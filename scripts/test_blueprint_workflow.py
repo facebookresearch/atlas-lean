@@ -828,15 +828,17 @@ class GraphSyncWorkflowTests(unittest.TestCase):
             if "uses" in step:
                 self.assertRegex(step["uses"], r"@[0-9a-f]{40}\Z")
 
-    def run_check(self, status: int):
-        """Run the check's step with a uv that prints a verdict and exits with *status*; returns the result, the job
-        summary and the arguments uv got."""
+    def run_check(self, status: int, report: str | None = None):
+        """Run the check's step with a uv that prints a verdict, writes *report* as the check's JSON report, if any,
+        and exits with *status*; returns the result, the job summary and the arguments uv got."""
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         root = Path(directory.name)
         (root / "bin").mkdir()
+        if report is not None:
+            (root / "report.json").write_text(report)
         (root / "bin" / "uv").write_text(f'#!/bin/sh\necho "$@" > uv-arguments\necho "In step: no"\necho "error: a link" >&2\n'
-                                        f"exit {status}\n")
+                                        f'[ -f report.json ] && cp report.json build/graph-sync.json\nexit {status}\n')
         (root / "bin" / "uv").chmod(0o755)
         summary = root / "summary.md"
         result = subprocess.run(
@@ -847,7 +849,9 @@ class GraphSyncWorkflowTests(unittest.TestCase):
         return result, summary.read_text(), (root / "uv-arguments").read_text().split()
 
     def test_the_verdict_goes_to_the_log_and_the_summary_with_the_branchs_command(self):
-        result, summary, arguments = self.run_check(1)
+        if shutil.which("jq") is None:
+            self.skipTest("jq is not installed")
+        result, summary, arguments = self.run_check(1, '{"in_step": false}')
         self.assertEqual(result.returncode, 1)
         self.assertEqual(arguments[arguments.index("python"):], ["python", "scripts/sync_wiki.py", "declarations", "--base",
                                                                 "b" * 40, "--check", "--report", "build/graph-sync.json"])
@@ -859,12 +863,14 @@ class GraphSyncWorkflowTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertNotIn("::warning", result.stdout)
         self.assertNotIn("merge-base", summary)
-        # A check that could not run says so, rather than that the pull request is not in step.
-        result, summary, _ = self.run_check(2)
-        self.assertEqual(result.returncode, 2)
-        self.assertIn("::warning title=Graph sync::The check could not run", result.stdout)
-        self.assertIn("The check could not run (exit 2)", summary)
-        self.assertNotIn("merge-base", summary)
+        # A check that could not run, by its exit code or with no report that says the pull request is not in step,
+        # as when Python fails, says so rather than that the pull request is not in step.
+        for status, report in ((2, None), (1, None), (1, '{"in_step": true}'), (1, "not json")):
+            result, summary, _ = self.run_check(status, report)
+            self.assertEqual(result.returncode, status)
+            self.assertIn("::warning title=Graph sync::The check could not run", result.stdout)
+            self.assertIn(f"The check could not run (exit {status})", summary)
+            self.assertNotIn("merge-base", summary)
 
     def find_base(self, event: str, env=lambda main, merge: {}):
         """Run the step that finds the base in a repository whose HEAD merges a branch into main, as a pull request's

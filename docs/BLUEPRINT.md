@@ -374,9 +374,10 @@ longer has, and a held marker they leave unusable, are errors, and the run
 then writes nothing: relink the row to the declaration's successor and keep its
 article id, or remove the link and keep the page as a planned page
 ([Writing pages](#writing-pages)). A row of one of its declarations whose page
-is missing is an error too, as is such a page, or a folder the pull request
-adds on its way, that its folder page does not list. A second run writes
-nothing.
+is missing, or reached through a link, is an error too, as is such a page, or a
+folder the pull request adds on its way up to the roadmap's own page, that its
+folder page does not list, or whose folder page or annotation row is missing.
+A second run writes nothing.
 
 With `--check`, the run writes nothing. It prints first whether the pull
 request is in step, exiting 1 when it is not, with the command that brings it

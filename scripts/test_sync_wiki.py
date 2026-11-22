@@ -2235,6 +2235,10 @@ class ScopedRun(unittest.TestCase):
         links.write_text(links.read_text().replace("af_" + "0" * 23 + "2", "af_" + "e" * 24))
         self.assertEqual(self.run_sync("--check")[3]["differences"],
                          ["blueprint/links/Algebra.jsonl: the changes write it otherwise than the sync"])
+        links.write_text(links.read_text().replace("af_" + "e" * 24, "af_" + "0" * 23 + "2"))
+        (self.root / "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md").unlink()
+        self.assertEqual(self.run_sync("--check")[3]["differences"],
+                         ["blueprint/roadmap/Algebra/groups/group-basics/lagrange.md: the changes delete it"])
 
     def commit(self, message: str) -> str:
         self.git("add", "-A")
@@ -2268,8 +2272,9 @@ class ScopedRun(unittest.TestCase):
         (self.root / "blueprint/roadmap/Algebra/groups/group-basics/fresh.md").unlink()
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["in_step"], report["missing"]), (1, False, []))
-        self.assertEqual(report["errors"], ["roadmap/Algebra/groups/group-basics/fresh.md, which the row of Ext.fresh "
-                                            "names, is not a page: restore it, or remove the row and run the sync again"])
+        self.assertEqual(report["errors"], ["blueprint/roadmap/Algebra/groups/group-basics/fresh.md, which the row of "
+                                            "Ext.fresh names, is not a page: restore it, or remove the row and run the "
+                                            "sync again"])
 
     def test_a_link_or_an_executable_bit_is_not_the_syncs(self) -> None:
         self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
@@ -2378,6 +2383,61 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual((self.root / "blueprint/roadmap/Algebra/groups/middle/README.md").read_text(),
                          "# Middle\n\nMiddle.\n\n- [Beta](beta/README.md)\n- [Zulu](zulu/README.md)\n")
         self.assertFalse(any("part-" in path for path in report["written"]), report["written"])
+
+    def test_a_new_subject_the_roadmap_cannot_list_keeps_the_check_red(self) -> None:
+        # The walk up from a page reaches the roadmap's own page: a new subject listed nowhere is an error.
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        taxonomy["regions"]["Foundations"] = ["Logic"]
+        taxonomy["subjects"]["Logic"] = {"title": "Logic", "description": "Proofs.", "fields": [
+            {"slug": "basics", "title": "Basics", "description": "Basics.", "subfields": []}]}
+        taxonomy["placements"]["MathlibExt/Logic/Basics"] = {"to": "Logic/basics", "title": "Basics"}
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        self.write("blueprint/roadmap/README.md", self.PAGES["README.md"] + "\n```\nnot a list\n```\n")
+        self.base = self.commit("a roadmap page with a code fence")
+        self.write("MathlibExt/Logic/Basics.lean", "namespace Ext.Logic\n\n/-- A proof. -/\ntheorem proof : True := "
+                   "trivial\n\n/-- Another. -/\ntheorem other : True := trivial\n\nend Ext.Logic\n")
+        self.assertEqual(self.run_sync()[0], 1)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertEqual(report["errors"], ["Logic, a folder the changes add, is listed on no folder page: list it on "
+                                            "README.md"])
+
+    def test_a_new_folder_without_its_row_or_behind_a_link_is_not_in_step(self) -> None:
+        self.write("MathlibExt/Algebra/Rings.lean", self.RINGS)
+        self.assertEqual(self.run_sync()[0], 0)
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        kept = links.read_text()
+        links.write_text("".join(line for line in kept.splitlines(keepends=True) if "rings/README.md" not in line))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertEqual(report["errors"], ["Algebra/not-yet-classified/rings/README.md, the page of a folder the "
+                                            "changes add, has no annotation row: restore its row"])
+        links.write_text(kept)
+        folder = self.root / "blueprint/roadmap/Algebra/not-yet-classified/rings"
+        folder.rename(self.root / "rings")
+        folder.symlink_to(self.root / "rings")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, sorted(report["errors"])), (1, [
+            f"blueprint/roadmap/Algebra/not-yet-classified/rings/{name}.md, which the row of Ext.Rings.{name} names, is "
+            "not a page: restore it, or remove the row and run the sync again" for name in ("fields", "units")]))
+
+    def test_a_folder_page_written_in_place_keeps_its_mode(self) -> None:
+        (self.root / "blueprint/roadmap/Algebra/groups/group-basics/README.md").chmod(0o755)
+        self.base = self.commit("an executable folder page")
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"]), (0, "sync"), report["differences"])
+
+    def test_the_check_reads_the_base_rows_once_whatever_the_number_of_rows(self) -> None:
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        counted = []
+        with patch.object(sync, "numbered_rows", side_effect=lambda real=sync.numbered_rows: counted.append(1) or real()):
+            status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"]), (0, "sync"))
+        # The working tree's rows, for the plan and for the ids; the base's, once for the ids and once for its plan.
+        self.assertEqual(len(counted), 4)
 
 
 class CommittedAnnotations(unittest.TestCase):

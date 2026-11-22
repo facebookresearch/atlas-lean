@@ -62,10 +62,11 @@ any other declaration, such as an older one of a module the changes touch, and n
 summary: the run over the whole project refreshes those. A link the changes leave naming a declaration the Lean no
 longer has, or a held marker they leave unusable, is an error, and the run then writes nothing: relink the row to the
 declaration's successor and keep its id, or remove the link and keep the page as a planned page. So is a row of one of
-its declarations with no page, and a page of one, or a folder the changes add on its way, that its folder page does not
-list. A second run writes nothing. With --check it writes nothing at all, exits 1 unless the working tree is in step,
-naming the command that brings it in step, and says whether the wiki changes since REV are exactly what the run would
-write on REV's wiki, fresh ids aside (see sync_output).
+its declarations with no page, or one reached through a link, and a page of one, or a folder the changes add on its way,
+that its folder page does not list, or whose folder page or row is missing. A second run writes nothing. With --check it
+writes nothing at all, exits 1 unless the working tree is in step, naming the command that brings it in step, and says
+whether the wiki changes since REV are exactly what the run would write on REV's wiki, fresh ids aside (see
+sync_output).
 
 ids gives each annotation that has no id a fresh one, as declarations gives one
 to each annotation it adds: a row written by hand, say. The id goes right after
@@ -1837,7 +1838,7 @@ def link_view(index) -> dict:
             # Named as the working tree's file, which a copy of the wiki (see sync_output) stands for.
             where = location(wiki.ROOT / path.relative_to(LINKS.parent.parent), number)
             stale[(row.get("id") or row["subject"][0]["uri"], name)].append(
-                f"{where} ({subject_path(row).relative_to(wiki.ROADMAP)})")
+                f"{where} ({os.path.relpath(subject_path(row), wiki.ROADMAP)})")
     return {"stale": dict(stale), "held_problems": set(held_markers(files, index)[3])}
 
 
@@ -1950,9 +1951,10 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
     gone = (old.keys() | (base["declared"] - head["declared"])) - now.keys()
     kept = {key for key in gone if key in named and key in state and documented(key, index) is False}
     entries.update({key: None for key in gone - kept})
-    changed_pages = [f"{key} ({named[key].relative_to(wiki.ROADMAP)})" for key in sorted(now.keys() & old.keys())
+    # Named as their rows write them, which need not lead into the roadmap.
+    changed_pages = [f"{key} ({os.path.relpath(named[key], wiki.ROADMAP)})" for key in sorted(now.keys() & old.keys())
                      if old[key] != now[key] and key in named]
-    changed_pages += [f"{key} ({named[key].relative_to(wiki.ROADMAP)}; docstring removed)"
+    changed_pages += [f"{key} ({os.path.relpath(named[key], wiki.ROADMAP)}; docstring removed)"
                       for key in sorted(old.keys() - now.keys()) if key in named and documented(key, index) is False]
     blocking = [f"{where} links {name}, which the Lean no longer has: relink the row to the declaration's successor "
                 "and keep its article id, or remove the link and keep the page as a planned page"
@@ -1960,27 +1962,12 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
                 for where in places]
     blocking += [f"{problem}: fix the held marker"
                  for problem in sorted(links["held_problems"] - base["held_problems"])]
+    folder_rows = {Path(os.path.normpath(LINKS / row["subject"][0]["uri"])) for _, row in rows
+                   if row["subject"][0]["uri"].endswith("/README.md")}
     problems = set()
     for key in own:
-        page = written_at.get(key)
-        if page is None:
-            continue
-        if page.is_symlink() or not page.is_file() or not page.is_relative_to(wiki.ROADMAP):
-            problems.add(f"{page.relative_to(wiki.VAULT)}, which the row of {key} names, is not a page: restore it, "
-                         "or remove the row and run the sync again")
-            continue
-        # The page, and each folder on its way that the base did not have, up to the first it had.
-        folder = page
-        while folder.parent != wiki.ROADMAP and (folder == page or folder.relative_to(wiki.ROADMAP).joinpath(
-                "README.md").as_posix() not in base["folders"]):
-            readme = folder.parent / "README.md"
-            if (folder.name if folder == page else f"{folder.name}/README.md") not in (
-                    listed_links(readme) if readme.is_file() else []):
-                what = f"the page of {key}" if folder == page else "a folder the changes add"
-                problems.add(f"{folder.relative_to(wiki.ROADMAP)}, {what}, is listed on no folder page: list it on "
-                             f"{readme.relative_to(wiki.ROADMAP)}")
-                break
-            folder = folder.parent
+        if key in written_at:
+            problems.update(page_problems(key, written_at[key], base["folders"], folder_rows))
     return Plan(new=own, missing=[key for key in own if key not in named and key not in held],
                 held=[key for key in own if key not in named and key in held],
                 digests={key: value for key, value in sorted(entries.items()) if state.get(key) != value},
@@ -1989,6 +1976,34 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
                 counts={"lean files": len(changed), "added": len(now.keys() - old.keys()),
                         "changed": sum(old[key] != now[key] for key in now.keys() & old.keys()),
                         "removed": len(old.keys() - now.keys())})
+
+
+def page_problems(key: str, page: Path, folders: set[str], folder_rows: set[Path]) -> list[str]:
+    """What keeps an own declaration's *page*, which its row names as written, from being in step. It must be a file
+    under the roadmap, reached through no link, and listed on its folder page. So must each folder on its way that the
+    base did not have (*folders*, the base's folder pages by path in the roadmap), up to the first it had, the
+    roadmap's own page included; and each such folder needs its folder page, with an annotation row (*folder_rows*,
+    the folder pages that rows name)."""
+    if (not page.is_relative_to(wiki.ROADMAP) or os.path.realpath(page) != str(page) or not page.is_file()):
+        return [f"{os.path.relpath(page, wiki.ROOT)}, which the row of {key} names, is not a page: restore it, or remove "
+                "the row and run the sync again"]
+    folder = page
+    while True:
+        readme = folder.parent / "README.md"
+        new = readme.relative_to(wiki.ROADMAP).as_posix() not in folders
+        if new and not readme.is_file():
+            return [f"{readme.relative_to(wiki.ROADMAP)}, the page of a folder the changes add, is missing: restore it"]
+        if new and readme not in folder_rows:
+            return [f"{readme.relative_to(wiki.ROADMAP)}, the page of a folder the changes add, has no annotation row: "
+                    "restore its row"]
+        if (folder.name if folder == page else f"{folder.name}/README.md") not in (
+                listed_links(readme) if readme.is_file() else []):
+            what = f"the page of {key}" if folder == page else "a folder the changes add"
+            return [f"{folder.relative_to(wiki.ROADMAP)}, {what}, is listed on no folder page: list it on "
+                    f"{readme.relative_to(wiki.ROADMAP)}"]
+        folder = folder.parent
+        if folder == wiki.ROADMAP or not new:
+            return []
 
 
 def apply_plan(plan: Plan, targets: list, index, generated: dict[Path, str], unindexed: list[str],
@@ -2045,8 +2060,8 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
         for made in (vault / "roadmap", vault / "links", state.parent):
             made.mkdir(parents=True, exist_ok=True)
         with relocated(vault=vault, state=state):
-            ids = {uri: article_id for uri, article_id in ids.items()
-                   if uri not in {row["subject"][0]["uri"] for _, _, row in numbered_rows()}}
+            on_base = {row["subject"][0]["uri"] for _, _, row in numbered_rows()}
+            ids = {uri: article_id for uri, article_id in ids.items() if uri not in on_base}
             plan = plan_of()
             if plan.blocking or plan.problems:
                 return "other", [f"the sync stops on the base's wiki: {row}" for row in plan.blocking + plan.problems]
@@ -2057,15 +2072,17 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
         differences = []
         for path in sorted(set(paths) | {path.relative_to(scratch).as_posix() for path in written}):
             mine, theirs = scratch / path, wiki.ROOT / path
-            expected = (mine.read_bytes(), mine in written or modes.get(path) != "100755") if mine.is_file() else None
-            actual = None if theirs.is_symlink() or not theirs.is_file() else (
-                theirs.read_bytes(), not theirs.stat().st_mode & 0o111)
-            if theirs.is_symlink() or (path in modes and modes[path] not in ("100644", "100755")):
+            linked = theirs.is_symlink() or os.path.realpath(theirs) != str(theirs)
+            # A file written in place keeps its mode, and one the sync makes is not executable.
+            expected = (mine.read_bytes(), modes.get(path) != "100755") if mine.is_file() else None
+            actual = None if linked or not theirs.is_file() else (theirs.read_bytes(), not theirs.stat().st_mode & 0o111)
+            if linked or modes.get(path, "100644") not in ("100644", "100755"):
                 differences.append(f"{path}: the sync writes no link or other kind of file")
             elif expected != actual:
-                differences.append(f"{path}: " + ("the sync writes it, and the changes do not" if actual is None else
-                                                  "the changes add it, and the sync does not" if expected is None else
-                                                  "the changes write it otherwise than the sync"))
+                differences.append(f"{path}: " + (
+                    "the changes add it, and the sync does not" if expected is None else
+                    ("the sync writes it, and the changes do not" if mine in written else "the changes delete it")
+                    if actual is None else "the changes write it otherwise than the sync"))
     return ("other", differences) if differences else ("sync", [])
 
 

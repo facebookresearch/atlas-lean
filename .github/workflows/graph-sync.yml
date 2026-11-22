@@ -90,16 +90,23 @@ jobs:
             python scripts/sync_wiki.py declarations --base "$BASE" --check \
             --report build/graph-sync.json > build/graph-sync.txt 2>&1 || status=$?
           cat build/graph-sync.txt
+          # Not in step only when the report says so: any other failure means the check could not run.
+          verdict="$(jq -r 'if .in_step == false then "out" else "other" end' build/graph-sync.json 2>/dev/null || true)"
+          if [[ "$status" -ne 0 && "$verdict" != out ]]; then
+            failed=yes
+          else
+            failed=no
+          fi
           {
             echo "### Graph sync"
             echo
             echo '```text'
             head -c 60000 build/graph-sync.txt
             echo '```'
-            if [[ "$status" -gt 1 ]]; then
+            if [[ "$failed" == yes ]]; then
               echo
               echo "The check could not run (exit $status): the log above says why."
-            elif [[ "$status" -eq 1 ]]; then
+            elif [[ "$status" -ne 0 ]]; then
               cat <<'TEXT'
 
           The check ran on the pull request merged into its base. On the pull request's branch, run the sync as:
@@ -111,9 +118,9 @@ jobs:
           TEXT
             fi
           } >> "$GITHUB_STEP_SUMMARY"
-          if [[ "$status" -gt 1 ]]; then
+          if [[ "$failed" == yes ]]; then
             echo "::warning title=Graph sync::The check could not run; the job summary says why."
-          elif [[ "$status" -eq 1 ]]; then
+          elif [[ "$status" -ne 0 ]]; then
             echo "::warning title=Graph sync::The graph is not in step with this change's Lean; the job summary says how to fix it."
           fi
           exit "$status"
