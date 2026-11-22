@@ -19,6 +19,7 @@ import Mathlib.Analysis.MeanInequalities
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Basic.ENNReal.BigOperators
+import Mathlib.Data.EReal.Basic
 
 /-!
 # Rényi differential privacy for finite discrete distributions
@@ -39,19 +40,35 @@ open scoped ENNReal
 noncomputable def renyiMoment {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) (α : ℝ) : ℝ :=
   ∑ w, (P w).toReal ^ α / (Q w).toReal ^ (α - 1)
 
-/-- Rényi divergence of order `α` between finite distributions `P` and `Q`. -/
-noncomputable def renyiDiv {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) (α : ℝ) : ℝ :=
+/-- Real-valued Rényi divergence formula of order `α`, valid under `Support`. -/
+noncomputable def renyiDivReal {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) (α : ℝ) : ℝ :=
   (1 / (α - 1)) * Real.log (renyiMoment P Q α)
 
 /-- Support inclusion: every outcome possible under `P` is possible under `Q`. -/
 def Support {Ω : Type*} (P Q : PMF Ω) : Prop :=
   ∀ w, P w ≠ 0 → Q w ≠ 0
 
+/-- Rényi divergence of order `α`: `⊤` off support, the real formula otherwise. -/
+noncomputable def renyiDiv {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) (α : ℝ) : EReal :=
+  if Support P Q then ↑(renyiDivReal P Q α) else ⊤
+
+/-- On support, `renyiDiv` is the real formula, coerced. -/
+theorem renyiDiv_of_support {Ω : Type*} [Fintype Ω] {P Q : PMF Ω} {α : ℝ}
+    (hs : Support P Q) : renyiDiv P Q α = ↑(renyiDivReal P Q α) := by
+  unfold renyiDiv
+  exact ite_eq_left hs
+
+/-- Off support, `renyiDiv` is infinite. -/
+theorem renyiDiv_of_not_support {Ω : Type*} [Fintype Ω] {P Q : PMF Ω} {α : ℝ}
+    (hs : ¬ Support P Q) : renyiDiv P Q α = ⊤ := by
+  unfold renyiDiv
+  exact ite_eq_right hs
+
 /-- Rényi DP of order `α` with budget `ε`, for ordered adjacent pairs. -/
 def IsRDP {Database Output : Type*} [Fintype Output] (M : Database → PMF Output)
     (adj : Database → Database → Prop) (α ε : ℝ) : Prop :=
-  0 ≤ ε ∧ ∀ d d', adj d d' →
-    Support (M d) (M d') ∧ renyiDiv (M d) (M d') α ≤ ε
+  0 ≤ ε ∧ 1 < α ∧ ∀ d d', adj d d' →
+    Support (M d) (M d') ∧ renyiDiv (M d) (M d') α ≤ (ε : EReal)
 
 /-- Independent product of two distributions. -/
 noncomputable def prodPMF {Ω₁ Ω₂ : Type*} (P1 : PMF Ω₁) (P2 : PMF Ω₂) :
@@ -129,10 +146,15 @@ theorem renyiMoment_self {Ω : Type*} [Fintype Ω] (P : PMF Ω) {α : ℝ}
     Finset.sum_congr rfl hterm]
   exact pmf_toReal_sum P
 
+private theorem renyiDivReal_self {Ω : Type*} [Fintype Ω] (P : PMF Ω) {α : ℝ}
+    (hα : 1 < α) : renyiDivReal P P α = 0 := by
+  unfold renyiDivReal
+  rw [renyiMoment_self P hα, Real.log_one, mul_zero]
+
 theorem renyiDiv_self {Ω : Type*} [Fintype Ω] (P : PMF Ω) {α : ℝ}
     (hα : 1 < α) : renyiDiv P P α = 0 := by
-  unfold renyiDiv
-  rw [renyiMoment_self P hα, Real.log_one, mul_zero]
+  rw [renyiDiv_of_support (fun w h => h), EReal.coe_eq_zero]
+  exact renyiDivReal_self P hα
 
 theorem one_le_renyiMoment {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) {α : ℝ}
     (hα : 1 < α) (hs : Support P Q) : 1 ≤ renyiMoment P Q α := by
@@ -166,12 +188,17 @@ theorem one_le_renyiMoment {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) {α : ℝ}
   rw [hMom]
   exact hJ
 
-theorem nonneg_renyiDiv {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) {α : ℝ}
-    (hα : 1 < α) (hs : Support P Q) : 0 ≤ renyiDiv P Q α := by
-  unfold renyiDiv
+private theorem renyiDivReal_nonneg {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) {α : ℝ}
+    (hα : 1 < α) (hs : Support P Q) : 0 ≤ renyiDivReal P Q α := by
+  unfold renyiDivReal
   apply mul_nonneg
   · exact div_nonneg zero_le_one (le_of_lt (sub_pos.mpr hα))
   · exact Real.log_nonneg (one_le_renyiMoment P Q hα hs)
+
+theorem nonneg_renyiDiv {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) {α : ℝ}
+    (hα : 1 < α) (hs : Support P Q) : 0 ≤ renyiDiv P Q α := by
+  rw [renyiDiv_of_support hs, EReal.coe_nonneg]
+  exact renyiDivReal_nonneg P Q hα hs
 
 private theorem bind_toReal {Ω Ω₂ : Type*} [Fintype Ω] [Fintype Ω₂]
     (P : PMF Ω) (k : Ω → PMF Ω₂) (y : Ω₂) :
@@ -206,7 +233,7 @@ private theorem support_bind {Ω Ω₂ : Type*} [Fintype Ω] {P Q : PMF Ω}
       (Finset.mem_univ x)
   intro hsum0
   rw [hsum0] at hle
-  exact hterm (le_antisymm hle (zero_le))
+  exact hterm (le_antisymm hle zero_le)
 
 theorem renyiMoment_bind_le {Ω Ω₂ : Type*} [Fintype Ω] [Fintype Ω₂]
     (P Q : PMF Ω) (k : Ω → PMF Ω₂) {α : ℝ} (hα : 1 < α)
@@ -316,11 +343,11 @@ theorem renyiMoment_bind_le {Ω Ω₂ : Type*} [Fintype Ω] [Fintype Ω₂]
           (rpow_div_eq_mul_rpow ENNReal.toReal_nonneg ENNReal.toReal_nonneg hα
             (fun h => support_toReal hs x h)).symm)
 
-theorem renyiDiv_bind_le {Ω Ω₂ : Type*} [Fintype Ω] [Fintype Ω₂]
+private theorem renyiDivReal_bind_le {Ω Ω₂ : Type*} [Fintype Ω] [Fintype Ω₂]
     (P Q : PMF Ω) (k : Ω → PMF Ω₂) {α : ℝ} (hα : 1 < α)
     (hs : Support P Q) :
-    renyiDiv (P.bind k) (Q.bind k) α ≤ renyiDiv P Q α := by
-  unfold renyiDiv
+    renyiDivReal (P.bind k) (Q.bind k) α ≤ renyiDivReal P Q α := by
+  unfold renyiDivReal
   apply mul_le_mul_of_nonneg_left
   · apply Real.log_le_log
     · exact lt_of_lt_of_le zero_lt_one
@@ -328,13 +355,21 @@ theorem renyiDiv_bind_le {Ω Ω₂ : Type*} [Fintype Ω] [Fintype Ω₂]
     · exact renyiMoment_bind_le P Q k hα hs
   · exact div_nonneg zero_le_one (le_of_lt (sub_pos.mpr hα))
 
+theorem renyiDiv_bind_le {Ω Ω₂ : Type*} [Fintype Ω] [Fintype Ω₂]
+    (P Q : PMF Ω) (k : Ω → PMF Ω₂) {α : ℝ} (hα : 1 < α)
+    (hs : Support P Q) :
+    renyiDiv (P.bind k) (Q.bind k) α ≤ renyiDiv P Q α := by
+  rw [renyiDiv_of_support (support_bind k hs), renyiDiv_of_support hs,
+    EReal.coe_le_coe_iff]
+  exact renyiDivReal_bind_le P Q k hα hs
+
 theorem isRDP_bind {Database A B : Type*} [Fintype A] [Fintype B]
     {M : Database → PMF A} {adj : Database → Database → Prop} {α ε : ℝ}
-    (hα : 1 < α) (h : IsRDP M adj α ε) (k : A → PMF B) :
+    (h : IsRDP M adj α ε) (k : A → PMF B) :
     IsRDP (fun d => (M d).bind k) adj α ε := by
-  refine ⟨h.1, fun d d' hadj => ?_⟩
-  obtain ⟨hs, hdiv⟩ := h.2 d d' hadj
-  refine ⟨support_bind k hs, (renyiDiv_bind_le _ _ k hα hs).trans hdiv⟩
+  refine ⟨h.1, h.2.1, fun d d' hadj => ?_⟩
+  obtain ⟨hs, hdiv⟩ := h.2.2 d d' hadj
+  refine ⟨support_bind k hs, (renyiDiv_bind_le _ _ k h.2.1 hs).trans hdiv⟩
 
 theorem support_prodPMF {Ω₁ Ω₂ : Type*} (P1 Q1 : PMF Ω₁) (P2 Q2 : PMF Ω₂)
     (hs1 : Support P1 Q1) (hs2 : Support P2 Q2) :
@@ -378,12 +413,12 @@ theorem renyiMoment_prodPMF {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂
       mul_div_mul_comm]
   simp_rw [hterm, ← Finset.sum_mul_sum]
 
-theorem renyiDiv_prodPMF {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
+private theorem renyiDivReal_prodPMF {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
     (P1 Q1 : PMF Ω₁) (P2 Q2 : PMF Ω₂) {α : ℝ} (hα : 1 < α)
     (hs1 : Support P1 Q1) (hs2 : Support P2 Q2) :
-    renyiDiv (prodPMF P1 P2) (prodPMF Q1 Q2) α
-      = renyiDiv P1 Q1 α + renyiDiv P2 Q2 α := by
-  unfold renyiDiv
+    renyiDivReal (prodPMF P1 P2) (prodPMF Q1 Q2) α
+      = renyiDivReal P1 Q1 α + renyiDivReal P2 Q2 α := by
+  unfold renyiDivReal
   rw [renyiMoment_prodPMF]
   have h1 : renyiMoment P1 Q1 α ≠ 0 :=
     ne_of_gt (lt_of_lt_of_le zero_lt_one (one_le_renyiMoment P1 Q1 hα hs1))
@@ -391,17 +426,35 @@ theorem renyiDiv_prodPMF {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
     ne_of_gt (lt_of_lt_of_le zero_lt_one (one_le_renyiMoment P2 Q2 hα hs2))
   rw [Real.log_mul h1 h2, mul_add]
 
+theorem renyiDiv_prodPMF {Ω₁ Ω₂ : Type*} [Fintype Ω₁] [Fintype Ω₂]
+    (P1 Q1 : PMF Ω₁) (P2 Q2 : PMF Ω₂) {α : ℝ} (hα : 1 < α)
+    (hs1 : Support P1 Q1) (hs2 : Support P2 Q2) :
+    renyiDiv (prodPMF P1 P2) (prodPMF Q1 Q2) α
+      = renyiDiv P1 Q1 α + renyiDiv P2 Q2 α := by
+  rw [renyiDiv_of_support (support_prodPMF _ _ _ _ hs1 hs2),
+    renyiDiv_of_support hs1, renyiDiv_of_support hs2, ← EReal.coe_add,
+    EReal.coe_eq_coe_iff]
+  exact renyiDivReal_prodPMF _ _ _ _ hα hs1 hs2
+
 theorem isRDP_prodPMF {Database A B : Type*} [Fintype A] [Fintype B]
     {M1 : Database → PMF A} {M2 : Database → PMF B}
-    {adj : Database → Database → Prop} {α ε1 ε2 : ℝ} (hα : 1 < α)
+    {adj : Database → Database → Prop} {α ε1 ε2 : ℝ}
     (h1 : IsRDP M1 adj α ε1) (h2 : IsRDP M2 adj α ε2) :
     IsRDP (fun d => prodPMF (M1 d) (M2 d)) adj α (ε1 + ε2) := by
-  refine ⟨add_nonneg h1.1 h2.1, fun d d' hadj => ?_⟩
-  obtain ⟨hs1, hdiv1⟩ := h1.2 d d' hadj
-  obtain ⟨hs2, hdiv2⟩ := h2.2 d d' hadj
+  have hα := h1.2.1
+  refine ⟨add_nonneg h1.1 h2.1, hα, fun d d' hadj => ?_⟩
+  obtain ⟨hs1, hdiv1⟩ := h1.2.2 d d' hadj
+  obtain ⟨hs2, hdiv2⟩ := h2.2.2 d d' hadj
+  have h1R : renyiDivReal (M1 d) (M1 d') α ≤ ε1 := by
+    rw [renyiDiv_of_support hs1] at hdiv1
+    exact EReal.coe_le_coe_iff.mp hdiv1
+  have h2R : renyiDivReal (M2 d) (M2 d') α ≤ ε2 := by
+    rw [renyiDiv_of_support hs2] at hdiv2
+    exact EReal.coe_le_coe_iff.mp hdiv2
   refine ⟨support_prodPMF _ _ _ _ hs1 hs2, ?_⟩
-  rw [renyiDiv_prodPMF _ _ _ _ hα hs1 hs2]
-  exact add_le_add hdiv1 hdiv2
+  rw [renyiDiv_prodPMF _ _ _ _ hα hs1 hs2, renyiDiv_of_support hs1,
+    renyiDiv_of_support hs2, ← EReal.coe_add, EReal.coe_le_coe_iff]
+  exact add_le_add h1R h2R
 
 private theorem exp_rpow (a b : ℝ) :
     (Real.exp a) ^ b = Real.exp (a * b) := by
@@ -409,13 +462,13 @@ private theorem exp_rpow (a b : ℝ) :
 
 private theorem moment_le_exp_of_renyiDiv {Ω : Type*} [Fintype Ω]
     (P Q : PMF Ω) {α ε : ℝ} (hα : 1 < α) (hs : Support P Q)
-    (hdiv : renyiDiv P Q α ≤ ε) :
+    (hdiv : renyiDivReal P Q α ≤ ε) :
     renyiMoment P Q α ≤ Real.exp ((α - 1) * ε) := by
   have hα1 : (0 : ℝ) < α - 1 := sub_pos.mpr hα
   have hMpos : (0 : ℝ) < renyiMoment P Q α :=
     lt_of_lt_of_le zero_lt_one (one_le_renyiMoment P Q hα hs)
   have hlog : Real.log (renyiMoment P Q α) ≤ (α - 1) * ε := by
-    unfold renyiDiv at hdiv
+    unfold renyiDivReal at hdiv
     have h := mul_le_mul_of_nonneg_left hdiv (le_of_lt hα1)
     rwa [← mul_assoc, mul_one_div_cancel hα1.ne', one_mul] at h
   conv_lhs => rw [← Real.exp_log hMpos]
@@ -542,7 +595,7 @@ private theorem toOuter_ne_top {Ω : Type*} [Fintype Ω] (P : PMF Ω)
 
 theorem approx_event_of_renyi {Ω : Type*} [Fintype Ω] (P Q : PMF Ω)
     {α ε δ : ℝ} (hα : 1 < α) (hs : Support P Q)
-    (hdiv : renyiDiv P Q α ≤ ε) (hδ0 : 0 < δ)
+    (hdiv : renyiDiv P Q α ≤ (ε : EReal)) (hδ0 : 0 < δ)
     (s : Finset Ω) :
     ∑ w ∈ s, (P w).toReal ≤ Real.exp (rdpEps2 ε δ α)
       * (∑ w ∈ s, (Q w).toReal) + δ := by
@@ -553,7 +606,11 @@ theorem approx_event_of_renyi {Ω : Type*} [Fintype Ω] (P Q : PMF Ω)
   have hα1ne : α - 1 ≠ 0 := ne_of_gt hα1
   have hδne : δ ≠ 0 := ne_of_gt hδ0
   have hH := holder_event_bound P Q hα hs s
-  have hM := moment_le_exp_of_renyiDiv P Q hα hs hdiv
+  have hdivR : renyiDivReal P Q α ≤ ε := by
+    have h := hdiv
+    rw [renyiDiv_of_support hs] at h
+    exact EReal.coe_le_coe_iff.mp h
+  have hM := moment_le_exp_of_renyiDiv P Q hα hs hdivR
   have hQS_nn : 0 ≤ ∑ w ∈ s, (Q w).toReal :=
     Finset.sum_nonneg (fun w _ => ENNReal.toReal_nonneg)
   set γ : ℝ := 1 - 1 / α with hγ
@@ -680,18 +737,19 @@ theorem approx_event_of_renyi {Ω : Type*} [Fintype Ω] (P Q : PMF Ω)
 
 theorem isApproxDP_of_isRDP {Database A : Type*} [Fintype A]
     {M : Database → PMF A} {adj : Database → Database → Prop} {α ε δ : ℝ}
-    (hα : 1 < α) (hε : 0 ≤ ε) (hδ0 : 0 < δ) (hδ1 : δ < 1)
+    (hε : 0 ≤ ε) (hδ0 : 0 < δ) (hδ1 : δ < 1)
     (h : IsRDP M adj α ε) :
     CSLibExt.Privacy.DifferentialPrivacy.IsApproxDP M adj
       (rdpEps2 ε δ α) δ := by
   classical
+  have hα := h.2.1
   refine ⟨?_, le_of_lt hδ0, fun d d' hadj s => ?_⟩
   · unfold rdpEps2
     apply add_nonneg hε
     apply div_nonneg _ (le_of_lt (sub_pos.mpr hα))
     apply Real.log_nonneg
     exact (one_le_div hδ0).mpr (le_of_lt hδ1)
-  · obtain ⟨hs, hdiv⟩ := h.2 d d' hadj
+  · obtain ⟨hs, hdiv⟩ := h.2.2 d d' hadj
     have hreal := approx_event_of_renyi (M d) (M d') hα hs hdiv hδ0
       (Finset.univ.filter (fun w => w ∈ s))
     rw [← toOuterMeasure_toReal (M d) s,

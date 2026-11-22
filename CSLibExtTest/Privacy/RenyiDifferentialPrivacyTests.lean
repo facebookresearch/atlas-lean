@@ -18,6 +18,7 @@ public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Basic.ENNReal.Basic
 public import Mathlib.Basic.ENNReal.Inv
+public import Mathlib.Data.EReal.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
 
 /-!
@@ -46,6 +47,12 @@ theorem test_uniform_toReal (w : Bool) :
   simp [Q1, Cslib.Probability.PMF.uniformOfFintype_apply, Fintype.card_bool,
     ENNReal.toReal_inv]
 
+theorem test_support : Support P1 Q1 := by
+  intro w _ h0
+  have h2 := test_uniform_toReal w
+  rw [h0, ENNReal.toReal_zero] at h2
+  norm_num at h2
+
 theorem test_moment_pure_uniform : renyiMoment P1 Q1 2 = 2 := by
   have hP1t : (P1 true).toReal = 1 := by simp [P1]
   have hP1f : (P1 false).toReal = 0 := by simp [P1]
@@ -54,22 +61,30 @@ theorem test_moment_pure_uniform : renyiMoment P1 Q1 2 = 2 := by
   simp only [hP1t, hP1f, test_uniform_toReal]
   norm_num [Real.rpow_two, Real.rpow_one]
 
-theorem test_div_pure_uniform : renyiDiv P1 Q1 2 = Real.log 2 := by
-  unfold renyiDiv
-  rw [test_moment_pure_uniform]
+theorem test_div_pure_uniform : renyiDiv P1 Q1 2 = (Real.log 2 : EReal) := by
+  rw [renyiDiv_of_support test_support]
+  unfold renyiDivReal
+  rw [test_moment_pure_uniform, EReal.coe_eq_coe_iff]
   norm_num
-
-theorem test_support : Support P1 Q1 := by
-  intro w _ h0
-  have h2 := test_uniform_toReal w
-  rw [h0, ENNReal.toReal_zero] at h2
-  norm_num at h2
 
 theorem test_one_le_moment : 1 ≤ renyiMoment P1 Q1 2 :=
   one_le_renyiMoment P1 Q1 (by norm_num) test_support
 
 theorem test_nonneg_div : 0 ≤ renyiDiv P1 Q1 2 :=
   nonneg_renyiDiv P1 Q1 (by norm_num) test_support
+
+noncomputable def Q0 : PMF Bool := PMF.pure false
+
+theorem test_not_support_off : ¬ Support P1 Q0 := by
+  intro h
+  have h1 := h true (by simp [P1])
+  simp [Q0] at h1
+
+theorem test_div_off_support_top : renyiDiv P1 Q0 2 = ⊤ :=
+  renyiDiv_of_not_support test_not_support_off
+
+theorem test_div_off_support_ne_zero : renyiDiv P1 Q0 2 ≠ 0 := by
+  simp [test_div_off_support_top]
 
 theorem test_moment_prod :
     renyiMoment (prodPMF P1 P1) (prodPMF Q1 Q1) 2 = 4 := by
@@ -89,24 +104,29 @@ def adjTest : Bool → Bool → Prop :=
   fun d d' => d = d' ∨ (d = true ∧ d' = false)
 
 theorem test_isRDP : IsRDP Mtest adjTest 2 (Real.log 2) := by
-  refine ⟨Real.log_nonneg (by norm_num), fun d d' hadj => ?_⟩
+  refine ⟨Real.log_nonneg (by norm_num), by norm_num, fun d d' hadj => ?_⟩
   simp only [adjTest] at hadj
   rcases hadj with rfl | ⟨rfl, rfl⟩
   · refine ⟨fun w h => h, ?_⟩
     rw [renyiDiv_self _ (by norm_num : (1 : ℝ) < 2)]
-    exact Real.log_nonneg (by norm_num)
-  · show Support P1 Q1 ∧ renyiDiv P1 Q1 2 ≤ Real.log 2
+    exact_mod_cast Real.log_nonneg (by norm_num)
+  · show Support P1 Q1 ∧ renyiDiv P1 Q1 2 ≤ (Real.log 2 : EReal)
     exact ⟨test_support, test_div_pure_uniform.le⟩
+
+theorem test_isRDP_excludes_one (ε : ℝ) : ¬ IsRDP Mtest adjTest 1 ε := by
+  intro h
+  have h1 := h.2.1
+  norm_num at h1
 
 theorem test_isApproxDP :
     CSLibExt.Privacy.DifferentialPrivacy.IsApproxDP Mtest adjTest
       (rdpEps2 (Real.log 2) (1 / 2) 2) (1 / 2) :=
-  isApproxDP_of_isRDP (by norm_num) (Real.log_nonneg (by norm_num))
+  isApproxDP_of_isRDP (Real.log_nonneg (by norm_num))
     (by norm_num) (by norm_num) test_isRDP
 
 theorem test_isRDP_bind :
     IsRDP (fun d => (Mtest d).bind PMF.pure) adjTest 2 (Real.log 2) :=
-  isRDP_bind (by norm_num) test_isRDP PMF.pure
+  isRDP_bind test_isRDP PMF.pure
 
 theorem test_bind_const : Q1.bind (fun _ => Q1) = Q1 := by
   ext y
