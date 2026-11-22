@@ -120,10 +120,10 @@ theorem weightedGreedySetCover_mem (w : Finset α → ℚ) (F : List (Finset α)
         · exact (bestRatioSet_spec hb).1
         · exact ih _ (h ▸ card_sdiff_lt (bestRatioSet_spec hb).2.1) _ rfl T hT
 
-/-- **The weighted greedy set cover is a cover.** Let $F$ be a list of finite sets, $U$ a finite
-set and $w$ any rational cost function on finite sets. If every element of $U$ lies in some set of
-$F$, then every element of $U$ lies in some set chosen by the weighted greedy set cover of $U$ from
-$F$ with costs $w$. -/
+/-- **Weighted greedy set cover covers the target when the input family covers it.** Let $F$ be a
+list of finite sets, $U$ a finite set and $w$ any rational cost function on finite sets. If every
+element of $U$ lies in some set of $F$, then every element of $U$ lies in some set chosen by the
+weighted greedy set cover of $U$ from $F$ with costs $w$. -/
 theorem weightedGreedySetCover_covers (w : Finset α → ℚ) (F : List (Finset α)) (U : Finset α)
     (hU : ∀ x ∈ U, ∃ S ∈ F, x ∈ S) :
     ∀ x ∈ U, ∃ S ∈ (weightedGreedySetCover w F U).ret, x ∈ S := by

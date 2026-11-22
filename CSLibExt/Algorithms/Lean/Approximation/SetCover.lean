@@ -123,9 +123,10 @@ theorem greedySetCover_mem (F : List (Finset α)) (U : Finset α) :
       · exact bestSet_mem hS
       · exact ih _ (h ▸ card_sdiff_lt hS) _ rfl T hT
 
-/-- **The greedy set cover is a cover.** Let $F$ be a list of finite sets and $U$ a finite set
-such that every element of $U$ lies in some set of $F$. Then every element of $U$ lies in some
-set of the list returned by the greedy set cover algorithm on $F$ and $U$. -/
+/-- **Greedy set cover covers the target when the input family covers it.** Let $F$ be a list of
+finite sets and $U$ a finite set such that every element of $U$ lies in some set of $F$. Then every
+element of $U$ lies in some set of the list returned by the greedy set cover algorithm on $F$ and
+$U$. -/
 theorem greedySetCover_covers (F : List (Finset α)) (U : Finset α)
     (hU : ∀ x ∈ U, ∃ S ∈ F, x ∈ S) : ∀ x ∈ U, ∃ S ∈ (greedySetCover F U).ret, x ∈ S := by
   induction h : U.card using Nat.strong_induction_on generalizing U with

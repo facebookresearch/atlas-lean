@@ -159,8 +159,9 @@ that finished, in order, and the processes left over. With fuel $0$, or when no 
 a request at most $w$, no process finishes and all the pending processes are left over. Otherwise
 the fuel is $n + 1$ for some $n$; take the first pending process $p$ whose request is at most $w$
 and run the algorithm with fuel $n$, free vector $w$ plus the allocation of $p$, and the list with
-that entry of $p$ removed. The result is $p$ followed by the processes that finished there,
-together with the processes left over there. -/
+that entry of $p$ removed. The result is $p$ followed by the processes that finished there, together
+with the processes left over there. The algorithm assumes finitely many resource types and decidable
+equality of processes. -/
 def reduceAux : ℕ → (R → ℕ) → List P → List P × List P
   | 0, _, pending => ([], pending)
   | fuel + 1, work, pending =>
@@ -173,16 +174,18 @@ def reduceAux : ℕ → (R → ℕ) → List P → List P × List P
 /-- **The processes the detection algorithm lets finish.** Given the free resource vector $w$ and a
 list of pending processes, run the detection algorithm: repeatedly take the first pending process
 whose request is at most what is free, let it finish, remove that entry from the list and add its
-allocation to what is free, until no pending process has a request at most what is free. This is
-the list of the processes taken, in the order they were taken. -/
+allocation to what is free, until no pending process has a request at most what is free. This is the
+list of the processes taken, in the order they were taken. The algorithm assumes finitely many
+resource types and decidable equality of processes. -/
 def finished (work : R → ℕ) (pending : List P) : List P :=
   (S.reduceAux pending.length work pending).1
 
-/-- **The detection algorithm.** Given the free resource vector $w$ and a list of pending
-processes, repeatedly take the first pending process whose request is at most what is free, let it
-finish, remove that entry from the list and add its allocation to what is free, until no pending
-process has a request at most what is free. The processes still pending then are the ones reported
-as deadlocked. -/
+/-- **The detection algorithm.** Given the free resource vector $w$ and a list of pending processes,
+repeatedly take the first pending process whose request is at most what is free, let it finish,
+remove that entry from the list and add its allocation to what is free, until no pending process has
+a request at most what is free. The processes still pending then are the ones reported as
+deadlocked. The algorithm assumes finitely many resource types and decidable equality of
+processes. -/
 def detect (work : R → ℕ) (pending : List P) : List P :=
   (S.reduceAux pending.length work pending).2
 
@@ -272,8 +275,9 @@ theorem reduceAux_disjoint (fuel : ℕ) (work : R → ℕ) (pending : List P)
       have hyp : y ≠ p := fun h => (List.Nodup.not_mem_erase hσnd) (h ▸ hy)
       exact (List.Nodup.mem_erase_iff hnd).2 ⟨hyp, hsub (List.mem_of_mem_erase hy)⟩
 
-/-- **Every reported process is stuck.** Let $w$ be the free resource vector. For every process $q$
-that the detection algorithm reports, the request of $q$ is not at most $w$ plus the sum of the
+/-- **Every reported process is stuck.** Suppose that there are finitely many resource types and
+that equality of processes is decidable, and let $w$ be the free resource vector. For every process
+$q$ that the detection algorithm reports, the request of $q$ is not at most $w$ plus the sum of the
 allocations of the processes that the algorithm lets finish: for at least one resource type, $q$
 requests more than is free even after all those processes have released their allocations. -/
 theorem detect_stuck (work : R → ℕ) (pending : List P) :
@@ -313,7 +317,8 @@ theorem mem_detect_iff {work : R → ℕ} {pending : List P} (hnd : pending.Nodu
         fun x hx => hperm.subset (List.mem_append_left _ hx), hfin⟩ hno
     · exact hdet
 
-/-- **No deadlock is reported exactly when all the processes can finish.** Let $w$ be the free
+/-- **No deadlock is reported exactly when all the processes can finish.** Suppose that there are
+finitely many resource types and that equality of processes is decidable. Let $w$ be the free
 resource vector and let the list of pending processes contain no duplicates. The detection
 algorithm, started with $w$ free, reports no process if and only if some reordering of the pending
 processes is a reduction sequence from $w$. -/

@@ -592,11 +592,10 @@ private theorem stored_at_hash (table : CuckooHashing K V m h1 h2) (valid : Vali
     subst placed
     exact Or.inr hi
 
-/--
-**Cuckoo lookup finds every stored key.** Let $T$ be a cuckoo hash table with hash functions $h_1$
-and $h_2$ that satisfies the placement invariant, and let $k$ be a key and $v$ a value. If the
-binding $k \mapsto v$ is stored in some slot of either table of $T$, then looking up $k$ in $T$
-returns some value.
+/-- **Under the placement invariant, cuckoo lookup finds every stored key.** Let $T$ be a cuckoo
+hash table with hash functions $h_1$ and $h_2$ that satisfies the placement invariant, and let $k$
+be a key and $v$ a value. If the binding $k \mapsto v$ is stored in some slot of either table of
+$T$, then looking up $k$ in $T$ returns some value.
 
 The returned value may differ from $v$ when $k$ is stored with two different values; when $T$
 stores each key with at most one value, it is $v$.
@@ -629,9 +628,10 @@ public theorem lookup_isSome_of_stored (table : CuckooHashing K V m h1 h2)
           rw [lookup_eq_some_of_table2 table key value atSecond notFirst]
           rfl
 
-/-- **Cuckoo lookup finds every stored binding.** Let $T$ be a cuckoo hash table that satisfies
-the placement invariant and is key-deterministic. For every key $k$ and value $v$, if the
-binding $k \mapsto v$ is stored in $T$, then looking up $k$ in $T$ returns $v$. -/
+/-- **Under the placement invariant and key determinism, cuckoo lookup finds every stored binding.**
+Let $T$ be a cuckoo hash table that satisfies the placement invariant and is key-deterministic. For
+every key $k$ and value $v$, if the binding $k \mapsto v$ is stored in $T$, then looking up $k$ in
+$T$ returns $v$. -/
 public theorem lookup_eq_some_of_stored (table : CuckooHashing K V m h1 h2)
     (valid : Valid table) (det : KeyDet table) (key : K) (value : V)
     (stored : Stored table key value) :
@@ -659,9 +659,10 @@ public theorem lookup_eq_some_of_stored (table : CuckooHashing K V m h1 h2)
             exact same hv.1
           exact lookup_eq_some_of_table2 table key value atSecond notFirst
 
-/-- **Cuckoo lookup finds exactly the stored bindings.** Let $T$ be a cuckoo hash table that
-satisfies the placement invariant and is key-deterministic. For every key $k$ and value $v$,
-looking up $k$ in $T$ returns $v$ if and only if the binding $k \mapsto v$ is stored in $T$. -/
+/-- **Under the placement invariant and key determinism, cuckoo lookup finds exactly the stored
+bindings.** Let $T$ be a cuckoo hash table that satisfies the placement invariant and is
+key-deterministic. For every key $k$ and value $v$, looking up $k$ in $T$ returns $v$ if and only if
+the binding $k \mapsto v$ is stored in $T$. -/
 public theorem lookup_eq_some_iff_stored (table : CuckooHashing K V m h1 h2)
     (valid : Valid table) (det : KeyDet table) (key : K) (value : V) :
     lookup table key = some value ↔ Stored table key value :=
