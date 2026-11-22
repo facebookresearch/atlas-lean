@@ -69,6 +69,7 @@ public import CSLibExt.Logics.Propositional.CNF.Compaction
 public import CSLibExt.Logics.Propositional.CNF.NormalForm
 public import CSLibExt.Logics.Propositional.CNF.ParsimoniousThree
 public import CSLibExt.Logics.Propositional.CNF.Resolution
+public import CSLibExt.Logics.Propositional.CNF.ResolutionSize
 public import CSLibExt.Logics.Propositional.CNF.ResolutionWidth
 public import CSLibExt.Logics.Propositional.CNF.Restriction
 public import CSLibExt.Logics.Propositional.CNF.Semantics
