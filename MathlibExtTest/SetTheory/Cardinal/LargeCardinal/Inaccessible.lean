@@ -12,8 +12,6 @@ Author: Steven Warner, Nam Trang
 module
 
 public import MathlibExt.SetTheory.Cardinal.LargeCardinal.Inaccessible
-public import Mathlib.SetTheory.Cardinal.Aleph
-public import Mathlib.SetTheory.Cardinal.Regular
 
 @[expose] public section
 

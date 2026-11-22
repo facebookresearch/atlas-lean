@@ -52,7 +52,8 @@ The equation is the paper's equation (7),
 $F(n) = (2^{k+1} k^k - (k+1)^{k+1}) / (k-1)^2$, multiplied by $(k-1)^2$.
 
 Source: Florian Luca, *On the Discriminant of the k-Generalized Fibonacci Polynomial, II*,
-The Fibonacci Quarterly 62 (2024), no. 3, Lemma 1 (`fq-2024-luca02082024-lem-1`). Equation (7) is written after
+The Fibonacci Quarterly 62 (2024), no. 3, Lemma 1 (`fq-2024-luca02082024-lem-1`). Equation (7) is
+written after
 multiplying by `(k-1)^2`; `F^{(k)}` is given by its defining properties as in
 `abs_discr_kGeneralizedFibonacciPolynomial_mem_iff`. By Theorem 1 the equation has no
 solution with `k > 100`, so this intermediate bound is implied by that statement. -/
@@ -76,7 +77,8 @@ $n < 1.5 \cdot 10^{18}$.
 The equation is the paper's equation (7) multiplied by $(k-1)^2$.
 
 Source: Florian Luca, *On the Discriminant of the k-Generalized Fibonacci Polynomial, II*,
-The Fibonacci Quarterly 62 (2024), no. 3, Lemma 2 (`fq-2024-luca02082024-lem-2`). Equation (7) is written after
+The Fibonacci Quarterly 62 (2024), no. 3, Lemma 2 (`fq-2024-luca02082024-lem-2`). Equation (7) is
+written after
 multiplying by `(k-1)^2`, as in `kGeneralizedFibonacci_discr_eq_index_bounds`; by Theorem 1
 the hypotheses are never met. -/
 public theorem_wanted kGeneralizedFibonacci_discr_eq_bounds (k : ℕ) (hk : 100 < k)

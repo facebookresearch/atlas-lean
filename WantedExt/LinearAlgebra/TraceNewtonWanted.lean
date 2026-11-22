@@ -23,13 +23,16 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.LinearAlgebra.TraceNewton` — trace_cayley_hamilton_newton (manifest `manifests/problems/trace_cayley_hamilton_newton.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.LinearAlgebra.TraceNewton` —
+trace_cayley_hamilton_newton (manifest `manifests/problems/trace_cayley_hamilton_newton.toml`, rev
+1, submitter Kim Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.LinearAlgebra.TraceNewtonWanted` namespace. Mathematical
+and placed the declarations in the `MathlibExt.LinearAlgebra.TraceNewtonWanted` namespace.
+Mathematical
 statements are unchanged. Source: Knill, *Some fundamental theorems in mathematics*, §220.
 -/
 module
@@ -77,7 +80,8 @@ noncomputable def charpolyDescendingCoeff {R : Type*} [CommRing R]
 
 For `k > N`, `c_k = 0`, and the remaining relation is the trace of
 Cayley-Hamilton multiplied by a power of `A`. -/
-/-- Source: Knill, *Some fundamental theorems in mathematics*, §220. Via leanprover/lean-eval@38361be, problem `trace_cayley_hamilton_newton`. -/
+/-- Source: Knill, *Some fundamental theorems in mathematics*, §220. Via
+leanprover/lean-eval@38361be, problem `trace_cayley_hamilton_newton`. -/
 public theorem_wanted trace_cayley_hamilton_newton {R : Type*} [CommRing R]
     (A : Matrix n n R) {k : ℕ} (hk : 1 ≤ k) :
     (k : R) * charpolyDescendingCoeff A k +

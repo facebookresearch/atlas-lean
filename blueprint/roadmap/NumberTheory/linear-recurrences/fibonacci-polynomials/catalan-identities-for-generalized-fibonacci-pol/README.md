@@ -1,0 +1,18 @@
+# Catalan identities for generalized Fibonacci polynomials
+
+- [Explicit formula for Fibonacci-type generalized Fibonacci polynomials](gfp-fib-eq-sum-choose.md)
+- [Explicit formula for Lucas-type generalized Fibonacci polynomials](gfp-lucas-eq-sum-choose.md)
+- [Webb–Parberry binomial identity](choose-sub-sub-one-eq-two-zpow-mul-sum.md)
+- [Binomial coefficients of odd lower index as an alternating sum](choose-two-mul-add-one-eq-alternating-su.md)
+- [Binomial coefficients of even lower index as an alternating sum](choose-two-mul-eq-alternating-sum.md)
+- [Catalan identity for Fibonacci-type generalized Fibonacci polynomials](gfp-fib-catalan.md)
+- [Catalan identity for Lucas-type generalized Fibonacci polynomials](gfp-lucas-catalan.md)
+- [Alternating sum of shifted binomial coefficients](alternating-sum-choose-mul-choose-sub.md)
+- [Recurrence for the floor-exponent binomial sums](floor-pow-binomial-sum-recurrence.md)
+- [Alternating sum of binomial row sums](alternating-choose-mul-sum-choose.md)
+- [Generating function of the floor-exponent binomial sums](floor-pow-binomial-sum-generating-functi.md)
+- [Generating function of the binomial section sums](section-binomial-sum-generating-function.md)
+- [Integral representation of Fibonacci-type generalized Fibonacci polynomials](gfp-fib-eval-eq-integral.md)
+- [Stewart's integral formula for the Fibonacci numbers](fib-eq-integral-one-add-mul-sqrt-five.md)
+- [Binomial sum of generalized Fibonacci polynomials as an integral](gfp-fib-binomial-sum-eq-integral.md)
+- [Binomial sum of Fibonacci numbers as an integral](fib-binomial-sum-eq-integral.md)

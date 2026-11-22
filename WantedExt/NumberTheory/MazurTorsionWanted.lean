@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.NumberTheory.MazurTorsion` — mazur_torsion (manifest `manifests/problems/mazur_torsion.toml`, rev 1, submitter Kim Morrison, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.NumberTheory.MazurTorsion` —
+mazur_torsion (manifest `manifests/problems/mazur_torsion.toml`, rev 1, submitter Kim Morrison,
+status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.NumberTheory.MazurTorsionWanted` namespace. Mathematical
-statements are unchanged. Source: B. Mazur, *Modular curves and the Eisenstein ideal*, Publ. IHÉS 47 (1977). Knill, *Some fundamental theorems in mathematics*, §139.
+and placed the declarations in the `MathlibExt.NumberTheory.MazurTorsionWanted` namespace.
+Mathematical
+statements are unchanged. Source: B. Mazur, *Modular curves and the Eisenstein ideal*, Publ. IHÉS
+47 (1977). Knill, *Some fundamental theorems in mathematics*, §139.
 -/
 module
 
@@ -72,7 +76,9 @@ is in the Mazur class: it is isomorphic to $\mathbb{Z}/n\mathbb{Z}$ for some
 $n \in \{1, 2, \ldots, 10, 12\}$, or to $\mathbb{Z}/2\mathbb{Z} \times \mathbb{Z}/2m\mathbb{Z}$ for
 some $m \in \{1, 2, 3, 4\}$.
 
-Source: B. Mazur, *Modular curves and the Eisenstein ideal*, Publ. IHÉS 47 (1977). Knill, *Some fundamental theorems in mathematics*, §139. Via leanprover/lean-eval@38361be, problem `mazur_torsion`. -/
+Source: B. Mazur, *Modular curves and the Eisenstein ideal*, Publ. IHÉS 47 (1977). Knill, *Some
+fundamental theorems in mathematics*, §139. Via leanprover/lean-eval@38361be, problem
+`mazur_torsion`. -/
 public theorem_wanted mazur_torsion (E : WeierstrassCurve ℚ) [E.IsElliptic] :
     IsInMazurClass ↥(AddCommGroup.torsion (WeierstrassCurve.Affine.Point E))
 

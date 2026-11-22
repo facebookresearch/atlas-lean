@@ -17,7 +17,8 @@ public import Mathlib.Logic.Function.Basic
 public import Mathlib.Data.List.Induction
 public import Mathlib.Data.List.GetD
 public import Mathlib.Order.Lex
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
+public import Mathlib.Data.Finset.Card
 
 /-!
 # Lamport clocks satisfy the clock condition
@@ -48,6 +49,16 @@ contributes `0` to the clock.
   `totalBefore_trans`, `totalBefore_total`: Lamport's total order on events
   (timestamps, ties broken by a linear order on processes) is a strict total
   order that extends happened-before.
+
+* `happensBefore_irrefl`, `isStrictOrder_happensBefore`: happened-before is an
+  irreflexive partial order (assumed by Lamport, a theorem in this model).
+* `clockCondition_of_c1_c2`: any clock satisfying Lamport's conditions C1 and C2
+  satisfies the clock condition.
+* `ClockBefore`, `clockBefore_of_happensBefore`, `clockBefore_total`: the order
+  induced by a clock system; for a clock satisfying the clock condition it is a
+  strict total order extending happened-before.
+* `exists_clock_of_extends`: Lamport's remark that every total order extending
+  happened-before is induced by some clock system satisfying the clock condition.
 
 The converse of the clock condition fails: concurrent events get ordered
 timestamps too (see the tests). Vector clocks characterize happened-before
@@ -272,5 +283,156 @@ theorem totalBefore_total {tr : List (Event P)} {a b : ℕ} {ea eb : Event P}
   rcases lt_or_gt_of_ne hne with hlt | hlt
   · exact Or.inl ⟨ea, eb, ha, hb, hlt⟩
   · exact Or.inr ⟨eb, ea, hb, ha, hlt⟩
+
+/-! ## Happened-before is a strict partial order; clock systems -/
+
+omit [DecidableEq P] [LinearOrder P] in
+/-- **Happened-before is irreflexive.** No event happened before itself. Lamport assumes this
+(1978, p. 559: "We assume that a ↛ a for any event a"); in this model of a finite execution it
+is a consequence, since happened-before only goes forward in the list. -/
+theorem happensBefore_irrefl (tr : List (Event P)) (a : ℕ) : ¬ HappensBefore tr a a :=
+  fun h => Nat.lt_irrefl a h.lt
+
+omit [DecidableEq P] [LinearOrder P] in
+/-- **Happened-before is an irreflexive partial order** on the positions of an execution
+(Lamport 1978, p. 559: "This implies that → is an irreflexive partial ordering on the set of all
+events in the system"). -/
+theorem isStrictOrder_happensBefore (tr : List (Event P)) :
+    IsStrictOrder ℕ (HappensBefore tr) where
+  irrefl := happensBefore_irrefl tr
+  trans _ _ _ := Relation.TransGen.trans
+
+omit [DecidableEq P] [LinearOrder P] in
+/-- **Conditions C1 and C2 imply the clock condition** (Lamport 1978, p. 560). Let `C` assign a
+number to every position of an execution. If `C` increases along each process (C1) and from the
+send of a message to its receipt (C2), then `C` satisfies the clock condition: `a` happened
+before `b` implies `C a < C b`. No clock algorithm is involved: this holds for every such `C`. -/
+theorem clockCondition_of_c1_c2 {tr : List (Event P)} (C : ℕ → ℕ)
+    (c1 : ∀ i j (ei ej : Event P), i < j → tr[i]? = some ei → tr[j]? = some ej →
+      ei.proc = ej.proc → C i < C j)
+    (c2 : ∀ i j (ej : Event P), i < j → tr[j]? = some ej → ej.recvFrom = some i → C i < C j)
+    {a b : ℕ} (h : HappensBefore tr a b) : C a < C b := by
+  have hstep : ∀ {i j}, Step tr i j → C i < C j := by
+    rintro i j ⟨hij, ei, ej, hi, hj, hp | hr⟩
+    · exact c1 i j ei ej hij hi hj hp
+    · exact c2 i j ej hij hj hr
+  induction h with
+  | single hs => exact hstep hs
+  | tail _ hs ih => exact ih.trans (hstep hs)
+
+omit [DecidableEq P] in
+/-- **The order induced by a clock system.** For a clock `C` assigning a number to each position,
+`a` precedes `b` when `C a < C b`, or `C a = C b` and the process of `a` precedes that of `b`
+(Lamport 1978, p. 561, the relation ⇒). With the Lamport timestamps as `C`, this is
+`TotalBefore` (`totalBefore_eq_clockBefore`). -/
+def ClockBefore (tr : List (Event P)) (C : ℕ → ℕ) (a b : ℕ) : Prop :=
+  ∃ ea eb, tr[a]? = some ea ∧ tr[b]? = some eb ∧ toLex (C a, ea.proc) < toLex (C b, eb.proc)
+
+/-- **Lamport's total order is the order induced by the Lamport timestamps.** -/
+theorem totalBefore_eq_clockBefore (tr : List (Event P)) :
+    TotalBefore tr = ClockBefore tr (fun a => (timestamps tr).getD a 0) :=
+  rfl
+
+omit [DecidableEq P] in
+/-- **The order induced by a clock satisfying the clock condition extends happened-before.**
+If a clock `C` satisfies the clock condition, then `a` happened before `b` implies that `a`
+precedes `b` in the order `ClockBefore tr C` (Lamport 1978, p. 561: "if a → b then a ⇒ b", for
+any system of clocks satisfying the Clock Condition). -/
+theorem clockBefore_of_happensBefore {tr : List (Event P)} {C : ℕ → ℕ}
+    (hC : ∀ a b, HappensBefore tr a b → C a < C b) {a b : ℕ} (h : HappensBefore tr a b) :
+    ClockBefore tr C a b := by
+  obtain ⟨⟨ea, ha⟩, eb, hb⟩ := h.exists_events
+  exact ⟨ea, eb, ha, hb, Prod.Lex.lt_iff.mpr (Or.inl (hC a b h))⟩
+
+omit [DecidableEq P] in
+theorem clockBefore_irrefl (tr : List (Event P)) (C : ℕ → ℕ) (a : ℕ) :
+    ¬ ClockBefore tr C a a := by
+  rintro ⟨ea, eb, ha, hb, hlt⟩
+  rw [ha] at hb
+  obtain rfl := Option.some.inj hb
+  exact lt_irrefl _ hlt
+
+omit [DecidableEq P] in
+theorem clockBefore_trans {tr : List (Event P)} {C : ℕ → ℕ} {a b c : ℕ}
+    (hab : ClockBefore tr C a b) (hbc : ClockBefore tr C b c) : ClockBefore tr C a c := by
+  obtain ⟨ea, eb, ha, hb, h1⟩ := hab
+  obtain ⟨eb', ec, hb', hc, h2⟩ := hbc
+  rw [hb] at hb'
+  obtain rfl := Option.some.inj hb'
+  exact ⟨ea, ec, ha, hc, h1.trans h2⟩
+
+omit [DecidableEq P] in
+/-- **The order induced by a clock satisfying the clock condition is total** on the events of
+an execution (Lamport 1978, p. 561). Two events of the same process are related by
+happened-before, so the clock condition separates them, and ties between different processes
+are broken by the order on processes. -/
+theorem clockBefore_total {tr : List (Event P)} {C : ℕ → ℕ}
+    (hC : ∀ a b, HappensBefore tr a b → C a < C b) {a b : ℕ} {ea eb : Event P}
+    (ha : tr[a]? = some ea) (hb : tr[b]? = some eb) (hab : a ≠ b) :
+    ClockBefore tr C a b ∨ ClockBefore tr C b a := by
+  have hne : toLex (C a, ea.proc) ≠ toLex (C b, eb.proc) := by
+    intro heq
+    have h1 : C a = C b := congrArg Prod.fst heq
+    have h2 : ea.proc = eb.proc := congrArg Prod.snd heq
+    rcases Nat.lt_or_gt_of_ne hab with hlt | hlt
+    · exact absurd h1 (hC a b (.single ⟨hlt, ea, eb, ha, hb, Or.inl h2⟩)).ne
+    · exact absurd h1 (hC b a (.single ⟨hlt, eb, ea, hb, ha, Or.inl h2.symm⟩)).ne'
+  rcases lt_or_gt_of_ne hne with hlt | hlt
+  · exact Or.inl ⟨ea, eb, ha, hb, hlt⟩
+  · exact Or.inr ⟨eb, ea, hb, ha, hlt⟩
+
+omit [DecidableEq P] in
+/-- **Every total order extending happened-before comes from a clock system** (Lamport 1978,
+p. 561: "Given any total ordering relation ⇒ which extends →, there is a system of clocks
+satisfying the Clock Condition which yields that relation"). Let `r` be a strict total order
+on the positions `0, …, n - 1` of an execution of length `n` that extends happened-before. Then
+some clock `C` satisfies the clock condition, and the order `ClockBefore tr C` it induces is
+exactly `r` on those positions. The clock is the rank of a position in `r`, so it never ties
+and the order on processes plays no role. The clock need not be produced by the algorithm
+`timestamps`. -/
+theorem exists_clock_of_extends {tr : List (Event P)} (r : ℕ → ℕ → Prop)
+    (hirr : ∀ a, ¬ r a a) (htrans : ∀ a b c, r a b → r b c → r a c)
+    (htot : ∀ a b, a < tr.length → b < tr.length → a ≠ b → r a b ∨ r b a)
+    (hext : ∀ a b, HappensBefore tr a b → r a b) :
+    ∃ C : ℕ → ℕ, (∀ a b, HappensBefore tr a b → C a < C b) ∧
+      ∀ a b, ClockBefore tr C a b ↔ a < tr.length ∧ b < tr.length ∧ r a b := by
+  classical
+  let C : ℕ → ℕ := fun a => ((Finset.range tr.length).filter (fun x => r x a)).card
+  have hlt : ∀ a b, a < tr.length → r a b → C a < C b := by
+    intro a b ha hab
+    refine Finset.card_lt_card ⟨fun x hx => ?_, fun hsub => ?_⟩
+    · simp only [Finset.mem_filter] at hx ⊢
+      exact ⟨hx.1, htrans _ _ _ hx.2 hab⟩
+    · have := hsub (Finset.mem_filter.mpr ⟨Finset.mem_range.mpr ha, hab⟩)
+      exact hirr a (Finset.mem_filter.mp this).2
+  have hiff : ∀ a b, a < tr.length → b < tr.length → (C a < C b ↔ r a b) := by
+    intro a b ha hb
+    refine ⟨fun h => ?_, hlt a b ha⟩
+    by_cases hab : a = b
+    · subst hab; exact absurd h (lt_irrefl _)
+    · rcases htot a b ha hb hab with h' | h'
+      · exact h'
+      · exact absurd (hlt b a hb h') (not_lt.mpr h.le)
+  refine ⟨C, fun a b h => ?_, fun a b => ?_⟩
+  · obtain ⟨⟨ea, ha⟩, -⟩ := h.exists_events
+    exact hlt a b (List.getElem?_eq_some_iff.mp ha).1 (hext a b h)
+  · constructor
+    · rintro ⟨ea, eb, ha, hb, h⟩
+      have ha' := (List.getElem?_eq_some_iff.mp ha).1
+      have hb' := (List.getElem?_eq_some_iff.mp hb).1
+      refine ⟨ha', hb', ?_⟩
+      rcases Prod.Lex.lt_iff.mp h with h | ⟨heq, hp⟩
+      · exact (hiff a b ha' hb').mp h
+      · by_cases hab : a = b
+        · subst hab
+          rw [ha] at hb
+          obtain rfl := Option.some.inj hb
+          exact absurd hp (lt_irrefl _)
+        · rcases htot a b ha' hb' hab with h' | h'
+          · exact h'
+          · exact absurd heq (hlt b a hb' h').ne'
+    · rintro ⟨ha, hb, h⟩
+      exact ⟨tr[a], tr[b], List.getElem?_eq_getElem ha, List.getElem?_eq_getElem hb,
+        Prod.Lex.lt_iff.mpr (Or.inl (hlt a b ha h))⟩
 
 end Cslib.Distributed.LamportClock

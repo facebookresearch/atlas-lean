@@ -24,10 +24,12 @@ variable {S : Set β} {a b : β}
 
 namespace Set
 
-noncomputable instance [LocallyFiniteOrderBot β] : Fintype (S ∩ Iio b : Set β) :=
+noncomputable instance instFintypeElemInterIioOfLocallyFiniteOrderBot_mathlibExt
+    [LocallyFiniteOrderBot β] : Fintype (S ∩ Iio b : Set β) :=
   (Set.finite_Iio b |>.inter_of_right S).fintype
 
-noncomputable instance [LocallyFiniteOrder β] [OrderBot β] : Fintype (S ∩ Icc a b : Set β) :=
+noncomputable instance instFintypeElemInterIccOfLocallyFiniteOrderOfOrderBot_mathlibExt
+    [LocallyFiniteOrder β] [OrderBot β] : Fintype (S ∩ Icc a b : Set β) :=
   (Set.finite_Icc a b |>.inter_of_right S).fintype
 
 end Set

@@ -12,8 +12,6 @@ Author: Stefan Trandafir
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Data.ZMod.Defs
 
 @[expose] public section

@@ -1,0 +1,3 @@
+# Inhomogeneous random-cluster probability
+
+Let $G = (V, E)$ be a simple graph on a finite set $V$, let $(p_e)$, $e$ ranging over the unordered pairs of elements of $V$, be edge parameters, and $q \in \mathbb{R}$. The inhomogeneous random-cluster probability of a configuration $\omega$ is $\phi^{\mathbf p}_{G,q}(\omega) = w^{\mathbf p}_{G,q}(\omega)/Z^{\mathbf p}_{G,q}$, the [inhomogeneous weight](fk-weight-w.md) divided by the [inhomogeneous partition function](fk-zw.md) (read as $0$ if the latter vanishes). When $0 \le p_e \le 1$ for every edge $e$ of $G$ and $q > 0$, $\phi^{\mathbf p}_{G,q}$ is a probability distribution on configurations; for other parameters it is only a normalized signed weight, possibly identically $0$.

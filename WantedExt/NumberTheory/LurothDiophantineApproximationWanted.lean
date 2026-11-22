@@ -365,17 +365,16 @@ public theorem_wanted lurothWellApproximableSet_eq_limsup (ψ : ℕ → ℝ)
       {x | {t ∈ lurothTripleSet |
         x ∈ Set.Ioo (t.1 : ℝ) (t.1 + ψ t.2.1 / t.2.1)}.Infinite}
 
-/-- **Tan–Zhou theorem (Lüroth analogue of Khintchine's theorem).** Let $\psi$ be a non-increasing
-function from the natural numbers (including $0$) to $(0, 1]$, and let $L(\psi)$ be the set of
-Lüroth $\psi$-well approximable numbers. If the series $\sum_{q \ge 1} -\psi(q) \log \psi(q) / q$
-converges, then $L(\psi)$ has Lebesgue measure $0$; if it diverges, then $L(\psi)$ has Lebesgue
-measure $1$.
+/-- Tan–Zhou, a Lüroth analogue of Khintchine's theorem: for non-increasing
+`ψ : ℕ → (0, 1]` other than the constant `1`, `L(L(ψ))` is `0` if
+`∑ -ψ(q) log ψ(q) / q` converges and `1` if it diverges. The `q = 0` term is `0` in Lean;
+`ψ` is also assumed non-increasing at `0`.
 
 Source: Ying Wai Lee, *Lüroth Expansions in Diophantine Approximation: Metric
 Properties and Conjectures*, INTEGERS 26 (2026), Article A45, Theorem 4 (Tan and
 Zhou). -/
 public theorem_wanted volume_lurothWellApproximableSet (ψ : ℕ → ℝ)
-    (hψ0 : ∀ q, 0 < ψ q) (hψ1 : ∀ q, ψ q ≤ 1) (hψ : Antitone ψ) :
+    (hψ0 : ∀ q, 0 < ψ q) (hψ1 : ∀ q, ψ q ≤ 1) (hψne : ∃ q, ψ q < 1) (hψ : Antitone ψ) :
     (Summable (fun q : ℕ => -ψ q * Real.log (ψ q) / q) →
         volume (lurothWellApproximableSet ψ) = 0) ∧
       (¬ Summable (fun q : ℕ => -ψ q * Real.log (ψ q) / q) →

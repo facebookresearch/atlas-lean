@@ -14,7 +14,7 @@ public import Mathlib.Topology.Connected.Basic
 public import Mathlib.Topology.Separation.Basic
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Topology.Defs.Basic
-public import Mathlib.Topology.SmallInductiveDimension
+public import Mathlib.Topology.InductiveDimension.Functions
 
 @[expose] public section
 
@@ -38,7 +38,15 @@ and covering definitions of dimension are not equivalent for all compact
 Hausdorff spaces. Small inductive dimension is Mathlib's
 `HasSmallInductiveDimensionLE`; the typescript does not say small vs large
 inductive dimension. Status: solved-negative for part (2) (whole Problem 187 is
-partially_solved, part (1) remaining separate). Citation: the Lunts–Lokutsievskii example is a Hausdorff compactum (bicompactum) with dim X ≠ ind X; see Encyclopedia of Mathematics, 'Dimension theory' ('There are, however, Hausdorff compacta X for which dim X ≠ ind X (the Lunts–Lokutsievskii example)'), and R. Engelking, Dimension Theory, North-Holland, 1978. Hence for some n the inductive and covering ≤ n predicates differ, which is what the negation above asserts. (In Soviet terminology a 'bicompactum' is a compact Hausdorff space.) Dimension theory gives `dim X ≤ ind X ≤ Ind X` for compact Hausdorff `X` with either inequality possibly strict; strictness of `dim < ind` is Lunts–Lokutsievskii; strictness of `ind < Ind` is Filippov's example (same EoM article).
+partially_solved, part (1) remaining separate). Citation: the Lunts–Lokutsievskii example is a
+Hausdorff compactum (bicompactum) with dim X ≠ ind X; see Encyclopedia of Mathematics, 'Dimension
+theory' ('There are, however, Hausdorff compacta X for which dim X ≠ ind X (the
+Lunts–Lokutsievskii example)'), and R. Engelking, Dimension Theory, North-Holland, 1978. Hence for
+some n the inductive and covering ≤ n predicates differ, which is what the negation above asserts.
+(In Soviet terminology a 'bicompactum' is a compact Hausdorff space.) Dimension theory gives
+`dim X ≤ ind X ≤ Ind X` for compact Hausdorff `X` with either inequality possibly strict;
+strictness of `dim < ind` is Lunts–Lokutsievskii; strictness of `ind < Ind` is Filippov's example
+(same EoM article).
 Source: P. Alexandroff, Problem 187 part (2) of the Scottish Book,
 typescript pp. 82–83.
 -/

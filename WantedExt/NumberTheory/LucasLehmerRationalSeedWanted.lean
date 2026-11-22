@@ -58,7 +58,8 @@ $V_{k+2} = P V_{k+1} - Q V_k$, for $R \ne 0$ the term $\bar V_k(R, Q)$ equals $V
 for even $k$ and $V_k(\sqrt R, Q)/\sqrt R$ for odd $k$.
 
 Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 2 (definition of `V̄_n` and recurrence (4thLehmer)). -/
+Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 2 (definition of `V̄_n` and
+recurrence (4thLehmer)). -/
 def lehmerV (R Q : ℤ) : ℕ → ℤ
   | 0 => 2
   | 1 => 1
@@ -84,7 +85,8 @@ These are the parameters giving the seed $4$, and $14 = 4^2 - 2$ and $194 = 14^2
 doubling formula (LehmerV2n) predicts.
 
 Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 2 (formula (LehmerV2n) and the case `R = 2`, `Q = -1` after Theorem 6). -/
+Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 2 (formula (LehmerV2n) and
+the case `R = 2`, `Q = -1` after Theorem 6). -/
 theorem lehmerV_two_neg_one :
     lehmerV 2 (-1) 2 = 4 ∧ lehmerV 2 (-1) 4 = 14 ∧ lehmerV 2 (-1) 8 = 194 := by
   decide
@@ -176,7 +178,8 @@ $5$ is odd and squarefree, and $360 = 2^a m^2 \cdot 5$ for some natural number $
 integer $m$.
 
 Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (example `10 = sqf(360)`). -/
+Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (example
+`10 = sqf(360)`). -/
 theorem isOddSquarefreePart_360 : IsOddSquarefreePart 360 5 :=
   ⟨by decide, Nat.prime_five.prime.squarefree, 1, 6, by norm_num⟩
 
@@ -186,7 +189,8 @@ congruent to $1$ modulo $m$ (that is, when $m$ is even). Then $\Omega(m) = 2\ome
 $\omega(m)$ is odd, and $\Omega(m) = \omega(m)$ otherwise.
 
 Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (definitions of `ω(m)` and `Ω(m)`). -/
+Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (definitions of `ω(m)` and
+`Ω(m)`). -/
 noncomputable def mersenneOmega (m : ℕ) : ℕ :=
   if Odd (orderOf (2 : ZMod m)) then 2 * orderOf (2 : ZMod m) else orderOf (2 : ZMod m)
 
@@ -230,7 +234,8 @@ $s_1 - 2 = 35$ and $s_1 + 2 = 39$ are $s_1^- = 35$ and $s_1^+ = 39$. Condition (
 $s_1^- = 35$ and $s_1^+ = 39$ holds for $n = 7$ and fails for $n = 1$.
 
 Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (example `s_1 = 37`, `𝒜(37) = {7}`). -/
+Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (example `s_1 = 37`,
+`𝒜(37) = {7}`). -/
 theorem mersenneEtaCondition_37 :
     MersenneEtaCondition 35 39 7 ∧ ¬ MersenneEtaCondition 35 39 1 := by
   norm_num [MersenneEtaCondition, mersenne]
