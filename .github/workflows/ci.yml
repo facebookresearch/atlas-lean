@@ -185,7 +185,7 @@ jobs:
       - name: Drop Lake's setup files before saving the build
         if: success() && github.event_name != 'pull_request'
         continue-on-error: true
-        run: find .lake -path '*/.lake/build/ir/*' -name '*.setup.json' -delete
+        run: find .lake -path '*.lake/build/ir/*' -name '*.setup.json' -delete
 
       - name: Save local build from main
         if: success() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && steps.local-build-cache.outputs.cache-hit != 'true'
