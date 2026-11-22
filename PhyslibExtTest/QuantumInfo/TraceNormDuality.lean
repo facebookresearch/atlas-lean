@@ -22,24 +22,18 @@ open PhyslibExt.QuantumInfo.TraceNormDuality
 
 /-- Diagonal value over `Fin 3`, through the diagonal computation. -/
 theorem diagonal_Fin3_value :
-    (@Matrix.diagonal (Fin 3) ℂ
-      (fun a b => Classical.propDecidable (a = b)) _ ![1, -2, Complex.I]).traceNorm
-      = 4 := by
+    (Matrix.diagonal ![1, -2, Complex.I]).traceNorm = 4 := by
   rw [traceNorm_diagonal, Fin.sum_univ_three]
   simp [Complex.norm_I]
   norm_num
 
 /-- Attainment is nonvacuous over `Fin 2`, from attainment and diagonal. -/
 theorem attainment_nonvacuous_Fin2 :
-    ∃ U : @Matrix.unitaryGroup (Fin 2)
-        (fun a b => Classical.propDecidable (a = b)) _ ℂ _ _,
+    ∃ U : Matrix.unitaryGroup (Fin 2) ℂ,
       ‖((U : Matrix (Fin 2) (Fin 2) ℂ).conjTranspose *
-        @Matrix.diagonal (Fin 2) ℂ
-          (fun a b => Classical.propDecidable (a = b)) _ ![3, -4]).trace‖ = 7 := by
+        Matrix.diagonal ![3, -4]).trace‖ = 7 := by
   obtain ⟨U, hU⟩ :=
-    exists_unitary_norm_tr_eq_traceNorm
-      (@Matrix.diagonal (Fin 2) ℂ
-        (fun a b => Classical.propDecidable (a = b)) _ ![3, -4])
+    exists_unitary_norm_tr_eq_traceNorm (Matrix.diagonal ![3, -4])
   refine ⟨U, hU.trans ?_⟩
   rw [traceNorm_diagonal, Fin.sum_univ_two]
   simp
