@@ -29,15 +29,13 @@ open scoped NNReal
 
 /-- Neutral generator conjugation at `y = 1 / 2` for the quadratic test function. -/
 example : generator (-0) (fun z : ℝ => z ^ 2) (1 - 1 / 2)
-    = generator 0 (fun z : ℝ => (1 - z) ^ 2) (1 / 2) := by
-  have hf : ContDiff ℝ 2 (fun z : ℝ => z ^ 2) := contDiff_id.pow 2
-  exact generator_neg_one_sub 0 (fun z : ℝ => z ^ 2) hf (1 / 2)
+    = generator 0 (fun z : ℝ => (1 - z) ^ 2) (1 / 2) :=
+  generator_neg_one_sub 0 (fun z : ℝ => z ^ 2) (1 / 2)
 
 /-- Endpoint reading: conjugation at `σ = 2`, `y = 0`, as the identity instance. -/
 example : generator (-2) (fun z : ℝ => z ^ 2) (1 - 0)
-    = generator 2 (fun z : ℝ => (1 - z) ^ 2) 0 := by
-  have hf : ContDiff ℝ 2 (fun z : ℝ => z ^ 2) := contDiff_id.pow 2
-  exact generator_neg_one_sub 2 (fun z : ℝ => z ^ 2) hf 0
+    = generator 2 (fun z : ℝ => (1 - z) ^ 2) 0 :=
+  generator_neg_one_sub 2 (fun z : ℝ => z ^ 2) 0
 
 /-- Reflection preserves the absorption time, read pointwise. -/
 example {Ω : Type*} (X : ℝ≥0 → Ω → ℝ) (ω : Ω) :

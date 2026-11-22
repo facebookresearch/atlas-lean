@@ -30,14 +30,15 @@ Conventions are those of `Domains.Biology.PopulationGenetics.Diffusion.KimuraFix
 scaled genic selection coefficient `σ = 2Ns` for a diploid population of `N` individuals and
 time in units of `2N` generations, with continuous `[0, 1]`-valued paths. The formula-level
 symmetry `kimuraFixation_neg (σ x : ℝ) :
-kimuraFixation (-σ) (1 - x) = 1 - kimuraFixation σ x` proved in
+kimuraFixation σ x = 1 - kimuraFixation (-σ) (1 - x)` proved in
 `Domains.Biology.PopulationGenetics.Diffusion.KimuraFixationSelection` is quoted, not
 restated. The neutral case, where reflection preserves the selection coefficient, is
 `NeutralMartingaleProblem.isWrightFisherSolution_one_sub` (with loss formula
 `NeutralMartingaleProblem.measureReal_loss_eq`).
 
-What is not claimed: the reflection stays on the same probability space — no new process is
-constructed — and neither uniqueness in law nor equality of path laws is asserted beyond the
+The reflection stays on the same probability space, filtration, and
+measure, and no new process is constructed. What is not claimed is
+uniqueness in law or equality of path laws beyond the
 solution-predicate transport `IsWrightFisherSolution.one_sub` stated below.
 
 ## Main results
@@ -66,12 +67,14 @@ open scoped NNReal
 open MathlibExt.Biology.PopulationGenetics.Diffusion.KimuraFixationProcess
   (IsWrightFisherSolution absorptionTime)
 
-/-- Conjugation of the backward generator by allele relabeling: for a `C²` test function `f`
-and every `y`, `generator (-σ) f (1 - y) = generator σ (fun z => f (1 - z)) y`. The neutral
-part is invariant under `y ↦ 1 - y` while the genic drift changes sign. The identity is
-stated for twice continuously differentiable test functions, which is the class the
-martingale-problem transport in this file uses. -/
-theorem generator_neg_one_sub (σ : ℝ) (f : ℝ → ℝ) (hf : ContDiff ℝ 2 f) (y : ℝ) :
+/-- Conjugation of the backward generator by allele relabeling: for an
+arbitrary test function `f` and every `y`,
+`generator (-σ) f (1 - y) = generator σ (fun z => f (1 - z)) y`. The neutral
+part is invariant under `y ↦ 1 - y` while the genic drift changes sign. No
+regularity is needed because the derivative is the totalized Mathlib
+derivative; the martingale-problem transport below applies the identity to
+its smooth test functions. -/
+theorem generator_neg_one_sub (σ : ℝ) (f : ℝ → ℝ) (y : ℝ) :
     generator (-σ) f (1 - y) = generator σ (fun z => f (1 - z)) y := by
   have h1 : deriv (fun z => f (1 - z)) = fun z => -deriv f (1 - z) :=
     funext fun z => deriv_comp_const_sub f 1 z
@@ -98,7 +101,7 @@ theorem IsWrightFisherSolution.one_sub {Ω : Type*} {mΩ : MeasurableSpace Ω} {
   · have h := hX.1 t ω
     constructor <;> linarith [h.1, h.2]
   · have hg : ContDiff ℝ 2 (fun z => f (1 - z)) := hf.comp (contDiff_const.sub contDiff_id)
-    simpa only [generator_neg_one_sub σ f hf] using hX.2.2.2 _ hg
+    simpa only [generator_neg_one_sub σ f] using hX.2.2.2 _ hg
 
 /-- Reflection preserves the absorption time: the first time `1 - X` is at `0` or `1` is the
 first time `X` is at `1` or `0`. Stated as equality of the two `Ω → ℝ≥0` functions. -/
