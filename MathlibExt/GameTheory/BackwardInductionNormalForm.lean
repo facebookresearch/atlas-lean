@@ -44,22 +44,16 @@ def Strategy {ι : Type*} [DecidableEq ι] :
   | PerfectInfoGame.node j (n := n) child, i =>
       (if i = j then Fin (n + 1) else PUnit) × (∀ k, Strategy (child k) i)
 
-/-- Assemble strategies into a profile by recursion on an explicit tree
-(auxiliary for `assemble`, whose tree argument is implicit and hence
-cannot be matched by the equation compiler). -/
-noncomputable def assembleAux {ι : Type*} [DecidableEq ι] (t : PerfectInfoGame ι)
-    (σ : ∀ i, Strategy t i) : Profile t :=
-  PerfectInfoGame.rec (motive := fun t => (∀ i, Strategy t i) → Profile t)
-    (fun payoff _ => Profile.leaf payoff)
-    (fun j _ child ih σ =>
-      Profile.node j child (Eq.mp (ite_eq_left rfl) (σ j).1)
-        (fun k => ih k (fun i => (σ i).2 k)))
-    t σ
-
-/-- Assemble one strategy per player into a tree profile. -/
+/-- Assemble one strategy per player into a tree profile, by recursion on the tree. -/
 noncomputable def assemble {ι : Type*} [DecidableEq ι] :
     {t : PerfectInfoGame ι} → (∀ i, Strategy t i) → Profile t :=
-  fun σ => assembleAux _ σ
+  fun {t} σ =>
+    PerfectInfoGame.rec (motive := fun t => (∀ i, Strategy t i) → Profile t)
+      (fun payoff _ => Profile.leaf payoff)
+      (fun j _ child ih σ =>
+        Profile.node j child (Eq.mp (ite_eq_left rfl) (σ j).1)
+          (fun k => ih k (fun i => (σ i).2 k)))
+      t σ
 
 /-- Restrict a tree profile to the strategy of player `i`: keep the
 actions at `i`'s nodes, drop the actions elsewhere. -/
@@ -76,34 +70,29 @@ noncomputable def restrict {ι : Type*} [DecidableEq ι] :
 
 /-- Cast cancellation: `Eq.mp` undoes `Eq.mpr` (the two proofs of the
 same equality are identified by proof irrelevance). -/
-theorem eq_mp_mpr_cancel {α β : Type u} (h1 h2 : α = β) (a : β) :
+private theorem eq_mp_mpr_cancel {α β : Type u} (h1 h2 : α = β) (a : β) :
     Eq.mp h1 (Eq.mpr h2 a) = a := by
   cases h1
   cases h2
   rfl
 
 /-- Cast cancellation: `Eq.mpr` undoes `Eq.mp`. -/
-theorem eq_mpr_mp_cancel {α β : Type u} (h1 h2 : α = β) (x : α) :
+private theorem eq_mpr_mp_cancel {α β : Type u} (h1 h2 : α = β) (x : α) :
     Eq.mpr h1 (Eq.mp h2 x) = x := by
   cases h1
   cases h2
   rfl
 
-/-- A pair is determined by its components. -/
-theorem prod_eq_intro {A B : Type*} {p q : A × B} (h1 : p.1 = q.1)
-    (h2 : p.2 = q.2) : p = q :=
-  Prod.ext h1 h2
-
-private theorem assembleAux_leaf {ι : Type*} [DecidableEq ι] (payoff : ι → ℝ)
+private theorem assemble_leaf {ι : Type*} [DecidableEq ι] (payoff : ι → ℝ)
     (σ : ∀ i, Strategy (PerfectInfoGame.leaf payoff) i) :
-    assembleAux (PerfectInfoGame.leaf payoff) σ = Profile.leaf payoff := rfl
+    assemble (t := PerfectInfoGame.leaf payoff) σ = Profile.leaf payoff := rfl
 
-private theorem assembleAux_node {ι : Type*} [DecidableEq ι] (j : ι) {n : Nat}
+private theorem assemble_node {ι : Type*} [DecidableEq ι] (j : ι) {n : Nat}
     (child : Fin (n + 1) → PerfectInfoGame ι)
     (σ : ∀ i, Strategy (PerfectInfoGame.node j child) i) :
-    assembleAux (PerfectInfoGame.node j child) σ =
+    assemble (t := PerfectInfoGame.node j child) σ =
       Profile.node j child (Eq.mp (ite_eq_left rfl) (σ j).1)
-        (fun k => assembleAux (child k) (fun i => (σ i).2 k)) := rfl
+        (fun k => assemble (fun i => (σ i).2 k)) := rfl
 
 private theorem restrict_leaf {ι : Type*} [DecidableEq ι] (payoff : ι → ℝ)
     (i : ι) :
@@ -152,9 +141,9 @@ theorem assemble_restrict {ι : Type*} [DecidableEq ι]
     {t : PerfectInfoGame ι} (τ : Profile t) :
     assemble (fun i => restrict τ i) = τ := by
   induction τ with
-  | leaf payoff => simp only [assemble, assembleAux_leaf]
+  | leaf payoff => simp only [assemble, assemble_leaf]
   | node j child a sub ih =>
-      simp only [assemble, assembleAux_node]
+      simp only [assemble, assemble_node]
       simp only [restrict_node]
       congr 1
       · rw [dite_eq_left True.intro]
@@ -170,13 +159,13 @@ theorem restrict_assemble {ι : Type*} [DecidableEq ι]
     restrict (assemble σ) i = σ i := by
   induction t with
   | leaf payoff =>
-      simp only [assemble, assembleAux_leaf, restrict_leaf]
+      simp only [assemble, assemble_leaf, restrict_leaf]
       exact match (σ i) with
         | PUnit.unit => rfl
   | node j child ih =>
-      simp only [assemble, assembleAux_node]
+      simp only [assemble, assemble_node]
       simp only [restrict_node]
-      apply prod_eq_intro
+      apply Prod.ext
       · dsimp only
         by_cases h : i = j
         · subst h
@@ -210,13 +199,13 @@ private theorem deviation_restrict_eq {ι : Type*} [DecidableEq ι]
   | leaf payoff => rfl
   | self child a a' sub sub' h ih =>
       simp only [restrict_node, dite_eq_right hij]
-      refine prod_eq_intro rfl ?_
+      refine Prod.ext rfl ?_
       apply funext
       intro k
       exact ih k
   | other child hij' a sub sub' h ih =>
       simp only [restrict_node]
-      refine prod_eq_intro rfl ?_
+      refine Prod.ext rfl ?_
       apply funext
       intro k
       exact ih k
@@ -230,11 +219,11 @@ private theorem deviation_assemble_of_agree {ι : Type*} [DecidableEq ι]
   induction t with
   | leaf payoff =>
       intro σ σ' h
-      simp only [assemble, assembleAux_leaf]
+      simp only [assemble, assemble_leaf]
       exact Profile.Deviation.leaf payoff
   | node k child ih =>
       intro σ σ' h
-      simp only [assemble, assembleAux_node]
+      simp only [assemble, assemble_node]
       by_cases hkj : k = j
       · subst hkj
         refine Profile.Deviation.self _ _ _ _ _ ?_
