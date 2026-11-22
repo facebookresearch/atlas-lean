@@ -14,12 +14,13 @@ public import MathlibExt.Probability.BernoulliProductTail
 namespace MathlibExt.Probability.BernoulliProductTailTests
 
 open MeasureTheory ProbabilityTheory Real
-open scoped BigOperators NNReal ProbabilityTheory
+open scoped BigOperators NNReal ProbabilityTheory unitInterval
 open MathlibExt.Probability.BernoulliProductTail
+open MathlibExt.Probability.Combinatorics.RandomSubset
 
 theorem T1_one_coord_sum_ge_one_eq_half :
-    (bernoulliProdMeasure (k := 1) (fun _ : Fin 1 => (1 / 2 : ℝ))
-      (fun _ => Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩)).real
+    (randomSubsetLaw (fun _ : Fin 1 => (⟨(1 / 2 : ℝ),
+      Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩⟩ : I))).real
         {ω | (1 : ℝ) ≤ ∑ i, coordVar i ω} = (1 / 2 : ℝ) := by
   rw [measureReal_sum_ge_eq_sum]
   have hfilter : Finset.univ.filter
@@ -50,8 +51,8 @@ theorem T1_one_coord_sum_ge_one_eq_half :
   simp
 
 theorem T2_two_coords_sum_ge_two_eq_quarter :
-    (bernoulliProdMeasure (k := 2) (fun _ : Fin 2 => (1 / 2 : ℝ))
-      (fun _ => Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩)).real
+    (randomSubsetLaw (fun _ : Fin 2 => (⟨(1 / 2 : ℝ),
+      Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩⟩ : I))).real
         {ω | (2 : ℝ) ≤ ∑ i, coordVar i ω} = (1 / 4 : ℝ) := by
   rw [measureReal_sum_ge_eq_sum]
   have hfilter : Finset.univ.filter
@@ -84,7 +85,7 @@ theorem T2_two_coords_sum_ge_two_eq_quarter :
   simp [Fin.prod_univ_two]
   norm_num
 
-#print axioms bernoulliProdMeasure_real_singleton
+#print axioms randomSubsetLaw_real_singleton
 #print axioms integral_coordVar
 #print axioms iIndepFun_coordVar
 #print axioms measureReal_sum_ge_eq_sum
