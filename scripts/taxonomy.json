@@ -9089,6 +9089,7 @@
   "MathlibExt/Algebra/Central/SkolemNoether": {"to": "Algebra/associative-algebras", "title": "Skolem–Noether theorem"},
   "MathlibExt/Algebra/CommutativeAlgebra/EakinNagata": {"to": "RingTheory/modules", "title": "Eakin–Nagata theorem"},
   "MathlibExt/Algebra/ContinuedFractions/Computation/Approximations": {"to": "NumberTheory/continued-fractions-expansions", "title": "Convergents of regular continued fractions"},
+  "MathlibExt/Algebra/DeepPowerSumCongruences": {"to": "Algebra/polynomials", "title": "Deep power-sum congruences"},
   "MathlibExt/Algebra/Etale/AlgHomCount": {"to": "RingTheory/algebras-and-differentials", "title": "Algebra homomorphisms into an algebraically closed field"},
   "MathlibExt/Algebra/Etale/Localization": {"to": "RingTheory/algebras-and-differentials", "title": "Localizations of smooth and étale algebras"},
   "MathlibExt/Algebra/Group/Indicator": {"to": "Algebra/algebraic-identities", "title": "Indicator functions"},

@@ -70361,7 +70361,7 @@
 "MetaMathlibExt.pow_add_half_mod_eq_and_digit_add": "33e3df99db269e57",
 "MetaMathlibExt.pow_add_pow_ne_pow_of_prime_five_le": "6dfd8cd71c25ee7b",
 "MetaMathlibExt.pow_div_one_sub_pow_eq_sum": "f856a2b651b9ae8a",
-"MetaMathlibExt.pow_mem_prime_pow_padicValNat_factorial_iff": "f3c771d27fe655d7",
+"MetaMathlibExt.pow_mem_prime_pow_padicValNat_factorial_iff": "7a1b8b0a7bf8a762",
 "MetaMathlibExt.pow_modEq_pow_of_modEq_six": "57715815c2c2c62c",
 "MetaMathlibExt.pow_mod_eq_pow_mod_add_one_of_crt": "0cfddf7fedd402c7",
 "MetaMathlibExt.pow_mod_eq_sub_one_of_orderOf_eq": "f4f94fbefee69d6b",
