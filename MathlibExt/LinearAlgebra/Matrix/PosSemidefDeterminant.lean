@@ -55,6 +55,8 @@ bounds themselves are in neither.
   iff `A` is a nonnegative scalar matrix.
 * `Matrix.PosSemidef.trace_mul_nonneg_re` : `0 ≤ ((A * B).trace).re`
   for `A` and `B` positive semidefinite.
+* `Matrix.PosSemidef.det_le_pow_trace_div_card` :
+  `A.det ≤ (A.trace / n) ^ n` for real `A` over an arbitrary finite index type.
 -/
 
 @[expose] public section
@@ -348,5 +350,37 @@ theorem PosSemidef.det_le_prod_diag {ι : Type*} [Fintype ι] [DecidableEq ι]
   simp only [hCdiag] at hmirror
   rw [hBdet, hBdiag] at hmirror
   exact hmirror
+
+/-- **AM–GM inequality for real positive semidefinite matrices over an arbitrary finite
+index type**: `det A ≤ ((tr A) / n) ^ n`. -/
+theorem PosSemidef.det_le_pow_trace_div_card {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {A : Matrix ι ι ℝ} (hA : A.PosSemidef) (hd : 0 < Fintype.card ι) :
+    A.det ≤ (A.trace / (Fintype.card ι : ℝ)) ^ Fintype.card ι := by
+  have hH := hA.isHermitian
+  rw [hH.det_eq_prod_eigenvalues, hH.trace_eq_sum_eigenvalues]
+  change ∏ i, hH.eigenvalues i ≤
+    ((∑ i, hH.eigenvalues i) / (Fintype.card ι : ℝ)) ^ Fintype.card ι
+  have hnn : ∀ i ∈ (Finset.univ : Finset ι), 0 ≤ hH.eigenvalues i :=
+    fun i _ => hA.eigenvalues_nonneg i
+  have hsum1 : 0 < ∑ i ∈ (Finset.univ : Finset ι), (1 : ℝ) := by
+    rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
+    exact_mod_cast hd
+  have hgeom := Real.geom_mean_le_arith_mean (Finset.univ : Finset ι)
+    (fun _ => (1 : ℝ)) hH.eigenvalues (fun i _ => zero_le_one) hsum1 hnn
+  simp only [Real.rpow_one, one_mul, Finset.sum_const, Finset.card_univ,
+    nsmul_eq_mul, mul_one] at hgeom
+  have hprod_nn : 0 ≤ ∏ i, hH.eigenvalues i :=
+    Finset.prod_nonneg (fun i _ => hA.eigenvalues_nonneg i)
+  have hcard_ne : (Fintype.card ι : ℝ) ≠ 0 := by exact_mod_cast ne_of_gt hd
+  have hround :
+      ((∏ i, hH.eigenvalues i) ^ ((Fintype.card ι : ℝ))⁻¹) ^ Fintype.card ι =
+        ∏ i, hH.eigenvalues i := by
+    rw [← Real.rpow_natCast, ← Real.rpow_mul hprod_nn, inv_mul_cancel₀ hcard_ne,
+      Real.rpow_one]
+  calc ∏ i, hH.eigenvalues i
+      = (((∏ i, hH.eigenvalues i) ^ ((Fintype.card ι : ℝ))⁻¹)) ^ Fintype.card ι :=
+        hround.symm
+    _ ≤ ((∑ i, hH.eigenvalues i) / (Fintype.card ι : ℝ)) ^ Fintype.card ι :=
+        pow_le_pow_left₀ (Real.rpow_nonneg hprod_nn _) hgeom _
 
 end Matrix

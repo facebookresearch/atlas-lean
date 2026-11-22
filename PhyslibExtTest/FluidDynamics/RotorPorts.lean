@@ -30,6 +30,12 @@ torque, power or shaft power, while equal swirl velocities at different radii do
 The rotor-relative swirl of the compressor ports at `ω = 1000`, `-100` and
 `-150`, gives `-70` in the Euler expression instead of the torque `90`.
 
+For the actuator disk: the disk with `U∞ = 3`, `U_d = 2`, `U_w = 1` satisfies the port laws, has
+induction factor `1/3`, extracts the power `8` and reaches the Betz limit `C_P = 16/27`; at zero
+freestream no coefficient normalizes a nonzero power; without extraction the port laws leave the
+disk speed undetermined; and the state built from the induction factor `1/5` has the power
+coefficient `64/125`, below the limit.
+
 ## i. Overview
 
 These are elaboration and non-vacuity checks, not new results.
@@ -38,12 +44,13 @@ These are elaboration and non-vacuity checks, not new results.
 
 No new results are introduced here. Section A defines the compressor ports and computes the torque,
 power and shaft power in both flow directions; section B realizes them by blade forces and applies
-the sign, equal-angular-momentum and swirl lemmas.
+the sign, equal-angular-momentum and swirl lemmas; section C checks the actuator disk.
 
 ## iii. Table of contents
 
 - A. A compressor and its reversed flow
 - B. Blade forces, signs and swirl
+- C. The actuator disk and the Betz limit
 
 ## iv. References
 
@@ -284,5 +291,70 @@ example (o : Fin 3 → ℝ) :
   · rw [relativeSwirl_eq]; norm_num [fixtureInlet]
   · rw [relativeSwirl_eq]; norm_num [fixtureOutlet]
   · norm_num [fixtureInlet, fixtureOutlet]
+
+/-! ## C. The actuator disk and the Betz limit -/
+
+/-- The Betz-optimal fixture: `ρ = 1`, `A = 1`, `U∞ = 3`, `U_d = 2`, `U_w = 1`, gauge pressures
+`p∞ = 0`, `p⁺ = 5/2`, `p⁻ = -3/2`, force `4`. -/
+noncomputable def betzFixture : ActuatorDisk where
+  ρ := 1
+  A := 1
+  uInf := 3
+  uDisk := 2
+  uWake := 1
+  pAmb := 0
+  pUp := 5 / 2
+  pDown := -3 / 2
+  force := 4
+
+/-- **`a = 1/3` gives nonzero extracted power.** The fixture satisfies the port laws, has induction
+factor `1/3`, extracts the power `8 ≠ 0` and reaches the Betz limit `C_P = 16/27`. -/
+lemma fixture_betz :
+    betzFixture.PortLaws ∧ inductionFactor betzFixture = 1 / 3 ∧
+      extractedPower betzFixture = 8 ∧ powerCoefficient betzFixture = 16 / 27 := by
+  have h : betzFixture.PortLaws :=
+    ⟨by norm_num [betzFixture], by norm_num [betzFixture], by norm_num [betzFixture],
+      by norm_num [betzFixture]⟩
+  have ha : inductionFactor betzFixture = 1 / 3 := by
+    norm_num [inductionFactor, betzFixture]
+  have hb := powerCoefficient_le_betz h (by norm_num [betzFixture]) (by norm_num [betzFixture])
+    (by norm_num [betzFixture]) (by norm_num [betzFixture])
+  exact ⟨h, ha, by norm_num [extractedPower, betzFixture], hb.2.2.2.mpr ha⟩
+
+/-- **`U∞ = 0` is not a valid normalization.** At zero freestream speed the normalization
+`ρ A U∞³ / 2` vanishes, so no coefficient normalizes a nonzero power `P`: there is no `C` with
+`P = C ρ A U∞³ / 2`. -/
+lemma fixture_zeroFreestream (ρ A : ℝ) {P : ℝ} (hP : P ≠ 0) :
+    powerNormalization ρ A 0 = 0 ∧ ¬ ∃ C : ℝ, P = C * powerNormalization ρ A 0 := by
+  have h0 : powerNormalization ρ A 0 = 0 := by simp [powerNormalization]
+  refine ⟨h0, ?_⟩
+  rintro ⟨C, hC⟩
+  rw [h0, mul_zero] at hC
+  exact hP hC
+
+/-- **Without extraction the disk speed is not determined.** With `U_w = U∞` the port laws hold
+with zero force for a disk speed other than `(U∞ + U_w) / 2`, so the hypothesis `U_w ≠ U∞` of
+`uDisk_eq` cannot be dropped. -/
+lemma fixture_noExtraction :
+    ∃ d : ActuatorDisk, d.PortLaws ∧ 0 < d.ρ ∧ 0 < d.A ∧ 0 < d.uInf ∧ d.uWake = d.uInf ∧
+      d.uDisk ≠ (d.uInf + d.uWake) / 2 := by
+  refine ⟨{ ρ := 1, A := 1, uInf := 2, uDisk := 1, uWake := 2, pAmb := 0,
+            pUp := 3 / 2, pDown := 3 / 2, force := 0 },
+    ⟨?_, ?_, ?_, ?_⟩, ?_, ?_, ?_, ?_, ?_⟩ <;> norm_num
+
+/-- The disk state built from the induction factor `a = 1/5` at `ρ = A = 1`, `U∞ = 5` satisfies
+the port laws, its induction factor is `1/5`, and its power coefficient `4 · (1/5) · (4/5)² =
+64/125` is below the Betz limit `16/27`, as `powerCoefficient_le_betz` requires. -/
+example :
+    (ActuatorDisk.ofInduction 1 1 5 0 (1 / 5)).PortLaws ∧
+      inductionFactor (ActuatorDisk.ofInduction 1 1 5 0 (1 / 5)) = 1 / 5 ∧
+      powerCoefficient (ActuatorDisk.ofInduction 1 1 5 0 (1 / 5)) = 64 / 125 ∧
+      powerCoefficient (ActuatorDisk.ofInduction 1 1 5 0 (1 / 5)) ≤ 16 / 27 := by
+  obtain ⟨hlaws, hind, hcp⟩ := ofInduction_spec 1 1 5 0 (1 / 5)
+  have hcp' := hcp (by norm_num) (by norm_num) (by norm_num)
+  have hle := (powerCoefficient_le_betz hlaws (by simp [ActuatorDisk.ofInduction])
+    (by simp [ActuatorDisk.ofInduction]) (by norm_num [ActuatorDisk.ofInduction])
+    (by norm_num [ActuatorDisk.ofInduction])).2.2.1
+  refine ⟨hlaws, hind (by norm_num), by rw [hcp']; norm_num, hle⟩
 
 end PhyslibExtTest.FluidDynamics.RotorPorts

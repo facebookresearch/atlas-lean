@@ -340,4 +340,3 @@ private theorem decay_pointwise_pos_not_enough :
   exact ⟨hpos, htsum⟩
 
 end MathlibExt.Probability.FinitePrefix
-

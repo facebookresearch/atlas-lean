@@ -11,6 +11,7 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Convex.Basic
 public import Mathlib.Analysis.InnerProductSpace.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Basic.Real.Sign
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
 import Mathlib.Analysis.Calculus.Deriv.Inv
@@ -33,7 +34,8 @@ Reduced models of contact and lubrication. Section A solves the one-dimensional 
 for a plane slider with a linear converging film in closed form; the pressure and the load per
 unit width are positive for the converging orientation. Section B treats frictionless scalar
 unilateral contact as an instance of Stampacchia's variational inequality, with the obstacle
-reaction as its complementarity multiplier.
+reaction as its complementarity multiplier. Section C states the set-valued Coulomb friction
+law, its dissipation and the static-equilibrium criterion.
 
 ## i. Overview
 
@@ -89,7 +91,32 @@ Model inputs (hypotheses):
 * the contact force opposes increasing `u` (the multiplier `λ` is its magnitude).
 
 Non-goals: no multidimensional contact, no constraint qualification or general KKT theory, no
-friction, adhesion, impact or wear, and no empirical adequacy or system safety claim.
+friction (section C states the Coulomb law separately), adhesion, impact or wear, and no
+empirical adequacy or system safety claim.
+
+Section C treats Coulomb friction.
+
+A body slides on a fixed surface with tangential velocity `v`, pressed against it by the normal
+force `N`, with friction coefficient `μ`. The declared reduced Coulomb law
+`IsCoulombFriction μ N v F` is set valued: a slipping body (`v ≠ 0`) feels the friction force
+`F = -μ N sign v`, and a sticking body (`v = 0`) any force `F ∈ [-μ N, μ N]`. The friction port
+pairs `F` with `v`; its power `F v` is the power delivered by the friction force to the body.
+On the graph `F v = -μ N |v|`, so for `μ, N ≥ 0` friction never supplies power and the port
+dissipates `μ N |v| ≥ 0`. A body at rest under an applied tangential force `Fa` is in static
+equilibrium, `Fa + F = 0` with an admissible stick force `F`, exactly when
+`Fa ∈ [-μ N, μ N]`. At rest the force is not determined when `μ N > 0`. A negative coefficient
+is inadmissible: with `μ < 0 < N` no force is admissible at rest, and slip would supply the
+positive power `-μ N |v|`.
+
+Sign convention: `v`, `F` and `Fa` are measured along one tangent direction. For `μ = 1/2`,
+`N = 10` and `v = 2` the friction force is `-5`, opposing the motion, and the friction power
+is `-10`.
+
+Model inputs (hypotheses): the reduced scalar law with supplied coefficient `μ` and normal
+force `N`, both nonnegative where the dissipation statement uses them; the normal force is
+given, not solved from a contact problem. Non-goals: no existence or uniqueness of
+trajectories of the differential inclusion, no distinction between static and kinetic
+coefficients, no contact-pressure solution and no wear rate.
 
 ## ii. Key results
 
@@ -115,6 +142,17 @@ friction, adhesion, impact or wear, and no empirical adequacy or system safety c
   `contactDisplacement k g f = min g (f / k)`.
 - `Elasticity.ContactAndLubrication.complementarity_of_vi`, `contactDisplacement_complementarity`:
   `λ ≥ 0`, `g - u ≥ 0` and `λ (g - u) = 0`.
+- `Elasticity.ContactAndLubrication.isCoulombFriction_of_ne_zero`, `isCoulombFriction_zero`:
+  the slip and stick branches of the Coulomb friction graph.
+- `Elasticity.ContactAndLubrication.coulomb_power_eq`, `coulomb_power_nonpos`: the friction
+  power is `-μ N |v|`, nonpositive for `μ, N ≥ 0`.
+- `Elasticity.ContactAndLubrication.coulomb_static_equilibrium_iff`: static equilibrium is
+  admissible exactly when the applied force is in `[-μ N, μ N]`.
+- `Elasticity.ContactAndLubrication.coulomb_stick_not_unique`: the force at rest is not unique
+  when `μ, N > 0`.
+- `Elasticity.ContactAndLubrication.coulomb_not_exists_stick_of_neg`,
+  `coulomb_slip_power_pos_of_neg`: a negative coefficient admits no stick force and makes slip
+  supply power.
 
 ## iii. Table of contents
 
@@ -128,6 +166,11 @@ friction, adhesion, impact or wear, and no empirical adequacy or system safety c
   - B.2. The hypotheses of Stampacchia's theorem
   - B.3. Existence, uniqueness and the contact displacement
   - B.4. Complementarity
+- C. Coulomb friction
+  - C.1. The friction graph
+  - C.2. Friction power and dissipation
+  - C.3. Static equilibrium and non-uniqueness at rest
+  - C.4. Negative coefficient
 
 ## iv. References
 
@@ -143,6 +186,13 @@ friction, adhesion, impact or wear, and no empirical adequacy or system safety c
   (unilateral constraints and the Signorini conditions).
 - `MathlibExt.Analysis.InnerProductSpace.Stampacchia.exists_unique_stampacchia`
   (`MathlibExt.Analysis.InnerProductSpace.Stampacchia`): Stampacchia's theorem, operator form.
+- C. A. Coulomb, *Théorie des machines simples*, Mémoires de mathématique et de physique
+  présentés à l'Académie royale des sciences 10 (1785), 161–332.
+- J. J. Moreau, *Unilateral contact and dry friction in finite freedom dynamics*, in
+  *Nonsmooth Mechanics and Applications*, CISM Courses and Lectures 302, Springer (1988),
+  1–82 (the set-valued friction law).
+- R. C. Hibbeler, *Engineering Mechanics: Statics*, 14th edition, chapter 8 (dry friction:
+  impending motion and the friction cone).
 -/
 
 @[expose] public section
@@ -957,5 +1007,123 @@ lemma contactDisplacement_complementarity {k : ℝ} (hk : 0 < k) (g f : ℝ) :
         0 := by
   have hvi := (contact_vi_iff hk g f (contactDisplacement k g f)).mpr rfl
   exact complementarity_of_vi hvi
+
+/-! ## C. Coulomb friction -/
+
+/-! ### C.1. The friction graph -/
+
+/-- The declared scalar Coulomb friction graph with coefficient `μ` and normal force `N`: at a
+nonzero sliding velocity `v` the friction force is `F = -μ N sign v`, and at `v = 0` it may take
+any value in `[-μ N, μ N]`. -/
+def IsCoulombFriction (μ N v F : ℝ) : Prop :=
+  (v ≠ 0 → F = -(μ * N) * Real.sign v) ∧ (v = 0 → F ∈ Set.Icc (-(μ * N)) (μ * N))
+
+/-- Slip: at a nonzero velocity the law determines the force, `F = -μ N sign v`. -/
+lemma isCoulombFriction_of_ne_zero {μ N v F : ℝ} (hv : v ≠ 0) :
+    IsCoulombFriction μ N v F ↔ F = -(μ * N) * Real.sign v := by
+  constructor
+  · intro h
+    obtain ⟨hslip, -⟩ := h
+    exact hslip hv
+  · intro hF
+    constructor
+    · intro _
+      exact hF
+    · intro h0
+      exact absurd h0 hv
+
+/-- Stick: at zero velocity the admissible forces are exactly the interval `[-μ N, μ N]`. -/
+lemma isCoulombFriction_zero {μ N F : ℝ} :
+    IsCoulombFriction μ N 0 F ↔ F ∈ Set.Icc (-(μ * N)) (μ * N) := by
+  constructor
+  · intro h
+    obtain ⟨-, hstick⟩ := h
+    exact hstick rfl
+  · intro hF
+    constructor
+    · intro h0
+      exact absurd rfl h0
+    · intro _
+      exact hF
+
+/-! ### C.2. Friction power and dissipation -/
+
+/-- The friction power `F v`, delivered by the friction force to the body, is `-μ N |v|` on the
+graph, at slip and at stick. -/
+lemma coulomb_power_eq {μ N v F : ℝ} (h : IsCoulombFriction μ N v F) :
+    F * v = -(μ * N * |v|) := by
+  by_cases hv : v = 0
+  · subst hv
+    simp
+  · obtain ⟨hslip, -⟩ := h
+    have hF := hslip hv
+    have hsign : Real.sign v * v = |v| := by
+      rcases lt_or_gt_of_ne hv with hneg | hpos
+      · rw [Real.sign_of_neg hneg, abs_of_neg hneg]
+        ring
+      · rw [Real.sign_of_pos hpos, abs_of_pos hpos]
+        ring
+    rw [hF]
+    calc (-(μ * N) * Real.sign v) * v
+        = -(μ * N) * (Real.sign v * v) := by ring
+      _ = -(μ * N) * |v| := by rw [hsign]
+      _ = -(μ * N * |v|) := by ring
+
+/-- Dissipation: for `μ, N ≥ 0` the friction force never supplies power, `F v ≤ 0`. -/
+lemma coulomb_power_nonpos {μ N v F : ℝ} (hμ : 0 ≤ μ) (hN : 0 ≤ N)
+    (h : IsCoulombFriction μ N v F) :
+    F * v ≤ 0 := by
+  rw [coulomb_power_eq h]
+  have hnn : 0 ≤ μ * N * |v| := mul_nonneg (mul_nonneg hμ hN) (abs_nonneg v)
+  linarith
+
+/-! ### C.3. Static equilibrium and non-uniqueness at rest -/
+
+/-- Static equilibrium: a body at rest under the applied tangential force `Fa` balances it with an
+admissible stick force, `Fa + F = 0`, exactly when `Fa ∈ [-μ N, μ N]`. -/
+lemma coulomb_static_equilibrium_iff {μ N Fa : ℝ} :
+    (∃ F, IsCoulombFriction μ N 0 F ∧ Fa + F = 0) ↔ Fa ∈ Set.Icc (-(μ * N)) (μ * N) := by
+  constructor
+  · rintro ⟨F, hF, hadd⟩
+    rw [isCoulombFriction_zero] at hF
+    obtain ⟨hlo, hhi⟩ := Set.mem_Icc.mp hF
+    exact Set.mem_Icc.mpr ⟨by linarith, by linarith⟩
+  · intro hFa
+    refine ⟨-Fa, ?_, add_neg_cancel Fa⟩
+    rw [isCoulombFriction_zero]
+    obtain ⟨hlo, hhi⟩ := Set.mem_Icc.mp hFa
+    exact Set.mem_Icc.mpr ⟨by linarith, by linarith⟩
+
+/-- At rest the law does not determine the friction force: for `μ, N > 0` two different forces
+are admissible at `v = 0`. -/
+lemma coulomb_stick_not_unique {μ N : ℝ} (hμ : 0 < μ) (hN : 0 < N) :
+    ∃ F₁ F₂, F₁ ≠ F₂ ∧ IsCoulombFriction μ N 0 F₁ ∧ IsCoulombFriction μ N 0 F₂ := by
+  have hpos : 0 < μ * N := mul_pos hμ hN
+  refine ⟨0, μ * N, ne_of_lt hpos, ?_, ?_⟩ <;> rw [isCoulombFriction_zero]
+  · exact Set.mem_Icc.mpr ⟨neg_nonpos.mpr (le_of_lt hpos), le_of_lt hpos⟩
+  · exact Set.mem_Icc.mpr ⟨neg_le_self (le_of_lt hpos), le_rfl⟩
+
+/-! ### C.4. Negative coefficient -/
+
+/-- A negative coefficient admits no stick force: for `μ < 0 < N` the interval `[-μ N, μ N]` is
+empty, so no force is admissible at rest. -/
+lemma coulomb_not_exists_stick_of_neg {μ N : ℝ} (hμ : μ < 0) (hN : 0 < N) :
+    ¬ ∃ F, IsCoulombFriction μ N 0 F := by
+  rintro ⟨F, hF⟩
+  rw [isCoulombFriction_zero] at hF
+  obtain ⟨hlo, hhi⟩ := Set.mem_Icc.mp hF
+  have hneg : μ * N < 0 := mul_neg_of_neg_of_pos hμ hN
+  linarith
+
+/-- A negative coefficient makes slip supply power: for `μ < 0 < N` and `v ≠ 0`, every force on
+the graph has `F v > 0`. -/
+lemma coulomb_slip_power_pos_of_neg {μ N v F : ℝ} (hμ : μ < 0) (hN : 0 < N) (hv : v ≠ 0)
+    (h : IsCoulombFriction μ N v F) :
+    0 < F * v := by
+  have hneg : μ * N < 0 := mul_neg_of_neg_of_pos hμ hN
+  have habs : 0 < |v| := abs_pos.mpr hv
+  have hmul : μ * N * |v| < 0 := mul_neg_of_neg_of_pos hneg habs
+  have hpow := coulomb_power_eq h
+  linarith
 
 end Elasticity.ContactAndLubrication

@@ -29,6 +29,7 @@ on:
   pull_request_target:
     types: [opened, synchronize, reopened, edited]
   merge_group:
+    types: [checks_requested]
 
 permissions:
   contents: read
