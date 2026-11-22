@@ -226,10 +226,10 @@ theorem inv_of_resolutionDerivable {φ : CNF} {C : CNFClause} (h : φ.Resolution
   | ax hC => exact inv_of_mem hC
   | resolve x _ _ hx hx' ihC ihD => exact inv_resolvent ihC ihD hx hx'
 
-/-- **Resolution refutations give contradictory cycles.** If a CNF formula $\varphi$ does not
-contain the empty clause and the empty clause is derivable from $\varphi$ by resolution, then
-there is a variable $x$ such that the literals $x$ and $\neg x$ reach each other in the
-implication graph of $\varphi$. -/
+/-- **Without the empty clause in the input, resolution refutations give contradictory cycles.** If
+a CNF formula $\varphi$ does not contain the empty clause and the empty clause is derivable from
+$\varphi$ by resolution, then there is a variable $x$ such that the literals $x$ and $\neg x$ reach
+each other in the implication graph of $\varphi$. -/
 theorem exists_contradictory_of_resolutionDerivable_nil {φ : CNF} (hnil : [] ∉ φ)
     (h : φ.ResolutionDerivable []) :
     ∃ x, ImpReach φ (x, true) (x, false) ∧ ImpReach φ (x, false) (x, true) := by

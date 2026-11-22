@@ -174,12 +174,12 @@ ordered field with a floor function is a binary floating-point number with a $p$
 and unbounded exponent when $x = m \cdot 2^e$ for some integers $m$ and $e$ with $|m| < 2^p$. -/
 def IsFloat (x : K) : Prop := ∃ m e : ℤ, |m| < 2 ^ p ∧ x = m * 2 ^ e
 
-/-- **Floating-point numbers of a bounded format.** For a natural number $p$ and integers
-$q_{\min}$ and $q_{\max}$, an element $x$ of a linearly ordered field with a floor function is a
-number of the binary format with $p$-bit significands and last-place exponents in
-$[q_{\min}, q_{\max}]$ when $x = m \cdot 2^e$ for some integers $m$ and $e$ with $|m| < 2^p$ and
-$q_{\min} \le e \le q_{\max}$. These are zero, the subnormal numbers and the normal numbers of
-the format.
+/-- **Floating-point numbers of a bounded format.** For a natural number $p$ and integers $q_{\min}$
+and $q_{\max}$, an element $x$ of a linearly ordered field with a floor function is a number of the
+binary format with $p$-bit significands and last-place exponents in $[q_{\min}, q_{\max}]$ when
+$x = m \cdot 2^e$ for some integers $m$ and $e$ with $|m| < 2^p$ and $q_{\min} \le e \le q_{\max}$.
+When $q_{\min} \le q_{\max}$, these are zero, the subnormal numbers and the normal numbers of the
+format; when $q_{\min} > q_{\max}$, no number qualifies, not even zero.
 
 In IEEE 754 terms, $q_{\min} = e_{\min} - p + 1$ and $q_{\max} = e_{\max} - p + 1$. -/
 def IsFloatIn (qmin qmax : ℤ) (x : K) : Prop :=

@@ -65,7 +65,8 @@ or buy on day one, whichever is cheaper. -/
 def opt (B d : ℕ) : ℕ := min d B
 
 /-- **Break-even strategy.** For a purchase price $B$, the break-even strategy is the deterministic
-strategy that buys on day $B$. -/
+strategy that buys on day $B$. For $B = 0$ this is the strategy $t = 0$, which the cost treats as
+renting forever. -/
 def breakEven (B : ℕ) : Strategy := some B
 
 /-- **The offline optimum bounds every strategy's cost.** For every purchase price $B$, every

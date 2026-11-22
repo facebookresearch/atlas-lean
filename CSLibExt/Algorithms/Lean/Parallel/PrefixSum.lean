@@ -115,9 +115,10 @@ theorem koggeStone_eq_seg (x : ℕ → M) :
       · rw [koggeStone_eq_seg x k i, h2,
           show min (i + 1) (2 ^ k) = i + 1 by omega, show min (i + 1) (2 * 2 ^ k) = i + 1 by omega]
 
-/-- **The scan computes all prefix products.** Let $x_0, x_1, \dots$ be a sequence in a monoid $M$
-and let $n$ and $K$ be natural numbers with $n \le 2^K$. After $K$ rounds of the Kogge–Stone scan,
-every position $i < n$ holds the prefix product $x_0 x_1 \cdots x_i$. -/
+/-- **For $n \le 2^K$, $K$ rounds of the scan compute all prefix products.** Let $x_0, x_1, \dots$
+be a sequence in a monoid $M$ and let $n$ and $K$ be natural numbers with $n \le 2^K$. After $K$
+rounds of the Kogge–Stone scan, every position $i < n$ holds the prefix product
+$x_0 x_1 \cdots x_i$. -/
 theorem koggeStone_eq_prefix (x : ℕ → M) {n K : ℕ} (hn : n ≤ 2 ^ K) {i : ℕ} (hi : i < n) :
     koggeStone x K i = prefixProd x i := by
   rw [koggeStone_eq_seg, prefixProd, show min (i + 1) (2 ^ K) = i + 1 by omega, Nat.sub_self]
@@ -141,8 +142,8 @@ $\max(n - 2^k, 0)$ of round $k$. -/
 def work (n K : ℕ) : ℕ := ∑ k ∈ Finset.range K, roundWork n k
 
 /-- **Work bound for the Kogge–Stone scan.** For all $n, K \in \mathbb{N}$, the total work of $K$
-rounds of the scan on $n$ positions is at most $nK$. Via `time_scanListT`, this also bounds
-`scanListT`. -/
+rounds of the scan on $n$ positions is at most $nK$. Via `time_scanListT`, this bounds the
+multiplication count of `scanListT`. -/
 theorem work_le (n K : ℕ) : work n K ≤ n * K := by
   unfold work
   calc ∑ k ∈ Finset.range K, roundWork n k ≤ ∑ _k ∈ Finset.range K, n :=

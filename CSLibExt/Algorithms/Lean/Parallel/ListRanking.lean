@@ -213,8 +213,8 @@ theorem rounds_dist (hs : Terminates succ) {t : ℕ} (ht : n ≤ 2 ^ t) (v : Fin
 nodes $0, \dots, n - 1$ is the pair of arrays of length $n$ whose entries at $v$ are the pointer
 and the distance of $v$ in $s$.
 
-Evaluating the state after $t$ rounds directly re-reads earlier rounds' pointers at every query,
-a cost growing exponentially with the number of rounds; the tabulated rounds cost $O(n)$ array
+Evaluating the state after $t$ rounds directly can re-read earlier rounds' pointers at every query,
+a cost that can grow exponentially with the number of rounds; the tabulated rounds cost $O(n)$ array
 operations each. -/
 def tabulate (s : State n) : Array (Option (Fin n)) × Array ℕ :=
   (Array.ofFn s.ptr, Array.ofFn s.dist)

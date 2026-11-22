@@ -377,12 +377,12 @@ theorem eq_policyValue_of_policyBellman_eq (π : S → A) {V : S → ℝ}
     (h : policyBellman M γ π V = V) : V = policyValue M γ hM hγ0 hγ1 π :=
   ContractingWith.fixedPoint_unique (policyBellman_contracting hM hγ0 hγ1 π) h
 
-/-- **Value iteration converges.** Let $M$ be a Markov decision process with finitely many states
-$S$, a nonempty finite set of actions, real rewards and stochastic transition probabilities
-(nonnegative, each row summing to $1$), and let $0 \le \gamma < 1$ be a discount factor. Let $T$ be
-the Bellman optimality operator of $M$ with discount $\gamma$. Then for every initial value
-function $V : S \to \mathbb{R}$, the value iterates $T^n V$ converge to the optimal value of $M$
-with discount $\gamma$ as $n \to \infty$. -/
+/-- **Value iteration converges for a discounted stochastic MDP with $0 \le \gamma < 1$.** Let $M$
+be a Markov decision process with finitely many states $S$, a nonempty finite set of actions, real
+rewards and stochastic transition probabilities (nonnegative, each row summing to $1$), and let
+$0 \le \gamma < 1$ be a discount factor. Let $T$ be the Bellman optimality operator of $M$ with
+discount $\gamma$. Then for every initial value function $V : S \to \mathbb{R}$, the value iterates
+$T^n V$ converge to the optimal value of $M$ with discount $\gamma$ as $n \to \infty$. -/
 theorem tendsto_valueIteration (V : S → ℝ) :
     Tendsto (fun n => valueIteration M γ n V) atTop (𝓝 (optimalValue M γ hM hγ0 hγ1)) :=
   ContractingWith.tendsto_iterate_fixedPoint (bellman_contracting hM hγ0 hγ1) V

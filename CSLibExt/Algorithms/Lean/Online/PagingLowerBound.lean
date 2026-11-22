@@ -107,8 +107,9 @@ occur in $c$, or $0$ if every page of $\{0, \dots, k\}$ occurs in $c$. -/
 def outside {k : ℕ} (c : List (Fin (k + 1))) : Fin (k + 1) :=
   ((List.finRange (k + 1)).find? fun x => x ∉ c).getD 0
 
-/-- **The outside page is not cached.** Let $k$ be a natural number and let $c$ be a list of at
-most $k$ pages from $\{0, \dots, k\}$. Then the outside page of $c$ does not occur in $c$. -/
+/-- **For a cache of at most $k$ entries from $k + 1$ pages, the outside page is not cached.** Let
+$k$ be a natural number and let $c$ be a list of at most $k$ pages from $\{0, \dots, k\}$. Then the
+outside page of $c$ does not occur in $c$. -/
 theorem outside_not_mem {k : ℕ} {c : List (Fin (k + 1))} (hc : c.length ≤ k) : outside c ∉ c := by
   unfold outside
   cases h : (List.finRange (k + 1)).find? fun x => x ∉ c with

@@ -202,11 +202,11 @@ theorem card_before {L : List α} (hnd : L.Nodup) {x : α} (hx : x ∈ L) :
 
 /-! ## The potential: inversions against the offline list -/
 
-/-- **Members of the inversion set.** Let $M$ and $L$ be lists. If a pair $(a, b)$ belongs to the
-inversion set of $M$ and $L$, then $a$ and $b$ are items of $M$, $a$ comes before $b$ in $M$, and
-$b$ comes before $a$ in $L$. Here the position of an item in a list is the index of its first
-occurrence, and an item that does not occur in the list sits at the position equal to the length
-of the list. -/
+/-- **Members of the inversion set.** Let $M$ and $L$ be lists over a type with decidable equality.
+If a pair $(a, b)$ belongs to the inversion set of $M$ and $L$, then $a$ and $b$ are items of $M$,
+$a$ comes before $b$ in $M$, and $b$ comes before $a$ in $L$. Here the position of an item in a list
+is the index of its first occurrence, and an item that does not occur in the list sits at the
+position equal to the length of the list. -/
 theorem mem_of_mem_invSet {M L : List α} {ab : α × α} (h : ab ∈ invSet M L) :
     ab.1 ∈ M ∧ ab.2 ∈ M ∧ M.idxOf ab.1 < M.idxOf ab.2 ∧ L.idxOf ab.2 < L.idxOf ab.1 := by
   simp only [invSet, Finset.mem_filter, Finset.mem_product, List.mem_toFinset] at h
@@ -310,8 +310,9 @@ theorem mtf_step {M L : List α} (hnd : M.Nodup) (hL : L.Perm M) {x : α} (hx : 
 
 /-! ## Move-to-front is `2`-competitive -/
 
-/-- **Move-to-front rearranges the list.** If $x$ is an item of a list $M$, then the list
-obtained from $M$ by moving $x$ to the front is a rearrangement (permutation) of $M$. -/
+/-- **Move-to-front rearranges the list.** Let the items have decidable equality. If $x$ is an item
+of a list $M$, then the list obtained from $M$ by moving $x$ to the front is a rearrangement
+(permutation) of $M$. -/
 theorem mtf_perm {M : List α} {x : α} (hx : x ∈ M) : (mtf M x).Perm M :=
   (List.perm_cons_erase hx).symm
 
@@ -320,9 +321,9 @@ theorem mtf_nodup {M : List α} (hnd : M.Nodup) (x : α) : (mtf M x).Nodup :=
 
 /-! ## Free exchanges -/
 
-/-- **A free move rearranges the list.** If $x$ is an item of a list $L$, then for every index
-$j$ (counting from $0$), the list obtained from $L$ by the free move of $x$ to index $j$ is a
-rearrangement (permutation) of $L$. -/
+/-- **A free move rearranges the list.** Let the items have decidable equality. If $x$ is an item of
+a list $L$, then for every requested index $j$ (counting from $0$), the list obtained from $L$ by
+the free move of $x$ with requested index $j$ is a rearrangement (permutation) of $L$. -/
 theorem freeMove_perm {L : List α} {x : α} (hx : x ∈ L) (j : ℕ) : (freeMove L x j).Perm L := by
   unfold freeMove
   split_ifs

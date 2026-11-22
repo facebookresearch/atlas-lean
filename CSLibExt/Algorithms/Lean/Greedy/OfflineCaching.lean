@@ -46,15 +46,15 @@ public inductive CacheEvent (α : Type u) where
   | miss (request : α) (evicted : Option α)
   deriving Repr, DecidableEq
 
-/-- **Legal cache transitions.** For a capacity $k \in \mathbb{N}$, this is the labelled
-transition system whose states are lists of blocks (the cache contents, in any order) and whose
-labels are cache events. Write $|C|$ for the length of a list $C$, $x :: C$ for $C$ with $x$
-prepended, and $C \setminus v$ for $C$ with the first occurrence of $v$ removed. There is a
-transition from $C$ to $C'$ labelled by a hit on $r$ when $r \in C$ and $C'$ is a permutation of
-$C$; labelled by a miss on $r$ with no eviction when $r \notin C$ and either $k = 0$ and $C$ and
-$C'$ are both empty, or $|C| < k$ and $C'$ is a permutation of $r :: C$; and labelled by a miss on
-$r$ evicting $v$ when $k > 0$, $r \notin C$, $|C| = k$, $v \in C$ and $C'$ is a permutation of
-$r :: (C \setminus v)$. -/
+/-- **Legal cache transitions.** For a type of blocks with decidable equality and a capacity
+$k \in \mathbb{N}$, this is the labelled transition system whose states are lists of blocks (the
+cache contents, in any order) and whose labels are cache events. Write $|C|$ for the length of a
+list $C$, $x :: C$ for $C$ with $x$ prepended, and $C \setminus v$ for $C$ with the first occurrence
+of $v$ removed. There is a transition from $C$ to $C'$ labelled by a hit on $r$ when $r \in C$ and
+$C'$ is a permutation of $C$; labelled by a miss on $r$ with no eviction when $r \notin C$ and
+either $k = 0$ and $C$ and $C'$ are both empty, or $|C| < k$ and $C'$ is a permutation of $r :: C$;
+and labelled by a miss on $r$ evicting $v$ when $k > 0$, $r \notin C$, $|C| = k$, $v \in C$ and $C'$
+is a permutation of $r :: (C \setminus v)$. -/
 @[expose] public def cacheLTS {α : Type u} [DecidableEq α] (capacity : Nat) :
     Cslib.LTS (List α) (CacheEvent α) where
   Tr before event after := match event with
@@ -761,10 +761,10 @@ def misses {α : Type u} (events : List (CacheEvent α)) : Nat := events.countP 
 theorem misses_append {α : Type u} (events events' : List (CacheEvent α)) :
     misses (events ++ events') = misses events + misses events' := List.countP_append
 
-/-- **Legal cache transitions preserve valid caches.** Let $k$ be a capacity and let $C \to C'$
-be a legal cache transition for capacity $k$, labelled by any cache event. If $C$ has no
-duplicate entries and length at most $k$, then $C'$ has no duplicate entries and length at
-most $k$. -/
+/-- **Legal cache transitions preserve valid caches.** Let the blocks have decidable equality, let
+$k$ be a capacity and let $C \to C'$ be a legal cache transition for capacity $k$, labelled by any
+cache event. If $C$ has no duplicate entries and length at most $k$, then $C'$ has no duplicate
+entries and length at most $k$. -/
 theorem cacheLTS_valid {α : Type u} [DecidableEq α] {capacity : Nat} {before after : List α}
     {event : CacheEvent α} (hstep : (cacheLTS capacity).Tr before event after)
     (hnodup : before.Nodup) (hcapacity : before.length ≤ capacity) :

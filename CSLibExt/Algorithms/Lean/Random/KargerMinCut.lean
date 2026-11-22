@@ -122,16 +122,17 @@ def contract (st : State V) (e : V × V) : State V where
   edges := (st.edges.map fun x => (rename e.2 e.1 x.1, rename e.2 e.1 x.2)).filter
     fun x => x.1 ≠ x.2
 
-/-- **Success probability of the contraction process.** For a natural number $k$, a number $f$
-of allowed contractions and a multigraph $G$ with edge list $E_G$, the probability $P_k(f, G)$
-that the contraction process on $G$ returns $k$ is defined by recursion on $f$. If $f = 0$, or
-$G$ has at most two vertices, or $G$ has no edges, then $P_k(f, G)$ is $1$ when $G$ has exactly
-$k$ edges and $0$ otherwise. Otherwise
+/-- **Success probability of the contraction process.** Let the vertices have decidable equality.
+For a natural number $k$, a number $f$ of allowed contractions and a multigraph $G$ with edge list
+$E_G$, the probability $P_k(f, G)$ that the contraction process on $G$ returns $k$ is defined by
+recursion on $f$. If $f = 0$, or $G$ has at most two vertices, or $G$ has no edges, then $P_k(f, G)$
+is $1$ when $G$ has exactly $k$ edges and $0$ otherwise. Otherwise
 $P_k(f, G) = \frac{1}{|E_G|} \sum_{e \in E_G} P_k(f - 1, G/e)$, where $G/e$ is the contraction of
 $G$ along $e$ and the sum runs over the edges with multiplicity.
 
-This models contracting a uniformly random edge while more than two vertices remain and counting
-the edges between the last two vertices. -/
+This models contracting a uniformly random edge while more than two vertices and some edge remain
+and contractions are left, and then counting the edges of the stopping state, which has at most two
+vertices unless the contractions run out or no edge remains. -/
 def successProb (k : ℕ) : ℕ → State V → ℚ
   | 0, st => if st.edges.length = k then 1 else 0
   | fuel + 1, st =>
@@ -198,9 +199,9 @@ theorem isMinCut_contract {st : State V} (hv : st.Valid) {k : ℕ} (hmin : IsMin
   rw [cutSize_contract]
   exact hmin.2 _ (isCut_lift hv hY)
 
-/-- **Contraction preserves validity and removes one vertex.** If a multigraph $G$ is valid and
-$e$ is one of its edges, then the contraction of $G$ along $e$ is valid and has exactly one
-vertex fewer than $G$. -/
+/-- **Contraction preserves validity and removes one vertex.** Let the vertices have decidable
+equality. If a multigraph $G$ is valid and $e$ is one of its edges, then the contraction of $G$
+along $e$ is valid and has exactly one vertex fewer than $G$. -/
 theorem valid_contract {st : State V} (hv : st.Valid) {e : V × V} (he : e ∈ st.edges) :
     (contract st e).Valid ∧ (contract st e).verts.length = st.verts.length - 1 := by
   obtain ⟨ha, hb, hab⟩ := hv.2 e he
@@ -568,15 +569,15 @@ private theorem fail_pow_le_half (st : State V) (hv : st.Valid) {k : ℕ} (hmin 
   have hqN : q ^ N ≤ (1 - 1 / (N : ℚ)) ^ N := pow_le_pow_left₀ hq0 hq1 N
   exact ⟨N, hNeq, hq0, by linarith, hqN.trans (one_sub_inv_pow_le_half hN)⟩
 
-/-- **Repeating Karger's algorithm succeeds with probability at least one half.** Let $G$ be a
-valid multigraph state with $n \ge 2$ vertices and minimum cut size $k$, and let $t$ be a natural
-number with $n(n-1) \le 2t$. Then the probability that at least one of $t$ independent runs of
-the contraction process returns $k$ is at least $1/2$.
+/-- **Sufficiently many independent runs of Karger's algorithm succeed with probability at least one
+half.** Let $G$ be a valid multigraph state with $n \ge 2$ vertices and minimum cut size $k$, and
+let $t$ be a natural number with $n(n-1) \le 2t$. Then the probability that at least one of $t$
+independent runs of the contraction process returns $k$ is at least $1/2$.
 
-Its probability reading uses the independence and common single-run law assumptions documented
-in `repeatSuccessProb`. Since every run returns at least the
-minimum cut size (`successProb_eq_zero_of_lt_minCut`), the smallest answer is then the minimum
-cut size. -/
+Its probability reading uses the independence and common single-run law assumptions documented in
+`repeatSuccessProb`. Since every run returns at least the minimum cut size
+(`successProb_eq_zero_of_lt_minCut`), whenever at least one run returns $k$, the smallest answer is
+the minimum cut size. -/
 theorem repeatSuccessProb_ge_half (st : State V) (hv : st.Valid) {k : ℕ} (hmin : IsMinCut st k)
     (hn : 2 ≤ st.verts.length) {t : ℕ} (ht : st.verts.length * (st.verts.length - 1) ≤ 2 * t) :
     1 / 2 ≤ repeatSuccessProb k t st := by
@@ -606,10 +607,10 @@ theorem repeatSuccessProb_ge (st : State V) (hv : st.Valid) {k : ℕ} (hmin : Is
   unfold repeatSuccessProb
   linarith
 
-/-- **Karger's algorithm succeeds with high probability.** Let $G$ be a valid multigraph with
-$n \ge 2$ vertices and minimum cut size $k$, and let $t$ be a natural number with
-$\lceil \log_2 n \rceil \cdot n(n-1) \le 2t$. Then the probability that at least one of $t$
-independent runs of the contraction process on $G$ returns $k$ is at least $1 - 1/n$.
+/-- **With sufficiently many independent runs, Karger's algorithm succeeds with high probability.**
+Let $G$ be a valid multigraph with $n \ge 2$ vertices and minimum cut size $k$, and let $t$ be a
+natural number with $\lceil \log_2 n \rceil \cdot n(n-1) \le 2t$. Then the probability that at least
+one of $t$ independent runs of the contraction process on $G$ returns $k$ is at least $1 - 1/n$.
 
 Thus $O(n^2 \log n)$ runs find the minimum cut size with high probability.
 

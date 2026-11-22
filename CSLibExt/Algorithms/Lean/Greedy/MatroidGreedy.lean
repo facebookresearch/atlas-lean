@@ -78,9 +78,11 @@ def matroidGreedy (indep : Finset α → Bool) (es : List α) : TimeM ℕ (Finse
 
 /-! ## Cost -/
 
-/-- **Running time of the greedy scan.** For every oracle $O$ on finite subsets of a type
-$\alpha$, every finite set $S \subseteq \alpha$ and every list $L$ of elements of $\alpha$, the
-greedy scan with oracle $O$ from $S$ over $L$ takes time exactly the length of $L$. -/
+/-- **Running time of the greedy scan.** Let the elements have decidable equality. For every oracle
+$O$ on finite subsets of a type $\alpha$, every finite set $S \subseteq \alpha$ and every list $L$
+of elements of $\alpha$, the greedy scan with oracle $O$ from $S$ over $L$ charges exactly one tick
+per listed element, for a total of the length of $L$; the oracle's own running time is not
+measured. -/
 @[simp]
 theorem matroidGreedyScan_time (indep : Finset α → Bool) (S : Finset α) (es : List α) :
     (matroidGreedyScan indep S es).time = es.length := by
@@ -99,11 +101,11 @@ theorem matroidGreedy_time (indep : Finset α → Bool) (es : List α) :
 
 /-! ## The scan invariant -/
 
-/-- **The greedy scan over a concatenation.** For every oracle $O$ on finite subsets of a type
-$\alpha$, every finite set $S \subseteq \alpha$ and all lists $P$ and $Q$ of elements of $\alpha$,
-the set returned by the greedy scan with oracle $O$ from $S$ over $P$ followed by $Q$ equals the
-set returned by the greedy scan with oracle $O$ over $Q$ starting from the set that the scan with
-oracle $O$ from $S$ over $P$ returns. -/
+/-- **The greedy scan over a concatenation.** Let the elements have decidable equality. For every
+oracle $O$ on finite subsets of a type $\alpha$, every finite set $S \subseteq \alpha$ and all lists
+$P$ and $Q$ of elements of $\alpha$, the set returned by the greedy scan with oracle $O$ from $S$
+over $P$ followed by $Q$ equals the set returned by the greedy scan with oracle $O$ over $Q$
+starting from the set that the scan with oracle $O$ from $S$ over $P$ returns. -/
 theorem matroidGreedyScan_append (indep : Finset α → Bool) (S : Finset α) (P Q : List α) :
     (matroidGreedyScan indep S (P ++ Q)).ret =
       (matroidGreedyScan indep (matroidGreedyScan indep S P).ret Q).ret := by
