@@ -614,7 +614,7 @@ theorem node_piecesLE (d : ℕ → ℕ) (Nnet : Net d) (i : ℕ)
 
 /-- Arithmetic-geometric mean corollary: a product is bounded by the
 `L`-th power of the mean, for `L` positive terms. -/
-theorem prod_le_mean_pow (ι : Type*) (s : Finset ι) (w : ι → ℝ) (L : ℕ)
+private theorem prod_le_mean_pow (ι : Type*) (s : Finset ι) (w : ι → ℝ) (L : ℕ)
     (hcard : s.card = L) (hL : 0 < L) (hw : ∀ i ∈ s, 0 ≤ w i) :
     ∏ i ∈ s, w i ≤ ((∑ i ∈ s, w i) / (L : ℝ)) ^ L := by
   have hL0 : (L : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (ne_of_gt hL)
