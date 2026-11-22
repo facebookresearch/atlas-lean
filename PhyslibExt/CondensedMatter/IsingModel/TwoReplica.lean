@@ -9,6 +9,7 @@ module
 
 import Mathlib.Algebra.BigOperators.Group.Finset.Lemmas
 import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.BigOperators.Ring.Nat
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Data.Finset.Sym
 public import Mathlib.Data.Pi.Interval
@@ -211,17 +212,10 @@ lemma sum_deg_comp_even (P : Finset (Sym2 V)) (hnd : ∀ e ∈ P, ¬ e.IsDiag) (
   rw [sum_deg_comp_eq]
   exact Finset.even_sum _ (fun e he => comp_edge_card_even P hnd u he)
 
+@[deprecated "Use `Finset.even_sum_iff_even_card_odd`." (since := "2026-11-12")]
 lemma even_sum_iff_even_count {α : Type*} (s : Finset α) (f : α → ℕ) :
-    Even (∑ x ∈ s, f x) ↔ Even (#(s.filter (fun x => Odd (f x)))) := by
-  rw [← ZMod.natCast_eq_zero_iff_even, ← ZMod.natCast_eq_zero_iff_even]
-  have key : ((∑ x ∈ s, f x : ℕ) : ZMod 2)
-      = ((#(s.filter (fun x => Odd (f x))) : ℕ) : ZMod 2) := by
-    push_cast; rw [Finset.card_filter]; push_cast
-    refine Finset.sum_congr rfl (fun x _ => ?_)
-    rcases Nat.even_or_odd (f x) with h | h
-    · rw [ite_eq_right (by simp [Nat.not_odd_iff_even, h]), ZMod.natCast_eq_zero_iff_even.2 h]
-    · rw [ite_eq_left h, ZMod.natCast_eq_one_iff_odd.2 h]
-  rw [key]
+    Even (∑ x ∈ s, f x) ↔ Even (#(s.filter (fun x => Odd (f x)))) :=
+  Finset.even_sum_iff_even_card_odd f
 
 lemma path_exists (P : Finset (Sym2 V)) (hnd : ∀ e ∈ P, ¬ e.IsDiag) (u v : V)
     (hu_odd : Odd (degP P u))
@@ -240,7 +234,7 @@ lemma path_exists (P : Finset (Sym2 V)) (hnd : ∀ e ∈ P, ¬ e.IsDiag) (u v : 
       · subst h; exact absurd hxC hv_notin
     · rintro rfl; exact ⟨hu_in, hu_odd⟩
   have hcount : Even (#((compOf P u).filter (fun x => Odd (degP P x)))) :=
-    (even_sum_iff_even_count _ _).1 hsum_even
+    (Finset.even_sum_iff_even_card_odd _).1 hsum_even
   rw [hoddC, Finset.card_singleton] at hcount
   exact (Nat.not_even_iff_odd.2 ⟨0, rfl⟩) hcount
 
