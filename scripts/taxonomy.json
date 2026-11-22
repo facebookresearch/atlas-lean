@@ -11011,6 +11011,7 @@
   "MathlibExt/NumberTheory/CountingOppermannPrimes": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Oppermann's conjecture"},
   "MathlibExt/NumberTheory/CoveringSystem": {"to": "NumberTheory/congruences/covering-systems", "title": "Covering systems"},
   "MathlibExt/NumberTheory/CoveringSystem/ExactCover": {"to": "NumberTheory/congruences/covering-systems", "title": "Exact covering systems"},
+  "MathlibExt/NumberTheory/CoveringSystem/TrifonovCovering": {"to": "NumberTheory/congruences/covering-systems", "title": "Minimum modulus of covering systems"},
   "MathlibExt/NumberTheory/Cyclotomic/CubicResidueSymbol": {"to": "NumberTheory/congruences/power-residues-reciprocity", "title": "Cubic residue symbol"},
   "MathlibExt/NumberTheory/Cyclotomic/Embedding": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Embeddings of cyclotomic fields"},
   "MathlibExt/NumberTheory/Cyclotomic/HomogenizedCyclotomic": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Homogenized cyclotomic polynomials"},
