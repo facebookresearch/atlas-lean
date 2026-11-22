@@ -69,9 +69,9 @@ jobs:
           git cat-file -e "$base^{commit}" 2>/dev/null || git fetch --no-tags --depth=1 origin "$base"
           echo "BASE=$base" >> "$GITHUB_ENV"
 
-      # The verdict, the command that fixes it and whether the pull request's
-      # wiki changes are only what that command writes go to the job summary
-      # and the graph-sync artifact.
+      # The verdicts come first: whether the pull request is in step, with the
+      # command that fixes it, and whether its wiki changes are only what that
+      # command writes. They go to the job summary and the graph-sync artifact.
       - name: Check that the graph is in step with the Lean
         continue-on-error: true
         env:
@@ -96,7 +96,10 @@ jobs:
             echo '```text'
             head -c 60000 build/graph-sync.txt
             echo '```'
-            if [[ "$status" -ne 0 ]]; then
+            if [[ "$status" -gt 1 ]]; then
+              echo
+              echo "The check could not run (exit $status): the log above says why."
+            elif [[ "$status" -eq 1 ]]; then
               cat <<'TEXT'
 
           The check ran on the pull request merged into its base. On the pull request's branch, run the sync as:
@@ -108,7 +111,9 @@ jobs:
           TEXT
             fi
           } >> "$GITHUB_STEP_SUMMARY"
-          if [[ "$status" -ne 0 ]]; then
+          if [[ "$status" -gt 1 ]]; then
+            echo "::warning title=Graph sync::The check could not run; the job summary says why."
+          elif [[ "$status" -eq 1 ]]; then
             echo "::warning title=Graph sync::The graph is not in step with this change's Lean; the job summary says how to fix it."
           fi
           exit "$status"

@@ -361,26 +361,29 @@ working tree's tools and taxonomy. Each of them that has no page gets one from
 its docstring, laid out as below, and its annotation row goes among the rows of
 its links file in path order, so that pull requests that add pages in
 different places add lines in different places. A folder the run makes gets
-none of the part folders `generate_wiki.py` would split it into. The run
-records in `scripts/wiki-sync.json` the digests of the declarations the
-changes add or remove or whose docstring they edit, and lists the pages whose
-declaration's docstring changed, to check. It writes no page for any other
-declaration, such as an older documented one of a module the changes touch,
-and leaves `blueprint/atlas.json` and `blueprint/coverage/README.md` to the
-run over the whole project below. A link the changes leave naming a
-declaration the Lean no longer has, and a held marker they leave unusable, are
-errors, and the run then writes nothing: relink the row to the declaration's
-successor and keep its article id, or remove the link and keep the page as a
-planned page ([Writing pages](#writing-pages)). A page of one of its
-declarations that no folder page lists is an error too. A second run writes
+none of the part folders `generate_wiki.py` would split it into. In
+`scripts/wiki-sync.json` the run changes only the entries the whole run below
+would change because of the pull request: the digests of its own declarations
+and of those whose docstring it edits, and the entries of those it removes. It
+lists the pages whose declaration's docstring the pull request edits or
+removes, to check. It writes no page for any other declaration, such as an
+older documented one of a module the changes touch, and leaves
+`blueprint/atlas.json` and `blueprint/coverage/README.md` to the run over the
+whole project. A link the changes leave naming a declaration the Lean no
+longer has, and a held marker they leave unusable, are errors, and the run
+then writes nothing: relink the row to the declaration's successor and keep its
+article id, or remove the link and keep the page as a planned page
+([Writing pages](#writing-pages)). A row of one of its declarations whose page
+is missing is an error too, as is such a page, or a folder the pull request
+adds on its way, that its folder page does not list. A second run writes
 nothing.
 
-With `--check`, the run writes nothing. It exits 1 unless the pull request is
-in step, printing the command that brings it in step, and reports whether the
-pull request's wiki changes are exactly what that command writes on the base's
-wiki: a fresh article id on a new row counts as the same, and every row the
-base has must keep its bytes. `--report FILE` also writes the findings as
-JSON. The `graph sync` check runs it on every pull request and merge group,
+With `--check`, the run writes nothing. It prints first whether the pull
+request is in step, exiting 1 when it is not, with the command that brings it
+in step, and whether the pull request's wiki changes are exactly what that
+command writes on the base's wiki, file contents and executable bits: a fresh
+article id on a new row counts as the same, and every row the base has must
+keep its bytes. `--report FILE` also writes the findings as JSON. The `graph sync` check runs it on every pull request and merge group,
 and only reports for now
 ([GitHub Actions and publication](#github-actions-and-publication)).
 

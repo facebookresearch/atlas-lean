@@ -859,6 +859,12 @@ class GraphSyncWorkflowTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertNotIn("::warning", result.stdout)
         self.assertNotIn("merge-base", summary)
+        # A check that could not run says so, rather than that the pull request is not in step.
+        result, summary, _ = self.run_check(2)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("::warning title=Graph sync::The check could not run", result.stdout)
+        self.assertIn("The check could not run (exit 2)", summary)
+        self.assertNotIn("merge-base", summary)
 
     def find_base(self, event: str, env=lambda main, merge: {}):
         """Run the step that finds the base in a repository whose HEAD merges a branch into main, as a pull request's
