@@ -75,8 +75,9 @@ open Real MeasureTheory
 
 -- Preserve the original benchmark namespace for compatibility.
 set_option linter.dupNamespace false in
-/-- The 1D Gaussian heat kernel. Extended by `f x` for `t ≤ 0` so that it is a global
-function `ℝ × ℝ → ℝ`; the PDE statement only constrains its behaviour on `t > 0`. -/
+/-- The 1D Gaussian heat-kernel solution. Extended by `f x` for `t ≤ 0` so that
+it is a global function `ℝ × ℝ → ℝ`; the PDE statement only constrains its
+behaviour on `t > 0`. -/
 noncomputable def heatSolution (f : ℝ → ℝ) (t x : ℝ) : ℝ :=
   if 0 < t then
     (4 * Real.pi * t)⁻¹ ^ ((1 : ℝ) / 2) *
