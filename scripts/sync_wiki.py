@@ -1724,7 +1724,8 @@ def run_declarations() -> int:
 # What the Lean index leaves out (see run_declarations): the archived release and the standalone developments.
 EXCLUDED = ("v1", "Atlas")
 # The graph's files outside blueprint/ (docs/BLUEPRINT.md, Graph rules).
-GRAPH_FILES = ("scripts/taxonomy.json", "scripts/wiki-sync.json", "scripts/card-moves.jsonl")
+GRAPH_FILES = ("scripts/taxonomy.json", "scripts/wiki-sync.json", "scripts/card-moves.jsonl",
+               "scripts/mathgraph-map.jsonl")
 LINKS_FILE = re.compile(r"blueprint/links/[^/]+\.jsonl")
 UPSTREAM = "https://github.com/facebookresearch/atlas-lean.git"
 

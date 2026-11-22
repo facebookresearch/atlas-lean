@@ -2240,6 +2240,27 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual(self.run_sync("--check")[3]["differences"],
                          ["blueprint/roadmap/Algebra/groups/group-basics/lagrange.md: the changes delete it"])
 
+    def test_graph_files_the_sync_never_writes_are_not_its(self) -> None:
+        # Each graph file outside the pages, the links and the baseline makes the wiki changes not the sync's, with
+        # or without a Lean change.
+        for path in ("scripts/taxonomy.json", "scripts/card-moves.jsonl", "scripts/mathgraph-map.jsonl",
+                     "blueprint/atlas.json"):
+            target = self.root / path
+            kept = target.read_text() if target.is_file() else None
+            target.write_text((kept or "") + "\n")
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual((status, report["wiki_changes"], report["differences"]), (0, "other", [
+                f"{path}: the sync writes nothing when no Lean changes"]), path)
+            self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual((report["wiki_changes"], report["differences"]), ("other", [
+                f"{path}: the sync never writes it"]), path)
+            self.groups()
+            if kept is None:
+                target.unlink()
+            else:
+                target.write_text(kept)
+
     def commit(self, message: str) -> str:
         self.git("add", "-A")
         self.git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", message)
