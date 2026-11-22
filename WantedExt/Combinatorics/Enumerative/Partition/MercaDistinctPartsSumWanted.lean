@@ -140,7 +140,8 @@ public theorem_wanted sumDistinctPartsModEq_eq_sum_partition (m r n : ℕ) (hrm 
 for the sum of the different parts that appear at least $m$ times in partitions of $n$, and
 $p(k)$ for the number of partitions of $k$. Then $s_m(n) = \sum_{j \ge 0,\ mj \le n} j\, p(n - mj)$.
 
-The paper's hypothesis $0 \le r < m$ forces $m \ge 1$; for $m = 0$ the right side diverges.
+The paper's hypothesis $0 \le r < m$ forces $m \ge 1$; for $m = 0$ the condition $mj \le n$ would
+no longer bound $j$ in the sum.
 
 Source: Cristina Ballantine, *Combinatorial Proofs of Merca's Identities Involving the Sum of
 Different Parts Congruent to r Modulo m in All Partitions of n*, INTEGERS 24 (2024),
@@ -222,7 +223,8 @@ $$
 = \sum_{j \ge 0,\ mj \le n} j\, \tilde q(n - mj).
 $$
 
-The paper says $m \ge 0$; for $m = 0$ the right side diverges.
+The paper says $m \ge 0$; the theorem assumes $m \ge 1$, since for $m = 0$ the condition
+$mj \le n$ no longer bounds $j$ in the paper's sum.
 
 Source: Cristina Ballantine, *Combinatorial Proofs of Merca's Identities Involving the Sum of
 Different Parts Congruent to r Modulo m in All Partitions of n*, INTEGERS 24 (2024),
@@ -283,7 +285,8 @@ $$
 = \sum_{j \ge 0,\ mj \le n} j\, N(n - mj).
 $$
 
-The paper says $m \ge 0$; for $m = 0$ the right side diverges.
+The paper says $m \ge 0$; the theorem assumes $m \ge 1$, since for $m = 0$ the condition
+$mj \le n$ no longer bounds $j$ in the paper's sum.
 
 Source: Cristina Ballantine, *Combinatorial Proofs of Merca's Identities Involving the Sum of
 Different Parts Congruent to r Modulo m in All Partitions of n*, INTEGERS 24 (2024),
@@ -304,7 +307,8 @@ $$
 = \sum_{j \ge 0,\ mj \le n} j\, R(n - mj).
 $$
 
-The paper says $m \ge 0$; for $m = 0$ the right side diverges.
+The paper says $m \ge 0$; the theorem assumes $m \ge 1$, since for $m = 0$ the condition
+$mj \le n$ no longer bounds $j$ in the paper's sum.
 
 Source: Cristina Ballantine, *Combinatorial Proofs of Merca's Identities Involving the Sum of
 Different Parts Congruent to r Modulo m in All Partitions of n*, INTEGERS 24 (2024),
@@ -348,7 +352,8 @@ $$
 = \sum_{j \ge 0,\ mj \le n} j\, G(n - mj).
 $$
 
-The paper says $m \ge 0$; for $m = 0$ the right side diverges.
+The paper says $m \ge 0$; the theorem assumes $m \ge 1$, since for $m = 0$ the condition
+$mj \le n$ no longer bounds $j$ in the paper's sum.
 
 Source: Cristina Ballantine, *Combinatorial Proofs of Merca's Identities Involving the Sum of
 Different Parts Congruent to r Modulo m in All Partitions of n*, INTEGERS 24 (2024),
@@ -394,8 +399,9 @@ $$
 = \sum_{j \ge 0,\ mj \le n} j\, C(n - mj).
 $$
 
-The paper says $m \ge 0$; for $m = 0$ the right side diverges. Part (ii) (with $D(k)$, positive
-crank) is omitted: it is false for this crank ($m = 1$, $n = 2$: left side $s_1(1) = 1$, right
+The paper says $m \ge 0$; the theorem assumes $m \ge 1$, since for $m = 0$ the condition
+$mj \le n$ no longer bounds $j$ in the paper's sum. Part (ii) (with $D(k)$, positive crank) is
+omitted: it is false for this crank ($m = 1$, $n = 2$: left side $s_1(1) = 1$, right
 side $D(1) + 2 D(0) = 0$).
 
 Source: Cristina Ballantine, *Combinatorial Proofs of Merca's Identities Involving the Sum of
