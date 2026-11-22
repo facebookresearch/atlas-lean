@@ -209,7 +209,8 @@ class BlueprintWorkflowTests(unittest.TestCase):
 
     def test_the_import_map_only_grows(self):
         # Right after the wiki tests: every line of scripts/mathgraph-map.jsonl is checked, and on a PR the base
-        # commit's map, which the checkout of the merge commit lacks until it is fetched, must be its start.
+        # commit's map, which the checkout of the merge commit lacks until it is fetched, must be its start, each line
+        # appended since recording a page the PR adds.
         name = "Check that the import map only grows"
         names = [step.get("name") for step in self.steps]
         self.assertEqual(names.index(name), names.index("Test the wiki scripts") + 1)

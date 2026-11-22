@@ -124,7 +124,8 @@ jobs:
           scripts.test_card_pages
 
       # Check scripts/mathgraph-map.jsonl (docs/mathgraph-import.md#the-map): each line valid and, on a PR, the map at
-      # the base commit the start of the checked-out one, unchanged.
+      # the base commit the start of the checked-out one, unchanged, and each line appended since recording a page the
+      # PR adds.
       - name: Check that the import map only grows
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
