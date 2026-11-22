@@ -20,8 +20,9 @@ import all Batteries.Data.UnionFind.Basic
 # Exact path compression for canonical Batteries union-find
 
 The public facts describe the actual original parent chain, complete saved records
-and first-root depth of canonical FIND. Private source-refinement proofs count
-one root test per visit and one carried parent assignment per nonroot. These
+and first-root depth of canonical FIND. Source-refinement definitions and proofs
+in `Internal` count one root test per visit and one carried parent assignment
+per nonroot. These
 selected events are not a logarithmic, inverse-Ackermann or physical RAM bound.
 
 Source: CLRS, fourth edition, §19.3, printed529–530. Codex-authored conversion
@@ -35,7 +36,7 @@ namespace Batteries.UnionFind
 namespace Internal
 /-- Source refinement only: every visited root test and every carried parent write is ticked.
 The canonical array and `FindAux` representation are unchanged. -/
-@[no_expose] def countedAux (self : UnionFind) (x : Fin self.size) :
+@[no_expose] public def countedAux (self : UnionFind) (x : Fin self.size) :
     TimeM (Nat × Nat) (UnionFind.FindAux self.size) := do
   TimeM.tick (1, 0)
   let y := self.arr[x.val].parent
@@ -50,7 +51,7 @@ The canonical array and `FindAux` representation are unchanged. -/
 termination_by self.rankMax - self.rank x
 
 /-- Erasing the actual visit/write events recovers the canonical recursive result. -/
-theorem countedAux_ret (self : UnionFind) (x : Fin self.size) :
+public theorem countedAux_ret (self : UnionFind) (x : Fin self.size) :
     (countedAux self x).ret = self.findAux x := by
   rw [countedAux, UnionFind.findAux]
   simp only [TimeM.ret_bind]
@@ -62,13 +63,13 @@ theorem countedAux_ret (self : UnionFind) (x : Fin self.size) :
 termination_by self.rankMax - self.rank x
 
 /-- A root still executes one source conditional and performs no parent assignment. -/
-theorem countedAux_time_root (self : UnionFind) (x : Fin self.size)
+public theorem countedAux_time_root (self : UnionFind) (x : Fin self.size)
     (h : self.arr[x.val].parent = x) : (countedAux self x).time = (1, 0) := by
   rw [countedAux]
   simp [h]
 
 /-- Nonroots execute the recursive source call, then one carried-record parent assignment. -/
-theorem countedAux_time_step (self : UnionFind) (x : Fin self.size)
+public theorem countedAux_time_step (self : UnionFind) (x : Fin self.size)
     (h : self.arr[x.val].parent ≠ x) :
     (countedAux self x).time = (1, 0) +
       ((countedAux self ⟨self.arr[x.val].parent, self.parent'_lt _ x.isLt⟩).time +
@@ -77,7 +78,7 @@ theorem countedAux_time_step (self : UnionFind) (x : Fin self.size)
   simp [h]
 
 /-- Every actual execution has exactly one more source test than parent writes. -/
-theorem countedAux_time_balance (self : UnionFind) (x : Fin self.size) :
+public theorem countedAux_time_balance (self : UnionFind) (x : Fin self.size) :
     (countedAux self x).time.1 = (countedAux self x).time.2 + 1 := by
   if h : self.arr[x.val].parent = x then
     rw [countedAux_time_root self x h]
@@ -102,7 +103,7 @@ theorem result_ext {n : Nat}
     exact Fin.ext hr
 
 /-- This packages the same carried array and root; it does not run canonical FIND a second time. -/
-@[no_expose] def countedFind (self : UnionFind) (x : Fin self.size) :
+@[no_expose] public def countedFind (self : UnionFind) (x : Fin self.size) :
     TimeM (Nat × Nat) ((s : UnionFind) × {_root : Fin s.size // s.size = self.size}) :=
   let result := countedAux self x
   let r := result.ret
@@ -124,14 +125,14 @@ theorem result_ext {n : Nat}
      2.2 := by simp [UnionFind.size, r.size_eq] }, result.time⟩
 
 /-- Full dependent result equality includes the saved store and returned valid representative. -/
-theorem countedFind_ret (self : UnionFind) (x : Fin self.size) :
+public theorem countedFind_ret (self : UnionFind) (x : Fin self.size) :
     (countedFind self x).ret = self.find x := by
   apply result_ext
   · exact congrArg UnionFind.FindAux.s (countedAux_ret self x)
   · exact congrArg (fun r ↦ r.root.val) (countedAux_ret self x)
 
 /-- A finite per-call rank-gap bound, not a logarithmic or amortized alpha bound. -/
-theorem countedAux_writes_rank (self : UnionFind) (x : Fin self.size) :
+public theorem countedAux_writes_rank (self : UnionFind) (x : Fin self.size) :
     (countedAux self x).time.2 ≤ self.rankMax - self.rank x := by
   if h : self.arr[x.val].parent = x then
     rw [countedAux_time_root self x h]

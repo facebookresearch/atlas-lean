@@ -19,9 +19,10 @@ import all CSLibExt.Algorithms.Lean.DataStructures.UnionFind.Find
 # Canonical rank-directed union and link
 
 The three public facts give the complete saved rank frame and the deterministic
-rank-selected root of canonical Batteries LINK/UNION. Private source-refinement
-proofs count actual rank tests and parent/rank assignments, and reuse the settled
-FIND refinement through a private import rather than a copied implementation.
+rank-selected root of canonical Batteries LINK/UNION. Source-refinement
+definitions and proofs in `LinkInternal` count actual rank tests and parent/rank
+assignments, and reuse the settled FIND refinement through a private import
+rather than a copied implementation.
 
 Distinct-root rank branches follow CLRS4 §19.3, printed530. Equal-index LINK
 returns without events as a disclosed library extension. These selected events
@@ -35,7 +36,7 @@ namespace Batteries.UnionFind
 
 namespace LinkInternal
 /-- Only a distinct-index tie increases the second node's saved rank. -/
-theorem rankD_linkAux (arr : Array UFNode) (x y : Fin arr.size) (i : Nat) :
+public theorem rankD_linkAux (arr : Array UFNode) (x y : Fin arr.size) (i : Nat) :
     UnionFind.rankD (UnionFind.linkAux arr x y) i =
       if x.val ≠ y.val ∧ arr[x.val].rank = arr[y.val].rank ∧ y.val = i then
         arr[y.val].rank + 1 else UnionFind.rankD arr i := by
@@ -97,7 +98,7 @@ public theorem rootD_link_eq_ite (self : UnionFind) (x y : Fin self.size)
 namespace LinkInternal
 
 /-- UNION's second FIND reads the saved state of its first FIND. -/
-theorem union_carried (self : UnionFind) (x y : Fin self.size) :
+public theorem union_carried (self : UnionFind) (x y : Fin self.size) :
     let first := self.find x
     let y₁ : Fin first.1.size := ⟨y.val, by rw [first.2.property]; exact y.isLt⟩
     let second := first.1.find y₁
@@ -107,7 +108,7 @@ theorem union_carried (self : UnionFind) (x y : Fin self.size) :
   rfl
 
 /-- Canonical path compression preserves every rank, including default indices. -/
-theorem rank_find (self : UnionFind) (x : Fin self.size) (i : Nat) :
+public theorem rank_find (self : UnionFind) (x : Fin self.size) (i : Nat) :
     (self.find x).1.rank i = self.rank i := by
   exact UnionFind.rankD_findAux
 
@@ -125,9 +126,9 @@ public theorem rank_union (self : UnionFind) (x y : Fin self.size) (i : Nat) :
 
 namespace LinkInternal
 
-/-- Private source refinement: rank tests, parent writes, rank writes.
+/-- Source refinement: rank tests, parent writes, rank writes.
 The canonical equal-index guard is not a rank test; it performs none of these events. -/
-@[no_expose] def countedLinkAux (arr : Array UFNode) (x y : Fin arr.size) :
+@[no_expose] public def countedLinkAux (arr : Array UFNode) (x y : Fin arr.size) :
     TimeM (Nat × Nat × Nat) (Array UFNode) := do
   if x.val = y then
     pure arr
@@ -149,7 +150,7 @@ The canonical equal-index guard is not a rank test; it performs none of these ev
         pure arr₁
 
 /-- The saved array is exactly canonical linkAux's result, not a reference-only result. -/
-theorem countedLinkAux_ret (arr : Array UFNode) (x y : Fin arr.size) :
+public theorem countedLinkAux_ret (arr : Array UFNode) (x y : Fin arr.size) :
     (countedLinkAux arr x y).ret = UnionFind.linkAux arr x y := by
   by_cases hxy : x.val = y.val
   · simp [countedLinkAux, UnionFind.linkAux, hxy]
@@ -159,7 +160,7 @@ theorem countedLinkAux_ret (arr : Array UFNode) (x y : Fin arr.size) :
         simp [countedLinkAux, UnionFind.linkAux, hxy, hgt, heq]
 
 /-- Branch counts concern the same saved-array execution that produced ret. -/
-theorem countedLinkAux_time (arr : Array UFNode) (x y : Fin arr.size) :
+public theorem countedLinkAux_time (arr : Array UFNode) (x y : Fin arr.size) :
     (countedLinkAux arr x y).time =
       if x.val = y.val then (0, 0, 0)
       else if arr[y.val].rank < arr[x.val].rank then (1, 1, 0)
@@ -175,7 +176,7 @@ theorem countedLinkAux_time (arr : Array UFNode) (x y : Fin arr.size) :
 
 /-- Product coordinates preserve the frozen FIND and LINK event conventions.
 Each phase executes once and the second FIND reads the first phase's saved store. -/
-@[no_expose] def countedUnion (self : UnionFind) (x y : Fin self.size) :
+@[no_expose] public def countedUnion (self : UnionFind) (x y : Fin self.size) :
     TimeM ((Nat × Nat) × (Nat × Nat × Nat)) (Array UFNode) :=
   let first := Internal.countedFind self x
   let y₁ : Fin first.ret.1.size :=
@@ -187,7 +188,7 @@ Each phase executes once and the second FIND reads the first phase's saved store
   ⟨linked.ret, (first.time + second.time, linked.time)⟩
 
 /-- Full array erasure is the direct canonical UNION result, not a detached class oracle. -/
-theorem countedUnion_ret (self : UnionFind) (x y : Fin self.size) :
+public theorem countedUnion_ret (self : UnionFind) (x y : Fin self.size) :
     (countedUnion self x y).ret = (self.union x y).arr := by
   let last (first : (s : UnionFind) × {_root : Fin s.size // s.size = self.size})
       (second : (s : UnionFind) × {_root : Fin s.size // s.size = first.1.size}) :=
@@ -206,7 +207,7 @@ theorem countedUnion_ret (self : UnionFind) (x y : Fin self.size) :
   exact (union_carried self x y).symm
 
 /-- Exactly two FIND root tests remain after subtracting their actual carried writes. -/
-theorem countedUnion_find_balance (self : UnionFind) (x y : Fin self.size) :
+public theorem countedUnion_find_balance (self : UnionFind) (x y : Fin self.size) :
     (countedUnion self x y).time.1.1 = (countedUnion self x y).time.1.2 + 2 := by
   let first := Internal.countedFind self x
   let y₁ : Fin first.ret.1.size :=
