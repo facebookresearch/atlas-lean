@@ -1,0 +1,278 @@
+name: Bump build cache
+
+# Warm CI's Lean build cache for a Lean/Mathlib bump before the bump is queued.
+#
+# ci.yml keys its cache of .lake/build on lean-toolchain and lake-manifest.json,
+# so a bump, which changes both, matches no cached build. Its pull request
+# build, its merge group, and every merge group queued behind it then build the
+# libraries from scratch: 316 minutes for the v4.36.0 bump (#6018), against a
+# 360-minute job limit and the queue's 360-minute check timeout, and the
+# libraries keep growing. Pull request runs never save a cache, and merge
+# groups read only caches saved from main, so the warm build has to be saved
+# from main.
+#
+# A maintainer dispatches this workflow from main with the bump's pull request
+# number and the head commit they reviewed. The run checks that the commit is
+# the pull request's current head, that the pull request changes the pins, and
+# that `guard` passed on that head. It then builds and checks the head as
+# ci.yml's `build` job does (scripts/check.sh build) and saves .lake/build under
+# ci.yml's key for the new pins. The bump's pull request runs and its merge
+# group, and the merge groups queued behind it, restore that build through
+# ci.yml's restore-keys prefix, as does main's first build after the bump
+# merges.
+#
+# Trust: the run executes the bump's code, and later builds on the new pins
+# restore what it saves, so dispatch it only for a head you reviewed. The key
+# carries the hash of the new pins, so no build on the current pins can restore
+# it. The job's token can only read.
+#
+# A run that runs out of time saves what it built under a `partial` key and
+# fails; dispatching again resumes from that build. A head that does not build
+# or check cleanly also saves under a `partial` key, so only a fully checked
+# build gets ci.yml's key for its commit. Main saves a new entry every 30 to 60
+# minutes and the repository keeps about five, so a warm entry lasts a few
+# hours unless a build restores it: warm the cache right before queueing the
+# bump.
+
+on:
+  workflow_dispatch:
+    inputs:
+      pull-request:
+        description: "Number of the bump pull request"
+        required: true
+        type: string
+      head-sha:
+        description: "Full SHA of the pull request's head commit, as you reviewed it"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: read
+  checks: read
+
+# One run per pull request at a time, never cancelled: two runs would build the
+# same commit twice, and a cancelled run saves nothing.
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.pull-request }}
+  cancel-in-progress: false
+
+jobs:
+  warm:
+    name: warm the bump's build cache
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      - name: Record the start time
+        id: start
+        run: echo "epoch=$(date +%s)" >> "$GITHUB_OUTPUT"
+
+      # A cache saved by a run on any other ref is scoped to that ref, where
+      # pull requests and merge groups cannot read it.
+      - name: Require main
+        run: |
+          if [ "$GITHUB_REF" != refs/heads/main ]; then
+            echo "::error::dispatch this workflow from main (got ${GITHUB_REF})"
+            exit 1
+          fi
+
+      # Before any of the pull request's code is checked out.
+      - name: Check the pull request and its head
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ inputs.pull-request }}
+          HEAD_SHA: ${{ inputs.head-sha }}
+        run: |
+          set -euo pipefail
+          if ! [[ "$PR" =~ ^[1-9][0-9]*$ ]]; then
+            echo "::error::pull-request must be a pull request number, got '$PR'"
+            exit 1
+          fi
+          if ! [[ "$HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::head-sha must be a full 40-character lowercase commit SHA"
+            exit 1
+          fi
+          pr="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" \
+            --jq '[.state, .base.ref, .base.repo.full_name, .head.sha] | @tsv')"
+          IFS=$'\t' read -r state base_ref base_repo head <<< "$pr"
+          if [ "$state" != open ] || [ "$base_ref" != main ] || [ "$base_repo" != "$GITHUB_REPOSITORY" ]; then
+            echo "::error::#${PR} must be an open pull request into main (state ${state}, base ${base_repo}:${base_ref})"
+            exit 1
+          fi
+          if [ "$head" != "$HEAD_SHA" ]; then
+            echo "::error::#${PR}'s head is ${head}, not ${HEAD_SHA}: review the new head and dispatch with it"
+            exit 1
+          fi
+          # The latest guard run on this head must have passed: the bump guard
+          # accepts only a forward move to a final release that every pinned
+          # dependency shares.
+          guard="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${HEAD_SHA}/check-runs?check_name=guard&filter=latest" \
+            --jq '[.check_runs[] | select(.status == "completed")] | sort_by(.completed_at) | last | .conclusion // ""')"
+          if [ "$guard" != success ]; then
+            echo "::error::guard has not passed on ${HEAD_SHA} (latest completed run: '${guard:-none}')"
+            exit 1
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.head-sha }}
+          persist-credentials: false
+
+      # With main's pins this would save under main's own key prefix, where
+      # every pull request and merge group could restore it.
+      - name: Require new pins
+        run: |
+          set -euo pipefail
+          git fetch --quiet --no-tags --depth=1 origin main
+          if git diff --quiet FETCH_HEAD HEAD -- lean-toolchain lake-manifest.json; then
+            echo "::error::this head has main's lean-toolchain and lake-manifest.json, so it is not a bump; ci.yml's cache already covers it"
+            exit 1
+          fi
+
+      - name: Name the cache entries
+        id: key
+        env:
+          PREFIX: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+          HEAD_SHA: ${{ inputs.head-sha }}
+        run: |
+          set -euo pipefail
+          {
+            echo "prefix=${PREFIX}"
+            echo "complete=${PREFIX}${HEAD_SHA}"
+            echo "partial=${PREFIX}partial-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          } >> "$GITHUB_OUTPUT"
+
+      # From here to the build, the same steps as ci.yml's build job.
+      - name: Free disk space for Lean caches
+        run: |
+          set -euo pipefail
+          df -h /
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          df -h /
+
+      - name: Add swap for cold Lean builds
+        run: |
+          set -euo pipefail
+          df -h /mnt
+          free -h
+          sudo fallocate -l 16G /mnt/lean-swap
+          sudo chmod 600 /mnt/lean-swap
+          sudo mkswap /mnt/lean-swap
+          sudo swapon /mnt/lean-swap
+          swapon --show
+          free -h
+
+      - name: Install elan v4.2.4
+        run: |
+          set -euo pipefail
+          installer_dir="${RUNNER_TEMP}/elan-installer"
+          archive="${installer_dir}/elan-x86_64-unknown-linux-gnu.tar.gz"
+          mkdir -p "$installer_dir"
+          curl --fail --silent --show-error --location \
+            --proto '=https' --tlsv1.2 \
+            https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
+            --output "$archive"
+          echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
+            | sha256sum --check --strict
+          tar xzf "$archive" -C "$installer_dir"
+          "$installer_dir/elan-init" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Fetch Mathlib cache
+        run: lake exe cache get
+
+      # An exact hit means this head is already warm. Otherwise this picks up
+      # the newest build on the new pins, such as an earlier run's partial one.
+      - name: Restore an earlier build on the new pins
+        id: restore
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lake/build
+          key: ${{ steps.key.outputs.complete }}
+          restore-keys: |
+            ${{ steps.key.outputs.prefix }}
+
+      # The memory-heavy modules first, one at a time, as in ci.yml (keep the
+      # list the same; scripts/test_bump_cache_workflow.py checks it), then
+      # ci.yml's `scripts/check.sh build`. Each command gets the time left
+      # before the deadline, which leaves room to save the build.
+      - name: Build and check the head
+        id: build
+        if: steps.restore.outputs.cache-hit != 'true'
+        env:
+          START: ${{ steps.start.outputs.epoch }}
+        run: |
+          set -uo pipefail
+          deadline=$(( START + 325 * 60 ))
+          status=ok
+          run_until_deadline() {
+            local minutes=$(( (deadline - $(date +%s)) / 60 ))
+            if [ "$minutes" -lt 1 ]; then
+              status=timeout
+              return
+            fi
+            local began
+            began=$(date +%s)
+            timeout --signal=TERM --kill-after=5m "${minutes}m" "$@"
+            local rc=$?
+            # 124: timed out; 137: killed after the grace period. An exit at
+            # the limit is the deadline, any other failure is the build's.
+            if { [ "$rc" -eq 124 ] || [ "$rc" -eq 137 ]; } \
+              && [ $(( $(date +%s) - began )) -ge $(( minutes * 60 )) ]; then
+              status=timeout
+            elif [ "$rc" -ne 0 ]; then
+              status=failed
+            fi
+          }
+          for module in \
+            MathlibExt.Combinatorics.Enumerative.Nontrivial1234_3412Classes \
+            MathlibExt.Combinatorics.Words.TernaryAbelianCubeFreeLowerBound \
+            MathlibExtTest.Combinatorics.InfiniteWord.CrochemoreSquarefreeCriterion; do
+            if [ "$status" = ok ]; then
+              run_until_deadline lake build "$module"
+            fi
+          done
+          # A failed heavy module would be retried alongside the others, which
+          # can exhaust the runner's memory.
+          if [ "$status" = ok ]; then
+            run_until_deadline scripts/check.sh build
+          fi
+          echo "status=${status}" >> "$GITHUB_OUTPUT"
+
+      - name: Save the build
+        if: ${{ !cancelled() && steps.build.outputs.status != '' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lake/build
+          key: ${{ steps.build.outputs.status == 'ok' && steps.key.outputs.complete || steps.key.outputs.partial }}
+
+      - name: Report
+        if: ${{ !cancelled() }}
+        env:
+          HIT: ${{ steps.restore.outputs.cache-hit }}
+          STATUS: ${{ steps.build.outputs.status }}
+          COMPLETE: ${{ steps.key.outputs.complete }}
+          PARTIAL: ${{ steps.key.outputs.partial }}
+        run: |
+          set -euo pipefail
+          if [ "$HIT" = true ]; then
+            echo "Already warm: ${COMPLETE}" | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          case "$STATUS" in
+            ok)
+              echo "Saved ${COMPLETE}" | tee -a "$GITHUB_STEP_SUMMARY"
+              ;;
+            timeout)
+              echo "Out of time: saved the partial build as ${PARTIAL}. Dispatch again with the same inputs to continue." | tee -a "$GITHUB_STEP_SUMMARY"
+              exit 1
+              ;;
+            failed)
+              echo "The head does not build or check cleanly (see the build step): saved what was built as ${PARTIAL}." | tee -a "$GITHUB_STEP_SUMMARY"
+              exit 1
+              ;;
+            *)
+              echo "The build did not run; nothing was saved." | tee -a "$GITHUB_STEP_SUMMARY"
+              exit 1
+              ;;
+          esac
