@@ -449,18 +449,25 @@ class WorkflowTests(DiagnosticFixture):
         return scripts[0]
 
     def test_diagnostics_step_is_found_whatever_its_key_order(self) -> None:
-        workflow = (
-            ROOT.parent / ".github/workflows/source-diagnostics.yml"
-        ).read_text()
-        expected = step_scripts(workflow, "diagnostics")
-        reordered = workflow.replace(
-            "      - name: Test and run source diagnostics\n        id: diagnostics\n",
-            "      - id: diagnostics\n        name: Test and run source diagnostics\n",
-        )
-        self.assertNotEqual(reordered, workflow)
-        reordered = reordered.rstrip("\n") + "\n        timeout-minutes: 8\n"
-        self.assertEqual(len(expected), 1)
-        self.assertEqual(step_scripts(reordered, "diagnostics"), expected)
+        script = "set -euo pipefail\npython3 -m unittest discover -s scripts -v\n"
+        block = "".join(f"          {line}\n" for line in script.splitlines())
+        layouts = {
+            "id after name": (
+                "jobs:\n  diagnostics:\n    steps:\n"
+                "      - name: Other\n        run: |\n          echo other\n"
+                "      - name: Test and run source diagnostics\n        id: diagnostics\n"
+                "        shell: bash\n        run: |\n" + block
+            ),
+            "id first, key after the block": (
+                "jobs:\n  diagnostics:\n    steps:\n"
+                "      - id: diagnostics\n        name: Test and run source diagnostics\n"
+                "        run: |\n" + block + "        timeout-minutes: 8\n"
+                "      - name: Later\n        run: echo later\n"
+            ),
+        }
+        for label, workflow in layouts.items():
+            with self.subTest(label):
+                self.assertEqual(step_scripts(workflow, "diagnostics"), [script])
 
     def prepare_workflow(self) -> None:
         scripts = self.root / "scripts"

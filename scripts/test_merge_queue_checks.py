@@ -176,8 +176,9 @@ def may_be_named(name: str, check: str) -> bool:
 
 
 def runs_this_test(step) -> bool:
-    return (isinstance(step, dict) and set(step) <= STEP_KEYS
-            and " ".join(str(step.get("run", "")).split()) == COMMAND)
+    run = str(step.get("run", "")).strip() if isinstance(step, dict) else ""
+    return (set(step or {}) <= STEP_KEYS and "\n" not in run
+            and " ".join(run.split()) == COMMAND)
 
 
 def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
@@ -292,7 +293,7 @@ FIXTURE = {
         "on": {"push": {"branches": "main"}, "pull_request": "", "merge_group": ""},
         "jobs": {"source-diagnostics": {"steps": [
             {"uses": "actions/checkout"},
-            {"name": "Test", "run": COMMAND.replace(" -s", "\n-s") + "\n"}]}},
+            {"name": "Test", "run": COMMAND.replace(" -s", "  -s") + "\n"}]}},
     },
     "bump-guard.yml": {
         "name": "Bump guard",
@@ -467,6 +468,9 @@ class MergeQueueChecks(unittest.TestCase):
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
                     [{"run": 'if [ "$GITHUB_EVENT_NAME" = pull_request ]; then\n'
                              + COMMAND + "\nfi\n"}]), "has no step that is exactly"),
+            "this test split over two lines": (
+                put("ci.yml", "jobs", "preflight", "steps",
+                    [{"run": COMMAND.replace(" -s", "\n-s")}]), "has no step that is exactly"),
             "this test commented out": (
                 put("ci.yml", "jobs", "preflight", "steps", [{"run": "# " + COMMAND}]),
                 "has no step that is exactly"),
