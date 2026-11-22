@@ -530,6 +530,25 @@ Mathlib bump that moves a credited declaration to another module stops
 `lean-facts`, which names the new module, until the row names it: the bump
 updates the row in the same change.
 
+### Pages imported from mathgraph
+
+`scripts/import_mathgraph.py` adds planned pages adapted from mathgraph, Jack
+McCarthy's graph of textbook results, from a manifest reviewed row by row
+([mathgraph-import.md](mathgraph-import.md)). The annotation of such a page
+records its origin under `org.atlas-wiki` as `"seed": {"source": "mathgraph",
+"node": "<node id>", "revision": "<commit>"}`. A prerequisite not yet linked by
+the import is listed there as well, in `"pending": [{"key": "<mathgraph key>",
+"kind": "statement" | "proof", "reason": "<reason>"}]`; a pending entry does
+not imply that no page states it. The page is then a
+[node still to expand](#nodes-still-to-expand): it carries `not_ready`, and its
+`## Expansion` section names the prerequisites a good expansion links. The
+importer never edits such a page again. An editor who links a prerequisite
+under `## Depends on` or `## Proof depends on` removes its entry in the same
+change, and `## Expansion` and `not_ready` with the last one; no tool makes or
+checks that edit. After the import a page is edited like any other;
+`scripts/mathgraph-map.jsonl` keeps the digests of mathgraph's text, so that a
+later release can tell what a later mathgraph revision changed.
+
 ## Page chrome
 
 GitHub Pages publishes a site of at most 1 GB, so the theme's share of each
