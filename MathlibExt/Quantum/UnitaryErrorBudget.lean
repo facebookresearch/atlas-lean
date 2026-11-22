@@ -130,14 +130,115 @@ theorem norm_list_ofFn_prod_sub_le {R : Type*} [NormedRing R] {T : ℕ}
         _ ≤ ‖u 0 - v 0‖ + ∑ i : Fin T, ‖u i.succ - v i.succ‖ :=
           add_le_add g1 g2
 
+/-- Chronological product of a gate family: index `0` is the first gate applied
+to the state, so the total operator is `U (T - 1) * ... * U 1 * U 0`. -/
+def circuitProd {R : Type*} [Monoid R] {T : ℕ} (U : Fin T → R) : R :=
+  (List.ofFn U).reverse.prod
+
+/-- Telescoping bound for two chronological circuit products in a normed
+ring. -/
+private theorem norm_circuitProd_sub_le {R : Type*} [NormedRing R] {T : ℕ}
+    (u v : Fin T → R) (hu : ∀ i, ‖u i‖ ≤ 1) (hv : ∀ i, ‖v i‖ ≤ 1) :
+    ‖circuitProd u - circuitProd v‖ ≤ ∑ i, ‖u i - v i‖ := by
+  suffices h : ∀ (T : ℕ) (u v : Fin T → R), (∀ i, ‖u i‖ ≤ 1) →
+      (∀ i, ‖v i‖ ≤ 1) →
+      ‖circuitProd u - circuitProd v‖ ≤ ∑ i, ‖u i - v i‖ from
+    h T u v hu hv
+  intro T
+  induction T with
+  | zero =>
+    intro u v _ _
+    simp only [circuitProd, List.ofFn_zero, List.reverse_nil, List.prod_nil,
+      sub_self, norm_zero]
+    exact Finset.sum_nonneg fun i _ => norm_nonneg _
+  | succ T ih =>
+    intro u v hu hv
+    by_cases hT : T = 0
+    · subst hT
+      have hu0 : circuitProd u = u 0 := by
+        simp [circuitProd, List.ofFn_succ, List.ofFn_zero, List.reverse_cons,
+          List.reverse_nil, List.prod_append, List.prod_cons, List.prod_nil]
+      have hv0 : circuitProd v = v 0 := by
+        simp [circuitProd, List.ofFn_succ, List.ofFn_zero, List.reverse_cons,
+          List.reverse_nil, List.prod_append, List.prod_cons, List.prod_nil]
+      rw [hu0, hv0, Fin.sum_univ_succ]
+      exact le_add_of_nonneg_right
+        (Finset.sum_nonneg fun i _ => norm_nonneg _)
+    · have hunfold : circuitProd u
+          = circuitProd (fun i : Fin T => u i.succ) * u 0 := by
+        simp only [circuitProd, List.ofFn_succ, List.reverse_cons,
+          List.prod_append, List.prod_cons, List.prod_nil, mul_one]
+      have hvnfold : circuitProd v
+          = circuitProd (fun i : Fin T => v i.succ) * v 0 := by
+        simp only [circuitProd, List.ofFn_succ, List.reverse_cons,
+          List.prod_append, List.prod_cons, List.prod_nil, mul_one]
+      rw [hunfold, hvnfold, Fin.sum_univ_succ]
+      have hPne : (List.ofFn fun i : Fin T => u i.succ) ≠ [] := by
+        intro hcon
+        rw [List.ofFn_eq_nil_iff] at hcon
+        exact hT hcon
+      have hQne : (List.ofFn fun i : Fin T => v i.succ) ≠ [] := by
+        intro hcon
+        rw [List.ofFn_eq_nil_iff] at hcon
+        exact hT hcon
+      have hPrev_ne : (List.ofFn fun i : Fin T => u i.succ).reverse ≠ [] := by
+        intro hcon
+        have h := congrArg List.reverse hcon
+        simp only [List.reverse_reverse, List.reverse_nil] at h
+        exact hPne h
+      have hQrev_ne : (List.ofFn fun i : Fin T => v i.succ).reverse ≠ [] := by
+        intro hcon
+        have h := congrArg List.reverse hcon
+        simp only [List.reverse_reverse, List.reverse_nil] at h
+        exact hQne h
+      have hP : ‖circuitProd (fun i : Fin T => u i.succ)‖ ≤ 1 := by
+        show ‖(List.ofFn fun i : Fin T => u i.succ).reverse.prod‖ ≤ 1
+        exact norm_list_prod_le_one_of_ne_nil (fun x hx => by
+          rw [List.mem_reverse] at hx
+          obtain ⟨i, hi⟩ := List.mem_ofFn.mp hx
+          rw [← hi]
+          exact hu _) hPrev_ne
+      have hQ : ‖circuitProd (fun i : Fin T => v i.succ)‖ ≤ 1 := by
+        show ‖(List.ofFn fun i : Fin T => v i.succ).reverse.prod‖ ≤ 1
+        exact norm_list_prod_le_one_of_ne_nil (fun x hx => by
+          rw [List.mem_reverse] at hx
+          obtain ⟨i, hi⟩ := List.mem_ofFn.mp hx
+          rw [← hi]
+          exact hv _) hQrev_ne
+      have ih' := ih (fun i : Fin T => u i.succ) (fun i : Fin T => v i.succ)
+        (fun i => hu _) (fun i => hv _)
+      have hdecomp : ∀ P Q a b : R,
+          P * a - Q * b = Q * (a - b) + (P - Q) * a := by
+        intro P Q a b
+        simp only [sub_mul, mul_sub]
+        abel
+      rw [hdecomp]
+      have g1 : ‖circuitProd (fun i : Fin T => v i.succ) * (u 0 - v 0)‖ ≤
+          ‖u 0 - v 0‖ :=
+        le_trans (norm_mul_le _ _) (mul_le_of_le_one_left (norm_nonneg _) hQ)
+      have g2 : ‖(circuitProd (fun i : Fin T => u i.succ) -
+          circuitProd (fun i : Fin T => v i.succ)) * u 0‖ ≤
+          ∑ i : Fin T, ‖u i.succ - v i.succ‖ :=
+        le_trans (norm_mul_le _ _)
+          (le_trans (mul_le_of_le_one_right (norm_nonneg _) (hu 0)) ih')
+      calc ‖circuitProd (fun i : Fin T => v i.succ) * (u 0 - v 0) +
+            (circuitProd (fun i : Fin T => u i.succ) -
+              circuitProd (fun i : Fin T => v i.succ)) * u 0‖
+          ≤ ‖circuitProd (fun i : Fin T => v i.succ) * (u 0 - v 0)‖ +
+            ‖(circuitProd (fun i : Fin T => u i.succ) -
+              circuitProd (fun i : Fin T => v i.succ)) * u 0‖ :=
+            norm_add_le _ _
+        _ ≤ ‖u 0 - v 0‖ + ∑ i : Fin T, ‖u i.succ - v i.succ‖ :=
+          add_le_add g1 g2
+
 /-- Operator-norm errors from replacing unitary gates add at most linearly. -/
 theorem norm_circuit_sub_le {n : Type*} [Fintype n] [DecidableEq n] {T : ℕ}
     (U V : Fin T → Matrix n n ℂ)
     (hU : ∀ i, U i ∈ Matrix.unitaryGroup n ℂ)
     (hV : ∀ i, V i ∈ Matrix.unitaryGroup n ℂ)
     (ε : Fin T → ℝ) (hε : ∀ i, ‖U i - V i‖ ≤ ε i) :
-    ‖(List.ofFn U).prod - (List.ofFn V).prod‖ ≤ ∑ i, ε i := by
-  have h := norm_list_ofFn_prod_sub_le U V
+    ‖circuitProd U - circuitProd V‖ ≤ ∑ i, ε i := by
+  have h := norm_circuitProd_sub_le U V
     (fun i => norm_mem_unitaryGroup_le_one (hU i))
     (fun i => norm_mem_unitaryGroup_le_one (hV i))
   exact le_trans h (Finset.sum_le_sum fun i _ => hε i)
@@ -222,25 +323,29 @@ theorem norm_inner_circuit_conj_sub_le {n : Type*} [Fintype n] [DecidableEq n]
     {P : Matrix n n ℂ} (hP : IsStarProjection P)
     (ψ : EuclideanSpace ℂ n) (hψ : ‖ψ‖ = 1) :
     ‖⟪ψ, Matrix.toEuclideanCLM (n := n) (𝕜 := ℂ)
-        (star (List.ofFn U).prod * P * (List.ofFn U).prod) ψ⟫_ℂ -
+        (star (circuitProd U) * P * (circuitProd U)) ψ⟫_ℂ -
       ⟪ψ, Matrix.toEuclideanCLM (n := n) (𝕜 := ℂ)
-        (star (List.ofFn V).prod * P * (List.ofFn V).prod) ψ⟫_ℂ‖ ≤
+        (star (circuitProd V) * P * (circuitProd V)) ψ⟫_ℂ‖ ≤
         2 * ∑ i, ε i := by
-  have hUprod : (List.ofFn U).prod ∈ Matrix.unitaryGroup n ℂ :=
-    Submonoid.list_prod_mem _ fun x hx => by
+  have hUprod : circuitProd U ∈ Matrix.unitaryGroup n ℂ := by
+    show (List.ofFn U).reverse.prod ∈ Matrix.unitaryGroup n ℂ
+    exact Submonoid.list_prod_mem _ fun x hx => by
+      rw [List.mem_reverse] at hx
       obtain ⟨i, rfl⟩ := List.mem_ofFn.mp hx
       exact hU i
-  have hVprod : (List.ofFn V).prod ∈ Matrix.unitaryGroup n ℂ :=
-    Submonoid.list_prod_mem _ fun x hx => by
+  have hVprod : circuitProd V ∈ Matrix.unitaryGroup n ℂ := by
+    show (List.ofFn V).reverse.prod ∈ Matrix.unitaryGroup n ℂ
+    exact Submonoid.list_prod_mem _ fun x hx => by
+      rw [List.mem_reverse] at hx
       obtain ⟨i, rfl⟩ := List.mem_ofFn.mp hx
       exact hV i
   have h3 := norm_inner_conj_sub_le hUprod hVprod hP ψ hψ
   have h2 := norm_circuit_sub_le U V hU hV ε hε
   calc ‖⟪ψ, Matrix.toEuclideanCLM (n := n) (𝕜 := ℂ)
-          (star (List.ofFn U).prod * P * (List.ofFn U).prod) ψ⟫_ℂ -
+          (star (circuitProd U) * P * (circuitProd U)) ψ⟫_ℂ -
         ⟪ψ, Matrix.toEuclideanCLM (n := n) (𝕜 := ℂ)
-          (star (List.ofFn V).prod * P * (List.ofFn V).prod) ψ⟫_ℂ‖
-      ≤ 2 * ‖(List.ofFn U).prod - (List.ofFn V).prod‖ := h3
+          (star (circuitProd V) * P * (circuitProd V)) ψ⟫_ℂ‖
+      ≤ 2 * ‖circuitProd U - circuitProd V‖ := h3
     _ ≤ 2 * ∑ i, ε i := by gcongr
 
 end MathlibExt.Quantum.UnitaryErrorBudget
