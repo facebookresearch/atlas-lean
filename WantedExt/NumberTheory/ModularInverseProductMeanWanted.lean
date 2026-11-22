@@ -19,9 +19,13 @@ namespace MetaMathlibExt
 
 open Complex Finset
 
-/-- The sum `S_k(n, m) := ∑ a_1 ⋯ a_k` over `k`-tuples `(a_1, …, a_k) ∈ {1, …, n}^k` with every
-`a_j` coprime to `n` and `a_1 ⋯ a_k ≡ m (mod n)`. For `k = 2`, `m = 1` this is the sum of the
-products `a ā` of the residues coprime to `n` and their modular inverses.
+/-- **The modular product sum $S_k(n, m)$.** For natural numbers $k$, $n$ and $m$, the modular
+product sum $S_k(n, m)$ is the natural number
+$$S_k(n, m) = \sum a_1 a_2 \cdots a_k,$$
+the sum running over all $k$-tuples $(a_1, \dots, a_k) \in \{1, \dots, n\}^k$ such that every
+$a_j$ is coprime to $n$ and $a_1 a_2 \cdots a_k \equiv m \pmod n$. For $k = 2$ and $m = 1$ this is
+the sum of the products $a \bar{a}$, where $a$ runs over the numbers in $\{1, \dots, n\}$ coprime
+to $n$ and $\bar{a} \in \{1, \dots, n\}$ is the inverse of $a$ modulo $n$.
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, equation (2). -/
@@ -30,22 +34,28 @@ public def modularProductSum (k n m : ℕ) : ℕ :=
       (∀ j, Nat.Coprime (a j) n) ∧ (∏ j, a j) ≡ m [MOD n],
     ∏ j, a j
 
-/-- Characteristic value: `S_2(3, 1) = 1 · 1 + 2 · 2 = 5`.
+/-- **The modular product sum $S_2(3, 1)$.** The modular product sum satisfies $S_2(3, 1) = 5$:
+the pairs $(a_1, a_2) \in \{1, 2, 3\}^2$ of numbers coprime to $3$ with $a_1 a_2 \equiv 1 \pmod 3$
+are $(1, 1)$ and $(2, 2)$, and $1 \cdot 1 + 2 \cdot 2 = 5$.
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, equation (2). -/
 public theorem modularProductSum_two_three_one : modularProductSum 2 3 1 = 5 := by
   decide
 
-/-- Characteristic value: `S_1(5, 3) = 3` (the only `a ∈ {1, …, 5}` with `a ≡ 3 (mod 5)`).
+/-- **The modular product sum $S_1(5, 3)$.** The modular product sum satisfies $S_1(5, 3) = 3$:
+the only $a \in \{1, \dots, 5\}$ coprime to $5$ with $a \equiv 3 \pmod 5$ is $a = 3$.
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, equation (2). -/
 public theorem modularProductSum_one_five_three : modularProductSum 1 5 3 = 3 := by
   decide
 
-/-- The constant `C_q := ∏_{p^α ∥ q} (1 + (2p³ + p² - 1) / ((p² + 1)(p² + p + 1))
-- 1 / (p^{3(α-1)} (p² + p + 1)))` of Xu and Zhang.
+/-- **Xu–Zhang constant.** For a natural number $q$, the Xu–Zhang constant $C_q$ is the product
+over the prime factors $p$ of $q$, with $p^\alpha$ the exact power of $p$ dividing $q$,
+$$C_q = \prod_{p^\alpha \parallel q} \left(1 + \frac{2p^3 + p^2 - 1}{(p^2 + 1)(p^2 + p + 1)} -
+\frac{1}{p^{3(\alpha - 1)} (p^2 + p + 1)}\right).$$
+For $q = 1$, and by convention for $q = 0$, there are no prime factors, so $C_0 = C_1 = 1$.
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, equation (4), quoting Z. Xu and W. Zhang, *Fourth
@@ -55,8 +65,8 @@ public noncomputable def xuZhangConstant (q : ℕ) : ℝ :=
     (1 + (2 * (p : ℝ) ^ 3 + (p : ℝ) ^ 2 - 1) / (((p : ℝ) ^ 2 + 1) * ((p : ℝ) ^ 2 + p + 1)) -
       1 / ((p : ℝ) ^ (3 * (q.factorization p - 1)) * ((p : ℝ) ^ 2 + p + 1)))
 
-/-- Characteristic value at a prime `p`:
-`C_p = 1 + (2p³ + p² - 1) / ((p² + 1)(p² + p + 1)) - 1 / (p² + p + 1)`.
+/-- **Xu–Zhang constant at a prime.** For every prime $p$, the Xu–Zhang constant of $p$ is
+$$C_p = 1 + \frac{2p^3 + p^2 - 1}{(p^2 + 1)(p^2 + p + 1)} - \frac{1}{p^2 + p + 1}.$$
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, equation (4). -/
@@ -66,9 +76,14 @@ public theorem xuZhangConstant_prime {p : ℕ} (hp : p.Prime) :
         1 / ((p : ℝ) ^ 2 + p + 1) := by
   simp [xuZhangConstant, hp.primeFactors, hp.factorization_self]
 
-/-- Theorem 1: for `k ≥ 3`, `n ≥ 2` and `m` coprime to `n`,
-`|S_k(n, m) - 2^{-k} n^k φ(n)^{k-1}| ≤ (2√3)^k n^{3k/2} (log n)^k` (the paper's explicit
-`O^*` notation). The paper's `m ≥ 1` follows from `gcd(m, n) = 1` and `n ≥ 2`.
+/-- **Explicit estimate for the modular product sum $S_k(n, m)$.** Let $\varphi$ be Euler's
+totient function and $S_k(n, m)$ the modular product sum. For all natural numbers $k \ge 3$,
+$n \ge 2$ and $m$ with $\gcd(m, n) = 1$,
+
+$$\left| S_k(n, m) - \frac{n^k \varphi(n)^{k-1}}{2^k} \right| \le
+(2\sqrt{3})^k \, n^{3k/2} (\log n)^k.$$
+
+The paper also assumes $m \ge 1$, which follows from $\gcd(m, n) = 1$ and $n \ge 2$.
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, Theorem 1. -/
@@ -77,9 +92,13 @@ public theorem_wanted modularProductSum_explicit_estimate {k n m : ℕ} (hk : 3 
     |(modularProductSum k n m : ℝ) - (n : ℝ) ^ k * (n.totient : ℝ) ^ (k - 1) / 2 ^ k| ≤
       (2 * Real.sqrt 3) ^ k * (n : ℝ) ^ ((3 * k : ℝ) / 2) * Real.log n ^ k
 
-/-- Theorem 2: for fixed `k ≥ 4` there is `C_k` such that for every odd `n ≥ 3` and every `m`
-coprime to `n`, `|S_k(n, m) - 2^{-k} n^k φ(n)^{k-1}|
-≤ C_k n^{3(k-2)/2} φ(n)³ (log n)^{k-4} (log log n)²`.
+/-- **Estimate for the modular product sum $S_k(n, m)$ at odd moduli.** Let $\varphi$ be Euler's
+totient function and $S_k(n, m)$ the modular product sum. For every natural number $k \ge 4$
+there is a real constant $C_k$ such that for every odd natural number $n \ge 3$ and every natural
+number $m$ with $\gcd(m, n) = 1$,
+
+$$\left| S_k(n, m) - \frac{n^k \varphi(n)^{k-1}}{2^k} \right| \le
+C_k \, n^{3(k-2)/2} \varphi(n)^3 (\log n)^{k-4} (\log \log n)^2.$$
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, Theorem 2. -/
@@ -89,9 +108,13 @@ public theorem_wanted modularProductSum_odd_estimate {k : ℕ} (hk : 4 ≤ k) :
         C * (n : ℝ) ^ ((3 * ((k : ℝ) - 2)) / 2) * (n.totient : ℝ) ^ 3 *
           Real.log n ^ (k - 4) * Real.log (Real.log n) ^ 2
 
-/-- Theorem 3: for `n ≥ 2` and `m` coprime to `n`,
-`|S_2(n, m) - n² φ(n) / 4| ≤ n² σ_{1/2}(n) (τ(n) log(e n))² + n φ(n) / 4`, where
-`σ_{1/2}(n) = ∑_{d ∣ n} √d` and `τ(n)` is the number of divisors.
+/-- **Explicit estimate for the modular product sum $S_2(n, m)$.** Let $\varphi$ be Euler's
+totient function, $\tau(n)$ the number of divisors of $n$,
+$\sigma_{1/2}(n) = \sum_{d \mid n} \sqrt{d}$ and $S_2(n, m)$ the modular product sum. For all
+natural numbers $n \ge 2$ and $m$ with $\gcd(m, n) = 1$,
+
+$$\left| S_2(n, m) - \frac{n^2 \varphi(n)}{4} \right| \le
+n^2 \sigma_{1/2}(n) \bigl(\tau(n) \log(en)\bigr)^2 + \frac{n \varphi(n)}{4}.$$
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, Theorem 3. -/
@@ -102,9 +125,14 @@ public theorem_wanted modularProductSum_two_explicit_estimate {n m : ℕ} (hn : 
           ((n.divisors.card : ℝ) * Real.log (Real.exp 1 * n)) ^ 2 +
         n * n.totient / 4
 
-/-- Theorem 4, mean square: for every `ε > 0` there is `C` such that for every odd `n ≥ 3`,
-`|∑_{1 ≤ m ≤ n, (m, n) = 1} (S_2(n, m) - n² φ(n) / 4)² - (5 C_n / 144) (n φ(n))³|
-≤ C n^{5 + ε}`, with `C_n` the Xu-Zhang constant of equation (4).
+/-- **Mean square of the error in the modular product sum $S_2(n, m)$.** Let $\varphi$ be Euler's
+totient function, $S_2(n, m)$ the modular product sum and $C_n$ the Xu–Zhang constant of $n$.
+For every real $\varepsilon > 0$ there is a real constant $C$ such that for every odd natural
+number $n \ge 3$,
+
+$$\left| \sum_{1 \le m \le n,\ \gcd(m, n) = 1}
+\left( S_2(n, m) - \frac{n^2 \varphi(n)}{4} \right)^2 -
+\frac{5 C_n}{144} \bigl(n \varphi(n)\bigr)^3 \right| \le C n^{5 + \varepsilon}.$$
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, Theorem 4. -/
@@ -115,8 +143,12 @@ public theorem_wanted modularProductSum_two_mean_square {ε : ℝ} (hε : 0 < ε
           5 * xuZhangConstant n / 144 * ((n : ℝ) * n.totient) ^ 3| ≤
         C * (n : ℝ) ^ (5 + ε)
 
-/-- Theorem 4, consequence: there are `c > 0` and `N` such that every odd `n ≥ N` admits
-`m ∈ {1, …, n}` coprime to `n` with `|S_2(n, m) - n² φ(n) / 4| ≥ c n^{3/2} φ(n)`.
+/-- **Large values of the error in the modular product sum $S_2(n, m)$.** Let $\varphi$ be Euler's
+totient function and $S_2(n, m)$ the modular product sum. There are a real number $c > 0$ and a
+natural number $N$ such that every odd natural number $n \ge N$ admits a natural number $m$ with
+$1 \le m \le n$ and $\gcd(m, n) = 1$ for which
+
+$$\left| S_2(n, m) - \frac{n^2 \varphi(n)}{4} \right| \ge c \, n^{3/2} \varphi(n).$$
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, Theorem 4. -/
@@ -127,10 +159,15 @@ public theorem_wanted modularProductSum_two_error_large :
           |(modularProductSum 2 n m : ℝ) - (n : ℝ) ^ 2 * n.totient / 4|
 
 open Classical in
-/-- Lemma 1 (Xu and Zhang): for every `ℓ ≥ 0` and `ε > 0` there is `C` such that for every odd
-`q ≥ 3`,
-`∑_{χ mod q, χ(-1) = -1} χ̄(2^ℓ) |∑_{a=1}^q a χ(a)|⁴ = C_q (3ℓ + 5) q³ φ(q)⁴ / (72 · 2^{ℓ+1}) + O(q^{6+ε})`,
-the error bounded by `C q^{6+ε}` (implied constant depending on `ℓ` and `ε`).
+/-- **Xu–Zhang twisted fourth moment of weighted character sums.** Let $\varphi$ be Euler's totient
+function and $C_q$ the Xu–Zhang constant of $q$. For every natural number $\ell$ and every real
+$\varepsilon > 0$ there is a real constant $C$ such that for every odd natural number $q \ge 3$,
+
+$$\left| \sum_{\chi \bmod q,\ \chi(-1) = -1} \overline{\chi(2^\ell)}
+\left| \sum_{a=1}^{q} a \, \chi(a) \right|^4 -
+\frac{C_q (3\ell + 5) q^3 \varphi(q)^4}{72 \cdot 2^{\ell + 1}} \right| \le C q^{6 + \varepsilon},$$
+
+where $\chi$ runs over the complex Dirichlet characters modulo $q$ with $\chi(-1) = -1$.
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, Lemma 1 (`integers-2024-A33-lem-1`, journal PDF
@@ -145,8 +182,12 @@ public theorem_wanted odd_character_twisted_weighted_sum_fourth_moment (ℓ : �
           (72 * 2 ^ (ℓ + 1)) : ℝ)‖ ≤ C * (q : ℝ) ^ (6 + ε)
 
 open Classical in
-/-- Corollary 1: there is `C` such that for every odd `n ≥ 3`,
-`∑_{χ mod n, χ(-1) = -1} |∑_{a=1}^n a χ(a)|⁴ ≤ C n³ φ(n)⁴ (log log n)²`.
+/-- **Fourth moment of weighted odd character sums.** There is a real constant $C$ such that for
+every odd integer $n \ge 3$,
+$$\sum_{\chi \text{ odd}} \Bigl|\sum_{a=1}^{n} a\, \chi(a)\Bigr|^4 \le
+C\, n^3 \varphi(n)^4 (\log\log n)^2,$$
+where $\chi$ runs over the odd Dirichlet characters modulo $n$ (those with $\chi(-1) = -1$) and
+$\varphi$ is Euler's totient function.
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, Corollary 1. -/
@@ -155,11 +196,12 @@ public theorem_wanted odd_character_weighted_sum_fourth_moment :
       ∑ χ : DirichletCharacter ℂ n with χ.Odd, ‖∑ a ∈ Icc 1 n, (a : ℂ) * χ a‖ ^ 4 ≤
         C * (n : ℝ) ^ 3 * (n.totient : ℝ) ^ 4 * Real.log (Real.log n) ^ 2
 
-/-- Lemma 2: for `n, k ≥ 1` and `m` coprime to `n`,
-`|∑_{1 ≤ a ≤ n, (a, n) = 1} a e_n(k m ā)| ≤ 2 n^{3/2} τ(n) (n, k)^{1/2} log(e n)`, where
-`e_n(x) = exp(2πi x / n)` and `ā` is the inverse of `a` modulo `n` (represented by
-`ZMod.val`; `e_n` is `n`-periodic). The paper's `m ≥ 1` follows from coprimality for `n ≥ 2`;
-for `n = 1` the claim holds for every `m`.
+/-- **Bound for a weighted Kloosterman-type sum.** Let $n \ge 1$ and $k \ge 1$ be integers and let
+$m$ be a natural number coprime to $n$. Write $e_n(x) = e^{2\pi i x / n}$, and for $a$ coprime to
+$n$ let $\bar a \in \{0, \dots, n - 1\}$ be the inverse of $a$ modulo $n$. Then
+$$\Bigl|\sum_{1 \le a \le n,\ \gcd(a, n) = 1} a\, e_n(k m \bar a)\Bigr| \le
+2 n^{3/2} \tau(n) \sqrt{\gcd(n, k)} \log(e n),$$
+where $\tau(n)$ is the number of positive divisors of $n$.
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, Lemma 2. -/
@@ -170,8 +212,9 @@ public theorem_wanted weighted_kloosterman_sum_bound {n k m : ℕ} (hn : 1 ≤ n
       2 * (n : ℝ) ^ ((3 : ℝ) / 2) * n.divisors.card * Real.sqrt (Nat.gcd n k) *
         Real.log (Real.exp 1 * n)
 
-/-- Lemma 3: for `q ≥ 2` and `q ∤ k`,
-`∑_{b=1}^{q-1} b e_q(-k b) = -q / (1 - e_q(-k))`. The paper's `k ≥ 1` follows from `q ∤ k`.
+/-- **Weighted sum of an additive character.** Let $q \ge 2$, let $k$ be a natural number not
+divisible by $q$, and write $e_q(x) = e^{2\pi i x / q}$. Then
+$$\sum_{b=1}^{q-1} b\, e_q(-kb) = -\frac{q}{1 - e_q(-k)}.$$
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, Lemma 3. -/
@@ -179,9 +222,13 @@ public theorem_wanted sum_mul_additive_character {q k : ℕ} (hq : 2 ≤ q) (hk 
     ∑ b ∈ Icc 1 (q - 1), (b : ℂ) * exp (2 * Real.pi * I * (-(k * b : ℂ)) / q) =
       -q / (1 - exp (2 * Real.pi * I * (-(k : ℂ)) / q))
 
-/-- Lemma 4: for `n ≥ 2` and `k ≥ 1`,
-`∑_{1 ≤ b ≤ n, (b, n) = 1} b e_n(-k b) = -n ∑_{d ∣ n, (n/d) ∤ k} μ(d) / (1 - e_{n/d}(-k))
-+ (n/2) ∑_{d ∣ n, d < n, (n/d) ∣ k} μ(d) (n/d - 1)`.
+/-- **Weighted additive character sum over reduced residues.** For a positive integer $r$ and an
+integer $x$ write $e_r(x) = \exp(2\pi i x / r)$, and let $\mu$ be the Möbius function. For all
+natural numbers $n \ge 2$ and $k \ge 1$,
+
+$$\sum_{1 \le b \le n,\ \gcd(b, n) = 1} b \, e_n(-kb)
+= -n \sum_{d \mid n,\ (n/d) \nmid k} \frac{\mu(d)}{1 - e_{n/d}(-k)} +
+\frac{n}{2} \sum_{d \mid n,\ d < n,\ (n/d) \mid k} \mu(d) \left(\frac{n}{d} - 1\right).$$
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, Lemma 4. -/
@@ -193,9 +240,12 @@ public theorem_wanted coprime_sum_mul_additive_character {n k : ℕ} (hn : 2 ≤
         n / 2 * ∑ d ∈ n.divisors with d < n ∧ (n / d) ∣ k,
           (ArithmeticFunction.moebius d : ℂ) * ((n / d : ℕ) - 1)
 
-/-- Lemma 5: for any arithmetic function `f` and `n`,
-`∑_{k=1}^n f(k) = ∑_{d ∣ n} ∑_{1 ≤ h ≤ n/d, (n/d, h) = 1} f(h d)`. The paper takes `n ≥ 1`;
-for `n = 0` both sides are empty sums.
+/-- **Splitting a sum by greatest common divisor.** For every function
+$f : \mathbb{N} \to \mathbb{C}$ and every natural number $n$,
+$$\sum_{k=1}^{n} f(k) = \sum_{d \mid n} \sum_{1 \le h \le n/d,\ \gcd(n/d, h) = 1} f(hd).$$
+
+Here $d$ runs over the positive divisors of $n$, and $0$ is taken to have none, so for $n = 0$
+both sides are empty sums.
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, Lemma 5. -/
@@ -203,8 +253,10 @@ public theorem_wanted sum_Icc_eq_sum_divisors_coprime (f : ℕ → ℂ) (n : ℕ
     ∑ k ∈ Icc 1 n, f k =
       ∑ d ∈ n.divisors, ∑ h ∈ Icc 1 (n / d) with Nat.Coprime (n / d) h, f (h * d)
 
-/-- Lemma 6: for `q ≥ 2`, `ℓ ≥ 1` and either sign `s = ±1`,
-`∑_{a mod q, q ∤ a ℓ} 1 / |1 - e_q(s a ℓ)| ≤ (q/2) log(e q / (2 (ℓ, q))) < (q/2) log(e q)`.
+/-- **Sum of reciprocal distances from roots of unity to 1.** Let $q \ge 2$ and $\ell \ge 1$ be
+integers, let $s \in \{1, -1\}$, and write $e_q(x) = e^{2\pi i x / q}$. Then
+$$\sum_{0 \le a < q,\ q \nmid a\ell} \frac{1}{|1 - e_q(s a \ell)|} \le
+\frac{q}{2} \log \frac{e q}{2 \gcd(\ell, q)} < \frac{q}{2} \log(e q).$$
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, Lemma 6. -/
@@ -215,9 +267,11 @@ public theorem_wanted sum_inv_norm_one_sub_additive_character {q ℓ : ℕ} (hq 
       q / 2 * Real.log (Real.exp 1 * q / (2 * Nat.gcd ℓ q)) ∧
     q / 2 * Real.log (Real.exp 1 * q / (2 * Nat.gcd ℓ q)) < q / 2 * Real.log (Real.exp 1 * q)
 
-/-- Lemma 7: for `n ≥ 2` and `d ∣ n`,
-`∑_{1 ≤ k ≤ n-1, (n/d) ∤ k} (n, k)^{1/2} / |1 - e_{n/d}(-k)| ≤ (1/2) n^{1/2} σ_{1/2}(n) log(e n)`,
-where `σ_{1/2}(n) = ∑_{δ ∣ n} √δ`.
+/-- **Gcd-weighted sum of reciprocal distances from roots of unity to 1.** Let $n \ge 2$, let $d$
+be a divisor of $n$, and write $e_m(x) = e^{2\pi i x / m}$. Then
+$$\sum_{1 \le k \le n-1,\ (n/d) \nmid k} \frac{\sqrt{\gcd(n, k)}}{|1 - e_{n/d}(-k)|} \le
+\frac{1}{2} \sqrt{n}\, \sigma_{1/2}(n) \log(e n),$$
+where $\sigma_{1/2}(n) = \sum_{\delta \mid n} \sqrt{\delta}$.
 
 Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
 Inverse*, INTEGERS 24 (2024), Article A33, Lemma 7. -/

@@ -21,16 +21,21 @@ section LaurentContinuedFraction
 
 variable {K : Type*} [Field K]
 
-/-- The variable `x` of the field `𝔽_q((x⁻¹))` of formal Laurent series in `x⁻¹`, realized in
-Mathlib's `LaurentSeries K` (series in `X = x⁻¹`) as `X⁻¹ = single (-1) 1`. A series
-`∑ c_n Xⁿ` is `∑ c_n x⁻ⁿ`, so its degree valuation is `|α| = |x|^{-α.order}`.
+/-- **The variable $x$ of $K((x^{-1}))$.** Let $K$ be a field. Formal Laurent series in $x^{-1}$
+over $K$ are realized as Laurent series $\sum_n c_n X^n$ in $X = x^{-1}$, and the variable $x$
+is the series $X^{-1}$, with coefficient $1$ at $X^{-1}$ and $0$ elsewhere.
+
+A series $\alpha = \sum_n c_n x^{-n} \ne 0$ has absolute value $|\alpha| = |x|^{-v(\alpha)}$,
+where its order $v(\alpha)$ is the least $n$ with $c_n \ne 0$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57, Section 1. -/
 def laurentInvVar (K : Type*) [Field K] : LaurentSeries K :=
   HahnSeries.single (-1 : ℤ) (1 : K)
 
-/-- `x · x⁻¹ = 1` in `LaurentSeries K`, with `x = laurentInvVar K` and `x⁻¹ = single 1 1`.
+/-- **The variable $x$ times $x^{-1}$ is one.** Let $K$ be a field. In $K((x^{-1}))$, the
+product of the variable $x$ and the series $x^{-1}$ (coefficient $1$ at $x^{-1}$ and $0$
+elsewhere) is $1$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57, Section 1. -/
@@ -38,22 +43,27 @@ theorem laurentInvVar_mul_single_one :
     laurentInvVar K * HahnSeries.single (1 : ℤ) (1 : K) = 1 := by
   simp [laurentInvVar, HahnSeries.single_mul_single]
 
-/-- The embedding `𝔽_q[x] → 𝔽_q((x⁻¹))`, `x ↦ laurentInvVar K`.
+/-- **Polynomials as Laurent series in the inverse variable.** Let $K$ be a field. The embedding
+$K[x] \to K((x^{-1}))$ is the $K$-algebra homomorphism that sends $x$ to the element $x$ of
+$K((x^{-1}))$, that is, it evaluates a polynomial at $x$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57, Section 1. -/
 def polyToLaurentInv (p : Polynomial K) : LaurentSeries K :=
   Polynomial.aeval (laurentInvVar K) p
 
-/-- The polynomial `x` embeds as `laurentInvVar K`.
+/-- **The polynomial variable embeds as the Laurent variable.** Let $K$ be a field. The
+embedding $K[x] \to K((x^{-1}))$ sends the polynomial $x$ to the element $x$ of
+$K((x^{-1}))$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57, Section 1. -/
 theorem polyToLaurentInv_X : polyToLaurentInv (Polynomial.X : Polynomial K) = laurentInvVar K := by
   simp [polyToLaurentInv]
 
-/-- The polynomial part `[α]` of `α ∈ 𝔽_q((x⁻¹))`: the terms `c_n x⁻ⁿ` with `n ≤ 0`, i.e. the
-coefficients of `Xⁿ`, `n ≤ 0`, in `LaurentSeries K`.
+/-- **Polynomial part of a Laurent series.** Let $K$ be a field and write a Laurent series
+$\alpha \in K((x^{-1}))$ as $\alpha = \sum_n c_n x^{-n}$. Its polynomial part is
+$[\alpha] = \sum_{n \le 0} c_n x^{-n}$, the sum of the terms in nonnegative powers of $x$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -66,7 +76,9 @@ def laurentPolyPart (α : LaurentSeries K) : LaurentSeries K where
     · exact hn
     · exact (hn rfl).elim
 
-/-- Coefficients of the polynomial part.
+/-- **Coefficients of the polynomial part of a Laurent series.** Let $K$ be a field and write
+$\alpha \in K((x^{-1}))$ as $\alpha = \sum_n c_n x^{-n}$. For every integer $n$, the coefficient
+of $x^{-n}$ in the polynomial part $[\alpha]$ is $c_n$ if $n \le 0$ and $0$ if $n > 0$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -75,7 +87,8 @@ theorem laurentPolyPart_coeff (α : LaurentSeries K) (n : ℤ) :
     (laurentPolyPart α).coeff n = if n ≤ 0 then α.coeff n else 0 :=
   rfl
 
-/-- The polynomial part of `x` is `x`, and that of `x⁻¹` is `0`.
+/-- **Polynomial parts of the variable and its inverse.** Let $K$ be a field. In
+$K((x^{-1}))$ the polynomial part of $x$ is $x$, and the polynomial part of $x^{-1}$ is $0$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -91,8 +104,10 @@ theorem laurentPolyPart_laurentInvVar :
     simp only [laurentPolyPart_coeff, HahnSeries.coeff_single, HahnSeries.coeff_zero]
     split_ifs with h₁ h₂ <;> first | rfl | omega
 
-/-- The complete quotients `α₀ = α`, `α_{n+1} = (α_n - [α_n])⁻¹` of the continued fraction
-expansion of `α ∈ 𝔽_q((x⁻¹))` (they become `0` after a finite expansion ends).
+/-- **Complete quotients of a Laurent series.** Let $K$ be a field and $\alpha \in K((x^{-1}))$. The
+complete quotients of the continued fraction expansion of $\alpha$ are $\alpha_0 = \alpha$ and
+$\alpha_{n+1} = (\alpha_n - [\alpha_n])^{-1}$ for $n \ge 0$, where $[\beta]$ is the polynomial part
+of $\beta$ and $0^{-1} = 0$. So the complete quotients become $0$ after a finite expansion ends.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -101,7 +116,9 @@ def laurentCompleteQuotient (α : LaurentSeries K) : ℕ → LaurentSeries K
   | 0 => α
   | n + 1 => (laurentCompleteQuotient α n - laurentPolyPart (laurentCompleteQuotient α n))⁻¹
 
-/-- The partial quotients `b_n = [α_n]` of `α = [b₀, b₁, b₂, …]`.
+/-- **Partial quotients of a Laurent series.** Let $K$ be a field, $\alpha \in K((x^{-1}))$ and
+$n \ge 0$. The $n$-th partial quotient of $\alpha$ is $b_n = [\alpha_n]$, the polynomial part of
+the $n$-th complete quotient $\alpha_n$ of $\alpha$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -109,7 +126,10 @@ Section 1, (1.3). -/
 def laurentPartialQuotient (α : LaurentSeries K) (n : ℕ) : LaurentSeries K :=
   laurentPolyPart (laurentCompleteQuotient α n)
 
-/-- `b₀ = [α]` and `α₁ = (α - [α])⁻¹`.
+/-- **First step of the continued fraction of a Laurent series.** Let $K$ be a field and
+$\alpha \in K((x^{-1}))$. The partial quotient $b_0$ of $\alpha$ is its polynomial part
+$[\alpha]$, and the complete quotient $\alpha_1$ is $(\alpha - [\alpha])^{-1}$, where
+$0^{-1} = 0$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -119,8 +139,11 @@ theorem laurentPartialQuotient_zero (α : LaurentSeries K) :
       laurentCompleteQuotient α 1 = (α - laurentPolyPart α)⁻¹ :=
   ⟨rfl, rfl⟩
 
-/-- `α` has bounded partial quotients: the degrees in `x` of all partial quotients are bounded,
-i.e. some `B` has `(b_n).coeff m = 0` (coefficient of `x⁻ᵐ`) for all `n` and `m < -B`.
+/-- **Laurent series with bounded partial quotients.** Let $K$ be a field. A Laurent series
+$\alpha \in K((x^{-1}))$ with partial quotients $b_0, b_1, \dots$ has bounded partial quotients
+if there is an integer $B$ such that for every $n \ge 0$ and every integer $k > B$ the
+coefficient of $x^k$ in $b_n$ is zero, that is, every nonzero $b_n$ is a polynomial in $x$ of
+degree at most $B$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -128,8 +151,10 @@ Section 1. -/
 def LaurentHasBoundedPartialQuotients (α : LaurentSeries K) : Prop :=
   ∃ B : ℤ, ∀ n : ℕ, ∀ m : ℤ, m < -B → (laurentPartialQuotient α n).coeff m = 0
 
-/-- Numerators of the convergents, shifted by one: `laurentConvNum α (n + 1) = P_n`, with
-`P_{-1} = 1`, `P₀ = b₀`, `P_{n+1} = b_{n+1} P_n + P_{n-1}`.
+/-- **Numerators of the convergents of a Laurent series.** Let $K$ be a field and let
+$\alpha \in K((x^{-1}))$ have partial quotients $b_0, b_1, \dots$. The numerators of the
+convergents of $\alpha$ are $P_{-1} = 1$, $P_0 = b_0$ and $P_{n+1} = b_{n+1} P_n + P_{n-1}$ for
+$n \ge 0$. The sequence is indexed with a shift of one: its term at $n \ge 0$ is $P_{n-1}$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -139,8 +164,10 @@ def laurentConvNum (α : LaurentSeries K) : ℕ → LaurentSeries K
   | 1 => laurentPartialQuotient α 0
   | n + 2 => laurentPartialQuotient α (n + 1) * laurentConvNum α (n + 1) + laurentConvNum α n
 
-/-- Denominators of the convergents, shifted by one: `laurentConvDen α (n + 1) = Q_n`, with
-`Q_{-1} = 0`, `Q₀ = 1`, `Q_{n+1} = b_{n+1} Q_n + Q_{n-1}`.
+/-- **Denominators of the convergents.** Let $K$ be a field, let $\alpha \in K((x^{-1}))$ and let
+$b_0, b_1, \dots$ be its partial quotients. The denominators of the convergents of $\alpha$ are
+given by $Q_{-1} = 0$, $Q_0 = 1$ and $Q_{n+1} = b_{n+1} Q_n + Q_{n-1}$ for $n \ge 0$. They are
+indexed from $0$ here: the $k$-th term of the sequence is $Q_{k-1}$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -150,7 +177,11 @@ def laurentConvDen (α : LaurentSeries K) : ℕ → LaurentSeries K
   | 1 => 1
   | n + 2 => laurentPartialQuotient α (n + 1) * laurentConvDen α (n + 1) + laurentConvDen α n
 
-/-- The recursions of the convergents: `P₁ = b₁ b₀ + 1` and `Q₁ = b₁`.
+/-- **The convergent $P_1 / Q_1$ of a Laurent series.** Let $K$ be a field and let
+$\alpha \in K((x^{-1}))$ have partial quotients $b_0, b_1, \dots$. Let $P_n$ and $Q_n$ be the
+numerators and denominators of its convergents, given by $P_{-1} = 1$, $Q_{-1} = 0$, $P_0 = b_0$,
+$Q_0 = 1$, $P_{n+1} = b_{n+1} P_n + P_{n-1}$ and $Q_{n+1} = b_{n+1} Q_n + Q_{n-1}$. Then
+$P_1 = b_1 b_0 + 1$ and $Q_1 = b_1$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -160,7 +191,9 @@ theorem laurentConv_two (α : LaurentSeries K) :
       laurentConvDen α 2 = laurentPartialQuotient α 1 := by
   simp [laurentConvNum, laurentConvDen]
 
-/-- `α ∈ 𝔽_q((x⁻¹))` is irrational: `Q α ≠ P` for all polynomials `P` and `Q ≠ 0`.
+/-- **Irrational Laurent series.** Let $K$ be a field. A Laurent series $\alpha \in K((x^{-1}))$
+is irrational if $Q \alpha \ne P$ for all polynomials $P, Q \in K[x]$ with $Q \ne 0$, where
+polynomials are embedded in $K((x^{-1}))$ by sending $x$ to the variable $x$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -168,7 +201,8 @@ Section 1. -/
 def LaurentIsIrrational (α : LaurentSeries K) : Prop :=
   ∀ P Q : Polynomial K, Q ≠ 0 → polyToLaurentInv Q * α ≠ polyToLaurentInv P
 
-/-- Polynomials are not irrational.
+/-- **Polynomials are not irrational.** Let $K$ be a field. For every polynomial $P \in K[x]$,
+the image of $P$ in $K((x^{-1}))$ is not irrational.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -177,8 +211,9 @@ theorem not_laurentIsIrrational_polyToLaurentInv (P : Polynomial K) :
     ¬ LaurentIsIrrational (polyToLaurentInv P) := fun h =>
   h P 1 one_ne_zero (by simp [polyToLaurentInv])
 
-/-- Baum–Sweet: a root `f ∈ 𝔽₂((x⁻¹))` of `f³ + p⁻¹ f + 1 = 0`, `p ∈ 𝔽₂[x]`, `deg p ≥ 1`, has
-bounded partial quotients (quoted result).
+/-- **Baum–Sweet: cubics with bounded partial quotients.** Let $p \in \mathbb{F}_2[x]$ have degree
+at least $1$. If $f \in \mathbb{F}_2((x^{-1}))$ satisfies $f^3 + p^{-1} f + 1 = 0$, then $f$ has
+bounded partial quotients.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -188,8 +223,9 @@ public theorem_wanted baumSweet_cubic_boundedPartialQuotients (p : Polynomial (Z
     (hf : f ^ 3 + (polyToLaurentInv p)⁻¹ * f + 1 = 0) :
     LaurentHasBoundedPartialQuotients f
 
-/-- Baum–Sweet: if `f ∈ 𝔽₂((x⁻¹))` satisfies `f^{2ⁿ+1} + g⁻¹ f + 1 = 0` with `n > 1`,
-`g ∈ 𝔽₂[x]`, `deg g ≥ 1`, then `f` has unbounded partial quotients (quoted result).
+/-- **Baum–Sweet: unbounded partial quotients for higher degrees.** Let $n > 1$ and let
+$g \in \mathbb{F}_2[x]$ have degree at least $1$. If $f \in \mathbb{F}_2((x^{-1}))$ satisfies
+$f^{2^n+1} + g^{-1} f + 1 = 0$, then $f$ does not have bounded partial quotients.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -199,12 +235,14 @@ public theorem_wanted baumSweet_unboundedPartialQuotients (n : ℕ) (hn : 1 < n)
     (hf : f ^ (2 ^ n + 1) + (polyToLaurentInv g)⁻¹ * f + 1 = 0) :
     ¬ LaurentHasBoundedPartialQuotients f
 
-/-- Baum–Sweet: for `n ≥ 0` and `P, Q ∈ 𝔽₂[x]` with `P + Q^{2ⁿ} ∉ {0, 1}`, the equation
-`f^{2ⁿ+1} + Q f^{2ⁿ} + P f + Q P + 1 = 0` has a root `f ∈ 𝔽₂((x⁻¹))` with continued fraction
-`[Q; P + Q^{2ⁿ}, P^{2ⁿ} + Q^{2^{2n}}, P^{2^{2n}} + Q^{2^{3n}}, …]`, i.e. `b₀ = Q` and
-`b_k = P^{2^{(k-1)n}} + Q^{2^{kn}}` for `k ≥ 1`. The paper also claims the root is unique; that
-part is omitted: for `n = 0`, `P = x`, `Q = 0` the equation `f (f + x) = 1` has the two roots
-`[0; x, x, …]` and `[x; x, x, …]`.
+/-- **Baum–Sweet: explicit continued fractions of roots.** Let $n \ge 0$ and let
+$P, Q \in \mathbb{F}_2[x]$ with $P + Q^{2^n} \ne 0$ and $P + Q^{2^n} \ne 1$. Then some
+$f \in \mathbb{F}_2((x^{-1}))$ satisfies $f^{2^n+1} + Q f^{2^n} + P f + QP + 1 = 0$ and has partial
+quotients $b_0 = Q$ and $b_k = P^{2^{(k-1)n}} + Q^{2^{kn}}$ for all $k \ge 1$, that is,
+$f = [Q; P + Q^{2^n}, P^{2^n} + Q^{2^{2n}}, P^{2^{2n}} + Q^{2^{3n}}, \dots]$.
+
+The paper also claims that this root is unique, which fails: for $n = 0$, $P = x$ and $Q = 0$ the
+equation $f(f + x) = 1$ has the two roots $[0; x, x, \dots]$ and $[x; x, x, \dots]$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -218,15 +256,22 @@ public theorem_wanted baumSweet_exists_root_continuedFraction (n : ℕ)
         ∀ k, 1 ≤ k → laurentPartialQuotient f k =
           polyToLaurentInv (P ^ (2 ^ ((k - 1) * n)) + Q ^ (2 ^ (k * n)))
 
-/-- Standard properties of the convergents `P_n / Q_n` of an irrational `α ∈ 𝔽_q((x⁻¹))`
-(`P_n = laurentConvNum α (n + 1)`, `Q_n = laurentConvDen α (n + 1)`, `|y| = |x|^{-y.order}`):
-(i) `(β P_n + P_{n-1}) / (β Q_n + Q_{n-1}) = [b₀, …, b_n, β]` for `β ≠ 0` whose tails
-`[b_k, …, b_n, β]` (`1 ≤ k ≤ n`) are nonzero (with the totalized inverse `0⁻¹ = 0` the fold
-otherwise disagrees: `n = 2`, `β = -b₂⁻¹` gives `b₀` on the left and `b₀ + b₁⁻¹` on the right);
-(ii) `P_n Q_{n-1} - P_{n-1} Q_n = (-1)^{n-1}`; (iii) `|Q_n| > |Q_{n-1}| > 0`;
-(iv) `|Q_n| = |b₁ ⋯ b_n|`; (v) `|α - P_n/Q_n| = 1 / (|b_{n+1}| |Q_n|²)`;
-(vi) `|Q_{n+1} α - P_{n+1}| < |Q_n α - P_n|`. Parts (iii)–(vi) are stated for `n ≥ 1` (the paper
-puts `n ≥ 1` on (iv)–(vi); (iii) fails at `n = 0` because `Q_{-1} = 0`).
+/-- **Basic properties of the convergents of a Laurent series.** Let $K$ be a field and let
+$\alpha \in K((x^{-1}))$ be irrational, with partial quotients $b_0, b_1, \dots$ and convergents
+$P_n / Q_n$, where $P_{-1} = 1$, $Q_{-1} = 0$, $P_0 = b_0$, $Q_0 = 1$,
+$P_{n+1} = b_{n+1} P_n + P_{n-1}$ and $Q_{n+1} = b_{n+1} Q_n + Q_{n-1}$. For a Laurent series
+$y = \sum_m c_m x^{-m}$ let $v(y)$ be its order, the least $m$ with $c_m \ne 0$, and let
+$v(0) = 0$; thus $|y| = |x|^{-v(y)}$ for $y \ne 0$. For $\beta \in K((x^{-1}))$ write
+$[b_k, \dots, b_n, \beta] = b_k + 1/(b_{k+1} + 1/(\cdots + 1/(b_n + 1/\beta)))$. Then:
+(i) for every $n \ge 0$ and every $\beta \ne 0$ such that $[b_k, \dots, b_n, \beta] \ne 0$ for
+all $1 \le k \le n$, $(\beta P_n + P_{n-1}) / (\beta Q_n + Q_{n-1}) = [b_0, \dots, b_n, \beta]$;
+(ii) $P_n Q_{n-1} - P_{n-1} Q_n = (-1)^{n+1}$ for every $n \ge 0$;
+(iii) $Q_{n-1} \ne 0$ and $v(Q_n) < v(Q_{n-1})$ for every $n \ge 1$;
+(iv) $v(Q_n) = v(b_1) + \dots + v(b_n)$ for every $n \ge 1$;
+(v) $v(\alpha - P_n / Q_n) = -v(b_{n+1}) - 2 v(Q_n)$ for every $n \ge 1$;
+(vi) $v(Q_n \alpha - P_n) < v(Q_{n+1} \alpha - P_{n+1})$ for every $n \ge 1$.
+
+Part (iii) fails at $n = 0$ because $Q_{-1} = 0$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -250,8 +295,11 @@ public theorem_wanted laurentConvergent_properties (α : LaurentSeries K)
       (∀ n : ℕ, 1 ≤ n → (laurentConvDen α (n + 1) * α - laurentConvNum α (n + 1)).order <
           (laurentConvDen α (n + 2) * α - laurentConvNum α (n + 2)).order)
 
-/-- Frobenius and continued fractions: over `𝔽_q` the continued fraction of `α^q` is
-`[b₀^q, b₁^q, …]` and its convergents are `P_n^q / Q_n^q`.
+/-- **Frobenius acts on continued fractions of Laurent series.** Let $K$ be a finite field with
+$q$ elements and let $\alpha \in K((x^{-1}))$, with partial quotients $b_0, b_1, \dots$ and
+convergent numerators and denominators $P_n, Q_n$, where $P_{-1} = 1$ and $Q_{-1} = 0$. Then for
+every $n \ge 0$ the $n$-th partial quotient of $\alpha^q$ is $b_n^q$, and for every $n \ge -1$
+the convergent numerator and denominator of $\alpha^q$ of index $n$ are $P_n^q$ and $Q_n^q$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -262,11 +310,19 @@ public theorem_wanted laurentPartialQuotient_pow_card [Fintype K] (α : LaurentS
       laurentConvNum (α ^ Fintype.card K) n = laurentConvNum α n ^ Fintype.card K ∧
       laurentConvDen (α ^ Fintype.card K) n = laurentConvDen α n ^ Fintype.card K
 
-/-- Let `α` be irrational and `P, Q ∈ 𝔽_q[x]` coprime, `Q ≠ 0`. (i) If
-`|Q α - P| = |x|^{-s} |Q|^{-1}` for some `s ≥ 1`, then `P = c P_n` and `Q = c Q_n` for some
-`n ≥ 0` and `c ∈ 𝔽_q \ {0}`, and `|b_{n+1}| = |x|^s`. (ii) If `|Q α - P| = |Q|^{-1}`, then
-`P = c P_n + d P_{n-1}` and `Q = c Q_n + d Q_{n-1}` for some `n ≥ 0` and `c, d ∈ 𝔽_q \ {0}`.
-Degrees are written with `order` (`|y| = |x|^{-y.order}`, `|Q| = |x|^{deg Q}`).
+/-- **Close rational approximations and convergents.** Let $K$ be a field and let
+$\alpha \in K((x^{-1}))$ be irrational, with partial quotients $b_0, b_1, \dots$ and convergents
+$P_n / Q_n$, where $P_{-1} = 1$, $Q_{-1} = 0$, $P_0 = b_0$, $Q_0 = 1$,
+$P_{n+1} = b_{n+1} P_n + P_{n-1}$ and $Q_{n+1} = b_{n+1} Q_n + Q_{n-1}$. For a Laurent series
+$y = \sum_m c_m x^{-m}$ let $v(y)$ be its order, the least $m$ with $c_m \ne 0$, and let
+$v(0) = 0$. Let $P, Q \in K[x]$ be coprime with $Q \ne 0$.
+(i) If $v(Q \alpha - P) = s + \deg Q$ for some integer $s \ge 1$, then there are $n \ge 0$ and
+$c \in K \setminus \{0\}$ with $P = c P_n$, $Q = c Q_n$ and $v(b_{n+1}) = -s$.
+(ii) If $v(Q \alpha - P) = \deg Q$, then there are $n \ge 0$ and $c, d \in K \setminus \{0\}$
+with $P = c P_n + d P_{n-1}$ and $Q = c Q_n + d Q_{n-1}$.
+
+With $|y| = |x|^{-v(y)}$, the hypothesis of (i) reads $|Q \alpha - P| = |x|^{-s} |Q|^{-1}$ and
+its conclusion $|b_{n+1}| = |x|^s$; the hypothesis of (ii) reads $|Q \alpha - P| = |Q|^{-1}$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -286,9 +342,12 @@ public theorem_wanted laurent_eq_convergent_of_order (α : LaurentSeries K)
           polyToLaurentInv Q =
             HahnSeries.C c * laurentConvDen α (n + 1) + HahnSeries.C d * laurentConvDen α n)
 
-/-- Let `α` be irrational with convergents `P_n / Q_n`. (i) If `|α| ≥ 1`, then
-`|α - P_n/Q_n| < |α|` for all `n ≥ 0`. (ii) If `|α| < 1`, then `|α - P₀/Q₀| = |α|` and
-`|α - P_n/Q_n| < |α|` for all `n ≥ 1` (`|y| = |x|^{-y.order}`).
+/-- **Distance from an irrational Laurent series to its convergents.** Let $K$ be a field, let
+$\alpha \in K((x^{-1}))$ be irrational with convergents $P_n/Q_n$ ($n \ge 0$), and for nonzero
+$y \in K((x^{-1}))$ let $|y| = |x|^{\deg y}$, where $\deg y$ is the largest exponent of $x$
+occurring in $y$ and $|x| > 1$ is fixed. (i) If $|\alpha| \ge 1$, then
+$|\alpha - P_n/Q_n| < |\alpha|$ for all $n \ge 0$. (ii) If $|\alpha| < 1$, then
+$|\alpha - P_0/Q_0| = |\alpha|$ and $|\alpha - P_n/Q_n| < |\alpha|$ for all $n \ge 1$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -302,12 +361,18 @@ public theorem_wanted laurent_sub_convergent_order (α : LaurentSeries K)
           ∀ n : ℕ, 1 ≤ n →
             α.order < (α - laurentConvNum α (n + 1) / laurentConvDen α (n + 1)).order)
 
-/-- Lasjaunias's lemma: let `α ∈ 𝔽_q((x⁻¹))` be irrational with `α = (A α^q + B)/(C α^q + D)`,
-`A, B, C, D ∈ 𝔽_q[x]`, `Δ = AD - BC ≠ 0`, `C ≠ 0`. If `P/Q = P_n/Q_n` is a convergent in lowest
-terms with `|α - P/Q| < |α - A/C|`, and, writing `R₁ = DP - BQ`, `S₁ = -CP + AQ`,
-`δ₁ = gcd(R₁, S₁)`, `R₁' = R₁/δ₁`, `S₁' = S₁/δ₁`, one of `R₁'`, `S₁'` is not a `q`-th power in
-`𝔽_q[x]`, then the next partial quotient satisfies `|b_{n+1}| < |Δ| |δ₁|^{-2}`. The hypothesis
-`C ≠ 0` makes `A/C` meaningful (implicit in the paper).
+/-- **Lasjaunias's bound on the next partial quotient.** Let $\mathbb{F}_q$ be a finite field, let
+$A, B, C, D \in \mathbb{F}_q[x]$ with $\Delta = AD - BC \ne 0$ and $C \ne 0$, and let
+$\alpha \in \mathbb{F}_q((x^{-1}))$ be irrational with $\alpha = (A\alpha^q + B)/(C\alpha^q + D)$.
+Write $|y| = |x|^{\deg y}$ for the absolute value on $\mathbb{F}_q((x^{-1}))$, where $\deg y$ is
+the largest exponent of $x$ occurring in $y \ne 0$, and write $P_n/Q_n$ for the convergents and
+$b_n$ for the partial quotients of $\alpha$. Let $n \ge 0$, let $P, Q \in \mathbb{F}_q[x]$ be
+coprime with $Q \ne 0$ and $P/Q = P_n/Q_n$, and suppose $|\alpha - P/Q| < |\alpha - A/C|$. Put
+$R_1 = DP - BQ$, $S_1 = -CP + AQ$ and $\delta_1 = \gcd(R_1, S_1)$. If $R_1/\delta_1$ or
+$S_1/\delta_1$ is not a $q$-th power in $\mathbb{F}_q[x]$, then
+$|b_{n+1}| < |\Delta|\,|\delta_1|^{-2}$.
+
+The hypothesis $C \ne 0$, which makes $A/C$ meaningful, is implicit in the paper.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -328,14 +393,17 @@ public theorem_wanted lasjaunias_partialQuotient_bound [Fintype K] [DecidableEq 
     -(laurentPartialQuotient α (n + 1)).order <
       ((A * D - B * C).natDegree : ℤ) - 2 * (gcd (D * P - B * Q) (-C * P + A * Q)).natDegree
 
-/-- Let `α ∈ 𝔽_q((x⁻¹))` be irrational with `α = f(α^q)`, `f(T) = (AT + B)/(CT + D)`,
-`Δ = AD - BC ≠ 0`, and let `P, Q ∈ 𝔽_q[x]`, `Q ≠ 0`, with `R₁ = DP - BQ`, `S₁ = -CP + AQ`,
-`R₂ = AP^q + BQ^q`, `S₂ = CP^q + DQ^q`, `S₁ ≠ 0`, `S₂ ≠ 0` (for `C ≠ 0` these say
-`P/Q ≠ A/C` and `(P/Q)^q ≠ -D/C`). Then
-`α^q - R₁/S₁ = Δ (Qα - P) / ((A - Cα) S₁)` and `α - R₂/S₂ = Δ (Qα - P)^q / ((Cα^q + D) S₂)`
-(equations (3.4) and (3.5); their middle expressions `f⁻¹(α) - f⁻¹(P/Q)` and
-`f(α^q) - f((P/Q)^q)` are omitted). The hypotheses `gcd(A, B, C, D) = 1` and that `P/Q` is a
-convergent in lowest terms are dropped as unused by the identities.
+/-- **Difference identities for a Möbius–Frobenius fixed point.** Let $K$ be a finite field with
+$q$ elements, let $A, B, C, D \in K[x]$ with $\Delta = AD - BC \ne 0$, and let
+$\alpha \in K((x^{-1}))$ be irrational with $\alpha = (A \alpha^q + B) / (C \alpha^q + D)$. Let
+$P, Q \in K[x]$ with $Q \ne 0$, put $R_1 = DP - BQ$, $S_1 = -CP + AQ$, $R_2 = AP^q + BQ^q$ and
+$S_2 = CP^q + DQ^q$, and assume $S_1 \ne 0$ and $S_2 \ne 0$. Then
+$\alpha^q - R_1 / S_1 = \Delta (Q \alpha - P) / ((A - C \alpha) S_1)$ and
+$\alpha - R_2 / S_2 = \Delta (Q \alpha - P)^q / ((C \alpha^q + D) S_2)$.
+
+For $C \ne 0$ the conditions $S_1 \ne 0$ and $S_2 \ne 0$ say $P/Q \ne A/C$ and
+$(P/Q)^q \ne -D/C$. The source also assumes $\gcd(A, B, C, D) = 1$ and that $P/Q$ is a
+convergent of $\alpha$ in lowest terms; the identities do not need these hypotheses.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -356,11 +424,20 @@ public theorem_wanted laurentMobius_sub_identities [Fintype K] (A B C D : Polyno
           ((polyToLaurentInv C * α ^ Fintype.card K + polyToLaurentInv D) *
             polyToLaurentInv (C * P ^ Fintype.card K + D * Q ^ Fintype.card K))
 
-/-- In the setting of Lemma 6, with `P/Q = P_n/Q_n` a convergent in lowest terms and
-`b_α(P, Q) = b_{n+1}` the next partial quotient: (i) if `|α - P/Q| < |α - A/C|`, then
-`|S₁ α^q - R₁| = |Δ| |b_{n+1}|^{-1} |S₁|^{-1}`; (ii) if `|α - P/Q| < |α^q + D/C|^{1/q}`, then
-`|S₂ α - R₂| = |Δ| |b_{n+1}|^{-q} |S₂|^{-1}` (degrees via `order`, `|y| = |x|^{-y.order}`). The
-hypothesis `C ≠ 0` makes `A/C`, `D/C` meaningful (implicit in the paper).
+/-- **Degree identities at convergents of a Möbius–Frobenius fixed point.** Let $K$ be a finite
+field with $q$ elements, let $A, B, C, D \in K[x]$ with $\Delta = AD - BC \ne 0$ and $C \ne 0$,
+and let $\alpha \in K((x^{-1}))$ be irrational with $\alpha = (A \alpha^q + B) / (C \alpha^q + D)$.
+Let $b_0, b_1, \dots$ be the partial quotients of $\alpha$ and $P_n / Q_n$ its convergents, where
+$P_{-1} = 1$, $Q_{-1} = 0$, $P_0 = b_0$, $Q_0 = 1$, $P_{n+1} = b_{n+1} P_n + P_{n-1}$ and
+$Q_{n+1} = b_{n+1} Q_n + Q_{n-1}$. For a Laurent series $y = \sum_m c_m x^{-m}$ let $v(y)$ be its
+order, the least $m$ with $c_m \ne 0$, and let $v(0) = 0$; thus $|y| = |x|^{-v(y)}$ for
+$y \ne 0$. Let $n \ge 0$, let $P, Q \in K[x]$ be coprime with $Q \ne 0$ and $P Q_n = Q P_n$,
+and put $R_1 = DP - BQ$, $S_1 = -CP + AQ$, $R_2 = AP^q + BQ^q$ and $S_2 = CP^q + DQ^q$, with
+the degree of the zero polynomial taken to be $0$. Then:
+(i) if $v(\alpha - A/C) < v(\alpha - P/Q)$, then
+$v(S_1 \alpha^q - R_1) = \deg S_1 - \deg \Delta - v(b_{n+1})$;
+(ii) if $v(\alpha^q + D/C) < q \, v(\alpha - P/Q)$, then
+$v(S_2 \alpha - R_2) = \deg S_2 - \deg \Delta - q \, v(b_{n+1})$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -386,12 +463,19 @@ public theorem_wanted laurentMobius_order_identities [Fintype K] (A B C D : Poly
             (A * D - B * C).natDegree -
             Fintype.card K * (laurentPartialQuotient α (n + 1)).order)
 
-/-- Lasjaunias's criterion: let `α` be irrational with `α = (A α^q + B)/(C α^q + D)`,
-`Δ = AD - BC ≠ 0`, `C ≠ 0`. If some convergent `P/Q = P_n/Q_n` in lowest terms lies in
-`F = {P/Q : |α - P/Q| < |α^q + D/C|^{1/q}}` and satisfies
-`|α - P/Q| < |Δ|^{1/(q-1)} |C α^q + D|^{2/(q-1)}` and `|b_{n+1}| > |Δ|^{1/(q-1)}`, then `α` has
-unbounded partial quotients. Fractional exponents are cleared by multiplying the logarithmic
-(degree) inequalities by `q` or `q - 1`.
+/-- **Lasjaunias's criterion for unbounded partial quotients.** Let $\mathbb{F}_q$ be a finite
+field, let $A, B, C, D \in \mathbb{F}_q[x]$ with $\Delta = AD - BC \ne 0$ and $C \ne 0$, and let
+$\alpha \in \mathbb{F}_q((x^{-1}))$ be irrational with $\alpha = (A\alpha^q + B)/(C\alpha^q + D)$.
+Write $|y| = |x|^{\deg y}$ for the absolute value on $\mathbb{F}_q((x^{-1}))$, where $\deg y$ is
+the largest exponent of $x$ occurring in $y \ne 0$, and write $P_n/Q_n$ for the convergents and
+$b_n$ for the partial quotients of $\alpha$. Suppose that for some $n \ge 0$ there are coprime
+$P, Q \in \mathbb{F}_q[x]$ with $Q \ne 0$ and $P/Q = P_n/Q_n$ such that
+$|\alpha - P/Q|^q < |\alpha^q + D/C|$, $|\alpha - P/Q|^{q-1} < |\Delta|\,|C\alpha^q + D|^2$ and
+$|b_{n+1}|^{q-1} > |\Delta|$. Then $\alpha$ does not have bounded partial quotients.
+
+In the paper these conditions read $|\alpha - P/Q| < |\alpha^q + D/C|^{1/q}$,
+$|\alpha - P/Q| < |\Delta|^{1/(q-1)} |C\alpha^q + D|^{2/(q-1)}$ and
+$|b_{n+1}| > |\Delta|^{1/(q-1)}$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -412,10 +496,12 @@ public theorem_wanted lasjaunias_unbounded_criterion [Fintype K] (A B C D : Poly
       -((Fintype.card K : ℤ) - 1) * (laurentPartialQuotient α (n + 1)).order) :
     ¬ LaurentHasBoundedPartialQuotients α
 
-/-- Ayadi et al.: over `𝔽₂`, a root `α` of positive degree of `C T³ + A T² + 1 = 0` with
-`C = x^ℓ`, `ℓ ≥ 2`, and `A = x^{2ℓ} + ∑_{i=2}^{2ℓ-1} e_i x^i + x + 1` has bounded partial quotients
-(`A` is any polynomial of degree `2ℓ` with constant and linear coefficients `1`; positive degree is
-`α.order < 0`).
+/-- **Bounded partial quotients for a cubic of Ayadi et al.** Let $\ell \ge 2$ and let
+$A \in \mathbb{F}_2[x]$ be a polynomial of degree $2\ell$ whose constant and linear coefficients
+are both $1$, that is, $A = x^{2\ell} + \sum_{i=2}^{2\ell-1} e_i x^i + x + 1$ with
+$e_i \in \mathbb{F}_2$. If $\alpha \in \mathbb{F}_2((x^{-1}))$ has positive degree in $x$ (the
+largest exponent of $x$ occurring in $\alpha$ is positive) and satisfies
+$x^\ell \alpha^3 + A \alpha^2 + 1 = 0$, then $\alpha$ has bounded partial quotients.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -426,8 +512,9 @@ public theorem_wanted ayadi_cubic_boundedPartialQuotients (ℓ : ℕ) (hℓ : 2 
     (hroot : laurentInvVar (ZMod 2) ^ ℓ * α ^ 3 + polyToLaurentInv A * α ^ 2 + 1 = 0) :
     LaurentHasBoundedPartialQuotients α
 
-/-- Over `𝔽₂`, a root `α` of the irreducible equation `x T³ + T + x = 0` has bounded partial
-quotients, all of degree at most `2`.
+/-- **Baum–Sweet cubic: partial quotients of degree at most 2.** If
+$\alpha \in \mathbb{F}_2((x^{-1}))$ satisfies $x\alpha^3 + \alpha + x = 0$, then every partial
+quotient $b_n$ of $\alpha$, $n \ge 0$, has degree at most $2$ in $x$.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
@@ -437,9 +524,12 @@ public theorem_wanted baumSweet_x_cubic_partialQuotient_degree_le_two
     (hroot : laurentInvVar (ZMod 2) * α ^ 3 + α + laurentInvVar (ZMod 2) = 0) :
     ∀ n : ℕ, ∀ m : ℤ, m < -2 → (laurentPartialQuotient α n).coeff m = 0
 
-/-- Let `α ∈ 𝔽_q((x⁻¹))` be an irrational root of `x T^{q+1} + D T + x^ℓ = 0` with `ℓ ≥ 1` and
-`D ∈ 𝔽_q[x]`, `D(0) ≠ 0`. If `|α| < |x|^{-((q-1)ℓ+1)}` (i.e. `α.order > (q - 1)ℓ + 1`), then `α`
-has unbounded partial quotients.
+/-- **Small roots of a hyperquadratic equation have unbounded partial quotients.** Let
+$\mathbb{F}_q$ be a finite field, let $\ell \ge 1$ and let $D \in \mathbb{F}_q[x]$ with
+$D(0) \ne 0$. Write $|y| = |x|^{\deg y}$ for the absolute value on $\mathbb{F}_q((x^{-1}))$, where
+$\deg y$ is the largest exponent of $x$ occurring in $y \ne 0$. If
+$\alpha \in \mathbb{F}_q((x^{-1}))$ is irrational, satisfies $x\alpha^{q+1} + D\alpha + x^\ell = 0$
+and $|\alpha| < |x|^{-((q-1)\ell + 1)}$, then $\alpha$ does not have bounded partial quotients.
 
 Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
 Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,

@@ -541,10 +541,6 @@ private noncomputable def horizFunNat (m : ℕ) (M : (W4 □ pathGraph m).Subgra
       if p.2 = i then p.1 else a
     else a
 
-private theorem pathGraph_irrefl (m : ℕ) (i : Fin m) : ¬(pathGraph m).Adj i i := by
-  rw [pathGraph_adj]
-  omega
-
 private theorem partner_same_layer_horiz (m : ℕ) (M : (W4 □ pathGraph m).Subgraph)
     (hM : M.IsPerfectMatching) (a : Fin 4) (i : Fin m)
     (h : (partner m M hM (a, i)).2 = i) : W4.Adj a (partner m M hM (a, i)).1 := by
@@ -553,7 +549,7 @@ private theorem partner_same_layer_horiz (m : ℕ) (M : (W4 □ pathGraph m).Sub
   rcases hc with ⟨hW, -⟩ | ⟨hpath, -⟩
   · exact hW
   · rw [h] at hpath
-    exact absurd hpath (pathGraph_irrefl m i)
+    exact absurd hpath (pathGraph m).irrefl
 
 private theorem partner_ne_layer_vert (m : ℕ) (M : (W4 □ pathGraph m).Subgraph)
     (hM : M.IsPerfectMatching) (a : Fin 4) (i : Fin m)
