@@ -380,9 +380,8 @@ def scheduleStep {ι : Type*} {π : Type*} [Fintype ι] [LinearOrder ι] [Linear
 def producePrefix {ι : Type*} {π : Type*} [Fintype ι] [LinearOrder ι] [LinearOrder π]
     (tasks : TaskSet ι) (rule : PriorityRule ι π) : ℕ → Schedule ι
   | 0 => fun _ => none
-  | n + 1 =>
-    Function.update (producePrefix tasks rule n) n
-      (scheduleStep tasks rule (producePrefix tasks rule n) n)
+  | n + 1 => let pre := producePrefix tasks rule n;
+    Function.update pre n (scheduleStep tasks rule pre n)
 
 /-- The priority-driven preemptive schedule: top priority runs, else idle. -/
 def produceSchedule {ι : Type*} {π : Type*} [Fintype ι] [LinearOrder ι] [LinearOrder π]

@@ -213,4 +213,38 @@ theorem T5_utilization : utilization tasksT5 = 3 / 2 := by
   simp only [utilization, huniv, Finset.sum, tasksT5]
   simp
 
+theorem T3_rm_trace_30 :
+    let sched := produceSchedule tasksT3 (rmRule tasksT3)
+    sched 0 = some 0 ∧
+      sched 1 = some 0 ∧
+      sched 2 = some 1 ∧
+      sched 3 = some 0 ∧
+      sched 4 = some 0 ∧
+      sched 5 = some 1 ∧
+      sched 6 = some 0 ∧
+      sched 7 = some 0 ∧
+      sched 8 = some 1 ∧
+      sched 9 = some 0 ∧
+      sched 10 = some 0 ∧
+      sched 11 = some 1 ∧
+      sched 12 = some 0 ∧
+      sched 13 = some 0 ∧
+      sched 14 = some 1 ∧
+      sched 15 = some 0 ∧
+      sched 16 = some 0 ∧
+      sched 17 = some 1 ∧
+      sched 18 = some 0 ∧
+      sched 19 = some 0 ∧
+      sched 20 = some 1 ∧
+      sched 21 = some 0 ∧
+      sched 22 = some 0 ∧
+      sched 23 = some 1 ∧
+      sched 24 = some 0 ∧
+      sched 25 = some 0 ∧
+      sched 26 = some 1 ∧
+      sched 27 = some 0 ∧
+      sched 28 = some 0 ∧
+      sched 29 = some 1 := by
+  decide
+
 end Cslib.Scheduling.RealTime.Tests
