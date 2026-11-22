@@ -44,7 +44,11 @@ Code-derived port of `BrownianFDD.brownian_fdd_convergence` and its helpers from
 `v1/Atlas/FourierAnalysis/code/BrownianMotion.lean` at commit
 `6191bf1ba03d204784385ef5be2472be88035b93`, lines 2387–2953 (Theorem 1 of Chapter 1, Brownian
 Motion). The archived proof left two `sorry`s, the variable-block central limit theorem and
-Slutsky's lemma for a deterministic perturbation; both are proved here. The public statement
+Slutsky's lemma for a deterministic perturbation; both are proved here. The proof of
+`tendsto_nat_mul_charFun_sub_one` closely adapts that of Mathlib's
+`ProbabilityTheory.tendsto_charFun_inv_sqrt_mul_pow` in
+`Mathlib/Probability/CentralLimitTheorem.lean` at revision
+`56a005855ea17e0b0958f73ec801ae140b0a1679` (Apache License 2.0). The public statement
 inlines the archived `IsRademacher`, `fnIncrement` and `varianceVector` definitions. The archived
 formalization and its original license/provenance remain in `v1/` (the original license text is
 `v1/LICENSE`). This records equivalence to the archived Lean statement, not verification against
@@ -164,7 +168,9 @@ theorem gridIndex_block_ratio_tendsto
   exact h1.sub h2
 
 /-- `n (φ(t/√n) - 1) → -t²/2` for the characteristic function `φ` of a centered unit-variance
-law; the second-order Taylor expansion behind Mathlib's central limit theorem. -/
+law; the second-order Taylor expansion behind Mathlib's central limit theorem. The proof adapts
+that of Mathlib's `ProbabilityTheory.tendsto_charFun_inv_sqrt_mul_pow`
+(`Mathlib/Probability/CentralLimitTheorem.lean`). -/
 lemma tendsto_nat_mul_charFun_sub_one {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {X : Ω → ℝ}
     (hX : AEMeasurable X P) (h0 : P[X] = 0) (h1 : P[X ^ 2] = 1) (t : ℝ) :
@@ -219,8 +225,9 @@ lemma tendsto_one_add_pow_of_tendsto_nat_mul {g : ℕ → ℂ} {w : ℂ} {m : �
   field_simp [n.cast_ne_zero.2 hn]
 
 /-- **Central limit theorem for variable blocks.** For iid centered unit-variance `R i`, if
-`m n → ∞` and `m n / n → σ²`, then `(∑_{a n ≤ i < a n + m n} R i) / √n` converges in
-distribution to `𝓝(0, σ²)`. -/
+`m n / n → σ²`, then `(∑_{a n ≤ i < a n + m n} R i) / √n` converges in distribution to
+`𝓝(0, σ²)`. No divergence of the block lengths `m n` is assumed: for `σ² = 0` they may stay
+bounded, and the limit is then the Dirac mass at `0`. -/
 theorem variable_block_CLT_tendstoInDistribution
     {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω']
     {P : Measure Ω} {P' : Measure Ω'}
@@ -668,4 +675,3 @@ public theorem tendstoInDistribution_randomWalk_increments
     t ht ht0 hZ' hZindep
 
 end ProbabilityTheory
-
