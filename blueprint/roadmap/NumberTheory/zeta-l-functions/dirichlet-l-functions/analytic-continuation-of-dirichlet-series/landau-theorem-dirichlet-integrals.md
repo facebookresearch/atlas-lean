@@ -1,9 +1,9 @@
 # Landau's theorem on Dirichlet integrals with non-negative integrands
 
-Let $A \colon [1, \infty) \to \mathbb{R}$ be bounded and Riemann integrable on every interval
-$[1, X]$, and suppose that for some $X_0 \ge 1$, $A(x) \ge 0$ for every $x \ge X_0$. Let $\sigma_c$
-be the infimum of the real numbers $\sigma$ for which
-$\int_{X_0}^\infty A(x) x^{-\sigma} \, dx < \infty$, and suppose that $\sigma_c$ is finite. Then
+Let $A \colon [1, \infty) \to \mathbb{R}$ be locally bounded, that is, bounded on every interval
+$[1, X]$, and Riemann integrable on every such interval, and suppose that for some $X_0 \ge 1$,
+$A(x) \ge 0$ for every $x \ge X_0$. Let $\sigma_c$ be the infimum of the real numbers $\sigma$ for
+which $\int_{X_0}^\infty A(x) x^{-\sigma} \, dx < \infty$, and suppose that $\sigma_c$ is finite. Then
 
 $$F(s) = \int_1^\infty A(x) x^{-s} \, dx$$
 
