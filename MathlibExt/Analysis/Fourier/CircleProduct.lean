@@ -1,8 +1,20 @@
 /-
-Copyright (c) 2025–2026 the contributors.
+Copyright (c) Meta Platforms, Inc. and affiliates.
 All rights reserved.
 
 This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Portions of this file are adapted from:
+
+arnovich/gimle-forseti, commit d5239d8f0ebbc12b11616a1e3ce0228203fd231f,
+`docs/spikes/353-scout-ks/round7/KSProjection/Product.lean`.
+Authors: arnovich.
+
+The source snapshot contains no separate copyright or license notice.
+The author contributes these adapted portions under the license in the
 LICENSE file in the root directory of this source tree.
 -/
 
