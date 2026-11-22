@@ -304,15 +304,6 @@ public theorem_wanted generalPell_finitely_many_classes (d : ℤ) (hd₀ : 0 < d
       ∀ x y : ℤ, x ^ 2 - d * y ^ 2 = z → ∃ p ∈ s, ∃ n : ℤ, ∃ σ : ℤ√d, (σ = 1 ∨ σ = -1) ∧
         (⟨x, y⟩ : ℤ√d) = σ * ((ε ^ n : Pell.Solution₁ d) : ℤ√d) * ⟨p.1, p.2⟩
 
-/-- **Rational solvability of the negative Pell equation.** For a positive squarefree integer
-$d$, the equation $x^2 - d y^2 = -1$ has a rational solution if and only if no prime divisor of
-$d$ is congruent to $3$ modulo $4$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 5 (`integers-2024-A111-thm-5`). -/
-public theorem_wanted negPell_rat_solvable_iff (d : ℕ) (hd : 0 < d) (hsq : Squarefree d) :
-    (∃ x y : ℚ, x ^ 2 - d * y ^ 2 = -1) ↔ ∀ p : ℕ, p.Prime → p ∣ d → p % 4 ≠ 3
-
 /-- **Basic properties of the negative Pell sequences.** Let $d > 1$ be a natural number such that
 $x^2 - d y^2 = -1$ has an integral solution, let $(X, Y)$ be its solution in natural numbers with
 least positive $Y$, and define integers $f_n, g_n$ by $(X + Y\sqrt{d})^n = f_n + g_n\sqrt{d}$.
