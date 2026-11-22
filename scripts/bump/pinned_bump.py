@@ -47,8 +47,8 @@ Entry points (see .github/workflows/bump-pinned-release.yml and bump-guard.yml):
            compare diff instead (see bump-guard.yml), so a merge group
            holding several PRs cannot hide a pin/guard change from a PR
            other than the first one parsed from the head ref.
-  guard    Run on every PR touching (or renaming) any file, from trusted
-           base code (pull_request_target). Validates a pin-change PR
+  guard    Run on every PR touching (or renaming) any file, from the base
+           checkout (pull_request and merge_group). Validates a pin-change PR
            without building it or running any PR code. Adapted from
            TauCeti's check-bump.sh: the complete lakefile compared after
            normalizing only the configured pinned revs; toolchain matches
@@ -1758,7 +1758,7 @@ def _regex_timeout(seconds: float):
 
     Python's backtracking engine has no per-match timeout, so a
     catastrophic pattern (e.g. (a+)+$) would otherwise occupy the
-    trusted pull_request_target runner until the workflow timeout.
+    guard's runner until the workflow timeout.
     The alarm is set only around pure regex simulation (SHAs are
     resolved beforehand, so no network call is interrupted). On
     platforms without setitimer, or outside the main thread, the

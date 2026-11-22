@@ -58,10 +58,16 @@ universe u
 
 variable {α : Type u}
 
-/-- The gap state carried by the affine-gap fold and DP: what the previous column was. -/
+/-- **Gap states.** A gap state is one of three values: $\mathrm{none}$, $\mathrm{gapX}$ and
+$\mathrm{gapY}$. The affine-gap score and the Gotoh recursion carry one as the kind of the previous
+column: $\mathrm{gapX}$ after a column pairing an element of the first sequence with a gap,
+$\mathrm{gapY}$ after a column pairing a gap with an element of the second sequence, and
+$\mathrm{none}$ otherwise, including before the first column. -/
 inductive GapState | none | gapX | gapY deriving DecidableEq, Repr
 
-/-- The cost of a gap column continuing or opening a run. -/
+/-- **Gap cost.** Given an integer gap-open cost $o$, an integer gap-extend cost $e$ and gap states
+$p$ (of the previous column) and $c$ (of the current gap column), the cost of the current column
+is $e$ if $p = c$ (the column continues a run) and $o$ otherwise (it opens a run). -/
 def gapCost (gapOpen gapExtend : ℤ) (prev cur : GapState) : ℤ :=
   if prev = cur then gapExtend else gapOpen
 
@@ -69,9 +75,18 @@ section Affine
 
 variable (σ : α → α → ℤ) (gapOpen gapExtend : ℤ)
 
-/-- The affine-gap score of one alignment, by a fold carrying the previous gap state.
-`gapX` is a `(some, none)` column (a gap in `ys`), `gapY` a `(none, some)` column.
-The `(none, none)` column cannot occur in a valid alignment; it is scored as a no-op. -/
+/-- **Affine-gap score from a gap state.** Fix an integer substitution score $\sigma$, an integer
+gap-open cost $o$ and an integer gap-extend cost $e$. The affine-gap score of an alignment started
+from a gap state $p$ is the sum of its column scores, computed left to right while carrying a gap
+state that starts at $p$ and is updated after each column. The empty alignment scores $0$. A
+column pairing an element $a$ of the first sequence with an element $b$ of the second scores
+$\sigma(a, b)$ and sets the state to $\mathrm{none}$. A column pairing an element of the first
+sequence with a gap has kind $\mathrm{gapX}$, and a column pairing a gap with an element of the
+second sequence has kind $\mathrm{gapY}$; such a column scores $e$ if the carried state equals its
+kind and $o$ otherwise, and sets the state to its kind. A column of two gaps scores $0$ and sets
+the state to $\mathrm{none}$.
+
+The column of two gaps cannot occur in a valid alignment; it is scored as a no-op. -/
 def affineScoreAux : Alignment α → GapState → ℤ
   | [], _ => 0
   | (some a, some b) :: A, _ => σ a b + affineScoreAux A .none
@@ -81,13 +96,27 @@ def affineScoreAux : Alignment α → GapState → ℤ
       gapCost gapOpen gapExtend prev .gapY + affineScoreAux A .gapY
   | (none, none) :: A, _ => affineScoreAux A .none
 
-/-- The affine-gap score of an alignment, starting with no open run. -/
+/-- **Affine-gap alignment score.** Given an integer substitution score $\sigma$, an integer
+gap-open cost $o$ and an integer gap-extend cost $e$, the affine-gap score of an alignment is its
+affine-gap score from a gap state, started from the state $\mathrm{none}$ (no open gap run). -/
 def affineScore (A : Alignment α) : ℤ := affineScoreAux σ gapOpen gapExtend A .none
 
-/-- The Gotoh DP, by fuel recursion on the total length, carrying the previous gap
-state. The fuel is the sum of the two lengths. Implementation detail: use
-`gotohContNone` / `gotohContGapX` / `gotohContGapY` / `gotohScore`, not this worker, which returns
-`0` on insufficient fuel. -/
+/-- **Fuel-bounded Gotoh recursion.** Fix an integer-valued scoring function $\sigma$ on pairs of
+letters and integer gap-open and gap-extend penalties $g_o$ and $g_e$. A gap state records what
+the previous alignment column was: a match ($\mathrm{none}$), a gap in the second sequence
+($\mathrm{gapX}$) or a gap in the first sequence ($\mathrm{gapY}$). For gap states $p$, $q$ let
+$c(p, q)$ be the gap cost, $g_e$ if $p = q$ and $g_o$ otherwise. Write $\varepsilon$ for the
+empty sequence and $a \cdot u$ for the sequence with first letter $a$ followed by $u$. For fuel
+$n \in \mathbb{N}$, sequences $u$, $v$ and a gap state $p$, the integer $G_n(u, v, p)$ is defined
+by recursion on $n$: $G_0(u, v, p) = 0$, $G_{n+1}(\varepsilon, \varepsilon, p) = 0$,
+$G_{n+1}(\varepsilon, b \cdot v, p) = c(p, \mathrm{gapY}) + G_n(\varepsilon, v, \mathrm{gapY})$,
+$G_{n+1}(a \cdot u, \varepsilon, p) = c(p, \mathrm{gapX}) + G_n(u, \varepsilon, \mathrm{gapX})$,
+and $G_{n+1}(a \cdot u, b \cdot v, p)$ is the maximum of $\sigma(a, b) + G_n(u, v, \mathrm{none})$,
+$c(p, \mathrm{gapX}) + G_n(u, b \cdot v, \mathrm{gapX})$ and
+$c(p, \mathrm{gapY}) + G_n(a \cdot u, v, \mathrm{gapY})$.
+
+With fuel at least the sum of the two lengths this is the Gotoh dynamic program; with less fuel
+the base case $G_0 = 0$ cuts the recursion short. -/
 def gotohAux : ℕ → List α → List α → GapState → ℤ
   | 0, _, _, _ => 0
   | _ + 1, [], [], _ => 0
@@ -98,28 +127,47 @@ def gotohAux : ℕ → List α → List α → GapState → ℤ
         (max (gapCost gapOpen gapExtend prev .gapX + gotohAux n xs (b :: ys) .gapX)
           (gapCost gapOpen gapExtend prev .gapY + gotohAux n (a :: xs) ys .gapY))
 
-/-- Best score of a suffix alignment given the previous column was a match (or
-there is no previous column, i.e. no open run). A continuation value, not an
-endpoint-restricted matrix: the next column may be a match or either gap. -/
+/-- **Gotoh value with no open gap run.** Given a substitution score $\sigma$, a gap-open score
+$g_o$ and a gap-extend score $g_e$, this is the value of the Gotoh dynamic program on sequences
+$x$ and $y$ when no gap run is open (the previous column was a match, or there is no previous
+column): the best affine-gap score of an alignment of $x$ and $y$, where a match column pairing
+$a$ with $b$ scores $\sigma(a, b)$ and a gap column scores $g_e$ if it continues a run of gaps in
+the same sequence and $g_o$ otherwise.
+
+It is a continuation value, not an endpoint-restricted matrix: the first column may be a match
+or either gap. -/
 def gotohContNone (xs ys : List α) : ℤ :=
   gotohAux σ gapOpen gapExtend (xs.length + ys.length) xs ys .none
 
-/-- Best score of a suffix alignment given the previous column was a gap in `ys`
-(an open `gapX` run). A continuation value, not an endpoint-restricted matrix:
-the next column may be a match or either gap; the previous state only makes the
-next gap in `ys` cost `gapExtend` instead of `gapOpen`. -/
+/-- **Gotoh continuation value after a gap in the second sequence.** Fix an integer-valued
+scoring function $\sigma$ on pairs of letters and integer gap-open and gap-extend penalties $g_o$
+and $g_e$. For sequences $u$ and $v$, the value $X(u, v)$ is the fuel-bounded Gotoh recursion on
+$u$ and $v$, run with fuel equal to the sum of their lengths and started in the gap state where
+the previous column was a gap in $v$.
+
+It is the best affine-gap score of an alignment of $u$ with $v$ scored from that state. It is a
+continuation value, not an endpoint-restricted matrix: the next column may be a match or either
+gap, and the previous state only makes a next gap in $v$ cost $g_e$ instead of $g_o$. -/
 def gotohContGapX (xs ys : List α) : ℤ :=
   gotohAux σ gapOpen gapExtend (xs.length + ys.length) xs ys .gapX
 
-/-- Best score of a suffix alignment given the previous column was a gap in `xs`
-(an open `gapY` run). A continuation value, not an endpoint-restricted matrix:
-the next column may be a match or either gap; the previous state only makes the
-next gap in `xs` cost `gapExtend` instead of `gapOpen`. -/
+/-- **Gotoh continuation value after a gap in the first sequence.** Fix an integer-valued
+scoring function $\sigma$ on pairs of letters and integer gap-open and gap-extend penalties $g_o$
+and $g_e$. For sequences $u$ and $v$, the value $Y(u, v)$ is the fuel-bounded Gotoh recursion on
+$u$ and $v$, run with fuel equal to the sum of their lengths and started in the gap state where
+the previous column was a gap in $u$.
+
+It is the best affine-gap score of an alignment of $u$ with $v$ scored from that state. It is a
+continuation value, not an endpoint-restricted matrix: the next column may be a match or either
+gap, and the previous state only makes a next gap in $u$ cost $g_e$ instead of $g_o$. -/
 def gotohContGapY (xs ys : List α) : ℤ :=
   gotohAux σ gapOpen gapExtend (xs.length + ys.length) xs ys .gapY
 
-/-- The optimal affine-gap alignment score: the `none` continuation (no previous
-column, so no open run). -/
+/-- **Gotoh score.** For a substitution score $\sigma$ and gap-open and gap-extend scores $g_o$
+and $g_e$, the Gotoh score of sequences $x$ and $y$ is the Gotoh value of $x$ against $y$ with no
+open gap run, since no gap run is open before the first column.
+
+It is the optimal affine-gap alignment score of $x$ and $y$. -/
 def gotohScore (xs ys : List α) : ℤ := gotohContNone σ gapOpen gapExtend xs ys
 
 /-- Extra fuel does not change the DP. -/
@@ -160,14 +208,18 @@ private theorem gotohAux_eq_of_le (m : ℕ) (xs ys : List α) (prev : GapState)
   | succ m hm ih =>
       rw [← ih, gotohAux_succ_of_le σ gapOpen gapExtend m xs ys prev hm]
 
-/-- The cost of a gap run of length `k` in one direction, given the previous state:
-continuing an open run costs `k * gapExtend`; otherwise a fresh run costs
-`gapOpen + (k - 1) * gapExtend` (and `0` for `k = 0`). -/
+/-- **Cost of a gap run.** Given an integer gap-open cost $o$, an integer gap-extend cost $e$, gap
+states $p$ (of the column before the run) and $c$ (of the run's columns) and a length
+$k \in \mathbb{N}$, the cost of a run of $k$ gap columns is $k e$ if $p = c$ (the run continues
+an open run); otherwise it is $0$ for $k = 0$ and $o + (k - 1) e$ for $k \ge 1$. -/
 def gapRunCost (gapOpen gapExtend : ℤ) (prev cur : GapState) (k : ℕ) : ℤ :=
   if prev = cur then (k : ℤ) * gapExtend
   else if k = 0 then 0 else gapOpen + ((k - 1 : ℕ) : ℤ) * gapExtend
 
-/-- One more column extends a gap run: continuing costs `gapExtend`, opening costs `gapOpen`. -/
+/-- **Adding a column to a gap run.** For an integer gap-open cost $o$, an integer gap-extend cost
+$e$, gap states $p$ and $c$ and $k \in \mathbb{N}$, the gap cost of a column in state $c$ after
+state $p$, plus the cost of a run of $k$ columns in state $c$ that follows state $c$, equals the
+cost of a run of $k + 1$ columns in state $c$ that follows state $p$. -/
 theorem gapRunCost_succ (gapOpen gapExtend : ℤ) (prev cur : GapState) (k : ℕ) :
     gapCost gapOpen gapExtend prev cur + gapRunCost gapOpen gapExtend cur cur k
       = gapRunCost gapOpen gapExtend prev cur (k + 1) := by
@@ -226,7 +278,11 @@ private theorem gotohAux_nil_right : ∀ (m : ℕ) (xs : List α) (prev : GapSta
           rw [hstep, ih xs .gapX (by omega)]
           exact gapRunCost_succ gapOpen gapExtend prev .gapX xs.length
 
-/-- Stripping a match column preserves validity. -/
+/-- **Removing a leading match column from a valid alignment.** Let $a$ and $b$ be elements,
+let $xs$ and $ys$ be sequences, and let $A$ be an alignment. If the alignment whose first column
+is the match column $(a, b)$, followed by the columns of $A$, is a valid alignment of the
+sequence $a$ followed by $xs$ and the sequence $b$ followed by $ys$, then $A$ is a valid
+alignment of $xs$ and $ys$. -/
 theorem isAlignment_of_cons_match {a b : α} {A : Alignment α} {xs ys : List α}
     (h : IsAlignment ((some a, some b) :: A) (a :: xs) (b :: ys)) : IsAlignment A xs ys := by
   obtain ⟨h1, h2, h3⟩ := h
@@ -238,7 +294,10 @@ theorem isAlignment_of_cons_match {a b : α} {A : Alignment α} {xs ys : List α
     rw [List.filterMap_cons] at h3'
     simpa using h3'
 
-/-- Stripping a gap-in-`ys` column preserves validity. -/
+/-- **Removing a leading column with a gap in the second sequence.** Let $A$ be an alignment, $a$
+an element and $x$, $y$ sequences. If prepending to $A$ the column that pairs $a$ with a gap gives
+a valid alignment of $a x$ (the sequence $x$ with $a$ prepended) and $y$, then $A$ is a valid
+alignment of $x$ and $y$. -/
 theorem isAlignment_of_cons_gapX {a : α} {A : Alignment α} {xs ys : List α}
     (h : IsAlignment ((some a, none) :: A) (a :: xs) ys) : IsAlignment A xs ys := by
   obtain ⟨h1, h2, h3⟩ := h
@@ -250,7 +309,10 @@ theorem isAlignment_of_cons_gapX {a : α} {A : Alignment α} {xs ys : List α}
     rw [List.filterMap_cons] at h3'
     simpa using h3'
 
-/-- Stripping a gap-in-`xs` column preserves validity. -/
+/-- **Removing a leading column with a gap in the first sequence.** Let $A$ be an alignment, $b$
+an element and $x$, $y$ sequences. If prepending to $A$ the column that pairs a gap with $b$ gives
+a valid alignment of $x$ and $b y$ (the sequence $y$ with $b$ prepended), then $A$ is a valid
+alignment of $x$ and $y$. -/
 theorem isAlignment_of_cons_gapY {b : α} {A : Alignment α} {xs ys : List α}
     (h : IsAlignment ((none, some b) :: A) xs (b :: ys)) : IsAlignment A xs ys := by
   obtain ⟨h1, h2, h3⟩ := h
@@ -262,7 +324,10 @@ theorem isAlignment_of_cons_gapY {b : α} {A : Alignment α} {xs ys : List α}
     rw [List.filterMap_cons] at h3'
     simpa using h3'
 
-/-- Prepending a match column preserves validity. -/
+/-- **Prepending a match column.** If $A$ is a valid alignment of sequences $x$ and $y$, then for
+all elements $a$ and $b$, the alignment obtained by prepending to $A$ the column that pairs $a$
+with $b$ is a valid alignment of $a x$ and $b y$ (the sequences $x$ and $y$ with $a$ and $b$
+prepended). -/
 theorem isAlignment_cons_match {a b : α} {A : Alignment α} {xs ys : List α}
     (h : IsAlignment A xs ys) : IsAlignment ((some a, some b) :: A) (a :: xs) (b :: ys) := by
   obtain ⟨h1, h2, h3⟩ := h
@@ -274,7 +339,10 @@ theorem isAlignment_cons_match {a b : α} {A : Alignment α} {xs ys : List α}
   · simp [List.filterMap_cons, h2]
   · simp [List.filterMap_cons, h3]
 
-/-- Prepending a gap-in-`ys` column preserves validity. -/
+/-- **Prepending a column with a gap in the second sequence.** If $A$ is a valid alignment of
+sequences $x$ and $y$, then for every element $a$, the alignment obtained by prepending to $A$ the
+column that pairs $a$ with a gap is a valid alignment of $a x$ (the sequence $x$ with $a$
+prepended) and $y$. -/
 theorem isAlignment_cons_gapX {a : α} {A : Alignment α} {xs ys : List α}
     (h : IsAlignment A xs ys) : IsAlignment ((some a, none) :: A) (a :: xs) ys := by
   obtain ⟨h1, h2, h3⟩ := h
@@ -286,7 +354,10 @@ theorem isAlignment_cons_gapX {a : α} {A : Alignment α} {xs ys : List α}
   · simp [List.filterMap_cons, h2]
   · simp [List.filterMap_cons, h3]
 
-/-- Prepending a gap-in-`xs` column preserves validity. -/
+/-- **Prepending a column with a gap in the first sequence.** If $A$ is a valid alignment of
+sequences $x$ and $y$, then for every element $b$, the alignment obtained by prepending to $A$ the
+column that pairs a gap with $b$ is a valid alignment of $x$ and $b y$ (the sequence $y$ with $b$
+prepended). -/
 theorem isAlignment_cons_gapY {b : α} {A : Alignment α} {xs ys : List α}
     (h : IsAlignment A xs ys) : IsAlignment ((none, some b) :: A) xs (b :: ys) := by
   obtain ⟨h1, h2, h3⟩ := h
@@ -498,13 +569,19 @@ private theorem exists_affineScore_eq_gotohAux : ∀ (n : ℕ) (xs ys : List α)
                   σ a b + gotohAux σ gapOpen gapExtend n xs ys .none
                 rw [hs1]
 
-/-- **Gotoh is optimal**: every valid alignment scores at most `gotohScore`. -/
+/-- **Gotoh is optimal.** Let $\sigma$ be an integer substitution score, $o$ an integer gap-open
+cost and $e$ an integer gap-extend cost. For all sequences $x$ and $y$ and every valid alignment
+$A$ of $x$ and $y$, the affine-gap score of $A$ is at most the Gotoh score of $x$ and $y$, both
+taken with $\sigma$, $o$ and $e$. -/
 theorem affineScore_le_gotohScore (A : Alignment α) (xs ys : List α)
     (hA : IsAlignment A xs ys) :
     affineScore σ gapOpen gapExtend A ≤ gotohScore σ gapOpen gapExtend xs ys :=
   affineScoreAux_le_gotohAux σ gapOpen gapExtend A xs ys .none hA
 
-/-- **Gotoh is attained**: some valid alignment achieves `gotohScore`. -/
+/-- **Gotoh is attained.** Let $\sigma$ be an integer substitution score, $o$ an integer gap-open
+cost and $e$ an integer gap-extend cost. For all sequences $x$ and $y$ there is a valid alignment
+$A$ of $x$ and $y$ whose affine-gap score equals the Gotoh score of $x$ and $y$, both taken with
+$\sigma$, $o$ and $e$. -/
 theorem exists_affineScore_eq_gotohScore (xs ys : List α) :
     ∃ A, IsAlignment A xs ys ∧
       affineScore σ gapOpen gapExtend A = gotohScore σ gapOpen gapExtend xs ys := by
@@ -512,7 +589,13 @@ theorem exists_affineScore_eq_gotohScore (xs ys : List α) :
     (xs.length + ys.length) xs ys .none le_rfl
   exact ⟨A, hA, hscore⟩
 
-/-- **First-column recurrence for the `none` continuation.** -/
+/-- **First-column recurrence for the continuation after a match.** Fix an
+integer-valued scoring function $\sigma$ on pairs of letters and integer gap-open and gap-extend
+penalties $g_o$ and $g_e$. For sequences $u$, $v$ let $N(u, v)$, $X(u, v)$ and $Y(u, v)$ be the
+Gotoh continuation values when the previous column was a match, a gap in $v$ and a gap in $u$
+respectively, and write $a \cdot u$ for the sequence with first letter $a$ followed by $u$. For
+all letters $a$, $b$ and sequences $u$, $v$, the value $N(a \cdot u, b \cdot v)$ is the maximum
+of $N(u, v) + \sigma(a, b)$, $X(u, b \cdot v) + g_o$ and $Y(a \cdot u, v) + g_o$. -/
 theorem gotohContNone_eq (a b : α) (xs ys : List α) :
     gotohContNone σ gapOpen gapExtend (a :: xs) (b :: ys) =
       max (gotohContNone σ gapOpen gapExtend xs ys + σ a b)
@@ -527,7 +610,13 @@ theorem gotohContNone_eq (a b : α) (xs ys : List α) :
     add_comm gapOpen (gotohContGapX σ gapOpen gapExtend xs (b :: ys)),
     add_comm gapOpen (gotohContGapY σ gapOpen gapExtend (a :: xs) ys)]
 
-/-- **First-column recurrence for the `gapX` continuation.** -/
+/-- **First-column recurrence for the continuation after a gap in the second sequence.** Fix an
+integer-valued scoring function $\sigma$ on pairs of letters and integer gap-open and gap-extend
+penalties $g_o$ and $g_e$. For sequences $u$, $v$ let $N(u, v)$, $X(u, v)$ and $Y(u, v)$ be the
+Gotoh continuation values when the previous column was a match, a gap in $v$ and a gap in $u$
+respectively, and write $a \cdot u$ for the sequence with first letter $a$ followed by $u$. For
+all letters $a$, $b$ and sequences $u$, $v$, the value $X(a \cdot u, b \cdot v)$ is the maximum
+of $N(u, v) + \sigma(a, b)$, $X(u, b \cdot v) + g_e$ and $Y(a \cdot u, v) + g_o$. -/
 theorem gotohContGapX_eq (a b : α) (xs ys : List α) :
     gotohContGapX σ gapOpen gapExtend (a :: xs) (b :: ys) =
       max (gotohContNone σ gapOpen gapExtend xs ys + σ a b)
@@ -542,7 +631,13 @@ theorem gotohContGapX_eq (a b : α) (xs ys : List α) :
     add_comm gapExtend (gotohContGapX σ gapOpen gapExtend xs (b :: ys)),
     add_comm gapOpen (gotohContGapY σ gapOpen gapExtend (a :: xs) ys)]
 
-/-- **First-column recurrence for the `gapY` continuation.** -/
+/-- **First-column recurrence for the continuation after a gap in the first sequence.** Fix an
+integer-valued scoring function $\sigma$ on pairs of letters and integer gap-open and gap-extend
+penalties $g_o$ and $g_e$. For sequences $u$, $v$ let $N(u, v)$, $X(u, v)$ and $Y(u, v)$ be the
+Gotoh continuation values when the previous column was a match, a gap in $v$ and a gap in $u$
+respectively, and write $a \cdot u$ for the sequence with first letter $a$ followed by $u$. For
+all letters $a$, $b$ and sequences $u$, $v$, the value $Y(a \cdot u, b \cdot v)$ is the maximum
+of $N(u, v) + \sigma(a, b)$, $X(u, b \cdot v) + g_o$ and $Y(a \cdot u, v) + g_e$. -/
 theorem gotohContGapY_eq (a b : α) (xs ys : List α) :
     gotohContGapY σ gapOpen gapExtend (a :: xs) (b :: ys) =
       max (gotohContNone σ gapOpen gapExtend xs ys + σ a b)
@@ -557,44 +652,73 @@ theorem gotohContGapY_eq (a b : α) (xs ys : List α) :
     add_comm gapOpen (gotohContGapX σ gapOpen gapExtend xs (b :: ys)),
     add_comm gapExtend (gotohContGapY σ gapOpen gapExtend (a :: xs) ys)]
 
-/-- The `none` continuation against the empty sequence is a single gap run. -/
+/-- **Gotoh value against an empty first sequence.** Let $g_o$ and $g_e$ be the gap-open and
+gap-extend scores. For every sequence $y$ of length $n$, the Gotoh value with no open gap run of
+the empty sequence against $y$ equals the score of a freshly opened run of $n$ gaps in the first
+sequence: $0$ if $n = 0$, and $g_o + (n - 1) g_e$ if $n \ge 1$. -/
 theorem gotohContNone_nil_left (ys : List α) :
     gotohContNone σ gapOpen gapExtend [] ys =
       gapRunCost gapOpen gapExtend .none .gapY ys.length :=
   gotohAux_nil_left σ gapOpen gapExtend (([] : List α).length + ys.length) ys .none (by simp)
 
-/-- The `none` continuation against the empty sequence is a single gap run. -/
+/-- **Gotoh value against an empty second sequence.** Let $g_o$ and $g_e$ be the gap-open and
+gap-extend scores. For every sequence $x$ of length $n$, the Gotoh value with no open gap run of
+$x$ against the empty sequence equals the score of a freshly opened run of $n$ gaps in the second
+sequence: $0$ if $n = 0$, and $g_o + (n - 1) g_e$ if $n \ge 1$. -/
 theorem gotohContNone_nil_right (xs : List α) :
     gotohContNone σ gapOpen gapExtend xs [] =
       gapRunCost gapOpen gapExtend .none .gapX xs.length :=
   gotohAux_nil_right σ gapOpen gapExtend (xs.length + ([] : List α).length) xs .none (by simp)
 
-/-- The `gapX` continuation against the empty sequence is a single gap run. -/
+/-- **Continuation after a gap in the second sequence, empty first sequence.** Fix a scoring
+function $\sigma$ on pairs of letters and integer gap-open and gap-extend penalties $g_o$ and
+$g_e$, and let $X(u, v)$ be the Gotoh continuation value of sequences $u$, $v$ when the previous
+column was a gap in $v$. For every sequence $v$ of length $k$, the value $X(\varepsilon, v)$,
+where $\varepsilon$ is the empty sequence, is the cost of one freshly opened gap run of length
+$k$: it is $0$ if $k = 0$ and $g_o + (k - 1) g_e$ if $k \ge 1$. -/
 theorem gotohContGapX_nil_left (ys : List α) :
     gotohContGapX σ gapOpen gapExtend [] ys =
       gapRunCost gapOpen gapExtend .gapX .gapY ys.length :=
   gotohAux_nil_left σ gapOpen gapExtend (([] : List α).length + ys.length) ys .gapX (by simp)
 
-/-- The `gapX` continuation against the empty sequence is a single gap run. -/
+/-- **Continuation after a gap in the second sequence, empty second sequence.** Fix a scoring
+function $\sigma$ on pairs of letters and integer gap-open and gap-extend penalties $g_o$ and
+$g_e$, and let $X(u, v)$ be the Gotoh continuation value of sequences $u$, $v$ when the previous
+column was a gap in $v$. For every sequence $u$ of length $k$, the value $X(u, \varepsilon)$,
+where $\varepsilon$ is the empty sequence, equals $k \, g_e$: the open gap run is extended by
+$k$ columns. -/
 theorem gotohContGapX_nil_right (xs : List α) :
     gotohContGapX σ gapOpen gapExtend xs [] =
       gapRunCost gapOpen gapExtend .gapX .gapX xs.length :=
   gotohAux_nil_right σ gapOpen gapExtend (xs.length + ([] : List α).length) xs .gapX (by simp)
 
-/-- The `gapY` continuation against the empty sequence is a single gap run. -/
+/-- **Continuation after a gap in the first sequence, empty first sequence.** Fix a scoring
+function $\sigma$ on pairs of letters and integer gap-open and gap-extend penalties $g_o$ and
+$g_e$, and let $Y(u, v)$ be the Gotoh continuation value of sequences $u$, $v$ when the previous
+column was a gap in $u$. For every sequence $v$ of length $k$, the value $Y(\varepsilon, v)$,
+where $\varepsilon$ is the empty sequence, equals $k \, g_e$: the open gap run is extended by
+$k$ columns. -/
 theorem gotohContGapY_nil_left (ys : List α) :
     gotohContGapY σ gapOpen gapExtend [] ys =
       gapRunCost gapOpen gapExtend .gapY .gapY ys.length :=
   gotohAux_nil_left σ gapOpen gapExtend (([] : List α).length + ys.length) ys .gapY (by simp)
 
-/-- The `gapY` continuation against the empty sequence is a single gap run. -/
+/-- **Continuation after a gap in the first sequence, empty second sequence.** Fix a scoring
+function $\sigma$ on pairs of letters and integer gap-open and gap-extend penalties $g_o$ and
+$g_e$, and let $Y(u, v)$ be the Gotoh continuation value of sequences $u$, $v$ when the previous
+column was a gap in $u$. For every sequence $u$ of length $k$, the value $Y(u, \varepsilon)$,
+where $\varepsilon$ is the empty sequence, is the cost of one freshly opened gap run of length
+$k$: it is $0$ if $k = 0$ and $g_o + (k - 1) g_e$ if $k \ge 1$. -/
 theorem gotohContGapY_nil_right (xs : List α) :
     gotohContGapY σ gapOpen gapExtend xs [] =
       gapRunCost gapOpen gapExtend .gapY .gapX xs.length :=
   gotohAux_nil_right σ gapOpen gapExtend (xs.length + ([] : List α).length) xs .gapY (by simp)
 
-/-- With `gapOpen = gapExtend = gap`, the affine-gap score of an alignment is the
-linear-gap score. -/
+/-- **Linear gaps as affine gaps, from any gap state.** Let $\sigma$ be an integer substitution
+score and $g$ an integer. If the gap-open cost and the gap-extend cost both equal $g$, then for
+every alignment $A$ and every gap state $p$, the affine-gap score of $A$ started from state $p$,
+with substitution score $\sigma$, equals the alignment score of $A$ with substitution score
+$\sigma$ and gap penalty $g$. -/
 theorem affineScoreAux_eq_alignmentScore (gap : ℤ) (hopen : gapOpen = gap)
     (hext : gapExtend = gap) : ∀ (A : Alignment α) (prev : GapState),
     affineScoreAux σ gapOpen gapExtend A prev = alignmentScore σ gap A := by
@@ -637,15 +761,19 @@ theorem affineScoreAux_eq_alignmentScore (gap : ℤ) (hopen : gapOpen = gap)
               rw [ih .none]
               simp [alignmentScore, columnScore]
 
-/-- With `gapOpen = gapExtend = gap`, the affine-gap score of an alignment is the
-linear-gap score. -/
+/-- **Linear gaps are affine gaps with equal costs.** Let $\sigma$ be an integer substitution
+score and $g$ an integer. If the gap-open cost and the gap-extend cost both equal $g$, then for
+every alignment $A$, the affine-gap score of $A$ with substitution score $\sigma$ equals the
+alignment score of $A$ with substitution score $\sigma$ and gap penalty $g$. -/
 theorem affineScore_eq_alignmentScore (gap : ℤ) (hopen : gapOpen = gap)
     (hext : gapExtend = gap) (A : Alignment α) :
     affineScore σ gapOpen gapExtend A = alignmentScore σ gap A :=
   affineScoreAux_eq_alignmentScore σ gapOpen gapExtend gap hopen hext A .none
 
-/-- With `gapOpen = gapExtend = gap`, affine-gap alignment is linear-gap
-Needleman–Wunsch. -/
+/-- **Gotoh with equal gap scores is Needleman–Wunsch.** Let $\sigma$ be a substitution score
+and $g$ an integer. If the gap-open and gap-extend scores both equal $g$, then for all sequences
+$x$ and $y$ the Gotoh score (optimal affine-gap alignment score) of $x$ and $y$ equals the
+Needleman–Wunsch score of $x$ and $y$ with substitution score $\sigma$ and gap score $g$. -/
 theorem gotohScore_eq_nwScore (gap : ℤ) (hopen : gapOpen = gap) (hext : gapExtend = gap)
     (xs ys : List α) :
     gotohScore σ gapOpen gapExtend xs ys = nwScore σ gap xs ys := by
