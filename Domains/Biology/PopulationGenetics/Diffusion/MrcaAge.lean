@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Domains.Biology.PopulationGenetics.Diffusion.Sojourn
-public import MathlibExt.Analysis.ODE.GreenKernel
 public import MathlibExt.Analysis.SpecialFunctions.Dilog
 import Mathlib.Analysis.Calculus.Deriv.Polynomial
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
@@ -64,9 +63,6 @@ Corollary 2 is `integral_neutralGreen` (both `Sojourn`; the value is
 * `continuousAt_killedGreen_diagonal`: `killedGreen (·, y)` is continuous at `x = y`.
 * `killedGreen_deriv_jump`: its derivative jumps by `-2 / (y (1 - y))` at `x = y`, as a
   Green's function for `∂C/∂t` with unit source must.
-* `killedGreen_eq_greenKernel`, `pattersonAux_wronskian`: on `(0, 1)`, `G_C` is the
-  two-solution `GreenKernel.kernel` built from `a₁`, `a₂` with normalization
-  `2 / y²`, and the two Appendix solutions have Wronskian `1`.
 * `tendsto_killedGreen_zero`, `tendsto_killedGreen_one`: `G_C(x, y) → 0` as
   `x → 0⁺` and as `x → 1⁻`, the Dirichlet boundary values.
 * `pattersonAux1_pos`, `killedGreen_pos`: `a₁` and `G_C` are positive on `(0, 1)`.
@@ -343,36 +339,6 @@ theorem killedGreen_eq_aux_right {x y : ℝ} (hxy : y < x) (hx : x ≠ 0) (hy0 :
   rw [ite_eq_right (not_le.mpr hxy)]
   field_simp
   ring
-
-/-- The Wronskian of Patterson's two Appendix solutions is `1` on `(0, 1)`. This is
-the normalization behind the constant in `killedGreen_deriv_jump`. -/
-theorem pattersonAux_wronskian {y : ℝ} (hy : y ∈ Ioo (0 : ℝ) 1) :
-    GreenKernel.wronskian pattersonAux1 pattersonAux2 y = 1 := by
-  have hy0 : y ≠ 0 := hy.1.ne'
-  have h1y : (1 : ℝ) - y ≠ 0 := (sub_pos.mpr hy.2).ne'
-  rw [GreenKernel.wronskian,
-    (hasDerivAt_pattersonAux1 hy0 (ne_of_lt hy.2)).deriv,
-    (hasDerivAt_pattersonAux2 hy0).deriv]
-  simp only [pattersonAux1, pattersonAux2]
-  field_simp
-  ring
-
-/-- Patterson's killed Green function is the two-solution `GreenKernel.kernel`
-built from `a₁` and `a₂`, with normalization `C y = 2 / y²`, on `(0, 1)`. -/
-theorem killedGreen_eq_greenKernel {x y : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1)
-    (hy : y ∈ Ioo (0 : ℝ) 1) :
-    killedGreen x y =
-      GreenKernel.kernel pattersonAux1 pattersonAux2 (fun y => 2 / y ^ 2) x y := by
-  by_cases h : x ≤ y
-  · rw [killedGreen_eq_aux_left h hx.1.ne' hy.1.ne', GreenKernel.kernel_of_le h]
-  · have hlt : y < x := not_le.mp h
-    have hx0 : x ≠ 0 := hx.1.ne'
-    have hy0 : y ≠ 0 := hy.1.ne'
-    have h1y : (1 : ℝ) - y ≠ 0 := (sub_pos.mpr hy.2).ne'
-    rw [killedGreen_eq_aux_right hlt hx0 hy0 (ne_of_lt hy.2),
-      GreenKernel.kernel_of_lt hlt]
-    simp only [pattersonAux2]
-    field_simp
 
 /-- At the diagonal the right branch takes the same value as the left branch. -/
 private theorem killedGreen_self_eq_aux_right {y : ℝ} (hy : y ∈ Ioo (0 : ℝ) 1) :
