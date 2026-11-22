@@ -207,7 +207,7 @@ To queue a standalone PR, use one of:
   they pass. `--match-head-commit <sha>` checks the head only when you run the
   command. The queue sets the merge method and the commit message, so
   `--squash`, `--subject` and `--body` have no effect, and `gh` refuses
-  `--delete-branch`. Before the queue is required, `gh pr merge` merges
+  `--delete-branch`. Before the queue is required, `gh pr merge` can merge
   directly instead.
 - The GraphQL mutation `enqueuePullRequest` (`pullRequestId`, and
   `expectedHeadOid` to pin the head). It queues the PR only if it can be queued
@@ -256,11 +256,12 @@ exactly the test command, so a change that makes one of them skip its jobs is
 caught by the other. The test fails if one of these workflows loses or filters
 those triggers, also runs on pushes to any branch but `main` or on another event
 that could report its checks for another tree (such as `pull_request_target`),
-can skip the job that reports the check, checks out another ref or repository in
-it, renames the check or puts an expression in its job name, lets another job
-report (or possibly report) the same name, or uses a concurrency group that the
-test does not know to differ between PRs and between merge groups, or that
-another workflow's group could match.
+can skip the job that reports the check or, through a step-level condition, the
+job's own check, checks out another ref or repository in it, renames the check
+or puts an expression in its job name, lets another job report (or possibly
+report) the same name, or uses a concurrency group that the test does not know
+to differ between PRs and between merge groups, or that another workflow's group
+could match.
 
 The other checks are advisory. The bump guard's `guard` checks Lean and Mathlib
 pin changes on PRs and merge groups; on PRs it runs through
