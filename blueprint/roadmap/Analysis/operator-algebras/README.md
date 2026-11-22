@@ -12,3 +12,4 @@ Banach algebras and C*- and von Neumann algebras: exponentials and product formu
 - [Russo–Dye theorem](c-star-algebra-russo-dye.md)
 - [Stinespring dilation theorem](stinespring-dilation.md)
 - [Operator monotone and operator convex functions](operator-monotone-and-operator-convex-functions/README.md)
+- [Boundary representation of an operator system S ⊆ C*(S): an irreducible representation of C*(S) whose restriction to S has a unique completely positive extension](boundary-representation.md)
