@@ -66,7 +66,8 @@ private theorem integral_hasDerivAt {f : ℝ → ℝ}
     (ContinuousOn.stronglyMeasurableAtFilter hJ hf b hb)
     (hf.continuousAt (hJ.mem_nhds hb))
 
-private theorem integral_hasDerivAt_time (hI : IsOpen I) (hJ : IsOpen J)
+/-- Differentiation under a finite spatial integral inside an open product. -/
+theorem integral_hasDerivAt_time (hI : IsOpen I) (hJ : IsOpen J)
     (hJc : OrdConnected J) {u : ℝ → ℝ → ℝ}
     (hu : ContDiffOn ℝ 2 (Function.uncurry u) (I ×ˢ J))
     (a b t : ℝ) (ha : a ∈ J) (hb : b ∈ J) (ht : t ∈ I) :
