@@ -118,11 +118,25 @@ class MergeManifestTest(unittest.TestCase):
         self.assertEqual(problems, [])
         self.assertEqual(row["rationale"], "Port the lemma. Restated (#961). Also: Adapted for the bump.")
         self.assertEqual(row["published_sha256"], fms.sha256(b"AXY"))
-        clean = merged_file(b"AX", ours=b"AX", theirs=b"A1", base=b"A", auto=b"AX")
+        # The mirror case: the bump's file contains main's change.
+        ours = diverged(base["path"], "AXY", "Port the lemma. Adapted for the bump.")
+        theirs = diverged(base["path"], "AX", "Port the lemma. Restated (#961).")
+        clean = merged_file(b"AXY", ours=b"AXY", theirs=b"AX", base=b"A", auto=b"AXY")
         text, _, problems = self.merge([base], [ours], [theirs], {base["path"]: clean})
         row = bb.manifest_rows(text)[base["path"]]
-        self.assertEqual((problems, row["published_sha256"]), ([], fms.sha256(b"AX")))
+        self.assertEqual((problems, row["published_sha256"]), ([], fms.sha256(b"AXY")))
         self.assertEqual(row["rationale"], "Port the lemma. Restated (#961). Also: Adapted for the bump.")
+        # With no base rationale, two first accounts of overlapping changes go to a person.
+        bare = {**base}
+        del bare["rationale"]
+        for o_file, t_file in ((b"AX", b"AXY"), (b"AXY", b"AX")):
+            o_row = diverged(base["path"], o_file.decode(), "Ported solely from PR #12.")
+            t_row = diverged(base["path"], t_file.decode(), "Ported solely from PR #21.")
+            staged = max(o_file, t_file, key=len)
+            files = {base["path"]: merged_file(staged, ours=o_file, theirs=t_file, base=b"A", auto=staged)}
+            _, _, problems = self.merge([bare], [o_row], [t_row], files)
+            self.assertEqual(len(problems), 1, problems)
+            self.assertIn("first rationales differ", problems[0])
 
     def test_metadata_only_changes_merge_field_by_field(self):
         base = diverged("MathlibExt/A.lean", "A", "Port the lemma.")
@@ -684,6 +698,39 @@ class GitTest(unittest.TestCase):
         row = bb.manifest_rows((self.repo / bb.MANIFEST).read_text())[a]
         self.assertEqual(row["rationale"], f"Port {a}. Type a_eq (#8). {BUMP}")
         self.assertEqual(row["published_sha256"], fms.sha256(more.encode()))
+
+    def test_first_accounts_of_contained_changes_need_a_person(self):
+        for bump_more in (False, True):
+            with self.subTest(bump_more=bump_more):
+                self.tearDown()
+                self.setUp()
+                files, rows = self.base_tree()
+                i = "MathlibExt/I.lean"
+                body = "def i := 1\n\n\ntheorem i_eq := rfl\n"
+                synced = META + "\n" + body
+                identical = {"path": i, "disposition": "identical", "published_sha256": fms.sha256(synced.encode()),
+                             "upstream_sha256": fms.sha256(body.encode())}
+                rows = rows + [identical]
+                self.write({i: synced}, rows, "sync I")
+                annotated = synced.replace("def i", "noncomputable def i")
+                typed = annotated.replace("theorem i_eq := rfl", "theorem i_eq : i = 1 := rfl")
+
+                def diverge_i(text, rationale):
+                    row = {**identical, "disposition": "diverged", "published_sha256": fms.sha256(text.encode()),
+                           "rationale": rationale, "backport": "pending"}
+                    return [row if r["path"] == i else r for r in rows]
+
+                bump_text, main_text = (typed, annotated) if bump_more else (annotated, typed)
+                self.git("checkout", "-q", "-b", "bump")
+                self.write({i: bump_text}, diverge_i(bump_text, "Annotation solely from PR #12."), "bump")
+                self.git("checkout", "-q", "main")
+                self.write({i: main_text}, diverge_i(main_text, "Annotation solely from PR #21."), "Port I (#21)")
+                self.git("checkout", "-q", "bump")
+                head = self.git("rev-parse", "HEAD").stdout
+                proc = self.tool("merge-main", "--main", "main")
+                self.assertEqual(proc.returncode, 3, proc.stdout + proc.stderr)
+                self.assertIn("first rationales differ", proc.stdout)
+                self.assertEqual(self.git("rev-parse", "HEAD").stdout, head)
 
     def test_refuses_a_dirty_tree(self):
         self.base_tree()

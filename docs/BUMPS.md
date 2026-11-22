@@ -83,7 +83,8 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
    merged file: if it is git's own merge of the two sides (or `--adjacent`'s),
    even one that comes out equal to one side, the row takes the new hash and
    both rationales: a side that rewrote the rationale keeps its account and the
-   other side's added sentences follow, and if both rewrote it you write one.
+   other side's added sentences follow. If both rewrote it, or both wrote a first
+   one for changes that may overlap, you write one.
    If you resolved a conflict by keeping one side's version, it keeps that
    side's row. With `--adjacent` it also merges a conflict where one side
    rewrote one whole doc comment and the other changed the one line next to it
