@@ -108,7 +108,7 @@ class BumpCacheWorkflowTest(unittest.TestCase):
     def test_read_only_token(self) -> None:
         permissions = top_level_block(self.warm_lines, "permissions")
         granted = dict(re.findall(r"^  ([a-z-]+): (\S+)", "\n".join(permissions), re.M))
-        self.assertEqual(granted, {"actions": "read", "contents": "read", "pull-requests": "read"})
+        self.assertEqual(granted, {"contents": "read", "pull-requests": "read"})
         self.assertIsNone(re.search(r"(?m)^[ \t]+permissions:", self.warm), "no job may widen the token")
 
     def test_inputs_reach_scripts_only_through_the_environment(self) -> None:
@@ -156,16 +156,26 @@ class BumpCacheWorkflowTest(unittest.TestCase):
     def test_checks_before_checkout(self) -> None:
         order = [self.warm.index(m) for m in (
             "name: Check the pull request and its head", "uses: actions/checkout@",
-            "name: Compare the head with main", "name: Name the cache entries", "name: Build and check the head")]
+            "name: Compare the head with main", "name: Run main's bump guard on the head",
+            "name: Name the cache entries", "name: Build and check the head")]
         self.assertEqual(order, sorted(order))
-        check = step(self.warm, "name: Check the pull request and its head")
-        self.assertIn("actions/workflows/bump-guard.yml/runs?head_sha=${HEAD_SHA}&event=pull_request&status=completed",
-                      check)
-        self.assertIn("sort_by(.run_number, .run_attempt) | last", check)
-        compare = step(self.warm, "name: Compare the head with main")
-        for guard_file in (".github/workflows/bump-guard.yml", ".github/workflows/bump-pinned-release.yml",
-                           "scripts/bump/pinned_bump.py"):
-            self.assertIn(guard_file, compare)
+
+    def test_runs_mains_guard_on_three_trees(self) -> None:
+        guard = step(self.warm, "name: Run main's bump guard on the head")
+        self.assertIn('git show "${MAIN_SHA}:scripts/bump/${file}" > "${guard}/main/scripts/bump/${file}"', guard)
+        self.assertIn("for file in pinned_bump.py pinned_deps.json; do", guard)
+        self.assertIn('trees=("base:${MAIN_SHA}" "merge-base:${merge_base}" "pr:${HEAD_SHA}")', guard)
+        self.assertIn('diff --no-renames --name-only "$merge_base" "$HEAD_SHA"', guard)
+        self.assertIn('cd "${guard}/main"\n', guard)
+        self.assertIn('python3 scripts/bump/pinned_bump.py guard --base "${guard}/base" --merge-base "${guard}/merge-base"',
+                      guard)
+        # The same files as the Bump guard workflow reads.
+        guard_workflow = (WORKFLOWS / "bump-guard.yml").read_text(encoding="utf-8")
+        self.assertIn("for file in lean-toolchain lakefile.toml lake-manifest.json; do", guard_workflow)
+        self.assertIn("for file in lean-toolchain lakefile.toml lake-manifest.json; do", guard)
+        for kind in ("policy", "doc", "ledger"):
+            self.assertIn(f"config_paths {kind})", guard_workflow)
+        self.assertIn("for kind in policy doc ledger; do", guard)
 
 
 class BuildStepTest(unittest.TestCase):
@@ -276,12 +286,18 @@ class CompareStepTest(unittest.TestCase):
         self.git("commit", "-q", "--allow-empty", "-m", "change")
 
     def run_step(self) -> subprocess.CompletedProcess:
-        return subprocess.run(["bash", "-e", "-c", self.script], cwd=self.work, capture_output=True, text=True,
-                              env=dict(os.environ, RUNNER_TEMP=str(self.temp)))
+        output = self.temp / "github_output"
+        output.write_text("")
+        proc = subprocess.run(["bash", "-e", "-c", self.script], cwd=self.work, capture_output=True, text=True,
+                              env=dict(os.environ, RUNNER_TEMP=str(self.temp), GITHUB_OUTPUT=str(output)))
+        self.main_output = output.read_text()
+        return proc
 
     def test_new_pins_pass(self) -> None:
         self.write({"lean-toolchain": "leanprover/lean4:v4.36.0\n"})
         self.assertEqual(self.run_step().returncode, 0)
+        main = subprocess.run(["git", "rev-parse", "main"], cwd=self.work, capture_output=True, text=True).stdout
+        self.assertEqual(self.main_output, f"main={main.strip()}\n")
 
     def test_main_pins_fail(self) -> None:
         self.write({})
@@ -296,11 +312,6 @@ class CompareStepTest(unittest.TestCase):
         self.assertNotEqual(proc.returncode, 0)
         self.assertIn("must be a regular file", proc.stdout)
 
-    def test_changed_guard_code_fails(self) -> None:
-        self.write({"lean-toolchain": "leanprover/lean4:v4.36.0\n", self.GUARD_CODE[2]: "weakened\n"})
-        proc = self.run_step()
-        self.assertNotEqual(proc.returncode, 0)
-        self.assertIn("changes the guard code", proc.stdout)
 
 if __name__ == "__main__":
     unittest.main()

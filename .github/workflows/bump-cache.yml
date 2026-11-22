@@ -13,11 +13,10 @@ name: Bump build cache
 #
 # A maintainer dispatches this workflow from main with the bump's pull request
 # number and the head commit they reviewed. Before it checks out that commit,
-# the run checks that it is the pull request's current head and that the
-# latest completed pull_request run of the Bump guard workflow on it passed.
-# It then checks that the head keeps main's guard code and changes the
-# contents of the pin files, so that its cache key differs from main's. It
-# builds and checks the head with the same commands as ci.yml's `build` job
+# the run checks that it is the pull request's current head. It then checks
+# that the head changes the contents of the pin files, so that its cache key
+# differs from main's, and runs main's bump guard on it against current main.
+# It builds and checks the head with the same commands as ci.yml's `build` job
 # (the memory-heavy modules, then scripts/check.sh build) and saves .lake/build
 # under ci.yml's key for the new pins. The bump's pull request runs, its merge
 # group, the merge groups queued behind it and main's first build after it
@@ -49,7 +48,6 @@ on:
         type: string
 
 permissions:
-  actions: read
   contents: read
   pull-requests: read
 
@@ -105,16 +103,6 @@ jobs:
             echo "::error::#${PR}'s head is ${head}, not ${HEAD_SHA}: review the new head and dispatch with it"
             exit 1
           fi
-          # The latest completed pull_request run of the Bump guard workflow on
-          # this commit must have passed: a guard pass on the commit, against
-          # the base that run saw. The next step checks that the head leaves
-          # the guard code as main has it, so that run used main's guard.
-          guard="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/bump-guard.yml/runs?head_sha=${HEAD_SHA}&event=pull_request&status=completed&per_page=100" \
-            --jq '[.workflow_runs[]] | sort_by(.run_number, .run_attempt) | last | .conclusion // ""')"
-          if [ "$guard" != success ]; then
-            echo "::error::the Bump guard workflow has not passed on ${HEAD_SHA} (latest completed run: '${guard:-none}')"
-            exit 1
-          fi
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -126,16 +114,12 @@ jobs:
       # With main's contents this run would save under the prefix every pull
       # request and merge group restores, so at least one file must differ.
       - name: Compare the head with main
+        id: compare
         run: |
           set -euo pipefail
           git fetch --quiet --no-tags --depth=1 origin main
           main_sha="$(git rev-parse FETCH_HEAD)"
-          guard_code=(.github/workflows/bump-guard.yml .github/workflows/bump-pinned-release.yml scripts/bump/pinned_bump.py)
-          changed="$(git diff --name-only "$main_sha" HEAD -- "${guard_code[@]}")"
-          if [ -n "$changed" ]; then
-            echo "::error::the head changes the guard code (${changed//$'\n'/, }), so a passing guard run proves nothing"
-            exit 1
-          fi
+          echo "main=${main_sha}" >> "$GITHUB_OUTPUT"
           differs=0
           for file in lean-toolchain lake-manifest.json; do
             mode="$(git ls-tree HEAD -- "$file" | cut -d' ' -f1)"
@@ -156,6 +140,77 @@ jobs:
             echo "::error::the head has main's lean-toolchain and lake-manifest.json, so it is not a bump; ci.yml's cache already covers it"
             exit 1
           fi
+
+      # Main's bump guard, run on the head against current main the way the
+      # Bump guard workflow runs it on a pull request: the pin files of main,
+      # of the merge base and of the head go in as data, and only main's copy of
+      # the guard runs. It accepts only a forward move to a final release that
+      # every pinned dependency has tagged, and fails a pin change that also
+      # touches the guard code.
+      - name: Run main's bump guard on the head
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_SHA: ${{ inputs.head-sha }}
+          MAIN_SHA: ${{ steps.compare.outputs.main }}
+        run: |
+          set -euo pipefail
+          guard="${RUNNER_TEMP}/guard"
+          mkdir -p "${guard}/base" "${guard}/merge-base" "${guard}/pr" "${guard}/main/scripts/bump"
+          merge_base="$(gh api "repos/${GITHUB_REPOSITORY}/compare/${MAIN_SHA}...${HEAD_SHA}" --jq '.merge_base_commit.sha')"
+          if ! [[ "$merge_base" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::could not find the merge base of main and ${HEAD_SHA}"
+            exit 1
+          fi
+          git fetch --quiet --no-tags --depth=1 --filter=blob:none origin "$merge_base"
+          # The guard reads its own configuration from beside itself, as it
+          # does in a checkout of main.
+          for file in pinned_bump.py pinned_deps.json; do
+            git show "${MAIN_SHA}:scripts/bump/${file}" > "${guard}/main/scripts/bump/${file}"
+          done
+          trees=("base:${MAIN_SHA}" "merge-base:${merge_base}" "pr:${HEAD_SHA}")
+          # Copy one file of one tree in, as data. Missing optional files stay
+          # missing; the guard decides what that means.
+          put() {
+            local dir="$1" rev="$2" file="$3" required="$4" dest
+            dest="$(realpath -m "${guard}/${dir}/${file}")"
+            case "$dest" in
+              "${guard}/${dir}"/*) ;;
+              *) echo "::error::refusing to copy ${file}: it leaves ${guard}/${dir}"; exit 1 ;;
+            esac
+            mkdir -p "$(dirname "$dest")"
+            if ! git show "${rev}:${file}" > "$dest" 2> /dev/null; then
+              rm -f "$dest"
+              if [ "$required" = true ]; then
+                echo "::error::${file} is missing at ${rev}"
+                exit 1
+              fi
+            fi
+          }
+          for tree in "${trees[@]}"; do
+            dir="${tree%%:*}"
+            rev="${tree#*:}"
+            for file in lean-toolchain lakefile.toml lake-manifest.json; do
+              put "$dir" "$rev" "$file" true
+            done
+            if [ "$dir" = base ]; then
+              put "$dir" "$rev" scripts/bump/pinned_deps.json true
+            else
+              put "$dir" "$rev" scripts/bump/pinned_deps.json false
+            fi
+          done
+          for kind in policy doc ledger; do
+            paths="$(cd "${guard}/main" && python3 scripts/bump/pinned_bump.py config-paths --kind "$kind" \
+              --pr-config "${guard}/pr/scripts/bump/pinned_deps.json")"
+            for file in $paths; do
+              for tree in "${trees[@]}"; do
+                put "${tree%%:*}" "${tree#*:}" "$file" false
+              done
+            done
+          done
+          git -c core.quotePath=false diff --no-renames --name-only "$merge_base" "$HEAD_SHA" > "${guard}/changed.txt"
+          cd "${guard}/main"
+          python3 scripts/bump/pinned_bump.py guard --base "${guard}/base" --merge-base "${guard}/merge-base" \
+            --pr "${guard}/pr" --changed-files "${guard}/changed.txt"
 
       - name: Name the cache entries
         id: key
