@@ -65,7 +65,8 @@ sequence number $k$), $\mathsf{recv}\,k$ (data channel to receiver), $\mathsf{ac
 to sender, the cumulative acknowledgement naming $k$ as the next expected frame) and
 $\mathsf{reply}\,k$ (receiver to the acknowledgement channel, in the lossy variant).
 
-The protocol only uses the sequence numbers $0$, $1$ and $2$. -/
+In runs from the initial configuration, the protocol only uses the sequence numbers $0$, $1$ and
+$2$. -/
 inductive Name
   /-- Accept a message from the user. -/
   | acc

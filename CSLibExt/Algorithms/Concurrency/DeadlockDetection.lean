@@ -236,11 +236,12 @@ theorem reduceAux_stuck (fuel : ℕ) (work : R → ℕ) (pending : List P)
         omega
       simpa [add_assoc] using ih (work + S.alloc p) (pending.erase p) hlen' q hq
 
-/-- **The algorithm with fuel leaves over no process of a reduction sequence.** Let $w$ be the free
-resource vector, let the list of pending processes contain no duplicates, and let the fuel be at
-least the number of pending processes. If $\sigma$ is a duplicate-free reduction sequence from $w$
-all of whose processes are pending, then no process of $\sigma$ is among the processes that the
-detection algorithm with that fuel leaves over. -/
+/-- **With sufficient fuel, no member of a duplicate-free pending reduction sequence is left over.**
+Suppose that there are finitely many resource types and that equality of processes is decidable. Let
+$w$ be the free resource vector, let the list of pending processes contain no duplicates, and let
+the fuel be at least the number of pending processes. If $\sigma$ is a duplicate-free reduction
+sequence from $w$ all of whose processes are pending, then no process of $\sigma$ is among the
+processes that the detection algorithm with that fuel leaves over. -/
 theorem reduceAux_disjoint (fuel : ℕ) (work : R → ℕ) (pending : List P)
     (hlen : pending.length ≤ fuel) (hnd : pending.Nodup) {σ : List P}
     (hσ : S.Reduces work σ) (hσnd : σ.Nodup) (hsub : σ ⊆ pending) :
