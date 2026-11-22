@@ -54,4 +54,29 @@ example (c : KernelCBN 2 (fun _ => ℝ)) (a : ℝ) :
       (c.intervene 0 a).pa 0 = ∅ :=
   ⟨c.map_joint_intervene_apply_eq_dirac 0 a, c.intervene_pa_self 0 a⟩
 
+/-- The degenerate chain that always outputs `true`. -/
+noncomputable def trueChain : BayesNet Bool 2 :=
+  BayesNet.mk chainPa2 (fun _ _ => StdSimplex.single true)
+
+/-- Concrete joint mass: the embedded degenerate chain puts mass `1` on
+`![true, true]` and mass `0` on `![true, false]`. -/
+example : trueChain.toKernelCBN.joint {![true, true]} = 1 ∧
+    trueChain.toKernelCBN.joint {![true, false]} = 0 := by
+  constructor
+  · rw [BayesNet.toKernelCBN_joint_singleton]
+    simp [trueChain, BayesNet.joint_eq_prod]
+  · rw [BayesNet.toKernelCBN_joint_singleton]
+    simp [trueChain, BayesNet.joint_eq_prod]
+
+/-- Concrete intervention: after `do(X_1 = false)` the embedded chain puts
+mass `1` on `![true, false]`. -/
+example : (trueChain.intervene 1 false).toKernelCBN.joint {![true, false]} = 1 := by
+  rw [BayesNet.toKernelCBN_joint_singleton]
+  simp [trueChain, BayesNet.joint_eq_prod, BayesNet.intervene]
+
+/-- The zero-node network: its joint is a probability measure on the
+one-point type of empty assignments. -/
+example (c : KernelCBN 0 (fun _ => ℝ)) : c.joint Set.univ = 1 :=
+  measure_univ
+
 end Cslib.MachineLearning.GraphicalModels
