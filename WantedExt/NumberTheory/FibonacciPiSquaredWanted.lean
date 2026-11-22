@@ -36,9 +36,21 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Theorem 2.1: for every `n ≥ 1`,
-`π² = (b_(n-1) + (-1)ⁿ Σ_k (k!)² p_n(k) F_(2k+2) / (2k+2n)!) / a_(n-1)` (2.1) and
-`π² = (b_n + (-1)^(n+1) Σ_k (k!)² p_n(k) F_(2k+1) / (2k+2n)!) / a_n` (2.2).
+/-- **Fibonacci series for $\pi^2$ with polynomial weights.** Let $p_1, p_2, \dots$ be polynomials
+with integer coefficients such that $p_1 = 1$ and, for every $n \ge 1$,
+$p_{n+1}(x) = (2x + 2n + 1)(2x + 2n + 2)\, p_n(x) - (x + 1)^2 p_n(x + 1)$. Let $(a_n)_{n \ge 0}$
+be real numbers with $a_0 = -8\sqrt{5}/250$, $a_1 = (25 - 4\sqrt{5})/250$ and
+$a_{n+1} = a_n + a_{n-1}$ for $n \ge 1$, and let $(b_n)_{n \ge 0}$ be real numbers with
+$b_0 = b_1 = 0$ and $b_{n+1} = b_n + b_{n-1} + (-1)^{n+1} p_n(0)/(2n)!$ for $n \ge 1$. Write $F_m$
+for the Fibonacci numbers ($F_0 = 0$, $F_1 = 1$). Then for every $n \ge 1$,
+
+$$\pi^2 = \frac{1}{a_{n-1}} \Bigl(b_{n-1} + (-1)^n \sum_{k=0}^{\infty}
+\frac{(k!)^2 \, p_n(k) \, F_{2k+2}}{(2k+2n)!}\Bigr)$$
+
+and
+
+$$\pi^2 = \frac{1}{a_n} \Bigl(b_n + (-1)^{n+1} \sum_{k=0}^{\infty}
+\frac{(k!)^2 \, p_n(k) \, F_{2k+1}}{(2k+2n)!}\Bigr).$$
 
 Source: Joseph Tonien, *Fibonacci and Pi Squared*, The Fibonacci Quarterly 62 (2024), no. 1,
 Theorem 2.1 (`fq-2024-tonien10292023-thm-2.1`). -/
@@ -58,9 +70,14 @@ public theorem_wanted pi_sq_eq_fibonacci_factorial_series (p : ℕ → ℤ[X]) (
         (((p n).eval (k : ℤ) : ℤ) : ℝ) * (Nat.fib (2 * k + 1) : ℝ) /
           ((2 * k + 2 * n).factorial : ℝ)) / a n
 
-/-- Lemma 2.2 (the case `n = 1`):
-`π² = (250 / (8√5)) Σ_k (k!)² F_(2k+2) / (2k+2)!` (2.3) and
-`π² = (250 / (25 - 4√5)) Σ_k (k!)² F_(2k+1) / (2k+2)!` (2.4).
+/-- **Two Fibonacci series for $\pi^2$.** Writing $F_m$ for the Fibonacci numbers ($F_0 = 0$,
+$F_1 = 1$),
+
+$$\pi^2 = \frac{250}{8\sqrt{5}} \sum_{k=0}^{\infty} \frac{(k!)^2 \, F_{2k+2}}{(2k+2)!}
+\quad \text{and} \quad
+\pi^2 = \frac{250}{25 - 4\sqrt{5}} \sum_{k=0}^{\infty} \frac{(k!)^2 \, F_{2k+1}}{(2k+2)!}.$$
+
+These are identities (2.3) and (2.4) of the paper, the case $n = 1$ of its Theorem 2.1.
 
 Source: Joseph Tonien, *Fibonacci and Pi Squared*, The Fibonacci Quarterly 62 (2024), no. 1,
 Lemma 2.2 (`fq-2024-tonien10292023-lem-2.2`). -/
@@ -70,8 +87,14 @@ public theorem_wanted pi_sq_eq_fibonacci_central_series :
       Real.pi ^ 2 = 250 / (25 - 4 * √5) * ∑' k : ℕ, ((k.factorial ^ 2 : ℕ) : ℝ) *
         (Nat.fib (2 * k + 1) : ℝ) / ((2 * k + 2).factorial : ℝ)
 
-/-- Lemma 2.3: `a_n = ((25 - 4√5) / 250) F_n - (8√5 / 250) F_(n-1)`, stated for `n ≥ 1`; the case
-`n = 0` with the paper's convention `F_(-1) = 1` is the initial value `a 0 = -8√5 / 250`.
+/-- **Fibonacci closed form of the sequence $a_n$.** Let $(a_n)_{n \ge 0}$ be real numbers with
+$a_0 = -8\sqrt{5}/250$, $a_1 = (25 - 4\sqrt{5})/250$ and $a_{n+1} = a_n + a_{n-1}$ for $n \ge 1$,
+and write $F_m$ for the Fibonacci numbers ($F_0 = 0$, $F_1 = 1$). Then for every $n \ge 0$,
+
+$$a_{n+1} = \frac{25 - 4\sqrt{5}}{250} F_{n+1} - \frac{8\sqrt{5}}{250} F_n.$$
+
+The paper states $a_n = \frac{25 - 4\sqrt{5}}{250} F_n - \frac{8\sqrt{5}}{250} F_{n-1}$ for all
+$n \ge 0$ with the convention $F_{-1} = 1$; its case $n = 0$ is the initial value $a_0$.
 
 Source: Joseph Tonien, *Fibonacci and Pi Squared*, The Fibonacci Quarterly 62 (2024), no. 1,
 Lemma 2.3 (`fq-2024-tonien10292023-lem-2.3`). -/
@@ -79,8 +102,13 @@ public theorem_wanted fibPiSquared_coeff_eq_fib (a : ℕ → ℝ) (ha0 : a 0 = -
     (ha1 : a 1 = (25 - 4 * √5) / 250) (ha : ∀ n, 1 ≤ n → a (n + 1) = a n + a (n - 1)) (n : ℕ) :
     a (n + 1) = (25 - 4 * √5) / 250 * Nat.fib (n + 1) - 8 * √5 / 250 * Nat.fib n
 
-/-- Lemma 2.4: for `n ≥ 1`,
-`p_n(x) = Σ_(j=0)^(n-1) (-1)^j C(n-1, j) Π_(k=2j+3)^(2n) (2x + k) Π_(t=1)^j (x + t)²`.
+/-- **Explicit formula for the polynomials $p_n$.** Let $p_1, p_2, \dots$ be polynomials with
+integer coefficients such that $p_1 = 1$ and, for every $n \ge 1$,
+$p_{n+1}(x) = (2x + 2n + 1)(2x + 2n + 2)\, p_n(x) - (x + 1)^2 p_n(x + 1)$. Then for every
+$n \ge 1$, as polynomials in $x$,
+
+$$p_n(x) = \sum_{j=0}^{n-1} (-1)^j \binom{n-1}{j} \Bigl(\prod_{k=2j+3}^{2n} (2x + k)\Bigr)
+\prod_{t=1}^{j} (x + t)^2.$$
 
 Source: Joseph Tonien, *Fibonacci and Pi Squared*, The Fibonacci Quarterly 62 (2024), no. 1,
 Lemma 2.4 (`fq-2024-tonien10292023-lem-2.4`). -/
