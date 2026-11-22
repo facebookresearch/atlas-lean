@@ -31,17 +31,23 @@ open Complex Finset
 
 @[expose] public section
 
-/-- For `0 < x < 1`, `1 / sin(πx) < (1/π) (1/x + 2x / (1 - x²))`: the first two terms of the
-partial-fraction expansion of `π / sin(πx)` bound it from above.
+/-- **Partial-fraction bound for the cosecant.** For every real number $x$ with $0 < x < 1$,
+$$\frac{1}{\sin(\pi x)} < \frac{1}{\pi}\left(\frac{1}{x} + \frac{2x}{1 - x^2}\right).$$
+That is, the first two terms of the partial-fraction expansion of $\pi / \sin(\pi x)$ bound it
+from above.
 
 Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
 (2025), Article A48, Lemma 3.1 (quoted from [3, Lemma 2.2]) (`integers-2025-A48-lem-3-1`). -/
 public theorem_wanted one_div_sin_pi_lt (x : ℝ) (hx₀ : 0 < x) (hx₁ : x < 1) :
     1 / Real.sin (Real.pi * x) < (1 / Real.pi) * (1 / x + 2 * x / (1 - x ^ 2))
 
-/-- For a prime `p`, an integer `a` with `p ∤ a`, and `1 ≤ B < p/2`,
-`∑_{h=1}^{B} 1 / |sin(π a h / p)| < (p/π)(log B + γ + 1/(2B)) + p B (B + 1) / (π (p² - B²))`,
-with `γ` the Euler–Mascheroni constant.
+/-- **Bound for a sum of reciprocal sines.** Let $p$ be a prime, let $a$ be an integer not
+divisible by $p$, let $B$ be an integer with $1 \le B < p/2$, and let $\gamma$ be the
+Euler–Mascheroni constant. Then
+$$
+\sum_{h=1}^{B} \frac{1}{|\sin(\pi a h / p)|} <
+\frac{p}{\pi}\left(\log B + \gamma + \frac{1}{2B}\right) + \frac{pB(B+1)}{\pi(p^2 - B^2)}.
+$$
 
 Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
 (2025), Article A48, Lemma 3.2 (`integers-2025-A48-lem-3-2`). -/
@@ -51,10 +57,19 @@ public theorem_wanted sum_one_div_abs_sin_lt (p : ℕ) (hp : p.Prime) (a : ℤ)
       (p / Real.pi) * (Real.log B + Real.eulerMascheroniConstant + 1 / (2 * B)) +
         p * B * (B + 1) / (Real.pi * ((p : ℝ) ^ 2 - (B : ℝ) ^ 2))
 
-/-- For every positive integer `K` and real `ξ`,
-`∑_{y=1}^{K} |sin(yξ)| / y < (2/π)(log(K + 1) + γ + log 2) + 3 / (π (K + 1))`, and, in the
-form (3.1) obtained from `log(K + 1) < log K + 1/K`,
-`∑_{y=1}^{K} |sin(yξ)| / y < (2/π) log K + (2/π)(γ + log 2) + 5 / (π K)`.
+/-- **Bound for a weighted sum of absolute sines.** Let $K$ be a positive integer, let $\xi$ be a
+real number, and let $\gamma$ be the Euler–Mascheroni constant. Then
+$$
+\sum_{y=1}^{K} \frac{|\sin(y\xi)|}{y} <
+\frac{2}{\pi}\left(\log(K + 1) + \gamma + \log 2\right) + \frac{3}{\pi(K + 1)}
+$$
+and
+$$
+\sum_{y=1}^{K} \frac{|\sin(y\xi)|}{y} <
+\frac{2}{\pi}\log K + \frac{2}{\pi}(\gamma + \log 2) + \frac{5}{\pi K}.
+$$
+
+The second bound is the form (3.1) of the first, obtained from $\log(K + 1) < \log K + 1/K$.
 
 Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
 (2025), Article A48, Lemma 3.4 (quoted from [3, Lemma 2.1]) and inequality (3.1)
@@ -67,14 +82,16 @@ public theorem_wanted sum_abs_sin_mul_div_lt (K : ℕ) (hK : 1 ≤ K) (ξ : ℝ)
         (2 / Real.pi) * Real.log K +
           (2 / Real.pi) * (Real.eulerMascheroniConstant + Real.log 2) + 5 / (Real.pi * K)
 
-/-- Selberg-type majorant and minorant: for an interval `J = [a, b]` of the circle
-`𝕋 = ℝ/ℤ` of length `b - a < 1` and a positive integer `K`, there are trigonometric polynomials
-`S_±(x) = ∑_{k=-K}^{K} α_±(k) e^{2πikx}` with `α_±(0) = b - a ± 1/(K+1)` and
-`S_-(x) ≤ 1_J(x) ≤ S_+(x)` for all `x`. Here `S_±` are real-valued (stated as vanishing
-imaginary part) and `1_J(x) = 1` exactly when `x - n ∈ [a, b]` for some integer `n`; the
-hypothesis `a ≤ b` makes `J` an interval. Partial statement: only the zero coefficients and the
-pointwise sandwich, as in the extracted record; bounds on the nonzero coefficients `α_±(k)`
-(as in the classical Selberg–Vaaler construction) are not part of the record and are not stated.
+/-- **Trigonometric polynomials bounding the indicator of an arc.** Let $a \le b$ be real
+numbers with $b - a < 1$ and let $K \ge 1$ be an integer. Let $\chi(x) = 1$ if
+$a \le x - n \le b$ for some integer $n$, and $\chi(x) = 0$ otherwise. Then there are complex
+numbers $\alpha_-(k)$ and $\alpha_+(k)$, for $k \in \mathbb{Z}$, with
+$\alpha_\pm(0) = b - a \pm \frac{1}{K+1}$, such that for every real $x$ the trigonometric
+polynomials $S_\pm(x) = \sum_{k=-K}^{K} \alpha_\pm(k) e^{2\pi i k x}$ are real and satisfy
+$S_-(x) \le \chi(x) \le S_+(x)$.
+
+Only the constant coefficients and the pointwise bounds are stated; no bounds on the
+coefficients $\alpha_\pm(k)$ with $k \ne 0$ are asserted.
 
 Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
 (2025), Article A48, Lemma 4.1 (`integers-2025-A48-lem-4-1`). -/
@@ -88,10 +105,10 @@ public theorem_wanted exists_trigPoly_minorant_majorant (a b : ℝ) (hab : a ≤
         let ind : ℝ := Set.indicator {y : ℝ | ∃ n : ℤ, a ≤ y - n ∧ y - n ≤ b} 1 x
         Sm.im = 0 ∧ Sp.im = 0 ∧ Sm.re ≤ ind ∧ ind ≤ Sp.re
 
-/-- Theorem 1.2: for a prime `p`, a quadratic `f(x) = a x² + b x + c` with `p ∤ a`, and a
-positive integer `B` with `√p < B < p/2`,
-`|S_p(f, B)| < √((2/π) p log(16.6 B² / p))`.
-The hypothesis that `p` is prime is the paper's standing assumption on `S_p`.
+/-- **Incomplete quadratic exponential sums of medium length.** Let $p$ be a prime, write
+$e_p(t) = e^{2\pi i t/p}$, let $a, b, c$ be integers with $p \nmid a$, and let $B$ be an integer
+with $\sqrt{p} < B < p/2$. Then $\left|\sum_{x=1}^{B} e_p(a x^2 + b x + c)\right| <
+\sqrt{\frac{2}{\pi} \, p \log \frac{16.6 B^2}{p}}$.
 
 Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
 (2025), Article A48, Theorem 1.2 (`integers-2025-A48-thm-1-2`). -/
@@ -100,11 +117,14 @@ public theorem_wanted norm_incomplete_quadratic_sum_lt (p : ℕ) (hp : p.Prime) 
     ‖∑ x ∈ Icc 1 B, exp (2 * Real.pi * I * ((a * x ^ 2 + b * x + c : ℤ) : ℂ) / p)‖ <
       Real.sqrt ((2 / Real.pi) * p * Real.log (16.6 * B ^ 2 / p))
 
-/-- Theorem 1.4: for a prime `p`, a monic cubic `f(x) = x³ + b x² + c x`, and a positive
-integer `B` with `4 p^{1/3} < B < √(p/12)`,
-`|S_p(f, B)| < (Bp)^{1/4} log^{1/4}(B³/p) log^{1/4}(Bp)`, and in particular
-`|S_p(f, B)| < (Bp)^{1/4} log^{1/2} p`. The "in particular" bound is stated on the same range
-`4 p^{1/3} < B < √(p/12)` (the paper's sentence says only `B < √(p/12)`).
+/-- **Bounds for short incomplete exponential sums of monic cubics.** Let $p$ be a prime, write
+$e_p(t) = e^{2\pi i t/p}$, let $b, c$ be integers, let $B$ be an integer with
+$4 p^{1/3} < B < \sqrt{p/12}$, and put $S = \sum_{x=1}^{B} e_p(x^3 + b x^2 + c x)$. Then
+$|S| < (Bp)^{1/4} \left(\log \frac{B^3}{p}\right)^{1/4} (\log (Bp))^{1/4}$ and
+$|S| < (Bp)^{1/4} (\log p)^{1/2}$.
+
+The second bound is stated on the same range $4 p^{1/3} < B < \sqrt{p/12}$ as the first,
+although the source states it for $B < \sqrt{p/12}$.
 
 Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
 (2025), Article A48, Theorem 1.4 (`integers-2025-A48-thm-1-4`). -/
@@ -116,11 +136,13 @@ public theorem_wanted norm_incomplete_monic_cubic_sum_lt (p : ℕ) (hp : p.Prime
       ‖∑ x ∈ Icc 1 B, exp (2 * Real.pi * I * ((x ^ 3 + b * x ^ 2 + c * x : ℤ) : ℂ) / p)‖ <
         ((B : ℝ) * p) ^ ((1 : ℝ) / 4) * Real.log p ^ ((1 : ℝ) / 2)
 
-/-- Lemma 2.1 (completing the sum): for a prime `p`, a polynomial `f` over `ℤ`, and
-`1 ≤ B ≤ p`, there is a complex `θ` with `|θ| ≤ 1` and
-`S_p(f, B) = (B/p) ∑_{x=1}^{p} e_p(f(x)) + θ T_p(B) max_{1 ≤ y ≤ p-1} |∑_{x=1}^{p} e_p(f(x) + y x)|`,
-where `T_p(B) = (1/p) ∑_{y=1}^{p-1} |sin(πBy/p) / sin(πy/p)|`. The maximum is written as a
-`Finset.sup` of `‖·‖₊` over `Icc 1 (p - 1)`; `θ` is complex since the sums are.
+/-- **Completing an incomplete exponential sum.** Let $p$ be a prime, write
+$e_p(t) = e^{2\pi i t/p}$, let $f$ be a polynomial with integer coefficients, and let $B$ be an
+integer with $1 \le B \le p$. Put
+$T_p(B) = \frac{1}{p} \sum_{y=1}^{p-1} \left|\frac{\sin(\pi B y/p)}{\sin(\pi y/p)}\right|$ and
+$M = \max_{1 \le y \le p-1} \left|\sum_{x=1}^{p} e_p(f(x) + yx)\right|$. Then there is a complex
+number $\theta$ with $|\theta| \le 1$ such that
+$\sum_{x=1}^{B} e_p(f(x)) = \frac{B}{p} \sum_{x=1}^{p} e_p(f(x)) + \theta \, T_p(B) \, M$.
 
 Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
 (2025), Article A48, Lemma 2.1 (`integers-2025-A48-lem-2-1`). -/
@@ -135,8 +157,10 @@ public theorem_wanted exists_incompleteSum_eq_completeSum_add (p : ℕ) (hp : p.
               ‖∑ x ∈ Icc 1 p,
                 exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ) : ℂ)
 
-/-- Lemma 2.2: for a prime `p` and a polynomial `f` over `ℤ`,
-`Φ(f, p) = max_{0 ≤ y ≤ p-1} |∑_{x=1}^{p} e_p(f(x) + y x)| ≥ √p`.
+/-- **Lower bound for the maximal twisted complete exponential sum.** Let $p$ be a prime, let $f$
+be a polynomial with integer coefficients, and write $e_p(t) = e^{2\pi i t / p}$ for integers $t$.
+Then
+$$\max_{0 \le y \le p - 1} \left| \sum_{x=1}^{p} e_p(f(x) + yx) \right| \ge \sqrt{p}.$$
 
 Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
 (2025), Article A48, Lemma 2.2 (`integers-2025-A48-lem-2-2`). -/
@@ -146,10 +170,13 @@ public theorem_wanted sqrt_le_sup_norm_completeSum (p : ℕ) (hp : p.Prime) (f :
         ‖∑ x ∈ Icc 1 p,
           exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ)
 
-/-- Theorem 1.1: for a prime `p`, a polynomial `f` over `ℤ` whose reduction mod `p` has degree
-`d_p(f) ≥ 2`, and `1 ≤ B ≤ p`,
-`|S_p(f, B)| ≤ min{(2/π²) log p + 3.29 + B/p, (4/π²) log p + B/p + 0.35} Φ(f, p)`, with
-`Φ(f, p) = max_{0 ≤ y ≤ p-1} |∑_{x=1}^{p} e_p(f(x) + y x)|`.
+/-- **Explicit completion bound for incomplete exponential sums.** Let $p$ be a prime, write
+$e_p(t) = e^{2\pi i t/p}$, let $f$ be a polynomial with integer coefficients whose reduction
+modulo $p$ has degree at least $2$, and let $B$ be an integer with $1 \le B \le p$. Put
+$\Phi(f, p) = \max_{0 \le y \le p-1} \left|\sum_{x=1}^{p} e_p(f(x) + yx)\right|$. Then
+$\left|\sum_{x=1}^{B} e_p(f(x))\right| \le
+\min\left\{\frac{2}{\pi^2} \log p + 3.29 + \frac{B}{p},
+\frac{4}{\pi^2} \log p + \frac{B}{p} + 0.35\right\} \Phi(f, p)$.
 
 Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
 (2025), Article A48, Theorem 1.1 (`integers-2025-A48-thm-1-1`). -/
@@ -163,8 +190,11 @@ public theorem_wanted norm_incompleteSum_le_min_mul_sup (p : ℕ) (hp : p.Prime)
           ‖∑ x ∈ Icc 1 p,
             exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ)
 
-/-- Corollary 1.1: for a prime `p ≥ 5`, a polynomial `f` over `ℤ` with `d_p(f) ≥ 2`, and
-`1 ≤ B ≤ p`, `|S_p(f, B)| < Φ(f, p) log p`.
+/-- **Logarithmic completion bound for incomplete exponential sums.** Let $p \ge 5$ be a prime,
+write $e_p(t) = e^{2\pi i t/p}$, let $f$ be a polynomial with integer coefficients whose reduction
+modulo $p$ has degree at least $2$, and let $B$ be an integer with $1 \le B \le p$. Put
+$\Phi(f, p) = \max_{0 \le y \le p-1} \left|\sum_{x=1}^{p} e_p(f(x) + yx)\right|$. Then
+$\left|\sum_{x=1}^{B} e_p(f(x))\right| < \Phi(f, p) \log p$.
 
 Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
 (2025), Article A48, Corollary 1.1 (`integers-2025-A48-cor-1-1`). -/
@@ -177,8 +207,13 @@ public theorem_wanted norm_incompleteSum_lt_sup_mul_log (p : ℕ) (hp : p.Prime)
             exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ) *
         Real.log p
 
-/-- Lemma 3.3: for a prime `p`, an integer `a` with `p ∤ a`, and `√(p/π) < B < p/2`,
-`∑_{h=1}^{B} min{B, 1/|sin(π a h / p)|} < (p/π)(log(πB²/p) + 1 + πB/p) + pB(B+1)/(π(p² - B²))`.
+/-- **Bound for a truncated sum of reciprocal sines.** Let $p$ be a prime, let $a$ be an integer
+not divisible by $p$, and let $B$ be an integer with $\sqrt{p/\pi} < B < p/2$. Then
+$$
+\sum_{h=1}^{B} \min\left\{B, \frac{1}{|\sin(\pi a h / p)|}\right\} <
+\frac{p}{\pi}\left(\log\frac{\pi B^2}{p} + 1 + \frac{\pi B}{p}\right) +
+\frac{pB(B+1)}{\pi(p^2 - B^2)}.
+$$
 
 Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
 (2025), Article A48, Lemma 3.3 (`integers-2025-A48-lem-3-3`). -/
@@ -188,11 +223,13 @@ public theorem_wanted sum_min_one_div_abs_sin_lt (p : ℕ) (hp : p.Prime) (a : �
       (p / Real.pi) * (Real.log (Real.pi * B ^ 2 / p) + 1 + Real.pi * B / p) +
         p * B * (B + 1) / (Real.pi * ((p : ℝ) ^ 2 - (B : ℝ) ^ 2))
 
-/-- Lemma 3.5: for positive integers `q, K, B` with `K < q`,
-`∑_{k=1}^{K} |sin(πBk/q)| / |sin(πk/q)| <
-(2/π²) q log K + (2q/π²)(γ + log 2) + (q/π) K/(q - K) + 5q/(π²K)`, with `γ` the
-Euler–Mascheroni constant. Positivity of `q` follows from `1 ≤ K < q` and is not a separate
-hypothesis.
+/-- **Bound for a sum of sine ratios.** Let $q$, $K$ and $B$ be natural numbers with
+$1 \le K < q$ and $B \ge 1$, and let $\gamma$ be the Euler–Mascheroni constant. Then
+$$
+\sum_{k=1}^{K} \frac{|\sin(\pi B k / q)|}{|\sin(\pi k / q)|} <
+\frac{2}{\pi^2} q \log K + \frac{2q}{\pi^2}(\gamma + \log 2) + \frac{q}{\pi} \cdot \frac{K}{q - K} +
+\frac{5q}{\pi^2 K}.
+$$
 
 Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
 (2025), Article A48, Lemma 3.5 (`integers-2025-A48-lem-3-5`). -/
@@ -203,10 +240,12 @@ public theorem_wanted sum_abs_sin_div_abs_sin_lt (q K B : ℕ) (hK : 1 ≤ K) (h
           2 * q / Real.pi ^ 2 * (Real.eulerMascheroniConstant + Real.log 2) +
         q / Real.pi * (K / ((q : ℝ) - K)) + 5 * q / (Real.pi ^ 2 * K)
 
-/-- Proposition 6.1: for a prime `p`, a quadratic `f(x) = a x² + b x + c` with `p ∤ a`, and a
-positive integer `B` with `√p < B < p/2`,
-`|S_p(f, B)|² ≤ min{(2p/π) log(B²/p) + 1.366 p + 3B + R, (2p/π) log B + 0.368 p + B + p/(πB) + R}`,
-where `R = 2pB(B+1)/(π(p² - B²))`.
+/-- **Square of an incomplete quadratic exponential sum.** Let $p$ be a prime, write
+$e_p(t) = e^{2\pi i t/p}$, let $a, b, c$ be integers with $p \nmid a$, let $B$ be an integer with
+$\sqrt{p} < B < p/2$, and put $S = \sum_{x=1}^{B} e_p(a x^2 + b x + c)$ and
+$R = \frac{2pB(B+1)}{\pi(p^2 - B^2)}$. Then $|S|^2$ is at most the minimum of
+$\frac{2p}{\pi} \log \frac{B^2}{p} + 1.366 p + 3B + R$ and
+$\frac{2p}{\pi} \log B + 0.368 p + B + \frac{p}{\pi B} + R$.
 
 Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
 (2025), Article A48, Proposition 6.1 (`integers-2025-A48-prop-6-1`). -/
@@ -218,8 +257,10 @@ public theorem_wanted norm_sq_incomplete_quadratic_sum_le (p : ℕ) (hp : p.Prim
         (2 * p / Real.pi * Real.log B + 0.368 * p + B + p / (Real.pi * B) +
             2 * p * B * (B + 1) / (Real.pi * ((p : ℝ) ^ 2 - (B : ℝ) ^ 2)))
 
-/-- Corollary 6.1: for a prime `p`, a quadratic `f(x) = a x² + b x + c` with `p ∤ a`, and
-`1 ≤ B ≤ p`, `|S_p(f, B)| < √p + √((2/π) p log p + p/2)`.
+/-- **Uniform bound for incomplete quadratic exponential sums.** Let $p$ be a prime, write
+$e_p(t) = e^{2\pi i t/p}$, let $a, b, c$ be integers with $p \nmid a$, and let $B$ be an integer
+with $1 \le B \le p$. Then $\left|\sum_{x=1}^{B} e_p(a x^2 + b x + c)\right| <
+\sqrt{p} + \sqrt{\frac{2}{\pi} p \log p + \frac{p}{2}}$.
 
 Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
 (2025), Article A48, Corollary 6.1 (`integers-2025-A48-cor-6-1`). -/
@@ -228,12 +269,15 @@ public theorem_wanted norm_incomplete_quadratic_sum_lt_sqrt_add_sqrt (p : ℕ) (
     ‖∑ x ∈ Icc 1 B, exp (2 * Real.pi * I * ((a * x ^ 2 + b * x + c : ℤ) : ℂ) / p)‖ <
       Real.sqrt p + Real.sqrt (2 / Real.pi * p * Real.log p + p / 2)
 
-/-- Theorem 1.3: for a prime `p ≥ 3`, a cubic `f(x) = a x³ + b x² + c x` with `p ∤ a`, and a
-positive integer `B`, with `δ_p = 1.0661 / log log p`,
-`|S_p(f, B)| ≤ 1.1 B^{1/4} p^{1/4 + δ_p/4} log^{1/4} p` for `B < √(p/2)`, and
-`|S_p(f, B)| ≤ 1.38 (1 + p/B²)^{1/4} B^{3/4} p^{δ_p/2} log^{1/4} p` for `√(p/2) < B ≤ p`.
-The hypothesis `p ≥ 3` (so that `log log p > 0`) is added: for `p = 2`, `δ_2 < 0` and
-`f(x) = x³ + x`, `B = 2` give `|S_2(f, 2)| = 2` against a right-hand side below `0.86`.
+/-- **Explicit bounds for incomplete cubic exponential sums.** Let $p \ge 3$ be a prime, write
+$e_p(t) = e^{2\pi i t/p}$ and $\delta_p = \frac{1.0661}{\log \log p}$, let $a, b, c$ be integers
+with $p \nmid a$, let $B$ be a positive integer, and put
+$S = \sum_{x=1}^{B} e_p(a x^3 + b x^2 + c x)$. If $B < \sqrt{p/2}$, then
+$|S| \le 1.1 \, B^{1/4} p^{1/4 + \delta_p/4} (\log p)^{1/4}$. If $\sqrt{p/2} < B \le p$, then
+$|S| \le 1.38 \, (1 + p/B^2)^{1/4} B^{3/4} p^{\delta_p/2} (\log p)^{1/4}$.
+
+The hypothesis $p \ge 3$ makes $\log \log p > 0$. For $p = 2$, $f(x) = x^3 + x$ and $B = 2$,
+the sum equals $2$ while the second bound is below $0.86$.
 
 Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
 (2025), Article A48, Theorem 1.3 (`integers-2025-A48-thm-1-3`). -/
@@ -250,12 +294,16 @@ public theorem_wanted norm_incomplete_cubic_sum_le (p : ℕ) (hp : p.Prime) (hp3
             (p : ℝ) ^ (1.0661 / Real.log (Real.log p) / 2) *
           Real.log p ^ ((1 : ℝ) / 4))
 
-/-- Lemma 7.1: for real `x ≥ 2`,
-`∑_{n ≤ x} τ(n)/n = (1/2) log² x + 2γ log x + C + O*(2.1 log x / x^{2/3})`, where `O*` means
-the implied constant is `1`, `γ` is the Euler–Mascheroni constant, and `C = γ² - 2γ₁` with `γ₁`
-the first Stieltjes constant. Mathlib has no Stieltjes constants, so `γ₁` enters through its
-limit definition `γ₁ = lim_{N→∞} (∑_{k=1}^{N} log k / k - (log N)²/2)`, i.e. the constant `C`
-is characterised by that limit being `(γ² - C)/2`. `τ(n)` is `n.divisors.card`.
+/-- **Explicit asymptotic for the logarithmic mean of the divisor function.** Let $\tau(n)$ be
+the number of positive divisors of $n$ and let $\gamma$ be the Euler–Mascheroni constant. There
+is a real constant $C$ such that $\sum_{k=1}^{N} \frac{\log k}{k} - \frac{(\log N)^2}{2}$ tends
+to $\frac{\gamma^2 - C}{2}$ as $N \to \infty$ and such that for every real $x \ge 2$,
+$\left|\sum_{1 \le n \le x} \frac{\tau(n)}{n} -
+\left(\frac{(\log x)^2}{2} + 2\gamma \log x + C\right)\right| \le \frac{2.1 \log x}{x^{2/3}}$.
+
+The first condition says that $C = \gamma^2 - 2\gamma_1$, where
+$\gamma_1 = \lim_{N \to \infty} \left(\sum_{k=1}^{N} \frac{\log k}{k} - \frac{(\log N)^2}{2}\right)$
+is the first Stieltjes constant.
 
 Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
 (2025), Article A48, Lemma 7.1 (`integers-2025-A48-lem-7-1`). -/
