@@ -16,7 +16,6 @@ import Mathlib.Analysis.Normed.Lp.SmoothApprox
 import Mathlib.MeasureTheory.Function.LpSpace.Complete
 import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
 import Mathlib.MeasureTheory.Measure.LevyConvergence
-import Mathlib.MeasureTheory.Measure.Portmanteau
 import Mathlib.Probability.BrownianMotion.Basic
 import Mathlib.Probability.CentralLimitTheorem
 import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
@@ -194,8 +193,8 @@ section BrownianMotion
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {B : NNReal → Ω → ℝ}
 
 -- Target 33: a process with independent increments `B t - B s ~ 𝓝(0, t - s)` and `B 0 = 0`
--- (property (2), mathlib's `IsPreBrownianReal`) is exactly (a) a centred Gaussian process
--- (`IsGaussianProcess`: every finite family `(B t₁, …, B tₘ)`, hence every combination
+-- almost surely (property (2), mathlib's `IsPreBrownianReal`) is exactly (a) a centred Gaussian
+-- process (`IsGaussianProcess`: every finite family `(B t₁, …, B tₘ)`, hence every combination
 -- `∑ ξⱼ B tⱼ`, is Gaussian) with (b) `𝔼[B s B t] = min s t`. mathlib's converse needs neither
 -- `B 0 = 0` nor the increments: (b) gives `Var[B 0] = 0`.
 example (hB : IsPreBrownianReal B P) :
