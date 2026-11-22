@@ -42,7 +42,9 @@ noncomputable def covarianceMatrix {n : ℕ}
 
 /-- **Differential entropy.** For a function $f \colon \mathbb{R}^n \to \mathbb{R}$, usually the
 Lebesgue density of a probability law, the differential entropy of $f$ is
-$-\int_{\mathbb{R}^n} f(x) \log f(x) \, dx$, with the natural logarithm and $0 \log 0 = 0$.
+$-\int_{\mathbb{R}^n} f(x) \log f(x) \, dx$. Here $\log$ is the natural logarithm extended to all
+reals by $\log 0 = 0$ and $\log x = \log |x|$ for $x < 0$ (so $0 \log 0 = 0$), and the integral is
+taken to be $0$ when $x \mapsto f(x) \log f(x)$ is not Lebesgue integrable.
 
 Source: `constants/20b.md`, Ent(μ)=-∫f log f. -/
 noncomputable def differentialEntropy {n : ℕ} (f : EuclideanSpace ℝ (Fin n) → ℝ) : ℝ :=
@@ -78,7 +80,10 @@ structure LogConcaveLaw (n : ℕ) where
   entropy_integrable : Integrable (fun x => density x * Real.log (density x)) volume
 
 /-- **Covariance matrices of log-concave laws are positive semidefinite.** For every log-concave
-law $\mu$ on $\mathbb{R}^n$, the covariance matrix of $\mu$ is positive semidefinite.
+law $\mu$ on $\mathbb{R}^n$ in the sense of `LogConcaveLaw` (so $n \ge 1$ and $\mu$ is a
+probability measure with a log-concave Lebesgue density $f$, integrable coordinates and coordinate
+products, and Lebesgue-integrable $f \log f$), the covariance matrix of $\mu$ is positive
+semidefinite.
 
 The proof writes the quadratic form of the covariance matrix as the integral of the square of a
 centered linear form. -/
@@ -166,8 +171,8 @@ noncomputable def bodyIsotropicConstant {n : ℕ} (K : FullDimensionalBody n) : 
     (volume (K.body : Set (EuclideanSpace ℝ (Fin n)))).toReal ^ 2)
     (1 / (2 * (n : ℝ)))
 
-/-- **Isotropic constant of a log-concave law.** For a log-concave law $\mu$ on $\mathbb{R}^n$ with
-Lebesgue density $f$, the isotropic constant of $\mu$ is
+/-- **Isotropic constant of a log-concave law.** For a log-concave law $\mu$ on $\mathbb{R}^n$ in
+the sense of `LogConcaveLaw`, with Lebesgue density $f$, the isotropic constant of $\mu$ is
 $L_\mu = e^{-h(f)/n} (\det \mathrm{Cov}(\mu))^{1/(2n)}$, where
 $h(f) = -\int_{\mathbb{R}^n} f \log f$ is the differential entropy of $f$ and $\mathrm{Cov}(\mu)$
 is the covariance matrix of the coordinates under $\mu$. -/
@@ -234,9 +239,9 @@ noncomputable def squaredRadiusThinShellWidth (n : ℕ) : ℝ≥0∞ :=
 /-- **Supremum of the isotropic constant over full-dimensional log-concave laws.** This is the
 supremum, in $[0, \infty]$, of the isotropic constant
 $L_\mu = e^{-h(f)/n} (\det \mathrm{Cov}(\mu))^{1/(2n)}$ over all positive integers $n$ and all
-log-concave laws $\mu$ on $\mathbb{R}^n$ with Lebesgue density $f$, where
-$h(f) = -\int_{\mathbb{R}^n} f \log f$ is the differential entropy of $f$ and $\mathrm{Cov}(\mu)$
-is the covariance matrix of the coordinates under $\mu$.
+log-concave laws $\mu$ on $\mathbb{R}^n$ (in the sense of `LogConcaveLaw`) with Lebesgue density
+$f$, where $h(f) = -\int_{\mathbb{R}^n} f \log f$ is the differential entropy of $f$ and
+$\mathrm{Cov}(\mu)$ is the covariance matrix of the coordinates under $\mu$.
 
 Each such law has a density on all of $\mathbb{R}^n$, so laws supported on a proper affine
 subspace are not included here. -/

@@ -110,8 +110,7 @@ theorem inv_sqrt_twelve_le_entropyIsotropicConstant :
   inv_sqrt_twelve_le_bodySupremum.trans bodySupremum_le_entropyIsotropicConstant
 
 /-- **Membership in the unit interval body.** A point $x$ of the one-dimensional Euclidean space
-lies in the unit interval body if and only if its single coordinate $x_1$ satisfies
-$-1/2 \le x_1 \le 1/2$. -/
+lies in the unit interval body if and only if its only coordinate lies in $[-1/2, 1/2]$. -/
 theorem unitIntervalBody_mem_iff (x : EuclideanSpace ℝ (Fin 1)) :
     x ∈ (unitIntervalBody.body : Set (EuclideanSpace ℝ (Fin 1))) ↔
       ∀ i : Fin 1, -(1 / 2 : ℝ) ≤ x i ∧ x i ≤ (1 / 2 : ℝ) := by

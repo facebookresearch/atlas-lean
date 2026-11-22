@@ -28,9 +28,12 @@ namespace ProbabilityTheory
 open MeasureTheory Set
 open scoped Topology
 
-/-- **Quantile function of a real measure.** Let $\mu$ be a measure on $\mathbb{R}$ with cumulative
-distribution function $F_\mu$ (for a probability measure, $F_\mu(x) = \mu((-\infty, x])$). The
-quantile function of $\mu$, the generalized inverse of $F_\mu$, is the function
+/-- **Quantile function of a real measure.** Let $\mu$ be a measure on $\mathbb{R}$ and let $F_\mu$
+be Mathlib's cumulative distribution function of $\mu$ (`ProbabilityTheory.cdf μ`). It equals
+$x \mapsto \mu((-\infty, x])$ when $\mu$ is a probability measure; for any other measure it is
+still monotone, right-continuous, valued in $[0, 1]$, with limits $0$ at $-\infty$ and $1$ at
+$+\infty$, but in general not $x \mapsto \mu((-\infty, x])$. The quantile function of $\mu$, the
+generalized inverse of $F_\mu$, is the function
 $Q_\mu : \mathbb{R} \to \mathbb{R}$ given by
 $Q_\mu(u) = \inf \lbrace x \in \mathbb{R} : u \le F_\mu(x) \rbrace$ for $u \in (0, 1)$ and
 $Q_\mu(u) = 0$ for $u \notin (0, 1)$. -/
@@ -56,8 +59,9 @@ private theorem cdfQuantile_set_bddBelow (μ : Measure ℝ) {u : ℝ}
   exact (not_lt_of_ge hx) (hx₀ x hlt.le)
 
 /-- **The cdf at the quantile is at least the level.** Let $\mu$ be a measure on $\mathbb{R}$ with
-cumulative distribution function $F_\mu$ and quantile function $Q_\mu$. For every $u \in (0, 1)$,
-$u \le F_\mu(Q_\mu(u))$. -/
+cumulative distribution function $F_\mu$ in Mathlib's sense (`ProbabilityTheory.cdf μ`, equal to
+$x \mapsto \mu((-\infty, x])$ for a probability measure) and quantile function $Q_\mu$. For every
+$u \in (0, 1)$, $u \le F_\mu(Q_\mu(u))$. -/
 theorem cdfQuantile_mem (μ : Measure ℝ) {u : ℝ} (hu : u ∈ Ioo (0 : ℝ) 1) :
     u ≤ cdf μ (cdfQuantile μ u) := by
   have hne := cdfQuantile_set_nonempty μ hu
@@ -78,8 +82,10 @@ theorem cdfQuantile_mem (μ : Measure ℝ) {u : ℝ} (hu : u ∈ Ioo (0 : ℝ) 1
   simpa only [cdfQuantile, hu, ite_true] using ge_of_tendsto hright hev
 
 /-- **The quantile function as a generalized inverse of the cdf.** Let $\mu$ be a measure on
-$\mathbb{R}$ with cumulative distribution function $F_\mu$ and quantile function $Q_\mu$. For
-every $u \in (0, 1)$ and every real $x$, $Q_\mu(u) \le x$ if and only if $u \le F_\mu(x)$. -/
+$\mathbb{R}$ with cumulative distribution function $F_\mu$ in Mathlib's sense
+(`ProbabilityTheory.cdf μ`, equal to $x \mapsto \mu((-\infty, x])$ for a probability measure) and
+quantile function $Q_\mu$. For every $u \in (0, 1)$ and every real $x$, $Q_\mu(u) \le x$ if and
+only if $u \le F_\mu(x)$. -/
 theorem cdfQuantile_le_iff (μ : Measure ℝ) {u : ℝ} (hu : u ∈ Ioo (0 : ℝ) 1)
     {x : ℝ} : cdfQuantile μ u ≤ x ↔ u ≤ cdf μ x := by
   have hmem := cdfQuantile_mem μ hu
