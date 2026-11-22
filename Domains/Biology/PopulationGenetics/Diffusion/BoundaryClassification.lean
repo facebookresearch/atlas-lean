@@ -43,12 +43,20 @@ right endpoint integrating over `(c, 1)` with inner integrals from `c` to `x`.
 An endpoint is regular if both functionals are finite, exit if `Σ < ∞` and
 `N = ∞`, entrance if `Σ = ∞` and `N < ∞`, and natural if both are infinite.
 Finiteness is stated with `MeasureTheory.IntegrableOn` against `volume`.
+The predicates record these raw finiteness patterns at the chosen
+basepoint; the classification reading is for an interior basepoint, which
+every theorem below assumes.
 
 The classification is independent of the interior basepoint. For the
-Wright-Fisher selection-mutation diffusion (see Ewens (2004), Chapter 4) each
-endpoint is exit, regular, or entrance according as the corresponding
-mutation parameter equals `0`, lies strictly between `0` and `1`, or is at
-least `1`, independently of selection and of the other endpoint's parameter.
+Wright-Fisher selection-mutation diffusion (see Ewens (2004), Chapter 4)
+with nonnegative mutation parameters, each endpoint is exit, regular, or
+entrance according as the corresponding mutation parameter equals `0`,
+lies strictly between `0` and `1`, or is at least `1`, independently of
+selection and of the other endpoint's parameter. For a general real
+parameter the analytic criteria proved below are finiteness of `Σ` exactly
+below `1` and finiteness of `N` exactly above `0`, so the exit pattern also
+occurs for negative parameters, which are outside the population-genetics
+reading.
 
 This is Feller's analytic integral test only: the predicates record which
 Feller functionals are finite. Attainability or non-attainability of the
