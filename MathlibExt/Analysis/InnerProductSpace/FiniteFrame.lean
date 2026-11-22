@@ -147,8 +147,8 @@ theorem re_inner_frameOperator_apply_self (f : ι → E) (x : E) :
   rw [inner_frameOperator_apply_self]
   simp
 
-/-- **Cauchy–Schwarz bound for the frame operator.** Let $(f_i)_{i \in \iota}$ be a finite family in
-an inner product space $E$ over $\mathbb{K}$ ($\mathbb{R}$ or $\mathbb{C}$), with frame operator
+/-- **Cauchy–Schwarz bound for the frame operator.** Let $(f_i)_{i \in \iota}$ be a finite family
+in an inner product space $E$ over $\mathbb{K}$ ($\mathbb{R}$ or $\mathbb{C}$), with frame operator
 $S$. For all $x, y \in E$,
 $$
 |\langle S x, y \rangle|^2 \le \Big(\sum_{i} |\langle f_i, x \rangle|^2\Big)

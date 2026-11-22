@@ -1756,8 +1756,8 @@ Proof: The compactly supported Cauchy–Green equation in one coordinate, combin
 cutoff and one-variable identity continuation.
 
 Source: Hartogs extension phenomenon, F. Hartogs, Math. Ann.
-62 (1906); see Hörmander, An Introduction to Complex Analysis in Several Variables; Lean is ℂⁿ n ≥
-2 finite-dimensional form via EuclideanSpace ℂ (Fin n) with U open connected K compact U\K
+62 (1906); see Hörmander, An Introduction to Complex Analysis in Several Variables; Lean is ℂⁿ
+n ≥ 2 finite-dimensional form via EuclideanSpace ℂ (Fin n) with U open connected K compact U\K
 connected.
 -/
 theorem hartogs_extension

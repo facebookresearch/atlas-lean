@@ -72,8 +72,8 @@ the average of its first $n + 1$ terms, $\frac{1}{n+1} \sum_{k=0}^{n} x(k)$. -/
 def cesaroMean (x : ℕ → 𝕜) (n : ℕ) : 𝕜 :=
   (∑ k ∈ Finset.range (n + 1), x k) / ((n : 𝕜) + 1)
 
-/-- **The Cesàro denominator $n + 1$ is nonzero.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$.
-For every natural number $n$, the element $n + 1$ of $\mathbb{K}$ is nonzero. -/
+/-- **The Cesàro denominator $n + 1$ is nonzero.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$. For every natural number $n$, the element $n + 1$ of $\mathbb{K}$ is nonzero. -/
 @[deprecated Nat.cast_add_one_ne_zero +typeChanged (since := "2026-11-09")]
 lemma cesaro_den_ne_zero (n : ℕ) : ((n : 𝕜) + 1) ≠ 0 := Nat.cast_add_one_ne_zero n
 
@@ -222,8 +222,8 @@ lemma norm_cesaroE0 : ‖cesaroE0 (𝕜 := 𝕜)‖ = 1 := by
   rw [cesaroE0, lp.norm_single (E := fun _ : ℕ => 𝕜) (p := (2 : ℝ≥0∞)) (by simp)]
   simp
 
-/-- **The Cesàro operator has norm at least one.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$.
-The Cesàro operator $C$ on $\ell^2(\mathbb{N}, \mathbb{K})$, given by
+/-- **The Cesàro operator has norm at least one.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$. The Cesàro operator $C$ on $\ell^2(\mathbb{N}, \mathbb{K})$, given by
 $(Cx)_n = (x_0 + x_1 + \dots + x_n)/(n + 1)$, has operator norm $\|C\| \ge 1$.
 
 This is seen on the first basis vector $e_0$, for which $\|e_0\| = 1$ and $(C e_0)_0 = 1$. -/

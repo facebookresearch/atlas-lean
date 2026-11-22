@@ -296,8 +296,8 @@ theorem summable_norm_lp_one (a : lp (fun _ : ι => 𝕜) 1) :
   have h := (memℓp_gen_iff (p := (1 : ℝ≥0∞)) (E := fun _ : ι => 𝕜) (by simp)).mp a.2
   simpa using h
 
-/-- **Summability of the $\ell^1$–$c_0$ pairing.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$
-and let $\iota$ be a type. For every $a \in \ell^1(\iota, \mathbb{K})$ and
+/-- **Summability of the $\ell^1$–$c_0$ pairing.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$ and let $\iota$ be a type. For every $a \in \ell^1(\iota, \mathbb{K})$ and
 $x \in c_0(\iota, \mathbb{K})$, the family $(a_i x_i)_{i \in \iota}$ is (unconditionally)
 summable. -/
 theorem summable_c0Pairing (a : lp (fun _ : ι => 𝕜) 1) (x : c0 𝕜 ι) :
@@ -384,8 +384,8 @@ noncomputable def c0DualPairingLin : lp (fun _ : ι => 𝕜) 1 →ₗ[𝕜] Stro
     refine tsum_congr fun i => ?_
     rw [lp.coeFn_smul, Pi.smul_apply, smul_eq_mul, mul_assoc]
 
-/-- **Formula for the $\ell^1$–$c_0$ pairing as a linear map.** Let $\mathbb{K}$ be $\mathbb{R}$ or
-$\mathbb{C}$, let $c_0(\iota, \mathbb{K})$ be the space of families in $\mathbb{K}$ indexed by
+/-- **Formula for the $\ell^1$–$c_0$ pairing as a linear map.** Let $\mathbb{K}$ be $\mathbb{R}$
+or $\mathbb{C}$, let $c_0(\iota, \mathbb{K})$ be the space of families in $\mathbb{K}$ indexed by
 $\iota$ that tend to $0$ along the cofinite filter, and let $\ell^1(\iota, \mathbb{K})$ be the
 space of absolutely summable families. For $a \in \ell^1(\iota, \mathbb{K})$ and
 $x \in c_0(\iota, \mathbb{K})$, the linear map from $\ell^1(\iota, \mathbb{K})$ to the continuous
