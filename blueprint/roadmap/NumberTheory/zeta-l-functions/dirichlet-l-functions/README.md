@@ -10,6 +10,9 @@ Dirichlet characters, conductors, primitive and quadratic characters, Dirichlet 
 - [Moments of Dedekind zeta coefficients over sums of six squares](moments-of-dedekind-zeta-coefficients-over-sums/README.md)
 - [Perron's formula](perron-s-formula/README.md)
 - [Subconvexity bounds for Dirichlet L-functions](subconvexity-bounds-for-dirichlet-l-functions/README.md)
+- [Meromorphic continuation of Hecke L-functions](hecke-l-function-meromorphic-continuation.md)
+- [Functional equation of Hecke L-functions](hecke-l-function-functional-equation.md)
+- [Non-vanishing of Hecke L-functions on the line Re s = 1](hecke-l-function-nonvanishing-on-re-one.md)
 - [Functional equation of the Dirichlet beta function](ramanujan-part1-ch7-entry18-bernoullidif.md)
 
 ## Zeros of Dirichlet L-functions
