@@ -134,7 +134,7 @@ theorem test_instantiation :
       Feasible testHalfPlane ([] ++ [testA, a', c', testC] ++ []) ∧
       polyLen ([] ++ [testA, a', c', testC] ++ []) <
         polyLen ([] ++ [testA, testB, testC] ++ []) :=
-  local_shortening_of_locally_convex testHalfPlane [] testA testB testC [] test_feasible
+  local_shortening_of_locally_convex testHalfPlane [] [] testA testB testC test_feasible
     test_locally_convex test_not_wbtw
 
 example (F : Set plane) (l₁ : List plane) (a b c : plane) (l₂ : List plane)
@@ -145,7 +145,7 @@ example (F : Set plane) (l₁ : List plane) (a b c : plane) (l₂ : List plane)
       dist a' b < ε ∧ dist c' b < ε ∧
       Feasible F (l₁ ++ [a, a', c', c] ++ l₂) ∧
       polyLen (l₁ ++ [a, a', c', c] ++ l₂) < polyLen (l₁ ++ [a, b, c] ++ l₂) :=
-  local_shortening_of_locally_convex F l₁ a b c l₂ h hconv hb ε hε
+  local_shortening_of_locally_convex F l₁ l₂ a b c h hconv hb ε hε
 
 example (F : Set plane) (l₁ l₂ : List plane) (a b c : plane)
     (hfeas : Feasible F (l₁ ++ [a, b, c] ++ l₂))
