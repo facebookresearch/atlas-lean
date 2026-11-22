@@ -12,7 +12,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Computability.Encoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Logics.Propositional.CNF.Basic
 
 /-!
@@ -390,11 +390,5 @@ open Classical in
 the bitstrings encoding a satisfiable CNF formula. -/
 noncomputable def satDec : MetaMathlibExt.ComplexityTheory.DecisionProblem :=
   fun x => if x ∈ SATLang then true else false
-
-/-- Polynomial-time many-one reduction between decision problems, expressed
-through the canonical `ComplexityTheory.IsPolyTime` predicate. -/
-def PolyManyOneRed (L₁ L₂ : MetaMathlibExt.ComplexityTheory.DecisionProblem) : Prop :=
-  ∃ reduce : List Bool → List Bool,
-    MetaMathlibExt.ComplexityTheory.IsPolyTime reduce ∧ ∀ x, L₁ x = L₂ (reduce x)
 
 end Cslib.CookLevin

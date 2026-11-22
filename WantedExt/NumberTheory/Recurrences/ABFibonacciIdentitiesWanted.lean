@@ -26,12 +26,13 @@ random complex parameters. In Theorem 10,
 Fibonacci `(1, 1)`, Pell `(2, 1)` and Jacobsthal
 `(1, 2)` specializations.
 
-Not stated (see the source audit table): Lemma 6
-(the polynomials `H_m^{a, b}`), Theorem 3 (the
-calligraphic convolution sequences, with a truncated
-case distinction), Theorem 13 (the roots `α, β` are
-not defined in the extraction) and Theorem 15
-(quoted from Szakács).
+Theorem 3 uses the multiplicative arithmetic functions
+`𝓕_{a,b} = α^Ω ∗ β^Ω` (Dirichlet) and `𝓛_{a,b} = α^Ω ⊔ β^Ω`
+(unitary convolution), built from the MathlibExt API
+`MetaMathlibExt.powOmega`, `MetaMathlibExt.unitaryConv` and
+`MetaMathlibExt.multiplicativeOfPrimePowers`, with `α, β` the roots
+of `x² - ax - b`; `horadamAB a b r s` is Horadam's
+`H_m^{a,b}(r, s)`.
 -/
 module
 
@@ -39,12 +40,15 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.NumberTheory.ArithmeticFunction.UnitaryConvolution
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.Recurrences.ABFibonacciIdentitiesWanted
+
+open MetaMathlibExt (powOmega unitaryConv multiplicativeOfPrimePowers)
 
 /-- The `(a, b)`-Fibonacci numbers over `ℂ`:
 `F_0 = 0`, `F_1 = 1`, `F_{n+2} = a F_{n+1} + b F_n`.
@@ -357,5 +361,106 @@ theorem_wanted convolution_specializations (n : ℕ) :
         lucasAB 1 1 (2 * n + 2) - 2 ^ (n + 1) - 1 ∧
       ∑ i ∈ Finset.Icc 1 n, (2 ^ (n - i) + 1) * fibAB 1 1 (2 * i) =
         lucasAB 1 1 (2 * n + 2) - 2 ^ (n + 1) - 1)
+
+/-- Horadam's sequence `H_m^{a,b}(r, s)`: `H_0 = r`,
+`H_1 = s`, `H_{m+2} = a H_{m+1} + b H_m`.
+
+Source: Emil Daniel Schwab, "Fibonacci Numbers
+via Dirichlet Convolution and Lucas Numbers via
+Unitary Convolution", Journal of Integer Sequences 28
+(2025), Article 25.1.7, Section 1.2. -/
+def horadamAB (a b r s : ℂ) : ℕ → ℂ
+  | 0 => r
+  | 1 => s
+  | n + 2 => a * horadamAB a b r s (n + 1) + b * horadamAB a b r s n
+
+/-- The defining recurrence of `horadamAB`.
+
+Source: Emil Daniel Schwab, "Fibonacci Numbers
+via Dirichlet Convolution and Lucas Numbers via
+Unitary Convolution", Journal of Integer Sequences 28
+(2025), Article 25.1.7, Section 1.2. -/
+theorem horadamAB_add_two (a b r s : ℂ) (n : ℕ) :
+    horadamAB a b r s (n + 2) =
+      a * horadamAB a b r s (n + 1) + b * horadamAB a b r s n :=
+  rfl
+
+/-- **Lemma 6**: `H_m^{a,b}((-b)ⁿ, 0) = (-1)ⁿ b^{n+1} F_{m-1}^{a,b}`,
+stated for `m + 1` (every `m ≥ 1`) and, for `b ≠ 0`, at
+`m = 0` with the backward value `F_{-1} = 1/b`.
+
+Source: Emil Daniel Schwab, "Fibonacci Numbers
+via Dirichlet Convolution and Lucas Numbers via
+Unitary Convolution", Journal of Integer Sequences 28
+(2025), Article 25.1.7, Lemma 6. -/
+theorem_wanted horadamAB_neg_pow_zero (a b : ℂ) (n : ℕ) :
+    (∀ m : ℕ, horadamAB a b ((-b) ^ n) 0 (m + 1) =
+        (-1) ^ n * b ^ (n + 1) * fibAB a b m) ∧
+      (b ≠ 0 → horadamAB a b ((-b) ^ n) 0 0 = (-1) ^ n * b ^ (n + 1) * b⁻¹)
+
+/-- **Theorem 3**: with `α, β` the roots of `x² - ax - b`,
+`𝓕_{a,b} = α^Ω ∗ β^Ω`, `𝓛_{a,b} = α^Ω ⊔ β^Ω`, and `±γ` the
+roots of `x² + b` (so `𝓕_{0,-b} = γ^Ω ∗ (-γ)^Ω`):
+(i) `𝓕_{a,b}(p^m) = F_{m+1}^{a,b}` and `𝓛_{a,b}(p^m) = 1` for
+`m = 0`, `L_m^{a,b}` for `m > 0`; (ii) `[𝓕/𝓛]_D = 𝓕_{0,-b}`, as
+`𝓕_{a,b} = 𝓛_{a,b} ∗ 𝓕_{0,-b}`, and
+`[𝓛/𝓕]_U = 𝓗^{(0)}_{a,b} = μ_a ∗ 𝓕_{a,b}`, as
+`𝓛_{a,b} = 𝓕_{a,b} ⊔ 𝓗^{(0)}_{a,b}` and
+`𝓗^{(0)}_{a,b} = μ_a ∗ 𝓕_{a,b}`, where
+`𝓗^{(0)}_{a,b}(p^m) = H_m^{a,b}(1, 0)` and `μ_a(p^m)` is
+`1, -a, 0` for `m = 0, 1, ≥ 2`.
+
+Source: Emil Daniel Schwab, "Fibonacci Numbers
+via Dirichlet Convolution and Lucas Numbers via
+Unitary Convolution", Journal of Integer Sequences 28
+(2025), Article 25.1.7, Theorem 3. -/
+theorem_wanted fibLucas_arithmeticFunction_identities (a b α β γ : ℂ)
+    (hsum : α + β = a) (hprod : α * β = -b) (hγ : γ ^ 2 = -b) :
+    (∀ p m : ℕ, p.Prime →
+        (powOmega α * powOmega β) (p ^ m) = fibAB a b (m + 1) ∧
+          unitaryConv (powOmega α) (powOmega β) (p ^ m) =
+            if m = 0 then 1 else lucasAB a b m) ∧
+      powOmega α * powOmega β =
+        unitaryConv (powOmega α) (powOmega β) * (powOmega γ * powOmega (-γ)) ∧
+      unitaryConv (powOmega α) (powOmega β) =
+        unitaryConv (powOmega α * powOmega β)
+          (multiplicativeOfPrimePowers (horadamAB a b 1 0)) ∧
+      multiplicativeOfPrimePowers (horadamAB a b 1 0) =
+        multiplicativeOfPrimePowers (fun m => if m = 0 then 1 else if m = 1 then -a else 0) *
+          (powOmega α * powOmega β)
+
+/-- **Theorem 13**: for the roots `α, β` of `x² - ax - b`,
+neither a zero of `x² - cx - d`,
+`∑_{i=1}^n L_{n-i}^{a,b} F_i^{c,d} =
+(α^{n+1} - α F_{n+1}^{c,d} - d F_n^{c,d})/(α² - cα - d) +
+(β^{n+1} - β F_{n+1}^{c,d} - d F_n^{c,d})/(β² - cβ - d)`.
+
+Source: Emil Daniel Schwab, "Fibonacci Numbers
+via Dirichlet Convolution and Lucas Numbers via
+Unitary Convolution", Journal of Integer Sequences 28
+(2025), Article 25.1.7, Theorem 13. -/
+theorem_wanted sum_lucasAB_mul_fibAB (a b c d α β : ℂ) (hsum : α + β = a)
+    (hprod : α * β = -b) (hα : α ^ 2 - c * α - d ≠ 0) (hβ : β ^ 2 - c * β - d ≠ 0)
+    (n : ℕ) :
+    ∑ i ∈ Finset.Icc 1 n, lucasAB a b (n - i) * fibAB c d i =
+      (α ^ (n + 1) - α * fibAB c d (n + 1) - d * fibAB c d n) / (α ^ 2 - c * α - d) +
+        (β ^ (n + 1) - β * fibAB c d (n + 1) - d * fibAB c d n) / (β ^ 2 - c * β - d)
+
+/-- **Theorem 15** (Szakács): `Δ ∑_{i=0}^n F_i F_{n-i} =
+(n + 1) L_n - 2 F_{n+1}` with `Δ = a² + 4b`, for the
+`(a, b)`-Fibonacci and Lucas numbers. The paper's
+hypothesis `Δ ≠ 0` is dropped: at `Δ = 0` both sides
+vanish.
+
+Source: Emil Daniel Schwab, "Fibonacci Numbers
+via Dirichlet Convolution and Lucas Numbers via
+Unitary Convolution", Journal of Integer Sequences 28
+(2025), Article 25.1.7, Theorem 15, quoting
+T. Szakács, "Convolution of second order linear
+recursive sequences II", Communications in
+Mathematics 25 (2017), 137–148, Theorem 4. -/
+theorem_wanted disc_mul_sum_fibAB_mul_fibAB (a b : ℂ) (n : ℕ) :
+    (a ^ 2 + 4 * b) * ∑ i ∈ Finset.range (n + 1), fibAB a b i * fibAB a b (n - i) =
+      (n + 1) * lucasAB a b n - 2 * fibAB a b (n + 1)
 
 end MathlibExt.NumberTheory.Recurrences.ABFibonacciIdentitiesWanted

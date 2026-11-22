@@ -168,3 +168,36 @@ theorem mem_center_specialUnitaryGroup_fin_two_iff
     · simp [hneg]
 
 end Matrix
+
+namespace Matrix
+
+/-- A complex `2 × 2` matrix is special unitary exactly when it has the standard
+conjugate-entry form with normalized parameters. The forward direction is the
+existing matrix-form theorem; the converse verifies unitarity and determinant one. -/
+theorem mem_specialUnitaryGroup_fin_two_iff {M : Matrix (Fin 2) (Fin 2) ℂ} :
+    M ∈ Matrix.specialUnitaryGroup (Fin 2) ℂ ↔
+      ∃ α β : ℂ, M = !![α, β; -starRingEnd ℂ β, starRingEnd ℂ α] ∧
+        Complex.normSq α + Complex.normSq β = 1 := by
+  constructor
+  · exact exists_eq_of_mem_specialUnitaryGroup_fin_two M
+  · rintro ⟨α, β, rfl, hnorm⟩
+    rw [Matrix.mem_specialUnitaryGroup_iff]
+    refine ⟨?_, ?_⟩
+    · rw [Matrix.mem_unitaryGroup_iff']
+      ext i j
+      fin_cases i <;> fin_cases j <;>
+        simp [Matrix.mul_apply, Fin.sum_univ_two]
+      · rw [mul_comm (starRingEnd ℂ α) α, Complex.mul_conj, Complex.mul_conj]
+        exact_mod_cast hnorm
+      · ring
+      · ring
+      · rw [mul_comm (starRingEnd ℂ β) β, Complex.mul_conj, Complex.mul_conj, add_comm]
+        exact_mod_cast hnorm
+    · rw [Matrix.det_fin_two_of]
+      have h1 : α * starRingEnd ℂ α = ↑(Complex.normSq α) := Complex.mul_conj α
+      have h2 : β * -(starRingEnd ℂ β) = -↑(Complex.normSq β) := by
+        rw [mul_neg, Complex.mul_conj]
+      rw [h1, h2, sub_neg_eq_add, ← Complex.ofReal_add, hnorm]
+      norm_num
+
+end Matrix

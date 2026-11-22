@@ -216,7 +216,8 @@ theorem rCycleStirlingEulerian_small :
 family `P` of permutations, in the paper's convention
 `∑_{n ≥ 0} ∑_{σ ∈ P_n} x^{e(σ)} q^{c(σ)} u^n / n!`, with `e` the excedance count and `c`
 the number of cycles (fixed points included; the existing `cycleQuotientCount`), over a
-commutative `ℚ`-algebra `R` (so `x` and `q` can be indeterminates). With `q = 1` it is the paper's `P(x, u)`, with general `q` its
+commutative `ℚ`-algebra `R` (so `x` and `q` can be indeterminates). With `q = 1` it is the paper's
+`P(x, u)`, with general `q` its
 `q`-analogue `P(q, x, u)`.
 
 Source: Imboa-Navalona Manjaka Rakotoson and Fanja Rakotondrajao, *Associated

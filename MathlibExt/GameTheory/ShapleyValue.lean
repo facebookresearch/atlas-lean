@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Fintype.BigOperators
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Algebra.Module.LinearMap.Basic
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Finset.Card
@@ -51,6 +51,7 @@ namespace MathlibExt.GameTheory.ShapleyValue
 /-- A cooperative TU-game: real-valued characteristic function normalized at `∅`. -/
 @[ext]
 structure CoopGame (Player : Type*) where
+  /-- The characteristic function, giving the worth of each coalition. -/
   charFun : Set Player → ℝ
   empty : charFun ∅ = 0
 
@@ -203,17 +204,6 @@ private theorem sum_powerset_neg_one_pow_card (M : Finset Player) :
     exact h.symm
 
 omit [Fintype Player] in
-private theorem card_sdiff_of_subset {R T : Finset Player} (h : R ⊆ T) :
-    (T \ R).card = T.card - R.card := by
-  have h1 : R ∩ T = R := by
-    ext x
-    simp only [Finset.mem_inter]
-    constructor
-    · intro hx; exact hx.1
-    · intro hx; exact ⟨hx, h hx⟩
-  rw [Finset.card_sdiff, h1]
-
-omit [Fintype Player] in
 /-- Inner Möbius sum: summing the kernel over `T` with `R ⊆ T ⊆ S` picks out `R = S`. -/
 private theorem inner_mobius_sum (S R : Finset Player) (hR : R ∈ S.powerset) :
     ∑ T ∈ S.powerset.filter (fun T => R ⊆ T), (-1 : ℝ) ^ (T.card - R.card)
@@ -257,7 +247,7 @@ private theorem inner_mobius_sum (S R : Finset Player) (hR : R ∈ S.powerset) :
     · intro T hT
       rw [Finset.mem_filter] at hT
       show (-1 : ℝ) ^ (T.card - R.card) = (-1 : ℝ) ^ (T \ R).card
-      rw [card_sdiff_of_subset hT.2]
+      rw [Finset.card_sdiff_of_subset hT.2]
   rw [hsum, sum_powerset_neg_one_pow_card]
   have hiff : (S \ R = ∅) ↔ (R = S) := by
     constructor
@@ -746,16 +736,6 @@ private theorem mobiusCoeff_perm (σ : Equiv.Perm Player) (v : CoopGame Player)
     exact hinv ↑R
   rw [hcardT, hcardR, hchar]
 
-private theorem image_univ_perm (σ : Equiv.Perm Player) :
-    Finset.image (⇑σ) Finset.univ = Finset.univ := by
-  ext x
-  simp only [Finset.mem_image, Finset.mem_univ, true_and]
-  constructor
-  · intro _
-    trivial
-  · intro _
-    exact ⟨σ.symm x, Equiv.apply_symm_apply σ x⟩
-
 private theorem shapley_symmetric : IsSymmetric
     (shapleyLM : CoopGame Player →ₗ[ℝ] (Player → ℝ)) := by
   intro σ v hinv i
@@ -765,7 +745,7 @@ private theorem shapley_symmetric : IsSymmetric
       = Finset.image (fun T => Finset.image (⇑σ) T)
         (Finset.univ : Finset Player).powerset := by
     have himg : Finset.image (⇑σ) (Finset.univ : Finset Player) = Finset.univ :=
-      image_univ_perm σ
+      Finset.image_univ_equiv σ
     have h := Finset.powerset_image (s := (Finset.univ : Finset Player)) (f := (⇑σ))
     rw [himg] at h
     exact h
@@ -798,6 +778,18 @@ private theorem shapley_symmetric : IsSymmetric
     rw [ite_eq_right hσnmem, ite_eq_right hi]
 
 omit [DecidableEq Player] in
+/-- **Existence and uniqueness of the Shapley value.** On a fixed finite set of players there is
+exactly one linear map `φ` from TU games (`CoopGame`) to payoff vectors that is efficient
+(`IsEfficient`), symmetric (`IsSymmetric`) and gives nothing to null players
+(`SatisfiesNullPlayerAxiom`). The map constructed in the proof assigns to player `i` the sum,
+over the coalitions `T` containing `i`, of `c_T(v) / |T|`, where the `c_T(v)` are the
+coefficients of `v` in the basis of unanimity games (Möbius inversion).
+
+This is an adapted, fixed-player-set form of Shapley's theorem (L. S. Shapley, "A value for
+n-person games", Contributions to the Theory of Games II, Ann. of Math. Stud. 28, Princeton
+Univ. Press, 1953, 307–317), with linearity in place of additivity and the null-player axiom
+made explicit; see the source-fidelity note at the top of this file. Axioms as summarised in
+Encyclopedia of Mathematics, "Shapley value" (secondary source). -/
 public theorem shapley_characterization : ∃! φ : CoopGame Player →ₗ[ℝ] (Player → ℝ),
     IsEfficient φ ∧ IsSymmetric φ ∧ SatisfiesNullPlayerAxiom φ := by
   refine ExistsUnique.intro shapleyLM

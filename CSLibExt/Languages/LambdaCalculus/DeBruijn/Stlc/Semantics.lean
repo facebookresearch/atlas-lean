@@ -18,6 +18,7 @@ module
 
 public import CSLibExt.Languages.LambdaCalculus.DeBruijn.Stlc.Substitution
 public import Mathlib.Logic.Relation
+public import Cslib.Foundations.Relation.Defs
 
 /-!
 # Call-by-value dynamics for STLC
@@ -49,6 +50,7 @@ inductive Step {Base : Type u} : {Γ : List (Ty Base)} → {A : Ty Base} →
   | beta {A B : Ty Base} {Γ : List (Ty Base)} {body : Tm (A :: Γ) B} {a : Tm Γ A} :
       Value a → Step (.app (.lam body) a) (Tm.instantiate body a)
 
+@[inherit_doc]
 infix:50 " ⟶ₛ " => Step
 
 variable {Base : Type u}
@@ -110,8 +112,15 @@ theorem deterministic {t t₁ t₂ : Tm Γ A} (h₁ : t ⟶ₛ t₁) (h₂ : t �
       | appArg _ hstep => exact (value_irreducible hva hstep).elim
       | beta _ => rfl
 
-/-- A term is in normal form when it has no outgoing reduction. -/
+/-- A term is in normal form for the call-by-value step relation `Step` when it has no
+outgoing `Step`.  This is upstream `Relation.Normal Step` (see `normalForm_iff_normal`).
+Since `Step` never reduces under a binder, every lambda is a normal form here, even one
+whose body contains a beta-redex. -/
 def NormalForm (t : Tm Γ A) : Prop := ∀ t', ¬t ⟶ₛ t'
+
+/-- `NormalForm` is the upstream normal-form predicate `Relation.Normal` for `Step`. -/
+theorem normalForm_iff_normal {t : Tm Γ A} : NormalForm t ↔ Relation.Normal Step t :=
+  not_exists.symm
 
 /-- For closed well-typed terms, normal forms are exactly values. -/
 theorem closed_normalForm_iff_value (t : Tm [] A) : NormalForm t ↔ Value t := by

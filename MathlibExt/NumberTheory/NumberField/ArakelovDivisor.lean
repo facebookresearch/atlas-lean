@@ -189,6 +189,7 @@ noncomputable def ArakelovDivisor.sectionSet (D : ArakelovDivisor K) : Set K :=
   { x | x ∈ (D.1 : FractionalIdeal (𝓞 K)⁰ K) ∧
     ∀ w : InfinitePlace K, w x ≤ (D.2 w : ℝ) }
 
+omit [NumberField K] in
 /-- Membership in a section set unfolds to the ideal membership plus the
 archimedean bounds. -/
 @[simp]

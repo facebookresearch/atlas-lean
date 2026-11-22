@@ -128,7 +128,7 @@ theorem detailedBalance_isStationary (P : StochasticMatrix M) (π : Distribution
     _ = π.val j := mul_one _
 
 /-- Every entry of every power of a stochastic matrix is nonnegative. -/
-private lemma matPow_nonneg (P : StochasticMatrix M) : ∀ (n : ℕ) (i j : Fin (M + 1)),
+lemma matPow_nonneg (P : StochasticMatrix M) : ∀ (n : ℕ) (i j : Fin (M + 1)),
     0 ≤ P.matPow n i j := by
   intro n
   induction n with
