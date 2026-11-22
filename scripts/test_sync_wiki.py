@@ -2417,9 +2417,17 @@ class ScopedRun(unittest.TestCase):
         folder.rename(self.root / "rings")
         folder.symlink_to(self.root / "rings")
         status, out, err, report = self.run_sync("--check")
-        self.assertEqual((status, sorted(report["errors"])), (1, [
+        self.assertEqual((status, report["errors"]), (1, [
+            "blueprint/roadmap/Algebra/not-yet-classified/rings is a link: the sync writes through none; put what it "
+            "links to in its place"] + [
             f"blueprint/roadmap/Algebra/not-yet-classified/rings/{name}.md, which the row of Ext.Rings.{name} names, is "
             "not a page: restore it, or remove the row and run the sync again" for name in ("fields", "units")]))
+        # A link stops the writer, which then writes nothing.
+        before = {path: path.read_bytes() for path in (self.root / "blueprint").rglob("*") if path.is_file()}
+        status, out, err, report = self.run_sync()
+        self.assertEqual((status, "The run wrote nothing" in err), (1, True))
+        self.assertEqual({path: path.read_bytes() for path in (self.root / "blueprint").rglob("*") if path.is_file()},
+                         before)
 
     def test_a_folder_page_written_in_place_keeps_its_mode(self) -> None:
         (self.root / "blueprint/roadmap/Algebra/groups/group-basics/README.md").chmod(0o755)
@@ -2433,11 +2441,103 @@ class ScopedRun(unittest.TestCase):
         self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
         self.assertEqual(self.run_sync()[0], 0)
         counted = []
-        with patch.object(sync, "numbered_rows", side_effect=lambda real=sync.numbered_rows: counted.append(1) or real()):
+        # The base's Lean is read in this process, as where the platform cannot fork.
+        real = sync.numbered_rows
+
+        def numbered_rows():
+            counted.append(1)
+            return real()
+
+        def in_background(function, *args):
+            value = function(*args)
+            return lambda: value
+
+        with patch.object(sync, "numbered_rows", numbered_rows), patch.object(sync, "in_background", in_background):
             status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["wiki_changes"]), (0, "sync"))
-        # The working tree's rows, for the plan and for the ids; the base's, once for the ids and once for its plan.
-        self.assertEqual(len(counted), 4)
+        # The base's rows for its view, the working tree's for the plan and for the ids, and the base's once for the
+        # ids and once for its plan: five, with more rows than that.
+        self.assertGreater(len(sync.numbered_rows()), 5)
+        self.assertEqual(len(counted), 5)
+
+    def test_a_part_copy_the_changes_leave_stale_is_refreshed(self) -> None:
+        # A new folder goes into the last part of a split field; the copy of that part on the field's page must list it,
+        # and the writer refreshes that copy even when nothing else is left to write.
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        taxonomy["placements"]["MathlibExt/Algebra/Rings"] = {"to": "Algebra/groups", "title": "Rings"}
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        field = self.write("blueprint/roadmap/Algebra/groups/README.md",
+                           "# Groups\n\nGroups.\n\n- [Group basics](group-basics/README.md)\n\n"
+                           "## [Part 1](part-01/README.md)\n\n- [Cosets](part-01/cosets/README.md)\n")
+        self.write("blueprint/roadmap/Algebra/groups/part-01/README.md",
+                   "# Groups, part 1\n\n- [Cosets](cosets/README.md)\n")
+        self.write("blueprint/roadmap/Algebra/groups/part-01/cosets/README.md", "# Cosets\n\nCosets.\n")
+        self.base = self.commit("a field split into parts")
+        self.write("MathlibExt/Algebra/Rings.lean", self.RINGS)
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 0, err)
+        copy = "- [Rings](part-01/rings/README.md)\n"
+        self.assertIn(copy, field.read_text())
+        field.write_text(field.read_text().replace(copy, ""))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["parts"], report["errors"], report["missing"],
+                          report["digests"]), (1, False, ["Algebra/groups/part-01/README.md"], [], [], {}))
+        self.assertIn(f"python3 scripts/sync_wiki.py declarations --base {self.base}", out)
+        status, out, err, report = self.run_sync()
+        self.assertEqual((status, "Nothing to write." in out), (0, False))
+        self.assertIn(copy, field.read_text())
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"))
+
+    def test_a_part_copy_the_sync_cannot_refresh_is_an_error(self) -> None:
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        taxonomy["placements"]["MathlibExt/Algebra/Rings"] = {"to": "Algebra/groups", "title": "Rings"}
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        # A code fence makes the field's page one the sync does not refresh.
+        field = self.write("blueprint/roadmap/Algebra/groups/README.md",
+                           "# Groups\n\nGroups.\n\n```\ncode\n```\n\n- [Group basics](group-basics/README.md)\n\n"
+                           "## [Part 1](part-01/README.md)\n\n- [Cosets](part-01/cosets/README.md)\n")
+        self.write("blueprint/roadmap/Algebra/groups/part-01/README.md",
+                   "# Groups, part 1\n\n- [Cosets](cosets/README.md)\n")
+        self.write("blueprint/roadmap/Algebra/groups/part-01/cosets/README.md", "# Cosets\n\nCosets.\n")
+        self.base = self.commit("a field split into parts, with a code fence")
+        self.write("MathlibExt/Algebra/Rings.lean", self.RINGS)
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 1)
+        self.assertIn("error: the copy of Algebra/groups/part-01's list on its parent's page could not be refreshed",
+                      err)
+        self.assertNotIn("part-01/rings/README.md", field.read_text())
+        cosets = "- [Cosets](part-01/cosets/README.md)\n"
+        field.write_text(field.read_text().replace(cosets, cosets + "- [Rings](part-01/rings/README.md)\n"))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["parts"], report["wiki_changes"]), (0, True, [], "other"))
+
+    def test_a_page_written_again_is_listed_once(self) -> None:
+        # The repair a missing page's error advises: remove its row, and the sync writes the page again, keeping the
+        # folder page's entry for it.
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        (self.root / "blueprint/roadmap/Algebra/groups/group-basics/fresh.md").unlink()
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text("".join(line for line in links.read_text().splitlines(keepends=True)
+                                 if "fresh.md" not in line))
+        self.assertEqual(self.run_sync()[0], 0)
+        folder_page = (self.root / "blueprint/roadmap/Algebra/groups/group-basics/README.md").read_text()
+        self.assertEqual(folder_page.count("(fresh.md)"), 1, folder_page)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"))
+
+    def test_a_temporary_folder_reached_through_a_link(self) -> None:
+        real = Path(tempfile.mkdtemp()).resolve()
+        self.addCleanup(shutil.rmtree, real, True)
+        alias = self.root.parent / f"{self.root.name}-alias"
+        alias.symlink_to(real)
+        self.addCleanup(alias.unlink)
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        with patch.object(tempfile, "tempdir", str(alias)):
+            self.assertEqual(self.run_sync()[0], 0)
+            status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"]), (0, "sync"), err)
 
 
 class CommittedAnnotations(unittest.TestCase):

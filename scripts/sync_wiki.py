@@ -55,14 +55,15 @@ commit REV add, document, make public or undeprecate (see scoped_plan). Both sid
 tools and taxonomy, so that only the Lean's changes count. It writes only what they need: a page for each of them that
 has none, laid out as above but with none of the parts generate_wiki splits a folder into in a folder it makes (see
 kept_layout), an annotation row for each page or folder page it adds, among its links file's rows in path order (see
-insert_rows), the part lists of the parts it adds to, and the baseline entries a whole run would change because of the
-changes: the digests of its own declarations and of those whose docstring they edit, and the entries of those they
-remove. It names each page whose declaration's docstring the changes edit or remove, for a reader. It writes no page for
-any other declaration, such as an older one of a module the changes touch, and neither the area catalog nor the coverage
-summary: the run over the whole project refreshes those. A link the changes leave naming a declaration the Lean no
-longer has, or a held marker they leave unusable, is an error, and the run then writes nothing: relink the row to the
-declaration's successor and keep its id, or remove the link and keep the page as a planned page. So is a row of one of
-its declarations with no page, or one reached through a link, and a page of one, or a folder the changes add on its way,
+insert_rows), the copies of the parts that list a page or a folder it adds, and the baseline entries a whole run would
+change because of the changes: the digests of its own declarations and of those whose docstring they edit, and the
+entries of those they remove. It names each page whose declaration's docstring the changes edit or remove, for a reader.
+It writes no page for any other declaration, such as an older one of a module the changes touch, and neither the area
+catalog nor the coverage summary: the run over the whole project refreshes those. A link the changes leave naming a
+declaration the Lean no longer has, or a held marker they leave unusable, is an error, and the run then writes nothing:
+relink the row to the declaration's successor and keep its id, or remove the link and keep the page as a planned page.
+So is a link in the wiki or at the baseline, through which a write could leave them. So is a row of one of its
+declarations with no page, or one reached through a link, and a page of one, or a folder the changes add on its way,
 that its folder page does not list, or whose folder page or row is missing. A second run writes nothing. With --check it
 writes nothing at all, exits 1 unless the working tree is in step, naming the command that brings it in step, and says
 whether the wiki changes since REV are exactly what the run would write on REV's wiki, fresh ids aside (see
@@ -1193,12 +1194,14 @@ class Scope:
     """A run of declarations scoped to a pull request's own declarations (see run_scoped and apply_declarations): only
     those *keys* names get pages, and the docstring baseline takes only the entries *digests* gives, a digest, or None
     to drop the entry. A new row whose page *ids* names takes the id given there when it is one and no row has it; a
-    check passes the ids of the rows the pull request added, so that fresh ids compare equal (see sync_output).
-    *written* gathers every file the run writes."""
+    check passes the ids of the rows the pull request added, so that fresh ids compare equal (see sync_output). The
+    copies of the part pages *parts* names are refreshed too, as those of the parts the run adds to are (see
+    refresh_part_lists). *written* gathers every file the run writes."""
 
     keys: set[str]
     digests: dict[str, str | None]
     ids: dict[str, str] = field(default_factory=dict)
+    parts: set[Path] = field(default_factory=set)
     written: set[Path] = field(default_factory=set)
 
 
@@ -1498,9 +1501,10 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         folder.mkdir(parents=True, exist_ok=True)
         target.path.write_text(text)
         written.add(target.path)
-        # A new folder's page lists its pages already.
+        # A new folder's page lists its pages already, and a scoped run lists no page its folder page lists, as when
+        # an editor removed a page's row to have it written again.
         readme = folder / "README.md"
-        if readme.is_file():
+        if readme.is_file() and not (scope is not None and target.path.name in listed_links(readme)):
             # Where generate_wiki lists the page here, else in source order among its module's pages here, each
             # with its section. A page joins a section of the folder page's own list only beside its module's pages:
             # where that list runs over sections, generate_wiki's order across modules says nothing of them.
@@ -1585,7 +1589,7 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
                 report[kind].append(readme.parent.relative_to(wiki.ROADMAP).as_posix())
     written |= touched
     if scope is not None:
-        refresh_part_lists(touched, report, written)
+        refresh_part_lists(touched | scope.parts, report, written)
         # The baseline takes the scope's entries alone, and is not written when it takes none; the rows go where
         # they belong (see insert_rows).
         if scope.digests:
@@ -1859,7 +1863,8 @@ def base_view(base: str, taxonomy: dict, changed: frozenset[str]) -> dict:
     from autoform_cli.lean import index_project
 
     with tempfile.TemporaryDirectory(prefix="atlas-base-") as folder:
-        root = Path(folder)
+        # Resolved, as the paths the tools compare with it are.
+        root = Path(folder).resolve()
         extract(base, root, lambda path: lean_source(path) or LINKS_FILE.fullmatch(path) is not None)
         index = index_project(root, exclude_roots=EXCLUDED)
         with relocated(root=root, vault=root / "blueprint"):
@@ -1910,6 +1915,8 @@ class Plan:
     changed: list[str]
     # What the run cannot do, and so stops it: links and held markers the changes leave stale or unusable.
     blocking: list[str]
+    # The part pages whose copy on their parent's page lacks an entry of the changes, which the run refreshes.
+    parts: list[str]
     # What else needs an editor: an own declaration's row with no page, and a page or a new folder of one that its
     # folder page does not list.
     problems: list[str]
@@ -1918,7 +1925,11 @@ class Plan:
     counts: dict[str, int]
 
     def in_step(self) -> bool:
-        return not (self.missing or self.digests or self.blocking or self.problems)
+        return not (self.missing or self.digests or self.parts or self.blocking or self.problems)
+
+    def writes(self) -> bool:
+        """Whether a run has something to write (see apply_plan)."""
+        return bool(self.missing or self.digests or self.parts)
 
 
 NOTHING = {"lean files": 0, "added": 0, "changed": 0, "removed": 0}
@@ -1964,55 +1975,96 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
                  for problem in sorted(links["held_problems"] - base["held_problems"])]
     folder_rows = {Path(os.path.normpath(LINKS / row["subject"][0]["uri"])) for _, row in rows
                    if row["subject"][0]["uri"].endswith("/README.md")}
-    problems = set()
+    problems, parts = set(), set()
     for key in own:
         if key in written_at:
-            problems.update(page_problems(key, written_at[key], base["folders"], folder_rows))
+            found, stale = page_problems(key, written_at[key], base["folders"], folder_rows)
+            problems.update(found)
+            parts.update(stale)
+    blocking += [f"{path} is a link: the sync writes through none; put what it links to in its place"
+                 for path in links_in_wiki()]
     return Plan(new=own, missing=[key for key in own if key not in named and key not in held],
                 held=[key for key in own if key not in named and key in held],
                 digests={key: value for key, value in sorted(entries.items()) if state.get(key) != value},
-                changed=changed_pages, blocking=blocking, problems=sorted(set(problems)),
+                changed=changed_pages, blocking=blocking, parts=sorted(parts), problems=sorted(problems),
                 unindexed=sorted(row for name, row in head["unindexed"].items() if name not in base["unindexed"]),
                 counts={"lean files": len(changed), "added": len(now.keys() - old.keys()),
                         "changed": sum(old[key] != now[key] for key in now.keys() & old.keys()),
                         "removed": len(old.keys() - now.keys())})
 
 
-def page_problems(key: str, page: Path, folders: set[str], folder_rows: set[Path]) -> list[str]:
-    """What keeps an own declaration's *page*, which its row names as written, from being in step. It must be a file
-    under the roadmap, reached through no link, and listed on its folder page. So must each folder on its way that the
-    base did not have (*folders*, the base's folder pages by path in the roadmap), up to the first it had, the
-    roadmap's own page included; and each such folder needs its folder page, with an annotation row (*folder_rows*,
-    the folder pages that rows name)."""
+def page_problems(key: str, page: Path, folders: set[str], folder_rows: set[Path]) -> tuple[list[str], list[str]]:
+    """What keeps an own declaration's *page*, which its row names as written, from being in step: the problems for an
+    editor, and the part pages whose copy the sync refreshes. The page must be a file under the roadmap, reached
+    through no link, and listed on its folder page. So must each folder on its way that the base did not have
+    (*folders*, the base's folder pages by path in the roadmap), up to the first it had, the roadmap's own page
+    included; and each such folder needs its folder page, with an annotation row (*folder_rows*, the folder pages that
+    rows name). Where a part lists one of them, its copy on its parent's page must list it too (see
+    with_part_lists)."""
     if (not page.is_relative_to(wiki.ROADMAP) or os.path.realpath(page) != str(page) or not page.is_file()):
         return [f"{os.path.relpath(page, wiki.ROOT)}, which the row of {key} names, is not a page: restore it, or remove "
-                "the row and run the sync again"]
-    folder = page
+                "the row and run the sync again"], []
+    folder, stale = page, []
     while True:
         readme = folder.parent / "README.md"
         new = readme.relative_to(wiki.ROADMAP).as_posix() not in folders
         if new and not readme.is_file():
-            return [f"{readme.relative_to(wiki.ROADMAP)}, the page of a folder the changes add, is missing: restore it"]
+            return [f"{readme.relative_to(wiki.ROADMAP)}, the page of a folder the changes add, is missing: "
+                    "restore it"], stale
         if new and readme not in folder_rows:
             return [f"{readme.relative_to(wiki.ROADMAP)}, the page of a folder the changes add, has no annotation row: "
-                    "restore its row"]
-        if (folder.name if folder == page else f"{folder.name}/README.md") not in (
-                listed_links(readme) if readme.is_file() else []):
+                    "restore its row"], stale
+        entry = folder.name if folder == page else f"{folder.name}/README.md"
+        if entry not in (listed_links(readme) if readme.is_file() else []):
             what = f"the page of {key}" if folder == page else "a folder the changes add"
             return [f"{folder.relative_to(wiki.ROADMAP)}, {what}, is listed on no folder page: list it on "
-                    f"{readme.relative_to(wiki.ROADMAP)}"]
-        folder = folder.parent
+                    f"{readme.relative_to(wiki.ROADMAP)}"], stale
+        holder = folder.parent
+        if PART.fullmatch(holder.name) and not copied(holder.parent / "README.md", holder.name, entry):
+            stale.append(readme.relative_to(wiki.ROADMAP).as_posix())
+        folder = holder
         if folder == wiki.ROADMAP or not new:
-            return []
+            return [], stale
+
+
+def copied(readme: Path, part: str, entry: str) -> bool:
+    """Whether the folder page *readme* copies the entry *entry* of its part *part* ("part-N") under the heading that
+    links the part, or has no such heading, and so no copy to keep (see with_part_lists)."""
+    text = readme.read_text() if readme.is_file() else ""
+    heading, found = None, False
+    for block in blocks(text):
+        if HEADING.match(block):
+            heading = (match := PART_HEADING.match(block)) and match.group(2) == f"{part}/README.md"
+            found = found or bool(heading)
+        elif heading and (item := simple_item(block, code=True)) and item.group(2) == f"{part}/{entry}":
+            return True
+    return not found
+
+
+def links_in_wiki() -> list[str]:
+    """The links among the wiki's pages and links files, and the baseline, or that they are reached through, by their
+    path in the repository: a write through one could leave the wiki."""
+    found = [path for path in (wiki.VAULT, wiki.ROADMAP, LINKS, STATE.parent, STATE)
+             if path.is_symlink() or path.exists() and os.path.realpath(path) != str(path)]
+    pending = [folder for folder in (wiki.ROADMAP, LINKS) if folder.is_dir() and folder not in found]
+    while pending:
+        with os.scandir(pending.pop()) as entries:
+            for entry in entries:
+                if entry.is_symlink():
+                    found.append(Path(entry.path))
+                elif entry.is_dir(follow_symlinks=False):
+                    pending.append(entry.path)
+    return sorted({os.path.relpath(path, wiki.ROOT) for path in found})
 
 
 def apply_plan(plan: Plan, targets: list, index, generated: dict[Path, str], unindexed: list[str],
                ids: dict[str, str] | None = None) -> tuple[dict[str, list[str]], set[Path]] | None:
     """Write what *plan* asks for (see Scope and apply_declarations), with the ids *ids* gives where they are free;
     returns the report and every file written, or None when the plan asks for nothing, as on a second run."""
-    if not (plan.missing or plan.digests):
+    if not plan.writes():
         return None
-    scope = Scope(keys=set(plan.missing), digests=plan.digests, ids=ids or {})
+    scope = Scope(keys=set(plan.missing), digests=plan.digests, ids=ids or {},
+                  parts={wiki.ROADMAP / part for part in plan.parts})
     report = apply_declarations(targets, index, generated, unindexed, scope)
     report.update({"changed": plan.changed, "unindexed": plan.unindexed, "held": plan.held, "gone": []})
     return report, scope.written
@@ -2028,6 +2080,7 @@ def print_plan(plan: Plan, base: str) -> None:
                         ("Of them, those held back, so with no page", plan.held),
                         ("Docstring baseline entries to write", [f"{key}: {'drop' if value is None else value}"
                                                                  for key, value in plan.digests.items()]),
+                        ("Part lists whose copy lacks an entry of the changes, to refresh", plan.parts),
                         ("Pages whose declaration's docstring changed, to check", plan.changed),
                         ("Documented declarations the changes add that the Lean index lacks, for an editor",
                          plan.unindexed)):
@@ -2054,7 +2107,8 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
         return "other", others
     ids = {row["subject"][0]["uri"]: row["id"] for _, _, row in numbered_rows() if isinstance(row.get("id"), str)}
     with tempfile.TemporaryDirectory(prefix="atlas-sync-") as folder:
-        scratch = Path(folder)
+        # Resolved, as the paths the tools compare with it are.
+        scratch = Path(folder).resolve()
         vault, state = scratch / "blueprint", scratch / "scripts" / "wiki-sync.json"
         modes = extract(base, scratch, lambda path: written_by_sync(path))
         for made in (vault / "roadmap", vault / "links", state.parent):
@@ -2130,19 +2184,20 @@ def run_scoped(argv: list[str]) -> int:
             index = index_project(wiki.ROOT, exclude_roots=EXCLUDED)
             head = lean_view(index, [], [], lean)
             with tempfile.TemporaryDirectory(prefix="atlas-base-") as folder:
-                extract(base, Path(folder), LINKS_FILE.fullmatch)
-                with relocated(vault=Path(folder) / "blueprint"):
+                extract(base, Path(folder).resolve(), LINKS_FILE.fullmatch)
+                with relocated(vault=Path(folder).resolve() / "blueprint"):
                     old = {**head, **link_view(index), "folders": base_folders(base)}
             plan = scoped_plan(old, head, index, targets, lean)
         else:
             # Nothing the sync reads changed, as in a pull request of documentation or tooling alone.
-            plan = Plan({}, [], [], {}, [], [], [], [], dict(NOTHING))
+            plan = Plan(new={}, missing=[], held=[], digests={}, changed=[], blocking=[], parts=[], problems=[],
+                        unindexed=[], counts=dict(NOTHING))
     except GitError as error:
         print(f"error: {error}", file=sys.stderr)
         return 2
     report: dict = {"schema": "atlas-graph-sync/v1", "base": base, "check": options.check, "fix": fix,
                     "lean_files": sorted(lean), "counts": plan.counts, "new": plan.new, "missing": plan.missing,
-                    "held": plan.held, "digests": plan.digests, "changed": plan.changed,
+                    "held": plan.held, "digests": plan.digests, "parts": plan.parts, "changed": plan.changed,
                     "errors": plan.blocking + plan.problems, "unindexed": plan.unindexed}
     if options.check:
         real = wiki.VAULT
@@ -2164,7 +2219,7 @@ def run_scoped(argv: list[str]) -> int:
         report.update({"in_step": in_step, "wiki_changes": changes, "differences": differences})
         # The verdicts first, then what they rest on.
         print(f"In step: {'yes' if in_step else 'no'}")
-        if plan.missing or plan.digests:
+        if plan.writes():
             print("To bring it in step, run this from the repository root and commit what it writes"
                   + (", once the errors below are fixed" if plan.blocking else "") + f":\n  {fix}")
         print("Wiki changes since the base: " + {
@@ -2181,8 +2236,13 @@ def run_scoped(argv: list[str]) -> int:
             status = 1
         elif done := apply_plan(plan, targets, index, generated, unindexed):
             print_report(done[0])
+            # A part whose copy the run could not refresh may lack an entry of the changes, which only an editor
+            # can then copy.
+            for folder in done[0]["parts"]:
+                print(f"error: the copy of {folder}'s list on its parent's page could not be refreshed: copy the "
+                      "entries the run added there by hand", file=sys.stderr)
             report["written"] = sorted(path.relative_to(wiki.ROOT).as_posix() for path in done[1])
-            status = 1 if done[0]["unlisted"] or plan.problems else 0
+            status = 1 if done[0]["unlisted"] or done[0]["parts"] or plan.problems else 0
         else:
             print("Nothing to write.")
             status = 1 if plan.problems else 0
