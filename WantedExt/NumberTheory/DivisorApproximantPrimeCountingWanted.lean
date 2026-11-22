@@ -45,17 +45,6 @@ public theorem_wanted abs_exp_approx_sub_dvd_indicator_le (A : ℕ → ℕ → �
     |Real.exp (-(n * k * A k n * Real.sin (n * Real.pi / k) ^ 2)) - (if k ∣ n then 1 else 0)| ≤
       Real.exp (-(n * k : ℝ))
 
-/-- Lemma 2: with `A` as in Lemma 1, `τ̃(n) = ∑_{k=1}^{n} exp(-n k A(k, n) sin²(nπ/k))`
-satisfies `τ̃(n) = τ(n) + O(1/(eⁿ - 1))` as `n → ∞`.
-
-Source: Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
-Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Lemma 2 (`integers-2026-A46-lem-2`). -/
-public theorem_wanted divisorCountApprox_sub_isBigO (A : ℕ → ℕ → ℝ)
-    (hA : ∀ k n, 1 ≤ k → k ≤ n → ¬ k ∣ n →
-      1 ≤ A k n * Real.sin (n * Real.pi / k) ^ 2) :
-    (fun n : ℕ => ∑ k ∈ Icc 1 n, Real.exp (-(n * k * A k n * Real.sin (n * Real.pi / k) ^ 2)) -
-        (n.divisors.card : ℝ)) =O[atTop] fun n : ℕ => 1 / (Real.exp n - 1)
-
 /-- Lemma 3: `π₀(n) = ∑_{m=2}^{n} exp(-m (τ(m) - 2))` satisfies
 `π₀(n) - π(n) < 1/(e³ (e - 1))` for all `n ≥ 2`.
 
