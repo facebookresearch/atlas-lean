@@ -17,9 +17,9 @@ For a Bayesian network with a set `L` of latent (unobserved) nodes, Tian and
 Pearl (AAAI 2002) factor the observed law over the c-components of the latent
 projection: `P(v) = ∏ S ∈ C(G), Q[S](v)`, where the Q-factors
 `Q[S](v) = P_{v∖s}(s)` are interventional laws of the network. This file
-defines the observed law `BayesNet.observedLaw`, the Q-factor
-`BayesNet.qFactor`, the c-components `ADMG.cComponents` as vertex sets, and
-proves the factorization together with the prefix identity that recovers each
+defines the observed law `BayesNet.observedLaw` and the Q-factor
+`BayesNet.qFactor`, using the c-components `ADMG.cComponents` as vertex
+sets from `LatentProjection`, and proves the factorization together with the prefix identity that recovers each
 Q-factor from the observed law along a topological order (in division-free
 form for every `v`, and as a product of conditional ratios when `P(v) > 0`).
 The factorization and prefix identities need no semi-Markovian hypothesis;
