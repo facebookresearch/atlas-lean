@@ -36,8 +36,14 @@ unregistered companion `disprovedMain`. `SimpleGraph.IsBalanced` is
 MathlibExt's. Status: resolved false (formalized in Lean). -/
 
 open Classical in
-/-- The historical claim: dense graphs contain large `D`-balanced subgraphs
-with many edges (disproved). -/
+/-- **Erdős–Simonovits balanced subgraph claim.** For all reals $\varepsilon$ and $\alpha$ with
+$0 < \varepsilon < 1$ and $0 < \alpha < 1$, for all sufficiently large real $D$ and then all
+sufficiently large $n$, every simple graph $G$ on the vertex set $\{0, \dots, n-1\}$ with more
+than $n^{1+\alpha}$ edges has a (not necessarily induced) subgraph $H$ with some number $m$ of
+vertices such that $H$ is $D$-balanced (its maximum degree is at most $D$ times its minimum
+degree), $m > n^{1-\alpha}$, and $H$ has more than $\varepsilon m^{1+\alpha}$ edges.
+
+This claim (Erdős Problem 1077) is false. -/
 def mainPositive : Prop :=
   ∀ ε > (0 : ℝ), ε < 1 → ∀ α > (0 : ℝ), α < 1 → ∀ᶠ D in atTop, ∀ᶠ n in atTop,
     ∀ G : SimpleGraph (Fin n), G.edgeSet.ncard > (n : ℝ) ^ (1 + α) →
@@ -47,12 +53,29 @@ def mainPositive : Prop :=
         m > (n : ℝ) ^ (1 - α) ∧
         H.edgeSet.ncard > ε * m ^ (1 + α)
 
-/-- Its disproof (companion). -/
+/-- **Negation of the Erdős–Simonovits balanced subgraph claim.** The proposition that the
+Erdős–Simonovits balanced subgraph claim fails, that is, that it is not the case that for all
+reals $\varepsilon$ and $\alpha$ with $0 < \varepsilon < 1$ and $0 < \alpha < 1$, for all
+sufficiently large real $D$ and then all sufficiently large $n$, every simple graph $G$ on the
+vertex set $\{0, \dots, n-1\}$ with more than $n^{1+\alpha}$ edges has a (not necessarily
+induced) subgraph $H$ with some number $m$ of vertices such that $H$ is $D$-balanced (its maximum
+degree is at most $D$ times its minimum degree), $m > n^{1-\alpha}$, and $H$ has more than
+$\varepsilon m^{1+\alpha}$ edges. -/
 def disprovedMain : Prop := ¬ mainPositive
 
 /--
-Resolved false: Disproved: the m>n^{1-α} balanced-subgraph claim is false (bipartite witness;
-correct order n^α per JunGao and Jiang-Longbrake [JiLo25]), per erdosproblems.com/1077. Source:
+**The Erdős–Simonovits balanced subgraph claim is false.** It is not the case that for all reals
+$\varepsilon$ and $\alpha$ with $0 < \varepsilon < 1$ and $0 < \alpha < 1$, for all sufficiently
+large real $D$ and then all sufficiently large $n$, every simple graph $G$ on the vertex set
+$\{0, \dots, n-1\}$ with more than $n^{1+\alpha}$ edges has a (not necessarily induced) subgraph
+$H$ with some number $m$ of vertices such that $H$ is $D$-balanced (its maximum degree is at most
+$D$ times its minimum degree), $m > n^{1-\alpha}$, and $H$ has more than $\varepsilon m^{1+\alpha}$
+edges.
+
+The disproof uses a bipartite witness: the requirement $m > n^{1-\alpha}$ is too strong, and the
+correct order is $n^{\alpha}$ per Jun Gao and Jiang–Longbrake [JiLo25], per erdosproblems.com/1077.
+
+Source:
 External Lean disproof of Erdos Problem 1077, plby/lean-proofs at commit
 dfe2d78128b493c572cf525b1b8edf4897fb7664,
 https://github.com/plby/lean-proofs/blob/dfe2d78128b493c572cf525b1b8edf4897fb7664/src/latest/ErdosProblems/Erdos1077.lean#L265.
