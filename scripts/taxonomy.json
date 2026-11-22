@@ -9900,6 +9900,7 @@
   "MathlibExt/Combinatorics/DensityHalesJewett": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Density Hales–Jewett theorem"},
   "MathlibExt/Combinatorics/Digraph/DirectedCayley": {"to": "GraphTheory/algebraic-graph-theory", "title": "Cayley graphs and digraphs"},
   "MathlibExt/Combinatorics/Digraph/LabeledDigraph": {"to": "GraphTheory/directed-graphs", "title": "Labeled directed graphs"},
+  "MathlibExt/Combinatorics/DisjunctiveRado": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Disjunctive Rado numbers"},
   "MathlibExt/Combinatorics/DixonCubicBinomial": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Dixon's identity"},
   "MathlibExt/Combinatorics/DixonSummation": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Dixon's identity"},
   "MathlibExt/Combinatorics/DobinskiBell": {"to": "Combinatorics/stirling-bell-eulerian/bell-fubini-numbers", "title": "Dobinski's formula"},
