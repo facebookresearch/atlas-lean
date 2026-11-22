@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.NumberTheory.PrimeCounting
+public import MathlibExt.NumberTheory.DivisorApproximantPrimeCounting
 
 /-!
 # Smooth approximants of divisor functions and `π(n)` (statements)
