@@ -122,7 +122,9 @@ $$\sum_{d=1}^{m} \mu(d) \binom{\lfloor m/d \rfloor - \lfloor \ell/d \rfloor}{k}.
 
 Proves `Wanted` entry `mobius_formula_relatively_prime_subset_counts_interval`.
 
-Source: M. Ayad, V. Coia, and O. Kihel, “The Number of Relatively Prime Subsets of a Finite Union of Sets of Consecutive Integers”, Journal of Integer Sequences 17 (2014), Article 14.3.7, Theorem 1, lines 138-151, <https://cs.uwaterloo.ca/journals/JIS/VOL17/Kihel/kihel10.tex>.
+Source: M. Ayad, V. Coia, and O. Kihel, “The Number of Relatively Prime Subsets of a Finite Union
+of Sets of Consecutive Integers”, Journal of Integer Sequences 17 (2014), Article 14.3.7, Theorem
+1, lines 138-151, <https://cs.uwaterloo.ca/journals/JIS/VOL17/Kihel/kihel10.tex>.
 -/
 theorem mobius_formula_relatively_prime_subset_counts_interval
     (ℓ m k : ℕ) (h_lt : ℓ < m) (h_k : 1 ≤ k) :

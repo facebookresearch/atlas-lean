@@ -1082,7 +1082,9 @@ are the base-$B$ digits of their Kaprekar image, so $K$ is the Kaprekar map on t
 
 Proves `Wanted` entry `four_digit_kaprekar_structural_classification`.
 
-Source: Evan Chen, Ken Ono, Richard E. Schwartz, and Dinesh Thakur, "Four-Digit Kaprekar Dynamics in Odd Bases", Journal of Integer Sequences 29 (2026), Article 26.4.7, Theorem `thm:structural`, lines 220-230, <https://cs.uwaterloo.ca/journals/JIS/VOL29/Ono/ono3.tex>.
+Source: Evan Chen, Ken Ono, Richard E. Schwartz, and Dinesh Thakur, "Four-Digit Kaprekar Dynamics in
+Odd Bases", Journal of Integer Sequences 29 (2026), Article 26.4.7, Theorem `thm:structural`, lines
+220-230, <https://cs.uwaterloo.ca/journals/JIS/VOL29/Ono/ono3.tex>.
 -/
 theorem four_digit_kaprekar_structural_classification
     (B : ℕ) (hB : Odd B) (hB3 : 3 < B) :

@@ -14,12 +14,12 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Generalized Lucasnomial Fuss–Catalan numbers.** Let $P$ be Lucas parameters, that is, nonzero
-reals $p$ and $q$ whose Lucas bracket sequence $U_0 = 0$, $U_1 = 1$, $U_{m+2} = pU_{m+1} + qU_m$
-satisfies $U_m \ne 0$ for every $m \ge 1$. Write $U_m! = U_1 U_2 \cdots U_m$, and let the
-Lucasnomial coefficient $\binom{m}{k}_U$ be $\frac{U_m!}{U_k! \, U_{m-k}!}$ for $k \le m$ and $0$
-for $k > m$. For natural numbers $a$, $r$ and $n$, the generalized Lucasnomial Fuss–Catalan number
-of $P$ is the real number
+/-- **Generalized Lucasnomial Fuss–Catalan numbers.** Let $P$ be Lucas parameters, that is,
+nonzero reals $p$ and $q$ whose Lucas bracket sequence $U_0 = 0$, $U_1 = 1$,
+$U_{m+2} = pU_{m+1} + qU_m$ satisfies $U_m \ne 0$ for every $m \ge 1$. Write
+$U_m! = U_1 U_2 \cdots U_m$, and let the Lucasnomial coefficient $\binom{m}{k}_U$ be
+$\frac{U_m!}{U_k! \, U_{m-k}!}$ for $k \le m$ and $0$ for $k > m$. For natural numbers $a$, $r$ and
+$n$, the generalized Lucasnomial Fuss–Catalan number of $P$ is the real number
 
 $$C_{U,a,r}(n) = \frac{U_r}{U_{(a-1)n+r}} \binom{an+r-1}{n}_U.$$
 

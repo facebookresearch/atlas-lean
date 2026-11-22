@@ -696,7 +696,10 @@ Ireland--Rosen, Ch. 15 §2, and Washington, Cor. 5.14, back to Kummer's 1851 pap
 
 Proves `Wanted` entry `kummer_congruence`.
 
-Source: Ernst Eduard Kummer, "Über eine allgemeine Eigenschaft der rationalen Entwickelungscoefficienten einer bestimmten Gattung analytischer Functionen," Journal für die reine und angewandte Mathematik 41 (1851), 368–372, DOI 10.1515/crll.1851.41.368, https://doi.org/10.1515/crll.1851.41.368.
+Source: Ernst Eduard Kummer, "Über eine allgemeine Eigenschaft der rationalen
+Entwickelungscoefficienten einer bestimmten Gattung analytischer Functionen," Journal für die reine
+und angewandte Mathematik 41 (1851), 368–372, DOI 10.1515/crll.1851.41.368,
+https://doi.org/10.1515/crll.1851.41.368.
 -/
 public theorem kummer_congruence {p m n t : ℕ} [Fact (Nat.Prime p)]
     (hm_dvd : ¬ (p - 1) ∣ m) (hn_dvd : ¬ (p - 1) ∣ n)
