@@ -4,7 +4,9 @@ Let the encryption scheme have explicit randomness and decrypt every encryption,
 $\mathrm{Dec}_{k_1}(E(k_1, m, r)) = m$ for every key $k_1$, message $m$ and randomness $r$, and let the
 MAC be deterministic with canonical verification. For every chosen-ciphertext adversary $A$ against
 encrypt-then-MAC that makes at most $q$ oracle queries,
+
 $$\mathrm{Adv}^{\mathrm{cca}}(A) \le \mathrm{Adv}^{\mathrm{cpa}}(B) + \sum_{j < q} \mathrm{Adv}^{\mathrm{mac}}(\mathcal{F}_j),$$
+
 where $B$ is the CPA reduction against the encryption scheme and $\mathcal{F}_j$ is the MAC forger
 guessing index $j$, built with two random tapes of $q$ samples (Katz and Lindell, Section 4.5,
 encrypt-then-authenticate with a CPA-secure scheme and a MAC with unique tags). Here
