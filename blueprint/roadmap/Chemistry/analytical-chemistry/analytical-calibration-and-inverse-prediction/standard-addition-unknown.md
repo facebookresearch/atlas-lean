@@ -1,4 +1,4 @@
-# Standard Addition Unknown
+# Unknown concentration by standard addition
 
 Standard-addition unknown from a fitted line: given the fitted intercept and
 slope of the response-versus-added-concentration line, the unknown concentration is

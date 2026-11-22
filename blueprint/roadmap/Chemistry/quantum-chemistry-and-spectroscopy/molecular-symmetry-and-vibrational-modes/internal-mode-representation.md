@@ -1,4 +1,4 @@
-# Internal Mode Representation
+# Internal-mode representation of a point group
 
 The internal-mode representation: the displacement representation on the quotient by the
 rigid translations and rotations (`Representation.quotient`). Its carrier is

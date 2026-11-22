@@ -1,4 +1,4 @@
-# Wall Pressure
+# Kinetic pressure on a wall
 
 Pressure on a wall in the elastic-wall model, defined as momentum transfer per unit
 area per unit time: particle `i ∈ s` delivers momentum `Δp i` to the wall once every `τ i`, so

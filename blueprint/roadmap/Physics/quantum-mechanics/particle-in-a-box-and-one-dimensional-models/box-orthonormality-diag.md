@@ -1,4 +1,4 @@
-# Box orthonormality diag
+# Box states are normalized
 
 Diagonal orthonormality: `∫ x in 0..L, boxFunction n * boxFunction n = 1`,
 via `sin^2 = (1 - cos 2θ)/2` (Mathlib `Real.cos_two_mul`,

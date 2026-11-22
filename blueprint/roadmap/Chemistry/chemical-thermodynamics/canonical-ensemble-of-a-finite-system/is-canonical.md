@@ -1,4 +1,4 @@
-# Is Canonical
+# Canonical distribution at inverse temperature β
 
 The canonical postulate as a predicate: `p` is canonical for the energies `E` at inverse
 temperature `β` if `p = boltzmannProb E β`. The postulate (equal a priori probabilities for a

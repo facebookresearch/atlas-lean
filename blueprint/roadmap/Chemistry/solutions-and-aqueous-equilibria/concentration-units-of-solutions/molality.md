@@ -1,4 +1,4 @@
-# Molality
+# Molality of a solution
 
 Molality `b = n / mSolvent`: amount of solute per mass of solvent, with the mass in kg
 (or g, fixed per lemma). Molality is a different function from `molarity`: the denominator

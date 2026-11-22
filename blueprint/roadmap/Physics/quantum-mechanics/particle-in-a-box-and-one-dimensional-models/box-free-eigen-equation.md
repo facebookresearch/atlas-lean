@@ -1,4 +1,4 @@
-# Box free eigen equation
+# Extended box states solve the free Schrödinger equation
 
 Free differential-expression identity: the sine extension `boxFunction n L` of the `n`-th
 box state to all of `ℝ` satisfies `-(ħ^2/2m) ψ'' = E_n ψ` at every real `x` (uses `deriv`

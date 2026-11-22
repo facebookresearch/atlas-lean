@@ -1,4 +1,4 @@
-# Euler homogeneous function
+# Euler's homogeneous-function identity for entropy
 
 Euler homogeneous-function identity (differential form): differentiating
 `S(tU, tV, tN) = t * S(U, V, N)` at `t = 1` gives

@@ -1,4 +1,4 @@
-# First-order relative-uncertainty rule for products, quotients and powers
+# First-order relative uncertainty of products, quotients and powers
 
 Let
 `y = ∏ i, x i ^ p i` with integer exponents `p i` and nonzero input estimates `x i ≠ 0`. Let the

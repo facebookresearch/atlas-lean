@@ -1,4 +1,4 @@
-# Clear Denominators
+# Clearing the denominators of nonnegative mole ratios
 
 Clearing denominators of nonnegative ratios: for `r e = a / b ≥ 0` in lowest terms, the
 natural number `a * (D / b)`, where `D = commonDenominator r`; it equals `D * r e`

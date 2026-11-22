@@ -1,4 +1,4 @@
-# Balance Matrix
+# Balance matrix of components and charge
 
 The balance matrix: the component rows of `B` with one more row, indexed by `none`, for
 electric charge. It is a composition matrix for `Chemistry.Stoichiometry.IsBalanced` whose

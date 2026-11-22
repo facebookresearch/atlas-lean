@@ -1,4 +1,4 @@
-# Adiabatic invariant ratio p
+# Adiabatic pressure ratio from the volume ratio
 
 Reversible adiabatic invariant in ratio form: `p₂ / p₁ = (V₁ / V₂) ^ γ` for the ideal gas
 `idealGasP n R`. The relation `had`, which `adiabatic_path_integrated` gives with `nR = n * R`,

@@ -1,4 +1,4 @@
-# Has Deriv At acoustic Mode Energy conserved
+# Zero energy derivative without heat release or damping
 
 With no heat release and no dissipation, the modal energy has
 zero derivative at any single time satisfying the modal equations.

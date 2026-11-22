@@ -1,3 +1,3 @@
-# Rayleigh Quotient
+# Rayleigh quotient
 
 Rayleigh quotient `(x ⬝ᵥ H *ᵥ x) / (x ⬝ᵥ x)`.

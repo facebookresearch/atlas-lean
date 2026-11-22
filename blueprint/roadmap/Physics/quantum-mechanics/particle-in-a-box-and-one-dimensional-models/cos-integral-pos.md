@@ -1,4 +1,4 @@
-# Cos integral pos
+# Cosine integrals over the box vanish for m ≥ 1
 
 Cosine interval integral at positive integer frequency: for `m ≥ 1`,
 `∫ x in 0..L, cos (m * π * x / L) = 0`, by the fundamental theorem of

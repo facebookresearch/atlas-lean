@@ -1,14 +1,14 @@
 # Postulates of finite-dimensional quantum mechanics
 
-- [Norm to Euclidean Lin conj Transpose of mem unitary](norm-to-euclidean-lin-conj-transpose-of.md)
-- [Bijective to Euclidean Lin conj Transpose of mem unitary](bijective-to-euclidean-lin-conj-transpos.md)
-- [Unitary Orthonormal Basis](unitary-orthonormal-basis.md)
-- [Coe unitary Orthonormal Basis](coe-unitary-orthonormal-basis.md)
+- [The adjoint of a unitary matrix preserves norms](norm-to-euclidean-lin-conj-transpose-of.md)
+- [The adjoint of a unitary matrix acts bijectively](bijective-to-euclidean-lin-conj-transpos.md)
+- [Orthonormal basis from the columns of a unitary matrix](unitary-orthonormal-basis.md)
+- [Basis vectors are the columns of the unitary matrix](coe-unitary-orthonormal-basis.md)
 - [Born rule normalization in a unitary measurement basis](sum-born-prob-unitary-orthonormal-basis.md)
 
 ## B. Unitary time evolution
 
-- [Unitary time evolution](unitary-time-evolution.md)
+- [Time evolution by a Hermitian Hamiltonian is unitary](unitary-time-evolution.md)
 
 ## C. No finite-dimensional canonical commutator
 

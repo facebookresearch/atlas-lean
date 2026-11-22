@@ -1,4 +1,4 @@
-# Absolute Entropy
+# Absolute molar entropy with phase transitions
 
 The absolute molar entropy
 `S(T) = ∫ t in 0..T, Cp t / t + ∑ k ∈ trans with Tt k ≤ T, ΔH k / Tt k` for molar heat

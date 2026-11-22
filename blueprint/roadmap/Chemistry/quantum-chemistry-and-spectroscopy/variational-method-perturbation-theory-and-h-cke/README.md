@@ -1,51 +1,51 @@
 # Variational method, perturbation theory and Hückel theory
 
-- [Rayleigh Quotient](rayleigh-quotient.md)
-- [Generalized Rayleigh Quotient](generalized-rayleigh-quotient.md)
-- [Huckel Matrix](huckel-matrix.md)
-- [Pert E1](pert-e1.md)
-- [Pert V1](pert-v1.md)
-- [Pert E2](pert-e2.md)
-- [Pert V2](pert-v2.md)
-- [Alternating Flip](alternating-flip.md)
+- [Rayleigh quotient](rayleigh-quotient.md)
+- [Generalized Rayleigh quotient](generalized-rayleigh-quotient.md)
+- [Hückel matrix of a graph](huckel-matrix.md)
+- [First-order energy correction](pert-e1.md)
+- [First-order eigenvector correction](pert-v1.md)
+- [Second-order energy correction](pert-e2.md)
+- [Second-order eigenvector correction](pert-v2.md)
+- [Alternating-sign flip of a vector](alternating-flip.md)
 
 ## B. Rayleigh quotients and variational bounds
 
-- [Rayleigh Quotient eq to Euclidean CLM rayleigh Quotient](rayleigh-quotient-eq-to-euclidean-clm-ra.md)
-- [Rayleigh Quotient ge eigenvalues min](rayleigh-quotient-ge-eigenvalues-min.md)
-- [Rayleigh Quotient le eigenvalues max](rayleigh-quotient-le-eigenvalues-max.md)
-- [Cauchy Interlacing one Dim](cauchy-interlacing-one-dim.md)
-- [Generalized Eigenvalue eq ratio](generalized-eigenvalue-eq-ratio.md)
+- [Rayleigh quotient agrees with the operator definition](rayleigh-quotient-eq-to-euclidean-clm-ra.md)
+- [Rayleigh quotient is at least the smallest eigenvalue](rayleigh-quotient-ge-eigenvalues-min.md)
+- [Rayleigh quotient is at most the largest eigenvalue](rayleigh-quotient-le-eigenvalues-max.md)
+- [One-dimensional Cauchy interlacing](cauchy-interlacing-one-dim.md)
+- [Generalized eigenvalues as generalized Rayleigh quotients](generalized-eigenvalue-eq-ratio.md)
 
 ## C. Perturbation residuals
 
-- [First Order residual](first-order-residual.md)
-- [Second Order projected residual](second-order-projected-residual.md)
+- [First-order perturbation residual is O(t²)](first-order-residual.md)
+- [Second-order projected residual is O(t³)](second-order-projected-residual.md)
 
 ## D. Hückel modes on paths and cycles
 
-- [Huckel path eigenvector](huckel-path-eigenvector.md)
-- [Huckel path sine Mode ne zero](huckel-path-sine-mode-ne-zero.md)
-- [Huckel path eigenvalues distinct](huckel-path-eigenvalues-distinct.md)
-- [Huckel cycle cos Mode ne zero](huckel-cycle-cos-mode-ne-zero.md)
-- [Huckel cycle eigenvector cos](huckel-cycle-eigenvector-cos.md)
-- [Huckel cycle sin Mode mul Vec](huckel-cycle-sin-mode-mul-vec.md)
+- [Hückel eigenvectors of a path graph](huckel-path-eigenvector.md)
+- [Path sine modes are nonzero](huckel-path-sine-mode-ne-zero.md)
+- [Hückel path eigenvalues are distinct](huckel-path-eigenvalues-distinct.md)
+- [Cycle cosine modes are nonzero](huckel-cycle-cos-mode-ne-zero.md)
+- [Hückel cosine eigenvectors of a cycle graph](huckel-cycle-eigenvector-cos.md)
+- [Hückel matrix action on cycle sine modes](huckel-cycle-sin-mode-mul-vec.md)
 
 ## E. Pairing on even cycles
 
-- [Alternating Flip ne zero](alternating-flip-ne-zero.md)
-- [Cycle Adjacency flip](cycle-adjacency-flip.md)
-- [Huckel cycle flip mul Vec](huckel-cycle-flip-mul-vec.md)
+- [The alternating flip preserves nonzero vectors](alternating-flip-ne-zero.md)
+- [Even-cycle adjacency anticommutes with the flip](cycle-adjacency-flip.md)
+- [On even cycles the flip reflects energies about α](huckel-cycle-flip-mul-vec.md)
 - [Pairing of Hückel energies on even cycles](huckel-cycle-pairing.md)
 
 ## F. Counting the closed-form cycle energies
 
-- [Cycle cos pos count 4m2](cycle-cos-pos-count-4m2.md)
-- [Cycle cos zero count 4m](cycle-cos-zero-count-4m.md)
-- [Huckel cycle closed Form count lt alpha 4m2](huckel-cycle-closed-form-count-lt-alpha.md)
-- [Huckel cycle closed Form count eq alpha 4m](huckel-cycle-closed-form-count-eq-alpha.md)
+- [Exactly 2m + 1 positive cosines for N = 4m + 2](cycle-cos-pos-count-4m2.md)
+- [Exactly two vanishing cosines for N = 4m](cycle-cos-zero-count-4m.md)
+- [Closed-form cycle energies below α for N = 4m + 2](huckel-cycle-closed-form-count-lt-alpha.md)
+- [Closed-form cycle energies equal to α for N = 4m](huckel-cycle-closed-form-count-eq-alpha.md)
 
 ## G. The two-orbital LCAO secular determinant
 
-- [Lcao det](lcao-det.md)
-- [Lcao energies are roots](lcao-energies-are-roots.md)
+- [Factorization of the two-orbital secular determinant](lcao-det.md)
+- [LCAO energies are roots of the secular determinant](lcao-energies-are-roots.md)

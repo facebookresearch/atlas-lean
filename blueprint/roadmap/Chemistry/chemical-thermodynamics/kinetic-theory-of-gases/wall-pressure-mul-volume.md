@@ -1,4 +1,4 @@
-# Wall Pressure mul volume
+# Kinetic-theory pressure law for an isotropic gas
 
 Elastic-wall pressure law: `p * V = (1 / 3) * N * m * ⟨v²⟩`.
 

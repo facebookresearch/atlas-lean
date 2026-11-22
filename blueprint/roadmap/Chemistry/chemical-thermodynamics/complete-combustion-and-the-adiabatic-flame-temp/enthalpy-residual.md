@@ -1,4 +1,4 @@
-# Enthalpy Residual
+# Adiabatic enthalpy residual
 
 The adiabatic enthalpy residual: reactant amounts `nR` enter at the inlet temperature `Tin`,
 product amounts `nP` leave at the temperature `T`, and `H i` is the molar enthalpy of species `i`

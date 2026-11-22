@@ -1,4 +1,4 @@
-# Effusion rate eq iff
+# Equal effusion rates exactly when T/M agree
 
 Equal effusion rates at fixed number density: under the model hypothesis of
 `effusion_rate_eq` for each gas, with its own factor

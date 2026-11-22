@@ -1,4 +1,4 @@
-# Internal Energy
+# Ideal-gas internal energy with constant Cv
 
 Internal energy of an ideal gas with constant heat capacity `Cv`, relative to a reference
 state: `U(T) = U₀ + Cv * (T - T₀)`, where `U₀` is the energy at the reference temperature `T₀`.

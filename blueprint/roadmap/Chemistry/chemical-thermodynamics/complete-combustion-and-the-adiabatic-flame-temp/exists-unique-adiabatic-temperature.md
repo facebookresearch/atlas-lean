@@ -1,4 +1,4 @@
-# Exists Unique adiabatic Temperature
+# Existence and uniqueness of the adiabatic temperature
 
 The unique adiabatic temperature: with `Tlo < Thi`, positive total heat capacity on
 `[Tlo, Thi]` and the sign change `R(Tlo) ≤ 0 ≤ R(Thi)`, the residual has exactly one root in

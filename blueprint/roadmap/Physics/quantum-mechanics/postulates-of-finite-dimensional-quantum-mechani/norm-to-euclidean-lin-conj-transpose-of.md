@@ -1,3 +1,3 @@
-# Norm to Euclidean Lin conj Transpose of mem unitary
+# The adjoint of a unitary matrix preserves norms
 
 The `Uᴴ`-action of a unitary matrix preserves Euclidean norms.

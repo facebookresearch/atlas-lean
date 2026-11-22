@@ -1,4 +1,4 @@
-# Chemical Shift field indep
+# Chemical shift is field independent in the shielding model
 
 Field independence to first order inside the shielding model: if
 `ν = γ * B0 * (1 - σ) / (2 * Real.pi)` and

@@ -1,4 +1,4 @@
-# Acoustic Mode Energy
+# Energy of an acoustic standing mode
 
 Acoustic modal energy for one standing mode with pressure amplitude
 `A` and velocity amplitude `B` in a duct of length `L`, ratio of

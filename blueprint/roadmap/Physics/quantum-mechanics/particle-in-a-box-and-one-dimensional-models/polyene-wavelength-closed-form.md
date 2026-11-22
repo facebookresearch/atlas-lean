@@ -1,4 +1,4 @@
-# Polyene wavelength closed form
+# Closed form of the free-electron polyene wavelength
 
 Model estimate (free-electron + box, not a measurement or a theorem
 about real polyenes): closed form of the model wavelength,

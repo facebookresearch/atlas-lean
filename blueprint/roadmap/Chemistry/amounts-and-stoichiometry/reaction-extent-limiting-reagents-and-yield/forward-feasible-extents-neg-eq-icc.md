@@ -1,4 +1,4 @@
-# Forward Feasible Extents neg eq Icc
+# Feasible forward extents of the reversed reaction
 
 Inventory of the reversed reaction: if every initial amount is nonnegative and `ν` produces
 some species, the forward-feasible extents of `-ν` form the closed interval from `0` to

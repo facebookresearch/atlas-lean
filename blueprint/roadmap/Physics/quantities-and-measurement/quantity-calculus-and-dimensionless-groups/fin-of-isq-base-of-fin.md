@@ -1,3 +1,3 @@
-# Fin Of ISQ base Of Fin
+# The index of the i-th base quantity is i
 
 `finOfISQ` is inverse to `baseOfFin`.

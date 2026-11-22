@@ -1,4 +1,4 @@
-# Adiabatic invariant p V
+# Pressure–volume invariant of a reversible adiabat
 
 Reversible adiabatic invariant: `p * V ^ γ` is constant across states of the ideal gas
 `idealGasP n R`. The relation `had`, which `adiabatic_path_integrated` gives with `nR = n * R`,

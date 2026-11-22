@@ -1,4 +1,4 @@
-# Ideal Gas P mul rpow of log relation
+# Pressure–volume invariant from a logarithmic state relation
 
 The ideal-gas `p * V ^ γ` takes equal values at two states related by
 `Cv * log (T₂ / T₁) + k * log (V₂ / V₁) = 0` with `γ - 1 = k / Cv`, for an arbitrary

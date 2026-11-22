@@ -1,4 +1,4 @@
-# Energy Level eq hydrogen Energy
+# Hydrogen energy levels agree with the general definition
 
 Bridge to Physlib's Bohr levels: for a three-dimensional `QuantumMechanics.HydrogenAtom`,
 Physlib's level `n` (counted from `0`) is the level with principal quantum number `n + 1`, and

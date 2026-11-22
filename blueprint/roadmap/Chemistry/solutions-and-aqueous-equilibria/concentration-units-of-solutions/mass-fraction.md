@@ -1,4 +1,4 @@
-# Mass Fraction
+# Mass fraction of a solute
 
 Mass fraction `w = mSolute / mSoln`: solute mass over total solution mass. This is the
 single-solute ratio `mSolute / mSoln`; it is NOT `Chemistry.Amounts.massFraction`, which is

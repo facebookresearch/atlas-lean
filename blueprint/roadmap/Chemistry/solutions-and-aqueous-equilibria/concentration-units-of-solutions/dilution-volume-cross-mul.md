@@ -1,4 +1,4 @@
-# Dilution Volume cross mul
+# The computed final volume satisfies c₂V₂ = c₁V₁
 
 The cross-multiplied (algebraic) identity for the computed final volume: for `c₂ > 0` and
 arbitrary `c₁, V₁`, `V₂ = c₁ * V₁ / c₂` satisfies `c₂ * V₂ = c₁ * V₁`. This alone does not show

@@ -1,4 +1,4 @@
-# Vd W critical point
+# Van der Waals critical constants from explicit equations
 
 Van der Waals model, critical point. If `a, b, R, T > 0`, `Vm > b`, and both critical
 equations `∂p/∂V_m = 0` and `∂²p/∂V_m² = 0` hold at `(Vm, T)` (in the explicit forms given by

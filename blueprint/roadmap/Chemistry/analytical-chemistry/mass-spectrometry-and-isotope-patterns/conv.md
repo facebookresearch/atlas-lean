@@ -1,4 +1,4 @@
-# Conv
+# Convolution of exact-mass distributions
 
 The convolution of two exact-mass distributions, the exact-mass distribution of a molecule
 made of two parts with independent isotope compositions: the mass distribution of the sum of

@@ -1,4 +1,4 @@
-# Enthalpy Residual shift of is Balanced
+# Reference-state invariance of the enthalpy residual
 
 Reference-state invariance: shifting every molar enthalpy by element potentials,
 `H i T + ∑ b, A b i * e b`, leaves the residual unchanged when the products are reached by a

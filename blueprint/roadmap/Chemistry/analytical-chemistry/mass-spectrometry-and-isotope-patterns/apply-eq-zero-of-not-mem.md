@@ -1,3 +1,3 @@
-# Apply eq zero of not Mem
+# Masses outside the support have probability zero
 
 Masses outside the witness have probability `0`.

@@ -1,4 +1,4 @@
-# Carnot Efficiency
+# Carnot efficiency of a reversible engine
 
 The Carnot efficiency `1 - Tc / Th` of a reversible engine operating between a cold
 reservoir at absolute temperature `Tc` and a hot reservoir at absolute temperature `Th`.

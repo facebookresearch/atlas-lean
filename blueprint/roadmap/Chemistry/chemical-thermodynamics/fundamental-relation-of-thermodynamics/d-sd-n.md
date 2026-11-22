@@ -1,4 +1,4 @@
-# D Sd N
+# Partial derivative of entropy in a species amount
 
 Partial derivative of `S` with respect to `N i`: the `deriv` of the
 single-variable slice varying `N i` through `Function.update` at fixed `U`, `V`

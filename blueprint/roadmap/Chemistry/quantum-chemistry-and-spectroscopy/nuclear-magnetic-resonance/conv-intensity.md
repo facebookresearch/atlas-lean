@@ -1,4 +1,4 @@
-# Conv Intensity
+# Convolution of multiplet intensities
 
 Convolution of intensity functions on finite types: the intensity at a
 combined position `k` is the sum of `f i * g j` over the pairs `(i, j)` with

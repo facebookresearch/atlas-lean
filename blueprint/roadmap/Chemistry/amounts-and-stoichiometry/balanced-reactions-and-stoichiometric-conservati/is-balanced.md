@@ -1,4 +1,4 @@
-# Is Balanced
+# Balanced reaction for a composition matrix
 
 The reaction `ν` is balanced for the composition matrix `A` when it carries a zero net total
 of every balance coordinate, `A *ᵥ ν = 0`. Here `A b s` is the amount of the coordinate `b` (an

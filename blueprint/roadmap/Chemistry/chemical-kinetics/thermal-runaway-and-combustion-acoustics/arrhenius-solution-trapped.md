@@ -1,4 +1,4 @@
-# Arrhenius solution trapped
+# Temperature trapping for all forward time
 
 Forward trapping for a forward solution defined for all
 `t ≥ 0`: if `T` has within-derivative

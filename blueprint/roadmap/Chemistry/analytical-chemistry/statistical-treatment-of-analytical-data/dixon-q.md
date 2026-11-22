@@ -1,4 +1,4 @@
-# Dixon Q
+# Dixon's Q statistic
 
 Dixon's Q statistic for observation `j` of the sample `x`: the gap to the nearest other
 observation over the sample range, `nearestGap x j / sampleRange x`, and `0` when the range is

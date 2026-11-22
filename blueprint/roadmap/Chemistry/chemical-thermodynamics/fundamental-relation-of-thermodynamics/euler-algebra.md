@@ -1,4 +1,4 @@
-# Euler algebra
+# Algebraic core of the Euler relation
 
 Pure-algebra core of the Euler relation: with `T = 1/SU`, `p = T*SV` and
 `μᵢ = -T*SNᵢ`, the homogeneous-function identity `SU*U + SV*V + ∑ SNᵢNᵢ = S`

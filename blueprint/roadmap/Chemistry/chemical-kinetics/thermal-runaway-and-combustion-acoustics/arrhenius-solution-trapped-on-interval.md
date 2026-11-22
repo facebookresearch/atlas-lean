@@ -1,4 +1,4 @@
-# Arrhenius solution trapped on interval
+# Temperature trapping on a finite time interval
 
 Finite-horizon trapping: if `T` has within-derivative
 `arrheniusRate G H B Ta (T s) / C` on `Set.Icc 0 t` at every

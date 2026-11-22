@@ -1,4 +1,4 @@
-# Effusion rate ne of temperature ne
+# At equal molar mass, effusion rates differ with temperature
 
 Non-claim: under the same model hypothesis, with `k₁ > 0` and `hk : k₁ = k₂`, gases
 of equal molar mass at different temperatures do not effuse at equal rates. As in

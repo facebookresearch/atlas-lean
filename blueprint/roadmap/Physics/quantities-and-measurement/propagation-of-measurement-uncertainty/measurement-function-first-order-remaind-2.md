@@ -1,4 +1,4 @@
-# Explicit first-order remainder for a `C²` measurement function
+# Explicit first-order remainder for a C² measurement function
 
 If `f` is of class `C²`
 on an open set `U` containing the box `Set.Icc lo hi` and its second derivative satisfies

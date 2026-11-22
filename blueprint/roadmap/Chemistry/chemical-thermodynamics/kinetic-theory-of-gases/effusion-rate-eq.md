@@ -1,4 +1,4 @@
-# Effusion rate eq
+# Effusion rate at fixed number density scales as √(T/M)
 
 Dependence of the effusion rate on `T` and `M`: under the model hypothesis
 `rate = k * ⟨v⟩`, `rate = k * √(8 * R / π) * √(T / M)`; for a proportionality factor `k` held

@@ -1,4 +1,4 @@
-# Angular Momentum rep dimensions
+# Representation dimensions 2l + 1 for l = 0, 1/2, 1
 
 Carrier dimensions `2 * l + 1`: the `l = 0, 1/2, 1` representations act irreducibly
 (`lZero_irreducible`, `spinHalf_irreducible`, `lOne_irreducible`) on `Fin 1 → ℂ`,

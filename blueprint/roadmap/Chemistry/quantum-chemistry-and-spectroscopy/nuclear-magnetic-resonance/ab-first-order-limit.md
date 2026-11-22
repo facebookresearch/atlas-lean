@@ -1,4 +1,4 @@
-# Ab first order limit
+# Square-root estimate for the first-order AB limit
 
 First-order limit: for `Δν ≠ 0`,
 `|√(Δν ^ 2 + J ^ 2) - |Δν|| ≤ J ^ 2 / (2 * |Δν|)`. With `Δν = νA - νB` this bounds how far

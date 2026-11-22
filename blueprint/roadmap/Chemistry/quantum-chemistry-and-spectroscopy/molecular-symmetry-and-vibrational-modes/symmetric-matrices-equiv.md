@@ -1,4 +1,4 @@
-# Symmetric Matrices Equiv
+# Coordinates on symmetric matrices
 
 Coordinates `(S₀₀, S₁₁, S₂₂, S₀₁, S₀₂, S₁₂)` on symmetric matrices. In the quadratic form
 `rᵀ S r` (`quadraticFormOf`) the coefficients of `x², y², z²` are `S₀₀, S₁₁, S₂₂` and the

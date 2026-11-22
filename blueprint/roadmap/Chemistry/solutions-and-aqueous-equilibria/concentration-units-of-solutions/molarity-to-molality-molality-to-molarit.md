@@ -1,4 +1,4 @@
-# Molarity To Molality molality To Molarity
+# Converting molality to molarity and back
 
 Round trip: converting molality to molarity and back returns the molality, for `b ≥ 0`
 and positive `ρ` and `M`. The converted molarity lies in the physical domain

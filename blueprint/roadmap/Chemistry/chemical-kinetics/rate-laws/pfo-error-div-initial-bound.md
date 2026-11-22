@@ -1,4 +1,4 @@
-# Pfo error div initial bound
+# Error bound normalized by the initial concentration
 
 Pseudo-first-order error normalized by the initial concentration `[A]₀`:
 `|[A]&#40;t) - [A]₀ exp(-k[B]₀t)| / [A]₀ ≤ r (1 / (1 - r) + k[B]₀t)`. The denominator is `[A]₀`, not

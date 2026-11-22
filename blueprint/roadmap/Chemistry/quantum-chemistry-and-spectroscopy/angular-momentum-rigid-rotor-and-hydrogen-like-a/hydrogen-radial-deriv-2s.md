@@ -1,3 +1,3 @@
-# Hydrogen Radial deriv 2s
+# First and second derivatives of the 2s radial function
 
 2s derivatives, via `HasDerivAt`.

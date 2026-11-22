@@ -1,4 +1,4 @@
-# Partition Function
+# Partition function of a finite system
 
 The partition function `Z = ∑ i, exp (-β * E i)` of a system with finitely many states,
 energies `E` and inverse temperature `β`.

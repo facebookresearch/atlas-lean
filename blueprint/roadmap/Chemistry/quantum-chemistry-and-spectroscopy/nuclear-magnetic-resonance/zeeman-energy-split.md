@@ -1,4 +1,4 @@
-# Zeeman energy split
+# Zeeman splitting of a spin-1/2 nucleus
 
 Energy splitting between `m = -1/2` and `m = +1/2`: `ΔE = γ * hbar * B0`.
 `γ > 0` fixes the sign convention (for nuclei with negative `γ` the level

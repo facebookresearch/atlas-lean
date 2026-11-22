@@ -1,4 +1,4 @@
-# Excess Fraction
+# Population excess fraction of a two-level system
 
 The population excess fraction `(e^x - 1) / (e^x + 1)` of a two-level
 system whose populations are in the Boltzmann ratio `Nα / Nβ = e^x`

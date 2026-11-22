@@ -1,4 +1,4 @@
-# Sum mul log boltzmann Prob
+# Boltzmann cross entropy depends only on the mean energy
 
 The Lagrange-multiplier form summed against `p` with `∑ i, p i = 1`: minus the cross entropy,
 `∑ i, p i * log (boltzmannProb E β i) = -β * ∑ i, p i * E i - log Z`, depends on `p` only

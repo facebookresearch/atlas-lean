@@ -1,4 +1,4 @@
-# Measurement Function variance affine Combination
+# Variance of an affine combination of inputs
 
 The variance of an affine combination `b + ∑ i, a i * X i` of input quantities with finite
 second moments on a probability space: the constant offset `b` does not contribute

@@ -1,4 +1,4 @@
-# Engine efficiency le carnot Efficiency
+# Engine efficiency is at most the Carnot efficiency
 
 The second-law bound: any engine between reservoirs at `0 < Tc ≤ Th`, with heat absorbed
 `Qh`, heat rejected `Qc`, work `W = Qh - Qc` (first law) and the Clausius inequality

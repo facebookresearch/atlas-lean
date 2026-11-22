@@ -1,3 +1,3 @@
-# Translation Map
+# Rigid-translation map
 
 The rigid-translation map `v ↦ (fun _ => v)` into the displacement space.

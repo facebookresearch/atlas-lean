@@ -1,4 +1,4 @@
-# Absolute Entropy mono
+# Absolute entropy is monotone in temperature
 
 Absolute entropy is monotone: with `0 ≤ Cp` on `[0, T]`, nonnegative transition
 enthalpies, positive transition temperatures and `Cp t / t` integrable on `0..T₂` (so both

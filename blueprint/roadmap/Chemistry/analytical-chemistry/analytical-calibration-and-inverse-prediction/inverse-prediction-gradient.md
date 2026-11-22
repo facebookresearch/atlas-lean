@@ -1,4 +1,4 @@
-# Inverse Prediction Gradient
+# Gradient of inverse prediction
 
 The gradient of inverse prediction with respect to `(y₀, a, b)`: the partial
 derivatives `1 / b`, `-1 / b` and `-(y₀ - a) / b ^ 2`. For `b ≠ 0` they are the derivatives of

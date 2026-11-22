@@ -1,4 +1,4 @@
-# Crit Ratio deriv has Deriv At at root
+# Second derivative of the critical ratio at a stationary point
 
 At a stationary point the derivative function
 `s ↦ exp (B / s) * (s^2 - B * s + B * Ta) / s^2` (which agrees with

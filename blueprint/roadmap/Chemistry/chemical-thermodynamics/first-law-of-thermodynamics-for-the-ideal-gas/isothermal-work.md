@@ -1,4 +1,4 @@
-# Isothermal work
+# Isothermal work as the integral of −p dV
 
 Reversible isothermal ideal-gas work done on the system.
 The ideal-gas equation and reversibility enter as the explicit integrand

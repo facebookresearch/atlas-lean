@@ -1,4 +1,4 @@
-# Card combined le
+# Resolved line count is at most the maximum multiplicity
 
 Resolved-line bound: the number of distinct combined positions is at most
 the maximum multiplicity. Coincident shifts/degeneracies reduce the resolved

@@ -1,4 +1,4 @@
-# Acoustic Mode Energy deriv nonpos of no heat
+# Without heat release the modal energy does not increase
 
 Signed dissipation with no heat release: under `0 ≤ r` and
 `0 < L`, with `H = 0`, the modal energy derivative is

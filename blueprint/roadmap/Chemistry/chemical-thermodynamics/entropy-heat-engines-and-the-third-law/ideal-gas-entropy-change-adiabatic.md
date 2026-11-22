@@ -1,4 +1,4 @@
-# Ideal Gas Entropy Change adiabatic
+# No entropy change along a reversible adiabat
 
 Reversible-adiabatic case: for positive temperatures and volumes, if
 `T₂ / T₁ = (V₁ / V₂) ^ (R / cv)` (the adiabatic relation for constant `cv`) then `ΔS = 0`.

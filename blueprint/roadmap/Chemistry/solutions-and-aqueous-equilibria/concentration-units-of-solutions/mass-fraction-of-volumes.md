@@ -1,4 +1,4 @@
-# Mass Fraction of volumes
+# Mass fraction from volumes and densities
 
 Mass fraction from volumes: with solute density `ρs` (so `mSolute = ρs * vSolute`) and
 solution density `ρ` (so `mSoln = ρ * vSoln`), the mass fraction is `(ρs / ρ)` times the

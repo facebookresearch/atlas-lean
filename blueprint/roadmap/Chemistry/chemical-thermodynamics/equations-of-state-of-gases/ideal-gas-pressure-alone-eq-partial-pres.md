@@ -1,4 +1,4 @@
-# Ideal Gas pressure alone eq partial Pressure
+# Ideal-gas partial pressure is the pressure exerted alone
 
 Ideal-gas model: in a mixture with nonnegative amounts `n i` and total amount `∑ i, n i` at
 volume `V` and temperature `T`, the pressure `n i * R * T / V` that component `i` would exert

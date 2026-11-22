@@ -1,4 +1,4 @@
-# Rate Group
+# Scalar rate group of an order-n rate law
 
 The scalar `k * t * [A]₀ ^ (n - 1)` through which the integrated laws of order `n` depend on
 `k`, `t` and `[A]₀` (`zeroOrderSol_rateGroup`, `firstOrderSol_rateGroup`,

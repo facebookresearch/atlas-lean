@@ -1,4 +1,4 @@
-# Wavelength inv eq rydberg Wavenumber
+# Rydberg formula for inverse transition wavelengths
 
 Bridge to Physlib's Rydberg formula: for a three-dimensional
 `QuantumMechanics.HydrogenAtom`, the inverse wavelength of the transition from Physlib's level

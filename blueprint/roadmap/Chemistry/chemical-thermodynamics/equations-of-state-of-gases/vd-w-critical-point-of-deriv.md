@@ -1,4 +1,4 @@
-# Vd W critical point of deriv
+# Van der Waals critical constants from vanishing derivatives
 
 Van der Waals model, critical point stated with the derivatives themselves: if
 `deriv p = 0` and `deriv (deriv p) = 0` at `Vm > b` for the van der Waals pressure `p`, then

@@ -1,4 +1,4 @@
-# Molarity To Molality
+# Conversion from molarity to molality
 
 Molarity-to-molality conversion `b = c / (ρ - c * M)` for solution density `ρ` and solute
 molar mass `M`, meant for the physical domain `0 ≤ c ∧ c < ρ / M`, which it maps bijectively

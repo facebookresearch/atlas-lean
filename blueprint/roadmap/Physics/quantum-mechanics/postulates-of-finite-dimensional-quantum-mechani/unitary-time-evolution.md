@@ -1,4 +1,4 @@
-# Unitary time evolution
+# Time evolution by a Hermitian Hamiltonian is unitary
 
 For a Hermitian Hamiltonian `H`, real time `t`, and real
 `ħ ≠ 0`, the propagator `exp (-(t / ħ) • (I • H))`, i.e. `exp (-i H t / ħ)`, is unitary. The

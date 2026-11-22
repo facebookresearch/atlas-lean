@@ -1,4 +1,4 @@
-# Rect Loop Integral
+# Line integral of a 1-form around a rectangle
 
 Line integral of the 1-form `P dV + Q dT` around the axis-aligned rectangle
 with volume range `[V₁, V₂]` and temperature range `[T₁, T₂]`, traversed

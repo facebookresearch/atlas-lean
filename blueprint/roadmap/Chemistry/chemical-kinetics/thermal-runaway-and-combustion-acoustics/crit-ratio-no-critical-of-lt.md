@@ -1,4 +1,4 @@
-# Crit Ratio no critical of lt
+# No stationary point of the critical ratio for B < 4Tₐ
 
 No critical point: for `B < 4 * Ta`, the critical ratio has no
 stationary point above `Ta`. (Algebraically,

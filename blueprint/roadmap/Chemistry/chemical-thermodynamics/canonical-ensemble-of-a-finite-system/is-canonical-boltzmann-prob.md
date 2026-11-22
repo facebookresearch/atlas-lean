@@ -1,3 +1,3 @@
-# Is Canonical boltzmann Prob
+# The Boltzmann distribution is canonical
 
 The Boltzmann distribution is canonical.

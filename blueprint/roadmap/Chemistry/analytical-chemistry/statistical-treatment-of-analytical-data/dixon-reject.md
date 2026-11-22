@@ -1,4 +1,4 @@
-# Dixon Reject
+# Dixon's Q-test rejection rule
 
 Dixon decision procedure: reject observation `j` of a sample of `n ≥ 3` observations at the
 critical value `qcrit ≥ 0` when it is extreme and its Q statistic exceeds `qcrit`. The test is not

@@ -1,4 +1,4 @@
-# Molarity dilution Volume algebraic
+# Algebraic molarity identity for the computed volume
 
 An algebraic identity, not a physical claim: for `c₁ * V₁ ≠ 0` and every `c₂`,
 `(c₁ * V₁) / (c₁ * V₁ / c₂) = c₂`, i.e. `molarity (c₁ * V₁) (dilutionVolume c₁ V₁ c₂) = c₂`.

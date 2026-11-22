@@ -1,4 +1,4 @@
-# Internal Mode Space
+# Internal-mode space of a molecule
 
 The internal-mode space: displacements modulo rigid translations and rigid rotations. Its
 dimension is a kinematic count; zero or imaginary vibrational frequencies belong to the

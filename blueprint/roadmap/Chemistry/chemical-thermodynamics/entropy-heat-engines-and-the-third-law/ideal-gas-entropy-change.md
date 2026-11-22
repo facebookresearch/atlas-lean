@@ -1,4 +1,4 @@
-# Ideal Gas Entropy Change
+# Ideal-gas entropy change for constant heat capacity
 
 The integrated ideal-gas entropy change
 `ΔS = n * cv * log (T₂ / T₁) + n * R * log (V₂ / V₁)` with constant molar heat capacity

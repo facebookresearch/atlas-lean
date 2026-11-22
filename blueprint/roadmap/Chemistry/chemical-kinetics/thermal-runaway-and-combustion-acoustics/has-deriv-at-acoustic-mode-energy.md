@@ -1,4 +1,4 @@
-# Has Deriv At acoustic Mode Energy
+# Energy identity for the acoustic mode
 
 Energy identity for the acoustic mode: if `A` and `B` are
 differentiable in time with

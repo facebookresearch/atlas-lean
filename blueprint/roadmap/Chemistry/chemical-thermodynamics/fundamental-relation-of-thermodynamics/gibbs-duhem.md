@@ -1,4 +1,4 @@
-# Gibbs Duhem
+# Gibbs–Duhem relation along a curve
 
 Gibbs-Duhem relation in derivative form along a curve: if `T`, `p` and the
 `μᵢ` have derivatives `T'`, `p'`, `μ'` along the curve at `t0`, then

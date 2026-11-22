@@ -1,4 +1,4 @@
-# Finrank rotation Subspace of not collinear
+# Rotation subspace is three-dimensional if noncollinear
 
 For a noncollinear configuration the rigid rotations form a `3`-dimensional subspace (no
 hypothesis on the masses is needed here; positivity enters through

@@ -1,4 +1,4 @@
-# Mb Speed
+# Maxwell–Boltzmann speed distribution
 
 Maxwell-Boltzmann speed density (model input), for the gas constant `R`, absolute
 temperature `T`, molar mass `M` and speed `v`:

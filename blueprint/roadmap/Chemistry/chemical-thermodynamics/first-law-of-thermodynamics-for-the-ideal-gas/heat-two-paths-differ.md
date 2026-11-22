@@ -1,4 +1,4 @@
-# Heat two Paths differ
+# Heat differs along the two spanning paths
 
 Heat is path dependent: the two spanning path integrals differ. Like `heat_pathDependent`,
 it holds for all real `T₁ ≠ T₂` and every `Cv`, nonpositive temperatures included, where it

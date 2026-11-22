@@ -1,4 +1,4 @@
-# Has Deriv At absolute Entropy
+# Absolute entropy has derivative Cp/T between transitions
 
 The temperature derivative of absolute entropy is `Cp / T`: for `0 < T`, under
 continuity of `Cp` on positive temperatures and integrability of `Cp t / t` on `0..T`,

@@ -1,4 +1,4 @@
-# Effusion rate ratio
+# Graham's law of effusion
 
 Graham's law of effusion: two gases at the same temperature `T`, with rates
 proportional to their mean speeds with their own factors (model hypothesis),

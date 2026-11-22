@@ -1,4 +1,4 @@
-# Ab Offsets self
+# Transition offsets in the A₂ limit of equal shifts
 
 Equivalent shifts (`A₂`): at `νA = νB = ν0` with `J ≥ 0` the four candidate offsets are
 `ν0 - J`, `ν0`, `ν0` and `ν0 + J`. For `J > 0` the outer two involve the lower mixed state, which

@@ -1,4 +1,4 @@
-# `3N - 6` rule
+# The 3N − 6 rule for nonlinear molecules
 
 A noncollinear configuration of `N` nuclei has `3 * N - 6` internal
 modes (kinematic count). Since `3 ≤ N` holds automatically the natural-number subtraction is

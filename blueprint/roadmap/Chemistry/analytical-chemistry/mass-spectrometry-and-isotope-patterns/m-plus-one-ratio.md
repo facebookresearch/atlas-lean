@@ -1,4 +1,4 @@
-# M Plus One Ratio
+# Exact (M+1)/M ratio for n carbon atoms
 
 The exact `(M+1)/M` ratio of `n` carbon atoms whose heavy isotope ¹³C has fractional
 abundance `p`. It is the ratio of the `X ^ 1` and `X ^ 0` coefficients of `((1 - p) + p X) ^ n`.

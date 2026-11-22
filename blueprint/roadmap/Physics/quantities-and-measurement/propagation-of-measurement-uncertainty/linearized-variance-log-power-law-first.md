@@ -1,4 +1,4 @@
-# The relative-uncertainty rule as the first-order law for `log |y|`
+# The relative-uncertainty rule as the first-order law for log |y|
 
 Under the
 hypotheses of `relativeUncertainty_powerLaw_firstOrder`, the first-order variance of

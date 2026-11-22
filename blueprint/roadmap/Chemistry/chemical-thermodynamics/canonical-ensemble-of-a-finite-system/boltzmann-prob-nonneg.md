@@ -1,3 +1,3 @@
-# Boltzmann Prob nonneg
+# Boltzmann probabilities are nonnegative
 
 Boltzmann probabilities are nonnegative.

@@ -1,4 +1,4 @@
-# Student TInterval eq t Interval
+# Agreement with the random-variable t-interval
 
 The random-variable t-interval of `ContinuousDistributions` is `tInterval` computed from the
 first `n` observations. Its coverage under `ContinuousDistributions.StudentTPivotLaw` is

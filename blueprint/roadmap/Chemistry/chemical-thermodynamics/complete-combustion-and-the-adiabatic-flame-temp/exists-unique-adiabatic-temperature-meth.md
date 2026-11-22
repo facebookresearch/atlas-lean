@@ -1,4 +1,4 @@
-# Exists Unique adiabatic Temperature methane
+# Existence and uniqueness of the methane flame temperature
 
 The adiabatic temperature of the methane product model: from nonnegative reactant amounts
 `n₀` and a feasible positive extent `ξ` of complete methane combustion, with molar heat

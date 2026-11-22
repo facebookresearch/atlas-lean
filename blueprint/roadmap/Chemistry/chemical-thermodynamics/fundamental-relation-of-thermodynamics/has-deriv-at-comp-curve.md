@@ -1,4 +1,4 @@
-# Has Deriv At comp curve
+# Chain rule for entropy along a curve of states
 
 Chain rule along a curve of states: if the curve components have derivatives
 `U'`, `V'`, `N' i` at `t0` and `S` is differentiable at the state

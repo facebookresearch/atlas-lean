@@ -1,4 +1,4 @@
-# Crit Ratio two folds nondegenerate
+# The two ordinary folds are nondegenerate
 
 The two ordinary folds are nondegenerate: the second
 derivative of the critical ratio is nonzero at both fold

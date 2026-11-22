@@ -1,4 +1,4 @@
-# Ab Hamiltonian
+# Hamiltonian of the AB spin system
 
 The AB Hamiltonian in frequency units (Hz), `H = -νA I_zA - νB I_zB + J I_A · I_B`. The
 Zeeman terms have the sign of `zeemanEnergy` (`E = -γ hbar B0 m`), so for positive resonance

@@ -1,4 +1,4 @@
-# Standard Addition unknown eq
+# Standard addition recovers the unknown with an explicit blank
 
 Standard addition with an explicit blank: under the linear-response model
 `y s = a₀ + b * (x_u + s)` with the same blank `a₀` and sensitivity `b` for all additions,

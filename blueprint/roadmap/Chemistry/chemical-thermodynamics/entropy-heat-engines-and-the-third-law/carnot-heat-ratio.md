@@ -1,4 +1,4 @@
-# Carnot heat ratio
+# Carnot heat ratio equals the temperature ratio
 
 For the reversible cycle, both isothermal heats are positive and the rejected-to-absorbed
 heat ratio equals the temperature ratio: with `Qh = n * R * Th * log (V₂ / V₁)` and

@@ -1,4 +1,4 @@
-# IR activity (dipole model, MOD)
+# IR activity in the dipole model
 
 A vibrational mode transforming as the irreducible
 representation `σ` (an irreducible component of the internal-mode representation) is

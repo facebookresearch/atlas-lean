@@ -1,4 +1,4 @@
-# Unit Factor
+# Unit conversion factor of a dimension
 
 The factor by which the numerical value of a quantity of dimension `d` is multiplied under a
 change of unit choices from `u₁` to `u₂`: the real value of Physlib's

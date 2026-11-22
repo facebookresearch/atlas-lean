@@ -1,4 +1,4 @@
-# Fundamental Relation
+# Equilibrium postulates for the entropy
 
 The equilibrium postulates for the entropy of a simple system with `k` species,
 carried as structure hypotheses, not global axioms. On the open domain

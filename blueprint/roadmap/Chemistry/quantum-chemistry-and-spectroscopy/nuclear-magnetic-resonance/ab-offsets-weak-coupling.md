@@ -1,4 +1,4 @@
-# Ab Offsets weak Coupling
+# Weak-coupling limit of the AB transition offsets
 
 Weak-coupling limit of the AB transition offsets: when `νA ≠ νB`, the offsets of `− → ββ`
 and `αα → +` lie within `J ^ 2 / (4 |νA - νB|)` of the first-order doublet `max νA νB ± J / 2`

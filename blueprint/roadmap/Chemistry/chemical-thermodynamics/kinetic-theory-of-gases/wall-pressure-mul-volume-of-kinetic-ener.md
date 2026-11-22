@@ -1,4 +1,4 @@
-# Wall Pressure mul volume of kinetic Energy
+# Kinetic pressure law yields the ideal-gas law
 
 Consistency step: if, besides the hypotheses of `wallPressure_mul_volume`, `hEk`
 names the mean kinetic energy `Ek = (1 / 2) * m * v2` and the identification

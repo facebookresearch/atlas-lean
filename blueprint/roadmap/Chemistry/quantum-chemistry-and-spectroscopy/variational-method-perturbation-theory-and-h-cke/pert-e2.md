@@ -1,3 +1,3 @@
-# Pert E2
+# Second-order energy correction
 
 Second-order energy correction.

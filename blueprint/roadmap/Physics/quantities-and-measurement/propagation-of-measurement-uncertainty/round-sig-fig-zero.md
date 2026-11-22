@@ -1,3 +1,3 @@
-# Round Sig Fig zero
+# Zero rounds to zero
 
 Zero is reported as zero.

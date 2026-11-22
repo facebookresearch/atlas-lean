@@ -1,4 +1,4 @@
-# Nitrogen Rule of even sum valence
+# Nitrogen rule from an even valence sum
 
 The nitrogen rule from the valence-balance hypothesis. Suppose every atom `i ∈ s` has a common
 valence `v i` of its element, and the valences have an even sum. Then the nominal mass

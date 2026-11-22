@@ -1,4 +1,4 @@
-# Entropy Flow sign
+# Hot-to-cold transfer raises entropy to first order
 
 Hot-to-cold sign in derivative form: if subsystem 1 is hotter than subsystem
 2 (`T₁ > T₂`), then `dStot/dU₁ < 0` at the point, so transferring energy from 1

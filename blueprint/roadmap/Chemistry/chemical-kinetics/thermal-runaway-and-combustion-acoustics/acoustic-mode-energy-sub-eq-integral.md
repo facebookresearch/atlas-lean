@@ -1,4 +1,4 @@
-# Acoustic Mode Energy sub eq integral
+# Integrated energy balance of the acoustic mode
 
 Integrated energy balance over a time interval `[t0, t1]`: under
 the same modal equations at every time, the energy change equals the

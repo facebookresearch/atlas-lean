@@ -1,4 +1,4 @@
-# Sideal
+# Monatomic ideal-gas entropy
 
 Ideal-gas entropy (MOD): `S = N * kB * (log (V/N) + (3/2) * log (U/N) + s0)`
 with a symbolic constant `kB` (per-particle Boltzmann constant, energy per

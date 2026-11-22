@@ -1,4 +1,4 @@
-# Proton Reference Level
+# Proton reference level
 
 A proton reference level for species with charges `z` and component matrix `B`, with `H⁺`
 as the proton. It designates water `H₂O`, hydronium `H₃O⁺` and hydroxide `OH⁻` species and a

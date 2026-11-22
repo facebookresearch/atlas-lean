@@ -1,4 +1,4 @@
-# Raman activity (polarizability model, MOD)
+# Raman activity in the polarizability model
 
 A vibrational mode transforming as the
 irreducible representation `σ` is Raman-active iff `σ` occurs in the symmetric-square

@@ -1,4 +1,4 @@
-# Grubbs G
+# Grubbs' G statistic
 
 Grubbs' statistic `G = max_i |x i - x̄| / s` of a sample: the largest absolute deviation from
 the sample mean over the sample standard deviation, and `0` when `s = 0` (no spread, hence no

@@ -1,4 +1,4 @@
-# Round Sig Fig
+# Rounding to k significant figures
 
 Rounding to `k` significant figures, for a positive count `k : ℕ+`, a reporting function
 `ℝ → ℝ`: `roundSigFig k x = round (x * 10 ^ e) / 10 ^ e` with

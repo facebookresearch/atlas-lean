@@ -1,4 +1,4 @@
-# Entropy Of Mixing
+# Ideal entropy of mixing
 
 The ideal entropy of mixing `ΔS_mix = n * R * H(x)` for mole fractions `x : ι → ℝ`, where
 `H(x) = -∑ i, x i * log (x i)` is the Shannon entropy

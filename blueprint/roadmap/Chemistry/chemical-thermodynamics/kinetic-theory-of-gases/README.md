@@ -1,34 +1,34 @@
 # Kinetic theory of gases
 
-- [Mb Speed](mb-speed.md)
-- [Mb Speed nonneg](mb-speed-nonneg.md)
-- [Integral mb Speed](integral-mb-speed.md)
+- [Maxwell–Boltzmann speed distribution](mb-speed.md)
+- [The Maxwell–Boltzmann speed density is nonnegative](mb-speed-nonneg.md)
+- [Normalization of the Maxwell–Boltzmann speed density](integral-mb-speed.md)
 
 ## B. Characteristic speeds
 
-- [Mean Speed](mean-speed.md)
-- [Rms Speed](rms-speed.md)
-- [Most Probable Speed](most-probable-speed.md)
-- [Mean Speed eq](mean-speed-eq.md)
-- [Integral sq mul mb Speed](integral-sq-mul-mb-speed.md)
-- [Rms Speed eq](rms-speed-eq.md)
-- [Mb Speed le mb Speed most Probable Speed](mb-speed-le-mb-speed-most-probable-speed.md)
-- [Mb Speed lt mb Speed most Probable Speed](mb-speed-lt-mb-speed-most-probable-speed.md)
-- [Is Max On mb Speed iff](is-max-on-mb-speed-iff.md)
-- [Most Probable Speed lt mean Speed](most-probable-speed-lt-mean-speed.md)
-- [Mean Speed lt rms Speed](mean-speed-lt-rms-speed.md)
+- [Mean molecular speed](mean-speed.md)
+- [Root-mean-square speed](rms-speed.md)
+- [Most probable speed](most-probable-speed.md)
+- [Closed form of the mean speed](mean-speed-eq.md)
+- [Second moment of the Maxwell–Boltzmann density](integral-sq-mul-mb-speed.md)
+- [Closed form of the root-mean-square speed](rms-speed-eq.md)
+- [The most probable speed maximizes the speed density](mb-speed-le-mb-speed-most-probable-speed.md)
+- [The most probable speed is a strict maximum](mb-speed-lt-mb-speed-most-probable-speed.md)
+- [The most probable speed is the unique maximizer](is-max-on-mb-speed-iff.md)
+- [Most probable speed is below the mean speed](most-probable-speed-lt-mean-speed.md)
+- [Mean speed is below the root-mean-square speed](mean-speed-lt-rms-speed.md)
 
 ## C. Pressure from momentum flux
 
-- [Wall Pressure](wall-pressure.md)
-- [Expect speed sq of isotropy](expect-speed-sq-of-isotropy.md)
-- [Wall Pressure mul volume](wall-pressure-mul-volume.md)
-- [Wall Pressure mul volume of kinetic Energy](wall-pressure-mul-volume-of-kinetic-ener.md)
-- [Wall Pressure mul volume molar](wall-pressure-mul-volume-molar.md)
+- [Kinetic pressure on a wall](wall-pressure.md)
+- [Mean square speed under isotropy](expect-speed-sq-of-isotropy.md)
+- [Kinetic-theory pressure law for an isotropic gas](wall-pressure-mul-volume.md)
+- [Kinetic pressure law yields the ideal-gas law](wall-pressure-mul-volume-of-kinetic-ener.md)
+- [Molar ideal-gas law from kinetic theory](wall-pressure-mul-volume-molar.md)
 
 ## D. Effusion
 
-- [Effusion rate eq](effusion-rate-eq.md)
-- [Effusion rate ratio](effusion-rate-ratio.md)
-- [Effusion rate eq iff](effusion-rate-eq-iff.md)
-- [Effusion rate ne of temperature ne](effusion-rate-ne-of-temperature-ne.md)
+- [Effusion rate at fixed number density scales as √(T/M)](effusion-rate-eq.md)
+- [Graham's law of effusion](effusion-rate-ratio.md)
+- [Equal effusion rates exactly when T/M agree](effusion-rate-eq-iff.md)
+- [At equal molar mass, effusion rates differ with temperature](effusion-rate-ne-of-temperature-ne.md)

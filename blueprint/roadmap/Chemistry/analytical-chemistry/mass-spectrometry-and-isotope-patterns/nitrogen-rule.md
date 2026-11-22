@@ -1,4 +1,4 @@
-# Nitrogen Rule
+# Nitrogen rule for bond graphs at common valences
 
 The nitrogen rule for a bond graph at common valences: a common-valence bond-graph
 result, not a neutrality claim. If every atom is bonded at a common valence of its element,

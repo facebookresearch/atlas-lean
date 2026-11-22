@@ -1,3 +1,3 @@
-# Base Of Fin fin Of ISQ
+# Each base quantity is recovered from its index
 
 `baseOfFin` is inverse to `finOfISQ`.

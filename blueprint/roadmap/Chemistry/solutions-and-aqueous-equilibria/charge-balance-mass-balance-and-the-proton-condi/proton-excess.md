@@ -1,4 +1,4 @@
-# Proton Excess
+# Proton excess of a species
 
 The proton excess of each species relative to `R`: the charge row plus the component rows
 weighted by `R.w`. It is `0` on the zero level, `1` on hydronium and `-1` on hydroxide, so it

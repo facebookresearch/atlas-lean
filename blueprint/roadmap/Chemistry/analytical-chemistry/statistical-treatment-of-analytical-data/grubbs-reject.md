@@ -1,4 +1,4 @@
-# Grubbs Reject
+# Grubbs' test rejection rule
 
 Grubbs decision procedure: reject the most extreme observation of a sample `x` of `n ≥ 3`
 observations at the critical value `gcrit ≥ 0`. The test is not defined for fewer than three

@@ -1,4 +1,4 @@
-# Heat path Dependent
+# The heat 1-form has a nonzero loop integral
 
 The heat 1-form is path dependent: its rectangular loop integral is nonzero. It assumes
 nothing about the temperatures beyond `T₁ ≠ T₂` and nothing about `Cv`, so it also holds for

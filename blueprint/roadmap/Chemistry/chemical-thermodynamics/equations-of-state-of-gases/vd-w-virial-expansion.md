@@ -1,4 +1,4 @@
-# Vd W virial expansion
+# Exact virial identity for the van der Waals gas
 
 Van der Waals model, exact virial identity: `Z = 1 + B / V_m + b ^ 2 / (V_m (V_m - b))` with
 `B = b - a / (R T)`. So `B` is the coefficient of `1 / V_m` in the expansion of `Z`, with the

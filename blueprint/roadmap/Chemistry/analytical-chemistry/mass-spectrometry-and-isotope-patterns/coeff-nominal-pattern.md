@@ -1,4 +1,4 @@
-# Coeff nominal Pattern
+# Coefficients of the nominal pattern as isotopologue weights
 
 The coefficient of `X ^ k` in the nominal pattern of a molecule is the total (unnormalized)
 weight of its isotopologues of nominal shift `k`. It is the sum, over the choices `σ` of one

@@ -1,4 +1,4 @@
-# Reaction Enthalpy
+# Reaction enthalpy as a linear functional
 
 Reaction enthalpy as a linear functional on the reaction space: for a fixed assignment of
 molar enthalpies `H : ι → ℝ`, the enthalpy of the reaction `ν` is `∑ i, ν i * H i`, with

@@ -1,4 +1,4 @@
-# Ideal Gas P ratio of log relation
+# Pressure ratio from a logarithmic state relation
 
 Pressure ratio of the ideal-gas model `idealGasP n R` between two states related by
 `Cv * log (T₂ / T₁) + k * log (V₂ / V₁) = 0` with `γ - 1 = k / Cv`, for an arbitrary

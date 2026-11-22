@@ -1,4 +1,4 @@
-# Chemical Shift
+# Chemical shift in ppm
 
 Chemical shift in ppm: `δ = 1e6 * (ν - νref) / νref`, a dimensionless
 ratio of frequencies in Hz. `1e6` is the real literal `1000000`. The shift is

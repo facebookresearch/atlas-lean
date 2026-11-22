@@ -1,3 +1,3 @@
-# First Order Sol pos
+# The first-order solution stays positive
 
 The first-order solution stays positive.

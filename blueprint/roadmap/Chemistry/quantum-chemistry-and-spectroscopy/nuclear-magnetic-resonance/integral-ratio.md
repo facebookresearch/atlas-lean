@@ -1,4 +1,4 @@
-# Integral ratio
+# Integral ratios equal nucleus ratios under full relaxation
 
 Integrals are proportional to nucleus count: if `ii = C * Ni` and
 `ij = C * Nj` for a common `C ≠ 0` (full-relaxation model hypothesis, `C` a

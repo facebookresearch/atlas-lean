@@ -1,4 +1,4 @@
-# Carnot volume ratio
+# Equal volume ratios in a Carnot cycle
 
 The adiabatic legs of a reversible ideal-gas Carnot cycle force equal volume ratios:
 from the model hypotheses `Th * V₂ ^ k = Tc * V₃ ^ k` and `Tc * V₄ ^ k = Th * V₁ ^ k` with
