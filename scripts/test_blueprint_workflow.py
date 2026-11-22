@@ -235,12 +235,14 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertIn("exit 0", skip)
         self.assertNotIn("continue-on-error", step)
         self.assertEqual(step["timeout-minutes"], "10")
-        # Autoform's check reports informal links that close a cycle through Lean edges; no second pass.
-        self.assertNotIn("--built", self.text)
         positions = {s.get("name"): i for i, s in enumerate(self.steps)}
         self.assertLess(positions["Test the wiki scripts"], positions[step["name"]])
         self.assertLess(positions[step["name"]], positions["Build the current v2 libraries"])
         self.assertLess(positions[step["name"]], positions["Add the Lean-owned facts to the articles"])
+        built = self.step("Check informal dependencies on the built graph (report only)")
+        self.assertLess(positions["Add the Lean-owned facts to the articles"], positions[built["name"]])
+        self.assertIn('check_graph_rules.py --built --summary "$GITHUB_STEP_SUMMARY"', built["run"])
+        self.assertNotIn("--blocking", built["run"])
 
     def test_the_audit_reports_without_blocking_and_fails_only_if_it_cannot_run(self):
         audit = self.step("Audit the graph (report only)")

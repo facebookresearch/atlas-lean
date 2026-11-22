@@ -233,6 +233,12 @@ jobs:
           uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
           autoform check blueprint --lean-root .
 
+      - name: Check informal dependencies on the built graph (report only)
+        timeout-minutes: 10
+        run: >-
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          python scripts/check_graph_rules.py --built --summary "$GITHUB_STEP_SUMMARY"
+
       # Report only, so that its findings can be measured before any of them
       # blocks a PR: two pages for one declaration, overfull folders,
       # provenance and coverage gaps. The counts go in the job summary.

@@ -115,16 +115,18 @@ def lean_sections(text: str) -> list[str]:
     return found
 
 
+def names_declaration(end: object) -> bool:
+    location = end.get("location") if isinstance(end, dict) else None
+    return isinstance(location, dict) and bool(location.get("declaration"))
+
+
 def linked(annotation: dict) -> bool:
     """Whether a row ties its page to Lean, as `sync_wiki.py lean-facts` reads it: a declaration under
     `object`, or the module and name an earlier sync wrote."""
     extensions = annotation.get("extensions")
     own = extensions.get(OWN) if isinstance(extensions, dict) else None
     objects = annotation.get("object")
-    named = isinstance(objects, list) and any(
-        isinstance(end, dict) and isinstance(end.get("location"), dict) and end["location"].get("declaration")
-        for end in objects
-    )
+    named = isinstance(objects, list) and any(names_declaration(end) for end in objects)
     return bool(named or (isinstance(own, dict) and "module" in own and "name" in own))
 
 
@@ -229,6 +231,8 @@ def check_defaults(source: Path, root: Path, links: Path, report: Report) -> Non
         if fact in shared:
             report.add(8, name, f"the defaults commit {fact!r}, which lean-facts adds at build time")
     # Autoform merges the defaults into every row, so each of these would apply to every page.
+    if "id" in shared:
+        report.add(5, name, "the defaults set a page ID; put each ID on its annotation row")
     objects = shared.get("object")
     if linked({**shared, "object": objects if isinstance(objects, list) else [objects]}):
         report.add(5, name, "the defaults name a Lean declaration for every page; name it on the page's own row")
@@ -292,7 +296,7 @@ def load_annotations(root: Path, report: Report) -> set[Path]:
             objects = annotation.get("object", [])
             if not isinstance(objects, list):
                 report.add(5, subject, "its annotation's `object` is not a list of ends", at)
-            elif len(objects) > 1:
+            elif sum(names_declaration(end) for end in objects) > 1:
                 report.add(5, subject, "its annotation names more than one Lean declaration", at)
             article_id = annotation.get("id")
             if article_id is not None:  # a missing id is not a finding until the one-off fill (#5524)
@@ -388,16 +392,20 @@ def check_listings(root: Path, report: Report) -> None:
 
 
 def check_edges(root: Path, linked_pages: set[Path], report: Report) -> None:
-    graph_module, _ = autoform()
-    vault = root / "blueprint"
     for page in sorted(linked_pages):
         # Folder pages are included: lean-facts skips them, so nothing would rewrite their sections.
         text = read_text(page, root, report, 9)
         for heading in lean_sections(text) if text is not None else ():
             canonical = "Proof depends on" if heading.casefold() == "proof depends on" else "Depends on"
             report.add(9, rel(page, root), f"commits `## {canonical}`, which lean-facts writes at build time")
+
+    check_informal_edges(root, report)
+
+
+def check_informal_edges(root: Path, report: Report) -> None:
+    graph_module, _ = autoform()
     try:
-        graph = graph_module.load_graph(vault)
+        graph = graph_module.load_graph(root / "blueprint")
     except graph_module.GraphValidationError as error:
         # Not an ATLAS rule: Autoform's own format. `autoform check` reports the same issues after lean-facts.
         for issue in error.issues:
@@ -517,8 +525,9 @@ def annotate(finding: Finding, level: str) -> str:
     return f"::{level} {','.join(parts + [title])}::{message}"
 
 
-def summary(findings: list[Finding], blocking: bool) -> str:
-    lines = [f"## Graph rules ({'blocking' if blocking else 'report-only'})", ""]
+def summary(findings: list[Finding], blocking: bool, *, built: bool = False) -> str:
+    title = "Informal dependencies on the built graph" if built else "Graph rules"
+    lines = [f"## {title} ({'blocking' if blocking else 'report-only'})", ""]
     if not findings:
         return "\n".join(lines + ["No findings.", ""])
     lines += [f"- {finding}" for finding in findings[:50]]
@@ -531,23 +540,31 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--base", help="the commit the change starts from, to check its size (rule 15)")
     parser.add_argument("--blocking", action="store_true", help="exit 1 on any finding")
+    parser.add_argument("--built", action="store_true", help="after lean-facts: report informal dependencies only")
     parser.add_argument("--summary", type=Path, help="append a Markdown summary here (GITHUB_STEP_SUMMARY)")
     parser.add_argument("--root", type=Path, default=ROOT, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
+    if args.built and (args.base or args.blocking):
+        parser.error("--built reports on the built graph and cannot be used with --base or --blocking")
     root = args.root.resolve()
     try:
         if args.base:
             git(root, "rev-parse", "--verify", "--quiet", f"{args.base}^{{commit}}")
     except subprocess.CalledProcessError:
         parser.error(f"--base {args.base!r} is not a commit in this repository; fetch it first")
-    findings = check(root, args.base)
+    if args.built:
+        report = Report()
+        check_informal_edges(root, report)
+        findings = report.findings
+    else:
+        findings = check(root, args.base)
     actions = os.environ.get("GITHUB_ACTIONS") == "true"
     level = "error" if args.blocking else "warning"
     for finding in findings:
         print(annotate(finding, level) if actions else f"{level}: {finding}", file=sys.stderr)
     if args.summary:
         with args.summary.open("a", encoding="utf-8") as handle:
-            handle.write(summary(findings, args.blocking))
+            handle.write(summary(findings, args.blocking, built=args.built))
     if not findings:
         print("graph rules: OK")
     else:

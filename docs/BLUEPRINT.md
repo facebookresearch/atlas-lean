@@ -221,7 +221,7 @@ every merge group, and on the daily build of `main`:
     (`sync_wiki.py` reads it as written and Autoform decodes it, so the two
     could bind different pages); no other annotation file Autoform would read
     (a `.json`, a `.ndjson`, a nested file or a second `_defaults.json`), and
-    no `_defaults.json` naming a declaration for every page;
+    no `_defaults.json` assigning a page ID or Lean declaration;
   - rule 8: no build output is tracked, and neither a row nor a
     `_defaults.json` commits `kind` or `status`;
   - rules 9 and 10: no linked page, folder pages included, commits `## Depends
@@ -229,8 +229,10 @@ every merge group, and on the daily build of `main`:
   - rule 11: `## Informally uses` links existing pages, never the page itself,
     and closes no cycle through informal links and planned pages' own edges.
     On the committed tree a linked page has no dependency sections (rule 9),
-    so a cycle through Lean edges shows only after `lean-facts`, where
-    `autoform check` warns about each informal link that closes one;
+    so cycles that need Lean dependencies show up after `lean-facts`.
+    The report-only `check_graph_rules.py --built` pass runs the same cycle
+    check on the built graph, including cycles with several informal links.
+    A cycle visible in both graphs can appear in both reports;
   - rule 12: `not_ready` is a boolean, on an article with no Lean link, and
     never set in `_defaults.json`;
   - rule 15: a PR changes fewer than 3,000 files.

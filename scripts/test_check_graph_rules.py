@@ -119,6 +119,13 @@ class GraphRules(unittest.TestCase):
         self.assertIn("malformed id 'af_xyz'", found)
         self.assertNotIn("fundamental.md", found)  # it has no id, which is not a finding (#5524)
 
+    def test_the_defaults_do_not_assign_a_page_id(self) -> None:
+        defaults = "blueprint/links/_defaults.json"
+        self.vault.write(defaults, json.dumps({"id": "af_" + "2" * 24}))
+        self.assertEqual(self.vault.check(), [
+            f"{defaults}: the defaults set a page ID; put each ID on its annotation row (rule 5)",
+        ])
+
     def test_bad_subject_uris_are_findings_not_crashes(self) -> None:
         self.vault.annotations["Physics"].append({"subject": [{"type": "generic", "uri": None}]})
         self.vault.save()
@@ -138,7 +145,12 @@ class GraphRules(unittest.TestCase):
         self.assertEqual(self.vault.check(), [])
 
     def test_an_annotation_names_at_most_one_declaration(self) -> None:
-        self.vault.annotations["CategoryTheory"][2]["object"].append({"location": {"declaration": "X.other"}})
+        objects = self.vault.annotations["CategoryTheory"][2]["object"]
+        objects.append({"type": "generic", "uri": "https://example.org/source"})
+        self.vault.save()
+        self.assertEqual(self.vault.check(), [])
+
+        objects.append({"location": {"declaration": "X.other"}})
         self.vault.annotations["CategoryTheory"][3]["object"] = {"location": {"declaration": "X.fundamental"}}
         self.vault.save()
         found = self.findings()
@@ -371,6 +383,28 @@ class GraphRules(unittest.TestCase):
         self.vault.write("blueprint/roadmap/Physics/mechanics.md",
                          "# Mechanics\n\nNewton.\n\n## Depends on\n\n- [Fundamental](../CategoryTheory/topos-theory/fundamental.md)\n")
         self.assertIn("which reaches back to it", self.findings())
+
+    def test_the_built_check_reports_a_lean_cycle_with_two_informal_links(self) -> None:
+        self.vault.annotations["Physics"][1] = Vault.row("Physics/mechanics.md", declaration="X.mechanics")
+        self.vault.save()
+        self.vault.write(
+            "blueprint/roadmap/CategoryTheory/topos-theory/is-topos.md",
+            "# Elementary topos\n\n## Informally uses\n\n- [Mechanics](../../Physics/mechanics.md)\n",
+        )
+        self.assertEqual(self.vault.check(), [])
+
+        # lean-facts completes Fundamental -> Topos -> Mechanics -> Fundamental.
+        self.vault.write(
+            "blueprint/roadmap/Physics/mechanics.md",
+            "# Mechanics\n\n## Proof depends on\n\n- [Fundamental](../CategoryTheory/topos-theory/fundamental.md)\n",
+        )
+        summary = self.vault.root / "summary.md"
+        with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+            self.assertEqual(rules.main(["--root", str(self.vault.root), "--built", "--summary", str(summary)]), 0)
+        text = summary.read_text(encoding="utf-8")
+        self.assertIn("Informal dependencies on the built graph (report-only)", text)
+        self.assertEqual(text.count("(rule 11)"), 2)
+        self.assertNotIn("(rule 9)", text)  # the generated proof dependency belongs in the built graph
 
     def test_a_linked_folder_page_commits_no_lean_sections(self) -> None:
         self.vault.annotations["Physics"][0]["object"] = [{"location": {"declaration": "X.physics"}}]
