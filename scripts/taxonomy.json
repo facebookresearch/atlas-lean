@@ -11296,6 +11296,7 @@
   "MathlibExt/NumberTheory/PrimeCounting/WeakPNTArithmeticProgression": {"to": "NumberTheory/distribution-of-primes/primes-in-progressions", "title": "Prime number theorem for arithmetic progressions"},
   "MathlibExt/NumberTheory/PrimeCounting/WeightedHilbert": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Large sieve"},
   "MathlibExt/NumberTheory/PrimeCounting/WeightedLargeSieve": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Large sieve"},
+  "MathlibExt/NumberTheory/PrimeDvdChoose": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Binomid indices and generalized binomial coefficients"},
   "MathlibExt/NumberTheory/PrimeGap": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Prime gaps"},
   "MathlibExt/NumberTheory/PrimeGapLiminf": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Prime gaps"},
   "MathlibExt/NumberTheory/PrimeGapsNearPrimorials": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Primes just above factorials and primorials"},
