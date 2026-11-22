@@ -10081,6 +10081,7 @@
   "MathlibExt/Combinatorics/Enumerative/RParameterGeneralizedFibonacciSequence": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Barry–Hennessy generalized Fibonacci numbers"},
   "MathlibExt/Combinatorics/Enumerative/RStirlingFirstAlternatingExpansion": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "r-Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/RStirlingSecond": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "r-Stirling numbers"},
+  "MathlibExt/Combinatorics/Enumerative/RationallyWeightedBinomialSums": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Rationally weighted binomial sums"},
   "MathlibExt/Combinatorics/Enumerative/RefinedEulerianMarginals": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Refined Eulerian polynomials"},
   "MathlibExt/Combinatorics/Enumerative/RefinedEulerianPolynomial": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Refined Eulerian polynomials"},
   "MathlibExt/Combinatorics/Enumerative/RightDownDiagonalSequences": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Diagonal sequences of square zig-zag shapes"},
