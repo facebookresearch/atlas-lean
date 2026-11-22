@@ -789,11 +789,11 @@ def IsMonotoneCircuit {n : ℕ} (C : List (ACGate n)) : Prop :=
     | _ => False
 
 /-- **The class $\mathsf{AC}^0$.** A decision problem $L$ on bitstrings is in $\mathsf{AC}^0$ when
-there are a depth bound $d$, a polynomial $p$ with natural-number coefficients and, for every
-$n$, a flat Boolean circuit $C_n$ on $n$ inputs such that for every $n$: every gate of $C_n$
+there exist a depth bound $d$, a polynomial $p$ with natural-number coefficients and a family
+$(C_n)$ of flat Boolean circuits, $C_n$ on $n$ inputs, such that for every $n$: every gate of $C_n$
 refers only to earlier gates; $C_n$ has no mod gates; $C_n$ has at most $p(n)$ gates and depth at
-most $d$; and for every bitstring $x$ of length $n$, $L(x)$ is true if and only if $C_n$ has a
-last gate and the value of that gate on input $x$ is true.
+most $d$; and for every bitstring $x$ of length $n$, $L(x)$ is true if and only if $C_n$ has a last
+gate and the value of that gate on input $x$ is true.
 
 The and and or gates have unbounded fan-in. The family $(C_n)$ is an arbitrary function of the
 input length, with no uniformity condition, so $\mathsf{AC}^0$ contains undecidable unary
@@ -806,13 +806,12 @@ def AC0 : DecisionComplexityClass :=
         (L x = true ↔
           (circuitEval (C n) (fun i => x.getD (i : ℕ) false)).getLast? = some true)}
 
-/-- **The class $\mathsf{AC}^0[m]$.** For a natural number $m$, a decision problem $L$ on
-bitstrings is in $\mathsf{AC}^0[m]$ when there are a depth bound $d$, a polynomial $p$ with
-natural-number coefficients and, for every $n$, a flat Boolean circuit $C_n$ on $n$ inputs such
-that for every $n$: every gate of $C_n$ refers only to earlier gates; every mod gate of $C_n$ has
-modulus $m$; $C_n$ has at most $p(n)$ gates and depth at most $d$; and for every bitstring $x$ of
-length $n$, $L(x)$ is true if and only if $C_n$ has a last gate and the value of that gate on
-input $x$ is true.
+/-- **The class $\mathsf{AC}^0[m]$.** For a natural number $m$, a decision problem $L$ on bitstrings
+is in $\mathsf{AC}^0[m]$ when there exist a depth bound $d$, a polynomial $p$ with natural-number
+coefficients and a family $(C_n)$ of flat Boolean circuits, $C_n$ on $n$ inputs, such that for every
+$n$: every gate of $C_n$ refers only to earlier gates; every mod gate of $C_n$ has modulus $m$;
+$C_n$ has at most $p(n)$ gates and depth at most $d$; and for every bitstring $x$ of length $n$,
+$L(x)$ is true if and only if $C_n$ has a last gate and the value of that gate on input $x$ is true.
 
 The and and or gates have unbounded fan-in, the family $(C_n)$ need not be uniform, and a circuit
 with no mod gates also qualifies. -/
@@ -1367,9 +1366,10 @@ that, for all $x$ and $s$: $d \neq 0$; if $s$ is feasible for $x$, then
 $\mathrm{val}(x, s) = \sigma a / d$, where $\sigma = -1$ if $b$ is true and $\sigma = 1$
 otherwise; and if $s$ is not feasible for $x$, then $\mathrm{val}(x, s) = 0$.
 
-The approximation classes APX, PTAS and FPTAS all require this condition. Without it, a problem
-could hide an undecidable feasibility relation while assigning value $0$ everywhere, and the
-constant empty-solution algorithm would vacuously satisfy the approximation guarantees.
+The approximation classes APX, PTAS and FPTAS all require this condition. Without it, take a problem
+in which the empty string is a feasible solution of every instance, feasibility of the other
+candidates is undecidable, and every value is $0$: the constant algorithm that returns the empty
+string would satisfy the approximation guarantees, although the problem is not NPO.
 
 Source: C. H. Papadimitriou and M. Yannakakis, "Optimization, approximation,
 and complexity classes", Journal of Computer and System Sciences 43 (1991),
@@ -1391,9 +1391,10 @@ for $x$, the output $A(x, 1^2)$ of $A$ on $x$ with the unary precision tape of l
 feasible solution for $x$ whose value is at least $\rho$ times the value of $s$.
 
 The ratio $\rho$ is the fraction of the optimum achieved, the reciprocal of the convention
-$\rho \ge 1$ in which the value is at least the optimum divided by $\rho$. The NPO
-requirement is part of the class: without it, a problem that is not NPO and has value $0$
-everywhere would qualify vacuously.
+$\rho \ge 1$ in which the value is at least the optimum divided by $\rho$. The NPO requirement is
+part of the class: without it, a problem that is not NPO, has value $0$ everywhere and has the empty
+string as a feasible solution of every instance would qualify through the constant algorithm that
+returns the empty string.
 
 Source: C. H. Papadimitriou and M. Yannakakis, "Optimization, approximation,
 and complexity classes", Journal of Computer and System Sciences 43 (1991),

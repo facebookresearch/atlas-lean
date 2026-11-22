@@ -830,7 +830,8 @@ scratch counter $N$, and goes back to the read-loop label (with the flag true). 
 $L$ is on top, in particular when the raw input is empty, it pushes $c_s$ on the input stack, sets
 the flag to false and goes to the first label of the counter program.
 
-The full program takes $L$ to be all of $\mathrm{Fin}\,r$, so each step reads one input symbol. -/
+The full program takes $L$ to be all of $\mathrm{Fin}\,r$, so each iteration with nonempty raw input
+consumes one symbol; the final iteration consumes none. -/
 def rdT (cf : Fin r → Fin g) (cs : Fin g) : List (Fin r) → TM2.Stmt (FΓ g r) (FL D Λ) Bool
   | [] => .push (.h .inp) (fun _ => cs) (.load (fun _ => false) (.goto fun _ => .pre .p1))
   | i :: L => .peek .raw (fun _ o => decide (o = some i))
