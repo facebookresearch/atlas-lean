@@ -27,7 +27,7 @@
 
 - [Decimal shift for k significant figures](sig-fig-shift.md)
 - [Rounding to k significant figures](round-sig-fig.md)
-- [Characterization of the decimal exponent](floor-logb-ten-abs-eq.md)
+- [The decimal exponent between consecutive powers of ten](floor-logb-ten-abs-eq.md)
 - [Rounding place from the decimal exponent](round-sig-fig-eq-of-zpow-le-of-lt.md)
 - [Rounding to significant figures is well defined](round-sig-fig-well-defined.md)
 - [Zero rounds to zero](round-sig-fig-zero.md)

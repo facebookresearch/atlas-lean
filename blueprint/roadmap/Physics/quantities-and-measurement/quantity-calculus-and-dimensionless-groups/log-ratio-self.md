@@ -1,3 +1,3 @@
 # The log-ratio of a value to itself is zero
 
-The logarithm of the ratio of a value to itself is `0`.
+For a positive value `x`, the [logarithm of the ratio](log-ratio.md) of `x` to itself is `0`.

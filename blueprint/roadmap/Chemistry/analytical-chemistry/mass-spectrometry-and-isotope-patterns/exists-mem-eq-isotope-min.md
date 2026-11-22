@@ -1,3 +1,4 @@
 # A lightest isotope exists
 
-Some isotope of the set attains the least nucleon number: a lightest isotope exists.
+In a nonempty isotope set, some isotope attains the [least nucleon number](isotope-min.md): a
+lightest isotope exists.

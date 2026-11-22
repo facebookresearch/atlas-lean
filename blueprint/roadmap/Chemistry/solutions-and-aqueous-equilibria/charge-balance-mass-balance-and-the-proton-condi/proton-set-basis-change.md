@@ -1,3 +1,4 @@
 # Basis invariance of the proton condition
 
-The proton condition of the transported reference level is the same constraint.
+For an invertible change of component basis `P`, the proton condition of the
+[transported reference level](basis-change.md) is the same constraint.

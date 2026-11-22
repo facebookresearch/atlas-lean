@@ -452,8 +452,8 @@ and C: see `exists_roundSigFig_add_ne`. -/
 noncomputable def roundSigFig (k : ℕ+) (x : ℝ) : ℝ :=
   round (x * 10 ^ sigFigShift k x) / 10 ^ sigFigShift k x
 
-/-- The decimal exponent `⌊log₁₀ |x|⌋` is the unique integer `m` with
-`10 ^ m ≤ |x| < 10 ^ (m + 1)`. -/
+/-- If an integer `m` satisfies `10 ^ m ≤ |x| < 10 ^ (m + 1)`, then the decimal exponent
+`⌊log₁₀ |x|⌋` equals `m`. -/
 lemma floor_logb_ten_abs_eq {x : ℝ} {m : ℤ} (h1 : (10 : ℝ) ^ m ≤ |x|)
     (h2 : |x| < 10 ^ (m + 1)) : ⌊Real.logb 10 |x|⌋ = m := by
   have hx : 0 < |x| := lt_of_lt_of_le (zpow_pos (by norm_num) m) h1

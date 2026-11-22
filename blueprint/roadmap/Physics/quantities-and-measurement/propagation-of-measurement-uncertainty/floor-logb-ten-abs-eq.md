@@ -1,4 +1,4 @@
-# Characterization of the decimal exponent
+# The decimal exponent between consecutive powers of ten
 
-The decimal exponent `⌊log₁₀ |x|⌋` is the unique integer `m` with
-`10 ^ m ≤ |x| < 10 ^ (m + 1)`.
+If an integer `m` satisfies `10 ^ m ≤ |x| < 10 ^ (m + 1)`, then the decimal exponent
+`⌊log₁₀ |x|⌋` equals `m`.

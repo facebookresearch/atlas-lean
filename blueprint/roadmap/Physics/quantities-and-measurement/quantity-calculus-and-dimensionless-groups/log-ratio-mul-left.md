@@ -1,4 +1,4 @@
 # Log-ratios are invariant under common scaling
 
-The logarithm of a ratio is unchanged when both values are multiplied by the same positive
-factor.
+For positive values `x` and `x₀` of one dimension, the [logarithm of their ratio](log-ratio.md) is
+unchanged when both are multiplied by the same positive factor.

@@ -158,11 +158,12 @@ convention `m / 0 = 0` cannot supply one. -/
 noncomputable def molarMass (m n : ℝ) (_hn : n ≠ 0) : ℝ :=
   m / n
 
-/-- `m = M n`: the mass is the molar mass times the amount of substance. -/
+/-- For a nonzero amount of substance `n`, `m = M n`: the mass is the molar mass times the amount
+of substance. -/
 lemma molarMass_mul (m : ℝ) {n : ℝ} (hn : n ≠ 0) : molarMass m n hn * n = m :=
   div_mul_cancel₀ m hn
 
-/-- The molar mass is the unique `M` with `m = M n`. -/
+/-- For a nonzero amount of substance `n`, the molar mass is the unique `M` with `m = M n`. -/
 lemma molarMass_eq_iff {m n M : ℝ} (hn : n ≠ 0) : molarMass m n hn = M ↔ m = M * n :=
   div_eq_iff hn
 

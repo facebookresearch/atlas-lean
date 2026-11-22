@@ -642,8 +642,8 @@ lemma balanceCombination_basisChange {κ ι : Type*} [Fintype κ] [DecidableEq �
 
 namespace ProtonReferenceLevel
 
-/-- The reference level `R` in the component basis `P * B`: the same designated species and
-zero level, with the weights `R.w ᵥ* P⁻¹`. -/
+/-- For an invertible matrix `P`, the reference level `R` in the component basis `P * B`: the same
+designated species and zero level, with the weights `R.w ᵥ* P⁻¹`. -/
 noncomputable def basisChange {κ ι : Type*} [Fintype κ] [DecidableEq κ] {z : ι → ℤ}
     {B : Matrix κ ι ℚ} (R : ProtonReferenceLevel z B) (P : Matrix κ κ ℚ) (hP : IsUnit P.det) :
     ProtonReferenceLevel z (P * B) where
@@ -666,14 +666,16 @@ noncomputable def basisChange {κ ι : Type*} [Fintype κ] [DecidableEq κ] {z :
     rw [balanceCombination_basisChange z B 1 R.w P hP]
     exact R.balanceCombination_hydroxide
 
-/-- The transported reference level has the same proton excess. -/
+/-- For an invertible change of component basis `P`, the transported reference level has the same
+proton excess. -/
 lemma protonExcess_basisChange {κ ι : Type*} [Fintype κ] [DecidableEq κ] {z : ι → ℤ}
     {B : Matrix κ ι ℚ} (R : ProtonReferenceLevel z B) (P : Matrix κ κ ℚ)
     (hP : IsUnit P.det) : (R.basisChange P hP).protonExcess = R.protonExcess :=
   balanceCombination_basisChange z B 1 R.w P hP
 
-/-- The transported weights give the same weighted total of the transported real totals, so
-they annihilate `P *ᵥ T` exactly when `R.w` annihilates `T`. -/
+/-- For an invertible change of component basis `P`, the transported weights give the same weighted
+total of the transported real totals, so they annihilate `P *ᵥ T` exactly when `R.w` annihilates
+`T`. -/
 lemma protonWeightTotal_basisChange {κ ι : Type*} [Fintype κ] [DecidableEq κ] {z : ι → ℤ}
     {B : Matrix κ ι ℚ} (R : ProtonReferenceLevel z B) (P : Matrix κ κ ℚ)
     (hP : IsUnit P.det) (T : κ → ℝ) :
@@ -691,7 +693,8 @@ lemma protonWeightTotal_basisChange {κ ι : Type*} [Fintype κ] [DecidableEq κ
     (fun k => ((R.w k : ℚ) : ℝ)) ⬝ᵥ T
   rw [Matrix.dotProduct_mulVec, hcast]
 
-/-- The proton condition of the transported reference level is the same constraint. -/
+/-- For an invertible change of component basis `P`, the proton condition of the transported
+reference level is the same constraint. -/
 lemma protonSet_basisChange {κ ι : Type*} [Fintype κ] [DecidableEq κ] [Fintype ι]
     {z : ι → ℤ} {B : Matrix κ ι ℚ} (R : ProtonReferenceLevel z B) (P : Matrix κ κ ℚ)
     (hP : IsUnit P.det) :
