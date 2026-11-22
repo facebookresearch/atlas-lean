@@ -236,12 +236,13 @@ theorem pathPMF_apply {S : Type*} [Fintype S] [DecidableEq S] (q : S → ℝ)
 
 
 theorem tsum_listPathWeight_length_gt {S : Type*} [Fintype S] [DecidableEq S]
-    (q : S → ℝ) (Q : S → S → ℝ) (c : ℝ) (_hc0 : 0 ≤ c) (hc1 : c < 1)
-    (hq : ∀ a : S, 0 ≤ q a) (hQ : ∀ a b : S, 0 ≤ Q a b)
+    (q : S → ℝ) (Q : S → S → ℝ) (c : ℝ) (hc1 : c < 1)
+    (hQ : ∀ a b : S, 0 ≤ Q a b)
     (hrow : ∀ j : S, q j + ∑ k : S, Q j k = 1)
     (hsurv : ∀ a : S, ∑ b : S, Q a b ≤ c) (i : S) (n : ℕ) :
     ∑' l : List S, (if n < l.length then listPathWeight q Q i l else 0)
       = ENNReal.ofReal (survivalMass Q i n) := by
+  have hq : ∀ a : S, 0 ≤ q a := fun a => by linarith [hrow a, hsurv a]
   have htot : (∑' l : List S, listPathWeight q Q i l) = 1 :=
     (hasSum_listPathWeight q Q c hc1 hQ hrow hsurv i).tsum_eq
   have hsplit : (∑' l : List S,
@@ -379,16 +380,17 @@ theorem tsum_listPathWeight_length_gt {S : Type*} [Fintype S] [DecidableEq S]
   exact WithTop.add_left_cancel ENNReal.ofReal_ne_top hsplit
 
 theorem tsum_listPathWeight_toReal_length_sub_le {S : Type*} [Fintype S]
-    [DecidableEq S] (q : S → ℝ) (Q : S → S → ℝ) (c : ℝ) (hc0 : 0 ≤ c)
-    (hc1 : c < 1) (hq : ∀ a : S, 0 ≤ q a) (hQ : ∀ a b : S, 0 ≤ Q a b)
+    [DecidableEq S] (q : S → ℝ) (Q : S → S → ℝ) (c : ℝ)
+    (hc1 : c < 1) (hQ : ∀ a b : S, 0 ≤ Q a b)
     (hrow : ∀ j : S, q j + ∑ k : S, Q j k = 1)
     (hsurv : ∀ a : S, ∑ b : S, Q a b ≤ c) (i : S) :
     ∑' l : List S, (listPathWeight q Q i l).toReal * ((l.length : ℝ) - 1)
       ≤ c / (1 - c) := by
+  have hc0 : 0 ≤ c := le_trans (Finset.sum_nonneg fun b _ => hQ i b) (hsurv i)
   have htail : ∀ k : ℕ, (∑' l : List S,
       (if k < l.length then listPathWeight q Q i l else 0))
       = ENNReal.ofReal (survivalMass Q i k) :=
-    fun k => tsum_listPathWeight_length_gt q Q c hc0 hc1 hq hQ hrow hsurv i k
+    fun k => tsum_listPathWeight_length_gt q Q c hc1 hQ hrow hsurv i k
   have hcount : ∀ l : List S,
       listPathWeight q Q i l * ((l.length - 1 : ℕ) : ENNReal)
       = ∑' n : ℕ,
@@ -519,16 +521,17 @@ theorem tsum_listPathWeight_toReal_length_sub_le {S : Type*} [Fintype S]
   rwa [htoReal] at hreal
 
 theorem tsum_listPathWeight_toReal_length_le {S : Type*} [Fintype S]
-    [DecidableEq S] (q : S → ℝ) (Q : S → S → ℝ) (c : ℝ) (hc0 : 0 ≤ c)
-    (hc1 : c < 1) (hq : ∀ a : S, 0 ≤ q a) (hQ : ∀ a b : S, 0 ≤ Q a b)
+    [DecidableEq S] (q : S → ℝ) (Q : S → S → ℝ) (c : ℝ)
+    (hc1 : c < 1) (hQ : ∀ a b : S, 0 ≤ Q a b)
     (hrow : ∀ j : S, q j + ∑ k : S, Q j k = 1)
     (hsurv : ∀ a : S, ∑ b : S, Q a b ≤ c) (i : S) :
     ∑' l : List S, (listPathWeight q Q i l).toReal * (l.length : ℝ)
       ≤ 1 / (1 - c) := by
+  have hc0 : 0 ≤ c := le_trans (Finset.sum_nonneg fun b _ => hQ i b) (hsurv i)
   have htail : ∀ k : ℕ, (∑' l : List S,
       (if k < l.length then listPathWeight q Q i l else 0))
       = ENNReal.ofReal (survivalMass Q i k) :=
-    fun k => tsum_listPathWeight_length_gt q Q c hc0 hc1 hq hQ hrow hsurv i k
+    fun k => tsum_listPathWeight_length_gt q Q c hc1 hQ hrow hsurv i k
   have hcount : ∀ l : List S, listPathWeight q Q i l * (l.length : ENNReal)
       = ∑' n : ℕ, (if n < l.length then listPathWeight q Q i l else 0) := by
     intro l

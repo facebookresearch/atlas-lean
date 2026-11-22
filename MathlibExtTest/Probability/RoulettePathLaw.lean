@@ -112,7 +112,7 @@ example : (∑' l : List Unit, (if 0 < l.length then
       else 0)) = 1 := by
   rw [tsum_listPathWeight_length_gt (fun _ : Unit => (1 / 2 : ℝ))
     (stepKernel (fun _ : Unit => (1 / 2 : ℝ)) (fun _ _ => (1 : ℝ))) (1 / 2 : ℝ)
-    (by norm_num) (by norm_num) (fun _ => by norm_num)
+    (by norm_num)
     (by intro a b; unfold stepKernel; norm_num)
     (by intro j; simp [stepKernel])
     (by intro a; simp [stepKernel]; norm_num) () 0,
@@ -125,7 +125,7 @@ example : (∑' l : List Unit, (if 1 < l.length then
       else 0)) = ENNReal.ofReal (1 / 2 : ℝ) := by
   rw [tsum_listPathWeight_length_gt (fun _ : Unit => (1 / 2 : ℝ))
     (stepKernel (fun _ : Unit => (1 / 2 : ℝ)) (fun _ _ => (1 : ℝ))) (1 / 2 : ℝ)
-    (by norm_num) (by norm_num) (fun _ => by norm_num)
+    (by norm_num)
     (by intro a b; unfold stepKernel; norm_num)
     (by intro j; simp [stepKernel])
     (by intro a; simp [stepKernel]; norm_num) () 1]
@@ -155,7 +155,7 @@ example : (∑' l : List Unit, (if 1 < l.length then
 example : (∑' l : List Unit, (listPathWeight (fun _ : Unit => (1 / 2 : ℝ)) (stepKernel (fun _ : Unit => (1 / 2 : ℝ)) (fun _ _ => (1 : ℝ))) () l).toReal * ((l.length : ℝ) - 1)) ≤ 1 := by
   have h := tsum_listPathWeight_toReal_length_sub_le (fun _ : Unit => (1 / 2 : ℝ))
     (stepKernel (fun _ : Unit => (1 / 2 : ℝ)) (fun _ _ => (1 : ℝ))) (1 / 2 : ℝ)
-    (by norm_num) (by norm_num) (fun _ => by norm_num)
+    (by norm_num)
     (by intro a b; unfold stepKernel; norm_num)
     (by intro j; simp [stepKernel])
     (by intro a; simp [stepKernel]; norm_num) ()
@@ -169,7 +169,7 @@ example : (∑' l : List Unit, (listPathWeight (fun _ : Unit => (1 / 2 : ℝ))
       * (l.length : ℝ)) ≤ 2 := by
   have h := tsum_listPathWeight_toReal_length_le (fun _ : Unit => (1 / 2 : ℝ))
     (stepKernel (fun _ : Unit => (1 / 2 : ℝ)) (fun _ _ => (1 : ℝ))) (1 / 2 : ℝ)
-    (by norm_num) (by norm_num) (fun _ => by norm_num)
+    (by norm_num)
     (by intro a b; unfold stepKernel; norm_num)
     (by intro j; simp [stepKernel])
     (by intro a; simp [stepKernel]; norm_num) ()
