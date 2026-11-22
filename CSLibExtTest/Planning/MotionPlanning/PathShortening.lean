@@ -87,15 +87,41 @@ example : Wbtw ℝ (!₂[0, 0] : plane) (!₂[1, 0] : plane) (!₂[2, 0] : plane
     norm_num
   exact ⟨dist_add_dist_eq_iff.mp heq, heq⟩
 
--- `Feasible` on three points is exactly the two segment inclusions.
+-- `Feasible` on three points is the two segment inclusions plus last-point membership.
 example (F : Set plane) (x y z : plane) :
-    Feasible F [x, y, z] ↔ segment ℝ x y ⊆ F ∧ segment ℝ y z ⊆ F := by
-  simp only [feasible_cons_cons, feasible_singleton, and_true]
+    Feasible F [x, y, z] ↔ segment ℝ x y ⊆ F ∧ segment ℝ y z ⊆ F ∧ z ∈ F :=
+  Iff.rfl
 
 -- The endpoints of a feasible edge lie in `F`.
 example (F : Set plane) (x y : plane) (h : Feasible F [x, y]) : x ∈ F ∧ y ∈ F := by
-  simp only [feasible_cons_cons, feasible_singleton, and_true] at h
-  exact ⟨h (left_mem_segment ℝ x y), h (right_mem_segment ℝ x y)⟩
+  simp only [feasible_cons_cons] at h
+  exact ⟨h.1 (left_mem_segment ℝ x y), h.2⟩
+
+-- A one-vertex polyline at an interior point of a concrete box is feasible.
+example : Feasible {p : plane | p 0 ∈ Set.Ioo (0:ℝ) 2 ∧ p 1 ∈ Set.Ioo (0:ℝ) 2}
+    [(!₂[1, 1] : plane)] := by
+  show (!₂[1, 1] : plane) ∈ {p : plane | p 0 ∈ Set.Ioo (0:ℝ) 2 ∧ p 1 ∈ Set.Ioo (0:ℝ) 2}
+  simp only [Set.mem_Ioo]
+  norm_num [Matrix.cons_val_zero, Matrix.cons_val_succ]
+
+-- A one-vertex polyline at an exterior point of the box is not feasible.
+example : ¬ Feasible {p : plane | p 0 ∈ Set.Ioo (0:ℝ) 2 ∧ p 1 ∈ Set.Ioo (0:ℝ) 2}
+    [(!₂[5, 1] : plane)] := by
+  intro h
+  have h' : (!₂[5, 1] : plane) ∈ {p : plane | p 0 ∈ Set.Ioo (0:ℝ) 2 ∧ p 1 ∈ Set.Ioo (0:ℝ) 2} := h
+  simp only [Set.mem_Ioo] at h'
+  norm_num [Matrix.cons_val_zero, Matrix.cons_val_succ] at h'
+
+-- A one-vertex polyline is never feasible for the empty set.
+example : ¬ Feasible (∅ : Set plane) [(!₂[0, 0] : plane)] := by
+  intro h
+  exact Set.notMem_empty _ h
+
+-- A two-point polyline needs its single-vertex tail in `F`.
+example (F : Set plane) (x y : plane) (hseg : segment ℝ x y ⊆ F) (hy : y ∈ F) :
+    Feasible F [x, y] := by
+  simp only [feasible_cons_cons]
+  exact ⟨hseg, hy⟩
 
 -- Length splits over a junction written with appends.
 example : polyLen ([(!₂[0, 0] : plane)] ++ [(!₂[1, 0] : plane), (!₂[1, 1] : plane)]

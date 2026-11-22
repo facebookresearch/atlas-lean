@@ -44,7 +44,7 @@ noncomputable def polyLen : List plane → ℝ
 /-- Every closed segment between consecutive vertices lies in `F`. -/
 def Feasible (F : Set plane) : List plane → Prop
   | [] => True
-  | [_] => True
+  | [x] => x ∈ F
   | a :: b :: rest => segment ℝ a b ⊆ F ∧ Feasible F (b :: rest)
 
 @[simp]
@@ -64,18 +64,31 @@ theorem feasible_nil (F : Set plane) : Feasible F [] :=
   trivial
 
 @[simp]
-theorem feasible_singleton (F : Set plane) (x : plane) : Feasible F [x] :=
-  trivial
+theorem feasible_singleton (F : Set plane) (x : plane) : x ∈ F → Feasible F [x] :=
+  fun h => h
 
 theorem feasible_cons_cons (F : Set plane) (a b : plane) (rest : List plane) :
     Feasible F (a :: b :: rest) ↔ segment ℝ a b ⊆ F ∧ Feasible F (b :: rest) :=
   Iff.rfl
 
+theorem feasible_head_mem (F : Set plane) (a : plane) (rest : List plane)
+    (h : Feasible F (a :: rest)) : a ∈ F := by
+  cases rest with
+  | nil => exact h
+  | cons b rest' =>
+    rw [feasible_cons_cons] at h
+    exact h.1 (left_mem_segment ℝ a b)
+
 theorem feasible_append_cons (F : Set plane) (a : plane) (rest : List plane) :
     ∀ l₁ : List plane,
       Feasible F (l₁ ++ a :: rest) ↔ Feasible F (l₁ ++ [a]) ∧ Feasible F (a :: rest)
-  | [] => by simp
-  | [y] => by simp [feasible_cons_cons]
+  | [] => by
+    simp only [List.nil_append]
+    exact ⟨fun h => ⟨feasible_head_mem F a rest h, h⟩, And.right⟩
+  | [y] => by
+    simp only [List.cons_append, List.nil_append, feasible_cons_cons]
+    exact ⟨fun h => ⟨⟨h.1, feasible_head_mem F a rest h.2⟩, h.2⟩,
+      fun h => ⟨h.1.1, h.2⟩⟩
   | y :: z :: l₁ => by
     have ih := feasible_append_cons F a rest (z :: l₁)
     simp only [List.cons_append, feasible_cons_cons] at ih ⊢
