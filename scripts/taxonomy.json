@@ -11124,6 +11124,7 @@
   "MathlibExt/NumberTheory/HurwitzQuaternionWaring": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Waring's problem for Hurwitz quaternions"},
   "MathlibExt/NumberTheory/HyperfactorialPartition": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Hyperfactorial partitions"},
   "MathlibExt/NumberTheory/ImaginaryQuadraticDiscriminant": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Imaginary quadratic discriminants"},
+  "MathlibExt/NumberTheory/IncompleteExponentialSum": {"to": "NumberTheory/exponential-sums", "title": "Incomplete exponential sums"},
   "MathlibExt/NumberTheory/IntegerComplexity": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/IntegerPolynomialMap": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Integer polynomial maps modulo primes"},
   "MathlibExt/NumberTheory/IsobaricPolynomial": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Isobaric polynomials"},
