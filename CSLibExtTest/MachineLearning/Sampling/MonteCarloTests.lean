@@ -54,6 +54,45 @@ example {ρ : Measure α} [IsProbabilityMeasure ρ] (f : α → ℝ) :
     ∫ x, (2 : ℝ≥0∞).toReal * f x ∂ρ = ∫ x, f x ∂(ρ.withDensity fun _ ↦ 2) :=
   integral_weight_mul measurable_const (ae_of_all _ fun _ ↦ ENNReal.ofNat_lt_top) f
 
+/-! ### Importance sampling for an integrand that is only integrable -/
+
+section IntegrableImportanceSampling
+
+variable {μ : Measure Ω}
+
+/-- With weight `1`, unbiasedness is plain Monte Carlo for an integrable-only integrand. -/
+example {ρ : Measure α} {f : α → ℝ} (hfi : Integrable f ρ) {X : ℕ → Ω → α}
+    (hX : ∀ i, Measurable (X i)) (hlaw : ∀ i, μ.map (X i) = ρ) {n : ℕ} (hn : n ≠ 0) :
+    ∫ ω, mcEstimate f X n ω ∂μ = ∫ x, f x ∂ρ := by
+  have h := integral_isEstimate_of_integrable (μ := μ) (w := 1) measurable_const
+    (Filter.Eventually.of_forall fun _ ↦ ENNReal.one_lt_top) (by rwa [withDensity_one]) hX hlaw hn
+  simpa only [isEstimate_one, withDensity_one] using h
+
+/-- The measurable-integrand theorem is the special case of the integrable one. -/
+example {ρ : Measure α} {w : α → ℝ≥0∞} (hw : Measurable w) (hwt : ∀ᵐ x ∂ρ, w x < ∞) {f : α → ℝ}
+    (hf : Measurable f) (hfi : Integrable f (ρ.withDensity w)) {X : ℕ → Ω → α}
+    (hX : ∀ i, Measurable (X i)) (hlaw : ∀ i, μ.map (X i) = ρ) {n : ℕ} (hn : n ≠ 0) :
+    integral_isEstimate_of_integrable (μ := μ) hw hwt hfi hX hlaw hn =
+      integral_isEstimate hw hwt hf hfi hX hlaw hn := rfl
+
+/-- At `n = 0` the estimate is `0`, so `n ≠ 0` cannot be dropped. -/
+example (X : ℕ → Ω → α) (w : α → ℝ≥0∞) (f : α → ℝ) (ω : Ω) : isEstimate w f X 0 ω = 0 := by
+  simp [isEstimate, mcEstimate]
+
+/-- Radon–Nikodym form: a target `ν ≪ ρ` sampled through `ν.rnDeriv ρ`. -/
+example {ν ρ : Measure α} [SigmaFinite ν] [SigmaFinite ρ] (hνρ : ν ≪ ρ) {f : α → ℝ}
+    (hfi : Integrable f ν) {X : ℕ → Ω → α} (hX : ∀ i, Measurable (X i))
+    (hlaw : ∀ i, μ.map (X i) = ρ) {n : ℕ} (hn : n ≠ 0) :
+    ∫ ω, isEstimate (ν.rnDeriv ρ) f X n ω ∂μ = ∫ x, f x ∂ν :=
+  integral_isEstimate_rnDeriv (μ := μ) hνρ hfi hX hlaw hn
+
+#print axioms integral_isEstimate_of_integrable
+#print axioms tendsto_isEstimate_of_integrable
+#print axioms integral_isEstimate_rnDeriv
+#print axioms tendsto_isEstimate_rnDeriv
+#print axioms isEstimate_one
+
+end IntegrableImportanceSampling
 /-- The integrable-integrand variants need no `Measurable f` hypothesis. -/
 example {μ : Measure Ω} {ν : Measure α} {f : α → ℝ} (hfi : Integrable f ν) {X : ℕ → Ω → α}
     (hX : ∀ i, Measurable (X i)) (hlaw : ∀ i, μ.map (X i) = ν)
