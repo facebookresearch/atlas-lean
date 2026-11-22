@@ -193,14 +193,22 @@ def appended(base: str, text: str) -> str | None:
 
 
 def has_sentence(text: str, sentence: str) -> bool:
-    """Whether `sentence` is in `text` as a whole sentence, not inside a longer one: `#13`
-    is not in `#130`."""
-    sentence = sentence.strip().rstrip(".!?")
+    """Whether `sentence` is already in `text` as a complete sentence: it starts the text or
+    follows a `.`, `!`, `?` or `:`, and ends the text or is followed by its full stop and
+    then a space. "Backport: PR #13" is not in "Backport: PR #130.", nor "Reference:
+    Theorem 4." in "Reference: Theorem 4 bis.". When in doubt the answer is no, and the
+    sentence is kept twice rather than lost."""
+    sentence = sentence.strip()
     if not sentence:
         return True
-    for match in re.finditer(re.escape(sentence), text):
+    core = sentence.rstrip(".!?")
+    if not core:
+        return True
+    for match in re.finditer(re.escape(core), text):
         before, after = text[:match.start()].rstrip(), text[match.end():]
-        if (not before or before.endswith((".", "!", "?", ":"))) and re.match(r"[.!?]?(\s|$)", after):
+        starts = not before or before.endswith((".", "!", "?", ":"))
+        ends = not after.strip() or re.match(r"[.!?]+(\s|$)", after) is not None
+        if starts and ends:
             return True
     return False
 
