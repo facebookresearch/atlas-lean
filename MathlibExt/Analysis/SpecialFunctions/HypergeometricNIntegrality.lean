@@ -25,12 +25,11 @@ defines that coefficient, Christol's ordering and counting functions,
 `N`-integrality (integrality after a positive rational rescaling), and
 the explicit scaling term in the Delaygue–Rivoal–Roques formula for
 the least rescaling.  Christol's criterion and the scaling formula
-themselves are recorded as wanted results; see
-`WantedExt.Analysis.SpecialFunctions.ChristolHypergeometricIntegralityWanted`.
+themselves are deferred to a `WantedExt` follow-up.
 
 Conventions follow E. Delaygue, T. Rivoal and J. Roques, *On Dwork's
 `p`-adic formal congruences theorem and hypergeometric mirror maps*,
-Mem. Amer. Math. Soc. 246 (2016), §2.1.  Two points in the source need
+Mem. Amer. Math. Soc. 246 (2017), §2.1.  Two points in the source need
 care.  First, its phrase "there exists `c ∈ ℚ`" for `N`-integrality
 cannot include `c = 0`, which trivialises the notion; the source's
 least constant is taken over positive rationals, and `NIntegral` here
@@ -56,7 +55,7 @@ used in `lambda`.
 
 * E. Delaygue, T. Rivoal, J. Roques, *On Dwork's `p`-adic formal
   congruences theorem and hypergeometric mirror maps*, Mem. Amer.
-  Math. Soc. **246** (2016), no. 1163, §2.1.
+  Math. Soc. **246** (2017), no. 1163, §2.1.
 * G. Christol, *Fonctions hypergéométriques bornées*, Groupe de
   Travail d'Analyse Ultramétrique **14** (1986–1987), exp. 8, 1–16.
 -/
