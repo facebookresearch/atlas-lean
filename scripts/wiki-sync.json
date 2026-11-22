@@ -70465,7 +70465,7 @@
 "MetaMathlibExt.prime_modEq_one_of_dvd_cyclotomic_eval": "01a6c8648daac75e",
 "MetaMathlibExt.prime_mul_mem_lucasPeriodSet": "e0b0ff110c18264f",
 "MetaMathlibExt.prime_mul_sum_bernoulli_div_mod_prime": "dbc5cbd50e7e4722",
-"MetaMathlibExt.prime_pair_pow_add_pow_eq_sq_iff": "a19190a29c892c2d",
+"MetaMathlibExt.prime_pair_pow_add_pow_eq_sq_iff": "6a601d15bc6faacb",
 "MetaMathlibExt.prime_pair_pow_add_two_pow_even_mul_pow_eq_sq_iff": "7c595bf8f110e880",
 "MetaMathlibExt.prime_pair_pow_add_two_pow_odd_mul_pow_ne_sq": "e012e9cc7ae25b58",
 "MetaMathlibExt.prime_pair_pow_sub_pow_eq_sq_iff": "81c3960c949664a6",
