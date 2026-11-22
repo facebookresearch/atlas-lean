@@ -14,6 +14,7 @@ public import Mathlib.Data.Nat.Totient
 public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
+public import MathlibExt.NumberTheory.Cyclotomic.CommonPrimeDivisorEvalPow
 
 namespace MetaMathlibExt
 
