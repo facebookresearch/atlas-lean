@@ -11,8 +11,8 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Complex.Basic
-public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.RingTheory.Binomial
+public import MathlibExt.Combinatorics.Enumerative.SuccPowStirlingSecond
 public import MathlibExt.NumberTheory.LucasSequence
 public import WantedExt.NumberTheory.HyperLeonardoWanted
 
@@ -333,13 +333,6 @@ public theorem_wanted ringChoose_sub_eq_sum (m n k : ℕ) :
     Ring.choose ((n : ℤ) + m - k - 1) m =
       ∑ j ∈ range (k + 1), (-1) ^ j * (k.choose j : ℤ) *
         (if j ≤ m then Ring.choose ((n : ℤ) + m - j - 1) (m - j) else 0)
-
-/-- Lemma 2: `(k + 1)^ℓ = ∑_{j=0}^{k} C(k, j) j! S(ℓ + 1, j + 1)`.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Lemma 2, Equation (4.11) (`integers-2024-A70-lem-2`). -/
-public theorem_wanted succ_pow_eq_sum_stirlingSecond (k ℓ : ℕ) :
-    (k + 1) ^ ℓ = ∑ j ∈ range (k + 1), k.choose j * j.factorial * Nat.stirlingSecond (ℓ + 1) (j + 1)
 
 /-- Theorem 10: `∑_{k=0}^{n} k^ℓ F_k = ∑_{m=0}^{ℓ} c_{ℓ,m}(n) F_{n+2(m+1)} -
 ∑_{m=0}^{ℓ} c_{ℓ,m}(0) F_{2(m+1)}`. The conjecture on the constant term that follows in the
