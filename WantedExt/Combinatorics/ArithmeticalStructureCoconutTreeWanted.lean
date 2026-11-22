@@ -31,9 +31,14 @@ The coconut tree `CT(p, s)` has vertex type `Fin p ⊕ Fin s`: the path vertex
 vertices. Counts `|Arith(G)|` and `|SArith(G)|` are `Set.ncard` of the sets of
 pairs `(d, r)`. -/
 
-/-- An arithmetical structure on a graph `G`: positive labelings `d` and `r`
-with `(diag(d) - A) r = 0`, i.e. `d_v r_v = ∑_{w ∼ v} r_w` for every vertex,
-and the entries of `r` have no common factor other than `1`.
+/-- **Arithmetical structure.** An arithmetical structure on a graph $G$ with vertex set $V$ is a
+pair of labelings $d, r : V \to \mathbb{N}$ such that $d(v) > 0$ and $r(v) > 0$ for every vertex
+$v$, $d(v)\, r(v) = \sum_{w \sim v} r(w)$ for every vertex $v$, where the sum runs over the
+neighbours $w$ of $v$, and the only natural number dividing every $r(v)$ is $1$. For a finite graph
+with adjacency matrix $A$ the middle condition reads $(\operatorname{diag}(d) - A)\, r = 0$.
+
+The neighbour sum is taken to be $0$ when $v$ has infinitely many neighbours, so no arithmetical
+structure exists on a graph with a vertex of infinite degree.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 2.1
@@ -43,7 +48,8 @@ public def IsArithmeticalStructure {V : Type*} (G : SimpleGraph V) (d r : V → 
     (∀ v, d v * r v = ∑ᶠ w ∈ {w | G.Adj v w}, r w) ∧
     ∀ g : ℕ, (∀ v, g ∣ r v) → g = 1
 
-/-- On a single edge, `d = r = (1, 1)` is an arithmetical structure.
+/-- **The all-ones structure on a single edge.** On the graph with two vertices joined by an edge,
+the labelings $d = (1, 1)$ and $r = (1, 1)$ form an arithmetical structure.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 2.1
@@ -61,8 +67,11 @@ public theorem isArithmeticalStructure_top_fin_two :
     rw [this, finsum_mem_singleton]
     rfl
 
-/-- The coconut tree `CT(p, s)`: a path `v_1 - v_2 - ⋯ - v_p` together with `s`
-leaves `v_{ℓ_1}, …, v_{ℓ_s}`, each adjacent to `v_p`.
+/-- **Coconut tree.** For natural numbers $p$ and $s$, the coconut tree $\mathrm{CT}(p, s)$ is the
+graph whose vertices are the path vertices $v_1, \dots, v_p$ and the leaves
+$v_{\ell_1}, \dots, v_{\ell_s}$, in which $v_i$ and $v_{i+1}$ are adjacent for $1 \le i < p$, every
+leaf is adjacent to $v_p$, and there are no other edges. For $p = 0$ it consists of $s$ isolated
+vertices.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 2.2
@@ -74,7 +83,9 @@ public def coconutTree (p s : ℕ) : SimpleGraph (Fin p ⊕ Fin s) :=
     | .inl i, .inr _ => i.val + 1 = p
     | .inr _, _ => False
 
-/-- Path vertices of `CT(p, s)` are adjacent exactly when consecutive.
+/-- **Adjacent path vertices of a coconut tree.** Let the coconut tree $CT(p, s)$ have path
+vertices $v_1, \dots, v_p$. Two path vertices $v_a$ and $v_b$ are adjacent if and only if
+$|a - b| = 1$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 2.2
@@ -90,8 +101,9 @@ public theorem coconutTree_adj_inl_inl {p s : ℕ} (i j : Fin p) :
     subst hij
     omega
 
-/-- A leaf of `CT(p, s)` is adjacent to the path vertex `v_{i+1}` exactly when
-`i + 1 = p`.
+/-- **Adjacency of leaves and path vertices in a coconut tree.** Let the coconut tree
+$CT(p, s)$ have path vertices $v_1, \dots, v_p$, with central vertex $v_p$. A leaf of $CT(p, s)$
+is adjacent to a path vertex $v_k$ if and only if $k = p$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 2.2
@@ -100,7 +112,8 @@ public theorem coconutTree_adj_inl_inr {p s : ℕ} (i : Fin p) (j : Fin s) :
     (coconutTree p s).Adj (.inl i) (.inr j) ↔ i.val + 1 = p := by
   simp [coconutTree, SimpleGraph.fromRel_adj]
 
-/-- Leaves of `CT(p, s)` are pairwise nonadjacent.
+/-- **Leaves of a coconut tree are pairwise nonadjacent.** No leaf of the coconut tree $CT(p, s)$
+is adjacent to a leaf.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 2.2
@@ -109,8 +122,10 @@ public theorem coconutTree_not_adj_inr_inr {p s : ℕ} (j j' : Fin s) :
     ¬(coconutTree p s).Adj (.inr j) (.inr j') := by
   simp [coconutTree, SimpleGraph.fromRel_adj]
 
-/-- A smooth arithmetical structure on `CT(p, s)`: an arithmetical structure
-with `d_1, …, d_{p-1}, d_{ℓ_1}, …, d_{ℓ_s} ≥ 2` (no condition on `d_p`).
+/-- **Smooth arithmetical structure on a coconut tree.** Let $CT(p, s)$ be the coconut tree with
+path vertices $v_1, \dots, v_p$ and leaves $\ell_1, \dots, \ell_s$ adjacent to $v_p$. An
+arithmetical structure $(d, r)$ on $CT(p, s)$ is smooth if $d(v_i) \ge 2$ for $1 \le i \le p - 1$
+and $d(\ell_j) \ge 2$ for $1 \le j \le s$; there is no condition on $d(v_p)$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 2.3
@@ -119,7 +134,9 @@ public def IsSmoothCoconut (p s : ℕ) (d r : Fin p ⊕ Fin s → ℕ) : Prop :=
   IsArithmeticalStructure (coconutTree p s) d r ∧
     (∀ i : Fin p, i.val + 1 < p → 2 ≤ d (.inl i)) ∧ ∀ j, 2 ≤ d (.inr j)
 
-/-- A smooth structure has every leaf label `d_{ℓ_j} ≥ 2`.
+/-- **Leaves of a smooth coconut structure have label at least 2.** If $(d, r)$ is a smooth
+arithmetical structure on the coconut tree $\mathrm{CT}(p, s)$, then $d_{\ell_j} \ge 2$ for every
+leaf $\ell_j$, $1 \le j \le s$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 2.3
@@ -128,23 +145,26 @@ public theorem IsSmoothCoconut.two_le_leaf {p s : ℕ} {d r : Fin p ⊕ Fin s �
     (h : IsSmoothCoconut p s d r) (j : Fin s) : 2 ≤ d (.inr j) :=
   h.2.2 j
 
-/-- The ballot number `B(n, k) = (n - k + 1) / (n + 1) · binom(n + k, n)`
-(OEIS A009766), written with truncated subtraction and exact division for
-`k ≤ n + 1`.
+/-- **Ballot numbers.** For natural numbers $n$ and $k$, the ballot number $B(n, k)$ is the
+integer part of $\max(n + 1 - k, 0) \binom{n+k}{n} / (n + 1)$. For $k \le n + 1$ the division
+is exact, so $B(n, k) = \frac{n - k + 1}{n + 1} \binom{n+k}{n}$ (OEIS A009766), and
+$B(n, k) = 0$ for $k > n + 1$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Section 1. -/
 public def ballotNumber (n k : ℕ) : ℕ :=
   (n + 1 - k) * (n + k).choose n / (n + 1)
 
-/-- `B(n, 0) = 1`.
+/-- **Ballot numbers with second index zero.** For every natural number $n$, the ballot number
+$B(n, 0)$ equals $1$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Section 1. -/
 public theorem ballotNumber_zero_right (n : ℕ) : ballotNumber n 0 = 1 := by
   simp [ballotNumber]
 
-/-- `B(n, n) = C_n`, the Catalan number.
+/-- **Diagonal ballot numbers are Catalan numbers.** For every natural number $n$, the ballot
+number $B(n, n)$ equals the $n$-th Catalan number $C_n$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Section 1. -/
@@ -153,9 +173,14 @@ public theorem ballotNumber_self (n : ℕ) : ballotNumber n n = catalan n := by
     ← Nat.centralBinom_eq_two_mul_choose, ← succ_mul_catalan_eq_centralBinom,
     Nat.mul_div_cancel_left _ (Nat.succ_pos n)]
 
-/-- The term `A(x, y)` of Theorem 1: `A(x, 0) = C_{x-1}`,
-`A(x, 1) = C_{x-1} - C_{x-2}` and, for `y ≥ 2`,
-`A(x, y) = ∑_{i=y+1}^{x} B(x - y - 1, x - i) |SArith(CT(i - y, y))|`.
+/-- **Terms of the coconut tree count.** For natural numbers $x$ and $y$, the term $A(x, y)$ is
+defined by $A(x, 0) = C_{x-1}$, $A(x, 1) = C_{x-1} - C_{x-2}$ and, for $y \ge 2$,
+
+$$A(x, y) = \sum_{i=y+1}^{x} B(x - y - 1, x - i) \, |\mathrm{SArith}(CT(i - y, y))|,$$
+
+where $C_n$ is the $n$-th Catalan number (a negative index is read as $0$), $B$ is the ballot
+number, and $|\mathrm{SArith}(CT(m, y))|$ is the number of smooth arithmetical structures
+$(d, r)$ on the coconut tree $CT(m, y)$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Theorem 1. -/
@@ -166,21 +191,23 @@ public noncomputable def coconutCountTerm (x y : ℕ) : ℕ :=
     Set.ncard {z : (Fin (i - y) ⊕ Fin y → ℕ) × (Fin (i - y) ⊕ Fin y → ℕ) |
       IsSmoothCoconut (i - y) y z.1 z.2}
 
-/-- `A(x, 0) = C_{x-1}`.
+/-- **The coconut count term with second argument zero.** For every natural number $x$, the
+term $A(x, 0)$ of the coconut tree count equals the Catalan number $C_{x-1}$, read as $C_0$
+when $x = 0$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Theorem 1. -/
 public theorem coconutCountTerm_zero (x : ℕ) : coconutCountTerm x 0 = catalan (x - 1) := by
   simp [coconutCountTerm]
 
-/-- The Euclidean chain function `F(x_1, x_2)`: the number of positive terms
-of the Euclidean chain `x_1, x_2, x_3, …` with
-`x_{i+1} = (-x_{i-1}) mod x_i` (least nonnegative residue) while `x_i ≠ 0`, and
-`0` afterwards; so `F(x, 0) = 1` and `F(x, y) = 1 + F(y, (-x) mod y)` for
-`y ≠ 0`. This count of positive terms is the meaning for `x > 0`, the source's
-domain. For `x = 0` the recursion is a totalization that also counts the first
-term `0` (`F(0, 0) = 1`, `F(0, 1) = 2`, while the chains `0, 0` and `0, 1, 0`
-have `0` and `1` positive terms); no wanted statement uses `x = 0`.
+/-- **Euclidean chain function.** For natural numbers $x_1$ and $x_2$, the Euclidean chain
+$x_1, x_2, x_3, \dots$ is given by $x_{i+1} = (-x_{i-1}) \bmod x_i$ (the least nonnegative
+residue) while $x_i \ne 0$, and by $x_{i+1} = 0$ once $x_i = 0$. The Euclidean chain function is
+defined by the recursion $F(x, 0) = 1$ and $F(x, y) = 1 + F(y, (-x) \bmod y)$ for $y \ne 0$. For
+$x_1 > 0$, $F(x_1, x_2)$ is the number of positive terms of the Euclidean chain.
+
+For $x_1 = 0$ the recursion also counts the first term $0$: $F(0, 0) = 1$ and $F(0, 1) = 2$,
+although the chains $0, 0$ and $0, 1, 0$ have $0$ and $1$ positive terms.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 4.12
@@ -190,7 +217,11 @@ public def euclideanChainLength (x y : ℕ) : ℕ :=
 termination_by y
 decreasing_by exact Nat.mod_lt _ (Nat.pos_of_ne_zero h)
 
-/-- `F(x, 0) = 1` (for `x = 0` this is the totalized value, see `euclideanChainLength`).
+/-- **Euclidean chain function with second argument zero.** For every natural number $x$, the
+Euclidean chain function $F$ satisfies $F(x, 0) = 1$.
+
+For $x = 0$ this is the value given by the recursive definition of $F$, not a count of positive
+terms.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 4.12
@@ -199,7 +230,9 @@ public theorem euclideanChainLength_zero (x : ℕ) : euclideanChainLength x 0 = 
   rw [euclideanChainLength]
   simp
 
-/-- `F(x, y) = 1 + F(y, (-x) mod y)` for `y ≠ 0`.
+/-- **Recursion for the Euclidean chain function.** For natural numbers $x$ and $y$ with $y \ne 0$,
+the Euclidean chain function $F$ satisfies $F(x, y) = 1 + F(y, (-x) \bmod y)$, where
+$(-x) \bmod y$ is the least nonnegative residue of $-x$ modulo $y$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 4.12
@@ -209,7 +242,8 @@ public theorem euclideanChainLength_of_ne_zero (x : ℕ) {y : ℕ} (hy : y ≠ 0
   rw [euclideanChainLength]
   simp [hy]
 
-/-- Example 4.13: `F(13, 60) = 8`.
+/-- **Euclidean chain function of 13 and 60.** The Euclidean chain function $F$ satisfies
+$F(13, 60) = 8$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Example 4.13
@@ -217,9 +251,11 @@ Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Example 4.13
 public theorem euclideanChainLength_thirteen_sixty : euclideanChainLength 13 60 = 8 := by
   simp [euclideanChainLength_of_ne_zero, euclideanChainLength_zero]
 
-/-- Lemma 1: for an arithmetical structure on `CT(p, s)` the following are
-equivalent: (1) `d_i ≥ 2` for `1 ≤ i ≤ p - 1`; (2)
-`0 < r_2 - r_1 ≤ r_3 - r_2 ≤ ⋯ ≤ r_p - r_{p-1}`; (3) `r_1 < r_2 < ⋯ < r_p`.
+/-- **Monotonicity criteria for arithmetical structures on coconut trees.** Let $(d, r)$ be an
+arithmetical structure on the coconut tree $CT(p, s)$ with path vertices $v_1, \dots, v_p$, and
+write $d_k = d(v_k)$ and $r_k = r(v_k)$. The following are equivalent: (1) $d_k \ge 2$ for
+$1 \le k \le p - 1$; (2) $0 < r_2 - r_1 \le r_3 - r_2 \le \cdots \le r_p - r_{p-1}$; (3)
+$r_1 < r_2 < \cdots < r_p$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Lemma 1
@@ -233,8 +269,10 @@ public theorem_wanted IsArithmeticalStructure.coconut_tfae {p s : ℕ}
             ≤ (r (.inl ⟨i + 2, hi⟩) : ℤ) - r (.inl ⟨i + 1, by omega⟩),
       StrictMono fun i : Fin p => r (.inl i)].TFAE
 
-/-- Lemma 2: an arithmetical structure on `CT(p, s)` (`p ≥ 1`) is smooth if
-and only if `r_{ℓ_j} < r_p` for all `j` and `r_1 < r_2 < ⋯ < r_p`.
+/-- **Characterization of smooth coconut structures.** Let $p \ge 1$ and let $(d, r)$ be an
+arithmetical structure on the coconut tree $CT(p, s)$ with path vertices $v_1, \dots, v_p$ and
+leaves $\ell_1, \dots, \ell_s$ adjacent to $v_p$. Then $(d, r)$ is smooth if and only if
+$r(\ell_j) < r(v_p)$ for every $j$ and $r(v_1) < r(v_2) < \dots < r(v_p)$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Lemma 2
@@ -245,8 +283,10 @@ public theorem_wanted IsArithmeticalStructure.isSmoothCoconut_iff {p s : ℕ}
     IsSmoothCoconut p s d r ↔
       (∀ j, r (.inr j) < r (.inl ⟨p - 1, by omega⟩)) ∧ StrictMono fun i : Fin p => r (.inl i)
 
-/-- Lemma 3: in a smooth arithmetical structure on `CT(p, s)` the leaf labels
-`r_{ℓ_1}, …, r_{ℓ_s}` have no common factor other than `1`.
+/-- **The leaf labels of a smooth arithmetical structure on a coconut tree are coprime.** Let
+$(d, r)$ be a smooth arithmetical structure on the coconut tree $\mathrm{CT}(p, s)$ with leaves
+$v_{\ell_1}, \dots, v_{\ell_s}$. If a natural number $g$ divides $r(v_{\ell_j})$ for every
+$j = 1, \dots, s$, then $g = 1$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Lemma 3
@@ -255,9 +295,11 @@ public theorem_wanted IsSmoothCoconut.eq_one_of_dvd_leaves {p s : ℕ}
     {d r : Fin p ⊕ Fin s → ℕ} (h : IsSmoothCoconut p s d r) {g : ℕ}
     (hg : ∀ j, g ∣ r (.inr j)) : g = 1
 
-/-- Proposition 5: for `p ≥ 1`, the number of arithmetical structures on
-`CT(p, 1) = P_{p+1}` whose leaf cannot be smoothed (`d_{ℓ_1} ≠ 1`) is
-`C_p - C_{p-1}`.
+/-- **Arithmetical structures on a one-leaf coconut tree with a non-smoothable leaf.** For every
+integer $p \ge 1$, the number of arithmetical structures $(d, r)$ on the coconut tree
+$\mathrm{CT}(p, 1)$, which is the path on $p + 1$ vertices, whose leaf $\ell_1$ has
+$d_{\ell_1} \ne 1$ (so that the leaf cannot be smoothed) is $C_p - C_{p-1}$, where $C_n$
+denotes the $n$-th Catalan number.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 5
@@ -268,9 +310,10 @@ public theorem_wanted ncard_arithmeticalStructure_coconutTree_one_leaf_ne_one {p
       IsArithmeticalStructure (coconutTree p 1) x.1 x.2 ∧ x.1 (.inr 0) ≠ 1}
       = catalan p - catalan (p - 1)
 
-/-- Theorem 1: for `p ≥ 1` and `s ≥ 2`,
-`|Arith(CT(p, s))| = ∑_{j=0}^{s} binom(s, j) A(p + s - j, s - j)` with `A` as in
-`coconutCountTerm`.
+/-- **Number of arithmetical structures on coconut trees.** For $p \ge 1$ and $s \ge 2$, the number
+of arithmetical structures on the coconut tree $CT(p, s)$ is
+$$\sum_{j=0}^{s} \binom{s}{j} A(p + s - j, s - j),$$
+where $A(x, y)$ is the coconut count term.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Theorem 1
@@ -281,9 +324,11 @@ public theorem_wanted ncard_arithmeticalStructure_coconutTree {p s : ℕ} (hp : 
       IsArithmeticalStructure (coconutTree p s) x.1 x.2}
       = ∑ j ∈ Finset.range (s + 1), s.choose j * coconutCountTerm (p + s - j) (s - j)
 
-/-- Corollary 2: for `p ≥ 2`,
-`|Arith(CT(p, 2))| = 2 C_p - C_{p-1}
-+ ∑_{i=3}^{p+2} B(p - 1, p + 2 - i) |SArith(CT(i - 2, 2))|`.
+/-- **Number of arithmetical structures on coconut trees with two leaves.** For $p \ge 2$, the
+number of arithmetical structures on the coconut tree $CT(p, 2)$ is
+$$2 C_p - C_{p-1} + \sum_{i=3}^{p+2} B(p - 1, p + 2 - i)\, N(i - 2),$$
+where $C_n$ is the $n$-th Catalan number, $B(n, k)$ is the ballot number and $N(q)$ is the number
+of smooth arithmetical structures on $CT(q, 2)$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 2
@@ -296,8 +341,10 @@ public theorem_wanted ncard_arithmeticalStructure_coconutTree_two {p : ℕ} (hp 
             Set.ncard {z : (Fin (i - 2) ⊕ Fin 2 → ℕ) × (Fin (i - 2) ⊕ Fin 2 → ℕ) |
               IsSmoothCoconut (i - 2) 2 z.1 z.2}
 
-/-- Corollary 3: for `s ≥ 2`, the star `S_s = CT(1, s)` has
-`|Arith(CT(1, s))| = 1 + ∑_{j=0}^{s-2} binom(s, j) |SArith(S_{s-j})|`.
+/-- **Number of arithmetical structures on stars.** For $s \ge 2$, the number of arithmetical
+structures on the star $CT(1, s)$, a centre joined to $s$ leaves, is
+$$1 + \sum_{j=0}^{s-2} \binom{s}{j} N(s - j),$$
+where $N(t)$ is the number of smooth arithmetical structures on the star $CT(1, t)$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 3
@@ -309,8 +356,11 @@ public theorem_wanted ncard_arithmeticalStructure_coconutTree_star {s : ℕ} (hs
           Set.ncard {z : (Fin 1 ⊕ Fin (s - j) → ℕ) × (Fin 1 ⊕ Fin (s - j) → ℕ) |
             IsSmoothCoconut 1 (s - j) z.1 z.2}
 
-/-- Proposition 6 (quoted from Archer et al.): for `x ≥ 1` and `y, k ≥ 0`,
-`F(x + k y, y) = F(x, y)` and `F(x, k x + y) = F(x, y) + k`.
+/-- **Euclidean chain function under adding multiples.** For natural numbers $x \ge 1$, $y$ and
+$k$, the Euclidean chain function $F$ satisfies $F(x + k y, y) = F(x, y)$ and
+$F(x, k x + y) = F(x, y) + k$.
+
+The source quotes this result from Archer et al.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 6
@@ -319,7 +369,8 @@ public theorem_wanted euclideanChainLength_add_mul {x : ℕ} (hx : 0 < x) (y k :
     euclideanChainLength (x + k * y) y = euclideanChainLength x y ∧
       euclideanChainLength x (k * x + y) = euclideanChainLength x y + k
 
-/-- Corollary 4: for `x, y ≥ 1` with `x ∣ y`, `F(x, y) = 1 + y / x`.
+/-- **Euclidean chain function when the first argument divides the second.** For natural numbers
+$x, y \ge 1$ with $x \mid y$, the Euclidean chain function $F$ satisfies $F(x, y) = 1 + y / x$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 4
@@ -327,7 +378,9 @@ Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 4
 public theorem_wanted euclideanChainLength_of_dvd {x y : ℕ} (hx : 0 < x) (hy : 0 < y)
     (hxy : x ∣ y) : euclideanChainLength x y = 1 + y / x
 
-/-- Corollary 5: `F(1, y) = y + 1` for `y ≥ 0`, and `F(x, 1) = 2` for `x ≥ 1`.
+/-- **Euclidean chain function at one.** For every natural number $y$, the Euclidean chain
+function $F$ satisfies $F(1, y) = y + 1$, and for every natural number $x \ge 1$ it satisfies
+$F(x, 1) = 2$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 5
@@ -336,10 +389,14 @@ public theorem_wanted euclideanChainLength_one_left_and_one_right (y : ℕ) {x :
     (hx : 0 < x) :
     euclideanChainLength 1 y = y + 1 ∧ euclideanChainLength x 1 = 2
 
-/-- Proposition 7: for `s ≥ 1` and `(c, a_1, …, a_s) ∈ ℕ^{s+1}` with
-`a_i ∣ c`, `a_i < c` and `gcd(c, a_1, …, a_s) = 1`, there is a unique `p ≥ 1`
-admitting a smooth arithmetical structure on `CT(p, s)` with `r_{ℓ_i} = a_i` and
-`r_p = c`, and that structure is unique.
+/-- **Smooth coconut structures with prescribed labels.** Let $s \ge 1$ and let $c$ and
+$a_1, \dots, a_s$ be natural numbers with $a_i > 0$, $a_i \mid c$ and $a_i < c$ for every $i$, such
+that the only natural number dividing $c$ and all of $a_1, \dots, a_s$ is $1$. Write $CT(p, s)$ for
+the coconut tree with path vertices $v_1, \dots, v_p$ and leaves $\ell_1, \dots, \ell_s$ adjacent
+to $v_p$. Then there is exactly one $p \ge 1$ such that $CT(p, s)$ carries a smooth arithmetical
+structure $(d, r)$ with $r(\ell_i) = a_i$ for every $i$ and $r(v_p) = c$. Moreover, for every
+$p \ge 1$, any two smooth arithmetical structures $(d, r)$ and $(d', r')$ on $CT(p, s)$ with
+$r(\ell_i) = r'(\ell_i) = a_i$ for every $i$ and $r(v_p) = r'(v_p) = c$ are equal.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 7
@@ -355,10 +412,14 @@ public theorem_wanted existsUnique_isSmoothCoconut {s : ℕ} (hs : 1 ≤ s) {c :
         IsSmoothCoconut p s d' r' → (∀ i, r' (.inr i) = a i) →
         r' (.inl ⟨p - 1, by omega⟩) = c → d = d' ∧ r = r'
 
-/-- Corollary 6: the smooth arithmetical structure of Proposition 7 lives on
-`CT(p, s)` with `p = F(∑_j a_j, c) - 1`; stated for every smooth arithmetical
-structure on `CT(p, s)` (each is the one constructed for its own labels
-`a_j = r_{ℓ_j}`, `c = r_p`).
+/-- **Path length of a smooth arithmetical structure on a coconut tree.** Let $F$ be the
+Euclidean chain function, let $p \ge 1$, and let $(d, r)$ be a smooth arithmetical structure on
+the coconut tree $\mathrm{CT}(p, s)$, with path vertices $v_1, \dots, v_p$ and leaves
+$v_{\ell_1}, \dots, v_{\ell_s}$. Then $p = F(r(v_{\ell_1}) + \dots + r(v_{\ell_s}), r(v_p)) - 1$.
+
+The source states this for the smooth arithmetical structure that Proposition 7 constructs from
+labels $a_1, \dots, a_s$ and $c$; every smooth arithmetical structure is the one constructed from
+its own labels $a_j = r(v_{\ell_j})$ and $c = r(v_p)$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 6
@@ -367,8 +428,10 @@ public theorem_wanted IsSmoothCoconut.eq_euclideanChainLength_sub_one {p s : ℕ
     (hp : 0 < p) {d r : Fin p ⊕ Fin s → ℕ} (h : IsSmoothCoconut p s d r) :
     p = euclideanChainLength (∑ j, r (.inr j)) (r (.inl ⟨p - 1, by omega⟩)) - 1
 
-/-- Proposition 8: a smooth arithmetical structure on `CT(p, s)` (`p ≥ 1`) has
-`d_p > 1` if and only if `r_p < ∑_j r_{ℓ_j}`.
+/-- **Smooth coconut structures with central label above one.** Let $p \ge 1$ and let $(d, r)$ be
+a smooth arithmetical structure on the coconut tree $\mathrm{CT}(p, s)$, with central vertex $v_p$
+and leaves $\ell_1, \ldots, \ell_s$. Then $d_{v_p} > 1$ if and only if
+$r_{v_p} < \sum_{j=1}^{s} r_{\ell_j}$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 8
@@ -377,8 +440,10 @@ public theorem_wanted IsSmoothCoconut.one_lt_center_iff {p s : ℕ} (hp : 0 < p)
     {d r : Fin p ⊕ Fin s → ℕ} (h : IsSmoothCoconut p s d r) :
     1 < d (.inl ⟨p - 1, by omega⟩) ↔ r (.inl ⟨p - 1, by omega⟩) < ∑ j, r (.inr j)
 
-/-- Corollary 7: no smooth arithmetical structure on `CT(p, 2)` (`p ≥ 1`) has
-`d_p > 1`.
+/-- **Smooth structures on coconut trees with two leaves.** Let $p \ge 1$ and let $(d, r)$ be a
+smooth arithmetical structure on the coconut tree $CT(p, 2)$, whose path is
+$v_1, \dots, v_p$ and whose two leaves are attached to the central vertex $v_p$. Then
+$d(v_p) \le 1$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 7
@@ -387,11 +452,18 @@ public theorem_wanted IsSmoothCoconut.center_le_one_of_two {p : ℕ} (hp : 0 < p
     {d r : Fin p ⊕ Fin 2 → ℕ} (h : IsSmoothCoconut p 2 d r) :
     d (.inl ⟨p - 1, by omega⟩) ≤ 1
 
-/-- Smoothing at the non-central path vertex `v_{i+1}` (zero-based `i < p`) of `CT(p + 1, s)`,
-giving labels on `CT(p, s)`: the vertex is removed (`r'` and `d'` are re-indexed by
-`Fin.succAbove i`) and the `d`-values of its path neighbours drop by `1`. For `i ≥ 1` this is the
-degree-2 smoothing of Definition 3.1 and for `i = 0` the smoothing at `v_1` of Definition 3.4 (the
-requirement `d_{i+1} = 1` is a hypothesis of the statements below).
+/-- **Smoothing at a path vertex of a coconut tree.** Let the coconut tree $CT(p + 1, s)$ have
+path vertices $v_1, \dots, v_{p+1}$, central vertex $v_{p+1}$ and leaves $\ell_1, \dots, \ell_s$,
+let $d$ and $r$ be labelings of its vertices by natural numbers, and let $1 \le k \le p + 1$.
+Smoothing $(d, r)$ at $v_k$ gives the labelings $(d', r')$ of $CT(p, s)$ obtained by deleting
+$v_k$ and renumbering the remaining path vertices $v_1, \dots, v_{k-1}, v_{k+1}, \dots, v_{p+1}$
+in order as $v_1, \dots, v_p$. Every remaining vertex keeps its value of $r$ and its value of $d$,
+except that $d$ drops by $1$ (truncated at $0$) at the path neighbours $v_{k-1}$ and $v_{k+1}$
+of $v_k$, where they exist.
+
+The paper applies it only at a non-central vertex ($k \le p$) with $d(v_k) = 1$: for $k \ge 2$
+this is the degree-2 smoothing of Definition 3.1 and for $k = 1$ the smoothing at $v_1$ of
+Definition 3.4.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definitions 3.1 and 3.4
@@ -405,8 +477,14 @@ public def coconutSmoothPath {p s : ℕ} (i : Fin (p + 1))
       (fun l => x.1 (.inr l)),
     Sum.elim (fun j => x.2 (.inl (i.succAbove j))) (fun l => x.2 (.inr l)))
 
-/-- Smoothing at the leaf `v_{ℓ_{l+1}}` of `CT(p, s + 1)`, giving labels on `CT(p, s)`: the
-leaf is removed (re-indexed by `Fin.succAbove l`) and `d_p` drops by `1`.
+/-- **Smoothing at a leaf of a coconut tree.** Let the coconut tree $CT(p, s + 1)$ have path
+vertices $v_1, \dots, v_p$, central vertex $v_p$ and leaves $\ell_1, \dots, \ell_{s+1}$, let $d$
+and $r$ be labelings of its vertices by natural numbers, and let $1 \le k \le s + 1$. Smoothing
+$(d, r)$ at the leaf $\ell_k$ gives the labelings $(d', r')$ of $CT(p, s)$ obtained by deleting
+$\ell_k$ and renumbering the remaining leaves $\ell_1, \dots, \ell_{k-1}, \ell_{k+1}, \dots,
+\ell_{s+1}$ in order as $\ell_1, \dots, \ell_s$. Every remaining vertex keeps its value of $r$
+and its value of $d$, except that $d$ drops by $1$ (truncated at $0$) at the central vertex $v_p$
+when $p \ge 1$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 3.4
@@ -418,9 +496,15 @@ public def coconutSmoothLeaf {p s : ℕ} (l : Fin (s + 1))
       (fun m => x.1 (.inr (l.succAbove m))),
     Sum.elim (fun j => x.2 (.inl j)) (fun m => x.2 (.inr (l.succAbove m))))
 
-/-- Subdivision at position `i + 1` (zero-based `i < p`) of `CT(p, s)`, giving labels on
-`CT(p + 1, s)`: a new path vertex `v'_{i+1}` with `r' = r_i + r_{i+1}` (`r' = r_1` when `i = 0`)
-and `d' = 1` is inserted, and its path neighbours' `d`-values rise by `1`; leaves are unchanged.
+/-- **Subdivision at a path vertex of a coconut tree.** Let the coconut tree $CT(p, s)$ have path
+vertices $v_1, \dots, v_p$ and leaves $\ell_1, \dots, \ell_s$, let $d$ and $r$ be labelings of
+its vertices by natural numbers, and let $1 \le k \le p$. Subdividing $(d, r)$ at position $k$
+gives the labelings $(d', r')$ of $CT(p + 1, s)$ obtained by inserting a new path vertex $w$
+just before $v_k$, so that the path becomes $v_1, \dots, v_{k-1}, w, v_k, \dots, v_p$, with
+$d'(w) = 1$ and $r'(w) = r(v_{k-1}) + r(v_k)$, where $r(v_0) = 0$ (so $r'(w) = r(v_1)$ when
+$k = 1$). The path neighbours of $w$, namely $v_{k-1}$ (when $k \ge 2$) and $v_k$, get
+$d' = d + 1$; every other vertex keeps its value of $d$, and every vertex other than $w$ keeps
+its value of $r$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 3.9
@@ -443,9 +527,11 @@ public def coconutSubdivide {p s : ℕ} (i : Fin p)
         else pr (j.val - 1))
       (fun l => x.2 (.inr l)))
 
-/-- Example 3.2: smoothing `d = (3, 1, 3, 2, 2 | 2, 2, 4)`,
-`r = (1, 3, 2, 3, 4 | 2, 2, 1)` on `CT(5, 3)` at `v_2` gives `d' = (2, 2, 2, 2 | 2, 2, 4)`,
-`r' = (1, 2, 3, 4 | 2, 2, 1)` on `CT(4, 3)`.
+/-- **Example of smoothing a coconut tree at a path vertex.** List a labeling of a coconut tree as
+its values on the path vertices $v_1, v_2, \dots$, then $\mid$, then its values on the leaves.
+Smoothing the labelings $d = (3, 1, 3, 2, 2 \mid 2, 2, 4)$ and $r = (1, 3, 2, 3, 4 \mid 2, 2, 1)$
+of $CT(5, 3)$ at $v_2$ gives the labelings $d' = (2, 2, 2, 2 \mid 2, 2, 4)$ and
+$r' = (1, 2, 3, 4 \mid 2, 2, 1)$ of $CT(4, 3)$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Example 3.2
@@ -456,10 +542,11 @@ public theorem coconutSmoothPath_example :
       (Sum.elim ![2, 2, 2, 2] ![2, 2, 4], Sum.elim ![1, 2, 3, 4] ![2, 2, 1]) := by
   decide
 
-/-- Example 3.5: on `CT(4, 4)` with `r = (2, 2, 4, 6 | 3, 3, 2, 6)`
-(so `d = (1, 3, 2, 3 | 2, 2, 3, 1)`),
-smoothing at `v_1` and then at `v_{ℓ_4}` gives `d' = (2, 2, 2 | 2, 2, 3)`,
-`r' = (2, 4, 6 | 3, 3, 2)` on `CT(3, 3)`.
+/-- **An example of smoothing at a path vertex and at a leaf.** On the coconut tree $CT(4, 4)$,
+write a labeling as (values at $v_1, \dots, v_4$ | values at the leaves $\ell_1, \dots, \ell_4$).
+Take $d = (1, 3, 2, 3 \mid 2, 2, 3, 1)$ and $r = (2, 2, 4, 6 \mid 3, 3, 2, 6)$. Smoothing at the
+path vertex $v_1$ and then at the leaf $\ell_4$ gives the labelings $d' = (2, 2, 2 \mid 2, 2, 3)$
+and $r' = (2, 4, 6 \mid 3, 3, 2)$ on $CT(3, 3)$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Example 3.5
@@ -471,8 +558,12 @@ public theorem coconutSmoothLeaf_example :
       (Sum.elim ![2, 2, 2] ![2, 2, 3], Sum.elim ![2, 4, 6] ![3, 3, 2]) := by
   decide
 
-/-- Subdividing the result of Example 3.2 at position `2` recovers the original structure on
-`CT(5, 3)` (subdivision inverts smoothing).
+/-- **Example of subdividing a coconut tree.** List a labeling of a coconut tree as its values on
+the path vertices $v_1, v_2, \dots$, then $\mid$, then its values on the leaves. Subdividing the
+labelings $d = (2, 2, 2, 2 \mid 2, 2, 4)$ and $r = (1, 2, 3, 4 \mid 2, 2, 1)$ of $CT(4, 3)$ at
+position $2$ gives the labelings $d' = (3, 1, 3, 2, 2 \mid 2, 2, 4)$ and
+$r' = (1, 3, 2, 3, 4 \mid 2, 2, 1)$ of $CT(5, 3)$. These are the labelings of Example 3.2, whose
+smoothing at $v_2$ is $(d, r)$, so here subdivision undoes that smoothing.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 3.9 and
@@ -483,10 +574,11 @@ public theorem coconutSubdivide_example :
       (Sum.elim ![3, 1, 3, 2, 2] ![2, 2, 4], Sum.elim ![1, 3, 2, 3, 4] ![2, 2, 1]) := by
   decide
 
-/-- `CoconutAncestor p s x q t y`: the labels `y` on `CT(q, t)` are obtained from the labels `x` on
-`CT(p, s)` by a (possibly empty) sequence of smoothing operations, each at a vertex with
-`d = 1` (at a non-central path vertex, or at a leaf); `y` is an ancestor of `x` and `x` a
-descendant of `y`.
+/-- **Ancestors of labelings of coconut trees.** Let $x$ be a pair of vertex labelings $(d, r)$
+of the coconut tree $CT(p, s)$ and $y$ a pair of vertex labelings of $CT(q, t)$. Then $y$ is an
+ancestor of $x$, and $x$ a descendant of $y$, when $y$ is obtained from $x$ by a finite,
+possibly empty, sequence of smoothings, each performed at a vertex where the current
+$d$-label equals $1$: either at a path vertex other than the central vertex, or at a leaf.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 3.7
@@ -503,9 +595,11 @@ public inductive CoconutAncestor : (p s : ℕ) → (Fin p ⊕ Fin s → ℕ) × 
       (hd : x.1 (.inr l) = 1) (h : CoconutAncestor p s (coconutSmoothLeaf l x) q t y) :
       CoconutAncestor p (s + 1) x q t y
 
-/-- Proposition 3.3 (and the `v_1` case of Proposition 3.6): if `(d, r)` is an arithmetical
-structure on `CT(p + 1, s)` with `s ≥ 1` and `d_{i+1} = 1` at a non-central path vertex
-(`i < p`), smoothing there gives an arithmetical structure on `CT(p, s)`.
+/-- **Path smoothing preserves arithmetical structures on coconut trees.** Let $s \ge 1$ and let
+$(d, r)$ be an arithmetical structure on the coconut tree $CT(p + 1, s)$, whose path vertices are
+$v_1, \dots, v_{p+1}$ with central vertex $v_{p+1}$. If $d(v_k) = 1$ for some non-central path
+vertex $v_k$ (that is, $1 \le k \le p$), then smoothing $(d, r)$ at $v_k$ gives an arithmetical
+structure on $CT(p, s)$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 3.3
@@ -516,10 +610,14 @@ public theorem_wanted IsArithmeticalStructure.coconutSmoothPath {p s : ℕ} (hs 
     (hi : i.val < p) (hd : x.1 (.inl i) = 1) :
     IsArithmeticalStructure (coconutTree p s) (coconutSmoothPath i x).1 (coconutSmoothPath i x).2
 
-/-- Proposition 3.6, leaf case: if `(d, r)` is an arithmetical structure on `CT(p, s + 1)` and
-`d_{ℓ} = 1` at a leaf, smoothing there gives an arithmetical structure on `CT(p, s)`. The
-single-edge tree `CT(1, 1)` is excluded (`2 ≤ p + s`): there `d = r = (1, 1)` and smoothing the
-leaf leaves one vertex with `d' = 0`, which is not an arithmetical structure.
+/-- **Smoothing a leaf preserves arithmetical structures.** Let $p$ and $s$ be natural numbers
+with $p + s \ge 2$, let $(d, r)$ be an arithmetical structure on the coconut tree
+$CT(p, s + 1)$, and let $\ell$ be a leaf with $d(\ell) = 1$. Then the labelings $(d', r')$
+obtained by smoothing $(d, r)$ at $\ell$ form an arithmetical structure on $CT(p, s)$.
+
+The hypothesis $p + s \ge 2$ excludes the single-edge tree $CT(1, 1)$: there $d = r = (1, 1)$,
+and smoothing the leaf gives $d' = 0$ at the remaining vertex, which is not an arithmetical
+structure.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 3.6
@@ -530,8 +628,10 @@ public theorem_wanted IsArithmeticalStructure.coconutSmoothLeaf {p s : ℕ} (hps
     (hd : x.1 (.inr l) = 1) :
     IsArithmeticalStructure (coconutTree p s) (coconutSmoothLeaf l x).1 (coconutSmoothLeaf l x).2
 
-/-- Proposition 3.11: subdividing an arithmetical structure on `CT(p, s)` at any position
-`i + 1 ∈ {1, …, p}` gives an arithmetical structure on `CT(p + 1, s)`.
+/-- **Subdivision preserves arithmetical structures on coconut trees.** If $(d, r)$ is an
+arithmetical structure on the coconut tree $CT(p, s)$, whose path vertices are $v_1, \dots, v_p$,
+then for every $1 \le k \le p$, subdividing $(d, r)$ at position $k$ (inserting a new path vertex
+just before $v_k$) gives an arithmetical structure on $CT(p + 1, s)$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 3.11
@@ -542,8 +642,13 @@ public theorem_wanted IsArithmeticalStructure.coconutSubdivide {p s : ℕ}
     IsArithmeticalStructure (coconutTree (p + 1) s) (coconutSubdivide i x).1
       (coconutSubdivide i x).2
 
-/-- Lemma 3.8: every arithmetical structure on `CT(p, s)` (`s ≥ 1`) with
-`d_{ℓ_1}, …, d_{ℓ_s} ≥ 2` has a unique smooth ancestor on `CT(q, s)` for some `1 ≤ q ≤ p`.
+/-- **Unique smooth ancestor.** Let $s \ge 1$ and let $(d, r)$ be an arithmetical structure on the
+coconut tree $CT(p, s)$ with $d(\ell_j) \ge 2$ at every leaf $\ell_j$. Then there is exactly one
+pair consisting of a number $q$ with $1 \le q \le p$ and a smooth arithmetical structure on
+$CT(q, s)$ that is a coconut ancestor of $(d, r)$, that is, one obtained from $(d, r)$ by a
+possibly empty sequence of smoothings, each performed at a vertex whose current $d$-label is $1$
+and which is either a leaf or a path vertex other than the last path vertex (the one adjacent to
+the leaves).
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Lemma 3.8
@@ -554,9 +659,10 @@ public theorem_wanted IsArithmeticalStructure.existsUnique_smooth_coconutAncesto
     ∃! y : Σ q : ℕ, (Fin q ⊕ Fin s → ℕ) × (Fin q ⊕ Fin s → ℕ),
       1 ≤ y.1 ∧ y.1 ≤ p ∧ IsSmoothCoconut y.1 s y.2.1 y.2.2 ∧ CoconutAncestor p s x y.1 s y.2
 
-/-- Proposition 4.5: for `s ≥ 2`, `1 ≤ i ≤ p` and a smooth arithmetical structure `(d, r)` on
-`CT(i, s)`, exactly `B(p - 1, p - i)` arithmetical structures on `CT(p, s)` are descendants of
-`(d, r)`.
+/-- **Number of descendants of a smooth coconut structure.** Let $s \ge 2$ and $1 \le i \le p$,
+and let $(d, r)$ be a smooth arithmetical structure on the coconut tree $\mathrm{CT}(i, s)$. Then
+exactly $B(p - 1, p - i)$ arithmetical structures on $\mathrm{CT}(p, s)$ are descendants of
+$(d, r)$, where $B(n, k)$ is the ballot number.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 4.5
@@ -568,9 +674,12 @@ public theorem_wanted ncard_coconutDescendants {p s i : ℕ} (hs : 2 ≤ s) (hi 
       IsArithmeticalStructure (coconutTree p s) x.1 x.2 ∧ CoconutAncestor p s x i s y}
       = ballotNumber (p - 1) (p - i)
 
-/-- Corollary 4.6: for `p ≥ 1` and `s ≥ 2`, the number of arithmetical structures on `CT(p, s)`
-whose leaves cannot be smoothed (`d_{ℓ_j} ≥ 2` for all `j`) is
-`∑_{i=1}^{p} B(p - 1, p - i) |SArith(CT(i, s))|`.
+/-- **Counting coconut structures whose leaves cannot be smoothed.** For $p \ge 1$ and $s \ge 2$,
+the number of arithmetical structures $(d, r)$ on the coconut tree $CT(p, s)$ with $d(\ell_j) \ge 2$
+at every leaf $\ell_j$ is
+$$\sum_{i=1}^{p} B(p - 1, p - i)\, N(i),$$
+where $B(n, k)$ is the ballot number and $N(i)$ is the number of smooth arithmetical structures on
+$CT(i, s)$.
 
 Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
 Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Corollary 4.6

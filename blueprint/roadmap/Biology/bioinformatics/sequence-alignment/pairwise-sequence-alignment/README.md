@@ -1,5 +1,7 @@
 # Pairwise sequence alignment
 
+- [Unit-cost edit distance is a Needleman–Wunsch instance](edit-distance-distance-eq-neg-nw-score.md)
+- [Longest common subsequence length is a Needleman–Wunsch instance](longest-common-subsequence-length-eq-nw.md)
 - [Alignment](alignment.md)
 - [Valid alignment of two sequences](is-alignment.md)
 - [Score of an alignment column](column-score.md)
