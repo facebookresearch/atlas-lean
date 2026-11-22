@@ -13,8 +13,10 @@ fails if a required workflow:
   command running it, with no step-level `if` or `continue-on-error`;
 - leaves Ubuntu runners (the build needs a full Ubuntu VM), or runs its steps in
   a shell other than bash by default (a job in a container defaults to `sh`);
-- checks out another ref or repository in that job, so that the check would
-  report on the PR or merge group without testing its tree;
+- checks out another ref or repository, or only part of the tree (any checkout
+  input beyond credentials, history and progress settings), in that job, so
+  that the check would report on the PR or merge group without testing all of
+  its tree; or runs `build` in a container;
 - renames the check, puts an expression in the job's name, lets another job
   report (or possibly report, through an expression in its name) the same
   name, or moves the job into a reusable workflow (which reports
@@ -76,6 +78,8 @@ STEP_KEYS = {"name", "id", "env", "run", "timeout-minutes", "shell"}
 # Runners with the root access and job length the Lean build needs (it adds
 # swap); the lighter jobs may use any Ubuntu runner.
 FULL_UBUNTU = {"ubuntu-24.04", "ubuntu-22.04", "ubuntu-latest"}
+# Checkout inputs that leave the checked-out tree whole and unchanged.
+CHECKOUT_INPUTS = {"persist-credentials", "fetch-depth", "fetch-tags", "show-progress", "clean"}
 # The command that runs each required job's own check.
 ENTRY_POINTS = {
     "repository integrity": "scripts/check.sh preflight",
@@ -265,9 +269,12 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
         if not any(runs_exactly(step, ENTRY_POINTS[check], shell) for step in steps):
             found.append(f"{check!r} has no step that is exactly {ENTRY_POINTS[check]!r}")
         for step in as_list(job.get("steps")):
-            if (isinstance(step, dict) and "actions/checkout" in str(step.get("uses", ""))
-                    and {"ref", "repository"} & set(step.get("with") or {})):
-                found.append(f"{check!r} checks out another ref or repository")
+            if isinstance(step, dict) and "actions/checkout" in str(step.get("uses", "")):
+                extra = sorted(set(step.get("with") or {}) - CHECKOUT_INPUTS)
+                if extra:
+                    found.append(f"{check!r} checks out with {extra}, which can change the tree")
+        if check == "build" and job.get("container"):
+            found.append(f"{check!r} runs in a container, where it cannot add swap")
         for prerequisite in as_list(job.get("needs")):
             if (name, prerequisite) not in required_jobs:
                 found.append(f"{check!r} needs {prerequisite!r}, which is not required")
@@ -545,6 +552,14 @@ class MergeQueueChecks(unittest.TestCase):
                     put("ci.yml", "jobs", "preflight", "defaults",
                         {"run": {"working-directory": "."}})(workflows)),
                 "by default, not bash"),
+            "build sparse checkout": (
+                put("ci.yml", "jobs", "build", "steps",
+                    [{"uses": "actions/checkout@v7",
+                      "with": {"sparse-checkout": "MathlibExt/\n!DomainsTest/Biology/"}},
+                     {"run": "scripts/check.sh build"}]), "which can change the tree"),
+            "build in a container": (
+                put("ci.yml", "jobs", "build", "container", "ubuntu:24.04"),
+                "runs in a container"),
             "build on ubuntu-slim": (put("ci.yml", "jobs", "build", "runs-on", "ubuntu-slim"),
                                      "not an Ubuntu runner it can run on"),
             "Source diagnostics on Windows": (
@@ -560,11 +575,11 @@ class MergeQueueChecks(unittest.TestCase):
                 put("ci.yml", "jobs", "build", "steps",
                     [{"uses": "actions/checkout@v7", "with": {"ref": "${{ github.head_ref || "
                                                                      "'main' }}"}}]),
-                "checks out another ref"),
+                "which can change the tree"),
             "build checks out another repository": (
                 put("ci.yml", "jobs", "build", "steps",
                     [{"uses": "actions/checkout@v7", "with": {"repository": "someone/fork"}}]),
-                "checks out another ref"),
+                "which can change the tree"),
             "this test commented out": (
                 put("ci.yml", "jobs", "preflight", "steps", [{"run": "# " + COMMAND}]),
                 "has no step that is exactly"),
