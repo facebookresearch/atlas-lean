@@ -9203,6 +9203,7 @@
   "MathlibExt/Analysis/Asymptotics/BenderProductCoefficient": {"to": "Analysis/asymptotic-analysis", "title": "Bender's lemma"},
   "MathlibExt/Analysis/Asymptotics/CatalanAsymptoticExpansion": {"to": "Analysis/asymptotic-analysis", "title": "Asymptotic expansion of the Catalan numbers"},
   "MathlibExt/Analysis/Asymptotics/CatalanOddTermsShift": {"to": "Analysis/asymptotic-analysis", "title": "Asymptotic expansion of the Catalan numbers"},
+  "MathlibExt/Analysis/Asymptotics/Jakimczuk": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Hyperharmonic numbers and sums over primes"},
   "MathlibExt/Analysis/Asymptotics/MonotoneIntegralCriterion": {"to": "Analysis/sequences-and-series/summability", "title": "Integral criterion for asymptotic equivalence"},
   "MathlibExt/Analysis/Asymptotics/TaylorAdmissibleSequence": {"to": "Analysis/asymptotic-analysis", "title": "Taylor's law for integer sequences"},
   "MathlibExt/Analysis/Asymptotics/TaylorInitialMean": {"to": "Analysis/asymptotic-analysis", "title": "Taylor's law for integer sequences"},
