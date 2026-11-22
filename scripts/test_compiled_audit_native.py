@@ -32,6 +32,32 @@ class CompiledAuditTests(unittest.TestCase):
             'Forbidden': 'module\n@[expose] public section\naxiom alien : False\ntheorem poisoned : False := alien\n',
             'Implemented': 'module\n@[expose] public section\ndef fast (n : Nat) : Nat := n + 1\n@[implemented_by fast] def substituted (n : Nat) : Nat := n\n',
             'PrivateUnsafe': 'module\nprivate unsafe def unchecked : Nat := 0\n',
+            # Lean generates `T.ctorIdx`, and for `T.ctorIdx` the unsafe `T.ctorIdx._impl`, for each of
+            # these: several constructors, parameters and indices, a universe, no constructor at all.
+            'GeneratedCtorIdx': (
+                'module\n@[expose] public section\nuniverse u\n'
+                'inductive Colour where\n  | red\n  | green\n  | blue\n'
+                'inductive Tagged (α : Type u) : Nat → Type u where\n'
+                '  | zero (a : α) : Tagged α 0\n  | succ (a : α) (n : Nat) (t : Tagged α n) : Tagged α (n + 1)\n'
+                'inductive Void : Type\n'
+                'structure Box where\n  x : Nat\n'),
+            # A hand-written unsafe `_impl` for a type whose generated `ctorIdx` uses none.
+            'HandWrittenCtorIdxImpl': (
+                'module\n@[expose] public section\n'
+                'inductive One where\n  | only\n'
+                'unsafe def One.ctorIdx._impl (x : One) : Nat := 7\n'),
+            # A hand-written pair in place of the generated one.
+            'HandWrittenCtorIdx': (
+                'module\n@[expose] public section\n'
+                'set_option genCtorIdx false in\ninductive Two where\n  | first\n  | second\n'
+                'unsafe def Two.ctorIdx._impl (x : Two) : Nat := 7\n'
+                '@[implemented_by Two.ctorIdx._impl] def Two.ctorIdx (x : Two) : Nat := 0\n'),
+            # The generated `_impl`, but a `ctorIdx` whose value is not the generated one.
+            'ForgedCtorIdxValue': (
+                'module\n@[expose] public section\n'
+                'set_option genCtorIdx false in\ninductive Three where\n  | first\n  | second\n'
+                'unsafe def Three.ctorIdx._impl (x : Three) : Nat := getObjTagNat x\n'
+                '@[implemented_by Three.ctorIdx._impl] def Three.ctorIdx (x : Three) : Nat := 5\n'),
         }
         for name, text in sources.items():
             path = cls.fixture / f'MathlibExtTest/AuditFixture/{name}.lean'
@@ -91,6 +117,26 @@ class CompiledAuditTests(unittest.TestCase):
     def test_private_unsafe_still_fails(self):
         with self.assertRaisesRegex(audit.AuditFailure, 'unsafe declaration'):
             audit.audit(self.fixture, ['MathlibExtTest.AuditFixture.PrivateUnsafe'], self.checker)
+
+    def test_generated_ctor_idx_passes(self):
+        module = 'MathlibExtTest.AuditFixture.GeneratedCtorIdx'
+        self.assertEqual(audit.audit(self.fixture, [module], self.checker)['checkedModules'], [module])
+
+    def test_hand_written_ctor_idx_impl_fails(self):
+        with self.assertRaisesRegex(audit.AuditFailure, r'One\.ctorIdx\._impl is an unsafe declaration'):
+            audit.audit(self.fixture, ['MathlibExtTest.AuditFixture.HandWrittenCtorIdxImpl'], self.checker)
+
+    def test_hand_written_ctor_idx_pair_fails(self):
+        with self.assertRaises(audit.AuditFailure) as failure:
+            audit.audit(self.fixture, ['MathlibExtTest.AuditFixture.HandWrittenCtorIdx'], self.checker)
+        self.assertIn('Two.ctorIdx._impl is an unsafe declaration', str(failure.exception))
+        self.assertIn('Two.ctorIdx uses implemented_by', str(failure.exception))
+
+    def test_forged_ctor_idx_value_fails(self):
+        with self.assertRaises(audit.AuditFailure) as failure:
+            audit.audit(self.fixture, ['MathlibExtTest.AuditFixture.ForgedCtorIdxValue'], self.checker)
+        self.assertIn('Three.ctorIdx._impl is an unsafe declaration', str(failure.exception))
+        self.assertIn('Three.ctorIdx uses implemented_by', str(failure.exception))
 
     def test_other_import_failure_still_fails(self):
         with self.assertRaisesRegex(audit.AuditFailure, 'does not exist'):
