@@ -50,8 +50,8 @@ some violate it (`Delta = 1`, singleton code range, `x = 10` has error
 clipped and has error exactly `Delta / 2`). No probabilistic model of
 the quantization error is asserted.
 
-Discharges ECE roadmap leaf `ECE.SIG.ADC.L1` (saturating ADC with an
-explicit quantization contract).
+This module formalizes a saturating ADC with an explicit
+quantization contract.
 -/
 
 @[expose] public section
