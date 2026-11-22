@@ -1648,9 +1648,8 @@ class MkdirWindow(Fixture):
         self.assertEqual(self.snapshot(), {**before, self.FOLDER: None, f"{self.FOLDER}/stray.md": b"# Stray\n"})
 
 
-class Map(Fixture):
-    """Every line of the map is as the importer writes it, and on a pull request the map only grows: the importer and
-    --check-map refuse a map with any other line, naming it, and --check-map --base a map whose base lines changed."""
+class MapFixture(Fixture):
+    """The fixture with the map's helpers: writing it, checking it, and committing the fixture as a base."""
 
     def write_map(self, *lines: str, end: str = "\n") -> None:
         self.write("scripts/mathgraph-map.jsonl", "\n".join(lines) + end)
@@ -1682,6 +1681,11 @@ class Map(Fixture):
         self.git("add", "-A")
         self.git("commit", "-q", "--allow-empty", "-m", "base")
         return self.git("rev-parse", "HEAD")
+
+
+class Map(MapFixture):
+    """Every line of the map is as the importer writes it, and on a pull request the map only grows: the importer and
+    --check-map refuse a map with any other line, naming it, and --check-map --base a map whose base lines changed."""
 
     def test_a_map_the_importer_writes_passes(self) -> None:
         self.applied([planned("sylow-existence", pending=[missing("p-group", "proof", "not-imported")], not_ready=True,
@@ -1804,21 +1808,24 @@ class Map(Fixture):
         self.assertIn("the 1 lines of the map at", self.check_map("--base", base)[1])
 
     def test_the_map_only_grows_from_the_base(self) -> None:
-        alpha, beta, gamma = (importer.map_line(map_row(key)) for key in ("alpha", "beta", "gamma"))
         rule = "the map only grows: lines are appended to it, never edited, removed or moved"
         empty = self.commit()
-        # The base has no map, and the map is valid.
-        self.write_map(alpha, beta)
+        # The base has no map, and the change imports two results, as the first content PR does: the map is valid and
+        # its lines are appended, each recording a page the change adds.
+        self.applied([planned("alpha"), planned("beta", sketch="It follows.", pending=[missing("p-group")],
+                                                    not_ready=True, prose_missing="It uses p-groups.")])
         code, out, err = self.check_map("--base", empty)
         self.assertEqual((code, err), (0, ""))
-        self.assertIn(f"the 0 lines of the map at {empty} are its first, unchanged, and 2 are appended", out)
+        self.assertIn(f"the 0 lines of the map at {empty} are its first, unchanged, and 2 are appended, each recording "
+                      "a page this change adds", out)
         base = self.commit()
-        # Lines appended.
-        self.write_map(alpha, beta, gamma)
+        # Lines appended by a later import.
+        self.applied([planned("gamma")])
         code, out, err = self.check_map("--base", base)
         self.assertEqual((code, err), (0, ""))
         self.assertIn(f"the 2 lines of the map at {base} are its first, unchanged, and 1 are appended", out)
-        edited = importer.map_line(map_row("beta", statement_sha256=digest("another statement")))
+        alpha, beta, gamma = importer.MAP.read_text().splitlines()
+        edited = importer.map_line({**json.loads(beta), "statement_sha256": digest("another statement")})
         for name, lines, message in (
                 ("edited", (alpha, edited, gamma), f"line 2: not line 2 of the map at {base}: that line is edited or "
                                                    f"removed; {rule}"),
@@ -1835,6 +1842,118 @@ class Map(Fixture):
         self.write_map(alpha, beta)
         self.map_refused("--base 'no-such-commit' names no commit of the repository", "--base", "no-such-commit")
         self.map_refused("--base '--all' names no commit of the repository", "--base=--all")
+
+
+class AppendedLines(MapFixture):
+    """With --base, each line appended to the map since that commit records a page the same change adds: the page,
+    absent at the commit, has one annotation, with the line's seed, the id that seed gives and the line's pending list,
+    and the line's statement and sketch digests are the page's. The lines of the map at the commit are never checked
+    against the pages."""
+
+    def where(self, base: str, number: int = 1, key: str = "alpha") -> str:
+        return f"scripts/mathgraph-map.jsonl line {number} ({key}), appended since {base}"
+
+    def imported(self) -> tuple[str, dict, Path, str]:
+        """The fixture committed, then a result imported with a sketch and a pending prerequisite: the base commit, the
+        map's line, the links file and the links file's text."""
+        base = self.commit()
+        self.applied([planned("alpha", sketch="It follows.", pending=[missing("p-group")], not_ready=True,
+                              prose_missing="It uses p-groups.")])
+        code, out, err = self.check_map("--base", base)
+        self.assertEqual((code, err), (0, ""))
+        links = sync.LINKS / "Algebra.jsonl"
+        return base, json.loads(importer.MAP.read_text()), links, links.read_text()
+
+    def test_a_line_for_no_page_or_for_a_page_the_base_has(self) -> None:
+        base = self.commit()
+        self.write_map(importer.map_line(map_row("alpha", pending=[])))
+        # Without --base, the lines alone are checked.
+        code, out, err = self.check_map()
+        self.assertEqual((code, err), (0, ""))
+        self.map_refused(f"{self.where(base)}: its page blueprint/roadmap/Algebra/groups/alpha.md is no file in the "
+                         "worktree, so this change did not add it", "--base", base)
+        self.write_map(importer.map_line(map_row("lagrange", page="blueprint/roadmap/Algebra/groups/lagrange.md",
+                                                 pending=[])))
+        self.map_refused(f"{self.where(base, key='lagrange')}: its page blueprint/roadmap/Algebra/groups/lagrange.md is "
+                         f"in the tree of {base} already, so this change did not add it", "--base", base)
+
+    def test_a_line_whose_digests_seed_or_pending_list_differ_from_its_page(self) -> None:
+        base, line, _, _ = self.imported()
+        where, other = self.where(base), digest("another statement")
+        cases = {
+            "statement": ({**line, "statement_sha256": other},
+                          f"{where}: statement_sha256 is {other}, but its page's statement, as Autoform reads it, has "
+                          f"the SHA-256 {line['statement_sha256']}"),
+            "sketch": ({**line, "sketch_sha256": digest("")},
+                       f"{where}: sketch_sha256 is {digest('')}, but its page's sketch, as Autoform reads it (the empty "
+                       f"string when it has none), has the SHA-256 {line['sketch_sha256']}"),
+            "pending": ({**line, "pending": []}, f"{where}: its pending list is not that of its page's annotation, "
+                                                 f"{json.dumps([missing('p-group')])}"),
+            "revision": ({**line, "revision": "f" * 40}, f"{where}: the seed of its page's annotation is"),
+        }
+        for name, (row, message) in cases.items():
+            with self.subTest(name):
+                self.write_map(importer.map_line(row))
+                self.map_refused(message, "--base", base)
+        # The page's own text, read as Autoform reads it.
+        self.write_map(importer.map_line(line))
+        page = wiki.ROADMAP / "Algebra/groups/alpha.md"
+        text = page.read_text()
+        page.write_text(text.replace("The statement of alpha.", "Another statement."))
+        self.map_refused(f"{where}: statement_sha256 is {line['statement_sha256']}, but its page's statement",
+                         "--base", base)
+        page.write_text(text.replace("## Proof sketch\n\nIt follows.\n", "## Proof sketch\n\nIt follows.\n\n## Proof "
+                                     "sketch\n\nAgain.\n"))
+        self.map_refused(f"{where}: its page has more than one `## Proof sketch` section", "--base", base)
+        page.unlink()
+        page.symlink_to(self.write("elsewhere.md", text))
+        self.map_refused(f"{where}: blueprint/roadmap/Algebra/groups/alpha.md is a symbolic link", "--base", base)
+
+    def test_a_line_whose_page_has_no_matching_annotation(self) -> None:
+        base, line, links, text = self.imported()
+        where = self.where(base)
+        rows = [json.loads(entry) for entry in text.splitlines()]
+        mine = next(row for row in rows if row["subject"][0]["uri"].endswith("/alpha.md"))
+        other_seed = {**mine["extensions"][sync.OWN]["seed"], "revision": "e" * 40}
+
+        def with_rows(*replaced: dict) -> str:
+            return "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in replaced)
+
+        cases = {
+            "another seed": (with_rows(*[row if row is not mine else
+                                         {**mine, "extensions": {**mine["extensions"],
+                                                                 sync.OWN: {**mine["extensions"][sync.OWN],
+                                                                            "seed": other_seed}}} for row in rows]),
+                             f"{where}: the seed of its page's annotation is {json.dumps(other_seed)}, not the line's "
+                             f"{json.dumps(mine['extensions'][sync.OWN]['seed'])}"),
+            "another id": (with_rows(*[row if row is not mine else {**mine, "id": "af_" + "0" * 24} for row in rows]),
+                           f"{where}: its page's annotation id is \"af_{'0' * 24}\", not {mine['id']}, which the line's "
+                           "seed gives"),
+            "no annotation": (with_rows(*[row for row in rows if row is not mine]),
+                              f"{where}: its page blueprint/roadmap/Algebra/groups/alpha.md has no annotation"),
+            "two annotations": (text + with_rows(mine),
+                                f"{where}: its page blueprint/roadmap/Algebra/groups/alpha.md has more than one "
+                                "annotation row"),
+        }
+        for name, (written, message) in cases.items():
+            with self.subTest(name):
+                links.write_text(written)
+                self.map_refused(message, "--base", base)
+        links.write_text(text)
+        self.assertEqual(self.check_map("--base", base)[0], 0)
+
+    def test_lines_of_the_base_map_are_never_checked_against_the_pages(self) -> None:
+        # A line's page may move or go after it was written: the line keeps its snapshot, and only the lines appended
+        # since the base are checked.
+        self.applied([planned("alpha")])
+        base = self.commit()
+        self.applied([planned("beta")])
+        links = sync.LINKS / "Algebra.jsonl"
+        (wiki.ROADMAP / "Algebra/groups/alpha.md").unlink()
+        links.write_text("".join(entry + "\n" for entry in links.read_text().splitlines() if "/alpha.md" not in entry))
+        code, out, err = self.check_map("--base", base)
+        self.assertEqual((code, err), (0, ""))
+        self.assertIn(f"the 1 lines of the map at {base} are its first, unchanged, and 1 are appended", out)
 
 
 class Documentation(unittest.TestCase):

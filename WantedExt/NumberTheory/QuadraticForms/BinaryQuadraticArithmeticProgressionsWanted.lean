@@ -19,37 +19,15 @@ the paper's sense that its discriminant is not a perfect square.
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Group.Even
 public import Mathlib.Data.Int.Basic
-public import Mathlib.Data.Rat.Defs
-public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.NumberTheory.QuadraticForms.BinaryQuadraticArithmeticProgressions
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.QuadraticForms.BinaryQuadraticArithmeticProgressionsWanted
-
-/-- **Rational representations of an arithmetic progression scale to integral ones.** Let
-$a, b, c$ be integers, $n$ a natural number and $u_0, d$ rational numbers. If for every natural
-number $i < n$ there are rational numbers $x, y$ with $ax^2 + bxy + cy^2 = u_0 + id$, then there
-is a nonzero integer $k$ such that for every natural number $i < n$ there are integers $x, y$
-with $ax^2 + bxy + cy^2 = k^2(u_0 + id)$.
-
-The nonzero condition on $k$ is the paper's common-denominator choice; it also excludes the
-trivial zero scaling.
-
-Source: Ajai Choudhry, "Arithmetic Progressions Represented by
-Binary Quadratic Forms", Lemma 1. -/
-theorem_wanted exists_int_representations_of_rat_arithmetic_progression
-    (a b c : ℤ) (n : ℕ) (u0 d : ℚ)
-    (hrep : ∀ i ∈ Finset.range n, ∃ x y : ℚ,
-      (a : ℚ) * x ^ 2 + (b : ℚ) * x * y + (c : ℚ) * y ^ 2 =
-        u0 + i * d) :
-    ∃ k : ℤ, k ≠ 0 ∧ ∀ i ∈ Finset.range n, ∃ x y : ℤ,
-      (a * x ^ 2 + b * x * y + c * y ^ 2 : ℚ) =
-        (k : ℚ) ^ 2 * (u0 + i * d)
 
 /-- **Nine-term arithmetic progressions represented by $px^2 + qy^2$.** Let $p, q, g, h$ be
 integers such that $-4pq$ is not a perfect square, and put

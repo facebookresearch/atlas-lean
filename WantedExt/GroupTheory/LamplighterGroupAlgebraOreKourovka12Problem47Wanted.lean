@@ -40,35 +40,59 @@ source's negative answer, which needs one pair, and what Theorem 3 of Linnell, L
 proves.
 -/
 
-/-- The shift `f ↦ f(· - 1)` of the base group `⊕_{i ∈ ℤ} ℤ/p`. -/
+/-- **Shift of the lamplighter base group.** For a natural number $p$, the shift is the
+automorphism $f \mapsto f(\cdot - 1)$ of the base group $\bigoplus_{i \in \mathbb{Z}} \mathbb{Z}/p$,
+the additive group of finitely supported functions $\mathbb{Z} \to \mathbb{Z}/p$, viewed as a
+multiplicative group. -/
 noncomputable def shift (p : ℕ) : MulAut (Multiplicative (ℤ →₀ ZMod p)) :=
   AddEquiv.toMultiplicative (Finsupp.domCongr (Equiv.addRight (1 : ℤ)))
 
-/-- The wreath product `ℤ/p ≀ ℤ = (⊕_{i ∈ ℤ} ℤ/p) ⋊ ℤ`, with `ℤ` acting by the shift. -/
+/-- **Lamplighter group.** For a natural number $p$, the lamplighter group
+$\mathbb{Z}/p \wr \mathbb{Z}$ is the semidirect product
+$\left(\bigoplus_{i \in \mathbb{Z}} \mathbb{Z}/p\right) \rtimes \mathbb{Z}$, in which
+$n \in \mathbb{Z}$ acts on the base group by the $n$-th power of the shift
+$f \mapsto f(\cdot - 1)$. -/
 abbrev Lamplighter (p : ℕ) : Type :=
   Multiplicative (ℤ →₀ ZMod p) ⋊[zpowersHom (MulAut (Multiplicative (ℤ →₀ ZMod p))) (shift p)]
     Multiplicative ℤ
 
-/-- `s` is a non-zero-divisor: neither a left nor a right zero divisor. -/
+/-- **Non-zero-divisor.** An element $s$ of a ring $R$ is a non-zero-divisor when it is neither a
+left nor a right zero divisor: for every $z \in R$, $zs = 0$ implies $z = 0$ and $sz = 0$ implies
+$z = 0$. -/
 def IsNonZeroDivisor {R : Type*} [Ring R] (s : R) : Prop :=
   (∀ z : R, z * s = 0 → z = 0) ∧ ∀ z : R, s * z = 0 → z = 0
 
-/-- `R` satisfies the (right) Ore condition for its non-zero-divisors, i.e. has a classical
-right ring of quotients: for `s, t` with `s` a non-zero-divisor there are `x, y` with `x` a
-non-zero-divisor and `s y = t x`. For group algebras the left and right conditions agree. -/
+/-- **Right Ore ring.** A ring $R$ satisfies the right Ore condition for its non-zero-divisors, so
+that it has a classical right ring of quotients, when for all $s, t \in R$ with $s$ a
+non-zero-divisor there are $x, y \in R$ with $x$ a non-zero-divisor and $sy = tx$.
+
+For group algebras the left and right conditions agree. -/
 def IsOreRing (R : Type*) [Ring R] : Prop :=
   ∀ s t : R, IsNonZeroDivisor s → ∃ x y : R, IsNonZeroDivisor x ∧ s * y = t * x
 
-/-- Kourovka 12.47 (P. A. Linnell), stated for some field `k` and some prime `p`: the group
-algebra `k[ℤ/p ≀ ℤ]` has a classical ring of quotients. -/
+/-- **Kourovka Problem 12.47: some lamplighter group algebra is Ore.** There are a field $k$ and a
+prime $p$ such that the group algebra $k[\mathbb{Z}/p \wr \mathbb{Z}]$ of the lamplighter group
+$\mathbb{Z}/p \wr \mathbb{Z}$ satisfies the right Ore condition for its non-zero-divisors, that
+is, has a classical right ring of quotients.
+
+Kourovka 12.47 (P. A. Linnell) asks this for a given field and prime; the existential form makes
+its refutation cover every field and every prime. -/
 def lamplighterGroupAlgebraOre : Prop :=
   ∃ (k : Type) (_ : Field k) (p : ℕ), p.Prime ∧ IsOreRing (MonoidAlgebra k (Lamplighter p))
 
 /--
-Resolved false: Linnell, Lück and Schick (Theorem 3, with W. Dicks's argument) prove that `kG` is
-not an Ore ring for every field `k` and every group `G` containing `H ≀ ℤ` with `H ≠ 1` finite, in
-particular for `G = ℤₚ ≀ ℤ` and every prime `p`; the Kourovka Archive answers 12.47 "No, it does
-not". Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
+**Lamplighter group algebras are not Ore.** For every field $k$ and every prime $p$, the group
+algebra $k[\mathbb{Z}/p \wr \mathbb{Z}]$ of the lamplighter group $\mathbb{Z}/p \wr \mathbb{Z}$
+does not satisfy the right Ore condition for its non-zero-divisors: there are $s$ and $t$ in it,
+with $s$ a non-zero-divisor, such that $sy = tx$ holds for no $x$ and $y$ with $x$ a
+non-zero-divisor.
+
+Resolved false: Linnell, Lück and Schick (Theorem 3, with W. Dicks's argument) prove that $kG$ is
+not an Ore ring for every field $k$ and every group $G$ containing $H \wr \mathbb{Z}$ with
+$H \ne 1$ finite, in particular for $G = \mathbb{Z}/p \wr \mathbb{Z}$ and every prime $p$; the
+Kourovka Archive answers 12.47 "No, it does not".
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
 Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 12.47
 (P. A. Linnell); resolution: P. A. Linnell, W. Lück and T. Schick, The Ore condition, affiliated
 operators, and the lamplighter group, in: High-dimensional manifold topology (Trieste, 2001), World

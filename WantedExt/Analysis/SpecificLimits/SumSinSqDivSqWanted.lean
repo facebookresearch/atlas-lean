@@ -40,11 +40,10 @@ public import Mathlib
 
 namespace MathlibExt.Analysis.SpecificLimits.SumSinSqDivSqWanted
 
-/-- Suppose $0<\delta<\pi$, show that
+/-- **A closed form for $\sum \sin^2(n\delta)/(n^2\delta)$.** For every real $\delta$ with
+$0 < \delta < \pi$,
 
-\[
-\sum_{n=1}^\infty \frac{\sin^2(n\delta)}{n^2\delta} = \frac{\pi-\delta}{2}.
-\]
+$$\sum_{n=1}^{\infty} \frac{\sin^2(n\delta)}{n^2\delta} = \frac{\pi - \delta}{2}.$$
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Sequences, series, summability;
 Convergence and divergence of infinite limiting processes),
