@@ -851,7 +851,7 @@ class GraphSyncWorkflowTests(unittest.TestCase):
             if "uses" in step:
                 self.assertRegex(step["uses"], r"@[0-9a-f]{40}\Z")
 
-    def run_check(self, status: int, report: str | None = None):
+    def run_check(self, status: int, report: str | None = None, extra: str = ""):
         """Run the check's step with a uv that prints a verdict, writes *report* as the check's JSON report, if any,
         and exits with *status*; returns the result, the job summary and the arguments uv got."""
         directory = tempfile.TemporaryDirectory()
@@ -861,6 +861,7 @@ class GraphSyncWorkflowTests(unittest.TestCase):
         if report is not None:
             (root / "report.json").write_text(report)
         (root / "bin" / "uv").write_text(f'#!/bin/sh\necho "$@" > uv-arguments\necho "In step: no"\necho "error: a link" >&2\n'
+                                        'printf "%s\\n" "${UV_EXTRA:-}"\n'
                                         f'[ -f report.json ] && cp report.json build/graph-sync.json\nexit {status}\n')
         (root / "bin" / "uv").chmod(0o755)
         summary = root / "summary.md"
@@ -868,8 +869,21 @@ class GraphSyncWorkflowTests(unittest.TestCase):
             ["bash", "-c", self.steps["Check that the graph is in step with the Lean"]["run"]], cwd=root, text=True,
             capture_output=True, env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}", "BASE": "b" * 40,
                                       "AUTOFORM_SOURCE": "https://example.invalid/autoform.git", "AUTOFORM_REF": "a" * 40,
-                                      "GITHUB_STEP_SUMMARY": str(summary)})
+                                      "GITHUB_STEP_SUMMARY": str(summary), "UV_EXTRA": extra})
         return result, summary.read_text(), (root / "uv-arguments").read_text().split()
+
+    def test_the_check_output_can_neither_issue_a_command_nor_end_the_summary_block(self):
+        # A file name holding a workflow command or a code fence, as the check prints it.
+        result, summary, _ = self.run_check(0, extra="::error::forged\n```\n# Heading")
+        lines = result.stdout.splitlines()
+        start = next(number for number, line in enumerate(lines) if line.startswith("::stop-commands::"))
+        token = lines[start].removeprefix("::stop-commands::")
+        self.assertTrue(token.startswith("graph-sync-") and len(token) > len("graph-sync-") + 16, token)
+        end = lines.index(f"::{token}::")
+        self.assertTrue(start < lines.index("::error::forged") < end)
+        self.assertTrue(all(line.startswith("    ") or not line.strip() or line.startswith(("###", "The check"))
+                            for line in summary.splitlines()), summary)
+        self.assertIn("    ```\n    # Heading", summary)
 
     def test_the_verdict_goes_to_the_log_and_the_summary_with_the_branchs_command(self):
         if shutil.which("jq") is None:
@@ -880,7 +894,7 @@ class GraphSyncWorkflowTests(unittest.TestCase):
                                                                 "b" * 40, "--check", "--report", "build/graph-sync.json"])
         self.assertIn("In step: no\nerror: a link\n", result.stdout)
         self.assertIn("::warning title=Graph sync::", result.stdout)
-        self.assertIn("```text\nIn step: no\nerror: a link\n```", summary)
+        self.assertIn("    In step: no\n    error: a link\n", summary)
         self.assertIn('python3 scripts/sync_wiki.py declarations --base "$(git merge-base FETCH_HEAD HEAD)"\n', summary)
         result, summary, _ = self.run_check(0)
         self.assertEqual(result.returncode, 0)

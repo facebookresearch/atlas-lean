@@ -89,7 +89,12 @@ jobs:
             --with markdown==3.10.3 \
             python scripts/sync_wiki.py declarations --base "$BASE" --check \
             --report build/graph-sync.json > build/graph-sync.txt 2>&1 || status=$?
+          # The output names the pull request's files: replayed with workflow commands stopped, and shown in the
+          # summary as an indented code block, it can neither issue a command nor end the block.
+          token="graph-sync-$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')"
+          echo "::stop-commands::$token"
           cat build/graph-sync.txt
+          echo "::$token::"
           # Not in step only when the report says so: any other failure means the check could not run.
           verdict="$(jq -r 'if .in_step == false then "out" else "other" end' build/graph-sync.json 2>/dev/null || true)"
           if [[ "$status" -ne 0 && "$verdict" != out ]]; then
@@ -100,9 +105,7 @@ jobs:
           {
             echo "### Graph sync"
             echo
-            echo '```text'
-            head -c 60000 build/graph-sync.txt
-            echo '```'
+            head -c 60000 build/graph-sync.txt | sed 's/^/    /'
             if [[ "$failed" == yes ]]; then
               echo
               echo "The check could not run (exit $status): the log above says why."

@@ -3228,15 +3228,18 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
     folder_rows = {page for _, row in rows if (page := subject_path(row)) is not None and page.name == "README.md"}
     problems, parts = set(), set()
     for key in own:
-        if key in written_at:
-            found, stale = page_problems(key, written_at[key], base["folders"], folder_rows)
+        # Its page, linked or holding it back.
+        page = written_at.get(key) or held.get(key)
+        if page is not None:
+            found, stale = page_problems(key, page, base["folders"], folder_rows)
             problems.update(found)
             parts.update(stale)
     blocking += [f"{path} is a link: the sync writes through none; put what it links to in its place"
                  for path in links_in_wiki()]
     return Plan(new=own, missing=[key for key in own if key not in named and key not in held],
                 held=[key for key in own if key not in named and key in held],
-                digests={key: value for key, value in sorted(entries.items()) if state.get(key) != value},
+                digests={key: value for key, value in sorted(entries.items())
+                         if (key in state if value is None else state.get(key) != value)},
                 changed=changed_pages, blocking=blocking, parts=sorted(parts), problems=sorted(problems),
                 unindexed=sorted(row for name, row in head["unindexed"].items() if name not in base["unindexed"]),
                 counts={"lean files": len(changed), "added": len(now.keys() - old.keys()),
@@ -3427,6 +3430,27 @@ def run_scoped(argv: list[str]) -> int:
     lean = frozenset(path for path in paths if lean_source(path))
     graph = [path for path in paths if graph_file(path)]
     fix = f"python3 scripts/sync_wiki.py declarations --base {base}"
+    # A link in the wiki or at the baseline stops the run before it reads any of them: one could lead anywhere, to a
+    # file that has no end among others.
+    if linked := links_in_wiki():
+        errors = [f"{path} is a link: the sync reads and writes through none; put what it links to in its place"
+                  for path in linked]
+        if options.check:
+            print("In step: no")
+        for row in errors:
+            print(f"error: {row}", file=sys.stderr)
+        if not options.check:
+            print("The run wrote nothing: fix the errors above and run it again.", file=sys.stderr)
+        if options.report:
+            options.report.parent.mkdir(parents=True, exist_ok=True)
+            options.report.write_text(json.dumps({
+                "schema": "atlas-graph-sync/v1", "base": base, "check": options.check, "fix": fix,
+                "lean_files": sorted(lean), "counts": dict(NOTHING), "new": {}, "missing": [], "held": [],
+                "digests": {}, "parts": [], "changed": [], "errors": errors, "unindexed": [], "in_step": False,
+                "wiki_changes": "other", "written": [],
+                "differences": [f"{path}: the sync writes no link or other kind of file" for path in linked]},
+                indent=1, ensure_ascii=False, sort_keys=True) + "\n")
+        return 1
     targets, unindexed, generated, index = [], [], {}, None
     try:
         if lean:

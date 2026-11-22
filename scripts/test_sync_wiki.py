@@ -3559,10 +3559,8 @@ class ScopedRun(unittest.TestCase):
         folder.symlink_to(self.root / "rings")
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["errors"]), (1, [
-            "blueprint/roadmap/Algebra/not-yet-classified/rings is a link: the sync writes through none; put what it "
-            "links to in its place"] + [
-            f"blueprint/roadmap/Algebra/not-yet-classified/rings/{name}.md, which the row of Ext.Rings.{name} names, is "
-            "not a page: restore it, or remove the row and run the sync again" for name in ("fields", "units")]))
+            "blueprint/roadmap/Algebra/not-yet-classified/rings is a link: the sync reads and writes through none; put "
+            "what it links to in its place"]))
         # A link stops the writer, which then writes nothing.
         before = {path: path.read_bytes() for path in (self.root / "blueprint").rglob("*") if path.is_file()}
         status, out, err, report = self.run_sync()
@@ -4167,6 +4165,48 @@ class ScopedRun(unittest.TestCase):
             '"role": "states"}]'))
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["errors"]), (0, []))
+
+
+    def test_a_link_in_the_wiki_stops_the_run_before_it_reads_anything(self) -> None:
+        outside = self.root.parent / f"{self.root.name}-outside.jsonl"
+        outside.write_text("")
+        self.addCleanup(outside.unlink)
+        (self.root / "blueprint/links/Other.jsonl").symlink_to(outside)
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        for flags in ((), ("--check",)):
+            with patch.object(sync, "numbered_rows", side_effect=AssertionError("read the links")), \
+                    patch.object(sync, "read_annotations", side_effect=AssertionError("read the links")):
+                status, out, err, report = self.run_sync(*flags)
+            self.assertEqual((status, report["in_step"], report["errors"]), (1, False, [
+                "blueprint/links/Other.jsonl is a link: the sync reads and writes through none; put what it links to "
+                "in its place"]), flags)
+
+    def test_the_page_of_an_own_declaration_held_back_must_be_a_page(self) -> None:
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text() + json.dumps({
+            "subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/fresh.md"}],
+            "id": "af_" + "f" * 24, "extensions": {sync.OWN: {"held": {"declaration": "Ext.fresh",
+                                                                       "reason": "Its statement is wrong."}}}}) + "\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["held"], report["missing"]), (1, False, ["Ext.fresh"], []))
+        self.assertEqual(report["errors"], ["blueprint/roadmap/Algebra/groups/group-basics/fresh.md, which the row of "
+                                            "Ext.fresh names, is not a page: restore it, or remove the row and run the "
+                                            "sync again"])
+
+    def test_an_entry_to_drop_is_dropped_whatever_its_value(self) -> None:
+        # The changes remove backlog, whose entry the baseline must lose: an entry left as null is still there.
+        groups = self.root / "MathlibExt/Algebra/Groups.lean"
+        groups.write_text(groups.read_text().replace("/-- A result that has no page yet. -/\ntheorem backlog : True := "
+                                                     "trivial\n\n", ""))
+        state = self.root / "scripts/wiki-sync.json"
+        digests = json.loads(state.read_text())["docstrings"]
+        digests["Ext.backlog"] = None
+        state.write_text(json.dumps({"docstrings": digests}, indent=0) + "\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["digests"]), (1, {"Ext.backlog": None}))
+        self.assertEqual(self.run_sync()[0], 0)
+        self.assertNotIn("Ext.backlog", json.loads(state.read_text())["docstrings"])
 
 
 
