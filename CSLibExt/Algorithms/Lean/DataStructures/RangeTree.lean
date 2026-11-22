@@ -52,8 +52,11 @@ set_option autoImplicit false
 
 namespace Cslib.Algorithms.Lean
 
-/-- A 1D range tree over `Int`: empty, a single leaf, or a binary node
-caching the leaf interval `[lo, hi]` of its subtree. -/
+/-- **Range tree.** A one-dimensional range tree over the integers is either empty, a single leaf
+holding an integer, or a binary node made of two integers $l$ and $h$ together with a left and a
+right subtree. The integers $l$ and $h$ are meant to cache the interval $[l, h]$ spanned by the
+leaf values of the node's subtree; the type does not enforce this, the bounds-correctness
+predicate does. -/
 inductive RangeTree where
   | empty : RangeTree
   | leaf : Int → RangeTree
@@ -61,18 +64,26 @@ inductive RangeTree where
 
 namespace RangeTree
 
-/-- Accumulator leaf traversal: `toListAux t acc = toList t ++ acc`, so
-`toList` is linear rather than repeatedly appending left leaf lists. -/
+/-- **Leaf traversal of a range tree with an accumulator.** For a range tree $t$ and a list $a$
+of integers, $\operatorname{aux}(t, a)$ is $a$ if $t$ is empty, the list $x$ followed by $a$ if
+$t$ is a single leaf with value $x$, and $\operatorname{aux}(L, \operatorname{aux}(R, a))$ if $t$
+is a node with left subtree $L$ and right subtree $R$.
+
+Equivalently, $\operatorname{aux}(t, a)$ is the leaf list of $t$ followed by $a$, so the leaf list
+is computed in linear time rather than by repeatedly appending left leaf lists. -/
 def toListAux : RangeTree → List Int → List Int
   | .empty, acc => acc
   | .leaf x, acc => x :: acc
   | .node _ _ left right, acc => toListAux left (toListAux right acc)
 
-/-- The leaf values of a tree from left to right. -/
+/-- **Leaf list of a range tree.** The leaf list of a range tree $t$ is the list of the integers
+stored at its leaves, read from left to right and with repetitions. -/
 def toList (t : RangeTree) : List Int :=
   toListAux t []
 
-/-- The accumulator traversal appends the leaf list onto its accumulator. -/
+/-- **Range-tree leaf traversal appends to its accumulator.** For every range tree $t$ and every
+list $a$ of integers, the accumulator leaf traversal of $t$ started from $a$ equals the leaf list
+of $t$ followed by $a$. -/
 theorem toListAux_eq (t : RangeTree) (acc : List Int) :
     toListAux t acc = t.toList ++ acc := by
   induction t generalizing acc with
@@ -85,7 +96,9 @@ theorem toListAux_eq (t : RangeTree) (acc : List Int) :
         simp
       rw [toListAux, ihRight, ihLeft, hnode, List.append_assoc]
 
-/-- Characteristic node equation for `toList` (the former definition). -/
+/-- **Leaf list of a range-tree node.** For all integers $lo$, $hi$ and range trees $L$, $R$, the
+leaf list of the node with stored bounds $lo$, $hi$, left subtree $L$ and right subtree $R$ is
+the leaf list of $L$ followed by the leaf list of $R$. -/
 theorem toList_node (lo hi : Int) (left right : RangeTree) :
     (RangeTree.node lo hi left right).toList = left.toList ++ right.toList := by
   rw [toList, toListAux, toListAux_eq, toListAux_eq]
@@ -94,13 +107,15 @@ theorem toList_node (lo hi : Int) (left right : RangeTree) :
 @[simp] theorem toList_empty : (RangeTree.empty).toList = [] := rfl
 @[simp] theorem toList_leaf (x : Int) : (RangeTree.leaf x).toList = [x] := rfl
 
-/-- The number of leaves of a tree. -/
+/-- **Number of leaves of a range tree.** The size of a range tree is its number of leaves: $0$ for
+the empty tree, $1$ for a leaf, and the sum of the sizes of the two children for a node. -/
 def size : RangeTree → Nat
   | .empty => 0
   | .leaf _ => 1
   | .node _ _ left right => left.size + right.size
 
-/-- The length of the leaf list is the size of the tree. -/
+/-- **Length of the leaf list of a range tree.** For every range tree $t$, the list of leaf values
+of $t$ read from left to right has length equal to the number of leaves of $t$. -/
 @[simp]
 theorem length_toList (t : RangeTree) : t.toList.length = t.size := by
   induction t with
@@ -108,28 +123,39 @@ theorem length_toList (t : RangeTree) : t.toList.length = t.size := by
   | leaf _ => rfl
   | node _ _ _ _ ihLeft ihRight => simp [toList_node, size, ihLeft, ihRight]
 
-/-- The cached lower leaf bound; `0` for the empty tree (vacuous).
-Constant-time: a projection of the node cache, not a traversal. -/
+/-- **Cached lower bound of a range tree.** For a range tree $t$, $\operatorname{tmin}(t)$ is
+$0$ if $t$ is empty, $x$ if $t$ is a single leaf with value $x$, and the stored lower bound
+$lo$ if $t$ is a node with stored bounds $lo$, $hi$ and two subtrees.
+
+The value $0$ for the empty tree is a sentinel without meaning. Computing
+$\operatorname{tmin}(t)$ takes constant time: it reads the bound cached at the root and does not
+traverse the tree. -/
 def tmin : RangeTree → Int
   | .empty => 0
   | .leaf x => x
   | .node lo _ _ _ => lo
 
-/-- The cached upper leaf bound; `0` for the empty tree (vacuous). -/
+/-- **Cached upper bound of a range tree.** For a range tree $t$, $\operatorname{tmax}(t)$ is
+$0$ if $t$ is empty, $x$ if $t$ is a single leaf with value $x$, and the stored upper bound
+$hi$ if $t$ is a node with stored bounds $lo$, $hi$ and two subtrees.
+
+The value $0$ for the empty tree is a sentinel without meaning. -/
 def tmax : RangeTree → Int
   | .empty => 0
   | .leaf x => x
   | .node _ hi _ _ => hi
 
-/-- The cached node intervals are the true leaf intervals:
-at every node, `lo = min left.tmin right.tmin` and
-`hi = max left.tmax right.tmax`, recursively. Node children must be
-nonempty: `tmin`/`tmax` give the empty tree the sentinel `0`, so with an
-empty child the node cache would only conservatively enclose the leaves
-(for example `.node 0 5 .empty (.leaf 5)` would cache `[0, 5]` for the
-single leaf `5`), not equal the true leaf interval. Together
-`bounds_of_mem` and `bounds_mem_toList_of_ne_nil` show the cache is
-exactly attained by leaves. -/
+/-- **Bounds-valid range trees.** For a range tree $s$, write $s_{\min}$ and $s_{\max}$ for its
+cached lower and upper bounds: the stored interval endpoints at a node, the value itself at a
+leaf, and $0$ for the empty tree. Bounds-validity is defined inductively: the empty tree and every
+leaf are bounds-valid, and a node with cached interval $[a, b]$, left child $\ell$ and right child
+$r$ is bounds-valid when $\ell$ and $r$ are bounds-valid, each of them has at least one leaf,
+$a = \min(\ell_{\min}, r_{\min})$ and $b = \max(\ell_{\max}, r_{\max})$.
+
+The children must be nonempty because the empty tree has cached bounds $0$: with an empty child
+the node cache would only enclose the leaves (a node over an empty child and the single leaf $5$
+could cache $[0, 5]$), not equal their true interval. In a bounds-valid tree every leaf value lies
+in the cached interval, and if the tree has a leaf, both cached bounds are leaf values. -/
 inductive BoundsOk : RangeTree → Prop where
   | empty : BoundsOk .empty
   | leaf (x : Int) : BoundsOk (.leaf x)
@@ -139,17 +165,22 @@ inductive BoundsOk : RangeTree → Prop where
       (hhi : hi = max left.tmax right.tmax) :
       BoundsOk (.node lo hi left right)
 
-/-- Range-tree validity: correct cached bounds and sorted (classical)
-leaf order. -/
+/-- **Valid range tree.** A range tree $t$ is valid when it has correct cached bounds (every node
+has two subtrees with nonempty leaf lists, and its stored lower and upper bounds are the minimum
+of the lower bounds and the maximum of the upper bounds of its two subtrees, recursively) and
+its leaf list is sorted in nondecreasing order. -/
 def Valid (t : RangeTree) : Prop :=
   BoundsOk t ∧ t.toList.Pairwise (· ≤ ·)
 
-/-- A valid tree has sorted leaf order. -/
+/-- **Valid range trees have sorted leaves.** If a range tree $t$ is valid, then its list of leaf
+values, read from left to right, is sorted in nondecreasing order. -/
 theorem Valid.pairwise_toList {t : RangeTree} (h : Valid t) :
     t.toList.Pairwise (· ≤ ·) :=
   h.2
 
-/-- Every leaf value of a bounds-valid tree lies in `[tmin, tmax]`. -/
+/-- **Leaf values of a bounds-valid tree lie between the cached bounds.** Let $t$ be a
+bounds-valid range tree, and write $t_{\min}$ and $t_{\max}$ for its cached lower and upper
+bounds. Then every leaf value $x$ of $t$ satisfies $t_{\min} \le x \le t_{\max}$. -/
 theorem bounds_of_mem {t : RangeTree} (hb : BoundsOk t) {x : Int}
     (hx : x ∈ t.toList) :
     t.tmin ≤ x ∧ x ≤ t.tmax := by
@@ -176,9 +207,12 @@ theorem bounds_of_mem {t : RangeTree} (hb : BoundsOk t) {x : Int}
               · rw [hlo]; exact le_trans (min_le_right _ _) h1
               · rw [hhi]; exact le_trans h2 (le_max_right _ _)
 
-/-- The cached bounds of a nonempty bounds-valid tree are attained by
-leaves, so `[tmin, tmax]` is the true leaf interval, not merely an
-enclosing interval. -/
+/-- **The cached bounds of a nonempty bounds-valid range tree are leaf values.** Let $t$ be a
+bounds-valid range tree with at least one leaf. Then the cached lower bound of $t$ and the cached
+upper bound of $t$ are both leaf values of $t$.
+
+Together with the fact that every leaf value lies between the cached bounds, this shows that the
+cached interval is exactly the interval spanned by the leaves, not merely an enclosing one. -/
 theorem bounds_mem_toList_of_ne_nil {t : RangeTree} (hb : BoundsOk t)
     (hne : t.toList ≠ []) :
     t.tmin ∈ t.toList ∧ t.tmax ∈ t.toList := by
@@ -218,11 +252,16 @@ private theorem filter_eq_self_of_all {xs : List Int} {lo hi : Int}
   simpa using h x hx
 
 /--
-Accumulator range report for `[lo, hi]`: a node whose cached interval is
-disjoint from the query contributes nothing, a node contained in it
-contributes its whole leaf list onto the accumulator (the canonical-node
-case, via the linear `toListAux`), and otherwise both children are
-searched. The cached bounds make each pruning test constant-time.
+**Accumulator range report.** For integers $a$, $b$ and a list $\mathit{acc}$ of integers, the
+accumulator range report of a range tree for $[a, b]$ starting from $\mathit{acc}$ is defined by
+recursion on the tree. The empty tree returns $\mathit{acc}$. A leaf with value $x$ returns $x$
+followed by $\mathit{acc}$ if $a \le x \le b$, and $\mathit{acc}$ otherwise. A node with cached
+interval $[l, h]$ returns $\mathit{acc}$ if $h < a$ or $b < l$; otherwise, if $a \le l$ and
+$h \le b$, it returns the node's leaf values from left to right followed by $\mathit{acc}$;
+otherwise it returns the report of the left child starting from the report of the right child
+starting from $\mathit{acc}$.
+
+The cached bounds make each pruning test constant-time.
 -/
 def reportAux : RangeTree → Int → Int → List Int → List Int
   | .empty, _, _, acc => acc
@@ -233,12 +272,16 @@ def reportAux : RangeTree → Int → Int → List Int → List Int
         toListAux (.node nlo nhi left right) acc
       else reportAux left lo hi (reportAux right lo hi acc)
 
-/-- The range report for `[lo, hi]`; see `reportAux`. -/
+/-- **Range report.** The range report of a range tree $t$ for integers $a$ and $b$ is the
+accumulator range report of $t$ for $[a, b]$ starting from the empty list. -/
 def report (t : RangeTree) (lo hi : Int) : List Int :=
   reportAux t lo hi []
 
-/-- The accumulator report of a bounds-valid tree is its filtered leaf
-list on the accumulator. -/
+/-- **Accumulator range report of a bounds-valid range tree.** Let $t$ be a bounds-valid range
+tree, let $a$ and $b$ be integers and let $\mathit{acc}$ be a list of integers. Then the
+accumulator range report of $t$ for $[a, b]$ starting from $\mathit{acc}$ is the list of the leaf
+values $x$ of $t$ with $a \le x \le b$, in left-to-right order and with repetitions, followed by
+$\mathit{acc}$. -/
 theorem reportAux_eq_filter_append {t : RangeTree} (hb : BoundsOk t)
     (lo hi : Int) (acc : List Int) :
     t.reportAux lo hi acc =
@@ -283,31 +326,47 @@ theorem reportAux_eq_filter_append {t : RangeTree} (hb : BoundsOk t)
                 ihRight hRight, ihLeft hLeft, toList_node, List.filter_append,
                 List.append_assoc]
 
-/-- The report of a bounds-valid tree is the leaf list filtered to `[lo, hi]`. -/
+/-- **Correctness of the range report.** Let $t$ be a range tree satisfying the bounds-correctness
+predicate: every node has two subtrees with at least one leaf each and caches the least and the
+greatest leaf value of its subtree. For all integers $a$ and $b$, the range report of $t$ for
+$[a, b]$ equals the list of leaf values $x$ of $t$ with $a \le x \le b$, in left-to-right order. -/
 theorem report_eq_filter {t : RangeTree} (hb : BoundsOk t) (lo hi : Int) :
     t.report lo hi = t.toList.filter (fun x => lo ≤ x ∧ x ≤ hi) := by
   rw [report, reportAux_eq_filter_append hb]
   simp
 
-/-- Membership in the report is membership in the tree inside `[lo, hi]`. -/
+/-- **Membership in a range report.** Let $t$ be a range tree satisfying the bounds-correctness
+predicate: every node has two subtrees with at least one leaf each and caches the least and the
+greatest leaf value of its subtree. For all integers $a$, $b$ and $x$, the value $x$ occurs in the
+range report of $t$ for $[a, b]$ if and only if $x$ is a leaf value of $t$ and $a \le x \le b$. -/
 theorem mem_report_iff {t : RangeTree} (hb : BoundsOk t) {lo hi x : Int} :
     x ∈ t.report lo hi ↔ x ∈ t.toList ∧ lo ≤ x ∧ x ≤ hi := by
   rw [report_eq_filter hb]
   simp
 
-/-- The number of stored values in `[lo, hi]`. -/
+/-- **Range count.** For a range tree $t$ and integers $a$ and $b$, the range count of $t$ over
+$[a, b]$ is the length of the range report of $t$ for $[a, b]$.
+
+On a bounds-valid tree this is the number of leaves whose value lies in $[a, b]$. -/
 def count (t : RangeTree) (lo hi : Int) : Nat :=
   (t.report lo hi).length
 
-/-- The count is the length of the leaf list filtered to `[lo, hi]`. -/
+/-- **Range count of a bounds-valid tree.** Let $t$ be a bounds-valid range tree and let $a$ and
+$b$ be integers. Then the range count of $t$ over $[a, b]$ equals the number of leaves of $t$
+whose value lies in $[a, b]$. -/
 theorem count_eq {t : RangeTree} (hb : BoundsOk t) (lo hi : Int) :
     t.count lo hi = (t.toList.filter (fun x => lo ≤ x ∧ x ≤ hi)).length := by
   rw [count, report_eq_filter hb]
 
-/-- Builds a balanced range tree from a list by recursively splitting in
-half, caching each node's leaf interval from its (once-built) children.
-The input order is preserved verbatim (see `toList_build`); sortedness is
-a hypothesis on the caller, recorded by `valid_build_of_sorted`. -/
+/-- **Building a range tree from a list.** For a range tree $s$, write $s_{\min}$ and $s_{\max}$
+for its cached lower and upper bounds. The range tree built from a list $L$ of integers of length
+$n$ is defined by recursion on $n$: the empty list gives the empty tree, a one-element list $[x]$
+gives the leaf $x$, and for $n \ge 2$ it is the node whose left child $\ell$ is the tree built from
+the first $\lfloor n/2 \rfloor$ entries of $L$, whose right child $r$ is the tree built from the
+remaining entries, and whose cached interval is
+$[\min(\ell_{\min}, r_{\min}), \max(\ell_{\max}, r_{\max})]$.
+
+The entries of $L$ are kept in their given order; $L$ is not sorted first. -/
 def build : List Int → RangeTree
   | [] => .empty
   | [x] => .leaf x
@@ -321,7 +380,8 @@ decreasing_by
     simp_all only [List.length_take, List.length_drop, List.length_cons]
     omega
 
-/-- The leaf list of a tree built from a list is that list. -/
+/-- **Building a range tree preserves the list.** For every list $xs$ of integers, the leaf list
+of the range tree built from $xs$ is $xs$. -/
 @[simp]
 theorem toList_build : ∀ xs : List Int, (build xs).toList = xs := by
   intro xs
@@ -360,12 +420,14 @@ theorem toList_build : ∀ xs : List Int, (build xs).toList = xs := by
               rw [hBuild, toList_node, hLeft, hRight]
               exact List.take_append_drop _ _
 
-/-- The size of a tree built from a list is the length of that list. -/
+/-- **Size of a built range tree.** For every list $\mathit{xs}$ of integers, the range tree built
+from $\mathit{xs}$ has exactly as many leaves as $\mathit{xs}$ has elements. -/
 @[simp]
 theorem size_build (xs : List Int) : (build xs).size = xs.length := by
   rw [← length_toList, toList_build]
 
-/-- A built tree has correct cached bounds. -/
+/-- **Built range trees are bounds-valid.** For every list $L$ of integers, the range tree built
+from $L$ by recursive halving is bounds-valid. -/
 theorem boundsOk_build : ∀ xs : List Int, BoundsOk (build xs) := by
   intro xs
   induction hn : xs.length using Nat.strongRecOn generalizing xs with
@@ -421,25 +483,33 @@ theorem boundsOk_build : ∀ xs : List Int, BoundsOk (build xs) := by
               rw [hBuild]
               exact BoundsOk.node hLeft hRight hLeftNe hRightNe rfl rfl
 
-/-- Building from a sorted list yields a valid (classical) range tree:
-correct cached bounds and sorted leaf order. Without the sortedness
-hypothesis only `boundsOk_build` holds. -/
+/-- **Building from a sorted list gives a valid range tree.** For every list $xs$ of integers that
+is sorted in nondecreasing order, the range tree built from $xs$ is valid.
+
+Without the sortedness hypothesis the built tree still has correct cached bounds, but it need not
+be valid. -/
 theorem valid_build_of_sorted {xs : List Int} (h : xs.Pairwise (· ≤ ·)) :
     Valid (build xs) :=
   ⟨boundsOk_build xs, by rw [toList_build]; exact h⟩
 
-/-- The report on a tree built from a list is that list filtered to `[lo, hi]`. -/
+/-- **Range report on a built tree.** For every list $\mathit{xs}$ of integers and all integers $a$
+and $b$, the range report for $[a, b]$ on the range tree built from $\mathit{xs}$ equals the list
+of elements $x$ of $\mathit{xs}$ with $a \le x \le b$, in their original order. -/
 theorem report_build (xs : List Int) (lo hi : Int) :
     (build xs).report lo hi = xs.filter (fun x => lo ≤ x ∧ x ≤ hi) := by
   rw [report_eq_filter (boundsOk_build xs), toList_build]
 
-/-- The count on a tree built from a list is the filtered length of that list. -/
+/-- **Range counting on a built tree.** For every list $L$ of integers and all integers $a$ and
+$b$, the range count over $[a, b]$ of the range tree built from $L$ equals the number of entries
+of $L$, counted with multiplicity, that lie in $[a, b]$. -/
 theorem count_build (xs : List Int) (lo hi : Int) :
     (build xs).count lo hi =
       (xs.filter (fun x => lo ≤ x ∧ x ≤ hi)).length := by
   rw [count_eq (boundsOk_build xs), toList_build]
 
-/-- Membership in the report on a built tree, stated on the input list. -/
+/-- **Range report membership on a built tree.** For every list $L$ of integers and all integers
+$a$, $b$ and $x$, the value $x$ occurs in the range report for $[a, b]$ on the range tree built
+from $L$ if and only if $x$ is an entry of $L$ and $a \le x \le b$. -/
 theorem mem_report_build_iff {xs : List Int} {lo hi x : Int} :
     x ∈ (build xs).report lo hi ↔ x ∈ xs ∧ lo ≤ x ∧ x ≤ hi := by
   rw [mem_report_iff (boundsOk_build xs), toList_build]
