@@ -75,8 +75,7 @@ existing measure-valued predicate coincide on `PMF.toMeasure`.
 from `Countable Ω` plus `MeasurableSingletonClass Ω` via
 `MeasurableSingletonClass.toDiscreteMeasurableSpace`. -/
 theorem isApproxDP_iff_differentiallyPrivate_toMeasure {D Ω : Type*}
-    [MeasurableSpace D] [MeasurableSpace Ω]
-    [Countable D] [MeasurableSingletonClass D]
+    [MeasurableSpace Ω]
     [Countable Ω] [MeasurableSingletonClass Ω]
     {M : D → PMF Ω} {adj : D → D → Prop} {ε δ : ℝ} :
     IsApproxDP M adj ε δ ↔ 0 ≤ ε ∧ 0 ≤ δ ∧

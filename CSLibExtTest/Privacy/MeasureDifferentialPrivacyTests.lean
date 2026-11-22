@@ -64,6 +64,15 @@ theorem measureDP_of_delta_zero_pure (adj : Bool → Bool → Prop) :
     IsMeasureDP (pmfKernel fun _ : Bool => PMF.pure true) adj 0 0 :=
   isMeasureDP_delta_zero_iff.mpr (measureDP_delta_zero_pure adj)
 
+/-- The bridge needs no discreteness on the index type: it applies to
+mechanisms indexed by the non-countable type `Real`. -/
+theorem approxDP_bridge_real_index (M : Real → PMF (Fin 2))
+    (adj : Real → Real → Prop) (ε δ : ℝ) :
+    IsApproxDP M adj ε δ ↔ 0 ≤ ε ∧ 0 ≤ δ ∧
+      Cslib.Crypto.Privacy.DifferentiallyPrivate adj
+        (fun d => (M d).toMeasure) ε (ENNReal.ofReal δ) :=
+  isApproxDP_iff_differentiallyPrivate_toMeasure
+
 #print axioms CSLibExt.Privacy.DifferentialPrivacy.isApproxDP_iff_isMeasureDP
 #print axioms CSLibExt.Privacy.DifferentialPrivacy.isMeasureDP_const
 #print axioms CSLibExtTest.Privacy.DifferentialPrivacy.measureDP_bernoulli_const
