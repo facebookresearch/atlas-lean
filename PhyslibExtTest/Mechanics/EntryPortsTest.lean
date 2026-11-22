@@ -38,6 +38,17 @@ tests and not a published applicability range):
 * a radiator with `ε = 0.8`, `σ = 5.670374419e-8 W/(m² K⁴)` and surroundings at `200 K` has a
   nonnegative equilibrium for `qabs = 100 W/m²`, and `300 K` is its only one for
   `qabs = 0.8 σ (300⁴ - 200⁴)`.
+
+Peak deceleration along the profile above, where `hstar = 7000 log 34.3 ≈ 24.7 km`:
+
+* the deceleration is positive; its derivative vanishes at `hstar` and not at `7000 log 17.15`,
+  the candidate without the factor `2`;
+* it increases with altitude below `hstar` and decreases above it;
+* on `[0, 40000]` the interior `hstar` is selected, on `[35000, 40000]` the lower endpoint, and
+  with entry at `20000 m` on `[10000, 20000]` the entry altitude; each selection maximizes the
+  deceleration on its band, and the ground altitude of `[0, 40000]` stays strictly below it;
+* with `β = 20000 kg/m²` the stationary point lies below the ground and is not reached in the
+  band `[0, 40000]`.
 -/
 
 @[expose] public section
@@ -258,5 +269,206 @@ example : ∃ T : ℝ, 0 ≤ T ∧
     0.8 * 5.670374419e-8 * T ^ 4 = 100 + 0.8 * 5.670374419e-8 * 200 ^ 4 :=
   radiator_equilibrium_exists (by norm_num) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num)
+
+/-- `20000 < hstar < 35000` for the profile of these tests: `hstar = 7000 log 34.3`, with
+`exp (20 / 7) ≤ (7 / 6) ^ 20 < 34.3` and `34.3 < (3 / 2) ^ 10 ≤ exp 5`. -/
+private lemma peakDecelerationAltitude_fixture_bounds :
+    20000 < peakDecelerationAltitude 1.225 7000 500 (Real.pi / 6) ∧
+      peakDecelerationAltitude 1.225 7000 500 (Real.pi / 6) < 35000 := by
+  have hstar : peakDecelerationAltitude 1.225 7000 500 (Real.pi / 6) = 7000 * Real.log 34.3 := by
+    unfold peakDecelerationAltitude ballisticK
+    rw [Real.sin_pi_div_six]
+    norm_num
+  have hseventh : Real.exp (1 / 7) ≤ 7 / 6 := by
+    have h := Real.add_one_le_exp (-(1 / 7) : ℝ)
+    have hmul : Real.exp (-(1 / 7)) * Real.exp (1 / 7) = 1 := by
+      rw [← Real.exp_add]
+      norm_num
+    nlinarith [Real.exp_pos (1 / 7 : ℝ)]
+  have hhalf : (3 / 2 : ℝ) ≤ Real.exp (1 / 2) := by linarith [Real.add_one_le_exp (1 / 2 : ℝ)]
+  have hlo : 20 / 7 < Real.log 34.3 := by
+    rw [Real.lt_log_iff_exp_lt (by norm_num)]
+    have h20 : Real.exp (20 / 7) = Real.exp (1 / 7) ^ 20 := by
+      rw [← Real.exp_nat_mul]
+      norm_num
+    rw [h20]
+    exact lt_of_le_of_lt (pow_le_pow_left₀ (Real.exp_pos _).le hseventh 20) (by norm_num)
+  have hhi : Real.log 34.3 < 5 := by
+    rw [Real.log_lt_iff_lt_exp (by norm_num)]
+    have h5 : Real.exp 5 = Real.exp (1 / 2) ^ 10 := by
+      rw [← Real.exp_nat_mul]
+      norm_num
+    rw [h5]
+    exact lt_of_lt_of_le (by norm_num) (pow_le_pow_left₀ (by norm_num) hhalf 10)
+  rw [hstar]
+  exact ⟨by linarith, by linarith⟩
+
+-- The deceleration at `30000 m` is positive.
+example : 0 < ballisticDeceleration 1.225 7000 500 (Real.pi / 6) 40000 3000 30000 :=
+  ballisticDeceleration_pos (by norm_num) (by norm_num) (by norm_num) _ _ _ _
+
+-- The altitude derivative of the deceleration at any height.
+example (h : ℝ) :
+    HasDerivAt (ballisticDeceleration 1.225 7000 500 (Real.pi / 6) 40000 3000)
+      (ballisticDeceleration 1.225 7000 500 (Real.pi / 6) 40000 3000 h *
+        (2 * ballisticK 1.225 7000 500 (Real.pi / 6) * Real.exp (-h / 7000) - 1) / 7000) h :=
+  hasDerivAt_ballisticDeceleration (by norm_num) _ _ _ _ _ h (by norm_num)
+    (by rw [Real.sin_pi_div_six]; norm_num)
+
+-- The derivative vanishes at `hstar`; dropping the factor `2` in `hstar` (`7000 log 17.15`)
+-- gives an altitude where it does not.
+example :
+    deriv (ballisticDeceleration 1.225 7000 500 (Real.pi / 6) 40000 3000)
+        (peakDecelerationAltitude 1.225 7000 500 (Real.pi / 6)) = 0 ∧
+      deriv (ballisticDeceleration 1.225 7000 500 (Real.pi / 6) 40000 3000)
+        (7000 * Real.log 17.15) ≠ 0 := by
+  have hsin : 0 < Real.sin (Real.pi / 6) := by rw [Real.sin_pi_div_six]; norm_num
+  have hiff := deriv_ballisticDeceleration_eq_zero_iff (ρ0 := 1.225) (H := 7000) (β := 500)
+    (γ := Real.pi / 6) (ve := 3000) (by norm_num) (by norm_num) (by norm_num) hsin (by norm_num)
+    40000
+  refine ⟨(hiff _).2 rfl, fun h0 => ?_⟩
+  have h1 := (hiff _).1 h0
+  unfold peakDecelerationAltitude ballisticK at h1
+  rw [Real.sin_pi_div_six] at h1
+  have h2 : Real.log 17.15 = Real.log (2 * (1.225 * 7000 / (2 * 500 * (1 / 2)))) := by linarith
+  have h3 : (17.15 : ℝ) = 2 * (1.225 * 7000 / (2 * 500 * (1 / 2))) :=
+    Real.log_injOn_pos (by norm_num) (by norm_num) h2
+  norm_num at h3
+
+-- Below `hstar` the deceleration increases with altitude; above it, it decreases.
+example :
+    ballisticDeceleration 1.225 7000 500 (Real.pi / 6) 40000 3000 10000 <
+        ballisticDeceleration 1.225 7000 500 (Real.pi / 6) 40000 3000 20000 ∧
+      ballisticDeceleration 1.225 7000 500 (Real.pi / 6) 40000 3000 40000 <
+        ballisticDeceleration 1.225 7000 500 (Real.pi / 6) 40000 3000 35000 := by
+  have hsin : 0 < Real.sin (Real.pi / 6) := by rw [Real.sin_pi_div_six]; norm_num
+  obtain ⟨hlo, hhi⟩ := peakDecelerationAltitude_fixture_bounds
+  refine ⟨ballisticDeceleration_strictMonoOn (ρ0 := 1.225) (H := 7000) (β := 500)
+    (γ := Real.pi / 6) (ve := 3000) (by norm_num) (by norm_num) (by norm_num) hsin (by norm_num)
+    40000 (Set.mem_Iic.2 (by linarith)) (Set.mem_Iic.2 hlo.le) (by norm_num), ?_⟩
+  exact ballisticDeceleration_strictAntiOn (ρ0 := 1.225) (H := 7000) (β := 500)
+    (γ := Real.pi / 6) (ve := 3000) (by norm_num) (by norm_num) (by norm_num) hsin (by norm_num)
+    40000 (Set.mem_Ici.2 hhi.le) (Set.mem_Ici.2 (by linarith)) (by norm_num)
+
+
+-- Interior maximum: on the band `[0, 40000]` from the ground to the entry altitude, `hstar`
+-- lies inside, is selected, and maximizes the deceleration (about `132 m / s ^ 2`).
+example :
+    peakDecelerationAltitude 1.225 7000 500 (Real.pi / 6) ∈ Set.Ioo 0 40000 ∧
+      bandPeakAltitude 1.225 7000 500 (Real.pi / 6) 0 40000 =
+        peakDecelerationAltitude 1.225 7000 500 (Real.pi / 6) ∧
+      IsMaxOn (ballisticDeceleration 1.225 7000 500 (Real.pi / 6) 40000 3000) (Set.Icc 0 40000)
+        (peakDecelerationAltitude 1.225 7000 500 (Real.pi / 6)) := by
+  have hsin : 0 < Real.sin (Real.pi / 6) := by rw [Real.sin_pi_div_six]; norm_num
+  have hstar : peakDecelerationAltitude 1.225 7000 500 (Real.pi / 6) = 7000 * Real.log 34.3 := by
+    unfold peakDecelerationAltitude ballisticK
+    rw [Real.sin_pi_div_six]
+    norm_num
+  have hlog : Real.log 34.3 < 40 / 7 := by
+    rw [Real.log_lt_iff_lt_exp (by norm_num)]
+    have h1 : (17 / 7 : ℝ) ≤ Real.exp (10 / 7) := by linarith [Real.add_one_le_exp (10 / 7 : ℝ)]
+    have h2 : Real.exp (40 / 7) = Real.exp (10 / 7) ^ 4 := by
+      rw [← Real.exp_nat_mul]
+      norm_num
+    have h3 : (17 / 7 : ℝ) ^ 4 ≤ Real.exp (10 / 7) ^ 4 := pow_le_pow_left₀ (by norm_num) h1 4
+    rw [h2]
+    linarith [show (34.3 : ℝ) < (17 / 7) ^ 4 by norm_num]
+  have hmem : peakDecelerationAltitude 1.225 7000 500 (Real.pi / 6) ∈ Set.Ioo 0 40000 := by
+    rw [hstar]
+    exact ⟨mul_pos (by norm_num) (Real.log_pos (by norm_num)), by linarith⟩
+  have hsel := bandPeakAltitude_of_mem (he := 40000) (Set.Ioo_subset_Icc_self hmem)
+  refine ⟨hmem, hsel, ?_⟩
+  have hmax := (isMaxOn_bandPeakAltitude (ρ0 := 1.225) (H := 7000) (β := 500)
+    (γ := Real.pi / 6) (ve := 3000) (by norm_num) (by norm_num) (by norm_num) hsin (by norm_num)
+    (show (0 : ℝ) < 40000 by norm_num)).2
+  rwa [hsel] at hmax
+
+-- Endpoint maximum: on the band `[35000, 40000]` the candidate lies below the band, so the lower
+-- endpoint is selected and maximizes the deceleration (about `66 m / s ^ 2` at `35 km` against
+-- `36 m / s ^ 2` at entry).
+example :
+    peakDecelerationAltitude 1.225 7000 500 (Real.pi / 6) < 35000 ∧
+      bandPeakAltitude 1.225 7000 500 (Real.pi / 6) 35000 40000 = 35000 ∧
+      IsMaxOn (ballisticDeceleration 1.225 7000 500 (Real.pi / 6) 40000 3000)
+        (Set.Icc 35000 40000) 35000 := by
+  have hsin : 0 < Real.sin (Real.pi / 6) := by rw [Real.sin_pi_div_six]; norm_num
+  have hstar : peakDecelerationAltitude 1.225 7000 500 (Real.pi / 6) = 7000 * Real.log 34.3 := by
+    unfold peakDecelerationAltitude ballisticK
+    rw [Real.sin_pi_div_six]
+    norm_num
+  have hlog : Real.log 34.3 < 5 := by
+    rw [Real.log_lt_iff_lt_exp (by norm_num)]
+    have h1 : (3 / 2 : ℝ) ≤ Real.exp (1 / 2) := by linarith [Real.add_one_le_exp (1 / 2 : ℝ)]
+    have h2 : Real.exp 5 = Real.exp (1 / 2) ^ 10 := by
+      rw [← Real.exp_nat_mul]
+      norm_num
+    have h3 : (3 / 2 : ℝ) ^ 10 ≤ Real.exp (1 / 2) ^ 10 := pow_le_pow_left₀ (by norm_num) h1 10
+    rw [h2]
+    linarith [show (34.3 : ℝ) < (3 / 2) ^ 10 by norm_num]
+  have hlt : peakDecelerationAltitude 1.225 7000 500 (Real.pi / 6) < 35000 := by
+    rw [hstar]
+    linarith
+  have hsel := bandPeakAltitude_of_lt (he := 40000) hlt
+  refine ⟨hlt, hsel, ?_⟩
+  have hmax := (isMaxOn_bandPeakAltitude (ρ0 := 1.225) (H := 7000) (β := 500)
+    (γ := Real.pi / 6) (ve := 3000) (by norm_num) (by norm_num) (by norm_num) hsin (by norm_num)
+    (show (35000 : ℝ) < 40000 by norm_num)).2
+  rwa [hsel] at hmax
+
+-- A stationary point below the ground is not an observed peak: for `β = 20000 kg / m ^ 2`,
+-- `K = 0.42875` and `hstar = 7000 * log 0.8575 ≈ -1.08 km` lies below the band `[0, 40000]`. The
+-- ground endpoint is selected, and every deceleration in the band stays strictly below the
+-- stationary value.
+example :
+    peakDecelerationAltitude 1.225 7000 20000 (Real.pi / 6) < 0 ∧
+      bandPeakAltitude 1.225 7000 20000 (Real.pi / 6) 0 40000 = 0 ∧
+      ∀ h ∈ Set.Icc (0 : ℝ) 40000,
+        ballisticDeceleration 1.225 7000 20000 (Real.pi / 6) 40000 3000 h <
+          ballisticDeceleration 1.225 7000 20000 (Real.pi / 6) 40000 3000
+            (peakDecelerationAltitude 1.225 7000 20000 (Real.pi / 6)) := by
+  have hsin : 0 < Real.sin (Real.pi / 6) := by rw [Real.sin_pi_div_six]; norm_num
+  have hstar :
+      peakDecelerationAltitude 1.225 7000 20000 (Real.pi / 6) = 7000 * Real.log 0.8575 := by
+    unfold peakDecelerationAltitude ballisticK
+    rw [Real.sin_pi_div_six]
+    norm_num
+  have hneg : peakDecelerationAltitude 1.225 7000 20000 (Real.pi / 6) < 0 := by
+    rw [hstar]
+    exact mul_neg_of_pos_of_neg (by norm_num) (Real.log_neg (by norm_num) (by norm_num))
+  refine ⟨hneg, bandPeakAltitude_of_lt hneg, fun h hh => ?_⟩
+  exact ballisticDeceleration_lt_peak (ρ0 := 1.225) (H := 7000) (β := 20000) (γ := Real.pi / 6)
+    (ve := 3000) (by norm_num) (by norm_num) (by norm_num) hsin (by norm_num) 40000
+    (lt_of_lt_of_le hneg hh.1).ne'
+
+-- Upper endpoint: with entry at `20000 m`, `hstar` lies above the band `[10000, 20000]`, so the
+-- entry altitude is selected and maximizes the deceleration on the band.
+example :
+    20000 < peakDecelerationAltitude 1.225 7000 500 (Real.pi / 6) ∧
+      bandPeakAltitude 1.225 7000 500 (Real.pi / 6) 10000 20000 = 20000 ∧
+      IsMaxOn (ballisticDeceleration 1.225 7000 500 (Real.pi / 6) 20000 3000)
+        (Set.Icc 10000 20000) 20000 := by
+  have hsin : 0 < Real.sin (Real.pi / 6) := by rw [Real.sin_pi_div_six]; norm_num
+  have hgt := peakDecelerationAltitude_fixture_bounds.1
+  have hsel := bandPeakAltitude_of_gt (ρ0 := 1.225) (H := 7000) (β := 500) (γ := Real.pi / 6)
+    (show (10000 : ℝ) < 20000 by norm_num) hgt
+  refine ⟨hgt, hsel, ?_⟩
+  have hmax := (isMaxOn_bandPeakAltitude (ρ0 := 1.225) (H := 7000) (β := 500)
+    (γ := Real.pi / 6) (ve := 3000) (by norm_num) (by norm_num) (by norm_num) hsin (by norm_num)
+    (show (10000 : ℝ) < 20000 by norm_num)).2
+  rwa [hsel] at hmax
+
+-- The selected altitude of `[0, 40000]` is the only maximizer: the ground altitude has a strictly
+-- smaller deceleration.
+example :
+    ballisticDeceleration 1.225 7000 500 (Real.pi / 6) 40000 3000 0 <
+      ballisticDeceleration 1.225 7000 500 (Real.pi / 6) 40000 3000
+        (bandPeakAltitude 1.225 7000 500 (Real.pi / 6) 0 40000) := by
+  have hsin : 0 < Real.sin (Real.pi / 6) := by rw [Real.sin_pi_div_six]; norm_num
+  have hlo := peakDecelerationAltitude_fixture_bounds.1
+  have hpos : 0 < bandPeakAltitude 1.225 7000 500 (Real.pi / 6) 0 40000 := by
+    unfold bandPeakAltitude
+    exact lt_of_lt_of_le (lt_min (by linarith) (by norm_num)) (le_max_right _ _)
+  exact ballisticDeceleration_lt_bandPeakAltitude (by norm_num) (by norm_num) (by norm_num) hsin
+    (by norm_num) (show (0 : ℝ) < 40000 by norm_num) ⟨le_rfl, by norm_num⟩ hpos.ne
 
 end PhyslibExtTest.Mechanics.EntryPorts

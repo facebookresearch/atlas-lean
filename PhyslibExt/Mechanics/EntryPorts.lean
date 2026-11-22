@@ -11,14 +11,16 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import PhyslibExt.Mechanics.AircraftPerformance
 
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 import PhyslibExt.EarthScience.PlanetaryEnergyBalance
 
 /-!
-# Entry ports: finite-entry ballistic profile, heat load and radiator equilibrium
+# Entry ports: ballistic entry profile, heat load, radiator equilibrium, peak deceleration
 
 ## i. Overview
 
@@ -67,6 +69,18 @@ coefficient and its validity box are supplied calibration evidence, not a proved
 load is heat per unit area; the heat into a surface needs a declared area to multiply it. No
 ablation, thermal-protection, empirical adequacy or system safety claim is made.
 
+Section F finds the peak drag deceleration along the profile. For `H ≠ 0`, `β > 0` and
+`sin γ > 0` the deceleration `a(h) = ρ(h) * v(h) ^ 2 / (2 * β)` has altitude derivative
+`a'(h) = a(h) * (2 * K * exp (-h / H) - 1) / H`. For `ρ0, H, β, ve > 0` and `sin γ > 0`, which
+give `K > 0`, its only stationary point is `hstar = H * log (2 * K)`: `a` increases with altitude
+below `hstar`, decreases above it, and `hstar` is its strict global maximum. On the finite band
+`[hmin, he]`, `hmin < he`, the peak is selected as `hstar` when `hstar` lies in the band and as
+the nearer endpoint otherwise (`hmin` when `hstar < hmin`, the entry altitude `he` when
+`hstar > he`); under the same hypotheses the selected altitude is the unique maximizer on the
+band, and a stationary point below the band is not reached: every deceleration in the band stays
+strictly below its value. Since `H > 0` and `K > 0`, `hstar` lies below the ground `h = 0`
+exactly when `2 * K < 1`.
+
 ## ii. Key results
 
 - `EntryPorts.ballisticVelocity_entry`: `v(he) = ve`.
@@ -85,6 +99,14 @@ ablation, thermal-protection, empirical adequacy or system safety claim is made.
 - `EntryPorts.StagnationHeatingCorrelation.heatLoad_vacuum`: vacuum gives zero heat load.
 - `EntryPorts.radiator_equilibrium_exists`, `EntryPorts.radiator_equilibrium_unique`: the radiator
   equilibrium temperature.
+- `EntryPorts.ballisticDeceleration`, `EntryPorts.hasDerivAt_ballisticDeceleration`: the
+  deceleration and its altitude derivative.
+- `EntryPorts.deriv_ballisticDeceleration_eq_zero_iff`,
+  `EntryPorts.ballisticDeceleration_lt_peak`: for `ρ0, H, β, ve > 0` and `sin γ > 0`, `hstar` is
+  the only stationary point and the strict global maximum.
+- `EntryPorts.bandPeakAltitude`, `EntryPorts.isMaxOn_bandPeakAltitude`,
+  `EntryPorts.ballisticDeceleration_lt_bandPeakAltitude`: the selected altitude on the band and,
+  under the same hypotheses and `hmin < he`, its maximality.
 
 ## iii. Table of contents
 
@@ -93,13 +115,14 @@ ablation, thermal-protection, empirical adequacy or system safety claim is made.
 - C. Descent and the entry condition
 - D. The isothermal layer
 - E. Stagnation-point heat load and radiator equilibrium
+- F. Peak deceleration on the entry band
 
 ## iv. References
 
 - H. J. Allen and A. J. Eggers, *A study of the motion and aerodynamic heating of ballistic
   missiles entering the earth's atmosphere at high supersonic speeds*, NACA Report 1381, 1958
   (straight-line ballistic entry, `v = v_E exp (-ρ0 H exp (-h / H) / (2 β sin γ))` normalized at
-  infinite altitude).
+  infinite altitude; peak deceleration at `h = H log (ρ0 H / (β sin γ))`).
 - F. J. Regan and S. M. Anandakrishnan, *Dynamics of Atmospheric Re-Entry*, AIAA Education
   Series, 1993 (ballistic entry from a finite entry altitude).
 - K. Sutton and R. A. Graves, *A general stagnation-point convective-heating equation for
@@ -586,5 +609,214 @@ lemma radiator_equilibrium_unique {ε σ qabs Tenv T₁ T₂ : ℝ} (hε : 0 < �
     ring
   · rw [h₂]
     ring
+
+/-! ## F. Peak deceleration on the entry band -/
+
+/-- Drag deceleration along the finite-entry profile, `a(h) = ρ(h) * v(h) ^ 2 / (2 * β)`, for the
+exponential density and the profile `ballisticVelocity` with entry state `(he, ve)`; for
+`ρ0 ≥ 0` and `β > 0` it is the magnitude of `v' = -ρ(h) * v ^ 2 / (2 * β)` at altitude `h`. -/
+noncomputable def ballisticDeceleration (ρ0 H β γ he ve h : ℝ) : ℝ :=
+  exponentialDensity ρ0 H h * ballisticVelocity ρ0 H β γ he ve h ^ 2 / (2 * β)
+
+/-- Candidate peak-deceleration altitude `hstar = H * log (2 * K)`, `K = ballisticK ρ0 H β γ`; it
+does not depend on the entry state. For `ρ0, H, β, ve > 0` and `sin γ > 0`, which give `K > 0`,
+it is the only stationary point and the strict global maximum of the deceleration
+(`deriv_ballisticDeceleration_eq_zero_iff`, `ballisticDeceleration_lt_peak`). For `H > 0` and
+`0 < 2 * K ≤ 1` it lies at or below `h = 0`. -/
+noncomputable def peakDecelerationAltitude (ρ0 H β γ : ℝ) : ℝ :=
+  H * Real.log (2 * ballisticK ρ0 H β γ)
+
+/-- The peak altitude selected on the band `[hmin, he]`: `hstar` clamped to the band, which for
+`hmin < he` is `hstar` when it lies in the band and otherwise the nearer endpoint (`hmin` below the
+band, `he` above it). For `ρ0, H, β, ve > 0`, `sin γ > 0` and `hmin < he` it maximizes the
+deceleration on the band (`isMaxOn_bandPeakAltitude`). -/
+noncomputable def bandPeakAltitude (ρ0 H β γ hmin he : ℝ) : ℝ :=
+  max hmin (min (peakDecelerationAltitude ρ0 H β γ) he)
+
+/-- `2 * K * exp (-h / H) = exp ((hstar - h) / H)` for `K > 0`, `H ≠ 0`. -/
+private lemma two_mul_ballisticK_mul_exp {ρ0 H β γ : ℝ} (hH : H ≠ 0)
+    (hK : 0 < ballisticK ρ0 H β γ) (h : ℝ) :
+    2 * ballisticK ρ0 H β γ * Real.exp (-h / H) =
+      Real.exp ((peakDecelerationAltitude ρ0 H β γ - h) / H) := by
+  unfold peakDecelerationAltitude
+  have h2K : 0 < 2 * ballisticK ρ0 H β γ := mul_pos two_pos hK
+  have hsplit : (H * Real.log (2 * ballisticK ρ0 H β γ) - h) / H =
+      Real.log (2 * ballisticK ρ0 H β γ) + -h / H := by
+    field_simp
+    ring
+  rw [hsplit, Real.exp_add, Real.exp_log h2K]
+
+/-- The deceleration is positive for `ρ0, β, ve > 0`. -/
+lemma ballisticDeceleration_pos {ρ0 β ve : ℝ} (hρ0 : 0 < ρ0) (hβ : 0 < β) (hve : 0 < ve)
+    (H γ he h : ℝ) : 0 < ballisticDeceleration ρ0 H β γ he ve h := by
+  unfold ballisticDeceleration exponentialDensity
+  exact div_pos (mul_pos (mul_pos hρ0 (Real.exp_pos _))
+    (pow_pos (ballisticVelocity_pos hve ρ0 H β γ he h) 2)) (mul_pos two_pos hβ)
+
+/-- Derivative in altitude: for `H ≠ 0`, `β > 0` and a downward path, `sin γ > 0`,
+`a'(h) = a(h) * (2 * K * exp (-h / H) - 1) / H`. -/
+lemma hasDerivAt_ballisticDeceleration {H : ℝ} (hH : H ≠ 0) (ρ0 β γ he ve h : ℝ) (hβ : 0 < β)
+    (hγ : 0 < Real.sin γ) :
+    HasDerivAt (ballisticDeceleration ρ0 H β γ he ve)
+      (ballisticDeceleration ρ0 H β γ he ve h *
+        (2 * ballisticK ρ0 H β γ * Real.exp (-h / H) - 1) / H) h := by
+  have h1 : HasDerivAt (fun x : ℝ => -x / H) (-1 / H) h := (hasDerivAt_id' h).neg.div_const H
+  have hρ : HasDerivAt (fun x => exponentialDensity ρ0 H x)
+      (ρ0 * (Real.exp (-h / H) * (-1 / H))) h := h1.exp.const_mul ρ0
+  have hv := hasDerivAt_ballisticVelocity hH ρ0 β γ he ve h hβ hγ
+  have hprod := (hρ.mul (hv.mul hv)).div_const (2 * β)
+  have hfun : ballisticDeceleration ρ0 H β γ he ve = fun x => exponentialDensity ρ0 H x *
+      (ballisticVelocity ρ0 H β γ he ve x * ballisticVelocity ρ0 H β γ he ve x) / (2 * β) := by
+    funext x
+    unfold ballisticDeceleration
+    ring
+  rw [hfun]
+  convert hprod using 1
+  simp only [Pi.mul_apply]
+  unfold exponentialDensity ballisticK
+  have hD : 2 * β * Real.sin γ ≠ 0 := mul_ne_zero (mul_ne_zero two_ne_zero hβ.ne') hγ.ne'
+  field_simp
+  ring
+
+/-- The candidate maximum: for `ρ0, H, β, ve > 0` and `sin γ > 0` the derivative of the
+deceleration vanishes exactly at `hstar = H * log (2 * K)`. -/
+lemma deriv_ballisticDeceleration_eq_zero_iff {ρ0 H β γ ve : ℝ} (hρ0 : 0 < ρ0) (hH : 0 < H)
+    (hβ : 0 < β) (hγ : 0 < Real.sin γ) (hve : 0 < ve) (he h : ℝ) :
+    deriv (ballisticDeceleration ρ0 H β γ he ve) h = 0 ↔
+      h = peakDecelerationAltitude ρ0 H β γ := by
+  have hK := ballisticK_pos hρ0 hH hβ hγ
+  rw [(hasDerivAt_ballisticDeceleration hH.ne' ρ0 β γ he ve h hβ hγ).deriv,
+    two_mul_ballisticK_mul_exp hH.ne' hK h]
+  have ha := ballisticDeceleration_pos hρ0 hβ hve H γ he h
+  constructor
+  · intro h0
+    have h1 : Real.exp ((peakDecelerationAltitude ρ0 H β γ - h) / H) - 1 = 0 := by
+      rcases div_eq_zero_iff.mp h0 with h2 | h2
+      · exact (mul_eq_zero.mp h2).resolve_left ha.ne'
+      · exact absurd h2 hH.ne'
+    have h2 : (peakDecelerationAltitude ρ0 H β γ - h) / H = 0 :=
+      (Real.exp_eq_one_iff _).mp (sub_eq_zero.mp h1)
+    rcases div_eq_zero_iff.mp h2 with h3 | h3
+    · linarith
+    · exact absurd h3 hH.ne'
+  · intro hh
+    rw [hh, sub_self, zero_div, Real.exp_zero, sub_self, mul_zero, zero_div]
+
+/-- Below `hstar` the deceleration is strictly increasing in altitude: as the vehicle descends
+below `hstar`, the deceleration falls. -/
+lemma ballisticDeceleration_strictMonoOn {ρ0 H β γ ve : ℝ} (hρ0 : 0 < ρ0) (hH : 0 < H)
+    (hβ : 0 < β) (hγ : 0 < Real.sin γ) (hve : 0 < ve) (he : ℝ) :
+    StrictMonoOn (ballisticDeceleration ρ0 H β γ he ve)
+      (Set.Iic (peakDecelerationAltitude ρ0 H β γ)) := by
+  have hK := ballisticK_pos hρ0 hH hβ hγ
+  apply strictMonoOn_of_deriv_pos (convex_Iic _)
+  · exact fun x _ =>
+      (hasDerivAt_ballisticDeceleration hH.ne' ρ0 β γ he ve x hβ hγ).continuousAt.continuousWithinAt
+  · intro x hx
+    rw [interior_Iic] at hx
+    rw [(hasDerivAt_ballisticDeceleration hH.ne' ρ0 β γ he ve x hβ hγ).deriv,
+      two_mul_ballisticK_mul_exp hH.ne' hK x]
+    have ha := ballisticDeceleration_pos hρ0 hβ hve H γ he x
+    have hpos : 0 < (peakDecelerationAltitude ρ0 H β γ - x) / H := div_pos (sub_pos.mpr hx) hH
+    have h1 : 1 < Real.exp ((peakDecelerationAltitude ρ0 H β γ - x) / H) := by
+      rw [← Real.exp_zero]
+      exact Real.exp_lt_exp.mpr hpos
+    exact div_pos (mul_pos ha (sub_pos.mpr h1)) hH
+
+/-- Above `hstar` the deceleration is strictly decreasing in altitude: as the vehicle descends
+toward `hstar`, the deceleration grows. -/
+lemma ballisticDeceleration_strictAntiOn {ρ0 H β γ ve : ℝ} (hρ0 : 0 < ρ0) (hH : 0 < H)
+    (hβ : 0 < β) (hγ : 0 < Real.sin γ) (hve : 0 < ve) (he : ℝ) :
+    StrictAntiOn (ballisticDeceleration ρ0 H β γ he ve)
+      (Set.Ici (peakDecelerationAltitude ρ0 H β γ)) := by
+  have hK := ballisticK_pos hρ0 hH hβ hγ
+  apply strictAntiOn_of_deriv_neg (convex_Ici _)
+  · exact fun x _ =>
+      (hasDerivAt_ballisticDeceleration hH.ne' ρ0 β γ he ve x hβ hγ).continuousAt.continuousWithinAt
+  · intro x hx
+    rw [interior_Ici] at hx
+    rw [(hasDerivAt_ballisticDeceleration hH.ne' ρ0 β γ he ve x hβ hγ).deriv,
+      two_mul_ballisticK_mul_exp hH.ne' hK x]
+    have ha := ballisticDeceleration_pos hρ0 hβ hve H γ he x
+    have hneg : (peakDecelerationAltitude ρ0 H β γ - x) / H < 0 :=
+      div_neg_of_neg_of_pos (sub_neg.mpr hx) hH
+    have h1 : Real.exp ((peakDecelerationAltitude ρ0 H β γ - x) / H) < 1 := by
+      rw [← Real.exp_zero]
+      exact Real.exp_lt_exp.mpr hneg
+    exact div_neg_of_neg_of_pos (mul_neg_of_pos_of_neg ha (sub_neg.mpr h1)) hH
+
+/-- `hstar` is the strict global maximum of the deceleration over all altitudes. -/
+lemma ballisticDeceleration_lt_peak {ρ0 H β γ ve : ℝ} (hρ0 : 0 < ρ0) (hH : 0 < H) (hβ : 0 < β)
+    (hγ : 0 < Real.sin γ) (hve : 0 < ve) (he : ℝ) {h : ℝ}
+    (hne : h ≠ peakDecelerationAltitude ρ0 H β γ) :
+    ballisticDeceleration ρ0 H β γ he ve h <
+      ballisticDeceleration ρ0 H β γ he ve (peakDecelerationAltitude ρ0 H β γ) := by
+  rcases lt_or_gt_of_ne hne with hlt | hgt
+  · have hmono := ballisticDeceleration_strictMonoOn hρ0 hH hβ hγ hve he
+    exact hmono (Set.mem_Iic.mpr (le_of_lt hlt)) (Set.mem_Iic.mpr le_rfl) hlt
+  · have hanti := ballisticDeceleration_strictAntiOn hρ0 hH hβ hγ hve he
+    exact hanti (Set.mem_Ici.mpr le_rfl) (Set.mem_Ici.mpr (le_of_lt hgt)) hgt
+
+/-- Selection inside the band: when `hstar ∈ [hmin, he]` the band peak is `hstar`. -/
+lemma bandPeakAltitude_of_mem {ρ0 H β γ hmin he : ℝ}
+    (hmem : peakDecelerationAltitude ρ0 H β γ ∈ Set.Icc hmin he) :
+    bandPeakAltitude ρ0 H β γ hmin he = peakDecelerationAltitude ρ0 H β γ := by
+  unfold bandPeakAltitude
+  rw [min_eq_left hmem.2, max_eq_right hmem.1]
+
+/-- Selection below the band: when `hstar < hmin` the band peak is the lower endpoint `hmin`. -/
+lemma bandPeakAltitude_of_lt {ρ0 H β γ hmin he : ℝ}
+    (hlt : peakDecelerationAltitude ρ0 H β γ < hmin) :
+    bandPeakAltitude ρ0 H β γ hmin he = hmin := by
+  unfold bandPeakAltitude
+  exact max_eq_left ((min_le_left _ _).trans hlt.le)
+
+/-- Selection above the band: when `he < hstar` the band peak is the entry altitude `he`. -/
+lemma bandPeakAltitude_of_gt {ρ0 H β γ hmin he : ℝ} (hband : hmin < he)
+    (hgt : he < peakDecelerationAltitude ρ0 H β γ) :
+    bandPeakAltitude ρ0 H β γ hmin he = he := by
+  unfold bandPeakAltitude
+  rw [min_eq_right (le_of_lt hgt), max_eq_right (le_of_lt hband)]
+
+/-- Peak deceleration on the finite entry band: for `ρ0, H, β, ve > 0`, `sin γ > 0` and
+`hmin < he`, the selected altitude lies in the band and maximizes the deceleration on it. -/
+lemma isMaxOn_bandPeakAltitude {ρ0 H β γ ve hmin he : ℝ} (hρ0 : 0 < ρ0) (hH : 0 < H)
+    (hβ : 0 < β) (hγ : 0 < Real.sin γ) (hve : 0 < ve) (hband : hmin < he) :
+    bandPeakAltitude ρ0 H β γ hmin he ∈ Set.Icc hmin he ∧
+      IsMaxOn (ballisticDeceleration ρ0 H β γ he ve) (Set.Icc hmin he)
+        (bandPeakAltitude ρ0 H β γ hmin he) := by
+  have hmem : bandPeakAltitude ρ0 H β γ hmin he ∈ Set.Icc hmin he :=
+    ⟨le_max_left _ _, max_le hband.le (min_le_right _ _)⟩
+  refine ⟨hmem, isMaxOn_iff.2 fun x hx => ?_⟩
+  rcases lt_or_ge (peakDecelerationAltitude ρ0 H β γ) hmin with h1 | h1
+  · rw [bandPeakAltitude_of_lt h1]
+    exact (ballisticDeceleration_strictAntiOn hρ0 hH hβ hγ hve he).antitoneOn
+      (Set.mem_Ici.2 h1.le) (Set.mem_Ici.2 (h1.le.trans hx.1)) hx.1
+  · rcases le_or_gt (peakDecelerationAltitude ρ0 H β γ) he with h2 | h2
+    · rw [bandPeakAltitude_of_mem ⟨h1, h2⟩]
+      rcases eq_or_ne x (peakDecelerationAltitude ρ0 H β γ) with hx' | hx'
+      · rw [hx']
+      · exact (ballisticDeceleration_lt_peak hρ0 hH hβ hγ hve he hx').le
+    · rw [bandPeakAltitude_of_gt hband h2]
+      exact (ballisticDeceleration_strictMonoOn hρ0 hH hβ hγ hve he).monotoneOn
+        (Set.mem_Iic.2 (hx.2.trans h2.le)) (Set.mem_Iic.2 h2.le) hx.2
+
+/-- The selected altitude is the only maximizer on the band: every other altitude of the band has
+a strictly smaller deceleration. -/
+lemma ballisticDeceleration_lt_bandPeakAltitude {ρ0 H β γ ve hmin he : ℝ} (hρ0 : 0 < ρ0)
+    (hH : 0 < H) (hβ : 0 < β) (hγ : 0 < Real.sin γ) (hve : 0 < ve) (hband : hmin < he) {h : ℝ}
+    (hh : h ∈ Set.Icc hmin he) (hne : h ≠ bandPeakAltitude ρ0 H β γ hmin he) :
+    ballisticDeceleration ρ0 H β γ he ve h <
+      ballisticDeceleration ρ0 H β γ he ve (bandPeakAltitude ρ0 H β γ hmin he) := by
+  rcases lt_or_ge (peakDecelerationAltitude ρ0 H β γ) hmin with h1 | h1
+  · rw [bandPeakAltitude_of_lt h1] at hne ⊢
+    exact ballisticDeceleration_strictAntiOn hρ0 hH hβ hγ hve he (Set.mem_Ici.2 h1.le)
+      (Set.mem_Ici.2 (h1.le.trans hh.1)) (lt_of_le_of_ne hh.1 (Ne.symm hne))
+  · rcases le_or_gt (peakDecelerationAltitude ρ0 H β γ) he with h2 | h2
+    · rw [bandPeakAltitude_of_mem ⟨h1, h2⟩] at hne ⊢
+      exact ballisticDeceleration_lt_peak hρ0 hH hβ hγ hve he hne
+    · rw [bandPeakAltitude_of_gt hband h2] at hne ⊢
+      exact ballisticDeceleration_strictMonoOn hρ0 hH hβ hγ hve he
+        (Set.mem_Iic.2 (hh.2.trans h2.le)) (Set.mem_Iic.2 h2.le) (lt_of_le_of_ne hh.2 hne)
 
 end EntryPorts
