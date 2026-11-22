@@ -73,18 +73,6 @@ public theorem_wanted generating_function_term_representation_mono_base
       (∑' k : ℕ, (t k : ℝ) * (((r : ℝ) ^ n)⁻¹) ^ k)) % r ^ n
 
 /--
-**Floor quotient of a negated non-multiple.** Let $A$ and $B$ be integers with $A \ge 1$ and
-$B \ge 2$ such that $B$ does not divide $A$. Then
-$-\lfloor -A/B \rfloor = \lfloor A/B \rfloor + 1$.
-
-Source: M. Prunescu and J. M. Shunia, *On Modular Representations of C-Recursive Integer Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.3, Lemma 4.
--/
-public theorem_wanted neg_ediv_eq_ediv_add_one_of_not_dvd
-    (A B : ℤ) (hA : 1 ≤ A) (hB : 2 ≤ B) (hndvd : ¬ B ∣ A) :
-    -((-A) / B) = A / B + 1
-
-/--
 **Pulling a factor out of a remainder.** Let $a$, $y$ and $C$ be natural numbers with $ay < C$.
 Then $(ay) \bmod C = a \cdot (y \bmod C)$.
 

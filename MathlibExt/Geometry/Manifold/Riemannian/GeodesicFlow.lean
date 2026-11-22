@@ -82,22 +82,21 @@ def unitTangentBundle (I : ModelWithCorners ℝ E H) (M : Type*) [TopologicalSpa
     Set (TangentBundle I M) :=
   {p : TangentBundle I M | ‖p.snd‖ = 1}
 
-/-- `u : ℝ → TangentBundle I M` is the velocity curve `t ↦ γ'(t)` of a geodesic `γ` of `g`,
-with `γ = fun t ↦ (u t).proj`. The textbook definition is `∇_{γ'} γ' = 0`; Mathlib has no
-covariant derivative along curves, so the geodesic equation is stated in weak form: pairing
-with every vector field `W` differentiable at the base point. Under the structure's own
-hypotheses the two fields force the needed regularity: testing the geodesic equation against
-the coordinate vector fields of a chart shows that the coordinates of the velocity are
-differentiable, with derivative given by the geodesic equation, which is continuous since the
-metric is `C^1`; so the base curve is `C^2` in charts. For such curves the weak form is
-equivalent to `∇_{γ'} γ' = 0` by metric compatibility along `γ`
-(`d/dt g(γ', W∘γ) = g(∇_{γ'}γ', W) + g(γ', ∇_{γ'}W)`, and the values `W(γ t)` exhaust the
-tangent space); in a chart it is the Euler-Lagrange equation
-`g(γ'', w) + (∂_{γ'} g)(γ', w) - ½ (∂_w g)(γ', γ') = 0`. The connection is applied only to
-fields differentiable at the point, where Mathlib's connection is uniquely determined
-(`CovariantDerivative.IsLeviCivitaConnection.uniqueness`) by the Koszul formula
-(`leviCivitaConnection_apply_inner`) and equals the textbook value. No smoothness of the curve
-beyond what the two fields assert is assumed. -/
+/-- **Geodesic velocity curves.** Let $M$ be a $C^2$ manifold (boundary and corners allowed)
+modeled on a finite-dimensional real space, with a $C^1$ Riemannian metric
+$\langle \cdot, \cdot \rangle$ and Levi-Civita connection $\nabla$. A curve
+$u : \mathbb{R} \to TM$, with base curve $\gamma$ ($\gamma(t)$ is the base point of $u(t)$), is a
+geodesic velocity curve when for every $t \in \mathbb{R}$: $\gamma$ is differentiable at $t$ with
+velocity $\gamma'(t) = u(t)$; and for every vector field $W$ on $M$ that is differentiable at
+$\gamma(t)$, the function $s \mapsto \langle u(s), W(\gamma(s)) \rangle$ has derivative
+$\langle u(t), \nabla_{u(t)} W \rangle$ at $t$.
+
+The second condition is the weak form of the geodesic equation $\nabla_{\gamma'} \gamma' = 0$:
+by metric compatibility, $\frac{d}{dt} \langle \gamma', W \circ \gamma \rangle =
+\langle \nabla_{\gamma'} \gamma', W \rangle + \langle \gamma', \nabla_{\gamma'} W \rangle$, and the
+values $W(\gamma(t))$ exhaust the tangent space. The two conditions force $\gamma$ to be $C^2$ in
+charts, where the weak form is equivalent to $\nabla_{\gamma'} \gamma' = 0$; no further
+smoothness of the curve is assumed. -/
 structure IsGeodesicVelocityCurve (I : ModelWithCorners ℝ E H) {M : Type*}
     [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 2 M]
     [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
@@ -117,14 +116,18 @@ structure IsGeodesicVelocityCurve (I : ModelWithCorners ℝ E H) {M : Type*}
         (inner ℝ (u t).snd
           (CovariantDerivative.leviCivitaConnection I M W (u t).proj (u t).snd)) t
 
-/-- `φ : ℝ → TangentBundle I M → TangentBundle I M` is the geodesic flow of `g` on the tangent
-bundle: `φ 0 v = v` for every `v`, the flow law `φ (t + s) v = φ t (φ s v)` holds, and every
-orbit `fun t ↦ φ t v` is a geodesic velocity curve, so `φ t v = γ̇_v(t)` where `γ_v` is the
-geodesic with initial velocity `v`. The flow is characterized, not constructed; for a `C^∞`
-metric on a boundaryless manifold (complete, for the global flow) existence and uniqueness are
-classical and not formalized here. The group law is a field; no continuity, smoothness or
-conservation of speed is assumed: those are classical properties in that smooth setting only,
-not claimed in the file's general setting. -/
+/-- **Geodesic flow on the tangent bundle.** Let $M$ be a $C^2$ manifold (boundary and corners
+allowed) modeled on a finite-dimensional real space, with a $C^1$ Riemannian metric $g$. A
+family of maps $\varphi_t : TM \to TM$, $t \in \mathbb{R}$, is a geodesic flow of $g$ when
+$\varphi_0(v) = v$ for every $v \in TM$, $\varphi_{t+s}(v) = \varphi_t(\varphi_s(v))$ for all
+$t, s \in \mathbb{R}$ and $v \in TM$, and for every $v \in TM$ the orbit $t \mapsto \varphi_t(v)$
+is a geodesic velocity curve. Then $\varphi_t(v) = \gamma_v'(t)$ for a geodesic $\gamma_v$ with
+initial velocity $v$.
+
+The definition characterizes the flow and does not assert that one exists or is unique. For a
+$C^\infty$ metric on a boundaryless manifold, uniqueness is classical, and the global flow exists
+when the metric is also complete. No continuity, smoothness or conservation of speed is assumed.
+-/
 structure IsGeodesicFlow (I : ModelWithCorners ℝ E H) {M : Type*}
     [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 2 M]
     [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
@@ -138,14 +141,20 @@ structure IsGeodesicFlow (I : ModelWithCorners ℝ E H) {M : Type*}
   isGeodesicVelocityCurve : ∀ (v : TangentBundle I M),
     IsGeodesicVelocityCurve I (fun t ↦ φ t v)
 
-/-- `φ : ℝ → SM → SM` is the geodesic flow `φ_t : SM → SM` of Burns-Matveev §1 ("φ_t is the
-geodesic flow on SM; the geodesic defined by `v ∈ SM` is `γ_v`, parametrized by arclength").
-`φ 0 v = v` for every `v`, the flow law `φ (t + s) v = φ t (φ s v)` holds, and every orbit
-`fun t ↦ (φ t v : TangentBundle I M)` is a geodesic velocity curve. The flow is characterized,
-not constructed; for a `C^∞` metric on a boundaryless manifold (complete, for the global flow)
-existence and uniqueness are classical and not formalized here. The group law is a field; no
-continuity, smoothness or conservation of speed is assumed: those are classical properties in
-that smooth setting only, not claimed in the file's general setting. -/
+/-- **Geodesic flow on the unit tangent bundle.** Let $M$ be a $C^2$ manifold (boundary and
+corners allowed) modeled on a finite-dimensional real space, with a $C^1$ Riemannian metric $g$
+and unit tangent bundle $SM$. A family of maps $\varphi_t : SM \to SM$, $t \in \mathbb{R}$, is a
+geodesic flow on $SM$ when $\varphi_0(v) = v$ for every $v \in SM$,
+$\varphi_{t+s}(v) = \varphi_t(\varphi_s(v))$ for all $t, s \in \mathbb{R}$ and $v \in SM$, and
+for every $v \in SM$ the orbit $t \mapsto \varphi_t(v)$, viewed as a curve in $TM$, is a
+geodesic velocity curve. This is the geodesic flow $\varphi_t$ on $SM$ of Burns–Matveev §1:
+the orbit of $v$ is the velocity curve of a unit-speed geodesic $\gamma_v$ with initial
+velocity $v$.
+
+The definition characterizes the flow and does not assert that one exists or is unique. For a
+$C^\infty$ metric on a boundaryless manifold, uniqueness is classical, and the global flow exists
+when the metric is also complete. No continuity, smoothness or conservation of speed is assumed.
+-/
 structure IsUnitGeodesicFlow (I : ModelWithCorners ℝ E H) {M : Type*}
     [TopologicalSpace M] [ChartedSpace H M] [IsManifold I 2 M]
     [RiemannianBundle (fun x : M ↦ TangentSpace I x)]

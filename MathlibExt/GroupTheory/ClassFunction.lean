@@ -28,11 +28,16 @@ J.-P. Serre, Linear Representations of Finite Groups, GTM 42, §2 (functions on
 a group, class functions).
 -/
 
-/-- A function is a class function when it is constant on conjugacy classes. -/
+/-- **Class functions on a group.** Let $G$ be a group and $k$ a set. A function
+$f : G \to k$ is a class function when it is constant on conjugacy classes, that is,
+$f(h g h^{-1}) = f(g)$ for all $g, h \in G$. -/
 def IsClassFunction {G k : Type*} [Group G] (f : G → k) : Prop :=
   ∀ g h : G, f (h * g * h⁻¹) = f g
 
-/-- Class functions as a submodule of all functions. -/
+/-- **The space of class functions.** Let $G$ be a group and $k$ a field. The space of
+class functions $G \to k$ is the $k$-linear subspace of the vector space of all functions
+$G \to k$, under pointwise addition and scalar multiplication, consisting of the class
+functions. -/
 def classFunctions (G : Type*) [Group G] (k : Type*) [Field k] :
     Submodule k (G → k) where
   carrier := {f | IsClassFunction f}
@@ -41,7 +46,10 @@ def classFunctions (G : Type*) [Group G] (k : Type*) [Field k] :
   smul_mem' := fun c f hf a b => by simp only [Pi.smul_apply, hf a b]
 
 /--
-Characters of finite-dimensional representations are class functions.
+**Characters are class functions.** Let $G$ be a group and $k$ a field. For every
+finite-dimensional representation $V$ of $G$ over $k$, the character of $V$, the function
+sending $g \in G$ to the trace of the linear map by which $g$ acts on $V$, is a class
+function on $G$.
 
 Sources: `undergrad.yaml`, section "Representation theory of finite groups",
 entry "class function over a group"; J.-P. Serre, Linear Representations of
@@ -56,23 +64,29 @@ private theorem classFunction_eq_of_isConj {G k : Type*} [Group G]
   obtain ⟨h, rfl⟩ := isConj_iff.mp hxy
   exact (hf x h).symm
 
-/-- A class function takes equal values on conjugate elements. -/
+/-- **Class functions agree on conjugate elements.** Let $G$ be a group and let
+$f : G \to k$ be a class function with values in a set $k$. If $x, y \in G$ are conjugate,
+then $f(x) = f(y)$. -/
 public theorem IsClassFunction.eq_of_isConj {G k : Type*} [Group G]
     {f : G → k} (hf : IsClassFunction f) {x y : G} (hxy : IsConj x y) : f x = f y :=
   classFunction_eq_of_isConj hf hxy
 
 /--
-A function is a class function iff it factors through the quotient onto
-conjugacy classes.
+**Class functions factor through conjugacy classes.** Let $G$ be a group and $k$ a set,
+and write $[x]$ for the conjugacy class of $x \in G$. A function $f : G \to k$ is a class
+function if and only if there is a function $q$ from the set of conjugacy classes of $G$
+to $k$ such that $f(x) = q([x])$ for all $x \in G$.
+
+Proof: A class function is constant on each conjugacy class, so it descends to a function
+on conjugacy classes. Conversely, if $f(x) = q([x])$ for all $x \in G$, then for all
+$g, h \in G$ we have $f(h g h^{-1}) = q([h g h^{-1}]) = q([g]) = f(g)$, because
+$h g h^{-1}$ and $g$ are conjugate.
+
+Proves `Wanted` entry `isClassFunction_iff_factor_conjClasses`.
 
 Sources: `undergrad.yaml`, section "Representation theory of finite groups",
 entry "class function over a group"; J.-P. Serre, Linear Representations of
 Finite Groups, GTM 42, §2 (class functions as functions on conjugacy classes).
-
-Proves `Wanted` entry `isClassFunction_iff_factor_conjClasses`.
-
-Proof: Descend a class function with `Quotient.lift`, using `isConj_iff` for
-well-definedness, and use equality in `ConjClasses` for the converse.
 -/
 public theorem isClassFunction_iff_factor_conjClasses {G k : Type*}
     [Group G] (f : G → k) :
@@ -89,7 +103,12 @@ public theorem isClassFunction_iff_factor_conjClasses {G k : Type*}
           (ConjClasses.mk_eq_mk_iff_isConj.2 (isConj_iff.2 ⟨h, rfl⟩)).symm
       _ = f x := (hq x).symm
 
-/-- Class functions are linearly equivalent to functions on conjugacy classes. -/
+/-- **Class functions as functions on conjugacy classes.** Let $G$ be a group and $k$ a
+field, and write $[x]$ for the conjugacy class of $x \in G$. This is the $k$-linear
+isomorphism from the space of class functions $G \to k$ to the vector space of all
+functions from the set of conjugacy classes of $G$ to $k$ that sends a class function $f$
+to the function $[x] \mapsto f(x)$; its inverse sends a function $q$ on conjugacy classes
+to the class function $x \mapsto q([x])$. -/
 public def classFunctionsEquivConjClasses (G : Type*) [Group G] (k : Type*) [Field k] :
     classFunctions G k ≃ₗ[k] (ConjClasses G → k) where
   toFun f := Quotient.lift f fun _ _ => f.property.eq_of_isConj
@@ -116,14 +135,22 @@ public def classFunctionsEquivConjClasses (G : Type*) [Group G] (k : Type*) [Fie
     intro x
     rfl
 
-/-- Descending a class function and evaluating on its conjugacy class recovers its value. -/
+/-- **Evaluating a class function on conjugacy classes.** Let $G$ be a group and $k$ a
+field. For every class function $f : G \to k$ and every $x \in G$, the function on
+conjugacy classes that corresponds to $f$ under the linear isomorphism between class
+functions and functions on conjugacy classes takes the value $f(x)$ at the conjugacy
+class of $x$. -/
 @[simp]
 public theorem classFunctionsEquivConjClasses_apply_mk {G k : Type*} [Group G] [Field k]
     (f : classFunctions G k) (x : G) :
     classFunctionsEquivConjClasses G k f (ConjClasses.mk x) = (f : G → k) x :=
   rfl
 
-/-- Lifting a function on conjugacy classes evaluates by the quotient map. -/
+/-- **Lifting a function on conjugacy classes.** Let $G$ be a group and $k$ a field. For
+every function $q$ from the set of conjugacy classes of $G$ to $k$ and every $x \in G$,
+the class function that corresponds to $q$ under the inverse of the linear isomorphism
+between class functions and functions on conjugacy classes takes at $x$ the value of $q$
+at the conjugacy class of $x$. -/
 @[simp]
 public theorem classFunctionsEquivConjClasses_symm_apply {G k : Type*} [Group G] [Field k]
     (q : ConjClasses G → k) (x : G) :
@@ -131,18 +158,19 @@ public theorem classFunctionsEquivConjClasses_symm_apply {G k : Type*} [Group G]
   rfl
 
 /--
-The space of class functions has dimension equal to the number of conjugacy
-classes.
+**Dimension of the space of class functions.** Let $G$ be a finite group and $k$ a field.
+The space of class functions $G \to k$ is a $k$-vector space whose dimension equals the
+number of conjugacy classes of $G$.
+
+Proof: The linear isomorphism between class functions and functions on conjugacy classes
+reduces this to the space of all functions from the finite set of conjugacy classes of
+$G$ to $k$, whose dimension is the number of conjugacy classes.
+
+Proves `Wanted` entry `finrank_classFunctions_eq_card_conjClasses`.
 
 Sources: `undergrad.yaml`, section "Representation theory of finite groups",
 entry "class function over a group"; J.-P. Serre, Linear Representations of
 Finite Groups, GTM 42, §2.7, Theorem 6 (dimension count for class functions).
-
-Proves `Wanted` entry `finrank_classFunctions_eq_card_conjClasses`.
-
-Proof: Use `classFunctionsEquivConjClasses` and
-`Module.finrank_fintype_fun_eq_card`, after obtaining a finite quotient from
-`ConjClasses.mk_surjective`.
 -/
 public theorem finrank_classFunctions_eq_card_conjClasses (G : Type*)
     [Group G] [Fintype G] (k : Type*) [Field k] :
