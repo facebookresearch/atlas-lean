@@ -45,7 +45,8 @@ smoothness is unavailable. Instead we record the classical **Jacobian criterion*
 partial derivatives is the coordinate origin. This is exactly nonsingularity of the projective
 surface `V(f)` over an algebraically closed field, so `IsSmooth` is only defined under an
 `[IsAlgClosed k]` hypothesis; over a general field, smoothness must be checked after base
-change to `AlgebraicClosure k` (checking `k`-rational points alone is strictly weaker). By Euler's identity, when `3` is invertible in
+change to `AlgebraicClosure k` (checking `k`-rational points alone is strictly weaker). By Euler's
+identity, when `3` is invertible in
 `k` the condition `f = 0` is redundant given that all partials vanish
 (`CubicSurface.isSingularPoint_iff`). The definition is built purely by composing existing
 Mathlib API (`MvPolynomial.IsHomogeneous`, `MvPolynomial.pderiv`, `MvPolynomial.aeval`) rather
@@ -107,6 +108,7 @@ over $S$.
 
 This is the Jacobian criterion for smoothness of the projective surface
 $V(f) \subseteq \mathbb{P}^3$ cut out by $f$. -/
+@[nolint unusedArguments] -- `IsAlgClosed k` is intended; see the module docstring.
 def IsSmooth [IsAlgClosed k] (S : CubicSurface k) : Prop :=
   ∀ x : Fin 4 → k, S.IsSingularPoint x → x = 0
 

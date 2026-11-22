@@ -23,11 +23,8 @@ Infrastructure for the determinant identity of Gonzalez-Jimenez–Lozano-Robledo
 *Elliptic Curves with abelian division fields*, arXiv:1511.08578v2,
 Math. Z. 283 (2016), DOI `10.1007/s00209-016-1623-z`.
 
-Frozen source (path wrapped for line length), SHA-256
-`33306eccf5fce60cc116e22c4227a9125a35370982c51473be94db57ef21abc9`:
-`/data/users/akiezun/high_roi_mathlib/elementary_nt_gap_catalog_v1/`
-`primary_sources/partC/determinant_abelian_arxiv_source/extracted/`
-`gonzalez-lozano_v11b_arxiv.tex`.
+Frozen source: the arXiv source file `gonzalez-lozano_v11b_arxiv.tex`, SHA-256
+`33306eccf5fce60cc116e22c4227a9125a35370982c51473be94db57ef21abc9`.
 
 This file builds the concrete natural Galois action on affine nonsingular points,
 restricts it to the `p`-torsion subgroup (a `ZMod p`-module), packages each

@@ -37,9 +37,12 @@ index type `n`:
 
 Born probabilities use the imported `Quantum.FiniteState` API: `bornProb b ψ i` is
 `‖inner ℂ (b i) ψ‖ ^ 2` for an orthonormal basis `b` and a state in
-`EuclideanSpace ℂ (Fin n)`. Its `sum_bornProb` gives Parseval's identity, and
-`sum_bornProb_eq_one` gives normalization under `IsNormalized ψ`. No parallel matrix-coordinate
-Born rule is introduced here; two-state checks belong to `PhyslibExtTest.Quantum.FiniteState`.
+`EuclideanSpace ℂ (Fin n)`. `unitaryOrthonormalBasis U hU` is the
+matrix-to-`OrthonormalBasis` bridge: the columns of the unitary matrix `U` as an orthonormal
+basis (`coe_unitaryOrthonormalBasis`). `sum_bornProb_unitaryOrthonormalBasis` is Born
+normalization in a unitary measurement basis, a direct corollary of `sum_bornProb_eq_one`; no
+parallel matrix-coordinate Born rule is introduced. Two-state `bornProb` checks are in
+`PhyslibExtTest.Chemistry.Quantum.FinitePostulates`.
 
 The spectral theorem is Mathlib's `Matrix.IsHermitian.spectral_theorem`, used directly by
 consumers. The unitarity of the exponential of a skew-adjoint element is Mathlib's
@@ -60,6 +63,10 @@ and the physical constant `Constants.ℏ`) and `PauliMatrix.pauliMatrix`.
 
 ## ii. Key results
 
+- `Chemistry.Quantum.unitaryOrthonormalBasis` : columns of a unitary matrix as an
+  orthonormal basis (`coe_unitaryOrthonormalBasis`), the bridge to the canonical Born API.
+- `Chemistry.Quantum.sum_bornProb_unitaryOrthonormalBasis` : Born probabilities in a unitary
+  measurement basis sum to `1` for a normalized state.
 - `Chemistry.Quantum.unitary_time_evolution` : `exp (-(t / ħ) • (I • H))` is unitary.
 - `Chemistry.Quantum.no_finite_dim_canonical_commutator` : no finite matrices `X`, `P` satisfy
   `X * P - P * X = I • ħ • 1` when `ħ ≠ 0` and `0 < n`.
@@ -68,9 +75,10 @@ and the physical constant `Constants.ℏ`) and `PauliMatrix.pauliMatrix`.
 
 ## iii. Table of contents
 
-- A. Unitary time evolution
-- B. No finite-dimensional canonical commutator
-- C. Simultaneous diagonalization of commuting observables
+- A. Born rule in a unitary measurement basis
+- B. Unitary time evolution
+- C. No finite-dimensional canonical commutator
+- D. Simultaneous diagonalization of commuting observables
 
 ## iv. References
 
@@ -84,9 +92,10 @@ and the physical constant `Constants.ℏ`) and `PauliMatrix.pauliMatrix`.
   `Matrix.trace_mul_comm`, `Matrix.trace_smul`, `Matrix.trace_one`,
   `LinearMap.IsSymmetric.directSum_isInternal_of_commute`,
   `LinearMap.IsSymmetric.orthogonalFamily_eigenspace_inf_eigenspace`.
-- ATLAS: `PhyslibExt.Quantum.FiniteState`.
+- ATLAS: `PhyslibExt.Quantum.FiniteState` (`IsNormalized`, `bornProb`,
+  `sum_bornProb_eq_one`).
 
-## A. Unitary time evolution
+## A. Born rule in a unitary measurement basis
 -/
 
 @[expose] public section
@@ -94,6 +103,96 @@ and the physical constant `Constants.ℏ`) and `PauliMatrix.pauliMatrix`.
 open scoped Matrix
 
 namespace Chemistry.Quantum
+
+/-- The squared-norm sum of a coordinate vector equals its dot product with itself. -/
+private lemma ofReal_sum_norm_sq {n : ℕ} (w : Fin n → ℂ) :
+    ((∑ i, ‖w i‖ ^ 2 : ℝ) : ℂ) = star w ⬝ᵥ w := by
+  push_cast
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [Pi.star_apply, Complex.star_def, mul_comm, Complex.mul_conj']
+
+/-- A unitary matrix preserves dot products under the `Uᴴ`-action. -/
+private lemma dotProduct_conjTranspose_mulVec_of_mem_unitary {n : ℕ}
+    (U : Matrix (Fin n) (Fin n) ℂ) (hU : U ∈ Matrix.unitaryGroup (Fin n) ℂ)
+    (v : Fin n → ℂ) :
+    star (Uᴴ *ᵥ v) ⬝ᵥ (Uᴴ *ᵥ v) = star v ⬝ᵥ v := by
+  rw [Matrix.star_mulVec, Matrix.conjTranspose_conjTranspose, ← Matrix.dotProduct_mulVec,
+    Matrix.mulVec_mulVec, ← Matrix.star_eq_conjTranspose, Matrix.mem_unitaryGroup_iff.mp hU,
+    Matrix.one_mulVec]
+
+/-- The `Uᴴ`-action of a unitary matrix preserves Euclidean norms. -/
+lemma norm_toEuclideanLin_conjTranspose_of_mem_unitary {n : ℕ}
+    (U : Matrix (Fin n) (Fin n) ℂ) (hU : U ∈ Matrix.unitaryGroup (Fin n) ℂ)
+    (x : EuclideanSpace ℂ (Fin n)) :
+    ‖Matrix.toEuclideanLin (Uᴴ) x‖ = ‖x‖ := by
+  have hsq : ‖Matrix.toEuclideanLin (Uᴴ) x‖ ^ 2 = ‖x‖ ^ 2 := by
+    apply Complex.ofReal_injective
+    rw [EuclideanSpace.norm_sq_eq, EuclideanSpace.norm_sq_eq, ofReal_sum_norm_sq,
+      ofReal_sum_norm_sq]
+    show star (Uᴴ *ᵥ x.ofLp) ⬝ᵥ (Uᴴ *ᵥ x.ofLp) = star x.ofLp ⬝ᵥ x.ofLp
+    exact dotProduct_conjTranspose_mulVec_of_mem_unitary U hU _
+  exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp hsq
+
+/-- The `Uᴴ`-action of a unitary matrix is bijective, with inverse the `U`-action. -/
+lemma bijective_toEuclideanLin_conjTranspose_of_mem_unitary {n : ℕ}
+    (U : Matrix (Fin n) (Fin n) ℂ) (hU : U ∈ Matrix.unitaryGroup (Fin n) ℂ) :
+    Function.Bijective ⇑(Matrix.toEuclideanLin (Uᴴ)) := by
+  have hUHU : Uᴴ * U = 1 := by
+    rw [← Matrix.star_eq_conjTranspose, Matrix.mem_unitaryGroup_iff'.mp hU]
+  have hUUH : U * Uᴴ = 1 := by
+    rw [← Matrix.star_eq_conjTranspose, Matrix.mem_unitaryGroup_iff.mp hU]
+  have hcomp1 : Matrix.toEuclideanLin (Uᴴ) ∘ₗ Matrix.toEuclideanLin U = LinearMap.id := by
+    have h : Matrix.toLpLin 2 2 (Uᴴ) ∘ₗ Matrix.toLpLin 2 2 U = LinearMap.id := by
+      rw [← Matrix.toLpLin_mul, hUHU, Matrix.toLpLin_one]
+    exact h
+  have hcomp2 : Matrix.toEuclideanLin U ∘ₗ Matrix.toEuclideanLin (Uᴴ) = LinearMap.id := by
+    have h : Matrix.toLpLin 2 2 U ∘ₗ Matrix.toLpLin 2 2 (Uᴴ) = LinearMap.id := by
+      rw [← Matrix.toLpLin_mul, hUUH, Matrix.toLpLin_one]
+    exact h
+  refine ⟨?_, ?_⟩
+  · have hleft : Function.LeftInverse ⇑(Matrix.toEuclideanLin U) ⇑(Matrix.toEuclideanLin (Uᴴ)) :=
+      fun x => by rw [← LinearMap.comp_apply, hcomp2, LinearMap.id_apply]
+    exact hleft.injective
+  · have hright : Function.RightInverse ⇑(Matrix.toEuclideanLin U) ⇑(Matrix.toEuclideanLin (Uᴴ)) :=
+      fun x => by rw [← LinearMap.comp_apply, hcomp1, LinearMap.id_apply]
+    exact hright.surjective
+
+/-- The columns of a unitary matrix `U` as an orthonormal basis of `EuclideanSpace ℂ (Fin n)`:
+the `i`-th basis vector is the `i`-th column `U *ᵥ Pi.single i 1`
+(`coe_unitaryOrthonormalBasis`). The underlying linear isometry is the `Uᴴ`-action, inverted by
+the `U`-action. This is the matrix-to-`OrthonormalBasis` bridge for the canonical
+`Quantum.FiniteState` Born API. -/
+noncomputable def unitaryOrthonormalBasis {n : ℕ} (U : Matrix (Fin n) (Fin n) ℂ)
+    (hU : U ∈ Matrix.unitaryGroup (Fin n) ℂ) :
+    OrthonormalBasis (Fin n) ℂ (EuclideanSpace ℂ (Fin n)) :=
+  OrthonormalBasis.ofRepr
+    { toLinearEquiv :=
+        LinearEquiv.ofBijective (Matrix.toEuclideanLin (Uᴴ))
+          (bijective_toEuclideanLin_conjTranspose_of_mem_unitary U hU)
+      norm_map' := norm_toEuclideanLin_conjTranspose_of_mem_unitary U hU }
+
+/-- The `i`-th vector of `unitaryOrthonormalBasis U hU` is the `i`-th column of `U`. -/
+lemma coe_unitaryOrthonormalBasis {n : ℕ} (U : Matrix (Fin n) (Fin n) ℂ)
+    (hU : U ∈ Matrix.unitaryGroup (Fin n) ℂ) (i : Fin n) :
+    unitaryOrthonormalBasis U hU i = WithLp.toLp 2 (U *ᵥ Pi.single i 1) := by
+  have hUHU : Uᴴ * U = 1 := by
+    rw [← Matrix.star_eq_conjTranspose, Matrix.mem_unitaryGroup_iff'.mp hU]
+  rw [← (unitaryOrthonormalBasis U hU).repr_symm_single i, LinearIsometryEquiv.symm_apply_eq]
+  show WithLp.toLp 2 (Pi.single i 1) =
+    Matrix.toEuclideanLin (Uᴴ) (WithLp.toLp 2 (U *ᵥ Pi.single i 1))
+  rw [Matrix.toLpLin_apply, WithLp.ofLp_toLp, Matrix.mulVec_mulVec, hUHU, Matrix.one_mulVec]
+
+/-- **Born rule normalization in a unitary measurement basis.** If `U` is unitary, so that its
+columns form the orthonormal measurement basis `unitaryOrthonormalBasis U hU`, and `ψ` is a
+normalized state, then the canonical Born probabilities `bornProb` of the outcomes `i` sum to
+`1`. This is `Quantum.FiniteState.sum_bornProb_eq_one` for the bridge basis. -/
+lemma sum_bornProb_unitaryOrthonormalBasis {n : ℕ} (U : Matrix (Fin n) (Fin n) ℂ)
+    (hU : U ∈ Matrix.unitaryGroup (Fin n) ℂ) {ψ : EuclideanSpace ℂ (Fin n)}
+    (hψ : Quantum.FiniteState.IsNormalized ψ) :
+    ∑ i, Quantum.FiniteState.bornProb (unitaryOrthonormalBasis U hU) ψ i = 1 :=
+  Quantum.FiniteState.sum_bornProb_eq_one _ hψ
+
+/-! ## B. Unitary time evolution -/
 
 /-- **Unitary time evolution.** For a Hermitian Hamiltonian `H`, real time `t`, and real
 `ħ ≠ 0`, the propagator `exp (-(t / ħ) • (I • H))`, i.e. `exp (-i H t / ħ)`, is unitary. The
@@ -109,7 +208,7 @@ lemma unitary_time_evolution {n : Type*} [Fintype n] [DecidableEq n]
   exact NormedSpace.exp_mem_unitary_of_mem_skewAdjoint <| skewAdjoint.smul_mem _ <|
     hH.isSelfAdjoint.smul_mem_skewAdjoint Complex.conj_I
 
-/-! ## B. No finite-dimensional canonical commutator -/
+/-! ## C. No finite-dimensional canonical commutator -/
 
 /-- **No finite-dimensional canonical commutation relation.** For `0 < n` and `ħ ≠ 0`, no
 complex `n × n` matrices `X`, `P` satisfy `X * P - P * X = I • ħ • 1`. Proof by the trace
@@ -134,7 +233,7 @@ lemma no_finite_dim_canonical_commutator {n : ℕ} (hn : 0 < n) (ħ : ℝ) (hħ 
   have hħ' : (ħ : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr hħ
   exact mul_ne_zero hn' (mul_ne_zero Complex.I_ne_zero hħ') htrace_comm
 
-/-! ## C. Simultaneous diagonalization of commuting observables -/
+/-! ## D. Simultaneous diagonalization of commuting observables -/
 
 /-- In a finite-dimensional inner product space with an orthonormal basis indexed by `n`, an
 orthogonal internal direct sum of subspaces `V i` has an orthonormal basis indexed by `n`

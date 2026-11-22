@@ -20,14 +20,6 @@ namespace MetaMathlibExt
 /-! # Szele's criterion for cyclic numbers
 -/
 
-private theorem isCyclic_mul_comm_of_isCyclic (G : Type*) [Group G] [IsCyclic G] (x y : G) :
-    x * y = y * x := by
-  obtain ⟨g, hg⟩ := IsCyclic.exists_generator (α := G)
-  simp only [Subgroup.mem_zpowers_iff] at hg
-  obtain ⟨a, rfl⟩ := hg x
-  obtain ⟨b, rfl⟩ := hg y
-  rw [← zpow_add, ← zpow_add, add_comm]
-
 private theorem natCard_multiplicative_zmod (m : ℕ) [NeZero m] :
     Nat.card (Multiplicative (ZMod m)) = m := by
   rw [Nat.card_eq_fintype_card, Fintype.card_multiplicative, ZMod.card]
@@ -36,7 +28,7 @@ private theorem not_isCyclic_semidirect_of_ne {N G : Type*} [Group N] [Group G] 
     (a : N) (b : G) (h : ⇑(φ b) a ≠ a) : ¬ IsCyclic (N ⋊[φ] G) := by
   intro hc
   haveI := hc
-  have hxy := isCyclic_mul_comm_of_isCyclic _ (⟨a, 1⟩ : N ⋊[φ] G) (⟨1, b⟩ : N ⋊[φ] G)
+  have hxy := mul_comm' (⟨a, 1⟩ : N ⋊[φ] G) (⟨1, b⟩ : N ⋊[φ] G)
   have hleft : a * ⇑(φ 1) 1 = 1 * ⇑(φ b) a := congrArg SemidirectProduct.left hxy
   simp only [map_one, mul_one, one_mul] at hleft
   exact h hleft.symm

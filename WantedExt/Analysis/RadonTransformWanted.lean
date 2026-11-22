@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.RadonTransform` — radon_transform_inversion (manifest `manifests/problems/radon_transform_inversion.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.RadonTransform` —
+radon_transform_inversion (manifest `manifests/problems/radon_transform_inversion.toml`, rev 1,
+submitter Kim Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Analysis.RadonTransformWanted` namespace. Mathematical
-statements are unchanged. Source: J. Radon (1917); R. N. Bracewell (Fourier slice theorem, 1956). Knill, *Some fundamental theorems in mathematics*, §100.
+and placed the declarations in the `MathlibExt.Analysis.RadonTransformWanted` namespace.
+Mathematical
+statements are unchanged. Source: J. Radon (1917); R. N. Bracewell (Fourier slice theorem, 1956).
+Knill, *Some fundamental theorems in mathematics*, §100.
 -/
 module
 
@@ -75,7 +79,9 @@ noncomputable def fourier2 (f : ℝ × ℝ → ℂ) (k : ℝ × ℝ) : ℂ :=
 /- **Radon's theorem (diagonalization + pseudo-inversion).** The Fourier slice
 theorem diagonalizes the Radon transform, and the transform admits a left
 inverse on the Schwartz space. -/
-/-- Source: J. Radon (1917); R. N. Bracewell (Fourier slice theorem, 1956). Knill, *Some fundamental theorems in mathematics*, §100. Via leanprover/lean-eval@38361be, problem `radon_transform_inversion`. -/
+/-- Source: J. Radon (1917); R. N. Bracewell (Fourier slice theorem, 1956). Knill, *Some fundamental
+theorems in mathematics*, §100. Via leanprover/lean-eval@38361be, problem
+`radon_transform_inversion`. -/
 public theorem_wanted radon_can_be_diagonalized_and_pseudo_inverted :
     (∀ φ : SchwartzMap (ℝ × ℝ) ℂ, ∀ θ k : ℝ,
         fourier1 (fun p => radon (φ : ℝ × ℝ → ℂ) (p, θ)) k =

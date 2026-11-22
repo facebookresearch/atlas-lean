@@ -23,14 +23,19 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.AlgebraicGeometry.TopologicalReconstruction` — kollar_lieblich_olsson_sawin (manifest `manifests/problems/kollar_lieblich_olsson_sawin.toml`, rev 1, submitter Junyan Xu, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module
+`LeanEval.AlgebraicGeometry.TopologicalReconstruction` — kollar_lieblich_olsson_sawin (manifest
+`manifests/problems/kollar_lieblich_olsson_sawin.toml`, rev 1, submitter Junyan Xu, status active)
+—
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.AlgebraicGeometry.TopologicalReconstructionWanted` namespace. Mathematical
-statements are unchanged. Source: János Kollár, Max Lieblich, Martin Olsson, and Will Sawin. The Zariski topology, linear systems, and algebraic varieties.
+and placed the declarations in the `MathlibExt.AlgebraicGeometry.TopologicalReconstructionWanted`
+namespace. Mathematical
+statements are unchanged. Source: János Kollár, Max Lieblich, Martin Olsson, and Will Sawin. The
+Zariski topology, linear systems, and algebraic varieties.
 -/
 module
 
@@ -121,7 +126,9 @@ $3$ and $K$ and $L$ are essentially of finite type over $\mathbb{Q}$; or it is a
 $K$ and $L$ are uncountable. Then for every homeomorphism $h : X \to Y$ there is an isomorphism
 of schemes $X \cong Y$ whose underlying map is $h$.
 
-Source: János Kollár, Max Lieblich, Martin Olsson, and Will Sawin. The Zariski topology, linear systems, and algebraic varieties. Via leanprover/lean-eval@38361be, problem `kollar_lieblich_olsson_sawin`. -/
+Source: János Kollár, Max Lieblich, Martin Olsson, and Will Sawin. The Zariski topology,
+linear systems, and algebraic varieties. Via leanprover/lean-eval@38361be, problem
+`kollar_lieblich_olsson_sawin`. -/
 public theorem_wanted kollar_lieblich_olsson_sawin (X Y : Scheme.{u}) (K L : Type u)
     [Field K] [Field L] [CharZero K] [CharZero L] [IrreducibleSpace X] [IrreducibleSpace Y]
     (norm_X : IsNormalScheme X) (f : X ⟶ Spec (.of K)) (proj_f : IsProjectiveHom f)

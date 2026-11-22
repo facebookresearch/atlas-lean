@@ -19,8 +19,8 @@ public import MathlibExt.Probability.CdfContinuityPoints
 
 Standard use at the standard normal, the degenerate zero-variance Gaussian
 (a Dirac mass by `gaussianReal_zero_var`) showing the nonzero-variance
-hypothesis cannot be dropped, and the singleton-null round trip through the
-continuity iff.
+hypothesis cannot be dropped, the singleton-null round trip through the
+continuity iff, and the derivative `Φ' = φ` of the standard normal cdf.
 -/
 
 @[expose] public section
@@ -198,4 +198,31 @@ example : cdfQuantile (gaussianReal 0 1) (1 / 2) ≤ 0 := by
   have hmem : (1 / 2 : ℝ) ∈ Set.Ioo (0 : ℝ) 1 := ⟨by norm_num, by norm_num⟩
   exact (cdfQuantile_le_iff (gaussianReal 0 1) hmem).mpr cdf_gaussianReal_zero.ge
 
+/-- Use: at `0` the standard normal cdf has slope `φ(0) = 1 / √(2π)`. -/
+example : deriv (fun y => cdf (gaussianReal 0 1) y) 0 = (Real.sqrt (2 * Real.pi))⁻¹ := by
+  rw [(hasDerivAt_stdNormal_cdf 0).deriv]
+  simp [gaussianPDFReal]
+
+/-- Use: the standard normal cdf is differentiable everywhere. -/
+example (x : ℝ) : DifferentiableAt ℝ (cdf (gaussianReal 0 1)) x :=
+  (hasDerivAt_stdNormal_cdf x).differentiableAt
+
+/-- Use: quantile symmetry at a concrete level, `Φ⁻¹(1 - Φ 1) = -1`. -/
+example : cdfQuantile (gaussianReal 0 1) (1 - cdf (gaussianReal 0 1) 1) = -1 := by
+  rw [cdfQuantile_gaussianReal_one_sub,
+    cdfQuantile_cdf_of_strictMono _ (strictMono_cdf_gaussianReal 0 one_ne_zero)]
+
+/-- Use: symmetry pins the median, `Φ⁻¹(1 / 2) = 0`. -/
+example : cdfQuantile (gaussianReal 0 1) (1 / 2) = 0 := by
+  have h := cdfQuantile_gaussianReal_one_sub (1 / 2)
+  norm_num at h
+  linarith
+
+/-- Boundary: at `p = 1` both sides are the junk value `0` (`Φ⁻¹ 0 = Φ⁻¹ 1 = 0`), not `∓∞`,
+which is why symmetry needs no hypothesis on `p`. -/
+example : cdfQuantile (gaussianReal 0 1) (1 - 1) = 0 ∧ -cdfQuantile (gaussianReal 0 1) 1 = 0 := by
+  simp [cdfQuantile]
+
 end MathlibExt.Probability.GaussianCdf
+
+#print axioms ProbabilityTheory.cdfQuantile_gaussianReal_one_sub

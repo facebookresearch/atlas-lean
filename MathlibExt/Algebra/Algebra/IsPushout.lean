@@ -55,16 +55,13 @@ private lemma alphaR_tmul (s : S) (r : R') :
       algebraMap S S' s * algebraMap R' S' r := by
   simp [alphaR, Algebra.TensorProduct.lift_tmul]
 
-private lemma algebraMap_right_apply (r : R') :
-    algebraMap R' (S ⊗[R] R') r = (1 : S) ⊗ₜ[R] r := rfl
-
 private noncomputable def alpha : S ⊗[R] R' →ₐ[R'] S' :=
   { (alphaR : S ⊗[R] R' →ₐ[R] S').toRingHom with
     commutes' := fun r => by
       change (alphaR : S ⊗[R] R' →ₐ[R] S').toRingHom
           (algebraMap R' (S ⊗[R] R') r) = _
-      rw [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, algebraMap_right_apply, alphaR_tmul,
-        map_one, one_mul] }
+      rw [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, Algebra.TensorProduct.right_algebraMap_apply,
+        alphaR_tmul, map_one, one_mul] }
 
 private lemma alpha_apply (x : S ⊗[R] R') :
     (alpha : S ⊗[R] R' →ₐ[R'] S') x = (alphaR : S ⊗[R] R' →ₐ[R] S') x := rfl
@@ -88,7 +85,7 @@ private lemma includeLeft_compat :
       (algebraMap R' (S ⊗[R] R')).comp (algebraMap R R') := by
   ext r
   simp only [RingHom.coe_comp, Function.comp_apply,
-    Algebra.TensorProduct.includeLeftRingHom_apply, algebraMap_right_apply]
+    Algebra.TensorProduct.includeLeftRingHom_apply, Algebra.TensorProduct.right_algebraMap_apply]
   rw [Algebra.algebraMap_eq_smul_one, Algebra.algebraMap_eq_smul_one,
     TensorProduct.smul_tmul]
 
@@ -135,7 +132,7 @@ private theorem main
     induction x using TensorProduct.inductionOn with
     | add x y hx hy => rw [map_add, map_add, hx, hy]
     | tmul s r =>
-      rw [alpha_tmul, map_mul, AlgHom.commutes, algebraMap_right_apply]
+      rw [alpha_tmul, map_mul, AlgHom.commutes, Algebra.TensorProduct.right_algebraMap_apply]
       have hs : β (algebraMap S S' s) = s ⊗ₜ 1 := by
         have hcongr := congrArg (fun φ : S →+* S ⊗[R] R' => φ s) hβ
         simpa using hcongr

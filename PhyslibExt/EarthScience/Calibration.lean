@@ -28,6 +28,7 @@ Slope `0` is excluded: the estimator is undefined there.
 ## ii. Key results
 
 - `EarthScience.calibration_estimator_error`: pointwise error `ε / a`.
+- `EarthScience.calibrated_value`: calibrated value `x + ε / a`.
 - `EarthScience.calibration_estimator_expectation`: expectation
   `x + e / a`.
 
@@ -56,6 +57,13 @@ theorem calibration_estimator_error {a b x ε : ℝ} (ha : a ≠ 0) :
     ((a * x + b + ε - b) / a) - x = ε / a := by
   field_simp
   ring
+
+/-- Calibrated-value form of `calibration_estimator_error`: the
+calibrated value itself is `x + ε / a`. -/
+theorem calibrated_value {a b x ε : ℝ} (ha : a ≠ 0) :
+    (a * x + b + ε - b) / a = x + ε / a := by
+  have h := calibration_estimator_error ha (x := x) (ε := ε) (b := b) (a := a)
+  linarith
 
 /-! ## B. Expectation -/
 

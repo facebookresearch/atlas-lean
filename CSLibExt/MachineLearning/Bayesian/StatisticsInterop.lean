@@ -75,7 +75,7 @@ theorem posterior_gaussianMarginalLaw_one (m₀ : ℝ) {v₀ v : ℝ≥0} [NeZer
     gaussianReal_absolutelyContinuous m₀ (by positivity)
   have hae := hac (posterior_gaussianLikelihood_gaussianReal m₀ (v₀ := v₀) (v := v))
   filter_upwards [hae] with x hx
-  rw [hx, normalPosteriorKernel_apply m₀ h₀ h x]
+  rw [hx, normalPosteriorKernel_apply m₀ x]
 
 /-- **Categorical sequence kernel as product law.** On probability vectors, the categorical
 `N`-sample kernel equals the iid product of the one-draw categorical kernel. -/
@@ -109,16 +109,15 @@ theorem posterior_sharedSeqLaw_bayesPosterior (n N : ℕ) (α : Fin (n + 1) → 
   rw [← posterior_eq_bayesPosterior _ _ hev0]
   exact posterior_categoricalSeqKernel_dirichletMeasure hα s
 
-set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
 /-- **Finite-model weights are the kernel posterior.** The explicit posterior weights
 `postWeight` of the merged finite-model consistency theorem equal the `toReal` of the kernel
 posterior `bayesPosterior` of any product likelihood kernel against any counting-weighted prior. -/
-theorem postWeight_eq_bayesPosterior {Θ 𝓧 : Type*} [Fintype Θ] [DecidableEq Θ]
-    [Fintype 𝓧] [MeasurableSpace Θ] [Countable Θ] [MeasurableSingletonClass Θ]
+theorem postWeight_eq_bayesPosterior {Θ 𝓧 : Type*} [Fintype Θ]
+    [MeasurableSpace Θ] [Countable Θ] [MeasurableSingletonClass Θ]
     [MeasurableSpace 𝓧] [MeasurableSingletonClass 𝓧]
     (π : Θ → ℝ) (hπ : ∀ θ, 0 ≤ π θ) (f : Θ → 𝓧 → ℝ) (hf : ∀ θ x, 0 ≤ f θ x)
-    {Ω : Type*} [MeasurableSpace Ω] (X : ℕ → Ω → 𝓧) (n : ℕ) (ω : Ω) (θ : Θ)
+    {Ω : Type*} (X : ℕ → Ω → 𝓧) (n : ℕ) (ω : Ω) (θ : Θ)
     (μ : Measure Θ) (hμ : ∀ θ, μ {θ} = ENNReal.ofReal (π θ))
     (K : Kernel Θ (Fin n → 𝓧))
     (hK : ∀ θ (s : Fin n → 𝓧), K θ {s} = ∏ i, ENNReal.ofReal (f θ (s i))) :
