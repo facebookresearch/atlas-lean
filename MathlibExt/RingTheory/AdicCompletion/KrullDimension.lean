@@ -50,7 +50,7 @@ theorem IsLocalRing.two_le_ringKrullDim_adicCompletion_of_two_le
     (h : 2 ≤ ringKrullDim R) :
     2 ≤ ringKrullDim (AdicCompletion (IsLocalRing.maximalIdeal R) R) := by
   have : Module.FaithfullyFlat R (AdicCompletion (IsLocalRing.maximalIdeal R) R) :=
-    IsLocalRing.faithfullyFlat_adicCompletion_maximalIdeal R
+    Module.FaithfullyFlat.of_flat_of_isLocalHom
   have h2 : (2 : ℕ) ≤ Order.krullDim (PrimeSpectrum R) := by
     change ((2 : ℕ) : WithBot ℕ∞) ≤ ringKrullDim R
     exact h

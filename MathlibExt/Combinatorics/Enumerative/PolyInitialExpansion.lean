@@ -148,6 +148,7 @@ private theorem polyInitialExpansion_zero_full_range (n t : ℕ) (ht : t ≤ n)
         rw [Nat.stirlingSecond_eq_zero_of_lt (by omega : t < m)]
         simp
 
+set_option linter.unusedVariables false in
 /-- **Expansion by generalized Stirling numbers of the second kind.** For every natural number
 $n$, every real number $x$ and all real numbers $a(m, t)$, indexed by natural numbers $m$ and $t$,
 such that $a(m, t + 1) = m\,a(m, t) - (m + 1)\,a(m + 1, t)$ for all $m$ and $t$, writing

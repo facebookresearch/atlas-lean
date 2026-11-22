@@ -40,7 +40,9 @@ elements of $A$. In particular $0^{\wedge} A = \{0\}$.
 
 The source works in the integers; here $G$ is an arbitrary additive commutative monoid.
 
-Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of restricted sumset. -/
+Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
+Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of
+restricted sumset. -/
 public def restrictedSumset {G : Type*} [AddCommMonoid G] [DecidableEq G] (h : ℕ)
     (A : Finset G) : Finset G :=
   (A.powersetCard h).image (fun B => ∑ a ∈ B, a)
@@ -51,7 +53,9 @@ $\sum_{a \in B} a - 2 \sum_{a \in N} a$, where $B$ ranges over the $h$-element s
 $N$ ranges over the subsets of $B$. These are the sums of the elements of $B$ in which the
 elements of $N$ are given a negative sign.
 
-Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of restricted signed sumset. -/
+Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
+Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of
+restricted signed sumset. -/
 public def restrictedSignedSumset (h : ℕ) (A : Finset ℤ) : Finset ℤ :=
   ((A.powersetCard h).sigma (fun B => B.powerset)).image
     (fun p => ∑ a ∈ p.1, a - 2 * ∑ a ∈ p.2, a)
@@ -62,7 +66,9 @@ $A$ of integers and an integer $x$, $x$ lies in the restricted sumset $h^{\wedge
 if there is a function $c : \mathbb{Z} \to \mathbb{Z}$ with $c(a) \in \{0, 1\}$ for every
 $a \in A$, $\sum_{a \in A} c(a) = h$ and $x = \sum_{a \in A} c(a)\, a$.
 
-Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of restricted sumset. -/
+Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
+Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of
+restricted sumset. -/
 public theorem mem_restrictedSumset_iff (h : ℕ) (A : Finset ℤ) (x : ℤ) :
     x ∈ restrictedSumset h A ↔
       ∃ c : ℤ → ℤ,
@@ -108,7 +114,9 @@ $h^{\wedge}_{\pm} A$ if and only if there is a function $c : \mathbb{Z} \to \mat
 $c(a) \in \{-1, 0, 1\}$ for every $a \in A$, $\sum_{a \in A} |c(a)| = h$ and
 $x = \sum_{a \in A} c(a)\, a$.
 
-Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of restricted signed sumset. -/
+Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
+Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of
+restricted signed sumset. -/
 public theorem mem_restrictedSignedSumset_iff (h : ℕ) (A : Finset ℤ) (x : ℤ) :
     x ∈ restrictedSignedSumset h A ↔
       ∃ c : ℤ → ℤ,

@@ -13,7 +13,7 @@ public import Mathlib.SetTheory.Cardinal.NatCard
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Combinatorics.SimpleGraph.Acyclic
 import Mathlib.Data.Finset.Sort
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Data.Nat.Choose.Sum
 
 @[expose] public section

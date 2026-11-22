@@ -404,12 +404,6 @@ private lemma pizza_sum_odd {M : Type*} [AddCommMonoid M]
     have hk2 : 2 * (k / 2) + 1 = k := by omega
     rw [hk2]
 
-private lemma pizza_smul_eq_mul (r : ℝ) (z : ℂ) :
-    r • z = (r : ℂ) * z := by
-  apply Complex.ext
-  · simp
-  · simp
-
 private lemma pizza_polar_re (r φ : ℝ) :
     (Complex.polarCoord.symm (r, φ)).re = r * Real.cos φ := by
   rw [Complex.polarCoord_symm_apply]
@@ -722,7 +716,7 @@ private lemma pizza_sector_area (c p : ℝ × ℝ) (R : ℝ) (hR : 0 < R)
         change Complex.equivRealProdCLM.symm _ = _
         rw [map_add, map_smul]
         rfl
-      rw [hlin, hsymm_dir, pizza_smul_eq_mul] at hz
+      rw [hlin, hsymm_dir, Complex.real_smul] at hz
       exact hz
     · rintro ⟨r, θ, hr, ha, hL, hz⟩
       refine ⟨r, θ, hr, ha, hL, ?_⟩
@@ -758,7 +752,7 @@ private lemma pizza_sector_area (c p : ℝ × ℝ) (R : ℝ) (hR : 0 < R)
           * ((Real.cos θ : ℂ) + (Real.sin θ : ℂ) * Complex.I)
           = r • ((Real.cos θ : ℂ)
             + (Real.sin θ : ℂ) * Complex.I) := by
-        rw [pizza_smul_eq_mul]
+        rw [Complex.real_smul]
       rw [hz, hlin, hP, hmul, hsmul, hdir]
   rw [hvol1, hpre_inter, hpre_disc, hpre_cone]
   have hvol2 : MeasureTheory.volume

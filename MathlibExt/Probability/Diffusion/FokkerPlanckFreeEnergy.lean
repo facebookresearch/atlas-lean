@@ -89,7 +89,10 @@ private theorem spatial_contDiff (p : ℝ → ℝ → ℝ)
     (hp : ContDiff ℝ 2 (Function.uncurry p)) (t : ℝ) : ContDiff ℝ 2 (p t) := by
   exact hp.comp (contDiff_const.prodMk contDiff_id)
 
-private theorem integral_hasDerivAt (F F' : ℝ → ℝ → ℝ) (a b t : ℝ)
+/-- **Differentiation under the integral sign** for jointly continuous data: if `F` and `F'`
+are continuous on `ℝ × ℝ` and `F' s x` is the derivative of `r ↦ F r x` at `s` for all `s`
+and `x`, then `s ↦ ∫ x in a..b, F s x` has derivative `∫ x in a..b, F' t x` at `t`. -/
+lemma integral_hasDerivAt (F F' : ℝ → ℝ → ℝ) (a b t : ℝ)
     (hF : Continuous (Function.uncurry F)) (hF' : Continuous (Function.uncurry F'))
     (hderiv : ∀ s x, HasDerivAt (fun r => F r x) (F' s x) s) :
     HasDerivAt (fun s => ∫ x in a..b, F s x) (∫ x in a..b, F' t x) t := by

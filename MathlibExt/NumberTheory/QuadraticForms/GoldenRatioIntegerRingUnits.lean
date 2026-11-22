@@ -14,8 +14,8 @@ import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Computability.Reduce
+import Mathlib.NumberTheory.Real.GoldenRatio
 import Mathlib.NumberTheory.Real.Irrational
-import Mathlib.Tactic.NormNum.Prime
 
 @[expose] public section
 
@@ -26,17 +26,6 @@ namespace MetaMathlibExt
 private lemma sqrt5_sq : (Real.sqrt 5 : ℝ) ^ 2 = 5 :=
   Real.sq_sqrt (by norm_num)
 
-private lemma alpha_sq : ((1 + Real.sqrt 5) / 2 : ℝ) ^ 2 = ((1 + Real.sqrt 5) / 2 : ℝ) + 1 := by
-  have hs := sqrt5_sq
-  nlinarith [hs]
-
-private lemma alpha_gt_one : (1 : ℝ) < (1 + Real.sqrt 5) / 2 := by
-  have h : (2 : ℝ) < Real.sqrt 5 := by
-    have hs : (Real.sqrt 5) ^ 2 = 5 := Real.sq_sqrt (by norm_num)
-    have hnn : (0 : ℝ) ≤ Real.sqrt 5 := Real.sqrt_nonneg 5
-    nlinarith [hs, hnn]
-  linarith
-
 private lemma alpha_lt_two : ((1 + Real.sqrt 5) / 2 : ℝ) < 2 := by
   have h : Real.sqrt 5 < (3 : ℝ) := by
     have hs : (Real.sqrt 5) ^ 2 = 5 := Real.sq_sqrt (by norm_num)
@@ -44,15 +33,9 @@ private lemma alpha_lt_two : ((1 + Real.sqrt 5) / 2 : ℝ) < 2 := by
     nlinarith [hs, hnn]
   linarith
 
-private lemma alpha_pos : (0 : ℝ) < (1 + Real.sqrt 5) / 2 := by
-  linarith [alpha_gt_one]
-
-private lemma alpha_ne_zero : ((1 + Real.sqrt 5) / 2 : ℝ) ≠ 0 :=
-  ne_of_gt alpha_pos
-
 private lemma alpha_mul_sub_one : ((1 + Real.sqrt 5) / 2 : ℝ) * (((1 + Real.sqrt 5) / 2 : ℝ) - 1) = 1 := by
-  have hsq := alpha_sq
-  nlinarith [hsq]
+  have hsq := Real.goldenRatio_sq
+  linear_combination hsq
 
 private lemma alpha_inv_eq : ((1 + Real.sqrt 5) / 2 : ℝ)⁻¹ = ((1 + Real.sqrt 5) / 2 : ℝ) - 1 :=
   (eq_inv_of_mul_eq_one_right alpha_mul_sub_one).symm
@@ -60,25 +43,11 @@ private lemma alpha_inv_eq : ((1 + Real.sqrt 5) / 2 : ℝ)⁻¹ = ((1 + Real.sqr
 private lemma one_div_alpha : (1 : ℝ) / ((1 + Real.sqrt 5) / 2) = ((1 + Real.sqrt 5) / 2) - 1 := by
   rw [one_div, alpha_inv_eq]
 
-private lemma irrational_alpha : Irrational ((1 + Real.sqrt 5) / 2 : ℝ) := by
-  have h5 : Nat.Prime 5 := by norm_num
-  have h := Nat.Prime.irrational_sqrt h5
-  have h5' : Irrational (Real.sqrt 5) := by simpa using h
-  rw [irrational_iff_ne_rational] at h5' ⊢
-  intro a b hb hab
-  have hbR : ((b : ℤ) : ℝ) ≠ 0 := by exact_mod_cast hb
-  have hsqrt : (Real.sqrt 5 : ℝ) = (((2 * a - b : ℤ)) : ℝ) / (((b : ℤ)) : ℝ) := by
-    have h2 : (((2 * a - b : ℤ)) : ℝ) = 2 * (a : ℝ) - (b : ℝ) := by push_cast; ring
-    rw [h2, eq_div_iff hbR]
-    rw [eq_div_iff hbR] at hab
-    linarith [hab]
-  exact h5' _ _ hb hsqrt
-
 private lemma uniq_rep (a b a' b' : ℤ)
     (h : (a : ℝ) + (b : ℝ) * ((1 + Real.sqrt 5) / 2 : ℝ)
        = (a' : ℝ) + (b' : ℝ) * ((1 + Real.sqrt 5) / 2 : ℝ)) :
     a = a' ∧ b = b' := by
-  have hα := irrational_alpha
+  have hα := Real.goldenRatio_irrational
   rw [irrational_iff_ne_rational] at hα
   by_cases hb : b = b'
   · subst hb
@@ -99,7 +68,7 @@ private lemma uniq_rep (a b a' b' : ℤ)
 private lemma mul_rep (a1 b1 a2 b2 : ℤ) :
     ((a1 : ℝ) + (b1 : ℝ) * ((1 + Real.sqrt 5) / 2)) * ((a2 : ℝ) + (b2 : ℝ) * ((1 + Real.sqrt 5) / 2))
       = (((a1 * a2 + b1 * b2 : ℤ)) : ℝ) + (((a1 * b2 + a2 * b1 + b1 * b2 : ℤ))) * ((1 + Real.sqrt 5) / 2) := by
-  have hsq := alpha_sq
+  have hsq := Real.goldenRatio_sq
   push_cast
   linear_combination ((b1 : ℝ) * (b2 : ℝ)) * hsq
 
@@ -124,13 +93,9 @@ private lemma trace_rep (a b : ℤ) :
   push_cast
   ring
 
-private lemma alpha_mem_R :
-    ((1 + Real.sqrt 5) / 2 : ℝ) ∈ Algebra.adjoin ℤ ({(1 + Real.sqrt 5) / 2} : Set ℝ) :=
-  Algebra.subset_adjoin rfl
-
 private lemma alpha_sub_one_mem_R :
     (((1 + Real.sqrt 5) / 2 : ℝ) - 1) ∈ Algebra.adjoin ℤ ({(1 + Real.sqrt 5) / 2} : Set ℝ) :=
-  Subalgebra.sub_mem _ alpha_mem_R (Subalgebra.one_mem _)
+  Subalgebra.sub_mem _ (Algebra.self_mem_adjoin_singleton ℤ _) (Subalgebra.one_mem _)
 
 private lemma pow_mem_R (n : ℕ) :
     (((1 + Real.sqrt 5) / 2 : ℝ) ^ n) ∈ Algebra.adjoin ℤ ({(1 + Real.sqrt 5) / 2} : Set ℝ) := by
@@ -139,7 +104,7 @@ private lemma pow_mem_R (n : ℕ) :
   | succ k ih =>
     have : ((1 + Real.sqrt 5) / 2 : ℝ) ^ (k + 1) = ((1 + Real.sqrt 5) / 2 : ℝ) ^ k * ((1 + Real.sqrt 5) / 2) := by ring
     rw [this]
-    exact Subalgebra.mul_mem _ ih alpha_mem_R
+    exact Subalgebra.mul_mem _ ih (Algebra.self_mem_adjoin_singleton ℤ _)
 
 private lemma inv_pow_mem_R (n : ℕ) :
     ((((1 + Real.sqrt 5) / 2 : ℝ) - 1) ^ n) ∈ Algebra.adjoin ℤ ({(1 + Real.sqrt 5) / 2} : Set ℝ) := by
@@ -202,7 +167,7 @@ private lemma exists_unit_pow (n : ℤ) :
     have h1 : ((r * s : R) : ℝ) = (((1 + Real.sqrt 5) / 2 : ℝ) ^ n) * (((1 + Real.sqrt 5) / 2 : ℝ) ^ (-n)) := by
       simp [r, s]
     have h2 : (((1 : R)) : ℝ) = 1 := Subalgebra.coe_one R
-    rw [h1, h2, ← zpow_add₀ alpha_ne_zero]
+    rw [h1, h2, ← zpow_add₀ Real.goldenRatio_ne_zero]
     simp
   have hsr : s * r = 1 := by rw [mul_comm]; exact hrs
   exact ⟨Units.mk r s hrs hsr, rfl⟩
@@ -229,7 +194,7 @@ private lemma exists_unit_neg_pow (n : ℤ) :
     have h1 : ((r * s : R) : ℝ) = (-(((1 + Real.sqrt 5) / 2 : ℝ) ^ n)) * (-(((1 + Real.sqrt 5) / 2 : ℝ) ^ (-n))) := by
       simp [r, s]
     have h2 : (((1 : R)) : ℝ) = 1 := Subalgebra.coe_one R
-    rw [h1, h2, neg_mul_neg, ← zpow_add₀ alpha_ne_zero]
+    rw [h1, h2, neg_mul_neg, ← zpow_add₀ Real.goldenRatio_ne_zero]
     simp
   have hsr : s * r = 1 := by rw [mul_comm]; exact hrs
   exact ⟨Units.mk r s hrs hsr, rfl⟩
@@ -367,7 +332,7 @@ private lemma no_unit_in_interval (a b : ℤ)
 
 private lemma log_sandwich (y : ℝ) (hy : (0 : ℝ) < y) :
     ∃ n : ℤ, ((1 + Real.sqrt 5) / 2 : ℝ) ^ n ≤ y ∧ y < ((1 + Real.sqrt 5) / 2 : ℝ) ^ (n + 1) := by
-  have hLpos : (0 : ℝ) < Real.log ((1 + Real.sqrt 5) / 2) := Real.log_pos alpha_gt_one
+  have hLpos : (0 : ℝ) < Real.log ((1 + Real.sqrt 5) / 2) := Real.log_pos Real.one_lt_goldenRatio
   set L : ℝ := Real.log ((1 + Real.sqrt 5) / 2) with hL
   set t : ℝ := Real.log y / L with ht
   set n : ℤ := ⌊t⌋ with hn
@@ -390,7 +355,7 @@ private lemma log_sandwich (y : ℝ) (hy : (0 : ℝ) < y) :
   have hpow_n : Real.exp (((n : ℤ) : ℝ) * L) = ((1 + Real.sqrt 5) / 2 : ℝ) ^ n := by
     have hlog : Real.log ((((1 + Real.sqrt 5) / 2 : ℝ) ^ n)) = ((n : ℤ) : ℝ) * L := by
       rw [Real.log_zpow]
-    have hpos : (0 : ℝ) < (((1 + Real.sqrt 5) / 2 : ℝ) ^ n) := zpow_pos alpha_pos n
+    have hpos : (0 : ℝ) < (((1 + Real.sqrt 5) / 2 : ℝ) ^ n) := zpow_pos Real.goldenRatio_pos n
     have hexp := Real.exp_log hpos
     rw [hlog] at hexp
     exact hexp
@@ -399,7 +364,8 @@ private lemma log_sandwich (y : ℝ) (hy : (0 : ℝ) < y) :
       rw [Real.log_zpow]
     have hcast : ((((n + 1 : ℤ)) : ℝ)) = ((n : ℤ) : ℝ) + 1 := by push_cast; ring
     rw [hcast] at hlog
-    have hpos : (0 : ℝ) < (((1 + Real.sqrt 5) / 2 : ℝ) ^ (n + 1)) := zpow_pos alpha_pos (n + 1)
+    have hpos : (0 : ℝ) < (((1 + Real.sqrt 5) / 2 : ℝ) ^ (n + 1)) :=
+      zpow_pos Real.goldenRatio_pos (n + 1)
     have hexp := Real.exp_log hpos
     rw [hlog] at hexp
     exact hexp
@@ -412,7 +378,7 @@ private lemma pos_unit_eq_pow (u : (Algebra.adjoin ℤ ({(1 + Real.sqrt 5) / 2} 
     ∃ n : ℤ, ((u : Algebra.adjoin ℤ ({(1 + Real.sqrt 5) / 2} : Set ℝ)) : ℝ) = ((1 + Real.sqrt 5) / 2 : ℝ) ^ n := by
   set y : ℝ := ((u : Algebra.adjoin ℤ ({(1 + Real.sqrt 5) / 2} : Set ℝ)) : ℝ) with hy
   obtain ⟨n, hle, hlt⟩ := log_sandwich y hypos
-  have hαpos_n : (0 : ℝ) < (((1 + Real.sqrt 5) / 2 : ℝ) ^ n) := zpow_pos alpha_pos n
+  have hαpos_n : (0 : ℝ) < (((1 + Real.sqrt 5) / 2 : ℝ) ^ n) := zpow_pos Real.goldenRatio_pos n
   have hαne_n : (((1 + Real.sqrt 5) / 2 : ℝ) ^ n) ≠ 0 := ne_of_gt hαpos_n
   -- v = y / α^n satisfies 1 ≤ v < α
   set v : ℝ := y / (((1 + Real.sqrt 5) / 2 : ℝ) ^ n) with hvdef
@@ -421,7 +387,7 @@ private lemma pos_unit_eq_pow (u : (Algebra.adjoin ℤ ({(1 + Real.sqrt 5) / 2} 
     linarith [hle]
     -- 1 * α^n ≤ y ↔ α^n ≤ y
   have hpow_succ : (((1 + Real.sqrt 5) / 2 : ℝ) ^ (n + 1)) = (((1 + Real.sqrt 5) / 2 : ℝ) ^ n) * ((1 + Real.sqrt 5) / 2) :=
-    zpow_add_one₀ alpha_ne_zero n
+    zpow_add_one₀ Real.goldenRatio_ne_zero n
   have hv2 : v < (1 + Real.sqrt 5) / 2 := by
     rw [hvdef, div_lt_iff₀ hαpos_n]
     rw [hpow_succ] at hlt

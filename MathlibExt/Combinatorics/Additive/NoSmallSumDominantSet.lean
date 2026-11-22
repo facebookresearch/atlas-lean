@@ -1126,6 +1126,7 @@ theorem card_add_le_card_sub_of_card_lt_six (A : Finset ℤ) (h_card : A.card < 
   · obtain ⟨a, b, c, d, e, hab, hbc, hcd, hde, rfl⟩ := exists_sorted_of_card_eq_five A h
     exact nssd_card_five a b c d e hab hbc hcd hde
 
+set_option linter.unusedVariables false in
 /--
 **Chu's theorem: sets with fewer than six elements are not sum-dominant.** Let $A$ be a finite
 set of nonnegative integers with $|A| < 6$. Then $|A + A| \le |A - A|$, where
@@ -1142,6 +1143,7 @@ Sequences 22 (2019), Article 19.3.7, Theorem (label notsum-dominant),
 lines 126–128,
 https://cs.uwaterloo.ca/journals/JIS/VOL22/Chu/chu5.tex
 -/
+@[nolint unusedArguments] -- `h_nonneg` keeps the `Wanted` entry's statement
 theorem no_small_sum_dominant :
     ∀ (A : Finset ℤ) (h_nonneg : ∀ x ∈ A, 0 ≤ x) (h_card : A.card < 6),
       (A + A).card ≤ (A - A).card :=

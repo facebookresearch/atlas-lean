@@ -13,8 +13,8 @@ public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Rat.Defs
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Int
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.RingTheory.Coprime.Lemmas
 import Mathlib.Tactic.FieldSimp

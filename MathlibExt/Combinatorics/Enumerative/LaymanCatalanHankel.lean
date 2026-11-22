@@ -13,7 +13,7 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Ring.Lemmas
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.LinearAlgebra.Matrix.Block
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Linarith
@@ -767,6 +767,7 @@ Source hash `12b867e2c1325f629838bfe224904d3bc59e21050fc9bdabc79d70f6a70f71ee`.
 Concept `jis_dep_63ab37918a459a2ac2623d75`.
 Corrected occurrence count: 3 mentions / 2 papers / 0 proof uses.
 -/
+@[nolint unusedArguments]
 theorem layman_catalan_sum_hankel_det (n : ℕ) (hn : 1 ≤ n) :
     Matrix.det (fun i j : Fin n =>
       ((catalan (i.val + j.val + 1) + catalan (i.val + j.val + 2) : ℕ) : ℤ)) =

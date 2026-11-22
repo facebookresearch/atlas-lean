@@ -13,6 +13,7 @@ public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 public import Mathlib.InformationTheory.KullbackLeibler.Basic
 public import MathlibExt.InformationTheory.FiniteEntropy
+public import MathlibExt.Probability.ProbabilityMassFunction.Marginal
 
 /-!
 # Shannon conditional entropy through finite measurable quantizations
@@ -99,28 +100,13 @@ open Real
 
 variable {α β : Type*}
 
-theorem map_fst_apply [Finite α] (p : PMF (α × β)) [Fintype β] (a : α) :
-    (p.map Prod.fst) a = ∑ b, p (a, b) := by
-  classical
-  have := Fintype.ofFinite α
-  rw [PMF.map_apply, tsum_fintype, Fintype.sum_prod_type,
-    Finset.sum_eq_single a (fun x _ hx ↦ by simp [Ne.symm hx]) (by simp)]
-  simp
+alias map_fst_apply := PMF.map_fst_apply
 
-theorem map_snd_apply [Fintype α] [Finite β] (p : PMF (α × β)) (b : β) :
-    (p.map Prod.snd) b = ∑ a, p (a, b) := by
-  classical
-  have := Fintype.ofFinite β
-  rw [PMF.map_apply, tsum_fintype, Fintype.sum_prod_type]
-  simp
+alias map_snd_apply := PMF.map_snd_apply
 
-theorem toReal_map_fst_apply [Finite α] [Fintype β] (p : PMF (α × β)) (a : α) :
-    ((p.map Prod.fst) a).toReal = ∑ b, (p (a, b)).toReal := by
-  rw [map_fst_apply, ENNReal.toReal_sum fun b _ ↦ PMF.apply_ne_top p _]
+alias toReal_map_fst_apply := PMF.toReal_map_fst_apply
 
-theorem toReal_map_snd_apply [Fintype α] [Finite β] (p : PMF (α × β)) (b : β) :
-    ((p.map Prod.snd) b).toReal = ∑ a, (p (a, b)).toReal := by
-  rw [map_snd_apply, ENNReal.toReal_sum fun a _ ↦ PMF.apply_ne_top p _]
+alias toReal_map_snd_apply := PMF.toReal_map_snd_apply
 
 variable [MeasurableSpace α] [MeasurableSingletonClass α] [MeasurableSpace β]
   [MeasurableSingletonClass β]

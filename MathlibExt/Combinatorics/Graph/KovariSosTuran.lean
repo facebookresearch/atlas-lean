@@ -326,7 +326,7 @@ graph $K_{s,t}$. Then
 $$z(m, n; s, t) \le (s - 1)^{1/t} (n - t + 1) m^{1 - 1/t} + (t - 1) m.$$
 
 Proof: Double-count common right neighborhoods, apply the power-mean inequality, and take a real
-$t$-th root, following Kővári–Sós–Turán (1954) and Jukna, Theorem 2.10.
+$t$-th root, following Kővári–Sós–Turán (1954).
 
 Proves `Wanted` entry `kovari_sos_turan`.
 

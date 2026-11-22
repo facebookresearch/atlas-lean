@@ -26,7 +26,7 @@ import Mathlib.Combinatorics.Enumerative.Pentagonal.Basic
 public import Mathlib.Combinatorics.Enumerative.Pentagonal.PowerSeries
 import Mathlib.Data.Finset.Range
 import Mathlib.Data.Int.Cast.Lemmas
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Data.Nat.Choose.Basic
 import Mathlib.Data.Nat.Prime.Defs
 import Mathlib.Data.ZMod.Basic

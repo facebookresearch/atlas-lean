@@ -13,7 +13,7 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.RingTheory.PowerSeries.Basic
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Combinatorics.Enumerative.Composition
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
