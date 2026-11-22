@@ -60,7 +60,8 @@ it takes, and adds `new` when it adds declarations that get pages under
 - **A renamed or removed declaration keeps its pages.** In the same pull
   request, update each annotation that names it, as its Lean link or as a
   `held` marker, and keep the article id. When a declaration goes with no
-  successor, remove the link and keep the page as a planned page
+  successor, remove the Lean link or `held` marker, whichever names it, and
+  keep the page as a planned page
   ([Writing pages](docs/BLUEPRINT.md#writing-pages)).
 
 These are graph changes; [Graph PRs](#graph-prs) says what they need.
