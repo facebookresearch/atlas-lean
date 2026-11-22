@@ -12,6 +12,8 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Logic.Function.Basic
+public import MathlibExt.Analysis.Convex.StdSimplexWeights
+public import MathlibExt.GameTheory.CorrelatedEquilibrium
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
@@ -69,10 +71,43 @@ open scoped BigOperators
 variable {K : Type*} [Fintype K] [DecidableEq K] [Nonempty K]
 variable {T : ℕ}
 
-/-- The probability simplex on `K`: nonnegative weights summing to one.
-(C1 base defs) -/
+/-- The probability simplex on `K`: `p` is the weight function of a point
+of the standard simplex `Convexity.StdSimplex ℝ K`. (C1 base defs) -/
 def IsSimplex (p : K → ℝ) : Prop :=
-  (∀ a, 0 ≤ p a) ∧ ∑ a, p a = 1
+  ∃ x : Convexity.StdSimplex ℝ K, ∀ a, x.weights a = p a
+
+omit [DecidableEq K] [Nonempty K] in
+/-- A weight function is in the simplex when it is nonnegative and sums
+to one. -/
+theorem isSimplex_iff (p : K → ℝ) :
+    IsSimplex p ↔ (∀ a, 0 ≤ p a) ∧ ∑ a, p a = 1 := by
+  constructor
+  · rintro ⟨x, hx⟩
+    refine ⟨fun a => hx a ▸ x.nonneg a, ?_⟩
+    have h := x.total
+    rw [Finsupp.sum_fintype _ _ fun _ => rfl] at h
+    rw [← h]
+    exact Finset.sum_congr rfl fun a _ => (hx a).symm
+  · rintro ⟨h0, h1⟩
+    exact ⟨Convexity.StdSimplex.ofWeights p h0 h1,
+      Convexity.StdSimplex.ofWeights_weights p h0 h1⟩
+
+/-- The standard-simplex point whose weights are `p`. -/
+noncomputable def IsSimplex.toStdSimplex (p : K → ℝ) (h : IsSimplex p) :
+    Convexity.StdSimplex ℝ K :=
+  Classical.choose h
+
+omit [Fintype K] [DecidableEq K] [Nonempty K] in
+/-- The weights of the standard-simplex point built from `p` are `p`. -/
+theorem IsSimplex.toStdSimplex_weights (p : K → ℝ) (h : IsSimplex p) (a : K) :
+    (IsSimplex.toStdSimplex p h).weights a = p a :=
+  Classical.choose_spec h a
+
+omit [Fintype K] [DecidableEq K] [Nonempty K] in
+/-- The weights of a point of the standard simplex lie in the simplex. -/
+theorem isSimplex_weights (x : Convexity.StdSimplex ℝ K) :
+    IsSimplex x.weights :=
+  ⟨x, fun _ => rfl⟩
 
 /-- Cumulative loss of the fixed action `a` over the horizon. (C1 base defs) -/
 def cumulativeLoss (loss : Fin T → K → ℝ) (a : K) : ℝ :=
@@ -95,8 +130,9 @@ def swapRegret (play loss : Fin T → K → ℝ) : ℝ :=
     Finset.univ.inf' Finset.univ_nonempty
       (fun δ : K → K => ∑ t, ∑ a, play t a * loss t (δ a))
 
-/-- Average regret: external regret divided by the horizon. (C1 base defs) -/
-noncomputable def averageRegret (play loss : Fin T → K → ℝ) : ℝ :=
+/-- Average regret: external regret divided by the horizon. The horizon
+must be positive. (C1 base defs) -/
+noncomputable def averageRegret [NeZero T] (play loss : Fin T → K → ℝ) : ℝ :=
   externalRegret play loss / (T : ℝ)
 
 /-- Regret against any fixed distribution is at most external regret.
@@ -105,7 +141,7 @@ theorem expectedLoss_sub_weightedCumulative_le_externalRegret
     (play loss : Fin T → K → ℝ) (q : K → ℝ) (hq : IsSimplex q) :
     expectedLoss play loss - ∑ a, q a * cumulativeLoss loss a ≤
       externalRegret play loss := by
-  obtain ⟨hqnonneg, hqsum⟩ := hq
+  obtain ⟨hqnonneg, hqsum⟩ := (isSimplex_iff q).mp hq
   simp only [externalRegret]
   refine sub_le_sub_left ?_ _
   have hC : Finset.univ.inf' Finset.univ_nonempty (cumulativeLoss loss)
@@ -128,7 +164,7 @@ theorem externalRegret_le_swapRegret (play loss : Fin T → K → ℝ)
       = cumulativeLoss loss aStar := by
     show (∑ t, ∑ a, play t a * loss t aStar) = ∑ t, loss t aStar
     refine Finset.sum_congr rfl fun t _ => ?_
-    obtain ⟨-, hpt⟩ := hplay t
+    obtain ⟨-, hpt⟩ := (isSimplex_iff _).mp (hplay t)
     rw [← Finset.sum_mul, hpt, one_mul]
   rw [haStar]
   exact le_trans (Finset.inf'_le _ (Finset.mem_univ (fun _ => aStar))) (le_of_eq hEq)
@@ -142,7 +178,7 @@ theorem externalRegret_add_roundConst (play loss : Fin T → K → ℝ)
   have hinner : ∀ t : Fin T, (∑ a, play t a * (loss t a + c t))
       = (∑ a, play t a * loss t a) + c t := by
     intro t
-    obtain ⟨-, hpt⟩ := hplay t
+    obtain ⟨-, hpt⟩ := (isSimplex_iff _).mp (hplay t)
     have hsplit : (∑ a, play t a * (loss t a + c t))
         = ∑ a, (play t a * loss t a + play t a * c t) :=
       Finset.sum_congr rfl fun a _ => mul_add _ _ _
@@ -180,21 +216,42 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 variable {S : ι → Type*} [∀ i, Fintype (S i)] [∀ i, DecidableEq (S i)]
 
 /-- Expected cost of playing `a` against the other players' independent mixed
-strategies. (C3 game layer) -/
+strategies. This is `CorrelatedEquilibrium.pureCost`. (C3 game layer) -/
 def inducedLoss (cost : ι → (∀ i, S i) → ℝ) (σ : ∀ i, S i → ℝ) (i : ι)
     (a : S i) : ℝ :=
-  ∑ s ∈ Finset.univ.filter (fun s : ∀ j, S j => s i = a),
-    cost i s * ∏ j ∈ Finset.univ.erase i, σ j (s j)
+  MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost cost σ i a
+
+/-- The induced loss is the correlated-equilibrium pure cost. -/
+theorem inducedLoss_eq_pureCost (cost : ι → (∀ i, S i) → ℝ)
+    (σ : ∀ i, S i → ℝ) (i : ι) (a : S i) :
+    inducedLoss cost σ i a
+      = MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost cost σ i a :=
+  rfl
+
+/-- The induced loss as the cost weighted by the opponents' mixed play,
+summed over profiles where player `i` plays `a`. -/
+theorem inducedLoss_eq_sum_filter (cost : ι → (∀ i, S i) → ℝ)
+    (σ : ∀ i, S i → ℝ) (i : ι) (a : S i) :
+    inducedLoss cost σ i a
+      = ∑ s ∈ Finset.univ.filter (fun s : ∀ j, S j => s i = a),
+        cost i s * ∏ j ∈ Finset.univ.erase i, σ j (s j) := by
+  unfold inducedLoss MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost
+    MathlibExt.GameTheory.CorrelatedEquilibrium.othersWeight
+  rw [Finset.sum_filter]
+  refine Finset.sum_congr rfl fun s _ => ?_
+  by_cases h : s i = a
+  · simp [h, mul_comm]
+  · simp [h]
 
 /-- Induced losses are nonnegative for nonnegative costs. (C3 game layer) -/
 theorem inducedLoss_nonneg {cost : ι → (∀ i, S i) → ℝ} {σ : ∀ i, S i → ℝ}
     {i : ι} {a : S i} (hσ : ∀ j, IsSimplex (σ j))
     (hcost : ∀ j s, 0 ≤ cost j s) : 0 ≤ inducedLoss cost σ i a := by
-  simp only [inducedLoss]
+  rw [inducedLoss_eq_sum_filter]
   refine Finset.sum_nonneg fun s _ => ?_
   refine mul_nonneg (hcost i s) ?_
   refine Finset.prod_nonneg fun j _ => ?_
-  obtain ⟨hjn, -⟩ := hσ j
+  obtain ⟨hjn, -⟩ := (isSimplex_iff _).mp (hσ j)
   exact hjn _
 
 /-- Induced losses are at most one for [0,1] costs. (C3 game layer) -/
@@ -204,7 +261,7 @@ theorem inducedLoss_le_one {cost : ι → (∀ i, S i) → ℝ} {σ : ∀ i, S i
   have hW : ∀ s : ∀ j, S j, 0 ≤ ∏ j ∈ Finset.univ.erase i, σ j (s j) := by
     intro s
     refine Finset.prod_nonneg fun j _ => ?_
-    obtain ⟨hjn, -⟩ := hσ j
+    obtain ⟨hjn, -⟩ := (isSimplex_iff _).mp (hσ j)
     exact hjn _
   have hBridge : Finset.univ.filter (fun s : ∀ j, S j => s i = a)
       = Fintype.piFinset (Function.update (fun _ => Finset.univ) i {a}) := by
@@ -220,7 +277,7 @@ theorem inducedLoss_le_one {cost : ι → (∀ i, S i) → ℝ} {σ : ∀ i, S i
     · subst hj
       rw [Function.update_self, Function.update_self, Finset.sum_singleton]
     · rw [Function.update_of_ne hj, Function.update_of_ne hj]
-      obtain ⟨-, hjsum⟩ := hσ j
+      obtain ⟨-, hjsum⟩ := (isSimplex_iff _).mp (hσ j)
       exact hjsum
   have hLHS : ∏ j, ∑ b ∈ Function.update (fun _ => Finset.univ) i {a} j,
       Function.update (fun j b => σ j b) i (fun _ => 1) j b = 1 :=
@@ -253,7 +310,7 @@ theorem inducedLoss_le_one {cost : ι → (∀ i, S i) → ℝ} {σ : ∀ i, S i
       ∏ j ∈ Finset.univ.erase i, σ j (x j) = 1 := by
     rw [← hRHS, ← hkey]
     exact hLHS
-  simp only [inducedLoss]
+  rw [inducedLoss_eq_sum_filter]
   rw [hBridge, ← hsum]
   refine Finset.sum_le_sum fun s _ => ?_
   calc cost i s * ∏ j ∈ Finset.univ.erase i, σ j (s j)
