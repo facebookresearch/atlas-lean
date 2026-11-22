@@ -33,6 +33,7 @@ module
 public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import Mathlib.NumberTheory.ModularForms.SlashActions
+public import MathlibExt.NumberTheory.ModularForms.CuspFormConj
 public import MathlibExt.NumberTheory.ModularForms.OldForms
 import MathlibExt.NumberTheory.ModularForms.StrictPeriodsGamma0
 
@@ -54,10 +55,7 @@ noncomputable section
 
 namespace ModularFormClass
 
-/-- The `n`-th `q`-coefficient of a function on the upper half plane. -/
-def qCoeff (f : ℍ → ℂ) (n : ℕ) : ℂ :=
-  (UpperHalfPlane.qExpansion 1 f).coeff n
-
+/-- `qCoeff` (defined in `CuspFormConj`) unfolds to the `q`-expansion coefficient. -/
 lemma qCoeff_def (f : ℍ → ℂ) (n : ℕ) :
     qCoeff f n = (UpperHalfPlane.qExpansion 1 f).coeff n :=
   rfl
