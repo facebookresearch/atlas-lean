@@ -15,7 +15,9 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 /-! # Root lemmas for reciprocal sums of `m`th-order linear recursive sequences
 
 Statement-only requests for the self-contained lemmas of Du's paper on reciprocal sums
-and products of `m`th-order linear recursive sequences.
+and products of `m`th-order linear recursive sequences. The Eneström–Kakeya bound
+`norm_le_one_of_aeval_eq_zero_of_monotone_coeff` is proved in
+`MathlibExt.NumberTheory.Recurrences.ReciprocalSumsLinearRecurrence`.
 -/
 
 open Polynomial Filter Asymptotics
@@ -23,18 +25,6 @@ open Polynomial Filter Asymptotics
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- Eneström–Kakeya theorem, monotone form: if a nonzero real polynomial
-`a₀ + a₁ x + ⋯ + aₙ xⁿ` of degree `n` satisfies `0 ≤ a₀ ≤ a₁ ≤ ⋯ ≤ aₙ`, then every complex
-root `z` satisfies `‖z‖ ≤ 1`.
-
-Source: Tingting Du, *On the Reciprocal Sums and Products of m th-order Linear Recursive
-Sequences*, Journal of Integer Sequences 27 (2024), Article 24.2.3, Lemma 3
-(`jis-2024-24.2.3-lem-3`), quoted there as the Eneström–Kakeya theorem. -/
-public theorem_wanted norm_le_one_of_aeval_eq_zero_of_monotone_coeff
-    (p : ℝ[X]) (hp : p ≠ 0) (h0 : 0 ≤ p.coeff 0)
-    (hmono : ∀ i < p.natDegree, p.coeff i ≤ p.coeff (i + 1))
-    (z : ℂ) (hz : aeval z p = 0) : ‖z‖ ≤ 1
 
 /-- For `m ≥ 2` and positive integers `a₁, …, aₘ` (here `a i = a_{i+1}`), the polynomial
 `φ(x) = xᵐ - a₁ xᵐ⁻¹ - ⋯ - aₘ` has exactly one positive root `λ`, it satisfies `λ > 1`, and
