@@ -11080,6 +11080,7 @@
   "MathlibExt/NumberTheory/GaussianIntPrimeBasics": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Gaussian primes"},
   "MathlibExt/NumberTheory/GaussianIntPrimeClassification": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Gaussian primes"},
   "MathlibExt/NumberTheory/GaussianIntSplitPrimes": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Gaussian primes"},
+  "MathlibExt/NumberTheory/GcdPowAddNegOnePow": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Greatest common divisors of radical-expansion coefficients"},
   "MathlibExt/NumberTheory/GelfondSchneider": {"to": "NumberTheory/diophantine-approximation/transcendence-irrationality", "title": "Gelfond–Schneider theorem"},
   "MathlibExt/NumberTheory/GeneralArithmeticalEulerianPolynomial": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "General arithmetical Eulerian polynomials"},
   "MathlibExt/NumberTheory/GeneralizedCatalanPrimeDivisibility": {"to": "NumberTheory/special-numbers/catalan-numbers", "title": "Fuss–Catalan numbers"},
