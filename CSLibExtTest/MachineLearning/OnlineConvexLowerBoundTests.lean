@@ -19,21 +19,24 @@ namespace CSLibExtTest.MachineLearning.OnlineConvexLowerBound
 open Cslib.MachineLearning.OnlineConvexLowerBound
 
 /-- T1: at `T = 1` the total absolute sign sum over both sequences is `2`. -/
-example : ∑ σ : Fin 1 → Bool, |∑ t : Fin 1, sgn (σ t)| = 2 := by
-  simp only [Fin.sum_univ_one, sgn_abs, Finset.sum_const, Finset.card_univ,
+example : ∑ σ : Fin 1 → Bool, |∑ t : Fin 1, BooleanCube.cubeVal (σ t)| = 2 := by
+  have hcube : ∀ b : Bool, |BooleanCube.cubeVal b| = 1 := by
+    intro b
+    cases b <;> simp [BooleanCube.cubeVal]
+  simp only [Fin.sum_univ_one, hcube, Finset.sum_const, Finset.card_univ,
     show Fintype.card (Fin 1 → Bool) = 2 from by decide]
   simp
 
 /-- At `T = 2` the squared sign-sum over all four sequences is `8`,
 by direct evaluation of the four cases. -/
-example : ∑ σ : Fin 2 → Bool, (∑ t : Fin 2, sgn (σ t)) ^ 2 = 8 := by
+example : ∑ σ : Fin 2 → Bool, (∑ t : Fin 2, BooleanCube.cubeVal (σ t)) ^ 2 = 8 := by
   have h := Equiv.sum_comp (finTwoArrowEquiv Bool).symm
-    (fun σ : Fin 2 → Bool => (∑ t : Fin 2, sgn (σ t)) ^ 2)
+    (fun σ : Fin 2 → Bool => (∑ t : Fin 2, BooleanCube.cubeVal (σ t)) ^ 2)
   rw [← h, Fintype.sum_prod_type]
   simp only [finTwoArrowEquiv_symm_apply, Fin.sum_univ_two,
     Fintype.sum_bool]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
-  simp only [sgn]
+  simp only [BooleanCube.cubeVal]
   ring
 
 /-- T2: the always-zero algorithm at `T = 2`, `D = 2`, `G = 1` suffers
@@ -42,11 +45,11 @@ theorem t2_regret_value :
     regret 2 (fun _ _ => 0) 2 1 (fun _ => true) = 2 := by
   have hplay : ∀ t : Fin 2, playAt 2 (fun _ _ => 0) (fun _ => true) t
       = 0 := fun t => rfl
-  have hsgn : sgn true = 1 := rfl
+  have hcube : BooleanCube.cubeVal true = 1 := rfl
   show (∑ t : Fin 2,
-      sgn ((fun _ => true) t) * 1 * playAt 2 (fun _ _ => 0) (fun _ => true) t)
-      + 1 * (2 / 2) * |∑ t : Fin 2, sgn ((fun _ => true) t)| = 2
-  simp only [hplay, mul_zero, Finset.sum_const_zero, zero_add, hsgn,
+      BooleanCube.cubeVal ((fun _ => true) t) * 1 * playAt 2 (fun _ _ => 0) (fun _ => true) t)
+      + 1 * (2 / 2) * |∑ t : Fin 2, BooleanCube.cubeVal ((fun _ => true) t)| = 2
+  simp only [hplay, mul_zero, Finset.sum_const_zero, zero_add, hcube,
     Fin.sum_univ_two]
   rw [one_add_one_eq_two, abs_of_nonneg zero_le_two,
     div_self (by linarith : (2 : ℝ) ≠ 0)]
@@ -103,11 +106,11 @@ example (A : ∀ t : ℕ, (Fin t → Bool) → ℝ) :
 def testAlg : ∀ t : ℕ, (Fin t → Bool) → ℝ := fun t _ => (t : ℝ) + 1
 
 /-- `online_play_expectation_zero` at `T = 1` for `testAlg`. -/
-example : ∑ σ : Fin 1 → Bool, sgn (σ 0) * playAt 1 testAlg σ 0 = 0 :=
+example : ∑ σ : Fin 1 → Bool, BooleanCube.cubeVal (σ 0) * playAt 1 testAlg σ 0 = 0 :=
   online_play_expectation_zero 1 testAlg 0
 
 /-- `khintchine_lower` at `T = 2`. -/
-example : ∑ σ : Fin 2 → Bool, |∑ t : Fin 2, sgn (σ t)|
+example : ∑ σ : Fin 2 → Bool, |∑ t : Fin 2, BooleanCube.cubeVal (σ t)|
     ≥ (2 : ℝ) ^ 2 * Real.sqrt (((2 : ℕ) : ℝ) / 3) :=
   khintchine_lower 2
 
@@ -120,12 +123,13 @@ example : ∃ σ : Fin 1 → Bool,
 
 -- Guarded axiom audit for the lower-bound theorems.
 /--
-info: 'Cslib.MachineLearning.OnlineConvexLowerBound.sum_sgn_sq_mean' depends on axioms: [propext,
+info: 'Cslib.MachineLearning.OnlineConvexLowerBound.sum_cubeVal_fourth_le' depends on
+ axioms: [propext,
  Classical.choice,
  Quot.sound]
 -/
-#guard_msgs in
-#print axioms sum_sgn_sq_mean
+#guard_msgs (whitespace := lax) in
+#print axioms sum_cubeVal_fourth_le
 /--
 info: 'Cslib.MachineLearning.OnlineConvexLowerBound.khintchine_lower' depends on axioms: [propext,
  Classical.choice,

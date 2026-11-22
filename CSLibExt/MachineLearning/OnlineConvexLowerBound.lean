@@ -10,6 +10,8 @@ module
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Analysis.Real.Sqrt
+public import MathlibExt.Analysis.Fourier.BooleanCubeInfluence
+public import MathlibExt.Analysis.InnerProductSpace.RademacherTypeCotype
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
@@ -37,10 +39,11 @@ losses are `x ↦ σ_t * G * x` with signs `σ_t ∈ {±1}`.
 
 Everything is finite counting over sign sequences `σ : Fin T → Bool` with
 the counting measure; no probability library is used beyond `Finset` sums
-and real moments. The moment route: for `S = ∑ σ_t` (as reals),
-`E[S ^ 2] = T` and `E[S ^ 4] ≤ 3 * T ^ 2`, and Cauchy-Schwarz applied
-twice gives `(∑ S ^ 2) ^ 3 ≤ (∑ |S|) ^ 2 * ∑ S ^ 4`, hence
-`E|S| ≥ √(T / 3)`.
+and real moments. The moment route: for `S = ∑ σ_t` (as reals), the second
+moment `E[S ^ 2] = T` is the constant-coefficient specialization of the
+checked Rademacher second moment, `E[S ^ 4] ≤ 3 * T ^ 2`, and
+Cauchy-Schwarz applied twice gives `(∑ S ^ 2) ^ 3 ≤ (∑ |S|) ^ 2 * ∑ S ^ 4`,
+hence `E|S| ≥ √(T / 3)`.
 
 A randomized online strategy is a distribution over the deterministic
 adaptive strategies modeled here, and the same expectation bound applies
@@ -53,11 +56,6 @@ open scoped BigOperators
 
 namespace Cslib.MachineLearning.OnlineConvexLowerBound
 
-/-- Value of a sign bit as a real number: `true` is `+1`, `false` is `-1`. -/
-def sgn : Bool → ℝ
-  | true => 1
-  | false => -1
-
 /-- Round-`t` play of a deterministic online algorithm: the algorithm sees
 only the first `t` signs of the length-`T` sequence. -/
 def playAt (T : ℕ) (A : ∀ t : ℕ, (Fin t → Bool) → ℝ)
@@ -69,26 +67,11 @@ gradient scale `G` on `[-D / 2, D / 2]`, with the comparator minimum
 already evaluated (`comparator_lower_bound`, `comparator_attained`). -/
 noncomputable def regret (T : ℕ) (A : ∀ t : ℕ, (Fin t → Bool) → ℝ) (D G : ℝ)
     (σ : Fin T → Bool) : ℝ :=
-  (∑ t : Fin T, sgn (σ t) * G * playAt T A σ t) +
-    G * (D / 2) * |∑ t : Fin T, sgn (σ t)|
-
-/-- Every sign squares to one. -/
-theorem sgn_mul_self (b : Bool) : sgn b * sgn b = 1 := by
-  cases b <;> simp [sgn]
-
-/-- Every sign has absolute value one. -/
-theorem sgn_abs (b : Bool) : |sgn b| = 1 := by
-  cases b <;> simp [sgn, abs_neg]
-
-/-- There are `2 ^ T` sign sequences of length `T`. -/
-theorem card_sign_seq (T : ℕ) :
-    (Finset.univ : Finset (Fin T → Bool)).card = 2 ^ T := by
-  rw [Finset.card_univ, Fintype.card_pi]
-  simp [Fintype.card_bool, Finset.prod_const, Finset.card_univ,
-    Fintype.card_fin]
+  (∑ t : Fin T, BooleanCube.cubeVal (σ t) * G * playAt T A σ t) +
+    G * (D / 2) * |∑ t : Fin T, BooleanCube.cubeVal (σ t)|
 
 /-- The constant-one sum over sign sequences. -/
-theorem sum_one_sign (T : ℕ) :
+private theorem sum_one_sign (T : ℕ) :
     ∑ _σ : Fin T → Bool, (1 : ℝ) = (2 : ℝ) ^ T := by
   simp
 
@@ -119,48 +102,10 @@ theorem comparator_attained (D G S : ℝ) (hD : 0 ≤ D) (_hG : 0 ≤ G) :
     · rw [abs_of_neg (lt_of_not_ge hS)]
       ring
 
-/-- Flip of a single coordinate of a sign sequence. -/
-def signFlip (T : ℕ) (t : Fin T) (σ : Fin T → Bool) :
-    Fin T → Bool :=
-  fun t' => if t' = t then !(σ t') else σ t'
-
-/-- The flip changes the flipped coordinate. -/
-theorem signFlip_apply_same (T : ℕ) (t : Fin T) (σ : Fin T → Bool) :
-    signFlip T t σ t = !(σ t) := by
-  exact ite_eq_left rfl
-
-/-- The flip fixes all other coordinates. -/
-theorem signFlip_apply_ne (T : ℕ) (t t' : Fin T) (σ : Fin T → Bool)
-    (h : t' ≠ t) : signFlip T t σ t' = σ t' := by
-  exact ite_eq_right h
-
-/-- Flipping twice is the identity. -/
-theorem signFlip_involutive (T : ℕ) (t : Fin T) (σ : Fin T → Bool) :
-    signFlip T t (signFlip T t σ) = σ := by
-  funext t'
-  by_cases h : t' = t
-  · rw [h]
-    rw [signFlip_apply_same, signFlip_apply_same]
-    cases σ t <;> rfl
-  · rw [signFlip_apply_ne _ _ _ _ h, signFlip_apply_ne _ _ _ _ h]
-
-/-- The sign flips under boolean negation. -/
-theorem sgn_not : ∀ (b : Bool), sgn (!b) = -sgn b
-  | true => rfl
-  | false => by simp [sgn]
-
-/-- Coordinate flip as an equivalence. -/
-def signFlipEquiv (T : ℕ) (t : Fin T) :
-    (Fin T → Bool) ≃ (Fin T → Bool) where
-  toFun σ := signFlip T t σ
-  invFun σ := signFlip T t σ
-  left_inv σ := signFlip_involutive T t σ
-  right_inv σ := signFlip_involutive T t σ
-
 /-- The online play is unchanged by flipping the current coordinate. -/
 theorem playAt_flip (T : ℕ) (A : ∀ t : ℕ, (Fin t → Bool) → ℝ)
     (σ : Fin T → Bool) (t : Fin T) :
-    playAt T A (signFlip T t σ) t = playAt T A σ t := by
+    playAt T A (BooleanCube.flipCoord σ t) t = playAt T A σ t := by
   simp only [playAt]
   congr 1
   funext i
@@ -171,20 +116,18 @@ theorem playAt_flip (T : ℕ) (A : ∀ t : ℕ, (Fin t → Bool) → ℝ)
     have h2 : (Fin.castLE (le_of_lt (Fin.isLt t)) i).val = i.val := rfl
     rw [h2] at hval
     exact absurd hval (ne_of_lt (Fin.isLt i))
-  exact signFlip_apply_ne T t _ σ hne
+  exact BooleanCube.flipCoord_apply_of_ne σ hne
 
-/-- A sum that changes sign under the coordinate flip is zero. -/
-theorem sum_eq_zero_of_flip (T : ℕ) (t : Fin T)
+/-- A sum that changes sign under the coordinate flip is zero; reindexing
+is by `BooleanCube.sum_comp_flipCoord`. -/
+private theorem sum_eq_zero_of_flip (T : ℕ) (t : Fin T)
     (f : (Fin T → Bool) → ℝ)
-    (hterm : ∀ σ : Fin T → Bool, f (signFlip T t σ) = -f σ) :
+    (hterm : ∀ σ : Fin T → Bool, f (BooleanCube.flipCoord σ t) = -f σ) :
     ∑ σ : Fin T → Bool, f σ = 0 := by
-  have hreindex : (∑ σ : Fin T → Bool, f ((signFlipEquiv T t) σ))
+  have hreindex : (∑ σ : Fin T → Bool, f (BooleanCube.flipCoord σ t))
       = ∑ σ : Fin T → Bool, f σ :=
-    Equiv.sum_comp (signFlipEquiv T t) f
-  have hcoe : ∀ σ : Fin T → Bool, (signFlipEquiv T t) σ
-      = signFlip T t σ := fun σ => rfl
-  simp only [hcoe] at hreindex
-  have hLHS : (∑ σ : Fin T → Bool, f (signFlip T t σ))
+    BooleanCube.sum_comp_flipCoord f t
+  have hLHS : (∑ σ : Fin T → Bool, f (BooleanCube.flipCoord σ t))
       = -∑ σ : Fin T → Bool, f σ := by
     rw [← Finset.sum_neg_distrib]
     exact Finset.sum_congr rfl (fun σ _ => hterm σ)
@@ -192,66 +135,23 @@ theorem sum_eq_zero_of_flip (T : ℕ) (t : Fin T)
       = ∑ σ : Fin T → Bool, f σ := hLHS.symm.trans hreindex
   exact eq_zero_of_neg_eq hneg
 
-/-- Cross terms vanish for distinct rounds. -/
-theorem sum_sgn_cross (T : ℕ) (t u : Fin T) (hne : t ≠ u) :
-    ∑ σ : Fin T → Bool, sgn (σ t) * sgn (σ u) = 0 := by
-  apply sum_eq_zero_of_flip T t
-  intro σ
-  show sgn ((signFlip T t σ) t) * sgn ((signFlip T t σ) u) =
-    -(sgn (σ t) * sgn (σ u))
-  rw [signFlip_apply_same, sgn_not,
-    signFlip_apply_ne T t u σ (Ne.symm hne)]
-  ring
-
-/-- A squared sum is a double sum. -/
-theorem sum_sq_expand (T : ℕ) (s : Fin T → ℝ) :
-    (∑ t : Fin T, s t) ^ 2
-      = ∑ t : Fin T, ∑ u : Fin T, s t * s u := by
-  rw [pow_two, Finset.sum_mul_sum]
-
-/-- Split a squared sign sum into diagonal and off-diagonal parts. -/
-theorem sum_sq_split (T : ℕ) (σ : Fin T → Bool) :
-    (∑ t : Fin T, sgn (σ t)) ^ 2 = (T : ℝ) +
-      ∑ t : Fin T, ∑ u ∈ Finset.univ.erase t,
-        sgn (σ t) * sgn (σ u) := by
-  have hinner : ∀ t : Fin T, (∑ u : Fin T, sgn (σ t) * sgn (σ u))
-      = sgn (σ t) * sgn (σ t) +
-        ∑ u ∈ Finset.univ.erase t, sgn (σ t) * sgn (σ u) :=
-    fun t => (Finset.add_sum_erase _ _ (Finset.mem_univ t)).symm
-  have hdiag : (∑ t : Fin T, sgn (σ t) * sgn (σ t)) = (T : ℝ) := by
-    simp only [sgn_mul_self, Finset.sum_const, Finset.card_univ,
-      Fintype.card_fin, nsmul_eq_mul, mul_one]
-  rw [sum_sq_expand]
-  simp only [hinner, Finset.sum_add_distrib]
-  rw [hdiag]
-
-/-- Second moment of the sign sum over all sign sequences: cross terms
-vanish by the coordinate-flip symmetry, leaving `2 ^ T * T`.
-Proof route: expand with `pow_two` and `Finset.sum_mul_sum`; the diagonal
-contributes `T` (`sgn_mul_self`) and each off-diagonal cell sums to zero
-by reindexing with `Equiv.sum_comp`. -/
-theorem sum_sgn_sq_mean (T : ℕ) :
-    ∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 2
+/-- Second moment of the sign sum over all sign sequences, as the
+constant-coefficient specialization of the checked Rademacher second
+moment (`sum_rademacher_sq_real` at `a = 1`). -/
+private theorem sum_cubeVal_sq (T : ℕ) :
+    ∑ σ : Fin T → Bool, (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 2
       = (2 : ℝ) ^ T * (T : ℝ) := by
-  have hswap : (∑ σ : Fin T → Bool, ∑ t : Fin T,
-        ∑ u ∈ Finset.univ.erase t, sgn (σ t) * sgn (σ u))
-        = ∑ t : Fin T, ∑ u ∈ Finset.univ.erase t,
-          ∑ σ : Fin T → Bool, sgn (σ t) * sgn (σ u) := by
-    rw [Finset.sum_comm]
-    exact Finset.sum_congr rfl (fun t _ => Finset.sum_comm)
-  have hoff : (∑ σ : Fin T → Bool, ∑ t : Fin T,
-      ∑ u ∈ Finset.univ.erase t, sgn (σ t) * sgn (σ u)) = 0 := by
-    rw [hswap]
-    rw [Finset.sum_congr rfl (fun t _ => Finset.sum_congr rfl (fun u hu =>
-      sum_sgn_cross T t u (Ne.symm (Finset.ne_of_mem_erase hu))))]
-    simp only [Finset.sum_const_zero]
-  simp only [sum_sq_split, Finset.sum_add_distrib]
-  rw [hoff, add_zero]
-  have hconst : (∑ σ : Fin T → Bool, (T : ℝ))
-      = (T : ℝ) * ∑ σ : Fin T → Bool, (1 : ℝ) := by
-    rw [Finset.mul_sum]
-    exact Finset.sum_congr rfl (fun σ _ => (mul_one _).symm)
-  rw [hconst, sum_one_sign, mul_comm]
+  have h := MathlibExt.Analysis.InnerProductSpace.RademacherTypeCotype.sum_rademacher_sq_real
+    T fun _ => (1 : ℝ)
+  have hLHS : (∑ ε : Fin T → Bool, (∑ i, (if ε i then (1 : ℝ) else -1)) ^ 2)
+      = ∑ σ : Fin T → Bool, (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 2 := by
+    refine Finset.sum_congr rfl (fun σ _ => ?_)
+    congr 1
+    refine Finset.sum_congr rfl (fun t _ => ?_)
+    cases σ t <;> rfl
+  have hRHS : (∑ _i : Fin T, (1 : ℝ) ^ 2) = (T : ℝ) := by simp
+  rw [← hLHS, ← hRHS]
+  exact h
 
 /-- Fourth-moment upper bound for the sign sum; the `≤` form suffices for
 `khintchine_lower`. Proof route: induction that splits off the head
@@ -259,63 +159,80 @@ coordinate; for each tail sign sum, the two head choices contribute the sum
 of the fourth powers at the tail sum plus one and at the tail sum minus
 one, the odd terms cancel leaving twice the fourth power plus twelve
 times the square plus two, and the induction hypothesis combines with the
-exact second moment. -/
-theorem sum_sgn_fourth_le (T : ℕ) :
-    ∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 4
+constant-coefficient specialization of the checked Rademacher second
+moment. -/
+theorem sum_cubeVal_fourth_le (T : ℕ) :
+    ∑ σ : Fin T → Bool, (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 4
       ≤ (2 : ℝ) ^ T * (3 * (T : ℝ) ^ 2) := by
   induction T with
   | zero =>
-    show (∑ σ : Fin 0 → Bool, (∑ t : Fin 0, sgn (σ t)) ^ 4)
+    show (∑ σ : Fin 0 → Bool, (∑ t : Fin 0, BooleanCube.cubeVal (σ t)) ^ 4)
       ≤ (2 : ℝ) ^ (0 : ℕ) * (3 * ((0 : ℕ) : ℝ) ^ 2)
-    have hL : (∑ σ : Fin 0 → Bool, (∑ t : Fin 0, sgn (σ t)) ^ 4) = 0 := by
+    have hL : (∑ σ : Fin 0 → Bool,
+        (∑ t : Fin 0, BooleanCube.cubeVal (σ t)) ^ 4) = 0 := by
       simp
     have hR : (2 : ℝ) ^ (0 : ℕ) * (3 * ((0 : ℕ) : ℝ) ^ 2) = 0 := by simp
     rw [hL, hR]
   | succ n ih =>
-    show (∑ σ : Fin (n + 1) → Bool, (∑ t : Fin (n + 1), sgn (σ t)) ^ 4)
+    show (∑ σ : Fin (n + 1) → Bool,
+          (∑ t : Fin (n + 1), BooleanCube.cubeVal (σ t)) ^ 4)
       ≤ (2 : ℝ) ^ (n + 1) * (3 * ((n + 1 : ℕ) : ℝ) ^ 2)
     set E : (Fin n → Bool) → Bool → ℝ := fun σ' b =>
-      (∑ i : Fin n, sgn (σ' i)) ^ 4
-        + 4 * (∑ i : Fin n, sgn (σ' i)) ^ 3 * sgn b
-        + 6 * (∑ i : Fin n, sgn (σ' i)) ^ 2
-        + 4 * (∑ i : Fin n, sgn (σ' i)) * sgn b + 1 with hEdef
+      (∑ i : Fin n, BooleanCube.cubeVal (σ' i)) ^ 4
+        + 4 * (∑ i : Fin n, BooleanCube.cubeVal (σ' i)) ^ 3 *
+          BooleanCube.cubeVal b
+        + 6 * (∑ i : Fin n, BooleanCube.cubeVal (σ' i)) ^ 2
+        + 4 * (∑ i : Fin n, BooleanCube.cubeVal (σ' i)) *
+          BooleanCube.cubeVal b + 1 with hEdef
     have hreindex : (∑ σ : Fin (n + 1) → Bool,
-          (∑ t : Fin (n + 1), sgn (σ t)) ^ 4)
+          (∑ t : Fin (n + 1), BooleanCube.cubeVal (σ t)) ^ 4)
         = ∑ p : Bool × (Fin n → Bool),
-          (∑ t : Fin (n + 1), sgn (((Fin.consEquiv fun _ => Bool) p) t)) ^ 4 :=
+          (∑ t : Fin (n + 1),
+            BooleanCube.cubeVal (((Fin.consEquiv fun _ => Bool) p) t)) ^ 4 :=
       (Equiv.sum_comp (Fin.consEquiv fun _ => Bool)
-        (fun σ => (∑ t : Fin (n + 1), sgn (σ t)) ^ 4)).symm
+        (fun σ => (∑ t : Fin (n + 1), BooleanCube.cubeVal (σ t)) ^ 4)).symm
     simp only [Fin.consEquiv_apply] at hreindex
     have hsplit : ∀ p : Bool × (Fin n → Bool),
-        (∑ t : Fin (n + 1), sgn (Fin.cons (α := fun _ => Bool) p.1 p.2 t))
-          = sgn p.1 + ∑ i : Fin n, sgn (p.2 i) := fun p => by
+        (∑ t : Fin (n + 1),
+            BooleanCube.cubeVal (Fin.cons (α := fun _ => Bool) p.1 p.2 t))
+          = BooleanCube.cubeVal p.1
+            + ∑ i : Fin n, BooleanCube.cubeVal (p.2 i) := fun p => by
       rw [Fin.sum_univ_succ]
       simp only [Fin.cons_zero, Fin.cons_succ]
     have hexpand : ∀ p : Bool × (Fin n → Bool),
-        (∑ t : Fin (n + 1), sgn (Fin.cons (α := fun _ => Bool) p.1 p.2 t)) ^ 4
+        (∑ t : Fin (n + 1),
+            BooleanCube.cubeVal (Fin.cons (α := fun _ => Bool) p.1 p.2 t)) ^ 4
           = E p.2 p.1 := fun p => by
-      have hsq1 : sgn p.1 ^ 2 = 1 := by rw [pow_two]; exact sgn_mul_self _
-      have hs3 : sgn p.1 ^ 3 = sgn p.1 := by
-        rw [show sgn p.1 ^ 3 = sgn p.1 ^ 2 * sgn p.1 from by ring,
+      have hsq1 : BooleanCube.cubeVal p.1 ^ 2 = 1 := by
+        rw [pow_two]; exact BooleanCube.cubeVal_mul_self _
+      have hs3 : BooleanCube.cubeVal p.1 ^ 3 = BooleanCube.cubeVal p.1 := by
+        rw [show BooleanCube.cubeVal p.1 ^ 3
+          = BooleanCube.cubeVal p.1 ^ 2 * BooleanCube.cubeVal p.1 from by ring,
           hsq1, one_mul]
-      have hs4 : sgn p.1 ^ 4 = 1 := by
-        rw [show sgn p.1 ^ 4 = (sgn p.1 ^ 2) ^ 2 from by ring, hsq1,
+      have hs4 : BooleanCube.cubeVal p.1 ^ 4 = 1 := by
+        rw [show BooleanCube.cubeVal p.1 ^ 4
+          = (BooleanCube.cubeVal p.1 ^ 2) ^ 2 from by ring, hsq1,
           one_pow]
       rw [hsplit]
       simp only [hEdef]
-      rw [show (sgn p.1 + ∑ i : Fin n, sgn (p.2 i)) ^ 4
-        = sgn p.1 ^ 4 + 4 * sgn p.1 ^ 3 * (∑ i : Fin n, sgn (p.2 i))
-          + 6 * sgn p.1 ^ 2 * (∑ i : Fin n, sgn (p.2 i)) ^ 2
-          + 4 * sgn p.1 * (∑ i : Fin n, sgn (p.2 i)) ^ 3
-          + (∑ i : Fin n, sgn (p.2 i)) ^ 4 from by ring]
+      rw [show (BooleanCube.cubeVal p.1
+          + ∑ i : Fin n, BooleanCube.cubeVal (p.2 i)) ^ 4
+        = BooleanCube.cubeVal p.1 ^ 4 + 4 * BooleanCube.cubeVal p.1 ^ 3
+            * (∑ i : Fin n, BooleanCube.cubeVal (p.2 i))
+          + 6 * BooleanCube.cubeVal p.1 ^ 2
+            * (∑ i : Fin n, BooleanCube.cubeVal (p.2 i)) ^ 2
+          + 4 * BooleanCube.cubeVal p.1
+            * (∑ i : Fin n, BooleanCube.cubeVal (p.2 i)) ^ 3
+          + (∑ i : Fin n, BooleanCube.cubeVal (p.2 i)) ^ 4 from by ring]
       rw [hs4, hs3, hsq1]
       ring
     have hbool : ∀ σ' : Fin n → Bool, (∑ b : Bool, E σ' b)
-        = 2 * (∑ i : Fin n, sgn (σ' i)) ^ 4
-          + 12 * (∑ i : Fin n, sgn (σ' i)) ^ 2 + 2 := fun σ' => by
+        = 2 * (∑ i : Fin n, BooleanCube.cubeVal (σ' i)) ^ 4
+          + 12 * (∑ i : Fin n, BooleanCube.cubeVal (σ' i)) ^ 2 + 2 :=
+      fun σ' => by
       simp only [hEdef]
       rw [Fintype.sum_bool]
-      simp only [sgn]
+      simp only [BooleanCube.cubeVal]
       ring
     have hprod : (∑ p : Bool × (Fin n → Bool), E p.2 p.1)
         = ∑ b : Bool, ∑ σ' : Fin n → Bool, E σ' b :=
@@ -324,7 +241,9 @@ theorem sum_sgn_fourth_le (T : ℕ) :
         = ∑ σ' : Fin n → Bool, ∑ b : Bool, E σ' b :=
       Finset.sum_comm
     have hcard2 : (∑ _σ' : Fin n → Bool, (2 : ℝ)) = (2 : ℝ) ^ n * 2 := by
-      rw [Finset.sum_const, card_sign_seq, nsmul_eq_mul]
+      rw [Finset.sum_const, Finset.card_univ,
+        MathlibExt.Analysis.InnerProductSpace.RademacherTypeCotype.card_sign_vectors,
+        nsmul_eq_mul]
       simp [Nat.cast_pow]
     have hcast : ((n + 1 : ℕ) : ℝ) = (n : ℝ) + 1 := by simp
     have hN : 0 ≤ (2 : ℝ) ^ n := pow_nonneg (by linarith : (0:ℝ) ≤ 2) n
@@ -334,7 +253,7 @@ theorem sum_sgn_fourth_le (T : ℕ) :
     simp only [hbool]
     rw [Finset.sum_add_distrib, Finset.sum_add_distrib,
       ← Finset.mul_sum, ← Finset.mul_sum, hcard2, pow_succ, hcast]
-    linarith [ih, sum_sgn_sq_mean n, hN]
+    linarith [ih, sum_cubeVal_sq n, hN]
 
 /-- Moment algebra: two Cauchy-Schwarz bounds combine to `B ^ 3 ≤ A ^ 2 * C`. -/
 theorem moment_algebra (A B C M : ℝ) (hAnn : 0 ≤ A) (hBnn : 0 ≤ B)
@@ -359,121 +278,153 @@ theorem moment_algebra (A B C M : ℝ) (hAnn : 0 ≤ A) (hBnn : 0 ≤ B)
   linarith [z1, z2]
 
 /-- Khintchine-type lower bound: the mean absolute sign sum is at least
-`√(T / 3)`. From `sum_sgn_sq_mean` and `sum_sgn_fourth_le` by
+`√(T / 3)`. From the constant-coefficient specialization of the checked
+Rademacher second moment and `sum_cubeVal_fourth_le` by
 `Finset.sum_mul_sq_le_sq_mul_sq` applied twice, giving
 `(∑ S ^ 2) ^ 3 ≤ (∑ |S|) ^ 2 * ∑ S ^ 4`. -/
 theorem khintchine_lower (T : ℕ) :
-    ∑ σ : Fin T → Bool, |∑ t : Fin T, sgn (σ t)|
+    ∑ σ : Fin T → Bool, |∑ t : Fin T, BooleanCube.cubeVal (σ t)|
       ≥ (2 : ℝ) ^ T * Real.sqrt ((T : ℝ) / 3) := by
   by_cases hT0 : T = 0
   · subst hT0
-    show (∑ σ : Fin 0 → Bool, |∑ t : Fin 0, sgn (σ t)|)
+    show (∑ σ : Fin 0 → Bool, |∑ t : Fin 0, BooleanCube.cubeVal (σ t)|)
       ≥ (2 : ℝ) ^ (0 : ℕ) * Real.sqrt (((0 : ℕ) : ℝ) / 3)
-    have hL : (∑ σ : Fin 0 → Bool, |∑ t : Fin 0, sgn (σ t)|) = 0 := by
+    have hL : (∑ σ : Fin 0 → Bool,
+        |∑ t : Fin 0, BooleanCube.cubeVal (σ t)|) = 0 := by
       simp
     have hR : (2 : ℝ) ^ (0 : ℕ) * Real.sqrt (((0 : ℕ) : ℝ) / 3) = 0 := by
       simp
     rw [hL, hR]
   · have hTpos : 0 < T := by omega
-    have hB : (∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 2)
-        = (2 : ℝ) ^ T * (T : ℝ) := sum_sgn_sq_mean T
-    have hC : (∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 4)
-        ≤ (2 : ℝ) ^ T * (3 * (T : ℝ) ^ 2) := sum_sgn_fourth_le T
-    have hAnn : 0 ≤ ∑ σ : Fin T → Bool, |∑ t : Fin T, sgn (σ t)| :=
+    have hB : (∑ σ : Fin T → Bool,
+          (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 2)
+        = (2 : ℝ) ^ T * (T : ℝ) := sum_cubeVal_sq T
+    have hC : (∑ σ : Fin T → Bool,
+          (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 4)
+        ≤ (2 : ℝ) ^ T * (3 * (T : ℝ) ^ 2) := sum_cubeVal_fourth_le T
+    have hAnn : 0 ≤ ∑ σ : Fin T → Bool,
+        |∑ t : Fin T, BooleanCube.cubeVal (σ t)| :=
       Finset.sum_nonneg (fun σ _ => abs_nonneg _)
-    have hBnn : 0 ≤ ∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 2 :=
+    have hBnn : 0 ≤ ∑ σ : Fin T → Bool,
+        (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 2 :=
       Finset.sum_nonneg (fun σ _ => sq_nonneg _)
-    have hCnn : 0 ≤ ∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 4 :=
+    have hCnn : 0 ≤ ∑ σ : Fin T → Bool,
+        (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 4 :=
       Finset.sum_nonneg (fun σ _ => by
-        have h4 : (∑ t : Fin T, sgn (σ t)) ^ 4
-            = ((∑ t : Fin T, sgn (σ t)) ^ 2) ^ 2 := by ring
+        have h4 : (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 4
+            = ((∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 2) ^ 2 := by ring
         rw [h4]
         exact sq_nonneg _)
-    have hMnn : 0 ≤ ∑ σ : Fin T → Bool, |∑ t : Fin T, sgn (σ t)| ^ 3 :=
+    have hMnn : 0 ≤ ∑ σ : Fin T → Bool,
+        |∑ t : Fin T, BooleanCube.cubeVal (σ t)| ^ 3 :=
       Finset.sum_nonneg (fun σ _ => by
-        have h3 : |∑ t : Fin T, sgn (σ t)| ^ 3
-            = |∑ t : Fin T, sgn (σ t)| ^ 2 * |∑ t : Fin T, sgn (σ t)| := by
+        have h3 : |∑ t : Fin T, BooleanCube.cubeVal (σ t)| ^ 3
+            = |∑ t : Fin T, BooleanCube.cubeVal (σ t)| ^ 2
+              * |∑ t : Fin T, BooleanCube.cubeVal (σ t)| := by
           ring
         rw [h3]
         exact mul_nonneg (sq_nonneg _) (abs_nonneg _))
     have hCS1 : ((∑ σ : Fin T → Bool,
-          |∑ t : Fin T, sgn (σ t)| * |∑ t : Fin T, sgn (σ t)| ^ 2)) ^ 2
-        ≤ (∑ σ : Fin T → Bool, (|∑ t : Fin T, sgn (σ t)|) ^ 2) *
-          (∑ σ : Fin T → Bool, (|∑ t : Fin T, sgn (σ t)| ^ 2) ^ 2) :=
+          |∑ t : Fin T, BooleanCube.cubeVal (σ t)|
+            * |∑ t : Fin T, BooleanCube.cubeVal (σ t)| ^ 2)) ^ 2
+        ≤ (∑ σ : Fin T → Bool,
+            (|∑ t : Fin T, BooleanCube.cubeVal (σ t)|) ^ 2) *
+          (∑ σ : Fin T → Bool,
+            (|∑ t : Fin T, BooleanCube.cubeVal (σ t)| ^ 2) ^ 2) :=
       Finset.sum_mul_sq_le_sq_mul_sq _ _ _
-    have hM2 : ((∑ σ : Fin T → Bool, |∑ t : Fin T, sgn (σ t)| ^ 3)) ^ 2
-        ≤ (∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 2) *
-          (∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 4) := by
+    have hM2 : ((∑ σ : Fin T → Bool,
+          |∑ t : Fin T, BooleanCube.cubeVal (σ t)| ^ 3)) ^ 2
+        ≤ (∑ σ : Fin T → Bool,
+            (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 2) *
+          (∑ σ : Fin T → Bool,
+            (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 4) := by
       have eL : (∑ σ : Fin T → Bool,
-            |∑ t : Fin T, sgn (σ t)| * |∑ t : Fin T, sgn (σ t)| ^ 2)
-          = ∑ σ : Fin T → Bool, |∑ t : Fin T, sgn (σ t)| ^ 3 :=
+            |∑ t : Fin T, BooleanCube.cubeVal (σ t)|
+              * |∑ t : Fin T, BooleanCube.cubeVal (σ t)| ^ 2)
+          = ∑ σ : Fin T → Bool,
+            |∑ t : Fin T, BooleanCube.cubeVal (σ t)| ^ 3 :=
         Finset.sum_congr rfl (fun σ _ => by ring)
-      have eR1 : (∑ σ : Fin T → Bool, (|∑ t : Fin T, sgn (σ t)|) ^ 2)
-          = ∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 2 :=
+      have eR1 : (∑ σ : Fin T → Bool,
+            (|∑ t : Fin T, BooleanCube.cubeVal (σ t)|) ^ 2)
+          = ∑ σ : Fin T → Bool,
+            (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 2 :=
         Finset.sum_congr rfl (fun σ _ => sq_abs _)
-      have eR2 : (∑ σ : Fin T → Bool, (|∑ t : Fin T, sgn (σ t)| ^ 2) ^ 2)
-          = ∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 4 :=
+      have eR2 : (∑ σ : Fin T → Bool,
+            (|∑ t : Fin T, BooleanCube.cubeVal (σ t)| ^ 2) ^ 2)
+          = ∑ σ : Fin T → Bool,
+            (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 4 :=
         Finset.sum_congr rfl (fun σ _ => by rw [sq_abs]; ring)
       rw [eL, eR1, eR2] at hCS1
       exact hCS1
-    have hCS2 : ((∑ σ : Fin T → Bool, Real.sqrt |∑ t : Fin T, sgn (σ t)|
-          * (|∑ t : Fin T, sgn (σ t)|
-            * Real.sqrt |∑ t : Fin T, sgn (σ t)|))) ^ 2
+    have hCS2 : ((∑ σ : Fin T → Bool,
+          Real.sqrt |∑ t : Fin T, BooleanCube.cubeVal (σ t)|
+          * (|∑ t : Fin T, BooleanCube.cubeVal (σ t)|
+            * Real.sqrt |∑ t : Fin T, BooleanCube.cubeVal (σ t)|))) ^ 2
         ≤ (∑ σ : Fin T → Bool,
-            (Real.sqrt |∑ t : Fin T, sgn (σ t)|) ^ 2) *
+            (Real.sqrt |∑ t : Fin T, BooleanCube.cubeVal (σ t)|) ^ 2) *
           (∑ σ : Fin T → Bool,
-            (|∑ t : Fin T, sgn (σ t)|
-              * Real.sqrt |∑ t : Fin T, sgn (σ t)|) ^ 2) :=
+            (|∑ t : Fin T, BooleanCube.cubeVal (σ t)|
+              * Real.sqrt |∑ t : Fin T, BooleanCube.cubeVal (σ t)|) ^ 2) :=
       Finset.sum_mul_sq_le_sq_mul_sq _ _ _
-    have hB2 : ((∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 2)) ^ 2
-        ≤ (∑ σ : Fin T → Bool, |∑ t : Fin T, sgn (σ t)|) *
-          (∑ σ : Fin T → Bool, |∑ t : Fin T, sgn (σ t)| ^ 3) := by
-      have eL : (∑ σ : Fin T → Bool, Real.sqrt |∑ t : Fin T, sgn (σ t)|
-            * (|∑ t : Fin T, sgn (σ t)|
-              * Real.sqrt |∑ t : Fin T, sgn (σ t)|))
-          = ∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 2 := by
+    have hB2 : ((∑ σ : Fin T → Bool,
+          (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 2)) ^ 2
+        ≤ (∑ σ : Fin T → Bool, |∑ t : Fin T, BooleanCube.cubeVal (σ t)|) *
+          (∑ σ : Fin T → Bool,
+            |∑ t : Fin T, BooleanCube.cubeVal (σ t)| ^ 3) := by
+      have eL : (∑ σ : Fin T → Bool,
+            Real.sqrt |∑ t : Fin T, BooleanCube.cubeVal (σ t)|
+            * (|∑ t : Fin T, BooleanCube.cubeVal (σ t)|
+              * Real.sqrt |∑ t : Fin T, BooleanCube.cubeVal (σ t)|))
+          = ∑ σ : Fin T → Bool,
+            (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 2 := by
         refine Finset.sum_congr rfl (fun σ _ => ?_)
-        have hsq : (Real.sqrt |∑ t : Fin T, sgn (σ t)|) ^ 2
-            = |∑ t : Fin T, sgn (σ t)| :=
+        have hsq : (Real.sqrt |∑ t : Fin T, BooleanCube.cubeVal (σ t)|) ^ 2
+            = |∑ t : Fin T, BooleanCube.cubeVal (σ t)| :=
           Real.sq_sqrt (abs_nonneg _)
-        have hss : Real.sqrt |∑ t : Fin T, sgn (σ t)|
-              * (|∑ t : Fin T, sgn (σ t)|
-                * Real.sqrt |∑ t : Fin T, sgn (σ t)|)
-              = |∑ t : Fin T, sgn (σ t)| ^ 2 := by
-          have e : Real.sqrt |∑ t : Fin T, sgn (σ t)|
-                * (|∑ t : Fin T, sgn (σ t)|
-                  * Real.sqrt |∑ t : Fin T, sgn (σ t)|)
-                = |∑ t : Fin T, sgn (σ t)|
-                  * (Real.sqrt |∑ t : Fin T, sgn (σ t)|) ^ 2 := by ring
+        have hss : Real.sqrt |∑ t : Fin T, BooleanCube.cubeVal (σ t)|
+              * (|∑ t : Fin T, BooleanCube.cubeVal (σ t)|
+                * Real.sqrt |∑ t : Fin T, BooleanCube.cubeVal (σ t)|)
+              = |∑ t : Fin T, BooleanCube.cubeVal (σ t)| ^ 2 := by
+          have e : Real.sqrt |∑ t : Fin T, BooleanCube.cubeVal (σ t)|
+                * (|∑ t : Fin T, BooleanCube.cubeVal (σ t)|
+                  * Real.sqrt |∑ t : Fin T, BooleanCube.cubeVal (σ t)|)
+                = |∑ t : Fin T, BooleanCube.cubeVal (σ t)|
+                  * (Real.sqrt |∑ t : Fin T,
+                    BooleanCube.cubeVal (σ t)|) ^ 2 := by ring
           rw [e, hsq]
           ring
         rw [hss]
         exact sq_abs _
       have eR1 : (∑ σ : Fin T → Bool,
-            (Real.sqrt |∑ t : Fin T, sgn (σ t)|) ^ 2)
-          = ∑ σ : Fin T → Bool, |∑ t : Fin T, sgn (σ t)| :=
+            (Real.sqrt |∑ t : Fin T, BooleanCube.cubeVal (σ t)|) ^ 2)
+          = ∑ σ : Fin T → Bool, |∑ t : Fin T, BooleanCube.cubeVal (σ t)| :=
         Finset.sum_congr rfl (fun σ _ => Real.sq_sqrt (abs_nonneg _))
       have eR2 : (∑ σ : Fin T → Bool,
-            (|∑ t : Fin T, sgn (σ t)|
-              * Real.sqrt |∑ t : Fin T, sgn (σ t)|) ^ 2)
-          = ∑ σ : Fin T → Bool, |∑ t : Fin T, sgn (σ t)| ^ 3 := by
+            (|∑ t : Fin T, BooleanCube.cubeVal (σ t)|
+              * Real.sqrt |∑ t : Fin T, BooleanCube.cubeVal (σ t)|) ^ 2)
+          = ∑ σ : Fin T → Bool,
+            |∑ t : Fin T, BooleanCube.cubeVal (σ t)| ^ 3 := by
         refine Finset.sum_congr rfl (fun σ _ => ?_)
         rw [mul_pow, Real.sq_sqrt (abs_nonneg _)]
         ring
       rw [eL, eR1, eR2] at hCS2
       exact hCS2
-    have hB3 : (∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 2) ^ 3
-        ≤ (∑ σ : Fin T → Bool, |∑ t : Fin T, sgn (σ t)|) ^ 2
-          * (∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 4) :=
+    have hB3 : (∑ σ : Fin T → Bool,
+          (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 2) ^ 3
+        ≤ (∑ σ : Fin T → Bool, |∑ t : Fin T, BooleanCube.cubeVal (σ t)|) ^ 2
+          * (∑ σ : Fin T → Bool,
+            (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 4) :=
       moment_algebra _ _ _ _ hAnn hBnn hCnn hMnn hB2 hM2
-    have hST : (∑ t : Fin T, sgn ((fun _ => true) t)) = (T : ℝ) := by
-      simp only [sgn, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
-        nsmul_eq_mul, mul_one]
-    have hCpos : 0 < ∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 4 := by
+    have hST : (∑ t : Fin T,
+        BooleanCube.cubeVal ((fun _ => true) t)) = (T : ℝ) := by
+      simp only [BooleanCube.cubeVal, Finset.sum_const, Finset.card_univ,
+        Fintype.card_fin, nsmul_eq_mul, mul_one]
+    have hCpos : 0 < ∑ σ : Fin T → Bool,
+        (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 4 := by
       have hterm : ∀ σ : Fin T → Bool,
-          0 ≤ (∑ t : Fin T, sgn (σ t)) ^ 4 := fun σ => by
-        have h4 : (∑ t : Fin T, sgn (σ t)) ^ 4
-            = ((∑ t : Fin T, sgn (σ t)) ^ 2) ^ 2 := by ring
+          0 ≤ (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 4 := fun σ => by
+        have h4 : (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 4
+            = ((∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 2) ^ 2 := by ring
         rw [h4]
         exact sq_nonneg _
       have hle := Finset.single_le_sum (fun σ _ => hterm σ)
@@ -483,15 +434,20 @@ theorem khintchine_lower (T : ℕ) :
       linarith [hle, hT4]
     have hTposR : 0 < (T : ℝ) := Nat.cast_pos.mpr hTpos
     have hA2 : ((2 : ℝ) ^ T) ^ 2 * ((T : ℝ) / 3)
-        ≤ (∑ σ : Fin T → Bool, |∑ t : Fin T, sgn (σ t)|) ^ 2 := by
-      have h3 : (∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 2) ^ 3
-          / (∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 4)
-          ≤ (∑ σ : Fin T → Bool, |∑ t : Fin T, sgn (σ t)|) ^ 2 := by
+        ≤ (∑ σ : Fin T → Bool, |∑ t : Fin T, BooleanCube.cubeVal (σ t)|) ^ 2 := by
+      have h3 : (∑ σ : Fin T → Bool,
+            (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 2) ^ 3
+          / (∑ σ : Fin T → Bool,
+            (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 4)
+          ≤ (∑ σ : Fin T → Bool,
+            |∑ t : Fin T, BooleanCube.cubeVal (σ t)|) ^ 2 := by
         rw [div_le_iff₀ hCpos]
         linarith [hB3]
       have h4 : ((2 : ℝ) ^ T) ^ 2 * ((T : ℝ) / 3)
-          ≤ (∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 2) ^ 3
-            / (∑ σ : Fin T → Bool, (∑ t : Fin T, sgn (σ t)) ^ 4) := by
+          ≤ (∑ σ : Fin T → Bool,
+              (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 2) ^ 3
+            / (∑ σ : Fin T → Bool,
+              (∑ t : Fin T, BooleanCube.cubeVal (σ t)) ^ 4) := by
         rw [hB, mul_pow, le_div_iff₀ hCpos]
         have ha0 : 0 ≤ ((2 : ℝ) ^ T) ^ 2 * ((T : ℝ) / 3) :=
           mul_nonneg (sq_nonneg _)
@@ -511,17 +467,19 @@ theorem khintchine_lower (T : ℕ) :
     exact le_of_pow_le_pow_left₀ (by decide : (2 : ℕ) ≠ 0) hAnn hA2
 
 /-- The algorithm's own play has mean zero against the signs: for each
-round, reindexing by the coordinate-`t` flip (`Equiv.sum_comp`) changes
-the sign of `sgn (σ t)` while `playAt` is unchanged, since the
+round, reindexing by the coordinate-`t` flip (`BooleanCube.flipCoord`,
+via `BooleanCube.sum_comp_flipCoord`) changes the sign of
+`BooleanCube.cubeVal (σ t)` while `playAt` is unchanged, since the
 restriction reads only earlier coordinates; the sum equals its negation. -/
 theorem online_play_expectation_zero (T : ℕ)
     (A : ∀ t : ℕ, (Fin t → Bool) → ℝ) (t : Fin T) :
-    ∑ σ : Fin T → Bool, sgn (σ t) * playAt T A σ t = 0 := by
+    ∑ σ : Fin T → Bool, BooleanCube.cubeVal (σ t) * playAt T A σ t = 0 := by
   apply sum_eq_zero_of_flip T t
   intro σ
-  show sgn ((signFlip T t σ) t) * playAt T A (signFlip T t σ) t =
-    -(sgn (σ t) * playAt T A σ t)
-  rw [signFlip_apply_same, playAt_flip, sgn_not]
+  show BooleanCube.cubeVal ((BooleanCube.flipCoord σ t) t)
+      * playAt T A (BooleanCube.flipCoord σ t) t =
+    -(BooleanCube.cubeVal (σ t) * playAt T A σ t)
+  rw [BooleanCube.flipCoord_apply_self, playAt_flip, BooleanCube.cubeVal_not]
   ring
 
 /-- Main lower bound: every deterministic online algorithm on
@@ -540,26 +498,30 @@ theorem oco_lower_bound (T : ℕ) (A : ∀ t : ℕ, (Fin t → Bool) → ℝ)
       (D * G / 2) * Real.sqrt ((T : ℝ) / 3)
         ≤ regret T A D G σ := by
   have hPreg : ∀ σ : Fin T → Bool, regret T A D G σ
-      = (∑ t : Fin T, sgn (σ t) * G * playAt T A σ t) +
-        G * (D / 2) * |∑ t : Fin T, sgn (σ t)| := fun σ => rfl
+      = (∑ t : Fin T, BooleanCube.cubeVal (σ t) * G * playAt T A σ t) +
+        G * (D / 2) * |∑ t : Fin T, BooleanCube.cubeVal (σ t)| :=
+    fun σ => rfl
   have hsumP : (∑ σ : Fin T → Bool, ∑ t : Fin T,
-      sgn (σ t) * G * playAt T A σ t) = 0 := by
+      BooleanCube.cubeVal (σ t) * G * playAt T A σ t) = 0 := by
     rw [Finset.sum_comm]
     refine Finset.sum_eq_zero (fun t _ => ?_)
-    have hfactor : (∑ σ : Fin T → Bool, sgn (σ t) * G * playAt T A σ t)
-        = G * (∑ σ : Fin T → Bool, sgn (σ t) * playAt T A σ t) := by
+    have hfactor : (∑ σ : Fin T → Bool,
+          BooleanCube.cubeVal (σ t) * G * playAt T A σ t)
+        = G * (∑ σ : Fin T → Bool,
+          BooleanCube.cubeVal (σ t) * playAt T A σ t) := by
       rw [Finset.mul_sum]
       exact Finset.sum_congr rfl (fun σ _ => by ring)
     rw [hfactor, online_play_expectation_zero T A t, mul_zero]
-  have hsumC : (∑ σ : Fin T → Bool, G * (D / 2) * |∑ t : Fin T, sgn (σ t)|)
+  have hsumC : (∑ σ : Fin T → Bool,
+        G * (D / 2) * |∑ t : Fin T, BooleanCube.cubeVal (σ t)|)
       = G * (D / 2)
-        * (∑ σ : Fin T → Bool, |∑ t : Fin T, sgn (σ t)|) := by
+        * (∑ σ : Fin T → Bool, |∑ t : Fin T, BooleanCube.cubeVal (σ t)|) := by
     rw [← Finset.mul_sum]
   have hnonneg : 0 ≤ G * (D / 2) :=
     mul_nonneg (le_of_lt hG) (div_nonneg (le_of_lt hD) zero_le_two)
   have htot : (∑ σ : Fin T → Bool, regret T A D G σ)
       = G * (D / 2)
-        * (∑ σ : Fin T → Bool, |∑ t : Fin T, sgn (σ t)|) := by
+        * (∑ σ : Fin T → Bool, |∑ t : Fin T, BooleanCube.cubeVal (σ t)|) := by
     simp only [hPreg, Finset.sum_add_distrib, hsumP, zero_add, hsumC]
   have hmean : (2 : ℝ) ^ T * ((D * G / 2) * Real.sqrt ((T : ℝ) / 3))
       ≤ ∑ σ : Fin T → Bool, regret T A D G σ := by
