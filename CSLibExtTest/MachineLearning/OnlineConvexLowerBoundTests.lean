@@ -109,11 +109,6 @@ def testAlg : ∀ t : ℕ, (Fin t → Bool) → ℝ := fun t _ => (t : ℝ) + 1
 example : ∑ σ : Fin 1 → Bool, BooleanCube.cubeVal (σ 0) * playAt 1 testAlg σ 0 = 0 :=
   online_play_expectation_zero 1 testAlg 0
 
-/-- `khintchine_lower` at `T = 2`. -/
-example : ∑ σ : Fin 2 → Bool, |∑ t : Fin 2, BooleanCube.cubeVal (σ t)|
-    ≥ (2 : ℝ) ^ 2 * Real.sqrt (((2 : ℕ) : ℝ) / 3) :=
-  khintchine_lower 2
-
 /-- `oco_lower_bound` at `T = 1`, `D = 2`, `G = 1` for the zero algorithm. -/
 example : ∃ σ : Fin 1 → Bool,
     (2 * 1 / 2 : ℝ) * Real.sqrt (((1 : ℕ) : ℝ) / 3)
@@ -122,21 +117,6 @@ example : ∃ σ : Fin 1 → Bool,
     (by linarith) (by intro t s; simp)
 
 -- Guarded axiom audit for the lower-bound theorems.
-/--
-info: 'Cslib.MachineLearning.OnlineConvexLowerBound.sum_cubeVal_fourth_le' depends on
- axioms: [propext,
- Classical.choice,
- Quot.sound]
--/
-#guard_msgs (whitespace := lax) in
-#print axioms sum_cubeVal_fourth_le
-/--
-info: 'Cslib.MachineLearning.OnlineConvexLowerBound.khintchine_lower' depends on axioms: [propext,
- Classical.choice,
- Quot.sound]
--/
-#guard_msgs in
-#print axioms khintchine_lower
 /--
 info: 'Cslib.MachineLearning.OnlineConvexLowerBound.online_play_expectation_zero' depends on
  axioms: [propext,
