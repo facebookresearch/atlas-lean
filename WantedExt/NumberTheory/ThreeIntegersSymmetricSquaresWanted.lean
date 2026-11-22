@@ -88,7 +88,8 @@ def IsSumTwoNonzeroSquaresℤ (z : ℤ) : Prop :=
 numbers that are each a sum of two squares of rational numbers, then $\alpha / \beta$ is also a
 sum of two squares of rational numbers.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Lemma 1. -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Lemma 1. -/
 theorem_wanted sum_two_squares_div_sum_two_squaresℚ
     {α β : ℚ} (hα : α ≠ 0) (hβ : β ≠ 0)
     (hα₂ : IsSumTwoSquaresℚ α) (hβ₂ : IsSumTwoSquaresℚ β) :
@@ -98,7 +99,8 @@ theorem_wanted sum_two_squares_div_sum_two_squaresℚ
 such that each of $a + b + c$, $ab + bc + ca$ and $abc$ is the square of an integer, then the
 same holds for the triple $ab$, $bc$, $ca$.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Lemma 2. -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Lemma 2. -/
 theorem_wanted hasSquareElementarySymmetricFunctions_pairwise_products
     {a b c : ℤ}
     (h : HasSquareElementarySymmetricFunctions a b c) :
@@ -111,7 +113,8 @@ there is a nonzero rational number $k$ such that $A = ka$, $B = kb$ and $C = kc$
 $A + B + C$, $AB + BC + CA$ and $ABC$ are squares of integers, and each of $A$, $B$ and $C$ is a
 sum of two squares of integers.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Lemma 3. -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Lemma 3. -/
 theorem_wanted isSumTwoSquaresℚ_of_hasSquareElementarySymmetricFunctionsℚ_and_scaling
     {a b c : ℚ}
     (h : HasSquareElementarySymmetricFunctionsℚ a b c) :
@@ -139,7 +142,8 @@ integers $s$ and $t$, put $a = t^2 (s^2 - t^2)^2 (s^2 + t^2)$, $b = s^2 (s^2 - t
 and $c = 4 s^4 t^4$. Then each of $a + b + c$, $ab + bc + ca$ and $abc$ is the square of an
 integer.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.3). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.3). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family33
     (s t : ℤ) :
     HasSquareElementarySymmetricFunctions
@@ -152,7 +156,8 @@ integers $s$ and $t$, put $a = 4 s^4 t^2 (s^2 + t^2)$, $b = 4 s^2 t^4 (s^2 + t^2
 $c = (s^4 - t^4)^2$. Then each of $a + b + c$, $ab + bc + ca$ and $abc$ is the square of an
 integer.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.4). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.4). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family34
     (s t : ℤ) :
     HasSquareElementarySymmetricFunctions
@@ -166,7 +171,8 @@ $g = 3 s^6 + s^4 t^2 + s^2 t^4 - t^6$, and put $a = 4 s^4 t^2 (s^2 + t^2) f^2$,
 $b = (s^4 - t^4)^2 f^2$ and $c = 4 s^2 t^4 (s^2 + t^2) g^2$. Then each of $a + b + c$,
 $ab + bc + ca$ and $abc$ is the square of an integer.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.5). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.5). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family35
     (s t : ℤ) :
     HasSquareElementarySymmetricFunctions
@@ -182,7 +188,8 @@ $g = 3 s^6 + s^4 t^2 + s^2 t^4 - t^6$, and put $a = t^2 (s^2 - t^2)^2 (s^2 + t^2
 $b = 4 s^4 t^4 g^2$ and $c = s^2 (s^2 - t^2)^2 (s^2 + t^2) f^2$. Then each of $a + b + c$,
 $ab + bc + ca$ and $abc$ is the square of an integer.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.6). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 1, family (3.6). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family36
     (s t : ℤ) :
     HasSquareElementarySymmetricFunctions
@@ -210,7 +217,8 @@ integers $m$ and $n$, let $Q = m^4 - 6 m^2 n^2 + n^4$ and put $a = (m^4 - n^4)^2
 $b = 4 m^2 n^2 (m^2 + n^2)^2 Q^2$ and $c = 64 m^4 n^4 (m^2 - n^2)^4$. Then each of $a$, $b$,
 $c$, $a + b + c$, $ab + bc + ca$ and $abc$ is the square of an integer.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.30). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.30). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family330_and_entries_square
     (m n : ℤ) :
     let a := (m ^ 4 - n ^ 4) ^ 2 * (shiftedQuartic m n) ^ 2
@@ -225,7 +233,8 @@ integers $m$ and $n$, let $a = 64 m^4 n^4 (m^2 - n^2)^2$, $b = 16 m^2 n^2 (m^2 -
 $c = (m^2 + n^2)^2 (m^4 - 6 m^2 n^2 + n^4)^2$. Then $a + b + c$, $ab + bc + ca$ and $abc$ are
 squares of integers, and $a$, $b$ and $c$ are themselves squares of integers.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.31). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.31). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family331_and_entries_square
     (m n : ℤ) :
     let a := 64 * m ^ 4 * n ^ 4 * (m ^ 2 - n ^ 2) ^ 2
@@ -242,7 +251,8 @@ and put $a = 64 m^4 n^4 (m^2 - n^2)^2 P^2$, $b = (m^2 + n^2)^2 Q^2 P^2$ and
 $c = 16 m^2 n^2 (m^2 - n^2)^4 R^2$. Then each of $a$, $b$, $c$, $a + b + c$, $ab + bc + ca$ and
 $abc$ is the square of an integer.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.32). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.32). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family332_and_entries_square
     (m n : ℤ) :
     let a := 64 * m ^ 4 * n ^ 4 * (m ^ 2 - n ^ 2) ^ 2
@@ -262,7 +272,8 @@ and put $a = (m^4 - n^4)^2 Q^2 R^2$, $b = 64 m^4 n^4 (m^2 - n^2)^4 R^2$ and
 $c = 4 m^2 n^2 (m^2 + n^2)^2 Q^2 P^2$. Then each of $a$, $b$, $c$, $a + b + c$, $ab + bc + ca$
 and $abc$ is the square of an integer.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.33). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 2, family (3.33). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family333_and_entries_square
     (m n : ℤ) :
     let a := (m ^ 4 - n ^ 4) ^ 2 * (shiftedQuartic m n) ^ 2
@@ -296,7 +307,8 @@ squares of two nonzero integers $x$ and $y$.
 
 The hypothesis that $r$ and $s$ are nonzero is the nondegenerate range used in the proof.
 
-Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the Integers, Taken Two at a Time, Are Perfect Squares", Theorem 3, family (3.34). -/
+Source: Ajai Choudhry, "Three Integers Whose Sum, Product, and the Sum of the Products of the
+Integers, Taken Two at a Time, Are Perfect Squares", Theorem 3, family (3.34). -/
 theorem_wanted hasSquareElementarySymmetricFunctions_family334_and_entries_sum_two_nonzero_squares
     (r s : ℤ) (hr : r ≠ 0) (hs : s ≠ 0) :
     let a := r ^ 2 * (r ^ 2 + s ^ 2) * (degreeEightFactor r s) ^ 2

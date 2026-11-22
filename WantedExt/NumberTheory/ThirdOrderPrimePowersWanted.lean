@@ -13,6 +13,7 @@ public import Mathlib.Algebra.LinearRecurrence
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Tactic.NormNum
+public import MathlibExt.Combinatorics.Enumerative.NarayanaSequence
 public import MathlibExt.NumberTheory.PadovanSequence
 public import MathlibExt.NumberTheory.PerrinSequence
 public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
@@ -89,6 +90,20 @@ of Integer Sequences 29 (2026), Article 26.2.3, Theorem 3
 public theorem_wanted shiftedPadovan_infinite_not_isSumOfTwoPrimePowers :
     Set.Infinite {k : ℕ | ¬ IsSumOfTwoPrimePowers (shiftedPadovanSequence k : ℤ)}
 
+/-- Infinitely many Van der Laan numbers are not a sum of two prime powers; in fact
+`V_k` is not one for every sufficiently large `k ≡ 45752 (mod 967206240)`. The paper
+defines `V_0 = 1`, `V_1 = 0`, `V_2 = 1`, `V_k = V_{k-2} + V_{k-3}`, which is exactly the
+repository's `shiftedPadovanSequence`.
+
+Source: Baczkowski and Keener, *Third-Order Recurrence Sequences with
+Infinitely Many Terms not Equal to the Sum of Two Prime Powers*, Journal
+of Integer Sequences 29 (2026), Article 26.2.3, Theorem 4
+(`jis-2026-26.2.3-thm-4`). -/
+public theorem_wanted vanDerLaan_not_isSumOfTwoPrimePowers_of_modEq :
+    Set.Infinite {k : ℕ | ¬ IsSumOfTwoPrimePowers (shiftedPadovanSequence k : ℤ)} ∧
+      ∃ K : ℕ, ∀ k : ℕ, K ≤ k → k ≡ 45752 [MOD 967206240] →
+        ¬ IsSumOfTwoPrimePowers (shiftedPadovanSequence k : ℤ)
+
 /-- **Infinitely many Perrin numbers are not sums of two prime powers.** Let $(E_n)_{n \ge 0}$ be
 the Perrin sequence, given by $E_0 = 3$, $E_1 = 0$, $E_2 = 2$ and $E_{n+3} = E_{n+1} + E_n$.
 There are infinitely many natural numbers $k$ such that $E_k$ is not a sum of two prime powers.
@@ -119,6 +134,20 @@ of Integer Sequences 29 (2026), Article 26.2.3, Theorem 6
 (`jis-2026-26.2.3-thm-6`). -/
 public theorem_wanted leonardo_infinite_not_isSumOfTwoPrimePowers :
     Set.Infinite {k : ℕ | ¬ IsSumOfTwoPrimePowers (genLeonardo 1 k)}
+
+/-- Infinitely many Narayana's cows numbers (NC numbers) are not a sum of two prime powers;
+in fact `N_k` is not one for every sufficiently large `k ≡ 137042 (mod 718391520)`. The paper
+defines `N_0 = 0`, `N_1 = N_2 = 1`, `N_k = N_{k-1} + N_{k-3}`, which is the repository's
+`narayanaCowsSequence`.
+
+Source: Baczkowski and Keener, *Third-Order Recurrence Sequences with
+Infinitely Many Terms not Equal to the Sum of Two Prime Powers*, Journal
+of Integer Sequences 29 (2026), Article 26.2.3, Theorem 7
+(`jis-2026-26.2.3-thm-7`). -/
+public theorem_wanted narayanaCows_not_isSumOfTwoPrimePowers_of_modEq :
+    Set.Infinite {k : ℕ | ¬ IsSumOfTwoPrimePowers (narayanaCowsSequence k : ℤ)} ∧
+      ∃ K : ℕ, ∀ k : ℕ, K ≤ k → k ≡ 137042 [MOD 718391520] →
+        ¬ IsSumOfTwoPrimePowers (narayanaCowsSequence k : ℤ)
 
 /-- **Third-order recurrences with infinitely many terms not sums of two prime powers.** There
 are infinitely many sequences $(s_n)_{n \ge 0}$ of positive integers with all of the following

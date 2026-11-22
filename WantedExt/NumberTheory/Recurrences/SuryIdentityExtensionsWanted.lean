@@ -114,7 +114,8 @@ theorem_wanted lucas_step_sury_sum
 /-- **Theorem 5, Fibonacci offset formula**: for `j > |k| > 0`, the
 `j`-step Fibonacci numbers with offset `k` sum to `F_{j(n+1)}`.
 
-Source: Gregory Dresden and Xiaoya Gao, "Further Extensions of Sury's Identity", Theorem 5, formula (53). -/
+Source: Gregory Dresden and Xiaoya Gao, "Further Extensions of Sury's Identity", Theorem 5, formula
+(53). -/
 theorem_wanted fib_step_offset_sury_sum
     (j : ℕ) (k : ℤ) (n : ℕ)
     (hjk : |k| < (j : ℤ)) (hk : k ≠ 0) :
@@ -128,7 +129,8 @@ theorem_wanted fib_step_offset_sury_sum
 /-- **Theorem 5, Lucas offset formula**: for `j > |k|`, the `j`-step
 Lucas numbers with offset `k` sum to `F_{j(n+1)}`.
 
-Source: Gregory Dresden and Xiaoya Gao, "Further Extensions of Sury's Identity", Theorem 5, formula (54). -/
+Source: Gregory Dresden and Xiaoya Gao, "Further Extensions of Sury's Identity", Theorem 5, formula
+(54). -/
 theorem_wanted lucas_step_offset_sury_fib_sum
     (j : ℕ) (k : ℤ) (n : ℕ)
     (hjk : |k| < (j : ℤ)) :

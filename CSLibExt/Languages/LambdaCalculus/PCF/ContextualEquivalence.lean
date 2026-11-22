@@ -12,6 +12,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Languages.LambdaCalculus.PCF.Adequacy
+public import Cslib.Foundations.Syntax.Congruence
 
 /-!
 # Contextual equivalence
@@ -140,6 +141,17 @@ theorem plug_comp {Θ : List Ty} (outer : Ctx Δ B Θ C) (inner : Ctx Γ A Δ B)
 theorem comp_assoc {Θ Ξ : List Ty} {D : Ty} (outer : Ctx Θ C Ξ D) (middle : Ctx Δ B Θ C)
     (inner : Ctx Γ A Δ B) : comp (comp outer middle) inner = comp outer (comp middle inner) := by
   induction outer <;> simp [comp, *]
+
+/-- PCF one-hole contexts are the upstream heterogeneous contexts for PCF terms:
+`C<[t]` is `C.plug t`. -/
+instance instHasHContext : HasHContext (Tm Δ B) (Tm Γ A) where
+  Context := Ctx Γ A Δ B
+  fill C t := C.plug t
+
+/-- Filling an upstream context hole is plugging the PCF context. -/
+@[simp]
+theorem fill_eq_plug (C : Ctx Γ A Δ B) (t : Tm Γ A) :
+    HasHContext.fill (α := Tm Δ B) (β := Tm Γ A) C t = C.plug t := rfl
 
 end Ctx
 
@@ -302,6 +314,18 @@ theorem ctxEquiv_iff_ctxApprox {Γ : List Ty} {A : Ty} {t u : Tm Γ A} :
     CtxEquiv t u ↔ CtxApprox t u ∧ CtxApprox u t :=
   ⟨fun h => ⟨fun C n => (h C n).mp, fun C n => (h C n).mpr⟩,
     fun ⟨h₁, h₂⟩ C n => ⟨h₁ C n, h₂ C n⟩⟩
+
+/-- Contextual equivalence is a congruence in the sense of the upstream `Congruence` class. -/
+instance CtxEquiv.instCongruence {Γ : List Ty} {A : Ty} : Congruence (@CtxEquiv Γ A) := ⟨⟩
+
+/-- Contextual equivalence is an upstream `LawfulCongruence`: an equivalence relation
+preserved by every one-hole context (`CtxEquiv.congr`). -/
+instance CtxEquiv.instLawfulCongruence {Γ : List Ty} {A : Ty} :
+    LawfulCongruence (@CtxEquiv Γ A) where
+  refl := CtxEquiv.refl
+  symm _ _ := CtxEquiv.symm
+  trans _ _ _ := CtxEquiv.trans
+  covariant := ⟨fun C _ _ h => CtxEquiv.congr h (C : Ctx Γ A Γ A)⟩
 
 end Tm
 

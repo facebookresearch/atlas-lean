@@ -72,4 +72,85 @@ example : (3 / 2 : ℝ) =
   frischWaughLovell_eq_div transpose_one normal_A normal_z resid_z
     (by simp [A_mulVec, z, mulVec, dotProduct, Fin.sum_univ_three]; norm_num)
 
+/-! For the block form, regress `y = (1, 7, 1, 3)` on an intercept and the two-column block
+with columns `(0, 1, 2, 3)` and `(0, 1, 4, 9)`. The coefficients are `b = 2` and
+`g = (3, -1)`. Regressing the block columns on the intercept gives their means
+`U = (3/2, 7/2)`; the residualized Gram matrix is `[[5, 15], [15, 49]]`, and both sides of
+the block identity equal `(0, -4)`. -/
+
+/-- The intercept column for four observations. -/
+def Ablock : Matrix (Fin 4) (Fin 1) ℝ := fun _ _ => 1
+
+/-- The two-column regressor block `x` and `x²` at `x = 0, 1, 2, 3`. -/
+def Zblock : Matrix (Fin 4) (Fin 2) ℝ :=
+  Matrix.of ![![0, 0], ![1, 1], ![2, 4], ![3, 9]]
+
+/-- The column means of `Zblock`, its regression coefficients on the intercept. -/
+noncomputable def Ublock : Matrix (Fin 1) (Fin 2) ℝ := Matrix.of ![![3 / 2, 7 / 2]]
+
+/-- The response for the block example. -/
+def yblock : Fin 4 → ℝ := ![1, 7, 1, 3]
+
+theorem Ablock_mulVec (c : ℝ) : Ablock *ᵥ ![c] = fun _ => c := by
+  ext i
+  simp [Ablock, mulVec, dotProduct]
+
+theorem normal_Ablock :
+    Ablockᵀ *ᵥ ((1 : Matrix (Fin 4) (Fin 4) ℝ) *ᵥ
+      (yblock - Ablock *ᵥ ![2] - Zblock *ᵥ ![3, -1])) = 0 := by
+  ext i
+  fin_cases i
+  simp [Ablock_mulVec, Ablock, Zblock, yblock, mulVec, dotProduct, Fin.sum_univ_four,
+    vecHead, vecTail]
+  norm_num
+
+theorem normal_Zblock :
+    Zblockᵀ *ᵥ ((1 : Matrix (Fin 4) (Fin 4) ℝ) *ᵥ
+      (yblock - Ablock *ᵥ ![2] - Zblock *ᵥ ![3, -1])) = 0 := by
+  ext i
+  fin_cases i <;>
+    simp [Ablock_mulVec, Zblock, yblock, mulVec, dotProduct, Fin.sum_univ_four,
+      vecHead, vecTail] <;> norm_num
+
+theorem resid_Zblock :
+    Ablockᵀ * ((1 : Matrix (Fin 4) (Fin 4) ℝ) * (Zblock - Ablock * Ublock)) = 0 := by
+  ext i j
+  fin_cases i
+  fin_cases j <;> simp [Ablock, Zblock, Ublock, Matrix.mul_apply, Fin.sum_univ_four] <;>
+    norm_num
+
+/-- The block theorem on the example. -/
+example :
+    ((Zblock - Ablock * Ublock)ᵀ * (1 : Matrix (Fin 4) (Fin 4) ℝ) *
+      (Zblock - Ablock * Ublock)) *ᵥ ![3, -1] =
+        (Zblock - Ablock * Ublock)ᵀ *ᵥ ((1 : Matrix (Fin 4) (Fin 4) ℝ) *ᵥ yblock) :=
+  frischWaughLovell_block transpose_one normal_Ablock normal_Zblock resid_Zblock
+
+/-- The common value in the block identity is `(0, -4)`. -/
+example :
+    ((Zblock - Ablock * Ublock)ᵀ * (1 : Matrix (Fin 4) (Fin 4) ℝ) *
+      (Zblock - Ablock * Ublock)) *ᵥ ![3, -1] = ![0, -4] := by
+  ext i
+  fin_cases i <;>
+    simp [Ablock, Zblock, Ublock, mulVec, dotProduct, Matrix.mul_apply, Fin.sum_univ_four] <;>
+    norm_num
+
+theorem gram_block :
+    (Zblock - Ablock * Ublock)ᵀ * (1 : Matrix (Fin 4) (Fin 4) ℝ) *
+        (Zblock - Ablock * Ublock) = !![5, 15; 15, 49] := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [Ablock, Zblock, Ublock, Matrix.mul_apply, Fin.sum_univ_four] <;> norm_num
+
+/-- The block solved form recovers `g = (3, -1)`; the residual of `yblock` on the intercept
+uses its mean `v = 3`. -/
+example : ![3, -1] =
+    ((Zblock - Ablock * Ublock)ᵀ * (1 : Matrix (Fin 4) (Fin 4) ℝ) *
+      (Zblock - Ablock * Ublock))⁻¹ *ᵥ
+        ((Zblock - Ablock * Ublock)ᵀ *ᵥ
+          ((1 : Matrix (Fin 4) (Fin 4) ℝ) *ᵥ (yblock - Ablock *ᵥ ![3]))) :=
+  frischWaughLovell_block_eq_inv transpose_one normal_Ablock normal_Zblock resid_Zblock (by
+    rw [gram_block]
+    norm_num [Matrix.det_fin_two])
+
 end MathlibExtTest.LinearAlgebra.Matrix.FrischWaughLovell

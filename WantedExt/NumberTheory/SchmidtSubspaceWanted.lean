@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.NumberTheory.SchmidtSubspace` — schmidt_subspace (manifest `manifests/problems/schmidt_subspace.toml`, rev 1, submitter Junyan Xu, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.NumberTheory.SchmidtSubspace` —
+schmidt_subspace (manifest `manifests/problems/schmidt_subspace.toml`, rev 1, submitter Junyan Xu,
+status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.NumberTheory.SchmidtSubspaceWanted` namespace. Mathematical
-statements are unchanged. Source: W.M. Schmidt, Diophantine approximation, Lecture Notes in Mathematics 785, Springer Verlag 1980, Chap. V,VI,VII.
+and placed the declarations in the `MathlibExt.NumberTheory.SchmidtSubspaceWanted` namespace.
+Mathematical
+statements are unchanged. Source: W.M. Schmidt, Diophantine approximation, Lecture Notes in
+Mathematics 785, Springer Verlag 1980, Chap. V,VI,VII.
 -/
 module
 
@@ -53,7 +57,8 @@ subspaces of ℚⁿ. The specialization n = 2 gives the Thue–Siegel–Roth the
 
 ## References
 
-W.M. Schmidt, Diophantine approximation, Lecture Notes in Mathematics 785, Springer Verlag 1980, Chap. V,VI,VII.
+W.M. Schmidt, Diophantine approximation, Lecture Notes in Mathematics 785, Springer Verlag 1980,
+Chap. V,VI,VII.
 
 The slides https://pub.math.leidenuniv.nl/~evertsejh/14-bonn.pdf present
 Faltings’ product theorem, which gives a new proof and strong quantitative
@@ -82,7 +87,8 @@ Every proper subspace of $\mathbb{Q}^\sigma$ lies in a hyperplane $\sum_i c_i x_
 nonzero integer vector $c$, so this is the usual form: these $x$ lie in finitely many proper
 subspaces.
 
-Source: W.M. Schmidt, Diophantine approximation, Lecture Notes in Mathematics 785, Springer Verlag 1980, Chap. V,VI,VII. Via leanprover/lean-eval@38361be, problem `schmidt_subspace`. -/
+Source: W.M. Schmidt, Diophantine approximation, Lecture Notes in Mathematics 785, Springer
+Verlag 1980, Chap. V,VI,VII. Via leanprover/lean-eval@38361be, problem `schmidt_subspace`. -/
 public theorem_wanted schmidt_subspace (σ : Type*) [Fintype σ] (hσ : 2 ≤ Fintype.card σ)
     (L : σ → σ → ℂ)
     (alg : ∀ i j, IsAlgebraic ℚ (L i j)) (ind : LinearIndependent ℂ L)

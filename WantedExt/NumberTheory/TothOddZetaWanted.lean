@@ -62,7 +62,8 @@ $N(n;k) = (2^{4k+1} - 2^{2k})(2b_n - 1) +
 2^{-(2k+1)}((2^{2k+1} + 1) t_{n-1} + (2^{2k+1} - 1) t_n)$.
 
 Source: László Tóth, *Evaluating ζ(s) at Odd Positive Integers Using Automatic Dirichlet
-Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Theorem 2 (`jis-2025-25.4.4-thm-2`); `bₙ`, `tₙ` read from arXiv:2508.04151v1. -/
+Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Theorem 2
+(`jis-2025-25.4.4-thm-2`); `bₙ`, `tₙ` read from arXiv:2508.04151v1. -/
 public theorem_wanted riemannZeta_two_mul_add_one_sub_eq_tsum_paperfolding_thueMorse (k : ℕ)
     (hk : 1 ≤ k) :
     riemannZeta (2 * k + 1) - (2 : ℂ) ^ (2 * k - 1) / (2 * k).factorial *
@@ -85,7 +86,8 @@ In the source's indexing $b_n = f_{n-1}$ for $n \ge 1$, the sum is
 $\sum_{n \ge 1} (2 b_n - 1)/n^{2k+1}$.
 
 Source: László Tóth, *Evaluating ζ(s) at Odd Positive Integers Using Automatic Dirichlet
-Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Lemma 5 (`jis-2025-25.4.4-lem-5`); `bₙ` read from arXiv:2508.04151v1. -/
+Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Lemma 5 (`jis-2025-25.4.4-lem-5`);
+`bₙ` read from arXiv:2508.04151v1. -/
 public theorem_wanted tsum_paperfolding_two_mul_add_one (k : ℕ) (hk : 1 ≤ k) :
     ((2 : ℝ) ^ (4 * k + 1) - 2 ^ (2 * k)) *
         ∑' n : ℕ, (2 * ((paperfoldingSeq n).toNat : ℝ) - 1) / ((n + 1 : ℕ) : ℝ) ^ (2 * k + 1) =
@@ -106,7 +108,8 @@ which uses $b_0$, left undetermined by the recurrence $b_{2n} = b_n$; its proof 
 gives the sum over $n \ge 1$ stated here.
 
 Source: László Tóth, *Evaluating ζ(s) at Odd Positive Integers Using Automatic Dirichlet
-Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Corollary 7 (`jis-2025-25.4.4-cor-7`); `bₙ` read from arXiv:2508.04151v1. -/
+Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Corollary 7
+(`jis-2025-25.4.4-cor-7`); `bₙ` read from arXiv:2508.04151v1. -/
 public theorem_wanted tsum_neg_one_pow_paperfolding (k : ℕ) (hk : 1 ≤ k) :
     ∑' n : ℕ, (-1 : ℝ) ^ (paperfoldingSeq n).toNat / ((n + 1 : ℕ) : ℝ) ^ (2 * k + 1) =
       Real.pi ^ (2 * k + 1) * ((|chapter5EulerEven k| : ℤ) : ℝ) /

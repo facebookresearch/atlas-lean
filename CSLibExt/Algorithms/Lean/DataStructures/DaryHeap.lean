@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.Algorithms.Lean.DataStructures.BinaryHeap
 public import Mathlib.Data.Multiset.AddSub
 
 /-!
@@ -21,6 +22,13 @@ Insertion appends once and sifts along the genuine `d`-ary ancestor path. Extrac
 last entry to the root and sifts it down along a single `d`-ary child path, choosing the smallest
 valid child at each step. The representation stores exactly one array entry per multiset
 occurrence, plus one natural-number arity field and proofs erased by Lean's compiler.
+
+At arity two this is the binary heap of `BinaryHeap`: the parent and child maps, the order
+invariants and the sift procedures coincide (`heapParent_eq_daryParent_two`,
+`heapOrdered_iff_daryHeapOrdered_two`, `siftUp_eq_darySiftUp_two`,
+`siftDown_eq_darySiftDown_two`), and `MinHeap.toDary`
+carries a binary heap to an arity-two heap with the same array, commuting with insertion and
+extraction (`MinHeap.toDary_push`, `MinHeap.toDary_extractMin`).
 -/
 
 @[expose] public section
@@ -725,7 +733,7 @@ theorem daryMoveLastToRoot_siftDownReady {α : Type u} [LinearOrder α]
   · intro _ _ _ _ hzero'
     omega
 
-private theorem daryMoveLastToRoot_cons_perm {α : Type u} [LinearOrder α]
+private theorem daryMoveLastToRoot_cons_perm {α : Type u}
     (a : Array α) (hne : 0 < a.size) :
     (a[0]'hne :: (daryMoveLastToRoot a hne).toList).Perm a.toList := by
   let last := a.size - 1
@@ -1039,5 +1047,147 @@ theorem DaryMinHeap.extractMin_ordered {α : Type u} [LinearOrder α]
 theorem DaryMinHeap.card_elements {α : Type u} [LinearOrder α]
     (h : DaryMinHeap α) : h.elements.card = h.data.size := by
   simp [DaryMinHeap.elements]
+
+/-! ### Bridge to the binary heap at arity two -/
+
+/-- The binary parent map is the `d`-ary parent map at arity two. -/
+theorem heapParent_eq_daryParent_two (i : Nat) : heapParent i = daryParent 2 i :=
+  rfl
+
+/-- The binary left child is the arity-two child with offset zero. -/
+theorem heapLeft_eq_daryChild_two (i : Nat) : heapLeft i = daryChild 2 i 0 :=
+  rfl
+
+/-- The binary right child is the arity-two child with offset one. -/
+theorem heapRight_eq_daryChild_two (i : Nat) : heapRight i = daryChild 2 i 1 :=
+  rfl
+
+/-- The binary heap-order invariant is the `d`-ary invariant at arity two. -/
+theorem heapOrdered_iff_daryHeapOrdered_two {α : Type u} [LE α] (a : Array α) :
+    HeapOrdered a ↔ DaryHeapOrdered 2 a :=
+  ⟨fun h => ⟨le_rfl, fun i hi hpos => h i hi hpos⟩,
+    fun h i hi hpos => h.parent_le i hi hpos⟩
+
+/-- Binary sift-up is `d`-ary sift-up at arity two, on every array and start index. -/
+theorem siftUp_eq_darySiftUp_two {α : Type u} [LinearOrder α] (a : Array α) (i : Nat) :
+    siftUp a i = darySiftUp a i 2 le_rfl := by
+  induction i using Nat.strong_induction_on generalizing a with
+  | _ i ih =>
+    rw [siftUp, darySiftUp]
+    split
+    · split
+      · rename_i hi hpos
+        have hp : heapParent i < i := by unfold heapParent; omega
+        simp only [show daryParent 2 i = heapParent i from rfl]
+        split
+        · exact ih _ hp _
+        · rfl
+      · rfl
+    · rfl
+
+/-- The binary smaller-child selector is the `d`-ary smallest-child selector at arity two;
+both prefer the earlier child on ties. -/
+theorem smallerChild_eq_darySmallestChild_two {α : Type u} [LinearOrder α] (a : Array α) (i : Nat) :
+    smallerChild a i = darySmallestChild a 2 i := by
+  unfold darySmallestChild
+  rw [darySmallestChildFrom, darySmallestChildFrom, darySmallestChildFrom]
+  simp only [smallerChild, daryChild, heapLeft, heapRight]
+  by_cases hl : 2 * i + 1 < a.size <;> by_cases hr : 2 * i + 2 < a.size <;>
+    simp [hl, hr, show 2 * i + 1 + 1 = 2 * i + 2 by omega]
+  all_goals rfl
+
+/-- Binary sift-down is `d`-ary sift-down at arity two, on every array and start index. -/
+theorem siftDown_eq_darySiftDown_two {α : Type u} [LinearOrder α] (a : Array α) (i : Nat) :
+    siftDown a i = darySiftDown a i 2 le_rfl := by
+  induction hn : a.size - i using Nat.strong_induction_on generalizing a i with
+  | _ n ih =>
+    have hsc := smallerChild_eq_darySmallestChild_two a i
+    rw [siftDown, darySiftDown]
+    split
+    · split
+      · rfl
+      · simp_all
+    · split
+      · simp_all
+      · rename_i c h1 c' h2
+        rw [h1, h2] at hsc
+        cases hsc
+        have hc : c < a.size := smallerChild_valid a i c h1
+        have hgt : i < c := smallerChild_gt a i c h1
+        dsimp only
+        by_cases hlt : a[c] < a[i]
+        · simp only [hlt, ↓reduceDIte]
+          exact ih (a.size - c) (by omega) _ _ (by simp only [Array.size_swap])
+        · simp only [hlt, ↓reduceDIte]
+
+/-- View a binary min-heap as an arity-two heap with the same storage array. -/
+def MinHeap.toDary {α : Type u} [LinearOrder α] (h : MinHeap α) : DaryMinHeap α where
+  arity := 2
+  arity_valid := le_rfl
+  data := h.data
+  ordered := (heapOrdered_iff_daryHeapOrdered_two h.data).mp h.ordered
+
+/-- The arity-two view of a binary heap has arity two. -/
+@[simp]
+theorem MinHeap.toDary_arity {α : Type u} [LinearOrder α] (h : MinHeap α) :
+    h.toDary.arity = 2 :=
+  rfl
+
+/-- The arity-two view of a binary heap keeps its storage array. -/
+@[simp]
+theorem MinHeap.toDary_data {α : Type u} [LinearOrder α] (h : MinHeap α) :
+    h.toDary.data = h.data :=
+  rfl
+
+/-- The arity-two view of a binary heap represents the same multiset. -/
+@[simp]
+theorem MinHeap.toDary_elements {α : Type u} [LinearOrder α] (h : MinHeap α) :
+    h.toDary.elements = h.elements :=
+  rfl
+
+/-- The empty binary heap is the empty arity-two heap. -/
+theorem MinHeap.toDary_empty {α : Type u} [LinearOrder α] :
+    (MinHeap.empty : MinHeap α).toDary = DaryMinHeap.empty 2 :=
+  rfl
+
+/-- Binary insertion agrees with arity-two insertion. -/
+theorem MinHeap.toDary_push {α : Type u} [LinearOrder α] (h : MinHeap α) (x : α) :
+    (h.push x).toDary = h.toDary.push x := by
+  simp only [MinHeap.toDary, MinHeap.push, DaryMinHeap.push, siftUp_eq_darySiftUp_two]
+
+/-- Binary extraction agrees with arity-two extraction: the same minimum and the arity-two view
+of the same remaining heap. -/
+theorem MinHeap.toDary_extractMin {α : Type u} [LinearOrder α] (h : MinHeap α) :
+    h.extractMin.map (fun p => (p.1, p.2.toDary)) = h.toDary.extractMin := by
+  unfold MinHeap.extractMin DaryMinHeap.extractMin
+  by_cases hne : 0 < h.data.size
+  · simp only [MinHeap.toDary_data, hne, ↓reduceDIte, Option.map_some]
+    unfold MinHeap.extractTail DaryMinHeap.extractTail
+    by_cases hone : h.data.size = 1
+    · simp only [MinHeap.toDary_data, hone, ↓reduceDIte]
+      rfl
+    · simp only [MinHeap.toDary_data, hone, ↓reduceDIte]
+      simp only [MinHeap.toDary, siftDown_eq_darySiftDown_two, moveLastToRoot,
+        daryMoveLastToRoot]
+  · simp [hne]
+
+/-- View an arity-two heap as a binary min-heap with the same storage array. -/
+def DaryMinHeap.toBinary {α : Type u} [LinearOrder α] (h : DaryMinHeap α)
+    (h2 : h.arity = 2) : MinHeap α where
+  data := h.data
+  ordered := (heapOrdered_iff_daryHeapOrdered_two h.data).mpr (h2 ▸ h.ordered)
+
+/-- Viewing a binary heap at arity two and back returns the original heap. -/
+@[simp]
+theorem MinHeap.toDary_toBinary {α : Type u} [LinearOrder α] (h : MinHeap α) :
+    h.toDary.toBinary h.toDary_arity = h :=
+  rfl
+
+/-- Viewing an arity-two heap as a binary heap and back returns the original heap. -/
+theorem DaryMinHeap.toBinary_toDary {α : Type u} [LinearOrder α] (h : DaryMinHeap α)
+    (h2 : h.arity = 2) : (h.toBinary h2).toDary = h := by
+  cases h
+  cases h2
+  rfl
 
 end Cslib.Algorithms.Lean

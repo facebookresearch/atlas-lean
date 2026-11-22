@@ -31,21 +31,13 @@ open LieAlgebra
 
 attribute [local instance 100] LieRing.ofAssociativeRing
 
-private theorem levi_sum_repr
-    {K V ι : Type*} [Semiring K] [AddCommMonoid V] [Module K V]
-    [Fintype ι] (b : Module.Basis ι K V) (x : V) :
-    ∑ i, b.repr x i • b i = x := by
-  apply b.repr.injective
-  ext j
-  simp
-
 private theorem levi_repr_eq_dual
     {K V ι : Type*} [Field K] [AddCommGroup V] [Module K V]
     [Finite ι] [DecidableEq ι] {B : LinearMap.BilinForm K V}
     (hB : B.Nondegenerate) (b : Module.Basis ι K V) (x : V) (i : ι) :
     b.repr x i = B (B.dualBasis hB b i) x := by
   let _ := Fintype.ofFinite ι
-  conv_rhs => rw [← levi_sum_repr b x]
+  conv_rhs => rw [← b.sum_repr x]
   rw [map_sum]
   simp_rw [map_smul]
   simp_rw [LinearMap.BilinForm.apply_dualBasis_left hB b]
@@ -195,7 +187,7 @@ private theorem levi_casimir_commute
     _ = 0 := by
       have hxb (i) : ρ ⁅x, b i⁆ =
           ∑ j, b.repr ⁅x, b i⁆ j • ρ (b j) := by
-        conv_lhs => rw [← levi_sum_repr b ⁅x, b i⁆]
+        conv_lhs => rw [← b.sum_repr ⁅x, b i⁆]
         rw [map_sum]
         simp_rw [map_smul]
       have hxd (i) : ρ ⁅x, d i⁆ =

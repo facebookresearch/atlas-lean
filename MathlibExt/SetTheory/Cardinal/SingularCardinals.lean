@@ -11,13 +11,13 @@ Author: Nam Trang
 -/
 module
 
-public import Mathlib.SetTheory.Cardinal.Aleph
 public import Mathlib.SetTheory.Cardinal.Cofinality.Ordinal
-public import Mathlib.SetTheory.Cardinal.Regular
 
 @[expose] public section
 
 -- Source: Lean Definition Library (Airtable) records: Logic 358
+
+open Set Cardinal Ordinal
 
 /-!
 # Singular Cardinal Hypothesis
@@ -26,8 +26,6 @@ public import Mathlib.SetTheory.Cardinal.Regular
 
 * Jech (for `SingularCardinalsHypothesis`)
 -/
-
-open Set Cardinal Ordinal
 
 namespace MetaMathlibExt
 

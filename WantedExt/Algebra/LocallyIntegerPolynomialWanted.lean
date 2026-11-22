@@ -24,7 +24,8 @@ Article A41 (arXiv `2401.17955`, TeX source read).
 For `U ⊆ ℤ`, a function `f : U → ℤ` is *locally integer polynomial* (LIP) when its restriction
 to every finite subset of `U` is given by a polynomial with integer coefficients. These functions
 form the ring `LIP(U)`, here `lipSubring U`; `LIP(ℤ) = Lℤ[x]` is `lipSubring Set.univ`. A function
-`g : ℤ → ℤ` is LIP on `U` when `U.domRestrict g ∈ lipSubring U`. The paper's interpolation polynomial
+`g : ℤ → ℤ` is LIP on `U` when `U.domRestrict g ∈ lipSubring U`. The paper's interpolation
+polynomial
 `f_X ∈ ℚ[x]` (the unique polynomial of degree `< |X|` agreeing with `f` on the finite set `X`) is
 `interpolationPoly X f`, built from Mathlib's `Lagrange.interpolate`; "`f_X ∈ ℤ[x]`" is
 `interpolationPoly X f ∈ Polynomial.lifts (Int.castRingHom ℚ)`. The paper's `ℕ` is the positive

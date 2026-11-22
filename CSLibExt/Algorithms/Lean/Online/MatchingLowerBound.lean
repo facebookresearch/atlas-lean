@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Algorithms.Lean.Graph.BipartiteMatching
+public import CSLibExt.Algorithms.Lean.Online.BipartiteMatching
 public import Mathlib.Data.List.Forall2
 
 /-!
@@ -39,6 +40,11 @@ Main results:
   `not_competitive_of_lt`: so for `d < 2 * c` and `b < n`, `d * ALG + b < c * OPT` on some
   sequence (a finite-size obstruction); `not_competitive`: for a family of algorithms, one per
   size, every additive constant `b` fails at some size.
+* `greedyMatcher`: the greedy algorithm of `Online/BipartiteMatching.lean` as an `OnlineMatcher`;
+  `matched_greedyMatcher_eq_card`: it matches as many arrivals as `greedyAll` has edges on the
+  arrivals' graph `toAdj σ`, so `card_le_two_mul_matched_greedyMatcher` carries greedy's `1/2`
+  bound into this model, and `greedy_tight`: greedy matches exactly half of a perfect matching on
+  the adversary's arrivals, so it attains the best ratio a deterministic algorithm can.
 
 ## Cost model
 
@@ -291,5 +297,177 @@ family of algorithms, one for each even number `2 n` of left vertices, and all `
 theorem not_competitive (A : ∀ n, OnlineMatcher (2 * n)) {c d : ℕ} (hcd : d < 2 * c) (b : ℕ) :
     ∃ n σ m, IsPerfect σ m ∧ d * matched (A n) [] [] σ + b < c * m.length :=
   ⟨b + 1, not_competitive_of_lt (b + 1) hcd (Nat.lt_succ_self b) (A (b + 1))⟩
+
+/-! ## Greedy as an online matcher -/
+
+/-- Greedy's proposal: the free left neighbour of least index, if any. -/
+def greedyPick (used nbrs : List (Fin a)) : Option (Fin a) :=
+  (List.finRange a).find? fun i => decide (i ∈ nbrs) && decide (i ∉ used)
+
+/-- The left vertices the greedy algorithm has matched after the arrivals `h`. -/
+def greedyUsed (h : List (List (Fin a))) : List (Fin a) :=
+  h.foldl (fun used nbrs => match greedyPick used nbrs with
+    | some i => i :: used
+    | none => used) []
+
+/-- **Greedy as an online matcher**: it replays the history to recover the left vertices it has
+already matched (`greedyUsed`) and proposes the free neighbour of least index (`greedyPick`), the
+choice of `Online.BipartiteMatching.step`. -/
+def greedyMatcher : OnlineMatcher a := ⟨fun h nbrs => greedyPick (greedyUsed h) nbrs⟩
+
+private theorem greedyUsed_append_singleton (h : List (List (Fin a))) (nbrs : List (Fin a)) :
+    greedyUsed (h ++ [nbrs]) = match greedyPick (greedyUsed h) nbrs with
+      | some i => i :: greedyUsed h
+      | none => greedyUsed h := by
+  simp [greedyUsed, List.foldl_append]
+
+private theorem matched_greedyMatcher_aux : ∀ (σ h : List (List (Fin a))),
+    matched greedyMatcher h (greedyUsed h) σ + (greedyUsed h).length =
+      (greedyUsed (h ++ σ)).length
+  | [], h => by simp [matched]
+  | nbrs :: σ, h => by
+      have ih := matched_greedyMatcher_aux σ (h ++ [nbrs])
+      rw [greedyUsed_append_singleton] at ih
+      rw [show h ++ nbrs :: σ = h ++ [nbrs] ++ σ by simp]
+      simp only [matched]
+      change (match greedyPick (greedyUsed h) nbrs with
+        | some i => if i ∈ nbrs ∧ i ∉ greedyUsed h then
+            1 + matched greedyMatcher (h ++ [nbrs]) (i :: greedyUsed h) σ
+            else matched greedyMatcher (h ++ [nbrs]) (greedyUsed h) σ
+        | none => matched greedyMatcher (h ++ [nbrs]) (greedyUsed h) σ) + _ = _
+      cases hc : greedyPick (greedyUsed h) nbrs with
+      | none => rw [hc] at ih; simpa using ih
+      | some i =>
+          rw [hc] at ih
+          have hi := List.find?_some hc
+          simp only [Bool.and_eq_true, decide_eq_true_eq] at hi
+          simp only [hi, not_false_eq_true, and_self, ↓reduceIte]
+          simp only [List.length_cons] at ih
+          omega
+
+/-- `greedyMatcher` matches one arrival per left vertex it records as used. -/
+theorem matched_greedyMatcher (σ : List (List (Fin a))) :
+    matched greedyMatcher [] [] σ = (greedyUsed σ).length := by
+  simpa [greedyUsed] using matched_greedyMatcher_aux σ []
+
+open Cslib.Algorithms.Lean.BipartiteMatching in
+/-- The invariant of the run of `greedyAll` on the arrivals' graph after the first `k` arrivals:
+later arrivals are unmatched, and the free left vertices and the matching size agree with
+`greedyUsed`. -/
+private theorem greedy_take_inv (σ : List (List (Fin a))) : ∀ k, k ≤ σ.length →
+    let mate := Online.BipartiteMatching.greedy (toAdj σ) ((List.finRange σ.length).take k)
+      (fun _ => none)
+    (∀ j : Fin σ.length, k ≤ j.1 → mate j = none) ∧
+    (∀ i, Free mate i ↔ i ∉ greedyUsed (σ.take k)) ∧
+    (pairs mate).card = (greedyUsed (σ.take k)).length
+  | 0, _ => by
+      refine ⟨fun _ _ => rfl, fun i => ?_, ?_⟩
+      · simp [greedyUsed, Online.BipartiteMatching.greedy, Free]
+      · simp [greedyUsed, Online.BipartiteMatching.greedy, pairs]
+  | k + 1, hk => by
+      obtain ⟨h1, h2, h3⟩ := greedy_take_inv σ k (by omega)
+      intro mate
+      set m := Online.BipartiteMatching.greedy (toAdj σ) ((List.finRange σ.length).take k)
+        (fun _ => none) with hm
+      set used := greedyUsed (σ.take k) with hused
+      let j : Fin σ.length := ⟨k, by omega⟩
+      have hmj : m j = none := h1 j le_rfl
+      have htake : (List.finRange σ.length).take (k + 1) =
+          (List.finRange σ.length).take k ++ [j] := by
+        rw [List.take_add_one, List.getElem?_eq_getElem (by simp; omega)]
+        simp [j]
+      have hσ : σ.take (k + 1) = σ.take k ++ [σ[k]] := by
+        rw [List.take_add_one, List.getElem?_eq_getElem (by omega)]
+        rfl
+      have hpred : (fun i => decide (j ∈ toAdj σ i) && decide (Free m i)) =
+          fun i => decide (i ∈ σ[k]) && decide (i ∉ used) := by
+        funext i
+        simp [toAdj, h2 i, j]
+      have hc : (List.finRange a).find? (fun i => decide (j ∈ toAdj σ i) && decide (Free m i)) =
+          greedyPick used σ[k] := by
+        rw [hpred]; rfl
+      have hmate : mate = Function.update m j (greedyPick used σ[k]) := by
+        simp only [mate, htake, Online.BipartiteMatching.greedy, List.foldl_append,
+          List.foldl_cons, List.foldl_nil]
+        change Online.BipartiteMatching.step (toAdj σ) m j = _
+        simp only [Online.BipartiteMatching.step, hc]
+      have hU : greedyUsed (σ.take (k + 1)) = match greedyPick used σ[k] with
+          | some i => i :: used
+          | none => used := by
+        rw [hσ, greedyUsed_append_singleton]
+      rw [hmate, hU]
+      refine ⟨fun j' hj' => ?_, fun i => ?_, ?_⟩
+      · have hne : j' ≠ j := fun e => by have := congrArg Fin.val e; simp only [j] at this; omega
+        rw [Function.update_of_ne hne]
+        exact h1 j' (by omega)
+      · have hfree : Free (Function.update m j (greedyPick used σ[k])) i ↔
+            greedyPick used σ[k] ≠ some i ∧ Free m i := by
+          constructor
+          · intro hf
+            refine ⟨fun e => hf j (by simp [e]), fun j' => ?_⟩
+            by_cases hj' : j' = j
+            · rw [hj', hmj]; simp
+            · have := hf j'
+              rwa [Function.update_of_ne hj'] at this
+          · rintro ⟨hne, hf⟩ j'
+            by_cases hj' : j' = j
+            · rw [hj', Function.update_self]; exact hne
+            · rw [Function.update_of_ne hj']; exact hf j'
+        rw [hfree, h2 i]
+        cases greedyPick used σ[k] with
+        | none => simp
+        | some i₀ =>
+            simp only [ne_eq, Option.some.injEq, List.mem_cons, not_or]
+            tauto
+      · cases hg : greedyPick used σ[k] with
+        | none =>
+            have : Function.update m j none = m := by
+              rw [Function.update_eq_self_iff]; exact hmj.symm
+            rw [this]; exact h3
+        | some i₀ =>
+            have hnot : (i₀, j) ∉ pairs m := by simp [pairs, hmj]
+            have : pairs (Function.update m j (some i₀)) = insert (i₀, j) (pairs m) := by
+              ext ⟨i, j'⟩
+              by_cases hj' : j' = j
+              · subst hj'
+                simp [pairs, hmj, eq_comm]
+              · simp [pairs, hj']
+            rw [this, Finset.card_insert_of_notMem hnot, h3, List.length_cons]
+
+open Cslib.Algorithms.Lean.BipartiteMatching in
+/-- **`greedyMatcher` is the greedy algorithm of `Online/BipartiteMatching.lean`**: on every arrival
+sequence it matches as many arrivals as `greedyAll` has edges on the arrivals' graph. -/
+theorem matched_greedyMatcher_eq_card (σ : List (List (Fin a))) :
+    matched greedyMatcher [] [] σ =
+      (pairs (Online.BipartiteMatching.greedyAll (toAdj σ))).card := by
+  have := (greedy_take_inv σ σ.length le_rfl).2.2
+  rw [List.take_length, List.take_of_length_le (by simp)] at this
+  rw [matched_greedyMatcher, Online.BipartiteMatching.greedyAll_eq, this]
+
+/-- **Greedy is `1/2`-competitive in the `OnlineMatcher` model**: every matching of the arrivals'
+graph has at most twice as many edges as `greedyMatcher` matches arrivals
+(`Online.BipartiteMatching.card_le_two_mul_greedyAll` through `matched_greedyMatcher_eq_card`). -/
+theorem card_le_two_mul_matched_greedyMatcher {σ : List (List (Fin a))}
+    {M : Finset (Fin a × Fin σ.length)} (hM : BipartiteMatching.IsMatching (toAdj σ) M) :
+    M.card ≤ 2 * matched greedyMatcher [] [] σ := by
+  rw [matched_greedyMatcher_eq_card]
+  exact Online.BipartiteMatching.card_le_two_mul_greedyAll (toAdj σ) hM
+
+/-- The same against a perfect matching of the arrivals: `|m| ≤ 2 * ALG`. -/
+theorem length_le_two_mul_matched_greedyMatcher {σ : List (List (Fin a))} {m : List (Fin a)}
+    (hm : IsPerfect σ m) : m.length ≤ 2 * matched greedyMatcher [] [] σ := by
+  obtain ⟨M, hM, hc⟩ := exists_isMatching_of_isPerfect hm
+  rw [hm.2.length_eq, ← hc]
+  exact card_le_two_mul_matched_greedyMatcher hM
+
+/-- **The ratio `1/2` is tight for greedy, and greedy is optimal among deterministic online
+matchers**: `length_le_two_mul_matched_greedyMatcher` and, from the adversary of
+`exists_perfect_matched_le`, for every `n` some `2 n` arrivals have a perfect matching `m` of
+which `greedyMatcher` matches exactly half. -/
+theorem greedy_tight (n : ℕ) : ∃ σ m, IsPerfect σ m ∧ m.length = 2 * n ∧
+    2 * matched (greedyMatcher (a := 2 * n)) [] [] σ = m.length := by
+  obtain ⟨σ, m, hm, hml, -, hle⟩ := exists_perfect_matched_le n greedyMatcher
+  have := length_le_two_mul_matched_greedyMatcher hm
+  exact ⟨σ, m, hm, hml, by omega⟩
 
 end Cslib.Algorithms.Lean.Online.MatchingLowerBound

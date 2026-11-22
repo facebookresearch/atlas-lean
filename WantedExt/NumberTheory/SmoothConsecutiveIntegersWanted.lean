@@ -17,7 +17,7 @@ non-trivial location variant: the run lies in [n/2, n].
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.NumberTheory.Divisors
 public import Batteries.Util.ProofWanted
 

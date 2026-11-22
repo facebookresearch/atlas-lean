@@ -502,3 +502,7 @@ theorem_wanted pairwiseSumsSquares_quadruple_family59
           ((m ^ 3 - 3 * m) * q + (3 * m ^ 2 - 1) * r)]
 
 end TwoSetsSumsetSquaresWanted
+
+end NumberTheory
+
+end MathlibExt

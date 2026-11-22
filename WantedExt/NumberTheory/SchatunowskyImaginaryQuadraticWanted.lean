@@ -121,7 +121,8 @@ the $n$-th prime $\pi_n$ of the paper's norm-ordered set $P_m^+$ (Definition 1),
 $N(\pi_0) = 1$ matches its convention $\pi_0 = 1$.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 1 and Section 4 (`N(π_n)`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 1 and
+Section 4 (`N(π_n)`). -/
 public noncomputable def quadPrimeNorm (K : Type*) [Field K] [NumberField K] (n : ℕ) : ℕ :=
   if n = 0 then 1
   else Nat.nth (fun x => ∃ P : Ideal (𝓞 K), P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P = x) (n - 1)
@@ -130,7 +131,8 @@ public noncomputable def quadPrimeNorm (K : Type*) [Field K] [NumberField K] (n 
 $N(\pi_0)$ of $K$ equals $1$.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 1 (convention `π_0 = 1`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 1
+(convention `π_0 = 1`). -/
 public theorem quadPrimeNorm_zero (K : Type*) [Field K] [NumberField K] :
     quadPrimeNorm K 0 = 1 := by
   simp [quadPrimeNorm]
@@ -145,7 +147,8 @@ There are finitely many such prime ideals. For an imaginary quadratic field of c
 $N(\pi_n\#)$ is the norm of the paper's quadratic primorial $\pi_n\#$ (Definition 2).
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 2 (`π_n#`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 2
+(`π_n#`). -/
 public noncomputable def quadPrimorialNorm (K : Type*) [Field K] [NumberField K] (n : ℕ) : ℕ :=
   ∏ᶠ P ∈ {P : Ideal (𝓞 K) | P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P ≤ quadPrimeNorm K n},
     Ideal.absNorm P
@@ -155,7 +158,8 @@ $\mathcal{O}_K$, the primorial norm $N(\pi_0\#)$ of $K$ equals $1$: no nonzero p
 $\mathcal{O}_K$ has norm at most $1$.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 2 (`π_0# = 1`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 2
+(`π_0# = 1`). -/
 public theorem quadPrimorialNorm_zero (K : Type*) [Field K] [NumberField K] :
     quadPrimorialNorm K 0 = 1 := by
   have hempty : {P : Ideal (𝓞 K) | P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P ≤ 1} = ∅ := by
@@ -177,7 +181,8 @@ The set is closed under multiplication by units. For $K = \mathbb{Q}(\sqrt{m})$ 
 of class number one it is the paper's set $Q_{m,\ell}$ (Equation (4)).
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Section 5, Equation (4). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Section 5, Equation
+(4). -/
 public def quadSchatunowskySet (K : Type*) [Field K] [NumberField K] (ℓ : ℕ) : Set (𝓞 K) :=
   {α | 1 < Ideal.absNorm (Ideal.span {α}) ∧ ∀ β : 𝓞 K,
       1 < Ideal.absNorm (Ideal.span {β}) →
@@ -189,7 +194,8 @@ $\ell$, the element $1$ of the ring of integers $\mathcal{O}_K$ does not lie in 
 set $Q_\ell(K)$, because the ideal it generates has norm $1$.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Section 5, Equation (4). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Section 5, Equation
+(4). -/
 public theorem one_not_mem_quadSchatunowskySet (K : Type*) [Field K] [NumberField K] (ℓ : ℕ) :
     (1 : 𝓞 K) ∉ quadSchatunowskySet K ℓ := by
   simp [quadSchatunowskySet]
@@ -199,7 +205,8 @@ discriminant $d_K$. The unit group of its ring of integers $\mathcal{O}_K$ is cy
 $4$ if $d_K = -4$, of order $6$ if $d_K = -3$, and of order $2$ otherwise.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 2 (`integers-2026-A110-prop-2`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 2
+(`integers-2026-A110-prop-2`). -/
 public theorem_wanted imagQuadratic_units_isCyclic_card {K : Type*} [Field K] [NumberField K]
     (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] :
     IsCyclic (𝓞 K)ˣ ∧
@@ -219,7 +226,8 @@ The sequence $r_m$ is the paper's $N(\rho_m)$, where $\rho_m$ runs over all prim
 the paper's class-number-one assumption.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Lemma 1 (`integers-2026-A110-lem-1`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Lemma 1
+(`integers-2026-A110-lem-1`). -/
 public theorem_wanted tendsto_quadPrimeNorm_succ_div {K : Type*} [Field K] [NumberField K]
     (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] :
     Filter.Tendsto (fun n : ℕ =>
@@ -239,7 +247,8 @@ For every natural number $\ell$ there is $n_0$ such that $N(\pi_{n+1})^{\ell+1} 
 for all $n \ge n_0$.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 4 (`integers-2026-A110-prop-4`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 4
+(`integers-2026-A110-prop-4`). -/
 public theorem_wanted exists_quadPrimeNorm_pow_lt_quadPrimorialNorm {K : Type*} [Field K]
     [NumberField K]
     (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (ℓ : ℕ) :
@@ -256,7 +265,8 @@ For natural numbers $\ell$ and $n$, if $\alpha \in Q_\ell$ and $N(\pi_n)^{\ell+1
 then $\alpha$ lies in every nonzero prime ideal of $\mathcal{O}_K$ of norm at most $N(\pi_n)$.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Lemma 4 (`integers-2026-A110-lem-4`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Lemma 4
+(`integers-2026-A110-lem-4`). -/
 public theorem_wanted mem_prime_of_mem_quadSchatunowskySet {K : Type*} [Field K] [NumberField K]
     (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (hK1 : classNumber K = 1) (ℓ n : ℕ)
     (α : 𝓞 K) (hα : α ∈ quadSchatunowskySet K ℓ)
@@ -272,7 +282,8 @@ $(\alpha)$ has absolute norm greater than $N(\pi_{n_0})^{\ell+1}$ lies in the Sc
 $Q_\ell(K)$, and $Q_\ell(K)$ is finite.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 4 (`integers-2026-A110-thm-4`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 4
+(`integers-2026-A110-thm-4`). -/
 public theorem_wanted quadSchatunowskySet_norm_bound_and_finite {K : Type*} [Field K]
     [NumberField K]
     (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (hK1 : classNumber K = 1) (ℓ n₀ : ℕ)
@@ -298,7 +309,8 @@ $\ell = 1$, both $n_0 = 3$ and $n_0 = 4$ are admissible, but the element of larg
 $5(1+i) = \pi_2\#$, is not divisible by $\pi_3\# = 15(1+i)$.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 5 (`integers-2026-A110-thm-5`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 5
+(`integers-2026-A110-thm-5`). -/
 public theorem_wanted quadSchatunowskySet_eq_iUnion {K : Type*} [Field K] [NumberField K]
     (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (hK1 : classNumber K = 1) (ℓ n₀ : ℕ)
     (hn₀ : ∀ n ≥ n₀, quadPrimeNorm K (n + 1) ^ (ℓ + 1) < quadPrimorialNorm K n) :
@@ -316,7 +328,8 @@ $(2, 4)$, $(3, 5)$, $(4, 5)$, $(5, 6)$, $(6, 7)$, $(7, 7)$ and every $n \ge n_\e
 $N(\pi_{n+1})^{\ell+1} < N(\pi_n\#)$.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 5 (`integers-2026-A110-prop-5`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 5
+(`integers-2026-A110-prop-5`). -/
 public theorem_wanted gaussian_quadPrimeNorm_pow_lt_quadPrimorialNorm {K : Type*} [Field K]
     [NumberField K]
     (hK : discr K = -4) :
@@ -332,7 +345,8 @@ $(2, 4)$, $(3, 5)$, $(4, 5)$, $(5, 6)$, $(6, 7)$, $(7, 8)$ and every $n \ge n_\e
 $N(\pi_{n+1})^{\ell+1} < N(\pi_n\#)$.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 6 (`integers-2026-A110-prop-6`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 6
+(`integers-2026-A110-prop-6`). -/
 public theorem_wanted eisenstein_quadPrimeNorm_pow_lt_quadPrimorialNorm {K : Type*} [Field K]
     [NumberField K]
     (hK : discr K = -3) :
@@ -357,7 +371,8 @@ norm $2$ with $c\pi \in Q_\ell$ such that every $\alpha \in Q_\ell$ has $N(\alph
 with $\alpha$ an associate of $c\pi$ in case of equality.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Corollary 1 (`integers-2026-A110-cor-1`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Corollary 1
+(`integers-2026-A110-cor-1`). -/
 public theorem_wanted gaussian_quadSchatunowskySet_eq {K : Type*} [Field K] [NumberField K]
     (hK : discr K = -4) :
     quadSchatunowskySet K 1 =
@@ -419,7 +434,8 @@ $\pi$ of norm $3$ with $182\pi \in Q_3$ such that every $\alpha \in Q_3$ has
 $N(\alpha) \le N(182\pi)$, with $\alpha$ an associate of $182\pi$ in case of equality.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Corollary 2 (`integers-2026-A110-cor-2`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Corollary 2
+(`integers-2026-A110-cor-2`). -/
 public theorem_wanted eisenstein_quadSchatunowskySet_eq {K : Type*} [Field K] [NumberField K]
     (hK : discr K = -3) :
     quadSchatunowskySet K 1 =

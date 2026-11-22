@@ -21,7 +21,8 @@ positive integer and $1 \le k \le 13$.
 
 This is a finite verification of a conjecture of Erdős, which is open for all odd $n$.
 
-Source: Christian Hercher, *On the Sum of a Squarefree Integer and a Power of Two*, Journal of Integer Sequences 28 (2025), Article 25.3.1, Theorem 5 (`jis-2025-25.3.1-thm-5`). -/
+Source: Christian Hercher, *On the Sum of a Squarefree Integer and a Power of Two*, Journal of
+Integer Sequences 28 (2025), Article 25.3.1, Theorem 5 (`jis-2025-25.3.1-thm-5`). -/
 public theorem_wanted exists_squarefree_add_two_pow_of_odd_lt_two_pow_fifty (n : ℕ) (h1 : 1 < n)
     (h2 : n < 2 ^ 50) (hodd : Odd n) :
     ∃ s k : ℕ, 0 < s ∧ Squarefree s ∧ 1 ≤ k ∧ k ≤ 13 ∧ n = s + 2 ^ k
