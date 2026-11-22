@@ -78,10 +78,29 @@ example : (∫⁻ s in Set.Ico 0 ((0 : ℝ) + 2), delay (arrivals 1) (departures
   norm_num
 
 
--- W2 pointwise delays at the sample: s = 0 gives 0, s = 1 gives 4/3, s = 3 (clearance) and 7/2 give 0
+-- W2 pointwise values at the sample: the delay at `s = 0` is `0`; the queue is nonempty in
+-- the red branch at `s = 1` (one vehicle waiting, none departed), and empty at the clearance
+-- time `s = 3` and after it (`s = 4`), where the delay is again `0`.
 example : delay (arrivals 1) (departures 1 3 2) 0 = 0 := by
   refine le_antisymm ?_ bot_le
   exact iInf_le_of_le ⟨0, by simp [arrivals]⟩ (by simp)
+example : departures 1 3 2 1 = 0 ∧ backlog (arrivals 1) (departures 1 3 2) 1 = 1 := by
+  have hd : departures 1 3 2 1 = 0 := by norm_num [departures, queueLen]
+  refine ⟨hd, ?_⟩
+  have ha : arrivals 1 1 = 1 := by simp [arrivals]
+  simp only [backlog, ha, hd, ENNReal.coe_zero, tsub_zero, ENNReal.coe_one]
+example : delay (arrivals 1) (departures 1 3 2) 3 = 0 := by
+  refine le_antisymm ?_ bot_le
+  refine iInf_le_of_le ⟨0, ?_⟩ (by simp)
+  have ha : arrivals 1 3 = 3 := by simp [arrivals]
+  have hd : departures 1 3 2 (3 + 0) = 3 := by norm_num [departures, queueLen]
+  rw [ha, hd]
+example : delay (arrivals 1) (departures 1 3 2) 4 = 0 := by
+  refine le_antisymm ?_ bot_le
+  refine iInf_le_of_le ⟨0, ?_⟩ (by simp)
+  have ha : arrivals 1 4 = 4 := by simp [arrivals]
+  have hd : departures 1 3 2 (4 + 0) = 4 := by norm_num [departures, queueLen]
+  rw [ha, hd]
 
 /-! ## B. Premise and capacity controls -/
 
