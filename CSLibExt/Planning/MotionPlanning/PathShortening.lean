@@ -41,7 +41,7 @@ noncomputable def polyLen : List plane → ℝ
   | [_] => 0
   | a :: b :: rest => dist a b + polyLen (b :: rest)
 
-/-- Every closed segment between consecutive vertices lies in `F`. -/
+/-- Every vertex lies in `F`, and every closed segment between consecutive vertices lies in `F`; the empty polyline is vacuously feasible. -/
 def Feasible (F : Set plane) : List plane → Prop
   | [] => True
   | [x] => x ∈ F
