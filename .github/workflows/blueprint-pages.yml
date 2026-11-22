@@ -178,14 +178,38 @@ jobs:
       - name: Fetch Mathlib cache
         run: lake exe cache get
 
+      # The builds of the CSLib and Physlib packages, which change only with
+      # the pins. CI saves them from main (ci.yml); this job only restores
+      # them, after `lake exe cache get` has cloned the packages.
+      - name: Restore the package builds
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            .lake/packages/cslib/.lake/build
+            .lake/packages/Physlib/.lake/build
+          key: lake-deps-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+
+      # As in CI (ci.yml): a pull request first restores the build of the
+      # commit it is tested against, the first parent of the commit it checks
+      # out; other runs first look for their own commit. All fall back to
+      # main's newest build. Only CI saves these builds.
+      - name: Find the base build
+        id: base
+        run: |
+          set -euo pipefail
+          sha="$GITHUB_SHA"
+          if [[ "$GITHUB_EVENT_NAME" == pull_request ]]; then
+            sha="$(git cat-file -p HEAD | awk '/^parent /{print $2; exit}')"
+          fi
+          echo "sha=${sha:-$GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+
       - name: Restore local build
         id: build-cache
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .lake/build
-          key: blueprint-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+          key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ steps.base.outputs.sha }}
           restore-keys: |
-            blueprint-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
             lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
 
       # Match ci.yml's cold-runner mitigation for the two heavy production
@@ -460,13 +484,32 @@ jobs:
         with:
           version: "0.12.1"
 
+      # The Mathlib dump and the graph built from it depend only on the pins
+      # and the scripts that make them, so they are kept in a cache per key.
+      # Runs other than pull requests save it: main's nightly build makes one
+      # for each pin, and pull requests restore it. With a restored graph the
+      # job runs no Lean, so it skips the Lean setup too.
+      - name: Restore the Mathlib graph
+        id: mathlib-graph
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            mathlib-graph/mathlib-dump.jsonl.gz
+            mathlib-graph/mathlib-dump-meta.json
+            mathlib-graph/nodes.jsonl.gz
+            mathlib-graph/edges.jsonl.gz
+            mathlib-graph/graph-meta.json
+          key: mathlib-graph-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'scripts/dump_mathlib_dependencies.lean', 'scripts/extract_mathlib_graph.py', 'scripts/extract_v2_lean_dependencies.py') }}
+
       - name: Free disk space for Lean caches
+        if: steps.mathlib-graph.outputs.cache-hit != 'true'
         run: |
           set -euo pipefail
           sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
           df -h /
 
       - name: Add swap for the Mathlib dump
+        if: steps.mathlib-graph.outputs.cache-hit != 'true'
         run: |
           set -euo pipefail
           sudo fallocate -l 16G /mnt/lean-swap
@@ -475,6 +518,7 @@ jobs:
           sudo swapon /mnt/lean-swap
 
       - name: Install elan v4.2.4
+        if: steps.mathlib-graph.outputs.cache-hit != 'true'
         run: |
           set -euo pipefail
           installer_dir="${RUNNER_TEMP}/elan-installer"
@@ -491,6 +535,7 @@ jobs:
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
 
       - name: Fetch Mathlib cache
+        if: steps.mathlib-graph.outputs.cache-hit != 'true'
         run: lake exe cache get
 
       - name: Fetch the v2 extraction
@@ -505,9 +550,26 @@ jobs:
           path: mathlib-graph
 
       - name: Dump the Mathlib declarations
+        if: steps.mathlib-graph.outputs.cache-hit != 'true'
         run: >-
           python scripts/extract_mathlib_graph.py dump --jobs 3 --shards 6
           mathlib-graph/mathlib-dump.jsonl.gz
+
+      - name: Build the Mathlib graph
+        if: steps.mathlib-graph.outputs.cache-hit != 'true'
+        run: python scripts/extract_mathlib_graph.py graph mathlib-graph/mathlib-dump.jsonl.gz mathlib-graph
+
+      - name: Save the Mathlib graph
+        if: steps.mathlib-graph.outputs.cache-hit != 'true' && github.event_name != 'pull_request'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            mathlib-graph/mathlib-dump.jsonl.gz
+            mathlib-graph/mathlib-dump-meta.json
+            mathlib-graph/nodes.jsonl.gz
+            mathlib-graph/edges.jsonl.gz
+            mathlib-graph/graph-meta.json
+          key: ${{ steps.mathlib-graph.outputs.cache-primary-key }}
 
       - name: Extract the Mathlib layer
         run: |
@@ -516,7 +578,6 @@ jobs:
             echo "The wiki job kept an empty dump of the v2 declarations with their Mathlib uses" >&2
             exit 1
           }
-          python scripts/extract_mathlib_graph.py graph mathlib-graph/mathlib-dump.jsonl.gz mathlib-graph
           uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}" \
             python scripts/extract_mathlib_graph.py bridge mathlib-graph/v2-mathlib-dump.jsonl.gz mathlib-graph \
             --mathlib-dump mathlib-graph/mathlib-dump.jsonl.gz --check-v2 build/lean-dependencies.json
