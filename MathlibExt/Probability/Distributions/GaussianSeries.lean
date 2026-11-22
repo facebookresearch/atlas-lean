@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Independence
-import Mathlib.MeasureTheory.Measure.LevyConvergence
+import MathlibExt.Probability.Distributions.GaussianL2Limit
 import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
 
 /-!
@@ -21,9 +21,10 @@ converge in `L²` to a random variable `S ~ 𝓝(0, ∑' k, v k)`
 
 The variance of a block `∑_{n ≤ k < m} X k` is `∑_{n ≤ k < m} v k`, so the partial sums are
 Cauchy in `L²`. Each partial sum is `𝓝(0, ∑_{k < n} v k)` (`iIndepFun.hasGaussianLaw_fun_sum`
-plus mean and variance), `L²` convergence implies convergence in distribution, and
-`𝓝(0, ∑_{k < n} v k) → 𝓝(0, ∑' k, v k)` by Lévy's continuity theorem
-(`ProbabilityMeasure.tendsto_iff_tendsto_charFun`), so the limit is `𝓝(0, ∑' k, v k)`.
+plus mean and variance). Gaussian laws are closed under `L²` limits
+(`HasGaussianLaw.of_tendsto_eLpNorm_real`), and the mean and the second moment pass to the
+`L²` limit (`tendsto_integral_of_L1'`, `tendsto_integral_mul_of_tendsto_eLpNorm`), so the limit
+is `𝓝(0, ∑' k, v k)`.
 
 Mathlib has finite sums of independent Gaussians (`iIndepFun.hasGaussianLaw_sum`,
 `gaussianReal_add_gaussianReal_of_indepFun`) but not the series.
@@ -33,9 +34,11 @@ Code-derived port of `SumIndependentGaussians.sum_independent_gaussians` and its
 `6191bf1ba03d204784385ef5be2472be88035b93`, lines 2054–2385 (Proposition 1 of Chapter 1,
 Brownian Motion), with the archived wrappers of `HasLaw.hasGaussianLaw`,
 `HasGaussianLaw.memLp_two`, `HasLaw.variance_eq` and `HasLaw.integral_eq` inlined and the
-heartbeat overrides dropped. The archived formalization and its original license/provenance
-remain in `v1/` (the original license text is `v1/LICENSE`). This records equivalence to the
-archived Lean statement, not verification against the printed textbook.
+heartbeat overrides dropped. The law of the limit is identified with ATLAS's
+`HasGaussianLaw.of_tendsto_eLpNorm_real` instead of the archived argument through convergence in
+distribution and Lévy's continuity theorem. The archived formalization and its original
+license/provenance remain in `v1/` (the original license text is `v1/LICENSE`). This records
+equivalence to the archived Lean statement, not verification against the printed textbook.
 -/
 
 set_option autoImplicit false
@@ -233,9 +236,9 @@ lemma hasLaw_partialSum {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
       simp only [← NNReal.coe_sum]
       exact Real.toNNReal_coe
 
-/-- An `L²` limit `S` of the partial sums has law `𝓝(0, ∑' k, v k)`: `L²` convergence gives
-convergence in distribution, and `𝓝(0, ∑_{k < n} v k) → 𝓝(0, ∑' k, v k)` by Lévy's
-continuity theorem. -/
+/-- An `L²` limit `S` of the partial sums has law `𝓝(0, ∑' k, v k)`. It is Gaussian because
+Gaussian laws are closed under `L²` limits (`HasGaussianLaw.of_tendsto_eLpNorm_real`), and its mean
+and variance are the limits of those of the partial sums, `0` and `∑_{k < n} v k → ∑' k, v k`. -/
 theorem hasLaw_of_L2_limit {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P]
     (X : ℕ → Ω → ℝ) (v : ℕ → ℝ≥0)
@@ -246,55 +249,38 @@ theorem hasLaw_of_L2_limit {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     (hS_lim : Tendsto (fun n => eLpNorm (fun ω => (∑ k ∈ range n, X k ω) - S ω) 2 P)
         atTop (nhds 0)) :
     HasLaw S (gaussianReal 0 (∑' k, v k)) P := by
-  have hSn_aesm : ∀ n, AEStronglyMeasurable (fun ω => ∑ k ∈ range n, X k ω) P :=
-    fun n => (memLp_partialSum hgauss n).aestronglyMeasurable
-  have hS_aesm : AEStronglyMeasurable S P := hS_mem.aestronglyMeasurable
-  have hS_lim' : Tendsto (fun n => eLpNorm ((fun ω => ∑ k ∈ range n, X k ω) - S) 2 P)
+  have hSn : ∀ n, MemLp (fun ω => ∑ k ∈ range n, X k ω) 2 P := memLp_partialSum hgauss
+  have hlim : Tendsto (fun n => eLpNorm ((fun ω => ∑ k ∈ range n, X k ω) - S) 2 P)
       atTop (nhds 0) := hS_lim
-  have hTIM : TendstoInMeasure P (fun n => fun ω => ∑ k ∈ range n, X k ω) atTop S :=
-    tendstoInMeasure_of_tendsto_eLpNorm (by norm_num : (2 : ℝ≥0∞) ≠ 0) hS_lim'
-  have hTID := hTIM.tendstoInDistribution (fun n => (hSn_aesm n).aemeasurable)
-  have hconv1 := hTID.tendsto
+  have hG : HasGaussianLaw S P :=
+    HasGaussianLaw.of_tendsto_eLpNorm_real (hasGaussianLaw_partialSum X v hindep hgauss)
+      hS_mem.aestronglyMeasurable hlim
   have hlaw_n := hasLaw_partialSum X v hindep hgauss
-  set σsq := ∑' k, v k
-  have hσ_prob : IsProbabilityMeasure (gaussianReal (0 : ℝ) σsq) :=
-    (isGaussian_gaussianReal 0 σsq).toIsProbabilityMeasure
-  set μ_target : ProbabilityMeasure ℝ := ⟨gaussianReal 0 σsq, hσ_prob⟩
-  have hGn_prob : ∀ n, IsProbabilityMeasure (gaussianReal (0 : ℝ) (∑ k ∈ range n, v k)) :=
-    fun n => (isGaussian_gaussianReal 0 _).toIsProbabilityMeasure
-  set μ_seq : ℕ → ProbabilityMeasure ℝ :=
-    fun n => ⟨gaussianReal 0 (∑ k ∈ range n, v k), hGn_prob n⟩
-  have hconv_gauss : Tendsto μ_seq atTop (nhds μ_target) := by
-    rw [ProbabilityMeasure.tendsto_iff_tendsto_charFun]
-    intro t
-    simp only [μ_seq, μ_target, ProbabilityMeasure.coe_mk]
-    simp only [charFun_gaussianReal]
-    apply Filter.Tendsto.cexp
-    apply Filter.Tendsto.sub
-    · exact tendsto_const_nhds
-    · apply Filter.Tendsto.div_const
-      apply Filter.Tendsto.mul_const
-      apply (Complex.continuous_ofReal.tendsto _).comp
-      apply (continuous_subtype_val.tendsto _).comp
-      exact hsum.hasSum.tendsto_sum_nat
-  have hseq_eq : ∀ n, (⟨P.map (fun ω => ∑ k ∈ range n, X k ω),
-      inferInstance⟩ : ProbabilityMeasure ℝ) =
-      μ_seq n := by
-    intro n
-    ext : 1
-    simp only [μ_seq]
-    exact (hlaw_n n).map_eq
-  have hS_prob : IsProbabilityMeasure (P.map S) := inferInstance
-  set limit_pm : ProbabilityMeasure ℝ := ⟨P.map S, hS_prob⟩
-  have hconv1' : Tendsto μ_seq atTop (nhds limit_pm) := by
-    refine (hconv1.congr fun n => ?_)
-    exact hseq_eq n
-  have heq : limit_pm = μ_target := tendsto_nhds_unique hconv1' hconv_gauss
-  have hmap_eq : P.map S = gaussianReal 0 σsq := by
-    have h := congr_arg (fun p : ProbabilityMeasure ℝ => (p : Measure ℝ)) heq
-    simp only [limit_pm, μ_target, ProbabilityMeasure.coe_mk] at h
-    exact h
-  exact ⟨hS_mem.aestronglyMeasurable.aemeasurable, hmap_eq⟩
+  -- The means of the partial sums, all `0`, converge to the mean of `S`.
+  have hmean : ∫ ω, S ω ∂P = 0 := by
+    have h : Tendsto (fun n => ∫ ω, ∑ k ∈ range n, X k ω ∂P) atTop
+        (nhds (∫ ω, S ω ∂P)) := by
+      refine tendsto_integral_of_L1' S
+        (Eventually.of_forall fun n => (hSn n).integrable one_le_two) ?_
+      exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hlim
+        (fun _ => zero_le) (fun _ => eLpNorm_le_eLpNorm_of_exponent_le (by norm_num))
+    simp only [fun n => integral_eq_zero_of_hasLaw (hlaw_n n)] at h
+    exact tendsto_nhds_unique h tendsto_const_nhds
+  -- The second moments of the partial sums, `∑_{k < n} v k`, converge to that of `S`.
+  have hvar : Var[S; P] = ∑' k, (v k : ℝ) := by
+    have h := tendsto_integral_mul_of_tendsto_eLpNorm hSn hSn hS_mem hS_mem hlim hlim
+    have hn : ∀ n, ∫ ω, (∑ k ∈ range n, X k ω) * (∑ k ∈ range n, X k ω) ∂P =
+        ∑ k ∈ range n, (v k : ℝ) := by
+      intro n
+      have h1 := variance_eq_sub (hSn n)
+      rw [variance_of_hasLaw (hlaw_n n), integral_eq_zero_of_hasLaw (hlaw_n n)] at h1
+      simpa only [Pi.pow_apply, pow_two, NNReal.coe_sum, mul_zero, sub_zero] using h1.symm
+    simp only [hn] at h
+    rw [variance_eq_sub hS_mem, hmean]
+    simpa only [Pi.pow_apply, pow_two, mul_zero, sub_zero] using
+      tendsto_nhds_unique h (NNReal.summable_coe.mpr hsum).hasSum.tendsto_sum_nat
+  refine ⟨hG.aemeasurable, ?_⟩
+  rw [hG.map_eq_gaussianReal, hmean, hvar, ← NNReal.coe_tsum, Real.toNNReal_coe]
 
 /-- A series of independent centered Gaussians `X k ~ 𝓝(0, v k)` with `∑ v k < ∞` converges in
 `L²` to a random variable with law `𝓝(0, ∑' k, v k)`. -/
