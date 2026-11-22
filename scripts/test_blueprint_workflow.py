@@ -861,7 +861,7 @@ class GraphSyncWorkflowTests(unittest.TestCase):
         if report is not None:
             (root / "report.json").write_text(report)
         (root / "bin" / "uv").write_text(f'#!/bin/sh\necho "$@" > uv-arguments\necho "In step: no"\necho "error: a link" >&2\n'
-                                        'printf "%s\\n" "${UV_EXTRA:-}"\n'
+                                        'printf "%s" "${UV_EXTRA:-}"\n'
                                         f'[ -f report.json ] && cp report.json build/graph-sync.json\nexit {status}\n')
         (root / "bin" / "uv").chmod(0o755)
         summary = root / "summary.md"
@@ -887,7 +887,7 @@ class GraphSyncWorkflowTests(unittest.TestCase):
         # Lines a carriage return ends, and output with no last line end: every line of the summary stays indented,
         # and the log's resume marker stands on a line of its own.
         result, summary, _ = self.run_check(0, extra="one\r# two\r\n```three")
-        self.assertIn("    one\n    # two\n    ```three\n", summary)
+        self.assertTrue(summary.endswith("    one\n    # two\n    ```three\n"), summary)
         self.assertNotIn("\r", summary)
         self.assertTrue(any(line.startswith("::graph-sync-") for line in result.stdout.split("\n")), result.stdout)
 

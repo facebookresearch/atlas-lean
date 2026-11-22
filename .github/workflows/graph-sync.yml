@@ -106,6 +106,7 @@ jobs:
             echo "### Graph sync"
             echo
             head -c 60000 build/graph-sync.txt | sed -e 's/\r$//' -e 's/\r/\n/g' | sed 's/^/    /'
+            echo
             if [[ "$failed" == yes ]]; then
               echo
               echo "The check could not run (exit $status): the log above says why."

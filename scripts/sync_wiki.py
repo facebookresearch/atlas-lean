@@ -3300,15 +3300,31 @@ def copied(readme: Path, part: str, entry: str) -> bool:
     return not found
 
 
+def read_by_sync(path: str) -> bool:
+    """Whether a run reads the file at *path*, from the repository's root: the Lean (see lean_source), the wiki, the
+    taxonomy, the card move ledger, the baseline, and the site configuration, theme and hooks its renderer reads."""
+    return bool(lean_source(path) or path.startswith(("blueprint/", "theme/", "hooks/")) or path in GRAPH_FILES
+                or path == "mkdocs.yml")
+
+
 def links_in_wiki(changed: list[str] = ()) -> list[str]:
     """The links the sync could read or write through, by their path in the repository: among the wiki's files (all of
-    blueprint/: pages, links files, sources and the rest), at the baseline, the taxonomy and the card move ledger, or
-    the folders they are reached through; and the files of *changed*, the changes' own, the Lean among them. A read
-    through one could lead anywhere, and a write leave the repository."""
+    blueprint/: pages, links files, sources and the rest), at the baseline, the taxonomy, the card move ledger and the
+    site configuration, in the theme and the hooks, or the folders they are reached through; the files of *changed*,
+    the changes' own, that a run reads (see read_by_sync); and the Lean the repository holds as links. A read through
+    one could lead anywhere, and a write leave the repository."""
     inputs = (wiki.VAULT, wiki.ROADMAP, LINKS, STATE.parent, STATE, wiki.TAXONOMY,
-              wiki.ROOT / "scripts" / "card-moves.jsonl", *(wiki.ROOT / path for path in changed))
+              wiki.ROOT / "scripts" / "card-moves.jsonl", SITE, wiki.ROOT / "theme", wiki.ROOT / "hooks",
+              *(wiki.ROOT / path for path in changed if read_by_sync(path)))
     found = [path for path in inputs if path.is_symlink() or path.exists() and os.path.realpath(path) != str(path)]
-    pending = [wiki.VAULT] if wiki.VAULT.is_dir() and wiki.VAULT not in found else []
+    try:
+        tracked = git("ls-files", "-s", "-z").decode("utf-8").split("\0")
+    except GitError:
+        tracked = []
+    found += [wiki.ROOT / path for record in tracked if record.startswith("120000 ")
+              and lean_source(path := record.split("\t", 1)[1])]
+    pending = [folder for folder in (wiki.VAULT, wiki.ROOT / "theme", wiki.ROOT / "hooks")
+               if folder.is_dir() and folder not in found]
     while pending:
         with os.scandir(pending.pop()) as entries:
             for entry in entries:

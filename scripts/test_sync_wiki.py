@@ -4239,6 +4239,24 @@ class ScopedRun(unittest.TestCase):
             "place"], "none", [], 1))
 
 
+    def test_a_linked_site_configuration_stops_a_write_that_renders(self) -> None:
+        # The renderer reads the site configuration, which the changes leave as it is: a link there stops the run too.
+        site = self.root.parent / f"{self.root.name}-mkdocs.yml"
+        site.symlink_to(sync.SITE)
+        self.addCleanup(site.unlink)
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        with patch.object(sync, "SITE", site), patch.object(sync, "published", side_effect=AssertionError("rendered")):
+            status, out, err, report = self.run_sync()
+        self.assertEqual((status, len(report["errors"])), (1, 1), report["errors"])
+        self.assertIn("is a link: the sync reads and writes through none", report["errors"][0])
+
+    def test_a_link_the_sync_never_reads_leaves_a_documentation_change_alone(self) -> None:
+        self.write("docs/guide.md", "A guide.\n")
+        (self.root / "docs/guide-alias.md").symlink_to("guide.md")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"], report["errors"]), (0, True, "none", []))
+
+
 
 class BuildPath(Vault):
     """What the build's own steps refuse before they write, beside what credit_problems refuses everywhere."""
