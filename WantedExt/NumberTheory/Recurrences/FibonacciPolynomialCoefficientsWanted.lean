@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Rat.Defs
+public import MathlibExt.NumberTheory.Recurrences.FibonacciPolynomialCoefficients
 
 /-!
 # Integer sequences `P(n) F_n + Q(n) F_{n-1}` with rational polynomial coefficients
