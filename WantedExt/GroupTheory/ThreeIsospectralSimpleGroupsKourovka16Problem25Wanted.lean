@@ -32,7 +32,8 @@ The spectrum `ω(G)` is the set of element orders, `Set.range orderOf`. Groups a
 `Type`; non-isomorphic means that no `MulEquiv` exists.
 -/
 
-/-- The spectrum `ω(G)` of a group: the set of orders of its elements. -/
+/-- **Spectrum of a group.** The spectrum $\omega(G)$ of a group $G$ is the set of orders of its
+elements, where an element of infinite order is counted as having order $0$. -/
 def spectrum (G : Type*) [Group G] : Set ℕ :=
   Set.range (orderOf : G → ℕ)
 
@@ -47,11 +48,18 @@ def threeIsospectralSimpleGroups : Prop :=
     spectrum G₁ = spectrum G₂ ∧ spectrum G₂ = spectrum G₃
 
 /--
-Resolved false: the Kourovka Archive answers 16.25 "No", citing Buturlakin (2010): no three pairwise
-non-isomorphic finite non-abelian simple groups have the same spectrum. Source: E. I. Khukhro and V.
-D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
-arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 16.25 (A. V. Vasil'ev); resolution:
-A. A. Buturlakin, Sib. Èlektron. Mat. Izv. 7 (2010), 111-114, Kourovka Archive, Problem 16.25 (No).
+**No three non-isomorphic finite non-abelian simple groups are isospectral.** There do not exist
+three pairwise non-isomorphic finite non-abelian simple groups $G_1, G_2, G_3$ with
+$\omega(G_1) = \omega(G_2) = \omega(G_3)$, where the spectrum $\omega(G)$ of a group $G$ is the
+set of orders of its elements.
+
+This answers Kourovka Problem 16.25 (A. V. Vasil'ev) in the negative; the Kourovka Archive cites
+Buturlakin (2010).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 16.25 (A. V.
+Vasil'ev); resolution: A. A. Buturlakin, Sib. Èlektron. Mat. Izv. 7 (2010), 111-114, Kourovka
+Archive, Problem 16.25 (No).
 -/
 public theorem_wanted threeIsospectralSimpleGroups_refuted : ¬ threeIsospectralSimpleGroups
 
