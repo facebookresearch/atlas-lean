@@ -57,6 +57,7 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.NumberTheory.Bernoulli
 public import MathlibExt.Analysis.Ramanujan.Part1Ch5Entry10bEuleriansymmetry
+public import MathlibExt.NumberTheory.ForwardDiffPow
 public import MathlibExt.NumberTheory.GenocchiNumber
 public import MathlibExt.NumberTheory.LucasSequence
 
@@ -406,21 +407,6 @@ theorem_wanted two_sqrt5_pow_mul_add (q m : ℕ) (hq : 1 ≤ q)
           ((n.factorial : ℝ) /
               ∏ i, ((j i).val.factorial : ℝ)) *
             ∏ i, genLucasCoeff (j i).val
-
-/-- **Lemma 21**: the `k`-th forward difference with step
-`r` of `y ↦ yⁿ` is `∑_{j=0}^k (-1)^{k-j} C(k,j) (x + rj)ⁿ`
-(paper: nonzero complex `r`, positive `k`; the identity
-holds for all real `r` and all `k`).
-
-Source: Fatima Zohra Bensaci, Rachid Boumahdi, and Laala
-Khaldi, "Finite Sums Involving Fibonacci and Lucas Numbers",
-Lemma 21. -/
-theorem_wanted iterate_forwardDiff_pow_eq_sum (r x : ℝ)
-    (k n : ℕ) :
-    ((fun f : ℝ → ℝ => fun y => f (y + r) - f y)^[k]
-        (fun y => y ^ n)) x =
-      ∑ j ∈ Finset.range (k + 1), (-1 : ℝ) ^ (k - j) *
-        (Nat.choose k j : ℝ) * (x + r * j) ^ n
 
 /-- **Theorem 22**: `Gₙ/n = ∑_{j=0}^{n-1} (-1)ʲ j!/2ʲ
 S(n-1, j)` for `n ≥ 1`, with `S` the Stirling numbers of
