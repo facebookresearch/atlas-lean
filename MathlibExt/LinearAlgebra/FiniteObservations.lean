@@ -104,21 +104,16 @@ def observation {d : ℕ} (A : Matrix (Fin d) (Fin d) K)
 private theorem matrix_power_action {d : ℕ} (A : Matrix (Fin d) (Fin d) K)
     (x : Fin d → K) (n : ℕ) :
     (A.mulVecLin ^ n) x = (A ^ n).mulVec x := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [pow_succ', pow_succ', Module.End.mul_apply, ih]
-    exact (Matrix.mulVec_mulVec x A (A ^ n))
+  exact congrArg (fun f : Module.End K (Fin d → K) => f x)
+    (Matrix.toLin'_pow A n).symm
 
 /-- The product transition evolves both component systems at the same time. -/
 private theorem product_power_action {K V W : Type*} [Field K]
     [AddCommGroup V] [Module K V] [AddCommGroup W] [Module K W]
     (T : Module.End K V) (S : Module.End K W) (x : V) (y : W) (n : ℕ) :
     (T.prodMap S ^ n) (x, y) = ((T ^ n) x, (S ^ n) y) := by
-  induction n with
-  | zero => rfl
-  | succ n ih =>
-    simp only [pow_succ', Module.End.mul_apply, ih, LinearMap.prodMap_apply]
+  exact congrArg (fun f : Module.End K (V × W) => f (x, y))
+    (map_pow (LinearMap.prodMapAlgHom K V W) (T, S) n).symm
 
 /-- Two fixed linear outputs agree forever exactly when their first `d₁ + d₂`
 observations agree. Both dimensions may be zero. -/
