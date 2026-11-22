@@ -52,6 +52,7 @@ import json
 import os
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -191,10 +192,23 @@ def appended(base: str, text: str) -> str | None:
     return rest.lstrip(" .;").strip() if ends_sentence or starts_sentence else None
 
 
+def has_sentence(text: str, sentence: str) -> bool:
+    """Whether `sentence` is in `text` as a whole sentence, not inside a longer one: `#13`
+    is not in `#130`."""
+    sentence = sentence.strip().rstrip(".!?")
+    if not sentence:
+        return True
+    for match in re.finditer(re.escape(sentence), text):
+        before, after = text[:match.start()].rstrip(), text[match.end():]
+        if (not before or before.endswith((".", "!", "?", ":"))) and re.match(r"[.!?]?(\s|$)", after):
+            return True
+    return False
+
+
 def join_rationale(main_rationale: str, addition: str) -> str:
     """Main's rationale, then the bump's addition as a further sentence."""
     main_rationale = main_rationale.strip()
-    if not addition or addition in main_rationale:
+    if not addition or has_sentence(main_rationale, addition):
         return main_rationale
     if not main_rationale:
         return addition
@@ -611,43 +625,54 @@ def save_state(state: dict) -> None:
                                                   encoding="utf-8")
 
 
+def signature(path: str) -> str | None:
+    """The file's bytes and git's view of its mode, or None for anything but a regular file."""
+    target = REPO / path
+    if target.is_symlink() or not target.is_file():
+        return None
+    executable = target.stat().st_mode & stat.S_IXUSR  # git's 100755 versus 100644
+    return f"{fms.sha256(target.read_bytes())}:{'755' if executable else '644'}"
+
+
 def record_preimages() -> None:
-    """Remember every conflicted file exactly as `git merge` left it: the tool replaces such a
-    file only while it is still that, never once someone has edited it."""
-    preimages = {}
-    for path in unmerged_paths():
-        target = REPO / path
-        if target.is_file() and not target.is_symlink():
-            preimages[path] = fms.sha256(target.read_bytes())
-    save_state({"preimages": preimages, "draft": None})
+    """Remember every conflicted file exactly as `git merge` left it, mode included: the tool
+    replaces such a file only while it is still that, never once someone has changed it."""
+    preimages = {path: signature(path) for path in unmerged_paths()}
+    save_state({"preimages": {path: sig for path, sig in preimages.items() if sig}, "draft": None})
 
 
 def untouched(path: str) -> bool:
     """Whether `path` is still exactly as merge-main's `git merge` left it."""
-    target, recorded = REPO / path, load_state().get("preimages", {}).get(path)
-    return bool(recorded) and target.is_file() and not target.is_symlink() \
-        and fms.sha256(target.read_bytes()) == recorded
+    recorded = load_state().get("preimages", {}).get(path)
+    return bool(recorded) and signature(path) == recorded
 
 
 def write_draft(merged: str, regenerate: bool) -> bool:
     """Put the merged manifest in the working tree. It replaces only the file `git merge`
-    left or a draft this tool wrote and nobody edited since; anything else is the person's
-    work, kept unless they ask for --regenerate, which first saves it in the git directory."""
+    left or a draft this tool wrote, unchanged since (mode included); anything else is the
+    person's work, kept unless they ask for --regenerate, which first saves it in the git
+    directory."""
     target, state = REPO / MANIFEST, load_state()
+    if target.is_symlink():
+        raise Stop(f"{MANIFEST} is a symlink; replace it with the file itself")
     data = merged.encode("utf-8")
-    current = target.read_bytes() if target.is_file() else None
+    current = target.read_bytes() if target.exists() else None
     known = {state.get("preimages", {}).get(MANIFEST), state.get("draft")} - {None}
-    if current is not None and current != data and fms.sha256(current) not in known:
-        if not regenerate:
-            print(f"{MANIFEST} has changes this tool did not make: `git add {MANIFEST}` if it is your "
-                  "resolution and run resolve-manifest again, or run resolve-manifest --regenerate to "
-                  "replace it (it is saved first).")
-            return False
-        backup = git_path(f"bump-branch-manifest-{time.time_ns()}.json")
-        backup.write_bytes(current)
-        print(f"{MANIFEST}: the version it replaces is saved as {backup}")
+    sig = signature(MANIFEST)
+    if current is not None and sig not in known:
+        mode = sig.split(":")[1] if sig else None
+        same = current == data and any(entry.split(":")[1] == mode for entry in known)
+        if not same:
+            if not regenerate:
+                print(f"{MANIFEST} has changes this tool did not make: `git add {MANIFEST}` if it is your "
+                      "resolution and run resolve-manifest again, or run resolve-manifest --regenerate to "
+                      "replace it (it is saved first).")
+                return False
+            backup = git_path(f"bump-branch-manifest-{time.time_ns()}.json")
+            backup.write_bytes(current)
+            print(f"{MANIFEST}: the version it replaces is saved as {backup}")
     target.write_bytes(data)
-    save_state({**state, "draft": fms.sha256(data)})
+    save_state({**state, "draft": signature(MANIFEST)})
     return True
 
 

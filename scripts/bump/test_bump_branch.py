@@ -149,6 +149,11 @@ class MergeManifestTest(unittest.TestCase):
         self.assertEqual(bb.join_rationale("Main (#1).", "Adapted."), "Main (#1). Also: Adapted.")
         self.assertEqual(bb.join_rationale("", "Adapted."), "Adapted.")
         self.assertEqual(bb.join_rationale("Main. Also bump.", "Also bump."), "Main. Also bump.")
+        self.assertEqual(bb.join_rationale("A. Backport: PR #130.", "Backport: PR #13"),
+                         "A. Backport: PR #130. Also: Backport: PR #13")
+        self.assertTrue(bb.has_sentence("A. Also: Backport: PR #13. B.", "Backport: PR #13"))
+        self.assertFalse(bb.has_sentence("A. Backport: PR #130.", "Backport: PR #13"))
+        self.assertFalse(bb.has_sentence("A. See Backport: PR #13.", "Backport: PR #13"))
 
     def test_rows_needing_a_person_are_reported_and_the_text_still_parses(self):
         base = diverged("MathlibExt/A.lean", "A", "x.")
@@ -601,6 +606,37 @@ class GitTest(unittest.TestCase):
         self.assertEqual(proc.returncode, 3, proc.stdout + proc.stderr)
         self.assertIn("leaves it to you", proc.stdout)
         self.assertEqual((self.repo / d).read_text(), edited)
+        self.assertNotEqual(self.git("ls-files", "-u", "--", d).stdout, "")
+        self.assertEqual(self.git("rev-parse", "HEAD").stdout, head)
+
+    def test_a_reference_inside_a_longer_one_is_kept(self):
+        files, rows = self.base_tree()
+        a = "MathlibExt/A.lean"
+        rows = [{**r, "rationale": "Port the lemma."} if r["path"] == a else r for r in rows]
+        self.write({}, rows, "provenance")
+        self.git("checkout", "-q", "-b", "bump")
+        self.write({}, [{**r, "rationale": "Port the lemma. Backport: PR #13"} if r["path"] == a else r
+                        for r in rows], "bump: record the backport")
+        self.git("checkout", "-q", "main")
+        self.write(*self.edit(files, rows, a, files[a].replace("def a", "noncomputable def a"),
+                              "Port the lemma. Backport: PR #130."), message="Adapt (#130)")
+        self.git("checkout", "-q", "bump")
+        proc = self.tool("merge-main", "--main", "main")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        rationale = bb.manifest_rows((self.repo / bb.MANIFEST).read_text())[a]["rationale"]
+        self.assertIn("PR #130", rationale)
+        self.assertIn("PR #13", rationale.replace("PR #130", ""))
+
+    def test_a_mode_change_counts_as_an_edit(self):
+        d = "MathlibExt/D.lean"
+        self.diverge({d: ("def d := 1", "noncomputable def d := 1", f"Port {d}. {BUMP}")},
+                     {d: ("/-- D doc -/", "/-- D, restated -/", "Restate docstrings (#7).")}, "Restate docstrings (#7)")
+        head = self.git("rev-parse", "HEAD").stdout
+        self.assertEqual(self.tool("merge-main", "--main", "main").returncode, 3)
+        (self.repo / d).chmod(0o755)
+        proc = self.tool("resolve-manifest", "--adjacent")
+        self.assertEqual(proc.returncode, 3, proc.stdout + proc.stderr)
+        self.assertIn("leaves it to you", proc.stdout)
         self.assertNotEqual(self.git("ls-files", "-u", "--", d).stdout, "")
         self.assertEqual(self.git("rev-parse", "HEAD").stdout, head)
 
