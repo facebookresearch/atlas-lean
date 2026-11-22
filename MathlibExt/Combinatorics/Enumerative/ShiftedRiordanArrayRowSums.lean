@@ -34,18 +34,21 @@ private theorem shiftedRiordan_aux_binom {R : Type*} [CommSemiring R] (r : R) (j
   ring
 
 /--
-The constant term and coefficient sum of a shifted Riordan row polynomial: for
-the `r`-shifted array, evaluating the row polynomial at 0 gives the column-0
-entry `∑ k, A n k * r ^ k`, and evaluating at 1 (the row sum) gives the
-column-0 entry of the `(r + 1)`-shifted array.
+**Constant term and row sum of a shifted array.** Let $R$ be a commutative semiring, let
+$(A_{i,k})_{i,k \in \mathbb{N}}$ be an array with entries in $R$, and let $r \in R$ and
+$n \in \mathbb{N}$. For $s \in R$ let $A^{(s)}$ be the $s$-shifted array with entries
+$A^{(s)}_{i,j} = \sum_{k=j}^{i} \binom{k}{j} A_{i,k} s^{k-j}$ (an empty sum when $j > i$), and let
+$p(X) = \sum_{k=0}^{n} A^{(r)}_{n,k} X^k \in R[X]$ be the $n$-th row polynomial of $A^{(r)}$.
+Then $p(0) = A^{(r)}_{n,0} = \sum_{k=0}^{n} A_{n,k} r^k$ and
+$p(1) = \sum_{k=0}^{n} A^{(r)}_{n,k} = A^{(r+1)}_{n,0}$.
+
+Proves `Wanted` entry `shiftedRiordanArray_constantTerm_and_sumCoefficients`.
+The `r`-Riordan array is Definition de1parameterRiordan (lines 220–222).
 
 Source: José Agapito, Ângela Mestre, Maria M. Torres, and Pasquale Petrullo,
 "On One-Parameter Catalan Arrays," Journal of Integer Sequences 18 (2015),
 Article 15.5.1, Corollary (equations eqColumn0Rr and eqRowsumsRr),
 lines 240–245, https://cs.uwaterloo.ca/journals/JIS/VOL18/Agapito/agapito2.tex
-
-The `r`-Riordan array is Definition de1parameterRiordan (lines 220–222).
-Proves `Wanted` entry `shiftedRiordanArray_constantTerm_and_sumCoefficients`.
 -/
 theorem shiftedRiordanArray_constantTerm_and_sumCoefficients
     {R : Type*} [CommSemiring R] (A : ℕ → ℕ → R) (r : R) (n : ℕ) :
