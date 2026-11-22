@@ -34,6 +34,32 @@ import Mathlib.RingTheory.Ideal.Operations
 import Mathlib.RingTheory.Ideal.Span
 import Mathlib.Tactic.Ring
 
+/-!
+# Bivariate interpolation: closed-form degree choices
+
+This module turns the Guruswami-Sudan interpolation step
+`Cslib.CodingTheory.GuruswamiSudan.exists_interpolant` into corollaries
+with explicit degree bounds. Given `n` points `(αᵢ, yᵢ)` over a field
+and a degree bound `k`, it produces a nonzero bivariate interpolant of
+`(1, k - 1)`-weighted degree at most `D` vanishing at every point,
+first with the linear choice `D = n` coming from the weighted-monomial
+count (`exists_bivariate_interpolant`), then with the sharper
+square-root choice `D = ⌈√(2 * (k - 1) * n)⌉`
+(`exists_bivariate_interpolant_sqrt`), and finally transported to
+`MvPolynomial` (`exists_bivariate_interpolant_mvPolynomial`). The
+weighted-monomial counting bounds are `card_weighted_monomials_ge` and
+`two_mul_card_weighted_monomials_ge`; `hasRootMult_one_iff` identifies
+vanishing with root multiplicity one.
+
+## References
+
+The square-root degree choice and the counting estimate behind it are
+the multiplicity-one case of the interpolation analysis in
+V. Guruswami, A. Rudra, and M. Sudan, *Essential Coding Theory*, draft
+of August 26, 2025, Section 12.2, equations (12.8)-(12.9); the same
+edition is cited throughout `CSLibExt.Coding.GuruswamiSudan`.
+-/
+
 @[expose] public section
 
 namespace Cslib.CodingTheory.BivariateInterpolation
