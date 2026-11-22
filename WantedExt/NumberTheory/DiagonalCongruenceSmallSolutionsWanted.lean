@@ -52,7 +52,8 @@ Equivalently, $\Gamma(k, p) \le k$, where $\Gamma(k, p)$ is the least $n$ such t
 congruence in $n$ variables is solvable; extra variables can be set to $0$.
 
 Source: Todd Cochrane, Misty Ostergaard, Craig Spencer, and Kathryn Wilson, *A Note on Small
-Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Lemma 2 (`integers-2026-A14-lem-2`). -/
+Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Lemma 2
+(`integers-2026-A14-lem-2`). -/
 public theorem_wanted diagonal_congruence_solvable_of_card_eq_exponent (p : ℕ) [Fact p.Prime]
     {k : ℕ} (hk : 1 ≤ k) (a : Fin k → ℤ) (ha : ∀ i, ¬ (p : ℤ) ∣ a i) (c : ℤ) :
     ∃ x : Fin k → ℤ, ∑ i, a i * x i ^ k ≡ c [ZMOD p]
@@ -69,7 +70,8 @@ $C_1, C_2 > 0$ such that for all $N \ge N_0$ the number of $x \in A(N, N^\eta)^s
 $c_1 x_1^k + \dots + c_s x_s^k = 0$ is at least $C_1 N^{s-k}$ and at most $C_2 N^{s-k}$.
 
 Source: Todd Cochrane, Misty Ostergaard, Craig Spencer, and Kathryn Wilson, *A Note on Small
-Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Theorem 2 (`integers-2026-A14-thm-2`), quoting Chow, Lindqvist and Prendiville,
+Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Theorem 2
+(`integers-2026-A14-thm-2`), quoting Chow, Lindqvist and Prendiville,
 *Rado's criterion over squares and higher powers*, J. Eur. Math. Soc. 23 (2021),
 Theorem B.1. -/
 public theorem_wanted smooth_diagonal_solution_count_asymp :
@@ -102,7 +104,8 @@ modulo $p$ of $a_1 x_1^k + \dots + a_n x_n^k$ with $x \in A(B, B^\eta)^n$ has at
 elements.
 
 Source: Todd Cochrane, Misty Ostergaard, Craig Spencer, and Kathryn Wilson, *A Note on Small
-Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Lemma 1 (`integers-2026-A14-lem-1`). -/
+Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Lemma 1
+(`integers-2026-A14-lem-1`). -/
 public theorem_wanted card_smooth_diagonal_values_ge :
     ∃ g : ℕ → ℝ, (g =O[Filter.atTop] fun k : ℕ => Real.log (Real.log k) / Real.log k) ∧
       ∀ k : ℕ, 2 ≤ k → ∃ η₀ : ℝ, 0 < η₀ ∧
@@ -125,7 +128,8 @@ $p$, the congruence $a_1 x_1^k + \dots + a_n x_n^k \equiv c \pmod p$ has a solut
 numbers $x_1, \dots, x_n$ with $1 \le x_i \le C p^{1/k}$ for every $i$.
 
 Source: Todd Cochrane, Misty Ostergaard, Craig Spencer, and Kathryn Wilson, *A Note on Small
-Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Theorem 1 (`integers-2026-A14-thm-1`). -/
+Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Theorem 1
+(`integers-2026-A14-thm-1`). -/
 public theorem_wanted exists_small_solution_diagonal_congruence :
     ∃ g : ℕ → ℝ, (g =O[Filter.atTop] fun k : ℕ => Real.log (Real.log k) / Real.log k) ∧
       ∀ k : ℕ, 2 ≤ k → ∃ C : ℝ, 0 < C ∧

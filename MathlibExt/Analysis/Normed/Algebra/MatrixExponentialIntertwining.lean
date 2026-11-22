@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Normed.Algebra.MatrixExponential
+public import Mathlib.LinearAlgebra.Matrix.ToLin
+public import Mathlib.Topology.Algebra.Module.FiniteDimension
 import Mathlib.Analysis.Matrix.Normed
 
 /-!
@@ -24,6 +26,8 @@ series termwise (`A ^ k * X = X * B ^ k`).
 ## Main results
 
 * `Matrix.exp_mul_eq_mul_exp_of_mul_eq`: `A * X = X * B → exp A * X = X * exp B`.
+* `Matrix.exp_to_clm`: the continuous-linear-map exponential of a matrix agrees with the
+  matrix exponential applied to a vector, over an `RCLike` scalar field.
 
 ## References
 
@@ -61,5 +65,23 @@ theorem exp_mul_eq_mul_exp_of_mul_eq {A : Matrix m m 𝕂} {B : Matrix n n 𝕂}
     simp only [Function.comp_apply, L, R, AddMonoidHom.mk'_apply, Matrix.smul_mul,
       Matrix.mul_smul, hpow]
   · rfl
+
+
+open scoped Matrix.Norms.Operator in
+/-- The continuous-linear-map exponential of a matrix agrees with the matrix
+exponential applied to a vector, over `ℝ` or `ℂ`. -/
+theorem exp_to_clm {𝕜 : Type*} [RCLike 𝕜] {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (B : Matrix ι ι 𝕜) (t : ℝ) (v : ι → 𝕜) :
+    (NormedSpace.exp (t • LinearMap.toContinuousLinearMap B.toLin')) v =
+      NormedSpace.exp (t • B) *ᵥ v := by
+  let e : Matrix ι ι 𝕜 ≃ₐ[𝕜] ((ι → 𝕜) →L[𝕜] (ι → 𝕜)) :=
+    Matrix.toLinAlgEquiv'.trans (Module.End.toContinuousLinearMap (ι → 𝕜))
+  let := NormedAlgebra.restrictScalars ℚ 𝕜 ((ι → 𝕜) →L[𝕜] (ι → 𝕜))
+  have he : e (t • B) = t • e B := e.toLinearMap.map_smul_of_tower t B
+  have hexp := NormedSpace.map_exp e e.toLinearMap.continuous_of_finiteDimensional (t • B)
+  rw [he] at hexp
+  change (NormedSpace.exp (t • e B)) v = _
+  rw [← hexp]
+  rfl
 
 end Matrix

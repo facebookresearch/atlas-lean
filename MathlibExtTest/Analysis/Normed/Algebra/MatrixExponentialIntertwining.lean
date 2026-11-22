@@ -45,4 +45,25 @@ example (Q : Matrix (Fin 2) (Fin 2) ℝ) (hQ : ∀ i, ∑ j, Q i j = 0) (i : Fin
   rw [NormedSpace.exp_zero, Matrix.mul_one] at h
   simpa [Matrix.mul_apply, X] using h
 
+
+/-- The `exp_to_clm` agreement over `ℝ`, at the nonsymmetric exchange matrix. -/
+example (t : ℝ) (v : Fin 2 → ℝ) :
+    (NormedSpace.exp
+      (t • LinearMap.toContinuousLinearMap (Matrix.of ![![0, 1], ![0, 0]]).toLin')) v =
+      NormedSpace.exp (t • (Matrix.of ![![0, 1], ![0, 0]])) *ᵥ v :=
+  exp_to_clm _ t v
+
+/-- The same agreement over `ℂ`. -/
+example (t : ℝ) (v : Fin 2 → ℂ) :
+    (NormedSpace.exp
+      (t • LinearMap.toContinuousLinearMap (Matrix.of ![![0, 1], ![0, 0]]).toLin')) v =
+      NormedSpace.exp (t • (Matrix.of ![![0, 1], ![0, 0]])) *ᵥ v :=
+  exp_to_clm _ t v
+
+/-- Boundary `t = 0`: both exponentials are the identity. -/
+example (B : Matrix (Fin 2) (Fin 2) ℝ) (v : Fin 2 → ℝ) :
+    (NormedSpace.exp ((0 : ℝ) • LinearMap.toContinuousLinearMap B.toLin')) v = v := by
+  rw [exp_to_clm]
+  simp
+
 end MathlibExtTest.Analysis.Normed.Algebra.MatrixExponentialIntertwining

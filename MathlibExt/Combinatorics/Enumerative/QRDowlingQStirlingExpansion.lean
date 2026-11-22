@@ -15,7 +15,7 @@ public import MathlibExt.Combinatorics.Enumerative.QRWhitneyNumbers
 public import MathlibExt.NumberTheory.QRDowlingPolynomial
 import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 import Mathlib.Algebra.BigOperators.Ring.Finset
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
 

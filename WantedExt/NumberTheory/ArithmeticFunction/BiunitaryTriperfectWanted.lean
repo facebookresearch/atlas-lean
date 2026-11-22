@@ -24,7 +24,8 @@ Following Wall (as quoted in the paper's introduction), a divisor `d` of `n` is 
 `gcd₁(d, n / d) = 1`, where `gcd₁(a, b)` is the greatest common unitary divisor of `a` and `b`
 (a unitary divisor of `a` is a divisor `d` with `gcd(d, a / d) = 1`, `Nat.unitaryDivisors`).
 The paper's `σ**(n)` is `MetaMathlibExt.sigmaBiunitary n` (with `gcd₁` and the biunitary
-divisors in `MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryDivisor`), and `ω(n)` is `n.primeFactors.card`.
+divisors in `MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryDivisor`), and `ω(n)` is
+`n.primeFactors.card`.
 Exponents are written with `Nat.factorization`: `2 ^ e ∥ N` is `N.factorization 2 = e`.
 
 Lemmas 2.3 and 2.4 (Bang–Zsigmondy) use `IntegerSequence.IsPrimitivePrimeDivisor`, whose

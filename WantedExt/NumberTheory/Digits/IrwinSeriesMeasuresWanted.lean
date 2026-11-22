@@ -13,6 +13,7 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 public import Mathlib.MeasureTheory.Measure.Dirac.Def
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Nat.Digits.Defs
+public import MathlibExt.Analysis.Series.RiemannRearrangement
 
 namespace MetaMathlibExt
 
@@ -20,6 +21,7 @@ namespace MetaMathlibExt
 
 open scoped BigOperators ENNReal
 open Filter MeasureTheory Set
+open MathlibExt.Analysis.Series.RiemannRearrangementWanted (OrderedHasSum)
 
 /-- **Digit count.** For natural numbers $b$, $d$ and $n$, the digit count of $d$ in $n$ is the
 number of occurrences of the digit $d$ in the minimal base-$b$ representation of $n$ (its base-$b$
@@ -314,27 +316,19 @@ Article A11, definition of `μ_k` and Remark `rem:zero`. -/
 public theorem stringAtom_nil (b : ℕ) : stringAtom b [] = Measure.dirac 0 := by
   simp [stringAtom, stringWeight, normalizedStringValue, stringValue]
 
-/-- **Alternating series for the Irwin sum.** Let $b > 1$ and $d < b$ be natural numbers, let
-$(u_{j;m})_{j, m \in \mathbb{N}}$ be a family of real numbers satisfying the ordinary moment
-recurrence for $b$ and $d$, and let $k$ and $l \ge 1$ be natural numbers. For a natural number
-$n$ write $c(n)$ for the number of occurrences of the digit $d$ in the base-$b$ expansion of $n$,
-and let $H^{(k)}_{b,d}$ be the Irwin sum, the sum of $1/n$ over the positive integers $n$ with
-$c(n) = k$. Then the family of real numbers indexed by $m \ge 1$
-$$
-(-1)^m \sum_{\substack{b^{l-1} \le n < b^l \\ c(n) \le k}} \frac{u_{k - c(n);m}}{n^{m+1}}
-$$
-is summable, with sum
-$$
-H^{(k)}_{b,d} - \sum_{\substack{1 \le n < b^{l-1} \\ c(n) = k}} \frac{1}{n} -
-b \sum_{\substack{b^{l-1} \le n < b^l \\ c(n) \le k}} \frac{1}{n}.
-$$
-
+/-- Theorem 1(a): under exactly the two displayed recurrences (packaged in
+`OrdinaryMomentRecurrence`), the family indexed by `m≥1` has ordered sum
+(`OrderedHasSum`: its partial sums over `Finset.range N` converge) equal to the
+Irwin sum minus the exact short block and `b` times the at-most-`k` length-`l`
+block. `HasSum` would be wrong here: in `ℝ` it forces absolute summability, but
+at `l = 1` the series can converge only conditionally (for example `b = 10`,
+`d = 0`, `k = 0`).
 Source: Jean-François Burnol, *Measures for the Summation of Irwin Series*,
 INTEGERS 26 (2026), Article A11, Theorem 1. -/
-public theorem_wanted irwinSum_hasSum_alternating
+public theorem_wanted irwinSum_orderedHasSum_alternating
     (b d : ℕ) (hb : 1 < b) (hd : d < b) (u : ℕ → ℕ → ℝ)
     (hu : OrdinaryMomentRecurrence b d u) (k l : ℕ) (hl : 1 ≤ l) :
-    HasSum
+    OrderedHasSum
       (fun m : ℕ =>
         if 1 ≤ m then
           (-1 : ℝ) ^ m *
@@ -470,15 +464,12 @@ public theorem_wanted integral_eq_leadingReciprocal_hasSum
     HasSum (leadingReciprocalTerm b d (digitCount b d n + k) n)
       (∫ x in Set.Ico (0 : ℝ) 1, ((n : ℝ) + x)⁻¹ ∂irwinMeasure b d k hd)
 
-/-- **Prefix sums as alternating ordinary-moment series.** Let $b > 1$, let $d < b$ be a digit, let
-$n$ be a positive integer, let $k(n)$ be the number of occurrences of $d$ in the base-$b$
-expansion of $n$, and let $k \ge k(n)$. Write $u_{j;m} = \int_{[0,1)} x^m \, d\mu_j(x)$ for the
-ordinary moments of the Irwin measure $\mu_j$. Then there is a real number $S$ such that the
-reciprocals $1/N$ of the positive integers $N$ whose base-$b$ expansion begins with that of $n$
-and contains exactly $k$ occurrences of $d$ have sum $S$, and the series
-$\sum_{m \ge 0} (-1)^m u_{k - k(n);m} / n^{m+1}$ also has sum $S$.
-
-Source: Jean-François Burnol,
+/-- Corollary 1: when `k(n)≤k`, the prefix-restricted reciprocal series and
+the alternating ordinary-moment series have a common sum. The reciprocal
+family has positive terms and is stated with `HasSum`; the alternating series
+is stated with `OrderedHasSum` (ordered partial sums), because at `n = 1` it can
+converge only conditionally (for example `b = 10`, `d = 0`, `k = 0`), as in
+Theorem 1. The length is `integerLength b n`. Source: Jean-François Burnol,
 *Measures for the Summation of Irwin Series*, INTEGERS 26 (2026), Article A11,
 Corollary 1. -/
 public theorem_wanted leadingReciprocal_hasSum_ordinaryMoments
@@ -486,7 +477,7 @@ public theorem_wanted leadingReciprocal_hasSum_ordinaryMoments
     (hn : 0 < n) (hnk : digitCount b d n ≤ k) :
     ∃ S : ℝ,
       HasSum (leadingReciprocalTerm b d k n) S ∧
-      HasSum
+      OrderedHasSum
         (fun m : ℕ =>
           (-1 : ℝ) ^ m * ordinaryMoment b d (k - digitCount b d n) m hd /
             (n : ℝ) ^ (m + 1)) S
@@ -600,18 +591,13 @@ public theorem_wanted irwinMeasure_open_local_mass
           (irwinMeasure b d (k - (if 0 < d then j else j + l' - l)) hd
             (affineScaleSet b l' x U)).toReal)
 
-/-- **Local structure of the Irwin measures on half-open intervals.** Let $b > 1$ and $d < b$ be
-natural numbers, and for each natural number $k$ let $\mu_k$ be the Irwin measure of base $b$ and
-digit $d$ with index $k$. Let $x \in [0, 1)$ have base-$b$ depth $l$, that is, $l$ is the least
-natural number such that $b^l x$ is an integer; let $X$ be a string of $l$ base-$b$ digits, read
-most significant digit first, whose value $n(X)$ satisfies $n(X)/b^l = x$; and let $j$ be the
-number of occurrences of $d$ in $X$. Let $l' \ge l$ be a natural number, put $j' = j$ if $d > 0$
-and $j' = j + l' - l$ if $d = 0$, and let $k \ge j'$ be a natural number. Then for every set
-$U \subseteq [x, x + b^{-l'})$, as real numbers,
-$\mu_k(U) = b^{-l'} \mu_{k-j'}(b^{l'} U - b^{l'} x)$, where $b^{l'} U - b^{l'} x$ is the image
-of $U$ under $y \mapsto b^{l'} y - b^{l'} x$.
-
-Source: Jean-François Burnol,
+/-- Lemma 3: under the same depth, string, adjusted digit-count, and scale
+hypotheses as Lemma 2, the rescaling identity also holds for every subset of
+the half-open interval, under the added atom hypothesis `0 < d → l' = l ∨ j < k`
+omitted by the paper's Lemma 3; without it the identity fails at the atom at `x`
+(the strings `X 0^r`) when `0 < d`, `l < l'`, `k = j` and `x ∈ U`. For example,
+`b = 2`, `d = 1`, `x = 0`, `l = 0`, `l' = 1`, `j = k = 0`, `U = {0}` gives left
+side `2` and right side `1`. Masses use `.toReal`. Source: Jean-François Burnol,
 *Measures for the Summation of Irwin Series*, INTEGERS 26 (2026), Article A11,
 Lemma 3. -/
 public theorem_wanted irwinMeasure_halfOpen_deeper_local_mass
@@ -621,6 +607,7 @@ public theorem_wanted irwinMeasure_halfOpen_deeper_local_mass
     (hXval : normalizedStringValue b X = x) (j : ℕ)
     (hj : j = X.count ⟨d, hd⟩) (l' : ℕ) (hll' : l ≤ l')
     (k : ℕ) (hk : (if 0 < d then j else j + l' - l) ≤ k)
+    (hatom : 0 < d → l' = l ∨ j < k)
     (U : Set ℝ)
     (hU : U ⊆ Set.Ico x (x + (b : ℝ) ^ (-(l' : ℤ)))) :
     (irwinMeasure b d k hd U).toReal =

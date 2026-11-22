@@ -139,7 +139,8 @@ $F_1 = 1$, and let $T$ be the run length transform of $S(i) = F_{i+1}$, i.e. of
 $1, 1, 2, 3, 5, 8, \dots$. Then for every natural number $n$,
 $\sum_{k=0}^{n} \left(\binom{n - k}{2k} \binom{n}{k} \bmod 2\right) = T(n)$.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 2. -/
 public theorem_wanted runLengthTransform_choose_sub_two_mul_fib (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((n - k).choose (2 * k) * n.choose k) % 2 : ℕ) : ℤ) =
@@ -150,7 +151,8 @@ $F_1 = 1$, and let $T$ be the run length transform of $S(i) = F_{i+2}$, i.e. of
 $1, 2, 3, 5, 8, \dots$. Then for every natural number $n$,
 $\sum_{k=0}^{n} \left(\binom{3k}{k} \binom{n}{k} \bmod 2\right) = T(n)$.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 3. -/
 public theorem_wanted runLengthTransform_choose_three_mul_fib (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((3 * k).choose k * n.choose k) % 2 : ℕ) : ℤ) =
@@ -160,7 +162,8 @@ public theorem_wanted runLengthTransform_choose_three_mul_fib (n : ℕ) :
 $S(0) = 1$ and $S(i) = 2^{i-1}$ for $i \ge 1$, i.e. of $1, 1, 2, 4, 8, \dots$. Then for every
 natural number $n$, $\sum_{k=0}^{n} \left(\binom{n}{2k} \binom{n}{k} \bmod 2\right) = T(n)$.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 4. -/
 public theorem_wanted runLengthTransform_choose_two_mul_pow_two (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), (n.choose (2 * k) * n.choose k) % 2 : ℕ) : ℤ) =
@@ -171,7 +174,8 @@ natural number $n$, the sum $\sum_{k=0}^{n} \bigl(\binom{n+2k}{2k}\binom{n}{k} \
 equals the value at $n$ of the run length transform of the sequence $S$ with $S(0) = 1$ and
 $S(i) = 2$ for $i \ge 1$, that is, $1, 2, 2, 2, \dots$.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 5. -/
 public theorem_wanted runLengthTransform_choose_add_two_mul_one_two (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((n + 2 * k).choose (2 * k) * n.choose k) % 2 : ℕ) : ℤ) =
@@ -182,7 +186,8 @@ natural number $n$, the sum $\sum_{k=0}^{n} \bigl(\binom{n+k}{n-k}\binom{n}{k} \
 equals the value at $n$ of the run length transform of the sequence $S(i) = i + 1$ of positive
 integers $1, 2, 3, \dots$.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 6. -/
 public theorem_wanted runLengthTransform_choose_add_sub_succ (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((n + k).choose (n - k) * n.choose k) % 2 : ℕ) : ℤ) =
@@ -193,7 +198,8 @@ $N_1 = N_2 = 1$ and $N_j = N_{j-1} + N_{j-3}$ for $j \ge 3$, and let $T$ be the 
 transform of $S(i) = N_{i+1}$, i.e. of $1, 1, 1, 2, 3, 4, 6, 9, \dots$. Then for every natural
 number $n$, $\sum_{k=0}^{n} \left(\binom{n - k}{6k} \binom{n}{k} \bmod 2\right) = T(n)$.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 7. -/
 public theorem_wanted runLengthTransform_choose_sub_six_mul_narayanaCows (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((n - k).choose (6 * k) * n.choose k) % 2 : ℕ) : ℤ) =
@@ -204,7 +210,8 @@ natural number $n$, the sum $\sum_{k=0}^{n} \bigl(\binom{n+3k}{6k}\binom{n}{k} \
 equals the value at $n$ of the run length transform of the sequence
 $S(i) = \lfloor i / 2 \rfloor + 1$ of doubled positive integers $1, 1, 2, 2, 3, 3, \dots$.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 8. -/
 public theorem_wanted runLengthTransform_choose_add_three_mul_six_mul_doubled (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((n + 3 * k).choose (6 * k) * n.choose k) % 2 : ℕ) : ℤ) =
@@ -216,7 +223,8 @@ equals the value at $n$ of the run length transform of the sequence $S$ with $S(
 and $S(i) = L_{i-2}$ for $i \ge 2$, where $L_0 = 2, L_1 = 1, L_2 = 3, \dots$ are the Lucas
 numbers; that is, $S$ is $1, 1, 2, 1, 3, 4, 7, 11, \dots$.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 9. -/
 public theorem_wanted runLengthTransform_choose_add_two_mul_two_mul_sub_lucas (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((n + 2 * k).choose (2 * n - k) * n.choose k) % 2 : ℕ) : ℤ) =
@@ -232,7 +240,8 @@ coefficient $\binom{a}{b}$ with $a < 0$ is $0$.
 Equivalently, a negative top entry $7k - n$ may be replaced by $0$, since the bottom entry $n + k$
 is then positive.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 12. -/
 public theorem_wanted runLengthTransform_choose_seven_mul_sub_padovan_five (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((7 * k - n).choose (n + k) * n.choose k) % 2 : ℕ) : ℤ) =
@@ -244,7 +253,8 @@ equals the value at $n$ of the run length transform of the shifted Padovan seque
 $P(0) = 1$, $P(1) = 0$, $P(2) = 1$ and $P(i + 3) = P(i + 1) + P(i)$, that is,
 $1, 0, 1, 1, 1, 2, 2, 3, \dots$ (the Padovan numbers, OEIS A000931, from offset $3$).
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 13. -/
 public theorem_wanted runLengthTransform_choose_add_seven_mul_padovan_three (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((n + 7 * k).choose (3 * n + k) * n.choose k) % 2 : ℕ) : ℤ) =
@@ -255,7 +265,8 @@ $S(i) = 1$ for even $i$ and $S(i) = (i + 1)/2$ for odd $i$, i.e. of $1, 1, 1, 2,
 Then for every natural number $n$,
 $\sum_{k=0}^{n} \left(\binom{6k}{n + 3k} \binom{n}{k} \bmod 2\right) = T(n)$.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 14. -/
 public theorem_wanted runLengthTransform_choose_six_mul_alternating (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((6 * k).choose (n + 3 * k) * n.choose k) % 2 : ℕ) : ℤ) =
@@ -270,7 +281,8 @@ coefficient $\binom{a}{b}$ with $a < 0$ is $0$.
 Equivalently, a negative top entry $8k - 2n$ may be replaced by $0$, since the bottom entry $n + k$
 is then positive.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 15. -/
 public theorem_wanted runLengthTransform_choose_eight_mul_sub_period_three (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((8 * k - 2 * n).choose (n + k) * n.choose k) % 2 : ℕ) : ℤ) =
@@ -282,7 +294,8 @@ $S(m) = S(m - 1) + S(m - 2) - S(m - 3) + S(m - 4)$ for every $m \ge 4$. Then for
 number $n$, the sum $\sum_{k=0}^{n} \bigl(\binom{n+5k}{2n+2k}\binom{n}{k} \bmod 2\bigr)$ equals
 the value at $n$ of the run length transform of $S$.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 10. -/
 public theorem_wanted runLengthTransform_choose_add_five_mul_two_mul_add_two_mul (S : ℕ → ℤ)
     (h0 : S 0 = 1) (h1 : S 1 = 1) (h2 : S 2 = 1)
@@ -297,7 +310,8 @@ $S(m) = S(m - 1) + S(m - 2) - S(m - 3) + S(m - 4)$ for every $m \ge 4$. Then for
 number $n$, the sum $\sum_{k=0}^{n} \bigl(\binom{n+5k}{2k}\binom{n}{k} \bmod 2\bigr)$ equals the
 value at $n$ of the run length transform of $S$.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 11. -/
 public theorem_wanted runLengthTransform_choose_add_five_mul_two_mul (S : ℕ → ℤ) (h0 : S 0 = 1)
     (h1 : S 1 = 2) (h2 : S 2 = 2)

@@ -14,10 +14,12 @@ public import MathlibExt.Probability.ConvexSubGaussianComparison
 /-!
 # Sharp one-dimensional convex sub-Gaussian comparison: literature requests
 
-All six results below are private unproved data, not proofs. The implemented probability
+All six results below are unproved data, not proofs. The implemented probability
 model and characteristic APIs are upstream. The numerical approximations in Davis–Power
 Remark 2 are not asserted here, and the solved one-dimensional problem is not an open target.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open MathlibExt.Probability.ConvexSubGaussianComparison
@@ -94,27 +96,27 @@ open MathlibExt.Probability.ConvexSubGaussianComparisonWantedDavis
 namespace MathlibExt.Probability.ConvexSubGaussianComparisonWanted
 
 /-- Source: Davis–Power (2026), equations (3)–(6), existence and uniqueness. -/
-theorem_wanted davisPowerSystem_existsUnique :
+public theorem_wanted davisPowerSystem_existsUnique :
     ∃! q : DavisPowerSolution, q.IsValid
 
 /-- Source: van Handel (2025), historical one-dimensional finiteness consequence. -/
-theorem_wanted historicalFinitenessUpperBound :
+public theorem_wanted historicalFinitenessUpperBound :
     comparisonConstant ≠ ⊤
 
 /-- Source: Davis–Power (2026), Theorem 1, the exact `c0^2` comparator upper bound. -/
-theorem_wanted davisPowerSharpUpper :
+public theorem_wanted davisPowerSharpUpper :
     IsAdmissibleConstant (ENNReal.ofReal (davisPowerC0 ^ 2))
 
 /-- Source: Davis–Power (2026), Theorem 1, sharpness for every admissible variance factor. -/
-theorem_wanted davisPowerSharpLower (C : ENNReal) (hC : IsAdmissibleConstant C) :
+public theorem_wanted davisPowerSharpLower (C : ENNReal) (hC : IsAdmissibleConstant C) :
     ENNReal.ofReal (davisPowerC0 ^ 2) ≤ C
 
 /-- Source: Davis–Power (2026), the exact solved one-dimensional catalogue constant. -/
-theorem_wanted comparisonConstant_eq_davisPowerC0_sq :
+public theorem_wanted comparisonConstant_eq_davisPowerC0_sq :
     comparisonConstant = ENNReal.ofReal (davisPowerC0 ^ 2)
 
 /-- Source: Davis–Power (2026), the tail-saturating extremizer and smaller-factor sharpness. -/
-theorem_wanted davisPowerExtremalAttainment :
+public theorem_wanted davisPowerExtremalAttainment :
     ∃ (Ω : Type) (m : MeasurableSpace Ω)
       (μ : @Measure Ω m) (hμ : @IsProbabilityMeasure Ω m μ) (X : Ω → ℝ),
       @IsOneSubGaussianTail Ω m μ hμ X ∧ SaturatesGaussianTail μ X ∧

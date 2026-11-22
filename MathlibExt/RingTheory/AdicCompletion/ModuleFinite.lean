@@ -191,6 +191,17 @@ end Local
 
 end AdicCompleteModuleFiniteAux
 
+namespace IsAdicComplete
+
+/-- A finite module over a Noetherian ring that is adically complete with
+respect to an ideal is complete with respect to that ideal. -/
+theorem of_module_finite {R : Type u} [CommRing R] [IsNoetherianRing R] (I : Ideal R)
+    [IsAdicComplete I R] {M : Type v} [AddCommGroup M] [Module R M] [Module.Finite R M] :
+    IsAdicComplete I M :=
+  AdicCompleteModuleFiniteAux.isAdicComplete_of_module_finite I
+
+end IsAdicComplete
+
 namespace IsLocalRing
 
 /-- A finite local extension of an adically complete local ring is adically
