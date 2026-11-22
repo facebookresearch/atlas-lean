@@ -72,8 +72,12 @@ formula records the same map on `y ⊗ x`. Infinite places and the general
 function-field case remain outside this file's scope.
 -/
 
-/-- The sum of local completion degrees over places above `v` is the global degree.
-This combines parts (4) and (5) of ATLAS N236, Theorem 11.23, for use in N265. -/
+/-- **Local degrees sum to the global degree.** Let $L/K$ be an extension of number fields, $v$ a
+finite place of $K$ and $K_v$ the completion of $K$ at $v$; for each finite place $w$ of $L$ lying
+over $v$, let $L_w$ be the completion of $L$ at $w$, a $K_v$-algebra via the canonical map
+$K_v \to L_w$. Then $\sum_{w \mid v} [L_w : K_v] = [L : K]$.
+
+Source: ATLAS N236, Theorem 11.23, parts (4) and (5) combined; used in N265. -/
 theorem sum_finrank_adicCompletion_placesOver [Fintype (v.placesOver L)] :
     ∑ w : v.placesOver L,
       Module.finrank (v.adicCompletion K) (w.val.adicCompletion L) =
@@ -108,7 +112,11 @@ theorem sum_finrank_adicCompletion_placesOver [Fintype (v.placesOver L)] :
     Ideal.sum_ramification_inertia_eq_finrank v.asIdeal (𝓞 L),
     IsFractionRing.finrank_eq (𝓞 K) K (𝓞 L) L]
 
-/-- The source and target of the completion tensor-product map have equal dimension. -/
+/-- **Dimension count for the base change to a finite completion.** Let $L/K$ be an extension of
+number fields, $v$ a finite place of $K$ and $K_v$ the completion of $K$ at $v$; for each finite
+place $w$ of $L$ lying over $v$, let $L_w$ be the completion of $L$ at $w$, a $K_v$-algebra via
+the canonical map $K_v \to L_w$. Then $K_v \otimes_K L$ and $\prod_{w \mid v} L_w$ have the same
+dimension as $K_v$-vector spaces. -/
 theorem finrank_completionTensorProduct_eq_pi :
     Module.finrank (v.adicCompletion K) (v.adicCompletion K ⊗[K] L) =
       Module.finrank (v.adicCompletion K)
@@ -118,7 +126,12 @@ theorem finrank_completionTensorProduct_eq_pi :
   rw [Module.finrank_baseChange, Module.finrank_pi_fintype,
     sum_finrank_adicCompletion_placesOver v]
 
-/-- Injectivity of the completion tensor-product map. -/
+/-- **The canonical map to the product of completions is injective.** Let $L/K$ be an extension of
+number fields, $v$ a finite place of $K$ and $K_v$ the completion of $K$ at $v$; for each finite
+place $w$ of $L$ lying over $v$, let $L_w$ be the completion of $L$ at $w$, a $K_v$-algebra via
+the canonical map $K_v \to L_w$. The $K_v$-algebra map $K_v \otimes_K L \to \prod_{w \mid v} L_w$
+sending $x \otimes y$ to $(x y)_w$, where $x \in K_v$ and $y \in L$ are mapped into each $L_w$,
+is injective. -/
 theorem completionTensorProductMap_injective :
     Function.Injective (completionTensorProductMap (K := K) (L := L) v) := by
   have hfin := finrank_completionTensorProduct_eq_pi (K := K) (L := L) v
@@ -128,15 +141,25 @@ theorem completionTensorProductMap_injective :
   exact (LinearMap.injective_iff_surjective_of_finrank_eq_finrank hfin).mpr
     hsurjLin
 
-/-- Bijectivity of the completion tensor-product map. -/
+/-- **The canonical map to the product of completions is bijective.** Let $L/K$ be an extension of
+number fields, $v$ a finite place of $K$ and $K_v$ the completion of $K$ at $v$; for each finite
+place $w$ of $L$ lying over $v$, let $L_w$ be the completion of $L$ at $w$, a $K_v$-algebra via
+the canonical map $K_v \to L_w$. The $K_v$-algebra map $K_v \otimes_K L \to \prod_{w \mid v} L_w$
+sending $x \otimes y$ to $(x y)_w$, where $x \in K_v$ and $y \in L$ are mapped into each $L_w$,
+is bijective. -/
 theorem completionTensorProductMap_bijective :
     Function.Bijective (completionTensorProductMap (K := K) (L := L) v) :=
   ⟨completionTensorProductMap_injective v,
     completionTensorProductMap_surjective v⟩
 
-/-- The completion tensor product as an algebra equivalence. This is the
-factor-swapped form of the isomorphism in ATLAS N236, Theorem 11.23(5), used
-later in N265. -/
+/-- **Base change to a finite completion as a product of completions.** Let $L/K$ be an extension
+of number fields, $v$ a finite place of $K$ and $K_v$ the completion of $K$ at $v$; for each finite
+place $w$ of $L$ lying over $v$, let $L_w$ be the completion of $L$ at $w$, a $K_v$-algebra via the
+canonical map $K_v \to L_w$. This is the isomorphism of $K_v$-algebras
+$K_v \otimes_K L \cong \prod_{w \mid v} L_w$ sending $x \otimes y$ to $(x y)_w$, where $x \in K_v$
+and $y \in L$ are mapped into each $L_w$.
+
+Source: ATLAS N236, Theorem 11.23(5), with the tensor factors swapped; used later in N265. -/
 noncomputable def completionTensorProductAlgEquiv :
     v.adicCompletion K ⊗[K] L ≃ₐ[v.adicCompletion K]
       ((w : v.placesOver L) → w.val.adicCompletion L) :=
@@ -153,10 +176,15 @@ theorem completionTensorProductAlgEquiv_tmul (x : v.adicCompletion K) (y : L)
 
 attribute [local instance] Algebra.TensorProduct.rightAlgebra
 
-/-- Right-oriented (`L ⊗[K] K_v`) form of the completion tensor-product
-equivalence. This is the finite-place `K_v`-algebra orientation of ATLAS
-N265, Theorem 13.5, implemented as `theorem_13_5_finite_place_Kv` in the
-primary Lean source. -/
+/-- **Tensor product decomposition at a finite place.** Let $L/K$ be an extension of number fields,
+$v$ a finite place of $K$ and $K_v$ the completion of $K$ at $v$; for each finite place $w$ of $L$
+lying over $v$, let $L_w$ be the completion of $L$ at $w$, a $K_v$-algebra via the canonical map
+$K_v \to L_w$, and make $L \otimes_K K_v$ a $K_v$-algebra through its second factor. This is the
+isomorphism of $K_v$-algebras $L \otimes_K K_v \cong \prod_{w \mid v} L_w$ sending $y \otimes x$
+to $(y x)_w$, where $y \in L$ and $x \in K_v$ are mapped into each $L_w$.
+
+Source: ATLAS N265, Theorem 13.5, the finite-place $K_v$-algebra form for number fields
+(`theorem_13_5_finite_place_Kv` in the primary Lean source). -/
 noncomputable def completionTensorProductRightAlgEquiv :
     L ⊗[K] v.adicCompletion K ≃ₐ[v.adicCompletion K]
       ((w : v.placesOver L) → w.val.adicCompletion L) :=
@@ -172,7 +200,16 @@ theorem completionTensorProductRightAlgEquiv_tmul (y : L)
   simp [completionTensorProductRightAlgEquiv,
     completionTensorProductAlgEquiv_tmul]
 
-/-- The exact pure-tensor coordinate law in ATLAS N265, Theorem 13.5. -/
+/-- **Coordinate law for the tensor product decomposition.** Let $L/K$ be an extension of number
+fields, $v$ a finite place of $K$ and $K_v$ the completion of $K$ at $v$; for each finite place $w$
+of $L$ lying over $v$, let $L_w$ be the completion of $L$ at $w$, a $K_v$-algebra via the canonical
+map $K_v \to L_w$, and make $L \otimes_K K_v$ a $K_v$-algebra through its second factor. Consider
+the isomorphism of $K_v$-algebras $L \otimes_K K_v \cong \prod_{w \mid v} L_w$ sending $a \otimes b$
+to $(a b)_w$, where $a \in L$ and $b \in K_v$ are mapped into each $L_w$. For every $y \in L$ and
+every finite place $w$ of $L$ lying over $v$, the $w$-coordinate of the image of $y \otimes 1$ is
+the image of $y$ in $L_w$.
+
+Source: ATLAS N265, Theorem 13.5, the coordinate law for pure tensors. -/
 @[simp]
 theorem completionTensorProductRightAlgEquiv_tmul_one (y : L)
     (w : v.placesOver L) :
@@ -182,7 +219,15 @@ theorem completionTensorProductRightAlgEquiv_tmul_one (y : L)
   simp only [completionTensorProductRightAlgEquiv_tmul, map_one, one_mul]
   rfl
 
-/-- The source's `K`-algebra formulation, obtained by restriction of scalars. -/
+/-- **Tensor product decomposition at a finite place over the base field.** Let $L/K$ be an
+extension of number fields, $v$ a finite place of $K$ and $K_v$ the completion of $K$ at $v$; for
+each finite place $w$ of $L$ lying over $v$, let $L_w$ be the completion of $L$ at $w$. There
+exists an isomorphism of $K$-algebras $L \otimes_K K_v \cong \prod_{w \mid v} L_w$.
+
+It is obtained by restricting scalars from $K_v$ to $K$ in the isomorphism of $K_v$-algebras
+$L \otimes_K K_v \cong \prod_{w \mid v} L_w$ sending $y \otimes x$ to $(y x)_w$, where $y \in L$
+and $x \in K_v$ are mapped into each $L_w$, $L_w$ is a $K_v$-algebra via the canonical map
+$K_v \to L_w$, and $L \otimes_K K_v$ is a $K_v$-algebra through its second factor. -/
 theorem completionTensorProductRightAlgEquiv_K :
     Nonempty (L ⊗[K] v.adicCompletion K ≃ₐ[K]
       ((w : v.placesOver L) → w.val.adicCompletion L)) :=

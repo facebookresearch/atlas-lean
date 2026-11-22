@@ -9,6 +9,7 @@ Convergence in law of normalized sums and their error terms: central limit theor
 - [Limit theorems under sublinear expectations](limit-theorems-under-sublinear-expectations/README.md)
 - [Lindeberg–Feller central limit theorem](lindeberg-feller-central-limit-theorem/README.md)
 - [Local de Moivre–Laplace theorem for a fair coin](local-de-moivre-laplace-theorem/README.md)
+- [Multivariate central limit theorem](multivariate-central-limit-theorem/README.md)
 - [Optimal Berry–Esseen constant](optimal-berry-esseen-constant/README.md)
 - [Poisson limit theorem for binomial laws](poisson-limit-theorem/README.md)
 - [Infinite-variance limit (Scottish Book Problem 126)](scottish-book-problem-126/README.md)
