@@ -67,8 +67,9 @@ noncomputable def normalPostVar (v₀ v : ℝ≥0) : ℝ≥0 := v₀ * v / (v₀
 
 /-- **Posterior mean of the Normal–Normal model.** For a prior mean $m_0 \in \mathbb{R}$, a prior
 variance $v_0 \ge 0$, a noise variance $v \ge 0$ and an observation $x \in \mathbb{R}$, the
-posterior mean is $(v m_0 + v_0 x)/(v_0 + v)$, taken to be $0$ when $v_0 = v = 0$. When
-$v_0 + v > 0$ it is the precision-weighted average of $m_0$ and $x$. -/
+posterior mean is $(v m_0 + v_0 x)/(v_0 + v)$, taken to be $0$ when $v_0 = v = 0$. When $v_0 > 0$
+and $v > 0$ it is the precision-weighted average of $m_0$ and $x$; when $v_0 = 0 < v$ it is $m_0$,
+and when $v = 0 < v_0$ it is $x$. -/
 noncomputable def normalPostMean (m₀ : ℝ) (v₀ v : ℝ≥0) (x : ℝ) : ℝ :=
   (v * m₀ + v₀ * x) / (v₀ + v)
 
@@ -136,9 +137,10 @@ theorem gaussianPDF_mul_gaussianPDF (m₀ : ℝ) {v₀ v : ℝ≥0} (h₀ : v₀
 /-! ### The Gaussian likelihood with known variance -/
 
 /-- **Measurability of the Gaussian density in its mean and argument.** For a variance $v \ge 0$,
-write $\varphi_{\theta, v}(x) = (2 \pi v)^{-1/2} \exp(-(x - \theta)^2 / (2 v))$ for the density
-at $x$ of the Gaussian with mean $\theta$ and variance $v$, read as $0$ when $v = 0$, with values
-in $[0, \infty]$. Then $(\theta, x) \mapsto \varphi_{\theta, v}(x)$ is a measurable map on
+write $\varphi_{\theta, v}(x) = (2 \pi v)^{-1/2} \exp(-(x - \theta)^2 / (2 v))$ for the density at
+$x$ of the Gaussian with mean $\theta$ and variance $v$ when $v > 0$, with values in $[0, \infty]$;
+for $v = 0$ it is $0$ by convention (that Gaussian is a Dirac measure, with no Lebesgue density).
+Then $(\theta, x) \mapsto \varphi_{\theta, v}(x)$ is a measurable map on
 $\mathbb{R} \times \mathbb{R}$. -/
 theorem measurable_gaussianPDF_mean (v : ℝ≥0) :
     Measurable (Function.uncurry fun θ x : ℝ ↦ gaussianPDF θ v x) :=

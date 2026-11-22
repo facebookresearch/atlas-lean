@@ -163,14 +163,15 @@ theorem map_predict {x w : Ω → EuclideanSpace ℝ n} (hx : Measurable x) (hw 
   rw [map_linear_add_of_indepFun hx hw hind hP hQ hxl hwl F, add_zero]
   rfl
 
-/-- **The update step is the exact posterior.** Let $x$ be a measurable random vector in
-$\mathbb{R}^n$ and $v$ a measurable random vector in $\mathbb{R}^p$ on a probability space, with
-$x$ independent of $v$. Suppose $x$ has the law $N(m, P)$ of a belief with mean $m$ and positive
-semidefinite covariance $P$, and $v$ has law $N(0, R)$ with $R$ positive semidefinite. Let $H$ be
-a real $p \times n$ matrix with $H P H^\top + R$ invertible, and put $Y = H x + v$. Then for
-almost every $y$ with respect to the law of $Y$, the conditional distribution of $x$ given
-$Y = y$ is the law of the belief obtained from $(m, P)$ by the update with $H$, $R$ and the
-observation $y$. -/
+/-- **Under Gaussian hypotheses with an invertible innovation covariance, the update step gives the
+conditional law for almost every observation.** Let $n$ and $p$ be finite index types with decidable
+equality, let $x$ be a measurable random vector in $\mathbb{R}^n$ and $v$ a measurable random vector
+in $\mathbb{R}^p$ on a probability space, with $x$ independent of $v$. Suppose $x$ has the law
+$N(m, P)$ of a belief with mean $m$ and positive semidefinite covariance $P$, and $v$ has law
+$N(0, R)$ with $R$ positive semidefinite. Let $H$ be a real $p \times n$ matrix with
+$H P H^\top + R$ invertible, and put $Y = H x + v$. Then for almost every $y$ with respect to the
+law of $Y$, the conditional distribution of $x$ given $Y = y$ is the law of the belief obtained from
+$(m, P)$ by the update with $H$, $R$ and the observation $y$. -/
 theorem condDistrib_update {x : Ω → EuclideanSpace ℝ n} {v : Ω → EuclideanSpace ℝ p}
     (hx : Measurable x) (hv : Measurable v) (hind : IndepFun x v P) {b : Belief n}
     {R : Matrix p p ℝ} (hP : b.cov.PosSemidef) (hR : R.PosSemidef) (hxl : P.map x = b.law)

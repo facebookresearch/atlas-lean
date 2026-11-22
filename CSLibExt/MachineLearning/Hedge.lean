@@ -80,10 +80,9 @@ def total (w : Fin n → ℝ) : ℝ := ∑ i, w i
 
 /-- **Loss of a Hedge round.** For weights $w$ and losses $\ell$ on $n$ experts, the algorithm's
 loss in the round is $\left(\sum_i w_i \ell_i\right) / W$, where $W = \sum_i w_i$ is the total
-weight. For nonnegative weights of positive total, the only weights the algorithm produces, this
-is its expected loss when it follows expert $i$ with probability $w_i / W$. For other weights it
-is only this ratio: when $W = 0$ its value is $0$ ($x / 0 = 0$), and for weights of mixed sign it
-need not lie between the losses. -/
+weight. For nonnegative weights of positive total, this is its expected loss when it follows expert
+$i$ with probability $w_i / W$. For other weights it is only this ratio: when $W = 0$ its value is
+$0$ ($x / 0 = 0$), and for weights of mixed sign it need not lie between the losses. -/
 noncomputable def roundLoss (w ℓ : Fin n → ℝ) : ℝ := (∑ i, w i * ℓ i) / total w
 
 /-- **Loss of the Hedge algorithm.** Let $\eta$ be a learning rate, $w \in \mathbb{R}^n$ initial

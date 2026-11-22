@@ -951,9 +951,9 @@ theorem winsMove_dia {M : KripkeModel World Atom} {φ₁ : FixFreeFormula Atom} 
   simp only [FixFreeFormula.toMu, winsMove, hInv]
   rw [dite_eq_left hex]
 
-/-- **The Wins-guided move is legal.** For a Kripke model $M$ and a game position $p$ owned by
-Verifier from which some move exists, the Wins-guided move at $p$ is a legal move of the
-model-checking game on $M$ from $p$. -/
+/-- **At a Verifier-owned position with a move, the Wins-guided move is legal.** For a Kripke model
+$M$ and a game position $p$ owned by Verifier from which some move exists, the Wins-guided move at
+$p$ is a legal move of the model-checking game on $M$ from $p$. -/
 theorem winsMove_isMove (M : KripkeModel World Atom) (p : GamePosition Atom World)
     (hOwn : Owner p = true) (hExists : ∃ q, Move M p q) :
     Move M p (winsMove M p.1 p.2.1 p.2.2) := by

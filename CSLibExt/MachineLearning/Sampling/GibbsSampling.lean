@@ -154,11 +154,12 @@ theorem invariant_gibbsKernel (π : PMF (ι → S)) (hπ : ∀ x, π x ≠ 0) (i
     (pmfKernel (gibbsStep π hπ i)).Invariant π.toMeasure :=
   invariant_pmfKernel (gibbs_detailedBalance π hπ i)
 
-/-- **Systematic-scan Gibbs sampler.** Let $\pi$ be a probability distribution on the
-configurations $x : \iota \to S$, with $\iota$ and $S$ finite, such that $\pi(x) \neq 0$ for every
-$x$. For a list $l = (i_1, \dots, i_n)$ of coordinates, the systematic-scan Gibbs sampler is the
-Markov kernel on configurations that applies the Gibbs updates of the coordinates
-$i_1, i_2, \dots, i_n$ in this order; for the empty list it is the identity kernel. -/
+/-- **Systematic-scan Gibbs sampler.** Let $\pi$ be a probability distribution on the configurations
+$x : \iota \to S$, with $\iota$ and $S$ finite, equality of coordinates decidable and every
+singleton of $S$ measurable, such that $\pi(x) \neq 0$ for every $x$. For a list
+$l = (i_1, \dots, i_n)$ of coordinates, the systematic-scan Gibbs sampler is the Markov kernel on
+configurations that applies the Gibbs updates of the coordinates $i_1, i_2, \dots, i_n$ in this
+order; for the empty list it is the identity kernel. -/
 noncomputable def gibbsSweep (π : PMF (ι → S)) (hπ : ∀ x, π x ≠ 0) :
     List ι → Kernel (ι → S) (ι → S)
   | [] => Kernel.id

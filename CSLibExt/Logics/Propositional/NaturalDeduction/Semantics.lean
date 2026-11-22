@@ -232,10 +232,10 @@ theorem DerivableIn.evalBool_of_ipl {Γ : Ctx Atom} {A : Proposition Atom}
     (hΓ : ∀ B ∈ Γ, B.evalBool v = true) : A.evalBool v = true :=
   DerivableIn.boolSound h v (fun _ hB ↦ evalBool_of_mem_ipl hv hB) hΓ
 
-/-- **Consistency of classical propositional logic.** For every type of atoms with a designated
-atom $\bot$, the proposition $\bot$ is not derivable from the empty context in natural deduction
-over the classical theory, whose axioms are all instances $\neg\neg A \to A$ of double-negation
-elimination, where $\neg A$ abbreviates $A \to \bot$. -/
+/-- **Consistency of classical propositional logic.** For every type of atoms with decidable
+equality and a designated atom $\bot$, the proposition $\bot$ is not derivable from the empty
+context in natural deduction over the classical theory, whose axioms are all instances
+$\neg\neg A \to A$ of double-negation elimination, where $\neg A$ abbreviates $A \to \bot$. -/
 theorem not_derivableIn_cpl_bot : ¬ DerivableIn (CPL Atom) (⊥ : Proposition Atom) := by
   intro h
   have := DerivableIn.evalBool_of_cpl (v := fun _ ↦ false) h rfl (by simp)

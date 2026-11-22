@@ -68,12 +68,12 @@ noncomputable def softAssign (w : Fin K → ℝ) (μ : Fin K → EuclideanSpace 
     (x : EuclideanSpace ℝ (Fin d)) (k : Fin K) : ℝ :=
   w k * isoGaussPDF (μ k) v.toNNReal x / ∑ i, w i * isoGaussPDF (μ i) v.toNNReal x
 
-/-- **The Gaussian-mixture responsibilities are the common-variance responsibilities.** Let
-$\theta$ be valid parameters of an isotropic Gaussian mixture with $K$ components on
-$\mathbb{R}^d$, with weights $w_k$, means $\mu_k$ and variances all equal to a real number $v$.
-Then for every point $x \in \mathbb{R}^d$ and every component $k$, the responsibility of $k$ at
-$x$ under $\theta$ equals the common-variance responsibility $r_v(x, k)$ for the weights $w$ and
-means $\mu$. -/
+/-- **With equal component variances, Gaussian-mixture responsibilities are the common-variance
+responsibilities.** Let $\theta$ be valid parameters of an isotropic Gaussian mixture with $K$
+components on $\mathbb{R}^d$, with weights $w_k$, means $\mu_k$ and variances all equal to a real
+number $v$. Then for every point $x \in \mathbb{R}^d$ and every component $k$, the responsibility of
+$k$ at $x$ under $\theta$ equals the common-variance responsibility $r_v(x, k)$ for the weights $w$
+and means $\mu$. -/
 theorem resp_eq_softAssign (θ : ValidParams d K) {v : ℝ} (hv : ∀ k, (θ.1.var k : ℝ) = v)
     (x : EuclideanSpace ℝ (Fin d)) (k : Fin K) :
     resp θ x k = softAssign θ.1.weight θ.1.mean v x k := by

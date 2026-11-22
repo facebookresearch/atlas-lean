@@ -70,8 +70,9 @@ def sub : Formula Atom → Finset (Formula Atom)
 theorem mem_sub_self (phi : Formula Atom) : phi ∈ phi.sub := by
   cases phi <;> simp [sub]
 
-/-- **The subformula relation is transitive.** If $\psi$ is a subformula of a modal formula
-$\varphi$, then every subformula of $\psi$ is a subformula of $\varphi$. -/
+/-- **The subformula relation is transitive.** Let the atoms have decidable equality. If $\psi$ is a
+subformula of a modal formula $\varphi$, then every subformula of $\psi$ is a subformula of
+$\varphi$. -/
 theorem sub_subset_of_mem {phi psi : Formula Atom} (h : psi ∈ phi.sub) : psi.sub ⊆ phi.sub := by
   induction phi with
   | atom p => simp only [sub, Finset.mem_singleton] at h; subst h; rfl

@@ -302,10 +302,11 @@ theorem exists_finite_countermodel_S4 (h : ¬Derivable Axioms.S4 phi) :
     finModel_trans _ (finTrans_lemmonRel M phi)⟩, not_valid_finModel_of_isFiltration M phi hR hw⟩
   exact card_le_of_card_finset_le (card_filtrationWorlds_le M phi)
 
-/-- **Finite model property of S5.** If a modal formula $\varphi$ is not a theorem of S5, then
-there is a Kripke model with finitely many worlds, at most $2^{|\mathrm{sub}(\varphi)|}$ of them,
-where $\mathrm{sub}(\varphi)$ is the set of subformulas of $\varphi$, whose accessibility
-relation is an equivalence relation and in which $\varphi$ is false at some world. -/
+/-- **Finite model property of S5.** Let the atoms have decidable equality. If a modal formula
+$\varphi$ is not a theorem of S5, then there is a Kripke model with finitely many worlds, at most
+$2^{|\mathrm{sub}(\varphi)|}$ of them, where $\mathrm{sub}(\varphi)$ is the set of subformulas of
+$\varphi$, whose accessibility relation is an equivalence relation and in which $\varphi$ is false
+at some world. -/
 theorem exists_finite_countermodel_S5 (h : ¬Derivable Axioms.S5 phi) :
     ∃ (W : Type u) (_ : Fintype W) (M : KripkeModel W Atom),
       Fintype.card W ≤ 2 ^ phi.sub.card ∧ Equivalence M.rel ∧ ¬M.Valid phi := by

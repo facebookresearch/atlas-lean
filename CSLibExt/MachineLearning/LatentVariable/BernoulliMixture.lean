@@ -80,9 +80,10 @@ variable {d K N : ℕ}
 
 /-- **Product Bernoulli probability mass function.** For a vector $p \in \mathbb{R}^d$ of success
 probabilities and a binary vector $x \in \{0, 1\}^d$, the probability of $x$ under the product of
-$d$ independent Bernoulli distributions with parameters $p_1, \dots, p_d$ is
-$$\prod_{j=1}^{d} p_j^{x_j} (1 - p_j)^{1 - x_j},$$
-that is, the product over $j$ of $p_j$ when $x_j = 1$ and of $1 - p_j$ when $x_j = 0$. -/
+$d$ independent Bernoulli distributions with parameters $p_1, \dots, p_d$ is $$\prod_{j=1}^{d}
+p_j^{x_j} (1 - p_j)^{1 - x_j},$$ that is, the product over $j$ of $p_j$ when $x_j = 1$ and of
+$1 - p_j$ when $x_j = 0$. The product is defined for all real parameters; it is a probability mass
+function only when every $p_j$ lies in $[0, 1]$. -/
 noncomputable def bernPMF (p : Fin d → ℝ) (x : Fin d → Bool) : ℝ :=
   ∏ j, if x j then p j else 1 - p j
 
@@ -346,12 +347,13 @@ theorem logLik_le_emStep (hx : Rich xs) (θ : ValidParams d K) :
 
 variable (xs) in
 /-- **The log-likelihood is monotone along the EM iterates of a Bernoulli mixture.** Let
-$x_1, \dots, x_N \in \{0, 1\}^d$ be rich data: $N > 0$, and for every coordinate $j < d$ some
-$x_n$ has $j$-th coordinate $1$ and some $x_m$ has $j$-th coordinate $0$. Let $\theta_0$ be valid
+$x_1, \dots, x_N \in \{0, 1\}^d$ be rich data: $N > 0$, and for every coordinate $j < d$ some $x_n$
+has $j$-th coordinate $1$ and some $x_m$ has $j$-th coordinate $0$. Let $\theta_0$ be valid
 parameters of a mixture of $K$ products of $d$ Bernoulli distributions, and let $\theta_t$ be the
 result of $t$ EM steps from $\theta_0$. Then $\ell(\theta_t)$ is nondecreasing in
-$t \in \mathbb{N}$, where $\ell$ is the log-likelihood of the data under the mixture's joint
-distribution. -/
+$t \in \mathbb{N}$, where $\ell(\theta) = \sum_n \log \sum_k p_\theta(x_n, k)$ is the observed-data
+log-likelihood, $p_\theta(x, k)$ being the joint probability of $x$ and component $k$ under the
+mixture. -/
 theorem logLik_iterate_emStep_monotone (hx : Rich xs) (θ₀ : ValidParams d K) :
     Monotone fun t => logLik joint xs ((emStep xs hx)^[t] θ₀) := by
   have := nonempty_of_valid θ₀
