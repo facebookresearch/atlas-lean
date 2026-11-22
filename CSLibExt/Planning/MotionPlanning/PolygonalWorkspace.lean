@@ -77,6 +77,7 @@ The vertices are distinct; no edge occurrence is degenerate; non-adjacent
 edge occurrences (by cyclic index) have disjoint closed segments, while
 adjacent occurrences meet exactly in their common endpoint. -/
 def PolySimple (vs : List plane) : Prop :=
+  3 ≤ vs.length ∧
   List.Nodup vs ∧
   (∀ e ∈ cyclicEdges vs, e.1 ≠ e.2) ∧
   ∀ (i j : ℕ) (hi : i < (cyclicEdges vs).length) (hj : j < (cyclicEdges vs).length),
@@ -89,19 +90,26 @@ def PolySimple (vs : List plane) : Prop :=
     (¬ edgeAdjacent i j (cyclicEdges vs).length →
       Disjoint (segment ℝ e₁.1 e₁.2) (segment ℝ e₂.1 e₂.2))
 
+/-- Fewer than three vertices is never simple. -/
+theorem not_polySimple_length_lt_three (vs : List plane) (h : vs.length < 3) : ¬ PolySimple vs := fun hs => (Nat.not_le_of_gt h) hs.1
+/-- The empty vertex list is not simple. -/
+theorem not_polySimple_nil : ¬ PolySimple [] := not_polySimple_length_lt_three [] (by decide)
+
 /-- A simple polygon: a cyclic vertex list coupled to its filled region.
 `vertices` and `region` are data; the remaining fields are HYPOTHESES, each a
 genuine property of the computed boundary/region pair.
 
 A full concrete instance (proving `boundary_eq` for an explicit filled region)
-needs the frontier computation for that region, recorded below as a stage-2
-need; stage-1 facts about vertex data are stated for any `Poly`/`Workspace`
-with the given vertices. -/
+discharges `boundary_eq` by a frontier computation for its region, with an
+example in the test suite; stage-1 facts about vertex data are stated for any
+`Poly`/`Workspace` with the given vertices. -/
 structure Poly where
   /-- DEFINITIONAL DATA: the cyclic vertex list. -/
   vertices : List plane
   /-- DEFINITIONAL EVIDENCE: a polygon has at least three vertices. -/
   len_ge : 3 ≤ vertices.length
+  -- Note: `len_ge` is now also implied by `simple` (`PolySimple` requires
+  -- `3 ≤ vertices.length`); kept as an explicit field.
   /-- COUPLING DATA: the filled region of the polygon. -/
   region : Set plane
   /-- HYPOTHESIS (coupling): the frontier of the region is exactly the

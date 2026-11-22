@@ -296,7 +296,7 @@ theorem noZero_slantedVerts : ∀ e ∈ cyclicEdges slantedVerts, e.1 ≠ e.2 :=
   · exact slA_ne_slD.symm
 /-- The slanted quadrilateral satisfies occurrence-based simplicity. -/
 theorem simple_slantedVerts : PolySimple slantedVerts := by
-  refine ⟨nodup_slantedVerts, noZero_slantedVerts, ?_⟩
+  refine ⟨by decide, nodup_slantedVerts, noZero_slantedVerts, ?_⟩
   intro i j hi hj hne
   have hi4 : i < 4 := hi
   have hj4 : j < 4 := hj
@@ -393,7 +393,6 @@ theorem simple_slantedVerts : PolySimple slantedVerts := by
       unfold edgeAdjacent
       decide
   · exact absurd rfl hne
-/-- Any hole-free workspace on the unit square is not in general position. -/
 theorem Workspace.not_GeneralPosition_square (W : Workspace)
     (hv : W.outer.vertices = squareVerts) (h : W.holes = []) :
     ¬ W.GeneralPosition := by
@@ -446,7 +445,7 @@ theorem not_nodup_pinchedVerts : ¬ List.Nodup pinchedVerts := by
   exact hmem (by simp)
 /-- The pinched vertex list fails occurrence-based simplicity. -/
 theorem not_simple_pinchedVerts : ¬ PolySimple pinchedVerts := by
-  rintro ⟨hnodup, -, -⟩
+  rintro ⟨-, hnodup, -, -⟩
   exact not_nodup_pinchedVerts hnodup
 /-- A duplicated-vertex list `[A,B,C,A,B,C]`. -/
 def dupVerts : List plane := [triA, triB, triC, triA, triB, triC]
@@ -562,7 +561,7 @@ theorem noZero_slantTriVerts : ∀ e ∈ cyclicEdges slantTriVerts, e.1 ≠ e.2 
   · exact slA_ne_slC.symm
 /-- The slanted triangle satisfies occurrence-based simplicity. -/
 theorem simple_slantTriVerts : PolySimple slantTriVerts := by
-  refine ⟨nodup_slantTriVerts, noZero_slantTriVerts, ?_⟩
+  refine ⟨by decide, nodup_slantTriVerts, noZero_slantTriVerts, ?_⟩
   intro i j hi hj hne
   have hi3 : i < 3 := hi
   have hj3 : j < 3 := hj
@@ -618,7 +617,6 @@ theorem simple_slantTriVerts : PolySimple slantTriVerts := by
       unfold edgeAdjacent
       decide
   · exact absurd rfl hne
-/-- The slanted triangle has x-coordinates `[0, 3, 4]`. -/
 theorem xCoordsOf_slantTriVerts : xCoordsOf slantTriVerts = [0, 3, 4] := by
   simp [xCoordsOf, slantTriVerts, slA_x, slB_x, slC_x]
 /-- The slanted triangle with no holes has vertex count 3. -/
@@ -639,18 +637,16 @@ theorem generalPositionOf_slantTriVerts : generalPositionOf slantTriVerts := by
   · intro b hb
     simp at hb
 
-/- Stage-2 need (`frontier_slantTriRegion`): the `boundary_eq` coupling for the
-explicit slanted triangle,
+/- Former stage-2 need, now discharged below by `frontier_slantTriRegion`:
+the `boundary_eq` coupling for the explicit slanted triangle,
 `frontier slantTriRegion = boundarySet slantTriVerts`.
-Both inclusions need explicit witnesses: every boundary-chain point lies in
+Both inclusions used explicit witnesses: every boundary-chain point lies in
 `slantTriRegion` but outside its interior (outward normal witnesses per edge),
 and every region point outside the interior lies on an edge segment (via
 `slantTriInterior_subset_region`). With it, `slantTriVerts` with
-`slantTriRegion` assembles into a `Poly` (via `len_ge_slantTriVerts`,
-`isClosed_slantTriRegion`, `isBounded_slantTriRegion`,
-`interiorNonempty_slantTriRegion`, `simple_slantTriVerts`), and the hole-free
-`Workspace` over that `Poly` has vertex count 3 and general position (via
-`vertexCountOf_slantTriVerts`, `generalPositionOf_slantTriVerts`). -/
+`slantTriRegion` assembled into `slantTriPoly` (via `len_ge_slantTriVerts`,
+`isClosed_slantTriRegion`, `isBounded_slantTriRegion`), and then into
+`slantTriWorkspace`. -/
 /-- Inline example checks (acceptance tests). -/
 example : vertexCountOf squareVerts [] = 4 := vertexCountOf_squareVerts
 example : ¬ generalPositionOf squareVerts := not_generalPositionOf_squareVerts
@@ -686,5 +682,395 @@ example : generalPositionOf slantTriVerts := generalPositionOf_slantTriVerts
 #print axioms interiorNonempty_slantTriRegion
 #print axioms vertexCountOf_slantTriVerts
 #print axioms generalPositionOf_slantTriVerts
+
+/- Frontier of the explicit slanted-triangle region (construction stage 2a).
+
+The closed slanted triangle is an intersection of three closed half-planes;
+its frontier is the boundary chain of its three sides. This is the polygonal
+boundary representation in LaValle, Planning Algorithms, Section 6.2.1. -/
+
+/-- Witness direction: unit x-step for outward normals of the first two edges. -/
+def frontier_e0 : plane := !₂[1, 0]
+
+/-- Witness direction: unit y-step for the outward normal of the third edge. -/
+def frontier_e1 : plane := !₂[0, 1]
+
+theorem frontier_e0_norm : ‖frontier_e0‖ = 1 := by
+  rw [EuclideanSpace.norm_eq]
+  simp [frontier_e0]
+
+theorem frontier_e1_norm : ‖frontier_e1‖ = 1 := by
+  rw [EuclideanSpace.norm_eq]
+  simp [frontier_e1]
+
+theorem frontier_dist_e0 (p : plane) (t : ℝ) :
+    dist (p + t • frontier_e0) p = |t| := by
+  rw [dist_eq_norm, add_sub_cancel_left, norm_smul, frontier_e0_norm, mul_one,
+    Real.norm_eq_abs]
+
+theorem frontier_dist_e1 (p : plane) (t : ℝ) :
+    dist (p + t • frontier_e1) p = |t| := by
+  rw [dist_eq_norm, add_sub_cancel_left, norm_smul, frontier_e1_norm, mul_one,
+    Real.norm_eq_abs]
+
+theorem frontier_add_e0_c0 (p : plane) (t : ℝ) : (p + t • frontier_e0) 0 = p 0 + t := by
+  simp [frontier_e0]
+
+theorem frontier_add_e0_c1 (p : plane) (t : ℝ) : (p + t • frontier_e0) 1 = p 1 := by
+  simp [frontier_e0]
+
+theorem frontier_add_e1_c0 (p : plane) (t : ℝ) : (p + t • frontier_e1) 0 = p 0 := by
+  simp [frontier_e1]
+
+theorem frontier_add_e1_c1 (p : plane) (t : ℝ) : (p + t • frontier_e1) 1 = p 1 + t := by
+  simp [frontier_e1]
+
+theorem frontier_cont_f1 : Continuous (fun p : plane => p 0 - 3 * p 1) :=
+  (PiLp.continuous_apply 2 (fun _ => ℝ) 0).sub
+    (continuous_const.mul (PiLp.continuous_apply 2 (fun _ => ℝ) 1))
+
+theorem frontier_cont_f2 : Continuous (fun p : plane => 2 * p 0 - p 1) :=
+  ((continuous_const : Continuous fun _ : plane => (2:ℝ)).mul
+    (PiLp.continuous_apply 2 (fun _ => ℝ) 0)).sub
+    (PiLp.continuous_apply 2 (fun _ => ℝ) 1)
+
+theorem frontier_cont_f3 : Continuous (fun p : plane => 3 * p 0 - 4 * p 1) :=
+  (((continuous_const : Continuous fun _ : plane => (3:ℝ)).mul
+    (PiLp.continuous_apply 2 (fun _ => ℝ) 0)).sub
+    ((continuous_const : Continuous fun _ : plane => (4:ℝ)).mul
+      (PiLp.continuous_apply 2 (fun _ => ℝ) 1)))
+
+theorem frontier_closed_region : IsClosed slantTriRegion := by
+  have h1 : IsClosed {p : plane | p 0 - 3 * p 1 ≤ 0} :=
+    isClosed_le frontier_cont_f1 (continuous_const : Continuous fun _ : plane => (0:ℝ))
+  have h2 : IsClosed {p : plane | 2 * p 0 - p 1 ≤ 5} :=
+    isClosed_le frontier_cont_f2 (continuous_const : Continuous fun _ : plane => (5:ℝ))
+  have h3 : IsClosed {p : plane | (0:ℝ) ≤ 3 * p 0 - 4 * p 1} :=
+    isClosed_le (continuous_const : Continuous fun _ : plane => (0:ℝ)) frontier_cont_f3
+  have heq : slantTriRegion =
+      {p : plane | p 0 - 3 * p 1 ≤ 0} ∩
+      ({p : plane | 2 * p 0 - p 1 ≤ 5} ∩
+        {p : plane | (0:ℝ) ≤ 3 * p 0 - 4 * p 1}) := rfl
+  rw [heq]
+  exact h1.inter (h2.inter h3)
+
+theorem frontier_open_interiorSet : IsOpen slantTriInterior := by
+  have h1 : IsOpen {p : plane | p 0 - 3 * p 1 < 0} :=
+    isOpen_lt frontier_cont_f1 (continuous_const : Continuous fun _ : plane => (0:ℝ))
+  have h2 : IsOpen {p : plane | 2 * p 0 - p 1 < 5} :=
+    isOpen_lt frontier_cont_f2 (continuous_const : Continuous fun _ : plane => (5:ℝ))
+  have h3 : IsOpen {p : plane | (0:ℝ) < 3 * p 0 - 4 * p 1} :=
+    isOpen_lt (continuous_const : Continuous fun _ : plane => (0:ℝ)) frontier_cont_f3
+  have heq : slantTriInterior =
+      {p : plane | p 0 - 3 * p 1 < 0} ∩
+      ({p : plane | 2 * p 0 - p 1 < 5} ∩
+        {p : plane | (0:ℝ) < 3 * p 0 - 4 * p 1}) := rfl
+  rw [heq]
+  exact h1.inter (h2.inter h3)
+
+theorem frontier_subset_interior : slantTriInterior ⊆ slantTriRegion := by
+  intro p hp
+  simp only [slantTriInterior, slantTriRegion, mem_ofPred_eq] at hp ⊢
+  obtain ⟨h1, h2, h3⟩ := hp
+  exact ⟨le_of_lt h1, le_of_lt h2, le_of_lt h3⟩
+
+/-- Points on the first edge line are outside the interior. -/
+theorem frontier_not_mem_of_f1 (p : plane) (h : p 0 - 3 * p 1 = 0) :
+    p ∉ interior slantTriRegion := by
+  intro hmem
+  rw [mem_interior_iff_mem_nhds, Metric.mem_nhds_iff] at hmem
+  obtain ⟨ε, hεpos, hεsub⟩ := hmem
+  set q := p + (ε / 2) • frontier_e0 with hq
+  have hqball : q ∈ Metric.ball p ε := by
+    rw [Metric.mem_ball, frontier_dist_e0, abs_of_pos (by linarith : (0:ℝ) < ε / 2)]
+    linarith
+  have hqmem := hεsub hqball
+  simp only [slantTriRegion, mem_ofPred_eq] at hqmem
+  obtain ⟨h1, _h2, _h3⟩ := hqmem
+  have hc0 : q 0 = p 0 + ε / 2 := by simp [hq, frontier_e0]
+  have hc1 : q 1 = p 1 := by simp [hq, frontier_e0]
+  rw [hc0, hc1] at h1
+  linarith
+
+/-- Points on the second edge line are outside the interior. -/
+theorem frontier_not_mem_of_f2 (p : plane) (h : 2 * p 0 - p 1 = 5) :
+    p ∉ interior slantTriRegion := by
+  intro hmem
+  rw [mem_interior_iff_mem_nhds, Metric.mem_nhds_iff] at hmem
+  obtain ⟨ε, hεpos, hεsub⟩ := hmem
+  set q := p + (ε / 2) • frontier_e0 with hq
+  have hqball : q ∈ Metric.ball p ε := by
+    rw [Metric.mem_ball, frontier_dist_e0, abs_of_pos (by linarith : (0:ℝ) < ε / 2)]
+    linarith
+  have hqmem := hεsub hqball
+  simp only [slantTriRegion, mem_ofPred_eq] at hqmem
+  obtain ⟨_h1, h2, _h3⟩ := hqmem
+  have hc0 : q 0 = p 0 + ε / 2 := by simp [hq, frontier_e0]
+  have hc1 : q 1 = p 1 := by simp [hq, frontier_e0]
+  rw [hc0, hc1] at h2
+  linarith
+
+/-- Points on the third edge line are outside the interior. -/
+theorem frontier_not_mem_of_f3 (p : plane) (h : 3 * p 0 - 4 * p 1 = 0) :
+    p ∉ interior slantTriRegion := by
+  intro hmem
+  rw [mem_interior_iff_mem_nhds, Metric.mem_nhds_iff] at hmem
+  obtain ⟨ε, hεpos, hεsub⟩ := hmem
+  set q := p + (ε / 2) • frontier_e1 with hq
+  have hqball : q ∈ Metric.ball p ε := by
+    rw [Metric.mem_ball, frontier_dist_e1, abs_of_pos (by linarith : (0:ℝ) < ε / 2)]
+    linarith
+  have hqmem := hεsub hqball
+  simp only [slantTriRegion, mem_ofPred_eq] at hqmem
+  obtain ⟨_h1, _h2, h3⟩ := hqmem
+  have hc0 : q 0 = p 0 := by simp [hq, frontier_e1]
+  have hc1 : q 1 = p 1 + ε / 2 := by simp [hq, frontier_e1]
+  rw [hc0, hc1] at h3
+  linarith
+
+/-- The interior of the closed triangle is the strict-inequality set. -/
+theorem frontier_interior_eq : interior slantTriRegion = slantTriInterior := by
+  apply Set.eq_of_subset_of_subset
+  · intro p hmem
+    have hsub : p ∈ slantTriRegion := interior_subset hmem
+    simp only [slantTriRegion, mem_ofPred_eq] at hsub
+    obtain ⟨hle1, hle2, hle3⟩ := hsub
+    simp only [slantTriInterior, mem_ofPred_eq]
+    have hf1 : p 0 - 3 * p 1 < 0 := by
+      by_contra hcon
+      have heq : p 0 - 3 * p 1 = 0 := by linarith
+      exact frontier_not_mem_of_f1 p heq hmem
+    have hf2 : 2 * p 0 - p 1 < 5 := by
+      by_contra hcon
+      have heq : 2 * p 0 - p 1 = 5 := by linarith
+      exact frontier_not_mem_of_f2 p heq hmem
+    have hf3 : (0:ℝ) < 3 * p 0 - 4 * p 1 := by
+      by_contra hcon
+      have heq : 3 * p 0 - 4 * p 1 = 0 := by linarith
+      exact frontier_not_mem_of_f3 p heq hmem
+    exact ⟨hf1, hf2, hf3⟩
+  · have hmono := interior_mono frontier_subset_interior
+    rw [IsOpen.interior_eq frontier_open_interiorSet] at hmono
+    exact hmono
+
+theorem frontier_cyclicEdges :
+    cyclicEdges slantTriVerts = [(slA, slB), (slB, slC), (slC, slA)] := rfl
+
+theorem frontier_boundary_unfold :
+    boundarySet slantTriVerts =
+      segment ℝ slA slB ∪ segment ℝ slB slC ∪ segment ℝ slC slA := by
+  have h : boundarySet slantTriVerts =
+      {p | ∃ e ∈ ([(slA, slB), (slB, slC), (slC, slA)] : List (plane × plane)),
+        p ∈ segment ℝ e.1 e.2} := by
+    unfold boundarySet
+    rw [frontier_cyclicEdges]
+  rw [h]
+  ext p
+  simp only [mem_ofPred_eq, mem_union, List.mem_cons, List.not_mem_nil, or_false]
+  constructor
+  · rintro ⟨e, he, hp⟩
+    rcases he with rfl | rfl | rfl
+    · exact Or.inl (Or.inl hp)
+    · exact Or.inl (Or.inr hp)
+    · exact Or.inr hp
+  · rintro ((h1 | h2) | h3)
+    · exact ⟨(slA, slB), Or.inl rfl, h1⟩
+    · exact ⟨(slB, slC), Or.inr (Or.inl rfl), h2⟩
+    · exact ⟨(slC, slA), Or.inr (Or.inr rfl), h3⟩
+
+/-- First side: the segment from `slA` to `slB`. -/
+theorem frontier_seg_AB (p : plane) : p ∈ segment ℝ slA slB ↔
+    p 0 - 3 * p 1 = 0 ∧ 2 * p 0 - p 1 ≤ 5 ∧ 0 ≤ 3 * p 0 - 4 * p 1 := by
+  constructor
+  · rintro ⟨a, b, ha, hb, hab, h⟩
+    have h0 : (a • slA + b • slB) 0 = p 0 := by rw [h]
+    have h1 : (a • slA + b • slB) 1 = p 1 := by rw [h]
+    simp only [slA, slB] at h0 h1
+    simp at h0 h1
+    constructor
+    · linarith
+    · constructor <;> linarith
+  · rintro ⟨heq, hle2, hle3⟩
+    have hb0 : (0:ℝ) ≤ p 1 := by linarith
+    have hb1 : p 1 ≤ 1 := by linarith
+    refine ⟨1 - p 1, p 1, by linarith, hb0, by ring, ?_⟩
+    ext i
+    fin_cases i
+    · have h0 : ((1 - p 1) • slA + (p 1) • slB) 0 = p 0 := by
+        simp only [slA, slB]
+        simp
+        linarith
+      exact h0
+    · have h1 : ((1 - p 1) • slA + (p 1) • slB) 1 = p 1 := by
+        simp only [slA, slB]
+        simp
+      exact h1
+
+/-- Second side: the segment from `slB` to `slC`. -/
+theorem frontier_seg_BC (p : plane) : p ∈ segment ℝ slB slC ↔
+    p 0 - 3 * p 1 ≤ 0 ∧ 2 * p 0 - p 1 = 5 ∧ 0 ≤ 3 * p 0 - 4 * p 1 := by
+  constructor
+  · rintro ⟨a, b, ha, hb, hab, h⟩
+    have h0 : (a • slB + b • slC) 0 = p 0 := by rw [h]
+    have h1 : (a • slB + b • slC) 1 = p 1 := by rw [h]
+    simp only [slB, slC] at h0 h1
+    simp at h0 h1
+    constructor
+    · linarith
+    · constructor
+      · linarith
+      · linarith
+  · rintro ⟨hle1, heq, hle3⟩
+    have hb0 : (0:ℝ) ≤ p 0 - 3 := by linarith
+    have hb1 : p 0 - 3 ≤ 1 := by linarith
+    refine ⟨1 - (p 0 - 3), p 0 - 3, by linarith, hb0, by ring, ?_⟩
+    ext i
+    fin_cases i
+    · have h0 : ((1 - (p 0 - 3)) • slB + (p 0 - 3) • slC) 0 = p 0 := by
+        simp only [slB, slC]
+        simp
+        ring
+      exact h0
+    · have h1 : ((1 - (p 0 - 3)) • slB + (p 0 - 3) • slC) 1 = p 1 := by
+        simp only [slB, slC]
+        simp
+        linarith
+      exact h1
+
+/-- Third side: the segment from `slC` to `slA`. -/
+theorem frontier_seg_CA (p : plane) : p ∈ segment ℝ slC slA ↔
+    p 0 - 3 * p 1 ≤ 0 ∧ 2 * p 0 - p 1 ≤ 5 ∧ 3 * p 0 - 4 * p 1 = 0 := by
+  constructor
+  · rintro ⟨a, b, ha, hb, hab, h⟩
+    have h0 : (a • slC + b • slA) 0 = p 0 := by rw [h]
+    have h1 : (a • slC + b • slA) 1 = p 1 := by rw [h]
+    simp only [slC, slA] at h0 h1
+    simp at h0 h1
+    constructor
+    · linarith
+    · constructor
+      · linarith
+      · linarith
+  · rintro ⟨hle1, hle2, heq⟩
+    have hb0 : (0:ℝ) ≤ p 1 / 3 := by linarith
+    have hb1 : p 1 / 3 ≤ 1 := by linarith
+    refine ⟨p 1 / 3, 1 - p 1 / 3, hb0, by linarith, by ring, ?_⟩
+    ext i
+    fin_cases i
+    · have h0 : ((p 1 / 3) • slC + (1 - p 1 / 3) • slA) 0 = p 0 := by
+        simp only [slC, slA]
+        simp
+        linarith
+      exact h0
+    · have h1 : ((p 1 / 3) • slC + (1 - p 1 / 3) • slA) 1 = p 1 := by
+        simp only [slC, slA]
+        simp
+      exact h1
+
+/-- Stage-2 coupling: the frontier of the explicit slanted triangle is its
+boundary chain. -/
+theorem frontier_slantTriRegion :
+    frontier slantTriRegion = boundarySet slantTriVerts := by
+  rw [IsClosed.frontier_eq frontier_closed_region, frontier_interior_eq,
+    frontier_boundary_unfold]
+  ext p
+  simp only [slantTriRegion, slantTriInterior, mem_ofPred_eq, mem_sdiff, mem_union]
+  constructor
+  · rintro ⟨⟨hle1, hle2, hle3⟩, hnot⟩
+    have hdisj : p 0 - 3 * p 1 = 0 ∨ 2 * p 0 - p 1 = 5 ∨ 3 * p 0 - 4 * p 1 = 0 := by
+      by_contra hcon
+      have hne1 : p 0 - 3 * p 1 ≠ 0 := fun heq => hcon (Or.inl heq)
+      have hne2 : 2 * p 0 - p 1 ≠ 5 := fun heq => hcon (Or.inr (Or.inl heq))
+      have hne3 : 3 * p 0 - 4 * p 1 ≠ 0 := fun heq => hcon (Or.inr (Or.inr heq))
+      have hf1 : p 0 - 3 * p 1 < 0 := lt_of_le_of_ne hle1 hne1
+      have hf2 : 2 * p 0 - p 1 < 5 := lt_of_le_of_ne hle2 hne2
+      have hf3 : (0:ℝ) < 3 * p 0 - 4 * p 1 := lt_of_le_of_ne' hle3 hne3
+      exact hnot ⟨hf1, hf2, hf3⟩
+    rcases hdisj with heq1 | heq2 | heq3
+    · have hmem : p ∈ segment ℝ slA slB := (frontier_seg_AB p).mpr ⟨heq1, hle2, hle3⟩
+      exact Or.inl (Or.inl hmem)
+    · have hmem : p ∈ segment ℝ slB slC := (frontier_seg_BC p).mpr ⟨hle1, heq2, hle3⟩
+      exact Or.inl (Or.inr hmem)
+    · have hmem : p ∈ segment ℝ slC slA := (frontier_seg_CA p).mpr ⟨hle1, hle2, heq3⟩
+      exact Or.inr hmem
+  · rintro ((hAB | hBC) | hCA)
+    · obtain ⟨heq1, hle2, hle3⟩ := (frontier_seg_AB p).mp hAB
+      refine ⟨⟨le_of_eq heq1, hle2, hle3⟩, ?_⟩
+      rintro ⟨hf1, _hf2, _hf3⟩
+      linarith
+    · obtain ⟨hle1, heq2, hle3⟩ := (frontier_seg_BC p).mp hBC
+      refine ⟨⟨hle1, le_of_eq heq2, hle3⟩, ?_⟩
+      rintro ⟨_hf1, hf2, _hf3⟩
+      linarith
+    · obtain ⟨hle1, hle2, heq3⟩ := (frontier_seg_CA p).mp hCA
+      refine ⟨⟨hle1, hle2, le_of_eq heq3.symm⟩, ?_⟩
+      rintro ⟨_hf1, _hf2, hf3⟩
+      linarith
+
+/-- The slanted triangle as a `Poly` instance. -/
+def slantTriPoly : Poly :=
+  { vertices := slantTriVerts
+    len_ge := len_ge_slantTriVerts
+    region := slantTriRegion
+    boundary_eq := frontier_slantTriRegion
+    closed_region := isClosed_slantTriRegion
+    bounded := isBounded_slantTriRegion
+    interior_nonempty := interiorNonempty_slantTriRegion
+    simple := simple_slantTriVerts }
+
+/-- The hole-free workspace over the slanted triangle. -/
+def slantTriWorkspace : Workspace :=
+  { outer := slantTriPoly
+    holes := []
+    hole_inside := by simp
+    holes_disjoint := List.Pairwise.nil }
+
+/-- The interior point lies in the strict set (direct computation). -/
+theorem frontier_interiorPoint_mem : triInteriorPoint ∈ slantTriInterior := by
+  simp only [triInteriorPoint, slantTriInterior, mem_ofPred_eq]
+  simp
+  norm_num
+
+/-- The interior point lies in the region interior. -/
+theorem frontier_interiorPoint_mem_interior :
+    triInteriorPoint ∈ interior slantTriRegion := by
+  rw [frontier_interior_eq]
+  exact frontier_interiorPoint_mem
+
+/-- Free space contains the interior point. -/
+example : triInteriorPoint ∈ slantTriWorkspace.freeSpace := by
+  have hmem : triInteriorPoint ∈ interior slantTriPoly.region :=
+    frontier_interiorPoint_mem_interior
+  have hnil : holeUnion ([] : List Poly) = ∅ := rfl
+  simp only [Workspace.freeSpace, slantTriWorkspace, slantTriPoly] at ⊢
+  rw [hnil]
+  simp only [mem_sdiff, mem_empty_iff_false, not_false_eq_true, and_true]
+  exact hmem
+
+/-- Free space excludes a concrete exterior point. -/
+example : (!₂[5, 0] : plane) ∉ slantTriWorkspace.freeSpace := by
+  intro hmem
+  simp only [Workspace.freeSpace, slantTriWorkspace, slantTriPoly] at hmem
+  have hnil : holeUnion ([] : List Poly) = ∅ := rfl
+  rw [hnil] at hmem
+  simp only [mem_sdiff, mem_empty_iff_false, not_false_eq_true, and_true] at hmem
+  rw [frontier_interior_eq] at hmem
+  simp only [slantTriInterior, mem_ofPred_eq] at hmem
+  simp at hmem
+
+/-- Vertex count is 3. -/
+example : slantTriWorkspace.vertexCount = 3 := rfl
+
+/-- General position holds. -/
+example : slantTriWorkspace.GeneralPosition := by
+  simp only [Workspace.GeneralPosition, Workspace.allVertices, slantTriWorkspace, slantTriPoly]
+  simp only [List.map_nil, List.flatten_nil, List.append_nil]
+  unfold generalPositionOf xCoordsOf slantTriVerts
+  simp only [List.map_cons, List.map_nil]
+  simp only [slA, slB, slC]
+  simp
+
+#print axioms frontier_slantTriRegion
+#print axioms slantTriWorkspace
 
 end Cslib.Planning.MotionPlanning.PolygonalWorkspace
