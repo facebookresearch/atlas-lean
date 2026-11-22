@@ -41,9 +41,8 @@ public import Mathlib
 
 namespace MathlibExt.Analysis.Calculus.ExpTaylorPolyOddUniqueZeroWanted
 
-/-- The function $f(x)=1+x+x^2/2!+\cdots+x^n/n!$, $x\in\mathbb{R}$, has a unique zero for odd
-
-$n\in\mathbb{N}^*$.
+/-- **Odd Taylor polynomials of the exponential have exactly one real zero.** For every odd
+positive integer $n$, the polynomial $1+x+x^2/2!+\cdots+x^n/n!$ has exactly one real zero.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Real functions; Polynomials,
 rational functions in real analysis), `benchmark/level1/ma_proofbench_l1_19.lean` at
