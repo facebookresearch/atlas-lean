@@ -743,10 +743,11 @@ def Simulation.comp {Req AnsX AnsY AnsZ : Type*}
 
 /-- A randomized strategy against an oblivious adversary: the request
 sequence is fixed before the seed is drawn; each seed selects a causal
-deterministic strategy. Feasibility is required seedwise. -/
+deterministic strategy. The structure itself imposes no feasibility;
+seedwise feasibility for a problem is required by `RandCompetitive`
+and `RandProfitCompetitive`. -/
 structure RandStrategy (Req Ans Ω : Type*) [MeasurableSpace Ω] where
-  μ : MeasureTheory.Measure Ω
-  isProb : MeasureTheory.IsProbabilityMeasure μ
+  μ : MeasureTheory.ProbabilityMeasure Ω
   strat : Ω → Strategy Req Ans
 
 /-- Expected cost of a randomized strategy on a fixed input, as a
@@ -754,7 +755,7 @@ nonnegative extended value (divergent expectation is `⊤`). -/
 noncomputable def expectedCost {Req Ans Ω : Type*} [MeasurableSpace Ω]
     (P : OnlineProblem Req Ans) (A : RandStrategy Req Ans Ω)
     (σ : List Req) : ENNReal :=
-  ∫⁻ ω, ENNReal.ofReal (algCost P (A.strat ω) σ) ∂A.μ
+  ∫⁻ ω, ENNReal.ofReal (algCost P (A.strat ω) σ) ∂(A.μ : MeasureTheory.Measure Ω)
 
 /-- Randomized `(c, b)`-competitiveness against an oblivious adversary:
 every seed is feasible, the run cost is measurable per input, and the
@@ -773,11 +774,13 @@ deterministic competitiveness of the selected strategy. -/
 theorem randCompetitive_dirac_iff {Req Ans Ω : Type*} [MeasurableSpace Ω]
     (P : OnlineProblem Req Ans) (A0 : Strategy Req Ans) (ω0 : Ω) (c b : ℝ) :
     RandCompetitive P
-        { μ := MeasureTheory.Measure.dirac ω0, isProb := by infer_instance,
+        { μ := (⟨MeasureTheory.Measure.dirac ω0, by infer_instance⟩ :
+            MeasureTheory.ProbabilityMeasure Ω),
           strat := fun _ => A0 } c b
       ↔ Competitive P A0 c b := by
   have hexp : ∀ σ : List Req, expectedCost P
-      { μ := MeasureTheory.Measure.dirac ω0, isProb := by infer_instance,
+      { μ := (⟨MeasureTheory.Measure.dirac ω0, by infer_instance⟩ :
+          MeasureTheory.ProbabilityMeasure Ω),
         strat := fun _ => A0 } σ
       = ENNReal.ofReal (algCost P A0 σ) := by
     intro σ
@@ -809,7 +812,7 @@ theorem Simulation.randCompetitive_transfer {Req AnsX AnsY Ω : Type*}
     (hmeas : ∀ σ : List Req, X.legal σ →
       Measurable (fun ω => ENNReal.ofReal (algCost X (S.F (A.strat ω)) σ))) :
     RandCompetitive X
-      { μ := A.μ, isProb := A.isProb, strat := fun ω => S.F (A.strat ω) }
+      { μ := A.μ, strat := fun ω => S.F (A.strat ω) }
       (S.a * c * S.d) (S.a * c * S.q + S.a * b + S.p) := by
   obtain ⟨hc0, hb0, hAY, hineq⟩ := hA
   refine ⟨mul_nonneg (mul_nonneg S.ha hc0) S.hd, ?_,
@@ -826,18 +829,19 @@ theorem Simulation.randCompetitive_transfer {Req AnsX AnsY Ω : Type*}
     have hmul : Measurable (fun ω => ENNReal.ofReal S.a
         * ENNReal.ofReal (algCost Y (A.strat ω) σ)) :=
       hYmeas.const_mul _
-    have hprob : A.μ Set.univ = 1 := @MeasureTheory.measure_univ _ _ _ A.isProb
+    have hprob : (A.μ : MeasureTheory.Measure Ω) Set.univ = 1 :=
+      MeasureTheory.measure_univ
     have step0 : expectedCost X
-          { μ := A.μ, isProb := A.isProb, strat := fun ω => S.F (A.strat ω) }
+          { μ := A.μ, strat := fun ω => S.F (A.strat ω) }
           σ
           ≤ ∫⁻ ω, (ENNReal.ofReal S.a
             * ENNReal.ofReal (algCost Y (A.strat ω) σ) + ENNReal.ofReal S.p)
-            ∂A.μ := by
+            ∂(A.μ : MeasureTheory.Measure Ω) := by
       unfold expectedCost
       exact MeasureTheory.lintegral_mono fun ω => S.costF (A.strat ω) σ hσ
     have stepE : (∫⁻ ω, (ENNReal.ofReal S.a
             * ENNReal.ofReal (algCost Y (A.strat ω) σ) + ENNReal.ofReal S.p)
-            ∂A.μ)
+            ∂(A.μ : MeasureTheory.Measure Ω))
         = ENNReal.ofReal S.a * expectedCost Y A σ + ENNReal.ofReal S.p := by
       unfold expectedCost
       rw [MeasureTheory.lintegral_add_left hmul _,
@@ -877,11 +881,11 @@ theorem Simulation.randCompetitive_transfer {Req AnsX AnsY Ω : Type*}
       rw [e1, e2]
       ring
     calc expectedCost X
-            { μ := A.μ, isProb := A.isProb,
+            { μ := A.μ,
               strat := fun ω => S.F (A.strat ω) } σ
         ≤ ∫⁻ ω, (ENNReal.ofReal S.a
             * ENNReal.ofReal (algCost Y (A.strat ω) σ) + ENNReal.ofReal S.p)
-            ∂A.μ := step0
+            ∂(A.μ : MeasureTheory.Measure Ω) := step0
       _ = ENNReal.ofReal S.a * expectedCost Y A σ + ENNReal.ofReal S.p :=
         stepE
       _ ≤ ENNReal.ofReal S.a * (ENNReal.ofReal c *
@@ -928,7 +932,8 @@ def RandProfitCompetitive {Req Ans Ω : Type*} [MeasurableSpace Ω]
     ∀ σ : List Req, P.legal σ →
       Measurable (fun ω => (profit (run (A.strat ω) σ) : ENNReal)) ∧
       ENNReal.ofReal ρ * optProfit P profit σ
-        ≤ (∫⁻ ω, (profit (run (A.strat ω) σ) : ENNReal) ∂A.μ)
+        ≤ (∫⁻ ω, (profit (run (A.strat ω) σ) : ENNReal)
+            ∂(A.μ : MeasureTheory.Measure Ω))
           + ENNReal.ofReal b
 
 theorem ProfitCompetitive.mono {Req Ans : Type*} (P : OnlineProblem Req Ans)
