@@ -5,23 +5,26 @@
 full audit (audit_compiled_modules.py) at REVISION. It records the .olean of
 each module REVISION audited, but only if REVISION has the same
 audit_compiled_modules.py and check_axioms.lean. With ATLAS_AUDIT_RESTORED=FILE,
-this script then runs the full audit's batches that hold a module whose .olean is
-missing, new, rewritten or unrecorded, exactly as the full audit runs them, since
-modules can also conflict when imported together. Lake rebuilds a module whenever
-its source or what it needs from its imports changes, so every module of a
-skipped batch keeps declarations that passed at REVISION.
+this script then runs, exactly as the full audit runs them, the full audit's
+batches that hold or import a module whose .olean is missing, new, rewritten or
+unrecorded: modules can also conflict when imported together. Every other batch
+loads only modules whose .olean is the one that passed at REVISION.
 """
 from __future__ import annotations
 
+from collections import defaultdict
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 
 import audit_compiled_modules as full
 
 POLICY = ('scripts/audit_compiled_modules.py', 'scripts/check_axioms.lean')
+# Generous on purpose: any `import X` in a source, comments included, counts.
+IMPORT = re.compile(r"\bimport\s+(?:all\s+)?([\w.'«»!?]+)")
 
 
 def olean(root: Path, module: str) -> list[int] | None:
@@ -42,6 +45,22 @@ def record(root: Path, revision: str) -> dict[str, list[int]] | None:
     paths = git('ls-tree', '-r', '-z', '--name-only', revision, '--', *full.ROOTS).decode().split('\0')
     modules = [path.removesuffix('.lean').replace('/', '.') for path in paths if path.endswith('.lean')]
     return {module: status for module in modules if (status := olean(root, module)) is not None}
+
+
+def importers(root: Path, changed: set[str]) -> set[str]:
+    """`changed` and every project module that imports one of them, directly or not."""
+    imported_by = defaultdict(set)
+    for library in full.ROOTS:
+        for path in (root / library).rglob('*.lean'):
+            module = path.relative_to(root).as_posix().removesuffix('.lean').replace('/', '.')
+            for target in IMPORT.findall(path.read_text(encoding='utf-8', errors='replace')):
+                imported_by[target.replace('«', '').replace('»', '')].add(module)
+    affected, pending = set(changed), list(changed)
+    while pending:
+        for module in imported_by[pending.pop()] - affected:
+            affected.add(module)
+            pending.append(module)
+    return affected
 
 
 def batches_with(inventory: list[str], rebuilt: set[str], size: int = full.BATCH_SIZE) -> list[str]:
@@ -67,9 +86,10 @@ def main() -> int:
         inventory = full.inventory(root)
         rebuilt = {module for module in inventory
                    if olean(root, module) is None or olean(root, module) != restored.get(module)}
-        modules = batches_with(inventory, rebuilt)
+        affected = importers(root, rebuilt)
+        modules = batches_with(inventory, affected)
         print(f'compiled audit: {len(rebuilt)} modules rebuilt since the restored build, '
-              f'{len(modules)} modules in their batches', flush=True)
+              f'{len(affected)} with their importers, {len(modules)} modules in their batches', flush=True)
         checker = (root / 'scripts/check_axioms.lean').read_text()
         result = full.audit(root, modules, checker) if modules else {'modules': 0}
     except (full.AuditFailure, KeyError, OSError, ValueError, subprocess.SubprocessError) as error:

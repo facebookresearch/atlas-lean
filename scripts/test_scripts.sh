@@ -376,7 +376,7 @@ if ! env PATH="$FAKE_BIN:$PATH" ATLAS_AUDIT_RESTORED="$TMP_ROOT/restored.json" \
   cat "$TMP_ROOT/output.log" >&2
   fail "scoped compiled audit failed"
 fi
-grep -q 'compiled audit: 3 modules rebuilt since the restored build, 9 modules in their batches' \
+grep -q 'compiled audit: 3 modules rebuilt since the restored build, 3 with their importers, 9 modules in their batches' \
   "$TMP_ROOT/output.log" || fail "scoped compiled audit found the wrong rebuilt modules"
 [[ "$(grep -c -x 'import [A-Za-z]*\.Sentinel' "$FAKE_LEAN_INPUT")" == 9 ]] ||
   fail "scoped compiled audit did not run the whole batch"
@@ -385,6 +385,18 @@ import audit_rebuilt_modules as scoped
 assert scoped.batches_with(list("abcde"), {"d"}, 2) == list("cd")
 assert scoped.batches_with(list("abcde"), {"a", "e"}, 2) == list("abe")
 assert scoped.batches_with(list("abcde"), set(), 2) == []' || fail "scoped compiled audit chose the wrong batches"
+mkdir -p "$TMP_ROOT/graph/MathlibExt" "$TMP_ROOT/graph/WantedExt"
+printf 'module\n' >"$TMP_ROOT/graph/MathlibExt/A.lean"
+printf 'module\nimport MathlibExt.A\n' >"$TMP_ROOT/graph/MathlibExt/B.lean"
+printf 'module\npublic import\n  MathlibExt.B--note\n' >"$TMP_ROOT/graph/WantedExt/C.lean"
+printf 'module\nimport MathlibExt.D\n' >"$TMP_ROOT/graph/WantedExt/E.lean"
+printf 'module\nimport «WantedExt».C\n' >"$TMP_ROOT/graph/WantedExt/F.lean"
+PYTHONPATH="$TMP_ROOT/repo/scripts" python3 -c '
+import sys; from pathlib import Path
+import audit_rebuilt_modules as scoped
+assert scoped.importers(Path(sys.argv[1]), {"MathlibExt.A"}) == {"MathlibExt.A", "MathlibExt.B", "WantedExt.C", "WantedExt.F"}
+assert scoped.importers(Path(sys.argv[1]), set()) == set()' "$TMP_ROOT/graph" ||
+  fail "scoped compiled audit missed an importer"
 : >"$OLEANS/DomainsTest/Sentinel.olean"
 git -C "$TMP_ROOT/repo" add WantedExt && git -C "$TMP_ROOT/repo" -c user.name=t -c user.email=t@t commit -qm audited
 python3 "$TMP_ROOT/repo/scripts/audit_rebuilt_modules.py" record "$TMP_ROOT/restored.json" HEAD
