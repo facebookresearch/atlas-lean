@@ -1,0 +1,144 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+import MathlibExt.AlgebraicTopology.Spectra.Sequential.GenericLevelModel
+import MathlibExt.AlgebraicTopology.Spectra.Sequential.EnrichedPresentation
+import MathlibExt.AlgebraicTopology.ModelCategory.SourceEvaluationProperties
+import MathlibExt.CategoryTheory.Monoidal.PreservesColimits
+
+/-!
+# Projective level models on the original sequential T-spectrum carrier
+
+The genuine model is constructed from the original generator-cardinal and
+source-cell witnesses. The proved original presentation equivalence gives
+the model on `SequentialSpectrum V T`, retaining every original evaluation,
+free family, structure map, ordinal bottom and actual functorial factor map.
+-/
+
+set_option autoImplicit false
+
+noncomputable section
+
+universe w uV vV
+
+open CategoryTheory Limits MorphismProperty Opposite MonoidalCategory
+open scoped MonoidalClosed
+
+namespace HomotopicalAlgebra.GenericSequentialLevel
+
+variable {V : Type uV} [Category.{vV} V] [MonoidalCategory V] [SymmetricCategory V]
+  [MonoidalClosed V] [ModelCategory V] [IsClosedSymmetricMonoidalModelCategory V]
+  [HasColimitsOfSize.{w, w} V] [LocallySmall.{w} V]
+  {κ : Cardinal.{w}} [Fact κ.IsRegular] [OrderBot κ.ord.ToType]
+
+local instance smallColimits : HasColimitsOfSize.{0, 0} V := hasColimitsOfSizeShrink.{0, 0, w, w} V
+
+attribute [local instance] CategoryTheory.SequentialSpectrum.EnrichedIndex.enrichedCategory
+
+/-- Every original natural-degree evaluation of the raw sequential carrier. -/
+def originalLevelProperty (T : V) (P : MorphismProperty V) : MorphismProperty (SequentialSpectrum V T) :=
+  EvaluationTransfer.evaluationProperty
+    (fun a : CategoryTheory.SequentialSpectrum.EnrichedIndex.Index T => SequentialSpectrum.evaluation T a.degree) P
+
+/-- Every original raw sequential free image, retaining its degree and base-arrow label. -/
+abbrev originalGenerators (T : V) (P : MorphismProperty V) : MorphismProperty (SequentialSpectrum V T) :=
+  adjointFamilyGenerators
+    (fun a : CategoryTheory.SequentialSpectrum.EnrichedIndex.Index T => SequentialSpectrum.freeAt T a.degree) P
+
+/-- The proved original presentation gives each actual original evaluation comparison. -/
+def originalEvaluationIso (T : V) (a : CategoryTheory.SequentialSpectrum.EnrichedIndex.Index T) :
+    (SequentialSpectrum.EnrichedPresentation.enrichedEquivalence T).functor ⋙ EnrichedFunctorCat.evaluation a ≅
+      SequentialSpectrum.evaluation T a.degree := by
+  rcases a with ⟨n⟩
+  exact SequentialSpectrum.EnrichedPresentation.toEvaluationIso T n
+
+variable (T : V) [IsCofibrant T] (d : CofibrantGenerationData V κ)
+  (hSourceI : SourceCondition (κ := κ) T d.I) (hSourceJ : SourceCondition (κ := κ) T d.J)
+
+/-- The complete level model is constructed on the same original raw sequential T-spectrum carrier. -/
+@[instance_reducible]
+def originalModelCategory : ModelCategory (SequentialSpectrum V T) :=
+  EnrichedProjective.MappedSources.sourceModelCategory d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ
+    (SequentialSpectrum.EnrichedPresentation.enrichedEquivalence T)
+
+/-- Weak equivalences are precisely every original level weak equivalence. -/
+theorem original_weakEquivalences_eq :
+    letI : ModelCategory (SequentialSpectrum V T) := originalModelCategory T d hSourceI hSourceJ
+    weakEquivalences (SequentialSpectrum V T) = originalLevelProperty T (weakEquivalences V) :=
+  EnrichedProjective.MappedSources.sourceWeak_eq d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ
+    (SequentialSpectrum.EnrichedPresentation.enrichedEquivalence T)
+    (fun a => SequentialSpectrum.evaluation T a.degree) (originalEvaluationIso T)
+
+/-- Fibrations are precisely every original level fibration. -/
+theorem original_fibrations_eq :
+    letI : ModelCategory (SequentialSpectrum V T) := originalModelCategory T d hSourceI hSourceJ
+    fibrations (SequentialSpectrum V T) = originalLevelProperty T (fibrations V) :=
+  EnrichedProjective.MappedSources.sourceFibration_eq d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ
+    (SequentialSpectrum.EnrichedPresentation.enrichedEquivalence T)
+    (fun a => SequentialSpectrum.evaluation T a.degree) (originalEvaluationIso T)
+
+/-- Trivial fibrations are precisely every original level trivial fibration. -/
+theorem original_trivialFibrations_eq :
+    letI : ModelCategory (SequentialSpectrum V T) := originalModelCategory T d hSourceI hSourceJ
+    trivialFibrations (SequentialSpectrum V T) = originalLevelProperty T (trivialFibrations V) :=
+  EnrichedProjective.MappedSources.sourceTrivialFibration_eq d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ
+    (SequentialSpectrum.EnrichedPresentation.enrichedEquivalence T)
+    (fun a => SequentialSpectrum.evaluation T a.degree) (originalEvaluationIso T)
+
+/-- Cofibrations are generated by the actual original raw sequential free I images. -/
+theorem original_cofibrations_eq :
+    letI : ModelCategory (SequentialSpectrum V T) := originalModelCategory T d hSourceI hSourceJ
+    cofibrations (SequentialSpectrum V T) = (originalGenerators T d.I).rlp.llp :=
+  EnrichedProjective.MappedSources.sourceCofibration_generators_eq d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ
+    (SequentialSpectrum.EnrichedPresentation.enrichedEquivalence T)
+    (fun a => SequentialSpectrum.evaluation T a.degree) (originalEvaluationIso T)
+    (fun a => SequentialSpectrum.freeAt T a.degree) (fun a => SequentialSpectrum.freeAtEvaluationAdjunction T a.degree)
+
+/-- Trivial cofibrations are generated by the actual original raw sequential free J images. -/
+theorem original_trivialCofibrations_eq :
+    letI : ModelCategory (SequentialSpectrum V T) := originalModelCategory T d hSourceI hSourceJ
+    trivialCofibrations (SequentialSpectrum V T) = (originalGenerators T d.J).rlp.llp :=
+  EnrichedProjective.MappedSources.sourceTrivialCofibration_generators_eq d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ
+    (SequentialSpectrum.EnrichedPresentation.enrichedEquivalence T)
+    (fun a => SequentialSpectrum.evaluation T a.degree) (originalEvaluationIso T)
+    (fun a => SequentialSpectrum.freeAt T a.degree) (fun a => SequentialSpectrum.freeAtEvaluationAdjunction T a.degree)
+
+/-- Every original raw sequential free/evaluation adjunction is Quillen for this same constructed model. -/
+theorem original_freeAtEvaluation_isQuillenAdjunction (n : ℕ) :
+    letI : ModelCategory (SequentialSpectrum V T) := originalModelCategory T d hSourceI hSourceJ
+    (SequentialSpectrum.freeAtEvaluationAdjunction T n).IsQuillenAdjunction :=
+  EnrichedProjective.MappedSources.sourceFreeEvaluation_isQuillenAdjunction d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ
+    (SequentialSpectrum.EnrichedPresentation.enrichedEquivalence T)
+    (fun a => SequentialSpectrum.evaluation T a.degree) (originalEvaluationIso T)
+    (fun a => SequentialSpectrum.freeAt T a.degree) (fun a => SequentialSpectrum.freeAtEvaluationAdjunction T a.degree)
+    (CategoryTheory.SequentialSpectrum.EnrichedIndex.degree T n)
+
+/-- The complete same-cardinal I factor maps are retained on the original raw sequential carrier. -/
+def originalCofibrantFactorizationData :
+    letI : ModelCategory (SequentialSpectrum V T) := originalModelCategory T d hSourceI hSourceJ
+    FunctorialFactorizationData (cofibrations (SequentialSpectrum V T)) (trivialFibrations (SequentialSpectrum V T)) :=
+  EnrichedProjective.MappedSources.sourceCofibrantFactorizationData d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ
+    (SequentialSpectrum.EnrichedPresentation.enrichedEquivalence T)
+
+/-- The complete same-cardinal J factor maps are retained on the original raw sequential carrier. -/
+def originalFibrantFactorizationData :
+    letI : ModelCategory (SequentialSpectrum V T) := originalModelCategory T d hSourceI hSourceJ
+    FunctorialFactorizationData (trivialCofibrations (SequentialSpectrum V T)) (fibrations (SequentialSpectrum V T)) :=
+  EnrichedProjective.MappedSources.sourceFibrantFactorizationData d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ
+    (SequentialSpectrum.EnrichedPresentation.enrichedEquivalence T)
+
+end HomotopicalAlgebra.GenericSequentialLevel

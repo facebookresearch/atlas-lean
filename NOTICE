@@ -157,3 +157,75 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Joël Riou
 -/
 ```
+
+## MathlibExt/Algebra/Category/Grp/RepresentedFiveLemma.lean
+
+```text
+/-
+Copyright (c) 2026 Tsutomu Okano. All rights reserved.
+Authors: Tsutomu Okano <toskua@meta.com>
+-/
+```
+
+## MathlibExt/AlgebraicTopology/ModelCategory/EnrichedProjectiveNative/NativeOmegaHoHomGroups.lean
+
+```text
+/-
+Copyright (c) 2026 Tsutomu Okano. All rights reserved.
+Authors: Tsutomu Okano <toskua@meta.com>
+-/
+```
+
+## MathlibExt/AlgebraicTopology/ModelCategory/EnrichedProjectiveNative/NativeOmegaHomFiveLemma.lean
+
+```text
+/-
+Copyright (c) 2026 Tsutomu Okano. All rights reserved.
+Authors: Tsutomu Okano <toskua@meta.com>
+-/
+```
+
+## MathlibExt/AlgebraicTopology/Spectra/Orthogonal/StableHomotopy/ConditionalFiberSequence.lean
+
+```text
+/-
+Copyright (c) 2026 Tsutomu Okano. All rights reserved.
+Authors: Tsutomu Okano <toskua@meta.com>
+-/
+```
+
+## MathlibExt/AlgebraicTopology/Spectra/Orthogonal/StableHomotopy/ConditionalChosenFiberSequence.lean
+
+```text
+/-
+Copyright (c) 2026 Tsutomu Okano. All rights reserved.
+Authors: Tsutomu Okano <toskua@meta.com>
+-/
+```
+
+## MathlibExt/AlgebraicTopology/ModelCategory/EnrichedProjectiveNative/NativeOrthogonalStableProperness.lean
+
+```text
+/-
+Copyright (c) 2026 Tsutomu Okano. All rights reserved.
+Authors: Tsutomu Okano <toskua@meta.com>
+-/
+```
+
+## MathlibExt/AlgebraicTopology/TopologicalSpace/Spectra/Native/NativeAllObjectSpectrumMonoidAxiom.lean
+
+```text
+/-
+Copyright (c) 2026 Tsutomu Okano. All rights reserved.
+-/
+```
+
+## MathlibExt/CategoryTheory/ComposableArrows/Opposite.lean
+
+```text
+/-
+Copyright (c) 2026 Avocado. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Avocado
+-/
+```
