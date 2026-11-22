@@ -35,22 +35,36 @@ the braid relations gives the Coxeter presentation of `S_{n+1}`. Kourovka's defi
 coloured braid group, as posed.
 -/
 
-/-- The coloured (pure) braid group on `n + 1` strands: the normal closure of the squares `σᵢ²` of
-the standard generators of the braid group `B_{n+1}`, the Artin group of the Coxeter matrix of type
-`Aₙ`. This is the kernel of `B_{n+1} → S_{n+1}`, since adding the relations `σᵢ² = 1` to the braid
-relations presents the Coxeter group of type `Aₙ`, the symmetric group `S_{n+1}`. -/
+/-- **Pure braid group.** For $n \in \mathbb{N}$, the pure (coloured) braid group $P_{n+1}$ on
+$n + 1$ strands is the normal closure, in the braid group $B_{n+1}$, of the squares $\sigma_i^2$ of
+the standard generators $\sigma_1, \dots, \sigma_n$ of $B_{n+1}$, where $B_{n+1}$ is the Artin
+group of the Coxeter matrix of type $A_n$.
+
+This is the kernel of the map $B_{n+1} \to S_{n+1}$, since adding the relations $\sigma_i^2 = 1$ to
+the braid relations presents the Coxeter group of type $A_n$, the symmetric group $S_{n+1}$. -/
 def pureBraidGroup (n : ℕ) : Subgroup (CoxeterMatrix.A n).ArtinGroup :=
   Subgroup.normalClosure (Set.range fun i => CoxeterMatrix.ArtinGroup.of (CoxeterMatrix.A n) i ^ 2)
 
-/-- Kourovka 11.54 (G. S. Makanin): in the group of coloured braids only the identity braid is
-conjugate (within that group) to its inverse. -/
+/-- **Kourovka 11.54: pure braids conjugate to their inverses.** The proposition that for every
+$n \in \mathbb{N}$, every pure braid $\beta$ on $n + 1$ strands that is conjugate to its inverse
+inside the pure braid group, that is, $\gamma \beta \gamma^{-1} = \beta^{-1}$ for some pure braid
+$\gamma$ on $n + 1$ strands, is the identity braid.
+
+This is Kourovka Problem 11.54 (G. S. Makanin). -/
 def pureBraidConjInvTrivial : Prop :=
   ∀ n : ℕ, ∀ β ∈ pureBraidGroup n, (∃ γ ∈ pureBraidGroup n, γ * β * γ⁻¹ = β⁻¹) → β = 1
 
 /--
-Resolved true: the Kourovka Archive answers 11.54 affirmatively (V. A. Roman'kov): the coloured
-braid group embeds in the IA-automorphism group of a free group, which is residually torsion-free
-nilpotent, and in a torsion-free nilpotent group `β` conjugate to `β⁻¹` forces `β = 1`. Source: E.
+**Kourovka 11.54: only the trivial pure braid is conjugate to its inverse.** For every
+$n \in \mathbb{N}$ and every pure braid $\beta$ on $n + 1$ strands, if
+$\gamma \beta \gamma^{-1} = \beta^{-1}$ for some pure braid $\gamma$ on $n + 1$ strands, then
+$\beta = 1$.
+
+The Kourovka Archive answers 11.54 affirmatively (V. A. Roman'kov): the pure braid group embeds in
+the IA-automorphism group of a free group, which is residually torsion-free nilpotent, and in a
+torsion-free nilpotent group an element conjugate to its inverse is trivial.
+
+Source: E.
 I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st
 issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 11.54 (G. S. Makanin);
 resolution: V. A. Roman'kov, letter of 3 October 1990; see also V. G. Bardakov, Russ. Acad. Sci. Sb.

@@ -45,9 +45,10 @@ namespace MetaMathlibExt
 
 open Polynomial ArithmeticFunction
 
-/-- The falling factorial `x (x - 1) ⋯ (x - n + 1)` expands in powers of `x` with the signed
-Stirling numbers of the first kind as coefficients, stated as an identity of integer
-polynomials.
+/-- **Falling factorial in terms of signed Stirling numbers.** For every natural number $n$, the
+identity of polynomials with integer coefficients
+$$x (x - 1) \cdots (x - n + 1) = \sum_{k=0}^{n} s(n, k)\, x^k$$
+holds, where $s(n, k)$ is the signed Stirling number of the first kind.
 
 Source: Benjamin Schreyer, *Rigged Horse Numbers and their Modular Periodicity*, Journal of
 Integer Sequences 28 (2025), Article 25.4.1, Proposition 2 (`jis-2025-25.4.1-prop-2`). -/
@@ -55,8 +56,10 @@ public theorem_wanted descPochhammer_eq_sum_signedStirlingFirst (n : ℕ) :
     descPochhammer ℤ n =
       ∑ k ∈ Finset.range (n + 1), C (signedStirlingFirst n k) * X ^ k
 
-/-- For every residue `a ∈ {0, …, K - 1}`, `a ^ R ≡ a ^ (λ(K) + R) (mod K)`, where `R` is the
-largest exponent in the prime factorization of `K`.
+/-- **A Carmichael congruence for all residues modulo $K$.** Let $K$ be a natural number, let
+$\lambda(K)$ be the value of the Carmichael function at $K$, and let $R$ be the largest exponent
+in the prime factorization of $K$ ($R = 0$ for $K \le 1$). Then
+$a^R \equiv a^{\lambda(K) + R} \pmod K$ for every natural number $a < K$.
 
 Source: Benjamin Schreyer, *Rigged Horse Numbers and their Modular Periodicity*, Journal of
 Integer Sequences 28 (2025), Article 25.4.1, Proposition 4 (`jis-2025-25.4.1-prop-4`). -/
@@ -64,9 +67,10 @@ public theorem_wanted pow_add_carmichael_modEq_of_lt (K a : ℕ) (ha : a < K) :
     let R := K.factorization.support.sup K.factorization
     a ^ R ≡ a ^ (carmichael K + R) [MOD K]
 
-/-- The Fubini numbers are eventually periodic modulo `K` with period dividing `λ(K)`, from
-the index `R` on, where `R` is the largest exponent in the prime factorization of `K`:
-`F(n + λ(K)) ≡ F(n) (mod K)` for `n ≥ R`.
+/-- **Eventual periodicity of the Fubini numbers modulo $K$.** Let $K$ be a natural number, let
+$\lambda(K)$ be the value of the Carmichael function at $K$, and let $R$ be the largest exponent
+in the prime factorization of $K$ ($R = 0$ for $K \le 1$). Then the Fubini numbers $F(n)$
+satisfy $F(n + \lambda(K)) \equiv F(n) \pmod K$ for every natural number $n \ge R$.
 
 Source: Benjamin Schreyer, *Rigged Horse Numbers and their Modular Periodicity*, Journal of
 Integer Sequences 28 (2025), Article 25.4.1, Corollary 10 (`jis-2025-25.4.1-cor-10`). -/
@@ -74,8 +78,11 @@ public theorem_wanted fubiniNumber_add_carmichael_modEq (K n : ℕ)
     (hn : K.factorization.support.sup K.factorization ≤ n) :
     fubiniNumber (n + carmichael K) ≡ fubiniNumber n [MOD K]
 
-/-- For odd `K`, the eventual period of the Fubini numbers modulo `K` is exactly `λ(K)`:
-a shift `p` is an eventual period of `F(n) mod K` if and only if `λ(K)` divides `p`.
+/-- **Eventual periods of the Fubini numbers modulo an odd number.** Let $K$ be an odd natural
+number and let $\lambda(K)$ be the value of the Carmichael function at $K$. Then a natural number
+$p$ is divisible by $\lambda(K)$ if and only if there is a natural number $N$ such that the Fubini
+numbers $F(n)$ satisfy $F(n + p) \equiv F(n) \pmod K$ for all $n \ge N$. In particular, the
+eventual period of the Fubini numbers modulo $K$ is exactly $\lambda(K)$.
 
 Source: Benjamin Schreyer, *Rigged Horse Numbers and their Modular Periodicity*, Journal of
 Integer Sequences 28 (2025), Article 25.4.1, Corollary 11 (`jis-2025-25.4.1-cor-11`). -/
@@ -83,10 +90,14 @@ public theorem_wanted fubiniNumber_eventuallyPeriodic_iff_carmichael_dvd (K : �
     (p : ℕ) :
     (∃ N, ∀ n ≥ N, fubiniNumber (n + p) ≡ fubiniNumber n [MOD K]) ↔ carmichael K ∣ p
 
-/-- For fixed `r ≥ 1`, the `r`-Fubini numbers `F_r(n)` (weak orderings of `n` elements in
-which the `r` distinguished elements are pairwise untied) are eventually periodic modulo `K`
-with period dividing `λ(K)`, from the index `r - 1 + R` on, where `R` is the largest exponent
-in the prime factorization of `K`.
+/-- **Eventual periodicity of the $r$-Fubini numbers modulo $K$.** For a natural number $r \ge 1$
+and a natural number $m$, let $F_r(m)$ be the number of pairs $(k, f)$ of a natural number
+$k \le m$ and a surjection $f : \{0, \dots, m - 1\} \to \{0, \dots, k - 1\}$ that is injective on
+the elements less than $r$; equivalently, $F_r(m)$ counts the weak orderings of $m$ elements in
+which the elements less than $r$ are pairwise untied. Let $K$ be a natural number, let
+$\lambda(K)$ be the value of the Carmichael function at $K$, and let $R$ be the largest exponent
+in the prime factorization of $K$ ($R = 0$ for $K \le 1$). Then
+$F_r(n + \lambda(K)) \equiv F_r(n) \pmod K$ for every natural number $n \ge r - 1 + R$.
 
 Source: Benjamin Schreyer, *Rigged Horse Numbers and their Modular Periodicity*, Journal of
 Integer Sequences 28 (2025), Article 25.4.1, Corollary 12 (`jis-2025-25.4.1-cor-12`). -/
