@@ -40,6 +40,12 @@ class FolderListingTests(unittest.TestCase):
             "plain/c.md: not listed on README.md",
         ])
 
+    def test_the_required_graph_job_runs_both_checks(self):
+        job = Path(__file__).resolve().parent.parent.joinpath(".github/workflows/ci.yml").read_text()
+        job = job.split("\n  graph:\n", 1)[1].split("\n  build:\n", 1)[0]
+        self.assertIn("autoform check blueprint --lean-root .", job)
+        self.assertIn("python scripts/check_folder_listings.py", job)
+
 
 if __name__ == "__main__":
     unittest.main()
