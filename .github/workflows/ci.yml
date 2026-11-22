@@ -32,8 +32,9 @@ jobs:
       - name: Run deterministic repository checks
         run: >-
           { changes="$(git status --porcelain --untracked-files=all)"
-          && ! git ls-files -v | grep -qv '^H '
+          && index="$(git ls-files -v)"
           && [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes"
+          && "$index" != [!H]* && "$index" != *$'\n'[!H]*
           && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; }
           || { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };
           scripts/check.sh preflight
@@ -77,8 +78,9 @@ jobs:
           PYTHONDONTWRITEBYTECODE: "1"
         run: >-
           { changes="$(git status --porcelain --untracked-files=all)"
-          && ! git ls-files -v | grep -qv '^H '
+          && index="$(git ls-files -v)"
           && [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes"
+          && "$index" != [!H]* && "$index" != *$'\n'[!H]*
           && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; }
           || { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };
           "$RUNNER_TEMP/merge-queue-venv/bin/python" -m unittest discover
@@ -167,8 +169,9 @@ jobs:
       - name: Build extension libraries
         run: >-
           { changes="$(git status --porcelain --untracked-files=all)"
-          && ! git ls-files -v | grep -qv '^H '
+          && index="$(git ls-files -v)"
           && [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes"
+          && "$index" != [!H]* && "$index" != *$'\n'[!H]*
           && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; }
           || { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };
           scripts/check.sh build

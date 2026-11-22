@@ -122,9 +122,12 @@ RUN_THIS_TEST = ("repository integrity", "source-diagnostics")
 COMMAND = ('"$RUNNER_TEMP/merge-queue-venv/bin/python" -m unittest discover '
            "-s scripts -p test_merge_queue_checks.py -v")
 # The workspace check each protected step runs first, with whitespace collapsed.
+# The index listing is captured, not piped: under pipefail, `grep -q` stopping
+# early would make `git ls-files` fail with SIGPIPE.
 VERIFY = ('{ changes="$(git status --porcelain --untracked-files=all)" '
-          "&& ! git ls-files -v | grep -qv '^H ' "
+          '&& index="$(git ls-files -v)" '
           '&& [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes" '
+          '&& "$index" != [!H]* && "$index" != *$\'\\n\'[!H]* '
           '&& "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; } '
           '|| { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };')
 
@@ -293,22 +296,38 @@ def workflow_name(filename: str, workflow: dict) -> str:
     return str(workflow.get("name") or f".github/workflows/{filename}")
 
 
-def shell_code(line: str) -> str:
-    """A shell line without its comment, which starts at a `#` that begins a
-    word outside quotes."""
-    quote, escaped = None, False
-    for i, char in enumerate(line):
+def shell_lines(script: str) -> list[str]:
+    """A shell script's lines without comments. A comment starts at a `#` that
+    begins a word outside quotes and runs to the end of its line; quotes may
+    span lines."""
+    lines, current = [], []
+    quote, escaped, comment, word_start = None, False, False, True
+    for char in script:
+        if char == "\n":
+            lines.append("".join(current).strip())
+            current, comment, escaped = [], False, False
+            word_start = word_start or quote is None
+            if quote:
+                current.append(char)
+            continue
+        if comment:
+            continue
         if escaped:
-            escaped = False
+            escaped, word_start = False, False
         elif char == "\\" and quote != "'":
             escaped = True
         elif quote:
             quote = None if char == quote else quote
         elif char in "'\"":
-            quote = char
-        elif char == "#" and (i == 0 or line[i - 1].isspace()):
-            return line[:i]
-    return line
+            quote, word_start = char, False
+        elif char == "#" and word_start:
+            comment = True
+            continue
+        else:
+            word_start = char.isspace() or char in ";&|()<>"
+        current.append(char)
+    lines.append("".join(current).strip())
+    return lines
 
 
 def step_texts(step) -> tuple[list[str], list[str]]:
@@ -316,7 +335,7 @@ def step_texts(step) -> tuple[list[str], list[str]]:
     values, as text."""
     if not isinstance(step, dict):
         return [], []
-    lines = [shell_code(line).strip() for line in str(step.get("run", "")).splitlines()]
+    lines = shell_lines(str(step.get("run", "")))
     values = []
     for key in ("env", "with"):
         value = step.get(key) or {}
@@ -638,7 +657,9 @@ class MergeQueueChecks(unittest.TestCase):
                                        "run": DIAGNOSTICS}]}),
                        put("ci.yml", "jobs", "build", "runs-on", ["ubuntu-26.04"]),
                        put("ci.yml", "jobs", "build", "steps",
-                           [{"run": '# Use $GITHUB_PATH rather than $GITHUB_ENV for elan.\n'
+                           [{"run": 'printf "Installing elan;\nthen PATH.\n"'
+                                    '  # not $GITHUB_PATH yet\n'
+                                    '# Use $GITHUB_PATH rather than $GITHUB_ENV for elan.\n'
                                     'elan-init -y  # The next line adds elan to $GITHUB_PATH.\n'
                                     'echo "$HOME/.elan/bin" >> "$GITHUB_PATH"  # for lake'},
                             {"run": BUILD}]),
@@ -1032,7 +1053,7 @@ class WorkspaceCheck(unittest.TestCase):
     """VERIFY, run as GitHub runs a step without `shell` (`bash -e`), in a scratch
     repository, before a command that prints RAN."""
 
-    def run_check(self, change=None, sha=None):
+    def run_check(self, change=None, sha=None, options=("-e",), files=0):
         with tempfile.TemporaryDirectory() as scratch:
             repo, home = Path(scratch, "repo"), Path(scratch, "home")
             repo.mkdir()
@@ -1052,6 +1073,8 @@ class WorkspaceCheck(unittest.TestCase):
             git("init", "-q")
             (repo / ".gitignore").write_text(".lake/\n")
             (repo / "file").write_text("one\n")
+            for number in range(files):  # an index listing larger than a pipe buffer
+                (repo / f"listing-padding-file-{number:06}.txt").write_text("")
             git("add", ".")
             git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "one")
             (repo / "file").write_text("two\n")
@@ -1059,7 +1082,7 @@ class WorkspaceCheck(unittest.TestCase):
             head = git("rev-parse", "HEAD")
             if change:
                 change(repo, git)
-            result = subprocess.run(["bash", "-e", "-c", exact("echo RAN")], cwd=directory,
+            result = subprocess.run(["bash", *options, "-c", exact("echo RAN")], cwd=directory,
                                     env={**environment, "GITHUB_SHA": sha or head},
                                     capture_output=True, text=True)
             try:
@@ -1103,6 +1126,20 @@ class WorkspaceCheck(unittest.TestCase):
         for label, run in changes.items():
             with self.subTest(label):
                 code, output = run()
+                self.assertNotEqual(code, 0)
+                self.assertNotIn("RAN", output)
+
+    def test_under_pipefail_and_with_a_large_index(self):
+        # The diagnostics step runs under `bash -eo pipefail`; a large index
+        # listing would make an early-exiting pipeline fail with SIGPIPE.
+        def hidden_edit(repo, git):
+            git("update-index", "--skip-worktree", "file")
+            (repo / "file").write_text("edited\n")
+
+        for options in (("-e",), ("-e", "-o", "pipefail")):
+            with self.subTest(options):
+                self.assertEqual(self.run_check(options=options, files=3000), (0, "RAN\n"))
+                code, output = self.run_check(hidden_edit, options=options, files=3000)
                 self.assertNotEqual(code, 0)
                 self.assertNotIn("RAN", output)
 
