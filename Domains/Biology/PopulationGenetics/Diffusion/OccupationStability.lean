@@ -9,8 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Domains.Biology.PopulationGenetics.Diffusion.PathFunctionals
-public import Mathlib.MeasureTheory.Integral.DominatedConvergence
-public import Mathlib.Tactic
+public import Mathlib.Topology.UniformSpace.UniformConvergence
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
+import Mathlib.Tactic
 
 /-!
 # Stability of stopped occupation under uniform limits
