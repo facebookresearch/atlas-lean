@@ -26,6 +26,11 @@ example (A : ℕ → Matrix (Fin 2) (Fin 2) ℤ) :
   have h1 : orderedProd A 1 0 = A 0 := by simp [orderedProd]
   rw [orderedProd_succ_of_le A (Nat.zero_le 1), h1]
 
+-- A reversed interval is the empty product.
+example (A : ℕ → Matrix (Fin 2) (Fin 2) ℤ) :
+    orderedProd A 1 2 = 1 :=
+  orderedProd_of_le A (Nat.le_succ 1)
+
 -- Noncommuting witness: the two orders differ.
 example : (!![1, 1; 0, 1] : Matrix (Fin 2) (Fin 2) ℤ) * !![1, 0; 1, 1] ≠
     !![1, 0; 1, 1] * !![1, 1; 0, 1] := by
