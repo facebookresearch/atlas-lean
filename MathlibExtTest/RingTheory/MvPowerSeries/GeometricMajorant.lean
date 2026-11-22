@@ -61,7 +61,7 @@ example : IsMajorized (1 - X (0 : Fin 1) : MvPowerSeries (Fin 1) ℚ)⁻¹
     (by norm_num) rest (by norm_num) using 1
   norm_num
 
--- A negative, non-unit constant checks absolute-value scaling of the inverse.
+-- A negative constant with absolute value different from one checks inverse scaling.
 example : IsMajorized (C (-2) + X (0 : Fin 1) : MvPowerSeries (Fin 1) ℚ)⁻¹
     ⟨1 / 2, fun _ => 1 / 2, by norm_num, fun _ => by norm_num⟩ := by
   have rest : ∀ n : Fin 1 →₀ ℕ, n ≠ 0 →
