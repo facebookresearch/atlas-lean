@@ -36,6 +36,20 @@ private def mayImport (source target : Lean.Name) : Bool :=
     (source == `WantedExt &&
       (target == `CSLibExt || target == `MathlibExt))
 
+/-- Since Lean v4.36, every inductive type `T` gets a compiler-generated `T.ctorIdx` that is
+`implemented_by` an unsafe `T.ctorIdx._impl`. Both are compiler output, not library code, so the
+safety checks skip exactly this pair. -/
+private def isGeneratedCtorIdx (env : Lean.Environment) (name : Lean.Name) : Bool :=
+  let isInductive (n : Lean.Name) : Bool :=
+    match env.find? n with
+    | some (.inductInfo _) => true
+    | _ => false
+  match name with
+  | .str (.str t "ctorIdx") "_impl" => isInductive t
+  | .str t "ctorIdx" =>
+    isInductive t && Lean.Compiler.getImplementedBy? env name == some (name ++ `_impl)
+  | _ => false
+
 private def containsWantedWrapper (type : Lean.Expr) : Bool :=
   (type.find? fun
     | .const name _ =>
@@ -60,10 +74,11 @@ run_cmd do
     let mut hasWantedDeclaration := false
     for name in moduleData.constNames do
       let some info := env.find? name | continue
-      if info.isUnsafe then
+      let generated := isGeneratedCtorIdx env name
+      if info.isUnsafe && !generated then
         Lean.logError m!"{name} is an unsafe declaration"
         failed := true
-      if (Lean.Compiler.getImplementedBy? env name).isSome then
+      if (Lean.Compiler.getImplementedBy? env name).isSome && !generated then
         Lean.logError m!"{name} uses implemented_by"
         failed := true
       if containsWantedWrapper info.type then
