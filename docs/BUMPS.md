@@ -83,14 +83,23 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
    merged file: if it is git's own merge of the two sides (or `--adjacent`'s),
    the row takes main's rationale plus the bump's addition and the new hash; if
    it is one side's version, it keeps that side's row. With `--adjacent` it
-   also merges a file where the two sides replaced different lines that merely
-   touch, which is how docstring campaigns on main usually meet the bump's
-   edits. It leaves every other conflict to you: resolve it and `git add` it,
-   record the rationale of any file you resolved by hand with
-   `scripts/check_formal_math_sync.py --record-divergence`, then run
-   `bump_branch.py resolve-manifest`. Before committing it checks the manifest
-   against main on the exact tree it would commit. Re-run any fixer the bump
-   needs for files main adds, such as a rename script. Then build: what fails
+   also merges a conflict where one side rewrote a whole doc comment and the
+   other edited the single declaration line next to it, which is how docstring
+   campaigns on main usually meet the bump's edits. Before committing it checks
+   the manifest against main on the exact tree it would commit.
+
+   Other conflicts are yours:
+
+   1. Resolve each conflicted file and `git add` it.
+   2. Run `bump_branch.py resolve-manifest`. If it lists rows to finish (a file
+      you resolved by hand needs its own rationale), record each with
+      `python3 scripts/check_formal_math_sync.py --record-divergence PATH
+      --rationale TEXT --backport pending`, `git add` the manifest, and run
+      `resolve-manifest` again.
+
+   Then re-run any fixer the bump needs, such as a rename script: files main
+   adds or edits can bring back the old names, and a conflict resolved in
+   favour of main can undo the bump's edit on that line. Then build: what fails
    is mostly new code from main, and `bump_branch.py breakage <build log>`
    lists, for each failing module, the main pull requests that changed it: the
    candidates. Fix, commit, push.

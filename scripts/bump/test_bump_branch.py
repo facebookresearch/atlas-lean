@@ -88,6 +88,25 @@ class MergeManifestTest(unittest.TestCase):
         _, _, problems = self.merge([base], [ours_backport], [theirs], {base["path"]: kept_main})
         self.assertIn("also changed the row's other fields", problems[0])
 
+    def test_a_row_only_correction_on_one_side_survives(self):
+        base = diverged("MathlibExt/A.lean", "A", "The local lemma is from PR #12.")
+        ours = diverged(base["path"], "A-bump", "The local lemma is from PR #12. Adapted to the new toolchain.")
+        theirs = {**base, "rationale": "The local lemma is from PR #21."}
+        kept_bump = merged_file(b"A-bump", ours=b"A-bump", theirs=b"A", base=b"A", auto=b"A-bump")
+        text, _, problems = self.merge([base], [ours], [theirs], {base["path"]: kept_bump})
+        row = bb.manifest_rows(text)[base["path"]]
+        self.assertEqual(problems, [])
+        self.assertEqual(row["rationale"], "The local lemma is from PR #21. Also: Adapted to the new toolchain.")
+        self.assertEqual(row["published_sha256"], ours["published_sha256"])
+        # The mirror case: the bump only attributes, main changes the file.
+        ours2 = {**base, "rationale": "The local lemma is from PR #12. Attributed to its authors."}
+        theirs2 = diverged(base["path"], "A-main", "The local lemma is from PR #12; restated (#961).")
+        kept_main = merged_file(b"A-main", ours=b"A", theirs=b"A-main", base=b"A", auto=b"A-main")
+        text, _, problems = self.merge([base], [ours2], [theirs2], {base["path"]: kept_main})
+        row = bb.manifest_rows(text)[base["path"]]
+        self.assertEqual((problems, row["published_sha256"]), ([], theirs2["published_sha256"]))
+        self.assertEqual(row["rationale"], "The local lemma is from PR #12; restated (#961). Also: Attributed to its authors.")
+
     def test_metadata_only_changes_merge_field_by_field(self):
         base = diverged("MathlibExt/A.lean", "A", "Port the lemma.")
         ours = {**base, "backport": "https://example.org/3"}
@@ -200,14 +219,24 @@ class MergeAdjacentTest(unittest.TestCase):
         ours = "def f := 1\ntheorem ready : True := trivial\ndef g := 0\n"
         theirs = "def f := 0\ntheorem ready : True := by trivial\ndef g := 1\n"
         self.assertIsNone(bb.merge_conflicts_adjacent(base, ours, theirs))
+        # The same with equal line counts: the bump also drops a comment above `f`.
+        base = "-- Old comment\ndef f := 0\ndef g := 0\n"
+        ours = "def f := 1\ntheorem ready : True := trivial\ndef g := 0\n"
+        theirs = "-- Old comment\ndef f := 0\ntheorem ready : True := by trivial\ndef g := 1\n"
+        self.assertIsNone(bb.merge_conflicts_adjacent(base, ours, theirs))
+        # Only a whole doc comment beside one edited code line merges.
+        self.assertIsNone(bb.merge_adjacent("/-- a\nb -/\ndef x := 1\n", "/-- a\nb -/\nnoncomputable def x := 1\n",
+                                            "/-- a\nc\n"))
+        self.assertIsNone(bb.merge_adjacent("-- note\ndef x := 1\n", "-- note\ndef y := 1\n", "-- better note\ndef x := 1\n"))
 
     def test_clean_regions_keep_gits_merge(self):
         lines = [f"line {i}\n" for i in range(30)]
+        lines[4] = "/-- doc -/\n"
         base = "".join(lines)
         ours = "".join(lines[:5] + ["ours\n"] + lines[6:20] + ["far ours\n"] + lines[20:])
-        theirs = "".join(lines[:4] + ["theirs\n"] + lines[5:])
+        theirs = "".join(lines[:4] + ["/-- new doc -/\n"] + lines[5:])
         self.assertEqual(bb.merge_conflicts_adjacent(base, ours, theirs),
-                         "".join(lines[:4] + ["theirs\n", "ours\n"] + lines[6:20] + ["far ours\n"] + lines[20:]))
+                         "".join(lines[:4] + ["/-- new doc -/\n", "ours\n"] + lines[6:20] + ["far ours\n"] + lines[20:]))
 
     def test_marker_lines_in_the_file_are_left_alone(self):
         example = "".join(f"{c * 40} example\n" for c in "<|=>")
@@ -263,7 +292,7 @@ class GitTest(unittest.TestCase):
         self.git("commit", "-q", "-m", message)
 
     def base_tree(self):
-        files = {f"MathlibExt/{n}.lean": f"-- {n} doc\ndef {n.lower()} := 1\n\n\ntheorem {n.lower()}_eq := rfl\n"
+        files = {f"MathlibExt/{n}.lean": f"/-- {n} doc -/\ndef {n.lower()} := 1\n\n\ntheorem {n.lower()}_eq := rfl\n"
                  for n in "ABCD"}
         rows = [diverged(path, text, f"Port {path}.") for path, text in files.items()]
         self.write(files, rows, "base")
@@ -295,8 +324,8 @@ class GitTest(unittest.TestCase):
         _, br, mr = self.diverge(
             {a: ("theorem a_eq := rfl", "theorem a_eq : a = 1 := rfl", f"Port {a}. {BUMP}"),
              c: ("def c", "noncomputable def c", f"Port {c}. {BUMP}")},
-            {a: ("-- A doc", "-- A, restated", "Restate docstrings (#961)."),
-             b: ("-- B doc", "-- B, restated", "Restate docstrings (#961).")})
+            {a: ("/-- A doc -/", "/-- A, restated -/", "Restate docstrings (#961)."),
+             b: ("/-- B doc -/", "/-- B, restated -/", "Restate docstrings (#961).")})
         status = json.loads(self.tool("status", "--main", "main", "--json").stdout)
         self.assertEqual((status["conflicts_with_main"], status["main_prs_since"]), ([bb.MANIFEST], [961]))
         self.assertEqual(status["manifest_rows_changed"], 2)
@@ -307,7 +336,7 @@ class GitTest(unittest.TestCase):
         self.assertEqual(self.git("status", "--porcelain").stdout, "")
         merged = bb.manifest_rows((self.repo / bb.MANIFEST).read_text())
         merged_a = (self.repo / a).read_bytes()
-        self.assertIn(b"-- A, restated", merged_a)
+        self.assertIn(b"/-- A, restated -/", merged_a)
         self.assertIn(b"a_eq : a = 1", merged_a)
         self.assertEqual(merged[a]["published_sha256"], fms.sha256(merged_a))
         self.assertEqual(merged[a]["rationale"], f"Restate docstrings (#961). {BUMP}")
@@ -348,14 +377,14 @@ class GitTest(unittest.TestCase):
     def test_adjacent_resolves_neighbouring_edits(self):
         d = "MathlibExt/D.lean"
         self.diverge({d: ("def d := 1", "noncomputable def d := 1", f"Port {d}. {BUMP}")},
-                     {d: ("-- D doc", "-- D, restated", "Restate docstrings (#7).")}, "Restate docstrings (#7)")
+                     {d: ("/-- D doc -/", "/-- D, restated -/", "Restate docstrings (#7).")}, "Restate docstrings (#7)")
         self.assertEqual(self.tool("merge-main", "--main", "main", "--no-commit").returncode, 3)
         self.git("merge", "--abort")
         proc = self.tool("merge-main", "--main", "main", "--adjacent")
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertIn(f"{d}: merged changes to neighbouring lines", proc.stdout)
         text = (self.repo / d).read_text()
-        self.assertIn("-- D, restated\nnoncomputable def d := 1", text)
+        self.assertIn("/-- D, restated -/\nnoncomputable def d := 1", text)
         merged = bb.manifest_rows((self.repo / bb.MANIFEST).read_text())
         self.assertEqual(merged[d]["published_sha256"], fms.sha256(text.encode()))
         self.assertEqual(merged[d]["rationale"], f"Restate docstrings (#7). {BUMP}")
@@ -363,12 +392,12 @@ class GitTest(unittest.TestCase):
     def test_adjacent_leaves_a_file_without_a_final_newline(self):
         files, rows = self.base_tree()
         e = "MathlibExt/E.lean"
-        self.write({e: "-- E doc\ndef e := 1"}, rows + [diverged(e, "-- E doc\ndef e := 1", "Port E.")], "add E")
-        rows = rows + [diverged(e, "-- E doc\ndef e := 1", "Port E.")]
+        self.write({e: "/-- E doc -/\ndef e := 1"}, rows + [diverged(e, "/-- E doc -/\ndef e := 1", "Port E.")], "add E")
+        rows = rows + [diverged(e, "/-- E doc -/\ndef e := 1", "Port E.")]
         self.git("checkout", "-q", "-b", "bump")
-        self.write(*self.edit({e: ""}, rows, e, "-- E doc\nnoncomputable def e := 1", f"Port E. {BUMP}"))
+        self.write(*self.edit({e: ""}, rows, e, "/-- E doc -/\nnoncomputable def e := 1", f"Port E. {BUMP}"))
         self.git("checkout", "-q", "main")
-        self.write(*self.edit({e: ""}, rows, e, "-- E, restated\ndef e := 1", "Restate (#8)."))
+        self.write(*self.edit({e: ""}, rows, e, "/-- E, restated -/\ndef e := 1", "Restate (#8)."))
         self.git("checkout", "-q", "bump")
         proc = self.tool("merge-main", "--main", "main", "--adjacent")
         self.assertEqual(proc.returncode, 3, proc.stdout + proc.stderr)
@@ -381,7 +410,7 @@ class GitTest(unittest.TestCase):
         self.write(*self.edit(files, rows, a, files[a].replace("theorem a_eq", "theorem a_eq'"), f"Port {a}. {BUMP}"))
         self.git("checkout", "-q", "main")
         # Main edits the file without recording it: git merges the file, the row stays the bump's.
-        self.write({a: files[a].replace("-- A doc", "-- A, unrecorded")}, message="Unrecorded edit (#9)")
+        self.write({a: files[a].replace("/-- A doc -/", "/-- A, unrecorded -/")}, message="Unrecorded edit (#9)")
         self.git("checkout", "-q", "bump")
         head = self.git("rev-parse", "HEAD").stdout
         proc = self.tool("merge-main", "--main", "main")
@@ -402,12 +431,51 @@ class GitTest(unittest.TestCase):
         self.assertIn("removed the row", proc.stdout)
         draft = (self.repo / bb.MANIFEST).read_text()
         self.assertIn(a, bb.manifest_rows(draft))
-        # A rerun before the repair is staged keeps the person's edits.
-        (self.repo / bb.MANIFEST).write_text(draft.replace("Edit (#3).", "Edit (#3), kept."))
-        proc = self.tool("resolve-manifest")
+        # A rerun keeps the person's edits to the draft, even unfinished ones.
+        for edited in (draft.replace("Edit (#3).", "Edit (#3), kept."), draft.rstrip().rstrip("}")):
+            (self.repo / bb.MANIFEST).write_text(edited)
+            proc = self.tool("resolve-manifest")
+            self.assertEqual(proc.returncode, 3, proc.stdout + proc.stderr)
+            self.assertIn("has edits since this tool wrote it", proc.stdout)
+            self.assertEqual((self.repo / bb.MANIFEST).read_text(), edited)
+        # Deleting it starts over.
+        (self.repo / bb.MANIFEST).unlink()
+        self.assertEqual(self.tool("resolve-manifest").returncode, 3)
+        self.assertEqual((self.repo / bb.MANIFEST).read_text(), draft)
+
+    def test_a_bracketed_file_name_is_not_a_pattern(self):
+        self.base_tree()
+        fancy, plain = "MathlibExt/Notes[1].lean", "MathlibExt/Notes1.lean"
+        self.write({fancy: "/-- doc -/\ndef n := 1\n", plain: "def m := 1\n"}, message="notes")
+        self.git("checkout", "-q", "-b", "bump")
+        self.write({fancy: "/-- doc -/\nnoncomputable def n := 1\n", plain: "def m := 2\n"}, message="bump")
+        self.git("checkout", "-q", "main")
+        self.write({fancy: "/-- new doc -/\ndef n := 1\n", plain: "def m := 3\n"}, message="Notes (#4)")
+        self.git("checkout", "-q", "bump")
+        head = self.git("rev-parse", "HEAD").stdout
+        proc = self.tool("merge-main", "--main", "main", "--adjacent")
         self.assertEqual(proc.returncode, 3, proc.stdout + proc.stderr)
-        self.assertIn("edits that are not staged", proc.stdout)
-        self.assertIn("Edit (#3), kept.", (self.repo / bb.MANIFEST).read_text())
+        self.assertIn(f"{fancy}: merged changes to neighbouring lines", proc.stdout)
+        self.assertNotEqual(self.git("ls-files", "-u", "--", plain).stdout, "", "the other file must stay unmerged")
+        self.assertEqual(self.tool("resolve-manifest").returncode, 3)
+        self.assertEqual(self.git("rev-parse", "HEAD").stdout, head)
+
+    def test_a_correction_on_main_survives_a_clean_merge(self):
+        files, rows = self.base_tree()
+        a = "MathlibExt/A.lean"
+        rows = [{**r, "rationale": "The local lemma is from PR #12."} if r["path"] == a else r for r in rows]
+        self.write({}, rows, "provenance")
+        self.git("checkout", "-q", "-b", "bump")
+        self.write(*self.edit(files, rows, a, files[a].replace("def a", "noncomputable def a"),
+                              "The local lemma is from PR #12. Adapted to the new toolchain."))
+        self.git("checkout", "-q", "main")
+        self.write({}, [{**r, "rationale": "The local lemma is from PR #21."} if r["path"] == a else r for r in rows],
+                   "Correct a transposed reference (#5)")
+        self.git("checkout", "-q", "bump")
+        proc = self.tool("merge-main", "--main", "main")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        merged = bb.manifest_rows((self.repo / bb.MANIFEST).read_text())
+        self.assertEqual(merged[a]["rationale"], "The local lemma is from PR #21. Also: Adapted to the new toolchain.")
 
     def test_refuses_a_dirty_tree(self):
         self.base_tree()
