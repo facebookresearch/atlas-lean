@@ -43,20 +43,32 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: vertex count, edge list, bound. -/
+/-- **Instances of DIRECTED PATH COVER.** An instance of DIRECTED PATH COVER is a triple
+$(n, E, K)$, where the natural number $n$ is the number of vertices, the list $E$ of ordered
+pairs of natural numbers lists the directed edges, and the natural number $K$ bounds the number
+of paths. -/
 abbrev DirectedPathCoverInstance := ℕ × List (ℕ × ℕ) × ℕ
 
 
-/-- Directed adjacency from an edge list (as a Bool, for use in filters). -/
+/-- **Directed adjacency in an edge list.** For a list $E$ of ordered pairs of natural numbers
+and natural numbers $u$ and $v$, the directed adjacency test of $E$ at $(u, v)$ is the boolean
+that is true exactly when the pair $(u, v)$ occurs in $E$, that is, when $E$ contains an edge
+from $u$ to $v$. -/
 def DAdj (edges : List (ℕ × ℕ)) (u v : ℕ) : Bool :=
   edges.contains (u, v)
 
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed DIRECTED PATH COVER instances.** An instance $(n, E, K)$ of
+DIRECTED PATH COVER is well formed when the edge list $E$ has no repeated entries and every
+edge $(a, b)$ in $E$ satisfies $a < n$, $b < n$ and $a \ne b$. -/
 def WellFormed (i : DirectedPathCoverInstance) : Prop :=
   i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2
 
-/-- A cover of all vertices by at most `K` directed paths. -/
+/-- **Feasible DIRECTED PATH COVER instances.** An instance $(n, E, K)$ of DIRECTED PATH
+COVER is feasible when there is a list of at most $K$ paths, each a list of natural numbers,
+such that every path has no repeated vertex, every vertex on a path is less than $n$, and
+whenever $v$ immediately follows $u$ on a path the pair $(u, v)$ occurs in $E$; and such that
+every vertex $v < n$ lies on some path, and all paths containing $v$ are equal. -/
 def DirectedPathCoverFeasible
     (i : DirectedPathCoverInstance) : Prop :=
   ∃ paths : List (List ℕ), paths.length ≤ i.2.2 ∧
@@ -65,7 +77,10 @@ def DirectedPathCoverFeasible
     ∀ v < i.1, ∃ p ∈ paths, v ∈ p ∧ ∀ p' ∈ paths, v ∈ p' → p' = p
 
 open Classical in
-/-- DIRECTED PATH COVER as a decision problem over bitstrings. -/
+/-- **DIRECTED PATH COVER as a decision problem.** DIRECTED PATH COVER is the decision problem
+that accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding,
+to an instance $(n, E, K)$ of DIRECTED PATH COVER that is well formed and feasible; bitstrings
+that do not decode to an instance are rejected. -/
 noncomputable def directedPathCoverDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -73,7 +88,11 @@ noncomputable def directedPathCoverDec :
   | some i => decide (WellFormed i ∧ DirectedPathCoverFeasible i)
   | none => false
 
-/-- **DIRECTED PATH COVER is NP-complete.** Source: M. R. Garey and D. S. Johnson, *Computers
+/-- **DIRECTED PATH COVER is NP-complete.** The decision problem DIRECTED PATH COVER is in NP,
+and every decision problem in NP has a polynomial-time many-one reduction to
+DIRECTED PATH COVER.
+
+Source: M. R. Garey and D. S. Johnson, *Computers
 and Intractability* (1979), PATH COVER (the `K = 1` slice is Hamiltonian path). -/
 public theorem_wanted directedPathCover_npComplete :
     directedPathCoverDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
