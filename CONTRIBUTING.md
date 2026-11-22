@@ -216,13 +216,14 @@ To queue a PR, use one of:
 Once the queue is required, `main` refuses direct merges, including those of
 the REST endpoint `PUT /repos/{owner}/{repo}/pulls/{number}/merge`, which does
 not support merge queues, and of the GraphQL mutation `mergePullRequest`.
-Scripts and bots that merge directly should switch to `enqueuePullRequest`, or
-to `PUT /repos/{owner}/{repo}/pulls/{number}/merge-async` with
-`"merge_action": "merge_queue"`; both only ever queue. `merge-async` answers
-`202` when it accepts the request, `200` if the PR is already queued or merged,
-and `409` if another request is pending; `GET .../merge-async/{uuid}` gives a
-request's result. A queue request is not a merge: read the PR's state
-afterwards to learn whether it was queued, merged, or removed from the queue.
+Scripts and bots that merge directly should switch to `enqueuePullRequest` for
+a standalone PR, or to `PUT /repos/{owner}/{repo}/pulls/{number}/merge-async`
+with `"merge_action": "merge_queue"`, which GitHub requires for a stack of pull
+requests; both only ever queue. `merge-async` answers `202` when it accepts the
+request, `200` if the PR is already queued or merged, and `409` if another
+request is pending; `GET .../merge-async/{uuid}` gives a request's result. A
+queue request is not a merge: read the PR's state afterwards to learn whether
+it was queued, merged, or removed from the queue.
 
 Consecutive PRs that pass land together, up to the queue's merge limit, which
 GitHub may exceed by up to half to keep a stack together. The queue removes a PR
@@ -248,7 +249,7 @@ a maintainer approves the run. Both CI's `repository integrity` job and Source
 diagnostics run `scripts/test_merge_queue_checks.py`, each in a step that is
 exactly the test command, so a change that makes one of them skip its jobs is
 caught by the other. The test fails if one of these workflows loses or filters
-those triggers, also runs on pushes to the queue's branches or on another event
+those triggers, also runs on pushes to any branch but `main` or on another event
 that could report its checks for another tree (such as `pull_request_target`),
 can skip the job that reports the check, renames the check or puts an expression
 in its job name, lets another job report (or possibly report) the same name, or

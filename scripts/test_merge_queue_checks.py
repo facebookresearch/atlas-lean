@@ -18,9 +18,11 @@ fails if a required workflow:
   workflow's group could match: GitHub concurrency groups are repository-wide
   and case-insensitive, so one run could cancel or replace another's. In a
   reusable workflow, `github.workflow` is the caller's name;
-- runs on pushes to the queue's `gh-readonly-queue/...` branches, which GitHub
-  creates for each merge group: that run would report the same check on the
-  same commit, and could share the merge group's concurrency group.
+- runs on pushes to any branch but `main`. A push to a PR's branch would report
+  the same checks on the PR's head commit for another tree, and a push to one
+  of the queue's `gh-readonly-queue/...` branches, which GitHub creates for
+  each merge group, would report them on the merge group's commit and could
+  share its concurrency group.
 
 It also fails if a required workflow gains another event that could report
 the same checks on a PR's head (such as `pull_request_target`), or unless both
@@ -65,14 +67,10 @@ RUN_THIS_TEST = ("repository integrity", "source-diagnostics")
 COMMAND = ('"$RUNNER_TEMP/merge-queue-venv/bin/python" -m unittest discover '
            "-s scripts -p test_merge_queue_checks.py -v")
 STEP_KEYS = {"name", "id", "env", "run", "timeout-minutes"}
-# Events a required workflow may run on besides its PR event: none of them
-# reports on a PR's head commit.
+# Events a required workflow may run on besides its PR event. Pushes must be
+# limited to `main`; a workflow_dispatch run reports on a PR's head only if a
+# maintainer starts it on that branch.
 OTHER_EVENTS = {"push", "merge_group", "workflow_dispatch", "schedule"}
-# The queue creates a branch under this prefix for each merge group; a branch
-# filter excludes them all only through one of these patterns.
-QUEUE_PREFIX = "gh-readonly-queue/"
-WHOLE_QUEUE = {"**", "gh-readonly-queue/**", "gh-readonly-queue/main/**",
-               "gh-readonly-queue/main/*"}
 # Concurrency groups known to differ between any two runs of the PR event and
 # between any two merge groups. Both start with the workflow's name. Under
 # pull_request_target, github.ref is the default branch for every PR, so the
@@ -134,36 +132,12 @@ def literal_start(workflow_name: str | None, group: str) -> str:
     return head.casefold()
 
 
-def literal_prefix(pattern: str) -> str:
-    """The text every branch a filter pattern matches starts with. `?` and `+`
-    act on the character before them, so that character is not part of it."""
-    special = [i for i, char in enumerate(pattern) if char in "*?+["]
-    if not special:
-        return pattern
-    prefix = pattern[:special[0]]
-    return prefix[:-1] if pattern[special[0]] in "?+" else prefix
-
-
-def can_match_queue(pattern: str) -> bool:
-    prefix = literal_prefix(pattern)
-    if prefix == pattern:  # no wildcard: matches at most one branch
-        return prefix.startswith(QUEUE_PREFIX)
-    return prefix.startswith(QUEUE_PREFIX) or QUEUE_PREFIX.startswith(prefix)
-
-
-def pushes_to_queue_branches(push: dict) -> bool:
+def pushes_to_other_branches(push: dict) -> bool:
+    """Whether a push trigger can run for a branch other than `main`. A filter
+    on tags alone does not run for branches."""
     if "branches" in push:
-        selected = False  # later patterns override earlier ones
-        for pattern in as_list(push["branches"]):
-            if pattern.startswith("!"):
-                selected = selected and pattern[1:] not in WHOLE_QUEUE
-            elif can_match_queue(pattern):
-                selected = True
-        return selected
-    if "branches-ignore" in push:
-        return not WHOLE_QUEUE & set(as_list(push["branches-ignore"]))
-    # A push filter on tags alone does not run for branches.
-    return not ({"tags", "tags-ignore"} & set(push))
+        return set(as_list(push["branches"])) != {"main"}
+    return "branches-ignore" in push or not ({"tags", "tags-ignore"} & set(push))
 
 
 def may_be_named(name: str, check: str) -> bool:
@@ -235,8 +209,8 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
             missing = PR_TYPES - set(as_list(settings.get("types", sorted(PR_TYPES))))
             if missing:
                 found.append(f"{name} does not run on {pr_event} {sorted(missing)}")
-        if "push" in triggers and pushes_to_queue_branches(triggers["push"]):
-            found.append(f"{name} runs on pushes to the queue's branches")
+        if "push" in triggers and pushes_to_other_branches(triggers["push"]):
+            found.append(f"{name} runs on pushes to branches other than main")
         extra = sorted(set(triggers) - OTHER_EVENTS - {pr_event})
         if extra:
             found.append(f"{name} also runs on {extra}, which could report its checks "
@@ -353,10 +327,8 @@ class MergeQueueChecks(unittest.TestCase):
                        put("ci.yml", "jobs", "build", "name", "build"),
                        put("ci.yml", "concurrency", "group",
                            "${{github.workflow}}-${{  github.ref }}"),
-                       put("ci.yml", "on", "push", {"branches": ["**", "!gh-readonly-queue/**"]}),
+                       put("ci.yml", "on", "push", {"branches": "main"}),
                        put("ci.yml", "on", "push", {"tags": ["v*"]}),
-                       put("ci.yml", "on", "push", {"branches": ["main", "release/*"]}),
-                       put("ci.yml", "on", "push", {"branches-ignore": ["gh-readonly-queue/**"]}),
                        put("nightly.yml", {"name": "CI-nightly", "on": {"schedule": ""},
                                            "concurrency": {"group": "${{ github.workflow }}-"
                                                                     "${{ github.ref }}"},
@@ -438,18 +410,16 @@ class MergeQueueChecks(unittest.TestCase):
                                     "${{ github.workflow }}-${{ github.ref }}"),
                                 "job-level concurrency group"),
             "push on every branch": (put("ci.yml", "on", "push", ""),
-                                     "pushes to the queue's branches"),
+                                     "branches other than main"),
             "push on queue branches": (
                 put("source-diagnostics.yml", "on", "push", "branches",
-                    ["main", "gh-readonly-queue/main/**"]), "pushes to the queue's branches"),
-            "push ignoring only main": (put("ci.yml", "on", "push", {"branches-ignore": "main"}),
-                                        "pushes to the queue's branches"),
-            "push ignoring one-digit queue branches only": (
-                put("ci.yml", "on", "push",
-                    {"branches-ignore": ["gh-readonly-queue/main/pr-[0-9]-*"]}),
-                "pushes to the queue's branches"),
-            "push on gh-*": (put("ci.yml", "on", "push", {"branches": ["gh-*"]}),
-                             "pushes to the queue's branches"),
+                    ["main", "gh-readonly-queue/main/**"]), "branches other than main"),
+            "push on every branch but the queue's": (
+                put("ci.yml", "on", "push", {"branches-ignore": ["gh-readonly-queue/**"]}),
+                "branches other than main"),
+            "push on release branches too": (
+                put("ci.yml", "on", "push", {"branches": ["main", "release/*"]}),
+                "branches other than main"),
             "this test dropped from Source diagnostics": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
                     [{"uses": "actions/checkout"}]), "has no step that is exactly"),
