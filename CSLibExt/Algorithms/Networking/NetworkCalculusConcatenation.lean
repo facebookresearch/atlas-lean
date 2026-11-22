@@ -340,6 +340,32 @@ theorem convCurve_rateLatency (R₁ R₂ T₁ T₂ : ℝ≥0) :
   rw [hr]
   exact WithTop.coe_eq_coe.mp hc
 
+private theorem cc_tokenBucket_zero_zero (w : ℝ≥0) :
+    tokenBucket 0 0 w = 0 := by
+  unfold tokenBucket
+  split <;> simp
+
+private theorem cc_flow_zero_of_zero_bucket {R : ℝ≥0 → ℝ≥0}
+    (hR : IsCumulativeFlow R) (hα : IsArrivalCurve R (tokenBucket 0 0))
+    (u : ℝ≥0) : R u = 0 := by
+  have h := hα.2 0 u zero_le
+  rw [hR.2] at h
+  simp only [tsub_zero] at h
+  rw [cc_tokenBucket_zero_zero] at h
+  exact le_antisymm h zero_le
+
+private theorem cc_delay_zero_of_flow_zero {R R' : ℝ≥0 → ℝ≥0}
+    (hR0 : ∀ u, R u = 0) (t : ℝ≥0) : delay R R' t = 0 := by
+  have h0 : R t ≤ R' (t + 0) := by
+    rw [hR0 t]
+    exact zero_le
+  unfold delay
+  refine le_antisymm ?_ zero_le
+  calc (⨅ u : { τ : ℝ≥0 // R t ≤ R' (t + τ) }, (u.val : ℝ≥0∞))
+        ≤ ((0 : ℝ≥0) : ℝ≥0∞) :=
+          iInf_le _ (⟨0, h0⟩ : { τ : ℝ≥0 // R t ≤ R' (t + τ) })
+    _ = 0 := ENNReal.coe_zero
+
 /-- End-to-end delay bound through two rate-latency nodes, paying bursts
 only once: a `γ_{r,b}`-constrained flow with `r ≤ min R₁ R₂` has virtual
 delay at most `T₁ + T₂ + b / min R₁ R₂` at every time. -/
@@ -349,15 +375,25 @@ theorem delay_concat_rateLatency {R Rmid R' : ℝ≥0 → ℝ≥0} {r b : ℝ≥
     (hα : IsArrivalCurve R (tokenBucket r b))
     (hβ₁ : IsServiceCurve R Rmid (rateLatency R₁ T₁))
     (hβ₂ : IsServiceCurve Rmid R' (rateLatency R₂ T₂))
-    (hr : r ≤ min R₁ R₂) (hRpos : 0 < min R₁ R₂) (hpos : 0 < r ∨ 0 < b)
+    (hr : r ≤ min R₁ R₂) (hRpos : 0 < min R₁ R₂)
     (t : ℝ≥0) :
     delay R R' t ≤ ((T₁ + T₂ + b / min R₁ R₂ : ℝ≥0) : ℝ≥0∞) := by
-  have hβ : IsServiceCurve R R' (convCurve (rateLatency R₁ T₁) (rateLatency R₂ T₂)) :=
-    serviceCurve_concat hR hRmid hR' hβ₁ hβ₂
-  rw [convCurve_rateLatency] at hβ
-  have h := delay_le_hdev hR hR' hα hβ t
-  rw [hdev_tokenBucket_rateLatency hr hRpos hpos] at h
-  exact h
+  by_cases hpos : 0 < r ∨ 0 < b
+  · have hβ : IsServiceCurve R R' (convCurve (rateLatency R₁ T₁) (rateLatency R₂ T₂)) :=
+      serviceCurve_concat hR hRmid hR' hβ₁ hβ₂
+    rw [convCurve_rateLatency] at hβ
+    have h := delay_le_hdev hR hR' hα hβ t
+    rw [hdev_tokenBucket_rateLatency hr hRpos hpos] at h
+    exact h
+  · push Not at hpos
+    obtain ⟨hr0, hb0⟩ := hpos
+    have hr0' : r = 0 := le_antisymm hr0 zero_le
+    have hb0' : b = 0 := le_antisymm hb0 zero_le
+    subst hr0'
+    subst hb0'
+    have hR0 : ∀ u, R u = 0 := cc_flow_zero_of_zero_bucket hR hα
+    rw [cc_delay_zero_of_flow_zero hR0 t]
+    exact zero_le
 
 /-- Order independence: the same end-to-end bound holds with the two
 rate-latency nodes swapped. -/
@@ -367,14 +403,24 @@ theorem delay_concat_rateLatency_swap {R Rmid R' : ℝ≥0 → ℝ≥0} {r b : �
     (hα : IsArrivalCurve R (tokenBucket r b))
     (hβ₁ : IsServiceCurve R Rmid (rateLatency R₂ T₂))
     (hβ₂ : IsServiceCurve Rmid R' (rateLatency R₁ T₁))
-    (hr : r ≤ min R₁ R₂) (hRpos : 0 < min R₁ R₂) (hpos : 0 < r ∨ 0 < b)
+    (hr : r ≤ min R₁ R₂) (hRpos : 0 < min R₁ R₂)
     (t : ℝ≥0) :
     delay R R' t ≤ ((T₁ + T₂ + b / min R₁ R₂ : ℝ≥0) : ℝ≥0∞) := by
-  have hβ : IsServiceCurve R R' (convCurve (rateLatency R₂ T₂) (rateLatency R₁ T₁)) :=
-    serviceCurve_concat hR hRmid hR' hβ₁ hβ₂
-  rw [convCurve_comm, convCurve_rateLatency] at hβ
-  have h := delay_le_hdev hR hR' hα hβ t
-  rw [hdev_tokenBucket_rateLatency hr hRpos hpos] at h
-  exact h
+  by_cases hpos : 0 < r ∨ 0 < b
+  · have hβ : IsServiceCurve R R' (convCurve (rateLatency R₂ T₂) (rateLatency R₁ T₁)) :=
+      serviceCurve_concat hR hRmid hR' hβ₁ hβ₂
+    rw [convCurve_comm, convCurve_rateLatency] at hβ
+    have h := delay_le_hdev hR hR' hα hβ t
+    rw [hdev_tokenBucket_rateLatency hr hRpos hpos] at h
+    exact h
+  · push Not at hpos
+    obtain ⟨hr0, hb0⟩ := hpos
+    have hr0' : r = 0 := le_antisymm hr0 zero_le
+    have hb0' : b = 0 := le_antisymm hb0 zero_le
+    subst hr0'
+    subst hb0'
+    have hR0 : ∀ u, R u = 0 := cc_flow_zero_of_zero_bucket hR hα
+    rw [cc_delay_zero_of_flow_zero hR0 t]
+    exact zero_le
 
 end Cslib.Algorithms.Networking.NetworkCalculus

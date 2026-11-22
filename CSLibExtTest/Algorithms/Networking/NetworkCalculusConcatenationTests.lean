@@ -83,4 +83,68 @@ theorem concat_unsustainable_rate_top {r b R₁ R₂ T₁ T₂ : ℝ≥0}
   rw [convCurve_rateLatency]
   exact hdev_top_of_rate h
 
+/-- Zero-bucket regression: the zero flow through the two Intserv nodes has
+delay `0` at the named slots, and `delay_concat_rateLatency` applies at
+`r = b = 0` with bound `1 + 2 + 0 / min 2 3`. -/
+theorem concat_zero_tokenBucket_delay :
+    delay (fun _ => 0) (fun _ => 0) 0 = 0 ∧
+    delay (fun _ => 0) (fun _ => 0) 1 = 0 ∧
+    delay (fun _ => 0) (fun _ => 0) 2 = 0 ∧
+    delay (fun _ => 0) (fun _ => 0) 7
+      ≤ ((1 + 2 + 0 / min 2 3 : ℝ≥0) : ℝ≥0∞) := by
+  have hflow : IsCumulativeFlow (fun _ => 0) := ⟨fun _ _ _ => le_rfl, rfl⟩
+  have htb0 : ∀ w : ℝ≥0, tokenBucket 0 0 w = 0 := fun w => by
+    unfold tokenBucket
+    split <;> simp
+  have hα : IsArrivalCurve (fun _ => 0) (tokenBucket 0 0) := by
+    refine ⟨?_, ?_⟩
+    · intro a b _
+      simp [htb0 a, htb0 b]
+    · intro s t _
+      show (0 : ℝ≥0) - 0 ≤ tokenBucket 0 0 (t - s)
+      rw [tsub_self]
+      exact zero_le
+  have hmonoRL : ∀ (R T : ℝ≥0), Monotone (rateLatency R T) := by
+    intro R T a b hab
+    show R * max (a - T) 0 ≤ R * max (b - T) 0
+    exact mul_le_mul_of_nonneg_left
+      (max_le_max (tsub_le_tsub_right hab _) le_rfl) zero_le
+  have hzeroRL : ∀ (R T : ℝ≥0), rateLatency R T 0 = 0 := fun R T => by
+    simp [rateLatency]
+  have hservRL : ∀ (R T : ℝ≥0) (t : ℝ≥0),
+      minPlusConv (fun _ => 0) (rateLatency R T) t ≤ ((0 : ℝ≥0) : ℝ≥0∞) := by
+    intro R T t
+    have h := minPlusConv_le (f := (fun _ => 0)) (g := rateLatency R T)
+      (t := t) (s := 0) zero_le
+    rw [hzeroRL R T] at h
+    simpa using h
+  have hβ₁ : IsServiceCurve (fun _ => 0) (fun _ => 0) (rateLatency 2 1) :=
+    ⟨hmonoRL 2 1, hzeroRL 2 1, fun t => by
+      have h := hservRL 2 1 t
+      simpa using h⟩
+  have hβ₂ : IsServiceCurve (fun _ => 0) (fun _ => 0) (rateLatency 3 2) :=
+    ⟨hmonoRL 3 2, hzeroRL 3 2, fun t => by
+      have h := hservRL 3 2 t
+      simpa using h⟩
+  have hr : (0 : ℝ≥0) ≤ min 2 3 := zero_le
+  have hRpos : (0 : ℝ≥0) < min 2 3 := lt_min (by norm_num) (by norm_num)
+  have hdelay0 : ∀ t : ℝ≥0, delay (fun _ => 0) (fun _ => 0) t = 0 := by
+    intro t
+    have h0 : (fun _ => (0 : ℝ≥0)) t ≤ (fun _ => (0 : ℝ≥0)) (t + 0) := by
+      show (0 : ℝ≥0) ≤ 0
+      exact le_rfl
+    unfold delay
+    refine le_antisymm ?_ zero_le
+    calc (⨅ u : { τ : ℝ≥0 //
+            (fun _ => (0 : ℝ≥0)) t ≤ (fun _ => (0 : ℝ≥0)) (t + τ) },
+          (u.val : ℝ≥0∞))
+          ≤ ((0 : ℝ≥0) : ℝ≥0∞) :=
+            iInf_le _ (⟨0, h0⟩ : { τ : ℝ≥0 //
+              (fun _ => (0 : ℝ≥0)) t ≤ (fun _ => (0 : ℝ≥0)) (t + τ) })
+      _ = 0 := ENNReal.coe_zero
+  have hbound := delay_concat_rateLatency (R := fun _ => 0) (Rmid := fun _ => 0)
+    (R' := fun _ => 0) (r := 0) (b := 0) (R₁ := 2) (R₂ := 3) (T₁ := 1) (T₂ := 2)
+    hflow hflow hflow hα hβ₁ hβ₂ hr hRpos 7
+  exact ⟨hdelay0 0, hdelay0 1, hdelay0 2, hbound⟩
+
 end Cslib.Algorithms.Networking.NetworkCalculus
