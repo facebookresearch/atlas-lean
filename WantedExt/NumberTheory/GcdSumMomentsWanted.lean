@@ -38,22 +38,25 @@ namespace MetaMathlibExt
 
 open Complex Filter Asymptotics Polynomial
 
-/-- The mean gcd-sum function `A(n) = P(n)/n`, where `P(n) = ∑_{j=1}^n gcd(j, n)` is Pillai's
-gcd-sum function (`A(0) = 0` by the convention `x / 0 = 0`).
+/-- **The mean gcd-sum function.** For a natural number $n$, let $P(n) = \sum_{j=1}^{n} \gcd(j, n)$
+be Pillai's gcd-sum function. The mean gcd-sum function is the real-valued function given by
+$A(n) = P(n)/n$ for $n \ge 1$ and $A(0) = 0$.
 
 Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
 Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Section 1 (definition of `A(n)`). -/
 noncomputable def gcdSumMean (n : ℕ) : ℝ :=
   (∑ j ∈ Finset.Icc 1 n, (Nat.gcd j n : ℝ)) / n
 
-/-- `A(1) = 1`.
+/-- **The mean gcd-sum function at $1$.** The mean gcd-sum function $A$ satisfies $A(1) = 1$.
 
 Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
 Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Section 1 (definition of `A(n)`). -/
 theorem gcdSumMean_one : gcdSumMean 1 = 1 := by
   simp [gcdSumMean]
 
-/-- `A(2) = 3/2`, since `P(2) = gcd(1, 2) + gcd(2, 2) = 3`.
+/-- **The mean gcd-sum function at $2$.** The mean gcd-sum function $A$ satisfies $A(2) = 3/2$,
+since $A(2) = P(2)/2$, where $P(n) = \sum_{j=1}^{n} \gcd(j, n)$ is Pillai's gcd-sum function
+and $P(2) = \gcd(1, 2) + \gcd(2, 2) = 3$.
 
 Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
 Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Section 1 (definition of `A(n)`). -/
@@ -61,8 +64,9 @@ theorem gcdSumMean_two : gcdSumMean 2 = 3 / 2 := by
   rw [gcdSumMean, show Finset.Icc 1 2 = {1, 2} by decide]
   norm_num
 
-/-- `A(n) = ∑_{d ∣ n} φ(d)/d` for `n ≥ 1`, the divisor-sum form the paper records next to the
-definition.
+/-- **Divisor-sum formula for the mean gcd-sum function.** For every natural number $n \ge 1$,
+the mean gcd-sum function $A$ satisfies $A(n) = \sum_{d \mid n} \varphi(d)/d$, where $\varphi$ is
+Euler's totient function and the sum runs over the positive divisors $d$ of $n$.
 
 Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
 Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Section 1 (Pillai's identity). -/
@@ -74,8 +78,12 @@ theorem gcdSumMean_eq_sum_totient_div {n : ℕ} (hn : 0 < n) :
   have : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
   field_simp
 
-/-- **Theorem 1** (`k = 2`). There are a real polynomial `P` and a constant `C` with
-`∑_{n ≤ x} A(n)^2 = x P(log x) + O(x^{1/2} exp(C (log log x)^2))` as `x → ∞`.
+/-- **Asymptotic formula for the second moment of the mean gcd-sum function.** For $n \ge 1$ let
+$A(n) = \frac{1}{n} \sum_{j=1}^{n} \gcd(j, n)$ be the mean gcd-sum function. There are a real
+polynomial $P$ and a real constant $C$ such that, as $x \to \infty$,
+
+$$\sum_{1 \le n \le x} A(n)^2 = x P(\log x) +
+O\left(x^{1/2} \exp\left(C (\log \log x)^2\right)\right).$$
 
 Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
 Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Theorem 1 (`integers-2026-A70-thm-1`). -/
@@ -84,8 +92,12 @@ public theorem_wanted sum_gcdSumMean_sq_asymptotic :
       (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, gcdSumMean n ^ 2 - x * P.eval (Real.log x))
         =O[atTop] fun x => x ^ (1 / 2 : ℝ) * Real.exp (C * Real.log (Real.log x) ^ 2)
 
-/-- **Theorem 2** (`k = 3`). There are a real polynomial `P` and a constant `C` with
-`∑_{n ≤ x} A(n)^3 = x P(log x) + O(x^{5/8} exp(C (log log x)^2))` as `x → ∞`.
+/-- **Asymptotic formula for the third moment of the mean gcd-sum function.** For $n \ge 1$ let
+$A(n) = \frac{1}{n} \sum_{j=1}^{n} \gcd(j, n)$ be the mean gcd-sum function. There are a real
+polynomial $P$ and a real constant $C$ such that, as $x \to \infty$,
+
+$$\sum_{1 \le n \le x} A(n)^3 = x P(\log x) +
+O\left(x^{5/8} \exp\left(C (\log \log x)^2\right)\right).$$
 
 Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
 Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Theorem 2 (`integers-2026-A70-thm-2`). -/
@@ -94,8 +106,11 @@ public theorem_wanted sum_gcdSumMean_cube_asymptotic :
       (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, gcdSumMean n ^ 3 - x * P.eval (Real.log x))
         =O[atTop] fun x => x ^ (5 / 8 : ℝ) * Real.exp (C * Real.log (Real.log x) ^ 2)
 
-/-- **Theorem 3** (`k = 4`). There is a real polynomial `P` such that for every `ε > 0`,
-`∑_{n ≤ x} A(n)^4 = x P(log x) + O_ε(x^{157/199 + ε})` as `x → ∞`.
+/-- **Asymptotic formula for the fourth moment of the mean gcd-sum function.** For $n \ge 1$ let
+$A(n) = \frac{1}{n} \sum_{j=1}^{n} \gcd(j, n)$ be the mean gcd-sum function. There is a real
+polynomial $P$ such that for every $\varepsilon > 0$, as $x \to \infty$,
+
+$$\sum_{1 \le n \le x} A(n)^4 = x P(\log x) + O_\varepsilon\left(x^{157/199 + \varepsilon}\right).$$
 
 Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
 Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Theorem 3 (`integers-2026-A70-thm-3`). -/
@@ -104,9 +119,13 @@ public theorem_wanted sum_gcdSumMean_pow_four_asymptotic :
       (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, gcdSumMean n ^ 4 - x * P.eval (Real.log x))
         =O[atTop] fun x => x ^ (157 / 199 + ε)
 
-/-- **Theorem 4** (`k ≥ 5`). For each fixed `k ≥ 5` there is a real polynomial `P` such that
-for every `ε > 0`,
-`∑_{n ≤ x} A(n)^k = x P(log x) + O_{k,ε}(x^{1 + 2ε - 42/(13 · 2^k - 9)})` as `x → ∞`.
+/-- **Asymptotic formula for the higher moments of the mean gcd-sum function.** For $n \ge 1$ let
+$A(n) = \frac{1}{n} \sum_{j=1}^{n} \gcd(j, n)$ be the mean gcd-sum function, and let $k \ge 5$ be
+an integer. There is a real polynomial $P$ such that for every $\varepsilon > 0$, as
+$x \to \infty$,
+
+$$\sum_{1 \le n \le x} A(n)^k = x P(\log x) +
+O_{k,\varepsilon}\left(x^{1 + 2\varepsilon - 42/(13 \cdot 2^k - 9)}\right).$$
 
 Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
 Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Theorem 4 (`integers-2026-A70-thm-4`). -/
@@ -115,12 +134,20 @@ public theorem_wanted sum_gcdSumMean_pow_asymptotic (k : ℕ) (hk : 5 ≤ k) :
       (fun x : ℝ => ∑ n ∈ Finset.Icc 1 ⌊x⌋₊, gcdSumMean n ^ k - x * P.eval (Real.log x))
         =O[atTop] fun x => x ^ (1 + 2 * ε - 42 / (13 * 2 ^ k - 9))
 
-/-- **Lemma 8** (structure of `F_k`). For every `k`, there are Dirichlet series
-`G_k(s) = ∑ g(n) n^{-s}`, absolutely convergent for `ℜ s > 1/2`, and
-`G̃_{k,2}(s) = ∑ h(n) n^{-s}`, absolutely convergent for `ℜ s > 1/3`, with
-`∑ A(n)^k n^{-s} = ζ(s)^{2^k} G_k(s)` and `G_k(s) ζ(2s)^{4^k - 3^k - C(2^k, 2)} = G̃_{k,2}(s)`
-for `ℜ s > 1`. The exponent is a natural number (`3^k + C(2^k, 2) ≤ 4^k`). The explicit Euler
-product (3) for `G̃_{k,2}` is not stated.
+/-- **Factorization of the Dirichlet series of powers of the mean gcd-sum function.** Let $k$ be a
+natural number and let $A$ be the mean gcd-sum function. There are functions
+$g, h \colon \mathbb{N} \to \mathbb{C}$ such that the Dirichlet series
+$G_k(s) = \sum_{n \ge 1} g(n) n^{-s}$ converges absolutely for every complex $s$ with
+$\operatorname{Re} s > 1/2$, the Dirichlet series $\tilde G_{k,2}(s) = \sum_{n \ge 1} h(n) n^{-s}$
+converges absolutely for every complex $s$ with $\operatorname{Re} s > 1/3$, and for every complex
+$s$ with $\operatorname{Re} s > 1$,
+$$\sum_{n \ge 1} A(n)^k n^{-s} = \zeta(s)^{2^k} G_k(s)$$
+and
+$$G_k(s) \, \zeta(2s)^{4^k - 3^k - \binom{2^k}{2}} = \tilde G_{k,2}(s).$$
+
+The exponent $4^k - 3^k - \binom{2^k}{2}$ is a nonnegative integer, since
+$3^k + \binom{2^k}{2} \le 4^k$. The paper also gives an explicit Euler product for
+$\tilde G_{k,2}$, which is not stated here.
 
 Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
 Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Lemma 8 (`integers-2026-A70-lem-8`). -/
@@ -131,17 +158,19 @@ public theorem_wanted LSeries_gcdSumMean_pow_eq_riemannZeta_pow_mul (k : ℕ) :
         LSeries (fun n => ((gcdSumMean n ^ k : ℝ) : ℂ)) s = riemannZeta s ^ (2 ^ k) * LSeries g s ∧
         LSeries g s * riemannZeta (2 * s) ^ (4 ^ k - 3 ^ k - (2 ^ k).choose 2) = LSeries h s
 
-/-- **Theorem 5**, vanishing of the exponents `ℓ_m`: for `m ≥ 2^k - 1`,
-`ℓ_m = ∑_{r=0}^{2^k} (-1)^r C(2^k, r) (m + 1 - r)^k = 0`.
+/-- **An alternating binomial sum vanishes.** Let $k$ and $m$ be natural numbers with $k \ge 2$
+and $m \ge 2^k - 1$. Then, computed in the integers,
+$$\sum_{r=0}^{\min(2^k,\, m+1)} (-1)^r \binom{2^k}{r} (m + 1 - r)^k = 0.$$
+Since $m + 1 \ge 2^k$, the upper limit of the sum is $2^k$.
 
-The sum is truncated at `r ≤ m + 1` (the coefficient of `p^{-ms}` in
-`(1 - p^{-s})^{2^k} ∑_a (a + 1)^k p^{-as}`, read off from (3)); for `m ≥ 2^k - 1` the truncation
-is vacuous. The printed untruncated sum vanishes for every `m` (a `2^k`-th difference of a
-polynomial of degree `k`), which contradicts the paper's own `ℓ_2 = 3^k - 4^k + C(2^k, 2)`
-(the exponent in (2) and (3)): at `k = 2`, `m = 2` the printed sum is `0` but the truncated sum is
-`-1`. With the truncation the hypothesis `m ≥ 2^k - 1` is needed (`k = 2`, `m = 2`). The paper's
-`k ≥ 2` is kept: at `k = 0` the `r = m + 1` term contributes `0^0 = 1` instead of the vanishing
-coefficient of a negative index, so the truncated sum is no longer the coefficient of (3).
+This sum is the exponent $\ell_m$ of the paper: the coefficient of $p^{-ms}$ in
+$(1 - p^{-s})^{2^k} \sum_{a \ge 0} (a + 1)^k p^{-as}$, which is why it stops at $r = m + 1$. The
+paper prints the sum up to $r = 2^k$ for every $m$; that sum vanishes for every $m$, being a
+$2^k$-th difference of a polynomial of degree $k$, which contradicts the paper's own
+$\ell_2 = 3^k - 4^k + \binom{2^k}{2}$: for $k = m = 2$ the truncated sum is $-1$. So with the
+truncation the hypothesis $m \ge 2^k - 1$ is needed. The paper's hypothesis $k \ge 2$ is kept: for
+$k = 0$ the term $r = m + 1$ contributes $0^0 = 1$ rather than the coefficient of a negative
+index, so the truncated sum is no longer the coefficient read off from the paper's Euler product.
 
 Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
 Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Theorem 5 (`integers-2026-A70-thm-5`). -/
@@ -150,9 +179,15 @@ public theorem_wanted alternating_choose_two_pow_mul_pow_eq_zero (k m : ℕ) (hk
     ∑ r ∈ Finset.range (min (2 ^ k) (m + 1) + 1),
       (-1 : ℤ) ^ r * ((2 ^ k).choose r : ℤ) * ((m : ℤ) + 1 - r) ^ k = 0
 
-/-- **Theorem 5**, the case `k = 2`: `F_2(s) = ζ(s)^4 / ζ(2s) · G̃_{2,2}(s)` for `ℜ s > 1`,
-where `G̃_{2,2}(s) = ∑ h(n) n^{-s}` converges absolutely in every half-plane `ℜ s > 1/n`, that
-is, for `ℜ s > 0`.
+/-- **Dirichlet series of the square of the mean gcd-sum function.** Let $A$ be the mean gcd-sum
+function. There is a function $h \colon \mathbb{N} \to \mathbb{C}$ such that the Dirichlet series
+$\tilde G_{2,2}(s) = \sum_{n \ge 1} h(n) n^{-s}$ converges absolutely for every complex $s$ with
+$\operatorname{Re} s > 0$, and for every complex $s$ with $\operatorname{Re} s > 1$,
+$$\sum_{n \ge 1} A(n)^2 n^{-s} = \frac{\zeta(s)^4}{\zeta(2s)} \, \tilde G_{2,2}(s).$$
+
+This is the case $k = 2$ of the paper's Theorem 5, which gives the absolute convergence of
+$\tilde G_{2,2}(s)$ in every half-plane $\operatorname{Re} s > 1/N$ with $N \ge 1$, that is, for
+$\operatorname{Re} s > 0$.
 
 Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
 Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Theorem 5 (`integers-2026-A70-thm-5`). -/
@@ -162,8 +197,9 @@ public theorem_wanted LSeries_gcdSumMean_sq_eq_riemannZeta_pow_four_div :
         LSeries (fun n => ((gcdSumMean n ^ 2 : ℝ) : ℂ)) s =
           riemannZeta s ^ 4 / riemannZeta (2 * s) * LSeries h s
 
-/-- **Lemma 2** (quoted from Ivić). `∫_{T/2}^T |ζ(5/8 + i t)|^8 dt ≪ T (log T)^{38}` for all
-sufficiently large `T`.
+/-- **Ivić's eighth-moment bound on the line $\operatorname{Re} s = 5/8$.** There are real
+constants $C$ and $T_0$ such that for every real $T \ge T_0$,
+$$\int_{T/2}^{T} |\zeta(5/8 + it)|^8 \, dt \le C T (\log T)^{38}.$$
 
 Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
 Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Lemma 2 (`integers-2026-A70-lem-2`). -/
@@ -185,8 +221,9 @@ public theorem_wanted riemannZeta_twelfth_moment_asymptotic {σ : ℝ} (hσ₁ :
           ((ArithmeticFunction.zeta ^ 6 : ArithmeticFunction ℕ) n : ℝ) ^ 2 / (n : ℝ) ^ (2 * σ))
       =O[atTop] fun T => T ^ ((9 - 7 * σ) / 4 + ε)
 
-/-- **Lemma 5** (quoted). `∫_{10}^T |ζ(1/2 + i t)|^4 / |ζ(1 + 2 i t)| dt ≪ T (log T)^5` for
-all sufficiently large `T`.
+/-- **A weighted fourth-moment bound for $\zeta$ on the critical line.** There are real constants
+$C$ and $T_0$ such that for every real $T \ge T_0$,
+$$\int_{10}^{T} \frac{|\zeta(1/2 + it)|^4}{|\zeta(1 + 2it)|} \, dt \le C T (\log T)^5.$$
 
 Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
 Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Lemma 5 (`integers-2026-A70-lem-5`). -/
@@ -195,10 +232,16 @@ public theorem_wanted riemannZeta_fourth_moment_div_le :
       ∫ t in (10 : ℝ)..T, ‖riemannZeta (1 / 2 + t * I)‖ ^ 4 / ‖riemannZeta (1 + 2 * t * I)‖ ≤
         C * T * Real.log T ^ 5
 
-/-- **Lemma 7** (quoted, Ramachandra–Sankaranarayanan). There are constants `C` and `U₀` such
-that for every `U ≥ U₀` some `T* ∈ (U, 2U)` satisfies
-`|ζ(σ ± i T*)| ≤ exp(C (log log U)^2)` for all `σ ≥ 1/2`. The trailing `≪ U^ε` is a
-consequence and is not stated.
+/-- **Ramachandra–Sankaranarayanan bound for $\zeta$ at a well-chosen height.** Let $\zeta$ be the
+Riemann zeta function. There are real constants $C$ and $U_0$ such that for every real
+$U \ge U_0$ there is a real number $T$ with $U < T < 2U$ such that for every real $\sigma \ge 1/2$,
+$$
+|\zeta(\sigma + iT)| \le \exp\bigl(C (\log \log U)^2\bigr) \quad \text{and} \quad
+|\zeta(\sigma - iT)| \le \exp\bigl(C (\log \log U)^2\bigr).
+$$
+
+The source adds that this bound is $\ll U^{\varepsilon}$ for every $\varepsilon > 0$; that
+consequence is not part of this statement.
 
 Source: M. S. Datt, Ekta Soni, and A. Sankaranarayanan, *On the Asymptotic Formula for the
 Gcd-Sum Function*, INTEGERS 26 (2026), Article A70, Lemma 7 (`integers-2026-A70-lem-7`). -/

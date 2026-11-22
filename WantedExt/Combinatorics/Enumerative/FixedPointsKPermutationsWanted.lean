@@ -31,6 +31,7 @@ public import Mathlib.GroupTheory.Perm.Cycle.Type
 public import Mathlib.Probability.CDF
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import MathlibExt.Combinatorics.Enumerative.Stirling
+public import MathlibExt.Combinatorics.Sequences.NewtonInequalities
 
 namespace MetaMathlibExt
 
@@ -156,22 +157,6 @@ public theorem_wanted derangementCyclePolynomial_real_roots {n : ℕ} (hn : 2 �
     let D : ℝ[X] := ∑ k ∈ Finset.Icc 1 n,
       C (kPermFixedPointCount (n + k) k 0 : ℝ) * X ^ (k - 1)
     D.Splits
-
-/-- Corollary 1 (unimodality part): a positive sequence `(a_j)_{j=0}^{n}` satisfying Newton's
-inequalities has a single maximum or a plateau of two elements: it strictly increases up to some
-`m`, then strictly decreases, possibly after one equality `a_m = a_{m+1}`. The paper's "SLC"
-conclusion is not stated (the abbreviation is not defined in the extracted statement).
-
-Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
-INTEGERS 24 (2024), Article A54, Corollary 1 (`integers-2024-A54-cor-1`). -/
-public theorem_wanted unimodal_of_newton_inequalities {a : ℕ → ℝ} {n : ℕ}
-    (hpos : ∀ j ≤ n, 0 < a j)
-    (hnewton : ∀ j, 1 ≤ j → j ≤ n - 1 →
-      ((j + 1 : ℝ) / j) * (((n : ℝ) - j + 1) / ((n : ℝ) - j)) * (a (j - 1) * a (j + 1)) ≤
-        a j ^ 2) :
-    ∃ m ≤ n, StrictMonoOn a (Set.Icc 0 m) ∧
-      (StrictAntiOn a (Set.Icc m n) ∨
-        (m < n ∧ a m = a (m + 1) ∧ StrictAntiOn a (Set.Icc (m + 1) n)))
 
 /-- Corollary 2 (unimodality part): for `k ≤ n` the sequence `(a(n, k, j))_{j=0}^{k}` is unimodal
 with a peak or a plateau of two elements: it weakly increases up to its first maximizer `m`,

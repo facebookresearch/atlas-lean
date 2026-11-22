@@ -187,7 +187,8 @@ theorem residualMatrix_mul_self (hX : IsUnit (Xᵀ * X)) :
   rw [Matrix.sub_mul, Matrix.one_mul, Matrix.mul_assoc, olsMatrix_mul_residualMatrix hX,
     Matrix.mul_zero, sub_zero]
 
-/-- The OLS residuals `y - X β̂` are `residualMatrix X *ᵥ y`. -/
+/-- For every design matrix, `y - X β̂ = residualMatrix X *ᵥ y` with `β̂ = olsEstimator X y`. When
+`Xᵀ * X` is invertible, this is the least-squares residual vector. -/
 theorem sub_mulVec_olsEstimator (X : Matrix m k ℝ) (y : m → ℝ) :
     y - X *ᵥ olsEstimator X y = residualMatrix X *ᵥ y := by
   rw [residualMatrix, sub_mulVec, one_mulVec, olsEstimator, mulVec_mulVec]
