@@ -73,12 +73,6 @@ private lemma odd_iff_padicValNat_two_eq_zero (m : ℕ) (hm : m ≠ 0) :
     have h1 := one_le_padicValNat_of_dvd hm hev
     omega
 
-private lemma digits_two_sum_le (n : ℕ) : (Nat.digits 2 n).sum ≤ n := by
-  have h1 : (1 : ℕ) ≤ 2 := by norm_num
-  calc (Nat.digits 2 n).sum ≤ Nat.ofDigits 2 (Nat.digits 2 n) :=
-        Nat.sum_le_ofDigits (Nat.digits 2 n) h1
-    _ = n := Nat.ofDigits_digits 2 n
-
 private lemma digits_two_succ_add (n : ℕ) :
     (Nat.digits 2 n).sum + 1
       = (Nat.digits 2 (n + 1)).sum + padicValNat 2 (n + 1) := by
@@ -91,8 +85,8 @@ private lemma digits_two_succ_add (n : ℕ) :
   have hneF : n.factorial ≠ 0 := Nat.factorial_ne_zero n
   have hmul := padicValNat.mul (p := 2) (a := n + 1) (b := n.factorial) hne1 hneF
   rw [← hfact] at hmul
-  have hs1 := digits_two_sum_le n
-  have hs2 := digits_two_sum_le (n + 1)
+  have hs1 := Nat.digit_sum_le 2 n
+  have hs2 := Nat.digit_sum_le 2 (n + 1)
   omega
 
 private lemma ofDigits_two_eq_zero_of_sum_eq_zero (L : List ℕ) (hsum : L.sum = 0) :
@@ -143,18 +137,18 @@ private lemma pow_two_of_digits_sum_eq_one (m : ℕ) (_hm : m ≠ 0)
   rw [Nat.ofDigits_digits] at hk
   exact ⟨k, hk⟩
 
-/-- Catalan parity characterization: `catalan n` is odd if and only if `n` is one
-less than a power of two, i.e. `∃ a : ℕ, n = 2 ^ a - 1`.
+/-- **Parity of Catalan numbers.** For every natural number $n$, the $n$th Catalan number $C_n$
+is odd if and only if $n = 2^a - 1$ for some natural number $a$.
 
-Authoritative source: Alon Regev, "The Central Component of a Triangulation",
+Proves `Wanted` entry `catalan_odd_iff`.
+
+Source: Alon Regev, "The Central Component of a Triangulation",
 Journal of Integer Sequences 16 (2013), Article 13.4.1, theorem `oddcats`,
 lines 132–147 of <https://cs.uwaterloo.ca/journals/JIS/VOL16/Regev/regev4.tex>.
 This entry records the displayed theorem statement. Lines 85–88 define `C_n`
 with the standard indexing used by Mathlib's `catalan`, so no index shift is
 required. The natural subtraction in `2 ^ a - 1` is safe because `2 ^ a` is
 positive. No parallel Catalan definition is introduced.
-
-Proves `Wanted` entry `catalan_odd_iff`.
 -/
 theorem catalan_odd_iff (n : ℕ) :
     Odd (catalan n) ↔ ∃ a : ℕ, n = 2 ^ a - 1 := by

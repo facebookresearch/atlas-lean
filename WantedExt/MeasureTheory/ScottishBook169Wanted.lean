@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
+public import Mathlib.MeasureTheory.Measure.Hausdorff
 public import Mathlib.Algebra.Order.Module.Field
 public import Mathlib.Data.EReal.Inv
 public import Mathlib.Tactic.Measurability
@@ -22,14 +22,18 @@ public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 
 @[expose] public section
 
+open MeasureTheory
+
 namespace MathlibExt.MeasureTheory.ScottishBook169Wanted
 
-/-- Two plane sets are congruent when an isometry of the plane carries
-one onto the other. -/
+/-- **Congruent plane sets.** Two sets $E$ and $F$ in the Euclidean plane $\mathbb{R}^2$ are
+congruent when some isometry of the plane onto itself maps $E$ onto $F$. -/
 def AreCongruent (E F : Set (EuclideanSpace ℝ (Fin 2))) : Prop :=
   ∃ T : EuclideanSpace ℝ (Fin 2) ≃ᵢ EuclideanSpace ℝ (Fin 2), T '' E = F
 
-/-- `μ` is equal on congruent sets. -/
+/-- **Congruence-invariant set functions on the plane.** A function $\mu$ that assigns to every
+subset of the Euclidean plane $\mathbb{R}^2$ a value in $[0, \infty]$ is congruence invariant when
+$\mu(E) = \mu(F)$ for all congruent plane sets $E$ and $F$. -/
 def IsCongruenceInvariant (μ : Set (EuclideanSpace ℝ (Fin 2)) → ENNReal) : Prop :=
   ∀ E F : Set (EuclideanSpace ℝ (Fin 2)), AreCongruent E F → μ E = μ F
 
@@ -42,32 +46,31 @@ def IsCountablyAdditive (μ : Set (EuclideanSpace ℝ (Fin 2)) → ENNReal) : Pr
 
 /-- The countably additive reading of Problem 169: there is a function
 `μ`, defined for all plane sets, equal on congruent sets, countably
-additive, extending the Caratheodory linear measure (read as Lebesgue
-volume on measurable sets), with values in `[0, +∞]` (automatic for
-`ENNReal`). -/
+additive, extending Carathéodory's linear measure (the one-dimensional
+Hausdorff measure on measurable sets), with values in `[0, +∞]`
+(automatic for `ENNReal`). -/
 def CountablyAdditiveCongruenceClaim : Prop :=
   ∃ μ : Set (EuclideanSpace ℝ (Fin 2)) → ENNReal,
     IsCongruenceInvariant μ ∧ IsCountablyAdditive μ ∧
     ∀ E : Set (EuclideanSpace ℝ (Fin 2)), MeasurableSet E →
-      μ E = MeasureTheory.volume E
+      μ E = μH[1] E
 
 /--
 The countably additive reading is false in ZFC. Sketch: let
-`V₀ ⊆ [0,1]` meet each `ℚ`-coset of `ℝ` exactly once (Vitali selector)
-and put `V = V₀ × [0,1]`. Enumerating `ℚ ∩ [-1,1]` as `(qₙ)`, the
-translates `Tₙ = V + (qₙ, 0)` are pairwise disjoint, each congruent to
-`V`, so all have the same mass `c = μ V`. Their union contains the unit
-square `Q = [0,1] × [0,1]` and lies in the strip `[-1,2] × [0,1]` of
-volume 3, so countable additivity and monotonicity give
-`1 = μ Q ≤ μ U ≤ 3`, while countable additivity also gives
-`μ U = ∑'ₙ c`, which is `0` if `c = 0` and `+∞` if `c > 0`, a
+`V₀ ⊆ [0,1]` meet each `ℚ`-coset represented in `[0,1]` exactly once
+(Vitali selector) and put `V = V₀ × {0}`. Enumerating `ℚ ∩ [-1,1]` as
+`(qₙ)`, the translates `Tₙ = V + (qₙ, 0)` are pairwise disjoint, each
+congruent to `V`, so all have the same mass `c = μ V`. Their union
+contains the unit segment `[0,1] × {0}` and lies in `[-1,2] × {0}`,
+of linear measures `1` and `3` respectively, so countable additivity
+and monotonicity give `1 ≤ μ U ≤ 3`, while countable additivity also
+gives `μ U = ∑'ₙ c`, which is `0` if `c = 0` and `+∞` if `c > 0`, a
 contradiction. Hence no such `μ` exists. This refutes the countably
 additive formalization only. The typescript says bare "additive"; the
-finite-additivity reading is Banach's 1923 theorem (a Banach measure: a
-finitely additive, isometry-invariant function on all plane sets
-extending Lebesgue measure), not this claim, and is not asserted here.
+finite-additivity reading is not asserted here.
 Source: E. Szpilrajn, Problem 169 of the Scottish Book; typescript
-PDF p.78, printed p.75. Banach, Fund. Math. 4 (1923), 7-33.
+PDF p.78, printed p.75. C. Carathéodory, *Über das lineare Mass von
+Punktmengen*, Nachr. Ges. Wiss. Göttingen (1914), 404-426.
 -/
 theorem_wanted no_countably_additive_congruence_measure :
   ¬ CountablyAdditiveCongruenceClaim

@@ -10,18 +10,25 @@ module
 public import MathlibExt.Analysis.ODE.FiniteElement1D
 public import MathlibExt.Analysis.ODE.SturmLiouvilleExistence
 public import MathlibExt.Analysis.ODE.SturmLiouvilleUniqueness
+public import PhyslibExt.Mechanics.EngineeringStatics
+public import PhyslibExt.Mechanics.EulerBernoulliBeam
 public import PhyslibExt.Units.EngineeringQuantities
 import MathlibExt.Analysis.Calculus.ZeroFourthDerivative
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.FunProp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# Prismatic members: bars and shafts with fixed or loaded ends, clamped-free cantilever
+# Prismatic members: bars and shafts, cantilever and simply supported beams, closed-cell torsion
 
 ## i. Overview
 
@@ -76,6 +83,39 @@ problem with `k = GJ`, handled by the same lemmas. With both ends free (end forc
 `x = 0`, outward normal `-x`, and `P₁` at `x = L`) a solution can be shifted by a rigid
 translation and exists only if the net load vanishes, `P₀ + P₁ + ∫₀ᴸ f = 0`.
 
+A prismatic member whose cross-section is a single thin closed rectangular cell, with median sides
+`a, b > 0` (the median rectangle `[-a/2, a/2] × [-b/2, b/2]` in the section plane), uniform wall
+thickness `t > 0` and shear modulus `G > 0`, carries a uniform shear flow `q` (force per length of
+median line) in torsion. On each straight wall the flow integrates to the resultant `q ℓ` along the
+wall, with line of action through the wall midpoint; positive `q` circulates counterclockwise
+about `+z`. The four wall resultants have zero sum, so they form a couple, and their moment
+`Mechanics.EngineeringStatics.momentAbout` about every reference point is `(0, 0, 2 a b q)`: the
+cell carries the torque `T = 2 a b q = 2 A q`, with `A = a b` the enclosed area. The stated
+thin-wall compatibility law, the declared reduced model of the twist (Bredt's second formula),
+equates the circulation `∑ walls (q / (G t)) ℓ` of the wall shear strain to `2 A θ'`; with the
+median perimeter `2 (a + b)` it gives the twist rate `θ' = T (a + b) / (2 G a² b² t)`. The wall
+shear stress is `τ = q / t = T / (2 a b t)`, and `T = G J θ'` with the torsion constant
+`J = 4 A² t / (2 (a + b)) = 2 a² b² t / (a + b)`, so `G J` is the cell's effective torsional
+rigidity, the `GJ` of the circular-shaft reading above. Not claimed: a convergence theorem from
+three-dimensional elasticity, warping restraint, or the open-section formula. Cutting one wall
+leaves wall resultants that do not sum to zero, so they are not a couple and no closed-cell torque
+is carried; at zero thickness the torsion constant vanishes, so no twist rate carries a nonzero
+torque.
+
+A prismatic Euler-Bernoulli beam of positive length `L` and constant bending stiffness `EI > 0`
+rests on a pin at `x = 0` and a pin (or roller) at `x = L` and carries a constant distributed load
+`q`; the deflection `w` and `q` are positive in the same transverse direction, and a support
+reaction is positive when it acts against the load. The model is `EI * w'''' = q` with
+`w 0 = w L = 0` and `w'' 0 = w'' L = 0` (`IsSimplySupportedSolution`, which also records
+`0 < L`); the pins constrain the deflection, not the slope. The existing quartic witness
+`Mechanics.EulerBernoulli.uniformLoadDeflection q EI L` solves the problem, and every solution
+agrees with it on `[0, L]`: the difference of two solutions is a cubic on `[0, L]` by the cubic
+lemma, and the two deflection and two curvature conditions force it to vanish. So the solutions are
+exactly the `C⁴` functions equal to the quartic on `[0, L]`; every solution has the support
+reactions `-(EI * w''' 0) = EI * w''' L = q * L / 2` (shear force `-(EI * w''')`, as for the
+cantilever) and the slopes `± q * L ^ 3 / (24 * EI)` at the pins. Replacing the two moment
+conditions by clamped slopes gives the different solution `q * x ^ 2 * (L - x) ^ 2 / (24 * EI)`.
+
 ## ii. Key results
 
 - `isFixedFixedSolution_scale`, `exists_isFixedFixedSolution`, `IsFixedFixedSolution.eqOn`.
@@ -101,6 +141,20 @@ translation and exists only if the net load vanishes, `P₀ + P₁ + ∫₀ᴸ f
 - `fixedTractionDisplacement_const`: the uniform-load closed form.
 - `IsFreeFreeSolution.add_const`, `IsFreeFreeSolution.net_load`: two free ends admit rigid
   translations and need zero net load.
+- `resultantForce_cellWallForce`, `momentAbout_cellWall`: the four wall resultants of the thin
+  closed cell form a couple of moment `(0, 0, 2 a b q)` about every reference point.
+- `isClosedCellCompatible_iff`: under the compatibility law the twist rate is
+  `T (a + b) / (2 G a² b² t)`.
+- `wallShearStress_eq`, `closedCellTorsionConstant_eq`, `torque_eq_rigidity_mul_twistRate`:
+  `τ = q / t = T / (2 a b t)` for `t > 0`, Bredt's torsion constant `J = 4 A² / ∑ ℓ / t`, and
+  `T = G J θ'`.
+- `isSimplySupportedSolution_uniformLoadDeflection`, `IsSimplySupportedSolution.eqOn`,
+  `isSimplySupportedSolution_iff`: the simply supported beam under a uniform load, existence and
+  uniqueness on `[0, L]`.
+- `IsSimplySupportedSolution.reactions`, `IsSimplySupportedSolution.slopes`: the support reactions
+  `q * L / 2` and the unconstrained slopes of every solution.
+- `clampedSlopes_change_solution`: clamped slopes in place of the moment conditions give a
+  different solution.
 
 ## iii. Table of contents
 
@@ -113,6 +167,11 @@ translation and exists only if the net load vanishes, `P₀ + P₁ + ∫₀ᴸ f
 - G. Fixed-traction bar and shaft: load path, existence and uniqueness
 - H. Fixed-traction bar: uniform load
 - I. Boundary example: two free ends
+- J. Thin closed rectangular cell: wall resultants and torque
+- K. Thin closed rectangular cell: compatibility, shear stress and rigidity
+- L. Simply supported beam: existence and uniqueness
+- M. Simply supported beam: support reactions and slopes
+- N. Simply supported beam: clamped slopes change the solution
 
 ## iv. References
 
@@ -120,7 +179,11 @@ translation and exists only if the net load vanishes, `P₀ + P₁ + ∫₀ᴸ f
   circular shafts, cantilever deflections).
 - J. M. Gere and B. J. Goodno, *Mechanics of Materials*, 8th edition, 2013 (statically
   indeterminate bars and shafts under distributed loads; bars with distributed axial loads and
-  nonuniform torsion; differential equations of the deflection curve).
+  nonuniform torsion; differential equations of the deflection curve; thin-walled tubes in
+  torsion: shear flow, `T = 2 q A_m`, `τ = T / (2 t A_m)`, `J = 4 A_m² / ∫ ds / t`; simply
+  supported and fixed-end beams under a uniform load).
+- S. Timoshenko and J. N. Goodier, *Theory of Elasticity*, 3rd edition, 1970 (torsion of thin
+  tubular members: the twist condition `∮ τ ds = 2 G θ' A`).
 -/
 
 @[expose] public section
@@ -1196,6 +1259,396 @@ lemma IsFreeFreeSolution.net_load {k L P₀ P₁ : ℝ} {f u : ℝ → ℝ} (hL 
   have hk0 : k * derivWithin u (Set.Icc 0 L) 0 = -P₀ := by linarith
   rw [hLend, hk0] at hFTC
   linarith
+
+section ClosedCell
+
+open Mechanics.EngineeringStatics (momentAbout)
+open PhyslibExt.Mechanics.HarmonicMechanics (resultantForce)
+
+/-! ## J. Thin closed rectangular cell: wall resultants and torque -/
+
+/-- Midpoints of the four walls of the median rectangle `[-a/2, a/2] × [-b/2, b/2]` in the section
+plane `z = 0`, in counterclockwise order about `+z`: bottom, right, top, left. -/
+noncomputable def cellWallMidpoint (a b : ℝ) : Fin 4 → Fin 3 → ℝ :=
+  ![![0, -(b / 2), 0], ![a / 2, 0, 0], ![0, b / 2, 0], ![-(a / 2), 0, 0]]
+
+/-- Resultants of the uniform shear flow `q` on the four walls, in the order of
+`cellWallMidpoint`: on each straight wall the flow integrates to `q` times the wall length (`a` for
+the bottom and top walls, `b` for the right and left walls), directed along the wall in the
+counterclockwise sense about `+z` for `q > 0`, with line of action through the wall midpoint. -/
+noncomputable def cellWallForce (a b q : ℝ) : Fin 4 → Fin 3 → ℝ :=
+  ![![q * a, 0, 0], ![0, q * b, 0], ![-(q * a), 0, 0], ![0, -(q * b), 0]]
+
+/-- Lengths of the four walls along the median line, in the order of `cellWallMidpoint`. -/
+def cellWallLength (a b : ℝ) : Fin 4 → ℝ :=
+  ![a, b, a, b]
+
+/-- **The closed cell is self-equilibrated.** The four wall resultants sum to zero. -/
+lemma resultantForce_cellWallForce (a b q : ℝ) : resultantForce (cellWallForce a b q) = 0 := by
+  unfold resultantForce cellWallForce
+  rw [Fin.sum_univ_four]
+  ext i
+  fin_cases i <;> simp
+
+/-- **Torque from the four wall resultants.** About every reference point `O`, the wall resultants
+(no free couples) have the moment `(0, 0, 2 a b q)`: the cell carries the torque
+`T = 2 a b q = 2 A q` about the member axis `+z`, positive for counterclockwise shear flow. -/
+lemma momentAbout_cellWall (a b q : ℝ) (O : Fin 3 → ℝ) :
+    momentAbout (cellWallMidpoint a b) (cellWallForce a b q) (fun _ => 0) O =
+      ![0, 0, 2 * a * b * q] := by
+  unfold momentAbout cellWallMidpoint cellWallForce
+  rw [Fin.sum_univ_four]
+  simp only [add_zero, Pi.sub_apply, cross_apply]
+  ext i
+  fin_cases i <;> simp; ring
+
+/-! ## K. Thin closed rectangular cell: compatibility, shear stress and rigidity -/
+
+/-- The stated thin-wall compatibility law of a single closed cell (the declared reduced model):
+the circulation of the wall shear strain `q / (G t)` around the median line,
+`∑ walls (q / (G t)) ℓ`, equals twice the enclosed area `a b` times the twist rate `θ'`. -/
+def IsClosedCellCompatible (a b t G q θ' : ℝ) : Prop :=
+  ∑ i, q / (G * t) * cellWallLength a b i = 2 * (a * b) * θ'
+
+/-- Wall shear stress `τ = q / t` of the shear flow `q` in a wall of thickness `t`. -/
+noncomputable def wallShearStress (q t : ℝ) : ℝ :=
+  q / t
+
+/-- Torsion constant of the thin closed rectangular cell, `J = 4 A² t / S` with the enclosed area
+`A = a b` and the median perimeter `S = 2 (a + b)`: `J = 2 a² b² t / (a + b)`. `G J` is the
+effective torsional rigidity of the cell. -/
+noncomputable def closedCellTorsionConstant (a b t : ℝ) : ℝ :=
+  2 * a ^ 2 * b ^ 2 * t / (a + b)
+
+/-- **Twist rate under the compatibility law.** For `a, b, t, G > 0` and the torque `T` of the
+wall resultants about any reference point `O`, the compatibility law holds exactly when
+`θ' = T (a + b) / (2 G a² b² t)`. -/
+lemma isClosedCellCompatible_iff {a b t G q θ' T : ℝ} {O : Fin 3 → ℝ} (ha : 0 < a) (hb : 0 < b)
+    (ht : 0 < t) (hG : 0 < G)
+    (hT : T = momentAbout (cellWallMidpoint a b) (cellWallForce a b q) (fun _ => 0) O 2) :
+    IsClosedCellCompatible a b t G q θ' ↔ θ' = T * (a + b) / (2 * G * a ^ 2 * b ^ 2 * t) := by
+  have hT' : T = 2 * a * b * q := by
+    rw [hT, momentAbout_cellWall]
+    simp
+  unfold IsClosedCellCompatible cellWallLength
+  rw [Fin.sum_univ_four]
+  simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]
+  rw [hT']
+  have ha' : a ≠ 0 := ne_of_gt ha
+  have hb' : b ≠ 0 := ne_of_gt hb
+  have ht' : t ≠ 0 := ne_of_gt ht
+  have hG' : G ≠ 0 := ne_of_gt hG
+  have hab : a + b ≠ 0 := ne_of_gt (add_pos ha hb)
+  constructor
+  · intro h
+    field_simp at h ⊢
+    linear_combination -h / 2
+  · intro h
+    field_simp at h ⊢
+    linear_combination -2 * h
+
+/-- **Shear stress.** For `a, b ≠ 0` and a wall thickness `t > 0` the wall shear stress is
+`τ = q / t = T / (2 a b t)`, where `T` is the torque of the wall resultants. -/
+lemma wallShearStress_eq {a b t q T : ℝ} {O : Fin 3 → ℝ} (ha : a ≠ 0) (hb : b ≠ 0) (ht : 0 < t)
+    (hT : T = momentAbout (cellWallMidpoint a b) (cellWallForce a b q) (fun _ => 0) O 2) :
+    wallShearStress q t = T / (2 * a * b * t) := by
+  have hT' : T = 2 * a * b * q := by
+    rw [hT, momentAbout_cellWall]
+    simp
+  unfold wallShearStress
+  rw [hT']
+  have ht' : t ≠ 0 := ne_of_gt ht
+  field_simp
+
+/-- **The torsion constant is Bredt's.** For `a, b, t > 0`,
+`J = 4 A² / ∑ walls (ℓ / t)` with `A = a b`, and `J > 0`. -/
+lemma closedCellTorsionConstant_eq {a b t : ℝ} (ha : 0 < a) (hb : 0 < b) (ht : 0 < t) :
+    closedCellTorsionConstant a b t = 4 * (a * b) ^ 2 / ∑ i, cellWallLength a b i / t ∧
+      0 < closedCellTorsionConstant a b t := by
+  have ha' : a ≠ 0 := ne_of_gt ha
+  have hb' : b ≠ 0 := ne_of_gt hb
+  have ht' : t ≠ 0 := ne_of_gt ht
+  have hab : 0 < a + b := add_pos ha hb
+  have hab' : a + b ≠ 0 := ne_of_gt hab
+  unfold closedCellTorsionConstant cellWallLength
+  rw [Fin.sum_univ_four]
+  simp only [Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]
+  constructor
+  · field_simp
+    ring
+  · positivity
+
+/-- **Effective torsional rigidity.** For `a, b, t, G > 0`, under the compatibility law the torque
+of the wall resultants is the effective rigidity times the twist rate: `T = G J θ'`. -/
+lemma torque_eq_rigidity_mul_twistRate {a b t G q θ' T : ℝ} {O : Fin 3 → ℝ} (ha : 0 < a)
+    (hb : 0 < b) (ht : 0 < t) (hG : 0 < G)
+    (hT : T = momentAbout (cellWallMidpoint a b) (cellWallForce a b q) (fun _ => 0) O 2)
+    (h : IsClosedCellCompatible a b t G q θ') :
+    T = G * closedCellTorsionConstant a b t * θ' := by
+  have hθ := (isClosedCellCompatible_iff ha hb ht hG hT).mp h
+  unfold closedCellTorsionConstant
+  rw [hθ]
+  have ha' : a ≠ 0 := ne_of_gt ha
+  have hb' : b ≠ 0 := ne_of_gt hb
+  have ht' : t ≠ 0 := ne_of_gt ht
+  have hG' : G ≠ 0 := ne_of_gt hG
+  have hab : a + b ≠ 0 := ne_of_gt (add_pos ha hb)
+  field_simp
+
+end ClosedCell
+
+/-! ## L. Simply supported beam: existence and uniqueness -/
+
+open Mechanics.EulerBernoulli
+
+/-- The simply supported problem on a beam of positive length `L`: `w` is `C⁴`, satisfies
+`EI * w'''' = q` on `(0, L)`, and has zero deflection and zero curvature at both pins. The slopes
+at the pins are not constrained. -/
+structure IsSimplySupportedSolution (EI L q : ℝ) (w : ℝ → ℝ) : Prop where
+  span_pos : 0 < L
+  contDiff : ContDiff ℝ 4 w
+  eq : ∀ x ∈ Set.Ioo (0 : ℝ) L, EI * iteratedDeriv 4 w x = q
+  zero_left : w 0 = 0
+  zero_right : w L = 0
+  curvature_left : iteratedDeriv 2 w 0 = 0
+  curvature_right : iteratedDeriv 2 w L = 0
+
+/-- Normal form of the uniform-load quartic in powers of `x`. -/
+private lemma uld_eq (q EI L : ℝ) : uniformLoadDeflection q EI L = fun x =>
+    q / (24 * EI) * x ^ 4 + (-(2 * q * L) / (24 * EI)) * x ^ 3 + q * L ^ 3 / (24 * EI) * x ^ 1 := by
+  funext x
+  unfold uniformLoadDeflection
+  ring
+
+/-- The uniform-load quartic is `C⁴`. -/
+private lemma uld_contDiff (q EI L : ℝ) : ContDiff ℝ 4 (uniformLoadDeflection q EI L) := by
+  rw [uld_eq]
+  fun_prop
+
+/-- Iterated derivatives of the uniform-load quartic, term by term. -/
+private lemma iteratedDeriv_uld (q EI L : ℝ) (n : ℕ) (x : ℝ) :
+    iteratedDeriv n (uniformLoadDeflection q EI L) x =
+      q / (24 * EI) * iteratedDeriv n (fun x : ℝ => x ^ 4) x +
+      (-(2 * q * L) / (24 * EI)) * iteratedDeriv n (fun x : ℝ => x ^ 3) x +
+      q * L ^ 3 / (24 * EI) * iteratedDeriv n (fun x : ℝ => x ^ 1) x := by
+  rw [uld_eq]
+  have h1 : ContDiffAt ℝ n (fun x : ℝ => q / (24 * EI) * x ^ 4 +
+      (-(2 * q * L) / (24 * EI)) * x ^ 3) x := by fun_prop
+  have h2 : ContDiffAt ℝ n (fun x : ℝ => q * L ^ 3 / (24 * EI) * x ^ 1) x := by fun_prop
+  have h3 : ContDiffAt ℝ n (fun x : ℝ => q / (24 * EI) * x ^ 4) x := by fun_prop
+  have h4 : ContDiffAt ℝ n (fun x : ℝ => (-(2 * q * L) / (24 * EI)) * x ^ 3) x := by fun_prop
+  rw [iteratedDeriv_fun_add h1 h2, iteratedDeriv_fun_add h3 h4]
+  simp only [iteratedDeriv_const_mul_field]
+
+/-- Two `C⁴` functions that agree on `[0, L]`, `L > 0`, have the same derivatives up to order
+four at every point of `[0, L]`, endpoints included. -/
+private lemma iteratedDeriv_eq_of_eqOn {L : ℝ} (hL : 0 < L) {f g : ℝ → ℝ} (hf : ContDiff ℝ 4 f)
+    (hg : ContDiff ℝ 4 g) (h : Set.EqOn f g (Set.Icc 0 L)) {k : ℕ} (hk : k ≤ 4) {y : ℝ}
+    (hy : y ∈ Set.Icc 0 L) : iteratedDeriv k f y = iteratedDeriv k g y := by
+  have hU : UniqueDiffOn ℝ (Set.Icc (0 : ℝ) L) := uniqueDiffOn_Icc hL
+  rw [← iteratedDerivWithin_eq_iteratedDeriv hU ((hf.of_le (by exact_mod_cast hk)).contDiffAt) hy,
+    ← iteratedDerivWithin_eq_iteratedDeriv hU ((hg.of_le (by exact_mod_cast hk)).contDiffAt) hy]
+  exact iteratedDerivWithin_congr h hy
+
+/-- Existence: for a positive span the uniform-load quartic solves the simply supported
+problem. -/
+lemma isSimplySupportedSolution_uniformLoadDeflection {EI L : ℝ} (hEI : 0 < EI) (hL : 0 < L)
+    (q : ℝ) : IsSimplySupportedSolution EI L q (uniformLoadDeflection q EI L) := by
+  exact ⟨hL, uld_contDiff q EI L,
+    fun x _ => uniformLoadDeflection_ei_mul_iteratedDeriv_four q EI L hEI x,
+    uniformLoadDeflection_zero_left q EI L, uniformLoadDeflection_zero_right q EI L,
+    uniformLoadDeflection_secondDeriv_zero_left q EI L,
+    uniformLoadDeflection_secondDeriv_zero_right q EI L⟩
+
+/-- Uniqueness: every solution of the simply supported problem agrees with the uniform-load
+quartic on `[0, L]`. -/
+lemma IsSimplySupportedSolution.eqOn {EI L q : ℝ} {w : ℝ → ℝ} (hEI : 0 < EI)
+    (hw : IsSimplySupportedSolution EI L q w) :
+    Set.EqOn w (uniformLoadDeflection q EI L) (Set.Icc 0 L) := by
+  set d := fun y => w y - uniformLoadDeflection q EI L y with hd_def
+  have hdc : ContDiff ℝ 4 d := hw.contDiff.sub (uld_contDiff q EI L)
+  have hsub : ∀ (k : ℕ) (y : ℝ), k ≤ 4 → iteratedDeriv k d y =
+      iteratedDeriv k w y - iteratedDeriv k (uniformLoadDeflection q EI L) y := by
+    intro k y hk
+    have h1 : ContDiffAt ℝ k w y := (hw.contDiff.of_le (by exact_mod_cast hk)).contDiffAt
+    have h2 : ContDiffAt ℝ k (uniformLoadDeflection q EI L) y :=
+      ((uld_contDiff q EI L).of_le (by exact_mod_cast hk)).contDiffAt
+    exact iteratedDeriv_fun_sub h1 h2
+  have h4 : ∀ y ∈ Set.Ioo (0 : ℝ) L, iteratedDeriv 4 d y = 0 := by
+    intro y hy
+    rw [hsub 4 y le_rfl]
+    have e1 := hw.eq y hy
+    have e2 := uniformLoadDeflection_ei_mul_iteratedDeriv_four q EI L hEI y
+    have : EI * (iteratedDeriv 4 w y - iteratedDeriv 4 (uniformLoadDeflection q EI L) y) = 0 := by
+      rw [mul_sub, e1, e2, sub_self]
+    exact (mul_eq_zero.mp this).resolve_left hEI.ne'
+  obtain ⟨c₀, c₁, c₂, c₃, hc⟩ := exists_cubic_of_iteratedDeriv_four_eq_zero hdc h4
+  have hcub : ∀ k ≤ 3, ∀ y ∈ Set.Icc (0 : ℝ) L, iteratedDeriv k d y =
+      iteratedDeriv k (fun x : ℝ => c₀ + c₁ * x + c₂ * x ^ 2 + c₃ * x ^ 3) y :=
+    fun k hk y hy => iteratedDeriv_eq_of_eqOn hw.span_pos hdc (by fun_prop) hc (by omega) hy
+  have h0 : (0 : ℝ) ∈ Set.Icc (0 : ℝ) L := ⟨le_rfl, hw.span_pos.le⟩
+  have hLm : L ∈ Set.Icc (0 : ℝ) L := ⟨hw.span_pos.le, le_rfl⟩
+  have t0 : d 0 = 0 := by
+    simp only [hd_def, hw.zero_left, uniformLoadDeflection_zero_left, sub_self]
+  have tL : d L = 0 := by
+    simp only [hd_def, hw.zero_right, uniformLoadDeflection_zero_right, sub_self]
+  have t20 : iteratedDeriv 2 d 0 = 0 := by
+    rw [hsub 2 0 (by norm_num), hw.curvature_left, uniformLoadDeflection_secondDeriv_zero_left,
+      sub_self]
+  have t2L : iteratedDeriv 2 d L = 0 := by
+    rw [hsub 2 L (by norm_num), hw.curvature_right, uniformLoadDeflection_secondDeriv_zero_right,
+      sub_self]
+  obtain ⟨-, p2L, -⟩ := iteratedDeriv_cubic c₀ c₁ c₂ c₃ L
+  obtain ⟨-, p20, -⟩ := iteratedDeriv_cubic c₀ c₁ c₂ c₃ 0
+  have e2 : c₂ = 0 := by
+    have := hcub 2 (by norm_num) 0 h0
+    rw [t20, p20] at this
+    linarith
+  have e3 : c₃ = 0 := by
+    have := hcub 2 (by norm_num) L hLm
+    rw [t2L, p2L, e2] at this
+    have h' : c₃ * L = 0 := by linarith
+    exact (mul_eq_zero.mp h').resolve_right hw.span_pos.ne'
+  have e0 : c₀ = 0 := by
+    have := hc 0 h0
+    rw [t0] at this
+    linarith
+  have e1 : c₁ = 0 := by
+    have := hc L hLm
+    rw [tL, e0, e2, e3] at this
+    have h' : c₁ * L = 0 := by linarith
+    exact (mul_eq_zero.mp h').resolve_right hw.span_pos.ne'
+  intro x hx
+  simpa [hd_def, e0, e1, e2, e3, sub_eq_zero] using hc x hx
+
+/-- Characterization: for `EI > 0` and `L > 0` the solutions of the simply supported problem are
+exactly the `C⁴` functions that agree with the uniform-load quartic on `[0, L]`. -/
+lemma isSimplySupportedSolution_iff {EI L q : ℝ} {w : ℝ → ℝ} (hEI : 0 < EI) (hL : 0 < L) :
+    IsSimplySupportedSolution EI L q w ↔
+      ContDiff ℝ 4 w ∧ Set.EqOn w (uniformLoadDeflection q EI L) (Set.Icc 0 L) := by
+  refine ⟨fun hw => ⟨hw.contDiff, hw.eqOn hEI⟩, fun ⟨hc, he⟩ => ?_⟩
+  have key : ∀ k ≤ 4, ∀ y ∈ Set.Icc (0 : ℝ) L,
+      iteratedDeriv k w y = iteratedDeriv k (uniformLoadDeflection q EI L) y :=
+    fun k hk y hy => iteratedDeriv_eq_of_eqOn hL hc (uld_contDiff q EI L) he hk hy
+  have h0 : (0 : ℝ) ∈ Set.Icc (0 : ℝ) L := ⟨le_rfl, hL.le⟩
+  have hLm : L ∈ Set.Icc (0 : ℝ) L := ⟨hL.le, le_rfl⟩
+  refine ⟨hL, hc, fun x hx => ?_, ?_, ?_, ?_, ?_⟩
+  · rw [key 4 le_rfl x (Set.Ioo_subset_Icc_self hx)]
+    exact uniformLoadDeflection_ei_mul_iteratedDeriv_four q EI L hEI x
+  · rw [he h0]
+    exact uniformLoadDeflection_zero_left q EI L
+  · rw [he hLm]
+    exact uniformLoadDeflection_zero_right q EI L
+  · rw [key 2 (by norm_num) 0 h0]
+    exact uniformLoadDeflection_secondDeriv_zero_left q EI L
+  · rw [key 2 (by norm_num) L hLm]
+    exact uniformLoadDeflection_secondDeriv_zero_right q EI L
+
+/-! ## M. Simply supported beam: support reactions and slopes -/
+
+/-- Support reactions: every solution has the reaction `-(EI * w''' 0) = q * L / 2` at the left
+pin and `EI * w''' L = q * L / 2` at the right pin. -/
+lemma IsSimplySupportedSolution.reactions {EI L q : ℝ} {w : ℝ → ℝ} (hEI : 0 < EI)
+    (hw : IsSimplySupportedSolution EI L q w) :
+    -(EI * iteratedDeriv 3 w 0) = q * L / 2 ∧ EI * iteratedDeriv 3 w L = q * L / 2 := by
+  have heq := hw.eqOn hEI
+  have h0 : (0 : ℝ) ∈ Set.Icc (0 : ℝ) L := ⟨le_rfl, hw.span_pos.le⟩
+  have hLm : L ∈ Set.Icc (0 : ℝ) L := ⟨hw.span_pos.le, le_rfl⟩
+  rw [iteratedDeriv_eq_of_eqOn hw.span_pos hw.contDiff (uld_contDiff q EI L) heq (by norm_num) h0,
+    iteratedDeriv_eq_of_eqOn hw.span_pos hw.contDiff (uld_contDiff q EI L) heq (by norm_num) hLm,
+    iteratedDeriv_uld, iteratedDeriv_uld]
+  simp [iteratedDeriv_pow, iteratedDeriv_fun_id]
+  have hEI' : EI ≠ 0 := hEI.ne'
+  constructor
+  · field_simp
+    ring
+  · field_simp
+    ring
+
+/-- The pins do not constrain the slope: every solution has the slope `q * L ^ 3 / (24 * EI)` at
+the left pin and `-(q * L ^ 3 / (24 * EI))` at the right pin. -/
+lemma IsSimplySupportedSolution.slopes {EI L q : ℝ} {w : ℝ → ℝ} (hEI : 0 < EI)
+    (hw : IsSimplySupportedSolution EI L q w) :
+    deriv w 0 = q * L ^ 3 / (24 * EI) ∧ deriv w L = -(q * L ^ 3 / (24 * EI)) := by
+  have heq := hw.eqOn hEI
+  have h0 : (0 : ℝ) ∈ Set.Icc (0 : ℝ) L := ⟨le_rfl, hw.span_pos.le⟩
+  have hLm : L ∈ Set.Icc (0 : ℝ) L := ⟨hw.span_pos.le, le_rfl⟩
+  rw [← iteratedDeriv_one,
+    iteratedDeriv_eq_of_eqOn hw.span_pos hw.contDiff (uld_contDiff q EI L) heq (by norm_num) h0,
+    iteratedDeriv_eq_of_eqOn hw.span_pos hw.contDiff (uld_contDiff q EI L) heq (by norm_num) hLm,
+    iteratedDeriv_uld, iteratedDeriv_uld]
+  simp [iteratedDeriv_pow, iteratedDeriv_fun_id]
+  ring
+
+/-! ## N. Simply supported beam: clamped slopes change the solution -/
+
+/-- Clamped-clamped deflection under the uniform load `q`: `q * x ^ 2 * (L - x) ^ 2 / (24 * EI)`.
+-/
+noncomputable def clampedClampedDeflection (EI L q x : ℝ) : ℝ :=
+  q * x ^ 2 * (L - x) ^ 2 / (24 * EI)
+
+/-- Normal form of the clamped-clamped polynomial in powers of `x`. -/
+private lemma ccd_eq (EI L q : ℝ) : clampedClampedDeflection EI L q = fun x =>
+    q / (24 * EI) * x ^ 4 + (-(2 * q * L) / (24 * EI)) * x ^ 3 + q * L ^ 2 / (24 * EI) * x ^ 2 := by
+  funext x
+  unfold clampedClampedDeflection
+  ring
+
+/-- Iterated derivatives of the clamped-clamped polynomial, term by term. -/
+private lemma iteratedDeriv_ccd (EI L q : ℝ) (n : ℕ) (x : ℝ) :
+    iteratedDeriv n (clampedClampedDeflection EI L q) x =
+      q / (24 * EI) * iteratedDeriv n (fun x : ℝ => x ^ 4) x +
+      (-(2 * q * L) / (24 * EI)) * iteratedDeriv n (fun x : ℝ => x ^ 3) x +
+      q * L ^ 2 / (24 * EI) * iteratedDeriv n (fun x : ℝ => x ^ 2) x := by
+  rw [ccd_eq]
+  have h1 : ContDiffAt ℝ n (fun x : ℝ => q / (24 * EI) * x ^ 4 +
+      (-(2 * q * L) / (24 * EI)) * x ^ 3) x := by fun_prop
+  have h2 : ContDiffAt ℝ n (fun x : ℝ => q * L ^ 2 / (24 * EI) * x ^ 2) x := by fun_prop
+  have h3 : ContDiffAt ℝ n (fun x : ℝ => q / (24 * EI) * x ^ 4) x := by fun_prop
+  have h4 : ContDiffAt ℝ n (fun x : ℝ => (-(2 * q * L) / (24 * EI)) * x ^ 3) x := by fun_prop
+  rw [iteratedDeriv_fun_add h1 h2, iteratedDeriv_fun_add h3 h4]
+  simp only [iteratedDeriv_const_mul_field]
+
+/-- Replacing the two moment conditions by clamped slopes changes the solution: for `q ≠ 0` the
+clamped-clamped polynomial satisfies the equation, both deflection conditions and both clamped
+slopes, but it is not a simply supported solution, and its midspan deflection
+`q * L ^ 4 / (384 * EI)` differs from the simply supported one. -/
+lemma clampedSlopes_change_solution {EI L q : ℝ} (hEI : 0 < EI) (hL : 0 < L) (hq : q ≠ 0) :
+    (∀ x, EI * iteratedDeriv 4 (clampedClampedDeflection EI L q) x = q) ∧
+      clampedClampedDeflection EI L q 0 = 0 ∧ clampedClampedDeflection EI L q L = 0 ∧
+      deriv (clampedClampedDeflection EI L q) 0 = 0 ∧
+      deriv (clampedClampedDeflection EI L q) L = 0 ∧
+      ¬ IsSimplySupportedSolution EI L q (clampedClampedDeflection EI L q) ∧
+      clampedClampedDeflection EI L q (L / 2) ≠ uniformLoadDeflection q EI L (L / 2) := by
+  have hEI' : EI ≠ 0 := hEI.ne'
+  have hL' : L ≠ 0 := hL.ne'
+  refine ⟨fun x => ?_, ?_, ?_, ?_, ?_, fun h => ?_, ?_⟩
+  · rw [iteratedDeriv_ccd]
+    simp [iteratedDeriv_pow]
+    field_simp
+  · unfold clampedClampedDeflection
+    ring
+  · unfold clampedClampedDeflection
+    ring
+  · rw [← iteratedDeriv_one, iteratedDeriv_ccd]
+    simp [iteratedDeriv_pow]
+  · rw [← iteratedDeriv_one, iteratedDeriv_ccd]
+    simp [iteratedDeriv_pow]
+    ring
+  · have h2 := h.curvature_left
+    have hv : iteratedDeriv 2 (clampedClampedDeflection EI L q) 0 = q * L ^ 2 / (12 * EI) := by
+      rw [iteratedDeriv_ccd]
+      simp [iteratedDeriv_pow]
+      ring
+    rw [hv] at h2
+    exact div_ne_zero (mul_ne_zero hq (pow_ne_zero 2 hL')) (mul_ne_zero (by norm_num) hEI') h2
+  · unfold clampedClampedDeflection uniformLoadDeflection
+    intro h
+    field_simp at h
+    have h4 : q * L ^ 4 = 0 := by nlinarith
+    rcases mul_eq_zero.mp h4 with h5 | h5
+    · exact hq h5
+    · exact hL' (pow_eq_zero_iff (by norm_num) |>.mp h5)
 
 end Elasticity.PrismaticMembers
 

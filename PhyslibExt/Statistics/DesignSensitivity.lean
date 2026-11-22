@@ -14,7 +14,7 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
-# Spring compliance sensitivity on a constrained design interval
+# Spring compliance: sensitivity on a constrained design interval and error composition
 
 ## i. Overview
 
@@ -37,12 +37,30 @@ one-sided first-order condition, not stationarity, and no unconstrained optimum 
 dimension identities of section F record the units of `k`, `u_tip` and `p`, `J`, and `dJ/dk`
 in the ISQ dimensions of `PhyslibExt.Units.EngineeringQuantities`.
 
+Sections G to I bound errors in the compliance `J(F, k) = F² / k` itself, read as a quantity of
+interest. The admissible parameters `|F| ≤ Fmax`, `k ≥ kmin` with `kmin > 0` form a convex set,
+so with two admissible points `(F, k)` and `(Fhat, khat)` the coordinate path
+`(F, k) → (Fhat, k) → (Fhat, khat)` stays in it. The named intermediate compliance `J(Fhat, k)`
+splits the error into a force step, bounded through the difference of squares by
+`(2 Fmax / kmin) |F - Fhat|`, and a stiffness step, bounded through the difference of inverse
+stiffnesses by `(Fmax² / kmin²) |k - khat|`; the triangle inequality adds them. Model,
+discretization, algebraic solver and floating-point arithmetic terms enter the same finite
+triangle inequality only as supplied bounds between named values of the same compliance. A
+residual `k u - F` of a trial tip displacement `u` bounds the state error, and for `F ≠ 0` the
+compliance error, only through a stability constant: for `k ≥ kmin > 0` it bounds the state error
+by `|k u - F| / kmin` and the compliance error by `|F| |k u - F| / kmin`, while over all `k > 0`
+no constant turns the residual into a bound on the state error, nor, for `F ≠ 0`, into a bound on
+the compliance error. The state-error half holds for every `F`; at `F = 0` the compliance error
+`J - F u` vanishes, so its half needs `F ≠ 0`.
+
 Model inputs:
 
 * a clamped/traction-end bar (not a fixed-fixed bar), small-strain linear elastic with constant
   rigidity; the end force is fixed and the stiffness `k` is the design variable;
 * `J` is the load work on the tip displacement; no PDE adjoint, dynamic adjoint or constrained
-  minimizer existence is claimed.
+  minimizer existence is claimed;
+* the error bounds are deterministic, not covariance or credibility statements, and each supplied
+  error term carries its own provenance.
 
 ## ii. Key results
 
@@ -65,6 +83,21 @@ Model inputs:
 - `Statistics.DesignSensitivity.deriv_compliance_ne_zero`,
   `Statistics.DesignSensitivity.compliance_upper_endpoint`: no stationary point for `F ≠ 0`; the
   one-sided first-order condition at the upper endpoint.
+- `Statistics.DesignSensitivity.compliance_eq_sq_div`,
+  `Statistics.DesignSensitivity.abs_compliance_sub_force_le`,
+  `Statistics.DesignSensitivity.abs_compliance_sub_stiffness_le`: `J = F² / k` and the force and
+  stiffness steps of the compliance error.
+- `Statistics.DesignSensitivity.abs_compliance_sub_compliance_le`,
+  `Statistics.DesignSensitivity.abs_compliance_sub_computed_le`: the compliance error between two
+  admissible parameter points, and its composition with supplied model, discretization, solver
+  and arithmetic terms.
+- `Statistics.DesignSensitivity.abs_sub_le_residual_div`: a residual bounds the state and
+  compliance errors with the stability constant `1 / kmin`.
+- `Statistics.DesignSensitivity.not_exists_residual_state_error_bound`,
+  `Statistics.DesignSensitivity.not_exists_residual_compliance_error_bound`,
+  `Statistics.DesignSensitivity.not_exists_residual_error_bound`: without a lower stiffness bound
+  no constant turns the residual into a bound on the state error, for any `F`, nor on the
+  compliance error, for `F ≠ 0`; the last lemma states both halves for `F ≠ 0`.
 
 ## iii. Table of contents
 
@@ -74,6 +107,9 @@ Model inputs:
 - D. Feasible directions
 - E. Endpoints: one-sided conditions, not stationarity
 - F. Units
+- G. Compliance error: one-parameter steps
+- H. Compliance error: composition
+- I. Residuals and the stability constant
 
 ## iv. References
 
@@ -81,6 +117,9 @@ Model inputs:
   bars; the bar as a spring of stiffness `EA / L`).
 - M. P. Bendsøe and O. Sigmund, *Topology Optimization: Theory, Methods and Applications*,
   2003, chapter 1 (compliance, adjoint sensitivity, self-adjointness of compliance).
+- W. L. Oberkampf and C. J. Roy, *Verification and Validation in Scientific Computing*,
+  Cambridge University Press, 2010, chapters 7 and 8 (round-off, iterative and discretization
+  errors in a numerical solution).
 -/
 
 @[expose] public section
@@ -371,6 +410,239 @@ lemma complianceSensitivity_dimension :
   decide
 
 end Units
+
+/-! ## G. Compliance error: one-parameter steps -/
+
+/-- The compliance is `J(F, k) = F² / k`, for every `k` (both sides are `0` at `k = 0`). -/
+lemma compliance_eq_sq_div (F k : ℝ) : compliance F k = F ^ 2 / k := by
+  unfold compliance tipDisplacement
+  ring
+
+/-- **Force step.** For forces `|F|, |Fhat| ≤ Fmax` at a stiffness `k ≥ kmin > 0`, the difference
+of squares gives `|J(F, k) - J(Fhat, k)| ≤ (2 Fmax / kmin) |F - Fhat|`. -/
+lemma abs_compliance_sub_force_le {Fmax kmin F Fhat k : ℝ} (hkmin : 0 < kmin)
+    (hF : |F| ≤ Fmax) (hFhat : |Fhat| ≤ Fmax) (hk : kmin ≤ k) :
+    |compliance F k - compliance Fhat k| ≤ (2 * Fmax / kmin) * |F - Fhat| := by
+  have hkpos : 0 < k := lt_of_lt_of_le hkmin hk
+  have hkne : k ≠ 0 := ne_of_gt hkpos
+  have hFmax : 0 ≤ Fmax := le_trans (abs_nonneg F) hF
+  have hsum : |F + Fhat| ≤ 2 * Fmax := by
+    calc |F + Fhat| ≤ |F| + |Fhat| := abs_add_le _ _
+      _ ≤ Fmax + Fmax := add_le_add hF hFhat
+      _ = 2 * Fmax := by ring
+  have hid : F ^ 2 / k - Fhat ^ 2 / k = (F - Fhat) * (F + Fhat) / k := by ring
+  have h1 : |F + Fhat| / k ≤ (2 * Fmax) / k := by
+    rw [div_le_iff₀ hkpos, div_mul_cancel₀ _ hkne]
+    exact hsum
+  have h2 : (2 * Fmax) / k ≤ (2 * Fmax) / kmin := by
+    rw [div_le_iff₀ hkpos, div_mul_eq_mul_div, le_div_iff₀ hkmin]
+    exact mul_le_mul_of_nonneg_left hk (mul_nonneg (show (0:ℝ) ≤ 2 by norm_num) hFmax)
+  have hstep : |F + Fhat| / k ≤ 2 * Fmax / kmin := le_trans h1 h2
+  rw [compliance_eq_sq_div, compliance_eq_sq_div, hid, abs_div, abs_mul,
+    abs_of_pos hkpos]
+  calc |F - Fhat| * |F + Fhat| / k
+      = |F - Fhat| * (|F + Fhat| / k) := by ring
+    _ ≤ |F - Fhat| * (2 * Fmax / kmin) :=
+        mul_le_mul_of_nonneg_left hstep (abs_nonneg (F - Fhat))
+    _ = 2 * Fmax / kmin * |F - Fhat| := by ring
+
+/-- **Stiffness step.** For a force `|Fhat| ≤ Fmax` and stiffnesses `k, khat ≥ kmin > 0`, the
+inverse-stiffness difference gives `|J(Fhat, k) - J(Fhat, khat)| ≤ (Fmax² / kmin²) |k - khat|`. -/
+lemma abs_compliance_sub_stiffness_le {Fmax kmin Fhat k khat : ℝ} (hkmin : 0 < kmin)
+    (hFhat : |Fhat| ≤ Fmax) (hk : kmin ≤ k) (hkhat : kmin ≤ khat) :
+    |compliance Fhat k - compliance Fhat khat| ≤ (Fmax ^ 2 / kmin ^ 2) * |k - khat| := by
+  have hkpos : 0 < k := lt_of_lt_of_le hkmin hk
+  have hkhatpos : 0 < khat := lt_of_lt_of_le hkmin hkhat
+  have hkne : k ≠ 0 := ne_of_gt hkpos
+  have hkhatne : khat ≠ 0 := ne_of_gt hkhatpos
+  have hsq : Fhat ^ 2 ≤ Fmax ^ 2 := by
+    calc Fhat ^ 2 = |Fhat| ^ 2 := (sq_abs Fhat).symm
+      _ ≤ Fmax ^ 2 := pow_le_pow_left₀ (abs_nonneg Fhat) hFhat 2
+  have hkkpos : (0:ℝ) < k * khat := mul_pos hkpos hkhatpos
+  have hkmin2 : (0:ℝ) < kmin ^ 2 := pow_pos hkmin 2
+  have hkk : kmin ^ 2 ≤ k * khat := by
+    calc kmin ^ 2 = kmin * kmin := by ring
+      _ ≤ k * khat := mul_le_mul hk hkhat hkmin.le (le_trans hkmin.le hk)
+  have hid : Fhat ^ 2 / k - Fhat ^ 2 / khat = Fhat ^ 2 * (khat - k) / (k * khat) := by
+    field_simp
+  have h1 : Fhat ^ 2 / (k * khat) ≤ Fmax ^ 2 / (k * khat) := by
+    rw [div_le_iff₀ hkkpos, div_mul_cancel₀ _ (ne_of_gt hkkpos)]
+    exact hsq
+  have h2 : Fmax ^ 2 / (k * khat) ≤ Fmax ^ 2 / kmin ^ 2 := by
+    rw [div_le_iff₀ hkkpos, div_mul_eq_mul_div, le_div_iff₀ hkmin2]
+    exact mul_le_mul_of_nonneg_left hkk (sq_nonneg Fmax)
+  have hbound : Fhat ^ 2 / (k * khat) ≤ Fmax ^ 2 / kmin ^ 2 := le_trans h1 h2
+  rw [compliance_eq_sq_div, compliance_eq_sq_div, hid, abs_div, abs_mul,
+    abs_of_pos hkkpos, abs_sq Fhat, abs_sub_comm khat k]
+  calc Fhat ^ 2 * |k - khat| / (k * khat)
+      = |k - khat| * (Fhat ^ 2 / (k * khat)) := by ring
+    _ ≤ |k - khat| * (Fmax ^ 2 / kmin ^ 2) :=
+        mul_le_mul_of_nonneg_left hbound (abs_nonneg (k - khat))
+    _ = Fmax ^ 2 / kmin ^ 2 * |k - khat| := by ring
+
+/-! ## H. Compliance error: composition -/
+
+/-- **Compliance error between two admissible parameter points.** For `|F|, |Fhat| ≤ Fmax` and
+`k, khat ≥ kmin > 0`, through the intermediate compliance `J(Fhat, k)`,
+`|J(F, k) - J(Fhat, khat)| ≤ (2 Fmax / kmin) |F - Fhat| + (Fmax² / kmin²) |k - khat|`. -/
+lemma abs_compliance_sub_compliance_le {Fmax kmin F Fhat k khat : ℝ} (hkmin : 0 < kmin)
+    (hF : |F| ≤ Fmax) (hFhat : |Fhat| ≤ Fmax) (hk : kmin ≤ k) (hkhat : kmin ≤ khat) :
+    |compliance F k - compliance Fhat khat| ≤
+      (2 * Fmax / kmin) * |F - Fhat| + (Fmax ^ 2 / kmin ^ 2) * |k - khat| := by
+  have hforce := abs_compliance_sub_force_le hkmin hF hFhat hk
+  have hstiff := abs_compliance_sub_stiffness_le hkmin hFhat hk hkhat
+  calc |compliance F k - compliance Fhat khat|
+      = |(compliance F k - compliance Fhat k) +
+        (compliance Fhat k - compliance Fhat khat)| := by
+        congr 1
+        ring
+    _ ≤ |compliance F k - compliance Fhat k| + |compliance Fhat k - compliance Fhat khat| :=
+        abs_add_le _ _
+    _ ≤ (2 * Fmax / kmin) * |F - Fhat| + (Fmax ^ 2 / kmin ^ 2) * |k - khat| :=
+        add_le_add hforce hstiff
+
+/-- **Composition with supplied terms.** The compliance `J(Fhat, khat)` at the estimated inputs,
+the compliance `Jmodel` of the analysis model, its discretization `Jdisc`, the algebraic solver
+output `Jsolve` and the computed value `Jcomp` are successive values of the same compliance;
+with the supplied bounds `eModel`, `eDisc`, `eSolve`, `eArith` on their successive differences,
+`|J(F, k) - Jcomp|` is at most the parameter bound plus the four supplied terms. -/
+lemma abs_compliance_sub_computed_le {Fmax kmin F Fhat k khat Jmodel Jdisc Jsolve Jcomp eModel
+    eDisc eSolve eArith : ℝ} (hkmin : 0 < kmin) (hF : |F| ≤ Fmax) (hFhat : |Fhat| ≤ Fmax)
+    (hk : kmin ≤ k) (hkhat : kmin ≤ khat) (hmodel : |compliance Fhat khat - Jmodel| ≤ eModel)
+    (hdisc : |Jmodel - Jdisc| ≤ eDisc) (hsolve : |Jdisc - Jsolve| ≤ eSolve)
+    (harith : |Jsolve - Jcomp| ≤ eArith) :
+    |compliance F k - Jcomp| ≤
+      (2 * Fmax / kmin) * |F - Fhat| + (Fmax ^ 2 / kmin ^ 2) * |k - khat| + eModel + eDisc +
+        eSolve + eArith := by
+  have h0 := abs_compliance_sub_compliance_le hkmin hF hFhat hk hkhat
+  have t1 : |compliance F k - Jcomp|
+      ≤ |compliance F k - compliance Fhat khat| + |compliance Fhat khat - Jcomp| := by
+    calc |compliance F k - Jcomp|
+        = |(compliance F k - compliance Fhat khat) + (compliance Fhat khat - Jcomp)| := by
+          congr 1
+          ring
+      _ ≤ _ := abs_add_le _ _
+  have t2 : |compliance Fhat khat - Jcomp|
+      ≤ |compliance Fhat khat - Jmodel| + |Jmodel - Jcomp| := by
+    calc |compliance Fhat khat - Jcomp|
+        = |(compliance Fhat khat - Jmodel) + (Jmodel - Jcomp)| := by
+          congr 1
+          ring
+      _ ≤ _ := abs_add_le _ _
+  have t3 : |Jmodel - Jcomp| ≤ |Jmodel - Jdisc| + |Jdisc - Jcomp| := by
+    calc |Jmodel - Jcomp| = |(Jmodel - Jdisc) + (Jdisc - Jcomp)| := by
+          congr 1
+          ring
+      _ ≤ _ := abs_add_le _ _
+  have t4 : |Jdisc - Jcomp| ≤ |Jdisc - Jsolve| + |Jsolve - Jcomp| := by
+    calc |Jdisc - Jcomp| = |(Jdisc - Jsolve) + (Jsolve - Jcomp)| := by
+          congr 1
+          ring
+      _ ≤ _ := abs_add_le _ _
+  linarith
+
+/-! ## I. Residuals and the stability constant -/
+
+/-- **A residual with a stability constant.** For a stiffness `k ≥ kmin > 0` and a trial tip
+displacement `u`, the residual `k u - F` of the equilibrium `k u_tip = F` bounds the state error
+by `|k u - F| / kmin` and the compliance error `J - F u` by `|F| |k u - F| / kmin`. -/
+lemma abs_sub_le_residual_div {kmin k F u : ℝ} (hkmin : 0 < kmin) (hk : kmin ≤ k) :
+    |tipDisplacement F k - u| ≤ |k * u - F| / kmin ∧
+      |compliance F k - F * u| ≤ |F| * |k * u - F| / kmin := by
+  have hkpos : 0 < k := lt_of_lt_of_le hkmin hk
+  have hkne : k ≠ 0 := ne_of_gt hkpos
+  have hstate : |tipDisplacement F k - u| ≤ |k * u - F| / kmin := by
+    have hid : tipDisplacement F k - u = -(k * u - F) / k := by
+      unfold tipDisplacement
+      field_simp
+      ring
+    rw [hid, abs_div, abs_neg, abs_of_pos hkpos, div_le_iff₀ hkpos, div_mul_eq_mul_div,
+      le_div_iff₀ hkmin]
+    exact mul_le_mul_of_nonneg_left hk (abs_nonneg (k * u - F))
+  refine ⟨hstate, ?_⟩
+  have hid2 : compliance F k - F * u = F * (tipDisplacement F k - u) := by
+    unfold compliance
+    ring
+  rw [hid2, abs_mul]
+  calc |F| * |tipDisplacement F k - u|
+      ≤ |F| * (|k * u - F| / kmin) := mul_le_mul_of_nonneg_left hstate (abs_nonneg F)
+    _ = |F| * |k * u - F| / kmin := by ring
+
+/-- **A bare residual is not a state error.** For every end force `F`, over all stiffnesses
+`k > 0`, with no lower bound, no constant `C` makes `C |k u - F|` a bound on the state error: the
+trial `u = F / k + 1` has residual `k` and state error `1`. -/
+lemma not_exists_residual_state_error_bound (F : ℝ) :
+    ¬ ∃ C : ℝ, ∀ k u : ℝ, 0 < k → |tipDisplacement F k - u| ≤ C * |k * u - F| := by
+  rintro ⟨C, hC⟩
+  have key : ∀ k : ℝ, 0 < k → (1:ℝ) ≤ C * k := by
+    intro k hk
+    have h := hC k (F / k + 1) hk
+    have e1 : tipDisplacement F k - (F / k + 1) = -1 := by
+      unfold tipDisplacement
+      ring
+    have e2 : k * (F / k + 1) - F = k := by
+      have hkne : k ≠ 0 := ne_of_gt hk
+      field_simp
+      ring
+    rw [e1, abs_neg, abs_one, e2, abs_of_pos hk] at h
+    exact h
+  have hC1 : (1:ℝ) ≤ C := by
+    have h := key 1 one_pos
+    rwa [mul_one] at h
+  have hCpos : 0 < C := lt_of_lt_of_le one_pos hC1
+  have hCne : C ≠ 0 := ne_of_gt hCpos
+  have h2C : (0:ℝ) < 2 * C := by linarith
+  have h2Cne : (2:ℝ) * C ≠ 0 := mul_ne_zero two_ne_zero hCne
+  have hsmall := key (1 / (2 * C)) (div_pos one_pos h2C)
+  have hval : C * (1 / (2 * C)) = 1 / 2 := by
+    rw [mul_one_div, div_eq_iff h2Cne]
+    ring
+  rw [hval] at hsmall
+  norm_num at hsmall
+
+/-- **A bare residual is not a compliance error.** For an end force `F ≠ 0`, over all stiffnesses
+`k > 0`, with no lower bound, no constant `C` makes `C |k u - F|` a bound on the compliance error:
+the trial `u = F / k + 1` has residual `k` and compliance error `|F|`. At `F = 0` the compliance
+error `J - F u` vanishes, so the force must be nonzero. -/
+lemma not_exists_residual_compliance_error_bound {F : ℝ} (hF : F ≠ 0) :
+    ¬ ∃ C : ℝ, ∀ k u : ℝ, 0 < k → |compliance F k - F * u| ≤ C * |k * u - F| := by
+  rintro ⟨C, hC⟩
+  have key : ∀ k : ℝ, 0 < k → |F| ≤ C * k := by
+    intro k hk
+    have h := hC k (F / k + 1) hk
+    have e1 : compliance F k - F * (F / k + 1) = -F := by
+      unfold compliance tipDisplacement
+      ring
+    have e2 : k * (F / k + 1) - F = k := by
+      have hkne : k ≠ 0 := ne_of_gt hk
+      field_simp
+      ring
+    rw [e1, abs_neg, e2, abs_of_pos hk] at h
+    exact h
+  have hFpos : 0 < |F| := abs_pos.mpr hF
+  have hC1 : |F| ≤ C := by
+    have h := key 1 one_pos
+    rwa [mul_one] at h
+  have hCpos : 0 < C := lt_of_lt_of_le hFpos hC1
+  have hCne : C ≠ 0 := ne_of_gt hCpos
+  have h2C : (0:ℝ) < 2 * C := by linarith
+  have h2Cne : (2:ℝ) * C ≠ 0 := mul_ne_zero two_ne_zero hCne
+  have hsmall := key (|F| / (2 * C)) (div_pos hFpos h2C)
+  have hval2 : C * (|F| / (2 * C)) = |F| / 2 := by
+    rw [← mul_div_assoc, div_eq_div_iff h2Cne two_ne_zero]
+    ring
+  rw [hval2] at hsmall
+  linarith
+
+/-- **A bare residual is not an error.** Over all stiffnesses `k > 0`, with no lower bound, no
+constant `C` makes `C |k u - F|` a bound on the state error, and for `F ≠ 0` none makes it a
+bound on the compliance error: the trial `u = F / k + 1` has residual `k`, state error `1` and
+compliance error `|F|`. This combines `not_exists_residual_state_error_bound`, which holds for
+every `F`, and `not_exists_residual_compliance_error_bound`. -/
+lemma not_exists_residual_error_bound {F : ℝ} (hF : F ≠ 0) :
+    (¬ ∃ C : ℝ, ∀ k u : ℝ, 0 < k → |tipDisplacement F k - u| ≤ C * |k * u - F|) ∧
+      ¬ ∃ C : ℝ, ∀ k u : ℝ, 0 < k → |compliance F k - F * u| ≤ C * |k * u - F| := by
+  exact ⟨not_exists_residual_state_error_bound F, not_exists_residual_compliance_error_bound hF⟩
 
 end Statistics.DesignSensitivity
 

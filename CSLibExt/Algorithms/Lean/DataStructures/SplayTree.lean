@@ -49,15 +49,6 @@ namespace SplayTree
 
 open BinarySearchTree
 
-@[simp] private theorem mem_nil {α : Type u} {x : α} :
-    x ∈ (BinaryTree.nil : BinaryTree α) ↔ False :=
-  Iff.rfl
-
-@[simp] private theorem mem_node {α : Type u} {x key : α}
-    {left right : BinaryTree α} :
-    x ∈ BinaryTree.node key left right ↔ x ∈ left ∨ x = key ∨ x ∈ right :=
-  Iff.rfl
-
 /-- The key at the root of a tree, if any. -/
 public def root? {α : Type u} : BinaryTree α → Option α
   | .nil => none

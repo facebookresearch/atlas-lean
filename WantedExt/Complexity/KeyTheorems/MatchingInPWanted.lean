@@ -39,7 +39,13 @@ twice.
 -/
 
 open Classical in
-/-- General matching decision problem over bitstrings. -/
+/-- **General matching decision problem.** The decision problem that accepts a bitstring $x$
+exactly when $x$ decodes, under the canonical bitstring encoding, to a triple $(n, E, K)$ of a
+natural number $n$, a list $E$ of pairs of natural numbers and a natural number $K$ such that
+every pair $(u, v)$ in $E$ has $u < n$, $v < n$ and $u \neq v$, and some sublist $M$ of $E$
+(a subsequence, keeping the order of $E$) with no repeated entries and length at least $K$ has
+the property that any two different pairs $(u_1, v_1)$ and $(u_2, v_2)$ in $M$ share no
+element: $u_1, v_1 \notin \{u_2, v_2\}$. Bitstrings that do not decode are rejected. -/
 noncomputable def matchingDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -52,7 +58,12 @@ noncomputable def matchingDec :
           e₁.1 ≠ e₂.1 ∧ e₁.1 ≠ e₂.2 ∧ e₁.2 ≠ e₂.1 ∧ e₁.2 ≠ e₂.2)
   | none => false
 
-/-- **General matching is in P (Edmonds' blossom algorithm).** Source: J. Edmonds, "Paths,
+/-- **General matching is in P (Edmonds' blossom algorithm).** The general matching decision
+problem belongs to the complexity class P. This is the problem of deciding, for a vertex count
+$n$, a list $E$ of edges joining distinct vertices below $n$ and a target $K$, encoded as a
+bitstring, whether $E$ contains at least $K$ distinct pairwise vertex-disjoint edges.
+
+Source: J. Edmonds, "Paths,
 trees, and flowers", Canadian Journal of Mathematics 17 (1965), 449-467. -/
 public theorem_wanted matching_in_p :
     matchingDec ∈ MetaMathlibExt.ComplexityTheory.P

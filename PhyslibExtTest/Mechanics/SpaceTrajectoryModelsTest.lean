@@ -20,7 +20,11 @@ displacement `1 - log 2` and final speed `log 2`; the mid-burn thrust; and the d
 restricted three-body problem: both triangular points for the mass ratio `1/10`; the collision
 boundary, where the effective potential takes a junk value; the particle at rest at a triangular
 point, which meets every hypothesis of the rotating equations; and a point between the primaries
-where the gradient of the effective potential does not vanish.
+where the gradient of the effective potential does not vanish. For the Jacobi integral: for equal
+masses, the Jacobi constant `3` of the barycenter state with velocity `(1, 0)`, which forbids the
+triangular point `(0, √3/2)`, where `2 Ω = 11/4`, to every unforced trajectory through that
+state; a thrusting path that reaches that point; and the particle at rest at a triangular point,
+whose Jacobi function is constant.
 
 ## i. Overview
 
@@ -34,6 +38,7 @@ No new definitions or results are introduced here.
 
 - A. The burn and the depletion boundary
 - B. Restricted three-body equilibria
+- C. The Jacobi integral and the forbidden region
 
 ## iv. References
 
@@ -162,5 +167,167 @@ example : HasDerivAt (fun ξ => effectivePotential (1 / 10) ξ 0) (-14 / 5) (2 /
   rw [h1, h2] at h
   convert h using 1
   norm_num
+
+/-! ## C. The Jacobi integral and the forbidden region -/
+
+/-- **A nonzero-velocity state.** For equal masses, `μ = 1/2`, the barycenter `(0, 0)` is at
+distance `1/2` from both primaries, and the state there with velocity `(1, 0)` has the Jacobi
+constant `C = 2 · 2 - 1 = 3`. The triangular point `(1/2 - μ, √3/2) = (0, √3/2)` has
+`2 Ω = 11/4 < 3`, so it is forbidden to the unforced trajectory through that state. -/
+lemma jacobi_nonzero_velocity_fixture :
+    0 < primaryDistOne (1 / 2) 0 0 ∧ 0 < primaryDistTwo (1 / 2) 0 0 ∧
+      jacobiConstant (1 / 2) 0 0 1 0 = 3 ∧
+      2 * effectivePotential (1 / 2) 0 (Real.sqrt 3 / 2) = 11 / 4 := by
+  have hr1 : primaryDistOne (1 / 2) 0 0 = 1 / 2 := by
+    have h : ((0 : ℝ) + 1 / 2) ^ 2 + (0 : ℝ) ^ 2 = (1 / 2) ^ 2 := by norm_num
+    unfold primaryDistOne
+    rw [h]
+    exact Real.sqrt_sq (by norm_num)
+  have hr2 : primaryDistTwo (1 / 2) 0 0 = 1 / 2 := by
+    have h : ((0 : ℝ) - (1 - 1 / 2)) ^ 2 + (0 : ℝ) ^ 2 = (1 / 2) ^ 2 := by norm_num
+    unfold primaryDistTwo
+    rw [h]
+    exact Real.sqrt_sq (by norm_num)
+  have hC : jacobiConstant (1 / 2) 0 0 1 0 = 3 := by
+    unfold jacobiConstant effectivePotential
+    rw [hr1, hr2]
+    norm_num
+  have hsq3 : (Real.sqrt 3 / 2) ^ 2 = 3 / 4 := by
+    have h3 : Real.sqrt 3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
+    rw [div_pow, h3]
+    norm_num
+  have hr1t : primaryDistOne (1 / 2) 0 (Real.sqrt 3 / 2) = 1 := by
+    have h : ((0 : ℝ) + 1 / 2) ^ 2 + (Real.sqrt 3 / 2) ^ 2 = 1 := by
+      rw [hsq3]; norm_num
+    unfold primaryDistOne
+    rw [h]
+    exact Real.sqrt_one
+  have hr2t : primaryDistTwo (1 / 2) 0 (Real.sqrt 3 / 2) = 1 := by
+    have h : ((0 : ℝ) - (1 - 1 / 2)) ^ 2 + (Real.sqrt 3 / 2) ^ 2 = 1 := by
+      rw [hsq3]; norm_num
+    unfold primaryDistTwo
+    rw [h]
+    exact Real.sqrt_one
+  have hT : 2 * effectivePotential (1 / 2) 0 (Real.sqrt 3 / 2) = 11 / 4 := by
+    unfold effectivePotential
+    rw [hsq3, hr1t, hr2t]
+    norm_num
+  refine ⟨by rw [hr1]; norm_num, by rw [hr2]; norm_num, hC, hT⟩
+
+/-- **Thrust breaks the forbidden region.** For `μ = 1/2` the `C²` path
+`(x, y) = (t - t², (√3/2) t²)` avoids both primaries on `[0, 1]`, starts at the barycenter with
+velocity `(1, 0)` (Jacobi constant `3`) and ends at the triangular point `(0, √3/2)`, where
+`2 Ω = 11/4 < 3`. It obeys the rotating equations with the thrust acceleration it needs, so a
+thrusting trajectory reaches a point that no unforced trajectory from the same state reaches. -/
+lemma thrust_reaches_forbidden_point :
+    ∃ x y ax ay : ℝ → ℝ, ContDiff ℝ 2 x ∧ ContDiff ℝ 2 y ∧
+      (∀ t ∈ Icc (0 : ℝ) 1, 0 < primaryDistOne (1 / 2) (x t) (y t) ∧
+        0 < primaryDistTwo (1 / 2) (x t) (y t) ∧
+        deriv (deriv x) t - 2 * deriv y t =
+          deriv (fun ξ => effectivePotential (1 / 2) ξ (y t)) (x t) + ax t ∧
+        deriv (deriv y) t + 2 * deriv x t =
+          deriv (fun η => effectivePotential (1 / 2) (x t) η) (y t) + ay t) ∧
+      x 0 = 0 ∧ y 0 = 0 ∧ deriv x 0 = 1 ∧ deriv y 0 = 0 ∧ x 1 = 0 ∧ y 1 = Real.sqrt 3 / 2 ∧
+      2 * effectivePotential (1 / 2) (x 1) (y 1) <
+        jacobiConstant (1 / 2) (x 0) (y 0) (deriv x 0) (deriv y 0) := by
+  have hXc : ContDiff ℝ 2 (fun s : ℝ => s - s ^ 2) := by fun_prop
+  have hYc : ContDiff ℝ 2 (fun s : ℝ => (Real.sqrt 3 / 2) * s ^ 2) := by fun_prop
+  have hdx : ∀ s, HasDerivAt (fun s : ℝ => s - s ^ 2) (1 - 2 * s) s := by
+    intro s
+    have h := (hasDerivAt_id' s).sub ((hasDerivAt_id' s).pow 2)
+    convert h using 1; simp
+  have hdy : ∀ s, HasDerivAt (fun s : ℝ => (Real.sqrt 3 / 2) * s ^ 2)
+      ((Real.sqrt 3 / 2) * (2 * s)) s := by
+    intro s
+    have h := ((hasDerivAt_id' s).pow 2).const_mul (Real.sqrt 3 / 2)
+    convert h using 1; simp
+  have hdx0 : deriv (fun s : ℝ => s - s ^ 2) 0 = 1 := by
+    rw [(hdx 0).deriv]; norm_num
+  have hdy0 : deriv (fun s : ℝ => (Real.sqrt 3 / 2) * s ^ 2) 0 = 0 := by
+    rw [(hdy 0).deriv]; norm_num
+  have hx0 : (fun s : ℝ => s - s ^ 2) 0 = 0 := by norm_num
+  have hy0 : (fun s : ℝ => (Real.sqrt 3 / 2) * s ^ 2) 0 = 0 := by norm_num
+  have hx1 : (fun s : ℝ => s - s ^ 2) 1 = 0 := by norm_num
+  have hy1 : (fun s : ℝ => (Real.sqrt 3 / 2) * s ^ 2) 1 = Real.sqrt 3 / 2 := by norm_num
+  refine ⟨fun s : ℝ => s - s ^ 2, fun s : ℝ => (Real.sqrt 3 / 2) * s ^ 2,
+    (fun u : ℝ => deriv (deriv fun s : ℝ => s - s ^ 2) u -
+      2 * deriv (fun s : ℝ => (Real.sqrt 3 / 2) * s ^ 2) u -
+      deriv (fun ξ => effectivePotential (1 / 2) ξ ((Real.sqrt 3 / 2) * u ^ 2)) (u - u ^ 2)),
+    (fun u : ℝ => deriv (deriv fun s : ℝ => (Real.sqrt 3 / 2) * s ^ 2) u +
+      2 * deriv (fun s : ℝ => s - s ^ 2) u -
+      deriv (fun η => effectivePotential (1 / 2) (u - u ^ 2) η) ((Real.sqrt 3 / 2) * u ^ 2)),
+    hXc, hYc, ?_, hx0, hy0, hdx0, hdy0, hx1, hy1, ?_⟩
+  · intro t ht
+    obtain ⟨ht0, ht1⟩ := ht
+    have hxlo : (0 : ℝ) ≤ t - t ^ 2 :=
+      by nlinarith [mul_nonneg ht0 (show (0 : ℝ) ≤ 1 - t by linarith)]
+    have hxhi : t - t ^ 2 ≤ (1 : ℝ) / 4 := by nlinarith [sq_nonneg (t - 1 / 2)]
+    have hXlo : (1 / 2 : ℝ) ≤ (t - t ^ 2) + 1 / 2 := by linarith
+    have hsq1 : (1 / 4 : ℝ) ≤ ((t - t ^ 2) + 1 / 2) ^ 2 := by
+      nlinarith [sq_nonneg (((t - t ^ 2) + 1 / 2) - 1 / 2), hXlo]
+    have hr1 : (0 : ℝ) < ((t - t ^ 2) + 1 / 2) ^ 2 + ((Real.sqrt 3 / 2) * t ^ 2) ^ 2 := by
+      have hnn : (0 : ℝ) ≤ ((Real.sqrt 3 / 2) * t ^ 2) ^ 2 := sq_nonneg _
+      linarith
+    have hX2hi : (t - t ^ 2) - 1 / 2 ≤ (-1 / 4 : ℝ) := by linarith [hxhi]
+    have hsq2 : (1 / 16 : ℝ) ≤ ((t - t ^ 2) - (1 - 1 / 2)) ^ 2 := by
+      have hsub : (t - t ^ 2) - (1 - 1 / 2) = (t - t ^ 2) - 1 / 2 := by ring
+      rw [hsub]
+      nlinarith [sq_nonneg (((t - t ^ 2) - 1 / 2) + 1 / 4), hX2hi]
+    have hr2 : (0 : ℝ) < ((t - t ^ 2) - (1 - 1 / 2)) ^ 2 + ((Real.sqrt 3 / 2) * t ^ 2) ^ 2 := by
+      have hnn : (0 : ℝ) ≤ ((Real.sqrt 3 / 2) * t ^ 2) ^ 2 := sq_nonneg _
+      linarith
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · simp only []
+      unfold primaryDistOne
+      exact Real.sqrt_pos.mpr hr1
+    · simp only []
+      unfold primaryDistTwo
+      exact Real.sqrt_pos.mpr hr2
+    · simp only []
+      ring
+    · simp only []
+      ring
+  · rw [hx1, hy1, hx0, hy0, hdx0, hdy0]
+    have hfix := jacobi_nonzero_velocity_fixture
+    rw [hfix.2.2.2, hfix.2.2.1]
+    norm_num
+
+/-- No unforced trajectory from the barycenter state with velocity `(1, 0)` reaches the
+triangular point `(0, √3/2)` for equal masses: its Jacobi constant `3` exceeds `2 Ω = 11/4`
+there. -/
+example {t₁ : ℝ} {x y : ℝ → ℝ} (hx : ContDiff ℝ 2 x) (hy : ContDiff ℝ 2 y)
+    (h₁ : ∀ t ∈ Icc 0 t₁, 0 < primaryDistOne (1 / 2) (x t) (y t))
+    (h₂ : ∀ t ∈ Icc 0 t₁, 0 < primaryDistTwo (1 / 2) (x t) (y t))
+    (hrot : ∀ t ∈ Icc 0 t₁,
+      deriv (deriv x) t - 2 * deriv y t =
+          deriv (fun ξ => effectivePotential (1 / 2) ξ (y t)) (x t) ∧
+        deriv (deriv y) t + 2 * deriv x t =
+          deriv (fun η => effectivePotential (1 / 2) (x t) η) (y t))
+    (hx0 : x 0 = 0) (hy0 : y 0 = 0) (hvx : deriv x 0 = 1) (hvy : deriv y 0 = 0) :
+    ∀ t ∈ Icc 0 t₁, ¬ (x t = 0 ∧ y t = Real.sqrt 3 / 2) := by
+  obtain ⟨-, -, hC, hL⟩ := jacobi_nonzero_velocity_fixture
+  apply not_reach_of_two_effectivePotential_lt hx hy h₁ h₂ hrot
+  rw [hx0, hy0, hvx, hvy, hC, hL]
+  norm_num
+
+/-- The Jacobi integral along an actual unforced solution: the particle at rest at the triangular
+point `(1/2 - μ, √3/2)` avoids both primaries and obeys the unforced rotating equations at every
+time, so its Jacobi function is constant on every interval. -/
+example (μ t₀ t₁ : ℝ) :
+    ∀ t ∈ Icc t₀ t₁,
+      jacobiConstant μ (1 / 2 - μ) (1 * (Real.sqrt 3 / 2)) (deriv (fun _ => 1 / 2 - μ) t)
+          (deriv (fun _ => 1 * (Real.sqrt 3 / 2)) t) =
+        jacobiConstant μ (1 / 2 - μ) (1 * (Real.sqrt 3 / 2)) (deriv (fun _ => 1 / 2 - μ) t₀)
+          (deriv (fun _ => 1 * (Real.sqrt 3 / 2)) t₀) := by
+  obtain ⟨hd1, hd2, -, -⟩ := triangular_equilibrium μ (s := 1) (Or.inl rfl)
+  have hp1 : 0 < primaryDistOne μ (1 / 2 - μ) (1 * (Real.sqrt 3 / 2)) := by rw [hd1]; norm_num
+  have hp2 : 0 < primaryDistTwo μ (1 / 2 - μ) (1 * (Real.sqrt 3 / 2)) := by rw [hd2]; norm_num
+  refine jacobiConstant_eq_of_rotating_equations (x := fun _ => 1 / 2 - μ)
+    (y := fun _ => 1 * (Real.sqrt 3 / 2)) contDiff_const contDiff_const (fun _ _ => hp1)
+    (fun _ _ => hp2) fun t _ => ?_
+  obtain ⟨h1, h2⟩ := rotating_equations (μ := μ) (t := t) (x := fun _ => 1 / 2 - μ)
+    (y := fun _ => 1 * (Real.sqrt 3 / 2)) contDiff_const contDiff_const hp1 hp2
+    (triangular_inertial_orbit μ (Or.inl rfl) t)
+  exact ⟨h1, h2⟩
 
 end PhyslibExtTest.Mechanics.SpaceTrajectoryModels

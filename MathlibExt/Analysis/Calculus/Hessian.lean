@@ -36,7 +36,12 @@ open Set
 
 namespace MetaMathlibExt
 
-/-- Hessian matrix of `f` at `x` as an `n × n` real matrix.
+/-- **Hessian matrix.** For a function $f : \mathbb{R}^n \to \mathbb{R}$ and a point
+$x \in \mathbb{R}^n$, the Hessian matrix of $f$ at $x$ is the $n \times n$ real matrix whose
+$(i, j)$ entry is $\frac{d}{ds}\big|_{s=0} \frac{d}{dt}\big|_{t=0} f(x + s e_i + t e_j)$, where
+$e_1, \dots, e_n$ is the standard basis of $\mathbb{R}^n$ and a derivative that does not exist is
+taken to be $0$.
+
 Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
 `Differential calculus`, entry `Hessian matrix` (unmapped);
 W. Rudin, Principles of Mathematical Analysis, 3rd ed., Ch. 9;
@@ -46,8 +51,12 @@ noncomputable def hessianMatrix {n : ℕ} (f : (Fin n → ℝ) → ℝ) (x : Fin
   fun i j => deriv (fun s : ℝ => deriv (fun t : ℝ =>
     f (x + s • Pi.single i (1 : ℝ) + t • Pi.single j (1 : ℝ))) 0) 0
 
-/-- Characteristic spec: the `(i, j)` entry is the iterated second partial
-derivative along the `i`-th then `j`-th coordinate axes.
+/-- **Entries of the Hessian matrix.** For $f : \mathbb{R}^n \to \mathbb{R}$, a point
+$x \in \mathbb{R}^n$ and indices $i, j$, the $(i, j)$ entry of the Hessian matrix of $f$ at $x$ is
+$\frac{d}{ds}\big|_{s=0} \frac{d}{dt}\big|_{t=0} f(x + s e_i + t e_j)$, where $e_1, \dots, e_n$ is
+the standard basis of $\mathbb{R}^n$ and a derivative that does not exist is taken to be $0$:
+differentiate first along $e_j$, then along $e_i$.
+
 Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
 `Differential calculus`, entry `Hessian matrix` (unmapped);
 W. Rudin, Principles of Mathematical Analysis, 3rd ed., Ch. 9. -/
@@ -104,8 +113,11 @@ private theorem hessian_clm_apply_self_eq_sum {n : ℕ}
   rw [Finset.sum_comm]
   simp only [mul_comm, mul_left_comm]
 
-/-- The entries of the Hessian matrix are evaluations of the second Fréchet derivative on the
-standard basis. -/
+/-- **Hessian entries as second Fréchet derivatives.** Let $f : \mathbb{R}^n \to \mathbb{R}$ be
+twice continuously differentiable and let $x \in \mathbb{R}^n$. For all indices $i, j$, the
+$(i, j)$ entry of the Hessian matrix of $f$ at $x$ equals $D(Df)(x)(e_i)(e_j)$, the derivative of
+the Fréchet derivative $Df$ at $x$ in the direction $e_i$, applied to $e_j$, where
+$e_1, \dots, e_n$ is the standard basis of $\mathbb{R}^n$. -/
 theorem hessianMatrix_eq_fderiv_fderiv {n : ℕ} (f : (Fin n → ℝ) → ℝ)
     (hf : ContDiff ℝ 2 f) (x : Fin n → ℝ) (i j : Fin n) :
     hessianMatrix f x i j =
@@ -116,16 +128,19 @@ theorem hessianMatrix_eq_fderiv_fderiv {n : ℕ} (f : (Fin n → ℝ) → ℝ)
   simp only [zero_smul, add_zero]
   exact hessian_deriv_fderiv_line f hf x (Pi.single i 1) (Pi.single j 1)
 
-/-- The Hessian of a `C^2` function is symmetric.
-Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
-`Differential calculus`, entry `Hessian matrix` (unmapped);
-W. Rudin, Principles of Mathematical Analysis, 3rd ed., Theorem 9.41 (pp. 235–236).
+/-- **Symmetry of the Hessian.** If $f : \mathbb{R}^n \to \mathbb{R}$ is twice continuously
+differentiable, then for every $x \in \mathbb{R}^n$ the Hessian matrix of $f$ at $x$ is symmetric:
+it equals its transpose.
+
+Proof: Rewrite the matrix entries as evaluations of the second Fréchet derivative and apply
+Schwarz's theorem on the symmetry of second derivatives, as proved in Mathlib, following
+Wikipedia's “Symmetry of second derivatives”.
 
 Proves `Wanted` entry `hessianMatrix_symmetric`.
 
-Proof: Rewrite the matrix entries as evaluations of the second Fréchet derivative and apply
-Mathlib's Schwarz theorem `ContDiffAt.isSymmSndFDerivAt`, following Wikipedia's “Symmetry of
-second derivatives”.
+Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
+`Differential calculus`, entry `Hessian matrix` (unmapped);
+W. Rudin, Principles of Mathematical Analysis, 3rd ed., Theorem 9.41 (pp. 235–236).
 -/
 theorem hessianMatrix_symmetric {n : ℕ} (f : (Fin n → ℝ) → ℝ)
     (hf : ContDiff ℝ 2 f) (x : Fin n → ℝ) :
@@ -174,19 +189,22 @@ theorem _root_.IsLocalMin.deriv_deriv_nonneg {g : ℝ → ℝ} {x : ℝ}
     simpa [hmin.deriv_eq_zero] using hderivAnti hxmem hymem hxy
   exact (not_lt_of_ge (hball hzball).1) (hgAnti hxmem hzmem hxz)
 
-/-- Second-derivative test, necessary direction: at a local minimizer of a
-`C^2` function the Hessian quadratic form is nonnegative.
-Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
-`Differential calculus`, entry `Hessian matrix` (unmapped);
-W. Rudin, Principles of Mathematical Analysis, 3rd ed., Ch. 9.
+/-- **Second-derivative test, necessary condition.** Let $f : \mathbb{R}^n \to \mathbb{R}$ be twice
+continuously differentiable and let $x$ be a local minimum of $f$. Then the Hessian quadratic
+form of $f$ at $x$ is nonnegative: writing $H$ for the Hessian matrix of $f$ at $x$, every
+$v \in \mathbb{R}^n$ satisfies $\sum_{i, j} v_i H_{ij} v_j \ge 0$.
+
+Proof: Restrict the function to the affine line through $x$ in direction $v$, apply the necessary
+direction of the one-variable second derivative test, then expand the second Fréchet derivative in
+the standard basis. The one-variable step argues by contradiction as in the proof of the
+second-derivative test in Wikipedia's “Derivative test”: a negative second derivative makes the
+first derivative negative just right of the critical point, so the function decreases there.
 
 Proves `Wanted` entry `isLocalMin_hessian_quadratic_nonneg`.
 
-Proof: Restrict the function to the affine line in direction `v`, apply the necessary direction of
-the one-variable second derivative test, then expand the second Fréchet derivative in the standard
-basis. The one-variable step argues by contradiction as in the proof of the second-derivative
-test in Wikipedia's “Derivative test”: a negative second derivative makes the first derivative
-negative just right of the critical point, so the function decreases there.
+Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
+`Differential calculus`, entry `Hessian matrix` (unmapped);
+W. Rudin, Principles of Mathematical Analysis, 3rd ed., Ch. 9.
 -/
 theorem isLocalMin_hessian_quadratic_nonneg {n : ℕ} (f : (Fin n → ℝ) → ℝ)
     (hf : ContDiff ℝ 2 f) (x : Fin n → ℝ) (hmin : IsLocalMin f x)

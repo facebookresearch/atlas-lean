@@ -33,11 +33,17 @@ open Matrix
 
 @[expose] public section
 
-/-- Theorem 3 (quoted from Mohammad and Talukder 2020), for one length: a poset matrix of order
-`m + k`, `m, k ≥ 1`, satisfies the block of `0`s property (block of `1`s property) of length `m`
-iff it is the direct sum `A ⊕ B` (ordinal sum `A ⊞ B`) of poset matrices of orders `m` and `k`.
-Partial: the record's version with several lengths `n₁ < ⋯ < n_m` is the iterate of this one and
-is not stated separately.
+/-- **Block decomposition of a poset matrix.** Let $m, k \ge 1$ and let $M$ be a poset matrix of
+order $m + k$, a Boolean matrix with rows and columns indexed by $0, \dots, m + k - 1$. Then
+$M_{ij}$ is false for all $i < m \le j$ if and only if there are poset matrices $A$ of order $m$
+and $B$ of order $k$ such that $M$ is their direct sum: $M_{ij} = A_{ij}$ for $i, j < m$,
+$M_{m+i, m+j} = B_{ij}$ for $i, j < k$, and every other entry of $M$ is false. Likewise $M_{ij}$
+is true for all $i < m \le j$ if and only if there are poset matrices $A$ of order $m$ and $B$ of
+order $k$ such that $M$ is their ordinal sum: the same diagonal blocks, $M_{ij}$ true for all
+$i < m \le j$, and $M_{ij}$ false for all $j < m \le i$.
+
+Only one block length is stated; the version with several lengths $n_1 < \dots < n_r$ follows by
+iterating it.
 
 Source: Salah Uddin Mohammad, Md. Shah Noor, and Md. Rashed Talukder, *Recognition and
 Enumeration of the Quasi-Full Rooted Trees*, Journal of Integer Sequences 28 (2025),
@@ -55,12 +61,19 @@ public theorem_wanted isPosetMatrix_block_iff_directSum_ordinalSum (m k : ℕ) (
           M = reindex finSumFinEquiv finSumFinEquiv
             (fromBlocks A (Matrix.of fun _ _ => true) (Matrix.of fun _ _ => false) B))
 
-/-- Theorem 4 (quoted from Mohammad and Talukder 2020), for two terms: if poset matrices `A` and
-`B` represent posets `P` and `Q`, then the direct sum `A ⊕ B` is a poset matrix representing the
-direct (disjoint) sum `P + Q` (`P ⊕ Q` with `Sum.instLE`), and the ordinal sum `A ⊞ B` is a poset
-matrix representing the ordinal sum `P ⊕ₗ Q`. Partial: the record's `r`-term version is the
-iterate of this one and is not stated separately; the record's `P₁ + P₁ + ⋯ + P_r` is read as
-`P₁ + P₂ + ⋯ + P_r`.
+/-- **Direct and ordinal sums of poset matrices represent sums of posets.** A poset matrix $M$ of
+order $n$, a Boolean matrix with rows and columns indexed by $0, \dots, n - 1$, represents a
+partial order $P$ when there is a bijection $e$ from $\{0, \dots, n - 1\}$ to $P$ such that
+$e(i) \le e(j)$ if and only if $M_{ij}$ is true. Let $A$ and $B$ be poset matrices of orders $m$
+and $k$ representing partial orders $P$ and $Q$. Let $A \oplus B$ and $A \boxplus B$ be the
+matrices $N$ of order $m + k$ with $N_{ij} = A_{ij}$ for $i, j < m$, $N_{m+i, m+j} = B_{ij}$ for
+$i, j < k$, and $N_{ij}$ false for all $j < m \le i$, where $N_{ij}$ for $i < m \le j$ is false
+in $A \oplus B$ and true in $A \boxplus B$. Then $A \oplus B$ is a poset matrix representing the
+disjoint sum $P + Q$, in which no element of $P$ is comparable with an element of $Q$, and
+$A \boxplus B$ is a poset matrix representing the ordinal sum $P \oplus Q$, in which every
+element of $P$ lies below every element of $Q$.
+
+Only sums of two terms are stated; sums of $r$ terms follow by iterating.
 
 Source: Salah Uddin Mohammad, Md. Shah Noor, and Md. Rashed Talukder, *Recognition and
 Enumeration of the Quasi-Full Rooted Trees*, Journal of Integer Sequences 28 (2025),
@@ -82,13 +95,18 @@ public theorem_wanted directSum_ordinalSum_represents {P Q : Type*} [PartialOrde
         reindex finSumFinEquiv finSumFinEquiv
           (fromBlocks A (Matrix.of fun _ _ => true) (Matrix.of fun _ _ => false) B) i j = true)
 
-/-- Theorem 5 (quoted from Mohammad et al. 2025): let a poset matrix `M` of order `n` represent
-a poset `P`. If `M` satisfies the block of `1`s property of some length `r`, `1 ≤ r < n`, then
-`P` is connected; if it satisfies the block of `0`s property of some length, then `P` is
-disconnected. Connected means that every subset of `P` closed under comparability is empty or
-everything; disconnected (two or more direct terms) means that some nonempty proper subset is
-closed under comparability. "`M` can be relabeled" is covered because a relabeling of `M` again
-represents `P`. The hypothesis `P ≇ 1` follows from `1 ≤ r < n`.
+/-- **Block properties decide connectedness of the represented poset.** Let $M$ be a poset matrix
+of order $n$, a Boolean matrix with rows and columns indexed by $0, \dots, n - 1$, that
+represents a partial order $P$: there is a bijection $e$ from $\{0, \dots, n - 1\}$ to $P$ such
+that $e(i) \le e(j)$ if and only if $M_{ij}$ is true. Let $1 \le r < n$. If $M_{ij}$ is true for
+all $i < r \le j$ (the block of $1$s property of length $r$), then $P$ is connected: every subset
+$S$ of $P$ such that $x \in S \iff y \in S$ whenever $x \le y$ is empty or all of $P$. If
+$M_{ij}$ is false for all $i < r \le j$ (the block of $0$s property of length $r$), then $P$ is
+disconnected: some nonempty subset $S$ of $P$ with nonempty complement satisfies
+$x \in S \iff y \in S$ whenever $x \le y$.
+
+Since a relabeling of $M$ represents the same poset, this also covers matrices that satisfy a
+block property after relabeling.
 
 Source: Salah Uddin Mohammad, Md. Shah Noor, and Md. Rashed Talukder, *Recognition and
 Enumeration of the Quasi-Full Rooted Trees*, Journal of Integer Sequences 28 (2025),
@@ -101,15 +119,16 @@ public theorem_wanted connected_or_disconnected_of_block_property {P : Type*} [P
     ((∀ i j : Fin n, (i : ℕ) < r → r ≤ (j : ℕ) → M i j = false) →
       ∃ S : Set P, S.Nonempty ∧ Sᶜ.Nonempty ∧ ∀ x y : P, x ≤ y → (x ∈ S ↔ y ∈ S))
 
-/-- Theorem 10, for the trees represented: a finite poset `P` with `n ≥ 3` elements that is a
-rooted tree (a least element, the root, and every `Set.Iic x` a chain) is a quasi-full `t`-ary
-rooted tree when every `x` has exactly `min(|Ici x| - 1, t)` children (elements covering `x`),
-`Ici x` being the subtree rooted at `x`. Then (i) a quasi-full `(n-1)`-ary tree is quasi-full
-`t`-ary for every `t ≥ n`, and (ii) a quasi-full `t`-ary tree with `t ≤ n - 2` is not quasi-full
-`t'`-ary for any `t' ≥ n`. The record's `M ∈ 𝓜_{n,t}` (a poset matrix in a set of pairwise
-nonequivalent matrices representing the quasi-full `t`-ary trees on `n` elements) is read as
-"`M` represents a quasi-full `t`-ary rooted tree with `n` elements"; both parts depend only on
-the represented poset, so they are stated for `P`.
+/-- **Arity of quasi-full rooted trees.** Let $P$ be a finite partial order with $n \ge 3$
+elements that is a rooted tree: $P$ has a least element and, for every $x \in P$, the elements
+below $x$ form a chain. For a natural number $t$, call $P$ quasi-full $t$-ary when every $x \in P$
+is covered by exactly $\min(|U_x| - 1, t)$ elements of $P$, where $U_x = \{y \in P : x \le y\}$.
+Then (i) if $P$ is quasi-full $(n - 1)$-ary, it is quasi-full $t$-ary for every $t \ge n$; and
+(ii) if $P$ is quasi-full $t$-ary for some $t \le n - 2$, it is not quasi-full $t'$-ary for any
+$t' \ge n$.
+
+The source states this for poset matrices representing quasi-full $t$-ary rooted trees; both
+parts depend only on the represented poset.
 
 Source: Salah Uddin Mohammad, Md. Shah Noor, and Md. Rashed Talukder, *Recognition and
 Enumeration of the Quasi-Full Rooted Trees*, Journal of Integer Sequences 28 (2025),
@@ -126,15 +145,18 @@ public theorem_wanted quasiFullTree_arity {P : Type*} [PartialOrder P] [Fintype 
         ∀ t', Fintype.card P ≤ t' →
           ¬ ∀ x : P, Nat.card {y : P // x ⋖ y} = min (Nat.card (Set.Ici x) - 1) t')
 
-/-- Theorem 11 (direct sum criterion, quoted from Mohammad et al. 2025): let `M` and `M'` be
-poset matrices of order `n ≥ 2` and `t ≥ 2`. Suppose `M` satisfies the block of `0`s property at
-the lengths `l₁ < ⋯ < l_{t-1}` (here `l : Fin (t+1) → ℕ` strictly increasing with `l 0 = 0`,
-`l t = n`) which are nondecreasing inter-distant (the gaps `l_{k+1} - l_k` are nondecreasing),
-and every direct term (the diagonal block on `[l_k, l_{k+1})`) satisfies the block of `1`s
-property of some length; likewise `M'` with `l'`. If `l ≠ l'` (some `l_k ≠ l'_k`), then `M` and
-`M'` are relabeling inequivalent. The record's hypothesis `M, M' ∈ 𝓝_{n,t}` (matrices
-representing quasi-full `t`-ary rooted forests) is dropped: the claim holds for all such poset
-matrices.
+/-- **Direct sum criterion for relabeling inequivalence.** Let $n, t \ge 2$ and let
+$M$ and $M'$ be poset matrices of order $n$, Boolean matrices with rows and columns indexed by
+$0, \dots, n - 1$. Let $0 = l_0 < l_1 < \dots < l_t = n$ be such that the gaps $l_{k+1} - l_k$ are
+nondecreasing in $k$. Suppose that for every $k \le t$, $M_{ij}$ is false for all $i < l_k \le j$,
+and that for every $k < t$ there is $s \ge 1$ with $l_k + s < l_{k+1}$ such that $M_{ij}$ is true
+for all $i, j$ with $l_k \le i < l_k + s \le j < l_{k+1}$. Suppose the same of $M'$ with a sequence
+$0 = l'_0 < l'_1 < \dots < l'_t = n$ whose gaps are nondecreasing. If $l_k \ne l'_k$ for some $k$,
+then $M$ and $M'$ are not relabeling equivalent: there is no permutation $\sigma$ of
+$\{0, \dots, n - 1\}$ with $M'_{ij} = M_{\sigma(i) \sigma(j)}$ for all $i, j$.
+
+The source assumes in addition that $M$ and $M'$ represent quasi-full $t$-ary rooted forests; the
+statement holds without that assumption.
 
 Source: Salah Uddin Mohammad, Md. Shah Noor, and Md. Rashed Talukder, *Recognition and
 Enumeration of the Quasi-Full Rooted Trees*, Journal of Integer Sequences 28 (2025),

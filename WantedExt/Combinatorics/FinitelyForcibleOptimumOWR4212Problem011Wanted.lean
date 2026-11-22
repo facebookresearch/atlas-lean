@@ -42,51 +42,76 @@ completely characterized is open-ended and not formalized.
 
 open MeasureTheory
 
-/-- A graphon: a jointly measurable symmetric function `W : ℝ → ℝ → ℝ` with values in `[0, 1]`
-(only its values on `[0, 1]²` enter the densities). -/
+/-- **Graphon.** A graphon is a function $W$ of two real variables that is jointly measurable
+(measurable as a function on $\mathbb{R}^2$), symmetric ($W(x, y) = W(y, x)$ for all real $x, y$)
+and takes values in $[0, 1]$ at every point of $\mathbb{R}^2$.
+
+Only the values of $W$ on $[0, 1]^2$ enter the densities. -/
 def IsGraphon (W : ℝ → ℝ → ℝ) : Prop :=
   Measurable (Function.uncurry W) ∧ (∀ x y, W x y = W y x) ∧ ∀ x y, W x y ∈ Set.Icc (0 : ℝ) 1
 
 open Classical in
-/-- The labelled density `τ(G, W)` of a graph `G` on the vertex set `Fin k`: the probability that
-the `W`-random graph on `Fin k` (independent uniform points `x i ∈ [0, 1]`, the pair `{i, j}` joined
-with probability `W (x i) (x j)`) equals `G`. -/
+/-- **Labelled density.** For a graph $G$ on the vertex set $\{0, \dots, k-1\}$ and a function $W$
+of two real variables, the labelled density of $G$ in $W$ is
+$$\tau(G, W) = \int_{[0,1]^k} \prod_{i < j} w_{ij}(x) \, dx,$$
+where the integral is with respect to Lebesgue measure (and is taken to be $0$ if the integrand is
+not integrable), the product runs over the pairs $i < j$ of vertices, and $w_{ij}(x) = W(x_i, x_j)$
+if $i$ and $j$ are adjacent in $G$ and $w_{ij}(x) = 1 - W(x_i, x_j)$ otherwise.
+
+When $W$ is a graphon, $\tau(G, W)$ is the probability that the $W$-random graph on
+$\{0, \dots, k-1\}$ (independent uniform points $x_i \in [0, 1]$, each pair $\{i, j\}$ joined
+independently with probability $W(x_i, x_j)$) equals $G$. -/
 noncomputable def labelledDensity {k : ℕ} (G : SimpleGraph (Fin k)) (W : ℝ → ℝ → ℝ) : ℝ :=
   ∫ x in Set.univ.pi fun _ : Fin k => Set.Icc (0 : ℝ) 1,
     ∏ i : Fin k, ∏ j : Fin k,
       if i < j then (if G.Adj i j then W (x i) (x j) else 1 - W (x i) (x j)) else 1
 
-/-- The density `d(H, W)` of a graph `H` on `Fin k` in the graphon `W`: the probability that the
-`W`-random graph on `Fin k` is isomorphic to `H`, i.e. the sum of `τ(G, W)` over the graphs `G` on
-`Fin k` isomorphic to `H`. -/
+/-- **Density of a graph in a graphon.** For a graph $H$ on the vertex set $\{0, \dots, k-1\}$ and
+a function $W$ of two real variables, the density $d(H, W)$ is the sum of the labelled densities
+$\tau(G, W)$ over all graphs $G$ on $\{0, \dots, k-1\}$ that are isomorphic to $H$.
+
+When $W$ is a graphon, $d(H, W)$ is the probability that the $W$-random graph on
+$\{0, \dots, k-1\}$ is isomorphic to $H$. -/
 noncomputable def density {k : ℕ} (H : SimpleGraph (Fin k)) (W : ℝ → ℝ → ℝ) : ℝ :=
   ∑ᶠ (G : SimpleGraph (Fin k)) (_ : Nonempty (G ≃g H)), labelledDensity G W
 
-/-- Two graphons are weakly isomorphic when every graph has the same density in both. -/
+/-- **Weak isomorphism.** Two functions $W_1$ and $W_2$ of two real variables are weakly isomorphic
+if $d(H, W_1) = d(H, W_2)$ for every natural number $k$ and every graph $H$ on the vertex set
+$\{0, \dots, k-1\}$, where $d(H, W)$ is the density of $H$ in $W$.
+
+The notion is meant for graphons, but no graphon condition is imposed on $W_1$ and $W_2$. -/
 def WeaklyIsomorphic (W₁ W₂ : ℝ → ℝ → ℝ) : Prop :=
   ∀ (k : ℕ) (H : SimpleGraph (Fin k)), density H W₁ = density H W₂
 
-/-- `W` is finitely forcible: there are graphs `H₁, …, H_ℓ` such that every graphon `W'` with
-`d(Hᵢ, W') = d(Hᵢ, W)` for all `i` is weakly isomorphic to `W`. -/
+/-- **Finitely forcible graphon.** A function $W$ of two real variables is finitely forcible if
+there are finitely many graphs $H_1, \dots, H_\ell$ such that every graphon $W'$ with
+$d(H_i, W') = d(H_i, W)$ for all $i$ is weakly isomorphic to $W$. -/
 def IsFinitelyForcible (W : ℝ → ℝ → ℝ) : Prop :=
   ∃ (ℓ : ℕ) (H : Fin ℓ → (k : ℕ) × SimpleGraph (Fin k)), ∀ W', IsGraphon W' →
     (∀ i, density (H i).2 W' = density (H i).2 W) → WeaklyIsomorphic W W'
 
-/-- Lovász's conjecture that every extremal problem has a finitely forcible optimum (Oberwolfach
-Report 11/2010, p. 554), in the form of Grzesik-Kráľ-Lovász, Conjecture 1, stated for graphons: for
-graphs `H₁, …, H_ℓ` and reals `d₁, …, d_ℓ`, if some graphon has `d(Hᵢ, W) = dᵢ` for every `i`, then
-some finitely forcible graphon does. -/
+/-- **Lovász's finitely forcible optimum conjecture.** The proposition that for all graphs
+$H_1, \dots, H_\ell$ and reals $d_1, \dots, d_\ell$, if some graphon $W$ satisfies
+$d(H_i, W) = d_i$ for every $i$, then some finitely forcible graphon $W_0$ satisfies
+$d(H_i, W_0) = d_i$ for every $i$.
+
+This is Lovász's conjecture that every extremal problem has a finitely forcible optimum
+(Oberwolfach Report 11/2010, p. 554), in the form of Grzesik, Kráľ and Lovász, Conjecture 1. -/
 def finitelyForcibleOptimum : Prop :=
   ∀ (ℓ : ℕ) (H : Fin ℓ → (k : ℕ) × SimpleGraph (Fin k)) (d : Fin ℓ → ℝ),
     (∃ W, IsGraphon W ∧ ∀ i, density (H i).2 W = d i) →
       ∃ W, IsGraphon W ∧ IsFinitelyForcible W ∧ ∀ i, density (H i).2 W = d i
 
 /--
-Resolved false: Grzesik, Kráľ and Lovász (Theorem 18) construct graphs `H₁, …, H_ℓ` and reals `d₁,
-…, d_ℓ` that are realized as densities by some graphon, such that every graphon `W` with `d(Hᵢ, W) =
-dᵢ` for all `i` is weakly isomorphic to a member of a family none of whose graphons is finitely
-forcible; so no finitely forcible graphon satisfies these constraints, which disproves Lovász's
-conjecture (their Conjecture 1). Source: L. Lovász (joint work with B. Szegedy), Extremal graphs and
+**Lovász's finitely forcible optimum conjecture is false.** There are graphs $H_1, \dots, H_\ell$
+and reals $d_1, \dots, d_\ell$ such that some graphon $W$ satisfies $d(H_i, W) = d_i$ for every $i$,
+but no finitely forcible graphon $W_0$ satisfies $d(H_i, W_0) = d_i$ for every $i$.
+
+Grzesik, Kráľ and Lovász (Theorem 18) construct such graphs and reals for which every graphon
+$W$ with $d(H_i, W) = d_i$ for all $i$ is weakly isomorphic to a member of a family none of whose
+graphons is finitely forcible.
+
+Source: L. Lovász (joint work with B. Szegedy), Extremal graphs and
 graph limits, in Graph Theory, Oberwolfach Reports 7 (2010), no. 11, pp. 554-555, question 1, DOI
 10.4171/OWR/2010/11; resolution: A. Grzesik, D. Kráľ and L. M. Lovász, Elusive extremal graphs,
 Proc. Lond. Math. Soc. (3) 121 (2020), 1685-1736, DOI 10.1112/plms.12382, arXiv:1807.01141,

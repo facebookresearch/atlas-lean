@@ -15,16 +15,15 @@
 ## About ATLAS
 
 ATLAS provides reusable formal building blocks for human- and machine-assisted
-theorem proving across analysis, algebra, geometry, topology, probability,
-statistics, and theoretical computer science.
+theorem proving across mathematics, theoretical computer science, physics, and applied domains.
 
 The project was generated with
 [AutoformBot](https://github.com/facebookresearch/autoform-bot), an
 autoformalization pipeline for developing Lean libraries at scale.
 
-## Formalized mathematics libraries
+## Formalized libraries
 
-The root Lake package is limited to seven libraries:
+The root Lake package is organized into the following libraries:
 
 | Directory | Purpose |
 | --- | --- |
@@ -34,6 +33,8 @@ The root Lake package is limited to seven libraries:
 | [`CSLibExtTest/`](CSLibExtTest/README.md) | Tests and diagnostics for `CSLibExt` |
 | [`PhyslibExt/`](PhyslibExt/README.md) | Reusable, fully proved physics developments built on Physlib |
 | [`PhyslibExtTest/`](PhyslibExtTest/README.md) | Tests and diagnostics for `PhyslibExt` |
+| [`Domains/`](Domains/README.md) | Proved domain models: [biology](Domains/Biology/), [economics and finance](Domains/Economics/), [operations research](Domains/OperationsResearch/), [materials science](Domains/MaterialsScience/), [chemistry](Domains/Chemistry/), [transport](Domains/Transport/), and [urban planning](Domains/Urban/) |
+| [`DomainsTest/`](DomainsTest/README.md) | Tests and diagnostics for domain models |
 | [`WantedExt/`](WantedExt/README.md) | Established results whose Lean implementation or proof is deferred |
 
 Repository checks live in [`scripts/`](scripts/README.md). Run the complete
@@ -45,12 +46,6 @@ scripts/check.sh
 
 The existing `Atlas/` developments and archived `v1/` release are not part of
 this root build. They retain their own build configuration.
-
-Much of `MathlibExt`, `CSLibExt`, `WantedExt` and their tests comes from
-`fairinternal/formal-math`, which is an upstream source snapshot, not a Lake
-dependency. [`provenance/formal-math-sync.json`](provenance/README.md) records
-the upstream commit and, for every file taken from it, whether it is a
-header-only copy, a reviewed divergence, or retired.
 
 ## Dependency explorer
 
