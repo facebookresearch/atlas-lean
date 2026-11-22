@@ -38,8 +38,13 @@ private theorem coeff_pow_add_C_mul_X (n : ℕ) (a b : ℂ) (p : ℂ[X]) :
     coeff_C_mul, coeff_mul_X_pow', ite_eq_left (Nat.sub_le _ _), Nat.sub_sub_self hkn]
   ring
 
-/-- The Bernstein sum weighted by central binomial coefficients is an even polynomial in
-`1 - x` whose coefficients are explicit binomial products. -/
+/-- **Central binomial polynomial identity, Bernstein form.** For every natural number $n$ and
+every complex $x$,
+$$\sum_{k=0}^{n} \binom{n}{k} 2^{-k} \binom{2k}{k} (1-x)^k x^{n-k} =
+\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} 2^{-2k} \binom{2k}{k} (1-x)^{2k}.$$
+
+Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
+Sums*, INTEGERS 26 (2026), Article A19, Corollary 6 (`integers-2026-A19-cor-6`). -/
 public theorem sum_choose_centralBinom_one_sub_pow_mul_pow (n : ℕ) (x : ℂ) :
     ∑ k ∈ range (n + 1),
         (n.choose k : ℂ) / 2 ^ k * ((2 * k).choose k : ℂ) * (1 - x) ^ k * x ^ (n - k) =

@@ -13,6 +13,7 @@ import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
 import Mathlib.Data.Nat.Choose.Cast
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
+public import MathlibExt.Combinatorics.Enumerative.CentralBinomialBernstein
 
 /-!
 # Knuth's old sum, generalizations and related sums
