@@ -20,7 +20,7 @@ open scoped Pointwise
 
 /-- **Breuillard–Green–Tao structure theorem for approximate subgroups.** For every real number
 $K$ there is a natural number $C \ge 1$ with the following property. Let $G$ be a group and let
-$A \subseteq G$ be a $K$-approximate subgroup, that is, $1 \in A$, $A^{-1} = A$, and $A^2$ is
+$A \subseteq G$ be a finite $K$-approximate subgroup, that is, $1 \in A$, $A^{-1} = A$, and $A^2$ is
 covered by at most $K$ left translates of $A$. Then there are a subgroup $H$ of $G$, a normal
 subgroup $N$ of $H$, a finite set $F \subseteq G$ and a finite set $S \subseteq H/N$ such that
 $H/N$ is nilpotent of class at most $C$ (the $C$-th term of its upper central series is all of
@@ -33,7 +33,7 @@ original B. Breuillard, B. Green, T. Tao, *The structure of approximate
 groups*, Publ. Math. IHÉS 116 (2012). -/
 theorem_wanted breuillard_green_tao_approximate_subgroup {K : ℝ} :
     ∃ C : ℕ, 0 < C ∧
-      ∀ {G : Type*} [Group G] [DecidableEq G] (A : Set G)
+      ∀ {G : Type*} [Group G] [DecidableEq G] (A : Set G) (_hfin : A.Finite)
         (_hA : IsApproximateSubgroup K A),
         ∃ (H : Subgroup G) (N : Subgroup H) (_hD : N.Normal) (F : Finset G)
           (S : Finset (H ⧸ N)),

@@ -12,3 +12,4 @@ Modular and cusp forms, congruence subgroups, cusps, Eisenstein series congruenc
 - [Ramanujan–Petersson conjecture](ramanujan-petersson-conjecture/README.md)
 - [Taylor–Wiles patching](taylor-wiles-patching/README.md)
 - [Weight-two cusp forms on Γ₀(2)](weight-two-cusp-forms-on-2/README.md)
+- [Chowla–Selberg formula: the class average of logarithms of CM values of the eta function](chowla-selberg-eta-class-average.md)

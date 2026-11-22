@@ -51,10 +51,11 @@ abbrev BaumslagGroup : Type :=
 
 /-- **Letter functions for Baumslag's group.** To each letter of the free group on $a, b$ attach a
 function $\mathbb{R} \to \mathbb{R}$: $a$ gives $f(x) = 2x$, $a^{-1}$ gives $x/2$, $b$ gives
-$g(x) = 2^x$ and $b^{-1}$ gives $\log_2 x$.
+$g(x) = 2^x$ and $b^{-1}$ gives the total function $x \mapsto \log_2 |x|$ for $x \ne 0$, with
+value $0$ at $x = 0$ (Mathlib's `Real.logb 2`).
 
-On $(0, \infty)$ the function $\log_2 x$ is the inverse of $g$, which is all that matters for germs
-at $+\infty$. -/
+On $(0, \infty)$ this function is $\log_2 x$, the inverse of $g$, which is all that matters for
+germs at $+\infty$. -/
 noncomputable def letterFunction : Fin 2 × Bool → ℝ → ℝ
   | (0, true) => fun x => 2 * x
   | (0, false) => fun x => x / 2
@@ -88,7 +89,8 @@ def baumslagGroupGermRepresentationFaithful : Prop :=
 $\langle a, b \mid (bab^{-1})\, a\, (bab^{-1})^{-1} = a^2 \rangle$, let $f(x) = 2x$ and
 $g(x) = 2^x$, and for $w$ in the free group on $a, b$ with reduced word $l_1 l_2 \cdots l_k$ let
 $\varphi_w = \varphi_{l_1} \circ \varphi_{l_2} \circ \cdots \circ \varphi_{l_k}$, where
-$\varphi_a = f$, $\varphi_{a^{-1}}(x) = x/2$, $\varphi_b = g$ and $\varphi_{b^{-1}}(x) = \log_2 x$.
+$\varphi_a = f$, $\varphi_{a^{-1}}(x) = x/2$, $\varphi_b = g$, $\varphi_{b^{-1}}(x) = \log_2 |x|$
+for $x \ne 0$ and $\varphi_{b^{-1}}(0) = 0$.
 The representation $a \mapsto f$, $b \mapsto g$ of $B$ by germs at $+\infty$ is not faithful: there
 is an element $w$ of the free group on $a, b$ such that $\varphi_w(x) = x$ for all sufficiently
 large real $x$, but the image of $w$ in $B$ is not trivial.

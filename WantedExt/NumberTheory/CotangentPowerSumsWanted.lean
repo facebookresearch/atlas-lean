@@ -19,10 +19,15 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Girstmair's coefficients
-`c_{r,j} = (-1)^{r-1} ∑_{k=j}^{r} (-2)^{k-j} / (k-1)! · C(r, k) · S(k, j)`, where `S(k, j)` is
-the unsigned Stirling number of the first kind (`Nat.stirlingFirst`). They express `i^r cot^r` in
-terms of the derivatives `i^j cot^{(j-1)}`.
+/-- **Girstmair's cotangent power coefficients.** For natural numbers $r$ and $j$, the rational
+number $c_{r,j}$ is
+$$c_{r,j} = (-1)^{r-1} \sum_{k=j}^{r} \frac{(-2)^{k-j}}{(k-1)!} \binom{r}{k} S(k, j),$$
+where $S(k, j)$ is the unsigned Stirling number of the first kind, the number of permutations
+of $k$ elements with exactly $j$ cycles. Subtraction of natural numbers is truncated at $0$: for
+$r = 0$ the exponent $r - 1$ is read as $0$, and for $j = 0$ the factor $(k-1)!$ of the term
+$k = 0$ is read as $0! = 1$.
+
+These coefficients express $(i \cot)^r$ in terms of the derivatives $i^j \cot^{(j-1)}$.
 
 Source: Kurt Girstmair, *Cotangent Power Sums and Character Coordinates*, INTEGERS 25 (2025),
 Article A63, Equation (8). The equation is not in the journal record; it is read from the arXiv
@@ -31,27 +36,27 @@ def cotangentPowerCoeff (r j : ℕ) : ℚ :=
   (-1) ^ (r - 1) * ∑ k ∈ Finset.Icc j r,
     (-2) ^ (k - j) / ((k - 1).factorial : ℚ) * (r.choose k : ℚ) * (Nat.stirlingFirst k j : ℚ)
 
-/-- `c_{1,1} = 1`, matching `i cot = i cot`.
+/-- **Girstmair's coefficient at index (1, 1).** Girstmair's cotangent power coefficient
+$c_{1,1}$ equals $1$, matching the identity $i \cot = i \cot$.
 
 Source: Kurt Girstmair, *Cotangent Power Sums and Character Coordinates*, INTEGERS 25 (2025),
 Article A63, characteristic value of Equation (8). -/
 theorem cotangentPowerCoeff_one_one : cotangentPowerCoeff 1 1 = 1 := by
   simp [cotangentPowerCoeff, Nat.stirlingFirst]
 
-/-- `c_{2,2} = -1`, matching `(i cot)^2 = 1 - i^2 cot'` with `cot' = -1 - cot^2`.
+/-- **Girstmair's coefficient at index (2, 2).** Girstmair's cotangent power coefficient
+$c_{2,2}$ equals $-1$, matching the identity $(i \cot)^2 = 1 - i^2 \cot'$ with
+$\cot' = -1 - \cot^2$.
 
 Source: Kurt Girstmair, *Cotangent Power Sums and Character Coordinates*, INTEGERS 25 (2025),
 Article A63, characteristic value of Equation (8). -/
 theorem cotangentPowerCoeff_two_two : cotangentPowerCoeff 2 2 = -1 := by
   simp [cotangentPowerCoeff, Nat.stirlingFirst]
 
-/-- Cotangent powers through cotangent derivatives: for `r ≥ 1` and real `x` with `sin x ≠ 0`,
-`(i cot x)^r = ((-1)^r + 1)/2 + ∑_{j=1}^{r} c_{r,j} i^j cot^{(j-1)}(x)`, where `cot^{(m)}` is the
-`m`-th derivative of `cot` and `c_{r,j}` is `cotangentPowerCoeff r j`.
-
-The record's consequences that follow are not part of this statement: equations (9) and (10)
-follow from this identity and `cotangentPowerCoeff_eq_zero_of_mod_two_ne`. Equation (11) enters
-Theorem 1, stated below as `sum_conj_dirichletCharacter_mul_I_mul_cot_pow_of_even`.
+/-- **Cotangent powers through cotangent derivatives.** Let $c_{r,j}$ be Girstmair's cotangent
+power coefficients and $\cot^{(m)}$ the $m$-th derivative of the real cotangent function. For
+every natural number $r \ge 1$ and every real number $x$ with $\sin x \ne 0$,
+$$(i \cot x)^r = \frac{(-1)^r + 1}{2} + \sum_{j=1}^{r} c_{r,j} \, i^j \cot^{(j-1)}(x).$$
 
 Source: Kurt Girstmair, *Cotangent Power Sums and Character Coordinates*, INTEGERS 25 (2025),
 Article A63, Proposition 1 (`integers-2025-A63-prop-1`). -/
@@ -61,22 +66,34 @@ public theorem_wanted I_mul_cot_pow_eq_sum_iteratedDeriv_cot (r : ℕ) (hr : 1 �
       ∑ j ∈ Finset.Icc 1 r, (cotangentPowerCoeff r j : ℂ) * Complex.I ^ j *
         ((iteratedDeriv (j - 1) Real.cot x : ℝ) : ℂ)
 
-/-- Parity of Girstmair's coefficients: `c_{r,j} = 0` when `1 ≤ j ≤ r` and `r ≢ j (mod 2)`.
-The source deduces this from the `ℚ`-linear independence of the functions `i^j cot^{(j-1)}`.
+/-- **Parity of Girstmair's cotangent power coefficients.** For natural numbers $j$ and $r$ with
+$1 \le j \le r$ and $r \not\equiv j \pmod 2$, Girstmair's cotangent power coefficient $c_{r,j}$
+is $0$.
+
+The source deduces this from the $\mathbb{Q}$-linear independence of the functions
+$i^j \cot^{(j-1)}$.
 
 Source: Kurt Girstmair, *Cotangent Power Sums and Character Coordinates*, INTEGERS 25 (2025),
 Article A63, Proposition 1, the sentence that follows it (`integers-2025-A63-prop-1`). -/
 public theorem_wanted cotangentPowerCoeff_eq_zero_of_mod_two_ne {r j : ℕ} (hj : 1 ≤ j)
     (hjr : j ≤ r) (hpar : r % 2 ≠ j % 2) : cotangentPowerCoeff r j = 0
 
-/-- **Theorem 1, odd `r`.** For `n ≥ 2`, odd `r ≥ 1` and an odd Dirichlet character `χ` mod `n`
-(`χ(-1) = -1`) with conductor `f` and attached primitive character `χ_f`,
-`y(χ|i^r cot^r(π/n)) = -∑_{1 ≤ j ≤ r, j odd} c_{r,j} (2n)^j/(j f^j) ∏_{p ∣ n} (1 - χ̄_f(p)/p^j)
-B_{j,χ_f}`, where `B_{j,χ_f} = f^{j-1} ∑_{k=1}^f B_j(k/f) χ_f(k)`.
+/-- **Girstmair's cotangent power sums, odd case.** Let $n \ge 2$, let $r$ be odd, and let $\chi$
+be a complex Dirichlet character modulo $n$ with $\chi(-1) = -1$. Let $f$ be the conductor of
+$\chi$, $\chi_f$ the primitive character modulo $f$ attached to $\chi$, and $c_{r,j}$
+Girstmair's cotangent power coefficients. Write
+$\tau(\overline{\chi_f}) = \sum_{k=1}^{f} \overline{\chi_f(k)} e^{2 \pi i k/f}$ for the Gauss sum
+and $B_{j,\chi_f} = f^{j-1} \sum_{k=1}^{f} B_j(k/f) \chi_f(k)$, where $B_j$ is the $j$-th
+Bernoulli polynomial. Then
+$$\sum_{k} \overline{\chi(k)} \left(i \cot \frac{\pi k}{n}\right)^r = -\tau(\overline{\chi_f})
+\sum_{j} \frac{c_{r,j} (2n)^j}{j f^j}
+\prod_{p \mid n} \Bigl(1 - \frac{\overline{\chi_f(p)}}{p^j}\Bigr) B_{j,\chi_f},$$
+where $k$ runs over $1 \le k \le n$ with $\gcd(k, n) = 1$, $j$ runs over the odd numbers with
+$1 \le j \le r$, and $p$ runs over the primes dividing $n$.
 
-The character coordinate is unfolded through its defining Equation (3),
-`y(χ|a) τ(χ̄_f) = ∑_{1 ≤ k ≤ n, (k,n)=1} χ̄(k) σ_k(a)`, with `σ_k(i^r cot^r(π/n)) =
-i^r cot^r(πk/n)` (Equation (4)) and the Gauss sum `τ(χ̄_f) = ∑_{k=1}^f χ̄_f(k) e^{2πik/f}`.
+The left side is $\tau(\overline{\chi_f})$ times the character coordinate
+$y(\chi \mid i^r \cot^r(\pi/n))$ of the source, defined by Equation (3), since
+$\sigma_k(i^r \cot^r(\pi/n)) = i^r \cot^r(\pi k/n)$ (Equation (4)).
 
 Source: Kurt Girstmair, *Cotangent Power Sums and Character Coordinates*, INTEGERS 25 (2025),
 Article A63, Theorem 1, first case (`integers-2025-A63-thm-1`). -/
@@ -95,13 +112,23 @@ public theorem_wanted sum_conj_dirichletCharacter_mul_I_mul_cot_pow_of_odd {n : 
                 χ.primitiveCharacter k)
 
 open Classical in
-/-- **Theorem 1, even `r`.** For `n ≥ 2`, even `r ≥ 2` and an even Dirichlet character `χ` mod
-`n` (`χ(-1) = 1`) with conductor `f`,
-`y(χ|i^r cot^r(π/n)) = y(χ|1) + ∑_{1 ≤ j ≤ r, j even} c_{r,j} (2n)^j/(j f^j)
-∏_{p ∣ n} (1 - χ̄_f(p)/p^j) B_{j,χ_f}`, where `y(χ|1)` is `φ(n)` for the principal character and
-`0` otherwise (Equation (11)).
+/-- **Girstmair's cotangent power sums, even case.** Let $n \ge 2$, let $r \ge 2$ be even, and let
+$\chi$ be a complex Dirichlet character modulo $n$ with $\chi(-1) = 1$. Let $f$ be the conductor
+of $\chi$, $\chi_f$ the primitive character modulo $f$ attached to $\chi$, and $c_{r,j}$
+Girstmair's cotangent power coefficients. Write
+$\tau(\overline{\chi_f}) = \sum_{k=1}^{f} \overline{\chi_f(k)} e^{2 \pi i k/f}$ for the Gauss sum,
+$B_{j,\chi_f} = f^{j-1} \sum_{k=1}^{f} B_j(k/f) \chi_f(k)$, where $B_j$ is the $j$-th Bernoulli
+polynomial, and $\varepsilon_\chi = \varphi(n)$ if $\chi$ is the principal character modulo $n$
+and $\varepsilon_\chi = 0$ otherwise. Then
+$$\sum_{k} \overline{\chi(k)} \left(i \cot \frac{\pi k}{n}\right)^r = \tau(\overline{\chi_f}) \,
+\Bigl(\varepsilon_\chi + \sum_{j} \frac{c_{r,j} (2n)^j}{j f^j}
+\prod_{p \mid n} \Bigl(1 - \frac{\overline{\chi_f(p)}}{p^j}\Bigr) B_{j,\chi_f}\Bigr),$$
+where $k$ runs over $1 \le k \le n$ with $\gcd(k, n) = 1$, $j$ runs over the even numbers with
+$1 \le j \le r$, and $p$ runs over the primes dividing $n$.
 
-The character coordinate is unfolded through Equation (3) as in the odd case.
+The left side is $\tau(\overline{\chi_f})$ times the character coordinate
+$y(\chi \mid i^r \cot^r(\pi/n))$ of the source (Equation (3)), and $\varepsilon_\chi$ is
+$y(\chi \mid 1)$ (Equation (11)).
 
 Source: Kurt Girstmair, *Cotangent Power Sums and Character Coordinates*, INTEGERS 25 (2025),
 Article A63, Theorem 1, second case (`integers-2025-A63-thm-1`). -/
@@ -120,11 +147,15 @@ public theorem_wanted sum_conj_dirichletCharacter_mul_I_mul_cot_pow_of_even {n :
                 (((Polynomial.bernoulli j).eval ((k : ℚ) / χ.conductor) : ℚ) : ℂ) *
                   χ.primitiveCharacter k))
 
-/-- **Theorem 2.** Girstmair's coefficients agree with the coefficients `d_{r,j}` of the
-earlier literature (Equation (15)): for `1 ≤ j ≤ r` with `j ≡ r (mod 2)`,
-`c_{r,j} = (-1)^{r+1} 2^{r-j}/(j-1)! · d_{r,j}`, where
-`d_{r,j} = ∑_{j_1, …, j_r ≥ 0, j + 2 j_1 + ⋯ + 2 j_r = r} ∏_{t=1}^r B_{2 j_t}/(2 j_t)!`
-(Equation (13); only even-index Bernoulli numbers occur).
+/-- **Cotangent power coefficients through even Bernoulli numbers.** Let $c_{r,j}$ be
+Girstmair's cotangent power coefficients and $B_m$ the $m$-th Bernoulli number. For natural
+numbers $j$ and $r$ with $1 \le j \le r$ and $j \equiv r \pmod 2$,
+$$c_{r,j} = \frac{(-1)^{r+1} 2^{r-j}}{(j-1)!} \, d_{r,j},$$
+where
+$$d_{r,j} = \sum_{(j_1, \dots, j_r)} \prod_{t=1}^{r} \frac{B_{2 j_t}}{(2 j_t)!}$$
+and the sum runs over all $r$-tuples $(j_1, \dots, j_r)$ of natural numbers with
+$j + 2 j_1 + \dots + 2 j_r = r$. This is Theorem 2 of the source, relating $c_{r,j}$ to the
+coefficients $d_{r,j}$ of the earlier literature (Equations (13) and (15)).
 
 Source: Kurt Girstmair, *Cotangent Power Sums and Character Coordinates*, INTEGERS 25 (2025),
 Article A63, Theorem 2 with Equations (13) and (15) (`integers-2025-A63-thm-2`). -/

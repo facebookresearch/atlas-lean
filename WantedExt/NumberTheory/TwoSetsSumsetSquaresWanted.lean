@@ -44,22 +44,30 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.TwoSetsSumsetSquaresWanted
 
-/-- All pairwise sums of two finite families are squares. -/
+/-- **Families whose pairwise sums are squares.** Let $\alpha$ be a type with an addition and a
+multiplication, and let $(a_i)_{i \in I}$ and $(b_j)_{j \in J}$ be families in $\alpha$ indexed by
+arbitrary types $I$ and $J$. They have all pairwise sums square when, for every $i \in I$ and
+$j \in J$, the sum $a_i + b_j$ is a square in $\alpha$, that is, $a_i + b_j = c \cdot c$ for some
+$c \in \alpha$. -/
 def PairwiseSumsSquares {ι κ α : Type*} [Add α] [Mul α]
     (a : ι → α) (b : κ → α) : Prop :=
   ∀ i j, IsSquare (a i + b j)
 
-/-- The squared-entry matrix `(e i j)^2` is semi-magic: all row and
-column sums have a common value. -/
+/-- **Semi-magic matrix of squares.** A $3 \times 3$ integer matrix $E = (e_{ij})$ has semi-magic
+squares when the matrix $(e_{ij}^2)$ of its squared entries is semi-magic: there is an integer
+$S$ such that $\sum_{j=1}^{3} e_{ij}^2 = S$ for every row $i$ and $\sum_{i=1}^{3} e_{ij}^2 = S$ for
+every column $j$. -/
 def IsSemiMagicRoots (e : Fin 3 → Fin 3 → ℤ) : Prop :=
   ∃ S : ℤ,
     (∀ i : Fin 3, ∑ j : Fin 3, (e i j) ^ 2 = S) ∧
       ∀ j : Fin 3, ∑ i : Fin 3, (e i j) ^ 2 = S
 
-/-- **Lemma 1**: rational families with all pairwise sums squares
-can be rescaled and translated to integer families, by
-`aᵢ' = k²aᵢ - t` and `bⱼ' = k²bⱼ + t`, whenever the displayed
-values are integers.
+/-- **Scaling rational families with square pairwise sums to integers.** Let $a_1, \dots, a_m$
+and $b_1, \dots, b_n$ be rational numbers such that every sum $a_i + b_j$ is the square of a
+rational number, and let $t$ be an integer and $k$ a rational number such that $k^2 a_i - t$ is an
+integer for every $i$ and $k^2 b_j + t$ is an integer for every $j$. Then the integers
+$a_i' = k^2 a_i - t$ and $b_j' = k^2 b_j + t$ are such that every sum $a_i' + b_j'$ is the square
+of an integer.
 
 Source: Ajai Choudhry, "Two Sets of Integers Such That All
 Elements of the Sumset of the Two Sets Are Perfect Squares",
@@ -75,9 +83,11 @@ theorem_wanted exists_int_pairwiseSumsSquares_scale_translate
         (∀ j, (b' j : ℚ) = k ^ 2 * b j + (t : ℚ)) ∧
         PairwiseSumsSquares a' b'
 
-/-- **Lemma 2, triple construction**: from a semi-magic
-squared-entry matrix with roots `e`, the triples in formula (2.2)
-have all nine pairwise sums squares.
+/-- **Triples with square pairwise sums from a semi-magic square of squares.** Let $e_{ij}$,
+$1 \le i, j \le 3$, be integers such that the matrix of squares $(e_{ij}^2)$ is semi-magic, that
+is, all its row sums and all its column sums are equal. Put $a_1 = e_{13}^2$, $a_2 = e_{31}^2$,
+$a_3 = e_{22}^2$ and $b_1 = 0$, $b_2 = e_{21}^2 - e_{13}^2$, $b_3 = e_{11}^2 - e_{22}^2$. Then
+$a_i + b_j$ is a perfect square for all $i, j \in \{1, 2, 3\}$.
 
 Source: Ajai Choudhry, "Two Sets of Integers Such That All
 Elements of the Sumset of the Two Sets Are Perfect Squares",
@@ -88,9 +98,13 @@ theorem_wanted pairwiseSumsSquares_triple_of_isSemiMagicRoots
       ![e 0 2 ^ 2, e 2 0 ^ 2, e 1 1 ^ 2]
       ![0, e 1 0 ^ 2 - e 0 2 ^ 2, e 0 0 ^ 2 - e 1 1 ^ 2]
 
-/-- **Lemma 2, triple converse**: from two integer triples with all
-nine pairwise sums squares, the matrix `E₁` in formula (2.9) has
-integer square roots and is semi-magic.
+/-- **Triples with square pairwise sums come from semi-magic squares.** Let $a_1, a_2, a_3$ and
+$b_1, b_2, b_3$ be integers such that every sum $a_i + b_j$ is the square of an integer. Then
+there is a $3 \times 3$ integer matrix $E = (e_{ij})$ whose squared entries $e_{ij}^2$ have all
+three row sums and all three column sums equal to one common integer, and such that
+$e_{11}^2 = a_3 + b_3$, $e_{12}^2 = a_2 + b_2$, $e_{13}^2 = a_1 + b_1$, $e_{21}^2 = a_1 + b_2$,
+$e_{22}^2 = a_3 + b_1$, $e_{23}^2 = a_2 + b_3$, $e_{31}^2 = a_2 + b_1$, $e_{32}^2 = a_1 + b_3$ and
+$e_{33}^2 = a_3 + b_2$.
 
 Source: Ajai Choudhry, "Two Sets of Integers Such That All
 Elements of the Sumset of the Two Sets Are Perfect Squares",
@@ -105,10 +119,13 @@ theorem_wanted exists_isSemiMagicRoots_of_pairwiseSumsSquares_triple
           e 2 0 ^ 2 = a 1 + b 0 ∧ e 2 1 ^ 2 = a 0 + b 2 ∧
           e 2 2 ^ 2 = a 2 + b 1
 
-/-- **Lemma 2, quintuple construction**: if `E` and `F` are
-semi-magic and their diagonal squared entries agree as in (2.3),
-then adjoining `a₄ = f₁₃²` and `a₅ = f₃₁²` to the triple from
-`E` gives all fifteen pairwise sums squares.
+/-- **Five integers with square sums from two semi-magic squares of squares.** Let $e_{ij}$ and
+$f_{ij}$, $1 \le i, j \le 3$, be integers such that the matrices of squares $(e_{ij}^2)$ and
+$(f_{ij}^2)$ are both semi-magic (in each matrix all row sums and all column sums are equal) and
+have the same diagonal, $e_{ii}^2 = f_{ii}^2$ for $i = 1, 2, 3$. Put $a_1 = e_{13}^2$,
+$a_2 = e_{31}^2$, $a_3 = e_{22}^2$, $a_4 = f_{13}^2$, $a_5 = f_{31}^2$ and $b_1 = 0$,
+$b_2 = e_{21}^2 - e_{13}^2$, $b_3 = e_{11}^2 - e_{22}^2$. Then $a_i + b_j$ is a perfect square for
+all $1 \le i \le 5$ and $1 \le j \le 3$.
 
 Source: Ajai Choudhry, "Two Sets of Integers Such That All
 Elements of the Sumset of the Two Sets Are Perfect Squares",
@@ -122,10 +139,14 @@ theorem_wanted pairwiseSumsSquares_quintuple_of_isSemiMagicRoots
       ![e 0 2 ^ 2, e 2 0 ^ 2, e 1 1 ^ 2, f 0 2 ^ 2, f 2 0 ^ 2]
       ![0, e 1 0 ^ 2 - e 0 2 ^ 2, e 0 0 ^ 2 - e 1 1 ^ 2]
 
-/-- **Lemma 2, quintuple converse**: relative to the triples built
-from a given semi-magic `E`, any two further integers making all
-fifteen sums squares arise from a semi-magic `F` satisfying (2.3)
-and formula (2.4).
+/-- **Quintuple extensions come from a second semi-magic square.** Let $E = (e_{ij})$ be a
+$3 \times 3$ integer matrix whose squared entries $e_{ij}^2$ have all three row sums and all three
+column sums equal to one common integer. Put $(a_1, a_2, a_3) = (e_{13}^2, e_{31}^2, e_{22}^2)$ and
+$(b_1, b_2, b_3) = (0, e_{21}^2 - e_{13}^2, e_{11}^2 - e_{22}^2)$, and let $a_4, a_5$ be integers
+such that every sum $a_i + b_j$ with $1 \le i \le 5$ and $1 \le j \le 3$ is the square of an
+integer. Then there is a $3 \times 3$ integer matrix $F = (f_{ij})$ whose squared entries also
+have all row sums and all column sums equal to one common integer, with $f_{11}^2 = e_{11}^2$,
+$f_{22}^2 = e_{22}^2$, $f_{33}^2 = e_{33}^2$, $a_4 = f_{13}^2$ and $a_5 = f_{31}^2$.
 
 Source: Ajai Choudhry, "Two Sets of Integers Such That All
 Elements of the Sumset of the Two Sets Are Perfect Squares",
@@ -142,10 +163,14 @@ theorem_wanted exists_isSemiMagicRoots_f_of_pairwiseSumsSquares_quintuple
           e 2 2 ^ 2 = f 2 2 ^ 2 ∧
           a4 = f 0 2 ^ 2 ∧ a5 = f 2 0 ^ 2
 
-/-- **Lemma 2, quadruple construction**: if `E`, `G`, and `H` are
-semi-magic and satisfy conditions (2.5), (2.6), and (2.7), then
-adjoining `a₄ = g₂₂²` and `b₄ = g₁₁² - g₂₂²` as in (2.8)
-gives all sixteen pairwise sums squares.
+/-- **Extending the triples to quadruples with square pairwise sums.** Let $E = (e_{ij})$,
+$G = (g_{ij})$ and $H = (h_{ij})$ be $3 \times 3$ integer matrices, each of whose squared entries
+have all three row sums and all three column sums equal to one common integer, such that
+$e_{12}^2 = g_{12}^2$, $e_{13}^2 = g_{13}^2$, $e_{21}^2 = g_{21}^2$, $e_{31}^2 = g_{31}^2$,
+$e_{11}^2 = h_{11}^2$, $e_{22}^2 = h_{22}^2$, $g_{11}^2 = h_{12}^2$ and $g_{22}^2 = h_{31}^2$. Put
+$(a_1, a_2, a_3, a_4) = (e_{13}^2, e_{31}^2, e_{22}^2, g_{22}^2)$ and
+$(b_1, b_2, b_3, b_4) = (0, e_{21}^2 - e_{13}^2, e_{11}^2 - e_{22}^2, g_{11}^2 - g_{22}^2)$. Then
+$a_i + b_j$ is the square of an integer for all $1 \le i, j \le 4$.
 
 Source: Ajai Choudhry, "Two Sets of Integers Such That All
 Elements of the Sumset of the Two Sets Are Perfect Squares",
@@ -163,10 +188,16 @@ theorem_wanted pairwiseSumsSquares_quadruple_of_isSemiMagicRoots
       ![0, e 1 0 ^ 2 - e 0 2 ^ 2, e 0 0 ^ 2 - e 1 1 ^ 2,
         g 0 0 ^ 2 - g 1 1 ^ 2]
 
-/-- **Lemma 2, quadruple converse**: relative to the triples built
-from a given semi-magic `E`, any further `a₄, b₄` making all
-sixteen sums squares arise from semi-magic `G` and `H` satisfying
-(2.5), (2.6), (2.7), and formula (2.8).
+/-- **Quadruple extensions come from two further semi-magic squares.** Let $E = (e_{ij})$ be a
+$3 \times 3$ integer matrix whose squared entries $e_{ij}^2$ have all three row sums and all three
+column sums equal to one common integer. Put $(a_1, a_2, a_3) = (e_{13}^2, e_{31}^2, e_{22}^2)$ and
+$(b_1, b_2, b_3) = (0, e_{21}^2 - e_{13}^2, e_{11}^2 - e_{22}^2)$, and let $a_4, b_4$ be integers
+such that every sum $a_i + b_j$ with $1 \le i, j \le 4$ is the square of an integer. Then there
+are $3 \times 3$ integer matrices $G = (g_{ij})$ and $H = (h_{ij})$, each of whose squared entries
+have all row sums and all column sums equal to one common integer, such that
+$g_{12}^2 = e_{12}^2$, $g_{13}^2 = e_{13}^2$, $g_{21}^2 = e_{21}^2$, $g_{31}^2 = e_{31}^2$,
+$h_{11}^2 = e_{11}^2$, $h_{22}^2 = e_{22}^2$, $h_{12}^2 = g_{11}^2$, $h_{31}^2 = g_{22}^2$,
+$a_4 = g_{22}^2$ and $b_4 = g_{11}^2 - g_{22}^2$.
 
 Source: Ajai Choudhry, "Two Sets of Integers Such That All
 Elements of the Sumset of the Two Sets Are Perfect Squares",
@@ -185,8 +216,10 @@ theorem_wanted exists_isSemiMagicRoots_gh_of_pairwiseSumsSquares_quadruple
           g 0 0 ^ 2 = h 0 1 ^ 2 ∧ g 1 1 ^ 2 = h 2 0 ^ 2 ∧
           a4 = g 1 1 ^ 2 ∧ b4 = g 0 0 ^ 2 - g 1 1 ^ 2
 
-/-- **Theorem 1, family (3.1)**: the first four-parameter pair of
-integer triples with all pairwise sums squares.
+/-- **Four-parameter triples with square pairwise sums, family (3.1).** For all integers
+$p, q, r, s$, put $a_1 = 0$, $a_2 = 16pqrs$, $a_3 = (p+q+r+s)(p+q-r-s)(p-q+r-s)(p-q-r+s)$ and
+$b_1 = 4(pr - qs)^2$, $b_2 = 4(ps - qr)^2$, $b_3 = 4(pq - rs)^2$. Then $a_i + b_j$ is a perfect
+square for all $i, j \in \{1, 2, 3\}$.
 
 Source: Ajai Choudhry, "Two Sets of Integers Such That All
 Elements of the Sumset of the Two Sets Are Perfect Squares",
@@ -200,8 +233,12 @@ theorem_wanted pairwiseSumsSquares_triple_family31
       ![4 * (p * r - q * s) ^ 2, 4 * (p * s - q * r) ^ 2,
         4 * (p * q - r * s) ^ 2]
 
-/-- **Theorem 1, family (3.2)**: the second four-parameter pair of
-integer triples with all pairwise sums squares.
+/-- **Four-parameter triples with square pairwise sums, family (3.2).** For all integers
+$p, q, r, s$, put $a_1 = -(p+q+r+s)(p+q-r-s)(p-q+r-s)(p-q-r+s)$,
+$a_2 = -(p-q+r+s)(p-q-r-s)(p+q+r-s)(p+q-r+s)$, $a_3 = 0$ and
+$b_1 = (p^2 - q^2 + r^2 - s^2)^2$, $b_2 = (p^2 - q^2 - r^2 + s^2)^2$,
+$b_3 = (p^2 + q^2 - r^2 - s^2)^2$. Then $a_i + b_j$ is a perfect square for all
+$i, j \in \{1, 2, 3\}$.
 
 Source: Ajai Choudhry, "Two Sets of Integers Such That All
 Elements of the Sumset of the Two Sets Are Perfect Squares",
@@ -217,8 +254,10 @@ theorem_wanted pairwiseSumsSquares_triple_family32
         (p ^ 2 - q ^ 2 - r ^ 2 + s ^ 2) ^ 2,
         (p ^ 2 + q ^ 2 - r ^ 2 - s ^ 2) ^ 2]
 
-/-- **Theorem 1, family (3.3)**: the third four-parameter pair of
-integer triples with all pairwise sums squares.
+/-- **Four-parameter triples with square pairwise sums, family (3.3).** For all integers
+$p, q, r, s$, put $a_1 = 4(ps - qr)^2$, $a_2 = 4(ps + qr)^2$, $a_3 = (p^2 - q^2 - r^2 + s^2)^2$
+and $b_1 = 4(p^2 - q^2)(r^2 - s^2)$, $b_2 = 0$, $b_3 = 4(p^2 - r^2)(q^2 - s^2)$. Then $a_i + b_j$
+is a perfect square for all $i, j \in \{1, 2, 3\}$.
 
 Source: Ajai Choudhry, "Two Sets of Integers Such That All
 Elements of the Sumset of the Two Sets Are Perfect Squares",
@@ -231,8 +270,23 @@ theorem_wanted pairwiseSumsSquares_triple_family33
       ![4 * (p ^ 2 - q ^ 2) * (r ^ 2 - s ^ 2), 0,
         4 * (p ^ 2 - r ^ 2) * (q ^ 2 - s ^ 2)]
 
-/-- **Theorem 2**: the seven-parameter rational quintuple/triple
-family (4.1) with all fifteen pairwise sums squares of rationals.
+/-- **A seven-parameter family of five and three rationals with square pairwise sums.** For
+rational numbers $f, g, m, u_1, u_2, v_1, v_2$, put
+$\alpha = m u_1 u_2 (u_1 v_1 - u_2 v_2)$, $\beta = (u_1 v_2 - u_2 v_1)(m^2 u_1 u_2 v_1 v_2 - 1)$,
+$\gamma = m v_1 v_2 (u_1 v_1 - u_2 v_2)$, $\alpha' = m u_1 u_2 (u_1 v_1 + u_2 v_2)$,
+$\beta' = (u_1 v_2 + u_2 v_1)(m^2 u_1 u_2 v_1 v_2 + 1)$ and
+$\gamma' = m v_1 v_2 (u_1 v_1 + u_2 v_2)$, and let
+$a_1 = 4(\alpha f^2 - \beta f g - \gamma g^2)^2$,
+$a_2 = 4(\alpha' f^2 + \beta' f g + \gamma' g^2)^2$,
+$a_3 = \bigl((u_1^2 u_2^2 (v_1^2 - v_2^2) m^2 + u_1^2 - u_2^2) f^2 -
+(v_1^2 v_2^2 (u_1^2 - u_2^2) m^2 + v_1^2 - v_2^2) g^2\bigr)^2$,
+$a_4 = 4(\alpha f^2 + \beta f g - \gamma g^2)^2$,
+$a_5 = 4(\alpha' f^2 - \beta' f g + \gamma' g^2)^2$,
+$b_1 = 0$,
+$b_2 = -4 (u_1^2 - u_2^2)(v_1^2 - v_2^2)(m^2 u_1^2 u_2^2 f^2 - g^2)(f^2 - m^2 v_1^2 v_2^2 g^2)$
+and
+$b_3 = 4 (m^2 u_1^2 v_1^2 - 1)(m^2 u_2^2 v_2^2 - 1)(f^2 u_1^2 - g^2 v_1^2)(f^2 u_2^2 - g^2 v_2^2)$.
+Then $a_i + b_j$ is the square of a rational number for all $1 \le i \le 5$ and $1 \le j \le 3$.
 
 Source: Ajai Choudhry, "Two Sets of Integers Such That All
 Elements of the Sumset of the Two Sets Are Perfect Squares",
@@ -269,8 +323,20 @@ theorem_wanted pairwiseSumsSquares_quintuple_family41
           (f ^ 2 * u1 ^ 2 - g ^ 2 * v1 ^ 2) *
           (f ^ 2 * u2 ^ 2 - g ^ 2 * v2 ^ 2)]
 
-/-- **Theorem 3**: the four-parameter pair of integer quadruples
-(5.1) with all sixteen pairwise sums perfect squares.
+/-- **A four-parameter family of integer quadruples with square pairwise sums.** For integers
+$u_1, u_2, v_1, v_2$, put $w = v_1^4 - 6 v_1^2 v_2^2 + v_2^4$, $s = v_1^2 + v_2^2$ and
+$d = v_1^2 - v_2^2$, and let
+$a_1 = w^2 d^2 (u_1^2 + u_2^2)^2$, $a_2 = w^2 s^2 (u_1^2 - u_2^2)^2$,
+$a_3 = d^2 (s^2 u_1^2 - 16 u_1 u_2 v_1^2 v_2^2 - s^2 u_2^2)^2$,
+$a_4 = d^2 (s^2 u_1^2 + 16 u_1 u_2 v_1^2 v_2^2 - s^2 u_2^2)^2$, $b_1 = 0$,
+$b_2 = w^2 \bigl((v_2 - v_1) u_1 + (v_1 + v_2) u_2\bigr)
+\bigl((v_1 + v_2) u_1 + (v_1 - v_2) u_2\bigr)\bigl((v_1 - v_2) u_1 + (v_1 + v_2) u_2\bigr)
+\bigl((v_1 + v_2) u_1 - (v_1 - v_2) u_2\bigr)$,
+$b_3 = -d^2 (s u_1 + 4 u_1 v_1 v_2 - s u_2)(s u_1 - 4 u_1 v_1 v_2 - s u_2)
+(s u_1 + 4 u_2 v_1 v_2 + s u_2)(s u_1 - 4 u_2 v_1 v_2 + s u_2)$ and
+$b_4 = -d^2 (s u_1 + 4 u_1 v_1 v_2 + s u_2)(s u_1 - 4 u_1 v_1 v_2 + s u_2)
+(s u_1 + 4 u_2 v_1 v_2 - s u_2)(s u_1 - 4 u_2 v_1 v_2 - s u_2)$.
+Then $a_i + b_j$ is the square of an integer for all $1 \le i, j \le 4$.
 
 Source: Ajai Choudhry, "Two Sets of Integers Such That All
 Elements of the Sumset of the Two Sets Are Perfect Squares",
@@ -315,8 +381,25 @@ theorem_wanted pairwiseSumsSquares_quadruple_family51
           ((v1 ^ 2 + v2 ^ 2) * u1 - 4 * u2 * v1 * v2 -
             (v1 ^ 2 + v2 ^ 2) * u2)]
 
-/-- **Theorem 4, family (5.8)**: the first three-parameter pair of
-rational quadruples with all sixteen pairwise sums squares.
+/-- **First three-parameter family of rational quadruples with square pairwise sums.** For
+rational numbers $m, q, r$, let
+$a_1 = 16 m^2 (m^4 - 1)^2 \bigl((5m^4 - 2m^2 + 1) q^2 - 2(m^4 - 6m^2 + 1) q r +
+(m^4 - 2m^2 + 5) r^2\bigr)^2$,
+$a_2 = 16 m^2 (m^4 - 1)^2 \bigl((5m^4 - 2m^2 + 1) q^2 - (m^4 - 2m^2 + 5) r^2\bigr)^2$,
+$a_3 = 16 m^2 (m^4 - 1)^2 \bigl((7m^4 - 2m^2 - 1) q^2 - (2m^4 - 12m^2 + 2) q r -
+(m^4 + 2m^2 - 7) r^2\bigr)^2$,
+$a_4 = (m^2 - 1)^2 \bigl((3m^8 + 40m^6 - 26m^4 - 1) q^2 + 2(m^4 - 6m^2 + 1)^2 q r -
+(m^8 + 26m^4 - 40m^2 - 3) r^2\bigr)^2$,
+$b_1 = 0$,
+$b_2 = -4 m^2 \bigl((m^4 + 6m^2 - 3) q + (m^4 - 2m^2 + 5) r\bigr)
+\bigl((3m^4 - 6m^2 - 1) q - (m^4 - 2m^2 + 5) r\bigr)
+\bigl((5m^4 - 2m^2 + 1) q - (3m^4 - 6m^2 - 1) r\bigr)
+\bigl((5m^4 - 2m^2 + 1) q + (m^4 + 6m^2 - 3) r\bigr)$,
+$b_3 = -128 m^2 (m^4 - 1)^3 (q^2 - r^2)(3m^2 q - m^2 r - q + 3r)(m^2 q + r)$ and
+$b_4 = 16 (m^2 + 1)^2 (m^2 - 1)^3 (m^2 q^2 - r^2)
+\bigl((m^4 + 6m^3 - 2m - 1) q - (m^4 + 2m^3 - 6m - 1) r\bigr)
+\bigl((m^4 - 6m^3 + 2m - 1) q - (m^4 - 2m^3 + 6m - 1) r\bigr)$.
+Then $a_i + b_j$ is the square of a rational number for all $1 \le i, j \le 4$.
 
 Source: Ajai Choudhry, "Two Sets of Integers Such That All
 Elements of the Sumset of the Two Sets Are Perfect Squares",
@@ -357,8 +440,25 @@ theorem_wanted pairwiseSumsSquares_quadruple_family58
           ((m ^ 4 - 6 * m ^ 3 + 2 * m - 1) * q -
             (m ^ 4 - 2 * m ^ 3 + 6 * m - 1) * r)]
 
-/-- **Theorem 4, family (5.9)**: the second three-parameter pair of
-rational quadruples with all sixteen pairwise sums squares.
+/-- **Second three-parameter family of rational quadruples with square pairwise sums.** For
+rational numbers $m, q, r$, let
+$a_1 = 16 m^2 (m^4 - 1)^2 \bigl((m^6 - 2m^4 + 5m^2) q^2 + (2m^5 - 12m^3 + 2m) q r +
+(5m^4 - 2m^2 + 1) r^2\bigr)^2$,
+$a_2 = 16 m^2 (m^4 - 1)^2 \bigl((m^6 - 2m^4 + 5m^2) q^2 - (5m^4 - 2m^2 + 1) r^2\bigr)^2$,
+$a_3 = (m^2 - 1)^2 \bigl((m^{10} + 26m^6 - 40m^4 - 3m^2) q^2 +
+(2m^9 - 24m^7 + 76m^5 - 24m^3 + 2m) q r - (3m^8 + 40m^6 - 26m^4 - 1) r^2\bigr)^2$,
+$a_4 = 16 m^2 (m^4 - 1)^2 \bigl((m^6 + 2m^4 - 7m^2) q^2 - (2m^5 - 12m^3 + 2m) q r -
+(7m^4 - 2m^2 - 1) r^2\bigr)^2$,
+$b_1 = 0$,
+$b_2 = -4 m^2 \bigl((m^5 + 6m^3 - 3m) q - (5m^4 - 2m^2 + 1) r\bigr)
+\bigl((3m^5 - 6m^3 - m) q + (5m^4 - 2m^2 + 1) r\bigr)
+\bigl((m^5 - 2m^3 + 5m) q + (3m^4 - 6m^2 - 1) r\bigr)
+\bigl((m^5 - 2m^3 + 5m) q - (m^4 + 6m^2 - 3) r\bigr)$,
+$b_3 = -16 m^2 (m^2 + 1)^2 (m^2 - 1)^3 (q^2 - r^2)
+\bigl((m^5 - 2m^4 + 6m^2 - m) q + (m^4 - 6m^3 + 2m - 1) r\bigr)
+\bigl((m^5 + 2m^4 - 6m^2 - m) q + (m^4 + 6m^3 - 2m - 1) r\bigr)$ and
+$b_4 = 128 m^3 (m^4 - 1)^3 (m r - q)(m^2 q^2 - r^2)\bigl((m^3 - 3m) q + (3m^2 - 1) r\bigr)$.
+Then $a_i + b_j$ is the square of a rational number for all $1 \le i, j \le 4$.
 
 Source: Ajai Choudhry, "Two Sets of Integers Such That All
 Elements of the Sumset of the Two Sets Are Perfect Squares",
