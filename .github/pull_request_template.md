@@ -20,7 +20,7 @@
 - [ ] New reusable computer-science developments are in `CSLibExt`, with tests
       or diagnostics in `CSLibExtTest`.
 - [ ] Changed `CSLibExt` code contains no proof holes, custom axioms,
-      `native_decide`, or imports from `PhyslibExt`, `WantedExt`, or any test
+      `native_decide`, or imports from `PhyslibExt`, `Domains`, `WantedExt`, or any test
       library.
 - [ ] This pull request does not change `CSLibExt`, or the items above are
       complete.
@@ -30,10 +30,15 @@
 - [ ] New reusable physics developments extend upstream Physlib, with tests
       or diagnostics in `PhyslibExtTest`.
 - [ ] Changed `PhyslibExt` code follows Physlib's conventions and contains no
-      proof holes, custom axioms, `native_decide`, or imports from `WantedExt`
+      proof holes, custom axioms, `native_decide`, or imports from `Domains`, `WantedExt`
       or any test library.
 - [ ] This pull request does not change `PhyslibExt`, or the items above are
       complete.
+
+## Domains and DomainsTest
+
+- [ ] Domain-specific models live in `Domains` and their tests in `DomainsTest`.
+      The foundation libraries do not import these libraries.
 
 ## WantedExt
 

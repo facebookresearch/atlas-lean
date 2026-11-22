@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.GameTheory.Regret
+public import MathlibExt.GameTheory.RegretInducedLoss
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fin.VecNotation
@@ -101,6 +102,7 @@ theorem ex_averageRegret : averageRegret exPlay exLoss = 1 / 3 := by
 
 /-- T5: `![1 / 2, 1 / 2]` is in the simplex. -/
 theorem ex_simplex_half : IsSimplex (![1 / 2, 1 / 2] : Fin 2 → ℝ) := by
+  rw [isSimplex_iff]
   refine ⟨fun a => ?_, ?_⟩
   · fin_cases a <;> norm_num
   · norm_num [Fin.sum_univ_two]
@@ -108,7 +110,7 @@ theorem ex_simplex_half : IsSimplex (![1 / 2, 1 / 2] : Fin 2 → ℝ) := by
 /-- T5: `![1, 1]` is not in the simplex. -/
 theorem ex_not_simplex_one : ¬ IsSimplex (![1, 1] : Fin 2 → ℝ) := by
   intro h
-  norm_num [IsSimplex, Fin.sum_univ_two] at h
+  norm_num [isSimplex_iff, Fin.sum_univ_two] at h
 
 /-- Mismatch cost of the induced-loss example. -/
 def exCost : Fin 2 → (Fin 2 → Fin 2) → ℝ :=
@@ -118,10 +120,12 @@ def exCost : Fin 2 → (Fin 2 → Fin 2) → ℝ :=
 noncomputable def exOpp : Fin 2 → Fin 2 → ℝ :=
   fun _ => ![1 / 2, 1 / 2]
 
-/-- T6: induced loss under the uniform mix is `1 / 2` for both actions. -/
-theorem test_inducedLoss_uniform :
-    inducedLoss exCost exOpp 0 0 = 1 / 2 ∧
-      inducedLoss exCost exOpp 0 1 = 1 / 2 := by
+/-- T6: pure cost under the uniform mix is `1 / 2` for both actions. -/
+theorem test_pureCost_uniform :
+    MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost exCost exOpp 0 0
+        = 1 / 2 ∧
+      MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost exCost exOpp 0 1
+        = 1 / 2 := by
   have hsum : ∀ g : (Fin 2 → Fin 2) → ℝ,
       ∑ s, g s = (g ![0, 0] + g ![0, 1]) + (g ![1, 0] + g ![1, 1]) := by
     intro g
@@ -131,11 +135,78 @@ theorem test_inducedLoss_uniform :
   have h10 : (1 : Fin 2) ≠ 0 := by decide
   have herase : Finset.univ.erase (0 : Fin 2) = {1} := by decide
   constructor
-  · simp only [inducedLoss, exCost, exOpp, Finset.sum_filter, hsum, herase,
+  · simp only [pureCost_eq_sum_filter, exCost, exOpp, Finset.sum_filter, hsum, herase,
       Finset.prod_singleton, Matrix.cons_val_zero, Matrix.cons_val_one]
     simp
-  · simp only [inducedLoss, exCost, exOpp, Finset.sum_filter, hsum, herase,
+  · simp only [pureCost_eq_sum_filter, exCost, exOpp, Finset.sum_filter, hsum, herase,
       Finset.prod_singleton, Matrix.cons_val_zero, Matrix.cons_val_one]
     simp
+
+/-- Mixed-play example losses: action `0` loses in round `0`, action `1`
+loses in round `1`. -/
+def mixLoss : Fin 2 → Fin 2 → ℝ :=
+  ![![1, 0], ![0, 1]]
+
+/-- Mixed-play example play: action `t` is played in round `t`. -/
+def mixPlay : Fin 2 → Fin 2 → ℝ :=
+  ![![1, 0], ![0, 1]]
+
+/-- T7: with genuinely varying play, swap regret `2` strictly exceeds
+external regret `1`. -/
+theorem ex2_swap_gt_external :
+    externalRegret mixPlay mixLoss = 1 ∧ swapRegret mixPlay mixLoss = 2 ∧
+      externalRegret mixPlay mixLoss ≤ swapRegret mixPlay mixLoss := by
+  have hplay : ∀ t, IsSimplex (mixPlay t) := by
+    intro t
+    fin_cases t <;> rw [isSimplex_iff] <;> refine ⟨?_, ?_⟩
+    · intro a
+      fin_cases a <;> norm_num [mixPlay]
+    · norm_num [mixPlay, Fin.sum_univ_two]
+    · intro a
+      fin_cases a <;> norm_num [mixPlay]
+    · norm_num [mixPlay, Fin.sum_univ_two]
+  have hexp : expectedLoss mixPlay mixLoss = 2 := by
+    norm_num [expectedLoss, mixPlay, mixLoss, Fin.sum_univ_two,
+      Matrix.cons_val_two]
+  have hcum : ∀ a : Fin 2, cumulativeLoss mixLoss a = 1 := by
+    intro a
+    fin_cases a <;>
+      norm_num [cumulativeLoss, mixLoss, Fin.sum_univ_two, Matrix.cons_val_two]
+  have hext : externalRegret mixPlay mixLoss = 1 := by
+    have hmin : Finset.univ.inf' Finset.univ_nonempty
+        (cumulativeLoss mixLoss) = 1 := by
+      apply le_antisymm
+      · calc Finset.univ.inf' Finset.univ_nonempty (cumulativeLoss mixLoss)
+            ≤ cumulativeLoss mixLoss 0 :=
+              Finset.inf'_le _ (Finset.mem_univ _)
+          _ = 1 := hcum 0
+      · exact Finset.le_inf' _ _ fun b _ => le_of_eq (hcum b).symm
+    norm_num [externalRegret, hexp, hmin]
+  have hswap : swapRegret mixPlay mixLoss = 2 := by
+    have hmin : Finset.univ.inf' Finset.univ_nonempty
+        (fun δ : Fin 2 → Fin 2 => ∑ t, ∑ a, mixPlay t a * mixLoss t (δ a))
+        = 0 := by
+      apply le_antisymm
+      · calc Finset.univ.inf' Finset.univ_nonempty
+              (fun δ : Fin 2 → Fin 2 => ∑ t, ∑ a, mixPlay t a * mixLoss t (δ a))
+            ≤ (fun δ : Fin 2 → Fin 2 =>
+                ∑ t, ∑ a, mixPlay t a * mixLoss t (δ a))
+                (fun a => if a = 0 then 1 else 0) :=
+              Finset.inf'_le _ (Finset.mem_univ _)
+          _ = 0 := by
+              norm_num [mixPlay, mixLoss, Fin.sum_univ_two, Matrix.cons_val_two]
+      · apply Finset.le_inf' _ _ (fun δ _ => ?_)
+        have h01 : ∀ i : Fin 2, i = 0 ∨ i = 1 := by
+          intro i
+          fin_cases i
+          · exact Or.inl rfl
+          · exact Or.inr rfl
+        simp only [mixPlay, mixLoss, Fin.sum_univ_two, Matrix.cons_val_zero,
+          Matrix.cons_val_one]
+        rcases h01 (δ 0) with h | h <;> rcases h01 (δ 1) with h' | h' <;>
+          rw [h, h'] <;> norm_num
+    rw [swapRegret, hexp, hmin]
+    norm_num
+  exact ⟨hext, hswap, externalRegret_le_swapRegret mixPlay mixLoss hplay⟩
 
 end MathlibExtTest.GameTheory.Regret
