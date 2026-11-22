@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import MathlibExt.Probability.FiniteProbability
 public import PhyslibExt.Reliability.PhysicalFailureEvents
 public import PhyslibExt.Statistics.CalibrationPorts
 
@@ -36,12 +37,13 @@ through the scenario, and no independence is assumed.
   `z = g d + b + ε` with gain `g ≠ 0`; the calibration `Statistics.CalibrationPorts.gaugeStrain`
   returns `d + ε / g`, so the error is scaled, not removed. The bin event is
   `A = {ω | zlo ≤ z ω ≤ zhi}`.
-* Conditioning. For nonnegative weights with `P(A) > 0` the weights normalized on `A` are a finite
-  distribution, and the conditional failure probability is `P(A ∩ F) / P(A) ∈ [0, 1]` with `F` the
-  system failure event at `t`; `A ∩ F` is the set of scenarios whose reading is in the bin and whose
-  damage configuration at `t` is not in `S`. With positive weights `P(A) > 0` exactly when the bin
-  holds a scenario; a null bin has no conditional law. Signed weights with `P(A) > 0` still satisfy
-  the ratio identity, but they are not a scenario law and the ratio can exceed one.
+* Conditioning. The weights normalized on `A` are `condWeights` of
+  `MathlibExt.Probability.FiniteProbability`. For nonnegative weights with `P(A) > 0` they are a
+  finite distribution, and the conditional failure probability is `P(A ∩ F) / P(A) ∈ [0, 1]` with
+  `F` the system failure event at `t`; `A ∩ F` is the set of scenarios whose reading is in the bin
+  and whose damage configuration at `t` is not in `S`. With positive weights `P(A) > 0` exactly
+  when the bin holds a scenario; a null bin has no conditional law. Signed weights with `P(A) > 0`
+  still satisfy the ratio identity, but they are not a scenario law and the ratio can exceed one.
 
 One epoch and one bin only. The sensor equation is a declared model, neither learned nor
 certified by the probability identity. No empirical adequacy or system safety claim is made.
@@ -54,17 +56,13 @@ certified by the probability identity. No empirical adequacy or system safety cl
   event at `t`.
 - `Reliability.sensorReading`, `Reliability.gaugeStrain_sensorReading`, `Reliability.binEvent`,
   `Reliability.mem_binEvent_sensorReading_iff`: the sensor and its bin preimage.
-- `Reliability.condWeights`, `Reliability.condWeights_isDistribution`,
-  `Reliability.prob_condWeights`, `Reliability.prob_pos_iff_nonempty`: normalization on a
-  nonzero-mass event.
 - `Reliability.prob_condWeights_systemFailureEvent`: the conditional system failure probability.
 
 ## iii. Table of contents
 
 - A. Linear damage lifetimes and the system failure event
 - B. The calibrated sensor and the bin event
-- C. Weights normalized on a nonzero-mass event
-- D. The conditional failure probability
+- C. The conditional failure probability
 
 ## iv. References
 
@@ -75,7 +73,9 @@ certified by the probability identity. No empirical adequacy or system safety cl
   measured with error.
 - `PhyslibExt.Reliability.PhysicalFailureEvents` (damage lifetimes and the monotone-system event),
   `MathlibExt.Probability.Reliability.SystemLifetime`,
-  `MathlibExt.Probability.FiniteProbability.prob` and `PhyslibExt.Statistics.CalibrationPorts`.
+  `MathlibExt.Probability.FiniteProbability.prob`,
+  `MathlibExt.Probability.FiniteProbability.condWeights` (weights normalized on an event of
+  positive mass) and `PhyslibExt.Statistics.CalibrationPorts`.
 -/
 
 @[expose] public section
@@ -194,54 +194,7 @@ lemma mem_binEvent_sensorReading_iff [Fintype Ω] {E : Type*} {g b : ℝ} (hg : 
   rw [Finset.mem_filter]
   exact ⟨fun h => h.2, fun h => ⟨Finset.mem_univ ω, h⟩⟩
 
-/-! ## C. Weights normalized on a nonzero-mass event -/
-
-/-- The weights normalized on the event `A`: `p ω / P(A)` on `A` and `0` off it. The proof of
-`0 < P(A)` is part of the definition, so a null event has no normalized weights. For nonnegative
-weights they are a finite distribution (`condWeights_isDistribution`). -/
-noncomputable def condWeights [DecidableEq Ω] (p : Ω → ℝ) (A : Finset Ω)
-    (_hA : 0 < prob p A) : Ω → ℝ :=
-  fun ω => if ω ∈ A then p ω / prob p A else 0
-
-/-- **Normalization.** For nonnegative weights and `P(A) > 0`, the normalized weights are
-nonnegative, have total mass one and vanish off `A`. -/
-lemma condWeights_isDistribution [Fintype Ω] [DecidableEq Ω] {p : Ω → ℝ} (hp : ∀ ω, 0 ≤ p ω)
-    {A : Finset Ω} (hA : 0 < prob p A) :
-    (∀ ω, 0 ≤ condWeights p A hA ω) ∧ ∑ ω, condWeights p A hA ω = 1 ∧
-      ∀ ω ∉ A, condWeights p A hA ω = 0 := by
-  refine ⟨fun ω => ?_, ?_, fun ω hω => by simp [condWeights, hω]⟩
-  · unfold condWeights
-    split_ifs
-    · exact div_nonneg (hp ω) hA.le
-    · exact le_rfl
-  · unfold condWeights
-    rw [Finset.sum_ite_mem, Finset.univ_inter, ← Finset.sum_div]
-    exact div_self hA.ne'
-
-/-- **Ratio identity.** Under the weights normalized on `A`, an event `F` has the weight
-`P(A ∩ F) / P(A)`. Only `P(A) > 0` is used, so the identity also holds for signed weights, which
-are not a scenario law; for nonnegative weights it is the conditional probability of `F` given `A`
-(`prob_condWeights_systemFailureEvent`). -/
-lemma prob_condWeights [DecidableEq Ω] (p : Ω → ℝ) {A : Finset Ω}
-    (hA : 0 < prob p A) (F : Finset Ω) :
-    prob (condWeights p A hA) F = prob p (A ∩ F) / prob p A := by
-  unfold prob condWeights
-  rw [Finset.sum_ite_mem, Finset.inter_comm, ← Finset.sum_div]
-  rfl
-
-/-- **A null bin is rejected.** With positive weights, `P(A) > 0` exactly when `A` holds a
-scenario. -/
-lemma prob_pos_iff_nonempty {p : Ω → ℝ} (hp : ∀ ω, 0 < p ω) (A : Finset Ω) :
-    0 < prob p A ↔ A.Nonempty := by
-  constructor
-  · intro h
-    by_contra hne
-    rw [Finset.not_nonempty_iff_eq_empty] at hne
-    simp [prob, hne] at h
-  · intro hne
-    exact Finset.sum_pos (fun ω _ => hp ω) hne
-
-/-! ## D. The conditional failure probability -/
+/-! ## C. The conditional failure probability -/
 
 /-- **Single-epoch conditional failure probability.** For nonnegative scenario weights `p`, an
 increasing system event `S`, nonnegative rates, a sensor with gain `g ≠ 0` on component `i₀`, its
