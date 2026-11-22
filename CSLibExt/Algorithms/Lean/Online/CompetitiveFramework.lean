@@ -198,7 +198,7 @@ theorem Competitive.mono {Req Ans : Type*} (P : OnlineProblem Req Ans)
 
 /-- Strict lower-bound predicate: no strategy beats the factor `cstar`
 without an additive constant. -/
-def StrictLowerBound {Req Ans : Type*} (P : OnlineProblem Req Ans)
+def StrictLowerBound {Req Ans : Type*} [Nonempty Ans] (P : OnlineProblem Req Ans)
     (cstar : ℝ) : Prop :=
   ∀ (A : Strategy Req Ans), StrategyFeasible P A →
     ∀ c : ℝ, 0 ≤ c → c < cstar →
@@ -209,7 +209,7 @@ def StrictLowerBound {Req Ans : Type*} (P : OnlineProblem Req Ans)
 even with an arbitrary uniform additive constant. Distinct from the strict
 predicate: a bounded-cost strategy refutes every positive additive lower
 bound. -/
-def AdditiveLowerBound {Req Ans : Type*} (P : OnlineProblem Req Ans)
+def AdditiveLowerBound {Req Ans : Type*} [Nonempty Ans] (P : OnlineProblem Req Ans)
     (cstar : ℝ) : Prop :=
   ∀ (A : Strategy Req Ans), StrategyFeasible P A →
     ∀ c b : ℝ, 0 ≤ c → c < cstar → 0 ≤ b →
@@ -217,7 +217,7 @@ def AdditiveLowerBound {Req Ans : Type*} (P : OnlineProblem Req Ans)
         ENNReal.ofReal c * optCost P σ + ENNReal.ofReal b
           < ENNReal.ofReal (algCost P A σ)
 
-theorem StrictLowerBound.of_additive {Req Ans : Type*}
+theorem StrictLowerBound.of_additive {Req Ans : Type*} [Nonempty Ans]
     (P : OnlineProblem Req Ans) {cstar : ℝ} (h : AdditiveLowerBound P cstar) :
     StrictLowerBound P cstar := by
   intro A hA c hc0 hc
@@ -226,6 +226,7 @@ theorem StrictLowerBound.of_additive {Req Ans : Type*}
   exact ⟨σ, hσ, hlt⟩
 
 theorem not_strictCompetitive_of_strictLowerBound {Req Ans : Type*}
+    [Nonempty Ans]
     (P : OnlineProblem Req Ans) (A : Strategy Req Ans) {cstar c : ℝ}
     (h : StrictLowerBound P cstar) (hc : c < cstar) :
     ¬ StrictCompetitive P A c := by
@@ -237,6 +238,7 @@ theorem not_strictCompetitive_of_strictLowerBound {Req Ans : Type*}
   exact (not_le_of_gt hlt) hle
 
 theorem not_additiveCompetitive_of_additiveLowerBound {Req Ans : Type*}
+    [Nonempty Ans]
     (P : OnlineProblem Req Ans) (A : Strategy Req Ans) {cstar c : ℝ}
     (h : AdditiveLowerBound P cstar) (hc : c < cstar) :
     ¬ AdditiveCompetitive P A c := by
@@ -244,6 +246,172 @@ theorem not_additiveCompetitive_of_additiveLowerBound {Req Ans : Type*}
   obtain ⟨b, hc0, hb0, hA, hineq⟩ := hadd
   obtain ⟨σ, hσ, hlt⟩ := h A hA c b hc0 hc hb0
   exact (not_le_of_gt hlt) (hineq σ hσ)
+
+theorem run_append_singleton {Req Ans : Type*} (A : Strategy Req Ans)
+    (σ : List Req) (r : Req) :
+    run A (σ ++ [r]) = run A σ ++ [(r, A (σ ++ [r]))] := by
+  have h := runFrom_append A [] σ [r]
+  simp only [List.nil_append] at h
+  have h1 : runFrom A σ [r] = [(r, A (σ ++ [r]))] := rfl
+  unfold run
+  rw [h, h1]
+
+open Classical in
+private noncomputable def pickAnswer {Req Ans : Type*} [Nonempty Ans]
+    (P : OnlineProblem Req Ans) (τ : List (Req × Ans)) (r : Req) : Ans :=
+  if h : P.feasible τ ∧ P.legal (τ.map Prod.fst ++ [r]) then
+    Classical.choose (P.nonblocking h.1 h.2)
+  else Classical.choice inferInstance
+
+private theorem pickAnswer_spec {Req Ans : Type*} [Nonempty Ans]
+    (P : OnlineProblem Req Ans) (τ : List (Req × Ans)) (r : Req)
+    (h : P.feasible τ ∧ P.legal (τ.map Prod.fst ++ [r])) :
+    P.feasible (τ ++ [(r, pickAnswer P τ r)]) := by
+  unfold pickAnswer
+  rw [dite_eq_left h]
+  exact Classical.choose_spec (P.nonblocking h.1 h.2)
+
+private noncomputable def stratAux {Req Ans : Type*} [Nonempty Ans]
+    (P : OnlineProblem Req Ans) : Nat → List Req → Ans
+  | 0, _ => Classical.choice inferInstance
+  | _ + 1, [] => Classical.choice inferInstance
+  | n + 1, r :: rest =>
+    pickAnswer P (run (stratAux P n) (r :: rest).dropLast)
+      ((r :: rest).getLast (by simp))
+
+private noncomputable def stratOf {Req Ans : Type*} [Nonempty Ans]
+    (P : OnlineProblem Req Ans) : Strategy Req Ans :=
+  fun σ => stratAux P σ.length σ
+
+private theorem runFrom_strat_congr {Req Ans : Type*} {f g : Strategy Req Ans}
+    (past : List Req) : ∀ (σ : List Req),
+    (∀ ρ : List Req, ρ.length ≤ past.length + σ.length → f ρ = g ρ) →
+    runFrom f past σ = runFrom g past σ := by
+  intro σ
+  induction σ generalizing past with
+  | nil => intro _; rfl
+  | cons r σ ih =>
+    intro h
+    have e1 : (past ++ [r]).length = past.length + 1 := by simp
+    have e2 : (r :: σ).length = σ.length + 1 := by simp
+    have hq : f (past ++ [r]) = g (past ++ [r]) := h _ (by omega)
+    have ht : runFrom f (past ++ [r]) σ = runFrom g (past ++ [r]) σ :=
+      ih _ (fun ρ hρ => h ρ (by omega))
+    simp only [runFrom, hq, ht]
+
+private theorem run_strat_congr {Req Ans : Type*} {f g : Strategy Req Ans}
+    {σ : List Req} (h : ∀ ρ : List Req, ρ.length ≤ σ.length → f ρ = g ρ) :
+    run f σ = run g σ := by
+  unfold run
+  exact runFrom_strat_congr _ _ (fun ρ hρ => h ρ (by simpa using hρ))
+
+private theorem stratAux_coh {Req Ans : Type*} [Nonempty Ans]
+    (P : OnlineProblem Req Ans) (n : Nat) : ∀ (m : Nat) (σ : List Req),
+    σ.length ≤ n → σ.length ≤ m → stratAux P n σ = stratAux P m σ := by
+  induction n with
+  | zero =>
+    intro m σ hn _
+    have hσ : σ = [] := List.length_eq_zero_iff.mp (Nat.le_zero.mp hn)
+    subst hσ
+    cases m with
+    | zero => rfl
+    | succ m => simp only [stratAux]
+  | succ n ih =>
+    intro m σ hn hm
+    cases m with
+    | zero =>
+      have hσ : σ = [] := List.length_eq_zero_iff.mp (Nat.le_zero.mp hm)
+      subst hσ
+      simp only [stratAux]
+    | succ m =>
+      cases σ with
+      | nil => simp only [stratAux]
+      | cons r rest =>
+        simp only [stratAux]
+        have hlen : ((r :: rest).dropLast).length ≤ n
+            ∧ ((r :: rest).dropLast).length ≤ m := by
+          have e : ((r :: rest).dropLast).length = (r :: rest).length - 1 :=
+            List.length_dropLast
+          have e2 : (r :: rest).length = rest.length + 1 := by simp
+          omega
+        have hrun : run (stratAux P n) (r :: rest).dropLast
+            = run (stratAux P m) (r :: rest).dropLast := by
+          apply run_strat_congr
+          intro ρ hρ
+          exact ih m ρ (Nat.le_trans hρ hlen.1) (Nat.le_trans hρ hlen.2)
+        rw [hrun]
+
+private theorem stratOf_run_feasible {Req Ans : Type*} [Nonempty Ans]
+    (P : OnlineProblem Req Ans) (n : Nat) : ∀ (σ : List Req),
+    σ.length ≤ n → P.legal σ → P.feasible (run (stratOf P) σ) := by
+  induction n with
+  | zero =>
+    intro σ hn _
+    have hσ0 : σ = [] := List.length_eq_zero_iff.mp (Nat.le_zero.mp hn)
+    subst hσ0
+    rw [run_nil]
+    exact P.feasible_nil
+  | succ n ih =>
+    intro σ hn hσ
+    cases σ with
+    | nil =>
+      rw [run_nil]
+      exact P.feasible_nil
+    | cons r rest =>
+      have hne : (r :: rest) ≠ [] := by simp
+      have hEq : (r :: rest).dropLast ++ [(r :: rest).getLast hne]
+          = r :: rest :=
+        List.dropLast_append_getLast hne
+      have hlen : ((r :: rest).dropLast).length < (r :: rest).length := by
+        have e : ((r :: rest).dropLast).length = (r :: rest).length - 1 :=
+          List.length_dropLast
+        have e2 : (r :: rest).length = rest.length + 1 := by simp
+        omega
+      have hle : P.legal
+          ((r :: rest).dropLast ++ [(r :: rest).getLast hne]) := by
+        rwa [hEq]
+      have hσ' : P.legal (r :: rest).dropLast := P.legal_prefix hle
+      have hfeas : P.feasible (run (stratOf P) (r :: rest).dropLast) :=
+        ih _ (by omega) hσ'
+      have hleg : P.legal ((run (stratOf P) (r :: rest).dropLast).map Prod.fst
+          ++ [(r :: rest).getLast hne]) := by
+        have hmap : (run (stratOf P) (r :: rest).dropLast).map Prod.fst
+            = (r :: rest).dropLast :=
+          run_map_fst _ _
+        rwa [hmap]
+      have hpick := pickAnswer_spec P (run (stratOf P) (r :: rest).dropLast)
+        ((r :: rest).getLast hne) ⟨hfeas, hleg⟩
+      have hA : stratOf P (r :: rest)
+          = pickAnswer P (run (stratOf P) (r :: rest).dropLast)
+              ((r :: rest).getLast hne) := by
+        have hL : (r :: rest).length = rest.length + 1 := by simp
+        simp only [stratOf]
+        rw [hL]
+        simp only [stratAux]
+        have hrun : run (stratAux P rest.length) (r :: rest).dropLast
+            = run (stratOf P) (r :: rest).dropLast := by
+          apply run_strat_congr
+          intro ρ hρ
+          have hρle : ρ.length ≤ rest.length := by omega
+          simp only [stratOf]
+          exact stratAux_coh P _ _ _ hρle le_rfl
+        rw [hrun]
+      have hrun2 : run (stratOf P) (r :: rest)
+          = run (stratOf P) (r :: rest).dropLast
+            ++ [((r :: rest).getLast hne, stratOf P (r :: rest))] := by
+        have h := run_append_singleton (stratOf P) (r :: rest).dropLast
+          ((r :: rest).getLast hne)
+        rwa [hEq] at h
+      rw [hrun2, hA]
+      exact hpick
+
+/-- A feasible strategy exists whenever answers exist: choose answers
+inductively along request prefixes using `nonblocking`. This keeps the
+lower-bound predicates from holding vacuously. -/
+theorem exists_strategyFeasible {Req Ans : Type*} [Nonempty Ans]
+    (P : OnlineProblem Req Ans) :
+    ∃ A : Strategy Req Ans, StrategyFeasible P A := by
+  exact ⟨stratOf P, fun σ hσ => stratOf_run_feasible P σ.length σ le_rfl hσ⟩
 
 /-- A state machine answering requests online: from the current state and
 request it produces an answer and a next state. -/
@@ -575,10 +743,11 @@ def Simulation.comp {Req AnsX AnsY AnsZ : Type*}
 
 /-- A randomized strategy against an oblivious adversary: the request
 sequence is fixed before the seed is drawn; each seed selects a causal
-deterministic strategy. Feasibility is required seedwise. -/
+deterministic strategy. The structure itself imposes no feasibility;
+seedwise feasibility for a problem is required by `RandCompetitive`
+and `RandProfitCompetitive`. -/
 structure RandStrategy (Req Ans Ω : Type*) [MeasurableSpace Ω] where
-  μ : MeasureTheory.Measure Ω
-  isProb : MeasureTheory.IsProbabilityMeasure μ
+  μ : MeasureTheory.ProbabilityMeasure Ω
   strat : Ω → Strategy Req Ans
 
 /-- Expected cost of a randomized strategy on a fixed input, as a
@@ -586,7 +755,7 @@ nonnegative extended value (divergent expectation is `⊤`). -/
 noncomputable def expectedCost {Req Ans Ω : Type*} [MeasurableSpace Ω]
     (P : OnlineProblem Req Ans) (A : RandStrategy Req Ans Ω)
     (σ : List Req) : ENNReal :=
-  ∫⁻ ω, ENNReal.ofReal (algCost P (A.strat ω) σ) ∂A.μ
+  ∫⁻ ω, ENNReal.ofReal (algCost P (A.strat ω) σ) ∂(A.μ : MeasureTheory.Measure Ω)
 
 /-- Randomized `(c, b)`-competitiveness against an oblivious adversary:
 every seed is feasible, the run cost is measurable per input, and the
@@ -605,11 +774,13 @@ deterministic competitiveness of the selected strategy. -/
 theorem randCompetitive_dirac_iff {Req Ans Ω : Type*} [MeasurableSpace Ω]
     (P : OnlineProblem Req Ans) (A0 : Strategy Req Ans) (ω0 : Ω) (c b : ℝ) :
     RandCompetitive P
-        { μ := MeasureTheory.Measure.dirac ω0, isProb := by infer_instance,
+        { μ := (⟨MeasureTheory.Measure.dirac ω0, by infer_instance⟩ :
+            MeasureTheory.ProbabilityMeasure Ω),
           strat := fun _ => A0 } c b
       ↔ Competitive P A0 c b := by
   have hexp : ∀ σ : List Req, expectedCost P
-      { μ := MeasureTheory.Measure.dirac ω0, isProb := by infer_instance,
+      { μ := (⟨MeasureTheory.Measure.dirac ω0, by infer_instance⟩ :
+          MeasureTheory.ProbabilityMeasure Ω),
         strat := fun _ => A0 } σ
       = ENNReal.ofReal (algCost P A0 σ) := by
     intro σ
@@ -641,7 +812,7 @@ theorem Simulation.randCompetitive_transfer {Req AnsX AnsY Ω : Type*}
     (hmeas : ∀ σ : List Req, X.legal σ →
       Measurable (fun ω => ENNReal.ofReal (algCost X (S.F (A.strat ω)) σ))) :
     RandCompetitive X
-      { μ := A.μ, isProb := A.isProb, strat := fun ω => S.F (A.strat ω) }
+      { μ := A.μ, strat := fun ω => S.F (A.strat ω) }
       (S.a * c * S.d) (S.a * c * S.q + S.a * b + S.p) := by
   obtain ⟨hc0, hb0, hAY, hineq⟩ := hA
   refine ⟨mul_nonneg (mul_nonneg S.ha hc0) S.hd, ?_,
@@ -658,18 +829,19 @@ theorem Simulation.randCompetitive_transfer {Req AnsX AnsY Ω : Type*}
     have hmul : Measurable (fun ω => ENNReal.ofReal S.a
         * ENNReal.ofReal (algCost Y (A.strat ω) σ)) :=
       hYmeas.const_mul _
-    have hprob : A.μ Set.univ = 1 := @MeasureTheory.measure_univ _ _ _ A.isProb
+    have hprob : (A.μ : MeasureTheory.Measure Ω) Set.univ = 1 :=
+      MeasureTheory.measure_univ
     have step0 : expectedCost X
-          { μ := A.μ, isProb := A.isProb, strat := fun ω => S.F (A.strat ω) }
+          { μ := A.μ, strat := fun ω => S.F (A.strat ω) }
           σ
           ≤ ∫⁻ ω, (ENNReal.ofReal S.a
             * ENNReal.ofReal (algCost Y (A.strat ω) σ) + ENNReal.ofReal S.p)
-            ∂A.μ := by
+            ∂(A.μ : MeasureTheory.Measure Ω) := by
       unfold expectedCost
       exact MeasureTheory.lintegral_mono fun ω => S.costF (A.strat ω) σ hσ
     have stepE : (∫⁻ ω, (ENNReal.ofReal S.a
             * ENNReal.ofReal (algCost Y (A.strat ω) σ) + ENNReal.ofReal S.p)
-            ∂A.μ)
+            ∂(A.μ : MeasureTheory.Measure Ω))
         = ENNReal.ofReal S.a * expectedCost Y A σ + ENNReal.ofReal S.p := by
       unfold expectedCost
       rw [MeasureTheory.lintegral_add_left hmul _,
@@ -709,11 +881,11 @@ theorem Simulation.randCompetitive_transfer {Req AnsX AnsY Ω : Type*}
       rw [e1, e2]
       ring
     calc expectedCost X
-            { μ := A.μ, isProb := A.isProb,
+            { μ := A.μ,
               strat := fun ω => S.F (A.strat ω) } σ
         ≤ ∫⁻ ω, (ENNReal.ofReal S.a
             * ENNReal.ofReal (algCost Y (A.strat ω) σ) + ENNReal.ofReal S.p)
-            ∂A.μ := step0
+            ∂(A.μ : MeasureTheory.Measure Ω) := step0
       _ = ENNReal.ofReal S.a * expectedCost Y A σ + ENNReal.ofReal S.p :=
         stepE
       _ ≤ ENNReal.ofReal S.a * (ENNReal.ofReal c *
@@ -722,45 +894,50 @@ theorem Simulation.randCompetitive_transfer {Req AnsX AnsY Ω : Type*}
       _ = ENNReal.ofReal (S.a * c * S.d) * optCost X σ
             + ENNReal.ofReal (S.a * c * S.q + S.a * b + S.p) := step3
 
-/-- Feasible-profit supremum for an explicitly given profit function on
-traces (maximization form; the profit counterpart of `optCost`). -/
+/-- Feasible-profit supremum for an explicitly given nonnegative profit
+function on traces (maximization form; the profit counterpart of
+`optCost`). Profit is nonnegative by type: the maximization ratio is
+meaningful only on that domain, and negative values cannot be silently
+truncated. -/
 noncomputable def optProfit {Req Ans : Type*} (P : OnlineProblem Req Ans)
-    (profit : List (Req × Ans) → ℝ) (σ : List Req) : ENNReal :=
+    (profit : List (Req × Ans) → NNReal) (σ : List Req) : ENNReal :=
   ⨆ τ ∈ {τ : List (Req × Ans) | P.feasible τ ∧ τ.map Prod.fst = σ},
-    ENNReal.ofReal (profit τ)
+    (profit τ : ENNReal)
 
 theorem le_optProfit {Req Ans : Type*} (P : OnlineProblem Req Ans)
-    (profit : List (Req × Ans) → ℝ) {σ : List Req} {τ : List (Req × Ans)}
+    (profit : List (Req × Ans) → NNReal) {σ : List Req} {τ : List (Req × Ans)}
     (hτ : P.feasible τ) (hστ : τ.map Prod.fst = σ) :
-    ENNReal.ofReal (profit τ) ≤ optProfit P profit σ := by
+    (profit τ : ENNReal) ≤ optProfit P profit σ := by
   unfold optProfit
-  exact le_biSup (fun τ => ENNReal.ofReal (profit τ)) ⟨hτ, hστ⟩
+  exact le_biSup (fun τ => (profit τ : ENNReal)) ⟨hτ, hστ⟩
 
 /-- Profit-form competitiveness for maximization consumers:
-`ρ • OPT_profit ≤ ALG_profit + b` with `0 ≤ ρ ≤ 1`. This is a separate
-predicate from the cost form; the two are not interchangeable. -/
+`ρ • OPT_profit ≤ ALG_profit + b` with `0 ≤ ρ ≤ 1`, for a nonnegative
+profit function. This is a separate predicate from the cost form; the
+two are not interchangeable. -/
 def ProfitCompetitive {Req Ans : Type*} (P : OnlineProblem Req Ans)
-    (profit : List (Req × Ans) → ℝ) (A : Strategy Req Ans) (ρ b : ℝ) :
+    (profit : List (Req × Ans) → NNReal) (A : Strategy Req Ans) (ρ b : ℝ) :
     Prop :=
   0 ≤ ρ ∧ ρ ≤ 1 ∧ 0 ≤ b ∧ StrategyFeasible P A ∧
     ∀ σ : List Req, P.legal σ →
       ENNReal.ofReal ρ * optProfit P profit σ
-        ≤ ENNReal.ofReal (profit (run A σ)) + ENNReal.ofReal b
+        ≤ (profit (run A σ) : ENNReal) + ENNReal.ofReal b
 
 /-- Randomized profit-form competitiveness: expected profit replaces the
 deterministic profit. -/
 def RandProfitCompetitive {Req Ans Ω : Type*} [MeasurableSpace Ω]
-    (P : OnlineProblem Req Ans) (profit : List (Req × Ans) → ℝ)
+    (P : OnlineProblem Req Ans) (profit : List (Req × Ans) → NNReal)
     (A : RandStrategy Req Ans Ω) (ρ b : ℝ) : Prop :=
   0 ≤ ρ ∧ ρ ≤ 1 ∧ 0 ≤ b ∧ (∀ ω, StrategyFeasible P (A.strat ω)) ∧
     ∀ σ : List Req, P.legal σ →
-      Measurable (fun ω => ENNReal.ofReal (profit (run (A.strat ω) σ))) ∧
+      Measurable (fun ω => (profit (run (A.strat ω) σ) : ENNReal)) ∧
       ENNReal.ofReal ρ * optProfit P profit σ
-        ≤ (∫⁻ ω, ENNReal.ofReal (profit (run (A.strat ω) σ)) ∂A.μ)
+        ≤ (∫⁻ ω, (profit (run (A.strat ω) σ) : ENNReal)
+            ∂(A.μ : MeasureTheory.Measure Ω))
           + ENNReal.ofReal b
 
 theorem ProfitCompetitive.mono {Req Ans : Type*} (P : OnlineProblem Req Ans)
-    (profit : List (Req × Ans) → ℝ) (A : Strategy Req Ans) {ρ b ρ' b' : ℝ}
+    (profit : List (Req × Ans) → NNReal) (A : Strategy Req Ans) {ρ b ρ' b' : ℝ}
     (h : ProfitCompetitive P profit A ρ b) (hρ : ρ' ≤ ρ) (hb : b ≤ b')
     (hρ'0 : 0 ≤ ρ') : ProfitCompetitive P profit A ρ' b' := by
   obtain ⟨hρ0, hρ1, hb0, hA, hineq⟩ := h

@@ -37,15 +37,15 @@ and an exact oracle.
 
 ## Informally uses
 
-- [Canonical polar factor of a rectangular matrix](../../../../LinearAlgebra/matrix-decompositions/polar-decomposition/rectangular-polar-factor.md):
+- [Canonical polar factor of a rectangular matrix](../../../../LinearAlgebra/matrix-decompositions/polar-decomposition/polar-decomposition-theorem/rectangular-polar-factor.md):
   mathematical prerequisite, the update direction $P(M_t)$ and its invariance under positive scaling.
-- [Duality of the spectral and nuclear norms](../../../../LinearAlgebra/matrix-decompositions/singular-value-decomposition/spectral-norm-dual-nuclear-norm.md):
+- [Duality of the spectral and nuclear norms](../../../../LinearAlgebra/matrix-decompositions/singular-value-decomposition/duality-of-the-spectral-and-nuclear-norms/spectral-norm-dual-nuclear-norm.md):
   mathematical prerequisite, which identifies $-\rho P(M_t)$ as the minimizer of a linear function
   over the spectral-norm ball.
 
 ## Background
 
-- [Odd polynomial iterations for the polar factor](../../../../LinearAlgebra/matrix-decompositions/polar-decomposition/odd-polynomial-polar-iterations.md):
+- [Odd polynomial iterations for the polar factor](../../../../LinearAlgebra/matrix-decompositions/polar-decomposition/odd-polynomial-iterations-for-the-polar-factor/odd-polynomial-polar-iterations.md):
   computational prerequisite, how $P(M_t)$ is approximated in practice, and why a finite run is only
   an approximation.
 

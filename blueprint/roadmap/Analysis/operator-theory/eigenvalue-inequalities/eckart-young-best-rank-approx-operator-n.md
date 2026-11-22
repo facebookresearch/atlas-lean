@@ -11,7 +11,7 @@ and indexed from $0$, and $\sigma_j(T) = 0$ for $j \ge \dim E$.
 
 - [Singular value decomposition](../../../LinearAlgebra/matrix-decompositions/singular-value-decomposition/README.md): the truncated SVD attains the infimum.
 - [Eckart–Young, best-approximation form](../../../Probability/linear-models-multivariate/principal-component-analysis/is-least-frobenius-sub-sq.md): the Frobenius-norm version, the basis of principal component analysis.
-- [The spectral norm is the largest singular value](../../../LinearAlgebra/matrix-decompositions/singular-value-decomposition/op-norm-eq-singular-values-zero.md): the case $k = 0$.
+- [The spectral norm is the largest singular value](../../../LinearAlgebra/matrix-decompositions/singular-value-decomposition/singular-value-decomposition-theorem/op-norm-eq-singular-values-zero.md): the case $k = 0$.
 
 ## Sources
 

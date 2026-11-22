@@ -13,6 +13,8 @@ What a PR may change in the graph, and how to expand a node, is in
 - `blueprint/links/`: literature-links annotations associating articles with
   Lean declarations, stable article IDs, and navigation metadata.
 - `scripts/taxonomy.json` and `blueprint/atlas.json`: subject organization.
+- Card records in `blueprint/links/` and `scripts/card-moves.jsonl`: the cards readers navigate by,
+  and the addresses moves retire ([cards.md](cards.md)).
 - Lean sources: declaration kinds and statement/proof status.
 - Compiled Lean: dependencies of declarations' types and values. The values of
   `def`, `abbrev` and `inductive` declarations, and of `instance` declarations
@@ -35,175 +37,172 @@ and docstring changes should be reviewed with the sync report below.
 
 ## Graph rules
 
-These are the rules for any PR that changes the graph: `blueprint/roadmap/`,
+These rules apply to any PR that changes the graph: `blueprint/roadmap/`,
 `blueprint/links/`, `blueprint/atlas.json`, `blueprint/coverage/`,
-`scripts/taxonomy.json` or `scripts/wiki-sync.json`. Each rule gives its
-reason. AutoformBot's [blueprint format](https://github.com/facebookresearch/autoform-bot/blob/6126f7fce521c0040796d0b67d952d36ee051f3f/autoform_cli/reference/blueprint-format.md),
-at the commit in `.github/autoform-ref`, defines pages, links and status; these
-rules add only what ATLAS needs on top of it. Where ATLAS needs something the
-format lacks, open an AutoformBot issue rather than diverge. Reviewers apply
-the same rules ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
+`scripts/taxonomy.json`, `scripts/wiki-sync.json` or `scripts/card-moves.jsonl`. They add only what ATLAS
+needs to AutoformBot's
+[blueprint format](https://github.com/facebookresearch/autoform-bot/blob/6126f7fce521c0040796d0b67d952d36ee051f3f/autoform_cli/reference/blueprint-format.md),
+at the commit in `.github/autoform-ref`; where ATLAS needs something the
+format lacks, open an AutoformBot issue rather than diverge.
 
-### Hierarchy
+The rules are normative: every graph PR is held against them, by its author
+and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
+[Writing pages](#writing-pages),
+[Nodes still to expand](#nodes-still-to-expand),
+[Placing pages](#placing-pages) and [Cards](#cards) need a reader's judgment.
+[What the tools own](#what-the-tools-own) is the mechanical layer, and
+[Procedures](#procedures) gives the steps. How to open a graph PR is in
+[CONTRIBUTING.md](../CONTRIBUTING.md#graph-prs).
 
-1. **A page sits where `scripts/taxonomy.json` places its module or field:**
-   subject, field, an optional subfield, then topic folders; regions only group
-   subjects on the root page. A subject with fields holds only field folders;
-   `not-yet-classified/` holds modules the taxonomy has not placed yet.
-   *Reason:* the taxonomy is the one record of the hierarchy:
-   `generate_wiki.py` lays out the folders from it, and `sync_wiki.py
-   declarations` places a module with no pages yet where it says. A page placed
-   elsewhere makes the vault and the taxonomy disagree.
-2. **Every page and subfolder is listed on its folder page** (`README.md`).
-   *Reason:* those lists are the site's navigation and reading order. Autoform
-   takes a page's parent from its folder, so an unlisted statement still has
-   one but appears only under "Other statements", and an unlisted planned page
-   or subfolder does not appear in its chapter at all.
-3. **Child limits follow the generator and Autoform's audit:**
-   `scripts/generate_wiki.py` splits a topic listing into parts above 20
-   entries, a `navigation: module` page may hold 120 articles, the root page
-   (the subject index) 64, and `autoform audit` reports any other article
-   with more than 24 direct children (`overfull-container`). *Reason:* past
-   those sizes a folder page and its local graph stop being readable.
-4. **Moving a module or folder is a taxonomy change, made in the same PR,**
-   with `autoform move` to rewrite the links; then list the page on its new
-   folder page and, across subjects, move its annotation to the new subject's
-   links file (rules 2 and 5), which `autoform move` does not do. *Reason:* a
-   move made only in the vault leaves the taxonomy describing the old place, so
-   the next module the sync places, and the next generated layout, follow the
-   old hierarchy.
+### Writing pages
 
-### Data and metadata
+- **State what the declaration states.** Give every hypothesis and convention
+  that changes the meaning (`x / 0 = 0`, truncated subtraction, a `[NeZero q]`
+  argument, a list's default entry). A fix to a statement also goes into the
+  Lean docstring on `main`, in the same PR or a linked issue, since the sync
+  reports drift only one way. When the declaration is false, vacuous,
+  unsatisfiable, mis-specified or private, the page states the source's
+  mathematics and holds the declaration back, as
+  [Maintaining articles](#maintaining-articles) describes.
+- **Be unambiguous.** A planned page, one with no Lean link (a held page
+  included), states its result precisely enough that a reader knows exactly
+  which statement is meant, and cites the source it follows. It is reviewed
+  against that source as a linked page is reviewed against its declaration.
+- **Leave no gaps.** A planned page writes its own `## Depends on` and
+  `## Proof depends on`: nothing else records its prerequisites, and they
+  count toward its readiness. A planned page is never a task. It links a
+  declaration only once that declaration states what the page does and its
+  Lean records the page's prerequisites (see
+  [Expanding a node](#expanding-a-node)). Until then it stays unlinked, even
+  if a declaration for it already exists; once linked it drops its own
+  dependency sections.
+- **One page per result.** Search the vault and pinned Mathlib before adding a
+  page, and link an existing one instead of restating it. Pages for documented
+  declarations come from `sync_wiki.py declarations`, then may be edited; a
+  hand-written second page splits the node in two.
+- **Prose is timeless.** Don't describe the library's state ("the Lean proof",
+  "not formalized yet"): it goes stale as the Lean changes, and the site shows
+  status already.
+- **`## Informally uses` records the source's proof, not readiness.** It lists
+  only results the cited proof uses but the Lean need not; what the statement
+  needs goes in the prose, and one the Lean also uses is redundant, not a
+  finding. It links an existing page, never the page itself, closes no cycle,
+  and never counts toward readiness.
 
-5. **Each page has one annotation, in `blueprint/links/<Subject>.jsonl`**
-   (`roadmap.jsonl` for the root page), and an annotation names at most one
-   Lean declaration. An `id` (`af_` and 24 hex digits) is unique and never
-   changes. `sync_wiki.py declarations` gives one to every annotation it adds;
-   the annotations that have none yet get theirs in a one-off fill (#5524).
-   `autoform links set` cannot do this, because it does not write these
-   per-subject files. *Reason:* Autoform reads an article's facts from its
-   annotation, and two annotations for one page, or one page for two
-   declarations, make its status ambiguous; `autoform work` refuses an
-   unfinished formalizable leaf without an `id`, so rule 14's tasks cannot be
-   listed until every one has one. Until #5524 lands, a row without an `id`
-   is not a review finding.
-6. **Pages for documented declarations come from `sync_wiki.py
-   declarations`,** then may be edited. Don't hand-write a second page for a
-   declaration. *Reason:* the sync tracks docstring changes per declaration;
-   a hand-written duplicate splits the node in two (`autoform audit`'s
-   `duplicate-lean-target`).
-7. **A page states what its declaration states,** with every hypothesis and
-   convention that changes the meaning (`x / 0 = 0`, truncated subtraction, a
-   `[NeZero q]` argument, a list's default entry). A fix to a statement also
-   goes into the Lean docstring on `main`, in the same PR or in a linked issue.
-   **Exception:** when the declaration is false, vacuous, unsatisfiable,
-   mis-specified or private, the page states the source's mathematics, and its
-   annotation holds the declaration back with a `held` marker instead of
-   linking it, as [Maintaining articles](#maintaining-articles) describes: the
-   reason and, unless it is private by design, the issue or issues tracking
-   the Lean fix. *Reason:* readers trust the page, not the Lean,
-   and the sync reports docstring drift only one way; a fix in a linked issue
-   keeps the docstrings converging without making every wiki fix a Lean PR, and
-   a held page should not be relinked to a declaration that is wrong.
-8. **Build outputs are never committed:** `lean-facts` output, `site-src/`,
-   `site/`, the dependency dump. `scripts/wiki-sync.json` and
-   `blueprint/atlas.json` change only as [Maintaining articles](#maintaining-articles)
-   describes. *Reason:* they are rebuilt from the Lean on every run.
+### Nodes still to expand
 
-### Edges
+- **Mark a node still to break down `not_ready`.** It is a planned article,
+  not a folder page, whose annotation carries
+  `"extensions": {"org.autoform": {"not_ready": true}}`. Its page says what
+  the node covers, which sources it follows, and what a good expansion
+  contains. Autoform never lists it as a task and counts it in its scope's
+  status, so a folder still to expand does not look finished.
+- **An expansion replaces the node** with pages beside it that together cover
+  its mathematics at a sensible granularity, deletes the node's page and
+  annotation (its `id` is never reused), and repoints every link to it. A new
+  page that is still high-level is a new marked node. Follow
+  [Expanding a node](#expanding-a-node), which says when a new page may
+  become a wanted statement.
 
-9. **A page tied to a Lean declaration never commits `## Depends on` or
-   `## Proof depends on`;** `sync_wiki.py lean-facts` writes them from the
-   compiled Lean at build time. *Reason:* Lean is the source of truth for
-   those edges, and lean-facts rewrites the sections anyway.
-10. **A page with no Lean declaration (a planned page) may write its own
-    `## Depends on` and `## Proof depends on`.** They count toward its readiness,
-    as Autoform's format says, and `lean-facts` leaves them alone on a page
-    whose annotation has no Lean link (`object`), a held page included (a row
-    an earlier sync wrote with only a module and a name counts as linked). Such
-    a page has no `kind`, so it is not a task (rule 14). A planned page is
-    held to the same standard as any article: it states its result precisely
-    and cites the source it follows, and a reviewer checks the statement
-    against that source. When its declaration is ready to link under rules 7
-    and 13, the annotation links it and the page drops its own dependency
-    sections (rule 9); until then the page stays unlinked and keeps its
-    prerequisites, even if a declaration for it already exists. *Reason:*
-    nothing else records a planned node's prerequisites, and a planned page is
-    the graph's record of mathematics not yet in Lean.
-11. **`## Informally uses` lists only results the cited proof uses** but the
-    Lean need not. What the statement needs (its definitions and ingredients)
-    is described in the page's prose, not listed here. A result the Lean also
-    uses may be listed; that is redundant, not a finding. It links an existing
-    page, never the page itself, and closes no cycle. It never counts toward
-    readiness. *Reason:* it records the source's argument without changing
-    what is ready; reviews of the 21 wiki batches moved hundreds of statement
-    ingredients out of this section.
+### Placing pages
 
-### Nodes without Lean
+- **A page sits where `scripts/taxonomy.json` places it:** subject, field, an
+  optional subfield, then topic folders. A subject with fields holds only
+  field folders, regions only group subjects on the root page, and
+  `not-yet-classified/` holds modules the taxonomy has not placed yet. The
+  taxonomy is the one record of the hierarchy; the generator and the sync
+  follow it. A topic folder, or a folder inside one, may be a card
+  ([Cards](#cards)), which groups pages below the place the taxonomy gives
+  their module.
+- **Every page and subfolder is listed on its folder page** (`README.md`).
+  The lists are the site's navigation and reading order: an unlisted
+  statement appears only under "Other statements", and an unlisted planned
+  page or subfolder does not appear in its chapter at all.
+- **Each page has one annotation,** in `blueprint/links/<Subject>.jsonl`
+  (`roadmap.jsonl` for the root page), naming at most one Lean declaration;
+  otherwise Autoform's status for it is ambiguous. `autoform links set` does
+  not write these per-subject files.
+- **Moving a module or folder changes `scripts/taxonomy.json` in the same
+  PR,** or the next sync and the next generated layout follow the old place.
+  See [Moving a page](#moving-a-page). Moving pages into a card inside their
+  topic is not a taxonomy change; it is recorded in `scripts/card-moves.jsonl`
+  ([Cards](#cards)).
 
-12. **A node still to be broken down (DAG work) is a planned page whose
-    annotation carries Autoform's** `"extensions": {"org.autoform": {"not_ready": true}}`.
-    It is an article, not a folder page, and names no declaration. Its page
-    says what the node covers, which sources it follows, and what a good
-    expansion contains. *Reason:* Autoform defines `not_ready` as "needs more
-    blueprint work before it can be attempted", never lists it as a task, and
-    counts such leaves in their scope's status bar and item count, so a folder
-    of nodes still to expand does not look finished on the site.
-13. **Expanding a node replaces it** with new pages beside it in the same
-    folder, listed on the folder page (rule 2). The expansion deletes the
-    node's page and its annotation; its `id` is never reused. Its prose and
-    sources move to the folder page or to the new pages, and every link to the
-    node, in a `## Depends on`, `## Proof depends on` or `## Informally uses`,
-    is repointed to the new pages that link actually needs. The new pages take
-    over the node's own prerequisites: each carries the ones it still needs. A
-    low-level new page is a `theorem_wanted` or `def_wanted` statement in
-    `WantedExt` with a docstring, whose page then comes from the sync (rule 6),
-    but only once the Lean records every prerequisite that still blocks it:
-    each statement prerequisite appears in the declaration's statement, and
-    each proof prerequisite is already proved, since a wanted statement has no
-    proof and so no proof edges. Until then it stays a planned page that
-    records them in its own sections (rule 10). The sync puts a page beside its
-    module's other pages, so put the statements in a module whose pages that
-    folder holds, or place a new module there in `scripts/taxonomy.json` in the
-    same PR (rules 1 and 4). A new page that is still high-level is a new
-    marked node. Order among the new planned pages goes in their own
-    `## Depends on` (rule 10). *Reason:* a leaf becomes a formalization task
-    only once it names a declaration, and a wanted statement is that
-    declaration. A wanted statement's edges come only from its Lean statement,
-    and `lean-facts` replaces the hand-written ones, so a wanted statement made
-    too early would look ready while a prerequisite is still planned or
-    unproved. A link to the removed node left under `## Depends on` or
-    `## Proof depends on` fails `autoform check` ("dependency target does not
-    exist"), but one left under `## Informally uses` only warns, so a passing
-    check does not show that every link was repointed. `autoform move` cannot
-    turn a page into a folder page, so replacing the node keeps the expansion
-    to steps the tools support.
+### Cards
 
-### Tasks and review
+- **A card is a folder whose folder page's annotation carries a card record**
+  (`extensions["org.atlas-wiki"]["card"]`), as [cards.md](cards.md) gives it:
+  a concept or a result, its main statement's `id`, a reviewed importance and
+  level. Its folder page credits no declaration and writes no dependency
+  section; its pages are its statements, 1 to 24, each listed once under
+  `## Statements` with the main statement first, and an `## Idea` explains it
+  to a learner. Readers navigate by concepts and named results, not by Lean
+  declarations; keeping the card uncredited keeps Autoform's counts, readiness
+  and tasks on the statements.
+- **Links between cards go only under `## Background`** and are teaching
+  links; elsewhere a card links another card's main statement. Every card
+  edge is derived from the statements, with witnesses, which keeps the card
+  map honest about what uses what.
+- **A move that retires an address goes into `scripts/card-moves.jsonl`,**
+  and a page gets an `id` before it moves. `scripts/cards.py check` must pass.
 
-14. **Formalization tasks are the articles Autoform finds ready:** ready to
-    state (a `def_wanted`, or a definition in a module with `sorry`) or ready
-    to prove (a `theorem_wanted`, or a theorem in a module with `sorry`), once
-    its prerequisites are as far along as Autoform requires: statement
-    prerequisites stated, proof prerequisites proved. Proved and Mathlib-backed
-    articles are never tasks. Autoform finds them on the checkout after
-    `sync_wiki.py lean-facts`, as the wiki build runs it: committed annotations
-    carry no `kind`, so `autoform work list` on the committed tree lists no
-    task, with or without ids. *Reason:* one readiness rule, Autoform's, for
-    the site, `autoform work list` and the task list.
-15. **A graph PR keeps under 3,000 changed files, names the issue it
-    works on (`Closes #…`, or `Part of #…` when it does part of it), and an
-    expansion changes no Lean outside `WantedExt`.** *Reason:*
-    GitHub shows at most 3,000 files in one diff, and a reviewer judging an
-    expansion should not also have to review proofs.
-16. **Every graph PR needs an approval from a code owner**
-    (`.github/CODEOWNERS`) as well as Codex's review. Codex reviews a PR
-    automatically when its author is an owner, member or collaborator of the
-    repository or its fork's owner is on `codex.yml`'s trusted list; on any
-    other fork PR, a maintainer comments `@codex` for an advisory review. An expansion is judged
-    for mathematical coverage and granularity, not only form. *Reason:* agents
-    can produce graph changes faster than people can check them, and a poor
-    expansion spreads into every task below it.
+### What the tools own
+
+The tools write these, so they are never edited or committed by hand:
+
+- `## Depends on` and `## Proof depends on` on a page linked to a declaration
+  (an annotation with an `object`, or the module and name an earlier sync
+  wrote): `sync_wiki.py lean-facts` writes them from the compiled Lean.
+- `kind` and `status` on an annotation, which `lean-facts` adds at build time.
+- Build outputs, which are never committed: `lean-facts` output, `site-src/`,
+  `site/`, the dependency dump.
+- `scripts/wiki-sync.json` and `blueprint/atlas.json`, which change only as
+  [Maintaining articles](#maintaining-articles) describes.
+
+Each annotation has an `id` (`af_` and 24 hex digits) that is unique and never
+changes; `autoform work` refuses an unfinished formalizable leaf without one,
+so one such row stops the task list. `sync_wiki.py declarations` gives each row
+it adds an `id`, and `sync_wiki.py ids` gives one to every row that has none,
+such as a row written by hand; the wiki tests fail on a row without one.
+
+Blueprint Pages' `build the wiki` job runs `autoform check blueprint`, which
+fails on cycles, dangling dependency targets and missing declarations. The job
+is advisory, so a reviewer skips those only once it has passed on the PR's
+head commit, and otherwise reports them. Nothing runs `autoform audit` in CI;
+authors may run `autoform audit blueprint --lean-root .`, and reviewers still
+check what it reports, such as overfull folders (`overfull-container`) and two
+pages for one declaration (`duplicate-lean-target`). `autoform work` lists the
+tasks once `lean-facts` has run.
+
+### Procedures
+
+#### Moving a page
+
+Move it with `autoform move`, which rewrites the links. In the same PR, change
+`scripts/taxonomy.json` when the move changes where the taxonomy places the
+module or folder, list the page on its new folder page, and, across subjects,
+move its annotation to the new subject's links file, which `autoform move` does
+not do. A move into a card inside the page's topic leaves the taxonomy as it is;
+record it in `scripts/card-moves.jsonl` instead ([Cards](#cards)).
+
+#### Expanding a node
+
+1. Add the new pages beside the node and list them on the folder page. Move
+   the node's prose and sources to the folder page or the new pages.
+2. Delete the node's page and annotation. Repoint every link to it, under
+   `## Depends on`, `## Proof depends on` or `## Informally uses`, to the new
+   pages that link actually needs. `autoform check` fails on a link left under
+   the first two but only warns under `## Informally uses`.
+3. Give each new page the node's prerequisites it still needs; order among new
+   planned pages goes in their own `## Depends on`.
+4. Make a low-level page a `theorem_wanted` or `def_wanted` statement, with a
+   docstring, in `WantedExt` only when each statement prerequisite appears in
+   its Lean statement and each proof prerequisite is already proved: a wanted
+   statement has no proof edges, and `lean-facts` replaces hand-written ones,
+   so one made too early looks ready. Until then it stays a planned page with
+   its own dependency sections. Put a wanted statement in a module whose pages
+   that folder holds, or place a new module there in `scripts/taxonomy.json` in
+   the same PR; its page then comes from the sync.
 
 ## Local environment and tests
 
@@ -223,7 +222,9 @@ python -m unittest \
   scripts.test_check_blueprint_site_navigation \
   scripts.test_site_chrome \
   scripts.test_blueprint_workflow \
-  scripts.test_blueprint_taxonomy
+  scripts.test_blueprint_taxonomy \
+  scripts.test_card_pages \
+  scripts.test_cards
 ```
 
 Render from a dedicated checkout that excludes `v1/` and `Atlas/`, as the
@@ -240,37 +241,40 @@ git sparse-checkout set --no-cone '/*' '!/v1/' '!/Atlas/'
 Install the Python environment above in that checkout, then:
 
 ```sh
+(
+set -euo pipefail
 lake exe cache get
 lake build MathlibExt.Combinatorics.Enumerative.Nontrivial1234_3412Classes
 lake build MathlibExt.Combinatorics.Words.TernaryAbelianCubeFreeLowerBound
 lake build MathlibExt CSLibExt PhyslibExt Domains WantedExt
 
-git ls-files 'MathlibExt/*.lean' 'CSLibExt/*.lean' \
-  'PhyslibExt/*.lean' 'Domains/*.lean' 'WantedExt/*.lean' |
-while IFS= read -r source; do
-  module="${source%.lean}"
-  printf '%s\n' "${module//\//.}"
-done > v2-modules.txt
+scripts/list_v2_modules.sh v2-modules.txt
 lake env lean --run scripts/dump_v2_dependencies.lean v2-modules.txt \
   > v2-dependencies.jsonl
 python scripts/extract_v2_lean_dependencies.py \
   v2-dependencies.jsonl build/lean-dependencies.json
 python scripts/sync_wiki.py lean-facts build/lean-dependencies.json
 autoform check blueprint --lean-root .
+python scripts/cards.py rollup build/cards.json \
+  --dependencies build/lean-dependencies.json
 autoform render blueprint --output site-src --lean-root . \
   --require-declarations --ileans .lake/build/lib/lean
 mkdocs build --strict
 python scripts/check_blueprint_site.py site-src site
+)
 ```
 
-These shell snippets use Bash. `lean-facts` updates the local articles and
+These shell snippets use Bash; the second runs in a subshell that stops at the
+first failing command without changing your shell's options. `lean-facts` updates the local articles and
 annotations for rendering; do not commit those derived changes. Because the
 rendered blueprint then differs from the commit, `autoform render` leaves out
 each page's link to its Markdown source; restoring those links is tracked in
 [#4993](https://github.com/facebookresearch/atlas-lean/issues/4993). Missing
 compiled modules or import collisions fail the workflow rather than silently
 publishing a partial graph. The ordinary repository CI remains the authority
-for the libraries' build and trust-policy checks.
+for the libraries' build and trust-policy checks; it also imports the same modules
+together (`scripts/check_declaration_collisions.sh`), so a pull request that adds a
+colliding declaration fails there.
 
 ## The Mathlib layer
 
@@ -312,6 +316,23 @@ classification proposals, `join` reads their placements instead of those of
 `scripts/taxonomy.json`; `--strict` fails on a placement target that is neither
 a field of `scripts/taxonomy.json` nor one the given proposals add.
 
+## Mathlib pages
+
+The full site, kept as the `blueprint-site-full` artifact, adds one page per
+Mathlib module of the layer, grouped by topic, and its statement boxes list the
+Mathlib declarations their Lean statement and proof use; the site GitHub Pages
+publishes is unchanged. [`mathlib-pages.md`](mathlib-pages.md) describes the
+pages and how an article links to a Mathlib declaration: to its source line at
+the pinned revision, with its exact name as the link's title, which
+`python scripts/mathlib_link.py` prints. They are build outputs too, written
+from the built site and the layer:
+
+```sh
+python -m unittest scripts.test_build_mathlib_pages
+python scripts/build_mathlib_pages.py build site mathlib-graph site-full
+python scripts/build_mathlib_pages.py check site mathlib-graph site-full
+```
+
 ## Maintaining articles
 
 ```sh
@@ -321,8 +342,12 @@ python scripts/sync_wiki.py declarations
 Run this deliberately after Lean updates, review its additions, and commit
 only the editorial/source changes. It creates pages for new documented
 non-deprecated declarations, preserves existing article prose, and reports
-removed declarations and changed docstrings. It also refreshes the source-derived
-area catalog and coverage metadata without replacing article prose.
+removed declarations and changed docstrings. It never places a new page in a
+card or below one: such a page goes to the card's parent folder and is listed
+as unassigned, for an editor to place in a card, and no new page takes the name
+of a folder or an address `scripts/card-moves.jsonl` records. It also refreshes
+the source-derived area catalog and coverage metadata without replacing article
+prose.
 It edits within a folder page only where every line of the page is simple: a
 blank line, a heading, a single-line `- [title](page)` item with plain text
 after it, or a line of plain text that opens no other block, with no item next to
@@ -382,20 +407,25 @@ without JavaScript and the explorer's fallback. `theme/partials/nav.html` lists
 Home, the sections above the page, the page's siblings and its own entries;
 each folder page lists its children too. `hooks/trim_pages.py` publishes the
 renderer's notices for moved explorer URLs as bare redirects and collapses the
-theme's indentation, and `hooks/title_only_search.py` keeps one title record
-per page in the search index.
+theme's indentation, `hooks/title_only_search.py` keeps one title record per
+page in the search index, and `hooks/card_pages.py` shows each card on its
+folder page and keeps every address the card move ledger retired leading to its
+page ([cards.md](cards.md#reading)), with `theme/stylesheets/atlas-cards.css`.
 
 ## GitHub Actions and publication
 
 `Blueprint Pages` runs on `main` once a day at 03:17 UTC and on manual runs
-(**Actions → Blueprint Pages → Run workflow**), on every merge group, and on
+(**Actions → Blueprint Pages → Run workflow**), and on
 PRs that touch the wiki: `blueprint/`, the wiki scripts and
 their tests, `scripts/taxonomy.json`, `scripts/wiki-sync.json`, the site
 configuration (`mkdocs.yml`, `theme/`, `hooks/`), this document, the workflow,
 `.github/autoform-ref`, or the toolchain pins (`lean-toolchain`,
 `lake-manifest.json`, `lakefile.toml`). A Lean-only PR skips it, because
 `lean-facts` turns a renamed or deleted declaration into an unlinked page rather
-than a failure; merge groups and `main` still build the whole wiki. Do not make
+than a failure; `main` still builds the whole wiki once a day. Merge groups skip
+it too: it is not a required check, so a merge-group run could not stop a merge,
+and CI's required build already imports every v2 module together
+(`scripts/check_declaration_collisions.sh`). Do not make
 `build the wiki` a required status check: a workflow that `paths` skips never
 reports on that PR, so a required check would block every PR it skips. Making
 it requirable would need a first job that checks the changed paths and a
@@ -404,8 +434,14 @@ before deployment. Tests, Lean compilation, dependency extraction, rendering,
 and strict site checks run in one read-only job from one checkout. The job
 restores CI's `lake-build-*` cache and saves no cache of its own. The Mathlib
 layer is built afterwards in a second read-only job, `build the Mathlib layer`,
-which deployment does not wait for. The only write-capable job is the separate
-Pages deployment job; it runs no Lean or Python package code.
+the Mathlib pages in a third, `build the Mathlib pages`, and the card scripts are
+tested and the cards checked in a fourth, `check the cards`, from the wiki job's
+dependency artifact ([cards.md](cards.md#checks-and-ci)); deployment waits for
+none of them. The wiki job derives the card data its site shows itself, after
+`lean-facts` and before rendering, in a step that fails closed: a card error
+leaves the site exactly as it is without cards and fails `check the cards` only
+([cards.md](cards.md#reading)). The only write-capable job is the separate Pages
+deployment job; it runs no Lean or Python package code.
 
 Publication is disabled until a repository maintainer:
 
@@ -417,7 +453,9 @@ Publication is disabled until a repository maintainer:
    for the reason above.
 
 Only successful `main` builds publish. PRs, merge groups, and manual runs on
-other branches never upload a Pages artifact or request deployment. Successful
-`main` builds also keep the built site for a day as the `blueprint-site`
-artifact, so it can be downloaded or mirrored while Pages is off. No
-repository setting is changed merely by adding this workflow.
+other branches never upload a Pages artifact or request deployment. Every
+successful build keeps the built site for a day as the `blueprint-site`
+artifact, which `build the Mathlib pages` reads; `main`'s can be downloaded or
+mirrored. Successful `main` builds also keep the site with its Mathlib pages
+for three days as the `blueprint-site-full` artifact, for hosting outside
+GitHub Pages. No repository setting is changed merely by adding this workflow.
