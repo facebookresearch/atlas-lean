@@ -16,6 +16,7 @@ public import Mathlib.Data.Int.Fib.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.Recurrences.GibonacciFibonacciFactorIdentity
 
 /-!
 # Fibonacci identities via Fibonacci functions

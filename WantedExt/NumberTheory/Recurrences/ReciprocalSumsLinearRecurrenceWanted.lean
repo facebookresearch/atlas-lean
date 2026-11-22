@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import MathlibExt.Analysis.Complex.EnestromKakeya
 
 /-! # Root lemmas for reciprocal sums of `m`th-order linear recursive sequences
 

@@ -14,6 +14,7 @@ public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import MathlibExt.Combinatorics.Enumerative.PellLucasNumber
+public import MathlibExt.NumberTheory.KPellLucasCloseToPowerOfTwo
 
 /-!
 # `k`-Pell–Lucas numbers close to a power of 2
