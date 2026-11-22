@@ -53,6 +53,8 @@ for every circuit, every input assignment, and every randomness tape.
 open Cslib.Circuits
 open Cslib.Crypto.Protocols.SecretSharing.Shamir.Polynomial
 
+namespace CSLibExt.Crypto.Protocols.BGW
+
 /-- Arithmetic gate labels: binary addition and multiplication. -/
 inductive ArithOp where
   | add : ArithOp
@@ -96,15 +98,6 @@ theorem polyNatDegree_sum_le {F : Type*} [Field F] {Party : Type*} [Fintype Part
       rw [max_le_iff]
       exact ⟨hf _ (Finset.mem_insert_self _ _),
         ih (fun i hi => hf i (Finset.mem_insert_of_mem hi))⟩
-
-/-- A product of polynomials of natural degree at most `t` has natural degree
-    at most `2 * t`. -/
-theorem polyNatDegree_mul_le_two_mul {F : Type*} [Field F]
-    (p q : Polynomial F) (t : ℕ) (hp : p.natDegree ≤ t) (hq : q.natDegree ≤ t) :
-    (p * q).natDegree ≤ 2 * t := by
-  calc (p * q).natDegree ≤ p.natDegree + q.natDegree := Polynomial.natDegree_mul_le
-    _ ≤ t + t := Nat.add_le_add hp hq
-    _ = 2 * t := (two_mul t).symm
 
 /-- From a degree bound below `t + 1` to a natural-degree bound by `t`. -/
 theorem polyNatDegree_le_of_degree_lt_succ {F : Type*} [Field F]
@@ -236,7 +229,7 @@ theorem newGatePoly_ok {F : Type*} [Field F] {Party : Type*} [Fintype Party]
       rw [max_le_iff]
       exact ⟨(hWP (wires 0)).2, (hWP (wires 1)).2⟩
   · have hD : ((WP (wires 0) * WP (wires 1))).natDegree ≤ 2 * params.threshold :=
-      polyNatDegree_mul_le_two_mul _ _ _ (hWP (wires 0)).2 (hWP (wires 1)).2
+      natDegree_mul_le_two_mul _ _ _ (hWP (wires 0)).2 (hWP (wires 1)).2
     have hrec := hlam _ hD
     have hBr : ∀ i, (sharingPolynomial
           ((WP (wires 0) * WP (wires 1)).eval (params.point i))
@@ -599,3 +592,5 @@ theorem protocol_correct_exists {F : Type*} [Field F] {Party : Type*} [Fintype P
   obtain ⟨lam, hlam⟩ := recombination_vector_spec params h2t
   exact ⟨lam, fun circ x tapeIn tapeMul j =>
     protocol_correct params lam hlam h2t circ x tapeIn tapeMul j⟩
+
+end CSLibExt.Crypto.Protocols.BGW
