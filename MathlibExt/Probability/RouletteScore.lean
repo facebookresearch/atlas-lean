@@ -103,7 +103,7 @@ private theorem sum_survivalWeight_aux {S : Type*} [Fintype S] [DecidableEq S]
               intro x _
               apply Finset.sum_congr rfl
               intro j _
-              rw [hef, snoc_apply_zero, survivalWeight_snoc, Fin.snoc_last]
+              rw [hef, Fin.snoc_apply_zero, survivalWeight_snoc, Fin.snoc_last]
           _ = ∑ x : Fin (n + 1) → S,
                 (if x 0 = i then survivalWeight T x * (Matrix.of T).mulVec E (x (Fin.last n))
                 else 0) := by

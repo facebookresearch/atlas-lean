@@ -76,7 +76,7 @@ noncomputable def stoppedMass {S : Type*} [Fintype S] [DecidableEq S] (q : S →
   ∑ x : Fin (n + 1) → S, if x 0 = i then completedWeight q Q x else 0
 
 /-- Appending a final state preserves a path's initial state. -/
-theorem snoc_apply_zero {S : Type*} (n : ℕ) (x : Fin (n + 1) → S) (j : S) :
+private theorem snoc_apply_zero {S : Type*} (n : ℕ) (x : Fin (n + 1) → S) (j : S) :
     Fin.snoc (α := fun _ => S) x j 0 = x 0 := by
   rw [← Fin.castSucc_zero, Fin.snoc_castSucc]
 
