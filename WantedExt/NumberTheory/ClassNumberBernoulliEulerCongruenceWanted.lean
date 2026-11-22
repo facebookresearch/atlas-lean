@@ -29,17 +29,16 @@ namespace MetaMathlibExt
 
 open MathlibExt.Analysis.Ramanujan.Part1Ch5.Entry10bEuleriansymmetry NumberField
 
-/-- Classical congruence for the class number `h(-p)` of the imaginary quadratic field
-`ℚ(√-p)`, `p > 3` prime: `h(-p) ≡ -2 B_{(p+1)/2} (mod p)` when `p ≡ 3 (mod 4)`, and
-`h(-p) ≡ 2⁻¹ E_{(p-1)/2} (mod p)` when `p ≡ 1 (mod 4)`, where `Bₙ` are the Bernoulli numbers
-(`t/(eᵗ - 1)`) and `Eₙ` the Euler numbers (`2/(eᵗ + e⁻ᵗ)`).
+/-- **Class number congruences for $\mathbb{Q}(\sqrt{-p})$.** Let $p > 3$ be a prime and let $K$
+be a number field of degree $2$ over $\mathbb{Q}$ that contains a square root of $-p$, with class
+number $h$. Let $B_n$ be the Bernoulli numbers, $t/(e^t - 1) = \sum_n B_n t^n/n!$, and $E_n$ the
+Euler numbers, $2/(e^t + e^{-t}) = \sum_n E_n t^n/n!$ (so $E_2 = -1$). If $p \equiv 3 \pmod 4$,
+then $p$ divides the numerator, in lowest terms, of the rational number $h + 2B_{(p+1)/2}$. If
+$p \equiv 1 \pmod 4$, then $p$ divides the integer $2h - E_{(p-1)/2}$.
 
-The field is any number field `K` of degree `2` containing a square root of `-p`. `Bₙ` is
-Mathlib's `bernoulli` (it agrees with `bernoulli'` at the even index `(p+1)/2 ≥ 4`), and
-`E_{(p-1)/2}` is `chapter5EulerEven ((p-1)/4)` (`chapter5EulerEven m = E_{2m}`). The first
-congruence is stated as `p ∣ num(h + 2 B_{(p+1)/2})`; the denominator of `B_{(p+1)/2}` is
-prime to `p` for `p > 3` (von Staudt-Clausen), so this is the congruence in `ℤ_(p)`. The second
-is stated as `p ∣ 2h - E_{(p-1)/2}`, equivalent since `p` is odd.
+Since the denominator of $B_{(p+1)/2}$ is prime to $p$ for $p > 3$ (von Staudt–Clausen) and $p$
+is odd, these are the congruences $h \equiv -2B_{(p+1)/2} \pmod p$ and
+$h \equiv E_{(p-1)/2}/2 \pmod p$.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -52,10 +51,10 @@ public theorem_wanted classNumber_sqrt_neg_prime_congr_bernoulli_euler (p : ℕ)
     (p % 4 = 1 →
       (p : ℤ) ∣ 2 * (NumberField.classNumber K : ℤ) - chapter5EulerEven ((p - 1) / 4))
 
-/-- The real period `ϖ₁ = ∫₀¹ (1 - t³)^(-2/3) dt` of the Eisenstein lattice satisfies
-`ϖ₁ = B(1/3, 1/3)/3 = Γ(1/3)³/(2π√3) = 2^(1/3)/(3√3) · B(1/6, 1/2)`.
-
-`B` is Mathlib's `Complex.betaIntegral`; the identities are stated in `ℂ` for that reason.
+/-- **Beta and Gamma values of the real Eisenstein period.** The real number
+$\varpi_1 = \int_0^1 (1 - t^3)^{-2/3}\,dt$ satisfies
+$\varpi_1 = \frac13 B(\frac13, \frac13) = \frac{\Gamma(1/3)^3}{2\pi\sqrt3}
+= \frac{2^{1/3}}{3\sqrt3} B(\frac16, \frac12)$, where $B$ is the Beta function.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -68,16 +67,18 @@ public theorem_wanted eisensteinRealPeriod_eq_beta_gamma :
       (ϖ : ℂ) = (((2 : ℝ) ^ (1 / 3 : ℝ) / (3 * Real.sqrt 3) : ℝ) : ℂ) *
         Complex.betaIntegral (1 / 6) (1 / 2)
 
-/-- Elementary properties of the Weierstrass `℘`-function of the lattice `ϖ₁ ℤ[ρ]`, where
-`ρ = e^(2πi/3)` and `ϖ₁ = ∫₀¹ (1 - t³)^(-2/3) dt`: (a) `℘(ρu) = ρ℘(u)`, `℘(-u) = ℘(u)`,
-`℘'(ρu) = ℘'(u)`, `℘'(-u) = -℘'(u)`; (b) `℘(ū) = conj ℘(u)`, `℘'(ū) = conj ℘'(u)`;
-(c) `℘'² = 4℘³ - 27`; (d) `℘(ϖ₁/3) = 3`, `℘((1 - ρ)ϖ₁/3) = 0`; (e) `℘'(ϖ₁/3) = -9`,
-`℘'((1 - ρ)ϖ₁/3) = -3√3 i`.
+/-- **The Weierstrass function of the Eisenstein lattice.** Let $\rho = e^{2\pi i/3}$, let
+$\varpi_1 = \int_0^1 (1 - t^3)^{-2/3}\,dt$, and let $\wp$ be the Weierstrass function of the
+lattice $\Lambda = \varpi_1 \mathbb{Z} + \varpi_1 \rho \mathbb{Z}$, with derivative $\wp'$. Then for
+every $u \in \mathbb{C} \setminus \Lambda$:
+(a) $\wp(\rho u) = \rho\,\wp(u)$, $\wp(-u) = \wp(u)$, $\wp'(\rho u) = \wp'(u)$ and
+$\wp'(-u) = -\wp'(u)$;
+(b) $\wp(\bar u) = \overline{\wp(u)}$ and $\wp'(\bar u) = \overline{\wp'(u)}$;
+(c) $\wp'(u)^2 = 4\wp(u)^3 - 27$.
+Moreover, (d) $\wp(\varpi_1/3) = 3$ and $\wp((1 - \rho)\varpi_1/3) = 0$, and
+(e) $\wp'(\varpi_1/3) = -9$ and $\wp'((1 - \rho)\varpi_1/3) = -3\sqrt{3}\,i$.
 
-The lattice is any `PeriodPair` with periods `ϖ₁` and `ϖ₁ρ`; `℘` and `℘'` are Mathlib's
-`PeriodPair.weierstrassP` and `PeriodPair.derivWeierstrassP`. The functional identities in
-(a)-(c) are stated off the lattice, where both functions are meromorphic with poles. The
-reality consequence in (b) is omitted (it follows from the conjugation identities).
+By (b), $\wp$ and $\wp'$ take real values at real points off $\Lambda$.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -98,18 +99,23 @@ public theorem_wanted weierstrassP_eisenstein_lattice (L : PeriodPair) (ϖ : ℝ
     L.derivWeierstrassP (ϖ / 3) = -9 ∧
     L.derivWeierstrassP ((1 - ρ) * ϖ / 3) = -3 * Real.sqrt 3 * Complex.I
 
-/-- Addition formula for the Eisenstein elliptic function `Sl`:
-`Sl(u + v) = (Sl(u)² Cl(v) - Sl(v)² Cl(u)) / (Sl(u) Cl(v)² - Sl(v) Cl(u)²)`, and
-`Sl(u + v) ∈ Sl(u) + Sl(v) + (Sl(u), Sl(v))⁴ ℤ[1/3][[Sl(u), Sl(v)]]` inside `ℚ[[u, v]]`.
+/-- **Addition formula for the Eisenstein function Sl.** Let $\mathrm{Sl}, \mathrm{Cl}$ be formal
+power series in $\mathbb{Q}[[u]]$ with $\mathrm{Sl}' = \mathrm{Cl}^2$,
+$\mathrm{Cl}' = -\mathrm{Sl}^2$, $\mathrm{Sl}(0) = 0$ and $\mathrm{Cl}(0) = 1$. In the ring
+$\mathbb{Q}[[u, v]]$ of formal power series in two variables,
+$$\mathrm{Sl}(u + v)\bigl(\mathrm{Sl}(u)\,\mathrm{Cl}(v)^2 - \mathrm{Sl}(v)\,\mathrm{Cl}(u)^2\bigr)
+= \mathrm{Sl}(u)^2\,\mathrm{Cl}(v) - \mathrm{Sl}(v)^2\,\mathrm{Cl}(u),$$
+and there is a power series $F \in \mathbb{Q}[[x, y]]$, with every coefficient in $\mathbb{Z}[1/3]$
+and no terms of total degree below $4$, such that
+$\mathrm{Sl}(u + v) = \mathrm{Sl}(u) + \mathrm{Sl}(v) + F(\mathrm{Sl}(u), \mathrm{Sl}(v))$.
 
-The Taylor series of `Sl` and `Cl` at `0` enter as power series `S C : ℚ⟦X⟧` subject to
-`Sl' = Cl²`, `Cl' = -Sl²`, `Sl(0) = 0`, `Cl(0) = 1` (the paper's Lemma 3; these determine both
-series uniquely), since the paper's definition of `Sl` through the Weierstrass `ζ`-function has
-no Mathlib counterpart. The quotient is
-stated cleared of its denominator, and the second claim as a two-variable series `F` with
-coefficients in `ℤ[1/3]` and no terms of total degree below `4`. The arXiv version
-(arXiv:2204.04425) states the ideal power `2`; the journal statement, followed here, has `4`
-(all terms of `Sl(u + v) - Sl(u) - Sl(v)` have total degree `≡ 1 (mod 3)`).
+The four conditions determine $\mathrm{Sl}$ and $\mathrm{Cl}$ uniquely: they are the Taylor series
+at $0$ of the Eisenstein elliptic functions of the source. The first identity is the addition
+formula $\mathrm{Sl}(u + v) = \frac{\mathrm{Sl}(u)^2 \mathrm{Cl}(v) - \mathrm{Sl}(v)^2
+\mathrm{Cl}(u)}{\mathrm{Sl}(u) \mathrm{Cl}(v)^2 - \mathrm{Sl}(v) \mathrm{Cl}(u)^2}$ with its
+denominator cleared. The arXiv version of the source (arXiv:2204.04425) has the exponent $2$ in
+place of $4$; every term of $\mathrm{Sl}(u + v) - \mathrm{Sl}(u) - \mathrm{Sl}(v)$ has total
+degree $\equiv 1 \pmod 3$.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -131,15 +137,19 @@ public theorem_wanted sl_add_formula (S C : PowerSeries ℚ)
         (∀ e : Fin 2 →₀ ℕ, e.degree < 4 → MvPowerSeries.coeff e F = 0) ∧
         suv = su + sv + F.subst ![su, sv]
 
-/-- For every integer `r`, `Sl(ru) ∈ r Sl(u) + Sl(u)⁴ ℤ[1/3][[Sl(u)³]]`, and for `r ≠ 0`,
-`Sl(ru)⁻¹ ∈ 1/(r Sl(u)) + Sl(u)² ℤ[1/r, 1/3][[Sl(u)³]]`, inside `ℚ[[u]]` (resp. `u⁻¹ℚ[[u]]`).
+/-- **Sl(ru) as a power series in Sl(u).** Let $\mathrm{Sl}, \mathrm{Cl}$ be formal power series
+in $\mathbb{Q}[[u]]$ with $\mathrm{Sl}' = \mathrm{Cl}^2$, $\mathrm{Cl}' = -\mathrm{Sl}^2$,
+$\mathrm{Sl}(0) = 0$ and $\mathrm{Cl}(0) = 1$, and let $r$ be an integer. Then there is a power
+series $g \in \mathbb{Q}[[x]]$, with every coefficient in $\mathbb{Z}[1/3]$, such that
+$\mathrm{Sl}(ru) = r\,\mathrm{Sl}(u) + \mathrm{Sl}(u)^4\,g(\mathrm{Sl}(u)^3)$. If moreover
+$r \ne 0$, there is a power series $h \in \mathbb{Q}[[x]]$, each coefficient of which has the form
+$a/(r^j 3^k)$ with $a \in \mathbb{Z}$ and $j, k \ge 0$, such that
+$r\,\mathrm{Sl}(u) = \mathrm{Sl}(ru) + r\,\mathrm{Sl}(u)^3\,\mathrm{Sl}(ru)\,h(\mathrm{Sl}(u)^3)$.
 
-The Taylor series of `Sl` and `Cl` at `0` enter as power series `S C : ℚ⟦X⟧` subject to
-`Sl' = Cl²`, `Cl' = -Sl²`, `Sl(0) = 0`, `Cl(0) = 1` (the paper's Lemma 3; these determine both
-series uniquely), since the paper's definition of `Sl` through the Weierstrass `ζ`-function has
-no Mathlib counterpart. `Sl(ru)` is
-`PowerSeries.rescale r S`. The second claim, `Sl(ru)⁻¹ = 1/(r Sl(u)) + Sl(u)² h(Sl(u)³)`, is
-stated multiplied through by `r Sl(u) Sl(ru)`: `r Sl(u) = Sl(ru) + r Sl(u)³ Sl(ru) h(Sl(u)³)`.
+Dividing by $r\,\mathrm{Sl}(u)\,\mathrm{Sl}(ru)$, the second identity reads
+$\mathrm{Sl}(ru)^{-1} = (r\,\mathrm{Sl}(u))^{-1} + \mathrm{Sl}(u)^2\,h(\mathrm{Sl}(u)^3)$ in the
+Laurent series in $u$. The four conditions determine $\mathrm{Sl}$ and $\mathrm{Cl}$ uniquely:
+they are the Taylor series at $0$ of the Eisenstein elliptic functions of the source.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -156,15 +166,16 @@ public theorem_wanted sl_rescale_int_expansion (S C : PowerSeries ℚ)
       (r : ℚ) • S = PowerSeries.rescale (r : ℚ) S +
         (r : ℚ) • (S ^ 3 * PowerSeries.rescale (r : ℚ) S * h.subst (S ^ 3)))
 
-/-- The inverse of `Sl` near `0` is
-`ArcSl(t) = Σ_{n ≥ 0} (-1)ⁿ binom(-2/3, n) t^(3n+1)/(3n+1)`, i.e.
-`u = Σ_{n ≥ 0} (-1)ⁿ binom(-2/3, n) Sl(u)^(3n+1)/(3n+1)` in `ℚ[[u]]`.
+/-- **Power series inverse of $\mathrm{Sl}$.** Let $S, C \in \mathbb{Q}[[u]]$ be formal power
+series with $S' = C^2$, $C' = -S^2$, $S(0) = 0$ and $C(0) = 1$. Then
+$$\sum_{n \ge 0} (-1)^n \binom{-2/3}{n} \frac{S^{3n+1}}{3n+1} = u$$
+in $\mathbb{Q}[[u]]$, where $\binom{-2/3}{n} = \frac{1}{n!} \prod_{j=0}^{n-1} (-2/3 - j)$ is the
+generalized binomial coefficient.
 
-The Taylor series of `Sl` and `Cl` at `0` enter as power series `S C : ℚ⟦X⟧` subject to
-`Sl' = Cl²`, `Cl' = -Sl²`, `Sl(0) = 0`, `Cl(0) = 1` (the paper's Lemma 3; these determine both
-series uniquely), since the paper's definition of `Sl` through the Weierstrass `ζ`-function has
-no Mathlib counterpart. `binom(-2/3, n)` is
-`Ring.choose (-2/3) n`.
+These conditions determine $S$ and $C$ uniquely: they are the Taylor series at $0$ of the
+Eisenstein elliptic functions $\mathrm{Sl}$ and $\mathrm{Cl}$. The statement says that
+$\mathrm{ArcSl}(t) = \sum_{n \ge 0} (-1)^n \binom{-2/3}{n} t^{3n+1}/(3n+1)$ is the inverse of
+$\mathrm{Sl}$ near $0$.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -178,13 +189,14 @@ public theorem_wanted arcSl_subst_sl (S C : PowerSeries ℚ)
         (-1 : ℚ) ^ (k / 3) * Ring.choose (-2 / 3 : ℚ) (k / 3) / k else 0).subst S =
       PowerSeries.X
 
-/-- The Hurwitz-normalized Taylor coefficients `c_{3m+1} = (3m+1)! C_{3m+1}` of
-`Sl(u) = Σ_m C_{3m+1} u^(3m+1)` are integers.
+/-- **The Hurwitz-normalized coefficients of Sl are integers.** Let $\mathrm{Sl}, \mathrm{Cl}$ be
+formal power series in $\mathbb{Q}[[u]]$ with $\mathrm{Sl}' = \mathrm{Cl}^2$,
+$\mathrm{Cl}' = -\mathrm{Sl}^2$, $\mathrm{Sl}(0) = 0$ and $\mathrm{Cl}(0) = 1$, and let $C_n$ be
+the coefficient of $u^n$ in $\mathrm{Sl}$. Then $(3m + 1)!\,C_{3m+1}$ is an integer for every
+$m \ge 0$.
 
-The Taylor series of `Sl` and `Cl` at `0` enter as power series `S C : ℚ⟦X⟧` subject to
-`Sl' = Cl²`, `Cl' = -Sl²`, `Sl(0) = 0`, `Cl(0) = 1` (the paper's Lemma 3; these determine both
-series uniquely), since the paper's definition of `Sl` through the Weierstrass `ζ`-function has
-no Mathlib counterpart.
+The four conditions determine $\mathrm{Sl}$ and $\mathrm{Cl}$ uniquely: they are the Taylor series
+at $0$ of the Eisenstein elliptic functions of the source.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -196,14 +208,16 @@ public theorem_wanted factorial_mul_coeff_sl_isInt (S C : PowerSeries ℚ)
     (hS0 : PowerSeries.constantCoeff S = 0) (hC0 : PowerSeries.constantCoeff C = 1) (m : ℕ) :
     ∃ z : ℤ, ((3 * m + 1).factorial : ℚ) * PowerSeries.coeff (3 * m + 1) S = z
 
-/-- Writing `1/Sl(u) = 1/u + Σ_n D_{3n+2} u^(3n+2)` and `d_n = n! Dₙ`, one has
-`2 d_{6m+2} ∈ ℤ[1/3]` for all `m ≥ 0`.
+/-- **The Hurwitz-normalized coefficients of 1/Sl.** Let $\mathrm{Sl}, \mathrm{Cl}$ be formal power
+series in $\mathbb{Q}[[u]]$ with $\mathrm{Sl}' = \mathrm{Cl}^2$, $\mathrm{Cl}' = -\mathrm{Sl}^2$,
+$\mathrm{Sl}(0) = 0$ and $\mathrm{Cl}(0) = 1$. Write $\mathrm{Sl}(u) = u\,S_0(u)$ with
+$S_0 \in \mathbb{Q}[[u]]$, and let $D_n$ be the coefficient of $u^{n+1}$ in $S_0^{-1}$, so that
+$1/\mathrm{Sl}(u) = 1/u + \sum_{n \ge 0} D_n u^n$. Then for every $m \ge 0$ the number
+$2\,(6m + 2)!\,D_{6m+2}$ lies in $\mathbb{Z}[1/3]$, that is, it equals $a/3^k$ for some
+$a \in \mathbb{Z}$ and $k \ge 0$.
 
-The Taylor series of `Sl` and `Cl` at `0` enter as power series `S C : ℚ⟦X⟧` subject to
-`Sl' = Cl²`, `Cl' = -Sl²`, `Sl(0) = 0`, `Cl(0) = 1` (the paper's Lemma 3; these determine both
-series uniquely), since the paper's definition of `Sl` through the Weierstrass `ζ`-function has
-no Mathlib counterpart. With `Sl(u) = u S₀(u)`,
-`D_k` is the coefficient of `u^(k+1)` in `S₀⁻¹`.
+The four conditions determine $\mathrm{Sl}$ and $\mathrm{Cl}$ uniquely: they are the Taylor series
+at $0$ of the Eisenstein elliptic functions of the source.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -217,18 +231,18 @@ public theorem_wanted two_mul_factorial_coeff_inv_sl_mem_int_inv_three (S C : Po
       PowerSeries.coeff (6 * m + 3) (PowerSeries.mk fun n => PowerSeries.coeff (n + 1) S)⁻¹ =
         a / 3 ^ k
 
-/-- For a prime `ℓ`, the denominator of the Bernoulli-Hurwitz-type number `C_{2(ℓ-1)/3}` (the
-coefficient of `u^(2(ℓ-1)/3)` in `Sl(u)`) is prime to `ℓ` when `ℓ ≡ 7 (mod 9)`, and that of
-`D_{2(ℓ-1)/3}` (the coefficient of `u^(2(ℓ-1)/3)` in `1/Sl(u) - 1/u`) is prime to `ℓ` when
-`ℓ ≡ 4 (mod 9)`.
+/-- **Denominators of the Hurwitz-type numbers of Sl.** Let $\mathrm{Sl}, \mathrm{Cl}$ be formal
+power series in $\mathbb{Q}[[u]]$ with $\mathrm{Sl}' = \mathrm{Cl}^2$,
+$\mathrm{Cl}' = -\mathrm{Sl}^2$, $\mathrm{Sl}(0) = 0$ and $\mathrm{Cl}(0) = 1$. Let $C_n$ be the
+coefficient of $u^n$ in $\mathrm{Sl}$; write $\mathrm{Sl}(u) = u\,S_0(u)$ with
+$S_0 \in \mathbb{Q}[[u]]$ and let $D_n$ be the coefficient of $u^{n+1}$ in $S_0^{-1}$, so that
+$1/\mathrm{Sl}(u) = 1/u + \sum_{n \ge 0} D_n u^n$. Let $\ell$ be a prime and put
+$k = 2(\ell - 1)/3$. If $\ell \equiv 7 \pmod 9$, then $\ell$ does not divide the denominator of
+$C_k$ in lowest terms; if $\ell \equiv 4 \pmod 9$, then $\ell$ does not divide the denominator of
+$D_k$ in lowest terms.
 
-The Taylor series of `Sl` and `Cl` at `0` enter as power series `S C : ℚ⟦X⟧` subject to
-`Sl' = Cl²`, `Cl' = -Sl²`, `Sl(0) = 0`, `Cl(0) = 1` (the paper's Lemma 3; these determine both
-series uniquely), since the paper's definition of `Sl` through the Weierstrass `ζ`-function has
-no Mathlib counterpart. With `Sl(u) = u S₀(u)`, `D_k` is the coefficient of `u^(k+1)` in `S₀⁻¹`.
-Only the first sentence of the theorem is stated: the congruences `α_λ ≡ -C_{2(ℓ-1)/3}/3`,
-`-D_{2(ℓ-1)/3}/3 (mod λ)` involve the elliptic Gauss sum coefficient `α_λ`, built from the
-paper's `φ`, and are omitted.
+The four conditions determine $\mathrm{Sl}$ and $\mathrm{Cl}$ uniquely: they are the Taylor series
+at $0$ of the Eisenstein elliptic functions of the source.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -242,19 +256,19 @@ public theorem_wanted sl_hurwitz_numbers_den_coprime (S C : PowerSeries ℚ)
     (ℓ % 9 = 4 → ¬ ℓ ∣ (PowerSeries.coeff (2 * (ℓ - 1) / 3 + 1)
       (PowerSeries.mk fun n => PowerSeries.coeff (n + 1) S)⁻¹).den)
 
-/-- Properties of the Eisenstein elliptic functions `φ(u) = 6℘(ϖ₁u)/(9 + ℘'(ϖ₁u))` and
-`ψ(u) = (-9 + ℘'(ϖ₁u))/(9 + ℘'(ϖ₁u))`, where `℘` is the Weierstrass function of the lattice
-`ϖ₁ ℤ[ρ]`, `ρ = e^(2πi/3)` and `ϖ₁ = ∫₀¹ (1 - t³)^(-2/3) dt`: (d) `φ(ρu) = ρφ(u)`,
-`ψ(ρu) = ψ(u)`, `φ(ū) = conj φ(u)`, `ψ(ū) = conj ψ(u)`; (e) `φ' = -3ϖ₁ψ²`, `ψ' = 3ϖ₁φ²`;
-(f) `φ³ + ψ³ = 1`, `φ(0) = 0`, `ψ(0) = 1`; (g) `φ(-u) = -φ(u)/ψ(u)`, `ψ(-u) = ψ(u)⁻¹` and
-`φ(u)⁻¹ + φ(-u)⁻¹ = 3℘(ϖ₁u)⁻¹`.
-
-`φ` is the paper's introductory definition through `℘` and `ψ` its formula from part (c); the
-paper's Definition 1 through the Weierstrass `ζ`-function, and parts (a), (b), (h), which
-concern `ζ` and the function `Z` built from it, are omitted (`ζ` is not in Mathlib). The
-lattice is any `PeriodPair` with periods `ϖ₁` and `ϖ₁ρ`. The identities are stated off the
-poles (`ϖ₁u` off the lattice, the denominators nonzero), and `φ(0) = 0`, `ψ(0) = 1` as limits
-at `0`, where `℘` has its pole.
+/-- **Identities for the Eisenstein elliptic functions $\varphi$ and $\psi$.** Let
+$\rho = e^{2\pi i/3}$, let $\varpi_1 = \int_0^1 (1 - t^3)^{-2/3}\,dt$, and let $\wp$ be the
+Weierstrass function of the lattice spanned by $\varpi_1$ and $\varpi_1\rho$. Put
+$\varphi(u) = 6\wp(\varpi_1 u)/(9 + \wp'(\varpi_1 u))$ and
+$\psi(u) = (\wp'(\varpi_1 u) - 9)/(\wp'(\varpi_1 u) + 9)$. For every $u \in \mathbb{C}$ with
+$\varpi_1 u$ off the lattice and $\wp'(\varpi_1 u) \ne -9$: $\varphi(\rho u) = \rho\varphi(u)$,
+$\psi(\rho u) = \psi(u)$, $\varphi(\bar u) = \overline{\varphi(u)}$,
+$\psi(\bar u) = \overline{\psi(u)}$, the functions $\varphi$ and $\psi$ are complex differentiable
+at $u$ with $\varphi'(u) = -3\varpi_1 \psi(u)^2$ and $\psi'(u) = 3\varpi_1 \varphi(u)^2$, and
+$\varphi(u)^3 + \psi(u)^3 = 1$. As $u \to 0$ with $u \ne 0$, $\varphi(u) \to 0$ and
+$\psi(u) \to 1$. For every $u$ with $\varpi_1 u$ off the lattice and $\wp'(\varpi_1 u)^2 \ne 81$:
+$\varphi(-u) = -\varphi(u)/\psi(u)$ and $\psi(-u) = \psi(u)^{-1}$, and if moreover
+$\wp(\varpi_1 u) \ne 0$, then $\varphi(u)^{-1} + \varphi(-u)^{-1} = 3/\wp(\varpi_1 u)$.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -277,15 +291,20 @@ public theorem_wanted eisensteinPhiPsi_properties (L : PeriodPair) (ϖ : ℝ)
       φ (-u) = -φ u / ψ u ∧ ψ (-u) = (ψ u)⁻¹ ∧
       (L.weierstrassP (ϖ * u) ≠ 0 → (φ u)⁻¹ + (φ (-u))⁻¹ = 3 / L.weierstrassP (ϖ * u)))
 
-/-- On the real segment, `Sl : [0, ϖ₁] → [0, 1]` is the inverse of
-`ArcSl : [0, 1] → [0, ϖ₁]`, `ArcSl(t) = ∫₀ᵗ (1 - s³)^(-2/3) ds
-= Σ_{n ≥ 0} (-1)ⁿ binom(-2/3, n) t^(3n+1)/(3n+1)`, where `ϖ₁ = ArcSl(1)`,
-`Sl(u) = φ(u/(-3ϖ₁))` and `φ(u) = 6℘(ϖ₁u)/(9 + ℘'(ϖ₁u))` for the Weierstrass `℘` of the
-lattice `ϖ₁ ℤ[ρ]`, `ρ = e^(2πi/3)`.
+/-- **$\mathrm{Sl}$ and $\mathrm{ArcSl}$ are inverse on the real segment.** Let
+$\rho = e^{2\pi i/3}$, let $\varpi_1 = \int_0^1 (1 - t^3)^{-2/3}\,dt$, let $\wp$ be the
+Weierstrass function of the lattice spanned by $\varpi_1$ and $\varpi_1\rho$, and put
+$\varphi(u) = 6\wp(\varpi_1 u)/(9 + \wp'(\varpi_1 u))$. For real $x$ put
+$\mathrm{Sl}(x) = \varphi(x/(-3\varpi_1))$, and for real $t$ put
+$\mathrm{ArcSl}(t) = \int_0^t (1 - s^3)^{-2/3}\,ds$, so that $\varpi_1 = \mathrm{ArcSl}(1)$. Then:
+for every $t \in [0, 1]$ the series $\sum_{n \ge 0} (-1)^n \binom{-2/3}{n} t^{3n+1}/(3n+1)$ has
+sum $\mathrm{ArcSl}(t)$, where $\binom{-2/3}{n}$ is the generalized binomial coefficient; for
+every $x \in [0, \varpi_1]$, $\mathrm{Sl}(x)$ is a real number $s \in [0, 1]$ with
+$\mathrm{ArcSl}(s) = x$; and for every $t \in [0, 1]$, $\mathrm{ArcSl}(t) \in [0, \varpi_1]$ and
+$\mathrm{Sl}(\mathrm{ArcSl}(t)) = t$.
 
-`Sl` is the paper's introductory definition through `℘` (complex-valued; the statement
-includes that it is real on `[0, ϖ₁]`). The lattice is any `PeriodPair` with periods `ϖ₁`
-and `ϖ₁ρ`, and `binom(-2/3, n)` is `Ring.choose (-2/3 : ℚ) n`.
+At $x = 0$, where $\wp$ has a pole, the values $\wp(0)$ and $\wp'(0)$ are taken to be $0$, so
+$\mathrm{Sl}(0) = 0$.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -301,16 +320,20 @@ public theorem_wanted eisensteinSl_inverse_arcSl (L : PeriodPair) (ϖ : ℝ)
     (∀ x ∈ Set.Icc (0 : ℝ) ϖ, ∃ s ∈ Set.Icc (0 : ℝ) 1, sl x = s ∧ arcSl s = x) ∧
     (∀ t ∈ Set.Icc (0 : ℝ) 1, arcSl t ∈ Set.Icc (0 : ℝ) ϖ ∧ sl (arcSl t) = t)
 
-/-- Jacobi sums of the quadratic and the cubic residue character: for a primary prime
-`μ ∈ ℤ[ρ]` (`μ ≡ 1 (mod 3)`) of prime norm `p`, the quadratic character `ϕ` of `𝔽_p` and the
-cubic residue character `χ` modulo `μ` (`χ(t) ≡ t^((p-1)/3) (mod μ)`) satisfy
-`J(ϕ, χ) = χ(4) J(χ, χ) = -χ(4) μ`, where `J(ϕ, χ) = Σ_{t ∈ 𝔽_p} ϕ(t) χ(1 - t)`.
+/-- **Jacobi sums of the quadratic and the cubic residue character.** Let $K$ be a number field
+generated over $\mathbb{Q}$ by a primitive cube root of unity, with ring of integers
+$\mathcal{O}_K$. Let $\mu \in \mathcal{O}_K$ with $\mu \equiv 1 \pmod 3$, and let $p$ be a prime
+such that the norm of $\mu$ from $\mathcal{O}_K$ to $\mathbb{Z}$ is $p$. Let
+$\chi : \mathbb{Z}/p\mathbb{Z} \to \mathcal{O}_K$ be a multiplicative character with
+$\chi(t) \equiv t^{(p-1)/3} \pmod{\mu}$ for every integer $t$ (the cubic residue character modulo
+$\mu$), and let $\phi$ be the quadratic character of $\mathbb{Z}/p\mathbb{Z}$, with values in
+$\{0, \pm 1\} \subset \mathcal{O}_K$. Writing
+$J(\alpha, \beta) = \sum_{t \in \mathbb{Z}/p\mathbb{Z}} \alpha(t)\,\beta(1 - t)$, one has
+$J(\phi, \chi) = \chi(4)\,J(\chi, \chi)$ and $J(\chi, \chi) = -\mu$.
 
-The paper's setting (i) says "any characters `ϕ` and `χ` of `𝔽_p^×`"; the identity holds for
-the quadratic `ϕ` and the cubic residue character `χ` modulo `μ`, the characters of the lemma
-it cites (Ireland-Rosen, Chap. 18, §3 and Chap. 9, §4) and of its use in Lemma 14 (d); this
-reading is stated. `ℤ[ρ]` is the ring of integers of a cyclotomic field `K = ℚ(ζ₃)`, `χ` takes
-values in it, and `J` is Mathlib's `jacobiSum`.
+The source states this for arbitrary characters $\phi$ and $\chi$ of $\mathbb{F}_p^\times$; the
+identity holds for the quadratic $\phi$ and the cubic residue character $\chi$ modulo $\mu$, the
+characters of the lemma it cites (Ireland-Rosen, Chap. 18, §3 and Chap. 9, §4).
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -322,15 +345,14 @@ public theorem_wanted jacobiSum_quadraticChar_cubicResidueChar (K : Type*) [Fiel
     let ϕ : MulChar (ZMod p) (𝓞 K) := (quadraticChar (ZMod p)).ringHomComp (Int.castRingHom _)
     jacobiSum ϕ χ = χ 4 * jacobiSum χ χ ∧ jacobiSum χ χ = -μ
 
-/-- For an odd prime `q ≡ 2 (mod 3)`, the quadratic character `ϕ` and a cubic character `χ` of
-`𝔽_{q²}` satisfy `J₂(ϕ, χ) = Σ_{t ∈ 𝔽_{q²}} ϕ(t) χ(1 - t) = q`.
+/-- **The Jacobi sum of the quadratic and a cubic character of a field with $q^2$ elements.** Let
+$q$ be an odd prime with $q \equiv 2 \pmod 3$, let $F$ be a finite field with $q^2$ elements, let
+$\phi$ be the quadratic character of $F$, and let $\chi : F \to \mathbb{C}$ be a multiplicative
+character of order $3$, that is, $\chi^3 = 1$ and $\chi \ne 1$ (characters take the value $0$ at
+$0$). Then the Jacobi sum $J(\phi, \chi) = \sum_{t \in F} \phi(t)\,\chi(1 - t)$ equals $q$.
 
-The paper's setting (ii) says "any characters `ϕ` and `χ` of `𝔽_{q²}^×`"; the identity holds
-for the quadratic `ϕ` and a character `χ` of order `3` (the cubic residue character modulo
-`-q` or its conjugate, which give the same value since it is real), as in the sources it
-cites; this reading is stated. `q = 2` is excluded since `𝔽₄^×` has no quadratic character.
-`𝔽_{q²}` is any finite field `F` with `q²` elements, characters are complex-valued, and `J₂`
-is Mathlib's `jacobiSum`.
+The source states this for arbitrary characters $\phi$ and $\chi$ of $F^\times$; the identity
+holds for the quadratic $\phi$ and a $\chi$ of order $3$, the characters of the sources it cites.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -340,14 +362,18 @@ public theorem_wanted jacobiSum_quadraticChar_cubicChar_card_sq (q : ℕ) (hqp :
     (hF : Fintype.card F = q ^ 2) (χ : MulChar F ℂ) (hχ3 : χ ^ 3 = 1) (hχ1 : χ ≠ 1) :
     jacobiSum ((quadraticChar F).ringHomComp (Int.castRingHom ℂ)) χ = q
 
-/-- Cubic reciprocity in `ℤ[ρ]`: for primary primes `λ₁, λ₂` (`λᵢ ≡ 1 (mod 3)`), the cubic
-residue symbols agree, `(λ₁/λ₂)₃ = (λ₂/λ₁)₃`.
+/-- **Cubic reciprocity.** Let $K$ be the cyclotomic field generated by a primitive cube root of
+unity, with ring of integers $\mathcal{O}_K$, and let $\zeta \in \mathcal{O}_K$ be a primitive cube
+root of unity. Let $\lambda_1, \lambda_2 \in \mathcal{O}_K$ be primes with
+$\lambda_1 \equiv \lambda_2 \equiv 1 \pmod 3$, and write $N$ for the absolute value of the norm
+from $\mathcal{O}_K$ to $\mathbb{Z}$. If $\omega_1, \omega_2 \in \{1, \zeta, \zeta^2\}$ satisfy
+$\lambda_1^{(N\lambda_2 - 1)/3} \equiv \omega_1 \pmod{\lambda_2}$ and
+$\lambda_2^{(N\lambda_1 - 1)/3} \equiv \omega_2 \pmod{\lambda_1}$, then $\omega_1 = \omega_2$.
 
-`ℤ[ρ]` is the ring of integers of a cyclotomic field `K = ℚ(ζ₃)` with a primitive cube root
-of unity `ζ`. The symbol `(a/π)₃` is the cube root of unity `ω ∈ {1, ζ, ζ²}` with
-`a^((N π - 1)/3) ≡ ω (mod π)`; the statement says that any such `ω₁` for `(λ₁/λ₂)₃` and
-`ω₂` for `(λ₂/λ₁)₃` coincide (when `λ₁ = λ₂` both symbols are `0` and no such `ω`
-exists). `λᵢ` is written `lamᵢ`.
+Here $\mathcal{O}_K = \mathbb{Z}[\zeta]$ and $N\lambda_i \equiv 1 \pmod 3$, so the exponents are
+integers. In terms of cubic residue symbols the statement is
+$(\lambda_1/\lambda_2)_3 = (\lambda_2/\lambda_1)_3$; when $\lambda_1 = \lambda_2$ no such
+$\omega_1$ exists and the statement is empty.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -362,19 +388,27 @@ public theorem_wanted cubicResidueSymbol_reciprocity (K : Type*) [Field K] [Numb
     (h₂₁ : lam₁ ∣ lam₂ ^ (((Algebra.norm ℤ lam₁).natAbs - 1) / 3) - ω₂) :
     ω₁ = ω₂
 
-/-- Point counts of the reductions of `E_λ : y² = x³ + λ²/4`, in its global minimal form
-`y² + λy = x³`, for a primary prime `λ ∈ ℤ[ρ]` (`λ ≡ 1 (mod 3)`) of prime norm `ℓ`, with
-`χ_λ(a) = (a/λ)₃ ∈ {1, ζ, ζ²}`, `a^((ℓ-1)/3) ≡ χ_λ(a) (mod λ)`: (d) for a primary `μ ≠ λ` of
-prime norm `p`, `#E_λ(𝔽_p) = p + 1 - (χ_λ(μ) μ̄ + conj(χ_λ(μ) μ̄))`; (e) for a prime
-`q ≡ 2 (mod 3)`, `#E_λ(𝔽_{q²}) = q² + 1 + q (χ_λ(q) + conj χ_λ(q))`.
+/-- **Point counts of $y^2 + \lambda y = x^3$ modulo primes of $\mathbb{Z}[\zeta_3]$.** Let $K$
+be the cyclotomic field generated by a primitive cube root of unity, with ring of integers
+$\mathcal{O}_K$, let $\zeta \in \mathcal{O}_K$ be a primitive cube root of unity, and write $N$
+and $\mathrm{Tr}$ for the norm and trace from $\mathcal{O}_K$ to $\mathbb{Z}$. Let
+$\lambda \in \mathcal{O}_K$ satisfy $\lambda \equiv 1 \pmod 3$ with $N\lambda = \ell$ a prime. For
+a principal ideal $I$ of $\mathcal{O}_K$, let $n(I)$ be the number of pairs
+$(x, y) \in (\mathcal{O}_K/I)^2$ with $y^2 + \lambda y = x^3$. Then:
+(d) if $\mu \in \mathcal{O}_K$ with $\mu \ne \lambda$ and $\mu \equiv 1 \pmod 3$ has prime norm
+$N\mu = p$, and $\omega \in \{1, \zeta, \zeta^2\}$ satisfies
+$\mu^{(\ell-1)/3} \equiv \omega \pmod \lambda$, then
+$n((\mu)) + 1 = p + 1 - \mathrm{Tr}(\omega^2\mu)$;
+(e) if $q$ is a prime with $q \equiv 2 \pmod 3$, and $\omega \in \{1, \zeta, \zeta^2\}$ satisfies
+$q^{(\ell-1)/3} \equiv \omega \pmod \lambda$, then $n((q)) + 1 = q^2 + 1 + q\,\mathrm{Tr}(\omega)$.
 
-`ℤ[ρ]` is the ring of integers of a cyclotomic field `K = ℚ(ζ₃)` with a primitive cube root
-of unity `ζ`; `𝔽_p` and `𝔽_{q²}` are the residue rings `ℤ[ρ]/(μ)` and `ℤ[ρ]/(q)`. Point counts
-are affine solutions of `y² + λy = x³` plus the point at infinity. Since `z + z̄` is the trace
-of `z` and `χ̄ = χ²` for a cube root of unity, `χ_λ(μ) μ̄ + conj(χ_λ(μ) μ̄) = Tr(χ_λ(μ)² μ)`
-and `χ_λ(q) + conj χ_λ(q) = Tr(χ_λ(q))`. Parts (a)-(c) (bad reduction, Kodaira types and
-Tamagawa numbers of Néron models) and (f) are not part of this declaration ((f) is
-`eisensteinTwist_torsion`).
+The curve $y^2 + \lambda y = x^3$ is a global minimal model of
+$E_\lambda : y^2 = x^3 + \lambda^2/4$, and $\mathcal{O}_K/(\mu) \cong \mathbb{F}_p$,
+$\mathcal{O}_K/(q) \cong \mathbb{F}_{q^2}$, so $n + 1$ counts the points of $E_\lambda$ over these
+fields, including the point at infinity. With $\chi_\lambda(a) = \omega$ the cubic residue symbol
+$(a/\lambda)_3$, the right-hand sides are
+$p + 1 - (\chi_\lambda(\mu)\bar\mu + \overline{\chi_\lambda(\mu)\bar\mu})$ and
+$q^2 + 1 + q(\chi_\lambda(q) + \overline{\chi_\lambda(q)})$.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -393,12 +427,13 @@ public theorem_wanted eisensteinTwist_card_points (K : Type*) [Field K] [NumberF
           xy.2 ^ 2 + Ideal.Quotient.mk _ lam * xy.2 = xy.1 ^ 3} : ℤ) + 1 =
           q ^ 2 + 1 + q * Algebra.trace ℤ (𝓞 K) ω)
 
-/-- The torsion of `E_λ : y² = x³ + λ²/4` over `ℚ(ρ)`, for a primary prime `λ ∈ ℤ[ρ]`
-(`λ ≡ 1 (mod 3)`) of prime norm: `E_λ(ℚ(ρ))_tors = E_λ(ℚ(ρ))[3] = {∞, (0, ±λ/2)}`, so
-`#E_λ(ℚ(ρ))_tors = 3`.
-
-`ℚ(ρ)` is a cyclotomic field `K = ℚ(ζ₃)` and `ℤ[ρ]` its ring of integers; points are Mathlib's
-`WeierstrassCurve.Affine.Point`.
+/-- **Torsion of $y^2 = x^3 + \lambda^2/4$ over $\mathbb{Q}(\zeta_3)$.** Let $K$ be the cyclotomic
+field generated by a primitive cube root of unity, with ring of integers $\mathcal{O}_K$, and let
+$\lambda \in \mathcal{O}_K$ satisfy $\lambda \equiv 1 \pmod 3$, with norm from $\mathcal{O}_K$ to
+$\mathbb{Z}$ a prime number. Let $E$ be the Weierstrass curve $y^2 = x^3 + \lambda^2/4$ over $K$,
+with point at infinity $O$. Then a point $P \in E(K)$ has finite order if and only if $3P = O$;
+$3P = O$ if and only if $P$ is $O$, $(0, \lambda/2)$ or $(0, -\lambda/2)$; and $E(K)$ has exactly
+$3$ points of finite order.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -412,15 +447,23 @@ public theorem_wanted eisensteinTwist_torsion (K : Type*) [Field K] [NumberField
       (∃ h, P = .some 0 ((lam : K) / 2) h) ∨ ∃ h, P = .some 0 (-(lam : K) / 2) h) ∧
     Nat.card {P : W.toAffine.Point // IsOfFinAddOrder P} = 3
 
-/-- Congruence for the square of `λ̃ = ∏_{χ_λ(r) = 1} φ(r/λ)`: `λ̃² ≡ Λ^(2(ℓ-1)/3)` modulo
-`Λ^(2(ℓ-1)/3 + 1)` in `O_λ`, where `Λ = φ(1/λ)` and `O_λ` is the ring of integers of `ℚ(ρ, Λ)`.
+/-- **Congruence for the square of $\tilde\lambda$.** Let $\rho = e^{2\pi i/3}$, let
+$\varpi_1 = \int_0^1 (1 - t^3)^{-2/3}\,dt$, let $\wp$ be the Weierstrass function of the lattice
+spanned by $\varpi_1$ and $\varpi_1\rho$, and put
+$\varphi(u) = 6\wp(\varpi_1 u)/(9 + \wp'(\varpi_1 u))$. Let $a, b$ be integers with $a \equiv 1$ and
+$b \equiv 0 \pmod 3$ such that $\ell = a^2 - ab + b^2$ is prime, and put $\lambda = a + b\rho$.
+Let $r_0 \in \mathbb{Z}/\ell$ satisfy $a + b r_0 = 0$, and let
+$\chi : \mathbb{Z}/\ell \to \mathbb{C}$ be such that for every $t \ne 0$ there is
+$j \in \mathbb{N}$ with $\chi(t) = \rho^j$ and $t^{(\ell-1)/3} = r_0^j$. Put
+$\Lambda = \varphi(1/\lambda)$ and $\tilde\lambda = \prod \varphi(r/\lambda)$, the product
+over the integers $0 < r < \ell$ with $\chi(r) = 1$. Then
+$\tilde\lambda^2 - \Lambda^{2(\ell-1)/3} = \Lambda^{2(\ell-1)/3 + 1} x$ for some algebraic
+integer $x$ in the subfield $\mathbb{Q}(\rho, \Lambda)$ of $\mathbb{C}$.
 
-Setting: `ℓ` prime, `λ = a + bρ ∈ ℤ[ρ]` with `a ≡ 1`, `b ≡ 0 (mod 3)` and `λλ̄ = ℓ`;
-`φ(u) = 6℘(ϖ₁u)/(9 + ℘'(ϖ₁u))` (the paper's introductory definition through `℘`, for the lattice
-`ϖ₁ ℤ[ρ]`, any `PeriodPair` with periods `ϖ₁`, `ϖ₁ρ`); `χ_λ` the cubic residue character modulo
-`λ`, given on `ℤ[ρ]/(λ) ≅ ℤ/ℓ` (`ρ ↦ r₀`) by `χ_λ(t) = ρᵏ` when `t^((ℓ-1)/3) = r₀ᵏ`. The classes
-of `(ℤ[ρ]/(λ))ˣ` are represented by `r = 1, …, ℓ-1`. `O_λ` is the set of algebraic integers in
-the subfield `ℚ(ρ, Λ)` of `ℂ`.
+Here $\lambda\bar\lambda = \ell$, $\rho \mapsto r_0$ identifies $\mathbb{Z}[\rho]/(\lambda)$ with
+$\mathbb{Z}/\ell$, and $\chi$ is the cubic residue character modulo $\lambda$. The statement is
+the congruence $\tilde\lambda^2 \equiv \Lambda^{2(\ell-1)/3}$ modulo $\Lambda^{2(\ell-1)/3 + 1}$
+in the ring of integers of $\mathbb{Q}(\rho, \Lambda)$.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -441,13 +484,26 @@ public theorem_wanted eisensteinLambdaTilde_sq_congr (L : PeriodPair) (ϖ : ℝ)
     ∃ x : ℂ, IsIntegral ℤ x ∧ x ∈ IntermediateField.adjoin ℚ ({ρ, Λ} : Set ℂ) ∧
       lamTilde ^ 2 - Λ ^ (2 * (ℓ - 1) / 3) = Λ ^ (2 * (ℓ - 1) / 3 + 1) * x
 
-/-- The elliptic Gauss sum `G_λ(χ_λ, f) = (1/3) Σ_{r ∈ (ℤ[ρ]/(λ))ˣ} χ_λ(r) f(r/λ)`, with
-`f = φ` for `ℓ ≡ 7 (mod 9)` and `f = φ⁻¹` for `ℓ ≡ 4 (mod 9)`, (a) lies in `O_λ`, and
-(b) equals `Σ_{r ∈ ker χ_λ} f(r/λ)`.
+/-- **Integrality of the elliptic Gauss sum.** Let $\rho = e^{2\pi i/3}$, let
+$\varpi_1 = \int_0^1 (1 - t^3)^{-2/3}\,dt$, let $\wp$ be the Weierstrass function of the lattice
+$\varpi_1 \mathbb{Z} + \varpi_1 \rho \mathbb{Z}$, and let
+$\varphi(u) = 6\wp(\varpi_1 u)/(9 + \wp'(\varpi_1 u))$. Let $a, b$ be integers with
+$a \equiv 1 \pmod 3$ and $b \equiv 0 \pmod 3$ such that $\ell = a^2 - ab + b^2$ is a prime with
+$\ell \equiv 7 \pmod 9$ or $\ell \equiv 4 \pmod 9$, and put $\lambda = a + b\rho$. Let
+$r_0 \in \mathbb{Z}/\ell\mathbb{Z}$ satisfy $a + b r_0 = 0$, and let
+$\chi_\lambda : \mathbb{Z}/\ell\mathbb{Z} \to \mathbb{C}$ be a function such that for every
+$t \ne 0$ there is an integer $k \ge 0$ with $\chi_\lambda(t) = \rho^k$ and
+$t^{(\ell-1)/3} = r_0^k$. Let $f = \varphi$ if $\ell \equiv 7 \pmod 9$ and $f = 1/\varphi$ if
+$\ell \equiv 4 \pmod 9$, and let
+$$G = \frac{1}{3} \sum_{r=1}^{\ell-1} \chi_\lambda(r)\,f(r/\lambda).$$
+Then $G$ is an algebraic integer lying in the subfield $\mathbb{Q}(\rho, \varphi(1/\lambda))$ of
+$\mathbb{C}$, and $G$ equals the sum of $f(r/\lambda)$ over the integers $1 \le r \le \ell - 1$ with
+$\chi_\lambda(r) = 1$.
 
-Setting as in `eisensteinLambdaTilde_sq_congr`: `λ = a + bρ` primary of prime norm `ℓ`,
-`φ(u) = 6℘(ϖ₁u)/(9 + ℘'(ϖ₁u))`, `χ_λ` given on `ℤ[ρ]/(λ) ≅ ℤ/ℓ` (`ρ ↦ r₀`), classes
-represented by `r = 1, …, ℓ-1`, and `O_λ` the algebraic integers in `ℚ(ρ, Λ)`, `Λ = φ(1/λ)`.
+Here $\chi_\lambda$ is the cubic residue character modulo $\lambda$, read through the isomorphism
+$\mathbb{Z}[\rho]/(\lambda) \cong \mathbb{Z}/\ell\mathbb{Z}$ that sends $\rho$ to $r_0$; the
+integers $1, \dots, \ell - 1$ represent $(\mathbb{Z}[\rho]/(\lambda))^\times$, so $G$ is the
+elliptic Gauss sum $G_\lambda(\chi_\lambda, f)$ of the source.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
@@ -467,18 +523,32 @@ public theorem_wanted ellipticGaussSum_mem_integers_eq_sum_ker (L : PeriodPair) 
     (IsIntegral ℤ G ∧ G ∈ IntermediateField.adjoin ℚ ({ρ, φ (1 / lam)} : Set ℂ)) ∧
       G = ∑ r ∈ (Finset.Ioo 0 ℓ).filter (fun r : ℕ => χ (r : ZMod ℓ) = 1), f ((r : ℂ) / lam)
 
-/-- Congruences for `|α_λ|²`, where `α_λ = G_λ(χ_λ, f)/λ̃²` is the coefficient of the elliptic
-Gauss sum: modulo `λ`, `|α_λ|² ≡ (conj χ_λ(3) C_{2(ℓ-1)/3})²/9` if `ℓ ≡ 7 (mod 9)` and
-`≡ (χ_λ(3) D_{2(ℓ-1)/3})²/9` if `ℓ ≡ 4 (mod 9)`; modulo `ℓ`,
-`|α_λ|² ≡ (3^((ℓ-7)/6) C_{2(ℓ-1)/3})²`, resp. `(3^((ℓ-4)/3) D_{2(ℓ-1)/3})²`.
+/-- **Congruences for $|\alpha_\lambda|^2$.** Let $\rho = e^{2\pi i/3}$, let
+$\varpi_1 = \int_0^1 (1 - t^3)^{-2/3}\,dt$, let $\wp$ be the Weierstrass function of the lattice
+spanned by $\varpi_1$ and $\varpi_1\rho$, and put
+$\varphi(u) = 6\wp(\varpi_1 u)/(9 + \wp'(\varpi_1 u))$. Put
+$\mathrm{Sl}(u) = \varphi(u/(-3\varpi_1))$. Let $a, b$ be integers with $a \equiv 1$ and
+$b \equiv 0 \pmod 3$ such that $\ell = a^2 - ab + b^2$ is prime, and put $\lambda = a + b\rho$.
+Let $r_0 \in \mathbb{Z}/\ell$ satisfy $a + b r_0 = 0$, and let
+$\chi : \mathbb{Z}/\ell \to \mathbb{C}$ be such that for every $t \ne 0$ there is
+$j \in \mathbb{N}$ with $\chi(t) = \rho^j$ and $t^{(\ell-1)/3} = r_0^j$. Let $f = \varphi$ if
+$\ell \equiv 7 \pmod 9$ and $f = 1/\varphi$ otherwise, and put
+$G = \frac13 \sum_{0 < r < \ell} \chi(r) f(r/\lambda)$,
+$\tilde\lambda = \prod_{0 < r < \ell,\ \chi(r) = 1} \varphi(r/\lambda)$ and
+$\alpha = G/\tilde\lambda^2$. Let $k = 2(\ell-1)/3$, and let $C$ and $D$ be the coefficients of
+$u^k$ in the Taylor expansions at $0$ of $\mathrm{Sl}(u)$ and of $\mathrm{Sl}(u)^{-1} - u^{-1}$.
+If $\ell \equiv 7 \pmod 9$, there are integers $m, m'$ prime to $\ell$ with
+$m(|\alpha|^2 - (\overline{\chi(3)}\,C)^2/9) \in \lambda\mathbb{Z}[\rho]$ and
+$m'(|\alpha|^2 - (3^{(\ell-7)/6} C)^2) \in \ell\mathbb{Z}$. If $\ell \equiv 4 \pmod 9$, there are
+integers $m, m'$ prime to $\ell$ with $m(|\alpha|^2 - (\chi(3) D)^2/9) \in \lambda\mathbb{Z}[\rho]$
+and $m'(|\alpha|^2 - (3^{(\ell-4)/3} D)^2) \in \ell\mathbb{Z}$.
 
-Setting as in `eisensteinLambdaTilde_sq_congr` and `ellipticGaussSum_mem_integers_eq_sum_ker`
-(`f = φ` for `ℓ ≡ 7`, `f = φ⁻¹` for `ℓ ≡ 4 (mod 9)`, `λ̃ = ∏_{χ_λ(r) = 1} φ(r/λ)`; the paper's
-introductory definition of `α_λ`). `C_n` and `D_n` are the Taylor coefficients at `0` of
-`Sl(u) = φ(u/(-3ϖ₁))` and of `Sl(u)⁻¹ - u⁻¹`, written `iteratedDeriv n _ 0 / n!` (both
-functions take their limit value `0` at `0`). A congruence `x ≡ y` between numbers whose
-denominators are prime to `ℓ` is stated as `m (x - y) ∈ λ ℤ[ρ]`, resp. `ℓ ℤ`, for an integer `m`
-prime to `ℓ`.
+Here $\lambda\bar\lambda = \ell$, $\rho \mapsto r_0$ identifies $\mathbb{Z}[\rho]/(\lambda)$ with
+$\mathbb{Z}/\ell$, $\chi$ is the cubic residue character $\chi_\lambda$ modulo $\lambda$, $G$ is
+the elliptic Gauss sum $G_\lambda(\chi_\lambda, f)$ and $\alpha = \alpha_\lambda$ its coefficient,
+so the statement gives congruences modulo $\lambda$ and modulo $\ell$. At $u = 0$, where $\wp$ has
+a pole, both functions take the value $0$, their limit there, and $C$, $D$ are their $k$-th
+derivatives at $0$ divided by $k!$.
 
 Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
 Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26

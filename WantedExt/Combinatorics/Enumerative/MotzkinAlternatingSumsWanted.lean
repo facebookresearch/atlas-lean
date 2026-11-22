@@ -17,9 +17,12 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The even-indexed Riordan numbers `r₀, r₂, r₄, …` form a log-convex sequence:
-`r_{2n}² ≤ r_{2n-2} · r_{2n+2}` for every `n ≥ 1`, written here with `n + 1` in place
-of `n`. The Riordan numbers are `MetaMathlibExt.riordanNumber` (`1, 0, 1, 1, 3, 6, 15, …`).
+/-- **Log-convexity of the even-indexed Riordan numbers.** Let $r_n$ denote the $n$-th Riordan
+number. The even-indexed Riordan numbers $r_0, r_2, r_4, \dots$ form a log-convex sequence: for
+every natural number $n$,
+$$r_{2n+2}^2 \le r_{2n} \, r_{2n+4}.$$
+
+The Riordan numbers begin $1, 0, 1, 1, 3, 6, 15, \dots$.
 
 Source: Feng-Zhen Zhao, *The Log-Balancedness of the Sequence for the Alternating Sums
 of Motzkin Numbers*, INTEGERS 26 (2026), Article A55, Corollary 1
@@ -28,22 +31,26 @@ public theorem_wanted riordanNumber_even_logConvex (n : ℕ) :
     riordanNumber (2 * (n + 1)) ^ 2 ≤
       riordanNumber (2 * n) * riordanNumber (2 * (n + 2))
 
-/-- The alternating sums of Motzkin numbers `T_n = ∑_{k=0}^n (-1)^{n-k} M_k` (OEIS A187306:
-`1, 0, 2, 2, 7, 14, 37, …`), with `M_k = MetaMathlibExt.motzkinNumber k`.
+/-- **Alternating sums of Motzkin numbers.** Let $M_k$ denote the $k$-th Motzkin number. For a
+natural number $n$, the $n$-th alternating Motzkin sum is the integer
+$$T_n = \sum_{k=0}^{n} (-1)^{n-k} M_k.$$
+It is OEIS A187306, which begins $1, 0, 2, 2, 7, 14, 37, \dots$
 
 Source: Feng-Zhen Zhao, *The Log-Balancedness of the Sequence for the Alternating Sums
 of Motzkin Numbers*, INTEGERS 26 (2026), Article A55, Equation (2). -/
 public def motzkinAlternatingSum (n : ℕ) : ℤ :=
   ∑ k ∈ Finset.range (n + 1), (-1) ^ (n - k) * (motzkinNumber k : ℤ)
 
-/-- `T_0 = 1`.
+/-- **The alternating Motzkin sum at 0.** Let $M_k$ denote the $k$-th Motzkin number and let
+$T_n = \sum_{k=0}^{n} (-1)^{n-k} M_k$. Then $T_0 = 1$.
 
 Source: Feng-Zhen Zhao, *The Log-Balancedness of the Sequence for the Alternating Sums
 of Motzkin Numbers*, INTEGERS 26 (2026), Article A55, Table 2. -/
 public theorem motzkinAlternatingSum_zero : motzkinAlternatingSum 0 = 1 := by
   simp [motzkinAlternatingSum, motzkinNumber_zero]
 
-/-- `T_{n+1} = M_{n+1} - T_n`.
+/-- **Recurrence for alternating Motzkin sums.** Let $M_k$ denote the $k$-th Motzkin number and
+let $T_n = \sum_{k=0}^{n} (-1)^{n-k} M_k$. For every natural number $n$, $T_{n+1} = M_{n+1} - T_n$.
 
 Source: Feng-Zhen Zhao, *The Log-Balancedness of the Sequence for the Alternating Sums
 of Motzkin Numbers*, INTEGERS 26 (2026), Article A55, Equation (2). -/
@@ -57,7 +64,8 @@ public theorem motzkinAlternatingSum_succ (n : ℕ) :
   rw [show n + 1 - k = (n - k) + 1 by omega, pow_succ]
   ring
 
-/-- Small values: `T_1 = 0` and `T_2 = 2`.
+/-- **Alternating Motzkin sums at 1 and 2.** Let $M_k$ denote the $k$-th Motzkin number and let
+$T_n = \sum_{k=0}^{n} (-1)^{n-k} M_k$. Then $T_1 = 0$ and $T_2 = 2$.
 
 Source: Feng-Zhen Zhao, *The Log-Balancedness of the Sequence for the Alternating Sums
 of Motzkin Numbers*, INTEGERS 26 (2026), Article A55, Table 2. -/
@@ -68,22 +76,28 @@ public theorem motzkinAlternatingSum_one_two :
   refine ⟨h1, ?_⟩
   rw [motzkinAlternatingSum_succ, h1, motzkinNumber_two]; norm_num
 
-/-- The alternating sums of Fibonacci numbers `W_n = ∑_{k=0}^n (-1)^{n-k} F_k`
-(`0, 1, 0, 2, 1, 4, 4, 9, …`), with `F_k = Nat.fib k`.
+/-- **Alternating sums of Fibonacci numbers.** Let $F_k$ denote the $k$-th Fibonacci number,
+with $F_0 = 0$ and $F_1 = 1$. For a natural number $n$, the $n$-th alternating Fibonacci sum is
+the integer
+$$W_n = \sum_{k=0}^{n} (-1)^{n-k} F_k.$$
+The sequence begins $0, 1, 0, 2, 1, 4, 4, 9, \dots$
 
 Source: Feng-Zhen Zhao, *The Log-Balancedness of the Sequence for the Alternating Sums
 of Motzkin Numbers*, INTEGERS 26 (2026), Article A55, Equation (9). -/
 public def fibonacciAlternatingSum (n : ℕ) : ℤ :=
   ∑ k ∈ Finset.range (n + 1), (-1) ^ (n - k) * (Nat.fib k : ℤ)
 
-/-- `W_0 = 0`.
+/-- **The alternating Fibonacci sum at 0.** Let $F_k$ denote the $k$-th Fibonacci number, with
+$F_0 = 0$ and $F_1 = 1$, and let $W_n = \sum_{k=0}^{n} (-1)^{n-k} F_k$. Then $W_0 = 0$.
 
 Source: Feng-Zhen Zhao, *The Log-Balancedness of the Sequence for the Alternating Sums
 of Motzkin Numbers*, INTEGERS 26 (2026), Article A55, Table 3. -/
 public theorem fibonacciAlternatingSum_zero : fibonacciAlternatingSum 0 = 0 := by
   simp [fibonacciAlternatingSum]
 
-/-- `W_{n+1} = F_{n+1} - W_n`.
+/-- **Recurrence for alternating Fibonacci sums.** Let $F_k$ denote the $k$-th Fibonacci
+number, with $F_0 = 0$ and $F_1 = 1$, and let $W_n = \sum_{k=0}^{n} (-1)^{n-k} F_k$. For every
+natural number $n$, $W_{n+1} = F_{n+1} - W_n$.
 
 Source: Feng-Zhen Zhao, *The Log-Balancedness of the Sequence for the Alternating Sums
 of Motzkin Numbers*, INTEGERS 26 (2026), Article A55, Equation (9). -/
@@ -97,14 +111,20 @@ public theorem fibonacciAlternatingSum_succ (n : ℕ) :
   rw [show n + 1 - k = (n - k) + 1 by omega, pow_succ]
   ring
 
-/-- `{T_n}_{n ≥ 8}` is log-balanced and `{T_n}_{n ≥ 5}` is tempered. Following the paper
-(Došlić), a positive sequence `z` is log-balanced on `n ≥ N` if `z_n² ≤ z_{n-1} z_{n+1}`
-(log-convex) and `z_n/n!` is log-concave, i.e. `n z_{n-1} z_{n+1} ≤ (n+1) z_n²`, for every
-`n ≥ N + 1`; it is tempered if its quotients `x_n = z_{n+1}/z_n` satisfy
-`n/(n+1) x_{n-1} ≤ x_n ≤ (n+1)/n x_{n-1}`, i.e. `n z_n² ≤ (n+1) z_{n-1} z_{n+1}` and
-`n z_{n-1} z_{n+1} ≤ (n+1) z_n²`, for every `n ≥ N + 1`. The factorials and quotient
-weights use the original index `n`, as in the paper's proofs; the inequalities are
-cleared of denominators (all terms are positive here).
+/-- **The alternating Motzkin sums are eventually log-balanced and tempered.** Let $M_k$ denote
+the $k$-th Motzkin number and let $T_n = \sum_{k=0}^{n} (-1)^{n-k} M_k$. For every natural
+number $n \ge 9$,
+$$T_n^2 \le T_{n-1} T_{n+1} \quad\text{and}\quad n T_{n-1} T_{n+1} \le (n+1) T_n^2,$$
+and for every natural number $n \ge 6$,
+$$n T_n^2 \le (n+1) T_{n-1} T_{n+1} \quad\text{and}\quad n T_{n-1} T_{n+1} \le (n+1) T_n^2.$$
+
+Following Došlić, a positive sequence $(z_n)_{n \ge N}$ is log-balanced if it is log-convex,
+$z_n^2 \le z_{n-1} z_{n+1}$, and $(z_n/n!)$ is log-concave, $n z_{n-1} z_{n+1} \le (n+1) z_n^2$,
+for every $n \ge N + 1$; it is tempered if its quotients $x_n = z_{n+1}/z_n$ satisfy
+$\frac{n}{n+1} x_{n-1} \le x_n \le \frac{n+1}{n} x_{n-1}$ for every $n \ge N + 1$. So the two
+parts say that $(T_n)_{n \ge 8}$ is log-balanced and $(T_n)_{n \ge 5}$ is tempered, with the
+inequalities cleared of denominators (all terms are positive here) and the factorials and
+quotient weights using the original index $n$, as in the paper's proofs.
 
 Source: Feng-Zhen Zhao, *The Log-Balancedness of the Sequence for the Alternating Sums
 of Motzkin Numbers*, INTEGERS 26 (2026), Article A55, Theorem 1. -/
@@ -120,9 +140,16 @@ public theorem_wanted motzkinAlternatingSum_logBalanced_tempered :
         n * (motzkinAlternatingSum (n - 1) * motzkinAlternatingSum (n + 1)) ≤
           (n + 1) * motzkinAlternatingSum n ^ 2)
 
-/-- `{T_n T_{n+1}}_{n ≥ 6}` is log-convex and `{T_n T_{n+1}}_{n ≥ 9}` is log-balanced, with
-the notions of `motzkinAlternatingSum_logBalanced_tempered` (conditions at every
-`n ≥ N + 1`, original index in the factorial weight).
+/-- **Products of consecutive alternating Motzkin sums are eventually log-convex and
+log-balanced.** Let $M_k$ denote the $k$-th Motzkin number, let
+$T_n = \sum_{k=0}^{n} (-1)^{n-k} M_k$ and let $P_n = T_n T_{n+1}$. For every natural number
+$n \ge 7$, $P_n^2 \le P_{n-1} P_{n+1}$; and for every natural number $n \ge 10$,
+$P_n^2 \le P_{n-1} P_{n+1}$ and $n P_{n-1} P_{n+1} \le (n+1) P_n^2$.
+
+Following Došlić, a positive sequence $(z_n)_{n \ge N}$ is log-convex if
+$z_n^2 \le z_{n-1} z_{n+1}$ for every $n \ge N + 1$, and log-balanced if moreover $(z_n/n!)$ is
+log-concave, $n z_{n-1} z_{n+1} \le (n+1) z_n^2$, for every $n \ge N + 1$. So the two parts say
+that $(P_n)_{n \ge 6}$ is log-convex and $(P_n)_{n \ge 9}$ is log-balanced.
 
 Source: Feng-Zhen Zhao, *The Log-Balancedness of the Sequence for the Alternating Sums
 of Motzkin Numbers*, INTEGERS 26 (2026), Article A55, Theorem 2. -/
@@ -139,8 +166,14 @@ public theorem_wanted motzkinAlternatingSum_mul_succ_logConvex_logBalanced :
             (motzkinAlternatingSum (n + 1) * motzkinAlternatingSum (n + 2))) ≤
           (n + 1) * (motzkinAlternatingSum n * motzkinAlternatingSum (n + 1)) ^ 2)
 
-/-- `{M_n + T_n}_{n ≥ 6}` is log-balanced (notion of
-`motzkinAlternatingSum_logBalanced_tempered`: conditions at every `n ≥ 7`).
+/-- **Log-balancedness of Motzkin numbers plus their alternating sums.** Let $M_n$ denote the
+$n$-th Motzkin number, let $T_n = \sum_{k=0}^{n} (-1)^{n-k} M_k$ be the alternating sum of
+Motzkin numbers, and put $z_n = M_n + T_n$. Then the sequence $(z_n)_{n \ge 6}$ is log-balanced:
+for every natural number $n \ge 7$,
+$$z_n^2 \le z_{n-1} \, z_{n+1} \quad\text{and}\quad n \, z_{n-1} \, z_{n+1} \le (n+1) \, z_n^2.$$
+
+The first inequality is log-convexity; for positive terms the second is log-concavity of
+$z_n / n!$ with denominators cleared, the factorial using the original index $n$.
 
 Source: Feng-Zhen Zhao, *The Log-Balancedness of the Sequence for the Alternating Sums
 of Motzkin Numbers*, INTEGERS 26 (2026), Article A55, Theorem 3. -/
@@ -152,8 +185,14 @@ public theorem_wanted motzkinNumber_add_motzkinAlternatingSum_logBalanced (n : �
           ((motzkinNumber (n + 1) : ℤ) + motzkinAlternatingSum (n + 1))) ≤
         (n + 1) * ((motzkinNumber n : ℤ) + motzkinAlternatingSum n) ^ 2
 
-/-- `{W_n}_{n ≥ 11}` is tempered (notion of `motzkinAlternatingSum_logBalanced_tempered`:
-conditions at every `n ≥ 12`).
+/-- **The alternating Fibonacci sums are eventually tempered.** Let $F_k$ denote the $k$-th
+Fibonacci number, with $F_0 = 0$ and $F_1 = 1$, and let $W_n = \sum_{k=0}^{n} (-1)^{n-k} F_k$.
+For every natural number $n \ge 12$,
+$$n W_n^2 \le (n+1) W_{n-1} W_{n+1} \quad\text{and}\quad n W_{n-1} W_{n+1} \le (n+1) W_n^2.$$
+
+These are the conditions $\frac{n}{n+1} x_{n-1} \le x_n \le \frac{n+1}{n} x_{n-1}$ on the
+quotients $x_n = W_{n+1}/W_n$, cleared of denominators (all terms are positive here), so the
+sequence $(W_n)_{n \ge 11}$ is tempered, with the conditions imposed at every index $n \ge 12$.
 
 Source: Feng-Zhen Zhao, *The Log-Balancedness of the Sequence for the Alternating Sums
 of Motzkin Numbers*, INTEGERS 26 (2026), Article A55, Theorem 4. -/
