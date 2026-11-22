@@ -3,7 +3,9 @@
 
 from __future__ import annotations
 
+import os
 import re
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -27,16 +29,18 @@ class BlueprintWorkflowTests(unittest.TestCase):
     def step(self, name):
         return next(step for step in self.steps if step.get("name") == name)
 
-    def test_pull_requests_run_the_check_on_wiki_paths_and_merge_groups_always(self):
+    def test_pull_requests_run_the_check_on_wiki_paths_and_merge_groups_never(self):
         events = self.workflow["on"]
-        self.assertEqual(set(events), {
-            "push", "pull_request", "merge_group", "workflow_dispatch",
-        })
-        self.assertEqual(events["push"]["branches"], ["main"])
+        # Not a required check, so a merge-group run could not stop a merge; CI's
+        # required build imports every v2 module together on each merge group.
+        self.assertEqual(set(events), {"schedule", "pull_request", "workflow_dispatch"})
+        # main is built once a day at 03:17 UTC (GitHub reads cron in UTC), not on every push.
+        self.assertEqual(events["schedule"], [{"cron": "17 3 * * *"}])
         paths = events["pull_request"]["paths"]
         for path in (
             "blueprint/**", "scripts/generate_wiki.py", "scripts/sync_wiki.py",
             "scripts/extract_v2_lean_dependencies.py", "scripts/dump_v2_dependencies.lean",
+            "scripts/list_v2_modules.sh",
             "scripts/check_blueprint_site.py", "scripts/taxonomy.json", "scripts/wiki-sync.json",
             "scripts/requirements-blueprint.txt", "mkdocs.yml", "theme/**", "hooks/**",
             "docs/BLUEPRINT.md", ".github/workflows/blueprint-pages.yml", ".github/autoform-ref",
@@ -88,7 +92,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
     def test_current_build_and_dump_fail_closed(self):
         build = self.step("Build the current v2 libraries")
         self.assertEqual(build["run"],
-                         "lake build MathlibExt CSLibExt PhyslibExt WantedExt")
+                         "lake build MathlibExt CSLibExt PhyslibExt Domains WantedExt")
         dump = self.step("Dump declaration dependencies")
         self.assertNotIn("continue-on-error", build)
         self.assertNotIn("continue-on-error", dump)
@@ -109,9 +113,16 @@ class BlueprintWorkflowTests(unittest.TestCase):
             "lake build MathlibExt.Combinatorics.Words.TernaryAbelianCubeFreeLowerBound",
         ])
 
+    @staticmethod
+    def dump_fixture(root):
+        """A repository with the dump step's module-listing script."""
+        (root / "scripts").mkdir()
+        shutil.copy2(ROOT / "scripts/list_v2_modules.sh", root / "scripts")
+
     def test_dump_refuses_missing_compiled_modules(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
+            self.dump_fixture(root)
             (root / ".lake/build/lib/lean").mkdir(parents=True)
             subprocess.run(["git", "init", "-q", str(root)], check=True)
             (root / "MathlibExt").mkdir()
@@ -125,6 +136,50 @@ class BlueprintWorkflowTests(unittest.TestCase):
             self.assertIn("Missing compiled module: MathlibExt/Example.lean",
                           result.stderr)
             self.assertFalse((root / "v2-dependencies.jsonl").exists())
+
+    def test_dump_reads_non_ascii_paths_literally(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.dump_fixture(root)
+            (root / ".lake/build/lib/lean/MathlibExt").mkdir(parents=True)
+            (root / ".lake/build/lib/lean/MathlibExt/Étale.olean").write_text("")
+            (root / "bin").mkdir()
+            (root / "bin/lake").write_text("#!/usr/bin/env bash\necho '{}'\n")
+            (root / "bin/lake").chmod(0o755)
+            subprocess.run(["git", "init", "-q", str(root)], check=True)
+            (root / "MathlibExt").mkdir()
+            (root / "MathlibExt/Étale.lean").write_text("-- fixture\n")
+            subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+            result = subprocess.run(
+                ["bash", "-c", self.step("Dump declaration dependencies")["run"]],
+                cwd=root, text=True, capture_output=True, check=False,
+                env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}"},
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual((root / "v2-modules.txt").read_text(encoding="utf-8"),
+                             "MathlibExt.Étale\n")
+
+    def test_dump_refuses_a_partial_module_list(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.dump_fixture(root)
+            (root / ".lake/build/lib/lean/MathlibExt").mkdir(parents=True)
+            (root / ".lake/build/lib/lean/MathlibExt/Example.olean").write_text("")
+            (root / "bin").mkdir()
+            # `git ls-files` lists one module, then fails.
+            (root / "bin/git").write_text(
+                "#!/usr/bin/env bash\nprintf 'MathlibExt/Example.lean\\0'\nexit 74\n")
+            (root / "bin/lake").write_text("#!/usr/bin/env bash\necho '{}'\n")
+            for name in ("git", "lake"):
+                (root / "bin" / name).chmod(0o755)
+            result = subprocess.run(
+                ["bash", "-c", self.step("Dump declaration dependencies")["run"]],
+                cwd=root, text=True, capture_output=True, check=False,
+                env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}"},
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse((root / "v2-dependencies.jsonl").exists())
+            self.assertFalse((root / "v2-dependencies.jsonl.gz").exists())
 
     def test_the_build_cache_is_restored_from_ci_and_never_saved(self):
         restore = self.step("Restore local build")
@@ -148,15 +203,101 @@ class BlueprintWorkflowTests(unittest.TestCase):
                            "github.event_name != 'pull_request'",
                            "github.event_name != 'merge_group'"):
                 self.assertIn(clause, condition)
+            # Scheduled and manual runs of main publish, so no clause may require a push.
+            self.assertNotIn("push", condition)
         self.assertTrue(all("uses" in step for step in deploy["steps"]))
 
-    def test_built_site_is_kept_only_for_main_builds(self):
-        condition = self.step("Keep the built site")["if"]
+    def test_the_mathlib_layer_cannot_hold_back_the_site(self):
+        # The layer has its own job and check after the wiki job, and deployment waits for the wiki job alone.
+        jobs = self.workflow["jobs"]
+        mathlib = jobs["mathlib"]
+        self.assertEqual(mathlib["needs"], "wiki")
+        self.assertEqual(jobs["deploy"]["needs"], "wiki")
+        self.assertNotIn("permissions", mathlib)
+        self.assertNotIn("continue-on-error", mathlib)
+        checkout = next(step for step in mathlib["steps"] if step.get("name") == "Check out project")
+        self.assertEqual(checkout["with"]["persist-credentials"], "false")
+        self.assertIn("!/v1/", checkout["with"]["sparse-checkout"])
+        self.assertIn("!/Atlas/", checkout["with"]["sparse-checkout"])
+        # In the wiki job only the dump of the v2 declarations, which needs the ATLAS build. It comes after every
+        # step the site needs, cannot fail the job, and has a timeout, so a hang cannot hold the job until its own
+        # timeout either; its upload cannot fail the job. A missing dump fails the layer's job instead.
+        dump = "Dump the v2 declarations with their Mathlib uses"
+        wiki_steps = [step["name"] for step in self.steps if "extract_mathlib_graph.py" in step.get("run", "")]
+        self.assertEqual(wiki_steps, [dump])
+        self.assertEqual(self.step(dump)["continue-on-error"], "true")
+        self.assertLessEqual(int(self.step(dump)["timeout-minutes"]), 30)
+        self.assertIn("--jobs 1 --shards 1", self.step(dump)["run"])
+        names = [step.get("name") for step in self.steps]
+        upload = "Keep the v2 declarations with their Mathlib uses"
+        self.assertEqual(names[-2:], [dump, upload])
+        for site_step in ("Check routes, anchors, and article cards", "Keep dependency diagnostics",
+                          "Keep the built site", "Upload Pages artifact"):
+            self.assertLess(names.index(site_step), names.index(dump), site_step)
+        self.assertEqual(self.step(upload)["continue-on-error"], "true")
+        self.assertEqual(self.step(upload)["with"]["name"], "v2-mathlib-dump")
+        self.assertNotIn("mathlib-graph", self.step("Keep dependency diagnostics")["with"]["path"])
+        steps = {step.get("name"): step for step in mathlib["steps"]}
+        self.assertEqual(steps["Fetch the v2 extraction"]["with"]["name"], "blueprint-dependencies")
+        fetch = steps["Fetch the v2 declarations with their Mathlib uses"]["with"]
+        self.assertEqual((fetch["name"], fetch["path"]), ("v2-mathlib-dump", "mathlib-graph"))
+        extract = steps["Extract the Mathlib layer"]["run"]
+        self.assertIn("set -euo pipefail", extract)
+        self.assertIn("test -s mathlib-graph/v2-mathlib-dump.jsonl.gz", extract)
+        self.assertIn("--check-v2 build/lean-dependencies.json", extract)
+        self.assertIn("join --strict", extract)
+        for command in ("dump", "graph", "bridge", "stats"):
+            self.assertTrue(any(f"extract_mathlib_graph.py {command}" in step.get("run", "")
+                                for step in mathlib["steps"]), command)
+        # Only the upload may fail without failing the layer's check.
+        self.assertEqual([name for name, step in steps.items() if "continue-on-error" in step],
+                         ["Keep the Mathlib layer"])
+        self.assertEqual(steps["Keep the Mathlib layer"]["with"]["name"], "mathlib-graph")
+        self.assertEqual(steps["Keep the Mathlib layer"]["if"], "always()")
+
+    def test_every_build_keeps_its_site_and_only_main_keeps_the_full_site(self):
+        # The built site is a one-day artifact of every successful build, which the Mathlib pages job reads; only
+        # main keeps the site with its Mathlib pages, and neither is a Pages upload.
+        keep = self.step("Keep the built site")
+        self.assertEqual(keep["if"], "success()")
+        self.assertEqual((keep["with"]["name"], keep["with"]["retention-days"]), ("blueprint-site", "1"))
+        steps = {step.get("name"): step for step in self.workflow["jobs"]["mathlib-pages"]["steps"]}
+        full = steps["Keep the site with its Mathlib pages"]
+        self.assertIn("actions/upload-artifact@", full["uses"])
+        self.assertEqual((full["with"]["name"], full["with"]["path"]), ("blueprint-site-full", "site-full"))
         for clause in ("github.ref == 'refs/heads/main'",
                        "github.event_name != 'pull_request'",
                        "github.event_name != 'merge_group'"):
-            self.assertIn(clause, condition)
-        self.assertNotIn("BLUEPRINT_PAGES", condition)
+            self.assertIn(clause, full["if"])
+        self.assertNotIn("BLUEPRINT_PAGES", full["if"])
+        self.assertNotIn("push", full["if"])
+
+    def test_the_mathlib_pages_cannot_hold_back_the_site(self):
+        # The pages have their own read-only job after the wiki and the Mathlib layer; deployment waits for the
+        # wiki job alone, and the wiki job never runs the pages script.
+        jobs = self.workflow["jobs"]
+        pages = jobs["mathlib-pages"]
+        self.assertEqual(pages["needs"], ["wiki", "mathlib"])
+        self.assertEqual(jobs["deploy"]["needs"], "wiki")
+        for key in ("permissions", "continue-on-error", "if"):
+            self.assertNotIn(key, pages)
+        self.assertFalse(any("build_mathlib_pages" in step.get("run", "") for step in self.steps))
+        steps = {step.get("name"): step for step in pages["steps"]}
+        checkout = steps["Check out project"]["with"]
+        self.assertEqual(checkout["persist-credentials"], "false")
+        self.assertIn("!/v1/", checkout["sparse-checkout"])
+        self.assertIn("!/Atlas/", checkout["sparse-checkout"])
+        fetched = {(s["with"]["name"], s["with"]["path"]) for s in pages["steps"] if "download-artifact@" in s.get("uses", "")}
+        self.assertEqual(fetched, {("blueprint-site", "site"), ("mathlib-graph", "mathlib-graph")})
+        self.assertIn("python -m unittest scripts.test_build_mathlib_pages", steps["Test the Mathlib pages script"]["run"])
+        self.assertIn("scripts/test_build_mathlib_pages.py", self.workflow["on"]["pull_request"]["paths"])
+        build = steps["Build the Mathlib pages"]["run"]
+        self.assertIn("build_mathlib_pages.py build", build)
+        self.assertIn("github.event_name == 'pull_request' && '--strict-links' || ''", build)
+        self.assertIn("build_mathlib_pages.py check site mathlib-graph site-full", steps["Check the site with its Mathlib pages"]["run"])
+        for step in pages["steps"]:
+            self.assertNotIn("continue-on-error", step)
+            self.assertFalse(step.get("uses", "").startswith(("actions/upload-pages-artifact@", "actions/deploy-pages@")))
 
 
 if __name__ == "__main__":
