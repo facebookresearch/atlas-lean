@@ -30,7 +30,7 @@ def CubeEdges : Set (EuclideanSpace ℝ (Fin 3)) :=
 /--
 There is a nonzero harmonic function, defined in a region containing a cube
 in its interior, which vanishes on all the edges of the cube. The function
-is harmonic on an open region `U` whose interior contains the cube
+is harmonic on a connected open region `U` whose interior contains the cube
 `[-1, 1]³`, vanishes on every point of the cube's edges, and is nonzero
 somewhere in `U`.
 Source: R. Wavre, Problem 151 of the Scottish Book; the affirmative answer
@@ -41,7 +41,7 @@ the Scottish Book" (arXiv:2603.27867). The typescript notes a prize of a
 -/
 theorem_wanted harmonicFunctionVanishesOnCubeEdges :
     ∃ (U : Set (EuclideanSpace ℝ (Fin 3))) (f : EuclideanSpace ℝ (Fin 3) → ℝ),
-      IsOpen U ∧ Cube ⊆ interior U ∧ InnerProductSpace.HarmonicOnNhd f U ∧
+      IsOpen U ∧ IsConnected U ∧ Cube ⊆ interior U ∧ InnerProductSpace.HarmonicOnNhd f U ∧
         (∀ x ∈ CubeEdges, f x = 0) ∧ ∃ x ∈ U, f x ≠ 0
 
 end MathlibExt.Analysis.ScottishBook151Wanted

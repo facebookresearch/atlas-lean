@@ -10,7 +10,7 @@ module
 
 public import CSLibExt.Algorithms.Lean.DataStructures.BinaryHeap
 public import MathlibExt.InformationTheory.PrefixFree
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 
 /-!
 # Huffman coding
@@ -462,7 +462,8 @@ theorem HuffmanTree.pathCode?_eq_none_iff {α : Type u} [DecidableEq α]
         push Not at h
         simp [HuffmanTree.pathCode?, ihLeft.mpr h.1, ihRight.mpr h.2]
 
-private theorem HuffmanTree.sum_snd_weightedLeaves {α : Type u}
+/-- The sum of the leaf weights equals the total weight. -/
+theorem HuffmanTree.sum_snd_weightedLeaves {α : Type u}
     (tree : HuffmanTree α) :
     (tree.weightedLeaves.map Prod.snd).sum = tree.totalWeight := by
   induction tree with
@@ -598,7 +599,9 @@ and a serial number $s$.
 Priorities are ordered lexicographically, first by weight and then by serial number, so serial
 numbers break ties between equal weights deterministically. -/
 structure HuffmanPriority where
+  /-- The weight, compared first in the queue order. -/
   weight : Nat
+  /-- The serial number: it breaks weight ties and indexes the work table. -/
   serial : Nat
 deriving DecidableEq, Repr
 
@@ -617,7 +620,9 @@ is, a natural-number weight and a natural-number serial, with a Huffman tree ove
 
 The serial is used to find the tree again after its priority is extracted from the heap. -/
 structure HuffmanWorkItem (α : Type u) where
+  /-- The queue priority; its serial locates this item after heap extraction. -/
   priority : HuffmanPriority
+  /-- The coding tree carried by this item. -/
   tree : HuffmanTree α
 deriving DecidableEq, Repr
 
@@ -627,8 +632,11 @@ first and the second, together with a binary min-heap of Huffman priorities, the
 The two-minimum extraction fills it with the two successive minima of a heap and the heap left
 after removing them. -/
 structure HuffmanTwoMin where
+  /-- The first extracted priority, minimal in the original heap. -/
   first : HuffmanPriority
+  /-- The second extracted priority, minimal in the heap left after the first. -/
   second : HuffmanPriority
+  /-- The heap left after both extractions. -/
   rest : MinHeap HuffmanPriority
 
 /-- **Extracting two minima from a Huffman heap.** Given a binary min-heap $h$ of Huffman

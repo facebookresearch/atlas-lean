@@ -23,14 +23,20 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.PiSixSphereThree` — pi6_sphere_three_mulEquiv_zmod_twelve (manifest `manifests/problems/pi6_sphere_three_mulEquiv_zmod_twelve.toml`, rev 1, submitter Vasily Ilin, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.PiSixSphereThree` —
+pi6_sphere_three_mulEquiv_zmod_twelve (manifest
+`manifests/problems/pi6_sphere_three_mulEquiv_zmod_twelve.toml`, rev 1, submitter Vasily Ilin,
+status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Topology.PiSixSphereThreeWanted` namespace. Mathematical
-statements are unchanged. Source: H. Toda, 'Composition Methods in Homotopy Groups of Spheres', Annals of Mathematics Studies 49, Princeton University Press, 1962. The value pi_6(S^3) = Z/12 also appears in the tables of A. Hatcher, 'Algebraic Topology', Section 4.1.
+and placed the declarations in the `MathlibExt.Topology.PiSixSphereThreeWanted` namespace.
+Mathematical
+statements are unchanged. Source: H. Toda, 'Composition Methods in Homotopy Groups of Spheres',
+Annals of Mathematics Studies 49, Princeton University Press, 1962. The value pi_6(S^3) = Z/12 also
+appears in the tables of A. Hatcher, 'Algebraic Topology', Section 4.1.
 -/
 module
 
@@ -55,7 +61,10 @@ The statement follows the explicit-basepoint conventions of
 -/
 
 /- **π₆ of the 3-sphere.** Toda's tables give `π₆(𝕊³) ≅ ℤ/12`. -/
-/-- Source: H. Toda, 'Composition Methods in Homotopy Groups of Spheres', Annals of Mathematics Studies 49, Princeton University Press, 1962. The value pi_6(S^3) = Z/12 also appears in the tables of A. Hatcher, 'Algebraic Topology', Section 4.1. Via leanprover/lean-eval@38361be, problem `pi6_sphere_three_mulEquiv_zmod_twelve`. -/
+/-- Source: H. Toda, 'Composition Methods in Homotopy Groups of Spheres', Annals of Mathematics
+Studies 49, Princeton University Press, 1962. The value pi_6(S^3) = Z/12 also appears in the tables
+of A. Hatcher, 'Algebraic Topology', Section 4.1. Via leanprover/lean-eval@38361be, problem
+`pi6_sphere_three_mulEquiv_zmod_twelve`. -/
 public theorem_wanted pi6_sphere_three_mulEquiv_zmod_twelve
     (x : Metric.sphere (0 : EuclideanSpace ℝ (Fin 4)) 1) :
     Nonempty

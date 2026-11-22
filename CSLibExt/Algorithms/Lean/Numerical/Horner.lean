@@ -9,9 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Cslib.Algorithms.Lean.TimeM
-public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.Polynomial.OfFn
 public import Mathlib.Algebra.Polynomial.Eval.Defs
+import Mathlib.Algebra.BigOperators.Fin
 
 /-!
 # Horner polynomial evaluation

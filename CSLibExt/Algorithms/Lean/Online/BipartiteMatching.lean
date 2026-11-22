@@ -30,7 +30,8 @@ Main results:
 
 The factor `2` is tight for greedy: on left vertex `0` adjacent to right `0, 1` and left `1`
 adjacent to right `0`, with right `0` arriving first, greedy matches one edge out of two (see the
-tests).
+tests). `MatchingLowerBound.greedy_tight` states tightness at every even size `2 n`, through
+`greedyMatcher`, greedy as an online matcher.
 
 ## Cost model
 

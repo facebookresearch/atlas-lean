@@ -34,8 +34,9 @@ Main results (Brent, *The parallel evaluation of general arithmetic expressions*
   `T ≤ (n - D) / p + D ≤ n / p + D`; `brent` packages it with the two laws, so the optimal
   length is within a factor `2` of `max (n / p) D`.
 
-The schedule here is Brent's level-by-level one; the theorem that *every* greedy scheduler meets
-the same bound (CLRS Theorem 27.1) is not formalized.
+The schedule here is Brent's level-by-level one. `GreedyScheduler.lean` proves the stronger
+Graham bound for every `Schedule.Greedy` schedule in `Schedule.greedy_length_le`, and derives
+CLRS Theorem 27.1 in `Schedule.greedy_length`.
 
 ## Cost model
 

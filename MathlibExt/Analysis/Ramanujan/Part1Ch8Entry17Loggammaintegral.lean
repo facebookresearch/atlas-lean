@@ -726,11 +726,6 @@ private theorem chapter8_log_div_integral {a b : ℝ} (ha : 0 < a)
   have heq := intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint
   simpa only using heq
 
-/-- `exp 1 < 3`, so `[3, ∞)` lies in the antitone region of `log x / x`. -/
-private theorem chapter8_exp_one_lt_three : Real.exp 1 < 3 := by
-  have h := Real.exp_one_lt_d9
-  linarith
-
 /-- `log x / x` is antitone on `[a, b]` when `3 ≤ a`. -/
 private theorem chapter8_antitone_Icc {a b : ℝ} (ha : 3 ≤ a)
     (_hab : a ≤ b) :
@@ -738,7 +733,7 @@ private theorem chapter8_antitone_Icc {a b : ℝ} (ha : 3 ≤ a)
   apply Real.log_div_self_antitoneOn.mono
   intro x hx
   simp only [Set.mem_Ici, Set.mem_Icc] at hx ⊢
-  have hexp := chapter8_exp_one_lt_three
+  have hexp := Real.exp_one_lt_three
   linarith [hx.1]
 
 /-- `log t / t → 0` as `t → ∞`. -/
@@ -805,10 +800,6 @@ private theorem chapter8_LHS_tendsto (x : ℝ) (n : ℕ)
     tendsto_finsetSum _ (fun k hk => chapter8_partial_tendsto _ (h4 k hk))
   exact hmul.sub hsum
 
-/-- `N ≤ n * N` for `0 < n`. -/
-private theorem chapter8_N_le_nN (n N : ℕ) (hn : 0 < n) : N ≤ n * N :=
-  Nat.le_mul_of_pos_left N hn
-
 /-- Telescoping difference of shifted range sums. -/
 private theorem chapter8_telescope (g : ℝ → ℝ) (x0 : ℝ) (a : ℕ) :
     (∑ i ∈ Finset.range a, g (x0 + (i : ℝ))) -
@@ -829,7 +820,7 @@ private theorem chapter8_S_eq (x : ℝ) (n N : ℕ) (hn : 0 < n) :
       ∑ i ∈ Finset.range (n * N - N),
         Real.log (((N : ℝ) + 1 + x) + (i : ℝ)) /
           (((N : ℝ) + 1 + x) + (i : ℝ)) := by
-  have hle := chapter8_N_le_nN n N hn
+  have hle := Nat.le_mul_of_pos_left N hn
   have hsum := sum_range_add_sum_Ico
     (fun i : ℕ => Real.log (((i : ℝ) + 1) + x) / (((i : ℝ) + 1) + x)) hle
   have hdiff : (∑ i ∈ Finset.range (n * N),
@@ -852,7 +843,7 @@ private theorem chapter8_S_eq (x : ℝ) (n N : ℕ) (hn : 0 < n) :
 /-- Upper limit identity `x0 + a = x1`. -/
 private theorem chapter8_x0_add_a (x : ℝ) (n N : ℕ) (hn : 0 < n) :
     ((N : ℝ) + 1 + x) + ((n * N - N : ℕ) : ℝ) = ((n * N : ℕ) : ℝ) + 1 + x := by
-  have hle := chapter8_N_le_nN n N hn
+  have hle := Nat.le_mul_of_pos_left N hn
   have hadd : N + (n * N - N) = n * N := Nat.add_sub_cancel' hle
   have hcast : (N : ℝ) + ((n * N - N : ℕ) : ℝ) = ((n * N : ℕ) : ℝ) := by
     rw [← Nat.cast_add, hadd]
@@ -1222,7 +1213,7 @@ private theorem chapter8_I_eq (x : ℝ) (n N : ℕ) (hx : -1 < x) (hn : 0 < n) :
       (Real.log (((n * N : ℕ) : ℝ) + 1 + x)) ^ 2 / 2 -
         (Real.log ((N : ℝ) + 1 + x)) ^ 2 / 2 := by
   have hx0_pos := chapter8_x0_pos x N hx
-  have hle := chapter8_N_le_nN n N hn
+  have hle := Nat.le_mul_of_pos_left N hn
   have hleR : (N : ℝ) ≤ ((n * N : ℕ) : ℝ) := Nat.cast_le.mpr hle
   have hab : (N : ℝ) + 1 + x ≤ ((n * N : ℕ) : ℝ) + 1 + x := by linarith
   exact chapter8_log_div_integral hx0_pos hab
@@ -1265,7 +1256,7 @@ private theorem chapter8_middle_tendsto (x : ℝ) (n : ℕ) (hx : -1 < x)
 /-- `n * N → ∞` as `N → ∞` for `0 < n`. -/
 private theorem chapter8_n_mul_tendsto (n : ℕ) (hn : 0 < n) :
     Tendsto (fun N : ℕ => n * N) atTop atTop :=
-  tendsto_atTop_mono (fun N => chapter8_N_le_nN n N hn) tendsto_id
+  tendsto_atTop_mono (fun N => Nat.le_mul_of_pos_left N hn) tendsto_id
 
 /-- `(n*N : ℝ) + x → ∞`. -/
 private theorem chapter8_Y_tendsto_atTop (x : ℝ) (n : ℕ) (hn : 0 < n) :

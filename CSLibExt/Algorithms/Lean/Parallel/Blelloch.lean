@@ -24,18 +24,23 @@ Main results:
 
 * `blelloch_eq_seg`: **position `j < 2 ^ k` holds the exclusive prefix product** `seg x 0 j`
   (via `seg_pairUp`: prefix products of the pair products are the even prefix products).
-* `blellochWork_eq`: `2 ^ (k + 1) - 2` combinations, fewer than `2 n`; `blellochSpan_eq`: `2 k`
-  parallel steps.
+* `blellochListT_work_eq`: on inputs of length `2 ^ k`, the instrumented list scan performs
+  `2 ^ (k + 1) - 2` multiplications, fewer than `2 n`.
+* `blellochListT_rounds_eq`: on inputs of length `2 ^ k`, it schedules `2 * k` rounds.
+* `ret_blellochListT`: erasing the instrumentation gives `blellochList` on every input.
 * `blellochList` (`pairList`, `expand`): the scan on lists in `O(n)` time, proved equal
   (`getD_blellochList`, `getD_blellochList_eq_seg`).
 
 ## Cost model
 
-Work-span, as in `PrefixSum.lean`: a parallel step has span `1` and work equal to its number of
-monoid multiplications (`blellochWork`, `blellochSpan` follow the recursion: one step of
-`2 ^ (k - 1)` pair products, the recursive scan, one step of `2 ^ (k - 1)` products for the odd
-positions). `blelloch` is the recursion used for the proofs; evaluated directly it recomputes the
-pair products (sequential cost quadratic in `n`); `blellochList` is the linear-time implementation.
+`blellochListT` uses upstream `TimeM (ℕ × ℕ)`, with one work tick per monoid multiplication
+and one round tick per scheduled pair or expansion phase. Traversal, allocation, copying, and
+recursive calls are free. Work includes multiplication by the identity. Each phase's products
+are independent, although the list evaluator traverses them sequentially. The compatibility name
+`blellochSpan` counts scheduled rounds, not a task DAG's longest path. The exact work recurrence
+requires the input length to be `2 ^ k`; erasure holds for arbitrary lists. `blelloch` is the
+recursion used for the proofs; evaluated directly it recomputes the pair products (sequential
+cost quadratic in `n`); `blellochList` is the linear-time implementation.
 -/
 
 @[expose] public section
@@ -89,7 +94,7 @@ theorem blelloch_eq_seg : ∀ (k : ℕ) (x : ℕ → M) (j : ℕ), j < 2 ^ k →
         congr 2
         omega
 
-/-! ## Work and span -/
+/-! ## Work and scheduled rounds -/
 
 /-- **Work of Blelloch's scan.** The number $W(k)$ of monoid multiplications Blelloch's scan
 performs on $2^k$ positions is defined by $W(0) = 0$ and $W(k+1) = 2^k + W(k) + 2^k$: on
@@ -99,16 +104,18 @@ def blellochWork : ℕ → ℕ
   | 0 => 0
   | k + 1 => 2 ^ k + blellochWork k + 2 ^ k
 
-/-- **Parallel steps of Blelloch's scan.** The span $S(k)$ of Blelloch's scan on $2^k$
-positions is defined by $S(0) = 0$ and $S(k+1) = S(k) + 2$: one parallel step for the pair
-products, the recursive scan, and one parallel step for the odd positions. -/
+/-- **Scheduled rounds of Blelloch's scan.** The round count $S(k)$ of Blelloch's scan on $2^k$
+positions is defined by $S(0) = 0$ and $S(k+1) = S(k) + 2$: one pair round, the recursive scan,
+then one expansion round. This counts idle rounds too and is not a task DAG longest-path
+calculation. -/
 def blellochSpan : ℕ → ℕ
   | 0 => 0
   | k + 1 => blellochSpan k + 2
 
-/-- **Blelloch's scan is work-efficient.** For every natural number $k$, the number $W(k)$ of
-monoid multiplications Blelloch's scan performs on $n = 2^k$ positions satisfies
-$W(k) + 2 = 2^{k+1}$, so $W(k) = 2^{k+1} - 2 < 2n$. -/
+/-- **Blelloch's scan is work-efficient.** For every natural number $k$, the work recurrence $W$
+of Blelloch's scan satisfies $W(k) + 2 = 2^{k+1}$, so $W(k) = 2^{k+1} - 2 < 2n$ for $n = 2^k$
+positions. By `time_blellochListT`, $W(k)$ counts the monoid multiplications that
+`blellochListT` performs on lists of length $2^k$. -/
 theorem blellochWork_eq : ∀ k, blellochWork k + 2 = 2 ^ (k + 1)
   | 0 => rfl
   | k + 1 => by
@@ -116,8 +123,8 @@ theorem blellochWork_eq : ∀ k, blellochWork k + 2 = 2 ^ (k + 1)
       simp only [blellochWork, Nat.pow_succ] at *
       omega
 
-/-- **Blelloch's scan has logarithmic span.** For every natural number $k$, the span of
-Blelloch's scan on $n = 2^k$ positions is $2k = 2 \log_2 n$. -/
+/-- **Blelloch's scan takes logarithmically many scheduled rounds.** For every natural number $k$,
+the scheduled round count of Blelloch's scan on $n = 2^k$ positions is $2k = 2 \log_2 n$. -/
 theorem blellochSpan_eq : ∀ k, blellochSpan k = 2 * k
   | 0 => rfl
   | k + 1 => by rw [blellochSpan, blellochSpan_eq k]; omega
@@ -248,5 +255,112 @@ the exclusive prefix product $x_0 x_1 \cdots x_{j-1}$ (equal to $1$ when $j = 0$
 theorem getD_blellochList_eq_seg (k : ℕ) (xs : List M) (h : xs.length = 2 ^ k) (j : ℕ)
     (hj : j < 2 ^ k) : (blellochList k xs).getD j 1 = seg (fun i => xs.getD i 1) 0 j := by
   rw [getD_blellochList k xs h j hj, blelloch_eq_seg k _ j hj]
+
+/-! ## Instrumented work and scheduled rounds -/
+
+/-- Combine adjacent pairs, charging one work tick per multiplication and no rounds.
+An unmatched final element is discarded, as in `pairList`. -/
+def pairListT : List M → TimeM (ℕ × ℕ) (List M)
+  | a :: b :: xs => do
+      TimeM.tick (1, 0)
+      let ys ← pairListT xs
+      pure ((a * b) :: ys)
+  | _ => pure []
+
+/-- Erasing adjacent-pair instrumentation gives the original pair products. -/
+@[simp] theorem ret_pairListT : ∀ xs : List M, (pairListT xs).ret = pairList xs
+  | [] => rfl
+  | [_] => rfl
+  | a :: b :: xs => by simp [pairListT, ret_pairListT xs, pairList]
+
+/-- The pair phase performs one multiplication per complete input pair. -/
+@[simp] theorem time_pairListT : ∀ xs : List M,
+    (pairListT xs).time = (xs.length / 2, 0)
+  | [] => by
+      change (0, 0) = ((0 : ℕ) / 2, 0)
+      decide
+  | [_] => by
+      change (0, 0) = ((1 : ℕ) / 2, 0)
+      decide
+  | a :: b :: xs => by
+      simp [pairListT, time_pairListT xs]
+      omega
+
+/-- Interleave the scanned pairs and odd-position products, charging each multiplication.
+The cost counts work only; the caller records the scheduled round. -/
+def expandT : List M → List M → TimeM (ℕ × ℕ) (List M)
+  | z :: zs, a :: _ :: xs => do
+      TimeM.tick (1, 0)
+      let ys ← expandT zs xs
+      pure (z :: (z * a) :: ys)
+  | _, _ => pure []
+
+/-- Erasing expansion instrumentation gives the original interleaving on all inputs. -/
+@[simp] theorem ret_expandT : ∀ zs xs : List M, (expandT zs xs).ret = expand zs xs
+  | [], _ => rfl
+  | _ :: _, [] => rfl
+  | _ :: _, [_] => rfl
+  | z :: zs, a :: b :: xs => by simp [expandT, ret_expandT zs xs, expand]
+
+/-- Expansion charges one multiplication per scanned pair with a complete input pair. -/
+@[simp] theorem time_expandT : ∀ zs xs : List M,
+    (expandT zs xs).time = (min zs.length (xs.length / 2), 0)
+  | [], _ => rfl
+  | _ :: zs, [] => by
+      change (0, 0) = (min (zs.length + 1) ((0 : ℕ) / 2), 0)
+      rw [show (0 : ℕ) / 2 = 0 from by decide, Nat.min_zero]
+  | _ :: zs, [_] => by
+      change (0, 0) = (min (zs.length + 1) ((1 : ℕ) / 2), 0)
+      rw [show (1 : ℕ) / 2 = 0 from by decide, Nat.min_zero]
+  | z :: zs, a :: b :: xs => by
+      simp [expandT, time_expandT zs xs]
+      omega
+
+/-- The tabulated Blelloch scan instrumented with multiplication work and scheduled rounds.
+Each recursive level schedules one pair round and one expansion round, even if idle. -/
+def blellochListT : ℕ → List M → TimeM (ℕ × ℕ) (List M)
+  | 0, _ => pure [1]
+  | k + 1, xs => do
+      TimeM.tick (0, 1)
+      let ps ← pairListT xs
+      let zs ← blellochListT k ps
+      TimeM.tick (0, 1)
+      expandT zs xs
+
+/-- Erasing the instrumentation preserves Blelloch's list result on every input. -/
+@[simp] theorem ret_blellochListT : ∀ (k : ℕ) (xs : List M),
+    (blellochListT k xs).ret = blellochList k xs
+  | 0, _ => rfl
+  | k + 1, xs => by
+      simp [blellochListT, ret_blellochListT k (pairList xs), blellochList]
+
+/-- On a list of length `2 ^ k`, timed Blelloch work equals `blellochWork` and its
+scheduled round count equals `blellochSpan`. -/
+@[simp] theorem time_blellochListT : ∀ (k : ℕ) (xs : List M), xs.length = 2 ^ k →
+    (blellochListT k xs).time = (blellochWork k, blellochSpan k)
+  | 0, _, _ => rfl
+  | k + 1, xs, h => by
+      have hk : 2 ^ (k + 1) = 2 * 2 ^ k := by rw [Nat.pow_succ, Nat.mul_comm]
+      have hs : xs.length / 2 = 2 ^ k := by omega
+      have hp : (pairList xs).length = 2 ^ k := by rw [length_pairList, hs]
+      have hz := length_blellochList k (pairList xs) hp
+      simp [blellochListT, time_blellochListT k (pairList xs) hp, hs, hz,
+        blellochWork, blellochSpan]
+      omega
+
+/-- On `2 ^ k` inputs the instrumented scan performs exactly `2 ^ (k + 1) - 2`
+multiplications. -/
+theorem blellochListT_work_eq (k : ℕ) (xs : List M) (h : xs.length = 2 ^ k) :
+    (blellochListT k xs).time.1 = 2 ^ (k + 1) - 2 := by
+  rw [time_blellochListT k xs h]
+  have := blellochWork_eq k
+  change blellochWork k = 2 ^ (k + 1) - 2
+  omega
+
+/-- On `2 ^ k` inputs the instrumented scan schedules exactly `2 * k` parallel rounds. -/
+theorem blellochListT_rounds_eq (k : ℕ) (xs : List M) (h : xs.length = 2 ^ k) :
+    (blellochListT k xs).time.2 = 2 * k := by
+  rw [time_blellochListT k xs h]
+  exact blellochSpan_eq k
 
 end Cslib.Algorithms.Lean.Parallel.PrefixSum

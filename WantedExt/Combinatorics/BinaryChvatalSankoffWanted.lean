@@ -333,7 +333,7 @@ theorem trivialUpperBound_holds : trivialUpperBound :=
   binaryChvatalSankoffConstant_mem_Icc.2
 
 /-- Expected binary LCS length is superadditive under concatenation. Adapted
-from the verified gpt-5.6-sol proof in task T292145496. -/
+from a verified proof found by an automated prover. -/
 theorem expectedLCSLength_superadditive :
     ∀ m n : ℕ,
       expectedLCSLength m + expectedLCSLength n ≤ expectedLCSLength (m + n) := by

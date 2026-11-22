@@ -28,6 +28,10 @@ has the average formula `expectedTime_uniformPermutation`, summing the cost
 over all `n !` permutations. This makes expected-cost analyses over random
 input orderings (randomly ordered inputs for deterministic algorithms)
 computable by finite sums.
+
+The Fisher–Yates executor samples this law: `randomlyPermuteDistribution_map_toList` (in
+`RandomlyPermute/Probability.lean`) shows that its output, read as a list, has law
+`uniformPermutation xs.toList`, so these expectations also hold after `randomlyPermute`.
 -/
 
 @[expose] public section

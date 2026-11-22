@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.Computability.Languages.Congruences.Hopcroft
 public import Mathlib.Data.Nat.Log
+import MathlibExt.Data.Nat.Halving
 
 /-!
 # The smaller-half counting lemma for Hopcroft's minimization algorithm
@@ -21,9 +22,9 @@ form used by the algorithm: the `smaller` half of a split is at most half the bl
 of halving steps grows the initial block by a factor of two per step, and every entry that
 `newSplitters` adds for a split block is a half of that block, so a smaller-half entry
 halves. It also defines `hopcroftSplitters`, the list of splitters the loop pops, so that
-the total-work bound can be stated precisely; that bound itself is not proved here
-(it needs the charging argument that turns this counting lemma into a bound on the
-predecessor cost). The cost model is predecessor
+the total-work bound can be stated precisely; that bound itself is registered as a
+`theorem_wanted` in `WantedExt` (it needs the charging argument that turns this counting
+lemma into a bound on the predecessor cost). The cost model is predecessor
 cost: processing a popped splitter `(C, a)` costs one predecessor visit for each state
 whose `a`-successor lies in `C`, i.e. `(preimage M C a).card`, plus `O(1)` per-splitter
 overhead for popping and bookkeeping. Splitting the blocks only touches the states in
@@ -79,18 +80,11 @@ theorem two_mul_smaller_card_le_of_split {σ : Type*} [DecidableEq σ] {D A B : 
 
 /-- After `k` halving steps, the initial block is at least `2 ^ k` times the final block.
 The halving hypothesis is stated for the cardinalities only; no subset hypothesis is
-needed. -/
+needed. This is `MathlibExt.Nat.two_pow_mul_le_of_halving` for block cardinalities. -/
 theorem mul_pow_le_card_of_halving_chain {σ : Type*} {f : ℕ → Finset σ} {k : ℕ}
     (hstep : ∀ i, i < k → 2 * (f (i + 1)).card ≤ (f i).card) :
-    2 ^ k * (f k).card ≤ (f 0).card := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    have ih' := ih (fun i hi => hstep i (Nat.lt_trans hi (Nat.lt_succ_self k)))
-    calc 2 ^ (k + 1) * (f (k + 1)).card = 2 ^ k * (2 * (f (k + 1)).card) := by
-          rw [pow_succ, Nat.mul_assoc]
-      _ ≤ 2 ^ k * (f k).card := Nat.mul_le_mul_left _ (hstep k (Nat.lt_succ_self k))
-      _ ≤ (f 0).card := ih'
+    2 ^ k * (f k).card ≤ (f 0).card :=
+  MathlibExt.Nat.two_pow_mul_le_of_halving (a := fun i => (f i).card) hstep
 
 /-- **The smaller-half counting lemma.** In a chain of blocks where each step at least
 halves the size, a block containing a given state can occur at most `Nat.log 2 n` times
@@ -104,15 +98,10 @@ theorem smaller_half_chain_le_log {σ : Type*} [Fintype σ] {f : ℕ → Finset 
     {k : ℕ} (hmem : ∀ i, i ≤ k → q ∈ f i)
     (hstep : ∀ i, i < k → 2 * (f (i + 1)).card ≤ (f i).card) :
     k ≤ Nat.log 2 (Fintype.card σ) := by
-  have hne : (f k).Nonempty := ⟨q, hmem k le_rfl⟩
-  have hpos : 1 ≤ (f k).card := Finset.Nonempty.card_pos hne
-  have h1 : 2 ^ k ≤ (f 0).card :=
-    calc 2 ^ k = 2 ^ k * 1 := (Nat.mul_one _).symm
-      _ ≤ 2 ^ k * (f k).card := Nat.mul_le_mul_left _ hpos
-      _ ≤ (f 0).card := mul_pow_le_card_of_halving_chain hstep
-  have h2 : (f 0).card ≤ Fintype.card σ := Finset.card_le_univ _
-  have h3 : k ≤ Nat.log 2 (f 0).card := Nat.le_log_of_pow_le (by norm_num) h1
-  exact h3.trans (Nat.log_mono_right h2)
+  have hpos : 0 < (f k).card := Finset.Nonempty.card_pos ⟨q, hmem k le_rfl⟩
+  have h3 : k ≤ Nat.log 2 (f 0).card :=
+    MathlibExt.Nat.le_log_of_halving_of_pos (a := fun i => (f i).card) hstep hpos
+  exact h3.trans (Nat.log_mono_right (Finset.card_le_univ _))
 
 variable {α σ : Type*} [Fintype α] [FinEnum α] [Fintype σ] [DecidableEq σ]
 
@@ -173,8 +162,8 @@ def hopcroftSplitters : ℕ → List (Finset σ) → List (Finset σ × α) → 
 
 /-- The predecessor cost of a splitter trace: for each popped splitter `(C, a)`, one
 predecessor visit per state in the preimage `preimage M C a`, plus `1` per-splitter
-overhead. This is the quantity the total-work bound, not proved here, constrains
-to `O(|Σ| n log n)`. Charging splitter size `C.card` instead
+overhead. This is the quantity the total-work bound (`hopcroft_total_work` in
+`WantedExt`) constrains to `O(|Σ| n log n)`. Charging splitter size `C.card` instead
 would undercount: if all `n` states transition on `a` to one state `q`, processing the
 singleton splitter `({q}, a)` costs `n` predecessor visits while `C.card` charges
 only `1`. -/
