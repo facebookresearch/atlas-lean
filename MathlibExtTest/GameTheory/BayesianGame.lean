@@ -419,7 +419,7 @@ theorem base_h_eq :
 /-- An agent deviation pays the deviating plan's ex-interim utility. -/
 theorem agent_payoff_eq (i θi : Fin 2) (t : Fin 2) :
     exGame.condInterim
-      (ofAgentProfile (Function.update (toAgentProfile sStar) ⟨i, θi⟩ t)) i θi =
+      (agentProfileEquiv.symm (Function.update (agentProfileEquiv sStar) ⟨i, θi⟩ t)) i θi =
     exGame.condInterim (Function.update sStar i (fun _ => t)) i θi := by
   apply condInterim_congr
   intro θ hθ
@@ -428,18 +428,18 @@ theorem agent_payoff_eq (i θi : Fin 2) (t : Fin 2) :
 /-- The undeviated agent payoff is the candidate's ex-interim utility. -/
 theorem agent_base_eq (i θi : Fin 2) :
     exGame.condInterim
-      (ofAgentProfile (Function.update (toAgentProfile sStar) ⟨i, θi⟩
-        ((toAgentProfile sStar) ⟨i, θi⟩))) i θi =
+      (agentProfileEquiv.symm (Function.update (agentProfileEquiv sStar) ⟨i, θi⟩
+        ((agentProfileEquiv sStar) ⟨i, θi⟩))) i θi =
     exGame.condInterim sStar i θi := by
-  rw [Function.update_eq_self, ofAgentProfile_toAgentProfile]
+  rw [Function.update_eq_self, agentProfileEquiv.symm_apply_apply]
 
 /-- Every agent best-responds in the agent form at the candidate profile. -/
 theorem t3_all : ∀ (i θi t : Fin 2),
     exGame.condInterim
-      (ofAgentProfile (Function.update (toAgentProfile sStar) ⟨i, θi⟩ t)) i θi ≤
+      (agentProfileEquiv.symm (Function.update (agentProfileEquiv sStar) ⟨i, θi⟩ t)) i θi ≤
     exGame.condInterim
-      (ofAgentProfile (Function.update (toAgentProfile sStar) ⟨i, θi⟩
-        ((toAgentProfile sStar) ⟨i, θi⟩))) i θi := by
+      (agentProfileEquiv.symm (Function.update (agentProfileEquiv sStar) ⟨i, θi⟩
+        ((agentProfileEquiv sStar) ⟨i, θi⟩))) i θi := by
   rw [Fin.forall_fin_two]
   constructor
   · rw [Fin.forall_fin_two]
@@ -477,13 +477,13 @@ theorem t3_all : ∀ (i θi t : Fin 2),
 
 /-- The candidate profile is a Nash equilibrium of the agent form. -/
 theorem t3_example_agentForm_nash :
-    StrategicGame.IsNash exGame.agentForm (toAgentProfile sStar) := by
+    StrategicGame.IsNash exGame.agentForm (agentProfileEquiv sStar) := by
   show ∀ (a : Σ _ : Fin 2, Fin 2) (t : Fin 2),
     exGame.condInterim
-      (ofAgentProfile (Function.update (toAgentProfile sStar) a t)) a.fst a.snd ≤
+      (agentProfileEquiv.symm (Function.update (agentProfileEquiv sStar) a t)) a.fst a.snd ≤
     exGame.condInterim
-      (ofAgentProfile (Function.update (toAgentProfile sStar) a
-        ((toAgentProfile sStar) a))) a.fst a.snd
+      (agentProfileEquiv.symm (Function.update (agentProfileEquiv sStar) a
+        ((agentProfileEquiv sStar) a))) a.fst a.snd
   intro a t
   obtain ⟨i, θi⟩ := a
   exact t3_all i θi t
@@ -497,7 +497,7 @@ theorem t4_example_exInterim_optimal :
 
 /-- The agent-form equivalence, forward direction on the example. -/
 theorem t5_example_agentForm_of_bayesNash :
-    StrategicGame.IsNash exGame.agentForm (toAgentProfile sStar) :=
+    StrategicGame.IsNash exGame.agentForm (agentProfileEquiv sStar) :=
   (isBayesNash_iff_isNash_agentForm exGame sStar).mp t1_example_isBayesNash
 
 /-- The agent-form equivalence, reverse direction on the example. -/

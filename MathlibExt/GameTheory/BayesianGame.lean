@@ -92,21 +92,17 @@ def IsBayesNash {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι] [Fintype ι]
   MathlibExt.GameTheory.MechanismDesign.IsBayesNash G.prior G.prior_nonneg
     G.prior_sum G.utility id s
 
-/-- Read a plan profile as an agent profile: the action of agent
-`(i, θi)` is what the plan of player `i` prescribes at type `θi`. -/
-def toAgentProfile {ι : Type*} {Θ X : ι → Type*}
-    (s : ∀ i, Θ i → X i) : ∀ a : Σ i, Θ i, X a.fst :=
-  fun a => s a.fst a.snd
-
-/-- Read an agent profile as a plan profile. -/
-def ofAgentProfile {ι : Type*} {Θ X : ι → Type*}
-    (σ : ∀ a : Σ i, Θ i, X a.fst) : ∀ i, Θ i → X i :=
-  fun i θi => σ ⟨i, θi⟩
+/-- Plan profiles are agent profiles: currying a plan profile at the
+agent `(i, θi)` gives the action player `i`'s plan prescribes at type
+`θi`. This is `Equiv.piCurry` for the constant family `X i`. -/
+def agentProfileEquiv {ι : Type*} {Θ X : ι → Type*} :
+    (∀ i, Θ i → X i) ≃ ∀ a : Σ i, Θ i, X a.fst :=
+  (Equiv.piCurry (fun i _ => X i)).symm
 
 /-- The agent profile prescribes the plan's action at each type. -/
-theorem toAgentProfile_apply {ι : Type*} {Θ X : ι → Type*}
+theorem agentProfileEquiv_apply {ι : Type*} {Θ X : ι → Type*}
     (s : ∀ i, Θ i → X i) (i : ι) (θi : Θ i) :
-    toAgentProfile s ⟨i, θi⟩ = s i θi :=
+    agentProfileEquiv s ⟨i, θi⟩ = s i θi :=
   rfl
 
 /-- **The agent (expanded) normal form.** Every pair `(i, θi)` is a
@@ -115,7 +111,7 @@ ex-interim utility of type `θi` under the induced plan profile. -/
 noncomputable def agentForm {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι] [Fintype ι]
     [∀ i, Fintype (Θ i)] [∀ i, DecidableEq (Θ i)] [∀ i, Fintype (X i)] (G : BayesianGame ι Θ X) :
     MathlibExt.GameTheory.StrategicGame (Σ i, Θ i) (fun a => X a.fst) where
-  payoff a σ := G.condInterim (ofAgentProfile σ) a.fst a.snd
+  payoff a σ := G.condInterim (agentProfileEquiv.symm σ) a.fst a.snd
   strategy_nonempty a := G.action_nonempty a.fst
 
 /-- The marginal probability of every type is positive. -/
@@ -153,19 +149,19 @@ theorem condInterim_eq {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι] [Fint
 theorem agent_dev_agree {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι]
     [∀ i, DecidableEq (Θ i)] (s : ∀ i, Θ i → X i) (i : ι) (θi : Θ i)
     (t : X i) (θ : ∀ j, Θ j) (hθ : θ i = θi) :
-    (fun j => ofAgentProfile (Function.update (toAgentProfile s) ⟨i, θi⟩ t) j (θ j)) =
+    (fun j => agentProfileEquiv.symm (Function.update (agentProfileEquiv s) ⟨i, θi⟩ t) j (θ j)) =
       (fun j => (Function.update s i (fun _ => t)) j (θ j)) := by
   funext j
   by_cases hj : j = i
   · subst hj
-    show Function.update (toAgentProfile s) ⟨j, θi⟩ t ⟨j, θ j⟩ =
+    show Function.update (agentProfileEquiv s) ⟨j, θi⟩ t ⟨j, θ j⟩ =
       Function.update s j (fun _ => t) j (θ j)
     rw [hθ, Function.update_self, Function.update_self]
   · have hne : (⟨j, θ j⟩ : Σ k, Θ k) ≠ ⟨i, θi⟩ :=
       fun h => hj (congrArg Sigma.fst h)
-    show Function.update (toAgentProfile s) ⟨i, θi⟩ t ⟨j, θ j⟩ =
+    show Function.update (agentProfileEquiv s) ⟨i, θi⟩ t ⟨j, θ j⟩ =
       Function.update s i (fun _ => t) j (θ j)
-    rw [Function.update_of_ne hne, Function.update_of_ne hj, toAgentProfile_apply]
+    rw [Function.update_of_ne hne, Function.update_of_ne hj, agentProfileEquiv_apply]
 
 /-- The ex-interim utility only depends on the plan over filtered profiles. -/
 theorem condInterim_congr {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι] [Fintype ι]
@@ -179,18 +175,6 @@ theorem condInterim_congr {ι : Type*} {Θ X : ι → Type*} [DecidableEq ι] [F
   apply Finset.sum_congr rfl
   intro θ hθ
   rw [h θ hθ]
-
-/-- Converting a plan profile to an agent profile and back is the identity. -/
-theorem ofAgentProfile_toAgentProfile {ι : Type*} {Θ X : ι → Type*}
-    (s : ∀ i, Θ i → X i) :
-    ofAgentProfile (toAgentProfile s) = s :=
-  rfl
-
-/-- Converting an agent profile to a plan profile and back is the identity. -/
-theorem toAgentProfile_ofAgentProfile {ι : Type*} {Θ X : ι → Type*}
-    (σ : ∀ a : Σ i, Θ i, X a.fst) :
-    toAgentProfile (ofAgentProfile σ) = σ :=
-  rfl
 
 /-- Characterisation via the ex-interim (conditional) utility: `s` is a
 Bayesian Nash equilibrium iff no type of any player gains ex-interim by
@@ -246,52 +230,52 @@ theorem isBayesNash_iff_isNash_agentForm {ι : Type*} {Θ X : ι → Type*}
     (s : ∀ i, Θ i → X i) :
     G.IsBayesNash s ↔
       MathlibExt.GameTheory.StrategicGame.IsNash G.agentForm
-        (toAgentProfile s) := by
+        (agentProfileEquiv s) := by
   refine (isBayesNash_iff G s).trans ?_
   show _ ↔ ∀ (a : Σ i, Θ i) (t : X a.fst),
       G.condInterim
-        (ofAgentProfile (Function.update (toAgentProfile s) a t)) a.fst a.snd ≤
+        (agentProfileEquiv.symm (Function.update (agentProfileEquiv s) a t)) a.fst a.snd ≤
       G.condInterim
-        (ofAgentProfile (Function.update (toAgentProfile s) a ((toAgentProfile s) a)))
+        (agentProfileEquiv.symm (Function.update (agentProfileEquiv s) a ((agentProfileEquiv s) a)))
         a.fst a.snd
   constructor
   · intro h a
     obtain ⟨i, θi⟩ := a
     intro t
     show G.condInterim
-        (ofAgentProfile (Function.update (toAgentProfile s) ⟨i, θi⟩ t)) i θi ≤
+        (agentProfileEquiv.symm (Function.update (agentProfileEquiv s) ⟨i, θi⟩ t)) i θi ≤
       G.condInterim
-        (ofAgentProfile (Function.update (toAgentProfile s) ⟨i, θi⟩
-          ((toAgentProfile s) ⟨i, θi⟩))) i θi
+        (agentProfileEquiv.symm (Function.update (agentProfileEquiv s) ⟨i, θi⟩
+          ((agentProfileEquiv s) ⟨i, θi⟩))) i θi
     have hdev : G.condInterim
-        (ofAgentProfile (Function.update (toAgentProfile s) ⟨i, θi⟩ t)) i θi =
+        (agentProfileEquiv.symm (Function.update (agentProfileEquiv s) ⟨i, θi⟩ t)) i θi =
         G.condInterim (Function.update s i (fun _ => t)) i θi := by
       apply condInterim_congr
       intro θ hθ
       exact agent_dev_agree s i θi t θ (Finset.mem_filter.mp hθ).2
-    have hbase : Function.update (toAgentProfile s) ⟨i, θi⟩
-        ((toAgentProfile s) ⟨i, θi⟩) = toAgentProfile s :=
+    have hbase : Function.update (agentProfileEquiv s) ⟨i, θi⟩
+        ((agentProfileEquiv s) ⟨i, θi⟩) = agentProfileEquiv s :=
       Function.update_eq_self _ _
-    rw [hdev, hbase, ofAgentProfile_toAgentProfile]
+    rw [hdev, hbase, agentProfileEquiv.symm_apply_apply]
     exact h i θi t
   · intro h i θi a
     have hnash := h ⟨i, θi⟩ a
     have hdev : G.condInterim
-        (ofAgentProfile (Function.update (toAgentProfile s) ⟨i, θi⟩ a)) i θi =
+        (agentProfileEquiv.symm (Function.update (agentProfileEquiv s) ⟨i, θi⟩ a)) i θi =
         G.condInterim (Function.update s i (fun _ => a)) i θi := by
       apply condInterim_congr
       intro θ hθ
       exact agent_dev_agree s i θi a θ (Finset.mem_filter.mp hθ).2
-    have hbase : Function.update (toAgentProfile s) ⟨i, θi⟩
-        ((toAgentProfile s) ⟨i, θi⟩) = toAgentProfile s :=
+    have hbase : Function.update (agentProfileEquiv s) ⟨i, θi⟩
+        ((agentProfileEquiv s) ⟨i, θi⟩) = agentProfileEquiv s :=
       Function.update_eq_self _ _
     have hnash' : G.condInterim
-        (ofAgentProfile (Function.update (toAgentProfile s) ⟨i, θi⟩ a)) i θi ≤
+        (agentProfileEquiv.symm (Function.update (agentProfileEquiv s) ⟨i, θi⟩ a)) i θi ≤
         G.condInterim
-          (ofAgentProfile (Function.update (toAgentProfile s) ⟨i, θi⟩
-            ((toAgentProfile s) ⟨i, θi⟩))) i θi :=
+          (agentProfileEquiv.symm (Function.update (agentProfileEquiv s) ⟨i, θi⟩
+            ((agentProfileEquiv s) ⟨i, θi⟩))) i θi :=
       hnash
-    rw [hdev, hbase, ofAgentProfile_toAgentProfile] at hnash'
+    rw [hdev, hbase, agentProfileEquiv.symm_apply_apply] at hnash'
     exact hnash'
 
 end BayesianGame
