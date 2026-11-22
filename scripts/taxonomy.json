@@ -11900,6 +11900,7 @@
   "MathlibExt/RingTheory/AdjoinRoot/LocalMaximal": {"to": "RingTheory/local-rings", "title": "Maximal ideals in integral extensions of local rings"},
   "MathlibExt/RingTheory/ClassGroup/CoprimeRepresentative": {"to": "RingTheory/dedekind-domains", "title": "Ideal class group"},
   "MathlibExt/RingTheory/ClassGroup/IdealSimilarity": {"to": "RingTheory/dedekind-domains", "title": "Ideal class group"},
+  "MathlibExt/RingTheory/ClusterAlgebra/LaurentPhenomenon": {"to": "RingTheory/cluster-algebras", "title": "Seed mutation and the Laurent phenomenon"},
   "MathlibExt/RingTheory/ClusterAlgebra/Mutation": {"to": "RingTheory/cluster-algebras", "title": "Seed mutation and the Laurent phenomenon"},
   "MathlibExt/RingTheory/ClusterAlgebra/RankTwo": {"to": "RingTheory/cluster-algebras", "title": "Cluster algebras of rank two"},
   "MathlibExt/RingTheory/ClusterAlgebra/SomosFour": {"to": "RingTheory/cluster-algebras", "title": "Seed mutation and the Laurent phenomenon"},
