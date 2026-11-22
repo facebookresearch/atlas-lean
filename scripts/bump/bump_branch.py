@@ -547,7 +547,7 @@ def breakage(log_path: Path, main_ref: str, since: str | None) -> int:
     for module in modules:
         path = module.replace(".", "/") + ".lean"
         print(module)
-        if git_bytes("cat-file", "-e", f"HEAD:{path}") is None:
+        if not (REPO / path).is_file() and git_bytes("cat-file", "-e", f"{end}:{path}") is None:
             print("  not a file of this repository (an upstream module, or a missing import)")
             continue
         lines = git("log", "--first-parent", "--format=%h %s", span, "--", path).stdout.splitlines()

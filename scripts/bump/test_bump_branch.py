@@ -391,6 +391,22 @@ class GitTest(unittest.TestCase):
         self.assertIn("MathlibExt.C\n  not changed on main", proc.stdout)
         self.assertIn("MathlibExt.Étale\n  not a file of this repository", proc.stdout)
 
+    def test_breakage_during_a_merge_sees_files_main_added(self):
+        files, _ = self.base_tree()
+        self.git("checkout", "-q", "-b", "bump")
+        self.write({"MathlibExt/A.lean": files["MathlibExt/A.lean"] + "-- bump\n"}, message="bump")
+        self.git("checkout", "-q", "main")
+        self.write({"MathlibExt/New.lean": "theorem new := rfl\n"}, message="Add a new module (#124)")
+        self.git("checkout", "-q", "bump")
+        self.git("merge", "-q", "--no-commit", "main")
+        log = self.repo.parent / f"{self.repo.name}-merge.log"
+        log.write_text("✖ [2/3] Building MathlibExt.New (2.0s)\n")
+        proc = self.tool("breakage", str(log), "--main", "main")
+        log.unlink()
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertIn("MathlibExt.New\n  ", proc.stdout)
+        self.assertIn("Add a new module (#124)", proc.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()
