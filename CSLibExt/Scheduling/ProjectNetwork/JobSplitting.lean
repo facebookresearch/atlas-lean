@@ -52,7 +52,10 @@ network in both directions, transports the owner critical-path lower bound to jo
 and discharges the owner premises for the split network of a finite acyclic table, so
 `exists_isFeasibleSchedule_eq_sum` applies to it directly.
 
-Reference: the standard job-splitting construction for the critical-path method.
+References: J. J. Moder, C. R. Phillips and E. W. Davis, *Project Management with CPM, PERT
+and Precedence Diagramming*, 3rd edition, Van Nostrand Reinhold, 1983 (activity-on-arrow
+networks and dummy activities); J. E. Kelley Jr. and M. R. Walker, Critical-path planning and
+scheduling, *Proceedings of the Eastern Joint Computer Conference*, 1959, pp. 160-173.
 -/
 
 /-- Events of the job-splitting network of a job table with jobs `J`. -/
@@ -257,79 +260,11 @@ theorem sum_map_splitDuration {J : Type*} {G : Digraph J} (d : J → ℕ)
             ((l.filterMap SplitArc.job?).map d).sum
           rw [ih]
           exact zero_add _
-/-- Path durations agree, network to table: the job sequence of every source-to-sink walk of
-the split network is a precedence chain of jobs that begins at a start job and ends at a
-finish job, and it is empty exactly when the walk is the declared source-to-sink arc. -/
-private theorem walk_nil {V E : Type*} {tail head : E → V} {o : V} :
-    IsArcWalk tail head o o [] := by
-  refine ⟨fun _ => rfl, fun e he => by simp at he, List.isChain_nil, fun e he => by simp at he⟩
-private theorem walk_singleton {V E : Type*} {tail head : E → V} {o d : V} {a : E}
-    (ht : tail a = o) (hd : head a = d) : IsArcWalk tail head o d [a] := by
-  refine ⟨fun h => by simp at h, fun e he => ?_, List.isChain_singleton a, fun e he => ?_⟩
-  · simp at he
-    subst he
-    exact ht
-  · simp at he
-    subst he
-    exact hd
-private theorem walk_cons {V E : Type*} {tail head : E → V} {o d : V} {a : E} {l : List E}
-    (ht : tail a = o) (htl : IsArcWalk tail head (head a) d l)
-    (hchain : ∀ b ∈ l.head?, head a = tail b) : IsArcWalk tail head o d (a :: l) := by
-  obtain ⟨hnil, -, hch, hlast⟩ := htl
-  refine ⟨fun h => by simp at h, fun e he => ?_, List.isChain_cons.2 ⟨hchain, hch⟩,
-    fun e he => ?_⟩
-  · simp at he
-    subst he
-    exact ht
-  · cases l with
-    | nil =>
-      simp at he
-      subst he
-      exact hnil rfl
-    | cons b l' =>
-      rw [List.getLast?_cons_cons] at he
-      exact hlast e he
-private theorem walk_snoc {V E : Type*} {tail head : E → V} {o d : V} {l : List E} {a : E}
-    (hp : IsArcWalk tail head o (tail a) l) (hd : head a = d) :
-    IsArcWalk tail head o d (l ++ [a]) := by
-  obtain ⟨hnil, hhead, hch, hlast⟩ := hp
-  refine ⟨fun h => by simp at h, fun e he => ?_, ?_, fun e he => ?_⟩
-  · cases l with
-    | nil =>
-      simp at he
-      subst he
-      exact (hnil rfl).symm
-    | cons b l' =>
-      simp at he
-      subst he
-      exact hhead b (by simp)
-  · exact hch.append (List.isChain_singleton a) (fun x hx y hy => by
-      simp at hy
-      subst hy
-      exact hlast x hx)
-  · rw [List.getLast?_concat] at he
-    simp at he
-    subst he
-    exact hd
 private theorem mem_getLast?_cons_of_mem {α : Type*} {j m : α} {c' : List α}
     (hm : m ∈ c'.getLast?) : m ∈ (j :: c').getLast? := by
   cases c' with
   | nil => simp at hm
   | cons m' rest => simpa using hm
-private theorem walk_tail {V E : Type*} {tail head : E → V} {o d : V} {a : E} {l : List E}
-    (h : IsArcWalk tail head o d (a :: l)) : IsArcWalk tail head (head a) d l := by
-  obtain ⟨-, -, hch, hlast⟩ := h
-  have hpair : ∀ b ∈ l.head?, head a = tail b := (List.isChain_cons.1 hch).1
-  have hch' : l.IsChain (fun a b => head a = tail b) := (List.isChain_cons.1 hch).2
-  refine ⟨?_, fun b hb => (hpair b hb).symm, hch', ?_⟩
-  · intro hl
-    subst hl
-    exact hlast a (by simp)
-  · cases l with
-    | nil => intro e he; simp at he
-    | cons b l' =>
-      rw [List.getLast?_cons_cons] at hlast
-      exact hlast
 private theorem job?_some {J : Type*} {G : Digraph J} {e : SplitArc G} {j : J}
     (h : SplitArc.job? e = some j) : e = .job j := by
   cases e with
@@ -399,26 +334,6 @@ private theorem walk_input_jobs_nil {J : Type*} {G : Digraph J} {j₀ : J} {d : 
     subst ha
     rw [List.filterMap_cons_some (f := SplitArc.job?) rfl] at hempty
     simp at hempty
-private noncomputable def transGenPred {J : Type*} [Fintype J] (r : J → J → Prop) (j : J) :
-    Finset J := by
-  classical
-  exact Finset.univ.filter (fun i => Relation.TransGen r i j)
-private theorem transGenPred_card_lt {J : Type*} [Fintype J] {r : J → J → Prop}
-    (hirr : ∀ v, ¬ Relation.TransGen r v v) {i j : J} (hij : r i j) :
-    (transGenPred r i).card < (transGenPred r j).card := by
-  apply Finset.card_lt_card
-  rw [Finset.ssubset_iff_subset_ne]
-  constructor
-  · intro x hx
-    simp only [transGenPred, Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
-    exact Relation.TransGen.tail hx hij
-  · intro heq
-    have hi : i ∈ transGenPred r j := by
-      simp only [transGenPred, Finset.mem_filter, Finset.mem_univ, true_and]
-      exact Relation.TransGen.single hij
-    rw [← heq] at hi
-    simp only [transGenPred, Finset.mem_filter, Finset.mem_univ, true_and] at hi
-    exact hirr i hi
 private noncomputable def transGenSucc {J : Type*} [Fintype J] (r : J → J → Prop) (j : J) :
     Finset J := by
   classical
@@ -445,10 +360,6 @@ private theorem wf_of_card_measure {J : Type*} {r : J → J → Prop}
   refine Subrelation.wf ?_ (measure (fun j => (m j).card)).wf
   intro a b hab
   exact h a b hab
-private theorem wf_adj_of_acyclic {J : Type*} [Finite J] {G : Digraph J} (hG : G.IsAcyclic) :
-    WellFounded G.Adj :=
-  wf_of_card_measure (@transGenPred J (Fintype.ofFinite J) G.Adj)
-    (@transGenPred_card_lt J (Fintype.ofFinite J) _ hG)
 private theorem wf_conv_of_acyclic {J : Type*} [Finite J] {G : Digraph J} (hG : G.IsAcyclic) :
     WellFounded (fun k j => G.Adj j k) :=
   wf_of_card_measure (@transGenSucc J (Fintype.ofFinite J) G.Adj)
@@ -457,7 +368,7 @@ private theorem walk_source_output {J : Type*} [Finite J] {G : Digraph J} (hG : 
     (j : J) : ∃ l, IsArcWalk (splitTail G) (splitHead G) .source (.output j) l := by
   refine WellFounded.fix
     (C := fun j => ∃ l, IsArcWalk (splitTail G) (splitHead G) .source (.output j) l)
-    (wf_adj_of_acyclic hG) ?_ j
+    (Digraph.isAcyclic_iff_wellFounded.mp hG) ?_ j
   intro j IH
   by_cases hstart : ∀ i, ¬ G.Adj i j
   · refine ⟨[.fromSource j hstart, .job j], ?_⟩
@@ -695,6 +606,9 @@ private theorem chain_sum_le_of_head {J : Type*} [Fintype J] {G : Digraph J} {d 
       have hsum : ((j' :: m :: rest).map d).sum = d j' + ((m :: rest).map d).sum := by simp
       rw [hsum]
       omega
+/-- Path durations agree, network to table: the job sequence of every source-to-sink walk of
+the split network is a precedence chain of jobs that begins at a start job and ends at a
+finish job, and it is empty exactly when the walk is the declared source-to-sink arc. -/
 theorem isChain_filterMap_job?_of_isArcWalk {J : Type*} {G : Digraph J}
     {l : List (SplitArc G)} (hl : IsArcWalk (splitTail G) (splitHead G) .source .sink l) :
     (l.filterMap SplitArc.job?).IsChain G.Adj ∧
@@ -795,125 +709,6 @@ theorem exists_isArcWalk_source_sink {J : Type*} [Finite J] {G : Digraph J} (hG 
     constructor
     · exact walk_source_output hG j
     · exact walk_output_sink hG j
-/-- The split network of an acyclic table has no nonempty closed walk: such a walk would run
-through a cycle of precedences. This is the closed-walk premise of
-`exists_isFeasibleSchedule_eq_sum` for the split network; no finiteness is needed. -/
-private theorem getLast?_cons_of_ne_nil {α : Type*} {a : α} {l : List α} (h : l ≠ []) :
-    (a :: l).getLast? = l.getLast? := by
-  cases hl : l.getLast? with
-  | none =>
-      rw [List.getLast?_eq_none_iff] at hl
-      exact absurd hl h
-  | some x =>
-      rw [List.getLast?_cons, hl]
-      rfl
-private theorem walk_cons_ga2 {V E : Type*} {tail head : E → V} {o d : V} {a : E} {rest : List E}
-    (hl : IsArcWalk tail head o d (a :: rest)) :
-    tail a = o ∧ IsArcWalk tail head (head a) d rest := by
-  obtain ⟨h1, h2, h3, h4⟩ := hl
-  have htail : tail a = o := h2 a (by simp [List.head?_cons])
-  refine ⟨htail, ?_, ?_, ?_, ?_⟩
-  · intro hnil
-    subst hnil
-    exact h4 a (by simp [List.getLast?_singleton])
-  · intro e he
-    cases rest with
-    | nil => simp at he
-    | cons b rest' =>
-        rw [List.head?_cons, Option.mem_some] at he
-        cases he
-        exact (List.isChain_cons_cons.mp h3).1.symm
-  · cases rest with
-    | nil => exact List.isChain_nil
-    | cons b rest' => exact (List.isChain_cons_cons.mp h3).2
-  · intro e he
-    cases rest with
-    | nil => simp at he
-    | cons b rest' =>
-        have hgl := getLast?_cons_of_ne_nil (a := a) (l := b :: rest') (by simp)
-        rw [hgl] at h4
-        exact h4 e he
-private theorem walk_cons_mk {V E : Type*} {tail head : E → V} {o m : V} {a : E}
-    {rest : List E} (htail : tail a = o) (hr : IsArcWalk tail head (head a) m rest) :
-    IsArcWalk tail head o m (a :: rest) := by
-  obtain ⟨r1, r2, r3, r4⟩ := hr
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · intro hnil
-    cases hnil
-  · intro e he
-    rw [List.head?_cons, Option.mem_some] at he
-    rw [← he]
-    exact htail
-  · cases rest with
-    | nil => exact List.isChain_singleton a
-    | cons b rest' =>
-        have hb : tail b = head a := r2 b (by simp [List.head?_cons])
-        have hr3 : (b :: rest').IsChain (fun x y => head x = tail y) := r3
-        exact List.isChain_cons_cons.mpr ⟨hb.symm, hr3⟩
-  · intro e he
-    cases rest with
-    | nil =>
-        rw [List.getLast?_singleton, Option.mem_some] at he
-        cases he
-        exact r1 rfl
-    | cons b rest' =>
-        have hgl := getLast?_cons_of_ne_nil (a := a) (l := b :: rest') (by simp)
-        rw [hgl] at he
-        exact r4 e he
-private theorem walk_append {V E : Type*} {tail head : E → V} {o d : V} {l1 l2 : List E}
-    (hl : IsArcWalk tail head o d (l1 ++ l2)) :
-    ∃ m, IsArcWalk tail head o m l1 ∧ IsArcWalk tail head m d l2 := by
-  induction l1 generalizing o with
-  | nil =>
-      rw [List.nil_append] at hl
-      refine ⟨o, ⟨?_, ?_, ?_, ?_⟩, hl⟩
-      · intro _
-        rfl
-      · intro e he
-        simp at he
-      · exact List.isChain_nil
-      · intro e he
-        simp at he
-  | cons a rest ih =>
-      rw [List.cons_append] at hl
-      obtain ⟨htail, hrest⟩ := walk_cons_ga2 hl
-      obtain ⟨m, h1, h2⟩ := ih hrest
-      exact ⟨m, walk_cons_mk htail h1, h2⟩
-private theorem walk_append_mk {V E : Type*} {tail head : E → V} {o m d : V} {l1 l2 : List E}
-    (h1 : IsArcWalk tail head o m l1) (h2 : IsArcWalk tail head m d l2) :
-    IsArcWalk tail head o d (l1 ++ l2) := by
-  obtain ⟨h1e, h1h, h1c, h1t⟩ := h1
-  obtain ⟨h2e, h2h, h2c, h2t⟩ := h2
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · intro hnil
-    rw [List.append_eq_nil_iff] at hnil
-    obtain ⟨rfl, rfl⟩ := hnil
-    exact (h1e rfl).trans (h2e rfl)
-  · intro e he
-    cases l1 with
-    | nil =>
-        rw [List.nil_append] at he
-        exact (h2h e he).trans (h1e rfl).symm
-    | cons a rest =>
-        rw [List.cons_append, List.head?_cons, Option.mem_some] at he
-        rw [← he]
-        exact h1h a (by simp [List.head?_cons])
-  · exact List.IsChain.append h1c h2c (fun x hx y hy => (h1t x hx).trans (h2h y hy).symm)
-  · intro e he
-    cases l2 with
-    | nil =>
-        rw [List.append_nil] at he
-        exact (h1t e he).trans (h2e rfl)
-    | cons b rest' =>
-        rw [List.getLast?_append] at he
-        cases hX : (b :: rest').getLast? with
-        | none =>
-            rw [List.getLast?_eq_none_iff] at hX
-            cases hX
-        | some x =>
-            rw [hX] at he
-            have he' : e ∈ (b :: rest').getLast? := by rw [hX]; exact he
-            exact h2t e he'
 private theorem walk_singleton_job {J : Type*} {G : Digraph J} {m1 m2 : SplitEvent J} {j : J}
     (hl : IsArcWalk (splitTail G) (splitHead G) m1 m2 [SplitArc.job (G := G) j]) :
     m1 = .input j ∧ m2 = .output j := by
@@ -930,7 +725,7 @@ private theorem walk_from_input_jobfree_nil {J : Type*} {G : Digraph J} {j : J}
   cases l with
   | nil => rfl
   | cons a rest =>
-      obtain ⟨htail, _⟩ := walk_cons_ga2 hl
+      obtain ⟨htail, _⟩ := walk_cons_pair hl
       cases a with
       | job j' =>
           have hnone := hfree _ List.mem_cons_self
@@ -949,7 +744,7 @@ private theorem walk_from_sink_nil_ga2 {J : Type*} {G : Digraph J}
   cases l with
   | nil => rfl
   | cons a rest =>
-      obtain ⟨htail, _⟩ := walk_cons_ga2 hl
+      obtain ⟨htail, _⟩ := walk_cons_pair hl
       cases a with
       | job j' => simp [splitTail] at htail
       | precedence i j' h => simp [splitTail] at htail
@@ -963,7 +758,7 @@ private theorem adj_of_walk_output_input {J : Type*} {G : Digraph J} {i j : J}
   cases l with
   | nil => exact absurd rfl hne
   | cons a rest =>
-      obtain ⟨htail, hrest⟩ := walk_cons_ga2 hl
+      obtain ⟨htail, hrest⟩ := walk_cons_pair hl
       have hfree' : ∀ a ∈ rest, a.job? = none :=
         fun a ha => hfree a (List.mem_cons.mpr (Or.inr ha))
       cases a with
@@ -999,7 +794,7 @@ private theorem closed_jobfree_nil {J : Type*} {G : Digraph J} {v : SplitEvent J
   cases l with
   | nil => rfl
   | cons a rest =>
-      obtain ⟨htail, hrest⟩ := walk_cons_ga2 hl
+      obtain ⟨htail, hrest⟩ := walk_cons_pair hl
       have hfree' : ∀ a ∈ rest, a.job? = none :=
         fun a ha => hfree a (List.mem_cons.mpr (Or.inr ha))
       cases a with
@@ -1153,7 +948,7 @@ private theorem isChain_jobs {J : Type*} {G : Digraph J} {o d : SplitEvent J}
   induction l generalizing o with
   | nil => exact List.isChain_nil
   | cons a rest ih =>
-      obtain ⟨htail, hrest⟩ := walk_cons_ga2 hl
+      obtain ⟨htail, hrest⟩ := walk_cons_pair hl
       have ih' : (rest.filterMap SplitArc.job?).IsChain G.Adj := ih hrest
       cases a with
       | job j =>
@@ -1260,6 +1055,9 @@ private theorem wrap_edge {J : Type*} {G : Digraph J} {pre post : List (SplitArc
     have hcontra : SplitEvent.output jA = SplitEvent.input jB := h1.trans h2
     cases hcontra
   exact adj_of_walk_output_input hseg hfree hne
+/-- The split network of an acyclic table has no nonempty closed walk: such a walk would run
+through a cycle of precedences. This is the closed-walk premise of
+`exists_isFeasibleSchedule_eq_sum` for the split network; no finiteness is needed. -/
 theorem eq_nil_of_isArcWalk_split_self {J : Type*} {G : Digraph J} (hG : G.IsAcyclic) :
     ∀ v (l : List (SplitArc G)), IsArcWalk (splitTail G) (splitHead G) v v l → l = [] := by
   intro v l hl

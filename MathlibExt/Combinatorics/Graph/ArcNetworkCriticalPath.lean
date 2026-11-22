@@ -44,7 +44,9 @@ every arc occurs no earlier than its tail event plus the arc's duration,
 
 Every time and duration is a natural number of ticks; tick `0` is the start.
 
-Reference: the standard critical-path method on activity-on-arc networks.
+Reference: J. E. Kelley Jr. and M. R. Walker, Critical-path planning and scheduling,
+*Proceedings of the Eastern Joint Computer Conference*, 1959, pp. 160-173 (earliest event
+times as longest path lengths from the source in an activity-on-arc network).
 -/
 
 /-- Event times `τ : V → ℕ` are a feasible schedule of the activity-on-arc network
@@ -52,11 +54,6 @@ Reference: the standard critical-path method on activity-on-arc networks.
 every arc occurs no earlier than its tail event plus the arc's duration. -/
 def IsFeasibleSchedule {V E : Type*} (tail head : E → V) (dur : E → ℕ) (τ : V → ℕ) : Prop :=
   ∀ e, τ (tail e) + dur e ≤ τ (head e)
-/-- Critical-path lower bound: under a feasible schedule of an activity-on-arc network, the
-duration of every walk `l` from `o` to `d` fits between the two events,
-`τ o + (l.map dur).sum ≤ τ d`. In particular the sink event follows the source event by at least
-the duration of every source-to-sink walk, a critical (longest) one included. No acyclicity is
-assumed. -/
 private theorem mem_of_mem_or {E : Type*} {o1 o2 : Option E} {a : E} (h : a ∈ o1.or o2) :
     a ∈ o1 ∨ (o1 = none ∧ a ∈ o2) := by
   cases o1 with
@@ -71,20 +68,11 @@ private theorem getLast?_cons_or {E : Type*} (a : E) (l : List E) :
     (a :: l).getLast? = l.getLast?.or (some a) := by
   have h : (a :: l) = [a] ++ l := by simp
   rw [h, List.getLast?_append, List.getLast?_singleton]
-private theorem isArcWalk_of_cons {V E : Type*} {tail head : E → V} {o d : V} {a : E}
-    {rest : List E} (hl : IsArcWalk tail head o d (a :: rest)) :
-    IsArcWalk tail head (head a) d rest := by
-  obtain ⟨-, -, hchain, hlast⟩ := hl
-  rw [List.isChain_cons] at hchain
-  obtain ⟨hpw, hch⟩ := hchain
-  refine ⟨?_, ?_, hch, ?_⟩
-  · intro h
-    subst h
-    exact hlast a (by rw [List.getLast?_singleton, Option.mem_def])
-  · intro f hf
-    exact (hpw f hf).symm
-  · intro g hg
-    exact hlast g (by rw [getLast?_cons_or]; exact mem_or_left hg)
+/-- Critical-path lower bound: under a feasible schedule of an activity-on-arc network, the
+duration of every walk `l` from `o` to `d` fits between the two events,
+`τ o + (l.map dur).sum ≤ τ d`. In particular the sink event follows the source event by at least
+the duration of every source-to-sink walk, a critical (longest) one included. No acyclicity is
+assumed. -/
 theorem IsFeasibleSchedule.add_sum_map_le {V E : Type*} {tail head : E → V} {dur : E → ℕ}
     {τ : V → ℕ} (hτ : IsFeasibleSchedule tail head dur τ) {o d : V} {l : List E}
     (hl : IsArcWalk tail head o d l) : τ o + (l.map dur).sum ≤ τ d := by
@@ -98,7 +86,7 @@ theorem IsFeasibleSchedule.add_sum_map_le {V E : Type*} {tail head : E → V} {d
     simp
   | cons a rest ih =>
     intro o hl
-    have hl_rest : IsArcWalk tail head (head a) d rest := isArcWalk_of_cons hl
+    have hl_rest : IsArcWalk tail head (head a) d rest := walk_tail hl
     obtain ⟨-, hhead, -, -⟩ := hl
     have htail : tail a = o := hhead a (by rw [List.head?_cons, Option.mem_def])
     have ih' := ih hl_rest
@@ -106,12 +94,6 @@ theorem IsFeasibleSchedule.add_sum_map_le {V E : Type*} {tail head : E → V} {d
     rw [htail] at he
     simp only [List.map_cons, List.sum_cons]
     omega
-/-- Earliest event dates exist: in an activity-on-arc network with finitely many arcs, no
-nonempty closed walk, and every event reachable from the source event `s`, some feasible
-schedule puts `s` at tick `0` and every event `v` at the duration of a walk from `s` to `v`. With
-the critical-path lower bound this is the earliest schedule (`τ' s + τ v ≤ τ' v` for every
-feasible `τ'`), and the provided walk to each event, a sink in particular, has maximum duration
-among walks from `s`. A specification, not an algorithm. -/
 private theorem isChain_append_singleton {E : Type*} {r : E → E → Prop} {l : List E} {e : E}
     (hchain : l.IsChain r) (hboundary : ∀ g ∈ l.getLast?, r g e) :
     (l ++ [e]).IsChain r := by
@@ -138,52 +120,6 @@ private theorem isChain_append_singleton {E : Type*} {r : E → E → Prop} {l :
         exact hboundary f (by rw [List.getLast?_singleton, Option.mem_def])
     · intro g hg
       exact hboundary g (by rw [getLast?_cons_or]; exact mem_or_left hg)
-private theorem isArcWalk_append_singleton {V E : Type*} {tail head : E → V} {s : V} {e : E}
-    {l : List E} (hl : IsArcWalk tail head s (tail e) l) :
-    IsArcWalk tail head s (head e) (l ++ [e]) := by
-  revert hl
-  cases l with
-  | nil =>
-    intro hl
-    obtain ⟨hempty, -, -, -⟩ := hl
-    have hs : s = tail e := hempty rfl
-    simp only [List.nil_append]
-    refine ⟨?_, ?_, List.isChain_singleton e, ?_⟩
-    · intro h
-      simp at h
-    · intro f hf
-      rw [List.head?_cons, Option.mem_def] at hf
-      simp at hf
-      subst hf
-      exact hs.symm
-    · intro f hf
-      rw [List.getLast?_singleton, Option.mem_def] at hf
-      simp at hf
-      subst hf
-      rfl
-  | cons f fs =>
-    intro hl
-    have hchain0 := hl.2.2.1
-    have hlast0 := hl.2.2.2
-    refine ⟨?_, ?_, isChain_append_singleton hchain0 hlast0, ?_⟩
-    · intro h
-      simp at h
-    · have hhd : ((f :: fs) ++ [e]).head? = some f := by simp [List.cons_append]
-      rw [hhd]
-      intro g hg
-      rw [Option.mem_def] at hg
-      simp at hg
-      subst hg
-      exact hl.2.1 f (by rw [List.head?_cons, Option.mem_def])
-    · have hg : ((f :: fs) ++ [e]).getLast? = some e := by
-        rw [List.getLast?_append, List.getLast?_singleton]
-        rfl
-      rw [hg]
-      intro g hg'
-      rw [Option.mem_def] at hg'
-      simp at hg'
-      subst hg'
-      rfl
 private theorem isChain_middle_singleton {E : Type*} {r : E → E → Prop} {B : List E} {a : E}
     {C : List E} (h : (B ++ a :: C).IsChain r) : (B ++ [a]).IsChain r := by
   revert h
@@ -227,7 +163,7 @@ private theorem nodup_of_isArcWalk {V E : Type*} {tail head : E → V}
   | cons a rest ih =>
     intro o hl
     rw [List.nodup_cons]
-    refine ⟨?_, ih (isArcWalk_of_cons hl)⟩
+    refine ⟨?_, ih (walk_tail hl)⟩
     intro hmem
     obtain ⟨B, C, rfl⟩ := exists_append_cons_of_mem hmem
     have hclosed : IsArcWalk tail head (head a) (head a) (B ++ [a]) := by
@@ -303,6 +239,12 @@ private theorem exists_max_of_bounded : ∀ (B : ℕ) (S : Set ℕ),
         rw [heq] at hk
         exact hmem hk
       omega
+/-- Earliest event dates exist: in an activity-on-arc network with finitely many arcs, no
+nonempty closed walk, and every event reachable from the source event `s`, some feasible
+schedule puts `s` at tick `0` and every event `v` at the duration of a walk from `s` to `v`. With
+the critical-path lower bound this is the earliest schedule (`τ' s + τ v ≤ τ' v` for every
+feasible `τ'`), and the provided walk to each event, a sink in particular, has maximum duration
+among walks from `s`. A specification, not an algorithm. -/
 theorem exists_isFeasibleSchedule_eq_sum {V E : Type*} [Finite E] {tail head : E → V}
     (dur : E → ℕ) {s : V} (hacyc : ∀ v (l : List E), IsArcWalk tail head v v l → l = [])
     (hreach : ∀ v, ∃ l, IsArcWalk tail head s v l) :
@@ -342,7 +284,7 @@ theorem exists_isFeasibleSchedule_eq_sum {V E : Type*} [Finite E] {tail head : E
   · intro e
     show Classical.choose (hmax (tail e)) + dur e ≤ Classical.choose (hmax (head e))
     obtain ⟨l, hl, hsum⟩ := (Classical.choose_spec (hmax (tail e))).1
-    have hl' : IsArcWalk tail head s (head e) (l ++ [e]) := isArcWalk_append_singleton hl
+    have hl' : IsArcWalk tail head s (head e) (l ++ [e]) := walk_snoc hl rfl
     have hle := (Classical.choose_spec (hmax (head e))).2 ((l.map dur).sum + dur e)
       ⟨l ++ [e], hl', by simp [List.map_append, List.sum_append]⟩
     omega
