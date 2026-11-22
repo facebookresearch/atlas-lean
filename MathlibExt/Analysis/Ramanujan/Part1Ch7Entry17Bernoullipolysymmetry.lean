@@ -8,8 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.MeasureTheory.Function.Floor
-
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.Floor.Defs
 public import Mathlib.Algebra.Polynomial.Basic
@@ -50,6 +48,7 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import Mathlib.MeasureTheory.Function.Floor
 
 @[expose] public section
 

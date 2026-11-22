@@ -103,7 +103,7 @@ $w$ applied to $x$ takes the value $\overline{w_i}\, x_{i+1}$ at $i$. -/
     weightedBackwardFun w x i = conj (w i) * x (i + 1) := rfl
 
 /-- Convert bounded weight norms to the uniform bound expected by the diagonal API. -/
-private theorem exists_uniform_bound {w : ℕ → 𝕜}
+theorem exists_uniform_bound {w : ℕ → 𝕜}
     (hw : BddAbove (Set.range fun n => ‖w n‖)) : ∃ C, ∀ n, ‖w n‖ ≤ C := by
   simpa only [bddAbove_def, Set.forall_mem_range] using hw
 

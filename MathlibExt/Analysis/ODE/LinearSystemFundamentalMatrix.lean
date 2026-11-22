@@ -15,7 +15,6 @@ public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.LinearAlgebra.Matrix.Trace
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
-import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Polynomial
 import Mathlib.Analysis.Calculus.MeanValue
@@ -26,6 +25,7 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Topology.Algebra.Module.FiniteDimension
 import Mathlib.Topology.Order.ProjIcc
 import MathlibExt.Analysis.ODE.MaximalSolution
+import Mathlib.Analysis.Calculus.Deriv.Prod
 
 /-!
 # Fundamental matrices for linear ODE systems
@@ -377,6 +377,7 @@ theorem fundamental_matrix_linear_system
     intro y hy0 hy
     exact (hunique y ⟨hy0, fun t ↦ by simpa [C] using hy t⟩).trans hxz.symm
 
+set_option linter.unusedVariables false in
 /-- **Liouville's formula for the principal matrix solution.** Let $n \in \mathbb{N}$, let
 $A : \mathbb{R} \to \mathbb{R}^{n \times n}$ be continuous, let $t_0 \in \mathbb{R}$, write $I$ for
 the $n \times n$ identity matrix, and let $\Phi : \mathbb{R} \to \mathbb{R}^{n \times n}$ satisfy
@@ -394,6 +395,7 @@ Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
 G. Teschl, Ordinary Differential Equations and Dynamical Systems, Section 3.4;
 stable ref https://en.wikipedia.org/wiki/Abel%27s_identity.
 -/
+@[nolint unusedArguments] -- `hΦ0` keeps the stated hypothesis
 theorem fundamental_matrix_liouville_det
     {n : ℕ} (A : ℝ → Matrix (Fin n) (Fin n) ℝ) (t₀ : ℝ)
     (hA : Continuous A)

@@ -74,9 +74,8 @@ def cesaroMean (x : ℕ → 𝕜) (n : ℕ) : 𝕜 :=
 
 /-- **The Cesàro denominator $n + 1$ is nonzero.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$.
 For every natural number $n$, the element $n + 1$ of $\mathbb{K}$ is nonzero. -/
-lemma cesaro_den_ne_zero (n : ℕ) : ((n : 𝕜) + 1) ≠ 0 := by
-  rw [← Nat.cast_add_one (R := 𝕜) n]
-  exact Nat.cast_ne_zero.mpr (Nat.succ_ne_zero n)
+@[deprecated Nat.cast_add_one_ne_zero +typeChanged (since := "2026-11-09")]
+lemma cesaro_den_ne_zero (n : ℕ) : ((n : 𝕜) + 1) ≠ 0 := Nat.cast_add_one_ne_zero n
 
 /-- **Norm of the Cesàro denominator.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$. For every
 natural number $n$, the element $n + 1$ of $\mathbb{K}$ (the denominator of the $n$-th Cesàro
@@ -314,7 +313,7 @@ theorem notMem_range_cesaroCLM : cesaroNonRange (𝕜 := 𝕜) ∉ Set.range (ce
     intro n
     have hpre := cesaro_preimage_succ x n
     rw [hCx (n + 1), hCx n, cesaroNonRange_apply (n + 1), cesaroNonRange_apply n] at hpre
-    have hne1 : ((n : 𝕜) + 1) ≠ 0 := cesaro_den_ne_zero n
+    have hne1 : ((n : 𝕜) + 1) ≠ 0 := Nat.cast_add_one_ne_zero n
     have hne2 : ((n : 𝕜) + 2) ≠ 0 := by
       have h : ((n + 2 : ℕ) : 𝕜) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
       push_cast at h
@@ -574,7 +573,7 @@ lemma cesaroCLM_test_apply_lt {N : ℕ} {n : ℕ} (hn : n < N) :
           push_cast
           ring
   rw [hsum]
-  exact mul_div_cancel_left₀ _ (cesaro_den_ne_zero n)
+  exact mul_div_cancel_left₀ _ (Nat.cast_add_one_ne_zero n)
 
 /-- **The Cesàro operator on a test vector, past its support.** Let $\mathbb{K}$ be
 $\mathbb{R}$ or $\mathbb{C}$, and let $C$ be the Cesàro operator on

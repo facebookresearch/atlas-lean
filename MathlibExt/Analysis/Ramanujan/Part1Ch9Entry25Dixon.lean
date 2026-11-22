@@ -64,10 +64,6 @@ private lemma dixon_exp_polar (t : ℝ) : Complex.exp (Complex.I * (t : ℂ)) =
     ((Real.cos t : ℝ) : ℂ) + ((Real.sin t : ℝ) : ℂ) * Complex.I := by
   rw [mul_comm Complex.I, Complex.exp_mul_I, ← Complex.ofReal_cos, ← Complex.ofReal_sin]
 
-private lemma dixon_exp_polar' (t : ℝ) : Complex.exp ((t : ℂ) * Complex.I) =
-    ((Real.cos t : ℝ) : ℂ) + ((Real.sin t : ℝ) : ℂ) * Complex.I := by
-  rw [mul_comm]; exact dixon_exp_polar t
-
 private lemma dixon_re_z (x theta : ℝ) :
     (((x : ℂ) * Complex.exp (Complex.I * theta)) : ℂ).re = x * Real.cos theta := by
   rw [dixon_exp_polar]
@@ -269,7 +265,7 @@ private lemma dixon_zpow_eq (x theta : ℝ) (j : ℕ) :
   rw [mul_pow, ← Complex.ofReal_pow]
   congr 1
   rw [← Complex.exp_nat_mul]
-  have e := dixon_exp_polar' (((j + 1 : ℕ) : ℝ) * theta)
+  have e := Complex.exp_ofReal_mul_I (((j + 1 : ℕ) : ℝ) * theta)
   convert e using 2
   push_cast; ring
 

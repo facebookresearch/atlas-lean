@@ -8,8 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Analysis.PSeries
-
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.Floor.Defs
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
@@ -45,6 +43,7 @@ import Mathlib.NumberTheory.ZetaValues
 import Mathlib.Tactic
 import MathlibExt.Analysis.Calculus.EulerMaclaurinFormula
 import MathlibExt.Analysis.SpecialFunctions.ExpSubOneMittagLeffler
+import Mathlib.Analysis.PSeries
 
 @[expose] public section
 
@@ -90,6 +89,7 @@ namespace Entry10Centralbinomialfull
 
 open scoped Nat Real BigOperators Interval Polynomial ContDiff
 open Asymptotics Filter Finset Complex Topology MeasureTheory
+open MetaMathlibExt (bernoulliKernel)
 
 noncomputable section
 
@@ -830,50 +830,6 @@ private lemma ch6Entry14_abs_bernoulliFun_odd_le (n : ℕ) (hn : 1 ≤ n) (y : �
       0 ≤ 2 * ((2 * n + 1).factorial : ℝ) / (2 * Real.pi) ^ (2 * n + 1))]
   exact mul_le_mul_of_nonneg_left hsum (by positivity)
 
-private lemma ch6Entry14_bernoulli_coeff (j : ℕ) :
-    ((bernoulli j : ℚ) : ℝ) =
-      if j = 1 then (-1 / 2 : ℝ) else (bernoulli j : ℝ) := by
-  by_cases hj : j = 1
-  · subst j
-    simp [bernoulli_one]
-  · simp [hj]
-
-private lemma ch6Entry14_bernoulliFun_eq_sum (p : ℕ) (x : ℝ) :
-    bernoulliFun p x =
-      ∑ j ∈ Finset.range (p + 1), (Nat.choose p j : ℝ) *
-        (if j = 1 then (-1 / 2 : ℝ) else (bernoulli j : ℝ)) * x ^ (p - j) := by
-  rw [show bernoulliFun p x =
-    Polynomial.eval x (Polynomial.map (algebraMap ℚ ℝ) (Polynomial.bernoulli p)) by rfl]
-  rw [Polynomial.bernoulli_def, Polynomial.map_sum, Polynomial.eval_finsetSum]
-  have hterm : ∀ i ∈ Finset.range (p + 1),
-      Polynomial.eval x (Polynomial.map (algebraMap ℚ ℝ)
-        (Polynomial.monomial i (bernoulli (p - i) * ↑(p.choose i)))) =
-        ((bernoulli (p - i) : ℚ) : ℝ) * (Nat.choose p i : ℝ) * x ^ i := by
-    intro i _
-    rw [Polynomial.map_monomial, Polynomial.eval_monomial]
-    simp only [map_mul, map_natCast, eq_ratCast]
-  rw [Finset.sum_congr rfl hterm]
-  have hrefl : (∑ i ∈ Finset.range (p + 1),
-      ((bernoulli (p - i) : ℚ) : ℝ) * (Nat.choose p i : ℝ) * x ^ i) =
-      ∑ j ∈ Finset.range (p + 1),
-        ((bernoulli j : ℚ) : ℝ) * (Nat.choose p (p - j) : ℝ) * x ^ (p - j) := by
-    rw [← Finset.sum_range_reflect (fun j ↦ ((bernoulli j : ℚ) : ℝ) *
-      (Nat.choose p (p - j) : ℝ) * x ^ (p - j)) (p + 1)]
-    apply Finset.sum_congr rfl
-    intro i hi
-    simp only [Finset.mem_range] at hi
-    have e1 : p + 1 - 1 - i = p - i := by omega
-    have e2 : p - (p - i) = i := by omega
-    rw [e1, e2]
-  rw [hrefl]
-  apply Finset.sum_congr rfl
-  intro j hj
-  simp only [Finset.mem_range] at hj
-  rw [← ch6Entry14_bernoulli_coeff j, Nat.choose_symm (by omega : j ≤ p)]
-  ring
-
-private noncomputable def ch6Entry14_periodicKernel (p : ℕ) (x : ℝ) : ℝ :=
-  bernoulliFun p (Int.fract x)
 
 private lemma ch6Entry14_periodicKernel_eq_of_spec
     (P : ℕ → ℝ → ℝ) (p : ℕ)
@@ -881,16 +837,16 @@ private lemma ch6Entry14_periodicKernel_eq_of_spec
     (hunit : ∀ x ∈ Set.Ico (0 : ℝ) 1, P p x =
       ∑ j ∈ Finset.range (p + 1), (Nat.choose p j : ℝ) *
         (if j = 1 then (-1 / 2 : ℝ) else (bernoulli j : ℝ)) * x ^ (p - j))
-    (x : ℝ) : P p x = ch6Entry14_periodicKernel p x := by
+    (x : ℝ) : P p x = bernoulliKernel p x := by
   have hp : Function.Periodic (P p) 1 := hper p
   have hfract : P p (Int.fract x) = P p x := by
     rw [Int.fract]
     simpa only [mul_one] using hp.sub_int_mul_eq (Int.floor x)
   rw [← hfract, hunit (Int.fract x) ⟨Int.fract_nonneg x, Int.fract_lt_one x⟩]
-  exact (ch6Entry14_bernoulliFun_eq_sum p (Int.fract x)).symm
+  exact (MetaMathlibExt.bernoulliFun_eq_sum p (Int.fract x)).symm
 
 private lemma ch6Entry14_abs_periodicKernel_odd_le (n : ℕ) (hn : 1 ≤ n) (x : ℝ) :
-    |ch6Entry14_periodicKernel (2 * n + 1) x| ≤
+    |bernoulliKernel (2 * n + 1) x| ≤
       (2 * ((2 * n + 1).factorial : ℝ) / (2 * Real.pi) ^ (2 * n + 1)) *
         (Real.pi ^ 2 / 6) := by
   apply ch6Entry14_abs_bernoulliFun_odd_le n hn
@@ -906,7 +862,7 @@ private lemma ch6Entry14_eulerMaclaurin_real
             (iteratedDerivWithin (2 * k - 1) f (Set.Icc (a : ℝ) (b : ℝ)) b -
               iteratedDerivWithin (2 * k - 1) f (Set.Icc (a : ℝ) (b : ℝ)) a)) +
         ((-1 : ℝ) ^ (p + 1) / (p.factorial : ℝ) *
-          (∫ t in (a : ℝ)..(b : ℝ), ch6Entry14_periodicKernel p t *
+          (∫ t in (a : ℝ)..(b : ℝ), bernoulliKernel p t *
             iteratedDerivWithin p f (Set.Icc (a : ℝ) (b : ℝ)) t)) := by
   obtain ⟨P, hper, hunit, hformula⟩ :=
     MetaMathlibExt.eulerMaclaurinFormula a b p f hab hp hdf
@@ -980,21 +936,21 @@ private noncomputable def ch6Entry14_endpointCorrection (n : ℕ) (x : ℝ) (J :
 
 private noncomputable def ch6Entry14_emRemainder (n : ℕ) (x : ℝ) (J : ℕ) : ℝ :=
   1 / ((2 * n + 1).factorial : ℝ) *
-    ∫ t in (0 : ℝ)..J, ch6Entry14_periodicKernel (2 * n + 1) t *
+    ∫ t in (0 : ℝ)..J, bernoulliKernel (2 * n + 1) t *
       (x ^ (2 * n + 1) * iteratedDeriv (2 * n + 1) ch6Entry14_kernel (x * t))
 
 private lemma ch6Entry14_remainder_integral_eq_within (n : ℕ) (x : ℝ) (J : ℕ)
     (hJ : 1 ≤ J) :
-    (∫ t in (0 : ℝ)..J, ch6Entry14_periodicKernel (2 * n + 1) t *
+    (∫ t in (0 : ℝ)..J, bernoulliKernel (2 * n + 1) t *
       iteratedDerivWithin (2 * n + 1) (fun s : ℝ ↦ ch6Entry14_kernel (x * s))
         (Set.Icc (0 : ℝ) J) t) =
-      ∫ t in (0 : ℝ)..J, ch6Entry14_periodicKernel (2 * n + 1) t *
+      ∫ t in (0 : ℝ)..J, bernoulliKernel (2 * n + 1) t *
         (x ^ (2 * n + 1) * iteratedDeriv (2 * n + 1) ch6Entry14_kernel (x * t)) := by
   apply intervalIntegral.integral_congr
   intro t ht
   have ht' : t ∈ Set.Icc (0 : ℝ) J := by
     simpa [Set.uIoc_of_le (by positivity : (0 : ℝ) ≤ J)] using ht
-  change ch6Entry14_periodicKernel (2 * n + 1) t *
+  change bernoulliKernel (2 * n + 1) t *
       iteratedDerivWithin (2 * n + 1) (fun s : ℝ ↦ ch6Entry14_kernel (x * s))
         (Set.Icc (0 : ℝ) J) t = _
   rw [ch6Entry14_iteratedDerivWithin_scaledKernel x (2 * n + 1) J hJ ht']
@@ -1133,14 +1089,14 @@ private lemma ch6Entry14_abs_emRemainder_le (n J : ℕ) (x : ℝ)
         (WithTop.coe_le_coe.mpr le_top)).norm).comp
           (continuous_const.mul continuous_id)))
   have hint :
-      ‖∫ t in (0 : ℝ)..J, ch6Entry14_periodicKernel (2 * n + 1) t *
+      ‖∫ t in (0 : ℝ)..J, bernoulliKernel (2 * n + 1) t *
         (x ^ (2 * n + 1) * iteratedDeriv (2 * n + 1) ch6Entry14_kernel (x * t))‖ ≤
         ∫ t in (0 : ℝ)..J, g t := by
     apply intervalIntegral.norm_integral_le_of_norm_le (by positivity)
       (by
         filter_upwards with t
         intro _
-        change ‖ch6Entry14_periodicKernel (2 * n + 1) t *
+        change ‖bernoulliKernel (2 * n + 1) t *
           (x ^ (2 * n + 1) * iteratedDeriv (2 * n + 1) ch6Entry14_kernel (x * t))‖ ≤ g t
         rw [norm_mul, norm_mul]
         simp only [Real.norm_eq_abs,
@@ -1159,7 +1115,7 @@ private lemma ch6Entry14_abs_emRemainder_le (n J : ℕ) (x : ℝ)
     abs_of_nonneg (by positivity : 0 ≤ 1 / ((2 * n + 1).factorial : ℝ))]
   calc
     1 / ((2 * n + 1).factorial : ℝ) *
-        |∫ t in (0 : ℝ)..J, ch6Entry14_periodicKernel (2 * n + 1) t *
+        |∫ t in (0 : ℝ)..J, bernoulliKernel (2 * n + 1) t *
           (x ^ (2 * n + 1) * iteratedDeriv (2 * n + 1) ch6Entry14_kernel (x * t))| ≤
       1 / ((2 * n + 1).factorial : ℝ) * (∫ t in (0 : ℝ)..J, g t) :=
         mul_le_mul_of_nonneg_left (by simpa only [Real.norm_eq_abs] using hint) (by positivity)

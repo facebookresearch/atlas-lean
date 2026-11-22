@@ -8,8 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Analysis.PSeries
-
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.NumberTheory.Bernoulli
@@ -18,6 +16,7 @@ import Mathlib.Analysis.Calculus.SmoothSeries
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Cotangent
 import Mathlib.NumberTheory.ZetaValues
 import Mathlib.Tactic
+import Mathlib.Analysis.PSeries
 
 /-!
 # Mittag-Leffler expansion of the Bose-Einstein kernel

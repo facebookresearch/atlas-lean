@@ -126,7 +126,6 @@ theorem jsf_regionGraph_bot :
   simp
 
 theorem jsf_dual_delete_dichotomy (G : SimpleGraph (Site 2)) {p q f g : Site 2}
-    [Finite (regionGraph G).ConnectedComponent]
     [Finite (regionGraph (G ⊔ edge p q)).ConnectedComponent]
     (hpq : p ≠ q)
     (hfg : crossEdge s(p, q) = s(f, g)) (hpres : crossEdge s(p, q) ∈ (regionGraph G).edgeSet) :

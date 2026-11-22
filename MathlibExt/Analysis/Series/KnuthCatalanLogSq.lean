@@ -8,8 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Analysis.Normed.Group.FunctionSeries
-
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Nat.Choose.Central
@@ -26,6 +24,7 @@ import Mathlib.Tactic.GCongr
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import Mathlib.Analysis.Normed.Group.FunctionSeries
 
 @[expose] public section
 

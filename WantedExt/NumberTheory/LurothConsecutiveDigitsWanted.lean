@@ -124,7 +124,8 @@ with `d_n(x) ≥ Ψ(n)` for infinitely many `n` has Lebesgue measure `0` if `∑
 from Jager and de Vroedt (its reference [3]).
 
 Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 1 (`integers-2024-A67-thm-1`). -/
+Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 1
+(`integers-2024-A67-thm-1`). -/
 public theorem_wanted volume_lurothDigit_ge_zero_one (Ψ : ℕ → ℝ) (hΨ : ∀ n, 0 < Ψ n) :
     let E := {x ∈ Set.Ioc (0 : ℝ) 1 | ∃ᶠ n in atTop, Ψ n ≤ lurothDigitSeq x n}
     (Summable (fun n => (Ψ n)⁻¹) → volume E = 0) ∧
@@ -138,7 +139,8 @@ public theorem_wanted volume_lurothDigit_ge_zero_one (Ψ : ℕ → ℝ) (hΨ : �
 `Summable`). Quoted in the paper from Brown-Sarre, Robert and Hussain (its reference [2]).
 
 Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 2, with `T` and `ℓ(t)` from (2) (`integers-2024-A67-thm-2`). -/
+Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 2, with `T` and
+`ℓ(t)` from (2) (`integers-2024-A67-thm-2`). -/
 public theorem_wanted volume_lurothWeightedProduct_ge_zero_one {m : ℕ} (hm : 0 < m)
     (t : Fin m → ℝ) (ht : ∀ i, 0 < t i) (Ψ : ℕ → ℝ) (hΨ : ∀ n, 0 < Ψ n)
     (hlim : ∃ c : ℝ, 1 < c ∧ ∀ᶠ n in atTop, c ≤ Ψ n) :

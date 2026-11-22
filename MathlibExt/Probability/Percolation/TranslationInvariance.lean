@@ -63,7 +63,7 @@ theorem shift_eq_piCongrLeft (g : G) :
   rw [shift_apply, he₁, MulAction.toPerm_symm_apply]
 
 /-- The Bernoulli product measure on `{0, 1}^E` is invariant under the shift action of `G`. -/
-theorem bernoulli_translationInvariant (p : ℝ≥0) (hp : p ≤ 1) [Countable E] :
+theorem bernoulli_translationInvariant (p : ℝ≥0) (hp : p ≤ 1) :
     IsTranslationInvariant (G := G) (bernoulliProductMeasure (E := E) p hp) := by
   intro g
   refine ⟨measurable_shift g, ?_⟩

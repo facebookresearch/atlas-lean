@@ -11,10 +11,10 @@ module
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Topology.MetricSpace.Lipschitz
-import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.ODE.DiscreteGronwall
 import MathlibExt.Analysis.ODE.MaximalSolution
+import Mathlib.Analysis.Calculus.Deriv.Comp
 
 /-!
 # Explicit Euler convergence
@@ -296,6 +296,7 @@ theorem explicit_euler_first_order_convergence
         (mul_nonneg (mul_nonneg hC₁0 hD0) hh.1.le)
     _ = (C₁ * D * Real.exp ((L : ℝ) * D)) * h := by ring
 
+set_option linter.unusedVariables false in
 /-- **Local truncation error of the explicit Euler method.** Let $E$ be a real Banach space, let
 $t_0 < T$, let $f : \mathbb{R} \times E \to E$ be $C^2$, let $x_0 \in E$, and let
 $x : \mathbb{R} \to E$ satisfy $x(t_0) = x_0$ and $x'(t) = f(t, x(t))$ for every
@@ -313,6 +314,7 @@ Sources: `Mathlib/docs/undergrad.yaml`, section `Numerical Analysis` /
 E. Hairer, S. P. Nørsett and G. Wanner, Solving Ordinary Differential
 Equations I, 2nd ed., Section I.7.
 -/
+@[nolint unusedArguments] -- `[CompleteSpace E]`, `hx0` keep the `Wanted` entry's statement
 theorem explicit_euler_local_truncation_error
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     (f : ℝ → E → E) (t₀ T : ℝ) (x₀ : E)

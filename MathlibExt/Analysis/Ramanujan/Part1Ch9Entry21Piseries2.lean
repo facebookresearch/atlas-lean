@@ -205,13 +205,6 @@ private lemma aux_abs_tan_le_one (x : ℝ) (hx : |x| ≤ Real.pi / 4) :
     exact (Real.strictMonoOn_tan.le_iff_le hmem hmem2).mpr hx2
   exact abs_le.mpr ⟨hlo, hhi⟩
 
-private lemma aux_oddHarmonic_nonneg (n : ℕ) : 0 ≤ chapter9OddHarmonic n := by
-  change 0 ≤ ∑ j ∈ Finset.range n, 1 / ((((2 * j + 1 : ℕ))) : ℝ)
-  apply Finset.sum_nonneg
-  intro i _
-  apply one_div_nonneg.mpr
-  exact le_of_lt (Nat.cast_pos.mpr (by omega))
-
 private lemma aux_sqrt_self_le (n : ℕ) : Real.sqrt ((n : ℝ)) ≤ (n : ℝ) := by
   rcases Nat.eq_zero_or_pos n with rfl | hpos
   · simp
@@ -303,7 +296,7 @@ private lemma aux_left_norm_le (x : ℝ) (j : ℕ) (hx : |x| ≤ Real.pi / 4) :
     have hH : chapter9OddHarmonic (j + 1)
         ≤ 2 * Real.sqrt ((((j + 1 : ℕ))) : ℝ) :=
       aux_oddHarmonic_le (j + 1)
-    have hHnn : 0 ≤ chapter9OddHarmonic (j + 1) := aux_oddHarmonic_nonneg (j + 1)
+    have hHnn : 0 ≤ chapter9OddHarmonic (j + 1) := Entry8Arcsin.oddHarmonic_nonneg (j + 1)
     have htpos : (0 : ℝ) < ((((j + 1 : ℕ))) : ℝ) :=
       Nat.cast_pos.mpr (by omega)
     have h2kcast : ((((2 * (j + 1) : ℕ))) : ℝ) = 2 * ((((j + 1 : ℕ))) : ℝ) := by
@@ -713,7 +706,7 @@ private lemma aux_deriv_norm_le (b x : ℝ) (j : ℕ) (hb0 : 0 ≤ b)
   have htan_le := aux_abs_tan_le_tan_b b x hb2 hx
   have hcos_le := aux_cos_inv_sq_le b x hb2 hx
   have hdiv_le := aux_oddHarmonic_div_le j
-  have hHnn := aux_oddHarmonic_nonneg (j + 1)
+  have hHnn := Entry8Arcsin.oddHarmonic_nonneg (j + 1)
   have hNpos : (0 : ℝ) < ((((2 * (j + 1) : ℕ))) : ℝ) :=
     Nat.cast_pos.mpr (by omega)
   have hmem_x : x ∈ Set.Ioo (-(Real.pi / 2)) (Real.pi / 2) := by
@@ -2134,17 +2127,11 @@ private lemma aux_Gr_tendsto (u : ℝ) (hu : |u| ≤ Real.pi / 4) :
     exact aux_Gr_tendsto_zero
   · exact aux_Gr_tendsto_ne u hu hu0
 
-private lemma aux_sin_sq_le_one (u : ℝ) : Real.sin (2 * u) ^ 2 ≤ 1 := by
-  have h := Real.abs_sin_le_one (2 * u)
-  calc Real.sin (2 * u) ^ 2 = |Real.sin (2 * u)| ^ 2 := (sq_abs _).symm
-    _ ≤ 1 ^ 2 := pow_le_pow_left₀ (abs_nonneg _) h 2
-    _ = 1 := one_pow 2
-
 private lemma aux_Qkey (r u : ℝ) (hr : r ∈ Set.Ioo (0 : ℝ) 1) :
     2 * r * (1 + r ^ 2) * Real.sin (2 * u) ^ 2
       ≤ (1 - r ^ 2) ^ 2 + 4 * r ^ 2 * Real.sin (2 * u) ^ 2 := by
   have hrpos : 0 < r := hr.1
-  have hsq := aux_sin_sq_le_one u
+  have hsq := Real.sin_sq_le_one (2 * u)
   have h2r : (0 : ℝ) ≤ 2 * r := by linarith
   have hle : 2 * r * Real.sin (2 * u) ^ 2 ≤ 2 * r * 1 :=
     mul_le_mul_of_nonneg_left hsq h2r
