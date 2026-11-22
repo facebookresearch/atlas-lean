@@ -35,14 +35,17 @@ endpoint and monotonicity facts; no empirical adequacy of the ideal
 model is claimed.
 
 Section B treats a wind turbine described by a supplied power curve of the hub-height wind speed
-`U ≥ 0`, a speed magnitude. The cut-in, rated and cut-out speeds satisfy `0 ≤ U_ci < U_r < U_co`,
-the rated power is `P_r > 0`, and the operating curve on the partial-load regime is a model or
-calibration input with no assumed shape or sign. The curve is evaluated by regime, and each
-characteristic speed belongs to the regime that produces power: zero below cut-in (`U < U_ci`); the
-supplied curve on the partial-load regime `U_ci ≤ U < U_r`; the rated power on the rated regime
-`U_r ≤ U ≤ U_co`; zero above cut-out (`U_co < U`). Every produced value is clipped between zero and
-`min P_r (betzPower ρ A U)`, where `betzPower ρ A U = (16/27) ρ A U³ / 2` is the Betz limit times
-the freestream kinetic power through the swept area `A ≥ 0` at the air density `ρ ≥ 0`.
+`U ≥ 0`, a speed magnitude. The cut-in, rated and cut-out speeds are supplied nominal regime
+thresholds with `0 ≤ U_ci < U_r < U_co`, the rated power is `P_r > 0`, and the operating curve on
+the partial-load regime is a model or calibration input with no assumed shape or sign. The
+thresholds assign each speed to one regime of the piecewise curve: zero below cut-in (`U < U_ci`);
+the supplied curve on the partial-load regime `U_ci ≤ U < U_r`, cut-in included; the rated power on
+the rated regime `U_r ≤ U ≤ U_co`, both ends included; zero above cut-out (`U_co < U`). At every
+`U ≥ 0` each produced value is clipped between zero and `min P_r (betzPower ρ A U)`, where
+`betzPower ρ A U = (16/27) ρ A U³ / 2` is the Betz limit times the freestream kinetic power through
+the swept area `A ≥ 0` at the air density `ρ ≥ 0`. The thresholds carry no attainment meaning: the
+rated speed need not be the lowest speed at which the power reaches `P_r`, a regime may evaluate to
+zero, and `ρ = 0` or `A = 0` makes the Betz cap zero.
 
 The Betz limit is not derived again. It is the bound
 `FluidDynamics.RotorPorts.powerCoefficient_le_betz` of the ideal actuator disk on the
@@ -58,8 +61,8 @@ the elapsed time is `T_t = ∑_{k < t} dt k`. At every prefix `t ≤ N`, start a
 of different turbines are not assumed simultaneous: the sum of their individual maxima can exceed
 the largest simultaneous sum.
 
-Model inputs of section B: the supplied curve and its characteristic speeds, one speed per interval
-of the wind record, and the ideal-disk assumptions of the reused Betz bound. No turbulence,
+Model inputs of section B: the supplied curve and its regime thresholds, one speed per interval of
+the wind record, and the ideal-disk assumptions of the reused Betz bound. No turbulence,
 availability, wake-loss or grid model is used, and no empirical adequacy or turbine safety claim is
 made.
 
@@ -105,10 +108,9 @@ made.
   `EarthScience.planetaryEnergyBalance_equilibrium_exists` in
   `PhyslibExt.EarthScience.PlanetaryEnergyBalance`, specialized here
   to the receiver loss with a linear term.
-- IEC 61400-1, *Wind energy generation systems, Part 1: Design requirements*: the cut-in, rated
-  and cut-out wind speeds at hub height (the lowest speed at which the turbine produces power, the
-  lowest speed at which it reaches rated power, the highest speed at which it is designed to
-  produce power).
+- IEC 61400-1, *Wind energy generation systems, Part 1: Design requirements*: the terms cut-in,
+  rated and cut-out wind speed. Section B uses them only to name supplied regime thresholds; the
+  standard's attainment meanings are not properties of `WindPowerCurve`.
 - IEC 61400-12-1, *Wind energy generation systems, Part 12-1: Power performance measurements of
   electricity producing wind turbines*: the measured power curve, a calibration input.
 - J. F. Manwell, J. G. McGowan and A. L. Rogers, *Wind Energy Explained*, Wiley, ch. 2 (power
@@ -302,16 +304,19 @@ lemma receiver_objective_endpoints {Ta G α U K Tstag : ℝ} (hG : G ≠ 0)
 noncomputable def betzPower (ρ A U : ℝ) : ℝ :=
   16 / 27 * FluidDynamics.RotorPorts.powerNormalization ρ A U
 
-/-- A supplied wind-turbine power curve. The cut-in, rated and cut-out speeds satisfy
-`0 ≤ U_ci < U_r < U_co`, the rated power is positive, and the air density and the swept area of
-the Betz cap are nonnegative. The operating curve is the supplied partial-load curve, a model or
-calibration input with no assumed shape or sign, evaluated only on `U_ci ≤ U < U_r`. -/
+/-- A supplied wind-turbine power curve. The cut-in, rated and cut-out speeds are nominal regime
+thresholds with `0 ≤ U_ci < U_r < U_co`, the rated power is positive, and the air density and the
+swept area of the Betz cap are nonnegative. The operating curve is the supplied partial-load curve,
+a model or calibration input with no assumed shape or sign, evaluated only on `U_ci ≤ U < U_r`.
+The thresholds select the regimes of `power` and carry no attainment meaning: the rated speed need
+not be the lowest speed at which the power reaches the rated power, a regime may evaluate to zero,
+and `ρ = 0` or `A = 0` makes the Betz cap zero. -/
 structure WindPowerCurve where
-  /-- The cut-in speed `U_ci`. -/
+  /-- The cut-in threshold `U_ci`, the lower end of the partial-load regime. -/
   uCutIn : ℝ
-  /-- The rated speed `U_r`. -/
+  /-- The rated threshold `U_r`, the lower end of the rated regime. -/
   uRated : ℝ
-  /-- The cut-out speed `U_co`. -/
+  /-- The cut-out threshold `U_co`, the upper end of the rated regime. -/
   uCutOut : ℝ
   /-- The rated power `P_r`. -/
   pRated : ℝ
@@ -321,11 +326,11 @@ structure WindPowerCurve where
   A : ℝ
   /-- The supplied partial-load operating curve. -/
   operating : ℝ → ℝ
-  /-- The cut-in speed is nonnegative. -/
+  /-- The cut-in threshold is nonnegative. -/
   cutIn_nonneg : 0 ≤ uCutIn
-  /-- The cut-in speed is below the rated speed. -/
+  /-- The cut-in threshold is below the rated threshold. -/
   cutIn_lt_rated : uCutIn < uRated
-  /-- The rated speed is below the cut-out speed. -/
+  /-- The rated threshold is below the cut-out threshold. -/
   rated_lt_cutOut : uRated < uCutOut
   /-- The rated power is positive. -/
   pRated_pos : 0 < pRated
@@ -336,15 +341,16 @@ structure WindPowerCurve where
 
 namespace WindPowerCurve
 
-/-- The clip of a value `x` at the wind speed `U`, `max 0 (min x (min P_r (betzPower ρ A U)))`:
-between zero and the smaller of the rated power and the Betz power. -/
+/-- The clip of a value `x` at the wind speed `U`, `max 0 (min x (min P_r (betzPower ρ A U)))`.
+For `U ≥ 0` the cap `min P_r (betzPower ρ A U)` is nonnegative (`ρ, A ≥ 0`) and the clip lies
+between zero and the cap; for `U < 0` the clip is zero. -/
 noncomputable def clip (c : WindPowerCurve) (U x : ℝ) : ℝ :=
   max 0 (min x (min c.pRated (betzPower c.ρ c.A U)))
 
 /-- The evaluated power at the wind speed `U`: zero below cut-in, the clipped supplied curve on the
 partial-load regime `U_ci ≤ U < U_r`, the clipped rated power on the rated regime
-`U_r ≤ U ≤ U_co`, and zero above cut-out. Each characteristic speed belongs to the regime that
-produces power: `U_ci` to partial load, `U_r` and `U_co` to the rated regime. -/
+`U_r ≤ U ≤ U_co`, and zero above cut-out. The thresholds assign `U_ci` to the partial-load regime
+and `U_r`, `U_co` to the rated regime; a regime may still evaluate to zero. -/
 noncomputable def power (c : WindPowerCurve) (U : ℝ) : ℝ :=
   if U < c.uCutIn then 0
   else if U < c.uRated then c.clip U (c.operating U)
