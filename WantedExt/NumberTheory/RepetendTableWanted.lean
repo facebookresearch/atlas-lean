@@ -25,6 +25,9 @@ public import Mathlib.Topology.Algebra.InfiniteSum.Real
 Statements from R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*,
 INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 `m * B ^ (j + 1) / n % B`; `E(L, n)` is the number of units of order `L` in `ZMod n`.
+
+`MetaMathlibExt.long_division_remainder_expansion` is proved in
+`MathlibExt.NumberTheory.RepetendTable`.
 -/
 
 namespace MetaMathlibExt
@@ -109,22 +112,6 @@ public theorem_wanted repetend_block_sum_eq (B N x d k : ℕ) (hB : 2 ≤ B) (hx
     let S := ∑ j ∈ Finset.range d, ∑ i ∈ Finset.range k, a (j * k + i) * B ^ (k - 1 - i)
     let R := ∑ j ∈ Finset.range d, x * B ^ (j * k) % N
     S * N = R * (B ^ k - 1) ∧ (Nat.Coprime (B ^ k - 1) N → B ^ k - 1 ∣ S)
-
-
-/-- Long division of `m/n` in base `b`: with remainders `c_j = m b^j mod n` and digits
-`r_j = ⌊b c_j / n⌋`, every truncation satisfies
-`m/n = ∑_{i<k} r_i b^{-i-1} + c_k/(n b^k)`, and `r_j = (b c_j - c_{j+1})/n`. Stated for a
-proper fraction `m < n` (needed for `k = 0`) and every base `b ≥ 1`; the identity
-`r_j = (b c_j - c_{j+1})/n` is stated with the division cleared.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 5 (`integers-2025-A26-lem-5`). -/
-public theorem_wanted long_division_remainder_expansion (m n b : ℕ) (hmn : m < n) (hb : 0 < b) :
-    let c : ℕ → ℕ := fun j => m * b ^ j % n
-    let r : ℕ → ℕ := fun j => b * c j / n
-    (∀ k : ℕ, (m : ℚ) / n =
-      ∑ i ∈ Finset.range k, (r i : ℚ) / (b : ℚ) ^ (i + 1) + (c k : ℚ) / ((n : ℚ) * (b : ℚ) ^ k)) ∧
-    ∀ j : ℕ, r j * n = b * c j - c (j + 1)
 
 /-- The last repetend digit of `1/n` is nonzero: for `n ≥ 2` and a base `b ≥ 2` prime to `n`,
 with repetend length `L = ord_n(b)`, the digit `⌊b^((L-1)+1)/n⌋ mod b` at position `L - 1` is
