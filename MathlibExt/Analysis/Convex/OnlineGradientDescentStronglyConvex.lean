@@ -233,20 +233,20 @@ theorem ogd_regret_strongly_convex {E : Type*} [NormedAddCommGroup E]
 
 /-- Varying-step online gradient descent iterates.
 
-This extends the fixed-step `ogdIter` API with a step-size sequence `η`,
-using the same projected-gradient recursion. At unit step with scaled round
-gradients it agrees with `ogdIter` (see `ogdIterVarying_eq_ogdIter`).
+The existing `ogdIter` iterate at unit step with scaled round gradients
+`fun t x => η t • g t x`, giving the projected-gradient recursion with
+a step-size sequence `η` (see `ogdIterVarying_eq_ogdIter`).
 -/
 noncomputable def ogdIterVarying {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
-    (proj : E → E) (g : ℕ → E → E) (η : ℕ → ℝ) (x0 : E) : ℕ → E
-  | 0 => x0
-  | t + 1 => proj (ogdIterVarying proj g η x0 t - η t • g t (ogdIterVarying proj g η x0 t))
+    (proj : E → E) (g : ℕ → E → E) (η : ℕ → ℝ) (x0 : E) : ℕ → E :=
+  ogdIter proj (fun t x => η t • g t x) 1 x0
 
 /-- Successor equation for the varying-step iterates. -/
 theorem ogdIterVarying_succ {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     (proj : E → E) (g : ℕ → E → E) (η : ℕ → ℝ) (x0 : E) (t : ℕ) :
     ogdIterVarying proj g η x0 (t + 1)
-      = proj (ogdIterVarying proj g η x0 t - η t • g t (ogdIterVarying proj g η x0 t)) := rfl
+      = proj (ogdIterVarying proj g η x0 t - η t • g t (ogdIterVarying proj g η x0 t)) := by
+  simp only [ogdIterVarying, ogdIter, one_smul]
 
 /-- The varying-step iterates agree with the fixed-step `ogdIter` at unit
 step with scaled round gradients, as functions. -/
@@ -254,13 +254,7 @@ theorem ogdIterVarying_eq_ogdIter {E : Type*} [NormedAddCommGroup E] [InnerProdu
     (proj : E → E) (g : ℕ → E → E) (η : ℕ → ℝ) (x0 : E) :
     ogdIterVarying proj g η x0
       = ogdIter proj
-        (fun t x => η t • g t x) 1 x0 := by
-  funext t
-  induction t with
-  | zero => rfl
-  | succ t ih =>
-    rw [ogdIterVarying_succ, ih]
-    simp [ogdIter, one_smul]
+        (fun t x => η t • g t x) 1 x0 := rfl
 
 /-- Regret of the varying-step iterates for `α`-strongly convex losses.
 

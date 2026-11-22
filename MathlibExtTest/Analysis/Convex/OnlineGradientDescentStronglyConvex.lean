@@ -224,14 +224,14 @@ theorem t4_iter_zero : ogdIterVarying id t2g t4eta 0 0 = 0 := rfl
 /-- T4: first varying-step iterate on the quadratic instance. -/
 theorem t4_iter_one : ogdIterVarying id t2g t4eta 0 1 = 1 / 2 := by
   show ogdIterVarying id t2g t4eta 0 (0 + 1) = 1 / 2
-  simp only [ogdIterVarying, id]
-  norm_num [t4eta, t2g, smul_eq_mul]
+  rw [ogdIterVarying_succ, t4_iter_zero]
+  norm_num [t4eta, t2g, smul_eq_mul, id]
 
 /-- T4: second varying-step iterate on the quadratic instance. -/
 theorem t4_iter_two : ogdIterVarying id t2g t4eta 0 2 = 1 := by
   show ogdIterVarying id t2g t4eta 0 (1 + 1) = 1
-  simp only [ogdIterVarying, id]
-  norm_num [t4eta, t2g, smul_eq_mul]
+  rw [ogdIterVarying_succ, t4_iter_one]
+  norm_num [t4eta, t2g, smul_eq_mul, id]
 
 /-- T5: check of `ogdIterVarying_eq_ogdIter` at iterate `0`: both sides are `0`. -/
 theorem t5_iter_zero :
@@ -319,7 +319,7 @@ theorem t6_regret_one :
       (t2f t (ogdIterVarying id t2g (fun t => 1 / (2 * ((t : ℝ) + 1))) 0 t) - t2f t 1))
       = 1 := by
   rw [Finset.sum_range_one]
-  norm_num [ogdIterVarying, t2f]
+  norm_num [ogdIterVarying, ogdIter, t2f]
 
 /-- T6: at `T = 1` the regret `1` equals the bound (tightness). -/
 theorem t6_cmp_one :
