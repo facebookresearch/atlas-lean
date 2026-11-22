@@ -59,8 +59,8 @@ example : KOVpair Bool QH5 PH5 (Real.log 3) 0 :=
 
 /-! ## The always-accept test has type-II error `1` -/
 
-example : betaOf Bool PH5 QH5 (fun _ => (0 : ℝ)) = 1 :=
-  betaOf_phi0 Bool PH5 QH5
+example : betaOf Bool QH5 (fun _ => (0 : ℝ)) = 1 :=
+  betaOf_phi0 Bool QH5
 
 /-! ## Tradeoff at level `0` for the full-support pair -/
 
@@ -70,17 +70,17 @@ claim is false. -/
 theorem tradeoff_PH5_QH5_zero : tradeoff Bool PH5 QH5 0 = 1 := by
   apply le_antisymm
   · have htest0 : IsTest Bool (fun _ => (0 : ℝ)) := test_phi0 Bool
-    have hα : alphaOf Bool PH5 QH5 (fun _ => (0 : ℝ)) ≤ 0 :=
-      le_of_eq (alphaOf_phi0 Bool PH5 QH5)
+    have hα : alphaOf Bool PH5 (fun _ => (0 : ℝ)) ≤ 0 :=
+      le_of_eq (alphaOf_phi0 Bool PH5)
     have h := tradeoff_le_betaOf Bool PH5 QH5 0 (fun _ => (0 : ℝ))
       (le_refl 0) htest0 hα
-    rw [betaOf_phi0 Bool PH5 QH5] at h
+    rw [betaOf_phi0 Bool QH5] at h
     exact h
   · refine le_tradeoff Bool PH5 QH5 0 1 (le_refl 0) ?_
     intro phi hphi hαphi
-    have hnn : 0 ≤ alphaOf Bool PH5 QH5 phi :=
-      alphaOf_nonneg Bool PH5 QH5 phi hphi
-    have hzero : alphaOf Bool PH5 QH5 phi = 0 := le_antisymm hαphi hnn
+    have hnn : 0 ≤ alphaOf Bool PH5 phi :=
+      alphaOf_nonneg Bool PH5 phi hphi
+    have hzero : alphaOf Bool PH5 phi = 0 := le_antisymm hαphi hnn
     have hterm : ∀ w ∈ (Finset.univ : Finset Bool),
         (PH5 w).toReal * phi w = 0 := by
       have hiff : (∑ w, (PH5 w).toReal * phi w) = 0 ↔
@@ -96,7 +96,7 @@ theorem tradeoff_PH5_QH5_zero : tradeoff Bool PH5 QH5 0 = 1 := by
       rcases mul_eq_zero.mp ht with hP | hph
       · exact absurd hP (ne_of_gt hpos)
       · exact hph
-    have hβ : betaOf Bool PH5 QH5 phi = 1 := by
+    have hβ : betaOf Bool QH5 phi = 1 := by
       have hpt : ∀ w : Bool, (QH5 w).toReal * (1 - phi w)
           = (QH5 w).toReal := by
         intro w

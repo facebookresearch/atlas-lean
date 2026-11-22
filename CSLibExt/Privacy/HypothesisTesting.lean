@@ -160,12 +160,12 @@ lemma pmf_sum_add_compl (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
 
 /-- Type-I error (false positive mass) of the rejection set `S`. -/
 noncomputable def typeI (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
-    (P Q : PMF Ω) (S : Finset Ω) : ℝ :=
+    (P : PMF Ω) (S : Finset Ω) : ℝ :=
   ∑ w ∈ S, (P w).toReal
 
 /-- Type-II error (false negative mass) of the rejection set `S`. -/
 noncomputable def typeII (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
-    (P Q : PMF Ω) (S : Finset Ω) : ℝ :=
+    (Q : PMF Ω) (S : Finset Ω) : ℝ :=
   ∑ w ∈ Sᶜ, (Q w).toReal
 
 /-- The KOV pair condition: for every rejection set, type-I and type-II error
@@ -173,8 +173,8 @@ satisfy both tradeoff inequalities. -/
 def KOVpair (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
     (P Q : PMF Ω) (eps delta : ℝ) : Prop :=
   ∀ S : Finset Ω,
-    typeI Ω P Q S + Real.exp eps * typeII Ω P Q S ≥ 1 - delta ∧
-      Real.exp eps * typeI Ω P Q S + typeII Ω P Q S ≥ 1 - delta
+    typeI Ω P S + Real.exp eps * typeII Ω Q S ≥ 1 - delta ∧
+      Real.exp eps * typeI Ω P S + typeII Ω Q S ≥ 1 - delta
 
 /-- Approximate differential privacy of a mechanism on finite outputs, with
 global nonnegative real budgets as in `DifferentialPrivacy.IsApproxDP`. -/
@@ -185,20 +185,20 @@ def IsApproxDPFin (D Ω : Type*) [Fintype Ω] [DecidableEq Ω]
       ≤ Real.exp eps * (∑ w ∈ S, ((M d2) w).toReal) + delta
 
 lemma typeI_nonneg (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
-    (P Q : PMF Ω) (S : Finset Ω) : 0 ≤ typeI Ω P Q S := by
+    (P : PMF Ω) (S : Finset Ω) : 0 ≤ typeI Ω P S := by
   simp only [typeI]
   apply Finset.sum_nonneg
   intro w _
   exact toReal_nonneg_real
 
 lemma typeI_le_one (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
-    (P Q : PMF Ω) (S : Finset Ω) : typeI Ω P Q S ≤ 1 := by
+    (P : PMF Ω) (S : Finset Ω) : typeI Ω P S ≤ 1 := by
   have hsplit := pmf_sum_add_compl Ω P S
   have hnn : 0 ≤ ∑ w ∈ Sᶜ, (P w).toReal := by
     apply Finset.sum_nonneg
     intro w _
     exact toReal_nonneg_real
-  have heq : typeI Ω P Q S = ∑ w ∈ S, (P w).toReal := rfl
+  have heq : typeI Ω P S = ∑ w ∈ S, (P w).toReal := rfl
   rw [heq]
   linarith [hsplit, hnn]
 
@@ -373,17 +373,17 @@ lemma kovpair_symm (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
 /-! ## H2: randomized tests and the tradeoff function -/
 
 /-- A randomized test takes values in `[0, 1]`. -/
-def IsTest (Ω : Type*) [Fintype Ω] (phi : Ω → ℝ) : Prop :=
+def IsTest (Ω : Type*) (phi : Ω → ℝ) : Prop :=
   ∀ w, 0 ≤ phi w ∧ phi w ≤ 1
 
 /-- Type-I error of a randomized test. -/
 noncomputable def alphaOf (Ω : Type*) [Fintype Ω]
-    (P Q : PMF Ω) (phi : Ω → ℝ) : ℝ :=
+    (P : PMF Ω) (phi : Ω → ℝ) : ℝ :=
   ∑ w, (P w).toReal * phi w
 
 /-- Type-II error of a randomized test. -/
 noncomputable def betaOf (Ω : Type*) [Fintype Ω]
-    (P Q : PMF Ω) (phi : Ω → ℝ) : ℝ :=
+    (Q : PMF Ω) (phi : Ω → ℝ) : ℝ :=
   ∑ w, (Q w).toReal * (1 - phi w)
 
 /-- The hypothesis-testing tradeoff function: the least type-II error among
@@ -397,19 +397,19 @@ always-reject test is feasible with type-II error `0`, so the value is `0`
 noncomputable def tradeoff (Ω : Type*) [Fintype Ω]
     (P Q : PMF Ω) (alpha : ℝ) : ℝ :=
   sInf { b : ℝ | ∃ phi : Ω → ℝ,
-    IsTest Ω phi ∧ alphaOf Ω P Q phi ≤ alpha ∧ betaOf Ω P Q phi = b }
+    IsTest Ω phi ∧ alphaOf Ω P phi ≤ alpha ∧ betaOf Ω Q phi = b }
 
 lemma alphaOf_nonneg (Ω : Type*) [Fintype Ω]
-    (P Q : PMF Ω) (phi : Ω → ℝ) (hphi : IsTest Ω phi) :
-    0 ≤ alphaOf Ω P Q phi := by
+    (P : PMF Ω) (phi : Ω → ℝ) (hphi : IsTest Ω phi) :
+    0 ≤ alphaOf Ω P phi := by
   simp only [alphaOf]
   apply Finset.sum_nonneg
   intro w _
   exact mul_nonneg_real toReal_nonneg_real (hphi w).1
 
 lemma betaOf_nonneg (Ω : Type*) [Fintype Ω]
-    (P Q : PMF Ω) (phi : Ω → ℝ) (hphi : IsTest Ω phi) :
-    0 ≤ betaOf Ω P Q phi := by
+    (Q : PMF Ω) (phi : Ω → ℝ) (hphi : IsTest Ω phi) :
+    0 ≤ betaOf Ω Q phi := by
   simp only [betaOf]
   apply Finset.sum_nonneg
   intro w _
@@ -422,80 +422,80 @@ lemma test_phi0 (Ω : Type*) [Fintype Ω] : IsTest Ω (fun _ => (0 : ℝ)) :=
 lemma test_phi1 (Ω : Type*) [Fintype Ω] : IsTest Ω (fun _ => (1 : ℝ)) :=
   fun _ => ⟨zero_le_one, le_refl 1⟩
 
-lemma alphaOf_phi0 (Ω : Type*) [Fintype Ω] (P Q : PMF Ω) :
-    alphaOf Ω P Q (fun _ => (0 : ℝ)) = 0 := by
+lemma alphaOf_phi0 (Ω : Type*) [Fintype Ω] (P : PMF Ω) :
+    alphaOf Ω P (fun _ => (0 : ℝ)) = 0 := by
   simp only [alphaOf, mul_zero, sum_zero_eq]
 
-lemma betaOf_phi0 (Ω : Type*) [Fintype Ω] (P Q : PMF Ω) :
-    betaOf Ω P Q (fun _ => (0 : ℝ)) = 1 := by
+lemma betaOf_phi0 (Ω : Type*) [Fintype Ω] (Q : PMF Ω) :
+    betaOf Ω Q (fun _ => (0 : ℝ)) = 1 := by
   simp only [betaOf, sub_zero, mul_one]
   exact pmf_toReal_sum Ω Q
 
-lemma alphaOf_phi1 (Ω : Type*) [Fintype Ω] (P Q : PMF Ω) :
-    alphaOf Ω P Q (fun _ => (1 : ℝ)) = 1 := by
+lemma alphaOf_phi1 (Ω : Type*) [Fintype Ω] (P : PMF Ω) :
+    alphaOf Ω P (fun _ => (1 : ℝ)) = 1 := by
   simp only [alphaOf, mul_one]
   exact pmf_toReal_sum Ω P
 
-lemma betaOf_phi1 (Ω : Type*) [Fintype Ω] (P Q : PMF Ω) :
-    betaOf Ω P Q (fun _ => (1 : ℝ)) = 0 := by
+lemma betaOf_phi1 (Ω : Type*) [Fintype Ω] (Q : PMF Ω) :
+    betaOf Ω Q (fun _ => (1 : ℝ)) = 0 := by
   simp only [betaOf, sub_self, mul_zero, sum_zero_eq]
 
 lemma tradeoff_set_nonempty (Ω : Type*) [Fintype Ω]
     (P Q : PMF Ω) (alpha : ℝ) (hα0 : 0 ≤ alpha) :
     { b : ℝ | ∃ phi : Ω → ℝ,
-      IsTest Ω phi ∧ alphaOf Ω P Q phi ≤ alpha ∧ betaOf Ω P Q phi = b
+      IsTest Ω phi ∧ alphaOf Ω P phi ≤ alpha ∧ betaOf Ω Q phi = b
     }.Nonempty := by
   have htest0 : IsTest Ω (fun _ => (0 : ℝ)) := test_phi0 Ω
-  have hα0' : alphaOf Ω P Q (fun _ => (0 : ℝ)) ≤ alpha := by
-    have hz : alphaOf Ω P Q (fun _ => (0 : ℝ)) = 0 := alphaOf_phi0 Ω P Q
+  have hα0' : alphaOf Ω P (fun _ => (0 : ℝ)) ≤ alpha := by
+    have hz : alphaOf Ω P (fun _ => (0 : ℝ)) = 0 := alphaOf_phi0 Ω P
     rw [hz]
     exact hα0
-  exact ⟨betaOf Ω P Q (fun _ => (0 : ℝ)), (fun _ => (0 : ℝ)),
+  exact ⟨betaOf Ω Q (fun _ => (0 : ℝ)), (fun _ => (0 : ℝ)),
     htest0, hα0', rfl⟩
 
 lemma tradeoff_bddBelow (Ω : Type*) [Fintype Ω] (P Q : PMF Ω) (alpha : ℝ) :
     BddBelow { b : ℝ | ∃ phi : Ω → ℝ,
-      IsTest Ω phi ∧ alphaOf Ω P Q phi ≤ alpha ∧ betaOf Ω P Q phi = b } := by
+      IsTest Ω phi ∧ alphaOf Ω P phi ≤ alpha ∧ betaOf Ω Q phi = b } := by
   refine ⟨0, ?_⟩
   intro b hb
   simp only [Set.mem_ofPred_eq] at hb
   obtain ⟨phi, hphi, -, rfl⟩ := hb
-  exact betaOf_nonneg Ω P Q phi hphi
+  exact betaOf_nonneg Ω Q phi hphi
 
 /-- Lower bounds on the tradeoff function: it suffices to bound the type-II
 error of every feasible test. Stated only for `0 ≤ alpha`. -/
 lemma le_tradeoff (Ω : Type*) [Fintype Ω] (P Q : PMF Ω) (alpha x : ℝ)
     (hα0 : 0 ≤ alpha)
-    (h : ∀ phi : Ω → ℝ, IsTest Ω phi → alphaOf Ω P Q phi ≤ alpha →
-      x ≤ betaOf Ω P Q phi) :
+    (h : ∀ phi : Ω → ℝ, IsTest Ω phi → alphaOf Ω P phi ≤ alpha →
+      x ≤ betaOf Ω Q phi) :
     x ≤ tradeoff Ω P Q alpha := by
   have hne := tradeoff_set_nonempty Ω P Q alpha hα0
   have hbd := tradeoff_bddBelow Ω P Q alpha
   have hall : ∀ b ∈ { b : ℝ | ∃ phi : Ω → ℝ,
-      IsTest Ω phi ∧ alphaOf Ω P Q phi ≤ alpha ∧ betaOf Ω P Q phi = b },
+      IsTest Ω phi ∧ alphaOf Ω P phi ≤ alpha ∧ betaOf Ω Q phi = b },
       x ≤ b := by
     intro b hb
     simp only [Set.mem_ofPred_eq] at hb
     obtain ⟨phi, hphi, hα, rfl⟩ := hb
     exact h phi hphi hα
   show x ≤ sInf { b : ℝ | ∃ phi : Ω → ℝ,
-    IsTest Ω phi ∧ alphaOf Ω P Q phi ≤ alpha ∧ betaOf Ω P Q phi = b }
+    IsTest Ω phi ∧ alphaOf Ω P phi ≤ alpha ∧ betaOf Ω Q phi = b }
   apply le_csInf <;> assumption
 
 /-- Upper bounds on the tradeoff function: every feasible test witnesses one.
 Stated only for `0 ≤ alpha`. -/
 lemma tradeoff_le_betaOf (Ω : Type*) [Fintype Ω] (P Q : PMF Ω)
     (alpha : ℝ) (phi : Ω → ℝ) (hα0 : 0 ≤ alpha) (hphi : IsTest Ω phi)
-    (hα : alphaOf Ω P Q phi ≤ alpha) :
-    tradeoff Ω P Q alpha ≤ betaOf Ω P Q phi := by
+    (hα : alphaOf Ω P phi ≤ alpha) :
+    tradeoff Ω P Q alpha ≤ betaOf Ω Q phi := by
   have hne := tradeoff_set_nonempty Ω P Q alpha hα0
   have hbd := tradeoff_bddBelow Ω P Q alpha
-  have hmem : betaOf Ω P Q phi ∈ { b : ℝ | ∃ phi : Ω → ℝ,
-      IsTest Ω phi ∧ alphaOf Ω P Q phi ≤ alpha ∧ betaOf Ω P Q phi = b } :=
+  have hmem : betaOf Ω Q phi ∈ { b : ℝ | ∃ phi : Ω → ℝ,
+      IsTest Ω phi ∧ alphaOf Ω P phi ≤ alpha ∧ betaOf Ω Q phi = b } :=
     ⟨phi, hphi, hα, rfl⟩
   show sInf { b : ℝ | ∃ phi : Ω → ℝ,
-    IsTest Ω phi ∧ alphaOf Ω P Q phi ≤ alpha ∧ betaOf Ω P Q phi = b }
-    ≤ betaOf Ω P Q phi
+    IsTest Ω phi ∧ alphaOf Ω P phi ≤ alpha ∧ betaOf Ω Q phi = b }
+    ≤ betaOf Ω Q phi
   apply csInf_le <;> assumption
 
 /-- The tradeoff at `alpha = 1` is `0` in general, via the always-reject
@@ -504,30 +504,30 @@ theorem tradeoff_at_one (Ω : Type*) [Fintype Ω] (P Q : PMF Ω) :
     tradeoff Ω P Q 1 = 0 := by
   apply le_antisymm
   · have htest1 : IsTest Ω (fun _ => (1 : ℝ)) := test_phi1 Ω
-    have hα : alphaOf Ω P Q (fun _ => (1 : ℝ)) ≤ 1 :=
-      le_of_eq (alphaOf_phi1 Ω P Q)
+    have hα : alphaOf Ω P (fun _ => (1 : ℝ)) ≤ 1 :=
+      le_of_eq (alphaOf_phi1 Ω P)
     have h := tradeoff_le_betaOf Ω P Q 1 (fun _ => (1 : ℝ)) zero_le_one
       htest1 hα
-    rw [betaOf_phi1 Ω P Q] at h
+    rw [betaOf_phi1 Ω Q] at h
     exact h
   · refine le_tradeoff Ω P Q 1 0 zero_le_one ?_
     intro phi hphi _
-    exact betaOf_nonneg Ω P Q phi hphi
+    exact betaOf_nonneg Ω Q phi hphi
 
 /-- Below `[0, 1]`: no test is feasible, so the tradeoff is `sInf ∅ = 0`. -/
 theorem tradeoff_eq_zero_of_neg (Ω : Type*) [Fintype Ω]
     (P Q : PMF Ω) (alpha : ℝ) (hα : alpha < 0) :
     tradeoff Ω P Q alpha = 0 := by
   have hempty : { b : ℝ | ∃ phi : Ω → ℝ,
-      IsTest Ω phi ∧ alphaOf Ω P Q phi ≤ alpha ∧ betaOf Ω P Q phi = b } = ∅ := by
+      IsTest Ω phi ∧ alphaOf Ω P phi ≤ alpha ∧ betaOf Ω Q phi = b } = ∅ := by
     rw [Set.eq_empty_iff_forall_notMem]
     intro b hb
     simp only [Set.mem_ofPred_eq] at hb
     obtain ⟨phi, hphi, hαphi, -⟩ := hb
-    have hnn := alphaOf_nonneg Ω P Q phi hphi
+    have hnn := alphaOf_nonneg Ω P phi hphi
     linarith
   show sInf { b : ℝ | ∃ phi : Ω → ℝ,
-    IsTest Ω phi ∧ alphaOf Ω P Q phi ≤ alpha ∧ betaOf Ω P Q phi = b } = 0
+    IsTest Ω phi ∧ alphaOf Ω P phi ≤ alpha ∧ betaOf Ω Q phi = b } = 0
   rw [hempty, Real.sInf_empty]
 
 /-- Above `[0, 1]`: the always-reject test is feasible with type-II error `0`,
@@ -537,16 +537,16 @@ theorem tradeoff_eq_zero_of_one_le (Ω : Type*) [Fintype Ω]
     tradeoff Ω P Q alpha = 0 := by
   apply le_antisymm
   · have htest1 : IsTest Ω (fun _ => (1 : ℝ)) := test_phi1 Ω
-    have hαphi : alphaOf Ω P Q (fun _ => (1 : ℝ)) ≤ alpha := by
-      rw [alphaOf_phi1 Ω P Q]
+    have hαphi : alphaOf Ω P (fun _ => (1 : ℝ)) ≤ alpha := by
+      rw [alphaOf_phi1 Ω P]
       exact hα
     have h := tradeoff_le_betaOf Ω P Q alpha (fun _ => (1 : ℝ))
       (by linarith) htest1 hαphi
-    rw [betaOf_phi1 Ω P Q] at h
+    rw [betaOf_phi1 Ω Q] at h
     exact h
   · refine le_tradeoff Ω P Q alpha 0 (by linarith) ?_
     intro phi hphi _
-    exact betaOf_nonneg Ω P Q phi hphi
+    exact betaOf_nonneg Ω Q phi hphi
 
 /-! ## H3: the f-DP lower bound -/
 
@@ -611,24 +611,24 @@ theorem kovpair_forward_tradeoff_ge (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
     linarith [hexpand, hQ]
   have hAsum : ∑ w, phi w * vA w ≤ delta :=
     test_superlevel_le Ω phi hphi vA delta SA hmemA hδA
-  have hβphi : betaOf Ω P Q phi = 1 - ∑ w, (Q w).toReal * phi w := by
+  have hβphi : betaOf Ω Q phi = 1 - ∑ w, (Q w).toReal * phi w := by
     have hpt : ∀ w : Ω, (Q w).toReal * (1 - phi w)
         = (Q w).toReal - (Q w).toReal * phi w := fun w => by ring
     have hmass : ∑ w, (Q w).toReal = 1 := pmf_toReal_sum Ω Q
     simp only [betaOf, hpt, Finset.sum_sub_distrib]
     linarith [hmass]
-  have hαphi' : ∑ w, phi w * (P w).toReal = alphaOf Ω P Q phi := by
+  have hαphi' : ∑ w, phi w * (P w).toReal = alphaOf Ω P phi := by
     have hpt : ∀ w : Ω, phi w * (P w).toReal = (P w).toReal * phi w :=
       fun w => mul_comm _ _
     simp only [alphaOf, hpt]
   have hAform : ∑ w, phi w * vA w
-      = (1 - betaOf Ω P Q phi) - Real.exp eps * alphaOf Ω P Q phi := by
+      = (1 - betaOf Ω Q phi) - Real.exp eps * alphaOf Ω P phi := by
     have hpt : ∀ w : Ω, phi w * vA w
         = phi w * (Q w).toReal - Real.exp eps * (phi w * (P w).toReal) := by
       intro w
       simp only [hvA]
       ring
-    have hqphi : ∑ w, phi w * (Q w).toReal = 1 - betaOf Ω P Q phi := by
+    have hqphi : ∑ w, phi w * (Q w).toReal = 1 - betaOf Ω Q phi := by
       have hpt2 : ∀ w : Ω, phi w * (Q w).toReal = (Q w).toReal * phi w :=
         fun w => mul_comm _ _
       simp only [hpt2]
@@ -638,7 +638,7 @@ theorem kovpair_forward_tradeoff_ge (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
         = Real.exp eps * (∑ w, phi w * (P w).toReal) := by
       rw [Finset.mul_sum]
     rw [hfac, hqphi, hαphi']
-  have hA' : (1 - betaOf Ω P Q phi) - Real.exp eps * alphaOf Ω P Q phi
+  have hA' : (1 - betaOf Ω Q phi) - Real.exp eps * alphaOf Ω P phi
       ≤ delta := by
     rw [← hAform]
     exact hAsum
@@ -665,14 +665,14 @@ theorem kovpair_forward_tradeoff_ge (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
   have hBsum : ∑ w, psi w * vB w ≤ delta :=
     test_superlevel_le Ω psi hpsi vB delta SB hmemB hδB
   have hBform : ∑ w, psi w * vB w
-      = (1 - alphaOf Ω P Q phi) - Real.exp eps * betaOf Ω P Q phi := by
+      = (1 - alphaOf Ω P phi) - Real.exp eps * betaOf Ω Q phi := by
     have hpt : ∀ w : Ω, psi w * vB w
         = psi w * (P w).toReal
           - Real.exp eps * (psi w * (Q w).toReal) := by
       intro w
       simp only [hvB]
       ring
-    have hpsiP : ∑ w, psi w * (P w).toReal = 1 - alphaOf Ω P Q phi := by
+    have hpsiP : ∑ w, psi w * (P w).toReal = 1 - alphaOf Ω P phi := by
       have hpt2 : ∀ w : Ω, psi w * (P w).toReal
           = (P w).toReal - phi w * (P w).toReal := by
         intro w
@@ -681,7 +681,7 @@ theorem kovpair_forward_tradeoff_ge (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
       have hmass : ∑ w, (P w).toReal = 1 := pmf_toReal_sum Ω P
       simp only [hpt2, Finset.sum_sub_distrib]
       rw [hmass, hαphi']
-    have hpsiQ : ∑ w, psi w * (Q w).toReal = betaOf Ω P Q phi := by
+    have hpsiQ : ∑ w, psi w * (Q w).toReal = betaOf Ω Q phi := by
       have hpt2 : ∀ w : Ω, psi w * (Q w).toReal
           = (Q w).toReal * (1 - phi w) := by
         intro w
@@ -693,27 +693,27 @@ theorem kovpair_forward_tradeoff_ge (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
         = Real.exp eps * (∑ w, psi w * (Q w).toReal) := by
       rw [Finset.mul_sum]
     rw [hfac, hpsiP, hpsiQ]
-  have hB' : (1 - alphaOf Ω P Q phi) - Real.exp eps * betaOf Ω P Q phi
+  have hB' : (1 - alphaOf Ω P phi) - Real.exp eps * betaOf Ω Q phi
       ≤ delta := by
     rw [← hBform]
     exact hBsum
-  have hβ0 : 0 ≤ betaOf Ω P Q phi := betaOf_nonneg Ω P Q phi hphi
-  have hii : 1 - delta - Real.exp eps * alpha ≤ betaOf Ω P Q phi := by
-    have hEα : Real.exp eps * alphaOf Ω P Q phi ≤ Real.exp eps * alpha :=
+  have hβ0 : 0 ≤ betaOf Ω Q phi := betaOf_nonneg Ω Q phi hphi
+  have hii : 1 - delta - Real.exp eps * alpha ≤ betaOf Ω Q phi := by
+    have hEα : Real.exp eps * alphaOf Ω P phi ≤ Real.exp eps * alpha :=
       mul_le_mul_left_real hαphi hE0
     linarith [hA', hEα]
   have hiii : Real.exp (-eps) * (1 - delta - alpha)
-      ≤ betaOf Ω P Q phi := by
+      ≤ betaOf Ω Q phi := by
     have hEE : Real.exp (-eps) * Real.exp eps = 1 := by
       rw [← Real.exp_add, neg_add_cancel, Real.exp_zero]
-    have hX : (1 - delta - alpha) ≤ Real.exp eps * betaOf Ω P Q phi := by
+    have hX : (1 - delta - alpha) ≤ Real.exp eps * betaOf Ω Q phi := by
       linarith [hB', hαphi]
     calc Real.exp (-eps) * (1 - delta - alpha)
-        ≤ Real.exp (-eps) * (Real.exp eps * betaOf Ω P Q phi) :=
+        ≤ Real.exp (-eps) * (Real.exp eps * betaOf Ω Q phi) :=
           mul_le_mul_left_real hX hE'0
-      _ = betaOf Ω P Q phi := by rw [← mul_assoc, hEE, one_mul]
+      _ = betaOf Ω Q phi := by rw [← mul_assoc, hEE, one_mul]
   have hmax : max 0 (max (1 - delta - Real.exp eps * alpha)
-      (Real.exp (-eps) * (1 - delta - alpha))) ≤ betaOf Ω P Q phi :=
+      (Real.exp (-eps) * (1 - delta - alpha))) ≤ betaOf Ω Q phi :=
     max_le_real hβ0 (max_le_real hii hiii)
   exact hmax
 
@@ -763,50 +763,50 @@ lemma sum_mul_ite_mem_compl_eq (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
   exact sum_ite_mem_eq Ω Sᶜ c
 
 lemma alphaOf_indicator (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
-    (P Q : PMF Ω) (S : Finset Ω) :
-    alphaOf Ω P Q (fun w => if w ∈ S then (1 : ℝ) else 0)
-      = typeI Ω P Q S := by
+    (P : PMF Ω) (S : Finset Ω) :
+    alphaOf Ω P (fun w => if w ∈ S then (1 : ℝ) else 0)
+      = typeI Ω P S := by
   have h : ∑ w, (P w).toReal * (if w ∈ S then (1 : ℝ) else 0)
       = ∑ w ∈ S, (P w).toReal :=
     sum_mul_ite_mem_eq Ω S (fun w => (P w).toReal)
-  have hα : alphaOf Ω P Q (fun w => if w ∈ S then (1 : ℝ) else 0)
+  have hα : alphaOf Ω P (fun w => if w ∈ S then (1 : ℝ) else 0)
       = ∑ w, (P w).toReal * (if w ∈ S then (1 : ℝ) else 0) := rfl
-  have hI : typeI Ω P Q S = ∑ w ∈ S, (P w).toReal := rfl
+  have hI : typeI Ω P S = ∑ w ∈ S, (P w).toReal := rfl
   rw [hα, hI]
   exact h
 
 lemma betaOf_indicator (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
-    (P Q : PMF Ω) (S : Finset Ω) :
-    betaOf Ω P Q (fun w => if w ∈ S then (1 : ℝ) else 0)
-      = typeII Ω P Q S := by
+    (Q : PMF Ω) (S : Finset Ω) :
+    betaOf Ω Q (fun w => if w ∈ S then (1 : ℝ) else 0)
+      = typeII Ω Q S := by
   have h1 : ∀ w : Ω, (Q w).toReal * (1 - (if w ∈ S then (1 : ℝ) else 0))
       = (Q w).toReal * (if w ∈ S then (0 : ℝ) else 1) := by
     intro w
     by_cases hw : w ∈ S <;> simp [hw]
-  have h2 : betaOf Ω P Q (fun w => if w ∈ S then (1 : ℝ) else 0)
+  have h2 : betaOf Ω Q (fun w => if w ∈ S then (1 : ℝ) else 0)
       = ∑ w, (Q w).toReal * (if w ∈ S then (0 : ℝ) else 1) := by
     simp only [betaOf, h1]
   have h3 : ∑ w, (Q w).toReal * (if w ∈ S then (0 : ℝ) else 1)
       = ∑ w ∈ Sᶜ, (Q w).toReal :=
     sum_mul_ite_mem_compl_eq Ω S (fun w => (Q w).toReal)
-  have hII : typeII Ω P Q S = ∑ w ∈ Sᶜ, (Q w).toReal := rfl
+  have hII : typeII Ω Q S = ∑ w ∈ Sᶜ, (Q w).toReal := rfl
   rw [h2, h3, hII]
 
 /-- Indicator upper bound: at level `typeI S`, the tradeoff is at most the
 type-II error of `S`. -/
 lemma tradeoff_indicator_upper (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
     (P Q : PMF Ω) (S : Finset Ω) :
-    tradeoff Ω P Q (typeI Ω P Q S) ≤ typeII Ω P Q S := by
+    tradeoff Ω P Q (typeI Ω P S) ≤ typeII Ω Q S := by
   have htest : IsTest Ω (fun w => if w ∈ S then (1 : ℝ) else 0) := by
     intro w
     by_cases hw : w ∈ S <;> simp [hw]
-  have hα : alphaOf Ω P Q (fun w => if w ∈ S then (1 : ℝ) else 0)
-      ≤ typeI Ω P Q S :=
-    le_of_eq (alphaOf_indicator Ω P Q S)
-  have hI0 : 0 ≤ typeI Ω P Q S := typeI_nonneg Ω P Q S
-  have hub := tradeoff_le_betaOf Ω P Q (typeI Ω P Q S)
+  have hα : alphaOf Ω P (fun w => if w ∈ S then (1 : ℝ) else 0)
+      ≤ typeI Ω P S :=
+    le_of_eq (alphaOf_indicator Ω P S)
+  have hI0 : 0 ≤ typeI Ω P S := typeI_nonneg Ω P S
+  have hub := tradeoff_le_betaOf Ω P Q (typeI Ω P S)
     (fun w => if w ∈ S then (1 : ℝ) else 0) hI0 htest hα
-  rw [betaOf_indicator Ω P Q S] at hub
+  rw [betaOf_indicator Ω Q S] at hub
   exact hub
 
 /-- H3 converse: if the f-DP lower bound holds at every level in `[0, 1]`,
@@ -818,29 +818,29 @@ theorem kovpair_of_tradeoff_ge (Ω : Type*) [Fintype Ω] [DecidableEq Ω]
     KOVpair Ω P Q eps delta := by
   rw [kovpair_iff_event_bounds Ω P Q eps delta]
   intro S
-  have hI0 : 0 ≤ typeI Ω P Q S := typeI_nonneg Ω P Q S
-  have hI1 : typeI Ω P Q S ≤ 1 := typeI_le_one Ω P Q S
-  have hIc0 : 0 ≤ typeI Ω P Q Sᶜ := typeI_nonneg Ω P Q Sᶜ
-  have hIc1 : typeI Ω P Q Sᶜ ≤ 1 := typeI_le_one Ω P Q Sᶜ
+  have hI0 : 0 ≤ typeI Ω P S := typeI_nonneg Ω P S
+  have hI1 : typeI Ω P S ≤ 1 := typeI_le_one Ω P S
+  have hIc0 : 0 ≤ typeI Ω P Sᶜ := typeI_nonneg Ω P Sᶜ
+  have hIc1 : typeI Ω P Sᶜ ≤ 1 := typeI_le_one Ω P Sᶜ
   have hup := tradeoff_indicator_upper Ω P Q S
   have hupc := tradeoff_indicator_upper Ω P Q Sᶜ
   have hlo := h _ hI0 hI1
   have hloc := h _ hIc0 hIc1
-  have hp1 : 1 - delta - Real.exp eps * typeI Ω P Q S
-      ≤ fEpsDelta eps delta (typeI Ω P Q S) :=
+  have hp1 : 1 - delta - Real.exp eps * typeI Ω P S
+      ≤ fEpsDelta eps delta (typeI Ω P S) :=
     le_trans le_max_left_real le_max_right_real
-  have hp2 : Real.exp (-eps) * (1 - delta - typeI Ω P Q Sᶜ)
-      ≤ fEpsDelta eps delta (typeI Ω P Q Sᶜ) :=
+  have hp2 : Real.exp (-eps) * (1 - delta - typeI Ω P Sᶜ)
+      ≤ fEpsDelta eps delta (typeI Ω P Sᶜ) :=
     le_trans le_max_right_real le_max_right_real
   have hsplitP := pmf_sum_add_compl Ω P S
   have hsplitQ := pmf_sum_add_compl Ω Q S
-  have hIIc : typeII Ω P Q Sᶜ = ∑ w ∈ S, (Q w).toReal := by
+  have hIIc : typeII Ω Q Sᶜ = ∑ w ∈ S, (Q w).toReal := by
     simp only [typeII, compl_compl]
-  have hIQ : typeII Ω P Q S = 1 - ∑ w ∈ S, (Q w).toReal := by
+  have hIQ : typeII Ω Q S = 1 - ∑ w ∈ S, (Q w).toReal := by
     simp only [typeII]
     linarith [hsplitQ]
-  have hIP : typeI Ω P Q S = ∑ w ∈ S, (P w).toReal := rfl
-  have hIcP : typeI Ω P Q Sᶜ = ∑ w ∈ Sᶜ, (P w).toReal := rfl
+  have hIP : typeI Ω P S = ∑ w ∈ S, (P w).toReal := rfl
+  have hIcP : typeI Ω P Sᶜ = ∑ w ∈ Sᶜ, (P w).toReal := rfl
   constructor
   · have hEE : Real.exp (-eps) * Real.exp eps = 1 := by
       rw [← Real.exp_add, neg_add_cancel, Real.exp_zero]
@@ -913,10 +913,10 @@ lemma pmf_bind_toReal (Ω Ω2 : Type*) [Fintype Ω] [Fintype Ω2]
 
 /-- The pullback test preserves type-I error. -/
 lemma pullbackTest_alpha (Ω Ω2 : Type*) [Fintype Ω] [Fintype Ω2]
-    (P Q : PMF Ω) (k : Ω → PMF Ω2) (phi : Ω2 → ℝ) :
-    alphaOf Ω P Q (pullbackTest Ω Ω2 k phi)
-      = alphaOf Ω2 (P.bind k) (Q.bind k) phi := by
-  have hLHS : alphaOf Ω P Q (pullbackTest Ω Ω2 k phi)
+    (P : PMF Ω) (k : Ω → PMF Ω2) (phi : Ω2 → ℝ) :
+    alphaOf Ω P (pullbackTest Ω Ω2 k phi)
+      = alphaOf Ω2 (P.bind k) phi := by
+  have hLHS : alphaOf Ω P (pullbackTest Ω Ω2 k phi)
       = ∑ w, ∑ y, (P w).toReal * ((k w y).toReal * phi y) := by
     have hpt : ∀ w : Ω, (P w).toReal * pullbackTest Ω Ω2 k phi w
         = ∑ y, (P w).toReal * ((k w y).toReal * phi y) := by
@@ -927,7 +927,7 @@ lemma pullbackTest_alpha (Ω Ω2 : Type*) [Fintype Ω] [Fintype Ω2]
   have hswap : (∑ w, ∑ y, (P w).toReal * ((k w y).toReal * phi y))
       = ∑ y, ∑ w, (P w).toReal * ((k w y).toReal * phi y) :=
     Finset.sum_comm
-  have hRHS : alphaOf Ω2 (P.bind k) (Q.bind k) phi
+  have hRHS : alphaOf Ω2 (P.bind k) phi
       = ∑ y, ∑ w, (P w).toReal * ((k w y).toReal * phi y) := by
     have hbind := pmf_bind_toReal Ω Ω2 P k
     have hpt : ∀ y : Ω2, ((P.bind k) y).toReal * phi y
@@ -945,9 +945,9 @@ lemma pullbackTest_alpha (Ω Ω2 : Type*) [Fintype Ω] [Fintype Ω2]
 
 /-- The pullback test preserves type-II error. -/
 lemma pullbackTest_beta (Ω Ω2 : Type*) [Fintype Ω] [Fintype Ω2]
-    (P Q : PMF Ω) (k : Ω → PMF Ω2) (phi : Ω2 → ℝ) :
-    betaOf Ω P Q (pullbackTest Ω Ω2 k phi)
-      = betaOf Ω2 (P.bind k) (Q.bind k) phi := by
+    (Q : PMF Ω) (k : Ω → PMF Ω2) (phi : Ω2 → ℝ) :
+    betaOf Ω Q (pullbackTest Ω Ω2 k phi)
+      = betaOf Ω2 (Q.bind k) phi := by
   have hone : ∀ w : Ω, 1 - pullbackTest Ω Ω2 k phi w
       = ∑ y, (k w y).toReal * (1 - phi y) := by
     intro w
@@ -959,7 +959,7 @@ lemma pullbackTest_beta (Ω Ω2 : Type*) [Fintype Ω] [Fintype Ω2]
       simp only [hpt, Finset.sum_sub_distrib]
       rw [hmass]
     exact hsum.symm
-  have hLHS : betaOf Ω P Q (pullbackTest Ω Ω2 k phi)
+  have hLHS : betaOf Ω Q (pullbackTest Ω Ω2 k phi)
       = ∑ w, ∑ y, (Q w).toReal * ((k w y).toReal * (1 - phi y)) := by
     have hpt : ∀ w : Ω, (Q w).toReal * (1 - pullbackTest Ω Ω2 k phi w)
         = ∑ y, (Q w).toReal * ((k w y).toReal * (1 - phi y)) := by
@@ -970,7 +970,7 @@ lemma pullbackTest_beta (Ω Ω2 : Type*) [Fintype Ω] [Fintype Ω2]
   have hswap : (∑ w, ∑ y, (Q w).toReal * ((k w y).toReal * (1 - phi y)))
       = ∑ y, ∑ w, (Q w).toReal * ((k w y).toReal * (1 - phi y)) :=
     Finset.sum_comm
-  have hRHS : betaOf Ω2 (P.bind k) (Q.bind k) phi
+  have hRHS : betaOf Ω2 (Q.bind k) phi
       = ∑ y, ∑ w, (Q w).toReal * ((k w y).toReal * (1 - phi y)) := by
     have hbind := pmf_bind_toReal Ω Ω2 Q k
     have hpt : ∀ y : Ω2, ((Q.bind k) y).toReal * (1 - phi y)
@@ -996,23 +996,23 @@ theorem tradeoff_postprocess (Ω Ω2 : Type*) [Fintype Ω] [Fintype Ω2]
   have hne := tradeoff_set_nonempty Ω2 (P.bind k) (Q.bind k) alpha hα0
   have hbd := tradeoff_bddBelow Ω2 (P.bind k) (Q.bind k) alpha
   have hall : ∀ b ∈ { b : ℝ | ∃ phi : Ω2 → ℝ,
-      IsTest Ω2 phi ∧ alphaOf Ω2 (P.bind k) (Q.bind k) phi ≤ alpha ∧
-        betaOf Ω2 (P.bind k) (Q.bind k) phi = b },
+      IsTest Ω2 phi ∧ alphaOf Ω2 (P.bind k) phi ≤ alpha ∧
+        betaOf Ω2 (Q.bind k) phi = b },
       tradeoff Ω P Q alpha ≤ b := by
     intro b hb
     simp only [Set.mem_ofPred_eq] at hb
     obtain ⟨phi, hphi, hαphi, rfl⟩ := hb
     have hpsi := pullbackTest_isTest Ω Ω2 k phi hphi
-    have hαpsi : alphaOf Ω P Q (pullbackTest Ω Ω2 k phi) ≤ alpha := by
-      rw [pullbackTest_alpha Ω Ω2 P Q k phi]
+    have hαpsi : alphaOf Ω P (pullbackTest Ω Ω2 k phi) ≤ alpha := by
+      rw [pullbackTest_alpha Ω Ω2 P k phi]
       exact hαphi
     have hub := tradeoff_le_betaOf Ω P Q alpha (pullbackTest Ω Ω2 k phi)
       hα0 hpsi hαpsi
-    rw [pullbackTest_beta Ω Ω2 P Q k phi] at hub
+    rw [pullbackTest_beta Ω Ω2 Q k phi] at hub
     exact hub
   show tradeoff Ω P Q alpha ≤ sInf { b : ℝ | ∃ phi : Ω2 → ℝ,
-    IsTest Ω2 phi ∧ alphaOf Ω2 (P.bind k) (Q.bind k) phi ≤ alpha ∧
-      betaOf Ω2 (P.bind k) (Q.bind k) phi = b }
+    IsTest Ω2 phi ∧ alphaOf Ω2 (P.bind k) phi ≤ alpha ∧
+      betaOf Ω2 (Q.bind k) phi = b }
   apply le_csInf <;> assumption
 
 /-! ## H5: the `3/4` vs `1/4` boundary pair on `Bool` -/
@@ -1102,11 +1102,11 @@ lemma PH5_pos (w : Bool) : 0 < (PH5 w).toReal := by
     norm_num
 
 /-- Type-I error of the boundary test `S = {false}`. -/
-lemma typeI_PH5_singleton_false : typeI Bool PH5 QH5 {false} = 1/4 := by
+lemma typeI_PH5_singleton_false : typeI Bool PH5 {false} = 1/4 := by
   simp only [typeI, sum_singleton_eq, PH5_false]
 
 /-- Type-II error of the boundary test `S = {false}`. -/
-lemma typeII_PH5_singleton_false : typeII Bool PH5 QH5 {false} = 1/4 := by
+lemma typeII_PH5_singleton_false : typeII Bool QH5 {false} = 1/4 := by
   have hc : ({false} : Finset Bool)ᶜ = {true} := by decide
   simp only [typeII, hc, sum_singleton_eq, QH5_true]
 
@@ -1119,27 +1119,27 @@ theorem kovpair_PH5_QH5 : KOVpair Bool PH5 QH5 (Real.log 3) 0 := by
       S = ∅ ∨ S = {true} ∨ S = {false} ∨ S = Finset.univ := by decide
   intro S
   rcases hS S with rfl | rfl | rfl | rfl
-  · have hI : typeI Bool PH5 QH5 ∅ = 0 := by
+  · have hI : typeI Bool PH5 ∅ = 0 := by
       simp only [typeI, sum_empty_eq]
-    have hII : typeII Bool PH5 QH5 ∅ = 1 := by
+    have hII : typeII Bool QH5 ∅ = 1 := by
       have hc : (∅ : Finset Bool)ᶜ = Finset.univ := by decide
       simp only [typeII, hc]
       exact pmf_toReal_sum Bool QH5
     rw [hI, hII, hexp]
     constructor <;> norm_num
-  · have hI : typeI Bool PH5 QH5 {true} = 3/4 := by
+  · have hI : typeI Bool PH5 {true} = 3/4 := by
       simp only [typeI, sum_singleton_eq, PH5_true]
-    have hII : typeII Bool PH5 QH5 {true} = 3/4 := by
+    have hII : typeII Bool QH5 {true} = 3/4 := by
       have hc : ({true} : Finset Bool)ᶜ = {false} := by decide
       simp only [typeII, hc, sum_singleton_eq, QH5_false]
     rw [hI, hII, hexp]
     constructor <;> norm_num
   · rw [typeI_PH5_singleton_false, typeII_PH5_singleton_false, hexp]
     constructor <;> norm_num
-  · have hI : typeI Bool PH5 QH5 Finset.univ = 1 := by
+  · have hI : typeI Bool PH5 Finset.univ = 1 := by
       simp only [typeI]
       exact pmf_toReal_sum Bool PH5
-    have hII : typeII Bool PH5 QH5 Finset.univ = 0 := by
+    have hII : typeII Bool QH5 Finset.univ = 0 := by
       have hc : (Finset.univ : Finset Bool)ᶜ = ∅ := by decide
       simp only [typeII, hc, sum_empty_eq]
     rw [hI, hII, hexp]
