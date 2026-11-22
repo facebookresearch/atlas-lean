@@ -834,7 +834,7 @@ private lemma zmi_product_sum (K s t : ℕ) (hs1 : 1 ≤ s) (hsK : s < K)
 
 /-- **Left inverse of Zagier's matrix.** For every natural number $K$, the matrix $P_K$
 given by the first Bernoulli formula is a left inverse of Zagier's matrix $A_K$:
-$P_K A_K = I$, where $I$ is the $(K - 1) \times (K - 1)$ identity matrix. -/
+$P_K A_K = I$, where $I$ is the $(K - 1) \times (K - 1)$ identity matrix (empty when $K \le 1$). -/
 public lemma zagierInverseP_mul_zagierMatrix (K : ℕ) :
     zagierInverseP K * zagierMatrix K = 1 := by
   have hPQ : zagierInverseP K = zagierInverseQ K := zagierInverseP_eq_zagierInverseQ K
@@ -875,7 +875,7 @@ public lemma zagierInverseP_mul_zagierMatrix (K : ℕ) :
 
 /-- **Right inverse of Zagier's matrix.** For every natural number $K$, the matrix $P_K$
 given by the first Bernoulli formula is a right inverse of Zagier's matrix $A_K$:
-$A_K P_K = I$, where $I$ is the $(K - 1) \times (K - 1)$ identity matrix. -/
+$A_K P_K = I$, where $I$ is the $(K - 1) \times (K - 1)$ identity matrix (empty when $K \le 1$). -/
 public lemma zagierMatrix_mul_zagierInverseP (K : ℕ) :
     zagierMatrix K * zagierInverseP K = 1 :=
   (Matrix.mul_eq_one_comm_of_card_eq _ _ _ rfl).mpr (zagierInverseP_mul_zagierMatrix K)

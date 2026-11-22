@@ -37,7 +37,9 @@ def hurwitzMatrix (a b : ℕ → R) (n : ℕ) : Matrix (Fin (n + 1)) (Fin (n + 1
 
 /-- **Hurwitz transform.** For sequences $a, b \colon \mathbb{N} \to R$ in a commutative ring $R$,
 the Hurwitz transform of $a$ and $b$ is the sequence whose $n$-th term, for $n \in \mathbb{N}$, is
-the determinant of the Hurwitz matrix of $a$ and $b$ of order $n$. -/
+the determinant of the Hurwitz matrix of $a$ and $b$ of order $n$, the $(n+1) \times (n+1)$ matrix
+with rows and columns indexed by $0, \dots, n$. In particular the term for $n = 0$ is the single
+entry $h_{00} = a_0$. -/
 def hurwitzTransform (a b : ℕ → R) (n : ℕ) : R :=
   (hurwitzMatrix a b n).det
 
