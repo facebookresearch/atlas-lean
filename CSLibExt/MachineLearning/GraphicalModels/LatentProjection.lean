@@ -126,6 +126,19 @@ theorem reflTransGen_edge_le {a c : Fin n}
   | refl => exact le_rfl
   | tail _ hstep ih => exact le_trans ih (le_of_lt (b.edge_lt hstep.1))
 
+/-- A direct edge is a latent path. -/
+theorem latentPath_of_edge_direct (l j : Fin n) (h : b.Edge l j) :
+    b.LatentPath L l j :=
+  ⟨l, Relation.ReflTransGen.refl, h⟩
+
+
+/-- Latent paths extend backward along latent edges. -/
+theorem latentPath_of_edge_latentPath (l' l u : Fin n) (h : b.Edge l' l) (hl : l ∈ L)
+    (hpath : b.LatentPath L l u) : b.LatentPath L l' u := by
+  obtain ⟨m, hseg, hedge⟩ := hpath
+  exact ⟨m, Relation.ReflTransGen.head ⟨h, hl⟩ hseg, hedge⟩
+
+
 /-- A latent path strictly increases the topological index. -/
 theorem LatentPath.lt {u w : Fin n} (h : b.LatentPath L u w) : u < w := by
   obtain ⟨m, hpath, hedge⟩ := h
@@ -156,6 +169,19 @@ def latentProjection : ADMG {v : Fin n // v ∉ L} where
         exact h.1 rfl }
   acyclic v hv := by
     exact lt_irrefl _ (transGen_latentPath_lt b L hv)
+
+/-- Bidirected projection edges are latent common causes. -/
+theorem latentProjection_bidir_adj_iff (u w : {v : Fin n // v ∉ L}) :
+    (b.latentProjection L).bidir.Adj u w ↔
+      u ≠ w ∧ ∃ t ∈ L, b.LatentPath L t (u : Fin n) ∧ b.LatentPath L t (w : Fin n) :=
+  Iff.rfl
+
+
+/-- Directed projection edges are latent paths. -/
+theorem latentProjection_dir_iff (u w : {v : Fin n // v ∉ L}) :
+    (b.latentProjection L).dir u w ↔ b.LatentPath L (u : Fin n) (w : Fin n) :=
+  Iff.rfl
+
 
 /-- The directed part of the projection is irreflexive. -/
 theorem latentProjection_dir_irrefl (v : {v : Fin n // v ∉ L}) :

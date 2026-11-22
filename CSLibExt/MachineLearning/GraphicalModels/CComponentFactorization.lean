@@ -328,19 +328,6 @@ theorem dependsOn_prod_cpt (B : Finset (Fin n)) :
   rw [hpa, hj]
 
 omit [Fintype α] [DecidableEq α] [Nonempty α] in
-/-- A direct edge is a latent path. -/
-theorem latentPath_of_edge_direct (l j : Fin n) (h : b.Edge l j) :
-    b.LatentPath L l j :=
-  ⟨l, Relation.ReflTransGen.refl, h⟩
-
-omit [Fintype α] [DecidableEq α] [Nonempty α] in
-/-- Latent paths extend backward along latent edges. -/
-theorem latentPath_of_edge_latentPath (l' l u : Fin n) (h : b.Edge l' l) (hl : l ∈ L)
-    (hpath : b.LatentPath L l u) : b.LatentPath L l' u := by
-  obtain ⟨m, hseg, hedge⟩ := hpath
-  exact ⟨m, Relation.ReflTransGen.head ⟨h, hl⟩ hseg, hedge⟩
-
-omit [Fintype α] [DecidableEq α] [Nonempty α] in
 /-- Latent parents of `latentsInto H` and `H` stay in `latentsInto H`. -/
 theorem mem_latentsInto_of_edge_mem (H : Finset {i : Fin n // i ∉ L}) (l j : Fin n)
     (hj : j ∈ b.latentsInto L H ∪ H.map (Function.Embedding.subtype _)) (hl : l ∈ L)
@@ -352,19 +339,6 @@ theorem mem_latentsInto_of_edge_mem (H : Finset {i : Fin n // i ∉ L}) (l j : F
   · rw [Finset.mem_map] at hjmap
     obtain ⟨a, haH, rfl⟩ := hjmap
     exact ⟨a, haH, b.latentPath_of_edge_direct L _ _ h⟩
-
-omit [Fintype α] [DecidableEq α] [Nonempty α] in
-/-- Bidirected projection edges are latent common causes. -/
-theorem latentProjection_bidir_adj_iff (u w : {v : Fin n // v ∉ L}) :
-    (b.latentProjection L).bidir.Adj u w ↔
-      u ≠ w ∧ ∃ t ∈ L, b.LatentPath L t (u : Fin n) ∧ b.LatentPath L t (w : Fin n) :=
-  Iff.rfl
-
-omit [Fintype α] [DecidableEq α] [Nonempty α] in
-/-- Directed projection edges are latent paths. -/
-theorem latentProjection_dir_iff (u w : {v : Fin n // v ∉ L}) :
-    (b.latentProjection L).dir u w ↔ b.LatentPath L (u : Fin n) (w : Fin n) :=
-  Iff.rfl
 
 omit [Fintype α] [DecidableEq α] [Nonempty α] in
 /-- With no bidirected edge across the split, the two latent sets are disjoint. -/
