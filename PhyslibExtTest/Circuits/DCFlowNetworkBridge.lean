@@ -29,6 +29,7 @@ open MathlibExt.Combinatorics.Graph.ArcNetwork
 open PhyslibExt.Circuits.ArcPortSigns
 open PhyslibExt.Circuits.LosslessDCFlowModel
 open PhyslibExt.Circuits.DCFlowNetworkBridge
+open MathlibExt.Combinatorics.Graph.ArcNetworkLaplacian (positiveArcGraph)
 
 /-! ## Three-bus radial network: arcs `0 → 1` (`b = 1`), `1 → 2` (`b = 2`), reference `0` -/
 
@@ -60,13 +61,14 @@ lemma b3_pos : ∀ e, 0 < b3 e := by
   intro e; fin_cases e <;> simp [b3]
 
 /-- Hypothesis `hconn` holds. -/
-lemma conn3 : (SimpleGraph.fromRel fun u v => ∃ e, tail3 e = u ∧ head3 e = v).Connected := by
-  have h01 : (SimpleGraph.fromRel fun u v => ∃ e, tail3 e = u ∧ head3 e = v).Adj 0 1 :=
-    (SimpleGraph.fromRel_adj _ _ _).mpr ⟨by decide, Or.inl ⟨0, rfl, rfl⟩⟩
-  have h12 : (SimpleGraph.fromRel fun u v => ∃ e, tail3 e = u ∧ head3 e = v).Adj 1 2 :=
-    (SimpleGraph.fromRel_adj _ _ _).mpr ⟨by decide, Or.inl ⟨1, rfl, rfl⟩⟩
-  have hr : ∀ v,
-      (SimpleGraph.fromRel fun u v => ∃ e, tail3 e = u ∧ head3 e = v).Reachable 0 v := by
+lemma conn3 : (positiveArcGraph tail3 head3 (fun _ => (1 : ℝ))).Connected := by
+  have h01 : (positiveArcGraph tail3 head3 (fun _ => (1 : ℝ))).Adj 0 1 := by
+    simp only [positiveArcGraph, SimpleGraph.fromRel_adj]
+    exact ⟨by decide, Or.inl ⟨0, one_pos, rfl, rfl⟩⟩
+  have h12 : (positiveArcGraph tail3 head3 (fun _ => (1 : ℝ))).Adj 1 2 := by
+    simp only [positiveArcGraph, SimpleGraph.fromRel_adj]
+    exact ⟨by decide, Or.inl ⟨1, one_pos, rfl, rfl⟩⟩
+  have hr : ∀ v, (positiveArcGraph tail3 head3 (fun _ => (1 : ℝ))).Reachable 0 v := by
     intro v
     fin_cases v
     · rfl
@@ -169,10 +171,11 @@ noncomputable def b2 : Fin 1 → ℝ := ![1]
 
 lemma b2_pos : ∀ e, 0 < b2 e := by intro e; fin_cases e; simp [b2]
 
-lemma conn2 : (SimpleGraph.fromRel fun u v => ∃ e, t2 e = u ∧ h2 e = v).Connected := by
-  have h01 : (SimpleGraph.fromRel fun u v => ∃ e, t2 e = u ∧ h2 e = v).Adj 0 1 :=
-    (SimpleGraph.fromRel_adj _ _ _).mpr ⟨by decide, Or.inl ⟨0, rfl, rfl⟩⟩
-  have hr : ∀ v, (SimpleGraph.fromRel fun u v => ∃ e, t2 e = u ∧ h2 e = v).Reachable 0 v := by
+lemma conn2 : (positiveArcGraph t2 h2 (fun _ => (1 : ℝ))).Connected := by
+  have h01 : (positiveArcGraph t2 h2 (fun _ => (1 : ℝ))).Adj 0 1 := by
+    simp only [positiveArcGraph, SimpleGraph.fromRel_adj]
+    exact ⟨by decide, Or.inl ⟨0, one_pos, rfl, rfl⟩⟩
+  have hr : ∀ v, (positiveArcGraph t2 h2 (fun _ => (1 : ℝ))).Reachable 0 v := by
     intro v; fin_cases v
     · rfl
     · exact h01.reachable
