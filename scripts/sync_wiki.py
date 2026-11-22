@@ -36,13 +36,17 @@ section holds. On any other page, it goes at the end, after a blank line, and is
 reported for an editor to place; if the page has raw HTML or a code fence, it is
 left out and reported as an error. A folder the wiki has keeps its layout and each
 topic its folder (see kept_layout), and a folder page split into parts lists what
-its parts list when both pages are simple; any other part list is reported. Each
-edit is checked before it is written (see verify_edit): Autoform's check of what
-the site may publish must pass on the page, as render would otherwise show it as
-typed, with no link, and the text it publishes is rendered with the site's
-Markdown extensions and read as a browser builds it. An edit that would lose a
-link, move a heading or its id, or show its new link elsewhere or not at all is
-left out and reported too, and a page keeps its line ends and bytes.
+its parts list when both pages are simple; any other part list is reported. A
+card (docs/cards.md) holds only the statements its editors placed in it: a new
+page that would land in a card or in a folder below one goes in the card's
+parent folder, and the run lists it as unassigned; no new page takes the name
+of a folder or an address the card move ledger records. Each edit is checked
+before it is written (see verify_edit): Autoform's check of what the site may
+publish must pass on the page, as render would otherwise show it as typed, with
+no link, and the text it publishes is rendered with the site's Markdown
+extensions and read as a browser builds it. An edit that would lose a link, move
+a heading or its id, or show its new link elsewhere or not at all is left out
+and reported too, and a page keeps its line ends and bytes.
 
 import runs once, on a tree whose Lean still holds the wiki's English. TITLES.jsonl
 holds checked titles, one {"file", "name", "opening", "title"} per line: a
@@ -1112,6 +1116,21 @@ def kept_layout(folder: Path, created: dict[Path, str]) -> tuple[Path, dict[Path
     return (parts(at)[-1] if (at / "README.md").is_file() else at), pages
 
 
+def retired_addresses() -> set[str]:
+    """Every address the card move ledger (scripts/card-moves.jsonl, docs/cards.md) records as left: a moved page's
+    or folder's old path and a retired card's folder. Each leads to its article through the ledger, so no new page
+    takes it."""
+    path = wiki.ROOT / "scripts" / "card-moves.jsonl"
+    if not path.is_file():
+        return set()
+    found = set()
+    for line in path.read_text().splitlines():
+        if line.strip():
+            row = json.loads(line)
+            found.update(value for key, value in row.items() if key in ("page", "folder") and isinstance(value, str))
+    return found
+
+
 def new_article_id(taken: set[str]) -> str:
     """A fresh article id, `af_` and 24 hex digits, none of `taken`, which it joins. Random, so a page that replaces a
     deleted one never takes its id."""
@@ -1152,8 +1171,22 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     held_problems = sorted(f"{subject_path(a).relative_to(wiki.ROADMAP)}: {problems[id(a)]}" for _, a in keyed
                            if id(a) in problems)
     current = {declaration_key(target): target for target in targets if declaration_key(target)}
+    # A card holds only the statements its editors placed in it (docs/cards.md), and an address the move ledger
+    # records stays its article's for good.
+    cards = {subject_path(a).parent for rows in files.values() for a in rows
+             if subject_path(a).name == "README.md" and "card" in a.get("extensions", {}).get(OWN, {})}
+    retired = retired_addresses()
+
+    def card_above(path: Path) -> Path | None:
+        for up in (path, *path.parents):
+            if up in cards:
+                return up
+            if up == wiki.ROADMAP:
+                break
+        return None
+
     report: dict[str, list[str]] = {"added": [], "folders": [], "gone": [], "changed": [], "unindexed": [], "parts": [],
-                                  "replaced": [], "appended": [], "unlisted": [],
+                                  "replaced": [], "appended": [], "unlisted": [], "unassigned": [],
                                   "held": sorted(f"{name} ({path.relative_to(wiki.ROADMAP)})" for name, path in held.items()),
                                   "held_problems": held_problems}
     if held_problems:
@@ -1189,16 +1222,31 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
             folder = max((held for held in folders[target.module] if held in order), key=order.index)
         else:
             folder, laid_out = kept_layout(target.path.parent, created)
+        # A new page that would land in a card, or in a folder below one, goes beside the card, for an editor to
+        # place in one: a card never gains a page or a folder it was not given.
+        holder = card_above(folder)
+        unassigned = holder is not None
+        if holder is not None:
+            folder, laid_out = holder.parent, {}
         up, missing = folder, []
         while not (up / "README.md").is_file() and up / "README.md" not in created and up != wiki.ROADMAP:
             missing.append(up / "README.md")
             up = up.parent
-        if missing and all(laid_out.get(page, page) in generated for page in missing):
+        # A folder the run makes takes no address a page or the move ledger holds: a page `x.md` and a folder `x/`
+        # share a node id, and a recorded address keeps leading to its article.
+        occupied = [page for page in missing if (page.parent.parent / f"{page.parent.name}.md").exists()
+                    or page.parent.relative_to(wiki.ROADMAP).as_posix() in retired]
+        if missing and not occupied and all(laid_out.get(page, page) in generated for page in missing):
             created.update((page, generated[laid_out.get(page, page)]) for page in missing)
         else:
             folder = up
+        if (holder := card_above(folder)) is not None:
+            folder, unassigned = holder.parent, True
+        # A name no page, no folder (a folder page has the folder's node id) and no recorded address has.
         name, number = target.slug, 1
-        while name in wiki.RESERVED_SLUGS or (folder / f"{name}.md").exists():
+        while (name in wiki.RESERVED_SLUGS or (folder / f"{name}.md").exists() or (folder / name).exists()
+               or folder / name / "README.md" in created
+               or (folder / name).relative_to(wiki.ROADMAP).as_posix() in retired):
             number += 1
             name = f"{target.slug}-{number}"
         target.path = folder / f"{name}.md"
@@ -1239,6 +1287,8 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         files.setdefault(links_file(target.path), []).append(annotation)
         pages[key] = target.path
         report["added"].append(f"{key} -> {target.path.relative_to(wiki.ROADMAP)}")
+        if unassigned:
+            report["unassigned"].append(target.path.relative_to(wiki.ROADMAP).as_posix())
     def title(path: Path) -> str | None:
         if path.is_file():
             return page_heading(path.read_text()) or path.stem
@@ -1327,7 +1377,9 @@ def run_declarations() -> int:
                         ("appended", "New pages and folders listed at the end of a page that is not simple, to place"),
                         ("unlisted", "New pages and folders listed nowhere, as their page may hold raw HTML or code, the "
                          "site would show it as typed, or their item would not show where placed"),
-                        ("held", "Declarations held back, whose pages stay unlinked until the Lean is fixed")):
+                        ("held", "Declarations held back, whose pages stay unlinked until the Lean is fixed"),
+                        ("unassigned", "New pages placed beside the card that holds their module's other pages, for an "
+                         "editor to place in a card")):
         print(f"{title}: {len(report[kind])}")
         for row in report[kind]:
             print(f"  {row}")

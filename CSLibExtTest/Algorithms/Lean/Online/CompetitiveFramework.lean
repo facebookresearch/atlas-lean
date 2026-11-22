@@ -113,6 +113,10 @@ example : Competitive ToyP ((Simulation.refl ToyP).F AlwaysTrue) 1 0 := by
 #print axioms StrictLowerBound.of_additive
 #print axioms not_strictCompetitive_of_strictLowerBound
 #print axioms not_additiveCompetitive_of_additiveLowerBound
+#print axioms exists_strategyFeasible
+
+example : ∃ A : Strategy Bool Bool, StrategyFeasible ToyP A :=
+  exists_strategyFeasible ToyP
 
 end Cslib.Algorithms.Lean.Online.CompetitiveFrameworkTest
 
