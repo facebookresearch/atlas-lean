@@ -108,8 +108,8 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
    lists, for each failing module, the main pull requests that changed it: the
    candidates. Fix, commit, push.
 
-5. **Warm CI right before queueing.** Dispatch `bump-cache.yml` from main with
-   the pull request number and the head you reviewed:
+5. **Warm CI early, and keep it warm.** Dispatch `bump-cache.yml` from main
+   with the pull request number and the head you reviewed:
 
    ```sh
    gh workflow run bump-cache.yml --repo facebookresearch/atlas-lean --ref main \
@@ -118,12 +118,24 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
 
    It runs main's bump guard on that head first, then builds and checks it as
    CI does, and saves the build where the bump's own CI runs, its merge group
-   and the groups behind it find it. The first warm-up for a release is a cold
-   build, about five hours on a CI runner. A run that runs out of time saves a
-   checkpoint that only another dispatch for the same head uses: dispatch again
-   with the same SHA. Count on the warm cache only once a run reports `Saved`.
-   On 22 November main saved a new cache entry every 30 to 60 minutes and about
-   five fitted, so an entry lasted a few hours unless a build used it.
+   and the groups behind it find it. Every head of the bump has the same pins,
+   so a later dispatch, and the bump's own CI, start from the newest saved
+   build and rebuild only what changed since.
+
+   - Dispatch first as soon as the bump's head passes the guard. That run is a
+     cold build, about five hours on a CI runner, and nobody needs to wait for
+     it. A run that runs out of time saves a checkpoint that only another
+     dispatch for the same head uses: dispatch again with the same SHA.
+   - Dispatch again after merging main into the bump. Starting from the last
+     saved build, it takes about as long as an ordinary pull request build
+     (30 to 40 minutes on 22 November) when a few hours of main came in since,
+     and it keeps a recent build in the cache: GitHub evicts the least recently
+     used entries first. On 22 November main saved a new entry every 30 to 60
+     minutes and about five fitted; if main saves one on every push, as #6159
+     proposes, an entry nobody uses may last only tens of minutes.
+   - Dispatch last for the head you will queue, and queue it (step 6) as soon
+     as that run reports `Saved`. If the bump's merge group builds from
+     scratch anyway, the entry was evicted: dispatch again.
 
 6. **Queue it at the front of the queue.** Queue it right after a merge of main
    whose required checks passed, at a quiet hour: 11:00 to 13:00 UTC merges
