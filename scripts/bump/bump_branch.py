@@ -391,6 +391,14 @@ def file_versions(path: str) -> dict | None:
 # ---------------------------------------------------------------- neighbouring lines
 
 
+def lines_of(text: str) -> list[str]:
+    """`text` split after each LF, as git splits lines; a CR stays part of its line, and no
+    other character (form feed, U+2028, ...) ends a line."""
+    lines = [line + "\n" for line in text.split("\n")]
+    lines[-1] = lines[-1][:-1]
+    return lines if lines[-1] else lines[:-1]
+
+
 def edits(base: list[str], side: list[str]) -> list[tuple[int, int, list[str]]]:
     """The changes from `base` to `side` as (start, end, new lines) over base line ranges."""
     matcher = difflib.SequenceMatcher(None, base, side, autojunk=False)
@@ -420,7 +428,7 @@ def merge_adjacent(base: str, ours: str, theirs: str) -> str | None:
     contain any of the other. Every other conflict (overlapping changes, an insertion or
     deletion at the seam, any other pair of neighbouring changes) returns None, for a
     person."""
-    b, o, t = (text.splitlines(keepends=True) for text in (base, ours, theirs))
+    b, o, t = (lines_of(text) for text in (base, ours, theirs))
     mine, other = edits(b, o), edits(b, t)
     for s1, e1, new1 in mine:
         for s2, e2, new2 in other:
@@ -475,7 +483,7 @@ def merge_conflicts_adjacent(base: str, ours: str, theirs: str) -> str | None:
     starts, middle, separator, ends = ("<" * size + " ours", "|" * size + " base", "=" * size,
                                        ">" * size + " theirs")
     out, block, state, blocks = [], {"ours": [], "base": [], "theirs": []}, None, 0
-    for line in output.splitlines(keepends=True):
+    for line in lines_of(output):
         bare = line.rstrip("\r\n")
         if state is None and bare == starts:
             state = "ours"

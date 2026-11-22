@@ -247,6 +247,16 @@ class MergeAdjacentTest(unittest.TestCase):
         self.assertEqual(bb.merge_conflicts_adjacent(base, ours, theirs),
                          example + "/-- new doc -/\nnoncomputable def x := 1\n")
 
+    def test_only_lf_ends_a_line(self):
+        # Git sees one line here, changed on both sides; U+2028 or a form feed must not split it.
+        for sep in ("\u2028", "\x0c", "\x0b", "\x85"):
+            base = f"/-- doc -/{sep}def x := 1\nrest\n"
+            ours = f"/-- doc -/{sep}noncomputable def x := 1\nrest\n"
+            theirs = f"/-- new doc -/{sep}def x := 1\nrest\n"
+            self.assertIsNone(bb.merge_conflicts_adjacent(base, ours, theirs), repr(sep))
+        self.assertEqual(bb.lines_of("a\r\nb\u2028c\nd"), ["a\r\n", "b\u2028c\n", "d"])
+        self.assertEqual(bb.lines_of(""), [])
+
     def test_line_endings_are_kept(self):
         base = "a\r\n/-- doc -/\r\ndef x := 1\r\nb\r\n"
         ours = base.replace("def x", "noncomputable def x")
