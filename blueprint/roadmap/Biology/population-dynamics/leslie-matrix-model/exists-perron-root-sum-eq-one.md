@@ -1,7 +1,7 @@
 # Perron root of a Leslie matrix
 
 Let $L$ be the Leslie matrix of $n \ge 1$ age classes with fertilities $f_0, \dots, f_{n-1}$ and
-survival probabilities $s_0, \dots, s_{n-1}$, and suppose that $L$ is irreducible: its entries are
+real survival coefficients $s_0, \dots, s_{n-1}$, and suppose that $L$ is irreducible: its entries are
 nonnegative, and for all age classes $i$ and $j$ (including $i = j$) there is a sequence
 $i = i_0, i_1, \dots, i_k = j$ with $k \ge 1$ and $L_{i_{t-1} i_t} > 0$ for $t = 1, \dots, k$. Then there
 are a real $r > 0$ and a vector $v \in \mathbb{R}^n$ with positive entries such that $Lv = rv$, every

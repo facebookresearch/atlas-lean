@@ -1,3 +1,4 @@
 # The SIR field is smooth
 
-The SIR vector field is smooth in the state variable: its components are polynomials in $S$ and $I$.
+For each time, the SIR vector field is $C^n$ in the state variable for every $n$, including $n = \omega$:
+it is real analytic, and in particular smooth, since its components are polynomials in $S$ and $I$.

@@ -22,7 +22,7 @@
 - [Global existence for the SIS system](exists-is-solution.md)
 - [The explicit SIS solution is nonnegative](sis-infected-nonneg.md)
 - [The explicit SIS solution is below the linearized solution](sis-infected-le-mul-exp.md)
-- [The explicit SIS solution is a logistic solution](sis-infected-eq-logistic.md)
+- [The explicit SIS solution is a logistic formula](sis-infected-eq-logistic.md)
 
 ## Uniqueness
 
