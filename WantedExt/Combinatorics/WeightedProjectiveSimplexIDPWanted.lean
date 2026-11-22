@@ -969,8 +969,9 @@ of the dilate $tP = \{t y : y \in P\}$. The Hilbert basis of $P$ is the set of n
 lattice points $a$ of $P$ that are irreducible: whenever $a = b + c$ with $b$ and $c$ cone
 lattice points of $P$, one of $b$ and $c$ is zero.
 
-For this positive monoid the irreducible nonzero elements are exactly the minimal generating
-set, so this is an equivalent formulation of the usual Hilbert basis.
+For a nonempty lattice polytope $P$ the cone lattice points form a positive monoid, whose
+irreducible nonzero elements are exactly its minimal generating set, so this is then an equivalent
+formulation of the usual Hilbert basis.
 
 Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
 Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
