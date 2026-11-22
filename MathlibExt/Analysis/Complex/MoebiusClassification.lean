@@ -63,6 +63,17 @@ the two agree on non-scalar `g`. Mathlib's `Matrix.IsHyperbolic` and `Matrix.IsE
 discriminant-sign notions over ordered rings, not the multiplier notions of (12). The `Moebius`
 namespace keeps these names apart.
 
+## References
+
+* Zuoqin Wang, lecture notes for Sigurdur Helgason's *18.112 Functions of a Complex Variable*,
+  MIT OpenCourseWare, Fall 2008, Lecture 7: Definition 1 (printed page 1) and the trace criteria
+  (printed pages 2–4). The notes count the identity as parabolic:
+  <https://ocw.mit.edu/courses/18-112-functions-of-a-complex-variable-fall-2008/resources/lecture7/>
+* Lars V. Ahlfors, *Complex Analysis*, 3rd edition, McGraw-Hill, 1979, p. 86, the normal
+  form (12), to which the notes refer.
+
+## Provenance
+
 Rubric-guided revision of v1 ComplexVariables target 08 (`MoebiusTrans.IsParabolic` in
 `v1/Atlas/ComplexVariables/code/Lecture7.lean` at commit 6191bf1ba03d204784385ef5be2472be88035b93),
 Lecture 7, Definition 1. The archived formalization defined only the parabolic clause: the
@@ -81,9 +92,10 @@ open Matrix OnePoint
 namespace Moebius
 
 /-- `k` is a multiplier of `g` in the normal form (12): there is a Möbius map `T` with
-`T (g x) = k * T x` for every `x` on the Riemann sphere. The fixed points of (12) are
-`T⁻¹ 0` and `T⁻¹ ∞`, and `T` may be any map sending them to `0` and `∞`
-(`Moebius.isMultiplier_iff`). -/
+`T (g x) = k * T x` for every `x` on the Riemann sphere. Then `T⁻¹ 0` and `T⁻¹ ∞` are two
+distinct fixed points of `g`, the fixed points `α`, `β` of (12), and `T` may be any map sending
+them to `0` and `∞` (`Moebius.isMultiplier_iff`). They are the only fixed points unless `k = 1`,
+which happens only for the identity, which fixes every point. -/
 @[expose] public def IsMultiplier (g : GL (Fin 2) ℂ) (k : ℂ) : Prop :=
   ∃ T : GL (Fin 2) ℂ, ∀ x : OnePoint ℂ, T • g • x = (T • x).map (k * ·)
 
