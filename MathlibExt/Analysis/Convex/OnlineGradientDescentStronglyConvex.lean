@@ -11,6 +11,7 @@ public import Mathlib.Analysis.InnerProductSpace.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Topology.MetricSpace.Lipschitz
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import MathlibExt.Analysis.Convex.OnlineGradientDescent
 
 import Mathlib.NumberTheory.Harmonic.Bounds
 
@@ -25,11 +26,14 @@ optimization", Section 3.3, Theorem 3.3.
 The main result is `ogd_regret_strongly_convex`, proved from the one-step
 inequality `ogd_strongly_convex_step` (telescoping distance terms) and the
 harmonic-number estimate `harmonic_sum_le_one_add_log`.
+
+This file is the time-varying strongly convex companion to the fixed-step
+`ogdIter` and `ogd_regret` API in `MathlibExt.Analysis.Convex.OnlineGradientDescent`.
 -/
 
 @[expose] public section
 
-namespace Cslib.MachineLearning.OnlineGradientDescentStronglyConvex
+namespace MathlibExt.Analysis.Convex.OnlineGradientDescentStronglyConvex
 
 open scoped InnerProductSpace
 
@@ -123,6 +127,11 @@ for `t = 1, .., T` appears here as `η t = 1 / (α * (t + 1))` for
 sequence satisfying the projected-gradient update hypothesis `hupd` (whose
 existence is elementary by recursion) enjoys the bound.
 
+Only the comparator instance of strong convexity is assumed: no
+strong-convexity inequality outside the comparator instance is assumed.
+Feasible-set strong convexity supplies this hypothesis for feasible iterates
+and comparator.
+
 As `α → 0` both the step-size schedule and the regret bound blow up; there
 is no claim at `α = 0` (the bound is infinite and the schedule undefined).
 -/
@@ -135,8 +144,8 @@ theorem ogd_regret_strongly_convex {E : Type*} [NormedAddCommGroup E]
     (hprojstar : proj xstar = xstar)
     (hupd : ∀ t, x (t + 1)
       = proj (x t - (1 / (α * ((t : ℝ) + 1))) • g t (x t)))
-    (hsc : ∀ (t : ℕ) (y : E), f t (x t) + ⟪g t (x t), y - x t⟫_ℝ
-      + (α / 2) * ‖y - x t‖ ^ 2 ≤ f t y)
+    (hsc : ∀ t : ℕ, f t (x t) + ⟪g t (x t), xstar - x t⟫_ℝ
+      + (α / 2) * ‖xstar - x t‖ ^ 2 ≤ f t xstar)
     (hG : ∀ t, ‖g t (x t)‖ ≤ G)
     (hT : 1 ≤ T) :
     ∑ t ∈ Finset.range T, (f t (x t) - f t xstar)
@@ -180,7 +189,7 @@ theorem ogd_regret_strongly_convex {E : Type*} [NormedAddCommGroup E]
           + ((1 / (α * ((t : ℝ) + 1))) / 2) * G ^ 2 := by
     intro t _
     have hL1 := ogd_strongly_convex_step proj f g α (1 / (α * ((t : ℝ) + 1)))
-      x xstar t (hη t) hproj hprojstar (hupd t) (hsc t xstar)
+      x xstar t (hη t) hproj hprojstar (hupd t) (hsc t)
     have hS : ‖xstar - x t‖ = ‖x t - xstar‖ := by rw [← neg_sub, norm_neg]
     rw [hS, hcombine t] at hL1
     have hle := mul_le_mul_of_nonneg_left (hg2 t) (hηnn t)
@@ -222,4 +231,64 @@ theorem ogd_regret_strongly_convex {E : Type*} [NormedAddCommGroup E]
         add_le_add hdist hstep_le
     _ = (G ^ 2 / (2 * α)) * (1 + Real.log T) := zero_add _
 
-end Cslib.MachineLearning.OnlineGradientDescentStronglyConvex
+/-- Varying-step online gradient descent iterates.
+
+This extends the fixed-step `ogdIter` API with a step-size sequence `η`,
+using the same projected-gradient recursion. At unit step with scaled round
+gradients it agrees with `ogdIter` (see `ogdIterVarying_eq_ogdIter`).
+-/
+noncomputable def ogdIterVarying {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    (proj : E → E) (g : ℕ → E → E) (η : ℕ → ℝ) (x0 : E) : ℕ → E
+  | 0 => x0
+  | t + 1 => proj (ogdIterVarying proj g η x0 t - η t • g t (ogdIterVarying proj g η x0 t))
+
+/-- Successor equation for the varying-step iterates. -/
+theorem ogdIterVarying_succ {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    (proj : E → E) (g : ℕ → E → E) (η : ℕ → ℝ) (x0 : E) (t : ℕ) :
+    ogdIterVarying proj g η x0 (t + 1)
+      = proj (ogdIterVarying proj g η x0 t - η t • g t (ogdIterVarying proj g η x0 t)) := rfl
+
+/-- The varying-step iterates agree with the fixed-step `ogdIter` at unit
+step with scaled round gradients, as functions. -/
+theorem ogdIterVarying_eq_ogdIter {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    (proj : E → E) (g : ℕ → E → E) (η : ℕ → ℝ) (x0 : E) :
+    ogdIterVarying proj g η x0
+      = ogdIter proj
+        (fun t x => η t • g t x) 1 x0 := by
+  funext t
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [ogdIterVarying_succ, ih]
+    simp [ogdIter, one_smul]
+
+/-- Regret of the varying-step iterates for `α`-strongly convex losses.
+
+Running `ogdIterVarying` with the schedule `η t = 1 / (α * (t + 1))`
+enjoys the same regret bound as the abstract sequence in
+`ogd_regret_strongly_convex`, from which this corollary follows directly.
+Only the comparator instance of strong convexity along the iterates is
+assumed.
+-/
+theorem ogdIterVarying_regret_strongly_convex {E : Type*} [NormedAddCommGroup E]
+    [InnerProductSpace ℝ E]
+    (proj : E → E) (f : ℕ → E → ℝ) (g : ℕ → E → E) (α G : ℝ)
+    (x0 : E) (xstar : E) (T : ℕ)
+    (hα : 0 < α) (_hG0 : 0 ≤ G)
+    (hproj : LipschitzWith 1 proj)
+    (hprojstar : proj xstar = xstar)
+    (hsc : ∀ t : ℕ, f t (ogdIterVarying proj g (fun t => 1 / (α * ((t : ℝ) + 1))) x0 t)
+      + ⟪g t (ogdIterVarying proj g (fun t => 1 / (α * ((t : ℝ) + 1))) x0 t),
+        xstar - ogdIterVarying proj g (fun t => 1 / (α * ((t : ℝ) + 1))) x0 t⟫_ℝ
+      + (α / 2) * ‖xstar - ogdIterVarying proj g (fun t => 1 / (α * ((t : ℝ) + 1))) x0 t‖ ^ 2
+      ≤ f t xstar)
+    (hG : ∀ t, ‖g t (ogdIterVarying proj g (fun t => 1 / (α * ((t : ℝ) + 1))) x0 t)‖ ≤ G)
+    (hT : 1 ≤ T) :
+    ∑ t ∈ Finset.range T,
+        (f t (ogdIterVarying proj g (fun t => 1 / (α * ((t : ℝ) + 1))) x0 t) - f t xstar)
+      ≤ (G ^ 2 / (2 * α)) * (1 + Real.log T) := by
+  exact ogd_regret_strongly_convex proj f g α G
+    (ogdIterVarying proj g (fun t => 1 / (α * ((t : ℝ) + 1))) x0) xstar T
+    hα _hG0 hproj hprojstar (fun t => ogdIterVarying_succ proj g _ x0 t) hsc hG hT
+
+end MathlibExt.Analysis.Convex.OnlineGradientDescentStronglyConvex
