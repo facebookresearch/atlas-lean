@@ -49,8 +49,10 @@ theorem tvDist_unfold {Outcome : Type*} [Fintype Outcome] (P R : PMF Outcome) :
     tvDist P R = (1 / 2) * ∑ w, |(P w).toReal - (R w).toReal| :=
   rfl
 
-/-- Real masses of a finite PMF sum to one. -/
-theorem pmf_toReal_sum_univ {Outcome : Type*} [Fintype Outcome] [Nonempty Outcome]
+/-- Real masses of a finite PMF sum to one; a local specialization of
+`MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one` kept private to avoid a
+parallel public API. -/
+private theorem pmf_toReal_sum_univ {Outcome : Type*} [Fintype Outcome] [Nonempty Outcome]
     (P : PMF Outcome) : ∑ w, (P w).toReal = 1 := by
   have h1 : (∑ w, P w) = 1 := by
     have htsum := P.tsum_coe
