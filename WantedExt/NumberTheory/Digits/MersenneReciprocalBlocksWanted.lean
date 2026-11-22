@@ -27,8 +27,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Proposition 1: let `2^p - 1` be prime and let `p` divide the period `L` of `1/(2^p - 1)`;
-with blocks of length `ℓ = L/p`, `10^ℓ ≡ 2^r (mod 2^p - 1)` for some `r ∈ {1, …, p - 1}`.
+/-- **The block-length power of ten is a power of two modulo the Mersenne prime.** Let $p$ be a
+natural number such that $M = 2^p - 1$ is prime, let $L$ be the multiplicative order of $10$ modulo
+$M$ (the period of the decimal expansion of $1/M$), and suppose that $p$ divides $L$. Then there is
+a natural number $r$ with $1 \le r \le p - 1$ such that $10^{L/p} \equiv 2^r \pmod{M}$.
 
 Source: Amitabha Tripathi, *A Note on the Decimal Expansion of Reciprocals of Mersenne Primes*,
 INTEGERS 24 (2024), Article A14, Proposition 1 (`integers-2024-A14-prop-1`). -/
@@ -37,18 +39,23 @@ public theorem_wanted ten_pow_blockLength_modEq_two_pow (p : ℕ) (hM : (2 ^ p -
     ∃ r ∈ Finset.Icc 1 (p - 1),
       10 ^ (orderOf (10 : ZMod (2 ^ p - 1)) / p) ≡ 2 ^ r [MOD 2 ^ p - 1]
 
-/-- Theorem 1: let `2^p - 1` be prime, let `p` divide the period `L` of `1/(2^p - 1)`, cut the
-repeating block into `p` blocks `B_1, …, B_p` of length `ℓ = L/p`, let `1 ≤ r ≤ p - 1` with
-`10^ℓ ≡ 2^r (mod 2^p - 1)`, and let `s ≡ r^{-1} (mod p)`. With block subscripts taken modulo
-`p` in `{1, …, p}`:
-(i) `B_{ks+1} = 2B_{(k-1)s+1}` for `1 ≤ k ≤ p - 1`, `k ≠ p - r`; `B_{ks+1} = 2B_{(k-1)s+1} + 1`
-for `k = p - r`; `B_{ks+1} = 2B_{(k-1)s+1} - 10^ℓ` for `k = p`; in particular, when `r = 1`,
-`B_{k+1} = 2B_k` for `1 ≤ k ≤ p - 2`, `B_p = 2B_{p-1} + 1` and `B_1 = 2B_p - 10^ℓ`;
-(ii) `B_1 + ⋯ + B_p = 10^ℓ - 1`.
-The extraction prints `s ≡ r-1 (mod p)` with its superscripts flattened (as in `2p - 1` for
-`2^p - 1` and `10ℓ` for `10^ℓ`); the reading `s ≡ r - 1` fails at `p = 3` (`r = 1`, `s = 0`).
-`B` is extended to all natural indices by `B j = B_{((j - 1) mod p) + 1}`; the identities are in
-`ℤ`.
+/-- **Doubling recurrence for the blocks of $1/(2^p - 1)$.** Let $p$ be a natural number such
+that $M = 2^p - 1$ is prime, let $L$ be the multiplicative order of $10$ modulo $M$ (the period of
+the decimal expansion of $1/M$), and suppose that $p$ divides $L$. Put $\ell = L/p$ and let
+$N = (10^L - 1)/M$ be the repeating block of $1/M$, read as an $L$-digit integer with leading
+zeros. For $1 \le k \le p$ let $B_k = \lfloor N / 10^{\ell (p - k)} \rfloor \bmod 10^\ell$ be
+the $k$-th block of $\ell$ digits of $N$ from the left, and extend the indices to all $j \ge 1$
+by $B_j = B_k$ where $k = ((j - 1) \bmod p) + 1$. Let $r$ and $s$ be natural numbers with
+$1 \le r \le p - 1$, $10^\ell \equiv 2^r \pmod{M}$ and $rs \equiv 1 \pmod{p}$. Then, as
+integers:
+
+(i) for every $k$ with $1 \le k \le p$, $B_{ks+1} = 2B_{(k-1)s+1} - 10^\ell$ if $k = p$,
+$B_{ks+1} = 2B_{(k-1)s+1} + 1$ if $k = p - r$, and $B_{ks+1} = 2B_{(k-1)s+1}$ otherwise;
+
+(ii) if $r = 1$, then for every $k$ with $1 \le k \le p$, $B_{k+1} = 2B_k - 10^\ell$ if $k = p$,
+$B_{k+1} = 2B_k + 1$ if $k = p - 1$, and $B_{k+1} = 2B_k$ otherwise;
+
+(iii) $B_1 + B_2 + \dots + B_p = 10^\ell - 1$.
 
 Source: Amitabha Tripathi, *A Note on the Decimal Expansion of Reciprocals of Mersenne Primes*,
 INTEGERS 24 (2024), Article A14, Theorem 1 (`integers-2024-A14-thm-1`). -/

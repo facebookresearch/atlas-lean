@@ -756,10 +756,7 @@ private def ac_noaaCheck : Bool :=
         decide (¬ (u.getD i 0 = u.getD (i + 1) 0 ∧
                    u.getD (i + 1) 0 = u.getD (i + 2) 0)))))))
 
--- Arithmetic: block-index monotonicity and span descent
-private theorem ac_div_mono {i j : ℕ} (h : i ≤ j) : i / 6 ≤ j / 6 :=
-  Nat.div_le_div_right h
-
+-- Arithmetic: span descent
 private theorem ac_span_descent {i0 i3 : ℕ} (h : 6 ≤ i3 - i0) :
     1 ≤ i3 / 6 - i0 / 6 ∧ i3 / 6 - i0 / 6 < i3 - i0 := by
   constructor <;> omega
@@ -1666,9 +1663,9 @@ private theorem ac_delta_no_T_aux : ∀ S : ℕ, ∀ (t : ac_Tpl),
           t i0 i1 i2 i3 h01 h12 h23 hr hspan
       have hpmem : ac_T.contains p = true :=
         ac_closed_spec t ht m0 m1 m2 m3 p hpar
-      have hq01 : i0 / 6 ≤ i1 / 6 := ac_div_mono h01
-      have hq12 : i1 / 6 ≤ i2 / 6 := ac_div_mono h12
-      have hq23 : i2 / 6 ≤ i3 / 6 := ac_div_mono h23
+      have hq01 : i0 / 6 ≤ i1 / 6 := Nat.div_le_div_right h01
+      have hq12 : i1 / 6 ≤ i2 / 6 := Nat.div_le_div_right h12
+      have hq23 : i2 / 6 ≤ i3 / 6 := Nat.div_le_div_right h23
       have hltS : i3 / 6 - i0 / 6 < S := by omega
       exact ih (i3 / 6 - i0 / 6) hltS p hpmem (i0 / 6) (i1 / 6) (i2 / 6)
         (i3 / 6) hq01 hq12 hq23 rfl hpos' hreal
@@ -1814,9 +1811,9 @@ private theorem ac_omega_cubeFree (b : ℕ → Bool) (i ℓ : ℕ) (hℓ : 1 ≤
         _ i (i + ℓ) (i + 2 * ℓ) (i + 3 * ℓ) h01 h12 h23 hr hspan
     have hpmem : ac_T.contains p = true :=
       ac_zero_spec _ _ _ _ m0 m1 m2 m3 p hpar
-    have hq01 : i / 6 ≤ (i + ℓ) / 6 := ac_div_mono h01
-    have hq12 : (i + ℓ) / 6 ≤ (i + 2 * ℓ) / 6 := ac_div_mono h12
-    have hq23 : (i + 2 * ℓ) / 6 ≤ (i + 3 * ℓ) / 6 := ac_div_mono h23
+    have hq01 : i / 6 ≤ (i + ℓ) / 6 := Nat.div_le_div_right h01
+    have hq12 : (i + ℓ) / 6 ≤ (i + 2 * ℓ) / 6 := Nat.div_le_div_right h12
+    have hq23 : (i + 2 * ℓ) / 6 ≤ (i + 3 * ℓ) / 6 := Nat.div_le_div_right h23
     exact ac_delta_no_T p hpmem (i / 6) ((i + ℓ) / 6) ((i + 2 * ℓ) / 6)
       ((i + 3 * ℓ) / 6) hq01 hq12 hq23 hpos' hreal
 
@@ -1943,16 +1940,6 @@ private theorem ac_cnt_block_sum (ω : ℕ → Fin 3) (a : Fin 3) (m q : ℕ) :
       (k := (q + 1) * m) (Nat.zero_le _) hle
     rw [hsplit, ih, Finset.sum_range_succ]
 
-private theorem ac_lt_two_pow_self (n : ℕ) : n < 2 ^ n := by
-  induction n with
-  | zero => decide
-  | succ n ih =>
-    have hpos : 0 < 2 ^ n := pow_pos (by omega) _
-    have hpow : 2 ^ (n + 1) = 2 ^ n * 2 := pow_succ 2 n
-    have hle : n + 1 ≤ 2 ^ n := ih
-    rw [hpow]
-    omega
-
 private theorem ac_two_pow_le_three_pow (n : ℕ) : 2 ^ n ≤ 3 ^ n := by
   gcongr
   omega
@@ -1973,7 +1960,7 @@ private theorem ac_good_window (m : ℕ) :
       set K : ℕ := 3 * m ^ 2 + m with hKdef
       set j : ℕ := K + 1 with hjdef
       have hj_gt_K : K < j := by omega
-      have h2j_gt : K < 2 ^ j := lt_trans hj_gt_K (ac_lt_two_pow_self j)
+      have h2j_gt : K < 2 ^ j := lt_trans hj_gt_K Nat.lt_two_pow_self
       by_contra hcon
       simp only [not_exists] at hcon
       have hbad : ∀ s, 4 * ac_cnt ac_delta 1 s (s + m) + 3 < m := by
@@ -2075,8 +2062,46 @@ private theorem ac_good_window (m : ℕ) :
         linarith [h2K]
       linarith [hbig, key, hsmall, hlt]
 
+-- Transfer window cube-freeness to a finite word while the word function is a parameter.
+private theorem ac_window_admissible (ω : ℕ → Fin 3) (B n : ℕ)
+    (W : List (Fin 3)) (hW : W = List.ofFn (fun k : Fin n => ω (B + k)))
+    (hω : ∀ (i ℓ : ℕ), 1 ≤ ℓ →
+      ¬ (∀ a : Fin 3, ac_cnt ω a i (i + ℓ) =
+          ac_cnt ω a (i + ℓ) (i + 2 * ℓ) ∧
+        ac_cnt ω a (i + ℓ) (i + 2 * ℓ) =
+          ac_cnt ω a (i + 2 * ℓ) (i + 3 * ℓ))) :
+    W.length = n ∧
+      ¬ ∃ p x y z t : List (Fin 3), W = p ++ x ++ y ++ z ++ t ∧
+        x ≠ [] ∧ y ≠ [] ∧ z ≠ [] ∧
+        ∀ a : Fin 3, x.count a = y.count a ∧ y.count a = z.count a := by
+  constructor
+  · rw [hW, List.length_ofFn]
+  · rintro ⟨p, x, y, z, t, hfac, hx, hy, hz, heq⟩
+    have hbr := ac_list_factor_bridge (ω := ω) (B := B) (n := n) (W := W)
+      hW p x y z t hfac hx hy hz (fun a => (heq a).1) (fun a => (heq a).2)
+    obtain ⟨hℓ, hyl, hzl, hcounts⟩ := hbr
+    apply hω (B + p.length) x.length hℓ
+    intro a
+    obtain ⟨e1, e2⟩ := hcounts a
+    rw [hyl] at e1
+    rw [hyl, hzl] at e2
+    refine ⟨?_, ?_⟩
+    · have j1 : B + (p.length + x.length) = B + p.length + x.length := by omega
+      have j2 : B + p.length + x.length + x.length =
+          B + p.length + 2 * x.length := by omega
+      rw [j1, j2] at e1
+      exact e1
+    · have k1 : B + (p.length + x.length) = B + p.length + x.length := by omega
+      have k2 : B + p.length + x.length + x.length =
+          B + p.length + 2 * x.length := by omega
+      have k3 : B + ((p.length + x.length) + x.length) =
+          B + p.length + 2 * x.length := by omega
+      have k4 : B + p.length + 2 * x.length + x.length =
+          B + p.length + 3 * x.length := by omega
+      rw [k1, k2, k3, k4] at e2
+      exact e2
+
 -- 2^(#ones) lower bound on the ncard.
-set_option maxHeartbeats 1000000 in
 private theorem ac_ncard_lower (n s : ℕ) :
     2 ^ ((Finset.Ico s (s + n / 6)).filter (fun q => ac_delta q = 1)).card ≤
       Set.ncard {w : List (Fin 3) | w.length = n ∧
@@ -2139,41 +2164,9 @@ private theorem ac_ncard_lower (n s : ℕ) :
           x ≠ [] ∧ y ≠ [] ∧ z ≠ [] ∧
           ∀ a : Fin 3, x.count a = y.count a ∧ y.count a = z.count a} := by
     intro S _
-    constructor
-    · have hlen : (F S).length = n := List.length_ofFn
-      exact hlen
-    · rintro ⟨p, x, y, z, t, hfac, hx, hy, hz, heq⟩
-      have hfac' : List.ofFn (fun k : Fin n =>
-          ac_omega (fun q => decide (q ∈ S)) (6 * s + (k : ℕ))) =
-          p ++ x ++ y ++ z ++ t := hfac
-      have hbr := ac_list_factor_bridge (ac_omega fun q => decide (q ∈ S)) (6 * s) n
-        (List.ofFn fun k : Fin n => ac_omega (fun q => decide (q ∈ S)) (6 * s + ↑k))
-        rfl p x y z t hfac' hx hy hz (fun a => (heq a).1) (fun a => (heq a).2)
-      obtain ⟨hℓ, hyl, hzl, hcounts⟩ := hbr
-      have hcon := ac_omega_cubeFree (fun q => decide (q ∈ S))
-        (6 * s + p.length) x.length hℓ
-      apply hcon
-      intro a
-      obtain ⟨e1, e2⟩ := hcounts a
-      rw [hyl] at e1
-      rw [hyl, hzl] at e2
-      refine ⟨?_, ?_⟩
-      · have j1 : 6 * s + (p.length + x.length) =
-            6 * s + p.length + x.length := by omega
-        have j2 : 6 * s + p.length + x.length + x.length =
-            6 * s + p.length + 2 * x.length := by omega
-        rw [j1, j2] at e1
-        exact e1
-      · have k1 : 6 * s + (p.length + x.length) =
-            6 * s + p.length + x.length := by omega
-        have k2 : 6 * s + p.length + x.length + x.length =
-            6 * s + p.length + 2 * x.length := by omega
-        have k3 : 6 * s + ((p.length + x.length) + x.length) =
-            6 * s + p.length + 2 * x.length := by omega
-        have k4 : 6 * s + p.length + 2 * x.length + x.length =
-            6 * s + p.length + 3 * x.length := by omega
-        rw [k1, k2, k3, k4] at e2
-        exact e2
+    exact ac_window_admissible (ω := ac_omega (fun q => decide (q ∈ S)))
+      (B := 6 * s) (n := n) (W := F S) rfl
+      (fun i ℓ hℓ => ac_omega_cubeFree (fun q => decide (q ∈ S)) i ℓ hℓ)
   have hinj : Set.InjOn F (↑(Q.powerset) : Set (Finset ℕ)) := by
     intro S hS T hT hST
     have hSQ : S ⊆ Q := Finset.mem_powerset.mp (Finset.mem_coe.mp hS)

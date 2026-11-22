@@ -286,7 +286,7 @@ theorem jeb_jce_degree_insert_other (E : Set (Sym2 (Site 2)))
   convert step using 3
 
 theorem jeb_degree_data_of_closedContour (H : SimpleGraph (Site 2))
-    [SimpleGraph.LocallyFinite H] [Fintype H.edgeSet] (hsub : H ≤ hypercubicLattice 2)
+    [SimpleGraph.LocallyFinite H] (hsub : H ≤ hypercubicLattice 2)
     (p q : Site 2)
     (hpq : (hypercubicLattice 2).Adj p q) (hnpq : s(p, q) ∉ H.edgeSet)
     (hcc : jce_ClosedContour (insert (s(p, q)) H.edgeSet)) :

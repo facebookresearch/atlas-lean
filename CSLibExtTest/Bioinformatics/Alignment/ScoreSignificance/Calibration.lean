@@ -9,14 +9,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Bioinformatics.Alignment.ScoreSignificance.Calibration
-public import Mathlib.Probability.CDF
-public import Mathlib.Probability.Independence.InfinitePi
+public import CSLibExtTest.Bioinformatics.Alignment.ScoreSignificance.ExpFixture
 
 /-!
 # Karlin–Altschul p-value calibration tests
 
 * Values of `gumbelPValue` and `gumbelLevel`: positivity, the bound `≤ 1`, the rejection region
   and `exp (-K e^{-θ x_α}) = 1 - α` at `α = 1 / 2`.
+* The Gumbel distribution function and level as the shared `gumbelCDF` and `gumbelQuantile` at
+  concrete parameters, and `exp (-K e^{-θ x_α}) = 1 - α` recovered from the shared inverse lemma.
 * A nontrivial instance of the generic calibration theorems `tendsto_real_gumbelPValue_le` and
   `eventually_real_gumbelPValue_le_le`: `Mₙ` the maximum of `n + 1` i.i.d. `Exp(1)` variables
   (a `LadderInput` with one excursion per step, `θ = K = 1`). The p-value
@@ -52,50 +53,31 @@ example (s : ℝ) :
 example : Real.exp (-(1 * Real.exp (-(1 * gumbelLevel 1 1 (1 / 2))))) = 1 / 2 := by
   rw [exp_neg_mul_exp_gumbelLevel one_pos one_pos (by norm_num) (by norm_num)]; norm_num
 
+/-! ### The Gumbel level through the shared Gumbel API -/
+
+/-- With `K = e` and `θ = 1`, the distribution function `exp (-K e^{-θ x})` is the shared
+`gumbelCDF` with location `1` and scale `1`. -/
+example (x : ℝ) : Real.exp (-(Real.exp 1 * Real.exp (-(1 * x)))) = gumbelCDF 1 1 x := by
+  simpa using exp_neg_mul_exp_eq_gumbelCDF (Real.exp_pos 1) one_pos x
+
+/-- With `K = e` and `θ = 1`, the Gumbel level at `α = 1 - e⁻¹` is the shared quantile at `e⁻¹`,
+which is the location `1`. -/
+example : gumbelLevel (Real.exp 1) 1 (1 - Real.exp (-1)) = 1 := by
+  rw [gumbelLevel_eq_gumbelQuantile (Real.exp_pos 1)
+    (sub_pos.2 (Real.exp_lt_one_iff.2 (by norm_num))) (sub_lt_self 1 (Real.exp_pos (-1)))]
+  simp [gumbelQuantile]
+
+/-- `exp_neg_mul_exp_gumbelLevel` at `K = 2`, `θ = 3`, `α = 1 / 20`, obtained from the shared
+inverse lemma `gumbelCDF_gumbelQuantile` through the two bridges. -/
+example : Real.exp (-(2 * Real.exp (-(3 * gumbelLevel 2 3 (1 / 20))))) = 1 - 1 / 20 := by
+  rw [exp_neg_mul_exp_eq_gumbelCDF two_pos three_pos,
+    gumbelLevel_eq_gumbelQuantile two_pos (by norm_num) (by norm_num)]
+  exact gumbelCDF_gumbelQuantile (by norm_num) (by norm_num) (by norm_num)
+
 /-! ### A nontrivial instance: maxima of i.i.d. exponential variables -/
-
-instance : IsProbabilityMeasure (expMeasure 1) := isProbabilityMeasure_expMeasure one_pos
-
-/-- I.i.d. `Exp(1)` coordinates. -/
-noncomputable abbrev Pexp : Measure (ℕ → ℝ) := Measure.infinitePi fun _ => expMeasure 1
-
-/-- The running maximum `max_{i ≤ n} ω i`. -/
-noncomputable def runMax (n : ℕ) (ω : ℕ → ℝ) : ℝ :=
-  (Finset.range (n + 1)).sup' ⟨0, by simp⟩ ω
 
 theorem measurable_runMax (n : ℕ) : Measurable (runMax n) :=
   Finset.measurable_range_sup'' fun k _ => measurable_pi_apply k
-
-/-- One `Exp(1)` excursion per step: `Y i ω = ω i`, `N n = n`, `A = 1`, `F = cdf Exp(1)`. -/
-noncomputable def expLadder : LadderInput Pexp runMax where
-  Y i ω := ω i
-  N n _ := n
-  F t := cdf (expMeasure 1) t
-  A := 1
-  A_pos := one_pos
-  measurable_Y i := measurable_pi_apply i
-  iIndepFun_Y := iIndepFun_infinitePi (X := fun _ => (id : ℝ → ℝ)) fun _ => measurable_id
-  real_Y_le i t := by
-    rw [cdf_eq_real, ← Measure.infinitePi_map_eval (fun _ => expMeasure 1) i,
-      map_measureReal_apply (measurable_pi_apply i) measurableSet_Iic]
-    rfl
-  count_lln ε hε := by
-    refine tendsto_const_nhds.congr' ?_
-    filter_upwards [eventually_ge_atTop 1] with n hn
-    have hn' : (n : ℝ) ≠ 0 := by positivity
-    have hset : {ω : ℕ → ℝ | ε ≤ |(n : ℝ) / n - (1 : ℝ)⁻¹|} = ∅ := by
-      ext ω; simp [div_self hn', not_le.2 hε]
-    rw [hset, measureReal_empty]
-  le_of_forall_le := ae_of_all _ fun ω n t h =>
-    Finset.sup'_le _ _ fun i hi => h i (Nat.lt_succ_iff.1 (Finset.mem_range.1 hi))
-  le_of_lt_count := ae_of_all _ fun ω n i hi =>
-    Finset.le_sup' ω (Finset.mem_range.2 (by omega))
-
-theorem expLadder_tail :
-    Tendsto (fun t => (1 - expLadder.F t) * Real.exp (1 * t)) atTop (𝓝 1) :=
-  tendsto_tail_of_eq_exp fun t ht => by
-    change 1 - cdf (expMeasure 1) t = _
-    rw [cdf_expMeasure_eq one_pos]; simp [ht]
 
 /-- The classical Gumbel limit for this model, in the form the calibration theorems take:
 `P(Mₙ ≤ log n / 1 + x) → exp (-(1 · e^{-1 · x}))`. -/

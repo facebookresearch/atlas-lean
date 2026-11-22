@@ -195,4 +195,20 @@ example {μ : Measure Ω} (Ts Cs : Fin 2 → Ω → ℝ) (F : Measure ℝ) (hlaw
       (∫⁻ s in Iic t, ENNReal.ofReal (totalAtRiskProcess Ts Cs s ω) ∂(hazardMeasure F)).toReal :=
   totalCompensator_eq_of_map_eq hlaw t ω hfin
 
+/-! ### `trivialOn`: the σ-algebra of sets that contain or miss `E` -/
+
+/-- A superset of `E` is measurable. -/
+example (E A : Set Ω) (h : E ⊆ A) : MeasurableSet[trivialOn E] A := Or.inr h
+
+/-- A set disjoint from `E` is measurable. -/
+example (E A : Set Ω) (h : A ∩ E = ∅) : MeasurableSet[trivialOn E] A := Or.inl h
+
+/-- Non-vacuity: on `Bool`, `{true}` meets `univ` without containing it, so it is not
+`trivialOn univ`-measurable. -/
+example : ¬ MeasurableSet[trivialOn (univ : Set Bool)] {true} := by
+  rintro (h | h)
+  · exact (h.subset (⟨rfl, trivial⟩ : true ∈ ({true} : Set Bool) ∩ univ) :
+      true ∈ (∅ : Set Bool))
+  · exact absurd (h (mem_univ false)) (by simp)
+
 end MathlibExtTest.Probability.Statistics.CountingProcess

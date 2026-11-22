@@ -30,7 +30,7 @@ The parameter `θ` ranges over a finite-dimensional real inner product space `E`
 `EuclideanSpace ℝ (Fin d)`), and `p θ` is a family of densities with respect to a reference
 measure `ν`. The **score** is the gradient `∇_θ log p θ x ∈ E` (`score`) and the **Fisher
 information** is the operator `I(θ) = E_θ [s sᵀ]` (`fisherInformation`), with quadratic form
-`⟪I(θ) u, u⟫ = E_θ ⟪s, u⟫²`. Every result here is the vector form of a one-parameter result in
+`⟪I(θ) u, u⟫ = E_θ ⟪s, u⟫²`. The likelihood results are vector forms of one-parameter results in
 `FisherInformation`, `MLEAsymptoticNormality` and `LikelihoodRatioTests`:
 
 * Cramér–Rao reduces to the scalar inequality along the line `t ↦ θ + t • u`, whose scalar
@@ -567,9 +567,11 @@ private theorem norm_add_inverse_le {D K B : E →L[ℝ] E} {A T : E} {r η κ :
 
 
 omit [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E] [MeasurableSpace 𝓧] in
-/-- The summed first-order Taylor bound at a root `θ` in the ball:
-`‖∑ ψ θ₀ (xᵢ) + (∑ Dψ θ₀ (xᵢ)) (θ - θ₀)‖ ≤ (∑ M (xᵢ)) ‖θ - θ₀‖²`. -/
-private theorem norm_sum_add_sum_apply_le {ψ : E → 𝓧 → E} {θ₀ : E} {δ : ℝ}
+/-- If each `ψ · x` is differentiable on `ball θ₀ δ` with `‖Dψ θ x - Dψ θ₀ x‖ ≤ M x * ‖θ - θ₀‖`
+there, and `θ ∈ ball θ₀ δ` is a root of `∑ i ∈ range n, ψ · (xs i)`, then
+`‖∑ i ∈ range n, ψ θ₀ (xs i) + (∑ i ∈ range n, Dψ θ₀ (xs i)) (θ - θ₀)‖` is at most
+`(∑ i ∈ range n, M (xs i)) * ‖θ - θ₀‖ ^ 2`. -/
+theorem norm_sum_add_sum_apply_le {ψ : E → 𝓧 → E} {θ₀ : E} {δ : ℝ}
     (hψ_diff : ∀ x, ∀ θ ∈ Metric.ball θ₀ δ, DifferentiableAt ℝ (fun t => ψ t x) θ)
     {M : 𝓧 → ℝ}
     (hM : ∀ x, ∀ θ ∈ Metric.ball θ₀ δ,

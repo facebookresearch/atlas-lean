@@ -38,10 +38,13 @@ grid. Proposition 4 carries the domain hypothesis
 `J_k(0) = 0` is a spurious fixed point for which the
 fourth case fails (`J_k(1) = 1 ≠ 0`). Not stated (see the
 source audit table): Lemma 8(b), 8(c), Theorem 9(b),
-9(c), 9(d), and Corollaries 10, 11, which use the paper's
-auxiliary functions `δ_k`, `M_k`, `a_k` and the "next
-extremal point" notation, none of which are defined in
-the extracted statements.
+9(c), 9(d). Corollaries 10 and 11 ("next" extremal point
+= the least extremal point beyond the given one) use
+`IsHighExtremal`, which for `m ≥ 2k - 3` agrees with the
+paper's Definition 1 (`J_k(m) ∈ [[m - k + 2, m]]`; checked
+for `k ≤ 9`, `m < 3000`); Corollary 11's last formula is
+omitted, false as printed (`k = 2`, `ň = 1`, `n = 2`:
+`J_2(2) = 1`, the formula gives `3`).
 -/
 module
 
@@ -56,20 +59,21 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.JosephusWanted
 
-/-- Low extremal point of `J_k` in the paper's sense:
-`J_k(m) ∈ [1, k - 1]`. -/
+/-- **Low extremal point of the Josephus function.** For natural numbers $k$ and $m$, the point
+$m$ is a low extremal point of the Josephus function $J_k$ if $1 \le J_k(m) \le k - 1$, where
+$k - 1$ is truncated at $0$. -/
 def IsLowExtremal (k m : ℕ) : Prop :=
   1 ≤ MetaMathlibExt.josephus k m ∧
     MetaMathlibExt.josephus k m ≤ k - 1
 
-/-- High extremal point of `J_k`: the point just before
-a low extremal point. -/
+/-- **High extremal point of the Josephus function.** For natural numbers $k$ and $m$, the point
+$m$ is a high extremal point of the Josephus function $J_k$ if $m + 1$ is a low extremal point
+of $J_k$, that is, if $1 \le J_k(m + 1) \le k - 1$. -/
 def IsHighExtremal (k m : ℕ) : Prop := IsLowExtremal k (m + 1)
 
-/-- **Theorem 2**: with `p := J_k(n)`, if
-`p + k ∈ [[ℓ(n+1) + 1, (ℓ+1)(n+1)]]` for some
-nonnegative integer `ℓ`, then
-`J_k(n+1) = p + k - ℓ(n+1)`.
+/-- **Josephus recurrence by number of wrap-arounds.** Let $k \ge 2$ and $n \ge 1$ be natural
+numbers, let $J_k$ be the Josephus function and write $p = J_k(n)$. If $\ell$ is a natural
+number with $\ell(n+1) + 1 \le p + k \le (\ell+1)(n+1)$, then $J_k(n+1) = p + k - \ell(n+1)$.
 
 Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
 "Analytical Study and Efficient Evaluation of the
@@ -81,12 +85,13 @@ theorem_wanted josephus_succ_eq_sub (k n ℓ : ℕ) (hk : 2 ≤ k)
     MetaMathlibExt.josephus k (n + 1) =
       MetaMathlibExt.josephus k n + k - ℓ * (n + 1)
 
-/-- **Proposition 4**: at a fixed point `n_p ≥ 1`
-(`J_k(n_p) = n_p`), writing `s_ℓ = ℓ * (n_p + 1)`, the
-value `J_k(n_p + 1)` is `k - 1` if `k ≤ n_p + 1`; `n_p + 1`
-if `k = s_ℓ + 1` for some `ℓ ≥ 1`; `k₁ - 1` if
-`k = s_ℓ + k₁` for some `ℓ ≥ 1` and `2 ≤ k₁ ≤ n_p`; and
-`n_p` if `k = s_{ℓ+1}` for some `ℓ ≥ 1`.
+/-- **The Josephus function just after a fixed point.** Let $k \ge 2$ and $n_p \ge 1$ be natural
+numbers with $J_k(n_p) = n_p$, where $J_k$ is the Josephus function. Then $J_k(n_p + 1)$ is
+determined as follows: (i) if $k \le n_p + 1$, then $J_k(n_p + 1) = k - 1$; (ii) if
+$k = \ell(n_p + 1) + 1$ for some natural number $\ell \ge 1$, then $J_k(n_p + 1) = n_p + 1$;
+(iii) if $k = \ell(n_p + 1) + k_1$ for some natural numbers $\ell \ge 1$ and $k_1$ with
+$2 \le k_1 \le n_p$, then $J_k(n_p + 1) = k_1 - 1$; (iv) if $k = (\ell + 1)(n_p + 1)$ for some
+natural number $\ell \ge 1$, then $J_k(n_p + 1) = n_p$.
 
 Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
 "Analytical Study and Efficient Evaluation of the
@@ -103,8 +108,9 @@ theorem_wanted josephus_fixed_succ_cases (k np : ℕ)
     (∀ ℓ : ℕ, 1 ≤ ℓ → k = (ℓ + 1) * (np + 1) →
       MetaMathlibExt.josephus k (np + 1) = np)
 
-/-- **Proposition 4**, final clause: for `n_p ≥ k - 1`,
-`J_k(n_p) = n_p` if and only if `J_k(n_p + 1) = k - 1`.
+/-- **Josephus fixed points detected by the next value.** Let $k \ge 2$ and $n_p$ be natural
+numbers with $n_p \ge k - 1$, and let $J_k$ be the Josephus function. Then $J_k(n_p) = n_p$ if
+and only if $J_k(n_p + 1) = k - 1$.
 
 Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
 "Analytical Study and Efficient Evaluation of the
@@ -114,8 +120,9 @@ theorem_wanted josephus_eq_self_iff (k np : ℕ) (hk : 2 ≤ k)
     MetaMathlibExt.josephus k np = np ↔
       MetaMathlibExt.josephus k (np + 1) = k - 1
 
-/-- **Lemma 6**(a): with `p := J_k(n)`, if
-`p + k * m ≤ n + m` then `J_k(n + m) = p + k * m`.
+/-- **Linear growth of the Josephus function before a wrap-around.** Let $k \ge 2$, $n \ge 1$
+and $m$ be natural numbers, let $J_k$ be the Josephus function and write $p = J_k(n)$. If
+$p + km \le n + m$, then $J_k(n + m) = p + km$.
 
 Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
 "Analytical Study and Efficient Evaluation of the
@@ -126,11 +133,13 @@ theorem_wanted josephus_add_eq_of_le (k n m : ℕ) (hk : 2 ≤ k)
     MetaMathlibExt.josephus k (n + m) =
       MetaMathlibExt.josephus k n + k * m
 
-/-- **Lemma 6**(b), with the single-wrap hypothesis (see
-the module docstring): if `m` is the smallest nonnegative
-integer with `J_k(n) + k * m > n + m` and moreover
-`J_k(n) + k * m ≤ 2 * (n + m)`, then
-`J_k(n + m) = J_k(n) + k * m - (n + m)`.
+/-- **The Josephus function at the first wrap-around.** Let $k \ge 2$, $n \ge 1$ and $m$ be
+natural numbers and let $J_k$ be the Josephus function. Suppose that $m$ is the least natural
+number with $J_k(n) + km > n + m$, and that moreover $J_k(n) + km \le 2(n + m)$. Then
+$J_k(n + m) = J_k(n) + km - (n + m)$.
+
+The second hypothesis, which allows only one wrap-around, is not in the printed lemma; without it
+the statement fails at $k = 4$, $n = 1$, $m = 1$.
 
 Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
 "Analytical Study and Efficient Evaluation of the
@@ -144,11 +153,11 @@ theorem_wanted josephus_add_eq_sub_of_minimal (k n m : ℕ)
     MetaMathlibExt.josephus k (n + m) =
       MetaMathlibExt.josephus k n + k * m - (n + m)
 
-/-- **Corollary 7**: `2k - 2` is always an extremal point;
-precisely, if `J_k(2k - 2) ≤ k - 1` then `2k - 3` is a
-high extremal point and `2k - 2` is low extremal, and if
-`J_k(2k - 2) > k - 1` then `2k - 2` is a high extremal
-point and `2k - 1` is low extremal.
+/-- **Extremal points of the Josephus function near $2k - 2$.** Let $k \ge 2$ be a natural
+number and let $J_k$ be the Josephus function; call $m$ low extremal if $1 \le J_k(m) \le k - 1$,
+and high extremal if $m + 1$ is low extremal. If $J_k(2k - 2) \le k - 1$, then $2k - 3$ is high
+extremal and $2k - 2$ is low extremal. If $J_k(2k - 2) > k - 1$, then $2k - 2$ is high extremal
+and $2k - 1$ is low extremal. In particular, $2k - 2$ is always a low or a high extremal point.
 
 Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
 "Analytical Study and Efficient Evaluation of the
@@ -161,11 +170,14 @@ theorem_wanted extremal_two_mul_sub (k : ℕ) (hk : 2 ≤ k) :
       IsHighExtremal k (2 * k - 2) ∧
         IsLowExtremal k (2 * k - 1))
 
-/-- **Lemma 8**(a): if `j := J_k(n + 1) ∈ [[1, k - 1]]`
-(so `n + 1` is a low extremal point), the nonnegative
-solutions of `j + k * m ≤ n + 1 + m` are exactly
-`m ≤ ⌊(n - (j - 1)) / (k - 1)⌋`, and that bound is at
-least `1` when `n ≥ k - 2 + j`.
+/-- **Linear-step bound at a low extremal point.** Let $k \ge 2$ and $n$ be natural numbers, let
+$J_k$ be the Josephus function, write $j = J_k(n+1)$, and suppose $j \le k - 1$. Then for every
+natural number $m$, $j + km \le n + 1 + m$ holds if and only if
+$m \le \lfloor (n - (j - 1)) / (k - 1) \rfloor$. Moreover, if $k - 2 + j \le n$, then
+$\lfloor (n - (j - 1)) / (k - 1) \rfloor \ge 1$.
+
+Since $1 \le J_k(n+1) \le n + 1$, the hypothesis says $j \in [1, k - 1]$, that is, $n + 1$ is a
+low extremal point in the paper's sense, and none of the subtractions above is truncated.
 
 Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
 "Analytical Study and Efficient Evaluation of the
@@ -177,10 +189,11 @@ theorem_wanted shift_le_iff_le_div (k n : ℕ) (hk : 2 ≤ k)
     (k - 2 + MetaMathlibExt.josephus k (n + 1) ≤ n →
       1 ≤ (n - (MetaMathlibExt.josephus k (n + 1) - 1)) / (k - 1))
 
-/-- **Theorem 9**(a): if `n_e ≥ 2k - 3` is a high
-extremal point and `j := J_k(n_e + 1)`, then
-`J_k(n_e + 1 + m) = j + k * m` for all
-`m ≤ ⌊(n_e - (j - 1)) / (k - 1)⌋`.
+/-- **Linear growth of the Josephus function after a high extremal point.** Let $k \ge 2$ and
+$n_e \ge 2k - 3$ be natural numbers such that $n_e$ is a high extremal point of the Josephus
+function $J_k$, that is, $1 \le J_k(n_e + 1) \le k - 1$, and write $j = J_k(n_e + 1)$. Then
+$J_k(n_e + 1 + m) = j + km$ for every natural number
+$m \le \lfloor (n_e - (j - 1)) / (k - 1) \rfloor$.
 
 Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
 "Analytical Study and Efficient Evaluation of the
@@ -192,13 +205,58 @@ theorem_wanted josephus_add_eq_of_high (k ne m : ℕ)
     MetaMathlibExt.josephus k (ne + 1 + m) =
       MetaMathlibExt.josephus k (ne + 1) + k * m
 
-/-- **Theorem 13**: the Josephus function `J_k` has
-infinitely many fixed points.
+/-- **The Josephus function has infinitely many fixed points.** For every natural number
+$k \ge 2$, the set of natural numbers $n$ with $J_k(n) = n$ is infinite, where $J_k$ is the
+Josephus function.
 
 Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
 "Analytical Study and Efficient Evaluation of the
 Josephus Function", Theorem 13. -/
 theorem_wanted infinite_fixedPoints (k : ℕ) (hk : 2 ≤ k) :
     {n : ℕ | MetaMathlibExt.josephus k n = n}.Infinite
+
+/-- **Corollary 10**: for a high extremal point `n_e ≥ 2k - 3`, with
+`r = n_e mod (k - 1)` and `c = 1` if `r < k - 2 - n_e + J_k(n_e)`, else `0`,
+the next high extremal point is
+`n_e' = (k(n_e + 1) - (r + 1))/(k - 1) - c`, with
+`J_k(n_e') = (k - 1) - n_e + J_k(n_e) + k⌊(2n_e - J_k(n_e) - (k - 2))/(k - 1)⌋`,
+and `J_k(n) = k(n - n_e') + J_k(n_e')` for `n ∈ [[n_e + 1, n_e']]`
+(integer division by the positive `k - 1` is the floor).
+
+Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
+"Analytical Study and Efficient Evaluation of the Josephus
+Function", Journal of Integer Sequences 27 (2024), Article
+24.3.8, Corollary 10. -/
+theorem_wanted josephus_next_high_extremal (k ne : ℕ) (hk : 2 ≤ k) (hne : 2 * k - 3 ≤ ne)
+    (hh : IsHighExtremal k ne) :
+    let r := ne % (k - 1)
+    let c : ℕ := if (r : ℤ) < (k : ℤ) - 2 - ne + MetaMathlibExt.josephus k ne then 1 else 0
+    let ne' := (k * (ne + 1) - (r + 1)) / (k - 1) - c
+    ne < ne' ∧ IsHighExtremal k ne' ∧ (∀ m, ne < m → m < ne' → ¬ IsHighExtremal k m) ∧
+      (MetaMathlibExt.josephus k ne' : ℤ) =
+        ((k : ℤ) - 1) - ne + MetaMathlibExt.josephus k ne +
+          k * ((2 * (ne : ℤ) - MetaMathlibExt.josephus k ne - ((k : ℤ) - 2)) / ((k : ℤ) - 1)) ∧
+      ∀ n, ne + 1 ≤ n → n ≤ ne' →
+        (MetaMathlibExt.josephus k n : ℤ) = k * ((n : ℤ) - ne') + MetaMathlibExt.josephus k ne'
+
+/-- **Corollary 11** (first two formulas): for a low extremal point `ň ≥ 2k - 3`, with
+`ř = ň mod (k - 1)` and `č = 1` if `ř < J_k(ň)`, else `0`, the next low extremal
+point is `ň' = (kň - ř)/(k - 1) - č + 1`, with
+`J_k(ň') = k - ň' + J_k(ň) + k⌊(ň - J_k(ň))/(k - 1)⌋`. The corollary's last
+formula is omitted: false as printed (`k = 2`, `ň = 1`, `n = 2`).
+
+Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
+"Analytical Study and Efficient Evaluation of the Josephus
+Function", Journal of Integer Sequences 27 (2024), Article
+24.3.8, Corollary 11. -/
+theorem_wanted josephus_next_low_extremal (k ne : ℕ) (hk : 2 ≤ k) (hne : 2 * k - 3 ≤ ne)
+    (hl : IsLowExtremal k ne) :
+    let r := ne % (k - 1)
+    let c : ℕ := if r < MetaMathlibExt.josephus k ne then 1 else 0
+    let ne' := (k * ne - r) / (k - 1) - c + 1
+    ne < ne' ∧ IsLowExtremal k ne' ∧ (∀ m, ne < m → m < ne' → ¬ IsLowExtremal k m) ∧
+      (MetaMathlibExt.josephus k ne' : ℤ) =
+        (k : ℤ) - ne' + MetaMathlibExt.josephus k ne +
+          k * (((ne : ℤ) - MetaMathlibExt.josephus k ne) / ((k : ℤ) - 1))
 
 end MathlibExt.NumberTheory.JosephusWanted

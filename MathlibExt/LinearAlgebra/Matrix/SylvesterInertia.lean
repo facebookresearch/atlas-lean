@@ -127,7 +127,8 @@ private theorem sylvesterInertia_card_signs
 /-- Sylvester's law of inertia: congruence preserves the inertia triple
 of a real symmetric matrix (statement `sylvester-inertia-s1`;
 source J. J. Sylvester, *A demonstration of the theorem that every homogeneous quadratic polynomial
-is reducible by real orthogonal substitutions to the form of a sum of positive and negative squares*,
+is reducible by real orthogonal substitutions to the form of a sum of positive and negative
+squares*,
 Philosophical Magazine Ser. 4, 4(23) (1852), 138-142; Hermitian over `ℝ` is symmetric).
 
 Proves `Wanted` entry `sylvester_law_of_inertia`.

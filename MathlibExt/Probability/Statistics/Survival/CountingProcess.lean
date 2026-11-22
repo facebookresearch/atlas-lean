@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Probability.Statistics.Survival.ObservedTime
+
 public import Mathlib.Probability.Martingale.Basic
 public import Mathlib.Probability.ConditionalExpectation
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
@@ -118,10 +120,6 @@ open scoped ENNReal
 variable {Ω : Type*} {m0 : MeasurableSpace Ω}
 
 /-! ### The censoring model and its processes -/
-
-/-- The **observed time** `X = T ∧ C` of a subject with latent failure time `T` and censoring
-time `C`. -/
-def obsTime (T C : Ω → ℝ) (ω : Ω) : ℝ := min (T ω) (C ω)
 
 /-- The **counting process** `N(t) = 1{X ≤ t, δ = 1} = 1{T ≤ C, T ≤ t}` of observed failures.
 Ties `T = C` count as observed failures (failure precedes censoring). -/
@@ -515,7 +513,7 @@ theorem strictPast_le_history (t : ℝ) :
 
 /-- The σ-algebra of sets that either contain `E` or miss it. -/
 @[instance_reducible]
-private def trivialOn (E : Set Ω) : MeasurableSpace Ω where
+def trivialOn (E : Set Ω) : MeasurableSpace Ω where
   MeasurableSet' A := A ∩ E = ∅ ∨ E ⊆ A
   measurableSet_empty := Or.inl (empty_inter E)
   measurableSet_compl A hA := by

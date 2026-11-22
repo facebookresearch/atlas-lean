@@ -10,13 +10,15 @@ module
 
 public import Mathlib.Probability.StrongLaw
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import MathlibExt.Probability.WeightLaw
+public import MathlibExt.Probability.Statistics.Bayesian.FinitePosterior
 
 /-!
 # Posterior consistency in a finite model
 
-`weightLaw g` is the law `∑ x, ENNReal.ofReal (g x) • δ_x` on a finite space, and
 `postWeight π f X n ω θ` is the posterior probability of `θ` after the first `n` observations in
-the finite model with prior weights `π` and likelihoods `f θ x`.
+the finite model with prior weights `π` and likelihoods `f θ x`. Observation laws are the finite
+laws `weightLaw g = ∑ x, ENNReal.ofReal (g x) • δ_x` of `MathlibExt.Probability.WeightLaw`.
 
 `ae_tendsto_postWeight_one`: with finite parameter and observation spaces, positive prior mass at
 the truth `θ₀`, strictly positive normalized likelihoods, positive Kullback–Leibler separation of
@@ -40,12 +42,9 @@ namespace MathlibExt.Probability.Statistics.Bayesian
 
 open MeasureTheory ProbabilityTheory Filter Topology
 
-/-- The law on a finite space `𝓧` with real point masses `g x`:
-`∑ x, ENNReal.ofReal (g x) • δ_x`. For `g ≥ 0` with `∑ x, g x = 1` it is a probability measure
-(`isProbabilityMeasure_weightLaw`). -/
-noncomputable def weightLaw {𝓧 : Type*} [Fintype 𝓧] [MeasurableSpace 𝓧] (g : 𝓧 → ℝ) :
-    Measure 𝓧 :=
-  ∑ x, ENNReal.ofReal (g x) • Measure.dirac x
+-- `weightLaw` and `isProbabilityMeasure_weightLaw` moved to `MathlibExt.Probability.WeightLaw`;
+-- these aliases keep their former names in this namespace.
+export MathlibExt.Probability (weightLaw isProbabilityMeasure_weightLaw)
 
 /-- Posterior probability of `θ` after the first `n` observations `X 0 ω, …, X (n - 1) ω` in the
 finite model with prior weights `π` and likelihoods `f θ x`:
@@ -54,14 +53,6 @@ noncomputable def postWeight {Θ 𝓧 Ω : Type*} [Fintype Θ] (π : Θ → ℝ)
     (X : ℕ → Ω → 𝓧) (n : ℕ) (ω : Ω) (θ : Θ) : ℝ :=
   (π θ * ∏ i ∈ Finset.range n, f θ (X i ω)) /
     ∑ θ', π θ' * ∏ i ∈ Finset.range n, f θ' (X i ω)
-
-private lemma integral_weightLaw {𝓧 : Type*} [Fintype 𝓧] [MeasurableSpace 𝓧]
-    [MeasurableSingletonClass 𝓧] (g : 𝓧 → ℝ) (hg : ∀ x, 0 ≤ g x) (φ : 𝓧 → ℝ) :
-    ∫ x, φ x ∂(weightLaw g) = ∑ x, g x * φ x := by
-  rw [weightLaw, integral_finsetSum_measure fun x _ =>
-    (Integrable.of_finite (μ := Measure.dirac x)).smul_measure ENNReal.ofReal_ne_top]
-  refine Finset.sum_congr rfl fun x _ => ?_
-  rw [integral_smul_measure, integral_dirac, ENNReal.toReal_ofReal (hg x), smul_eq_mul]
 
 /-- Strong law for the log-likelihood ratio: likelihood-ratio products against a
 KL-separated truth `g₀` tend to `0` almost surely. -/
@@ -143,17 +134,6 @@ private lemma tendsto_postWeight_one_of_ratio {Θ 𝓧 Ω : Type*} [Fintype Θ] 
     (tendsto_finsetSum _ hother)
   rw [Finset.sum_const_zero, sub_zero] at hlim
   exact hlim.congr hsum
-
-/-- Nonnegative point masses summing to one give a probability measure. -/
-theorem isProbabilityMeasure_weightLaw {𝓧 : Type*} [Fintype 𝓧] [MeasurableSpace 𝓧]
-    [MeasurableSingletonClass 𝓧] (g : 𝓧 → ℝ) (hg_nonneg : ∀ x, 0 ≤ g x)
-    (hg_sum : ∑ x, g x = 1) :
-    IsProbabilityMeasure (weightLaw g) := by
-  constructor
-  rw [weightLaw, Measure.finsetSum_apply]
-  simp only [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _), smul_eq_mul,
-    mul_one]
-  rw [← ENNReal.ofReal_sum_of_nonneg (fun x _ => hg_nonneg x), hg_sum, ENNReal.ofReal_one]
 
 /-- **Posterior consistency in a finite model.** Finite parameter and observation spaces, a prior
 with positive mass at the truth `θ₀`, strictly positive normalized likelihoods, positive
@@ -327,5 +307,70 @@ theorem twoPoint_postWeight_tendsto_one {Ω : Type*} [MeasurableSpace Ω]
     (0 : Fin 2) zero_lt_one
     (fun θ : Fin 2 => bernPMF (if θ = 0 then p₀ else p₁))
     hf_pos hf_sum hKL X hX hlaw' hindep
+
+
+/-! ## `postWeight` as a finite Bayes update -/
+
+variable {Θ : Type*} [Fintype Θ]
+
+/-- The finite-model posterior weights `postWeight` are the Bayes update by the product of the
+first `n` likelihoods. -/
+theorem postWeight_eq_finitePosterior {𝓧 Ω : Type*} (π : Θ → ℝ) (f : Θ → 𝓧 → ℝ)
+    (X : ℕ → Ω → 𝓧) (n : ℕ) (ω : Ω) :
+    postWeight π f X n ω = finitePosterior π (fun θ => ∏ i ∈ Finset.range n, f θ (X i ω)) := by
+  rfl
+
+/-- `postWeight` after `n + 1` observations is the update of `postWeight` after `n` by the next
+likelihood. -/
+theorem postWeight_succ {𝓧 Ω : Type*} (π : Θ → ℝ) (f : Θ → 𝓧 → ℝ) (X : ℕ → Ω → 𝓧)
+    (n : ℕ) (ω : Ω)
+    (hE : finiteEvidence π (fun θ => ∏ i ∈ Finset.range n, f θ (X i ω)) ≠ 0) :
+    postWeight π f X (n + 1) ω = finitePosterior (postWeight π f X n ω) (fun θ => f θ (X n ω)) := by
+  have hprod : (fun θ => ∏ i ∈ Finset.range (n + 1), f θ (X i ω)) =
+      (fun θ => (∏ i ∈ Finset.range n, f θ (X i ω)) * f θ (X n ω)) := by
+    funext θ
+    exact Finset.prod_range_succ (fun i => f θ (X i ω)) n
+  rw [postWeight_eq_finitePosterior, postWeight_eq_finitePosterior, hprod]
+  exact (finitePosterior_finitePosterior hE).symm
+
+omit [Fintype Θ] in
+theorem batchLikelihood_map_range {𝓧 Ω : Type*} (f : Θ → 𝓧 → ℝ) (X : ℕ → Ω → 𝓧)
+    (n : ℕ) (ω : Ω) :
+    batchLikelihood ((List.range n).map fun i θ => f θ (X i ω)) =
+      fun θ => ∏ i ∈ Finset.range n, f θ (X i ω) := by
+  have happ : ∀ (l₁ l₂ : List (Θ → ℝ)),
+      batchLikelihood (l₁ ++ l₂) = fun θ => batchLikelihood l₁ θ * batchLikelihood l₂ θ := by
+    intro l₁ l₂
+    funext θ
+    unfold batchLikelihood
+    simp [List.map_append, List.prod_append]
+  induction n with
+  | zero =>
+    simp [List.range_zero, batchLikelihood_nil]
+  | succ n ih =>
+    rw [List.range_succ, List.map_append]
+    have hsingle : batchLikelihood (List.map (fun i θ => f θ (X i ω)) [n]) =
+        (fun θ => f θ (X n ω)) := by
+      funext θ
+      unfold batchLikelihood
+      simp
+    rw [happ, ih, hsingle]
+    funext θ
+    exact (Finset.prod_range_succ (fun i => f θ (X i ω)) n).symm
+
+/-- `postWeight` is the sequential posterior over the first `n` observations. -/
+theorem postWeight_eq_sequentialPosterior {𝓧 Ω : Type*} {π : Θ → ℝ}
+    (hπ : ∀ θ, 0 ≤ π θ) (hπ1 : ∑ θ, π θ = 1) {f : Θ → 𝓧 → ℝ} (hf : ∀ θ x, 0 ≤ f θ x)
+    (X : ℕ → Ω → 𝓧) (n : ℕ) (ω : Ω) :
+    postWeight π f X n ω = sequentialPosterior π ((List.range n).map fun i θ => f θ (X i ω)) := by
+  have hbatch := batchLikelihood_map_range (Θ := Θ) f X n ω
+  have hLmap : ∀ L ∈ (List.range n).map (fun i θ => f θ (X i ω)), ∀ θ, 0 ≤ L θ := by
+    intro L hmem θ
+    simp only [List.mem_map, List.mem_range] at hmem
+    obtain ⟨i, _, rfl⟩ := hmem
+    exact hf θ (X i ω)
+  rw [postWeight_eq_finitePosterior,
+    sequentialPosterior_eq_finitePosterior_batchLikelihood hπ hπ1 hLmap, hbatch]
+
 
 end MathlibExt.Probability.Statistics.Bayesian

@@ -49,7 +49,7 @@ namespace Lattice
 
 variable {V : Type*} [Finite V] [DecidableEq V]
 
-omit [DecidableEq V] in
+omit [DecidableEq V] [Finite V] in
 theorem tnse_connected_of_card_components_eq_one {G : SimpleGraph V}
     (hcard : Nat.card G.ConnectedComponent = 1) : G.Connected := by
   classical
@@ -86,10 +86,10 @@ def tnse_deleteList (A : SimpleGraph V) : List (Sym2 V) → SimpleGraph V
   | [] => A
   | e :: L => (tnse_deleteList A L).deleteEdges {e}
 
-omit [DecidableEq V] in
+omit [DecidableEq V] [Finite V] in
 @[simp] theorem tnse_deleteList_nil (A : SimpleGraph V) : tnse_deleteList A [] = A := rfl
 
-omit [DecidableEq V] in
+omit [DecidableEq V] [Finite V] in
 @[simp] theorem tnse_deleteList_cons (A : SimpleGraph V) (e : Sym2 V) (L : List (Sym2 V)) :
     tnse_deleteList A (e :: L) = (tnse_deleteList A L).deleteEdges {e} := rfl
 
@@ -99,10 +99,10 @@ def tnse_AllNonBridge (A : SimpleGraph V) : List (Sym2 V) → Prop
   | [] => True
   | e :: L => tnse_IsNonBridgeEdge (tnse_deleteList A L) e ∧ tnse_AllNonBridge A L
 
-omit [DecidableEq V] in
+omit [DecidableEq V] [Finite V] in
 @[simp] theorem tnse_allNonBridge_nil (A : SimpleGraph V) : tnse_AllNonBridge A [] := trivial
 
-omit [DecidableEq V] in
+omit [DecidableEq V] [Finite V] in
 theorem tnse_allNonBridge_cons {A : SimpleGraph V} {e : Sym2 V} {L : List (Sym2 V)}
     (hhead : tnse_IsNonBridgeEdge (tnse_deleteList A L) e) (htail : tnse_AllNonBridge A L) :
     tnse_AllNonBridge A (e :: L) := ⟨hhead, htail⟩
@@ -118,7 +118,7 @@ theorem tnse_connected_deleteList_of_allNonBridge (A : SimpleGraph V) (hA : A.Co
     rw [tnse_deleteList_cons]
     exact tnse_connected_deleteEdge_of_isNonBridge (tnse_deleteList A L) (ih htail) hhead
 
-omit [DecidableEq V] in
+omit [DecidableEq V] [Finite V] in
 theorem tnse_reachable_of_detour (A : SimpleGraph V) {a b a' b' : V}
     (h1 : A.Adj a a') (h2 : A.Adj a' b') (h3 : A.Adj b' b)
     (hne1 : s(a, a') ≠ s(a, b)) (hne2 : s(a', b') ≠ s(a, b)) (hne3 : s(b', b) ≠ s(a, b)) :

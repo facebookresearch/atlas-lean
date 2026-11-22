@@ -1,0 +1,68 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import Mathlib.Probability.Moments.Covariance
+public import Mathlib.Probability.Moments.Variance
+
+/-!
+# Portfolio beta is linear in portfolio weights
+
+Source: Atlas roadmap FI07.T01: portfolio beta is linear in portfolio
+weights when market variance is positive. Beta is the covariance of an
+asset's return with the market return, divided by the variance of the market
+return. The portfolio return is the weight-weighted sum of the asset returns.
+`assetBeta` is the formal totalized ratio; it is a CAPM beta only for a
+probability measure, square-integrable returns, and positive market variance,
+which `portfolio_beta_linear` assumes.
+-/
+
+@[expose] public section
+
+namespace MathlibExt.Probability.Finance.PortfolioBeta
+
+open MeasureTheory ProbabilityTheory
+
+/-- The formal beta ratio `cov[X, Y; μ] / Var[Y; μ]` of return `X` against
+market return `Y` under `μ`. This is only a totalized expression: `μ` is an
+arbitrary measure, `X` and `Y` are arbitrary functions, Mathlib's `cov` and
+`Var` return junk values when their integrability conditions fail, and real
+division by `0` gives `0`. It is the CAPM beta of `X` only when all of the
+following hold: `μ` is a probability measure, `X` and `Y` are square-integrable
+(`MemLp X 2 μ` and `MemLp Y 2 μ`), and `0 < Var[Y; μ]`. These are the
+hypotheses of `portfolio_beta_linear`. -/
+noncomputable def assetBeta {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) (X Y : Ω → ℝ) : ℝ :=
+  cov[X, Y; μ] / Var[Y; μ]
+
+set_option linter.unusedVariables false in
+/-- **Portfolio beta is linear in portfolio weights (FI07.T01).** When the market
+variance is positive, the beta of the portfolio return `∑ i, w i * R i ω` is the
+weight-weighted sum of the asset betas. The proof is covariance additivity /
+homogeneity in the first slot (`covariance_fun_sum_left`,
+`covariance_const_mul_left`) plus `Finset.sum_div`; the cited Mathlib lemmas
+are not reproved. The hypothesis `hVar` is contract-required (with the
+probability-measure and `MemLp` hypotheses, it is what makes each ratio a CAPM
+beta) even though the field identity holds without it. -/
+theorem portfolio_beta_linear
+    {ι : Type*} [Fintype ι]
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    (R : ι → Ω → ℝ) (RM : Ω → ℝ) (w : ι → ℝ)
+    (hR : ∀ i, MemLp (R i) 2 μ) (hM : MemLp RM 2 μ)
+    (hVar : 0 < Var[RM; μ]) :
+    assetBeta μ (fun ω => ∑ i, w i * R i ω) RM =
+      ∑ i, w i * assetBeta μ (R i) RM := by
+  have hsum : ∀ i, MemLp (fun ω => w i * R i ω) 2 μ := fun i => (hR i).const_mul (w i)
+  unfold assetBeta
+  rw [covariance_fun_sum_left hsum hM]
+  simp_rw [covariance_const_mul_left]
+  rw [Finset.sum_div]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [mul_div_assoc]
+
+end MathlibExt.Probability.Finance.PortfolioBeta

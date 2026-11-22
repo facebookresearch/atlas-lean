@@ -12,7 +12,7 @@ public import Mathlib.Order.Monotone.Basic
 public import Mathlib.Logic.Function.Iterate
 public import Mathlib.Data.List.Basic
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 import MathlibExt.Combinatorics.InfiniteWord.FibonacciWord
@@ -300,17 +300,11 @@ private theorem kBlock_cross {a b : List Bool} {m : ℕ}
   have g : a.foldl kStep 3 < b.foldl kStep 2 := by omega
   exact g
 
-private theorem kPairwise_single (x : ℕ) : List.Pairwise (· < ·) [x] := by
-  apply List.Pairwise.cons
-  · intro _ ha
-    exact (List.not_mem_nil ha).elim
-  · exact List.Pairwise.nil
-
 private theorem kCodes_pairwise_zero : ((kCodes 0).map kVal).Pairwise (· < ·) :=
-  kPairwise_single _
+  List.pairwise_singleton _ _
 
 private theorem kCodes_pairwise_one : ((kCodes 1).map kVal).Pairwise (· < ·) :=
-  kPairwise_single _
+  List.pairwise_singleton _ _
 
 private theorem kCodes_pairwise_step (n : ℕ)
     (ih0 : ((kCodes n).map kVal).Pairwise (· < ·))

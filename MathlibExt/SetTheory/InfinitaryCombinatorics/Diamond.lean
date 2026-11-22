@@ -11,9 +11,7 @@ Author: Steven Warner
 -/
 module
 
-public import Mathlib.SetTheory.Cardinal.Aleph
 public import Mathlib.SetTheory.Cardinal.Cofinality.Club
-public import MathlibExt.SetTheory.Cardinal.Cofinality.Stationary
 
 @[expose] public section
 

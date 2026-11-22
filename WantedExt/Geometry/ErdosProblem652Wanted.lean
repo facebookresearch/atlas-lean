@@ -16,7 +16,7 @@ public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Finset.Card
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import MathlibExt.Geometry.Metric
 

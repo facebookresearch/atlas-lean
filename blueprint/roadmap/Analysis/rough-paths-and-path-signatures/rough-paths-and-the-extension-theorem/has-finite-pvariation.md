@@ -1,0 +1,3 @@
+# Finite $p$-variation of degree $n$
+
+Let $\iota$ be a finite alphabet. Tensor series are given by their coefficients $F(w)$ on words $w$ over $\iota$, and the degree-$i$ level of $F$ carries the $\ell^1$ norm $\|F^i\| = \sum_{|w| = i} |F(w)|$. A family $(s, t) \mapsto X_{s,t}$ of tensor series has finite $p$-variation of degree $n$ on $J \subseteq \mathbb{R}$ if there are a [control](is-control.md) $\omega$ on $J$ and a weight $\beta > 0$ such that the levels $1, \dots, n$ of $X$ are [controlled by $\omega$ with weight $\beta$](is-controlled-by.md) (T. Lyons, Rev. Mat. Iberoam. 14 (1998), Definition 1.2.2 and Lemma 2.1.1).

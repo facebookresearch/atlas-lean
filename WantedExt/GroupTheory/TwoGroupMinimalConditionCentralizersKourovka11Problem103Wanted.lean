@@ -17,6 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.PGroup
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -32,9 +33,7 @@ condition for centralizers forbids infinite strictly descending chains `C_G(X₀
 centralizers of subsets.
 -/
 
-/-- `G` is locally finite: every finitely generated subgroup is finite. -/
-def IsLocallyFinite (G : Type*) [Group G] : Prop :=
-  ∀ S : Finset G, (Subgroup.closure (S : Set G) : Set G).Finite
+open MathlibExt.GroupTheory.GroupClassesShared (IsLocallyFinite)
 
 /-- `G` satisfies the minimal condition on centralizers: there is no infinite strictly descending
 chain `C_G(X₀) > C_G(X₁) > ⋯` of centralizers of subsets of `G`. -/

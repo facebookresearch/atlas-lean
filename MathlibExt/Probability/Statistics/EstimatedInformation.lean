@@ -73,14 +73,12 @@ here; all copies are private and faithful. Follow-up once it may be edited:
 
 * rewrite `VectorInference.tendstoInDistribution_two_mul_logLikelihood_sub` (Wilks) to call
   `tendstoInMeasure_two_mul_logLikelihood_sub_sub`, whose remainder proof repeats the one inside
-  it, then delete the private copy `norm_sum_add_sum_apply_le'` here (twin of
-  `VectorInference.norm_sum_add_sum_apply_le`);
+  it;
 * replace the note in the `VectorInference` module docstring that estimated-information
   versions and observed-information consistency "are not covered here" with a pointer to this
   file;
-* make one public `tendstoInMeasure_add_zero` and delete the private copies; the one here is
-  the fifth, after `MLEAsymptoticNormality`, `LikelihoodRatioTests`, `VectorInference` and
-  `LikelihoodRatioLocalPower`.
+* delete the private copy `tendstoInMeasure_add_zero'` in `VectorInference` and use the public
+  `MeasureTheory.tendstoInMeasure_add_zero` (in `MLEAsymptoticNormality`).
 
 ## References
 
@@ -141,21 +139,6 @@ theorem observedInformation_zero (p : E → 𝓧 → ℝ) (x : ℕ → 𝓧) (θ
 variable [MeasurableSpace E] [BorelSpace E]
   {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
   {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
-
-omit [MeasurableSpace E] [BorelSpace E] [IsProbabilityMeasure P] in
-private theorem tendstoInMeasure_add_zero {U V : ℕ → Ω → ℝ}
-    (hU : TendstoInMeasure P U atTop 0) (hV : TendstoInMeasure P V atTop 0) :
-    TendstoInMeasure P (fun i ω => U i ω + V i ω) atTop 0 := by
-  rw [tendstoInMeasure_iff_norm] at hU hV ⊢
-  intro ε hε
-  have h2 := (hU (ε / 2) (by positivity)).add (hV (ε / 2) (by positivity))
-  rw [add_zero] at h2
-  refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds h2 (fun _ => zero_le)
-    fun i => (measure_mono fun ω hω => ?_).trans (measure_union_le _ _)
-  simp only [Set.mem_ofPred_eq, Pi.zero_apply, sub_zero, Real.norm_eq_abs] at hω ⊢
-  by_contra h
-  simp only [Set.mem_union, Set.mem_ofPred_eq, not_or, not_le] at h
-  linarith [abs_add_le (U i ω) (V i ω)]
 
 omit [MeasurableSpace E] [BorelSpace E] [IsProbabilityMeasure P] in
 /-- The observed information at `θ₀` along an i.i.d. sample is a.e. strongly measurable. -/
@@ -430,29 +413,6 @@ theorem tendstoInDistribution_scoreStatistic_of_estimator {ν : Measure 𝓧} {p
 
 /-! ### The likelihood ratio and the Wald statistic with estimated information -/
 
-omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] [MeasurableSpace 𝓧] in
-/-- The summed first-order Taylor bound at a root `θ` in the ball:
-`‖∑ ψ θ₀ (xᵢ) + (∑ Dψ θ₀ (xᵢ)) (θ - θ₀)‖ ≤ (∑ M (xᵢ)) ‖θ - θ₀‖²`. -/
-private theorem norm_sum_add_sum_apply_le' {ψ : E → 𝓧 → E} {θ₀ : E} {δ : ℝ}
-    (hψ_diff : ∀ x, ∀ θ ∈ Metric.ball θ₀ δ, DifferentiableAt ℝ (fun t => ψ t x) θ)
-    {M : 𝓧 → ℝ}
-    (hM : ∀ x, ∀ θ ∈ Metric.ball θ₀ δ,
-      ‖fderiv ℝ (fun t => ψ t x) θ - fderiv ℝ (fun t => ψ t x) θ₀‖ ≤ M x * ‖θ - θ₀‖)
-    (n : ℕ) (xs : ℕ → 𝓧) {θ : E} (hθ : θ ∈ Metric.ball θ₀ δ)
-    (hroot : ∑ i ∈ Finset.range n, ψ θ (xs i) = 0) :
-    ‖∑ i ∈ Finset.range n, ψ θ₀ (xs i) +
-        (∑ i ∈ Finset.range n, fderiv ℝ (fun t => ψ t (xs i)) θ₀) (θ - θ₀)‖ ≤
-      (∑ i ∈ Finset.range n, M (xs i)) * ‖θ - θ₀‖ ^ 2 := by
-  have e : ∑ i ∈ Finset.range n, ψ θ₀ (xs i) +
-      (∑ i ∈ Finset.range n, fderiv ℝ (fun t => ψ t (xs i)) θ₀) (θ - θ₀) =
-      -∑ i ∈ Finset.range n, (ψ θ (xs i) - ψ θ₀ (xs i) -
-        fderiv ℝ (fun t => ψ t (xs i)) θ₀ (θ - θ₀)) := by
-    rw [sum_apply, Finset.sum_sub_distrib, Finset.sum_sub_distrib, hroot]
-    abel
-  rw [e, norm_neg, Finset.sum_mul]
-  refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_)
-  exact norm_sub_sub_fderiv_le (f := fun t => ψ t (xs i)) (hψ_diff (xs i)) (hM (xs i)) hθ
-
 /-- **Quadratic expansion of the log-likelihood ratio, vector parameter.** Under the hypotheses
 of `VectorInference.tendstoInDistribution_two_mul_logLikelihood_sub` (without the joint
 measurability of `p`, the positive definiteness and `dim E ≥ 1`; only nonsingularity of
@@ -585,7 +545,7 @@ theorem tendstoInMeasure_two_mul_logLikelihood_sub_sub
     have he : ∀ i, |e i| ≤ M' (X i ω) * ‖d‖ ^ 3 := fun i =>
       abs_log_sub_sub_sub_le (hℓ_diff (X i ω)) (hs_diff (X i ω)) (hM' (X i ω)) hball
     have htay : ‖S0 + Hs d‖ ≤ SM * ‖d‖ ^ 2 :=
-      norm_sum_add_sum_apply_le' hs_diff hM' n (fun i => X i ω) hball hroot'
+      norm_sum_add_sum_apply_le hs_diff hM' n (fun i => X i ω) hball hroot'
     have hid : L n ω - W n ω =
         2 * ∑ i ∈ Finset.range n, e i + 2 * ⟪S0 + Hs d, d⟫ - ⟪(Hs + (n : ℝ) • I) d, d⟫ := by
       simp only [hL_def, hW_def, he_def, hS0, hHs_def, add_apply,

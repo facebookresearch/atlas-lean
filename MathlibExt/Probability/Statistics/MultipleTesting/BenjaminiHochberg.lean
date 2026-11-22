@@ -62,6 +62,9 @@ GWAS p-values) satisfies it.
 
 * `bhIndex_le_numBelow`, `le_bhIndex`: `bhIndex q p` is the largest qualifying `k`.
 * `card_bhRejections`: BH at level `q ≥ 0` rejects exactly `bhIndex q p` hypotheses.
+* `mem_bhRejections_iff_le_bhIndex_update`, `mem_bhRejections_iff_bhIndex_eq_update`: the
+  leave-one-out characterisation of a rejection, via the index with the p-value replaced by `0`
+  (Fithian–Lei 2020, Lemma 1).
 * `bhIndex_eq_sup`, `measurable_bhIndex`, `measurable_falseDiscoveryProportion_bhRejections`:
   for measurable p-values, the BH index and the false discovery proportion of the BH rejections
   are measurable. `bhIndex q p` is definitionally `stepUpIndex (fun k => q * k / m) p`, so these and
@@ -76,7 +79,10 @@ GWAS p-values) satisfies it.
   are valid (Benjamini–Yekutieli 2001, Theorem 1.3).
 * `one_le_harmonic`: Mathlib's harmonic number satisfies `1 ≤ H_m` for `m ≥ 1`.
 * `IsPRDSOn`: PRDS of the p-values on the true nulls; `isPRDSOn_iff_setLIntegral`,
-  `IsPRDSOn.measure_inter_mul_le`.
+  `IsPRDSOn.measure_inter_mul_le`, `IsPRDSOn.measure_inter_mul_measure_slab_le`.
+* `not_isPRDSOn_of_measure_inter_mul_lt`, `not_isPRDSOn_of_separated`: refuting PRDS by an
+  increasing event that is more likely given `p i ≤ s` than given `s < p i ≤ t`, e.g. when a
+  threshold on `p k` separates the two events.
 * `isPRDSOn_of_iIndepFun`, `isPRDSOn_of_monotone_comp`, `isPRDSOn_empty`: independent p-values,
   deterministic positive dependence (e.g. identical p-values) and the empty null set are PRDS.
 * `integral_falseDiscoveryProportion_bhRejections_le_of_isPRDSOn`: BH at level `q` has
@@ -153,6 +159,60 @@ private theorem bh_leave_one_out {m k : ℕ} {q : ℝ} (hq : 0 ≤ q) (p : Fin m
   simp only [bhRejections, Finset.mem_filter, Finset.mem_univ, true_and]
   exact stepUp_leave_one_out (c := fun k => q * (k : ℝ) / m) (fun _ _ h => by dsimp only; gcongr)
     (fun _ => by positivity) p i k
+
+private theorem bhIndex_le_update {m : ℕ} {q : ℝ} (hq : 0 ≤ q) (p : Fin m → ℝ)
+    (i : Fin m) : bhIndex q p ≤ bhIndex q (Function.update p i 0) :=
+  stepUpIndex_le_update (fun _ => threshold_nonneg hq) p i
+
+private theorem bhIndex_update_eq {m : ℕ} {q : ℝ} (hq : 0 ≤ q) (p : Fin m → ℝ)
+    (i : Fin m) (hpi : p i ≤ q * bhIndex q (Function.update p i 0) / m) :
+    bhIndex q p = bhIndex q (Function.update p i 0) :=
+  stepUpIndex_update_eq (fun _ => threshold_nonneg hq) p i hpi
+
+private theorem numBelow_lt_update {m : ℕ} (p : Fin m → ℝ) (i : Fin m) {t : ℝ}
+    (ht : 0 ≤ t) (hpi : t < p i) : numBelow p t < numBelow (Function.update p i 0) t := by
+  classical
+  apply Finset.card_lt_card
+  refine (Finset.ssubset_iff_of_subset fun j hj => ?_).mpr ⟨i, ?_, ?_⟩
+  · refine Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩
+    by_cases hji : j = i
+    · simpa [hji] using ht
+    · simpa [Function.update_of_ne hji] using (Finset.mem_filter.mp hj).2
+  · simpa using ht
+  · simpa using hpi
+
+/-- **Leave-one-out criterion for Benjamini–Hochberg rejection.** At a level `q ≥ 0`,
+hypothesis `i` is rejected by the BH procedure exactly when its p-value is at most
+`q k⁰ / m`, where `k⁰` is the BH step-up index computed after replacing the `i`-th p-value
+by `0`. No sign condition is imposed on the p-values.
+
+Source: W. Fithian and L. Lei, *Conditional calibration for false discovery rate control under
+dependence*, arXiv:2007.10438 (2020), Lemma 1, stated there for general step-up procedures. -/
+theorem mem_bhRejections_iff_le_bhIndex_update {q : ℝ} (hq : 0 ≤ q) (p : Fin m → ℝ)
+    (i : Fin m) :
+    i ∈ bhRejections q p ↔ p i ≤ q * bhIndex q (Function.update p i 0) / m := by
+  simp only [bhRejections, Finset.mem_filter, Finset.mem_univ, true_and]
+  refine ⟨fun hpi => hpi.trans (threshold_mono hq (bhIndex_le_update hq p i)), fun hpi => ?_⟩
+  rwa [bhIndex_update_eq hq p i hpi]
+
+/-- **Benjamini–Hochberg rejection as leave-one-out index invariance.** At a level `q ≥ 0`,
+hypothesis `i` is rejected by the BH procedure exactly when replacing its p-value by `0` leaves
+the BH step-up index unchanged. No sign condition is imposed on the p-values.
+
+Source: W. Fithian and L. Lei, *Conditional calibration for false discovery rate control under
+dependence*, arXiv:2007.10438 (2020), Lemma 1, stated there for general step-up procedures. -/
+theorem mem_bhRejections_iff_bhIndex_eq_update {q : ℝ} (hq : 0 ≤ q) (p : Fin m → ℝ)
+    (i : Fin m) :
+    i ∈ bhRejections q p ↔ bhIndex q p = bhIndex q (Function.update p i 0) := by
+  rw [mem_bhRejections_iff_le_bhIndex_update hq]
+  refine ⟨bhIndex_update_eq hq p i, fun h => ?_⟩
+  by_contra! hlt
+  have hp := bhIndex_le_numBelow q p
+  rw [h] at hp
+  have hlt' := numBelow_lt_update p i (threshold_nonneg hq) hlt
+  have hcard : numBelow (Function.update p i 0) (q * bhIndex q (Function.update p i 0) / m) =
+      bhIndex q (Function.update p i 0) := card_bhRejections hq _
+  omega
 
 /-- The BH step-up index as a finite supremum, the form used to prove measurability. -/
 theorem bhIndex_eq_sup {m : ℕ} (q : ℝ) (p : Fin m → ℝ) :
@@ -502,8 +562,14 @@ theorem integral_falseDiscoveryProportion_bhRejections_le_of_arbitrary_dependenc
 `x ↦ P(P ∈ D | p i = x)` has a nondecreasing version. The conditional probability is Mathlib's
 regular conditional distribution `condDistrib P (p i) μ`, which is determined only up to
 `μ.map (p i)`-null sets, hence the "version" (`=ᵐ`) quantifier. Larger p-values are less
-significant, so `D` increasing means "closed under making p-values larger". -/
-def IsPRDSOn {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsFiniteMeasure μ]
+significant, so `D` increasing means "closed under making p-values larger". It is stated for a
+nonzero finite measure, and depends on `μ` only up to a positive factor; under the zero measure,
+which is excluded, every almost-everywhere statement holds and every p-value vector would be
+PRDS. It is a statement about the laws of the p-values only when they are almost everywhere
+measurable, as in every result below: for a non-measurable `p i`, `μ.map (p i)` is not the law
+of `p i` but Mathlib's fallback, an arbitrary Dirac mass, and the condition then holds with a
+constant `g`. -/
+def IsPRDSOn {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsFiniteMeasure μ] [NeZero μ]
     (p : Fin m → Ω → ℝ) (H0 : Finset (Fin m)) : Prop :=
   ∀ i ∈ H0, ∀ D : Set (Fin m → ℝ), MeasurableSet D → IsUpperSet D →
     ∃ g : ℝ → ENNReal, Monotone g ∧
@@ -526,7 +592,8 @@ nondecreasing `g` with `μ (P ∈ D, p i ∈ B) = ∫⁻ x in B, g x ∂(law of 
 i.e. `g` is a nondecreasing version of `x ↦ P(P ∈ D | p i = x)` in the classical
 (Kolmogorov) sense, with no reference to a chosen kernel. -/
 theorem isPRDSOn_iff_setLIntegral {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
-    [IsFiniteMeasure μ] (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (H0 : Finset (Fin m)) :
+    [IsFiniteMeasure μ] [NeZero μ]
+    (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (H0 : Finset (Fin m)) :
     IsPRDSOn μ p H0 ↔ ∀ i ∈ H0, ∀ D : Set (Fin m → ℝ), MeasurableSet D → IsUpperSet D →
       ∃ g : ℝ → ENNReal, Monotone g ∧ ∀ B : Set ℝ, MeasurableSet B →
         μ ({ω | (fun j => p j ω) ∈ D} ∩ p i ⁻¹' B) = ∫⁻ x in B, g x ∂(μ.map (p i)) := by
@@ -548,7 +615,7 @@ measurable increasing set and `s ≤ t`, then
 denominators are positive) `t ↦ P(P ∈ D | p i ≤ t)` is nondecreasing. This cross-multiplied form
 is the step of the Benjamini–Yekutieli proof that uses PRDS. -/
 theorem IsPRDSOn.measure_inter_mul_le {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
-    [IsFiniteMeasure μ] {p : Fin m → Ω → ℝ} {H0 : Finset (Fin m)} (h : IsPRDSOn μ p H0)
+    [IsFiniteMeasure μ] [NeZero μ] {p : Fin m → Ω → ℝ} {H0 : Finset (Fin m)} (h : IsPRDSOn μ p H0)
     (hp : ∀ i, Measurable (p i)) {i : Fin m} (hi : i ∈ H0) {D : Set (Fin m → ℝ)}
     (hD : MeasurableSet D) (hup : IsUpperSet D) {s t : ℝ} (hst : s ≤ t) :
     μ ({ω | (fun j => p j ω) ∈ D} ∩ {ω | p i ω ≤ s}) * μ {ω | p i ω ≤ t} ≤
@@ -583,9 +650,93 @@ theorem IsPRDSOn.measure_inter_mul_le {Ω : Type*} [MeasurableSpace Ω] {μ : Me
     _ ≤ a * ν (Set.Iic s) + b * ν (Set.Iic s) := by gcongr
     _ = (a + b) * ν (Set.Iic s) := (add_mul _ _ _).symm
 
+/-- **PRDS compares adjacent slabs.** If `p` is PRDS on `H0`, `i ∈ H0` and `D` is a measurable
+increasing set, then for all `s, t`
+`μ (P ∈ D, p i ≤ s) * μ (s < p i ≤ t) ≤ μ (P ∈ D, s < p i ≤ t) * μ (p i ≤ s)`, i.e. (when the
+denominators are positive) `P(P ∈ D | p i ≤ s) ≤ P(P ∈ D | s < p i ≤ t)`. This is
+`IsPRDSOn.measure_inter_mul_le` with the common part `{p i ≤ s}` cancelled; no `s ≤ t` is needed,
+since for `t < s` the slab is empty. -/
+theorem IsPRDSOn.measure_inter_mul_measure_slab_le {Ω : Type*} [MeasurableSpace Ω]
+    {μ : Measure Ω} [IsFiniteMeasure μ] [NeZero μ] {p : Fin m → Ω → ℝ} {H0 : Finset (Fin m)}
+    (h : IsPRDSOn μ p H0) (hp : ∀ i, Measurable (p i)) {i : Fin m} (hi : i ∈ H0)
+    {D : Set (Fin m → ℝ)} (hD : MeasurableSet D) (hup : IsUpperSet D) (s t : ℝ) :
+    μ ({ω | (fun j => p j ω) ∈ D} ∩ {ω | p i ω ≤ s}) * μ {ω | s < p i ω ∧ p i ω ≤ t} ≤
+      μ ({ω | (fun j => p j ω) ∈ D} ∩ {ω | s < p i ω ∧ p i ω ≤ t}) * μ {ω | p i ω ≤ s} := by
+  rcases lt_or_ge t s with hts | hst
+  · have hB : {ω | s < p i ω ∧ p i ω ≤ t} = ∅ :=
+      Set.eq_empty_of_forall_notMem fun ω hω => absurd (hω.1.trans_le hω.2) (not_lt.2 hts.le)
+    simp [hB]
+  have hE : MeasurableSet {ω | (fun j => p j ω) ∈ D} := Measurable.of_eval hp hD
+  have hBm : MeasurableSet {ω | s < p i ω ∧ p i ω ≤ t} :=
+    (measurableSet_lt measurable_const (hp i)).inter (measurableSet_le (hp i) measurable_const)
+  have hAB : Disjoint {ω | p i ω ≤ s} {ω | s < p i ω ∧ p i ω ≤ t} :=
+    Set.disjoint_left.2 fun ω h1 h2 => absurd h1 (not_le.2 h2.1)
+  have hT : {ω | p i ω ≤ t} = {ω | p i ω ≤ s} ∪ {ω | s < p i ω ∧ p i ω ≤ t} := by
+    ext ω
+    simp only [Set.mem_union, Set.mem_ofPred_eq]
+    constructor
+    · intro h
+      rcases le_or_gt (p i ω) s with hs | hs
+      · exact Or.inl hs
+      · exact Or.inr ⟨hs, h⟩
+    · rintro (h | h)
+      · exact h.trans hst
+      · exact h.2
+  have key := h.measure_inter_mul_le hp hi hD hup hst
+  rw [hT, Set.inter_union_distrib_left, measure_union hAB hBm,
+    measure_union (hAB.mono Set.inter_subset_right Set.inter_subset_right) (hE.inter hBm),
+    mul_add, add_mul] at key
+  exact ENNReal.le_of_add_le_add_left
+    (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)) key
+
+/-- **Refuting PRDS by a reversed conditional probability.** If for some true null `i ∈ H0`, some
+measurable increasing set `D` and some `s, t`, the event `P ∈ D` is strictly more likely given
+`p i ≤ s` than given `s < p i ≤ t`, in the cross-multiplied form
+`μ (P ∈ D, s < p i ≤ t) * μ (p i ≤ s) < μ (P ∈ D, p i ≤ s) * μ (s < p i ≤ t)`, then `p` is not
+PRDS on `H0`. This is the contrapositive of `IsPRDSOn.measure_inter_mul_measure_slab_le`. -/
+theorem not_isPRDSOn_of_measure_inter_mul_lt {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+    [IsFiniteMeasure μ] [NeZero μ]
+    {p : Fin m → Ω → ℝ} (hp : ∀ i, Measurable (p i)) {H0 : Finset (Fin m)}
+    {i : Fin m} (hi : i ∈ H0) {D : Set (Fin m → ℝ)} (hD : MeasurableSet D) (hup : IsUpperSet D)
+    {s t : ℝ}
+    (hlt : μ ({ω | (fun j => p j ω) ∈ D} ∩ {ω | s < p i ω ∧ p i ω ≤ t}) * μ {ω | p i ω ≤ s} <
+      μ ({ω | (fun j => p j ω) ∈ D} ∩ {ω | p i ω ≤ s}) * μ {ω | s < p i ω ∧ p i ω ≤ t}) :
+    ¬ IsPRDSOn μ p H0 := fun h =>
+  (not_lt.2 (h.measure_inter_mul_measure_slab_le hp hi hD hup s t)) hlt
+
+/-- **A separation criterion that refutes PRDS.** Suppose `p k` is at least `u` (almost surely)
+whenever `p i ≤ s`, and below `u` whenever `s < p i ≤ t`, with both events of positive
+probability, for some true null `i ∈ H0`. Then the increasing set `D = {x | u ≤ x k}` has
+`P(P ∈ D | p i ≤ s) = 1 > 0 = P(P ∈ D | s < p i ≤ t)`, so `p` is not PRDS on `H0`
+(`not_isPRDSOn_of_measure_inter_mul_lt`). Typical instance: `p k` a decreasing function of `p i`
+(counter-monotone pairs, coupled corrected statistics). -/
+theorem not_isPRDSOn_of_separated {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+    [IsFiniteMeasure μ] [NeZero μ]
+    {p : Fin m → Ω → ℝ} (hp : ∀ i, Measurable (p i)) {H0 : Finset (Fin m)}
+    {i k : Fin m} (hi : i ∈ H0) {s t u : ℝ} (hA : μ {ω | p i ω ≤ s} ≠ 0)
+    (hB : μ {ω | s < p i ω ∧ p i ω ≤ t} ≠ 0) (hAu : ∀ᵐ ω ∂μ, p i ω ≤ s → u ≤ p k ω)
+    (hBu : ∀ᵐ ω ∂μ, s < p i ω → p i ω ≤ t → p k ω < u) :
+    ¬ IsPRDSOn μ p H0 := by
+  refine not_isPRDSOn_of_measure_inter_mul_lt hp hi (D := {x | u ≤ x k}) (s := s) (t := t)
+    (measurableSet_le measurable_const (measurable_pi_apply k))
+    (fun x y hxy hx => le_trans hx (hxy k)) ?_
+  have hDA : μ ({ω | (fun j => p j ω) ∈ {x : Fin m → ℝ | u ≤ x k}} ∩ {ω | p i ω ≤ s}) =
+      μ {ω | p i ω ≤ s} := by
+    refine measure_congr (Filter.eventuallyEqSet_iff.2 ?_)
+    filter_upwards [hAu] with ω hω
+    simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
+    exact ⟨fun h => h.2, fun h => ⟨hω h, h⟩⟩
+  have hDB : μ ({ω | (fun j => p j ω) ∈ {x : Fin m → ℝ | u ≤ x k}} ∩
+      {ω | s < p i ω ∧ p i ω ≤ t}) = 0 := by
+    refine measure_eq_zero_iff_ae_notMem.2 ?_
+    filter_upwards [hBu] with ω hω hmem
+    exact absurd hmem.1 (not_le.2 (hω hmem.2.1 hmem.2.2))
+  rw [hDA, hDB, zero_mul]
+  exact pos_iff_ne_zero.2 (mul_ne_zero hA hB)
+
 /-- Every family is PRDS on the empty set of true nulls. -/
 theorem isPRDSOn_empty {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsFiniteMeasure μ]
-    (p : Fin m → Ω → ℝ) : IsPRDSOn μ p ∅ := by
+    [NeZero μ] (p : Fin m → Ω → ℝ) : IsPRDSOn μ p ∅ := by
   intro i hi
   simp at hi
 
@@ -594,7 +745,8 @@ vector is a coordinatewise nondecreasing function `F` of `p i`, then `p` is PRDS
 conditional probability of an increasing set is the indicator of the upper set `F ⁻¹' D`. The
 comonotone family `p j = U` for all `j` (perfect positive dependence) is the main instance. -/
 theorem isPRDSOn_of_monotone_comp {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
-    [IsFiniteMeasure μ] (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (H0 : Finset (Fin m))
+    [IsFiniteMeasure μ] [NeZero μ]
+    (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (H0 : Finset (Fin m))
     (hF : ∀ i ∈ H0, ∃ F : ℝ → Fin m → ℝ, Monotone F ∧ ∀ ω, (fun j => p j ω) = F (p i ω)) :
     IsPRDSOn μ p H0 := by
   classical

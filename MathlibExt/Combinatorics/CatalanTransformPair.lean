@@ -13,7 +13,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Rat.Defs
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Field.Lemmas
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.RingTheory.Binomial
 import Mathlib.RingTheory.PowerSeries.Catalan
 import Mathlib.RingTheory.PowerSeries.Substitution
@@ -664,13 +664,10 @@ private lemma B_eq_subst (a b : ℕ → ℚ)
       rw [hcc, hcp, eN, ec, smul_eq_mul]
       ring
 
-private lemma hXsubst : PowerSeries.HasSubst (PowerSeries.X : PowerSeries ℚ) :=
-  PowerSeries.HasSubst.of_constantCoeff_zero' PowerSeries.constantCoeff_X
-
 private lemma subst_X_coeff (a : ℕ → ℚ) (n : ℕ) :
     PowerSeries.coeff n (PowerSeries.subst (PowerSeries.X : PowerSeries ℚ) (PowerSeries.mk a)) = a
         n := by
-  rw [PowerSeries.coeff_subst' hXsubst]
+  rw [PowerSeries.coeff_subst' PowerSeries.HasSubst.X']
   simp only [PowerSeries.coeff_mk]
   have hsupp : Function.support (fun d => a d • PowerSeries.coeff n
       ((PowerSeries.X : PowerSeries ℚ) ^ d))

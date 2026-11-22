@@ -11,7 +11,10 @@ module
 public import MathlibExt.Probability.Distributions.Gamma
 public import Mathlib.Probability.Distributions.Exponential
 public import Mathlib.Probability.HasLaw
+public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.Moments.Variance
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 
 /-!
 # Moments of the exponential distribution
@@ -19,7 +22,9 @@ public import Mathlib.Probability.Moments.Variance
 Mathlib defines the exponential law of rate `r` as `expMeasure r := gammaMeasure 1 r`, with
 density `r * exp (-(r * x))` on `[0, ∞)`. This file computes its moments: the `n`-th moment is
 `n! / r ^ n`; in particular the mean is `r⁻¹`, the second moment is `2 / r ^ 2` and the variance
-is `r⁻¹ ^ 2`. The results are transported to random variables via `HasLaw`.
+is `r⁻¹ ^ 2`. The results are transported to random variables via `HasLaw`. It also gives the
+characteristic function `r / (r - i u)` and the probability that the first of two independent
+exponential clocks rings first.
 
 ## Main results
 
@@ -31,9 +36,13 @@ is `r⁻¹ ^ 2`. The results are transported to random variables via `HasLaw`.
   the mean is `r⁻¹`.
 * `ProbabilityTheory.integral_sq_expMeasure`: the second moment is `2 / r ^ 2`.
 * `ProbabilityTheory.variance_id_expMeasure`: the variance is `r⁻¹ ^ 2`.
+* `ProbabilityTheory.charFun_expMeasure`: the characteristic function is `r / (r - i u)`.
 * `ProbabilityTheory.HasLaw.integral_eq_inv_of_expMeasure`,
   `ProbabilityTheory.HasLaw.variance_eq_of_expMeasure`: the same for a random variable with
   law `expMeasure r`.
+* `ProbabilityTheory.prod_expMeasure_real_lt`,
+  `ProbabilityTheory.measureReal_lt_of_hasLaw_expMeasure`: competing exponential clocks, for
+  independent `X ~ Exp(a)` and `Y ~ Exp(b)`, `P(X < Y) = a / (a + b)`.
 
 ## References
 
@@ -128,6 +137,92 @@ theorem variance_id_expMeasure {r : ℝ} (hr : 0 < r) : Var[id; expMeasure r] = 
   rw [integral_sq_expMeasure hr, integral_id_expMeasure hr]
   field_simp
   ring
+
+/-! ### Characteristic function -/
+
+section CharFun
+
+open Complex
+
+/-- The characteristic function of the exponential law of rate `r > 0`:
+`E[exp(i u X)] = r / (r - i u)`. -/
+theorem charFun_expMeasure {r : ℝ} (hr : 0 < r) (u : ℝ) :
+    charFun (expMeasure r) u = r / (r - u * I) := by
+  have hm : Measurable (gammaPDF 1 r) := by
+    unfold gammaPDF
+    exact (measurable_gammaPDFReal 1 r).ennreal_ofReal
+  rw [charFun_apply, expMeasure, gammaMeasure,
+    integral_withDensity_eq_integral_toReal_smul hm (ae_of_all _ fun _ => by simp [gammaPDF])]
+  have h : ∀ x : ℝ, (gammaPDF 1 r x).toReal • cexp ((inner ℝ x u : ℝ) * I) =
+      Set.indicator (Set.Ici 0) (fun x : ℝ => (r : ℂ) * cexp ((-r + u * I) * x)) x := by
+    intro x
+    by_cases hx : 0 ≤ x
+    · rw [gammaPDF_of_nonneg hx, Set.indicator_of_mem (Set.mem_Ici.2 hx),
+        ENNReal.toReal_ofReal (by positivity)]
+      simp only [Real.rpow_zero, mul_one, Real.Gamma_one, div_one, Real.rpow_one, sub_self]
+      rw [Complex.real_smul, ofReal_mul, ofReal_exp, mul_assoc, ← Complex.exp_add]
+      congr 2
+      simp [RCLike.inner_apply]
+      ring
+    · rw [gammaPDF_of_neg (not_le.1 hx), Set.indicator_of_notMem (by simpa using hx)]
+      simp
+  simp_rw [h]
+  rw [integral_indicator measurableSet_Ici, integral_Ici_eq_integral_Ioi, integral_const_mul,
+    integral_exp_mul_complex_Ioi (by simp [hr]) 0]
+  have h1 : (r : ℂ) - u * I ≠ 0 := by
+    intro h0
+    have := congrArg Complex.re h0
+    simp at this
+    linarith
+  have : -(r : ℂ) + u * I ≠ 0 := by
+    intro h0
+    apply h1
+    linear_combination -h0
+  simp
+  field_simp
+  ring
+
+end CharFun
+
+/-! ### Competing exponential clocks -/
+
+/-- **Competing exponential clocks**: if `X ~ Exp(a)` and `Y ~ Exp(b)` are independent, the
+first clock rings first with probability `a / (a + b)`; on the product law,
+`P(X < Y) = a / (a + b)`. -/
+theorem prod_expMeasure_real_lt {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
+    ((expMeasure a).prod (expMeasure b)).real {p : ℝ × ℝ | p.1 < p.2} = a / (a + b) := by
+  have := isProbabilityMeasure_expMeasure ha
+  have := isProbabilityMeasure_expMeasure hb
+  have hS : MeasurableSet {p : ℝ × ℝ | p.1 < p.2} := measurableSet_lt measurable_fst measurable_snd
+  have hsec : ∀ x : ℝ, Prod.mk x ⁻¹' {p : ℝ × ℝ | p.1 < p.2} = Set.Ioi x := fun _ ↦ rfl
+  have htail : ∀ x : ℝ, (expMeasure b).real (Set.Ioi x) =
+      1 - (if 0 ≤ x then 1 - exp (-(b * x)) else 0) := fun x ↦ by
+    rw [← cdf_expMeasure_eq hb, cdf_eq_real, ← Set.compl_Iic, measureReal_compl measurableSet_Iic,
+      probReal_univ]
+  rw [measureReal_def, Measure.prod_apply hS, ← integral_toReal
+    (measurable_measure_prodMk_left hS).aemeasurable (ae_of_all _ fun _ ↦ measure_lt_top _ _)]
+  simp_rw [hsec, ← measureReal_def, htail]
+  rw [integral_expMeasure_eq_setIntegral ha]
+  rw [setIntegral_congr_fun measurableSet_Ioi (g := fun x ↦ a * exp ((-(a + b)) * x))
+    fun x (hx : 0 < x) ↦ by
+      simp only [hx.le, ↓reduceIte]
+      rw [show -(a + b) * x = -(a * x) + -(b * x) by ring, exp_add]
+      ring]
+  rw [integral_const_mul, integral_exp_mul_Ioi (by linarith) 0]
+  simp only [mul_zero, exp_zero]
+  field_simp
+
+/-- `P(X < Y) = a / (a + b)` for independent `X ~ Exp(a)`, `Y ~ Exp(b)` on any probability
+space. -/
+theorem measureReal_lt_of_hasLaw_expMeasure {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {μ : Measure Ω} [IsProbabilityMeasure μ] {X Y : Ω → ℝ} {a b : ℝ} (ha : 0 < a) (hb : 0 < b)
+    (hX : HasLaw X (expMeasure a) μ) (hY : HasLaw Y (expMeasure b) μ) (hXY : IndepFun X Y μ) :
+    μ.real {ω | X ω < Y ω} = a / (a + b) := by
+  have hP := IndepFun.hasLaw_prod hX hY hXY
+  have hS : MeasurableSet {p : ℝ × ℝ | p.1 < p.2} := measurableSet_lt measurable_fst measurable_snd
+  rw [← prod_expMeasure_real_lt ha hb, ← hP.map_eq, measureReal_def, measureReal_def,
+    Measure.map_apply_of_aemeasurable hP.aemeasurable hS]
+  rfl
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} {X : Ω → ℝ} {r : ℝ}
 

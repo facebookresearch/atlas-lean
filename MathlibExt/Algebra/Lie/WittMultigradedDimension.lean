@@ -1354,6 +1354,7 @@ theorem finrank_freeLieMultihomogeneousComponent
     finrank_span_eq_card (wittLyndonFamily_linearIndependent K degree)]
   exact card_lyndonWordsOfContent_eq_wittMultigradedValue degree hdegree
 
+set_option linter.unusedVariables false in
 /-- **Witt's multigraded dimension formula.** Let $K$ be a field, let $r > 0$, and let
 $n_1, \dots, n_r$ be natural numbers with $n_1 + \dots + n_r > 0$. Then the multihomogeneous
 component of multidegree $(n_1, \dots, n_r)$ of the free Lie algebra over $K$ on $r$ generators
@@ -1369,6 +1370,7 @@ Integer Sequences 7 (2004), Article 04.2.2, Witt's formula paragraph,
 lines 621–628,
 <https://cs.uwaterloo.ca/journals/JIS/VOL7/Moree/moree12.tex>.
 -/
+@[nolint unusedArguments] -- `hr` keeps the stated hypothesis of the formula
 theorem witt_multigraded_dimension_formula
     (K : Type) [Field K] (r : ℕ) (hr : 0 < r)
     (degree : Fin r → ℕ) (hdegree : 0 < ∑ i, degree i) :

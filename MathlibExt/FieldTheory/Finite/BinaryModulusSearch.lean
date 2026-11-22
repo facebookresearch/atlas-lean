@@ -75,23 +75,13 @@ private theorem passesInverseTest_eq_true {s : Nat} (g : BitVec s) :
     · exact Or.inl hx
     · exact Or.inr ⟨y, mem_binaryWords y, hy⟩
 
-private theorem zero_toPolynomial (s : Nat) : (0#s).toPolynomial = 0 := by
-  ext i
-  simp [BitVec.coeff_toPolynomial]
-
 private theorem adjoinRootEquiv_zero {s : Nat} (g : BitVec s) :
     g.adjoinRootEquiv (0#s) = 0 := by
-  rw [BitVec.adjoinRootEquiv_apply, zero_toPolynomial, map_zero]
-
-private theorem one_toPolynomial {s : Nat} (hs : 0 < s) :
-    (1#s).toPolynomial = 1 := by
-  ext i
-  rw [BitVec.coeff_toPolynomial, BitVec.getLsbD_one, Polynomial.coeff_one]
-  simp [hs]
+  rw [BitVec.adjoinRootEquiv_apply, toPolynomial_zero, map_zero]
 
 private theorem adjoinRootEquiv_one {s : Nat} (g : BitVec s) (hs : 0 < s) :
     g.adjoinRootEquiv (1#s) = 1 := by
-  rw [BitVec.adjoinRootEquiv_apply, one_toPolynomial hs, map_one]
+  rw [BitVec.adjoinRootEquiv_apply, toPolynomial_one hs, map_one]
 
 /-- At positive width, the exhaustive inverse test succeeds exactly for irreducible monic
 moduli. -/
