@@ -42,55 +42,82 @@ its groups, and equal to the variety of all abelian groups when its groups are e
 groups (groups taken in `Type`). One target per part.
 -/
 
-/-- A group `G` satisfies the laws `W ⊆ FreeGroup ℕ`: every law takes the value `1` under every
-substitution of elements of `G` for the variables. The variety defined by `W` is the class of
+/-- **Groups satisfying a set of laws in countably many variables.** Let $F_\mathbb{N}$ be the free
+group on countably many generators and $W \subseteq F_\mathbb{N}$ a set of words, the laws. A group
+$G$ satisfies the laws $W$ when $\varphi(w) = 1$ for every $w \in W$ and every homomorphism
+$\varphi \colon F_\mathbb{N} \to G$, that is, every law takes the value $1$ under every
+substitution of elements of $G$ for the variables. The variety defined by $W$ is the class of
 these groups. -/
 def SatisfiesLaws (W : Set (FreeGroup ℕ)) (G : Type*) [Group G] : Prop :=
   ∀ w ∈ W, ∀ φ : FreeGroup ℕ →* G, φ w = 1
 
-/-- The verbal subgroup of `FreeGroup (Fin r)` for the laws `W`: the normal closure of all values
-`φ w` of laws under homomorphisms `φ : FreeGroup ℕ →* FreeGroup (Fin r)`. -/
+/-- **Verbal subgroup of a free group of finite rank.** Let $W$ be a set of laws in the free group
+$F_\mathbb{N}$ on countably many generators, and let $F_r$ be the free group on $r$ generators. The
+verbal subgroup $V_W(F_r)$ of $F_r$ for $W$ is the normal closure in $F_r$ of all elements
+$\varphi(w)$ with $w \in W$ and $\varphi \colon F_\mathbb{N} \to F_r$ a homomorphism. -/
 abbrev verbalSubgroup (W : Set (FreeGroup ℕ)) (r : ℕ) : Subgroup (FreeGroup (Fin r)) :=
   Subgroup.normalClosure {x | ∃ w ∈ W, ∃ φ : FreeGroup ℕ →* FreeGroup (Fin r), φ w = x}
 
-/-- The free `r`-generator group `G_r` of the variety defined by `W`. -/
+/-- **Relatively free group as a quotient of a free group.** Let $W$ be a set of laws in the free
+group $F_\mathbb{N}$ on countably many generators, and let $r \in \mathbb{N}$. The free
+$r$-generator group $G_r$ of the variety defined by $W$ is the quotient $F_r / V_W(F_r)$ of the
+free group $F_r$ on $r$ generators by its verbal subgroup $V_W(F_r)$ for $W$. -/
 abbrev RelativelyFreeGroup (W : Set (FreeGroup ℕ)) (r : ℕ) : Type :=
   FreeGroup (Fin r) ⧸ verbalSubgroup W r
 
-/-- A test set of `G`: every endomorphism of `G` that is the identity on `S` is an automorphism. -/
+/-- **Test set of a group.** A subset $S$ of a group $G$ is a test set when every endomorphism of
+$G$ that fixes every element of $S$ is bijective, that is, an automorphism of $G$. -/
 def IsTestSet {G : Type*} [Group G] (S : Set G) : Prop :=
   ∀ f : G →* G, (∀ s ∈ S, f s = s) → Function.Bijective f
 
-/-- `G` has test rank `r`: the minimum of the cardinalities of the test sets of `G` is `r`. -/
+/-- **Test rank of a group.** A group $G$ has test rank $r \in \mathbb{N}$ when $G$ has a test set
+of cardinality $r$ and every test set of $G$ has cardinality at least $r$ (an infinite set counting
+as having cardinality $\infty$), that is, when the minimum of the cardinalities of the test sets of
+$G$ is $r$. -/
 def HasTestRank (G : Type*) [Group G] (r : ℕ) : Prop :=
   (∃ S : Set G, IsTestSet S ∧ S.encard = r) ∧ ∀ S : Set G, IsTestSet S → (r : ℕ∞) ≤ S.encard
 
-/-- Kourovka 16.87(a) (E. I. Timoshenko): if the free `r`-generator group of a variety has test
-rank `r` for every `r ≥ 1`, then the variety is abelian. -/
+/-- **Timoshenko's test rank question, part (a).** The statement that for every set $W$ of laws in
+the free group $F_\mathbb{N}$ on countably many generators, if for every $r \ge 1$ the free
+$r$-generator group $G_r$ of the variety defined by $W$ has test rank $r$, then this variety is
+abelian: every group satisfying the laws $W$ is abelian.
+
+This is Kourovka Notebook Problem 16.87(a) (E. I. Timoshenko), which asks whether the statement
+holds. -/
 def testRankVarietyAbelian : Prop :=
   ∀ W : Set (FreeGroup ℕ), (∀ r : ℕ, 1 ≤ r → HasTestRank (RelativelyFreeGroup W r) r) →
     ∀ (G : Type) [Group G], SatisfiesLaws W G → ∀ a b : G, a * b = b * a
 
-/-- Kourovka 16.87(b) (E. I. Timoshenko): if, moreover, the variety is not periodic (no exponent
-`n > 0` holds in all its groups), then it is the variety of all abelian groups. -/
+/-- **Timoshenko's test rank question, part (b).** The statement that for every set $W$ of laws in
+the free group $F_\mathbb{N}$ on countably many generators, if for every $r \ge 1$ the free
+$r$-generator group $G_r$ of the variety defined by $W$ has test rank $r$ and the variety is not
+periodic (there is no $n > 0$ with $g^n = 1$ for every element $g$ of every group satisfying $W$),
+then the variety is the variety of all abelian groups: a group satisfies the laws $W$ if and only
+if it is abelian.
+
+This is Kourovka Notebook Problem 16.87(b) (E. I. Timoshenko), which asks whether the statement
+holds. -/
 def testRankNonperiodicVarietyAllAbelian : Prop :=
   ∀ W : Set (FreeGroup ℕ), (∀ r : ℕ, 1 ≤ r → HasTestRank (RelativelyFreeGroup W r) r) →
     (¬ ∃ n : ℕ, 0 < n ∧ ∀ (G : Type) [Group G], SatisfiesLaws W G → ∀ g : G, g ^ n = 1) →
       ∀ (G : Type) [Group G], (SatisfiesLaws W G ↔ ∀ a b : G, a * b = b * a)
 
-/--
-Resolved false: Kinyon and Urban (Section 3.23, Proposition 3.9) show that for a prime `p` the free
-groups of every rank `r ≥ 1` in the variety defined by `[[x, y], z] = 1` and `[x, y]^p = 1` have
-test rank `r`, while the variety is not abelian since it contains `UT₃(𝔽_p)`. The Kourovka Notebook
-(21st issue) answers 16.87(a) "No" (AI solution confirmed by E. I. Timoshenko). Source: E. I.
-Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st
-issue, arXiv:1401.0300v49 (2026), Problem 16.87 (E. I. Timoshenko); resolution: M. Kinyon and J.
-Urban (with Codex gpt-6-astra), Results on problems from the Kourovka Notebook, preprint, version 4
-(19 September 2026), Section 3.23 (Problem 16.87): the variety M_p defined by [[x, y], z] = 1 and
-[x, y]^p = 1 (p prime) is nonabelian (it contains UT_3(F_p)) and nonperiodic (it contains Z), and
-Proposition 3.9 shows that its free group of rank r has test rank r for every r ≥ 1; the Kourovka
-Notebook (21st issue) marks 16.87 solved (a), b) No, it is not true in both cases; AI solution
-confirmed by E. I. Timoshenko),
+/-- **Negative answer to Timoshenko's test rank question, part (a).** There is a set $W$ of laws
+in the free group $F_\mathbb{N}$ on countably many generators such that for every $r \ge 1$ the
+free $r$-generator group $G_r$ of the variety defined by $W$ has test rank $r$, but the variety is
+not abelian: some group satisfying the laws $W$ is not abelian.
+
+The witness is the variety defined by $[[x, y], z] = 1$ and $[x, y]^p = 1$ for a prime $p$, which
+contains the non-abelian group $\mathrm{UT}_3(\mathbb{F}_p)$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 16.87 (E. I. Timoshenko); resolution: M.
+Kinyon and J. Urban (with Codex gpt-6-astra), Results on problems from the Kourovka Notebook,
+preprint, version 4 (19 September 2026), Section 3.23 (Problem 16.87): the variety M_p defined by
+[[x, y], z] = 1 and [x, y]^p = 1 (p prime) is nonabelian (it contains UT_3(F_p)) and nonperiodic
+(it contains Z), and Proposition 3.9 shows that its free group of rank r has test rank r for
+every r ≥ 1; the Kourovka Notebook (21st issue) marks 16.87 solved (a), b) No, it is not true in
+both cases; AI solution confirmed by E. I. Timoshenko),
 https://kourovkanotebookorg.wordpress.com/wp-content/uploads/2026/09/kourovka-mathematics.pdf.
 -/
 public theorem_wanted testRankVarietyAbelian_refuted : ¬ testRankVarietyAbelian

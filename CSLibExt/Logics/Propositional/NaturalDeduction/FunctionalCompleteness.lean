@@ -64,16 +64,26 @@ variable [DecidableEq Atom]
 
 namespace Proposition
 
-/-- The Shannon expansion of `f` over the atoms of `xs`. With no atom left, `f` is read at
-the all-false assignment and becomes `⊤` (written `⊥ → ⊥`) or `⊥`. -/
+/-- **Shannon expansion.** Let $f$ assign a truth value to every valuation of the atoms. The
+Shannon expansion $S(\ell, f)$ of $f$ over a list $\ell$ of atoms is defined by recursion on
+$\ell$. For the empty list it is $\bot \to \bot$ if $f$ is true at the valuation that makes every
+atom false, and $\bot$ otherwise. For the list $x \cdot \ell$ with head $x$ and tail $\ell$,
+$$
+S(x \cdot \ell, f) = (x \wedge S(\ell, f_1)) \vee (\neg x \wedge S(\ell, f_0)),
+$$
+where $\neg x$ is $x \to \bot$, and $f_1(v) = f(v[x \mapsto \mathrm{true}])$ and
+$f_0(v) = f(v[x \mapsto \mathrm{false}])$, with $v[x \mapsto b]$ the valuation $v$ changed at $x$
+to $b$. -/
 def shannon : List Atom → ((Atom → Bool) → Bool) → Proposition Atom
   | [], f => if f (fun _ ↦ false) then (⊥ → ⊥ : Proposition Atom) else ⊥
   | x :: xs, f =>
     or (and (atom x) (shannon xs fun v ↦ f (Function.update v x true)))
       (and (¬(atom x) : Proposition Atom) (shannon xs fun v ↦ f (Function.update v x false)))
 
-/-- The Shannon expansion of a function that depends only on the atoms of `xs` has that
-function as its truth table, for every valuation with `⊥` false. -/
+/-- **Correctness of the Shannon expansion.** Let $x_1, \dots, x_n$ be a list of atoms and let
+$f$ assign a truth value to every valuation of the atoms, such that $f(v) = f(w)$ whenever $v$
+and $w$ agree on $x_1, \dots, x_n$. Then for every valuation $v$ that makes $\bot$ false, the
+Shannon expansion of $f$ over $x_1, \dots, x_n$ has truth value $f(v)$ under $v$. -/
 theorem evalBool_shannon {xs : List Atom} {f : (Atom → Bool) → Bool}
     (hf : ∀ v w : Atom → Bool, (∀ a ∈ xs, v a = w a) → f v = f w) {v : Atom → Bool}
     (hv : v ⊥ = false) : (shannon xs f).evalBool v = f v := by
@@ -118,15 +128,18 @@ end Shannon
 
 namespace Proposition
 
-/-- `A` uses no connective other than `→`. -/
+/-- **Propositions built from $\to$ and $\bot$.** A proposition is built from $\to$ and $\bot$
+when it contains no conjunction and no disjunction: every atom (including $\bot$, which is an
+atom) is, and $A \to B$ is exactly when both $A$ and $B$ are. -/
 def IsImpBot : Proposition Atom → Prop
   | atom _ => True
   | and _ _ => False
   | or _ _ => False
   | imp A B => IsImpBot A ∧ IsImpBot B
 
-/-- Rewrite `∧` and `∨` with `→` and `⊥`: `A ∧ B` as `(A → (B → ⊥)) → ⊥`, `A ∨ B` as
-`(A → ⊥) → B`. -/
+/-- **Translation into $\to$ and $\bot$.** The translation $A^*$ of a proposition $A$ is defined
+by recursion on $A$: each atom is unchanged, $(A \to B)^* = A^* \to B^*$,
+$(A \wedge B)^* = (A^* \to (B^* \to \bot)) \to \bot$ and $(A \vee B)^* = (A^* \to \bot) \to B^*$. -/
 def toImpBot : Proposition Atom → Proposition Atom
   | atom a => atom a
   | and A B => imp (imp (toImpBot A) (imp (toImpBot B) ⊥)) ⊥
@@ -140,7 +153,9 @@ theorem isImpBot_toImpBot (A : Proposition Atom) : IsImpBot (toImpBot A) := by
   | or A B ihA ihB => exact ⟨⟨ihA, trivial⟩, ihB⟩
   | imp A B ihA ihB => exact ⟨ihA, ihB⟩
 
-/-- The translation keeps every truth value when `⊥` is false. -/
+/-- **The translation into $\to$ and $\bot$ preserves truth values.** For every proposition $A$
+and every valuation $v$ that makes $\bot$ false, the translation of $A$ into $\to$ and $\bot$
+has the same truth value under $v$ as $A$. -/
 theorem evalBool_toImpBot (A : Proposition Atom) {v : Atom → Bool} (hv : v ⊥ = false) :
     (toImpBot A).evalBool v = A.evalBool v := by
   induction A with
@@ -162,8 +177,11 @@ theorem exists_isImpBot_evalBool_eq [DecidableEq Atom] (xs : List Atom) (f : (At
   ⟨toImpBot (shannon xs f), isImpBot_toImpBot _, fun _ hv ↦ by
     rw [evalBool_toImpBot _ hv, evalBool_shannon hf hv]⟩
 
-/-- The translation to `→` and `⊥` preserves derivability in classical propositional
-logic. -/
+/-- **The translation into $\to$ and $\bot$ preserves and reflects classical derivability.**
+For every proposition $A$, let $A^*$ be its translation into $\to$ and $\bot$, which keeps atoms
+and implications and recursively replaces each $B \wedge C$ by $(B \to (C \to \bot)) \to \bot$
+and each $B \vee C$ by $(B \to \bot) \to C$. Then $A^*$ is derivable from no hypotheses in
+classical propositional logic if and only if $A$ is. -/
 theorem derivableIn_cpl_toImpBot_iff [DecidableEq Atom] (A : Proposition Atom) :
     DerivableIn (CPL Atom) A.toImpBot ↔ DerivableIn (CPL Atom) A := by
   rw [DerivableIn.iff_derivableIn_empty, DerivableIn.iff_derivableIn_empty, derivableIn_cpl_iff,
