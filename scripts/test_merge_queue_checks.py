@@ -9,6 +9,8 @@ fails if a required workflow:
   or filters some of them out;
 - can skip the job that reports the check (a skipped job counts as passing):
   a job-level `if`, a matrix, or a prerequisite that is not required itself;
+  or can hold it back: a deployment `environment`, whose reviewers or wait
+  timers could keep it from running, or a `needs` cycle;
 - can skip the job's own check: the job needs a step that is exactly the
   workspace check below followed by the command running it, with no
   step-level `if` or `continue-on-error`, and the job must not have a
@@ -135,10 +137,11 @@ SETS_LATER_ENV = re.compile(
     r"GITHUB_ENV|github\s*(?:\.\s*env\b|\[\s*['\"]env['\"]\s*\])|_runner_file_commands"
     r"|exportVariable", re.I)
 # Runners with the root access and job length the Lean build needs (it adds
-# swap); the lighter jobs may use any Ubuntu runner.
-FULL_UBUNTU = {"ubuntu-24.04", "ubuntu-22.04", "ubuntu-latest"}
+# swap); the lighter jobs may use any GitHub-hosted Ubuntu label below.
+FULL_UBUNTU = {"ubuntu-26.04", "ubuntu-24.04", "ubuntu-22.04", "ubuntu-latest"}
 # Every GitHub-hosted Ubuntu label; `build` needs one of the full x64 VMs above.
-UBUNTU = FULL_UBUNTU | {"ubuntu-slim", "ubuntu-24.04-arm", "ubuntu-22.04-arm"}
+UBUNTU = FULL_UBUNTU | {"ubuntu-slim", "ubuntu-26.04-arm", "ubuntu-24.04-arm",
+                        "ubuntu-22.04-arm"}
 # Checkout inputs that leave the checked-out tree whole and unchanged.
 CHECKOUT_INPUTS = {"persist-credentials", "fetch-depth", "fetch-tags", "show-progress", "clean"}
 # The command that runs each required job's own check.
@@ -237,6 +240,20 @@ def may_be_named(name: str, check: str) -> bool:
     prefix, suffix = name.split("${{", 1)[0], name.rsplit("}}", 1)[-1]
     return (check.startswith(prefix) and check.endswith(suffix)
             and len(check) >= len(prefix) + len(suffix))
+
+
+def needs_itself(workflow: dict, job_id: str) -> bool:
+    """Whether a job depends on itself, directly or through other jobs."""
+    jobs = workflow.get("jobs") or {}
+    seen, pending = set(), as_list((jobs.get(job_id) or {}).get("needs"))
+    while pending:
+        current = pending.pop()
+        if current == job_id:
+            return True
+        if current not in seen:
+            seen.add(current)
+            pending += as_list((jobs.get(current) or {}).get("needs"))
+    return False
 
 
 def workflow_name(filename: str, workflow: dict) -> str:
@@ -377,13 +394,16 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
         if "${{" in job.get("name", ""):
             found.append(f"{check!r} has an expression in its job name, so it may report "
                          "another name on some events")
-        for key in ("if", "strategy", "uses"):
+        for key in ("if", "strategy", "uses", "environment"):
             if key in job:
                 found.append(f"{check!r} has a job-level {key!r}")
         steps = as_list(job.get("steps"))
         shells = default_shells(job, workflow)
-        runner = str(job.get("runs-on", ""))
-        if runner not in (FULL_UBUNTU if check == "build" else UBUNTU):
+        # One label, written alone or as a one-item list.
+        labels = job.get("runs-on")
+        runner = labels[0] if isinstance(labels, list) and len(labels) == 1 else labels
+        if not isinstance(runner, str) or runner not in (
+                FULL_UBUNTU if check == "build" else UBUNTU):
             found.append(f"{check!r} runs on {job.get('runs-on')!r}, not an Ubuntu runner "
                          "it can run on")
         for shell in shells:
@@ -426,6 +446,8 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
         for prerequisite in as_list(job.get("needs")):
             if (name, prerequisite) not in required_jobs:
                 found.append(f"{check!r} needs {prerequisite!r}, which is not required")
+        if needs_itself(workflow, job_id):
+            found.append(f"{check!r} needs itself through `needs`, so it never runs")
         # A new run in a concurrency group cancels the group's pending run even
         # without cancel-in-progress.
         group = concurrency_group(workflow.get("concurrency"))
@@ -546,6 +568,9 @@ class MergeQueueChecks(unittest.TestCase):
                             "steps": [{"env": {"PYTHONDONTWRITEBYTECODE": "1"}, "run": TEST},
                                       {"id": "diagnostics",
                                        "run": DIAGNOSTICS}]}),
+                       put("ci.yml", "jobs", "build", "runs-on", ["ubuntu-26.04"]),
+                       put("source-diagnostics.yml", "jobs", "source-diagnostics", "runs-on",
+                           "ubuntu-26.04-arm"),
                        put("report.yml", {"on": {"pull_request": ""}, "concurrency": {
                            "group": "${{ github.workflow }}-${{ github.ref }}"},
                            "jobs": {"report": {}}}),
@@ -749,6 +774,14 @@ class MergeQueueChecks(unittest.TestCase):
             "a workflow's defaults from an expression": (
                 put("ci.yml", "defaults", "${{ fromJSON(vars.CI_DEFAULTS) }}"),
                 "gets defaults from an expression in its workflow"),
+            "build behind a deployment environment": (
+                put("ci.yml", "jobs", "build", "environment", "production"),
+                "has a job-level 'environment'"),
+            "build needing itself": (put("ci.yml", "jobs", "build", "needs", ["build"]),
+                                     "'build' needs itself"),
+            "preflight and build needing each other": (
+                put("ci.yml", "jobs", "preflight", "needs", "build"),
+                "'repository integrity' needs itself"),
             "Source diagnostics on an unknown Ubuntu label": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "runs-on",
                     "ubuntu-typo"), "not an Ubuntu runner"),
