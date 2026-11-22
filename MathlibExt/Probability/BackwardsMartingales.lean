@@ -571,9 +571,15 @@ private theorem condExp_antitone_ae_tendsto {g : Ω → ℝ} (m : ℕ → Measur
       exact eLpNorm_condExp_le_eLpNorm g le_rfl
   exact memLp_one_iff_integrable.mp (lt_of_le_of_lt hbound (lt_top_iff_ne_top.mpr hgLp))
 
-/-- **Lévy's downward theorem** (a.s. form): conditional expectations along a
-decreasing sequence of σ-algebras converge a.e. to the conditional
-expectation given the intersection σ-algebra. -/
+/-- **Lévy's downward theorem, almost sure convergence.** Let $(\Omega, \mathcal F, \mu)$ be a
+probability space, let $\mathcal F_0 \supseteq \mathcal F_1 \supseteq \cdots$ be a decreasing
+sequence of sub-σ-algebras of $\mathcal F$, and let $\mathcal F_\infty = \bigcap_n \mathcal F_n$.
+For every function $g : \Omega \to \mathbb R$, the conditional expectations
+$\mathbb E[g \mid \mathcal F_n]$ converge to $\mathbb E[g \mid \mathcal F_\infty]$ as
+$n \to \infty$, $\mu$-almost everywhere.
+
+No integrability hypothesis is needed: for a non-integrable $g$ every conditional expectation is
+$0$ by convention, and the statement is trivial. -/
 theorem levy_downward_ae {g : Ω → ℝ} (m : ℕ → MeasurableSpace Ω)
     (hm : Antitone m) (hm0 : ∀ n, m n ≤ m0) :
     ∀ᵐ ω ∂μ, Tendsto (fun n => (μ[g | m n]) ω) atTop (𝓝 ((μ[g | ⨅ n, m n]) ω)) := by
@@ -587,7 +593,12 @@ theorem levy_downward_ae {g : Ω → ℝ} (m : ℕ → MeasurableSpace Ω)
     simp only [h0, h0', Pi.zero_apply]
     exact ae_of_all μ fun _ => tendsto_const_nhds
 
-/-- **Lévy's downward theorem** (`L¹` form). -/
+/-- **Lévy's downward theorem in L¹.** Let $(\Omega, \mathcal F, \mu)$ be a probability space,
+let $\mathcal F_0 \supseteq \mathcal F_1 \supseteq \cdots$ be a decreasing sequence of
+sub-σ-algebras of $\mathcal F$, and let $\mathcal F_\infty = \bigcap_n \mathcal F_n$. For every
+integrable function $g : \Omega \to \mathbb R$, the $L^1(\mu)$ norm
+$\lVert \mathbb E[g \mid \mathcal F_n] - \mathbb E[g \mid \mathcal F_\infty] \rVert_1$ tends to $0$
+as $n \to \infty$. -/
 theorem levy_downward_tendsto_eLpNorm_one {g : Ω → ℝ} (m : ℕ → MeasurableSpace Ω)
     (hm : Antitone m) (hm0 : ∀ n, m n ≤ m0) (hg : Integrable g μ) :
     Tendsto (fun n => eLpNorm ((μ[g | m n]) - μ[g | ⨅ n, m n]) 1 μ) atTop (𝓝 0) := by
@@ -601,14 +612,25 @@ theorem levy_downward_tendsto_eLpNorm_one {g : Ω → ℝ} (m : ℕ → Measurab
     (memLp_one_iff_integrable.mpr integrable_condExp) hui.1
     (tendstoInMeasure_of_tendsto_ae haem hconv)
 
-/-- A *backwards martingale* with respect to a decreasing sequence `m` of
-σ-algebras is a process whose `n`-th term is a.e. equal to the conditional
-expectation of its `0`-th term given `m n`. -/
+/-- **Backwards martingale.** Let $\mu$ be a measure on a measurable space $(\Omega, \mathcal F)$
+and let $(\mathcal F_n)_{n \ge 0}$ be a sequence of σ-algebras on $\Omega$. A sequence of
+functions $M_n : \Omega \to \mathbb R$ is a backwards martingale with respect to $(\mathcal F_n)$
+and $\mu$ if $M_0$ is $\mu$-integrable and, for every $n$, $M_n = \mathbb E[M_0 \mid \mathcal F_n]$
+$\mu$-almost everywhere.
+
+Here $\mathbb E[M_0 \mid \mathcal F_n]$ is the conditional expectation with respect to $\mu$ when
+$\mathcal F_n \subseteq \mathcal F$ and the restriction of $\mu$ to $\mathcal F_n$ is σ-finite,
+and is $0$ by convention otherwise. The definition is used when $(\mathcal F_n)$ is a decreasing
+sequence of sub-σ-algebras, but it does not require this. -/
 def IsBackwardsMartingale (M : ℕ → Ω → ℝ) (m : ℕ → MeasurableSpace Ω) (μ : Measure Ω) : Prop :=
   Integrable (M 0) μ ∧ ∀ n, M n =ᵐ[μ] μ[M 0 | m n]
 
-/-- **Backwards martingale convergence theorem** (a.s. form): a backwards
-martingale converges a.e. to `μ[M 0 | ⨅ n, m n]`. -/
+/-- **Backwards martingale convergence theorem, almost sure convergence.** Let
+$(\Omega, \mathcal F, \mu)$ be a probability space, let
+$\mathcal F_0 \supseteq \mathcal F_1 \supseteq \cdots$ be a decreasing sequence of sub-σ-algebras
+of $\mathcal F$, and let $\mathcal F_\infty = \bigcap_n \mathcal F_n$. If the real-valued process
+$(M_n)_{n \ge 0}$ is a backwards martingale with respect to $(\mathcal F_n)$ and $\mu$, then
+$M_n \to \mathbb E[M_0 \mid \mathcal F_\infty]$ as $n \to \infty$, $\mu$-almost everywhere. -/
 theorem backwards_martingale_ae_tendsto {M : ℕ → Ω → ℝ} (m : ℕ → MeasurableSpace Ω)
     (hm : Antitone m) (hm0 : ∀ n, m n ≤ m0) (hM : IsBackwardsMartingale M m μ) :
     ∀ᵐ ω ∂μ, Tendsto (fun n => M n ω) atTop (𝓝 ((μ[M 0 | ⨅ n, m n]) ω)) := by
@@ -618,7 +640,12 @@ theorem backwards_martingale_ae_tendsto {M : ℕ → Ω → ℝ} (m : ℕ → Me
   filter_upwards [hlevy, hae] with ω hω_conv hω_eq
   exact hω_conv.congr (fun n => (hω_eq n).symm)
 
-/-- **Backwards martingale convergence theorem** (`L¹` form). -/
+/-- **Backwards martingale convergence theorem in L¹.** Let $(\Omega, \mathcal F, \mu)$ be a
+probability space, let $\mathcal F_0 \supseteq \mathcal F_1 \supseteq \cdots$ be a decreasing
+sequence of sub-σ-algebras of $\mathcal F$, and let $\mathcal F_\infty = \bigcap_n \mathcal F_n$.
+If the real-valued process $(M_n)_{n \ge 0}$ is a backwards martingale with respect to
+$(\mathcal F_n)$ and $\mu$, then the $L^1(\mu)$ norm
+$\lVert M_n - \mathbb E[M_0 \mid \mathcal F_\infty] \rVert_1$ tends to $0$ as $n \to \infty$. -/
 theorem backwards_martingale_tendsto_eLpNorm_one {M : ℕ → Ω → ℝ}
     (m : ℕ → MeasurableSpace Ω) (hm : Antitone m) (hm0 : ∀ n, m n ≤ m0)
     (hM : IsBackwardsMartingale M m μ) :

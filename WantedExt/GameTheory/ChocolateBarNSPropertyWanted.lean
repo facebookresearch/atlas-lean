@@ -15,6 +15,7 @@ public import Mathlib.Order.Interval.Set.Defs
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Order.Lattice.Nat
+public import MathlibExt.Data.Nat.DyadicBlock
 
 /-! # The NS property of chocolate-bar games (Miyadera, Manabe, Singh)
 
@@ -183,16 +184,6 @@ Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
 Article G3, Lemma 7 (`integers-2025-G3-lem-7`). -/
 public theorem_wanted hasNSProperty_div_two_pow {m : ℕ} (hm : 0 < m) :
     HasNSProperty fun x ↦ x / 2 ^ m
-
-/-- **Equal quotients by a power of two lie in one dyadic block.** Let $i$ be a natural number
-and let $z < z'$ be natural numbers. Then $\lfloor z / 2^i \rfloor = \lfloor z' / 2^i \rfloor$ if
-and only if there is a natural number $d$ with $d \cdot 2^i \le z$ and $z' < (d + 1) \cdot 2^i$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 8 (a) (`integers-2025-G3-lem-8`). -/
-public theorem_wanted div_two_pow_eq_iff_exists_block {z z' i : ℕ} (hzz' : z < z') :
-    z / 2 ^ i = z' / 2 ^ i ↔ ∃ d, d * 2 ^ i ≤ z ∧ z' < (d + 1) * 2 ^ i
 
 /-- **Dyadic splitting of two numbers with different quotients.** Let $z, z', i$ be natural
 numbers with $\lfloor z / 2^i \rfloor < \lfloor z' / 2^i \rfloor$. Then there are natural numbers

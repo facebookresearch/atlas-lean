@@ -34,6 +34,9 @@ paper's `e_n(P)` and `polyPowerSum P n` its `p_n(P)`, defined through Newton's i
 `p_0(P) = deg P`, as in the paper's Notation of Section 3.2. Symmetric functions are taken in
 finitely many variables (`MvPolynomial σ ℚ`, `σ` finite), which loses nothing for identities
 between them.
+
+Proposition 3, `pow_mem_prime_pow_padicValNat_factorial_iff`, is proved in
+`MathlibExt.Algebra.DeepPowerSumCongruences`.
 -/
 
 open Polynomial
@@ -154,19 +157,6 @@ theorem polyPowerSum_succ {A : Type*} [CommRing A] (P : A[X]) (n : ℕ) :
     polyPowerSum P (n + 1) = (-1) ^ n * ((n + 1 : ℕ) : A) * polyElemSymm P (n + 1) +
       ∑ i : Fin n, (-1) ^ (i : ℕ) * polyElemSymm P (i + 1) * polyPowerSum P (n - i) := by
   rw [polyPowerSum]
-
-/-- **A prime-exponent criterion for powers in an ideal.** Let $p$ be a prime, $v_p$ the $p$-adic
-valuation, and $\mathfrak{b}$ an ideal of a commutative ring $B$.
-The following are equivalent: for every $n \ge 1$ and every $a \in \mathfrak{b}$ there is
-$c \in \mathfrak{b}$ with $a^n = p^{v_p(n!)} c$; and for every $a \in \mathfrak{b}$ there is
-$c \in \mathfrak{b}$ with $a^p = p c$.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Proposition 3 (`integers-2024-A46-prop-3`). -/
-public theorem_wanted pow_mem_prime_pow_padicValNat_factorial_iff {p : ℕ} [Fact p.Prime]
-    {B : Type*} [CommRing B] (I : Ideal B) :
-    (∀ n : ℕ, 1 ≤ n → ∀ a ∈ I, ∃ c ∈ I, a ^ n = (p : B) ^ padicValNat p n.factorial * c) ↔
-      ∀ a ∈ I, ∃ c ∈ I, a ^ p = (p : B) * c
 
 /-- **The $p$-th power criterion for divided-power ideals.** Let $p$ be a prime and let $A$ be a
 commutative ring in which every natural number not divisible by $p$ is a unit (a

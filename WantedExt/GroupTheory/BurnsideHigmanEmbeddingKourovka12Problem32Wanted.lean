@@ -36,26 +36,38 @@ group. A group finitely presented in `𝔅ₙ` is `⟨x₀, …, x_{m-1} | S, w�
 finite, so it has exponent `n`. "`n ≫ 1`" is read as "every odd `n ≥ n₀`, for some `n₀`".
 -/
 
-/-- The group with generators `x₀, …, x_{m-1}` presented in the Burnside variety `𝔅ₙ` by the
-finite set of relators `S`: the relators are `S` together with `wⁿ` for every word `w`. -/
+/-- **Groups finitely presented in a Burnside variety.** For natural numbers $n$ and $m$ and a
+finite set $S$ of elements of the free group on $x_0, \dots, x_{m-1}$, this is the group with
+generators $x_0, \dots, x_{m-1}$ and relators $S$ together with $w^n$ for every element $w$ of the
+free group: the group finitely presented by $S$ in the Burnside variety $\mathfrak{B}_n$ of groups
+of exponent $n$. -/
 abbrev BurnsidePresented (n m : ℕ) (S : Finset (FreeGroup (Fin m))) : Type :=
   PresentedGroup ((S : Set (FreeGroup (Fin m))) ∪ Set.range fun w : FreeGroup (Fin m) => w ^ n)
 
-/-- Kourovka 12.32 (S. V. Ivanov): an analogue of Higman's embedding theorem for the Burnside
-variety of odd exponent `n ≫ 1`: there is `n₀` such that for every odd `n ≥ n₀`, every group of
-exponent `n` given by countably many generators and a recursively enumerable set of relators
-embeds in a group finitely presented in `𝔅ₙ`. Words are coded as `List (ℕ × Bool)`. -/
+/-- **Kourovka Problem 12.32: Higman embedding for Burnside varieties.** There is $n_0$ such that
+for every odd $n \ge n_0$ the following holds. Let $G$ be a group given by generators
+$x_0, x_1, \dots$ and a recursively enumerable set of relators, and suppose that $g^n = 1$ for
+every $g \in G$. Then for some $m$ and some finite set $S$ of elements of the free group on
+$x_0, \dots, x_{m-1}$, there is an injective homomorphism from $G$ to the group finitely presented
+by $S$ in the Burnside variety $\mathfrak{B}_n$, whose relators are $S$ together with $w^n$ for
+every element $w$ of that free group.
+
+The relators are words in the generators, and recursive enumerability refers to these words. -/
 def higmanEmbeddingBurnsideVariety : Prop :=
   ∃ n₀ : ℕ, ∀ n : ℕ, n₀ ≤ n → Odd n → ∀ R : Set (List (ℕ × Bool)), REPred (· ∈ R) →
     (∀ g : PresentedGroup (FreeGroup.mk '' R), g ^ n = 1) →
     ∃ (m : ℕ) (S : Finset (FreeGroup (Fin m)))
       (f : PresentedGroup (FreeGroup.mk '' R) →* BurnsidePresented n m S), Function.Injective f
 
-/--
-Resolved true: Olshanskii (J. Algebra 560 (2020), Theorem 1.1 and Corollary 1.2) proves that there
-is `C` such that for every odd `n ≥ C`, every group of exponent `n` given by countably many
-generators and a recursively enumerable set of relators is a subgroup of a 2-generated group
-finitely presented in `𝔅ₙ`; the Kourovka Archive records 12.32 as proved. Source: E. I. Khukhro and
+/-- **Higman embedding theorem for Burnside varieties.** There is $n_0$ such that for every odd
+$n \ge n_0$, every group of exponent $n$ given by generators $x_0, x_1, \dots$ and a recursively
+enumerable set of relators embeds in a group finitely presented in the Burnside variety
+$\mathfrak{B}_n$: a group with generators $x_0, \dots, x_{m-1}$ for some $m$ whose relators are a
+finite set $S$ together with $w^n$ for every word $w$.
+
+Olshanskii proves this with the ambient group 2-generated; the statement here does not require it.
+
+Source: E. I. Khukhro and
 V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 12.32 (S. V. Ivanov); resolution: A.
 Yu. Olshanskii, Groups finitely presented in Burnside varieties, J. Algebra 560 (2020), 960-1052,
