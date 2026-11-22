@@ -28,9 +28,7 @@ coefficients.
 The coefficient formulas (2.10) and (2.15) survive in the extracted text with their
 numerators only; the denominators used here are the unique ones for which the
 displayed numerators solve the paper's initial-value systems (2.8) and (2.13), and
-they reproduce the paper's worked examples. In Theorem 3.1 the extracted formulas
-for `c` and `d` contradict the paper's own example; the stated reading is the one
-that the example and the initial-value system support (see the source audit table).
+they reproduce the paper's worked examples.
 -/
 
 namespace MetaMathlibExt

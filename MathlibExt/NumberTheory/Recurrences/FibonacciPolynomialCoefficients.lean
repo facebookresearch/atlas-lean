@@ -56,6 +56,10 @@ $f = (v_0 + v_1 - 3v_2 - v_3 + 3v_4 - v_5)/2$.
 
 These integers are then the initial values of the sequence: $v_i = w_i$ for $0 \le i \le 5$.
 
+The source prints $-3v_5$ in the numerator of $c$ and $+2v_1$ in $d$. The corrected terms
+$+3v_5$ and $-2v_1$ give $c = 3/5$ and $d = 0$ for the source's tiling example
+$(v_0, \dots, v_5) = (0, 1, 2, 6, 12, 26)$.
+
 Source: Kálmán Liptai, László Németh, Tamás Szakács and László Szalay,
 *On Certain Fibonacci Representations*, Fibonacci Quarterly 62 (2024), no. 4,
 Theorem 3.1 (`fq-2024-szakacs06212024rev-thm-3.1`). -/
