@@ -55,6 +55,20 @@ expression evaluates to `0` (`measureMutualInformation_noiseless_ne_logDet`).
 
 Fading, channel-estimation error, multiuser channels, power constraints and optimization over
 `K` are not treated.
+
+## References
+
+* T. M. Cover and J. A. Thomas, *Elements of Information Theory*, 2nd ed., Wiley, 2006,
+  §9.5 (channels with colored Gaussian noise), eqs. (9.81)-(9.82), with Theorem 8.4.1 (entropy of
+  a multivariate normal distribution, `h(N(μ, K)) = (1/2) log ((2πe)ⁿ |K|)` bits). For
+  `Y = X + Z` with `X ~ N(0, K_X)` independent of `Z ~ N(0, K_Z)`, these give
+  `I(X; Y) = h(Y) - h(Z) = (1/2) log (|K_X + K_Z| / |K_Z|)` bits, the case `H = 1`, `K = K_X`,
+  `R = K_Z` of the formula above, with the same factor `1/2`.
+
+The source states the formula for the identity channel matrix and does not discuss singular input
+covariances. The extension to a general `H` and to singular positive semidefinite `K` is derived
+here, not taken from the source: the proof never uses a density of `X`, only that the output
+covariance `R + H K Hᵀ` is positive definite, which holds because `R` is.
 -/
 
 @[expose] public section
