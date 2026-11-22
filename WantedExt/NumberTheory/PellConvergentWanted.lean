@@ -78,7 +78,9 @@ is a convergent of the regular continued fraction expansion of $\sqrt{d}$: there
 number $n$ such that the $n$-th convergent of $\sqrt{d}$ (counting from the $0$-th) equals
 $x / y$.
 
-Source: J.-L. Lagrange (1770). Listed as §84 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `pell_solution_convergent`. -/
+Source: J.-L. Lagrange (1770). Listed as §84 in O. Knill, Some Fundamental Theorems in Mathematics
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `pell_solution_convergent`. -/
 public theorem_wanted pell_solution_is_convergent
     (d : ℤ) (_hd : Squarefree d) (_hd0 : 0 < d)
     (x y : ℤ) (_hx : 0 < x) (_hy : 0 < y)

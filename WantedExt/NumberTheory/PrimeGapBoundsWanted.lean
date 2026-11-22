@@ -43,7 +43,12 @@ taken in $\mathbb{N} \cup \{\infty\}$.
 Source: Polymath, Algebra & Number Theory 8 (2014), 2067-2199; Polymath8b v4, Introduction. -/
 theorem_wanted polymath8a2014UpperBound : primeGapLiminf ≤ (4680 : WithTop ℕ)
 
-/-- Maynard's unconditional bound; Tao independently obtained only a weaker bound.
+/-- **Maynard's bound 600 on small prime gaps.** Let $p_0 < p_1 < p_2 < \cdots$ be the primes in
+increasing order. Then $\liminf_{n \to \infty} (p_{n+1} - p_n) \le 600$, where the liminf is
+taken in $\mathbb{N} \cup \{\infty\}$.
+
+Tao independently obtained only a weaker bound.
+
 Source: Maynard, Annals of Mathematics 181 (2015), 383-413; Polymath8b v4, Theorem 1.3(i). -/
 theorem_wanted maynard2015UpperBound : primeGapLiminf ≤ (600 : WithTop ℕ)
 
