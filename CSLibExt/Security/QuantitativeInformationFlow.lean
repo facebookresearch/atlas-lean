@@ -11,6 +11,7 @@ public import Mathlib.Probability.ProbabilityMassFunction.Basic
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 public import Mathlib.Probability.ProbabilityMassFunction.Monad
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import MathlibExt.Probability.ProbabilityMassFunction.Uniform
 
 open scoped BigOperators
 
@@ -22,6 +23,23 @@ namespace Cslib.Security.QuantitativeInformationFlow
 Vulnerability, posterior vulnerability and min-entropy leakage for finite
 secrets and observations, with the `log2 |O|` upper bound and the exact
 leakage of deterministic channels under the uniform prior.
+
+## References
+
+The formalized notions follow Geoffrey Smith, *On the Foundations of
+Quantitative Information Flow*, FoSSaCS 2009:
+
+- `vulnerability`: prior vulnerability, the maximum prior mass of any secret.
+- `posteriorVulnerability`: posterior vulnerability, the sum over observations
+  of the maximum joint mass of any secret with that observation.
+- `minEntropyLeakage`: min-entropy leakage, the binary log of posterior over
+  prior vulnerability.
+- `posterior_le_card_mul` and `leakage_le_log_card`: the `|O|` bound on
+  posterior vulnerability and the resulting `log2 |O|` bound on leakage.
+- `posterior_det_uniform` and `leakage_det_uniform`: exact posterior and
+  leakage of deterministic channels under the uniform prior.
+- `posterior_const_channel` and `leakage_const_channel`: channels independent
+  of the secret preserve vulnerability and leak nothing.
 -/
 
 noncomputable section
@@ -43,31 +61,21 @@ mass of any secret with that observation. -/
   [Fintype Y] (pi : PMF X) (C : X → PMF Y) : Real :=
   Real.logb 2 (posteriorVulnerability pi C / vulnerability pi)
 
-/-- The uniform prior on a nonempty finite type. -/
-@[expose] public def uniformPrior (X : Type*) [Fintype X] [Nonempty X] :
-  PMF X :=
-  PMF.ofFintype (fun _ => (Fintype.card X : ENNReal)⁻¹) (by
-    rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
-    apply ENNReal.mul_inv_cancel
-    · exact_mod_cast Fintype.card_ne_zero
-    · exact ENNReal.natCast_ne_top _)
-
 /-- Every secret has mass `1 / |X|` under the uniform prior. -/
-public theorem uniformPrior_apply_toReal (X : Type*) [Fintype X]
+public theorem uniformFintype_apply_toReal (X : Type*) [Fintype X]
   [Nonempty X] (x : X) :
-  ((uniformPrior X x).toReal) = 1 / (Fintype.card X : Real) := by
-  unfold uniformPrior
-  simp [PMF.ofFintype_apply, ENNReal.toReal_inv, ENNReal.toReal_natCast,
+  ((PMF.uniformFintype X x).toReal) = 1 / (Fintype.card X : Real) := by
+  simp [PMF.uniformFintype_apply, ENNReal.toReal_inv, ENNReal.toReal_natCast,
     one_div]
 
 /-- Vulnerability of the uniform prior is `1 / |X|`. -/
-public theorem vulnerability_uniformPrior (X : Type*) [Fintype X]
+public theorem vulnerability_uniformFintype (X : Type*) [Fintype X]
   [Nonempty X] :
-  vulnerability (uniformPrior X) = 1 / (Fintype.card X : Real) := by
+  vulnerability (PMF.uniformFintype X) = 1 / (Fintype.card X : Real) := by
   unfold vulnerability
   apply Finset.sup'_eq_of_forall
   intro x _
-  exact uniformPrior_apply_toReal X x
+  exact uniformFintype_apply_toReal X x
 
 /-- A single real mass of a `PMF` is at most one. -/
 theorem PMF_toReal_le_one {X : Type*} (p : PMF X) (x : X) :
@@ -154,7 +162,7 @@ public theorem leakage_le_log_card {X Y : Type*} [Fintype X]
 /-- Posterior of a deterministic channel under the uniform prior. -/
 public theorem posterior_det_uniform {X Y : Type*} [Fintype X]
   [Nonempty X] [Fintype Y] [DecidableEq Y] (f : X → Y) :
-  posteriorVulnerability (uniformPrior X) (fun x => PMF.pure (f x)) =
+  posteriorVulnerability (PMF.uniformFintype X) (fun x => PMF.pure (f x)) =
   (Finset.card (Finset.image f Finset.univ) : Real) *
   (1 / (Fintype.card X : Real)) := by
   set C : X → PMF Y := (fun x => PMF.pure (f x)) with hCdef
@@ -169,10 +177,10 @@ public theorem posterior_det_uniform {X Y : Type*} [Fintype X]
     show ((PMF.pure (f x) y).toReal) = _
     by_cases h : y = f x <;> simp [h, PMF.pure_apply]
   have hterm : ∀ (x : X) (y : Y),
-    ((uniformPrior X x).toReal) * ((C x y).toReal) =
+    ((PMF.uniformFintype X x).toReal) * ((C x y).toReal) =
     (if y = f x then 1 / (Fintype.card X : Real) else 0) := by
     intro x y
-    rw [uniformPrior_apply_toReal X x, hpure x y]
+    rw [uniformFintype_apply_toReal X x, hpure x y]
     by_cases h : y = f x <;> simp [h]
   have hmem : ∀ y : Y,
     y ∈ Finset.image f Finset.univ ↔ ∃ x : X, f x = y := by
@@ -180,7 +188,7 @@ public theorem posterior_det_uniform {X Y : Type*} [Fintype X]
     simp [Finset.mem_image]
   have per_y : ∀ y : Y,
     Finset.univ.sup' Finset.univ_nonempty
-      (fun x => ((uniformPrior X x).toReal) * ((C x y).toReal)) =
+      (fun x => ((PMF.uniformFintype X x).toReal) * ((C x y).toReal)) =
     (if y ∈ Finset.image f Finset.univ then
       1 / (Fintype.card X : Real) else 0) := by
     intro y
@@ -190,7 +198,7 @@ public theorem posterior_det_uniform {X Y : Type*} [Fintype X]
       apply le_antisymm
       · apply Finset.sup'_le
         intro x _
-        have hx : ((uniformPrior X x).toReal) * ((C x y).toReal) ≤
+        have hx : ((PMF.uniformFintype X x).toReal) * ((C x y).toReal) ≤
           1 / (Fintype.card X : Real) := by
           rw [hterm x y]
           split_ifs with h
@@ -198,16 +206,16 @@ public theorem posterior_det_uniform {X Y : Type*} [Fintype X]
           · exact hcpos.le
         exact hx
       · have h0 : (1 / (Fintype.card X : Real)) =
-          ((uniformPrior X x0).toReal) * ((C x0 y).toReal) := by
+          ((PMF.uniformFintype X x0).toReal) * ((C x0 y).toReal) := by
           rw [hterm x0 y]
           simp [hx0.symm]
         rw [h0]
         exact Finset.le_sup' (fun x =>
-          ((uniformPrior X x).toReal) * ((C x y).toReal)) (Finset.mem_univ x0)
+          ((PMF.uniformFintype X x).toReal) * ((C x y).toReal)) (Finset.mem_univ x0)
     · simp only [hy, ite_false]
       apply Finset.sup'_eq_of_forall
       intro x _
-      have hx0 : ((uniformPrior X x).toReal) * ((C x y).toReal) = 0 := by
+      have hx0 : ((PMF.uniformFintype X x).toReal) * ((C x y).toReal) = 0 := by
         rw [hterm x y]
         have hne : ¬ y = f x :=
           fun hcon => hy ((hmem y).mpr ⟨x, hcon.symm⟩)
@@ -215,32 +223,32 @@ public theorem posterior_det_uniform {X Y : Type*} [Fintype X]
       exact hx0
   have hzero : ∀ y : Y, y ∉ Finset.image f Finset.univ →
     Finset.univ.sup' Finset.univ_nonempty
-      (fun x => ((uniformPrior X x).toReal) * ((C x y).toReal)) =
+      (fun x => ((PMF.uniformFintype X x).toReal) * ((C x y).toReal)) =
     0 := by
     intro y hy
     rw [per_y y]
     simp only [hy, ite_false]
   have hon : ∀ y ∈ Finset.image f Finset.univ,
     Finset.univ.sup' Finset.univ_nonempty
-      (fun x => ((uniformPrior X x).toReal) * ((C x y).toReal)) =
+      (fun x => ((PMF.uniformFintype X x).toReal) * ((C x y).toReal)) =
     1 / (Fintype.card X : Real) := by
     intro y hy
     rw [per_y y]
     simp only [hy, ite_true]
   have hsub : (∑ y ∈ Finset.image f Finset.univ,
     Finset.univ.sup' Finset.univ_nonempty
-      (fun x => ((uniformPrior X x).toReal) * ((C x y).toReal))) =
+      (fun x => ((PMF.uniformFintype X x).toReal) * ((C x y).toReal))) =
     (∑ y, Finset.univ.sup' Finset.univ_nonempty
-      (fun x => ((uniformPrior X x).toReal) * ((C x y).toReal))) :=
+      (fun x => ((PMF.uniformFintype X x).toReal) * ((C x y).toReal))) :=
     Finset.sum_subset (Finset.subset_univ (Finset.image f Finset.univ)) (fun y _ hy => hzero y hy)
   have hpost : (∑ y, Finset.univ.sup' Finset.univ_nonempty
-      (fun x => ((uniformPrior X x).toReal) * ((C x y).toReal))) =
+      (fun x => ((PMF.uniformFintype X x).toReal) * ((C x y).toReal))) =
     (Finset.card (Finset.image f Finset.univ) : Real) *
     (1 / (Fintype.card X : Real)) := by
     rw [← hsub]
     calc (∑ y ∈ Finset.image f Finset.univ,
         Finset.univ.sup' Finset.univ_nonempty
-          (fun x => ((uniformPrior X x).toReal) * ((C x y).toReal))) =
+          (fun x => ((PMF.uniformFintype X x).toReal) * ((C x y).toReal))) =
       ∑ _ ∈ Finset.image f Finset.univ,
         (1 / (Fintype.card X : Real)) :=
       Finset.sum_congr rfl hon
@@ -253,14 +261,14 @@ public theorem posterior_det_uniform {X Y : Type*} [Fintype X]
 /-- Leakage of a deterministic channel under the uniform prior. -/
 public theorem leakage_det_uniform {X Y : Type*} [Fintype X] [Nonempty X]
   [Fintype Y] [DecidableEq Y] (f : X → Y) :
-  minEntropyLeakage (uniformPrior X) (fun x => PMF.pure (f x)) =
+  minEntropyLeakage (PMF.uniformFintype X) (fun x => PMF.pure (f x)) =
   Real.logb 2 (Finset.card (Finset.image f Finset.univ)) := by
   have hcard : (0 : Real) < (Fintype.card X : Real) := by
     exact_mod_cast Fintype.card_pos
   have hc0 : (1 / (Fintype.card X : Real)) ≠ 0 :=
     ne_of_gt (div_pos zero_lt_one hcard)
   unfold minEntropyLeakage
-  rw [posterior_det_uniform, vulnerability_uniformPrior,
+  rw [posterior_det_uniform, vulnerability_uniformFintype,
     mul_div_cancel_right₀ _ hc0]
 
 /-- A channel independent of the secret preserves vulnerability. -/

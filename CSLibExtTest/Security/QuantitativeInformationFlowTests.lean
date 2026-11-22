@@ -9,6 +9,7 @@ module
 
 public import CSLibExt.Security.QuantitativeInformationFlow
 public import Mathlib.Probability.ProbabilityMassFunction.Monad
+public import MathlibExt.Probability.ProbabilityMassFunction.Uniform
 
 open scoped BigOperators
 
@@ -22,13 +23,13 @@ Ground instances of the leakage bounds on two-point types.
 
 /-- T1: vulnerability of the two-point uniform prior is one half. -/
 public theorem test_uniform_two_vulnerability :
-  vulnerability (uniformPrior Bool) = 1 / 2 := by
-  rw [vulnerability_uniformPrior, Fintype.card_bool]
+  vulnerability (PMF.uniformFintype Bool) = 1 / 2 := by
+  rw [vulnerability_uniformFintype, Fintype.card_bool]
   norm_num
 
 /-- T2: the identity channel on two points has posterior one. -/
 public theorem test_identity_posterior :
-  posteriorVulnerability (uniformPrior Bool) (fun x => PMF.pure x) =
+  posteriorVulnerability (PMF.uniformFintype Bool) (fun x => PMF.pure x) =
   1 := by
   rw [posterior_det_uniform]
   have himg : Finset.card (Finset.image (fun x : Bool => x)
@@ -39,11 +40,11 @@ public theorem test_identity_posterior :
 
 /-- T3: a constant channel on two points leaks nothing. -/
 public theorem test_const_leakage_zero :
-  minEntropyLeakage (uniformPrior Bool) (fun _ : Bool => PMF.pure true) = 0 := by
-  have hv : 0 < vulnerability (uniformPrior Bool) := by
+  minEntropyLeakage (PMF.uniformFintype Bool) (fun _ : Bool => PMF.pure true) = 0 := by
+  have hv : 0 < vulnerability (PMF.uniformFintype Bool) := by
     rw [test_uniform_two_vulnerability]
     norm_num
-  exact leakage_const_channel (uniformPrior Bool) (fun _ : Bool =>
+  exact leakage_const_channel (PMF.uniformFintype Bool) (fun _ : Bool =>
     PMF.pure true) true (fun x => rfl) hv
 
 /-- T4: the range of the constant-`true` map has one element. -/
@@ -54,14 +55,14 @@ public theorem test_range_card :
 
 /-- T4: a non-surjective deterministic channel leaks `log2 1 = 0`. -/
 public theorem test_nonsurjective_leakage :
-  minEntropyLeakage (uniformPrior Bool) (fun _ : Bool => PMF.pure true) = 0 := by
+  minEntropyLeakage (PMF.uniformFintype Bool) (fun _ : Bool => PMF.pure true) = 0 := by
   rw [leakage_det_uniform, test_range_card]
   simp
 
 /-- T5: the Q4 bound on the two-point identity channel. -/
 public theorem test_posterior_le_numeric :
-  posteriorVulnerability (uniformPrior Bool) (fun x => PMF.pure x) ≤
-  (Fintype.card Bool : Real) * vulnerability (uniformPrior Bool) :=
+  posteriorVulnerability (PMF.uniformFintype Bool) (fun x => PMF.pure x) ≤
+  (Fintype.card Bool : Real) * vulnerability (PMF.uniformFintype Bool) :=
   posterior_le_card_mul _ _
 
 -- T6: axiom check for the main theorems.
