@@ -40,10 +40,14 @@ def LacunaryCLT (r : ℕ → ℤ) : Prop :=
         (MeasureTheory.volume.restrict (Set.Ioc a b)) (fun y => Real.exp (- y ^ 2))))
 
 /--
-**Kac's lacunary central limit theorem.** Let $(r_n)_{n \ge 0}$ be a sequence of integers such
-that $r_n - (r_0 + r_1 + \dots + r_{n-1})$ tends to $+\infty$ as $n \to \infty$. Then $(r_n)$
+**Kac's lacunary central limit theorem.** Let $(r_n)_{n \ge 0}$ be a sequence of positive integers
+such that $r_n - (r_0 + r_1 + \dots + r_{n-1})$ tends to $+\infty$ as $n \to \infty$. Then $(r_n)$
 satisfies the central limit theorem for lacunary sine sums. The sequence $r_n = 2^n$ satisfies
 it as well.
+
+Positivity is needed: the constant sequence $r_n = -1$ satisfies the gap hypothesis, since
+$r_n - (r_0 + \dots + r_{n-1}) = n - 1$, but its normalized sum $-\sqrt{n} \sin(2 \pi x)$ is not
+asymptotically normal.
 
 The sequence $r_n = 2^n$ does not satisfy the gap hypothesis, since
 $2^n - (1 + 2 + \dots + 2^{n-1}) = 1$ for every $n$. The sequence $r_n = 2^{n^2}$ is the example
@@ -55,7 +59,7 @@ Acad. Sci. USA 33 (1947), 333-338, who proved the central limit theorem for
 lacunary trigonometric series with ratio bounded away from `1`.
 -/
 theorem_wanted kacLacunaryCentralLimitTheorem :
-    (∀ r : ℕ → ℤ,
+    (∀ r : ℕ → ℤ, (∀ k, 0 < r k) →
       Filter.Tendsto (fun n : ℕ => (r n - ∑ k ∈ Finset.range n, r k))
         Filter.atTop Filter.atTop → LacunaryCLT r) ∧
       LacunaryCLT (fun n : ℕ => (2 : ℤ) ^ n)
