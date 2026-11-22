@@ -4,11 +4,11 @@
 `record FILE REVISION` runs right after CI restores a build that passed the
 full audit (audit_compiled_modules.py) at REVISION. It records the .olean of
 each module REVISION audited, but only if REVISION has the same
-audit_compiled_modules.py and check_axioms.lean. With ATLAS_AUDIT_RESTORED=FILE,
-this script then runs, exactly as the full audit runs them, the full audit's
-batches that hold or import a module whose .olean is missing, new, rewritten or
-unrecorded: modules can also conflict when imported together. Every other batch
-loads only modules whose .olean is the one that passed at REVISION.
+audit_compiled_modules.py, check_axioms.lean and this script. With
+ATLAS_AUDIT_RESTORED=FILE, this script then runs, exactly as the full audit runs
+them, the full audit's batches that hold or import a module whose .olean is
+missing, new, rewritten or unrecorded: modules can also conflict when imported
+together. Every other batch loads only modules whose .olean passed at REVISION.
 """
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ import sys
 
 import audit_compiled_modules as full
 
-POLICY = ('scripts/audit_compiled_modules.py', 'scripts/check_axioms.lean')
+POLICY = ('scripts/audit_compiled_modules.py', 'scripts/check_axioms.lean', 'scripts/audit_rebuilt_modules.py')
 # Generous on purpose: any `import X` in a source, comments included, counts.
 IMPORT = re.compile(r"\bimport\s+(?:all\s+)?([\w.'«»!?]+)")
 
@@ -40,7 +40,10 @@ def record(root: Path, revision: str) -> dict[str, list[int]] | None:
     """The .olean of each module audited at `revision`, or None if its policy differs."""
     def git(*args: str) -> bytes:
         return subprocess.run(['git', *args], cwd=root, check=True, stdout=subprocess.PIPE).stdout
-    if any(git('show', f'{revision}:{name}') != (root / name).read_bytes() for name in POLICY):
+    try:
+        if any(git('show', f'{revision}:{name}') != (root / name).read_bytes() for name in POLICY):
+            return None
+    except subprocess.CalledProcessError:
         return None
     paths = git('ls-tree', '-r', '-z', '--name-only', revision, '--', *full.ROOTS).decode().split('\0')
     modules = [path.removesuffix('.lean').replace('/', '.') for path in paths if path.endswith('.lean')]

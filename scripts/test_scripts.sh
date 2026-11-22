@@ -405,7 +405,7 @@ if ! env PATH="$FAKE_BIN:$PATH" ATLAS_AUDIT_RESTORED="$TMP_ROOT/restored.json" \
   "$TMP_ROOT/repo/scripts/check_axioms.sh" >"$TMP_ROOT/output.log" 2>&1 || [[ -s "$FAKE_LAKE_LOG" ]]; then
   fail "scoped compiled audit of an unchanged build ran Lean or failed"
 fi
-for policy in audit_compiled_modules.py check_axioms.lean; do
+for policy in audit_compiled_modules.py check_axioms.lean audit_rebuilt_modules.py; do
   cp "$TMP_ROOT/repo/scripts/$policy" "$TMP_ROOT/$policy"
   printf '\n' >>"$TMP_ROOT/repo/scripts/$policy"
   if python3 "$TMP_ROOT/repo/scripts/audit_rebuilt_modules.py" record "$TMP_ROOT/changed.json" HEAD \
