@@ -11,6 +11,7 @@ module
 public import Mathlib.Algebra.Group.Int.Defs
 import Mathlib.Data.Nat.Fib.Basic
 import Mathlib.Tactic.LinearCombination
+import MathlibExt.NumberTheory.Recurrences.HoradamGeneralizedCatalanIdentity
 
 /-!
 # Generalized Leonardo numbers
@@ -42,10 +43,9 @@ Vajda's identity
 
 `F_{a+j} F_{a+t} - F_a F_{a+j+t} = (-1)^a F_j F_t`
 
-with `a = n - t + 1` and `j = m + t - n`. With `a = d + 1`, `j = e + 1` and `t = s + 1`, the
-addition formula `F_{p+q+1} = F_p F_q + F_{p+1} F_{q+1}` (`Nat.fib_add`) expands the left side of
-Vajda's identity to `F_{e+1} F_{s+1} (F_{d+2}^2 - F_{d+1}^2 - F_{d+1} F_{d+2})`, and Cassini's
-identity `F_d F_{d+2} - F_{d+1}^2 = (-1)^{d+1}` finishes the proof.
+with `a = n - t + 1` and `j = m + t - n`. Vajda's identity is the generalized Catalan identity
+for Horadam sequences, `horadam_generalized_catalan_identity`, in the case `c₁ = c₂ = 1` with the
+Fibonacci numbers as all three sequences.
 
 ## References
 
@@ -86,52 +86,22 @@ private theorem genLeonardo_add_eq_mul_fib (k : ℤ) :
     rw [genLeonardo, hF]
     linear_combination h0 + h1
 
-/-- **Cassini's identity**, in the form `F_d F_{d+2} - F_{d+1}^2 = (-1)^{d+1}`. -/
-private theorem fib_mul_fib_add_two_sub_sq (d : ℕ) :
-    (Nat.fib d : ℤ) * Nat.fib (d + 2) - (Nat.fib (d + 1) : ℤ) ^ 2 = (-1) ^ (d + 1) := by
-  induction d with
-  | zero => simp
-  | succ d ih =>
-    have h2 : (Nat.fib (d + 2) : ℤ) = Nat.fib d + Nat.fib (d + 1) := by
-      exact_mod_cast Nat.fib_add_two
-    have h3 : (Nat.fib (d + 3) : ℤ) = Nat.fib (d + 1) + Nat.fib (d + 2) := by
-      exact_mod_cast Nat.fib_add_two
-    rw [h3, pow_succ _ (d + 1)]
-    linear_combination -ih - (Nat.fib (d + 2) : ℤ) * h2
-
 /-- **Vajda's identity** `F_{a+j} F_{a+t} - F_a F_{a+j+t} = (-1)^a F_j F_t`, for `a = d + 1`,
-`j = e + 1` and `t = s + 1`. -/
+`j = e + 1` and `t = s + 1`: the generalized Catalan identity
+`horadam_generalized_catalan_identity` for `c₁ = c₂ = 1` and the Fibonacci numbers. -/
 private theorem fib_vajda (d e s : ℕ) :
     (Nat.fib (d + e + 2) : ℤ) * Nat.fib (d + s + 2) - Nat.fib (d + 1) * Nat.fib (d + e + s + 3)
       = (-1) ^ (d + 1) * (Nat.fib (e + 1) * Nat.fib (s + 1)) := by
-  have hadd (p q : ℕ) : (Nat.fib (p + q + 1) : ℤ) =
-      Nat.fib p * Nat.fib q + Nat.fib (p + 1) * Nat.fib (q + 1) := by
-    exact_mod_cast Nat.fib_add p q
-  have h1 : (Nat.fib (d + e + 2) : ℤ) =
-      Nat.fib (d + 1) * Nat.fib e + Nat.fib (d + 2) * Nat.fib (e + 1) := by
-    rw [show d + e + 2 = d + 1 + e + 1 by omega]
-    exact hadd (d + 1) e
-  have h2 : (Nat.fib (d + s + 2) : ℤ) =
-      Nat.fib (d + 1) * Nat.fib s + Nat.fib (d + 2) * Nat.fib (s + 1) := by
-    rw [show d + s + 2 = d + 1 + s + 1 by omega]
-    exact hadd (d + 1) s
-  have h3 : (Nat.fib (d + e + s + 3) : ℤ) =
-      Nat.fib (d + 1) * Nat.fib (e + s + 1) + Nat.fib (d + 2) * Nat.fib (e + s + 2) := by
-    rw [show d + e + s + 3 = d + 1 + (e + s + 1) + 1 by omega]
-    exact hadd (d + 1) (e + s + 1)
-  have h4 : (Nat.fib (e + s + 1) : ℤ) =
-      Nat.fib e * Nat.fib s + Nat.fib (e + 1) * Nat.fib (s + 1) := hadd e s
-  have h5 : (Nat.fib (e + s + 2) : ℤ) =
-      Nat.fib e * Nat.fib (s + 1) + Nat.fib (e + 1) * Nat.fib (s + 2) := by
-    rw [show e + s + 2 = e + (s + 1) + 1 by omega]
-    exact hadd e (s + 1)
-  have h6 : (Nat.fib (s + 2) : ℤ) = Nat.fib s + Nat.fib (s + 1) := by
-    exact_mod_cast Nat.fib_add_two
-  have h7 : (Nat.fib (d + 2) : ℤ) = Nat.fib d + Nat.fib (d + 1) := by
-    exact_mod_cast Nat.fib_add_two
-  rw [h1, h2, h3, h4, h5, h6]
-  linear_combination (Nat.fib (e + 1) * Nat.fib (s + 1) : ℤ) * fib_mul_fib_add_two_sub_sq d +
-    (Nat.fib (e + 1) * Nat.fib (s + 1) * Nat.fib (d + 2) : ℤ) * h7
+  have hF (n : ℕ) : (Nat.fib (n + 2) : ℤ) = 1 * Nat.fib (n + 1) + 1 * Nat.fib n := by
+    rw [Nat.fib_add_two, Nat.cast_add]
+    ring
+  have h := horadam_generalized_catalan_identity (1 : ℤ) 1 (fun n ↦ (Nat.fib n : ℤ))
+    (fun n ↦ (Nat.fib n : ℤ)) (fun n ↦ (Nat.fib n : ℤ)) hF hF hF (by simp) (by simp)
+    (d + 1) (e + 1) (s + 1)
+  rw [show d + 1 + (e + 1) + (s + 1) = d + e + s + 3 by omega,
+    show d + 1 + (e + 1) = d + e + 2 by omega, show d + 1 + (s + 1) = d + s + 2 by omega,
+    Nat.fib_zero, Nat.fib_one, Nat.cast_zero, Nat.cast_one] at h
+  linear_combination h
 
 /-- **Shift identity for generalized Leonardo numbers.** Let $k$ be an integer and let $L_{k,n}$
 denote the generalized Leonardo numbers. For all natural numbers $m$, $n$, $t$ with
