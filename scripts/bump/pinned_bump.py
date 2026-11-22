@@ -1542,13 +1542,45 @@ def _validate_replacement_literals(entry: dict) -> list[str]:
 
 
 def _written_regions(original: str, current: str) -> list[tuple[int, int]]:
-    """(start, end) spans of `current` that differ from `original`."""
-    matcher = difflib.SequenceMatcher(a=original, b=current, autojunk=False)
-    return [
-        (b_start, b_end)
-        for tag, _, _, b_start, b_end in matcher.get_opcodes()
-        if tag != "equal"
-    ]
+    """(start, end) spans of `current` that differ from `original`.
+
+    Characters are diffed only within changed lines: one
+    character-level SequenceMatcher over a whole file is quadratic in
+    its length, and the simulation calls this for every added rule at
+    every transition, inside its time budget. Rules rewrite version/SHA
+    tokens, which never span lines, so lines stay paired; when the line
+    count changed (the version/SHA postcondition then fails), a
+    line-level diff pairs them instead.
+    """
+    old_lines = original.splitlines(keepends=True)
+    new_lines = current.splitlines(keepends=True)
+    if len(old_lines) == len(new_lines):
+        blocks = [
+            (i, i + 1, i, i + 1)
+            for i, (old, new) in enumerate(zip(old_lines, new_lines))
+            if old != new
+        ]
+    else:
+        line_matcher = difflib.SequenceMatcher(a=old_lines, b=new_lines, autojunk=False)
+        blocks = [
+            (i1, i2, j1, j2)
+            for tag, i1, i2, j1, j2 in line_matcher.get_opcodes()
+            if tag != "equal"
+        ]
+    line_starts = [0]
+    for line in new_lines:
+        line_starts.append(line_starts[-1] + len(line))
+    regions: list[tuple[int, int]] = []
+    for i1, i2, j1, j2 in blocks:
+        matcher = difflib.SequenceMatcher(
+            a="".join(old_lines[i1:i2]), b="".join(new_lines[j1:j2]), autojunk=False
+        )
+        regions.extend(
+            (line_starts[j1] + b_start, line_starts[j1] + b_end)
+            for tag, _, _, b_start, b_end in matcher.get_opcodes()
+            if tag != "equal"
+        )
+    return regions
 
 
 _NORMALIZE_VERSION_RE = re.compile(r"(?<![A-Za-z0-9_])v?\d+\.\d+(?:\.\d+)?")
