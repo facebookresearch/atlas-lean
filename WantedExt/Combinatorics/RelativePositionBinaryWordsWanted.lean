@@ -48,8 +48,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The paper's set `𝒲`: infinite binary words (`a = true`, `b = false`) in which both
-letters occur infinitely often.
+/-- **Binary words in which both letters occur infinitely often.** An infinite word
+$w = \ell_0 \ell_1 \ell_2 \cdots$ over the letters $a$ and $b$ belongs to the set $\mathcal{W}$ when
+both letters occur infinitely often in it, that is, when there are infinitely many positions $i$
+with $\ell_i = a$ and infinitely many positions $i$ with $\ell_i = b$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Section 2
@@ -57,8 +59,13 @@ Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, S
 public def BothLettersInfinite (w : ℕ → Bool) : Prop :=
   {i | w i = true}.Infinite ∧ {i | w i = false}.Infinite
 
-/-- The position function `p_α(n)`: the (0-based) position of the `n`-th occurrence
-(`n ≥ 1`) of the letter `α` in `w`.
+/-- **Position function of a letter.** For an infinite binary word $w = \ell_0 \ell_1 \cdots$,
+a letter $\alpha$ and $n \ge 1$, $p_\alpha(n)$ is the position of the $n$-th occurrence of $\alpha$
+in $w$, counting positions from $0$; that is, $p_\alpha(n)$ is the $n$-th smallest index $i$ with
+$\ell_i = \alpha$.
+
+By convention $p_\alpha(n) = 0$ when $\alpha$ occurs fewer than $n$ times in $w$, and
+$p_\alpha(0) = p_\alpha(1)$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Section 2
@@ -66,7 +73,11 @@ Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, S
 public noncomputable def letterPosition (w : ℕ → Bool) (α : Bool) (n : ℕ) : ℕ :=
   Nat.nth (fun i => w i = α) (n - 1)
 
-/-- The relative position function `r(n) = p_b(n) - p_a(n)`.
+/-- **Relative position function.** Let $w = \ell_0 \ell_1 \ell_2 \cdots$ be an infinite word over
+$\{a, b\}$, and for a letter $\alpha$ and $n \ge 1$ let $p_\alpha(n)$ be the position (counting
+from $0$) of the $n$-th occurrence of $\alpha$ in $w$, or $0$ if $\alpha$ occurs fewer than $n$
+times. The relative position function of $w$ is the integer-valued function
+$r(n) = p_b(n) - p_a(n)$, $n \ge 1$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Section 2
@@ -74,7 +85,9 @@ Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, S
 public noncomputable def relativePosition (w : ℕ → Bool) (n : ℕ) : ℤ :=
   (letterPosition w false n : ℤ) - letterPosition w true n
 
-/-- If `w` starts with `α`, then `p_α(1) = 0`.
+/-- **Position of the first occurrence of the initial letter.** If an infinite binary word $w$
+starts with the letter $\alpha$, then the first occurrence of $\alpha$ in $w$ is at position $0$,
+that is, $p_\alpha(1) = 0$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Section 2
@@ -83,7 +96,8 @@ public theorem letterPosition_one_of_head {w : ℕ → Bool} {α : Bool} (h : w 
     letterPosition w α 1 = 0 := by
   simp [letterPosition, Nat.nth_zero_of_zero (p := fun i => w i = α) h]
 
-/-- If `w` starts with `ab`, then `r(1) = 1`.
+/-- **Relative position of a word starting with $ab$.** If an infinite word $w$ over $\{a, b\}$
+starts with $ab$, then its relative position function satisfies $r(1) = 1$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Section 2
@@ -99,9 +113,15 @@ public theorem relativePosition_one_of_head_ab {w : ℕ → Bool} (h₀ : w 0 = 
     · exact (Set.eq_empty_iff_forall_notMem.1 h 1) h₁
   simp [relativePosition, hb, letterPosition_one_of_head h₀]
 
-/-- **Lemma 4.** A function `p : ℕ → ℤ_{≥0}` is `p_a` of some `w ∈ a𝒲` iff it is strictly
-increasing, `p(1) = 0` and `Δp > 1` infinitely often; it is `p_b` of some `w ∈ a𝒲` iff it is
-strictly increasing, `p(1) > 0` and `Δp > 1` infinitely often.
+/-- **Characterization of the position functions.** Let $p$ be a function from the natural
+numbers to the natural numbers. There is an infinite word $w$ over the letters $a$ and $b$ that
+starts with $a$, in which both letters occur infinitely often, and whose position function for
+$a$ satisfies $p_a(n) = p(n)$ for all $n \ge 1$, if and only if $p(n) < p(n+1)$ for all $n \ge 1$,
+$p(1) = 0$, and $p(n+1) - p(n) > 1$ for infinitely many $n \ge 1$. Likewise, there is an infinite
+word over $a$ and $b$ that starts with $a$, in which both letters occur infinitely often, and
+whose position function for $b$ satisfies $p_b(n) = p(n)$ for all $n \ge 1$, if and only if
+$p(n) < p(n+1)$ for all $n \ge 1$, $p(1) > 0$, and $p(n+1) - p(n) > 1$ for infinitely many
+$n \ge 1$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 4
@@ -114,7 +134,10 @@ public theorem_wanted exists_word_letterPosition_eq_iff (p : ℕ → ℕ) :
       (∀ n, 1 ≤ n → p n < p (n + 1)) ∧ 0 < p 1 ∧
         {n | 1 ≤ n ∧ 1 < p (n + 1) - p n}.Infinite)
 
-/-- **Lemma 5.** Two words of `𝒲` coincide iff their relative position functions coincide.
+/-- **The relative position function determines the word.** Let $w$ and $w'$ be infinite words
+over the letters $a$ and $b$ in each of which both letters occur infinitely often, and let $r_w$
+and $r_{w'}$ be their relative position functions. Then $w = w'$ if and only if
+$r_w(n) = r_{w'}(n)$ for every $n \ge 1$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 5
@@ -123,8 +146,11 @@ public theorem_wanted eq_iff_relativePosition_eq {w w' : ℕ → Bool} (hw : Bot
     (hw' : BothLettersInfinite w') :
     w = w' ↔ ∀ n, 1 ≤ n → relativePosition w n = relativePosition w' n
 
-/-- **Lemma 8.** Every non-decreasing `r : ℕ → ℕ` (positive values) is the relative position
-function of some `w ∈ a𝒲`.
+/-- **Non-decreasing functions as relative position functions.** Let $r$ be a function from the
+natural numbers to the natural numbers with $r(n) \ge 1$ and $r(n) \le r(n+1)$ for every
+$n \ge 1$. Then there is an infinite word $w$ over the letters $a$ and $b$ that starts with $a$,
+in which both letters occur infinitely often, and whose relative position function satisfies
+$r_w(n) = r(n)$ for every $n \ge 1$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 8
@@ -133,8 +159,11 @@ public theorem_wanted exists_word_relativePosition_eq_of_monotone (r : ℕ → �
     (hpos : ∀ n, 1 ≤ n → 1 ≤ r n) (hmono : ∀ n, 1 ≤ n → r n ≤ r (n + 1)) :
     ∃ w, BothLettersInfinite w ∧ w 0 = true ∧ ∀ n, 1 ≤ n → relativePosition w n = r n
 
-/-- **Corollary 9.** Every non-increasing `r : ℕ → ℤ` with `r(1) < 0` is the relative position
-function of some `w ∈ b𝒲`.
+/-- **Non-increasing functions as relative position functions.** Let $r$ be a function from the
+natural numbers to the integers with $r(1) < 0$ and $r(n+1) \le r(n)$ for every $n \ge 1$. Then
+there is an infinite word $w$ over the letters $a$ and $b$ that starts with $b$, in which both
+letters occur infinitely often, and whose relative position function satisfies $r_w(n) = r(n)$
+for every $n \ge 1$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Corollary 9
@@ -143,9 +172,15 @@ public theorem_wanted exists_word_relativePosition_eq_of_antitone (r : ℕ → �
     (hanti : ∀ n, 1 ≤ n → r (n + 1) ≤ r n) :
     ∃ w, BothLettersInfinite w ∧ w 0 = false ∧ ∀ n, 1 ≤ n → relativePosition w n = r n
 
-/-- **Lemma 13.** For `w ∈ a𝒲` and `k ≥ 1`: `b^k` is a subword of `w` iff
-`sup Δp_a > k` iff `Δp_b` takes the value one at least `k - 1` times in a row; and `a^k` is a
-subword iff `Δp_a` takes the value one at least `k - 1` times in a row.
+/-- **Runs of one letter and gaps between letter positions.** Let $w = \ell_0 \ell_1 \ell_2 \cdots$
+be an infinite word over the letters $a$ and $b$ in which both letters occur infinitely often and
+$\ell_0 = a$. For a letter $\alpha$ and $n \ge 1$, let $p_\alpha(n)$ be the position of the $n$-th
+occurrence of $\alpha$ in $w$, counting positions from $0$. Let $k \ge 1$. Then the following are
+equivalent: there is $i$ with $\ell_{i+j} = b$ for all $0 \le j < k$ (the block $b^k$ occurs in
+$w$); there is $n \ge 1$ with $p_a(n+1) - p_a(n) > k$; and there is $n \ge 1$ with
+$p_b(n+j+1) - p_b(n+j) = 1$ for all $0 \le j < k - 1$. Moreover, there is $i$ with
+$\ell_{i+j} = a$ for all $0 \le j < k$ (the block $a^k$ occurs in $w$) if and only if there is
+$n \ge 1$ with $p_a(n+j+1) - p_a(n+j) = 1$ for all $0 \le j < k - 1$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 13
@@ -161,10 +196,14 @@ public theorem_wanted subword_run_iff_letterPosition_diff {w : ℕ → Bool}
         ∃ n, 1 ≤ n ∧ ∀ j < k - 1,
           letterPosition w true (n + j + 1) - letterPosition w true (n + j) = 1)
 
-/-- **Lemma 14.** For `w ∈ a𝒲`: (a) if `r` is strictly increasing then `bb` is not a subword;
-(b) if `bb` is not a subword then `r` is non-decreasing; (c) if `b^k` is a subword, then
-`Δr(n+j) ≤ 0` for `1 ≤ j ≤ k-1` and some `n`; (d) if `a^k` is a subword, then
-`Δr(n+j) ≥ 0` for `1 ≤ j ≤ k-1` and some `n`.
+/-- **Monotonicity of the relative position function and runs of letters.** Let $w$ be an
+infinite word over $\{a, b\}$ that starts with $a$ and in which both letters occur infinitely
+often, let $r$ be its relative position function, and write $\Delta r(n) = r(n+1) - r(n)$. A
+factor of $w$ is a block of consecutive letters. (a) If $r(n) < r(n+1)$ for all $n \ge 1$, then
+$bb$ is not a factor of $w$. (b) If $bb$ is not a factor of $w$, then $r(n) \le r(n+1)$ for all
+$n \ge 1$. (c) For every $k \ge 0$, if $b^k$ is a factor of $w$, then there is $n \ge 0$ with
+$\Delta r(n+j) \le 0$ for all $1 \le j \le k - 1$. (d) For every $k \ge 0$, if $a^k$ is a factor
+of $w$, then there is $n \ge 0$ with $\Delta r(n+j) \ge 0$ for all $1 \le j \le k - 1$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 14
@@ -179,8 +218,14 @@ public theorem_wanted relativePosition_monotonicity_runs {w : ℕ → Bool}
       (∀ k, (∃ i, ∀ j < k, w (i + j) = true) →
         ∃ n, ∀ j, 1 ≤ j → j ≤ k - 1 → 0 ≤ r (n + j + 1) - r (n + j))
 
-/-- **Lemma 15.** For `w ∈ a𝒲` not containing `b^k`, `|Δr - Δp_b| ≤ k`; in particular `Δr` is
-bounded iff `Δp_b` is bounded.
+/-- **Relative position increments without long runs of b.** Let $w = \ell_0 \ell_1 \ell_2 \cdots$
+be an infinite word over the letters $a$ and $b$ in which both letters occur infinitely often and
+whose first letter $\ell_0$ is $a$. Let $p_b$ be its position function for the letter $b$, let $r$
+be its relative position function, and write $\Delta s(n) = s(n+1) - s(n)$. Let $k$ be a natural
+number such that $w$ contains no $k$ consecutive letters $b$, that is, there is no $i$ with
+$\ell_{i+j} = b$ for all $j < k$. Then $|\Delta r(n) - \Delta p_b(n)| \le k$ for every $n \ge 1$.
+Moreover, $|\Delta r(n)|$ is bounded over $n \ge 1$ if and only if $\Delta p_b(n)$ is bounded over
+$n \ge 1$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 15
@@ -193,11 +238,16 @@ public theorem_wanted abs_relativePosition_diff_sub_le {w : ℕ → Bool}
       ((∃ C : ℤ, ∀ n, 1 ≤ n → |relativePosition w (n + 1) - relativePosition w n| ≤ C) ↔
         ∃ C : ℕ, ∀ n, 1 ≤ n → letterPosition w false (n + 1) - letterPosition w false n ≤ C)
 
-/-- **Lemma 16.** For `w ∈ a𝒲`, the following are equivalent: `w` is periodic; `Δp_a` is
-periodic; `Δp_a` and `Δp_b` are periodic. Moreover, if `w = u^ω` and `u` contains `k` letters
-`a` and `j` letters `b`, then `Δp_a` is `k`-periodic and `Δp_b` is `j`-periodic.
-(Periodic sequences on `ℕ = {1, 2, …}` are periodic at `n ≥ 1`; a periodic word is purely
-periodic, `w = u^ω`.)
+/-- **Periodicity of a word and of the gaps between occurrences of its letters.** Let
+$w = w_0 w_1 w_2 \cdots$ be an infinite binary word over $\{a, b\}$ that starts with $a$ and in
+which both letters occur infinitely often. Let $p_\alpha(n)$ be the position (counted from $0$)
+of the $n$-th occurrence of the letter $\alpha$ in $w$, and $\Delta p_\alpha(n) =
+p_\alpha(n+1) - p_\alpha(n)$. Call a sequence $s$ periodic if there is $q > 0$ with
+$s(n + q) = s(n)$ for all $n \ge 1$. The following are equivalent: $w$ is periodic, that is,
+$w_{i+q} = w_i$ for some $q > 0$ and all $i \ge 0$; $\Delta p_a$ is periodic; $\Delta p_a$ and
+$\Delta p_b$ are both periodic. Moreover, if $w = u^\omega$ for a nonempty finite word $u$ with
+$k$ letters $a$ and $j$ letters $b$, then $\Delta p_a(n + k) = \Delta p_a(n)$ and
+$\Delta p_b(n + j) = \Delta p_b(n)$ for all $n \ge 1$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 16
@@ -212,8 +262,14 @@ public theorem_wanted periodic_iff_letterPosition_diff_periodic {w : ℕ → Boo
         (∀ n, 1 ≤ n → dpa (n + u.count true) = dpa n) ∧
           ∀ n, 1 ≤ n → dpb (n + u.count false) = dpb n
 
-/-- **Corollary 17.** If `w ∈ 𝒲` is periodic, so is `Δr`; if `w = u^ω` and `u` contains `k`
-letters `a` and `j` letters `b`, then `lcm(k, j)` is a period of `Δr`.
+/-- **Periodicity of the relative position differences.** Let $w = w_0 w_1 w_2 \cdots$ be an
+infinite word over $\{a, b\}$ in which both letters occur infinitely often, let $p_a(n)$ and
+$p_b(n)$ be the positions of the $n$-th $a$ and the $n$-th $b$ in $w$, let
+$r(n) = p_b(n) - p_a(n)$, and let $\Delta r(n) = r(n + 1) - r(n)$. If $w$ is purely periodic
+(there is $q > 0$ with $w_{i + q} = w_i$ for all $i \ge 0$), then there is $q > 0$ with
+$\Delta r(n + q) = \Delta r(n)$ for all $n \ge 1$. Moreover, if $w = uuu\cdots$ for a nonempty
+finite word $u$ containing $k$ letters $a$ and $j$ letters $b$, then
+$\Delta r(n + \operatorname{lcm}(k, j)) = \Delta r(n)$ for all $n \ge 1$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Corollary 17
@@ -225,11 +281,16 @@ public theorem_wanted relativePosition_diff_periodic_of_periodic {w : ℕ → Bo
       ∀ u : List Bool, 0 < u.length → (∀ i, w i = u.getD (i % u.length) false) →
         ∀ n, 1 ≤ n → dr (n + Nat.lcm (u.count true) (u.count false)) = dr n
 
-/-- **Lemma 25.** For `w ∈ a𝒲` all of whose single-letter runs have length at most `c`,
-`p_a(n) ≤ (c+1)(n-1)`, `p_b(n) ≤ (c+1)n - 1` and `c(1-n) + 1 ≤ r(n) ≤ cn`.
-The printed lower bound `(1-c)n + 1 ≤ r(n)` is false (for `w = (abb)^ω`, `c = 2`,
-`r(4) = 5 - 9 = -4 < -3`); the bound `c(1-n) + 1` is the one derived in the paper's proof.
-Stating the result for every bound `c` of the runs is equivalent to stating it for the
+/-- **Bounds on position functions for words with bounded runs.** Let $w$ be an infinite binary
+word over $\{a, b\}$ that starts with $a$ and in which both letters occur infinitely often, and
+let $c \ge 0$ be an integer such that every block of consecutive equal letters of $w$ has length
+at most $c$. Write $p_\alpha(n)$ for the position (counted from $0$) of the $n$-th occurrence of
+the letter $\alpha$ in $w$, and $r(n) = p_b(n) - p_a(n)$. Then for every $n \ge 1$,
+$p_a(n) \le (c+1)(n-1)$, $p_b(n) \le (c+1)n - 1$ and $c(1-n) + 1 \le r(n) \le cn$.
+
+The paper prints the lower bound $(1-c)n + 1 \le r(n)$, which is false: for $w = (abb)^\omega$
+and $c = 2$, $r(4) = 5 - 9 = -4 < -3$. The bound $c(1-n) + 1$ is the one derived in the paper's
+proof. Stating the result for every bound $c$ of the runs is equivalent to stating it for the
 longest run.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
@@ -242,8 +303,12 @@ public theorem_wanted letterPosition_le_of_run_le {w : ℕ → Bool} (hw : BothL
       (letterPosition w false n : ℤ) ≤ (c + 1) * n - 1 ∧
       (c : ℤ) * (1 - n) + 1 ≤ relativePosition w n ∧ relativePosition w n ≤ c * n
 
-/-- **Corollary 27.** For `w ∈ 𝒲` all of whose single-letter runs have length at most `c`,
-`p_a(n), p_b(n) ≤ (c+1)n - 1` and `-cn ≤ r(n) ≤ cn`.
+/-- **Linear bounds for words with bounded runs.** Let $w$ be an infinite binary word over the
+letters $a$ and $b$ in which both letters occur infinitely often, and let $c$ be a natural number
+such that every block of consecutive equal letters of $w$ has length at most $c$. Let $p_a(n)$
+and $p_b(n)$ be the positions (counting from $0$) of the $n$-th $a$ and the $n$-th $b$ in $w$, and
+let $r(n) = p_b(n) - p_a(n)$. Then for every $n \ge 1$, $p_a(n) \le (c+1)n - 1$,
+$p_b(n) \le (c+1)n - 1$ and $-cn \le r(n) \le cn$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Corollary 27
@@ -254,7 +319,12 @@ public theorem_wanted letterPosition_le_of_run_le' {w : ℕ → Bool} (hw : Both
       (letterPosition w false n : ℤ) ≤ (c + 1) * n - 1 ∧
       -((c : ℤ) * n) ≤ relativePosition w n ∧ relativePosition w n ≤ c * n
 
-/-- The deletion operator `D_α` on `𝒲`: delete the first occurrence of the letter `α`.
+/-- **Deleting the first occurrence of a letter.** Let $w = \ell_0 \ell_1 \ell_2 \cdots$ be an
+infinite word over the letters $a$ and $b$, let $\alpha$ be a letter, and let $p$ be the position
+(counted from $0$) of the first occurrence of $\alpha$ in $w$, with $p = 0$ if $\alpha$ does not
+occur in $w$. The word $D_\alpha(w)$ has letter $\ell_i$ at each position $i < p$ and letter
+$\ell_{i+1}$ at each position $i \ge p$. So $D_\alpha(w)$ is $w$ with its first $\alpha$ deleted,
+and, when $\alpha$ does not occur in $w$, it is $w$ with its first letter deleted.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Section 2
@@ -262,7 +332,11 @@ Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, S
 public noncomputable def deleteFirst (w : ℕ → Bool) (α : Bool) : ℕ → Bool :=
   fun i => if i < letterPosition w α 1 then w i else w (i + 1)
 
-/-- The deletion operator `D = D_a ∘ D_b`: delete the first `b` and the first `a`.
+/-- **The deletion operator.** For an infinite word $w$ over the letters $a$ and $b$, the word
+$D(w)$ is $D_a(D_b(w))$, where $D_\alpha$ deletes the first occurrence of the letter $\alpha$
+(and deletes the first letter of a word in which $\alpha$ does not occur): first apply $D_b$,
+then $D_a$. When both letters occur in $w$, $D(w)$ is $w$ with its first $b$ and its first $a$
+deleted.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Section 2
@@ -270,7 +344,12 @@ Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, S
 public noncomputable def deletion (w : ℕ → Bool) : ℕ → Bool :=
   deleteFirst (deleteFirst w false) true
 
-/-- If `w` starts with `α`, deleting the first `α` shifts `w` by one.
+/-- **Deleting a leading letter.** Let $w = \ell_0 \ell_1 \ell_2 \cdots$ be an infinite word
+over the letters $a$ and $b$, let $\alpha$ be a letter, and let $D_\alpha$ be the operator that
+deletes the first occurrence of $\alpha$ from a word (and deletes the first letter of a word in
+which $\alpha$ does not occur). If $\ell_0 = \alpha$, then $D_\alpha$ shifts $w$ by one:
+$D_\alpha(w) = \ell_1 \ell_2 \ell_3 \cdots$, that is, the letter of $D_\alpha(w)$ at each
+position $i$ is $\ell_{i+1}$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Section 2
@@ -280,7 +359,10 @@ public theorem deleteFirst_of_head {w : ℕ → Bool} {α : Bool} (h : w 0 = α)
   funext i
   simp [deleteFirst, letterPosition_one_of_head h]
 
-/-- The counting function `#_α(m)`: the number of letters `α` among `ℓ₀, …, ℓ_{m-1}`.
+/-- **Letter-counting function.** Let $w = \ell_0 \ell_1 \ell_2 \cdots$ be an infinite binary
+word, $\alpha$ a letter and $m$ a natural number. The counting function $\#_\alpha(m)$ is the
+number of indices $i < m$ with $\ell_i = \alpha$, that is, the number of letters $\alpha$ among
+the first $m$ letters $\ell_0, \dots, \ell_{m-1}$ of $w$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Section 3
@@ -288,7 +370,9 @@ Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, S
 public def letterCount (w : ℕ → Bool) (α : Bool) (m : ℕ) : ℕ :=
   ((Finset.range m).filter fun i => w i = α).card
 
-/-- `#_α(0) = 0`.
+/-- **The letter-counting function at zero.** For every infinite binary word $w$ and every
+letter $\alpha$, $\#_\alpha(0) = 0$, where $\#_\alpha(m)$ is the number of letters $\alpha$ among
+the first $m$ letters of $w$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Section 3
@@ -296,7 +380,10 @@ Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, S
 public theorem letterCount_zero (w : ℕ → Bool) (α : Bool) : letterCount w α 0 = 0 := by
   simp [letterCount]
 
-/-- `#_α(m+1) = #_α(m) + [ℓ_m = α]`.
+/-- **Recursion for the letter-counting function.** Let $w = \ell_0 \ell_1 \ell_2 \cdots$ be an
+infinite binary word, $\alpha$ a letter and $m$ a natural number, and let $\#_\alpha(m)$ be the
+number of letters $\alpha$ among $\ell_0, \dots, \ell_{m-1}$. Then $\#_\alpha(m+1)$ equals
+$\#_\alpha(m) + 1$ if $\ell_m = \alpha$, and $\#_\alpha(m)$ otherwise.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Section 3
@@ -308,14 +395,17 @@ public theorem letterCount_succ (w : ℕ → Bool) (α : Bool) (m : ℕ) :
   · rw [Finset.card_insert_of_notMem (by simp)]
   · simp
 
-/-- **Lemma 6 (reconstruction algorithm).** For `w ∈ 𝒲` with relative position function `r`:
-if `r(1) > 0` then `p_a(1) = 0`, `p_b(1) = r(1)`, otherwise `p_a(1) = -r(1)`, `p_b(1) = 0`; and
-for `n ≥ 1`, with `k_{n+1}` the least position not among `p_a(1), …, p_a(n), p_b(1), …, p_b(n)`,
-`r(n+1) > 0` gives `p_a(n+1) = k_{n+1}`, `p_b(n+1) = k_{n+1} + r(n+1)`, and `r(n+1) < 0` gives
-`p_a(n+1) = k_{n+1} - r(n+1)`, `p_b(n+1) = k_{n+1}`. (The algorithm's output is stated as the
-equality of the computed values with the true positions; `r(1) ≠ 0`, so "otherwise" is
-`r(1) < 0`. Positions start at `0`, which always lies in `A_n ∪ B_n`, so taking the minimum over
-`ℕ = {1, 2, …}` or over `ℤ_{≥0}` gives the same `k_{n+1}`.)
+/-- **Reconstruction of a binary word from its relative position function.** Let $w$ be an
+infinite binary word over $\{a, b\}$ in which both letters occur infinitely often, let $p_a(n)$
+and $p_b(n)$ be the positions (counted from $0$) of the $n$-th $a$ and the $n$-th $b$ in $w$, and
+let $r(n) = p_b(n) - p_a(n)$. If $r(1) > 0$ then $p_a(1) = 0$ and $p_b(1) = r(1)$; if $r(1) < 0$
+then $p_a(1) = -r(1)$ and $p_b(1) = 0$. For every $n \ge 1$, let $k_{n+1}$ be the least natural
+number different from all of $p_a(1), \dots, p_a(n), p_b(1), \dots, p_b(n)$. If $r(n+1) > 0$ then
+$p_a(n+1) = k_{n+1}$ and $p_b(n+1) = k_{n+1} + r(n+1)$; if $r(n+1) < 0$ then
+$p_a(n+1) = k_{n+1} - r(n+1)$ and $p_b(n+1) = k_{n+1}$.
+
+The paper states this as an algorithm; here its output is stated as equalities with the true
+positions. Since $r(1) \ne 0$, the paper's "otherwise" in the first step is the case $r(1) < 0$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 6
@@ -331,8 +421,14 @@ public theorem_wanted letterPosition_reconstruction {w : ℕ → Bool} (hw : Bot
         (0 < r (n + 1) → pa (n + 1) = k ∧ pb (n + 1) = k + r (n + 1)) ∧
           (r (n + 1) < 0 → pa (n + 1) = k - r (n + 1) ∧ pb (n + 1) = k)
 
-/-- **Proposition 11.** (a) The reflection `w ↦ w̄` maps `a𝒲` onto `b𝒲` and `b𝒲` onto `a𝒲`.
-(b) For `w, w' ∈ 𝒲`, `w̄ = w'` iff `r_w = -r_{w'}`.
+/-- **Reflection of binary words and relative position.** Let $\mathcal{W}$ be the set of
+infinite words over $\{a, b\}$ in which both letters occur infinitely often, and let
+$a\mathcal{W}$ and $b\mathcal{W}$ be its words that begin with $a$ and with $b$. For a word $w$
+let $\bar w$ be its reflection, obtained by exchanging $a$ and $b$ at every position, and let
+$r_w(n) = p_b(n) - p_a(n)$ be its relative position function, where $p_a(n)$ and $p_b(n)$ are
+the positions of the $n$-th $a$ and the $n$-th $b$ in $w$. Then (a) the map $w \mapsto \bar w$
+sends $a\mathcal{W}$ onto $b\mathcal{W}$ and $b\mathcal{W}$ onto $a\mathcal{W}$; and (b) for all
+$w, w' \in \mathcal{W}$, $\bar w = w'$ if and only if $r_w(n) = -r_{w'}(n)$ for every $n \ge 1$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Proposition 11
@@ -345,9 +441,13 @@ public theorem_wanted reflection_image_and_relativePosition :
       ∀ w w' : ℕ → Bool, BothLettersInfinite w → BothLettersInfinite w' →
         ((fun i => !w i) = w' ↔ ∀ n, 1 ≤ n → relativePosition w n = -relativePosition w' n)
 
-/-- **Lemma 19.** For `w ∈ 𝒲`, `Δp_b` is periodic iff `D_a^{p_b(1)}(w)` (the word `w` with its
-initial run of `a`'s deleted) is periodic. (Same conventions as Lemma 16: periodic sequences on
-`ℕ = {1, 2, …}` are periodic at `n ≥ 1`, and a periodic word is purely periodic.)
+/-- **Periodicity of the gaps between the $b$'s.** Let $w$ be an infinite binary word over the
+letters $a$ and $b$ in which both letters occur infinitely often, let $p_b(n)$ be the position
+(counting from $0$) of the $n$-th $b$ in $w$, and let $\Delta p_b(n) = p_b(n+1) - p_b(n)$. Let
+$D_a$ delete the first $a$ of a word, and let $v = D_a^{p_b(1)}(w)$, the word $w$ with its initial
+run of $a$'s deleted. Then there is $q > 0$ with $\Delta p_b(n + q) = \Delta p_b(n)$ for all
+$n \ge 1$ if and only if there is $q > 0$ such that, for every $i \ge 0$, the letters of $v$ at
+positions $i + q$ and $i$ are equal.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 19
@@ -360,9 +460,13 @@ public theorem_wanted letterPosition_diff_periodic_iff_deleteFirst_periodic {w :
         (fun v => deleteFirst v true)^[letterPosition w false 1] w (i + q) =
           (fun v => deleteFirst v true)^[letterPosition w false 1] w i
 
-/-- **Lemma 21.** A finite word `u` of length `2k` is equilibrious (as many `a`'s as `b`'s) iff
-`D^k ∘ Pre_u` is the identity on `𝒲`. (`IsEquilibriousWord` is stated on `List (Fin 2)`; the
-letter `a = true` is sent to `0` and `b = false` to `1`.)
+/-- **Prepending an equilibrious word is undone by deletion.** Let $u$ be a finite word in the
+letters $a$ and $b$ of length $2k$. Then $u$ is equilibrious, that is, $a$ and $b$ occur equally
+often in $u$, if and only if $D^k(uw) = w$ for every infinite binary word $w$ in which both
+letters occur infinitely often, where $D$ deletes the first $b$ and the first $a$ of a word.
+
+Here $a$ and $b$ play the roles of the letters $0$ and $1$ in the definition of equilibrious
+words.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 21
@@ -372,9 +476,13 @@ public theorem_wanted isEquilibriousWord_iff_deletion_iterate_prepend (u : List 
     IsEquilibriousWord (u.map fun x => if x then 0 else 1) ↔
       ∀ w, BothLettersInfinite w → deletion^[k] (u ++ₛ w) = w
 
-/-- **Lemma 22.** For an equilibrious word `u` of length `2k` and `w ∈ 𝒲`,
-`p_{a, uw}(n+k) = p_{a,w}(n) + 2k`, `p_{b, uw}(n+k) = p_{b,w}(n) + 2k`, hence
-`r_{uw}(n+k) = r_w(n)`, for all `n ≥ 1`.
+/-- **Prepending an equilibrious word shifts the position functions.** Let $u$ be a finite word
+over $\{a, b\}$ of length $2k$ that is equilibrious (it contains as many letters $a$ as letters
+$b$), and let $w$ be an infinite binary word in which both letters occur infinitely often. For a
+word $v$, write $p_{\alpha,v}(n)$ for the position (counted from $0$) of the $n$-th occurrence of
+the letter $\alpha$ in $v$, and $r_v(n) = p_{b,v}(n) - p_{a,v}(n)$. Then for every $n \ge 1$ the
+concatenation $uw$ satisfies $p_{a,uw}(n+k) = p_{a,w}(n) + 2k$, $p_{b,uw}(n+k) = p_{b,w}(n) + 2k$
+and $r_{uw}(n+k) = r_w(n)$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 22
@@ -386,11 +494,19 @@ public theorem_wanted letterPosition_prepend_equilibrious (u : List Bool) {k : �
       letterPosition (u ++ₛ w) false (n + k) = letterPosition w false n + 2 * k ∧
       relativePosition (u ++ₛ w) (n + k) = relativePosition w n
 
-/-- **Lemma 24.** For `w ∈ 𝒲` and the cloning substitution `φ_k(w) = fun i => w (i / k)`
-(`a ↦ a^k`, `b ↦ b^k`), for all `m ≥ 0` and `1 ≤ j ≤ k`:
-`p_{a,φ_k(w)}(mk+j) = k p_{a,w}(m+1) + j - 1`, `p_{b,φ_k(w)}(mk+j) = k p_{b,w}(m+1) + j - 1`,
-`r_{φ_k(w)}(mk+j) = k r_w(m+1)`. The paper takes `k ≥ 2`; the identities hold for `k = 1`
-(`φ_1` is the identity) and are vacuous for `k = 0`, so no bound on `k` is assumed.
+/-- **Position functions of a cloned word.** Let $w$ be an infinite binary word over the
+letters $a$ and $b$ in which both letters occur infinitely often, let $k$ be a natural number,
+and let $\varphi_k(w)$ be the word whose letter at position $i$ is the letter of $w$ at position
+$\lfloor i/k \rfloor$ (for $k \ge 1$, the word obtained from $w$ by repeating each letter $k$
+times). For a word $v$ and a letter $\alpha$, let $p_{\alpha,v}(n)$ be the position (counting
+from $0$) of the $n$-th occurrence of $\alpha$ in $v$, and let $r_v(n) = p_{b,v}(n) - p_{a,v}(n)$.
+Then for all natural numbers $m$ and $j$ with $1 \le j \le k$,
+$p_{a,\varphi_k(w)}(mk+j) = k\,p_{a,w}(m+1) + j - 1$,
+$p_{b,\varphi_k(w)}(mk+j) = k\,p_{b,w}(m+1) + j - 1$ and
+$r_{\varphi_k(w)}(mk+j) = k\,r_w(m+1)$.
+
+The paper takes $k \ge 2$; the identities hold for $k = 1$ ($\varphi_1$ is the identity) and are
+vacuous for $k = 0$, so no bound on $k$ is assumed.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 24
@@ -404,8 +520,14 @@ public theorem_wanted letterPosition_clone {w : ℕ → Bool} (hw : BothLettersI
       relativePosition (fun i => w (i / k)) (m * k + j) = k * relativePosition w (m + 1)
 
 open Filter Topology in
-/-- **Lemma 28.** For `w ∈ 𝒲` and a letter `α`: (a) for `d ∈ (0, 1]`, `#_α(m)/m → d` iff
-`p_α(n)/n → 1/d`; (b) `#_α(m)/m → 0` iff `p_α(n)/n → ∞`.
+/-- **Letter frequency and growth of letter positions.** Let $w = \ell_0 \ell_1 \ell_2 \cdots$ be
+an infinite word over the letters $a$ and $b$ in which both letters occur infinitely often, and
+let $\alpha$ be a letter. Write $\#_\alpha(m)$ for the number of occurrences of $\alpha$ among
+$\ell_0, \ldots, \ell_{m-1}$, and for $n \ge 1$ write $p_\alpha(n)$ for the position of the
+$n$-th occurrence of $\alpha$ in $w$, counting positions from $0$. Then (a) for every real $d$
+with $0 < d \le 1$, $\#_\alpha(m)/m \to d$ as $m \to \infty$ if and only if
+$p_\alpha(n)/n \to 1/d$ as $n \to \infty$; and (b) $\#_\alpha(m)/m \to 0$ as $m \to \infty$ if and
+only if $p_\alpha(n)/n \to \infty$ as $n \to \infty$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 28
@@ -419,9 +541,14 @@ public theorem_wanted tendsto_letterCount_div_iff_tendsto_letterPosition_div {w 
         Tendsto (fun n : ℕ => (letterPosition w α n : ℝ) / n) atTop atTop)
 
 open Filter in
-/-- **Corollary 29.** For `w ∈ 𝒲` and a letter `α`,
-`limsup #_α(m)/m = limsup n/p_α(n)` and `liminf #_α(m)/m = liminf n/p_α(n)` (both sequences are
-bounded, so the real `limsup`/`liminf` are the classical ones).
+/-- **Upper and lower densities of a letter from its position function.** Let $w$ be an infinite
+binary word in which both letters occur infinitely often and let $\alpha$ be a letter. Write
+$\#_\alpha(m)$ for the number of occurrences of $\alpha$ among the first $m$ letters of $w$, and
+$p_\alpha(n)$ for the position (counted from $0$) of the $n$-th occurrence of $\alpha$. Then
+$\limsup_{m \to \infty} \#_\alpha(m)/m = \limsup_{n \to \infty} n/p_\alpha(n)$ and
+$\liminf_{m \to \infty} \#_\alpha(m)/m = \liminf_{n \to \infty} n/p_\alpha(n)$.
+
+Both sequences are bounded, so these are the classical upper and lower limits in $\mathbb{R}$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Corollary 29
@@ -434,8 +561,13 @@ public theorem_wanted limsup_liminf_letterCount_div {w : ℕ → Bool} (hw : Bot
         liminf (fun n : ℕ => (n : ℝ) / letterPosition w α n) atTop
 
 open Filter Topology in
-/-- **Theorem 30.** For `w ∈ 𝒲` and `d ∈ (0, 1)` the following are equivalent:
-`Freq(b) = d`; `Freq(a) = 1 - d`; `p_b(n)/n → 1/d`; `p_a(n)/n → 1/(1-d)`.
+/-- **Letter frequencies and the growth of the position functions.** Let $w$ be an infinite
+binary word over the letters $a$ and $b$ in which both letters occur infinitely often, and let
+$0 < d < 1$. For a letter $\alpha$, let $\#_\alpha(m)$ be the number of letters $\alpha$ among the
+first $m$ letters of $w$, and let $p_\alpha(n)$ be the position (counting from $0$) of the $n$-th
+occurrence of $\alpha$ in $w$. Then the following are equivalent: $\#_b(m)/m \to d$ as
+$m \to \infty$; $\#_a(m)/m \to 1 - d$; $p_b(n)/n \to 1/d$ as $n \to \infty$;
+$p_a(n)/n \to 1/(1 - d)$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Theorem 30
@@ -448,8 +580,15 @@ public theorem_wanted letter_frequency_tfae {w : ℕ → Bool} (hw : BothLetters
       Tendsto (fun n : ℕ => (letterPosition w true n : ℝ) / n) atTop (𝓝 (1 / (1 - d)))].TFAE
 
 open Filter Topology in
-/-- **Corollary 31.** If `Freq(b) = d ∈ (0, 1)` then `r(n)/n → 1/d - 1/(1-d)`. (Such a word has
-both letters infinitely often, so no separate `w ∈ 𝒲` hypothesis is needed.)
+/-- **Relative position of a word with given letter frequency.** Let
+$w = \ell_0 \ell_1 \ell_2 \cdots$ be an infinite word over the letters $a$ and $b$. Let $\#_b(m)$
+be the number of letters $b$ among $\ell_0, \ldots, \ell_{m-1}$, and for $n \ge 1$ let
+$r(n) = p_b(n) - p_a(n)$, where $p_\alpha(n)$ is the position of the $n$-th occurrence of the
+letter $\alpha$ in $w$, counting positions from $0$. If $0 < d < 1$ and $\#_b(m)/m \to d$ as
+$m \to \infty$, then $r(n)/n \to 1/d - 1/(1-d)$ as $n \to \infty$.
+
+Such a word contains both letters infinitely often, so no separate hypothesis that both letters
+occur infinitely often is needed.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Corollary 31
@@ -460,9 +599,13 @@ public theorem_wanted tendsto_relativePosition_div_of_frequency {w : ℕ → Boo
     Tendsto (fun n : ℕ => (relativePosition w n : ℝ) / n) atTop (𝓝 (1 / d - 1 / (1 - d)))
 
 open Filter Topology in
-/-- **Proposition 33.** For `w ∈ 𝒲` with `r(n)/n → L` in the extended reals, `Freq(b)` exists
-and equals `0` if `L = ∞`, `1` if `L = -∞`, `1/2` if `L = 0`, and
-`(2 + L - √(4 + L²)) / (2L)` otherwise.
+/-- **The frequency of $b$ from the growth of the relative position.** Let $w$ be an infinite
+binary word in which both letters $a$ and $b$ occur infinitely often, let $r$ be its relative
+position function, and suppose that $r(n)/n$ converges to $L$ in the extended real line
+$[-\infty, \infty]$. Let $\#_b(m)$ be the number of letters $b$ among the first $m$ letters of
+$w$. Then $\#_b(m)/m$ converges, and its limit, the frequency of $b$ in $w$, is $0$ if
+$L = \infty$, $1$ if $L = -\infty$, $1/2$ if $L = 0$, and
+$(2 + L - \sqrt{4 + L^2})/(2L)$ if $L$ is a nonzero real number.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Proposition 33
@@ -477,11 +620,15 @@ public theorem_wanted frequency_of_tendsto_relativePosition_div {w : ℕ → Boo
         Tendsto freqB atTop (𝓝 ((2 + x - Real.sqrt (4 + x ^ 2)) / (2 * x)))
 
 open Filter Topology in
-/-- **Theorem 34.** For `w ∈ 𝒲`, with `r(n)/n → r`, `p_b(n)/n → p`, `p_a(n)/n → q` read in the
-extended reals: if one of the limits exists then all exist, `1/p + 1/q = 1`, and
-`p = (2 + r + √(4 + r²))/2`, `q = (2 - r + √(4 + r²))/2`. At `r = ±∞` the formulas are read as
-their limits (`r = ∞` gives `p = ∞`, `q = 1`; `r = -∞` gives `p = 1`, `q = ∞`), as in the paper's
-remark that they hold for `r ∈ {0, ±∞}`. (`EReal` inverses have `⊤⁻¹ = 0`.)
+/-- **Mean values of the position functions.** Let $w$ be an infinite word over $\{a, b\}$ in
+which both letters occur infinitely often, with letter position functions $p_a$, $p_b$ and
+relative position function $r$, and consider the sequences $r(n)/n$, $p_b(n)/n$ and $p_a(n)/n$
+in the extended reals $[-\infty, \infty]$. If one of the three sequences converges, then so do
+the other two. If $p_b(n)/n \to p$ and $p_a(n)/n \to q$, then $1/p + 1/q = 1$, where
+$1/\infty = 0$. If $r(n)/n \to x$ with $x$ real, then
+$p_b(n)/n \to (2 + x + \sqrt{4 + x^2})/2$ and $p_a(n)/n \to (2 - x + \sqrt{4 + x^2})/2$. If
+$r(n)/n \to \infty$, then $p_b(n)/n \to \infty$ and $p_a(n)/n \to 1$; if $r(n)/n \to -\infty$,
+then $p_b(n)/n \to 1$ and $p_a(n)/n \to \infty$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Theorem 34
@@ -500,10 +647,16 @@ public theorem_wanted relativePosition_letterPosition_mean_values {w : ℕ → B
       (Tendsto R atTop (𝓝 ⊤) → Tendsto P atTop (𝓝 ⊤) ∧ Tendsto Q atTop (𝓝 1)) ∧
       (Tendsto R atTop (𝓝 ⊥) → Tendsto P atTop (𝓝 1) ∧ Tendsto Q atTop (𝓝 ⊤))
 
-/-- `v = ϱ(w)` for a substitution `ϱ` (extended to words by concatenation): every prefix
-`ϱ(ℓ₀ ⋯ ℓ_{m-1})` of the image is a prefix of `v`, and these prefixes are unboundedly long, so
-that they determine all of `v` (without this, an erasing `ϱ` such as `fun _ => []` would relate
-every pair of words). `IsSubstitutionImage ϱ w w` says that `w` is a fixed point of `ϱ`.
+/-- **Image of an infinite word under a substitution.** Let $\varrho$ be a substitution on the
+letters $a$ and $b$, sending each letter to a finite word and extended to finite words by
+concatenation, and let $w = \ell_0 \ell_1 \ell_2 \cdots$ and $v$ be infinite binary words. Then
+$v$ is the image $\varrho(w)$ of $w$ when, for every $m$, the finite word
+$\varrho(\ell_0 \cdots \ell_{m-1})$ is a prefix of $v$, and these words are arbitrarily long:
+for every $N$ there is an $m$ such that $\varrho(\ell_0 \cdots \ell_{m-1})$ has length at least
+$N$. A word $w$ that is its own image $\varrho(w)$ is a fixed point of $\varrho$.
+
+Without the length condition an erasing substitution, such as the one sending both letters to
+the empty word, would make every infinite word an image of every other.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Section 1
@@ -513,7 +666,8 @@ public def IsSubstitutionImage (ϱ : Bool → List Bool) (w v : ℕ → Bool) : 
   ∀ m i, i < ((List.ofFn fun j : Fin m => w j).flatMap ϱ).length →
     v i = ((List.ofFn fun j : Fin m => w j).flatMap ϱ).getD i false
 
-/-- Every word is its own image under the identity substitution.
+/-- **Every word is fixed by the identity substitution.** Every infinite binary word $w$ is
+its own image under the identity substitution $a \mapsto a$, $b \mapsto b$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Section 1
@@ -526,15 +680,21 @@ public theorem isSubstitutionImage_id (w : ℕ → Bool) :
   simp [List.getD_eq_getElem?_getD, hi]
 
 open Filter Topology in
-/-- **Theorem 35.** Let `μ` be a binary substitution (`μ a`, `μ b` finite words, extended to
-words by concatenation) such that `a` and `b` occur in `μ(ab)`, and let `v = μ(w)` for `w ∈ 𝒲`
-with `Freq_a(w) = f`. Then `Freq_a(v)` and `Freq_b(v)` exist and
-`[Freq_a(v), Freq_b(v)]ᵀ = M_μ [f, 1 - f]ᵀ / (|μ(a)| f + |μ(b)| (1 - f))`, where the incidence
-matrix has `M₁₁ = |μ(a)|_a`, `M₁₂ = |μ(b)|_a`, `M₂₁ = |μ(a)|_b`, `M₂₂ = |μ(b)|_b`.
-Added hypothesis: `μ` is non-erasing (`μ a`, `μ b` nonempty). The paper's substitutions are
-arbitrary homomorphisms, and for erasing `μ` the formula fails: with `μ(a) = ε`, `μ(b) = ab`
-and `w ∈ 𝒲` with `Freq_a(w) = 1` (for example `b` exactly at the perfect squares),
-`μ(w) = (ab)^ω` has `Freq_a = 1/2` while the denominator `|μ(a)|·1 + |μ(b)|·0` is `0`.
+/-- **Letter frequencies of a substitution image.** Let $\mu$ be a substitution sending the
+letters $a$ and $b$ to nonempty finite words, extended to words by concatenation, such that both
+$a$ and $b$ occur in $\mu(a)\mu(b)$. For a word $x$ and a letter $\alpha$ write $\#_\alpha(x, m)$
+for the number of letters $\alpha$ among the first $m$ letters of $x$; for a finite word $u$
+write $|u|$ for its length and $|u|_\alpha$ for the number of letters $\alpha$ in it. Let $w$ be
+an infinite binary word in which both letters occur infinitely often, let $v = \mu(w)$, suppose
+that $\#_a(w, m)/m \to f$ for a real number $f$, and let $L = |\mu(a)|\,f + |\mu(b)|\,(1 - f)$.
+Then
+
+$$\frac{\#_a(v, m)}{m} \to \frac{|\mu(a)|_a\,f + |\mu(b)|_a\,(1 - f)}{L}, \qquad
+\frac{\#_b(v, m)}{m} \to \frac{|\mu(a)|_b\,f + |\mu(b)|_b\,(1 - f)}{L}.$$
+
+The paper allows erasing substitutions, but then the formula fails: for $\mu(a)$ empty,
+$\mu(b) = ab$ and $w$ with $b$ exactly at the perfect squares, the frequency of $a$ in $w$ is $1$
+and $\mu(w) = (ab)^\omega$ has frequency of $a$ equal to $1/2$, while $L = 0$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Theorem 35
@@ -551,10 +711,16 @@ public theorem_wanted frequency_substitution_image (μ : Bool → List Bool)
         (𝓝 (((μ true).count false * f + (μ false).count false * (1 - f)) / L))
 
 open Polynomial in
-/-- **Lemma 39.** For `M ∈ M₂(ℤ)`, `[τ 1]ᵀ` (`τ` the golden ratio) is a right eigenvector of `M`
-iff `M = [[m+n, m], [m, n]]` for some integers `m, n`; in that case the eigenvalues of `M` are
-`n + mτ` and `n + mτ'` (`τ' = (1 - √5)/2`), i.e. the characteristic polynomial factors as
-`(X - (n + mτ))(X - (n + mτ'))`.
+/-- **Integer matrices with the golden eigenvector.** Let $\tau = (1 + \sqrt 5)/2$ be the golden
+ratio and $\tau' = (1 - \sqrt 5)/2$ its conjugate, and let $M$ be a $2 \times 2$ integer matrix.
+Then $(\tau, 1)^T$ is a right eigenvector of $M$, that is, $M (\tau, 1)^T = c\,(\tau, 1)^T$ for
+some real number $c$, if and only if
+
+$$M = \begin{pmatrix} m + n & m \\ m & n \end{pmatrix}$$
+
+for some integers $m$ and $n$. In that case the characteristic polynomial of $M$ is
+$(X - (n + m\tau))(X - (n + m\tau'))$, so the eigenvalues of $M$ are $n + m\tau$ and
+$n + m\tau'$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 39
@@ -567,14 +733,18 @@ public theorem_wanted golden_eigenvector_iff (M : Matrix (Fin 2) (Fin 2) ℤ) :
         (M.map (Int.cast : ℤ → ℝ)).charpoly =
           (X - C ((n : ℝ) + m * Real.goldenRatio)) * (X - C ((n : ℝ) + m * Real.goldenConj))
 
-/-- **Theorem 63.** Let `j, m ≥ 1`, `τ_{j,m} = (j + √(j² + 4m))/2` and `M ∈ M₂(ℤ)`.
-(a) If `j² + 4m` is not a perfect square, `[τ_{j,m} 1]ᵀ` is a right eigenvector of `M` iff
-`M = [[t + sj, ms], [s, t]]` for some integers `s, t`. (b) If `j² + 4m = r²`, it is a right
-eigenvector iff `M = [[s, t], [u, v]]` with `u(j+r)² + 2(v-s)(j+r) - 4t = 0`.
-Corrected reading in (b): `r` is the nonnegative root, `r = √(j² + 4m)`, as the paper's proof
-uses `τ_{j,m} = (j + r)/2`. For the negative root the printed statement fails: `j = 1`, `m = 2`,
-`r = -3`, `M = [[0, 0], [1, 1]]` satisfies `u(j+r)² + 2(v-s)(j+r) - 4t = 4 - 4 - 0 = 0`, but
-`τ_{1,2} = 2` and `M [2, 1]ᵀ = [0, 3]ᵀ` is not a multiple of `[2, 1]ᵀ`.
+/-- **Integer matrices with a Pisa eigenvector.** Let $j, m \ge 1$ be integers, let
+$\tau_{j,m} = (j + \sqrt{j^2 + 4m})/2$, and let $M$ be a $2 \times 2$ integer matrix.
+(a) If $j^2 + 4m$ is not a perfect square, then $(\tau_{j,m}, 1)^T$ is a right eigenvector of $M$
+over $\mathbb{R}$ if and only if $M$ has rows $(t + sj, ms)$ and $(s, t)$ for some integers $s, t$.
+(b) If $j^2 + 4m = r^2$ with $r$ a natural number, then $(\tau_{j,m}, 1)^T$ is a right
+eigenvector of $M$ over $\mathbb{R}$ if and only if $M$ has rows $(s, t)$ and $(u, v)$ with
+$u(j+r)^2 + 2(v-s)(j+r) - 4t = 0$.
+
+In (b) $r$ is the nonnegative root, as the paper's proof uses $\tau_{j,m} = (j + r)/2$. For the
+negative root the printed statement fails: for $j = 1$, $m = 2$, $r = -3$, the matrix $M$ with
+rows $(0, 0)$ and $(1, 1)$ satisfies $u(j+r)^2 + 2(v-s)(j+r) - 4t = 4 - 4 - 0 = 0$, but
+$\tau_{1,2} = 2$ and $M (2, 1)^T = (0, 3)^T$ is not a multiple of $(2, 1)^T$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Theorem 63
@@ -589,9 +759,12 @@ public theorem_wanted pisa_eigenvector_iff (j m : ℕ) (hj : 1 ≤ j) (hm : 1 �
           u * (j + r) ^ 2 + 2 * (v - s) * (j + r) - 4 * t = 0 ∧ M = !![s, t; u, v])
 
 open Polynomial in
-/-- **Lemma 66.** For `k ≥ 1`, `τ_k = (k + √(k² + 4))/2` and `M ∈ M₂(ℤ)`, `[τ_k 1]ᵀ` is a right
-eigenvector of `M` iff `M = [[km + n, m], [m, n]]` for some integers `m, n`; then the eigenvalues
-are `n + mτ_k` and `n + mτ_k'` with `τ_k' = (k - √(k² + 4))/2`.
+/-- **Integer matrices with a metallic-mean eigenvector.** Let $k \ge 1$ be an integer, let
+$\tau_k = (k + \sqrt{k^2 + 4})/2$ and $\tau_k' = (k - \sqrt{k^2 + 4})/2$, and let $M$ be a
+$2 \times 2$ integer matrix. Then $(\tau_k, 1)^T$ is a right eigenvector of $M$ over $\mathbb{R}$
+if and only if $M$ has rows $(km + n, m)$ and $(m, n)$ for some integers $m, n$. For such $M$ the
+characteristic polynomial of $M$ is $(X - (n + m\tau_k))(X - (n + m\tau_k'))$, so the eigenvalues
+of $M$ are $n + m\tau_k$ and $n + m\tau_k'$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 66
@@ -605,12 +778,16 @@ public theorem_wanted metallic_eigenvector_iff (k : ℕ) (hk : 1 ≤ k)
       ∀ m n : ℤ, M = !![k * m + n, m; m, n] →
         (M.map (Int.cast : ℤ → ℝ)).charpoly = (X - C ((n : ℝ) + m * τ)) * (X - C ((n : ℝ) + m * τ'))
 
-/-- **Theorem 38.** For the Fibonacci word `f`: (a) `Δp_a(n)` is the coding of `f` at `n - 1`
-under `(a, b) ↦ (2, 1)`; (b) `Δp_b(n)` is its coding under `(a, b) ↦ (3, 2)`; (c) `r(n) = n` (so
-`Δr = 1`). Corrected reading: the record prints the codings `(1, 2)` and `(2, 3)`, which are false
-(`f = abaab⋯` has `p_a = 0, 2, 3, 5, …`, so `Δp_a(1) = 2` while `f` starts with `a`); the codings
-`(2, 1)` and `(3, 2)` are the ones derived in the paper's proof. A sequence `x₁x₂⋯` is read as
-the word with `x₁` at position `0`, as in the paper's conventions.
+/-- **Position differences in the Fibonacci word.** Let $f = \ell_0 \ell_1 \ell_2 \cdots =
+abaab\cdots$ be the Fibonacci word, the infinite Fibonacci word with each $0$ written as $a$
+and each $1$ as $b$. Let $p_a(n)$ and $p_b(n)$ be the positions (counted from $0$) of the
+$n$-th $a$ and the $n$-th $b$ in $f$, and let $r(n) = p_b(n) - p_a(n)$. Then for every $n \ge 1$:
+$p_a(n+1) - p_a(n)$ is $2$ if $\ell_{n-1} = a$ and $1$ if $\ell_{n-1} = b$;
+$p_b(n+1) - p_b(n)$ is $3$ if $\ell_{n-1} = a$ and $2$ if $\ell_{n-1} = b$; and $r(n) = n$.
+
+The printed statement gives the codings $(1, 2)$ and $(2, 3)$ instead, which are false:
+$p_a$ takes the values $0, 2, 3, 5, \ldots$, so $p_a(2) - p_a(1) = 2$ while $f$ starts with
+$a$. The codings above are the ones derived in the paper's proof.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Theorem 38
@@ -623,7 +800,12 @@ public theorem_wanted fibonacciWord_letterPosition_diff :
         if f (n - 1) then 3 else 2) ∧
       ∀ n, 1 ≤ n → relativePosition f n = n
 
-/-- **Theorem 43.** For the Fibonacci word `f`, `r_{D(f)}(n) = n + 1` for all `n ≥ 1`.
+/-- **Relative position of the deleted Fibonacci word.** Let $f = abaababaabaab\cdots$ be the
+Fibonacci word, the fixed point of $a \mapsto ab$, $b \mapsto a$. Let $D(f)$ be the word obtained
+from $f$ by deleting its first $b$ and then the first $a$ of the result, and for an infinite
+word $v$ over $\{a, b\}$ let $r_v(n) = p_b(n) - p_a(n)$, where $p_a(n)$ and $p_b(n)$ are the
+positions of the $n$-th $a$ and the $n$-th $b$ in $v$. Then $r_{D(f)}(n) = n + 1$ for every
+$n \ge 1$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Theorem 43
@@ -631,7 +813,13 @@ Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, T
 public theorem_wanted relativePosition_deletion_fibonacciWord (n : ℕ) (hn : 1 ≤ n) :
     relativePosition (deletion (fun i => !fibInf i)) n = n + 1
 
-/-- **Theorem 44.** For every `k`, `r_{D^k(f)}(n) = n + k` for all sufficiently large `n`.
+/-- **Relative position of iterated deletions of the Fibonacci word.** Let
+$f = abaababaabaab\cdots$ be the Fibonacci word, the fixed point of $a \mapsto ab$,
+$b \mapsto a$. Let $D$ be the operator on infinite words over $\{a, b\}$ that deletes the first
+$b$ and then the first $a$ of the result, and for such a word $v$ let
+$r_v(n) = p_b(n) - p_a(n)$, where $p_a(n)$ and $p_b(n)$ are the positions of the $n$-th $a$ and
+the $n$-th $b$ in $v$. Then for every natural number $k$ there is an $N$ such that
+$r_{D^k(f)}(n) = n + k$ for all $n > N$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Theorem 44
@@ -639,10 +827,13 @@ Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, T
 public theorem_wanted relativePosition_deletion_iterate_fibonacciWord (k : ℕ) :
     ∃ N, ∀ n, N < n → relativePosition (deletion^[k] (fun i => !fibInf i)) n = n + k
 
-/-- **Theorem 45 (the Fibonacci switch).** For `μ(a) = aab`, `μ(b) = ab`, the word obtained
-from `f` by replacing each level-2 supertile `aba` by `aab` and keeping each `ab` is `μ(f)`
-(the level-2 supertiles of `f` follow `f` itself), and `μ(f) = D(f)`. Stated as
-`IsSubstitutionImage μ f (D f)`.
+/-- **The Fibonacci switch.** Let $f = abaab\cdots$ be the Fibonacci word, the infinite
+Fibonacci word with each $0$ written as $a$ and each $1$ as $b$, and let $\mu$ be the
+substitution $a \mapsto aab$, $b \mapsto ab$. Then $D(f)$ is the image $\mu(f)$ of $f$ under
+$\mu$, where $D$ deletes the first $b$ and the first $a$ of a word.
+
+In the paper's description, $\mu(f)$ is the word obtained from $f$ by replacing each level-2
+supertile $aba$ by $aab$ and keeping each $ab$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Theorem 45
@@ -652,11 +843,21 @@ public theorem_wanted fibonacci_switch :
         false]) (fun i => !fibInf i)
       (deletion (fun i => !fibInf i))
 
-/-- **Theorem 46.** For `w ∈ a𝒲`, both `Δp_a` and `Δp_b` are codings of `w` (`Δp_α(n)` a
-function of `ℓ_{n-1}`) iff `w = f` or `w = (ab)^ω`; and they are both isomorphic to `w`
-(injective codings) iff `w = f`. The second part drops the paper's word "aperiodic": `(ab)^ω` has
-constant `Δp_a`, `Δp_b`, so it is never isomorphic to them, and the isomorphism claim holds for
-every `w ∈ a𝒲`.
+/-- **Gap codings single out the Fibonacci word among words starting with $a$.** Let
+$w = \ell_0 \ell_1 \ell_2 \cdots$ be an infinite binary word over the letters $a$ and $b$ in which
+both letters occur infinitely often and $\ell_0 = a$. For a letter $\alpha$ let $p_\alpha(n)$ be
+the position (counting from $0$) of the $n$-th occurrence of $\alpha$ in $w$ and
+$\Delta p_\alpha(n) = p_\alpha(n+1) - p_\alpha(n)$. Call $\Delta p_a$ and $\Delta p_b$ codings of
+$w$ if there are maps $\sigma_a, \sigma_b$ from $\{a, b\}$ to the natural numbers with
+$\Delta p_a(n) = \sigma_a(\ell_{n-1})$ and $\Delta p_b(n) = \sigma_b(\ell_{n-1})$ for all
+$n \ge 1$, and injective codings if moreover $\sigma_a$ and $\sigma_b$ are injective. Let
+$f = abaab\cdots$ be the infinite Fibonacci word written with $a$ for $0$ and $b$ for $1$. Then
+$\Delta p_a$ and $\Delta p_b$ are codings of $w$ if and only if $w = f$ or $w = (ab)^\omega$, and
+they are injective codings of $w$ if and only if $w = f$.
+
+The second part drops the paper's word "aperiodic": for $(ab)^\omega$ the sequences $\Delta p_a$
+and $\Delta p_b$ are constant, so they are not injective codings, and the characterization holds
+for every such $w$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Theorem 46
@@ -673,9 +874,21 @@ public theorem_wanted letterPosition_diff_codings_iff_fibonacci {w : ℕ → Boo
           letterPosition w false (n + 1) - letterPosition w false n = σb (w (n - 1))) ↔
         w = (fun i => !fibInf i))
 
-/-- **Corollary 48.** For `w ∈ b𝒲`, both `Δp_a` and `Δp_b` are codings of `w` iff `w = f̄` or
-`w = (ba)^ω`; they are both isomorphic to `w` iff `w = f̄` ("aperiodic" dropped as in
-Theorem 46).
+/-- **Gap codings single out the reflected Fibonacci word among words starting with $b$.** Let
+$w = \ell_0 \ell_1 \ell_2 \cdots$ be an infinite binary word over the letters $a$ and $b$ in which
+both letters occur infinitely often and $\ell_0 = b$. For a letter $\alpha$ let $p_\alpha(n)$ be
+the position (counting from $0$) of the $n$-th occurrence of $\alpha$ in $w$ and
+$\Delta p_\alpha(n) = p_\alpha(n+1) - p_\alpha(n)$. Call $\Delta p_a$ and $\Delta p_b$ codings of
+$w$ if there are maps $\sigma_a, \sigma_b$ from $\{a, b\}$ to the natural numbers with
+$\Delta p_a(n) = \sigma_a(\ell_{n-1})$ and $\Delta p_b(n) = \sigma_b(\ell_{n-1})$ for all
+$n \ge 1$, and injective codings if moreover $\sigma_a$ and $\sigma_b$ are injective. Let
+$\bar f = babba\cdots$ be the infinite Fibonacci word written with $b$ for $0$ and $a$ for $1$
+(the Fibonacci word $f = abaab\cdots$ with $a$ and $b$ exchanged). Then $\Delta p_a$ and
+$\Delta p_b$ are codings of $w$ if and only if $w = \bar f$ or $w = (ba)^\omega$, and they are
+injective codings of $w$ if and only if $w = \bar f$.
+
+The second part drops the paper's word "aperiodic": for $(ba)^\omega$ the sequences $\Delta p_a$
+and $\Delta p_b$ are constant, so they are not injective codings.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Corollary 48
@@ -692,10 +905,19 @@ public theorem_wanted letterPosition_diff_codings_iff_fibonacci_reflect {w : ℕ
           letterPosition w false (n + 1) - letterPosition w false n = σb (w (n - 1))) ↔
         w = fibInf)
 
-/-- **Corollary 49.** Up to isomorphism (the reflection), `f` is the only binary word of `𝒲`
-isomorphic to the difference sequence of the position function of each letter: `Δp_a` and
-`Δp_b` are both injective codings of `w ∈ 𝒲` iff `w = f` or `w = f̄` ("aperiodic" dropped as in
-Theorem 46).
+/-- **The Fibonacci word and its reflection are the words isomorphic to their gap sequences.**
+Let $w = \ell_0 \ell_1 \ell_2 \cdots$ be an infinite binary word over the letters $a$ and $b$ in
+which both letters occur infinitely often. For a letter $\alpha$ let $p_\alpha(n)$ be
+the position (counting from $0$) of the $n$-th occurrence of $\alpha$ in $w$ and
+$\Delta p_\alpha(n) = p_\alpha(n+1) - p_\alpha(n)$. Call $\Delta p_a$ and $\Delta p_b$ codings of
+$w$ if there are maps $\sigma_a, \sigma_b$ from $\{a, b\}$ to the natural numbers with
+$\Delta p_a(n) = \sigma_a(\ell_{n-1})$ and $\Delta p_b(n) = \sigma_b(\ell_{n-1})$ for all
+$n \ge 1$, and injective codings if moreover $\sigma_a$ and $\sigma_b$ are injective. Let
+$f = abaab\cdots$ be the infinite Fibonacci word written with $a$ for $0$ and $b$ for $1$, and
+$\bar f$ the word $f$ with $a$ and $b$ exchanged. Then $\Delta p_a$ and $\Delta p_b$ are injective
+codings of $w$ if and only if $w = f$ or $w = \bar f$.
+
+The paper's word "aperiodic" is dropped, as in Theorem 46 and Corollary 48.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Corollary 49
@@ -708,8 +930,12 @@ public theorem_wanted letterPosition_diff_isomorphic_iff_fibonacci {w : ℕ → 
           letterPosition w false (n + 1) - letterPosition w false n = σb (w (n - 1))) ↔
       w = (fun i => !fibInf i) ∨ w = fibInf
 
-/-- **Proposition 51.** For the iccanobiF substitution `ϱ_F'` (`a ↦ ba`, `b ↦ a`) and `n ≥ 1`:
-`ab ϱ_F^{2n}(a) = (ϱ_F')^{2n}(a) ba` and `ba ϱ_F^{2n-1}(a) = (ϱ_F')^{2n-1}(a) ab`.
+/-- **Fibonacci and iccanobiF iterates of a.** Let $\varrho_F$ be the Fibonacci substitution
+$a \mapsto ab$, $b \mapsto a$ and let $\varrho_F'$ be the iccanobiF substitution $a \mapsto ba$,
+$b \mapsto a$, acting on finite words over the letters $a$ and $b$; thus $\varrho_F^m(a)$ is the
+finite Fibonacci word $f_m$ with each $0$ written as $a$ and each $1$ as $b$. Then for every
+$n \ge 1$, $ab\,\varrho_F^{2n}(a) = (\varrho_F')^{2n}(a)\,ba$ and
+$ba\,\varrho_F^{2n-1}(a) = (\varrho_F')^{2n-1}(a)\,ab$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Proposition 51
@@ -722,9 +948,16 @@ public theorem_wanted fibonacci_iccanobiF_conjugate_a (n : ℕ) (hn : 1 ≤ n) :
         (fun u : List Bool => u.flatMap fun x => if x then [false, true] else [true])^[2 * n -
             1] [true] ++ [true, false]
 
-/-- **Proposition 52.** For `n ≥ 1`: `ab ϱ_F^{2n+1}(b) = (ϱ_F')^{2n+1}(b) ba` and
-`ba ϱ_F^{2n}(b) = (ϱ_F')^{2n}(b) ab`. Here `ϱ_F^{k+1}(b) = ϱ_F^k(a)` is written
-`(fibWord k).map (!·)`.
+/-- **Conjugacy of the Fibonacci and iccanobiF iterates of $b$.** Let $\varrho_F'$ be the
+iccanobiF substitution $a \mapsto ba$, $b \mapsto a$, extended to finite words by concatenation,
+and for each $k$ let $g_k$ be the finite Fibonacci word $f_k$ with each $0$ written as $a$ and
+each $1$ as $b$. For every $n \ge 1$,
+
+$$ab\,g_{2n} = (\varrho_F')^{2n+1}(b)\,ba, \qquad ba\,g_{2n-1} = (\varrho_F')^{2n}(b)\,ab.$$
+
+Since $g_k = \varrho_F^k(a) = \varrho_F^{k+1}(b)$ for the Fibonacci substitution $\varrho_F$
+($a \mapsto ab$, $b \mapsto a$), this says $ab\,\varrho_F^{2n+1}(b) = (\varrho_F')^{2n+1}(b)\,ba$
+and $ba\,\varrho_F^{2n}(b) = (\varrho_F')^{2n}(b)\,ab$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Proposition 52
@@ -737,10 +970,14 @@ public theorem_wanted fibonacci_iccanobiF_conjugate_b (n : ℕ) (hn : 1 ≤ n) :
         (fun u : List Bool => u.flatMap fun x => if x then [false, true] else [true])^[2 *
             n] [false] ++ [true, false]
 
-/-- **Theorem 53.** The words `(ϱ_F')^{2n}(a)` are prefixes of `Pre_{ab}(f)` and
-`(ϱ_F')^{2n}(b)` are prefixes of `Pre_{ba}(f)`, with lengths tending to infinity, so
-`(ϱ_F')^{2n}(a) → Pre_{ab}(f) ∈ a𝒲` and `(ϱ_F')^{2n}(b) → Pre_{ba}(f) ∈ b𝒲`; moreover
-`r_{Pre_{ab}(f)}(1) = 1`, `r_{Pre_{ba}(f)}(1) = -1` and both equal `n - 1` for `n > 1`.
+/-- **The iccanobiF iterates approximate $abf$ and $baf$.** Let $f = abaab\cdots$ be the
+Fibonacci word, the infinite Fibonacci word with each $0$ written as $a$ and each $1$ as $b$,
+and let $\varrho_F'$ be the iccanobiF substitution $a \mapsto ba$, $b \mapsto a$, extended to
+finite words by concatenation. For every $n \ge 0$, the word $(\varrho_F')^{2n}(a)$ is a prefix
+of the infinite word $abf$ and $(\varrho_F')^{2n}(b)$ is a prefix of $baf$, and for every $N$
+there is an $n$ such that $(\varrho_F')^{2n}(a)$ and $(\varrho_F')^{2n}(b)$ both have length at
+least $N$. Moreover, the relative position functions of $abf$ and $baf$ satisfy
+$r_{abf}(1) = 1$, $r_{baf}(1) = -1$ and $r_{abf}(n) = r_{baf}(n) = n - 1$ for every $n \ge 2$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Theorem 53
@@ -757,8 +994,12 @@ public theorem_wanted iccanobiF_fixed_points :
       ∀ n, 2 ≤ n → relativePosition ([true, false] ++ₛ f) n = n - 1 ∧
         relativePosition ([false, true] ++ₛ f) n = n - 1
 
-/-- **Theorem 55.** For an equilibrious word `u` of length `2j` and `w_j = Pre_u(f)`,
-`r_{w_j}(n) = n - j` for all `n > j`; if `u = (ab)^j`, then `r_{w_j}(1) = ⋯ = r_{w_j}(j) = 1`.
+/-- **Relative positions of the Fibonacci word with an equilibrious word prepended.** Let
+$f = abaab\cdots$ be the infinite Fibonacci word with $0$ read as $a$ and $1$ as $b$, let $j \ge 0$,
+let $u$ be a finite word over $\{a, b\}$ of length $2j$ in which $a$ and $b$ occur equally often
+(an equilibrious word), and let $r$ be the relative position function of the concatenation $uf$.
+Then $r(n) = n - j$ for all $n > j$. If moreover $u = (ab)^j$, then $r(n) = 1$ for all
+$1 \le n \le j$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Theorem 55
@@ -769,11 +1010,17 @@ public theorem_wanted relativePosition_prepend_equilibrious_fibonacci (u : List 
       (u = (List.replicate j [true, false]).flatten →
         ∀ n, 1 ≤ n → n ≤ j → relativePosition (u ++ₛ (fun i => !fibInf i)) n = 1)
 
-/-- **Theorem 57.** For `k, m ≥ 1`, `l ≥ 0` and `w` the one-sided fixed point of the extended Pisa
-substitution `σ_{k,l,m}` (`a ↦ a^k b a^l`, `b ↦ a^m`):
-`p_b(n) = m p_a(n) + (k+l+1-m) n + m - l - 1` and `r(n) = (m-1) p_a(n) + (k+l+1-m) n + m - l - 1`
-for `n ≥ 1`; and `w` is the unique word of `𝒲` whose relative position function satisfies the
-second identity.
+/-- **Position identities for the extended Pisa substitution.** Let $k \ge 1$, $l \ge 0$ and
+$m \ge 1$ be natural numbers, let $\sigma$ be the substitution $a \mapsto a^k b a^l$,
+$b \mapsto a^m$, and let $w$ be a one-sided fixed point of $\sigma$ (so $\sigma(w) = w$) that
+begins with $a$. For an infinite word $v$ over $\{a, b\}$ and $n \ge 1$, let $p_a(n)$ and
+$p_b(n)$ be the positions (counted from $0$) of the $n$-th $a$ and the $n$-th $b$ in $v$, and let
+$r(n) = p_b(n) - p_a(n)$. Then for $v = w$ and every $n \ge 1$,
+$$p_b(n) = m\,p_a(n) + (k + l + 1 - m)n + m - l - 1$$
+and
+$$r(n) = (m - 1)p_a(n) + (k + l + 1 - m)n + m - l - 1.$$
+Moreover, every infinite word $v$ over $\{a, b\}$ in which both letters occur infinitely often
+and whose functions $r$ and $p_a$ satisfy the second identity for all $n \ge 1$ equals $w$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Theorem 57
@@ -791,8 +1038,13 @@ public theorem_wanted pisa_letterPosition_identity (k l m : ℕ) (hk : 1 ≤ k) 
           (m - 1 : ℤ) * letterPosition w' true n + (k + l + 1 - m : ℤ) * n + m - l - 1) →
         w' = w
 
-/-- **Corollary 58.** For `k, m ≥ 1`, `l ≥ 0` and `w` the one-sided fixed point of `σ_{k,l,m}`,
-`r(n) = ((m-1)/m) p_b(n) + ((k+l+1-m)/m) n + (m-l-1)/m` for `n ≥ 1`.
+/-- **Relative position of the extended Pisa fixed point via the positions of $b$.** Let
+$k \ge 1$, $l \ge 0$ and $m \ge 1$ be natural numbers, let $\sigma$ be the substitution
+$a \mapsto a^k b a^l$, $b \mapsto a^m$, and let $w$ be a one-sided fixed point of $\sigma$ (so
+$\sigma(w) = w$) that begins with $a$. Let $p_a(n)$ and $p_b(n)$ be the positions (counted from
+$0$) of the $n$-th $a$ and the $n$-th $b$ in $w$, and let $r(n) = p_b(n) - p_a(n)$. Then for
+every $n \ge 1$,
+$$r(n) = \frac{m - 1}{m}\,p_b(n) + \frac{k + l + 1 - m}{m}\,n + \frac{m - l - 1}{m}.$$
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Corollary 58
@@ -806,12 +1058,21 @@ public theorem_wanted pisa_relativePosition_of_letterPosition_b (k l m : ℕ) (h
       (k + l + 1 - m) / m * n + (m - l - 1) / m
 
 open Filter Topology in
-/-- **Lemma 32.** Let `ϱ` be a primitive substitution (some power of its substitution matrix is
-positive), `[u 1]ᵀ` a right Perron–Frobenius eigenvector of the substitution matrix (eigenvalue
-`λ`), and `w ∈ 𝒲` a fixed point of `ϱ`. Then `Freq(a) = u/(u+1)`, `Freq(b) = 1/(u+1)`,
-`p_a(n)/n → 1 + 1/u`, `p_b(n)/n → u + 1`, `r(n)/n → u - 1/u`, and all these limits lie in
-`ℚ(λ)`. The Perron–Frobenius condition is stated as `u > 0` and `[u 1]ᵀ` an eigenvector: a
-positive eigenvector of a primitive matrix belongs to the Perron–Frobenius eigenvalue.
+/-- **Letter frequencies and mean positions of primitive fixed points.** Let $\varrho$ be a
+substitution on the letters $a, b$ with substitution matrix $M$, where $M_{11} = |\varrho(a)|_a$,
+$M_{12} = |\varrho(b)|_a$, $M_{21} = |\varrho(a)|_b$ and $M_{22} = |\varrho(b)|_b$ ($|v|_x$ is
+the number of letters $x$ in $v$). Suppose $\varrho$ is primitive (some power of $M$ has all
+entries positive), and let $u > 0$ and $\lambda$ be real numbers with
+$M (u, 1)^T = \lambda (u, 1)^T$. Let $w$ be a one-sided fixed point of $\varrho$ (so
+$\varrho(w) = w$) in which both letters occur infinitely often. Let $N_a(n)$ and $N_b(n)$ be the
+numbers of letters $a$ and $b$ among the first $n$ letters of $w$, let $p_a(n)$ and $p_b(n)$ be
+the positions of the $n$-th $a$ and the $n$-th $b$ in $w$, and let $r(n) = p_b(n) - p_a(n)$.
+Then, as $n \to \infty$, $N_a(n)/n \to u/(u + 1)$, $N_b(n)/n \to 1/(u + 1)$,
+$p_a(n)/n \to 1 + 1/u$, $p_b(n)/n \to u + 1$ and $r(n)/n \to u - 1/u$, and each of these five
+limits lies in the subfield $\mathbb{Q}(\lambda)$ of $\mathbb{R}$.
+
+A positive eigenvector of a primitive matrix belongs to its Perron–Frobenius eigenvalue, so
+$(u, 1)^T$ is a right Perron–Frobenius eigenvector of $M$ and $\lambda$ is its eigenvalue.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 32
@@ -833,10 +1094,18 @@ public theorem_wanted primitive_fixed_point_mean_values (ϱ : Bool → List Bool
         x ∈ IntermediateField.adjoin ℚ {c}
 
 open Filter Topology in
-/-- **Lemma 41.** For a primitive substitution `ϱ` and a fixed point `w ∈ 𝒲`, `r(n)/n → 1` iff
-`[τ 1]ᵀ` (`τ` the golden ratio) is a right Perron–Frobenius eigenvector of the substitution
-matrix (stated as an eigenvector: `[τ 1]ᵀ` is positive, so its eigenvalue is the
-Perron–Frobenius one).
+/-- **Relative position asymptotic to $n$ and the golden ratio.** Let $\varrho$ be a substitution
+on the letters $a, b$ with substitution matrix $M$, where $M_{11} = |\varrho(a)|_a$,
+$M_{12} = |\varrho(b)|_a$, $M_{21} = |\varrho(a)|_b$ and $M_{22} = |\varrho(b)|_b$ ($|v|_x$ is
+the number of letters $x$ in $v$), and suppose $\varrho$ is primitive (some power of $M$ has all
+entries positive). Let $w$ be a one-sided fixed point of $\varrho$ (so $\varrho(w) = w$) in which
+both letters occur infinitely often, let $p_a(n)$ and $p_b(n)$ be the positions of the $n$-th $a$
+and the $n$-th $b$ in $w$, and let $r(n) = p_b(n) - p_a(n)$. Then $r(n)/n \to 1$ as
+$n \to \infty$ if and only if $(\varphi, 1)^T$ is an eigenvector of $M$, where
+$\varphi = (1 + \sqrt 5)/2$ is the golden ratio.
+
+Since $(\varphi, 1)^T$ is positive, this is the same as being a right Perron–Frobenius
+eigenvector of $M$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Lemma 41
@@ -851,13 +1120,27 @@ public theorem_wanted primitive_relativePosition_div_tendsto_one_iff (ϱ : Bool 
           ![Real.goldenRatio, 1] = c • ![Real.goldenRatio, 1]
 
 open Filter Topology in
-/-- **Proposition 62.** Let `j, m ≥ 1`, `τ = τ_{j,m} = (j + √(j² + 4m))/2`, `ϱ` a primitive binary
-substitution and `w` a fixed point of `ϱ`. The following are equivalent: (i) `Freq(a) =
-(τ - m)/(j + 1 - m)`; (ii) `Freq(b) = (j + 1 - τ)/(j + 1 - m)`; (iii) `p_a(n)/n → 1 + (τ - j)/m`;
-(iv) `p_b(n)/n → τ + 1`; (v) `r(n)/n → ((m-1)τ + j)/m`; (vi) `p_a(n)/n` has a limit `q` and
-`r(n)/n → (m-1) q + (j + 1 - m)`; (vii) `[τ 1]ᵀ` is a right eigenvector of the substitution
-matrix. Added hypothesis `m ≠ j + 1`: for `m = j + 1`, `τ_{j,j+1} = j + 1 = m`, so (i) and (ii)
-read `0/0` and the printed equivalence is meaningless.
+/-- **Frequency and position criteria for an eigenvector of a primitive substitution.** Let
+$j \ge 1$ and $m \ge 1$ be natural numbers with $m \ne j + 1$, and let
+$\tau = (j + \sqrt{j^2 + 4m})/2$. Let
+$\varrho$ be a substitution on the letters $a, b$ with substitution matrix $M$, where
+$M_{11} = |\varrho(a)|_a$, $M_{12} = |\varrho(b)|_a$, $M_{21} = |\varrho(a)|_b$ and
+$M_{22} = |\varrho(b)|_b$ ($|v|_x$ is the number of letters $x$ in $v$). Suppose $\varrho$ is
+primitive (some power of $M$ has all entries positive), and let $w$ be a one-sided fixed point
+of $\varrho$ (so $\varrho(w) = w$). Let $N_a(n)$ and $N_b(n)$ be the numbers of letters $a$ and
+$b$ among the first $n$ letters of $w$, let $p_a(n)$ and $p_b(n)$ be the positions (counted from
+$0$) of the $n$-th $a$ and the $n$-th $b$ in $w$, and let $r(n) = p_b(n) - p_a(n)$. Then the
+following are equivalent, all limits taken as $n \to \infty$:
+(i) $N_a(n)/n \to (\tau - m)/(j + 1 - m)$;
+(ii) $N_b(n)/n \to (j + 1 - \tau)/(j + 1 - m)$;
+(iii) $p_a(n)/n \to 1 + (\tau - j)/m$;
+(iv) $p_b(n)/n \to \tau + 1$;
+(v) $r(n)/n \to ((m - 1)\tau + j)/m$;
+(vi) $p_a(n)/n$ converges to some real number $q$ and $r(n)/n \to (m - 1)q + j + 1 - m$;
+(vii) $(\tau, 1)^T$ is an eigenvector of $M$.
+
+The hypothesis $m \ne j + 1$ is added to the paper's statement: for $m = j + 1$ one has
+$\tau = j + 1 = m$, so (i) and (ii) read $0/0$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Proposition 62
@@ -879,10 +1162,18 @@ public theorem_wanted pisa_frequency_tfae (j m : ℕ) (hj : 1 ≤ j) (hm : 1 ≤
           (ϱ false).count false] : Matrix (Fin 2) (Fin 2) ℕ).map (Nat.cast : ℕ → ℝ)).mulVec ![τ,
           1] = c • ![τ, 1]].TFAE
 
-/-- **Theorem 64.** (a) For `j ≥ 1`, `w = (a^j b^j)^ω` has `r(n) = j`. (b) For `0 ≤ j ≤ k - 1` and
-`w` the one-sided fixed point of `σ_{k-j,j,1}`, `r(n) = kn - j`. (c) For `w` the one-sided fixed
-point of `σ_{1,k-1,1}`, `r_{D(w)}(n) = kn + 1`. Domain restriction in (c): `k ≥ 1`; the paper
-writes `k ≥ 0`, but `σ_{1,k-1,1}` needs `k - 1 ≥ 0`.
+/-- **Words with linear relative position function.** For integers $k, l, m \ge 0$ write
+$\sigma_{k,l,m}$ for the substitution $a \mapsto a^k b a^l$, $b \mapsto a^m$, and for a binary
+word $v$ let $r_v(n) = p_{b,v}(n) - p_{a,v}(n)$, where $p_{\alpha,v}(n)$ is the position (counted
+from $0$) of the $n$-th occurrence of the letter $\alpha$ in $v$.
+(a) For every $j \ge 1$, the word $v = (a^j b^j)^\omega$ has $r_v(n) = j$ for all $n \ge 1$.
+(b) For integers $0 \le j < k$, every fixed point $w$ of $\sigma_{k-j,j,1}$ that starts with $a$
+has $r_w(n) = kn - j$ for all $n \ge 1$.
+(c) For every $k \ge 1$, if $w$ is a fixed point of $\sigma_{1,k-1,1}$ that starts with $a$ and
+$D(w)$ is the word $w$ with its first $a$ and its first $b$ deleted, then $r_{D(w)}(n) = kn + 1$
+for all $n \ge 1$.
+
+The paper writes $k \ge 0$ in (c), but $\sigma_{1,k-1,1}$ needs $k \ge 1$.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Theorem 64
@@ -899,20 +1190,24 @@ public theorem_wanted linear_relativePosition_examples :
             List.replicate (k - 1) true else List.replicate 1 true) w w → w 0 = true →
         ∀ n, 1 ≤ n → relativePosition (deletion w) n = k * n + 1
 
-/-- **Proposition 65**, corrected substitution. Let `k ≥ 1`, `j ∈ ℤ`, `j = qk - r` with
-`0 ≤ r ≤ k - 1`, and let `w` be the one-sided fixed point of the Pisa substitution
-`σ_{k-r,r,1}` (`a ↦ a^{k-r} b a^r`, `b ↦ a`). (a) If `q ≥ 0`, then `r_{D^q(w)}(n) = kn + j` for
-all large `n`. (b) If `q < 0`, then for every equilibrious word `s` of length `-2q`,
-`r_{sw}(n) = kn + j` for all large `n`.
-Correction: the paper takes `w` to be the fixed point of `σ_{1,k-1,1}` for every `r`, which is
-false unless `r = k - 1`: for `k = 2`, `j = 2` (`q = 1`, `r = 0`) that fixed point has
-`r_{D(w)}(n) = 2n + 1` (Theorem 64(c)), not `2n + 2`. The substitution `σ_{k-r,r,1}` is the one
-Theorem 64(b) provides (`r(n) = kn - r`), from which `D` (Section 2:
-`r_{D(w)}(n) = r_w(n+1)` on `ab𝒲 ∪ ba𝒲`) and equilibrious prefixes (Lemma 22) shift the index by
-`q`, giving every progression `kn + j` as the paper's
-preceding sentence ("This can always be achieved") intends; for `r = k - 1` it is the paper's
-`σ_{1,k-1,1}`. Domain restriction: `k ≥ 1` (the paper writes `k ≥ 0`, but `0 ≤ r ≤ k - 1` is then
-empty). The instance `s = (ab)^{-q}` of (b) is omitted, being a special case.
+/-- **Eventually linear relative position functions with positive slope.** Let $k \ge 1$, $q$
+and $c$ be integers with $0 \le c \le k - 1$, and put $j = qk - c$. Let $w$ be an infinite word
+over $\{a, b\}$ that starts with $a$ and is a fixed point of the Pisa substitution
+$\sigma_{k-c,c,1}$, given by $a \mapsto a^{k-c} b a^c$ and $b \mapsto a$. For an infinite word $v$
+write $r_v$ for its relative position function, and let $D$ be the deletion operator, which
+deletes the first $b$ and then the first $a$ of a word. (a) If $q \ge 0$, then
+$r_{D^q(w)}(n) = kn + j$ for all sufficiently large $n$. (b) If $q < 0$, then for every finite
+word $u$ over $\{a, b\}$ of length $-2q$ in which $a$ and $b$ occur equally often (an
+equilibrious word), $r_{uw}(n) = kn + j$ for all sufficiently large $n$.
+
+The paper takes $w$ to be the fixed point of $\sigma_{1,k-1,1}$ for every $c$, which is false
+unless $c = k - 1$: for $k = 2$ and $j = 2$ ($q = 1$, $c = 0$) that fixed point has
+$r_{D(w)}(n) = 2n + 1$ (Theorem 64(c)), not $2n + 2$. The substitution $\sigma_{k-c,c,1}$ is the
+one Theorem 64(b) provides ($r_w(n) = kn - c$), from which $D$ (with $r_{D(w)}(n) = r_w(n+1)$
+for words that start with $ab$ or $ba$ and contain both letters infinitely often) and
+equilibrious prefixes (Lemma 22) shift the index by $q$, giving every progression $kn + j$ with
+$k \ge 1$; for $c = k - 1$ it is the paper's $\sigma_{1,k-1,1}$. The paper writes $k \ge 0$, but
+the range $0 \le c \le k - 1$ is then empty.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Proposition 65
@@ -928,13 +1223,23 @@ public theorem_wanted relativePosition_eventually_eq_linear (k r : ℕ) (hk : 1 
           ∀ᶠ n in Filter.atTop, relativePosition (u ++ₛ w) n = k * n + j)
 
 open Filter Topology in
-/-- **Theorem 67.** Let `ϱ` be a primitive binary substitution with substitution matrix `M` and
-one-sided fixed point `w ∈ 𝒲`, `k ≥ 1` and `τ_k = (k + √(k² + 4))/2`. (a) `r(n)/n → k` iff
-`[τ_k 1]ᵀ` is a right Perron–Frobenius eigenvector of `M` iff `M = [[km + n, m], [m, n]]` with
-`m ≥ 1`, `n ≥ 0`. (b) `r(n)/n → -k` iff `[1 τ_k]ᵀ` is one iff `M = [[n, m], [m, km + n]]` with
-`m ≥ 1`, `n ≥ 0`. (c) `r(n)/n → 0` iff `[1 1]ᵀ` is one iff the row sums `a + b`, `c + d` of
-`M = [[a, b], [c, d]]` agree. The Perron–Frobenius conditions are stated as eigenvector
-conditions (the vectors are positive, so the eigenvalue is the Perron–Frobenius one).
+/-- **Primitive substitutions with asymptotically linear relative position.** Let $\varrho$ be a
+substitution on the letters $a, b$ with substitution matrix $M$, where $M_{11} = |\varrho(a)|_a$,
+$M_{12} = |\varrho(b)|_a$, $M_{21} = |\varrho(a)|_b$ and $M_{22} = |\varrho(b)|_b$ ($|v|_x$ is
+the number of letters $x$ in $v$). Suppose $\varrho$ is primitive (some power of $M$ has all
+entries positive), and let $w$ be a one-sided fixed point of $\varrho$ (so $\varrho(w) = w$) in
+which both letters occur infinitely often. Let $p_a(n)$ and $p_b(n)$ be the positions of the
+$n$-th $a$ and the $n$-th $b$ in $w$, let $r(n) = p_b(n) - p_a(n)$, let $k \ge 1$ be a natural
+number and let $\tau = (k + \sqrt{k^2 + 4})/2$. With all limits taken as $n \to \infty$:
+(a) the following are equivalent: $r(n)/n \to k$; $(\tau, 1)^T$ is an eigenvector of $M$;
+$M$ has rows $(km + t, m)$ and $(m, t)$ for some natural numbers $m \ge 1$ and $t \ge 0$.
+(b) the following are equivalent: $r(n)/n \to -k$; $(1, \tau)^T$ is an eigenvector of $M$;
+$M$ has rows $(t, m)$ and $(m, km + t)$ for some natural numbers $m \ge 1$ and $t \ge 0$.
+(c) the following are equivalent: $r(n)/n \to 0$; $(1, 1)^T$ is an eigenvector of $M$;
+$M_{11} + M_{12} = M_{21} + M_{22}$.
+
+These vectors are positive, so being an eigenvector of the primitive matrix $M$ is the same as
+being its right Perron–Frobenius eigenvector.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Theorem 67
@@ -970,9 +1275,14 @@ public theorem_wanted primitive_asymptotically_linear_classification (ϱ : Bool 
             (!![(ϱ true).count true, (ϱ false).count true; (ϱ true).count false,
             (ϱ false).count false] : Matrix (Fin 2) (Fin 2) ℕ) 1 1].TFAE
 
-/-- **Proposition 69.** If every dimer `X_n = ℓ_{2n} ℓ_{2n+1}` of `w` is `ab` or `ba`, then
-`r(n) = 1` if `X_{n-1} = ab` and `r(n) = -1` if `X_{n-1} = ba`, for `n ≥ 1`. (The dimer condition
-forces both letters to occur infinitely often, so no separate `w ∈ 𝒲` hypothesis is needed.)
+/-- **Relative positions of a word made of $ab$ and $ba$ blocks.** Let
+$w = \ell_0 \ell_1 \ell_2 \cdots$ be an infinite word over $\{a, b\}$ such that every block
+$\ell_{2i} \ell_{2i+1}$ ($i \ge 0$) is $ab$ or $ba$, and let $r$ be its relative position
+function. Then for every $n \ge 1$, $r(n) = 1$ if $\ell_{2n-2} = a$ and $r(n) = -1$ if
+$\ell_{2n-2} = b$.
+
+The block condition forces both letters to occur infinitely often, so no separate hypothesis on
+$w$ is needed.
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Proposition 69
@@ -981,8 +1291,12 @@ public theorem_wanted relativePosition_of_dimers {w : ℕ → Bool}
     (hdim : ∀ i, w (2 * i) ≠ w (2 * i + 1)) (n : ℕ) (hn : 1 ≤ n) :
     relativePosition w n = if w (2 * (n - 1)) then 1 else -1
 
-/-- **Theorem 70.** The Thue–Morse word `t` is the only word `w ∈ a𝒲` with `w = r(1) r(2) ⋯` on
-the letters `a = 1`, `b = -1`, i.e. with `r(n) = 1` if `ℓ_{n-1} = a` and `r(n) = -1` otherwise.
+/-- **Characterization of the Thue–Morse word by its relative positions.** Let
+$w = \ell_0 \ell_1 \ell_2 \cdots$ be an infinite word over $\{a, b\}$ that starts with $a$ and in
+which both letters occur infinitely often, and let $r$ be its relative position function. Then
+$r(n) = 1$ when $\ell_{n-1} = a$ and $r(n) = -1$ when $\ell_{n-1} = b$, for all $n \ge 1$, if and
+only if $w$ is the Thue–Morse word $t = abbabaab\cdots$ (the Thue–Morse sequence with $0$ read as
+$a$ and $1$ as $b$).
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Theorem 70
@@ -991,8 +1305,12 @@ public theorem_wanted relativePosition_self_coding_iff_thueMorse {w : ℕ → Bo
     (hw : BothLettersInfinite w) (h₀ : w 0 = true) :
     (∀ n, 1 ≤ n → relativePosition w n = if w (n - 1) then 1 else -1) ↔ w = (fun i => !thueMorse i)
 
-/-- **Corollary 71.** The Thue–Morse word is the only word in `abba𝒲` isomorphic to
-`r(1) r(2) ⋯` (`r(n)` an injective coding of `ℓ_{n-1}`).
+/-- **Characterization of the Thue–Morse word among words starting with $abba$.** Let
+$w = \ell_0 \ell_1 \ell_2 \cdots$ be an infinite word over $\{a, b\}$ that begins with $abba$ and in
+which both letters occur infinitely often, and let $r$ be its relative position function. Then
+there is an injective map $\sigma \colon \{a, b\} \to \mathbb{Z}$ with $r(n) = \sigma(\ell_{n-1})$
+for all $n \ge 1$ if and only if $w$ is the Thue–Morse word $t = abbabaab\cdots$ (the Thue–Morse
+sequence with $0$ read as $a$ and $1$ as $b$).
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Corollary 71
@@ -1003,8 +1321,13 @@ public theorem_wanted relativePosition_isomorphic_iff_thueMorse {w : ℕ → Boo
     (∃ σ : Bool → ℤ, Function.Injective σ ∧ ∀ n, 1 ≤ n → relativePosition w n = σ (w (n - 1))) ↔
       w = (fun i => !thueMorse i)
 
-/-- **Theorem 72.** For `k > 1`, `φ_k(t)` is the only word `w ∈ a𝒲` with `w = r(1) r(2) ⋯` on the
-letters `a = k`, `b = -k`.
+/-- **Characterization of the cloned Thue–Morse words by their relative positions.** Let $k > 1$
+be an integer, let $w = \ell_0 \ell_1 \ell_2 \cdots$ be an infinite word over $\{a, b\}$ that starts
+with $a$ and in which both letters occur infinitely often, and let $r$ be its relative position
+function. Then $r(n) = k$ when $\ell_{n-1} = a$ and $r(n) = -k$ when $\ell_{n-1} = b$, for all
+$n \ge 1$, if and only if $w = \varphi_k(t)$, the word whose letter at position $i$ is
+$t_{\lfloor i/k \rfloor}$, where $t = abbabaab\cdots$ is the Thue–Morse word (the Thue–Morse
+sequence with $0$ read as $a$ and $1$ as $b$).
 
 Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
 Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Theorem 72

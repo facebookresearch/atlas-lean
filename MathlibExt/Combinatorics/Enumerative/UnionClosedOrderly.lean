@@ -30,39 +30,48 @@ namespace MetaMathlibExt
 This file proves that every nonempty initial segment of a canonical indexed family is canonical.
 -/
 
-/-- Binary code `b(A)` of a subset `A ⊆ Ω_n`: the sum of `2^i` over `i ∈ A`. -/
+/-- **Binary code of a subset.** For a natural number $n$ and a subset $A$ of
+$\{0, 1, \dots, n-1\}$, the binary code of $A$ is the natural number
+$b(A) = \sum_{i \in A} 2^i$. -/
 public def binRep (n : ℕ) (A : Finset (Fin n)) : ℕ :=
   ∑ i ∈ A, 2 ^ (i : ℕ)
 
-/-- The paper's strict order on subsets: `A < B` iff `|A| > |B|`, or the
-cardinalities agree and `b(A) < b(B)`. -/
+/-- **Set order.** For subsets $A$ and $B$ of $\{0, \dots, n-1\}$, $A$ precedes $B$ in the set
+order, written $A < B$, if $|A| > |B|$, or $|A| = |B|$ and $b(A) < b(B)$, where
+$b(A) = \sum_{i \in A} 2^i$ is the binary code of $A$. -/
 public def setLT (n : ℕ) (A B : Finset (Fin n)) : Prop :=
   B.card < A.card ∨ (A.card = B.card ∧ binRep n A < binRep n B)
 
-/-- Sort key encoding the paper's set order as one natural number:
-`(n - |A|) * 2^n + b(A)`. Since `b(A) < 2^n`, numeric key order agrees with
-the paper's set order. -/
+/-- **Sort key of a subset.** For a subset $A$ of $\{0, \dots, n-1\}$, the sort key of $A$ is
+the natural number $(n - |A|) \cdot 2^n + b(A)$, where $b(A) = \sum_{i \in A} 2^i$ is the
+binary code of $A$.
+
+Since $b(A) < 2^n$, comparing sort keys as numbers agrees with the set order: larger sets come
+first, and sets of the same size are ordered by binary code. -/
 public def setKey (n : ℕ) (A : Finset (Fin n)) : ℕ :=
   (n - A.card) * 2 ^ n + binRep n A
 
-/-- The paper's string `s(U)`: sort keys of the nonempty members of `U`,
-in increasing order. -/
+/-- **String of a family.** For a family $U$ of subsets of $\{0, \dots, n-1\}$, the string
+$s(U)$ is the list of the sort keys of the nonempty members of $U$, in increasing order. -/
 public def famString (n : ℕ) (U : Finset (Finset (Fin n))) : List ℕ :=
   Multiset.sort ((U.filter (· ≠ ∅)).val.map (setKey n)) (· ≤ ·)
 
-/-- Action of a universe permutation on a family: apply `σ` to every element
-of every member. -/
+/-- **Permuted image of a family.** For a permutation $\sigma$ of $\{0, \dots, n-1\}$ and a
+family $U$ of subsets of $\{0, \dots, n-1\}$, the permuted image $\sigma(U)$ is the family
+$\{\sigma(A) : A \in U\}$, where $\sigma(A) = \{\sigma(a) : a \in A\}$. -/
 public def permImage (n : ℕ) (σ : Equiv.Perm (Fin n))
     (U : Finset (Finset (Fin n))) : Finset (Finset (Fin n)) :=
   U.image fun A => A.image ⇑σ
 
-/-- A family is union-closed if it contains the union of any two members. -/
+/-- **Union-closed family.** A family $U$ of subsets of $\{0, \dots, n-1\}$ is union-closed if
+$A \cup B \in U$ for all $A, B \in U$. -/
 public def IsUnionClosed (n : ℕ) (U : Finset (Finset (Fin n))) : Prop :=
   ∀ A ∈ U, ∀ B ∈ U, A ∪ B ∈ U
 
-/-- A family is the canonical representative of its isomorphism class if its
-string is lexicographically minimal among all permuted images (`≤` on
-`List ℕ` is the lexicographic order). -/
+/-- **Canonical family.** A family $U$ of subsets of $\{0, \dots, n-1\}$ is canonical, the
+canonical representative of its isomorphism class, if for every permutation $\sigma$ of
+$\{0, \dots, n-1\}$ the string $s(U)$ is lexicographically at most the string $s(\sigma(U))$
+of the permuted family $\sigma(U)$. -/
 public def IsCanonical (n : ℕ) (U : Finset (Finset (Fin n))) : Prop :=
   ∀ σ : Equiv.Perm (Fin n), famString n U ≤ famString n (permImage n σ U)
 
@@ -94,7 +103,8 @@ private theorem orderly_setLT_key_lt (n : ℕ) (A B : Finset (Fin n))
     rw [hcard]
     exact Nat.add_lt_add_left hbin _
 
-/-- The paper's strict set order agrees exactly with strict order on its numeric sort key. -/
+/-- **The sort key encodes the set order.** For all subsets $A$ and $B$ of $\{0, \dots, n-1\}$,
+$A < B$ in the set order if and only if the sort key of $A$ is less than the sort key of $B$. -/
 public theorem setLT_iff_setKey_lt (n : ℕ) (A B : Finset (Fin n)) :
     setLT n A B ↔ setKey n A < setKey n B := by
   constructor
@@ -308,10 +318,12 @@ private theorem orderly_perm_famString_length (n : ℕ) (σ : Equiv.Perm (Fin n)
   rw [hfilter, Finset.card_image_of_injective]
   exact Finset.image_injective σ.injective
 
-/--
-Every prefix of a canonically sorted indexed family is canonical. This holds for every
-`m ≤ k`, including `m = 0`, and needs neither universe coverage nor union closure.
--/
+/-- **Prefixes of a sorted canonical family are canonical.** Let $A_1, \dots, A_k$ be nonempty
+subsets of $\{0, \dots, n-1\}$ with $A_i < A_j$ in the set order whenever $i < j$, and suppose
+the family $U = \{\emptyset, A_1, \dots, A_k\}$ is canonical. Then for every $m \le k$, including
+$m = 0$, the family $\{\emptyset, A_1, \dots, A_m\}$ is canonical.
+
+Neither union closure nor coverage of the universe is needed. -/
 public theorem orderly_canonical_prefix_of_sorted
     (n k m : ℕ) (U : Finset (Finset (Fin n)))
     (A : Fin k → Finset (Fin n))
@@ -409,25 +421,23 @@ public theorem orderly_canonical_prefix_of_sorted
   exact (not_lt_of_ge hcanonical) hfullLt
 
 /--
-Orderly generation for union-closed sets: let `U ≠ {Ω_n, ∅}` be a union-closed
-family for the universe `Ω_n` that is the canonical representative of its
-isomorphism class. If `U = {A_1, …, A_k, ∅}` with `A_1 < ⋯ < A_k` in the
-paper's set order and `1 ≤ m ≤ k`, then the prefix `{A_1, …, A_m, ∅}` is also
-the canonical representative of its class.
+**Orderly generation of union-closed families.** Let $n$, $k$ and $m$ be natural numbers with
+$1 \le m \le k$, and let $A_1, \dots, A_k$ be nonempty subsets of $\Omega_n = \{0, \dots, n-1\}$
+with $A_i < A_j$ in the set order whenever $i < j$. Suppose the family
+$U = \{\emptyset, A_1, \dots, A_k\}$ is union-closed, every element of $\Omega_n$ lies in some
+member of $U$, $U \ne \{\Omega_n, \emptyset\}$, and $U$ is canonical. Then the prefix family
+$\{\emptyset, A_1, \dots, A_m\}$ is canonical.
 
-Provenance: Gunnar Brinkmann and Robin Deklerck, "Generation of Union-Closed
-Sets and Moore Families", Journal of Integer Sequences 21 (2018),
-Article 18.1.7, Theorem `thm:orderly`, source lines 275–281,
-<https://cs.uwaterloo.ca/journals/JIS/VOL21/Brinkmann/brink6.tex>.
-Canonical means the family string (sort keys of nonempty members in increasing
-order) is lexicographically minimal among permuted images; the set order sorts
-by decreasing cardinality, breaking ties by the binary code.
+The hypotheses that $U$ is union-closed, covers $\Omega_n$ and differs from
+$\{\Omega_n, \emptyset\}$ are not used in the proof. The string of $U$ lists the sort keys of
+$A_1, \dots, A_k$ in order, so the string of the prefix family is a prefix of it, and a
+permutation that made the prefix family's string smaller would make the string of $U$ smaller.
 
 Proves `Wanted` entry `orderly_canonical_prefix`.
 
-Proof: The binary-key bound identifies the indexed families with strictly sorted key lists, and
-sorted-submultiset order statistics lift any improving permutation of a prefix to the full family.
-This is the orderly-generation argument of Brinkmann and Deklerck, Theorem `thm:orderly`.
+Source: Gunnar Brinkmann and Robin Deklerck, "Generation of Union-Closed Sets and Moore
+Families", Journal of Integer Sequences 21 (2018), Article 18.1.7, Theorem `thm:orderly`,
+source lines 275–281, <https://cs.uwaterloo.ca/journals/JIS/VOL21/Brinkmann/brink6.tex>.
 -/
 public theorem orderly_canonical_prefix
     (n k m : ℕ) (U : Finset (Finset (Fin n)))

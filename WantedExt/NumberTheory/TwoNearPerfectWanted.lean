@@ -29,14 +29,17 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Theorem 1: if `n = 2^k p` (`p` prime, `k > 0`) is `2`-near perfect with omitted divisors
-`d₁, d₂`, then up to swapping `d₁, d₂` one of: (1) `p = 2^k - 1`, `d₁ = 1`, `d₂ = p`;
-(2) `p = 2^(k+1) - 2^a - 2^b - 1`, `d₁ = 2^a`, `d₂ = 2^b`; (3)
-`p = (2^(k+1) - 2^a - 1) / (1 + 2^b)`, `d₁ = 2^a`, `d₂ = 2^b p`; (4)
-`p = (2^(k+1) - 1) / (1 + 2^a + 2^b)`, `d₁ = 2^a p`, `d₂ = 2^b p`, for some `a, b ∈ ℕ`.
-Quotients are written as products. The paper states only this necessary direction; the four
-situations are not sufficient as printed (`k = 3`, `a = b = 1` gives the prime `p = 11` in
-situation 2, but `d₁ = d₂ = 2`).
+/-- **$2$-near perfect numbers of the form $2^k p$.** Let $k \ge 1$, let $p$ be a prime and let
+$n = 2^k p$. Suppose $d_1 \ne d_2$ are divisors of $n$ with $\sigma(n) = 2n + d_1 + d_2$, where
+$\sigma$ is the sum-of-divisors function (that is, $n$ is $2$-near perfect with omitted divisors
+$d_1, d_2$). Then, after possibly swapping $d_1$ and $d_2$, one of the following holds, where
+all equations are between integers: (1) $p = 2^k - 1$, $d_1 = 1$ and $d_2 = p$; (2) for some
+natural numbers $a, b$, $p = 2^{k+1} - 2^a - 2^b - 1$, $d_1 = 2^a$ and $d_2 = 2^b$; (3) for some
+natural numbers $a, b$, $p(1 + 2^b) = 2^{k+1} - 2^a - 1$, $d_1 = 2^a$ and $d_2 = 2^b p$; (4) for
+some natural numbers $a, b$, $p(1 + 2^a + 2^b) = 2^{k+1} - 1$, $d_1 = 2^a p$ and $d_2 = 2^b p$.
+
+The paper states only this necessary direction; the four situations are not sufficient as
+printed ($k = 3$, $a = b = 1$ gives the prime $p = 11$ in situation 2, but $d_1 = d_2 = 2$).
 
 Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
 *On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Theorem 1
@@ -52,7 +55,10 @@ public theorem_wanted two_near_perfect_two_pow_mul_prime_cases {k p d₁ d₂ : 
         (∃ a b : ℕ, (p : ℤ) * (1 + 2 ^ a + 2 ^ b) = 2 ^ (k + 1) - 1 ∧
           e₁ = 2 ^ a * p ∧ e₂ = 2 ^ b * p))
 
-/-- Theorem 2: if `n = 2^k p^2` (`p` prime) is `2`-near perfect, then `n ∈ {18, 36, 200}`.
+/-- **$2$-near perfect numbers of the form $2^k p^2$.** Let $p$ be a prime, let $k$ be a natural
+number and let $n = 2^k p^2$. If $n$ has divisors $d_1 \ne d_2$ with
+$\sigma(n) = 2n + d_1 + d_2$, where $\sigma$ is the sum-of-divisors function (that is, $n$ is
+$2$-near perfect with omitted divisors $d_1, d_2$), then $n$ is $18$, $36$ or $200$.
 
 Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
 *On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Theorem 2
@@ -62,8 +68,9 @@ public theorem_wanted two_near_perfect_two_pow_mul_prime_sq {k p d₁ d₂ : ℕ
     (hσ : ArithmeticFunction.sigma 1 (2 ^ k * p ^ 2) = 2 * (2 ^ k * p ^ 2) + d₁ + d₂) :
     2 ^ k * p ^ 2 = 18 ∨ 2 ^ k * p ^ 2 = 36 ∨ 2 ^ k * p ^ 2 = 200
 
-/-- Lemma 2: for integers `1 ≤ a ≤ k`, if `D = 2^(2k+2) + 2^(k+2) - 2^(a+2) - 7` is a
-perfect square, then `k = a = 1`.
+/-- **Square values of the discriminant $2^{2k+2} + 2^{k+2} - 2^{a+2} - 7$.** Let $a$ and $k$ be
+natural numbers with $1 \le a \le k$. If $2^{2k+2} + 2^{k+2} - 2^{a+2} - 7$ is the square of an
+integer, then $k = a = 1$.
 
 Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
 *On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 2
@@ -72,9 +79,10 @@ public theorem_wanted eq_one_of_isSquare_discriminant {a k : ℕ} (ha : 0 < a) (
     (hD : IsSquare ((2 : ℤ) ^ (2 * k + 2) + 2 ^ (k + 2) - 2 ^ (a + 2) - 7)) :
     k = 1 ∧ a = 1
 
-/-- Lemma 3: if `b, k ≥ 0`, `p` is odd and
-`(2^(k+1) - 1)(p^2 + p + 1) = 2^(k+1) p^2 + 2^b p + 1`, then `p ∣ 2^k - 1` and
-`p + 1 ∣ 2^b - 2`.
+/-- **Divisibility constraints on odd solutions of $(2^{k+1} - 1)(p^2 + p + 1) =
+2^{k+1} p^2 + 2^b p + 1$.** Let $b$ and $k$ be natural numbers and let $p$ be an odd natural
+number such that $(2^{k+1} - 1)(p^2 + p + 1) = 2^{k+1} p^2 + 2^b p + 1$. Then, as integers, $p$
+divides $2^k - 1$ and $p + 1$ divides $2^b - 2$.
 
 Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
 *On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 3
@@ -83,8 +91,9 @@ public theorem_wanted dvd_of_two_near_perfect_eq_six {b k p : ℕ} (hp : Odd p)
     (h : ((2 : ℤ) ^ (k + 1) - 1) * (p ^ 2 + p + 1) = 2 ^ (k + 1) * p ^ 2 + 2 ^ b * p + 1) :
     (p : ℤ) ∣ 2 ^ k - 1 ∧ (p + 1 : ℤ) ∣ 2 ^ b - 2
 
-/-- Lemma 4: `(2^(k+1) - 1)(p^2 + p + 1) = 2^(k+1) p^2 + 2^b p + 1` has no solution with
-`p` odd and `2 ≤ b ≤ k - 1`.
+/-- **No odd solutions of $(2^{k+1} - 1)(p^2 + p + 1) = 2^{k+1} p^2 + 2^b p + 1$ for
+$2 \le b \le k - 1$.** Let $b$ and $k$ be natural numbers with $2 \le b$ and $b + 1 \le k$, and
+let $p$ be an odd natural number. Then $(2^{k+1} - 1)(p^2 + p + 1) \ne 2^{k+1} p^2 + 2^b p + 1$.
 
 Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
 *On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 4
@@ -93,9 +102,10 @@ public theorem_wanted not_two_near_perfect_eq_seven {b k p : ℕ} (hp : Odd p) (
     (hbk : b + 1 ≤ k) :
     ((2 : ℤ) ^ (k + 1) - 1) * (p ^ 2 + p + 1) ≠ 2 ^ (k + 1) * p ^ 2 + 2 ^ b * p + 1
 
-/-- Lemma 5: if `n = 2^k p^2` (`p` an odd prime) is `2`-near perfect with omitted divisors
-`d₁, d₂`, then `d₁ + d₂ = -p^2 + (2^(k+1) - 1) p + (2^(k+1) - 1)` and `d₁, d₂` have
-opposite parity.
+/-- **Sum and parity of the omitted divisors of a $2$-near perfect $2^k p^2$.** Let $p$ be an odd
+prime, let $k$ be a natural number, and let $d_1 \ne d_2$ be divisors of $n = 2^k p^2$ with
+$\sigma(n) = 2n + d_1 + d_2$, where $\sigma$ denotes the sum of divisors. Then
+$d_1 + d_2 = -p^2 + (2^{k+1} - 1) p + (2^{k+1} - 1)$, and $d_1$ and $d_2$ have opposite parity.
 
 Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
 *On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 5
@@ -107,9 +117,9 @@ public theorem_wanted omitted_divisors_sum_two_pow_mul_prime_sq {k p d₁ d₂ :
     ((d₁ + d₂ : ℕ) : ℤ) = -(p : ℤ) ^ 2 + (2 ^ (k + 1) - 1) * p + (2 ^ (k + 1) - 1) ∧
       d₁ % 2 ≠ d₂ % 2
 
-/-- Lemma 6: if `k, b > 0`, `p` is odd and
-`(2^(k+1) - 1)(p^2 + p + 1) = 2^(k+1) p^2 + 2^b p^2 + 1` (Equation (12)), then
-`p ∣ 2^k - 1`.
+/-- **Odd solutions $p$ of $(2^{k+1} - 1)(p^2 + p + 1) = 2^{k+1} p^2 + 2^b p^2 + 1$ divide
+$2^k - 1$.** Let $k$ and $b$ be positive natural numbers and let $p$ be an odd natural number
+such that $(2^{k+1} - 1)(p^2 + p + 1) = 2^{k+1} p^2 + 2^b p^2 + 1$. Then $p$ divides $2^k - 1$.
 
 Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
 *On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 6
@@ -119,8 +129,10 @@ public theorem_wanted dvd_of_two_near_perfect_eq_twelve {b k p : ℕ} (hk : 0 < 
     (h : ((2 : ℤ) ^ (k + 1) - 1) * (p ^ 2 + p + 1) = 2 ^ (k + 1) * p ^ 2 + 2 ^ b * p ^ 2 + 1) :
     (p : ℤ) ∣ 2 ^ k - 1
 
-/-- Lemma 7: an odd solution `p` of Equation (12) (with `k, b > 0`, as in Lemma 6)
-satisfies `p + 1 ∣ 2^b + 2`.
+/-- **Odd solutions $p$ of $(2^{k+1} - 1)(p^2 + p + 1) = 2^{k+1} p^2 + 2^b p^2 + 1$ satisfy
+$p + 1 \mid 2^b + 2$.** Let $k$ and $b$ be positive natural numbers and let $p$ be an odd natural
+number such that $(2^{k+1} - 1)(p^2 + p + 1) = 2^{k+1} p^2 + 2^b p^2 + 1$. Then, as integers,
+$p + 1$ divides $2^b + 2$.
 
 Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
 *On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 7
@@ -130,8 +142,11 @@ public theorem_wanted succ_dvd_of_two_near_perfect_eq_twelve {b k p : ℕ} (hk :
     (h : ((2 : ℤ) ^ (k + 1) - 1) * (p ^ 2 + p + 1) = 2 ^ (k + 1) * p ^ 2 + 2 ^ b * p ^ 2 + 1) :
     (p + 1 : ℤ) ∣ 2 ^ b + 2
 
-/-- Lemma 8: if `n = 2^k p` (`p` an odd prime) is strongly `2`-near perfect, then
-`p = (2^(k+1) - 2^a - 1) / (1 + 2^(k-a))` for some `a ≤ k`.
+/-- **Strongly $2$-near perfect numbers of the form $2^k p$.** Let $p$ be an odd prime, let $k$
+be a natural number and let $n = 2^k p$. Suppose that $n$ is strongly $2$-near perfect, that is,
+$\sigma(n) = 2n + d + n/d$ for some divisor $d$ of $n$, where $\sigma$ is the sum-of-divisors
+function. Then there is a natural number $a \le k$ with $p(1 + 2^{k-a}) = 2^{k+1} - 2^a - 1$,
+that is, $p = (2^{k+1} - 2^a - 1)/(1 + 2^{k-a})$.
 
 Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
 *On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 8
@@ -142,9 +157,13 @@ public theorem_wanted strong_two_near_perfect_two_pow_mul_prime_form {k p : ℕ}
       ArithmeticFunction.sigma 1 (2 ^ k * p) = 2 * (2 ^ k * p) + d + 2 ^ k * p / d) :
     ∃ a ≤ k, (p : ℤ) * (1 + 2 ^ (k - a)) = 2 ^ (k + 1) - 2 ^ a - 1
 
-/-- Lemma 9: if `n = 2^k p` with `p` prime and `p = (2^(k+1) - 2^a - 1) / (1 + 2^(k-a))`,
-`a ≤ k`, then `k < 2a`. The paper also assumes `n` strongly `2`-near perfect; that follows
-from the form of `p` (take `d = 2^a`), so the hypothesis is dropped.
+/-- **Prime solutions of $p(1 + 2^{k-a}) = 2^{k+1} - 2^a - 1$ satisfy $k < 2a$.** Let $a \le k$
+be natural numbers and let $p$ be a prime with $p(1 + 2^{k-a}) = 2^{k+1} - 2^a - 1$, that is,
+$p = (2^{k+1} - 2^a - 1)/(1 + 2^{k-a})$. Then $k < 2a$.
+
+The source also assumes that $n = 2^k p$ is strongly $2$-near perfect, that is, that
+$\sigma(n) = 2n + d + n/d$ for some divisor $d$ of $n$, where $\sigma$ is the sum of divisors.
+This follows from the equation for $p$ by taking $d = 2^a$.
 
 Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
 *On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 9
@@ -153,9 +172,11 @@ public theorem_wanted lt_two_mul_of_strong_two_near_perfect_form {a k p : ℕ} (
     (hak : a ≤ k) (hform : (p : ℤ) * (1 + 2 ^ (k - a)) = 2 ^ (k + 1) - 2 ^ a - 1) :
     k < 2 * a
 
-/-- Lemma 10: if `b ≥ 1` and `2^b + 1 ∣ 3 · 2^a + 1`, then `b = 2`. As printed the lemma
-has no range for `b`; the proof divides `a` by `b` (`a = bq + r`, `0 ≤ r < b`), so
-`b ≥ 1` is assumed. For `b = 0` it fails: `2 ∣ 3 · 2^0 + 1 = 4`.
+/-- **If $b \ge 1$ and $2^b + 1$ divides $3 \cdot 2^a + 1$, then $b = 2$.** Let $a$ and $b$ be
+natural numbers with $b \ge 1$. If $2^b + 1$ divides $3 \cdot 2^a + 1$, then $b = 2$.
+
+The source prints the lemma with no range for $b$; its proof divides $a$ by $b$, so $b \ge 1$ is
+assumed here. The hypothesis is needed: for $b = 0$, $2^0 + 1 = 2$ divides $3 \cdot 2^0 + 1 = 4$.
 
 Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
 *On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 10
@@ -163,9 +184,12 @@ Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Ze
 public theorem_wanted eq_two_of_two_pow_add_one_dvd {a b : ℕ} (hb : 1 ≤ b)
     (h : 2 ^ b + 1 ∣ 3 * 2 ^ a + 1) : b = 2
 
-/-- Proposition 1 (Case 1: both omitted divisors are powers of `2`): if `n = 2^k p^2`
-(`p` an odd prime) is `2`-near perfect with omitted divisors `2^i ≠ 2^j`, `i, j ≤ k`, then
-`n = 18` and the omitted divisors are `1` and `2`.
+/-- **$2$-near perfect $2^k p^2$ whose omitted divisors are powers of $2$.** Let $p$ be an odd
+prime, let $k$ be a natural number and let $i \ne j$ be natural numbers with $i \le k$ and
+$j \le k$. If $n = 2^k p^2$ satisfies $\sigma(n) = 2n + 2^i + 2^j$, where $\sigma$ is the
+sum-of-divisors function (that is, $n$ is $2$-near perfect with omitted divisors $2^i$ and
+$2^j$), then $n = 18$ and either $i = 0, j = 1$ or $i = 1, j = 0$, so the omitted divisors are
+$1$ and $2$.
 
 Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
 *On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Proposition 1
@@ -175,8 +199,10 @@ public theorem_wanted two_near_perfect_two_pow_mul_prime_sq_case_one {k p i j : 
     (hσ : ArithmeticFunction.sigma 1 (2 ^ k * p ^ 2) = 2 * (2 ^ k * p ^ 2) + 2 ^ i + 2 ^ j) :
     2 ^ k * p ^ 2 = 18 ∧ ((i = 0 ∧ j = 1) ∨ (i = 1 ∧ j = 0))
 
-/-- Proposition 2 (Case 2: omitted divisors `2^i`, `i ≤ k`, and `p^m`, `m ∈ {1, 2}`): no
-`n = 2^k p^2` (`p` an odd prime) is `2`-near perfect with such omitted divisors.
+/-- **No $2$-near perfect $2^k p^2$ with omitted divisors $2^i$ and $p$ or $p^2$.** Let $p$ be an
+odd prime, let $k$ and $i$ be natural numbers with $i \le k$, let $m$ be $1$ or $2$, and let
+$n = 2^k p^2$. Then $\sigma(n) \ne 2n + 2^i + p^m$, where $\sigma$ is the sum-of-divisors
+function; that is, $n$ is not $2$-near perfect with omitted divisors $2^i$ and $p^m$.
 
 Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
 *On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Proposition 2
@@ -185,9 +211,10 @@ public theorem_wanted not_two_near_perfect_two_pow_mul_prime_sq_case_two {k p i 
     (hp : p.Prime) (hp2 : p ≠ 2) (hi : i ≤ k) (hm : m = 1 ∨ m = 2) :
     ArithmeticFunction.sigma 1 (2 ^ k * p ^ 2) ≠ 2 * (2 ^ k * p ^ 2) + 2 ^ i + p ^ m
 
-/-- Proposition 3 (Case 3 with omitted divisors `1` and `2^b p^2`, `1 ≤ b ≤ k`): if
-`n = 2^k p^2` (`p` an odd prime) is `2`-near perfect with these omitted divisors, then
-`n = 36` and the omitted divisors are `1` and `18`.
+/-- **$2$-near perfect $2^k p^2$ with omitted divisors $1$ and $2^b p^2$.** Let $p$ be an odd
+prime and let $b, k$ be integers with $1 \le b \le k$. If $n = 2^k p^2$ satisfies
+$\sigma(n) = 2n + 1 + 2^b p^2$, where $\sigma$ is the sum-of-divisors function (that is, $n$ is
+$2$-near perfect with omitted divisors $1$ and $2^b p^2$), then $n = 36$ and $2^b p^2 = 18$.
 
 Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
 *On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Proposition 3
@@ -198,9 +225,11 @@ public theorem_wanted two_near_perfect_two_pow_mul_prime_sq_case_three {k p b : 
       2 * (2 ^ k * p ^ 2) + 1 + 2 ^ b * p ^ 2) :
     2 ^ k * p ^ 2 = 36 ∧ 2 ^ b * p ^ 2 = 18
 
-/-- Proposition 4 (Case V: omitted divisors `p^m`, `m ∈ {1, 2}`, and `2^b p^j`,
-`1 ≤ b ≤ k`, `j ∈ {1, 2}`): if `n = 2^k p^2` (`p` an odd prime) is `2`-near perfect with
-such omitted divisors, then `n = 200`.
+/-- **$2$-near perfect $2^k p^2$ with omitted divisors $p^m$ and $2^b p^j$.** Let $p$ be an odd
+prime, let each of $m$ and $j$ be $1$ or $2$, and let $b, k$ be integers with $1 \le b \le k$.
+If $n = 2^k p^2$ satisfies $\sigma(n) = 2n + p^m + 2^b p^j$, where $\sigma$ is the
+sum-of-divisors function (that is, $n$ is $2$-near perfect with omitted divisors $p^m$ and
+$2^b p^j$), then $n = 200$.
 
 Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
 *On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Proposition 4
@@ -212,10 +241,14 @@ public theorem_wanted two_near_perfect_two_pow_mul_prime_sq_case_five {k p m b j
       2 * (2 ^ k * p ^ 2) + p ^ m + 2 ^ b * p ^ j) :
     2 ^ k * p ^ 2 = 200
 
-/-- Proposition 5: if `n = 2^k p` with `p` prime and `p = (2^(k+1) - 2^a - 1) / (1 + 2^(k-a))`,
-`a ≤ k`, then `k = a + 2`, the omitted divisors are `d₁ = 2^a` and `d₂ = n / d₁ = 4p`,
-`p = (2^(a+3) - 2^a - 1) / 5`, and `a ≡ 3 (mod 4)`. The paper's hypothesis that `n` is
-strongly `2`-near perfect follows from the form of `p` and is dropped.
+/-- **Classification of prime solutions of $p(1 + 2^{k-a}) = 2^{k+1} - 2^a - 1$.** Let $a \le k$
+be natural numbers and let $p$ be a prime with $p(1 + 2^{k-a}) = 2^{k+1} - 2^a - 1$, that is,
+$p = (2^{k+1} - 2^a - 1)/(1 + 2^{k-a})$. Then $k = a + 2$, $2^k p / 2^a = 4p$,
+$5p = 2^{a+3} - 2^a - 1$, and $a \equiv 3 \pmod 4$.
+
+The source states this for $n = 2^k p$ strongly $2$-near perfect, that is, with
+$\sigma(n) = 2n + d + n/d$ for some divisor $d$ of $n$, where $\sigma$ is the sum of divisors.
+That hypothesis follows from the equation for $p$ by taking $d = 2^a$.
 
 Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
 *On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Proposition 5
