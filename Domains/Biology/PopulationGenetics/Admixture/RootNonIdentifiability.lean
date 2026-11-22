@@ -138,4 +138,113 @@ theorem f2_eq_of_mixedDrift_eq [DecidableEq E] (M' : DriftModel μ' E P) {Mx A B
     f2_admixedBranch M hab hac hbc hwM hA hB hX, key A X hA hX, key B X hB hX, key A B hA hB,
     hmix]
 
+/-- The level set of the mixed drift is an explicit two-dimensional family: a triple
+`(la', lb', lc')` has the same mixed drift as `(la, lb, lc)` exactly when
+`lc' = lc - α² (la' - la) - (1 - α)² (lb' - lb)`, with `la'`, `lb'` free. -/
+theorem mixedDrift_eq_mixedDrift_iff (α la lb lc la' lb' lc' : ℝ) :
+    mixedDrift α la' lb' lc' = mixedDrift α la lb lc ↔
+      lc' = lc - α ^ 2 * (la' - la) - (1 - α) ^ 2 * (lb' - lb) := by
+  unfold mixedDrift
+  constructor <;> intro h <;> linarith
+
+variable {Ω Ω' P E : Type*} {m : MeasurableSpace Ω} {m' : MeasurableSpace Ω'} {μ : Measure Ω}
+  {μ' : Measure Ω'} [Fintype E]
+
+/-- Equal mixed drift gives the same `f2` matrix: if two drift models have the same weights,
+`Mx` is admixed as in `f2_admixedBranch`, every population other than `Mx` (in particular `A`
+and `B`) has weight `0` on `a`, `b`, `c`, the lengths agree off `{a, b, c}` and the mixed drifts
+agree, then `f2` agrees at every pair of populations. -/
+theorem f2_eq_of_mixedDrift_eq_of_forall_ne [DecidableEq E] (M : DriftModel μ E P)
+    (M' : DriftModel μ' E P) {Mx A B : P} {a b c : E} {α : ℝ} (hab : a ≠ b) (hac : a ≠ c)
+    (hbc : b ≠ c)
+    (hwM : M.weight Mx = α • (M.weight A + Pi.single a 1) +
+      (1 - α) • (M.weight B + Pi.single b 1) + Pi.single c 1)
+    (hw : M'.weight = M.weight)
+    (hlen : ∀ e, e ∉ ({a, b, c} : Finset E) → M'.len e = M.len e)
+    (hmix : mixedDrift α (M'.len a) (M'.len b) (M'.len c) =
+      mixedDrift α (M.len a) (M.len b) (M.len c))
+    (hA : ∀ e ∈ ({a, b, c} : Finset E), M.weight A e = 0)
+    (hB : ∀ e ∈ ({a, b, c} : Finset E), M.weight B e = 0)
+    (hrest : ∀ Y, Y ≠ Mx → ∀ e ∈ ({a, b, c} : Finset E), M.weight Y e = 0) (Y Z : P) :
+    f2 μ' M'.freq Y Z = f2 μ M.freq Y Z := by
+  by_cases hY : Y = Mx <;> by_cases hZ : Z = Mx
+  · rw [hY, hZ, f2_self, f2_self]
+  · rw [hY]
+    exact f2_eq_of_mixedDrift_eq M M' hab hac hbc hwM hw hlen hmix hA hB (hrest Z hZ)
+  · rw [hZ, f2_comm Y Mx, f2_comm Y Mx]
+    exact f2_eq_of_mixedDrift_eq M M' hab hac hbc hwM hw hlen hmix hA hB (hrest Y hY)
+  · rw [M'.f2_freq, M.f2_freq, hw]
+    refine Finset.sum_congr rfl fun e _ => ?_
+    by_cases he : e ∈ ({a, b, c} : Finset E)
+    · rw [hrest Y hY e he, hrest Z hZ e he]
+      simp
+    · rw [hlen e he]
+
+/-- Under the hypotheses of `f2_eq_of_mixedDrift_eq_of_forall_ne`, every `f4` (hence every
+`f2` and `f3`) agrees. -/
+theorem f4_eq_of_mixedDrift_eq_of_forall_ne [DecidableEq E] (M : DriftModel μ E P)
+    (M' : DriftModel μ' E P) {Mx A B : P} {a b c : E} {α : ℝ} (hab : a ≠ b) (hac : a ≠ c)
+    (hbc : b ≠ c)
+    (hwM : M.weight Mx = α • (M.weight A + Pi.single a 1) +
+      (1 - α) • (M.weight B + Pi.single b 1) + Pi.single c 1)
+    (hw : M'.weight = M.weight)
+    (hlen : ∀ e, e ∉ ({a, b, c} : Finset E) → M'.len e = M.len e)
+    (hmix : mixedDrift α (M'.len a) (M'.len b) (M'.len c) =
+      mixedDrift α (M.len a) (M.len b) (M.len c))
+    (hA : ∀ e ∈ ({a, b, c} : Finset E), M.weight A e = 0)
+    (hB : ∀ e ∈ ({a, b, c} : Finset E), M.weight B e = 0)
+    (hrest : ∀ Y, Y ≠ Mx → ∀ e ∈ ({a, b, c} : Finset E), M.weight Y e = 0) (W X Y Z : P) :
+    f4 μ' M'.freq W X Y Z = f4 μ M.freq W X Y Z := by
+  rw [f4_eq_f2 M'.memLp_freq, f4_eq_f2 M.memLp_freq]
+  simp only [f2_eq_of_mixedDrift_eq_of_forall_ne M M' hab hac hbc hwM hw hlen hmix hA hB hrest]
+
+/-- Realization of the constant-mixed-drift family: for every drift model in which `Mx` is
+the only population using the admixture-adjacent edges `a`, `b`, `c`, and every member
+`(ℓa + s, ℓb + t, ℓc - α² s - (1 - α)² t)` of the (algebraically two-dimensional)
+constant-mixed-drift family with nonnegative entries, there is a drift model on a
+probability space with the same weights, those three lengths, the same lengths elsewhere,
+and the same `f4` at every quadruple. The terminal lengths are therefore non-identifiable
+whenever a *distinct* admissible member exists; the admissible family can also collapse to
+the original triple alone (e.g. `ℓa = ℓb = ℓc = 0` with `0 < α < 1` forces `s = t = 0`), in
+which case this theorem only recovers the original model. -/
+theorem exists_mixedDrift_family_f4_eq {E P : Type u} [Fintype E] [DecidableEq E]
+    (M : DriftModel μ E P) {Mx A B : P} {a b c : E} {α : ℝ} (hab : a ≠ b) (hac : a ≠ c)
+    (hbc : b ≠ c)
+    (hwM : M.weight Mx = α • (M.weight A + Pi.single a 1) +
+      (1 - α) • (M.weight B + Pi.single b 1) + Pi.single c 1)
+    (hA : ∀ e ∈ ({a, b, c} : Finset E), M.weight A e = 0)
+    (hB : ∀ e ∈ ({a, b, c} : Finset E), M.weight B e = 0)
+    (hrest : ∀ Y, Y ≠ Mx → ∀ e ∈ ({a, b, c} : Finset E), M.weight Y e = 0)
+    {s t : ℝ} (hs : 0 ≤ M.len a + s) (ht : 0 ≤ M.len b + t)
+    (hc : 0 ≤ M.len c - α ^ 2 * s - (1 - α) ^ 2 * t) :
+    ∃ (Ω' : Type u) (_ : MeasurableSpace Ω') (μ' : Measure Ω') (_ : IsProbabilityMeasure μ')
+      (M' : DriftModel μ' E P), M'.weight = M.weight ∧ M'.len a = M.len a + s ∧
+        M'.len b = M.len b + t ∧ M'.len c = M.len c - α ^ 2 * s - (1 - α) ^ 2 * t ∧
+        (∀ e, e ∉ ({a, b, c} : Finset E) → M'.len e = M.len e) ∧
+        ∀ W X Y Z, f4 μ' M'.freq W X Y Z = f4 μ M.freq W X Y Z := by
+  set len' : E → ℝ := fun e => if e = a then M.len a + s else if e = b then M.len b + t
+    else if e = c then M.len c - α ^ 2 * s - (1 - α) ^ 2 * t else M.len e with hlen'
+  have hnn : ∀ e, 0 ≤ len' e := by
+    intro e
+    simp only [hlen']
+    split_ifs
+    · exact hs
+    · exact ht
+    · exact hc
+    · exact M.len_nonneg e
+  obtain ⟨Ω', hΩ', μ', hμ', M', hw, hl⟩ :=
+    MathlibExt.Biology.PopulationGenetics.Admixture.exists_driftModel M.weight len' hnn
+  have la' : M'.len a = M.len a + s := by rw [hl]; simp [hlen']
+  have lb' : M'.len b = M.len b + t := by rw [hl]; simp [hlen', Ne.symm hab]
+  have lc' : M'.len c = M.len c - α ^ 2 * s - (1 - α) ^ 2 * t := by
+    rw [hl]; simp [hlen', Ne.symm hac, Ne.symm hbc]
+  have lo : ∀ e, e ∉ ({a, b, c} : Finset E) → M'.len e = M.len e := by
+    intro e he
+    simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at he
+    rw [hl]
+    simp [hlen', he.1, he.2.1, he.2.2]
+  refine ⟨Ω', hΩ', μ', hμ', M', hw, la', lb', lc', lo, fun W X Y Z => ?_⟩
+  exact f4_eq_of_mixedDrift_eq_of_forall_ne M M' hab hac hbc hwM hw lo
+    (by rw [la', lb', lc']; unfold mixedDrift; ring) hA hB hrest W X Y Z
+
 end MathlibExt.Biology.PopulationGenetics.TreeFStatistics

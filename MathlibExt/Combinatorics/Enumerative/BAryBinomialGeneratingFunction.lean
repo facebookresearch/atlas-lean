@@ -86,39 +86,6 @@ private lemma base_digits_ofDigits_sum_range (b : ℕ) (M : List ℕ) :
     congr 1
     exact Finset.sum_congr rfl (fun k _ => by ring)
 
-private lemma base_digits_len_pow_lt (b n : ℕ) (hb : 2 ≤ b) :
-    n < b ^ (Nat.digits b n).length := by
-  have h1b : 1 < b := lt_of_lt_of_le one_lt_two hb
-  have hmem : ∀ x ∈ Nat.digits b n, x < b :=
-    fun x hx => Nat.digits_lt_base h1b hx
-  calc n = Nat.ofDigits b (Nat.digits b n) := (Nat.ofDigits_digits b n).symm
-    _ < b ^ (Nat.digits b n).length :=
-        Nat.ofDigits_lt_base_pow_length h1b hmem
-
-private lemma base_digits_digits_length_le (b n k : ℕ) (hb : 2 ≤ b) (hkn : k ≤ n) :
-    (Nat.digits b k).length ≤ (Nat.digits b n).length := by
-  rcases eq_or_ne k 0 with rfl | hk0
-  · rw [Nat.digits_zero]
-    exact Nat.zero_le _
-  · by_contra hlt
-    have hlt' : (Nat.digits b n).length + 1 ≤ (Nat.digits b k).length :=
-      not_le.mp hlt
-    have h1b : 1 < b := lt_of_lt_of_le one_lt_two hb
-    have hpos : 0 < b := lt_trans zero_lt_one h1b
-    have h1 := Nat.base_pow_length_digits_le b k h1b hk0
-    have h2 : b ^ ((Nat.digits b n).length + 1) ≤ b ^ (Nat.digits b k).length :=
-      pow_le_pow_right₀ (le_of_lt h1b) hlt'
-    have h4 : b * b ^ (Nat.digits b n).length ≤ b * k := by
-      calc b * b ^ (Nat.digits b n).length
-          = b ^ ((Nat.digits b n).length + 1) := (pow_succ' b _).symm
-        _ ≤ b ^ (Nat.digits b k).length := h2
-        _ ≤ b * k := h1
-    have hbig : b ^ (Nat.digits b n).length ≤ k :=
-      Nat.le_of_mul_le_mul_left h4 hpos
-    have hsmall : k < b ^ (Nat.digits b n).length :=
-      lt_of_le_of_lt hkn (base_digits_len_pow_lt b n hb)
-    exact absurd hbig (not_le.mpr hsmall)
-
 private lemma base_digits_ofFn_getD {L : ℕ} {f : Fin L → ℕ} {i : ℕ} (h : i < L) :
     (List.ofFn f).getD i 0 = f ⟨i, h⟩ := by
   have hlen : i < (List.ofFn f).length := by rwa [List.length_ofFn]
@@ -183,11 +150,11 @@ private lemma base_digits_phi_le (b n : ℕ)
             (fun i => (Nat.digits b n).getD i 0 * b ^ i) _
         rw [h1, ← base_digits_ofDigits_sum_range, Nat.ofDigits_digits]
 
-private lemma base_digits_phi_digits (b n k : ℕ) (hb : 2 ≤ b) (hkn : k ≤ n) :
+private lemma base_digits_phi_digits (b n k : ℕ) (hkn : k ≤ n) :
     (∑ l : Fin (Nat.digits b n).length, (Nat.digits b k).getD l.val 0 * b ^ (l.val : ℕ))
       = k := by
   have hlen : (Nat.digits b k).length ≤ (Nat.digits b n).length :=
-    base_digits_digits_length_le b n k hb hkn
+    Nat.le_length_digits_le b k n hkn
   have h1 : (∑ l : Fin (Nat.digits b n).length,
         (Nat.digits b k).getD l.val 0 * b ^ (l.val : ℕ))
       = ∑ i ∈ Finset.range (Nat.digits b n).length,
@@ -237,7 +204,7 @@ private lemma base_digits_sum_cast_coef {R : Type*} [CommSemiring R] (b n : ℕ)
           (((Nat.digits b n).getD l 0).choose ((Nat.digits b k).getD l 0) : R)) * x ^ k :=
   Finset.sum_congr rfl fun k hk => by
     rw [bAryBinomialCoefficient_eq_prod_getD b n k hb le_rfl
-      (base_digits_digits_length_le b n k hb (Nat.lt_succ_iff.mp (Finset.mem_range.mp hk))),
+      (Nat.le_length_digits_le b k n (Nat.lt_succ_iff.mp (Finset.mem_range.mp hk))),
       Nat.cast_prod]
 
 /--
@@ -328,8 +295,8 @@ theorem bAryBinomialCoefficient_generating_function {R : Type*} [CommSemiring R]
       have hvl : ∀ l : Fin (Nat.digits b n).length,
           (Nat.digits b k₁).getD l.val 0 = (Nat.digits b k₂).getD l.val 0 :=
         fun l => congrArg (fun p => ((p l).val : ℕ)) heq
-      have h1 := base_digits_phi_digits b n k₁ hb hkn₁
-      have h2 := base_digits_phi_digits b n k₂ hb hkn₂
+      have h1 := base_digits_phi_digits b n k₁ hkn₁
+      have h2 := base_digits_phi_digits b n k₂ hkn₂
       have hss : (∑ l : Fin (Nat.digits b n).length,
             (Nat.digits b k₁).getD l.val 0 * b ^ (l.val : ℕ))
           = ∑ l : Fin (Nat.digits b n).length,
@@ -361,7 +328,7 @@ theorem bAryBinomialCoefficient_generating_function {R : Type*} [CommSemiring R]
       have hkn : k ≤ n := Nat.lt_succ_iff.mp (Finset.mem_range.mp hkr)
       have hkk : (∑ l : Fin (Nat.digits b n).length,
             (Nat.digits b k).getD l.val 0 * b ^ (l.val : ℕ)) = k :=
-        base_digits_phi_digits b n k hb hkn
+        base_digits_phi_digits b n k hkn
       have hprod : (∏ l ∈ Finset.range (Nat.digits b n).length,
             (((Nat.digits b n).getD l 0).choose ((Nat.digits b k).getD l 0) : R))
           = ∏ l : Fin (Nat.digits b n).length,
