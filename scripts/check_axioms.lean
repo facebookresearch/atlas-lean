@@ -18,7 +18,7 @@ private def trustedAxioms : Array Lean.Name :=
 
 private def libraryRoots : Array Lean.Name :=
   #[`CSLibExt, `CSLibExtTest, `MathlibExt, `MathlibExtTest, `PhyslibExt, `PhyslibExtTest,
-    `WantedExt]
+    `Domains, `DomainsTest, `WantedExt]
 
 private def libraryOf? (name : Lean.Name) : Option Lean.Name :=
   libraryRoots.find? (·.isPrefixOf name)
@@ -30,6 +30,9 @@ private def mayImport (source target : Lean.Name) : Bool :=
     (source == `PhyslibExt && (target == `CSLibExt || target == `MathlibExt)) ||
     (source == `PhyslibExtTest &&
       (target == `PhyslibExt || target == `CSLibExt || target == `MathlibExt)) ||
+    (source == `Domains && (target == `PhyslibExt || target == `CSLibExt || target == `MathlibExt)) ||
+    (source == `DomainsTest &&
+      (target == `Domains || target == `PhyslibExt || target == `CSLibExt || target == `MathlibExt)) ||
     (source == `WantedExt &&
       (target == `CSLibExt || target == `MathlibExt))
 

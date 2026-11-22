@@ -68,7 +68,7 @@ and aperiodic ladder support are also hypotheses. The lattice case is not treate
 
 Mathlib and MathlibExt contain no renewal theorem (searched for `renewal` and `ladder`
 in Mathlib, and `renewal`/`ladder` in MathlibExt: the only hits are the exponential
-solutions of the Euler–Lotka renewal equation in `MathlibExt.Biology.Epidemiology.EulerLotka`,
+solutions of the Euler–Lotka renewal equation in `Domains.Biology.Epidemiology.EulerLotka`,
 which do not address convergence). The aperiodicity input uses Mathlib's
 `Nat.exists_mem_closure_of_ge` (Frobenius / numerical-semigroup lemma), the
 uniqueness of renewal solutions uses `PowerSeries` multiplication, and the limit passages use

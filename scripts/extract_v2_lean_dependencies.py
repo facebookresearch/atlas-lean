@@ -28,7 +28,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 BLUEPRINT = ROOT / "blueprint"
-LIBRARIES = frozenset({"MathlibExt", "CSLibExt", "PhyslibExt", "WantedExt"})
+LIBRARIES = frozenset({"MathlibExt", "CSLibExt", "PhyslibExt", "Domains", "WantedExt"})
 # The key of `missing_articles` for absent targets whose names start with no library name.
 UNPREFIXED = "unprefixed"
 # A definition is its body and an inductive type its constructors, so their values are part of the statement
