@@ -60,7 +60,7 @@ noncomputable def M (n : ℕ) : ℕ :=
     (_union : A ∪ B = Finset.Icc (1 : ℤ) (2 * n))
     (_same_card : A.card = B.card)}
 
-/-- **Overlaps are bounded by the maximum overlap.** For finite sets $A, B \subseteq \mathbb{Z}$
+ /-- **Overlaps are bounded by the maximum overlap.** For finite sets $A, B \subseteq \mathbb{Z}$
 and every integer $k$, the overlap $\#\{(a, b) \in A \times B : a - b = k\}$ is at most the
 maximum overlap of $A$ and $B$. -/
 theorem Overlap_le_MaxOverlap (A B : Finset ℤ) (k : ℤ) :
@@ -186,7 +186,8 @@ noncomputable def continuousOverlap (f g : ℝ → ℝ) (x : ℝ) : ℝ :=
 
 /-- **Continuous overlap values.** For functions $f, g : \mathbb{R} \to \mathbb{R}$, the set of
 overlap values of $f$ and $g$ is the image of the translation interval $[-2, 2]$ under the overlap
-$x \mapsto \int_{-1}^{1} f(t)\,g(x + t)\,dt$. -/
+$x \mapsto \int_{-1}^{1} f(t)\,g(x + t)\,dt$, where the integral is taken to be $0$ when
+$t \mapsto f(t)\,g(x + t)$ is not integrable on $[-1, 1]$. -/
 def continuousOverlapValues (f g : ℝ → ℝ) : Set ℝ :=
   continuousOverlap f g '' continuousTranslationInterval
 
@@ -196,8 +197,9 @@ with respect to Lebesgue measure, take values in $[0, 1]$ at every point, vanish
 outside the support interval $[-1, 1]$, satisfy $f(t) + g(t) = 1$ for every $t \in [-1, 1]$, and
 satisfy $\int_{\mathbb{R}} f(t)\,dt = 1$.
 
-Since measurability is only required almost everywhere, Lebesgue-null modifications of Borel
-functions are included. Integrability and the bounds on the overlap follow from these conditions.
+Since measurability is only required almost everywhere, $f$ and $g$ need only agree almost
+everywhere with Borel functions; the range, support and complementarity conditions must still hold
+at every point. Integrability and the bounds on the overlap follow from these conditions.
 -/
 structure ContinuousAdmissible (f g : ℝ → ℝ) : Prop where
   measurable_f : AEMeasurable f volume
@@ -278,7 +280,8 @@ theorem ContinuousAdmissible.overlapValues_bddAbove {f g : ℝ → ℝ}
 
 /-- **Continuous pair score.** For functions $f, g : \mathbb{R} \to \mathbb{R}$, the pair score of
 $f$ and $g$ is the supremum of the overlap values $\int_{-1}^{1} f(t)\,g(x + t)\,dt$ over the
-translations $x \in [-2, 2]$.
+translations $x \in [-2, 2]$, each integral being $0$ when its integrand is not integrable on
+$[-1, 1]$.
 
 As with every supremum of real numbers here, it is $0$ when the set is not bounded above; for
 admissible pairs the overlap values lie in $[0, 1]$. -/
