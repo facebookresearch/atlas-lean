@@ -33,10 +33,10 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.Recurrences.TribonacciTetranacciSumsOfSquaresWanted
 
-/-- Gryszka's Lemma 1, cleared of the denominator `4`: for an
-integer-indexed Tribonacci recurrence, four times
-`∑ k ∈ [1,n], T k * T (k - 2)` is the displayed difference of
-squares.
+/-- **Sum of products of Tribonacci terms two apart.** Let $T \colon \mathbb{Z} \to \mathbb{Z}$
+satisfy $T(m+3) = T(m+2) + T(m+1) + T(m)$ for every integer $m$. Then for every
+natural number $n$,
+$$4 \sum_{k=1}^{n} T(k)\,T(k-2) = \bigl(T(n+1) - T(n-1)\bigr)^2 - \bigl(T(1) - T(-1)\bigr)^2.$$
 
 Source: Karol Gryszka, "A Simple Proof of the Formula for the Sum
 of Tribonacci and Tetranacci Numbers Squared", Lemma 1. -/
@@ -48,8 +48,10 @@ theorem_wanted four_mul_sum_tribonacci_mul_sub_two
       (T ((n : ℤ) + 1) - T ((n : ℤ) - 1)) ^ 2 -
         (T 1 - T (-1)) ^ 2
 
-/-- Gryszka's Theorem 1, cleared of the denominator `4`: the sum of
-squares of an arbitrary integer-indexed Tribonacci sequence.
+/-- **Sum of squares of a Tribonacci sequence.** Let $T \colon \mathbb{Z} \to \mathbb{Z}$ satisfy
+$T(m+3) = T(m+2) + T(m+1) + T(m)$ for every integer $m$. Then for every natural number $n$,
+$$4 \sum_{k=1}^{n} T(k)^2 = 4\,T(n)\,T(n+1) - 4\,T(0)\,T(1) -
+\bigl(T(n+1) - T(n-1)\bigr)^2 + \bigl(T(1) - T(-1)\bigr)^2.$$
 
 Source: Karol Gryszka, "A Simple Proof of the Formula for the Sum
 of Tribonacci and Tetranacci Numbers Squared", Theorem 1. -/
@@ -62,10 +64,14 @@ theorem_wanted four_mul_sum_tribonacci_sq
         (T ((n : ℤ) + 1) - T ((n : ℤ) - 1)) ^ 2 +
         (T 1 - T (-1)) ^ 2
 
-/-- Gryszka's Lemma 2, cleared of the denominator `3`, with the
-boundary sign given by the paper's telescoping calculation:
-three times `∑ k ∈ [1,n], Q k * (Q (k - 2) + Q (k - 3))` is the
-displayed expression.
+/-- **Sum of products of Tetranacci terms two and three apart.** Let
+$Q \colon \mathbb{Z} \to \mathbb{Z}$ satisfy $Q(m+4) = Q(m+3) + Q(m+2) + Q(m+1) + Q(m)$ for every
+integer $m$. Then for every natural number $n$,
+$$3 \sum_{k=1}^{n} Q(k)\bigl(Q(k-2) + Q(k-3)\bigr) = \bigl(Q(n+1) - Q(n-1)\bigr)^2 -
+\bigl(Q(1) - Q(-1)\bigr)^2 - Q(n-2)\bigl(Q(n) + Q(n-3)\bigr) + Q(-2)\bigl(Q(0) + Q(-3)\bigr).$$
+
+The boundary terms contain $Q(n) + Q(n-3)$ and $Q(0) + Q(-3)$, with the sign given by the
+paper's telescoping calculation.
 
 Source: Karol Gryszka, "A Simple Proof of the Formula for the Sum
 of Tribonacci and Tetranacci Numbers Squared", Lemma 2. -/
@@ -81,9 +87,14 @@ theorem_wanted three_mul_sum_tetranacci_mul_sub_two_add_sub_three
         Q ((n : ℤ) - 2) * (Q n + Q ((n : ℤ) - 3)) +
         Q (-2) * (Q 0 + Q (-3))
 
-/-- Gryszka's Theorem 2, cleared of the denominator `3`: the sum of
-squares of an arbitrary integer-indexed Tetranacci sequence, with
-the same boundary sign as in Lemma 2.
+/-- **Sum of squares of a Tetranacci sequence.** Let $Q \colon \mathbb{Z} \to \mathbb{Z}$ satisfy
+$Q(m+4) = Q(m+3) + Q(m+2) + Q(m+1) + Q(m)$ for every integer $m$. Then for every natural
+number $n$,
+$$3 \sum_{k=1}^{n} Q(k)^2 = 3\,Q(n)\,Q(n+1) - 3\,Q(0)\,Q(1) - \bigl(Q(n+1) - Q(n-1)\bigr)^2 +
+\bigl(Q(1) - Q(-1)\bigr)^2 + Q(n-2)\bigl(Q(n) + Q(n-3)\bigr) - Q(-2)\bigl(Q(0) + Q(-3)\bigr).$$
+
+Inside the boundary terms the sums $Q(n) + Q(n-3)$ and $Q(0) + Q(-3)$ carry a plus sign, as in
+Gryszka's Lemma 2; this sign is the one forced by the paper's telescoping calculation.
 
 Source: Karol Gryszka, "A Simple Proof of the Formula for the Sum
 of Tribonacci and Tetranacci Numbers Squared", Theorem 2. -/

@@ -21,41 +21,51 @@ namespace MetaMathlibExt
 
 open Finset
 
-/-- The `q`-weighted binary digit sum `s_q(k) = ∑_{i ≥ 0} ω_i q^{i+1}`, where
-`k = ∑_i ω_i 2^i` is the binary expansion of `k` (`ω_i` is the `i`-th entry of
-`Nat.digits 2 k`, least significant first).
+/-- **The $q$-weighted binary digit sum.** Let $q$ be an element of a commutative ring and let
+$k$ be a natural number with binary expansion $k = \sum_{i \ge 0} \omega_i 2^i$, where
+$\omega_i \in \{0, 1\}$. The $q$-weighted binary digit sum of $k$ is
+$s_q(k) = \sum_{i \ge 0} \omega_i q^{i+1}$, a finite sum because only finitely many $\omega_i$
+are nonzero.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, Section 1 (definition of `s_q`). -/
 def qWeightedDigitSum {R : Type*} [CommRing R] (q : R) (k : ℕ) : R :=
   ∑ i ∈ range (Nat.digits 2 k).length, ((Nat.digits 2 k).getD i 0 : R) * q ^ (i + 1)
 
-/-- The partial sums `S_q(n) = ∑_{k=0}^{n-1} s_q(k)` of the `q`-weighted binary digit sum.
+/-- **Partial sums of the $q$-weighted binary digit sum.** For an element $q$ of a commutative
+ring and a natural number $n$, the partial sum is $S_q(n) = \sum_{k=0}^{n-1} s_q(k)$, where $s_q$
+is the $q$-weighted binary digit sum.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, Section 1 (definition of `S_q`). -/
 def qWeightedDigitPartialSum {R : Type*} [CommRing R] (q : R) (n : ℕ) : R :=
   ∑ k ∈ range n, qWeightedDigitSum q k
 
-/-- The Takagi-Landsberg function `𝒯_a(x) = ∑_{n ≥ 0} a^n τ(2^n x)`, where
-`τ(x) = |x - round x|` is the distance from `x` to the nearest integer. The parameter `a`
-ranges over `ℝ` or `ℂ`; the series converges for `‖a‖ < 1`, and at dyadic rationals it is a
-finite sum.
+/-- **The Takagi–Landsberg function.** For a real or complex parameter $a$ and a real number $x$,
+let $\tau(y)$ denote the distance from a real number $y$ to the nearest integer. The
+Takagi–Landsberg function is $\mathcal{T}_a(x) = \sum_{n \ge 0} a^n \tau(2^n x)$, where the
+value is taken to be $0$ when the series does not converge absolutely. The series converges for
+$|a| < 1$, and at dyadic rationals $x$ it is a finite sum.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, Section 1.1, equation (TakagiLandsberg). -/
 noncomputable def takagiLandsberg {𝕜 : Type*} [RCLike 𝕜] (a : 𝕜) (x : ℝ) : 𝕜 :=
   ∑' n : ℕ, a ^ n * ((|2 ^ n * x - round (2 ^ n * x)| : ℝ) : 𝕜)
 
-/-- `s_q(0) = 0`.
+/-- **The $q$-weighted digit sum of zero.** For every element $q$ of a commutative ring, the
+$q$-weighted binary digit sum of $0$ is $s_q(0) = 0$.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, Section 1. -/
 theorem qWeightedDigitSum_zero {R : Type*} [CommRing R] (q : R) : qWeightedDigitSum q 0 = 0 := by
   simp [qWeightedDigitSum]
 
-/-- The binary recursion `s_q(k) = q (k mod 2) + q s_q(⌊k/2⌋)` for `k > 0`, which gives the
-paper's relations `s_q(2j) = q s_q(j)` and `s_q(2j+1) = q s_q(j) + q`.
+/-- **Binary recursion for the $q$-weighted digit sum.** Let $q$ be an element of a commutative
+ring and let $k > 0$ be a natural number. Then the $q$-weighted binary digit sum satisfies
+$s_q(k) = q\,(k \bmod 2) + q\,s_q(\lfloor k/2 \rfloor)$.
+
+This gives the paper's relations $s_q(2j) = q\,s_q(j)$ for $j \ge 1$ and
+$s_q(2j+1) = q\,s_q(j) + q$ for $j \ge 0$.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, proof of Theorem 1, equations (s(2j)) and (s(2j+1)). -/
@@ -70,16 +80,21 @@ theorem qWeightedDigitSum_of_pos {R : Type*} [CommRing R] (q : R) {k : ℕ} (hk 
   · refine sum_congr rfl fun i _ => ?_
     ring
 
-/-- `𝒯_a(0) = 0`.
+/-- **The Takagi–Landsberg function vanishes at zero.** For every real or complex parameter $a$,
+the Takagi–Landsberg function satisfies $\mathcal{T}_a(0) = 0$.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, Section 1.1. -/
 theorem takagiLandsberg_zero {𝕜 : Type*} [RCLike 𝕜] (a : 𝕜) : takagiLandsberg a 0 = 0 := by
   simp [takagiLandsberg]
 
-/-- For `0 < N`, every dyadic grid point `t_j = j / 2^{N-1}` (`j ≤ 2^{N-1}`) of `[0, 1]`
-satisfies `(S_q(t_j l) - t_j S_q(l)) / R = -q 𝒯_a(t_j)` with `l = 2^N`, `R = (2q)^{N-1}` and
-`a = 1/(2q)`, for complex `q` with `|q| > 1/2`. Here `t_j l = 2j`.
+/-- **Dyadic values of the normalized $q$-weighted fluctuation.** Let $q$ be a complex number
+with $|q| > 1/2$, let $N > 0$ be a natural number, and let $j \le 2^{N-1}$ be a natural number.
+Put $t_j = j / 2^{N-1}$ and $a = 1/(2q)$. Then
+$$\frac{S_q(2j) - t_j\,S_q(2^N)}{(2q)^{N-1}} = -q\,\mathcal{T}_a(t_j),$$
+where $S_q$ is the partial sum of the $q$-weighted binary digit sum and $\mathcal{T}_a$ is the
+Takagi–Landsberg function. With $l = 2^N$ we have $t_j l = 2j$, so the numerator is the
+fluctuation $S_q(t_j l) - t_j\,S_q(l)$ at the grid point $t_j$ of $[0, 1]$.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, Proposition 1 (`integers-2026-A61-prop-1`). -/
@@ -89,11 +104,13 @@ public theorem_wanted qWeightedDigitPartialSum_dyadic_fluctuation (q : ℂ) (hq 
         ((j : ℂ) / 2 ^ (N - 1)) * qWeightedDigitPartialSum q (2 ^ N)) / (2 * q) ^ (N - 1) =
       -q * takagiLandsberg (1 / (2 * q)) ((j : ℝ) / 2 ^ (N - 1))
 
-/-- The `q`-weighted Trollope-Delange formula: for real `q` with `|q| > 1/2`, `q ≠ 1`,
-`a = 1/(2q)` and every positive integer `n`, with `k = ⌊log₂ n⌋ = Nat.log 2 n`,
-`S_q(n) / n = (q/2) ((1 - q^{k+1})/(1 - q) - q^k F̂_q(log₂ n))`, where
-`F̂_q(u) = 2^{1-u} 𝒯_a(2^{-(1-u)})` on `[0, 1)` extended with period `1` (evaluated at the
-fractional part `{log₂ n}`).
+/-- **The $q$-weighted Trollope–Delange formula.** Let $q$ be a real number with $|q| > 1/2$ and
+$q \ne 1$, and put $a = 1/(2q)$. For a positive integer $n$, let $k = \lfloor \log_2 n \rfloor$
+and let $u = \log_2 n - k$ be the fractional part of $\log_2 n$. Write
+$F(u) = 2^{1-u}\,\mathcal{T}_a(2^{u-1})$. Then
+$$\frac{S_q(n)}{n} = \frac{q}{2}\left(\frac{1 - q^{k+1}}{1 - q} - q^k F(u)\right),$$
+where $S_q$ is the partial sum of the $q$-weighted binary digit sum and $\mathcal{T}_a$ is the
+Takagi–Landsberg function.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, Theorem 1 (`integers-2026-A61-thm-1`). -/
@@ -105,9 +122,12 @@ public theorem_wanted qWeighted_trollopeDelange (q : ℝ) (hq : 1 / 2 < |q|) (hq
           ((2 : ℝ) ^ (1 - Int.fract (Real.logb 2 n)) *
             takagiLandsberg (1 / (2 * q)) ((2 : ℝ) ^ (-(1 - Int.fract (Real.logb 2 n))))))
 
-/-- Girgensohn's lemma: for `G : ℕ → ℝ`, the assignment `F((n - p_n)/p_n) := G(n)` on positive
-integers `n`, with `p_n = 2^{⌊log₂ n⌋}`, is a well-defined function of the dyadic rational
-`(n - p_n)/p_n ∈ [0, 1)` if and only if `G(2n) = G(n)` for all positive `n`.
+/-- **Girgensohn's lemma.** Let $G$ be a function from the natural numbers to the real numbers, and
+for a positive integer $n$ let $p_n = 2^{\lfloor \log_2 n \rfloor}$, so that $(n - p_n)/p_n$ is a
+dyadic rational in $[0, 1)$. The following are equivalent: (i) for all positive integers $m$ and
+$n$ with $(m - p_m)/p_m = (n - p_n)/p_n$ we have $G(m) = G(n)$, that is, $F((n - p_n)/p_n) = G(n)$
+well-defines a function $F$ of these dyadic rationals; (ii) $G(2n) = G(n)$ for every positive
+integer $n$.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, Lemma 1 (`integers-2026-A61-lem-1`), quoting Girgensohn,
@@ -118,8 +138,11 @@ public theorem_wanted dyadicMantissa_wellDefined_iff_doubling_invariant (G : ℕ
           ((n : ℚ) - 2 ^ Nat.log 2 n) / 2 ^ Nat.log 2 n → G m = G n) ↔
       ∀ n : ℕ, 0 < n → G (2 * n) = G n
 
-/-- The carry into digit `i` when the natural number `j` is added to the dyadic integer
-`ω = (ω₀, ω₁, …) ∈ ℤ₂ = ∏ {0, 1}` (binary addition, least significant digit first).
+/-- **Carry in adding a natural number to a dyadic integer.** Let $\omega$ be a dyadic integer,
+written as its sequence $(\omega_0, \omega_1, \dots)$ of binary digits $\omega_i \in \{0, 1\}$
+(least significant digit first), and let $j$ be a natural number with binary digits
+$j_0, j_1, \dots$. The carry $c_i$ into digit $i$ in the binary addition of $j$ to $\omega$ is
+defined by $c_0 = 0$ and $c_{i+1} = \lfloor (\omega_i + j_i + c_i)/2 \rfloor$.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, Section 5 (dyadic integers and the odometer). -/
@@ -127,20 +150,29 @@ def dyadicAddNatCarry (ω : ℕ → Fin 2) (j : ℕ) : ℕ → ℕ
   | 0 => 0
   | i + 1 => ((ω i : ℕ) + (j.testBit i).toNat + dyadicAddNatCarry ω j i) / 2
 
-/-- The dyadic integer `ω + j` for `ω ∈ ℤ₂` and `j ∈ ℕ`.
+/-- **Adding a natural number to a dyadic integer.** Let $\omega$ be a dyadic integer, written as
+its sequence $(\omega_0, \omega_1, \dots)$ of binary digits $\omega_i \in \{0, 1\}$ (least
+significant digit first), and let $j$ be a natural number with binary digits $j_0, j_1, \dots$.
+The dyadic integer $\omega + j$ has $i$-th digit $(\omega_i + j_i + c_i) \bmod 2$, where the
+carries are given by $c_0 = 0$ and $c_{i+1} = \lfloor (\omega_i + j_i + c_i)/2 \rfloor$.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, Section 5 (dyadic integers and the odometer). -/
 def dyadicAddNat (ω : ℕ → Fin 2) (j : ℕ) : ℕ → Fin 2 := fun i =>
   ⟨((ω i : ℕ) + (j.testBit i).toNat + dyadicAddNatCarry ω j i) % 2, Nat.mod_lt _ two_pos⟩
 
-/-- The dyadic odometer `T ω = ω + 1`.
+/-- **Dyadic odometer.** The dyadic odometer is the map $T$ on the dyadic integers $\mathbb{Z}_2$,
+viewed as binary digit sequences $\omega = (\omega_0, \omega_1, \dots)$ (least significant digit
+first), given by $T\omega = \omega + 1$, binary addition of $1$ with carries.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, Section 5. -/
 def dyadicOdometer (ω : ℕ → Fin 2) : ℕ → Fin 2 := dyadicAddNat ω 1
 
-/-- `T(0) = (1, 0, 0, …)`: its first three digits.
+/-- **First digits of the odometer at zero.** Let $T$ be the dyadic odometer $T\omega = \omega + 1$
+on dyadic integers $\omega = (\omega_0, \omega_1, \dots)$, written as binary digit sequences. The
+image $T(0)$ of the zero sequence $(0, 0, 0, \dots)$ has digits $T(0)_0 = 1$, $T(0)_1 = 0$ and
+$T(0)_2 = 0$.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, Section 5. -/
@@ -149,7 +181,9 @@ theorem dyadicOdometer_zero_apply :
       dyadicOdometer (fun _ => 0) 2 = 0 := by
   decide
 
-/-- The Haar (uniform product) measure on `ℤ₂ = ∏_{i ≥ 0} {0, 1}`.
+/-- **Haar measure on the dyadic integers.** The Haar measure on the dyadic integers
+$\mathbb{Z}_2$, viewed as the space $\{0, 1\}^{\mathbb{N}}$ of binary digit sequences: the infinite
+product of the uniform probability measures on $\{0, 1\}$, one for each digit.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, Section 5. -/
@@ -164,9 +198,17 @@ instance : MeasureTheory.IsProbabilityMeasure dyadicHaar := by
   unfold dyadicHaar
   infer_instance
 
-/-- The odometer partial sums `S_{q,ω}(n) = ∑_{j<n} s_q(T^j ω)`, with
-`s_q(ω) = ∑_{i ≥ 0} ω_i q^{i+1}`, extended to real `x ≥ 0` by linear interpolation:
-`S_{q,ω}(x) = S_{q,ω}(⌊x⌋) + {x} s_q(T^{⌊x⌋} ω)`.
+/-- **Odometer partial sums.** Let $q \in \mathbb{C}$, let $\omega = (\omega_0, \omega_1, \dots)$ be
+a dyadic integer written as its binary digit sequence, let $T$ be the dyadic odometer
+$T\omega = \omega + 1$, and let $s_q(\omega) = \sum_{i \ge 0} \omega_i q^{i+1}$, taken to be $0$
+when the series is not absolutely summable. For real $x$ the odometer partial sum is
+
+$$S_{q,\omega}(x) = \sum_{j < \lfloor x \rfloor_+} s_q(T^j \omega) +
+\{x\} \, s_q(T^{\lfloor x \rfloor_+} \omega),$$
+
+where $\lfloor x \rfloor_+ = \max(\lfloor x \rfloor, 0)$ and $\{x\} = x - \lfloor x \rfloor$. So
+$S_{q,\omega}(n) = \sum_{j < n} s_q(T^j \omega)$ for every natural number $n$, and for $x \ge 0$
+the function $S_{q,\omega}$ interpolates these values linearly between consecutive integers.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, Sections 4 and 5. -/
@@ -174,7 +216,8 @@ noncomputable def odometerDigitPartialSum (q : ℂ) (ω : ℕ → Fin 2) (x : �
   (∑ j ∈ range ⌊x⌋₊, ∑' i : ℕ, ((dyadicOdometer^[j] ω i : ℕ) : ℂ) * q ^ (i + 1)) +
     ((Int.fract x : ℝ) : ℂ) * ∑' i : ℕ, ((dyadicOdometer^[⌊x⌋₊] ω i : ℕ) : ℂ) * q ^ (i + 1)
 
-/-- `S_{q,ω}(0) = 0`.
+/-- **The odometer partial sum vanishes at zero.** For every $q \in \mathbb{C}$ and every dyadic
+integer $\omega$, the interpolated odometer partial sum satisfies $S_{q,\omega}(0) = 0$.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, Section 5. -/
@@ -182,10 +225,15 @@ theorem odometerDigitPartialSum_zero (q : ℂ) (ω : ℕ → Fin 2) :
     odometerDigitPartialSum q ω 0 = 0 := by
   simp [odometerDigitPartialSum]
 
-/-- The maximal absolute fluctuation of `t ↦ S_{q,ω}(t l) - t S_{q,ω}(l)` on `[0, 1]`.
-This is the scale of the *canonical* normalizing coefficient of the sources: "the
-normalizing coefficient `R_n` is canonically defined to be equal to the maximum in
-`t ∈ [0, 1]` of `|𝒮(t·l_n(x)) - t·𝒮(l_n)|`".
+/-- **Maximal fluctuation of the odometer partial sums.** Let $q$ be a complex number, let
+$\omega = (\omega_0, \omega_1, \dots)$ be a dyadic integer (a sequence of binary digits), let $l$
+be a natural number, and let $S_{q,\omega}$ denote the interpolated odometer partial sums. The
+maximal fluctuation is the supremum over $t \in [0, 1]$ of
+$|S_{q,\omega}(t l) - t\,S_{q,\omega}(l)|$.
+
+This is the scale of the canonical normalizing coefficient of the sources: "the normalizing
+coefficient $R_n$ is canonically defined to be equal to the maximum in $t \in [0, 1]$ of
+$|\mathcal{S}(t \cdot l_n(x)) - t \cdot \mathcal{S}(l_n)|$".
 
 Source: Aleksei Minabutdinov, *Limiting curves for the dyadic odometer and the generalized
 Trollope-Delange formula*, Section 2.2 (definition of `φ_n` and `R_n`), and *A q-Weighted
@@ -196,19 +244,25 @@ noncomputable def odometerMaxFluctuation (q : ℂ) (ω : ℕ → Fin 2) (l : ℕ
     ‖odometerDigitPartialSum q ω ((t : ℝ) * (l : ℝ)) -
       (t : ℝ) * odometerDigitPartialSum q ω (l : ℝ)‖
 
-/-- A **stabilizing sequence** for `(q, ω)` with **normalizing sequence** `R` and limiting
-curve `φ`: a sequence `l_n` of positive integers tending to infinity and a sequence `R_n`
-of nonzero scalars, unbounded in absolute value and eventually of the same order as the
-canonical coefficient `odometerMaxFluctuation q ω (l n)`, such that the normalized
-fluctuations `(S_{q,ω}(t l_n) - t S_{q,ω}(l_n)) / R_n` converge uniformly on `[0, 1]` to
-the continuous function `φ`.
+/-- **Stabilizing sequence for the dyadic odometer.** Let $q \in \mathbb{C}$, let $\omega$ be a
+dyadic integer, let $S_{q,\omega}$ be the interpolated odometer partial sum, and for a natural
+number $l$ let $M_{q,\omega}(l) = \sup_{t \in [0, 1]} |S_{q,\omega}(tl) - t S_{q,\omega}(l)|$ be the
+maximal fluctuation. A sequence $(l_n)$ of natural numbers is a stabilizing sequence for
+$(q, \omega)$ with normalizing sequence $(R_n)$ of complex numbers and limiting curve
+$\varphi : \mathbb{R} \to \mathbb{C}$ when: every $l_n$ is positive and $l_n \to \infty$; every
+$R_n$ is nonzero and $|R_n| \to \infty$; there are real constants $c > 0$ and $C$ with
+$c M_{q,\omega}(l_n) \le |R_n| \le C M_{q,\omega}(l_n)$ for all sufficiently large $n$;
+$\varphi$ is continuous on $[0, 1]$; and the functions
+$t \mapsto (S_{q,\omega}(t l_n) - t S_{q,\omega}(l_n))/R_n$ converge uniformly on $[0, 1]$ to
+$\varphi$.
 
-`R` is a *chosen* sequence of the canonical order, not forced to equal the maximal
-fluctuation: with that equality every normalized fluctuation would have sup-norm `≤ 1`,
-so the limit in Theorem 2 below could not be `-𝒯_a` (for example `𝒯_{3/4}(1/3) = 4/3`).
-This matches the sources' usage, where `φ^{l_n,R_n}` is parametrized by the chosen `R_n`
-(e.g. `R_n = (2q)^{n-1}` along `l_n = 2^n` in Article A61, Section 3); unbounded growth
-of `R_n` is the necessary condition for a limiting curve recorded in the odometer paper.
+The normalizing sequence $R_n$ is chosen of the order of $M_{q,\omega}(l_n)$, not equal to it:
+with equality every normalized fluctuation would have supremum norm at most $1$, so the limit in
+Theorem 2 of Article A61 could not be the negative Takagi–Landsberg function $-\mathcal{T}_a$
+(for example $\mathcal{T}_{3/4}(1/3) = 4/3$). This matches the sources' usage, where
+$\varphi^{l_n,R_n}$ is parametrized by the chosen $R_n$ (e.g. $R_n = (2q)^{n-1}$ along
+$l_n = 2^n$ in Article A61, Section 3); unbounded growth of $R_n$ is the necessary condition for
+a limiting curve recorded in the odometer paper.
 
 Source: Aleksei Minabutdinov, *Limiting curves for the dyadic odometer and the generalized
 Trollope-Delange formula*, Definition 1 and Section 3.1, restated in *A q-Weighted
@@ -226,12 +280,17 @@ def IsStabilizingSeq (q : ℂ) (ω : ℕ → Fin 2) (l : ℕ → ℕ) (R : ℕ �
         t * odometerDigitPartialSum q ω (l n)) / R n)
       φ Filter.atTop (Set.Icc 0 1)
 
-/-- **Theorem 2** (quoted from the author's earlier work): for `1/2 < |q| < 1` and Haar-almost
-every `ω ∈ ℤ₂` there are a stabilizing sequence `l_n` of positive integers and a normalizing
-sequence `R_n` (in the sense of `IsStabilizingSeq`: nonzero, unbounded, and of the order
-of the maximal fluctuation) such that
-`φ^{l_n,R_n}_{q,ω}(t) = (S_{q,ω}(t l_n) - t S_{q,ω}(l_n))/R_n` converges uniformly on
-`[0, 1]` to `-𝒯_a` with `a = 1/(2q)`.
+/-- **Odometer limiting curve is the negative Takagi–Landsberg function.** Let $q \in \mathbb{C}$
+with $1/2 < |q| < 1$ and put $a = 1/(2q)$. Then for almost every dyadic integer $\omega$ with
+respect to the Haar measure on $\mathbb{Z}_2$ there are a sequence $(l_n)$ of natural numbers and
+a sequence $(R_n)$ of complex numbers such that $(l_n)$ is a stabilizing sequence for
+$(q, \omega)$ with normalizing sequence $(R_n)$ and limiting curve $t \mapsto -\mathcal{T}_a(t)$,
+where $\mathcal{T}_a$ is the Takagi–Landsberg function. In particular, with $S_{q,\omega}$ the
+interpolated odometer partial sums, the normalized fluctuations
+$(S_{q,\omega}(t l_n) - t S_{q,\omega}(l_n))/R_n$ converge uniformly on $[0, 1]$ to
+$-\mathcal{T}_a(t)$.
+
+This is Theorem 2 of the source, which quotes it from the author's earlier work.
 
 Source: Aleksei Minabutdinov, *A q-Weighted Analogue of the Trollope-Delange Formula*,
 INTEGERS 26 (2026), Article A61, Theorem 2 (`integers-2026-A61-thm-2`). -/

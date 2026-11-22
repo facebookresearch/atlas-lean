@@ -17,6 +17,7 @@ public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Order.LiminfLimsup
 public import MathlibExt.Combinatorics.Enumerative.TotienomialCoefficient
 public import MathlibExt.NumberTheory.GeneralizedFibocatalanNumber
+public import MathlibExt.NumberTheory.PrimeDvdChoose
 
 namespace MetaMathlibExt
 
@@ -207,16 +208,6 @@ public theorem_wanted binomidShift_image_inter_eq_zero {l m : ℕ} (hlm : l ≠ 
     binomidShift l '' {η | IsLexMinimalExtension η}
         ∩ binomidShift m '' {η | IsLexMinimalExtension η}
       = {fun _ => 0}
-
-/-- **Primes divide all inner binomial coefficients of infinitely many rows.** For every prime
-$p$ there are infinitely many natural numbers $n$ such that $p$ divides the binomial coefficient
-$\binom{n}{k}$ for every $k$ with $1 \le k < n$.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Corollary 3
-(`integers-2024-A53-cor-3`). -/
-public theorem_wanted infinite_setOf_prime_dvd_choose {p : ℕ} (hp : p.Prime) :
-    {n : ℕ | ∀ k, 1 ≤ k → k < n → p ∣ n.choose k}.Infinite
 
 /-- **Primes divide all inner Fibonomial coefficients of infinitely many rows.** Let $F_n$ be
 the Fibonacci numbers and $F_n! = F_1 F_2 \cdots F_n$ the Fibonacci factorial. For every prime
