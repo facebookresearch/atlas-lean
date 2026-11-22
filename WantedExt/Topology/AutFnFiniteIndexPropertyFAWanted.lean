@@ -47,10 +47,14 @@ Clause list (every item below appears in the formal text):
 
 universe u
 
-/-- Serre's Property FA for a group `G`: every simplicial action of `G`
-on a simplicial tree, acting by adjacency-preserving permutations without
-edge inversion, has a global fixed vertex [AMR-109-0276] (Question 2.8,
-PDF p. 331). -/
+/-- **Serre's Property FA.** A group $G$ has Property FA when every action of $G$ on a tree
+without edge inversion has a global fixed vertex: for every tree $T$ with vertex set $V$ and every
+homomorphism $\alpha$ from $G$ to the group of permutations of $V$ such that each $\alpha(g)$
+satisfies $\alpha(g)(u) \sim \alpha(g)(v) \iff u \sim v$ for all vertices $u, v$ (where $\sim$ is
+adjacency in $T$), and such that no $\alpha(g)$ swaps the two ends of an edge, there is a vertex
+$v$ with $\alpha(g)(v) = v$ for all $g \in G$.
+
+Source: [AMR-109-0276] (Question 2.8, PDF p. 331). -/
 def HasPropertyFA (G : Type u) [Group G] : Prop :=
   ∀ (V : Type u) (T : SimpleGraph V), T.IsTree →
     ∀ (α : G →* Equiv.Perm V),
@@ -58,18 +62,28 @@ def HasPropertyFA (G : Type u) [Group G] : Prop :=
       (∀ g : G, ∀ u v : V, T.Adj u v → ⇑(α g) u = v → ⇑(α g) v ≠ u) →
       ∃ v : V, ∀ g : G, ⇑(α g) v = v
 
-/-- Farb Question 2.8 [AMR-109-0276] (PDF p. 331): for `n ≥ 4`, do
-subgroups of finite index in `Aut(Fₙ)` have Serre's Property FA? -/
+/-- **Farb's question on Property FA for finite-index subgroups of $\operatorname{Aut}(F_n)$.**
+The proposition that for every natural number $n \ge 4$, every subgroup of finite index in the
+automorphism group $\operatorname{Aut}(F_n)$ of the free group $F_n$ on $n$ generators has Serre's
+Property FA.
+
+Source: Farb Question 2.8 [AMR-109-0276] (PDF p. 331). -/
 def conjecture : Prop :=
   ∀ n : ℕ, 4 ≤ n →
     ∀ H : Subgroup (MulAut (FreeGroup (Fin n))),
       H.FiniteIndex → HasPropertyFA ↥H
 
 /--
-Resolved true: Aut(F_n) has Kazhdan's property (T) for n >= 4: Kaluba–Kielak–Nowak (Ann. of
-Math. 193 (2021), arXiv:1812.03456) for n >= 6, Kaluba–Nowak–Ozawa for n = 5, Nitsche
-(arXiv:2009.05134) for n = 4. Property (T) passes to finite-index subgroups and implies Serre's
-FA (Watatani). Source: Marek Kaluba, Dawid Kielak and Piotr W. Nowak, On property (T) for
+**Finite-index subgroups of $\operatorname{Aut}(F_n)$ have Property FA for $n \ge 4$.** For every
+natural number $n \ge 4$, every subgroup of finite index in the automorphism group
+$\operatorname{Aut}(F_n)$ of the free group $F_n$ on $n$ generators has Serre's Property FA.
+
+This answers Farb's Question 2.8 positively: $\operatorname{Aut}(F_n)$ has Kazhdan's property (T)
+for $n \ge 4$ (Kaluba–Kielak–Nowak for $n \ge 6$, Kaluba–Nowak–Ozawa for $n = 5$, Nitsche for
+$n = 4$), property (T) passes to finite-index subgroups, and it implies Serre's Property FA
+(Watatani).
+
+Source: Marek Kaluba, Dawid Kielak and Piotr W. Nowak, On property (T) for
 Aut(F_n) and SL_n(Z), Ann. of Math. 193 (2021), arXiv:1812.03456,
 https://arxiv.org/abs/1812.03456; Martin Nitsche, Computer proofs for Property (T), and SDP
 duality, arXiv:2009.05134v3 (2022), https://arxiv.org/abs/2009.05134. Moved from
