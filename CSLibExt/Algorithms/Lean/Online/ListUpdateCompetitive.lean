@@ -120,7 +120,7 @@ private theorem mtfListAfter_append_singleton {α : Type*} [DecidableEq α]
       simp only [mtfListAfter, ih]
 
 /-- Move-to-front as a causal framework strategy. -/
-noncomputable def mtfStrategy {α : Type*} [DecidableEq α] (M : List α) :
+def mtfStrategy {α : Type*} [DecidableEq α] (M : List α) :
     Strategy α (List α) :=
   fun σ => match σ.reverse with
     | [] => M
