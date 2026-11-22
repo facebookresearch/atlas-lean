@@ -23,33 +23,8 @@ namespace MetaMathlibExt
 
 /-! # B-ary Chu-Vandermonde -/
 
-/-- Splitting off the lowest base-`b` digit from `x % (b * b ^ L)`. -/
-private lemma bary_mod_mul (b L x : ℕ) (hb : 2 ≤ b) :
-    x % (b * b ^ L) = x % b + b * ((x / b) % b ^ L) := by
-  have hb0 : 0 < b := by omega
-  have hM : 0 < b ^ L := pow_pos hb0 L
-  have hr0 : x % b < b := Nat.mod_lt x hb0
-  have hq : (x / b) % b ^ L < b ^ L := Nat.mod_lt _ hM
-  have hY : (x / b) % b ^ L + 1 ≤ b ^ L := Nat.succ_le_of_lt hq
-  have hA : x % b + b * ((x / b) % b ^ L) < b * b ^ L := by
-    calc x % b + b * ((x / b) % b ^ L)
-        < b + b * ((x / b) % b ^ L) := Nat.add_lt_add_right hr0 _
-      _ = b * (((x / b) % b ^ L) + 1) := by ring
-      _ ≤ b * b ^ L := Nat.mul_le_mul_left b hY
-  have h2 := Nat.div_add_mod (x / b) (b ^ L)
-  have hQR : b * (x / b) = (b * b ^ L) * ((x / b) / b ^ L) + b * ((x / b) % b ^ L) := by
-    conv_lhs => rw [← h2]
-    ring
-  have h1 := Nat.div_add_mod x b
-  have hx : x = (x % b + b * ((x / b) % b ^ L)) + (b * b ^ L) * ((x / b) / b ^ L) := by
-    calc x = b * (x / b) + x % b := h1.symm
-      _ = (x % b + b * ((x / b) % b ^ L)) + (b * b ^ L) * ((x / b) / b ^ L) := by
-        rw [hQR]; ring
-  conv_lhs => rw [hx]
-  rw [Nat.add_mul_mod_self_left, Nat.mod_eq_of_lt hA]
-
 /-- Reconstructing `x % b ^ L` from its base-`b` digits. -/
-private lemma bary_sum_digits_mod (b x L : ℕ) (hb : 2 ≤ b) :
+private lemma bary_sum_digits_mod (b x L : ℕ) :
     ∑ l ∈ Finset.range L, ((x / b ^ l) % b) * b ^ l = x % b ^ L := by
   induction L generalizing x with
   | zero => simp only [Finset.range_zero, Finset.sum_empty, pow_zero, Nat.mod_one]
@@ -67,10 +42,10 @@ private lemma bary_sum_digits_mod (b x L : ℕ) (hb : 2 ≤ b) :
     rw [Finset.sum_range_succ', hS]
     simp only [pow_zero, Nat.div_one, mul_one]
     rw [pow_succ', add_comm (b * ((x / b) % b ^ L)) (x % b)]
-    exact (bary_mod_mul b L x hb).symm
+    exact Nat.mod_mul.symm
 
 /-- Carry-free digits below `l` bound the sum of the remainders mod `b ^ l`. -/
-private lemma bary_mod_sum_le (b l m n : ℕ) (hb : 2 ≤ b)
+private lemma bary_mod_sum_le (b l m n : ℕ)
     (hfree : ∀ j ∈ Finset.range l, (m / b ^ j) % b + (n / b ^ j) % b < b) :
     m % b ^ l + n % b ^ l + 1 ≤ b ^ l := by
   induction l generalizing m n with
@@ -97,7 +72,7 @@ private lemma bary_mod_sum_le (b l m n : ℕ) (hb : 2 ≤ b)
     have hA : m % b + n % b + 1 ≤ b := Nat.succ_le_of_lt h0
     have hmul : b * (((m / b) % b ^ l + (n / b) % b ^ l) + 1) ≤ b * b ^ l :=
       Nat.mul_le_mul_left b hB
-    rw [pow_succ', bary_mod_mul b l m hb, bary_mod_mul b l n hb]
+    rw [pow_succ', Nat.mod_mul (x := m), Nat.mod_mul (x := n)]
     calc m % b + b * ((m / b) % b ^ l) + (n % b + b * ((n / b) % b ^ l)) + 1
         = (m % b + n % b + 1) + b * (((m / b) % b ^ l) + ((n / b) % b ^ l)) := by ring
       _ ≤ b + b * (((m / b) % b ^ l) + ((n / b) % b ^ l)) :=
@@ -110,7 +85,7 @@ private lemma bary_div_add (b l m n : ℕ) (hb : 2 ≤ b)
     (hfree : ∀ j ∈ Finset.range l, (m / b ^ j) % b + (n / b ^ j) % b < b) :
     (m + n) / b ^ l = m / b ^ l + n / b ^ l := by
   have hR : m % b ^ l + n % b ^ l < b ^ l := by
-    have hle := bary_mod_sum_le b l m n hb hfree
+    have hle := bary_mod_sum_le b l m n hfree
     omega
   have hM : 0 < b ^ l := pow_pos (by omega) l
   have hdm := Nat.div_add_mod m (b ^ l)
@@ -154,7 +129,7 @@ private lemma bary_eq_zero_of_lt (b n k : ℕ) (hb : 2 ≤ b) (h : n < k) :
   have hle : ∀ l ∈ Finset.range (n + k + 1), (k / b ^ l) % b ≤ (n / b ^ l) % b :=
     fun l hl => not_lt.mp fun hlt => h0 (Finset.prod_eq_zero hl (Nat.choose_eq_zero_of_lt hlt))
   have hsum := Finset.sum_le_sum fun l hl => Nat.mul_le_mul_right (b ^ l) (hle l hl)
-  rw [bary_sum_digits_mod b k _ hb, bary_sum_digits_mod b n _ hb, Nat.mod_eq_of_lt hk,
+  rw [bary_sum_digits_mod b k, bary_sum_digits_mod b n, Nat.mod_eq_of_lt hk,
     Nat.mod_eq_of_lt hn] at hsum
   omega
 

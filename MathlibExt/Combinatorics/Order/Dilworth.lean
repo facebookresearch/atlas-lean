@@ -62,14 +62,10 @@ private theorem widthFin_mono {α : Type*} [Fintype α] [PartialOrder α]
   apply Finset.sup_mono
   exact Finset.powerset_mono.mpr h
 
-private theorem isAntichain_singleton {α : Type*} [PartialOrder α] (a : α) :
-    IsAntichain (· ≤ ·) ({a} : Set α) :=
-  IsAntichain.singleton (r := (· ≤ ·)) (a := a)
-
 private theorem isAntichain_coe_singleton {α : Type*} [PartialOrder α] (a : α) :
     IsAntichain (· ≤ ·) ((({a} : Finset α)) : Set α) := by
   rw [Finset.coe_singleton]
-  exact isAntichain_singleton a
+  exact IsAntichain.singleton
 
 private theorem widthFin_ge_one_of_mem {α : Type*} [Fintype α] [PartialOrder α]
     {s : Finset α} {a : α} (h : a ∈ s) : 1 ≤ widthFin s := by

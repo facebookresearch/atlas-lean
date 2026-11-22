@@ -739,23 +739,6 @@ private lemma ntCls_map {α β : Type*} {r : α → α → Prop} {r' : β → β
   · rintro ⟨w, hw, rfl⟩
     exact ntEqvGen_map hiff hw
 
-/-- Forward map on image subtypes. -/
-private def ntImgFwd {α β : Type*} (f : β → α) (s : Set β) (a : ↥s) : ↥(f '' s) :=
-  ⟨f a.1, a.1, a.2, rfl⟩
-
-/-- Images under an injection preserve `Nat.card`. -/
-private lemma ntCard_image {α β : Type*} {f : β → α} (hf : Function.Injective f)
-    (s : Set β) : Nat.card ↥(f '' s) = Nat.card ↥s := by
-  have hinj : Function.Injective (ntImgFwd f s) := by
-    intro a1 a2 h
-    have hval : f a1.1 = f a2.1 := congrArg Subtype.val h
-    exact Subtype.ext (hf hval)
-  have hsurj : Function.Surjective (ntImgFwd f s) := by
-    intro b
-    obtain ⟨a, haS, hab⟩ := b.2
-    exact ⟨⟨a, haS⟩, Subtype.ext hab⟩
-  exact (Nat.card_eq_of_bijective (ntImgFwd f s) ⟨hinj, hsurj⟩).symm
-
 /-- Image membership as an explicit existential. -/
 private lemma ntMem_image {α β : Type*} {f : β → α} {S' : Set β} {x : α}
     (h : x ∈ f '' S') : ∃ b ∈ S', f b = x := h
@@ -775,7 +758,7 @@ private noncomputable def ntMapFwd {α β : Type*} {r : α → α → Prop}
       (ntCls_map hf hiff hclosed
         (Classical.indefiniteDescription _ C'.2).1).symm),
     by
-      rw [ntCard_image hf]
+      rw [Nat.card_image_of_injective hf]
       exact (Classical.indefiniteDescription _ C'.2).2.2.2⟩
 
 /-- Backward class map for transport. -/
@@ -806,7 +789,7 @@ private noncomputable def ntMapBwd {α β : Type*} {r : α → α → Prop}
               (Classical.indefiniteDescription _
                 (ntMem_image
                   (Classical.indefiniteDescription _ C.2).2.1)).1)))
-      rw [← ntCard_image hf, ← himg]
+      rw [← Nat.card_image_of_injective hf, ← himg]
       exact hcardC⟩
 
 /-- Transport of the class count along an injective closed-range map. -/
