@@ -33,7 +33,13 @@ def l0 : Fin 1 → Fin 2 → ℝ :=
   fun _ a => if a = 0 then 2 else 6
 
 theorem t1_stationary : IsStationaryPlay qId pU := by
-  refine ⟨?_, ?_⟩
+  refine ⟨?_, ?_, ?_⟩
+  · intro t j
+    rw [isSimplex_iff]
+    refine ⟨?_, ?_⟩
+    · intro a
+      fin_cases j <;> fin_cases a <;> simp [qId]
+    · fin_cases j <;> simp [qId, Fin.sum_univ_two]
   · intro t
     rw [isSimplex_iff]
     refine ⟨?_, ?_⟩
@@ -140,10 +146,10 @@ theorem t4_exists_stationary_swap :
   refine ⟨p, hp, ?_⟩
   intro t
   have hsum : p t 0 + p t 1 = 1 := by
-    have h := ((isSimplex_iff _).mp (hp.1 t)).2
+    have h := ((isSimplex_iff _).mp (hp.2.1 t)).2
     rwa [Fin.sum_univ_two] at h
   have h0 : p t 0 = p t 1 := by
-    have h := hp.2 t 0
+    have h := hp.2.2 t 0
     simpa [qSwap, Fin.sum_univ_two] using h
   constructor <;> linarith
 

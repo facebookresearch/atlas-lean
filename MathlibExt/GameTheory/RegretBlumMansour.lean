@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.GameTheory.Regret
-public import MathlibExt.Probability.FiniteMarkovChainConvergence
+import MathlibExt.Probability.FiniteMarkovChainConvergence
 
 set_option autoImplicit false
 
@@ -49,7 +49,7 @@ def scaledLoss (p : Fin T → K → ℝ) (loss : Fin T → K → ℝ) (j : K) :
 is a stationary distribution of the chain with transition probabilities
 `q t j i` from `j` to `i`. -/
 def IsStationaryPlay (q : Fin T → K → K → ℝ) (p : Fin T → K → ℝ) : Prop :=
-  (∀ t, IsSimplex (p t)) ∧
+  (∀ t j, IsSimplex (q t j)) ∧ (∀ t, IsSimplex (p t)) ∧
     ∀ t i, p t i = ∑ j, p t j * q t j i
 
 /-- Under stationarity, the master's expected loss is the sum over the
@@ -59,7 +59,7 @@ theorem expectedLoss_eq_sum_scaled (q : Fin T → K → K → ℝ)
     (p loss : Fin T → K → ℝ) (hp : IsStationaryPlay q p) :
     expectedLoss p loss =
       ∑ j, expectedLoss (fun t => q t j) (scaledLoss p loss j) := by
-  obtain ⟨-, hstat⟩ := hp
+  obtain ⟨-, -, hstat⟩ := hp
   have h : ∀ (t : Fin T) (a : K),
       p t a * loss t a = ∑ j, q t j a * (p t j * loss t a) := by
     intro t a
@@ -119,7 +119,7 @@ theorem exists_isStationaryPlay (q : Fin T → K → K → ℝ)
       MathlibExt.Probability.FiniteMarkovChainConvergence.exists_stationary hP
     exact ⟨π, (isSimplex_iff π).mpr ⟨hnonneg, hsum⟩, hvec⟩
   choose p hp using hstat
-  refine ⟨p, ⟨?_, ?_⟩⟩
+  refine ⟨p, hq, ?_, ?_⟩
   · intro t
     exact (hp t).1
   · intro t i
