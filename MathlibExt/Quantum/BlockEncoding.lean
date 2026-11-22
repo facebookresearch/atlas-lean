@@ -52,7 +52,7 @@ abbrev IsQubitBlockEncoding {s a : ℕ} (A : Matrix (Fin (2 ^ s)) (Fin (2 ^ s)) 
 private def embMat (o : κ) : Matrix (κ × ι) ι ℂ :=
   Matrix.of fun p j => if p = (o, j) then 1 else 0
 
-private theorem embMat_conjTranspose_mul_self (o : κ) [Nonempty κ] [Nonempty ι] :
+private theorem embMat_conjTranspose_mul_self (o : κ) :
     (embMat o)ᴴ * embMat o = (1 : Matrix ι ι ℂ) := by
   ext i j
   show (∑ p : κ × ι, star (if p = (o, i) then (1 : ℂ) else 0) *
@@ -73,7 +73,7 @@ private theorem embMat_conjTranspose_mul_self (o : κ) [Nonempty κ] [Nonempty �
     simp only [hterm]
     simp [h]
 
-private theorem embMat_norm (o : κ) [Nonempty ι] [Nonempty κ] :
+private theorem embMat_norm (o : κ) [Nonempty ι] :
     ‖(embMat o : Matrix (κ × ι) ι ℂ)‖ = (1 : ℝ) := by
   set E : Matrix (κ × ι) ι ℂ := embMat o
   have hEE : Eᴴ * E = (1 : Matrix ι ι ℂ) :=
