@@ -174,6 +174,7 @@ private lemma digits_repunit_mul_aux (b B M N e : ℕ) (hb : 1 < b)
     simp at hne
   · exact h1
 
+set_option linter.unusedVariables false in
 /--
 **Chinese remainder solutions with nonzero-digit product one.** Let $b \ge 3$ and $w \ge 1$
 be integers, and for $v = 1, \dots, w$ let $m_v$ be a positive integer and $r_v$ an integer.
@@ -190,6 +191,7 @@ b-Prodigious Numbers," Journal of Integer Sequences 25 (2022),
 Article 22.8.7, Lemma `lem:crt`, lines 178-180,
 <https://cs.uwaterloo.ca/journals/JIS/VOL25/Wong/wong42.tex>.
 -/
+@[nolint unusedArguments] -- `hw` keeps the `Wanted` entry's statement
 theorem exists_positive_crt_solution_nonzero_digit_product_one
     (w b : ℕ)
     (r : Fin w → ℤ)

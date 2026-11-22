@@ -88,10 +88,13 @@ private lemma schwarzPick_psi_phi {z w : ℂ} (hz : ‖z‖ < 1) (hw : ‖w‖ <
   rw [div_eq_iff hd2, div_add' _ _ _ hd, e2, ← mul_div_assoc, div_eq_div_iff hd hd, e3]
 
 /--
-If `f : ℂ → ℂ` is holomorphic on `ball 0 1` and maps the ball into itself, then `‖(f z - f w)/(1 -
-conj (f w) * f z)‖ ≤ ‖(z - w)/(1 - conj w * z)‖` for all `z, w ∈ ball 0 1`, where `conj = star`.
+**Schwarz–Pick lemma.** Let $f : \mathbb{C} \to \mathbb{C}$ be holomorphic on the open unit disc
+$\mathbb{D} = \{z : |z| < 1\}$ and map $\mathbb{D}$ into itself. Then for all $z, w \in \mathbb{D}$,
+$|f(z) - f(w)| / |1 - \overline{f(w)}\, f(z)| \le |z - w| / |1 - \bar w z|$.
+
 Source: Schwarz–Pick lemma, G. Pick (1916), building on Schwarz's lemma; see Ahlfors; Lean is
 holomorphic self-map of disc pseudo-hyperbolic distance nonincreasing inequality with star conj.
+
 Proves `Wanted` entry `schwarzPick`.
 -/
 theorem schwarzPick

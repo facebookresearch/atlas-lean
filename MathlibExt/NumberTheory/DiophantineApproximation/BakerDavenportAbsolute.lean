@@ -67,6 +67,7 @@ theorem bakerDavenport_reduction_absolute_general
   linarith
 
 
+set_option linter.unusedVariables false in
 /-- **Baker–Davenport reduction lemma, absolute-value form.** For a real number $x$ write
 $\lVert x \rVert = |x - \operatorname{round}(x)|$ for the distance from $x$ to a nearest integer.
 Let $M$ be a positive integer and $\kappa$ an irrational real number, and let $q$ be the
@@ -94,6 +95,7 @@ Source-file SHA-256
 exact-span SHA-256
 `cc488ea946e7229300ad0b1a00befe1e523c8a5b97331a1d79e04c8f40429fe4`.
 -/
+@[nolint unusedArguments] -- `hkappa` keeps the `Wanted` entry's statement
 theorem bakerDavenport_reduction_absolute
     (M : ℕ) (hM : 0 < M)
     (kappa : ℝ) (hkappa : Irrational kappa)

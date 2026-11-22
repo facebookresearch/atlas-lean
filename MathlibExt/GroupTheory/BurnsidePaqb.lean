@@ -17,7 +17,7 @@ public import MathlibExt.GroupTheory.BurnsidePaqb.SimplePrime
 Authors: Muse Spark 1.3
 
 Port of the fully proved headline stage from the screened archive
-`genai_web_search/tree/users/akiezun/burnside_proof.zip` (SHA-256
+`burnside_proof.zip` (SHA-256
 `d9da7df82e467d9fa587892eeef9f51e2b83df0588175653bd1d16264b09dd00`):
 `Burnside/Statement.lean`.
 
@@ -53,6 +53,7 @@ theorem burnside_paqb_zero {G : Type} [Group G] [Fintype G]
     p q a b hp hq hcard
 
 attribute [-instance] Fin.instMul in
+attribute [-instance] Fin.instNatPow in
 /-- If `G` is finite and `Fintype.card G = p ^ a * q ^ b` for primes `p, q` and
 `a, b : ℕ`, then `G` is solvable. Proved by descent to `Fin (Fintype.card G)`. -/
 theorem burnside_paqb {G : Type*} [Group G] [Fintype G]

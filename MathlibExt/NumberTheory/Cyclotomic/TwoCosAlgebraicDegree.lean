@@ -14,7 +14,7 @@ public import Mathlib.LinearAlgebra.Dimension.Finrank
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.CStarAlgebra.Classes
 import Mathlib.Analysis.InnerProductSpace.Basic
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.FieldTheory.Relrank
 import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 import Mathlib.RingTheory.Flat.FaithfullyFlat.Algebra

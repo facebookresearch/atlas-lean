@@ -181,11 +181,6 @@ private theorem choose_T_symm (n k l : ℕ) (h : k + l ≤ n) :
     mul_ne_zero hK (mul_ne_zero hL hM0)
   exact mul_right_cancel₀ hZ (by rw [key1, key2])
 
-private theorem succ_cast_ne_zero (i : ℕ) : ((i : ℂ) + 1) ≠ 0 := by
-  have hc : ((i : ℂ) + 1) = ((i + 1 : ℕ) : ℂ) := by push_cast; ring
-  rw [hc]
-  exact_mod_cast Nat.succ_ne_zero i
-
 private theorem T1_helper (n i k : ℕ) (hki : k ≤ i) (hin : i ≤ n) :
     ((((n + 1).choose (i + 1) : ℕ)) : ℂ) * ((((i + 1).choose k : ℕ)) : ℂ)
       = ((((n + 1).choose k : ℕ)) : ℂ) * ((((n + 1 - k).choose (n - i) : ℕ)) : ℂ) := by
@@ -219,7 +214,7 @@ private theorem sigma_at (r : ℂ) (i : ℕ)
   rw [hr1] at h
   have hcast : ((((i + 1 : ℕ))) : ℂ) = (i : ℂ) + 1 := by push_cast; ring
   rw [hcast] at h
-  have hI1 := succ_cast_ne_zero i
+  have hI1 := Nat.cast_add_one_ne_zero (R := ℂ) i
   rw [eq_div_iff hI1]
   linear_combination h
 
@@ -235,7 +230,7 @@ private theorem per_side (r q : ℂ) (hr : r ≠ 0) (n i : ℕ) (hi : i ≤ n)
   have hs := sigma_at r i sigma hsigma
   have hkey := key_expand r hr n i hi
   have hdiv := choose_div_key n i hi
-  have hI1 := succ_cast_ne_zero i
+  have hI1 := Nat.cast_add_one_ne_zero (R := ℂ) i
   have hT : ∀ k ∈ Finset.range (i + 1),
       ((((n + 1).choose (i + 1) : ℕ)) : ℂ) * ((((i + 1).choose k : ℕ)) : ℂ)
         = ((((n + 1).choose k : ℕ)) : ℂ) * ((((n + 1 - k).choose (n - i) : ℕ)) : ℂ) := by
@@ -273,7 +268,7 @@ private theorem double_sum_eq (a b : ℂ) (ha : a ≠ 0) (hb : b ≠ 0) (n : ℕ
       (a ^ ((n : ℤ) - 1 - (i : ℤ)) * b ^ i * sigma (a - 1) i))
     = (∑ i ∈ Finset.range (n + 1), (n.choose i : ℂ) * (bernoulli (n - i) : ℂ) *
       (a ^ i * b ^ ((n : ℤ) - 1 - (i : ℤ)) * sigma (b - 1) i)) := by
-  have hN1 := succ_cast_ne_zero n
+  have hN1 := Nat.cast_add_one_ne_zero (R := ℂ) n
   apply mul_left_cancel₀ hN1
   rw [Finset.mul_sum, Finset.mul_sum]
   have eA : (∑ i ∈ Finset.range (n + 1), ((n : ℂ) + 1) * ((n.choose i : ℂ) *

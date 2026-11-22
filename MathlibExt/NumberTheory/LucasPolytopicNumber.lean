@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.GroupWithZero.Finset
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 
 /-!
 # Lucas-polytopic numbers
@@ -44,7 +44,9 @@ $\{n\}_{s,t} \ne 0$ for every natural number $n \ne 0$.
 The last condition ensures that the $s,t$-factorials are nonzero, so quotients of them never
 divide by zero. -/
 structure LucasParameters where
+  /-- The coefficient of `{n + 1}ₛₜ` in the Lucas bracket recurrence. -/
   s : ℝ
+  /-- The coefficient of `{n}ₛₜ` in the Lucas bracket recurrence. -/
   t : ℝ
   s_ne_zero : s ≠ 0
   t_ne_zero : t ≠ 0

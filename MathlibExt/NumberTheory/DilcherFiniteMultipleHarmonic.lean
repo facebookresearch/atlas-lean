@@ -15,7 +15,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Data.Nat.Choose.Sum
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.GroupTheory.Finiteness
 import Mathlib.Tactic.LinearCombination
 
@@ -353,6 +353,7 @@ identity to Karl Dilcher, "Some q-series identities related to divisor functions
 Discrete Mathematics 145 (1995), 83–93, DOI 10.1016/0012-365X(95)00092-B
 (the JIS bibliography prints "divisor factors").
 -/
+@[nolint unusedArguments]
 theorem dilcher_finite_multiple_harmonic_identity (m n : ℕ)
     (hm : 0 < m) (hn : 0 < n) :
     (∑ k ∈ Finset.Icc 1 n,

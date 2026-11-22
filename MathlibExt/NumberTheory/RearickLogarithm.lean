@@ -227,14 +227,6 @@ private theorem f1_of_hL (f : ArithmeticFunction ℝ) (hf : 0 < f 1)
   rw [hlog, Real.exp_zero] at hexp
   exact hexp.symm
 
-private theorem div_mul_right_eq (a b d : ℕ) (hda : d ∣ a) :
-    (a * b) / d = (a / d) * b := by
-  rw [mul_comm a b, Nat.mul_div_assoc b hda, mul_comm b (a / d)]
-
-private theorem div_mul_left_eq (a b d : ℕ) (hdb : d ∣ b) :
-    (a * b) / d = a * (b / d) :=
-  Nat.mul_div_assoc a hdb
-
 private theorem lt_of_mul_right (a b : ℕ) (haPos : 0 < a) (hb1 : 1 < b) (N : ℕ) (hab : a * b = N) :
     a < N := by
   rw [← hab]
@@ -364,7 +356,7 @@ private theorem forward_vanish (f : ArithmeticFunction ℝ) (hf : 0 < f 1)
             have hda : d ∣ a := (Nat.mem_divisors.mp hd_mem).1
             have hNd : N / d = (a / d) * b := by
               rw [← hab]
-              exact div_mul_right_eq a b d hda
+              exact Nat.mul_div_right_comm hda b
             have hdiv : (a / d) ∣ a := Nat.div_dvd_of_dvd hda
             have hcopd : Nat.Coprime (a / d) b :=
               Nat.Coprime.coprime_dvd_left hdiv hcop
@@ -381,7 +373,7 @@ private theorem forward_vanish (f : ArithmeticFunction ℝ) (hf : 0 < f 1)
             have hdb : d ∣ b := (Nat.mem_divisors.mp hd_mem).1
             have hNd : N / d = a * (b / d) := by
               rw [← hab]
-              exact div_mul_left_eq a b d hdb
+              exact Nat.mul_div_assoc a hdb
             have hdiv : (b / d) ∣ b := Nat.div_dvd_of_dvd hdb
             have hcopd : Nat.Coprime a (b / d) :=
               (Nat.Coprime.coprime_dvd_left hdiv hcop.symm).symm
@@ -511,7 +503,7 @@ private theorem reverse_mult_aux (f : ArithmeticFunction ℝ) (hf : 0 < f 1)
               have hd1 : 1 < d := by omega
               have hNd : N / d = (a / d) * b := by
                 rw [← hab]
-                exact div_mul_right_eq a b d hda
+                exact Nat.mul_div_right_comm hda b
               have hdiv : (a / d) ∣ a := Nat.div_dvd_of_dvd hda
               have hcopd : Nat.Coprime (a / d) b :=
                 Nat.Coprime.coprime_dvd_left hdiv hcop
@@ -540,7 +532,7 @@ private theorem reverse_mult_aux (f : ArithmeticFunction ℝ) (hf : 0 < f 1)
               have hd1 : 1 < d := by omega
               have hNd : N / d = a * (b / d) := by
                 rw [← hab]
-                exact div_mul_left_eq a b d hdb
+                exact Nat.mul_div_assoc a hdb
               have hdiv : (b / d) ∣ b := Nat.div_dvd_of_dvd hdb
               have hcopd : Nat.Coprime a (b / d) :=
                 (Nat.Coprime.coprime_dvd_left hdiv hcop.symm).symm

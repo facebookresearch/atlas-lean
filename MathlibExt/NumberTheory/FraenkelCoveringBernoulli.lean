@@ -12,7 +12,7 @@ public import Mathlib.NumberTheory.Bernoulli
 public import MathlibExt.NumberTheory.CoveringSystem.ExactCover
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
@@ -502,6 +502,7 @@ Equation (23); exact source span: lines 228–241; full live TeX source-file SHA
 exact newline-terminated equation/context span SHA-256
 `1c95008be9bbbc150a494df7eef936abd3ee277ab9bd32ff1f67b0b0f4b76526`.
 -/
+@[nolint unusedArguments]
 theorem fraenkel_exact_M_cover_bernoulli_recurrence
     (q M m : ℕ) (a n : Fin q → ℕ)
     (hq : 2 ≤ q) (hm : 1 ≤ m)

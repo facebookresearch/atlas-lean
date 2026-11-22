@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Data.Nat.Digits.Defs
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Ring
 

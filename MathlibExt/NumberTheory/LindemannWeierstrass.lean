@@ -665,11 +665,6 @@ private theorem lw_exists_int_poly_eval_zero_ne_zero_of_isIntegral {ι : Type*}
     rw [hmap]
     exact Finset.prod_eq_zero himem hQi
 
-/-- Helper: the coercion `K → ℂ` is injective. -/
-private theorem lw_coe_injective {K : IntermediateField ℚ ℂ} :
-    Function.Injective ((↑) : K → ℂ) :=
-  Subtype.coe_injective
-
 open Classical in
 /-- Auxiliary integer polynomial vanishing at the nonzero points of `S`
 after scaling by `d`, with nonzero constant term. -/
@@ -702,7 +697,7 @@ private theorem lw_aux_poly {K : IntermediateField ℚ ℂ}
         simp [map_mul, Polynomial.aeval_X, eq_intCast]
       rw [Polynomial.aeval_comp, hq]
     rw [hae]
-    have hxC : ((x : K) : ℂ) ≠ 0 := fun h => hx0 (lw_coe_injective h)
+    have hxC : ((x : K) : ℂ) ≠ 0 := fun h => hx0 (Subtype.coe_injective h)
     have hne : (d : ℂ) * ((⟨x, hx⟩ : ↥S).val : ℂ) ≠ 0 :=
       mul_ne_zero (Int.cast_ne_zero.mpr hd) hxC
     exact hF₀van ⟨x, hx⟩ hne
@@ -1233,7 +1228,7 @@ private theorem lw_false_of_data {K : IntermediateField ℚ ℂ}
         Finset.mem_singleton]
       constructor
       · intro hi
-        exact Subtype.ext (lw_coe_injective hi)
+        exact Subtype.ext (Subtype.coe_injective hi)
       · intro hi
         subst hi
         rfl

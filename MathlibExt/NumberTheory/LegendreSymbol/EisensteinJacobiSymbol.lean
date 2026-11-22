@@ -288,12 +288,6 @@ private theorem fold_modEq (m b : ℕ) (hb : Odd b) (hcop : Nat.Coprime m b) :
     change gaussCount m b % 2 = eisS m b % 2
     omega
 
-private theorem neg_one_pow_modEq {x y : ℕ} (h : x ≡ y [MOD 2]) : (-1 : ℤ) ^ x = (-1 : ℤ) ^ y := by
-  have h2 : x % 2 = y % 2 := h
-  conv_lhs => rw [neg_one_pow_eq_pow_mod_two]
-  conv_rhs => rw [neg_one_pow_eq_pow_mod_two]
-  rw [h2]
-
 private theorem sq_sub_one_div_eight_mod_two (b : ℕ) (hb : Odd b) :
     ((b ^ 2 - 1) / 8) % 2 = (if b % 8 = 1 ∨ b % 8 = 7 then 0 else 1) := by
   have hb1 : 0 < b := hb.pos
@@ -414,7 +408,7 @@ private theorem eis_jacobi_gen (a : ℕ) : ∀ b : ℕ, Odd b → Nat.Coprime a 
       have hcorr : (if Even a then (b ^ 2 - 1) / 8 else 0) = (b ^ 2 - 1) / 8 := by
         simp only [ha_even, ite_true]
       rw [hJ, hJ2, IHm, hcorr, ha2, ← pow_add]
-      apply neg_one_pow_modEq
+      refine pow_eq_pow_of_modEq ?_ neg_one_sq
       change ((b ^ 2 - 1) / 8 + (eisS m b + (if Even m then (b ^ 2 - 1) / 8 else 0))) % 2
         = (eisS (2 * m) b + (b ^ 2 - 1) / 8) % 2
       have hs2 : (eisS (2 * m) b) % 2
@@ -482,7 +476,7 @@ private theorem eis_jacobi_gen (a : ℕ) : ∀ b : ℕ, Odd b → Nat.Coprime a 
             rw [h1, h2]
           have hev := even_quot_add_ite ha hb (Nat.div_add_mod b a).symm
           rw [hrec, hJr, IHr, hcorr_a, ← pow_add]
-          apply neg_one_pow_modEq
+          refine pow_eq_pow_of_modEq ?_ neg_one_sq
           change (a / 2 * (b / 2) +
               (eisS (b % a) a + (if Even (b % a) then (a ^ 2 - 1) / 8 else 0))) % 2
             = (eisS a b + 0) % 2
@@ -551,7 +545,7 @@ private theorem eis_jacobi_gen (a : ℕ) : ∀ b : ℕ, Odd b → Nat.Coprime a 
             rw [h1, h2]
           have hev' := even_quot_add_ite hb ha (Nat.div_add_mod a b).symm
           rw [hJr', IHr', hcorr_a]
-          apply neg_one_pow_modEq
+          refine pow_eq_pow_of_modEq ?_ neg_one_sq
           change (eisS (a % b) b + (if Even (a % b) then (b ^ 2 - 1) / 8 else 0)) % 2
             = (eisS a b + 0) % 2
           by_cases hr : Even (a % b)

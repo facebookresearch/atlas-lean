@@ -36,12 +36,12 @@ def IsMetricCenter (E : Type*) [PseudoMetricSpace E] (p q c : E) : Prop :=
   (∀ n, c ∈ metricCenterSets E p q n) ∧
   ∀ y, (∀ n, y ∈ metricCenterSets E p q n) → y = c
 
-/-- Mazur and Ulam's Problem 69 from the Scottish Book: is a complete
+/-- Mazur and Ulam's Problem 69 from the Scottish Book: is a nonempty complete
 metric space `E` in which (1) every pair has exactly one metric center
 and (2) for every `p, q` there is exactly one `x` such that `q` is the
 metric center of `(p, x)` necessarily isometric to a Banach space? -/
 def ScottishBookProblem69Claim : Prop :=
-  ∀ (E : Type) [PseudoMetricSpace E] [CompleteSpace E],
+  ∀ (E : Type) [PseudoMetricSpace E] [CompleteSpace E] [Nonempty E],
     (∀ p q : E, ∃! c, IsMetricCenter E p q c) →
     (∀ p q : E, ∃! x, IsMetricCenter E p x q) →
     ∃ (F : Type) (_ : NormedAddCommGroup F) (_ : NormedSpace ℝ F)
@@ -49,7 +49,7 @@ def ScottishBookProblem69Claim : Prop :=
 
 /--
 Mazur–Ulam Problem 69 is false: properties (1) and (2) do not
-characterize Banach spaces among metric spaces. Source: S. Mazur and
+characterize Banach spaces among nonempty metric spaces. Source: S. Mazur and
 S. Ulam, Problem 69 of the Scottish Book; typescript Ad 69 records the
 negative answer (S. Mazur, December 21, 1936).
 -/

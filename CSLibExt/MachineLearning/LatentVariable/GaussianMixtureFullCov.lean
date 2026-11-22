@@ -120,7 +120,9 @@ noncomputable def newCov (θ : ValidParams d K) (k : Fin K) : Matrix (Fin d) (Fi
   weightedScatter (fun n => resp θ (xs n) k) xs (newMean xs θ k)
 
 /-- The M-step: `π k' = N k / N`, `μ k'` the weighted mean, `Σ k'` the weighted sample
-covariance. -/
+covariance. The result is a `Params`, a data container whose validity is proved separately under
+hypotheses on the data. For an empty sample (`N = 0`) every weight is `0` (`0 / 0`), so the
+weights do not form a distribution. -/
 noncomputable def mStep (θ : ValidParams d K) : Params d K where
   weight k := mass xs θ k / N
   mean := newMean xs θ

@@ -40,43 +40,6 @@ private lemma list_iUnion_cons {X : Type*} (c : Set X) (l : List (Set X)) :
   ext x
   simp [Set.mem_iUnion]
 
-private lemma pairwise_of_forall_ne {α : Type*} {l : List α} {R : α → α → Prop}
-    (h : ∀ a ∈ l, ∀ b ∈ l, a ≠ b → R a b) (hn : l.Nodup) : l.Pairwise R := by
-  induction l with
-  | nil => exact List.Pairwise.nil
-  | cons a l ih =>
-    have h1 : ∀ b ∈ l, R a b := by
-      intro b hb
-      apply h _ (List.mem_cons.mpr (Or.inl rfl)) _ (List.mem_cons.mpr (Or.inr hb))
-      intro hcon
-      exact (List.nodup_cons.mp hn).1 (hcon ▸ hb)
-    have h2 : l.Pairwise R :=
-      ih (fun a' ha' b' hb' hne =>
-        h _ (List.mem_cons.mpr (Or.inr ha')) _ (List.mem_cons.mpr (Or.inr hb')) hne)
-        (List.nodup_cons.mp hn).2
-    exact List.pairwise_cons.mpr ⟨h1, h2⟩
-
-private lemma nodup_map_on {α β : Type*} {l : List α} {f : α → β}
-    (h : ∀ a ∈ l, ∀ b ∈ l, f a = f b → a = b) (hn : l.Nodup) : (l.map f).Nodup := by
-  induction l with
-  | nil => simp
-  | cons a l ih =>
-    have hna : a ∉ l := (List.nodup_cons.mp hn).1
-    have hnl : l.Nodup := (List.nodup_cons.mp hn).2
-    have ih' := ih
-      (fun a' ha' b' hb' heq =>
-        h _ (List.mem_cons.mpr (Or.inr ha')) _ (List.mem_cons.mpr (Or.inr hb')) heq) hnl
-    rw [List.map_cons, List.nodup_cons]
-    refine ⟨?_, ih'⟩
-    intro hmem
-    rw [List.mem_map] at hmem
-    obtain ⟨b, hb, heq⟩ := hmem
-    have hba : b = a := by
-      have hsymm := heq.symm
-      exact (h _ (List.mem_cons.mpr (Or.inl rfl)) _ (List.mem_cons.mpr (Or.inr hb)) hsymm).symm
-    subst hba
-    exact hna hb
-
 private lemma splitClopen {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [TotallyDisconnectedSpace X] [PerfectSpace X] {U : Set X}
     (hU : IsClopen U) (hne : U.Nonempty) :
@@ -292,7 +255,7 @@ theorem brouwer_cantor_space_characterization
       · exact absurd (Fin.ext h) hij
       · exact Disjoint.symm (hDdisj j i h)
     have hL0nodup : L0.Nodup := by
-      apply nodup_map_on _ (Finset.nodup_toList _)
+      apply List.Nodup.map_on _ (Finset.nodup_toList _)
       intro i hi j hj heq
       have hi' : (Df i).Nonempty :=
         (Finset.mem_filter.mp (Finset.mem_toList.mp hi)).2
@@ -322,7 +285,7 @@ theorem brouwer_cantor_space_characterization
         exact Set.mem_iUnion.mpr ⟨Df i, Set.mem_iUnion.mpr ⟨hmem, hxi⟩⟩
     by_cases hlen : 2 ≤ L0.length
     · exact ⟨L0, hlen, hL0cl, hL0ne', hL0sub, hL0mesh,
-        pairwise_of_forall_ne hL0disj hL0nodup, hL0union⟩
+        hL0nodup.pairwise_of_forall_ne hL0disj, hL0union⟩
     · push Not at hlen
       have hL0ne : L0 ≠ [] := by
         intro hcon

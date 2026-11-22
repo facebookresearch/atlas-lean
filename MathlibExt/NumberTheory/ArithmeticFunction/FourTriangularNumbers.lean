@@ -936,13 +936,6 @@ private lemma ftn_ncard_gaussNormSet_of_prime_three (p N : ℕ) (hp : Nat.Prime 
       exact h2 (Int.natCast_dvd_natCast.mp hdvdZ)
     rw [hempty, Set.ncard_empty]
 
-private lemma ftn_gauss_norm_nonneg (z : GaussianInt) : 0 ≤ z.norm := by
-  have h1 := ftn_norm_pair z.re z.im
-  have hz : (⟨z.re, z.im⟩ : GaussianInt) = z := Zsqrtd.ext_iff.mpr ⟨rfl, rfl⟩
-  rw [hz] at h1
-  rw [h1]
-  exact add_nonneg (mul_self_nonneg _) (mul_self_nonneg _)
-
 private lemma ftn_gauss_norm_dvd {x y : GaussianInt} (h : x ∣ y) :
     x.norm ∣ y.norm := by
   obtain ⟨v, hv⟩ := h
@@ -983,8 +976,8 @@ private lemma ftn_prime_of_norm_prime (z : GaussianInt) (p : ℕ) (hp : Nat.Prim
       have e := congrArg Zsqrtd.norm hxy
       rw [Zsqrtd.norm_mul, hz] at e
       exact e.symm
-    have ha_nn := ftn_gauss_norm_nonneg x
-    have hb_nn := ftn_gauss_norm_nonneg y
+    have ha_nn := GaussianInt.norm_nonneg x
+    have hb_nn := GaussianInt.norm_nonneg y
     have hAB : x.norm.natAbs * y.norm.natAbs = p := by
       have h := congrArg Int.natAbs hnab
       rwa [Int.natAbs_mul, Int.natAbs_natCast] at h
