@@ -591,7 +591,7 @@ positive conclusion. -/
 theorem not_pos_smul_one_le_of_exists_mem_ker_inf {𝕜 : Type*}
     [RCLike 𝕜] {E : Type*} [NormedAddCommGroup E]
     [InnerProductSpace 𝕜 E] {A B : E →ₗ[𝕜] E}
-    (hA : A.IsPositive) (hB : B.IsPositive) {c : ℝ} (hc : 0 < c)
+    {c : ℝ} (hc : 0 < c)
     {x : E} (hx : x ≠ 0)
     (hxker : x ∈ LinearMap.ker A ⊓ LinearMap.ker B) :
     ¬ (((c : ℝ) : 𝕜) • (1 : E →ₗ[𝕜] E)) ≤ A + B := by

@@ -122,8 +122,6 @@ scalar lower bound is possible. -/
 theorem no_positive_bound_zero_operators :
     ¬ ((1 : ℂ) • (1 : ℂ →ₗ[ℂ] ℂ) ≤
       (0 : ℂ →ₗ[ℂ] ℂ) + (0 : ℂ →ₗ[ℂ] ℂ)) := by
-  have hA : (0 : ℂ →ₗ[ℂ] ℂ).IsPositive := LinearMap.isPositive_zero
-  have hB : (0 : ℂ →ₗ[ℂ] ℂ).IsPositive := LinearMap.isPositive_zero
   have hc : 0 < (1 : ℝ) := by norm_num
   have hx : (1 : ℂ) ≠ 0 := one_ne_zero
   have hxker : (1 : ℂ) ∈
@@ -131,7 +129,7 @@ theorem no_positive_bound_zero_operators :
         LinearMap.ker (0 : ℂ →ₗ[ℂ] ℂ) := by
     simp
   have hmain := not_pos_smul_one_le_of_exists_mem_ker_inf
-    hA hB hc hx hxker
+    hc hx hxker
   simpa using hmain
 
 #print axioms subspaceCos_nonneg
