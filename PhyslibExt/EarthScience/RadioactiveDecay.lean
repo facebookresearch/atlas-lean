@@ -13,7 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Exponential
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 import Mathlib.Analysis.Calculus.Deriv.Mul
-import MathlibExt.Biology.Biophysics.CompartmentKinetics
+import MathlibExt.Analysis.ODE.ConstantInputRelaxation
 /-!
 # Radioactive decay and the unique positive half-life
 

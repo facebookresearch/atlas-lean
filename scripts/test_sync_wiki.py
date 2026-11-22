@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import json
+import re
 import shutil
 import tempfile
 import unittest
@@ -143,7 +144,8 @@ class LeanFacts(Vault):
         index = SimpleNamespace(declarations={})
         for _ in range(2):
             counts, unlinked = sync.apply_lean_facts(index, {})
-            self.assertEqual(counts, {"articles": 0, "unresolved": 1, "edges": 0})
+            # A page whose annotation names no declaration is planned, not unresolved.
+            self.assertEqual(counts, {"articles": 0, "unresolved": 0, "edges": 0})
             self.assertEqual(unlinked, [])
             self.assertEqual(page.read_text(), "# Unlinked\n\nKeep the edited statement.\n")
         row = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][0]
@@ -288,6 +290,61 @@ class LeanFacts(Vault):
         self.assertNotIn("kind", row)
         self.assertNotIn("status", row)
 
+    def test_a_planned_page_keeps_its_prerequisites_but_is_no_task(self) -> None:
+        # A page whose annotation names no declaration records its prerequisites by hand (Graph rules, Edges); it has
+        # no kind or status, so Autoform never lists it as a task.
+        body = ("# Main\n\nPlanned.\n\n## Depends on\n\n- [Base](base.md)\n\n"
+                "## Proof depends on\n\n- [Lemma](lemma.md)\n")
+        page = self.page("Algebra/main.md", body)
+        self.annotate([self.about("Algebra/main.md", kind="theorem", status="stated", id="af_0123456789abcdef01234567",
+                                  extensions={"org.autoform": {"not_ready": True}})])
+        for _ in range(2):
+            counts, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations={}), {})
+            self.assertEqual((counts["unresolved"], unlinked), (0, []))
+            self.assertEqual(page.read_text(), body)
+        row = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][0]
+        self.assertEqual(row, self.about("Algebra/main.md", id="af_0123456789abcdef01234567",
+                                         extensions={"org.autoform": {"not_ready": True}}))
+
+    def test_an_expansion_keeps_a_planned_prerequisite_only_on_a_planned_page(self) -> None:
+        # Graph rules, expanding a node: a new page whose proof needs the planned page B stays planned and keeps that
+        # edge; made a wanted statement too early, it would lose it, since its edges come only from the Lean.
+        source = self.tmp / "Ext" / "Groups.lean"
+        source.parent.mkdir(parents=True)
+        source.write_text("theorem_wanted early : True\n")
+        self.page("Algebra/b.md", "# B\n\nStill planned.\n")
+        waiting = "# Waiting\n\nPlanned.\n\n## Depends on\n\nThis node has no prerequisites.\n\n## Proof depends on\n\n- [B](b.md)\n"
+        kept = self.page("Algebra/waiting.md", waiting)
+        early = self.page("Algebra/early.md", "# Early\n\nWanted.\n\n## Proof depends on\n\n- [B](b.md)\n")
+        self.annotate([self.about("Algebra/b.md"), self.about("Algebra/waiting.md"),
+                       self.about("Algebra/early.md", object=[{"location": {"declaration": "Ext.early"}}])])
+        index = SimpleNamespace(declarations={"Ext.early": SimpleNamespace(keyword="theorem_wanted",
+                                                                           path=Path("Ext/Groups.lean"))})
+        sync.apply_lean_facts(index, {"Ext.early": {"module": "Ext.Groups", "statement": [], "proof": []}})
+        self.assertEqual(kept.read_text(), waiting)
+        self.assertEqual(early.read_text(), "# Early\n\nWanted.\n\n## Depends on\n\nThis node has no prerequisites.\n")
+
+    def test_a_wanted_statement_records_no_proof_edge_to_an_unproved_prerequisite(self) -> None:
+        # Graph rules, expanding a node: B is in Lean but unproved. A wanted statement has no proof, so the Lean
+        # records no proof edge from it to B; only a page that stays planned keeps that edge.
+        source = self.tmp / "Ext" / "Groups.lean"
+        source.parent.mkdir(parents=True)
+        source.write_text("theorem_wanted b : True\ntheorem_wanted early : True\n")
+        self.page("Algebra/b.md", "# B\n\nUnproved.\n")
+        waiting = "# Waiting\n\nPlanned.\n\n## Depends on\n\nThis node has no prerequisites.\n\n## Proof depends on\n\n- [B](b.md)\n"
+        kept = self.page("Algebra/waiting.md", waiting)
+        early = self.page("Algebra/early.md", "# Early\n\nWanted.\n\n## Proof depends on\n\n- [B](b.md)\n")
+        self.annotate([self.about("Algebra/b.md", object=[{"location": {"declaration": "Ext.b"}}]),
+                       self.about("Algebra/waiting.md"),
+                       self.about("Algebra/early.md", object=[{"location": {"declaration": "Ext.early"}}])])
+        wanted = SimpleNamespace(keyword="theorem_wanted", path=Path("Ext/Groups.lean"))
+        sync.apply_lean_facts(SimpleNamespace(declarations={"Ext.b": wanted, "Ext.early": wanted}),
+                              {name: {"module": "Ext.Groups", "statement": [], "proof": []} for name in ("Ext.b", "Ext.early")})
+        rows = {sync.subject_path(r).name: r for r in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
+        self.assertEqual((rows["b.md"]["kind"], rows["b.md"]["status"]), ("theorem", "stated"))
+        self.assertEqual(kept.read_text(), waiting)
+        self.assertEqual(early.read_text(), "# Early\n\nWanted.\n\n## Depends on\n\nThis node has no prerequisites.\n")
+
     def test_pages_taken_from_docstrings_get_their_facts(self) -> None:
         # declarations marks its pages with OWN's "from", which names a module only for a page with no Lean name.
         source = self.tmp / "Ext" / "Groups.lean"
@@ -413,7 +470,8 @@ class Declarations(Vault):
         old = self.page("Algebra/groups/old.md", "# Old, as the wiki wrote it\n\nEdited text.\n")
         self.page("Algebra/README.md", "# Algebra\n\n- [Groups](groups/README.md)\n")
         self.annotate([
-            self.about("Algebra/groups/old.md", object=[{"location": {"declaration": "Ext.old"}}]),
+            self.about("Algebra/groups/old.md", id="af_000000000000000000000001",
+                       object=[{"location": {"declaration": "Ext.old"}}]),
             self.about("Algebra/groups/gone.md", object=[{"location": {"declaration": "Ext.gone"}}]),
         ])
         targets = [
@@ -446,6 +504,116 @@ class Declarations(Vault):
         self.assertEqual(rows["new.md"]["object"], [{"location": {"declaration": "Ext.new"}}])
         self.assertEqual(rows["new.md"]["extensions"], {"org.atlas-wiki": {"from": "docstring"}})
         self.assertNotIn("wanted.md", rows)
+        # Each row the sync adds gets a fresh id (What the tools own); one it already had keeps its own, and one without
+        # stays without, for `ids` to give it one.
+        self.assertEqual(rows["old.md"]["id"], "af_000000000000000000000001")
+        self.assertNotIn("id", rows["gone.md"])
+        added = [rows["new.md"]["id"], rows["lone.md"]["id"]]
+        for article_id in added:
+            self.assertRegex(article_id, r"^af_[0-9a-f]{24}$")
+        self.assertEqual(len(set(added + ["af_000000000000000000000001"])), 3)
+
+    def test_a_new_page_never_joins_a_card(self) -> None:
+        # A card holds only the statements its editors placed in it (docs/cards.md): a new declaration whose module's
+        # pages sit in a card goes beside the card, and the run lists it for an editor.
+        self.page("Algebra/README.md", "# Algebra\n\n- [Groups](groups/README.md)\n")
+        self.page("Algebra/groups/README.md", "# Groups\n\nProse.\n\n- [Orders](orders/README.md)\n")
+        self.page("Algebra/groups/orders/README.md", "# Orders\n\nIt says.\n\n## Idea\n\nWhy.\n\n## Statements\n\n"
+                  "- [Old](old.md)\n")
+        self.page("Algebra/groups/orders/old.md", "# Old\n\nText.\n")
+        card = {"kind": "result", "main": "af_000000000000000000000001", "importance": "key", "level": "undergraduate"}
+        self.annotate([
+            self.about("Algebra/README.md"), self.about("Algebra/groups/README.md"),
+            self.about("Algebra/groups/orders/README.md", id="af_000000000000000000000002",
+                       extensions={"org.atlas-wiki": {"card": card}}),
+            self.about("Algebra/groups/orders/old.md", id="af_000000000000000000000001",
+                       object=[{"location": {"declaration": "Ext.old"}}]),
+        ])
+        targets = [declaration("Ext.old", "old", "Old", "Text."), declaration("Ext.new", "new", "New", "New text.")]
+        report = sync.apply_declarations(targets, SimpleNamespace(declarations={"Ext.old": None, "Ext.new": None}))
+        self.assertEqual(report["added"], ["Ext.new -> Algebra/groups/new.md"])
+        self.assertEqual(report["unassigned"], ["Algebra/groups/new.md"])
+        self.assertFalse((wiki.ROADMAP / "Algebra/groups/orders/new.md").exists())
+        self.assertEqual((wiki.ROADMAP / "Algebra/groups/README.md").read_text(),
+                         "# Groups\n\nProse.\n\n- [Orders](orders/README.md)\n- [New](new.md)\n")
+        self.assertNotIn("New", (wiki.ROADMAP / "Algebra/groups/orders/README.md").read_text())
+
+    def card_beside_a_folder(self) -> None:
+        """Algebra/groups holds a page of module Groups and the card orders (docs/cards.md)."""
+        self.page("Algebra/README.md", "# Algebra\n\n- [Groups](groups/README.md)\n")
+        self.page("Algebra/groups/README.md", "# Groups\n\nProse.\n\n- [G](g.md)\n- [Orders](orders/README.md)\n")
+        self.page("Algebra/groups/g.md", "# G\n\nText.\n")
+        self.page("Algebra/groups/orders/README.md", "# Orders\n\nIt says.\n\n## Idea\n\nWhy.\n\n## Statements\n\n"
+                  "- [Old](old.md)\n")
+        self.page("Algebra/groups/orders/old.md", "# Old\n\nText.\n")
+        card = {"kind": "result", "main_article_id": "af_000000000000000000000001", "importance": "key",
+                "level": "undergraduate"}
+        self.annotate([
+            self.about("Algebra/README.md"), self.about("Algebra/groups/README.md"),
+            self.about("Algebra/groups/g.md", id="af_000000000000000000000003",
+                       object=[{"location": {"declaration": "Ext.g"}}]),
+            self.about("Algebra/groups/orders/README.md", id="af_000000000000000000000002",
+                       extensions={"org.atlas-wiki": {"card": card}}),
+            self.about("Algebra/groups/orders/old.md", id="af_000000000000000000000001",
+                       object=[{"location": {"declaration": "Ext.old"}}]),
+        ])
+
+    def new_module_below_the_card(self, generated: bool) -> dict:
+        # generate_wiki lays a new module's folder out inside the card; the run makes no folder or page there,
+        # with or without generate_wiki's folder page for it.
+        self.card_beside_a_folder()
+        new = declaration("Ext.new", "new", "New", "New text.", module=("Ext", "Fresh"))
+        new.path = wiki.ROADMAP / "Algebra" / "groups" / "orders" / "fresh" / "new.md"
+        layout = {wiki.ROADMAP / "Algebra/groups/orders/fresh/README.md": "# Fresh\n\n- [New](new.md)\n"}
+        return sync.apply_declarations(
+            [declaration("Ext.g", "g", "G", "Text."), declaration("Ext.old", "old", "Old", "Text."), new],
+            SimpleNamespace(declarations={"Ext.g": None, "Ext.old": None, "Ext.new": None}),
+            generated=layout if generated else {})
+
+    def assert_beside_the_card(self, report: dict) -> None:
+        self.assertEqual(report["added"], ["Ext.new -> Algebra/groups/new.md"])
+        self.assertEqual(report["unassigned"], ["Algebra/groups/new.md"])
+        self.assertEqual(sorted(path.name for path in (wiki.ROADMAP / "Algebra/groups/orders").iterdir()),
+                         ["README.md", "old.md"])
+
+    def test_a_new_module_laid_out_below_a_card_goes_beside_it(self) -> None:
+        self.assert_beside_the_card(self.new_module_below_the_card(generated=True))
+
+    def test_the_fallback_to_the_nearest_folder_page_never_lands_in_a_card(self) -> None:
+        self.assert_beside_the_card(self.new_module_below_the_card(generated=False))
+
+    def test_a_new_folder_takes_no_recorded_address(self) -> None:
+        # generate_wiki lays a new module out in Algebra/groups/former/, an address a moved page left: the run makes
+        # no folder there and places the page in the nearest folder the wiki has.
+        self.card_beside_a_folder()
+        (wiki.ROOT / "scripts").mkdir(exist_ok=True)
+        (wiki.ROOT / "scripts" / "card-moves.jsonl").write_text(json.dumps(
+            {"page": "Algebra/groups/former", "to": "Algebra/groups/orders/old", "article_id": "af_000000000000000000000001"})
+            + "\n")
+        new = declaration("Ext.new", "new", "New", "New text.", module=("Ext", "Fresh"))
+        new.path = wiki.ROADMAP / "Algebra" / "groups" / "former" / "new.md"
+        layout = {wiki.ROADMAP / "Algebra/groups/former/README.md": "# Former\n\n- [New](new.md)\n"}
+        report = sync.apply_declarations(
+            [declaration("Ext.g", "g", "G", "Text."), declaration("Ext.old", "old", "Old", "Text."), new],
+            SimpleNamespace(declarations={"Ext.g": None, "Ext.old": None, "Ext.new": None}), generated=layout)
+        self.assertEqual(report["added"], ["Ext.new -> Algebra/groups/new.md"])
+        self.assertFalse((wiki.ROADMAP / "Algebra/groups/former").exists())
+
+    def test_a_new_page_takes_no_name_a_folder_or_a_recorded_address_has(self) -> None:
+        # A page named like the card's folder would share its node id; a moved page's old address keeps
+        # redirecting to its article.
+        self.card_beside_a_folder()
+        (wiki.ROOT / "scripts").mkdir(exist_ok=True)
+        (wiki.ROOT / "scripts" / "card-moves.jsonl").write_text(json.dumps(
+            {"page": "Algebra/groups/gone", "to": "Algebra/groups/orders/old", "article_id": "af_000000000000000000000001"})
+            + "\n")
+        report = sync.apply_declarations(
+            [declaration("Ext.g", "g", "G", "Text."), declaration("Ext.old", "old", "Old", "Text."),
+             declaration("Ext.orders", "orders", "Orders lemma", "A statement."),
+             declaration("Ext.gone", "gone", "Gone lemma", "Another statement.")],
+            SimpleNamespace(declarations={"Ext.g": None, "Ext.old": None, "Ext.orders": None, "Ext.gone": None}))
+        self.assertEqual(sorted(report["added"]), ["Ext.gone -> Algebra/groups/gone-2.md",
+                                                   "Ext.orders -> Algebra/groups/orders-2.md"])
 
     def test_a_held_declaration_keeps_its_page_unlinked_and_gets_no_other(self) -> None:
         self.page("Algebra/README.md", "# Algebra\n\n- [Claim](claim.md)\n")
@@ -645,7 +813,9 @@ class Declarations(Vault):
         self.assertEqual((wiki.ROADMAP / "Algebra" / "README.md").read_text(),
                          "# Algebra\n\n- [Fields](fields/README.md)\n- [Rings](rings/README.md)\n- [Topology](topology/README.md)\n")
         rows = {sync.subject_path(row).relative_to(wiki.ROADMAP).as_posix(): row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
-        self.assertEqual(rows["Algebra/rings/README.md"], {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/rings/README.md"}]})
+        self.assertEqual(rows["Algebra/rings/README.md"]["subject"], [{"type": "generic", "uri": "../roadmap/Algebra/rings/README.md"}])
+        self.assertEqual(set(rows["Algebra/rings/README.md"]), {"subject", "id"})
+        self.assertRegex(rows["Algebra/rings/README.md"]["id"], r"^af_[0-9a-f]{24}$")
         self.assertEqual(rows["Algebra/rings/ideals/README.md"]["extensions"], {"org.autoform": {"navigation": "module"}})
         self.assertNotIn("Algebra/rings/ideals/old.md", rows)
 
@@ -1084,7 +1254,7 @@ class Declarations(Vault):
 
     def test_a_page_listed_nowhere_fails_the_run(self) -> None:
         report = {kind: [] for kind in ("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended",
-                                         "held", "held_problems")}
+                                         "held", "held_problems", "unassigned")}
         report["unlisted"] = ["Algebra/groups/sylow.md"]
         lean = SimpleNamespace(index_project=lambda *args, **kwargs: SimpleNamespace(declarations={}))
         with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean), "autoform_cli.lean": lean}), \
@@ -1653,6 +1823,7 @@ class UnindexedDeclarations(Vault):
         # Only the report formats `module:name` or `path:line`, for a reader.
         self.assertEqual([line for line in lines if "}:{" in line], [
             'summary["unindexed"].append(f"{relative.as_posix()}:{number + 1} {written}")',
+            'return f"{path.relative_to(wiki.ROOT).as_posix()}:{line}"',
             '+ [f"{subject_path(a).relative_to(wiki.ROADMAP)} ({a[\'extensions\'][OWN][\'module\']}:{a[\'extensions\'][OWN][\'name\']})"',
         ])
         for helper in ("declaration_identity", "split_identity", "fallback_metadata", "match_fallback", "qualified_name",
@@ -1665,6 +1836,140 @@ class UnindexedDeclarations(Vault):
             'short = target.names[0].split(".")[-1]',
             'if (match := wiki.V2_DECLARATION.match(row)) and match.group("name").split(".")[-1] == short]',
         ])
+
+
+class ArticleIds(Vault):
+    """`ids` gives each annotation without an id a fresh one and changes no other byte (What the tools own, in
+    docs/BLUEPRINT.md)."""
+
+    def links(self, name: str, text: str) -> Path:
+        sync.LINKS.mkdir(parents=True, exist_ok=True)
+        path = sync.LINKS / name
+        path.write_bytes(text.encode("utf-8"))
+        return path
+
+    def row(self, page: str, **fields) -> str:
+        return json.dumps(self.about(page, **fields), ensure_ascii=False)
+
+    def test_each_row_without_an_id_gets_one_after_its_subject_and_keeps_every_other_byte(self) -> None:
+        kept = self.row("Algebra/a.md", object=[{"location": {"declaration": "Ext.a"}}], id="af_000000000000000000000001")
+        rows = [
+            kept,
+            self.row("Algebra/b.md", object=[{"location": {"declaration": "Ext.b"}}],
+                     extensions={"org.atlas-wiki": {"from": "docstring"}}),
+            self.row("Algebra/README.md", extensions={"org.autoform": {"navigation": "module"}}),
+            self.row("Algebra/théorème.md", extensions={"org.atlas-wiki": {"held": {"declaration": "Ext.c", "reason": "false",
+                                                                                     "issue": 1}}}),
+        ]
+        algebra = self.links("Algebra.jsonl", "\n".join(rows) + "\n")
+        root = self.links("roadmap.jsonl", self.row("README.md") + "\n")
+        without, problems = sync.apply_ids()
+        self.assertEqual(problems, [])
+        self.assertEqual(without, ["blueprint/links/Algebra.jsonl:2", "blueprint/links/Algebra.jsonl:3",
+                                   "blueprint/links/Algebra.jsonl:4", "blueprint/links/roadmap.jsonl:1"])
+        filled = algebra.read_bytes().decode("utf-8").split("\n")
+        self.assertEqual((filled[0], filled[-1], len(filled)), (kept, "", len(rows) + 1))
+        ids = ["af_000000000000000000000001"]
+        for before, after in zip([*rows[1:], self.row("README.md")], [*filled[1:-1], root.read_text().rstrip("\n")]):
+            added = re.search(r', "id": "(af_[0-9a-f]{24})"', after)
+            # Without its id the row is the row it was, byte for byte; with it, it is the row declarations would write.
+            self.assertEqual(after[:added.start()] + after[added.end():], before)
+            annotation = json.loads(before)
+            self.assertEqual(after, json.dumps({"subject": annotation.pop("subject"), "id": added.group(1), **annotation},
+                                               ensure_ascii=False))
+            ids.append(added.group(1))
+        self.assertEqual(len(set(ids)), len(ids))
+        # A second run finds no row without an id and changes nothing.
+        written = {path: path.read_bytes() for path in (algebra, root)}
+        self.assertEqual(sync.apply_ids(), ([], []))
+        self.assertEqual({path: path.read_bytes() for path in (algebra, root)}, written)
+
+    def test_a_row_written_another_way_keeps_its_bytes(self) -> None:
+        rows = ['{"subject":[{"uri":"../roadmap/Algebra/a.md","type":"generic"}] , "object": [ ]}\r',
+                '{ "subject" : [{"type": "generic", "uri": "../roadmap/Algebra/b.md"}]}\r']
+        path = self.links("Algebra.jsonl", "\n".join(rows) + "\n")
+        self.assertEqual(sync.apply_ids()[1], [])
+        filled = path.read_bytes().decode("utf-8").split("\n")
+        self.assertRegex(filled[0], r'\A\{"subject":\[\{"uri":"\.\./roadmap/Algebra/a\.md","type":"generic"\}\], "id": "af_[0-9a-f]{24}" , "object": \[ \]\}\r\Z')
+        self.assertRegex(filled[1], r'\A\{ "subject" : \[\{"type": "generic", "uri": "\.\./roadmap/Algebra/b\.md"\}\], "id": "af_[0-9a-f]{24}"\}\r\Z')
+        self.assertEqual(filled[2], "")
+
+    def test_a_malformed_shared_or_repeated_id_or_a_row_it_cannot_read_stops_the_run(self) -> None:
+        text = "\n".join([
+            self.row("Algebra/a.md", id="af_000000000000000000000001"),
+            self.row("Algebra/b.md", id="af_000000000000000000000001"),
+            self.row("Algebra/c.md", id="af_1"),
+            # JSON keeps the last of two ids, so the first, malformed, one would pass unseen.
+            self.row("Algebra/d.md", id="broken")[:-1] + ', "id": "af_000000000000000000000003"}',
+            "{not json",
+            '{"object": []}',
+            '{"subject": [{"type": "generic", "uri": "../roadmap/Algebra/g.md", "uri": "../roadmap/Algebra/h.md"}]}',
+            '{"subject": [{"type": "generic", "uri": "../roadmap/Algebra/i.md"}], "weight": NaN}',
+            self.row("Algebra/e.md"),
+        ]) + "\n"
+        path = self.links("Algebra.jsonl", text)
+        other = self.links("Logic.jsonl", self.row("Logic/f.md") + "\n")
+        self.assertEqual(sync.apply_ids(), (["blueprint/links/Algebra.jsonl:9", "blueprint/links/Logic.jsonl:1"], [
+            "blueprint/links/Algebra.jsonl:2: its id af_000000000000000000000001 is the id of blueprint/links/Algebra.jsonl:1 too",
+            'blueprint/links/Algebra.jsonl:3: its id "af_1" is not af_ and 24 hex digits',
+            "blueprint/links/Algebra.jsonl:4: the row repeats id",
+            "blueprint/links/Algebra.jsonl:5: the row is not a JSON object",
+            "blueprint/links/Algebra.jsonl:6: the row has no subject",
+            "blueprint/links/Algebra.jsonl:7: the row repeats uri",
+            "blueprint/links/Algebra.jsonl:8: the row holds NaN, which JSON does not allow",
+        ]))
+        with redirect_stderr(io.StringIO()) as errors:
+            self.assertEqual(sync.main(["ids"]), 1)
+        self.assertIn("error: 7 rows to fix; the run wrote nothing", errors.getvalue())
+        # Neither file is written, the one without a problem included.
+        self.assertEqual(path.read_bytes().decode("utf-8"), text)
+        self.assertEqual(other.read_bytes().decode("utf-8"), self.row("Logic/f.md") + "\n")
+
+    def test_a_line_that_holds_only_a_form_feed_is_no_blank_line(self) -> None:
+        text = self.row("Algebra/a.md") + "\n\x0c\n\n"
+        path = self.links("Algebra.jsonl", text)
+        other = self.links("Logic.jsonl", self.row("Logic/b.md") + "\n")
+        self.assertEqual(sync.apply_ids(), (["blueprint/links/Algebra.jsonl:1", "blueprint/links/Logic.jsonl:1"],
+                                            ["blueprint/links/Algebra.jsonl:2: the row is not a JSON object"]))
+        self.assertEqual(path.read_bytes().decode("utf-8"), text)
+        self.assertEqual(other.read_bytes().decode("utf-8"), self.row("Logic/b.md") + "\n")
+
+    def test_a_links_file_that_is_a_symbolic_link_stops_the_run(self) -> None:
+        outside = sync.LINKS.parents[1] / "outside.jsonl"
+        outside.write_text(self.row("Logic/b.md") + "\n")
+        sync.LINKS.mkdir(parents=True, exist_ok=True)
+        (sync.LINKS / "Logic.jsonl").symlink_to(outside)
+        text = self.row("Algebra/a.md") + "\n"
+        path = self.links("Algebra.jsonl", text)
+        self.assertEqual(sync.apply_ids(), (["blueprint/links/Algebra.jsonl:1"],
+                                            ["blueprint/links/Logic.jsonl: it is not a regular file"]))
+        self.assertEqual(path.read_text(), text)
+        self.assertEqual(outside.read_text(), self.row("Logic/b.md") + "\n")
+
+    def test_a_row_whose_subject_is_not_first_gets_the_id_right_after_its_subject(self) -> None:
+        kept = '{"extensions": {}, "subject": [{"type": "generic", "uri": "../roadmap/Algebra/a.md"}], "id": "af_000000000000000000000001"}'
+        row = '{"object": [{"location": {"declaration": "Ext.b"}}], "subject": [{"type": "generic", "uri": "../roadmap/Algebra/b.md"}]}'
+        path = self.links("Algebra.jsonl", f"{kept}\n{row}\n")
+        self.assertEqual(sync.apply_ids(), (["blueprint/links/Algebra.jsonl:2"], []))
+        filled = path.read_bytes().decode("utf-8").split("\n")
+        self.assertEqual(filled[0], kept)
+        self.assertRegex(filled[1], r'\A' + re.escape(row[:-1]) + r', "id": "af_[0-9a-f]{24}"\}\Z')
+
+    def test_a_check_writes_nothing(self) -> None:
+        text = self.row("Algebra/a.md") + "\n"
+        path = self.links("Algebra.jsonl", text)
+        self.assertEqual(sync.apply_ids(write=False), (["blueprint/links/Algebra.jsonl:1"], []))
+        self.assertEqual(path.read_bytes().decode("utf-8"), text)
+
+
+class CommittedAnnotations(unittest.TestCase):
+    def test_every_annotation_has_an_id_of_its_own(self) -> None:
+        # What the tools own (docs/BLUEPRINT.md): declarations gives an id to each annotation it adds, and ids to
+        # any other row.
+        without, problems = sync.apply_ids(write=False)
+        self.assertEqual(problems, [])
+        self.assertEqual(len(without), 0, f"annotations without an id, such as {without[:3]}: "
+                                          "`python scripts/sync_wiki.py ids` gives them theirs")
 
 
 class Titles(unittest.TestCase):

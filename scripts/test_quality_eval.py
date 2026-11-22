@@ -79,6 +79,8 @@ class StatisticsTests(unittest.TestCase):
     def test_scope_excludes_legacy_wanted_tests_and_certificates(self) -> None:
         self.assertTrue(evaluation.eligible_path("MathlibExt/Analysis/X.lean", "atlas"))
         self.assertTrue(evaluation.eligible_path("CSLibExt/Logic/X.lean", "atlas"))
+        self.assertTrue(evaluation.eligible_path("Domains/Transport/Accessibility.lean", "atlas"))
+        self.assertFalse(evaluation.eligible_path("DomainsTest/Transport/Accessibility.lean", "atlas"))
         self.assertTrue(evaluation.eligible_path("PhyslibExt/StatisticalMechanics/X.lean", "atlas"))
         for path in ("Atlas/X.lean", "v1/X.lean", "WantedExt/X.lean", "MathlibExtTest/X.lean",
                      "CSLibExtTest/X.lean", "PhyslibExtTest/X.lean", "MathlibExt/Certificates/X.lean",
@@ -544,7 +546,9 @@ class OfficialSuiteTests(unittest.TestCase):
     def atlas_fixture_sources(physics: bool) -> dict[str, str]:
         return {
             "MathlibExt/Fixture.lean": ("-- no declarations\n" if physics else
-                "theorem atlas_a : True := by trivial\ntheorem atlas_b : True := by trivial\n"),
+                "theorem atlas_a : True := by trivial\n"),
+            "Domains/Fixture.lean": ("-- no declarations\n" if physics else
+                "theorem domain_b : True := by trivial\n"),
             "CSLibExt/Empty.lean": "-- no declarations\n",
             "PhyslibExt/Fixture.lean": ("module\npublic lemma physics_a : True := by trivial\n"
                 "public lemma physics_b : True := by trivial\n"
@@ -628,15 +632,25 @@ class OfficialSuiteTests(unittest.TestCase):
     def test_real_preparation_and_populated_report(self) -> None:
         run = self.prepare_fixture()
         manifest = evaluation.verify_run(run)
-        self.assertEqual(manifest["populations"]["atlas"]["theorems"], 2)
+        census = manifest["populations"]["atlas"]
+        self.assertEqual(census["theorems"], 2)
+        self.assertEqual(census["roots"]["Domains"]["public_theorems"], 1)
+        self.assertEqual(census["roots"]["Domains"]["files"], 1)
         self.assertEqual(len(evaluation.selected_tasks(run, None, None)), 10)
         self.write_negative_results(run, "fixture")
         evaluation.report(argparse.Namespace(run_dir=run, label="fixture", require_complete=True))
         summary = evaluation.read_json(run / "reports" / "fixture" / "summary.json")
         self.assertTrue(summary["complete"])
-        self.assertEqual(len(summary["cells"]), 6)
-        self.assertEqual(summary["cells"]["unnecessary-hypotheses/MathlibExt/public"]["judged"], 2)
-        lines = (run / "reports/fixture/report.md").read_text().splitlines()
+        self.assertEqual(len(summary["cells"]), 8)
+        for root in ("Domains", "MathlibExt"):
+            for indicator in ("unnecessary-hypotheses", "duplicates-mathlib-inclusive"):
+                self.assertEqual(summary["cells"][f"{indicator}/{root}/public"]["judged"], 1)
+        self.assertFalse(any("/Domains/" in key for key in summary["comparisons"]))
+        text = (run / "reports/fixture/report.md").read_text()
+        self.assertIn("CSLibExt, PhyslibExt and Domains duplication rates count matches in "
+                      "Mathlib, Batteries or Lean core only", text)
+        self.assertIn("CSLibExt, PhyslibExt and Domains have no domain-matched control", text)
+        lines = text.splitlines()
         header = next(index for index, line in enumerate(lines) if line.startswith("| Indicator"))
         self.assertEqual(lines[header].count("|"), lines[header + 1].count("|"))
         self.assertEqual(lines[header].count("|"), lines[header + 2].count("|"))
@@ -644,7 +658,7 @@ class OfficialSuiteTests(unittest.TestCase):
     def test_physics_preparation_and_populated_report(self) -> None:
         run = self.prepare_fixture(physics=True)
         manifest = evaluation.verify_run(run)
-        self.assertEqual(manifest["scope"]["atlas"], ["MathlibExt", "CSLibExt", "PhyslibExt"])
+        self.assertEqual(manifest["scope"]["atlas"], ["MathlibExt", "CSLibExt", "PhyslibExt", "Domains"])
         census = manifest["populations"]["atlas"]
         self.assertEqual(census["roots"]["PhyslibExt"]["public_theorems"], 2)
         self.assertEqual(census["roots"]["PhyslibExt"]["files"], 1)
@@ -664,9 +678,9 @@ class OfficialSuiteTests(unittest.TestCase):
             self.assertEqual(cell["judged"], 1 if visibility == "whole-file" else 2)
         self.assertEqual(summary["comparisons"], {})
         text = (run / "reports/physics-fixture/report.md").read_text()
-        self.assertIn("Scope: maintained MathlibExt, CSLibExt, PhyslibExt;", text)
-        self.assertIn("Physlib (including PhyslibAlpha and QuantumInfo) redundancy is not measured", text)
-        self.assertIn("CSLibExt and PhyslibExt have no domain-matched control", text)
+        self.assertIn("Scope: maintained MathlibExt, CSLibExt, PhyslibExt, Domains;", text)
+        self.assertIn("Physlib (including PhyslibAlpha and QuantumInfo) and other domain libraries "
+                      "are not duplicate targets", text)
 
     def test_physics_duplicate_references_preserve_official_scope(self) -> None:
         run = self.prepare_fixture(physics=True)

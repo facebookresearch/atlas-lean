@@ -4,4 +4,4 @@ Let $\iota$ be a finite index set, $V$ a real normed space, $E_i : V \to \mathbb
 
 $$\sum_{i \in \iota} \Bigl(\frac{k_i}{E_i(\psi)} - 1\Bigr) DE_i(\psi),$$
 
-where $\ell$ is the [Poisson log-likelihood](poisson-log-lik.md).
+where $\ell$ is the [Poisson log-likelihood](../../../Probability/statistical-estimation/likelihood-and-maximum-likelihood-estimators/poisson-log-lik.md).

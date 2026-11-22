@@ -22,7 +22,7 @@ covered here.
 
 ## Informally uses
 
-- [Rank of a product of matrices](../../linear-maps-and-duality/rank-of-a-product.md):
+- [Rank of a product of matrices](../../linear-maps-and-duality/rank-of-a-matrix-product/rank-of-a-product.md):
   mathematical prerequisite, the rank bound for each block.
 
 ## Sources

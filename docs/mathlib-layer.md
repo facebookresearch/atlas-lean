@@ -10,7 +10,8 @@ below. The workflow's `build the Mathlib layer` job uploads them as the
 `mathlib-graph` artifact, with this page as `SCHEMA.md`, except the two dumps:
 the v2 one is the wiki job's `v2-mathlib-dump` artifact and the Mathlib one
 depends only on the pinned Mathlib. Like the v2 dependency dump, they are build outputs and are
-never committed. `docs/BLUEPRINT.md` gives the commands.
+never committed. `docs/BLUEPRINT.md` gives the commands, and
+`docs/mathlib-pages.md` describes the pages built from the layer.
 
 ## Nodes
 
@@ -152,7 +153,7 @@ hidden constants on its way (`private`, `lean:internal`, `excluded_module`,
 `data_field`, ...).
 
 `bridge-edges.jsonl.gz`: the same fields for edges from ATLAS articles to
-Mathlib nodes, with `library` (`MathlibExt`, `CSLibExt`, `PhyslibExt` or
+Mathlib nodes, with `library` (`MathlibExt`, `CSLibExt`, `PhyslibExt`, `Domains` or
 `WantedExt`); `through` may name `atlas_non_article`, an ATLAS constant no article
 links.
 
