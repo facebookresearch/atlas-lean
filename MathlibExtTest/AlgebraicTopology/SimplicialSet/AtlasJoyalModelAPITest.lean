@@ -115,11 +115,11 @@ example {X Y : SSet.{u}} [SSet.Quasicategory Y] (p : X ⟶ Y)
   exact SSet.quasicategory_of_innerFibration p
 
 -- The specialized criterion cannot silently remove its target hypothesis.
-example {X Y : SSet.{u}} (p : X ⟶ Y) : True := by
+example {X Y : SSet.{u}} (_p : X ⟶ Y) : True := by
   fail_if_success
-    have h : SSet.categoricalFibrations p ↔
-        SSet.InnerFibration p ∧ SSet.HasStrictEquivalenceLifting p :=
-      SSet.categoricalFibrations_iff_innerFibration_and_hasStrictEquivalenceLifting p
+    have h : SSet.categoricalFibrations _p ↔
+        SSet.InnerFibration _p ∧ SSet.HasStrictEquivalenceLifting _p :=
+      SSet.categoricalFibrations_iff_innerFibration_and_hasStrictEquivalenceLifting _p
   trivial
 
 private abbrev Directed := AsSmall.{u} (Fin 2)
@@ -131,8 +131,8 @@ private def forwardArrow :
 
 private theorem forwardArrowNotIso : ¬ IsIso forwardArrow.{u} := by
   intro h
-  let _ : IsIso forwardArrow.{u} := h
-  have impossible : (1 : Fin 2) ≤ 0 := leOfHom (AsSmall.down.map (inv forwardArrow.{u}))
+  obtain ⟨backward, _, _⟩ := h.out
+  have impossible : (1 : Fin 2) ≤ 0 := leOfHom backward.down
   exact (by decide : ¬ ((1 : Fin 2) ≤ 0)) impossible
 
 example : SSet.Quasicategory directedNerve.{u} := inferInstance
