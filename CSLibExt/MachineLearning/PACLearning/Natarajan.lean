@@ -20,19 +20,23 @@ import Mathlib.Data.Finset.Prod
 import Mathlib.Logic.Function.Basic
 import Mathlib.Tactic.GCongr
 import Mathlib.Tactic.Ring
+import Mathlib.Data.Fintype.EquivFin
 
 /-! # Natarajan dimension and the Natarajan lemma
 
 This file defines N-shattering and the Natarajan dimension for concept classes
-of `Fin k`-valued functions, and proves the Natarajan lemma: a class of
-Natarajan dimension at most `d` induces at most `m ^ d * k ^ (2 * d)` distinct
-restrictions on any nonempty sample of `m` points.
+over an arbitrary label type, and proves the Natarajan lemma: over a finite
+label type of cardinality `k`, a class of Natarajan dimension at most `d`
+induces at most `m ^ d * k ^ (2 * d)` distinct restrictions on any nonempty
+sample of `m` points.
 
-The public interface is set-based, over `ConceptClass α (Fin k)`: the class
-itself may be infinite; only the sample is finite. The proof goes through a
-private finite-class core (`FinCore`): for each realized labeling, one witness
-concept is chosen from the class, and the finite witness class inherits both
-the trace count and the dimension bound.
+The public interface is set-based, over `ConceptClass α β`: the class
+itself may be infinite; only the sample is finite. Shattering and dimension
+need no finiteness on `β`; counting needs `[Fintype β]`. The proof goes
+through a private finite-class core (`FinCore`) over `Fin k`: for each
+realized labeling, one witness concept is chosen from the class, and the
+finite witness class inherits both the trace count and the dimension bound.
+The general finite-label case is transported along `β ≃ Fin (Fintype.card β)`.
 
 ## Main definitions
 
@@ -62,35 +66,35 @@ the trace count and the dimension bound.
 
 namespace Cslib.MachineLearning.PACLearning
 
-/-- A concept class `C` of `Fin k`-valued functions *N-shatters* a finite
+/-- A concept class `C` over an arbitrary label type *N-shatters* a finite
 sample `s` if there are two labelings `f₀ f₁` of the domain, disagreeing at
 every point of `s`, such that every subset `t` of `s` is realized by some
 concept agreeing with `f₁` on `t` and with `f₀` on the rest of `s`. The class
 itself may be infinite. -/
-def NShatters {α : Type*} {k : ℕ} (C : ConceptClass α (Fin k))
+def NShatters {α β : Type*} (C : ConceptClass α β)
     (s : Finset α) : Prop :=
-  ∃ f₀ f₁ : α → Fin k, (∀ x ∈ s, f₀ x ≠ f₁ x) ∧
+  ∃ f₀ f₁ : α → β, (∀ x ∈ s, f₀ x ≠ f₁ x) ∧
     ∀ t : Finset α, t ⊆ s → ∃ h ∈ C,
       (∀ x ∈ t, h x = f₁ x) ∧ ∀ x ∈ s, x ∉ t → h x = f₀ x
 
 /-- A concept class has *Natarajan dimension at most `d`* if no set of `d + 1`
 points is N-shattered by it. Stated in `≤`-form to avoid supremum conventions
 for the dimension itself. -/
-def NDimLE {α : Type*} {k : ℕ} (C : ConceptClass α (Fin k)) (d : ℕ) : Prop :=
+def NDimLE {α β : Type*} (C : ConceptClass α β) (d : ℕ) : Prop :=
   ∀ s : Finset α, s.card = d + 1 → ¬ NShatters C s
 
 open scoped Classical in
 /-- The number of distinct restrictions of the concepts in `C` to the sample
 `s`: the labelings of `s` realized by some concept in `C`. The class itself
-may be infinite; only the sample is finite. -/
-noncomputable def tracesCard {α : Type*} {k : ℕ}
-    (C : ConceptClass α (Fin k)) (s : Finset α) : ℕ :=
-  (Finset.univ.filter fun g : s → Fin k =>
+may be infinite; only the sample is finite. Needs a finite label type. -/
+noncomputable def tracesCard {α β : Type*} [Fintype β]
+    (C : ConceptClass α β) (s : Finset α) : ℕ :=
+  (Finset.univ.filter fun g : s → β =>
     ∃ c ∈ C, ∀ x : s, c x.val = g x).card
 
 /-- N-shattering is hereditary: if `C` N-shatters `s`, it N-shatters every
 subset of `s`. -/
-theorem nShatters_subset {α : Type*} {k : ℕ} (C : ConceptClass α (Fin k))
+theorem nShatters_subset {α β : Type*} (C : ConceptClass α β)
     (s t : Finset α) (h : NShatters C s) (hsub : t ⊆ s) :
     NShatters C t := by
   obtain ⟨f₀, f₁, hne, hwit⟩ := h
@@ -100,7 +104,7 @@ theorem nShatters_subset {α : Type*} {k : ℕ} (C : ConceptClass α (Fin k))
 
 /-- The `NDimLE` bound is monotone in `d`: a `(d' + 1)`-set contains a
 `(d + 1)`-subset, to which shattering descends. -/
-theorem nDimLE_mono {α : Type*} {k : ℕ} (C : ConceptClass α (Fin k))
+theorem nDimLE_mono {α β : Type*} (C : ConceptClass α β)
     (d d' : ℕ) (hle : d ≤ d') (hd : NDimLE C d) : NDimLE C d' := by
   intro s hs hsh
   have hle' : d + 1 ≤ s.card := by omega
@@ -616,8 +620,8 @@ end FinCore
 
 /-- Under `NDimLE C 0`, any two concepts in `C` agree at every point: a
 disagreement at `x` would N-shatter the singleton `{x}`. -/
-theorem nDimLE_zero {α : Type*} {k : ℕ} (C : ConceptClass α (Fin k))
-    (hd : NDimLE C 0) (c₁ c₂ : α → Fin k) (m₁ : c₁ ∈ C) (m₂ : c₂ ∈ C)
+theorem nDimLE_zero {α β : Type*} (C : ConceptClass α β)
+    (hd : NDimLE C 0) (c₁ c₂ : α → β) (m₁ : c₁ ∈ C) (m₂ : c₂ ∈ C)
     (x : α) : c₁ x = c₂ x := by
   by_contra hne
   apply hd {x} (Finset.card_singleton x)
@@ -632,17 +636,11 @@ theorem nDimLE_zero {α : Type*} {k : ℕ} (C : ConceptClass α (Fin k))
     · exact ⟨c₂, m₂, fun z _ => rfl,
         fun z hz1 hz2 => absurd hz1 hz2⟩
 
-/-- The Natarajan lemma: if `C` has Natarajan dimension at most `d`, the
-number of distinct restrictions of `C` to any nonempty sample `s` is at most
-`s.card ^ d * k ^ (2 * d)`. The class may be infinite: the proof chooses one
-witness concept in `C` per realized labeling and applies the finite-class
-core to the resulting finite witness class.
-
-Corners: the empty sample is excluded by `hs` (a single empty restriction
-would exceed `0 ^ d * k ^ (2 * d) = 0` for `d ≥ 1`); the empty class gives
-zero restrictions; `k = 0` forces no realized labeling on a nonempty sample;
-at `k = 1` no nonempty set is N-shattered and the bound holds trivially. -/
-theorem natarajan_lemma {α : Type*} {k : ℕ}
+/-- Private `Fin k` set-based lemma, retained as the transport target for
+the general finite-label case. If `C` has Natarajan dimension at most `d`,
+the number of distinct restrictions of `C` to any nonempty sample `s` is at
+most `s.card ^ d * k ^ (2 * d)`. -/
+private theorem natarajan_lemma_fin {α : Type*} {k : ℕ}
     (C : ConceptClass α (Fin k)) (d : ℕ) (hd : NDimLE C d) (s : Finset α)
     (hs : s.Nonempty) :
     tracesCard C s ≤ s.card ^ d * k ^ (2 * d) := by
@@ -690,11 +688,91 @@ theorem natarajan_lemma {α : Type*} {k : ℕ}
   rw [← htraces]
   exact FinCore.natarajan_lemma W d hWdim s hs
 
+/-- The Natarajan lemma: if `C` over a finite label type has Natarajan
+dimension at most `d`, the number of distinct restrictions of `C` to any
+nonempty sample `s` is at most `s.card ^ d * (Fintype.card β) ^ (2 * d)`.
+The class may be infinite: the `Fin` case chooses one witness concept in
+`C` per realized labeling and applies the finite-class core; the general
+case is transported along `β ≃ Fin (Fintype.card β)`.
+
+Corners: the empty sample is excluded by `hs` (a single empty restriction
+would exceed `0 ^ d * k ^ (2 * d) = 0` for `d ≥ 1` with `k` the label
+cardinality); the empty class gives zero restrictions; `Fintype.card β = 0`
+forces no realized labeling on a nonempty sample; at `Fintype.card β = 1`
+no nonempty set is N-shattered and the bound holds trivially. -/
+theorem natarajan_lemma {α β : Type*} [Fintype β]
+    (C : ConceptClass α β) (d : ℕ) (hd : NDimLE C d) (s : Finset α)
+    (hs : s.Nonempty) :
+    tracesCard C s ≤ s.card ^ d * (Fintype.card β) ^ (2 * d) := by
+  classical
+  set k := Fintype.card β with hk
+  set e := Fintype.equivFin β with he
+  set C' : ConceptClass α (Fin k) :=
+    { h' | ∃ c ∈ C, ∀ x, e (c x) = h' x } with hC'
+  have hC'mem : ∀ h' : α → Fin k,
+      h' ∈ C' ↔ ∃ c ∈ C, ∀ x, e (c x) = h' x := by
+    intro h'
+    rw [hC']
+    rfl
+  have hd' : NDimLE C' d := by
+    intro s' hcard' hsh'
+    apply hd s' hcard'
+    obtain ⟨f₀', f₁', hne', hwit'⟩ := hsh'
+    refine ⟨fun x => e.symm (f₀' x), fun x => e.symm (f₁' x), ?_, ?_⟩
+    · intro x hx hcon
+      exact hne' x hx (e.symm.injective hcon)
+    · intro t ht
+      obtain ⟨h', mh', h1', h0'⟩ := hwit' t ht
+      obtain ⟨c, mc, hceq⟩ := (hC'mem _).mp mh'
+      refine ⟨c, mc, fun x hxt => ?_, fun x hxs hxt => ?_⟩
+      · have h1x := h1' x hxt
+        have heq : e (c x) = f₁' x := (hceq x).trans h1x
+        have hcon := congrArg e.symm heq
+        rw [e.symm_apply_apply] at hcon
+        exact hcon
+      · have h0x := h0' x hxs hxt
+        have heq : e (c x) = f₀' x := (hceq x).trans h0x
+        have hcon := congrArg e.symm heq
+        rw [e.symm_apply_apply] at hcon
+        exact hcon
+  have htraces : tracesCard C s = tracesCard C' s := by
+    unfold tracesCard
+    apply Finset.card_bij' (fun g _ => fun x : s => e (g x))
+      (fun g' _ => fun x : s => e.symm (g' x))
+    · intro g hg
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hg ⊢
+      obtain ⟨c, mc, hcg⟩ := hg
+      refine ⟨fun x => e (c x), (hC'mem _).mpr ⟨c, mc, ?_⟩, ?_⟩
+      · intro x
+        rfl
+      · intro x
+        change e (c x.val) = e (g x)
+        rw [hcg x]
+    · intro g' hg'
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hg' ⊢
+      obtain ⟨c', mc', hcg'⟩ := hg'
+      obtain ⟨c, mc, hceq⟩ := (hC'mem _).mp mc'
+      refine ⟨c, mc, fun x => ?_⟩
+      have h1 : e (c x.val) = c' x.val := hceq x.val
+      have heq : e (c x.val) = g' x := h1.trans (hcg' x)
+      have hcon := congrArg e.symm heq
+      rw [e.symm_apply_apply] at hcon
+      exact hcon
+    · intro g hg
+      funext x
+      simp only [e.symm_apply_apply]
+    · intro g' hg'
+      funext x
+      simp only [e.apply_symm_apply]
+  have hbound := natarajan_lemma_fin C' d hd' s hs
+  rw [htraces]
+  exact hbound
+
 /-- The set-based trace count on a coerced finite class agrees with the
 image-of-finite-class count. -/
-theorem tracesCard_coe_finset {α : Type*} {k : ℕ}
-    (H : Finset (α → Fin k)) (s : Finset α) :
-    tracesCard (↑H : ConceptClass α (Fin k)) s =
+theorem tracesCard_coe_finset {α β : Type*} [Fintype β] [DecidableEq β]
+    (H : Finset (α → β)) (s : Finset α) :
+    tracesCard (↑H : ConceptClass α β) s =
       (H.image fun h (x : s) => h x.val).card := by
   unfold tracesCard
   congr 1
@@ -710,11 +788,12 @@ theorem tracesCard_coe_finset {α : Type*} {k : ℕ}
 /-- Finite-class corollary of the Natarajan lemma, stated with a `Finset`
 throughout: the dimension hypothesis takes the coerced class and the
 conclusion counts the image of the finite class. -/
-theorem natarajan_lemma_finset {α : Type*} {k : ℕ}
-    (H : Finset (α → Fin k)) (d : ℕ)
-    (hd : NDimLE (↑H : ConceptClass α (Fin k)) d) (s : Finset α)
+theorem natarajan_lemma_finset {α β : Type*} [Fintype β] [DecidableEq β]
+    (H : Finset (α → β)) (d : ℕ)
+    (hd : NDimLE (↑H : ConceptClass α β) d) (s : Finset α)
     (hs : s.Nonempty) :
-    (H.image fun h (x : s) => h x.val).card ≤ s.card ^ d * k ^ (2 * d) := by
+    (H.image fun h (x : s) => h x.val).card ≤
+      s.card ^ d * (Fintype.card β) ^ (2 * d) := by
   rw [← tracesCard_coe_finset]
   exact natarajan_lemma _ d hd s hs
 

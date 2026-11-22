@@ -152,7 +152,7 @@ theorem twoConsts_lemma_bound_four :
   have h := natarajan_lemma _ 1 twoConsts_ndimLE_one Finset.univ hs
   have hcard : (Finset.univ : Finset (Fin 1)).card = 1 := by decide
   have hnum : (1 : ℕ) ^ 1 * 2 ^ (2 * 1) = 4 := by decide
-  rw [hcard, hnum] at h
+  rw [hcard, Fintype.card_fin, hnum] at h
   exact h
 
 theorem twoConsts_tracesCard_two :
@@ -193,6 +193,76 @@ theorem constClass_tracesCard_empty :
 
 theorem empty_sample_not_nonempty :
     ¬ (∅ : Finset (Fin 2)).Nonempty := Finset.not_nonempty_empty
+
+-- Bool-label tests: genuine non-`Fin` use of the generalized API.
+theorem boolConsts_ndimLE_one :
+    NDimLE (↑({fun _ : Fin 1 => false, fun _ : Fin 1 => true} :
+      Finset ((Fin 1) → Bool)) : ConceptClass (Fin 1) Bool) 1 := by
+  intro s hs _
+  have hle : s.card ≤ 1 := by
+    have h := Finset.card_le_univ s
+    rw [Fintype.card_fin] at h
+    exact h
+  omega
+
+theorem boolConsts_shatter_univ :
+    NShatters (↑({fun _ : Fin 1 => false, fun _ : Fin 1 => true} :
+      Finset ((Fin 1) → Bool)) : ConceptClass (Fin 1) Bool)
+      Finset.univ := by
+  refine ⟨fun _ => false, fun _ => true, ?_, ?_⟩
+  · decide
+  · intro t ht
+    by_cases hempty : t = ∅
+    · refine ⟨fun _ => false, Finset.mem_insert_self _ _, ?_, ?_⟩
+      · intro x hxt
+        rw [hempty] at hxt
+        exact absurd hxt (Finset.notMem_empty x)
+      · intro x _ _
+        rfl
+    · have htU : t = Finset.univ := by
+        have hcard1 : (Finset.univ : Finset (Fin 1)).card = 1 := by decide
+        have hle : t.card ≤ 1 := by
+          have h := Finset.card_le_card (Finset.subset_univ t)
+          omega
+        have hpos : 0 < t.card :=
+          Finset.card_pos.mpr (Finset.nonempty_iff_ne_empty.mpr hempty)
+        have hcard : t.card = 1 := by omega
+        have hle' : (Finset.univ : Finset (Fin 1)).card ≤ t.card := by omega
+        exact Finset.eq_of_subset_of_card_le (Finset.subset_univ t) hle'
+      refine ⟨fun _ => true,
+        Finset.mem_insert_of_mem (Finset.mem_singleton_self _), ?_, ?_⟩
+      · intro x _
+        rfl
+      · intro x _ hxt
+        rw [htU] at hxt
+        exact absurd (Finset.mem_univ x) hxt
+
+theorem boolConsts_not_ndimLE_zero :
+    ¬ NDimLE (↑({fun _ : Fin 1 => false, fun _ : Fin 1 => true} :
+      Finset ((Fin 1) → Bool)) : ConceptClass (Fin 1) Bool) 0 := by
+  intro hle
+  have hcard : (Finset.univ : Finset (Fin 1)).card = 0 + 1 := by decide
+  exact hle Finset.univ hcard boolConsts_shatter_univ
+
+theorem boolConsts_tracesCard_two :
+    tracesCard (↑({fun _ : Fin 1 => false, fun _ : Fin 1 => true} :
+      Finset ((Fin 1) → Bool)) : ConceptClass (Fin 1) Bool)
+      Finset.univ = 2 := by
+  rw [tracesCard_coe_finset]
+  decide
+
+-- Direct lemma use at bound 1 with `Bool` labels; the numeric bound is
+-- `1 ^ 1 * (Fintype.card Bool) ^ (2 * 1) = 4`.
+theorem boolConsts_lemma_bound_four :
+    tracesCard (↑({fun _ : Fin 1 => false, fun _ : Fin 1 => true} :
+      Finset ((Fin 1) → Bool)) : ConceptClass (Fin 1) Bool)
+      Finset.univ ≤ 4 := by
+  have hs : (Finset.univ : Finset (Fin 1)).Nonempty := Finset.univ_nonempty
+  have h := natarajan_lemma _ 1 boolConsts_ndimLE_one Finset.univ hs
+  have hcard : (Finset.univ : Finset (Fin 1)).card = 1 := by decide
+  have hnum : (1 : ℕ) ^ 1 * 2 ^ (2 * 1) = 4 := by decide
+  rw [hcard, Fintype.card_bool, hnum] at h
+  exact h
 
 #print axioms Cslib.MachineLearning.PACLearning.nShatters_subset
 #print axioms Cslib.MachineLearning.PACLearning.natarajan_lemma
