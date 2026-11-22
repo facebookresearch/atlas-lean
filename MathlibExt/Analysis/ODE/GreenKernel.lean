@@ -44,7 +44,7 @@ kernel in `Domains.Biology.PopulationGenetics.Diffusion`.
   `GreenKernel.hasDerivWithinAt_kernel_Ici`: one-sided derivatives at the
   diagonal.
 * `GreenKernel.derivWithin_kernel_jump_wronskian`: the derivative jump is
-  `-C y * wronskian u v y / v y`.
+  `C y * wronskian u v y / v y`.
 -/
 
 open Filter Set
@@ -59,9 +59,10 @@ the left branch at `x = y` whenever `v y ≠ 0`. -/
 noncomputable def kernel (u v C : ℝ → ℝ) (x y : ℝ) : ℝ :=
   if x ≤ y then C y * u x else C y * (u y / v y) * v x
 
-/-- The Wronskian `u' v - u v'` of two real functions. -/
+/-- The Wronskian `u v' - u' v` of two real functions, matching the determinant
+convention `det [[u, v], [u', v']]`. -/
 noncomputable def wronskian (u v : ℝ → ℝ) (x : ℝ) : ℝ :=
-  deriv u x * v x - u x * deriv v x
+  u x * deriv v x - deriv u x * v x
 
 /-- The left branch of the two-solution Green kernel. -/
 theorem kernel_of_le {u v C : ℝ → ℝ} {x y : ℝ} (hxy : x ≤ y) :
@@ -162,10 +163,9 @@ theorem derivWithin_kernel_jump_wronskian {u v C : ℝ → ℝ} {y : ℝ}
     (hu : DifferentiableAt ℝ u y) (hv : DifferentiableAt ℝ v y) (hvy : v y ≠ 0) :
     derivWithin (fun x => kernel u v C x y) (Ici y) y -
         derivWithin (fun x => kernel u v C x y) (Iic y) y =
-      -C y * wronskian u v y / v y := by
+      C y * wronskian u v y / v y := by
   rw [derivWithin_kernel_jump hu hv hvy]
   unfold wronskian
   field_simp
-  ring
 
 end GreenKernel

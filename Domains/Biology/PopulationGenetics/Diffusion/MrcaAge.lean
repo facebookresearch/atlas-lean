@@ -66,7 +66,7 @@ Corollary 2 is `integral_neutralGreen` (both `Sojourn`; the value is
   Green's function for `∂C/∂t` with unit source must.
 * `killedGreen_eq_greenKernel`, `pattersonAux_wronskian`: on `(0, 1)`, `G_C` is the
   two-solution `GreenKernel.kernel` built from `a₁`, `a₂` with normalization
-  `2 / y²`, and the two Appendix solutions have Wronskian `1`.
+  `2 / y²`, and the two Appendix solutions have Wronskian `-1`.
 * `tendsto_killedGreen_zero`, `tendsto_killedGreen_one`: `G_C(x, y) → 0` as
   `x → 0⁺` and as `x → 1⁻`, the Dirichlet boundary values.
 * `pattersonAux1_pos`, `killedGreen_pos`: `a₁` and `G_C` are positive on `(0, 1)`.
@@ -344,10 +344,10 @@ theorem killedGreen_eq_aux_right {x y : ℝ} (hxy : y < x) (hx : x ≠ 0) (hy0 :
   field_simp
   ring
 
-/-- The Wronskian of Patterson's two Appendix solutions is `1` on `(0, 1)`. This is
+/-- The Wronskian of Patterson's two Appendix solutions is `-1` on `(0, 1)`. This is
 the normalization behind the constant in `killedGreen_deriv_jump`. -/
 theorem pattersonAux_wronskian {y : ℝ} (hy : y ∈ Ioo (0 : ℝ) 1) :
-    GreenKernel.wronskian pattersonAux1 pattersonAux2 y = 1 := by
+    GreenKernel.wronskian pattersonAux1 pattersonAux2 y = -1 := by
   have hy0 : y ≠ 0 := hy.1.ne'
   have h1y : (1 : ℝ) - y ≠ 0 := (sub_pos.mpr hy.2).ne'
   rw [GreenKernel.wronskian,
