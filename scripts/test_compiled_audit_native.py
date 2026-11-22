@@ -59,6 +59,13 @@ class CompiledAuditTests(unittest.TestCase):
                 'set_option genCtorIdx false in\ninductive AuditThree where\n  | first\n  | second\n'
                 'unsafe def AuditThree.ctorIdx._impl (x : AuditThree) : Nat := getObjTagNat x\n'
                 '@[implemented_by AuditThree.ctorIdx._impl] def AuditThree.ctorIdx (_ : AuditThree) : Nat := 5\n'),
+            # A hand-written pair of exactly the generated form: only its declaration ranges tell it apart.
+            'ExactHandWrittenCtorIdx': (
+                'module\n@[expose] public section\n'
+                'set_option genCtorIdx false in\ninductive AuditFour where\n  | first\n  | second\n'
+                'unsafe def AuditFour.ctorIdx._impl : AuditFour → Nat := fun x => getObjTagNat x\n'
+                '@[implemented_by AuditFour.ctorIdx._impl] def AuditFour.ctorIdx : AuditFour → Nat :=\n'
+                '  fun x => AuditFour.casesOn (motive := fun _ => Nat) x (nat_lit 0) (nat_lit 1)\n'),
         }
         for name, text in sources.items():
             path = cls.fixture / f'MathlibExtTest/AuditFixture/{name}.lean'
@@ -138,6 +145,12 @@ class CompiledAuditTests(unittest.TestCase):
             audit.audit(self.fixture, ['MathlibExtTest.AuditFixture.ForgedCtorIdxValue'], self.checker)
         self.assertIn('AuditThree.ctorIdx._impl is an unsafe declaration', str(failure.exception))
         self.assertIn('AuditThree.ctorIdx uses implemented_by', str(failure.exception))
+
+    def test_exact_hand_written_ctor_idx_pair_fails(self):
+        with self.assertRaises(audit.AuditFailure) as failure:
+            audit.audit(self.fixture, ['MathlibExtTest.AuditFixture.ExactHandWrittenCtorIdx'], self.checker)
+        self.assertIn('AuditFour.ctorIdx._impl is an unsafe declaration', str(failure.exception))
+        self.assertIn('AuditFour.ctorIdx uses implemented_by', str(failure.exception))
 
     def test_other_import_failure_still_fails(self):
         with self.assertRaisesRegex(audit.AuditFailure, 'does not exist'):

@@ -91,16 +91,15 @@ runtime tag of its argument with `getObjTagNat`. Both are compiler output, not l
 safety checks skip this pair, but only in exactly that generated form and in the module that
 declares `T`: a hand-written `T.ctorIdx._impl`, or a `T.ctorIdx` implemented by anything else, is
 still reported. -/
+private def ctorIdxPair? : Lean.Name → Option (Lean.Name × Lean.Name × Lean.Name)
+  | .str (.str t "ctorIdx") "_impl" => some (t, .str t "ctorIdx", .str (.str t "ctorIdx") "_impl")
+  | .str t "ctorIdx" => some (t, .str t "ctorIdx", .str (.str t "ctorIdx") "_impl")
+  | _ => none
+
 private def isGeneratedCtorIdx (env : Lean.Environment) (name : Lean.Name) : Bool :=
-  let names? : Option (Lean.Name × Lean.Name) :=
-    match name with
-    | .str (.str t "ctorIdx") "_impl" => some (t, .str t "ctorIdx")
-    | .str t "ctorIdx" => some (t, name)
-    | _ => none
-  match names? with
+  match ctorIdxPair? name with
   | none => false
-  | some (t, ctorIdx) =>
-    let impl := ctorIdx ++ `_impl
+  | some (t, ctorIdx, impl) =>
     match env.find? t, env.find? ctorIdx, env.find? impl with
     | some (.inductInfo info), some (.defnInfo idx), some implInfo =>
       info.ctors.length != 1 && idx.safety == .safe &&
@@ -111,6 +110,15 @@ private def isGeneratedCtorIdx (env : Lean.Environment) (name : Lean.Name) : Boo
         env.getModuleIdxFor? ctorIdx == env.getModuleIdxFor? t &&
         env.getModuleIdxFor? impl == env.getModuleIdxFor? t
     | _, _, _ => false
+
+/-- Whether `name` is one of the pair Lean generated: it has the form `isGeneratedCtorIdx` checks, and
+neither declaration has declaration ranges. Lean records ranges for every declaration a source file
+writes, the elaborator's own auxiliary ones included, but none for what `mkCtorIdx` adds, so a
+hand-written pair of exactly the generated form is still reported. -/
+private def isGeneratedCtorIdxDecl (name : Lean.Name) : CommandElabM Bool := do
+  let some (_, ctorIdx, impl) := ctorIdxPair? name | return false
+  unless isGeneratedCtorIdx (← Lean.getEnv) name do return false
+  return (← Lean.findDeclarationRanges? ctorIdx).isNone && (← Lean.findDeclarationRanges? impl).isNone
 
 private def containsWantedWrapper (type : Lean.Expr) : Bool :=
   (type.find? fun
@@ -136,7 +144,7 @@ run_cmd do
     let mut hasWantedDeclaration := false
     for name in moduleData.constNames do
       let some info := env.find? name | continue
-      let generated := isGeneratedCtorIdx env name
+      let generated ← isGeneratedCtorIdxDecl name
       if info.isUnsafe && !generated then
         Lean.logError m!"{name} is an unsafe declaration"
         failed := true
