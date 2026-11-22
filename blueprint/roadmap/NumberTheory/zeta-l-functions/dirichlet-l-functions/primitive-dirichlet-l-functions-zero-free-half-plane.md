@@ -8,8 +8,13 @@ This node is still to be broken down into statements with published proofs. Its 
 under Sources, derives the statement from one-sided growth bounds for weighted sums, over families
 of characters, of smoothed Chebyshev functions twisted by those characters. That step uses
 [Landau's theorem on Dirichlet integrals with non-negative integrands](analytic-continuation-of-dirichlet-series/landau-theorem-dirichlet-integrals.md),
-with Mathlib's theorems that these L-functions are entire for nontrivial characters and do not
-vanish on $\operatorname{Re} s \ge 1$. Besides that step, the proof uses:
+with two theorems that Mathlib proves for Dirichlet characters: their L-functions are entire for
+nontrivial characters, and do not vanish on $\operatorname{Re} s \ge 1$. The first is the case of
+the finite-order Hecke characters of $\mathbb{Q}$ of the
+[meromorphic continuation of Hecke L-functions](hecke-l-function-meromorphic-continuation.md), and
+the second, on the line $\operatorname{Re} s = 1$, that of the
+[non-vanishing of Hecke L-functions on the line Re s = 1](hecke-l-function-nonvanishing-on-re-one.md);
+to the right of the line the Euler product gives it. Besides that step, the proof uses:
 
 - Green's description of the cuspidal irreducible characters of $\mathrm{GL}_n(\mathbb{F}_p)$, $p$
   prime: their degrees and their values on the classes whose characteristic polynomial is
@@ -48,6 +53,8 @@ and [abelian schemes and their moduli](../../../AlgebraicGeometry/abelian-variet
 ## Proof depends on
 
 - [Landau's theorem on Dirichlet integrals with non-negative integrands](analytic-continuation-of-dirichlet-series/landau-theorem-dirichlet-integrals.md), for the step from the growth bounds to the zero-free half-plane
+- [Meromorphic continuation of Hecke L-functions](hecke-l-function-meromorphic-continuation.md), for its case of the finite-order Hecke characters of $\mathbb{Q}$ that correspond to nontrivial primitive Dirichlet characters, whose L-functions are entire
+- [Non-vanishing of Hecke L-functions on the line Re s = 1](hecke-l-function-nonvanishing-on-re-one.md), for the same case
 - [Green's parametrization of the cuspidal characters of $\mathrm{GL}_n(\mathbb{F}_q)$](../../../GroupTheory/characters-of-finite-groups/green-cuspidal-characters-of-gl-n.md), for the case of a prime field
 - [Theta correspondence for unitary dual pairs](../../../RepresentationTheory/automorphic-representations/theta-correspondence-for-unitary-dual-pairs.md)
 - [Automorphic representations of GLₙ and unitary groups](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n-and-unitary-groups.md)
