@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import MathlibExt.Analysis.SpecialFunctions.Gamma.RpowLowerBound
 
 namespace MetaMathlibExt
 
