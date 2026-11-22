@@ -1,0 +1,159 @@
+# Third-party notices
+
+These files include material from Mathlib, distributed under Apache 2.0.
+Their original copyright, license and author notices appear below. The
+individual source files also retain their copyright and license lines.
+
+## MathlibExt/AlgebraicTopology/SimplicialSet/FundamentalGroupoid/Basic.lean
+
+```text
+/-
+Copyright (c) 2026 Joël Riou. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Joël Riou
+-/
+```
+
+Upstream source: `Mathlib/AlgebraicTopology/SimplicialSet/FundamentalGroupoid/Basic.lean`.
+
+## MathlibExt/AlgebraicTopology/Quasicategory/TwoTruncatedCompat.lean
+
+```text
+/-
+Copyright (c) 2025 Julian Komaromy. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Julian Komaromy, Joël Riou
+-/
+```
+
+Upstream source: `Mathlib/AlgebraicTopology/Quasicategory/TwoTruncated.lean`.
+
+## MathlibExt/AlgebraicTopology/SimplicialSet/CompStructCompat.lean
+
+```text
+/-
+Copyright (c) 2025 Joël Riou. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Joël Riou, Arnoud van der Leer
+-/
+```
+
+Upstream source: `Mathlib/AlgebraicTopology/SimplicialSet/CompStruct.lean`.
+
+## MathlibExt/AlgebraicTopology/SimplicialSet/StdSimplexCompat.lean
+
+```text
+/-
+Copyright (c) 2021 Kim Morrison. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Johan Commelin, Kim Morrison, Adam Topaz, Joël Riou
+-/
+```
+
+Upstream source: `Mathlib/AlgebraicTopology/SimplicialSet/StdSimplex.lean`.
+
+## MathlibExt/AlgebraicTopology/SimplicialSet/KanComplex/FundamentalGroupoid.lean
+
+```text
+/-
+Copyright (c) 2026 Joël Riou. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Joël Riou
+-/
+```
+
+Upstream source: `Mathlib/AlgebraicTopology/SimplicialSet/KanComplex/FundamentalGroupoid.lean`.
+
+## MathlibExt/AlgebraicTopology/SimplicialSet/MonoidalCompat.lean
+
+```text
+/-
+Copyright (c) 2024 Joël Riou. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Joël Riou, Jack McKoen
+-/
+```
+
+Upstream source: `Mathlib/AlgebraicTopology/SimplicialSet/Monoidal.lean`.
+
+## MathlibExt/AlgebraicTopology/SimplicialSet/ProdStdSimplexOneCompat.lean
+
+```text
+/-
+Copyright (c) 2025 Joël Riou. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Joël Riou
+-/
+```
+
+Upstream source: `Mathlib/AlgebraicTopology/SimplicialSet/ProdStdSimplexOne.lean`.
+
+## MathlibExt/AlgebraicTopology/SimplicialSet/KanComplex/PtSimplexEquiv.lean
+
+```text
+/-
+Copyright (c) 2026 Joël Riou. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Joël Riou
+-/
+```
+
+Upstream source: `Mathlib/AlgebraicTopology/SimplicialSet/KanComplex/PtSimplexEquiv.lean`.
+
+## MathlibExt/AlgebraicTopology/SimplicialSet/KanComplex/HomotopyGroup.lean
+
+```text
+/-
+Copyright (c) 2026 Joël Riou. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Joël Riou
+-/
+```
+
+Upstream source: `Mathlib/AlgebraicTopology/SimplicialSet/KanComplex/HomotopyGroup.lean`.
+
+## MathlibExt/AlgebraicTopology/SimplicialSet/FundamentalGroupoid/Homotopy.lean
+
+```text
+/-
+Copyright (c) 2026 Joël Riou. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Joël Riou
+-/
+```
+
+Upstream source: `Mathlib/AlgebraicTopology/SimplicialSet/FundamentalGroupoid/Homotopy.lean`.
+
+## MathlibExt/AlgebraicTopology/SimplicialSet/ProdStdSimplexCompat.lean
+
+```text
+/-
+Copyright (c) 2025 Joël Riou. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Joël Riou
+-/
+```
+
+Upstream source: `Mathlib/AlgebraicTopology/SimplicialSet/ProdStdSimplex.lean`.
+
+## MathlibExt/CategoryTheory/TrivialBundleWithFiberTerminal.lean
+
+```text
+/-
+Copyright (c) 2026 Joël Riou. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Joël Riou
+-/
+```
+
+Upstream source: `Mathlib/CategoryTheory/MorphismProperty/TrivialBundles.lean`.
+
+## MathlibExt/AlgebraicTopology/ModelCategory/SemiModel/Transfer.lean
+
+```text
+/-
+Copyright (c) 2025 Joël Riou. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Joël Riou
+-/
+```

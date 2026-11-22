@@ -497,7 +497,7 @@ grep -q 'check_copyright.py --all' "$REPO_ROOT/scripts/check.sh" ||
   fail "preflight does not check every file's copyright header"
 
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_quality_eval.py -v
-python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_formal_math_sync.py -v
+python3 -m unittest discover -s "$REPO_ROOT/scripts" -p 'test_formal_math*.py' -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_references.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_reference_workflow.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_merge_queue_checks.py -v

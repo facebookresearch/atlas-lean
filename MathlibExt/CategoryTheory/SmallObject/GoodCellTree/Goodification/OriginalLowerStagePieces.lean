@@ -1,0 +1,80 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import MathlibExt.CategoryTheory.SmallObject.GoodCellTree.Goodification.FilteredOriginalLowerColimit
+public import MathlibExt.CategoryTheory.SmallObject.GoodCellTree.LowerSetColimits
+public import Mathlib.CategoryTheory.Filtered.Basic
+
+/-!
+# Actual original lower pieces cut out by the original initial-stage cover
+
+The actual original intersection functor retains every original lower
+label and inclusion map. The original stage cover proves its union is
+the same original lower set. Original directedness derives the actual
+filtered-category dictionary for every nonempty original stage carrier.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option maxRecDepth 512
+
+noncomputable section
+
+universe w
+
+namespace CategoryTheory.SmallObject.OriginalLowerStagePieces
+
+open Limits LowerSetColimits
+
+variable {P I : Type w} [Preorder P] [Preorder I]
+  (S : I → LowerSet P) (hMono : Monotone S)
+  (hCover : ∀ p : P, ∃ i : I, p ∈ S i)
+
+/-- The whole actual original intersection diagram keeps the same original lower stage labels. -/
+abbrev pieces (B : LowerSet P) : I ⥤ LowerSet P where
+  obj i := B ⊓ S i
+  map h := homOfLE (inf_le_inf_left B (hMono (leOfHom h)))
+
+include hCover in
+/-- The actual original stage cover exhausts the same whole original lower carrier. -/
+theorem pieces_union (B : LowerSet P) :
+    FilteredOriginalLowerColimit.union (pieces S hMono B) = B := by
+  ext p
+  change p ∈ (⨆ i : I, B ⊓ S i) ↔ p ∈ B
+  rw [LowerSet.mem_iSup_iff]
+  constructor
+  · rintro ⟨i, hp⟩
+    exact hp.1
+  · intro hp
+    obtain ⟨i, hi⟩ := hCover p
+    exact ⟨i, hp, hi⟩
+
+/-- The complete original piece object function is the actual original lower intersection. -/
+theorem pieces_obj_function (B : LowerSet P) :
+    (fun i : I => (pieces S hMono B).obj i) = (fun i : I => B ⊓ S i) := rfl
+
+/-- Each actual original piece stays inside its actual original stage, without a size guess. -/
+theorem piece_below (B : LowerSet P) (i : I) : (pieces S hMono B).obj i ≤ S i := inf_le_right
+
+variable (hDirected : ∀ i j : I, ∃ k : I, i ≤ k ∧ j ≤ k)
+
+include hDirected in
+/-- Actual original directedness gives the original filtered-category dictionary. -/
+theorem filtered [Nonempty I] : IsFiltered I where
+  cocone_objs i j := by
+    obtain ⟨k, hik, hjk⟩ := hDirected i j
+    exact ⟨k, homOfLE hik, homOfLE hjk, trivial⟩
+  cocone_maps _ _ f g := ⟨_, 𝟙 _, by
+    rw [Category.comp_id, Category.comp_id]
+    exact Subsingleton.elim f g⟩
+  nonempty := inferInstance
+
+end CategoryTheory.SmallObject.OriginalLowerStagePieces
