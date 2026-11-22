@@ -1020,12 +1020,13 @@ public def homogenizedWeightedVertices {n : ℕ} (q : Fin n → ℕ) :
   {(1, fun i => -(q i : ℤ))} ∪ Set.range (fun i : Fin n => (1, Pi.single i (1 : ℤ)))
 
 /-- **Exceptional Hilbert basis columns.** Let $n \ge 1$. Write $t_0, \dots, t_8$ for the
-integer triples $(0,0,0)$, $(0,0,-1)$, $(0,-1,-1)$, $(0,-1,-2)$, $(0,-2,-3)$, $(0,-3,-5)$,
+integer triples $(0,0,0)$, $(0,0,-1)$, $(0,-1,-1)$, $(0,-1,-2)$, $(0,-2,-3)$, $(-1,-3,-5)$,
 $(-1,-4,-6)$, $(-2,-7,-10)$ and $(-3,-10,-15)$. For $j = 0, \dots, 8$ the $j$th exceptional
 column is the pair $(h_j, v_j)$, where the height $h_j$ is $1$ for $j \le 6$ and $2$ for
 $j = 7, 8$, and $v_j \in \mathbb{Z}^{2n+2}$ has its first $2n-1$ coordinates equal to $0$ and
 its last three coordinates equal to $t_j$.
 
+The source prints $t_5$ as $(0, -3, -5)$, a point outside the cone; it is $(-1, -3, -5)$ here.
 For $n = 0$ the vector $v_j \in \mathbb{Z}^2$ consists of the first and third entries of $t_j$.
 
 Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
@@ -1035,32 +1036,32 @@ public def exceptionalHilbertColumn (n : ℕ) (j : Fin 9) :
     ℕ × (Fin (2 * n + 2) → ℤ) :=
   let triples : Fin 9 → Fin 3 → ℤ := ![
     ![0, 0, 0], ![0, 0, -1], ![0, -1, -1], ![0, -1, -2], ![0, -2, -3],
-    ![0, -3, -5], ![-1, -4, -6], ![-2, -7, -10], ![-3, -10, -15]]
+    ![-1, -3, -5], ![-1, -4, -6], ![-2, -7, -10], ![-3, -10, -15]]
   (if j.val < 7 then 1 else 2, fun i =>
     if i.val < 2 * n - 1 then 0
     else if _h0 : i.val = 2 * n - 1 then triples j 0
     else if _h1 : i.val = 2 * n then triples j 1
     else triples j 2)
 
-/-- **Hilbert basis of $\Delta_{(1,q(n))}$.** Let $n \ge 1$ and let
+/-- **Hilbert basis of $\Delta_{(1,q(n))}$.** Let $n \ge 2$ and let
 $q(n) = (1^{2n-1}, 3n, 10n, 15n)$, that is, $2n - 1$ ones followed by $3n$, $10n$, $15n$. Write
 lattice points of the cone over the weighted projective simplex
 $\Delta_{(1,q(n))} \subseteq \mathbb{R}^{2n+2}$ as pairs $(k, w)$ with height $k \in \mathbb{N}$
 and $w \in \mathbb{Z}^{2n+2}$. The Hilbert basis of this cone is exactly the set of homogenized
 vertices, namely $(1, e_i)$ for each standard basis vector $e_i$ and $(1, -q(n))$, together with
 nine further points $(k, w)$ in which $w$ vanishes outside its last three coordinates. Their last
-three coordinates are $(0,0,0)$, $(0,0,-1)$, $(0,-1,-1)$, $(0,-1,-2)$, $(0,-2,-3)$, $(0,-3,-5)$
+three coordinates are $(0,0,0)$, $(0,0,-1)$, $(0,-1,-1)$, $(0,-1,-2)$, $(0,-2,-3)$, $(-1,-3,-5)$
 and $(-1,-4,-6)$ at height $k = 1$, and $(-2,-7,-10)$ and $(-3,-10,-15)$ at height $k = 2$.
 
 Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
 Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
 A60, Theorem 13. -/
-public theorem_wanted almostIDP_hilbertBasis (n : ℕ) (hn : 1 ≤ n) :
+public theorem_wanted almostIDP_hilbertBasis (n : ℕ) (hn : 2 ≤ n) :
     hilbertBasis (weightedSimplex (almostIDPWeights n)) =
       homogenizedWeightedVertices (almostIDPWeights n) ∪
         Set.range (exceptionalHilbertColumn n)
 
-/-- **Exactly two Hilbert basis elements of height two.** Let $n \ge 1$ and let
+/-- **Exactly two Hilbert basis elements of height two.** Let $n \ge 2$ and let
 $q(n) = (1^{2n-1}, 3n, 10n, 15n)$, that is, $2n - 1$ ones followed by $3n$, $10n$, $15n$. Write the
 elements of the Hilbert basis of the cone over the weighted projective simplex $\Delta_{(1,q(n))}$
 as pairs $(k, w)$ with height $k \in \mathbb{N}$ and $w \in \mathbb{Z}^{2n+2}$. Exactly two elements
@@ -1069,7 +1070,7 @@ of this Hilbert basis have height $k > 1$, and every element of height $k > 1$ h
 Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
 Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
 A60, Theorem 13. -/
-public theorem_wanted almostIDP_exactly_two_height_two (n : ℕ) (hn : 1 ≤ n) :
+public theorem_wanted almostIDP_exactly_two_height_two (n : ℕ) (hn : 2 ≤ n) :
     Set.ncard {a ∈ hilbertBasis (weightedSimplex (almostIDPWeights n)) | 1 < a.1} = 2 ∧
     ∀ a ∈ hilbertBasis (weightedSimplex (almostIDPWeights n)), 1 < a.1 → a.1 = 2
 

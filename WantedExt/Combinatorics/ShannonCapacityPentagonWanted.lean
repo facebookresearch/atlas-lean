@@ -88,7 +88,8 @@ vertices has Shannon capacity $\sqrt{5}$: writing $\alpha(C_5^{\boxtimes k})$ fo
 number of the $k$-th strong power of $C_5$, we have $\alpha(C_5^{\boxtimes k})^{1/k} \to \sqrt{5}$
 as $k \to \infty$.
 
-Source: Knill, *Some fundamental theorems in mathematics*, §238. Via leanprover/lean-eval@38361be, problem `shannon_capacity_pentagon`. -/
+Source: Knill, *Some fundamental theorems in mathematics*, §238. Via leanprover/lean-eval@38361be,
+problem `shannon_capacity_pentagon`. -/
 public theorem_wanted shannon_capacity_pentagon :
     HasShannonCapacity (SimpleGraph.cycleGraph 5) (Real.sqrt 5)
 

@@ -144,7 +144,11 @@ Because $C / \log \log n \to 0$ for every constant $C$, this contradicts Erdős'
 $n$ points in the plane determine at most $n^{1 + C / \log \log n}$ unit distances for some
 constant $C$ and all large $n$.
 
-Source: OpenAI, *Planar Point Sets with Many Unit Distances*, 2026. https://cdn.openai.com/pdf/74c24085-19b0-4534-9c90-465b8e29ad73/unit-distance-proof.pdf . Original conjecture: P. Erdős, *On sets of distances of n points*, Amer. Math. Monthly 53 (1946), 248-250. k-equidistant variant: P. Erdős, K. Falconer, *Some problems in combinatorial geometry*, 1997. Via leanprover/lean-eval@38361be, problem `erdos_unit_distance_conjecture_false`. -/
+Source: OpenAI, *Planar Point Sets with Many Unit Distances*, 2026.
+https://cdn.openai.com/pdf/74c24085-19b0-4534-9c90-465b8e29ad73/unit-distance-proof.pdf . Original
+conjecture: P. Erdős, *On sets of distances of n points*, Amer. Math. Monthly 53 (1946), 248-250.
+k-equidistant variant: P. Erdős, K. Falconer, *Some problems in combinatorial geometry*, 1997. Via
+leanprover/lean-eval@38361be, problem `erdos_unit_distance_conjecture_false`. -/
 public theorem_wanted erdos_unit_distance_conjecture_false :
     ∃ δ : ℝ, 0 < δ ∧
       ∀ N : ℕ, ∃ (n : ℕ) (P : Finset (EuclideanSpace ℝ (Fin 2))),

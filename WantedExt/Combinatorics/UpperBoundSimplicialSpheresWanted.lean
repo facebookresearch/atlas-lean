@@ -121,7 +121,12 @@ $$
 with subtraction truncated at $0$; for $n \ge d + 1$ this is the number of $k$-dimensional
 faces of the cyclic polytope $C(n, d)$.
 
-Source: R.P. Stanley, 'The upper bound conjecture and Cohen–Macaulay rings', Studies in Appl. Math. 54 (1975) 135–142. Conjecture: T.S. Motzkin (1957); polytope case: P. McMullen, 'The maximum numbers of faces of a convex polytope', Mathematika 17 (1970) 179–184. §142 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `upper_bound_simplicial_spheres`. -/
+Source: R.P. Stanley, 'The upper bound conjecture and Cohen–Macaulay rings', Studies in Appl. Math.
+54 (1975) 135–142. Conjecture: T.S. Motzkin (1957); polytope case: P. McMullen, 'The maximum numbers
+of faces of a convex polytope', Mathematika 17 (1970) 179–184. §142 in O. Knill, *Some Fundamental
+Theorems in Mathematics*
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `upper_bound_simplicial_spheres`. -/
 public theorem_wanted upper_bound_theorem_simplicial_spheres
     {d n k : ℕ} (X : FiniteSimplicialSphere d)
     (_hn : faceCount X 0 = n) (_hk : k < d) :

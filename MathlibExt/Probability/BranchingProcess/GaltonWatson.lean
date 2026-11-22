@@ -79,8 +79,6 @@ noncomputable def extinctionProb : ℝ :=
 
 /-! ### Iterates of the generating function -/
 
-private lemma zero_mem : (0 : ℝ) ∈ Icc (0 : ℝ) 1 := ⟨le_rfl, zero_le_one⟩
-
 private theorem pgf_mem [IsProbabilityMeasure ν]
     {s : ℝ} (hs : s ∈ Icc (0 : ℝ) 1) : pgf id ν s ∈ Icc (0 : ℝ) 1 := by
   have hi := integrable_pow_of_abs_le_one (μ := ν) (s := s) measurable_id
@@ -128,7 +126,7 @@ private theorem iterate_le [IsProbabilityMeasure ν]
   | zero => exact hs.1
   | succ n hn =>
     rw [Function.iterate_succ_apply']
-    exact (pgf_mono ν (iterate_pgf_mem_Icc ν n zero_mem) hs hn).trans h
+    exact (pgf_mono ν (iterate_pgf_mem_Icc ν n unitInterval.zero_mem) hs hn).trans h
 
 /-- The iterates `f^[n](0)` of the offspring generating function are non-decreasing. -/
 theorem monotone_iterate_pgf_zero [IsProbabilityMeasure ν] :
@@ -139,20 +137,22 @@ theorem monotone_iterate_pgf_zero [IsProbabilityMeasure ν] :
   | zero => simpa using (pgf_mem ν (by simp : (0 : ℝ) ∈ Icc 0 1)).1
   | succ n hn =>
     simpa only [Function.comp_apply, Function.iterate_succ_apply'] using
-      pgf_mono ν (iterate_pgf_mem_Icc ν n zero_mem) (iterate_pgf_mem_Icc ν (n + 1) zero_mem) hn
+      pgf_mono ν (iterate_pgf_mem_Icc ν n unitInterval.zero_mem)
+        (iterate_pgf_mem_Icc ν (n + 1) unitInterval.zero_mem) hn
 
 /-- `sup_n f^[n](0)` is the least fixed point of `f` in `[0, 1]`
 (Athreya–Ney 1972, ch. I). -/
 theorem isLeast_iSup_iterate_pgf_zero [IsProbabilityMeasure ν] :
     IsLeast {s | s ∈ Icc (0 : ℝ) 1 ∧ pgf id ν s = s} (⨆ n, (pgf id ν)^[n] 0) := by
   have hb : BddAbove (range fun n => (pgf id ν)^[n] 0) :=
-    ⟨1, by rintro _ ⟨n, rfl⟩; exact (iterate_pgf_mem_Icc ν n zero_mem).2⟩
+    ⟨1, by rintro _ ⟨n, rfl⟩; exact (iterate_pgf_mem_Icc ν n unitInterval.zero_mem).2⟩
   have hq : (⨆ n, (pgf id ν)^[n] 0) ∈ Icc (0 : ℝ) 1 :=
-    ⟨(iterate_pgf_mem_Icc ν 0 zero_mem).1.trans (le_ciSup hb 0),
-      ciSup_le (fun n => (iterate_pgf_mem_Icc ν n zero_mem).2)⟩
+    ⟨(iterate_pgf_mem_Icc ν 0 unitInterval.zero_mem).1.trans (le_ciSup hb 0),
+      ciSup_le (fun n => (iterate_pgf_mem_Icc ν n unitInterval.zero_mem).2)⟩
   have ht := tendsto_atTop_ciSup (monotone_iterate_pgf_zero ν) hb
   have hf : pgf id ν (⨆ n, (pgf id ν)^[n] 0) = ⨆ n, (pgf id ν)^[n] 0 := by
-    apply tendsto_nhds_unique (pgf_tendsto ν (fun n => iterate_pgf_mem_Icc ν n zero_mem) ht)
+    apply tendsto_nhds_unique
+      (pgf_tendsto ν (fun n => iterate_pgf_mem_Icc ν n unitInterval.zero_mem) ht)
     have ht' : Tendsto (fun n => (pgf id ν)^[n + 1] 0) atTop
         (𝓝 (⨆ n, (pgf id ν)^[n] 0)) := ht.comp (tendsto_add_atTop_nat 1)
     simpa only [Nat.add_one, Function.iterate_succ_apply'] using ht'
@@ -390,7 +390,7 @@ theorem pgf_law [IsProbabilityMeasure ν] (n : ℕ) {s : ℝ} (hs : s ∈ Icc (0
 /-- `P(Z_n = 0) = f^[n](0)`. -/
 theorem law_real_zero [IsProbabilityMeasure ν] (n : ℕ) :
     (law ν n).real {0} = (pgf id ν)^[n] 0 := by
-  rw [← pgf_law ν n zero_mem, pgf_zero id _ measurable_id]
+  rw [← pgf_law ν n unitInterval.zero_mem, pgf_zero id _ measurable_id]
   rfl
 
 private lemma lintegral_convPow [IsProbabilityMeasure ν] (z : ℕ) :

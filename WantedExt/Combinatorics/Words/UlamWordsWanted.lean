@@ -279,7 +279,8 @@ $\mu_g(n)$ have the same order of growth as $n \to \infty$: there are constants 
 that $c \, \mu_g(n) \le 2^n / |U_n| \le C \, \mu_g(n)$ for all sufficiently large $n$.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 4 (first sentence). -/
+*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 4 (first
+sentence). -/
 public theorem_wanted ulamDensity_inv_isTheta_ulamGapMean :
     (fun n : ℕ => (2 : ℝ) ^ n / ulamWordCount n) =Θ[Filter.atTop]
       fun n => (ulamGapMean n : ℝ)

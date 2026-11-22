@@ -18,6 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Analysis.Fourier.BooleanCube
+public import MathlibExt.Analysis.Fourier.BooleanCubeNoiseStability
 
 @[expose] public section
 
@@ -67,6 +68,14 @@ For $-1 \le \rho \le 1$ this is the Fourier expansion of $\mathbb{E}[f(x) f(y)]$
 and a $\rho$-correlated copy $y$ of $x$. -/
 noncomputable def noiseStability {n : ℕ} (ρ : ℝ) (f : BoolCube n → ℝ) : ℝ :=
   ∑ S : Finset (Fin n), ρ ^ S.card * boolFourierCoeff n f S ^ 2
+
+/-- **The two noise-stability definitions agree.** For every `f : BoolCube n → ℝ` and real `ρ`,
+the Fourier-sum definition `noiseStability ρ f` equals MathlibExt's
+`BooleanCube.boolNoiseStab ρ f = 𝔼[f · T_ρ f]` (R. O'Donnell, *Analysis of Boolean Functions*,
+2014, Theorem 2.49). -/
+theorem noiseStability_eq_boolNoiseStab {n : ℕ} (ρ : ℝ) (f : BoolCube n → ℝ) :
+    noiseStability ρ f = boolNoiseStab ρ f :=
+  (boolNoiseStab_eq_sum ρ f).symm
 
 /-- **Majority Is Least Stable conjecture in $n$ variables.** For $n \in \mathbb{N}$, this is the
 statement that every linear threshold function $f : \{-1, 1\}^n \to \mathbb{R}$ satisfies

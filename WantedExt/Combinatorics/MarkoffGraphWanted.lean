@@ -102,7 +102,8 @@ one coordinate $x_i$ by $3 x_j x_k - x_i$ and keeps the other two coordinates $x
 where $\{i, j, k\} = \{0, 1, 2\}$. Every connected component of this graph has a number of
 vertices divisible by $p$.
 
-Source: https://link.springer.com/article/10.1007/s00222-025-01346-9 Via leanprover/lean-eval@38361be, problem `dvd_card_connectedComponent_markoffGraph`. -/
+Source: https://link.springer.com/article/10.1007/s00222-025-01346-9 Via
+leanprover/lean-eval@38361be, problem `dvd_card_connectedComponent_markoffGraph`. -/
 public theorem_wanted dvd_card_connectedComponent_markoffGraph
     {p : ℕ} (hp : Nat.Prime p) (hgt : 3 < p) :
     ∀ c : (markoffGraph p).ConnectedComponent, p ∣ Nat.card c

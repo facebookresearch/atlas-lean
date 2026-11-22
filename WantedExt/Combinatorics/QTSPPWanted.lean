@@ -141,7 +141,8 @@ Coordinates start at $0$ and the denominator is cleared: with coordinates $1, \d
 the formula $\sum_{\pi} q^{o(\pi)} = \prod_{1 \le i \le j \le k \le n}
 (1 - q^{i+j+k-1}) / (1 - q^{i+j+k-2})$ of Koutschan, Kauers and Zeilberger.
 
-Source: Koutschan, Kauers, and Zeilberger (2011), Theorem 1. DOI: 10.1073/pnas.1019186108 Via leanprover/lean-eval@38361be, problem `q_tspp`. -/
+Source: Koutschan, Kauers, and Zeilberger (2011), Theorem 1. DOI: 10.1073/pnas.1019186108 Via
+leanprover/lean-eval@38361be, problem `q_tspp`. -/
 public theorem_wanted q_tspp (n : ℕ) :
     generatingPolynomial n *
       (∏ c ∈ sortedTriples n,

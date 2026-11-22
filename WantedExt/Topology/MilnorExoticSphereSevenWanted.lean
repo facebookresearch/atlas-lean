@@ -23,14 +23,19 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.MilnorExoticSphereSeven` — milnor_exotic_sphere_seven (manifest `manifests/problems/milnor_exotic_sphere_seven.toml`, rev 1, submitter Kim Morrison, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.MilnorExoticSphereSeven` —
+milnor_exotic_sphere_seven (manifest `manifests/problems/milnor_exotic_sphere_seven.toml`, rev 1,
+submitter Kim Morrison, status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Topology.MilnorExoticSphereSevenWanted` namespace. Mathematical
-statements are unchanged. Source: J. Milnor, On manifolds homeomorphic to the 7-sphere, Ann. of Math. 64 (1956), 399-405. Recorded as a `proof_wanted` in Mathlib/Geometry/Manifold/PoincareConjecture.lean at rev 5450b53e5ddc.
+and placed the declarations in the `MathlibExt.Topology.MilnorExoticSphereSevenWanted` namespace.
+Mathematical
+statements are unchanged. Source: J. Milnor, On manifolds homeomorphic to the 7-sphere, Ann. of
+Math. 64 (1956), 399-405. Recorded as a `proof_wanted` in
+Mathlib/Geometry/Manifold/PoincareConjecture.lean at rev 5450b53e5ddc.
 -/
 module
 
@@ -72,7 +77,9 @@ open Metric (sphere)
 
 /- **Milnor's exotic 7-sphere.** There exists a smooth 7-manifold
 homeomorphic to the standard 7-sphere `𝕊⁷` but not diffeomorphic to it. -/
-/-- Source: J. Milnor, On manifolds homeomorphic to the 7-sphere, Ann. of Math. 64 (1956), 399-405. Recorded as a `proof_wanted` in Mathlib/Geometry/Manifold/PoincareConjecture.lean at rev 5450b53e5ddc. Via leanprover/lean-eval@38361be, problem `milnor_exotic_sphere_seven`. -/
+/-- Source: J. Milnor, On manifolds homeomorphic to the 7-sphere, Ann. of Math. 64 (1956), 399-405.
+Recorded as a `proof_wanted` in Mathlib/Geometry/Manifold/PoincareConjecture.lean at rev
+5450b53e5ddc. Via leanprover/lean-eval@38361be, problem `milnor_exotic_sphere_seven`. -/
 public theorem_wanted milnor_exotic_sphere_seven :
     ∃ (M : Type) (_ : TopologicalSpace M)
       (_ : ChartedSpace (EuclideanSpace ℝ (Fin 7)) M)

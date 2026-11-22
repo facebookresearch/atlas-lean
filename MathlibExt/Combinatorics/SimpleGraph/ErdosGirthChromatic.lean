@@ -12,7 +12,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Girth
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Complex.Exponential
 import Mathlib.Combinatorics.Pigeonhole
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Data.Nat.Choose.Bounds
 import Mathlib.Data.Nat.Choose.Cast
 import Mathlib.Order.CompletePartialOrder

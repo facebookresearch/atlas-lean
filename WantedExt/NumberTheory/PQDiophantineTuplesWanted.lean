@@ -14,6 +14,7 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
+public import MathlibExt.NumberTheory.PQDiophantineTuples
 
 /-!
 # `{p, q}`-Diophantine quadruples and quintuples
@@ -24,8 +25,11 @@ distinct positive integers whose pairwise products plus one are `S`-units
 (`MetaMathlibExt.IsSDiophantineTuple`). For a quadruple `(a, b, c, d)` the paper writes
 `s₁ = ab + 1`, `s₂ = ac + 1`, `s₃ = ad + 1`, `s₄ = bc + 1`, `s₅ = bd + 1`, `s₆ = cd + 1`,
 `sᵢ = p ^ αᵢ * q ^ βᵢ`; here `αᵢ` and `βᵢ` are `padicValNat p sᵢ` and `padicValNat q sᵢ`.
-Lemmas 1-7, Proposition 1 and Theorems 1 and 2 are stated as wanted theorems; Lemmas 1-5 quote
+Lemmas 2-7, Proposition 1 and Theorems 1 and 2 are stated as wanted theorems; Lemmas 1-5 quote
 earlier results.
+
+Proved in `MathlibExt.NumberTheory.PQDiophantineTuples`: Lemma 1
+(`MetaMathlibExt.not_mul_add_one_dvd_mul_add_one`).
 -/
 
 namespace MetaMathlibExt
@@ -77,15 +81,6 @@ theorem isSDiophantineTuple_two_three_five_one_three_eight :
     simp
   rcases ha with rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl <;>
     first | exact absurd rfl hab | exact h4 | exact h9 | exact h25
-
-/-- If `a < b < c` are positive integers, then `ac + 1` does not divide `bc + 1`. The paper
-states this for `S`-Diophantine triples; the `S`-unit hypothesis is not needed.
-
-Source: Volker Ziegler, *On the Existence of `{p, q}`-Diophantine Quadruples and Quintuples*,
-INTEGERS 25 (2025), Article A92, Lemma 1, quoting Szalay and Ziegler (2013), Lemma 2.1
-(`integers-2025-A92-lem-1`). -/
-public theorem_wanted not_mul_add_one_dvd_mul_add_one {a b c : ℕ} (ha : 0 < a) (hab : a < b)
-    (hbc : b < c) : ¬(a * c + 1 ∣ b * c + 1)
 
 /-- For every prime `ℓ` and all `a, b, c, d`, with `vᵢ = padicValNat ℓ sᵢ`, the smallest value
 in each of `(v₂, v₃, v₄, v₅)`, `(v₁, v₂, v₅, v₆)`, `(v₁, v₃, v₄, v₆)` is attained at least twice

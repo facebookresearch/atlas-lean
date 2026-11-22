@@ -17,6 +17,8 @@ public import Mathlib.Combinatorics.SimpleGraph.Metric
 
 -- Source: Lean Definition Library (Airtable) records: Combinatorics 2, Combinatorics 20, Combinatorics 23, Combinatorics 24, Combinatorics 429, Combinatorics 441
 
+open SimpleGraph
+
 /-!
 # `MathlibExt.Combinatorics.SimpleGraph.AlgebraicGraphTheory.Homomorphisms`
 
@@ -33,8 +35,6 @@ public import Mathlib.Combinatorics.SimpleGraph.Metric
 * Algebraic Graph Theory, Godsil & Royle (2001), Section 6.8 Foldings and Covers, page 114. (for
   `SimpleGraph.IsFolding`)
 -/
-
-open SimpleGraph
 
 namespace MetaMathlibExt
 
