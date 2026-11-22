@@ -9,24 +9,29 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Privacy.ApproximateDifferentialPrivacy
+public import MathlibExt.Probability.MarkovChainContraction
 
 /-!
 # Approximate max-divergence decomposition, part 1 (finite discrete)
 
-Part 1 only: the finite-outcome decomposition (existence of a repaired
-distribution). Part 2 (countable extension) is split out and not proved here.
+Part 1 of Dwork and Roth, Section 3.5.1, Lemma 3.17, over a finite
+outcome type: an approximate max-divergence bound yields a repaired
+distribution `P~` within total variation `δ` of `P` with pure
+max-divergence `D∞ (P~‖Q) ≤ ε`. Part 2 of the lemma (repairing `Q`
+simultaneously as well) is not formalized here.
 
-Finite outcome scope: `[Fintype Outcome] [Nonempty Outcome]`. Countable
-extension is a recorded gap.
-
-The three predicates below are a standalone finite real form using
-`Finset` sums of `(P w).toReal`. No bridge to the Atlas
-`IsApproxDP`/`toOuterMeasure` form is proved here.
+Finite outcome scope: `[Fintype Outcome] [Nonempty Outcome]`. Total
+variation is the shared `MarkovChainContraction.tvDist`. The finite
+`Finset`-sum predicates below are connected to the
+`IsApproxDP`/`toOuterMeasure` form by bridge theorems in both
+directions.
 -/
 
 @[expose] public section
 
 namespace CSLibExt.Privacy.MaxDivergenceDecomposition
+
+open MathlibExt.Probability.MarkovChainContraction
 
 /-- Finite approximate max-divergence bound. -/
 def approxMaxDivLE {Outcome : Type*} [Fintype Outcome] [Nonempty Outcome]
@@ -39,10 +44,10 @@ def maxDivLE {Outcome : Type*} [Fintype Outcome] [Nonempty Outcome]
     (P Q : PMF Outcome) (eps : ℝ) : Prop :=
   ∀ w, (P w).toReal ≤ Real.exp eps * (Q w).toReal
 
-/-- Half-L1 total variation distance on a finite type. -/
-noncomputable def tvDist {Outcome : Type*} [Fintype Outcome] [Nonempty Outcome]
-    (P R : PMF Outcome) : ℝ :=
-  (1 / 2) * ∑ w, |(P w).toReal - (R w).toReal|
+/-- Unfolding of the shared total variation distance on `toReal` masses. -/
+theorem tvDist_unfold {Outcome : Type*} [Fintype Outcome] (P R : PMF Outcome) :
+    tvDist P R = (1 / 2) * ∑ w, |(P w).toReal - (R w).toReal| :=
+  rfl
 
 /-- Real masses of a finite PMF sum to one. -/
 theorem pmf_toReal_sum_univ {Outcome : Type*} [Fintype Outcome] [Nonempty Outcome]
@@ -360,7 +365,7 @@ theorem abs_sub_eq_add_sub_two_min (a b : ℝ) :
 theorem tvDist_eq_one_minus_overlap {Outcome : Type*} [Fintype Outcome]
     [Nonempty Outcome] (P R : PMF Outcome) :
     tvDist P R = 1 - ∑ w, min ((P w).toReal) ((R w).toReal) := by
-  simp only [tvDist]
+  rw [tvDist_unfold]
   have hpt : ∀ w : Outcome,
       |(P w).toReal - (R w).toReal| =
         (P w).toReal + (R w).toReal - 2 * min ((P w).toReal) ((R w).toReal) :=
@@ -376,15 +381,6 @@ theorem tvDist_eq_one_minus_overlap {Outcome : Type*} [Fintype Outcome]
     ring
   rw [hsum]
   ring
-
-theorem tvDist_self {Outcome : Type*} [Fintype Outcome] [Nonempty Outcome]
-    (P : PMF Outcome) : tvDist P P = 0 := by
-  simp only [tvDist]
-  have : ∑ w, |(P w).toReal - (P w).toReal| = 0 := by
-    apply Finset.sum_eq_zero
-    intro w _
-    simp
-  rw [this, mul_zero]
 
 open Classical in
 theorem repairPMF_tvDist_le_of_pos {Outcome : Type*} [Fintype Outcome]
@@ -440,7 +436,9 @@ theorem exists_repair_of_approx {Outcome : Type*} [Fintype Outcome]
   classical
   by_cases hd : excessMass P Q eps = 0
   · refine ⟨P, ?_, maxDivLE_of_excess_eq_zero P Q eps hd⟩
-    rw [tvDist_self]
+    have h0 : tvDist P P = 0 :=
+      MathlibExt.Probability.MarkovMixing.tvDist_self _
+    rw [h0]
     exact hdelta
   · have hpos : 0 < excessMass P Q eps :=
       lt_of_le_of_ne (excessMass_nonneg P Q eps) (Ne.symm hd)
@@ -484,7 +482,7 @@ theorem event_diff_le_tvDist {Outcome : Type*} [Fintype Outcome]
         |∑ w ∈ Finset.univ \ s, ((P w).toReal - (R w).toReal)| :=
       neg_le_abs _
     linarith
-  simp only [tvDist]
+  rw [tvDist_unfold]
   linarith [hsplit, hsplit_abs, hsum0, hdiff, habs1, habs2, hle]
 
 open Classical in
@@ -525,5 +523,72 @@ theorem excess_eq_zero_of_approx_zero {Outcome : Type*} [Fintype Outcome]
   apply le_antisymm
   · exact excessMass_le_delta P Q eps 0 h
   · exact excessMass_nonneg P Q eps
+
+/-- Outer measure of a finite set is the real mass sum. -/
+theorem toOuterMeasure_coe_finset {Outcome : Type*} (P : PMF Outcome)
+    (s : Finset Outcome) :
+    P.toOuterMeasure ↑s = ENNReal.ofReal (∑ w ∈ s, (P w).toReal) := by
+  rw [PMF.toOuterMeasure_apply_finset,
+    ENNReal.ofReal_sum_of_nonneg (fun a _ => ENNReal.toReal_nonneg)]
+  apply Finset.sum_congr rfl
+  intro a ha
+  exact (ENNReal.ofReal_toReal (P.apply_ne_top a)).symm
+
+/-- Event privacy implies the finite approximate bound. -/
+theorem approxMaxDivLE_of_isApproxDP {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome]
+    {D : Type*} {M : D → PMF Outcome} {adj : D → D → Prop} {eps delta : ℝ}
+    (h : CSLibExt.Privacy.DifferentialPrivacy.IsApproxDP M adj eps delta)
+    {d d' : D} (hadj : adj d d') :
+    approxMaxDivLE (M d) (M d') eps delta := by
+  intro s
+  have hset := h.2.2 d d' hadj ↑s
+  rw [toOuterMeasure_coe_finset, toOuterMeasure_coe_finset] at hset
+  have hnn : 0 ≤ ∑ w ∈ s, ((M d') w).toReal :=
+    Finset.sum_nonneg fun w _ => ENNReal.toReal_nonneg
+  have hcombine : ENNReal.ofReal (Real.exp eps) *
+        ENNReal.ofReal (∑ w ∈ s, ((M d') w).toReal) + ENNReal.ofReal delta =
+      ENNReal.ofReal
+        (Real.exp eps * (∑ w ∈ s, ((M d') w).toReal) + delta) := by
+    rw [← ENNReal.ofReal_mul (Real.exp_pos eps).le,
+      ← ENNReal.ofReal_add (mul_nonneg (Real.exp_pos eps).le hnn) h.2.1]
+  rw [hcombine] at hset
+  exact (ENNReal.ofReal_le_ofReal_iff
+    (add_nonneg (mul_nonneg (Real.exp_pos eps).le hnn) h.2.1)).mp hset
+
+/-- The finite bound for all adjacent pairs gives event privacy. -/
+theorem isApproxDP_of_forall_approxMaxDivLE {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome]
+    {D : Type*} (M : D → PMF Outcome) (adj : D → D → Prop)
+    {eps delta : ℝ} (heps : 0 ≤ eps) (hdelta : 0 ≤ delta)
+    (h : ∀ d d', adj d d' → approxMaxDivLE (M d) (M d') eps delta) :
+    CSLibExt.Privacy.DifferentialPrivacy.IsApproxDP M adj eps delta := by
+  classical
+  refine ⟨heps, hdelta, fun d d' hadj s => ?_⟩
+  set t : Finset Outcome := Finset.univ.filter (fun w => w ∈ s) with ht
+  have hreal := h d d' hadj t
+  have hcoe : ↑t = s := by
+    ext w
+    simp [ht]
+  rw [← hcoe, toOuterMeasure_coe_finset, toOuterMeasure_coe_finset]
+  have hnn : 0 ≤ ∑ w ∈ t, ((M d') w).toReal :=
+    Finset.sum_nonneg fun w _ => ENNReal.toReal_nonneg
+  have hcombine : ENNReal.ofReal (Real.exp eps) *
+        ENNReal.ofReal (∑ w ∈ t, ((M d') w).toReal) + ENNReal.ofReal delta =
+      ENNReal.ofReal (Real.exp eps * (∑ w ∈ t, ((M d') w).toReal) + delta) := by
+    rw [← ENNReal.ofReal_mul (Real.exp_pos eps).le,
+      ← ENNReal.ofReal_add (mul_nonneg (Real.exp_pos eps).le hnn) hdelta]
+  rw [hcombine]
+  exact ENNReal.ofReal_le_ofReal hreal
+
+/-- Repair from event privacy directly. -/
+theorem exists_repair_of_isApproxDP {Outcome : Type*} [Fintype Outcome]
+    [Nonempty Outcome] {D : Type*} {M : D → PMF Outcome}
+    {adj : D → D → Prop} {eps delta : ℝ}
+    (h : CSLibExt.Privacy.DifferentialPrivacy.IsApproxDP M adj eps delta)
+    {d d' : D} (hadj : adj d d') :
+    ∃ Ptilde, tvDist (M d) Ptilde ≤ delta ∧ maxDivLE Ptilde (M d') eps :=
+  exists_repair_of_approx (M d) (M d') eps delta h.1 h.2.1
+    (approxMaxDivLE_of_isApproxDP h hadj)
 
 end CSLibExt.Privacy.MaxDivergenceDecomposition

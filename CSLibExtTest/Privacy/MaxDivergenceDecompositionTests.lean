@@ -24,6 +24,7 @@ and `P = Q` cases.
 namespace CSLibExtTest.Privacy.MaxDivergenceDecompositionTests
 
 open CSLibExt.Privacy.MaxDivergenceDecomposition
+open MathlibExt.Probability.MarkovChainContraction
 
 /-- `P = (3/4, 1/4)` on `Bool` (`false` first). -/
 noncomputable def P0 : PMF Bool :=
@@ -100,7 +101,7 @@ theorem repaired_exists :
 
 /-- Explicit witness: `Q0` itself works for the regression numbers. -/
 theorem tvDist_P0_Q0 : tvDist P0 Q0 = 1 / 4 := by
-  simp only [tvDist, Fintype.sum_bool, P0_false_toReal, P0_true_toReal,
+  simp only [tvDist_unfold, Fintype.sum_bool, P0_false_toReal, P0_true_toReal,
     Q0_false_toReal, Q0_true_toReal]
   norm_num
 
@@ -139,7 +140,9 @@ theorem maxDiv_self_of_nonneg {Outcome : Type*} [Fintype Outcome]
 theorem self_witness_zero {Outcome : Type*} [Fintype Outcome]
     [Nonempty Outcome] (P : PMF Outcome) :
     tvDist P P ≤ 0 := by
-  rw [tvDist_self]
+  have h0 : tvDist P P = 0 :=
+    MathlibExt.Probability.MarkovMixing.tvDist_self _
+  rw [h0]
 
 #print axioms CSLibExt.Privacy.MaxDivergenceDecomposition.exists_repair_of_approx
 #print axioms CSLibExt.Privacy.MaxDivergenceDecomposition.approx_of_exists_repair
