@@ -170,24 +170,17 @@ def legacy(annotation: dict | None) -> tuple[str, str] | None:
     return None
 
 
-def lean_link(end: dict) -> bool:
-    """Whether an object end is a Lean link as Autoform's reader reads it: of type `lean`, or with neither a type nor
-    a uri, which the folder defaults make a Lean link to this project. Any other end is a reference."""
-    return end.get("type") == "lean" or ("type" not in end and "uri" not in end)
-
-
 def credit(annotation: dict | None) -> str:
-    """Whom a row credits: `atlas` for a declaration of the project, `mathlib` for one of Mathlib, else `none`. The
-    row's first Lean link that names a declaration decides (see lean_link), as for `declaration`."""
+    """Whom a row credits: `atlas` for a declaration of the project, `mathlib` for one of Mathlib, else `none`."""
     for end in (annotation or {}).get("object", []):
-        if lean_link(end) and end.get("location", {}).get("declaration"):
-            return "mathlib" if sync.mathlib_uri(end.get("uri")) else "atlas"
+        if end.get("location", {}).get("declaration"):
+            return "mathlib" if end.get("uri") == MATHLIB else "atlas"
     return "atlas" if legacy(annotation) else "none"
 
 
 def declaration(annotation: dict | None) -> str | None:
     for end in (annotation or {}).get("object", []):
-        if lean_link(end) and (name := end.get("location", {}).get("declaration")):
+        if name := end.get("location", {}).get("declaration"):
             return name
     return None
 
