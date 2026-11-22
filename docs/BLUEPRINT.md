@@ -13,6 +13,8 @@ What a PR may change in the graph, and how to expand a node, is in
 - `blueprint/links/`: literature-links annotations associating articles with
   Lean declarations, stable article IDs, and navigation metadata.
 - `scripts/taxonomy.json` and `blueprint/atlas.json`: subject organization.
+- Card records in `blueprint/links/` and `scripts/card-moves.jsonl`: the cards readers navigate by,
+  and the addresses moves retire ([cards.md](cards.md)).
 - Lean sources: declaration kinds and statement/proof status.
 - Compiled Lean: dependencies of declarations' types and values. The values of
   `def`, `abbrev` and `inductive` declarations, and of `instance` declarations
@@ -37,7 +39,7 @@ and docstring changes should be reviewed with the sync report below.
 
 These rules apply to any PR that changes the graph: `blueprint/roadmap/`,
 `blueprint/links/`, `blueprint/atlas.json`, `blueprint/coverage/`,
-`scripts/taxonomy.json` or `scripts/wiki-sync.json`. They add only what ATLAS
+`scripts/taxonomy.json`, `scripts/wiki-sync.json` or `scripts/card-moves.jsonl`. They add only what ATLAS
 needs to AutoformBot's
 [blueprint format](https://github.com/facebookresearch/autoform-bot/blob/6126f7fce521c0040796d0b67d952d36ee051f3f/autoform_cli/reference/blueprint-format.md),
 at the commit in `.github/autoform-ref`; where ATLAS needs something the
@@ -46,8 +48,8 @@ format lacks, open an AutoformBot issue rather than diverge.
 The rules are normative: every graph PR is held against them, by its author
 and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
 [Writing pages](#writing-pages),
-[Nodes still to expand](#nodes-still-to-expand) and
-[Placing pages](#placing-pages) need a reader's judgment.
+[Nodes still to expand](#nodes-still-to-expand),
+[Placing pages](#placing-pages) and [Cards](#cards) need a reader's judgment.
 [What the tools own](#what-the-tools-own) is the mechanical layer, and
 [Procedures](#procedures) gives the steps. How to open a graph PR is in
 [CONTRIBUTING.md](../CONTRIBUTING.md#graph-prs).
@@ -109,7 +111,9 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   field folders, regions only group subjects on the root page, and
   `not-yet-classified/` holds modules the taxonomy has not placed yet. The
   taxonomy is the one record of the hierarchy; the generator and the sync
-  follow it.
+  follow it. A topic folder, or a folder inside one, may be a card
+  ([Cards](#cards)), which groups pages below the place the taxonomy gives
+  their module.
 - **Every page and subfolder is listed on its folder page** (`README.md`).
   The lists are the site's navigation and reading order: an unlisted
   statement appears only under "Other statements", and an unlisted planned
@@ -120,7 +124,27 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   not write these per-subject files.
 - **Moving a module or folder changes `scripts/taxonomy.json` in the same
   PR,** or the next sync and the next generated layout follow the old place.
-  See [Moving a page](#moving-a-page).
+  See [Moving a page](#moving-a-page). Moving pages into a card inside their
+  topic is not a taxonomy change; it is recorded in `scripts/card-moves.jsonl`
+  ([Cards](#cards)).
+
+### Cards
+
+- **A card is a folder whose folder page's annotation carries a card record**
+  (`extensions["org.atlas-wiki"]["card"]`), as [cards.md](cards.md) gives it:
+  a concept or a result, its main statement's `id`, a reviewed importance and
+  level. Its folder page credits no declaration and writes no dependency
+  section; its pages are its statements, 1 to 24, each listed once under
+  `## Statements` with the main statement first, and an `## Idea` explains it
+  to a learner. Readers navigate by concepts and named results, not by Lean
+  declarations; keeping the card uncredited keeps Autoform's counts, readiness
+  and tasks on the statements.
+- **Links between cards go only under `## Background`** and are teaching
+  links; elsewhere a card links another card's main statement. Every card
+  edge is derived from the statements, with witnesses, which keeps the card
+  map honest about what uses what.
+- **A move that retires an address goes into `scripts/card-moves.jsonl`,**
+  and a page gets an `id` before it moves. `scripts/cards.py check` must pass.
 
 ### What the tools own
 
@@ -154,9 +178,11 @@ tasks once `lean-facts` has run.
 #### Moving a page
 
 Move it with `autoform move`, which rewrites the links. In the same PR, change
-`scripts/taxonomy.json`, list the page on its new folder page, and, across
-subjects, move its annotation to the new subject's links file, which
-`autoform move` does not do.
+`scripts/taxonomy.json` when the move changes where the taxonomy places the
+module or folder, list the page on its new folder page, and, across subjects,
+move its annotation to the new subject's links file, which `autoform move` does
+not do. A move into a card inside the page's topic leaves the taxonomy as it is;
+record it in `scripts/card-moves.jsonl` instead ([Cards](#cards)).
 
 #### Expanding a node
 
@@ -195,7 +221,8 @@ python -m unittest \
   scripts.test_check_blueprint_site_navigation \
   scripts.test_site_chrome \
   scripts.test_blueprint_workflow \
-  scripts.test_blueprint_taxonomy
+  scripts.test_blueprint_taxonomy \
+  scripts.test_cards
 ```
 
 Render from a dedicated checkout that excludes `v1/` and `Atlas/`, as the
@@ -311,8 +338,12 @@ python scripts/sync_wiki.py declarations
 Run this deliberately after Lean updates, review its additions, and commit
 only the editorial/source changes. It creates pages for new documented
 non-deprecated declarations, preserves existing article prose, and reports
-removed declarations and changed docstrings. It also refreshes the source-derived
-area catalog and coverage metadata without replacing article prose.
+removed declarations and changed docstrings. It never places a new page in a
+card or below one: such a page goes to the card's parent folder and is listed
+as unassigned, for an editor to place in a card, and no new page takes the name
+of a folder or an address `scripts/card-moves.jsonl` records. It also refreshes
+the source-derived area catalog and coverage metadata without replacing article
+prose.
 It edits within a folder page only where every line of the page is simple: a
 blank line, a heading, a single-line `- [title](page)` item with plain text
 after it, or a line of plain text that opens no other block, with no item next to
@@ -397,8 +428,10 @@ before deployment. Tests, Lean compilation, dependency extraction, rendering,
 and strict site checks run in one read-only job from one checkout. The job
 restores CI's `lake-build-*` cache and saves no cache of its own. The Mathlib
 layer is built afterwards in a second read-only job, `build the Mathlib layer`,
-and the Mathlib pages in a third, `build the Mathlib pages`; deployment waits
-for neither. The only write-capable job is the separate Pages deployment job;
+the Mathlib pages in a third, `build the Mathlib pages`, and the card scripts are
+tested and the cards checked in a fourth, `check the cards`, from the wiki job's
+dependency artifact ([cards.md](cards.md#checks-and-ci)); deployment waits for
+none of them. The only write-capable job is the separate Pages deployment job;
 it runs no Lean or Python package code.
 
 Publication is disabled until a repository maintainer:
