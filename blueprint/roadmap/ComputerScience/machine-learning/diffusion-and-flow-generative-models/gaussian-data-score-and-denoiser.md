@@ -63,7 +63,7 @@ statements above need no eigenbasis, and the Woodbury identity is not needed in 
 - [Bayes' theorem for a linear-Gaussian observation](../../../Probability/distributions/continuous/gaussian-conditioning/cond-distrib-linear-add-of-indep-fun.md):
   mathematical prerequisite, (c) with $H = I$, $S = \Sigma$ and $R = \sigma^2 I$; its
   invertibility hypothesis is where $\sigma > 0$ is used.
-- [The multivariate Gaussian density](../../../Probability/distributions/continuous/multivariate-normal-distribution/multivariate-gaussian-eq-with-density.md):
+- [The multivariate Gaussian density](../../../Probability/distributions/continuous/multivariate-normal-distribution/gaussian-density/multivariate-gaussian-eq-with-density.md):
   mathematical prerequisite, the density in (b), for the positive definite covariance
   $\Sigma + \sigma^2 I$; the gradient of its logarithm is a further calculus step.
 
