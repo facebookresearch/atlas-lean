@@ -14,7 +14,8 @@ import CSLibExt.Crypto.Framework.BilinearGroup
 # Tests for the bilinear-group interface
 
 Toy-model numerics at `q = 7` (by `decide`), a kernel-triviality spot check,
-the toy BDH win, and axiom audits for the toy construction and the BDH theorem.
+the toy BDH insecurity witness, and axiom audits for the toy construction and
+the BDH theorem.
 -/
 
 namespace Cslib.Crypto.Framework
@@ -38,7 +39,9 @@ example : toy7.e (Multiplicative.ofAdd (2 : ZMod 7)) (Multiplicative.ofAdd (3 : 
 example (a : Multiplicative (ZMod 7)) (h : ∀ b, toy7.e a b = 1) : a = 1 :=
   BilinearGroupData.eq_one_of_forall_e_eq_one_left toy7 a h
 
-/-- The BDH toy win at `q = 7`. -/
+/-- The toy BDH insecurity witness at `q = 7`: a decoding adversary wins with
+probability one, exhibiting the insecurity of every instance against
+unrestricted adversaries that decode with `exp.symm`. -/
 example : toy7.bdhAdvantage (BilinearGroupData.toyBdhAdversary 7) = 1 :=
   BilinearGroupData.toy_bdhAdvantage_eq_one 7 _
 

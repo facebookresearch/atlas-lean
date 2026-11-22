@@ -22,15 +22,22 @@ A bilinear-group interface over explicit exponent isomorphisms
 exponents multiply in `ZMod q`. Bimultiplicativity, the power law and trivial
 kernels are derived, not assumed.
 
+`BilinearGroupData` packages algebraic witness data: the exponent isomorphisms
+`exp1`, `exp2` and `expT` expose decoders through their `symm` fields, so every
+instance is insecure against unrestricted function/`PMF` adversaries that decode
+exponents with `exp.symm`. The games below measure only adversaries that do not
+decode; a real hardness assumption needs an admissibility model excluding
+decoding adversaries.
+
 The toy exponent model (`toyModel`) elaborates the interface with all groups
-equal to `Multiplicative (ZMod q)`. It is deliberately insecure (exponents are
-directly readable), so it serves as an elaboration witness only.
+equal to `Multiplicative (ZMod q)`, serving as an elaboration witness.
 
 Security games use the framework advantage vocabulary (`winProb`, `advantage`):
 the bilinear Diffie-Hellman game (`bdhGame`, `bdhAdvantage`) and the two
-Diffie-Hellman games behind the symmetric external Diffie-Hellman predicate
-(`sxdh`). In the toy model, a decoding adversary wins the BDH game with
-probability one (`toy_bdhAdvantage_eq_one`).
+Diffie-Hellman games behind the pointwise advantage-bound predicate
+(`sxdhAdvBound`), which bounds fixed distinguishers only and is not the SXDH
+hardness assumption. A decoding adversary wins the BDH game with probability
+one (`toy_bdhAdvantage_eq_one`), exhibiting the insecurity above.
 -/
 
 @[expose] public section
@@ -220,9 +227,8 @@ theorem e_pow (B : BilinearGroupData) (x : B.G1) (y : B.G2) (m n : ℕ) :
   rw [hright, hleft, ← pow_mul]
 
 /-- The toy exponent model: all three groups are `Multiplicative (ZMod q)` with
-identity exponent maps and exponent multiplication as the pairing. This model
-is deliberately insecure, since exponents are directly readable, so it serves
-as an elaboration witness only and not as a secure instance. -/
+identity exponent maps and exponent multiplication as the pairing. It serves
+as an elaboration witness. -/
 def toyModel (q : ℕ) (hq : 1 < q) : BilinearGroupData where
   q := q
   hq := hq
@@ -250,49 +256,56 @@ theorem uniformZModPMF_apply (q : ℕ) [NeZero q] (a : ZMod q) :
     uniformZModPMF q a = (q : ENNReal)⁻¹ := rfl
 
 open Classical in
-/-- The BDH win predicate: the adversary wins if its output equals `gT ^ (a*b*c)`. -/
-noncomputable def bdhWin (B : BilinearGroupData) (A : B.G1 → B.G1 → B.G2 → B.GT)
-    (a b c : ZMod B.q) : Bool :=
-  if A (B.exp1 (Multiplicative.ofAdd a)) (B.exp1 (Multiplicative.ofAdd b))
-      (B.exp2 (Multiplicative.ofAdd c)) = B.expT (Multiplicative.ofAdd (a * b * c))
-  then true else false
+/-- The BDH win experiment at fixed exponents: run the randomized adversary and
+test whether its output equals `gT ^ (a*b*c)`. -/
+noncomputable def bdhWin (B : BilinearGroupData) (A : B.G1 → B.G1 → B.G2 → PMF B.GT)
+    (a b c : ZMod B.q) : PMF Bool :=
+  (A (B.exp1 (Multiplicative.ofAdd a)) (B.exp1 (Multiplicative.ofAdd b))
+    (B.exp2 (Multiplicative.ofAdd c))).map fun w =>
+    if w = B.expT (Multiplicative.ofAdd (a * b * c)) then true else false
 
-/-- The BDH game: sample `a`, `b`, `c` uniformly and run the adversary. -/
-noncomputable def bdhGame (B : BilinearGroupData) (A : B.G1 → B.G1 → B.G2 → B.GT) :
+/-- The BDH game: sample `a`, `b`, `c` uniformly and run the adversary,
+sampling its coins via `PMF.bind`. -/
+noncomputable def bdhGame (B : BilinearGroupData) (A : B.G1 → B.G1 → B.G2 → PMF B.GT) :
     PMF Bool :=
   (uniformZModPMF B.q).bind fun a =>
     (uniformZModPMF B.q).bind fun b =>
       (uniformZModPMF B.q).bind fun c =>
-        PMF.pure (B.bdhWin A a b c)
+        B.bdhWin A a b c
 
 /-- The BDH advantage: the winning probability of the BDH game. -/
-noncomputable def bdhAdvantage (B : BilinearGroupData) (A : B.G1 → B.G1 → B.G2 → B.GT) : ℝ :=
+noncomputable def bdhAdvantage (B : BilinearGroupData)
+    (A : B.G1 → B.G1 → B.G2 → PMF B.GT) : ℝ :=
   winProb (B.bdhGame A)
 
 /-- An adversary that always wins induces the constantly-`true` game. -/
-theorem bdhGame_eq_pure_true (B : BilinearGroupData) (A : B.G1 → B.G1 → B.G2 → B.GT)
-    (h : ∀ a b c, B.bdhWin A a b c = true) : B.bdhGame A = PMF.pure true := by
+theorem bdhGame_eq_pure_true (B : BilinearGroupData) (A : B.G1 → B.G1 → B.G2 → PMF B.GT)
+    (h : ∀ a b c, B.bdhWin A a b c = PMF.pure true) :
+    B.bdhGame A = PMF.pure true := by
   unfold bdhGame
   simp only [h, PMF.bind_const]
 
-/-- Toy-only decoding adversary for BDH: recovers the exponents with
-`Multiplicative.toAdd` (unavailable in the generic group model) and outputs the
-answer. This shows the toy model is an insecure elaboration witness only. -/
-def toyBdhAdversary (q : ℕ) : Multiplicative (ZMod q) → Multiplicative (ZMod q) →
-    Multiplicative (ZMod q) → Multiplicative (ZMod q) :=
-  fun x y z => Multiplicative.ofAdd (x.toAdd * y.toAdd * z.toAdd)
+/-- Decoding adversary for BDH: recovers the exponents and outputs the answer
+as a `PMF` via `PMF.pure`. In the toy model this reads `Multiplicative.toAdd`;
+in any instance the same attack decodes with `exp.symm`, exhibiting the
+insecurity of every instance against unrestricted adversaries. -/
+noncomputable def toyBdhAdversary (q : ℕ) : Multiplicative (ZMod q) →
+    Multiplicative (ZMod q) → Multiplicative (ZMod q) → PMF (Multiplicative (ZMod q)) :=
+  fun x y z => PMF.pure (Multiplicative.ofAdd (x.toAdd * y.toAdd * z.toAdd))
 
 /-- The decoding adversary always wins the toy BDH game. -/
 theorem toy_bdhWin (q : ℕ) (hq : 1 < q) (a b c : ZMod q) :
-    (toyModel q hq).bdhWin (toyBdhAdversary q) a b c = true := by
+    (toyModel q hq).bdhWin (toyBdhAdversary q) a b c = PMF.pure true := by
   have hcond : (toyBdhAdversary q) ((toyModel q hq).exp1 (Multiplicative.ofAdd a))
         ((toyModel q hq).exp1 (Multiplicative.ofAdd b))
         ((toyModel q hq).exp2 (Multiplicative.ofAdd c)) =
-        (toyModel q hq).expT (Multiplicative.ofAdd (a * b * c)) := rfl
+        PMF.pure ((toyModel q hq).expT (Multiplicative.ofAdd (a * b * c))) := rfl
   unfold bdhWin
-  exact ite_eq_left hcond
+  rw [hcond, PMF.pure_map]
+  exact congrArg PMF.pure (ite_eq_left rfl)
 
-/-- In the toy model, the decoding adversary wins the BDH game with probability one. -/
+/-- In the toy model, the decoding adversary wins the BDH game with probability one,
+exhibiting the insecurity of the interface against decoding adversaries. -/
 theorem toy_bdhAdvantage_eq_one (q : ℕ) (hq : 1 < q) :
     (toyModel q hq).bdhAdvantage (toyBdhAdversary q) = 1 := by
   have h := bdhGame_eq_pure_true (toyModel q hq) (toyBdhAdversary q) (toy_bdhWin q hq)
@@ -300,51 +313,58 @@ theorem toy_bdhAdvantage_eq_one (q : ℕ) (hq : 1 < q) :
   rw [h]
   simp [winProb_pure]
 
-/-- The DDH game in `G1` against the real distribution. -/
-noncomputable def ddh1RealGame (B : BilinearGroupData) (D : B.G1 → B.G1 → B.G1 → Bool) :
-    PMF Bool :=
+/-- The DDH game in `G1` against the real distribution, sampling the
+randomized distinguisher's coins via `PMF.bind`. -/
+noncomputable def ddh1RealGame (B : BilinearGroupData)
+    (D : B.G1 → B.G1 → B.G1 → PMF Bool) : PMF Bool :=
   (uniformZModPMF B.q).bind fun a =>
     (uniformZModPMF B.q).bind fun b =>
-      PMF.pure (D (B.exp1 (Multiplicative.ofAdd a)) (B.exp1 (Multiplicative.ofAdd b))
-        (B.exp1 (Multiplicative.ofAdd (a * b))))
+      D (B.exp1 (Multiplicative.ofAdd a)) (B.exp1 (Multiplicative.ofAdd b))
+        (B.exp1 (Multiplicative.ofAdd (a * b)))
 
 /-- The DDH game in `G1` against the random distribution. -/
-noncomputable def ddh1RandomGame (B : BilinearGroupData) (D : B.G1 → B.G1 → B.G1 → Bool) :
-    PMF Bool :=
+noncomputable def ddh1RandomGame (B : BilinearGroupData)
+    (D : B.G1 → B.G1 → B.G1 → PMF Bool) : PMF Bool :=
   (uniformZModPMF B.q).bind fun a =>
     (uniformZModPMF B.q).bind fun b =>
       (uniformZModPMF B.q).bind fun c =>
-        PMF.pure (D (B.exp1 (Multiplicative.ofAdd a)) (B.exp1 (Multiplicative.ofAdd b))
-          (B.exp1 (Multiplicative.ofAdd c)))
+        D (B.exp1 (Multiplicative.ofAdd a)) (B.exp1 (Multiplicative.ofAdd b))
+          (B.exp1 (Multiplicative.ofAdd c))
 
 /-- The DDH advantage in `G1`. -/
-noncomputable def ddh1Advantage (B : BilinearGroupData) (D : B.G1 → B.G1 → B.G1 → Bool) : ℝ :=
+noncomputable def ddh1Advantage (B : BilinearGroupData)
+    (D : B.G1 → B.G1 → B.G1 → PMF Bool) : ℝ :=
   advantage (B.ddh1RealGame D) (B.ddh1RandomGame D)
 
-/-- The DDH game in `G2` against the real distribution. -/
-noncomputable def ddh2RealGame (B : BilinearGroupData) (D : B.G2 → B.G2 → B.G2 → Bool) :
-    PMF Bool :=
+/-- The DDH game in `G2` against the real distribution, sampling the
+randomized distinguisher's coins via `PMF.bind`. -/
+noncomputable def ddh2RealGame (B : BilinearGroupData)
+    (D : B.G2 → B.G2 → B.G2 → PMF Bool) : PMF Bool :=
   (uniformZModPMF B.q).bind fun a =>
     (uniformZModPMF B.q).bind fun b =>
-      PMF.pure (D (B.exp2 (Multiplicative.ofAdd a)) (B.exp2 (Multiplicative.ofAdd b))
-        (B.exp2 (Multiplicative.ofAdd (a * b))))
+      D (B.exp2 (Multiplicative.ofAdd a)) (B.exp2 (Multiplicative.ofAdd b))
+        (B.exp2 (Multiplicative.ofAdd (a * b)))
 
 /-- The DDH game in `G2` against the random distribution. -/
-noncomputable def ddh2RandomGame (B : BilinearGroupData) (D : B.G2 → B.G2 → B.G2 → Bool) :
-    PMF Bool :=
+noncomputable def ddh2RandomGame (B : BilinearGroupData)
+    (D : B.G2 → B.G2 → B.G2 → PMF Bool) : PMF Bool :=
   (uniformZModPMF B.q).bind fun a =>
     (uniformZModPMF B.q).bind fun b =>
       (uniformZModPMF B.q).bind fun c =>
-        PMF.pure (D (B.exp2 (Multiplicative.ofAdd a)) (B.exp2 (Multiplicative.ofAdd b))
-          (B.exp2 (Multiplicative.ofAdd c)))
+        D (B.exp2 (Multiplicative.ofAdd a)) (B.exp2 (Multiplicative.ofAdd b))
+          (B.exp2 (Multiplicative.ofAdd c))
 
 /-- The DDH advantage in `G2`. -/
-noncomputable def ddh2Advantage (B : BilinearGroupData) (D : B.G2 → B.G2 → B.G2 → Bool) : ℝ :=
+noncomputable def ddh2Advantage (B : BilinearGroupData)
+    (D : B.G2 → B.G2 → B.G2 → PMF Bool) : ℝ :=
   advantage (B.ddh2RealGame D) (B.ddh2RandomGame D)
 
-/-- The symmetric external Diffie-Hellman assumption: DDH holds in both `G1` and `G2`. -/
-def sxdh (B : BilinearGroupData) (D₁ : B.G1 → B.G1 → B.G1 → Bool)
-    (D₂ : B.G2 → B.G2 → B.G2 → Bool) (ε : ℝ) : Prop :=
+/-- A pointwise advantage bound for fixed distinguishers in `G1` and `G2`.
+This is a fixed-instance advantage bound for the given distinguishers, NOT the
+SXDH hardness assumption, which needs admissible adversary classes because
+exponent witnesses expose decoders. -/
+def sxdhAdvBound (B : BilinearGroupData) (D₁ : B.G1 → B.G1 → B.G1 → PMF Bool)
+    (D₂ : B.G2 → B.G2 → B.G2 → PMF Bool) (ε : ℝ) : Prop :=
   B.ddh1Advantage D₁ ≤ ε ∧ B.ddh2Advantage D₂ ≤ ε
 
 end BilinearGroupData
