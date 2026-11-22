@@ -19,9 +19,11 @@ Gibbs law (`annealStep_eq_mhStep`), so the Gibbs law is stationary at fixed
 zero (`tendsto_gibbs_globalMinSet`). The depth apparatus of Hajek (1986) is
 developed from height-bounded reachability (`ReachableAt`): strong
 irreducibility, weak reversibility, local minima, escape depth (`depth`),
-and the critical depth `dStar`, with `HajekIff` stating (not proving)
-Hajek's characterization of convergence under logarithmic cooling
-schedules, whose specification is `logSchedule_specs`.
+and the critical depth `dStar`. The logarithmic schedules used in
+Hajek's convergence characterization are specified by
+`logSchedule_specs`; that deferred characterization is recorded as a
+`theorem_wanted` in
+`WantedExt/ComputerScience/MachineLearning/SimulatedAnnealingHajekWanted.lean`.
 -/
 
 @[expose] public section
@@ -523,13 +525,5 @@ theorem logSchedule_specs {c : ℝ} (hc : 0 < c) :
     have h2 : Tendsto (fun k : ℕ => Real.log ((k:ℝ)+2)) atTop atTop :=
       Real.tendsto_log_atTop.comp h1
     exact Tendsto.const_div_atTop h2 c
-
-/-- **Hajek's theorem, statement only** (not proved here): under the
-logarithmic schedule, convergence in probability to the global minima
-holds iff `c ≥ d*`. -/
-def HajekIff (hSI : StronglyIrreducible R V) (hWR : WeaklyReversible R V)
-    {c : ℝ} (hc : 0 < c) (x₀ : S) : Prop :=
-  Tendsto (fun k => (annealLaw R V (fun k : ℕ => c / Real.log ((k : ℝ) + 1)) x₀ k).toOuterMeasure
-      (globalMinSet V)) atTop (𝓝 1) ↔ (dStar R V).toReal ≤ c
 
 end Cslib.MachineLearning.Sampling.SimulatedAnnealing
