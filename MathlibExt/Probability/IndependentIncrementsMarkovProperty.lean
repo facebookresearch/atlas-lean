@@ -75,7 +75,8 @@ noncomputable def bmPrev (S : Finset ℝ≥0) (t : ℝ≥0) : ℝ≥0 :=
 /-- **Increment over the predecessor interval.** Let $(B_t)_{t \ge 0}$ be a real-valued process
 on $\Omega$, let $s \ge 0$, and let $S \subset \mathbb{R}_{\ge 0}$ be a finite set. For $t \ge 0$
 let $t^-$ be the largest element of $S$ strictly below $t$, or $0$ if there is none. The
-increment at $t$ is the random variable $\omega \mapsto B_{s+t}(\omega) - B_{s+t^-}(\omega)$. -/
+increment at $t$ is the function $\omega \mapsto B_{s+t}(\omega) - B_{s+t^-}(\omega)$; it is a
+random variable when $B_{s+t}$ and $B_{s+t^-}$ are measurable. -/
 noncomputable def bmInc (B : ℝ≥0 → Ω → ℝ) (s : ℝ≥0) (S : Finset ℝ≥0)
     (t : ℝ≥0) (ω : Ω) : ℝ :=
   B (s + t) ω - B (s + bmPrev S t) ω
