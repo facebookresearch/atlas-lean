@@ -129,7 +129,12 @@ groups under affine equivalence (conjugation by an arbitrary affine bijection of
 and exactly $65$ classes under orientation-preserving affine equivalence of crystallographic
 groups all of whose elements are orientation-preserving isometries.
 
-Source: E. Fedorov, 'Симметрія правильныхъ системъ фигуръ' (Symmetry of regular systems of figures), Trans. Min. Soc. St. Petersburg 28 (1891) 1–146; A. Schoenflies, *Krystallsysteme und Krystallstructur*, Teubner 1891, independently. Listed as §94 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `space_groups_230`. -/
+Source: E. Fedorov, 'Симметрія правильныхъ системъ фигуръ' (Symmetry of regular systems of figures),
+Trans. Min. Soc. St. Petersburg 28 (1891) 1–146; A. Schoenflies, *Krystallsysteme und
+Krystallstructur*, Teubner 1891, independently. Listed as §94 in O. Knill, *Some Fundamental
+Theorems in Mathematics*
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `space_groups_230`. -/
 public theorem_wanted space_groups :
     crystallographicCountOP 3 = 230 ∧
       crystallographicCount 3 = 219 ∧

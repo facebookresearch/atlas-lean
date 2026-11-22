@@ -118,7 +118,9 @@ the quotient of the closed unit disc by the non-orientable gluing relation with 
 and $n$. Each quotient is taken by the equivalence relation that the gluing relation generates,
 with the quotient topology.
 
-Source: Jean Gallier & Dianna Xu, *A Guide to the Classification Theorem for Compact Surfaces*, https://www.cis.upenn.edu/~jean/surfclassif-root.pdf Via leanprover/lean-eval@38361be, problem `topological_classification_of_surfaces`. -/
+Source: Jean Gallier & Dianna Xu, *A Guide to the Classification Theorem for Compact Surfaces*,
+https://www.cis.upenn.edu/~jean/surfclassif-root.pdf Via leanprover/lean-eval@38361be, problem
+`topological_classification_of_surfaces`. -/
 public theorem_wanted classification_of_surfaces (S : Type*) [TopologicalSpace S]
     [T2Space S] [ConnectedSpace S] [CompactSpace S] [Nonempty S]
     [ChartedSpace (EuclideanHalfSpace 2) S]

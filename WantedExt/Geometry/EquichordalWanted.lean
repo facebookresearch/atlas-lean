@@ -85,7 +85,11 @@ two distinct equichordal points. -/
 with nonempty interior. Then $K$ does not have two distinct equichordal points: there are no
 points $P \ne Q$ of the plane such that both $P$ and $Q$ are equichordal points of $K$.
 
-Source: M. R. Rychlik, A complete solution to the equichordal point problem of Fujiwara, Blaschke, Rothe and Weizenböck, Invent. Math. 129 (1997). Listed as §205 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Knill, §205. Via leanprover/lean-eval@38361be, problem `equichordal_point_unique`. -/
+Source: M. R. Rychlik, A complete solution to the equichordal point problem of Fujiwara, Blaschke,
+Rothe and Weizenböck, Invent. Math. 129 (1997). Listed as §205 in O. Knill, Some Fundamental
+Theorems in Mathematics
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Knill, §205. Via
+leanprover/lean-eval@38361be, problem `equichordal_point_unique`. -/
 public theorem_wanted equichordal_point_unique {K : Set Plane}
     (hK : IsCompact K) (hconv : Convex ℝ K) (hne : (interior K).Nonempty) :
     ¬ ∃ P Q : Plane,

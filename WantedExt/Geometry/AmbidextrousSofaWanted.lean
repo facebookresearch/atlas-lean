@@ -46,7 +46,10 @@ Source: catalogue upper row, Hammersley (1968), adapted from C41a. -/
 public theorem_wanted hammersley_upper :
     MovingSofa.ambidextrousOptimalArea ≤ ENNReal.ofReal (2 * Real.sqrt 2)
 
-/-- Source: catalogue upper row, Baek (2024) naive bound from C41a. The catalogue
+/-- **Baek upper bound for the ambidextrous sofa.** The supremum of the areas of
+ambidextrous sofas, taken in $[0, \infty]$, is at most $22196/10000 = 2.2196$.
+
+Source: catalogue upper row, Baek (2024) naive bound from C41a. The catalogue
 prints Gerver's constant truncated as `2.2195`; the endpoint here is rounded up to
 `22196 / 10000` so that it dominates Gerver's constant `2.21953166…`, as Baek's
 theorem requires. -/

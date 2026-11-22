@@ -161,7 +161,10 @@ serves as the exponent in the error term $(\rho a^3)^{1/2 + \eta}$ of the Lee–
 bound (Theorem 1.2), where $\rho$ is the density and $a$ the scattering length of the
 potential; that theorem asserts $\eta > 0$.
 
-Source: S. Fournais and J. P. Solovej, `The energy of dilute Bose gases`, Annals of Math, 192 (3) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-192-3-BoseGases.lean Via leanprover/lean-eval@38361be, problem `annals_bose_gases`. -/
+Source: S. Fournais and J. P. Solovej, `The energy of dilute Bose gases`, Annals of Math, 192
+(3) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0,
+e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-192-3-BoseGases.lean Via
+leanprover/lean-eval@38361be, problem `annals_bose_gases`. -/
 public def_wanted η : ℝ
 
 /- Constant `𝓒` in Theorem 1.2. -/
@@ -172,7 +175,10 @@ Lee–Huang–Yang lower bound (Theorem 1.2) for $v$ at density $\rho$, the erro
 $\mathcal{C}(\mathcal{R}(v), R/a)\,(\rho a^3)^{1/2 + \eta}$, where $\eta$ is the Lee–Huang–Yang
 error exponent, so its constant depends only on $\mathcal{R}(v)$ and $R/a$.
 
-Source: S. Fournais and J. P. Solovej, `The energy of dilute Bose gases`, Annals of Math, 192 (3) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-192-3-BoseGases.lean Via leanprover/lean-eval@38361be, problem `annals_bose_gases`. -/
+Source: S. Fournais and J. P. Solovej, `The energy of dilute Bose gases`, Annals of Math, 192
+(3) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0,
+e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-192-3-BoseGases.lean Via
+leanprover/lean-eval@38361be, problem `annals_bose_gases`. -/
 public def_wanted 𝓒 (𝓡 : ℝ) (r : ℝ) : ℝ
 
 /--

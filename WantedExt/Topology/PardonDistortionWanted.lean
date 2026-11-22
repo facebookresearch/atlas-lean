@@ -149,7 +149,9 @@ $\min(p, q)/160$.
 This is the smooth, oriented specialization of Pardon's theorem, which bounds the distortion of
 every rectifiable curve in the knot type of the $(p, q)$-torus knot.
 
-Source: John Pardon, 'On the distortion of knots on embedded surfaces', Annals of Mathematics (2) 174 (2011), no. 1, 637-646, Theorem 1.1. https://doi.org/10.4007/annals.2011.174.1.21 Via leanprover/lean-eval@38361be, problem `pardon_torus_knot_distortion`. -/
+Source: John Pardon, 'On the distortion of knots on embedded surfaces', Annals of Mathematics (2)
+174 (2011), no. 1, 637-646, Theorem 1.1. https://doi.org/10.4007/annals.2011.174.1.21 Via
+leanprover/lean-eval@38361be, problem `pardon_torus_knot_distortion`. -/
 public theorem_wanted pardon_torus_knot_distortion
     (p q : ℕ) (_hp : 0 < p) (_hq : 0 < q) (_hc : Nat.Coprime p q)
     (K : Knot)

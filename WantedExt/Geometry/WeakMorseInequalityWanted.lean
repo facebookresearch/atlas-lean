@@ -90,7 +90,10 @@ critical points, all of them non-degenerate. Then for every $k \in \mathbb{N}$ t
 number of $M$, the real dimension of the singular homology $H_k(M; \mathbb{R})$, is at most the
 number of critical points of $f$ of Morse index $k$.
 
-Source: M. Morse, The Calculus of Variations in the Large, AMS Colloq. Publ. 18 (1934). Listed as §40 additional statement in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `weak_morse_inequality`. -/
+Source: M. Morse, The Calculus of Variations in the Large, AMS Colloq. Publ. 18 (1934). Listed as
+§40 additional statement in O. Knill, Some Fundamental Theorems in Mathematics
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `weak_morse_inequality`. -/
 public theorem_wanted weak_morse_inequality
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
     {H : Type*} [TopologicalSpace H] {I : ModelWithCorners ℝ E H} [I.Boundaryless]

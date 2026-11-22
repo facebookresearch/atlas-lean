@@ -90,7 +90,10 @@ where $\nabla_X Y$ at $x$ is the covariant derivative of $Y$ in the direction $X
 $X \langle Y, Z \rangle$ at $x$ is the derivative of the function $y \mapsto \langle Y(y), Z(y)
 \rangle$ in the direction $X(x)$, and $[\cdot, \cdot]$ is the Lie bracket of vector fields.
 
-Source: J.-L. Koszul (course notes, 1950s); cf. do Carmo, Riemannian Geometry. Listed as §38 additional statement in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `koszul_formula`. -/
+Source: J.-L. Koszul (course notes, 1950s); cf. do Carmo, Riemannian Geometry. Listed as §38
+additional statement in O. Knill, Some Fundamental Theorems in Mathematics
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `koszul_formula`. -/
 public theorem_wanted koszul_formula
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
       [FiniteDimensional ℝ E] [CompleteSpace E]

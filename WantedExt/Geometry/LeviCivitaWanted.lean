@@ -115,7 +115,10 @@ metric, and every smooth, torsion-free, metric-compatible covariant derivative $
 tangent bundle of $M$ agrees with $\nabla$ on smooth vector fields: $\nabla'_v Y = \nabla_v Y$ for
 every smooth vector field $Y$ on $M$, every point $x \in M$ and every tangent vector $v$ at $x$.
 
-Source: T. Levi-Civita, Nozione di parallelismo in una varietà qualunque, Rend. Circ. Mat. Palermo 42 (1917). Listed as §38 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `levi_civita_exists_unique`. -/
+Source: T. Levi-Civita, Nozione di parallelismo in una varietà qualunque, Rend. Circ. Mat. Palermo
+42 (1917). Listed as §38 in O. Knill, Some Fundamental Theorems in Mathematics
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `levi_civita_exists_unique`. -/
 public theorem_wanted levi_civita_exists_unique
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
       [FiniteDimensional ℝ E] [CompleteSpace E]

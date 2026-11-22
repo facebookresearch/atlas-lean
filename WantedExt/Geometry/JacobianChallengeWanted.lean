@@ -86,7 +86,9 @@ variable {X : Type u} [TopologicalSpace X] [T2Space X] [CompactSpace X] [Connect
 connected Hausdorff space with a complex-analytic atlas modelled on $\mathbb{C}$, the genus of $X$
 is a natural number.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public def_wanted genus (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
     [Nonempty X] [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) ω X] : ℕ
 
@@ -97,7 +99,9 @@ Riemann surface, that is, a compact connected Hausdorff space with a complex-ana
 modelled on $\mathbb{C}$. The genus of $X$ is $0$ if and only if $X$ is homeomorphic to the unit
 sphere in Euclidean space $\mathbb{R}^3$.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public theorem_wanted genus_eq_zero_iff_homeo :
     ❰genus❱ X = 0 ↔ Nonempty (X ≃ₜ (Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1))
 
@@ -109,7 +113,9 @@ Jacobian $J(X)$ of $X$ is a type in the same universe as $X$.
 Separate wanted instances make $J(X)$ a compact Hausdorff commutative complex Lie group modelled
 on $\mathbb{C}^g$, where $g$ is the genus of $X$.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public def_wanted Jacobian (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
     [Nonempty X] [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) ω X] : Type u
 
@@ -148,14 +154,18 @@ public instance_wanted instLieAddGroup :
 /-- **Abel–Jacobi map.** Let $X$ be a compact Riemann surface with Jacobian $J(X)$. Each point
 $P \in X$ gives a map $X \to J(X)$, the Abel–Jacobi map based at $P$.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public def_wanted ofCurve (P : X) : X → ❰Jacobian❱ X
 
 /-- **The Abel–Jacobi map is holomorphic.** Let $X$ be a compact Riemann surface of genus $g$,
 and let $J(X)$ be its Jacobian, a complex manifold modelled on $\mathbb{C}^g$. For every point
 $P \in X$, the Abel–Jacobi map $X \to J(X)$ based at $P$ is holomorphic.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public theorem_wanted ofCurve_contMDiff (P : X) :
     ContMDiff (modelWithCornersSelf ℂ ℂ)
       (modelWithCornersSelf ℂ (Fin (❰genus❱ X) → ℂ)) ω (❰ofCurve❱ P)
@@ -164,7 +174,9 @@ public theorem_wanted ofCurve_contMDiff (P : X) :
 with Jacobian $J(X)$, an abelian group. For every point $P \in X$, the Abel–Jacobi map
 $X \to J(X)$ based at $P$ sends $P$ to $0$.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public theorem_wanted ofCurve_self (P : X) : ❰ofCurve❱ P P = 0
 
 -- this is the lemma which stops the hack answer "J(X)=0 for all X"
@@ -172,7 +184,9 @@ public theorem_wanted ofCurve_self (P : X) : ❰ofCurve❱ P P = 0
 with Jacobian $J(X)$, and let $P \in X$. If the genus of $X$ is positive, then the Abel–Jacobi map
 $X \to J(X)$ based at $P$ is injective.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public theorem_wanted ofCurve_inj (P : X) : 0 < ❰genus❱ X → Function.Injective (❰ofCurve❱ P)
 
 -- Lean variant (recorded in `WantedExt/Sources/LeanEval.md`): `Y` and `Z` below are
@@ -191,7 +205,9 @@ Jacobian of $X$, an abelian group with a topology. For a holomorphic map $f : X 
 pushforward $f_*$ is a continuous group homomorphism from $J(X)$ to $J(Y)$. It is meant to be
 the homomorphism induced by $f$; its properties are stated separately.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public def_wanted pushforward (f : X → Y)
     (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) ω f) :
     ❰Jacobian❱ X →ₜ+ ❰Jacobian❱ Y
@@ -202,7 +218,9 @@ $g_X$ and $g_Y$. The Jacobian $J(X)$ of $X$ is a complex-analytic manifold model
 $\mathbb{C}^{g_X}$, and likewise $J(Y)$ on $\mathbb{C}^{g_Y}$. For every holomorphic map
 $f : X \to Y$, the pushforward $f_* : J(X) \to J(Y)$ is holomorphic.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public theorem_wanted pushforward_contMDiff (f : X → Y)
     (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (❰genus❱ X) → ℂ))
@@ -214,7 +232,9 @@ connected, Hausdorff complex-analytic manifold of dimension one, and write $J(X)
 Jacobian. For every $P \in J(X)$, the pushforward of $P$ along the identity map of $X$ is $P$:
 $(\mathrm{id}_X)_*(P) = P$.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public theorem_wanted pushforward_id_apply :
     ∀ P : ❰Jacobian❱ X, ❰pushforward❱ id contMDiff_id P = P
 
@@ -228,7 +248,9 @@ is, compact, connected, Hausdorff complex-analytic manifolds of dimension one, a
 for the Jacobian of $X$. For all holomorphic maps $f : X \to Y$ and $g : Y \to Z$ and every
 $P \in J(X)$, the pushforwards satisfy $(g \circ f)_*(P) = g_*(f_*(P))$.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public theorem_wanted pushforward_comp_apply (f : X → Y)
     (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) ω g) :
@@ -244,7 +266,9 @@ pullback $f^*$ is a continuous group homomorphism from $J(Y)$ to $J(X)$. It is m
 zero map when $f$ is constant and the usual pullback along $f$ otherwise; its properties are
 stated separately.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public def_wanted pullback (f : X → Y)
     (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) ω f) :
     ❰Jacobian❱ Y →ₜ+ ❰Jacobian❱ X
@@ -254,7 +278,9 @@ of genus $g_X$ and $g_Y$, with Jacobians $J(X)$ and $J(Y)$, complex manifolds mo
 $\mathbb{C}^{g_X}$ and $\mathbb{C}^{g_Y}$. For every holomorphic map $f : X \to Y$, the induced
 pullback map $f^* : J(Y) \to J(X)$ is holomorphic.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public theorem_wanted pullback_contMDiff (f : X → Y)
     (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (❰genus❱ Y) → ℂ))
@@ -265,7 +291,9 @@ connected, Hausdorff complex-analytic manifold of dimension one, and write $J(X)
 Jacobian. For every $P \in J(X)$, the pullback of $P$ along the identity map of $X$ is $P$:
 $(\mathrm{id}_X)^*(P) = P$.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public theorem_wanted pullback_id_apply :
     ∀ P : ❰Jacobian❱ X, ❰pullback❱ id contMDiff_id P = P
 
@@ -274,7 +302,9 @@ Riemann surfaces, and for a holomorphic map $h$ between compact Riemann surfaces
 the induced pullback map on Jacobians. For all holomorphic maps $f : X \to Y$ and $g : Y \to Z$
 and every point $P$ of the Jacobian $J(Z)$, we have $(g \circ f)^*(P) = f^*(g^*(P))$.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public theorem_wanted pullback_comp_apply (f : X → Y)
     (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) ω g) :
@@ -287,7 +317,9 @@ holomorphic map $f : X \to Y$ has a degree, which is a natural number.
 
 The intended value is $0$ when $f$ is constant and the usual degree of $f$ otherwise.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public def_wanted degree (f : X → Y)
     (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) ω f) : ℕ  -- 0 for constant case
 
@@ -298,7 +330,9 @@ $f : X \to Y$ and every $P \in J(Y)$, the pushforward along $f$ of the pullback 
 is $\deg(f) \cdot P$, where the degree $\deg(f)$ is a natural number:
 $f_*(f^*(P)) = \deg(f) \cdot P$.
 
-Source: https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
+Source:
+https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge
+Via leanprover/lean-eval@38361be, problem `jacobian_challenge_diffgeo`. -/
 public theorem_wanted pushforward_pullback (f : X → Y)
     (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) ω f) :
     ∀ P : ❰Jacobian❱ Y, ❰pushforward❱ f hf (❰pullback❱ f hf P) = (❰degree❱ f hf) • P

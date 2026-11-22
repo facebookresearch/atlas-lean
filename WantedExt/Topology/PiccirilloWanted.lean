@@ -85,7 +85,8 @@ which traverses each edge in unit time, is injective on the interval $[0, N)$.
 Equivalently, the vertices of $K$ are distinct, non-adjacent edges are disjoint, and adjacent
 edges meet only at their shared vertex.
 
-Source: https://arxiv.org/abs/1808.02923 Via leanprover/lean-eval@38361be, problem `conway_knot_not_smoothly_slice`. -/
+Source: https://arxiv.org/abs/1808.02923 Via leanprover/lean-eval@38361be, problem
+`conway_knot_not_smoothly_slice`. -/
 public theorem_wanted conwayKnot_isSimple : conwayKnot.IsSimple
 
 /- **Piccirillo, "The Conway knot is not slice."**
@@ -103,7 +104,8 @@ half-space $\mathbb{R}^3 \times [0, \infty)$, takes a point of $\overline{\mathb
 $0$ exactly when it lies on the unit circle, and whose $\mathbb{R}^3$-component maps the unit
 circle onto the image of $J$.
 
-Source: https://arxiv.org/abs/1808.02923 Via leanprover/lean-eval@38361be, problem `conway_knot_not_smoothly_slice`. -/
+Source: https://arxiv.org/abs/1808.02923 Via leanprover/lean-eval@38361be, problem
+`conway_knot_not_smoothly_slice`. -/
 public theorem_wanted conway_knot_not_smoothly_slice : ¬ conwayKnot.SmoothlySlice
 
 end KnotTheory

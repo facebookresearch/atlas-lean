@@ -72,7 +72,9 @@ there is no smooth map $H : [0, 1] \times S^3 \to S^1 \times S^3$ such that ever
 $H(t, \cdot)$ is a smooth embedding, $H(0, \cdot)$ has the same image as $e_i$, and $H(1, \cdot)$
 has the same image as $e_j$.
 
-Source: R. Budney and D. Gabai, 'Knotted 3-balls in S⁴', Corollary 8.6, arXiv:1912.09029v3 (2021), https://arxiv.org/abs/1912.09029. Via leanprover/lean-eval@38361be, problem `budney_gabai_knotted_three_spheres`. -/
+Source: R. Budney and D. Gabai, 'Knotted 3-balls in S⁴', Corollary 8.6, arXiv:1912.09029v3 (2021),
+https://arxiv.org/abs/1912.09029. Via leanprover/lean-eval@38361be, problem
+`budney_gabai_knotted_three_spheres`. -/
 public theorem_wanted budney_gabai_knotted_three_spheres
     (x₀ : sphere (0 : EuclideanSpace ℝ (Fin 2)) 1) :
     ∃ e : ℕ → sphere (0 : EuclideanSpace ℝ (Fin 4)) 1 →

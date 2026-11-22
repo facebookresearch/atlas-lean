@@ -78,7 +78,10 @@ This is the $p$-adic case of the Hilbert–Smith conjecture in dimension three; 
 locally compact group acting faithfully on a connected 3-manifold is a Lie group also needs the
 classical reduction to $\mathbb{Z}_p$-actions, which is not part of this statement.
 
-Source: John Pardon, 'The Hilbert-Smith conjecture for three-manifolds', Journal of the American Mathematical Society 26 (2013), no. 3, 879-899, Theorem 1.5. https://doi.org/10.1090/S0894-0347-2013-00766-3 Via leanprover/lean-eval@38361be, problem `hilbert_smith_padic_dimension_three`. -/
+Source: John Pardon, 'The Hilbert-Smith conjecture for three-manifolds', Journal of the American
+Mathematical Society 26 (2013), no. 3, 879-899, Theorem 1.5.
+https://doi.org/10.1090/S0894-0347-2013-00766-3 Via leanprover/lean-eval@38361be, problem
+`hilbert_smith_padic_dimension_three`. -/
 public theorem_wanted hilbert_smith_padic_dimension_three
     (p : ℕ) [Fact p.Prime]
     (M : Type*) [TopologicalSpace M] [T2Space M] [SecondCountableTopology M]

@@ -170,7 +170,9 @@ domain for their action by left multiplication and finite covolume with respect 
 Then every group isomorphism $f : \Gamma \to \Lambda$ is a conjugation: there is
 $g \in \mathrm{PO}(n,1)$ such that $f(\gamma) = g \gamma g^{-1}$ for all $\gamma \in \Gamma$.
 
-Source: https://en.wikipedia.org/wiki/Mostow_rigidity_theorem#Algebraic_form and Gopal Prasad, *Strong rigidity of ℚ-rank 1 lattices*, Invent. Math. 21 (1973), 255–286. Via leanprover/lean-eval@38361be, problem `mostow_rigidity`. -/
+Source: https://en.wikipedia.org/wiki/Mostow_rigidity_theorem#Algebraic_form and Gopal
+Prasad, *Strong rigidity of ℚ-rank 1 lattices*, Invent. Math. 21 (1973), 255–286. Via
+leanprover/lean-eval@38361be, problem `mostow_rigidity`. -/
 public theorem_wanted mostow_rigidity (n : ℕ) (hn : 3 ≤ n) (Γ Λ : Subgroup (PO n 1))
     (disc_Γ : IsDiscrete (SetLike.coe Γ)) (disc_Λ : IsDiscrete (SetLike.coe Λ))
     [HasFundamentalDomain Γ (PO n 1)] [HasFundamentalDomain Λ (PO n 1)]

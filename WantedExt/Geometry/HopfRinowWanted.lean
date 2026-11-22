@@ -123,7 +123,11 @@ boundary, modelled on a finite-dimensional real normed space, with a smooth Riem
 whose Riemannian distance is the (extended) distance of $M$. Then $M$ is geodesically complete
 if and only if $M$ is complete for its distance.
 
-Source: H. Hopf and W. Rinow, *Ueber den Begriff der vollständigen differentialgeometrischen Fläche*, Comment. Math. Helv. 3 (1931), 209-225. Listed as §93 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `hopf_rinow`. -/
+Source: H. Hopf and W. Rinow, *Ueber den Begriff der vollständigen differentialgeometrischen
+Fläche*, Comment. Math. Helv. 3 (1931), 209-225. Listed as §93 in O. Knill, *Some Fundamental
+Theorems in Mathematics*
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `hopf_rinow`. -/
 public theorem_wanted hopf_rinow
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [FiniteDimensional ℝ E]

@@ -298,7 +298,9 @@ $\Pi (A : \mathrm{Prop}).\, \Pi (x : A).\, A$.
 This is typable only because $\mathrm{Prop}$ is impredicative: a product over
 $A : \mathrm{Prop}$ whose codomain is a proposition is again a proposition.
 
-Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
+Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus
+of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
+leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
 -/
 public theorem_wanted typing_polyId :
     Typing [] (.lam (.srt .prop) (.lam (.var 0) (.var 0)))
@@ -310,7 +312,9 @@ $\Pi (P : \mathrm{Prop}).\, P$. In the empty context, the application of the pol
 identity $\lambda (A : \mathrm{Prop}).\, \lambda (x : A).\, x$ to $\bot$ has type
 $\Pi (x : \bot).\, \bot$.
 
-Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
+Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus
+of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
+leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
 -/
 public theorem_wanted typing_polyId_app :
     Typing []

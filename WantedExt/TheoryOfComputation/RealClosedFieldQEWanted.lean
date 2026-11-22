@@ -225,7 +225,11 @@ $\operatorname{qe}(\varphi)$ holds in $\mathbb{R}$ under $e$ if and only if $\va
 
 The formula $\operatorname{qe}(\varphi)$ may mention additional variables, but only vacuously.
 
-Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012). Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`.
+Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier
+elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi,
+'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal
+proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012). Via
+leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`.
 -/
 public def_wanted qe (φ : Formula) : Formula
 
@@ -271,7 +275,11 @@ $e(0)$. Thus $e(0)$ is a square in $\mathbb{R}$ exactly when $e(0) \ge 0$.
 
 This checks the semantics and the de Bruijn convention against a known fact.
 
-Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012). Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`.
+Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier
+elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi,
+'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal
+proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012). Via
+leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`.
 -/
 public theorem_wanted holds_ex_sq (env : Nat → ℝ) :
     (Formula.ex (.eq (.mul (.var 0) (.var 0)) (.var 1))).Holds env ↔

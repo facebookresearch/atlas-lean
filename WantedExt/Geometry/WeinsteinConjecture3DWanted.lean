@@ -163,7 +163,12 @@ $d\alpha_x(u, v) \ne 0$ for some $u, v \in \ker \alpha_x$. Let $R$ be a Reeb vec
 $(\alpha, d\alpha)$. Then $R$ has a closed orbit: a nonconstant smooth integral curve of $R$
 that is periodic with some positive period.
 
-Source: C.H. Taubes, 'The Seiberg–Witten equations and the Weinstein conjecture', Geom. Topol. 11 (2007) 2117–2202; arXiv:math/0611007. Conjecture: A. Weinstein, 'On the hypotheses of Rabinowitz' periodic orbit theorems', J. Differential Equations 33 (1979) 353–358. §141 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `weinstein_conjecture_dim3`. -/
+Source: C.H. Taubes, 'The Seiberg–Witten equations and the Weinstein conjecture', Geom. Topol. 11
+(2007) 2117–2202; arXiv:math/0611007. Conjecture: A. Weinstein, 'On the hypotheses of Rabinowitz'
+periodic orbit theorems', J. Differential Equations 33 (1979) 353–358. §141 in O. Knill, *Some
+Fundamental Theorems in Mathematics*
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `weinstein_conjecture_dim3`. -/
 public theorem_wanted weinstein_conjecture_dim_three
     (E' : Type*) [NormedAddCommGroup E'] [NormedSpace ℝ E']
     [FiniteDimensional ℝ E']

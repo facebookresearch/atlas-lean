@@ -71,7 +71,9 @@ written as the empty word) on its input stack and all other stacks empty halts w
 representation of $f(n)$ on its output stack, all other stacks empty and its internal state back
 at the initial state.
 
-Source: A. M. Turing, *On Computable Numbers* (1936); S. C. Kleene, *General recursive functions of natural numbers* (1936). Knill, *Some fundamental theorems in mathematics*, §23. Via leanprover/lean-eval@38361be, problem `turing_recursive_equiv`. -/
+Source: A. M. Turing, *On Computable Numbers* (1936); S. C. Kleene, *General recursive functions of
+natural numbers* (1936). Knill, *Some fundamental theorems in mathematics*, §23. Via
+leanprover/lean-eval@38361be, problem `turing_recursive_equiv`. -/
 public theorem_wanted turing_recursive_equiv (f : ℕ → ℕ) :
     Computable f ↔ Nonempty (TM2Computable encodeNat encodeNat f)
 

@@ -115,7 +115,9 @@ valuations on convex bodies in `ℝⁿ` is `(n+1)`-dimensional. -/
 invariant valuations on the convex bodies of $\mathbb{R}^n$ (continuous, additive, and invariant
 under linear isometries and translations) is finite-dimensional of dimension $n + 1$.
 
-Source: H. Hadwiger (1937). Listed as §31 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `hadwiger`. -/
+Source: H. Hadwiger (1937). Listed as §31 in O. Knill, Some Fundamental Theorems in Mathematics
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `hadwiger`. -/
 public theorem_wanted hadwiger (n : ℕ) : Module.finrank ℝ (valuations n) = n + 1
 
 end ConvexGeometry

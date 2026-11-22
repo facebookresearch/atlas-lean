@@ -84,11 +84,13 @@ list of its base-$2$ digits, least significant first, with the digit $1$ written
 value true and the digit $0$ as false. The list has no trailing zero digit, so $0$ is encoded by
 the empty list.
 
-Unlike the unary encoding, this encoding of $n > 0$ has length $\lfloor \log_2 n \rfloor + 1$,
-which is the size model of the bit-complexity bound $O(n \log n)$ for integer multiplication;
-with the unary encoding that bound could not hold.
+This encoding of $n > 0$ has length $\lfloor \log_2 n \rfloor + 1$, which is the size model of
+the bit-complexity bound $O(n \log n)$ for integer multiplication; with a unary encoding that
+bound could not hold.
 
-Source: Lean variant; this replaces the upstream unary encoding `Computability.encodeNat`. -/
+Source: Lean variant. The upstream statement uses Mathlib's `Computability.encodeNat`, which is
+the same least-significant-bit-first binary encoding; this file defines it directly from
+`Nat.digits`. -/
 def encodeNatBinary (n : ℕ) : List Bool :=
   (Nat.digits 2 n).map (fun d => d == 1)
 
@@ -99,7 +101,10 @@ $(x, y)$ (the binary encodings of $x$ and $y$, zipped) halts within $t(\ell)$ st
 binary encoding of $xy$, where $\ell$ is the length of the input, and $t(n) = O(n \log n)$ as
 $n \to \infty$.
 
-Source: D. Harvey and J. van der Hoeven, `Integer multiplication in time O(n log n)`, Annals of Math, 193 (2) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-193-2-IntegerMultiplication.lean Via leanprover/lean-eval@38361be, problem `annals_integer_multiplication`. -/
+Source: D. Harvey and J. van der Hoeven, `Integer multiplication in time O(n log n)`, Annals of
+Math, 193 (2) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge
+(v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-193-2-IntegerMultiplication.lean Via
+leanprover/lean-eval@38361be, problem `annals_integer_multiplication`. -/
 public theorem_wanted theorem_1_1 :
     ∃ T : TM2ComputableInTime (encodeProd encodeNatBinary encodeNatBinary) encodeNatBinary (fun (x, y) ↦ x * y),
       (fun n ↦ (T.time n : ℝ)) =O[Filter.atTop] (fun n ↦ n * log n)

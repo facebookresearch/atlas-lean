@@ -129,7 +129,10 @@ $D\varphi^{-1}(z)$, namely
 $(v, w) \mapsto \alpha(\varphi^{-1}(z))(D\varphi^{-1}(z)\, v, D\varphi^{-1}(z)\, w)$, is in Darboux
 normal form.
 
-Source: J. G. Darboux, Sur le problème de Pfaff, Bull. Sci. Math. 6 (1882), 14-36, 49-68. Listed as §39 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `darboux`. -/
+Source: J. G. Darboux, Sur le problème de Pfaff, Bull. Sci. Math. 6 (1882), 14-36, 49-68. Listed as
+§39 in O. Knill, Some Fundamental Theorems in Mathematics
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `darboux`. -/
 public theorem_wanted darboux {n : ℕ} {U : Set (E n)} (_hU : IsOpen U)
     (α : E n → E n [⋀^Fin 2]→L[ℝ] ℝ) (_hα : IsSymplecticOn α U)
     {x : E n} (_hx : x ∈ U) :

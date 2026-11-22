@@ -112,7 +112,9 @@ compatible with the metric and strictly quarter-pinched (every sectional curvatu
 orthonormal pair lies in $(1, 4]$). Then $M$ is homeomorphic to the unit sphere
 $S^d \subset \mathbb{R}^{d+1}$.
 
-Source: M. Berger; W. Klingenberg; H. E. Rauch (topological sphere theorem, 1951–1961). Knill, *Some fundamental theorems in mathematics*, §121. Via leanprover/lean-eval@38361be, problem `sphere_theorem_topological`. -/
+Source: M. Berger; W. Klingenberg; H. E. Rauch (topological sphere theorem, 1951–1961). Knill, *Some
+fundamental theorems in mathematics*, §121. Via leanprover/lean-eval@38361be, problem
+`sphere_theorem_topological`. -/
 public theorem_wanted sphere_theorem
     [I.Boundaryless] [T2Space M] [CompactSpace M] [SimplyConnectedSpace M]
     (hdim : 2 ≤ Module.finrank ℝ E)
@@ -132,7 +134,9 @@ compatible with the metric and strictly quarter-pinched (every sectional curvatu
 orthonormal pair lies in $(1, 4]$). Then $M$ is diffeomorphic to the unit sphere
 $S^d \subset \mathbb{R}^{d+1}$ with its standard smooth structure.
 
-Source: S. Brendle & R. Schoen, *Manifolds with 1/4-pinched curvature are space forms*, J. AMS 22 (2009). Knill, *Some fundamental theorems in mathematics*, §121. Via leanprover/lean-eval@38361be, problem `sphere_theorem_differentiable`. -/
+Source: S. Brendle & R. Schoen, *Manifolds with 1/4-pinched curvature are space forms*, J. AMS 22
+(2009). Knill, *Some fundamental theorems in mathematics*, §121. Via leanprover/lean-eval@38361be,
+problem `sphere_theorem_differentiable`. -/
 public theorem_wanted differentiable_sphere_theorem
     [I.Boundaryless] [T2Space M] [CompactSpace M] [SimplyConnectedSpace M]
     (hdim : 2 ≤ Module.finrank ℝ E)

@@ -71,6 +71,11 @@ def conjecture : Prop :=
       H.FiniteIndex ∧ 0 < firstBettiRank ↥H
 
 /--
+**Some $\mathrm{Aut}(F_n)$ with $n > 3$ has no finite-index subgroup of positive first Betti
+number.** It is not the case that for every natural number $n > 3$ the automorphism group
+$\mathrm{Aut}(F_n)$ of the free group $F_n$ on $n$ generators has a finite-index subgroup $H$ whose
+first Betti number, the $\mathbb{Z}$-rank of the abelianization of $H$, is positive.
+
 Resolved false: Kaluba-Nowak-Ozawa proved that Aut(F5) has Kazhdan's property (T) (Math. Ann.
 375 (2019), 1169-1191, Corollary 2: "The groups Aut(F5) and Out(F5) have property (T)."). Every
 finite-index subgroup of Aut(F5) therefore has property (T): the problem list notes, in the

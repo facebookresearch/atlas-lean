@@ -56,7 +56,9 @@ $\kappa$-categorical if any two models of $T$ of cardinality $\kappa$ are isomor
 $\kappa$-categorical for some uncountable cardinal $\kappa$, then $T$ is $\mu$-categorical for
 every uncountable cardinal $\mu$.
 
-Source: M. Ramsey, *Morley's Categoricity Theorem* (UChicago VIGRE REU 2010), Corollary 7.3. https://www.math.uchicago.edu/~may/VIGRE/VIGRE2010/REUPapers/RamseyN.pdf Via leanprover/lean-eval@38361be, problem `morley_categoricity_theorem`. -/
+Source: M. Ramsey, *Morley's Categoricity Theorem* (UChicago VIGRE REU 2010), Corollary 7.3.
+https://www.math.uchicago.edu/~may/VIGRE/VIGRE2010/REUPapers/RamseyN.pdf Via
+leanprover/lean-eval@38361be, problem `morley_categoricity_theorem`. -/
 public theorem_wanted morley_categoricity_theorem
     (L : FirstOrder.Language.{0, 0}) (hL : L.card ≤ ℵ₀)
     (T : L.Theory) (hT : T.IsComplete)

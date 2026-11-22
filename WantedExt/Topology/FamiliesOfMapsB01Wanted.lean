@@ -159,7 +159,9 @@ boundary subpolyhedron $Q$ of $P$ and every $S' \subseteq X$, if the restriction
 $Q \times X$ is supported on $S'$, then the restriction of $F$ to $[0, 1] \times Q \times X$, as a
 family with parameter $(t, q) \in [0, 1] \times Q$, is supported on $S'$.
 
-Source: S. Morrison and K. Walker, *The Blob Complex*, arXiv:1009.5025, Appendix B, Lemma B.0.1 (pp. 93–96): https://arxiv.org/pdf/1009.5025 Via leanprover/lean-eval@38361be, problem `families_of_maps_b01`. -/
+Source: S. Morrison and K. Walker, *The Blob Complex*, arXiv:1009.5025, Appendix B, Lemma B.0.1 (pp.
+93–96): https://arxiv.org/pdf/1009.5025 Via leanprover/lean-eval@38361be, problem
+`families_of_maps_b01`. -/
 public theorem_wanted continuous
     {P : Set (Fin k → ℝ)} (_hP : IsPolyhedron P)
     [CompactSpace X]
@@ -199,7 +201,9 @@ the restriction of $F$ to $[0, 1] \times Q \times X$, as a family with parameter
 $(t, q) \in [0, 1] \times Q$, is supported on $S'$; and (vi) every $H_{t,p}$ and every inverse
 $H_{t,p}^{-1}$ is $L'$-Lipschitz.
 
-Source: S. Morrison and K. Walker, *The Blob Complex*, arXiv:1009.5025, Appendix B, Lemma B.0.1 (pp. 93–96): https://arxiv.org/pdf/1009.5025 Via leanprover/lean-eval@38361be, problem `families_of_maps_b01`. -/
+Source: S. Morrison and K. Walker, *The Blob Complex*, arXiv:1009.5025, Appendix B, Lemma B.0.1 (pp.
+93–96): https://arxiv.org/pdf/1009.5025 Via leanprover/lean-eval@38361be, problem
+`families_of_maps_b01`. -/
 public theorem_wanted biLipschitz
     {X T : Type*} [MetricSpace X] [MetricSpace T] [CompactSpace X]
     {P : Set (Fin k → ℝ)} (_hP : IsPolyhedron P)

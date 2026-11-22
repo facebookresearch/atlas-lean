@@ -433,7 +433,11 @@ This declaration fixes only the functor. Its intended characterization, as left 
 inclusion of light solid abelian groups into light condensed abelian groups, is the separate
 solidification adjunction.
 
-Source: https://github.com/dagurtomas/LeanCondensed (LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics, https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem `derived_solidification_free_CW_homology`. -/
+Source: https://github.com/dagurtomas/LeanCondensed
+(LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on
+analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics,
+https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem
+`derived_solidification_free_CW_homology`. -/
 public def_wanted solidification : LightCondAb ⥤ Solid
 
 /- **Hole 2.** The solidification functor is additive.  (This follows from the adjunction of the
@@ -448,7 +452,11 @@ solid objects in light condensed abelian groups. -/
 condensed abelian groups to light solid abelian groups as left adjoint to the inclusion of the full
 subcategory of light solid abelian groups into light condensed abelian groups.
 
-Source: https://github.com/dagurtomas/LeanCondensed (LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics, https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem `derived_solidification_free_CW_homology`. -/
+Source: https://github.com/dagurtomas/LeanCondensed
+(LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on
+analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics,
+https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem
+`derived_solidification_free_CW_homology`. -/
 public def_wanted solidificationAdjunction : ❰solidification❱ ⊣ isSolid.ι
 
 /- **Hole 4.** The derived solidification functor. -/
@@ -458,7 +466,11 @@ groups to the derived category of light solid abelian groups.
 Separate statements require it to be the left derived functor of degreewise solidification and
 left adjoint to the derived inclusion; these determine it up to natural isomorphism.
 
-Source: https://github.com/dagurtomas/LeanCondensed (LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics, https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem `derived_solidification_free_CW_homology`. -/
+Source: https://github.com/dagurtomas/LeanCondensed
+(LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on
+analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics,
+https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem
+`derived_solidification_free_CW_homology`. -/
 public def_wanted derivedSolidification : DLightCondAb ⥤ DSolid
 
 /- **Hole 5.** The comparison map from derived solidification to degreewise solidification. -/
@@ -469,7 +481,11 @@ solidification of $Q(K)$ to the functor sending $K$ to $Q(\mathrm{Sol}(K))$, whe
 $\mathrm{Sol}(K)$ is the complex of light solid abelian groups obtained by applying solidification
 to $K$ degreewise.
 
-Source: https://github.com/dagurtomas/LeanCondensed (LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics, https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem `derived_solidification_free_CW_homology`. -/
+Source: https://github.com/dagurtomas/LeanCondensed
+(LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on
+analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics,
+https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem
+`derived_solidification_free_CW_homology`. -/
 public def_wanted derivedSolidificationCounit :
     DerivedCategory.Q ⋙ ❰derivedSolidification❱ ⟶
       (❰solidification❱).mapHomologicalComplex (ComplexShape.up ℤ) ⋙ DerivedCategory.Q
@@ -484,7 +500,11 @@ the functor that applies solidification degreewise to a cochain complex of light
 groups and then passes to the derived category of light solid abelian groups, with respect to the
 quasi-isomorphisms of cochain complexes of light condensed abelian groups.
 
-Source: https://github.com/dagurtomas/LeanCondensed (LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics, https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem `derived_solidification_free_CW_homology`. -/
+Source: https://github.com/dagurtomas/LeanCondensed
+(LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on
+analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics,
+https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem
+`derived_solidification_free_CW_homology`. -/
 public def_wanted derivedSolidification_isLeftDerivedFunctor :
     (❰derivedSolidification❱).IsLeftDerivedFunctor ❰derivedSolidificationCounit❱
       (HomologicalComplex.quasiIso LightCondAb (ComplexShape.up ℤ))
@@ -541,7 +561,11 @@ derived solidification, from the derived category of light condensed abelian gro
 category of light solid abelian groups, is left adjoint to the derived inclusion $D(\iota)$ induced
 by the inclusion $\iota$ of light solid abelian groups into light condensed abelian groups.
 
-Source: https://github.com/dagurtomas/LeanCondensed (LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics, https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem `derived_solidification_free_CW_homology`. -/
+Source: https://github.com/dagurtomas/LeanCondensed
+(LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on
+analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics,
+https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem
+`derived_solidification_free_CW_homology`. -/
 public def_wanted derivedSolidificationAdjunction : ❰derivedSolidification❱ ⊣ derivedInclusion
 
 /-- **Free light condensed abelian group on a topological space.** For a topological space $X$,
@@ -620,7 +644,11 @@ A separate specification identifies it, up to natural isomorphism, with the func
 to the derived inclusion of the derived solidification of the free light condensed abelian group
 $\mathbb{Z}[X]$, viewed as a complex concentrated in degree $0$.
 
-Source: https://github.com/dagurtomas/LeanCondensed (LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics, https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem `derived_solidification_free_CW_homology`. -/
+Source: https://github.com/dagurtomas/LeanCondensed
+(LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on
+analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics,
+https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem
+`derived_solidification_free_CW_homology`. -/
 public def_wanted derivedSolidificationFreeCWFunctor : CWTopCat ⥤ DLightCondAb
 
 /- **Hole 9.** The specification identifying `derivedSolidificationFreeCWFunctor` with the
@@ -634,7 +662,11 @@ derived inclusion of light solid abelian groups into light condensed abelian gro
 functors from the category of topological spaces admitting a CW complex structure, with all
 continuous maps as morphisms, to the derived category of light condensed abelian groups.
 
-Source: https://github.com/dagurtomas/LeanCondensed (LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics, https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem `derived_solidification_free_CW_homology`. -/
+Source: https://github.com/dagurtomas/LeanCondensed
+(LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on
+analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics,
+https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem
+`derived_solidification_free_CW_homology`. -/
 public def_wanted derivedSolidificationFreeCWFunctorSpec :
     ❰derivedSolidificationFreeCWFunctor❱ ≅
       CWTopCat.toTopCat ⋙ freeLightCondAbOfTopFunctor ⋙ DerivedCategory.singleFunctor LightCondAb 0 ⋙
@@ -660,7 +692,11 @@ solidification of the free light condensed abelian group $\mathbb{Z}[X]$ placed 
 to a specified natural isomorphism), and the singular chain complex of $X$ is viewed as a complex
 of discrete light condensed abelian groups with chains of degree $n$ in cohomological degree $-n$.
 
-Source: https://github.com/dagurtomas/LeanCondensed (LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics, https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem `derived_solidification_free_CW_homology`. -/
+Source: https://github.com/dagurtomas/LeanCondensed
+(LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on
+analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics,
+https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem
+`derived_solidification_free_CW_homology`. -/
 public def_wanted derivedSolidification_free_CW_derivedNatIso :
     ❰derivedSolidificationFreeCWFunctor❱ ≅ singularChainsLightCondAbCWDerivedFunctor
 
@@ -707,7 +743,11 @@ of $X$ with integer coefficients, regarded as a discrete light condensed abelian
 
 The derived category is cohomologically indexed, so the $n$-th homology group sits in degree $-n$.
 
-Source: https://github.com/dagurtomas/LeanCondensed (LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics, https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem `derived_solidification_free_CW_homology`. -/
+Source: https://github.com/dagurtomas/LeanCondensed
+(LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on
+analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics,
+https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem
+`derived_solidification_free_CW_homology`. -/
 public def_wanted derivedSolidification_free_CW_homologyIso
     (X : TopCat) [Topology.CWComplex (Set.univ : Set X)] (n : ℕ) :
     isSolid.ι.obj
@@ -726,7 +766,11 @@ solidification of $\mathbb{Z}[X]$ placed in degree $0$, a light solid abelian gr
 light condensed abelian group, is isomorphic to the integral singular homology group
 $H_n(X; \mathbb{Z})$ viewed as a discrete light condensed abelian group.
 
-Source: https://github.com/dagurtomas/LeanCondensed (LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics, https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem `derived_solidification_free_CW_homology`. -/
+Source: https://github.com/dagurtomas/LeanCondensed
+(LeanCondensed/Projects/DerivedSolidCWHomology.lean); D. Clausen and P. Scholze, lectures on
+analytic stacks and light condensed mathematics.; P. Scholze, Lectures on Condensed Mathematics,
+https://arxiv.org/pdf/2605.03658 Via leanprover/lean-eval@38361be, problem
+`derived_solidification_free_CW_homology`. -/
 public theorem_wanted derivedSolidification_free_CW_homology
     (X : TopCat) [Topology.CWComplex (Set.univ : Set X)] (n : ℕ) :
     Nonempty
