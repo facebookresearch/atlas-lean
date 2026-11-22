@@ -4862,19 +4862,10 @@ private theorem zagFinRotate_pow_base {n : ℕ} (i : Fin n) :
   apply Fin.ext
   simp [Fin.add_def, zagBasePoint, Nat.mod_eq_of_lt i.isLt]
 
-private theorem zagConj_pow {n m : ℕ}
-    (e r : Equiv.Perm (Fin n)) :
-    (e * r * e⁻¹) ^ m = e * r ^ m * e⁻¹ := by
-  induction m with
-  | zero => simp
-  | succ m ih =>
-      rw [pow_succ', pow_succ', ih]
-      group
-
 private theorem zagHorizontal_pow_base {n : ℕ}
     (e : Equiv.Perm (Fin n)) (i : Fin n) :
     (zagHorizontal e ^ i.val) (e (zagBasePoint i)) = e i := by
-  rw [zagHorizontal, zagConj_pow]
+  rw [zagHorizontal, conj_pow]
   simp only [Equiv.Perm.mul_apply]
   change e (((finRotate n) ^ i.val) (e.symm (e (zagBasePoint i)))) = e i
   rw [e.symm_apply_apply, zagFinRotate_pow_base]

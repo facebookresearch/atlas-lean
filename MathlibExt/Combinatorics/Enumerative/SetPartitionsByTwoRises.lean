@@ -255,16 +255,6 @@ private theorem rises_castSucc_comp (N k : ℕ) (p : Fin N → Fin (k + 1)) :
       Fin.castSucc_lt_castSucc_iff]
   rw [h]
 
--- Transport preserves the RG bound values.
-private theorem val_castSucc_comp (k : ℕ) (a : Fin (k + 1)) :
-    ((Fin.castSucc a : Fin (k + 2))).val = a.val := by
-  rfl
-
--- Every value of a castSucc-transported word is below the top element.
-private theorem castSucc_lt_last (k : ℕ) (a : Fin (k + 1)) :
-    (Fin.castSucc a : Fin (k + 2)) < Fin.last (k + 1) :=
-  Fin.castSucc_lt_last a
-
 -- Step 1 (castSucc transport): the RG condition is preserved under `castSucc`,
 -- since `castSucc` is injective and preserves values.
 private theorem rg_castSucc_comp (N k : ℕ) (p : Fin N → Fin (k + 1))
@@ -325,14 +315,6 @@ private theorem coeff_bSeries (k : ℕ) (c : Fin k) (d : Fin 2 →₀ ℕ) :
   rfl
 
 -- Finsupp index helpers for `Fin 2`.
-private theorem single0_le_iff (d : Fin 2 →₀ ℕ) :
-    Finsupp.single (0 : Fin 2) (1 : ℕ) ≤ d ↔ 1 ≤ d 0 := by
-  exact Finsupp.single_le_iff
-
-private theorem single1_le_iff (d : Fin 2 →₀ ℕ) :
-    Finsupp.single (1 : Fin 2) (1 : ℕ) ≤ d ↔ 1 ≤ d 1 := by
-  exact Finsupp.single_le_iff
-
 private theorem add_single_le_iff (d : Fin 2 →₀ ℕ) :
     Finsupp.single (0 : Fin 2) (1 : ℕ) + Finsupp.single (1 : Fin 2) (1 : ℕ) ≤
         d ↔
@@ -660,10 +642,6 @@ private theorem risesCount_one (k : ℕ) (π : Fin 1 → Fin k) :
     have h2 : q.2.val = 0 := Nat.lt_one_iff.mp q.2.isLt
     omega
 
-private theorem castSucc_ne_last' (m : ℕ) (a : Fin (m + 1)) :
-    a.castSucc ≠ Fin.last (m + 1) :=
-  ne_of_lt (Fin.castSucc_lt_last a)
-
 private theorem pred_last_unique (m : ℕ) (a : Fin (m + 2))
     (h : (Fin.last (m + 1)).val = a.val + 1) :
     a = (Fin.last m).castSucc := by
@@ -713,7 +691,7 @@ private theorem risesCount_snoc (m k : ℕ) (p : Fin (m + 1) → Fin k)
             q.2.castSucc = Fin.last (m + 1) := by
           simpa only [Prod.mk.injEq] using hpair
         exact hconj.2
-      exact castSucc_ne_last' m q.2 h2
+      exact Fin.castSucc_ne_last q.2 h2
     have heq : (Finset.univ.filter fun q : Fin (m + 2) × Fin (m + 2) =>
           q.2.val = q.1.val + 1 ∧
             (Fin.snoc (α := fun _ => Fin k) p c) q.1 <
@@ -1090,7 +1068,7 @@ private theorem exists_castSucc_of_not_mem (n k : ℕ)
         exact this
       have hne : (Fin.castSucc b' : Fin (k + 2)) ≠ c := by
         rw [hc_last]
-        exact castSucc_ne_last' k b'
+        exact Fin.castSucc_ne_last b'
       simp only [Finset.mem_insert] at hmem_univ
       rcases hmem_univ with h_eq | h_mem
       · exact absurd h_eq hne
@@ -1624,7 +1602,7 @@ private theorem countLast_additive_of_eq_top (m R k : ℕ) :
               simp only [Finset.mem_image, Finset.mem_univ, true_and,
                 Function.comp_apply] at hmem
               obtain ⟨a, ha⟩ := hmem
-              exact castSucc_ne_last' k (s_extra.1 a) ha
+              exact Fin.castSucc_ne_last (s_extra.1 a) ha
             have hexists_ours : ∃ p'' : Fin (m + 1) → Fin (k + 1),
                 Fin.init (Fin.snoc (α := fun _ => Fin (k + 2))
                   (Fin.castSucc ∘ s_extra.1) (Fin.last (k + 1))) =
@@ -2069,24 +2047,10 @@ private theorem bSeries_eq_of_eq_top (k : ℕ) :
         · rw [ite_eq_left hR, ite_eq_left hR]
         · rw [ite_eq_right hR, ite_eq_right hR, Nat.cast_zero]
 
-private theorem zero_ne_last_succ (k : ℕ) :
-    (0 : Fin (k + 2)) ≠ Fin.last (k + 1) := by
-  intro h
-  have hv := congrArg Fin.val h
-  simp only [Fin.val_zero, Fin.val_last] at hv
-  omega
-
-private theorem not_lt_zero_fin (k : ℕ) (c' : Fin (k + 2)) :
-    ¬ c' < (0 : Fin (k + 2)) := by
-  intro h
-  have hv : c'.val < (0 : Fin (k + 2)).val := Fin.lt_def.mp h
-  simp only [Fin.val_zero] at hv
-  omega
-
 private theorem bSeries_zero (k : ℕ) :
     bSeries (k + 2) 0 =
       MvPowerSeries.X (0 : Fin 2) * aSeries (k + 2) := by
-  rw [bSeries_eq_of_ne_top k 0 (zero_ne_last_succ k)]
+  rw [bSeries_eq_of_ne_top k 0 Fin.last_pos.ne]
   have hterm : ∀ c' : Fin (k + 2),
       (if c' < (0 : Fin (k + 2)) then
         MvPowerSeries.X (0 : Fin 2) * MvPowerSeries.X (1 : Fin 2) *
@@ -2094,7 +2058,7 @@ private theorem bSeries_zero (k : ℕ) :
       else MvPowerSeries.X (0 : Fin 2) * bSeries (k + 2) c') =
       MvPowerSeries.X (0 : Fin 2) * bSeries (k + 2) c' := by
     intro c'
-    rw [ite_eq_right (not_lt_zero_fin k c')]
+    rw [ite_eq_right (Fin.not_lt_zero c')]
   calc (∑ c' : Fin (k + 2),
         (if c' < (0 : Fin (k + 2)) then
           MvPowerSeries.X (0 : Fin 2) * MvPowerSeries.X (1 : Fin 2) *

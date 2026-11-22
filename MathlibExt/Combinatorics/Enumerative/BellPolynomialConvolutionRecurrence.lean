@@ -31,18 +31,6 @@ open PowerSeries
 
 variable {K : Type*} [Field K] [CharZero K]
 
-omit [CharZero K] in
-/-- Product of monomials is the monomial of the summed degrees and multiplied coefficients. -/
-private lemma prod_monomial {ι : Type*} (s : Finset ι) (d : ι → ℕ) (a : ι → K) :
-    ∏ i ∈ s, PowerSeries.monomial (d i) (a i)
-      = PowerSeries.monomial (∑ i ∈ s, d i) (∏ i ∈ s, a i) := by
-  classical
-  induction s using Finset.induction with
-  | empty => simp
-  | insert x s hx ih =>
-    rw [Finset.prod_insert hx, Finset.sum_insert hx, Finset.prod_insert hx, ih,
-        PowerSeries.monomial_mul_monomial]
-
 /-- The multiplicity vectors of total multiplicity `k` and weighted total `n` are the same,
 whether described via `piAntidiag` or the (bounded) `piFinset`. -/
 private lemma bell_index_set (n k : ℕ) :
@@ -111,7 +99,7 @@ private lemma bell_coeff_pow (c : ℕ → K) (n k : ℕ) :
     intro κ _
     have hp : ∏ i, (PowerSeries.monomial (i.val + 1) (c (i.val + 1)) : K⟦X⟧) ^ (κ i)
         = PowerSeries.monomial (∑ i, (κ i) * (i.val + 1)) (∏ i, c (i.val + 1) ^ (κ i)) := by
-      simp_rw [PowerSeries.monomial_pow]; rw [prod_monomial]
+      simp_rw [PowerSeries.monomial_pow]; rw [PowerSeries.prod_monomial]
     rw [hp, ← nsmul_eq_mul, map_nsmul, PowerSeries.coeff_monomial, nsmul_eq_mul]
   rw [hA, hB]
   simp_rw [mul_ite, mul_zero]

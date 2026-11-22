@@ -21,13 +21,6 @@ namespace MetaMathlibExt
 /-! # Generalized Stirling matrix factorization
 -/
 
-private theorem P_monic_aux (b c : ℝ) (k : ℕ) :
-    (∏ i ∈ Finset.range k,
-      (Polynomial.X - Polynomial.C (c + (i : ℝ) * b) : Polynomial ℝ)).Monic := by
-  apply Polynomial.monic_prod_of_monic
-  intro i _
-  apply Polynomial.monic_X_sub_C
-
 private theorem P_natDegree_aux (b c : ℝ) (k : ℕ) :
     (∏ i ∈ Finset.range k,
       (Polynomial.X - Polynomial.C (c + (i : ℝ) * b) : Polynomial ℝ)).natDegree = k := by
@@ -71,7 +64,7 @@ private theorem coeff_top_aux (b c : ℝ) (f : ℕ → ℝ) (n : ℕ) :
     exact Polynomial.coeff_eq_zero_of_natDegree_lt hlt
   rw [Finset.sum_eq_zero hzero, zero_add]
   rw [Polynomial.coeff_C_mul]
-  have hm := P_monic_aux b c n
+  have hm := Polynomial.monic_prod_X_sub_C (fun i : ℕ => c + (i : ℝ) * b) (Finset.range n)
   have hd := P_natDegree_aux b c n
   have hmc := Polynomial.Monic.coeff_natDegree hm
   rw [hd] at hmc

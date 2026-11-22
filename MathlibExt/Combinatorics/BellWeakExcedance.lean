@@ -100,14 +100,6 @@ private theorem root_idem (n : ℕ) (σ : Equiv.Perm (Fin n)) (i : Fin n) :
 
 /-! ## Part A: Finpartitions are counted by Bell numbers -/
 
-private theorem finpartition_eq_of_parts_eq {α : Type*} [Lattice α] [OrderBot α]
-    {a : α} {P Q : Finpartition a} (h : P.parts = Q.parts) : P = Q := by
-  obtain ⟨p1, s1, u1, b1⟩ := P
-  obtain ⟨p2, s2, u2, b2⟩ := Q
-  simp only at h
-  subst h
-  rfl
-
 private theorem card_finpartition_univ (n : ℕ) :
     Fintype.card (Finpartition (Finset.univ : Finset (Fin n))) = Nat.bell n := by
   simpa using Finpartition.card_eq_bell (Finset.univ : Finset (Fin n))
@@ -951,7 +943,7 @@ private theorem part_eq_toPart_ofPartPerm {n : ℕ}
 private theorem toPart_ofPartPerm {n : ℕ}
     (P : Finpartition (Finset.univ : Finset (Fin n))) :
     toPart n (ofPartPerm P) = P := by
-  apply finpartition_eq_of_parts_eq
+  apply Finpartition.ext
   ext t
   constructor
   · intro ht
