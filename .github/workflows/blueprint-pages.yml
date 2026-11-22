@@ -238,7 +238,12 @@ jobs:
         env:
           DEPLOYING: ${{ vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group' }}
         run: |
+          set -euo pipefail
           bytes=$(du -sb site | cut -f1)
+          if ! [[ "$bytes" =~ ^[0-9]+$ ]]; then
+            echo "::error title=Site size unknown::du did not report the built site's size in bytes."
+            exit 1
+          fi
           mb=$((bytes / 1000000))
           echo "The built site is ${mb} MB. GitHub Pages publishes at most 1,000 MB." | tee -a "$GITHUB_STEP_SUMMARY"
           if [ "$bytes" -gt 1000000000 ]; then

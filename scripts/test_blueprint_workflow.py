@@ -368,21 +368,26 @@ class BlueprintWorkflowTests(unittest.TestCase):
             self.assertNotIn("continue-on-error", step)
             self.assertFalse(step.get("uses", "").startswith(("actions/upload-pages-artifact@", "actions/deploy-pages@")))
 
-    def run_size_check(self, size, deploying):
+    def run_size_step(self, du_script, deploying):
+        """Run the size step with `du` replaced by `du_script`; return its result and summary."""
         step = self.step("Check the site against GitHub Pages' size limit")
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / "bin").mkdir()
             du = root / "bin" / "du"
-            du.write_text(f"#!/bin/sh\nprintf '{size}\\tsite\\n'\n")
+            du.write_text(du_script)
             du.chmod(0o755)
             summary = root / "summary.md"
             env = {"PATH": f"{root / 'bin'}:/usr/bin:/bin", "GITHUB_STEP_SUMMARY": str(summary),
                    "DEPLOYING": "true" if deploying else "false"}
             result = subprocess.run(["bash", "-e", "-c", step["run"]], cwd=root, env=env,
                                     text=True, capture_output=True, check=False)
-            self.assertIn(f"The built site is {size // 1000000} MB.", summary.read_text())
-            return result
+            return result, summary.read_text() if summary.exists() else ""
+
+    def run_size_check(self, size, deploying):
+        result, summary = self.run_size_step(f"#!/bin/sh\nprintf '{size}\\tsite\\n'\n", deploying)
+        self.assertIn(f"The built site is {size // 1000000} MB.", summary)
+        return result
 
     def test_site_size_warns_from_900_mb_and_fails_only_a_publishing_build_over_1_gb(self):
         for size, deploying, code, annotation in (
@@ -399,6 +404,17 @@ class BlueprintWorkflowTests(unittest.TestCase):
                     self.assertNotIn("::", result.stdout)
                 else:
                     self.assertIn(annotation, result.stdout)
+
+    def test_site_size_check_fails_when_du_reports_no_size(self):
+        # A failing du, or output that is not a byte count, must fail the step on every build,
+        # not report 0 MB and pass.
+        for du_script in ("#!/bin/sh\necho 'du: cannot access site' >&2\nexit 1\n",
+                          "#!/bin/sh\nprintf 'unknown\\tsite\\n'\n", "#!/bin/sh\nexit 0\n"):
+            for deploying in (False, True):
+                with self.subTest(du=du_script, deploying=deploying):
+                    result, summary = self.run_size_step(du_script, deploying)
+                    self.assertNotEqual(result.returncode, 0, result.stdout)
+                    self.assertNotIn("The built site is", summary)
 
     def test_site_size_check_deploys_exactly_when_the_upload_does(self):
         step = self.step("Check the site against GitHub Pages' size limit")
