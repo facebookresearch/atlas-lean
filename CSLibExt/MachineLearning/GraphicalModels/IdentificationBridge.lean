@@ -19,7 +19,7 @@ determined by the observation `obs` on a model class `C`;
 estimand `τ` is determined by the observation law `P`. This file transports
 identification results between the two notions:
 
-* on the full parameter space the two agree definitionally
+* on the full parameter space the two are equivalent
   (`identifiedOn_univ_iff_isIdentifiedBy`);
 * a class `C` is the full space of its subtype, and post-composing the
   observation with a map injective on the observed values preserves
@@ -41,7 +41,8 @@ open MeasureTheory Finset
 open MathlibExt.Probability (weightLaw)
 open MathlibExt.Probability.Statistics (IsIdentifiedBy)
 
-/-- E0 (acceptance 1, literal reading; the claim in Identifiability.lean:41-43). -/
+/-- On the full parameter space, `IdentifiedOn` is `IsIdentifiedBy`: the two trivial
+membership premises in `IdentifiedOn Set.univ P τ` carry no content. -/
 theorem identifiedOn_univ_iff_isIdentifiedBy {Θ X : Type*} [MeasurableSpace X]
     (P : Θ → Measure X) (τ : Θ → ℝ) :
     IdentifiedOn (Set.univ : Set Θ) P τ ↔ IsIdentifiedBy P τ := by
@@ -51,7 +52,8 @@ theorem identifiedOn_univ_iff_isIdentifiedBy {Θ X : Type*} [MeasurableSpace X]
   · intro h m _ m' _ hP
     exact h m m' hP
 
-/-- E1: a class is the full parameter space of its subtype (helper; may be private). -/
+/-- A class is the full parameter space of its subtype, with the observation and the
+functional restricted along the subtype coercion. -/
 theorem identifiedOn_iff_univ_subtype {M O R : Type*} (C : Set M) (obs : M → O) (Q : M → R) :
     IdentifiedOn C obs Q ↔
       IdentifiedOn (Set.univ : Set C) (fun m : C => obs m) (fun m : C => Q m) := by
@@ -61,8 +63,8 @@ theorem identifiedOn_iff_univ_subtype {M O R : Type*} (C : Set M) (obs : M → O
   · intro h m hm m' hm' hobs
     exact h ⟨m, hm⟩ (Set.mem_univ _) ⟨m', hm'⟩ (Set.mem_univ _) hobs
 
-/-- E2: post-compose the observation with a map injective on the observed values
-(helper; may be private). -/
+/-- Post-composing the observation with a map injective on the observed values of the
+class does not change identification. -/
 theorem identifiedOn_comp_iff {M O O' R : Type*} {C : Set M} {obs : M → O} {e : O → O'}
     (he : Set.InjOn e (obs '' C)) (Q : M → R) :
     IdentifiedOn C (fun m => e (obs m)) Q ↔ IdentifiedOn C obs Q := by
@@ -72,7 +74,9 @@ theorem identifiedOn_comp_iff {M O O' R : Type*} {C : Set M} {obs : M → O} {e 
   · intro h m hm m' hm' hcomp
     exact h m hm m' hm' (he ⟨m, hm, rfl⟩ ⟨m', hm', rfl⟩ hcomp)
 
-/-- E3 (transport; MODEL GATE = subtype). -/
+/-- Identification on a class `C` by an observation `obs` is identification on the subtype
+`↥C` by the encoded observation `e ∘ obs`, when the encoding `e` into measures is injective
+on the observed values. -/
 theorem identifiedOn_iff_isIdentifiedBy_subtype {M O X : Type*} [MeasurableSpace X]
     {C : Set M} {obs : M → O} {e : O → Measure X} (he : Set.InjOn e (obs '' C)) (Q : M → ℝ) :
     IdentifiedOn C obs Q ↔ IsIdentifiedBy (fun m : C => e (obs m)) (fun m : C => Q m) := by
@@ -82,8 +86,8 @@ theorem identifiedOn_iff_isIdentifiedBy_subtype {M O X : Type*} [MeasurableSpace
   · intro h m hm m' hm' hobs
     exact h ⟨m, hm⟩ ⟨m', hm'⟩ (congrArg e hobs)
 
-/-- E0' (acceptance 1, model-assumption reading): the `Set.univ` equivalence on BayesNet
-joints across the encoding. -/
+/-- For Bayesian networks on the full model space, identification by the joint weight is
+identification by the encoded joint law `weightLaw b.joint`. -/
 theorem BayesNet.identifiedOn_univ_joint_iff_isIdentifiedBy {α : Type*} [Fintype α]
     [Nonempty α] [MeasurableSpace α] [MeasurableSingletonClass α] {n : ℕ}
     (Q : BayesNet α n → ℝ) :
@@ -102,29 +106,20 @@ theorem BayesNet.identifiedOn_univ_joint_iff_isIdentifiedBy {α : Type*} [Fintyp
       MathlibExt.Probability.measureReal_weightLaw_singleton hb' x] at h
   exact (identifiedOn_comp_iff he Q).symm.trans (identifiedOn_univ_iff_isIdentifiedBy _ _)
 
-/-- W1: `weightLaw` is injective on nonnegative weights. -/
-theorem weightLaw_injOn_nonneg {𝓧 : Type*} [Fintype 𝓧] [MeasurableSpace 𝓧]
-    [MeasurableSingletonClass 𝓧] :
-    Set.InjOn (weightLaw (𝓧 := 𝓧)) {g | ∀ x, 0 ≤ g x} := by
-  intro g hg g' hg' hgg
-  funext x
-  have h : (weightLaw g).real {x} = (weightLaw g').real {x} := by rw [hgg]
-  rw [MathlibExt.Probability.measureReal_weightLaw_singleton hg x,
-    MathlibExt.Probability.measureReal_weightLaw_singleton hg' x] at h
-  exact h
-
-/-- `weightLaw` is injective on the image of BayesNet joints (W1 + nonnegativity). -/
+/-- `weightLaw` is injective on the image of BayesNet joints, since joints are
+nonnegative. -/
 theorem weightLaw_injOn_joint_image {α : Type*} [Fintype α] [Nonempty α] [MeasurableSpace α]
     [MeasurableSingletonClass α] {n : ℕ} (C : Set (BayesNet α n)) :
     Set.InjOn weightLaw ((fun b : BayesNet α n => b.joint) '' C) := by
   intro g hg g' hg' hgg
   obtain ⟨b, -, rfl⟩ := hg
   obtain ⟨b', -, rfl⟩ := hg'
-  exact weightLaw_injOn_nonneg (fun x => b.toChain.joint_nonneg n x)
+  exact MathlibExt.Probability.weightLaw_injOn_nonneg (fun x => b.toChain.joint_nonneg n x)
     (fun x => b'.toChain.joint_nonneg n x) hgg
 
 namespace BayesNet
-/-- T1. -/
+/-- The back-door criterion of `Identifiability.lean` as an `IsIdentifiedBy` statement on
+the back-door model class, with networks observed through the encoded joint law. -/
 theorem isIdentifiedBy_backdoorClass {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α]
     [MeasurableSpace α] [MeasurableSingletonClass α] {n : ℕ}
     (pa : (k : Fin n) → Finset (Fin k)) (k y : Fin n) (Z : Finset (Fin n)) (a v : α)
@@ -137,7 +132,8 @@ theorem isIdentifiedBy_backdoorClass {α : Type*} [Fintype α] [DecidableEq α] 
     (BayesNet.identifiedOn_backdoorClass pa k y Z a v hky hyZ)
 
 -- `(α := α)` pins the value type, which no argument of `frontdoorClass` mentions.
-/-- T2. -/
+/-- The front-door criterion of `Identifiability.lean` as an `IsIdentifiedBy` statement on
+the front-door model class, with networks observed through the encoded joint law. -/
 theorem isIdentifiedBy_frontdoorClass {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α]
     [MeasurableSpace α] [MeasurableSingletonClass α] {n : ℕ}
     (pa : (k : Fin n) → Finset (Fin k)) (k y : Fin n) (M : Finset (Fin n)) (a v : α)
