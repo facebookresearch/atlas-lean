@@ -30,8 +30,9 @@ paper (Caalim and Tanaka, *On the monoid of lexicographically minimal
 extensions*, arXiv:2505.20018, Section 1), which restates them from this
 paper. -/
 
-/-- An infinite binomid index: a sequence of nonnegative integers with
-`∑_{i=n-k+1}^{n} e_i ≥ ∑_{i=1}^{k} e_i` for all `1 ≤ k ≤ n`.
+/-- **Binomid index.** An infinite binomid index is a sequence $(e_1, e_2, \dots)$ of
+nonnegative integers such that $\sum_{i=n-k+1}^{n} e_i \ge \sum_{i=1}^{k} e_i$ for all
+$1 \le k \le n$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53; definition as restated
@@ -39,7 +40,8 @@ in arXiv:2505.20018, Section 1. -/
 public def IsBinomidIndex (η : ℕ → ℕ) : Prop :=
   ∀ k n : ℕ, k ≤ n → ∑ i ∈ Finset.range k, η i ≤ ∑ i ∈ Finset.Ico (n - k) n, η i
 
-/-- Constant sequences are binomid indices.
+/-- **Constant sequences are binomid indices.** For every natural number $c$, the constant
+sequence $(c, c, c, \dots)$ is a binomid index.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53. -/
@@ -47,9 +49,11 @@ public theorem isBinomidIndex_const (c : ℕ) : IsBinomidIndex fun _ => c := by
   intro k n hk
   simp [Finset.sum_const, Nat.sub_sub_self hk]
 
-/-- `η` is the lex-minimal extension of its first `m` entries: `η` is a
-binomid index and is lexicographically at most every binomid index `γ`
-with the same first `m` entries.
+/-- **Lex-minimal extension.** Let $e = (e_1, e_2, \dots)$ be a sequence of nonnegative integers
+and $m \ge 0$. Then $e$ is the lex-minimal extension of $(e_1, \dots, e_m)$ when $e$ is an
+infinite binomid index and, for every infinite binomid index $g$ with $g_i = e_i$ for all
+$i \le m$, either $g = e$ or $e$ is lexicographically smaller than $g$: there is a $j$ with
+$e_i = g_i$ for all $i < j$ and $e_j < g_j$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53; definition as restated
@@ -58,15 +62,17 @@ public def IsLexMinimalExtensionOf (η : ℕ → ℕ) (m : ℕ) : Prop :=
   IsBinomidIndex η ∧ ∀ γ : ℕ → ℕ, IsBinomidIndex γ → (∀ i < m, γ i = η i) →
     η = γ ∨ ∃ j, (∀ i < j, η i = γ i) ∧ η j < γ j
 
-/-- `η` is a lex-minimal extension (of some finite binomid index); these
-form the paper's set `L`.
+/-- **Lex-minimal extensions.** A sequence $e = (e_1, e_2, \dots)$ of nonnegative integers is a
+lex-minimal extension when, for some $m \ge 0$, it is the lex-minimal extension of
+$(e_1, \dots, e_m)$. The set of all lex-minimal extensions is denoted $L$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53. -/
 public def IsLexMinimalExtension (η : ℕ → ℕ) : Prop :=
   ∃ m : ℕ, IsLexMinimalExtensionOf η m
 
-/-- The zero sequence is the lex-minimal extension of each of its prefixes.
+/-- **The zero sequence is lex-minimal.** For every $m \ge 0$, the zero sequence
+$(0, 0, \dots)$ is the lex-minimal extension of its first $m$ entries.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53. -/
@@ -88,7 +94,10 @@ public theorem isLexMinimalExtensionOf_zero (m : ℕ) :
     push Not at h
     simp [h i]
 
-/-- The right shift `σ^l`, sending `(e_1, e_2, …)` to `(0^l, e_1, e_2, …)`.
+/-- **Right shift of a sequence.** For a natural number $l$, the right shift $\sigma^l$ sends a
+sequence $\eta = (e_1, e_2, \dots)$ of nonnegative integers to the sequence
+$(0, \dots, 0, e_1, e_2, \dots)$ obtained by prepending $l$ zeros: its first $l$ entries are $0$
+and its $(l + i)$-th entry is $e_i$ for every $i \ge 1$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53; definition as restated
@@ -96,7 +105,8 @@ in arXiv:2505.20018, Section 1. -/
 public def binomidShift (l : ℕ) (η : ℕ → ℕ) : ℕ → ℕ :=
   fun i => if i < l then 0 else η (i - l)
 
-/-- `σ^0` is the identity.
+/-- **Shifting by zero places is the identity.** For every sequence $\eta$ of nonnegative
+integers, $\sigma^0(\eta) = \eta$, where $\sigma^l$ is the right shift that prepends $l$ zeros.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53. -/
@@ -104,8 +114,8 @@ public theorem binomidShift_zero (η : ℕ → ℕ) : binomidShift 0 η = η := 
   funext i
   simp [binomidShift]
 
-/-- Proposition 1: a monotonic increasing sequence of nonnegative integers is
-a binomid index.
+/-- **Monotone sequences are binomid indices.** Every non-decreasing sequence
+$e_1 \le e_2 \le \cdots$ of nonnegative integers is an infinite binomid index.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 1
@@ -113,10 +123,13 @@ Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 1
 public theorem_wanted isBinomidIndex_of_monotone {η : ℕ → ℕ} (hη : Monotone η) :
     IsBinomidIndex η
 
-/-- Lemma 1: with `s_n = e_1 + ⋯ + e_n`, `η` is a binomid index if and only if
-`s_n ≥ s_{n-k} + s_k` for `1 ≤ k < n`; and if `η` is the lex-minimal
-extension of its first `m` entries, then `s_n = max_{1 ≤ k < n} (s_{n-k} + s_k)`
-for all `n > m` (the maximum over the empty range, for `n = 1`, is `0`).
+/-- **Partial-sum characterization of binomid indices.** Let $\eta = (e_1, e_2, \dots)$ be a
+sequence of nonnegative integers with partial sums $s_n = e_1 + \dots + e_n$ (so $s_0 = 0$).
+Then $\eta$ is a binomid index if and only if $s_{n-k} + s_k \le s_n$ for all $k$ and $n$ with
+$1 \le k < n$. Moreover, for every $m$, if $\eta$ is the lex-minimal extension of its first $m$
+entries, then for every $n > m$
+$$s_n = \max_{1 \le k < n} (s_{n-k} + s_k),$$
+where the maximum over the empty range (for $n = 1$) is taken to be $0$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Lemma 1
@@ -130,9 +143,11 @@ public theorem_wanted isBinomidIndex_iff_partialSum (η : ℕ → ℕ) :
         = (Finset.Ico 1 n).sup fun k =>
             ∑ i ∈ Finset.range (n - k), η i + ∑ i ∈ Finset.range k, η i
 
-/-- Proposition 3: if a finite binomid index `η = (e_1, …, e_m)` (`m ≥ 1`)
-is monotonic increasing, then its lex-minimal extension is the periodic
-repetition `η^∞`. The finite index is the first `m` values of `e`.
+/-- **Monotone finite binomid indices extend periodically.** Let $m \ge 1$ and let
+$e_1 \le e_2 \le \cdots \le e_m$ be nonnegative integers. Then the periodic sequence
+$(e_1, \dots, e_m, e_1, \dots, e_m, \dots)$ is the lex-minimal extension of $(e_1, \dots, e_m)$.
+
+A non-decreasing finite sequence is automatically a finite binomid index.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 3
@@ -141,9 +156,10 @@ public theorem_wanted isLexMinimalExtensionOf_periodic_of_monotoneOn {m : ℕ}
     (hm : 0 < m) {e : ℕ → ℕ} (he : MonotoneOn e (Set.Iio m)) :
     IsLexMinimalExtensionOf (fun i => e (i % m)) m
 
-/-- Proposition 4: the periodic part of a lex-minimal extension does not begin
-at the second coordinate: if `(e_2, e_3, …)` is periodic with period `p`,
-then `e_1 = e_{1+p}`, so the whole sequence is periodic.
+/-- **A lex-minimal extension periodic from its second entry is periodic.** Let
+$\eta = (e_1, e_2, \dots)$ be a lex-minimal extension and let $p \ge 1$. If $e_{i+p} = e_i$
+for every $i \ge 2$, then $e_{1+p} = e_1$, so the whole sequence $\eta$ is periodic with
+period $p$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 4
@@ -152,8 +168,10 @@ public theorem_wanted IsLexMinimalExtension.apply_period_eq_apply_zero {η : ℕ
     (hη : IsLexMinimalExtension η) {p : ℕ} (hp : 0 < p)
     (hper : ∀ i, 1 ≤ i → η (i + p) = η i) : η p = η 0
 
-/-- Proposition 5: a purely periodic infinite binomid index is the
-lex-minimal extension of some finite binomid index.
+/-- **Periodic binomid indices are lex-minimal extensions.** If an infinite binomid index
+$e = (e_1, e_2, \dots)$ is periodic, that is, there is $p \ge 1$ with $e_{i+p} = e_i$ for all
+$i$, then $e$ is a lex-minimal extension: it is the lex-minimal extension of
+$(e_1, \dots, e_m)$ for some $m \ge 0$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 5
@@ -162,8 +180,12 @@ public theorem_wanted isLexMinimalExtension_of_periodic {η : ℕ → ℕ}
     (hη : IsBinomidIndex η) {p : ℕ} (hp : 0 < p) (hper : ∀ i, η (i + p) = η i) :
     IsLexMinimalExtension η
 
-/-- Corollary 1: the componentwise sum of two lex-minimal extensions is a
-lex-minimal extension (so `L` is a monoid under componentwise addition).
+/-- **Lex-minimal extensions are closed under addition.** If $\eta_1$ and $\eta_2$ are
+lex-minimal extensions, then their componentwise sum $\eta_1 + \eta_2$ is a lex-minimal
+extension.
+
+Since the zero sequence is also a lex-minimal extension, the set $L$ of lex-minimal extensions
+is a monoid under componentwise addition.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Corollary 1
@@ -172,7 +194,11 @@ public theorem_wanted IsLexMinimalExtension.add {η₁ η₂ : ℕ → ℕ}
     (h₁ : IsLexMinimalExtension η₁) (h₂ : IsLexMinimalExtension η₂) :
     IsLexMinimalExtension (η₁ + η₂)
 
-/-- Proposition 6: for `l ≠ m`, `σ^l(L) ∩ σ^m(L) = {0^∞}`.
+/-- **Distinct shifts of lex-minimal extensions meet only in zero.** Let $L$ be the set of
+lex-minimal extensions, and for a natural number $l$ let $\sigma^l$ be the right shift that
+prepends $l$ zeros to a sequence. For natural numbers $l \neq m$,
+$\sigma^l(L) \cap \sigma^m(L) = \{(0, 0, 0, \dots)\}$: the only sequence in both images is
+the zero sequence.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 6
@@ -182,8 +208,9 @@ public theorem_wanted binomidShift_image_inter_eq_zero {l m : ℕ} (hlm : l ≠ 
         ∩ binomidShift m '' {η | IsLexMinimalExtension η}
       = {fun _ => 0}
 
-/-- Corollary 3: for every prime `p` there are infinitely many `n` such that
-`p` divides every binomial coefficient `binom(n, k)` with `1 ≤ k < n`.
+/-- **Primes divide all inner binomial coefficients of infinitely many rows.** For every prime
+$p$ there are infinitely many natural numbers $n$ such that $p$ divides the binomial coefficient
+$\binom{n}{k}$ for every $k$ with $1 \le k < n$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Corollary 3
@@ -191,10 +218,10 @@ Binomid Index*, INTEGERS 24 (2024), Article A53, Corollary 3
 public theorem_wanted infinite_setOf_prime_dvd_choose {p : ℕ} (hp : p.Prime) :
     {n : ℕ | ∀ k, 1 ≤ k → k < n → p ∣ n.choose k}.Infinite
 
-/-- Corollary 4: for every prime `p` there are infinitely many `n` such that
-every Fibonomial coefficient `[n, k]_F = F_n! / (F_k! F_{n-k}!)` with
-`1 ≤ k < n` is an integer multiple of `p` (`F_n!` is
-`fibonacciFactorial`).
+/-- **Primes divide all inner Fibonomial coefficients of infinitely many rows.** Let $F_n$ be
+the Fibonacci numbers and $F_n! = F_1 F_2 \cdots F_n$ the Fibonacci factorial. For every prime
+$p$ there are infinitely many natural numbers $n$ such that for every $k$ with $1 \le k < n$ the
+Fibonomial coefficient $F_n! / (F_k! \, F_{n-k}!)$ is an integer multiple of $p$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Corollary 4
@@ -204,14 +231,16 @@ public theorem_wanted infinite_setOf_prime_dvd_fibonomial {p : ℕ} (hp : p.Prim
       fibonacciFactorial n / (fibonacciFactorial k * fibonacciFactorial (n - k))
         = (p : ℚ) * z}.Infinite
 
-/-- Proposition 2: the lex-minimal extension of a finite binomid index is given
-greedily. If the first `m ≥ 1` entries of `f` form a finite binomid index and,
-for every `j ≥ m`, `f j` is the maximum over `1 ≤ k ≤ j` of
-`∑_{i<k} f i - ∑_{j+1-k ≤ i < j} f i` (the paper's
-`f_n = max_{1 ≤ k < n} (∑_{i=1}^k f_i - ∑_{i=n-k+1}^{n-1} f_i)` with `n = j + 1`),
-then `f` is the lex-minimal extension of its first `m` entries. The maximum is
-stated in `ℕ` as: `f j` plus the second sum dominates every first sum, with
-equality for some `k`.
+/-- **The lex-minimal extension is computed greedily.** Let $m \ge 1$ and let
+$f = (f_1, f_2, \dots)$ be a sequence of nonnegative integers whose first $m$ entries form a
+finite binomid index, that is, $\sum_{i=n-k+1}^{n} f_i \ge \sum_{i=1}^{k} f_i$ for all
+$1 \le k \le n \le m$. Suppose that for every $n > m$ the entry $f_n$ equals the maximum,
+over $1 \le k < n$, of the integers $\sum_{i=1}^{k} f_i - \sum_{i=n-k+1}^{n-1} f_i$. Then $f$
+is the lex-minimal extension of $(f_1, \dots, f_m)$.
+
+The differences are taken in the integers and may be negative; the condition says that
+$f_n + \sum_{i=n-k+1}^{n-1} f_i \ge \sum_{i=1}^{k} f_i$ for every $1 \le k < n$, with equality
+for some such $k$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Proposition 2
@@ -225,12 +254,12 @@ public theorem_wanted isLexMinimalExtensionOf_of_greedy {m : ℕ} (hm : 0 < m) {
       ∑ i ∈ Finset.range k, f i = f j + ∑ i ∈ Finset.Ico (j + 1 - k) j, f i) :
     IsLexMinimalExtensionOf f m
 
-/-- Corollary 2, first part: if `η` is the lex-minimal extension of its first
-`m ≥ 1` entries and `p` is prime, then for every `n > m` some `p^η`-nomid
-coefficient `[n, k]_{p^η}` with `1 ≤ k < n` equals `1`. The `f`-nomid
-coefficient `[n, k]_f = f_n ⋯ f_{n-k+1} / (f_k ⋯ f_1)` is
-`generalizedBinomialCoefficient f k (n - k)`, applied to the `1`-indexed
-sequence `i ↦ p ^ η (i - 1)`.
+/-- **Lex-minimal extensions have a nomid coefficient equal to one.** Let $m \ge 1$, let
+$\eta = (e_1, e_2, \dots)$ be the lex-minimal extension of its first $m$ entries, and let $p$ be a
+prime. Write $f_i = p^{e_i}$ for $i \ge 1$ and, for $1 \le k \le n$, let
+$[n, k]_f = \frac{f_n f_{n-1} \cdots f_{n-k+1}}{f_k f_{k-1} \cdots f_1}$ be the $f$-nomid
+coefficient, the generalized binomial coefficient of $f$. Then for every $n > m$ there is some $k$
+with $1 \le k < n$ and $[n, k]_f = 1$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Corollary 2
@@ -241,10 +270,12 @@ public theorem_wanted IsLexMinimalExtensionOf.exists_nomid_eq_one {η : ℕ → 
     ∃ k, 1 ≤ k ∧ k < n ∧
       generalizedBinomialCoefficient (fun i => p ^ η (i - 1)) k (n - k) = 1
 
-/-- Corollary 2, second part: if a binomid index `μ` is not a lex-minimal
-extension of any finite binomid index and `p` is prime, then there are
-infinitely many `n` such that every `p^μ`-nomid coefficient `[n, k]_{p^μ}`
-with `1 ≤ k < n` is an integer multiple of `p`.
+/-- **Nomid coefficients of binomid indices that are not lex-minimal extensions.** Let
+$\mu = (e_1, e_2, \dots)$ be a binomid index such that for no $m$ is $\mu$ the lex-minimal
+extension of its first $m$ entries, and let $p$ be a prime. Write $f_i = p^{e_i}$ for $i \ge 1$
+and let $[n, k]_f = \frac{f_n f_{n-1} \cdots f_{n-k+1}}{f_k f_{k-1} \cdots f_1}$ be the
+$f$-nomid coefficient. Then there are infinitely many natural numbers $n$ such that for every $k$
+with $1 \le k < n$ the coefficient $[n, k]_f$ is an integer multiple of $p$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Corollary 2
@@ -255,10 +286,10 @@ public theorem_wanted infinite_setOf_prime_dvd_nomid_of_not_isLexMinimalExtensio
     {n : ℕ | ∀ k, 1 ≤ k → k < n → ∃ z : ℤ,
       generalizedBinomialCoefficient (fun i => p ^ μ (i - 1)) k (n - k) = (p : ℚ) * z}.Infinite
 
-/-- The average `A_{i,0}(η) = s_i / i` of the first `i` entries of `η`, where
-`s_i = e_1 + ⋯ + e_i` is `∑ l ∈ Finset.range i, η l`; in Lean `A_{0,0} = 0`.
-The two-index average `A_{i,l}(η) = (s_{i+l} - s_l) / i` is written inline as
-`(∑ j ∈ Finset.Ico l (i + l), η j) / i`.
+/-- **Initial averages of a sequence.** For a sequence $\eta = (e_1, e_2, \dots)$ of
+nonnegative integers and $i \ge 1$, the average $A_{i,0}(\eta)$ is the rational number
+$s_i / i$, where $s_i = e_1 + \dots + e_i$ is the sum of the first $i$ entries; for $i = 0$
+the value is $A_{0,0}(\eta) = 0$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Section 3; the same average
@@ -268,7 +299,9 @@ INTEGERS 26 (2026), Article A113, Section 2. -/
 public def binomidAverage (η : ℕ → ℕ) (i : ℕ) : ℚ :=
   ((∑ l ∈ Finset.range i, η l : ℕ) : ℚ) / i
 
-/-- Every average `A_{i,0}` with `i ≥ 1` of the constant sequence `c^∞` equals `c`.
+/-- **Averages of a constant sequence.** For every natural number $c$ and every $i \ge 1$,
+the average $A_{i,0}$ of the first $i$ entries of the constant sequence $(c, c, c, \dots)$
+equals $c$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Section 3. -/
@@ -278,15 +311,18 @@ public theorem binomidAverage_const (c : ℕ) {i : ℕ} (hi : 1 ≤ i) :
   simp only [binomidAverage, Finset.sum_const, Finset.card_range, smul_eq_mul, Nat.cast_mul]
   field_simp
 
-/-- The upper average `A_0(η) = limsup_i A_{i,0}(η)`, valued in `EReal`
-(it is `⊤` when `s_i / i` is unbounded).
+/-- **Upper average of a sequence.** For a sequence $\eta = (e_1, e_2, \dots)$ of nonnegative
+integers with partial sums $s_i = e_1 + \dots + e_i$ and averages $A_{i,0}(\eta) = s_i / i$,
+the upper average of $\eta$ is $A_0(\eta) = \limsup_{i \to \infty} A_{i,0}(\eta)$, taken in
+the extended real numbers; it is $+\infty$ when $s_i / i$ is unbounded.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Section 3. -/
 public noncomputable def binomidUpperAverage (η : ℕ → ℕ) : EReal :=
   Filter.limsup (fun i => ((binomidAverage η i : ℝ) : EReal)) Filter.atTop
 
-/-- The upper average of the constant sequence `c^∞` is `c`.
+/-- **Upper average of a constant sequence.** For every natural number $c$, the upper average
+$A_0$ of the constant sequence $(c, c, c, \dots)$ equals $c$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Section 3. -/
@@ -299,14 +335,18 @@ public theorem binomidUpperAverage_const (c : ℕ) :
     simp
   rw [binomidUpperAverage, Filter.limsup_congr h, Filter.limsup_const]
 
-/-- The Average Condition: `A_0(η) = A_{i,0}(η)` for some `i ≥ 1`.
+/-- **The Average Condition.** A sequence $\eta = (e_1, e_2, \dots)$ of nonnegative integers
+satisfies the Average Condition when its upper average $A_0(\eta)$, the limit superior as
+$n \to \infty$ of the averages $A_{n,0}(\eta) = (e_1 + \dots + e_n)/n$ taken in the extended
+real line, equals $A_{i,0}(\eta)$ for some $i \ge 1$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Lemma 3. -/
 public def BinomidAverageCondition (η : ℕ → ℕ) : Prop :=
   ∃ i, 1 ≤ i ∧ binomidUpperAverage η = ((binomidAverage η i : ℝ) : EReal)
 
-/-- Constant sequences satisfy the Average Condition.
+/-- **Constant sequences satisfy the Average Condition.** For every natural number $c$, the
+constant sequence $(c, c, c, \dots)$ satisfies the Average Condition.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Lemma 3. -/
@@ -314,10 +354,11 @@ public theorem binomidAverageCondition_const (c : ℕ) :
     BinomidAverageCondition fun _ => c :=
   ⟨1, le_rfl, by rw [binomidUpperAverage_const, binomidAverage_const c le_rfl]; norm_cast⟩
 
-/-- Lemma 2, parts 1-3: for a binomid index `η` and `i, l ≥ 1`,
-`A_{i,l} ≥ A_{i,0}`, `A_{ki,0} ≥ A_{i,0}` (for `k ≥ 1`), and
-`A_{i+l,0} = i/(i+l) A_{i,l} + l/(l+i) A_{l,0}`, with `A_{i,0}` as
-`binomidAverage η i` and `A_{i,l}` written out as `(s_{i+l} - s_l) / i`.
+/-- **Averages of a binomid index.** Let $\eta = (e_1, e_2, \dots)$ be a binomid index, write
+$s_n = e_1 + \dots + e_n$, and for $i \ge 1$ and $l \ge 0$ let $A_{i,l} = (s_{i+l} - s_l)/i$
+be the average of $e_{l+1}, \dots, e_{l+i}$. Then for all $i, l \ge 1$: $A_{i,l} \ge A_{i,0}$;
+$A_{ki,0} \ge A_{i,0}$ for every $k \ge 1$; and
+$A_{i+l,0} = \frac{i}{i+l} A_{i,l} + \frac{l}{l+i} A_{l,0}$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Lemma 2
@@ -330,8 +371,10 @@ public theorem_wanted IsBinomidIndex.binomidAverage_props {η : ℕ → ℕ} (h�
         (i : ℚ) / (i + l) * (((∑ j ∈ Finset.Ico l (i + l), η j : ℕ) : ℚ) / i) +
           (l : ℚ) / (l + i) * binomidAverage η l
 
-/-- Lemma 2, part 4: for a binomid index `η`, `A_0(η) = sup_{i ≥ 1} A_{i,0}(η)`
-in `EReal`.
+/-- **The upper average of a binomid index is the supremum of its averages.** Let $\eta$ be a
+binomid index, let $s_i$ be the sum of its first $i$ entries, let $A_{i,0}(\eta) = s_i / i$ for
+$i \ge 1$, and let $A_0(\eta) = \limsup_{i \to \infty} A_{i,0}(\eta)$ be its upper average.
+Then, in the extended real numbers, $A_0(\eta) = \sup_{i \ge 1} A_{i,0}(\eta)$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Lemma 2
@@ -340,7 +383,8 @@ public theorem_wanted IsBinomidIndex.binomidUpperAverage_eq_iSup {η : ℕ → �
     (hη : IsBinomidIndex η) :
     binomidUpperAverage η = ⨆ i : ℕ, ⨆ (_ : 1 ≤ i), ((binomidAverage η i : ℝ) : EReal)
 
-/-- Lemma 3: a lex-minimal extension satisfies the Average Condition.
+/-- **Lex-minimal extensions satisfy the Average Condition.** Every lex-minimal extension
+satisfies the Average Condition.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Lemma 3
@@ -348,9 +392,11 @@ Binomid Index*, INTEGERS 24 (2024), Article A53, Lemma 3
 public theorem_wanted IsLexMinimalExtension.binomidAverageCondition {η : ℕ → ℕ}
     (hη : IsLexMinimalExtension η) : BinomidAverageCondition η
 
-/-- Theorem 1: an infinite binomid index satisfying the Average Condition is
-the lex-minimal extension of some finite binomid index, and it is eventually
-periodic.
+/-- **The Average Condition gives eventually periodic lex-minimal extensions.** If an
+infinite binomid index $e = (e_1, e_2, \dots)$ satisfies the Average Condition, then $e$ is
+a lex-minimal extension, that is, the lex-minimal extension of $(e_1, \dots, e_m)$ for some
+$m \ge 0$, and $e$ is eventually periodic: there are $N$ and $p \ge 1$ such that
+$e_{n+p} = e_n$ for all $n \ge N$.
 
 Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
 Binomid Index*, INTEGERS 24 (2024), Article A53, Theorem 1

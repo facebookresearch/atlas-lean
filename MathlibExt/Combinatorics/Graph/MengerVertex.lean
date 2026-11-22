@@ -1380,15 +1380,6 @@ private theorem sum_one_diff {W : Type*} [Fintype W]
     exact hothers v hv.1
   omega
 
-/-- Chains map forward along pointwise implications. -/
-private theorem isChain_mono {W : Type*} {r r' : W → W → Prop} {l : List W}
-    (h : ∀ a b, r a b → r' a b) (hc : List.IsChain r l) :
-    List.IsChain r' l := by
-  induction hc with
-  | nil => exact List.IsChain.nil
-  | singleton a => exact List.IsChain.singleton a
-  | cons_cons hr _ ih => exact List.IsChain.cons_cons (h _ _ hr) ih
-
 /-- Positive flow value reaches the sink along positive arcs. -/
 private theorem flow_pos_reachable {V : Type*} [Fintype V]
     (cap : (V × Bool) → (V × Bool) → ℕ) (S T : V × Bool)
@@ -1801,7 +1792,7 @@ private theorem flow_to_family {V : Type*} [Fintype V] [DecidableEq V]
           have h := isListStep_chain hchainL hstep
           exact h
         have hchainCap : List.IsChain (fun x y => 0 < splitCap G s t big x y) L :=
-          isChain_mono (fun a b hab => lt_of_lt_of_le hab (hf.1 a b)) hchainL
+          List.IsChain.imp (fun a b hab => lt_of_lt_of_le hab (hf.1 a b)) hchainL
         obtain ⟨l, hheadl, hlastl, hchainl, hndl, hstepsl⟩ :=
           split_chain_vertices G s t big L hchainCap hnL hhead hlast
         obtain ⟨w, hwsup⟩ := walk_of_chain G l hchainl hheadl hlastl
@@ -1955,11 +1946,6 @@ def IsSTVertexCut {V : Type*} [Fintype V] [DecidableEq V]
   s ∉ C ∧ t ∉ C ∧
     ¬ (((⊤ : G.Subgraph).deleteVerts (↑C : Set V)).spanningCoe.Reachable s t)
 
-/-- Every path has a nodup vertex list. -/
-private theorem path_val_nodup {V : Type*} {G : SimpleGraph V} {s t : V}
-    (p : G.Path s t) : (p.val).support.Nodup :=
-  p.property.support_nodup
-
 /-- Every walk with a nodup vertex list is a path. -/
 private def path_of_nodupWalk {V : Type*} {G : SimpleGraph V} {s t : V}
     (w : G.Walk s t) (h : w.support.Nodup) : G.Path s t :=
@@ -2071,7 +2057,7 @@ theorem menger_vertex_max_min
   · exact (isSTVertexCut_iff_walkSeparator G s t C).mpr ⟨hsC, htC, hhitC⟩
   · exact hCcard
   · intro l paths' hdisj
-    exact hmax l (fun i => (paths' i).val) (fun i => path_val_nodup (paths' i))
+    exact hmax l (fun i => (paths' i).val) (fun i => (paths' i).nodup_support)
       (fun i j hij v hvi hvj => hdisj i j hij v hvi hvj)
   · intro C' hcut
     obtain ⟨hs', ht', hhit'⟩ := (isSTVertexCut_iff_walkSeparator G s t C').mp hcut
