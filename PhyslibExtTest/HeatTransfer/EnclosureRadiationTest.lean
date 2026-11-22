@@ -31,17 +31,17 @@ These are elaboration and non-vacuity checks, not new results.
 - The aperture fixture is a black enclosure, and deleting the aperture node is not.
 - With emissivities `1/2` the two-surface radiosities solve the gray equations uniquely and the
   net powers are two fifths of the black ones; with emissivities `1` the black values return.
-- Two parallel gray plates of area `2` with emissivities `(1/2, 1/4)` at `(400, 300)` exchange
-  `7000000000 * σ`, the closed form, and the flux is half of it; at equal temperatures both
-  radiosities are the blackbody value and nothing is exchanged; the plates' view factors are not
-  an enclosure for the unequal areas `(1, 2)`.
+- In the infinite-plane idealization, two parallel gray plates of area `2` with emissivities
+  `(1/2, 1/4)` at `(400, 300)` exchange `7000000000 * σ`, the closed form, and the flux is half
+  of it; at equal temperatures both radiosities are the blackbody value and nothing is
+  exchanged; the plates' view factors are not an enclosure for the unequal areas `(1, 2)`.
 
 ## iii. Table of contents
 
 - A. Two-surface enclosure
 - B. Aperture as an environment node
 - C. Gray two-surface enclosure
-- D. Parallel gray plates
+- D. Parallel gray plates: the infinite-plane idealization
 
 ## iv. References
 
@@ -258,12 +258,12 @@ example (σ : ℝ) :
   rw [grayNetPower_eq_emitted_sub_absorbed hE hJ 0]
   simp [Fin.sum_univ_two]
 
-/-! ## D. Parallel gray plates -/
+/-! ## D. Parallel gray plates: the infinite-plane idealization -/
 
-/- Gray plates of area `2` with emissivities `ε = (1/2, 1/4)` at `T = (400, 300)`: the
-radiosities `J = (22100000000 * σ, 18600000000 * σ)` solve the equations, the net power leaving
-the hotter plate is `7000000000 * σ`, equal to `parallelPlatePower σ 2 (1/2) (1/4) 400 300`, and
-the flux is half of it, `3500000000 * σ`. -/
+/- Idealized gray plates (unit view factors, no edge loss) of area `2` with emissivities
+`ε = (1/2, 1/4)` at `T = (400, 300)`: the radiosities `J = (22100000000 * σ, 18600000000 * σ)`
+solve the equations, the net power leaving the hotter plate is `7000000000 * σ`, equal to
+`parallelPlatePower σ 2 (1/2) (1/4) 400 300`, and the flux is half of it, `3500000000 * σ`. -/
 example (σ : ℝ) :
     IsRadiosity σ ![1 / 2, 1 / 4] parallelPlateViewFactor ![400, 300]
         ![22100000000 * σ, 18600000000 * σ] ∧
