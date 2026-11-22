@@ -19,6 +19,8 @@ namespace MetaMathlibExt
 
 open Asymptotics Filter Finset
 
+-- Keep the public argument name `ha` for callers that supply positivity by name.
+set_option linter.unusedVariables false in
 /-- **Jakimczuk's lemma on sums of asymptotically equivalent terms.** Let $(a_i)_{i \ge 0}$ and
 $(b_i)_{i \ge 0}$ be real sequences with $a_i > 0$ and $b_i > 0$ for every $i \ge 1$. If
 $a_i \sim b_i$ as $i \to \infty$ and $\sum_{i=1}^{n} b_i \to +\infty$ as $n \to \infty$, then
@@ -27,7 +29,7 @@ $$\sum_{i=1}^{n} a_i \sim \sum_{i=1}^{n} b_i \qquad (n \to \infty).$$
 The ATLAS wiki attributes this formulation to Rusen Li, *Sums over Primes II*,
 Journal of Integer Sequences 27 (2024), Article 24.4.1. -/
 public theorem sum_isEquivalent_of_isEquivalent (a b : ℕ → ℝ)
-    (_ha : ∀ i, 1 ≤ i → 0 < a i) (hb : ∀ i, 1 ≤ i → 0 < b i) (hab : a ~[atTop] b)
+    (ha : ∀ i, 1 ≤ i → 0 < a i) (hb : ∀ i, 1 ≤ i → 0 < b i) (hab : a ~[atTop] b)
     (hdiv : Tendsto (fun n => ∑ i ∈ Icc 1 n, b i) atTop atTop) :
     (fun n => ∑ i ∈ Icc 1 n, a i) ~[atTop] fun n => ∑ i ∈ Icc 1 n, b i := by
   have reindex (f : ℕ → ℝ) (n : ℕ) :

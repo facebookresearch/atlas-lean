@@ -20,8 +20,9 @@ example (x : ℝ) :
       fun n : ℕ => ∑ i ∈ Icc 1 n, if i = 0 then x else 1 := by
   apply MetaMathlibExt.sum_isEquivalent_of_isEquivalent
     (fun i => if i = 1 then 2 else 1) (fun i => if i = 0 then x else 1)
-  · intro i _
-    split <;> norm_num
+    (ha := by
+      intro i _
+      split <;> norm_num)
   · intro i hi
     simp [Nat.ne_of_gt hi]
   · apply EventuallyEq.isEquivalent
