@@ -33,13 +33,6 @@ public theorem_wanted iterate_logb_tetration_strictMono_and_converges {a b : ℝ
       ∃ L : ℝ, Tendsto (fun n : ℕ => (Real.logb a)^[n] ((fun x : ℝ => b ^ x)^[n] 1))
         atTop (𝓝 L)
 
-/-- Lemma 9, first inequality: `Γ(x + 1) > (x / e)^x` for every real `x ≥ 1`.
-
-Source: Karol Gryszka, *Exponential versus Factorial Revisited*, Journal of
-Integer Sequences 28 (2025), Article 25.2.8, Lemma 9 (`jis-2025-25.2.8-lem-9`). -/
-public theorem_wanted div_exp_one_rpow_lt_Gamma_add_one {x : ℝ} (hx : 1 ≤ x) :
-    (x / Real.exp 1) ^ x < Real.Gamma (x + 1)
-
 /-- Lemma 9, second inequality: `Γ(x + 1) ln Γ(x + 1) ≤ Γ(x)^{Γ(x)}` for every
 real `x > 4`.
 
