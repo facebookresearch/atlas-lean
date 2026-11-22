@@ -376,9 +376,15 @@ if ! env PATH="$FAKE_BIN:$PATH" ATLAS_AUDIT_RESTORED="$TMP_ROOT/restored.json" \
   cat "$TMP_ROOT/output.log" >&2
   fail "scoped compiled audit failed"
 fi
-[[ "$(grep -x 'import [A-Za-z]*\.Sentinel' "$FAKE_LEAN_INPUT")" == \
-  $'import MathlibExt.Sentinel\nimport DomainsTest.Sentinel\nimport WantedExt.Sentinel' ]] ||
-  fail "scoped compiled audit checked the wrong modules"
+grep -q 'compiled audit: 3 modules rebuilt since the restored build, 9 modules in their batches' \
+  "$TMP_ROOT/output.log" || fail "scoped compiled audit found the wrong rebuilt modules"
+[[ "$(grep -c -x 'import [A-Za-z]*\.Sentinel' "$FAKE_LEAN_INPUT")" == 9 ]] ||
+  fail "scoped compiled audit did not run the whole batch"
+PYTHONPATH="$TMP_ROOT/repo/scripts" python3 -c '
+import audit_rebuilt_modules as scoped
+assert scoped.batches_with(list("abcde"), {"d"}, 2) == list("cd")
+assert scoped.batches_with(list("abcde"), {"a", "e"}, 2) == list("abe")
+assert scoped.batches_with(list("abcde"), set(), 2) == []' || fail "scoped compiled audit chose the wrong batches"
 : >"$OLEANS/DomainsTest/Sentinel.olean"
 git -C "$TMP_ROOT/repo" add WantedExt && git -C "$TMP_ROOT/repo" -c user.name=t -c user.email=t@t commit -qm audited
 python3 "$TMP_ROOT/repo/scripts/audit_rebuilt_modules.py" record "$TMP_ROOT/restored.json" HEAD

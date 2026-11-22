@@ -5,10 +5,11 @@
 full audit (audit_compiled_modules.py) at REVISION. It records the .olean of
 each module REVISION audited, but only if REVISION has the same
 audit_compiled_modules.py and check_axioms.lean. With ATLAS_AUDIT_RESTORED=FILE,
-this script then audits every module whose .olean is missing, new, rewritten or
-unrecorded. Lake rebuilds a module whenever its source or what it needs from its
-imports changes, so every other module keeps declarations that passed at
-REVISION, and anything new it reaches changed in a rebuilt module.
+this script then runs the full audit's batches that hold a module whose .olean is
+missing, new, rewritten or unrecorded, exactly as the full audit runs them, since
+modules can also conflict when imported together. Lake rebuilds a module whenever
+its source or what it needs from its imports changes, so every module of a
+skipped batch keeps declarations that passed at REVISION.
 """
 from __future__ import annotations
 
@@ -43,6 +44,12 @@ def record(root: Path, revision: str) -> dict[str, list[int]] | None:
     return {module: status for module in modules if (status := olean(root, module)) is not None}
 
 
+def batches_with(inventory: list[str], rebuilt: set[str], size: int = full.BATCH_SIZE) -> list[str]:
+    """The full audit's batches of `inventory` that hold a rebuilt module, in order."""
+    batches = (inventory[start:start + size] for start in range(0, len(inventory), size))
+    return [module for batch in batches if rebuilt.intersection(batch) for module in batch]
+
+
 def main() -> int:
     root = Path(__file__).resolve().parent.parent
     if sys.argv[1:2] == ['record'] and len(sys.argv) == 4:
@@ -57,9 +64,12 @@ def main() -> int:
         return 2
     try:
         restored = json.loads(Path(os.environ['ATLAS_AUDIT_RESTORED']).read_text(encoding='utf-8'))
-        modules = [module for module in full.inventory(root)
-                   if olean(root, module) is None or olean(root, module) != restored.get(module)]
-        print(f'compiled audit: {len(modules)} modules rebuilt since the restored build', flush=True)
+        inventory = full.inventory(root)
+        rebuilt = {module for module in inventory
+                   if olean(root, module) is None or olean(root, module) != restored.get(module)}
+        modules = batches_with(inventory, rebuilt)
+        print(f'compiled audit: {len(rebuilt)} modules rebuilt since the restored build, '
+              f'{len(modules)} modules in their batches', flush=True)
         checker = (root / 'scripts/check_axioms.lean').read_text()
         result = full.audit(root, modules, checker) if modules else {'modules': 0}
     except (full.AuditFailure, KeyError, OSError, ValueError, subprocess.SubprocessError) as error:
