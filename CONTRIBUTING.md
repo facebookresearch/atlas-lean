@@ -302,7 +302,7 @@ group before it merges:
 - `guard` (Bump guard): the Lean and Mathlib pin check. On a merge group it
   checks a pin change again against the queue's base.
 
-The three workflows that report these four checks are configured for
+The three workflows that report these five checks are configured for
 `pull_request` and `merge_group`, without branch or path filters. If a PR has a merge conflict, resolve it before expecting
 its PR checks; a fork PR may also need a maintainer to approve the workflow run.
 `scripts/test_merge_queue_checks.py`, run by `scripts/check.sh preflight`,
