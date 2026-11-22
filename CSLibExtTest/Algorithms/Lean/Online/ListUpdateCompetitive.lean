@@ -34,3 +34,12 @@ example : ∃ σ : List ℕ, (listUpdateProblem ([1, 2, 3] : List ℕ)).legal σ
   listUpdate_additiveLowerBound (by decide) (by decide) (mtfStrategy [1, 2, 3])
     (mtfStrategy_feasible [1, 2, 3]) 1 0 (by norm_num)
     (by norm_num [show ([1, 2, 3].length) = 3 from rfl]) le_rfl
+
+example : stepCost [1, 2, 3] 1 [1, 3, 2] = 2 := by
+  decide
+
+example : traceCost [1, 2, 3] [(1, [1, 3, 2])] = 2 := by
+  decide
+
+example : traceCost [1, 2, 3] [(1, [1, 3, 2]), (2, [2, 1, 3])] = 5 := by
+  decide
