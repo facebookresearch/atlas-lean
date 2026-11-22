@@ -2984,26 +2984,25 @@ def link_view(index) -> dict:
     files: dict[Path, list[dict]] = defaultdict(list)
     for path, number, row in rows:
         files[path].append(row)
-        name = lean_name(row)
-        if name is not None and declared(name, index):
-            continue
-        if name is None:
+        # Each declaration of this project the row names, whatever its role, not only the one it credits.
+        names = list(dict.fromkeys(name for name, _role, _place in lean_ends(row).own))
+        gone = [name for name in names if not declared(name, index)]
+        if not names:
             # A row an earlier sync wrote with a module and a name, and that credits nothing else, links the declaration
             # the index resolves them to, as annotation_key reads it: one that resolves to none, or to several, links
             # none the Lean has.
             try:
-                if page_owner(row)[0] != "none":
-                    continue
+                owner = page_owner(row)[0]
             except CreditError:
-                continue  # Left to the rows Autoform cannot read, below.
-            pair = legacy_pair(row)
-            if (pair is None or not all(isinstance(part, str) for part in pair) or "held" in row["extensions"][OWN]
-                    or legacy_lean_name(row["extensions"][OWN], index)):
-                continue
-            name = f"{pair[1]} in {pair[0]}{BY_MODULE_AND_NAME}"
-        # Named as the working tree's file, which a copy of the wiki (see sync_output) stands for.
-        where = location(wiki.ROOT / path.relative_to(LINKS.parent.parent), number)
-        stale[(row.get("id") or page_name(row), name)].append(f"{where} ({page_name(row)})")
+                owner = None  # Left to the rows Autoform cannot read, below.
+            pair = legacy_pair(row) if owner == "none" else None
+            if (pair is not None and all(isinstance(part, str) for part in pair) and "held" not in row["extensions"][OWN]
+                    and not legacy_lean_name(row["extensions"][OWN], index)):
+                gone = [f"{pair[1]} in {pair[0]}{BY_MODULE_AND_NAME}"]
+        for name in gone:
+            # Named as the working tree's file, which a copy of the wiki (see sync_output) stands for.
+            where = location(wiki.ROOT / path.relative_to(LINKS.parent.parent), number)
+            stale[(row.get("id") or page_name(row), name)].append(f"{where} ({page_name(row)})")
     # Named as the working tree's links folder, which a copy of the wiki stands for.
     def stable(problem: str) -> str:
         return problem.replace(os.fspath(LINKS), "blueprint/links").replace(os.fspath(wiki.VAULT), "blueprint")

@@ -4103,6 +4103,24 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual(self.tree(), before)
 
 
+    def test_a_link_to_a_declaration_the_row_does_not_credit_goes_stale_too(self) -> None:
+        # A row stating lagrange and using helper: removing helper leaves its link stale, though the row's credit
+        # still holds.
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text().replace(
+            '"object": [{"location": {"declaration": "Ext.lagrange"}}]',
+            '"object": [{"location": {"declaration": "Ext.lagrange"}, "role": "states"}, '
+            '{"location": {"declaration": "Ext.helper"}, "role": "uses"}]'))
+        self.groups(more="theorem helper : True := trivial\n\n")
+        self.base = self.commit("a row that uses a second declaration")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (0, []))
+        self.groups()
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], len(report["errors"])), (1, False, 1), report["errors"])
+        self.assertIn("links Ext.helper, which the Lean no longer has", report["errors"][0])
+
+
 
 class BuildPath(Vault):
     """What the build's own steps refuse before they write, beside what credit_problems refuses everywhere."""
