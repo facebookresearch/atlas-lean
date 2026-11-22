@@ -1,6 +1,6 @@
 # Benjamini–Yekutieli FDR control under arbitrary dependence
 
-Let $p_1, \dots, p_m$ be p-values, let $H_0 \subseteq \{1, \dots, m\}$ be the set of true null
+Let $p_1, \dots, p_m$ be measurable p-values, let $H_0 \subseteq \{1, \dots, m\}$ be the set of true null
 hypotheses, and let every true-null p-value be valid: $\Pr[p_i \le t] \le t$ for $i \in H_0$ and
 $t \in [0, 1]$. Then for $q \in [0, 1]$ the Benjamini–Hochberg procedure run at the corrected level
 $q/H_m$, where $H_m = \sum_{k=1}^m 1/k$, has false discovery rate at most $q|H_0|/m$, with no assumption
