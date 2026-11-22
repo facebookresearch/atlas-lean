@@ -63,8 +63,7 @@ Smooth representations of $p$-adic groups and the Weil representation are outsid
 ## Expansion
 
 A good expansion replaces this node by definition pages and statements in the following order,
-each citing the source and locator below. Related pages are under
-[Representations of topological and Lie groups](../lie-and-topological-representations/README.md).
+each citing the source and locator below.
 
 1. Admissible representations, smooth and $K$-finite vectors, the Dixmier–Malliavin theorem, and
    Harish-Chandra's admissibility theorem for irreducible unitary representations.

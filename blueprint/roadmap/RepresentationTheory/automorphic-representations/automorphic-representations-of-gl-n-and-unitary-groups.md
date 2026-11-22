@@ -69,24 +69,23 @@ the trace formula and the cohomology of arithmetic groups are outside this node.
 
 - [Smooth representations of p-adic GLₙ and the local Langlands correspondence](../reductive-groups-over-local-fields/smooth-representations-of-p-adic-gl-n-and-local-langlands.md), for the local components of automorphic representations of $\mathrm{GL}_n$ at the finite places
 - [Representations of U(p, q)](../reductive-groups-over-local-fields/representations-of-u-p-q.md), for the local components of automorphic representations of unitary groups at the real places
+- [Topological idele class group](../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adeles-and-ideles/topological-idele-class-group.md), on which the central characters are defined
 
 ## Expansion
 
 A good expansion replaces this node by definition pages and statements in the following order,
 each citing the source and locator below.
 
-1. Adeles of a number field and the adelic points of $\mathrm{GL}_n$ and of unitary groups; related
-   pages are under [Adeles and class field theory](../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/README.md).
-2. Automorphic forms, cusp forms, automorphic representations and the tensor product theorem.
-3. Rapid decay of cusp forms, the discreteness of the cuspidal spectrum and Harish-Chandra's
+1. Automorphic forms, cusp forms, automorphic representations and the tensor product theorem.
+2. Rapid decay of cusp forms, the discreteness of the cuspidal spectrum and Harish-Chandra's
    finiteness theorem.
-4. Whittaker–Fourier expansions, multiplicity one and strong multiplicity one.
-5. Rankin–Selberg $L$-functions, the classification of Jacquet and Shalika and isobaric
+3. Whittaker–Fourier expansions, multiplicity one and strong multiplicity one.
+4. Rankin–Selberg $L$-functions, the classification of Jacquet and Shalika and isobaric
    representations.
-6. Unitary groups, their square-integrable global parameters (with Arthur's
+5. Unitary groups, their square-integrable global parameters (with Arthur's
    $\mathrm{SL}_2(\mathbb{C})$ factors) and weak base change; cyclic, and then solvable, base change
    and automorphic induction for $\mathrm{GL}_n$.
-7. Cuspidal algebraic representations and Clozel's purity lemma.
+6. Cuspidal algebraic representations and Clozel's purity lemma.
 
 ## Sources
 

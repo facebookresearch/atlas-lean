@@ -57,10 +57,10 @@ elliptic curves are outside this node.
 A good expansion replaces this node by definition pages and statements in the following order,
 each citing the source and locator below.
 
-1. Local Galois cohomology: finiteness and cohomological dimension 2 of $G_K$, local duality, the
-   local Euler characteristic formula, and unramified cohomology. Related pages are under
-   [Group cohomology](../../RepresentationTheory/group-cohomology/README.md) and
-   [p-adic numbers and local fields](../p-adic-numbers/README.md).
+1. Cohomology of profinite groups with coefficients in discrete modules, by continuous cochains, as
+   the direct limit of the cohomology of their finite quotients; then local Galois cohomology:
+   finiteness and cohomological dimension 2 of $G_K$, local duality, the local Euler characteristic
+   formula, and unramified cohomology.
 2. Global Galois cohomology: the groups $G_S$, the Poitou–Tate sequence, the global Euler
    characteristic formula, collections of local conditions and Wiles's formula, which use step 1.
 3. Weil–Deligne representations and the $\ell$-adic monodromy theorem.
@@ -80,6 +80,10 @@ each citing the source and locator below.
   (7.2.6) Theorem (Tate duality), (7.3.1) Theorem (local Euler characteristic), (8.6.10)
   (Poitou–Tate sequence), (8.7.4) (global Euler–Poincaré characteristic), (8.7.8) Definition
   (collections of local conditions) and (8.7.9) Theorem (Wiles's formula).
+- J. S. Milne, *Class Field Theory*, version 4.03 (2020),
+  <https://www.jmilne.org/math/CourseNotes/CFT.pdf>, Chapter II, §4: discrete $G$-modules over a
+  profinite group, continuous cochains, and Proposition 4.2 (their cohomology is the direct limit of the
+  cohomology of the finite quotients $G/H$ with coefficients $M^H$).
 - J. S. Milne, *Arithmetic Duality Theorems*, 2nd ed., BookSurge, 2006,
   <https://www.jmilne.org/math/Books/ADTnot.pdf>: Chapter I, Corollary 2.3 (local duality),
   Theorem 2.8 (local Euler characteristic), Theorem 4.10 (Poitou–Tate) and Theorem 5.1 (global

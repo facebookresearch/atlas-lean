@@ -65,16 +65,14 @@ each citing the source and locator below.
 
 1. Blow-ups, divisors with simple normal crossings and log resolutions; principalization, then
    resolution of quasi-projective varieties, deduced from it, and the functorial resolution of
-   schemes of finite type. Related pages are under
-   [Varieties and projective geometry](../varieties-and-projective-geometry/README.md).
+   schemes of finite type.
 2. Nef and big divisors, the volume and its properties.
 3. Kodaira vanishing, then Kawamata–Viehweg vanishing, whose statement uses the divisors of step 1
    and the positivity notions of step 2.
 4. Multiplier ideals of $\mathbb{Q}$-divisors and Nadel vanishing; then the analytic multiplier
    ideal sheaves and Nadel's theorem.
 5. Currents and the Poincaré–Lelong formula; $L^2$ estimates for $\bar\partial$ and the
-   Ohsawa–Takegoshi extension theorem. Related pages are under
-   [Complex analysis](../../Analysis/complex-analysis/README.md).
+   Ohsawa–Takegoshi extension theorem.
 
 ## Sources
 
