@@ -6,9 +6,40 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+arnovich/asgard-lean, commit
+e5e098d5bce80c3907a6acd4e2beb904309a1709,
+`Gimle/Asgard/Streams/ColeHopf.lean`. Authors: arnovich.
+
+MIT License
+
+Copyright (c) 2025 Gimle Labs
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-/
+
 module
 
 public import MathlibExt.Analysis.PDE.ExponentialColeHopf
+public import MathlibExt.RingTheory.MvPowerSeries.ExponentialDerivative
 public import MathlibExt.RingTheory.MvPowerSeries.ColeHopfSolution
 public import MathlibExt.RingTheory.MvPowerSeries.GeometricEvaluation
 import Mathlib.Analysis.SpecialFunctions.Exponential
@@ -78,6 +109,35 @@ theorem pderiv_one_exponentialSeries₂ (a b : ℚ) :
   have h1 : ((α 1).factorial : ℚ) ≠ 0 := by exact_mod_cast Nat.factorial_ne_zero _
   have hs : (α 1 : ℚ) + 1 ≠ 0 := by positivity
   field_simp
+
+/-- The coefficient formula is the canonical formal exponential of a linear form. -/
+theorem exponentialSeries₂_eq_expOfConstantCoeffZero (a b : ℚ) :
+    exponentialSeries₂ a b =
+      expOfConstantCoeffZero (C a * X 0 + C b * X 1) (by simp) := by
+  let E := expOfConstantCoeffZero (C a * X (0 : Fin 2) + C b * X 1) (by simp)
+  have step (α : Fin 2 →₀ ℕ) (i : Fin 2)
+      (ih : coeff α (exponentialSeries₂ a b) = coeff α E) :
+      coeff (α + Finsupp.single i 1) (exponentialSeries₂ a b) =
+        coeff (α + Finsupp.single i 1) E := by
+    apply mul_right_cancel₀ (show (α i : ℚ) + 1 ≠ 0 by positivity)
+    rw [← coeff_pderiv, ← coeff_pderiv]
+    fin_cases i
+    · change coeff α (pderiv 0 (exponentialSeries₂ a b)) = coeff α (pderiv 0 E)
+      rw [pderiv_zero_exponentialSeries₂]
+      simp [E, pderiv_expOfConstantCoeffZero, coeff_C_mul, ih]
+    · change coeff α (pderiv 1 (exponentialSeries₂ a b)) = coeff α (pderiv 1 E)
+      rw [pderiv_one_exponentialSeries₂]
+      simp [E, pderiv_expOfConstantCoeffZero, coeff_C_mul, ih]
+  ext α
+  change coeff α (exponentialSeries₂ a b) = coeff α E
+  induction α using Finsupp.induction₂ with
+  | zero => simp [coeff_zero_eq_constantCoeff, E]
+  | add_single i n α hi hn ih =>
+    clear hi hn
+    induction n with
+    | zero => simpa using ih
+    | succ n hn =>
+      simpa [Finsupp.single_add, ← add_assoc] using step (α + Finsupp.single i n) i hn
 
 private theorem hasSum_exp (r : ℝ) :
     HasSum (fun n : ℕ => r ^ n / n.factorial) (Real.exp r) := by

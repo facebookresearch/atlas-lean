@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.RingTheory.MvPowerSeries.ExponentialColeHopf
+import MathlibExt.RingTheory.MvPowerSeries.ExponentialDerivative
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.FinCases
 
@@ -116,3 +117,15 @@ example (x : Fin 2 → ℝ) (hx : ∀ i, |x i| ≤ (1/16 : ℝ)) :
 example : ¬ ((1/8 : ℚ) < mu.radius 0) := by norm_num [mu]
 example : ¬ ((2 : ℚ) / |2| * ((∏ _ : Fin 2, (1 - (1/2 : ℚ))⁻¹) - 1) ≤ 1) := by
   norm_num [Fin.prod_univ_two]
+
+-- The explicit coefficient API connects to the canonical formal exponential.
+example (a b : ℚ) : exponentialSeries₂ a b =
+    expOfConstantCoeffZero (C a * X 0 + C b * X 1) (by simp) :=
+  exponentialSeries₂_eq_expOfConstantCoeffZero a b
+
+-- The bridge lets downstream clients use the canonical derivative theorem.
+example : pderiv 0 (exponentialSeries₂ (-2) 0) =
+    C (-2) * exponentialSeries₂ (-2) 0 := by
+  rw [exponentialSeries₂_eq_expOfConstantCoeffZero]
+  rw [pderiv_expOfConstantCoeffZero]
+  simp
