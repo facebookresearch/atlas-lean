@@ -19,15 +19,16 @@ public import Mathlib.Tactic.Ring
 
 namespace MetaMathlibExt
 
-/-- Pascal's rule over `ℤ`, shifted form: for the successor index the
-binomial coefficient splits with no truncated subtraction. -/
+/-- **Pascal's rule for binomial coefficients.** For all natural numbers $n$ and $i$,
+$\binom{n+1}{i+1} = \binom{n}{i} + \binom{n}{i+1}$, as an identity of integers. -/
 theorem choose_succ_int (n i : ℕ) :
     (Nat.choose (n + 1) (i + 1) : ℤ) =
       (Nat.choose n i : ℤ) + (Nat.choose n (i + 1) : ℤ) := by
   exact_mod_cast Nat.choose_succ_succ n i
 
-/-- Fibonacci step used in the convolution: peeling two off the top index
-of the upper term and one off the lower term leaves the base term. -/
+/-- **Fibonacci step in the alternating binomial sum.** Let $F_m$ denote the $m$-th Fibonacci
+number, with $F_0 = 0$ and $F_1 = 1$. For natural numbers $n$, $k$ and $i$ with $i \le n$,
+$F_{2n+2-i+k} - F_{2n+1-i+k} = F_{2n-i+k}$, as an identity of integers. -/
 theorem fib_conv_step (n k i : ℕ) (hi : i ≤ n) :
     (Nat.fib (2 * n + 2 - i + k) : ℤ) - (Nat.fib (2 * n + 1 - i + k) : ℤ) =
       (Nat.fib (2 * n - i + k) : ℤ) := by
@@ -37,8 +38,9 @@ theorem fib_conv_step (n k i : ℕ) (hi : i ≤ n) :
   push_cast
   ring
 
-/-- Binomial convolution of Fibonacci numbers: the `n`-th alternating
-binomial transform of `i ↦ fib (2n - i + k)` recovers `fib k`.
+/-- **Alternating binomial sum of Fibonacci numbers.** Let $F_m$ denote the $m$-th Fibonacci
+number, with $F_0 = 0$ and $F_1 = 1$. For all natural numbers $n$ and $k$,
+$$\sum_{i=0}^{n} (-1)^i \binom{n}{i} F_{2n-i+k} = F_k.$$
 
 Source: Brian Hopkins and Aram Tangboonduangjit, "Scaled Fibonacci- and
 Lucas-Producing Rational Polynomials," Journal of Integer Sequences 25 (2022),

@@ -29,36 +29,53 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The function `u(x) = ((α + β √D)^x + (α - β √D)^x) / 2` of Equation (1.3).
+/-- **The Pell interpolation function u.** For integers $D$, $\alpha$, $\beta$, the function
+$u : \mathbb{R} \to \mathbb{R}$ is
+$u(x) = ((\alpha + \beta\sqrt D)^x + (\alpha - \beta\sqrt D)^x)/2$, where $\sqrt D$ is the real
+square root (zero when $D < 0$) and $(\cdot)^x$ is the real power.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Section 1, Equation (1.3). -/
 public noncomputable def pellU (D α β : ℤ) (x : ℝ) : ℝ :=
   ((α + β * Real.sqrt D) ^ x + (α - β * Real.sqrt D) ^ x) / 2
 
-/-- The function `v(x) = ((α + β √D)^x - (α - β √D)^x) / (2 √D)` of Equation (1.4).
+/-- **The Pell interpolation function v.** For integers $D$, $\alpha$, $\beta$, the function
+$v : \mathbb{R} \to \mathbb{R}$ is
+$v(x) = ((\alpha + \beta\sqrt D)^x - (\alpha - \beta\sqrt D)^x)/(2\sqrt D)$, where $\sqrt D$ is the
+real square root (zero when $D < 0$), $(\cdot)^x$ is the real power and division by zero gives
+$0$; in particular $v$ is identically $0$ when $D \le 0$.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Section 1, Equation (1.4). -/
 public noncomputable def pellV (D α β : ℤ) (x : ℝ) : ℝ :=
   ((α + β * Real.sqrt D) ^ x - (α - β * Real.sqrt D) ^ x) / (2 * Real.sqrt D)
 
-/-- `u(0) = 1`.
+/-- **Value of the Pell interpolation function u at 0.** For all integers $D$, $\alpha$, $\beta$,
+the function $u(x) = ((\alpha + \beta\sqrt D)^x + (\alpha - \beta\sqrt D)^x)/2$ of a real
+variable $x$ satisfies $u(0) = 1$.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Section 1, Equation (1.3). -/
 public theorem pellU_zero (D α β : ℤ) : pellU D α β 0 = 1 := by
   norm_num [pellU]
 
-/-- `v(0) = 0`.
+/-- **Value of the Pell interpolation function v at 0.** For all integers $D$, $\alpha$, $\beta$,
+the function $v(x) = ((\alpha + \beta\sqrt D)^x - (\alpha - \beta\sqrt D)^x)/(2\sqrt D)$ of a real
+variable $x$, where $\sqrt D$ is the real square root (zero when $D < 0$) and division by zero
+gives $0$, satisfies $v(0) = 0$.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Section 1, Equation (1.4). -/
 public theorem pellV_zero (D α β : ℤ) : pellV D α β 0 = 0 := by
   norm_num [pellV]
 
-/-- Every integer solution of `x² - D y² = 1` is `(i u_n, j v_n)` for some `n ≥ 0` and signs
-`i, j ∈ {1, -1}`, where `u_n + v_n √D = (α + β √D)^n`; conversely every such pair is a solution.
+/-- **Pell solutions are signed powers of the fundamental solution.** Let $D$ be an integer and
+let $(\alpha, \beta)$ be a fundamental solution of $x^2 - Dy^2 = 1$, that is, an integer solution
+with $\alpha > 1$ and $\beta > 0$ such that $\alpha \le x$ for every integer solution $(x, y)$ with
+$x > 1$ (one exists only when $D$ is positive and not a square). For $n \ge 0$ let $u_n, v_n$ be
+the integers with $u_n + v_n\sqrt D = (\alpha + \beta\sqrt D)^n$. Then integers $x, y$ satisfy
+$x^2 - Dy^2 = 1$ if and only if $x = i\,u_n$ and $y = j\,v_n$ for some integer $n \ge 0$ and some
+signs $i, j \in \{1, -1\}$.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Proposition 1.1
@@ -69,8 +86,14 @@ public theorem_wanted pell_solutions_eq_signed_powers {D : ℤ} {a : Pell.Soluti
       ∃ n : ℕ, ∃ i j : ℤ, (i = 1 ∨ i = -1) ∧ (j = 1 ∨ j = -1) ∧
         x = i * (a ^ n).x ∧ y = j * (a ^ n).y
 
-/-- The functions `u` and `v` interpolate the solution sequences: `u(n) = u_n` and `v(n) = v_n`
-for all integers `n ≥ 0`.
+/-- **The Pell interpolation functions agree with the solution sequence at natural numbers.** Let
+$D$ be an integer and let $(\alpha, \beta)$ be a fundamental solution of $x^2 - Dy^2 = 1$, that
+is, an integer solution with $\alpha > 1$ and $\beta > 0$ such that $\alpha \le x$ for every
+integer solution $(x, y)$ with $x > 1$ (one exists only when $D$ is positive and not a square).
+For $n \ge 0$ let $u_n, v_n$ be the integers with $u_n + v_n\sqrt D = (\alpha + \beta\sqrt D)^n$,
+and for real $t$ let $u(t) = ((\alpha + \beta\sqrt D)^t + (\alpha - \beta\sqrt D)^t)/2$ and
+$v(t) = ((\alpha + \beta\sqrt D)^t - (\alpha - \beta\sqrt D)^t)/(2\sqrt D)$. Then $u(n) = u_n$ and
+$v(n) = v_n$ for every natural number $n$.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Proposition 1.2
@@ -79,10 +102,15 @@ public theorem_wanted pellU_pellV_natCast {D : ℤ} {a : Pell.Solution₁ D}
     (ha : Pell.IsFundamental a) (n : ℕ) :
     pellU D a.x a.y n = (a ^ n).x ∧ pellV D a.x a.y n = (a ^ n).y
 
-/-- Closed form of `g = f⁻¹`, `f = u + v`: for real `x ≥ 1`, with
-`z = (D x - √(D x² - D + 1)) / (D - 1)`, the value
-`g(x) = cosh⁻¹(z) / log(α + β √D) = log(z + √(z² - 1)) / log(α + β √D)` is nonnegative and
-satisfies `u(g(x)) + v(g(x)) = x`. The inverse cosine is written through its logarithmic form.
+/-- **Closed form for inverting the sum of the Pell interpolating functions.** Let $D$ be an
+integer, let $(\alpha, \beta)$ be the fundamental solution of the Pell equation $X^2 - D Y^2 = 1$,
+put $\varepsilon = \alpha + \beta \sqrt{D}$ and $\bar\varepsilon = \alpha - \beta \sqrt{D}$, and let
+$u(t) = (\varepsilon^t + \bar\varepsilon^t) / 2$ and
+$v(t) = (\varepsilon^t - \bar\varepsilon^t) / (2 \sqrt{D})$ for real $t$. For every real $x \ge 1$,
+put $z = (D x - \sqrt{D x^2 - D + 1}) / (D - 1)$ and
+$g = \log(z + \sqrt{z^2 - 1}) / \log \varepsilon$. Then $g \ge 0$ and $u(g) + v(g) = x$.
+
+Here $\log(z + \sqrt{z^2 - 1})$ is $\cosh^{-1}(z)$ written in logarithmic form.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Theorem 2.2, Equation (2.1)
@@ -93,8 +121,14 @@ public theorem_wanted pell_inverse_closed_form {D : ℤ} {a : Pell.Solution₁ D
     let g : ℝ := Real.log (z + Real.sqrt (z ^ 2 - 1)) / Real.log (a.x + a.y * Real.sqrt D)
     0 ≤ g ∧ pellU D a.x a.y g + pellV D a.x a.y g = x
 
-/-- For real `x ≥ 1` and `t = g(x)` (the `t ≥ 0` with `u(t) + v(t) = x`),
-`⌊g(x)⌋ = ⌊(log ⌊x⌋ + C) / log(α + β √D)⌋` with `C = log(2 √D / (1 + √D))`.
+/-- **Floor of the inverse of the sum of the Pell interpolating functions.** Let $D$ be an
+integer, let $(\alpha, \beta)$ be the fundamental solution of the Pell equation $X^2 - D Y^2 = 1$,
+put $\varepsilon = \alpha + \beta \sqrt{D}$ and $\bar\varepsilon = \alpha - \beta \sqrt{D}$, and let
+$u(s) = (\varepsilon^s + \bar\varepsilon^s) / 2$ and
+$v(s) = (\varepsilon^s - \bar\varepsilon^s) / (2 \sqrt{D})$ for real $s$. If $x \ge 1$ and $t \ge 0$
+are real numbers with $u(t) + v(t) = x$, then
+$\lfloor t \rfloor = \lfloor (\log \lfloor x \rfloor + C) / \log \varepsilon \rfloor$, where
+$C = \log(2 \sqrt{D} / (1 + \sqrt{D}))$.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Theorem 2.3, Equation (2.5)
@@ -105,10 +139,18 @@ public theorem_wanted pell_inverse_floor {D : ℤ} {a : Pell.Solution₁ D}
     ⌊t⌋ = ⌊(Real.log (⌊x⌋ : ℝ) + Real.log (2 * Real.sqrt D / (1 + Real.sqrt D))) /
       Real.log (a.x + a.y * Real.sqrt D)⌋
 
-/-- Solutions of the Pell equation in the closed rotated square `|x| + |y| ≤ λ`: the set
-`Q_{F_D}(λ) = {(x, y) ∈ ℤ² : x² - D y² = 1, |x| + |y| ≤ λ}` is empty for `λ < 1`; for `λ ≥ 1` and
-`t = g(λ)` (the `t ≥ 0` with `u(t) + v(t) = λ`) it is the set of `(i u_n, j v_n)` with
-`i, j ∈ {1, -1}` and integers `0 ≤ n ≤ g(λ)`, and it has `2 + 4 ⌊g(λ)⌋` elements.
+/-- **Pell solutions in a closed rotated square.** Let $D$ be an integer and let $(\alpha, \beta)$
+be a fundamental solution of $x^2 - Dy^2 = 1$, that is, an integer solution with $\alpha > 1$
+and $\beta > 0$ such that $\alpha \le x$ for every integer solution $(x, y)$ with $x > 1$ (one
+exists only when $D$ is positive and not a square). For $n \ge 0$ let $u_n, v_n$ be the
+integers with $u_n + v_n\sqrt D = (\alpha + \beta\sqrt D)^n$, and for real $t$ let
+$u(t) = ((\alpha + \beta\sqrt D)^t + (\alpha - \beta\sqrt D)^t)/2$ and
+$v(t) = ((\alpha + \beta\sqrt D)^t - (\alpha - \beta\sqrt D)^t)/(2\sqrt D)$. For real $\lambda$
+let $Q(\lambda)$ be the set of integer pairs $(x, y)$ with $x^2 - Dy^2 = 1$ and
+$|x| + |y| \le \lambda$. If $\lambda < 1$, then $Q(\lambda)$ is empty. If $\lambda \ge 1$, then
+for every real $t \ge 0$ with $u(t) + v(t) = \lambda$, the set $Q(\lambda)$ consists of the pairs
+$(i\,u_n, j\,v_n)$ with $i, j \in \{1, -1\}$ and integers $0 \le n \le t$, and it has exactly
+$2 + 4\lfloor t \rfloor$ elements.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Theorem 2.1
@@ -122,10 +164,17 @@ public theorem_wanted pell_solutions_in_rotated_square {D : ℤ} {a : Pell.Solut
         p = (i * (a ^ n).x, j * (a ^ n).y)} ∧
       Q.ncard = 2 + 4 * ⌊t⌋₊
 
-/-- Explicit form of Theorem 2.1: for `λ ≥ 1`, with `C = log(2 √D / (1 + √D))` and
-`m = ⌊(log ⌊λ⌋ + C) / log(α + β √D)⌋`, the solutions of `x² - D y² = 1` with `|x| + |y| ≤ λ` are
-the `(i u_n, j v_n)` with `i, j ∈ {1, -1}` and `0 ≤ n ≤ m`, and there are `2 + 4 m` of them; for
-`λ < 1` there are none.
+/-- **Explicit count of Pell solutions in a closed rotated square.** Let $D$ be an integer and let
+$(\alpha, \beta)$ be a fundamental solution of $x^2 - Dy^2 = 1$, that is, an integer solution
+with $\alpha > 1$ and $\beta > 0$ such that $\alpha \le x$ for every integer solution $(x, y)$ with
+$x > 1$ (one exists only when $D$ is positive and not a square). For $n \ge 0$ let $u_n, v_n$ be
+the integers with $u_n + v_n\sqrt D = (\alpha + \beta\sqrt D)^n$. For real $\lambda$ let
+$Q(\lambda)$ be the set of integer pairs $(x, y)$ with $x^2 - Dy^2 = 1$ and
+$|x| + |y| \le \lambda$. If $\lambda < 1$, then $Q(\lambda)$ is empty. If $\lambda \ge 1$, let
+$m = \left\lfloor \left(\log\lfloor\lambda\rfloor + \log\frac{2\sqrt D}{1 + \sqrt D}\right) /
+\log(\alpha + \beta\sqrt D) \right\rfloor$; then $Q(\lambda)$ consists of the pairs
+$(i\,u_n, j\,v_n)$ with $i, j \in \{1, -1\}$ and integers $0 \le n \le m$, and $Q(\lambda)$ has
+exactly $2 + 4m$ elements.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Corollary 2.4
@@ -141,10 +190,21 @@ public theorem_wanted pell_solutions_in_rotated_square_explicit {D : ℤ} {a : P
         p = (i * (a ^ n).x, j * (a ^ n).y)} ∧
       (Q.ncard : ℤ) = 2 + 4 * m)
 
-/-- The real solutions `R_{i,j}(x) = (i u(x) + a, j v(x) + b)` of the shifted Pell equation
-`(x - a)² - D (y - b)² = 1` eventually lie in the closed quadrants: `R_{1,1}` in the first,
-`R_{-1,1}` in the second, `R_{-1,-1}` in the third and `R_{1,-1}` in the fourth. The printed
-statement swaps the third and fourth quadrants; this is the reading of the paper's proof.
+/-- **Shifted real Pell solutions eventually lie in the closed quadrants.** Let $D$ be an integer
+and let $(\alpha, \beta)$ be a fundamental solution of $X^2 - DY^2 = 1$, that is, an integer
+solution with $\alpha > 1$ and $\beta > 0$ such that $\alpha \le X$ for every integer solution
+$(X, Y)$ with $X > 1$ (one exists only when $D$ is positive and not a square). For real $x$ let
+$u(x) = ((\alpha + \beta\sqrt D)^x + (\alpha - \beta\sqrt D)^x)/2$ and
+$v(x) = ((\alpha + \beta\sqrt D)^x - (\alpha - \beta\sqrt D)^x)/(2\sqrt D)$, and for integers $a$,
+$b$ and signs $i, j \in \{1, -1\}$ let $R_{i,j}(x) = (i\,u(x) + a, j\,v(x) + b)$. Then there is a
+real $x_0$ such that for every real $x \ge x_0$ the point $R_{1,1}(x)$ lies in the closed first
+quadrant $\{X \ge 0, Y \ge 0\}$, $R_{-1,1}(x)$ in the closed second quadrant
+$\{X \le 0, Y \ge 0\}$, $R_{-1,-1}(x)$ in the closed third quadrant $\{X \le 0, Y \le 0\}$ and
+$R_{1,-1}(x)$ in the closed fourth quadrant $\{X \ge 0, Y \le 0\}$.
+
+The points $R_{i,j}(x)$ are real solutions of the shifted Pell equation
+$(X - a)^2 - D(Y - b)^2 = 1$. The printed statement of the source swaps the third and fourth
+quadrants; this statement follows the reading of the source's proof.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Proposition 3.1
@@ -157,9 +217,11 @@ public theorem_wanted pell_shifted_real_solutions_eventually_in_quadrants {D : �
       (-pellU D w.x w.y x + a ≤ 0 ∧ -pellV D w.x w.y x + b ≤ 0) ∧
       (0 ≤ pellU D w.x w.y x + a ∧ -pellV D w.x w.y x + b ≤ 0)
 
-/-- For integers `a ≠ 0` and `b`, the largest `L¹` norm of an intercept of the shifted Pell curve
-`(x - a)² - D (y - b)² = 1`, among `(a ± √(1 + D b²), 0)` and `(0, b ± √((a² - 1) / D))`, is
-`|a| + √(1 + D b²)`.
+/-- **Largest intercept norm of a shifted Pell curve.** Let $D > 0$, $a \ne 0$ and $b$ be
+integers. The intercepts of the shifted Pell curve $(x - a)^2 - D (y - b)^2 = 1$ with the axes
+are $(a \pm \sqrt{1 + D b^2}, 0)$ and $(0, b \pm \sqrt{(a^2 - 1) / D})$, with $L^1$ norms
+$|a \pm \sqrt{1 + D b^2}|$ and $|b \pm \sqrt{(a^2 - 1) / D}|$. The largest of these four norms
+is $|a| + \sqrt{1 + D b^2}$.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Proposition 3.2
@@ -169,15 +231,36 @@ public theorem_wanted pell_shifted_intercepts_max {D a : ℤ} (hD : 0 < D) (ha :
       max (max |a + Real.sqrt (1 + D * b ^ 2)| |a - Real.sqrt (1 + D * b ^ 2)|)
         (max |b + Real.sqrt ((a ^ 2 - 1) / D)| |b - Real.sqrt ((a ^ 2 - 1) / D)|)
 
-/-- The function `f_{i,j}(x) = |i u(x) + a| + |j v(x) + b|`, the `L¹` norm of the real solution
-`R_{i,j}(x)` of the shifted Pell equation `(x - a)² - D (y - b)² = 1`.
+/-- **The $L^1$ norm along a shifted Pell curve.** For integers $D$, $\alpha$, $\beta$, $a$, $b$,
+$i$ and $j$, put $\varepsilon = \alpha + \beta \sqrt{D}$ and
+$\bar\varepsilon = \alpha - \beta \sqrt{D}$, and let
+$u(x) = (\varepsilon^x + \bar\varepsilon^x) / 2$ and
+$v(x) = (\varepsilon^x - \bar\varepsilon^x) / (2 \sqrt{D})$ for real $x$. The function $f_{i,j}$
+is defined on the reals by $f_{i,j}(x) = |i u(x) + a| + |j v(x) + b|$.
+
+No condition is placed on the integers: $\sqrt{s} = 0$ for $s < 0$, a quotient by $0$ is $0$, and
+for real $c < 0$ the power $c^x$ means $|c|^x \cos(\pi x)$, while $0^0 = 1$ and $0^x = 0$ for
+$x \ne 0$.
+
+In the source, $(\alpha, \beta)$ is the fundamental solution of $X^2 - D Y^2 = 1$,
+$i, j \in \{1, -1\}$, and $f_{i,j}(x)$ is the $L^1$ norm of the real solution
+$R_{i,j}(x) = (i u(x) + a, j v(x) + b)$ of the shifted Pell equation
+$(X - a)^2 - D (Y - b)^2 = 1$.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Section 3, definition of `f_{i,j}`. -/
 public noncomputable def pellShiftedNorm (D α β a b i j : ℤ) (x : ℝ) : ℝ :=
   |i * pellU D α β x + a| + |j * pellV D α β x + b|
 
-/-- `f_{i,j}(0) = |i + a| + |b|`.
+/-- **Value at zero of the shifted Pell norm function.** Let $D$, $\alpha$, $\beta$, $a$, $b$,
+$i$ and $j$ be integers. Put $\varepsilon = \alpha + \beta \sqrt{D}$ and
+$\bar\varepsilon = \alpha - \beta \sqrt{D}$, let
+$u(x) = (\varepsilon^x + \bar\varepsilon^x) / 2$ and
+$v(x) = (\varepsilon^x - \bar\varepsilon^x) / (2 \sqrt{D})$ for real $x$, and let
+$f_{i,j}(x) = |i u(x) + a| + |j v(x) + b|$. Then $f_{i,j}(0) = |i + a| + |b|$.
+
+Here $\sqrt{s} = 0$ for $s < 0$, a quotient by $0$ is $0$, and $c^0 = 1$ for every real $c$; no
+condition is placed on the integers.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Section 3, definition of `f_{i,j}`. -/
@@ -185,21 +268,33 @@ public theorem pellShiftedNorm_zero (D α β a b i j : ℤ) :
     pellShiftedNorm D α β a b i j 0 = |(i : ℝ) + a| + |(b : ℝ)| := by
   simp [pellShiftedNorm, pellU_zero, pellV_zero]
 
-/-- The constant `K = |a| + max(|b| + 1, √(1 + D b²))` of Theorem 3.3.
+/-- **The bound $K$ for the shifted Pell equation.** For integers $D$, $a$ and $b$, the constant
+attached to the shifted Pell equation $(x - a)^2 - D (y - b)^2 = 1$ is the real number
+$K = |a| + \max(|b| + 1, \sqrt{1 + D b^2})$, where $\sqrt{s}$ is taken to be $0$ for $s < 0$.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Theorem 3.3, definition of `K`. -/
 public noncomputable def pellShiftBound (D a b : ℤ) : ℝ :=
   |(a : ℝ)| + max (|(b : ℝ)| + 1) (Real.sqrt (1 + D * b ^ 2))
 
-/-- `K = 1` for the unshifted equation `a = b = 0`.
+/-- **The bound $K$ of the unshifted Pell equation.** For every integer $D$, the constant
+$K = |a| + \max(|b| + 1, \sqrt{1 + D b^2})$ with $a = b = 0$ equals $1$.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Theorem 3.3, definition of `K`. -/
 public theorem pellShiftBound_zero_zero (D : ℤ) : pellShiftBound D 0 0 = 1 := by
   simp [pellShiftBound]
 
-/-- `f_{i,j}(0) ≤ K` for all signs `i, j ∈ {1, -1}`.
+/-- **The shifted Pell norm function at zero is at most the bound.** Let $D$, $\alpha$, $\beta$,
+$a$ and $b$ be integers and let $i, j \in \{1, -1\}$. Put $\varepsilon = \alpha + \beta \sqrt{D}$
+and $\bar\varepsilon = \alpha - \beta \sqrt{D}$, let
+$u(x) = (\varepsilon^x + \bar\varepsilon^x) / 2$ and
+$v(x) = (\varepsilon^x - \bar\varepsilon^x) / (2 \sqrt{D})$ for real $x$, let
+$f_{i,j}(x) = |i u(x) + a| + |j v(x) + b|$ and let $K = |a| + \max(|b| + 1, \sqrt{1 + D b^2})$.
+Then $f_{i,j}(0) \le K$.
+
+Here $\sqrt{s} = 0$ for $s < 0$, a quotient by $0$ is $0$, and $c^0 = 1$ for every real $c$; no
+further condition is placed on the integers.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Lemma 3.5
@@ -208,8 +303,15 @@ public theorem_wanted pellShiftedNorm_zero_le_pellShiftBound (D α β a b : ℤ)
     (hi : i = 1 ∨ i = -1) (hj : j = 1 ∨ j = -1) :
     pellShiftedNorm D α β a b i j 0 ≤ pellShiftBound D a b
 
-/-- With `x₁ = sup {x ≥ 0 : f_{i,j}(x) = K}` (Equation (3.6)), `f_{i,j}(x) ≤ K` for all
-`x ∈ [0, x₁]`.
+/-- **The shifted Pell norm function is at most the bound up to its last crossing.** Let $D$ be
+an integer, let $(\alpha, \beta)$ be the fundamental solution of the Pell equation
+$X^2 - D Y^2 = 1$, put $\varepsilon = \alpha + \beta \sqrt{D}$ and
+$\bar\varepsilon = \alpha - \beta \sqrt{D}$, and let
+$u(x) = (\varepsilon^x + \bar\varepsilon^x) / 2$ and
+$v(x) = (\varepsilon^x - \bar\varepsilon^x) / (2 \sqrt{D})$ for real $x$. Let $a$ and $b$ be
+integers, let $i, j \in \{1, -1\}$, let $f_{i,j}(x) = |i u(x) + a| + |j v(x) + b|$, let
+$K = |a| + \max(|b| + 1, \sqrt{1 + D b^2})$ and let $x_1 = \sup \{y \ge 0 : f_{i,j}(y) = K\}$.
+Then $f_{i,j}(x) \le K$ for every real $x$ with $0 \le x \le x_1$.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Lemma 3.6
@@ -221,9 +323,17 @@ public theorem_wanted pellShiftedNorm_le_pellShiftBound {D : ℤ} {w : Pell.Solu
       pellShiftedNorm D w.x w.y a b i j y = pellShiftBound D a b}) :
     pellShiftedNorm D w.x w.y a b i j x ≤ pellShiftBound D a b
 
-/-- With `x₁ = sup {x ≥ 0 : f_{i,j}(x) = K}` (Equation (3.6)), on `[x₁, ∞)` the function
-`f_{i,j}` equals `u + v + i a + j b` (Equation (3.7)), is strictly increasing, and maps
-`[x₁, ∞)` bijectively onto `[K, ∞)`.
+/-- **The shifted Pell norm function is increasing past its last crossing of the bound.** Let $D$
+be an integer, let $(\alpha, \beta)$ be the fundamental solution of the Pell equation
+$X^2 - D Y^2 = 1$, put $\varepsilon = \alpha + \beta \sqrt{D}$ and
+$\bar\varepsilon = \alpha - \beta \sqrt{D}$, and let
+$u(x) = (\varepsilon^x + \bar\varepsilon^x) / 2$ and
+$v(x) = (\varepsilon^x - \bar\varepsilon^x) / (2 \sqrt{D})$ for real $x$. Let $a$ and $b$ be
+integers, let $i, j \in \{1, -1\}$, let $f_{i,j}(x) = |i u(x) + a| + |j v(x) + b|$, let
+$K = |a| + \max(|b| + 1, \sqrt{1 + D b^2})$ and let $x_1 = \sup \{y \ge 0 : f_{i,j}(y) = K\}$.
+Then $f_{i,j}(x) = u(x) + v(x) + i a + j b$ for every real $x \ge x_1$, the function $f_{i,j}$ is
+strictly increasing on $[x_1, \infty)$, and $f_{i,j}$ maps $[x_1, \infty)$ bijectively onto
+$[K, \infty)$.
 
 Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
 Rotated Square Region*, INTEGERS 25 (2025), Article A112, Lemma 3.7
