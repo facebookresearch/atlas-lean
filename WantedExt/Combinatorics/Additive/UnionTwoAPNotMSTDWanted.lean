@@ -33,7 +33,8 @@ open Pointwise
 
 @[expose] public section
 
-/-- The interval `I_n = {0, 1, …, n - 1}` as a finite set of reals.
+/-- **Initial integer interval.** For a natural number $n$, $I_n = \{0, 1, \ldots, n - 1\}$ is
+the set of the first $n$ natural numbers, viewed as a finite set of real numbers; $I_0$ is empty.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58,
@@ -41,7 +42,8 @@ Section 1. -/
 noncomputable def realIntervalSet (n : ℕ) : Finset ℝ :=
   (Finset.range n).image fun i : ℕ => (i : ℝ)
 
-/-- `I_n` has `n` elements.
+/-- **Size of the interval $I_n$.** For every natural number $n$, the set
+$I_n = \{0, 1, \dots, n - 1\}$ of real numbers has exactly $n$ elements.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58,
@@ -49,7 +51,9 @@ Section 1. -/
 theorem card_realIntervalSet (n : ℕ) : (realIntervalSet n).card = n := by
   rw [realIntervalSet, Finset.card_image_of_injective _ Nat.cast_injective, Finset.card_range]
 
-/-- The arithmetic progression `J(x, m, d) = {x + i d : i ∈ [0, m]}`.
+/-- **Finite arithmetic progression.** For a real number $x$, a natural number $m$ and a real
+number $d$, $J(x, m, d)$ is the finite set of real numbers
+$\{x + i d : i = 0, 1, \ldots, m\}$, that is, $x, x + d, \ldots, x + m d$.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58,
@@ -57,7 +61,9 @@ Section 1. -/
 noncomputable def realAPSet (x : ℝ) (m : ℕ) (d : ℝ) : Finset ℝ :=
   (Finset.range (m + 1)).image fun i : ℕ => x + i * d
 
-/-- `J(x, m, d)` has `m + 1` elements when `d ≠ 0`.
+/-- **Size of the progression $J(x, m, d)$.** For a real number $x$, a natural number $m$ and a
+real number $d \ne 0$, the progression $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$ has exactly
+$m + 1$ elements.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58,
@@ -69,8 +75,9 @@ theorem card_realAPSet (x : ℝ) (m : ℕ) {d : ℝ} (hd : d ≠ 0) :
   have : (i : ℝ) * d = j * d := by simpa using h
   exact_mod_cast mul_right_cancel₀ hd this
 
-/-- A finite set of reals is an MSTD set when it has more sums than differences:
-`|A - A| < |A + A|`.
+/-- **MSTD set.** A finite set $A$ of real numbers is an *MSTD set* (more sums than differences)
+when its difference set has fewer elements than its sumset: $|A - A| < |A + A|$, where
+$A + A = \{a + b : a, b \in A\}$ and $A - A = \{a - b : a, b \in A\}$.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58,
@@ -78,7 +85,8 @@ Section 1. -/
 def IsMSTDSet (A : Finset ℝ) : Prop :=
   (A - A).card < (A + A).card
 
-/-- A singleton is not an MSTD set.
+/-- **A single point is not an MSTD set.** For every real number $a$, the set $\{a\}$ is not an
+MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58,
@@ -86,8 +94,12 @@ Section 1. -/
 theorem not_isMSTDSet_singleton (a : ℝ) : ¬ IsMSTDSet {a} := by
   simp [IsMSTDSet]
 
-/-- **Theorem 1.** The union of two finite arithmetic progressions `X₁ = J(a, m₁, d₁)` and `X₂ =
-J(b, m₂, d₂)` (positive common differences) with `max X₁ < min X₂` is not an MSTD set.
+/-- **The union of two separated arithmetic progressions is not an MSTD set.** For real numbers
+$x, d$ and a natural number $m$, write $J(x, m, d) = \{x + i d : i = 0, 1, \ldots, m\}$. Let
+$a, b, d_1, d_2$ be real numbers with $d_1 > 0$ and $d_2 > 0$, and let $m_1, m_2$ be natural
+numbers with $a + m_1 d_1 < b$, so that the largest element of $J(a, m_1, d_1)$ is less than the
+smallest element of $J(b, m_2, d_2)$. Then $J(a, m_1, d_1) \cup J(b, m_2, d_2)$ is not an MSTD
+set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Theorem 1
@@ -97,8 +109,10 @@ public theorem_wanted not_isMSTDSet_union_two_ap (a b d₁ d₂ : ℝ) (m₁ m�
     (hlt : a + m₁ * d₁ < b) :
     ¬ IsMSTDSet (realAPSet a m₁ d₁ ∪ realAPSet b m₂ d₂)
 
-/-- **Lemma 1.** For integers `n ≥ 3`, `m ≥ 2`, `d ≥ 2` and natural `x ∈ [n + 1, 2n - 2]`, `I_n ∪
-J(x, m, d)` is not an MSTD set.
+/-- **Interval plus integer progression starting in $[n + 1, 2n - 2]$ is not MSTD.** Let
+$I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$, as finite
+sets of reals. For natural numbers $n \ge 3$, $m \ge 2$, $d \ge 2$ and $x$ with
+$n + 1 \le x \le 2n - 2$, the set $I_n \cup J(x, m, d)$ is not an MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 1
@@ -108,8 +122,10 @@ public theorem_wanted not_isMSTDSet_intervalAP_nat_of_le_two_mul_sub_two (n m d 
     (hx₁ : n + 1 ≤ x) (hx₂ : x ≤ 2 * n - 2) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet (x : ℝ) m (d : ℝ))
 
-/-- **Lemma 2.** For integers `n ≥ 3`, `m ≥ 2`, `d ≥ 2` and natural `x ≥ 2n - 1`, `I_n ∪ J(x, m, d)`
-is not an MSTD set.
+/-- **Interval plus integer progression starting at $2n - 1$ or later is not MSTD.** Let
+$I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$, as finite
+sets of reals. For natural numbers $n \ge 3$, $m \ge 2$, $d \ge 2$ and $x \ge 2n - 1$, the set
+$I_n \cup J(x, m, d)$ is not an MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 2
@@ -119,8 +135,10 @@ public theorem_wanted not_isMSTDSet_intervalAP_nat_of_two_mul_sub_one_le (n m d 
     (hx : 2 * n - 1 ≤ x) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet (x : ℝ) m (d : ℝ))
 
-/-- **Lemma 3.** For integers `n ≥ 3`, `m ≥ 2`, `d ≥ 2` and natural `x > n - 1`, `I_n ∪ J(x, m, d)`
-is not an MSTD set.
+/-- **Interval plus integer progression starting after the interval is not MSTD.** Let
+$I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$, as finite
+sets of reals. For natural numbers $n \ge 3$, $m \ge 2$, $d \ge 2$ and $x > n - 1$, the set
+$I_n \cup J(x, m, d)$ is not an MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 3
@@ -130,8 +148,10 @@ public theorem_wanted not_isMSTDSet_intervalAP_nat_of_lt (n m d x : ℕ) (hn : 3
     (hx : n - 1 < x) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet (x : ℝ) m (d : ℝ))
 
-/-- **Lemma 4.** For `n ≥ 3`, `m ≥ 2`, a positive irrational `d` and natural `x ≥ n + 1`, `I_n ∪
-J(x, m, d)` is not an MSTD set.
+/-- **Interval plus irrational-step progression with natural start is not MSTD.** Let
+$I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$, as finite
+sets of reals. For natural numbers $n \ge 3$, $m \ge 2$ and $x \ge n + 1$, and a positive
+irrational real number $d$, the set $I_n \cup J(x, m, d)$ is not an MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 4
@@ -141,8 +161,11 @@ public theorem_wanted not_isMSTDSet_intervalAP_irrational_diff (n m x : ℕ) (d 
     (hd : 0 < d) (hx : n + 1 ≤ x) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet (x : ℝ) m d)
 
-/-- **Lemma 5.** For `n ≥ 3`, `d = s + p/q` with `0 < p < q` coprime, natural `x ≥ n + 1`, and
-either `m ∈ [2, q - 1]` or (`m ≥ q` and `qd > n - 1`), `I_n ∪ J(x, m, d)` is not an MSTD set.
+/-- **An interval and a later natural-start progression with few terms or large step are not MSTD.**
+Let $n \ge 3$, $m$ and $x$ be natural numbers with $x \ge n + 1$, and let $d = s + p/q$, where
+$s, p, q$ are natural numbers with $0 < p < q$ and $\gcd(p, q) = 1$. Suppose that either
+$2 \le m \le q - 1$, or $m \ge q$ and $qd > n - 1$. Write $I_n = \{0, 1, \dots, n - 1\}$ and
+$J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$. Then $I_n \cup J(x, m, d)$ is not an MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 5
@@ -153,8 +176,11 @@ public theorem_wanted not_isMSTDSet_intervalAP_rat_diff (n m x : ℕ) (d : ℝ) 
     (hx : n + 1 ≤ x) (hm : (2 ≤ m ∧ m ≤ q - 1) ∨ (q ≤ m ∧ (n : ℝ) - 1 < q * d)) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet (x : ℝ) m d)
 
-/-- **Lemma 6.** For `n ≥ 3`, `d = s + p/q` with `0 < p < q` coprime and `qd ≤ n - 1`, natural `x ≥
-n + 1` and `m ≥ q`, `I_n ∪ J(x, m, d)` is not an MSTD set.
+/-- **An interval and a later progression with natural start and small step are not MSTD.** Let
+$n \ge 3$, $m$ and $x$ be natural numbers with $x \ge n + 1$, and let $d = s + p/q$, where
+$s, p, q$ are natural numbers with $0 < p < q$ and $\gcd(p, q) = 1$. Suppose that $m \ge q$ and
+$qd \le n - 1$. Write $I_n = \{0, 1, \dots, n - 1\}$ and
+$J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$. Then $I_n \cup J(x, m, d)$ is not an MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 6
@@ -165,8 +191,11 @@ public theorem_wanted not_isMSTDSet_intervalAP_rat_diff_of_le (n m x : ℕ) (d :
     (hqd : q * d ≤ (n : ℝ) - 1) (hx : n + 1 ≤ x) (hm : q ≤ m) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet (x : ℝ) m d)
 
-/-- **Lemma 7.** For `n ≥ 3`, real `x ∉ ℕ` with `x > n - 1`, a positive irrational `d`, and `x + id
-∉ ℕ` for `i ∈ [0, m]`, `I_n ∪ J(x, m, d)` is not an MSTD set.
+/-- **Interval plus irrational-step progression avoiding the naturals is not MSTD.** Let
+$I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$, as finite
+sets of reals. Let $n \ge 3$ and $m$ be natural numbers, $d$ a positive irrational real number
+and $x > n - 1$ a real number such that none of $x + id$ for $i = 0, 1, \dots, m$ is a natural
+number. Then $I_n \cup J(x, m, d)$ is not an MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 7
@@ -177,7 +206,9 @@ public theorem_wanted not_isMSTDSet_intervalAP_irrational_of_forall_not_nat (n m
     (hnat : ∀ i ≤ m, x + i * d ∉ Set.range ((↑) : ℕ → ℝ)) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m d)
 
-/-- **Lemma 8.** For irrational `d`, at most one index `i` has `x + id ∈ ℕ`.
+/-- **At most one nonnegative integer point on a progression with irrational difference.** Let $x$
+and $d$ be real numbers with $d$ irrational. If $i$ and $j$ are natural numbers such that $x + id$
+and $x + jd$ are both nonnegative integers, then $i = j$.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 8
@@ -186,8 +217,12 @@ public theorem_wanted eq_of_add_mul_irrational_mem_nat (x d : ℝ) (hirr : Irrat
     (hi : x + i * d ∈ Set.range ((↑) : ℕ → ℝ)) (hj : x + j * d ∈ Set.range ((↑) : ℕ → ℝ)) :
     i = j
 
-/-- **Lemma 9.** For `n ≥ 3`, real `x ∉ ℕ` with `x > n - 1`, a positive irrational `d`, and `x + jd
-∈ ℕ` for some `j ∈ [1, m]`, `I_n ∪ J(x, m, d)` is not an MSTD set.
+/-- **Interval plus irrational-step progression meeting the naturals is not MSTD.** Let
+$I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$, as finite
+sets of reals. Let $n \ge 3$ and $m$ be natural numbers, $d$ a positive irrational real number
+and $x > n - 1$ a real number that is not a natural number, and suppose that $x + jd$ is a
+natural number for some integer $j$ with $1 \le j \le m$. Then $I_n \cup J(x, m, d)$ is not
+an MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 9
@@ -198,9 +233,13 @@ public theorem_wanted not_isMSTDSet_intervalAP_irrational_of_exists_nat (n m : �
     (hnat : ∃ j, 1 ≤ j ∧ j ≤ m ∧ x + j * d ∈ Set.range ((↑) : ℕ → ℝ)) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m d)
 
-/-- **Lemma 10.** For `n ≥ 3`, real `x ∉ ℕ` with `x > n - 1`, `d = s + p/q` with `0 < p < q`
-coprime, `x + id ∉ ℕ` for `i ∈ [0, m]`, and either `m ∈ [2, q - 1]` or (`m ≥ q` and `qd > n - 1`),
-`I_n ∪ J(x, m, d)` is not an MSTD set.
+/-- **An interval and a later rational-step progression with no integer term are not MSTD.** Let
+$n \ge 3$ and $m$ be natural numbers, let $x > n - 1$ be a real number that is not a natural
+number, and let $d = s + p/q$, where $s, p, q$ are natural numbers with $0 < p < q$ and
+$\gcd(p, q) = 1$. Suppose that $x + id$ is not a natural number for any natural number $i \le m$,
+and that either $2 \le m \le q - 1$, or $m \ge q$ and $qd > n - 1$. Write
+$I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$. Then
+$I_n \cup J(x, m, d)$ is not an MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 10
@@ -213,8 +252,10 @@ public theorem_wanted not_isMSTDSet_intervalAP_real_rat_diff_of_forall_not_nat (
     (hm : (2 ≤ m ∧ m ≤ q - 1) ∨ (q ≤ m ∧ (n : ℝ) - 1 < q * d)) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m d)
 
-/-- **Lemma 11.** For `d = s + p/q` with `0 < p < q` coprime, at most one `i ∈ [1, q - 1]` has `x +
-id ∈ ℕ`.
+/-- **Uniqueness of a nonnegative integer point for a rational difference.** Let $x$ be a real
+number, let $s, p, q$ be natural numbers with $0 < p < q$ and $\gcd(p, q) = 1$, and let
+$d = s + p/q$. If $i, j \in \{1, \dots, q - 1\}$ and $x + id$ and $x + jd$ are both nonnegative
+integers, then $i = j$.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 11
@@ -226,9 +267,13 @@ public theorem_wanted eq_of_add_mul_rat_mem_nat (x d : ℝ) (s p q : ℕ) (hp : 
     (hxi : x + i * d ∈ Set.range ((↑) : ℕ → ℝ)) (hxj : x + j * d ∈ Set.range ((↑) : ℕ → ℝ)) :
     i = j
 
-/-- **Lemma 12.** For `n ≥ 3`, real `x ∉ ℕ` with `x > n - 1`, `d = s + p/q` with `0 < p < q`
-coprime, `x + jd ∈ ℕ` for some `j ∈ [1, q - 1]`, and either `m ∈ [2, q - 1]` or (`m ≥ q` and `qd > n
-- 1`), `I_n ∪ J(x, m, d)` is not an MSTD set.
+/-- **An interval and a later rational-step progression with an integer term are not MSTD.** Let
+$n \ge 3$ and $m$ be natural numbers, let $x > n - 1$ be a real number that is not a natural
+number, and let $d = s + p/q$, where $s, p, q$ are natural numbers with $0 < p < q$ and
+$\gcd(p, q) = 1$. Suppose that $x + jd$ is a natural number for some natural number $j$ with
+$1 \le j \le q - 1$, and that either $2 \le m \le q - 1$, or $m \ge q$ and $qd > n - 1$. Write
+$I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$. Then
+$I_n \cup J(x, m, d)$ is not an MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 12
@@ -241,8 +286,12 @@ public theorem_wanted not_isMSTDSet_intervalAP_real_rat_diff_of_exists_nat (n m 
     (hm : (2 ≤ m ∧ m ≤ q - 1) ∨ (q ≤ m ∧ (n : ℝ) - 1 < q * d)) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m d)
 
-/-- **Lemma 13.** For `n ≥ 3`, real `x ∉ ℕ` with `x > n - 1`, `d = s + p/q` with `0 < p < q` coprime
-and `qd ≤ n - 1`, and `m ≥ q`, `I_n ∪ J(x, m, d)` is not an MSTD set.
+/-- **An interval and a later progression with non-integer start and small step are not MSTD.**
+Let $n \ge 3$ and $m$ be natural numbers, let $x > n - 1$ be a real number that is not a natural
+number, and let $d = s + p/q$, where $s, p, q$ are natural numbers with $0 < p < q$ and
+$\gcd(p, q) = 1$. Suppose that $m \ge q$ and $qd \le n - 1$. Write
+$I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$. Then
+$I_n \cup J(x, m, d)$ is not an MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 13
@@ -254,8 +303,10 @@ public theorem_wanted not_isMSTDSet_intervalAP_real_rat_diff_of_le (n m : ℕ) (
     (hqd : q * d ≤ (n : ℝ) - 1) (hx : (n : ℝ) - 1 < x) (hm : q ≤ m) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m d)
 
-/-- **Lemma 14.** For integers `n ≥ 3`, `m ≥ 2`, `d ≥ 2` and natural `x ≤ n - 1`, `I_n ∪ J(x, m, d)`
-is not an MSTD set.
+/-- **Interval plus integer progression starting inside the interval is not MSTD.** Let
+$I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$, as finite
+sets of reals. For natural numbers $n \ge 3$, $m \ge 2$, $d \ge 2$ and $x \le n - 1$, the set
+$I_n \cup J(x, m, d)$ is not an MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 14
@@ -265,8 +316,12 @@ public theorem_wanted not_isMSTDSet_intervalAP_nat_of_le_sub_one (n m d x : ℕ)
     (hx : x ≤ n - 1) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet (x : ℝ) m (d : ℝ))
 
-/-- **Lemma 15.** For integers `n ≥ 3`, `m ≥ 2`, `2 ≤ d ≤ n - 1` and `0 < x < n - 1` with `x`
-irrational or `x = s + p/q` (`0 < p < q`, coprime, `q ≠ 2`), `I_n ∪ J(x, m, d)` is not an MSTD set.
+/-- **An interval and an overlapping progression with small integer step are not MSTD.** Let
+$n \ge 3$, $m \ge 2$ and $d$ be natural numbers with $2 \le d \le n - 1$, and let $x$ be a real
+number with $0 < x < n - 1$ such that either $x$ is irrational or $x = s + p/q$ for natural
+numbers $s, p, q$ with $0 < p < q$, $q \ne 2$ and $\gcd(p, q) = 1$. Write
+$I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$. Then
+$I_n \cup J(x, m, d)$ is not an MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 15
@@ -279,8 +334,11 @@ public theorem_wanted not_isMSTDSet_intervalAP_overlap_of_den_ne_two (n m d : �
     (hx₀ : 0 < x) (hx₁ : x < (n : ℝ) - 1) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m (d : ℝ))
 
-/-- **Lemma 16.** For integers `n ≥ 3`, `m ≥ 2`, `2 ≤ d ≤ n - 1` and `x = s + 1/2` with `0 < x < n -
-1`, `I_n ∪ J(x, m, d)` is not an MSTD set.
+/-- **Interval plus integer-step progression with half-integer start is not MSTD.** Let
+$I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$, as finite
+sets of reals. Let $n \ge 3$, $m \ge 2$, $s$ and $d$ be natural numbers with
+$2 \le d \le n - 1$, and let $x = s + 1/2$. If $x < n - 1$, then $I_n \cup J(x, m, d)$ is not an
+MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 16
@@ -290,8 +348,10 @@ public theorem_wanted not_isMSTDSet_intervalAP_overlap_half (n m d s : ℕ) (x :
     (hd₂ : d ≤ n - 1) (hxs : x = s + 1 / 2) (hx : x < (n : ℝ) - 1) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m (d : ℝ))
 
-/-- **Lemma 17.** For integers `n ≥ 3`, `m ≥ 2`, `d ≥ n` and real `x ∉ ℕ` with `0 < x < n - 1`, `I_n
-∪ J(x, m, d)` is not an MSTD set.
+/-- **Interval plus progression with non-integer start and integer step at least $n$ is not MSTD.**
+Let $n \ge 3$, $m \ge 2$ and $d \ge n$ be natural numbers, and let $x$ be a real number with
+$0 < x < n - 1$ that is not a natural number. Write $I_n = \{0, 1, \dots, n - 1\}$ and
+$J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$. Then $I_n \cup J(x, m, d)$ is not an MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 17
@@ -301,9 +361,16 @@ public theorem_wanted not_isMSTDSet_intervalAP_overlap_large_diff (n m d : ℕ) 
     (hxN : x ∉ Set.range ((↑) : ℕ → ℝ)) (hx₀ : 0 < x) (hx₁ : x < (n : ℝ) - 1) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m (d : ℝ))
 
-/-- **Lemma 19.** For `n ≥ 3`, `m ≥ 2` and `0 < x < n - 1`, if (i) `x` is irrational and `d ∈ ℚ ∖
-ℕ`, or (ii) `x ∈ ℚ ∖ ℕ` and `d` is irrational, or (iii) `x = s₁ + p₁/q₁`, `d = s₂ + p₂/q₂` (reduced,
-with `gcd(q₁, q₂) = 1`, `q₁ ≥ 3`, and `d ∉ ℕ`), then `I_n ∪ J(x, m, d)` is not an MSTD set.
+/-- **An interval and an overlapping progression with incompatible start and step are not MSTD.**
+Let $n \ge 3$ and $m \ge 2$ be natural numbers, and let $x$ and $d$ be real numbers with
+$0 < x < n - 1$. Write $I_n = \{0, 1, \dots, n - 1\}$ and
+$J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$. Suppose that one of the following holds:
+(i) $x$ is irrational, and $d$ is rational but not a positive integer; (ii) $x$ is rational but
+not a natural number, and $d$ is irrational; (iii) there are natural numbers
+$s_1, s_2, p_1, p_2, q_1, q_2$ with $p_1 > 0$, $p_2 > 0$,
+$\gcd(p_1, q_1) = \gcd(p_2, q_2) = \gcd(q_1, q_2) = 1$ and $q_1 \ge 3$ such that
+$x = s_1 + p_1/q_1$ and $d = s_2 + p_2/q_2$, and $d$ is not a natural number. Then
+$I_n \cup J(x, m, d)$ is not an MSTD set. Here the natural numbers include $0$.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 19
@@ -318,9 +385,13 @@ public theorem_wanted not_isMSTDSet_intervalAP_overlap_of_coprime_den (n m : ℕ
         d ∉ Set.range ((↑) : ℕ → ℝ))) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m d)
 
-/-- **Lemma 20.** For reduced `x = s₁ + p₁/q₁` and `d = s₂ + p₂/q₂` with `gcd(q₁, q₂) > 1`, at most
-one `i ∈ [1, q₂ - 1]` has `x + id ∈ ℕ`, at most one `j ∈ [1, q₂ - 1]` has `2x + jd ∈ ℕ`, and such
-`i` and `j` differ.
+/-- **Uniqueness of integer points when the denominators share a factor.** Let
+$s_1, s_2, p_1, p_2, q_1, q_2$ be natural numbers with $p_1, p_2 > 0$, $\gcd(p_1, q_1) = 1$,
+$\gcd(p_2, q_2) = 1$ and $\gcd(q_1, q_2) > 1$, and let $x = s_1 + p_1/q_1$ and
+$d = s_2 + p_2/q_2$. For indices $i, i', j, j' \in \{1, \dots, q_2 - 1\}$: if $x + id$ and
+$x + i'd$ are both nonnegative integers then $i = i'$; if $2x + jd$ and $2x + j'd$ are both
+nonnegative integers then $j = j'$; and if $x + id$ and $2x + jd$ are both nonnegative integers
+then $i \ne j$.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 20
@@ -336,8 +407,12 @@ public theorem_wanted add_mul_mem_nat_unique_of_one_lt_gcd (x d : ℝ) (s₁ s�
     (∀ i j : ℕ, 1 ≤ i → i ≤ q₂ - 1 → 1 ≤ j → j ≤ q₂ - 1 →
       x + i * d ∈ Set.range ((↑) : ℕ → ℝ) → 2 * x + j * d ∈ Set.range ((↑) : ℕ → ℝ) → i ≠ j)
 
-/-- **Lemma 21.** For `n ≥ 3`, `m ≥ 2`, `0 < x < n - 1`, `d > n - 1`, and reduced `x = s₁ + p₁/q₁`,
-`d = s₂ + p₂/q₂` with `gcd(q₁, q₂) > 1`, `I_n ∪ J(x, m, d)` is not an MSTD set.
+/-- **An interval and an overlapping progression whose denominators share a factor are not MSTD.**
+Let $n \ge 3$ and $m \ge 2$ be natural numbers, and let $s_1, s_2, p_1, p_2, q_1, q_2$ be natural
+numbers with $p_1 > 0$, $p_2 > 0$, $\gcd(p_1, q_1) = \gcd(p_2, q_2) = 1$ and $\gcd(q_1, q_2) > 1$.
+Let $x = s_1 + p_1/q_1$ and $d = s_2 + p_2/q_2$, where a fraction with denominator $0$ is read as
+$0$, and suppose that $x < n - 1 < d$. Write $I_n = \{0, 1, \dots, n - 1\}$ and
+$J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$. Then $I_n \cup J(x, m, d)$ is not an MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 21
@@ -349,8 +424,9 @@ public theorem_wanted not_isMSTDSet_intervalAP_overlap_of_one_lt_gcd (n m : ℕ)
     (hx₁ : x < (n : ℝ) - 1) (hdn : (n : ℝ) - 1 < d) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m d)
 
-/-- **Lemma 22.** For `x = s₁ + 1/2` and `d = s₂ + p₂/q₂` with `q₂` odd, `x + id ∉ ℕ` for every `i ≥
-0`.
+/-- **No integer points for a half-integer start and an odd denominator.** Let $s_1, s_2, p_2, q_2$
+be natural numbers with $q_2$ odd, and let $x = s_1 + 1/2$ and $d = s_2 + p_2/q_2$. Then
+$x + id$ is not a nonnegative integer for any natural number $i$.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 22
@@ -360,8 +436,11 @@ public theorem_wanted add_mul_not_mem_nat_of_half (x d : ℝ) (s₁ s₂ p₂ q�
     (hx : x = s₁ + 1 / 2) (hd : d = s₂ + (p₂ : ℝ) / q₂) (i : ℕ) :
     x + i * d ∉ Set.range ((↑) : ℕ → ℝ)
 
-/-- **Lemma 23.** For `n ≥ 3`, `m ≥ 2`, `x = s₁ + 1/2` with `x < n - 1`, `d > n - 1`, and `d = s₂ +
-p₂/q₂` with `q₂` odd, `I_n ∪ J(x, m, d)` is not an MSTD set.
+/-- **Interval plus progression with half-integer start and odd-denominator step is not MSTD.**
+Let $I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$, as finite
+sets of reals. Let $n \ge 3$, $m \ge 2$, $s_1$, $s_2$ and $p_2$ be natural numbers and $q_2$ an
+odd natural number, and let $x = s_1 + 1/2$ and $d = s_2 + p_2/q_2$. If $x < n - 1 < d$, then
+$I_n \cup J(x, m, d)$ is not an MSTD set.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 23
@@ -372,12 +451,19 @@ public theorem_wanted not_isMSTDSet_intervalAP_overlap_half_odd_den (n m : ℕ) 
     (hx₁ : x < (n : ℝ) - 1) (hdn : (n : ℝ) - 1 < d) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m d)
 
-/-- **Theorem 2.** Let `X₁ = J(x₁, m₁, d₁)` and `X₂ = J(x₂, m₂, d₂)` with `d₁ > 0` and
-`min X₂ < max X₁`, and suppose `(x₂ - x₁)/d₁ = s₁ + p₁/q₁` and `d₂/d₁ = s₂ + p₂/q₂` with
-`sᵢ ≥ 0` and `pᵢ, qᵢ` positive and coprime. Then `X₁ ∪ X₂` is not an MSTD set, except in the
-two cases the paper leaves open: (i) `gcd(q₁, q₂) > 1` and `0 < d₂ < (m₁ - 1) d₁`, and
-(ii) `q₁ = 2`, `gcd(2, q₂) = 1` and `0 < d₂ < (m₁ - 1) d₁`; these are excluded by hypothesis.
-`min X₂ < max X₁` is written `x₂ < x₁ + m₁ d₁` (here `d₂ > 0` follows from `d₁ > 0`).
+/-- **Two overlapping progressions with rational ratios, outside two open cases, are not MSTD.**
+For real numbers $x, d$ and a natural number $m$, write
+$J(x, m, d) = \{x + id : i = 0, 1, \ldots, m\}$. Let $x_1, x_2, d_1, d_2$ be real numbers with
+$d_1 > 0$, let $m_1, m_2$ be natural numbers with $x_2 < x_1 + m_1 d_1$, and let
+$s_1, s_2, p_1, p_2, q_1, q_2$ be natural numbers with $p_1, p_2, q_1, q_2 > 0$,
+$\gcd(p_1, q_1) = \gcd(p_2, q_2) = 1$, $(x_2 - x_1)/d_1 = s_1 + p_1/q_1$ and
+$d_2/d_1 = s_2 + p_2/q_2$. Suppose that neither of the following holds: (i) $\gcd(q_1, q_2) > 1$
+and $0 < d_2 < (m_1 - 1) d_1$; (ii) $q_1 = 2$, $\gcd(2, q_2) = 1$ and $0 < d_2 < (m_1 - 1) d_1$.
+Then $J(x_1, m_1, d_1) \cup J(x_2, m_2, d_2)$ is not an MSTD set.
+
+Since $d_1 > 0$ and $d_2/d_1 = s_2 + p_2/q_2 > 0$, also $d_2 > 0$, so the condition
+$x_2 < x_1 + m_1 d_1$ says that the smallest element of $J(x_2, m_2, d_2)$ is less than the largest
+element of $J(x_1, m_1, d_1)$. Cases (i) and (ii) are the two cases the source leaves open.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Theorem 2
@@ -391,9 +477,12 @@ public theorem_wanted not_isMSTDSet_union_two_ap_overlap (x₁ x₂ d₁ d₂ : 
     (hexc₂ : ¬ (q₁ = 2 ∧ Nat.Coprime 2 q₂ ∧ 0 < d₂ ∧ d₂ < ((m₁ : ℝ) - 1) * d₁)) :
     ¬ IsMSTDSet (realAPSet x₁ m₁ d₁ ∪ realAPSet x₂ m₂ d₂)
 
-/-- **Lemma 18 (i).** If `x` is irrational and `d` is rational, then `x + i d` and `2x + j d` are
-not natural numbers for any `i, j ≥ 0`. The paper assumes `d ∈ ℚ ∖ ℕ`; the claim holds for every
-rational `d`, so that restriction is not stated.
+/-- **No nonnegative integer points for an irrational start and a rational difference.** Let
+$x$ be an irrational real number and $d$ a rational number. Then for all natural numbers $i$ and
+$j$, neither $x + id$ nor $2x + jd$ is a nonnegative integer.
+
+The paper assumes $d \in \mathbb{Q} \setminus \mathbb{N}$; the claim holds for every rational $d$,
+so that restriction is not stated.
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 18
@@ -402,11 +491,14 @@ public theorem_wanted add_mul_not_mem_nat_of_irrational_of_rat (x d : ℝ) (hx :
     (hd : d ∈ Set.range ((↑) : ℚ → ℝ)) (i j : ℕ) :
     x + i * d ∉ Set.range ((↑) : ℕ → ℝ) ∧ 2 * x + j * d ∉ Set.range ((↑) : ℕ → ℝ)
 
-/-- **Lemma 18 (ii), corrected.** If `x ∈ ℚ ∖ ℕ` and `d` is irrational, then `x + i d` is not a
-natural number for any `i ≥ 0`, and `2x + j d` is not a natural number for any `j ≥ 1`. As printed
-the lemma also claims `2x + 0 · d ∉ ℕ`, which fails at `x = 1/2` (`2x = 1`); the paper's proof
-("then `d ∈ ℚ`") covers only `j ≥ 1`, and the condition `q₁ ≥ 3` that excludes this case is
-attached only to (iii).
+/-- **Nonnegative integer points for a rational start and an irrational difference.** Let $x$ be
+a rational number that is not a nonnegative integer, and let $d$ be an irrational real number.
+Then $x + id$ is not a nonnegative integer for any natural number $i$, and $2x + jd$ is not a
+nonnegative integer for any natural number $j \ge 1$.
+
+As printed, the paper's Lemma 18 (ii) also claims $2x + 0 \cdot d \notin \mathbb{N}$, which fails
+at $x = 1/2$ (where $2x = 1$); the paper's proof ("then $d \in \mathbb{Q}$") covers only $j \ge 1$,
+and the condition that the denominator of $x$ be at least $3$ is attached only to part (iii).
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 18
@@ -416,11 +508,14 @@ public theorem_wanted add_mul_not_mem_nat_of_rat_of_irrational (x d : ℝ)
     (i j : ℕ) (hj : 1 ≤ j) :
     x + i * d ∉ Set.range ((↑) : ℕ → ℝ) ∧ 2 * x + j * d ∉ Set.range ((↑) : ℕ → ℝ)
 
-/-- **Lemma 18 (iii).** If `x = s₁ + p₁/q₁` and `d = s₂ + p₂/q₂` with `s₁, s₂, p₁, p₂, q₁, q₂ ∈ ℕ`,
-`gcd(p₁, q₁) = 1`, `gcd(q₁, q₂) = 1` and `q₁ ≥ 3`, then `x + i d` and `2x + j d` are not natural
-numbers for any `i, j ≥ 0`. The paper's further hypotheses (`p₁, p₂, q₂ > 0`, `gcd(p₂, q₂) = 1`,
-`d ∉ ℕ`) are not needed and are not stated (`p₁ > 0` and `q₂ > 0` already follow from the two
-coprimality conditions and `q₁ ≥ 3`).
+/-- **No integer points for coprime denominators, the first at least 3.** Let
+$s_1, s_2, p_1, p_2, q_1, q_2$ be natural numbers with $\gcd(p_1, q_1) = 1$, $\gcd(q_1, q_2) = 1$
+and $q_1 \ge 3$, and let $x = s_1 + p_1/q_1$ and $d = s_2 + p_2/q_2$. Then for all natural numbers
+$i$ and $j$, neither $x + id$ nor $2x + jd$ is a nonnegative integer.
+
+The paper's further hypotheses ($p_1, p_2, q_2 > 0$, $\gcd(p_2, q_2) = 1$, $d \notin \mathbb{N}$)
+are not needed and are not stated ($p_1 > 0$ and $q_2 > 0$ already follow from the two coprimality
+conditions and $q_1 \ge 3$).
 
 Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
 with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 18

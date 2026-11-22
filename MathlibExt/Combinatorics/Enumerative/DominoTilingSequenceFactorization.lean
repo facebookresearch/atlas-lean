@@ -51,9 +51,7 @@ private theorem domino_h_step (n : ℕ) (hn : 1 ≤ n) :
   rw [i1, i2, i3]
   exact domino_fib_odd_step k
 
-/-- Concrete values of `h n = Nat.fib (2 * n - 1)` at `n = 1, 2, 3, 4`. -/
-private theorem domino_h1 : Nat.fib (2 * 1 - 1) = 1 := rfl
-
+/-- Concrete values of `h n = Nat.fib (2 * n - 1)` at `n = 2, 3, 4`. -/
 private theorem domino_h2 : Nat.fib (2 * 2 - 1) = 2 := rfl
 
 private theorem domino_h3 : Nat.fib (2 * 3 - 1) = 5 := rfl
@@ -215,7 +213,7 @@ public theorem domino_tiling_sequence_factorization :
   · intro m hm
     exact domino_product_rec g hgrec m hm
   · show d 1 = g 1 * Nat.fib (2 * 1 - 1)
-    rw [hd1, hg1, domino_h1]
+    rw [hd1, hg1, Nat.fib_one]
   · show d 2 = g 2 * Nat.fib (2 * 2 - 1)
     rw [hd2, hg2, domino_h2]
   · show d 3 = g 3 * Nat.fib (2 * 3 - 1)

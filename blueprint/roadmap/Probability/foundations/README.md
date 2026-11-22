@@ -4,8 +4,8 @@ Construction of probability measures and processes (Kolmogorov extension, measur
 
 - [Conditional expectation as the best predictor](conditional-expectation-as-the-best-predictor/README.md)
 - [Hewitt–Savage zero–one law](hewitt-savage-zero-one-law/README.md)
-- [Probability measures from distribution functions](probability-measures-from-distribution-functions/README.md)
+- [Probability measures on the real line from distribution functions](probability-measures-from-distribution-functions/README.md)
 - [Regular conditional distributions](regular-conditional-distributions/README.md)
 - [Sublinear expectations and model uncertainty](sublinear-expectations-and-model-uncertainty/README.md)
-- [De Finetti's theorem for binary sequences](de-finetti-binary.md)
-- [Kolmogorov extension theorem](kolmogorov-extension.md)
+- [Kolmogorov extension theorem](kolmogorov-extension-theorem/README.md)
+- [De Finetti's theorem for binary sequences](de-finetti-theorem/README.md)
