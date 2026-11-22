@@ -35,6 +35,7 @@ theorem vcDim_halfspace_one : vcDim (halfspaceClass 1) = 2 := by
 theorem vcDim_halfspace_two : vcDim (halfspaceClass 2) = 3 := by
   simp [halfspaceClass_vcDim]
 
+open scoped Classical in
 /-- In dimension `1`, the two points `0` and `!₂[1]` are shattered. -/
 theorem halfspace_shatters_zero_one :
     SetShatters (halfspaceClass 1)

@@ -38,11 +38,6 @@ open scoped InnerProductSpace
 
 namespace Cslib.MachineLearning.PACLearning
 
-/-- Decidable equality on `EuclideanSpace ℝ (Fin d)`, for the witness set below. -/
-noncomputable scoped instance halfspaceDecEq (d : ℕ) :
-    DecidableEq (EuclideanSpace ℝ (Fin d)) :=
-  Classical.decEq _
-
 /-- The concept class of affine halfspaces in `ℝᵈ`: each concept decides the strict
 positive side `0 < ⟪w, x⟫ + b` of an affine functional. -/
 noncomputable def halfspaceClass (d : ℕ) :
@@ -50,12 +45,14 @@ noncomputable def halfspaceClass (d : ℕ) :
   {c | ∃ (w : EuclideanSpace ℝ (Fin d)) (b : ℝ),
     c = fun x => decide (0 < ⟪w, x⟫_ℝ + b)}
 
+open scoped Classical in
 /-- Lower-bound witness: the origin together with the standard basis vectors. -/
 noncomputable def halfspaceWitness (d : ℕ) :
     Finset (EuclideanSpace ℝ (Fin d)) :=
   insert 0 (Finset.image (fun i : Fin d => EuclideanSpace.single i (1 : ℝ))
     Finset.univ)
 
+open scoped Classical in
 /-- The witness set has `d + 1` points. -/
 theorem halfspaceWitness_card (d : ℕ) : (halfspaceWitness d).card = d + 1 := by
   have h0 : (0 : EuclideanSpace ℝ (Fin d)) ∉
