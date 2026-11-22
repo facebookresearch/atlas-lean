@@ -65740,7 +65740,7 @@
 "MetaMathlibExt.fibMorph": "2c17e61e3ecac63e",
 "MetaMathlibExt.fibMorph_append": "c78b714574e59431",
 "MetaMathlibExt.fibMorph_length_ge": "c50a8b272d7afb22",
-"MetaMathlibExt.fibPiSquared_coeff_eq_fib": "497e3f50419c9e88",
+"MetaMathlibExt.fibPiSquared_coeff_eq_fib": "8bf0ffdeb286d58c",
 "MetaMathlibExt.fibPiSquared_poly_eq_sum": "108b0d9fd90aced2",
 "MetaMathlibExt.fibPoly_pow_even_sub": "9d87e0a4871e05be",
 "MetaMathlibExt.fibPoly_pow_odd_sub": "abeb7f734b9436ad",

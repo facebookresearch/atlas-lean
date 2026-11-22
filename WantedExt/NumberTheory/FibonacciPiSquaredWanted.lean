@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-public import Mathlib.Data.Nat.Fib.Basic
+public import MathlibExt.NumberTheory.FibonacciPiSquared
 
 /-!
 # Fibonacci numbers and `π²`
@@ -69,15 +69,6 @@ public theorem_wanted pi_sq_eq_fibonacci_central_series :
         (Nat.fib (2 * k + 2) : ℝ) / ((2 * k + 2).factorial : ℝ) ∧
       Real.pi ^ 2 = 250 / (25 - 4 * √5) * ∑' k : ℕ, ((k.factorial ^ 2 : ℕ) : ℝ) *
         (Nat.fib (2 * k + 1) : ℝ) / ((2 * k + 2).factorial : ℝ)
-
-/-- Lemma 2.3: `a_n = ((25 - 4√5) / 250) F_n - (8√5 / 250) F_(n-1)`, stated for `n ≥ 1`; the case
-`n = 0` with the paper's convention `F_(-1) = 1` is the initial value `a 0 = -8√5 / 250`.
-
-Source: Joseph Tonien, *Fibonacci and Pi Squared*, The Fibonacci Quarterly 62 (2024), no. 1,
-Lemma 2.3 (`fq-2024-tonien10292023-lem-2.3`). -/
-public theorem_wanted fibPiSquared_coeff_eq_fib (a : ℕ → ℝ) (ha0 : a 0 = -(8 * √5) / 250)
-    (ha1 : a 1 = (25 - 4 * √5) / 250) (ha : ∀ n, 1 ≤ n → a (n + 1) = a n + a (n - 1)) (n : ℕ) :
-    a (n + 1) = (25 - 4 * √5) / 250 * Nat.fib (n + 1) - 8 * √5 / 250 * Nat.fib n
 
 /-- Lemma 2.4: for `n ≥ 1`,
 `p_n(x) = Σ_(j=0)^(n-1) (-1)^j C(n-1, j) Π_(k=2j+3)^(2n) (2x + k) Π_(t=1)^j (x + t)²`.
