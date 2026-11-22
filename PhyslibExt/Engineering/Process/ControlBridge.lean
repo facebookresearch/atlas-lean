@@ -97,18 +97,18 @@ lemma cstrLinearSystem_output_eq (V Q k C : ℝ) (x : Fin 1 → ℝ) (u : ℝ) :
   left
   rfl
 
+set_option linter.unusedVariables false in
 /-- **Exact deviation correspondence.** Around an equilibrium pair, the
 CSTR right-hand side at the deviated state and inlet is the mapped
 linear-system field, with no remainder term. -/
-lemma cstr_deviation_field_eq {V Q k css cinss x u : ℝ}
+lemma cstr_deviation_field_eq {V Q k css cinss x u : ℝ} (hV : 0 < V)
+    (hQ : 0 < Q) (hk : 0 ≤ k)
     (hss : (Q / V) * (cinss - css) - k * css = 0) :
     ![(Q / V) * ((cinss + u) - (css + x)) - k * (css + x)] =
       (cstrLinearSystem V Q k 1).field ![x] u := by
   rw [cstrLinearSystem_field_eq]
   simp only [Matrix.cons_val_zero]
-  have key : (Q / V) * ((cinss + u) - (css + x)) - k * (css + x) =
-      -(Q / V + k) * x + (Q / V) * u := by
-    linear_combination hss
-  rw [key]
+  congr 1
+  linear_combination hss
 
 end Engineering.Process.ControlBridge
