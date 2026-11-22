@@ -43,17 +43,27 @@ namespace MathlibExt.MeasureTheory.InfConvolutionLipschitzWanted
 
 variable {X : Type*} [MetricSpace X]
 
-/-- The inf-convolution `g f n x = ⨅ p, f p + n * d(x, p)` of the problem, valued in `ℝ≥0∞`. -/
+/-- **Inf-convolution with a multiple of the distance.** Let $X$ be a metric space with metric
+$d$, let $f : X \to [0,\infty]$, and let $n$ be a natural number. For $x \in X$,
+$$
+g_n(x) = \inf\{f(p) + n\,d(x,p) : p \in X\},
+$$
+the infimum being taken in $[0,\infty]$.
+-/
 noncomputable def g (f : X → ENNReal) (n : ℕ) (x : X) : ENNReal :=
   sInf (Set.range fun p : X => f p + n * ENNReal.ofReal (dist x p))
 
-/-- Suppose that $X$ is a metric space, with metric $d$, and that $f:X\to[0,\infty]$ is lower
-semicontinuous, $f(p)<\infty$ for at least one $p\in X$. For $n=1,2,3,\ldots$, $x\in X$, define
+/-- **The inf-convolution of a lower semicontinuous function is Lipschitz.** Let $X$ be a metric
+space with metric $d$, and let $f : X \to [0,\infty]$ be lower semicontinuous with $f(p) < \infty$
+for at least one $p \in X$. For a natural number $n$ and $x \in X$ let
+$$
+g_n(x) = \inf\{f(p) + n\,d(x,p) : p \in X\} \in [0,\infty].
+$$
+Then $|g_n(x) - g_n(y)| \le n\,d(x,y)$ for every natural number $n$ (including $n = 0$) and all
+$x, y \in X$.
 
-\[
-g_n(x)=\inf\{f(p)+nd(x,p):p\in X\}
-\]
-and prove that $|g_n(x)-g_n(y)|\le nd(x,y)$.
+Each $g_n(x)$ is finite, since $g_n(x) \le f(p) + n\,d(x,p)$ for the point $p$ with
+$f(p) < \infty$, so the difference is one of real numbers.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Functional analysis; Nonlinear
 functional analysis), `benchmark/level1/ma_proofbench_l1_36.lean` at
