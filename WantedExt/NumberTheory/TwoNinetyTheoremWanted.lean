@@ -99,7 +99,9 @@ for each critical number $m$ there is $x \in \mathbb{Z}^n$ with $x^{\top} M x = 
 is universal: for every positive integer $m$ there is $x \in \mathbb{Z}^n$ with
 $x^{\top} M x = m$.
 
-Source: M. Bhargava, J. Hanke, Universal quadratic forms and the 290-theorem, preprint (2011). See also https://en.wikipedia.org/wiki/15_and_290_theorems Via leanprover/lean-eval@38361be, problem `two_ninety_theorem`. -/
+Source: M. Bhargava, J. Hanke, Universal quadratic forms and the 290-theorem, preprint (2011). See
+also https://en.wikipedia.org/wiki/15_and_290_theorems Via leanprover/lean-eval@38361be, problem
+`two_ninety_theorem`. -/
 public theorem_wanted two_ninety_theorem {n : ℕ} (M : Matrix (Fin n) (Fin n) ℝ)
     (hpos : M.PosDef)
     (hIntegral : Integral M)

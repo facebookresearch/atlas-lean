@@ -60,7 +60,8 @@ complex embeddings of $K$. If $\operatorname{house}(\beta) \le 2$, then
 $\operatorname{house}(\beta) = 2$ or $\operatorname{house}(\beta) = 2\cos(\pi/m)$ for some
 integer $m \ge 1$.
 
-Source: https://arxiv.org/pdf/1004.0665 Via leanprover/lean-eval@38361be, problem `cyclotomic_integer_house_le_two`. -/
+Source: https://arxiv.org/pdf/1004.0665 Via leanprover/lean-eval@38361be, problem
+`cyclotomic_integer_house_le_two`. -/
 public theorem_wanted cyclotomic_integer_house_le_two
     {K : Type*} [Field K] [NumberField K] [Algebra ℚ K]
     (n : ℕ) [NeZero n] [IsCyclotomicExtension {n} ℚ K] {β : K}
@@ -77,7 +78,8 @@ complex embeddings of $K$. If $2 < \operatorname{house}(\beta) < 76/33$, then
 $\operatorname{house}(\beta)$ is one of $(\sqrt{7} + \sqrt{3})/2$, $\sqrt{5}$,
 $1 + 2\cos(2\pi/7)$, $(1 + \sqrt{5})/\sqrt{2}$ and $(1 + \sqrt{13})/2$.
 
-Source: https://arxiv.org/pdf/1004.0665 Via leanprover/lean-eval@38361be, problem `cyclotomic_integer_house_between_two_and_76_33`. -/
+Source: https://arxiv.org/pdf/1004.0665 Via leanprover/lean-eval@38361be, problem
+`cyclotomic_integer_house_between_two_and_76_33`. -/
 public theorem_wanted cyclotomic_integer_house_between_two_and_76_33
     {K : Type*} [Field K] [NumberField K] [Algebra ℚ K]
     (n : ℕ) [NeZero n] [IsCyclotomicExtension {n} ℚ K] {β : K}
