@@ -13,9 +13,11 @@ article id and origin. The Lean owns what lean-facts adds on the build's checkou
 an article's `## Depends on` and `## Proof depends on`, from the dependency dump,
 and its annotation's kind and status, from the Lean sources. A planned page, one
 whose annotation has no Lean link, keeps the prerequisites it records by hand,
-and gets no kind or status. So does a page Autoform credits to Mathlib: its
-annotation sets the `org.autoform` extension's `mathlib: true`, and its Lean link
-names a declaration of Mathlib's repository (MATHLIB), which lean-facts keeps.
+and gets no kind or status. A page Autoform credits to Mathlib has no declaration
+of this project either: its annotation sets the `org.autoform` extension's
+`mathlib: true`, and its Lean link names a declaration of Mathlib's repository
+(MATHLIB). lean-facts keeps that link and the kind the annotation records, and
+gives the page no status.
 
 declarations gives each declaration with a docstring and no page a page from its
 docstring, beside its module's other pages and listed on their page in source
@@ -203,13 +205,26 @@ def subject_path(annotation: dict) -> Path:
     return (LINKS / annotation["subject"][0]["uri"]).resolve()
 
 
+def mathlib_uri(uri) -> bool:
+    """Whether *uri* names Mathlib's repository as Autoform's reader reads it: without a query or fragment, a final
+    `/` or `.git`."""
+    return isinstance(uri, str) and re.split("[?#]", uri)[0].removesuffix("/").removesuffix(".git") == MATHLIB
+
+
 def lean_name(annotation: dict) -> str | None:
     """The declaration of this project that the annotation links; a link to Mathlib's repository names none."""
     for end in annotation.get("object", []):
         name = end.get("location", {}).get("declaration")
-        if name and end.get("uri") != MATHLIB:
+        if name and not mathlib_uri(end.get("uri")):
             return name
     return None
+
+
+def credits_mathlib(annotation: dict) -> bool:
+    """Whether the annotation credits its page to Mathlib: the `org.autoform` extension's `mathlib: true` and a Lean
+    link to Mathlib's repository."""
+    return annotation.get("extensions", {}).get(NAMESPACE, {}).get("mathlib") is True and any(
+        mathlib_uri(end.get("uri")) for end in annotation.get("object", []))
 
 
 def read_annotations() -> dict[Path, list[dict]]:
@@ -339,8 +354,10 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
                 continue
             name, own = lean_name(annotation), annotation.get("extensions", {}).get(OWN)
             if not name and not has_legacy_name(own):
-                # A planned page: its prerequisites are its own, and with no declaration it has no kind or status.
-                annotation.pop("kind", None)
+                # A planned page: its prerequisites are its own, and with no declaration it has no kind or status. A
+                # page credited to Mathlib keeps the kind its annotation records, as the Lean of this project has none.
+                if not credits_mathlib(annotation):
+                    annotation.pop("kind", None)
                 annotation.pop("status", None)
                 continue
             kind, status = lean_facts_for(name, own, index, sorry)

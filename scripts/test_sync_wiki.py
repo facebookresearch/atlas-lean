@@ -379,24 +379,38 @@ class LeanFacts(Vault):
         self.assertEqual((wiki.ROADMAP / "Algebra" / "gone.md").read_text(), "# Gone\n\nRemoved upstream.\n")
 
     def test_a_mathlib_credited_page_keeps_its_link(self) -> None:
-        # Autoform credits a page to Mathlib from a Lean link to Mathlib's repository and the mathlib flag; the Lean
-        # index has no such name, yet the link stays and the page gets no kind or status. The same name as a link of
+        # Autoform credits a page to Mathlib from a Lean link to Mathlib's repository, however its reader spells that
+        # repository, and the mathlib flag. The Lean index has no such name, yet the link and the recorded kind stay,
+        # with no status, so Autoform's reader still reads the page as Mathlib's theorem. The same name as a link of
         # this project is a declaration the Lean does not have, so its page is unlinked.
-        self.page("Algebra/in-mathlib.md", "# In Mathlib\n\nProved there.\n")
-        self.page("Algebra/gone.md", "# Gone\n\nRemoved upstream.\n")
-        mathlib = {"type": "lean", "uri": sync.MATHLIB,
+        from autoform_cli import annotations
+
+        def credited(page: str, uri: str) -> dict:
+            end = {"type": "lean", "uri": uri,
                    "location": {"declaration": "Group.exists", "module": "Mathlib.Algebra.Group"}}
-        credited = self.about("Algebra/in-mathlib.md", object=[mathlib], id="af_1",
-                              extensions={"org.autoform": {"mathlib": True}})
-        self.annotate([credited, self.about("Algebra/gone.md", object=[{"location": {"declaration": "Group.exists"}}],
-                                            id="af_2")])
+            return self.about(f"Algebra/{page}.md", object=[end], kind="theorem", status="formalized",
+                              id=f"af_{page}", extensions={"org.autoform": {"mathlib": True}})
+
+        for page in ("in-mathlib", "in-mathlib-git", "gone"):
+            self.page(f"Algebra/{page}.md", f"# {page}\n\nIt holds.\n")
+        rows = [credited("in-mathlib", sync.MATHLIB), credited("in-mathlib-git", sync.MATHLIB + ".git/"),
+                self.about("Algebra/gone.md", object=[{"location": {"declaration": "Group.exists"}}], id="af_gone")]
+        self.annotate(rows)
         counts, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations={}), {})
         self.assertEqual(counts, {"articles": 0, "unresolved": 1, "edges": 0})
         self.assertEqual(unlinked, ["Group.exists (Algebra/gone.md)"])
-        rows = {sync.subject_path(row).name: row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
-        self.assertEqual(rows["in-mathlib.md"], credited)
-        self.assertNotIn("object", rows["gone.md"])
-        self.assertEqual((wiki.ROADMAP / "Algebra" / "in-mathlib.md").read_text(), "# In Mathlib\n\nProved there.\n")
+        after = {sync.subject_path(row).name: row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
+        self.assertNotIn("object", after["gone.md"])
+        pages = {wiki.ROADMAP / "Algebra" / f"{page}.md": f"Algebra/{page}" for page in ("in-mathlib", "in-mathlib-git")}
+        links = annotations.read_links(wiki.VAULT, {**pages, wiki.ROADMAP / "Algebra" / "gone.md": "Algebra/gone"})
+        self.assertEqual(links.drops.warnings(), [])
+        for path in pages:
+            self.assertNotIn("status", after[path.name])
+            self.assertEqual((wiki.ROADMAP / "Algebra" / path.name).read_text(), f"# {path.stem}\n\nIt holds.\n")
+            facts = links.facts[path]
+            self.assertEqual((facts.get("declaration"), facts.get("mathlib"), facts.get("mathlib_declaration"),
+                              facts.get("mathlib_file")),
+                             ("theorem", "true", "Group.exists", "Mathlib/Algebra/Group.lean"), path.name)
 
     def test_pages_the_declarations_sync_wrote_get_their_facts(self) -> None:
         # declarations marks its pages with {"from": "docstring"}; an earlier sync also wrote a module and a name for
