@@ -1,0 +1,75 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+module
+
+import Mathlib.Tactic.NormNum
+
+import PhyslibExt.EarthScience.DropletGrowth
+
+/-!
+# Diffusion-limited droplet growth checks
+
+Concrete consumers of `PhyslibExt.EarthScience.DropletGrowth`:
+`r0 = 3, K = 2, S = 1, t = 4` (`r = 5`, `r^2 = 25`, `r' = 2/5`),
+no supersaturation, and evaporation `S = -1` at `t = 0`.
+
+## i. Overview
+
+These are elaboration and non-vacuity checks, not new results.
+
+## ii. Key results
+
+No new definitions or results are introduced here.
+
+## iii. Table of contents
+
+- A. Concrete checks
+
+## iv. References
+
+- `PhyslibExt.EarthScience.DropletGrowth`
+-/
+
+/-- Numeric radius squared: `r0 = 3, K = 2, S = 1, t = 4` gives `r^2 = 25`. -/
+example : (Real.sqrt ((3:ℝ) ^ 2 + 2 * 2 * 1 * 4)) ^ 2 = 25 := by
+  have h := EarthScience.radius_sq (r0 := 3) (K := 2) (S := 1) (t := 4)
+    (by norm_num) (by norm_num) (by norm_num)
+  rw [h]
+  norm_num
+
+/-- Numeric radius: `sqrt(25) = 5`. -/
+example : Real.sqrt ((3:ℝ) ^ 2 + 2 * 2 * 1 * 4) = 5 := by
+  rw [show ((3:ℝ) ^ 2 + 2 * 2 * 1 * 4) = (5:ℝ) ^ 2 by norm_num]
+  exact Real.sqrt_sq (by norm_num)
+
+/-- Numeric squared-radius derivative: `(r^2)' = 4` at the numeric point. -/
+example :
+    HasDerivAt (fun t => (Real.sqrt ((3:ℝ) ^ 2 + 2 * 2 * 1 * t)) ^ 2) (2 * 2 * 1) 4 :=
+  EarthScience.radius_sq_hasDerivAt (r0 := 3) (K := 2) (S := 1) (by norm_num) (by norm_num) 4 (by norm_num)
+
+/-- Numeric radius derivative: `r'(4) = 2/5`. -/
+example :
+    HasDerivAt (fun t => Real.sqrt ((3:ℝ) ^ 2 + 2 * 2 * 1 * t))
+      (2 * 1 / Real.sqrt ((3:ℝ) ^ 2 + 2 * 2 * 1 * 4)) 4 :=
+  EarthScience.radius_hasDerivAt (r0 := 3) (K := 2) (S := 1) (by norm_num) (by norm_num) 4 (by rw [show ((3:ℝ) ^ 2 + 2 * 2 * 1 * 4) = (5:ℝ) ^ 2 by norm_num, Real.sqrt_sq (by norm_num : (0:ℝ) ≤ 5)]; norm_num)
+
+/-- No supersaturation: `S = 0` keeps `r = 3`. -/
+example : Real.sqrt ((3:ℝ) ^ 2 + 2 * 2 * (0:ℝ) * 5) = 3 :=
+  EarthScience.no_supersaturation (r0 := 3) (K := 2) (t := 5) (by norm_num) (by norm_num)
+
+/-- Evaporation: with `S = -1` at `t = 0`, `r(0) = 3 > 0` and
+`r'(0) = K*S / r(0) = 2 * (-1) / 3 = -2/3`, so the droplet shrinks. -/
+example : HasDerivAt (fun t => Real.sqrt ((3:ℝ) ^ 2 + 2 * 2 * (-1) * t)) (-2 / 3) 0 := by
+  have hr : Real.sqrt ((3:ℝ) ^ 2 + 2 * 2 * (-1) * 0) = 3 := by
+    rw [show ((3:ℝ) ^ 2 + 2 * 2 * (-1) * 0) = (3:ℝ) ^ 2 by norm_num,
+      Real.sqrt_sq (by norm_num : (0:ℝ) ≤ 3)]
+  have h := EarthScience.radius_hasDerivAt (r0 := 3) (K := 2) (S := -1)
+    (by norm_num) (by norm_num) 0 (by rw [hr]; norm_num)
+  rw [hr] at h
+  convert h using 1
+  norm_num

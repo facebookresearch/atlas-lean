@@ -40,7 +40,8 @@ namespace MetaMathlibExt
 @[expose] public section
 
 /-- **Theorem 1.** For even `k ≥ 12`, `k ≠ 14`, with `m = dim S_k` (`⌊k/12⌋ - 1` if
-`k ≡ 2 (mod 12)`, else `⌊k/12⌋`), `C = (c_{ij})`, `c_{ij} = (τ^{*i} * σ_{k-12i-1})(j) / σ_{k-12i-1}(0)`
+`k ≡ 2 (mod 12)`, else `⌊k/12⌋`), `C = (c_{ij})`,
+`c_{ij} = (τ^{*i} * σ_{k-12i-1})(j) / σ_{k-12i-1}(0)`
 (the `q^j`-coefficient of `Δ^i E_{k-12i}`), and `(γ_1, …, γ_m) = (σ_{k-1}(1), …, σ_{k-1}(m)) C⁻¹`:
 `G_k ≡ ∑_{i=1}^m γ_i Δ^i E_{k-12i} (mod N'_k)`, coefficientwise for every `n ≥ 0`.
 

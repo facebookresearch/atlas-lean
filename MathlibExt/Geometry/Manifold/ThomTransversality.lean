@@ -120,6 +120,7 @@ theorem thom_transversality_uniform_approx_regular_value_zero
     rw [heq]
     exact hsurj
 
+set_option linter.unusedSectionVars false in
 /--
 For a compact finite-dimensional boundaryless Hausdorff second-countable `C^∞` manifold `M`, every
 `C^∞` map `f : M → ℝ^n` and `ε>0` admits a `C^∞` map `g` with `‖f x - g x‖ < ε` for all `x` such
@@ -129,6 +130,7 @@ Lee, ISMs; Lean states compact-source uniform-approx regular-value-zero corollar
 
 Proves `Wanted` entry `thom_transversality_compact_source_uniform_approx_regular_value_zero`.
 -/
+@[nolint unusedArguments] -- `[CompactSpace M]` is the compact-source scope of the Wanted entry.
 theorem thom_transversality_compact_source_uniform_approx_regular_value_zero
     {n : ℕ}
     (f : M → EuclideanSpace ℝ (Fin n))

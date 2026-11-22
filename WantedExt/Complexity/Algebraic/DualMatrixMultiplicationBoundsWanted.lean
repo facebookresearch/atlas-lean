@@ -15,7 +15,7 @@ public import Mathlib.Algebra.CharP.Basic
 /-!
 # Dual matrix-multiplication exponent: source-bound requests
 
-All declarations below are private unproved `ProofWanted` data. The optimizer uses
+All declarations below are public unproved `ProofWanted` data. The optimizer uses
 actual field-input arithmetic circuits, not a supplied complexity function. The
 zero-aspect value two and output-cost lower bound are proved upstream.
 
@@ -25,6 +25,8 @@ these consequences is claimed without the requested premise. The retained WXXZ
 introduction also allows divisions; its transfer to the selected division-free
 model is not proved. Exact tensor-rank and floor/ceiling transfers remain gaps.
 -/
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -91,24 +93,25 @@ theorem_wanted rectangularNaiveUpper :
     ∀ (F : Type u) [Field F] (k : ℝ), 0 ≤ k →
       rectangularCircuitExponent F k ≤ ENNReal.ofReal (2 + k)
 
-/-- **Circuit size and tensor rank give the same rectangular exponent.** For every field $F$
-and every real $k \ge 0$, the rectangular matrix multiplication exponent at aspect $k$ defined
+/-- **Circuit size and tensor rank give the same rectangular exponent.** For every infinite field
+$F$ and every real $k \ge 0$, the rectangular matrix multiplication exponent at aspect $k$ defined
 by arithmetic-circuit size equals the one defined by tensor rank.
 
 Source: LG2012 exact bilinear-rank characterization; the operation/rank transfer is missing. -/
 theorem_wanted rectangularOperationRankBridge :
-    ∀ (F : Type u) [Field F] (k : ℝ), 0 ≤ k →
+    ∀ (F : Type u) [Field F] [Infinite F] (k : ℝ), 0 ≤ k →
       rectangularCircuitExponent F k =
         MatrixMultiplicationExponent.rectangularMatrixMultiplicationExponent F k
 
-/-- **The rectangular exponent depends only on the characteristic.** If two fields $F$ and $K$
-have the same characteristic, then for every real $k \ge 0$ the rectangular matrix
+/-- **The rectangular exponent depends only on the characteristic.** If two infinite fields $F$
+and $K$ have the same characteristic, then for every real $k \ge 0$ the rectangular matrix
 multiplication exponents of $F$ and $K$ in the arithmetic-circuit model at aspect $k$ are
 equal.
 
 Source: LG2012 Section 1, characteristic dependence; this circuit-model transfer is missing. -/
 theorem_wanted characteristicInvariance :
-    ∀ (F : Type u) (K : Type v) [Field F] [Field K], ringChar F = ringChar K →
+    ∀ (F : Type u) (K : Type v) [Field F] [Field K] [Infinite F] [Infinite K],
+      ringChar F = ringChar K →
       ∀ k : ℝ, 0 ≤ k → rectangularCircuitExponent F k = rectangularCircuitExponent K k
 
 end Cslib.Complexity.Algebraic.DualMatrixMultiplicationBoundsWanted

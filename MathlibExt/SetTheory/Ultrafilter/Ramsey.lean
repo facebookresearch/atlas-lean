@@ -11,13 +11,14 @@ Author: Steven Warner
 -/
 module
 
-public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Order.CompletePartialOrder
 public import Mathlib.Order.Filter.Ultrafilter.Defs
 
 @[expose] public section
 
 -- Source: Lean Definition Library (Airtable) records: Logic 32
+
+open Set Function
 
 /-!
 # Ramsey ultrafilter
@@ -26,8 +27,6 @@ public import Mathlib.Order.Filter.Ultrafilter.Defs
 
 * Jech (for `IsRamseyUltrafilter`)
 -/
-
-open Set Function
 
 namespace MetaMathlibExt
 

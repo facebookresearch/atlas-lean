@@ -16,19 +16,22 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 /-!
 # Square matrix-multiplication exponent: source-bound requests
 
-All `theorem_wanted` declarations below are private unproved `ProofWanted` data.
+All `theorem_wanted` declarations below are public unproved `ProofWanted` data.
 The optimizer is the aspect-one case of the actual arithmetic-circuit exponent:
 the inner dimension is exactly `n`, each addition, subtraction or multiplication
 node costs one, and constants, input references and output references are free.
 The output-cost lower bound `2 ≤ ω` is proved upstream as
 `two_le_squareMatrixMultiplicationCircuitExponent`.
 
-The catalogue rows are stated for every field. Transfers from approximate or
+The catalogue rows are stated for every field; the bridge and invariance rows
+below are stated for infinite fields. Transfers from approximate or
 border-rank algorithms, recursive tensor constructions, division elimination,
 the operation/rank bridge and characteristic invariance are not proved here.
 The final sharpness proposition records the catalogue comment that `2` is
 conjectured sharp; it is a definition, not an asserted theorem.
 -/
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -265,25 +268,26 @@ theorem_wanted dupontEisenbergerEtAl2026Upper :
       squareMatrixMultiplicationCircuitExponent F ≤
         ENNReal.ofReal ((2371177 : ℝ) / 1000000)
 
-/-- **Circuit size and tensor rank give the same square exponent.** For every field $F$, the
-square matrix multiplication exponent of $F$ defined by arithmetic-circuit size equals the
+/-- **Circuit size and tensor rank give the same square exponent.** For every infinite field $F$,
+the square matrix multiplication exponent of $F$ defined by arithmetic-circuit size equals the
 matrix multiplication exponent of $F$ defined by tensor rank.
 
 Source: C15a additional comments and [B2013]: the arithmetic-operation
 exponent agrees with the tensor-rank exponent. This bridge is not proved. -/
 theorem_wanted squareOperationRankBridge :
-    ∀ (F : Type u) [Field F],
+    ∀ (F : Type u) [Field F] [Infinite F],
       squareMatrixMultiplicationCircuitExponent F =
         MatrixMultiplicationExponent.matrixMultiplicationExponent F
 
-/-- **The square exponent depends only on the characteristic.** If two fields $F$ and $K$ have
-the same characteristic, then the square matrix multiplication exponents of $F$ and $K$ in the
+/-- **The square exponent depends only on the characteristic.** If two infinite fields $F$ and $K$
+have the same characteristic, then the square matrix multiplication exponents of $F$ and $K$ in the
 arithmetic-circuit model are equal.
 
 Source: C15a additional comments and [S1981]: the exponent depends only on
 the field characteristic. This circuit-model transfer is not proved. -/
 theorem_wanted characteristicInvariance :
-    ∀ (F : Type u) (K : Type v) [Field F] [Field K], ringChar F = ringChar K →
+    ∀ (F : Type u) (K : Type v) [Field F] [Field K] [Infinite F] [Infinite K],
+      ringChar F = ringChar K →
       squareMatrixMultiplicationCircuitExponent F =
         squareMatrixMultiplicationCircuitExponent K
 

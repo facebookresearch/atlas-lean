@@ -9,9 +9,14 @@ LICENSE file in the root directory of this source tree.
 /-
 # Yao's XOR lemma: hardness amplification by XOR
 
-Source:
-A. C. Yao, "Theory and applications of trapdoor functions", Proceedings of the Twenty-Third
-Annual Symposium on Foundations of Computer Science (FOCS 1982), 80-91.
+Attribution: A. C. Yao, "Theory and applications of trapdoor functions", Proceedings of the
+Twenty-Third Annual Symposium on Foundations of Computer Science (FOCS 1982), 80-91. According
+to O. Goldreich, N. Nisan and A. Wigderson, "On Yao's XOR-Lemma" (ECCC TR95-050, revision 2,
+Section 1), the lemma was presented in Yao's talks on that work rather than in the paper, and
+its first published proof is L. Levin, "One-way functions and pseudorandom generators",
+Combinatorica 7 (1987). Textbook statements: Goldreich-Nisan-Wigderson, Lemmas 1 and 2
+(asymptotic, non-uniform); S. Arora and B. Barak, *Computational Complexity: A Modern
+Approach*, web draft of 2007-01-08, Theorem 17.2 (concrete parameters).
 -/
 module
 
@@ -77,13 +82,13 @@ odd number of the values $f(x_i)$ are true. -/
 def xorOf {n k : ℕ} (f : (Fin n → Bool) → Bool) (xs : Fin k → Fin n → Bool) : Bool :=
   xorFold (fun i => f (xs i))
 
-/-- **Agreement of a circuit with a Boolean function.** Let $\alpha$ be a finite type, let $C$
-be a circuit given as a list of encoded gates, let $g$ assign a Boolean to each $a \in \alpha$,
-and let $\mathrm{enc}$ encode each $a \in \alpha$ as a list of Booleans. The agreement of $C$
-with $g$ is the rational number $N / |\alpha|$ (which is $0$ when $\alpha$ is empty), where $N$
-is the number of $a \in \alpha$ such that $C$ has at least one gate and the value of its last
-gate, when $C$ is evaluated on the input list $\mathrm{enc}(a)$, equals $g(a)$. -/
-noncomputable def agreement {α : Type*} [Fintype α]
+/-- **Agreement of a circuit with a Boolean function.** Let $\alpha$ be a nonempty finite type, let
+$C$ be a circuit given as a list of encoded gates, let $g$ assign a Boolean to each
+$a \in \alpha$, and let $\mathrm{enc}$ encode each $a \in \alpha$ as a list of Booleans. The
+agreement of $C$ with $g$ is the rational number $N / |\alpha|$, where $N$ is the number of
+$a \in \alpha$ such that $C$ has at least one gate and the value of its last gate, when $C$ is
+evaluated on the input list $\mathrm{enc}(a)$, equals $g(a)$. -/
+noncomputable def agreement {α : Type*} [Fintype α] [Nonempty α]
     (C : List XORGate) (g : α → Bool) (enc : α → List Bool) : ℚ :=
   (Set.ncard {a | (xorCircuitEval C (enc a)).getLast? = some (g a)} : ℚ) /
     (Fintype.card α : ℚ)
@@ -98,9 +103,11 @@ $|C| \cdot (k + 1)^c \le s$, has agreement at most $1/2 + (1 - 2\delta)^k / 2 + 
 the XOR $f^{\oplus k}$ of $k$ independent copies of $f$, where a $k$-tuple of $n$-bit blocks is
 given to the circuit as its $nk$-bit flattening.
 
-Source: A. C. Yao, "Theory and
-applications of trapdoor functions", Proceedings of the Twenty-Third Annual Symposium on
-Foundations of Computer Science (FOCS 1982), 80-91. -/
+Attributed to A. C. Yao, "Theory and applications of trapdoor functions" (FOCS 1982, 80-91); by O.
+Goldreich, N. Nisan and A. Wigderson, "On Yao's XOR-Lemma" (ECCC TR95-050, revision 2, Section 1),
+the lemma was presented in Yao's talks rather than in that paper, with a first published proof by L.
+Levin (1987). Compare Goldreich-Nisan-Wigderson, Lemma 2, and S. Arora and B. Barak, *Computational
+Complexity*, web draft of 2007-01-08, Theorem 17.2. -/
 public theorem_wanted yao_xor_lemma :
     ∃ c : ℕ, ∀ (n k : ℕ) (hn : 1 ≤ n), ∀ (δ : ℚ), 0 < δ → δ ≤ 1 / 2 →
       ∀ f : (Fin n → Bool) → Bool, ∀ s : ℕ,

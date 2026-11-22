@@ -125,4 +125,98 @@ example : request S available all 1 ![1, 0, 2] = some (available₁, S₁) :=
   request_eq_some_iff.mpr ⟨by decide, by decide, by decide, by decide,
     (safetyCheck_iff _ _).mp (by decide), rfl, rfl⟩
 
+/-! ## The bridge to deadlock detection -/
+
+/-- The banker's safety check and deadlock detection with the remaining needs
+as requests agree: the unsafe state leaves `P1` reported as deadlocked. -/
+example : T.toDetectionState.detect 0 [0, 1] = [1] := by decide
+
+example : ¬ T.Safe 0 [0, 1] := fun h => by
+  have := ((T.safe_iff_detect_eq_nil 0 [0, 1]).mp h).2
+  exact absurd this (by decide)
+
+/-- Detection alone does not check for repetitions: with `P0` listed twice it
+lets both copies finish, credits `P0`'s allocation twice and then finishes
+`P1`, while the safety check rejects the list. -/
+example : T.toDetectionState.detect 0 [0, 0, 1] = [] ∧ T.safetyCheck 0 [0, 0, 1] = false := by
+  decide
+
+example : S.safetyCheck available all = true ↔
+    all.Nodup ∧ S.toDetectionState.detect available all = [] :=
+  S.safetyCheck_eq_true_iff_detect_eq_nil available all
+
+universe u v
+
+/-- The sequence correspondence works for arbitrary process and resource universes. -/
+example {P : Type u} {R : Type v} (B : System P R) (work : R → ℕ) (σ : List P) :
+    B.SafeSeq work σ ↔ B.toDetectionState.Reduces work σ :=
+  safeSeq_iff_reduces B work σ
+
+/-- The checker correspondence retains duplicate-freeness in arbitrary universes. -/
+example {P : Type u} {R : Type v} [DecidableEq P] [Fintype R]
+    (B : System P R) (work : R → ℕ) (pending : List P) :
+    B.safetyCheck work pending = true ↔
+      pending.Nodup ∧ B.toDetectionState.detect work pending = [] :=
+  safetyCheck_eq_true_iff_detect_eq_nil B work pending
+
+example : S.toDetectionState.alloc = S.alloc := by simp
+
+example : S.toDetectionState.request = S.need := by simp
+
+/-- Detection with remaining needs finishes the textbook safe state. -/
+example : S.toDetectionState.detect available all = [] := by decide
+
+/-- The safety theorem can now use detection directly. -/
+example : S.Safe available all :=
+  (safe_iff_detect_eq_nil S available all).mpr ⟨by decide, by decide⟩
+
+/-- After `P3` and `P1` finish, only `(5, 2, 2)` is free, so `P0`, `P2`,
+and `P4` remain. -/
+example : S.toDetectionState.detect ![1, 1, 1] all = [0, 2, 4] := by decide
+
+/-- The correspondence applies to zero fuel without assuming enough rounds. -/
+example : S.safetyCheckAux 0 available all = true ↔
+    (S.toDetectionState.reduceAux 0 available all).2 = [] :=
+  safetyCheckAux_iff_reduceAux S 0 available all
+
+/-- Neither loop succeeds when its fuel stops after only one process finishes. -/
+example : S.safetyCheckAux 1 available all = false ∧
+    (S.toDetectionState.reduceAux 1 available all).2 ≠ [] := by decide
+
+/-- Repeating a process can make detection release its allocation twice. -/
+example : T.toDetectionState.detect 0 [0, 0, 1] = [] := by decide
+
+/-- The sequence bridge still holds for repetitions. It does not assert safety. -/
+example : T.SafeSeq 0 [0, 0, 1] :=
+  (safeSeq_iff_reduces T 0 [0, 0, 1]).mpr (by decide)
+
+/-- An empty detection report alone cannot make the repeated pending list safe. -/
+example : T.toDetectionState.detect 0 [0, 0, 1] = [] ∧
+    T.safetyCheck 0 [0, 0, 1] = false ∧ ¬ T.Safe 0 [0, 0, 1] := by
+  refine ⟨by decide, by decide, ?_⟩
+  intro h
+  exact (by decide : ¬ ([0, 0, 1] : List (Fin 2)).Nodup) h.1
+
+/-- Detection's member-erasure lemma does not require that member to fit now. -/
+example : S.SafeSeq (available + S.alloc 0) ([1, 3, 4, 2, 0].erase 0) :=
+  SafeSeq.erase
+    ((safeSeq_iff_reduces S available [1, 3, 4, 2, 0]).mpr (by decide)) (by simp)
+
+/-- Empty process and resource types still give matching successful checks. -/
+example :
+    let B : System Empty Empty := ⟨(fun p => nomatch p), (fun p => nomatch p)⟩
+    B.safetyCheck (fun r => nomatch r) [] = true ∧
+      B.toDetectionState.detect (fun r => nomatch r) [] = [] := by decide
+
+/-- With no resource types, a single process needs no resources. -/
+example :
+    let B : System Unit Empty := ⟨(fun _ r => nomatch r), (fun _ r => nomatch r)⟩
+    B.safetyCheck (fun r => nomatch r) [()] = true ∧
+      B.toDetectionState.detect (fun r => nomatch r) [()] = [] := by decide
+
+/-- The adapter preserves truncated subtraction even for an allocation above the claim. -/
+example :
+    let B : System Unit (Fin 1) := ⟨fun _ _ => 0, fun _ _ => 1⟩
+    B.toDetectionState.request () = 0 ∧ B.safetyCheck 0 [()] = true := by decide
+
 end Cslib.Algorithms.Concurrency.Banker.Tests

@@ -12,7 +12,7 @@ LICENSE file in the root directory of this source tree.
 Source:
 O. Goldreich, S. Micali, and A. Wigderson, "Proofs that yield nothing but their validity, or
 all languages in NP have zero-knowledge proof systems", Journal of the ACM 38 (1991), 691-729
-(FOCS 1986); O. Goldwasser and M. Sipser, "Private coins versus public coins in interactive
+(FOCS 1986); S. Goldwasser and M. Sipser, "Private coins versus public coins in interactive
 proof systems", Advances in Computing Research 5 (1989), 73-90.
 -/
 module
@@ -64,7 +64,7 @@ belongs to the class $\mathsf{AM}$ of decision problems decided by Arthur–Merl
 
 Source: O. Goldreich, S. Micali, and A. Wigderson,
 "Proofs that yield nothing but their validity, or all languages in NP have zero-knowledge
-proof systems", Journal of the ACM 38 (1991), 691-729 (FOCS 1986); O. Goldwasser and M.
+proof systems", Journal of the ACM 38 (1991), 691-729 (FOCS 1986); S. Goldwasser and M.
 Sipser, "Private coins versus public coins in interactive proof systems", Advances in
 Computing Research 5 (1989), 73-90. -/
 public theorem_wanted graph_noniso_in_am :

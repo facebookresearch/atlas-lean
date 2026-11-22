@@ -34,27 +34,34 @@ open MetaMathlibExt.ComplexityTheory
 
 A *natural property* is a property of Boolean functions that is constructive (decidable by
 polynomial-size circuits given the truth table) and large (holding for at least a
-`2 ^ (-c * n)` fraction of all `n`-bit functions). It is *useful* against `P/poly` if
-every function family satisfying it infinitely often lies outside `P/poly`:
-a family satisfying the property at infinitely many lengths but lying in
-`P/poly` would contradict usefulness. Mere all-lengths usefulness would
-not suffice for the Razborov-Rudich argument: a `P/poly` family could
-satisfy the property at every sufficiently large length and fail once,
-giving no contradiction with the asymptotic `PRFSecure` condition. A natural proof
-of `P ≠ NP` would be a natural property useful against `P/poly` (in particular, one that
-holds of an NP function). Razborov and Rudich showed that if pseudorandom function families
-secure against polynomial-size truth-table distinguishers exist in `P/poly`, then no
-natural property is useful against `P/poly`: the constructivity decider would
-distinguish the pseudorandom family (none of whose members satisfies the property, by
-usefulness) from a random function (which satisfies it with probability at least the
-largeness density). So no natural proof can show `P ≠ NP`, or even superpolynomial
-circuit lower bounds for a function in `P/poly`. The PRF here has key length `n ^ 2`,
-quadratic in the input length `n`: with an `n`-bit key there are only `N = 2 ^ n`
-functions in the family, and a nonuniform truth-table distinguisher of size `O(N ^ 2)`
-could hardcode all of them and distinguish perfectly, so the assumption would be
-impossible. With key length `n ^ 2` the family has `2 ^ (n ^ 2)` members, superpolynomial
-in the truth-table size `2 ^ n`, and the assumption is the standard sufficiently strong
-PRF assumption (it follows from subexponentially secure one-way functions).
+`2 ^ (-c * n)` fraction of all `n`-bit functions). Razborov and Rudich call it *useful*
+against `P/poly` when every sequence `f_n ∈ C_n` has superpolynomial circuit size: for every
+`k`, `f_n` needs more than `n ^ k` gates for all large `n`. `UsefulAgainstPPoly` uses the
+equivalent infinitely-often form: a family that satisfies the property at infinitely many
+lengths is not in `P/poly`. (If a `P/poly` family met `C_n` infinitely often, filling the other
+lengths with members of `C_n` would give a sequence in `C` that is not superpolynomial almost
+everywhere; conversely a sequence in `C` that has circuits of size `n ^ k` at infinitely many
+lengths, set to a constant elsewhere, is a `P/poly` family meeting `C` infinitely often.)
+Changing a property at finitely many lengths preserves usefulness, so requiring largeness at
+every length rather than at all large lengths loses nothing.
+
+A natural proof of `P ≠ NP` would be a natural property useful against `P/poly` (in
+particular, one that holds of an NP function). Razborov and Rudich showed that if pseudorandom
+function families secure against polynomial-size truth-table distinguishers exist in `P/poly`,
+then no natural property is useful against `P/poly`: the constructivity decider would
+distinguish the pseudorandom family (none of whose members satisfies the property at large
+lengths, by usefulness) from a random function (which satisfies it with probability at least
+the largeness density). So no natural proof can show superpolynomial circuit lower bounds for
+an explicit function. The keyed family here has key length `n ^ 2`, quadratic in the input
+length `n`: with an `n`-bit key there are only `N = 2 ^ n` functions in the family, and a
+nonuniform truth-table distinguisher of size `O(N ^ 2)` could hardcode all of them and
+distinguish perfectly, so the assumption would be impossible. With key length `n ^ 2` the
+family has `2 ^ (n ^ 2)` members, superpolynomial in the truth-table size `2 ^ n`. In Razborov
+and Rudich's argument the key length is a polynomial in `n` fixed by the hardness exponent of
+the pseudorandom generator they start from, and their theorem assumes a pseudorandom generator
+rather than a pseudorandom function; this statement follows from their theorem once the key
+length is fixed to `n ^ 2` (evaluating the keyed function at fixed inputs turns it into a
+generator).
 -/
 
 /-- **Encoded gates.** An encoded gate of a flat Boolean circuit is a pair $(k, r)$ of a natural
@@ -121,23 +128,11 @@ def PRFInPPoly (F : (n : ℕ) → (Fin (n ^ 2) → Bool) → (Fin n → Bool) �
     ∀ key input, (npCircuitEval Circ (List.ofFn key ++ List.ofFn input)).getLast? =
       some (F n key input)
 
-/-- **Security of a keyed function family against truth-table distinguishers.** Let
-$F = (F_n)_{n \in \mathbb{N}}$ be a keyed family of Boolean functions: $F_n(k, x)$ is a Boolean
-value for every key $k \in \{0,1\}^{n^2}$ and every input $x \in \{0,1\}^n$. Write $F_{n,k}$ for the
-Boolean function $x \mapsto F_n(k, x)$ on $n$ bits and $T(g)$ for the truth table of a Boolean
-function $g$. Then $F$ is secure when the following holds for every polynomial $q$ with
-natural-number coefficients and every sequence $(D_n)_{n \in \mathbb{N}}$ of functions from
-bitstrings to Booleans such that, for each $n$, some circuit given as a list of at most $q(2^n)$
-encoded gates has last gate value $D_n(t)$ on every bitstring $t$: for every natural number $c$
-there is a natural number $N$ such that for every $n \ge N$
-
-$$\left| \frac{|\{k \in \{0,1\}^{n^2} : D_n(T(F_{n,k})) = \mathrm{true}\}|}{2^{n^2}} -
-\frac{|\{g : D_n(T(g)) = \mathrm{true}\}|}{2^{2^n}} \right| \le \frac{1}{2^{nc}},$$
-
-where $g$ ranges over all $2^{2^n}$ Boolean functions on $n$ bits. That is, a distinguisher
-computed by circuits of size polynomial in the truth-table size $2^n$ tells a uniformly random
-member of the family from a uniformly random Boolean function with advantage at most $2^{-cn}$
-for all large $n$, for every $c$. -/
+/-- A pseudorandom function family secure against polynomial-size truth-table
+distinguishers: no such distinguisher separates the family from a random function by a
+non-negligible advantage, where negligible is in the truth-table length `2 ^ n`: for every fixed
+`c` the advantage is at most `2 ^ (-c n)` for all large `n`. Keys are drawn from
+`Fin (n ^ 2) → Bool`, so the first fraction is over `2 ^ (n ^ 2)` keys. -/
 def PRFSecure (F : (n : ℕ) → (Fin (n ^ 2) → Bool) → (Fin n → Bool) → Bool) : Prop :=
   ∀ (D : (n : ℕ) → List Bool → Bool) (q : Polynomial ℕ),
     (∀ n, ∃ Circ : List NPGate, Circ.length ≤ q.eval (2 ^ n) ∧

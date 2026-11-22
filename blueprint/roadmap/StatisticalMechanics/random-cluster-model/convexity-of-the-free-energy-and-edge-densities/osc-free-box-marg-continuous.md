@@ -1,0 +1,3 @@
+# Continuity in $t$ of free $q = 2$ edge marginals on a finite graph
+
+Let $G$ be a finite simple graph and $e$ an unordered pair of vertices of $G$. Then $s \mapsto \phi_{G,\sigma(s),2}(e \text{ open})$ is continuous on $\mathbb{R}$, where $\sigma(s) = e^s/(1 + e^s)$ is the [logistic function](fsc-logistic.md) and $\phi_{G,p,2}$ is the [random-cluster probability](../random-cluster-measures-on-finite-graphs/fk-prob.md) on $G$ at $q = 2$ (the normalized weight $p^{o(\omega)}(1 - p)^{c(\omega)} 2^{k(\omega)}$ on assignments $\omega$ of open/closed states to all unordered pairs of vertices, with $o, c$ counting open and closed edges of $G$ and $k$ the open clusters).

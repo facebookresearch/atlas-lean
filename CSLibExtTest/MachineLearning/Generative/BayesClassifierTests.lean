@@ -70,3 +70,43 @@ example (P : Kernel Bool Bool) [IsMarkovKernel P] (π : Measure Bool) [IsFiniteM
   bayesRisk_zeroOneLoss P π
 
 end Cslib.MachineLearning.BayesClassifierTests
+
+namespace CSLibExtTest.MachineLearning.Generative.BayesClassifier
+
+open MeasureTheory ProbabilityTheory
+open Cslib.MachineLearning.BayesClassifier Cslib.MachineLearning.Bayesian
+open scoped ENNReal
+
+/-- Use case: two classes, uniform prior, constant likelihoods. The MAP rule is the MLE rule. -/
+example {P : Kernel Bool Bool} [IsFiniteKernel P] [IsMarkovKernel P]
+    {π : Measure Bool} [IsFiniteMeasure π]
+    {c : ℝ≥0∞} (hμ : ∀ θ, π {θ} = c) (hc : c ≠ 0) (f : Bool → Bool) :
+    IsPosteriorArgmax P π f ↔
+      ∀ x, (P ∘ₘ π) {x} ≠ 0 → IsMLE P x (f x) := by
+  exact isPosteriorArgmax_iff_forall_isMLE_of_uniform hμ hc
+
+/-- Boundary: the uniformity hypothesis is load-bearing. A two-point prior with distinct
+masses is not uniform. -/
+example (a b : ℝ≥0∞) (h : a ≠ b) :
+    ¬ ∀ θ : Bool, ((a • Measure.dirac true + b • Measure.dirac false) : Measure Bool) {θ}
+      = a := by
+  intro hall
+  have hfalse := hall false
+  simp at hfalse
+  exact h hfalse.symm
+
+/-- Boundary: at a zero-evidence observation the posterior masses vanish, so the pointwise
+MAP characterization has nothing to say there. -/
+example {Θ 𝓧 : Type*} [MeasurableSpace Θ] [MeasurableSpace 𝓧]
+    [Countable Θ] [MeasurableSingletonClass Θ]
+    [Countable 𝓧] [MeasurableSingletonClass 𝓧]
+    (κ : Kernel Θ 𝓧) (μ : Measure Θ) (x : 𝓧) (h0 : (κ ∘ₘ μ) {x} = 0) (θ : Θ) :
+    bayesPosterior κ μ x {θ} = 0 := by
+  rw [bayesPosterior_apply κ μ x (measurableSet_singleton θ)]
+  have hle : ∫⁻ a in {θ}, κ a {x} ∂μ ≤ (κ ∘ₘ μ) {x} := by
+    rw [comp_apply_singleton]
+    exact setLIntegral_le_lintegral {θ} _
+  rw [h0] at hle
+  rw [le_zero_iff.mp hle, mul_zero]
+
+end CSLibExtTest.MachineLearning.Generative.BayesClassifier

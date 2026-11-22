@@ -1,0 +1,219 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import CSLibExt.Logics.PDL.Basic
+public import Cslib.Foundations.RelationAlgebra.Representation
+public import Mathlib.Algebra.Order.Kleene
+
+/-!
+# Algebraic verification of PDL programs
+
+We use CSLib's `SquareRelations`, with composition in execution order,
+subset order and diagonal tests. `Program.toRelation` merely changes the
+representation of `ProgRel`; it is not another program semantics.
+
+The verification bridge identifies test absorption with partial
+correctness. Abstract star simulation uses Mathlib's `KleeneAlgebra`.
+No relational Kleene instance is introduced: `star` in the relation
+algebra means converse, whereas PDL iteration is `ReflTransGen`.
+
+These are project-authored program-verification results in the style of
+Kozen, *Kleene algebra with tests*, ACM TOPLAS 19(3), 1997.
+-/
+
+@[expose] public section
+
+namespace Cslib.PDL
+
+open RelationAlgebra
+
+variable {World Atom Label : Type*}
+
+/-- The diagonal relation restricted to an assertion. -/
+def testSet (P : Set World) : SquareRelations World :=
+  {(s, t) | s = t ∧ s ∈ P}
+
+/-- Interpret a PDL program in CSLib's canonical relation algebra. -/
+def Program.toRelation (M : Model World Atom Label)
+    (a : Program Atom Label) : SquareRelations World :=
+  {(s, t) | ProgRel M a s t}
+
+/-- Membership in a diagonal test. -/
+@[simp] theorem mem_testSet {P : Set World} {s t : World} :
+    testSet P (s, t) ↔ s = t ∧ s ∈ P := Iff.rfl
+
+/-- The representation conversion preserves exactly the executions. -/
+@[simp] theorem Program.mem_toRelation (M : Model World Atom Label)
+    (a : Program Atom Label) (s t : World) :
+    a.toRelation M (s, t) ↔ ProgRel M a s t := Iff.rfl
+
+/-- A test is a subidentity, not an arbitrary relation. -/
+theorem testSet_le_one (P : Set World) : testSet P ≤ 1 :=
+  fun _ h => h.1
+
+/-- Sequential tests conjoin their assertions without changing state. -/
+@[simp] theorem testSet_mul_testSet (P Q : Set World) :
+    testSet P * testSet Q = testSet (P ∩ Q) := by
+  change SetRel.comp (testSet P) (testSet Q) = testSet (P ∩ Q)
+  apply Set.ext
+  rintro ⟨s, t⟩
+  constructor
+  · rintro ⟨u, ⟨rfl, hP⟩, rfl, hQ⟩
+    exact ⟨rfl, hP, hQ⟩
+  · rintro ⟨rfl, hP, hQ⟩
+    exact ⟨s, ⟨rfl, hP⟩, rfl, hQ⟩
+
+/-- The KAT verification inequality is precisely universal partial
+correctness: every execution from `P` ends in `Q`. -/
+theorem test_mul_le_mul_test_iff (P Q : Set World)
+    (R : SquareRelations World) :
+    testSet P * R ≤ R * testSet Q ↔ P ⊆ SetRel.core R Q := by
+  constructor
+  · intro h s hP t hR
+    have hleft : (testSet P * R) (s, t) := ⟨s, ⟨rfl, hP⟩, hR⟩
+    obtain ⟨u, hRu, hut, hQ⟩ := h hleft
+    subst t
+    exact hQ
+  · rintro h ⟨s, t⟩ ⟨u, ⟨rfl, hP⟩, hR⟩
+    exact ⟨t, hR, rfl, h hP hR⟩
+
+/-- A postcondition can be absorbed on the right exactly when it holds
+on every execution starting in the precondition. -/
+theorem test_mul_eq_test_mul_test_iff (P Q : Set World)
+    (R : SquareRelations World) :
+    testSet P * R = testSet P * R * testSet Q ↔
+      P ⊆ SetRel.core R Q := by
+  constructor
+  · intro h s hP t hR
+    have hin : (testSet P * R) (s, t) := ⟨s, ⟨rfl, hP⟩, hR⟩
+    rw [h] at hin
+    obtain ⟨u, _, hut, hQ⟩ := hin
+    subst t
+    exact hQ
+  · intro h
+    apply Set.ext
+    rintro ⟨s, t⟩
+    constructor
+    · intro hin
+      obtain ⟨u, ⟨rfl, hP⟩, hR⟩ := hin
+      exact ⟨t, ⟨s, ⟨rfl, hP⟩, hR⟩, rfl, h hP hR⟩
+    · rintro ⟨u, hin, rfl, _⟩
+      exact hin
+
+/-- Classically, verification means that no execution from `P` can
+reach the complement of `Q`. -/
+theorem test_mul_test_compl_eq_bot_iff (P Q : Set World)
+    (R : SquareRelations World) :
+    testSet P * R * testSet Qᶜ = ⊥ ↔ P ⊆ SetRel.core R Q := by
+  classical
+  constructor
+  · intro h s hP t hR
+    by_contra hQ
+    have hbad : (testSet P * R * testSet Qᶜ) (s, t) :=
+      ⟨t, ⟨s, ⟨rfl, hP⟩, hR⟩, rfl, hQ⟩
+    rw [h] at hbad
+    exact hbad
+  · intro h
+    apply Set.ext
+    rintro ⟨s, t⟩
+    constructor
+    · rintro ⟨u, ⟨v, ⟨rfl, hP⟩, hR⟩, rfl, hQ⟩
+      exact (hQ (h hP hR)).elim
+    · intro hbot
+      exact hbot.elim
+
+/-- The interpretation of sequencing uses canonical composition. -/
+@[simp] theorem Program.toRelation_seq (M : Model World Atom Label)
+    (a b : Program Atom Label) :
+    (a.seq b).toRelation M = a.toRelation M * b.toRelation M := rfl
+
+/-- The interpretation of choice uses canonical union. -/
+@[simp] theorem Program.toRelation_choice (M : Model World Atom Label)
+    (a b : Program Atom Label) :
+    (a.choice b).toRelation M = a.toRelation M ⊔ b.toRelation M := rfl
+
+/-- Formula tests use the existing PDL satisfaction predicate. -/
+@[simp] theorem Program.toRelation_test (M : Model World Atom Label)
+    (φ : Formula Atom Label) :
+    (Program.test φ).toRelation M = testSet {s | Sat M φ s} := rfl
+
+/-- The false assertion is the zero program. -/
+@[simp] theorem testSet_empty : testSet (∅ : Set World) = ⊥ := by
+  apply Set.ext
+  rintro ⟨s, t⟩
+  exact ⟨fun h => h.2, fun h => h.elim⟩
+
+/-- The true assertion is the identity program. -/
+@[simp] theorem testSet_univ : testSet (Set.univ : Set World) = 1 := by
+  apply Set.ext
+  rintro ⟨s, t⟩
+  exact ⟨fun h => h.1, fun h => ⟨h, trivial⟩⟩
+
+/-- Boolean test negation is complement relative to identity, not the
+full relation-algebra complement (which includes off-diagonal pairs). -/
+theorem testSet_compl (P : Set World) :
+    testSet Pᶜ = (testSet P)ᶜ ⊓ 1 := by
+  apply Set.ext
+  rintro ⟨s, t⟩
+  constructor
+  · rintro ⟨rfl, hP⟩
+    exact ⟨fun h => hP h.2, rfl⟩
+  · rintro ⟨hP, rfl⟩
+    exact ⟨rfl, fun h => hP ⟨rfl, h⟩⟩
+
+/-- Iteration in the canonical carrier is the same reflexive-transitive
+closure as in `ProgRel`, including its identity boundary. -/
+@[simp] theorem Program.toRelation_star (M : Model World Atom Label)
+    (a : Program Atom Label) :
+    a.star.toRelation M = {(s, t) |
+      Relation.ReflTransGen (fun x y => a.toRelation M (x, y)) s t} :=
+  rfl
+
+/-- Union of assertions is union of their diagonal tests. -/
+theorem testSet_union (P Q : Set World) :
+    testSet (P ∪ Q) = testSet P ⊔ testSet Q := by
+  apply Set.ext
+  rintro ⟨s, t⟩
+  exact and_or_left
+
+namespace Algebra
+
+open scoped Computability
+
+/-- A one-step algebraic simulation lifts to arbitrary finite iteration.
+The simulator `p` need not be invertible or a test. -/
+theorem star_simulation {K : Type*} [KleeneAlgebra K] {p a b : K}
+    (h : p * a ≤ b * p) : p * a∗ ≤ b∗ * p := by
+  have hp : p ≤ b∗ * p := le_mul_of_one_le_left' one_le_kstar
+  have hstep : (b∗ * p) * a ≤ b∗ * p := by
+    calc
+      (b∗ * p) * a = b∗ * (p * a) := mul_assoc _ _ _
+      _ ≤ b∗ * (b * p) := mul_right_mono h
+      _ = (b∗ * b) * p := (mul_assoc _ _ _).symm
+      _ ≤ b∗ * p := mul_left_mono kstar_mul_le_kstar
+  exact mul_kstar_le hp hstep
+
+/-- A subidentity idempotent test preserved by one step is preserved by
+iteration. The test assumptions are explicit, with no new KAT class. -/
+theorem test_star_absorption {K : Type*} [KleeneAlgebra K] {p a : K}
+    (hp : p ≤ 1) (hpp : p * p = p) (h : p * a = p * a * p) :
+    p * a∗ = p * a∗ * p := by
+  have hpa : p * a ≤ a := (mul_left_mono hp).trans_eq (one_mul a)
+  have hcomm : p * a ≤ a * p := h.trans_le (mul_left_mono hpa)
+  have hle : p * a∗ ≤ p * a∗ * p := by
+    calc
+      p * a∗ = p * (p * a∗) := by rw [← mul_assoc, hpp]
+      _ ≤ p * (a∗ * p) := mul_right_mono (star_simulation hcomm)
+      _ = p * a∗ * p := (mul_assoc _ _ _).symm
+  exact hle.antisymm ((mul_right_mono hp).trans_eq (mul_one _))
+
+end Algebra
+
+end Cslib.PDL
