@@ -82,9 +82,10 @@ def AnnFormula.toFormula : AnnFormula Atom Agent → Formula Atom Agent
 /-- The announcement-eliminating translation: `translate φ ψ` expresses
 "after announcing `φ`, `ψ`", defined by recursion on `ψ`. Successive
 announcements compose their conditions with the encoded conjunction.
-When the ambient formula `φ` is announcement-free, so is the result
-(`translate_annCommonFree`); at the top level the ambient formula is a
-tautology, so `translateTop` is always announcement-free. -/
+When the ambient formula `φ` is free of both announcements and common
+knowledge, so is the result (`translate_annCommonFree`); at the top level
+the ambient formula is a tautology, which satisfies that premise, so
+`translateTop` is always free of both. -/
 def translate (φ : Formula Atom Agent) : AnnFormula Atom Agent → Formula Atom Agent
   | .atom a => .imp φ (.atom a)
   | .bot => .imp φ .bot
