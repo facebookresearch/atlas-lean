@@ -27,6 +27,7 @@ namespace Cslib.CodingTheory
 
 set_option autoImplicit false
 
+/-- Codec wrapping the Hamming(7,4) encoder; decode rejects inputs whose length differs from 7. -/
 def Hamming74.encoding : Computability.Encoding (Fin 4 → ZMod 2) (ZMod 2) :=
   { encode := fun m => List.ofFn (Hamming74.encode m),
     decode := fun l =>
@@ -45,20 +46,24 @@ def Hamming74.encoding : Computability.Encoding (Fin 4 → ZMod 2) (ZMod 2) :=
       rw [this, Hamming74.decode_encode, Hamming74.message_encode]
   }
 
+/-- Hamming(7,4) codewords always have length 7. -/
 theorem Hamming74.encoding_encode_length (m : Fin 4 → ZMod 2) : (Hamming74.encoding.encode m).length = 7 := by
   show (List.ofFn (Hamming74.encode m)).length = 7
   exact List.length_ofFn
 
+/-- Decoding any 7-bit vector returns its corrected message. -/
 theorem Hamming74.encoding_decode_ofFn (y : Fin 7 → ZMod 2) : Hamming74.encoding.decode (List.ofFn y) = some (Hamming74.message (Hamming74.decode y)) := by
   show (if h : (List.ofFn y).length = 7 then _ else none) = _
   rw [dif_pos List.length_ofFn]
   congr 2
 
+/-- Decoding a codeword with at most one corrupted bit recovers the message. -/
 theorem Hamming74.encoding_decode_ofFn_encode_add (m : Fin 4 → ZMod 2) {e : Fin 7 → ZMod 2} (he : hammingNorm e ≤ 1) : Hamming74.encoding.decode (List.ofFn (Hamming74.encode m + e)) = some m := by
   rw [Hamming74.encoding_decode_ofFn, Hamming74.decode_add (Hamming74.encode_mem_code m) he,
     Hamming74.message_encode]
 
 open Classical in
+/-- Codec wrapping CRC encoding; decode rejects words not divisible by the generator. -/
 noncomputable def CRC.encoding {F : Type*} [Field F] (g : F[X]) (hg : g ≠ 0) : Computability.Encoding F[X] F :=
   { encode := fun m => (CRC.encode g m).coeffList.reverse,
     decode := fun l =>
@@ -75,21 +80,25 @@ noncomputable def CRC.encoding {F : Type*} [Field F] (g : F[X]) (hg : g ≠ 0) :
         Nat.add_comm, CRC.coeff_encode_add hg]
   }
 
+/-- Decoding fails exactly when the error is not divisible by the generator. -/
 theorem CRC.encoding_decode_encode_add_eq_none_iff {F : Type*} [Field F] {g : F[X]} (hg : g ≠ 0) (m e : F[X]) : (CRC.encoding g hg).decode (CRC.encode g m + e).coeffList.reverse = none ↔ ¬ g ∣ e := by
   classical
   show (if g ∣ ofCoeffList (CRC.encode g m + e).coeffList.reverse then _ else none) = none ↔ _
   rw [ofCoeffList_reverse_coeffList, CRC.dvd_encode_add_iff]
   by_cases h : g ∣ e <;> simp [h]
 
+/-- Burst errors within the degree bound are always detected. -/
 theorem CRC.encoding_decode_eq_none_of_isBurstLE {F : Type*} [Field F] {g : F[X]} (hg : g ≠ 0) (hX : ¬ X ∣ g) (m : F[X]) {e : F[X]} (he : CRC.IsBurstLE e g.natDegree) : (CRC.encoding g hg).decode (CRC.encode g m + e).coeffList.reverse = none := by
   exact (CRC.encoding_decode_encode_add_eq_none_iff hg m e).2
     (CRC.not_dvd_of_isBurstLE hX he le_rfl)
 
+/-- Single-symbol errors are always detected when the generator has at least two terms. -/
 theorem CRC.encoding_decode_eq_none_of_single {F : Type*} [Field F] {g : F[X]} (hg : g ≠ 0) (h2 : 2 ≤ g.support.card) (m : F[X]) {a : F} (ha : a ≠ 0) (i : ℕ) : (CRC.encoding g hg).decode (CRC.encode g m + C a * X ^ i).coeffList.reverse = none := by
   exact (CRC.encoding_decode_encode_add_eq_none_iff hg m _).2
     (CRC.not_dvd_C_mul_X_pow h2 ha i)
 
 open Classical in
+/-- Codec wrapping Reed-Solomon encoding; decode rejects inputs whose length differs from n. -/
 noncomputable def ReedSolomon.encoding {F : Type*} [Field F] [DecidableEq F] {n k : ℕ} {α : Fin n → F} (hα : Function.Injective α) (hkn : k ≤ n) (S : ReedSolomon.KeySolver α k ((n - k) / 2)) : Computability.Encoding {p : F[X] // p.degree < k} F :=
   { encode := fun p => List.ofFn (ReedSolomon.encode α p.1),
     decode := fun l =>
@@ -109,10 +118,12 @@ noncomputable def ReedSolomon.encoding {F : Type*} [Field F] [DecidableEq F] {n 
       simp [p.2]
   }
 
+/-- Reed-Solomon codewords always have length n. -/
 theorem ReedSolomon.encoding_encode_length {F : Type*} [Field F] [DecidableEq F] {n k : ℕ} {α : Fin n → F} (hα : Function.Injective α) (hkn : k ≤ n) (S : ReedSolomon.KeySolver α k ((n - k) / 2)) (p : {p : F[X] // p.degree < k}) : ((ReedSolomon.encoding hα hkn S).encode p).length = n := by
   show (List.ofFn (ReedSolomon.encode α p.1)).length = n
   exact List.length_ofFn
 
+/-- Decoding corrects any error affecting at most half the redundancy symbols. -/
 theorem ReedSolomon.encoding_decode_ofFn_encode_add {F : Type*} [Field F] [DecidableEq F] {n k : ℕ} {α : Fin n → F} (hα : Function.Injective α) (hkn : k ≤ n) (S : ReedSolomon.KeySolver α k ((n - k) / 2)) (p : {p : F[X] // p.degree < k}) {err : Fin n → F} (herr : hammingNorm err ≤ (n - k) / 2) : (ReedSolomon.encoding hα hkn S).decode (List.ofFn (ReedSolomon.encode α p.1 + err)) = some p := by
   classical
   show (if h : (List.ofFn (ReedSolomon.encode α p.1 + err)).length = n then _ else none) = _
@@ -123,6 +134,7 @@ theorem ReedSolomon.encoding_decode_ofFn_encode_add {F : Type*} [Field F] [Decid
     simp
   simp only [this, ReedSolomon.decode_encode_add hα hkn S p.2 herr, Option.bind_some, p.2, dite_true]
 
+/-- Decoding fails exactly when every codeword lies beyond the error radius. -/
 theorem ReedSolomon.encoding_decode_ofFn_eq_none_iff {F : Type*} [Field F] [DecidableEq F] {n k : ℕ} {α : Fin n → F} (hα : Function.Injective α) (hkn : k ≤ n) (S : ReedSolomon.KeySolver α k ((n - k) / 2)) (y : Fin n → F) : (ReedSolomon.encoding hα hkn S).decode (List.ofFn y) = none ↔ ∀ p : F[X], p.degree < k → (n - k) / 2 < hammingDist y (ReedSolomon.encode α p) := by
   classical
   have h2e : 2 * ((n - k) / 2) + k ≤ n := by
