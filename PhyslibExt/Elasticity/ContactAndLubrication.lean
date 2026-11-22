@@ -35,7 +35,9 @@ for a plane slider with a linear converging film in closed form; the pressure an
 unit width are positive for the converging orientation. Section B treats frictionless scalar
 unilateral contact as an instance of Stampacchia's variational inequality, with the obstacle
 reaction as its complementarity multiplier. Section C states the set-valued Coulomb friction
-law, its dissipation and the static-equilibrium criterion.
+law, its dissipation and the static-equilibrium criterion. Section D adds the Coulomb friction
+cone and the admission conditions for a unilateral interface with friction, in
+compression-positive form.
 
 ## i. Overview
 
@@ -90,9 +92,10 @@ Model inputs (hypotheses):
 * frictionless scalar displacement, linear spring of stiffness `k > 0`, rigid obstacle at `g`;
 * the contact force opposes increasing `u` (the multiplier `λ` is its magnitude).
 
-Non-goals: no multidimensional contact, no constraint qualification or general KKT theory, no
-friction (section C states the Coulomb law separately), adhesion, impact or wear, and no
-empirical adequacy or system safety claim.
+Non-goals for Section B: no multidimensional contact, no constraint qualification or general
+KKT theory, no friction in the scalar model (Section C states the scalar Coulomb law separately
+and Section D the interface admission conditions), no adhesion, impact or wear, and no empirical
+adequacy or system safety claim.
 
 Section C treats Coulomb friction.
 
@@ -117,6 +120,28 @@ force `N`, both nonnegative where the dissipation statement uses them; the norma
 given, not solved from a contact problem. Non-goals: no existence or uniqueness of
 trajectories of the differential inclusion, no distinction between static and kinetic
 coefficients, no contact-pressure solution and no wear rate.
+
+Section D treats unilateral contact with Coulomb friction.
+
+A unit normal `n` of a rigid unilateral interface points out of the body on which the traction
+`τ` acts. The normal force is compression-positive, `N = -⟪τ, n⟫`, the tangent traction is
+`t = τ - ⟪τ, n⟫ • n`, and `τ = t - N • n`. With the normal gap `g` (open contact for `0 < g`,
+closed contact for `g = 0`) and a fixed dimensionless friction coefficient `μ`, physically
+`0 ≤ μ`, a contact state is admissible when `0 ≤ N`, `0 ≤ g`, `N * g = 0` and the Coulomb
+bound `‖t‖ ≤ μ * N` holds: `IsAdmissibleContact μ N g t`. Here `t` lies in a real inner product
+space `E` and `‖·‖` is its inner-product norm, so the friction cone
+`frictionCone μ = {(N, t) | ‖t‖ ≤ μ * N ∧ 0 ≤ N}` is isotropic; the slip threshold
+`‖t‖ = μ * N` is included, and at `μ = 0` it is the nonnegative normal ray `t = 0`,
+`0 ≤ N`; admission keeps its own `0 ≤ N`. The friction cone is convex for `0 ≤ μ`; the
+complementarity set in the `(N, g)` plane is not. Symbols are reused across sections with
+different meanings: `μ` is viscosity in Section A and the friction coefficient in Sections C
+and D; `g` is the obstacle position in Section B and the gap in Section D; `admissibleSet g`
+collects displacements in Section B, while `IsAdmissibleContact` is a property of contact states
+in Section D.
+
+Section D states no sliding rule, slip direction, frictional work, or existence or uniqueness
+of contact solutions: it is the static admission interface only, distinct from the scalar
+set-valued friction graph of Section C.
 
 ## ii. Key results
 
@@ -153,6 +178,17 @@ coefficients, no contact-pressure solution and no wear rate.
 - `Elasticity.ContactAndLubrication.coulomb_not_exists_stick_of_neg`,
   `coulomb_slip_power_pos_of_neg`: a negative coefficient admits no stick force and makes slip
   supply power.
+- `Elasticity.ContactAndLubrication.frictionCone`, `IsAdmissibleContact`: the Coulomb cone and
+  the admission conditions of Section D.
+- `Elasticity.ContactAndLubrication.normal_tangent_decomposition_iff`: the traction splits as
+  `τ = t - N • n` with `t` orthogonal to the unit normal `n` exactly when `N = -⟪τ, n⟫` and
+  `t = τ - ⟪τ, n⟫ • n`.
+- `Elasticity.ContactAndLubrication.convex_frictionCone`,
+  `not_convex_complementarity`: the friction cone is convex for `0 ≤ μ`; the complementarity
+  set in the `(N, g)` plane is not.
+- `Elasticity.ContactAndLubrication.IsAdmissibleContact.eq_zero_of_gap_pos`,
+  `isAdmissibleContact_zero_tangent_iff`: an open gap carries no force, and the frictionless
+  slice `t = 0` is exactly the scalar complementarity of Section B.
 
 ## iii. Table of contents
 
@@ -171,6 +207,7 @@ coefficients, no contact-pressure solution and no wear rate.
   - C.2. Friction power and dissipation
   - C.3. Static equilibrium and non-uniqueness at rest
   - C.4. Negative coefficient
+- D. Unilateral contact with Coulomb friction
 
 ## iv. References
 
@@ -184,6 +221,9 @@ coefficients, no contact-pressure solution and no wear rate.
   Applications*, Academic Press (1980), Chapter II (the obstacle problem).
 - N. Kikuchi and J. T. Oden, *Contact Problems in Elasticity*, SIAM (1988), Chapter 2
   (unilateral constraints and the Signorini conditions).
+- P. Wriggers, *Computational Contact Mechanics*, 2nd edition, Springer, 2006: the Signorini
+  conditions and the Coulomb friction law; the compression-positive normal form used here,
+  with the slip threshold included in the friction cone, is this file's sign convention.
 - `MathlibExt.Analysis.InnerProductSpace.Stampacchia.exists_unique_stampacchia`
   (`MathlibExt.Analysis.InnerProductSpace.Stampacchia`): Stampacchia's theorem, operator form.
 - C. A. Coulomb, *Théorie des machines simples*, Mémoires de mathématique et de physique
@@ -1125,5 +1165,133 @@ lemma coulomb_slip_power_pos_of_neg {μ N v F : ℝ} (hμ : μ < 0) (hN : 0 < N)
   have hmul : μ * N * |v| < 0 := mul_neg_of_neg_of_pos hneg habs
   have hpow := coulomb_power_eq h
   linarith
+
+/-! ## D. Unilateral contact with Coulomb friction -/
+
+open scoped InnerProductSpace
+
+/-- The Coulomb friction cone in `(N, t)` coordinates, `‖t‖ ≤ μ * N` with `0 ≤ N`, for the
+compression-positive normal force `N` and the tangent traction `t`. The inner product on `E`
+is required by design, though unused in the body: it makes `‖·‖` the Euclidean norm, so the
+cone is isotropic. -/
+@[nolint unusedArguments]
+def frictionCone {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] (μ : ℝ) :
+    Set (ℝ × E) :=
+  {p | ‖p.2‖ ≤ μ * p.1 ∧ 0 ≤ p.1}
+
+/-- An admissible contact state for the friction coefficient `μ`: compression-positive
+normal force `0 ≤ N`, gap `0 ≤ g`, complementarity `N * g = 0`, and the Coulomb bound
+`‖t‖ ≤ μ * N` on the tangent traction `t`, measured in the inner-product norm of `E`.
+Physically meaningful for `0 ≤ μ`. -/
+@[nolint unusedArguments]
+def IsAdmissibleContact {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    (μ N g : ℝ) (t : E) : Prop :=
+  0 ≤ N ∧ 0 ≤ g ∧ N * g = 0 ∧ ‖t‖ ≤ μ * N
+
+variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+
+/-- Normal/tangent frame of an interface traction. For a unit normal `n` pointing out of the
+body, the traction `τ` on the body splits as `τ = t - N • n` with `t` orthogonal to `n`
+exactly when `N = -⟪τ, n⟫` is the compression-positive normal force and
+`t = τ - ⟪τ, n⟫ • n` is the tangent traction. For a body with tension-positive Cauchy stress
+`σ`, `τ` is the Cauchy traction `σ n` and `N` is the compression-positive normal stress. -/
+lemma normal_tangent_decomposition_iff {n τ t : E} {N : ℝ} (hn : ‖n‖ = 1) :
+    (τ = t - N • n ∧ ⟪t, n⟫_ℝ = 0) ↔ (N = -⟪τ, n⟫_ℝ ∧ t = τ - ⟪τ, n⟫_ℝ • n) := by
+  have hnn : ⟪n, n⟫_ℝ = 1 := by
+    rw [real_inner_self_eq_norm_sq, hn, one_pow]
+  constructor
+  · rintro ⟨hτ, ht⟩
+    have hinner : ⟪τ, n⟫_ℝ = -N := by
+      rw [hτ, inner_sub_left, ht, real_inner_smul_left, hnn, mul_one, zero_sub]
+    have hN' : N = -⟪τ, n⟫_ℝ := by linarith
+    have ht' : t = τ + N • n := by
+      rw [hτ]
+      abel
+    refine ⟨hN', ?_⟩
+    rw [ht', hinner, neg_smul]
+    abel
+  · rintro ⟨hN, ht⟩
+    refine ⟨?_, ?_⟩
+    · rw [ht, hN, neg_smul]
+      abel
+    · rw [ht, inner_sub_left, real_inner_smul_left, hnn, mul_one, sub_self]
+
+/-- Main result, convex part: for a friction coefficient `0 ≤ μ` the friction cone is convex
+in `(N, t)`. This is the only convexity claim; the complementarity set is not convex
+(`not_convex_complementarity`). -/
+lemma convex_frictionCone {μ : ℝ} (hμ : 0 ≤ μ) :
+    Convex ℝ (frictionCone (E := E) μ) := by
+  intro x hx y hy a b ha hb _
+  have _hμ : 0 ≤ μ := hμ
+  simp only [frictionCone, Set.mem_ofPred_eq] at hx hy ⊢
+  obtain ⟨hx1, hx2⟩ := hx
+  obtain ⟨hy1, hy2⟩ := hy
+  have h2 : (a • x + b • y).2 = a • x.2 + b • y.2 := by simp
+  have h1 : (a • x + b • y).1 = a * x.1 + b * y.1 := by simp [smul_eq_mul]
+  rw [h2, h1]
+  constructor
+  · have e1 : a * ‖x.2‖ ≤ a * (μ * x.1) := mul_le_mul_of_nonneg_left hx1 ha
+    have e2 : b * ‖y.2‖ ≤ b * (μ * y.1) := mul_le_mul_of_nonneg_left hy1 hb
+    have hnorm : ‖a • x.2‖ + ‖b • y.2‖ = a * ‖x.2‖ + b * ‖y.2‖ := by
+      rw [norm_smul, norm_smul, Real.norm_eq_abs, Real.norm_eq_abs,
+        abs_of_nonneg ha, abs_of_nonneg hb]
+    have hring : a * (μ * x.1) + b * (μ * y.1) = μ * (a * x.1 + b * y.1) := by ring
+    have htri : ‖a • x.2 + b • y.2‖ ≤ ‖a • x.2‖ + ‖b • y.2‖ := norm_add_le _ _
+    linarith [htri, hnorm, e1, e2, hring, _hμ]
+  · exact add_nonneg (mul_nonneg ha hx2) (mul_nonneg hb hy2)
+
+/-- Main result, non-convex part: the unilateral complementarity set
+`{(N, g) | 0 ≤ N ∧ 0 ≤ g ∧ N * g = 0}` in the `(N, g)` plane, the union of the two
+nonnegative half-axes, is not convex. -/
+lemma not_convex_complementarity :
+    ¬ Convex ℝ {p : ℝ × ℝ | 0 ≤ p.1 ∧ 0 ≤ p.2 ∧ p.1 * p.2 = 0} := by
+  intro hconv
+  have hp : ((1, 0) : ℝ × ℝ) ∈ {p : ℝ × ℝ | 0 ≤ p.1 ∧ 0 ≤ p.2 ∧ p.1 * p.2 = 0} := by
+    show (0 : ℝ) ≤ 1 ∧ (0 : ℝ) ≤ 0 ∧ (1 : ℝ) * 0 = 0
+    exact ⟨zero_le_one, le_rfl, mul_zero 1⟩
+  have hq : ((0, 1) : ℝ × ℝ) ∈ {p : ℝ × ℝ | 0 ≤ p.1 ∧ 0 ≤ p.2 ∧ p.1 * p.2 = 0} := by
+    show (0 : ℝ) ≤ 0 ∧ (0 : ℝ) ≤ 1 ∧ (0 : ℝ) * 1 = 0
+    exact ⟨le_rfl, zero_le_one, zero_mul 1⟩
+  have hmid := hconv hp hq (show (0 : ℝ) ≤ 1 / 2 by norm_num)
+    (show (0 : ℝ) ≤ 1 / 2 by norm_num) (show (1 / 2 : ℝ) + 1 / 2 = 1 by norm_num)
+  have hpt : (1 / 2 : ℝ) • ((1, 0) : ℝ × ℝ) + (1 / 2 : ℝ) • ((0, 1) : ℝ × ℝ) =
+      (1 / 2, 1 / 2) := by
+    ext <;> simp [Prod.smul_mk, Prod.mk_add_mk, smul_eq_mul]
+  rw [hpt, Set.mem_ofPred_eq] at hmid
+  obtain ⟨-, -, hprod⟩ := hmid
+  have h12 : ((1 / 2, 1 / 2) : ℝ × ℝ).1 * (1 / 2, 1 / 2).2 = (1 / 2 : ℝ) * (1 / 2) := rfl
+  rw [h12] at hprod
+  norm_num at hprod
+
+/-- Separated contact carries no force: an admissible contact state with an open gap
+`0 < g` has zero normal force and zero tangent traction, for every `μ`. -/
+lemma IsAdmissibleContact.eq_zero_of_gap_pos {μ N g : ℝ} {t : E}
+    (h : IsAdmissibleContact μ N g t) (hg : 0 < g) :
+    N = 0 ∧ t = 0 := by
+  simp only [IsAdmissibleContact] at h
+  obtain ⟨-, -, hNg, htb⟩ := h
+  have hN0 : N = 0 := by
+    rcases mul_eq_zero.mp hNg with hN | hg0
+    · exact hN
+    · exact absurd hg0 (ne_of_gt hg)
+  refine ⟨hN0, ?_⟩
+  rw [hN0, mul_zero] at htb
+  have htnorm : ‖t‖ = 0 := le_antisymm htb (norm_nonneg _)
+  exact norm_eq_zero.mp htnorm
+
+/-- Frictionless slice: for `0 ≤ μ`, a contact state with zero tangent traction is admissible
+exactly when `(N, g)` satisfies the scalar unilateral complementarity. This is the
+conclusion shape of `Elasticity.ContactAndLubrication.complementarity_of_vi` with
+`N = contactForce k f u` and the gap `contactGap x₀ u` of an obstacle at `x₀`, so the
+frictionless scalar contact solution is admissible for every `0 ≤ μ`. -/
+lemma isAdmissibleContact_zero_tangent_iff {μ N g : ℝ} (hμ : 0 ≤ μ) :
+    IsAdmissibleContact μ N g (0 : E) ↔ 0 ≤ N ∧ 0 ≤ g ∧ N * g = 0 := by
+  simp only [IsAdmissibleContact, norm_zero]
+  constructor
+  · rintro ⟨hN, hg, hNg, -⟩
+    exact ⟨hN, hg, hNg⟩
+  · rintro ⟨hN, hg, hNg⟩
+    exact ⟨hN, hg, hNg, mul_nonneg hμ hN⟩
+
 
 end Elasticity.ContactAndLubrication
