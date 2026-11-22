@@ -13,10 +13,11 @@ import MathlibExt.Combinatorics.Enumerative.Partition.FixedPerimeterAlder
 namespace MetaMathlibExt
 
 -- At d = a = 1 both floor bounds are sharp, for either parity of the inner quotient.
+-- The hypothesis 2a < d + 3 is passed by its name `had` from the wanted statement.
 example (n : ℕ) (hn : 1 ≤ n) :
     (n - 1) / 2 / 2 = (n - 1) / 4 ∧ ((n - 1) / 2 + 1) / 2 = (n + 1) / 4 := by
-  obtain ⟨hdown, hup⟩ :=
-    floor_half_div_le_div_of_two_mul_lt (d := 1) (a := 1) (by decide) (by decide) (by decide) hn
+  obtain ⟨hdown, hup⟩ := floor_half_div_le_div_of_two_mul_lt (d := 1) (a := 1)
+    (by decide) (by decide) (had := by decide) hn
   exact ⟨le_antisymm hdown (by omega), le_antisymm hup (by omega)⟩
 
 -- At n = a the strict bound on 2a puts even the larger numerator below the divisor.

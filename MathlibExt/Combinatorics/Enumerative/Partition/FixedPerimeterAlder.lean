@@ -259,6 +259,7 @@ public theorem perimeterCounts_small_values :
       perimeterResidueArmLegCount 1 1 3 1 = 1 ∧ perimeterPMResidueArmLegCount 1 1 1 3 = 1 := by
   decide
 
+set_option linter.unusedVariables false in
 /-- **A floor inequality for perimeter counts.** Let $d$, $a$ and $n$ be natural numbers with
 $d \ge 1$, $a \ge 1$, $2a < d + 3$ and $a \le n$. Then
 $\lfloor \lfloor (n - a)/(d + 1) \rfloor / 2 \rfloor \le \lfloor (n - a)/(d + 3) \rfloor$
@@ -271,7 +272,7 @@ Source: Ling Chen, Isabelle Hernandez, Zain Shields, and Holly Swisher, *Analogu
 Partition Inequalities for Fixed Perimeter Partitions*, INTEGERS 24 (2024), Article A102,
 arXiv:2406.07655, Lemma 4.2 in the preprint. -/
 public theorem floor_half_div_le_div_of_two_mul_lt {d a n : ℕ} (hd : 0 < d) (ha : 0 < a)
-    (_had : 2 * a < d + 3) (hn : a ≤ n) :
+    (had : 2 * a < d + 3) (hn : a ≤ n) :
     (n - a) / (d + 1) / 2 ≤ (n - a) / (d + 3) ∧
       ((n - a) / (d + 1) + 1) / 2 ≤ (n + a) / (d + 3) := by
   have hden : d + 3 ≤ 2 * (d + 1) := by omega
