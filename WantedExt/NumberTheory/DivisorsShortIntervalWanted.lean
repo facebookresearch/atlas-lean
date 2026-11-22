@@ -81,17 +81,6 @@ public theorem_wanted prod_zpow_le_lcm_zpow_mul_prod_gcd {k : ℕ} (d : Fin k �
       ((Finset.univ.lcm d : ℕ) : ℚ) ^ (t * (t + 1) / 2) *
         ∏ i, ∏ j ∈ Finset.Ioi i, ((Nat.gcd (d i) (d j) : ℕ) : ℚ)
 
-/-- If `∑ x_i ≤ ∑ y_i`, some reordering `σ` has `∑_{i<s} x_{σ i} ≤ ∑_{i<s} y_{σ i}` for every
-prefix length `s ≤ k` (the paper's positivity of `x_i, y_i` is not needed).
-
-Source: Patrick Letendre, *Divisors of an Integer in a Short Interval*, INTEGERS 26 (2026),
-Article A115, Lemma 2 (`integers-2026-A115-lem-2`). -/
-public theorem_wanted exists_perm_prefix_sum_le {k : ℕ} (x y : Fin k → ℝ)
-    (h : ∑ i, x i ≤ ∑ i, y i) :
-    ∃ σ : Equiv.Perm (Fin k), ∀ s ≤ k,
-      ∑ i ∈ Finset.univ.filter (fun i : Fin k => i.val < s), x (σ i) ≤
-        ∑ i ∈ Finset.univ.filter (fun i : Fin k => i.val < s), y (σ i)
-
 /-- Arithmetic large sieve with prime-power moduli: let `M` be a finite set of integers in an
 interval of `N ≥ 1` integers and, for each prime `p ∈ S`, let `M` avoid a proper set
 `Ω_p ⊊ ℤ/p^{β_p}ℤ` of residues (given by representatives in `[0, p^{β_p})`). Then
