@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.Privacy.DifferentialPrivacyComposition
 public import CSLibExt.Privacy.ApproximateDifferentialPrivacy
+import CSLibExt.Crypto.Privacy.Basic
 
 /-!
 # k-fold adaptive composition and group privacy
@@ -27,30 +28,32 @@ Theorem 3.16 is recovered as the constant-kernel case.
 
 namespace CSLibExt.Privacy.DifferentialPrivacy
 
+universe u
+
 /-- Transcript after `n` adaptive stages with output family `A`.
-Zero stages carry `Unit`; stage `n+1` appends on the right. -/
-def Transcript (A : ℕ → Type) : ℕ → Type
-  | 0 => Unit
+Zero stages carry `PUnit`; stage `n+1` appends on the right. -/
+def Transcript (A : ℕ → Type u) : ℕ → Type u
+  | 0 => PUnit
   | n + 1 => Transcript A n × A n
 
 /-- Adaptive composition of stage kernels `K` for `k` stages.
 Stage `n` sees the prior transcript and the database. -/
-noncomputable def kfoldCompose {D : Type*} {A : ℕ → Type}
+noncomputable def kfoldCompose {D : Type*} {A : ℕ → Type u}
     (K : (n : ℕ) → Transcript A n → D → PMF (A n)) (k : ℕ) :
     D → PMF (Transcript A k) :=
   match k with
-  | 0 => fun _ => PMF.pure Unit.unit
+  | 0 => fun _ => PMF.pure PUnit.unit
   | n + 1 => fun d => ((kfoldCompose K n d).bind fun t =>
       (K n t d).bind fun a => PMF.pure (t, a))
 
 /-- Zero-stage composition is the constant unit mechanism. -/
-theorem kfoldCompose_zero {D : Type*} {A : ℕ → Type}
+theorem kfoldCompose_zero {D : Type*} {A : ℕ → Type u}
     {K : (n : ℕ) → Transcript A n → D → PMF (A n)} :
-    kfoldCompose K 0 = fun _ => PMF.pure Unit.unit :=
+    kfoldCompose K 0 = fun _ => PMF.pure PUnit.unit :=
   rfl
 
 /-- Successor composition exposes the paired bind. -/
-theorem kfoldCompose_succ {D : Type*} {A : ℕ → Type}
+theorem kfoldCompose_succ {D : Type*} {A : ℕ → Type u}
     {K : (n : ℕ) → Transcript A n → D → PMF (A n)} (n : ℕ) :
     kfoldCompose K (n + 1) = fun d => ((kfoldCompose K n d).bind fun t =>
       (K n t d).bind fun a => PMF.pure (t, a)) :=
@@ -58,7 +61,7 @@ theorem kfoldCompose_succ {D : Type*} {A : ℕ → Type}
 
 /-- Adaptive k-fold composition with additive budgets over one fixed adjacency.
 Each stage kernel is uniformly private for every fixed prior transcript. -/
-theorem isApproxDP_kfold {D : Type*} {A : ℕ → Type} {adj : D → D → Prop}
+theorem isApproxDP_kfold {D : Type*} {A : ℕ → Type u} {adj : D → D → Prop}
     {K : (n : ℕ) → Transcript A n → D → PMF (A n)} {ε δ : ℕ → ℝ} (k : ℕ)
     (hε : ∀ i, i < k → 0 ≤ ε i) (hδ : ∀ i, i < k → 0 ≤ δ i)
     (hK : ∀ i, i < k → ∀ t, IsApproxDP (fun d => K i t d) adj (ε i) (δ i)) :
@@ -67,7 +70,7 @@ theorem isApproxDP_kfold {D : Type*} {A : ℕ → Type} {adj : D → D → Prop}
   induction k with
   | zero =>
     simp only [Finset.range_zero, Finset.sum_empty]
-    show IsApproxDP (fun _ => PMF.pure Unit.unit) adj 0 0
+    show IsApproxDP (fun _ => PMF.pure PUnit.unit) adj 0 0
     rw [isApproxDP_zero_iff]
     exact isDP_const _ _
   | succ n ih =>
@@ -88,7 +91,7 @@ theorem isApproxDP_kfold {D : Type*} {A : ℕ → Type} {adj : D → D → Prop}
     exact hcomp
 
 /-- Zero-stage boundary: the empty transcript is `(0, 0)`-DP. -/
-theorem isApproxDP_kfold_zero {D : Type*} {A : ℕ → Type} {adj : D → D → Prop}
+theorem isApproxDP_kfold_zero {D : Type*} {A : ℕ → Type u} {adj : D → D → Prop}
     {K : (n : ℕ) → Transcript A n → D → PMF (A n)} :
     IsApproxDP (kfoldCompose K 0) adj 0 0 := by
   have h := isApproxDP_kfold (adj := adj) (K := K)
@@ -98,9 +101,9 @@ theorem isApproxDP_kfold_zero {D : Type*} {A : ℕ → Type} {adj : D → D → 
     (fun i hi _ => (Nat.not_lt_zero i hi).elim)
   simpa using h
 
-/-- One-stage case with its honest carrier `Unit × A 0`.
+/-- One-stage case with its honest carrier `PUnit × A 0`.
 No definitional claim to the original output type is made. -/
-theorem isApproxDP_kfold_one {D : Type*} {A : ℕ → Type} {adj : D → D → Prop}
+theorem isApproxDP_kfold_one {D : Type*} {A : ℕ → Type u} {adj : D → D → Prop}
     {K : (n : ℕ) → Transcript A n → D → PMF (A n)} {ε δ : ℕ → ℝ}
     (hε0 : 0 ≤ ε 0) (hδ0 : 0 ≤ δ 0)
     (hK0 : ∀ t, IsApproxDP (fun d => K 0 t d) adj (ε 0) (δ 0)) :
@@ -125,7 +128,7 @@ theorem isApproxDP_kfold_one {D : Type*} {A : ℕ → Type} {adj : D → D → P
 
 /-- Non-adaptive k-fold (Dwork-Roth Theorem 3.16) as the constant-kernel case.
 Kernels ignoring the transcript compose with summed budgets. -/
-theorem isApproxDP_kfold_const {D : Type*} {A : ℕ → Type} {adj : D → D → Prop}
+theorem isApproxDP_kfold_const {D : Type*} {A : ℕ → Type u} {adj : D → D → Prop}
     {M : (i : ℕ) → D → PMF (A i)} {ε δ : ℕ → ℝ} (k : ℕ)
     (hε : ∀ i, i < k → 0 ≤ ε i) (hδ : ∀ i, i < k → 0 ≤ δ i)
     (hM : ∀ i, i < k → IsApproxDP (M i) adj (ε i) (δ i)) :
@@ -137,7 +140,7 @@ theorem isApproxDP_kfold_const {D : Type*} {A : ℕ → Type} {adj : D → D →
 
 /-- Pure k-fold corollary: zero stage deltas give zero total delta.
 Via the canonical zero-delta equivalence, over generic adjacency. -/
-theorem isDP_kfold {D : Type*} {A : ℕ → Type} {adj : D → D → Prop}
+theorem isDP_kfold {D : Type*} {A : ℕ → Type u} {adj : D → D → Prop}
     {K : (n : ℕ) → Transcript A n → D → PMF (A n)} {ε : ℕ → ℝ} (k : ℕ)
     (hε : ∀ i, i < k → 0 ≤ ε i)
     (hK : ∀ i, i < k → ∀ t, IsDP (fun d => K i t d) adj (ε i)) :
@@ -164,30 +167,72 @@ inductive ReplaceOneChain {n : ℕ} {X : Type*} :
       ReplaceOneChain k d d' → ReplaceOne d' d'' →
       ReplaceOneChain (k + 1) d d''
 
+/-- A `ReplaceOneChain` yields a step-indexed neighbour chain. -/
+private theorem ReplaceOneChain.to_chain {n : ℕ} {X : Type*} {k : ℕ}
+    {d d' : Fin n → X} (h : ReplaceOneChain k d d') :
+    ∃ z : ℕ → (Fin n → X), z 0 = d ∧ z k = d' ∧
+      ∀ i < k, ReplaceOne (z i) (z (i + 1)) := by
+  induction h with
+  | refl d => exact ⟨fun _ => d, rfl, rfl, fun i hi => (Nat.not_lt_zero i hi).elim⟩
+  | @step k d d' d'' _ hstep ih =>
+    obtain ⟨z, hz0, hzk, hz⟩ := ih
+    refine ⟨fun i => if i ≤ k then z i else d'', ?_, ?_, ?_⟩
+    · show (if (0 : ℕ) ≤ k then z 0 else d'') = d
+      rw [ite_eq_left (Nat.zero_le k), hz0]
+    · show (if k + 1 ≤ k then z (k + 1) else d'') = d''
+      rw [ite_eq_right (by omega)]
+    · intro i hi
+      have h1 : i ≤ k := by omega
+      show ReplaceOne (if i ≤ k then z i else d'') (if i + 1 ≤ k then z (i + 1) else d'')
+      rw [ite_eq_left h1]
+      by_cases h2 : i + 1 ≤ k
+      · rw [ite_eq_left h2]
+        exact hz i (by omega)
+      · have hik : i = k := by omega
+        subst hik
+        rw [ite_eq_right h2, hzk]
+        exact hstep
+
+/-- PMF pure DP gives measure DP with `δ = 0` on the induced measures. -/
+private theorem isDP_toDifferentiallyPrivate {D Output : Type*} [MeasurableSpace Output]
+    {M : D → PMF Output} {adj : D → D → Prop} {ε : ℝ}
+    (hM : IsDP M adj ε) :
+    Cslib.Crypto.Privacy.DifferentiallyPrivate adj (fun d => (M d).toMeasure) ε 0 := by
+  have hEv := (isDP_iff_isDPEvent.mp hM).2
+  intro x y hxy S hS
+  show (M x).toMeasure S ≤ ENNReal.ofReal (Real.exp ε) * (M y).toMeasure S + 0
+  rw [add_zero, PMF.toMeasure_apply_eq_toOuterMeasure_apply _ hS,
+    PMF.toMeasure_apply_eq_toOuterMeasure_apply _ hS]
+  exact hEv x y hxy S
+
+/-- PMF approximate DP gives measure DP on the induced measures. -/
+private theorem isApproxDP_toDifferentiallyPrivate {D Output : Type*}
+    [MeasurableSpace Output] {M : D → PMF Output} {adj : D → D → Prop}
+    {ε δ : ℝ} (hM : IsApproxDP M adj ε δ) :
+    Cslib.Crypto.Privacy.DifferentiallyPrivate adj (fun d => (M d).toMeasure)
+      ε (ENNReal.ofReal δ) := by
+  intro x y hxy S hS
+  show (M x).toMeasure S ≤ ENNReal.ofReal (Real.exp ε) * (M y).toMeasure S +
+    ENNReal.ofReal δ
+  rw [PMF.toMeasure_apply_eq_toOuterMeasure_apply _ hS,
+    PMF.toMeasure_apply_eq_toOuterMeasure_apply _ hS]
+  exact hM.2.2 x y hxy S
+
 /-- Pure group privacy over exactly-`k` chains: factor `exp (k * ε)`. -/
 theorem isDP_groupPrivacy {n : ℕ} {X Output : Type*}
     {M : (Fin n → X) → PMF Output} {ε : ℝ}
     (hM : IsDP M ReplaceOne ε) {k : ℕ} {d d' : Fin n → X}
     (hchain : ReplaceOneChain k d d') (o : Output) :
     M d o ≤ ENNReal.ofReal (Real.exp ((k : ℝ) * ε)) * M d' o := by
-  induction hchain with
-  | refl d =>
-    simp only [Nat.cast_zero, zero_mul, Real.exp_zero, ENNReal.ofReal_one, one_mul,
-      le_refl]
-  | @step k d d' d'' hprev hstep ih =>
-    have h1 := ih
-    have h2 := hM.2 d' d'' hstep o
-    have hexp : ((k + 1 : ℕ) : ℝ) * ε = (k : ℝ) * ε + ε := by
-      push_cast
-      ring
-    calc M d o
-        ≤ ENNReal.ofReal (Real.exp ((k : ℝ) * ε)) * M d' o := h1
-      _ ≤ ENNReal.ofReal (Real.exp ((k : ℝ) * ε)) *
-          (ENNReal.ofReal (Real.exp ε) * M d'' o) :=
-          mul_le_mul' le_rfl h2
-      _ = ENNReal.ofReal (Real.exp (((k + 1 : ℕ) : ℝ) * ε)) * M d'' o := by
-          rw [hexp, Real.exp_add, ENNReal.ofReal_mul (Real.exp_pos _).le]
-          rw [mul_assoc]
+  let : MeasurableSpace Output := ⊤
+  obtain ⟨z, hz0, hzk, hz⟩ := ReplaceOneChain.to_chain hchain
+  have hDP := isDP_toDifferentiallyPrivate hM
+  have hS : MeasurableSet ({o} : Set Output) := MeasurableSpace.measurableSet_top
+  have h := hDP.group hz hS
+  rw [hz0, hzk] at h
+  rw [PMF.toMeasure_apply_singleton _ _ hS,
+    PMF.toMeasure_apply_singleton _ _ hS] at h
+  exact h
 
 /-- Pure group privacy for at-most-`k` chains, by monotonicity with `0 ≤ ε`. -/
 theorem isDP_groupPrivacy_le {n : ℕ} {X Output : Type*}
@@ -216,66 +261,24 @@ theorem isApproxDP_groupPrivacy {n : ℕ} {X Output : Type*}
       ENNReal.ofReal (Real.exp ((k : ℝ) * ε)) * (M d').toOuterMeasure s +
         ENNReal.ofReal (δ * Finset.sum (Finset.range k)
           (fun j => Real.exp ((j : ℝ) * ε))) := by
-  induction hchain with
-  | refl d =>
-    simp only [Nat.cast_zero, zero_mul, Real.exp_zero, ENNReal.ofReal_one, one_mul,
-      Finset.range_zero, Finset.sum_empty, mul_zero, ENNReal.ofReal_zero, add_zero,
-      le_refl]
-  | @step k d d' d'' hprev hstep ih =>
-    have hδ : 0 ≤ δ := hM.2.1
-    have h_single := hM.2.2 d' d'' hstep s
-    have hexp_succ : ((k + 1 : ℕ) : ℝ) * ε = (k : ℝ) * ε + ε := by
-      push_cast
-      ring
-    have hsum_succ : Finset.sum (Finset.range (k + 1))
-          (fun j => Real.exp ((j : ℝ) * ε)) =
-          Finset.sum (Finset.range k) (fun j => Real.exp ((j : ℝ) * ε)) +
-            Real.exp ((k : ℝ) * ε) :=
-      Finset.sum_range_succ _ _
-    have hSk_nonneg : 0 ≤ Finset.sum (Finset.range k)
-        (fun j => Real.exp ((j : ℝ) * ε)) := by
-      apply Finset.sum_nonneg
-      intro j _
-      exact (Real.exp_pos _).le
-    have hexp_k_nonneg : 0 ≤ Real.exp ((k : ℝ) * ε) :=
-      (Real.exp_pos _).le
-    have h_err_combine : Real.exp ((k : ℝ) * ε) * δ +
-          δ * Finset.sum (Finset.range k) (fun j => Real.exp ((j : ℝ) * ε)) =
-          δ * Finset.sum (Finset.range (k + 1))
-            (fun j => Real.exp ((j : ℝ) * ε)) := by
-      rw [hsum_succ]
-      ring
-    calc (M d).toOuterMeasure s
-        ≤ ENNReal.ofReal (Real.exp ((k : ℝ) * ε)) * (M d').toOuterMeasure s +
-            ENNReal.ofReal (δ * Finset.sum (Finset.range k)
-              (fun j => Real.exp ((j : ℝ) * ε))) := ih
-      _ ≤ ENNReal.ofReal (Real.exp ((k : ℝ) * ε)) *
-            (ENNReal.ofReal (Real.exp ε) * (M d'').toOuterMeasure s +
-              ENNReal.ofReal δ) +
-            ENNReal.ofReal (δ * Finset.sum (Finset.range k)
-              (fun j => Real.exp ((j : ℝ) * ε))) := by
-          apply add_le_add _ le_rfl
-          apply mul_le_mul' le_rfl h_single
-      _ = ENNReal.ofReal (Real.exp (((k + 1 : ℕ) : ℝ) * ε)) *
-            (M d'').toOuterMeasure s +
-            ENNReal.ofReal (δ * Finset.sum (Finset.range (k + 1))
-              (fun j => Real.exp ((j : ℝ) * ε))) := by
-          rw [mul_add]
-          have hmul : ENNReal.ofReal (Real.exp ((k : ℝ) * ε)) *
-              ENNReal.ofReal (Real.exp ε) =
-              ENNReal.ofReal (Real.exp (((k + 1 : ℕ) : ℝ) * ε)) := by
-            rw [hexp_succ, Real.exp_add,
-              ENNReal.ofReal_mul (Real.exp_pos _).le]
-          have herr : ENNReal.ofReal (Real.exp ((k : ℝ) * ε)) *
-              ENNReal.ofReal δ +
-              ENNReal.ofReal (δ * Finset.sum (Finset.range k)
-                (fun j => Real.exp ((j : ℝ) * ε))) =
-              ENNReal.ofReal (δ * Finset.sum (Finset.range (k + 1))
-                (fun j => Real.exp ((j : ℝ) * ε))) := by
-            rw [← ENNReal.ofReal_mul hexp_k_nonneg,
-              ← ENNReal.ofReal_add (mul_nonneg hexp_k_nonneg hδ)
-                (mul_nonneg hδ hSk_nonneg),
-              h_err_combine]
-          rw [← mul_assoc, hmul, add_assoc, herr]
+  let : MeasurableSpace Output := ⊤
+  obtain ⟨z, hz0, hzk, hz⟩ := ReplaceOneChain.to_chain hchain
+  have hDP := isApproxDP_toDifferentiallyPrivate hM
+  have hS : MeasurableSet s := MeasurableSpace.measurableSet_top
+  have h := hDP.group_sum hz hS
+  rw [hz0, hzk] at h
+  rw [PMF.toMeasure_apply_eq_toOuterMeasure_apply _ hS,
+    PMF.toMeasure_apply_eq_toOuterMeasure_apply _ hS] at h
+  have herr : Finset.sum (Finset.range k)
+        (fun i => ENNReal.ofReal (Real.exp ((i : ℝ) * ε))) * ENNReal.ofReal δ =
+      ENNReal.ofReal (δ * Finset.sum (Finset.range k)
+        (fun j => Real.exp ((j : ℝ) * ε))) := by
+    rw [← ENNReal.ofReal_sum_of_nonneg (fun i _ => (Real.exp_pos _).le)]
+    rw [← ENNReal.ofReal_mul
+      (Finset.sum_nonneg fun i _ => (Real.exp_pos _).le)]
+    congr 1
+    ring
+  rw [herr] at h
+  exact h
 
 end CSLibExt.Privacy.DifferentialPrivacy

@@ -9,12 +9,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Privacy.DifferentialPrivacyKFold
+public import Cslib.Probability.PMF
 
 /-!
 # k-fold and group privacy tests
 
 Boundary checks for adaptive composition (`k = 0, 1, 2`), constant mechanisms,
 two-step chains, and error-shape identities for the sum-form group privacy.
+Behavioral checks evaluate `kfoldCompose` on tiny Dirac and uniform
+mechanisms, pinning transcript carriers and masses.
 -/
 
 @[expose] public section
@@ -22,6 +25,9 @@ two-step chains, and error-shape identities for the sum-form group privacy.
 namespace CSLibExtTest.Privacy.DifferentialPrivacyKFoldTests
 
 open CSLibExt.Privacy.DifferentialPrivacy
+open scoped ENNReal
+
+universe u
 
 /-- Sum over zero stages vanishes. -/
 theorem test_sum_zero (ε : ℕ → ℝ) :
@@ -38,8 +44,98 @@ theorem test_sum_two (ε : ℕ → ℝ) :
     Finset.sum (Finset.range 2) ε = ε 0 + ε 1 := by
   simp [Finset.sum_range_succ]
 
+/-- Zero stages: the transcript is the unit Dirac. -/
+theorem test_kfold_zero_dirac {D : Type*} (d : D) :
+    kfoldCompose (A := fun _ => Bool) (fun _ _ _ => PMF.pure true) 0 d
+      = PMF.pure (PUnit.unit : PUnit) :=
+  rfl
+
+/-- Zero stages carry full mass on the unit transcript. -/
+theorem test_kfold_zero_mass {D : Type*} (d : D) :
+    kfoldCompose (A := fun _ => Bool) (fun _ _ _ => PMF.pure true) 0 d
+      (PUnit.unit : PUnit) = 1 := by
+  rw [test_kfold_zero_dirac]
+  show (PMF.pure (PUnit.unit : PUnit)) (PUnit.unit : PUnit) = 1
+  simp
+
+/-- One Dirac stage: the transcript is the paired Dirac. -/
+theorem test_kfold_one_dirac {D : Type*} (d : D) :
+    kfoldCompose (A := fun _ => Bool) (fun _ _ _ => PMF.pure true) 1 d
+      = PMF.pure ((PUnit.unit, true) : PUnit × Bool) := by
+  show kfoldCompose _ (0 + 1) _ = _
+  rw [kfoldCompose_succ, kfoldCompose_zero]
+  show ((PMF.pure (PUnit.unit : PUnit)).bind fun t =>
+      (PMF.pure true).bind fun a => PMF.pure (t, a)) = _
+  simp
+
+/-- One Dirac stage puts full mass on the paired point. -/
+theorem test_kfold_one_mass_true {D : Type*} (d : D) :
+    kfoldCompose (A := fun _ => Bool) (fun _ _ _ => PMF.pure true) 1 d
+      ((PUnit.unit, true) : PUnit × Bool) = 1 := by
+  rw [test_kfold_one_dirac]
+  show (PMF.pure ((PUnit.unit, true) : PUnit × Bool))
+    ((PUnit.unit, true) : PUnit × Bool) = 1
+  simp
+
+/-- One Dirac stage puts no mass off the paired point. -/
+theorem test_kfold_one_mass_false {D : Type*} (d : D) :
+    kfoldCompose (A := fun _ => Bool) (fun _ _ _ => PMF.pure true) 1 d
+      ((PUnit.unit, false) : PUnit × Bool) = 0 := by
+  rw [test_kfold_one_dirac]
+  show (PMF.pure ((PUnit.unit, true) : PUnit × Bool))
+    ((PUnit.unit, false) : PUnit × Bool) = 0
+  simp
+
+/-- Two Dirac stages: the transcript is the nested paired Dirac. -/
+theorem test_kfold_two_dirac {D : Type*} (d : D) :
+    kfoldCompose (A := fun _ => Bool) (fun _ _ _ => PMF.pure true) 2 d
+      = PMF.pure (((PUnit.unit, true), true) : (PUnit × Bool) × Bool) := by
+  show kfoldCompose _ (1 + 1) _ = _
+  rw [kfoldCompose_succ]
+  show (((kfoldCompose (A := fun _ => Bool) (fun _ _ _ => PMF.pure true) 1 d).bind
+    fun t => (PMF.pure true).bind fun a => PMF.pure (t, a))) = _
+  rw [test_kfold_one_dirac]
+  show (((PMF.pure ((PUnit.unit, true) : PUnit × Bool)).bind
+    fun t => (PMF.pure true).bind fun a => PMF.pure (t, a))) = _
+  simp
+
+/-- Two Dirac stages put full mass on the nested paired point. -/
+theorem test_kfold_two_mass {D : Type*} (d : D) :
+    kfoldCompose (A := fun _ => Bool) (fun _ _ _ => PMF.pure true) 2 d
+      (((PUnit.unit, true), true) : (PUnit × Bool) × Bool) = 1 := by
+  rw [test_kfold_two_dirac]
+  show (PMF.pure (((PUnit.unit, true), true) : (PUnit × Bool) × Bool))
+    (((PUnit.unit, true), true) : (PUnit × Bool) × Bool) = 1
+  simp
+
+/-- One uniform stage: even split on `true`. -/
+theorem test_kfold_one_coin_true {D : Type*} (d : D) :
+    kfoldCompose (A := fun _ => Bool)
+        (fun _ _ _ => Cslib.Probability.PMF.uniformOfFintype Bool) 1 d
+        ((PUnit.unit, true) : PUnit × Bool) = (2 : ℝ≥0∞)⁻¹ := by
+  show kfoldCompose _ (0 + 1) _ _ = _
+  rw [kfoldCompose_succ, kfoldCompose_zero]
+  show ((((PMF.pure (PUnit.unit : PUnit)).bind fun t =>
+    (Cslib.Probability.PMF.uniformOfFintype Bool).bind fun a =>
+      PMF.pure (t, a))) ((PUnit.unit, true) : PUnit × Bool)) = _
+  rw [Cslib.Probability.PMF.bind_pair_apply]
+  simp
+
+/-- One uniform stage: even split on `false`. -/
+theorem test_kfold_one_coin_false {D : Type*} (d : D) :
+    kfoldCompose (A := fun _ => Bool)
+        (fun _ _ _ => Cslib.Probability.PMF.uniformOfFintype Bool) 1 d
+        ((PUnit.unit, false) : PUnit × Bool) = (2 : ℝ≥0∞)⁻¹ := by
+  show kfoldCompose _ (0 + 1) _ _ = _
+  rw [kfoldCompose_succ, kfoldCompose_zero]
+  show ((((PMF.pure (PUnit.unit : PUnit)).bind fun t =>
+    (Cslib.Probability.PMF.uniformOfFintype Bool).bind fun a =>
+      PMF.pure (t, a))) ((PUnit.unit, false) : PUnit × Bool)) = _
+  rw [Cslib.Probability.PMF.bind_pair_apply]
+  simp
+
 /-- k-fold with `k = 2` matches the staged pair theorem budgets. -/
-theorem test_kfold_two_vs_pair {D : Type*} {A : ℕ → Type} {adj : D → D → Prop}
+theorem test_kfold_two_vs_pair {D : Type*} {A : ℕ → Type u} {adj : D → D → Prop}
     {K : (n : ℕ) → Transcript A n → D → PMF (A n)} {ε δ : ℕ → ℝ}
     (hε0 : 0 ≤ ε 0) (hε1 : 0 ≤ ε 1) (hδ0 : 0 ≤ δ 0) (hδ1 : 0 ≤ δ 1)
     (hK0 : ∀ t, IsApproxDP (fun d => K 0 t d) adj (ε 0) (δ 0))
@@ -64,7 +160,7 @@ theorem test_kfold_two_vs_pair {D : Type*} {A : ℕ → Type} {adj : D → D →
   simpa [Finset.sum_range_succ] using h
 
 /-- Constant kernels compose to `(0, 0)`-DP. -/
-theorem test_kfold_const_zero {D : Type*} {A : ℕ → Type} {adj : D → D → Prop}
+theorem test_kfold_const_zero {D : Type*} {A : ℕ → Type u} {adj : D → D → Prop}
     {p : (i : ℕ) → PMF (A i)} (k : ℕ) :
     IsApproxDP (kfoldCompose (fun i _ _ => p i) k) adj 0 0 := by
   have hM : ∀ i, i < k → IsApproxDP (fun _ : D => p i) adj 0 0 := by
@@ -113,19 +209,19 @@ theorem test_err_two (δ ε : ℝ) :
     simp [Finset.sum_range_succ]
   rw [hsum]
 
-/-- Two-step numeric bound with `ε = 0`, `δ = 1`: error `2`. -/
-theorem test_two_step_numeric {X Output : Type*}
+/-- Two-step bound with `ε = 0`, `δ = 0`: factor one, no error term. -/
+theorem test_two_step_pure {X Output : Type*}
     {M : (Fin 1 → X) → PMF Output}
-    (hM : IsApproxDP M ReplaceOne 0 1)
+    (hM : IsApproxDP M ReplaceOne 0 0)
     {d d'' : Fin 1 → X} (d' : Fin 1 → X) (s : Set Output) :
     (M d).toOuterMeasure s ≤
-      1 * (M d'').toOuterMeasure s + ENNReal.ofReal 2 := by
+      1 * (M d'').toOuterMeasure s + 0 := by
   have hchain := test_chain_two d d' d''
-  have h := isApproxDP_groupPrivacy (ε := 0) (δ := 1) hM hchain s
+  have h := isApproxDP_groupPrivacy (ε := 0) (δ := 0) hM hchain s
   have hexp : Real.exp (((2 : ℕ) : ℝ) * 0) = 1 := by
     simp
-  have herr : (1 : ℝ) * Finset.sum (Finset.range 2)
-      (fun j => Real.exp ((j : ℝ) * 0)) = 2 := by
+  have herr : (0 : ℝ) * Finset.sum (Finset.range 2)
+      (fun j => Real.exp ((j : ℝ) * 0)) = 0 := by
     simp
   simpa [hexp, herr] using h
 
