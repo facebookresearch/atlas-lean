@@ -12,6 +12,7 @@ import Mathlib.MeasureTheory.Function.SpecialFunctions.Sinc
 
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+public import MathlibExt.Probability.InfinitelyDivisible
 
 import Mathlib.Analysis.Complex.BranchLogRoot
 import Mathlib.Analysis.Analytic.IsolatedZeros
@@ -249,46 +250,24 @@ private lemma lk_restrict_away_zero_finite {ν : Measure ℝ}
       meas_ge_le_lintegral_div h_meas hε ENNReal.ofReal_ne_top
     _ < ∞ := ENNReal.div_lt_top (ne_of_lt hν) hε
 
-private noncomputable def lkConvPow (ρ : Measure ℝ) : ℕ → Measure ℝ
-  | 0 => Measure.dirac 0
-  | n + 1 => ρ ∗ lkConvPow ρ n
-
-private lemma lkConvPow_probability (ρ : Measure ℝ) [IsProbabilityMeasure ρ] (n : ℕ) :
-    IsProbabilityMeasure (lkConvPow ρ n) := by
-  induction n with
-  | zero =>
-      rw [lkConvPow]
-      infer_instance
-  | succ n ih =>
-      rw [lkConvPow]
-      infer_instance
-
 private lemma lkConvPow_finite (ρ : Measure ℝ) [IsFiniteMeasure ρ] (n : ℕ) :
-    IsFiniteMeasure (lkConvPow ρ n) := by
+    IsFiniteMeasure (Measure.convPow ρ n) := by
   induction n with
   | zero =>
-      rw [lkConvPow]
+      rw [Measure.convPow]
       infer_instance
   | succ n ih =>
-      rw [lkConvPow]
+      rw [Measure.convPow]
       infer_instance
 
 private lemma lk_charFun_convPow (ρ : Measure ℝ) [IsFiniteMeasure ρ] (n : ℕ) (t : ℝ) :
-    charFun (lkConvPow ρ n) t = charFun ρ t ^ n := by
+    charFun (Measure.convPow ρ n) t = charFun ρ t ^ n := by
   induction n with
-  | zero => simp [lkConvPow, charFun_dirac]
+  | zero => simp [Measure.convPow, charFun_dirac]
   | succ n ih =>
-      rw [lkConvPow]
+      rw [Measure.convPow]
       let _ := lkConvPow_finite ρ n
-      rw [charFun_conv, ih, pow_succ']
-
-private lemma lkConvPow_succ_iterate (ρ : Measure ℝ) [SFinite ρ] (n : ℕ) :
-    lkConvPow ρ (n + 1) = Nat.iterate (Measure.conv ρ) n ρ := by
-  induction n with
-  | zero => simp [lkConvPow, Measure.conv_dirac_zero]
-  | succ n ih =>
-      rw [show n + 1 + 1 = (n + 1).succ from rfl, lkConvPow, ih]
-      rw [show n + 1 = n.succ from rfl, Function.iterate_succ_apply']
+      rw [charFun_conv, ih, pow_succ]
 
 private lemma lk_conv_apply_univ (μ ν : Measure ℝ) [SFinite μ] [SFinite ν] :
     (μ ∗ ν) Set.univ = μ Set.univ * ν Set.univ := by
@@ -298,19 +277,19 @@ private lemma lk_conv_apply_univ (μ ν : Measure ℝ) [SFinite μ] [SFinite ν]
   simp [mul_comm]
 
 private lemma lkConvPow_apply_univ (ρ : Measure ℝ) [IsFiniteMeasure ρ] (n : ℕ) :
-    lkConvPow ρ n Set.univ = ρ Set.univ ^ n := by
+    Measure.convPow ρ n Set.univ = ρ Set.univ ^ n := by
   induction n with
-  | zero => simp [lkConvPow]
+  | zero => simp [Measure.convPow]
   | succ n ih =>
-      rw [lkConvPow]
+      rw [Measure.convPow]
       let _ := lkConvPow_finite ρ n
-      rw [lk_conv_apply_univ, ih, pow_succ']
+      rw [lk_conv_apply_univ, ih, pow_succ]
 
 private noncomputable def lkPoissonCoeff (ρ : Measure ℝ) (n : ℕ) : ℝ≥0∞ :=
   ENNReal.ofReal (Real.exp (-ρ.real Set.univ) / (n.factorial : ℝ))
 
 private noncomputable def lkCompoundPoisson (ρ : Measure ℝ) : Measure ℝ :=
-  Measure.sum fun n : ℕ ↦ lkPoissonCoeff ρ n • lkConvPow ρ n
+  Measure.sum fun n : ℕ ↦ lkPoissonCoeff ρ n • Measure.convPow ρ n
 
 private lemma lk_hasSum_poisson (lam : ℝ) :
     HasSum (fun n : ℕ ↦ Real.exp (-lam) * lam ^ n / (n.factorial : ℝ)) 1 := by
@@ -324,7 +303,7 @@ private lemma lk_hasSum_poisson (lam : ℝ) :
   simpa using h'
 
 private lemma lk_compound_term_univ (ρ : Measure ℝ) [IsFiniteMeasure ρ] (n : ℕ) :
-    (lkPoissonCoeff ρ n • lkConvPow ρ n) Set.univ =
+    (lkPoissonCoeff ρ n • Measure.convPow ρ n) Set.univ =
       ENNReal.ofReal
         (Real.exp (-ρ.real Set.univ) * (ρ.real Set.univ) ^ n / (n.factorial : ℝ)) := by
   rw [Measure.smul_apply, lkConvPow_apply_univ]
@@ -666,12 +645,12 @@ private lemma lk_infinitelyDivisible_of_charFun {μ ν : Measure ℝ}
         μ = Nat.iterate (Measure.conv ρ) (n - 1) ρ := by
   intro n hn
   obtain ⟨ρ, hρ⟩ := lk_exists_convolution_root hν γ σ hn
-  have h_eq : μ = lkConvPow (ρ : Measure ℝ) n := by
-    let _ := lkConvPow_probability (ρ : Measure ℝ) n
+  have h_eq : μ = Measure.convPow (ρ : Measure ℝ) n := by
+    let _ := Measure.isProbabilityMeasure_convPow (ν := (ρ : Measure ℝ)) n
     apply Measure.ext_of_charFun
     funext t
     rw [hchar, lk_charFun_convPow, hρ, lk_exp_div_pow _ hn]
-  have h_pow := lkConvPow_succ_iterate (ρ : Measure ℝ) (n - 1)
+  have h_pow := Measure.convPow_succ_eq_iterate (ν := (ρ : Measure ℝ)) (n - 1)
   rw [Nat.sub_add_cancel (Nat.one_le_iff_ne_zero.mpr hn)] at h_pow
   exact ⟨ρ, inferInstance, h_eq.trans h_pow⟩
 
@@ -761,7 +740,7 @@ private lemma lk_exists_charFun_root {μ : Measure ℝ}
     ∃ ρ : Measure ℝ, IsProbabilityMeasure ρ ∧
       ∀ t : ℝ, charFun μ t = charFun ρ t ^ n := by
   obtain ⟨ρ, hρ, hμ⟩ := hID n hn
-  have h_pow := lkConvPow_succ_iterate ρ (n - 1)
+  have h_pow := Measure.convPow_succ_eq_iterate (ν := ρ) (n - 1)
   rw [Nat.sub_add_cancel (Nat.one_le_iff_ne_zero.mpr hn)] at h_pow
   refine ⟨ρ, hρ, fun t ↦ ?_⟩
   rw [hμ, ← h_pow, lk_charFun_convPow]
@@ -2096,9 +2075,7 @@ Applications*, vol. II, Theorem XVII.2.1.
 -/
 theorem levy_Khintchin :
     ∀ (μ : MeasureTheory.Measure ℝ), MeasureTheory.IsProbabilityMeasure μ →
-      ((∀ n : ℕ, n ≠ 0 →
-          ∃ ν : MeasureTheory.Measure ℝ, MeasureTheory.IsProbabilityMeasure ν ∧
-            μ = Nat.iterate (MeasureTheory.Measure.conv ν) (n - 1) ν) ↔
+      (MeasureTheory.Measure.IsInfinitelyDivisible μ ↔
         ∃ γ : ℝ, ∃ σ : ℝ, 0 ≤ σ ∧
           ∃ ν : MeasureTheory.Measure ℝ,
             ν {0} = 0 ∧ (∫⁻ x, ENNReal.ofReal (min 1 (x ^ 2)) ∂ν < ∞) ∧
@@ -2109,6 +2086,7 @@ theorem levy_Khintchin :
                     Set.indicator {y : ℝ | |y| ≤ 1}
                       (fun y => Complex.I * (t : ℂ) * (y : ℂ)) x) ∂ν))) := by
   intro mu hmu
+  rw [Measure.isInfinitelyDivisible_iff_exists_iterate]
   constructor
   · intro hID
     obtain ⟨gamma, sigma, hsigma, nu, hnu0, hnu, hchar⟩ :=

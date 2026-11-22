@@ -136,21 +136,26 @@ theorem NerodeClass.toDFAState_injective (M : DFA Symbol State) (hM : M.accepts 
   apply (nerodeClass_eq_iff (L := L)).mpr
   simpa only [hM] using nerodeRel_of_eval_eq M hpq
 
-/-- The canonical Nerode automaton has no more states than any finite DFA recognizing `L`. -/
+/-- The canonical Nerode automaton has no more states than any finite DFA recognizing `L`.
+Upstream counterpart: `Language.dfa_num_state_min`, bridged by
+`Cslib.Language.natCard_nerodeQuotient_le_natCard_state`. -/
 theorem card_nerodeClass_le_card_state [Fintype (NerodeClass L)] [Fintype State]
     (M : DFA Symbol State) (hM : M.accepts = L) :
     Fintype.card (NerodeClass L) ≤ Fintype.card State :=
   Fintype.card_le_of_injective _ (NerodeClass.toDFAState_injective M hM)
 
-/-- The `Nat.card` form of the Myhill–Nerode lower bound: the number of distinct left
+/-- The `Nat.card` form of the Myhill-Nerode lower bound: the number of distinct left
 quotients of `L` is at most the number of states of any finite-state DFA accepting `L`.
 This is the statement formerly requested as `myhillNerode_minimal_state_count`; it follows
-from `nerodeClassEquivReachableResiduals` and `card_nerodeClass_le_card_state`. -/
+from `nerodeClassEquivReachableResiduals` and `card_nerodeClass_le_card_state`.
+This version supports arbitrary alphabet and state universes.
+Upstream counterpart: `Language.dfa_num_state_min`, bridged by
+`Cslib.Language.natCard_nerodeQuotient_le_natCard_state`. -/
 theorem natCard_range_leftQuotient_le_natCard_state [Finite State] (M : DFA Symbol State)
     (hM : M.accepts = L) :
     Nat.card (Set.range L.leftQuotient) ≤ Nat.card State := by
-  letI : Fintype State := Fintype.ofFinite State
-  letI : Finite (NerodeClass L) :=
+  let : Fintype State := Fintype.ofFinite State
+  let : Finite (NerodeClass L) :=
     Finite.of_injective _ (NerodeClass.toDFAState_injective M hM)
   cases nonempty_fintype (NerodeClass L)
   have e : NerodeClass L ≃ Set.range L.leftQuotient :=
@@ -161,7 +166,11 @@ theorem natCard_range_leftQuotient_le_natCard_state [Finite State] (M : DFA Symb
   exact card_nerodeClass_le_card_state M hM
 
 /-- For finite state spaces, equality in the Nerode lower bound is equivalent to the chosen
-class representatives reaching every state. -/
+class representatives reaching every state.
+Upstream counterpart: `Cslib.Automata.DA.FinAcc.IsMinimalAutomaton`, bridged by
+`Cslib.Automata.DA.FinAcc.isMinimalAutomaton_ofDFA_iff` for alphabets and states in `Type`, and
+by `Cslib.Language.isMinimalAutomaton_ofDFA_iff` for alphabets in `Type` and finite states in
+arbitrary universes. -/
 theorem card_nerodeClass_eq_card_state_iff [Fintype (NerodeClass L)] [Fintype State]
     (M : DFA Symbol State) (hM : M.accepts = L) :
     Fintype.card (NerodeClass L) = Fintype.card State ↔

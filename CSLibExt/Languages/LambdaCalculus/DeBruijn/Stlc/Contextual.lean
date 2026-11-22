@@ -17,6 +17,7 @@ Original formalization by Zeina Migeed (@migeed-z); ported with permission.
 module
 
 public import CSLibExt.Languages.LambdaCalculus.DeBruijn.Stlc.Equational
+public import Cslib.Foundations.Syntax.Context
 
 /-!
 # Typed term contexts for STLC
@@ -114,6 +115,17 @@ theorem semEq {I : Base → Type v} (C : TmCtx Γ A Δ B) {t u : Tm Γ A}
   | appFun C a ih => exact SemEq.app ih (SemEq.refl I a)
   | appArg f C ih => exact SemEq.app (SemEq.refl I f) ih
   | lam C ih => exact SemEq.lam ih
+
+/-- Typed one-hole contexts are the upstream heterogeneous contexts for STLC terms:
+`C<[t]` is `C.plug t`. -/
+instance instHasHContext : HasHContext (Tm Δ B) (Tm Γ A) where
+  Context := TmCtx Γ A Δ B
+  fill C t := C.plug t
+
+/-- Filling an upstream context hole is plugging the typed context. -/
+@[simp]
+theorem fill_eq_plug (C : TmCtx Γ A Δ B) (t : Tm Γ A) :
+    HasHContext.fill (α := Tm Δ B) (β := Tm Γ A) C t = C.plug t := rfl
 
 end TmCtx
 

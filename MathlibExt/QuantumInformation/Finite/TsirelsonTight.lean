@@ -18,7 +18,7 @@ Proof: standard 4x4 CHSH observables (Pauli-type block matrices with
 module
 
 public import Mathlib.Algebra.Star.CHSH
-public import Mathlib.Data.Complex.Basic
+public import Mathlib.Basic.Complex.Basic
 public import Mathlib.LinearAlgebra.Eigenspace.Basic
 public import Mathlib.LinearAlgebra.Matrix.ToLin
 

@@ -1,0 +1,17 @@
+# p-adic expansions
+
+- [Digits of a p-adic integer](padic-digit.md)
+- [p-adic digits are less than p](padic-digit-lt.md)
+- [p-adic expansion](padic-expansion.md)
+- [Terms of the p-adic expansion are the digits](padic-expansion-val.md)
+- [p-adic digits measure the gaps between approximations](padic-digit-mul-pow.md)
+- [One-step reconstruction from p-adic digits](appr-succ-eq.md)
+- [One-step reconstruction from the p-adic expansion](appr-succ-eq-val.md)
+- [Approximations as sums of p-adic digits](appr-eq-sum-padic-digit.md)
+- [Approximations as truncations of the p-adic expansion](appr-eq-sum-expansion-val.md)
+- [$p$-adic digits determine a $p$-adic integer](eq-of-padic-digit-eq.md)
+- [Existence of a $p$-adic integer with prescribed digits](exists-padic-digit-eq.md)
+- [Existence and uniqueness of $p$-adic integers with prescribed digits](exists-unique-padic-digit-eq.md)
+- [The $p$-adic expansion map is injective](padic-expansion-injective.md)
+- [The $p$-adic expansion map is surjective](padic-expansion-surjective.md)
+- [The $p$-adic expansion map is bijective](padic-expansion-bijective.md)

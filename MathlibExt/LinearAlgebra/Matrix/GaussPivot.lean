@@ -307,6 +307,7 @@ variable {K : Type*} [Field K]
 variable {m n : Type*} [Fintype m] [DecidableEq m] [LinearOrder m]
 variable [Fintype n] [DecidableEq n] [LinearOrder n]
 
+omit [Fintype n] [DecidableEq n] [LinearOrder n] in
 /--
 One row-pivot step of Gaussian elimination: given any nonzero entry in column `j`, swap its row
 to the pivot row `r` and clear the entries below it by a unit lower-triangular row operation.
@@ -328,6 +329,7 @@ theorem gauss_pivot_elim_step (A : Matrix m n K) (r : m) (j : n)
       ∀ i > r, (P * A.submatrix (Equiv.swap r i₀) id) i j = 0 := by
   exact gaussPivot_elimStep A r j i₀ h
 
+omit [DecidableEq n] in
 /--
 Gaussian elimination with arbitrary nonzero row pivots admits an endpoint factorization into a
 row permutation and a list of unit lower-triangular row operations whose product reaches row

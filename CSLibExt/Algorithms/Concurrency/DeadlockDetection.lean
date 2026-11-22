@@ -49,9 +49,12 @@ The results:
 * `detect_eq_nil_iff`: nothing is reported exactly when all the processes can
   finish in some order (complete reducibility).
 
-The list of pending processes is assumed to be duplicate-free. The model is
-the standard one of these papers: a blocked process waits for its whole
-request, holds what it has (hold and wait), and is not preempted.
+`mem_detect_iff` and `detect_eq_nil_iff` assume a duplicate-free pending list.
+The algorithm itself does not reject duplicate pending processes: reduction
+credits the allocation once per selected occurrence, so repeated entries may
+credit the same resources more than once. The model is the standard one of
+these papers: a blocked process waits for its whole request, holds what it has
+(hold and wait), and is not preempted.
 -/
 
 @[expose] public section
@@ -92,6 +95,23 @@ instance decidableReduces [Fintype R] :
       inferInstanceAs (Decidable (S.request p ≤ work ∧ S.Reduces (work + S.alloc p) rest))
 
 variable {S}
+
+/-- Crediting a member's allocation in advance preserves the reduction sequence
+with one occurrence of that process removed. -/
+theorem Reduces.erase_of_mem [DecidableEq P] {work : R → ℕ} {σ : List P} {p : P}
+    (h : S.Reduces work σ) (hp : p ∈ σ) :
+    S.Reduces (work + S.alloc p) (σ.erase p) := by
+  induction σ generalizing work with
+  | nil => simp at hp
+  | cons q rest ih =>
+      by_cases hqp : q = p
+      · subst hqp
+        simpa using h.2
+      · rw [List.erase_cons_tail (by simpa using hqp)]
+        refine ⟨h.1.trans fun r => Nat.le_add_right _ _, ?_⟩
+        have hp' : p ∈ rest := (List.mem_cons.mp hp).resolve_left (Ne.symm hqp)
+        have := ih h.2 hp'
+        rwa [add_right_comm] at this
 
 /-- If a process can finish now, letting it finish first keeps any reduction
 sequence valid without it. -/
