@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.LinearAlgebra.CrossProduct
 public import Mathlib.Order.Interval.Set.Defs
 public import PhyslibExt.ContinuumMechanics.ControlVolumes
@@ -22,11 +23,11 @@ import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# Rotor ports: Euler torque and power on the fluid, and the ideal actuator disk
+# Rotor ports: Euler torque and power on the fluid, the ideal actuator disk and hover
 
 Two lumped rotor models: the Euler turbomachine relation for a rotor with lumped ports (sections
 A-C), and the ideal actuator disk of one-dimensional momentum theory with the Betz limit
-(sections D-F).
+(sections D-F) and the hovering rotor (section G).
 
 ## i. Overview
 
@@ -109,6 +110,36 @@ loading, with no swirl and no tip loss; ambient pressure far upstream and in the
 axial pressure force on the streamtube boundary. No blade-element, wake-rotation or turbulent-wake
 model is used, and no empirical adequacy or turbine safety claim is made.
 
+The hovering rotor of section G is the same ideal actuator-disk model, on the separate hover
+branch: the same state and the same port laws, in still air. Axial speeds are
+positive along the flow through the disk: the far-upstream speed is `U∞ = 0`, the induced velocity
+is the speed `v_i = U_d` at the disk and `U_w` is the far-wake speed. The port laws are Bernoulli
+separately on the two sides of the disk, `p∞ + ρ U∞² / 2 = p⁺ + ρ v_i² / 2` and
+`p⁻ + ρ v_i² / 2 = p∞ + ρ U_w² / 2`, the momentum balance of the thin disk, `F = A (p⁺ - p⁻)`, and
+the momentum balance of the streamtube, `F = ρ A v_i (U∞ - U_w)`, where `F` is the axial force of
+the fluid on the disk, positive along the flow. A powered disk pushes the fluid along the flow, so
+`F < 0`, and the rotor thrust is `T = -F > 0`, directed against the flow (upward for a rotor blowing
+downward).
+
+With `U∞ = 0`, Bernoulli on the two sides gives `F = -ρ A U_w² / 2` and the streamtube gives
+`F = -ρ A v_i U_w`; a nonzero force makes `U_w ≠ 0`, so `U_w = 2 v_i`. Then `T = 2 ρ A v_i²`.
+The induced power, the kinetic power `ṁ (U_w² - U∞²) / 2` that the disk adds to the stream
+(`ṁ = ρ A v_i`), is the negative of the extracted power for every state satisfying the port laws,
+`P = T v_i`, the power `-F v_i` of the disk on the stream, with no still-air, sign or powered
+assumption. A powered disk
+delivers positive power, `T v_i > 0`; then `v_i > 0`, so the far wake moves at
+`U_w = 2 v_i > U∞ = 0`, outside the wind-extraction branch, which has `U_w < U∞`, and
+`v_i = √(T / (2 ρ A))` and `P = T √(T / (2 ρ A))`. The port laws do not change when every speed
+changes sign, and the reversed state takes power from the stream instead, so the powered
+hypothesis cannot be dropped. The
+freestream normalization `ρ A U∞³ / 2` of the wind-extraction power coefficient vanishes at
+`U∞ = 0`, so no such coefficient describes hover.
+
+Model inputs of section G: steady incompressible inviscid flow through an ideal disk of uniform
+loading in still air, with no swirl and no tip loss; ambient pressure far upstream and in the far
+wake; no net axial pressure force on the streamtube boundary. No blade-element, vortex-ring, stall
+or motor model is used, and no empirical adequacy or vehicle safety claim is made.
+
 ## ii. Key results
 
 - `FluidDynamics.RotorPorts.localMomentumFlux_eq_momentumFlux`: the area-weighted local momentum
@@ -135,10 +166,17 @@ model is used, and no empirical adequacy or turbine safety claim is made.
   `a = 1/3`.
 - `FluidDynamics.RotorPorts.ofInduction_spec`: every induction factor is realized by a state
   satisfying the port laws.
+- `FluidDynamics.RotorPorts.hover_uWake_eq`, `FluidDynamics.RotorPorts.hover_thrust_eq`: in
+  still air the far wake moves at `U_w = 2 v_i` and `T = 2 ρ A v_i²`.
+- `FluidDynamics.RotorPorts.inducedPower_eq`: for every state satisfying the port laws the induced
+  power is the negative of the extracted power, `-F U_d`, or `T U_d` with the thrust `T = -F`.
+- `FluidDynamics.RotorPorts.hover_inducedVelocity_eq`, `FluidDynamics.RotorPorts.hover_power_eq`:
+  for a powered disk `v_i = √(T / (2 ρ A))`, and the induced power is `T v_i = -F v_i`.
 - A compressor with a nonzero swirl change, the same ports with the throughflow reversed, blade
   forces that realize their torques and the rotor-relative swirl of the ports, and the
   Betz-optimal disk, the invalid zero freestream and the undetermined disk speed without
-  extraction, are checked in `PhyslibExtTest.FluidDynamics.RotorPorts`.
+  extraction, and nonzero hover thrust and power, the undefined freestream normalization in hover
+  and the reversed unpowered state, are checked in `PhyslibExtTest.FluidDynamics.RotorPorts`.
 
 ## iii. Table of contents
 
@@ -148,6 +186,7 @@ model is used, and no empirical adequacy or turbine safety claim is made.
 - D. The actuator disk and its port laws
 - E. Disk speed and pressure jump
 - F. Power coefficient and the Betz limit
+- G. The hovering rotor
 
 ## iv. References
 
@@ -165,6 +204,11 @@ model is used, and no empirical adequacy or turbine safety claim is made.
   disk, the induction factor and `C_P = 4 a (1 - a)²`.
 - T. Burton, N. Jenkins, D. Sharpe and E. Bossanyi, *Wind Energy Handbook*, Wiley, ch. 3: the
   actuator disk concept and the Betz limit.
+- J. G. Leishman, *Principles of Helicopter Aerodynamics*, Cambridge University Press, ch. 2:
+  momentum theory of the hovering rotor, `T = 2 ρ A v_i²`, `v_i = √(T / (2 ρ A))`, the far wake
+  at `2 v_i` and the ideal power `T v_i`.
+- W. Johnson, *Helicopter Theory*, Princeton University Press, ch. 2: actuator disk momentum
+  theory in hover.
 -/
 
 @[expose] public section
@@ -658,5 +702,106 @@ lemma ofInduction_spec (ρ A uInf pAmb a : ℝ) :
   · simp only [powerCoefficient, extractedPower, powerNormalization, ActuatorDisk.ofInduction]
     field_simp
     ring
+
+/-! ## G. The hovering rotor -/
+
+/-- The induced power `ṁ (U_w² - U∞²) / 2` with the mass flow `ṁ = ρ A U_d`: the kinetic power the
+disk adds to the stream through it. -/
+noncomputable def inducedPower (d : ActuatorDisk) : ℝ :=
+  d.ρ * d.A * d.uDisk * (d.uWake ^ 2 - d.uInf ^ 2) / 2
+
+/-- **Energy balance of the disk.** For every state satisfying the port laws, the induced power is
+the negative of the extracted power `F U_d`, with `F` the axial force of the fluid on the disk: it
+is the power `-F U_d` of the disk on the stream and, with the rotor thrust `T = -F`, it equals
+`T U_d`. No still air, sign or powered assumption is needed, so the identities also cover the
+reversed and zero-thrust states outside `hover_power_eq`. -/
+lemma inducedPower_eq {d : ActuatorDisk} (h : d.PortLaws) {T : ℝ} (hT : d.force = -T) :
+    inducedPower d = -extractedPower d ∧ inducedPower d = T * d.uDisk ∧
+      inducedPower d = -(d.force * d.uDisk) := by
+  have hE : inducedPower d = -extractedPower d := by
+    rw [extractedPower_eq h]
+    unfold inducedPower
+    ring
+  have hF : inducedPower d = -(d.force * d.uDisk) := by rw [hE, extractedPower]
+  exact ⟨hE, by rw [hF, hT]; ring, hF⟩
+
+/-- **Hover wake.** For a disk in still air (`U∞ = 0`) carrying a nonzero force, with positive
+density and area, the port laws give the far-wake speed `U_w = 2 v_i`, twice the induced velocity
+`v_i = U_d`. -/
+lemma hover_uWake_eq {d : ActuatorDisk} (h : d.PortLaws) (hρ : 0 < d.ρ) (hA : 0 < d.A)
+    (h0 : d.uInf = 0) (hF : d.force ≠ 0) : d.uWake = 2 * d.uDisk := by
+  obtain ⟨bu, bd, md, mt⟩ := h
+  simp only [h0] at bu mt
+  have e1 : d.force = -(d.ρ * d.A * d.uWake ^ 2 / 2) := by
+    linear_combination md - d.A * bu - d.A * bd
+  have h2 : d.ρ * d.A * (d.uWake ^ 2 - 2 * d.uWake * d.uDisk) = 0 := by
+    linear_combination 2 * e1 - 2 * mt
+  have hρA : d.ρ * d.A ≠ 0 := ne_of_gt (mul_pos hρ hA)
+  have hsq : d.uWake ^ 2 - 2 * d.uWake * d.uDisk = 0 := by
+    rcases mul_eq_zero.mp h2 with hcon | hsq
+    · exact absurd hcon hρA
+    · exact hsq
+  have hfac : d.uWake * (d.uWake - 2 * d.uDisk) = 0 := by
+    linear_combination hsq
+  rcases mul_eq_zero.mp hfac with hw0 | h2v
+  · exfalso
+    apply hF
+    calc d.force = -(d.ρ * d.A * d.uWake ^ 2 / 2) := e1
+      _ = 0 := by rw [hw0]; ring
+  · exact sub_eq_zero.mp h2v
+
+/-- **Hover thrust.** For a disk in still air with positive density and area whose rotor thrust
+`T = -F` (the force of the fluid on the disk points against the flow) is positive,
+`T = 2 ρ A v_i²`. -/
+lemma hover_thrust_eq {d : ActuatorDisk} (h : d.PortLaws) (hρ : 0 < d.ρ) (hA : 0 < d.A)
+    (h0 : d.uInf = 0) {T : ℝ} (hT : d.force = -T) (hTpos : 0 < T) :
+    T = 2 * d.ρ * d.A * d.uDisk ^ 2 := by
+  have hF : d.force ≠ 0 := by
+    rw [hT]
+    exact neg_ne_zero.mpr (ne_of_gt hTpos)
+  have hw := hover_uWake_eq h hρ hA h0 hF
+  obtain ⟨bu, bd, md, _⟩ := h
+  simp only [h0] at bu
+  have e1 : d.force = -(d.ρ * d.A * d.uWake ^ 2 / 2) := by
+    linear_combination md - d.A * bu - d.A * bd
+  rw [hT, hw] at e1
+  linear_combination -e1
+
+/-- **Induced velocity.** For a powered hovering disk, one whose thrust does positive work on the
+stream (`T v_i > 0`), the induced velocity is `v_i = √(T / (2 ρ A))`. -/
+lemma hover_inducedVelocity_eq {d : ActuatorDisk} (h : d.PortLaws) (hρ : 0 < d.ρ)
+    (hA : 0 < d.A) (h0 : d.uInf = 0) {T : ℝ} (hT : d.force = -T) (hTpos : 0 < T)
+    (hpow : 0 < T * d.uDisk) : d.uDisk = Real.sqrt (T / (2 * d.ρ * d.A)) := by
+  have hT2 := hover_thrust_eq h hρ hA h0 hT hTpos
+  have hv : 0 < d.uDisk := pos_of_mul_pos_right hpow hTpos.le
+  have h2ρA : (0:ℝ) < 2 * d.ρ * d.A := by positivity
+  have hsq : d.uDisk ^ 2 = T / (2 * d.ρ * d.A) := by
+    rw [eq_div_iff (ne_of_gt h2ρA)]
+    linear_combination -hT2
+  calc d.uDisk = Real.sqrt (d.uDisk ^ 2) := (Real.sqrt_sq hv.le).symm
+    _ = Real.sqrt (T / (2 * d.ρ * d.A)) := by rw [hsq]
+
+/-- **Hover power.** The induced power of the hovering disk is `P = T v_i`; it equals the power
+`-F v_i` of the disk on the stream and, for a powered disk (`T v_i > 0`),
+`P = T √(T / (2 ρ A))`. -/
+lemma hover_power_eq {d : ActuatorDisk} (h : d.PortLaws) (hρ : 0 < d.ρ) (hA : 0 < d.A)
+    (h0 : d.uInf = 0) {T : ℝ} (hT : d.force = -T) (hTpos : 0 < T) (hpow : 0 < T * d.uDisk) :
+    inducedPower d = T * d.uDisk ∧ inducedPower d = -(d.force * d.uDisk) ∧
+      inducedPower d = T * Real.sqrt (T / (2 * d.ρ * d.A)) := by
+  have hF : d.force ≠ 0 := by
+    rw [hT]
+    exact neg_ne_zero.mpr (ne_of_gt hTpos)
+  have hw := hover_uWake_eq h hρ hA h0 hF
+  have hT2 := hover_thrust_eq h hρ hA h0 hT hTpos
+  have hvi := hover_inducedVelocity_eq h hρ hA h0 hT hTpos hpow
+  have eP1 : inducedPower d = T * d.uDisk := by
+    simp only [inducedPower, h0, hw]
+    linear_combination (-d.uDisk) * hT2
+  have eP2 : inducedPower d = -(d.force * d.uDisk) := by
+    linear_combination eP1 + d.uDisk * hT
+  have eP3 : inducedPower d = T * Real.sqrt (T / (2 * d.ρ * d.A)) := by
+    rw [← hvi]
+    exact eP1
+  exact ⟨eP1, eP2, eP3⟩
 
 end FluidDynamics.RotorPorts

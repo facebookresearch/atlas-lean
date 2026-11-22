@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 module
+public import Mathlib.MeasureTheory.Measure.DiracProba
 
 public import Mathlib.Data.List.Basic
 public import Mathlib.Basic.ENNReal.Basic
@@ -738,6 +739,215 @@ def Simulation.comp {Req AnsX AnsY AnsZ : Type*}
       rw [m1, a1, m2]
       ring
     exact le_trans hchain (le_of_eq heq)
+
+
+/-- A randomized strategy against an oblivious adversary: the request
+sequence is fixed before the seed is drawn; each seed selects a causal
+deterministic strategy. The structure itself imposes no feasibility;
+seedwise feasibility for a problem is required by `RandCompetitive`
+and `RandProfitCompetitive`. -/
+structure RandStrategy (Req Ans Ω : Type*) [MeasurableSpace Ω] where
+  μ : MeasureTheory.ProbabilityMeasure Ω
+  strat : Ω → Strategy Req Ans
+
+/-- Expected cost of a randomized strategy on a fixed input, as a
+nonnegative extended value (divergent expectation is `⊤`). -/
+noncomputable def expectedCost {Req Ans Ω : Type*} [MeasurableSpace Ω]
+    (P : OnlineProblem Req Ans) (A : RandStrategy Req Ans Ω)
+    (σ : List Req) : ENNReal :=
+  ∫⁻ ω, ENNReal.ofReal (algCost P (A.strat ω) σ) ∂(A.μ : MeasureTheory.Measure Ω)
+
+/-- Randomized `(c, b)`-competitiveness against an oblivious adversary:
+every seed is feasible, the run cost is measurable per input, and the
+expected cost is at most `c • OPT + b` with constants outside the
+expectation. -/
+def RandCompetitive {Req Ans Ω : Type*} [MeasurableSpace Ω]
+    (P : OnlineProblem Req Ans) (A : RandStrategy Req Ans Ω) (c b : ℝ) :
+    Prop :=
+  0 ≤ c ∧ 0 ≤ b ∧ (∀ ω, StrategyFeasible P (A.strat ω)) ∧
+    ∀ σ : List Req, P.legal σ →
+      Measurable (fun ω => ENNReal.ofReal (algCost P (A.strat ω) σ)) ∧
+      expectedCost P A σ ≤ ENNReal.ofReal c * optCost P σ + ENNReal.ofReal b
+
+/-- The constant (Dirac) randomized strategy at a fixed seed agrees with
+deterministic competitiveness of the selected strategy. -/
+theorem randCompetitive_dirac_iff {Req Ans Ω : Type*} [MeasurableSpace Ω]
+    (P : OnlineProblem Req Ans) (A0 : Strategy Req Ans) (ω0 : Ω) (c b : ℝ) :
+    RandCompetitive P
+        { μ := (⟨MeasureTheory.Measure.dirac ω0, by infer_instance⟩ :
+            MeasureTheory.ProbabilityMeasure Ω),
+          strat := fun _ => A0 } c b
+      ↔ Competitive P A0 c b := by
+  have hexp : ∀ σ : List Req, expectedCost P
+      { μ := (⟨MeasureTheory.Measure.dirac ω0, by infer_instance⟩ :
+          MeasureTheory.ProbabilityMeasure Ω),
+        strat := fun _ => A0 } σ
+      = ENNReal.ofReal (algCost P A0 σ) := by
+    intro σ
+    change ∫⁻ _ : Ω, ENNReal.ofReal (algCost P A0 σ)
+        ∂MeasureTheory.Measure.dirac ω0
+      = ENNReal.ofReal (algCost P A0 σ)
+    exact MeasureTheory.lintegral_dirac' ω0 measurable_const
+  constructor
+  · rintro ⟨hc0, hb0, hA, hineq⟩
+    refine ⟨hc0, hb0, hA ω0, fun σ hσ => ?_⟩
+    obtain ⟨-, hle⟩ := hineq σ hσ
+    rw [hexp] at hle
+    exact hle
+  · rintro ⟨hc0, hb0, hA, hineq⟩
+    refine ⟨hc0, hb0, fun _ => hA, fun σ hσ => ?_⟩
+    refine ⟨?_, ?_⟩
+    · change Measurable (fun _ : Ω => ENNReal.ofReal (algCost P A0 σ))
+      exact measurable_const
+    · rw [hexp]
+      exact hineq σ hσ
+
+/-- Seedwise transfer of randomized competitiveness along a simulation,
+with the same coefficients as the deterministic transfer; measurability
+of the transferred cost is part of the conclusion's hypothesis check. -/
+theorem Simulation.randCompetitive_transfer {Req AnsX AnsY Ω : Type*}
+    [MeasurableSpace Ω] {X : OnlineProblem Req AnsX}
+    {Y : OnlineProblem Req AnsY} (S : Simulation X Y)
+    (A : RandStrategy Req AnsY Ω) {c b : ℝ} (hA : RandCompetitive Y A c b)
+    (hmeas : ∀ σ : List Req, X.legal σ →
+      Measurable (fun ω => ENNReal.ofReal (algCost X (S.F (A.strat ω)) σ))) :
+    RandCompetitive X
+      { μ := A.μ, strat := fun ω => S.F (A.strat ω) }
+      (S.a * c * S.d) (S.a * c * S.q + S.a * b + S.p) := by
+  obtain ⟨hc0, hb0, hAY, hineq⟩ := hA
+  refine ⟨mul_nonneg (mul_nonneg S.ha hc0) S.hd, ?_,
+    fun ω => S.F_feasible _ (hAY ω), fun σ hσ => ⟨hmeas σ hσ, ?_⟩⟩
+  · exact add_nonneg (add_nonneg (mul_nonneg (mul_nonneg S.ha hc0) S.hq)
+      (mul_nonneg S.ha hb0)) S.hp
+  · have hYmeas : Measurable
+        (fun ω => ENNReal.ofReal (algCost Y (A.strat ω) σ)) :=
+      (hineq σ (S.legal_mono σ hσ)).1
+    have hY : expectedCost Y A σ
+        ≤ ENNReal.ofReal c * optCost Y σ + ENNReal.ofReal b :=
+      (hineq σ (S.legal_mono σ hσ)).2
+    have hO := S.optCost_le hσ
+    have hmul : Measurable (fun ω => ENNReal.ofReal S.a
+        * ENNReal.ofReal (algCost Y (A.strat ω) σ)) :=
+      hYmeas.const_mul _
+    have hprob : (A.μ : MeasureTheory.Measure Ω) Set.univ = 1 :=
+      MeasureTheory.measure_univ
+    have step0 : expectedCost X
+          { μ := A.μ, strat := fun ω => S.F (A.strat ω) }
+          σ
+          ≤ ∫⁻ ω, (ENNReal.ofReal S.a
+            * ENNReal.ofReal (algCost Y (A.strat ω) σ) + ENNReal.ofReal S.p)
+            ∂(A.μ : MeasureTheory.Measure Ω) := by
+      unfold expectedCost
+      exact MeasureTheory.lintegral_mono fun ω => S.costF (A.strat ω) σ hσ
+    have stepE : (∫⁻ ω, (ENNReal.ofReal S.a
+            * ENNReal.ofReal (algCost Y (A.strat ω) σ) + ENNReal.ofReal S.p)
+            ∂(A.μ : MeasureTheory.Measure Ω))
+        = ENNReal.ofReal S.a * expectedCost Y A σ + ENNReal.ofReal S.p := by
+      unfold expectedCost
+      rw [MeasureTheory.lintegral_add_left hmul _,
+        MeasureTheory.lintegral_const_mul _ hYmeas,
+        MeasureTheory.lintegral_const, hprob, mul_one]
+    have hmul1 := mul_le_mul_right hY (ENNReal.ofReal S.a)
+    have step1 : ENNReal.ofReal S.a * expectedCost Y A σ + ENNReal.ofReal S.p
+        ≤ ENNReal.ofReal S.a * (ENNReal.ofReal c * optCost Y σ
+          + ENNReal.ofReal b) + ENNReal.ofReal S.p :=
+      add_le_add_left hmul1 (ENNReal.ofReal S.p)
+    have hmul2 := mul_le_mul_right hO (ENNReal.ofReal c)
+    have hadd2 := add_le_add_left hmul2 (ENNReal.ofReal b)
+    have hmul3 := mul_le_mul_right hadd2 (ENNReal.ofReal S.a)
+    have hadd3 := add_le_add_left hmul3 (ENNReal.ofReal S.p)
+    have step2 : ENNReal.ofReal S.a * expectedCost Y A σ + ENNReal.ofReal S.p
+        ≤ ENNReal.ofReal S.a * (ENNReal.ofReal c *
+          (ENNReal.ofReal S.d * optCost X σ + ENNReal.ofReal S.q)
+          + ENNReal.ofReal b) + ENNReal.ofReal S.p :=
+      le_trans step1 hadd3
+    have e1 : ENNReal.ofReal (S.a * c * S.d)
+        = ENNReal.ofReal S.a * ENNReal.ofReal c * ENNReal.ofReal S.d := by
+      rw [ENNReal.ofReal_mul (mul_nonneg S.ha hc0), ENNReal.ofReal_mul S.ha]
+    have e2 : ENNReal.ofReal (S.a * c * S.q + S.a * b + S.p)
+        = ENNReal.ofReal S.a * ENNReal.ofReal c * ENNReal.ofReal S.q
+          + ENNReal.ofReal S.a * ENNReal.ofReal b + ENNReal.ofReal S.p := by
+      rw [ENNReal.ofReal_add (add_nonneg (mul_nonneg (mul_nonneg S.ha hc0) S.hq)
+        (mul_nonneg S.ha hb0)) S.hp]
+      rw [ENNReal.ofReal_add (mul_nonneg (mul_nonneg S.ha hc0) S.hq)
+        (mul_nonneg S.ha hb0)]
+      rw [ENNReal.ofReal_mul (mul_nonneg S.ha hc0), ENNReal.ofReal_mul S.ha,
+        ENNReal.ofReal_mul S.ha]
+    have step3 : ENNReal.ofReal S.a * (ENNReal.ofReal c *
+          (ENNReal.ofReal S.d * optCost X σ + ENNReal.ofReal S.q)
+          + ENNReal.ofReal b) + ENNReal.ofReal S.p
+        = ENNReal.ofReal (S.a * c * S.d) * optCost X σ
+          + ENNReal.ofReal (S.a * c * S.q + S.a * b + S.p) := by
+      rw [e1, e2]
+      ring
+    calc expectedCost X
+            { μ := A.μ,
+              strat := fun ω => S.F (A.strat ω) } σ
+        ≤ ∫⁻ ω, (ENNReal.ofReal S.a
+            * ENNReal.ofReal (algCost Y (A.strat ω) σ) + ENNReal.ofReal S.p)
+            ∂(A.μ : MeasureTheory.Measure Ω) := step0
+      _ = ENNReal.ofReal S.a * expectedCost Y A σ + ENNReal.ofReal S.p :=
+        stepE
+      _ ≤ ENNReal.ofReal S.a * (ENNReal.ofReal c *
+            (ENNReal.ofReal S.d * optCost X σ + ENNReal.ofReal S.q)
+            + ENNReal.ofReal b) + ENNReal.ofReal S.p := step2
+      _ = ENNReal.ofReal (S.a * c * S.d) * optCost X σ
+            + ENNReal.ofReal (S.a * c * S.q + S.a * b + S.p) := step3
+
+/-- Feasible-profit supremum for an explicitly given nonnegative profit
+function on traces (maximization form; the profit counterpart of
+`optCost`). Profit is nonnegative by type: the maximization ratio is
+meaningful only on that domain, and negative values cannot be silently
+truncated. -/
+noncomputable def optProfit {Req Ans : Type*} (P : OnlineProblem Req Ans)
+    (profit : List (Req × Ans) → NNReal) (σ : List Req) : ENNReal :=
+  ⨆ τ ∈ {τ : List (Req × Ans) | P.feasible τ ∧ τ.map Prod.fst = σ},
+    (profit τ : ENNReal)
+
+theorem le_optProfit {Req Ans : Type*} (P : OnlineProblem Req Ans)
+    (profit : List (Req × Ans) → NNReal) {σ : List Req} {τ : List (Req × Ans)}
+    (hτ : P.feasible τ) (hστ : τ.map Prod.fst = σ) :
+    (profit τ : ENNReal) ≤ optProfit P profit σ := by
+  unfold optProfit
+  exact le_biSup (fun τ => (profit τ : ENNReal)) ⟨hτ, hστ⟩
+
+/-- Profit-form competitiveness for maximization consumers:
+`ρ • OPT_profit ≤ ALG_profit + b` with `0 ≤ ρ ≤ 1`, for a nonnegative
+profit function. This is a separate predicate from the cost form; the
+two are not interchangeable. -/
+def ProfitCompetitive {Req Ans : Type*} (P : OnlineProblem Req Ans)
+    (profit : List (Req × Ans) → NNReal) (A : Strategy Req Ans) (ρ b : ℝ) :
+    Prop :=
+  0 ≤ ρ ∧ ρ ≤ 1 ∧ 0 ≤ b ∧ StrategyFeasible P A ∧
+    ∀ σ : List Req, P.legal σ →
+      ENNReal.ofReal ρ * optProfit P profit σ
+        ≤ (profit (run A σ) : ENNReal) + ENNReal.ofReal b
+
+/-- Randomized profit-form competitiveness: expected profit replaces the
+deterministic profit. -/
+def RandProfitCompetitive {Req Ans Ω : Type*} [MeasurableSpace Ω]
+    (P : OnlineProblem Req Ans) (profit : List (Req × Ans) → NNReal)
+    (A : RandStrategy Req Ans Ω) (ρ b : ℝ) : Prop :=
+  0 ≤ ρ ∧ ρ ≤ 1 ∧ 0 ≤ b ∧ (∀ ω, StrategyFeasible P (A.strat ω)) ∧
+    ∀ σ : List Req, P.legal σ →
+      Measurable (fun ω => (profit (run (A.strat ω) σ) : ENNReal)) ∧
+      ENNReal.ofReal ρ * optProfit P profit σ
+        ≤ (∫⁻ ω, (profit (run (A.strat ω) σ) : ENNReal)
+            ∂(A.μ : MeasureTheory.Measure Ω))
+          + ENNReal.ofReal b
+
+theorem ProfitCompetitive.mono {Req Ans : Type*} (P : OnlineProblem Req Ans)
+    (profit : List (Req × Ans) → NNReal) (A : Strategy Req Ans) {ρ b ρ' b' : ℝ}
+    (h : ProfitCompetitive P profit A ρ b) (hρ : ρ' ≤ ρ) (hb : b ≤ b')
+    (hρ'0 : 0 ≤ ρ') : ProfitCompetitive P profit A ρ' b' := by
+  obtain ⟨hρ0, hρ1, hb0, hA, hineq⟩ := h
+  refine ⟨hρ'0, le_trans hρ hρ1, le_trans hb0 hb, hA, fun σ hσ => ?_⟩
+  have hrr : ENNReal.ofReal ρ' ≤ ENNReal.ofReal ρ :=
+    ENNReal.ofReal_le_ofReal hρ
+  have hbb : ENNReal.ofReal b ≤ ENNReal.ofReal b' :=
+    ENNReal.ofReal_le_ofReal hb
+  have hmul := mul_le_mul_left hrr (optProfit P profit σ)
+  exact le_trans hmul (le_trans (hineq σ hσ) (add_le_add_right hbb _))
 
 
 end Cslib.Algorithms.Lean.Online.CompetitiveFramework
