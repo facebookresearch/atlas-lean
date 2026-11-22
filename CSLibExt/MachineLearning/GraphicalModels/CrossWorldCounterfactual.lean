@@ -38,8 +38,11 @@ as `P(Y_1 = 1, Y_0 = 0)` evaluates the potential outcomes `Y_1` and `Y_0` at the
   (Pearl, Glymour and Jewell 2016, §4.3; Pearl 2009, §1.4.4).
 
 This is a self-contained two-node interface. The general finite SCMs of
-`CSLibExt/MachineLearning/GraphicalModels/StructuralCausalModels.lean` do not yet have
-interventions or counterfactual laws; unification with them is future work.
+`CSLibExt/MachineLearning/GraphicalModels/StructuralCausalModels.lean` have surgery
+(`FiniteSCM.doNode`, `FiniteSCM.doSet`) and conditional counterfactual probabilities
+(`FiniteSCM.counterfactualProb`), which relate the factual world to one intervened world at the
+same noise value. A joint over two intervened worlds, such as `P(Y_1 = 1, Y_0 = 0)` here, is not
+defined there; unifying `BinarySCM` with `FiniteSCM` is future work.
 
 ## References
 

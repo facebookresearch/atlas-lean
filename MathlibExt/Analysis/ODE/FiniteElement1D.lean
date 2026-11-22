@@ -836,43 +836,9 @@ theorem energy_sub_galerkin_le {f u : ℝ → ℝ} (hu : IsClassicalSolution f u
 theorem integral_sq_le_of_eq_zero {g : ℝ → ℝ} {a b : ℝ} (hab : a < b) (hg : ContDiff ℝ 1 g)
     (ha : g a = 0) (hb : g b = 0) :
     ∫ x in a..b, g x ^ 2 ≤ ((b - a) / Real.pi) ^ 2 * ∫ x in a..b, deriv g x ^ 2 := by
-  set s := (b - a) / Real.pi with hs
-  have hs0 : 0 < s := div_pos (sub_pos.mpr hab) Real.pi_pos
-  have hend : a + s * Real.pi = b := by
-    rw [hs, div_mul_cancel₀ _ Real.pi_pos.ne']
-    ring
-  have hdg : ∀ x, HasDerivAt g (deriv g x) x :=
-    fun x => ((hg.differentiable one_ne_zero) x).hasDerivAt
-  have hlin : Continuous fun t : ℝ => a + s * t := by fun_prop
-  have hF : ∀ t, HasDerivAt (fun t => g (a + s * t)) (s * deriv g (a + s * t)) t := by
-    intro t
-    have h1 : HasDerivAt (fun t : ℝ => a + s * t) s t := by
-      simpa using ((hasDerivAt_id t).const_mul s).const_add a
-    have h2 := (hdg (a + s * t)).comp t h1
-    rw [mul_comm] at h2
-    exact h2
-  have hw := MetaMathlibExt.wirtinger_inequality (fun t => g (a + s * t))
-    (fun t => s * deriv g (a + s * t)) (fun t _ => (hF t).hasDerivWithinAt)
-    ((continuous_const.mul ((hg.continuous_deriv le_rfl).comp hlin)).continuousOn)
-    (by simp [ha]) (by simp [hend, hb])
-  have h1 : ∫ t in (0 : ℝ)..Real.pi, g (a + s * t) ^ 2 = s⁻¹ * ∫ x in a..b, g x ^ 2 := by
-    have := intervalIntegral.integral_comp_add_mul (fun x => g x ^ 2) (a := 0) (b := Real.pi)
-      hs0.ne' a
-    simpa [hend] using this
-  have h2 : ∫ t in (0 : ℝ)..Real.pi, (s * deriv g (a + s * t)) ^ 2 =
-      s ^ 2 * (s⁻¹ * ∫ x in a..b, deriv g x ^ 2) := by
-    have := intervalIntegral.integral_comp_add_mul (fun x => deriv g x ^ 2) (a := 0)
-      (b := Real.pi) hs0.ne' a
-    simp only [mul_zero, add_zero, hend, smul_eq_mul] at this
-    rw [← this, ← intervalIntegral.integral_const_mul]
-    refine intervalIntegral.integral_congr fun t _ => ?_
-    ring
-  rw [h1, h2] at hw
-  have hmul := mul_le_mul_of_nonneg_left hw hs0.le
-  rw [← mul_assoc, mul_inv_cancel₀ hs0.ne', one_mul] at hmul
-  calc ∫ x in a..b, g x ^ 2 ≤ s * (s ^ 2 * (s⁻¹ * ∫ x in a..b, deriv g x ^ 2)) := hmul
-    _ = s ^ 2 * ∫ x in a..b, deriv g x ^ 2 := by
-        field_simp
+  exact MetaMathlibExt.wirtinger_inequality_Icc hab g (deriv g)
+    (fun x _ => ((hg.differentiable one_ne_zero) x).hasDerivAt.hasDerivWithinAt)
+    ((hg.continuous_deriv le_rfl).continuousOn) ha hb
 
 /-- The element estimate: a `C²` function vanishing at `a` and `b` satisfies
 `∫ₐᵇ (g')² ≤ ((b - a) / π)² ∫ₐᵇ (g'')²`. -/

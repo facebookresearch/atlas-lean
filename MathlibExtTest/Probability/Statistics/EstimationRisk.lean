@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.EstimationRisk
+public import MathlibExt.Probability.Statistics.ModelInterop
 public import MathlibExt.MeasureTheory.Function.ConditionalExpectation.BestPredictor
 public import MathlibExt.Probability.MonteCarloRate
 public import Mathlib.Probability.ProbabilityMassFunction.Integrals
@@ -27,6 +28,9 @@ Dirac laws with a fixed estimator. The MSE decomposition is verified
 numerically on laws with nonzero bias and variance. Negative cases exhibit a
 genuine infinite-moment geometric law, reject zero and infinite sampling
 measures as probability laws, and record empty-domain vacuity explicitly.
+Deterministic-kernel receipts identify the squared-error risk of the kernel
+bind with the finite MSE on the L² domain, including a regression split, and
+with `∞` off that domain.
 -/
 
 @[expose] public section
@@ -1521,5 +1525,90 @@ example : ¬ StronglyMeasurable[⊥] coinSign := by
   · have hnot : (false : Bool) ∉ ({true} : Set Bool) := by simp
     rw [h] at hnot
     exact hnot (Set.mem_univ false)
+
+/-- L² receipt: for a measurable square-integrable estimator, the squared-error risk of the
+deterministic kernel bind is the finite mean squared error, embedded in `ℝ≥0∞`. The finite-domain
+evidence is derived from `MemLp W 2`, not assumed. -/
+theorem deterministic_bind_sq_risk_eq_ofReal_meanSquaredError_of_memLp {S : Type*}
+    [MeasurableSpace S] {W : S → ℝ} (hW : Measurable W) {μ : ProbabilityMeasure S}
+    (hW2 : MemLp W 2 (μ : Measure S)) (θ : ℝ) :
+    ∫⁻ a, ENNReal.ofReal ((a - θ) ^ 2) ∂((μ : Measure S).bind (Kernel.deterministic W hW)) =
+      ENNReal.ofReal (meanSquaredError W μ θ (hW2.sub (memLp_const θ)).integrable_sq) := by
+  rw [lintegral_deterministic_bind_ofReal_sq_eq_meanSquaredErrorENN, ofReal_meanSquaredError]
+
+/-- Supervised-regression receipt: for a square-integrable response `Y` and a square-integrable
+`m`-measurable predictor `g`, the deterministic-kernel squared-error risk of the residual
+`Y - g` at target `0` is the finite noise `E[(Y - E[Y | m])²]` plus the finite excess
+`E[(E[Y | m] - g)²]`, embedded in `ℝ≥0∞`. -/
+theorem regression_bind_sq_risk_eq_noise_add_excess {Ω : Type*} {m mΩ : MeasurableSpace Ω}
+    (μ : ProbabilityMeasure Ω) (hm : m ≤ mΩ) {Y g : Ω → ℝ} (hYm : Measurable Y)
+    (hY : MemLp Y 2 (μ : Measure Ω)) (hg : MemLp g 2 (μ : Measure Ω))
+    (hgm : StronglyMeasurable[m] g) :
+    ∫⁻ a, ENNReal.ofReal ((a - 0) ^ 2) ∂((μ : Measure Ω).bind
+        (Kernel.deterministic (fun ω => Y ω - g ω) (hYm.sub (hgm.measurable.mono hm le_rfl)))) =
+      ENNReal.ofReal (∫ ω, (Y ω - (μ : Measure Ω)[Y|m] ω) ^ 2 ∂(μ : Measure Ω) +
+        ∫ ω, ((μ : Measure Ω)[Y|m] ω - g ω) ^ 2 ∂(μ : Measure Ω)) := by
+  have hW2 : Integrable (fun ω => ((Y ω - g ω) - 0) ^ 2) (μ : Measure Ω) :=
+    ((hY.sub hg).sub (memLp_const (0 : ℝ))).integrable_sq
+  rw [lintegral_deterministic_bind_ofReal_sq_eq_meanSquaredErrorENN,
+    ← ofReal_meanSquaredError hW2, meanSquaredError_eq_integral]
+  simp only [sub_zero]
+  rw [integral_sq_sub_eq_integral_sq_sub_condExp_add hm hY hg hgm]
+
+/-- Positive Bernoulli family: the constant estimator `1 / 2` for the target `p` has
+deterministic-kernel squared-error risk equal to its finite mean squared error, and that value is
+`(1 / 2 - p)²` at every `p`. -/
+theorem bernoulliP_const_bind_sq_risk (p : unitInterval) :
+    ∫⁻ a, ENNReal.ofReal ((a - (p : ℝ)) ^ 2) ∂(((bernoulliP p : ProbabilityMeasure Bool) :
+        Measure Bool).bind (Kernel.deterministic (fun _ : Bool => (1 / 2 : ℝ))
+          (measurable_const : Measurable fun _ : Bool => (1 / 2 : ℝ)))) =
+      ENNReal.ofReal (meanSquaredError (fun _ : Bool => (1 / 2 : ℝ)) (bernoulliP p) (p : ℝ)
+        Integrable.of_finite) ∧
+    meanSquaredError (fun _ : Bool => (1 / 2 : ℝ)) (bernoulliP p) (p : ℝ) Integrable.of_finite =
+      (1 / 2 - (p : ℝ)) ^ 2 := by
+  have hMSE : meanSquaredError (fun _ : Bool => (1 / 2 : ℝ)) (bernoulliP p) (p : ℝ)
+        Integrable.of_finite = (1 / 2 - (p : ℝ)) ^ 2 := by
+    rw [meanSquaredError_eq_integral, integral_const, probReal_univ, one_smul]
+  refine ⟨?_, hMSE⟩
+  rw [lintegral_deterministic_bind_ofReal_sq_eq_meanSquaredErrorENN, ofReal_meanSquaredError]
+
+/-- Endpoint `p = 0`: both the kernel risk and the finite mean squared error equal `1 / 4`. -/
+theorem bernoulliP_zero_const_bind_sq_risk :
+    ∫⁻ a, ENNReal.ofReal ((a - ((0 : unitInterval) : ℝ)) ^ 2) ∂(((bernoulliP 0 :
+        ProbabilityMeasure Bool) : Measure Bool).bind
+          (Kernel.deterministic (fun _ : Bool => (1 / 2 : ℝ))
+          (measurable_const : Measurable fun _ : Bool => (1 / 2 : ℝ)))) =
+      ENNReal.ofReal (1 / 4) ∧
+    meanSquaredError (fun _ : Bool => (1 / 2 : ℝ)) (bernoulliP 0) ((0 : unitInterval) : ℝ)
+      Integrable.of_finite = 1 / 4 := by
+  obtain ⟨hbind, hmse⟩ := bernoulliP_const_bind_sq_risk 0
+  have hval : (1 / 2 - ((0 : unitInterval) : ℝ)) ^ 2 = 1 / 4 := by norm_num
+  have hmse4 := hmse.trans hval
+  have hbind4 := hbind.trans (congrArg ENNReal.ofReal hmse4)
+  exact ⟨hbind4, hmse4⟩
+
+/-- Negative: off the L² domain the kernel risk stays `∞`. The doubling estimator under the
+geometric half law has a nonintegrable squared error at target `0`, so no finite mean squared
+error exists, and the deterministic-kernel squared-error risk is `∞`. -/
+theorem geom_double_bind_sq_risk_eq_top :
+    ∫⁻ a, ENNReal.ofReal ((a - 0) ^ 2) ∂((((ProbabilityTheory.geometricMeasure
+        geomHalf).toProbabilityMeasure : ProbabilityMeasure ℕ) : Measure ℕ).bind
+          (Kernel.deterministic (fun n : ℕ => (2 : ℝ) ^ (n + 1)) (measurable_of_countable _))) =
+      ∞ ∧
+    ¬ Integrable (fun n : ℕ => ((2 : ℝ) ^ (n + 1) - 0) ^ 2)
+      (((ProbabilityTheory.geometricMeasure geomHalf).toProbabilityMeasure :
+        ProbabilityMeasure ℕ) : Measure ℕ) := by
+  have hcoe : ((((ProbabilityTheory.geometricMeasure geomHalf).toProbabilityMeasure :
+      ProbabilityMeasure ℕ) : Measure ℕ)) =
+      ProbabilityTheory.geometricMeasure geomHalf := rfl
+  have hSq : ¬ Integrable (fun n : ℕ => ((2 : ℝ) ^ (n + 1) - 0) ^ 2)
+      ((((ProbabilityTheory.geometricMeasure geomHalf).toProbabilityMeasure :
+        ProbabilityMeasure ℕ) : Measure ℕ)) := by
+    rw [hcoe]
+    exact geom_sq_notIntegrable
+  refine ⟨?_, hSq⟩
+  rw [lintegral_deterministic_bind_ofReal_sq_eq_meanSquaredErrorENN]
+  exact meanSquaredErrorENN_eq_top_of_not_finite
+    (measurable_of_countable _).aestronglyMeasurable hSq
 
 end EstimationRiskTest

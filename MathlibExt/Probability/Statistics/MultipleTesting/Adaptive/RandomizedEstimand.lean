@@ -83,9 +83,7 @@ is an explicit hypothesis, not proved here.
 
 The covariate `X` takes finitely many values, as `integral_ipw_ate` requires; the
 general-covariate IPW identity `integral_ipw_treated_condExp` on main covers only the treated arm
-and is not used. Only BH under independence and Bonferroni are connected to the causal nulls;
-Holm, BH under PRDS and Benjamini–Yekutieli follow by the same one-line application of
-`isValidPValue_of_mem_ateNulls` but are not stated here.
+and is not used. Holm, BH under PRDS and Benjamini–Yekutieli: see `RandomizedEstimandHolm`.
 
 ## References
 

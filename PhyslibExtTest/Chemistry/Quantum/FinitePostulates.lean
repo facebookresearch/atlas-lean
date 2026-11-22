@@ -8,7 +8,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.Chemistry.Quantum.FinitePostulates
+import PhyslibExt.Quantum.FiniteState
+import MathlibExt.Analysis.InnerProductSpace.RobertsonUncertainty
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Analysis.Matrix.Hermitian
 import Mathlib.Analysis.Normed.Algebra.MatrixExponential
+import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Analysis.SpecialFunctions.Exponential
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Data.Fin.VecNotation
@@ -21,38 +26,88 @@ import Mathlib.Tactic.Ring
 /-!
 # Finite-dimensional quantum postulate checks
 
-Concrete consumers of `PhyslibExt.Chemistry.Quantum.FinitePostulates`: the Pauli matrices,
-Pauli time evolution, Pauli-`X` eigenvectors, the trace argument, and a simultaneous
-diagonalization. The spectral decomposition check uses Mathlib's canonical spectral theorem.
+Concrete consumers of `PhyslibExt.Chemistry.Quantum.FinitePostulates`: a two-state Born rule
+in the computational basis, the Pauli matrices, a Robertson-inequality instance in a
+nondegenerate state, Pauli time evolution, Pauli-`X` eigenvectors, the trace argument, and a
+simultaneous diagonalization. The spectral decomposition check uses Mathlib's canonical
+spectral theorem.
 
 ## i. Overview
 
 These are elaboration and exact-computation checks, not new results. The Pauli matrices are
 `σx = !![0, 1; 1, 0]`, `σy = !![0, -I; I, 0]`, and `σz = !![1, 0; 0, -1]` over `ℂ`.
-Born-probability checks are in `PhyslibExtTest.Quantum.FiniteState`, using the canonical
-`Quantum.FiniteState` API. This file makes no uncertainty-inequality claim.
+
+The Born check in section A uses the canonical `Quantum.FiniteState` API: `ψ₊` is a normalized
+two-state superposition whose `bornProb` values in the computational basis are both `1 / 2`,
+and the sum is `1` by `Chemistry.Quantum.sum_bornProb_unitaryOrthonormalBasis`.
+
+The Robertson check in section C uses the nondegenerate state `ψ₁ = ![(3/5), (4/5)·I]`: the
+expectations of `σx`, `σz` are `0`, `-7/25`, the coordinate-sum variances are `1`, `576/625`,
+and the commutator expectation is `48·I/25` with squared norm `2304/625`, so both sides of the
+checked inequality equal `576/625`. The coordinate-sum variance is proved equal to
+`RobertsonUncertainty.variance` on unit states (`variance_matToCLM_eq_coordsum`, via the
+matrix-to-`ContinuousLinearMap` bridge `matToCLM`), and the commutator expectation likewise
+(`commutatorInner_matToCLM`); the instance is an application of
+`MathlibExt.Analysis.InnerProductSpace.RobertsonUncertainty.robertson`, not a standalone
+computation.
 
 ## ii. Key results
 
-No new definitions or results are introduced here.
+Test scaffolding (not new results): `matToCLM`, the matrix-to-`ContinuousLinearMap` bridge,
+with `matToCLM_apply`, `isSelfAdjoint_matToCLM`, `meanValue_matToCLM`,
+`variance_matToCLM_eq_coordsum`, and `commutatorInner_matToCLM` connecting matrix coordinates
+to `RobertsonUncertainty`.
 
 ## iii. Table of contents
 
-- A. Pauli matrices
-- B. Pauli time evolution
-- C. Pauli-`X` eigenvectors
-- D. Trace argument
-- E. Simultaneous diagonalization
+- A. Born rule for a two-state superposition
+- B. Pauli matrices
+- C. Robertson inequality for `σx`, `σz`
+- D. Pauli time evolution
+- E. Pauli-`X` eigenvectors
+- F. Trace argument
+- G. Simultaneous diagonalization
 
 ## iv. References
 
 - `PhyslibExt.Chemistry.Quantum.FinitePostulates`
+- `PhyslibExt.Quantum.FiniteState`
+- `MathlibExt.Analysis.InnerProductSpace.RobertsonUncertainty`
 - `Matrix.IsHermitian.spectral_theorem`
 
-## A. Pauli matrices
+## A. Born rule for a two-state superposition
 -/
 
 open scoped Matrix
+
+open MathlibExt.Analysis.InnerProductSpace.RobertsonUncertainty
+
+local notation "ψ₊" => (WithLp.toLp 2 ![(√2 : ℂ)⁻¹, (√2 : ℂ)⁻¹])
+
+/-- `ψ₊ = ![(√2)⁻¹, (√2)⁻¹]` is normalized. -/
+example : Quantum.FiniteState.IsNormalized ψ₊ := by
+  rw [Quantum.FiniteState.IsNormalized, EuclideanSpace.norm_eq]
+  simp [Fin.sum_univ_two]
+  norm_num
+
+/-- In the computational basis, both Born probabilities of `ψ₊` are `1 / 2`. -/
+example (i : Fin 2) :
+    Quantum.FiniteState.bornProb (EuclideanSpace.basisFun (Fin 2) ℂ) ψ₊ i = 1 / 2 := by
+  rw [Quantum.FiniteState.bornProb, EuclideanSpace.basisFun_inner]
+  fin_cases i <;> simp
+
+/-- The two Born probabilities of `ψ₊` in the unitary measurement basis `1` sum to `1`, by
+`sum_bornProb_unitaryOrthonormalBasis`. -/
+example : ∑ i, Quantum.FiniteState.bornProb
+    (Chemistry.Quantum.unitaryOrthonormalBasis (1 : Matrix (Fin 2) (Fin 2) ℂ) (one_mem _)) ψ₊ i
+    = 1 :=
+  Chemistry.Quantum.sum_bornProb_unitaryOrthonormalBasis (1 : Matrix (Fin 2) (Fin 2) ℂ) (one_mem _)
+    (by
+    rw [Quantum.FiniteState.IsNormalized, EuclideanSpace.norm_eq]
+    simp [Fin.sum_univ_two]
+    norm_num)
+
+/-! ## B. Pauli matrices -/
 
 local notation "σx" => (!![0, 1; 1, 0] : Matrix (Fin 2) (Fin 2) ℂ)
 local notation "σy" => (!![0, -Complex.I; Complex.I, 0] : Matrix (Fin 2) (Fin 2) ℂ)
@@ -82,7 +137,150 @@ example : σx * σz - σz * σx = -2 * Complex.I • σy := by
   ext i j
   fin_cases i <;> fin_cases j <;> norm_num
 
-/-! ## B. Pauli time evolution -/
+/-! ## C. Robertson inequality for `σx`, `σz` -/
+
+/-- The nondegenerate test state `ψ₁ = ![(3/5), (4/5)·I]`. -/
+noncomputable def ψ₁ : EuclideanSpace ℂ (Fin 2) :=
+  WithLp.toLp 2 ![(3 / 5 : ℂ), (4 / 5 : ℂ) * Complex.I]
+
+/-- A complex `2 × 2` matrix as a continuous linear map on `EuclideanSpace ℂ (Fin 2)`. -/
+noncomputable def matToCLM (A : Matrix (Fin 2) (Fin 2) ℂ) :
+    EuclideanSpace ℂ (Fin 2) →L[ℂ] EuclideanSpace ℂ (Fin 2) :=
+  (Matrix.toEuclideanLin A).toContinuousLinearMap
+
+/-- Application of `matToCLM` is matrix-vector multiplication. -/
+lemma matToCLM_apply (A : Matrix (Fin 2) (Fin 2) ℂ) (x : EuclideanSpace ℂ (Fin 2)) :
+    matToCLM A x = WithLp.toLp 2 (A *ᵥ x.ofLp) := rfl
+
+/-- `matToCLM` of a Hermitian matrix is self-adjoint. -/
+lemma isSelfAdjoint_matToCLM {A : Matrix (Fin 2) (Fin 2) ℂ} (hA : A.IsHermitian) :
+    IsSelfAdjoint (matToCLM A) := by
+  rw [ContinuousLinearMap.isSelfAdjoint_iff_isSymmetric]
+  intro x y
+  show inner ℂ (matToCLM A x) y = inner ℂ x (matToCLM A y)
+  rw [matToCLM_apply, matToCLM_apply]
+  exact Quantum.FiniteState.inner_mulVec_left_of_isHermitian hA _ _
+
+/-- On unit states, the `meanValue` of `matToCLM A` is the real part of the coordinate
+expectation. -/
+lemma meanValue_matToCLM (A : Matrix (Fin 2) (Fin 2) ℂ) (x : EuclideanSpace ℂ (Fin 2))
+    (hx : ‖x‖ = 1) :
+    meanValue (matToCLM A) x = (star (A *ᵥ x.ofLp) ⬝ᵥ x.ofLp).re := by
+  rw [meanValue_of_norm_eq_one _ hx]
+  congr 1
+  rw [matToCLM_apply, EuclideanSpace.inner_eq_star_dotProduct, WithLp.ofLp_toLp]
+  exact dotProduct_comm _ _
+
+/-- Bridge: the coordinate-sum variance equals `RobertsonUncertainty.variance` on unit states
+(for Hermitian `A`). -/
+lemma variance_matToCLM_eq_coordsum {A : Matrix (Fin 2) (Fin 2) ℂ} (hA : A.IsHermitian)
+    (x : EuclideanSpace ℂ (Fin 2)) (hx : ‖x‖ = 1) :
+    variance (matToCLM A) x =
+      ∑ i, ‖(A *ᵥ x.ofLp - (star (A *ᵥ x.ofLp) ⬝ᵥ x.ofLp) • x.ofLp) i‖ ^ 2 := by
+  have hAmv : star (A *ᵥ x.ofLp) ⬝ᵥ x.ofLp = star x.ofLp ⬝ᵥ (A *ᵥ x.ofLp) := by
+    rw [Matrix.star_mulVec, hA.eq, ← Matrix.dotProduct_mulVec]
+  have hexp : ((meanValue (matToCLM A) x : ℝ) : ℂ) = star (A *ᵥ x.ofLp) ⬝ᵥ x.ofLp := by
+    rw [meanValue_matToCLM _ _ hx, hAmv]
+    refine Complex.ext rfl ?_
+    rw [Complex.ofReal_im]
+    exact (hA.im_star_dotProduct_mulVec_self _).symm
+  rw [variance_of_norm_eq_one _ hx, EuclideanSpace.norm_sq_eq]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  show ‖(matToCLM A x - ((meanValue (matToCLM A) x : ℝ) : ℂ) • x) i‖ ^ 2 = _
+  rw [hexp, matToCLM_apply]
+  rfl
+
+/-- Bridge: the commutator expectation of `matToCLM` maps equals the coordinate commutator
+expectation. -/
+lemma commutatorInner_matToCLM (A B : Matrix (Fin 2) (Fin 2) ℂ) (x : EuclideanSpace ℂ (Fin 2)) :
+    inner ℂ ((matToCLM A ∘L matToCLM B - matToCLM B ∘L matToCLM A) x) x =
+      star ((A * B - B * A) *ᵥ x.ofLp) ⬝ᵥ x.ofLp := by
+  rw [sub_apply, ContinuousLinearMap.comp_apply, ContinuousLinearMap.comp_apply,
+    matToCLM_apply, matToCLM_apply, matToCLM_apply, matToCLM_apply,
+    EuclideanSpace.inner_eq_star_dotProduct, WithLp.ofLp_sub, WithLp.ofLp_toLp, WithLp.ofLp_toLp,
+    WithLp.ofLp_toLp, WithLp.ofLp_toLp, Matrix.mulVec_mulVec, Matrix.mulVec_mulVec,
+    ← Matrix.sub_mulVec]
+  exact dotProduct_comm _ _
+
+/-- `ψ₁ = ![(3/5), (4/5)·I]` is a unit vector. -/
+example : star ψ₁.ofLp ⬝ᵥ ψ₁.ofLp = 1 := by
+  simp [ψ₁, WithLp.ofLp_toLp, dotProduct, Fin.sum_univ_two, Complex.conj_ofNat, Complex.conj_I,
+    mul_comm, mul_left_comm]
+  ring_nf
+  norm_num
+
+/-- Expectation of `σx` in `ψ₁` is `0`; variance is `1`. -/
+example :
+    star (σx *ᵥ ψ₁.ofLp) ⬝ᵥ ψ₁.ofLp = 0 ∧
+      ∑ i, ‖(σx *ᵥ ψ₁.ofLp - (star (σx *ᵥ ψ₁.ofLp) ⬝ᵥ ψ₁.ofLp) • ψ₁.ofLp) i‖ ^ 2 = 1 := by
+  have hE : star (σx *ᵥ ψ₁.ofLp) ⬝ᵥ ψ₁.ofLp = 0 := by
+    simp [ψ₁, WithLp.ofLp_toLp, dotProduct, Fin.sum_univ_two, Complex.conj_I, mul_assoc,
+      mul_comm, mul_left_comm]
+  refine ⟨hE, ?_⟩
+  rw [hE]
+  simp [ψ₁, WithLp.ofLp_toLp, Fin.sum_univ_two]
+  norm_num
+
+/-- Expectation of `σz` in `ψ₁` is `-7/25`; variance is `576/625`. -/
+example :
+    star (σz *ᵥ ψ₁.ofLp) ⬝ᵥ ψ₁.ofLp = (-7 / 25 : ℂ) ∧
+      ∑ i, ‖(σz *ᵥ ψ₁.ofLp - (star (σz *ᵥ ψ₁.ofLp) ⬝ᵥ ψ₁.ofLp) • ψ₁.ofLp) i‖ ^ 2
+        = 576 / 625 := by
+  have hE : star (σz *ᵥ ψ₁.ofLp) ⬝ᵥ ψ₁.ofLp = (-7 / 25 : ℂ) := by
+    simp [ψ₁, WithLp.ofLp_toLp, dotProduct, Fin.sum_univ_two, Complex.conj_I, mul_assoc,
+      mul_comm, mul_left_comm]
+    ring_nf
+    norm_num
+  refine ⟨hE, ?_⟩
+  rw [hE]
+  have hvec : σz *ᵥ ψ₁.ofLp - (-7 / 25 : ℂ) • ψ₁.ofLp
+      = ![(96 / 125 : ℂ), (-72 / 125 : ℂ) * Complex.I] := by
+    ext i
+    fin_cases i <;>
+      simp [ψ₁, WithLp.ofLp_toLp, mul_assoc, mul_comm, mul_left_comm] <;> ring_nf
+  rw [Fin.sum_univ_two, hvec]
+  simp [Complex.norm_I]
+  norm_num
+
+/-- The commutator expectation `⟪[σx, σz] ψ₁, ψ₁⟫` is `48·I/25`, with squared norm `2304/625`. -/
+example :
+    star ((σx * σz - σz * σx) *ᵥ ψ₁.ofLp) ⬝ᵥ ψ₁.ofLp = 48 / 25 * Complex.I ∧
+      ‖star ((σx * σz - σz * σx) *ᵥ ψ₁.ofLp) ⬝ᵥ ψ₁.ofLp‖ ^ 2 = 2304 / 625 := by
+  have hC : star ((σx * σz - σz * σx) *ᵥ ψ₁.ofLp) ⬝ᵥ ψ₁.ofLp = 48 / 25 * Complex.I := by
+    simp [ψ₁, WithLp.ofLp_toLp, dotProduct, Fin.sum_univ_two, Complex.conj_I, mul_assoc,
+      mul_comm, mul_left_comm]
+    ring_nf
+  refine ⟨hC, ?_⟩
+  rw [hC]
+  simp
+  norm_num
+
+/-- `ψ₁` has norm `1`. -/
+example : ‖ψ₁‖ = 1 := by
+  rw [EuclideanSpace.norm_eq]
+  simp [ψ₁, Fin.sum_univ_two]
+  norm_num
+
+/-- Robertson inequality instance for `σx`, `σz` in the nondegenerate state `ψ₁`, as an
+application of `robertson`: both variances (`1`, `576/625`) and the commutator bound
+(`(1/4) * (2304/625) = 576/625`) are nonzero. -/
+example :
+    (1 / 4 : ℝ) * ‖star ((σx * σz - σz * σx) *ᵥ ψ₁.ofLp) ⬝ᵥ ψ₁.ofLp‖ ^ 2 ≤
+      (∑ i, ‖(σx *ᵥ ψ₁.ofLp - (star (σx *ᵥ ψ₁.ofLp) ⬝ᵥ ψ₁.ofLp) • ψ₁.ofLp) i‖ ^ 2) *
+        ∑ i, ‖(σz *ᵥ ψ₁.ofLp - (star (σz *ᵥ ψ₁.ofLp) ⬝ᵥ ψ₁.ofLp) • ψ₁.ofLp) i‖ ^ 2 := by
+  have hX : Matrix.IsHermitian σx :=
+    Matrix.IsHermitian.ext fun i j => by fin_cases i <;> fin_cases j <;> simp
+  have hZ : Matrix.IsHermitian σz :=
+    Matrix.IsHermitian.ext fun i j => by fin_cases i <;> fin_cases j <;> simp
+  have hnorm : ‖ψ₁‖ = 1 := by
+    rw [EuclideanSpace.norm_eq]
+    simp [ψ₁, Fin.sum_univ_two]
+    norm_num
+  rw [← variance_matToCLM_eq_coordsum hX _ hnorm,
+    ← variance_matToCLM_eq_coordsum hZ _ hnorm, ← commutatorInner_matToCLM]
+  exact robertson (isSelfAdjoint_matToCLM hX) (isSelfAdjoint_matToCLM hZ) hnorm
+
+/-! ## D. Pauli time evolution -/
 
 /-- `exp (-(t / ħ) • (I • σz))` is unitary for every real `t` and `ħ ≠ 0`, by
 `unitary_time_evolution`. -/
@@ -125,7 +323,7 @@ example (ħ : ℝ) (hħ : ħ ≠ 0) :
   rw [hdiag, hneg, hpos, Matrix.diagonal_fin_two]
   rfl
 
-/-! ## C. Pauli-`X` eigenvectors -/
+/-! ## E. Pauli-`X` eigenvectors -/
 
 /-- `![1, 1]` is an eigenvector of `σx` with eigenvalue `1`. -/
 example : σx *ᵥ ![1, 1] = (1 : ℂ) • ![1, 1] := by
@@ -152,7 +350,7 @@ example :
   rw [Unitary.conjStarAlgAut_apply, Matrix.star_eq_conjTranspose]
   rfl
 
-/-! ## D. Trace argument -/
+/-! ## F. Trace argument -/
 
 /-- The trace of the commutator `[σx, σz]` vanishes. -/
 example : Matrix.trace (σx * σz - σz * σx) = 0 := by
@@ -173,7 +371,7 @@ example (ħ : ℝ) (hħ : ħ ≠ 0) :
     ¬ ∃ X P : Matrix (Fin 2) (Fin 2) ℂ, X * P - P * X = Complex.I • (ħ : ℂ) • 1 :=
   fun ⟨X, P, h⟩ => Chemistry.Quantum.no_finite_dim_canonical_commutator two_pos ħ hħ X P h
 
-/-! ## E. Simultaneous diagonalization -/
+/-! ## G. Simultaneous diagonalization -/
 
 /-- `simultaneous_orthonormal_eigenbasis` applies to the commuting, non-diagonal Hermitian pair
 `σx` and `!![2, 1; 1, 2]`. -/

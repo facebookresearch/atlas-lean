@@ -214,3 +214,42 @@ theorem bayesRisk_zeroOneLoss (P : Kernel C 𝓧) [IsFiniteKernel P] (π : Measu
 end Finite
 
 end Cslib.MachineLearning.BayesClassifier
+
+namespace Cslib.MachineLearning.BayesClassifier
+
+open MeasureTheory ProbabilityTheory
+open scoped ENNReal
+
+/-- A posterior argmax classifier is exactly a classifier that picks a MAP class at every
+observation of positive evidence (countable setting). -/
+theorem isPosteriorArgmax_iff_forall_isMAP {C 𝓧 : Type*} [Countable C]
+    [MeasurableSpace C] [MeasurableSingletonClass C] [Nonempty C] [MeasurableSpace 𝓧]
+    [Countable 𝓧] [MeasurableSingletonClass 𝓧] {P : Kernel C 𝓧} [IsFiniteKernel P]
+    [IsMarkovKernel P] {π : Measure C} [IsFiniteMeasure π] {f : 𝓧 → C} :
+    IsPosteriorArgmax P π f ↔
+      ∀ x, (P ∘ₘ π) {x} ≠ 0 → Cslib.MachineLearning.Bayesian.IsMAP P π x (f x) := by
+  constructor
+  · intro h x hx
+    exact (Cslib.MachineLearning.Bayesian.isMAP_iff_posterior P π hx (f x)).mpr
+      (ae_iff_of_countable.mp h.ae_le x hx)
+  · intro hf
+    exact isPosteriorArgmax_of_isMAP hf
+
+/-- Under a uniform prior, a posterior argmax classifier is exactly a classifier that picks a
+maximum-likelihood class at every observation of positive evidence. -/
+theorem isPosteriorArgmax_iff_forall_isMLE_of_uniform {C 𝓧 : Type*} [Countable C]
+    [MeasurableSpace C] [MeasurableSingletonClass C] [Nonempty C] [MeasurableSpace 𝓧]
+    [Countable 𝓧] [MeasurableSingletonClass 𝓧] {P : Kernel C 𝓧} [IsFiniteKernel P]
+    [IsMarkovKernel P] {π : Measure C} [IsFiniteMeasure π] {f : 𝓧 → C}
+    {c : ℝ≥0∞} (hμ : ∀ θ, π {θ} = c) (hc : c ≠ 0) :
+    IsPosteriorArgmax P π f ↔
+      ∀ x, (P ∘ₘ π) {x} ≠ 0 → Cslib.MachineLearning.Bayesian.IsMLE P x (f x) := by
+  rw [isPosteriorArgmax_iff_forall_isMAP]
+  refine forall_congr' fun x ↦ ?_
+  constructor <;> intro h hx
+  · exact (Cslib.MachineLearning.Bayesian.isMAP_iff_isMLE_of_uniform P π hμ hc hx
+      (f x)).mp (h hx)
+  · exact (Cslib.MachineLearning.Bayesian.isMAP_iff_isMLE_of_uniform P π hμ hc hx
+      (f x)).mpr (h hx)
+
+end Cslib.MachineLearning.BayesClassifier

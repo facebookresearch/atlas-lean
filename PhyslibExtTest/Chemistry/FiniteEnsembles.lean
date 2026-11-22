@@ -111,6 +111,21 @@ example (E : Fin 3 → ℝ) (β : ℝ) {p : Fin 3 → ℝ} (hp : ∀ i, 0 ≤ p 
     shannonEntropy p = shannonEntropy (boltzmannProb E β) ↔ p = boltzmannProb E β :=
   shannonEntropy_eq_shannonEntropy_boltzmannProb_iff E β hp hp1 hU
 
+example {p : Fin 3 → ℝ} (hp : ∀ i, 0 ≤ p i) (hp1 : ∑ i, p i = 1) : 0 ≤ shannonEntropy p :=
+  shannonEntropy_nonneg hp hp1
+
+/-- A point mass has zero Shannon entropy. -/
+example : shannonEntropy (![1, 0, 0] : Fin 3 → ℝ) = 0 :=
+  (shannonEntropy_eq_zero_iff (fun i => by fin_cases i <;> simp)
+    (by simp [Fin.sum_univ_three])).mpr ⟨0, rfl, fun j hj => by fin_cases j <;> simp_all⟩
+
+/-- A distribution with no state of probability `1` has nonzero Shannon entropy. -/
+example : shannonEntropy (![1 / 2, 1 / 2] : Fin 2 → ℝ) ≠ 0 := by
+  rw [Ne, shannonEntropy_eq_zero_iff (fun i => by fin_cases i <;> norm_num)
+    (by norm_num [Fin.sum_univ_two])]
+  rintro ⟨i, hi, -⟩
+  fin_cases i <;> norm_num at hi
+
 /-- (e) Boundary case: the mean-energy hypothesis of the maximum-entropy theorem is needed. For the
 two-level system with `0 < Δ` at `β * Δ = log 3`, the uniform distribution has the mean energy
 `Δ / 2 ≠ Δ / 4` and the larger entropy `log 2 > log 4 - 3 / 4 * log 3`. -/
@@ -435,6 +450,8 @@ end PhyslibExtTest.Chemistry.FiniteEnsembles
 #print axioms Chemistry.FiniteEnsembles.log_boltzmannProb
 #print axioms Chemistry.FiniteEnsembles.shannonEntropy
 #print axioms Chemistry.FiniteEnsembles.nonempty_of_sum_eq_one
+#print axioms Chemistry.FiniteEnsembles.shannonEntropy_nonneg
+#print axioms Chemistry.FiniteEnsembles.shannonEntropy_eq_zero_iff
 #print axioms Chemistry.FiniteEnsembles.mul_log_div_le_sub
 #print axioms Chemistry.FiniteEnsembles.mul_log_div_lt_sub
 #print axioms Chemistry.FiniteEnsembles.sum_mul_log_div_eq_sum_sub

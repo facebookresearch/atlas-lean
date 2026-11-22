@@ -306,6 +306,7 @@ theorem exists_isBisectionSequence_nested
   have h := hseq.invariants hab ha hb n
   exact mul_nonpos_of_nonpos_of_nonneg h.2.2.2.1 h.2.2.2.2
 
+set_option linter.unusedVariables false in
 /-- **Bisection method: nested intervals.** Let $f : \mathbb{R} \to \mathbb{R}$ be continuous on
 $[a, b]$, where $a \le b$ and $f(a) \le 0 \le f(b)$. Then there is a bisection sequence $u, v$
 for $f$ from $a$ to $b$ such that for every $n \in \mathbb{N}$:
@@ -322,6 +323,7 @@ entry `bisection method` (unmapped);
 R. L. Burden and J. D. Faires, Numerical Analysis, 10th ed., Section 2.1;
 stable ref https://en.wikipedia.org/wiki/Bisection_method.
 -/
+@[nolint unusedArguments] -- `hf` keeps the stated hypothesis
 theorem bisection_nested_intervals
     {f : ℝ → ℝ} {a b : ℝ} (hab : a ≤ b)
     (hf : ContinuousOn f (Set.Icc a b)) (ha : f a ≤ 0) (hb : 0 ≤ f b) :

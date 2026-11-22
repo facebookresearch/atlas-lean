@@ -236,7 +236,8 @@ public theorem_wanted primes_of_semiprime_index_count_sub_semiprimes_of_prime_in
       =O[atTop] fun x => x * Real.log (Real.log x) / Real.log x ^ 3
 
 /-- For fixed `j, k ≥ 1`, the counting function of the `j`-almost primes of `k`-almost prime
-index satisfies `N_{jk}(x) = (x / log² x) (log log x)^{j+k-2} / ((j-1)! (k-1)!) (1 + O(1/log log x))`.
+index satisfies
+`N_{jk}(x) = (x / log² x) (log log x)^{j+k-2} / ((j-1)! (k-1)!) (1 + O(1/log log x))`.
 The paper's clause "the same estimate holds for `N_{kj}`" is the instance with `j` and `k`
 swapped, since the main term is symmetric.
 
@@ -251,7 +252,8 @@ public theorem_wanted almostPrimeIndexSet_pair_count_asymptotic {j k : ℕ} (hj 
           ((j - 1).factorial * (k - 1).factorial) / Real.log (Real.log x)
 
 /-- For fixed `n ≥ 1` and positive integers `k_1, …, k_n` (here `k_1 = k` and
-`[k_2, …, k_n] = ks`), `N_{k_1 ⋯ k_n}(x) = (x / log^n x) ∏_{i=1}^n (log log x)^{k_i - 1} / (k_i - 1)!
+`[k_2, …, k_n] = ks`), `N_{k_1 ⋯ k_n}(x) = (x / log^n x) ∏_{i=1}^n (log log x)^{k_i - 1} /
+(k_i - 1)!
 · (1 + O(1/log log x))`. The extracted exponent `k_1 + ⋯ + k_{n-1} k_n - n` is a typo for
 `k_1 + ⋯ + k_{n-1} + k_n - n`, as the paper's equivalent product form shows.
 

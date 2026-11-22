@@ -13,7 +13,7 @@ public import Mathlib.RingTheory.PowerSeries.Substitution
 import Mathlib.Algebra.Order.Archimedean.Real.Hom
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Field.Basic
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.RingTheory.PowerSeries.Inverse
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith

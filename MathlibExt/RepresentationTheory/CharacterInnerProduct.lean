@@ -99,7 +99,7 @@ def charInner {G : Type*} [Fintype G] (χ ψ : G → ℂ) : ℂ :=
 
 /-- Bridge between `charInner` and Mathlib's normalisation `∑ g, χ g * ψ g⁻¹`. -/
 lemma charInner_character_eq_sum_inv {G V W : Type*} [Group G] [Fintype G] [AddCommGroup V]
-    [Module ℂ V] [FiniteDimensional ℂ V] [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W]
+    [Module ℂ V] [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W]
     (ρ : Representation ℂ G V) (σ : Representation ℂ G W) :
     charInner ρ.character σ.character =
       (Nat.card G : ℂ)⁻¹ * ∑ g, ρ.character g * σ.character g⁻¹ := by
@@ -424,8 +424,8 @@ irreducible `ρ` and `σ` and every linear map `f`, `∑ g, ρ g ∘ₗ f ∘ₗ
 be a matrix unit gives the matrix-coefficient form `∑ g, D_ρ(g)ᵢⱼ D_σ(g⁻¹)ₖₗ = 0` (not stated
 separately here). -/
 theorem sum_comp_comp_inv_eq_zero_of_not_nonempty_equiv {G V W : Type*} [Group G] [Fintype G]
-    [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V] [AddCommGroup W] [Module ℂ W]
-    [FiniteDimensional ℂ W] (ρ : Representation ℂ G V) (σ : Representation ℂ G W)
+    [AddCommGroup V] [Module ℂ V] [AddCommGroup W] [Module ℂ W]
+    (ρ : Representation ℂ G V) (σ : Representation ℂ G W)
     [IsIrreducible ρ] [IsIrreducible σ] (h : ¬ Nonempty (σ.Equiv ρ)) (f : W →ₗ[ℂ] V) :
     ∑ g, ρ g ∘ₗ f ∘ₗ σ g⁻¹ = 0 := by
   have : IsEmpty (σ.Equiv ρ) := not_nonempty_iff.mp h

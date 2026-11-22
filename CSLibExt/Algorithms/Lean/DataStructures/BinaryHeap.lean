@@ -35,7 +35,8 @@ def heapLeft (i : Nat) : Nat := 2 * i + 1
 /-- The right-child index in a contiguous level-order binary tree. -/
 def heapRight (i : Nat) : Nat := 2 * i + 2
 
-private theorem heapParent_lt (i : Nat) (hi : 0 < i) : heapParent i < i := by
+/-- A positive index's heap parent comes before it. -/
+theorem heapParent_lt (i : Nat) (hi : 0 < i) : heapParent i < i := by
   unfold heapParent
   have hdiv : (i - 1) / 2 ≤ i - 1 := Nat.div_le_self _ _
   omega

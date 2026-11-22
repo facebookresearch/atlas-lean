@@ -13,6 +13,7 @@ public import Mathlib.Analysis.Convex.Basic
 public import Mathlib.Topology.MetricSpace.Lipschitz
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.Convex.Deriv
+import MathlibExt.Analysis.Convex.FirstOrderCondition
 import Mathlib.Algebra.BigOperators.Field
 
 /-!
@@ -36,7 +37,14 @@ private theorem gradientDescent_hasDerivAt_line
   have hf := (hdiff (x + t • d)).hasGradientAt.hasFDerivAt
   simpa [Function.comp_def] using (hf.comp t hpath.hasFDerivAt).hasDerivAt
 
-private theorem gradientDescent_descent_lemma
+/-- **Descent lemma.** If `f` is differentiable on a real Hilbert space and its gradient is
+`L`-Lipschitz, then `f (x + d) ≤ f x + ⟪∇f(x), d⟫ + L / 2 * ‖d‖ ^ 2` for all `x, d`: `f` lies below
+the quadratic upper model at every point.
+
+Source: S. Boyd and L. Vandenberghe, *Convex Optimization*, Cambridge University Press, 2004,
+§9.1.2, eq. (9.13) (there under the Hessian bound `∇²f ⪯ M I`); cf. Y. Nesterov, *Introductory
+Lectures on Convex Optimization*, Kluwer, 2004, Ch. 1 (functions with Lipschitz gradient). -/
+theorem gradientDescent_descent_lemma
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
     {f : E → ℝ} {L : ℝ} (hL : 0 ≤ L) (hdiff : Differentiable ℝ f)
     (hsmooth : LipschitzWith ⟨L, hL⟩ (gradient f)) (x d : E) :
@@ -93,7 +101,14 @@ private theorem gradientDescent_descent_lemma
     (show (1 : ℝ) ∈ Set.Icc 0 1 by norm_num)
   simpa using hbound
 
-private theorem gradientDescent_sufficient_decrease
+/-- **Sufficient decrease of a gradient step.** If `f` is differentiable on a real Hilbert space
+with `L`-Lipschitz gradient (`L > 0`) and `0 < η ≤ 1 / L`, then the gradient step decreases `f` by
+at least `η / 2 * ‖∇f(x)‖ ^ 2`: `f (x - η ∇f(x)) ≤ f x - η / 2 * ‖∇f(x)‖ ^ 2`.
+
+Source: S. Boyd and L. Vandenberghe, *Convex Optimization*, Cambridge University Press, 2004,
+§9.3.1 (the bound `f(x⁺) ≤ f(x) - ‖∇f(x)‖² / (2M)` for the step `1 / M`); cf. Y. Nesterov,
+*Introductory Lectures on Convex Optimization*, Kluwer, 2004, Ch. 1 (the gradient method). -/
+theorem gradientDescent_sufficient_decrease
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
     {f : E → ℝ} {L : ℝ} (hL : 0 < L) (hdiff : Differentiable ℝ f)
     (hsmooth : LipschitzWith ⟨L, le_of_lt hL⟩ (gradient f))
@@ -118,19 +133,8 @@ private theorem gradientDescent_first_order
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
     {f : E → ℝ} (hconvex : ConvexOn ℝ Set.univ f) (hdiff : Differentiable ℝ f)
     (x y : E) : f x + inner ℝ (gradient f x) (y - x) ≤ f y := by
-  have hlineconvex : ConvexOn ℝ Set.univ
-      (fun t : ℝ => f (x + t • (y - x))) := by
-    have h := hconvex.comp_affineMap (AffineMap.lineMap x y)
-    simpa [Function.comp_def, AffineMap.lineMap_apply, add_comm] using h
-  have hderiv : HasDerivAt (fun t : ℝ => f (x + t • (y - x)))
-      (inner ℝ (gradient f x) (y - x)) 0 := by
-    simpa using gradientDescent_hasDerivAt_line hdiff x (y - x) 0
-  have hslope := hlineconvex.le_slope_of_hasDerivAt (Set.mem_univ 0) (Set.mem_univ 1)
-    zero_lt_one hderiv
-  rw [slope_def_field] at hslope
-  simp only [zero_smul, add_zero, one_smul, sub_zero, div_one] at hslope
-  rw [show x + (y - x) = y by abel] at hslope
-  linarith
+  simpa using MathlibExt.Analysis.Convex.FirstOrderCondition.add_fderiv_le_of_convexOn hconvex
+    (Set.mem_univ x) (Set.mem_univ y) (hdiff x).hasGradientAt.hasFDerivAt
 
 private theorem gradientDescent_one_step
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]

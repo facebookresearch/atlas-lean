@@ -35,6 +35,13 @@ relates the two: for `q : PMF α` the weights `(q a).toReal` sum to `1`, and the
 finite sums of this file. As a sum, `expectation p X` is the dot product `p ⬝ᵥ X`, and the
 sample mean equals Mathlib's uniform average `Finset.expect`.
 
+Conditioning on an event `A` of positive mass `P(A) = prob p A > 0` keeps the weights on `A`,
+divided by `P(A)`, and sets them to `0` off `A` (`condWeights`); the proof of `0 < P(A)` is an
+argument, so a null event has no normalized weights. For nonnegative weights the result is a
+finite distribution, and it gives an event `F` the probability `P(A ∩ F) / P(A)`; that ratio
+identity uses only `P(A) > 0` and holds for signed weights as well, which are not a probability
+law. With positive weights `P(A) > 0` exactly when `A` is nonempty.
+
 Independence is the product form `p (x, y) = pX x * pY y` on a product type: product events
 `s ×ˢ t` factor and the covariance of `f x` and `g y` vanishes. Zero covariance does not imply
 independence (`exists_covariance_eq_zero_prob_ne`).
@@ -65,8 +72,10 @@ its coverage under the posterior is definitional.
 
 - `expectation_linear`, `expectation_indicator`, `sum_prob_filter_eq` : linearity, indicators and
   total probability.
-- `variance_nonneg`, `variance_affine`, `covariance_sum_mul_sum`, `covMatrix_mulVec` : second
-  moments and linear maps.
+- `condWeights`, `condWeights_isDistribution`, `prob_condWeights`, `prob_pos_iff_nonempty` :
+  weights normalized on an event of positive mass.
+- `variance_nonneg`, `variance_affine`, `covariance_sq_le_variance_mul_variance`,
+  `covariance_sum_mul_sum`, `covMatrix_mulVec` : second moments and linear maps.
 - `covariance_prod_eq_zero`, `exists_covariance_eq_zero_prob_ne` : independence gives zero
   covariance, and the converse fails.
 - `expectation_sampleVarUnbiased` : Bessel's correction for i.i.d. finite samples.
@@ -86,6 +95,7 @@ its coverage under the posterior is definitional.
 - G. Least squares for a line
 - H. Least squares in matrix form
 - I. Intervals under a sampling model
+- J. Conditioning on an event of positive mass
 
 ## iv. References
 
@@ -228,6 +238,38 @@ lemma covariance_eq_sub {α : Type*} [Fintype α] {p : α → ℝ} (hp : ∑ x, 
   rw [covariance, h, expectation_sub, expectation_sub, expectation_sub, expectation_const_mul,
     expectation_const_mul, expectation_const hp]
   ring
+
+/-- Cauchy--Schwarz for the finite-state covariance: `(Cov_P(X, Y)) ^ 2 ≤ Var_P(X) * Var_P(Y)`
+when the weights are nonnegative. From `Finset.sum_mul_sq_le_sq_mul_sq` with `√P` weights
+on the centered variables; it is the key step of the Hansen--Jagannathan bound. -/
+theorem covariance_sq_le_variance_mul_variance {α : Type*} [Fintype α] {p X Y : α → ℝ}
+    (hp : ∀ x, 0 ≤ p x) :
+    (covariance p X Y) ^ 2 ≤ variance p X * variance p Y := by
+  have hcov : covariance p X Y
+      = ∑ ω, (Real.sqrt (p ω) * (X ω - expectation p X))
+        * (Real.sqrt (p ω) * (Y ω - expectation p Y)) := by
+    unfold covariance
+    change (∑ x, p x * ((X x - expectation p X) * (Y x - expectation p Y))) = _
+    apply Finset.sum_congr rfl
+    intro ω _
+    conv_lhs => rw [← Real.mul_self_sqrt (hp ω)]
+    ring
+  have hvar1 : variance p X
+      = ∑ ω, (Real.sqrt (p ω) * (X ω - expectation p X)) ^ 2 := by
+    unfold variance
+    change (∑ x, p x * ((X x - expectation p X) ^ 2)) = _
+    apply Finset.sum_congr rfl
+    intro ω _
+    rw [mul_pow, Real.sq_sqrt (hp ω)]
+  have hvar2 : variance p Y
+      = ∑ ω, (Real.sqrt (p ω) * (Y ω - expectation p Y)) ^ 2 := by
+    unfold variance
+    change (∑ x, p x * ((Y x - expectation p Y) ^ 2)) = _
+    apply Finset.sum_congr rfl
+    intro ω _
+    rw [mul_pow, Real.sq_sqrt (hp ω)]
+  rw [hcov, hvar1, hvar2]
+  exact Finset.sum_mul_sq_le_sq_mul_sq Finset.univ _ _
 
 lemma variance_eq_sub {α : Type*} [Fintype α] {p : α → ℝ} (hp : ∑ x, p x = 1) (X : α → ℝ) :
     variance p X = expectation p (fun x => X x ^ 2) - expectation p X ^ 2 := by
@@ -794,6 +836,78 @@ lemma ols_unique_minimizer_iff {ι : Type*} [Fintype ι] (x y : ι → ℝ) :
     rw [hb, sub_self, zero_mul, add_zero] at ha
     exact ⟨sub_eq_zero.mp (pow_eq_zero_iff two_ne_zero |>.mp ha), hb⟩
 
+/-! ### Least squares is linear in the responses -/
+
+/-- `S_xy = ∑ i, (x i - x̄) * y i`: the centred cross product is linear in `y`. -/
+theorem sxy_eq_sum_sub_mul {ι : Type*} [Fintype ι] (x y : ι → ℝ) :
+    sxy x y = ∑ i, (x i - sampleMean x) * y i := by
+  have h : ∀ i, (x i - sampleMean x) * (y i - sampleMean y) =
+      (x i - sampleMean x) * y i - (x i - sampleMean x) * sampleMean y := fun i => by ring
+  rw [sxy]
+  simp only [h]
+  rw [Finset.sum_sub_distrib, ← Finset.sum_mul, sum_sub_sampleMean, zero_mul, sub_zero]
+
+/-- The least-squares slope of exactly affine responses `b₀ + b₁ x` is `b₁` when `S_xx ≠ 0`. -/
+theorem olsSlope_affine {ι : Type*} [Fintype ι] {x : ι → ℝ} (hx : sxy x x ≠ 0) (b₀ b₁ : ℝ) :
+    olsSlope x (fun i => b₀ + b₁ * x i) = b₁ := by
+  rw [olsSlope, eq_comm, eq_div_iff hx, sxy_eq_sum_sub_mul, sxy_eq_sum_sub_mul]
+  simp only [mul_add, Finset.sum_add_distrib, ← Finset.sum_mul, sum_sub_sampleMean, zero_mul,
+    zero_add, Finset.mul_sum]
+  exact Finset.sum_congr rfl fun i _ => by ring
+
+/-- The sample mean is affine: the mean of `b₀ + b₁ x` is `b₀ + b₁ x̄` (for nonempty index). -/
+theorem sampleMean_affine {ι : Type*} [Fintype ι] [Nonempty ι] (x : ι → ℝ) (b₀ b₁ : ℝ) :
+    sampleMean (fun i => b₀ + b₁ * x i) = b₀ + b₁ * sampleMean x := by
+  have hn : (Fintype.card ι : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+  simp only [sampleMean_eq_sum_div, Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const,
+    Finset.card_univ, nsmul_eq_mul]
+  field_simp
+
+/-- The least-squares intercept of exactly affine responses `b₀ + b₁ x` is `b₀` when
+`S_xx ≠ 0`. -/
+theorem olsIntercept_affine {ι : Type*} [Fintype ι] {x : ι → ℝ} (hx : sxy x x ≠ 0) (b₀ b₁ : ℝ) :
+    olsIntercept x (fun i => b₀ + b₁ * x i) = b₀ := by
+  have : Nonempty ι := by
+    by_contra h
+    rw [not_nonempty_iff] at h
+    exact hx (by simp [sxy])
+  rw [olsIntercept, olsSlope_affine hx, sampleMean_affine]
+  ring
+
+open MeasureTheory in
+/-- The least-squares slope of integrable responses is integrable. -/
+theorem integrable_olsSlope {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} {ι : Type*}
+    [Fintype ι] (x : ι → ℝ) {Y : ι → Ω → ℝ} (hY : ∀ i, Integrable (Y i) μ) :
+    Integrable (fun ω => olsSlope x fun i => Y i ω) μ := by
+  simp only [olsSlope, sxy_eq_sum_sub_mul]
+  exact (integrable_finsetSum _ fun i _ => (hY i).const_mul _).div_const _
+
+open MeasureTheory in
+/-- Expectation commutes with the least-squares slope: for integrable responses `Y i`,
+`𝔼[b̂(x, Y)] = b̂(x, 𝔼 Y)`. -/
+theorem integral_olsSlope {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} {ι : Type*}
+    [Fintype ι] (x : ι → ℝ) {Y : ι → Ω → ℝ} (hY : ∀ i, Integrable (Y i) μ) :
+    ∫ ω, olsSlope x (fun i => Y i ω) ∂μ = olsSlope x fun i => ∫ ω, Y i ω ∂μ := by
+  simp only [olsSlope, sxy_eq_sum_sub_mul]
+  rw [integral_div, integral_finsetSum _ fun i _ => (hY i).const_mul _]
+  simp_rw [integral_const_mul]
+
+open MeasureTheory in
+/-- Expectation commutes with the least-squares intercept, for a probability measure and
+integrable responses. -/
+theorem integral_olsIntercept {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω}
+    [IsProbabilityMeasure μ] {ι : Type*} [Fintype ι] (x : ι → ℝ) {Y : ι → Ω → ℝ}
+    (hY : ∀ i, Integrable (Y i) μ) :
+    ∫ ω, olsIntercept x (fun i => Y i ω) ∂μ = olsIntercept x fun i => ∫ ω, Y i ω ∂μ := by
+  have hm : Integrable (fun ω => sampleMean fun i => Y i ω) μ := by
+    simp only [sampleMean_eq_sum_div]
+    exact (integrable_finsetSum _ fun i _ => hY i).div_const _
+  simp only [olsIntercept]
+  rw [integral_sub hm ((integrable_olsSlope x hY).mul_const _), integral_mul_const,
+    integral_olsSlope x hY]
+  simp only [sampleMean_eq_sum_div]
+  rw [integral_div, integral_finsetSum _ fun i _ => hY i]
+
 /-! ## H. Least squares in matrix form
 
 The canonical factored form of the normal equations for a design with `Fin m` rows is
@@ -969,5 +1083,54 @@ lemma IsCredibleInterval.expectation_indicator_eq {Θ : Type*} [Fintype Θ] {pos
     expectation post (fun t => if θ t ∈ Set.Icc lo hi then 1 else 0) = c := by
   rw [expectation_indicator]
   exact h.2.2
+
+/-! ## J. Conditioning on an event of positive mass -/
+
+variable {Ω : Type*}
+
+/-- The weights normalized on the event `A`: `p ω / P(A)` on `A` and `0` off it. The proof of
+`0 < P(A)` is part of the definition, so a null event has no normalized weights. For nonnegative
+weights they are a finite distribution (`condWeights_isDistribution`). -/
+noncomputable def condWeights [DecidableEq Ω] (p : Ω → ℝ) (A : Finset Ω)
+    (_hA : 0 < prob p A) : Ω → ℝ :=
+  fun ω => if ω ∈ A then p ω / prob p A else 0
+
+/-- **Normalization.** For nonnegative weights and `P(A) > 0`, the normalized weights are
+nonnegative, have total mass one and vanish off `A`. -/
+lemma condWeights_isDistribution [Fintype Ω] [DecidableEq Ω] {p : Ω → ℝ} (hp : ∀ ω, 0 ≤ p ω)
+    {A : Finset Ω} (hA : 0 < prob p A) :
+    (∀ ω, 0 ≤ condWeights p A hA ω) ∧ ∑ ω, condWeights p A hA ω = 1 ∧
+      ∀ ω ∉ A, condWeights p A hA ω = 0 := by
+  refine ⟨fun ω => ?_, ?_, fun ω hω => by simp [condWeights, hω]⟩
+  · unfold condWeights
+    split_ifs
+    · exact div_nonneg (hp ω) hA.le
+    · exact le_rfl
+  · unfold condWeights
+    rw [Finset.sum_ite_mem, Finset.univ_inter, ← Finset.sum_div]
+    exact div_self hA.ne'
+
+/-- **Ratio identity.** Under the weights normalized on `A`, an event `F` has the weight
+`P(A ∩ F) / P(A)`. Only `P(A) > 0` is used, so the identity also holds for signed weights, which
+are not a probability law; for nonnegative weights it is the conditional probability of `F` given
+`A`. -/
+lemma prob_condWeights [DecidableEq Ω] (p : Ω → ℝ) {A : Finset Ω}
+    (hA : 0 < prob p A) (F : Finset Ω) :
+    prob (condWeights p A hA) F = prob p (A ∩ F) / prob p A := by
+  unfold prob condWeights
+  rw [Finset.sum_ite_mem, Finset.inter_comm, ← Finset.sum_div]
+  rfl
+
+/-- **Positive mass.** With positive weights, `P(A) > 0` exactly when `A` is nonempty, so only the
+empty event is null. -/
+lemma prob_pos_iff_nonempty {p : Ω → ℝ} (hp : ∀ ω, 0 < p ω) (A : Finset Ω) :
+    0 < prob p A ↔ A.Nonempty := by
+  constructor
+  · intro h
+    by_contra hne
+    rw [Finset.not_nonempty_iff_eq_empty] at hne
+    simp [prob, hne] at h
+  · intro hne
+    exact Finset.sum_pos (fun ω _ => hp ω) hne
 
 end MathlibExt.Probability.FiniteProbability
