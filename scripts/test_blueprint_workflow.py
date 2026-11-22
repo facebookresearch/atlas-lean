@@ -261,6 +261,25 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertNotIn("restore-keys", packages["with"])
         self.assertLess(names.index("Fetch Mathlib cache"), names.index("Restore the package builds"))
         self.assertLess(names.index("Find the base build"), names.index("Restore local build"))
+        # A restore that fails part-way keeps what it extracted and reports no key: Lake must not trust it.
+        removal = self.step("Remove a failed restore")
+        self.assertEqual(removal["env"], {
+            "PACKAGE_BUILDS": "${{ steps.package-builds.outputs.cache-matched-key }}",
+            "LOCAL_BUILD": "${{ steps.build-cache.outputs.cache-matched-key }}",
+        })
+        self.assertEqual(packages["id"], "package-builds")
+        self.assertEqual(restore["id"], "build-cache")
+        self.assertEqual(names.index("Remove a failed restore"), names.index("Restore local build") + 1)
+        self.assertLess(names.index("Remove a failed restore"), names.index("Build memory-heavy modules one at a time"))
+        builds = (".lake/packages/cslib/.lake/build", ".lake/packages/Physlib/.lake/build", ".lake/build")
+        for matched, kept in ((("", ""), ()), (("lake-deps-k", ""), builds[:2]), (("", "lake-build-k"), builds[2:]),
+                              (("lake-deps-k", "lake-build-k"), builds)):
+            with tempfile.TemporaryDirectory() as directory:
+                for build in builds:
+                    (Path(directory) / build / "lib").mkdir(parents=True)
+                subprocess.run(["bash", "-c", removal["run"]], cwd=directory, check=True,
+                               env={**os.environ, "PACKAGE_BUILDS": matched[0], "LOCAL_BUILD": matched[1]})
+                self.assertEqual([b for b in builds if (Path(directory) / b / "lib").is_dir()], list(kept), matched)
         # A pull request's checkout is a merge commit whose first parent is the commit it is tested against; other
         # runs look for their own commit.
         with tempfile.TemporaryDirectory() as directory:
@@ -276,9 +295,12 @@ class BlueprintWorkflowTests(unittest.TestCase):
             git("checkout", "-q", base)
             git("merge", "-q", "--no-ff", "-m", "merge", "topic")
             merge = git("rev-parse", "HEAD")
+            # The checkout is a depth-one clone, where `HEAD^1` does not resolve.
+            clone = Path(directory) / "clone"
+            subprocess.run(["git", "clone", "-q", "--depth", "1", f"file://{directory}", str(clone)], check=True)
             for event, expected in (("pull_request", base), ("schedule", merge), ("workflow_dispatch", merge)):
                 output = Path(directory) / f"{event}.out"
-                subprocess.run(["bash", "-c", self.step("Find the base build")["run"]], cwd=directory, check=True,
+                subprocess.run(["bash", "-c", self.step("Find the base build")["run"]], cwd=clone, check=True,
                                env={**os.environ, "GITHUB_EVENT_NAME": event, "GITHUB_SHA": merge,
                                     "GITHUB_OUTPUT": str(output)})
                 self.assertEqual(output.read_text(), f"sha={expected}\n", event)

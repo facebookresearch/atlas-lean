@@ -182,6 +182,7 @@ jobs:
       # the pins. CI saves them from main (ci.yml); this job only restores
       # them, after `lake exe cache get` has cloned the packages.
       - name: Restore the package builds
+        id: package-builds
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
@@ -211,6 +212,18 @@ jobs:
           key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ steps.base.outputs.sha }}
           restore-keys: |
             lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+      # A restore that fails part-way reports no key but keeps the files it
+      # extracted, and Lake would trust their traces: remove them, so that
+      # Lake builds what they held.
+      - name: Remove a failed restore
+        env:
+          PACKAGE_BUILDS: ${{ steps.package-builds.outputs.cache-matched-key }}
+          LOCAL_BUILD: ${{ steps.build-cache.outputs.cache-matched-key }}
+        run: |
+          set -euo pipefail
+          [[ -n "$PACKAGE_BUILDS" ]] || rm -rf .lake/packages/cslib/.lake/build .lake/packages/Physlib/.lake/build
+          [[ -n "$LOCAL_BUILD" ]] || rm -rf .lake/build
 
       # Match ci.yml's cold-runner mitigation for the two heavy production
       # modules. The test-only module is not in the wiki's build surface.
