@@ -159,15 +159,15 @@ def may_be_named(name: str, check: str) -> bool:
             and len(check) >= len(prefix) + len(suffix))
 
 
-def default_shell(*levels: dict) -> str:
+def default_shell(job: dict, workflow: dict) -> str:
     """The shell a step without `shell` inherits from its job, then its
-    workflow; bash otherwise."""
-    for level in levels:
+    workflow; otherwise bash, or sh for a job that runs in a container."""
+    for level in (job, workflow):
         defaults = level.get("defaults") or {}
         shell = (defaults.get("run") or {}).get("shell") if isinstance(defaults, dict) else None
         if shell:
             return shell
-    return "bash"
+    return "sh" if job.get("container") else "bash"
 
 
 def runs_exactly(step, command: str, shell: str = "bash") -> bool:
@@ -367,6 +367,11 @@ class MergeQueueChecks(unittest.TestCase):
                        put("ci.yml", "concurrency", "group",
                            "${{github.workflow}}-${{  github.ref }}"),
                        put("ci.yml", "on", "push", {"branches": "main"}),
+                       put("source-diagnostics.yml", "jobs", "source-diagnostics",
+                           {"container": "python:3.12-bookworm",
+                            "defaults": {"run": {"shell": "bash"}},
+                            "steps": FIXTURE["source-diagnostics.yml"]["jobs"]
+                                            ["source-diagnostics"]["steps"]}),
                        put("ci.yml", "on", "push", {"tags": ["v*"]}),
                        put("nightly.yml", {"name": "CI-nightly", "on": {"schedule": ""},
                                            "concurrency": {"group": "${{ github.workflow }}-"
@@ -505,6 +510,10 @@ class MergeQueueChecks(unittest.TestCase):
             "build job defaulting to sh": (
                 put("ci.yml", "jobs", "build", "defaults", {"run": {"shell": "sh"}}),
                 "no step that is exactly 'scripts/check.sh build'"),
+            "Source diagnostics in a container": (
+                put("source-diagnostics.yml", "jobs", "source-diagnostics", "container",
+                    "python:3.12-bookworm"),
+                "'source-diagnostics' has no step that is exactly"),
             "CI defaulting to sh": (
                 put("ci.yml", "defaults", {"run": {"shell": "sh"}}),
                 "no step that is exactly 'scripts/check.sh preflight'"),
