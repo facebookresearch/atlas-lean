@@ -14,6 +14,7 @@ public import Mathlib.Algebra.Polynomial.Eval.Defs
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.NumberTheory.Bernoulli
+public import MathlibExt.Combinatorics.Enumerative.BinomialInversion
 
 namespace MetaMathlibExt
 
@@ -115,16 +116,6 @@ public theorem_wanted isCarlitzType_iff_sum_choose (q : ℝ) (hq0 : 0 < q) (hq1 
     (∃ a, IsCarlitzTypeWith q T a) ↔
       ∀ n x, T n x = ∑ k ∈ range (n + 1),
         (n.choose k : ℝ) * T k 0 * q ^ ((k : ℝ) * x) * qBracket q x ^ (n - k)
-
-/-- Binomial inversion: `u_n = ∑ C(n,k) v_k` for all `n` iff `v_n = ∑ (-1)^{n-k} C(n,k) u_k` for
-all `n`.
-
-Source: Bakir Farhi, *q-Analogues of Sums of Consecutive Powers of Natural Numbers and Extended
-Carlitz q-Bernoulli Numbers and Polynomials*, INTEGERS 26 (2026), Article A85, Lemma 2.2
-(`integers-2026-A85-lem-2-2`). -/
-public theorem_wanted binomial_inversion_iff (u v : ℕ → ℝ) :
-    (∀ n, u n = ∑ k ∈ range (n + 1), (n.choose k : ℝ) * v k) ↔
-      ∀ n, v n = ∑ k ∈ range (n + 1), (-1 : ℝ) ^ (n - k) * (n.choose k : ℝ) * u k
 
 /-- `q`-power sums: for `r ≥ 1`, `∑_{k<N} q^{rk} [k]^n = q^{rN} S_n(N) - S_n(0)`, where `S` is the
 Carlitz-type sequence with associated sequence `1/((q - 1)[k + r])`.
