@@ -23,8 +23,8 @@ public import Mathlib.Tactic
 
 Concrete checks for `MathlibExt.GameTheory.FacilityLocation`: costs (T1),
 the leftmost mechanism (T2), the median mechanism (T3), a maximum-cost lower
-bound (T4), and (non-)strategyproofness examples (T5).
-All proofs are direct computations.
+bound (T4), (non-)strategyproofness examples (T5), and headline theorem
+applications (T6). T1-T5 are direct computations.
 -/
 
 namespace MathlibExtTest.GameTheory.FacilityLocation
@@ -154,3 +154,41 @@ public theorem test_shift_not_strategyproof :
   have hdev := h ![0, 0] 0 (-1)
   simp only [Matrix.cons_val_zero, Function.update_self] at hdev
   norm_num at hdev
+
+/-- (T6) The median-minimizes-social-cost theorem, applied at a profile. -/
+public theorem test_median_minimizes_example :
+    socialCost ![0, 10, 20] (median ![0, 10, 20]) ≤
+      socialCost ![0, 10, 20] 0 :=
+  median_minimizes_socialCost _ _
+
+/-- (T6) The median group-strategyproofness theorem, instantiated. -/
+public theorem test_median_group_strategyproof :
+    IsGroupStrategyproof (median : Mechanism (Fin 3)) :=
+  median_isGroupStrategyproof
+
+/-- (T6) Group strategyproofness implies strategyproofness, for the median. -/
+public theorem test_median_strategyproof_of_group :
+    IsStrategyproof (median : Mechanism (Fin 3)) :=
+  isStrategyproof_of_isGroupStrategyproof median_isGroupStrategyproof
+
+/-- (T6) The median strategyproofness theorem, instantiated. -/
+public theorem test_median_strategyproof :
+    IsStrategyproof (median : Mechanism (Fin 3)) :=
+  median_isStrategyproof
+
+/-- (T6) The leftmost strategyproofness theorem, instantiated. -/
+public theorem test_leftmost_strategyproof :
+    IsStrategyproof (leftmost : Mechanism (Fin 3)) :=
+  leftmost_isStrategyproof
+
+/-- (T6) The leftmost 2-approximation theorem, applied at a profile. -/
+public theorem test_leftmost_approx_example :
+    maxCost ![0, 10] (leftmost ![0, 10]) ≤ 2 * maxCost ![0, 10] 5 :=
+  leftmost_isApproxMaxCost_two _ _
+
+/-- (T6) The two-agent lower-bound theorem: no strategyproof mechanism is
+a `c`-approximation for `c < 2`. -/
+public theorem test_no_strategyproof_better_than_two
+    (f : Mechanism (Fin 2)) (hSP : IsStrategyproof f) (c : ℝ)
+    (hc : IsApproxMaxCost f c) : ¬ c < 2 :=
+  not_lt_of_ge (two_le_of_isStrategyproof_isApproxMaxCost f hSP c hc)
