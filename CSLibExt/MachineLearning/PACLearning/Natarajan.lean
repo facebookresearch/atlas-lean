@@ -42,8 +42,11 @@ restrictions on any nonempty sample of `m` points.
 
 ## References
 
-* [B. K. Natarajan, *On learning sets and functions*][Natarajan1989]
-* [S. Shalev-Shwartz, S. Ben-David, *Understanding Machine Learning*][SSBD2014]
+* B. K. Natarajan, *On learning sets and functions*, Machine Learning 4 (1989), 67-97,
+  doi:10.1007/BF00114804.
+* S. Shalev-Shwartz and S. Ben-David,
+  *Understanding Machine Learning: From Theory to Algorithms*, Cambridge University Press,
+  2014, Chapter 29 (Multiclass Learnability), Definition 29.1 and the Natarajan lemma.
 -/
 
 @[expose] public section

@@ -112,6 +112,39 @@ theorem twoConsts_not_ndimLE_zero :
   have hcard : (Finset.univ : Finset (Fin 1)).card = 0 + 1 := by decide
   exact hle Finset.univ hcard twoConsts_shatter_univ
 
+-- Direct lemma use at bound 0; with the exact count, the bound 1 is tight.
+theorem constClass_lemma_bound_one :
+    tracesCard ({fun _ => (0 : Fin 3)} : Finset ((Fin 2) → Fin 3))
+      Finset.univ ≤ 1 := by
+  have hs : (Finset.univ : Finset (Fin 2)).Nonempty := Finset.univ_nonempty
+  have h := natarajan_lemma _ 0 constClass_ndimLE_zero Finset.univ hs
+  simpa using h
+
+-- Direct lemma use at bound 1; the numeric bound is 1 ^ 1 * 2 ^ (2 * 1).
+theorem twoConsts_lemma_bound_four :
+    tracesCard ({fun _ : Fin 1 => (0 : Fin 2), fun _ : Fin 1 => (1 : Fin 2)} :
+      Finset ((Fin 1) → Fin 2)) Finset.univ ≤ 4 := by
+  have hs : (Finset.univ : Finset (Fin 1)).Nonempty := Finset.univ_nonempty
+  have h := natarajan_lemma _ 1 twoConsts_ndimLE_one Finset.univ hs
+  have hcard : (Finset.univ : Finset (Fin 1)).card = 1 := by decide
+  have hnum : (1 : ℕ) ^ 1 * 2 ^ (2 * 1) = 4 := by decide
+  rw [hcard, hnum] at h
+  exact h
+
+theorem twoConsts_tracesCard_two :
+    tracesCard ({fun _ : Fin 1 => (0 : Fin 2), fun _ : Fin 1 => (1 : Fin 2)} :
+      Finset ((Fin 1) → Fin 2)) Finset.univ = 2 := by
+  decide
+
+-- Empty-sample boundary for a nonempty singleton class. The lemma needs
+-- `s.Nonempty`, so it is not applied here; the value is computed by `decide`.
+theorem constClass_tracesCard_empty :
+    tracesCard ({fun _ => (0 : Fin 3)} : Finset ((Fin 2) → Fin 3)) ∅ = 1 := by
+  decide
+
+theorem empty_sample_not_nonempty :
+    ¬ (∅ : Finset (Fin 2)).Nonempty := Finset.not_nonempty_empty
+
 #print axioms Cslib.MachineLearning.PACLearning.nShatters_subset
 #print axioms Cslib.MachineLearning.PACLearning.natarajan_lemma
 #print axioms Cslib.MachineLearning.PACLearning.nDimLE_zero
