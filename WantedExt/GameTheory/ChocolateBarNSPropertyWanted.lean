@@ -15,6 +15,7 @@ public import Mathlib.Order.Interval.Set.Defs
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Order.Lattice.Nat
+public import MathlibExt.Data.Nat.DyadicBlock
 
 /-! # The NS property of chocolate-bar games (Miyadera, Manabe, Singh)
 
@@ -158,15 +159,6 @@ Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
 Article G3, Lemma 7 (`integers-2025-G3-lem-7`). -/
 public theorem_wanted hasNSProperty_div_two_pow {m : ℕ} (hm : 0 < m) :
     HasNSProperty fun x ↦ x / 2 ^ m
-
-/-- For `z < z'`, `⌊z / 2^i⌋ = ⌊z' / 2^i⌋` if and only if `d 2^i ≤ z < z' < (d + 1) 2^i`
-for some `d`.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 8 (a) (`integers-2025-G3-lem-8`). -/
-public theorem_wanted div_two_pow_eq_iff_exists_block {z z' i : ℕ} (hzz' : z < z') :
-    z / 2 ^ i = z' / 2 ^ i ↔ ∃ d, d * 2 ^ i ≤ z ∧ z' < (d + 1) * 2 ^ i
 
 /-- If `⌊z / 2^i⌋ < ⌊z' / 2^i⌋`, there are `c`, `s ≥ i` and `t < 2^s` with
 `z = c 2^(s+1) + t < c 2^(s+1) + 2^s ≤ z'`.
