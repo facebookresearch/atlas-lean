@@ -28,7 +28,8 @@ namespace MetaMathlibExt
 
 open ArithmeticFunction
 
-/-- For `n ≥ 2`, `n² + t_{n-2} = (n - 1)² + t_n`, with `t_v = v (v + 1) / 2`.
+/-- **A square–triangular number identity.** Let $t_v = v(v + 1)/2$ denote the $v$-th triangular
+number. For every natural number $n \ge 2$, $n^2 + t_{n-2} = (n - 1)^2 + t_n$.
 
 Source: Mingyu Kim and Poo-Sung Park, *An Additive Uniqueness Pair of Sets for
 Multiplicative Functions: Squares and Triangular Numbers*, INTEGERS 26 (2026), Article A103,
@@ -36,9 +37,11 @@ Lemma 1 (`integers-2026-A103-lem-1`). -/
 public theorem_wanted sq_add_triangular_sub_two_eq (n : ℕ) (hn : 2 ≤ n) :
     n ^ 2 + (n - 2) * (n - 2 + 1) / 2 = (n - 1) ^ 2 + n * (n + 1) / 2
 
-/-- Let `f` be multiplicative with `f (u² + t_v) = f (u²) + f (t_v)` for all positive
-`u, v`. If `N ≥ 3` and `f n = n` for `1 ≤ n ≤ N - 1`, then `f (m²) = m²` for every `m` with
-`1 ≤ m ≤ N - 2`.
+/-- **Square–triangular additivity fixes small squares.** Let $t_v = v(v + 1)/2$ denote the
+$v$-th triangular number, and let $f$ be a complex-valued multiplicative arithmetic function
+with $f(u^2 + t_v) = f(u^2) + f(t_v)$ for all positive integers $u$ and $v$. Let $N \ge 3$ be an
+integer such that $f(n) = n$ for every integer $n$ with $1 \le n \le N - 1$. Then
+$f(m^2) = m^2$ for every integer $m$ with $1 \le m \le N - 2$.
 
 Source: Mingyu Kim and Poo-Sung Park, *An Additive Uniqueness Pair of Sets for
 Multiplicative Functions: Squares and Triangular Numbers*, INTEGERS 26 (2026), Article A103,
@@ -51,9 +54,11 @@ public theorem_wanted multiplicative_sq_triangular_additive_sq
     (m : ℕ) (hm : 1 ≤ m) (hmN : m ≤ N - 2) :
     f (m ^ 2) = m ^ 2
 
-/-- Let `f` be multiplicative with `f (u² + t_v) = f (u²) + f (t_v)` for all positive
-`u, v`. If `N ≥ 4` and `f n = n` for `1 ≤ n ≤ N - 1`, then `f (2^(2k-1)) = 2^(2k-1)` for
-every positive `k` with `2k ≤ N - 2`.
+/-- **Square–triangular additivity fixes odd powers of two.** Let $t_v = v(v + 1)/2$ denote the
+$v$-th triangular number, and let $f$ be a complex-valued multiplicative arithmetic function
+with $f(u^2 + t_v) = f(u^2) + f(t_v)$ for all positive integers $u$ and $v$. Let $N \ge 4$ be an
+integer such that $f(n) = n$ for every integer $n$ with $1 \le n \le N - 1$. Then
+$f(2^{2k-1}) = 2^{2k-1}$ for every positive integer $k$ with $2k \le N - 2$.
 
 Source: Mingyu Kim and Poo-Sung Park, *An Additive Uniqueness Pair of Sets for
 Multiplicative Functions: Squares and Triangular Numbers*, INTEGERS 26 (2026), Article A103,
@@ -66,8 +71,10 @@ public theorem_wanted multiplicative_sq_triangular_additive_two_pow_odd
     (k : ℕ) (hk : 0 < k) (hkN : 2 * k ≤ N - 2) :
     f (2 ^ (2 * k - 1)) = 2 ^ (2 * k - 1)
 
-/-- A multiplicative function with `f (u² + t_v) = f (u²) + f (t_v)` for all positive
-`u, v` is the identity.
+/-- **Squares and triangular numbers are an additive uniqueness pair.** Let $t_v = v(v + 1)/2$
+denote the $v$-th triangular number. If $f$ is a complex-valued multiplicative arithmetic
+function with $f(u^2 + t_v) = f(u^2) + f(t_v)$ for all positive integers $u$ and $v$, then
+$f(n) = n$ for every natural number $n$.
 
 Source: Mingyu Kim and Poo-Sung Park, *An Additive Uniqueness Pair of Sets for
 Multiplicative Functions: Squares and Triangular Numbers*, INTEGERS 26 (2026), Article A103,

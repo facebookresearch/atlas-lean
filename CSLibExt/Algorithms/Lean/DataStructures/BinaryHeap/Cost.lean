@@ -30,7 +30,10 @@ namespace Cslib.Algorithms.Lean
 
 universe u
 
-/-- Moving a nonroot index to its parent lowers its binary-tree depth by one. -/
+/-- **The heap parent is one level up.** For every natural number $i > 0$, the parent index
+$p = \lfloor (i-1)/2 \rfloor$ satisfies
+$\lfloor \log_2(p+1) \rfloor + 1 = \lfloor \log_2(i+1) \rfloor$; that is, in the level-order
+binary tree the parent of a nonroot index lies one level above it. -/
 theorem log2_heapParent_add_one (i : Nat) (hi : 0 < i) :
     Nat.log2 (heapParent i + 1) + 1 = Nat.log2 (i + 1) := by
   rw [Nat.log2_def (i + 1)]
@@ -42,7 +45,14 @@ theorem log2_heapParent_add_one (i : Nat) (hi : 0 < i) :
 
 namespace TimeM
 
-/-- Canonical sift-up with one tick per value comparison and one tick per actual swap. -/
+/-- **Sift-up with comparison and swap counts.** Given an array $a$ of length $|a|$ over a
+linearly ordered type and an index $i$, this computes the sift-up of $a$ at $i$ together
+with a cost $(c, s) \in \mathbb{N} \times \mathbb{N}$, where $c$ counts value comparisons
+and $s$ counts swaps. If $i \ge |a|$ or $i = 0$, the result is $a$ with cost $(0, 0)$.
+Otherwise let $p = \lfloor (i - 1)/2 \rfloor$ be the parent of $i$. If $a_i < a_p$, the
+result is this sift-up at $p$ of the array obtained from $a$ by exchanging the entries at
+positions $i$ and $p$, with cost $(1, 1)$ plus the cost of that recursive sift-up;
+otherwise the result is $a$ with cost $(1, 0)$. -/
 def siftUp {α : Type u} [LinearOrder α] (a : Array α) (i : Nat) :
     TimeM (Nat × Nat) (Array α) :=
   if hi : i < a.size then
@@ -63,7 +73,9 @@ decreasing_by
   unfold heapParent
   omega
 
-/-- Erasing the comparison and swap events recovers the canonical returned array. -/
+/-- **Counting does not change the result of sift-up.** For every array $a$ over a linearly
+ordered type and every natural number $i$, the array returned by sift-up with comparison and
+swap counts on $a$ at index $i$ equals the array returned by the plain sift-up of $a$ at $i$. -/
 theorem ret_siftUp {α : Type u} [LinearOrder α] (a : Array α) (i : Nat) :
     (siftUp a i).ret = Cslib.Algorithms.Lean.siftUp a i := by
   induction i using Nat.strong_induction_on generalizing a with
@@ -80,7 +92,10 @@ theorem ret_siftUp {α : Type u} [LinearOrder α] (a : Array α) (i : Nat) :
       · rfl
     · rfl
 
-/-- Every sift-up executes at most one value comparison per level above its index. -/
+/-- **Comparison bound for sift-up.** For every array $a$ over a linearly ordered type and
+every natural number $i$, the number of value comparisons counted by sift-up with comparison
+and swap counts on $a$ at index $i$ is at most $\lfloor \log_2(i+1) \rfloor$, the depth of
+index $i$ in the level-order binary tree. -/
 theorem comparisons_siftUp_le_log2 {α : Type u} [LinearOrder α]
     (a : Array α) (i : Nat) : (siftUp a i).time.1 ≤ Nat.log2 (i + 1) := by
   induction i using Nat.strong_induction_on generalizing a with
@@ -103,7 +118,10 @@ theorem comparisons_siftUp_le_log2 {α : Type u} [LinearOrder α]
       · simp
     · simp
 
-/-- Every sift-up executes at most one swap per level above its index. -/
+/-- **Swap bound for sift-up.** For every array $a$ over a linearly ordered type and every
+natural number $i$, the number of swaps counted by sift-up with comparison and swap counts
+on $a$ at index $i$ is at most $\lfloor \log_2(i+1) \rfloor$, the depth of index $i$ in the
+level-order binary tree. -/
 theorem swaps_siftUp_le_log2 {α : Type u} [LinearOrder α]
     (a : Array α) (i : Nat) : (siftUp a i).time.2 ≤ Nat.log2 (i + 1) := by
   induction i using Nat.strong_induction_on generalizing a with
@@ -124,20 +142,28 @@ theorem swaps_siftUp_le_log2 {α : Type u} [LinearOrder α]
       · simp
     · simp
 
-/-- The sum of counted comparisons and swaps is at most twice the index depth. -/
+/-- **Combined comparison and swap bound for sift-up.** For every array $a$ over a linearly
+ordered type and every natural number $i$, if sift-up with comparison and swap counts on $a$
+at index $i$ counts $c$ comparisons and $s$ swaps, then
+$c + s \le 2 \lfloor \log_2(i+1) \rfloor$. -/
 theorem events_siftUp_le_log2 {α : Type u} [LinearOrder α] (a : Array α) (i : Nat) :
     (siftUp a i).time.1 + (siftUp a i).time.2 ≤ 2 * Nat.log2 (i + 1) := by
   have hc := comparisons_siftUp_le_log2 a i
   have hs := swaps_siftUp_le_log2 a i
   omega
 
-/-- Sift-up at the root performs no comparisons or swaps. -/
+/-- **Sift-up at the root costs nothing.** For every array $a$ over a linearly ordered type,
+sift-up with comparison and swap counts on $a$ at index $0$ has cost $(0, 0)$: it counts no
+comparisons and no swaps. -/
 theorem time_siftUp_zero {α : Type u} [LinearOrder α] (a : Array α) :
     (siftUp a 0).time = (0, 0) := by
   rw [siftUp]
   split <;> rfl
 
-/-- An invalid index performs no comparisons or swaps. -/
+/-- **Sift-up at an out-of-range index costs nothing.** For every array $a$ of length $|a|$
+over a linearly ordered type and every natural number $i$ with $i \ge |a|$, sift-up with
+comparison and swap counts on $a$ at index $i$ has cost $(0, 0)$: it counts no comparisons
+and no swaps. -/
 theorem time_siftUp_of_size_le {α : Type u} [LinearOrder α] (a : Array α) (i : Nat)
     (hi : a.size ≤ i) : (siftUp a i).time = (0, 0) := by
   rw [siftUp]

@@ -180,6 +180,26 @@ The module has no process syntax and none of the Figure 1 typing rules, includin
 `[Br]` and `[Sel]`, and claims no subject reduction, progress or subtyping. Recursion,
 delegation, tuple payloads and the sort grammar are excluded.
 
+## Multiparty projection (`Multiparty/Projection.lean`)
+
+`Multiparty/Projection.lean` formalizes a finite, synchronous,
+participant-addressed fragment of the global and local types of Honda,
+Yoshida and Carbone, *Multiparty Asynchronous Session Types*, JACM 63(1),
+2016: the global-type grammar (Fig. 4) and local-type grammar (Fig. 6)
+without parallel composition, recursion, channel indices, delegation and
+shared-name sorts, with participants in place of channel indices.
+`GlobalType.project` implements projection (Definition 4.1) with plain
+merging: a third party follows a choice only when every branch projects to
+brace-equal local types (`LocalType.braceEq`, a structural equality up to
+branch order on distinct-label lists). `GlobalType.WellFormed` is label
+well-formedness plus projectability at every participant (coherence,
+Definition 4.2, specialized to this fragment), and well-formedness is
+decidable (Theorem 4.3, specialized). `LocalType.erase` forgets peers into
+binary `BranchingType`s, and two-party projections erase to duals
+(`GlobalType.project_erase_dual`), a project-specific bridge statement.
+No LTS, subject reduction, session fidelity, asynchrony, subtyping or
+process typing is formalized here.
+
 [hvk-manuscript]: https://filipendule.github.io/mgs/honda.vasconcelos.kubo.pdf
 [lean-source]: ../../../docs/provenance/pi-scoping/finite-session-basic.lean.txt
 [lean-manifest]: ../../../docs/provenance/pi-scoping/manifest.json

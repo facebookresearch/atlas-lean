@@ -39,34 +39,55 @@ limiting-measure construction, or cyclotomic trace computation is
 formalized here.
 -/
 
-/-- Source: catalogue trivial lower row, by AM--GM: the absolute trace
+/-- **Absolute trace of a totally positive algebraic integer is at least one.** For every
+complex number $\alpha$ that is a totally positive algebraic integer, the absolute trace of
+$\alpha$ is at least $1$.
+
+Source: catalogue trivial lower row, by AM--GM: the absolute trace
 is at least the geometric mean of the conjugates, whose product is a
 nonzero rational integer. -/
 theorem_wanted absoluteTrace_one_le_wanted (α : ℂ)
     (hα : IsTotallyPositive α) :
     1 ≤ absoluteTrace α
 
-/-- Source: Schur (1918), lower bound `√e ≤ C₈₆`. -/
+/-- **Schur's lower bound for the Schur–Siegel–Smyth constant.** The Schur–Siegel–Smyth trace
+constant $C_{86}$, an extended real number, satisfies $\sqrt{e} \le C_{86}$.
+
+Source: Schur (1918), lower bound `√e ≤ C₈₆`. -/
 theorem_wanted schur1918LowerBound_wanted :
     ((Real.sqrt (Real.exp 1) : ℝ) : EReal) ≤ schurSiegelSmythConstant
 
-/-- Source: Smyth (1984), auxiliary-function lower bound
+/-- **Smyth's lower bound for the Schur–Siegel–Smyth constant.** The Schur–Siegel–Smyth trace
+constant $C_{86}$, an extended real number, satisfies $1.7719 \le C_{86}$.
+
+Source: Smyth (1984), auxiliary-function lower bound
 `1.7719 ≤ C₈₆`. -/
 theorem_wanted smyth1984LowerBound_wanted :
     ((17719 / 10000 : ℝ) : EReal) ≤ schurSiegelSmythConstant
 
-/-- Source: Orloski--Sardari--Smith (2025), best known lower bound
+/-- **Orloski–Sardari–Smith lower bound for the Schur–Siegel–Smyth constant.** The
+Schur–Siegel–Smyth trace constant $C_{86}$, an extended real number, satisfies
+$1.80203 \le C_{86}$.
+
+Source: Orloski--Sardari--Smith (2025), best known lower bound
 `1.80203 ≤ C₈₆`. -/
 theorem_wanted orloskiSardariSmith2025LowerBound_wanted :
     ((180203 / 100000 : ℝ) : EReal) ≤ schurSiegelSmythConstant
 
-/-- Source: classical upper bound `C₈₆ ≤ 2`, from the totally positive
+/-- **Classical upper bound for the Schur–Siegel–Smyth constant.** The Schur–Siegel–Smyth trace
+constant $C_{86}$, an extended real number, satisfies $C_{86} \le 2$.
+
+Source: classical upper bound `C₈₆ ≤ 2`, from the totally positive
 algebraic integers `4 cos^2 (π / n)` whose absolute traces tend to
 `2`. -/
 theorem_wanted classicalUpperBound_wanted :
     schurSiegelSmythConstant ≤ (2 : EReal)
 
-/-- Source: Smith (2024), strict upper bound `C₈₆ < 1.89831` (the form of
+/-- **Smith's upper bound for the Schur–Siegel–Smyth trace constant.** The
+Schur–Siegel–Smyth trace constant $C_{86}$, an extended real number, satisfies
+$C_{86} < 1.89831$.
+
+Source: Smith (2024), strict upper bound `C₈₆ < 1.89831` (the form of
 Smith's theorem recorded in the neighbouring
 `AlgebraicIntegersWanted` file as `lambda_SSS < 1.89831`), disproving
 the conjectured value `2`: infinitely many totally positive algebraic
@@ -74,7 +95,10 @@ integers have absolute trace below `1.89831`. -/
 theorem_wanted smith2024UpperBound_wanted :
     schurSiegelSmythConstant < ((189831 / 100000 : ℝ) : EReal)
 
-/-- Source: Sardari--Orloski (2024), best known upper bound
+/-- **Sardari–Orloski upper bound for the Schur–Siegel–Smyth constant.** The Schur–Siegel–Smyth
+trace constant $C_{86}$, an extended real number, satisfies $C_{86} \le 1.8216$.
+
+Source: Sardari--Orloski (2024), best known upper bound
 `C₈₆ ≤ 1.8216` from explicit limiting measures. -/
 theorem_wanted sardariOrloski2024UpperBound_wanted :
     schurSiegelSmythConstant ≤ ((18216 / 10000 : ℝ) : EReal)
