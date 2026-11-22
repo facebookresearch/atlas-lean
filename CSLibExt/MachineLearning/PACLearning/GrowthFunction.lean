@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import CSLibExt.MachineLearning.PACLearning.Growth
+public import CSLibExt.MachineLearning.PACLearning.TraceCard
 public import MathlibExt.Combinatorics.BinomialPartialSum
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Data.Fintype.Card
@@ -52,13 +52,6 @@ an `m`-subset exists (see `exists_traceFamily_card_eq_growthFunction`), and
 and Ben-David. -/
 noncomputable def growthFunction {α : Type*} (C : ConceptClass α Bool) (m : ℕ) : ℕ :=
   sSup { (traceFamily C s).card | (s : Finset α) (_ : s.card = m) }
-
-/-- Every trace family has at most `2 ^ s.card` traces. -/
-theorem card_traceFamily_le_two_pow {α : Type*} (C : ConceptClass α Bool)
-    (s : Finset α) : (traceFamily C s).card ≤ 2 ^ s.card := by
-  have h1 := Finset.card_le_univ (traceFamily C s)
-  rw [Fintype.card_finset, Fintype.card_coe] at h1
-  exact h1
 
 /-- The trace count on any sample is bounded by the growth function. -/
 theorem traceFamily_card_le_growthFunction {α : Type*} (C : ConceptClass α Bool)
