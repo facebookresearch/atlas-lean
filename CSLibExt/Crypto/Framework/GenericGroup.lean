@@ -35,26 +35,36 @@ group multiplications and inversions of opaque labels, answered by a fixed encod
 
 ## Programs
 
-A generic program is an `OracleComp` value over group-operation queries, evaluated by
-`OracleComp.run` against the deterministic oracle `oracleOf enc` for the fixed encoding.
-The program type does not by itself prevent native arithmetic on labels inside
-continuations; genericity of the concrete exponentiation program is certified structurally:
-`powProg` is built only from oracle queries, `pure`, and `bind` over the given input labels.
+A generic algorithm is a program polymorphic in the label type `L`: an `OracleComp` value
+over group-operation queries `Query L` that uses only oracle queries (and `DecidableEq L`
+when it is given) to obtain and combine labels. Because such a program is polymorphic in
+`L`, it cannot inspect or synthesize label representations: there is no literal label to
+write down and no native arithmetic on labels to perform; every label it handles comes
+from its inputs or from oracle answers.
+
+The concrete representation exists only in the evaluator: the encoding permutation `enc`,
+the `ZMod q` arithmetic, and the `enc`/`enc.symm` conversions appear only in `oracleOf`,
+`idLabel`, `gmul`, `ginv`, and `runProg`, which instantiates `L := ZMod q` to evaluate a
+generic program against the deterministic oracle `oracleOf enc` for the fixed encoding.
 -/
 
 @[expose] public section
 
 namespace Cslib.Crypto.Framework.GenericGroup
 
+/-- Queries over an abstract label type: multiply two labels, or invert one label. -/
+abbrev Query (L : Type) : Type := (L × L) ⊕ L
+
+/-- A generic program over abstract labels: an oracle computation over group-operation
+queries, polymorphic in the label type `L`. -/
+abbrev Prog (L : Type) (α : Type) : Type := OracleComp (Query L) L α
+
 /-- Labels are exponents modulo `q`: the label of `a` stands for `g ^ a`. -/
 abbrev Label (q : ℕ) [Fact (1 < q)] : Type := ZMod q
 
-/-- Queries: multiply two labels, or invert one label. -/
-abbrev Query (q : ℕ) [Fact (1 < q)] : Type := (Label q × Label q) ⊕ Label q
-
 /-- The generic-group oracle under a fixed encoding permutation: decode the labels,
 add (or negate) the exponents, and re-encode. -/
-def oracleOf {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) : Query q → Label q
+def oracleOf {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) : Query (Label q) → Label q
   | .inl (a, b) => enc (enc.symm a + enc.symm b)
   | .inr a => enc (-enc.symm a)
 
@@ -108,21 +118,19 @@ theorem ginv_gmul {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) (a : Labe
     gmul enc (ginv enc a) a = idLabel enc := by
   simp only [gmul_eq, ginv_eq, idLabel_eq, Equiv.symm_apply_apply, neg_add_cancel]
 
-/-- A generic program: an oracle computation over group-operation queries. See the module
-documentation for the genericity limitation this type does and does not enforce. -/
-abbrev Prog (q : ℕ) [Fact (1 < q)] (α : Type) : Type := OracleComp (Query q) (Label q) α
-
-/-- Evaluate a generic program against the fixed-encoding oracle. -/
-def runProg {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) {α : Type} (c : Prog q α) : α :=
+/-- Evaluate a generic program against the fixed-encoding oracle, instantiating the
+abstract label type at `ZMod q`. -/
+def runProg {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) {α : Type} (c : Prog (Label q) α) : α :=
   OracleComp.run (oracleOf enc) c
 
-theorem runProg_eq {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) {α : Type} (c : Prog q α) :
+theorem runProg_eq {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) {α : Type} (c : Prog (Label q) α) :
     runProg enc c = OracleComp.run (oracleOf enc) c := rfl
 
-/-- Honest exponentiation: starting from an accumulator (the identity label) and a base
-label, issue one multiplication query per step for `n` steps. The program is built only
-from oracle queries, `pure`, and `bind` over the given input labels. -/
-def powProg {q : ℕ} [Fact (1 < q)] : ℕ → Label q → Label q → Prog q (Label q)
+/-- Honest exponentiation as a generic program: starting from an accumulator and a base
+label, issue one multiplication query per step for `n` steps. The program is polymorphic
+in the label type and built only from oracle queries, `pure`, and `bind` over the given
+input labels. -/
+def powProg {L : Type} : ℕ → L → L → Prog L L
   | 0, acc, _ => .pure acc
   | n + 1, acc, base =>
     OracleComp.query (.inl (acc, base)) fun lbl => powProg n lbl base
@@ -135,15 +143,15 @@ def powProg {q : ℕ} [Fact (1 < q)] : ℕ → Label q → Label q → Prog q (L
     runProg enc (powProg (n + 1) acc base) =
       runProg enc (powProg n (gmul enc acc base) base) := rfl
 
-@[simp] theorem queries_powProg_zero {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q))
-    (acc base : Label q) :
-    OracleComp.queries (oracleOf enc) (powProg 0 acc base) = [] := rfl
+@[simp] theorem queries_powProg_zero {L : Type} (O : Query L → L)
+    (acc base : L) :
+    OracleComp.queries O (powProg 0 acc base) = [] := rfl
 
-@[simp] theorem queries_powProg_succ {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) (n : ℕ)
-    (acc base : Label q) :
-    OracleComp.queries (oracleOf enc) (powProg (n + 1) acc base) =
-      .inl (acc, base) :: OracleComp.queries (oracleOf enc)
-        (powProg n (gmul enc acc base) base) := rfl
+@[simp] theorem queries_powProg_succ {L : Type} (O : Query L → L) (n : ℕ)
+    (acc base : L) :
+    OracleComp.queries O (powProg (n + 1) acc base) =
+      .inl (acc, base) :: OracleComp.queries O
+        (powProg n (O (.inl (acc, base))) base) := rfl
 
 /-- Correctness of `powProg` from any accumulator: the run encodes `n • x + a`, where `x`
 is the base exponent and `a` the accumulator exponent. -/
@@ -164,17 +172,18 @@ theorem run_powProg {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) (n : �
     runProg enc (powProg n (idLabel enc) (enc x)) = enc (n • x) := by
   simp only [run_powProg_core, idLabel_eq, Equiv.symm_apply_apply, add_zero]
 
-/-- The exponentiation program issues exactly `n` queries. -/
-theorem queries_powProg_length {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) (n : ℕ)
-    (acc base : Label q) :
-    (OracleComp.queries (oracleOf enc) (powProg n acc base)).length = n := by
+/-- The exponentiation program issues exactly `n` queries, against every oracle and at
+every label type. -/
+theorem queries_powProg_length {L : Type} (O : Query L → L) (n : ℕ)
+    (acc base : L) :
+    (OracleComp.queries O (powProg n acc base)).length = n := by
   induction n generalizing acc with
   | zero => rfl
   | succ n ih => simp only [queries_powProg_succ, List.length_cons, ih]
 
-/-- The exponentiation program is structurally `n`-bounded, hence bounded against every
-oracle by `OracleComp.length_queries_le`. -/
-theorem isQueryBounded_powProg {q : ℕ} [Fact (1 < q)] (n : ℕ) (acc base : Label q) :
+/-- The exponentiation program is structurally `n`-bounded at every label type, hence
+bounded against every oracle by `OracleComp.length_queries_le`. -/
+theorem isQueryBounded_powProg {L : Type} (n : ℕ) (acc base : L) :
     FreeM.IsQueryBounded n (powProg n acc base) := by
   induction n generalizing acc with
   | zero => exact FreeM.isQueryBounded_pure _ _
