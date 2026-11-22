@@ -96,6 +96,17 @@ jobs:
       - name: Fetch Mathlib cache
         run: lake exe cache get
 
+      # Upstream packages that the Mathlib cache does not cover. They change only
+      # with lake-manifest.json or the toolchain; main's push run saves them.
+      - name: Restore package builds
+        id: package-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            .lake/packages/cslib/.lake/build
+            .lake/packages/Physlib/.lake/build
+          key: lake-deps-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+
       # A pull request or merge group first restores the build of the commit it
       # is tested against: the first parent of the commit it checks out. Other
       # runs first look for their own commit. All fall back to main's newest.
@@ -129,11 +140,8 @@ jobs:
         run: |
           set -euo pipefail
           git fetch --quiet --no-tags --depth=1 origin "${RESTORED_KEY##*-}"
-          if git diff --quiet FETCH_HEAD HEAD -- scripts/check_axioms.lean scripts/audit_compiled_modules.py; then
-            python3 scripts/audit_compiled_modules.py --record "$RUNNER_TEMP/restored-build.json"
+          if python3 scripts/audit_compiled_modules.py --record "$RUNNER_TEMP/restored-build.json" FETCH_HEAD; then
             echo "ATLAS_AUDIT_RESTORED=$RUNNER_TEMP/restored-build.json" >> "$GITHUB_ENV"
-          else
-            echo "The audit policy changed since the restored build; the audit checks every module."
           fi
 
       - name: Test the declaration collision check
@@ -172,12 +180,28 @@ jobs:
       - name: Check the IMP invariant and variant lesson
         run: lake env lean -DwarningAsError=true docs/teaching/examples/IMPInvariants.lean
 
+      # About three quarters of the build's bytes are per-module setup files
+      # that Lake writes and reads only while it compiles that module.
+      - name: Drop Lake's setup files before saving the build
+        if: success() && github.event_name != 'pull_request'
+        continue-on-error: true
+        run: find .lake -path '*/.lake/build/ir/*' -name '*.setup.json' -delete
+
       - name: Save local build from main
         if: success() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && steps.local-build-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .lake/build
           key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+
+      - name: Save package builds from main
+        if: success() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && steps.package-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            .lake/packages/cslib/.lake/build
+            .lake/packages/Physlib/.lake/build
+          key: lake-deps-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
 
       # Merge-group caches are scoped to the queue's ref, where pull requests
       # cannot read them. build-cache.yml saves this fully checked build for

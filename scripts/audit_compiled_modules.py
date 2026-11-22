@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """Audit every project module in bounded, initialized Lean environments.
 
-With ATLAS_AUDIT_RESTORED=FILE, written by `--record FILE` right after CI
-restores a build that passed this audit under the same policy, only modules
-whose .olean is missing, new or rewritten since are audited. Lake rebuilds a
-module whenever its source or what it needs from its imports changes, and
-anything else such a module reaches changed in a rebuilt module.
+With ATLAS_AUDIT_RESTORED=FILE, written by `--record FILE REVISION` right after
+CI restores a build that passed this audit at REVISION, only modules whose
+.olean is missing, new or rewritten since are audited. The record is written
+only if REVISION has the same policy: the checker and the audited roots. Lake
+rebuilds a module whenever its source or what it needs from its imports
+changes, and anything else such a module reaches changed in a rebuilt module.
 """
 from __future__ import annotations
 
+import ast
 import json
 import os
 from pathlib import Path
@@ -50,6 +52,19 @@ def inventory(root: Path) -> list[str]:
     if not modules:
         raise AuditFailure('the audited source inventory is empty')
     return modules
+
+
+def policy(root: Path, revision: str | None = None) -> tuple[str, tuple[str, ...]]:
+    """The checker source and the audited roots, in the worktree or at `revision`."""
+    def read(name: str) -> str:
+        if revision is None:
+            return (root / name).read_text(encoding='utf-8')
+        return subprocess.run(['git', 'show', f'{revision}:{name}'], cwd=root, check=True,
+                              stdout=subprocess.PIPE, text=True).stdout
+    tree = ast.parse(read('scripts/audit_compiled_modules.py'))
+    roots = next(ast.literal_eval(node.value) for node in tree.body if isinstance(node, ast.Assign)
+                 and [getattr(target, 'id', None) for target in node.targets] == ['ROOTS'])
+    return read('scripts/check_axioms.lean'), roots
 
 
 def compiled(root: Path) -> dict[str, list[int]]:
@@ -125,7 +140,13 @@ def audit(root: Path, modules: list[str], checker: str, *, batch_size: int = BAT
 
 def main() -> int:
     root = Path(__file__).resolve().parent.parent
-    if sys.argv[1:2] == ['--record'] and len(sys.argv) == 3:
+    if sys.argv[1:2] == ['--record']:
+        if len(sys.argv) != 4:
+            print('usage: audit_compiled_modules.py [--record FILE REVISION]', flush=True)
+            return 2
+        if policy(root, sys.argv[3]) != policy(root):
+            print('The audit policy changed since the restored build; the audit checks every module.')
+            return 1
         Path(sys.argv[2]).write_text(json.dumps(compiled(root)), encoding='utf-8')
         return 0
     try:
