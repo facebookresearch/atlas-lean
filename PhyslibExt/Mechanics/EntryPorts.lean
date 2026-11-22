@@ -45,21 +45,22 @@ normalization (dropping `exp (-he / H)`) does not meet the entry condition
 downward path, `sin γ > 0`: at `β = 0` Lean's convention `x / 0 = 0` turns the drag term into
 `0`, and at `sin γ = 0` the altitude rate vanishes, so `dv/dh` is undefined. The isothermal
 corollary asks the trajectory to stay in a declared altitude band, where the isothermal layer
-model holds. Apart from the window condition `t₀ ≤ t₁` and that band, which restrict statements
-to their physical regime, each result assumes only the hypotheses its proof uses. The identity
-`ballisticVelocity_eq_exp_integral` holds for `H ≠ 0`, all other parameters arbitrary; it is the
-integrated drag equation for `β > 0` and `sin γ > 0`.
+model holds. Apart from the window condition `t₀ ≤ t₁`, that band and the radiator's `ε ≤ 1` and
+`0 ≤ Tenv` in section E, which restrict statements to their physical regime, each result assumes
+only the hypotheses its proof uses. The identity `ballisticVelocity_eq_exp_integral` holds for
+`H ≠ 0`, all other parameters arbitrary; it is the integrated drag equation for `β > 0` and
+`sin γ > 0`.
 
 Section E records a supplied stagnation-point heating correlation of the Sutton-Graves form
 `q = kSG * sqrt (ρ / rn) * v ^ 3` (convective heat flux per unit area at the stagnation point of
 a blunt nose of radius `rn`, free-stream density `ρ`, speed `v`) with its citation, its
 coefficient `kSG ≥ 0` and its nonempty validity box `0 ≤ ρ ≤ ρmax`, `rmin ≤ rn`, `0 ≤ v ≤ vmax`,
 `rmin > 0`, and evaluates it only inside the box. For a history that stays in the box on the
-finite horizon `[0, tf]`, `0 ≤ tf`, the heat load per unit area obeys
-`∫ t in 0..tf, q t ≤ tf * kSG * sqrt (ρmax / rmin) * vmax ^ 3`; along the profile in a band
+finite horizon `[0, tf]`, `0 ≤ tf`, with an interval-integrable flux, the heat load per unit area
+obeys `∫ t in 0..tf, q t ≤ tf * kSG * sqrt (ρmax / rmin) * vmax ^ 3`; along the profile in a band
 `[hmin, he]` below the entry altitude, the band maxima `ρ(hmin)` and `ve` replace `ρmax` and
-`vmax`. A gray radiator of emissivity `ε > 0` that absorbs the flux `qabs ≥ 0` and exchanges
-radiation with large surroundings at `Tenv` has exactly one nonnegative equilibrium temperature,
+`vmax`. A gray radiator of emissivity `0 < ε ≤ 1` that absorbs the flux `qabs ≥ 0` and exchanges
+radiation with large surroundings at `Tenv ≥ 0` has exactly one nonnegative equilibrium temperature,
 `ε * σ * T ^ 4 = qabs + ε * σ * Tenv ^ 4`, by the fourth-power equilibrium theorem of
 `PhyslibExt.EarthScience.PlanetaryEnergyBalance` with coefficient `ε * σ`. The correlation, its
 coefficient and its validity box are supplied calibration evidence, not a proved law. The heat
@@ -441,7 +442,9 @@ noncomputable def heatFlux (C : StagnationHeatingCorrelation) (ρ rn v : ℝ)
 
 /-- The heat load `∫ q dt` over the finite horizon `[0, tf]`, `0 ≤ tf`, of a history
 `t ↦ (ρ t, rn t, v t)` that stays in the validity box on the horizon. It is heat per unit area
-(`J / m ^ 2` in SI units); the heat into a surface needs a declared area to multiply it. -/
+(`J / m ^ 2` in SI units); the heat into a surface needs a declared area to multiply it. It is
+the heat load only for an interval-integrable flux: otherwise Lean's integral is `0` by
+convention, and the bounds below assume integrability. -/
 noncomputable def heatLoad (C : StagnationHeatingCorrelation) (tf : ℝ) (ρ rn v : ℝ → ℝ)
     (_htf : 0 ≤ tf) (_h : ∀ t ∈ Set.Icc 0 tf, C.Applies (ρ t) (rn t) (v t)) : ℝ :=
   ∫ t in (0 : ℝ)..tf, C.coefficient * Real.sqrt (ρ t / rn t) * v t ^ 3
@@ -456,21 +459,12 @@ private lemma flux_le_of_bounds {k ρ rn v ρm rm vm : ℝ} (hk : 0 ≤ k) (hρ0
   exact mul_le_mul (mul_le_mul_of_nonneg_left h2 hk) h3 (pow_nonneg hv0 3)
     (mul_nonneg hk (Real.sqrt_nonneg _))
 
-/-- An integrand in `[0, M]` on `[0, tf]` integrates to at most `tf * M`; no integrability is
-needed. -/
-private lemma integral_le_of_mem_Icc {f : ℝ → ℝ} {tf M : ℝ} (htf : 0 ≤ tf)
-    (hf : ∀ t ∈ Set.Icc 0 tf, 0 ≤ f t ∧ f t ≤ M) : ∫ t in (0 : ℝ)..tf, f t ≤ tf * M := by
-  have hb : ∀ t ∈ Set.uIoc (0 : ℝ) tf, ‖f t‖ ≤ M := by
-    intro t ht
-    rw [Set.uIoc_of_le htf] at ht
-    have hft := hf t ⟨ht.1.le, ht.2⟩
-    rw [Real.norm_of_nonneg hft.1]
-    exact hft.2
-  have hn := intervalIntegral.norm_integral_le_of_norm_le_const hb
-  rw [sub_zero, abs_of_nonneg htf] at hn
-  calc ∫ t in (0 : ℝ)..tf, f t ≤ ‖∫ t in (0 : ℝ)..tf, f t‖ := Real.le_norm_self _
-    _ ≤ M * tf := hn
-    _ = tf * M := mul_comm _ _
+/-- An interval-integrable integrand at most `M` on `[0, tf]` integrates to at most `tf * M`. -/
+private lemma integral_le_of_forall_le {f : ℝ → ℝ} {tf M : ℝ} (htf : 0 ≤ tf)
+    (hint : IntervalIntegrable f MeasureTheory.volume 0 tf) (hf : ∀ t ∈ Set.Icc 0 tf, f t ≤ M) :
+    ∫ t in (0 : ℝ)..tf, f t ≤ tf * M := by
+  have h := intervalIntegral.integral_mono_on htf hint intervalIntegrable_const hf
+  rwa [intervalIntegral.integral_const, smul_eq_mul, sub_zero] at h
 
 /-- The validity box is nonempty: the correlation applies somewhere. -/
 lemma exists_applies (C : StagnationHeatingCorrelation) : ∃ ρ rn v : ℝ, C.Applies ρ rn v := by
@@ -490,25 +484,31 @@ lemma heatFlux_le (C : StagnationHeatingCorrelation) {ρ rn v : ℝ} (h : C.Appl
   obtain ⟨⟨hρ0, hρ⟩, hrn, ⟨hv0, hv⟩⟩ := h
   exact flux_le_of_bounds C.coefficient_nonneg hρ0 hρ C.minNoseRadius_pos hrn hv0 hv
 
-/-- The heat load of a history in the validity box is nonnegative. -/
+/-- The heat load of a history in the validity box with an interval-integrable flux is
+nonnegative. -/
 lemma heatLoad_nonneg (C : StagnationHeatingCorrelation) {tf : ℝ} {ρ rn v : ℝ → ℝ}
-    (htf : 0 ≤ tf) (h : ∀ t ∈ Set.Icc 0 tf, C.Applies (ρ t) (rn t) (v t)) :
+    (htf : 0 ≤ tf) (h : ∀ t ∈ Set.Icc 0 tf, C.Applies (ρ t) (rn t) (v t))
+    (hint : IntervalIntegrable (fun t => C.coefficient * Real.sqrt (ρ t / rn t) * v t ^ 3)
+      MeasureTheory.volume 0 tf) :
     0 ≤ C.heatLoad tf ρ rn v htf h := by
   unfold heatLoad
-  exact intervalIntegral.integral_nonneg htf fun t ht => C.heatFlux_nonneg (h t ht)
+  have h0 := intervalIntegral.integral_mono_on htf intervalIntegrable_const hint
+    fun t ht => C.heatFlux_nonneg (h t ht)
+  simpa using h0
 
-/-- Finite-horizon heat-load bound: for a history that stays in the validity box on `[0, tf]`,
-the heat load per unit area is at most `tf * kSG * sqrt (ρmax / rmin) * vmax ^ 3`. No
-integrability hypothesis is needed. -/
+/-- Finite-horizon heat-load bound: for a history that stays in the validity box on `[0, tf]`
+and has an interval-integrable flux, the heat load per unit area is at most
+`tf * kSG * sqrt (ρmax / rmin) * vmax ^ 3`. -/
 lemma heatLoad_le (C : StagnationHeatingCorrelation) {tf : ℝ} {ρ rn v : ℝ → ℝ} (htf : 0 ≤ tf)
-    (h : ∀ t ∈ Set.Icc 0 tf, C.Applies (ρ t) (rn t) (v t)) :
+    (h : ∀ t ∈ Set.Icc 0 tf, C.Applies (ρ t) (rn t) (v t))
+    (hint : IntervalIntegrable (fun t => C.coefficient * Real.sqrt (ρ t / rn t) * v t ^ 3)
+      MeasureTheory.volume 0 tf) :
     C.heatLoad tf ρ rn v htf h ≤
       tf * C.coefficient * Real.sqrt (C.maxDensity / C.minNoseRadius) * C.maxSpeed ^ 3 := by
   unfold heatLoad
-  have key := integral_le_of_mem_Icc
-    (f := fun t => C.coefficient * Real.sqrt (ρ t / rn t) * v t ^ 3)
-    (M := C.coefficient * Real.sqrt (C.maxDensity / C.minNoseRadius) * C.maxSpeed ^ 3) htf
-    fun t ht => ⟨C.heatFlux_nonneg (h t ht), C.heatFlux_le (h t ht)⟩
+  have key := integral_le_of_forall_le
+    (M := C.coefficient * Real.sqrt (C.maxDensity / C.minNoseRadius) * C.maxSpeed ^ 3) htf hint
+    fun t ht => C.heatFlux_le (h t ht)
   calc ∫ t in (0 : ℝ)..tf, C.coefficient * Real.sqrt (ρ t / rn t) * v t ^ 3
       ≤ tf * (C.coefficient * Real.sqrt (C.maxDensity / C.minNoseRadius) * C.maxSpeed ^ 3) := key
     _ = tf * C.coefficient * Real.sqrt (C.maxDensity / C.minNoseRadius) * C.maxSpeed ^ 3 := by
@@ -529,25 +529,26 @@ lemma heatLoad_vacuum (C : StagnationHeatingCorrelation) {tf : ℝ} {ρ rn v : �
 
 /-- Heat load along the finite-entry ballistic profile: for `ρ0, H, β > 0`, a downward path,
 `sin γ > 0`, and `ve > 0`, if on `[0, tf]` the altitude `h t` stays in the band `[hmin, he]` below
-the entry altitude and the history `(ρ(h t), rn t, v(h t))` stays in the validity box, then the
-density is at most `ρ(hmin)` and the speed at most `ve`, so the heat load per unit area is at most
-`tf * kSG * sqrt (ρ(hmin) / rmin) * ve ^ 3`. -/
+the entry altitude, the history `(ρ(h t), rn t, v(h t))` stays in the validity box and its flux is
+interval integrable, then the density is at most `ρ(hmin)` and the speed at most `ve`, so the heat
+load per unit area is at most `tf * kSG * sqrt (ρ(hmin) / rmin) * ve ^ 3`. -/
 lemma heatLoad_le_of_band (C : StagnationHeatingCorrelation) {ρ0 H β γ he ve hmin tf : ℝ}
     {h rn : ℝ → ℝ} (hρ0 : 0 < ρ0) (hH : 0 < H) (hβ : 0 < β) (hγ : 0 < Real.sin γ)
     (hve : 0 < ve) (htf : 0 ≤ tf) (hband : ∀ t ∈ Set.Icc 0 tf, h t ∈ Set.Icc hmin he)
     (hbox : ∀ t ∈ Set.Icc 0 tf, C.Applies (exponentialDensity ρ0 H (h t)) (rn t)
-      (ballisticVelocity ρ0 H β γ he ve (h t))) :
+      (ballisticVelocity ρ0 H β γ he ve (h t)))
+    (hint : IntervalIntegrable (fun t => C.coefficient *
+      Real.sqrt (exponentialDensity ρ0 H (h t) / rn t) *
+        ballisticVelocity ρ0 H β γ he ve (h t) ^ 3) MeasureTheory.volume 0 tf) :
     C.heatLoad tf (fun t => exponentialDensity ρ0 H (h t)) rn
         (fun t => ballisticVelocity ρ0 H β γ he ve (h t)) htf hbox ≤
       tf * C.coefficient * Real.sqrt (exponentialDensity ρ0 H hmin / C.minNoseRadius) *
         ve ^ 3 := by
   unfold heatLoad
   have hmono := (ballisticVelocity_strictMono hρ0 hH hβ hγ hve he).monotone
-  have key := integral_le_of_mem_Icc
-    (f := fun t => C.coefficient * Real.sqrt (exponentialDensity ρ0 H (h t) / rn t) *
-      ballisticVelocity ρ0 H β γ he ve (h t) ^ 3)
+  have key := integral_le_of_forall_le
     (M := C.coefficient * Real.sqrt (exponentialDensity ρ0 H hmin / C.minNoseRadius) * ve ^ 3)
-    htf fun t ht => by
+    htf hint fun t ht => by
       obtain ⟨⟨hρ0', -⟩, hrn, ⟨hv0, -⟩⟩ := hbox t ht
       have hρle : exponentialDensity ρ0 H (h t) ≤ exponentialDensity ρ0 H hmin := by
         unfold exponentialDensity
@@ -557,7 +558,6 @@ lemma heatLoad_le_of_band (C : StagnationHeatingCorrelation) {ρ0 H β γ he ve 
       have hvle : ballisticVelocity ρ0 H β γ he ve (h t) ≤ ve := by
         have := hmono (hband t ht).2
         rwa [ballisticVelocity_entry] at this
-      refine ⟨C.heatFlux_nonneg (hbox t ht), ?_⟩
       exact flux_le_of_bounds C.coefficient_nonneg hρ0' hρle C.minNoseRadius_pos hrn hv0 hvle
   calc ∫ t in (0 : ℝ)..tf, C.coefficient * Real.sqrt (exponentialDensity ρ0 H (h t) / rn t) *
         ballisticVelocity ρ0 H β γ he ve (h t) ^ 3
@@ -568,14 +568,17 @@ lemma heatLoad_le_of_band (C : StagnationHeatingCorrelation) {ρ0 H β γ he ve 
 
 end StagnationHeatingCorrelation
 
+set_option linter.unusedVariables false in
 /-- Radiator equilibrium: a gray radiator of emissivity `ε` that absorbs the flux `qabs` per unit
-area and exchanges thermal radiation with large surroundings at temperature `Tenv` emits
+area and exchanges thermal radiation with large surroundings at absolute temperature `Tenv` emits
 `ε * σ * T ^ 4` and absorbs `ε * σ * Tenv ^ 4`, so it is in equilibrium at `T` when
-`ε * σ * T ^ 4 = qabs + ε * σ * Tenv ^ 4`. For `ε, σ > 0` and `qabs ≥ 0` a nonnegative
-equilibrium exists: the fourth-power equilibrium theorem with coefficient `ε * σ`, albedo `0` and
-supplied flux `4 * (qabs + ε * σ * Tenv ^ 4)`. -/
-lemma radiator_equilibrium_exists {ε σ qabs Tenv : ℝ} (hε : 0 < ε) (hσ : 0 < σ)
-    (hq : 0 ≤ qabs) : ∃ T : ℝ, 0 ≤ T ∧ ε * σ * T ^ 4 = qabs + ε * σ * Tenv ^ 4 := by
+`ε * σ * T ^ 4 = qabs + ε * σ * Tenv ^ 4`. For `0 < ε ≤ 1`, `σ > 0`, `qabs ≥ 0` and `Tenv ≥ 0` a
+nonnegative equilibrium exists: the fourth-power equilibrium theorem with coefficient `ε * σ`,
+albedo `0` and supplied flux `4 * (qabs + ε * σ * Tenv ^ 4)`. The proof does not use `ε ≤ 1` or
+`0 ≤ Tenv`; they restrict the statement to a gray surface and an absolute temperature. -/
+lemma radiator_equilibrium_exists {ε σ qabs Tenv : ℝ} (hε : 0 < ε) (hε₁ : ε ≤ 1) (hσ : 0 < σ)
+    (hq : 0 ≤ qabs) (hTenv : 0 ≤ Tenv) :
+    ∃ T : ℝ, 0 ≤ T ∧ ε * σ * T ^ 4 = qabs + ε * σ * Tenv ^ 4 := by
   have hεσ : 0 < ε * σ := mul_pos hε hσ
   have hS : 0 ≤ 4 * (qabs + ε * σ * Tenv ^ 4) :=
     mul_nonneg (by norm_num) (add_nonneg hq (mul_nonneg hεσ.le (Even.pow_nonneg (by decide) Tenv)))
@@ -585,10 +588,14 @@ lemma radiator_equilibrium_exists {ε σ qabs Tenv : ℝ} (hε : 0 < ε) (hσ : 
   rw [hTeq]
   ring
 
-/-- For `ε, σ > 0` the nonnegative radiator equilibrium is unique: the uniqueness half of the
-fourth-power equilibrium theorem with coefficient `ε * σ`. -/
-lemma radiator_equilibrium_unique {ε σ qabs Tenv T₁ T₂ : ℝ} (hε : 0 < ε) (hσ : 0 < σ)
-    (hT₁ : 0 ≤ T₁) (hT₂ : 0 ≤ T₂) (h₁ : ε * σ * T₁ ^ 4 = qabs + ε * σ * Tenv ^ 4)
+set_option linter.unusedVariables false in
+/-- For `0 < ε ≤ 1`, `σ > 0` and `Tenv ≥ 0` the nonnegative radiator equilibrium is unique: the
+uniqueness half of the fourth-power equilibrium theorem with coefficient `ε * σ`. The proof does
+not use `ε ≤ 1` or `0 ≤ Tenv`; they restrict the statement to a gray surface and an absolute
+temperature. -/
+lemma radiator_equilibrium_unique {ε σ qabs Tenv T₁ T₂ : ℝ} (hε : 0 < ε) (hε₁ : ε ≤ 1)
+    (hσ : 0 < σ) (hTenv : 0 ≤ Tenv) (hT₁ : 0 ≤ T₁) (hT₂ : 0 ≤ T₂)
+    (h₁ : ε * σ * T₁ ^ 4 = qabs + ε * σ * Tenv ^ 4)
     (h₂ : ε * σ * T₂ ^ 4 = qabs + ε * σ * Tenv ^ 4) : T₁ = T₂ := by
   have hεσ : 0 < ε * σ := mul_pos hε hσ
   refine EarthScience.planetaryEnergyBalance_equilibrium_unique
