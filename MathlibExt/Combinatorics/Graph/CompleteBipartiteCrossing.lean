@@ -451,20 +451,25 @@ private lemma sum_match (n : ℕ) :
     exact Finset.sum_congr rfl (fun ab hab => (Nat.sub_add_cancel (hle ab hab)).symm)
   rw [hsub, hMain, hCorr]
 
-/-- The left side counts distinct interior intersection points of the regular drawing with left
-vertices `(0, i)` and right vertices `(1, j)` in `Rat × Rat` for `i, j < n`: edges cross in the
-interior exactly when `i < i'` and `j' < j`, the image point is the explicit segment intersection,
-and `Finset.card` counts distinct points. The right side is the paper formula: the sum over `1 ≤ a,
-b ≤ n - 1` with `Nat.Coprime a b` of `(n - a) * (n - b)` minus the correction sum over
-`1 ≤ 2 * a, 2 * b ≤ n - 1` with `Nat.Coprime a b` of `(n - 2 * a) * (n - 2 * b)`, with bounds
-encoded by
-`Finset.range` and filters so subtraction stays in `ℕ`.
+/-- **Crossing points of the regular drawing of the complete bipartite graph.** Let $n$ be a
+natural number. In the regular drawing of $K_{n,n}$ in $\mathbb{Q}^2$, the left vertices are the
+points $(0, i)$ and the right vertices are the points $(1, j)$ for $0 \le i, j < n$, and each edge
+is the straight segment from $(0, i)$ to $(1, j)$. For $i < i'$ and $j' < j$, the edges from
+$(0, i)$ to $(1, j)$ and from $(0, i')$ to $(1, j')$ cross at the point $(x, i + x(j - i))$, where
+$x = (i' - i)/((i' - i) + (j - j'))$. The number of distinct points obtained in this way, over all
+$i, i', j, j' < n$ with $i < i'$ and $j' < j$, equals $S_1 - S_2$, where $S_1$ is the sum of
+$(n - a)(n - b)$ over all ordered pairs $(a, b)$ of coprime integers with $1 \le a, b \le n - 1$,
+and $S_2$ is the sum of $(n - 2a)(n - 2b)$ over all ordered pairs $(a, b)$ of coprime integers
+with $1 \le 2a \le n - 1$ and $1 \le 2b \le n - 1$.
+
+The difference is taken in $\mathbb{N}$; since $S_2 \le S_1$, it is the ordinary difference.
+
+Proves `Wanted` entry `legendre_regular_crossing`.
+
 Source: Stéphane Legendre, "The Number of Crossings in a Regular Drawing of the
 Complete Bipartite Graph", Journal of Integer Sequences 12 (2009), Article 09.5.5,
 Proposition `count_all`, line 263,
 <https://cs.uwaterloo.ca/journals/JIS/VOL12/Legendre/legendre2.tex>.
-
-Proves `Wanted` entry `legendre_regular_crossing`.
 -/
 theorem legendre_regular_crossing :
     ∀ (n : ℕ),

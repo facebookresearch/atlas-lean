@@ -19,10 +19,13 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The value at `x` of the Fibonacci-like generating function
-`G^{(a,b)}(x) = ((b - a) x + a) / (1 - x - x ^ 2)` attached to the
-Gibonacci sequence with `G^{(a,b)}_0 = a` and `G^{(a,b)}_1 = b`
-(`gibonacciNumber a b`).
+/-- **Gibonacci generating function.** For integers $a$ and $b$ and a rational number $x$, the
+value of the Gibonacci generating function at $x$ is the rational number
+
+$$G^{(a,b)}(x) = \frac{(b - a)x + a}{1 - x - x^2}.$$
+
+It is the generating function of the Gibonacci sequence $(G_n)_{n \ge 0}$ with $G_0 = a$,
+$G_1 = b$ and $G_{n+2} = G_{n+1} + G_n$.
 
 Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
 Sequences 27 (2024), Article 24.3.1, Lemma 5
@@ -30,7 +33,9 @@ Sequences 27 (2024), Article 24.3.1, Lemma 5
 public def gibonacciGeneratingValue (a b : ℤ) (x : ℚ) : ℚ :=
   (((b : ℚ) - (a : ℚ)) * x + (a : ℚ)) / (1 - x - x ^ 2)
 
-/-- Characteristic value at `x = 0`: `G^{(a,b)}(0) = a`.
+/-- **Value of the Gibonacci generating function at zero.** For all integers $a$ and $b$, the
+Gibonacci generating function $G^{(a,b)}(x) = \frac{(b - a)x + a}{1 - x - x^2}$ takes the value
+$G^{(a,b)}(0) = a$ at $x = 0$.
 
 Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
 Sequences 27 (2024), Article 24.3.1, Lemma 5
@@ -39,7 +44,9 @@ public theorem gibonacciGeneratingValue_zero (a b : ℤ) :
     gibonacciGeneratingValue a b 0 = (a : ℚ) := by
   simp [gibonacciGeneratingValue]
 
-/-- Characteristic value at `x = 1`: `G^{(a,b)}(1) = -b`.
+/-- **Value of the Gibonacci generating function at one.** For all integers $a$ and $b$, the
+Gibonacci generating function $G^{(a,b)}(x) = \frac{(b - a)x + a}{1 - x - x^2}$ takes the value
+$G^{(a,b)}(1) = -b$ at $x = 1$.
 
 Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
 Sequences 27 (2024), Article 24.3.1, Lemma 5
@@ -50,9 +57,10 @@ public theorem gibonacciGeneratingValue_one (a b : ℤ) :
   norm_num
   ring
 
-/-- The rational `x` is good for `(a, b)`: the generating function is
-defined at `x` (its denominator does not vanish) and takes an integer
-value there.
+/-- **Good rationals for a Gibonacci generating function.** Let $a$ and $b$ be integers and let
+$G^{(a,b)}(x) = \frac{(b - a)x + a}{1 - x - x^2}$ be the generating function of the Gibonacci
+sequence with initial terms $a$ and $b$. A rational number $x$ is good for $(a, b)$ when
+$1 - x - x^2 \ne 0$ and $G^{(a,b)}(x)$ is an integer.
 
 Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
 Sequences 27 (2024), Article 24.3.1 (the paper says `x = p / q` is good
@@ -61,8 +69,8 @@ integrality without the word good). -/
 public def IsGibonacciGood (a b : ℤ) (x : ℚ) : Prop :=
   1 - x - x ^ 2 ≠ 0 ∧ ∃ z : ℤ, gibonacciGeneratingValue a b x = (z : ℚ)
 
-/-- Characteristic example: `0` is good for every `(a, b)`, with value
-`a`.
+/-- **Zero is good for every pair.** For all integers $a$ and $b$, the rational number $0$ is good
+for $(a, b)$.
 
 Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
 Sequences 27 (2024), Article 24.3.1, Lemma 5
@@ -70,8 +78,10 @@ Sequences 27 (2024), Article 24.3.1, Lemma 5
 public theorem isGibonacciGood_zero (a b : ℤ) : IsGibonacciGood a b 0 :=
   ⟨by norm_num, a, gibonacciGeneratingValue_zero a b⟩
 
-/-- Characteristic example: `1` is good for every `(a, b)`, with value
-`-b`.
+/-- **One is good for every pair.** For all integers $a$ and $b$, the rational number $1$ is good
+for $(a, b)$.
+
+The value of the Gibonacci generating function there is $G^{(a,b)}(1) = -b$.
 
 Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
 Sequences 27 (2024), Article 24.3.1, Lemma 5
@@ -79,10 +89,14 @@ Sequences 27 (2024), Article 24.3.1, Lemma 5
 public theorem isGibonacciGood_one (a b : ℤ) : IsGibonacciGood a b 1 :=
   ⟨by norm_num, -b, by rw [gibonacciGeneratingValue_one]; simp⟩
 
-/-- The generating series identity: multiplying the Gibonacci power
-series by `1 - X - X ^ 2` leaves the linear polynomial `a + (b - a) X`.
-This is the product form of the paper's displayed quotient
-`G(x) = ((b - a) x + a) / (1 - x - x ^ 2)`.
+/-- **Generating series of a Gibonacci sequence.** Let $a$ and $b$ be integers and let
+$(G_n)_{n \ge 0}$ be the Gibonacci sequence with $G_0 = a$ and $G_1 = b$. In the ring
+$\mathbb{Q}[[X]]$ of formal power series with rational coefficients,
+
+$$(1 - X - X^2) \sum_{n \ge 0} G_n X^n = a + (b - a) X.$$
+
+This is the product form of the quotient $\frac{(b - a)x + a}{1 - x - x^2}$ for the generating
+function of $(G_n)$.
 
 Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
 Sequences 27 (2024), Article 24.3.1, Lemma 5
@@ -93,9 +107,9 @@ public theorem_wanted gibonacci_powerSeries_mul (a b : ℤ) :
       = PowerSeries.C (a : ℚ)
         + PowerSeries.C ((b : ℚ) - (a : ℚ)) * PowerSeries.X
 
-/-- Integrality propagates along the two fractional transforms: if
-`p / q` (in lowest terms) is good for `(a, b)`, then so are
-`q / (p + q)` (when `p + q ≠ 0`) and `(q - p) / p` (when `p ≠ 0`).
+/-- **Goodness passes to two transformed fractions.** Let $a$, $b$, $p$, $q$ be integers with
+$q \ne 0$ and $\gcd(p, q) = 1$, and suppose that $p/q$ is good for $(a, b)$. If $p + q \ne 0$,
+then $q/(p + q)$ is good for $(a, b)$; and if $p \ne 0$, then $(q - p)/p$ is good for $(a, b)$.
 
 Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
 Sequences 27 (2024), Article 24.3.1, Theorem 1
@@ -106,11 +120,13 @@ public theorem_wanted isGibonacciGood_transform (a b p q : ℤ)
     (p + q ≠ 0 → IsGibonacciGood a b ((q : ℚ) / ((p : ℚ) + (q : ℚ)))) ∧
     (p ≠ 0 → IsGibonacciGood a b (((q : ℚ) - (p : ℚ)) / (p : ℚ)))
 
-/-- The congruence criterion for goodness: for `(a, b) ≠ (0, 0)` and
-coprime `p, q`, the fraction `p / q` is good for `(a, b)` if and only
-if `a ≡ -b p (q - p)⁻¹ ≡ -b q p⁻¹ (mod |q ^ 2 - p q - p ^ 2|)`. The
-paper's modular inverses are written here with explicit inverse
-witnesses `u` and `v`.
+/-- **Congruence criterion for good fractions.** Let $a, b, p, q$ be integers with
+$(a, b) \ne (0, 0)$, $q \ne 0$ and $\gcd(p, q) = 1$, and put $m = |q^2 - pq - p^2|$. Then
+$p / q$ is good for $(a, b)$ if and only if there are integers $u$ and $v$ with
+$(q - p) u \equiv 1$, $p v \equiv 1$, $a \equiv -b p u$ and $a \equiv -b q v \pmod{m}$.
+
+In the source's notation, with modular inverses, the condition reads
+$a \equiv -bp(q - p)^{-1} \equiv -bqp^{-1} \pmod{m}$.
 
 Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
 Sequences 27 (2024), Article 24.3.1, Lemma 6
@@ -123,9 +139,10 @@ public theorem_wanted isGibonacciGood_iff (a b p q : ℤ)
       a ≡ -b * p * u [ZMOD |q ^ 2 - p * q - p ^ 2|] ∧
       a ≡ -b * q * v [ZMOD |q ^ 2 - p * q - p ^ 2|]
 
-/-- Consecutive Fibonacci ratios are good: `F_n / F_{n+1}` is good for
-every `(a, b)`. The paper allows every integer `n ≠ -1` with the
-two-sided Fibonacci extension; this statement covers `n ∈ ℕ`.
+/-- **Consecutive Fibonacci ratios are good.** For all integers $a$ and $b$ and every natural
+number $n$, the ratio $F_n / F_{n+1}$ of consecutive Fibonacci numbers is good for $(a, b)$.
+
+The source allows every integer $n \ne -1$, using the Fibonacci numbers at negative indices.
 
 Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
 Sequences 27 (2024), Article 24.3.1, Lemma 7
@@ -133,11 +150,12 @@ Sequences 27 (2024), Article 24.3.1, Lemma 7
 public theorem_wanted isGibonacciGood_fib_div (a b : ℤ) (n : ℕ) :
     IsGibonacciGood a b ((Nat.fib n : ℚ) / (Nat.fib (n + 1) : ℚ))
 
-/-- The two standard families of good values: the Fibonacci ratios
-`F_n / F_{n+1}`, and the negated Gibonacci ratios
-`-G^{(a,b)}_{n+1} / G^{(a,b)}_n` whenever the denominator is nonzero.
-The paper indexes both families by all integers (`n ≠ -1` for the
-first); this statement covers `n ∈ ℕ`.
+/-- **Two standard families of good values.** Let $a$ and $b$ be integers and let $(G_n)_{n \ge 0}$
+be the Gibonacci sequence with $G_0 = a$ and $G_1 = b$. For every natural number $n$, the ratio
+$F_n / F_{n+1}$ of consecutive Fibonacci numbers is good for $(a, b)$, and if $G_n \ne 0$, then
+$-G_{n+1} / G_n$ is good for $(a, b)$.
+
+The source indexes both families by all integers ($n \ne -1$ for the first).
 
 Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
 Sequences 27 (2024), Article 24.3.1, Corollary 2
@@ -148,9 +166,11 @@ public theorem_wanted isGibonacciGood_standard_values (a b : ℤ) :
       IsGibonacciGood a b
         (-(gibonacciNumber a b (n + 1) : ℚ) / (gibonacciNumber a b n : ℚ)))
 
-/-- Ratios of the Gibonacci sequence `H` with `H_0 = -b` and `H_1 = a`
-are good for `(a, b)` whenever the denominator is nonzero. The paper
-indexes `H` by all integers; this statement covers `n ∈ ℕ`.
+/-- **Consecutive ratios of a shifted Gibonacci sequence are good.** Let $a$ and $b$ be integers
+and let $(H_n)_{n \ge 0}$ be the Gibonacci sequence with $H_0 = -b$ and $H_1 = a$. For every
+natural number $n$ with $H_{n+1} \ne 0$, the ratio $H_n / H_{n+1}$ is good for $(a, b)$.
+
+The source indexes $H$ by all integers.
 
 Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
 Sequences 27 (2024), Article 24.3.1, Lemma 8
@@ -160,13 +180,16 @@ public theorem_wanted isGibonacciGood_shifted_ratio (a b : ℤ) (n : ℕ)
     IsGibonacciGood a b
       ((gibonacciNumber (-b) a n : ℚ) / (gibonacciNumber (-b) a (n + 1) : ℚ))
 
-/-- For coprime `p, q`, let `H` be the Gibonacci sequence with
-`H_0 = p` and `H_1 = q`. Then infinitely many pairs `(a, b)` make
-every ratio `H_n / H_{n+1}` (with nonzero denominator) good, and this
-holds for a given `(a, b)` if and only if
-`a ≡ -b p (q - p)⁻¹ ≡ -b q p⁻¹ (mod |q ^ 2 - p q - p ^ 2|)`, with the
-modular inverses written via explicit witnesses. The paper indexes
-`H` by all integers; this statement covers `n ∈ ℕ`.
+/-- **Good consecutive ratios of a Gibonacci sequence.** Let $p$ and $q$ be coprime integers,
+let $(H_n)_{n \ge 0}$ be the Gibonacci sequence with $H_0 = p$ and $H_1 = q$, and put
+$m = |q^2 - pq - p^2|$. Call a pair of integers $(a, b)$ admissible when $H_n / H_{n+1}$ is
+good for $(a, b)$ for every natural number $n$ with $H_{n+1} \ne 0$. Then there are infinitely
+many admissible pairs, and a pair $(a, b)$ is admissible if and only if there are integers $u$
+and $v$ with $(q - p) u \equiv 1$, $p v \equiv 1$, $a \equiv -b p u$ and
+$a \equiv -b q v \pmod{m}$.
+
+In the source's notation, with modular inverses, the condition reads
+$a \equiv -bp(q - p)^{-1} \equiv -bqp^{-1} \pmod{m}$. The source indexes $H$ by all integers.
 
 Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
 Sequences 27 (2024), Article 24.3.1, Theorem 3
