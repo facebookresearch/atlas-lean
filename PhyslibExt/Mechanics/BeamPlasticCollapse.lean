@@ -122,8 +122,6 @@ open Matrix
 
 /-! ## A. Finite model data -/
 
-/-! ## C. Statics, kinematics and work bridges -/
-
 /-- Compatibility matrix of the three-hinge mechanism of a fixed-ended beam of span `L`: the
 sagging hinge rotations at the left end, mid-span and right end per unit central deflection,
 `-2 / L`, `4 / L` and `-2 / L` (rows: critical sections; column: central deflection). -/
@@ -292,6 +290,8 @@ lemma elasticMoments_not_admissible (L : ℝ) {Mp : ℝ} (hMp : 0 < Mp) :
     have hnn : (0:ℝ) ≤ 4 * Mp / 3 := by positivity
     rw [abs_of_nonneg hnn] at h0
     linarith
+
+/-! ## C. Statics, kinematics and work bridges -/
 
 /-- Statics bridge: the canonical equilibrium equation of the finite model is the statical
 equation of the uniformly loaded fixed-ended beam, the mid-span moment minus the mean end
