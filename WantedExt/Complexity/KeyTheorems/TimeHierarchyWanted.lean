@@ -37,7 +37,11 @@ deterministic linear time, on the CSLib multi-tape model (`DTIME`). The multi-ta
 is the deterministic class of the repo's `CSLibExt` time/space development.
 -/
 
-/-- **Deterministic time hierarchy.** Source: J. Hartmanis and R. E. Stearns, "On the
+/-- **Deterministic time hierarchy: quadratic versus linear time.** There is a language $L$ of
+bitstrings that lies in the multi-tape deterministic time class $\mathrm{DTIME}(n^2)$ but not in
+$\mathrm{DTIME}(n)$.
+
+Source: J. Hartmanis and R. E. Stearns, "On the
 computational complexity of algorithms", Transactions of the American Mathematical Society
 117 (1965), 285-306. -/
 public theorem_wanted time_hierarchy :
