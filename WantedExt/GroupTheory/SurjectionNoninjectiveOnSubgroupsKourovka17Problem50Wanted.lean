@@ -32,17 +32,20 @@ Zelenyuk). UnsolvedMath record UM-00701352 (`KOU-17.50`), dataset ulamai/Unsolve
 The restriction of `f` to `H` is `f.comp H.subtype`; groups are taken in `Type`.
 -/
 
-/-- Kourovka 17.50 (E. G. Zelenyuk): for every finite group `G` there are a finite group `F` and a
-surjective homomorphism `f : F → G` whose restriction to every nontrivial subgroup of `F` is not
-injective. -/
+/-- **Kourovka Problem 17.50: surjections injective on no nontrivial subgroup.** The statement
+that for every finite group $G$ there are a finite group $F$ and a surjective homomorphism
+$f \colon F \to G$ such that for every nontrivial subgroup $H$ of $F$ the restriction of $f$ to
+$H$ is not injective. -/
 def surjectionNoninjectiveOnSubgroups : Prop :=
   ∀ (G : Type) [Group G] [Finite G], ∃ (F : Type) (_ : Group F) (_ : Finite F) (f : F →* G),
     Function.Surjective f ∧ ∀ H : Subgroup F, H ≠ ⊥ → ¬ Function.Injective (f.comp H.subtype)
 
 /--
-Resolved true: the Kourovka Archive answers 17.50 "Yes, it is", citing Burichenko (2012): every
-finite group `G` is the image of a finite group `F` under a homomorphism whose restriction to every
-nontrivial subgroup of `F` is not injective. Source: E. I. Khukhro and V. D. Mazurov (eds.),
+**Burichenko's theorem on surjections injective on no nontrivial subgroup.** For every finite
+group $G$ there are a finite group $F$ and a surjective homomorphism $f \colon F \to G$ such that
+for every nontrivial subgroup $H$ of $F$ the restriction of $f$ to $H$ is not injective.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.),
 Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026),
 Archive of Solved Problems, Problem 17.50 (E. G. Zelenyuk); resolution: V. P. Burichenko, Math.
 Notes 92 (2012), 327-332, Kourovka Archive, Problem 17.50 (Yes, it is).
