@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import re
 import shlex
@@ -13,6 +14,8 @@ import unittest
 from pathlib import Path
 
 import yaml
+
+from scripts import next_task
 
 ROOT = Path(__file__).resolve().parent.parent
 # The card files: their tests run in the card job (scripts/test_cards.py), not in the wiki job.
@@ -50,6 +53,8 @@ class BlueprintWorkflowTests(unittest.TestCase):
             "lean-toolchain", "lake-manifest.json", "lakefile.toml",
         ):
             self.assertIn(path, paths)
+        # The reader of the list the job writes: changing it runs the tests that hold the two to one format.
+        self.assertIn("scripts/next_task.py", paths)
         # Every test module the job runs is in the filter, so changing a test runs it.
         tests = self.step("Test the wiki scripts")["run"]
         for module in re.findall(r"scripts\.(test_\w+)", tests):
@@ -108,6 +113,14 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertLess(positions[build["name"]], positions[dump["name"]])
         self.assertLess(positions[dump["name"]], positions[
             "Collapse dependencies onto the wiki articles"])
+
+    def test_the_committed_graph_is_checked_before_lean_facts_and_only_reports(self):
+        # After `lean-facts` a stale link is already gone, so only this step can report it.
+        step = self.step("Check the committed graph")
+        self.assertEqual(step["continue-on-error"], "true")
+        self.assertIn("autoform check blueprint --lean-root .", step["run"])
+        positions = {s.get("name"): i for i, s in enumerate(self.steps)}
+        self.assertLess(positions[step["name"]], positions["Add the Lean-owned facts to the articles"])
 
     def test_memory_heavy_production_targets_are_serialized(self):
         script = self.step("Build memory-heavy modules one at a time")["run"]
@@ -258,6 +271,114 @@ class BlueprintWorkflowTests(unittest.TestCase):
                          ["Keep the Mathlib layer"])
         self.assertEqual(steps["Keep the Mathlib layer"]["with"]["name"], "mathlib-graph")
         self.assertEqual(steps["Keep the Mathlib layer"]["if"], "always()")
+
+    def test_the_ready_tasks_are_published_with_the_site_and_kept_on_every_run(self):
+        # What the tools own (docs/BLUEPRINT.md): Autoform's task list on the checkout after lean-facts, published
+        # as tasks.json.
+        name = "List the ready formalization tasks"
+        step = self.step(name)
+        script = step["run"]
+        self.assertIn("set -euo pipefail", script)
+        self.assertIn('uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}" autoform work list . --json', script)
+        self.assertIn("cp build/tasks.json site-src/tasks.json", script)
+        # The format it accepts is the one next_task.py reads.
+        self.assertIn(f'.schema != "{next_task.SCHEMA}"', script)
+        self.assertNotIn("continue-on-error", step)
+        self.assertNotIn("if", step)
+        names = [s.get("name") for s in self.steps]
+        # After lean-facts and the render, which writes site-src/, and before MkDocs copies it into the site.
+        for before in ("Add the Lean-owned facts to the articles", "Render the blueprint"):
+            self.assertLess(names.index(before), names.index(name))
+        self.assertLess(names.index(name), names.index("Build the Markdown site"))
+        # Kept as the `tasks` artifact right after it is written, whatever the later steps do; a missing file fails.
+        keep = self.step("Keep the task list")
+        self.assertEqual(names.index("Keep the task list"), names.index(name) + 1)
+        self.assertNotIn("if", keep)
+        self.assertNotIn("continue-on-error", keep)
+        self.assertEqual((keep["with"]["name"], keep["with"]["path"], keep["with"]["if-no-files-found"]),
+                         ("tasks", "build/tasks.json", "error"))
+
+    def run_task_step(self, output: str, status: int = 0):
+        """Run the task step in a fixture checkout, with an Autoform that writes *output* and exits with *status*."""
+        if shutil.which("jq") is None:
+            self.skipTest("jq is not installed")
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        root = Path(directory.name)
+        subprocess.run(["git", "init", "-q", str(root)], check=True)
+        subprocess.run(["git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q",
+                        "--allow-empty", "-m", "fixture"], check=True)
+        for folder in ("build", "site-src", "bin"):
+            (root / folder).mkdir()
+        (root / "output.json").write_text(output)
+        (root / "bin" / "uvx").write_text(f'#!/bin/sh\necho "$@" > uvx-arguments\ncat output.json\nexit {status}\n')
+        (root / "bin" / "uvx").chmod(0o755)
+        environment = {**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}",
+                       "AUTOFORM_SOURCE": "https://example.invalid/autoform.git", "AUTOFORM_REF": "a" * 40}
+        result = subprocess.run(["bash", "-c", self.step("List the ready formalization tasks")["run"]], cwd=root,
+                                env=environment, text=True, capture_output=True, check=False)
+        git = lambda *args: subprocess.run(["git", "-C", str(root), *args], text=True, capture_output=True,
+                                           check=True).stdout.strip()
+        return root, result, git("rev-parse", "HEAD"), git("log", "-1", "--format=%cI", "HEAD")
+
+    def test_tasks_json_is_autoforms_list_with_the_commit_and_the_pin(self):
+        work = {"schema": next_task.SCHEMA, "open_statements": False, "source_revision": "f" * 64,
+                "items": [{"article_id": "af_" + "0" * 24, "node_id": "Algebra/t", "phase": "proof", "ready": True,
+                           "state": "can_prove", "lean_targets": [{"declaration": "Ext.t", "source_file": None}]}]}
+        root, result, commit, date = self.run_task_step(json.dumps(work))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual((root / "uvx-arguments").read_text().split(), [
+            "--from", "git+https://example.invalid/autoform.git@" + "a" * 40,
+            "autoform", "work", "list", ".", "--json"])
+        published = json.loads((root / "site-src" / "tasks.json").read_text())
+        self.assertEqual(published, {**work, "commit": commit, "commit_date": date, "autoform_ref": "a" * 40})
+        self.assertEqual((root / "build" / "tasks.json").read_text(), (root / "site-src" / "tasks.json").read_text())
+
+    def test_a_refused_or_unknown_task_list_fails_the_build(self):
+        task = {"article_id": "af_" + "0" * 24, "node_id": "Algebra/t", "phase": "proof", "ready": True,
+                "state": "can_prove", "lean_targets": [{"declaration": "Ext.t", "source_file": None}]}
+
+        def listing(*items: dict) -> str:
+            return json.dumps({"schema": next_task.SCHEMA, "items": list(items)})
+
+        def picked(output: str) -> bool:
+            # Whether next_task.py reads the list, as the step would publish it.
+            with tempfile.TemporaryDirectory() as folder:
+                path = Path(folder) / "tasks.json"
+                path.write_text(output)
+                try:
+                    next_task.load_tasks(str(path))
+                except next_task.Failure:
+                    return False
+                return True
+
+        # A statement still to write may have no Lean declaration yet; a proof (below) may not.
+        good = listing(task, {**task, "article_id": "af_" + "1" * 24, "node_id": "Algebra/u", "phase": "statement",
+                              "state": "can_state", "lean_targets": []})
+        root, result, _, _ = self.run_task_step(good)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(picked((root / "build" / "tasks.json").read_text()))
+        broken = [{}, {**task, "node_id": None}, {**task, "node_id": " "}, {**task, "article_id": "af_" + "0" * 23},
+                  {**task, "article_id": "af_" + "0" * 24 + "\n"}, {**task, "phase": None},
+                  {**task, "ready": False, "state": "proved"}, {**task, "phase": "statement"},
+                  {**task, "lean_targets": None}, {**task, "lean_targets": [{"declaration": 1}]},
+                  {**task, "lean_targets": [{"declaration": ""}]}, {**task, "lean_targets": []}]
+        # next_task.py refuses the tasks the step refuses (below).
+        for bad in broken:
+            self.assertFalse(picked(listing(bad)), bad)
+        # A refusal, no output, two objects, another format, no items, an empty list (the checkout holds thousands
+        # of ready tasks, so none means the list is wrong), a task without what next_task.py reads, and a node or an
+        # article id twice.
+        for output, status in (("", 2), ("", 0), (good + "\n" + good, 0),
+                               (json.dumps({"schema": "autoform-work/v3", "items": [task]}), 0),
+                               (json.dumps({"schema": next_task.SCHEMA}), 0), (listing(), 0),
+                               *((listing(bad), 0) for bad in broken),
+                               (listing(task, {**task, "node_id": "A/u"}), 0),
+                               (listing(task, {**task, "article_id": "af_" + "1" * 24}), 0)):
+            root, result, _, _ = self.run_task_step(output, status)
+            self.assertNotEqual(result.returncode, 0, output)
+            for path in ("build/tasks.json", "site-src/tasks.json"):
+                self.assertFalse((root / path).exists(), (output, path))
 
     def test_the_cards_cannot_hold_back_the_site(self):
         # The card check has its own job after the wiki job; the wiki job and deployment never wait for it.

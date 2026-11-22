@@ -6,6 +6,29 @@ possible.
 ## Our Development Process
 ... (in particular how this is synced with internal changes to the project)
 
+## Picking a task
+
+The [site](https://facebookresearch.github.io/atlas-lean/) lists the
+formalization tasks that are ready now: statements to write in Lean and
+statements to prove, as `autoform work` finds them
+([What the tools own](docs/BLUEPRINT.md#what-the-tools-own)). It publishes
+them as
+[`tasks.json`](https://facebookresearch.github.io/atlas-lean/tasks.json), which
+each `main` build writes with `autoform work list --json`, together with the
+commit it was computed from. You don't need to build the repository to pick
+one, and people and agents follow the same steps:
+
+1. Take a task from `tasks.json`. `python3 scripts/next_task.py` prints the
+   next ones; `--json` prints them for agents.
+2. Skip a task that an open pull request names, by its article id (`af_…`) or
+   its Lean declaration, in its title, body or branch. `next_task.py` skips
+   those, including those an older pull request names, in its title, branch or
+   code, by the end of a declaration's name that no other task shares, and the
+   tasks of pull requests merged into `main` since `tasks.json` was computed.
+3. Open a draft pull request early, with the task's article id in its body, so
+   that others see the task is taken. Mark it ready for review when it is done,
+   or close it if you stop.
+
 ## Pull Requests
 We actively welcome your pull requests.
 

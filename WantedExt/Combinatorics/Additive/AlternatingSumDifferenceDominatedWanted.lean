@@ -30,8 +30,10 @@ namespace MetaMathlibExt
 
 open Pointwise
 
-/-- Lemma 1 (quoted from Nathanson): for `m ≥ 4` and `2 ≤ r ≤ m - 3`, the set
-`B = [0, m - 1] ∖ {r}` has `B + B = [0, 2m - 2]` and `B - B = [-(m - 1), m - 1]`.
+/-- **Sums and differences of an interval with one point removed.** Let $m$ and $r$ be integers
+with $m \ge 4$ and $2 \le r \le m - 3$, and let $B = \{0, 1, \dots, m - 1\} \setminus \{r\}$. Then
+the sumset $B + B = \{b + b' : b, b' \in B\}$ is $\{0, 1, \dots, 2m - 2\}$ and the difference set
+$B - B = \{b - b' : b, b' \in B\}$ is the set of integers from $-(m - 1)$ to $m - 1$.
 
 Source: Yorick Herrmann, Connor Hill, Merlin Phillips, Daniel Flores, Steven J. Miller and
 Steven Senger, *Additional Constructions of Sequences of Alternating Sum and Difference
@@ -42,14 +44,17 @@ public theorem_wanted interval_erase_add_sub {m r : ℤ} (hm : 4 ≤ m) (hr : 2 
       (Finset.Icc 0 (m - 1)).erase r - (Finset.Icc 0 (m - 1)).erase r =
         Finset.Icc (-(m - 1)) (m - 1)
 
-/-- Theorem 1: let `A₁` be an MSTD set of nonnegative integers with `0 ∈ A₁` (so
-`0 = min A₁`, as the paper's proof uses when it counts every sum `a + b + 2n` as new) and let
-`n > max A₁` be such that
-(a) `A₁ + A₁` and `A₁ - A₁` have the same number of residues modulo `n`, and (b) with
-`x = #{a ∈ A₁ : n + a ∉ A₁ + A₁}` and `y = #{b ∈ A₁ : n - b ∉ A₁ - A₁}`,
-`2y - x - 1 > |A₁ + A₁| - |A₁ - A₁|`. Define `A_{2l} = A_{2l-1} ∪ {ln}` and
-`A_{2l+1} = A_{2l-1} ∪ (A₁ + ln)` for `l ≥ 1`. Then `A_{2l}` is MDTS, `A_{2l+1}` is MSTD, and
-the sequence is strictly increasing.
+/-- **Alternating sum- and difference-dominated sets from shifted copies.** For a set $S$ of
+integers write $S + S = \{s + s' : s, s' \in S\}$ and $S - S = \{s - s' : s, s' \in S\}$. Let $A_1$
+be a finite set of integers with $|A_1 - A_1| < |A_1 + A_1|$ and $0 \in A_1$, and let $n$ be an
+integer with $0 \le a < n$ for every $a \in A_1$. Suppose that (a) $A_1 + A_1$ and $A_1 - A_1$
+meet the same number of residue classes modulo $n$, and (b) with
+$x = \#\{a \in A_1 : n + a \notin A_1 + A_1\}$ and $y = \#\{b \in A_1 : n - b \notin A_1 - A_1\}$
+we have $2y - x - 1 > |A_1 + A_1| - |A_1 - A_1|$. Let $A_1, A_2, A_3, \dots$ be finite sets of
+integers, starting with this $A_1$, such that for every $l \ge 1$, $A_{2l} = A_{2l-1} \cup \{ln\}$
+and $A_{2l+1} = A_{2l-1} \cup \{a + ln : a \in A_1\}$. Then for every $l \ge 1$,
+$|A_{2l} + A_{2l}| < |A_{2l} - A_{2l}|$, $|A_{2l+1} - A_{2l+1}| < |A_{2l+1} + A_{2l+1}|$ and
+$A_{2l-1} \subsetneq A_{2l} \subsetneq A_{2l+1}$.
 
 Source: Yorick Herrmann, Connor Hill, Merlin Phillips, Daniel Flores, Steven J. Miller and
 Steven Senger, *Additional Constructions of Sequences of Alternating Sum and Difference
@@ -67,11 +72,13 @@ public theorem_wanted alternating_sequence_of_copies (A₁ : Finset ℤ) (n : �
       (A (2 * l + 1) - A (2 * l + 1)).card < (A (2 * l + 1) + A (2 * l + 1)).card ∧
       A (2 * l - 1) ⊂ A (2 * l) ∧ A (2 * l) ⊂ A (2 * l + 1)
 
-/-- Theorem 2 (quoted from Nathanson): let `m ≥ 4`, `1 ≤ d ≤ m - 1`, `d ≠ m / 2`, and
-`k ≥ 3` if `d < m / 2`, `k ≥ 4` if `d > m / 2`. With `B = [0, m - 1] ∖ {d}`,
-`L = {m - d, 2m - d, …, km - d}`, `a* = (k + 1)m - 2d`, `A* = B ∪ L ∪ (a* - B)` and
-`A = A* ∪ {m}`, the set `A` is MSTD, `2m ∈ (A + A) ∖ (A* + A*)`, and
-`A* - {m} ⊆ A* - A*`. (`d ≠ m / 2` is written `2d ≠ m`.)
+/-- **Nathanson's sum-dominated set.** For a set $S$ of integers write
+$S + S = \{s + s' : s, s' \in S\}$ and $S - S = \{s - s' : s, s' \in S\}$. Let $m$, $d$, $k$ be
+integers with $m \ge 4$, $1 \le d \le m - 1$ and $2d \ne m$, and suppose $k \ge 3$ if $2d < m$
+and $k \ge 4$ if $2d > m$. Let $B = \{0, 1, \dots, m - 1\} \setminus \{d\}$,
+$L = \{jm - d : 1 \le j \le k\}$, $A^* = B \cup L \cup \{(k + 1)m - 2d - b : b \in B\}$ and
+$A = A^* \cup \{m\}$. Then $|A - A| < |A + A|$, $2m \in A + A$, $2m \notin A^* + A^*$, and
+$\{a - m : a \in A^*\} \subseteq A^* - A^*$.
 
 Source: Yorick Herrmann, Connor Hill, Merlin Phillips, Daniel Flores, Steven J. Miller and
 Steven Senger, *Additional Constructions of Sequences of Alternating Sum and Difference
@@ -84,15 +91,21 @@ public theorem_wanted nathanson_mstd_construction {m d k : ℤ} (hm : 4 ≤ m) (
     let A := insert m As
     (A - A).card < (A + A).card ∧ 2 * m ∈ A + A ∧ 2 * m ∉ As + As ∧ As - {m} ⊆ As - As
 
-/-- Theorem 3: let `A = A* ∪ {m}` be as in Theorem 2 with `m ≡ 0 (mod 4)` and
-`d ∈ {m / 4, 3m / 4}`. Then `A₁ = A ∪ {-d, (k + 1)m - d}` is MSTD. For `r ≥ 1` define
-`A_{2r} = A_{2r-1} ∪ {(k + r + 1)m - d}` and `A_{2r+1} = A_{2r-1} ∪ {-rm - d, (k + r + 1)m - d}`.
-Then `A_{2r}` is MDTS, `A_{2r+1}` is MSTD, the sequence is strictly increasing, and with
-`A*_i = A_i ∖ {m}`: `m + A*_{2r-1} ⊆ A*_{2r-1} + A*_{2r-1}`,
-`m - A*_{2r-1} ⊆ A*_{2r-1} - A*_{2r-1}`, `|A_{2r-1} + A_{2r-1}| = |A_{2r-1} - A_{2r-1}| + 1`,
-and `|A_{2r} + A_{2r}| ≤ |A_{2r} - A_{2r}| - m + 3`. The extracted condition on `d` (control
-glyphs in the record) is read as `d ∈ {m/4, 3m/4}`, as in the paper's proof, which treats
-exactly these two values; the lost cardinality bars in items 3 and 4 are restored.
+/-- **Alternating sum- and difference-dominated sets from Nathanson's construction.** For a set
+$S$ of integers write $S + S = \{s + s' : s, s' \in S\}$, $S - S = \{s - s' : s, s' \in S\}$,
+$c + S = \{c + s : s \in S\}$ and $c - S = \{c - s : s \in S\}$. Let $m$, $d$, $k$ be integers with
+$m \ge 4$, $m \equiv 0 \pmod 4$ and $4d = m$ or $4d = 3m$, and suppose $k \ge 3$ if $2d < m$ and
+$k \ge 4$ if $2d > m$. Let $B = \{0, 1, \dots, m - 1\} \setminus \{d\}$,
+$L = \{jm - d : 1 \le j \le k\}$ and $A^* = B \cup L \cup \{(k + 1)m - 2d - b : b \in B\}$. Let
+$A_1, A_2, A_3, \dots$ be finite sets of integers with $A_1 = A^* \cup \{m, -d, (k + 1)m - d\}$
+and, for every $r \ge 1$, $A_{2r} = A_{2r-1} \cup \{(k + r + 1)m - d\}$ and
+$A_{2r+1} = A_{2r-1} \cup \{-rm - d, (k + r + 1)m - d\}$. Then $|A_1 - A_1| < |A_1 + A_1|$, and
+for every $r \ge 1$, writing $A'_{2r-1} = A_{2r-1} \setminus \{m\}$: we have
+$|A_{2r} + A_{2r}| < |A_{2r} - A_{2r}|$ and $|A_{2r+1} - A_{2r+1}| < |A_{2r+1} + A_{2r+1}|$;
+$A_{2r-1} \subsetneq A_{2r} \subsetneq A_{2r+1}$; $m + A'_{2r-1} \subseteq A'_{2r-1} + A'_{2r-1}$
+and $m - A'_{2r-1} \subseteq A'_{2r-1} - A'_{2r-1}$;
+$|A_{2r-1} + A_{2r-1}| = |A_{2r-1} - A_{2r-1}| + 1$; and
+$|A_{2r} + A_{2r}| \le |A_{2r} - A_{2r}| - m + 3$.
 
 Source: Yorick Herrmann, Connor Hill, Merlin Phillips, Daniel Flores, Steven J. Miller and
 Steven Senger, *Additional Constructions of Sequences of Alternating Sum and Difference

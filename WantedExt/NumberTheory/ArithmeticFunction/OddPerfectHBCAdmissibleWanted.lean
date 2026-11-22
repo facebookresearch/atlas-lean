@@ -18,11 +18,11 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- A product comparison for `1 - 1/x`: let `(z_i)` and `(y_i)` be non-decreasing `k`-tuples of
-reals greater than one with `∏_{i ≤ l} z_i ≤ ∏_{i ≤ l} y_i` for all `1 ≤ l ≤ k` (10). Then
-`∏_{i=1}^k (1 - 1/z_i) ≤ ∏_{i=1}^k (1 - 1/y_i)`, with equality if and only if `z_i = y_i` for
-all `i`. Tuples are indexed by `Fin k` (`i = 0, …, k-1`), and the prefix condition is stated for
-every `l ≤ k` (the case `l = 0` is the empty product).
+/-- **Comparison of products of $1 - 1/x$ under prefix-product domination.** Let $k \ge 0$ and let
+$z_1 \le \dots \le z_k$ and $y_1 \le \dots \le y_k$ be real numbers, all greater than $1$, such
+that $z_1 \cdots z_l \le y_1 \cdots y_l$ for every $l$ with $0 \le l \le k$ (for $l = 0$ both sides
+are the empty product). Then $\prod_{i=1}^k (1 - 1/z_i) \le \prod_{i=1}^k (1 - 1/y_i)$, with
+equality if and only if $z_i = y_i$ for all $i$.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Lemma 2 (`integers-2024-A114-lem-2`), citing its reference [4]. -/
@@ -33,12 +33,10 @@ public theorem_wanted prod_one_sub_inv_le_of_prefix_prod_le (k : ℕ) (z y : Fin
     ∏ i, (1 - 1 / z i) ≤ ∏ i, (1 - 1 / y i) ∧
       (∏ i, (1 - 1 / z i) = ∏ i, (1 - 1 / y i) ↔ z = y)
 
-/-- First-element bounds for HBC-admissible `k`-tuples for `1/2`: let `y_1 < ⋯ < y_k` be positive
-integers with `∏_{i=1}^k (1 - 1/y_i) ≤ 1/2 < ∏_{i=1}^{k-1} (1 - 1/y_i)` (32). Then
-(i) `y_1 ≤ k + 1`; (ii) if all `y_i` are odd, `y_1 < 2(k + 3)/3`; (iii) if all `y_i` are prime,
-`y_1 < 3k/7 + 3` (33). The tuple is strictly increasing, as in the source's Theorem 1, whose
-tuples (18) the source calls HBC-admissible; it is indexed by `Fin k` with `k ≥ 1`, `y_1` being
-`y ⟨0, hk⟩`.
+/-- **First-element bounds for HBC-admissible tuples at $1/2$.** Let $k \ge 1$ and let
+$y_1 < y_2 < \dots < y_k$ be positive integers with
+$\prod_{i=1}^{k} (1 - 1/y_i) \le 1/2 < \prod_{i=1}^{k-1} (1 - 1/y_i)$. Then $y_1 \le k + 1$; if
+every $y_i$ is odd, then $y_1 < 2(k + 3)/3$; and if every $y_i$ is prime, then $y_1 < 3k/7 + 3$.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Lemma 5 (`integers-2024-A114-lem-5`). -/
@@ -51,34 +49,33 @@ public theorem_wanted hbcAdmissible_half_first_le (k : ℕ) (hk : 0 < k) (y : Fi
       ((∀ i, Odd (y i)) → (y ⟨0, hk⟩ : ℚ) < 2 * (k + 3) / 3) ∧
       ((∀ i, (y i).Prime) → (y ⟨0, hk⟩ : ℚ) < 3 * k / 7 + 3)
 
-/-- The smallest prime divisor `p_1` of an odd perfect number `N` with `m` distinct prime
-divisors satisfies `p_1 < 3m/7 + 3` (36). An odd perfect number is `Odd N ∧ N.Perfect`,
-`p_1 = N.minFac` and `m = N.primeFactors.card`.
+/-- **A linear bound on the smallest prime divisor of an odd perfect number.** If $N$ is an odd
+perfect number with $m$ distinct prime divisors, then the smallest prime divisor $p_1$ of $N$
+satisfies $p_1 < 3m/7 + 3$.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Lemma 6 (`integers-2024-A114-lem-6`). -/
 public theorem_wanted oddPerfect_minFac_lt (N : ℕ) (hodd : Odd N) (hperf : N.Perfect) :
     (N.minFac : ℚ) < 3 * N.primeFactors.card / 7 + 3
 
-/-- Sylvester (1888), quoted as Lemma 1 (ii): an odd perfect number has at least five distinct
-prime divisors. Odd perfect numbers are `Odd N ∧ N.Perfect`; item (i) of the lemma (Euler's form)
-is the proved `MetaMathlibExt.euler_odd_perfect_form`.
+/-- **Sylvester's bound on the number of prime divisors of an odd perfect number.** Every odd
+perfect number has at least five distinct prime divisors.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Lemma 1 (ii) (`integers-2024-A114-lem-1`). -/
 public theorem_wanted oddPerfect_five_le_card_primeFactors (N : ℕ) (hodd : Odd N)
     (hperf : N.Perfect) : 5 ≤ N.primeFactors.card
 
-/-- Dickson (1913), quoted as Lemma 1 (iii): for every `m`, only finitely many odd perfect numbers
-have exactly `m` distinct prime divisors.
+/-- **Dickson's finiteness theorem for odd perfect numbers.** For every natural number $m$, there
+are only finitely many odd perfect numbers with exactly $m$ distinct prime divisors.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Lemma 1 (iii) (`integers-2024-A114-lem-1`). -/
 public theorem_wanted finite_setOf_oddPerfect_card_primeFactors_eq (m : ℕ) :
     {N : ℕ | Odd N ∧ N.Perfect ∧ N.primeFactors.card = m}.Finite
 
-/-- Steuerwald (1937), quoted as Lemma 1 (iv): the even exponents of an odd perfect number are not
-all equal to two, i.e. some prime divisor has an even exponent different from `2`.
+/-- **Steuerwald's theorem on odd perfect numbers.** If $N$ is an odd perfect number, then $N$ has
+a prime divisor whose exponent in the prime factorization of $N$ is even and different from $2$.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Lemma 1 (iv) (`integers-2024-A114-lem-1`). -/
@@ -86,8 +83,9 @@ public theorem_wanted oddPerfect_exists_even_factorization_ne_two (N : ℕ) (hod
     (hperf : N.Perfect) :
     ∃ p ∈ N.primeFactors, Even (N.factorization p) ∧ N.factorization p ≠ 2
 
-/-- McDaniel (1970), quoted as Lemma 1 (v): an odd perfect number below `10 ^ 9118` has a prime
-divisor whose exponent is at least six.
+/-- **McDaniel's exponent bound for odd perfect numbers below $10^{9118}$.** If $N$ is an odd
+perfect number with $N < 10^{9118}$, then $N$ has a prime divisor whose exponent in the prime
+factorization of $N$ is at least $6$.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Lemma 1 (v) (`integers-2024-A114-lem-1`). -/
@@ -95,16 +93,17 @@ public theorem_wanted oddPerfect_exists_six_le_factorization_of_lt (N : ℕ) (ho
     (hperf : N.Perfect) (hN : N < 10 ^ 9118) :
     ∃ p ∈ N.primeFactors, 6 ≤ N.factorization p
 
-/-- Kishore (1981) and Hagis (1983), quoted as Lemma 1 (vi): an odd perfect number not divisible by
-three has at least eleven distinct prime divisors.
+/-- **Odd perfect numbers not divisible by three have at least eleven prime divisors.** Every odd
+perfect number that is not divisible by $3$ has at least $11$ distinct prime divisors. This is due
+to Kishore (1981) and Hagis (1983).
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Lemma 1 (vi) (`integers-2024-A114-lem-1`). -/
 public theorem_wanted oddPerfect_eleven_le_card_primeFactors_of_not_three_dvd (N : ℕ)
     (hodd : Odd N) (hperf : N.Perfect) (h3 : ¬ 3 ∣ N) : 11 ≤ N.primeFactors.card
 
-/-- Nielsen (2015), quoted as Lemma 1 (vii): an odd perfect number has at least ten distinct prime
-divisors, and at least twelve if it is not divisible by three.
+/-- **Nielsen's bound on the number of prime divisors of an odd perfect number.** Every odd perfect
+number $N$ has at least ten distinct prime divisors, and at least twelve if $3$ does not divide $N$.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Lemma 1 (vii) (`integers-2024-A114-lem-1`). -/
@@ -112,9 +111,9 @@ public theorem_wanted oddPerfect_ten_le_card_primeFactors (N : ℕ) (hodd : Odd 
     (hperf : N.Perfect) :
     10 ≤ N.primeFactors.card ∧ (¬ 3 ∣ N → 12 ≤ N.primeFactors.card)
 
-/-- Zelinsky (2021), quoted as Lemma 1 (viii): an odd perfect number with `m` distinct prime
-divisors has a prime divisor less than `(m - 1) / 2` (real division; equivalently the smallest
-prime divisor `N.minFac` is below it).
+/-- **Zelinsky's bound on the smallest prime divisor of an odd perfect number.** If $N$ is an odd
+perfect number with $m$ distinct prime divisors, then the smallest prime divisor $p$ of $N$
+satisfies $p < (m - 1)/2$.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Lemma 1 (viii) (`integers-2024-A114-lem-1`). -/
@@ -122,18 +121,17 @@ public theorem_wanted oddPerfect_minFac_lt_card_sub_one_div_two (N : ℕ) (hodd 
     (hperf : N.Perfect) :
     (N.minFac : ℚ) < ((N.primeFactors.card : ℚ) - 1) / 2
 
-/-- Ochem and Rao (2012), quoted as Lemma 1 (ix): every odd perfect number exceeds `10 ^ 1500`.
+/-- **Ochem–Rao lower bound for odd perfect numbers.** Every odd perfect number exceeds $10^{1500}$.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Lemma 1 (ix) (`integers-2024-A114-lem-1`). -/
 public theorem_wanted ten_pow_fifteen_hundred_lt_of_oddPerfect (N : ℕ) (hodd : Odd N)
     (hperf : N.Perfect) : 10 ^ 1500 < N
 
-/-- Goto and Ohno (2008) and Iannucci (1999, 2000), quoted as Lemma 1 (x): the largest, second
-largest and third largest prime divisors of an odd perfect number are at least `10 ^ 8`, `10 ^ 4`
-and `100`. Stated as the existence of three distinct prime divisors `p ≥ 10 ^ 8`, `q ≥ 10 ^ 4`,
-`r ≥ 100`, which is equivalent: the `j`-th largest prime divisor is at least the `j`-th largest of
-`p, q, r`, and conversely the three largest prime divisors are such a triple.
+/-- **Goto–Ohno–Iannucci bounds on the largest prime divisors of an odd perfect number.** If $N$ is
+an odd perfect number, then $N$ has three distinct prime divisors $p$, $q$, $r$ with
+$p \ge 10^8$, $q \ge 10^4$ and $r \ge 100$. Equivalently, the largest, second largest and third
+largest prime divisors of $N$ are at least $10^8$, $10^4$ and $100$ respectively.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Lemma 1 (x) (`integers-2024-A114-lem-1`). -/
@@ -142,11 +140,12 @@ public theorem_wanted oddPerfect_exists_three_large_prime_divisors (N : ℕ) (ho
     ∃ p ∈ N.primeFactors, ∃ q ∈ N.primeFactors, ∃ r ∈ N.primeFactors,
       p ≠ q ∧ p ≠ r ∧ q ≠ r ∧ 10 ^ 8 ≤ p ∧ 10 ^ 4 ≤ q ∧ 100 ≤ r
 
-/-- Calibrating numbers for `a/(a + d)`: with `α = (a + d)/d`, `n_i = 1 + α^{2^{i-1}}` for
-`1 ≤ i < k` and `n_k = α^{2^{k-1}}` (Definition 3). Then `∏_{i=1}^k (1 - 1/n_i) = a/(a + d)` (15),
-`∏_{i=1}^j n_i = (d/a)(α^{2^j} - 1)` for `1 ≤ j < k` (16), and
-`∏_{i=1}^k n_i = (d/a)(α^{2^k} - α^{2^{k-1}})` (17). Stated over `ℚ` for positive integers `a`, `d`
-(coprimality is not needed) and `k ≥ 1`.
+/-- **Product identities for calibrating numbers.** Let $a$ and $d$ be positive integers and let
+$k \ge 1$. Put $\alpha = (a + d)/d$, and let $n_i = 1 + \alpha^{2^{i-1}}$ for $1 \le i < k$ and
+$n_k = \alpha^{2^{k-1}}$ (the calibrating numbers for $a/(a + d)$). Then
+$\prod_{i=1}^{k} (1 - 1/n_i) = a/(a + d)$; for every $j$ with $1 \le j < k$,
+$\prod_{i=1}^{j} n_i = (d/a)(\alpha^{2^j} - 1)$; and
+$\prod_{i=1}^{k} n_i = (d/a)(\alpha^{2^k} - \alpha^{2^{k-1}})$.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Lemma 3. -/
@@ -158,14 +157,17 @@ public theorem_wanted hbcCalibrating_prod_identities (a d k : ℕ) (ha : 0 < a) 
       (∀ j, 1 ≤ j → j < k → ∏ i ∈ Finset.Icc 1 j, n i = (d / a) * (α ^ 2 ^ j - 1)) ∧
       ∏ i ∈ Finset.Icc 1 k, n i = (d / a) * (α ^ 2 ^ k - α ^ 2 ^ (k - 1))
 
-/-- Main theorem: let `a, d` be coprime positive integers and `y_1 < ⋯ < y_k` positive integers
-with `∏_{i=1}^k (1 - 1/y_i) ≤ a/(a + d) < ∏_{i=1}^{k-1} (1 - 1/y_i)` (18). With `α = (a + d)/d`
-and the calibrating numbers `n_i` of Definition 3, some `κ ∈ [1, k]` has
-`∏_{i ≤ κ} y_i ≤ ∏_{i ≤ κ} n_i` (19); and if `κ_max` is the largest such `κ`, then
-`a ∏_{i=1}^k y_i ≤ d^η F_k(α(κ_max))` (21), where `F_k(x) = x^{2^k} - x^{2^{k-1}}`,
-`α(κ) = α d^{1/2^κ}` for `κ < k`, `α(k) = α` (20), and `η = 1` if `κ_max = k`, else `0`.
-Tuples are indexed `1, …, k` as functions `ℕ → ℕ`; `κ_max` is characterized by (19) holding at
-`κ` and failing at every larger `κ' ≤ k`.
+/-- **Stone's product bound for HBC-admissible tuples.** Let $a$ and $d$ be coprime positive
+integers, let $k \ge 1$, and let $y_1 < y_2 < \dots < y_k$ be positive integers with
+$\prod_{i=1}^{k} (1 - 1/y_i) \le a/(a + d) < \prod_{i=1}^{k-1} (1 - 1/y_i)$ (the source calls such
+a tuple HBC-admissible for $a/(a + d)$). Put $\alpha = (a + d)/d$, let $n_i = 1 + \alpha^{2^{i-1}}$
+for $1 \le i < k$ and $n_k = \alpha^{2^{k-1}}$, and let $F_k(x) = x^{2^k} - x^{2^{k-1}}$. Then some
+$\kappa$ with $1 \le \kappa \le k$ has $\prod_{i=1}^{\kappa} y_i \le \prod_{i=1}^{\kappa} n_i$.
+Moreover, let $\kappa$ with $1 \le \kappa \le k$ satisfy this inequality while every $\kappa'$ with
+$\kappa < \kappa' \le k$ satisfies $\prod_{i=1}^{\kappa'} n_i < \prod_{i=1}^{\kappa'} y_i$, so that
+$\kappa$ is the largest such index. If $\kappa < k$, then
+$a \prod_{i=1}^{k} y_i \le F_k(\alpha d^{1/2^{\kappa}})$; if $\kappa = k$, then
+$a \prod_{i=1}^{k} y_i \le d \, F_k(\alpha)$.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Theorem 1. -/
@@ -183,8 +185,10 @@ public theorem_wanted hbcAdmissible_exists_prefix_le_and_prod_le (a d k : ℕ) (
         a * ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤
           (if κ = k then (d : ℝ) else 1) * (ακ κ ^ 2 ^ k - ακ κ ^ 2 ^ (k - 1))
 
-/-- Under the hypotheses of Theorem 1,
-`a ∏_{i=1}^k y_i ≤ ((a + d)/√d)^{2^k} - ((a + d)/√d)^{2^{k-1}}` (26).
+/-- **Stone's $\sqrt{d}$ product bound for HBC-admissible tuples.** Let $a$ and $d$ be coprime
+positive integers, let $k \ge 1$, and let $y_1 < y_2 < \dots < y_k$ be positive integers with
+$\prod_{i=1}^{k} (1 - 1/y_i) \le a/(a + d) < \prod_{i=1}^{k-1} (1 - 1/y_i)$. Put
+$\beta = (a + d)/\sqrt{d}$. Then $a \prod_{i=1}^{k} y_i \le \beta^{2^k} - \beta^{2^{k-1}}$.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Corollary 1. -/
@@ -195,8 +199,11 @@ public theorem_wanted hbcAdmissible_prod_le_sqrt (a d k : ℕ) (ha : 0 < a) (hd 
     a * ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤
       ((a + d) / Real.sqrt d) ^ 2 ^ k - ((a + d) / Real.sqrt d) ^ 2 ^ (k - 1)
 
-/-- Under the hypotheses of Theorem 1 with `k ≥ 2`, unless `y_1 = ⌊1 + α⌋` (`α = (a + d)/d`),
-`a ∏_{i=1}^k y_i ≤ ((a + d)/d^{3/4})^{2^k} - ((a + d)/d^{3/4})^{2^{k-1}}` (27).
+/-- **Stone's $d^{3/4}$ product bound for HBC-admissible tuples.** Let $a$ and $d$ be coprime
+positive integers, let $k \ge 2$, and let $y_1 < y_2 < \dots < y_k$ be positive integers with
+$\prod_{i=1}^{k} (1 - 1/y_i) \le a/(a + d) < \prod_{i=1}^{k-1} (1 - 1/y_i)$ and
+$y_1 \ne \lfloor 1 + (a + d)/d \rfloor$. Put $\beta = (a + d)/d^{3/4}$. Then
+$a \prod_{i=1}^{k} y_i \le \beta^{2^k} - \beta^{2^{k-1}}$.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Corollary 2. -/
@@ -208,9 +215,10 @@ public theorem_wanted hbcAdmissible_prod_le_of_ne_floor (a d k : ℕ) (ha : 0 < 
     a * ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤
       ((a + d) / (d : ℝ) ^ ((3 : ℝ) / 4)) ^ 2 ^ k - ((a + d) / (d : ℝ) ^ ((3 : ℝ) / 4)) ^ 2 ^ (k - 1)
 
-/-- For `k ≥ 3` and every HBC-admissible `k`-tuple `y_1 < ⋯ < y_k` for `7/10`
-(`∏_{i=1}^k (1 - 1/y_i) ≤ 7/10 < ∏_{i=1}^{k-1} (1 - 1/y_i)`),
-`∏_{i=1}^k y_i ≤ (2/7)((√15)^{2^k} - (√15)^{2^{k-1}})` (31). The sharpness remark is not stated.
+/-- **Product bound for HBC-admissible tuples at $7/10$.** Let $k \ge 3$ and let
+$y_1 < y_2 < \dots < y_k$ be positive integers with
+$\prod_{i=1}^{k} (1 - 1/y_i) \le 7/10 < \prod_{i=1}^{k-1} (1 - 1/y_i)$. Then
+$\prod_{i=1}^{k} y_i \le \frac{2}{7}\bigl(\sqrt{15}^{\,2^k} - \sqrt{15}^{\,2^{k-1}}\bigr)$.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Lemma 4. -/
@@ -220,11 +228,13 @@ public theorem_wanted hbcAdmissible_seven_tenths_prod_le (k : ℕ) (hk : 3 ≤ k
     ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤
       2 / 7 * (Real.sqrt 15 ^ 2 ^ k - Real.sqrt 15 ^ 2 ^ (k - 1))
 
-/-- Let `p_1 < ⋯ < p_k` be primes with `∏_{i=1}^k (1 - 1/p_i) ≤ 1/2 < ∏_{i=1}^{k-1} (1 - 1/p_i)`
-(37) and `p_1 ≥ 5`. With `F_k(x) = x^{2^k} - x^{2^{k-1}}`: `∏ p_i ≤ F_k(√(8/3^{7/8}))` (38);
-if `6 ≤ p_1 < 18`, `∏ p_i ≤ F_k(√(12/5^{15/16}))` (39); if `18 ≤ p_1 < 258`,
-`∏ p_i ≤ F_k(√(512/255^{31/32}))` (40); if `p_1 ≥ 258`,
-`∏ p_i ≤ F_k(√(2^{5/4} (2^{16} + 1)/2^{16}))` (41).
+/-- **Product bounds for prime tuples at $1/2$ by size of the first prime.** Let
+$p_1 < p_2 < \dots < p_k$ be primes with
+$\prod_{i=1}^{k} (1 - 1/p_i) \le 1/2 < \prod_{i=1}^{k-1} (1 - 1/p_i)$ and $p_1 \ge 5$, and let
+$F_k(x) = x^{2^k} - x^{2^{k-1}}$ and $P = \prod_{i=1}^{k} p_i$. Then $P \le F_k(\sqrt{8/3^{7/8}})$.
+Moreover, if $6 \le p_1 < 18$, then $P \le F_k(\sqrt{12/5^{15/16}})$; if $18 \le p_1 < 258$, then
+$P \le F_k(\sqrt{512/255^{31/32}})$; and if $p_1 \ge 258$, then
+$P \le F_k\bigl(\sqrt{2^{5/4} (2^{16} + 1)/2^{16}}\bigr)$.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Lemma 7. -/
@@ -243,9 +253,9 @@ public theorem_wanted hbcAdmissible_half_prime_prod_le_of_five_le (k : ℕ) (y :
         ∏ i ∈ Finset.Icc 1 k, (y i : ℝ) ≤
           F (Real.sqrt ((2 : ℝ) ^ ((5 : ℝ) / 4) * (2 ^ 16 + 1) / 2 ^ 16)))
 
-/-- Let `p_1 < ⋯ < p_k` be primes with `∏_{i=1}^k (1 - 1/p_i) ≤ 1/2 < ∏_{i=1}^{k-1} (1 - 1/p_i)`
-(51) and `p_1 = 5`. Then `∏_{i=1}^k p_i ≤ F_k(√(8/3^{31/32}))` (52), where
-`F_k(x) = x^{2^k} - x^{2^{k-1}}`.
+/-- **Product bound for prime tuples at $1/2$ starting at $5$.** Let $p_1 < p_2 < \dots < p_k$ be
+primes with $\prod_{i=1}^{k} (1 - 1/p_i) \le 1/2 < \prod_{i=1}^{k-1} (1 - 1/p_i)$ and $p_1 = 5$.
+Put $x = \sqrt{8/3^{31/32}}$. Then $\prod_{i=1}^{k} p_i \le x^{2^k} - x^{2^{k-1}}$.
 
 Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
 (2024), Article A114, Lemma 8. -/

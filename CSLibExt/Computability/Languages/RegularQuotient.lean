@@ -41,8 +41,12 @@ namespace RegularQuotient
 
 variable {σ : Type*} (M : DFA T σ)
 
-/-- The DFA for the right quotient: the transitions of `M`, accepting the states from which some
-word of `R` reaches an accepting state of `M` (a classical set of states). -/
+/-- **DFA for the right quotient by a language.** Given a DFA $M$ over an alphabet $T$ with state
+set $\sigma$ and a language $R$ over $T$, this is the DFA with the same states, transition function
+and start state as $M$, whose accepting states are the states $q$ from which some word of $R$
+leads $M$ to an accepting state of $M$.
+
+The accepting set is defined by quantifying over $R$, so it is not computable in general. -/
 def rightDFA (R : Language T) : DFA T σ :=
   ⟨M.step, M.start, {q | ∃ y ∈ R, M.evalFrom q y ∈ M.accept}⟩
 
@@ -53,8 +57,13 @@ theorem rightDFA_accepts (R : Language T) :
     ∃ y ∈ R, M.evalFrom M.start (x ++ y) ∈ M.accept
   simp only [DFA.evalFrom_of_append]
 
-/-- The NFA for the left quotient: the transitions of `M`, starting from the states reached by
-the words of `R` (a classical set of states). -/
+/-- **NFA for the left quotient by a language.** Given a DFA $M$ over an alphabet $T$ with state
+set $\sigma$ and a language $R$ over $T$, this is the NFA with state set $\sigma$ and the same
+accepting states as $M$, in which from a state $q$ on a letter $a$ the only possible move is to
+the state $M$ reaches from $q$ on $a$, and whose start states are the states that $M$ reaches from
+its start state on the words of $R$.
+
+The set of start states is defined by quantifying over $R$, so it is not computable in general. -/
 def leftNFA (R : Language T) : NFA T σ where
   step q a := {M.step q a}
   start := {q | ∃ x ∈ R, M.eval x = q}
@@ -90,13 +99,17 @@ theorem leftNFA_accepts (R : Language T) :
 
 end RegularQuotient
 
-/-- **Regular languages are closed under right quotients by arbitrary languages.** -/
+/-- **Regular languages are closed under right quotients by arbitrary languages.** If $L$ is a
+regular language over an alphabet $T$ and $R$ is any language over $T$, then the right quotient
+$\{x \mid \exists y \in R,\ xy \in L\}$ of $L$ by $R$ is regular. -/
 theorem IsRegular.rightQuotientSet {L : Language T} (hL : L.IsRegular) (R : Language T) :
     Language.IsRegular ({x | ∃ y ∈ R, x ++ y ∈ L} : Language T) := by
   obtain ⟨σ, _, M, rfl⟩ := hL
   exact ⟨σ, inferInstance, RegularQuotient.rightDFA M R, RegularQuotient.rightDFA_accepts M R⟩
 
-/-- **Regular languages are closed under left quotients by arbitrary languages.** -/
+/-- **Regular languages are closed under left quotients by arbitrary languages.** If $L$ is a
+regular language over an alphabet $T$ and $R$ is any language over $T$, then the left quotient
+$\{y \mid \exists x \in R,\ xy \in L\}$ of $L$ by $R$ is regular. -/
 theorem IsRegular.leftQuotientSet {L : Language T} (hL : L.IsRegular) (R : Language T) :
     Language.IsRegular ({y | ∃ x ∈ R, x ++ y ∈ L} : Language T) := by
   classical
