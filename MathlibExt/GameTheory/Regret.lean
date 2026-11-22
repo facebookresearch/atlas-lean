@@ -22,7 +22,12 @@ import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 
 This file is the canonical regret vocabulary for online learning in games. It has
 two layers. The base layer is game-free: a finite action type `K`, loss vectors
-over a horizon `T`, played distributions, and external, swap, and average regret.
+over a horizon `T`, played weight functions (distributions when each round's
+weights lie in the simplex, `IsSimplex`), and external, swap, and average
+regret. Following `NoRegretDynamics` and `CorrelatedEquilibrium`, play is a
+raw weight function and distribution facts are carried as `IsSimplex`
+hypotheses; `IsSimplex.toStdSimplex` and `isSimplex_weights` bridge to
+`Convexity.StdSimplex` points.
 The game layer, which induces a player's loss vector from the opponents' mixed
 play in a finite normal-form cost game, lives in
 `MathlibExt/GameTheory/RegretInducedLoss.lean`, so this base module stays
@@ -34,7 +39,8 @@ Base definitions (C1):
 
 * `IsSimplex`: the probability simplex on a finite type.
 * `cumulativeLoss`: cumulative loss of a fixed action.
-* `expectedLoss`: expected loss of the played distributions.
+* `expectedLoss`: play-weighted loss; the expected loss when play is a
+  distribution.
 * `swapRegret`: expected loss minus the best action remapping's loss.
 * `externalRegret`: expected loss minus the best fixed action's cumulative loss.
 * `averageRegret`: external regret divided by the horizon.
@@ -110,8 +116,9 @@ theorem isSimplex_weights (x : Convexity.StdSimplex ℝ K) :
 def cumulativeLoss (loss : Fin T → K → ℝ) (a : K) : ℝ :=
   ∑ t, loss t a
 
-/-- Expected loss of the played distributions against the losses.
-(C1 base defs) -/
+/-- Play-weighted loss `∑ t, ∑ a, play t a * loss t a`; when each `play t`
+is a distribution (`IsSimplex (play t)`), the expected loss of the played
+distributions. (C1 base defs) -/
 def expectedLoss (play loss : Fin T → K → ℝ) : ℝ :=
   ∑ t, ∑ a, play t a * loss t a
 
