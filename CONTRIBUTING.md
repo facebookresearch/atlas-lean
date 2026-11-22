@@ -276,10 +276,12 @@ those triggers, also runs on pushes to any branch but `main` or on another event
 that could report its checks for another tree (such as `pull_request_target`),
 can skip the job that reports the check or, through a step-level condition, the
 job's own check, checks out another ref or repository in it, moves it off Ubuntu
-runners or out of bash, renames the check or puts an expression in its job name,
-lets another job report (or possibly report) the same name, or uses a
-concurrency group that the test does not know to differ between PRs and between
-merge groups, or that another workflow's group could match.
+runners, into a container or out of bash, sets environment variables that could
+change how its steps run (only `PYTHONDONTWRITEBYTECODE` is allowed), renames
+the check or puts an expression in its job name, lets another job report (or
+possibly report) the same name, or uses a concurrency group that the test does
+not know to differ between PRs and between merge groups, or that another
+workflow's group could match.
 
 The other checks are advisory. The bump guard's `guard` checks Lean and Mathlib
 pin changes on PRs and merge groups; on PRs it runs through

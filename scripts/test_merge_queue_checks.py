@@ -11,13 +11,17 @@ fails if a required workflow:
   a job-level `if`, a matrix, or a prerequisite that is not required itself;
 - can skip the job's own check: the job needs a step that is exactly the
   command running it, with no step-level `if` or `continue-on-error`;
-- leaves Ubuntu runners (the build needs a full Ubuntu VM), or runs its steps in
-  a shell other than bash by default (a job in a container defaults to `sh`) or
-  outside the repository root;
+- leaves Ubuntu runners (the build needs a full Ubuntu VM), runs in a
+  container, or runs its steps in a shell other than bash by default or outside
+  the repository root;
+- sets an environment variable other than `PYTHONDONTWRITEBYTECODE` for the
+  whole workflow, for the job or on its checked steps, or has a step that
+  writes `$GITHUB_ENV`: a variable such as `BASH_ENV` makes bash run a file
+  before each step's command, which could exit early and report success;
 - checks out another ref or repository, or only part of the tree (any checkout
   input beyond credentials, history and progress settings), in that job, so
   that the check would report on the PR or merge group without testing all of
-  its tree; or runs `build` in a container;
+  its tree;
 - renames the check, puts an expression in the job's name, lets another job
   report (or possibly report, through an expression in its name) the same
   name, or moves the job into a reusable workflow (which reports
@@ -76,6 +80,8 @@ RUN_THIS_TEST = ("repository integrity", "source-diagnostics")
 COMMAND = ('"$RUNNER_TEMP/merge-queue-venv/bin/python" -m unittest discover '
            "-s scripts -p test_merge_queue_checks.py -v")
 STEP_KEYS = {"name", "id", "env", "run", "timeout-minutes", "shell"}
+# The only environment variable a required workflow, job or checked step may set.
+ENV_ALLOWED = {"PYTHONDONTWRITEBYTECODE"}
 # Runners with the root access and job length the Lean build needs (it adds
 # swap); the lighter jobs may use any Ubuntu runner.
 FULL_UBUNTU = {"ubuntu-24.04", "ubuntu-22.04", "ubuntu-latest"}
@@ -192,8 +198,20 @@ def runs_exactly(step, command: str, shell: str = "bash") -> bool:
     if not isinstance(step, dict):
         return False
     run = str(step.get("run", "")).strip()
-    return (set(step) <= STEP_KEYS and step.get("shell", shell) == "bash"
+    return (set(step) <= STEP_KEYS and not env_problems(step)
+            and step.get("shell", shell) == "bash"
             and "\n" not in run and " ".join(run.split()) == command)
+
+
+def env_problems(level: dict) -> list[str]:
+    """The environment variables a workflow, job or step sets beyond those
+    allowed; an `env` given as an expression could set any of them."""
+    env = level.get("env")
+    if env in (None, ""):
+        return []
+    if not isinstance(env, dict):
+        return ["(an expression)"]
+    return sorted(set(env) - ENV_ALLOWED)
 
 
 def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
@@ -284,8 +302,16 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                 extra = sorted(set(step.get("with") or {}) - CHECKOUT_INPUTS)
                 if extra:
                     found.append(f"{check!r} checks out with {extra}, which can change the tree")
-        if check == "build" and job.get("container"):
-            found.append(f"{check!r} runs in a container, where it cannot add swap")
+        if job.get("container"):
+            found.append(f"{check!r} runs in a container")
+        for scope, level in (("workflow", workflow), ("job", job)):
+            if env_problems(level):
+                found.append(f"{check!r} gets {env_problems(level)} from its {scope} env, "
+                             "which could change how its steps run")
+        if any(isinstance(step, dict) and "GITHUB_ENV" in str(step.get("run", ""))
+               for step in steps):
+            found.append(f"{check!r} has a step that writes $GITHUB_ENV, which sets variables "
+                         "for the steps after it")
         for prerequisite in as_list(job.get("needs")):
             if (name, prerequisite) not in required_jobs:
                 found.append(f"{check!r} needs {prerequisite!r}, which is not required")
@@ -403,10 +429,10 @@ class MergeQueueChecks(unittest.TestCase):
                            put("ci.yml", "jobs", "build", "defaults",
                                {"run": {"shell": "bash"}})(workflows)),
                        put("source-diagnostics.yml", "jobs", "source-diagnostics",
-                           {"container": "python:3.12-bookworm", "runs-on": "ubuntu-24.04",
-                            "defaults": {"run": {"shell": "bash"}},
-                            "steps": FIXTURE["source-diagnostics.yml"]["jobs"]
-                                            ["source-diagnostics"]["steps"]}),
+                           {"runs-on": "ubuntu-24.04", "env": {"PYTHONDONTWRITEBYTECODE": "1"},
+                            "steps": [{"env": {"PYTHONDONTWRITEBYTECODE": "1"}, "run": COMMAND},
+                                      {"id": "diagnostics",
+                                       "run": "scripts/run_source_diagnostics.sh"}]}),
                        put("ci.yml", "on", "push", {"tags": ["v*"]}),
                        put("nightly.yml", {"name": "CI-nightly", "on": {"schedule": ""},
                                            "concurrency": {"group": "${{ github.workflow }}-"
@@ -582,6 +608,32 @@ class MergeQueueChecks(unittest.TestCase):
                 put("ci.yml", "jobs", "build", "defaults",
                     {"run": {"working-directory": "scripts"}}),
                 "outside the repository root"),
+            "BASH_ENV for the whole workflow": (
+                put("ci.yml", "env", {"BASH_ENV": "scripts/exit0.sh"}),
+                "from its workflow env"),
+            "BASH_ENV for the job": (
+                put("source-diagnostics.yml", "jobs", "source-diagnostics", "env",
+                    {"BASH_ENV": "scripts/exit0.sh"}), "from its job env"),
+            "BASH_ENV on the checked step": (
+                put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
+                    [{"run": COMMAND},
+                     {"id": "diagnostics", "env": {"BASH_ENV": "scripts/exit0.sh"},
+                      "run": "scripts/run_source_diagnostics.sh"}]),
+                "no step that is exactly 'scripts/run_source_diagnostics.sh'"),
+            "job env from an expression": (
+                put("ci.yml", "jobs", "build", "env", "${{ fromJSON(vars.BUILD_ENV) }}"),
+                "from its job env"),
+            "a step that writes $GITHUB_ENV": (
+                put("ci.yml", "jobs", "build", "steps",
+                    [{"run": 'echo "BASH_ENV=$PWD/scripts/exit0.sh" >> "$GITHUB_ENV"'},
+                     {"run": "scripts/check.sh build"}]), "writes $GITHUB_ENV"),
+            "required job in a container with a bash default": (
+                put("source-diagnostics.yml", "jobs", "source-diagnostics",
+                    {"container": "python:3.12-bookworm", "runs-on": "ubuntu-24.04",
+                     "defaults": {"run": {"shell": "bash"}},
+                     "steps": FIXTURE["source-diagnostics.yml"]["jobs"]
+                                     ["source-diagnostics"]["steps"]}),
+                "runs in a container"),
             "build in a container": (
                 put("ci.yml", "jobs", "build", "container", "ubuntu:24.04"),
                 "runs in a container"),
