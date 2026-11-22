@@ -1,8 +1,8 @@
 # Solow growth model
 
-- [Growth factor of effective labor](solow-effective-labor-factor.md)
-- [Discrete Solow law](solow-law.md)
-- [Concrete instance](solow-law-example.md)
+- [Exact expansion of the effective-labor growth factor](solow-effective-labor-factor.md)
+- [Capital per effective worker follows the discrete Solow law](solow-law.md)
+- [A worked example of the discrete Solow law](solow-law-example.md)
 - [Reduced-form Cobb–Douglas Solow map](solow-map.md)
 - [Closed-form Solow steady state](solow-steady-state.md)
 - [The Solow map preserves positivity](solow-phi-pos.md)
@@ -17,6 +17,6 @@
 - [Capital falls exactly when above the steady state](solow-map-lt-self-iff.md)
 - [Capital rises exactly when below the steady state](solow-self-lt-map-iff.md)
 - [Uniqueness of the positive steady state](solow-unique.md)
-- [Continuity of the Solow map along convergent paths](solow-tendsto-map.md)
+- [Continuity of the Solow map at nonzero points](solow-tendsto-map.md)
 - [A nonzero limit of a Solow path is a steady state](solow-limit-fixed.md)
 - [Convergence to the steady state from positive capital](solow-tendsto.md)

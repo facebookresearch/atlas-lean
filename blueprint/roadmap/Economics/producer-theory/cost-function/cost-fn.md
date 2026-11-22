@@ -1,4 +1,6 @@
 # Cost function of an input requirement set
 
-The cost function `c(w) = inf_{x ∈ V} w ⬝ᵥ x` for the input requirement set `V`, as a real
-`sInf`. It is the economically meaningful value on `costDomain V`.
+For finitely many inputs and an input requirement set `V` (the input bundles that produce the target
+output), the cost function is the real infimum `c(w) = inf {w · x | x ∈ V}` at input prices `w`. It
+is the least cost only where `V` is nonempty and costs are bounded below; elsewhere the real infimum
+is `0` by convention.

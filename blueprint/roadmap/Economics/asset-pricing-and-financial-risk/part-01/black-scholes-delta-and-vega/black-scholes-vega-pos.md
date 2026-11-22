@@ -1,4 +1,5 @@
 # Black–Scholes vega is positive
 
-Positive vega: vega is strictly positive on `S0, K, σ, T > 0`,
-since the Gaussian density is strictly positive and `S0 √T > 0`.
+For `S0, K, σ, T > 0` and any real `r`, the Black–Scholes vega `S0 φ(d₁) √T` is strictly
+positive, where `φ` is the standard normal density and
+`d₁ = (log (S0 / K) + (r + σ²/2) T) / (σ √T)`: `φ` is strictly positive and `S0 √T > 0`.

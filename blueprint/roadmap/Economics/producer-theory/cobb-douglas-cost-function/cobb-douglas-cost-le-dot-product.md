@@ -1,3 +1,5 @@
 # No feasible bundle costs less than the closed-form cost
 
-Every nonnegative input bundle producing at least `q` costs at least the stated formula.
+For finitely many inputs, let `A > 0`, exponents `aᵢ > 0` with `∑ᵢ aᵢ = 1` and input prices
+`wᵢ > 0`. Every nonnegative input bundle `x` producing at least `q`, `A ∏ᵢ xᵢ ^ aᵢ ≥ q`, costs at
+least the closed-form cost: `c(w, q) = (q / A) ∏ᵢ (wᵢ / aᵢ) ^ aᵢ ≤ w · x`.

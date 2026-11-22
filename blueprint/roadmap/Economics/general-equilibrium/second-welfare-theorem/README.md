@@ -13,3 +13,8 @@
 - [Price equilibrium with transfers](is-equilibrium-with-transfers.md)
 - [Pareto optima are quasi-equilibria with transfers](exists-is-quasi-equilibrium-with-transfe.md)
 - [Equilibrium with transfers under the cheaper-bundle condition](is-equilibrium-with-transfers-of-cheaper.md)
+
+## Sources
+
+- A. Mas-Colell, M. D. Whinston, J. R. Green, *Microeconomic Theory*, Oxford University Press (1995): Definition 3.B.3; Sections 16.B and 16.D (Definitions 16.B.3, 16.B.4 and 16.D.1, Propositions 16.D.1 and 16.D.2).
+- K. J. Arrow, "An Extension of the Basic Theorems of Classical Welfare Economics", *Proceedings of the Second Berkeley Symposium on Mathematical Statistics and Probability* (1951), 507–532.

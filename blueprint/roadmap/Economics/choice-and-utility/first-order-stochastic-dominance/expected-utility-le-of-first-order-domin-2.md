@@ -1,6 +1,6 @@
 # First-order stochastic dominance raises expected utility
 
-If `q` first-order dominates
-`p` on a finite linearly ordered prize set, then `E_p[u] ≤ E_q[u]` for every increasing utility
-`u`; the coupling comes from the finite Strassen theorem
-`forall_isUpperSet_sum_le_iff_exists_coupling`.
+Let `p`, `q` be lotteries on a finite linearly ordered set of prizes. If `q` first-order dominates
+`p` (`∑_{x ≤ t} q(x) ≤ ∑_{x ≤ t} p(x)` for every threshold `t`), then `∑ₓ p(x) u(x) ≤ ∑ₓ q(x) u(x)`
+for every nondecreasing utility `u`. The proof uses the coupling given by the finite Strassen
+theorem.

@@ -1,5 +1,5 @@
 # Nominal rate implied by the Fisher relation
 
-Conversion definition: the nominal rate `(1 + r) * (1 + π) - 1` that the
-Fisher relation determines from the real rate `r` and inflation `π`
-(see `fisher_relation_iff`).
+The nominal rate that the Fisher relation `1 + i = (1 + r) * (1 + π)` determines
+from the real rate `r` and inflation `π` is `i = (1 + r) * (1 + π) - 1`, for all
+real `r` and `π`.

@@ -7,5 +7,9 @@
 - [Budget set of a convex consumption set is convex](convex-budget-set.md)
 - [Uniqueness of Marshallian demand under strict quasiconcavity](eq-of-is-marshallian-demand.md)
 - [Affordable quantities are bounded at positive prices](coord-le-of-mem-budget-set-consumption-s.md)
-- [Budget set is compact at positive prices](is-compact-budget-set-consumption-set.md)
+- [Nonnegative budget sets are compact at positive prices](is-compact-budget-set-consumption-set.md)
 - [Existence of Marshallian demand for continuous utility](exists-is-marshallian-demand.md)
+
+## Sources
+
+- J. Levin, *Consumer Theory*, Stanford Econ 202 lecture notes (2004): §§1–2, Propositions 1, 2 and 5.

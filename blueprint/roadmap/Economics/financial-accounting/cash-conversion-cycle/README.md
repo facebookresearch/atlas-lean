@@ -1,10 +1,10 @@
 # Cash conversion cycle
 
-## Accounting
+## Data for one period
 
 - [Working-capital data for one period](working-capital-data.md)
 
-## Working Capital Data
+## Turnover ratios, periods and the cycle
 
 - [Inventory turnover ratio](inventory-turnover.md)
 - [Accounts receivable turnover ratio](receivables-turnover.md)

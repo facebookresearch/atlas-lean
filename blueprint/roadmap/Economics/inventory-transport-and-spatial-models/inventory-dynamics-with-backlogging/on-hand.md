@@ -1,3 +1,4 @@
 # On-hand stock of a net inventory level
 
-On-hand stock `max x 0` for a net level `x` (apply to `stockTrace` at any `t`).
+The on-hand stock of a net inventory level `x ∈ ℝ` is `max(x, 0)`; applied to the net stock `I_t` of
+any period it gives the stock physically held.

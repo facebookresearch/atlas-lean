@@ -1,4 +1,5 @@
 # Sharpe ratio of a portfolio
 
-The Sharpe ratio `(μᵀ w - r) / √(wᵀ S w)` of the portfolio `w`, for expected asset returns
-`μ`, covariance matrix `S` and risk-free return `r`.
+For finitely many assets with expected returns `μ`, covariance matrix `S` and risk-free return
+`r`, the Sharpe ratio of a portfolio `w` is `(μᵀ w - r) / √(wᵀ S w)`, with the conventions
+`√x = 0` for `x < 0` and `x / 0 = 0`: the ratio is `0` when `wᵀ S w ≤ 0`.

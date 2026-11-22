@@ -1,5 +1,5 @@
 # Present value of the floating leg of a swap
 
-Present value of the floating leg: at payment date `t` the floating
-payment's present value is `D (t - 1) - D t` (source clause: "floating payment
-at `t` is the forward rate over `[t-1, t]`, discounted").
+For a swap of notional 1 with payment dates `t = 1, …, T` and discount factors `D_t` (any real
+numbers), the floating payment at date `t`, the forward rate over `[t - 1, t]`, is valued at
+`D_{t-1} - D_t`, so the floating leg's present value is `∑_{t=1}^{T} (D_{t-1} - D_t)`.

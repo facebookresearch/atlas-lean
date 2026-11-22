@@ -1,6 +1,7 @@
 # Cash-and-carry replicates the forward payoff
 
-Replication identity: cash-and-carry (long one unit of the underlying, which pays
-terminal spot `S ω` plus known terminal income `inc`, and borrow `S0` at gross rate
-`R`) has terminal payoff `(S ω + inc) - S0 * R`, which equals the long-forward payoff
-`S ω - F` when `F = S0 * R - inc`.
+Cash-and-carry consists of a long position in one unit of the underlying, which pays the
+terminal spot price `S(ω)` plus a known terminal income `inc`, financed by borrowing `S0` at
+the gross rate `R`. Its terminal payoff `(S(ω) + inc) - S0 R` equals the long-forward payoff
+`S(ω) - F` in every state `ω` when `F = S0 R - inc` (all quantities real, with no sign
+conditions).

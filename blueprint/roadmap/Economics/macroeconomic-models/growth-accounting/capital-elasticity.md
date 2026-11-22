@@ -1,7 +1,8 @@
 # Output elasticity with respect to capital
 
-Output elasticity of the production function `F` with respect to capital:
-`K * F_K / F`, where `F_K = fderiv ℝ F (K, L) (1, 0)` is the partial derivative
-of `F` in its first argument (source clause: "capital elasticity"). As a total
-function: if `F` is not differentiable at `(K, L)` or `F (K, L) = 0`, the total
-`fderiv` and division may yield junk values.
+The output elasticity of a production function `F : ℝ × ℝ → ℝ` with respect to
+capital at `(K, L)` is `ε_K = K * F_K / F(K, L)`, where `F_K` is the derivative
+of `F` at `(K, L)` applied to the direction `(1, 0)`, the partial derivative in
+the first argument. The definition is total: the derivative of a function that
+is not differentiable at `(K, L)` is taken to be `0`, and `x / 0 = 0`, so
+`ε_K = 0` when `F` is not differentiable at `(K, L)` or `F(K, L) = 0`.

@@ -1,5 +1,5 @@
 # Present value under given discount factors
 
-Present value of the dated cash flows `c t`, paid at the dates `t ∈ s`, under
-the discount factors `D t` (source clause: "PV = Σ_t D_t c_t"). `D` is an
-arbitrary term structure; `discountFactor r` is the constant-rate case.
+The present value of cash flows `c_t` paid at the dates `t` of a finite set `s ⊆ ℕ`, under
+discount factors `D_t`, is `PV = ∑_{t ∈ s} D_t c_t`. The term structure `D` is arbitrary,
+with no sign condition; constant-rate discounting is the case `D_t = (1 + r)⁻ᵗ`.

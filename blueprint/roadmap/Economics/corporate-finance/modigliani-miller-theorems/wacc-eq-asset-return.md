@@ -1,5 +1,5 @@
 # Weighted average cost of capital equals the asset return
 
-Weighted-average cost of capital form: under the same accounting identity and a
-nonzero total firm value, the value-weighted average of the equity and debt returns
-is the asset return.
+For real `E`, `D`, `rA`, `rD`, `rE` with nonzero total firm value `E + D ≠ 0` and the
+value-weighted return accounting `(E + D) * rA = E * rE + D * rD`, the weighted average cost of
+capital equals the asset return: `(E / (E + D)) * rE + (D / (E + D)) * rD = rA`.

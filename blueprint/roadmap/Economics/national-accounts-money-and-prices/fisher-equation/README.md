@@ -6,4 +6,4 @@
 - [Gross nominal return from real return and inflation](fisher-gross-nominal.md)
 - [The implied nominal rate satisfies the Fisher relation](fisher-exact.md)
 - [Approximation error for the implied nominal rate](fisher-approx-error.md)
-- [Concrete failure of the approximation](fisher-example.md)
+- [The additive Fisher approximation fails at r = π = 1/10](fisher-example.md)

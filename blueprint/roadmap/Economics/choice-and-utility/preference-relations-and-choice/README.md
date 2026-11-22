@@ -1,17 +1,17 @@
 # Preference relations and choice
 
-## Preference Relation
+## Arbitrary preference relations
 
 - [Strict part of an arbitrary preference relation](strict-pref.md)
 - [Choice rule of an arbitrary preference relation](choice.md)
 - [Maximal menu elements under an arbitrary preference relation](maximal.md)
 - [Completeness makes maximal elements greatest](maximal-eq-choice.md)
 
-## Economics
+## Rational preferences
 
 - [Rational preference relation](preference.md)
 
-## Preference
+## Strict preference, indifference and choice
 
 - [Strict part of a rational preference](strict-pref-2.md)
 - [Indifference relation of a rational preference](indiff.md)
@@ -19,3 +19,7 @@
 - [Maximal menu elements under a rational preference](maximal-2.md)
 - [Maximal and greatest elements coincide for rational preferences](maximal-eq-choice-2.md)
 - [Rational choice from a finite nonempty menu is nonempty](choice-nonempty.md)
+
+## Sources
+
+- J. Levin and P. Milgrom, *Introduction to Choice Theory*, Stanford Econ 202 notes (2004): §2 (Definitions 1–2, strict preference, indifference, the choice rule, Proposition 1).

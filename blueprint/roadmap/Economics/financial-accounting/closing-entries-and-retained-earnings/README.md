@@ -6,6 +6,6 @@
 - [Distributions to owners for the period](distributions.md)
 - [Closing entry into retained earnings](closing-entry.md)
 - [The closing entry is balanced](is-balanced-closing-entry.md)
-- [Closing zeroes every temporary account](post-closing-entry-of-ne-permanent.md)
+- [Closing into a permanent account zeroes every temporary account](post-closing-entry-of-ne-permanent.md)
 - [Retained earnings roll forward by net income less distributions](retained-earnings-roll-forward.md)
 - [Closing preserves the accounting equation](accounting-equation-post-closing-entry.md)

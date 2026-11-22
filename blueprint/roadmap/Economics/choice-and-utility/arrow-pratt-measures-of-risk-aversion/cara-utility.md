@@ -1,3 +1,4 @@
 # CARA (exponential) utility
 
-Constant absolute risk aversion (CARA, exponential) utility `u(x) = -exp(-a x)`.
+For a real parameter `a`, the constant absolute risk aversion (CARA, exponential) utility is
+`u(x) = -exp(-a x)` on real wealth `x`.

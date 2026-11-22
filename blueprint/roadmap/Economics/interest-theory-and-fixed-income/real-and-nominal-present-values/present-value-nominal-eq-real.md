@@ -1,6 +1,6 @@
 # Real and nominal NPV agree
 
-If each real cash flow `c t` is inflated by the price index
-`I t ≠ 0` (nominal flow `I t * c t`) and discounted by the corresponding nominal factor
-`D t / I t`, where `D` is the real term structure, the nominal present value equals the real
-present value.
+Let `D_t` be real discount factors and `I_t` a price index with `I_t ≠ 0` at every payment
+date `t` of a finite set `s ⊆ ℕ`. Inflating each real cash flow `c_t` to the nominal flow
+`I_t c_t` and discounting it by the nominal factor `D_t / I_t` gives the real present value:
+`∑_{t ∈ s} (D_t / I_t)(I_t c_t) = ∑_{t ∈ s} D_t c_t`.

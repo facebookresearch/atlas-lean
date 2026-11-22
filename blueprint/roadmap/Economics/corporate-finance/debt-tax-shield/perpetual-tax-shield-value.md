@@ -1,8 +1,8 @@
-# Perpetual riskless-debt tax shield
+# The tax shield on perpetual riskless debt is worth τ·D
 
-Under the discounting assumptions of
-`taxShieldValue` (perpetual debt, constant riskless rate `rD > 0`, constant tax rate,
-interest deducted every period), the shield value is `τ * D`. The proof is a
-specialization of `growingPerpetuity_eq` at growth `g = 0`: the shield
-sum equals `growingPerpetuity (τ * rD * D) rD 0`, and the Gordon-growth formula
-gives `τ * rD * D / rD = τ * D`.
+For a riskless rate `rD > 0` and any real tax rate `τ` and debt `D`, the present value of the
+perpetual tax shield, `∑_{t=1}^{∞} τ * rD * D * (1 + rD)^(-t)` (interest `rD * D` deducted at tax
+rate `τ` in every period `t = 1, 2, …`, discounted at the riskless rate `rD`), equals `τ * D`.
+Proof sketch: the shield sum is a growing perpetuity with first payment `τ * rD * D`, discount
+rate `rD` and growth `0`, so the growing-perpetuity formula `C₁ / (r - g)` gives
+`τ * rD * D / rD = τ * D`.

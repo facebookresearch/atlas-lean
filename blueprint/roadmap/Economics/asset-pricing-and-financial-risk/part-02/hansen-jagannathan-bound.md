@@ -1,7 +1,7 @@
-# Hansen–Jagannathan bound
+# Hansen–Jagannathan bound on the Sharpe ratio
 
-If the excess return is priced at zero by the SDF
-(`E_P[m * Rᵉ] = 0`), the mean SDF is positive and the excess-return variance is nonzero, then
-the Sharpe ratio of the excess return is bounded by the SDF volatility over its mean:
-`|E_P[Rᵉ]| / σ(Rᵉ) ≤ σ(m) / E_P[m]`, with `σ` the square root of the variance and
-`expectation` / `variance` the finite-probability ones.
+On a finite state space with probabilities `P(ω) ≥ 0` summing to `1`, let `m` be a stochastic
+discount factor and `Rᵉ` an excess return priced at zero by it, `E_P[m Rᵉ] = 0`. If the mean
+`E_P[m]` is positive and the variance of `Rᵉ` is positive, then the Sharpe ratio of the excess
+return is bounded by the volatility of `m` over its mean:
+`|E_P[Rᵉ]| / σ(Rᵉ) ≤ σ(m) / E_P[m]`, where `σ` is the square root of the variance under `P`.

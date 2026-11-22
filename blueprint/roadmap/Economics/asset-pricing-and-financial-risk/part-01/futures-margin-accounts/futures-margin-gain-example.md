@@ -1,4 +1,4 @@
 # Numerical example of futures margin gains
 
-Concrete instance: multiplier `2`, prices `F i = i ^ 2`, `n = 3`:
-daily gains `2 * (1 + 3 + 5) = 18 = 2 * (9 - 0)`.
+With multiplier `m = 2`, futures prices `F(i) = i²` and `n = 3` settlements, the cumulative
+variation-margin gain is `2 (1 + 3 + 5) = 18 = 2 (9 - 0)`.

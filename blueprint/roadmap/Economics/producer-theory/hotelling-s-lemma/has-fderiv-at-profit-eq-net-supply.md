@@ -1,7 +1,7 @@
 # Hotelling's lemma in supremum form
 
-Let `π` be the profit function of the production
-set `Y` on a neighborhood of `p₀` (the supremum of `p ⬝ᵥ y` over `y ∈ Y`), and
-let `y₀ ∈ Y` attain the maximal profit at `p₀`. If `π` is differentiable at
-`p₀` with derivative `π'`, then `π' v = y₀ ⬝ᵥ v` for every direction `v`: the
-price gradient of profit is the optimal net supply.
+For finitely many goods and a production set `Y`, let `π` be a function of prices that, at every
+price vector `p` near `p₀`, is the least upper bound of the profits `{p · y | y ∈ Y}`. Let `y₀ ∈ Y`
+attain the maximal profit at `p₀`: `p₀ · y₀ = π(p₀)`. If `π` has derivative `π'` (a linear map) at
+`p₀`, then `π'(v) = y₀ · v` for every direction `v`: the price gradient of profit is the optimal net
+supply.

@@ -1,3 +1,4 @@
 # Equity multiplier
 
-Equity multiplier (financial leverage): total assets over equity.
+The equity multiplier (financial leverage) is total assets over shareholders'
+equity, with the convention `x / 0 = 0`.

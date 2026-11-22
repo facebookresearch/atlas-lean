@@ -1,5 +1,6 @@
 # Feasible consumption under a borrowing limit
 
-Feasible period-0 consumptions under the borrowing limit `b`: consumption is
-nonnegative in both periods and savings satisfy `y₀ - c₀ ≥ -b`, i.e. the
-household borrows at most `b`, written as the single inequality `c₀ ≤ y₀ + b`.
+The feasible period-0 consumptions under the borrowing limit `b` are the `c₀`
+with `c₀ ≥ 0` and `c₁ ≥ 0`, where `c₁ = (1 + r) * (y₀ - c₀) + y₁`, and with
+savings `y₀ - c₀ ≥ -b`: the household borrows at most `b`, written as the single
+inequality `c₀ ≤ y₀ + b`.

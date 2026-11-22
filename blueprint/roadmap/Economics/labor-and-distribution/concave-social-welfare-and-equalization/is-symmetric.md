@@ -1,4 +1,5 @@
-# Symmetric (anonymous) social welfare function
+# Symmetric social welfare function
 
-A social welfare function is symmetric (anonymous) when relabeling individuals does not
-change welfare.
+A social welfare function `W` on income distributions is symmetric (anonymous)
+when relabeling individuals does not change welfare: `W(y ∘ σ) = W(y)` for every
+permutation `σ` of the individuals and every distribution `y`.

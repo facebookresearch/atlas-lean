@@ -1,3 +1,4 @@
-# Closing zeroes every temporary account
+# Closing into a permanent account zeroes every temporary account
 
-Closing leaves every temporary account at zero.
+If the retained-earnings account `re` is a permanent account, posting the
+closing entry into `re` leaves every temporary account with balance zero.

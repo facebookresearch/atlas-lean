@@ -1,3 +1,4 @@
 # Excess demand at a price
 
-Excess demand `D p - S p` at price `p`.
+For demand and supply functions `D` and `S` of price, the excess demand at price `p` is
+`D(p) - S(p)`.

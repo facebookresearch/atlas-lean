@@ -1,4 +1,5 @@
 # Accounts receivable turnover ratio
 
-Accounts receivable turnover `credit sales / average accounts receivable`
-(source eq. 19.8).
+The accounts receivable turnover ratio is
+`credit sales / average accounts receivable`, with the convention `x / 0 = 0`
+(OpenStax, *Principles of Finance*, §19.1, eq. 19.8).

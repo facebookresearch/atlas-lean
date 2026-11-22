@@ -1,4 +1,4 @@
 # Budget-balanced money transfers
 
-Money vector `m` is feasible from endowment `ω` (costless, budget-balanced
-transfers).
+For a finite set of agents, a vector of money holdings `m` is feasible from the money endowment `ω`
+(costless, budget-balanced transfers) when `∑ᵢ mᵢ = ∑ᵢ ωᵢ`.

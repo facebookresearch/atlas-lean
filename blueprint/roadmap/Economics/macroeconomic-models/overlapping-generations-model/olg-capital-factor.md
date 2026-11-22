@@ -1,6 +1,8 @@
 # Capital-market factor of the OLG recurrence
 
-Capital-market factor: with population growth `n` (`N[t+1] = (1+n) * N[t]`),
-full depreciation (two-period lives: capital lasts one generation), and capital
-market clearing `K[t+1] = N[t] * s[t]`, capital per worker obeys
-`k[t+1] = olgCapitalFactor A β n * sqrt (k[t])`.
+The capital-market factor of the OLG economy with population growth `n`, discount
+factor `β` and productivity `A` is `C = β * A / (2 * (1 + β) * (1 + n))`, with the
+convention `x / 0 = 0`. With log-utility savings `s = β / (1 + β) * w`, the wage
+`w = A / 2 * √k`, full depreciation (capital lasts one generation) and
+capital-market clearing `k(t + 1) = s(t) / (1 + n)`, capital per worker obeys
+`k(t + 1) = C * √(k(t))` when `1 + n ≠ 0` and `1 + β ≠ 0`.

@@ -1,4 +1,4 @@
 # Price index equals nominal over real
 
-Under the same convention, with nonzero real
-value, the price index is recovered as `nominal / real`.
+If `N = P * R` with nonzero real value `R`, the price index is recovered as
+`P = N / R`.

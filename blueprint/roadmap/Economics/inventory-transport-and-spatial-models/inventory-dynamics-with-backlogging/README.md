@@ -1,7 +1,5 @@
 # Inventory dynamics with backlogging
 
-- [Ledger stock as a zero-lead-time inventory trajectory](stock-eq-stock-trace.md)
-- [Terminal stock equals initial stock plus gains minus draws](terminal-accounting.md)
 - [Scheduled receipt in a period](receipt.md)
 - [Early receipts come from the initial pipeline](receipt-of-lt.md)
 - [Later receipts are orders placed one lead time earlier](receipt-of-not-lt.md)
@@ -37,3 +35,5 @@
 - [Simulation advances by one transition step](run-succ.md)
 - [Simulated stock follows the net-stock trajectory](run-fst-eq-stock-trace.md)
 - [Simulated pipeline equals the outstanding pipeline](run-snd-eq-pipeline.md)
+- [Ledger stock as a zero-lead-time inventory trajectory](stock-eq-stock-trace.md)
+- [Terminal stock equals initial stock plus gains minus draws](terminal-accounting.md)

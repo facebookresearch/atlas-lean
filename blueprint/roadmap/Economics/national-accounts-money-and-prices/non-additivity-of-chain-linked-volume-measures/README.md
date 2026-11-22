@@ -5,6 +5,6 @@
 - [Chained real value from a base value and an index](chained-real-value.md)
 - [Two-link chained real value of a basket](chained-value-two-links.md)
 - [Chained real value of a single component](chained-component-value.md)
-- [Endpoint simplification](chained-component-value-eq.md)
+- [A component's chained value is p₀ q₂ when q₀, q₁ and p₁ are nonzero](chained-component-value-eq.md)
 - [Laspeyres volume growths in the chain-linking example](chained-example-growths.md)
-- [Non-additivity of chained real components](chained-components-not-additive.md)
+- [Chained real components need not add up to the chained total](chained-components-not-additive.md)

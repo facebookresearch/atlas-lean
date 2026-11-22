@@ -1,4 +1,5 @@
 # A ceiling at or below equilibrium leaves no excess supply
 
-A ceiling at or below an equilibrium price leaves no excess supply when demand is weakly
-decreasing and supply weakly increasing between the ceiling and the equilibrium price.
+For demand and supply functions `D` and `S` of price, let `p*` be an equilibrium price
+(`D(p*) = S(p*)`) and `c ≤ p*`. If `D` is weakly decreasing and `S` weakly increasing on `[c, p*]`,
+then the ceiling leaves no excess supply: `D(c) - S(c) ≥ 0`.

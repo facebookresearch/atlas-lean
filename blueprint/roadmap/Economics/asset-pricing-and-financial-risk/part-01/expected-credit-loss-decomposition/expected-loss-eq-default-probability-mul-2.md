@@ -1,6 +1,8 @@
 # Expected loss as PD times conditional mean LGD times a constant EAD
 
-Factorization step: when exposure at default is the constant
-`ead` on the default event, expected loss factors as PD times the conditional
-expectation of LGD times `ead`. This is the separately stated factorization
-assumption: EAD constant on `D` (no independence of LGD from anything is used).
+Let `μ` be a probability measure, `D` a measurable default event with `P(D) = μ(D) ≠ 0`, and
+`EAD` (exposure at default) and `LGD` (loss given default) real functions such that `EAD`
+equals a constant `ead` on `D` and both `EAD · LGD` and `LGD` are integrable on `D`. Then the
+expected loss `∫ 1_D EAD LGD dμ` equals `P(D) · E[LGD | D] · ead`, where
+`E[LGD | D] = ∫ LGD dμ[·|D]` is the mean of `LGD` under the conditional probability
+`μ[·|D] = μ(· ∩ D) / P(D)`. No independence of `LGD` from anything is assumed.

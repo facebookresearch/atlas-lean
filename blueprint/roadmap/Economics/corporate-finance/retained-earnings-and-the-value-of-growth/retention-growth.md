@@ -1,4 +1,4 @@
 # Dividend growth rate from earnings retention
 
-Dividend growth rate in the constant-return reinvestment model: retained share `b`
-times reinvestment return `ROE` (source clause: "`g = b * ROE`").
+In the constant-return reinvestment model, the dividend growth rate is `g = b * ROE`: the
+retained share `b` of earnings times the reinvestment return `ROE` (any real numbers).

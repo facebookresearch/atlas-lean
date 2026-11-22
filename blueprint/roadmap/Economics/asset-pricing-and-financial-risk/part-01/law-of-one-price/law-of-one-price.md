@@ -1,8 +1,9 @@
 # Law of one price given a pricing vector
 
-Given a pricing vector `ψ` that prices
-every asset (`p a = ∑ ω, ψ ω * X a ω`), two portfolios with the same attainable
-payoff in every state have the same price: if
-`∑ a, h a * X a ω = ∑ a, h' a * X a ω` for every `ω`, then
-`∑ a, h a * p a = ∑ a, h' a * p a`. `exists_statePriceVector_prices_replicated` supplies such a `ψ` (strictly
-positive) under no arbitrage on funded gains.
+Take finitely many states `ω` and finitely many assets `a`, where asset `a` has price `p(a)`
+and pays `X(a, ω)` in state `ω`. Suppose a vector `ψ` on the states (of any sign) prices every
+asset: `p(a) = ∑_ω ψ(ω) X(a, ω)` for every `a`. Then two portfolios `h` and `h'` with the same
+payoff in every state, `∑_a h(a) X(a, ω) = ∑_a h'(a) X(a, ω)` for every `ω`, have the same
+price: `∑_a h(a) p(a) = ∑_a h'(a) p(a)`. A strictly positive such `ψ` exists when there is at
+least one state and, for some gross risk-free return `R > 0`, no portfolio `h` has funded gain
+`∑_a h(a) (X(a, ω) - R p(a))` nonnegative in every state and strictly positive in some state.

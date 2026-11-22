@@ -6,5 +6,5 @@
 - [Loss-adjusted pricing of a defaultable zero-coupon bond](state-price-value-eq-discount-factor-mul.md)
 - [Risk-neutral default probability lies between 0 and 1](risk-neutral-default-prob-mem-icc.md)
 - [Positive state prices give a positive risk-free discount factor](risk-free-discount-factor-pos.md)
-- [Normalization](risk-neutral-weights-pos-and-sum-eq-one.md)
+- [Positive state prices divided by their sum form a probability vector](risk-neutral-weights-pos-and-sum-eq-one.md)
 - [Risk-neutral default probability as a sum of state weights](risk-neutral-default-prob-eq-sum-div.md)

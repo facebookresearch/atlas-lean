@@ -1,4 +1,5 @@
 # Payables deferral period in days
 
-Payables deferral period (days in payables, DPO) `periodDays / accounts payable turnover`
-(source eq. 19.13).
+The payables deferral period (days in payables, DPO) is
+`(days in the period) / (accounts payable turnover)`, with the convention
+`x / 0 = 0` (OpenStax, *Principles of Finance*, §19.1, eq. 19.13).

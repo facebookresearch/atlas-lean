@@ -1,10 +1,10 @@
 # First welfare theorem
 
-## Economics
+## The economy
 
 - [Pure exchange economy](exchange-economy.md)
 
-## Exchange Economy
+## Feasibility, equilibrium and efficiency
 
 - [Feasible allocation with free disposal](is-feasible.md)
 - [Walrasian equilibrium of an exchange economy](is-walrasian-equilibrium.md)

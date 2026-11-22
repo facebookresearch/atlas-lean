@@ -1,7 +1,7 @@
 # One-period transition of stock and pipeline
 
-Deterministic backlogging transition on `(net stock, length-L pipeline)`
-with order `q` and demand `d` inputs. The receipt is the pipeline head for
-`L > 0` and the immediate order `q` for `L = 0`. New stock adds the receipt
-and subtracts demand in `ℝ` (no cap, no saturation). The new pipeline is the
-old tail followed by `q` (vacuous at `L = 0`). Deterministic by construction.
+The deterministic backlogging transition on a state `(I, p)`, a net stock `I ∈ ℝ` and a pipeline
+`p = (p_0, …, p_{L-1})` of nonnegative quantities, with order `q ≥ 0` and demand `d ≥ 0`: the
+receipt is `r = p_0` if `L > 0` and `r = q` if `L = 0`; the new stock is `I + r - d` (no cap, no
+saturation); the new pipeline is `(p_1, …, p_{L-1}, q)`, the old tail followed by `q` (empty when
+`L = 0`).

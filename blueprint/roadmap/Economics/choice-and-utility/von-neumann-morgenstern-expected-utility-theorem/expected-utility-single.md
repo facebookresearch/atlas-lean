@@ -1,3 +1,4 @@
 # Expected utility of a degenerate lottery
 
-Expected utility of a point mass is the utility of that outcome.
+For a finite set `X` of outcomes, a Bernoulli utility `u : X → ℝ` and an outcome `x`, the expected
+utility of the point mass `δₓ` (the lottery giving `x` with probability one) is `E_{δₓ}[u] = u(x)`.

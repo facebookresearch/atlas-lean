@@ -1,7 +1,7 @@
 # Systematic plus idiosyncratic variance decomposition
 
-For an
-orthogonal single-index residual (`cov[RM, ε; μ] = 0`), the variance of the
-single-index return splits as `Var[R_i; μ] = β ^ 2 * Var[RM; μ] + Var[ε; μ]`.
-The constant `α` drops out, the cross term vanishes by orthogonality, and the
-`β ^ 2` factor comes from `Var[β RM] = β ^ 2 Var[RM]`.
+On a probability space, let the market return `R_M` and the residual `ε` be square-integrable and
+uncorrelated, `Cov(R_M, ε) = 0`. Then for all real `α` and `β` the single-index return
+`R = α + β R_M + ε` has variance `Var(R) = β² Var(R_M) + Var(ε)`. The constant `α` drops out,
+the cross term vanishes because `Cov(β R_M, ε) = β Cov(R_M, ε) = 0`, and the `β²` factor comes
+from `Var(β R_M) = β² Var(R_M)`.

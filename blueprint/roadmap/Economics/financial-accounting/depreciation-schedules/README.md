@@ -1,8 +1,8 @@
 # Depreciation schedules
 
 - [Book value under depreciation with a salvage floor](floor-book-value.md)
-- [Book value never falls below salvage](salvage-le-floor-book-value.md)
-- [Book value never increases under nonnegative charges](floor-book-value-succ-le.md)
+- [If cost ≥ salvage, book value never falls below salvage](salvage-le-floor-book-value.md)
+- [If cost ≥ salvage, nonnegative charges never raise book value](floor-book-value-succ-le.md)
 - [Straight-line depreciation charge per period](straight-line-charge.md)
 - [Book value under straight-line depreciation](straight-line-book-value.md)
 - [Straight-line charges sum to cost minus salvage](sum-straight-line-charge.md)

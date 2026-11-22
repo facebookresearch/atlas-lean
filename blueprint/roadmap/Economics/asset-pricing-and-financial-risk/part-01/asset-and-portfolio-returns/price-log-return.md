@@ -1,8 +1,8 @@
 # Log return between two prices
 
-Log return over one price period: the log return of the gross return,
-`logReturn (grossReturn P₀ P₁)`. The definition is total: at nonpositive prices
-it returns a junk value, e.g. `priceLogReturn 100 0 = Real.log 0 = 0`, equal to
-the unchanged-price value `priceLogReturn 100 100`, although the gross return
-`grossReturn 100 0 = 0` of that total loss is valid. A genuine log return
-requires `0 < P₀` and `0 < P₁`, as assumed by `priceLogReturn_add`.
+The log return from an initial price `P₀` to a terminal price `P₁`, for real `P₀` and `P₁`, is
+`log (P₁ / P₀)`, the log return of the gross return `P₁ / P₀`. It is a log return only for
+`P₀ > 0` and `P₁ > 0`. With the conventions `x / 0 = 0`, `log 0 = 0` and `log x = log |x|`, it is
+`0` when `P₀ = 0` or `P₁ = 0` (so a total loss `P₁ = 0` gets the value `0` of an unchanged price,
+although its gross return `0` is meaningful), and `log |P₁ / P₀|` when the two prices have
+opposite signs.

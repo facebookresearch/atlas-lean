@@ -1,10 +1,7 @@
 # Upper-triangular matrix of a two-variable policy model
 
-A fixed 2-variable linear policy model: the state evolves by
-`x_{t+1} = A x_t + c` where `A` is an upper-triangular matrix.
-The diagonal entries `a` and `d` are the policy feedback coefficients
-(the eigenvalues); the
-off-diagonal entry `b` couples the second state variable into the first
-equation. Upper-triangular form makes the
-eigenvalues explicitly readable off the diagonal while keeping a
-nontrivial coupling term.
+The two-variable linear policy model has state evolving by `x(t + 1) = A x(t) + c`
+with the upper-triangular matrix `A = [[a, b], [0, d]]` (rows listed in order), for real
+`a`, `b` and `d`. The diagonal entries `a` and `d` are the policy feedback
+coefficients and the eigenvalues of `A`; the off-diagonal entry `b` couples the
+second state variable into the first equation.

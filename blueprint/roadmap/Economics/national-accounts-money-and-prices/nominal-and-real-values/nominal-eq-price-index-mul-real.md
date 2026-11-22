@@ -1,5 +1,4 @@
 # Nominal equals price index times real
 
-Deflating then reflating recovers the
-nominal value, provided the price index is nonzero. This is division cancellation;
-the content is the base convention.
+If the price index `P` is nonzero, deflating then reflating recovers the nominal
+value: `N = P * (N / P)` for every `N`.

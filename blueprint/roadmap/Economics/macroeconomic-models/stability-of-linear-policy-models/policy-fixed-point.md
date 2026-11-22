@@ -1,7 +1,7 @@
 # Candidate fixed point of the affine policy iteration
 
-The candidate fixed point of the affine policy iteration, solved
-explicitly from the triangular system (`x*_2 = c_2 / (1 - d)`, then
-`x*_1 = (c_1 + b x*_2) / (1 - a)`). It satisfies `x* = A x* + c` when
-`a ≠ 1` and `d ≠ 1` (see `linearPolicyMatrix_mulVec_fixedPoint_add`); no
-uniqueness is claimed here.
+For the policy model `x(t + 1) = A x(t) + c` with `A = [[a, b], [0, d]]` and
+`c = (c₁, c₂)`, the candidate fixed point is
+`x* = ((c₁ + b * c₂ / (1 - d)) / (1 - a), c₂ / (1 - d))`, solved from the triangular
+system (with the convention `x / 0 = 0`). When `a ≠ 1` and `d ≠ 1` it satisfies
+`x* = A x* + c`.

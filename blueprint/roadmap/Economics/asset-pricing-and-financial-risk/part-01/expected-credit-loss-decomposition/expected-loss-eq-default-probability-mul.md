@@ -1,9 +1,8 @@
 # Expected loss is PD times the conditional expected loss
 
-Expected-loss decomposition: expected loss equals the
-probability of default times the expected exposure-times-loss-given-default
-conditional on default. `ProbabilityTheory.cond μ D` is always defined as the
-`(μ D)⁻¹`-scaled restriction, even if `μ D = 0`. The nonzero hypothesis is
-required for probability normalization and ordinary conditional-expectation
-semantics; for a measurable zero event the conditional measure is zero and
-this theorem retains the nonzero hypothesis.
+Let `μ` be a probability measure, `D` a measurable default event with `P(D) = μ(D) ≠ 0`, and
+`EAD` (exposure at default) and `LGD` (loss given default) real functions such that
+`EAD · LGD` is integrable on `D`. Then the expected loss `∫ 1_D EAD LGD dμ` equals the default
+probability `P(D)` times the conditional expected loss `∫ EAD LGD dμ[·|D]`, where
+`μ[·|D] = μ(· ∩ D) / P(D)` is the conditional probability given `D`. No independence between
+`EAD` and `LGD` is assumed.

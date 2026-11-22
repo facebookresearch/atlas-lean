@@ -1,4 +1,4 @@
-# Reflating
+# Nominal value of a real magnitude
 
-The nominal value corresponding to real value `real` at price index
-`priceIndex` is `priceIndex * real`.
+Reflating: the nominal value corresponding to the real value `R` at price index
+`P` is `P * R`.

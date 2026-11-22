@@ -1,6 +1,5 @@
 # Threshold contribution of a destination
 
-Contribution of one destination at threshold `T`: its opportunity
-when a travel time is present and at most `T`, and zero otherwise. Travel
-times and thresholds are nonnegative reals; a missing travel time
-(`none`) contributes zero at every threshold.
+The contribution of destination `i` with opportunity `oᵢ ∈ ℝ` at a threshold `T ≥ 0`: `oᵢ` when the
+destination has a travel time `tᵢ ≥ 0` with `tᵢ ≤ T`, and `0` otherwise. A destination with no
+travel time contributes `0` at every threshold.

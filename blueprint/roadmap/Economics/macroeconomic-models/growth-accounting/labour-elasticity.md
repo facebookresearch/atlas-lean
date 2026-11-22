@@ -1,6 +1,8 @@
 # Output elasticity with respect to labour
 
-Output elasticity of the production function `F` with respect to labour:
-`L * F_L / F`, where `F_L = fderiv ℝ F (K, L) (0, 1)` is the partial derivative
-of `F` in its second argument (source clause: "labour elasticity"). As a total
-function, with the same junk-value caveat as `capitalElasticity`.
+The output elasticity of a production function `F : ℝ × ℝ → ℝ` with respect to
+labour at `(K, L)` is `ε_L = L * F_L / F(K, L)`, where `F_L` is the derivative
+of `F` at `(K, L)` applied to the direction `(0, 1)`, the partial derivative in
+the second argument. The definition is total: the derivative of a function that
+is not differentiable at `(K, L)` is taken to be `0`, and `x / 0 = 0`, so
+`ε_L = 0` when `F` is not differentiable at `(K, L)` or `F(K, L) = 0`.

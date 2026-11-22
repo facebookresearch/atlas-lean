@@ -1,5 +1,11 @@
-# Binomial stock price along a history of moves
+# Stock price at a node of the binomial tree
 
-Stock price in the binomial tree at the node reached by the history `s` of moves (most recent
-move first; `true` is an up move by the factor `u`, `false` a down move by the factor `d`),
-starting from the initial price `S₀`.
+In the binomial tree with initial price `S₀` and real move factors `u` (up) and `d` (down), the
+stock price at the node reached by a finite history of moves (listed most recent first) is
+defined recursively: it is `S₀` for the empty history, and one further up move multiplies it by
+`u`, one further down move by `d`. A history of `n` moves with `k` up moves thus leads to the
+price `S₀ * u^k * d^(n - k)`.
+
+This is the same function as
+[Stock price at a node of the binomial tree](../no-early-exercise-of-american-calls/stock-price.md).
+Here it is defined by recursion on the history; the linked page gives it in closed form.

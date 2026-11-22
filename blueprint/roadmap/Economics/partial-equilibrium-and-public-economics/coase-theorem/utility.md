@@ -1,3 +1,4 @@
 # Quasilinear utility of an agent
 
-Quasilinear utility of agent `i` at allocation `a` with money `m`.
+The quasilinear utility of agent `i`, with valuation `vᵢ` of physical allocations, at the physical
+allocation `a` with money holdings `m` is `vᵢ(a) + mᵢ`.

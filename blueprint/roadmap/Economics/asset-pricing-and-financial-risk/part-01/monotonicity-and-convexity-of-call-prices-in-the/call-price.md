@@ -1,6 +1,5 @@
 # Call price under state prices
 
-Call price at strike `K` under the state prices `ψ` and terminal underlying values `S`:
-`C(K) = ∑ ω, ψ ω * europeanCallPayoff (S ω) K` (source clause: "call price =
-state-price-weighted call payoff"). `ψ ω` is the state price of state `ω`; `S ω` is the
-terminal underlying value in state `ω`.
+For finitely many states `ω` with state prices `ψ(ω)` and terminal underlying values `S(ω)`, the
+call price at strike `K` is the state-price-weighted call payoff
+`C(K) = ∑_ω ψ(ω) max(S(ω) - K, 0)`.

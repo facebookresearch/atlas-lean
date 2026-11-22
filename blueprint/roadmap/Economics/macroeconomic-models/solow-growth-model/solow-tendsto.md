@@ -1,7 +1,7 @@
 # Convergence to the steady state from positive capital
 
-From any positive starting capital, the invariant-domain
-path `k(t+1) = φ(k(t))` converges to the unique positive steady state. The
-path stays in the closed interval between its starting point and the steady
-state, is monotone there, and is bounded; its limit is a fixed point, hence
-the steady state by uniqueness.
+Let `a > 0`, `0 ≤ b < 1` and `0 < α < 1`. If `k(0) > 0` and
+`k(t + 1) = a * k(t) ^ α + b * k(t)` for every `t`, then `k(t)` converges to the
+steady state `k* = (a / (1 - b)) ^ (1 / (1 - α))`. The path stays in the closed interval
+between `k(0)` and `k*` and is monotone there; its limit is a fixed point, hence
+`k*` by uniqueness.

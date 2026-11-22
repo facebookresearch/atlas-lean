@@ -1,3 +1,4 @@
 # Indifference relation of a rational preference
 
-Indifference `x ∼ y`: `x ≿ y` and `y ≿ x` (§2).
+For a rational preference `≿`, indifference `x ∼ y` holds when `x ≿ y` and `y ≿ x` (Levin–Milgrom,
+*Introduction to Choice Theory*, §2).

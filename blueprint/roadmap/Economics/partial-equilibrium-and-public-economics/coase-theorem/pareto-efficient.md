@@ -1,4 +1,5 @@
 # Pareto efficient outcome with money transfers
 
-`(a, m)` is Pareto efficient given endowment `ω`: feasible, and no feasible
-outcome makes every agent weakly better off and some agent strictly better off.
+For a finite set of agents with quasilinear utilities `vᵢ(a) + mᵢ` and money endowment `ω`, an
+outcome `(a, m)` is Pareto efficient when it is feasible (`∑ᵢ mᵢ = ∑ᵢ ωᵢ`) and no feasible outcome
+`(a', m')` has `vᵢ(a') + m'ᵢ ≥ vᵢ(a) + mᵢ` for every agent and `>` for some agent.

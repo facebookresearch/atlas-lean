@@ -1,6 +1,5 @@
 # Product weights of two independent losses
 
-The product weights of two independent losses: each loss is 100 with probability 0.04
-and 0 with probability 0.96, independently (source clause: "two independent losses of 100
-with probability 0.04 each"). `ω.1` is the first loss's Bernoulli outcome (`1` = loss),
-`ω.2` the second's.
+On the four outcomes `ω = (ω₁, ω₂)` with `ω₁, ω₂ ∈ {0, 1}`, where `ωₖ = 1` means that loss `k`
+occurs, the product weights are `p(ω) = q(ω₁) q(ω₂)` with `q(1) = 0.04` and `q(0) = 0.96`: each
+of the two losses is 100 with probability 0.04 and 0 with probability 0.96, independently.

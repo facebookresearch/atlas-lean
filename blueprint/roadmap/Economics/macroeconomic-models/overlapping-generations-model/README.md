@@ -5,4 +5,4 @@
 - [Capital-market factor of the OLG recurrence](olg-capital-factor.md)
 - [Optimal savings under log utility](log-utility-optimal-savings.md)
 - [OLG capital-market recurrence](olg-capital-recurrence.md)
-- [OLG steady state](olg-steady-state.md)
+- [Squared capital factor is a steady state of the OLG recurrence](olg-steady-state.md)

@@ -1,5 +1,5 @@
 # Approximation error for the implied nominal rate
 
-The additive
-approximation `i ≈ r + π` drops exactly the cross term `r * π`. Derived from
-the relation via `fisher_approx_error_of_relation`.
+For all real `r` and `π`, the nominal rate `i = (1 + r) * (1 + π) - 1` differs
+from the additive approximation `r + π` by exactly the cross term:
+`i - (r + π) = r * π`.

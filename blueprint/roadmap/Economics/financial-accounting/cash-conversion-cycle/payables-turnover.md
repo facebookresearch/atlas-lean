@@ -1,4 +1,5 @@
 # Accounts payable turnover ratio
 
-Accounts payable turnover `cost of goods sold / average accounts payable`
-(source eq. 19.11).
+The accounts payable turnover ratio is
+`cost of goods sold / average accounts payable`, with the convention `x / 0 = 0`
+(OpenStax, *Principles of Finance*, §19.1, eq. 19.11).

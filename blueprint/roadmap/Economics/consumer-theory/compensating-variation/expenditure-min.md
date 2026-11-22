@@ -1,4 +1,5 @@
 # Expenditure function for perfect complements
 
-Worked example: the expenditure function of the perfect-complements utility
-`min x₀ x₁` at positive prices is `e(p, ū) = (p₀ + p₁) ū` for `ū ≥ 0`.
+Worked example. For the perfect-complements utility `u(x) = min(x₀, x₁)` on the nonnegative quadrant
+`{x ∈ ℝ² | x ≥ 0}`, at positive prices `p₀, p₁ > 0` and a target utility `ū ≥ 0`, the expenditure
+function is `e(p, ū) = inf {p · x | x ≥ 0, u(x) ≥ ū} = (p₀ + p₁) ū`.

@@ -1,4 +1,5 @@
 # Cash flows of a coupon bond
 
-Cash flow of a bond at date `t`: coupon `coupon` at every payment date, plus face
-`face` at maturity `n` (source clause: "coupon at each date, redemption at maturity").
+For a bond with coupon `c`, face value `F` and maturity `n`, the cash flow at date `t` is
+`c + F` if `t = n` and `c` otherwise. The formula is defined at every date `t ≥ 0`; the bond's
+price uses it only at the payment dates `1, …, n`.

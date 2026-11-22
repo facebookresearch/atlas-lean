@@ -7,4 +7,4 @@
 - [Output growth decomposes into TFP and factor growth](growth-accounting.md)
 - [Capital share = capital elasticity under competitive pricing](competitive-share-capital-eq-elasticity.md)
 - [Labour share = labour elasticity under competitive pricing](competitive-share-labour-eq-elasticity.md)
-- [Competitive shares sum to one](competitive-shares-sum-eq-one.md)
+- [Competitive factor shares sum to one under the Euler identity](competitive-shares-sum-eq-one.md)

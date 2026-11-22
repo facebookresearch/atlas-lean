@@ -1,9 +1,6 @@
 # Price of nonnegative cash flows strictly decreases in the yield
 
-With nonnegative payments and at least one positive payment at a date
-`t ≥ 1`, the price is strictly decreasing in the yield on `(-1, ∞)`.
-The `1 ≤ t` condition is load-bearing: a positive
-payment at `t = 0` alone is discounted by 1 at every yield. This is the bond /
-present-value form over an arbitrary finite payment set;
-`strictAntiOn_npv` is the separate NPV form over the fixed dates
-`range (N + 1)`.
+If `c_t ≥ 0` at every date `t` of a finite set `s ⊆ ℕ` and `c_t > 0` at some date `t ≥ 1` of
+`s`, the price `P(r) = ∑_{t ∈ s} c_t (1 + r)⁻ᵗ` is strictly decreasing in the yield `r` on
+`(-1, ∞)`. The condition `t ≥ 1` is needed: a payment at `t = 0` alone is discounted by 1 at
+every yield.

@@ -7,7 +7,7 @@
 - [Efficient (competitive) quantity](competitive-quantity.md)
 - [Profit shortfall is quadratic in the output gap](profit-gap-eq.md)
 - [The monopoly quantity maximizes profit](profit-le-profit-monopoly-quantity.md)
-- [The monopoly quantity is the unique profit maximizer](eq-monopoly-quantity-of-forall-profit-le.md)
+- [Every profit maximizer is the monopoly quantity](eq-monopoly-quantity-of-forall-profit-le.md)
 - [Monopoly price averages the demand intercept and marginal cost](inverse-demand-monopoly-quantity.md)
 - [The competitive quantity is priced at marginal cost](inverse-demand-competitive-quantity.md)
 - [Monopoly output is positive but below the efficient level](monopoly-quantity-mem-ioo.md)

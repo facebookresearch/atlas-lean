@@ -1,8 +1,13 @@
 # Quasilinear surplus equals welfare change
 
-In the quasilinear model
-with unrestricted numeraire, suppose `e` is the expenditure function at
-reference utility `ubar` near every price in `[[p₀, p₁]]`, `x p` maximizes
-`φ z - p * z` over `Z` for every such price, `e` is differentiable there, and
-`x` is interval integrable. Then the expenditure-based welfare change
-`e p₀ - e p₁` equals the consumer-surplus change `∫ p in p₁..p₀, x p`.
+Consider quasilinear utility `φ(z) + m` over a good `z ∈ Z ⊆ ℝ`, priced `p`, and an unrestricted
+numeraire `m ∈ ℝ`, priced `1`. Let `J` be the closed interval between the prices `p₀` and `p₁`, and
+suppose:
+
+- for every `p ∈ J` and every price `q` near `p`, `e(q)` is the greatest lower bound of the costs
+  `{q z + m | z ∈ Z, m ∈ ℝ, φ(z) + m ≥ ū}` of reaching the reference utility `ū`;
+- for every `p ∈ J`, the demand `x(p) ∈ Z` maximizes `φ(z) - p z` over `z ∈ Z`;
+- `e` is differentiable at every `p ∈ J`, and `x` is integrable on `J`.
+
+Then the expenditure-based welfare change equals the consumer-surplus change:
+`e(p₀) - e(p₁) = ∫ x(p) dp` over `p` from `p₁` to `p₀`.

@@ -1,4 +1,9 @@
-# Expected credit loss in the PD × LGD × EAD setting
+# Expected credit loss on a default event (restated)
 
-Expected loss: the expected value of `EAD ω * LGD ω` on the default event
-`D`, and `0` outside `D`.
+For a measure `μ` (in use, a probability measure), a default event `D` and real functions
+`EAD` (exposure at default) and `LGD` (loss given default), the expected loss is
+`∫ 1_D EAD LGD dμ`: the expected value of `EAD(ω) · LGD(ω)` on `D`, and `0` outside `D`. It is
+`0` when `1_D · EAD · LGD` is not integrable, by the convention for the integral of a
+non-integrable function.
+
+This is the same definition as [Expected credit loss on a default event](expected-loss.md).

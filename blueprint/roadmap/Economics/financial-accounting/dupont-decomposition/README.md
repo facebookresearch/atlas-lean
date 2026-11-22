@@ -1,10 +1,10 @@
 # DuPont decomposition
 
-## Accounting
+## Inputs
 
 - [Accounting inputs of a DuPont analysis](du-pont-inputs.md)
 
-## Du Pont Inputs
+## Ratios and the DuPont identity
 
 - [Net profit margin](profit-margin.md)
 - [Asset turnover ratio](asset-turnover.md)

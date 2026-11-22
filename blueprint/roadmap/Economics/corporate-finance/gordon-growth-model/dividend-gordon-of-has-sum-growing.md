@@ -1,8 +1,8 @@
-# Dividend stream identification
+# Discounted dividends sum to D₁/(r − g) when the perpetuity terms do
 
-The discounted dividend stream has the same
-`HasSum` as the growing-perpetuity stream: shift by one date
-(the date-`0` term is `0`), then apply the
-shift lemma `discountedDividendStream_succ`. This is a shift/transport lemma: it turns
-any `HasSum` for the growing-perpetuity stream into a `HasSum` for the discounted
-dividend stream.
+For all real `D₁`, `r`, `g`: if the growing-perpetuity series
+`∑_{t=0}^{∞} D₁ * (1 + g)^t / (1 + r)^(t + 1)` is summable with sum `D₁ / (r - g)`, then the
+series of discounted dividends `∑_{t=0}^{∞} D_t / (1 + r)^t`, where `D_0 = 0` and
+`D_t = D₁ * (1 + g)^(t - 1)` for `t ≥ 1`, is summable with the same sum `D₁ / (r - g)`. Proof:
+the date-0 term is `0`, and shifting by one date turns the discounted dividends into the
+growing-perpetuity terms.

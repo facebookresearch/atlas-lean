@@ -1,5 +1,5 @@
 # Log return of a gross return
 
-Log return of a gross return `G`: `Real.log G`. The definition is total: at a nonpositive gross return it is a
-junk value, e.g. `logReturn 0 = Real.log 0 = 0`. A genuine log return requires
-`0 < G`.
+The log return of a gross return `G` is `log G`, for every real `G`. It is a log return only for
+`G > 0`: with the conventions `log 0 = 0` and `log x = log |x|`, it is `0` at `G = 0` and
+`log |G|` for `G < 0`.

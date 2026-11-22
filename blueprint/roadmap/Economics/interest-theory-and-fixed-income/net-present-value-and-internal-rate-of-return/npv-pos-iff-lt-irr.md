@@ -1,5 +1,6 @@
 # NPV is positive exactly when the rate is below the IRR
 
-For a project with nonnegative later cash flows, at least one positive, and an
-internal rate of return `ρ`, the NPV at any rate `r > -1` is positive exactly when
-`r < ρ`.
+Let the cash flows `c_0, …, c_N` have nonnegative later flows, `c_k ≥ 0` for `1 ≤ k ≤ N`, at
+least one of them positive, and let `ρ` be an internal rate of return: `ρ > -1` and
+`NPV(ρ) = 0`, where `NPV(r) = ∑_{k=0}^{N} (1 + r)⁻ᵏ c_k`. Then for every rate `r > -1`,
+`NPV(r) > 0` if and only if `r < ρ`.

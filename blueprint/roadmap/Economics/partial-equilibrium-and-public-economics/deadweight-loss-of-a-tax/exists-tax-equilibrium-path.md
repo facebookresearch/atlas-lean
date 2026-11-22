@@ -1,5 +1,6 @@
-# Small taxes have equilibria near the no-tax equilibrium
+# Small taxes have nearby equilibria when supply is steeper than demand
 
-Small taxes have equilibria near the no-tax equilibrium: for `C²` inverse
-demand and supply crossing at `qstar` with supply steeper than demand, there is
-an equilibrium quantity path `τ ↦ q τ`, continuous at `0` with `q 0 = qstar`.
+Let inverse demand `Pd` and inverse supply `Ps` be twice continuously differentiable at `q*`, cross
+there (`Pd(q*) = Ps(q*)`), and let supply be steeper than demand: `Ps'(q*) - Pd'(q*) > 0`. Then
+there is an equilibrium quantity path `τ ↦ q(τ)` with `q(0) = q*`, continuous at `0`, such that
+`Pd(q(τ)) - Ps(q(τ)) = τ` for every tax `τ` near `0`.

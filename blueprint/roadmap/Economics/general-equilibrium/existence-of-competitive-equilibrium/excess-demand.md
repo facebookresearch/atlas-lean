@@ -1,3 +1,5 @@
 # Aggregate excess demand
 
-Aggregate excess demand `z(p) = ∑ i, (demand i p - endowment i)`.
+In an exchange economy with a finite set `I` of consumers, endowments `ωᵢ` and demands `xᵢ`, the
+aggregate excess demand at a price vector `p` is the vector `z(p) = ∑ᵢ (xᵢ(p) − ωᵢ)`: total demand
+minus total endowment, good by good.

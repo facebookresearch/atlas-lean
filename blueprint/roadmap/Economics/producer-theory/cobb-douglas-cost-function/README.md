@@ -7,4 +7,4 @@
 - [Conditional factor demands are nonnegative](cobb-douglas-demand-nonneg.md)
 - [Conditional factor demands produce the target output](cobb-douglas-cobb-douglas-demand.md)
 - [Conditional factor demands attain the closed-form cost](dot-product-cobb-douglas-demand.md)
-- [Cobb–Douglas cost formula](is-least-cobb-douglas-cost.md)
+- [The closed-form Cobb–Douglas cost is the least cost](is-least-cobb-douglas-cost.md)

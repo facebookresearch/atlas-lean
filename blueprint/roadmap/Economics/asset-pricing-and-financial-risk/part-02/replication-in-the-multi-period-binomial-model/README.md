@@ -1,6 +1,6 @@
 # Replication in the multi-period binomial model
 
-- [Binomial stock price along a history of moves](price.md)
+- [Stock price at a node of the binomial tree](price.md)
 - [Risk-neutral up probability of the binomial model](rn-prob.md)
 - [Backward-induction value of a path-dependent claim](claim-value.md)
 - [Delta-hedging ratio in the binomial tree](hedge-ratio.md)

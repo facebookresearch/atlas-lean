@@ -1,3 +1,3 @@
 # On-hand stock is nonnegative
 
-On-hand nonnegativity.
+For every net inventory level `x ∈ ℝ`, the on-hand stock is nonnegative: `max(x, 0) ≥ 0`.

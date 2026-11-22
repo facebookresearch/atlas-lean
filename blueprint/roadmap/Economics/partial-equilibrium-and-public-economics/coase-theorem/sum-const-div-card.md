@@ -1,3 +1,4 @@
 # Equal shares of an amount sum back to it
 
-Splitting `c` equally over all agents sums back to `c`.
+For a finite nonempty set of `n` agents and any real `c`, splitting `c` equally sums back to `c`:
+`∑ᵢ c / n = c`.

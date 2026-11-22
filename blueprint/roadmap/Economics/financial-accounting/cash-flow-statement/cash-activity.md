@@ -1,4 +1,6 @@
 # Activity classes of the cash flow statement
 
-Statement-of-cash-flows activity class of a transaction; `noncash` marks transactions
-with no cash effect (disclosed separately, e.g. depreciation or debt-for-asset swaps).
+The activity class of a transaction in the statement of cash flows is one of
+operating, investing, financing or noncash; the noncash class marks transactions
+with no cash effect (disclosed separately, for example depreciation or
+debt-for-asset swaps).

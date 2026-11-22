@@ -1,4 +1,5 @@
 # Law of supply via revealed profitability
 
-**Law of supply** (revealed profitability). If `y` maximizes profit at `p` and `y'` at
-`p'` over the same production set, then `(p - p') ⬝ᵥ (y - y') ≥ 0`.
+Law of supply (revealed profitability). For finitely many goods, if `y` maximizes profit at prices
+`p` and `y'` at prices `p'` over the same production set `Y` (each in `Y` and earning at least the
+profit of every plan of `Y` at its prices), then `(p - p') · (y - y') ≥ 0`.

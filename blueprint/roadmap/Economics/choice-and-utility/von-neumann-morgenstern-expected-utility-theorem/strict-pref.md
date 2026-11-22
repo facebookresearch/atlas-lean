@@ -1,3 +1,3 @@
 # Strict preference between lotteries
 
-Strict preference `p ≻ q`: `p ≿ q` and not `q ≿ p`.
+For a relation `≿` on lotteries, strict preference `p ≻ q` holds when `p ≿ q` and not `q ≿ p`.

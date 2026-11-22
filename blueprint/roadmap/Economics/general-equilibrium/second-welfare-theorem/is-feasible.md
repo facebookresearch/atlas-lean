@@ -1,4 +1,5 @@
 # Feasible allocation of the aggregate endowment
 
-An allocation `x` (consumer `i` receives `x i`) is feasible for the aggregate endowment `ω`
-in a pure exchange economy: every bundle is nonnegative and the bundles add up to `ω`.
+In a pure exchange economy with a finite set `I` of consumers, an allocation `x` (consumer `i`
+receives the bundle `xᵢ`) is feasible for the aggregate endowment `ω` when every bundle is
+nonnegative, `xᵢ ∈ ℝ^L_+`, and the bundles add up to `ω`: `∑ᵢ xᵢ = ω`.

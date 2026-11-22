@@ -1,3 +1,4 @@
 # Asset turnover ratio
 
-Asset turnover: sales over total assets.
+The asset turnover ratio is sales over total assets, with the convention
+`x / 0 = 0`.

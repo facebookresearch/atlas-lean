@@ -14,6 +14,6 @@ The consumer's problem and its duality: budget sets, Marshallian demand and its 
 - [Shephard's lemma](shephard-s-lemma/README.md)
 - [Symmetry and negative semidefiniteness of the Slutsky matrix](symmetry-and-negative-semidefiniteness-of-the-sl/README.md)
 - [Two-good consumer problem](two-good-consumer-problem/README.md)
-- [Envelope kernel](has-fderiv-at-eq-of-eventually-le-of-eq.md)
+- [Touching differentiable functions have equal derivatives](has-fderiv-at-eq-of-eventually-le-of-eq.md)
 - [Quasilinear surplus equals welfare change](quasilinear-expenditure-sub-eq-integral.md)
-- [Slutsky equation](slutsky-equation.md)
+- [Slutsky equation: substitution effect equals price plus income effect](slutsky-equation.md)

@@ -7,4 +7,4 @@ Economies with many interacting markets: exchange economies, Walras' law, existe
 - [Leontief input–output model](leontief-input-output-model/README.md)
 - [Second welfare theorem](second-welfare-theorem/README.md)
 - [Scale invariance of equilibrium prices](is-walrasian-equilibrium-smul-iff.md)
-- [Walras' law](dot-product-excess-demand-eq-zero.md)
+- [Walras' law: exhausted budgets give excess demand of value zero](dot-product-excess-demand-eq-zero.md)

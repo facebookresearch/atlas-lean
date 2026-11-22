@@ -1,10 +1,12 @@
 # Linear factor-price relation given a pricing vector
 
-In an exact
-factor-spanning model with finite states and factors, given a pricing
-vector `ψ` that prices every asset
-(`p a = ∑ ω, ψ ω * X a ω`), every asset price is the loading-weighted sum of
-factor prices: there are `π k` with `p a = ∑ k, b a k * π k` for every asset
-`a`, where `π k = ∑ ω, ψ ω * F k ω` is the `ψ`-value of the factor payoff.
-`exists_statePriceVector_prices_replicated` supplies such a `ψ` (strictly positive) under no arbitrage on funded
-gains.
+Take finitely many states `ω`, finitely many factors `k` with payoffs `F(k, ω)`, and assets
+`a` (finitely or infinitely many) with prices `p(a)` and payoffs `X(a, ω)`. Assume exact factor
+spanning, `X(a, ω) = ∑_k b(a, k) F(k, ω)` for every asset `a` and state `ω`, with loadings
+`b(a, k)`, and a vector `ψ` on the states (of any sign) that prices every asset:
+`p(a) = ∑_ω ψ(ω) X(a, ω)` for every `a`. Then every asset price is the loading-weighted sum of
+factor prices, `p(a) = ∑_k b(a, k) π(k)` for every `a`, where `π(k) = ∑_ω ψ(ω) F(k, ω)` is the
+`ψ`-value of the payoff of factor `k`; the factors need not be traded. When there are finitely
+many assets and at least one state, a strictly positive such `ψ` exists if, for some gross
+risk-free return `R > 0`, no portfolio `h` has funded gain `∑_a h(a) (X(a, ω) - R p(a))`
+nonnegative in every state and strictly positive in some state.

@@ -16,4 +16,4 @@ Present values of deterministic cash flows: discounting and internal rates of re
 - [Real and nominal present values](real-and-nominal-present-values/README.md)
 - [Redington immunization](redington-immunization/README.md)
 - [Truncation error of discounted cash-flow streams](truncation-error-of-discounted-cash-flow-streams/README.md)
-- [Bootstrapping discount factors](bootstrap-discount-factors-unique.md)
+- [Bootstrapped discount factors are unique](bootstrap-discount-factors-unique.md)

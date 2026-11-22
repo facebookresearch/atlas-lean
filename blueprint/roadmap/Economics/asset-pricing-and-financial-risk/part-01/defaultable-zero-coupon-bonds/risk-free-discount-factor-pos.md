@@ -1,4 +1,4 @@
 # Positive state prices give a positive risk-free discount factor
 
-On a nonempty state space with positive state prices, the risk-free discount factor is
-positive.
+On a finite state space with at least one state, if every state price is positive,
+`ψ(ω) > 0`, then the risk-free discount factor `D = ∑_ω ψ(ω)` is positive.

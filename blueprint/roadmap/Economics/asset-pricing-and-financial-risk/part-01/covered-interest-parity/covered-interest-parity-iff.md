@@ -1,7 +1,7 @@
 # Payoff and rate forms of covered interest parity agree
 
-Payoff form and rate form of covered interest parity agree: the covered
-foreign strategy has the same terminal domestic payoff as the domestic deposit
-iff the forward rate is `spot * domesticGross / foreignGross`. This is algebra
-about the four rates; `coveredInterestParity_of_noFundedArbitrage` derives the
-payoff equality from no arbitrage.
+In a two-currency market with spot rate `S ≠ 0`, forward rate `F`, gross domestic return
+`R_d` and gross foreign return `R_f ≠ 0`, the covered foreign strategy has the same terminal
+domestic payoff as the domestic deposit, `F R_f / S = R_d`, if and only if the forward rate
+is `F = S R_d / R_f`. This is algebra about the four rates; nothing about arbitrage is
+assumed.

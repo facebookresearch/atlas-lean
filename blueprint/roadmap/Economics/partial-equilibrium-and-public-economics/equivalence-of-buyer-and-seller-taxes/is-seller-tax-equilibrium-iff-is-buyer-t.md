@@ -1,4 +1,4 @@
 # Seller-tax equilibrium as a buyer-tax equilibrium
 
-A seller-tax equilibrium with buyer price `p` is a buyer-tax equilibrium with seller price
-`p - τ`, and conversely.
+For any demand and supply functions `D`, `S`, tax `τ` and price `p`, `p` is a seller-tax equilibrium
+(`D(p) = S(p - τ)`) exactly when `p - τ` is a buyer-tax equilibrium (`D((p - τ) + τ) = S(p - τ)`).

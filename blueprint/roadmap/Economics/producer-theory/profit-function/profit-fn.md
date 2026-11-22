@@ -1,4 +1,5 @@
 # Profit function of a production set
 
-The profit function `π(p) = sup_{y ∈ Y} p ⬝ᵥ y`, as a real `sSup`. It is the economically
-meaningful value only on `profitDomain Y`, where the supremum is finite.
+For finitely many goods and a production set `Y`, the profit function is the real supremum
+`π(p) = sup {p · y | y ∈ Y}`. It is the maximal profit only where `Y` is nonempty and profits are
+bounded above; elsewhere the real supremum is `0` by convention.

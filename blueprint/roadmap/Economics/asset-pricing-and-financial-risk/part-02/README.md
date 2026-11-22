@@ -11,5 +11,5 @@
 - [Tangency portfolio and the Sharpe ratio](tangency-portfolio-and-the-sharpe-ratio/README.md)
 - [Two-asset minimum-variance portfolio](two-asset-minimum-variance-portfolio/README.md)
 - [Value at risk](value-at-risk/README.md)
-- [Black–Scholes zero-volatility limit](tendsto-black-scholes-call-zero-vol.md)
-- [Hansen–Jagannathan bound](hansen-jagannathan-bound.md)
+- [As σ → 0⁺ the Black–Scholes call price tends to max(S0 − K e⁻ʳᵀ, 0)](tendsto-black-scholes-call-zero-vol.md)
+- [Hansen–Jagannathan bound on the Sharpe ratio](hansen-jagannathan-bound.md)

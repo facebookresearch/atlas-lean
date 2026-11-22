@@ -7,5 +7,5 @@
 - [Minimum-variance portfolio is feasible](min-variance-portfolio-is-feasible.md)
 - [Optimality of the minimum-variance portfolio](portfolio-variance-min-variance-portfoli.md)
 - [No other feasible portfolio attains the minimum variance](eq-min-variance-portfolio-of-portfolio-v.md)
-- [Unique minimum-variance portfolio](exists-unique-min-variance.md)
+- [Existence and uniqueness of the minimum-variance portfolio](exists-unique-min-variance.md)
 - [Mean-variance frontier in closed form](portfolio-variance-min-variance-portfoli-2.md)

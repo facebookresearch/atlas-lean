@@ -9,4 +9,4 @@ The competitive firm: production sets and profit maximization, the profit and co
 - [Law of supply](law-of-supply/README.md)
 - [Product exhaustion theorem](product-exhaustion-theorem/README.md)
 - [Profit function](profit-function/README.md)
-- [Production sets and profit maximization](is-profit-max.md)
+- [Profit-maximizing production plan](is-profit-max.md)

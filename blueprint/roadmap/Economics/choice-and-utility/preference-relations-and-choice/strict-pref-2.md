@@ -1,3 +1,4 @@
 # Strict part of a rational preference
 
-Strict preference `x ≻ y`: `x ≿ y` but not `y ≿ x` (§2).
+For a rational preference `≿`, strict preference `x ≻ y` holds when `x ≿ y` but not `y ≿ x`
+(Levin–Milgrom, *Introduction to Choice Theory*, §2).

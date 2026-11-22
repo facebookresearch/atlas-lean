@@ -1,5 +1,8 @@
 # A price fall has nonnegative compensating variation
 
-On a consumption set of
-nonnegative bundles, if the new prices are nonnegative and nowhere above the old ones, then
-`0 ≤ CV`.
+For finitely many goods, let every bundle of the consumption set `X` be nonnegative, and let the new
+prices be nonnegative and nowhere above the old ones: `0 ≤ p¹ i ≤ p⁰ i` for every good `i`. Then for
+every utility `u` and wealth `w`, `CV = e(p⁰, u⁰) - e(p¹, u⁰) ≥ 0` with `u⁰ = v(p⁰, w)`, where
+`e(p, ū) = inf {p · x | x ∈ X, u(x) ≥ ū}` is the expenditure function and
+`v(p, w) = sup {u(x) | x ∈ X, p · x ≤ w}` the indirect utility (real infimum and supremum, `0` for
+an empty or unbounded set).

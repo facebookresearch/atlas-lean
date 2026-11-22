@@ -38,5 +38,5 @@ Asset pricing by absence of arbitrage and the measurement of financial risk: sta
 - [Tangency portfolio and the Sharpe ratio](part-02/tangency-portfolio-and-the-sharpe-ratio/README.md)
 - [Two-asset minimum-variance portfolio](part-02/two-asset-minimum-variance-portfolio/README.md)
 - [Value at risk](part-02/value-at-risk/README.md)
-- [Black–Scholes zero-volatility limit](part-02/tendsto-black-scholes-call-zero-vol.md)
-- [Hansen--Jagannathan bound](part-02/hansen-jagannathan-bound.md)
+- [As σ → 0⁺ the Black–Scholes call price tends to max(S0 − K e⁻ʳᵀ, 0)](part-02/tendsto-black-scholes-call-zero-vol.md)
+- [Hansen–Jagannathan bound on the Sharpe ratio](part-02/hansen-jagannathan-bound.md)

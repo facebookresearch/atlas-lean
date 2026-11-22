@@ -1,7 +1,7 @@
-# The unconstrained two-asset minimum-variance weight
+# The two-asset minimum-variance weight is a global minimizer
 
-When
-`Var(R₁ - R₂) > 0`, the weight `w* = (σ₂² - σ₁₂) / Var(R₁ - R₂)` globally
-minimizes the two-asset portfolio variance. The
-budget constraint is built into the `(w, 1 - w)` parametrization; no
-target-return constraint is imposed; `w*` need not lie in `[0, 1]`.
+For square-integrable returns `R₁` and `R₂` under a finite measure with `Var(R₁ - R₂) > 0`, the
+weight `w* = (σ₂² - σ₁₂) / Var(R₁ - R₂)`, where `σ₂² = Var(R₂)` and `σ₁₂ = Cov(R₁, R₂)`,
+minimizes the two-asset portfolio variance `Var(w R₁ + (1 - w) R₂)` over all `w ∈ ℝ`. The budget
+constraint is built into the `(w, 1 - w)` parametrization; no target-return constraint is
+imposed; `w*` need not lie in `[0, 1]`.

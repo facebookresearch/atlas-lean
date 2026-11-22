@@ -1,6 +1,7 @@
 # Price quasi-equilibrium with transfers
 
-`(x, p)` is a price quasi-equilibrium with transfers for the aggregate endowment `ω`
-(MWG Def. 16.D.1, exchange economy): `p ≠ 0`, the allocation is feasible, and every nonnegative
-bundle strictly preferred to `x i` costs at least the wealth `value p (x i)`; these wealth levels
-add up to `value p ω`.
+In a pure exchange economy with finitely many consumers and goods, utilities `uᵢ` and aggregate
+endowment `ω`, an allocation `x` and prices `p` form a price quasi-equilibrium with transfers (MWG
+Def. 16.D.1) when `p ≠ 0`, the allocation is feasible (`xᵢ ≥ 0` for every `i` and `∑ᵢ xᵢ = ω`), and
+for every consumer `i` every nonnegative bundle `z` with `uᵢ(z) > uᵢ(xᵢ)` costs at least the wealth
+`p · xᵢ`. By feasibility these wealth levels add up to `p · ω`.

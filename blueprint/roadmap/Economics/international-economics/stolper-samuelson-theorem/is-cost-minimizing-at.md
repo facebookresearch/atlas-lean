@@ -1,7 +1,8 @@
 # Unit-cost minimization at given factor prices
 
-Unit-cost minimization at factor prices `x₀ = (w₀, r₀)`: `c` is the minimum
-cost of producing one unit at factor prices `x = (w, r)`, and the unit input
-bundle `(aL, aK)` (labor, capital) is cost-minimizing at `x₀`. Since that bundle
-stays feasible, its cost `w aL + r aK` bounds `c x` from above near `x₀`, with
-equality at `x₀`.
+The unit input bundle `(aL, aK)` (labor, capital) is cost-minimizing for the
+unit cost function `c` at factor prices `x₀ = (w₀, r₀)` when its cost bounds `c`
+from above near `x₀` and equals it at `x₀`: `c(w, r) ≤ w * aL + r * aK` for all
+`(w, r)` near `x₀`, and `c(w₀, r₀) = w₀ * aL + r₀ * aK`. This holds when `c` is the
+minimum cost of producing one unit and `(aL, aK)` is a cost-minimizing bundle at
+`x₀`, since that bundle stays feasible at other factor prices.
