@@ -1,5 +1,5 @@
 /-
-Copyright (c) 2025–2026 the contributors.
+Copyright (c) Meta Platforms, Inc. and affiliates.
 All rights reserved.
 
 This source code is licensed under the license found in the
