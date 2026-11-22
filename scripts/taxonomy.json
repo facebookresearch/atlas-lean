@@ -11121,6 +11121,7 @@
   "MathlibExt/NumberTheory/IntegerComplexity": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/IntegerPolynomialMap": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Integer polynomial maps modulo primes"},
   "MathlibExt/NumberTheory/IsobaricPolynomial": {"to": "NumberTheory/linear-recurrences/recurrence-theory", "title": "Isobaric polynomials"},
+  "MathlibExt/NumberTheory/JacobiKernelLift": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Weighted Davenport constant"},
   "MathlibExt/NumberTheory/JacobiTwoSquareCount": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Jacobi's two-square theorem"},
   "MathlibExt/NumberTheory/JacobsthalLucasNumber": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Jacobsthal and Jacobsthal–Lucas numbers"},
   "MathlibExt/NumberTheory/KFull": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Powerful and k-full numbers"},
