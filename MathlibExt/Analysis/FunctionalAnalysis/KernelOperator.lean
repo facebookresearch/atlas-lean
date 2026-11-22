@@ -61,35 +61,54 @@ open scoped BoundedContinuousFunction Topology
 
 noncomputable section
 
-/-- The space `C([0, 1], ℝ)` of bounded continuous real functions on `[0, 1]`. -/
+/-- **Continuous functions on the unit interval.** $C([0, 1], \mathbb{R})$ denotes the space of
+bounded continuous functions $[0, 1] \to \mathbb{R}$, with the supremum norm
+$\|f\| = \sup_{x \in [0, 1]} |f(x)|$. -/
 abbrev KernelSpace := Set.Icc (0 : ℝ) 1 →ᵇ ℝ
 
-/-- A continuous kernel on `[0, 1] × [0, 1]`. -/
+/-- **Continuous kernels on the unit square.** A continuous kernel is a bounded continuous
+function $k : [0, 1] \times [0, 1] \to \mathbb{R}$. These kernels form a normed space under the
+supremum norm $\|k\| = \sup_{x, y \in [0, 1]} |k(x, y)|$. -/
 abbrev KernelType := (Set.Icc (0 : ℝ) 1 × Set.Icc (0 : ℝ) 1) →ᵇ ℝ
 
-/-- The clamped extension of a function on `[0, 1]` to `ℝ`. -/
+/-- **Clamped extension.** For a bounded continuous function $f$ on $[0, 1]$, its clamped extension
+is the function $\tilde f : \mathbb{R} \to \mathbb{R}$ given by
+$\tilde f(t) = f(\max(0, \min(1, t)))$. Thus $\tilde f(t) = f(0)$ for $t < 0$,
+$\tilde f(t) = f(t)$ for $t \in [0, 1]$, and $\tilde f(t) = f(1)$ for $t > 1$. -/
 def kernelExtend (f : KernelSpace) : ℝ → ℝ :=
   fun t => f (Set.projIcc 0 1 zero_le_one t)
 
-/-- The clamped extension is continuous. -/
+/-- **Continuity of the clamped extension.** For every bounded continuous function $f$ on
+$[0, 1]$, the clamped extension $t \mapsto f(\max(0, \min(1, t)))$ is continuous on $\mathbb{R}$. -/
 theorem kernelExtend_continuous (f : KernelSpace) : Continuous (kernelExtend f) :=
   f.continuous.comp continuous_projIcc
 
-/-- On `[0, 1]` the clamped extension agrees with the original function. -/
+/-- **The clamped extension agrees with the function on $[0, 1]$.** Let $f$ be a bounded continuous
+function on $[0, 1]$ and let $\tilde f(s) = f(\max(0, \min(1, s)))$ for real $s$ be its clamped
+extension. Then $\tilde f(t) = f(t)$ for every $t \in [0, 1]$. -/
 theorem kernelExtend_apply_of_mem {f : KernelSpace} {t : ℝ} (ht : t ∈ Set.Icc (0 : ℝ) 1) :
     kernelExtend f t = f ⟨t, ht⟩ := by
   rw [kernelExtend, Set.projIcc_of_mem zero_le_one ht]
 
-/-- The clamped extension is bounded by the sup norm. -/
+/-- **The clamped extension is bounded by the supremum norm.** Let
+$\pi(t) = \max(0, \min(1, t))$ be the projection of $\mathbb{R}$ onto $[0, 1]$. For every
+$f \in C([0, 1], \mathbb{R})$ and every $t \in \mathbb{R}$, the clamped extension
+$f \circ \pi$ of $f$ satisfies $|f(\pi(t))| \le \|f\|$, where $\|f\|$ is the supremum norm. -/
 theorem norm_kernelExtend_le (f : KernelSpace) (t : ℝ) : ‖kernelExtend f t‖ ≤ ‖f‖ :=
   f.norm_coe_le_norm _
 
-/-- The integrand of the kernel operator. -/
+/-- **Kernel integrand.** Let $\pi(t) = \max(0, \min(1, t))$ clamp a real number $t$ to $[0, 1]$.
+For a continuous kernel $k$ on $[0, 1] \times [0, 1]$, a bounded continuous function $f$ on
+$[0, 1]$ and a point $x \in [0, 1]$, the kernel integrand is the function
+$\mathbb{R} \to \mathbb{R}$, $t \mapsto k(x, \pi(t)) \, f(\pi(t))$. -/
 def kernelIntegrand (k : KernelType) (f : KernelSpace) (x : Set.Icc (0 : ℝ) 1) :
     ℝ → ℝ :=
   fun t => k (x, Set.projIcc 0 1 zero_le_one t) * kernelExtend f t
 
-/-- The integrand is jointly continuous in `(x, t)`. -/
+/-- **Joint continuity of the kernel integrand.** Let $\pi(t) = \max(0, \min(1, t))$ clamp a
+real number $t$ to $[0, 1]$. For every continuous kernel $k$ on $[0, 1] \times [0, 1]$ and every
+bounded continuous function $f$ on $[0, 1]$, the kernel integrand
+$(x, t) \mapsto k(x, \pi(t)) \, f(\pi(t))$ is jointly continuous on $[0, 1] \times \mathbb{R}$. -/
 theorem continuous_kernelIntegrand_uncurry (k : KernelType) (f : KernelSpace) :
     Continuous (Function.uncurry (kernelIntegrand k f)) := by
   have h1 : Continuous (fun p : Set.Icc (0 : ℝ) 1 × ℝ =>
@@ -99,23 +118,35 @@ theorem continuous_kernelIntegrand_uncurry (k : KernelType) (f : KernelSpace) :
     (kernelExtend_continuous f).comp continuous_snd
   exact h1.mul h2
 
-/-- The integrand is continuous in `t`. -/
+/-- **Continuity of the kernel integrand in $t$.** Let $\pi(t) = \max(0, \min(1, t))$ clamp a real
+number $t$ to $[0, 1]$. For every continuous kernel $k$ on $[0, 1] \times [0, 1]$, every bounded
+continuous function $f$ on $[0, 1]$ and every $x \in [0, 1]$, the function
+$t \mapsto k(x, \pi(t)) \, f(\pi(t))$ is continuous on $\mathbb{R}$. -/
 theorem kernelIntegrand_continuous (k : KernelType) (f : KernelSpace)
     (x : Set.Icc (0 : ℝ) 1) : Continuous (kernelIntegrand k f x) :=
   (continuous_kernelIntegrand_uncurry k f).comp
     (continuous_const.prodMk continuous_id)
 
-/-- The value of the kernel operator at `x`. -/
+/-- **Kernel value.** Let $\pi(t) = \max(0, \min(1, t))$ be the projection of $\mathbb{R}$ onto
+$[0, 1]$. For a continuous kernel $k$ on $[0, 1] \times [0, 1]$, a function
+$f \in C([0, 1], \mathbb{R})$ and a point $x \in [0, 1]$, the kernel value is the real number
+$$\int_0^1 k(x, \pi(t))\, f(\pi(t))\, dt.$$
+Since $\pi(t) = t$ for $t \in [0, 1]$, it equals $\int_0^1 k(x, t)\, f(t)\, dt$, the value at
+$x$ of the integral operator with kernel $k$ applied to $f$. -/
 def kernelValue (k : KernelType) (f : KernelSpace) (x : Set.Icc (0 : ℝ) 1) : ℝ :=
   ∫ t in (0 : ℝ)..1, kernelIntegrand k f x t
 
-/-- The kernel value is continuous in `x`. -/
+/-- **Continuity of the kernel value.** For every continuous kernel $k$ on
+$[0, 1] \times [0, 1]$ and every $f \in C([0, 1], \mathbb{R})$, the kernel value of $k$ and
+$f$, the function $x \mapsto \int_0^1 k(x, t)\, f(t)\, dt$ on $[0, 1]$, is continuous. -/
 theorem kernelValue_continuous (k : KernelType) (f : KernelSpace) :
     Continuous (kernelValue k f) :=
   intervalIntegral.continuous_parametric_intervalIntegral_of_continuous'
     (continuous_kernelIntegrand_uncurry k f) 0 1
 
-/-- The kernel value is bounded by `‖k‖ * ‖f‖`. -/
+/-- **Pointwise bound for a kernel integral.** Let $k$ be a continuous kernel on
+$[0, 1] \times [0, 1]$ and let $f \in C([0, 1], \mathbb{R})$. For every $x \in [0, 1]$, the integral
+$\int_0^1 k(x, t) \, f(t) \, dt$ has absolute value at most $\|k\|_\infty \, \|f\|_\infty$. -/
 theorem norm_kernelValue_le (k : KernelType) (f : KernelSpace)
     (x : Set.Icc (0 : ℝ) 1) : ‖kernelValue k f x‖ ≤ ‖k‖ * ‖f‖ := by
   have hknorm : ∀ t, ‖k (x, Set.projIcc 0 1 zero_le_one t)‖ ≤ ‖k‖ :=
@@ -135,7 +166,10 @@ theorem norm_kernelValue_le (k : KernelType) (f : KernelSpace)
         rw [intervalIntegral.integral_const]
         simp
 
-/-- The kernel operator as a linear map. -/
+/-- **The integral operator with continuous kernel, as a linear map.** For a continuous kernel $k$
+on $[0, 1] \times [0, 1]$, this is the $\mathbb{R}$-linear map $K$ from the space of bounded
+continuous real functions on $[0, 1]$ to itself given by $(Kf)(x) = \int_0^1 k(x, t) f(t) \, dt$
+for $x \in [0, 1]$. -/
 noncomputable def kernelLinearMap (k : KernelType) : KernelSpace →ₗ[ℝ] KernelSpace where
   toFun f :=
     BoundedContinuousFunction.ofNormedAddCommGroup (kernelValue k f)
@@ -163,7 +197,10 @@ noncomputable def kernelLinearMap (k : KernelType) : KernelSpace →ₗ[ℝ] Ker
       smul_eq_mul]
     ring
 
-/-- The kernel operator is bounded on the unit ball. -/
+/-- **Sup-norm bound for the integral operator with continuous kernel.** Write $\|\cdot\|$ for the
+sup norm. For every continuous kernel $k$ on $[0, 1] \times [0, 1]$ and every bounded continuous
+function $f$ on $[0, 1]$, the function $Kf$ given by $(Kf)(x) = \int_0^1 k(x, t) f(t) \, dt$
+satisfies $\|Kf\| \le \|k\| \, \|f\|$. -/
 theorem kernelLinearMap_norm_le (k : KernelType) (f : KernelSpace) :
     ‖kernelLinearMap k f‖ ≤ ‖k‖ * ‖f‖ := by
   show ‖BoundedContinuousFunction.ofNormedAddCommGroup (kernelValue k f)
@@ -172,22 +209,36 @@ theorem kernelLinearMap_norm_le (k : KernelType) (f : KernelSpace) :
     (kernelValue_continuous k f) (mul_nonneg (norm_nonneg _) (norm_nonneg _))
     (norm_kernelValue_le k f)
 
-/-- The integral operator with continuous kernel `k` on `C([0, 1], ℝ)`. -/
+/-- **Integral operator with a continuous kernel.** For a continuous kernel $k$ on
+$[0, 1] \times [0, 1]$, the integral operator $T_k$ with kernel $k$ is the continuous linear
+operator on $C([0, 1], \mathbb{R})$ given, for $f \in C([0, 1], \mathbb{R})$ and $x \in [0, 1]$, by
+$(T_k f)(x) = \int_0^1 k(x, t)\, f(t)\, dt$. -/
 noncomputable def kernelOperator (k : KernelType) : KernelSpace →L[ℝ] KernelSpace :=
   (kernelLinearMap k).mkContinuous ‖k‖ (kernelLinearMap_norm_le k)
 
-/-- Evaluation formula for the kernel operator. -/
+/-- **Evaluation formula for the integral operator.** Let $\pi(t) = \max(0, \min(1, t))$ be the
+projection of $\mathbb{R}$ onto $[0, 1]$. For a continuous kernel $k$ on $[0, 1] \times [0, 1]$,
+write $T_k$ for the integral operator with kernel $k$ on $C([0, 1], \mathbb{R})$. For every
+$f \in C([0, 1], \mathbb{R})$ and every $x \in [0, 1]$,
+$$(T_k f)(x) = \int_0^1 k(x, \pi(t))\, f(\pi(t))\, dt,$$
+the integral over $[0, 1]$ of the kernel integrand. Since $\pi(t) = t$ for $t \in [0, 1]$, this
+is $\int_0^1 k(x, t)\, f(t)\, dt$. -/
 theorem kernelOperator_apply (k : KernelType) (f : KernelSpace)
     (x : Set.Icc (0 : ℝ) 1) :
     kernelOperator k f x = ∫ t in (0 : ℝ)..1, kernelIntegrand k f x t :=
   rfl
 
-/-- The operator norm of the kernel operator is at most the sup norm of the kernel. -/
+/-- **Norm bound for a kernel integral operator.** For every continuous kernel $k$ on
+$[0, 1] \times [0, 1]$, the integral operator $K$ with kernel $k$ on $C([0, 1], \mathbb{R})$ has
+operator norm $\|K\| \le \|k\|_\infty$. -/
 theorem norm_kernelOperator_le (k : KernelType) : ‖kernelOperator k‖ ≤ ‖k‖ :=
   (kernelOperator k).opNorm_le_bound (norm_nonneg _) (kernelLinearMap_norm_le k)
 
-/-- A pointwise bound on the kernel difference gives a bound on the
-difference of the values of the operator. -/
+/-- **Difference bound for the values of a kernel operator.** Let $k$ be a continuous kernel on
+$[0, 1] \times [0, 1]$, let $K$ be the integral operator with kernel $k$ on $C([0, 1], \mathbb{R})$,
+let $f \in C([0, 1], \mathbb{R})$, and let $x, x' \in [0, 1]$ and $\delta \in \mathbb{R}$. If
+$|k(x, y) - k(x', y)| \le \delta$ for every $y \in [0, 1]$, then
+$|(Kf)(x) - (Kf)(x')| \le \delta \, \|f\|_\infty$. -/
 theorem norm_kernelOperator_apply_sub_le (k : KernelType) (f : KernelSpace)
     {x x' : Set.Icc (0 : ℝ) 1} {δ : ℝ}
     (h : ∀ y : Set.Icc (0 : ℝ) 1, ‖k (x, y) - k (x', y)‖ ≤ δ) :
@@ -234,8 +285,12 @@ theorem norm_kernelOperator_apply_sub_le (k : KernelType) (f : KernelSpace)
         rw [intervalIntegral.integral_const]
         simp
 
-/-- The kernel operator is compact, by Arzelà–Ascoli: the image of the unit
-ball is equicontinuous by uniform continuity of the kernel. -/
+/-- **Integral operators with continuous kernels are compact.** For every continuous kernel $k$ on
+$[0, 1] \times [0, 1]$, the integral operator $K$ on the space of bounded continuous real functions
+on $[0, 1]$, given by $(Kf)(x) = \int_0^1 k(x, t) f(t) \, dt$, is a compact operator.
+
+The proof uses Arzelà–Ascoli: the image of the unit ball is equicontinuous by uniform continuity
+of the kernel. -/
 theorem isCompactOperator_kernelOperator (k : KernelType) :
     IsCompactOperator (kernelOperator k) := by
   refine (isCompactOperator_iff_isCompact_closure_image_ball
@@ -282,8 +337,14 @@ theorem isCompactOperator_kernelOperator (k : KernelType) :
       _ = ε / 2 := mul_one _
       _ < ε := half_lt_self hε
 
-/-- A separable kernel gives an operator of finite rank: its range lies in the
-span of the finitely many functions `φ i`. -/
+/-- **Separable kernels give finite-rank integral operators.** Let $s$ be a finite set of indices
+and, for $i \in s$, let $\varphi_i$ and $\psi_i$ be bounded continuous functions on $[0, 1]$. If a
+continuous kernel $k$ on $[0, 1] \times [0, 1]$ satisfies
+$k(x, y) = \sum_{i \in s} \varphi_i(x) \psi_i(y)$ for all $x, y \in [0, 1]$, then the range of the
+integral operator $K$ on the space of bounded continuous real functions on $[0, 1]$, given by
+$(Kf)(x) = \int_0^1 k(x, t) f(t) \, dt$, is a finite-dimensional real vector space.
+
+The proof shows that the range lies in the span of the functions $\varphi_i$, $i \in s$. -/
 theorem finiteDimensional_range_kernelOperator_of_separable {ι : Type*} (k : KernelType)
     (s : Finset ι) (φ : ι → KernelSpace) (ψ : ι → KernelSpace)
     (hk : ∀ x y : Set.Icc (0 : ℝ) 1, k (x, y) = ∑ i ∈ s, φ i x * ψ i y) :
@@ -340,7 +401,10 @@ theorem finiteDimensional_range_kernelOperator_of_separable {ι : Type*} (k : Ke
     exact ⟨i, by simp [hi], rfl⟩
   exact Submodule.finiteDimensional_of_le hrange
 
-/-- The kernel operator is additive in the kernel. -/
+/-- **The integral operator is additive in the kernel.** For a continuous kernel $k$ on
+$[0, 1] \times [0, 1]$, write $T_k$ for the integral operator with kernel $k$ on
+$C([0, 1], \mathbb{R})$. For all continuous kernels $k_1$ and $k_2$, the operator with the
+pointwise sum kernel is the sum of the operators: $T_{k_1 + k_2} = T_{k_1} + T_{k_2}$. -/
 theorem kernelOperator_add (k₁ k₂ : KernelType) :
     kernelOperator (k₁ + k₂) = kernelOperator k₁ + kernelOperator k₂ := by
   apply ContinuousLinearMap.ext
@@ -357,7 +421,10 @@ theorem kernelOperator_add (k₁ k₂ : KernelType) :
   funext t
   simp [kernelIntegrand, add_mul]
 
-/-- The kernel operator is homogeneous in the kernel. -/
+/-- **The integral operator is homogeneous in the kernel.** For a continuous kernel $k$ on
+$[0, 1] \times [0, 1]$, write $T_k$ for the integral operator with kernel $k$ on
+$C([0, 1], \mathbb{R})$. For every real number $c$ and every continuous kernel $k$,
+$T_{c k} = c\, T_k$. -/
 theorem kernelOperator_smul (c : ℝ) (k : KernelType) :
     kernelOperator (c • k) = c • kernelOperator k := by
   apply ContinuousLinearMap.ext
@@ -370,7 +437,9 @@ theorem kernelOperator_smul (c : ℝ) (k : KernelType) :
   funext t
   simp [kernelIntegrand, smul_eq_mul, mul_assoc]
 
-/-- The kernel operator with kernel `0` is `0`. -/
+/-- **The zero kernel gives the zero operator.** The integral operator on
+$C([0, 1], \mathbb{R})$ whose kernel is the zero function on $[0, 1] \times [0, 1]$ is the
+zero operator. -/
 theorem kernelOperator_zero : kernelOperator 0 = 0 := by
   apply ContinuousLinearMap.ext
   intro f

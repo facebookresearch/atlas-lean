@@ -124,7 +124,8 @@ jobs:
           scripts.test_card_pages
 
       # Check scripts/mathgraph-map.jsonl (docs/mathgraph-import.md#the-map): each line valid and, on a PR, the map at
-      # the base commit the start of the checked-out one, unchanged.
+      # the base commit the start of the checked-out one, unchanged, and each line appended since recording a page the
+      # PR adds.
       - name: Check that the import map only grows
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
@@ -143,15 +144,6 @@ jobs:
             --with mkdocs-literate-nav==0.6.2 \
             --with jsonschema==4.26.0 \
             python scripts/import_mathgraph.py --check-map "${base[@]}"
-
-      # The committed graph, as authors wrote it. `lean-facts` below unlinks a
-      # page whose declaration is gone, so the check after it cannot see a
-      # stale link. Report-only for now (#4273, step 4).
-      - name: Check the committed graph
-        continue-on-error: true
-        run: >-
-          uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
-          autoform check blueprint --lean-root .
 
       - name: Free disk space for Lean caches
         run: |
