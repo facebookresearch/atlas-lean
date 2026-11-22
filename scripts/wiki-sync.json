@@ -27855,7 +27855,7 @@
 "MathlibExt.Analysis.SpecificLimits.ExpNegSqrtNormSelfConvolutionLimitWanted.f": "336f16d9fbbd9f68",
 "MathlibExt.Analysis.SpecificLimits.ExpNegSqrtNormSelfConvolutionLimitWanted.tendsto_convolution_self_div_atTop_norm": "336c12297254a2a9",
 "MathlibExt.Analysis.SpecificLimits.ExpOneTaylorRemainderBoundWanted.exp_one_sub_sum_inv_factorial_pos_and_lt": "e2f431a6acf5622c",
-"MathlibExt.Analysis.SpecificLimits.OneSubCosDivSeriesUniformWanted.tendstoUniformlyOn_sum_one_sub_cos_div": "31dac20c56a60ddc",
+"MathlibExt.Analysis.SpecificLimits.OneSubCosDivSeriesUniformWanted.tendstoUniformlyOn_sum_one_sub_cos_div": "66bd1044ee531e2a",
 "MathlibExt.Analysis.SpecificLimits.PowerSeriesCoeffEqOfAgreeOnReciprocalsWanted.coeff_eq_of_tsum_eq_on_inv_nat_add_two": "3d51e5c159dfcf4b",
 "MathlibExt.Analysis.SpecificLimits.ReciprocalSumAddInvNullWanted.tendsto_one_div_sum_add_inv_zero": "a5102dfcd4675729",
 "MathlibExt.Analysis.SpecificLimits.ReciprocalSumAddInvNullWanted.xSeq": "1ba046ebba49bb61",
