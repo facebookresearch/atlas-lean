@@ -44,7 +44,10 @@ this is the logarithm of Breusch's product $F_9(n)$. The endgame upper-bound ine
 the statement
 
 $$L(n) \le \left(\frac{18900}{279} + \frac{18900}{657} + \frac{18900}{963}\right)
-n \log 3.4 + \sqrt{2100n}\,\log(2100n).$$ -/
+n \log 3.4 + \sqrt{2100n}\,\log(2100n).$$
+
+At $n = 0$, with $\log 0 = 0$, both sides are $0$ (every binomial coefficient is
+$\binom{0}{0} = 1$), so the inequality holds. -/
 def UpperIneq (n : ℕ) : Prop :=
   logF9 n ≤ (18900/279 + 18900/657 + 18900/963 : ℝ) * n
     * Real.log 3.4 + Real.sqrt ((2100:ℝ)*n) * Real.log ((2100:ℝ)*n)

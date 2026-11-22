@@ -418,9 +418,10 @@ lemma log_fact_upper {N : ℕ} (hN : 1 ≤ N) :
   push_cast at hlog
   linarith [hlog]
 
-/-- **Main Stirling term.** For a real number $x$, $f_{\mathrm{main}}(x) = x \log x - x$.
+/-- **Main Stirling term.** For a real number $x$, $f_{\mathrm{main}}(x) = x \log x - x$, where
+$\log$ is Mathlib's real logarithm: $\log 0 = 0$ and $\log x = \log |x|$ for $x < 0$.
 
-This is the main term of Stirling's approximation to $\log x!$. -/
+For positive $x$ this is the main term of Stirling's approximation to $\log x!$. -/
 noncomputable def fmain (x : ℝ) : ℝ := x * Real.log x - x
 
 /-- **Termwise Stirling lower bound in Breusch's argument.** Let $(d, \varepsilon)$ be a pair in
