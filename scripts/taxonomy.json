@@ -9874,6 +9874,7 @@
   "MathlibExt/Combinatorics/Additive/GowersNorm": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Gowers uniformity norms"},
   "MathlibExt/Combinatorics/Additive/MinimumRestrictedAdditiveBasis": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Restricted additive bases"},
   "MathlibExt/Combinatorics/Additive/NoSmallSumDominantSet": {"to": "Combinatorics/additive-combinatorics/more-sums-than-differences", "title": "Minimum size of a sum-dominant set"},
+  "MathlibExt/Combinatorics/Additive/RainbowPowerDifference": {"to": "Combinatorics/ramsey-theory/schur-rado-theorems", "title": "Rainbow-free colorings for x − y = z^k"},
   "MathlibExt/Combinatorics/Additive/RepresentationCount": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Additive representation functions"},
   "MathlibExt/Combinatorics/Additive/RestrictedSignedSumset": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Restricted signed sumsets"},
   "MathlibExt/Combinatorics/Additive/Sarkozy": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Furstenberg–Sárközy theorem"},
