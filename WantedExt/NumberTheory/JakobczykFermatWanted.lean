@@ -24,6 +24,10 @@ Numbers*, INTEGERS 26 (2026), Article A77, about the Fermat numbers
 `F_n = 2^{2^n} + 1` (Mathlib's `Nat.fermatNumber`), their generalizations
 `F_n(a, b) = a^{b^n} + 1`, and Wieferich primes to base `2` (`Nat.IsWieferichPrime`, i.e.
 `p² ∣ 2^{p-1} - 1`) and to base `a` (`a^{p-1} ≡ 1 (mod p²)`).
+
+The characterization of Wieferich primes to base `a` by multiplicative orders,
+`MetaMathlibExt.pow_sub_one_modEq_one_sq_iff_orderOf_eq`, is proved in
+`MathlibExt.NumberTheory.WieferichOrder`.
 -/
 
 namespace MetaMathlibExt
@@ -148,16 +152,6 @@ INTEGERS 26 (2026), Article A77, Theorem 5 (`integers-2026-A77-thm-5`). -/
 public theorem_wanted sq_dvd_pow_two_pow_add_one_iff_wieferich {a n p : ℕ} (hp : p.Prime)
     (hp2 : p ≠ 2) (hpa : ¬ p ∣ a) :
     p ^ 2 ∣ a ^ 2 ^ n + 1 ↔ a ^ (p - 1) ≡ 1 [MOD p ^ 2] ∧ orderOf (a : ZMod p) = 2 ^ (n + 1)
-
-/-- For a prime `p ∤ a`: `p ∈ W(a)` if and only if `ord_{p²}(a) = ord_p(a)`, with `p ∈ W(a)`
-written `a^{p-1} ≡ 1 (mod p²)` (the paper's equation (8)); the source's `a ≥ 2` is dropped (both
-sides hold at `a = 1`).
-
-Source: Klaška, *Several Notes on Jakóbczyk's Hypothesis on Fermat Numbers*,
-INTEGERS 26 (2026), Article A77, Lemma 1 (iii) (`integers-2026-A77-lem-1`). -/
-public theorem_wanted pow_sub_one_modEq_one_sq_iff_orderOf_eq {a p : ℕ} (hp : p.Prime)
-    (hpa : ¬ p ∣ a) :
-    a ^ (p - 1) ≡ 1 [MOD p ^ 2] ↔ orderOf (a : ZMod (p ^ 2)) = orderOf (a : ZMod p)
 
 /-- For `a, b, D ≥ 2` and `D ∣ F_n(a, b) = a^{b^n} + 1`: (i) if `b` is odd, `D ∣ F_{n+k}(a, b)` for
 every `k ≥ 1`; (ii) if `b` is even and `D ≥ 3`, `D ∤ F_{n+k}(a, b)` for every `k ≥ 1`. The source

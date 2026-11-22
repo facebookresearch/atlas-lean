@@ -11469,6 +11469,7 @@
   "MathlibExt/NumberTheory/UnitaryDivisor": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Unitary divisors"},
   "MathlibExt/NumberTheory/VaughanIdentity": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Vaughan's identity"},
   "MathlibExt/NumberTheory/WardSBinomialCarryProduct": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Ward's generalized binomial coefficients"},
+  "MathlibExt/NumberTheory/WieferichOrder": {"to": "NumberTheory/primes-primality/special-primes", "title": "Square prime factors of Fermat numbers"},
   "MathlibExt/NumberTheory/WieferichPrime": {"to": "NumberTheory/primes-primality/special-primes", "title": "Wieferich primes"},
   "MathlibExt/NumberTheory/WilsonQuotient": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wilson quotients"},
   "MathlibExt/NumberTheory/Wolstenholme": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Wolstenholme's theorem"},
