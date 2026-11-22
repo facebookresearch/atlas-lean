@@ -892,11 +892,15 @@ private theorem wmi_word_fiber_card (m : ℕ) (k : Fin m → ℕ) (p : ℕ) :
   rw [← Nat.card_eq_fintype_card]
   exact Nat.card_congr (wmiWordFiberEquiv m k p)
 
-/-- Worpitzky identity for multiset Eulerian numbers: for nonnegative integers
-`k` over `Fin m` with total `K`, `∏ i, C (x + k i - 1) (k i)` equals
-`∑ p, C (x + K - p) K * a p` where `a p` counts permutations of the multiset
-`1 ^ (k 1) ⋯ m ^ (k m)` with `p - 1` descents (summed over
-`Finset.Icc 1 (max 1 K)`).
+/-- **Worpitzky identity for multiset permutations.** Let $m$ and $x$ be natural numbers, let
+$k_1, \dots, k_m$ be natural numbers with sum $K = k_1 + \dots + k_m$, and for $p \ge 1$ let
+$a_p$ be the number of words $w_1 w_2 \cdots w_K$ over the alphabet $\{1, \dots, m\}$ in which
+each letter $i$ occurs exactly $k_i$ times and which have exactly $p - 1$ descents, that is,
+indices $j$ with $1 \le j < K$ and $w_j > w_{j+1}$. Then
+
+$$\prod_{i=1}^{m} \binom{x + k_i - 1}{k_i} = \sum_{p=1}^{\max(1, K)} \binom{x + K - p}{K} a_p.$$
+
+Here subtraction of natural numbers is truncated at $0$.
 
 Source: A. Dzhumadil'daev and D. Yeliussizov, *Power Sums of Binomial
 Coefficients*, Journal of Integer Sequences 16 (2013), Article 13.1.4, Theorem

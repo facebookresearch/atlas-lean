@@ -49,8 +49,18 @@ local notation "𝔰[" k ", " r "]" => ite (Odd k) (2 * r - 1) (2 * r)
 /-- The paper's index `t`: `2r` for odd `k`, `2r - 1` for even `k`. -/
 local notation "𝔱[" k ", " r "]" => ite (Odd k) (2 * r) (2 * r - 1)
 
-/-- Lemma 2.1 (quoted from Koshy): for `k ≤ n`,
-`f_{n+k} f_{n-k} - f_n² = (-1)^{n+k+1} f_k²` and `ℓ_{n+k} ℓ_{n-k} - ℓ_n² = (-1)^{n+k} Δ² f_k²`.
+/-- **Catalan-type identities for Fibonacci and Lucas polynomials.** Let $f_i$ and $\ell_i$ be
+the Fibonacci and Lucas polynomials in $\mathbb{Z}[x]$, defined by $f_0 = 0$, $f_1 = 1$,
+$\ell_0 = 2$, $\ell_1 = x$ and $g_{i+2} = x g_{i+1} + g_i$ for $g = f, \ell$. For all natural
+numbers $k \le n$,
+$$
+f_{n+k} f_{n-k} - f_n^2 = (-1)^{n+k+1} f_k^2
+\quad\text{and}\quad
+\ell_{n+k} \ell_{n-k} - \ell_n^2 = (-1)^{n+k} (x^2 + 4) f_k^2
+$$
+in $\mathbb{Z}[x]$.
+
+The source quotes this lemma from Koshy.
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -59,9 +69,16 @@ public theorem_wanted gibonacciPoly_mul_sub_sq {n k : ℕ} (hk : k ≤ n) :
     𝔣 (n + k) * 𝔣 (n - k) - 𝔣 n ^ 2 = (-1) ^ (n + k + 1) * 𝔣 k ^ 2 ∧
       𝔩 (n + k) * 𝔩 (n - k) - 𝔩 n ^ 2 = (-1) ^ (n + k) * (X ^ 2 + 4) * 𝔣 k ^ 2
 
-/-- Lemma 2.2 (quoted from Koshy): for `x > 0`, `g ∈ {f, ℓ}`, odd `k` and a positive integer `λ`,
-`Σ_{n ≥ (k + 1)/2} (1/g_{2n-k}^λ - 1/g_{2n+k}^λ) = Σ_{r=1}^k 1/g_{2r-1}^λ`
-(summation index shifted to start at `0`).
+/-- **Telescoping inverse-power series of gibonacci polynomials at odd indices, odd shift.**
+Let $x > 0$ be real, and let $g_n$ denote either the Fibonacci polynomials, given by $g_0 = 0$ and
+$g_1 = 1$, or the Lucas polynomials, given by $g_0 = 2$ and $g_1 = x$, both satisfying
+$g_{n+2} = x g_{n+1} + g_n$ and evaluated at $x$. Let $k$ be an odd natural number and
+$\lambda$ a positive integer. Then
+$$\sum_{n=0}^{\infty} \left(\frac{1}{g_{2n+1}^{\lambda}} - \frac{1}{g_{2n+1+2k}^{\lambda}}\right) =
+\sum_{r=1}^{k} \frac{1}{g_{2r-1}^{\lambda}}.$$
+
+The source quotes this lemma from Koshy as the sum over $n \ge (k + 1)/2$ of
+$1/g_{2n-k}^{\lambda} - 1/g_{2n+k}^{\lambda}$; here the summation index is shifted to start at $0$.
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -71,9 +88,16 @@ public theorem_wanted tsum_inv_pow_gibonacciPoly_sub_odd {x : ℝ} (hx : 0 < x)
     ∑' n : ℕ, (1 / aeval x (g (2 * n + 1)) ^ lam - 1 / aeval x (g (2 * n + 1 + 2 * k)) ^ lam) =
       ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (g (2 * r - 1)) ^ lam
 
-/-- Lemma 2.3 (quoted from Koshy): for `x > 0`, `g ∈ {f, ℓ}`, even `k` and a positive integer `λ`,
-`Σ_{n ≥ k/2 + 1} (1/g_{2n-k}^λ - 1/g_{2n+k}^λ) = Σ_{r=1}^k 1/g_{2r}^λ`
-(summation index shifted to start at `0`).
+/-- **Telescoping inverse-power series of gibonacci polynomials at even indices, even shift.**
+Let $x > 0$ be real, and let $g_n$ denote either the Fibonacci polynomials, given by $g_0 = 0$ and
+$g_1 = 1$, or the Lucas polynomials, given by $g_0 = 2$ and $g_1 = x$, both satisfying
+$g_{n+2} = x g_{n+1} + g_n$ and evaluated at $x$. Let $k$ be an even natural number and
+$\lambda$ a positive integer. Then
+$$\sum_{n=0}^{\infty} \left(\frac{1}{g_{2n+2}^{\lambda}} - \frac{1}{g_{2n+2+2k}^{\lambda}}\right) =
+\sum_{r=1}^{k} \frac{1}{g_{2r}^{\lambda}}.$$
+
+The source quotes this lemma from Koshy as the sum over $n \ge k/2 + 1$ of
+$1/g_{2n-k}^{\lambda} - 1/g_{2n+k}^{\lambda}$; here the summation index is shifted to start at $0$.
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -83,9 +107,17 @@ public theorem_wanted tsum_inv_pow_gibonacciPoly_sub_even {x : ℝ} (hx : 0 < x)
     ∑' n : ℕ, (1 / aeval x (g (2 * n + 2)) ^ lam - 1 / aeval x (g (2 * n + 2 + 2 * k)) ^ lam) =
       ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (g (2 * r)) ^ lam
 
-/-- Lemma 2.4 (quoted from Koshy): for `x > 0`, `g ∈ {f, ℓ}`, odd `k` and a positive integer `λ`,
-`Σ_{n ≥ (k + 1)/2} (1/g_{2n+1-k}^λ - 1/g_{2n+1+k}^λ) = Σ_{r=1}^k 1/g_{2r}^λ`
-(summation index shifted to start at `0`).
+/-- **Telescoping inverse-power series of gibonacci polynomials at even indices, odd shift.**
+Let $x > 0$ be real, and let $g_n$ denote either the Fibonacci polynomials, given by $g_0 = 0$ and
+$g_1 = 1$, or the Lucas polynomials, given by $g_0 = 2$ and $g_1 = x$, both satisfying
+$g_{n+2} = x g_{n+1} + g_n$ and evaluated at $x$. Let $k$ be an odd natural number and
+$\lambda$ a positive integer. Then
+$$\sum_{n=0}^{\infty} \left(\frac{1}{g_{2n+2}^{\lambda}} - \frac{1}{g_{2n+2+2k}^{\lambda}}\right) =
+\sum_{r=1}^{k} \frac{1}{g_{2r}^{\lambda}}.$$
+
+The source quotes this lemma from Koshy as the sum over $n \ge (k + 1)/2$ of
+$1/g_{2n+1-k}^{\lambda} - 1/g_{2n+1+k}^{\lambda}$; here the summation index is shifted to start
+at $0$.
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -95,9 +127,17 @@ public theorem_wanted tsum_inv_pow_gibonacciPoly_succ_sub_odd {x : ℝ} (hx : 0 
     ∑' n : ℕ, (1 / aeval x (g (2 * n + 2)) ^ lam - 1 / aeval x (g (2 * n + 2 + 2 * k)) ^ lam) =
       ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (g (2 * r)) ^ lam
 
-/-- Lemma 2.5 (quoted from Koshy): for `x > 0`, `g ∈ {f, ℓ}`, even `k` and a positive integer `λ`,
-`Σ_{n ≥ k/2} (1/g_{2n+1-k}^λ - 1/g_{2n+1+k}^λ) = Σ_{r=1}^k 1/g_{2r-1}^λ`
-(summation index shifted to start at `0`).
+/-- **Telescoping inverse-power series of gibonacci polynomials at odd indices, even shift.**
+Let $x > 0$ be real, and let $g_n$ denote either the Fibonacci polynomials, given by $g_0 = 0$ and
+$g_1 = 1$, or the Lucas polynomials, given by $g_0 = 2$ and $g_1 = x$, both satisfying
+$g_{n+2} = x g_{n+1} + g_n$ and evaluated at $x$. Let $k$ be an even natural number and
+$\lambda$ a positive integer. Then
+$$\sum_{n=0}^{\infty} \left(\frac{1}{g_{2n+1}^{\lambda}} - \frac{1}{g_{2n+1+2k}^{\lambda}}\right) =
+\sum_{r=1}^{k} \frac{1}{g_{2r-1}^{\lambda}}.$$
+
+The source quotes this lemma from Koshy as the sum over $n \ge k/2$ of
+$1/g_{2n+1-k}^{\lambda} - 1/g_{2n+1+k}^{\lambda}$; here the summation index is shifted to start
+at $0$.
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -107,9 +147,15 @@ public theorem_wanted tsum_inv_pow_gibonacciPoly_succ_sub_even {x : ℝ} (hx : 0
     ∑' n : ℕ, (1 / aeval x (g (2 * n + 1)) ^ lam - 1 / aeval x (g (2 * n + 1 + 2 * k)) ^ lam) =
       ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (g (2 * r - 1)) ^ lam
 
-/-- Lemma 3.1: for `k ≤ n`,
-`Δ^{2(m-1)}(f_{n+k}^{2m} - f_{n-k}^{2m})
-  = Σ_{j=0}^{m-1} C(2m, j)(-1)^{(n+k+1)j} f_{2k(m-j)} f_{2n(m-j)}`.
+/-- **Even powers of Fibonacci polynomials at $n \pm k$.** Let $f_i \in \mathbb{Z}[x]$ be the
+Fibonacci polynomials, defined by $f_0 = 0$, $f_1 = 1$ and $f_{i+2} = x f_{i+1} + f_i$. For all
+natural numbers $k \le n$ and every natural number $m$,
+$$
+(x^2 + 4)^{m-1} \bigl(f_{n+k}^{2m} - f_{n-k}^{2m}\bigr) =
+\sum_{j=0}^{m-1} \binom{2m}{j} (-1)^{(n+k+1)j} f_{2k(m-j)} f_{2n(m-j)}
+$$
+in $\mathbb{Z}[x]$, where for $m = 0$ the exponent $m - 1$ is read as $0$ (both sides are then
+$0$).
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -119,8 +165,15 @@ public theorem_wanted fibPoly_pow_even_sub {n k : ℕ} (hk : k ≤ n) (m : ℕ) 
       ∑ j ∈ Finset.range m, ((2 * m).choose j : ℤ[X]) * (-1) ^ ((n + k + 1) * j) *
         𝔣 (2 * k * (m - j)) * 𝔣 (2 * n * (m - j))
 
-/-- Lemma 3.2: for `k ≤ n`,
-`ℓ_{n+k}^{2m} - ℓ_{n-k}^{2m} = Δ² Σ_{j=0}^{m-1} C(2m, j)(-1)^{(n+k)j} f_{2k(m-j)} f_{2n(m-j)}`.
+/-- **Even powers of Lucas polynomials at $n \pm k$.** Let $f_i$ and $\ell_i$ be the
+Fibonacci and Lucas polynomials in $\mathbb{Z}[x]$, defined by $f_0 = 0$, $f_1 = 1$, $\ell_0 = 2$,
+$\ell_1 = x$ and $g_{i+2} = x g_{i+1} + g_i$ for $g = f, \ell$. For all natural numbers
+$k \le n$ and every natural number $m$,
+$$
+\ell_{n+k}^{2m} - \ell_{n-k}^{2m} =
+(x^2 + 4) \sum_{j=0}^{m-1} \binom{2m}{j} (-1)^{(n+k)j} f_{2k(m-j)} f_{2n(m-j)}
+$$
+in $\mathbb{Z}[x]$.
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -130,9 +183,19 @@ public theorem_wanted lucasPoly_pow_even_sub {n k : ℕ} (hk : k ≤ n) (m : ℕ
       (X ^ 2 + 4) * ∑ j ∈ Finset.range m, ((2 * m).choose j : ℤ[X]) * (-1) ^ ((n + k) * j) *
         𝔣 (2 * k * (m - j)) * 𝔣 (2 * n * (m - j))
 
-/-- Lemma 4.1: for `k ≤ n` and `m ∈ ℕ`, `Δ^{2m}(f_{n+k}^{2m+1} - f_{n-k}^{2m+1})` equals
-`Σ_{j=0}^m C(2m+1, j)(-1)^{nj} f_{n(2m+1-2j)} ℓ_{k(2m+1-2j)}` if `k` is odd and
-`Σ_{j=0}^m C(2m+1, j)(-1)^{(n+1)j} ℓ_{n(2m+1-2j)} f_{k(2m+1-2j)}` otherwise.
+/-- **Odd powers of Fibonacci polynomials at $n \pm k$.** Let $f_i$ and $\ell_i$ be the
+Fibonacci and Lucas polynomials in $\mathbb{Z}[x]$, defined by $f_0 = 0$, $f_1 = 1$, $\ell_0 = 2$,
+$\ell_1 = x$ and $g_{i+2} = x g_{i+1} + g_i$ for $g = f, \ell$. Let $k \le n$ and $m$ be natural
+numbers. In $\mathbb{Z}[x]$, if $k$ is odd then
+$$
+(x^2 + 4)^m \bigl(f_{n+k}^{2m+1} - f_{n-k}^{2m+1}\bigr) =
+\sum_{j=0}^{m} \binom{2m+1}{j} (-1)^{nj} f_{n(2m+1-2j)} \ell_{k(2m+1-2j)},
+$$
+and if $k$ is even then
+$$
+(x^2 + 4)^m \bigl(f_{n+k}^{2m+1} - f_{n-k}^{2m+1}\bigr) =
+\sum_{j=0}^{m} \binom{2m+1}{j} (-1)^{(n+1)j} \ell_{n(2m+1-2j)} f_{k(2m+1-2j)}.
+$$
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -145,9 +208,19 @@ public theorem_wanted fibPoly_pow_odd_sub {n k : ℕ} (hk : k ≤ n) (m : ℕ) :
       ∑ j ∈ Finset.range (m + 1), ((2 * m + 1).choose j : ℤ[X]) * (-1) ^ ((n + 1) * j) *
         𝔩 (n * (2 * m + 1 - 2 * j)) * 𝔣 (k * (2 * m + 1 - 2 * j)))
 
-/-- Lemma 4.2: for `k ≤ n` and `m ∈ ℕ`, `ℓ_{n+k}^{2m+1} - ℓ_{n-k}^{2m+1}` equals
-`Σ_{j=0}^m C(2m+1, j)(-1)^{(n+1)j} ℓ_{n(2m+1-2j)} ℓ_{k(2m+1-2j)}` if `k` is odd and
-`Δ² Σ_{j=0}^m C(2m+1, j)(-1)^{nj} f_{n(2m+1-2j)} f_{k(2m+1-2j)}` otherwise.
+/-- **Odd powers of Lucas polynomials at $n \pm k$.** Let $f_i$ and $\ell_i$ be the
+Fibonacci and Lucas polynomials in $\mathbb{Z}[x]$, defined by $f_0 = 0$, $f_1 = 1$, $\ell_0 = 2$,
+$\ell_1 = x$ and $g_{i+2} = x g_{i+1} + g_i$ for $g = f, \ell$. Let $k \le n$ and $m$ be natural
+numbers. In $\mathbb{Z}[x]$, if $k$ is odd then
+$$
+\ell_{n+k}^{2m+1} - \ell_{n-k}^{2m+1} =
+\sum_{j=0}^{m} \binom{2m+1}{j} (-1)^{(n+1)j} \ell_{n(2m+1-2j)} \ell_{k(2m+1-2j)},
+$$
+and if $k$ is even then
+$$
+\ell_{n+k}^{2m+1} - \ell_{n-k}^{2m+1} =
+(x^2 + 4) \sum_{j=0}^{m} \binom{2m+1}{j} (-1)^{nj} f_{n(2m+1-2j)} f_{k(2m+1-2j)}.
+$$
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -160,10 +233,17 @@ public theorem_wanted lucasPoly_pow_odd_sub {n k : ℕ} (hk : k ≤ n) (m : ℕ)
       (X ^ 2 + 4) * ∑ j ∈ Finset.range (m + 1), ((2 * m + 1).choose j : ℤ[X]) *
         (-1) ^ (n * j) * 𝔣 (n * (2 * m + 1 - 2 * j)) * 𝔣 (k * (2 * m + 1 - 2 * j)))
 
-/-- Corollary 4.3: for real `x > 0`,
-`Σ_{n≥1} ((x³ + 3x)f_{6n} + 3x f_{2n})/(f_{2n}² + 1)³ = x² + 4` and
-`Σ_{n≥2} (x(x⁴ + 4x² + 3)ℓ_{6n} - 3x ℓ_{2n})/(f_{2n}² - x²)³
-  = (x² + 4)((x² + 2)³ + 1)/(x³(x² + 2)³)`.
+/-- **Cubic-denominator series for even-index Fibonacci polynomials.** Let $f_i$ and $\ell_i$ be the
+Fibonacci and Lucas polynomials, defined by $f_0 = 0$, $f_1 = 1$, $\ell_0 = 2$, $\ell_1 = x$ and
+$g_{i+2} = x g_{i+1} + g_i$ for $g = f, \ell$. For every real $x > 0$,
+$$
+\sum_{n \ge 1} \frac{(x^3 + 3x) f_{6n}(x) + 3x f_{2n}(x)}{(f_{2n}(x)^2 + 1)^3} = x^2 + 4
+$$
+and
+$$
+\sum_{n \ge 2} \frac{x(x^4 + 4x^2 + 3) \ell_{6n}(x) - 3x \ell_{2n}(x)}{(f_{2n}(x)^2 - x^2)^3} =
+\frac{(x^2 + 4)\bigl((x^2 + 2)^3 + 1\bigr)}{x^3 (x^2 + 2)^3}.
+$$
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -177,10 +257,15 @@ public theorem_wanted tsum_fibPoly_cube_even_index {x : ℝ} (hx : 0 < x) :
           (aeval x (𝔣 (2 * (n + 2))) ^ 2 - x ^ 2) ^ 3 =
         (x ^ 2 + 4) * ((x ^ 2 + 2) ^ 3 + 1) / (x ^ 3 * (x ^ 2 + 2) ^ 3)
 
-/-- Corollary 4.5: for real `x > 0`,
-`Σ_{n≥1} ((x³ + 3x)ℓ_{6n} - 3x ℓ_{2n})/(ℓ_{2n}² - Δ²)³ = 1/x³` and
-`Σ_{n≥2} (x(x⁴ + 4x² + 3)f_{6n} + 3x f_{2n})/(ℓ_{2n}² + (x² + 4)x²)³
-  = (1/(x² + 4))(1/(x² + 2)³ + 1/(x⁴ + 4x² + 2)³)`.
+/-- **Cubic series over even-indexed Lucas polynomials.** Let $x > 0$ be real, and let $f_n$ and
+$\ell_n$ denote the Fibonacci and Lucas polynomials evaluated at $x$, given by $f_0 = 0$,
+$f_1 = 1$, $\ell_0 = 2$, $\ell_1 = x$ and the recurrence $z_{n+2} = x z_{n+1} + z_n$ for both. Then
+$$\sum_{n=1}^{\infty} \frac{(x^3 + 3x) \ell_{6n} - 3x \ell_{2n}}
+{\left(\ell_{2n}^2 - (x^2 + 4)\right)^3} = \frac{1}{x^3}$$
+and
+$$\sum_{n=2}^{\infty} \frac{x(x^4 + 4x^2 + 3) f_{6n} + 3x f_{2n}}
+{\left(\ell_{2n}^2 + (x^2 + 4) x^2\right)^3} =
+\frac{1}{x^2 + 4} \left(\frac{1}{(x^2 + 2)^3} + \frac{1}{(x^4 + 4x^2 + 2)^3}\right).$$
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -194,10 +279,19 @@ public theorem_wanted tsum_lucasPoly_cube_even_index {x : ℝ} (hx : 0 < x) :
           (aeval x (𝔩 (2 * (n + 2))) ^ 2 + (x ^ 2 + 4) * x ^ 2) ^ 3 =
         1 / (x ^ 2 + 4) * (1 / (x ^ 2 + 2) ^ 3 + 1 / (x ^ 4 + 4 * x ^ 2 + 2) ^ 3)
 
-/-- Corollary 4.7: for real `x > 0`,
-`Σ_{n≥1} ((x³ + 3x)f_{6n+3} - 3x f_{2n+1})/(f_{2n+1}² - 1)³ = (x² + 4)/x³` and
-`Σ_{n≥1} (x(x⁴ + 4x² + 3)ℓ_{6n+3} + 3x ℓ_{2n+1})/(f_{2n+1}² + x²)³
-  = (x² + 4)((x² + 1)³ + 1)/(x² + 1)³`.
+/-- **Cubic-denominator series for odd-index Fibonacci polynomials.** Let $f_i$ and $\ell_i$ be the
+Fibonacci and Lucas polynomials, defined by $f_0 = 0$, $f_1 = 1$, $\ell_0 = 2$, $\ell_1 = x$ and
+$g_{i+2} = x g_{i+1} + g_i$ for $g = f, \ell$. For every real $x > 0$,
+$$
+\sum_{n \ge 1} \frac{(x^3 + 3x) f_{6n+3}(x) - 3x f_{2n+1}(x)}{(f_{2n+1}(x)^2 - 1)^3} =
+\frac{x^2 + 4}{x^3}
+$$
+and
+$$
+\sum_{n \ge 1} \frac{x(x^4 + 4x^2 + 3) \ell_{6n+3}(x) + 3x \ell_{2n+1}(x)}
+{(f_{2n+1}(x)^2 + x^2)^3} =
+\frac{(x^2 + 4)\bigl((x^2 + 1)^3 + 1\bigr)}{(x^2 + 1)^3}.
+$$
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -212,10 +306,14 @@ public theorem_wanted tsum_fibPoly_cube_odd_index {x : ℝ} (hx : 0 < x) :
           (aeval x (𝔣 (2 * (n + 1) + 1)) ^ 2 + x ^ 2) ^ 3 =
         (x ^ 2 + 4) * ((x ^ 2 + 1) ^ 3 + 1) / (x ^ 2 + 1) ^ 3
 
-/-- Corollary 4.9: for real `x > 0`,
-`Σ_{n≥1} ((x³ + 3x)ℓ_{6n+3} + 3x ℓ_{2n+1})/(ℓ_{2n+1}² + x² + 4)³ = 1/(x² + 2)³` and
-`Σ_{n≥1} (x(x⁴ + 4x² + 3)f_{6n+3} - 3x f_{2n+1})/(ℓ_{2n+1}² - x²(x² + 4))³
-  = ((x² + 3)³ + 1)/(x³(x² + 4)(x² + 3)³)`.
+/-- **Cubic sums with odd-index Lucas polynomial denominators.** Let $f_n$ and $\ell_n$ denote the
+Fibonacci and Lucas polynomials, given by $f_0 = 0$, $f_1 = 1$, $\ell_0 = 2$, $\ell_1 = x$ and
+$g_{n+2} = x g_{n+1} + g_n$ for $g \in \{f, \ell\}$, evaluated at a real number $x > 0$. Then
+$$\sum_{n \ge 1} \frac{(x^3 + 3x) \ell_{6n+3} + 3x \ell_{2n+1}}{(\ell_{2n+1}^2 + x^2 + 4)^3}
+= \frac{1}{(x^2 + 2)^3}$$
+and
+$$\sum_{n \ge 1} \frac{x (x^4 + 4x^2 + 3) f_{6n+3} - 3x f_{2n+1}}{(\ell_{2n+1}^2 - x^2 (x^2 + 4))^3}
+= \frac{(x^2 + 3)^3 + 1}{x^3 (x^2 + 4) (x^2 + 3)^3}.$$
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -230,8 +328,14 @@ public theorem_wanted tsum_lucasPoly_cube_odd_index {x : ℝ} (hx : 0 < x) :
           (aeval x (𝔩 (2 * (n + 1) + 1)) ^ 2 - x ^ 2 * (x ^ 2 + 4)) ^ 3 =
         ((x ^ 2 + 3) ^ 3 + 1) / (x ^ 3 * (x ^ 2 + 4) * (x ^ 2 + 3) ^ 3)
 
-/-- Corollary 4.4: `Σ_{n≥1} (4F_{6n} + 3F_{2n})/(F_{2n}² + 1)³ = 5` and
-`Σ_{n≥2} (8L_{6n} - 3L_{2n})/(F_{2n}² - 1)³ = 140/27`.
+/-- **Cubic-denominator series for even-index Fibonacci numbers.** Let $F_n$ be the Fibonacci
+numbers ($F_0 = 0$, $F_1 = 1$, $F_{n+2} = F_{n+1} + F_n$) and $L_n$ the Lucas numbers. Then, as
+series of real numbers,
+$$
+\sum_{n \ge 1} \frac{4F_{6n} + 3F_{2n}}{(F_{2n}^2 + 1)^3} = 5
+\quad\text{and}\quad
+\sum_{n \ge 2} \frac{8L_{6n} - 3L_{2n}}{(F_{2n}^2 - 1)^3} = \frac{140}{27}.
+$$
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -242,8 +346,12 @@ public theorem_wanted tsum_fib_cube_even_index :
       ∑' n : ℕ, (8 * (lucasNumber (6 * (n + 2)) : ℝ) - 3 * (lucasNumber (2 * (n + 2)) : ℝ)) /
           ((Nat.fib (2 * (n + 2)) : ℝ) ^ 2 - 1) ^ 3 = 140 / 27
 
-/-- Corollary 4.6: `Σ_{n≥1} (4L_{6n} - 3L_{2n})/(L_{2n}² - 5)³ = 1` and
-`Σ_{n≥2} (8F_{6n} + 3F_{2n})/(L_{2n}² + 5)³ = 74/9261`.
+/-- **Cubic series over even-indexed Lucas numbers.** Let $F_n$ and $L_n$ denote the Fibonacci and
+Lucas numbers, given by $F_0 = 0$, $F_1 = 1$, $L_0 = 2$, $L_1 = 1$ and the recurrence
+$z_{n+2} = z_{n+1} + z_n$ for both. Then
+$$\sum_{n=1}^{\infty} \frac{4L_{6n} - 3L_{2n}}{(L_{2n}^2 - 5)^3} = 1$$
+and
+$$\sum_{n=2}^{\infty} \frac{8F_{6n} + 3F_{2n}}{(L_{2n}^2 + 5)^3} = \frac{74}{9261}.$$
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -254,10 +362,18 @@ public theorem_wanted tsum_lucas_cube_even_index :
       ∑' n : ℕ, (8 * (Nat.fib (6 * (n + 2)) : ℝ) + 3 * (Nat.fib (2 * (n + 2)) : ℝ)) /
           ((lucasNumber (2 * (n + 2)) : ℝ) ^ 2 + 5) ^ 3 = 74 / 9261
 
-/-- Corollary 4.8: `Σ_{n≥1} (4F_{6n+3} - 3F_{2n+1})/(F_{2n+1}² - 1)³ = 5` and
-`Σ_{n≥1} (8L_{6n+3} + 3L_{2n+1})/(F_{2n+1}² + 1)³ = 45/8` (the case `x = 1` of Corollary 4.7; the
-extracted record prints the second lower limit as `n = 2`, under which the sum is
-`45/8 - 124/25 = 133/200`).
+/-- **Cubic-denominator series for odd-index Fibonacci numbers.** Let $F_n$ be the Fibonacci
+numbers ($F_0 = 0$, $F_1 = 1$, $F_{n+2} = F_{n+1} + F_n$) and $L_n$ the Lucas numbers. Then, as
+series of real numbers,
+$$
+\sum_{n \ge 1} \frac{4F_{6n+3} - 3F_{2n+1}}{(F_{2n+1}^2 - 1)^3} = 5
+\quad\text{and}\quad
+\sum_{n \ge 1} \frac{8L_{6n+3} + 3L_{2n+1}}{(F_{2n+1}^2 + 1)^3} = \frac{45}{8}.
+$$
+
+These are the case $x = 1$ of Corollary 4.7. The extracted record of the source prints the lower
+limit of the second series as $n = 2$; with that limit the sum would be
+$45/8 - 124/25 = 133/200$.
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -269,8 +385,12 @@ public theorem_wanted tsum_fib_cube_odd_index :
           3 * (lucasNumber (2 * (n + 1) + 1) : ℝ)) /
           ((Nat.fib (2 * (n + 1) + 1) : ℝ) ^ 2 + 1) ^ 3 = 45 / 8
 
-/-- Corollary 4.10: `Σ_{n≥1} (4L_{6n+3} + 3L_{2n+1})/(L_{2n+1}² + 5)³ = 1/27` and
-`Σ_{n≥1} (8F_{6n+3} - 3F_{2n+1})/(L_{2n+1}² - 5)³ = 13/64`.
+/-- **Cubic series over odd-indexed Lucas numbers.** Let $F_n$ and $L_n$ denote the Fibonacci and
+Lucas numbers, given by $F_0 = 0$, $F_1 = 1$, $L_0 = 2$, $L_1 = 1$ and the recurrence
+$z_{n+2} = z_{n+1} + z_n$ for both. Then
+$$\sum_{n=1}^{\infty} \frac{4L_{6n+3} + 3L_{2n+1}}{(L_{2n+1}^2 + 5)^3} = \frac{1}{27}$$
+and
+$$\sum_{n=1}^{\infty} \frac{8F_{6n+3} - 3F_{2n+1}}{(L_{2n+1}^2 - 5)^3} = \frac{13}{64}.$$
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -281,9 +401,15 @@ public theorem_wanted tsum_lucas_cube_odd_index :
       ∑' n : ℕ, (8 * (Nat.fib (6 * (n + 1) + 3) : ℝ) - 3 * (Nat.fib (2 * (n + 1) + 1) : ℝ)) /
           ((lucasNumber (2 * (n + 1) + 1) : ℝ) ^ 2 - 5) ^ 3 = 13 / 64
 
-/-- Theorem 1.1: for real `x > 0` and positive integers `k`, `m`,
-`Σ_{n≥L} Σ_{j=0}^{m-1} C(2m, j)(-1)^{(k+1)j} f_{2k(m-j)} f_{4n(m-j)} / [f_{2n}² - (-1)^k f_k²]^{2m}
-  = Δ^{2(m-1)} Σ_{r=1}^k 1/f_s^{2m}` (summation index shifted to start at `0`).
+/-- **Series of even powers of Fibonacci polynomials at even indices.** Let $f_i$ be the
+Fibonacci polynomials, defined by $f_0 = 0$, $f_1 = 1$ and $f_{i+2} = x f_{i+1} + f_i$. Let
+$x > 0$ be real and let $k$ and $m$ be positive integers. If $k$ is odd, put $L = (k + 1)/2$ and
+$s_r = 2r - 1$; if $k$ is even, put $L = k/2 + 1$ and $s_r = 2r$. Then
+$$
+\sum_{n \ge L} \frac{\sum_{j=0}^{m-1} \binom{2m}{j} (-1)^{(k+1)j} f_{2k(m-j)}(x)
+f_{4n(m-j)}(x)}{\bigl(f_{2n}(x)^2 - (-1)^k f_k(x)^2\bigr)^{2m}} =
+(x^2 + 4)^{m-1} \sum_{r=1}^{k} \frac{1}{f_{s_r}(x)^{2m}}.
+$$
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -295,9 +421,14 @@ public theorem_wanted tsum_fibPoly_even_pow_even_index {x : ℝ} (hx : 0 < x) {k
         (aeval x (𝔣 (2 * (n + 𝔏[k]))) ^ 2 - (-1) ^ k * aeval x (𝔣 k) ^ 2) ^ (2 * m) =
       (x ^ 2 + 4) ^ (m - 1) * ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (𝔣 𝔰[k, r]) ^ (2 * m)
 
-/-- Theorem 1.2: for real `x > 0` and positive integers `k`, `m`,
-`Σ_{n≥L} Σ_{j=0}^{m-1} C(2m, j)(-1)^{kj} f_{2k(m-j)} f_{4n(m-j)} / [ℓ_{2n}² + (-1)^k Δ² f_k²]^{2m}
-  = (1/Δ²) Σ_{r=1}^k 1/ℓ_s^{2m}` (summation index shifted to start at `0`).
+/-- **Even-power sums with even-index Lucas polynomial denominators.** Let $f_n$ and $\ell_n$
+denote the Fibonacci and Lucas polynomials, given by $f_0 = 0$, $f_1 = 1$, $\ell_0 = 2$,
+$\ell_1 = x$ and $g_{n+2} = x g_{n+1} + g_n$ for $g \in \{f, \ell\}$, evaluated at a real number
+$x > 0$, and let $k$ and $m$ be positive integers. Put $L = (k + 1)/2$ and $s_r = 2r - 1$ if $k$
+is odd, and $L = k/2 + 1$ and $s_r = 2r$ if $k$ is even. Then
+$$\sum_{n \ge L} \frac{\sum_{j=0}^{m-1} \binom{2m}{j} (-1)^{kj} f_{2k(m-j)} f_{4n(m-j)}}
+{\left(\ell_{2n}^2 + (-1)^k (x^2 + 4) f_k^2\right)^{2m}}
+= \frac{1}{x^2 + 4} \sum_{r=1}^{k} \frac{1}{\ell_{s_r}^{2m}}.$$
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -309,10 +440,15 @@ public theorem_wanted tsum_lucasPoly_even_pow_even_index {x : ℝ} (hx : 0 < x) 
         (aeval x (𝔩 (2 * (n + 𝔏[k]))) ^ 2 + (-1) ^ k * (x ^ 2 + 4) * aeval x (𝔣 k) ^ 2) ^ (2 * m) =
       1 / (x ^ 2 + 4) * ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (𝔩 𝔰[k, r]) ^ (2 * m)
 
-/-- Theorem 1.3: for real `x > 0` and positive integers `k`, `m`,
-`Σ_{n≥M} Σ_{j=0}^{m-1} C(2m, j)(-1)^{kj} f_{2k(m-j)} f_{(4n+2)(m-j)} /
-  [f_{2n+1}² + (-1)^k f_k²]^{2m} = Δ^{2(m-1)} Σ_{r=1}^k 1/f_t^{2m}`
-(summation index shifted to start at `0`).
+/-- **Even-power series over odd-indexed Fibonacci polynomials.** Let $x > 0$ be real, let $f_n$
+denote the Fibonacci polynomials evaluated at $x$, given by $f_0 = 0$, $f_1 = 1$ and
+$f_{n+2} = x f_{n+1} + f_n$, and let $k$ and $m$ be positive integers. Put $M = (k + 1)/2$ and
+$t_r = 2r$ if $k$ is odd, and $M = k/2$ and $t_r = 2r - 1$ if $k$ is even. Then
+$$\sum_{n=0}^{\infty} \frac{\sum_{j=0}^{m-1} \binom{2m}{j} (-1)^{kj} f_{2k(m-j)}
+f_{(4(n+M)+2)(m-j)}}{\left(f_{2(n+M)+1}^2 + (-1)^k f_k^2\right)^{2m}} =
+(x^2 + 4)^{m-1} \sum_{r=1}^{k} \frac{1}{f_{t_r}^{2m}}.$$
+
+This is the source's sum over $n \ge M$ with the summation index shifted to start at $0$.
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -324,10 +460,14 @@ public theorem_wanted tsum_fibPoly_even_pow_odd_index {x : ℝ} (hx : 0 < x) {k 
         (aeval x (𝔣 (2 * (n + 𝔐[k]) + 1)) ^ 2 + (-1) ^ k * aeval x (𝔣 k) ^ 2) ^ (2 * m) =
       (x ^ 2 + 4) ^ (m - 1) * ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (𝔣 𝔱[k, r]) ^ (2 * m)
 
-/-- Theorem 1.4: for real `x > 0` and positive integers `k`, `m`,
-`Σ_{n≥M} Σ_{j=0}^{m-1} C(2m, j)(-1)^{(k+1)j} f_{2k(m-j)} f_{(4n+2)(m-j)} /
-  [ℓ_{2n+1}² - (-1)^k Δ² f_k²]^{2m} = (1/Δ²) Σ_{r=1}^k 1/ℓ_t^{2m}`
-(summation index shifted to start at `0`).
+/-- **Even-power sums with odd-index Lucas polynomial denominators.** Let $f_n$ and $\ell_n$
+denote the Fibonacci and Lucas polynomials, given by $f_0 = 0$, $f_1 = 1$, $\ell_0 = 2$,
+$\ell_1 = x$ and $g_{n+2} = x g_{n+1} + g_n$ for $g \in \{f, \ell\}$, evaluated at a real number
+$x > 0$, and let $k$ and $m$ be positive integers. Put $M = (k + 1)/2$ and $t_r = 2r$ if $k$ is
+odd, and $M = k/2$ and $t_r = 2r - 1$ if $k$ is even. Then
+$$\sum_{n \ge M} \frac{\sum_{j=0}^{m-1} \binom{2m}{j} (-1)^{(k+1)j} f_{2k(m-j)} f_{(4n+2)(m-j)}}
+{\left(\ell_{2n+1}^2 - (-1)^k (x^2 + 4) f_k^2\right)^{2m}}
+= \frac{1}{x^2 + 4} \sum_{r=1}^{k} \frac{1}{\ell_{t_r}^{2m}}.$$
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -340,11 +480,20 @@ public theorem_wanted tsum_lucasPoly_even_pow_odd_index {x : ℝ} (hx : 0 < x) {
           (2 * m) =
       1 / (x ^ 2 + 4) * ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (𝔩 𝔱[k, r]) ^ (2 * m)
 
-/-- Theorem 1.5: for real `x > 0`, a positive integer `k` and `m ∈ ℕ`,
-`Σ_{n≥L} Σ_{j=0}^m C(2m+1, j) f_{2n(2m+1-2j)} ℓ_{k(2m+1-2j)} / (f_{2n}² + f_k²)^{2m+1}
-  = Δ^{2m} Σ_{r=1}^k 1/f_{2r-1}^{2m+1}` if `k` is odd, and
-`Σ_{n≥L} Σ_{j=0}^m C(2m+1, j)(-1)^j ℓ_{2n(2m+1-2j)} f_{k(2m+1-2j)} / (f_{2n}² - f_k²)^{2m+1}
-  = Δ^{2m} Σ_{r=1}^k 1/f_{2r}^{2m+1}` if `k` is even (summation index shifted to start at `0`).
+/-- **Odd-power series over even-indexed Fibonacci polynomials.** Let $x > 0$ be real, let $f_n$
+and $\ell_n$ denote the Fibonacci and Lucas polynomials evaluated at $x$, given by $f_0 = 0$,
+$f_1 = 1$, $\ell_0 = 2$, $\ell_1 = x$ and the recurrence $z_{n+2} = x z_{n+1} + z_n$ for both, and
+let $k$ be a positive integer and $m$ a natural number. Put $L = (k + 1)/2$ if $k$ is odd and
+$L = k/2 + 1$ if $k$ is even. If $k$ is odd, then
+$$\sum_{n=0}^{\infty} \frac{\sum_{j=0}^{m} \binom{2m+1}{j} f_{2(n+L)(2m+1-2j)}
+\ell_{k(2m+1-2j)}}{\left(f_{2(n+L)}^2 + f_k^2\right)^{2m+1}} =
+(x^2 + 4)^m \sum_{r=1}^{k} \frac{1}{f_{2r-1}^{2m+1}},$$
+and if $k$ is even, then
+$$\sum_{n=0}^{\infty} \frac{\sum_{j=0}^{m} \binom{2m+1}{j} (-1)^j \ell_{2(n+L)(2m+1-2j)}
+f_{k(2m+1-2j)}}{\left(f_{2(n+L)}^2 - f_k^2\right)^{2m+1}} =
+(x^2 + 4)^m \sum_{r=1}^{k} \frac{1}{f_{2r}^{2m+1}}.$$
+
+These are the source's sums over $n \ge L$ with the summation index shifted to start at $0$.
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -362,11 +511,18 @@ public theorem_wanted tsum_fibPoly_odd_pow_even_index {x : ℝ} (hx : 0 < x) {k 
         (aeval x (𝔣 (2 * (n + 𝔏[k]))) ^ 2 - aeval x (𝔣 k) ^ 2) ^ (2 * m + 1) =
       (x ^ 2 + 4) ^ m * ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (𝔣 (2 * r)) ^ (2 * m + 1))
 
-/-- Theorem 1.6: for real `x > 0`, a positive integer `k` and `m ∈ ℕ`,
-`Σ_{n≥L} Σ_{j=0}^m C(2m+1, j)(-1)^j ℓ_{2n(2m+1-2j)} ℓ_{k(2m+1-2j)} / (ℓ_{2n}² - Δ² f_k²)^{2m+1}
-  = Σ_{r=1}^k 1/ℓ_{2r-1}^{2m+1}` if `k` is odd, and
-`Σ_{n≥L} Σ_{j=0}^m C(2m+1, j) f_{2n(2m+1-2j)} f_{k(2m+1-2j)} / (ℓ_{2n}² + Δ² f_k²)^{2m+1}
-  = (1/Δ²) Σ_{r=1}^k 1/ℓ_{2r}^{2m+1}` if `k` is even (summation index shifted to start at `0`).
+/-- **Odd-power sums with even-index Lucas polynomial denominators.** Let $f_n$ and $\ell_n$
+denote the Fibonacci and Lucas polynomials, given by $f_0 = 0$, $f_1 = 1$, $\ell_0 = 2$,
+$\ell_1 = x$ and $g_{n+2} = x g_{n+1} + g_n$ for $g \in \{f, \ell\}$, evaluated at a real number
+$x > 0$, let $k$ be a positive integer and $m$ a natural number, and put $L = (k + 1)/2$ if $k$ is
+odd and $L = k/2 + 1$ if $k$ is even. If $k$ is odd, then
+$$\sum_{n \ge L} \frac{\sum_{j=0}^{m} (-1)^j \binom{2m+1}{j} \ell_{2n(2m+1-2j)} \ell_{k(2m+1-2j)}}
+{\left(\ell_{2n}^2 - (x^2 + 4) f_k^2\right)^{2m+1}}
+= \sum_{r=1}^{k} \frac{1}{\ell_{2r-1}^{2m+1}},$$
+and if $k$ is even, then
+$$\sum_{n \ge L} \frac{\sum_{j=0}^{m} \binom{2m+1}{j} f_{2n(2m+1-2j)} f_{k(2m+1-2j)}}
+{\left(\ell_{2n}^2 + (x^2 + 4) f_k^2\right)^{2m+1}}
+= \frac{1}{x^2 + 4} \sum_{r=1}^{k} \frac{1}{\ell_{2r}^{2m+1}}.$$
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -384,11 +540,20 @@ public theorem_wanted tsum_lucasPoly_odd_pow_even_index {x : ℝ} (hx : 0 < x) {
         (aeval x (𝔩 (2 * (n + 𝔏[k]))) ^ 2 + (x ^ 2 + 4) * aeval x (𝔣 k) ^ 2) ^ (2 * m + 1) =
       1 / (x ^ 2 + 4) * ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (𝔩 (2 * r)) ^ (2 * m + 1))
 
-/-- Theorem 1.7: for real `x > 0`, a positive integer `k` and `m ∈ ℕ`,
-`Σ_{n≥M} Σ_{j=0}^m C(2m+1, j)(-1)^j f_{(2n+1)(2m+1-2j)} ℓ_{k(2m+1-2j)} / (f_{2n+1}² - f_k²)^{2m+1}
-  = Δ^{2m} Σ_{r=1}^k 1/f_{2r}^{2m+1}` if `k` is odd, and
-`Σ_{n≥M} Σ_{j=0}^m C(2m+1, j) ℓ_{(2n+1)(2m+1-2j)} f_{k(2m+1-2j)} / (f_{2n+1}² + f_k²)^{2m+1}
-  = Δ^{2m} Σ_{r=1}^k 1/f_{2r-1}^{2m+1}` if `k` is even (summation index shifted to start at `0`).
+/-- **Odd-power series over odd-indexed Fibonacci polynomials.** Let $x > 0$ be real, let $f_n$
+and $\ell_n$ denote the Fibonacci and Lucas polynomials evaluated at $x$, given by $f_0 = 0$,
+$f_1 = 1$, $\ell_0 = 2$, $\ell_1 = x$ and the recurrence $z_{n+2} = x z_{n+1} + z_n$ for both, and
+let $k$ be a positive integer and $m$ a natural number. Put $M = (k + 1)/2$ if $k$ is odd and
+$M = k/2$ if $k$ is even. If $k$ is odd, then
+$$\sum_{n=0}^{\infty} \frac{\sum_{j=0}^{m} \binom{2m+1}{j} (-1)^j f_{(2(n+M)+1)(2m+1-2j)}
+\ell_{k(2m+1-2j)}}{\left(f_{2(n+M)+1}^2 - f_k^2\right)^{2m+1}} =
+(x^2 + 4)^m \sum_{r=1}^{k} \frac{1}{f_{2r}^{2m+1}},$$
+and if $k$ is even, then
+$$\sum_{n=0}^{\infty} \frac{\sum_{j=0}^{m} \binom{2m+1}{j} \ell_{(2(n+M)+1)(2m+1-2j)}
+f_{k(2m+1-2j)}}{\left(f_{2(n+M)+1}^2 + f_k^2\right)^{2m+1}} =
+(x^2 + 4)^m \sum_{r=1}^{k} \frac{1}{f_{2r-1}^{2m+1}}.$$
+
+These are the source's sums over $n \ge M$ with the summation index shifted to start at $0$.
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
@@ -406,12 +571,18 @@ public theorem_wanted tsum_fibPoly_odd_pow_odd_index {x : ℝ} (hx : 0 < x) {k :
         (aeval x (𝔣 (2 * (n + 𝔐[k]) + 1)) ^ 2 + aeval x (𝔣 k) ^ 2) ^ (2 * m + 1) =
       (x ^ 2 + 4) ^ m * ∑ r ∈ Finset.Icc 1 k, 1 / aeval x (𝔣 (2 * r - 1)) ^ (2 * m + 1))
 
-/-- Theorem 1.8: for real `x > 0`, a positive integer `k` and `m ∈ ℕ`,
-`Σ_{n≥M} Σ_{j=0}^m C(2m+1, j) ℓ_{(2n+1)(2m+1-2j)} ℓ_{k(2m+1-2j)} / (ℓ_{2n+1}² + Δ² f_k²)^{2m+1}
-  = Σ_{r=1}^k 1/ℓ_{2r}^{2m+1}` if `k` is odd, and
-`Σ_{n≥M} Σ_{j=0}^m C(2m+1, j)(-1)^j f_{(2n+1)(2m+1-2j)} f_{k(2m+1-2j)} /
-  (ℓ_{2n+1}² - Δ² f_k²)^{2m+1} = (1/Δ²) Σ_{r=1}^k 1/ℓ_{2r-1}^{2m+1}` if `k` is even
-(summation index shifted to start at `0`).
+/-- **Odd-power sums with odd-index Lucas polynomial denominators.** Let $f_n$ and $\ell_n$
+denote the Fibonacci and Lucas polynomials, given by $f_0 = 0$, $f_1 = 1$, $\ell_0 = 2$,
+$\ell_1 = x$ and $g_{n+2} = x g_{n+1} + g_n$ for $g \in \{f, \ell\}$, evaluated at a real number
+$x > 0$, let $k$ be a positive integer and $m$ a natural number, and put $M = (k + 1)/2$ if $k$ is
+odd and $M = k/2$ if $k$ is even. If $k$ is odd, then
+$$\sum_{n \ge M} \frac{\sum_{j=0}^{m} \binom{2m+1}{j} \ell_{(2n+1)(2m+1-2j)} \ell_{k(2m+1-2j)}}
+{\left(\ell_{2n+1}^2 + (x^2 + 4) f_k^2\right)^{2m+1}}
+= \sum_{r=1}^{k} \frac{1}{\ell_{2r}^{2m+1}},$$
+and if $k$ is even, then
+$$\sum_{n \ge M} \frac{\sum_{j=0}^{m} (-1)^j \binom{2m+1}{j} f_{(2n+1)(2m+1-2j)} f_{k(2m+1-2j)}}
+{\left(\ell_{2n+1}^2 - (x^2 + 4) f_k^2\right)^{2m+1}}
+= \frac{1}{x^2 + 4} \sum_{r=1}^{k} \frac{1}{\ell_{2r-1}^{2m+1}}.$$
 
 Source: Yinqi Lin and Bo Zhou, *Infinite Sums Involving Powers of Gibonacci Polynomials*,
 The Fibonacci Quarterly 62 (2024), Article linzhou02172024,
