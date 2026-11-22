@@ -41,8 +41,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Forward branch of the extended continuant with start index `b`: the value at `n` is
-`K_{n-2}(x)_b`, so `0 ↦ 0`, `1 ↦ 1`, and `n + 2 ↦ x_{b+n} K_{n-1} + K_{n-2}`.
+/-- **Forward branch of the extended continuant.** For an integer sequence
+$x : \mathbb{Z} \to \mathbb{Z}$ and an integer $b$, the forward branch with start index $b$ is the
+sequence $(F_n)_{n \ge 0}$ of integers defined by $F_0 = 0$, $F_1 = 1$ and
+$F_{n+2} = x_{b+n} F_{n+1} + F_n$. Its value $F_n$ is the extended continuant $K_{n-2}(x)_b$.
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Definition 3 (right-adjusting recurrence). -/
@@ -51,8 +53,11 @@ public def extendedContinuantFwd (x : ℤ → ℤ) (b : ℤ) : ℕ → ℤ
   | 1 => 1
   | n + 2 => x (b + n) * extendedContinuantFwd x b (n + 1) + extendedContinuantFwd x b n
 
-/-- Backward branch of the extended continuant with start index `b`: the value at `m` is
-`K_{-1-m}(x)_b`, so `0 ↦ 1`, `1 ↦ 0`, and `m + 2 ↦ -x_{b-1-m} K_{-2-m} + K_{-1-m}`.
+/-- **Backward branch of the extended continuant.** For an integer sequence
+$x : \mathbb{Z} \to \mathbb{Z}$ and an integer $b$, the backward branch with start index $b$ is
+the sequence $(B_m)_{m \ge 0}$ of integers defined by $B_0 = 1$, $B_1 = 0$ and
+$B_{m+2} = -x_{b-1-m} B_{m+1} + B_m$. Its value $B_m$ is the extended continuant
+$K_{-1-m}(x)_b$ of negative order $-1-m$.
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Definition 4 (right-adjusting recurrence). -/
@@ -61,8 +66,11 @@ public def extendedContinuantBwd (x : ℤ → ℤ) (b : ℤ) : ℕ → ℤ
   | 1 => 0
   | m + 2 => -x (b - 1 - m) * extendedContinuantBwd x b (m + 1) + extendedContinuantBwd x b m
 
-/-- The extended continuant `K_a(x)_b^{a+b}` of order `a ∈ ℤ` with start index `b`
-(Definitions 3 and 4 of the paper, right-adjusting form).
+/-- **Extended continuants.** Let $x : \mathbb{Z} \to \mathbb{Z}$ be a bi-infinite integer sequence
+and $b$ an integer. The extended continuant $K_a(x)_b$ of order $a \in \mathbb{Z}$ with start index
+$b$ (the paper's $K_a(x)_b^{a+b}$) is the integer defined by $K_{-2}(x)_b = 0$, $K_{-1}(x)_b = 1$,
+the forward recurrence $K_a(x)_b = x_{b+a} K_{a-1}(x)_b + K_{a-2}(x)_b$ for $a \ge 0$, and the
+backward recurrence $K_a(x)_b = K_{a+2}(x)_b - x_{b+a+2} K_{a+1}(x)_b$ for $a \le -3$.
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Definitions 3 and 4. -/
@@ -91,7 +99,9 @@ private theorem extendedContinuant_eq_bwd (x : ℤ → ℤ) (b : ℤ) {a : ℤ} 
     · congr 1
       omega
 
-/-- `K_{-2}(x)_b = 0`.
+/-- **Extended continuants of order $-2$ vanish.** For every bi-infinite integer sequence
+$x : \mathbb{Z} \to \mathbb{Z}$ and every integer $b$, the extended continuant of order $-2$ with
+start index $b$ is zero: $K_{-2}(x)_b = 0$.
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Definitions 3 and 4. -/
@@ -99,7 +109,9 @@ public theorem extendedContinuant_neg_two (x : ℤ → ℤ) (b : ℤ) :
     extendedContinuant x (-2) b = 0 :=
   extendedContinuant_eq_fwd x b (n := 0) (by omega)
 
-/-- `K_{-1}(x)_b = 1`.
+/-- **Extended continuant of order $-1$.** For every integer sequence
+$x : \mathbb{Z} \to \mathbb{Z}$ and every integer $b$, the extended continuant of $x$ of order
+$-1$ with start index $b$ equals $1$, that is, $K_{-1}(x)_b = 1$.
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Definitions 3 and 4. -/
@@ -107,7 +119,9 @@ public theorem extendedContinuant_neg_one (x : ℤ → ℤ) (b : ℤ) :
     extendedContinuant x (-1) b = 1 :=
   extendedContinuant_eq_fwd x b (n := 1) (by omega)
 
-/-- `K_0(x)_b^b = x_b`.
+/-- **The extended continuant of order $0$ is a single term.** For every bi-infinite integer
+sequence $x : \mathbb{Z} \to \mathbb{Z}$ and every integer $b$, the extended continuant of order $0$
+with start index $b$ is $K_0(x)_b = x_b$.
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Section 3.4 and Equation (13). -/
@@ -116,8 +130,12 @@ public theorem extendedContinuant_zero (x : ℤ → ℤ) (b : ℤ) :
   rw [extendedContinuant_eq_fwd x b (n := 2) (by omega)]
   simp [extendedContinuantFwd]
 
-/-- The right-adjusting recurrence `K_a(x)_b = x_{b+a} K_{a-1}(x)_b + K_{a-2}(x)_b` holds for
-every integer order `a` (for `a ≤ -1` it is the paper's backward recurrence of Definition 4).
+/-- **Recurrence for extended continuants.** For every bi-infinite integer sequence
+$x : \mathbb{Z} \to \mathbb{Z}$ and all integers $a$ and $b$, the extended continuants $K_a(x)_b$
+of order $a$ with start index $b$ satisfy
+$K_a(x)_b = x_{b+a} K_{a-1}(x)_b + K_{a-2}(x)_b$.
+
+For $a \le -1$ this is the paper's backward recurrence of Definition 4.
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Definitions 3 and 4 (RA versions). -/
@@ -138,8 +156,11 @@ public theorem extendedContinuant_recurrence (x : ℤ → ℤ) (a b : ℤ) :
     simp only [extendedContinuantBwd, hx]
     ring
 
-/-- Lemma 1: `K_{-3}(x)_h = 1`, `K_{-4}(x)_h = -x_{h-2}`, `K_{-5}(x)_h = 1 + x_{h-3} x_{h-2}`, and
-`K_{-6}(x)_h = -(x_{h-4} + x_{h-2} + x_{h-4} x_{h-3} x_{h-2})`.
+/-- **Extended continuants of orders $-3$ to $-6$.** Let $x : \mathbb{Z} \to \mathbb{Z}$ be an
+integer sequence and write $K_a(x)_b$ for its extended continuant of order $a$ with start index
+$b$. For every integer $h$, $K_{-3}(x)_h = 1$, $K_{-4}(x)_h = -x_{h-2}$,
+$K_{-5}(x)_h = 1 + x_{h-3} x_{h-2}$ and
+$K_{-6}(x)_h = -(x_{h-4} + x_{h-2} + x_{h-4} x_{h-3} x_{h-2})$.
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Lemma 1. -/
@@ -167,9 +188,15 @@ public theorem extendedContinuant_neg_three_to_six (x : ℤ → ℤ) (h : ℤ) :
   rw [h4, h5] at e4
   linear_combination -e4
 
-/-- Proposition 1: for `n ≥ 1`, the westbound matrix product
-`∏_{i=n}^{1} [[0, 1], [1, -x_{-i}]]` (factor `i = n` leftmost) equals
-`[[K_{-n-1}(x)_0, K_{-n-2}(x)_1], [K_{-n-2}(x)_0, K_{-n-3}(x)_1]]`.
+/-- **Westbound matrix product of extended continuants.** Let $x : \mathbb{Z} \to \mathbb{Z}$ be a
+bi-infinite integer sequence, write $K_a(x)_b$ for the extended continuant of order $a$ with start
+index $b$, and put $M_i = \begin{pmatrix} 0 & 1 \\ 1 & -x_{-i} \end{pmatrix}$. Then for every
+integer $n \ge 1$,
+
+$$
+M_n M_{n-1} \cdots M_1 =
+\begin{pmatrix} K_{-n-1}(x)_0 & K_{-n-2}(x)_1 \\ K_{-n-2}(x)_0 & K_{-n-3}(x)_1 \end{pmatrix}.
+$$
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Proposition 1. -/
@@ -179,7 +206,10 @@ public theorem_wanted extendedContinuant_westbound_matrix_prod (x : ℤ → ℤ)
       !![extendedContinuant x (-n - 1) 0, extendedContinuant x (-n - 2) 1;
         extendedContinuant x (-n - 2) 0, extendedContinuant x (-n - 3) 1]
 
-/-- Theorem 1: for all `h, n ∈ ℤ`, `K_{-n}(x)_h^{h-n} = (-1)^{n+1} K_{n-4}(x)_{h-n+2}^{h-2}`.
+/-- **Reflection formula for the order of extended continuants.** Let
+$x : \mathbb{Z} \to \mathbb{Z}$ be an integer sequence and write $K_a(x)_b$ for its extended
+continuant of order $a$ with start index $b$. For all integers $h$ and $n$,
+$$K_{-n}(x)_h = (-1)^{n+1} K_{n-4}(x)_{h-n+2}.$$
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Theorem 1. -/
@@ -187,9 +217,12 @@ public theorem_wanted extendedContinuant_neg_order (x : ℤ → ℤ) (h n : ℤ)
     extendedContinuant x (-n) h =
       ((n + 1).negOnePow : ℤ) * extendedContinuant x (n - 4) (h - n + 2)
 
-/-- Theorem 2 (Bennett): for nonnegative integers `k, ℓ, m, n`,
-`(-1)^{k+ℓ} K_{n-k-2}(x)_k K_{m-ℓ-2}(x)_ℓ + (-1)^{ℓ+m} K_{n-ℓ-2}(x)_ℓ K_{k-m-2}(x)_m
-+ (-1)^{m+k} K_{n-m-2}(x)_m K_{ℓ-k-2}(x)_k = 0`.
+/-- **Bennett's continuant identity for nonnegative indices.** Let $x : \mathbb{Z} \to \mathbb{Z}$
+be an integer sequence and write $K_a(x)_b$ for its extended continuant of order $a$ with start
+index $b$. For all nonnegative integers $k$, $\ell$, $m$, $n$,
+$$(-1)^{k+\ell} K_{n-k-2}(x)_k K_{m-\ell-2}(x)_\ell +
+(-1)^{\ell+m} K_{n-\ell-2}(x)_\ell K_{k-m-2}(x)_m +
+(-1)^{m+k} K_{n-m-2}(x)_m K_{\ell-k-2}(x)_k = 0.$$
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Theorem 2 (after G. T. Bennett, 1939). -/
@@ -201,7 +234,14 @@ public theorem_wanted extendedContinuant_bennett_nat (x : ℤ → ℤ) (k ℓ m 
       ((m + k : ℤ).negOnePow : ℤ) * extendedContinuant x ((n : ℤ) - m - 2) m *
         extendedContinuant x ((ℓ : ℤ) - k - 2) k = 0
 
-/-- Theorem 3: Bennett's symmetric identity (Theorem 2) holds for all integers `k, ℓ, m, n`.
+/-- **Bennett's continuant identity for all integer indices.** Let $x : \mathbb{Z} \to \mathbb{Z}$
+be an integer sequence and write $K_a(x)_b$ for its extended continuant of order $a$ with start
+index $b$. For all integers $k$, $\ell$, $m$, $n$,
+$$(-1)^{k+\ell} K_{n-k-2}(x)_k K_{m-\ell-2}(x)_\ell +
+(-1)^{\ell+m} K_{n-\ell-2}(x)_\ell K_{k-m-2}(x)_m +
+(-1)^{m+k} K_{n-m-2}(x)_m K_{\ell-k-2}(x)_k = 0.$$
+
+This extends Bennett's identity from nonnegative to arbitrary integer indices.
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Theorem 3. -/
@@ -213,9 +253,11 @@ public theorem_wanted extendedContinuant_bennett (x : ℤ → ℤ) (k ℓ m n : 
       ((m + k).negOnePow : ℤ) * extendedContinuant x (n - m - 2) m *
         extendedContinuant x (ℓ - k - 2) k = 0
 
-/-- Corollary 1 (Euler's continuant identity, extended): for all `h, k, ℓ, m ∈ ℤ`,
-`K_{ℓ+m}(x)_h K_{k-1}(x)_{ℓ+h+1} - K_{m-1}(x)_{ℓ+h+1} K_{k+ℓ}(x)_h
-= (-1)^k K_{m-k-2}(x)_{k+ℓ+h+2} K_{ℓ-1}(x)_h`.
+/-- **Euler's continuant identity for extended continuants.** Let $x : \mathbb{Z} \to \mathbb{Z}$
+be an integer sequence and write $K_a(x)_b$ for its extended continuant of order $a$ with start
+index $b$. For all integers $h$, $k$, $\ell$, $m$,
+$$K_{\ell+m}(x)_h K_{k-1}(x)_{\ell+h+1} - K_{m-1}(x)_{\ell+h+1} K_{k+\ell}(x)_h =
+(-1)^k K_{m-k-2}(x)_{k+\ell+h+2} K_{\ell-1}(x)_h.$$
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Corollary 1. -/
@@ -225,8 +267,10 @@ public theorem_wanted extendedContinuant_euler (x : ℤ → ℤ) (h k ℓ m : �
       (k.negOnePow : ℤ) * extendedContinuant x (m - k - 2) (k + ℓ + h + 2) *
         extendedContinuant x (ℓ - 1) h
 
-/-- Corollary 2: for all `n ∈ ℤ`,
-`K_n(x)_0 K_{n-2}(x)_1 - K_{n-1}(x)_1 K_{n-1}(x)_0 = (-1)^{n+1}`.
+/-- **Determinant identity for extended continuants.** Let $x : \mathbb{Z} \to \mathbb{Z}$ be an
+integer sequence and write $K_a(x)_b$ for its extended continuant of order $a$ with start index
+$b$. For every integer $n$,
+$$K_n(x)_0 K_{n-2}(x)_1 - K_{n-1}(x)_1 K_{n-1}(x)_0 = (-1)^{n+1}.$$
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Corollary 2. -/
@@ -235,10 +279,17 @@ public theorem_wanted extendedContinuant_det (x : ℤ → ℤ) (n : ℤ) :
         extendedContinuant x (n - 1) 1 * extendedContinuant x (n - 1) 0 =
       ((n + 1).negOnePow : ℤ)
 
-/-- Theorem 4: for even `σ ≥ 0` there is no `σ`-silent bi-infinite sequence: no `x : ℤ → ℤ`
-has raw westbound convergents `k_{-i-σ-1}` strictly equivalent to the raw convergents `d_i`
-of `z` for all `i ≥ 0`. Stated for every pair of integer sequences `x`, `z` (the BpCF
-conditions are not needed).
+/-- **No silent sequences of even order.** Let $\sigma \ge 0$ be an even integer and write
+$K_a(x)_b$ for the extended continuant of order $a$ with start index $b$. For all bi-infinite
+integer sequences $x, z : \mathbb{Z} \to \mathbb{Z}$ it is not the case that
+$K_{-i-\sigma-1}(x)_0 = K_i(z)_0$ and $K_{-i-\sigma-2}(x)_1 = K_{i-1}(z)_1$ for every natural
+number $i$.
+
+In the paper's terms: for even $\sigma$ no bi-infinite sequence $x$ is $\sigma$-silent, that is,
+there is no sequence $z$ such that for every $i \ge 0$ the raw westbound convergent
+$k_{-i-\sigma-1} = K_{-i-\sigma-1}(x)_0 / K_{-i-\sigma-2}(x)_1$ of $x$ is strictly equivalent
+(equal numerators and equal denominators) to the raw convergent $d_i = K_i(z)_0 / K_{i-1}(z)_1$
+of $z$. The BpCF conditions are not needed.
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Theorem 4. -/
@@ -246,9 +297,17 @@ public theorem_wanted not_silent_of_even (x z : ℤ → ℤ) (σ : ℕ) (hσ : E
     ¬ ∀ i : ℕ, extendedContinuant x (-(i : ℤ) - σ - 1) 0 = extendedContinuant z i 0 ∧
       extendedContinuant x (-(i : ℤ) - σ - 2) 1 = extendedContinuant z ((i : ℤ) - 1) 1
 
-/-- Theorem 5 (1-silent BpCFs): if `k_i ≐ c_i` and `k_{-i-2} ≐ d_i` for all `i ≥ 0`, then
-`x_n = y_n` for `n ≥ 0`, `x_{-n} = -z_n` for `n ≥ 1`, and `z_0 = 0` (the paper's `0 < ᾱ < 1`
-for the EA-generated SCF of the irrational `ᾱ`).
+/-- **Terms of a $1$-silent sequence.** Let $x, y, z : \mathbb{Z} \to \mathbb{Z}$ be bi-infinite
+integer sequences and write $K_a(x)_b$ for the extended continuant of order $a$ with start index
+$b$. Suppose that for every natural number $i$, $K_i(x)_0 = K_i(y)_0$,
+$K_{i-1}(x)_1 = K_{i-1}(y)_1$, $K_{-i-2}(x)_0 = K_i(z)_0$ and $K_{-i-3}(x)_1 = K_{i-1}(z)_1$.
+Then $x_n = y_n$ for every $n \ge 0$, $x_{-n} = -z_n$ for every $n \ge 1$, and $z_0 = 0$.
+
+In the paper's terms the hypotheses say that the raw convergents $k_i = K_i(x)_0 / K_{i-1}(x)_1$
+of $x$ are strictly equivalent (equal numerators and equal denominators) to the raw convergents
+$c_i$ of $y$, and $k_{-i-2}$ to the raw convergents $d_i$ of $z$, for all $i \ge 0$. The
+conclusion $z_0 = 0$ matches the paper's $0 < \bar\alpha < 1$ for the EA-generated SCF of the
+irrational $\bar\alpha$.
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Theorem 5. -/
@@ -259,9 +318,18 @@ public theorem_wanted oneSilent_terms (x y z : ℤ → ℤ)
       extendedContinuant x (-(i : ℤ) - 3) 1 = extendedContinuant z ((i : ℤ) - 1) 1) :
     (∀ n : ℕ, x n = y n) ∧ (∀ n : ℕ, 1 ≤ n → x (-(n : ℤ)) = -z n) ∧ z 0 = 0
 
-/-- Theorem 6 (3-silent BpCFs), with the paper's choice `x_{-1} = 0`: if `k_i ≐ c_i` and
-`k_{-i-4} ≐ d_i` for all `i ≥ 0` and `x_{-1} = 0`, then `x_n = y_n` for `n ≥ 0` and
-`x_{-n} = -z_{n-2}` for `n ≥ 2`.
+/-- **Terms of 3-silent sequences.** Let $x, y, z : \mathbb{Z} \to \mathbb{Z}$ be bi-infinite
+integer sequences, and write $K_a(x)_b$ for the extended continuant of $x$ of order $a$ with start
+index $b$. Suppose that for every natural number $i$ we have $K_i(x)_0 = K_i(y)_0$,
+$K_{i-1}(x)_1 = K_{i-1}(y)_1$, $K_{-i-4}(x)_0 = K_i(z)_0$ and
+$K_{-i-5}(x)_1 = K_{i-1}(z)_1$, and that $x_{-1} = 0$. Then $x_n = y_n$ for every $n \ge 0$, and
+$x_{-n} = -z_{n-2}$ for every $n \ge 2$.
+
+In the paper's terms, the hypotheses say that the raw convergents
+$k_n = K_n(x)_0 / K_{n-1}(x)_1$ of $x$ satisfy $k_i \doteq c_i$ and $k_{-i-4} \doteq d_i$ for all
+$i \ge 0$, where $c_i$ and $d_i$ are the corresponding raw convergents of $y$ and $z$ and $\doteq$
+is equality of numerators and of denominators; the periodicity and limit conditions of a
+bi-infinite periodic continued fraction are not assumed.
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Theorem 6 and its proof (option 2, `x_{-1} = 0`). -/
@@ -273,11 +341,18 @@ public theorem_wanted threeSilent_terms (x y z : ℤ → ℤ)
     (hx : x (-1) = 0) :
     (∀ n : ℕ, x n = y n) ∧ ∀ n : ℕ, 2 ≤ n → x (-(n : ℤ)) = -z ((n : ℤ) - 2)
 
-/-- Theorem 7 (`σ`-silent BpCFs, `σ = 2j + 1 ≥ 5`): if `k_i ≐ c_i` and `k_{-i-σ-1} ≐ d_i` for
-all `i ≥ 0`, then `x_n = y_n` for `n ≥ 0`, `x_{-σ+2} x_{-σ+1}` equals
-`-1 + K_{σ-6}(x)_{-σ+4} + z_0 K_{σ-5}(x)_{-σ+4}` (the paper's quotient formula multiplied out),
-`x_{-σ+1} = -K_{σ-5}(x)_{-σ+3} - z_0 K_{σ-4}(x)_{-σ+3}`,
-`x_{-σ} = -K_{σ-3}(x)_{-σ+2} - z_1`, and `x_{-n} = -z_{n-σ+1}` for `n ≥ σ + 1`.
+/-- **Terms of a $\sigma$-silent sequence for odd $\sigma \ge 5$.** Let $\sigma \ge 5$ be an odd
+integer, let $x, y, z : \mathbb{Z} \to \mathbb{Z}$ be bi-infinite integer sequences, and write
+$K_a(x)_b$ for the extended continuant of order $a$ with start index $b$. Suppose that for every
+natural number $i$, $K_i(x)_0 = K_i(y)_0$, $K_{i-1}(x)_1 = K_{i-1}(y)_1$,
+$K_{-i-\sigma-1}(x)_0 = K_i(z)_0$ and $K_{-i-\sigma-2}(x)_1 = K_{i-1}(z)_1$. Then $x_n = y_n$ for
+every $n \ge 0$,
+$x_{-\sigma+2} x_{-\sigma+1} = -1 + K_{\sigma-6}(x)_{-\sigma+4} + z_0 K_{\sigma-5}(x)_{-\sigma+4}$,
+$x_{-\sigma+1} = -K_{\sigma-5}(x)_{-\sigma+3} - z_0 K_{\sigma-4}(x)_{-\sigma+3}$,
+$x_{-\sigma} = -K_{\sigma-3}(x)_{-\sigma+2} - z_1$, and $x_{-n} = -z_{n-\sigma+1}$ for every integer
+$n \ge \sigma + 1$.
+
+The paper states the second formula as a quotient for $x_{-\sigma+2}$; here it is multiplied out.
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Theorem 7. -/
@@ -294,11 +369,17 @@ public theorem_wanted oddSilent_terms (x y z : ℤ → ℤ) (σ : ℤ) (hσ : Od
       x (-σ) = -extendedContinuant x (σ - 3) (-σ + 2) - z 1 ∧
       ∀ n : ℤ, σ + 1 ≤ n → x (-n) = -z (n - σ + 1)
 
-/-- Proposition 3, case `σ ≡ 1 (mod 6)`, `σ ≥ 7`: with `x_{-3} = x_0 + c₁`, `x_{-2} = 1`,
-`x_{-1} = -1`, `z_0 = x_0 + c₂` (`c₁ ≠ c₂`) and, for `4 ≤ m ≤ σ - 3`, `x_{-m} = -1` if
-`m ≡ 1 (mod 3)` and `x_{-m} = 1` otherwise (table (33)), the value
-`w = -K_{σ-5}(x)_{-σ+3} - z_0 K_{σ-4}(x)_{-σ+3}` that formula (29) assigns to `x_{-σ+1}` is
-nonzero and formula (29) gives `x_{-σ+2} = 1`.
+/-- **Silent-term formulas on table (33), case $\sigma \equiv 1 \pmod 6$.** Let $\sigma \ge 7$ be
+an integer with $\sigma \equiv 1 \pmod 6$, let $c_1 \ne c_2$ be integers, and let
+$x : \mathbb{Z} \to \mathbb{Z}$ be a bi-infinite integer sequence with $x_{-3} = x_0 + c_1$,
+$x_{-2} = 1$, $x_{-1} = -1$ and, for all integers $4 \le m \le \sigma - 3$, $x_{-m} = -1$ if
+$m \equiv 1 \pmod 3$ and $x_{-m} = 1$ otherwise. Write $K_a(x)_b$ for the extended continuant of
+order $a$ with start index $b$, and put $z_0 = x_0 + c_2$ and
+$w = -K_{\sigma-5}(x)_{-\sigma+3} - z_0 K_{\sigma-4}(x)_{-\sigma+3}$. Then $w \ne 0$ and
+$-1 + K_{\sigma-6}(x)_{-\sigma+4} + z_0 K_{\sigma-5}(x)_{-\sigma+4} = w$.
+
+So formula (29) of Theorem 7, with $z_0 = x_0 + c_2$, gives $x_{-\sigma+1} = w \ne 0$ and
+$x_{-\sigma+2} = 1$.
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Proposition 3 (case `σ ≡ 1 mod 6`). -/
@@ -313,11 +394,17 @@ public theorem_wanted silentTerms_table_one_mod_six (x : ℤ → ℤ) (σ : ℤ)
         1 * (-extendedContinuant x (σ - 5) (-σ + 3) -
           (x 0 + c₂) * extendedContinuant x (σ - 4) (-σ + 3))
 
-/-- Proposition 3, case `σ ≡ 5 (mod 6)`, `σ ≥ 7`: with `x_{-3} = x_0 + c₁`, `x_{-2} = 1`,
-`x_{-1} = -1`, `z_0 = x_0 + c₂` (`c₁ ≠ c₂`) and, for `4 ≤ m ≤ σ - 3`, `x_{-m} = -1` if
-`m ≡ 2 (mod 3)` and `x_{-m} = 1` otherwise (table (33)), the value
-`w = -K_{σ-5}(x)_{-σ+3} - z_0 K_{σ-4}(x)_{-σ+3}` that formula (29) assigns to `x_{-σ+1}` is
-nonzero and formula (29) gives `x_{-σ+2} = 1 + c₂ - c₁`.
+/-- **Silent-term formulas on table (33), case $\sigma \equiv 5 \pmod 6$.** Let $\sigma \ge 7$ be
+an integer with $\sigma \equiv 5 \pmod 6$, let $c_1 \ne c_2$ be integers, and let
+$x : \mathbb{Z} \to \mathbb{Z}$ be a bi-infinite integer sequence with $x_{-3} = x_0 + c_1$,
+$x_{-2} = 1$, $x_{-1} = -1$ and, for all integers $4 \le m \le \sigma - 3$, $x_{-m} = -1$ if
+$m \equiv 2 \pmod 3$ and $x_{-m} = 1$ otherwise. Write $K_a(x)_b$ for the extended continuant of
+order $a$ with start index $b$, and put $z_0 = x_0 + c_2$ and
+$w = -K_{\sigma-5}(x)_{-\sigma+3} - z_0 K_{\sigma-4}(x)_{-\sigma+3}$. Then $w \ne 0$ and
+$-1 + K_{\sigma-6}(x)_{-\sigma+4} + z_0 K_{\sigma-5}(x)_{-\sigma+4} = (1 + c_2 - c_1) w$.
+
+So formula (29) of Theorem 7, with $z_0 = x_0 + c_2$, gives $x_{-\sigma+1} = w \ne 0$ and
+$x_{-\sigma+2} = 1 + c_2 - c_1$.
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Proposition 3 (case `σ ≡ 5 mod 6`). -/
@@ -332,10 +419,11 @@ public theorem_wanted silentTerms_table_five_mod_six (x : ℤ → ℤ) (σ : ℤ
         (1 + c₂ - c₁) * (-extendedContinuant x (σ - 5) (-σ + 3) -
           (x 0 + c₂) * extendedContinuant x (σ - 4) (-σ + 3))
 
-/-- Lemma 3: for conjugate real quadratic irrationals `α = (P + √D)/Q > ᾱ = (P - √D)/Q`
-(`D > 0` not a square, `Q > 0`), the simple continued fraction of `ᾱ` is not purely periodic,
-i.e. it has at least one nonperiodic term (`ṙ ≥ 1`). The terms are the integer parts `b` of
-Mathlib's continued-fraction stream `GenContFract.IntFractPair.stream`.
+/-- **The conjugate continued fraction is not purely periodic.** Let $P$, $Q$ and $D$ be integers
+with $D > 0$ not a perfect square and $Q > 0$, and let $\bar\alpha = (P - \sqrt{D})/Q$. Then the
+simple continued fraction $[a_0; a_1, a_2, \dots]$ of $\bar\alpha$, which is infinite because
+$\bar\alpha$ is irrational, is not purely periodic: there is no integer $s \ge 1$ with
+$a_{n+s} = a_n$ for all $n \ge 0$. Here $a_0 = \lfloor \bar\alpha \rfloor$ is included.
 
 Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
 INTEGERS 26 (2026), Article A73, Lemma 3. -/
