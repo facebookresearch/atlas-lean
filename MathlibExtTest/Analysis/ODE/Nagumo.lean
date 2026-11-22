@@ -25,6 +25,11 @@ example {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
         u 0 ∈ s → ∀ t ∈ Icc 0 T, u t ∈ s :=
   Nagumo.invariant_iff_mem_posTangentConeAt f hf s hs
 
+-- The curve API also returns membership in the existing Mathlib cone.
+example : (1 : ℝ) ∈ posTangentConeAt (Ici 0) 0 :=
+  Nagumo.mem_posTangentConeAt_of_curve (T := 1) (u := fun t : ℝ => t)
+    (by norm_num) (hasDerivAt_id 0).hasDerivWithinAt (fun _ ht => ht.1)
+
 -- An existing Mathlib convex-segment lemma supplies the tangency hypothesis.
 example {a b : ℝ} {u : ℝ → ℝ}
     (hu : ∀ t ∈ Icc a b, HasDerivWithinAt u 1 (Icc a b) t)
@@ -37,33 +42,35 @@ example {a b : ℝ} {u : ℝ → ℝ}
     change 0 ≤ x + 1
     linarith [show 0 ≤ x from hx])
 
--- The bridge itself does not require finite dimension or a closed set.
+-- The characterization does not require even that the base point belongs to the set.
 example {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    {s : Set E} {x v : E} (hx : x ∈ s) (hv : Nagumo.IsContingent s x v) :
-    v ∈ posTangentConeAt s x :=
-  (Nagumo.isContingent_iff_mem_posTangentConeAt hx).mp hv
+    {s : Set E} {x v : E}
+    (hv : ∀ ε : ℝ, 0 < ε → ∀ δ : ℝ, 0 < δ →
+      ∃ h : ℝ, 0 < h ∧ h < δ ∧ ∃ y ∈ s, ‖y - x - h • v‖ ≤ ε * h) :
+    v ∈ posTangentConeAt s x := Nagumo.mem_posTangentConeAt_iff.mpr hv
 
--- Isolated points retain their zero tangent direction.
-example (x : Fin 0 → ℝ) : Nagumo.IsContingent {x} x 0 :=
-  (Nagumo.isContingent_iff_mem_posTangentConeAt (mem_singleton x)).mpr
+-- The zero-vector case also works in a nontrivial normed space.
+example (x : ℝ) : ∀ ε : ℝ, 0 < ε → ∀ δ : ℝ, 0 < δ →
+    ∃ h : ℝ, 0 < h ∧ h < δ ∧ ∃ y ∈ ({x} : Set ℝ),
+      ‖y - x - h • (0 : ℝ)‖ ≤ ε * h :=
+  Nagumo.mem_posTangentConeAt_iff.mp
     (zero_mem_tangentConeAt (subset_closure (mem_singleton x)))
 
--- The exact general criterion is available for a closed, not necessarily convex set.
-example {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (f : E → E) (hf : LocallyLipschitz f)
-    (s : Set E) (hs : IsClosed s) :
-    (∀ x ∈ s, Nagumo.IsContingent s x (f x)) ↔
-      ∀ T : ℝ, 0 < T → ∀ u : ℝ → E,
-        (∀ t ∈ Icc 0 T, HasDerivWithinAt u (f (u t)) (Icc 0 T) t) →
-        u 0 ∈ s → ∀ t ∈ Icc 0 T, u t ∈ s :=
-  Nagumo.invariant_iff_contingent f hf s hs
+-- A zero tangent vector at a base point outside this open set exercises the
+-- characterization's closure case rather than membership in the set.
+example : ∀ ε : ℝ, 0 < ε → ∀ δ : ℝ, 0 < δ →
+    ∃ h : ℝ, 0 < h ∧ h < δ ∧ ∃ y ∈ Ioi (0 : ℝ),
+      ‖y - 0 - h • (0 : ℝ)‖ ≤ ε * h :=
+  Nagumo.mem_posTangentConeAt_iff.mp
+    (zero_mem_tangentConeAt (by simp [closure_Ioi]))
 
 -- An unbounded, disconnected closed set: neither compactness nor convexity
 -- is required of the invariant region.
 private def twoRays : Set ℝ := Iic (-1) ∪ Ici 1
 
 private theorem twoRays_tangent (x : ℝ) (hx : x ∈ twoRays) :
-    Nagumo.IsContingent twoRays x x := by
+    x ∈ posTangentConeAt twoRays x := by
+  rw [Nagumo.mem_posTangentConeAt_iff]
   intro ε hε δ hδ
   let h := δ / 2
   have hh : 0 < h := half_pos hδ
@@ -84,7 +91,7 @@ private theorem twoRays_tangent (x : ℝ) (hx : x ∈ twoRays) :
 example {T : ℝ} {u : ℝ → ℝ}
     (hu : ∀ t ∈ Icc 0 T, HasDerivWithinAt u (u t) (Icc 0 T) t)
     (hu₀ : u 0 = -2) : ∀ t ∈ Icc 0 T, u t ≤ -1 ∨ 1 ≤ u t := by
-  exact Nagumo.mapsTo_of_contingent LipschitzWith.id.locallyLipschitz
+  exact Nagumo.mapsTo_of_mem_posTangentConeAt LipschitzWith.id.locallyLipschitz
     (isClosed_Iic.union isClosed_Ici) twoRays_tangent hu (by
       change u 0 ∈ twoRays
       rw [hu₀]
@@ -93,8 +100,9 @@ example {T : ℝ} {u : ℝ → ℝ}
 
 -- Positive-time tangency detects an outward vector at the endpoint.
 private theorem outward_not_contingent :
-    ¬ Nagumo.IsContingent (Ici (0 : ℝ)) 0 (-1) := by
+    (-1 : ℝ) ∉ posTangentConeAt (Ici 0) 0 := by
   intro ht
+  rw [Nagumo.mem_posTangentConeAt_iff] at ht
   obtain ⟨h, hh, _, y, hy, he⟩ := ht (1 / 2) (by norm_num) 1 (by norm_num)
   change 0 ≤ y at hy
   have he' : |y + h| ≤ (1 / 2 : ℝ) * h := by
@@ -102,10 +110,7 @@ private theorem outward_not_contingent :
   rw [abs_of_nonneg (by linarith [hy] : 0 ≤ y + h)] at he'
   linarith
 
-example : (-1 : ℝ) ∉ posTangentConeAt (Ici 0) 0 := fun h =>
-  outward_not_contingent
-    ((Nagumo.isContingent_iff_mem_posTangentConeAt
-      (show (0 : ℝ) ∈ Ici 0 from le_rfl)).mpr h)
+example : (-1 : ℝ) ∉ posTangentConeAt (Ici 0) 0 := outward_not_contingent
 
 -- The field x'=x² is only locally Lipschitz. The theorem asserts invariance
 -- on the supplied finite interval, not global existence past blow-up.
@@ -113,9 +118,11 @@ example {b : ℝ} {u : ℝ → ℝ}
     (hu : ∀ t ∈ Icc (-2) b, HasDerivWithinAt u ((u t) ^ 2) (Icc (-2) b) t)
     (hu₀ : u (-2) = 1) : ∀ t ∈ Icc (-2) b, 0 ≤ u t := by
   have hf : ContDiff ℝ 1 (fun x : ℝ => x ^ 2) := by fun_prop
-  apply Nagumo.mapsTo_of_contingent hf.locallyLipschitz isClosed_Ici _ hu
+  apply Nagumo.mapsTo_of_mem_posTangentConeAt hf.locallyLipschitz isClosed_Ici _ hu
     (show u (-2) ∈ Ici 0 by rw [hu₀]; norm_num)
-  intro x hx ε hε δ hδ
+  intro x hx
+  rw [Nagumo.mem_posTangentConeAt_iff]
+  intro ε hε δ hδ
   refine ⟨δ / 2, half_pos hδ, half_lt_self hδ, x + (δ / 2) * x ^ 2, ?_, ?_⟩
   · change 0 ≤ x + (δ / 2) * x ^ 2
     exact add_nonneg hx (mul_nonneg (half_pos hδ).le (sq_nonneg x))
@@ -125,9 +132,10 @@ example {b : ℝ} {u : ℝ → ℝ}
 
 -- Empty sets and zero-dimensional state spaces retain their expected behavior.
 example : ∀ x ∈ (∅ : Set (Fin 0 → ℝ)),
-    Nagumo.IsContingent ∅ x (0 : Fin 0 → ℝ) := by simp
+    (0 : Fin 0 → ℝ) ∈ posTangentConeAt ∅ x := by simp
 
-example (x : Fin 0 → ℝ) : Nagumo.IsContingent {x} x 0 := by
+example (x : Fin 0 → ℝ) : 0 ∈ posTangentConeAt {x} x := by
+  rw [Nagumo.mem_posTangentConeAt_iff]
   intro ε hε δ hδ
   refine ⟨δ / 2, half_pos hδ, half_lt_self hδ, x, rfl, ?_⟩
   simp only [sub_self, smul_zero, norm_zero]
@@ -138,10 +146,10 @@ example (T : ℝ) (hT : 0 < T) (u : ℝ → Fin 0 → ℝ)
     (hu : ∀ t ∈ Icc 0 T, HasDerivWithinAt u 0 (Icc 0 T) t)
     (hu₀ : u 0 ∈ (∅ : Set (Fin 0 → ℝ))) :
     ∀ t ∈ Icc 0 T, u t ∈ (∅ : Set (Fin 0 → ℝ)) :=
-  (Nagumo.invariant_iff_contingent (fun _ => 0)
+  (Nagumo.invariant_iff_mem_posTangentConeAt (fun _ => 0)
     (LipschitzWith.const _).locallyLipschitz ∅ isClosed_empty).mp
       (by simp) T hT u hu hu₀
 
-#print axioms Nagumo.invariant_iff_contingent
-#print axioms Nagumo.isContingent_iff_mem_posTangentConeAt
+#print axioms Nagumo.mem_posTangentConeAt_iff
+#print axioms Nagumo.mem_posTangentConeAt_of_curve
 #print axioms Nagumo.invariant_iff_mem_posTangentConeAt

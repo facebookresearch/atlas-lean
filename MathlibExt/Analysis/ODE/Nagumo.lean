@@ -29,8 +29,8 @@ the trajectory and its nearest points supplies one Lipschitz constant, so the
 liminf form of Grönwall keeps the distance zero. Necessity uses local existence.
 
 `invariant_iff_mem_posTangentConeAt` states the criterion using Mathlib's cone.
-`isContingent_iff_mem_posTangentConeAt` identifies the epsilon–delta condition
-used in the distance estimates with that cone at every point of the set.
+`mem_posTangentConeAt_iff` characterizes that cone by the epsilon–delta
+condition used in the distance estimates, for arbitrary sets and base points.
 
 Source: M. Nagumo, Über die Lage der Integralkurven gewöhnlicher
 Differentialgleichungen, Proc. Phys.-Math. Soc. Japan 24 (1942), 551–559.
@@ -42,8 +42,8 @@ open Set Filter Metric
 open scoped Topology NNReal
 namespace Nagumo
 
-/-- Positive-time contingent tangency at a point of an arbitrary closed set. -/
-def IsContingent {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+/-- Auxiliary epsilon–delta tangency condition for an arbitrary set. -/
+private def ContingentCondition {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (s : Set E) (x v : E) : Prop :=
   ∀ ε : ℝ, 0 < ε → ∀ δ : ℝ, 0 < δ →
     ∃ h : ℝ, 0 < h ∧ h < δ ∧ ∃ y ∈ s, ‖y - x - h • v‖ ≤ ε * h
@@ -67,10 +67,8 @@ private theorem mem_posTangentConeAt_iff_approx {s : Set E} {x v : E} :
     exact ⟨c • d, ⟨c, mem_univ _, d, ⟨by simpa using hd, hs⟩, rfl⟩,
       by simpa [dist_eq_norm, norm_sub_rev] using he⟩
 
-/-- The epsilon–delta contingent condition agrees with Mathlib's positive
-tangent cone at a point of the set. No closedness or dimension assumption is needed. -/
-theorem isContingent_iff_mem_posTangentConeAt {s : Set E} {x v : E} (hx : x ∈ s) :
-    IsContingent s x v ↔ v ∈ posTangentConeAt s x := by
+private theorem contingentCondition_iff_mem_posTangentConeAt {s : Set E} {x v : E} :
+    ContingentCondition s x v ↔ v ∈ posTangentConeAt s x := by
   rw [mem_posTangentConeAt_iff_approx]
   constructor
   · intro ht r hr ε hε
@@ -97,9 +95,9 @@ theorem isContingent_iff_mem_posTangentConeAt {s : Set E} {x v : E} (hx : x ∈ 
   · intro ht ε hε δ hδ
     by_cases hv : v = 0
     · subst v
-      refine ⟨δ / 2, half_pos hδ, half_lt_self hδ, x, hx, ?_⟩
-      simp only [sub_self, smul_zero, norm_zero]
-      positivity
+      obtain ⟨c, d, hd, hs, _⟩ := ht (ε * (δ / 2)) (by positivity) 1 zero_lt_one
+      refine ⟨δ / 2, half_pos hδ, half_lt_self hδ, x + d, hs, ?_⟩
+      simpa using hd.le
     have hvpos : 0 < ‖v‖ := norm_pos_iff.mpr hv
     obtain ⟨c, d, hd, hs, he⟩ := ht (δ * ‖v‖ / 2) (by positivity)
       (min ε (‖v‖ / 2)) (lt_min hε (half_pos hvpos))
@@ -143,9 +141,9 @@ private theorem derivative_error {u : ℝ → E} {v : E} {t ε : ℝ}
   simpa [Real.norm_eq_abs, abs_of_pos hh] using hbound hm
 
 /-- A right differentiable curve in a set has a contingent velocity. -/
-theorem isContingent_of_curve {s : Set E} {u : ℝ → E} {v : E} {T : ℝ}
+private theorem isContingent_of_curve {s : Set E} {u : ℝ → E} {v : E} {T : ℝ}
     (hT : 0 < T) (hu : HasDerivWithinAt u v (Icc 0 T) 0)
-    (hs : MapsTo u (Icc 0 T) s) : IsContingent s (u 0) v := by
+    (hs : MapsTo u (Icc 0 T) s) : ContingentCondition s (u 0) v := by
   have hd : HasDerivWithinAt u v (Ici 0) 0 :=
     hu.mono_of_mem_nhdsWithin (Icc_mem_nhdsGE hT)
   intro ε hε δ hδ
@@ -179,7 +177,7 @@ private theorem distance_step_bound (a b y z p q : E) {h : ℝ} (hh : 0 ≤ h) :
 private theorem liminf_distance_slope {s : Set E} {f : E → E} {u : ℝ → E}
     {t K : ℝ} {y : E}
     (hnear : infDist (u t) s = dist (u t) y)
-    (htan : IsContingent s y (f y))
+    (htan : ContingentCondition s y (f y))
     (hu : HasDerivWithinAt u (f (u t)) (Ici t) t)
     (hlip : ‖f (u t) - f y‖ ≤ K * infDist (u t) s) :
     ∀ r, K * infDist (u t) s < r →
@@ -210,9 +208,9 @@ private theorem liminf_distance_slope {s : Set E} {f : E → E} {u : ℝ → E}
 
 /-- Contingent tangency preserves a closed set along every existing solution.
 Only local Lipschitz continuity is needed; the set need not be convex. -/
-theorem mapsTo_of_contingent [FiniteDimensional ℝ E]
+private theorem mapsTo_of_contingent [FiniteDimensional ℝ E]
     {f : E → E} (hf : LocallyLipschitz f) {s : Set E} (hs : IsClosed s)
-    (htan : ∀ x ∈ s, IsContingent s x (f x)) {a b : ℝ} {u : ℝ → E}
+    (htan : ∀ x ∈ s, ContingentCondition s x (f x)) {a b : ℝ} {u : ℝ → E}
     (hu : ∀ t ∈ Icc a b, HasDerivWithinAt u (f (u t)) (Icc a b) t)
     (hu₀ : u a ∈ s) : MapsTo u (Icc a b) s := by
   have hc : ContinuousOn u (Icc a b) := fun t ht => (hu t ht).continuousWithinAt
@@ -253,12 +251,12 @@ theorem mapsTo_of_contingent [FiniteDimensional ℝ E]
   exact le_antisymm (by simpa [gronwallBound_ε0_δ0] using hgron t ht) infDist_nonneg
 
 /-- Invariance forces contingent tangency, by local existence through each point. -/
-theorem contingent_of_invariant [FiniteDimensional ℝ E]
+private theorem contingent_of_invariant [FiniteDimensional ℝ E]
     {f : E → E} (hf : LocallyLipschitz f) {s : Set E}
     (hinv : ∀ (T : ℝ), 0 < T → ∀ u : ℝ → E,
       (∀ t ∈ Icc 0 T, HasDerivWithinAt u (f (u t)) (Icc 0 T) t) →
       u 0 ∈ s → ∀ t ∈ Icc 0 T, u t ∈ s) :
-    ∀ x ∈ s, IsContingent s x (f x) := by
+    ∀ x ∈ s, ContingentCondition s x (f x) := by
   intro x hx
   obtain ⟨I, u, hu₀, hI, h0, -, hu, -⟩ :=
     MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_maximal_solution_exit_compact
@@ -282,9 +280,9 @@ theorem contingent_of_invariant [FiniteDimensional ℝ E]
   simpa [hu₀] using htan
 
 /-- Nagumo's criterion for a locally Lipschitz autonomous vector field. -/
-theorem invariant_iff_contingent [FiniteDimensional ℝ E]
+private theorem invariant_iff_contingent [FiniteDimensional ℝ E]
     (f : E → E) (hf : LocallyLipschitz f) (s : Set E) (hs : IsClosed s) :
-    (∀ x ∈ s, IsContingent s x (f x)) ↔
+    (∀ x ∈ s, ContingentCondition s x (f x)) ↔
       ∀ (T : ℝ), 0 < T → ∀ u : ℝ → E,
         (∀ t ∈ Icc 0 T, HasDerivWithinAt u (f (u t)) (Icc 0 T) t) →
         u 0 ∈ s → ∀ t ∈ Icc 0 T, u t ∈ s := by
@@ -292,6 +290,20 @@ theorem invariant_iff_contingent [FiniteDimensional ℝ E]
   · intro htan T _ u hu hu₀
     exact mapsTo_of_contingent hf hs htan hu hu₀
   · exact contingent_of_invariant hf
+
+/-- The epsilon–delta characterization of Mathlib's positive tangent cone.
+No membership, closedness, or finite-dimensionality assumption is needed. -/
+theorem mem_posTangentConeAt_iff {s : Set E} {x v : E} :
+    v ∈ posTangentConeAt s x ↔
+      ∀ ε : ℝ, 0 < ε → ∀ δ : ℝ, 0 < δ →
+        ∃ h : ℝ, 0 < h ∧ h < δ ∧ ∃ y ∈ s, ‖y - x - h • v‖ ≤ ε * h :=
+  contingentCondition_iff_mem_posTangentConeAt.symm
+
+/-- A right differentiable curve in a set has a positive tangent velocity. -/
+theorem mem_posTangentConeAt_of_curve {s : Set E} {u : ℝ → E} {v : E} {T : ℝ}
+    (hT : 0 < T) (hu : HasDerivWithinAt u v (Icc 0 T) 0)
+    (hs : MapsTo u (Icc 0 T) s) : v ∈ posTangentConeAt s (u 0) :=
+  contingentCondition_iff_mem_posTangentConeAt.mp (isContingent_of_curve hT hu hs)
 
 /-- Mathlib positive-tangent-cone membership preserves a closed set along an
 existing solution. -/
@@ -301,7 +313,7 @@ theorem mapsTo_of_mem_posTangentConeAt [FiniteDimensional ℝ E]
     (hu : ∀ t ∈ Icc a b, HasDerivWithinAt u (f (u t)) (Icc a b) t)
     (hu₀ : u a ∈ s) : MapsTo u (Icc a b) s :=
   mapsTo_of_contingent hf hs
-    (fun x hx => (isContingent_iff_mem_posTangentConeAt hx).mpr (htan x hx)) hu hu₀
+    (fun x hx => (contingentCondition_iff_mem_posTangentConeAt).mpr (htan x hx)) hu hu₀
 
 /-- Nagumo's criterion stated with Mathlib's positive tangent cone. -/
 theorem invariant_iff_mem_posTangentConeAt [FiniteDimensional ℝ E]
@@ -311,6 +323,6 @@ theorem invariant_iff_mem_posTangentConeAt [FiniteDimensional ℝ E]
         (∀ t ∈ Icc 0 T, HasDerivWithinAt u (f (u t)) (Icc 0 T) t) →
         u 0 ∈ s → ∀ t ∈ Icc 0 T, u t ∈ s := by
   rw [← invariant_iff_contingent f hf s hs]
-  exact forall₂_congr fun x hx => (isContingent_iff_mem_posTangentConeAt hx).symm
+  exact forall₂_congr fun x _ => contingentCondition_iff_mem_posTangentConeAt.symm
 
 end Nagumo
