@@ -14,7 +14,8 @@ name: Bump build cache
 # A maintainer dispatches this workflow from main with the bump's pull request
 # number and the head commit they reviewed. Before it checks out that commit,
 # the run checks that it is the pull request's current head and that the Bump
-# guard workflow passed on it. It then checks that the head keeps main's guard
+# guard workflow's latest run on it passed. It then checks that the head keeps
+# main's guard
 # code and changes the contents of the pin files, so that its cache key
 # differs from main's. It builds and checks the head with the same commands as
 # ci.yml's `build` job (the memory-heavy modules, then scripts/check.sh build)
@@ -49,7 +50,6 @@ on:
 
 permissions:
   actions: read
-  checks: read
   contents: read
   pull-requests: read
 
@@ -106,10 +106,11 @@ jobs:
             exit 1
           fi
           # The latest completed pull_request run of the Bump guard workflow on
-          # this head must have passed. The next step checks that the head
-          # leaves the guard code as main has it, so this is main's guard.
-          guard="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/bump-guard.yml/runs?head_sha=${HEAD_SHA}&event=pull_request&per_page=50" \
-            --jq '[.workflow_runs[] | select(.status == "completed")] | sort_by(.run_started_at) | last | .conclusion // ""')"
+          # this commit must have passed: a guard pass on the commit, against
+          # the base that run saw. The next step checks that the head leaves
+          # the guard code as main has it, so that run used main's guard.
+          guard="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/bump-guard.yml/runs?head_sha=${HEAD_SHA}&event=pull_request&status=completed&per_page=100" \
+            --jq '[.workflow_runs[]] | sort_by(.run_number, .run_attempt) | last | .conclusion // ""')"
           if [ "$guard" != success ]; then
             echo "::error::the Bump guard workflow has not passed on ${HEAD_SHA} (latest completed run: '${guard:-none}')"
             exit 1

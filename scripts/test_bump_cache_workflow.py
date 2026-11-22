@@ -61,6 +61,18 @@ def step(text: str, marker: str) -> str:
     return text[start:end if end != -1 else len(text)]
 
 
+def block_lines(text: str, key: str) -> list[str]:
+    """The stripped lines of the block scalar `key: |` in `text`."""
+    head, body = text.split(f"{key}: |\n", 1)
+    indent = len(head.rsplit("\n", 1)[-1]) + 2
+    lines = []
+    for line in body.splitlines():
+        if not line.startswith(" " * indent):
+            break
+        lines.append(line.strip())
+    return lines
+
+
 def run_blocks(lines: list[str]) -> list[str]:
     """The text of every `run:` script, inline or block."""
     scripts = []
@@ -96,7 +108,7 @@ class BumpCacheWorkflowTest(unittest.TestCase):
     def test_read_only_token(self) -> None:
         permissions = top_level_block(self.warm_lines, "permissions")
         granted = dict(re.findall(r"^  ([a-z-]+): (\S+)", "\n".join(permissions), re.M))
-        self.assertEqual(granted, {"actions": "read", "checks": "read", "contents": "read", "pull-requests": "read"})
+        self.assertEqual(granted, {"actions": "read", "contents": "read", "pull-requests": "read"})
         self.assertIsNone(re.search(r"(?m)^[ \t]+permissions:", self.warm), "no job may widen the token")
 
     def test_inputs_reach_scripts_only_through_the_environment(self) -> None:
@@ -113,7 +125,7 @@ class BumpCacheWorkflowTest(unittest.TestCase):
     def test_ci_restores_what_the_warm_up_saves(self) -> None:
         restore = step(self.ci, "name: Restore local build")
         self.assertIn("path: .lake/build", restore)
-        fallback = [line.strip() for line in restore.split("restore-keys: |", 1)[1].splitlines() if line.strip()]
+        fallback = block_lines(restore, "restore-keys")
         self.assertIn(CI_PREFIX, fallback, "ci.yml no longer falls back to lake-build-<os>-<pins>-; update bump-cache.yml")
         key = step(self.warm, "name: Name the cache entries")
         self.assertIn(f"NEW_PINS: {HASH}", key)
@@ -125,13 +137,31 @@ class BumpCacheWorkflowTest(unittest.TestCase):
         for marker in ("name: Restore an earlier build", "name: Save the build", "name: Confirm the save"):
             self.assertIn("path: .lake/build", step(self.warm, marker), marker)
 
+    def test_only_a_checked_build_gets_cis_key(self) -> None:
+        chosen = ("key: ${{ steps.build.outputs.status == 'ok' && steps.key.outputs.complete"
+                  " || steps.key.outputs.checkpoint }}")
+        self.assertIn(chosen, step(self.warm, "name: Save the build"))
+        self.assertIn(chosen, step(self.warm, "name: Confirm the save"), "confirm the key that was saved")
+        self.assertIn("lookup-only: true", step(self.warm, "name: Confirm the save"))
+        restore = step(self.warm, "name: Restore an earlier build")
+        self.assertIn("key: ${{ steps.key.outputs.complete }}", restore)
+        self.assertEqual(block_lines(restore, "restore-keys"),
+                         ["${{ steps.key.outputs.checkpoints }}", "${{ steps.key.outputs.prefix }}"])
+
+    def test_same_build_command_as_ci(self) -> None:
+        self.assertIn("run: scripts/check.sh build", step(self.ci, "name: Build extension libraries"))
+        build = step(self.warm, "name: Build and check the head")
+        self.assertIn("run_until_deadline scripts/check.sh build", build)
+
     def test_checks_before_checkout(self) -> None:
         order = [self.warm.index(m) for m in (
             "name: Check the pull request and its head", "uses: actions/checkout@",
             "name: Compare the head with main", "name: Name the cache entries", "name: Build and check the head")]
         self.assertEqual(order, sorted(order))
-        self.assertIn("actions/workflows/bump-guard.yml/runs?head_sha=${HEAD_SHA}&event=pull_request",
-                      step(self.warm, "name: Check the pull request and its head"))
+        check = step(self.warm, "name: Check the pull request and its head")
+        self.assertIn("actions/workflows/bump-guard.yml/runs?head_sha=${HEAD_SHA}&event=pull_request&status=completed",
+                      check)
+        self.assertIn("sort_by(.run_number, .run_attempt) | last", check)
         compare = step(self.warm, "name: Compare the head with main")
         for guard_file in (".github/workflows/bump-guard.yml", ".github/workflows/bump-pinned-release.yml",
                            "scripts/bump/pinned_bump.py"):
