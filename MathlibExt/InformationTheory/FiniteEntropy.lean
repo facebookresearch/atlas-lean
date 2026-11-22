@@ -195,7 +195,8 @@ theorem crossEntropy_pure [Fintype α] (y : α) (q : PMF α) :
   simp [crossEntropy, PMF.pure_apply]
 
 /-- **Cross-entropy is expected surprisal.** For probability mass functions $p$ and $q$ on a
-finite alphabet, the expected surprisal $\mathbb{E}_{a \sim p}[-\log_2 q(a)]$ (with
+finite alphabet $\alpha$, a measurable space in which every singleton is measurable, the expected
+surprisal $\mathbb{E}_{a \sim p}[-\log_2 q(a)]$ (with
 $-\log_2 0 = \infty$), taken as the integral of a $[0, \infty]$-valued function with respect to
 the law $p$, equals the cross-entropy $H(p, q)$. -/
 theorem lintegral_surprisal [Fintype α] [MeasurableSpace α] [MeasurableSingletonClass α]
@@ -210,7 +211,8 @@ theorem shannonEntropy_nonneg [Fintype α] (p : PMF α) : 0 ≤ shannonEntropy p
     (log_nonneg one_le_two)
 
 /-- **Cross-entropy is entropy plus divergence.** For probability mass functions $p$ and $q$ on a
-finite alphabet, the cross-entropy $H(p, q)$ in bits equals $H(p) + D(p \parallel q) / \ln 2$,
+finite alphabet $\alpha$, a measurable space in which every singleton is measurable, the
+cross-entropy $H(p, q)$ in bits equals $H(p) + D(p \parallel q) / \ln 2$,
 where $H(p)$ is the Shannon entropy of $p$ in bits and $D(p \parallel q)$ is the
 Kullback–Leibler divergence of $p$ from $q$ with the natural logarithm. The identity holds in
 $[0, \infty]$ with no support hypothesis: when $p$ charges an outcome that $q$ rules out, both
@@ -270,7 +272,8 @@ theorem shannonEntropy_le_crossEntropy [Fintype α] [MeasurableSpace α]
   exact le_self_add
 
 /-- **Equality in Gibbs' inequality.** For probability mass functions $p$ and $q$ on a finite
-alphabet, the cross-entropy $H(p, q)$ in bits equals the Shannon entropy $H(p)$ in bits if and
+alphabet $\alpha$, a measurable space in which every singleton is measurable, the cross-entropy
+$H(p, q)$ in bits equals the Shannon entropy $H(p)$ in bits if and
 only if $q = p$. Thus log loss is a strictly proper scoring rule. -/
 theorem crossEntropy_eq_shannonEntropy_iff [Fintype α] [MeasurableSpace α]
     [MeasurableSingletonClass α] (p q : PMF α) :
