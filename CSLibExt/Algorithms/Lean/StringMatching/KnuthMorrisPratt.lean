@@ -6,6 +6,15 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`Batteries/Data/Array/Match.lean` (Batteries, commit `66e469188fe07963e5cf666c7d4433f45b8131c5`):
+Copyright (c) 2023 F. G. Dorais. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: F. G. Dorais
+-/
+
 module
 
 public import Batteries.Data.List.Basic

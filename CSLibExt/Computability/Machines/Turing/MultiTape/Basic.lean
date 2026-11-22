@@ -6,6 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`Cslib/Computability/Machines/Turing/MultiTape/Deterministic.lean` (CSLib v4.35.0, commit
+`5b56df99362532c46e1175381fbbdd755bd56030`):
+Copyright (c) 2026 Christian Reitwiessner. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Christian Reitwiessner, Samuel Schlesinger, Aviv Bar Natan
+-/
+
 module
 
 public import Cslib.Computability.Machines.Turing.MultiTape.Deterministic
@@ -26,8 +36,8 @@ CSLib v4.36.0 (leanprover/cslib#1117) dropped the exact halting step `MultiTapeT
 API and the run lemmas `MultiTapeTM.runFrom_succ` and `MultiTapeTM.runFrom_add`. They are restated
 below, unchanged and in their original namespace, from
 `Cslib/Computability/Machines/Turing/MultiTape/Deterministic.lean` of CSLib v4.35.0 (commit
-`5b56df99362532c46e1175381fbbdd755bd56030`; Copyright (c) 2026 Christian Reitwiessner, Apache
-License, Version 2.0).
+`5b56df99362532c46e1175381fbbdd755bd56030`), whose copyright and authors are given at the top of
+this file.
 
 The upstream step of a machine built from a transition function (`MultiTapeTM.ofTr`) goes
 through `Classical.choose`; `stepWith tr` is the same successor written directly in terms of

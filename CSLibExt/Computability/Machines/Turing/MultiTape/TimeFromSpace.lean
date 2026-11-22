@@ -6,6 +6,22 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`Cslib/Computability/Machines/Turing/MultiTape/Deterministic.lean` (CSLib v4.35.0, commit
+`5b56df99362532c46e1175381fbbdd755bd56030`):
+Copyright (c) 2026 Christian Reitwiessner. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Christian Reitwiessner, Samuel Schlesinger, Aviv Bar Natan
+
+`Cslib/Computability/Machines/Turing/MultiTape/ConfigBound.lean` (CSLib v4.35.0, commit
+`5b56df99362532c46e1175381fbbdd755bd56030`):
+Copyright (c) 2026 Christian Reitwiessner. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Christian Reitwiessner
+-/
+
 module
 
 public import Cslib.Computability.Machines.Turing.MultiTape.ConfigBound
@@ -29,8 +45,8 @@ CSLib v4.36.0 (leanprover/cslib#1117) dropped the space of a deterministic run,
 in favour of the space of computation paths, and dropped `core_step_eq_of_core_eq`. They are
 restated below, unchanged and in their original namespace, from
 `Cslib/Computability/Machines/Turing/MultiTape/Deterministic.lean` and `ConfigBound.lean` of
-CSLib v4.35.0 (commit `5b56df99362532c46e1175381fbbdd755bd56030`; Copyright (c) 2026 Christian
-Reitwiessner, Samuel Schlesinger, Aviv Bar Natan, Apache License, Version 2.0).
+CSLib v4.35.0 (commit `5b56df99362532c46e1175381fbbdd755bd56030`), whose copyright and authors
+are given at the top of this file.
 -/
 
 @[expose] public section
