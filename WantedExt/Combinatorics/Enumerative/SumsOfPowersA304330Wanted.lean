@@ -28,7 +28,7 @@ convention `∏_{j=0}^{m-1} (x - j(j+1)) = Σ_r Ps_m^{(r)} x^r`,
 which is the convention satisfying Proposition 12 (checked
 numerically; the opposite sign fails).  The polynomial
 identities below are stated for all `n : ℕ` where they hold at
-`n = 0` as well; Lemmas 4 and 7 keep the paper's `n ≥ 1`.
+`n = 0` as well; Lemma 4 keeps the paper's `n ≥ 1`.
 -/
 module
 
@@ -187,19 +187,6 @@ theorem_wanted arrayR_eq_closedForm (k m : ℕ) (hm1 : 1 ≤ m)
             ∏ r : Fin k,
               (1 / ((4 : ℚ) ^ (r.val + 1) *
                 (Nat.factorial (2 * (r.val + 1)) : ℚ))) ^ ((b r).val)
-
-/-- **Lemma 7**: `Σ_{i=1}^n i·C(i + k - 1, 2k - 1) =
-(k(2n + 1)/(2k + 1))·C(n + k, 2k)` for `n ≥ 1` and fixed
-positive `k`.
-
-Source: José L. Cereceda, "Sums of Powers of Integers and the
-Sequence A304330", Lemma 7. -/
-theorem_wanted sum_mul_choose_eq (k n : ℕ) (hk : 1 ≤ k)
-    (hn : 1 ≤ n) :
-    (∑ i ∈ Finset.Icc 1 n,
-      (i : ℚ) * (Nat.choose (i + k - 1) (2 * k - 1) : ℚ)) =
-      ((k : ℚ) * (2 * (n : ℚ) + 1) / (2 * (k : ℚ) + 1)) *
-        (Nat.choose (n + k) (2 * k) : ℚ)
 
 /-- **Theorem 10**: `2^{2k-1} S_{2k-1}(n) =
 Σ_{m=1}^k Q_{k,m}(n)·C(n + m, 2m - 1)` for `k ≥ 1`, with
