@@ -38,10 +38,10 @@ the Batteries matcher, whose empty-pattern behavior also differs from this API.
 The prefix-table representation and operations adapt `Array.PrefixTable`,
 `Array.PrefixTable.step`, `Array.PrefixTable.extend`, and `Array.mkPrefixTable` from Batteries
 revision `f2effa3d803fda822b1f97b806c47cf2adfbcbc2`. Batteries v4.36.0 moved
-`Batteries.Data.Array.Match` to the separate package `fgdorais/batteries-kmp`, so these four
-definitions are copied below from Batteries revision `66e469188fe07963e5cf666c7d4433f45b8131c5`
-(Copyright (c) 2023 F. G. Dorais, Apache License, Version 2.0). Changes: explicit binders for
-`autoImplicit false`.
+`Batteries.Data.Array.Match` to the separate package `fgdorais/batteries-kmp`, so these definitions,
+with the `Inhabited` instance and `Array.PrefixTable.size`, are copied below from Batteries revision
+`66e469188fe07963e5cf666c7d4433f45b8131c5` (Copyright (c) 2023 F. G. Dorais, Apache License,
+Version 2.0). Changes: explicit binders for `autoImplicit false`.
 
 ## References
 
