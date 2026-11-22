@@ -125,4 +125,93 @@ example (c h θ₁ θ₂ c0 : ℝ) (hc0 : c0 ∈ Set.Ioo (0 : ℝ) 1) (hθ₁ : 
 #print axioms integral_diffusionGenerator_dominance_speedMeasureFrom
 #print axioms speedMeasureFrom_dominance_univ
 
+example : dominanceStationaryDensity 1 0 1 1 (1 / 2) =
+    Real.exp (1 / 2) * 2 := by
+  have h1 : (4 : ℝ) * 1 * 0 * (1 / 2) + 2 * 1 * (1 - 2 * 0) *
+      (1 / 2) ^ 2 = 1 / 2 := by
+    norm_num
+  have h2 : mutationSpeedDensity (1 : ℝ) 1 (1 / 2) = 2 := by
+    have e0 : (1 : ℝ) - 1 = 0 := by norm_num
+    simp only [mutationSpeedDensity, e0, Real.rpow_zero]
+    norm_num
+  simp only [dominanceStationaryDensity, h1, h2]
+
+example : scaleDensityFrom
+    (fun x => (1 * (1 - x) - 1 * x) / 2 + dominanceDrift 1 0 x)
+    (fun x => x * (1 - x)) (1 / 2) (1 / 4) =
+    (4 / 3) * Real.exp (3 / 8) := by
+  have hc0 : (1 / 2 : ℝ) ∈ Set.Ioo (0 : ℝ) 1 := ⟨by norm_num, by norm_num⟩
+  have hy : (1 / 4 : ℝ) ∈ Set.Ioo (0 : ℝ) 1 := ⟨by norm_num, by norm_num⟩
+  have hS := scaleDensityFrom_dominance (1 : ℝ) 0 1 1 (1 / 2) (1 / 4) hc0 hy
+  rw [hS]
+  have e0 : (4 : ℝ) * 1 * 0 * (1 / 2) + 2 * 1 * (1 - 2 * 0) * (1 / 2) ^ 2 =
+      1 / 2 := by
+    norm_num
+  have e1 : (4 : ℝ) * 1 * 0 * (1 / 4) + 2 * 1 * (1 - 2 * 0) * (1 / 4) ^ 2 =
+      1 / 8 := by
+    norm_num
+  rw [e0, e1]
+  have r1 : ((1 / 2 : ℝ)) ^ ((1 : ℝ)) = 1 / 2 := Real.rpow_one _
+  have r2 : ((1 : ℝ) - 1 / 2) ^ ((1 : ℝ)) = 1 / 2 := by
+    have hbase : ((1 : ℝ) - 1 / 2) = 1 / 2 := by norm_num
+    rw [hbase, Real.rpow_one]
+  have mS : mutationScaleDensity (1 : ℝ) 1 (1 / 4) = 16 / 3 := by
+    have n1 : ((1 / 4 : ℝ)) ^ (-(1 : ℝ)) = 4 := by
+      rw [Real.rpow_neg_one]
+      norm_num
+    have n2 : ((1 : ℝ) - 1 / 4) ^ (-(1 : ℝ)) = 4 / 3 := by
+      have hbase : ((1 : ℝ) - 1 / 4) = 3 / 4 := by norm_num
+      rw [hbase, Real.rpow_neg_one]
+      norm_num
+    simp only [mutationScaleDensity, n1, n2]
+    norm_num
+  rw [r1, r2, mS]
+  have hexp : Real.exp (1 / 2 : ℝ) * Real.exp (-(1 / 8 : ℝ)) =
+      Real.exp (3 / 8 : ℝ) := by
+    rw [← Real.exp_add]
+    congr 1
+    norm_num
+  trans (4 / 3 : ℝ) * (Real.exp (1 / 2) * Real.exp (-(1 / 8)))
+  · ring
+  · rw [hexp]
+
+example : speedDensityFrom
+    (fun x => (1 * (1 - x) - 1 * x) / 2 + dominanceDrift 1 0 x)
+    (fun x => x * (1 - x)) (1 / 2) (1 / 4) =
+    8 * Real.exp (-(3 / 8)) := by
+  have hc0 : (1 / 2 : ℝ) ∈ Set.Ioo (0 : ℝ) 1 := ⟨by norm_num, by norm_num⟩
+  have hy : (1 / 4 : ℝ) ∈ Set.Ioo (0 : ℝ) 1 := ⟨by norm_num, by norm_num⟩
+  have hS := speedDensityFrom_dominance (1 : ℝ) 0 1 1 (1 / 2) (1 / 4) hc0 hy
+  rw [hS]
+  have e0 : (4 : ℝ) * 1 * 0 * (1 / 2) + 2 * 1 * (1 - 2 * 0) * (1 / 2) ^ 2 =
+      1 / 2 := by
+    norm_num
+  rw [e0]
+  have r1 : ((1 / 2 : ℝ)) ^ (-(1 : ℝ)) = 2 := by
+    rw [Real.rpow_neg_one]
+    norm_num
+  have r2 : ((1 : ℝ) - 1 / 2) ^ (-(1 : ℝ)) = 2 := by
+    have hbase : ((1 : ℝ) - 1 / 2) = 1 / 2 := by norm_num
+    rw [hbase, Real.rpow_neg_one]
+    norm_num
+  have dS : dominanceStationaryDensity (1 : ℝ) 0 1 1 (1 / 4) =
+      Real.exp (1 / 8) * 2 := by
+    have g1 : (4 : ℝ) * 1 * 0 * (1 / 4) + 2 * 1 * (1 - 2 * 0) * (1 / 4) ^ 2 =
+        1 / 8 := by
+      norm_num
+    have g2 : mutationSpeedDensity (1 : ℝ) 1 (1 / 4) = 2 := by
+      have e0 : (1 : ℝ) - 1 = 0 := by norm_num
+      simp only [mutationSpeedDensity, e0, Real.rpow_zero]
+      norm_num
+    simp only [dominanceStationaryDensity, g1, g2]
+  rw [r1, r2, dS]
+  have hexp : Real.exp (-(1 / 2 : ℝ)) * Real.exp (1 / 8 : ℝ) =
+      Real.exp (-(3 / 8 : ℝ)) := by
+    rw [← Real.exp_add]
+    congr 1
+    norm_num
+  trans (8 : ℝ) * (Real.exp (-(1 / 2)) * Real.exp (1 / 8))
+  · ring
+  · rw [hexp]
+
 end MathlibExtTest.Biology.PopulationGenetics.Diffusion.DominanceStationary

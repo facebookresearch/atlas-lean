@@ -601,7 +601,8 @@ private theorem intervalIntegrable_dominance_aux (c h θ₁ θ₂ : ℝ)
 /-- Total mass of the interior-basepoint speed measure for the mutation-dominance
 coefficient pair with basepoint `c0`: the basepoint constant times the integral of
 `dominanceStationaryDensity` over `(0, 1)`, as an extended nonnegative real.
-Finiteness of the integral is not claimed here. -/
+For positive mutation parameters the density is interval integrable
+over `(0, 1)`, so the integral and the displayed total mass are finite. -/
 public theorem speedMeasureFrom_dominance_univ (c h θ₁ θ₂ c0 : ℝ)
     (hc0 : c0 ∈ Ioo (0 : ℝ) 1) (hθ₁ : 0 < θ₁) (hθ₂ : 0 < θ₂) :
     speedMeasureFrom
