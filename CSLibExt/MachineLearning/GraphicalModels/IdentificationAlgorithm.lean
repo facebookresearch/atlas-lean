@@ -49,7 +49,12 @@ in the source; off that domain (overlapping `X`, `Y`, or a non-topological
 for example `D \ X = ∅` falls into line 4 with an empty product, a case the
 invariants exclude. Topologicity and disjointness are therefore hypotheses
 of the results about the recursion (as in `ADMG.idRec_invariants`), not of
-its definition.
+its definition. The identifying reading also needs the usual positivity:
+every conditional in the returned expression must have a nonzero
+denominator at the evaluation point. `IdExpr.eval` uses real division, so
+off that domain a conditional with zero denominator evaluates to `0` by
+convention (see the `chain2_eval_cond_zero` test), again carrying no
+identification meaning.
 -/
 
 @[expose] public section
