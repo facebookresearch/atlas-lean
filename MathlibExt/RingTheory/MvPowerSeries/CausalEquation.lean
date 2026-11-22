@@ -47,7 +47,8 @@ import Mathlib.Tactic.FieldSimp
 A right-hand side is causal along an axis if coefficients through axis degree k
 read only input coefficients through degree k. Integration raises agreement by
 one degree, so Picard iteration stabilizes coefficient by coefficient. It gives
-exactly one formal solution with the prescribed entire degree-zero slice.
+exactly one formal solution over a characteristic-zero field with the prescribed
+entire degree-zero slice.
 Spatial derivatives and products preserve causality. This is formal Picard
 existence and uniqueness; no convergence or analytic solution is asserted.
 
