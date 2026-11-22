@@ -12,6 +12,8 @@ public import Mathlib.Data.Finset.Max
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Basic.Real.Basic
 
+@[expose] public section
+
 namespace MathlibExt.Combinatorics.Order.ErdosSzekeres
 
 /-!
