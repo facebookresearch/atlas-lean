@@ -40,18 +40,27 @@ has `(p - 1)²` elements), not one finite group.
 
 open scoped Pointwise
 
-/-- Tao's question (AIM, Recent trends in additive combinatorics, Problem 3.5) as a claim: small
-doubling forces small tripling uniformly in all groups, i.e. there is `f` such that every finite
-nonempty subset `A` of every group with `|A · A| ≤ K |A|` has `|A · A · A| ≤ f(K) |A|`. -/
+/-- **Tao's small-doubling question (AIM Problem 3.5).** The proposition that small doubling
+forces small tripling uniformly in all groups: there is a function $f : \mathbb{R} \to \mathbb{R}$
+such that for every group $G$, every finite nonempty subset $A \subseteq G$ and every real number
+$K$, if $|A \cdot A| \le K |A|$ then $|A \cdot A \cdot A| \le f(K) |A|$. Here
+$A \cdot A = \{ab : a, b \in A\}$ and $A \cdot A \cdot A = \{abc : a, b, c \in A\}$. -/
 def smallDoublingImpliesSmallTripling : Prop :=
   ∃ f : ℝ → ℝ, ∀ (G : Type) [Group G] [DecidableEq G] (A : Finset G) (K : ℝ), A.Nonempty →
     ((A * A).card : ℝ) ≤ K * A.card → ((A * A * A).card : ℝ) ≤ f K * A.card
 
 /--
-Resolved false: Tao's comment in the problem list records that B. Green and M.-C. Chang pointed out
-that the problem as stated is false, by considering `A = H ∪ {x}` with `H` a non-normal subgroup and
-`x` not in the normalizer of `H`; Tao's paper says that for such `A`, `A · A` has size comparable to
-`A` while `A · A · A` can be much larger (Sections 1 and 3). Source: AIM workshop Recent trends in
+**Small doubling does not imply small tripling.** There is no function
+$f : \mathbb{R} \to \mathbb{R}$ such that for every group $G$, every finite nonempty subset
+$A \subseteq G$ and every real number $K$ with $|A \cdot A| \le K |A|$ one has
+$|A \cdot A \cdot A| \le f(K) |A|$. Here $A \cdot A = \{ab : a, b \in A\}$ and
+$A \cdot A \cdot A = \{abc : a, b, c \in A\}$.
+
+B. Green and M.-C. Chang pointed out the counterexample $A = H \cup \{x\}$ with $H$ a finite
+non-normal subgroup and $x$ outside the normalizer of $H$: then $|A \cdot A|$ is comparable to
+$|A|$, while $|A \cdot A \cdot A|$ can be much larger.
+
+Source: AIM workshop Recent trends in
 additive combinatorics (2004), problem list collected by E. Croot and V. F. Lev,
 https://aimath.org/WWN/additivecomb/additivecomb.pdf, Problem 3.5 (T. Tao) and Tao's comment;
 resolution: Tao's comment on Problem 3.5 in the AIM problem list (counterexample pointed out by B.
