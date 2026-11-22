@@ -9,16 +9,17 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Mathlib.Analysis.Complex.CauchyIntegral
-import MathlibExt.Analysis.Complex.ResidueTheorem
+public import MathlibExt.Analysis.Complex.ResidueTheorem
 
 set_option autoImplicit false
 
 open Complex Filter Metric Set Topology
 open scoped Real
 
-/-! The counterclockwise unit circle `circlePath 0 1` satisfies every hypothesis on the curve. -/
+/-! The counterclockwise unit circle `circlePath 0 1` satisfies every hypothesis on the curve.
+These four facts are public so that other tests of curve theorems can reuse them. -/
 
-theorem range_circlePath_zero_one : range (circlePath 0 1) = sphere (0 : ℂ) 1 := by
+public theorem range_circlePath_zero_one : range (circlePath 0 1) = sphere (0 : ℂ) 1 := by
   refine subset_antisymm (by simpa using range_circlePath_subset (0 : ℂ) 1) fun w hw => ?_
   rw [← abs_one, ← image_circleMap_Ioc] at hw
   obtain ⟨θ, hθ, rfl⟩ := hw
@@ -30,7 +31,7 @@ theorem range_circlePath_zero_one : range (circlePath 0 1) = sphere (0 : ℂ) 1 
 -- The inside of the unit circle is the open unit disc: a point outside the closed disc lies on a
 -- ray that avoids the circle and is unbounded, and the component of a point of the open disc
 -- stays in the disc.
-theorem inside_range_circlePath_zero_one :
+public theorem inside_range_circlePath_zero_one :
     (range (circlePath 0 1)).inside = ball (0 : ℂ) 1 := by
   rw [range_circlePath_zero_one]
   ext z
@@ -65,7 +66,7 @@ theorem inside_range_circlePath_zero_one :
       isClosed_closedBall.isOpen_compl (disjoint_compl_right_iff_subset.2 ball_subset_closedBall)
       ((connectedComponentIn_subset _ _).trans hsub) ⟨z, mem_connectedComponentIn hzs, hz⟩
 
-theorem injOn_circlePath_zero_one : InjOn (circlePath 0 1) (Iio 1) := by
+public theorem injOn_circlePath_zero_one : InjOn (circlePath 0 1) (Iio 1) := by
   have h2π : (0 : ℝ) < 2 * π := Real.two_pi_pos
   have hmem : ∀ u : unitInterval, u ∈ Iio 1 → 2 * π * (u : ℝ) ∈ Ico 0 (2 * π) := fun u hu =>
     ⟨mul_nonneg h2π.le u.2.1, by
@@ -76,7 +77,7 @@ theorem injOn_circlePath_zero_one : InjOn (circlePath 0 1) (Iio 1) := by
     (by rw [sub_zero]) (hmem s hs) (hmem t ht) hst))
 
 -- Positive orientation: the unit circle winds once around every point inside it.
-theorem windingNumber_circlePath_zero_one :
+public theorem windingNumber_circlePath_zero_one :
     ∀ z ∈ (range (circlePath 0 1)).inside, windingNumber (circlePath 0 1) z = 1 := fun _ hz =>
   windingNumber_circlePath_of_mem_ball (inside_range_circlePath_zero_one ▸ hz)
 
