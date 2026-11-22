@@ -210,17 +210,6 @@ public theorem_wanted power_coeff_convolution_zpow {K : Type*} [Field K] [CharZe
       ((n : K) - ((u : K) / v + 1) * k) * coeff (n - k) ((A ^ u : (PowerSeries K)ˣ) : PowerSeries K) *
         coeff k ((A ^ v : (PowerSeries K)ˣ) : PowerSeries K) = 0
 
-/-- Power recursion lemma for positive exponents and an arbitrary power series `A`:
-`∑_{k=0}^n (n - (u/v + 1) k) a_u(n-k) a_v(k) = 0`.
-
-Source: Hartosh Singh Bal and Gaurav Bhatnagar, *Glaisher's Divisors and Infinite
-Products*, Journal of Integer Sequences 27 (2024), Article 24.1.6, Lemma 17
-(`jis-2024-24.1.6-lem-17`). -/
-public theorem_wanted power_coeff_convolution_pow {K : Type*} [Field K] [CharZero K]
-    (A : PowerSeries K) (u v : ℕ) (hu : u ≠ 0) (hv : v ≠ 0) (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1),
-      ((n : K) - ((u : K) / v + 1) * k) * coeff (n - k) (A ^ u) * coeff k (A ^ v) = 0
-
 /-- Six divisor-function recursions obtained from the power recursion lemma.
 
 Source: Hartosh Singh Bal and Gaurav Bhatnagar, *Glaisher's Divisors and Infinite

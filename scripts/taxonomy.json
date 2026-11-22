@@ -12026,6 +12026,7 @@
   "MathlibExt/RingTheory/PowerSeries/HermiteLagrangeSeries": {"to": "RingTheory/formal-power-series", "title": "Lagrange inversion theorem"},
   "MathlibExt/RingTheory/PowerSeries/KaluzaCoefficientBounds": {"to": "RingTheory/formal-power-series", "title": "Kaluza's theorem on reciprocal power series"},
   "MathlibExt/RingTheory/PowerSeries/LagrangeBurmannCoefficient": {"to": "RingTheory/formal-power-series", "title": "Lagrange inversion theorem"},
+  "MathlibExt/RingTheory/PowerSeries/PowerRecursion": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Glaisher's divisor functions and infinite products"},
   "MathlibExt/RingTheory/PowerSeries/RegularLocalRing": {"to": "RingTheory/local-rings", "title": "Regular local rings"},
   "MathlibExt/RingTheory/PowerSeries/TaylorFormula": {"to": "RingTheory/formal-power-series", "title": "Taylor's formula for formal power series"},
   "MathlibExt/RingTheory/ProductRings": {"to": "RingTheory/ideals-and-constructions", "title": "Products of rings and fields"},
