@@ -36,6 +36,7 @@ particular EVPI is nonnegative (`evpi_nonneg`).
 
 namespace MathlibExt.Economics.Finance.ValueOfInformation
 
+open MathlibExt.Probability.Decision.ValueOfInformation
 open MathlibExt.Probability.FiniteProbability
 open MathlibExt.Economics.Finance.RealOptionValue
 

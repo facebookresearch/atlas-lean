@@ -15,14 +15,20 @@ import Mathlib.Tactic.NormNum
 /-!
 # Tests for the expected value of information
 
-A two-state medical-test computation with strictly positive value of the test.
+The examples cover signed weights, a two-state medical test with positive information value,
+and a singleton action set with zero information value.
 -/
 
 @[expose] public section
 
-namespace MathlibExt.Economics.Finance.ValueOfInformationTest
+namespace MathlibExtTest.Probability.Decision.ValueOfInformation
 
-open MathlibExt.Economics.Finance.ValueOfInformation
+open MathlibExt.Probability.Decision.ValueOfInformation
+
+/-- The nonnegativity bound holds even when one evidence outcome has negative weight. -/
+example (U : Bool → Unit → ℝ) :
+    0 ≤ evii (Finset.univ : Finset Bool) Finset.univ_nonempty
+      (fun (_ : Unit) (e : Bool) => if e then (1 : ℝ) else -1) U := evii_nonneg
 
 /-- Medical-test example with strictly positive value of imperfect
 information. States `Ω = Fin 2` (`0` healthy, `1` disease), actions
@@ -72,4 +78,4 @@ example (w : Bool → Bool → ℝ) (hw : ∀ i j, 0 ≤ w i j) (U : Unit → Bo
   cases a
   exact le_rfl
 
-end MathlibExt.Economics.Finance.ValueOfInformationTest
+end MathlibExtTest.Probability.Decision.ValueOfInformation

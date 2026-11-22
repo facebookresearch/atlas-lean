@@ -12,7 +12,8 @@ import Domains.Economics.Finance.ValueOfInformation
 
 /-! # Perfect-information option value with a single feasible action -/
 
-open MathlibExt.Economics.Finance.ValueOfInformation
+open MathlibExt.Probability.Decision.ValueOfInformation (evii)
+open MathlibExt.Economics.Finance.ValueOfInformation (evii_diagonal_eq_optionValue_sub)
 open MathlibExt.Economics.Finance.RealOptionValue
 open MathlibExt.Probability.FiniteProbability
 

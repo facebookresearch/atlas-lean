@@ -16,20 +16,19 @@ public import Mathlib.Data.Finset.Lattice.Fold
 # Value of information for finite decisions
 
 Compare the best fixed action with the best action chosen after a finite observation.
-For nonnegative joint weights, the difference is nonnegative. Equality holds exactly
-when some feasible action is optimal for every observation of positive total weight.
+The difference is nonnegative for any real weights. If the weights are nonnegative, equality
+holds exactly when one feasible action is optimal for every observation of positive total weight.
 
 See H. Raiffa and R. Schlaifer, *Applied Statistical Decision Theory* (1961), ch. 4, §5.
 -/
 
 @[expose] public section
 
-namespace MathlibExt.Economics.Finance.ValueOfInformation
+namespace MathlibExt.Probability.Decision.ValueOfInformation
 
 /-- The (unnormalized) expected utility of committing to action `a` when the
 joint weight of state `ω` and evidence `e` is `w ω e`: sum over all states and
-evidence outcomes. Weights are arbitrary nonnegative reals, not necessarily
-normalized, matching `expectation`. -/
+evidence outcomes. This weighted sum is defined even for signed or unnormalized weights. -/
 noncomputable def commitValue {α Ω ε : Type*} [Fintype Ω] [Fintype ε]
     (w : Ω → ε → ℝ) (U : α → Ω → ℝ) (a : α) : ℝ :=
   ∑ ω, ∑ e, w ω e * U a ω
@@ -50,13 +49,11 @@ noncomputable def evii {α Ω ε : Type*} [Fintype Ω] [Fintype ε]
     (w : Ω → ε → ℝ) (U : α → Ω → ℝ) : ℝ :=
   informedValue actions hne w U - actions.sup' hne (fun a => commitValue w U a)
 
-/-- **Value of information is nonnegative.** For nonnegative joint weights,
-acting after seeing the evidence is worth at least the best commitment. -/
+/-- **Value of information is nonnegative.** For arbitrary real weights, choosing an
+optimal action for each observation is worth at least as much as any fixed action. -/
 theorem evii_nonneg {α Ω ε : Type*} [Fintype Ω] [Fintype ε]
-    {actions : Finset α} {hne : actions.Nonempty}
-    {w : Ω → ε → ℝ} (hw : ∀ ω e, 0 ≤ w ω e) {U : α → Ω → ℝ} :
+    {actions : Finset α} {hne : actions.Nonempty} {w : Ω → ε → ℝ} {U : α → Ω → ℝ} :
     0 ≤ evii actions hne w U := by
-  have _ := hw
   rw [evii, sub_nonneg]
   obtain ⟨a_star, ha_mem, ha_eq⟩ := Finset.exists_mem_eq_sup' hne (fun a => commitValue w U a)
   rw [ha_eq]
@@ -105,7 +102,7 @@ theorem evii_eq_zero_iff {α Ω ε : Type*} [Fintype Ω] [Fintype ε]
     exact Finset.le_sup' (fun a => ∑ ω, w ω e * U a ω) ha'
   · intro h
     obtain ⟨a, ha_mem, ha_opt⟩ := h
-    have h_nonneg : 0 ≤ evii actions hne w U := evii_nonneg hw
+    have h_nonneg : 0 ≤ evii actions hne w U := evii_nonneg
     apply le_antisymm _ h_nonneg
     rw [evii, sub_nonpos]
     have h_le_sup : commitValue w U a ≤ actions.sup' hne (fun a => commitValue w U a) :=
@@ -138,4 +135,4 @@ theorem evii_eq_zero_iff {α Ω ε : Type*} [Fintype Ω] [Fintype ε]
         rw [h_each_zero ω (Finset.mem_univ ω), zero_mul]
       rw [h_post_a', h_post_a]
 
-end MathlibExt.Economics.Finance.ValueOfInformation
+end MathlibExt.Probability.Decision.ValueOfInformation
