@@ -31,15 +31,16 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The number of regions into which a set `K ⊆ ℝ²` of cuts divides the plane: the number of
-connected components of `ℝ² \ K` (`0` if there are infinitely many).
+/-- **Number of regions cut out of the plane.** For a set $K \subseteq \mathbb{R}^2$ of cuts, the
+number of regions into which $K$ divides the plane is the number of connected components of the
+complement $\mathbb{R}^2 \setminus K$, or $0$ if there are infinitely many components.
 
 Source: David O. H. Cutler, Jonas Karlsson and Neil J. A. Sloane, *Cutting a Pancake with an
 Exotic Knife*, Journal of Integer Sequences 29 (2026), Article 26.4.5, Section 1. -/
 public noncomputable def planeRegionCount (K : Set (ℝ × ℝ)) : ℕ :=
   Set.ncard {C : Set (ℝ × ℝ) | ∃ x ∈ Kᶜ, C = connectedComponentIn Kᶜ x}
 
-/-- With no cuts the plane is a single region.
+/-- **No cuts, one region.** The empty set of cuts divides the plane into exactly one region.
 
 Source: David O. H. Cutler, Jonas Karlsson and Neil J. A. Sloane, *Cutting a Pancake with an
 Exotic Knife*, Journal of Integer Sequences 29 (2026), Article 26.4.5, Section 1 (`n = 0`). -/
@@ -51,8 +52,11 @@ public theorem planeRegionCount_empty : planeRegionCount ∅ = 1 := by
       PreconnectedSpace.connectedComponent_eq_univ]
   rw [planeRegionCount, h, Set.ncard_singleton]
 
-/-- **Theorem 1** (3-armed V's). The maximum number of regions formed in the plane by `n`
-long-legged 3-armed V's (a tip with three rays of arbitrary directions) is `(9n² - 5n + 2)/2`.
+/-- **Maximum region count for three-armed V's.** A long-legged three-armed V is the union of
+three rays $\{c + s u_j : s \ge 0\}$, $j = 1, 2, 3$, from a common tip $c \in \mathbb{R}^2$, with
+nonzero direction vectors $u_1, u_2, u_3 \in \mathbb{R}^2$ in arbitrary directions. For every
+natural number $n$, the largest number of regions into which the union of $n$ long-legged
+three-armed V's can divide the plane is $(9n^2 - 5n + 2)/2$.
 
 Source: David O. H. Cutler, Jonas Karlsson and Neil J. A. Sloane, *Cutting a Pancake with an
 Exotic Knife*, Journal of Integer Sequences 29 (2026), Article 26.4.5, Theorem 1
@@ -63,9 +67,11 @@ public theorem_wanted isGreatest_planeRegionCount_threeArmedV (n : ℕ) :
         N = planeRegionCount (⋃ i, ⋃ j, (fun s : ℝ => c i + s • u i j) '' Set.Ici 0)}
       ((9 * n ^ 2 - 5 * n + 2) / 2)
 
-/-- **Theorem 1** (3-chains). The maximum number of regions formed in the plane by `n` 3-chains
-(a finite segment `[p, q]` with a ray attached at each end, arbitrary directions,
-self-intersections allowed) is `(9n² - 5n + 2)/2`.
+/-- **Maximum region count for 3-chains.** For points $p, q \in \mathbb{R}^2$ and nonzero vectors
+$u, v \in \mathbb{R}^2$, the 3-chain is the union of the ray $\{p + s u : s \ge 0\}$, the segment
+$[p, q]$ and the ray $\{q + s v : s \ge 0\}$; the directions are arbitrary and the 3-chain may
+intersect itself. For every natural number $n$, the largest number of regions into which the
+union of $n$ 3-chains can divide the plane is $(9n^2 - 5n + 2)/2$.
 
 Source: David O. H. Cutler, Jonas Karlsson and Neil J. A. Sloane, *Cutting a Pancake with an
 Exotic Knife*, Journal of Integer Sequences 29 (2026), Article 26.4.5, Theorem 1
@@ -76,9 +82,11 @@ public theorem_wanted isGreatest_planeRegionCount_threeChain (n : ℕ) :
           segment ℝ (p i) (q i) ∪ (fun s : ℝ => q i + s • v i) '' Set.Ici 0))}
       ((9 * n ^ 2 - 5 * n + 2) / 2)
 
-/-- **Theorem 1** (long-legged A's). The maximum number of regions formed in the plane by `n`
-long-legged A's (a tip `c` with two rays `c + s u₁`, `c + s u₂` and a crossbar segment from
-`c + a u₁` to `c + b u₂`, `a, b > 0`) is `(9n² - 5n + 2)/2`.
+/-- **Maximum region count for long-legged A's.** For a tip $c \in \mathbb{R}^2$, nonzero vectors
+$u_1, u_2 \in \mathbb{R}^2$ and reals $a, b > 0$, the long-legged A is the union of the rays
+$\{c + s u_1 : s \ge 0\}$ and $\{c + s u_2 : s \ge 0\}$ and the crossbar segment
+$[c + a u_1, c + b u_2]$. For every natural number $n$, the largest number of regions into which
+the union of $n$ long-legged A's can divide the plane is $(9n^2 - 5n + 2)/2$.
 
 Source: David O. H. Cutler, Jonas Karlsson and Neil J. A. Sloane, *Cutting a Pancake with an
 Exotic Knife*, Journal of Integer Sequences 29 (2026), Article 26.4.5, Theorem 1
@@ -91,10 +99,13 @@ public theorem_wanted isGreatest_planeRegionCount_longLeggedA (n : ℕ) :
           segment ℝ (c i + a i • u₁ i) (c i + b i • u₂ i)))}
       ((9 * n ^ 2 - 5 * n + 2) / 2)
 
-/-- **Lemma 2** (constrained T's). A constrained long-legged `T̄` with center `c` and stem
-direction `(cos θ, sin θ)` is the line through `c` perpendicular to the stem (the crossbar)
-together with the stem ray from `c`. If two `T̄`'s meet in exactly four points, then
-`cos(θ₁ - θ₂) < 0`: their stem directions are more than `π/2` apart.
+/-- **Four-point intersections of constrained T's.** For a point $c \in \mathbb{R}^2$ and an angle
+$\theta \in \mathbb{R}$, the constrained long-legged T $\bar T(c, \theta)$ is the union of the
+crossbar, the line $\{c + s(-\sin\theta, \cos\theta) : s \in \mathbb{R}\}$, and the stem, the ray
+$\{c + s(\cos\theta, \sin\theta) : s \ge 0\}$. For all $c_1, c_2 \in \mathbb{R}^2$ and
+$\theta_1, \theta_2 \in \mathbb{R}$, if $\bar T(c_1, \theta_1) \cap \bar T(c_2, \theta_2)$ has
+exactly four points, then $\cos(\theta_1 - \theta_2) < 0$, that is, the two stem directions make
+an angle greater than $\pi/2$.
 
 Source: David O. H. Cutler, Jonas Karlsson and Neil J. A. Sloane, *Cutting a Pancake with an
 Exotic Knife*, Journal of Integer Sequences 29 (2026), Article 26.4.5, Lemma 2
@@ -105,10 +116,16 @@ public theorem_wanted cos_sub_neg_of_tbar_inter_ncard_four (c₁ c₂ : ℝ × �
         (fun s : ℝ => c + s • (Real.cos θ, Real.sin θ)) '' Set.Ici 0
     (T c₁ θ₁ ∩ T c₂ θ₂).ncard = 4 → Real.cos (θ₁ - θ₂) < 0
 
-/-- **Lemma 3** (lollipops). A lollipop with center `c`, radius `r > 0` and stem direction
-`(cos θ, sin θ)` is the circle of radius `r` about `c` together with the part of the ray from `c`
-in that direction outside the open disc. If two lollipops have three or four stem-circle
-intersections in total (stem of each with circle of the other), then `cos(θ₁ - θ₂) < 0`.
+/-- **Stem–circle intersections of two lollipops.** For a point $c = (a, b) \in \mathbb{R}^2$, a
+radius $r > 0$ and an angle $\theta \in \mathbb{R}$, the lollipop with center $c$, radius $r$ and
+stem direction $(\cos\theta, \sin\theta)$ consists of the circle
+$\{(x, y) \in \mathbb{R}^2 : (x - a)^2 + (y - b)^2 = r^2\}$ and the stem
+$\{c + s(\cos\theta, \sin\theta) : s \ge r\}$, the part of the ray from $c$ in that direction
+outside the open disc. For all $c_1, c_2 \in \mathbb{R}^2$, $r_1, r_2 > 0$ and
+$\theta_1, \theta_2 \in \mathbb{R}$, consider the lollipops with centers $c_i$, radii $r_i$ and
+stem directions $(\cos\theta_i, \sin\theta_i)$. If the number of points where the stem of the
+first meets the circle of the second plus the number of points where the stem of the second meets
+the circle of the first is $3$ or $4$, then $\cos(\theta_1 - \theta_2) < 0$.
 
 Source: David O. H. Cutler, Jonas Karlsson and Neil J. A. Sloane, *Cutting a Pancake with an
 Exotic Knife*, Journal of Integer Sequences 29 (2026), Article 26.4.5, Lemma 3
