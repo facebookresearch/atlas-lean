@@ -9,12 +9,25 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Privacy.DifferentialPrivacy
+public import Mathlib.Basic.ENNReal.Inv
+public import Mathlib.InformationTheory.KullbackLeibler.Basic
+public import Mathlib.MeasureTheory.Function.L1Space.Integrable
+public import Mathlib.MeasureTheory.Integral.IntegrableOn
+public import Mathlib.MeasureTheory.Integral.Lebesgue.Countable
+public import Mathlib.MeasureTheory.MeasurableSpace.Basic
+public import Mathlib.MeasureTheory.Measure.Decomposition.Lebesgue
+public import Mathlib.MeasureTheory.Measure.Dirac.Basic
+public import Mathlib.MeasureTheory.Measure.LogLikelihoodRatio
+public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Mathlib.MeasureTheory.Measure.WithDensity
+public import Mathlib.MeasureTheory.OuterMeasure.AE
 import Mathlib.Analysis.Normed.Group.InfiniteSum
 import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Basic.ENNReal.Basic
 import Mathlib.Basic.ENNReal.Real
 import Mathlib.Probability.ProbabilityMassFunction.Constructions
+import Mathlib.Probability.ProbabilityMassFunction.Integrals
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 import Mathlib.Topology.Algebra.InfiniteSum.Basic
@@ -27,32 +40,42 @@ import Mathlib.Topology.Algebra.InfiniteSum.Ring
 # Privacy-loss random variable and KL bound
 
 For discrete distributions `P Q : PMF Ω`, the privacy loss at `w` is
-`log (P w / Q w)` on real-valued masses, and `klPMF P Q` is the
+`log (P w / Q w)` on real-valued masses, and `privacyLossExpectation P Q` is the
 `P`-expectation of the loss. Under two-sided pointwise bounds
 `P w ≤ e^ε * Q w` and `Q w ≤ e^ε * P w`, the loss is bounded by `ε` on
-the common support, `klPMF` is nonnegative (Gibbs), and
-`klPMF P Q ≤ ε * (e^ε - 1)`.
+the common support, the expectation is nonnegative (Gibbs), agrees with
+Mathlib's `InformationTheory.klDiv` on `P.toMeasure` and `Q.toMeasure`, and
+is at most `ε * (e^ε - 1)`.
+
+The real-valued expectation is only meaningful as KL divergence under the
+two-sided bounds: off the common support it totalizes to `0` (both `1 / 0`
+and `log 0` are `0`), where the true KL divergence is infinite. The headline
+results are therefore stated with `klDiv`; the real sum is kept as the
+conditional quantity `privacyLossExpectation` with its domain documented.
 
 This is the discrete case of Dwork and Roth, *The Algorithmic
 Foundations of Differential Privacy* (2014), Lemma 3.18: a two-sided
 `D∞ ≤ ε` bound implies `KL ≤ ε * (e^ε - 1)`.
 
-Not covered here: no bridge to Mathlib's measure-theoretic `klDiv`,
-and no `(ε, δ)` approximate-DP variant.
+Not covered here: no `(ε, δ)` approximate-DP variant.
 -/
 
 @[expose] public section
 
 namespace CSLibExt.Privacy.DifferentialPrivacy
 
+open scoped ENNReal MeasureTheory
+
 /-- Privacy loss of outcome `w`: `log` of the ratio of real-valued masses. -/
 noncomputable def privacyLoss {Ω : Type*} (P Q : PMF Ω) (w : Ω) : ℝ :=
   Real.log ((P w).toReal / (Q w).toReal)
 
-/-- Discrete KL divergence: the `P`-expectation of `privacyLoss`.
-Support mismatch is excluded by hypotheses: the theorems below assume
-two-sided pointwise DP bounds, which force common support. -/
-noncomputable def klPMF {Ω : Type*} (P Q : PMF Ω) : ℝ :=
+/-- Real-valued loss expectation: the `P`-expectation of `privacyLoss`.
+This agrees with `InformationTheory.klDiv P.toMeasure Q.toMeasure` only under
+the two-sided pointwise DP bounds assumed below; off the common support the sum
+totalizes to `0` while the true divergence is infinite (see
+`klDiv_toMeasure_eq_top_of_disjoint_support`). -/
+noncomputable def privacyLossExpectation {Ω : Type*} (P Q : PMF Ω) : ℝ :=
   ∑' w, (P w).toReal * privacyLoss P Q w
 
 /-- Real-valued form of a pointwise DP bound. -/
@@ -147,9 +170,9 @@ private theorem tsum_toReal_apply {Ω : Type*} (P : PMF Ω) :
   rw [P.tsum_coe, ENNReal.toReal_one] at h
   exact h.symm
 
-/-- KL summands are bounded by `ε * P w`, hence summable. Apply twice
+/-- Expectation summands are bounded by `ε * P w`, hence summable. Apply twice
 for the symmetric term before combining series. -/
-theorem summable_klTerm_of_dp_two_sided {Ω : Type*} (P Q : PMF Ω) (ε : ℝ)
+theorem summable_privacyLossTerm_of_dp_two_sided {Ω : Type*} (P Q : PMF Ω) (ε : ℝ)
     (hε : 0 ≤ ε)
     (hPQ : ∀ w, P w ≤ ENNReal.ofReal (Real.exp ε) * Q w)
     (hQP : ∀ w, Q w ≤ ENNReal.ofReal (Real.exp ε) * P w) :
@@ -165,7 +188,7 @@ theorem summable_klTerm_of_dp_two_sided {Ω : Type*} (P Q : PMF Ω) (ε : ℝ)
     rw [abs_of_nonneg hnn, mul_comm ε ((P w).toReal)]
     exact mul_le_mul_of_nonneg_left habs hnn
 
-/-- The Gibbs comparison term is the negated KL summand. -/
+/-- The Gibbs comparison term is the negated expectation summand. -/
 private theorem gibbs_term_eq_neg {Ω : Type*} (P Q : PMF Ω) (ε : ℝ) (w : Ω)
     (hPQ : ∀ w, P w ≤ ENNReal.ofReal (Real.exp ε) * Q w)
     (hQP : ∀ w, Q w ≤ ENNReal.ofReal (Real.exp ε) * P w) :
@@ -215,21 +238,21 @@ private theorem gibbs_rhs_eq {Ω : Type*} (P Q : PMF Ω) (ε : ℝ) (w : Ω)
       mul_div_cancel₀ _ (ne_of_gt hPpos)
     rw [mul_sub, hcancel, mul_one]
 
-/-- Gibbs inequality: `klPMF` is nonnegative under two-sided bounds. -/
-theorem klPMF_nonneg {Ω : Type*} (P Q : PMF Ω) (ε : ℝ)
+/-- Gibbs inequality: `privacyLossExpectation` is nonnegative under two-sided bounds. -/
+theorem privacyLossExpectation_nonneg {Ω : Type*} (P Q : PMF Ω) (ε : ℝ)
     (hε : 0 ≤ ε)
     (hPQ : ∀ w, P w ≤ ENNReal.ofReal (Real.exp ε) * Q w)
     (hQP : ∀ w, Q w ≤ ENNReal.ofReal (Real.exp ε) * P w) :
-    0 ≤ klPMF P Q := by
+    0 ≤ privacyLossExpectation P Q := by
   have ht : Summable fun w => (P w).toReal * privacyLoss P Q w :=
-    summable_klTerm_of_dp_two_sided P Q ε hε hPQ hQP
+    summable_privacyLossTerm_of_dp_two_sided P Q ε hε hPQ hQP
   have hu : Summable fun w => (P w).toReal * Real.log ((Q w).toReal / (P w).toReal) :=
     (summable_congr (fun w => gibbs_term_eq_neg P Q ε w hPQ hQP)).mpr ht.neg
   have hv : Summable fun w => (P w).toReal * ((Q w).toReal / (P w).toReal - 1) :=
     (summable_congr (fun w => gibbs_rhs_eq P Q ε w hPQ hQP)).mpr
       ((summable_toReal_apply Q).sub (summable_toReal_apply P))
   have hsum : ∑' w, (P w).toReal * Real.log ((Q w).toReal / (P w).toReal) =
-      -klPMF P Q := by
+      -privacyLossExpectation P Q := by
     rw [tsum_congr (fun w => gibbs_term_eq_neg P Q ε w hPQ hQP)]
     exact tsum_neg
   have hzero : ∑' w, (P w).toReal * ((Q w).toReal / (P w).toReal - 1) = 0 := by
@@ -283,8 +306,8 @@ private theorem abs_sub_le_exp_sub_one_mul_min {Ω : Type*} (P Q : PMF Ω) (ε :
     · rw [abs_of_nonneg (sub_nonneg.mpr hle), min_eq_right hle]
       linarith
 
-/-- Adding KL summands in both directions symmetrizes to `(p - q) * L`. -/
-private theorem add_klTerm_eq {Ω : Type*} (P Q : PMF Ω) (ε : ℝ) (w : Ω)
+/-- Adding loss summands in both directions symmetrizes to `(p - q) * L`. -/
+private theorem add_privacyLossTerm_eq {Ω : Type*} (P Q : PMF Ω) (ε : ℝ) (w : Ω)
     (hPQ : ∀ w, P w ≤ ENNReal.ofReal (Real.exp ε) * Q w)
     (hQP : ∀ w, Q w ≤ ENNReal.ofReal (Real.exp ε) * P w) :
     (P w).toReal * privacyLoss P Q w + (Q w).toReal * privacyLoss Q P w =
@@ -305,22 +328,23 @@ private theorem add_klTerm_eq {Ω : Type*} (P Q : PMF Ω) (ε : ℝ) (w : Ω)
     rw [hneg]
     ring
 
-/-- KL upper bound from two-sided DP bounds (discrete Dwork-Roth Lemma 3.18):
-`klPMF P Q ≤ ε * (e^ε - 1)`. -/
-theorem klPMF_le_of_dp_two_sided {Ω : Type*} (P Q : PMF Ω) (ε : ℝ)
+/-- Loss-expectation upper bound from two-sided DP bounds
+(discrete Dwork-Roth Lemma 3.18 core estimate):
+`privacyLossExpectation P Q ≤ ε * (e^ε - 1)`. -/
+theorem privacyLossExpectation_le_of_dp_two_sided {Ω : Type*} (P Q : PMF Ω) (ε : ℝ)
     (hε : 0 ≤ ε)
     (hPQ : ∀ w, P w ≤ ENNReal.ofReal (Real.exp ε) * Q w)
     (hQP : ∀ w, Q w ≤ ENNReal.ofReal (Real.exp ε) * P w) :
-    klPMF P Q ≤ ε * (Real.exp ε - 1) := by
-  have htP := summable_klTerm_of_dp_two_sided P Q ε hε hPQ hQP
-  have htQ := summable_klTerm_of_dp_two_sided Q P ε hε hQP hPQ
-  have hnonnegQ := klPMF_nonneg Q P ε hε hQP hPQ
+    privacyLossExpectation P Q ≤ ε * (Real.exp ε - 1) := by
+  have htP := summable_privacyLossTerm_of_dp_two_sided P Q ε hε hPQ hQP
+  have htQ := summable_privacyLossTerm_of_dp_two_sided Q P ε hε hQP hPQ
+  have hnonnegQ := privacyLossExpectation_nonneg Q P ε hε hQP hPQ
   have hs : Summable fun w => ((P w).toReal - (Q w).toReal) * privacyLoss P Q w :=
-    (summable_congr (fun w => (add_klTerm_eq P Q ε w hPQ hQP).symm)).mpr
+    (summable_congr (fun w => (add_privacyLossTerm_eq P Q ε w hPQ hQP).symm)).mpr
       (htP.add htQ)
   have hadd : ∑' w, ((P w).toReal - (Q w).toReal) * privacyLoss P Q w =
-      klPMF P Q + klPMF Q P := by
-    rw [tsum_congr (fun w => (add_klTerm_eq P Q ε w hPQ hQP).symm)]
+      privacyLossExpectation P Q + privacyLossExpectation Q P := by
+    rw [tsum_congr (fun w => (add_privacyLossTerm_eq P Q ε w hPQ hQP).symm)]
     exact Summable.tsum_add htP htQ
   have hPsub := summable_toReal_apply P
   have hQsub := summable_toReal_apply Q
@@ -350,7 +374,7 @@ theorem klPMF_le_of_dp_two_sided {Ω : Type*} (P Q : PMF Ω) (ε : ℝ)
       ∑' w, (Real.exp ε - 1) * min (P w).toReal (Q w).toReal :=
     Summable.tsum_le_tsum
       (fun w => abs_sub_le_exp_sub_one_mul_min P Q ε w hPQ hQP) habs hexp
-  calc klPMF P Q ≤ klPMF P Q + klPMF Q P := le_add_of_nonneg_right hnonnegQ
+  calc privacyLossExpectation P Q ≤ privacyLossExpectation P Q + privacyLossExpectation Q P := le_add_of_nonneg_right hnonnegQ
     _ = ∑' w, ((P w).toReal - (Q w).toReal) * privacyLoss P Q w := hadd.symm
     _ ≤ ∑' w, ε * |(P w).toReal - (Q w).toReal| := hstep1
     _ = ε * ∑' w, |(P w).toReal - (Q w).toReal| := tsum_mul_left
@@ -369,20 +393,183 @@ theorem privacyLoss_le_of_isDP {Database Output : Type*} (M : Database → PMF O
     privacyLoss (M d) (M d₂) o ≤ ε :=
   privacyLoss_le_of_dp_le (M d) (M d₂) ε o hM.1 (hM.2 d d₂ hadj o)
 
-/-- Mechanism KL is nonnegative when adjacency holds both ways. -/
-theorem klPMF_nonneg_of_isDP {Database Output : Type*} (M : Database → PMF Output)
+/-- Mechanism loss expectation is nonnegative when adjacency holds both ways. -/
+theorem privacyLossExpectation_nonneg_of_isDP {Database Output : Type*} (M : Database → PMF Output)
     (adj : Database → Database → Prop) (ε : ℝ) (d d₂ : Database)
     (hM : IsDP M adj ε) (hadj : adj d d₂) (hadj_symm : adj d₂ d) :
-    0 ≤ klPMF (M d) (M d₂) :=
-  klPMF_nonneg (M d) (M d₂) ε hM.1 (fun o => hM.2 d d₂ hadj o)
+    0 ≤ privacyLossExpectation (M d) (M d₂) :=
+  privacyLossExpectation_nonneg (M d) (M d₂) ε hM.1 (fun o => hM.2 d d₂ hadj o)
     (fun o => hM.2 d₂ d hadj_symm o)
 
-/-- Mechanism KL upper bound when adjacency holds both ways. -/
-theorem klPMF_le_of_isDP {Database Output : Type*} (M : Database → PMF Output)
+/-- Mechanism loss-expectation upper bound when adjacency holds both ways. -/
+theorem privacyLossExpectation_le_of_isDP {Database Output : Type*} (M : Database → PMF Output)
     (adj : Database → Database → Prop) (ε : ℝ) (d d₂ : Database)
     (hM : IsDP M adj ε) (hadj : adj d d₂) (hadj_symm : adj d₂ d) :
-    klPMF (M d) (M d₂) ≤ ε * (Real.exp ε - 1) :=
-  klPMF_le_of_dp_two_sided (M d) (M d₂) ε hM.1 (fun o => hM.2 d d₂ hadj o)
+    privacyLossExpectation (M d) (M d₂) ≤ ε * (Real.exp ε - 1) :=
+  privacyLossExpectation_le_of_dp_two_sided (M d) (M d₂) ε hM.1 (fun o => hM.2 d d₂ hadj o)
     (fun o => hM.2 d₂ d hadj_symm o)
+
+/-- `P.toMeasure` is supported on `P.support`. -/
+private theorem ae_mem_support_toMeasure {Ω : Type*} [MeasurableSpace Ω]
+    [MeasurableSingletonClass Ω] (P : PMF Ω) :
+    ∀ᵐ w ∂P.toMeasure, w ∈ P.support := by
+  rw [MeasureTheory.ae_iff]
+  show P.toMeasure P.supportᶜ = 0
+  rw [P.toMeasure_apply_eq_toOuterMeasure, PMF.toOuterMeasure_apply_eq_zero_iff]
+  exact disjoint_compl_right
+
+/-- Two-sided pointwise bounds give absolute continuity of the PMF measures:
+a `Q`-null set is disjoint from the common support, hence `P`-null. -/
+private theorem toMeasure_ac_of_dp_two_sided {Ω : Type*} [MeasurableSpace Ω]
+    [MeasurableSingletonClass Ω] (P Q : PMF Ω) (ε : ℝ)
+    (hPQ : ∀ w, P w ≤ ENNReal.ofReal (Real.exp ε) * Q w)
+    (hQP : ∀ w, Q w ≤ ENNReal.ofReal (Real.exp ε) * P w) :
+    P.toMeasure ≪ Q.toMeasure := by
+  intro s hs
+  rw [Q.toMeasure_apply_eq_toOuterMeasure, PMF.toOuterMeasure_apply_eq_zero_iff] at hs
+  rw [P.toMeasure_apply_eq_toOuterMeasure, PMF.toOuterMeasure_apply_eq_zero_iff]
+  rwa [← support_eq_of_dp_two_sided P Q ε hPQ hQP] at hs
+
+/-- Under two-sided bounds, `P.toMeasure` has density `P w / Q w` against
+`Q.toMeasure`. -/
+private theorem toMeasure_eq_withDensity_div {Ω : Type*} [Countable Ω] [MeasurableSpace Ω]
+    [MeasurableSingletonClass Ω] (P Q : PMF Ω) (ε : ℝ)
+    (hPQ : ∀ w, P w ≤ ENNReal.ofReal (Real.exp ε) * Q w)
+    (hQP : ∀ w, Q w ≤ ENNReal.ofReal (Real.exp ε) * P w) :
+    P.toMeasure = Q.toMeasure.withDensity fun w => P w / Q w := by
+  apply MeasureTheory.Measure.ext_of_singleton
+  intro a
+  rw [MeasureTheory.withDensity_apply _ (MeasurableSet.singleton a),
+    MeasureTheory.lintegral_singleton,
+    P.toMeasure_apply_singleton _ (MeasurableSet.singleton a),
+    Q.toMeasure_apply_singleton _ (MeasurableSet.singleton a)]
+  by_cases hQa : Q a = 0
+  · have hPa : P a = 0 := (eq_zero_iff_of_dp_two_sided P Q ε a hPQ hQP).mpr hQa
+    simp [hPa, hQa]
+  · exact (ENNReal.div_mul_cancel hQa (Q.apply_ne_top a)).symm
+
+/-- The Radon-Nikodym derivative of the PMF measures is the mass ratio, a.e. -/
+private theorem rnDeriv_toMeasure_ae_eq_div {Ω : Type*} [Countable Ω] [MeasurableSpace Ω]
+    [MeasurableSingletonClass Ω] (P Q : PMF Ω) (ε : ℝ)
+    (hPQ : ∀ w, P w ≤ ENNReal.ofReal (Real.exp ε) * Q w)
+    (hQP : ∀ w, Q w ≤ ENNReal.ofReal (Real.exp ε) * P w) :
+    P.toMeasure.rnDeriv Q.toMeasure =ᵐ[P.toMeasure] fun w => P w / Q w := by
+  have hac := toMeasure_ac_of_dp_two_sided P Q ε hPQ hQP
+  have hρ := toMeasure_eq_withDensity_div P Q ε hPQ hQP
+  have hQ : P.toMeasure.rnDeriv Q.toMeasure =ᵐ[Q.toMeasure] fun w => P w / Q w := by
+    rw [hρ]
+    exact MeasureTheory.Measure.rnDeriv_withDensity _
+      (measurable_of_countable fun w => P w / Q w)
+  exact MeasureTheory.ae_iff.mpr (hac (MeasureTheory.ae_iff.mp hQ))
+
+/-- The log-likelihood ratio agrees a.e. with `privacyLoss` under two-sided bounds. -/
+private theorem llr_toMeasure_ae_eq_privacyLoss {Ω : Type*} [Countable Ω] [MeasurableSpace Ω]
+    [MeasurableSingletonClass Ω] (P Q : PMF Ω) (ε : ℝ)
+    (hPQ : ∀ w, P w ≤ ENNReal.ofReal (Real.exp ε) * Q w)
+    (hQP : ∀ w, Q w ≤ ENNReal.ofReal (Real.exp ε) * P w) :
+    MeasureTheory.llr P.toMeasure Q.toMeasure =ᵐ[P.toMeasure] privacyLoss P Q := by
+  have hrn := rnDeriv_toMeasure_ae_eq_div P Q ε hPQ hQP
+  have hmem := ae_mem_support_toMeasure P
+  filter_upwards [hrn, hmem] with w hrw hsup
+  simp only [MeasureTheory.llr, hrw, ENNReal.toReal_div, privacyLoss]
+
+/-- The log-likelihood ratio is integrable: it is a.e. bounded by `ε`. -/
+private theorem integrable_llr_toMeasure {Ω : Type*} [Countable Ω] [MeasurableSpace Ω]
+    [MeasurableSingletonClass Ω] (P Q : PMF Ω) (ε : ℝ)
+    (hε : 0 ≤ ε)
+    (hPQ : ∀ w, P w ≤ ENNReal.ofReal (Real.exp ε) * Q w)
+    (hQP : ∀ w, Q w ≤ ENNReal.ofReal (Real.exp ε) * P w) :
+    MeasureTheory.Integrable (MeasureTheory.llr P.toMeasure Q.toMeasure) P.toMeasure := by
+  have hllr := llr_toMeasure_ae_eq_privacyLoss P Q ε hPQ hQP
+  have hmem := ae_mem_support_toMeasure P
+  refine MeasureTheory.Integrable.of_bound
+    (MeasureTheory.measurable_llr _ _).aestronglyMeasurable ε ?_
+  filter_upwards [hllr, hmem] with w hw hsup
+  have hPw : P w ≠ 0 := (PMF.mem_support_iff _ _).mp hsup
+  rw [hw, Real.norm_eq_abs]
+  exact abs_privacyLoss_le_of_dp_two_sided P Q ε w hε hPQ hQP hPw
+
+/-- The `llr` integral against `P.toMeasure` is the loss expectation. -/
+private theorem integral_llr_toMeasure_eq_privacyLossExpectation {Ω : Type*} [Countable Ω]
+    [MeasurableSpace Ω] [MeasurableSingletonClass Ω] (P Q : PMF Ω) (ε : ℝ)
+    (hε : 0 ≤ ε)
+    (hPQ : ∀ w, P w ≤ ENNReal.ofReal (Real.exp ε) * Q w)
+    (hQP : ∀ w, Q w ≤ ENNReal.ofReal (Real.exp ε) * P w) :
+    ∫ w, MeasureTheory.llr P.toMeasure Q.toMeasure w ∂P.toMeasure
+      = privacyLossExpectation P Q := by
+  have hllr := llr_toMeasure_ae_eq_privacyLoss P Q ε hPQ hQP
+  have hint := integrable_llr_toMeasure P Q ε hε hPQ hQP
+  rw [MeasureTheory.integral_congr_ae hllr, PMF.integral_eq_tsum P _ (hint.congr hllr)]
+  apply tsum_congr
+  intro w
+  rw [smul_eq_mul]
+
+/-- Agreement: under two-sided DP bounds, `klDiv` on the PMF measures is the
+`ENNReal` cast of the loss expectation. -/
+theorem klDiv_toMeasure_eq_ofReal_privacyLossExpectation {Ω : Type*} [Countable Ω]
+    [MeasurableSpace Ω] [MeasurableSingletonClass Ω] (P Q : PMF Ω) (ε : ℝ)
+    (hε : 0 ≤ ε)
+    (hPQ : ∀ w, P w ≤ ENNReal.ofReal (Real.exp ε) * Q w)
+    (hQP : ∀ w, Q w ≤ ENNReal.ofReal (Real.exp ε) * P w) :
+    InformationTheory.klDiv P.toMeasure Q.toMeasure
+      = ENNReal.ofReal (privacyLossExpectation P Q) := by
+  have hac := toMeasure_ac_of_dp_two_sided P Q ε hPQ hQP
+  have hint := integrable_llr_toMeasure P Q ε hε hPQ hQP
+  have hval := integral_llr_toMeasure_eq_privacyLossExpectation P Q ε hε hPQ hQP
+  rw [InformationTheory.klDiv_of_ac_of_integrable hac hint, hval,
+    MeasureTheory.probReal_univ, MeasureTheory.probReal_univ]
+  congr 1
+  ring
+
+/-- The `klDiv` upper bound from two-sided DP bounds
+(discrete Dwork-Roth Lemma 3.18). -/
+theorem klDiv_toMeasure_le_of_dp_two_sided {Ω : Type*} [Countable Ω]
+    [MeasurableSpace Ω] [MeasurableSingletonClass Ω] (P Q : PMF Ω) (ε : ℝ)
+    (hε : 0 ≤ ε)
+    (hPQ : ∀ w, P w ≤ ENNReal.ofReal (Real.exp ε) * Q w)
+    (hQP : ∀ w, Q w ≤ ENNReal.ofReal (Real.exp ε) * P w) :
+    InformationTheory.klDiv P.toMeasure Q.toMeasure
+      ≤ ENNReal.ofReal (ε * (Real.exp ε - 1)) := by
+  rw [klDiv_toMeasure_eq_ofReal_privacyLossExpectation P Q ε hε hPQ hQP]
+  apply ENNReal.ofReal_le_ofReal
+  exact privacyLossExpectation_le_of_dp_two_sided P Q ε hε hPQ hQP
+
+/-- The real value of `klDiv` is the loss expectation under two-sided bounds. -/
+theorem toReal_klDiv_toMeasure_eq_privacyLossExpectation {Ω : Type*} [Countable Ω]
+    [MeasurableSpace Ω] [MeasurableSingletonClass Ω] (P Q : PMF Ω) (ε : ℝ)
+    (hε : 0 ≤ ε)
+    (hPQ : ∀ w, P w ≤ ENNReal.ofReal (Real.exp ε) * Q w)
+    (hQP : ∀ w, Q w ≤ ENNReal.ofReal (Real.exp ε) * P w) :
+    (InformationTheory.klDiv P.toMeasure Q.toMeasure).toReal
+      = privacyLossExpectation P Q := by
+  rw [klDiv_toMeasure_eq_ofReal_privacyLossExpectation P Q ε hε hPQ hQP,
+    ENNReal.toReal_ofReal
+      (privacyLossExpectation_nonneg P Q ε hε hPQ hQP)]
+
+/-- Disjoint support gives infinite `klDiv`: if `P` charges `a` and `Q` does not,
+`P.toMeasure` is not absolutely continuous with respect to `Q.toMeasure`. In
+particular the real-valued `privacyLossExpectation`, which totalizes to `0` here,
+is not the KL divergence off the two-sided bounds. -/
+theorem klDiv_toMeasure_eq_top_of_disjoint_support {Ω : Type*} [MeasurableSpace Ω]
+    [MeasurableSingletonClass Ω] (P Q : PMF Ω) (a : Ω) (hP : P a ≠ 0) (hQ : Q a = 0) :
+    InformationTheory.klDiv P.toMeasure Q.toMeasure = ∞ := by
+  apply InformationTheory.klDiv_of_not_ac
+  intro hac
+  have h1 : Q.toMeasure {a} = 0 := by
+    rw [Q.toMeasure_apply_singleton _ (MeasurableSet.singleton a), hQ]
+  have h2 := hac h1
+  rw [P.toMeasure_apply_singleton _ (MeasurableSet.singleton a)] at h2
+  exact hP h2
+
+/-- Mechanism `klDiv` upper bound when adjacency holds both ways. -/
+theorem klDiv_toMeasure_le_of_isDP {Database Output : Type*} [Countable Output]
+    [MeasurableSpace Output] [MeasurableSingletonClass Output]
+    (M : Database → PMF Output)
+    (adj : Database → Database → Prop) (ε : ℝ) (d d₂ : Database)
+    (hM : IsDP M adj ε) (hadj : adj d d₂) (hadj_symm : adj d₂ d) :
+    InformationTheory.klDiv (M d).toMeasure (M d₂).toMeasure
+      ≤ ENNReal.ofReal (ε * (Real.exp ε - 1)) :=
+  klDiv_toMeasure_le_of_dp_two_sided (M d) (M d₂) ε hM.1
+    (fun o => hM.2 d d₂ hadj o) (fun o => hM.2 d₂ d hadj_symm o)
 
 end CSLibExt.Privacy.DifferentialPrivacy

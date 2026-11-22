@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Basic.ENNReal.Basic
 public import Mathlib.Basic.Real.Basic
+public import Mathlib.MeasureTheory.MeasurableSpace.Instances
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Basic.ENNReal.Real
 import Mathlib.Tactic.Linarith
@@ -21,18 +22,21 @@ import Mathlib.Tactic.Ring
 import Mathlib.Topology.Algebra.InfiniteSum.Basic
 
 /-!
-# Privacy-loss tests: `ε = 0` boundary and randomized response
+# Privacy-loss tests: `ε = 0` boundary, randomized response, disjoint support
 
 Boundary checks for `CSLibExt.Privacy.PrivacyLoss`: at `ε = 0` the loss
-vanishes on support and `klPMF` vanishes; for binary randomized response
+vanishes on support and `privacyLossExpectation` vanishes; for binary randomized response
 with `p = 3/4` and `ε₀ = log 3`, the losses are `± log 3`,
-`klPMF = (1/2) log 3`, and the `ε₀ * (e^ε₀ - 1)` bound evaluates to
-`2 log 3`.
+`privacyLossExpectation = (1/2) log 3`, and the `ε₀ * (e^ε₀ - 1)` bound evaluates to
+`2 log 3`. For the disjoint-support pair `PMF.pure true` / `PMF.pure false`,
+`klDiv` is infinite while the real-valued `privacyLossExpectation` totalizes to `0`.
 -/
 
 @[expose] public section
 
 open CSLibExt.Privacy.DifferentialPrivacy
+
+open scoped ENNReal
 
 namespace CSLibExtTest.Privacy.PrivacyLossTests
 
@@ -45,14 +49,14 @@ theorem privacyLoss_eq_zero_of_dp_zero {Ω : Type*} (P Q : PMF Ω) (w : Ω)
   have h := abs_privacyLoss_le_of_dp_two_sided P Q 0 w (le_refl 0) hPQ hQP hw
   exact abs_eq_zero.mp (le_antisymm h (abs_nonneg _))
 
-/-- `ε = 0` boundary: `klPMF` vanishes. -/
-theorem klPMF_eq_zero_of_dp_zero {Ω : Type*} (P Q : PMF Ω)
+/-- `ε = 0` boundary: `privacyLossExpectation` vanishes. -/
+theorem privacyLossExpectation_eq_zero_of_dp_zero {Ω : Type*} (P Q : PMF Ω)
     (hPQ : ∀ w, P w ≤ ENNReal.ofReal (Real.exp 0) * Q w)
     (hQP : ∀ w, Q w ≤ ENNReal.ofReal (Real.exp 0) * P w) :
-    klPMF P Q = 0 := by
-  have hlo := klPMF_nonneg P Q 0 (le_refl 0) hPQ hQP
-  have hhi := klPMF_le_of_dp_two_sided P Q 0 (le_refl 0) hPQ hQP
-  have hhi0 : klPMF P Q ≤ 0 := by simpa using hhi
+    privacyLossExpectation P Q = 0 := by
+  have hlo := privacyLossExpectation_nonneg P Q 0 (le_refl 0) hPQ hQP
+  have hhi := privacyLossExpectation_le_of_dp_two_sided P Q 0 (le_refl 0) hPQ hQP
+  have hhi0 : privacyLossExpectation P Q ≤ 0 := by simpa using hhi
   exact le_antisymm hhi0 hlo
 
 /-- Masses biased toward `true`: randomized response with `p = 3/4`. -/
@@ -146,8 +150,8 @@ theorem rr_loss_false : privacyLoss rrP rrQ false = -Real.log 3 := by
   rw [h13, show (1/3 : ℝ) = 3⁻¹ by norm_num]
   exact Real.log_inv 3
 
-/-- `klPMF` of randomized response is `(1/2) log 3`. -/
-theorem rr_kl : klPMF rrP rrQ = 1/2 * Real.log 3 := by
+/-- `privacyLossExpectation` of randomized response is `(1/2) log 3`. -/
+theorem rr_kl : privacyLossExpectation rrP rrQ = 1/2 * Real.log 3 := by
   show (∑' b, (rrP b).toReal * privacyLoss rrP rrQ b) = _
   rw [tsum_fintype, Fintype.univ_bool,
     Finset.sum_insert (show (true : Bool) ∉ ({false} : Finset Bool) from by decide),
@@ -188,8 +192,8 @@ private theorem rr_hQP :
 
 /-- The KL upper bound applies to randomized response. -/
 theorem rr_kl_le_p3 :
-    klPMF rrP rrQ ≤ Real.log 3 * (Real.exp (Real.log 3) - 1) :=
-  klPMF_le_of_dp_two_sided rrP rrQ (Real.log 3)
+    privacyLossExpectation rrP rrQ ≤ Real.log 3 * (Real.exp (Real.log 3) - 1) :=
+  privacyLossExpectation_le_of_dp_two_sided rrP rrQ (Real.log 3)
     (Real.log_nonneg (by norm_num)) rr_hPQ rr_hQP
 
 /-- The bound evaluates to `2 log 3` at `ε₀ = log 3`. -/
@@ -203,10 +207,51 @@ theorem rr_kl_le_two_via_p3 : (1/2 : ℝ) * Real.log 3 ≤ 2 * Real.log 3 := by
   rw [← rr_kl, ← rr_bound_eq]
   exact rr_kl_le_p3
 
-#print axioms klPMF_nonneg
-#print axioms klPMF_le_of_dp_two_sided
+private theorem pureTrue_true : (PMF.pure true : PMF Bool) true = 1 := by
+  simp [PMF.pure_apply]
+
+private theorem pureFalse_true : (PMF.pure false : PMF Bool) true = 0 := by
+  simp [PMF.pure_apply]
+
+private theorem pureTrue_false : (PMF.pure true : PMF Bool) false = 0 := by
+  simp [PMF.pure_apply]
+
+private theorem pureFalse_false : (PMF.pure false : PMF Bool) false = 1 := by
+  simp [PMF.pure_apply]
+
+/-- Regression: disjoint supports give infinite `klDiv`, not `0`.
+`PMF.pure true` charges `true` while `PMF.pure false` does not. -/
+theorem klDiv_pure_true_false_eq_top :
+    InformationTheory.klDiv (PMF.pure true : PMF Bool).toMeasure
+      (PMF.pure false : PMF Bool).toMeasure = ∞ :=
+  klDiv_toMeasure_eq_top_of_disjoint_support _ _ true
+    (by rw [pureTrue_true]; exact one_ne_zero) pureFalse_true
+
+/-- Contrast: the real-valued loss expectation totalizes to `0` on disjoint
+supports, so it is not the KL divergence without the two-sided bounds. -/
+theorem privacyLossExpectation_pure_true_false_eq_zero :
+    privacyLossExpectation (PMF.pure true : PMF Bool)
+      (PMF.pure false : PMF Bool) = 0 := by
+  show (∑' b, ((PMF.pure true : PMF Bool) b).toReal * privacyLoss _ _ b) = _
+  rw [tsum_fintype, Fintype.univ_bool,
+    Finset.sum_insert (show (true : Bool) ∉ ({false} : Finset Bool) from by decide),
+    Finset.sum_singleton]
+  show ((PMF.pure true : PMF Bool) true).toReal * privacyLoss _ _ true +
+      ((PMF.pure true : PMF Bool) false).toReal * privacyLoss _ _ false = _
+  simp only [privacyLoss]
+  rw [pureTrue_true, pureTrue_false, pureFalse_true, pureFalse_false,
+    ENNReal.toReal_one, ENNReal.toReal_zero]
+  simp
+
+#print axioms privacyLossExpectation_nonneg
+#print axioms privacyLossExpectation_le_of_dp_two_sided
+#print axioms klDiv_toMeasure_eq_ofReal_privacyLossExpectation
+#print axioms klDiv_toMeasure_le_of_dp_two_sided
+#print axioms toReal_klDiv_toMeasure_eq_privacyLossExpectation
+#print axioms klDiv_toMeasure_eq_top_of_disjoint_support
 #print axioms privacyLoss_le_of_isDP
-#print axioms klPMF_nonneg_of_isDP
-#print axioms klPMF_le_of_isDP
+#print axioms privacyLossExpectation_nonneg_of_isDP
+#print axioms privacyLossExpectation_le_of_isDP
+#print axioms klDiv_toMeasure_le_of_isDP
 
 end CSLibExtTest.Privacy.PrivacyLossTests
