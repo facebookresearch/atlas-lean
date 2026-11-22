@@ -11194,6 +11194,7 @@
   "MathlibExt/NumberTheory/MultipleZeta/Reversal": {"to": "NumberTheory/zeta-l-functions/multiple-zeta-values", "title": "Multiple zeta values"},
   "MathlibExt/NumberTheory/MultipleZeta/Series": {"to": "NumberTheory/zeta-l-functions/multiple-zeta-values", "title": "Multiple zeta values"},
   "MathlibExt/NumberTheory/MultipleZeta/WordAlgebra": {"to": "NumberTheory/zeta-l-functions/multiple-zeta-values", "title": "Hoffman algebra and its bases"},
+  "MathlibExt/NumberTheory/MultiplicativeAdditivePairedSquares": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/NStepFibonacciSequence": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
   "MathlibExt/NumberTheory/NStepLucasSequence": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Lucas numbers"},
   "MathlibExt/NumberTheory/NetoHigherOrderBernoulli": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Higher-order Bernoulli numbers"},
