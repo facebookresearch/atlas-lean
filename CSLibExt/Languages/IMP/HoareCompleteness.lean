@@ -66,8 +66,25 @@ namespace Cslib.IMP
 
 /-! ## Partial correctness -/
 
-/-- Derivable partial-correctness Hoare triples. The consequence rule takes
-semantic entailments between assertions as premises. -/
+/-- **Derivability in Hoare logic for partial correctness.** Here an assertion is a predicate on
+states, and an assertion $P$ entails an assertion $P'$ when every state satisfying $P$ satisfies
+$P'$. For an assertion $P$ and a Boolean expression $b$, the assertion $P \land b$ holds in a
+state when $P$ holds there and $b$ evaluates to true in it, and the assertion $P \land \lnot b$
+holds in a state when $P$ holds there and $b$ evaluates to false in it. Derivability of
+partial-correctness Hoare triples $\{P\}\,c\,\{Q\}$ is the least relation closed under the
+following rules, where $P$, $P'$, $Q$, $Q'$, $R$ and $I$ are assertions, $c$, $c_1$ and $c_2$ are
+commands, $x$ is a variable, $a$ is an arithmetic expression and $b$ is a Boolean expression.
+
+* Skip: $\{Q\}\,\mathtt{skip}\,\{Q\}$.
+* Assignment: $\{Q[a/x]\}\,x := a\,\{Q\}$, where $Q[a/x]$ holds in a state $s$ when $Q$ holds in
+  the state obtained from $s$ by setting $x$ to the value of $a$ in $s$.
+* Sequencing: from $\{P\}\,c_1\,\{R\}$ and $\{R\}\,c_2\,\{Q\}$ derive $\{P\}\,c_1; c_2\,\{Q\}$.
+* Conditional: from $\{P \land b\}\,c_1\,\{Q\}$ and $\{P \land \lnot b\}\,c_2\,\{Q\}$ derive
+  $\{P\}\,\mathtt{if}\ b\ \mathtt{then}\ c_1\ \mathtt{else}\ c_2\,\{Q\}$.
+* While: from $\{I \land b\}\,c\,\{I\}$ derive
+  $\{I\}\,\mathtt{while}\ b\ \mathtt{do}\ c\,\{I \land \lnot b\}$.
+* Consequence: if $P$ entails $P'$, $\{P'\}\,c\,\{Q'\}$ is derivable and $Q'$ entails $Q$, then
+  $\{P\}\,c\,\{Q\}$ is derivable. -/
 inductive Derivable : Assertion → Cmd → Assertion → Prop
   | skip (post : Assertion) : Derivable post .skip post
   | assign (post : Assertion) (name : Nat) (value : AExp) :
@@ -93,7 +110,10 @@ inductive Derivable : Assertion → Cmd → Assertion → Prop
 
 namespace Derivable
 
-/-- Soundness: every derivable triple is valid. -/
+/-- **Soundness of Hoare logic for partial correctness.** Every partial-correctness Hoare triple
+$\{P\}\,c\,\{Q\}$ that is derivable in the partial-correctness proof system is valid: for all
+states $s$ and $s'$, if $s$ satisfies $P$ and $c$ has a terminating big-step execution from $s$ to
+$s'$, then $s'$ satisfies $Q$. -/
 theorem sound {pre post : Assertion} {command : Cmd}
     (h : Derivable pre command post) : Valid pre command post := by
   induction h with
@@ -104,7 +124,10 @@ theorem sound {pre post : Assertion} {command : Cmd}
   | whileLoop _ ihBody => exact Valid.whileLoop ihBody
   | consequence hpre _ hpost ih => exact Valid.consequence hpre ih hpost
 
-/-- Strengthen the precondition of a derivable triple. -/
+/-- **Precondition strengthening for partial correctness.** Let $P$, $P'$ and $Q$ be assertions
+and $c$ a command. If $P$ entails $P'$ (every state satisfying $P$ satisfies $P'$) and the
+partial-correctness triple $\{P'\}\,c\,\{Q\}$ is derivable in the partial-correctness proof
+system, then so is $\{P\}\,c\,\{Q\}$. -/
 theorem strengthen {pre pre' post : Assertion} {command : Cmd}
     (hpre : pre.Entails pre') (h : Derivable pre' command post) :
     Derivable pre command post :=
@@ -112,8 +135,10 @@ theorem strengthen {pre pre' post : Assertion} {command : Cmd}
 
 end Derivable
 
-/-- The weakest liberal precondition is derivable for every command and
-postcondition. -/
+/-- **The weakest liberal precondition gives a derivable triple.** For every command $c$ and
+every assertion $Q$, the triple whose precondition is the weakest liberal precondition of $c$
+with respect to $Q$, whose command is $c$ and whose postcondition is $Q$ is derivable in
+partial-correctness Hoare logic. -/
 theorem derivable_wlp : ∀ (command : Cmd) (post : Assertion),
     Derivable (wlp command post) command post
   | .skip, post => by
@@ -150,21 +175,27 @@ theorem derivable_wlp : ∀ (command : Cmd) (post : Assertion),
 
 namespace Derivable
 
-/-- Relative completeness: every valid partial-correctness triple is
-derivable. -/
+/-- **Relative completeness of total-correctness Hoare logic.** For all assertions $P$ and $Q$
+and every command $c$, if the total-correctness triple with precondition $P$, command $c$ and
+postcondition $Q$ is valid, then it is derivable in total-correctness Hoare logic. -/
 theorem complete {pre post : Assertion} {command : Cmd}
     (h : Valid pre command post) : Derivable pre command post :=
   strengthen (wlp.valid_iff.mp h) (derivable_wlp command post)
 
 end Derivable
 
-/-- Partial-correctness derivability coincides with validity. -/
+/-- **Partial-correctness Hoare logic as an inference system.** A Hoare triple, given by a
+precondition $P$, a command $c$ and a postcondition $Q$, is derivable in the default inference
+system on Hoare triples, which is partial-correctness Hoare logic, if and only if it is valid
+for partial correctness. -/
 theorem derivable_iff_valid {pre post : Assertion} {command : Cmd} :
     Derivable pre command post ↔ Valid pre command post :=
   ⟨Derivable.sound, Derivable.complete⟩
 
-/-- Partial-correctness derivability coincides with validity with respect to
-the relational denotational semantics. -/
+/-- **Partial-correctness Hoare logic matches the denotational semantics.** For all assertions
+$P$ and $Q$ and every command $c$, the partial-correctness triple with precondition $P$, command
+$c$ and postcondition $Q$ is derivable if and only if, for all states $s$ and $t$ such that $P$
+holds at $s$ and the pair $(s, t)$ lies in the relational denotation of $c$, $Q$ holds at $t$. -/
 theorem derivable_iff_denote {pre post : Assertion} {command : Cmd} :
     Derivable pre command post ↔
       ∀ ⦃initial final⦄, pre initial → Denote command initial final → post final := by
@@ -177,9 +208,13 @@ theorem derivable_iff_denote {pre post : Assertion} {command : Cmd} :
 
 /-! ## Loop iteration counts -/
 
-/-- `Iterates guard body n initial final` holds when the loop
-`while guard do body`, started in `initial`, exits in `final` after exactly `n`
-executions of the body. -/
+/-- **Loop runs with a given number of iterations.** Let $b$ be a Boolean expression and $c$ a
+command. For a natural number $n$ and states $s$, $s'$, the loop $\mathtt{while}\ b\ \mathtt{do}\ c$
+runs from $s$ to $s'$ in $n$ iterations when, started in $s$, it exits in $s'$ after exactly $n$
+executions of the body $c$. This is the least relation such that the loop runs from $s$ to $s$ in
+$0$ iterations whenever $b$ evaluates to false in $s$, and the loop runs from $s$ to $s'$ in
+$n + 1$ iterations whenever $b$ evaluates to true in $s$, the body $c$ has a terminating big-step
+execution from $s$ to some state $t$, and the loop runs from $t$ to $s'$ in $n$ iterations. -/
 inductive Iterates (guard : BExp) (body : Cmd) : Nat → State → State → Prop
   | exit {state : State} (hguard : guard.eval state = false) :
       Iterates guard body 0 state state
@@ -192,8 +227,11 @@ namespace Iterates
 
 variable {guard : BExp} {body : Cmd}
 
-/-- A loop run with a counted number of iterations is a big-step execution of
-the loop. -/
+/-- **Counted loop runs are big-step executions.** Let $b$ be a boolean expression, $c$ a
+command, $n$ a natural number and $s$, $t$ states. If the loop
+$\mathtt{while}\ b\ \mathtt{do}\ c$, started in $s$, exits in $t$ after exactly $n$
+executions of the body $c$, then the loop $\mathtt{while}\ b\ \mathtt{do}\ c$ runs from $s$
+to $t$ in the big-step semantics. -/
 theorem bigStep {n : Nat} {initial final : State}
     (h : Iterates guard body n initial final) :
     BigStep (.while guard body) initial final := by
@@ -201,8 +239,10 @@ theorem bigStep {n : Nat} {initial final : State}
   | exit hguard => exact .whileFalse hguard
   | step hguard hbody _ ih => exact .whileTrue hguard hbody ih
 
-/-- Every terminating execution of a loop performs some number of
-iterations. -/
+/-- **Every terminating loop run has an iteration count.** Let $b$ be a Boolean expression, $c$ a
+command and $s$, $s'$ states. If the loop $\mathtt{while}\ b\ \mathtt{do}\ c$ has a terminating
+big-step execution from $s$ to $s'$, then there is a natural number $n$ such that the loop,
+started in $s$, exits in $s'$ after exactly $n$ executions of the body $c$. -/
 theorem exists_of_bigStep {initial final : State}
     (h : BigStep (.while guard body) initial final) :
     ∃ n, Iterates guard body n initial final := by
@@ -221,7 +261,10 @@ theorem exists_of_bigStep {initial final : State}
       obtain ⟨n, hn⟩ := ihLoop rfl
       exact ⟨n + 1, .step hguard hbody hn⟩
 
-/-- The iteration count of a loop run is determined by its initial state. -/
+/-- **Uniqueness of the loop iteration count.** Let $b$ be a boolean expression, $c$ a command
+and $s$ a state. If the loop $\mathtt{while}\ b\ \mathtt{do}\ c$, started in $s$, exits in
+a state $t$ after exactly $n$ executions of the body and also exits in a state $t'$ after
+exactly $m$ executions of the body, then $n = m$. -/
 theorem count_unique {n m : Nat} {initial first second : State}
     (hfirst : Iterates guard body n initial first)
     (hsecond : Iterates guard body m initial second) : n = m := by
@@ -241,13 +284,20 @@ theorem count_unique {n m : Nat} {initial first second : State}
 end Iterates
 
 open scoped Classical in
-/-- The number of body iterations the loop `while guard do body` performs from
-`state` before exiting, or `0` when the loop does not terminate from `state`. -/
+/-- **Loop iteration count.** Let $b$ be a Boolean expression, $c$ a command and $s$ a state. If
+there are a natural number $n$ and a state $s'$ such that the loop
+$\mathtt{while}\ b\ \mathtt{do}\ c$, started in $s$, exits in $s'$ after exactly $n$ executions of
+the body $c$, then the iteration count of the loop from $s$ is such an $n$; otherwise it is $0$.
+
+Such an $n$ is unique because IMP is deterministic, so the iteration count is the number of body
+executions the loop performs from $s$ before exiting. -/
 noncomputable def iterationCount (guard : BExp) (body : Cmd) (state : State) : Nat :=
   if h : ∃ n final, Iterates guard body n state final then Classical.choose h else 0
 
-/-- On a terminating loop run, `iterationCount` is the run's iteration
-count. -/
+/-- **The iteration count of a terminating loop run.** Let $b$ be a Boolean expression, $c$ a
+command, $n$ a natural number and $s$, $s'$ states. If the loop $\mathtt{while}\ b\ \mathtt{do}\ c$,
+started in $s$, exits in $s'$ after exactly $n$ executions of the body $c$, then the iteration
+count of the loop from $s$ is $n$. -/
 theorem Iterates.iterationCount_eq {guard : BExp} {body : Cmd} {n : Nat}
     {initial final : State} (h : Iterates guard body n initial final) :
     iterationCount guard body initial = n := by
@@ -259,7 +309,10 @@ theorem Iterates.iterationCount_eq {guard : BExp} {body : Cmd} {n : Nat}
     exact hchosen.count_unique h
   · contradiction
 
-/-- `iterationCount` is `0` from a state where the loop does not terminate. -/
+/-- **The iteration count of a nonterminating loop is zero.** Let $b$ be a Boolean expression, $c$ a
+command and $s$ a state. If the loop $\mathtt{while}\ b\ \mathtt{do}\ c$ has no terminating
+big-step execution from $s$ to any state, then the iteration count of the loop from $s$ is
+$0$. -/
 theorem iterationCount_eq_zero {guard : BExp} {body : Cmd} {state : State}
     (h : ∀ final, ¬ BigStep (.while guard body) state final) :
     iterationCount guard body state = 0 := by
@@ -272,9 +325,21 @@ theorem iterationCount_eq_zero {guard : BExp} {body : Cmd} {state : State}
 
 /-! ## Total correctness -/
 
-/-- Derivable total-correctness Hoare triples. The `while` rule is the variant
-rule: the body, started from the invariant with the guard true and the variant
-equal to `n`, terminates in the invariant with the variant below `n`. -/
+/-- **Total-correctness Hoare logic.** Derivability of total-correctness Hoare triples
+$\{P\}\,c\,\{Q\}$, for assertions $P$, $Q$ (predicates on states) and IMP commands $c$, is the
+least relation closed under the following rules. In an assertion, $b$ for a boolean expression
+means that $b$ evaluates to true and $\neg b$ that it evaluates to false. Skip:
+$\{Q\}\,\mathtt{skip}\,\{Q\}$. Assignment: for a variable $x$ and an arithmetic expression $a$,
+$\{Q[a/x]\}\,x := a\,\{Q\}$, where $Q[a/x]$ holds in a state $s$ iff $Q$ holds in $s$ updated at
+$x$ to the value of $a$ in $s$. Sequencing: from $\{P\}\,c_1\,\{R\}$ and $\{R\}\,c_2\,\{Q\}$
+derive $\{P\}\,c_1; c_2\,\{Q\}$. Conditional: from $\{P \wedge b\}\,c_1\,\{Q\}$ and
+$\{P \wedge \neg b\}\,c_2\,\{Q\}$ derive
+$\{P\}\,\mathtt{if}\ b\ \mathtt{then}\ c_1\ \mathtt{else}\ c_2\,\{Q\}$. Loop (variant rule): for an
+assertion $I$ and a map $V$ from states to natural numbers, if for every natural number $n$ the
+triple $\{I \wedge b \wedge V = n\}\,c\,\{I \wedge V < n\}$ is derivable, derive
+$\{I\}\,\mathtt{while}\ b\ \mathtt{do}\ c\,\{I \wedge \neg b\}$. Consequence: if $P$ entails $P'$,
+$\{P'\}\,c\,\{Q'\}$ is derivable and $Q'$ entails $Q$, derive $\{P\}\,c\,\{Q\}$, where entailment
+is pointwise implication. -/
 inductive TDerivable : Assertion → Cmd → Assertion → Prop
   | skip (post : Assertion) : TDerivable post .skip post
   | assign (post : Assertion) (name : Nat) (value : AExp) :
@@ -302,7 +367,10 @@ inductive TDerivable : Assertion → Cmd → Assertion → Prop
 
 namespace TDerivable
 
-/-- Soundness: every derivable total-correctness triple is totally valid. -/
+/-- **Soundness of total-correctness Hoare logic.** For all assertions $P$ and $Q$ and every
+command $c$, if the triple $\{P\}\,c\,\{Q\}$ is derivable in total-correctness Hoare logic, then
+it is valid for total correctness: every state satisfying $P$ has a terminating big-step
+execution of $c$ ending in a state that satisfies $Q$. -/
 theorem sound {pre post : Assertion} {command : Cmd}
     (h : TDerivable pre command post) : TValid pre command post := by
   induction h with
@@ -318,7 +386,10 @@ theorem sound {pre post : Assertion} {command : Cmd}
       exact ⟨final, hstep, hinvariant', hlt⟩
   | consequence hpre _ hpost ih => exact TValid.consequence hpre ih hpost
 
-/-- Strengthen the precondition of a derivable total-correctness triple. -/
+/-- **Precondition strengthening for total correctness.** Let $P$, $P'$ and $Q$ be assertions and
+$c$ a command. If $P$ entails $P'$ (every state satisfying $P$ satisfies $P'$) and the triple
+$\{P'\}\,c\,\{Q\}$ is derivable in total-correctness Hoare logic, then so is
+$\{P\}\,c\,\{Q\}$. -/
 theorem strengthen {pre pre' post : Assertion} {command : Cmd}
     (hpre : pre.Entails pre') (h : TDerivable pre' command post) :
     TDerivable pre command post :=
@@ -326,8 +397,11 @@ theorem strengthen {pre pre' post : Assertion} {command : Cmd}
 
 end TDerivable
 
-/-- The weakest precondition is derivable for every command and
-postcondition. -/
+/-- **The weakest-precondition triple is derivable in total-correctness Hoare logic.** For every
+IMP command $c$ and every assertion $Q$ (a predicate on states), the triple
+$\{\mathrm{wp}(c, Q)\}\,c\,\{Q\}$ is derivable in the total-correctness Hoare logic. Here
+$\mathrm{wp}(c, Q)$ is the semantic weakest precondition: it holds in a state $s$ exactly when
+there is a terminating execution of $c$ from $s$ ending in a state satisfying $Q$. -/
 theorem tderivable_wp : ∀ (command : Cmd) (post : Assertion),
     TDerivable (wp command post) command post
   | .skip, post => by
@@ -375,27 +449,35 @@ theorem tderivable_wp : ∀ (command : Cmd) (post : Assertion),
 
 namespace TDerivable
 
-/-- Relative completeness: every totally valid triple is derivable in the
-total-correctness system. -/
+/-- **Total-correctness Hoare logic is relatively complete.** For all assertions $P$ and $Q$ and
+every command $c$, if the total-correctness Hoare triple $\{P\}\,c\,\{Q\}$ is valid, then it is
+derivable in total-correctness Hoare logic. -/
 theorem complete {pre post : Assertion} {command : Cmd}
     (h : TValid pre command post) : TDerivable pre command post :=
   strengthen (wp.tvalid_iff.mp h) (tderivable_wp command post)
 
-/-- A derivable total-correctness triple is a derivable partial-correctness
-triple. -/
+/-- **Total-correctness derivations give partial-correctness derivations.** For all assertions
+$P$ and $Q$ and every command $c$, if the triple with precondition $P$, command $c$ and
+postcondition $Q$ is derivable in total-correctness Hoare logic, then it is derivable in
+partial-correctness Hoare logic. -/
 theorem derivable {pre post : Assertion} {command : Cmd}
     (h : TDerivable pre command post) : Derivable pre command post :=
   Derivable.complete h.sound.valid
 
 end TDerivable
 
-/-- Total-correctness derivability coincides with total validity. -/
+/-- **Soundness and relative completeness of total-correctness Hoare logic.** For all assertions
+$P$, $Q$ (predicates on states) and every IMP command $c$, the triple $\{P\}\,c\,\{Q\}$ is
+derivable in the total-correctness Hoare logic if and only if it is totally valid. -/
 theorem tderivable_iff_tvalid {pre post : Assertion} {command : Cmd} :
     TDerivable pre command post ↔ TValid pre command post :=
   ⟨TDerivable.sound, TDerivable.complete⟩
 
-/-- Total-correctness derivability coincides with total validity with respect
-to the relational denotational semantics. -/
+/-- **Total-correctness Hoare logic is sound and complete for the denotational semantics.** For
+all assertions $P$, $Q$ (predicates on states) and every IMP command $c$, the triple
+$\{P\}\,c\,\{Q\}$ is derivable in the total-correctness Hoare logic if and only if for every
+state $s$ satisfying $P$ there is a state $s'$ such that $(s, s')$ lies in the relational
+denotation of $c$ and $s'$ satisfies $Q$. -/
 theorem tderivable_iff_denote {pre post : Assertion} {command : Cmd} :
     TDerivable pre command post ↔
       ∀ ⦃initial⦄, pre initial → ∃ final, Denote command initial final ∧ post final := by
@@ -410,8 +492,9 @@ theorem tderivable_iff_denote {pre post : Assertion} {command : Cmd} :
 
 /-! ## Hoare triples as CSLib inference systems -/
 
-/-- A Hoare triple `{pre} command {post}`, the judgement form of both Hoare
-logics. -/
+/-- **Hoare triples.** A Hoare triple $\{P\}\,c\,\{Q\}$ consists of a precondition $P$ and a
+postcondition $Q$, both assertions (predicates on states), and an IMP command $c$. It is the
+judgement form of both the partial-correctness and the total-correctness Hoare logic. -/
 structure Triple where
   /-- The precondition. -/
   pre : Assertion
@@ -420,7 +503,10 @@ structure Triple where
   /-- The postcondition. -/
   post : Assertion
 
-/-- Tag for the total-correctness inference system on `Triple`. -/
+/-- **Total-correctness tag for Hoare triples.** An empty type used only as a label: derivability
+of Hoare triples in the total-correctness Hoare logic is registered as an inference system under
+this tag, while partial-correctness derivability is the default inference system on Hoare
+triples. -/
 inductive TotalCorrectness : Type
 
 /-- Partial-correctness derivability is the default inference system on Hoare
@@ -434,14 +520,18 @@ instance : Cslib.Logic.InferenceSystem TotalCorrectness Triple :=
 
 namespace Triple
 
-/-- A triple is derivable in the default (partial-correctness) system iff it
-is valid. -/
+/-- **Derivability in the default inference system on Hoare triples is validity.** For every
+Hoare triple $\{P\}\,c\,\{Q\}$, the triple is derivable in the default inference system on Hoare
+triples, which is partial-correctness Hoare logic, if and only if it is valid for partial
+correctness. -/
 theorem derivable_iff_valid (t : Triple) :
     Cslib.Logic.InferenceSystem.Derivable t ↔ Valid t.pre t.command t.post :=
   nonempty_prop.trans IMP.derivable_iff_valid
 
-/-- A triple is derivable in the total-correctness system iff it is totally
-valid. -/
+/-- **Total-correctness Hoare logic as an inference system.** A Hoare triple, given by a
+precondition $P$, a command $c$ and a postcondition $Q$, is derivable in the inference system on
+Hoare triples tagged total correctness, which is total-correctness Hoare logic, if and only if
+it is valid for total correctness. -/
 theorem derivableIn_totalCorrectness_iff_tvalid (t : Triple) :
     Cslib.Logic.InferenceSystem.DerivableIn TotalCorrectness t ↔
       TValid t.pre t.command t.post :=
