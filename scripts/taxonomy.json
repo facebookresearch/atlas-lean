@@ -11435,6 +11435,7 @@
   "MathlibExt/NumberTheory/RamificationInertia/Tame": {"to": "RingTheory/ramification", "title": "Tame and wild ramification"},
   "MathlibExt/NumberTheory/Rat/Place": {"to": "NumberTheory/algebraic-number-theory/adeles-class-field-theory", "title": "Places and completions of the rationals"},
   "MathlibExt/NumberTheory/RationalParametrizationPowSwap": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Equation xʸ = yˣ"},
+  "MathlibExt/NumberTheory/RationalRightTriangleReciprocalSums": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Pythagorean triples"},
   "MathlibExt/NumberTheory/RearickLogarithm": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Rearick logarithm"},
   "MathlibExt/NumberTheory/Recurrences/AlfredFibonacciDeterminant": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Determinants of Fibonacci powers"},
   "MathlibExt/NumberTheory/Recurrences/BrousseauFibonacciReciprocal": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Reciprocal Fibonacci series"},
