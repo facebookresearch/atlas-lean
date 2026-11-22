@@ -431,18 +431,6 @@ public theorem_wanted padovanPerrinFundamental_eq_rho [CommRing R] (k₁ k₂ : 
       padovanPerrinFundamental k₁ k₂ p s (s + p) (n + (s + p) - j) =
         padovanPerrinRho k₁ k₂ p s (n + (s + p) - j + 1)
 
-/-- For positive integers `k₁, k₂, s` and `p = 1`, if
-`(-k₂ (s + 1) / (k₁ s))^s ≠ k₁ / (s + 1)` then `P(z) = z^{s+1} - k₁ z - k₂` has only simple roots
-(stated as separability over `ℂ`).
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Lemma 2 (`integers-2024-A49-lem-2`). -/
-public theorem_wanted padovanPerrin_charPoly_separable_of_p_eq_one (k₁ k₂ s : ℕ) (hk₁ : 0 < k₁)
-    (hk₂ : 0 < k₂) (hs : 0 < s)
-    (h : (-(k₂ : ℚ) * (s + 1) / (k₁ * s)) ^ s ≠ k₁ / (s + 1)) :
-    (X ^ (s + 1) - C (k₁ : ℂ) * X - C (k₂ : ℂ)).Separable
-
 /-- If the characteristic polynomial `P(z) = z^{s+p} - k₁ z^p - k₂` (with `k₂ ≠ 0`) has distinct
 roots `λ₁, …, λ_{s+p}`, then `ρ(n, s + p) = ∑_i λ_iⁿ⁻¹ / P'(λ_i)` for every `n ≥ s + p`. The paper
 states this for the general `ρ` of formula (12) attached to an arbitrary characteristic
