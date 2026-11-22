@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Fail if a page or subfolder is not listed on its folder page (docs/BLUEPRINT.md, "Placing pages").
 
-A page's folder page is its nearest ancestor `README.md`, as Autoform reads it, and links are read
-with Autoform's own reader, so a link in code or a comment does not count.
+A page's folder page is its nearest ancestor `README.md`, as Autoform finds it. Any link to the page
+counts, read with Autoform's own reader, so a link in code or a comment does not.
 """
 
 from __future__ import annotations
