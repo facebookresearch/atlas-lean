@@ -58,8 +58,7 @@ example :
       Monotone f ∧
       (∀ x : ℝ, DifferentiableAt ℝ f x) ∧
       ¬ Continuous (deriv f) :=
-  MathlibExt.Analysis.Calculus.MonotoneDiscontinuousDerivWanted
-    .exists_monotone_differentiable_not_continuous_deriv
+MathlibExt.Analysis.Calculus.MonotoneDiscontinuousDerivWanted.exists_monotone_differentiable_not_continuous_deriv
 
 #print axioms MathlibExt.Analysis.Calculus.MonotoneDiscontinuousDeriv.deriv_zero
 #print axioms MathlibExt.Analysis.Calculus.MonotoneDiscontinuousDeriv.deriv_ne_zero
