@@ -9978,6 +9978,7 @@
   "MathlibExt/Combinatorics/Enumerative/GeneralizedRascalTriangle": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Rascal triangle"},
   "MathlibExt/Combinatorics/Enumerative/GeneralizedStirlingMatrixFactorization": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "Hsu–Shiue generalized Stirling numbers"},
   "MathlibExt/Combinatorics/Enumerative/GeneralizedStirlingNumbers": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "Generalized Stirling numbers"},
+  "MathlibExt/Combinatorics/Enumerative/GridCylinderTorusTilings": {"to": "Combinatorics/tilings-board-placements", "title": "Tilings of grids, cylinders and tori up to symmetry"},
   "MathlibExt/Combinatorics/Enumerative/HeilermannFormula": {"to": "Combinatorics/riordan-arrays-transforms/hankel-continued-fractions", "title": "Heilermann's formula"},
   "MathlibExt/Combinatorics/Enumerative/HeilermannWeightedMotzkin": {"to": "Combinatorics/riordan-arrays-transforms/hankel-continued-fractions", "title": "Heilermann's formula"},
   "MathlibExt/Combinatorics/Enumerative/HeilermannWeightedMotzkinDeterminant": {"to": "Combinatorics/riordan-arrays-transforms/hankel-continued-fractions", "title": "Heilermann's formula"},
