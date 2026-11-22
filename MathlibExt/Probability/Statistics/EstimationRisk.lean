@@ -43,33 +43,50 @@ open scoped ENNReal
 
 variable {S : Type*} [MeasurableSpace S]
 
-/-- Source finite bias of a fixed real estimator under a probability law:
-expected value minus the real target. The `Integrable` input is the source
-expectation domain from Chapter 2 Definition 2.2.1; without it no finite
-source bias exists. Blueprint `af_723199a7ca6fb3e936a73618`. -/
+/-- **Bias of an estimator.** Let $S$ be a measurable space, $W : S \to \mathbb{R}$ an estimator,
+$\mu$ a probability measure on $S$ for which $W$ is integrable, and $\theta \in \mathbb{R}$ a
+target. The bias of $W$ under $\mu$ at $\theta$ is $\int_S W \, d\mu - \theta$, the expected value
+of $W$ under $\mu$ minus $\theta$.
+
+Integrability of $W$ is part of the input: it is the domain on which the expectation exists in
+the source (Chapter 2, Definition 2.2.1), so a nonintegrable estimator has no finite bias.
+
+Source: blueprint `af_723199a7ca6fb3e936a73618`. -/
 noncomputable def bias (W : S → ℝ) (μ : ProbabilityMeasure S) (θ : ℝ)
     (_hW : Integrable W (μ : Measure S)) : ℝ :=
   ∫ x, W x ∂(μ : Measure S) - θ
 
-/-- Characteristic evaluation: finite bias is the integral minus the target.
-Blueprint `af_723199a7ca6fb3e936a73618`. -/
+/-- **Bias as an integral.** Let $S$ be a measurable space, $W : S \to \mathbb{R}$ an estimator,
+$\mu$ a probability measure on $S$ for which $W$ is integrable, and $\theta \in \mathbb{R}$ a
+target. Then the bias of $W$ under $\mu$ at $\theta$ equals $\int_S W \, d\mu - \theta$.
+
+Source: blueprint `af_723199a7ca6fb3e936a73618`. -/
 @[simp]
 theorem bias_eq_integral (W : S → ℝ) (μ : ProbabilityMeasure S) (θ : ℝ)
     (hW : Integrable W (μ : Measure S)) :
     bias W μ θ hW = ∫ x, W x ∂(μ : Measure S) - θ :=
   rfl
 
-/-- Source finite mean squared error of a fixed real estimator under a
-probability law: expected squared error at the real target. The `Integrable`
-input is the source expectation domain; without it no finite source MSE
-exists. Blueprint `af_fd40353442120bd19166139d`. -/
+/-- **Mean squared error.** Let $\mu$ be a probability measure on a measurable space $S$, let
+$W : S \to \mathbb{R}$ be an estimator and $\theta \in \mathbb{R}$ a target value, and suppose the
+squared error $x \mapsto (W(x) - \theta)^2$ is $\mu$-integrable. The mean squared error of $W$ at
+$\theta$ under $\mu$ is the real number $\int_S (W(x) - \theta)^2 \, d\mu(x)$.
+
+The integrability hypothesis is part of the definition: without it no finite mean squared error is
+defined.
+
+Source: Casella–Berger, Definition 7.3.1; blueprint `af_fd40353442120bd19166139d`. -/
 noncomputable def meanSquaredError (W : S → ℝ) (μ : ProbabilityMeasure S)
     (θ : ℝ)
     (_hW2 : Integrable (fun x => (W x - θ) ^ 2) (μ : Measure S)) : ℝ :=
   ∫ x, (W x - θ) ^ 2 ∂(μ : Measure S)
 
-/-- Characteristic evaluation: finite MSE is the squared-error integral.
-Blueprint `af_fd40353442120bd19166139d`. -/
+/-- **Mean squared error as an integral.** Let $\mu$ be a probability measure on a measurable
+space $S$, let $W : S \to \mathbb{R}$ and $\theta \in \mathbb{R}$, and suppose the squared error
+$x \mapsto (W(x) - \theta)^2$ is $\mu$-integrable. Then the mean squared error of $W$ at $\theta$
+under $\mu$ equals $\int_S (W(x) - \theta)^2 \, d\mu(x)$.
+
+Source: blueprint `af_fd40353442120bd19166139d`. -/
 @[simp]
 theorem meanSquaredError_eq_integral (W : S → ℝ) (μ : ProbabilityMeasure S)
     (θ : ℝ)
@@ -77,18 +94,28 @@ theorem meanSquaredError_eq_integral (W : S → ℝ) (μ : ProbabilityMeasure S)
     meanSquaredError W μ θ hW2 = ∫ x, (W x - θ) ^ 2 ∂(μ : Measure S) :=
   rfl
 
-/-- Extended squared-error bridge: nonnegative extended integral of squared
-error. This is a boundary-analysis object only. It is not the source finite
-MSE; on the integrable domain it agrees with the source value by
-`ofReal_meanSquaredError`, and off that domain with measurability it records
-infinity by `meanSquaredErrorENN_eq_top_of_not_finite`. Blueprint
-`af_fd40353442120bd19166139d`. -/
+/-- **Extended mean squared error.** Let $\mu$ be a probability measure on a measurable space $S$,
+let $W : S \to \mathbb{R}$ be an estimator and let $\theta \in \mathbb{R}$ be a target value. The
+extended mean squared error of $W$ at $\theta$ under $\mu$ is the (lower) Lebesgue integral
+$\int_S (W(x) - \theta)^2 \, d\mu(x)$ of the nonnegative squared error, computed in $[0, \infty]$.
+It is defined for every $W$, with no integrability hypothesis.
+
+When the squared error is $\mu$-integrable, this value is finite and equals the mean squared error;
+when the squared error is almost everywhere strongly measurable but not $\mu$-integrable, it equals
+$\infty$.
+
+Source: blueprint `af_fd40353442120bd19166139d`. -/
 noncomputable def meanSquaredErrorENN (W : S → ℝ) (μ : ProbabilityMeasure S)
     (θ : ℝ) : ℝ≥0∞ :=
   ∫⁻ x, ENNReal.ofReal ((W x - θ) ^ 2) ∂(μ : Measure S)
 
-/-- On the finite domain, the extended bridge agrees with the source finite
-MSE value. Blueprint `af_fd40353442120bd19166139d`. -/
+/-- **Finite and extended mean squared error agree.** Let $\mu$ be a probability measure on a
+measurable space $S$, let $W : S \to \mathbb{R}$ and $\theta \in \mathbb{R}$, and suppose the
+squared error $x \mapsto (W(x) - \theta)^2$ is $\mu$-integrable. Then the extended mean squared
+error $\int_S (W(x) - \theta)^2 \, d\mu(x)$, computed in $[0, \infty]$, is finite and equals the
+mean squared error of $W$ at $\theta$ under $\mu$.
+
+Source: blueprint `af_fd40353442120bd19166139d`. -/
 theorem ofReal_meanSquaredError {W : S → ℝ} {μ : ProbabilityMeasure S}
     {θ : ℝ}
     (h : Integrable (fun x => (W x - θ) ^ 2) (μ : Measure S)) :
@@ -97,9 +124,13 @@ theorem ofReal_meanSquaredError {W : S → ℝ} {μ : ProbabilityMeasure S}
   exact ofReal_integral_eq_lintegral_ofReal h
     (Filter.Eventually.of_forall fun x => sq_nonneg (W x - θ))
 
-/-- Off the finite domain, with measurability, the extended bridge records
-infinity rather than a finite value. Blueprint
-`af_fd40353442120bd19166139d`. -/
+/-- **Extended mean squared error of a measurable non-integrable squared error is infinite.** Let
+$\mu$ be a probability measure on a measurable space $S$, $W : S \to \mathbb{R}$ an estimator and
+$\theta \in \mathbb{R}$. If the squared error $x \mapsto (W(x) - \theta)^2$ is almost everywhere
+strongly measurable with respect to $\mu$ but not $\mu$-integrable, then the extended mean squared
+error $\int_S (W(x) - \theta)^2 \, d\mu(x) \in [0, \infty]$ of $W$ at $\theta$ equals $\infty$.
+
+Source: blueprint `af_fd40353442120bd19166139d`. -/
 theorem meanSquaredErrorENN_eq_top_of_not_finite {W : S → ℝ}
     {μ : ProbabilityMeasure S} {θ : ℝ}
     (hm : AEStronglyMeasurable (fun x => (W x - θ) ^ 2) (μ : Measure S))
@@ -114,17 +145,27 @@ theorem meanSquaredErrorENN_eq_top_of_not_finite {W : S → ℝ}
   refine lintegral_congr_ae (Filter.Eventually.of_forall fun x => ?_)
   exact (Real.enorm_of_nonneg (sq_nonneg (W x - θ))).symm
 
-/-- Family bias for a single fixed estimator: at each parameter, bias under
-that parameter law at the target value. The per-parameter `Integrable`
-evidence is an input; `W` is fixed before the family and does not depend on
-`θ`. Blueprint `af_723199a7ca6fb3e936a73618`. -/
+/-- **Family bias of an estimator.** Let $S$ be a measurable space, $W : S \to \mathbb{R}$ an
+estimator, $(P_\theta)_{\theta \in \Theta}$ a family of probability measures on $S$ such that $W$
+is integrable for every $P_\theta$, and $\tau : \Theta \to \mathbb{R}$ a target function. The
+family bias of $W$ is the function on $\Theta$ whose value at $\theta$ is the bias of $W$ under
+$P_\theta$ at the target $\tau(\theta)$, that is, $\int_S W \, dP_\theta - \tau(\theta)$.
+
+The estimator $W$ is fixed before the family and does not depend on $\theta$.
+
+Source: blueprint `af_723199a7ca6fb3e936a73618`. -/
 noncomputable def familyBias {Θ : Type*} (W : S → ℝ)
     (P : Θ → ProbabilityMeasure S) (τ : Θ → ℝ)
     (h : ∀ θ, Integrable W ((P θ) : Measure S)) : Θ → ℝ :=
   fun θ => bias W (P θ) (τ θ) (h θ)
 
-/-- Characteristic evaluation: family bias is the integral minus the target.
-Blueprint `af_723199a7ca6fb3e936a73618`. -/
+/-- **Family bias as an integral.** Let $S$ be a measurable space, $W : S \to \mathbb{R}$ an
+estimator, $(P_\theta)_{\theta \in \Theta}$ a family of probability measures on $S$ such that $W$
+is integrable for every $P_\theta$, and $\tau : \Theta \to \mathbb{R}$ a target function. Then for
+every $\theta \in \Theta$ the family bias of $W$ at $\theta$ equals
+$\int_S W \, dP_\theta - \tau(\theta)$.
+
+Source: blueprint `af_723199a7ca6fb3e936a73618`. -/
 @[simp]
 theorem familyBias_apply {Θ : Type*} (W : S → ℝ)
     (P : Θ → ProbabilityMeasure S) (τ : Θ → ℝ)
@@ -132,18 +173,31 @@ theorem familyBias_apply {Θ : Type*} (W : S → ℝ)
     familyBias W P τ h θ = ∫ x, W x ∂((P θ) : Measure S) - τ θ :=
   rfl
 
-/-- Family finite MSE for a single fixed estimator: at each parameter, finite
-MSE under that parameter law at the target value. The per-parameter
-`Integrable` evidence is an input; `W` is fixed before the family and does
-not depend on `θ`. Blueprint `af_fd40353442120bd19166139d`. -/
+/-- **Family mean squared error of an estimator.** Let $S$ be a measurable space,
+$W : S \to \mathbb{R}$ an estimator, $(P_\theta)_{\theta \in \Theta}$ a family of probability
+measures on $S$ and $\tau : \Theta \to \mathbb{R}$ a target function such that
+$(W - \tau(\theta))^2$ is integrable for $P_\theta$ for every $\theta \in \Theta$. The family mean
+squared error of $W$ is the function on $\Theta$ whose value at $\theta$ is the mean squared error
+of $W$ under $P_\theta$ at the target $\tau(\theta)$, that is,
+$\int_S (W(x) - \tau(\theta))^2 \, dP_\theta(x)$.
+
+The estimator $W$ is fixed before the family and does not depend on $\theta$.
+
+Source: blueprint `af_fd40353442120bd19166139d`. -/
 noncomputable def familyMeanSquaredError {Θ : Type*} (W : S → ℝ)
     (P : Θ → ProbabilityMeasure S) (τ : Θ → ℝ)
     (h : ∀ θ, Integrable (fun x => (W x - τ θ) ^ 2) ((P θ) : Measure S)) :
     Θ → ℝ :=
   fun θ => meanSquaredError W (P θ) (τ θ) (h θ)
 
-/-- Characteristic evaluation: family MSE is the squared-error integral.
-Blueprint `af_fd40353442120bd19166139d`. -/
+/-- **Family mean squared error as an integral.** Let $S$ be a measurable space,
+$W : S \to \mathbb{R}$ an estimator, $(P_\theta)_{\theta \in \Theta}$ a family of probability
+measures on $S$ and $\tau : \Theta \to \mathbb{R}$ a target function such that
+$(W - \tau(\theta))^2$ is integrable for $P_\theta$ for every $\theta \in \Theta$. Then for every
+$\theta \in \Theta$ the family mean squared error of $W$ at $\theta$ equals
+$\int_S (W(x) - \tau(\theta))^2 \, dP_\theta(x)$.
+
+Source: blueprint `af_fd40353442120bd19166139d`. -/
 @[simp]
 theorem familyMeanSquaredError_apply {Θ : Type*} (W : S → ℝ)
     (P : Θ → ProbabilityMeasure S) (τ : Θ → ℝ)
@@ -153,32 +207,45 @@ theorem familyMeanSquaredError_apply {Θ : Type*} (W : S → ℝ)
       ∫ x, (W x - τ θ) ^ 2 ∂((P θ) : Measure S) :=
   rfl
 
-/-- Source unbiasedness of a single fixed real estimator for a target function:
-at every parameter the expectation exists and equals the target value. `W` is
-fixed before the family `P` and the target `τ`; no parameter-dependent
-estimator map is accepted. Integrability is inside the predicate: a
-nonintegrable estimator is not unbiased even when the totalized integral
-happens to match. The identity target on real parameters is the source
-`§7.3.1` case; the general target is the explicit `§7.3.2` generalization.
-Blueprint `af_95118d196fd6478105a6eb43`. -/
+/-- **Unbiased estimator.** Let $(P_\theta)_{\theta \in \Theta}$ be a family of probability measures
+on a measurable space $S$ and $\tau : \Theta \to \mathbb{R}$ a target function. An estimator
+$W : S \to \mathbb{R}$ is unbiased for $\tau$ if for every $\theta \in \Theta$ the function $W$ is
+$P_\theta$-integrable and $\int_S W \, dP_\theta = \tau(\theta)$.
+
+Integrability is part of the definition, so a non-integrable estimator is never unbiased. The
+estimator $W$ is fixed and does not depend on $\theta$.
+
+Source: Casella–Berger Definition 7.3.2 is the case $\tau(\theta) = \theta$ on real parameters;
+the general target follows section 7.3.2. Blueprint `af_95118d196fd6478105a6eb43`. -/
 def IsUnbiased {Θ : Type*} (W : S → ℝ) (P : Θ → ProbabilityMeasure S)
     (τ : Θ → ℝ) : Prop :=
   ∀ θ, Integrable W ((P θ) : Measure S) ∧
     ∫ x, W x ∂((P θ) : Measure S) = τ θ
 
-/-- Integrability at each parameter from unbiasedness. -/
+/-- **Unbiased estimators are integrable.** Let $(P_\theta)_{\theta \in \Theta}$ be a family of
+probability measures on $S$ and $\tau : \Theta \to \mathbb{R}$ a target function. If an estimator
+$W : S \to \mathbb{R}$ is unbiased for $\tau$, then $W$ is $P_\theta$-integrable for every
+$\theta \in \Theta$. -/
 theorem IsUnbiased.integrable {Θ : Type*} {W : S → ℝ}
     {P : Θ → ProbabilityMeasure S} {τ : Θ → ℝ} (h : IsUnbiased W P τ)
     (θ : Θ) : Integrable W ((P θ) : Measure S) :=
   (h θ).1
 
-/-- Expectation identity at each parameter from unbiasedness. -/
+/-- **An unbiased estimator has the target as its expectation.** Let $S$ be a measurable space,
+$W : S \to \mathbb{R}$ an estimator, $(P_\theta)_{\theta \in \Theta}$ a family of probability
+measures on $S$ and $\tau : \Theta \to \mathbb{R}$ a target function. If $W$ is unbiased for
+$\tau$ under the family $(P_\theta)$, then $\int_S W \, dP_\theta = \tau(\theta)$ for every
+$\theta \in \Theta$. -/
 theorem IsUnbiased.expect_eq {Θ : Type*} {W : S → ℝ}
     {P : Θ → ProbabilityMeasure S} {τ : Θ → ℝ} (h : IsUnbiased W P τ)
     (θ : Θ) : ∫ x, W x ∂((P θ) : Measure S) = τ θ :=
   (h θ).2
 
-/-- Unbiasedness holds exactly when the family bias vanishes everywhere. -/
+/-- **An estimator is unbiased exactly when its bias vanishes.** Let
+$(P_\theta)_{\theta \in \Theta}$ be a family of probability measures on $S$,
+$\tau : \Theta \to \mathbb{R}$ a target function, and $W : S \to \mathbb{R}$ an estimator that is
+$P_\theta$-integrable for every $\theta \in \Theta$. Then $W$ is unbiased for $\tau$ if and only if
+its family bias $\int_S W \, dP_\theta - \tau(\theta)$ is zero for every $\theta \in \Theta$. -/
 theorem isUnbiased_iff_forall_familyBias_eq_zero {Θ : Type*} {W : S → ℝ}
     {P : Θ → ProbabilityMeasure S} {τ : Θ → ℝ}
     (h : ∀ θ, Integrable W ((P θ) : Measure S)) :
@@ -192,8 +259,9 @@ theorem isUnbiased_iff_forall_familyBias_eq_zero {Θ : Type*} {W : S → ℝ}
     have hz : (∫ x, W x ∂((P θ) : Measure S)) - τ θ = 0 := hzero θ
     exact sub_eq_zero.mp hz
 
-/-- Squared-error integrability at a target derived from a finite second moment
-of the estimator. -/
+/-- **A finite second moment makes the squared error integrable.** Let $\mu$ be a probability
+measure on $S$ and $W : S \to \mathbb{R}$ an estimator in $L^2(\mu)$. Then for every
+$\theta \in \mathbb{R}$ the squared error $x \mapsto (W(x) - \theta)^2$ is $\mu$-integrable. -/
 theorem integrable_sq_sub_of_memLp_two {W : S → ℝ} {μ : ProbabilityMeasure S}
     {θ : ℝ} (hW : MemLp W 2 ((μ : Measure S))) :
     Integrable (fun x => (W x - θ) ^ 2) ((μ : Measure S)) := by
@@ -201,11 +269,15 @@ theorem integrable_sq_sub_of_memLp_two {W : S → ℝ} {μ : ProbabilityMeasure 
     hW.sub (memLp_const θ)
   exact hWsub.integrable_sq
 
-/-- Source equation 7.3.1: under a finite second moment, the finite MSE equals
-the variance plus the squared bias. This bias form is the complete source
-conclusion; the expectation form `(∫W - θ)²` is the same value through the
-accepted `bias` definition. All integrability evidence is derived from the
-`MemLp` hypothesis. Blueprint `af_3a1bafba0b7dff99554b01f0`. -/
+/-- **Bias–variance decomposition of the mean squared error.** Let $\mu$ be a probability measure
+on a measurable space $S$, let $\theta \in \mathbb{R}$, and let $W : S \to \mathbb{R}$ be
+square-integrable with respect to $\mu$, that is, $W \in L^2(\mu)$. Then the mean squared error of
+$W$ at $\theta$ under $\mu$ equals $\operatorname{Var}_\mu(W) + b^2$, where
+$b = \int_S W \, d\mu - \theta$ is the bias of $W$ at $\theta$ under $\mu$.
+
+The integrability that the mean squared error and the bias require follows from $W \in L^2(\mu)$.
+
+Source: Casella–Berger, equation (7.3.1); blueprint `af_3a1bafba0b7dff99554b01f0`. -/
 theorem meanSquaredError_eq_variance_add_sq_bias {W : S → ℝ}
     {μ : ProbabilityMeasure S} {θ : ℝ} (hW : MemLp W 2 ((μ : Measure S))) :
     meanSquaredError W μ θ (integrable_sq_sub_of_memLp_two hW) =
@@ -230,9 +302,13 @@ theorem meanSquaredError_eq_variance_add_sq_bias {W : S → ℝ}
   rw [hsq, hvar]
   ring
 
-/-- Source equation 7.3.1 in expectation form: the finite MSE equals the
-variance plus the squared deviation of the mean from the target. This is the
-same value as the bias form through the accepted `bias` definition. Blueprint
+/-- **Mean squared error as variance plus squared mean deviation.** Let $\mu$ be a probability
+measure on a measurable space $S$, let $\theta \in \mathbb{R}$, and let $W : S \to \mathbb{R}$ be
+square-integrable with respect to $\mu$, that is, $W \in L^2(\mu)$. Then the mean squared error of
+$W$ at $\theta$ under $\mu$ equals
+$\operatorname{Var}_\mu(W) + \left(\int_S W \, d\mu - \theta\right)^2$.
+
+Source: Casella–Berger, equation (7.3.1) in expectation form; blueprint
 `af_3a1bafba0b7dff99554b01f0`. -/
 theorem meanSquaredError_eq_variance_add_sq_expectation_sub {W : S → ℝ}
     {μ : ProbabilityMeasure S} {θ : ℝ} (hW : MemLp W 2 ((μ : Measure S))) :
@@ -241,8 +317,12 @@ theorem meanSquaredError_eq_variance_add_sq_expectation_sub {W : S → ℝ}
         ((∫ x, W x ∂((μ : Measure S))) - θ) ^ 2 :=
   meanSquaredError_eq_variance_add_sq_bias hW
 
-/-- The extended MSE bridge records the `ofReal` of the
-variance-plus-squared-bias value on the finite domain. -/
+/-- **Bias–variance decomposition of the extended mean squared error.** Let $\mu$ be a probability
+measure on a measurable space $S$, let $\theta \in \mathbb{R}$, and let $W : S \to \mathbb{R}$ be
+square-integrable with respect to $\mu$, that is, $W \in L^2(\mu)$. Then the extended mean squared
+error $\int_S (W(x) - \theta)^2 \, d\mu(x)$, computed in $[0, \infty]$, is finite and equals
+$\operatorname{Var}_\mu(W) + b^2$, where $b = \int_S W \, d\mu - \theta$ is the bias of $W$ at
+$\theta$ under $\mu$. -/
 theorem ofReal_variance_add_sq_bias {W : S → ℝ} {μ : ProbabilityMeasure S}
     {θ : ℝ} (hW : MemLp W 2 ((μ : Measure S))) :
     ENNReal.ofReal (ProbabilityTheory.variance W ((μ : Measure S)) +
@@ -251,8 +331,15 @@ theorem ofReal_variance_add_sq_bias {W : S → ℝ} {μ : ProbabilityMeasure S}
   rw [← meanSquaredError_eq_variance_add_sq_bias hW]
   exact ofReal_meanSquaredError _
 
-/-- Family equation 7.3.1 for a single fixed estimator: at each parameter with
-a finite second moment, family MSE equals variance plus squared family bias. -/
+/-- **Bias–variance decomposition for a parametric family.** Let $S$ be a measurable space,
+$W : S \to \mathbb{R}$ an estimator, $(P_\theta)_{\theta \in \Theta}$ a family of probability
+measures on $S$ and $\tau : \Theta \to \mathbb{R}$ a target function. Suppose that for every
+$\theta \in \Theta$, $W$ has a finite second moment under $P_\theta$, and $W$ and
+$(W - \tau(\theta))^2$ are integrable for $P_\theta$. Then for every $\theta \in \Theta$ the family
+mean squared error of $W$ at $\theta$ equals the variance $\operatorname{Var}_{P_\theta}(W)$ of
+$W$ under $P_\theta$ plus the square of the family bias of $W$ at $\theta$.
+
+Source: equation 7.3.1, in family form for a single fixed estimator. -/
 theorem familyMeanSquaredError_eq_variance_add_sq_familyBias {Θ : Type*}
     {W : S → ℝ} {P : Θ → ProbabilityMeasure S} {τ : Θ → ℝ}
     (hMem : ∀ θ, MemLp W 2 (((P θ)) : Measure S))
@@ -263,8 +350,13 @@ theorem familyMeanSquaredError_eq_variance_add_sq_familyBias {Θ : Type*}
         (familyBias W P τ h1 θ) ^ 2 :=
   meanSquaredError_eq_variance_add_sq_bias (hMem θ)
 
-/-- For an unbiased estimator the finite MSE equals the variance: the bias
-term vanishes. Source: the display following Definition 7.3.2. -/
+/-- **Mean squared error of an unbiased estimator.** Let $\mu$ be a probability measure on a
+measurable space $S$, let $\theta \in \mathbb{R}$, and let $W : S \to \mathbb{R}$ be
+square-integrable with respect to $\mu$ (that is, $W \in L^2(\mu)$) and satisfy
+$\int_S W \, d\mu = \theta$. Then the mean squared error of $W$ at $\theta$ under $\mu$ equals
+$\operatorname{Var}_\mu(W)$.
+
+Source: the display following Definition 7.3.2. -/
 theorem meanSquaredError_eq_variance_of_expect_eq {W : S → ℝ}
     {μ : ProbabilityMeasure S} {θ : ℝ} (hW : MemLp W 2 ((μ : Measure S)))
     (hunb : ∫ x, W x ∂((μ : Measure S)) = θ) :
@@ -276,8 +368,13 @@ theorem meanSquaredError_eq_variance_of_expect_eq {W : S → ℝ}
   rw [meanSquaredError_eq_variance_add_sq_bias hW, hb]
   simp
 
-/-- Family unbiasedness makes family MSE equal variance at every parameter
-with a finite second moment: a genuine predicate application. -/
+/-- **An unbiased estimator has mean squared error equal to its variance.** Let $S$ be a
+measurable space, $W : S \to \mathbb{R}$ an estimator, $(P_\theta)_{\theta \in \Theta}$ a family of
+probability measures on $S$ and $\tau : \Theta \to \mathbb{R}$ a target function. Suppose that $W$
+is unbiased for $\tau$ under the family, and that for every $\theta \in \Theta$, $W$ has a finite
+second moment under $P_\theta$ and $(W - \tau(\theta))^2$ is integrable for $P_\theta$. Then for
+every $\theta \in \Theta$ the family mean squared error of $W$ at $\theta$ equals the variance
+$\operatorname{Var}_{P_\theta}(W)$ of $W$ under $P_\theta$. -/
 theorem IsUnbiased.familyMeanSquaredError_eq_variance {Θ : Type*} {W : S → ℝ}
     {P : Θ → ProbabilityMeasure S} {τ : Θ → ℝ} (hunb : IsUnbiased W P τ)
     (hMem : ∀ θ, MemLp W 2 (((P θ)) : Measure S))
@@ -294,20 +391,30 @@ theorem IsUnbiased.familyMeanSquaredError_eq_variance {Θ : Type*} {W : S → �
   rw [h, hb]
   simp
 
-/-- Source finite frequentist risk of one fixed rule: at each parameter, the
-real expected loss under that parameter law and loss. `δ` is fixed before the
-family and does not depend on `θ`; `A` may differ from `Θ`. The
-per-parameter `Integrable` evidence is the source expectation domain from
-Chapter 2 Definition 2.2.1; without it no finite source risk exists. No prior,
-kernel, or optimality input occurs. Source equation 7.3.16. Blueprint
-`af_36871388da7326a07a5e4f71`. -/
+/-- **Frequentist risk.** Let $S$ be a measurable space, $\delta : S \to A$ a decision rule,
+$(P_\theta)_{\theta \in \Theta}$ a family of probability measures on $S$, and
+$\ell : \Theta \times A \to [0, \infty)$ a loss such that $x \mapsto \ell(\theta, \delta(x))$ is
+$P_\theta$-integrable for every $\theta \in \Theta$. The frequentist risk of $\delta$ is the
+function $\Theta \to \mathbb{R}$ given by
+$R(\theta, \delta) = \int_S \ell(\theta, \delta(x)) \, dP_\theta(x)$.
+
+The rule $\delta$ does not depend on $\theta$, and the action space $A$ may differ from $\Theta$.
+No prior, kernel or optimality criterion enters.
+
+Source: Casella–Berger equation 7.3.16; the integrability hypothesis is the expectation domain of
+Chapter 2 Definition 2.2.1. Blueprint `af_36871388da7326a07a5e4f71`. -/
 noncomputable def frequentistRisk {Θ A : Type*} (δ : S → A)
     (P : Θ → ProbabilityMeasure S) (ℓ : Θ → A → NNReal)
     (_h : ∀ θ, Integrable (fun x => (ℓ θ (δ x) : ℝ)) ((P θ) : Measure S)) :
     Θ → ℝ :=
   fun θ => ∫ x, (ℓ θ (δ x) : ℝ) ∂((P θ) : Measure S)
 
-/-- Exact value of finite frequentist risk at a parameter. -/
+/-- **Frequentist risk as an integral.** Let $S$ be a measurable space, $\delta : S \to A$ a
+decision rule, $(P_\theta)_{\theta \in \Theta}$ a family of probability measures on $S$ and
+$\ell : \Theta \times A \to [0, \infty)$ a loss function such that
+$x \mapsto \ell(\theta, \delta(x))$ is integrable for $P_\theta$ for every $\theta \in \Theta$.
+Then for every $\theta \in \Theta$ the frequentist risk of $\delta$ at $\theta$ equals
+$\int_S \ell(\theta, \delta(x)) \, dP_\theta(x)$. -/
 theorem frequentistRisk_apply {Θ A : Type*} {δ : S → A}
     {P : Θ → ProbabilityMeasure S} {ℓ : Θ → A → NNReal}
     {h : ∀ θ, Integrable (fun x => (ℓ θ (δ x) : ℝ)) ((P θ) : Measure S)}
@@ -316,7 +423,11 @@ theorem frequentistRisk_apply {Θ A : Type*} {δ : S → A}
       ∫ x, (ℓ θ (δ x) : ℝ) ∂((P θ) : Measure S) :=
   rfl
 
-/-- Finite frequentist risk is nonnegative at every parameter. -/
+/-- **Frequentist risk is nonnegative.** Let $\delta : S \to A$ be a decision rule,
+$(P_\theta)_{\theta \in \Theta}$ a family of probability measures on $S$, and
+$\ell : \Theta \times A \to [0, \infty)$ a loss such that $x \mapsto \ell(\theta, \delta(x))$ is
+$P_\theta$-integrable for every $\theta \in \Theta$. Then the frequentist risk $R(\theta, \delta)$
+of $\delta$ at $\theta$ is nonnegative for every $\theta \in \Theta$. -/
 theorem frequentistRisk_nonneg {Θ A : Type*} {δ : S → A}
     {P : Θ → ProbabilityMeasure S} {ℓ : Θ → A → NNReal}
     {h : ∀ θ, Integrable (fun x => (ℓ θ (δ x) : ℝ)) ((P θ) : Measure S)}
@@ -325,18 +436,29 @@ theorem frequentistRisk_nonneg {Θ A : Type*} {δ : S → A}
   exact integral_nonneg_of_ae
     (Filter.Eventually.of_forall fun x => NNReal.coe_nonneg _)
 
-/-- Extended risk bridge: nonnegative extended integral of the finite NNReal
-cost. This is a boundary-analysis object only. It is not the source finite
-risk; on the integrable domain it agrees with the source value by
-`ofReal_frequentistRisk`, and off that domain with measurability it records
-infinity by `frequentistRiskENN_eq_top_of_not_integrable`. Blueprint
-`af_36871388da7326a07a5e4f71`. -/
+/-- **Extended frequentist risk.** Let $S$ be a measurable space, $\delta : S \to A$ a decision
+rule, $(P_\theta)_{\theta \in \Theta}$ a family of probability measures on $S$, and
+$\ell : \Theta \times A \to [0, \infty)$ a loss. The extended frequentist risk of $\delta$ at
+$\theta \in \Theta$ is the Lebesgue integral $\int_S \ell(\theta, \delta(x)) \, dP_\theta(x)$, taken
+in $[0, \infty]$.
+
+When the loss is $P_\theta$-integrable for every $\theta$, this is the frequentist risk; when it is
+measurable but not integrable at $\theta$, it equals $\infty$.
+
+Source: blueprint `af_36871388da7326a07a5e4f71`. -/
 noncomputable def frequentistRiskENN {Θ A : Type*} (δ : S → A)
     (P : Θ → ProbabilityMeasure S) (ℓ : Θ → A → NNReal) (θ : Θ) : ℝ≥0∞ :=
   ∫⁻ x, ℓ θ (δ x) ∂((P θ) : Measure S)
 
-/-- On the finite domain, the extended bridge agrees with the source finite
-risk value. Blueprint `af_36871388da7326a07a5e4f71`. -/
+/-- **Finite and extended frequentist risk agree.** Let $\Theta$ and $A$ be sets, let
+$(P_\vartheta)_{\vartheta \in \Theta}$ be a family of probability measures on a measurable space
+$S$, let $\delta : S \to A$ be a decision rule and $\ell : \Theta \times A \to [0, \infty)$ a
+loss, and suppose $x \mapsto \ell(\vartheta, \delta(x))$ is $P_\vartheta$-integrable for every
+$\vartheta \in \Theta$. Then for every $\theta \in \Theta$ the extended frequentist risk
+$\int_S \ell(\theta, \delta(x)) \, dP_\theta(x)$, computed in $[0, \infty]$, is finite and equals
+the frequentist risk of $\delta$ at $\theta$.
+
+Source: blueprint `af_36871388da7326a07a5e4f71`. -/
 theorem ofReal_frequentistRisk {Θ A : Type*} {δ : S → A}
     {P : Θ → ProbabilityMeasure S} {ℓ : Θ → A → NNReal}
     {h : ∀ θ, Integrable (fun x => (ℓ θ (δ x) : ℝ)) ((P θ) : Measure S)}
@@ -346,10 +468,17 @@ theorem ofReal_frequentistRisk {Θ A : Type*} {δ : S → A}
   unfold frequentistRisk frequentistRiskENN
   exact (lintegral_coe_eq_integral (fun x => ℓ θ (δ x)) (h θ)).symm
 
-/-- Off the finite domain, with measurability, the extended bridge records
-infinity rather than a finite value. This prevents totalized-integral zero
-from manufacturing finite risk. No off-domain finite value is claimed.
-Blueprint `af_36871388da7326a07a5e4f71`. -/
+/-- **Extended frequentist risk of a measurable non-integrable loss is infinite.** Let $S$ be a
+measurable space, $\delta : S \to A$ a decision rule, $(P_\theta)_{\theta \in \Theta}$ a family of
+probability measures on $S$, $\ell : \Theta \times A \to [0, \infty)$ a loss, and
+$\theta \in \Theta$. If the function $x \mapsto \ell(\theta, \delta(x))$ is almost everywhere
+strongly measurable with respect to $P_\theta$ but not $P_\theta$-integrable, then the extended
+frequentist risk $\int_S \ell(\theta, \delta(x)) \, dP_\theta(x) \in [0, \infty]$ of $\delta$ at
+$\theta$ equals $\infty$.
+
+So a measurable non-integrable loss is never assigned a finite extended risk.
+
+Source: blueprint `af_36871388da7326a07a5e4f71`. -/
 theorem frequentistRiskENN_eq_top_of_not_integrable {Θ A : Type*}
     {δ : S → A} {P : Θ → ProbabilityMeasure S} {ℓ : Θ → A → NNReal}
     {θ : Θ}
@@ -371,10 +500,15 @@ theorem frequentistRiskENN_eq_top_of_not_integrable {Θ A : Type*}
           exact ENNReal.ofReal_coe_nnreal.symm
       _ = ∞ := htop
 
-/-- Finite family MSE is the squared-loss specialization of finite
-frequentist risk. This reuses the accepted `familyMeanSquaredError` leaf;
-it does not duplicate or change that MSE definition. Blueprint
-`af_36871388da7326a07a5e4f71`. -/
+/-- **Mean squared error is frequentist risk under squared-error loss.** Let
+$(P_\theta)_{\theta \in \Theta}$ be a family of probability measures on $S$,
+$W : S \to \mathbb{R}$ an estimator and $\tau : \Theta \to \mathbb{R}$ a target function such that
+$x \mapsto (W(x) - \tau(\theta))^2$ is $P_\theta$-integrable for every $\theta \in \Theta$. Then for
+every $\theta$, the frequentist risk at $\theta$ of $W$, as a decision rule with actions in
+$\mathbb{R}$, under the squared-error loss $\ell(\theta, a) = (a - \tau(\theta))^2$ equals the
+family mean squared error of $W$ for $\tau$ at $\theta$.
+
+Source: blueprint `af_36871388da7326a07a5e4f71`. -/
 theorem frequentistRisk_squared_eq_familyMeanSquaredError {Θ : Type*}
     {W : S → ℝ} {P : Θ → ProbabilityMeasure S} {τ : Θ → ℝ}
     (hRisk : ∀ θ, Integrable

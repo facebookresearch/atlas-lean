@@ -21,20 +21,18 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 namespace MathlibExt.Geometry.ScottishBook68Wanted
 
 /--
-The three-dimensional case of Ulam's Problem 68 singled out in the
-problem: a compact set `K` in 3-space homeomorphic to the closed unit
-ball, every planar section of whose boundary by a plane meeting the
-interior of `K` is a simple closed curve (homeomorphic to the unit
-circle), is convex. Here a plane is a level set of a nonzero continuous
-linear functional. The quantifier is restricted to planes meeting
-`interior K` (the cutting-plane reading): without it the premise is
-impossible, since a supporting plane meeting the frontier in a
-singleton makes it fail. Concrete case: for the closed unit ball, the
-plane `{x | x₁ = 1}` meets its frontier in the singleton `{(1, 0, 0)}`,
-neither empty nor a circle. The empty disjunct is dropped as redundant
-for interior-meeting planes. Merely allowing a point section would be
-insufficient: e.g. a cube's face-plane section is a square, neither
-empty, a point, nor a circle.
+**Ulam's flat-sections problem in dimension three.** Let $K \subseteq \mathbb{R}^3$ be a compact
+set homeomorphic to the closed unit ball. Suppose that for every nonzero continuous linear
+functional $F : \mathbb{R}^3 \to \mathbb{R}$ and every real $c$ such that the plane
+$\{x : F(x) = c\}$ meets the interior of $K$, the intersection of this plane with the boundary
+(frontier) of $K$ is homeomorphic to the unit circle. Then $K$ is convex.
+
+Only planes meeting the interior of $K$ are constrained: a supporting plane can meet the
+boundary in a single point, as the plane $\{x : x_1 = 1\}$ does for the closed unit ball, so
+requiring a circle for every plane would make the hypothesis impossible. Allowing empty or
+one-point sections for the other planes would still exclude convex bodies such as the cube,
+whose face planes meet its boundary in a square.
+
 Source: S. Ulam, Problem 68 of the Scottish Book, asking to prove that
 a manifold whose every hyperplane section of its boundary is a sphere
 is convex. Montejano gave a complete solution, settling the problem
