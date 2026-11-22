@@ -1426,7 +1426,8 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
            for key, a in keyed if key is None and {"module", "name"} <= a.get("extensions", {}).get(OWN, {}).keys()])
     folders: dict[tuple[str, ...], Counter] = defaultdict(Counter)
     for key, target in current.items():
-        if key in pages:
+        # A scoped run places no page beside one a row names outside the roadmap, where it would write outside it.
+        if key in pages and (scope is None or pages[key].is_relative_to(wiki.ROADMAP)):
             folders[target.module][pages[key].parent] += 1
     in_source_order: dict[tuple[str, ...], list] = defaultdict(list)
     for target in sorted(targets, key=lambda target: target.idx):
@@ -1434,8 +1435,10 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     created: dict[Path, str] = {}
     # generate_wiki's page of each folder the layout of a new page went through, by the folder's own page.
     layouts: dict[Path, Path] = {}
-    # The folder pages the run edits or adds, every file it writes, and the rows it adds (see Scope).
+    # The folder pages the run edits or adds, those that list a page it writes again already, every file it writes,
+    # and the rows it adds (see Scope).
     touched: set[Path] = set()
+    relisted: set[Path] = set()
     written: set[Path] = set()
     added: list[tuple[Path, dict]] = []
 
@@ -1502,9 +1505,11 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         target.path.write_text(text)
         written.add(target.path)
         # A new folder's page lists its pages already, and a scoped run lists no page its folder page lists, as when
-        # an editor removed a page's row to have it written again.
+        # an editor removed a page's row to have it written again; the copy of its part is refreshed all the same.
         readme = folder / "README.md"
-        if readme.is_file() and not (scope is not None and target.path.name in listed_links(readme)):
+        if scope is not None and readme.is_file() and target.path.name in listed_links(readme):
+            relisted.add(readme)
+        elif readme.is_file():
             # Where generate_wiki lists the page here, else in source order among its module's pages here, each
             # with its section. A page joins a section of the folder page's own list only beside its module's pages:
             # where that list runs over sections, generate_wiki's order across modules says nothing of them.
@@ -1589,7 +1594,7 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
                 report[kind].append(readme.parent.relative_to(wiki.ROADMAP).as_posix())
     written |= touched
     if scope is not None:
-        refresh_part_lists(touched | scope.parts, report, written)
+        refresh_part_lists(touched | relisted | scope.parts, report, written)
         # The baseline takes the scope's entries alone, and is not written when it takes none; the rows go where
         # they belong (see insert_rows).
         if scope.digests:
@@ -2057,6 +2062,14 @@ def links_in_wiki() -> list[str]:
     return sorted({os.path.relpath(path, wiki.ROOT) for path in found})
 
 
+def unfinished(report: dict[str, list[str]]) -> list[str]:
+    """What a scoped write, as its *report* says, left for an editor: the pages and folders it listed nowhere, and the
+    parts whose copy it could not refresh. A write that leaves any fails, and its output is not the sync's whole."""
+    return ([f"{row} is listed on no folder page: list it by hand" for row in report["unlisted"]]
+            + [f"the copy of {folder}'s list on its parent's page could not be refreshed: copy the entries the run "
+               "added there by hand" for folder in report["parts"]])
+
+
 def apply_plan(plan: Plan, targets: list, index, generated: dict[Path, str], unindexed: list[str],
                ids: dict[str, str] | None = None) -> tuple[dict[str, list[str]], set[Path]] | None:
     """Write what *plan* asks for (see Scope and apply_declarations), with the ids *ids* gives where they are free;
@@ -2120,9 +2133,9 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
             if plan.blocking or plan.problems:
                 return "other", [f"the sync stops on the base's wiki: {row}" for row in plan.blocking + plan.problems]
             done = apply(plan, ids)
-        report, written = done or ({"unlisted": []}, set())
-        if report["unlisted"]:
-            return "other", [f"the sync leaves {row} listed on no folder page" for row in report["unlisted"]]
+        report, written = done or ({"unlisted": [], "parts": []}, set())
+        if left := unfinished(report):
+            return "other", [f"the sync fails on the base's wiki: {row}" for row in left]
         differences = []
         for path in sorted(set(paths) | {path.relative_to(scratch).as_posix() for path in written}):
             mine, theirs = scratch / path, wiki.ROOT / path
@@ -2237,12 +2250,11 @@ def run_scoped(argv: list[str]) -> int:
         elif done := apply_plan(plan, targets, index, generated, unindexed):
             print_report(done[0])
             # A part whose copy the run could not refresh may lack an entry of the changes, which only an editor
-            # can then copy.
-            for folder in done[0]["parts"]:
-                print(f"error: the copy of {folder}'s list on its parent's page could not be refreshed: copy the "
-                      "entries the run added there by hand", file=sys.stderr)
+            # can then copy (see unfinished); print_report gives the pages and folders listed nowhere.
+            for row in unfinished({**done[0], "unlisted": []}):
+                print(f"error: {row}", file=sys.stderr)
             report["written"] = sorted(path.relative_to(wiki.ROOT).as_posix() for path in done[1])
-            status = 1 if done[0]["unlisted"] or done[0]["parts"] or plan.problems else 0
+            status = 1 if unfinished(done[0]) or plan.problems else 0
         else:
             print("Nothing to write.")
             status = 1 if plan.problems else 0

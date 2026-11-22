@@ -2507,6 +2507,12 @@ class ScopedRun(unittest.TestCase):
         self.assertIn("error: the copy of Algebra/groups/part-01's list on its parent's page could not be refreshed",
                       err)
         self.assertNotIn("part-01/rings/README.md", field.read_text())
+        # What the failed write leaves is not the sync's output, though nothing else changed.
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["parts"], report["wiki_changes"]),
+                         (1, False, ["Algebra/groups/part-01/README.md"], "other"))
+        self.assertIn("the copy of Algebra/groups/part-01's list on its parent's page could not be refreshed",
+                      report["differences"][0])
         cosets = "- [Cosets](part-01/cosets/README.md)\n"
         field.write_text(field.read_text().replace(cosets, cosets + "- [Rings](part-01/rings/README.md)\n"))
         status, out, err, report = self.run_sync("--check")
@@ -2538,6 +2544,76 @@ class ScopedRun(unittest.TestCase):
             self.assertEqual(self.run_sync()[0], 0)
             status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["wiki_changes"]), (0, "sync"), err)
+
+    def split_field(self, fence: str = "") -> Path:
+        """Make the base's field a split one: its part-01 holds the module Cosets's page of Ext.Cosets.one, which the
+        field's page copies; returns the field's page."""
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        for name in ("Rings", "Cosets"):
+            taxonomy["placements"][f"MathlibExt/Algebra/{name}"] = {"to": "Algebra/groups", "title": name}
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        field = self.write("blueprint/roadmap/Algebra/groups/README.md",
+                           f"# Groups\n\nGroups.\n\n{fence}- [Group basics](group-basics/README.md)\n\n"
+                           "## [Part 1](part-01/README.md)\n\n- [One](part-01/one.md)\n")
+        self.write("blueprint/roadmap/Algebra/groups/part-01/README.md", "# Groups, part 1\n\n- [One](one.md)\n")
+        self.write("blueprint/roadmap/Algebra/groups/part-01/one.md", "# One\n\nOne coset.\n")
+        self.write("MathlibExt/Algebra/Cosets.lean", "namespace Ext.Cosets\n\n/-- One coset. -/\ntheorem one : True := "
+                   "trivial\n\nend Ext.Cosets\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        rows = [{"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/part-01/README.md"}],
+                 "id": "af_" + "d" * 24},
+                {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/part-01/one.md"}],
+                 "id": "af_" + "e" * 24, "object": [{"location": {"declaration": "Ext.Cosets.one"}}]}]
+        links.write_text(links.read_text() + "".join(json.dumps(row) + "\n" for row in rows))
+        state = self.root / "scripts/wiki-sync.json"
+        digests = json.loads(state.read_text())["docstrings"]
+        digests["Ext.Cosets.one"] = sync.digest("One coset.")
+        state.write_text(json.dumps({"docstrings": dict(sorted(digests.items()))}, indent=0) + "\n")
+        self.base = self.commit("a field split into parts")
+        return field
+
+    def test_a_page_written_again_in_a_part_refreshes_the_parts_copy(self) -> None:
+        field = self.split_field()
+        cosets = self.root / "MathlibExt/Algebra/Cosets.lean"
+        two = "/-- Two cosets. -/\ntheorem two : True := trivial\n\nend Ext"
+        cosets.write_text(cosets.read_text().replace("end Ext", two))
+        self.assertEqual(self.run_sync()[0], 0)
+        copy = "- [Two](part-01/two.md)\n"
+        self.assertIn(copy, field.read_text())
+        # The page, its row and the field's copy of it go; the part's page still lists it.
+        (self.root / "blueprint/roadmap/Algebra/groups/part-01/two.md").unlink()
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text("".join(line for line in links.read_text().splitlines(keepends=True) if "two.md" not in line))
+        field.write_text(field.read_text().replace(copy, ""))
+        self.assertEqual(self.run_sync()[0], 0)
+        self.assertIn(copy, field.read_text())
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"))
+        before = self.tree()
+        self.assertEqual(self.run_sync()[0], 0)
+        self.assertEqual(self.tree(), before)
+
+    def test_a_row_outside_the_roadmap_places_no_page_there(self) -> None:
+        # A row names a page of the module outside the roadmap: the module's new page is laid out as if it had none.
+        self.write("outside/one.md", "# One\n\nOne coset.\n")
+        taxonomy = json.loads(json.dumps(self.TAXONOMY))
+        taxonomy["placements"]["MathlibExt/Algebra/Cosets"] = {"to": "Algebra/groups", "title": "Cosets"}
+        self.write("scripts/taxonomy.json", json.dumps(taxonomy))
+        self.write("MathlibExt/Algebra/Cosets.lean", "namespace Ext.Cosets\n\n/-- One coset. -/\ntheorem one : True := "
+                   "trivial\n\nend Ext.Cosets\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text() + json.dumps({
+            "subject": [{"type": "generic", "uri": "../../outside/one.md"}], "id": "af_" + "f" * 24,
+            "object": [{"location": {"declaration": "Ext.Cosets.one"}}]}) + "\n")
+        self.base = self.commit("a row outside the roadmap")
+        cosets = self.root / "MathlibExt/Algebra/Cosets.lean"
+        two = "/-- Two cosets. -/\ntheorem two : True := trivial\n\nend Ext"
+        cosets.write_text(cosets.read_text().replace("end Ext", two))
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 0, err)
+        self.assertEqual(sorted(path for path in self.tree() if path.startswith("outside/")), ["outside/one.md"])
+        self.assertTrue(all(path.startswith(("blueprint/", "scripts/")) for path in report["written"]),
+                        report["written"])
 
 
 class CommittedAnnotations(unittest.TestCase):
