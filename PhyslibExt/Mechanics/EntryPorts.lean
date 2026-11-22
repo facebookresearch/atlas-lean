@@ -31,7 +31,7 @@ integrating from the entry altitude gives
 `v(h) = ve * exp (K * (exp (-he / H) - exp (-h / H)))`, `K = ρ0 * H / (2 * β * sin γ)`,
 
 with `v(he) = ve`. The exponent is the column mass `∫ ρ` between `he` and `h` divided by
-`2 * β * sin γ` (`ballisticVelocity_eq_exp_integral`).
+`2 * β * sin γ` (`ballisticVelocity_eq_exp_integral`, for `H ≠ 0`).
 
 Model inputs: the exponential density with `ρ0, H > 0`, `β > 0`, a constant downward angle,
 drag-dominated motion without gravity or lift, and finite entry data `(he, ve)`, `ve > 0`. The
@@ -44,8 +44,8 @@ downward path, `sin γ > 0`: at `β = 0` Lean's convention `x / 0 = 0` turns the
 corollary asks the trajectory to stay in a declared altitude band, where the isothermal layer
 model holds. Apart from the window condition `t₀ ≤ t₁` and that band, which restrict statements
 to their physical regime, each result assumes only the hypotheses its proof uses. The identity
-`ballisticVelocity_eq_exp_integral` holds for all parameters; it is the integrated drag equation
-for `β > 0` and `sin γ > 0`.
+`ballisticVelocity_eq_exp_integral` holds for `H ≠ 0`, all other parameters arbitrary; it is the
+integrated drag equation for `β > 0` and `sin γ > 0`.
 
 ## ii. Key results
 
@@ -111,8 +111,8 @@ lemma ballisticVelocity_entry (ρ0 H β γ he ve : ℝ) :
   unfold ballisticVelocity
   rw [sub_self, mul_zero, Real.exp_zero, mul_one]
 
-/-- Column mass between two heights: `∫ ρ = ρ0 * H * (exp (-he / H) - exp (-h / H))` over
-`[he, h]`, by the fundamental theorem of calculus. -/
+/-- Column mass between two heights, for `H ≠ 0`: `∫ ρ = ρ0 * H * (exp (-he / H) - exp (-h / H))`
+over `[he, h]`, by the fundamental theorem of calculus. -/
 lemma integral_exponentialDensity {H : ℝ} (hH : H ≠ 0) (ρ0 he h : ℝ) :
     ∫ s in he..h, exponentialDensity ρ0 H s =
       ρ0 * H * (Real.exp (-he / H) - Real.exp (-h / H)) := by
@@ -138,8 +138,8 @@ lemma integral_exponentialDensity {H : ℝ} (hH : H ≠ 0) (ρ0 he h : ℝ) :
 
 /-- Integrated form of `dv/dh = ρ(h) * v / (2 * β * sin γ)`: the exponent of the profile is the
 column mass between `he` and `h` divided by `2 * β * sin γ`. The identity of the two formulas
-holds for all parameters; it is the integrated drag equation only for `β > 0` and `sin γ > 0`,
-where `2 * β * sin γ ≠ 0` (`hasDerivAt_ballisticVelocity`). -/
+holds for `H ≠ 0`, all other parameters arbitrary; it is the integrated drag equation only for
+`β > 0` and `sin γ > 0`, where `2 * β * sin γ ≠ 0` (`hasDerivAt_ballisticVelocity`). -/
 lemma ballisticVelocity_eq_exp_integral {H : ℝ} (hH : H ≠ 0) (ρ0 β γ he ve h : ℝ) :
     ballisticVelocity ρ0 H β γ he ve h =
       ve * Real.exp ((∫ s in he..h, exponentialDensity ρ0 H s) / (2 * β * Real.sin γ)) := by
