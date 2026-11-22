@@ -44,10 +44,12 @@ to live at
 For drift `b` and variance coefficient `a`, the scale density normalized at
 `c` is `s(y) = exp(-∫ c..y 2 * b / a)`, the speed density is
 `m(x) = 2 / (a x * s x)`, and the speed measure is `m(x) dx` on `(0, 1)`.
-Changing the basepoint multiplies the scale density by a positive constant
-and divides the speed density by the same constant, so the boundary-flux
-identity below is the same statement as in the regular case whenever both
-apply. Unlike the zero-origin normalization, the interior-basepoint
+When the integrand `2 * b / a` is interval integrable on the interval
+between two basepoints, changing the basepoint multiplies the scale
+density by the corresponding positive exponential constant and divides
+the speed density by the same constant. No such rescaling is asserted
+for arbitrary coefficients, where the defining integral can degenerate
+to its junk value. Unlike the zero-origin normalization, the interior-basepoint
 normalization stays meaningful when `b / a` is not integrable at the
 endpoints, which is the positive-mutation Wright-Fisher case
 `2 * b / a = θ₁ / x - θ₂ / (1 - x)`; see Ewens (2004), Chapter 4.
@@ -90,8 +92,10 @@ noncomputable def scaleDensityFrom (b a : ℝ → ℝ) (c y : ℝ) : ℝ :=
   exp (-∫ z in c..y, 2 * b z / a z)
 
 /-- Speed density `2 / (a x * scaleDensityFrom b a c x)`. Positive where
-`a` is positive; see `speedDensityFrom_pos`. Changing `c` divides this by
-the same positive constant by which the scale density is multiplied. -/
+`a` is positive; see `speedDensityFrom_pos`. Its basepoint dependence is
+the reciprocal of the scale density's, and rescaling under a change of
+basepoint requires interval integrability of `2 * b / a` between the
+basepoints. -/
 noncomputable def speedDensityFrom (b a : ℝ → ℝ) (c x : ℝ) : ℝ :=
   2 / (a x * scaleDensityFrom b a c x)
 

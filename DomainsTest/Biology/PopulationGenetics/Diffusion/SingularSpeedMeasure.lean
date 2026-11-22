@@ -320,4 +320,88 @@ example : ∫ x, diffusionGenerator (fun _ => (0 : ℝ)) (fun _ => (1 : ℝ))
 #print axioms integral_diffusionGenerator_speedMeasureFrom
 #print axioms integral_diffusionGenerator_speedMeasureFrom_eq_zero
 
+example : scaleDensityFrom (fun _ => (1 : ℝ)) (fun _ => (2 : ℝ)) (1 / 2)
+    (1 / 3) = Real.exp (1 / 6) := by
+  unfold scaleDensityFrom
+  have h1 : (fun z : ℝ => 2 * (fun _ => (1 : ℝ)) z / (fun _ => (2 : ℝ)) z) =
+      fun _ => (1 : ℝ) := by
+    funext z
+    norm_num
+  rw [h1, intervalIntegral.integral_const, smul_eq_mul, mul_one]
+  congr 1
+  norm_num
+
+example : scaleDensityFrom (fun _ => (1 : ℝ)) (fun _ => (2 : ℝ)) (1 / 2)
+    (1 / 3) = Real.exp (1 / 4) * scaleDensityFrom (fun _ => (1 : ℝ))
+    (fun _ => (2 : ℝ)) (1 / 4) (1 / 3) := by
+  have h1 : (fun z : ℝ => 2 * (fun _ => (1 : ℝ)) z / (fun _ => (2 : ℝ)) z) =
+      fun _ => (1 : ℝ) := by
+    funext z
+    norm_num
+  have hL : scaleDensityFrom (fun _ => (1 : ℝ)) (fun _ => (2 : ℝ)) (1 / 2)
+      (1 / 3) = Real.exp (1 / 6 : ℝ) := by
+    unfold scaleDensityFrom
+    rw [h1, intervalIntegral.integral_const, smul_eq_mul, mul_one]
+    congr 1
+    norm_num
+  have hR : scaleDensityFrom (fun _ => (1 : ℝ)) (fun _ => (2 : ℝ)) (1 / 4)
+      (1 / 3) = Real.exp (-(1 / 12 : ℝ)) := by
+    unfold scaleDensityFrom
+    rw [h1, intervalIntegral.integral_const, smul_eq_mul, mul_one]
+    congr 1
+    norm_num
+  rw [hL, hR, ← Real.exp_add]
+  congr 1
+  norm_num
+
+example : speedDensityFrom (fun _ => (1 : ℝ)) (fun _ => (2 : ℝ)) (1 / 2)
+    (1 / 3) = (Real.exp (1 / 6))⁻¹ := by
+  have h1 : (fun z : ℝ => 2 * (fun _ => (1 : ℝ)) z / (fun _ => (2 : ℝ)) z) =
+      fun _ => (1 : ℝ) := by
+    funext z
+    norm_num
+  have hscale : scaleDensityFrom (fun _ => (1 : ℝ)) (fun _ => (2 : ℝ)) (1 / 2)
+      (1 / 3) = Real.exp (1 / 6 : ℝ) := by
+    unfold scaleDensityFrom
+    rw [h1, intervalIntegral.integral_const, smul_eq_mul, mul_one]
+    congr 1
+    norm_num
+  have hexp : Real.exp (1 / 6 : ℝ) ≠ 0 := Real.exp_ne_zero _
+  unfold speedDensityFrom
+  rw [hscale]
+  field_simp
+
+example : 0 < speedDensityFrom
+    (fun x : ℝ => (1 * (1 - x) - 1 * x) / 2)
+    (fun x : ℝ => x * (1 - x)) (1 / 2) (1 / 3) := by
+  have ha_pos : ∀ x ∈ Ioo (0 : ℝ) 1, 0 < (fun x : ℝ => x * (1 - x)) x := by
+    intro x hx
+    obtain ⟨hx0, hx1⟩ := hx
+    exact mul_pos hx0 (sub_pos.mpr hx1)
+  have hx : (1 / 3 : ℝ) ∈ Ioo 0 1 := by norm_num
+  exact speedDensityFrom_pos _ _ _ _ ha_pos hx
+
+example : HasDerivAt
+    (scaleDensityFrom (fun x : ℝ => (1 * (1 - x) - 1 * x) / 2)
+      (fun x : ℝ => x * (1 - x)) (1 / 2)) 0 (1 / 2) := by
+  have hb_cont : Continuous (fun x : ℝ => (1 * (1 - x) - 1 * x) / 2) := by
+    fun_prop
+  have ha_cont : Continuous (fun x : ℝ => x * (1 - x)) := by
+    fun_prop
+  have hne : ∀ x ∈ Ioo (0 : ℝ) 1, (fun x : ℝ => x * (1 - x)) x ≠ 0 := by
+    intro x hx
+    obtain ⟨hx0, hx1⟩ := hx
+    exact mul_ne_zero (ne_of_gt hx0) (ne_of_gt (sub_pos.mpr hx1))
+  have hdiv : ContinuousOn (fun x : ℝ => (fun x : ℝ => (1 * (1 - x) - 1 * x) / 2) x /
+      (fun x : ℝ => x * (1 - x)) x) (Ioo 0 1) :=
+    hb_cont.continuousOn.div ha_cont.continuousOn hne
+  have hx : (1 / 2 : ℝ) ∈ Ioo 0 1 := by norm_num
+  have hc : (1 / 2 : ℝ) ∈ Ioo 0 1 := by norm_num
+  have h := hasDerivAt_scaleDensityFrom (fun x : ℝ => (1 * (1 - x) - 1 * x) / 2)
+    (fun x : ℝ => x * (1 - x)) (1 / 2) (1 / 2) hdiv hx hc
+  have hb : (1 * (1 - (1 / 2 : ℝ)) - 1 * (1 / 2)) / 2 = 0 := by
+    norm_num
+  rw [hb] at h
+  simpa using h
+
 end MathlibExtTest.Biology.PopulationGenetics.Diffusion.SingularSpeedMeasure
