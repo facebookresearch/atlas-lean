@@ -15,6 +15,7 @@ public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+public import MathlibExt.Analysis.SpecialFunctions.LogSumExp
 
 @[expose] public section
 
@@ -64,11 +65,11 @@ variable {ι : Type*} [Fintype ι] [Nonempty ι]
 
 /-- (C1 cost/prices) LMSR cost function: `b * log ∑ i, exp (q i / b)`. -/
 noncomputable def lmsrCost (b : ℝ) (q : ι → ℝ) : ℝ :=
-  b * Real.log (∑ i, Real.exp (q i / b))
+  b * Real.logSumExp (fun i => q i / b)
 
 /-- (C1 cost/prices) LMSR instantaneous price of outcome `i`: softmax. -/
 noncomputable def lmsrPrice (b : ℝ) (q : ι → ℝ) (i : ι) : ℝ :=
-  Real.exp (q i / b) / ∑ j, Real.exp (q j / b)
+  Real.softmax (fun j => q j / b) i
 
 /-- (C1 cost/prices) Maker loss when `i` occurs after trades from `0` to `q`. -/
 noncomputable def lmsrLoss (b : ℝ) (q : ι → ℝ) (i : ι) : ℝ :=
@@ -81,28 +82,24 @@ theorem sum_exp_div_pos (b : ℝ) (q : ι → ℝ) :
 
 /-- (C1 cost/prices) LMSR prices are nonnegative (no hypothesis on `b`). -/
 theorem lmsrPrice_nonneg (b : ℝ) (q : ι → ℝ) (i : ι) :
-    0 ≤ lmsrPrice b q i := by
-  unfold lmsrPrice
-  exact div_nonneg (le_of_lt (Real.exp_pos _)) (le_of_lt (sum_exp_div_pos b q))
+    0 ≤ lmsrPrice b q i :=
+  (Real.softmax_pos _ i).le
 
 /-- (C1 cost/prices) LMSR prices are positive (no hypothesis on `b`). -/
 theorem lmsrPrice_pos (b : ℝ) (q : ι → ℝ) (i : ι) :
-    0 < lmsrPrice b q i := by
-  unfold lmsrPrice
-  exact div_pos (Real.exp_pos _) (sum_exp_div_pos b q)
+    0 < lmsrPrice b q i :=
+  Real.softmax_pos _ i
 
 /-- (C1 cost/prices) LMSR prices sum to one. -/
 theorem sum_lmsrPrice (b : ℝ) (q : ι → ℝ) :
-    ∑ i, lmsrPrice b q i = 1 := by
-  unfold lmsrPrice
-  rw [← Finset.sum_div]
-  exact div_self (ne_of_gt (sum_exp_div_pos b q))
+    ∑ i, lmsrPrice b q i = 1 :=
+  Real.sum_softmax _
 
 omit [Nonempty ι] in
 /-- (C1 cost/prices) Cost of the zero share vector. -/
 theorem lmsrCost_zero (b : ℝ) :
     lmsrCost b (0 : ι → ℝ) = b * Real.log (Fintype.card ι) := by
-  simp [lmsrCost]
+  simp [lmsrCost, Real.logSumExp]
 
 /-- (C2 bounds) The cost dominates every outstanding-share quantity. -/
 theorem le_lmsrCost (b : ℝ) (hb : 0 < b) (q : ι → ℝ) (i : ι) :
@@ -117,7 +114,7 @@ theorem le_lmsrCost (b : ℝ) (hb : 0 < b) (q : ι → ℝ) (i : ι) :
   have hbne : b ≠ 0 := ne_of_gt hb
   have h3 : q i = b * (q i / b) := (mul_div_cancel₀ _ hbne).symm
   rw [h3]
-  unfold lmsrCost
+  simp only [lmsrCost, Real.logSumExp]
   exact mul_le_mul_of_nonneg_left h2 (le_of_lt hb)
 
 /-- (C2 bounds) The cost is at most `max q + b * log n`. -/
@@ -146,7 +143,7 @@ theorem lmsrCost_le (b : ℝ) (hb : 0 < b) (q : ι → ℝ) (M : ℝ)
   have hexpand : b * (Real.log (Fintype.card ι) + M / b)
       = b * Real.log (Fintype.card ι) + M := by
     rw [mul_add, hcancel]
-  unfold lmsrCost
+  simp only [lmsrCost, Real.logSumExp]
   rw [hexpand] at hmul
   linarith
 
@@ -177,7 +174,7 @@ theorem deriv_update_lmsrCost [DecidableEq ι] (b : ℝ) (hb : 0 < b) (q : ι �
       = fun t => b * Real.log (Real.exp ((q i + t) / b)
         + ∑ j ∈ Finset.univ.erase i, Real.exp (q j / b)) := by
     funext t
-    unfold lmsrCost
+    simp only [lmsrCost, Real.logSumExp]
     rw [hsplit t]
   rw [hfun]
   have haffine : HasDerivAt (fun t : ℝ => (q i + t) / b) (1 / b) 0 :=
@@ -222,7 +219,7 @@ theorem deriv_update_lmsrCost [DecidableEq ι] (b : ℝ) (hb : 0 < b) (q : ι �
     rw [hcongr] at h0
     exact h0.symm
   rw [hmul.deriv, hS0]
-  unfold lmsrPrice
+  simp only [lmsrPrice, Real.softmax]
   have hbne : b ≠ 0 := ne_of_gt hb
   have hSne : (∑ j, Real.exp (q j / b)) ≠ 0 :=
     ne_of_gt (sum_exp_div_pos b q)
@@ -236,11 +233,11 @@ theorem tradeProfit_eq_logScore (b : ℝ) (hb : 0 < b) (q q' : ι → ℝ) (i : 
   have hlog : ∀ r : ι → ℝ, Real.log (lmsrPrice b r i)
       = r i / b - Real.log (∑ j, Real.exp (r j / b)) := by
     intro r
-    unfold lmsrPrice
+    simp only [lmsrPrice, Real.softmax]
     rw [Real.log_div (Real.exp_pos _).ne' (sum_exp_div_pos b r).ne',
       Real.log_exp]
   rw [hlog q', hlog q]
-  unfold lmsrCost
+  simp only [lmsrCost, Real.logSumExp]
   have hbne : b ≠ 0 := ne_of_gt hb
   field_simp
   ring
@@ -274,7 +271,7 @@ theorem tendsto_lmsrLoss_single [DecidableEq ι] (b : ℝ) (hb : 0 < b) (i : ι)
     have hcost : lmsrCost b (Pi.single i t)
         = t + b * Real.log (1 + ((Fintype.card ι - 1 : ℕ) : ℝ)
           * Real.exp (-(t / b))) := by
-      unfold lmsrCost
+      simp only [lmsrCost, Real.logSumExp]
       rw [hsplit t]
       have hexp : (0 : ℝ) < Real.exp (t / b) := Real.exp_pos _
       have h1pos : (0 : ℝ) < 1 + ((Fintype.card ι - 1 : ℕ) : ℝ)

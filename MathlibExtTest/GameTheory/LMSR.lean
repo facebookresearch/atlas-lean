@@ -29,23 +29,23 @@ open MathlibExt.GameTheory.LMSR
 
 /-- T1: cost of the zero portfolio is `log 2`. -/
 theorem lmsrCost_one_zero : lmsrCost 1 ![0, 0] = Real.log 2 := by
-  simp [lmsrCost, Fin.sum_univ_two]
+  simp [lmsrCost, Real.logSumExp, Fin.sum_univ_two]
   norm_num
 
 /-- T2: both zero-portfolio prices are `1 / 2` (outcome `0`). -/
 theorem lmsrPrice_one_zero_zero : lmsrPrice 1 ![0, 0] 0 = 1 / 2 := by
-  simp [lmsrPrice, Fin.sum_univ_two]
+  simp [lmsrPrice, Real.softmax, Fin.sum_univ_two]
   norm_num
 
 /-- T2: both zero-portfolio prices are `1 / 2` (outcome `1`). -/
 theorem lmsrPrice_one_zero_one : lmsrPrice 1 ![0, 0] 1 = 1 / 2 := by
-  simp [lmsrPrice, Fin.sum_univ_two]
+  simp [lmsrPrice, Real.softmax, Fin.sum_univ_two]
   norm_num
 
 /-- T3: price after buying one share of outcome `0`. -/
 theorem lmsrPrice_one_update :
     lmsrPrice 1 ![1, 0] 0 = Real.exp 1 / (Real.exp 1 + 1) := by
-  simp [lmsrPrice, Fin.sum_univ_two]
+  simp [lmsrPrice, Real.softmax, Fin.sum_univ_two]
 
 /-- T4: maker loss on the zero portfolio is `0`. -/
 theorem lmsrLoss_one_zero : lmsrLoss 1 ![0, 0] 0 = 0 := by
