@@ -28,12 +28,13 @@ for air, example validity box `ρ ≤ 0.01 kg/m³`, `rn ≥ 1 m`, `v ≤ 3000 m/
 tests and not a published applicability range):
 
 * the box is nonempty, and at its corner the flux is nonnegative and within the pointwise bound;
-* the constant corner history over `10 s` has heat load `4702050 J/m²`, between `0` and the
-  bound, which it attains;
+* the constant corner history over `10 s`, whose constant flux is interval integrable, has heat
+  load `4702050 J/m²`, between `0` and the bound, which it attains;
 * zero density gives zero heat load; outside the box (`v = 4000 m/s`) the correlation does not
   apply and its formula exceeds the in-box bound;
 * along the profile above, the descending altitude history `40000 - 1250 t` on `[0, 4] s` stays
-  in the band `[35000, 40000]` and in the box, so the band bound applies;
+  in the band `[35000, 40000]` and in the box and has a continuous flux, so the band bound
+  applies;
 * a radiator with `ε = 0.8`, `σ = 5.670374419e-8 W/(m² K⁴)` and surroundings at `200 K` has a
   nonnegative equilibrium for `qabs = 100 W/m²`, and `300 K` is its only one for
   `qabs = 0.8 σ (300⁴ - 200⁴)`.
@@ -120,7 +121,8 @@ example (h : ∀ t ∈ Set.Icc (0 : ℝ) 10, exampleCorrelation.Applies 0.01 1 3
         10 * exampleCorrelation.coefficient *
           Real.sqrt (exampleCorrelation.maxDensity / exampleCorrelation.minNoseRadius) *
             exampleCorrelation.maxSpeed ^ 3 :=
-  ⟨exampleCorrelation.heatLoad_nonneg _ h, exampleCorrelation.heatLoad_le _ h⟩
+  ⟨exampleCorrelation.heatLoad_nonneg _ h intervalIntegrable_const,
+    exampleCorrelation.heatLoad_le _ h intervalIntegrable_const⟩
 
 
 -- Nonzero flux and positive horizon: the constant history at the box corner
@@ -179,7 +181,8 @@ example (T : ℝ) (hT : 0 ≤ T) :
       T = 300 := by
   constructor
   · intro h
-    exact radiator_equilibrium_unique (by norm_num) (by norm_num) hT (by norm_num) h (by norm_num)
+    exact radiator_equilibrium_unique (by norm_num) (by norm_num) (by norm_num) (by norm_num) hT
+      (by norm_num) h (by norm_num)
   · rintro rfl
     norm_num
 
@@ -238,13 +241,22 @@ example : ∃ hbox : ∀ t ∈ Set.Icc (0 : ℝ) 4, exampleCorrelation.Applies
     · simpa [exampleCorrelation] using hρle.trans hρ35
     · exact (ballisticVelocity_pos (by norm_num) _ _ _ _ _ _).le
     · simpa [exampleCorrelation] using hvle
+  have hint : IntervalIntegrable (fun t => exampleCorrelation.coefficient *
+      Real.sqrt (exponentialDensity 1.225 7000 (40000 - 1250 * t) / 1) *
+        ballisticVelocity 1.225 7000 500 (Real.pi / 6) 40000 3000 (40000 - 1250 * t) ^ 3)
+      MeasureTheory.volume 0 4 := by
+    refine Continuous.intervalIntegrable ?_ _ _
+    unfold exponentialDensity ballisticVelocity
+    simp only [div_one]
+    fun_prop
   exact ⟨hbox, StagnationHeatingCorrelation.heatLoad_le_of_band exampleCorrelation (by norm_num)
-    (by norm_num) (by norm_num) hsin (by norm_num) (by norm_num) hband hbox⟩
+    (by norm_num) (by norm_num) hsin (by norm_num) (by norm_num) hband hbox hint⟩
 
 -- The radiator of the last fixture has a nonnegative equilibrium for an absorbed flux of
 -- `100 W/m²` with surroundings at `200 K`.
 example : ∃ T : ℝ, 0 ≤ T ∧
     0.8 * 5.670374419e-8 * T ^ 4 = 100 + 0.8 * 5.670374419e-8 * 200 ^ 4 :=
-  radiator_equilibrium_exists (by norm_num) (by norm_num) (by norm_num)
+  radiator_equilibrium_exists (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
 
 end PhyslibExtTest.Mechanics.EntryPorts
