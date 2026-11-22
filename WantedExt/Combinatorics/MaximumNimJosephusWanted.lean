@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.JosephusFunction
+public import MathlibExt.Combinatorics.MaximumNimJosephus
 public import MathlibExt.GameTheory.SpragueGrundy
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Tactic
@@ -469,7 +470,8 @@ public theorem_wanted maximumNimGrundy_eq_sub_rule_succ (f : ℕ → ℕ) (hf0 :
     maximumNimGrundy f x = maximumNimGrundy f (x - f x - 1)
 
 -- Lemma 2 (`integers-2024-G5-lem-2`), the floor identity for non-multiples of `k`, is proved as
--- `maximumNim_sub_div_sub_one_eq` in `MathlibExt.Combinatorics.MaximumNimJosephus`.
+-- `maximumNim_sub_div_sub_one_eq` in `MathlibExt.Combinatorics.MaximumNimJosephus`, which this
+-- module imports.
 
 /-- **Maximum Nim Grundy numbers at multiples of the divisor.** Let $k \ge 2$ and let $G$ be
 the Grundy number of Maximum Nim with rule function $f(y) = \lfloor y/k \rfloor$. Every positive
