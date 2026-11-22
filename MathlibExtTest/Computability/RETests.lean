@@ -52,4 +52,13 @@ example : REPred fun n : ℕ ↦ ∃ m, m * m = n := by
     (Primrec.eq.decide.comp (Primrec.nat_mul.comp Primrec.snd Primrec.snd) Primrec.fst).to_comp,
     by funext p; simp⟩
 
+/-- Selection: a partial recursive square root, defined exactly on the perfect squares. -/
+example : ∃ g : ℕ →. ℕ, Partrec g ∧ (∀ n m, m ∈ g n → m * m = n) ∧
+    ∀ n, (∃ m, m * m = n) → (g n).Dom := by
+  classical
+  refine REPred.exists_partrec_choose (R := fun (n m : ℕ) ↦ m * m = n) (ComputablePred.to_re ?_)
+  exact ComputablePred.computable_iff.mpr ⟨fun p ↦ decide (p.2 * p.2 = p.1),
+    (Primrec.eq.decide.comp (Primrec.nat_mul.comp Primrec.snd Primrec.snd) Primrec.fst).to_comp,
+    by funext p; simp⟩
+
 end MathlibExtTest.Computability.RE

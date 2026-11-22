@@ -141,11 +141,10 @@ theorem reimer_wprob_familyEvent_of_isUpperSet (w : α → Bool → ℝ)
     (isIncreasing_familyEvent_of_isUpperSet hℬ)
 
 omit [DecidableEq α] in
+@[deprecated "Use `Finset.isLowerSet_coe_powerset Finset.univ`." (since := "2026-11-12")]
 theorem isLowerSet_powerset_univ :
-    IsLowerSet ((Finset.univ.powerset : Finset (Finset α)) : Set (Finset α)) := by
-  intro t s hts hs
-  simp only [Finset.mem_coe, Finset.mem_powerset] at hs ⊢
-  exact hts.trans hs
+    IsLowerSet ((Finset.univ.powerset : Finset (Finset α)) : Set (Finset α)) :=
+  Finset.isLowerSet_coe_powerset _
 
 theorem isLowerSet_principal (S : Finset α) :
     IsLowerSet ((Finset.univ.powerset.filter (· ⊆ S)) : Set (Finset α)) := by

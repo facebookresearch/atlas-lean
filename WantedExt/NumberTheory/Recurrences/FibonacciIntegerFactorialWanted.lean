@@ -88,7 +88,8 @@ public theorem fibEntryPoint_two : fibEntryPoint 2 = 3 := by
 $F_m$ is $5$, that is, the Fibonacci entry point of $5$ is $z(5) = 5$.
 
 Source: Florian Luca, *`F_4 F_5^6 F_7 F_8^4 F_9 F_{10}^2 F_{12}^5 F_{14} F_{15}^{-1}
-F_{18} F_{24} F_{30} = 36!`*, INTEGERS 24 (2024), Article A72, Section 2 (the exceptional index `m = 5`). -/
+F_{18} F_{24} F_{30} = 36!`*, INTEGERS 24 (2024), Article A72, Section 2 (the exceptional index `m =
+5`). -/
 public theorem fibEntryPoint_five : fibEntryPoint 5 = 5 := by
   apply le_antisymm
   · exact Nat.sInf_le ⟨by norm_num, by decide⟩
@@ -157,7 +158,8 @@ $\prod_{b \in J} \Psi_b$, counted with multiplicity, into $I$ that sends each $p
 of the form $p_l^{k_l} z(p_l)$.
 
 Source: Florian Luca, *`F_4 F_5^6 F_7 F_8^4 F_9 F_{10}^2 F_{12}^5 F_{14} F_{15}^{-1}
-F_{18} F_{24} F_{30} = 36!`*, INTEGERS 24 (2024), Article A72, Lemma 1 (`integers-2024-A72-lem-1`). -/
+F_{18} F_{24} F_{30} =
+36!`*, INTEGERS 24 (2024), Article A72, Lemma 1 (`integers-2024-A72-lem-1`). -/
 public theorem_wanted exists_injection_primeFactors_fibPrimitivePart (I J : Multiset ℕ)
     (hI : ∀ n ∈ I, 3 ≤ n ∧ n ≠ 6 ∧ n ≠ 12) (hJ : ∀ m ∈ J, 3 ≤ m ∧ m ≠ 6 ∧ m ≠ 12)
     (hIJ : ∀ n ∈ I, ∀ m ∈ J, n ≠ m)
@@ -176,7 +178,8 @@ valuation of $\Phi_m / \Psi_m$ is $1$, where $\Psi_m$ is the primitive part of t
 number $F_m$. Then $N_p < \frac{2n}{z(p)\, p\, (p - 2)}$.
 
 Source: Florian Luca, *`F_4 F_5^6 F_7 F_8^4 F_9 F_{10}^2 F_{12}^5 F_{14} F_{15}^{-1}
-F_{18} F_{24} F_{30} = 36!`*, INTEGERS 24 (2024), Article A72, Lemma 2 (`integers-2024-A72-lem-2`). -/
+F_{18} F_{24} F_{30} =
+36!`*, INTEGERS 24 (2024), Article A72, Lemma 2 (`integers-2024-A72-lem-2`). -/
 public theorem_wanted card_padicValRat_fibDelta_eq_one_lt {n : ℕ} (hn : 37 ≤ n)
     (I J : Multiset ℕ) (hI : ∀ n ∈ I, 3 ≤ n ∧ n ≠ 6 ∧ n ≠ 12)
     (hJ : ∀ m ∈ J, 3 ≤ m ∧ m ≠ 6 ∧ m ≠ 12) (hIJ : ∀ a ∈ I, ∀ b ∈ J, a ≠ b)

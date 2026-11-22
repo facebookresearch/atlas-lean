@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "origin_repository": "facebookresearch/atlas-lean",
+  "origin_revision": "8b3505eec6349259e3d6e0bb92d125cf54dcaaa0",
+  "origin_revision_status": "unpublished historical same-project development",
+  "audit_reference": "The in-tree plaintext snapshots; remote availability of the historical revision is not assumed.",
+  "license": "Meta Platforms, Inc. and affiliates; repository LICENSE",
+  "snapshot_encoding": "Original UTF-8 file bytes, including original license headers and final newline",
+  "snapshots": [
+    {
+      "snapshot": "Algebra.lean.txt",
+      "origin_path": "CSLibExt/Logics/PDL/Algebra.lean",
+      "origin_git_blob": "644f86b97fd1d8c19b482821dd102a591b9ee5b6",
+      "sha256": "9527c27ba8da034c8c37f649eb74ba64283d89ad87e95f0f980a8a77306795ec",
+      "bytes": 7914,
+      "lines": 219,
+      "reused_declarations": [
+        {
+          "origin_name": "Cslib.PDL.Algebra.star_simulation",
+          "source_lines": [192, 201],
+          "destination_module": "MathlibExt.Algebra.Order.Kleene",
+          "destination_name": "KleeneAlgebra.star_simulation",
+          "declaration_sha256": "d49a4b52195614eb22791defcce326f0a612292f4c7395099b739b6a4ccb4e24",
+          "declaration_hash_convention": "UTF-8 declaration from theorem keyword through final proof token, excluding trailing newline"
+        },
+        {
+          "origin_name": "Cslib.PDL.Algebra.test_star_absorption",
+          "source_lines": [205, 215],
+          "destination_module": "MathlibExt.Algebra.Order.Kleene",
+          "destination_name": "KleeneAlgebra.test_star_absorption",
+          "declaration_sha256": "81e2b1044f3ed772be913c13f37c5c0a18159fb252243419891ae558dcfcab38",
+          "declaration_hash_convention": "UTF-8 declaration from theorem keyword through final proof token, excluding trailing newline"
+        }
+      ],
+      "adaptation": "Complete declarations retain exact signatures and proof bodies; enclosing namespace, module imports and documentation change."
+    },
+    {
+      "snapshot": "AlgebraTests.lean.txt",
+      "origin_path": "CSLibExtTest/Logics/PDL/AlgebraTests.lean",
+      "origin_git_blob": "0fba5b391f01ca3ee75b8ef93fa164d36afb0ba2",
+      "sha256": "9f8a2f416f1af884e2d5fb414b2a50bc6f4e39a845860db571bd8bf501f4b0f1",
+      "bytes": 9396,
+      "lines": 254,
+      "reused_consumers": [
+        {
+          "description": "arbitrary-KleeneAlgebra sliding",
+          "source_lines": [228, 229],
+          "source_span_sha256": "b1a89f7622299388a456d5da52b7aff4c5ff7a2e3f73331c8fe8c92c2b008c28"
+        },
+        {
+          "description": "zero absorption boundary",
+          "source_lines": [231, 233],
+          "source_span_sha256": "5affdabe1a36761967791741b831ce22fe26344f96e82a74d9401ac47ab0b0d2"
+        },
+        {
+          "description": "identity absorption boundary",
+          "source_lines": [235, 237],
+          "source_span_sha256": "079ba858c08939711ae9ffaf058096ccd68e50a4604318f9685d9ea968d7bbd6"
+        }
+      ],
+      "consumer_hash_convention": "Complete specified source lines, including their trailing newlines",
+      "destination_module": "MathlibExtTest.Algebra.Order.Kleene",
+      "adaptation": "The three consumers change only qualified Cslib.PDL.Algebra theorem references to KleeneAlgebra; subsequent concrete tests are new consumers."
+    }
+  ],
+  "compilation_policy": "These .lean.txt snapshots are documentation only, outside the .lean Lake module globs. No compiled duplicate or PDL dependency is introduced."
+}

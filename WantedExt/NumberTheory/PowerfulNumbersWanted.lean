@@ -14,8 +14,11 @@ Numbers", *INTEGERS* 25 (2025), Paper A7, DOI 10.5281/zenodo.14679327
 (<https://math.colgate.edu/~integers/z7/z7.pdf>).
 
 All variables are integers unless positivity is stated explicitly.
-The paper's exact-divisibility notation `3 ∥ N` is spelled out as
-`3 ∣ N ∧ ¬ 9 ∣ N`.
+
+Proved in `MathlibExt.NumberTheory.PowerfulNumbers`: Lemmas 1–3
+(`MetaMathlibExt.int_sq_sub_int_sq_ne_two`,
+`MetaMathlibExt.three_exact_dvd_sq_add_self_add_one`, and
+`MetaMathlibExt.three_exact_dvd_sq_sub_self_add_one`).
 
 Lemma 4 is encoded with a nonzero `X` in the resulting elliptic-curve
 solution.  This is the conclusion produced by the paper's proof
@@ -32,39 +35,13 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.NumberTheory.Zsqrtd.Basic
+public import MathlibExt.NumberTheory.PowerfulNumbers
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.PowerfulNumbersWanted
-
-/-- **Two is not a difference of two squares.** For all integers $a$ and $b$,
-$a^2 - b^2 \neq 2$.
-
-Source: Tsz Ho Chan, "A Note on Three Consecutive Powerful Numbers",
-Lemma 1. -/
-theorem_wanted int_sq_sub_int_sq_ne_two
-    (a b : ℤ) :
-    a ^ 2 - b ^ 2 ≠ 2
-
-/-- **Exact divisibility of $x^2 + x + 1$ by $3$.** If $x$ is an integer with
-$x \equiv 1 \pmod 3$, then $3$ divides $x^2 + x + 1$ but $9$ does not.
-
-Source: Tsz Ho Chan, "A Note on Three Consecutive Powerful Numbers",
-Lemma 2. -/
-theorem_wanted three_exact_dvd_sq_add_self_add_one
-    (x : ℤ) (hx : x % 3 = 1) :
-    3 ∣ x ^ 2 + x + 1 ∧ ¬ 9 ∣ x ^ 2 + x + 1
-
-/-- **Exact divisibility of $x^2 - x + 1$ by $3$.** If $x$ is an integer with
-$x \equiv 2 \pmod 3$, then $3$ divides $x^2 - x + 1$ but $9$ does not.
-
-Source: Tsz Ho Chan, "A Note on Three Consecutive Powerful Numbers",
-Lemma 3. -/
-theorem_wanted three_exact_dvd_sq_sub_self_add_one
-    (x : ℤ) (hx : x % 3 = 2) :
-    3 ∣ x ^ 2 - x + 1 ∧ ¬ 9 ∣ x ^ 2 - x + 1
 
 /-- **Integer points on a quartic give integer points on a cubic.** Let $a$, $c$ and $e$ be
 integers with $a \neq 0$. If there are integers $x \neq 0$ and $y$ with

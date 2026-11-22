@@ -15,8 +15,7 @@ namespace MetaMathlibExt
 @[expose] public section
 
 /-- Van der Laan window predicate (concept `jis_term_73e55616c68e02e09fa349b5`,
-raw phrase rank 204 `laan sequence`, source
-`/data/users/akiezun/jis_corpus/artifacts/a6b5613ec29d7f2bcc9e-nacin5.tex`
+raw phrase rank 204 `laan sequence`, source `a6b5613ec29d7f2bcc9e-nacin5.tex`
 (SHA-256 `52008805cb731f6d0e329d46c8da38ea6055d8ced9031f7a81cf630ddd7b69a1`),
 lines 92-96).
 

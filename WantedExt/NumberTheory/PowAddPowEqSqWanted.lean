@@ -24,29 +24,24 @@ extraction's flattened `√` set-builders are read as
 Not stated (see the source audit table): Theorem 1
 (the special case `u^2 - v^q = 1` of Mihăilescu's
 theorem, already covered by
-`MathlibExt.NumberTheory.MihailescuWanted.mihailescu`)
-and Corollary 2 (false as extracted: its equation
-must have been flattened).
+`MathlibExt.NumberTheory.MihailescuWanted.mihailescu`).
+
+Proved in `MathlibExt.NumberTheory.PowAddPowEqSq`:
+Lemma 1, case `n = 2`
+(`MetaMathlibExt.two_pow_add_one_eq_sq`).
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Nat.Prime.Basic
+public import MathlibExt.NumberTheory.PowAddPowEqSq
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.PowAddPowEqSqWanted
-
-/-- **Solutions of $2^x + 1 = z^2$.** For natural numbers $x$ and $z$, $2^x + 1 = z^2$ holds if
-and only if $x = 3$ and $z = 3$.
-
-Source: Suton Tadee, "On the Diophantine Equation
-`n^x + (5p)^y = z^2`", Lemma 1. -/
-theorem_wanted two_pow_add_one_eq_sq (x z : ℕ) :
-    2 ^ x + 1 = z ^ 2 ↔ x = 3 ∧ z = 3
 
 /-- **Solutions of $n^x + 1 = z^2$ for $n \ne 2$.** Let $n \ge 1$ be a natural number with
 $n \ne 2$. For natural numbers $x$ and $z$, $n^x + 1 = z^2$ holds if and only if $x = 1$ and
@@ -99,6 +94,20 @@ Source: Suton Tadee, "On the Diophantine Equation
 theorem_wanted no_solution_mod_four_one (n p : ℕ) (hp : p.Prime)
     (hn : n % 4 = 1) (hp4 : p % 4 = 1) :
     ¬ ∃ x y z : ℕ, n ^ x + (5 * p) ^ y = z ^ 2
+
+/-- **Corollary 2** (Moonchaisook et al.): the
+Diophantine equation `(5^n)^x + (4^m p + 1)^y = z^2`
+has no nonnegative integer solution for `m ≥ 1`.
+The paper assumes `p` an odd prime and `n ≥ 1`;
+neither is needed (both bases are `≡ 1 (mod 4)`), so
+`p` and `n` are arbitrary naturals here. The
+hypothesis `m ≥ 1` is needed: `5^1 + (4^0·3 + 1)^1 = 3^2`.
+
+Source: Suton Tadee, "On the Diophantine Equation
+`n^x + (5p)^y = z^2`", Corollary 2. -/
+theorem_wanted five_pow_add_four_pow_mul_add_one_ne_sq
+    (p m n x y z : ℕ) (hm : 1 ≤ m) :
+    (5 ^ n) ^ x + (4 ^ m * p + 1) ^ y ≠ z ^ 2
 
 /-- **Solutions of $2^x + (5p)^y = z^2$ for $p \equiv 3 \pmod 4$.** Let $p$ be a prime with
 $p \equiv 3 \pmod 4$. For natural numbers $x$, $y$, $z$, $2^x + (5p)^y = z^2$ holds if and

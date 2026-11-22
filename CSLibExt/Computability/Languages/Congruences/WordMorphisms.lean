@@ -14,6 +14,7 @@ Original formalization by Zeina Migeed (@migeed-z); ported with permission.
 module
 
 public import CSLibExt.Computability.Languages.Congruences.Morphisms
+public import Cslib.Computability.Languages.LanguageHom
 
 /-!
 # Inverse images under free-monoid morphisms
@@ -21,12 +22,35 @@ public import CSLibExt.Computability.Languages.Congruences.Morphisms
 Alphabet maps are a special case of substitutions that send each source letter to an arbitrary
 target word.  Such substitutions are precisely monoid morphisms between free monoids.  Composing
 a recognizer with a substitution recognizes the inverse-image language, proving closure of finite
-syntactic monoids and regular languages under inverse morphisms.
+syntactic monoids under inverse morphisms. Regularity is derived from upstream
+`Cslib.Language.IsRegular.preimage` through `Language.Hom.ofFreeMonoidHom`.
+The image and preimage bridges identify the word-valued API with upstream
+`Language.image` and `Language.preimage`.
 -/
 
 @[expose] public section
 
 open scoped Computability
+
+namespace Language.Hom
+
+/-- A free-monoid morphism viewed as an upstream language homomorphism on lists. -/
+def ofFreeMonoidHom {Source Target : Type*}
+    (substitution : FreeMonoid Source →* FreeMonoid Target) : Hom Source Target where
+  toFun x := FreeMonoid.toList (substitution (FreeMonoid.ofList x))
+  map_nil' := congrArg FreeMonoid.toList (map_one substitution)
+  map_append' x y := congrArg FreeMonoid.toList
+    (map_mul substitution (FreeMonoid.ofList x) (FreeMonoid.ofList y))
+
+/-- The list action of the language homomorphism obtained from a free-monoid morphism. -/
+@[simp]
+theorem ofFreeMonoidHom_apply {Source Target : Type*}
+    (substitution : FreeMonoid Source →* FreeMonoid Target) (x : List Source) :
+    ofFreeMonoidHom substitution x =
+      FreeMonoid.toList (substitution (FreeMonoid.ofList x)) :=
+  rfl
+
+end Language.Hom
 
 namespace Cslib.Language
 
@@ -38,6 +62,20 @@ variable {Source : Type u} {Target : Type v}
 def wordMorphismPreimage (substitution : FreeMonoid Source →* FreeMonoid Target)
     (L : Language Target) : Language Source :=
   {x | FreeMonoid.toList (substitution (FreeMonoid.ofList x)) ∈ L}
+
+/-- The free-monoid preimage is the upstream language preimage under the same morphism.
+Use this equality to rewrite the representation explicitly; membership and identity
+simplification are provided by the word-morphism-preimage lemmas. -/
+theorem wordMorphismPreimage_eq_preimage
+    (substitution : FreeMonoid Source →* FreeMonoid Target) (L : Language Target) :
+    wordMorphismPreimage substitution L =
+      L.preimage (Language.Hom.ofFreeMonoidHom substitution) :=
+  rfl
+
+/-- The map-and-flatten image is the upstream image under the lifted letter substitution. -/
+theorem homImage_eq_image (φ : Source → List Target) (L : Language Source) :
+    (fun x => (x.map φ).flatten) '' L = L.image (Language.Hom.lift φ) :=
+  rfl
 
 @[simp]
 theorem mem_wordMorphismPreimage_iff
@@ -146,9 +184,8 @@ theorem finite_syntacticMonoid_wordMorphismPreimage
 theorem IsRegular.wordMorphismPreimage {L : Language Target} (hL : L.IsRegular)
     (substitution : FreeMonoid Source →* FreeMonoid Target) :
     (wordMorphismPreimage substitution L).IsRegular := by
-  rw [Cslib.Language.isRegular_iff_finite_syntacticMonoid] at hL ⊢
-  let _ : Finite (SyntacticMonoid L) := hL
-  exact finite_syntacticMonoid_wordMorphismPreimage substitution L
+  rw [wordMorphismPreimage_eq_preimage]
+  exact IsRegular.preimage (Language.Hom.ofFreeMonoidHom substitution) hL
 
 /-- Letterwise alphabet preimages agree with inverse images under the induced free-monoid
 morphism. -/

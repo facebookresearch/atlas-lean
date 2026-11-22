@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.LinearAlgebra.Matrix.Rank
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.Tactic.GCongr
@@ -30,10 +30,12 @@ namespace MathlibExt.Combinatorics.SimpleGraph.PerfectGraphWanted
 -/
 
 /-- Finite graph where every induced subgraph has `chromaticNumber = cliqueNum`. -/
+@[nolint unusedArguments]
 def IsPerfect {V : Type*} [Fintype V] (G : SimpleGraph V) : Prop :=
   ∀ (s : Set V), (G.induce s).chromaticNumber = ((G.induce s).cliqueNum : ℕ∞)
 
 /-- Gasparian's condition (P): every finset satisfies `card s ≤ alpha * omega`. -/
+@[nolint unusedArguments]
 def PerfIneq {V : Type*} [Fintype V] (G : SimpleGraph V) : Prop :=
   ∀ s : Finset V, s.card ≤ (G.induce (↑s : Set V)).indepNum * (G.induce (↑s : Set V)).cliqueNum
 
@@ -979,6 +981,7 @@ Source: L. Lovasz, "Normal hypergraphs and the perfect graph conjecture", Discre
 
 Proves `Wanted` entry `lovasz_weak_perfect_graph`.
 -/
+@[nolint unusedArguments]
 theorem lovasz_weak_perfect_graph
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) : IsPerfect G ↔ IsPerfect Gᶜ :=

@@ -142,15 +142,65 @@ private theorem lgv_chain_suffix {V : Type*} (E : V → V → Prop)
   rw [List.drop_left] at hdrop
   exact hdrop
 
-/-- **Lindström–Gessel–Viennot lemma**
-(https://en.wikipedia.org/wiki/Lindstr%C3%B6m%E2%80%93Gessel%E2%80%93Viennot_lemma):
-in a planar directed acyclic graph with ordered sources `A` and sinks `B`,
-the number of nonintersecting systems of vertex-list paths from `A i` to `B i`
-equals the determinant of the matrix `e` counting paths from `A i` to `B j`.
+/-- **Weight of a vertex-list path.** For edge weights `wt : V → V → R`, the weight of a path
+`v₀ v₁ ⋯ v_m`, given as the list of its vertices, is the product `∏ wt vₜ vₜ₊₁` of the weights of
+its edges; a path with one vertex (or the empty list) has weight `1` (Fomin and Zelevinsky,
+*Total positivity: tests and parametrizations*, Math. Intelligencer 22 (2000), no. 1, 23–33,
+arXiv:math/9912128v1, page 2: "the weight of a directed path in Γ is defined as the product of
+the weights of its edges"). -/
+def lgvPathWeight {V : Type*} {R : Type*} [CommRing R] (wt : V → V → R) : List V → R
+  | [] => 1
+  | [_] => 1
+  | u :: v :: l => wt u v * lgvPathWeight wt (v :: l)
 
-Proves `Wanted` entry `lindstrom_gessel_viennot`.
--/
-theorem lindstrom_gessel_viennot
+/-- **Path weights split at a vertex.** The weight of `A ++ v :: B` is the weight of `A ++ [v]`
+times the weight of `v :: B`. -/
+theorem lgvPathWeight_append_cons {V : Type*} {R : Type*} [CommRing R] (wt : V → V → R)
+    (A : List V) (v : V) (B : List V) :
+    lgvPathWeight wt (A ++ v :: B) = lgvPathWeight wt (A ++ [v]) * lgvPathWeight wt (v :: B) := by
+  induction A with
+  | nil => simp [lgvPathWeight]
+  | cons a A ih =>
+    cases A with
+    | nil => simp [lgvPathWeight]
+    | cons a' A => simp only [List.cons_append] at ih ⊢; rw [lgvPathWeight, lgvPathWeight, ih]; ring
+
+/-- Paths of unit edge weight have weight `1`. -/
+private theorem lgvPathWeight_one {V : Type*} {R : Type*} [CommRing R] :
+    ∀ p : List V, lgvPathWeight (fun _ _ => (1 : R)) p = 1
+  | [] => rfl
+  | [_] => rfl
+  | _ :: v :: l => by rw [lgvPathWeight, lgvPathWeight_one (v :: l), one_mul]
+
+/-- Two functions on `Fin n` that agree off two distinct points, and whose products at those
+two points agree, have the same product. -/
+private theorem lgv_prod_eq_of_two {R : Type*} [CommRing R] {n : ℕ} (f g : Fin n → R)
+    {i j : Fin n} (hij : j ≠ i) (hfg : ∀ k, k ≠ i → k ≠ j → f k = g k)
+    (h2 : f i * f j = g i * g j) : ∏ k, f k = ∏ k, g k := by
+  classical
+  have hj : j ∈ (Finset.univ : Finset (Fin n)).erase i := Finset.mem_erase.mpr ⟨hij, by simp⟩
+  rw [← Finset.mul_prod_erase _ f (Finset.mem_univ i), ← Finset.mul_prod_erase _ f hj,
+    ← Finset.mul_prod_erase _ g (Finset.mem_univ i), ← Finset.mul_prod_erase _ g hj,
+    ← mul_assoc, ← mul_assoc, h2]
+  congr 1
+  refine Finset.prod_congr rfl fun k hk => ?_
+  obtain ⟨hkj, hk'⟩ := Finset.mem_erase.mp hk
+  exact hfg k (Finset.mem_erase.mp hk').1 hkj
+
+/-- **Weighted Lindström–Gessel–Viennot lemma, noncrossing form.** Let `E` be an acyclic
+relation on `V` (witnessed by a rank function increasing along edges), with edge weights
+`wt : V → V → R` in a commutative ring, sources `A 0, …, A (n-1)` and sinks
+`B 0, …, B (n-1)`, and finite sets `P i j` of vertex-list paths from `A i` to `B j`. If every
+path from `A i` to `B k` meets every path from `A j` to `B l` whenever `i < j` and `l < k` (the
+planarity hypothesis), then `det (∑_{p ∈ P i j} w(p))` equals the sum of the weights
+`∏ᵢ w(Fᵢ)` of the families of pairwise vertex-disjoint paths `Fᵢ` from `A i` to `B i`
+(Fomin and Zelevinsky, *Total positivity: tests and parametrizations*, Math. Intelligencer 22
+(2000), no. 1, 23–33, arXiv:math/9912128v1, Lemma 1, case `I = J = [1, n]`, which that paper
+traces to Lindström, Karlin–McGregor and Gessel–Viennot). The noncrossing hypothesis replaces
+the planar embedding of the source, where sources and sinks lie in order on the boundary: it is
+what forces every vertex-disjoint family to connect `A i` to `B i`, so that only the identity
+permutation survives the sign-reversing involution. -/
+theorem lindstrom_gessel_viennot_weighted
     {V : Type*} [DecidableEq V]
     {R : Type*} [CommRing R]
     (n : ℕ)
@@ -162,15 +212,16 @@ theorem lindstrom_gessel_viennot
     (hPath : ∀ i j : Fin n, ∀ p : List V, p ∈ P i j ↔
       (p.head? = some (A i) ∧ p.getLast? = some (B j) ∧
         p.IsChain (fun u v => E u v)))
+    (wt : V → V → R)
     (e : Fin n → Fin n → R)
-    (he : ∀ i j : Fin n, e i j = ((P i j).card : R))
+    (he : ∀ i j : Fin n, e i j = ∑ p ∈ P i j, lgvPathWeight wt p)
     (hPlanar : ∀ i j k l : Fin n, i < j → l < k →
       ∀ p ∈ P i k, ∀ q ∈ P j l, ∃ v : V, v ∈ p ∧ v ∈ q)
     (S : Finset (Fin n → List V))
     (hSys : ∀ F : Fin n → List V, F ∈ S ↔
       ((∀ i : Fin n, F i ∈ P i i) ∧
         ∀ i j : Fin n, i ≠ j → Disjoint (F i).toFinset (F j).toFinset)) :
-    (S.card : R) = Matrix.det e := by
+    ∑ F ∈ S, ∏ i, lgvPathWeight wt (F i) = Matrix.det e := by
   classical
   have hNodup : ∀ (i j : Fin n) (p : List V), p ∈ P i j → p.Nodup := by
     intro i j p hp
@@ -205,7 +256,7 @@ theorem lindstrom_gessel_viennot
     have hx : (⇑σ : Fin n → Fin n) x = id x := congrFun heq x
     simpa using hx
   have hdet : Matrix.det e = ∑ σ : Equiv.Perm (Fin n), ((σ.sign : ℤ) : R) * ∏ i,
-      ((P i (σ i)).card : R) := by
+      ∑ p ∈ P i (σ i), lgvPathWeight wt p := by
     have h := Matrix.det_apply' (Matrix.transpose e)
     have ht : (Matrix.transpose e).det = Matrix.det e := Matrix.det_transpose e
     rw [ht] at h
@@ -217,18 +268,19 @@ theorem lindstrom_gessel_viennot
     intro i _
     have h1 : Matrix.transpose e (σ i) i = e i (σ i) := Matrix.transpose_apply _ _ _
     rw [h1, he]
-  have hsum : (∑ c : (Σ σ : Equiv.Perm (Fin n), ∀ i, ↥(P i (σ i))), (((c.1.sign : ℤ) : R))) =
-      ∑ σ : Equiv.Perm (Fin n), ((σ.sign : ℤ) : R) * ∏ i, ((P i (σ i)).card : R) := by
+  set W : (Σ σ : Equiv.Perm (Fin n), ∀ i, ↥(P i (σ i))) → R :=
+    fun c => ((c.1.sign : ℤ) : R) * ∏ k, lgvPathWeight wt (c.2 k).1 with hW
+  have hsum : (∑ c : (Σ σ : Equiv.Perm (Fin n), ∀ i, ↥(P i (σ i))), W c) =
+      ∑ σ : Equiv.Perm (Fin n), ((σ.sign : ℤ) : R) * ∏ i, ∑ p ∈ P i (σ i), lgvPathWeight wt p := by
     rw [Fintype.sum_sigma]
     apply Finset.sum_congr rfl
     intro σ _
-    have h1 : Fintype.card (∀ i, ↥(P i (σ i))) = ∏ i, Fintype.card ↥(P i (σ i)) :=
-      Fintype.card_pi
-    simp only [Fintype.card_coe] at h1
-    have h2 : ((Fintype.card (∀ i, ↥(P i (σ i))) : ℕ) : R) = ∏ i, ((P i (σ i)).card : R) := by
-      rw [h1, Nat.cast_prod]
-    simp only [Finset.sum_const, nsmul_eq_mul]
-    rw [Finset.card_univ, h2, mul_comm]
+    simp only [hW, ← Finset.mul_sum]
+    congr 1
+    have hco : ∀ i, ∑ p ∈ P i (σ i), lgvPathWeight wt p =
+        ∑ p : ↥(P i (σ i)), lgvPathWeight wt p.1 := fun i => (Finset.sum_coe_sort _ _).symm
+    simp_rw [hco]
+    exact (Fintype.prod_sum (fun i (p : ↥(P i (σ i))) => lgvPathWeight wt p.1)).symm
   set Coll : ((Σ σ : Equiv.Perm (Fin n), ∀ i, ↥(P i (σ i))) → Prop) :=
     fun c => ∃ i j, i ≠ j ∧ ∃ v, v ∈ (c.2 i).1 ∧ v ∈ (c.2 j).1 with hColl
   have hgood_perm : ∀ c : (Σ σ : Equiv.Perm (Fin n), ∀ i, ↥(P i (σ i))), ¬ Coll c → c.1 = 1 := by
@@ -239,68 +291,58 @@ theorem lindstrom_gessel_viennot
     have hpj : (c.2 j).1 ∈ P j (c.1 j) := (c.2 j).2
     obtain ⟨v, hvi, hvj⟩ := hPlanar i j (c.1 i) (c.1 j) hij hji _ hpi _ hpj
     exact hc ⟨i, j, ne_of_lt hij, v, hvi, hvj⟩
-  have hgood_sum : (∑ c ∈ Finset.univ.filter (fun c => ¬ Coll c), (((c.1.sign : ℤ) : R))) =
-      (S.card : R) := by
-    have hweight : ∀ c ∈ Finset.univ.filter
-        (fun c : (Σ σ : Equiv.Perm (Fin n), ∀ i, ↥(P i (σ i))) => ¬ Coll c),
-        (((c.1.sign : ℤ) : R)) = (1 : R) := by
-      intro c hc
-      have hmem : ¬ Coll c := (Finset.mem_filter.mp hc).2
-      have h1 : c.1 = 1 := hgood_perm c hmem
-      rw [h1]
-      simp
-    rw [Finset.sum_congr rfl hweight]
-    simp only [Finset.sum_const, nsmul_eq_mul, mul_one]
-    have hcard : (Finset.univ.filter
-        (fun c : (Σ σ : Equiv.Perm (Fin n), ∀ i, ↥(P i (σ i))) => ¬ Coll c)).card = S.card := by
-      apply Finset.card_bij (fun c _ => (fun i => (c.2 i).1))
-      · intro c hc
-        obtain ⟨σ, F⟩ := c
-        have hnc : ¬ Coll ⟨σ, F⟩ := (Finset.mem_filter.mp hc).2
-        have hperm : σ = 1 := hgood_perm ⟨σ, F⟩ hnc
-        subst hperm
-        rw [hSys]
+  have hgood_sum : (∑ c ∈ Finset.univ.filter (fun c => ¬ Coll c), W c) =
+      ∑ F ∈ S, ∏ i, lgvPathWeight wt (F i) := by
+    apply Finset.sum_bij (fun c _ => (fun i => (c.2 i).1))
+    · intro c hc
+      obtain ⟨σ, F⟩ := c
+      have hnc : ¬ Coll ⟨σ, F⟩ := (Finset.mem_filter.mp hc).2
+      have hperm : σ = 1 := hgood_perm ⟨σ, F⟩ hnc
+      subst hperm
+      rw [hSys]
+      constructor
+      · intro i
+        have hi : (F i).1 ∈ P i ((1 : Equiv.Perm (Fin n)) i) := (F i).2
+        simpa using hi
+      · intro i j hij
+        rw [Finset.disjoint_left]
+        intro a ha hja
+        have ha' : a ∈ (F i).1 := List.mem_toFinset.mp ha
+        have hj' : a ∈ (F j).1 := List.mem_toFinset.mp hja
+        exact hnc ⟨i, j, hij, a, ha', hj'⟩
+    · intro c1 hc1 c2 hc2 heq
+      have h1 : c1.1 = 1 := hgood_perm c1 (Finset.mem_filter.mp hc1).2
+      have h2 : c2.1 = 1 := hgood_perm c2 (Finset.mem_filter.mp hc2).2
+      obtain ⟨σ1, F1⟩ := c1
+      obtain ⟨σ2, F2⟩ := c2
+      simp only at h1 h2
+      subst h1
+      subst h2
+      have hfun : F1 = F2 := by
+        funext i
+        have hi := congrFun heq i
+        exact Subtype.ext hi
+      rw [hfun]
+    · intro F hF
+      have hFs := (hSys F).mp hF
+      let c : (Σ σ : Equiv.Perm (Fin n), ∀ i, ↥(P i (σ i))) :=
+        ⟨1, fun i => ⟨F i, by simpa using hFs.1 i⟩⟩
+      have hcgood : c ∈ Finset.univ.filter
+          (fun c : (Σ σ : Equiv.Perm (Fin n), ∀ i, ↥(P i (σ i))) => ¬ Coll c) := by
+        rw [Finset.mem_filter]
         constructor
-        · intro i
-          have hi : (F i).1 ∈ P i ((1 : Equiv.Perm (Fin n)) i) := (F i).2
-          simpa using hi
-        · intro i j hij
-          rw [Finset.disjoint_left]
-          intro a ha hja
-          have ha' : a ∈ (F i).1 := List.mem_toFinset.mp ha
-          have hj' : a ∈ (F j).1 := List.mem_toFinset.mp hja
-          exact hnc ⟨i, j, hij, a, ha', hj'⟩
-      · intro c1 hc1 c2 hc2 heq
-        have h1 : c1.1 = 1 := hgood_perm c1 (Finset.mem_filter.mp hc1).2
-        have h2 : c2.1 = 1 := hgood_perm c2 (Finset.mem_filter.mp hc2).2
-        obtain ⟨σ1, F1⟩ := c1
-        obtain ⟨σ2, F2⟩ := c2
-        simp only at h1 h2
-        subst h1
-        subst h2
-        have hfun : F1 = F2 := by
-          funext i
-          have hi := congrFun heq i
-          exact Subtype.ext hi
-        rw [hfun]
-      · intro F hF
-        have hFs := (hSys F).mp hF
-        let c : (Σ σ : Equiv.Perm (Fin n), ∀ i, ↥(P i (σ i))) :=
-          ⟨1, fun i => ⟨F i, by simpa using hFs.1 i⟩⟩
-        have hcgood : c ∈ Finset.univ.filter
-            (fun c : (Σ σ : Equiv.Perm (Fin n), ∀ i, ↥(P i (σ i))) => ¬ Coll c) := by
-          rw [Finset.mem_filter]
-          constructor
-          · exact Finset.mem_univ c
-          · intro hcol
-            obtain ⟨i, j, hij, v, hvi, hvj⟩ := hcol
-            have hd := hFs.2 i j hij
-            rw [Finset.disjoint_left] at hd
-            have hvi' : v ∈ (F i).toFinset := List.mem_toFinset.mpr hvi
-            have hvj' : v ∈ (F j).toFinset := List.mem_toFinset.mpr hvj
-            exact hd hvi' hvj'
-        exact ⟨c, hcgood, rfl⟩
-    rw [hcard]
+        · exact Finset.mem_univ c
+        · intro hcol
+          obtain ⟨i, j, hij, v, hvi, hvj⟩ := hcol
+          have hd := hFs.2 i j hij
+          rw [Finset.disjoint_left] at hd
+          have hvi' : v ∈ (F i).toFinset := List.mem_toFinset.mpr hvi
+          have hvj' : v ∈ (F j).toFinset := List.mem_toFinset.mpr hvj
+          exact hd hvi' hvj'
+      exact ⟨c, hcgood, rfl⟩
+    · intro c hc
+      have h1 : c.1 = 1 := hgood_perm c (Finset.mem_filter.mp hc).2
+      simp [hW, h1]
   -- Colliding configurations cancel by the tail-swap involution.
   -- Canonical collision: minimal rank r* (Finset.min' on the finite Rset of ranks
   -- of shared vertices), then minimal i* (Finset.min'), then minimal j*
@@ -311,7 +353,7 @@ theorem lindstrom_gessel_viennot
   -- increase so pre has rank < r* and suf has rank > r*, hence the canonical
   -- quadruple is preserved and the map is a fixed-point-free involution, as
   -- verified by the minimal-rank stability argument below.
-  have hbad_sum : (∑ c ∈ Finset.univ.filter (fun c => Coll c), (((c.1.sign : ℤ) : R))) = 0 := by
+  have hbad_sum : (∑ c ∈ Finset.univ.filter (fun c => Coll c), W c) = 0 := by
     classical
     have hcanon : ∀ c : (Σ σ : Equiv.Perm (Fin n), ∀ i, ↥(P i (σ i))), Coll c →
         ∃ (r : ℕ) (i j : Fin n) (v : V) (Ai Bi Aj Bj : List V),
@@ -734,15 +776,27 @@ theorem lindstrom_gessel_viennot
       · have hgt := hrankBj c hc _ hBj
         rw [hrw'] at hgt
         exact absurd hgt (lt_irrefl _)
-    have hsign : ∀ c (hc : Coll c),
-        ((c.1.sign : ℤ) : R) + (((hswap c hc).1.sign : ℤ) : R) = 0 := by
+    have hsign : ∀ c (hc : Coll c), W c + W (hswap c hc) = 0 := by
       intro c hc
       have hss : (hswap c hc).1.sign = c.1.sign * -1 := by
         rw [hfst c hc, Equiv.Perm.sign_mul,
           Equiv.Perm.sign_swap (Ne.symm (hji c hc))]
       have hcast : (((hswap c hc).1.sign : ℤ) : R) = -(((c.1.sign : ℤ) : R)) := by
         rw [hss]; push_cast; ring
-      rw [hcast, add_neg_cancel]
+      have hwt : ∏ k, lgvPathWeight wt ((hswap c hc).2 k).1 =
+          ∏ k, lgvPathWeight wt (c.2 k).1 := by
+        apply lgv_prod_eq_of_two _ _ (hji c hc)
+        · intro k hk1 hk2
+          rw [hsnd_o c hc k hk1 hk2]
+        · rw [hsnd_i c hc _ rfl, hsnd_j c hc _ rfl, hsplit_i c hc, hsplit_j c hc]
+          rw [lgvPathWeight_append_cons wt (Ai c hc) (v c hc) (Bj c hc),
+            lgvPathWeight_append_cons wt (Aj c hc) (v c hc) (Bi c hc),
+            lgvPathWeight_append_cons wt (Ai c hc) (v c hc) (Bi c hc),
+            lgvPathWeight_append_cons wt (Aj c hc) (v c hc) (Bj c hc)]
+          ring
+      simp only [hW]
+      rw [hwt, hcast]
+      ring
     have hne : ∀ c (hc : Coll c), hswap c hc ≠ c := by
       intro c hc hcon
       have hσ : (hswap c hc).1 = c.1 := congrArg Sigma.fst hcon
@@ -828,17 +882,54 @@ theorem lindstrom_gessel_viennot
       exact congrArg (Sigma.mk a.1) hcon
   have hsplit := Finset.sum_filter_add_sum_filter_not
     (Finset.univ : Finset (Σ σ : Equiv.Perm (Fin n), ∀ i, ↥(P i (σ i)))) Coll
-    (fun c => (((c.1.sign : ℤ) : R)))
-  have htotal : (∑ c : (Σ σ : Equiv.Perm (Fin n), ∀ i, ↥(P i (σ i))), (((c.1.sign : ℤ) : R))) =
-      (∑ c ∈ Finset.univ.filter (fun c => Coll c), (((c.1.sign : ℤ) : R))) +
-      (∑ c ∈ Finset.univ.filter (fun c => ¬ Coll c), (((c.1.sign : ℤ) : R))) := by
+    W
+  have htotal : (∑ c : (Σ σ : Equiv.Perm (Fin n), ∀ i, ↥(P i (σ i))), W c) =
+      (∑ c ∈ Finset.univ.filter (fun c => Coll c), W c) +
+      (∑ c ∈ Finset.univ.filter (fun c => ¬ Coll c), W c) := by
     exact hsplit.symm
   have hdet_total : Matrix.det e =
-      (∑ c ∈ Finset.univ.filter (fun c => Coll c), (((c.1.sign : ℤ) : R))) +
-      (∑ c ∈ Finset.univ.filter (fun c => ¬ Coll c), (((c.1.sign : ℤ) : R))) :=
+      (∑ c ∈ Finset.univ.filter (fun c => Coll c), W c) +
+      (∑ c ∈ Finset.univ.filter (fun c => ¬ Coll c), W c) :=
     (hdet.trans hsum.symm).trans htotal
   rw [hbad_sum, hgood_sum, zero_add] at hdet_total
   exact hdet_total.symm
+
+/-- **Lindström–Gessel–Viennot lemma**: in a directed acyclic graph with ordered sources `A`
+and sinks `B` satisfying the noncrossing (planarity) hypothesis, the number of nonintersecting
+systems of vertex-list paths from `A i` to `B i` equals the determinant of the matrix `e`
+counting paths from `A i` to `B j`. This is the unit-weight case of
+`lindstrom_gessel_viennot_weighted` (Fomin and Zelevinsky, *Total positivity: tests and
+parametrizations*, Math. Intelligencer 22 (2000), no. 1, 23–33, arXiv:math/9912128v1, Lemma 1,
+case `I = J = [1, n]`, all weights `1`; secondary source:
+https://en.wikipedia.org/wiki/Lindstr%C3%B6m%E2%80%93Gessel%E2%80%93Viennot_lemma).
+
+Proves `Wanted` entry `lindstrom_gessel_viennot`.
+-/
+theorem lindstrom_gessel_viennot
+    {V : Type*} [DecidableEq V]
+    {R : Type*} [CommRing R]
+    (n : ℕ)
+    (E : V → V → Prop)
+    (A B : Fin n → V)
+    (rank : V → ℕ)
+    (hAcyc : ∀ u v : V, E u v → rank u < rank v)
+    (P : Fin n → Fin n → Finset (List V))
+    (hPath : ∀ i j : Fin n, ∀ p : List V, p ∈ P i j ↔
+      (p.head? = some (A i) ∧ p.getLast? = some (B j) ∧
+        p.IsChain (fun u v => E u v)))
+    (e : Fin n → Fin n → R)
+    (he : ∀ i j : Fin n, e i j = ((P i j).card : R))
+    (hPlanar : ∀ i j k l : Fin n, i < j → l < k →
+      ∀ p ∈ P i k, ∀ q ∈ P j l, ∃ v : V, v ∈ p ∧ v ∈ q)
+    (S : Finset (Fin n → List V))
+    (hSys : ∀ F : Fin n → List V, F ∈ S ↔
+      ((∀ i : Fin n, F i ∈ P i i) ∧
+        ∀ i j : Fin n, i ≠ j → Disjoint (F i).toFinset (F j).toFinset)) :
+    (S.card : R) = Matrix.det e := by
+  classical
+  have h := lindstrom_gessel_viennot_weighted n E A B rank hAcyc P hPath (fun _ _ => (1 : R)) e
+    (fun i j => by simp [he, lgvPathWeight_one]) hPlanar S hSys
+  simpa [lgvPathWeight_one] using h
 
 end MetaMathlibExt
 end

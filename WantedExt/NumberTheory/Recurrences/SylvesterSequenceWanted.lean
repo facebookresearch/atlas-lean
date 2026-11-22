@@ -50,7 +50,8 @@ abbrev sylvesterNumber (n : ℕ) : ℕ :=
 sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For all natural numbers $k$, $m$ and $n$
 with $k \ge 1$, $m \ge k$ and $n \ge k$, the integer $(S_k - 1)^2$ divides $S_n - S_m$.
 
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, divisibility (4). -/
+Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, divisibility
+(4). -/
 theorem_wanted sylvester_sub_dvd
     (k m n : ℕ) (hk : 1 ≤ k) (hm : k ≤ m) (hn : k ≤ n) :
     ((sylvesterNumber k : ℤ) - 1) ^ 2 ∣
@@ -84,7 +85,8 @@ theorem_wanted sylvester_modEq_forty_three_mod_1764
 sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For all natural numbers $k$ and $n$ with
 $1 \le k \le n$, the integer $S_k^2 + 1$ divides the integer $S_n - (-1)^{n-k} S_k$.
 
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 2, divisibility (8). -/
+Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 2, divisibility
+(8). -/
 theorem_wanted sylvester_sq_add_one_dvd_sub
     (k n : ℕ) (hk : 1 ≤ k) (hn : k ≤ n) :
     (sylvesterNumber k : ℤ) ^ 2 + 1 ∣
@@ -95,7 +97,8 @@ theorem_wanted sylvester_sq_add_one_dvd_sub
 sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $i \ge 1$,
 $S_{2i} \equiv 7 \pmod{10}$.
 
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 2, congruence (9), even indices. -/
+Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 2, congruence (9),
+even indices. -/
 theorem_wanted sylvester_even_index_mod_ten
     (i : ℕ) (hi : 1 ≤ i) :
     sylvesterNumber (2 * i) % 10 = 7
@@ -104,7 +107,8 @@ theorem_wanted sylvester_even_index_mod_ten
 sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $i \ge 1$,
 $S_{2i+1} \equiv 3 \pmod{10}$.
 
-Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 2, congruence (9), odd indices. -/
+Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 2, congruence (9),
+odd indices. -/
 theorem_wanted sylvester_odd_index_mod_ten
     (i : ℕ) (hi : 1 ≤ i) :
     sylvesterNumber (2 * i + 1) % 10 = 3
@@ -168,7 +172,9 @@ theorem_wanted sylvester_ne_pow_add_or_sub_one
 conditions $n \ge 3$, $x \ge 1$, $y \ge 1$, $\gcd(x, y) = 1$ and $x^2 + 3 = 4y^n$ hold if and only
 if $n \ge 3$ and either $x = y = 1$ or $(n, x, y) = (3, 37, 7)$ (Luca–Tengely–Togbé).
 
-Source: F. Luca, Sz. Tengely, and A. Togbé, "On the Diophantine equation x² + C = 4yⁿ", Theorem 1.1, as quoted in Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Theorem 1, equation with C = 3. -/
+Source: F. Luca, Sz. Tengely, and A. Togbé, "On the Diophantine equation x² + C = 4yⁿ",
+Theorem 1.1, as quoted in Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Theorem 1,
+equation with C = 3. -/
 theorem_wanted lebesgue_nagell_three_solutions_iff
     (n x y : ℕ) :
     (3 ≤ n ∧ 1 ≤ x ∧ 1 ≤ y ∧ Nat.Coprime x y ∧
@@ -179,7 +185,9 @@ theorem_wanted lebesgue_nagell_three_solutions_iff
 conditions $n \ge 3$, $x \ge 1$, $y \ge 1$, $\gcd(x, y) = 1$ and $x^2 + 7 = 4y^n$ hold if and only
 if $(n, x, y)$ is $(3, 5, 2)$, $(5, 11, 2)$ or $(13, 181, 2)$ (Luca–Tengely–Togbé).
 
-Source: F. Luca, Sz. Tengely, and A. Togbé, "On the Diophantine equation x² + C = 4yⁿ", Theorem 1.1, as quoted in Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Theorem 1, equation with C = 7. -/
+Source: F. Luca, Sz. Tengely, and A. Togbé, "On the Diophantine equation x² + C = 4yⁿ",
+Theorem 1.1, as quoted in Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Theorem 1,
+equation with C = 7. -/
 theorem_wanted lebesgue_nagell_seven_solutions_iff
     (n x y : ℕ) :
     (3 ≤ n ∧ 1 ≤ x ∧ 1 ≤ y ∧ Nat.Coprime x y ∧
