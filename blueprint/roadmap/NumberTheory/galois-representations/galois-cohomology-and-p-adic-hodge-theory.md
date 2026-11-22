@@ -58,8 +58,8 @@ A good expansion replaces this node by definition pages and statements in the fo
 each citing the source and locator below.
 
 1. Local Galois cohomology: finiteness and cohomological dimension 2 of $G_K$, local duality, the
-   local Euler characteristic formula, and unramified cohomology. It builds on the group cohomology
-   pages under [Group cohomology](../../RepresentationTheory/group-cohomology/README.md) and on
+   local Euler characteristic formula, and unramified cohomology. Related pages are under
+   [Group cohomology](../../RepresentationTheory/group-cohomology/README.md) and
    [p-adic numbers and local fields](../p-adic-numbers/README.md).
 2. Global Galois cohomology: the groups $G_S$, the Poitou–Tate sequence, the global Euler
    characteristic formula, collections of local conditions and Wiles's formula, which use step 1.
@@ -120,7 +120,7 @@ each citing the source and locator below.
   (<https://leanprover-community.github.io/blog/posts/riemann-hypothesis/>); independent checks of
   its five main theorems by A. Sutherland (<https://math.mit.edu/~drew/grh/>). Source mirror:
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>.
-  The library has no licence, so none of its Lean comes into ATLAS. Related formal statements in Alpöge's proof, often in specialised forms,
+  Related formal statements in Alpöge's proof, often in specialised forms,
   include `Formalism.GaloisCohomology.LocalTateDualityK`,
   `GlobalTheory.Published.PoitouTateNormalised` (the nine-term sequence for finite sets of places,
   assuming $\ell \ne 2$ or $F$ totally complex), `ReciprocityTheory.Gal.GreenbergWiles`,

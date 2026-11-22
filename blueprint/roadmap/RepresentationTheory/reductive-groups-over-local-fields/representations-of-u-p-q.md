@@ -63,7 +63,7 @@ Smooth representations of $p$-adic groups and the Weil representation are outsid
 ## Expansion
 
 A good expansion replaces this node by definition pages and statements in the following order,
-each citing the source and locator below. It builds on
+each citing the source and locator below. Related pages are under
 [Representations of topological and Lie groups](../lie-and-topological-representations/README.md).
 
 1. Admissible representations, smooth and $K$-finite vectors, the Dixmier–Malliavin theorem, and
@@ -114,7 +114,7 @@ each citing the source and locator below. It builds on
   (<https://leanprover-community.github.io/blog/posts/riemann-hypothesis/>); independent checks of
   its five main theorems by A. Sutherland (<https://math.mit.edu/~drew/grh/>). Source mirror:
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>.
-  The library has no licence, so none of its Lean comes into ATLAS. Related formal statements in Alpöge's proof, often in specialised forms,
+  Related formal statements in Alpöge's proof, often in specialised forms,
   include `GlobalTheory.Published.KFiniteVectorsUnitary`,
   `GlobalTheory.Published.HarishChandraModules`, `GlobalTheory.Published.GKGlobalisation`,
   `GlobalTheory.Published.CasselmanWallach`, `GlobalTheory.Published.DixmierMalliavinFactorisation`,
