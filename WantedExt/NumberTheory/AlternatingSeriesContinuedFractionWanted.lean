@@ -21,19 +21,20 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Alternating series whose continued fractions follow a two-step partial-quotient pattern (the
-quotients follow the pattern; they need not repeat): let `(x_i)` be positive integers with
-`x_0 = 1` and let `x = ∑_{i ≥ 0} (-1)^i / x_i` be irrational with continued fraction
-`[0; a_1, a_2, …]` and convergents `p_n / q_n`. If `∑_{i=0}^{n} (-1)^i / x_i = p_{n+1} / q_{n+1}`,
-`x_{2n+1} ∣ x_{2n+2}` and
-`x_{2n+3} = (x_{2n+2}/x_{2n+1} · x_{2n}/x_{2n-1} ⋯ x_2/x_1)^2 + x_{2n+2}` for all `n ≥ 0`, then
-(i) `x_n = q_n q_{n+1}`, (ii) `q_{2n+1} ∣ a_{2n+3}`, and (iii) `a_{2n+2} = 1` for `n ≥ 1`.
+/-- **Alternating series with a two-step continued fraction pattern.** Let $(u_i)_{i \ge 0}$ be
+positive integers with $u_0 = 1$, and let $x$ be an irrational real number with
+$\sum_{i \ge 0} (-1)^i / u_i = x$. Write $x = [a_0; a_1, a_2, \dots]$ for its continued fraction
+expansion and $p_n / q_n = [a_0; a_1, \dots, a_n]$ for its convergents, with $q_0 = 1$ and
+$q_1 = a_1$. Suppose that for every $n \ge 0$ we have
+$\sum_{i=0}^{n} (-1)^i / u_i = p_{n+1} / q_{n+1}$, $u_{2n+1} \mid u_{2n+2}$ and
+$u_{2n+3} = \bigl(\prod_{j=0}^{n} u_{2j+2} / u_{2j+1}\bigr)^2 + u_{2n+2}$. Then
+(i) $u_n = q_n q_{n+1}$ for every $n \ge 0$, (ii) for every $n \ge 0$ there is a natural number
+$m$ with $a_{2n+3} = m \, q_{2n+1}$, and (iii) $a_{2n+2} = 1$ for every $n \ge 1$.
 
-`q_n` is `(GenContFract.of x).dens n`, `p_n` is `nums n`, and `a_k` is `partDens.get? (k - 1)`.
-Deviation: part (iii) is stated for `n ≥ 1`. At `n = 0` it fails: the continued fraction
-`[0; 1, 2, 1, 1, 4, 1, 32, 1, 1280, …]` (continued by `a_{2n+4} = 1`, `a_{2n+3} = q_{2n+1}`) with
-`x_n = q_n q_{n+1}` (`q = 1, 1, 3, 4, 7, 32, 39, 1280, …`) satisfies every hypothesis and has
-`a_2 = 2`.
+Part (iii) is stated only for $n \ge 1$, because it can fail at $n = 0$: the continued fraction
+$[0; 1, 2, 1, 1, 4, 1, 32, 1, 1280, \dots]$, continued by $a_{2n+4} = 1$ and
+$a_{2n+3} = q_{2n+1}$, with $u_n = q_n q_{n+1}$ (here $q = 1, 1, 3, 4, 7, 32, 39, 1280, \dots$)
+satisfies every hypothesis and has $a_2 = 2$.
 
 Source: Khalil Ayadi, Chiheb Ben Bechir, and Maher Saadaoui, *Continued Fractions with
 Predictable Patterns and Transcendental Numbers*, Journal of Integer Sequences 28 (2025),
@@ -51,21 +52,23 @@ public theorem_wanted alternatingSeries_contFract_twoStepPattern (x : ℝ) (hirr
         some ((GenContFract.of x).dens (2 * n + 1) * m)) ∧
       ∀ n : ℕ, 1 ≤ n → (GenContFract.of x).partDens.get? (2 * n + 1) = some 1
 
-/-- Alternating series whose continued fractions follow a three-step partial-quotient pattern:
-let `(x_i)` be positive integers with `x_0 = 1` and let
-`x = ∑_{i ≥ 0} (-1)^i / x_i` be irrational with continued fraction
-`[0; a_1, a_2, …]` and convergents `p_n / q_n`. If `∑_{i=0}^{n} (-1)^i / x_i = p_{n+1} / q_{n+1}`,
-`x_{3n+2} ∣ x_{3n+3}`,
-`x_{3n+2} - x_{3n+1} = (x_{3n+1}/x_{3n} · x_{3n-1}/x_{3n-2} · x_{3n-3}/x_{3n-4} ⋯)^2` and
-`x_{3n+4} - x_{3n+3} = (x_{3n+3}/x_{3n+2})^2 (x_{3n+2} - x_{3n+1})` for all `n ≥ 0`, then
-(i) `x_n = q_n q_{n+1}`, (ii) `q_{3n+2} ∣ a_{3n+4}`, (iii) `a_{3n+3} = 1`, and `a_{3n+2} = 1` for
-`n ≥ 1`.
+/-- **Alternating series with a three-step continued fraction pattern.** Let $(u_i)_{i \ge 0}$
+be positive integers with $u_0 = 1$, and let $x$ be an irrational real number with
+$\sum_{i \ge 0} (-1)^i / u_i = x$. Write $x = [a_0; a_1, a_2, \dots]$ for its continued fraction
+expansion and $p_n / q_n = [a_0; a_1, \dots, a_n]$ for its convergents, with $q_0 = 1$ and
+$q_1 = a_1$. Suppose that for every $n \ge 0$ we have
+$\sum_{i=0}^{n} (-1)^i / u_i = p_{n+1} / q_{n+1}$, $u_{3n+2} \mid u_{3n+3}$,
+$u_{3n+2} - u_{3n+1} = \bigl(\prod_{j=0}^{\lfloor 3n/2 \rfloor} u_{3n-2j+1} / u_{3n-2j}\bigr)^2$
+and $u_{3n+4} - u_{3n+3} = (u_{3n+3} / u_{3n+2})^2 (u_{3n+2} - u_{3n+1})$. Then
+(i) $u_n = q_n q_{n+1}$ for every $n \ge 0$, (ii) for every $n \ge 0$ there is a natural number
+$m$ with $a_{3n+4} = m \, q_{3n+2}$, and (iii) $a_{3n+3} = 1$ for every $n \ge 0$ and
+$a_{3n+2} = 1$ for every $n \ge 1$.
 
-The product is read as `∏ x_{k+1}/x_k` over `k = 3n, 3n - 2, 3n - 4, …, k ≥ 0` (it ends with
-`x_2/x_1` for odd `n` as printed, and with `x_1/x_0` for even `n`). `q_n`, `p_n`, `a_k` are as in
-`alternatingSeries_contFract_twoStepPattern`. Deviation: `a_{3n+2} = 1` is stated for `n ≥ 1`. At
-`n = 0` it fails: `[0; 1, 2, 1, 3, 1, 1, 19, 1, 1, 699, …]` with `x_n = q_n q_{n+1}` satisfies every
-hypothesis and has `a_2 = 2`.
+The product runs over the quotients $u_{k+1} / u_k$ for $k = 3n, 3n - 2, 3n - 4, \dots$, ending
+at $k = 1$ when $n$ is odd and at $k = 0$ when $n$ is even. The condition $a_{3n+2} = 1$ is
+stated only for $n \ge 1$, because it can fail at $n = 0$: the continued fraction
+$[0; 1, 2, 1, 3, 1, 1, 19, 1, 1, 699, \dots]$ with $u_n = q_n q_{n+1}$ satisfies every hypothesis
+and has $a_2 = 2$.
 
 Source: Khalil Ayadi, Chiheb Ben Bechir, and Maher Saadaoui, *Continued Fractions with
 Predictable Patterns and Transcendental Numbers*, Journal of Integer Sequences 28 (2025),
@@ -86,10 +89,13 @@ public theorem_wanted alternatingSeries_contFract_threeStepPattern (x : ℝ) (hi
       (∀ n : ℕ, (GenContFract.of x).partDens.get? (3 * n + 2) = some 1) ∧
       ∀ n : ℕ, 1 ≤ n → (GenContFract.of x).partDens.get? (3 * n + 1) = some 1
 
-/-- The convergent denominators `q_n` of the two-step pattern
-`[0; ω₀, 1, ω₁ q₁^β, 1, ω₂ q₃^β, 1, …]` (display (e2)): `q₀ = 1`, `q₁ = ω₀`,
-`q_{2n+2} = q_{2n+1} + q_{2n}` and `q_{2n+3} = ω_{n+1} q_{2n+1}^β q_{2n+2} + q_{2n+1}`
-(display (e22)).
+/-- **Convergent denominators of the two-step pattern.** For a natural number $\beta$ and a
+sequence $(\omega_n)_{n \ge 0}$ of natural numbers, define natural numbers $q_n$ by $q_0 = 1$,
+$q_1 = \omega_0$, and for every $n \ge 0$, $q_{2n+2} = q_{2n+1} + q_{2n}$ and
+$q_{2n+3} = \omega_{n+1} q_{2n+1}^\beta q_{2n+2} + q_{2n+1}$.
+
+When the $\omega_n$ are positive, these are the convergent denominators of the continued fraction
+$[0; \omega_0, 1, \omega_1 q_1^\beta, 1, \omega_2 q_3^\beta, 1, \dots]$.
 
 Source: Khalil Ayadi, Chiheb Ben Bechir, and Maher Saadaoui, *Continued Fractions with
 Predictable Patterns and Transcendental Numbers*, Journal of Integer Sequences 28 (2025),
@@ -101,8 +107,9 @@ public def twoStepPatternDen (β : ℕ) (ω : ℕ → ℕ) : ℕ → ℕ
       else ω (n / 2 + 1) * twoStepPatternDen β ω n ^ β * twoStepPatternDen β ω (n + 1) +
         twoStepPatternDen β ω n
 
-/-- Small values: for `ω ≡ 1` and `β = 1` (the paper's first example),
-`q = 1, 1, 2, 3, 5, 18, 23, 432, …`.
+/-- **Small values of the two-step pattern denominators.** For $\beta = 1$ and $\omega_n = 1$ for
+all $n$, the convergent denominators $q_0, \dots, q_7$ of the two-step pattern are
+$1, 1, 2, 3, 5, 18, 23, 432$ (the paper's first example).
 
 Source: Khalil Ayadi, Chiheb Ben Bechir, and Maher Saadaoui, *Continued Fractions with
 Predictable Patterns and Transcendental Numbers*, Journal of Integer Sequences 28 (2025),
@@ -111,10 +118,13 @@ public theorem twoStepPatternDen_one_one :
     (List.range 8).map (twoStepPatternDen 1 fun _ => 1) = [1, 1, 2, 3, 5, 18, 23, 432] := by
   decide
 
-/-- The convergent denominators `q_n` of the three-step pattern
-`[0; ω₀, 1, 1, ω₁ q₂^β, 1, 1, ω₂ q₅^β, …]` (display (e3)): `q₀ = 1`, `q₁ = ω₀`,
-`q_{3n+2} = q_{3n+1} + q_{3n}`, `q_{3n+3} = q_{3n+2} + q_{3n+1}` and
-`q_{3n+4} = ω_{n+1} q_{3n+3} q_{3n+2}^β + q_{3n+2}` (display (e33)).
+/-- **Convergent denominators of the three-step pattern.** For a natural number $\beta$ and a
+sequence $(\omega_n)_{n \ge 0}$ of natural numbers, define natural numbers $q_n$ by $q_0 = 1$,
+$q_1 = \omega_0$, and for every $n \ge 0$, $q_{3n+2} = q_{3n+1} + q_{3n}$,
+$q_{3n+3} = q_{3n+2} + q_{3n+1}$ and $q_{3n+4} = \omega_{n+1} q_{3n+3} q_{3n+2}^\beta + q_{3n+2}$.
+
+When the $\omega_n$ are positive, these are the convergent denominators of the continued fraction
+$[0; \omega_0, 1, 1, \omega_1 q_2^\beta, 1, 1, \omega_2 q_5^\beta, \dots]$.
 
 Source: Khalil Ayadi, Chiheb Ben Bechir, and Maher Saadaoui, *Continued Fractions with
 Predictable Patterns and Transcendental Numbers*, Journal of Integer Sequences 28 (2025),
@@ -127,7 +137,9 @@ public def threeStepPatternDen (β : ℕ) (ω : ℕ → ℕ) : ℕ → ℕ
           threeStepPatternDen β ω n
       else threeStepPatternDen β ω (n + 1) + threeStepPatternDen β ω n
 
-/-- Small values: for `ω ≡ 1` and `β = 1`, `q = 1, 1, 2, 3, 8, 11, 19, 220, …`.
+/-- **Small values of the three-step pattern denominators.** For $\beta = 1$ and $\omega_n = 1$
+for all $n$, the convergent denominators $q_0, \dots, q_7$ of the three-step pattern are
+$1, 1, 2, 3, 8, 11, 19, 220$.
 
 Source: Khalil Ayadi, Chiheb Ben Bechir, and Maher Saadaoui, *Continued Fractions with
 Predictable Patterns and Transcendental Numbers*, Journal of Integer Sequences 28 (2025),
@@ -136,11 +148,15 @@ public theorem threeStepPatternDen_one_one :
     (List.range 8).map (threeStepPatternDen 1 fun _ => 1) = [1, 1, 2, 3, 8, 11, 19, 220] := by
   decide
 
-/-- **Two-step pattern as an alternating series**: for `β ≥ 0` and positive integers `ω_n`,
-with `q_n = twoStepPatternDen β ω n`, the series `x = ∑_{i ≥ 0} (-1)^i/(q_i q_{i+1})`
-converges and `x = [0; ω₀, 1, ω₁ q₁^β, 1, ω₂ q₃^β, 1, …]`, i.e. `a₀ = 0`, `a₁ = ω₀`,
-`a_{2n+2} = 1` and `a_{2n+3} = ω_{n+1} q_{2n+1}^β`. The paper's `β ∈ ℤ_{>0}` is relaxed to
-`β ≥ 0`; `a_k` is `(GenContFract.of x).partDens.get? (k - 1)` and `a₀` is `.h`.
+/-- **Two-step pattern as an alternating series.** Let $\beta$ be a natural number, let
+$(\omega_n)_{n \ge 0}$ be positive integers, and let $(q_n)_{n \ge 0}$ be the convergent
+denominators of the two-step pattern for $\beta$ and $(\omega_n)$. Then the series
+$\sum_{i \ge 0} (-1)^i / (q_i q_{i+1})$ converges absolutely, and its sum $x$ has continued
+fraction expansion $[a_0; a_1, a_2, \dots]$ with $a_0 = 0$, $a_1 = \omega_0$, and
+$a_{2n+2} = 1$ and $a_{2n+3} = \omega_{n+1} q_{2n+1}^\beta$ for every $n \ge 0$; that is,
+$x = [0; \omega_0, 1, \omega_1 q_1^\beta, 1, \omega_2 q_3^\beta, 1, \dots]$.
+
+The paper assumes $\beta \ge 1$; the statement here also allows $\beta = 0$.
 
 Source: Khalil Ayadi, Chiheb Ben Bechir, and Maher Saadaoui, *Continued Fractions with
 Predictable Patterns and Transcendental Numbers*, Journal of Integer Sequences 28 (2025),
@@ -154,11 +170,17 @@ public theorem_wanted twoStepPattern_alternatingSeries_contFract (β : ℕ) (ω 
       ∀ n : ℕ, (GenContFract.of x).partDens.get? (2 * n + 1) = some 1 ∧
         (GenContFract.of x).partDens.get? (2 * n + 2) = some ((ω (n + 1) : ℝ) * q (2 * n + 1) ^ β)
 
-/-- **Irrationality exponent of the two-step pattern**: for `β ≥ 1` and positive integers
-`ω_n`, the number `x` of `twoStepPattern_alternatingSeries_contFract` has
-`μ(x) ≥ 2 + β + limsup_n ln ω_n / ln q_{2n} ≥ 2 + β ≥ 3`, and `x` is transcendental.
-`μ(x) ≥ M` is stated as `LiouvilleWith p x` for every real `p < M` (with the limsup in
-`EReal`, possibly `+∞`); the final `2 + β ≥ 3` is immediate from `β ≥ 1`.
+/-- **Irrationality exponent of the two-step pattern.** Let $\beta \ge 1$ be a natural number,
+let $(\omega_n)_{n \ge 0}$ be positive integers, let $(q_n)_{n \ge 0}$ be the convergent
+denominators of the two-step pattern for $\beta$ and $(\omega_n)$, and let
+$x = \sum_{i \ge 0} (-1)^i / (q_i q_{i+1})$. Let $L$ be the limit superior, in the extended real
+numbers, of $\ln \omega_n / \ln q_{2n}$ as $n \to \infty$. Then $x$ is Liouville with exponent $p$
+for every real $p < 2 + \beta + L$, that is, for each such $p$ there is a constant $C$ such that
+$0 < |x - m/k| < C / k^p$ for infinitely many positive integers $k$, each with some integer $m$.
+Moreover $2 + \beta \le 2 + \beta + L$, and $x$ is transcendental.
+
+In other words, the irrationality exponent of $x$ satisfies $\mu(x) \ge 2 + \beta + L$, where $L$
+may be $+\infty$.
 
 Source: Khalil Ayadi, Chiheb Ben Bechir, and Maher Saadaoui, *Continued Fractions with
 Predictable Patterns and Transcendental Numbers*, Journal of Integer Sequences 28 (2025),
@@ -172,12 +194,15 @@ public theorem_wanted twoStepPattern_irrationalityExponent (β : ℕ) (hβ : 1 �
     (∀ p : ℝ, (p : EReal) < 2 + β + L → LiouvilleWith p x) ∧
       (2 + β : EReal) ≤ 2 + β + L ∧ Transcendental ℤ x
 
-/-- **Three-step pattern as an alternating series**: for `β ≥ 0` and positive integers
-`ω_n`, with `q_n = threeStepPatternDen β ω n`, the series
-`x = ∑_{i ≥ 0} (-1)^i/(q_i q_{i+1})` converges and
-`x = [0; ω₀, 1, 1, ω₁ q₂^β, 1, 1, ω₂ q₅^β, …]`, i.e. `a₀ = 0`, `a₁ = ω₀`,
-`a_{3n+2} = a_{3n+3} = 1` and `a_{3n+4} = ω_{n+1} q_{3n+2}^β`. The paper's `β ∈ ℤ_{>0}` is
-relaxed to `β ≥ 0`; `a_k` is `(GenContFract.of x).partDens.get? (k - 1)`.
+/-- **Three-step pattern as an alternating series.** Let $\beta$ be a natural number, let
+$(\omega_n)_{n \ge 0}$ be positive integers, and let $(q_n)_{n \ge 0}$ be the convergent
+denominators of the three-step pattern for $\beta$ and $(\omega_n)$. Then the series
+$\sum_{i \ge 0} (-1)^i / (q_i q_{i+1})$ converges absolutely, and its sum $x$ has continued
+fraction expansion $[a_0; a_1, a_2, \dots]$ with $a_0 = 0$, $a_1 = \omega_0$, and
+$a_{3n+2} = a_{3n+3} = 1$ and $a_{3n+4} = \omega_{n+1} q_{3n+2}^\beta$ for every $n \ge 0$; that is,
+$x = [0; \omega_0, 1, 1, \omega_1 q_2^\beta, 1, 1, \omega_2 q_5^\beta, \dots]$.
+
+The paper assumes $\beta \ge 1$; the statement here also allows $\beta = 0$.
 
 Source: Khalil Ayadi, Chiheb Ben Bechir, and Maher Saadaoui, *Continued Fractions with
 Predictable Patterns and Transcendental Numbers*, Journal of Integer Sequences 28 (2025),
@@ -192,10 +217,17 @@ public theorem_wanted threeStepPattern_alternatingSeries_contFract (β : ℕ) (�
         (GenContFract.of x).partDens.get? (3 * n + 2) = some 1 ∧
         (GenContFract.of x).partDens.get? (3 * n + 3) = some ((ω (n + 1) : ℝ) * q (3 * n + 2) ^ β)
 
-/-- **Irrationality exponent of the three-step pattern**: for `β ≥ 1` and positive integers
-`ω_n`, the number `x` of `threeStepPattern_alternatingSeries_contFract` has
-`μ(x) ≥ 2 + β + limsup_n ln ω_n / ln q_{3n} ≥ 2 + β ≥ 3`, and `x` is transcendental, with
-`μ(x) ≥ M` encoded as in `twoStepPattern_irrationalityExponent`.
+/-- **Irrationality exponent of the three-step pattern.** Let $\beta \ge 1$ be a natural number,
+let $(\omega_n)_{n \ge 0}$ be positive integers, let $(q_n)_{n \ge 0}$ be the convergent
+denominators of the three-step pattern for $\beta$ and $(\omega_n)$, and let
+$x = \sum_{i \ge 0} (-1)^i / (q_i q_{i+1})$. Let $L$ be the limit superior, in the extended real
+numbers, of $\ln \omega_n / \ln q_{3n}$ as $n \to \infty$. Then $x$ is Liouville with exponent $p$
+for every real $p < 2 + \beta + L$, that is, for each such $p$ there is a constant $C$ such that
+$0 < |x - m/k| < C / k^p$ for infinitely many positive integers $k$, each with some integer $m$.
+Moreover $2 + \beta \le 2 + \beta + L$, and $x$ is transcendental.
+
+In other words, the irrationality exponent of $x$ satisfies $\mu(x) \ge 2 + \beta + L$, where $L$
+may be $+\infty$.
 
 Source: Khalil Ayadi, Chiheb Ben Bechir, and Maher Saadaoui, *Continued Fractions with
 Predictable Patterns and Transcendental Numbers*, Journal of Integer Sequences 28 (2025),
