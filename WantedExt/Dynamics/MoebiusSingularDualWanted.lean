@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.Dynamics.MoebiusSingularDual
 
 /-! # Singular duals of Moebius maps
 
