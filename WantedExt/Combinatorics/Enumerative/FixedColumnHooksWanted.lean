@@ -43,10 +43,11 @@ def partitionRowLen {n : ℕ} (p : n.Partition) (s : ℕ) : ℕ :=
 
 /-- **Hook length of a square of a partition.** For a partition $\lambda$ of $n$ and natural numbers
 $s$ and $m$, the hook length of the square in row $s$ and column $m$ is the integer
-$h_{s,m}(\lambda) = \lambda_s + \lambda'_m - s - m + 1$, where $\lambda_s$ is the $s$-th row length
-and $\lambda'_m$ the $m$-th column length of $\lambda$ (rows and columns are numbered from $1$).
-The integer is given by this formula for all $s$ and $m$, also when $(s, m)$ is not a square of
-the Young diagram.
+$h_{s,m}(\lambda) = \lambda_s + \lambda'_m - s - m + 1$, where $\lambda_s$ is the row length and
+$\lambda'_m$ the column length defined above: for $s, m \ge 1$ they are the lengths of the $s$-th
+row and the $m$-th column of the Young diagram (numbered from $1$), and at index $0$ they take the
+values $\lambda_0 = n$ and $\lambda'_0$ = the number of parts of $\lambda$. The integer is given by
+this formula for all $s$ and $m$, also when $(s, m)$ is not a square of the Young diagram.
 
 Source: Philip Cuthbertson, *Fixed Hooks in Arbitrary Columns of Partitions*, INTEGERS 25
 (2025), Article A28, Section 1. -/
