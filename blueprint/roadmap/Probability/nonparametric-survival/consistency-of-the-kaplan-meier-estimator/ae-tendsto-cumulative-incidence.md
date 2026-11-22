@@ -5,5 +5,7 @@ censoring model with competing risks, in which the event time and the cause $(T,
 independent of the censoring time $C$. If the observed at-risk mass $\Pr[\min(T, C) \ge m]$ is nonzero,
 then almost surely the Aalen–Johansen estimate $\hat F_c(m)$ of the cumulative incidence of cause $c$
 from the first $n$ subjects converges to
+
 $$F_c(m) = \Pr[T \le m, \ J = c].$$
+
 The statement covers grid times only, and nothing beyond the support of $C$.
