@@ -40,32 +40,38 @@ namespace CausalWitnesses
 open Finset Convexity
 
 /-- A three-node copy chain `Z → X → Y` on `Bool`: `Z` is fair, `X = Z`, and
-`Y = X` deterministically. Every node may read every earlier node. -/
+`Y = X` deterministically, with exact parent sets (`pa 0 = ∅`, `pa 1 = {0}`,
+`pa 2 = {1}`). -/
 noncomputable def copyChainNet : BayesNet Bool 3 where
-  pa _ := univ
+  pa := fun k => if _ : (k : ℕ) = 0 then ∅
+    else if _ : (k : ℕ) = 1 then {⟨0, by omega⟩}
+    else {⟨1, by omega⟩}
   cpt k u := if h0 : (k : ℕ) = 0 then
       InterveningVsConditioning.coin (1 / 2) (by norm_num) (by norm_num)
     else if h1 : (k : ℕ) = 1 then
-      (if u ⟨⟨0, by omega⟩, mem_univ _⟩ then
+      (if u ⟨⟨0, by omega⟩, by simp [h1]⟩ then
         InterveningVsConditioning.coin 1 (by norm_num) (by norm_num)
       else InterveningVsConditioning.coin 0 (by norm_num) (by norm_num))
     else
-      (if u ⟨⟨1, by omega⟩, mem_univ _⟩ then
+      (if u ⟨⟨1, by omega⟩, by simp [h0, h1]⟩ then
         InterveningVsConditioning.coin 1 (by norm_num) (by norm_num)
       else InterveningVsConditioning.coin 0 (by norm_num) (by norm_num))
 
 /-- A three-node common-cause network on `Bool`: `Z` is fair, `X = Z`, and
-`Y = Z` deterministically, ignoring `X`. -/
+`Y = Z` deterministically, ignoring `X`, with exact parent sets (`pa 0 = ∅`,
+`pa 1 = {0}`, `pa 2 = {0}`). -/
 noncomputable def commonCauseNet : BayesNet Bool 3 where
-  pa _ := univ
+  pa := fun k => if _ : (k : ℕ) = 0 then ∅
+    else if _ : (k : ℕ) = 1 then {⟨0, by omega⟩}
+    else {⟨0, by omega⟩}
   cpt k u := if h0 : (k : ℕ) = 0 then
       InterveningVsConditioning.coin (1 / 2) (by norm_num) (by norm_num)
     else if h1 : (k : ℕ) = 1 then
-      (if u ⟨⟨0, by omega⟩, mem_univ _⟩ then
+      (if u ⟨⟨0, by omega⟩, by simp [h1]⟩ then
         InterveningVsConditioning.coin 1 (by norm_num) (by norm_num)
       else InterveningVsConditioning.coin 0 (by norm_num) (by norm_num))
     else
-      (if u ⟨⟨0, by omega⟩, mem_univ _⟩ then
+      (if u ⟨⟨0, by omega⟩, by simp [h0, h1]⟩ then
         InterveningVsConditioning.coin 1 (by norm_num) (by norm_num)
       else InterveningVsConditioning.coin 0 (by norm_num) (by norm_num))
 
