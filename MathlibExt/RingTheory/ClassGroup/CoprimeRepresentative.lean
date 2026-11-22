@@ -14,9 +14,10 @@ public import Mathlib.RingTheory.ClassGroup.Basic
 /-!
 # Coprime representatives of ideal classes
 
-A nonzero ideal in a Dedekind domain has a coprime multiplier making it principal. That every ideal
-class has an integral representative coprime to a prescribed nonzero ideal is Mathlib's
-`ClassGroup.exists_mk0_eq_and_isCoprime`.
+A nonzero ideal in a Dedekind domain has a coprime multiplier making it principal, and every ideal
+class has an integral representative coprime to any prescribed nonzero ideal. The second result is
+Mathlib's `ClassGroup.exists_mk0_eq_and_isCoprime`; `ClassGroup.exists_mk0_eq_and_isCoprime'`
+states it for a nonzero ideal and a nonzero representative.
 -/
 
 @[expose] public section
@@ -42,3 +43,13 @@ theorem Ideal.exists_isCoprime_mul_isPrincipal (I a : Ideal A) (hI : I ≠ ⊥)
     exact Ideal.isCoprime_iff_sup_eq.mpr (by rw [sup_comm]; exact h2)
   · rw [← hJ]
     exact ⟨⟨x, rfl⟩⟩
+
+/-- Every ideal class has an integral representative coprime to any prescribed nonzero ideal. This
+is Mathlib's `ClassGroup.exists_mk0_eq_and_isCoprime`, stated with nonzero ideals. -/
+theorem ClassGroup.exists_mk0_eq_and_isCoprime' (c : ClassGroup A) (a : Ideal A)
+    (ha : a ≠ ⊥) :
+    ∃ (K : Ideal A) (hK : K ≠ ⊥),
+      ClassGroup.mk0 ⟨K, mem_nonZeroDivisors_iff_ne_zero.mpr hK⟩ = c ∧
+        IsCoprime K a := by
+  obtain ⟨⟨K, hK⟩, hc, hcop⟩ := ClassGroup.exists_mk0_eq_and_isCoprime c ha
+  exact ⟨K, mem_nonZeroDivisors_iff_ne_zero.mp hK, hc, hcop⟩
