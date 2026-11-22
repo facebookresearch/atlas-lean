@@ -33,9 +33,10 @@ The curve integral `∫_γ φ(z) dz` is Mathlib's `∫ᶜ z in γ, φ z • Cont
 residue is `Complex.residue`, and the inside of `γ` is `Set.inside (range γ)`, the union of the
 bounded components of `ℂ \ γ`; for a simple closed curve the Jordan curve theorem identifies it
 with the interior of `γ`. Positive orientation is the hypothesis that the winding number
-`Complex.windingNumber γ z` is `1` for `z` inside `γ`. For a simple closed curve the Jordan curve
-theorem gives `n(γ, z) = ±1` inside, and the orientation fixes the sign. Mathlib has no Jordan
-curve theorem, so the orientation hypothesis cannot be derived from simplicity here.
+`Complex.windingNumber γ z` is `1` for `z` inside `γ`. It is a separate hypothesis, not a
+consequence of simplicity: for a simple closed curve the Jordan curve theorem (which Mathlib does
+not have) gives `n(γ, z) = ±1` inside, and the direction of traversal selects the sign; the reversed
+unit circle has winding number `-1` inside.
 
 The proof follows the source. The singularities inside `γ` form a closed discrete subset of the
 compact set `γ ∪ inside γ ⊆ Ω`, hence a finite set `F`. Small circles `C(a, r_a)`, `a ∈ F`, isolate
