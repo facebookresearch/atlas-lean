@@ -423,7 +423,7 @@ instance Lab.instFintypeEnumFix : Fintype Lab where
     all_goals (try cases ‹Ordering›)
     all_goals decide
 
-/-- **Stack alphabet of the layout machine.** Every stack of the layout machine holds bits: the
+/-- **Stack alphabet of the checking machine.** Every stack of the checking machine holds bits: the
 alphabet of each stack is the type of Booleans. -/
 abbrev Γ : K → Type := fun _ => Bool
 
