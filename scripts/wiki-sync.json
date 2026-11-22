@@ -27849,7 +27849,7 @@
 "MathlibExt.Analysis.SpecialFunctions.OneStepPayoffMax.payoff_le_of_eq_max_sqrt": "4898b994e5fb7d42",
 "MathlibExt.Analysis.SpecialFunctions.OneStepPayoffMax.sq_eq_mul_iff_of_eq_max_sqrt": "164fa0a204483dbb",
 "MathlibExt.Analysis.SpecialFunctions.TsumInvSqShiftEqPiSqDivSinSqWanted.tsum_one_div_add_int_sq_eq_pi_sq_div_sin_sq": "0824fd8274027e2f",
-"MathlibExt.Analysis.SpecificLimits.AlternatingPairWeightedSeriesConvergesWanted.exists_tendsto_sum_inv_sq_smul_alternating_pair": "69a9415caf5b4ac3",
+"MathlibExt.Analysis.SpecificLimits.AlternatingPairWeightedSeriesConvergesWanted.exists_tendsto_sum_inv_sq_smul_alternating_pair": "beb8f34d0b7c01dc",
 "MathlibExt.Analysis.SpecificLimits.DiscountedTruncationCertificate.discounted_truncation_certificate_half_five": "2ee88f8d72f9d414",
 "MathlibExt.Analysis.SpecificLimits.DiscountedTruncationCertificate.discounted_truncation_certificate_third_three": "4b7b7b8a18aa956d",
 "MathlibExt.Analysis.SpecificLimits.ExpNegSqrtNormSelfConvolutionLimitWanted.f": "336f16d9fbbd9f68",
