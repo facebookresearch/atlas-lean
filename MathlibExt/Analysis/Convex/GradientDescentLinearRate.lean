@@ -27,8 +27,8 @@ minimizing the strong-convexity quadratic. This file covers roadmap
 package ML-19 of the Atlas TCS canon roadmap.
 
 The same linear rate also holds under the Polyak-Łojasiewicz inequality
-assumed directly (`gd_linear_rate_of_pl`), and for the Mathlib gradient
-map `gradient f` with an `L`-Lipschitz gradient
+at a global minimizer, assumed directly (`gd_linear_rate_of_pl`), and for
+the Mathlib gradient map `gradient f` with an `L`-Lipschitz gradient
 (`gd_linear_rate_gradient_of_pl`).
 
 Source: Nesterov, Introductory Lectures on Convex Optimization
@@ -170,19 +170,23 @@ private theorem gd_onestep_of_pl {E : Type*} [NormedAddCommGroup E] [InnerProduc
   linarith [h1]
 
 /-- Linear convergence of gradient descent under the Polyak-Łojasiewicz
-inequality: with the quadratic upper bound and `2 * μ * (f x - f xstar)
-≤ ‖g x‖ ^ 2` for every `x`, descent with step `1 / L` gives
+inequality at a global minimizer: with the quadratic upper bound and
+`2 * μ * (f x - f xstar) ≤ ‖g x‖ ^ 2` for every `x`, where `xstar`
+minimizes `f`, descent with step `1 / L` gives
 `f (x_k) - f xstar ≤ (1 - μ / L)^k * (f (x_0) - f xstar)`. -/
 theorem gd_linear_rate_of_pl {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     {f : E → ℝ} {g : E → E} {L μ : ℝ} (hμ : 0 < μ) (hμL : μ ≤ L)
     (hsmooth : ∀ x y, f y ≤ f x + @inner ℝ E _ (g x) (y - x) + (L / 2) * ‖y - x‖ ^ 2)
-    (xstar : E) (hpl : ∀ x, 2 * μ * (f x - f xstar) ≤ ‖g x‖ ^ 2)
+    (xstar : E) (hmin : ∀ y, f xstar ≤ f y)
+    (hpl : ∀ x, 2 * μ * (f x - f xstar) ≤ ‖g x‖ ^ 2)
     (x0 : E) (k : ℕ) :
     f (gdIter g L x0 k) - f xstar ≤ (1 - μ / L) ^ k * (f x0 - f xstar) := by
   have hL : 0 < L := lt_of_lt_of_le hμ hμL
   have hρ : (0 : ℝ) ≤ 1 - μ / L := by
     have h1 : μ / L ≤ 1 := (div_le_one hL).mpr hμL
     linarith [h1]
+  have hnn : ∀ n : ℕ, (0 : ℝ) ≤ f (gdIter g L x0 n) - f xstar :=
+    fun n => sub_nonneg.mpr (hmin (gdIter g L x0 n))
   induction k with
   | zero => simp [gdIter]
   | succ k ih =>
@@ -197,18 +201,19 @@ theorem gd_linear_rate_of_pl {E : Type*} [NormedAddCommGroup E] [InnerProductSpa
       rw [pow_succ]
       ring
     rw [hpow]
-    exact le_trans hstep hmul
+    linarith [hstep, hmul, hnn k]
 
 /-- Linear convergence of gradient descent for the Mathlib gradient map:
 if `f` is differentiable with `L`-Lipschitz gradient and satisfies the
-Polyak-Łojasiewicz inequality at `xstar`, then descent with step `1 / L`
-converges linearly in function value. -/
+Polyak-Łojasiewicz inequality at a global minimizer `xstar`, then descent
+with step `1 / L` converges linearly in function value. -/
 theorem gd_linear_rate_gradient_of_pl {E : Type*} [NormedAddCommGroup E]
     [InnerProductSpace ℝ E] [CompleteSpace E]
     {f : E → ℝ} {L μ : ℝ} (hμ : 0 < μ) (hμL : μ ≤ L)
     (hdiff : Differentiable ℝ f)
     (hlip : LipschitzWith ⟨L, le_of_lt (lt_of_lt_of_le hμ hμL)⟩ (gradient f))
-    (xstar : E) (hpl : ∀ x, 2 * μ * (f x - f xstar) ≤ ‖gradient f x‖ ^ 2)
+    (xstar : E) (hmin : ∀ y, f xstar ≤ f y)
+    (hpl : ∀ x, 2 * μ * (f x - f xstar) ≤ ‖gradient f x‖ ^ 2)
     (x0 : E) (k : ℕ) :
     f (gdIter (gradient f) L x0 k) - f xstar
       ≤ (1 - μ / L) ^ k * (f x0 - f xstar) := by
@@ -220,4 +225,4 @@ theorem gd_linear_rate_gradient_of_pl {E : Type*} [NormedAddCommGroup E]
     have hx : x + (y - x) = y := by abel
     rw [hx] at h
     exact h
-  exact gd_linear_rate_of_pl hμ hμL hquad xstar hpl x0 k
+  exact gd_linear_rate_of_pl hμ hμL hquad xstar hmin hpl x0 k

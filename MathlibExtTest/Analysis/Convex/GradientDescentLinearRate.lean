@@ -59,9 +59,12 @@ example : (gdIter (fun x : ℝ => 2 * x) 4 2 2) ^ 2 ≤ 1 := by
     intro x
     simp only [Real.norm_eq_abs, sq_abs]
     nlinarith
+  have hmin : ∀ y : ℝ, (0 : ℝ) ^ 2 ≤ y ^ 2 := by
+    intro y
+    simpa using sq_nonneg y
   convert gd_linear_rate_of_pl (f := fun x : ℝ => x ^ 2)
     (g := fun x : ℝ => 2 * x) (L := 4) (μ := 2) (by norm_num) (by norm_num)
-    hsmooth 0 hpl 2 2 using 1 <;> norm_num
+    hsmooth 0 hmin hpl 2 2 using 1 <;> norm_num
 
 /-- The Mathlib-gradient bridge applies to any differentiable `f` with
 `L`-Lipschitz gradient satisfying the PL inequality. -/
@@ -69,11 +72,12 @@ example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSp
     {f : E → ℝ} {L μ : ℝ} (hμ : 0 < μ) (hμL : μ ≤ L)
     (hdiff : Differentiable ℝ f)
     (hlip : LipschitzWith ⟨L, le_of_lt (lt_of_lt_of_le hμ hμL)⟩ (gradient f))
-    (xstar : E) (hpl : ∀ x, 2 * μ * (f x - f xstar) ≤ ‖gradient f x‖ ^ 2)
+    (xstar : E) (hmin : ∀ y, f xstar ≤ f y)
+    (hpl : ∀ x, 2 * μ * (f x - f xstar) ≤ ‖gradient f x‖ ^ 2)
     (x0 : E) (k : ℕ) :
     f (gdIter (gradient f) L x0 k) - f xstar
       ≤ (1 - μ / L) ^ k * (f x0 - f xstar) :=
-  gd_linear_rate_gradient_of_pl hμ hμL hdiff hlip xstar hpl x0 k
+  gd_linear_rate_gradient_of_pl hμ hμL hdiff hlip xstar hmin hpl x0 k
 
 /-- The Mathlib gradient of the quadratic `x²` is `2x`, with
 `4`-Lipschitz gradient and the PL inequality at `μ = 2`, so the
@@ -102,9 +106,12 @@ example : (gdIter (gradient fun x : ℝ => x ^ 2) 4 2 2) ^ 2 ≤ 1 := by
     intro x
     simp only [Real.norm_eq_abs, sq_abs]
     nlinarith
+  have hmin : ∀ y : ℝ, (0 : ℝ) ^ 2 ≤ y ^ 2 := by
+    intro y
+    simpa using sq_nonneg y
   convert gd_linear_rate_gradient_of_pl (f := fun x : ℝ => x ^ 2)
     (L := 4) (μ := 2) (by norm_num) (by norm_num)
-    hdiff hlip 0 hpl 2 2 using 1 <;> norm_num
+    hdiff hlip 0 hmin hpl 2 2 using 1 <;> norm_num
 
 #print axioms gd_linear_rate_of_pl
 #print axioms gd_linear_rate_gradient_of_pl
