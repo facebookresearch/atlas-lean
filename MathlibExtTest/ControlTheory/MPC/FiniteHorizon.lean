@@ -93,9 +93,8 @@ example {X U : Type*} (f : X → U → X) (x₀ : X) (Xs Xf : Set X)
 
 -- Shift and append at horizon `1`: dynamics `x + u`, input and state
 -- constraints `[-1, 1]`, terminal set `{0}` with feedback `κ x = -x`.
--- From `x₀ = 0` the input `u = 1` is feasible only if the terminal
--- state is in the terminal set, so use `u = 0` and check the shifted
--- sequence directly against `feasible_shift`.
+-- From `x₀ = 0` use the feasible zero input `u = 0` as the input to
+-- the shift-and-append construction below.
 example : Feasible (fun x u : ℝ => x + u) 0 (Set.Icc (-1) 1)
     (Set.Icc (-1) 1) {0} 1 (fun _ => 0) := by
   refine ⟨fun _ => by constructor <;> norm_num, ?_, ?_⟩
@@ -115,5 +114,37 @@ example (κ : ℝ → ℝ) (u : Fin 1 → ℝ) :
     exact Fin.ext this
   subst hk
   simp [shiftAppend]
+
+
+-- Applying `feasible_shift`: the shifted sequence from the feasible
+-- zero input is feasible at the successor state `0 + 0 = 0`, with
+-- terminal feedback `κ x = -x` on the terminal set `{0}`.
+example : Feasible (fun x u : ℝ => x + u) (0 + 0) (Set.Icc (-1) 1)
+    (Set.Icc (-1) 1) {0} 1
+    (shiftAppend (fun x u : ℝ => x + u) 0 (fun _ => 0) (fun x => -x)) := by
+  have hsub : ({0} : Set ℝ) ⊆ Set.Icc (-1) 1 := by
+    intro x hx
+    simp only [Set.mem_singleton_iff] at hx
+    rw [hx]
+    constructor <;> norm_num
+  have hκU : ∀ x ∈ ({0} : Set ℝ), (-x) ∈ Set.Icc (-1 : ℝ) 1 := by
+    intro x hx
+    simp only [Set.mem_singleton_iff] at hx
+    rw [hx]
+    simp
+  have hκf : ∀ x ∈ ({0} : Set ℝ), x + (-x) ∈ ({0} : Set ℝ) := by
+    intro x _
+    simp
+  have hfeas : Feasible (fun x u : ℝ => x + u) 0 (Set.Icc (-1) 1)
+      (Set.Icc (-1) 1) {0} 1 (fun _ => 0) := by
+    refine ⟨fun _ => by constructor <;> norm_num, ?_, ?_⟩
+    · intro k hk
+      interval_cases k
+      show (0 : ℝ) ∈ Set.Icc (-1 : ℝ) 1
+      constructor <;> norm_num
+    · simp [traj]
+  exact feasible_shift (fun x u : ℝ => x + u) 0 (Set.Icc (-1) 1)
+    (Set.Icc (-1) 1) ({0} : Set ℝ) le_rfl hsub (fun x => -x) hκU hκf
+    (fun _ => 0) hfeas
 
 #print axioms exists_optimal
