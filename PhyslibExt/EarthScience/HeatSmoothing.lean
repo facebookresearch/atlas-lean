@@ -99,6 +99,8 @@ open MeasureTheory
 open scoped Topology
 open Filter
 
+/-! ## A. Shared definitions -/
+
 /-- Gaussian heat kernel on `EuclideanSpace ℝ (Fin n)` at diffusivity 1:
 `(4πt)^(-n/2) exp(-‖x‖² / (4t))`. -/
 noncomputable def heatKernel (n : ℕ) (t : ℝ) (x : EuclideanSpace ℝ (Fin n)) : ℝ :=
@@ -110,13 +112,13 @@ noncomputable def heatConvolution (n : ℕ) (g : EuclideanSpace ℝ (Fin n) → 
   ∫ (y : EuclideanSpace ℝ (Fin n)), g y * heatKernel n t (x - y)
 
 /-- Gaussian-times-polynomial kernels. -/
-noncomputable def gaussPolyKernel (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private noncomputable def gaussPolyKernel (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     (t : ℝ) (x : EuclideanSpace ℝ (Fin n)) : ℝ :=
   (4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-‖x‖ ^ 2 / (4 * t))
     * MvPolynomial.eval (fun i => x i) Q * t ^ (-(k : ℤ))
 
 /-- Iterated coordinate second partial `D_{ij} φ`, as a function. -/
-noncomputable def secondPartialFn (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private noncomputable def secondPartialFn (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (i j : Fin n) (x : EuclideanSpace ℝ (Fin n)) : ℝ :=
   deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
     (WithLp.toLp 2 (Function.update x i v)) j r)))
@@ -124,22 +126,24 @@ noncomputable def secondPartialFn (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) →
     (x i)
 
 /-- Uniform modulus of `D_{ij} φ`. -/
-noncomputable def secondPartialModulus (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private noncomputable def secondPartialModulus (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (i j : Fin n) (r : ℝ) : ℝ :=
   sSup {v : ℝ | ∃ x z : EuclideanSpace ℝ (Fin n), ‖z‖ ≤ r
     ∧ v = |secondPartialFn n φ i j (x - z) - secondPartialFn n φ i j x|}
 
 /-- Taylor remainder integrand (the `s`-integral of the second-order term). -/
-noncomputable def Dfn (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private noncomputable def Dfn (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (x y : EuclideanSpace ℝ (Fin n)) : ℝ :=
   ∫ s in (0 : ℝ)..1, (1 - s) * ∑ i, ∑ j, y i * y j *
     (secondPartialFn n φ i j (x - s • y) - secondPartialFn n φ i j x)
+
+/-! ## B. Gaussian moments -/
 
 section Moments
 
 open MeasureTheory ProbabilityTheory
 
-theorem heatKernel_1d_pdf (t : ℝ) (ht : 0 < t) (v : NNReal) (hv : (v : ℝ) = 2 * t)
+private theorem heatKernel_1d_pdf (t : ℝ) (ht : 0 < t) (v : NNReal) (hv : (v : ℝ) = 2 * t)
     (s : ℝ) :
     gaussianPDFReal 0 v s
       = (4 * Real.pi * t) ^ (-(1 : ℝ) / 2) * Real.exp (-s ^ 2 / (4 * t)) := by
@@ -154,13 +158,13 @@ theorem heatKernel_1d_pdf (t : ℝ) (ht : 0 < t) (v : NNReal) (hv : (v : ℝ) = 
     ring
   simp only [gaussianPDFReal, hbase, hexp, hsqrt]
 
-theorem heatKernel_1d_ne_zero (t : ℝ) (ht : 0 < t) (v : NNReal) (hv : (v : ℝ) = 2 * t) :
+private theorem heatKernel_1d_ne_zero (t : ℝ) (ht : 0 < t) (v : NNReal) (hv : (v : ℝ) = 2 * t) :
     v ≠ 0 := by
   rintro rfl
   simp at hv
   linarith
 
-theorem heatKernel_1d_mass (t : ℝ) (ht : 0 < t) (v : NNReal) (hv : (v : ℝ) = 2 * t) :
+private theorem heatKernel_1d_mass (t : ℝ) (ht : 0 < t) (v : NNReal) (hv : (v : ℝ) = 2 * t) :
     ∫ s : ℝ, (4 * Real.pi * t) ^ (-(1 : ℝ) / 2) * Real.exp (-s ^ 2 / (4 * t)) = 1 := by
   have hv0 : v ≠ 0 := heatKernel_1d_ne_zero t ht v hv
   have hpoint : ∀ s : ℝ, (4 * Real.pi * t) ^ (-(1 : ℝ) / 2) * Real.exp (-s ^ 2 / (4 * t))
@@ -169,7 +173,7 @@ theorem heatKernel_1d_mass (t : ℝ) (ht : 0 < t) (v : NNReal) (hv : (v : ℝ) =
   simp_rw [hpoint]
   exact integral_gaussianPDFReal_eq_one 0 hv0
 
-theorem heatKernel_1d_first (t : ℝ) (ht : 0 < t) (v : NNReal) (hv : (v : ℝ) = 2 * t) :
+private theorem heatKernel_1d_first (t : ℝ) (ht : 0 < t) (v : NNReal) (hv : (v : ℝ) = 2 * t) :
     ∫ s : ℝ, ((4 * Real.pi * t) ^ (-(1 : ℝ) / 2) * Real.exp (-s ^ 2 / (4 * t))) * s = 0 := by
   have hv0 : v ≠ 0 := heatKernel_1d_ne_zero t ht v hv
   have h := integral_id_gaussianReal (μ := (0:ℝ)) (v := v)
@@ -181,7 +185,7 @@ theorem heatKernel_1d_first (t : ℝ) (ht : 0 < t) (v : NNReal) (hv : (v : ℝ) 
   simp_rw [hpoint]
   exact h
 
-theorem heatKernel_1d_second (t : ℝ) (ht : 0 < t) (v : NNReal) (hv : (v : ℝ) = 2 * t) :
+private theorem heatKernel_1d_second (t : ℝ) (ht : 0 < t) (v : NNReal) (hv : (v : ℝ) = 2 * t) :
     ∫ s : ℝ, (4 * Real.pi * t) ^ (-(1 : ℝ) / 2) * Real.exp (-s ^ 2 / (4 * t)) * s * s
       = 2 * t := by
   have hv0 : v ≠ 0 := heatKernel_1d_ne_zero t ht v hv
@@ -201,18 +205,18 @@ theorem heatKernel_1d_second (t : ℝ) (ht : 0 < t) (v : NNReal) (hv : (v : ℝ)
   simp_rw [hpoint]
   exact h2
 
-theorem heatKernel_transfer (n : ℕ) (F : EuclideanSpace ℝ (Fin n) → ℝ) :
+private theorem heatKernel_transfer (n : ℕ) (F : EuclideanSpace ℝ (Fin n) → ℝ) :
     (∫ x : EuclideanSpace ℝ (Fin n), F x)
       = ∫ y : Fin n → ℝ, F ((MeasurableEquiv.toLp 2 (Fin n → ℝ)) y) := by
   have hmp := EuclideanSpace.volume_preserving_symm_measurableEquiv_toLp (Fin n)
   have h := hmp.integral_comp' (fun y : Fin n → ℝ => F ((MeasurableEquiv.toLp 2 (Fin n → ℝ)) y))
   simpa using h
 
-theorem heatKernel_norm_sq (n : ℕ) (y : Fin n → ℝ) :
+private theorem heatKernel_norm_sq (n : ℕ) (y : Fin n → ℝ) :
     ‖(MeasurableEquiv.toLp 2 (Fin n → ℝ)) y‖ ^ 2 = ∑ j, (y j) ^ 2 :=
   EuclideanSpace.real_norm_sq_eq _
 
-theorem heatKernel_rpow_prod (n : ℕ) (t : ℝ) (ht : 0 < t) :
+private theorem heatKernel_rpow_prod (n : ℕ) (t : ℝ) (ht : 0 < t) :
     (4 * Real.pi * t) ^ (-(n : ℝ) / 2)
       = ∏ _j : Fin n, (4 * Real.pi * t) ^ (-(1 : ℝ) / 2) := by
   have hpos : (0:ℝ) ≤ 4 * Real.pi * t := by positivity
@@ -221,7 +225,7 @@ theorem heatKernel_rpow_prod (n : ℕ) (t : ℝ) (ht : 0 < t) :
   congr 1
   ring
 
-theorem heatKernel_mass_point (n : ℕ) (t : ℝ) (ht : 0 < t) (y : Fin n → ℝ) :
+private theorem heatKernel_mass_point (n : ℕ) (t : ℝ) (ht : 0 < t) (y : Fin n → ℝ) :
     (4 * Real.pi * t) ^ (-(n : ℝ) / 2)
         * Real.exp (-‖(MeasurableEquiv.toLp 2 (Fin n → ℝ)) y‖ ^ 2 / (4 * t))
       = ∏ j, ((4 * Real.pi * t) ^ (-(1 : ℝ) / 2) * Real.exp (-(y j) ^ 2 / (4 * t))) := by
@@ -230,7 +234,7 @@ theorem heatKernel_mass_point (n : ℕ) (t : ℝ) (ht : 0 < t) (y : Fin n → �
     simp only [neg_div, Finset.sum_div, ← Finset.sum_neg_distrib]
   rw [hsum, Real.exp_sum, Finset.prod_mul_distrib]
 
-theorem heatKernel_first_point (n : ℕ) (t : ℝ) (ht : 0 < t) (i : Fin n) (y : Fin n → ℝ) :
+private theorem heatKernel_first_point (n : ℕ) (t : ℝ) (ht : 0 < t) (i : Fin n) (y : Fin n → ℝ) :
     ((4 * Real.pi * t) ^ (-(n : ℝ) / 2)
         * Real.exp (-‖(MeasurableEquiv.toLp 2 (Fin n → ℝ)) y‖ ^ 2 / (4 * t)))
         * ((MeasurableEquiv.toLp 2 (Fin n → ℝ)) y) i
@@ -241,7 +245,7 @@ theorem heatKernel_first_point (n : ℕ) (t : ℝ) (ht : 0 < t) (i : Fin n) (y :
   have e1 : ((MeasurableEquiv.toLp 2 (Fin n → ℝ)) y) i = y i := rfl
   rw [Finset.prod_mul_distrib, hmass, hite, e1]
 
-theorem heatKernel_second_point (n : ℕ) (t : ℝ) (ht : 0 < t) (i j : Fin n)
+private theorem heatKernel_second_point (n : ℕ) (t : ℝ) (ht : 0 < t) (i j : Fin n)
     (y : Fin n → ℝ) :
     ((4 * Real.pi * t) ^ (-(n : ℝ) / 2)
         * Real.exp (-‖(MeasurableEquiv.toLp 2 (Fin n → ℝ)) y‖ ^ 2 / (4 * t)))
@@ -257,7 +261,7 @@ theorem heatKernel_second_point (n : ℕ) (t : ℝ) (ht : 0 < t) (i j : Fin n)
   ring
 
 /-- Gaussian moments of the heat kernel. -/
-theorem heatKernel_mass (n : ℕ) {t : ℝ} (ht : 0 < t) :
+private theorem heatKernel_mass (n : ℕ) {t : ℝ} (ht : 0 < t) :
     ∫ y : EuclideanSpace ℝ (Fin n), (4 * Real.pi * t) ^ (-(n : ℝ) / 2)
         * Real.exp (-‖y‖ ^ 2 / (4 * t)) = 1 := by
   have ht' : (0:ℝ) < 2 * t := by linarith
@@ -270,7 +274,7 @@ theorem heatKernel_mass (n : ℕ) {t : ℝ} (ht : 0 < t) :
   exact Finset.prod_const_one
 
 /-- First moment of the heat kernel vanishes. -/
-theorem heatKernel_firstMoment (n : ℕ) {t : ℝ} (ht : 0 < t) (i : Fin n) :
+private theorem heatKernel_firstMoment (n : ℕ) {t : ℝ} (ht : 0 < t) (i : Fin n) :
     ∫ y : EuclideanSpace ℝ (Fin n), ((4 * Real.pi * t) ^ (-(n : ℝ) / 2)
         * Real.exp (-‖y‖ ^ 2 / (4 * t))) * y i = 0 := by
   have ht' : (0:ℝ) < 2 * t := by linarith
@@ -290,7 +294,7 @@ theorem heatKernel_firstMoment (n : ℕ) {t : ℝ} (ht : 0 < t) (i : Fin n) :
   exact Finset.prod_eq_zero (Finset.mem_univ i) (by simp)
 
 /-- Second moments of the heat kernel: `2t * δ_ij`. -/
-theorem heatKernel_secondMoment (n : ℕ) {t : ℝ} (ht : 0 < t) (i j : Fin n) :
+private theorem heatKernel_secondMoment (n : ℕ) {t : ℝ} (ht : 0 < t) (i j : Fin n) :
     ∫ y : EuclideanSpace ℝ (Fin n), ((4 * Real.pi * t) ^ (-(n : ℝ) / 2)
         * Real.exp (-‖y‖ ^ 2 / (4 * t))) * (y i * y j)
       = if i = j then 2 * t else 0 := by
@@ -328,11 +332,13 @@ theorem heatKernel_secondMoment (n : ℕ) {t : ℝ} (ht : 0 < t) (i j : Fin n) :
 
 end Moments
 
+/-! ## C. Kernel PDE -/
+
 section KernelPDE
 
 open MeasureTheory
 
-theorem normSq_toLp_update (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) (r : ℝ) :
+private theorem normSq_toLp_update (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) (r : ℝ) :
     ‖WithLp.toLp 2 (Function.update x i r)‖ ^ 2 = ‖x‖ ^ 2 - (x i) ^ 2 + r ^ 2 := by
   simp only [EuclideanSpace.real_norm_sq_eq]
   have hmem : i ∈ (Finset.univ : Finset (Fin n)) := Finset.mem_univ i
@@ -345,7 +351,7 @@ theorem normSq_toLp_update (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n
   rw [Finset.sum_congr rfl hupd, Function.update_self]
   ring
 
-theorem hasDerivAt_rpow_linear (c a : ℝ) (ha : 0 < a) {t : ℝ} (ht : 0 < t) :
+private theorem hasDerivAt_rpow_linear (c a : ℝ) (ha : 0 < a) {t : ℝ} (ht : 0 < t) :
     HasDerivAt (fun s => (a * s) ^ c) (c * (a * t) ^ c / t) t := by
   have ht' : t ≠ 0 := ne_of_gt ht
   have hat : a * t ≠ 0 := mul_ne_zero (ne_of_gt ha) ht'
@@ -362,7 +368,7 @@ theorem hasDerivAt_rpow_linear (c a : ℝ) (ha : 0 < a) {t : ℝ} (ht : 0 < t) :
     rw [h2, h1]
   exact (((hasDerivAt_id' t).const_mul a).rpow_const (Or.inl hat)).congr_deriv hval
 
-theorem hasDerivAt_exp_negQuot (Q : ℝ) {t : ℝ} (ht : 0 < t) :
+private theorem hasDerivAt_exp_negQuot (Q : ℝ) {t : ℝ} (ht : 0 < t) :
     HasDerivAt (fun s => Real.exp (-Q / (4 * s)))
       (Real.exp (-Q / (4 * t)) * (Q / (4 * t ^ 2))) t := by
   have ht' : t ≠ 0 := ne_of_gt ht
@@ -383,7 +389,7 @@ theorem hasDerivAt_exp_negQuot (Q : ℝ) {t : ℝ} (ht : 0 < t) :
     rw [hval]
   exact hexp
 
-theorem hasDerivAt_space_exp (C K : ℝ) {t s : ℝ} (ht : 0 < t) :
+private theorem hasDerivAt_space_exp (C K : ℝ) {t s : ℝ} (ht : 0 < t) :
     HasDerivAt (fun r => C * Real.exp (-(K + r ^ 2) / (4 * t)))
       (C * Real.exp (-(K + s ^ 2) / (4 * t)) * (-s / (2 * t))) s := by
   have ht' : t ≠ 0 := ne_of_gt ht
@@ -414,7 +420,7 @@ theorem hasDerivAt_space_exp (C K : ℝ) {t s : ℝ} (ht : 0 < t) :
   exact hmul.congr_deriv hval2
 
 /-- The heat kernel satisfies the heat equation pointwise. -/
-theorem heatKernel_pde (n : ℕ) {t : ℝ} (ht : 0 < t) (x : EuclideanSpace ℝ (Fin n)) :
+private theorem heatKernel_pde (n : ℕ) {t : ℝ} (ht : 0 < t) (x : EuclideanSpace ℝ (Fin n)) :
     deriv (fun s => (4 * Real.pi * s) ^ (-(n : ℝ) / 2)
         * Real.exp (-‖x‖ ^ 2 / (4 * s))) t
       = ∑ i : Fin n, deriv (fun s => deriv (fun r =>
@@ -515,11 +521,13 @@ theorem heatKernel_pde (n : ℕ) {t : ℝ} (ht : 0 < t) (x : EuclideanSpace ℝ 
 
 end KernelPDE
 
+/-! ## D. Taylor expansion -/
+
 section Taylor
 
 open MeasureTheory
 
-lemma lpasms_expand (n : ℕ) (w : EuclideanSpace ℝ (Fin n)) :
+private lemma lpasms_expand (n : ℕ) (w : EuclideanSpace ℝ (Fin n)) :
     w = ∑ i, (w i) • EuclideanSpace.single i 1 := by
   apply PiLp.ext
   intro j
@@ -537,7 +545,7 @@ lemma lpasms_expand (n : ℕ) (w : EuclideanSpace ℝ (Fin n)) :
   rw [Finset.sum_ite_eq]
   simp
 
-lemma lpasms_coord_line (n : ℕ) (p : EuclideanSpace ℝ (Fin n)) (i : Fin n) (r₀ : ℝ) :
+private lemma lpasms_coord_line (n : ℕ) (p : EuclideanSpace ℝ (Fin n)) (i : Fin n) (r₀ : ℝ) :
     HasDerivAt (fun r => WithLp.toLp 2 (Function.update p i r))
       (EuclideanSpace.single i 1) r₀ := by
   have heq : (fun r => WithLp.toLp 2 (Function.update p i r))
@@ -563,7 +571,7 @@ lemma lpasms_coord_line (n : ℕ) (p : EuclideanSpace ℝ (Fin n)) (i : Fin n) (
   rw [one_smul] at h1
   exact HasDerivAt.const_add _ h1
 
-lemma lpasms_partial_eq (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private lemma lpasms_partial_eq (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (q : EuclideanSpace ℝ (Fin n)) (i : Fin n)
     (L : EuclideanSpace ℝ (Fin n) →L[ℝ] ℝ) (hφ : HasFDerivAt φ L q) :
     L (EuclideanSpace.single i (1:ℝ))
@@ -578,7 +586,7 @@ lemma lpasms_partial_eq (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
   have hci := hφ'.comp_hasDerivAt (q i) (lpasms_coord_line n q i (q i))
   exact hci.deriv.symm
 
-lemma lpasms_chain1 (n : ℕ) (c : ℝ → EuclideanSpace ℝ (Fin n))
+private lemma lpasms_chain1 (n : ℕ) (c : ℝ → EuclideanSpace ℝ (Fin n))
     (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (s : ℝ) (w : EuclideanSpace ℝ (Fin n)) (L : EuclideanSpace ℝ (Fin n) →L[ℝ] ℝ)
     (hφ : HasFDerivAt φ L (c s)) (hc : HasDerivAt c w s) :
@@ -596,7 +604,7 @@ lemma lpasms_chain1 (n : ℕ) (c : ℝ → EuclideanSpace ℝ (Fin n))
   rw [hLw] at hcomp
   exact hcomp
 
-lemma lpasms_taylor1 (g : ℝ → ℝ) (hg : ContDiff ℝ 2 g) :
+private lemma lpasms_taylor1 (g : ℝ → ℝ) (hg : ContDiff ℝ 2 g) :
     g 1 - g 0 - deriv g 0 = ∫ s in (0:ℝ)..1, (1 - s) * deriv (deriv g) s := by
   have hg1 : ContDiff ℝ 1 (deriv g) := hg.deriv'
   have hgd : Differentiable ℝ g := hg.differentiable (by simp)
@@ -624,17 +632,17 @@ lemma lpasms_taylor1 (g : ℝ → ℝ) (hg : ContDiff ℝ 2 g) :
   rw [hftc] at hibp
   linear_combination -hibp
 
-lemma lpasms_curve_deriv (n : ℕ) (x y : EuclideanSpace ℝ (Fin n)) (s : ℝ) :
+private lemma lpasms_curve_deriv (n : ℕ) (x y : EuclideanSpace ℝ (Fin n)) (s : ℝ) :
     HasDerivAt (fun s => x - s • y) (-y) s := by
   have h := HasDerivAt.const_sub x ((hasDerivAt_id s).smul_const y)
   rw [one_smul] at h
   exact h
 
-lemma lpasms_curve_smooth (n : ℕ) (x y : EuclideanSpace ℝ (Fin n)) :
+private lemma lpasms_curve_smooth (n : ℕ) (x y : EuclideanSpace ℝ (Fin n)) :
     ContDiff ℝ 2 (fun s : ℝ => x - s • y) :=
   contDiff_const.sub (contDiff_id.smul contDiff_const)
 
-lemma lpasms_partial_smooth (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private lemma lpasms_partial_smooth (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (hφ : ContDiff ℝ 2 φ) (i : Fin n) :
     ContDiff ℝ 1 (fun q => (fderiv ℝ φ q) (EuclideanSpace.single i (1:ℝ))) := by
   have hff : ContDiff ℝ 1
@@ -649,7 +657,7 @@ lemma lpasms_partial_smooth (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
 /-- Second-order Taylor expansion with integral remainder, in
 coordinates, for a `C²` function, with the iterated partials in the
 form used by the heat-semigroup generator assembly. -/
-theorem taylor_two_integral_remainder_lpasm (n : ℕ)
+private theorem taylor_two_integral_remainder_lpasm (n : ℕ)
     {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (x y : EuclideanSpace ℝ (Fin n)) :
     φ (x - y) - φ x + ∑ i, y i * deriv (fun s => φ (WithLp.toLp 2 (Function.update x i s))) (x i)
@@ -755,13 +763,15 @@ theorem taylor_two_integral_remainder_lpasm (n : ℕ)
 
 end Taylor
 
+/-! ## E. Kernel closure and domination -/
+
 section Closures
 
 open MeasureTheory
 
 
 /-- Derivative of a polynomial evaluation along a coordinate update. -/
-theorem hasDerivAt_eval_update (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (f : Fin n → ℝ)
+private theorem hasDerivAt_eval_update (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (f : Fin n → ℝ)
     (i : Fin n) (r : ℝ) :
     HasDerivAt (fun s => MvPolynomial.eval (Function.update f i s) Q)
       (MvPolynomial.eval (Function.update f i r) (MvPolynomial.pderiv i Q)) r := by
@@ -844,7 +854,7 @@ theorem hasDerivAt_eval_update (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (f : Fin
         exact h
 
 /-- Time derivative of the kernel is a sum of two class members. -/
-theorem gaussPolyKernel_deriv_time (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem gaussPolyKernel_deriv_time (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     {t : ℝ} (ht : 0 < t) (x : EuclideanSpace ℝ (Fin n)) :
     deriv (fun s => gaussPolyKernel n Q k s x) t
       = gaussPolyKernel n (-(((n : ℝ) / 2 + (k : ℝ)) • Q)) (k + 1) t x
@@ -939,7 +949,7 @@ theorem gaussPolyKernel_deriv_time (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k :
   ring
 
 /-- Space derivative of the kernel is a sum of two class members. -/
-theorem gaussPolyKernel_deriv_space (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem gaussPolyKernel_deriv_space (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     {t : ℝ} (ht : 0 < t) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) :
     deriv (fun s => gaussPolyKernel n Q k t
         (WithLp.toLp 2 (Function.update x i s))) (x i)
@@ -1097,7 +1107,7 @@ open MeasureTheory
 
 
 /-- Coordinates are bounded by one plus the norm. -/
-lemma coord_le_one_add_norm (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) :
+private lemma coord_le_one_add_norm (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) :
     |x i| ≤ 1 + ‖x‖ := by
   have h : ‖x i‖ ≤ ‖x‖ := PiLp.norm_apply_le x i
   rw [Real.norm_eq_abs] at h
@@ -1105,7 +1115,7 @@ lemma coord_le_one_add_norm (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin 
   linarith
 
 /-- Polynomial bound: `|eval|` is at most a constant times `(1 + ‖x‖) ^ D`. -/
-lemma mvpoly_eval_le (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
+private lemma mvpoly_eval_le (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
     ∃ C : ℝ, ∃ D : ℕ, 0 < C ∧ ∀ x : EuclideanSpace ℝ (Fin n),
       |MvPolynomial.eval (fun i => x i) Q| ≤ C * (1 + ‖x‖) ^ D := by
   induction Q using MvPolynomial.induction_on with
@@ -1143,7 +1153,7 @@ lemma mvpoly_eval_le (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
       _ = C * (1 + ‖x‖) ^ (D + 1) := by rw [pow_succ']; ring
 
 /-- Elementary exponential lower bound: `(y / m) ^ m ≤ exp y` for `y ≥ 0`. -/
-lemma pow_div_le_exp (y : ℝ) (m : ℕ) (hy : 0 ≤ y) (hm : 1 ≤ m) :
+private lemma pow_div_le_exp (y : ℝ) (m : ℕ) (hy : 0 ≤ y) (hm : 1 ≤ m) :
     (y / m) ^ m ≤ Real.exp y := by
   have hmpos' : 0 < m := lt_of_lt_of_le zero_lt_one hm
   have hm0 : (m : ℝ) ≠ 0 := by exact_mod_cast ne_of_gt hmpos'
@@ -1156,7 +1166,7 @@ lemma pow_div_le_exp (y : ℝ) (m : ℕ) (hy : 0 ≤ y) (hm : 1 ≤ m) :
     _ = Real.exp y := by rw [← Real.exp_nat_mul, hmy]
 
 /-- Polynomial growth is beaten by Gaussian growth. -/
-lemma poly_le_exp_mul (D : ℕ) (t0 : ℝ) (ht0 : 0 < t0) :
+private lemma poly_le_exp_mul (D : ℕ) (t0 : ℝ) (ht0 : 0 < t0) :
     ∃ C : ℝ, 0 < C ∧ ∀ r : ℝ, 0 ≤ r →
       (1 + r) ^ D ≤ C * Real.exp (r ^ 2 / (16 * t0)) := by
   set m : ℕ := D + 1 with hm
@@ -1220,7 +1230,7 @@ lemma poly_le_exp_mul (D : ℕ) (t0 : ℝ) (ht0 : 0 < t0) :
               (le_of_lt (Real.exp_pos _))
 
 /-- The rpow prefactor is bounded on the compact time interval. -/
-lemma prefactor_bound (n : ℕ) (t0 t : ℝ) (ht0 : 0 < t0)
+private lemma prefactor_bound (n : ℕ) (t0 t : ℝ) (ht0 : 0 < t0)
     (hlo : t0 / 2 ≤ t) (_hhi : t ≤ 2 * t0) :
     (4 * Real.pi * t) ^ (-(n : ℝ) / 2) ≤ (2 * Real.pi * t0) ^ (-(n : ℝ) / 2) := by
   have ht : (0 : ℝ) < t := lt_of_lt_of_le (by positivity) hlo
@@ -1243,7 +1253,7 @@ lemma prefactor_bound (n : ℕ) (t0 t : ℝ) (ht0 : 0 < t0)
     (Real.rpow_pos_of_pos hbase_lo _)).mpr hpow
 
 /-- The zpow time factor is bounded on the compact time interval. -/
-lemma zpow_bound (k : ℕ) (t0 t : ℝ) (ht0 : 0 < t0) (hlo : t0 / 2 ≤ t) :
+private lemma zpow_bound (k : ℕ) (t0 t : ℝ) (ht0 : 0 < t0) (hlo : t0 / 2 ≤ t) :
     t ^ (-(k : ℤ)) ≤ (t0 / 2) ^ (-(k : ℤ)) := by
   have ht : (0 : ℝ) < t := lt_of_lt_of_le (by positivity) hlo
   have ht0' : (0 : ℝ) < t0 / 2 := by positivity
@@ -1254,7 +1264,7 @@ lemma zpow_bound (k : ℕ) (t0 t : ℝ) (ht0 : 0 < t0) (hlo : t0 / 2 ≤ t) :
   exact (inv_le_inv₀ (pow_pos ht k) (pow_pos ht0' k)).mpr hpow
 
 /-- Gaussian comparison on the time interval. -/
-lemma gauss_le (n : ℕ) (t0 t : ℝ) (ht0 : 0 < t0)
+private lemma gauss_le (n : ℕ) (t0 t : ℝ) (ht0 : 0 < t0)
     (hlo : t0 / 2 ≤ t) (hhi : t ≤ 2 * t0) (z : EuclideanSpace ℝ (Fin n)) :
     Real.exp (-‖z‖ ^ 2 / (4 * t)) ≤ Real.exp (-‖z‖ ^ 2 / (8 * t0)) := by
   apply Real.exp_le_exp_of_le
@@ -1267,7 +1277,7 @@ lemma gauss_le (n : ℕ) (t0 t : ℝ) (ht0 : 0 < t0)
 
 /-- Domination of a Gaussian-polynomial kernel by a slower Gaussian
 on a compact time interval away from `0`. -/
-theorem gaussPolyKernel_domination (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem gaussPolyKernel_domination (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     {t0 : ℝ} (ht0 : 0 < t0) :
     ∃ C : ℝ, 0 < C ∧ ∀ {t : ℝ}, t0 / 2 ≤ t → t ≤ 2 * t0 →
       ∀ z : EuclideanSpace ℝ (Fin n),
@@ -1369,12 +1379,14 @@ theorem gaussPolyKernel_domination (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k :
 
 end Domination
 
+/-! ## F. Continuity, time and space partials -/
+
 section ClassConvCont
 
 open MeasureTheory
 
 
-lemma integrable_exp_neg_mul_norm_sq (n : ℕ) (b : ℝ) (hb : 0 < b) :
+private lemma integrable_exp_neg_mul_norm_sq (n : ℕ) (b : ℝ) (hb : 0 < b) :
     Integrable (fun v : EuclideanSpace ℝ (Fin n) => Real.exp (-b * ‖v‖ ^ 2)) volume := by
   have hbC : 0 < (b : ℂ).re := by simpa using hb
   have h := GaussianFourier.integrable_cexp_neg_mul_sq_norm_add
@@ -1388,7 +1400,7 @@ lemma integrable_exp_neg_mul_norm_sq (n : ℕ) (b : ℝ) (hb : 0 < b) :
   rw [hcast, ← Complex.ofReal_exp]
   exact (RCLike.ofReal_re _).symm
 
-lemma poly_eval_bound (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
+private lemma poly_eval_bound (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
     ∃ C : ℝ, ∃ D : ℕ, 0 ≤ C ∧ ∀ x : EuclideanSpace ℝ (Fin n),
       |MvPolynomial.eval (fun i => x i) Q| ≤ C * (1 + ‖x‖) ^ D := by
   classical
@@ -1431,7 +1443,7 @@ lemma poly_eval_bound (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
     _ = C * (1 + ‖x‖) ^ D := by
         rw [Finset.sum_mul]
 
-lemma poly_gaussian_bounded (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (a : ℝ) (ha : 0 < a) :
+private lemma poly_gaussian_bounded (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (a : ℝ) (ha : 0 < a) :
     ∃ Cg : ℝ, 0 ≤ Cg ∧ ∀ z : EuclideanSpace ℝ (Fin n),
       |MvPolynomial.eval (fun i => z i) Q * Real.exp (-a * ‖z‖ ^ 2)| ≤ Cg := by
   obtain ⟨C, D, hC, hbound⟩ := poly_eval_bound n Q
@@ -1464,7 +1476,7 @@ lemma poly_gaussian_bounded (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (a : ℝ) (
               apply mul_le_mul_of_nonneg_right h1 (Real.exp_nonneg _)
           _ ≤ Real.exp ((D : ℝ) ^ 2 / (4 * a)) := h2
 
-lemma kernel_continuousAt_q (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private lemma kernel_continuousAt_q (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     (q₀ : ℝ × EuclideanSpace ℝ (Fin n)) (hq₀ : 0 < q₀.1)
     (y : EuclideanSpace ℝ (Fin n)) :
     ContinuousAt (fun q : ℝ × EuclideanSpace ℝ (Fin n) =>
@@ -1501,7 +1513,7 @@ lemma kernel_continuousAt_q (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     exact continuousAt_fst.zpow₀ _ (Or.inl ht_ne)
   exact ((h1.mul h2).mul h3).mul h4
 
-lemma kernel_continuous_y (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private lemma kernel_continuous_y (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     (t : ℝ) (x : EuclideanSpace ℝ (Fin n)) (ht : t ≠ 0) :
     Continuous (fun y : EuclideanSpace ℝ (Fin n) =>
       gaussPolyKernel n Q k t (x - y)) := by
@@ -1527,7 +1539,7 @@ lemma kernel_continuous_y (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     exact (hpoly.comp hcoord).comp hsub
   exact ((continuous_const.mul h2).mul h3).mul continuous_const
 
-lemma exp_shift_bound (n : ℕ) (t₀ : ℝ) (ht₀ : 0 < t₀)
+private lemma exp_shift_bound (n : ℕ) (t₀ : ℝ) (ht₀ : 0 < t₀)
     (x₀ x y : EuclideanSpace ℝ (Fin n)) (hx : x ∈ Metric.ball x₀ 1) :
     Real.exp (-‖x - y‖ ^ 2 / (16 * t₀))
       ≤ Real.exp ((‖x₀‖ + 1) ^ 2 / (16 * t₀))
@@ -1569,7 +1581,7 @@ lemma exp_shift_bound (n : ℕ) (t₀ : ℝ) (ht₀ : 0 < t₀)
         apply mul_le_mul_of_nonneg_right _ (Real.exp_nonneg _)
         exact Real.exp_le_exp.mpr hCx
 
-lemma poly_exp_split_bound (n : ℕ) (Q : MvPolynomial (Fin n) ℝ)
+private lemma poly_exp_split_bound (n : ℕ) (Q : MvPolynomial (Fin n) ℝ)
     (t₀ t : ℝ) (ht₀ : 0 < t₀) (ht_lo : t₀ / 2 < t) (ht_hi : t < 2 * t₀)
     (Cg : ℝ) (hCg_nonneg : 0 ≤ Cg) (hCg : ∀ z : EuclideanSpace ℝ (Fin n),
       |MvPolynomial.eval (fun i => z i) Q * Real.exp (-(1 / (16 * t₀)) * ‖z‖ ^ 2)| ≤ Cg)
@@ -1613,7 +1625,7 @@ lemma poly_exp_split_bound (n : ℕ) (Q : MvPolynomial (Fin n) ℝ)
     _ ≤ Cg * Real.exp (-‖z‖ ^ 2 / (16 * t₀)) :=
         mul_le_mul hP1 hP2 hexp2_nonneg hCg_nonneg
 
-lemma rpow_bound_on_Icc (n : ℕ) (t₀ : ℝ) (ht₀ : 0 < t₀) :
+private lemma rpow_bound_on_Icc (n : ℕ) (t₀ : ℝ) (ht₀ : 0 < t₀) :
     ∃ C1 : ℝ, 0 ≤ C1 ∧ ∀ t ∈ Set.Icc (t₀ / 2) (2 * t₀),
       |(4 * Real.pi * t) ^ (-(n : ℝ) / 2)| ≤ C1 := by
   have hcont : ContinuousOn (fun t : ℝ => (4 * Real.pi * t) ^ (-(n : ℝ) / 2))
@@ -1636,7 +1648,7 @@ lemma rpow_bound_on_Icc (n : ℕ) (t₀ : ℝ) (ht₀ : 0 < t₀) :
   have h := hC1 t ht
   simpa using h
 
-lemma zpow_bound_on_Icc (k : ℕ) (t₀ : ℝ) (ht₀ : 0 < t₀) :
+private lemma zpow_bound_on_Icc (k : ℕ) (t₀ : ℝ) (ht₀ : 0 < t₀) :
     ∃ C2 : ℝ, 0 ≤ C2 ∧ ∀ t ∈ Set.Icc (t₀ / 2) (2 * t₀),
       |t ^ (-(k : ℤ))| ≤ C2 := by
   have hcont : ContinuousOn (fun t : ℝ => t ^ (-(k : ℤ)))
@@ -1659,7 +1671,7 @@ lemma zpow_bound_on_Icc (k : ℕ) (t₀ : ℝ) (ht₀ : 0 < t₀) :
   simpa using h
 
 /-- A class-member convolution is continuous on `t > 0`. -/
-theorem classConv_continuousOn (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem classConv_continuousOn (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     {g : EuclideanSpace ℝ (Fin n) → ℝ}
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M) :
@@ -1788,7 +1800,7 @@ section G4cTime
 open MeasureTheory
 
 
-lemma continuous_euclidean_coord (n : ℕ) (i : Fin n) :
+private lemma continuous_euclidean_coord (n : ℕ) (i : Fin n) :
     Continuous fun v : EuclideanSpace ℝ (Fin n) => v i := by
   have h : ∀ v : EuclideanSpace ℝ (Fin n),
       v i = inner ℝ (EuclideanSpace.single i (1 : ℝ)) v := by
@@ -1798,7 +1810,7 @@ lemma continuous_euclidean_coord (n : ℕ) (i : Fin n) :
   simp_rw [h]
   exact Continuous.inner continuous_const continuous_id
 
-lemma continuous_kernel_poly (n : ℕ) (Q : MvPolynomial (Fin n) ℝ)
+private lemma continuous_kernel_poly (n : ℕ) (Q : MvPolynomial (Fin n) ℝ)
     (x : EuclideanSpace ℝ (Fin n)) :
     Continuous fun y : EuclideanSpace ℝ (Fin n) =>
       MvPolynomial.eval (fun i => (x - y) i) Q := by
@@ -1809,7 +1821,7 @@ lemma continuous_kernel_poly (n : ℕ) (Q : MvPolynomial (Fin n) ℝ)
     exact (continuous_euclidean_coord n i).comp (continuous_const.sub continuous_id)
   exact (MvPolynomial.continuous_eval Q).comp h1
 
-lemma continuous_kernel_space (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private lemma continuous_kernel_space (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     (s : ℝ) (x : EuclideanSpace ℝ (Fin n)) :
     Continuous fun y : EuclideanSpace ℝ (Fin n) =>
       gaussPolyKernel n Q k s (x - y) := by
@@ -1830,7 +1842,7 @@ lemma continuous_kernel_space (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
       * MvPolynomial.eval (fun i => (x - y) i) Q * s ^ (-(k : ℤ))
   exact ((continuous_const.mul hexp).mul hpoly).mul continuous_const
 
-lemma differentiableAt_kernel_time (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private lemma differentiableAt_kernel_time (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     {s : ℝ} (hs : 0 < s) (z : EuclideanSpace ℝ (Fin n)) :
     DifferentiableAt ℝ (fun s' => gaussPolyKernel n Q k s' z) s := by
   have h4ps : (0 : ℝ) < 4 * Real.pi * s := by positivity
@@ -1853,7 +1865,7 @@ lemma differentiableAt_kernel_time (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k :
     * s' ^ (-(k : ℤ))) s
   exact ((hA.mul hB).mul hC).mul hD
 
-lemma integrable_translated_gaussian (n : ℕ) (t : ℝ) (ht : 0 < t)
+private lemma integrable_translated_gaussian (n : ℕ) (t : ℝ) (ht : 0 < t)
     (x : EuclideanSpace ℝ (Fin n)) :
     Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
       Real.exp (-‖x - y‖ ^ 2 / (16 * t))) volume := by
@@ -1895,7 +1907,7 @@ lemma integrable_translated_gaussian (n : ℕ) (t : ℝ) (ht : 0 < t)
 
 /-- Time partial of a Gaussian-polynomial-kernel convolution, by
 differentiation under the integral. -/
-theorem classConv_hasDerivAt_time (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem classConv_hasDerivAt_time (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     {g : EuclideanSpace ℝ (Fin n) → ℝ}
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M)
@@ -2017,7 +2029,8 @@ open MeasureTheory
 open scoped Topology
 
 
-theorem aux_polyEval_diff (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (z0 : EuclideanSpace ℝ (Fin n)) :
+private theorem aux_polyEval_diff (n : ℕ) (Q : MvPolynomial (Fin n) ℝ)
+    (z0 : EuclideanSpace ℝ (Fin n)) :
     DifferentiableAt ℝ (fun z : EuclideanSpace ℝ (Fin n) => MvPolynomial.eval (fun i => z i) Q) z0
       := by
   induction Q using MvPolynomial.induction_on with
@@ -2053,7 +2066,7 @@ theorem aux_polyEval_diff (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (z0 : Euclide
       exact ContinuousLinearMap.differentiableAt _
     exact hp.mul hproj
 
-theorem aux_kernel_diff (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ) (t : ℝ)
+private theorem aux_kernel_diff (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ) (t : ℝ)
     (z0 : EuclideanSpace ℝ (Fin n)) :
     DifferentiableAt ℝ (fun z : EuclideanSpace ℝ (Fin n) => gaussPolyKernel n Q k t z) z0 := by
   have hnorm : DifferentiableAt ℝ (fun z : EuclideanSpace ℝ (Fin n) => ‖z‖ ^ 2) z0 :=
@@ -2089,7 +2102,7 @@ theorem aux_kernel_diff (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ) (t : 
   rw [h_eq]
   exact ((hconst1.mul hexp).mul hpoly).mul hconst2
 
-theorem aux_kernel_cont (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ) (t : ℝ) :
+private theorem aux_kernel_cont (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ) (t : ℝ) :
     Continuous (fun z : EuclideanSpace ℝ (Fin n) => gaussPolyKernel n Q k t z) := by
   have h_eq : (fun z : EuclideanSpace ℝ (Fin n) => gaussPolyKernel n Q k t z)
       = fun z => ((4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-‖z‖ ^ 2 / (4 * t))
@@ -2119,7 +2132,7 @@ theorem aux_kernel_cont (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ) (t : 
     continuous_const
   exact ((hconst1.mul hexp).mul hpoly).mul hconst2
 
-theorem aux_update_hasDeriv (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) (s0 : ℝ) :
+private theorem aux_update_hasDeriv (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) (s0 : ℝ) :
     HasDerivAt (fun s : ℝ => (WithLp.toLp 2 (Function.update x i s) : EuclideanSpace ℝ (Fin n)))
       (EuclideanSpace.single i (1 : ℝ)) s0 := by
   have h_eq : (fun s : ℝ => (WithLp.toLp 2 (Function.update x i s) : EuclideanSpace ℝ (Fin n)))
@@ -2139,7 +2152,7 @@ theorem aux_update_hasDeriv (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin 
     h1.smul_const _
   simpa using h2.const_add x
 
-theorem aux_kernelUpdate_diff (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ) (t : ℝ)
+private theorem aux_kernelUpdate_diff (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ) (t : ℝ)
     (w : EuclideanSpace ℝ (Fin n)) (i : Fin n) (s0 : ℝ) :
     DifferentiableAt ℝ (fun s : ℝ => gaussPolyKernel n Q k t
       (WithLp.toLp 2 (Function.update w i s))) s0 := by
@@ -2152,7 +2165,7 @@ theorem aux_kernelUpdate_diff (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
   have hcomp := hk.comp s0 hw
   simpa [Function.comp_def] using hcomp
 
-theorem aux_updateDiff_norm (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) (s : ℝ) :
+private theorem aux_updateDiff_norm (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) (s : ℝ) :
     ‖(WithLp.toLp 2 (Function.update x i s) : EuclideanSpace ℝ (Fin n)) - x‖ = |s - x i| := by
   have h_eq : (WithLp.toLp 2 (Function.update x i s) : EuclideanSpace ℝ (Fin n)) - x
       = (s - x i) • EuclideanSpace.single i (1 : ℝ) := by
@@ -2168,7 +2181,7 @@ theorem aux_updateDiff_norm (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin 
   rw [h_eq, norm_smul, Real.norm_eq_abs, PiLp.norm_single]
   simp
 
-theorem aux_sq_bound (n : ℕ) (x y : EuclideanSpace ℝ (Fin n)) (i : Fin n) (s : ℝ)
+private theorem aux_sq_bound (n : ℕ) (x y : EuclideanSpace ℝ (Fin n)) (i : Fin n) (s : ℝ)
     (hs : s ∈ Set.Ioo ((x i) - 1) ((x i) + 1)) :
     ‖x - y‖ ^ 2 ≤ 2 * ‖(WithLp.toLp 2 (Function.update x i s) : EuclideanSpace ℝ (Fin n)) - y‖ ^ 2
       + 2 := by
@@ -2208,7 +2221,7 @@ theorem aux_sq_bound (n : ℕ) (x y : EuclideanSpace ℝ (Fin n)) (i : Fin n) (s
       - 1)]
   exact hsq.trans h2
 
-theorem aux_exp_bound (w2 d2 t : ℝ) (ht : 0 < t) (h : d2 ≤ 2 * w2 + 2) :
+private theorem aux_exp_bound (w2 d2 t : ℝ) (ht : 0 < t) (h : d2 ≤ 2 * w2 + 2) :
     Real.exp (-w2 / (16 * t)) ≤ Real.exp (1 / (16 * t)) * Real.exp (-d2 / (32 * t)) := by
   have ht16 : 0 < (16 * t : ℝ) := by positivity
   have h1 : -w2 / (16 * t) ≤ -d2 / (32 * t) + 1 / (16 * t) := by
@@ -2226,7 +2239,7 @@ theorem aux_exp_bound (w2 d2 t : ℝ) (ht : 0 < t) (h : d2 ≤ 2 * w2 + 2) :
     _ = Real.exp (-d2 / (32 * t)) * Real.exp (1 / (16 * t)) := Real.exp_add _ _
     _ = Real.exp (1 / (16 * t)) * Real.exp (-d2 / (32 * t)) := mul_comm _ _
 
-theorem aux_gaussReal_int (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (c0 : ℝ) (hc0 : 0 < c0) :
+private theorem aux_gaussReal_int (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (c0 : ℝ) (hc0 : 0 < c0) :
     Integrable (fun y : EuclideanSpace ℝ (Fin n) => Real.exp (-‖x - y‖ ^ 2 / c0)) := by
   have hb0 : 0 < (1 / c0 : ℝ) := by positivity
   let b : ℂ := ((1 / c0 : ℝ) : ℂ)
@@ -2274,7 +2287,7 @@ theorem aux_gaussReal_int (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (c0 : ℝ) 
 set_option linter.unusedVariables false in
 /-- First space partial of a class-member convolution, assembled from
 kernel space closure and kernel domination. -/
-theorem classConv_hasDerivAt_space_asm (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem classConv_hasDerivAt_space_asm (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     {g : EuclideanSpace ℝ (Fin n) → ℝ}
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M)
@@ -2628,7 +2641,7 @@ open scoped Topology
 open Asymptotics
 
 
-theorem coord_le_norm (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) :
+private theorem coord_le_norm (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) :
     |x i| ≤ ‖x‖ := by
   have h1 : (x i) ^ 2 ≤ ∑ j, (x j) ^ 2 := by
     apply Finset.single_le_sum (fun j _ => sq_nonneg _) (Finset.mem_univ i)
@@ -2640,7 +2653,7 @@ theorem coord_le_norm (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) :
     _ ≤ √(‖x‖ ^ 2) := Real.sqrt_le_sqrt h2
     _ = ‖x‖ := Real.sqrt_sq hnonneg
 
-theorem monomial_le (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (e : Fin n →₀ ℕ) :
+private theorem monomial_le (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (e : Fin n →₀ ℕ) :
     |∏ i ∈ e.support, x i ^ e i| ≤ (1 + ‖x‖) ^ (e.sum fun _ k => k) := by
   calc |∏ i ∈ e.support, x i ^ e i|
       = ∏ i ∈ e.support, |x i| ^ e i := by
@@ -2658,7 +2671,7 @@ theorem monomial_le (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (e : Fin n →₀
         rw [Finset.prod_pow_eq_pow_sum]
         congr 1
 
-theorem poly_le (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (x : EuclideanSpace ℝ (Fin n)) :
+private theorem poly_le (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (x : EuclideanSpace ℝ (Fin n)) :
     |MvPolynomial.eval (fun i => x i) Q|
       ≤ (∑ d ∈ Q.support, |Q.coeff d|) * (1 + ‖x‖) ^ Q.totalDegree := by
   rw [MvPolynomial.eval_eq]
@@ -2680,7 +2693,7 @@ theorem poly_le (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (x : EuclideanSpace ℝ
     _ = (∑ d ∈ Q.support, |Q.coeff d|) * (1 + ‖x‖) ^ Q.totalDegree := by
         rw [Finset.sum_mul]
 
-theorem gauss_integrable (n : ℕ) (t : ℝ) (ht : 0 < t) :
+private theorem gauss_integrable (n : ℕ) (t : ℝ) (ht : 0 < t) :
     Integrable (fun z : EuclideanSpace ℝ (Fin n) => Real.exp (-‖z‖ ^ 2 / (4 * t))) := by
   have hb : 0 < ((1 / (4 * t) : ℝ) : ℂ).re := by
     simp only [one_div, mul_inv_rev, Complex.ofReal_mul, Complex.ofReal_inv, Complex.ofReal_ofNat,
@@ -2715,7 +2728,7 @@ theorem gauss_integrable (n : ℕ) (t : ℝ) (ht : 0 < t) :
     exact continuous_norm.pow 2
   exact ⟨hmeas, hfin⟩
 
-theorem poly_exp_bound (D : ℕ) (t : ℝ) (ht : 0 < t) (r : ℝ) (hr : 0 ≤ r) :
+private theorem poly_exp_bound (D : ℕ) (t : ℝ) (ht : 0 < t) (r : ℝ) (hr : 0 ≤ r) :
     (1 + r) ^ D ≤ (2 ^ D * ((8 * t) ^ D * (Nat.factorial D : ℝ) + 1)) * Real.exp (r ^ 2 / (8 * t))
       := by
   have h8t : (0:ℝ) < 8 * t := by positivity
@@ -2784,7 +2797,7 @@ theorem poly_exp_bound (D : ℕ) (t : ℝ) (ht : 0 < t) (r : ℝ) (hr : 0 ≤ r)
             _ = (2 ^ D * ((8 * t) ^ D * (Nat.factorial D : ℝ) + 1)) * Real.exp (r ^ 2 / (8 * t)) :=
               by ring
 
-theorem polyGauss_integrable (n : ℕ) (D : ℕ) (t : ℝ) (ht : 0 < t) :
+private theorem polyGauss_integrable (n : ℕ) (D : ℕ) (t : ℝ) (ht : 0 < t) :
     Integrable (fun z : EuclideanSpace ℝ (Fin n) => Real.exp (-‖z‖ ^ 2 / (4 * t)) * (1 + ‖z‖) ^ D)
       := by
   set C0 : ℝ := 2 ^ D * ((8 * t) ^ D * (Nat.factorial D : ℝ) + 1) with hC0
@@ -2831,7 +2844,7 @@ theorem polyGauss_integrable (n : ℕ) (D : ℕ) (t : ℝ) (ht : 0 < t) :
         field_simp
         ring
 
-noncomputable def mkSpaceLin (n : ℕ) (D : Fin n → ℝ) : EuclideanSpace ℝ (Fin n) →L[ℝ] ℝ :=
+private noncomputable def mkSpaceLin (n : ℕ) (D : Fin n → ℝ) : EuclideanSpace ℝ (Fin n) →L[ℝ] ℝ :=
   let Llin : EuclideanSpace ℝ (Fin n) →ₗ[ℝ] ℝ :=
     { toFun := fun h => ∑ i, h i * D i
       map_add' := by
@@ -2858,7 +2871,7 @@ noncomputable def mkSpaceLin (n : ℕ) (D : Fin n → ℝ) : EuclideanSpace ℝ 
       _ = ‖h‖ * ∑ i, |D i| := by rw [← Finset.mul_sum]
       _ = (∑ i, |D i|) * ‖h‖ := by ring)
 
-theorem trans_preserving (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) :
+private theorem trans_preserving (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) :
     MeasurePreserving (fun y => x - y) (volume : Measure (EuclideanSpace ℝ (Fin n))) volume := by
   have h1 : MeasurePreserving (fun y : EuclideanSpace ℝ (Fin n) => -y) volume volume :=
     Measure.measurePreserving_neg volume
@@ -2872,7 +2885,7 @@ theorem trans_preserving (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) :
   rw [hEq]
   exact hcomp
 
-theorem poly_cont (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
+private theorem poly_cont (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
     Continuous (fun z : EuclideanSpace ℝ (Fin n) => MvPolynomial.eval (fun i => z i) Q) := by
   have h1 : Continuous (fun z : EuclideanSpace ℝ (Fin n) => (fun i => z i)) := by
     rw [continuous_pi_iff]
@@ -2880,7 +2893,7 @@ theorem poly_cont (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
     exact PiLp.continuous_apply _ _ i
   exact (MvPolynomial.continuous_eval Q).comp h1
 
-theorem kernel_cont_z (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ) (t : ℝ) :
+private theorem kernel_cont_z (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ) (t : ℝ) :
     Continuous (fun z : EuclideanSpace ℝ (Fin n) => gaussPolyKernel n Q k t z) := by
   unfold gaussPolyKernel
   apply Continuous.mul
@@ -2894,7 +2907,7 @@ theorem kernel_cont_z (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ) (t : �
     · exact poly_cont n Q
   · exact continuous_const
 
-theorem kernel_bound (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ) (t : ℝ)
+private theorem kernel_bound (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ) (t : ℝ)
     (z : EuclideanSpace ℝ (Fin n)) :
     |gaussPolyKernel n Q k t z|
       ≤ |(4 * Real.pi * t) ^ (-(n : ℝ) / 2)| * |t ^ (-(k : ℤ))|
@@ -2914,7 +2927,7 @@ theorem kernel_bound (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ) (t : ℝ
         * (∑ d ∈ Q.support, |Q.coeff d|)
         * (Real.exp (-‖z‖ ^ 2 / (4 * t)) * (1 + ‖z‖) ^ Q.totalDegree) := by ring
 
-theorem kernel_integrable_z (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem kernel_integrable_z (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     (t : ℝ) (ht : 0 < t) :
     Integrable (fun z : EuclideanSpace ℝ (Fin n) => gaussPolyKernel n Q k t z) := by
   set Cc : ℝ := |(4 * Real.pi * t) ^ (-(n : ℝ) / 2)| * |t ^ (-(k : ℤ))|
@@ -2938,7 +2951,7 @@ theorem kernel_integrable_z (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     _ = Cc * (Real.exp (-‖z‖ ^ 2 / (4 * t)) * (1 + ‖z‖) ^ Q.totalDegree) := by
         simp only [hCc]
 
-theorem kernel_integrable_trans (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem kernel_integrable_trans (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     (t : ℝ) (ht : 0 < t) (x : EuclideanSpace ℝ (Fin n)) :
     Integrable (fun y : EuclideanSpace ℝ (Fin n) => gaussPolyKernel n Q k t (x - y)) := by
   have hK := kernel_integrable_z n Q k t ht
@@ -2947,7 +2960,7 @@ theorem kernel_integrable_trans (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : �
   -- hcomp : Integrable ((fun z => K t z) ∘ (fun y => x - y))
   simpa [Function.comp_def] using hcomp
 
-theorem classConv_integrable (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem classConv_integrable (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     (g : EuclideanSpace ℝ (Fin n) → ℝ)
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M)
@@ -2974,7 +2987,7 @@ theorem classConv_integrable (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
       ≤ |M| * |gaussPolyKernel n Q k t (x - y)| := by
         apply mul_le_mul_of_nonneg_right hM' (abs_nonneg _)
 
-theorem timeDeriv_cont (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem timeDeriv_cont (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     (g : EuclideanSpace ℝ (Fin n) → ℝ)
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M)
@@ -3036,7 +3049,7 @@ theorem timeDeriv_cont (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     rw [hCong, integral_add hInt1 hInt2]
   exact hAdd.congr hEq
 
-theorem spaceDeriv_cont (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem spaceDeriv_cont (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     (g : EuclideanSpace ℝ (Fin n) → ℝ)
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M)
@@ -3103,10 +3116,10 @@ theorem spaceDeriv_cont (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     rw [hCong, integral_add hInt1 hInt2]
   exact hAdd.congr hEq
 
-theorem mkSpaceLin_apply (n : ℕ) (D : Fin n → ℝ) (h : EuclideanSpace ℝ (Fin n)) :
+private theorem mkSpaceLin_apply (n : ℕ) (D : Fin n → ℝ) (h : EuclideanSpace ℝ (Fin n)) :
     mkSpaceLin n D h = ∑ i, h i * D i := rfl
 
-theorem norm_le_of_coord_sq (n : ℕ) (w z₀ z : EuclideanSpace ℝ (Fin n))
+private theorem norm_le_of_coord_sq (n : ℕ) (w z₀ z : EuclideanSpace ℝ (Fin n))
     (h : ∀ j, (w j - z₀ j) ^ 2 ≤ ((z - z₀) j) ^ 2) :
     ‖w - z₀‖ ≤ ‖z - z₀‖ := by
   rw [← sq_le_sq₀ (norm_nonneg _) (norm_nonneg _),
@@ -3115,7 +3128,7 @@ theorem norm_le_of_coord_sq (n : ℕ) (w z₀ z : EuclideanSpace ℝ (Fin n))
   rw [PiLp.sub_apply]
   exact h j
 
-theorem spaceSlice_hasFDerivAt (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem spaceSlice_hasFDerivAt (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     (g : EuclideanSpace ℝ (Fin n) → ℝ)
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M)
@@ -3370,7 +3383,7 @@ theorem spaceSlice_hasFDerivAt (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ
 
 /-- Joint differentiability of a class-member convolution, assembled
 from its time and space partials. -/
-theorem classConv_hasFDerivAt_joint_asm (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem classConv_hasFDerivAt_joint_asm (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     {g : EuclideanSpace ℝ (Fin n) → ℝ}
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M)
@@ -3573,12 +3586,14 @@ theorem classConv_hasFDerivAt_joint_asm (n : ℕ) (Q : MvPolynomial (Fin n) ℝ)
 
 end JointAsm
 
+/-! ## G. Joint differentiability and `fderiv` decomposition -/
+
 section DecompAsm
 
 open MeasureTheory
 
 
-theorem integrable_real_exp_neg_mul_sq_norm (ι : Type*) [Fintype ι] {b : ℝ} (hb : 0 < b) :
+private theorem integrable_real_exp_neg_mul_sq_norm (ι : Type*) [Fintype ι] {b : ℝ} (hb : 0 < b) :
     Integrable (fun v : EuclideanSpace ℝ ι => Real.exp (-b * ‖v‖ ^ 2)) volume := by
   have h0 := GaussianFourier.integrable_cexp_neg_mul_sq_norm_add_of_euclideanSpace
     (b := (b : ℂ)) (by simpa using hb) (0 : ℂ) (0 : EuclideanSpace ℝ ι)
@@ -3589,7 +3604,7 @@ theorem integrable_real_exp_neg_mul_sq_norm (ι : Type*) [Fintype ι] {b : ℝ} 
     ← Complex.ofReal_neg, ← Complex.ofReal_pow, ← Complex.ofReal_mul, Complex.ofReal_re]
 
 /-- A power of `r ≥ 0` is bounded by a multiple of `exp (c * r ^ 2)`. -/
-theorem pow_le_const_mul_exp (c : ℝ) (hc : 0 < c) (D : ℕ) :
+private theorem pow_le_const_mul_exp (c : ℝ) (hc : 0 < c) (D : ℕ) :
     ∃ C2 : ℝ, 0 ≤ C2 ∧ ∀ r : ℝ, 0 ≤ r → r ^ D ≤ C2 * Real.exp (c * r ^ 2) := by
   set m : ℕ := D + 1 with hm_def
   have hmpos : (0 : ℝ) < m := by
@@ -3640,7 +3655,7 @@ theorem pow_le_const_mul_exp (c : ℝ) (hc : 0 < c) (D : ℕ) :
     _ = (1 + ((m : ℝ) / c) ^ m) * Real.exp (c * r ^ 2) := by ring
 
 /-- A multivariate polynomial is bounded by a multiple of `1 + ‖z‖ ^ D`. -/
-theorem mvpoly_eval_le_one_add_pow (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
+private theorem mvpoly_eval_le_one_add_pow (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
     ∃ C1 : ℝ, ∃ D : ℕ, 0 ≤ C1 ∧ ∀ z : EuclideanSpace ℝ (Fin n),
       |MvPolynomial.eval (fun i => z i) Q| ≤ C1 * (1 + ‖z‖ ^ D) := by
   refine ⟨Q.support.sum (fun d => |Q.coeff d|),
@@ -3701,7 +3716,7 @@ theorem mvpoly_eval_le_one_add_pow (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
             * (1 + ‖z‖ ^ (Q.support.sum fun d => ∑ i, d i)) :=
           (Finset.sum_mul _ _ _).symm
 
-theorem continuous_kernel (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem continuous_kernel (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     {t : ℝ} (_ht : 0 < t) (x : EuclideanSpace ℝ (Fin n)) :
     Continuous fun y : EuclideanSpace ℝ (Fin n) => gaussPolyKernel n Q k t (x - y) := by
   have hsub : Continuous fun y : EuclideanSpace ℝ (Fin n) => x - y :=
@@ -3717,7 +3732,7 @@ theorem continuous_kernel (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
   unfold gaussPolyKernel
   exact ((continuous_const.mul hexp).mul hpoly).mul continuous_const
 
-theorem integrable_kernel (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem integrable_kernel (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     {t : ℝ} (ht : 0 < t) (x : EuclideanSpace ℝ (Fin n)) :
     Integrable (fun y : EuclideanSpace ℝ (Fin n) => gaussPolyKernel n Q k t (x - y))
       volume := by
@@ -3816,7 +3831,7 @@ theorem integrable_kernel (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
 
 /-- The `fderiv` of a class-member convolution is a `coprod` of
 class-member convolutions. -/
-theorem classConv_fderiv_decomp_asm (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem classConv_fderiv_decomp_asm (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     {g : EuclideanSpace ℝ (Fin n) → ℝ}
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M)
@@ -3915,13 +3930,15 @@ theorem classConv_fderiv_decomp_asm (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k 
 
 end DecompAsm
 
+/-! ## H. Induction to `ContDiffOn ∞` and specialization -/
+
 section H3Step
 
 open MeasureTheory
 
 
 /-- Coordinate evaluation on `EuclideanSpace` as an inner product. -/
-theorem coordProj_apply (n : ℕ) (i : Fin n) (h : EuclideanSpace ℝ (Fin n)) :
+private theorem coordProj_apply (n : ℕ) (i : Fin n) (h : EuclideanSpace ℝ (Fin n)) :
     (innerSL ℝ (EuclideanSpace.single i (1 : ℝ))) h = h i := by
   rw [innerSL_apply_apply, EuclideanSpace.inner_single_left]
   simp
@@ -3929,7 +3946,7 @@ theorem coordProj_apply (n : ℕ) (i : Fin n) (h : EuclideanSpace ℝ (Fin n)) :
 /-- Induction step: `ContDiffOn (m+1)` for a class-member
 convolution, from `ContDiffOn m` for all class members and the
 `fderiv` decomposition. -/
-theorem classConv_contDiffOn_succ (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem classConv_contDiffOn_succ (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     {g : EuclideanSpace ℝ (Fin n) → ℝ}
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M)
@@ -4097,7 +4114,7 @@ open Filter
 
 /-- Whole-space heat smoothing (C^∞): the Gaussian heat convolution of
 bounded measurable data is `ContDiffOn ∞` at positive time. -/
-theorem heat_convolution_smooth_final (n : ℕ) {g : EuclideanSpace ℝ (Fin n) → ℝ}
+private theorem heat_convolution_smooth_final (n : ℕ) {g : EuclideanSpace ℝ (Fin n) → ℝ}
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M)
     (hClassThm : ∀ (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
@@ -4124,11 +4141,13 @@ theorem heat_convolution_smooth_final (n : ℕ) {g : EuclideanSpace ℝ (Fin n) 
 
 end H3Final
 
+/-! ## I. Laplacian identification -/
+
 section LapBridge
 
 open MeasureTheory
 
-theorem hasDerivAt_line_single (n : ℕ) (i : Fin n) (y : EuclideanSpace ℝ (Fin n))
+private theorem hasDerivAt_line_single (n : ℕ) (i : Fin n) (y : EuclideanSpace ℝ (Fin n))
     (a : ℝ) :
     HasDerivAt (fun s : ℝ => y + (s - a) • EuclideanSpace.single i (1 : ℝ))
       (EuclideanSpace.single i (1 : ℝ)) a := by
@@ -4138,7 +4157,7 @@ theorem hasDerivAt_line_single (n : ℕ) (i : Fin n) (y : EuclideanSpace ℝ (Fi
   have h3 := HasDerivAt.const_add y h2
   simpa using h3
 
-theorem line_single_eq_update (n : ℕ) (i : Fin n) (y : EuclideanSpace ℝ (Fin n))
+private theorem line_single_eq_update (n : ℕ) (i : Fin n) (y : EuclideanSpace ℝ (Fin n))
     (s : ℝ) :
     (y + (s - y.ofLp i) • EuclideanSpace.single i (1 : ℝ)) =
       WithLp.toLp 2 (Function.update y.ofLp i s) := by
@@ -4150,7 +4169,7 @@ theorem line_single_eq_update (n : ℕ) (i : Fin n) (y : EuclideanSpace ℝ (Fin
   rw [PiLp.single_apply, Function.update_apply]
   by_cases h : j = i <;> simp [h]
 
-theorem deriv_comp_line_eq_fderiv (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private theorem deriv_comp_line_eq_fderiv (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (c : ℝ → EuclideanSpace ℝ (Fin n)) (g : ℝ → ℝ) (a : ℝ)
     (i : Fin n)
     (hc : HasDerivAt c (EuclideanSpace.single i (1 : ℝ)) a)
@@ -4161,7 +4180,7 @@ theorem deriv_comp_line_eq_fderiv (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) →
   rw [hcomp] at h
   exact h.deriv
 
-theorem deriv_slice_eq (n : ℕ) (i : Fin n) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private theorem deriv_slice_eq (n : ℕ) (i : Fin n) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (x : EuclideanSpace ℝ (Fin n)) (t : ℝ)
     (hd : ∀ y, DifferentiableAt ℝ φ y) :
     deriv (fun r : ℝ => φ (WithLp.toLp 2 (Function.update x.ofLp i r))) t =
@@ -4199,7 +4218,7 @@ theorem deriv_slice_eq (n : ℕ) (i : Fin n) (φ : EuclideanSpace ℝ (Fin n) �
   rw [hpt] at h
   exact h
 
-theorem differentiableAt_eval_fderiv (n : ℕ) (i : Fin n)
+private theorem differentiableAt_eval_fderiv (n : ℕ) (i : Fin n)
     (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (y : EuclideanSpace ℝ (Fin n))
     (hd : DifferentiableAt ℝ (fderiv ℝ φ) y) :
@@ -4208,7 +4227,7 @@ theorem differentiableAt_eval_fderiv (n : ℕ) (i : Fin n)
   (hd.hasFDerivAt.clm_apply (hasFDerivAt_const (EuclideanSpace.single i (1 : ℝ))
     y)).differentiableAt
 
-theorem fderiv_eval_eq (n : ℕ) (i : Fin n) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private theorem fderiv_eval_eq (n : ℕ) (i : Fin n) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (x : EuclideanSpace ℝ (Fin n))
     (hd : DifferentiableAt ℝ (fderiv ℝ φ) x) :
     (fderiv ℝ (fun y : EuclideanSpace ℝ (Fin n) =>
@@ -4223,7 +4242,7 @@ theorem fderiv_eval_eq (n : ℕ) (i : Fin n) (φ : EuclideanSpace ℝ (Fin n) �
   rw [h1.fderiv]
   simp [ContinuousLinearMap.flip_apply]
 
-theorem deriv2_slice_eq (n : ℕ) (i : Fin n) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private theorem deriv2_slice_eq (n : ℕ) (i : Fin n) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (x : EuclideanSpace ℝ (Fin n))
     (hd : ∀ y, DifferentiableAt ℝ φ y)
     (hd2 : ∀ y, DifferentiableAt ℝ (fderiv ℝ φ) y) :
@@ -4250,7 +4269,7 @@ theorem deriv2_slice_eq (n : ℕ) (i : Fin n) (φ : EuclideanSpace ℝ (Fin n) �
   rw [hψd.deriv]
   exact fderiv_eval_eq n i φ x (hd2 x)
 
-theorem deriv2_slice_eq_pinned_rhs (n : ℕ) (i : Fin n) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private theorem deriv2_slice_eq_pinned_rhs (n : ℕ) (i : Fin n) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (x : EuclideanSpace ℝ (Fin n)) :
     deriv (deriv (fun r : ℝ => φ (WithLp.toLp 2 (Function.update x.ofLp i r)))) (x.ofLp i) =
       deriv (fun v : ℝ => deriv (fun r : ℝ => φ (WithLp.toLp 2
@@ -4279,7 +4298,7 @@ theorem deriv2_slice_eq_pinned_rhs (n : ℕ) (i : Fin n) (φ : EuclideanSpace �
 
 /-- The Laplacian is the sum of the diagonal iterated coordinate
 second partials. -/
-theorem laplacian_eq_sum_diag_secondPartial (n : ℕ)
+private theorem laplacian_eq_sum_diag_secondPartial (n : ℕ)
     {φ : EuclideanSpace ℝ (Fin n) → ℝ} (hφ : ContDiff ℝ 2 φ)
     (x : EuclideanSpace ℝ (Fin n)) :
     Laplacian.laplacian φ x
@@ -4321,7 +4340,7 @@ open scoped ContDiff Topology
 /-- Laplacian of a heat convolution = sum of diagonal iterated
 coordinate second partials, from smoothness + the general
 Laplacian identification. -/
-theorem laplacian_heatConvolution_via_smooth (n : ℕ)
+private theorem laplacian_heatConvolution_via_smooth (n : ℕ)
     {g : EuclideanSpace ℝ (Fin n) → ℝ}
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M)
@@ -4397,7 +4416,7 @@ section FourTerm
 open MeasureTheory
 
 
-theorem normUpdate_sq (n : ℕ) (i : Fin n) (z : EuclideanSpace ℝ (Fin n)) (r : ℝ) :
+private theorem normUpdate_sq (n : ℕ) (i : Fin n) (z : EuclideanSpace ℝ (Fin n)) (r : ℝ) :
     ‖WithLp.toLp 2 (Function.update z i r)‖ ^ 2
       = ‖z‖ ^ 2 - (z i) ^ 2 + r ^ 2 := by
   have h1 : ‖WithLp.toLp 2 (Function.update z i r)‖ ^ 2
@@ -4441,7 +4460,7 @@ theorem normUpdate_sq (n : ℕ) (i : Fin n) (z : EuclideanSpace ℝ (Fin n)) (r 
   simp_rw [heq]
   exact hsum (fun j => (z j) ^ 2) (r ^ 2)
 
-theorem firstDeriv_gauss {t : ℝ} (ht : 0 < t) (C A : ℝ) (s : ℝ) :
+private theorem firstDeriv_gauss {t : ℝ} (ht : 0 < t) (C A : ℝ) (s : ℝ) :
     deriv (fun r : ℝ => C * Real.exp (-(A + r ^ 2) / (4 * t))) s
       = C * (Real.exp (-(A + s ^ 2) / (4 * t)) * (-s / (2 * t))) := by
   have h2 : HasDerivAt (fun r : ℝ => r ^ 2) (2 * s) s := by
@@ -4459,7 +4478,7 @@ theorem firstDeriv_gauss {t : ℝ} (ht : 0 < t) (C A : ℝ) (s : ℝ) :
   have hmul := hexp.const_mul C
   exact hmul.deriv
 
-theorem secondDeriv_gauss {t : ℝ} (ht : 0 < t) (C A : ℝ) (p : ℝ) :
+private theorem secondDeriv_gauss {t : ℝ} (ht : 0 < t) (C A : ℝ) (p : ℝ) :
     deriv (fun s : ℝ => C * (Real.exp (-(A + s ^ 2) / (4 * t)) * (-s / (2 * t)))) p
       = C * (Real.exp (-(A + p ^ 2) / (4 * t)) * (p ^ 2 / (4 * t ^ 2) - 1 / (2 * t))) := by
   have h2 : HasDerivAt (fun r : ℝ => r ^ 2) (2 * p) p := by
@@ -4500,7 +4519,7 @@ theorem secondDeriv_gauss {t : ℝ} (ht : 0 < t) (C A : ℝ) (p : ℝ) :
 
 /-- Four-term kernel sum equals the iterated coordinate derivative
 of the plain heat kernel. -/
-theorem fourTermKernel_eq_iteratedDeriv (n : ℕ) (i : Fin n) {t : ℝ} (ht : 0 < t)
+private theorem fourTermKernel_eq_iteratedDeriv (n : ℕ) (i : Fin n) {t : ℝ} (ht : 0 < t)
     (z : EuclideanSpace ℝ (Fin n)) :
     (gaussPolyKernel n (MvPolynomial.pderiv i (MvPolynomial.pderiv i 1)) 0 t z
       + gaussPolyKernel n ((-1 / 2 : ℝ) • (MvPolynomial.X i * MvPolynomial.pderiv i 1)) 1 t z
@@ -4565,7 +4584,7 @@ section IntBdd
 open MeasureTheory
 
 /-- Polynomial growth bound for `MvPolynomial.eval` on Euclidean space. -/
-theorem gaussPoly_polyBound (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
+private theorem gaussPoly_polyBound (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
     ∃ C : ℝ, ∃ D : ℕ, 0 ≤ C ∧
       ∀ z : EuclideanSpace ℝ (Fin n),
         |MvPolynomial.eval (fun i => z i) Q| ≤ C * (1 + ‖z‖) ^ D := by
@@ -4606,7 +4625,7 @@ theorem gaussPoly_polyBound (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
       _ = Cp * (1 + ‖z‖) ^ (Dp + 1) := by rw [pow_succ]; ring
 
 /-- Polynomial growth is dominated by Gaussian growth. -/
-theorem gaussPoly_polyExpBound (D : ℕ) {t : ℝ} (ht : 0 < t) :
+private theorem gaussPoly_polyExpBound (D : ℕ) {t : ℝ} (ht : 0 < t) :
     ∃ C : ℝ, 0 ≤ C ∧
       ∀ r : ℝ, 0 ≤ r → (1 + r) ^ D ≤ C * Real.exp (r ^ 2 / (8 * t)) := by
   have ht8 : (0 : ℝ) < 8 * t := by linarith
@@ -4675,7 +4694,7 @@ theorem gaussPoly_polyExpBound (D : ℕ) {t : ℝ} (ht : 0 < t) :
     _ ≤ 2 ^ D * (2 + (8 * t) ^ D * D.factorial) * Real.exp s := step3
 
 /-- Unshifted Gaussians are integrable on Euclidean space. -/
-theorem gaussPoly_integrable_gauss (n : ℕ) {t : ℝ} (ht : 0 < t) :
+private theorem gaussPoly_integrable_gauss (n : ℕ) {t : ℝ} (ht : 0 < t) :
     Integrable (fun y : EuclideanSpace ℝ (Fin n) => Real.exp (-‖y‖ ^ 2 / (16 * t))) volume := by
   have ht16 : (0 : ℝ) < 16 * t := by linarith
   have hb : (0 : ℝ) < ((1 / (16 * t) : ℝ) : ℂ).re := by
@@ -4697,7 +4716,7 @@ theorem gaussPoly_integrable_gauss (n : ℕ) {t : ℝ} (ht : 0 < t) :
 /-- A bounded a.e. measurable weight times a Gaussian-polynomial kernel is
 integrable: Gaussian decay dominates polynomial growth and the bounded
 measurable factor. -/
-theorem integrable_bddMul_gaussPolyKernel (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem integrable_bddMul_gaussPolyKernel (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     {g : EuclideanSpace ℝ (Fin n) → ℝ}
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M)
@@ -4861,7 +4880,7 @@ open scoped Topology
 
 
 /-- Gaussian integrability helper: real Gaussian on EuclideanSpace is integrable. -/
-lemma integrable_exp_neg_sq_norm_aux (n : ℕ) (c : ℝ) (hc : 0 < c) :
+private lemma integrable_exp_neg_sq_norm_aux (n : ℕ) (c : ℝ) (hc : 0 < c) :
     Integrable (fun v : EuclideanSpace ℝ (Fin n) => Real.exp (-c * ‖v‖ ^ 2)) volume := by
   have hb : 0 < (↑c : ℂ).re := by simpa using hc
   have hC := GaussianFourier.integrable_cexp_neg_mul_sq_norm_add_of_euclideanSpace
@@ -4884,7 +4903,7 @@ lemma integrable_exp_neg_sq_norm_aux (n : ℕ) (c : ℝ) (hc : 0 < c) :
   exact hR
 
 /-- Polynomial growth is dominated by a Gaussian factor: `(1+r)^D ≤ C * exp (a*r^2)`. -/
-lemma poly_exp_bound_aux (D : ℕ) (a : ℝ) (ha : 0 < a) :
+private lemma poly_exp_bound_aux (D : ℕ) (a : ℝ) (ha : 0 < a) :
     ∃ C : ℝ, 0 < C ∧ ∀ r : ℝ, 0 ≤ r → (1 + r) ^ D ≤ C * Real.exp (a * r ^ 2) := by
   refine ⟨Real.exp ((D : ℝ) ^ 2 / (4 * a)), Real.exp_pos _, fun r hr => ?_⟩
   have h1r : (1 : ℝ) + r ≤ Real.exp r := by
@@ -4913,7 +4932,7 @@ lemma poly_exp_bound_aux (D : ℕ) (a : ℝ) (ha : 0 < a) :
         rw [add_comm (a * r ^ 2) _, Real.exp_add]
 
 /-- Polynomial-times-Gaussian is integrable on EuclideanSpace. -/
-lemma integrable_poly_gauss_aux (n : ℕ) (D : ℕ) (c : ℝ) (hc : 0 < c) :
+private lemma integrable_poly_gauss_aux (n : ℕ) (D : ℕ) (c : ℝ) (hc : 0 < c) :
     Integrable (fun v : EuclideanSpace ℝ (Fin n) => (1 + ‖v‖) ^ D * Real.exp (-c * ‖v‖ ^ 2))
       volume := by
   have hc2 : (0 : ℝ) < c / 2 := by linarith
@@ -4960,7 +4979,7 @@ lemma integrable_poly_gauss_aux (n : ℕ) (D : ℕ) (c : ℝ) (hc : 0 < c) :
       _ = C * Real.exp (-(c / 2) * ‖v‖ ^ 2) := by rw [hCexp]
 
 /-- A coordinate is bounded by the Euclidean norm. -/
-lemma coord_le_norm_aux (n : ℕ) (z : EuclideanSpace ℝ (Fin n)) (j : Fin n) :
+private lemma coord_le_norm_aux (n : ℕ) (z : EuclideanSpace ℝ (Fin n)) (j : Fin n) :
     |z j| ≤ ‖z‖ := by
   have h : (z j) ^ 2 ≤ ‖z‖ ^ 2 := by
     rw [EuclideanSpace.real_norm_sq_eq]
@@ -4970,7 +4989,7 @@ lemma coord_le_norm_aux (n : ℕ) (z : EuclideanSpace ℝ (Fin n)) (j : Fin n) :
     _ = ‖z‖ := Real.sqrt_sq (norm_nonneg _)
 
 /-- MvPolynomial evaluation is bounded by a constant times `(1 + ‖z‖)^D`. -/
-lemma mvpoly_eval_bound_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
+private lemma mvpoly_eval_bound_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
     ∃ C : ℝ, ∃ D : ℕ, 0 ≤ C ∧
       ∀ z : EuclideanSpace ℝ (Fin n), |MvPolynomial.eval (fun i => z i) Q| ≤ C * (1 + ‖z‖) ^ D := by
   induction Q using MvPolynomial.induction_on with
@@ -5018,7 +5037,7 @@ lemma mvpoly_eval_bound_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) :
 
 /-- Gaussian shift bound: moving the center by a bounded amount costs a constant factor
 and halves the decay rate. -/
-lemma gauss_shift_bound_aux (n : ℕ) (R t : ℝ) (_hR : 0 ≤ R) (ht : 0 < t)
+private lemma gauss_shift_bound_aux (n : ℕ) (R t : ℝ) (_hR : 0 ≤ R) (ht : 0 < t)
     (w : EuclideanSpace ℝ (Fin n)) (hw : ‖w‖ ≤ R) (y : EuclideanSpace ℝ (Fin n)) :
     Real.exp (-‖w - y‖ ^ 2 / (4 * t))
       ≤ Real.exp (R ^ 2 / (4 * t)) * Real.exp (-‖y‖ ^ 2 / (8 * t)) := by
@@ -5053,7 +5072,7 @@ lemma gauss_shift_bound_aux (n : ℕ) (R t : ℝ) (_hR : 0 ≤ R) (ht : 0 < t)
 
 /-- A class-member kernel at a shifted point is bounded by a constant times a
 polynomial-Gaussian bound in `y`, uniformly for `w` in a ball of radius `R`. -/
-lemma gaussPolyKernel_le_bound_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private lemma gaussPolyKernel_le_bound_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     (t R : ℝ) (ht : 0 < t) (hR : 0 ≤ R) :
     ∃ C : ℝ, ∃ D : ℕ, 0 ≤ C ∧ ∀ w : EuclideanSpace ℝ (Fin n), ∀ y : EuclideanSpace ℝ (Fin n),
       ‖w‖ ≤ R → |gaussPolyKernel n Q k t (w - y)|
@@ -5121,19 +5140,19 @@ lemma gaussPolyKernel_le_bound_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k :
           ring
 
 /-- Coordinates of an updated point, at the updated index. -/
-lemma toLp_update_same_aux (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) (r : ℝ) :
+private lemma toLp_update_same_aux (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) (r : ℝ) :
     (WithLp.toLp 2 (Function.update x i r)) i = r := by
   change Function.update x i r i = r
   simp
 
 /-- Coordinates of an updated point, away from the updated index. -/
-lemma toLp_update_of_ne_aux (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i j : Fin n) (r : ℝ)
+private lemma toLp_update_of_ne_aux (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i j : Fin n) (r : ℝ)
     (h : j ≠ i) : (WithLp.toLp 2 (Function.update x i r)) j = x j := by
   change Function.update x i r j = x j
   exact Function.update_of_ne h _ _
 
 /-- Derivative of a coordinate of the shifted point along the line `r ↦ update x i r`. -/
-lemma coord_update_hasDerivAt_aux (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i j : Fin n)
+private lemma coord_update_hasDerivAt_aux (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i j : Fin n)
     (y : EuclideanSpace ℝ (Fin n)) (r : ℝ) :
     HasDerivAt (fun r' => (WithLp.toLp 2 (Function.update x i r') - y) j)
       (if j = i then 1 else 0) r := by
@@ -5162,7 +5181,7 @@ lemma coord_update_hasDerivAt_aux (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i 
 
 /-- Derivative of a polynomial evaluated along the line `r ↦ update x i r`
 is the evaluation of the partial derivative. -/
-lemma poly_line_hasDerivAt_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ)
+private lemma poly_line_hasDerivAt_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ)
     (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) (y : EuclideanSpace ℝ (Fin n)) (r : ℝ) :
     HasDerivAt (fun r' => MvPolynomial.eval (fun j => (WithLp.toLp 2 (Function.update x i r') - y)
       j) Q)
@@ -5228,7 +5247,7 @@ lemma poly_line_hasDerivAt_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ)
     exact ihP.mul hcoord
 
 /-- Derivative of the squared norm along the line `r ↦ update x i r`. -/
-lemma normSq_line_hasDerivAt_aux (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n)
+private lemma normSq_line_hasDerivAt_aux (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n)
     (y : EuclideanSpace ℝ (Fin n)) (r : ℝ) :
     HasDerivAt (fun r' => ‖WithLp.toLp 2 (Function.update x i r') - y‖ ^ 2)
       (2 * (WithLp.toLp 2 (Function.update x i r) - y) i) r := by
@@ -5267,7 +5286,7 @@ lemma normSq_line_hasDerivAt_aux (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i :
   exact HasDerivAt.sum (fun j _ => hterm j)
 
 /-- Derivative of the Gaussian factor along the line `r ↦ update x i r`. -/
-lemma gauss_line_hasDerivAt_aux (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n)
+private lemma gauss_line_hasDerivAt_aux (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n)
     (y : EuclideanSpace ℝ (Fin n)) (t r : ℝ) :
     HasDerivAt (fun r' => Real.exp (-‖WithLp.toLp 2 (Function.update x i r') - y‖ ^ 2 / (4 * t)))
       (Real.exp (-‖WithLp.toLp 2 (Function.update x i r) - y‖ ^ 2 / (4 * t))
@@ -5276,13 +5295,13 @@ lemma gauss_line_hasDerivAt_aux (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : 
   exact (hS.neg.div_const (4 * t)).exp
 
 /-- Evaluation commutes with scalar multiplication. -/
-lemma eval_smul_eq_aux (n : ℕ) (z : Fin n → ℝ) (c : ℝ) (P : MvPolynomial (Fin n) ℝ) :
+private lemma eval_smul_eq_aux (n : ℕ) (z : Fin n → ℝ) (c : ℝ) (P : MvPolynomial (Fin n) ℝ) :
     MvPolynomial.eval z (c • P) = c * MvPolynomial.eval z P := by
   exact MvPolynomial.smul_eval z P c
 
 /-- Pointwise first partial of a class-member kernel along the line,
 as a sum of two class members. -/
-lemma kernel_line_hasDerivAt_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private lemma kernel_line_hasDerivAt_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) (g : EuclideanSpace ℝ (Fin n) → ℝ)
     (y : EuclideanSpace ℝ (Fin n)) (t r : ℝ) (ht : 0 < t) :
     HasDerivAt (fun r' => g y * gaussPolyKernel n Q k t (WithLp.toLp 2 (Function.update x i r') -
@@ -5337,7 +5356,7 @@ lemma kernel_line_hasDerivAt_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : �
   exact hK.const_mul (g y)
 
 /-- Coordinate evaluation on EuclideanSpace is continuous (it is 1-Lipschitz). -/
-lemma coord_continuous_aux (n : ℕ) (j : Fin n) :
+private lemma coord_continuous_aux (n : ℕ) (j : Fin n) :
     Continuous (fun y : EuclideanSpace ℝ (Fin n) => y j) := by
   have hLip : LipschitzWith 1 (fun y : EuclideanSpace ℝ (Fin n) => y j) := by
     apply LipschitzWith.of_dist_le_mul
@@ -5350,7 +5369,7 @@ lemma coord_continuous_aux (n : ℕ) (j : Fin n) :
   exact hLip.continuous
 
 /-- A class-member kernel is continuous in the integration variable. -/
-lemma kernel_continuous_in_y_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private lemma kernel_continuous_in_y_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     (t : ℝ) (w : EuclideanSpace ℝ (Fin n)) :
     Continuous (fun y : EuclideanSpace ℝ (Fin n) => gaussPolyKernel n Q k t (w - y)) := by
   have hcoord : ∀ j : Fin n, Continuous (fun y : EuclideanSpace ℝ (Fin n) => (w - y) j) := by
@@ -5398,7 +5417,7 @@ lemma kernel_continuous_in_y_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : �
   exact ((continuous_const.mul hE).mul hP).mul continuous_const
 
 /-- Integrability of the domination bound in division form. -/
-lemma integrable_polygauss_divform_aux (n : ℕ) (D : ℕ) (t : ℝ) (ht : 0 < t) (C : ℝ) :
+private lemma integrable_polygauss_divform_aux (n : ℕ) (D : ℕ) (t : ℝ) (ht : 0 < t) (C : ℝ) :
     Integrable (fun y : EuclideanSpace ℝ (Fin n) => C * ((1 + ‖y‖) ^ D * Real.exp (-‖y‖ ^ 2 / (8 *
       t))))
       volume := by
@@ -5419,7 +5438,7 @@ lemma integrable_polygauss_divform_aux (n : ℕ) (D : ℕ) (t : ℝ) (ht : 0 < t
   exact (integrable_poly_gauss_aux n D (1 / (8 * t)) hpos).const_mul C
 
 /-- The line `r ↦ update x i r` stays in a ball for `r` near `s₀`. -/
-lemma w_ball_bound_aux (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) (s₀ : ℝ) :
+private lemma w_ball_bound_aux (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) (s₀ : ℝ) :
     ∃ R : ℝ, 0 ≤ R ∧ ∀ r ∈ Metric.ball s₀ 1, ‖WithLp.toLp 2 (Function.update x i r)‖ ≤ R := by
   refine ⟨|s₀| + 1 + ‖x‖, by positivity, fun r hr => ?_⟩
   have hdist : dist r s₀ < 1 := Metric.mem_ball.mp hr
@@ -5473,7 +5492,7 @@ lemma w_ball_bound_aux (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) (s
     _ = |s₀| + 1 + ‖x‖ := Real.sqrt_sq hRnn
 
 /-- A class-member convolution integrand is integrable at any fixed center. -/
-lemma integrable_kernel_conv_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private lemma integrable_kernel_conv_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     (g : EuclideanSpace ℝ (Fin n) → ℝ)
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M)
@@ -5498,7 +5517,7 @@ lemma integrable_kernel_conv_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : �
 
 /-- First coordinate partial of a class-member convolution, as a sum of two
 class-member convolutions (differentiate once under the integral). -/
-lemma firstPartial_conv_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private lemma firstPartial_conv_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     (g : EuclideanSpace ℝ (Fin n) → ℝ)
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M)
@@ -5615,7 +5634,8 @@ lemma firstPartial_conv_aux (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
 
 /-- Second coordinate partial of a class-member convolution, as a sum
 of four class-member convolutions (closure applied twice). -/
-theorem classConv_secondPartial_space_standalone (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
+private theorem classConv_secondPartial_space_standalone (n : ℕ)
+    (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
     {g : EuclideanSpace ℝ (Fin n) → ℝ}
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M)
@@ -5801,6 +5821,8 @@ theorem heat_convolution_smooth (n : ℕ) {g : EuclideanSpace ℝ (Fin n) → �
 
 end FinalGlueH3
 
+/-! ## J. Heat equation assembly -/
+
 section H4cFinal
 
 open MeasureTheory
@@ -5809,7 +5831,7 @@ open MeasureTheory
 /-- The heat convolution satisfies the heat equation, assembled from
 the time partial, the second partials, the kernel PDE, the four-term
 kernel identity, and the integrability lemma. -/
-theorem heatConvolution_satisfies_heat_equation_final_asm (n : ℕ)
+private theorem heatConvolution_satisfies_heat_equation_final_asm (n : ℕ)
     {g : EuclideanSpace ℝ (Fin n) → ℝ}
     (hg_meas : AEStronglyMeasurable g volume)
     (hg_bdd : ∃ M : ℝ, ∀ᵐ y, |g y| ≤ M)
@@ -6060,6 +6082,8 @@ theorem heat_convolution_satisfies_heat_equation (n : ℕ)
 
 end FinalGlueH4
 
+/-! ## K. Constant-one -/
+
 section H1new
 
 open MeasureTheory
@@ -6116,11 +6140,13 @@ theorem heat_convolution_const_one (n : ℕ) {t : ℝ} (ht : 0 < t)
 
 end H1new
 
+/-! ## L. Remainder, modulus, and the `L^p` estimate -/
+
 section Split
 
 open MeasureTheory
 
-theorem hasDerivAt_eucl_update (n : ℕ) (p : EuclideanSpace ℝ (Fin n)) (i : Fin n) (v0 : ℝ) :
+private theorem hasDerivAt_eucl_update (n : ℕ) (p : EuclideanSpace ℝ (Fin n)) (i : Fin n) (v0 : ℝ) :
     HasDerivAt (fun v : ℝ => WithLp.toLp 2 (Function.update p i v))
       (EuclideanSpace.single i (1 : ℝ)) v0 := by
   have heq : (fun v : ℝ => WithLp.toLp 2 (Function.update p i v))
@@ -6136,13 +6162,13 @@ theorem hasDerivAt_eucl_update (n : ℕ) (p : EuclideanSpace ℝ (Fin n)) (i : F
     h1.smul_const _
   simpa using h2.const_add p
 
-theorem eucl_update_self (n : ℕ) (p : EuclideanSpace ℝ (Fin n)) (i : Fin n) :
+private theorem eucl_update_self (n : ℕ) (p : EuclideanSpace ℝ (Fin n)) (i : Fin n) :
     (WithLp.toLp 2 (Function.update p i (p i))) = p := by
   ext j
   simp [Function.update]
   by_cases h : j = i <;> simp [h]
 
-theorem first_partial_eq_fderiv (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private theorem first_partial_eq_fderiv (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (p : EuclideanSpace ℝ (Fin n)) (i : Fin n)
     (hφ : DifferentiableAt ℝ φ p) :
     deriv (fun v : ℝ => φ (WithLp.toLp 2 (Function.update p i v))) (p i)
@@ -6155,7 +6181,7 @@ theorem first_partial_eq_fderiv (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → �
     HasFDerivAt.comp_hasDerivAt_of_eq (p i) hφ' hline hpt.symm
   exact hcomp.deriv
 
-theorem second_partial_eq (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ) (hφ : ContDiff ℝ 2 φ)
+private theorem second_partial_eq (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ) (hφ : ContDiff ℝ 2 φ)
     (p : EuclideanSpace ℝ (Fin n)) (i j : Fin n) :
     deriv (fun v : ℝ => deriv (fun r : ℝ => φ (WithLp.toLp 2 (Function.update
           (WithLp.toLp 2 (Function.update p i v)) j r)))
@@ -6183,7 +6209,7 @@ theorem second_partial_eq (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ) (h
   rw [hfun]
   exact first_partial_eq_fderiv n _ p i hPdiff
 
-theorem continuous_second_partial_in_s (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private theorem continuous_second_partial_in_s (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (hφ : ContDiff ℝ 2 φ) (x y : EuclideanSpace ℝ (Fin n)) (i j : Fin n) :
     Continuous (fun s : ℝ => deriv (fun v : ℝ => deriv (fun r : ℝ => φ (WithLp.toLp 2
       (Function.update
@@ -6217,7 +6243,7 @@ theorem continuous_second_partial_in_s (n : ℕ) (φ : EuclideanSpace ℝ (Fin n
   rw [heq]
   exact hcomp
 
-theorem integral_one_sub : (∫ s in (0 : ℝ)..1, (1 - s)) = 1 / 2 := by
+private theorem integral_one_sub : (∫ s in (0 : ℝ)..1, (1 - s)) = 1 / 2 := by
   have h1 : IntervalIntegrable (fun _ : ℝ => (1 : ℝ)) volume 0 1 :=
     continuous_const.intervalIntegrable _ _
   have h2 : IntervalIntegrable (fun s : ℝ => s) volume 0 1 :=
@@ -6230,7 +6256,7 @@ theorem integral_one_sub : (∫ s in (0 : ℝ)..1, (1 - s)) = 1 / 2 := by
     _ = 1 / 2 := by ring
 
 /-- The `s`-integral split for the Taylor remainder. -/
-theorem s_integral_split (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+private theorem s_integral_split (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (x y : EuclideanSpace ℝ (Fin n)) :
     ∫ s in (0 : ℝ)..1, (1 - s) * ∑ i, ∑ j, y i * y j *
         deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
@@ -6424,7 +6450,7 @@ open MeasureTheory
 
 
 /-- Remainder identity assembled from Taylor, moments, half, split. -/
-theorem heatConvolution_sub_eq_remainder_asm (n : ℕ)
+private theorem heatConvolution_sub_eq_remainder_asm (n : ℕ)
     {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ)
     {t : ℝ} (ht : 0 < t) (x : EuclideanSpace ℝ (Fin n))
@@ -6897,7 +6923,7 @@ section DijProps
 open MeasureTheory
 
 
-theorem Dij_upd_line (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) (v : ℝ) :
+private theorem Dij_upd_line (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) (v : ℝ) :
     WithLp.toLp 2 (Function.update x.ofLp i v)
       = (x - (x.ofLp i) • EuclideanSpace.single i (1:ℝ))
         + v • EuclideanSpace.single i (1:ℝ) := by
@@ -6914,7 +6940,7 @@ theorem Dij_upd_line (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) (i : Fin n) (v :
   rw [h1]
   module
 
-theorem Dij_inner_bridge (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private theorem Dij_inner_bridge (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (hφ : ContDiff ℝ 2 φ) (y : EuclideanSpace ℝ (Fin n)) (j : Fin n) :
     deriv (fun r => φ (WithLp.toLp 2 (Function.update y.ofLp j r))) (y.ofLp j)
       = (fderiv ℝ φ y) (EuclideanSpace.single j (1:ℝ)) := by
@@ -6944,7 +6970,7 @@ theorem Dij_inner_bridge (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
       + (y.ofLp j) • EuclideanSpace.single j (1:ℝ) = y := by module
   rw [hrec]
 
-theorem Dij_firstPartial_contDiff (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private theorem Dij_firstPartial_contDiff (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (hφ : ContDiff ℝ 2 φ) (j : Fin n) :
     ContDiff ℝ 1 (fun y => (fderiv ℝ φ y) (EuclideanSpace.single j (1:ℝ))) := by
   have h2 : ContDiff ℝ ((1 : WithTop ℕ∞) + 1) φ := by
@@ -6954,7 +6980,7 @@ theorem Dij_firstPartial_contDiff (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) →
   have h := (contDiff_succ_iff_fderiv_apply (n := 1)).mp h2
   exact h.2.2 (EuclideanSpace.single j (1:ℝ))
 
-theorem Dij_secondPartial_eq (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private theorem Dij_secondPartial_eq (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (hφ : ContDiff ℝ 2 φ) (i j : Fin n) (x : EuclideanSpace ℝ (Fin n)) :
     secondPartialFn n φ i j x
       = (fderiv ℝ (fun y => (fderiv ℝ φ y) (EuclideanSpace.single j (1:ℝ))) x)
@@ -7009,7 +7035,7 @@ theorem Dij_secondPartial_eq (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
 
 /-- `D_{ij} φ` for `C²` compactly supported `φ` is continuous, compactly
 supported, uniformly continuous, and its modulus tends to `0`. -/
-theorem secondPartial_props (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+private theorem secondPartial_props (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ) (i j : Fin n) :
     Continuous (secondPartialFn n φ i j)
       ∧ HasCompactSupport (secondPartialFn n φ i j)
@@ -7129,14 +7155,14 @@ section GaussMom2
 
 open MeasureTheory
 
-lemma euclid_norm_sq (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) :
+private lemma euclid_norm_sq (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) :
     ‖x‖ ^ 2 = ∑ i, (x i) ^ 2 := by
   have hnonneg : 0 ≤ ∑ i, ‖x i‖ ^ 2 := Finset.sum_nonneg (fun i _ => sq_nonneg _)
   calc ‖x‖ ^ 2 = (√(∑ i, ‖x i‖ ^ 2)) ^ 2 := by rw [EuclideanSpace.norm_eq]
     _ = ∑ i, ‖x i‖ ^ 2 := Real.sq_sqrt hnonneg
     _ = ∑ i, (x i) ^ 2 := by simp only [Real.norm_eq_abs, sq_abs]
 
-lemma int_gauss (t : ℝ) (ht : 0 < t) :
+private lemma int_gauss (t : ℝ) (ht : 0 < t) :
     ∫ x : ℝ, Real.exp (-x ^ 2 / (4 * t)) = √(4 * Real.pi * t) := by
   have _ := ht
   have h1 : (fun x : ℝ => Real.exp (-x ^ 2 / (4 * t)))
@@ -7150,7 +7176,7 @@ lemma int_gauss (t : ℝ) (ht : 0 < t) :
   rw [div_inv_eq_mul]
   ring
 
-lemma int_gauss_sq (t : ℝ) (ht : 0 < t) :
+private lemma int_gauss_sq (t : ℝ) (ht : 0 < t) :
     ∫ x : ℝ, x ^ 2 * Real.exp (-x ^ 2 / (4 * t)) = 2 * t * √(4 * Real.pi * t) := by
   have hsqrt_pos : (0:ℝ) < √(4 * Real.pi * t) := by positivity
   obtain ⟨v, hvc, hv0⟩ : ∃ v : NNReal, (v : ℝ) = 2 * t ∧ v ≠ 0 :=
@@ -7185,7 +7211,7 @@ lemma int_gauss_sq (t : ℝ) (ht : 0 < t) :
       = √(4 * Real.pi * t) * 2 * t := h
     _ = 2 * t * √(4 * Real.pi * t) := by ring
 
-lemma intble_gauss (t : ℝ) (ht : 0 < t) :
+private lemma intble_gauss (t : ℝ) (ht : 0 < t) :
     Integrable (fun x : ℝ => Real.exp (-x ^ 2 / (4 * t))) := by
   have h1 : (fun x : ℝ => Real.exp (-x ^ 2 / (4 * t)))
       = (fun x : ℝ => Real.exp (-(4 * t)⁻¹ * x ^ 2)) := by
@@ -7197,7 +7223,7 @@ lemma intble_gauss (t : ℝ) (ht : 0 < t) :
   apply integrable_exp_neg_mul_sq
   positivity
 
-lemma intble_gauss_sq (t : ℝ) (ht : 0 < t) :
+private lemma intble_gauss_sq (t : ℝ) (ht : 0 < t) :
     Integrable (fun x : ℝ => x ^ 2 * Real.exp (-x ^ 2 / (4 * t))) := by
   have hb : (0:ℝ) < (4 * t)⁻¹ := by positivity
   have h1 : (fun x : ℝ => x ^ 2 * Real.exp (-x ^ 2 / (4 * t)))
@@ -7211,7 +7237,7 @@ lemma intble_gauss_sq (t : ℝ) (ht : 0 < t) :
   rw [h1]
   exact integrable_rpow_mul_exp_neg_mul_sq hb (by norm_num : (-1:ℝ) < 2)
 
-lemma prod_ite_eq_mul_pow (n : ℕ) (k : Fin n) (A B : ℝ) :
+private lemma prod_ite_eq_mul_pow (n : ℕ) (k : Fin n) (A B : ℝ) :
     (∏ l : Fin n, (if l = k then A else B)) = A * B ^ (n - 1) := by
   rw [← Finset.mul_prod_erase _ _ (Finset.mem_univ k)]
   rw [ite_eq_left rfl]
@@ -7224,7 +7250,7 @@ lemma prod_ite_eq_mul_pow (n : ℕ) (k : Fin n) (A B : ℝ) :
   rw [hcongr, Finset.prod_const, Finset.card_erase_of_mem (Finset.mem_univ k),
     Finset.card_univ, Fintype.card_fin]
 
-lemma gauss_factored (n : ℕ) (t : ℝ) (k : Fin n) (x : Fin n → ℝ) :
+private lemma gauss_factored (n : ℕ) (t : ℝ) (k : Fin n) (x : Fin n → ℝ) :
     Real.exp (-(∑ l, (x l)^2)/(4*t)) * (x k)^2
       = ∏ l, ((if l = k then (x l)^2 else 1) * Real.exp (-(x l)^2/(4*t))) := by
   rw [Finset.prod_mul_distrib]
@@ -7235,7 +7261,7 @@ lemma gauss_factored (n : ℕ) (t : ℝ) (k : Fin n) (x : Fin n → ℝ) :
   congr 1
   rw [← Finset.sum_neg_distrib, ← Finset.sum_div]
 
-lemma coord_second_moment (n : ℕ) (t : ℝ) (ht : 0 < t) (k : Fin n) :
+private lemma coord_second_moment (n : ℕ) (t : ℝ) (ht : 0 < t) (k : Fin n) :
     ∫ (x : Fin n → ℝ), ((4 * Real.pi * t) ^ (-(n:ℝ)/2) * Real.exp (-(∑ l, (x l)^2)/(4*t))) * (x k)^2
       = 2 * t := by
   have hn : 0 < n := lt_of_le_of_lt (Nat.zero_le _) k.isLt
@@ -7276,7 +7302,7 @@ lemma coord_second_moment (n : ℕ) (t : ℝ) (ht : 0 < t) (k : Fin n) :
   have hexp : (-(n:ℝ)/2 + ((1:ℝ)/2 + ((n:ℝ)-1)/2)) = 0 := by ring
   rw [hexp, Real.rpow_zero, mul_one]
 
-lemma transfer_heat (n : ℕ) (t : ℝ) (i j : Fin n) :
+private lemma transfer_heat (n : ℕ) (t : ℝ) (i j : Fin n) :
     (∫ (y : EuclideanSpace ℝ (Fin n)), ((4 * Real.pi * t) ^ (-(n : ℝ) / 2)
         * Real.exp (-‖y‖ ^ 2 / (4 * t))) * |y i * y j|)
     = ∫ (x : Fin n → ℝ), ((4 * Real.pi * t) ^ (-(n : ℝ) / 2)
@@ -7287,12 +7313,12 @@ lemma transfer_heat (n : ℕ) (t : ℝ) (i j : Fin n) :
   filter_upwards with x
   rw [euclid_norm_sq]
 
-lemma abs_mul_le_sq_add (a b : ℝ) : |a * b| ≤ (a^2 + b^2)/2 := by
+private lemma abs_mul_le_sq_add (a b : ℝ) : |a * b| ≤ (a^2 + b^2)/2 := by
   have h := two_mul_le_add_sq |a| |b|
   rw [sq_abs, sq_abs, mul_assoc, ← abs_mul] at h
   linarith
 
-lemma intble_factored (n : ℕ) (t : ℝ) (ht : 0 < t) (k : Fin n) :
+private lemma intble_factored (n : ℕ) (t : ℝ) (ht : 0 < t) (k : Fin n) :
     Integrable (fun x : Fin n → ℝ => Real.exp (-(∑ l, (x l)^2)/(4*t)) * (x k)^2) := by
   have hfun : (fun x : Fin n → ℝ => Real.exp (-(∑ l, (x l)^2)/(4*t)) * (x k)^2)
       = (fun x => ∏ l, ((if l = k then (x l)^2 else 1) * Real.exp (-(x l)^2/(4*t)))) := by
@@ -7309,7 +7335,7 @@ lemma intble_factored (n : ℕ) (t : ℝ) (ht : 0 < t) (k : Fin n) :
     exact intble_gauss t ht
 
 /-- Heat-kernel cross-moment bound and tail second moment `o(t)`. -/
-theorem heatKernel_crossMoment_le (n : ℕ) {t : ℝ} (ht : 0 < t) (i j : Fin n) :
+private theorem heatKernel_crossMoment_le (n : ℕ) {t : ℝ} (ht : 0 < t) (i j : Fin n) :
     ∫ (y : EuclideanSpace ℝ (Fin n)), ((4 * Real.pi * t) ^ (-(n : ℝ) / 2)
         * Real.exp (-‖y‖ ^ 2 / (4 * t))) * |y i * y j| ≤ 2 * t := by
   rw [transfer_heat n t i j]
@@ -7369,7 +7395,7 @@ theorem heatKernel_crossMoment_le (n : ℕ) {t : ℝ} (ht : 0 < t) (i j : Fin n)
         integral_mono hf hg hle
     _ = 2 * t := hval
 
-lemma intble_coord (n : ℕ) (s : ℝ) (hs : 0 < s) (k : Fin n) :
+private lemma intble_coord (n : ℕ) (s : ℝ) (hs : 0 < s) (k : Fin n) :
     Integrable (fun x : Fin n → ℝ => (((4*Real.pi*s)^(-(n:ℝ)/2) * Real.exp (-(∑ l, (x l)^2)/(4*s)))
       * (x k)^2)) := by
   have hfun2 : (fun x : Fin n → ℝ => (((4*Real.pi*s)^(-(n:ℝ)/2) * Real.exp (-(∑ l, (x l)^2)/(4*s)))
@@ -7379,7 +7405,7 @@ lemma intble_coord (n : ℕ) (s : ℝ) (hs : 0 < s) (k : Fin n) :
   rw [hfun2]
   exact (intble_factored n s hs k).const_mul _
 
-lemma transfer_heat_sq (n : ℕ) (s : ℝ) :
+private lemma transfer_heat_sq (n : ℕ) (s : ℝ) :
     (∫ (y : EuclideanSpace ℝ (Fin n)), ((4 * Real.pi * s) ^ (-(n : ℝ) / 2)
         * Real.exp (-‖y‖ ^ 2 / (4 * s))) * ‖y‖ ^ 2)
     = ∫ (x : Fin n → ℝ), ((4 * Real.pi * s) ^ (-(n : ℝ) / 2)
@@ -7390,7 +7416,7 @@ lemma transfer_heat_sq (n : ℕ) (s : ℝ) :
   filter_upwards with x
   rw [euclid_norm_sq]
 
-lemma full_second_moment (n : ℕ) (s : ℝ) (hs : 0 < s) :
+private lemma full_second_moment (n : ℕ) (s : ℝ) (hs : 0 < s) :
     (∫ (y : EuclideanSpace ℝ (Fin n)), ((4 * Real.pi * s) ^ (-(n : ℝ) / 2)
         * Real.exp (-‖y‖ ^ 2 / (4 * s))) * ‖y‖ ^ 2) = 2 * (n:ℝ) * s := by
   rw [transfer_heat_sq n s]
@@ -7405,7 +7431,7 @@ lemma full_second_moment (n : ℕ) (s : ℝ) (hs : 0 < s) :
   rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
   ring
 
-lemma intble_full_sq (n : ℕ) (s : ℝ) (hs : 0 < s) :
+private lemma intble_full_sq (n : ℕ) (s : ℝ) (hs : 0 < s) :
     Integrable (fun y : EuclideanSpace ℝ (Fin n) => ((4*Real.pi*s)^(-(n:ℝ)/2) * Real.exp
       (-‖y‖^2/(4*s))) * ‖y‖^2) := by
   rw [← (PiLp.volume_preserving_toLp _).integrable_comp_emb (MeasurableEquiv.toLp 2
@@ -7417,7 +7443,7 @@ lemma intble_full_sq (n : ℕ) (s : ℝ) (hs : 0 < s) :
   simp only [Function.comp_apply]
   rw [euclid_norm_sq, Finset.mul_sum]
 
-lemma heat_2t_eq_8t (n : ℕ) (t : ℝ) :
+private lemma heat_2t_eq_8t (n : ℕ) (t : ℝ) :
     (fun y : EuclideanSpace ℝ (Fin n) => ((8*Real.pi*t)^(-(n:ℝ)/2) * Real.exp (-‖y‖^2/(8*t))) *
       ‖y‖^2)
     = (fun y => ((4*Real.pi*(2*t))^(-(n:ℝ)/2) * Real.exp (-‖y‖^2/(4*(2*t)))) * ‖y‖^2) := by
@@ -7426,19 +7452,19 @@ lemma heat_2t_eq_8t (n : ℕ) (t : ℝ) :
   funext y
   rw [e1, e2]
 
-lemma full_second_moment_8 (n : ℕ) (t : ℝ) (ht : 0 < t) :
+private lemma full_second_moment_8 (n : ℕ) (t : ℝ) (ht : 0 < t) :
     (∫ (y : EuclideanSpace ℝ (Fin n)), ((8*Real.pi*t)^(-(n:ℝ)/2) * Real.exp (-‖y‖^2/(8*t))) * ‖y‖^2)
       = 2*(n:ℝ)*(2*t) := by
   rw [heat_2t_eq_8t n t]
   exact full_second_moment n (2*t) (by linarith)
 
-lemma intble_full_sq_8 (n : ℕ) (t : ℝ) (ht : 0 < t) :
+private lemma intble_full_sq_8 (n : ℕ) (t : ℝ) (ht : 0 < t) :
     Integrable (fun y : EuclideanSpace ℝ (Fin n) => ((8*Real.pi*t)^(-(n:ℝ)/2) * Real.exp
       (-‖y‖^2/(8*t))) * ‖y‖^2) := by
   rw [heat_2t_eq_8t n t]
   exact intble_full_sq n (2*t) (by linarith)
 
-lemma heat_norm_ratio (n : ℕ) (t : ℝ) (ht : 0 < t) :
+private lemma heat_norm_ratio (n : ℕ) (t : ℝ) (ht : 0 < t) :
     (4*Real.pi*t)^(-(n:ℝ)/2) = (2:ℝ)^((n:ℝ)/2) * (8*Real.pi*t)^(-(n:ℝ)/2) := by
   have h2 : (2:ℝ)^((n:ℝ)/2) * (2:ℝ)^(-(n:ℝ)/2) = 1 := by
     rw [← Real.rpow_add (show (0:ℝ) < 2 by norm_num)]
@@ -7448,7 +7474,8 @@ lemma heat_norm_ratio (n : ℕ) (t : ℝ) (ht : 0 < t) :
   rw [h8, Real.mul_rpow (show (0:ℝ) ≤ 2 by norm_num) (show (0:ℝ) ≤ 4*Real.pi*t by positivity),
     ← mul_assoc, h2, one_mul]
 
-lemma tail_pointwise (n : ℕ) (t δ : ℝ) (ht : 0 < t) (hδ : 0 < δ) (y : EuclideanSpace ℝ (Fin n))
+private lemma tail_pointwise (n : ℕ) (t δ : ℝ) (ht : 0 < t) (hδ : 0 < δ)
+    (y : EuclideanSpace ℝ (Fin n))
     (hy : δ < ‖y‖) :
     ((4*Real.pi*t)^(-(n:ℝ)/2) * Real.exp (-‖y‖^2/(4*t))) * ‖y‖^2
       ≤ (Real.exp (-δ^2/(8*t)) * (2:ℝ)^((n:ℝ)/2)) * (((8*Real.pi*t)^(-(n:ℝ)/2) * Real.exp
@@ -7496,7 +7523,7 @@ lemma tail_pointwise (n : ℕ) (t δ : ℝ) (ht : 0 < t) (hδ : 0 < δ) (y : Euc
       (-‖y‖^2/(8*t))) * ‖y‖^2) := by
         ring
 
-lemma tail_bound (n : ℕ) (t δ : ℝ) (ht : 0 < t) (hδ : 0 < δ) :
+private lemma tail_bound (n : ℕ) (t δ : ℝ) (ht : 0 < t) (hδ : 0 < δ) :
     (∫ (y : EuclideanSpace ℝ (Fin n)) in {y | δ < ‖y‖},
         ((4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-‖y‖ ^ 2 / (4 * t))) * ‖y‖ ^ 2) / t
       ≤ Real.exp (-δ^2/(8*t)) * ((2:ℝ)^((n:ℝ)/2) * (4*(n:ℝ))) := by
@@ -7557,7 +7584,7 @@ lemma tail_bound (n : ℕ) (t δ : ℝ) (ht : 0 < t) (hδ : 0 < δ) :
   rw [h3] at h2
   exact h2
 
-lemma tail_exp_tendsto (δ : ℝ) (hδ : 0 < δ) :
+private lemma tail_exp_tendsto (δ : ℝ) (hδ : 0 < δ) :
     Filter.Tendsto (fun t : ℝ => Real.exp (-δ^2/(8*t))) (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) := by
   have hneg : (-δ^2/8) < 0 := by
     have hpos : (0:ℝ) < δ^2/8 := by positivity
@@ -7574,7 +7601,7 @@ lemma tail_exp_tendsto (δ : ℝ) (hδ : 0 < δ) :
   rw [hfun]
   exact Real.tendsto_exp_atBot.comp h1
 
-theorem heatKernel_tail_secondMoment_div_tendsto (n : ℕ) {δ : ℝ} (hδ : 0 < δ) :
+private theorem heatKernel_tail_secondMoment_div_tendsto (n : ℕ) {δ : ℝ} (hδ : 0 < δ) :
     Filter.Tendsto
       (fun t : ℝ => (∫ (y : EuclideanSpace ℝ (Fin n)) in {y | δ < ‖y‖},
           ((4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-‖y‖ ^ 2 / (4 * t)))
@@ -7607,19 +7634,19 @@ section LpEstNposHelpers
 open MeasureTheory
 
 
-theorem coord_abs_le_norm (n : ℕ) (y : EuclideanSpace ℝ (Fin n)) (i : Fin n) :
+private theorem coord_abs_le_norm (n : ℕ) (y : EuclideanSpace ℝ (Fin n)) (i : Fin n) :
     |y i| ≤ ‖y‖ := by
   have h : ‖y i‖ ≤ ‖y‖ := PiLp.norm_apply_le y i
   rwa [Real.norm_eq_abs] at h
 
-theorem smul_norm_le_of_unit_interval (n : ℕ) (y : EuclideanSpace ℝ (Fin n)) (s : ℝ)
+private theorem smul_norm_le_of_unit_interval (n : ℕ) (y : EuclideanSpace ℝ (Fin n)) (s : ℝ)
     (hs0 : 0 ≤ s) (hs1 : s ≤ 1) : ‖s • y‖ ≤ ‖y‖ := by
   rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg hs0]
   calc s * ‖y‖ ≤ 1 * ‖y‖ :=
         mul_le_mul_of_nonneg_right hs1 (norm_nonneg _)
     _ = ‖y‖ := one_mul _
 
-theorem sum_abs_mul_le_norm_sq (n : ℕ) (y : EuclideanSpace ℝ (Fin n)) :
+private theorem sum_abs_mul_le_norm_sq (n : ℕ) (y : EuclideanSpace ℝ (Fin n)) :
     ∑ i : Fin n, ∑ j : Fin n, |y i * y j| ≤ (n : ℝ) ^ 2 * ‖y‖ ^ 2 := by
   have hcoord : ∀ i : Fin n, |y i| ≤ ‖y‖ := fun i => coord_abs_le_norm n y i
   calc ∑ i : Fin n, ∑ j : Fin n, |y i * y j|
@@ -7633,7 +7660,7 @@ theorem sum_abs_mul_le_norm_sq (n : ℕ) (y : EuclideanSpace ℝ (Fin n)) :
         simp [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
         ring
 
-theorem secondPartialModulus_mono_aux (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private theorem secondPartialModulus_mono_aux (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (i j : Fin n)
     (hcont : Continuous (secondPartialFn n φ i j))
     (hsupp : HasCompactSupport (secondPartialFn n φ i j))
@@ -7663,7 +7690,7 @@ theorem secondPartialModulus_mono_aux (n : ℕ) (φ : EuclideanSpace ℝ (Fin n)
     obtain ⟨x, z, hz, rfl⟩ := hv
     exact ⟨x, z, le_trans hz hle, rfl⟩
 
-theorem secondPartial_sub_le_modulus_aux (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private theorem secondPartial_sub_le_modulus_aux (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (i j : Fin n)
     (hcont : Continuous (secondPartialFn n φ i j))
     (hsupp : HasCompactSupport (secondPartialFn n φ i j))
@@ -7686,7 +7713,7 @@ section LpEstZero
 open MeasureTheory
 
 
-theorem heatKernel_nonneg (n : ℕ) (t : ℝ) (ht : 0 < t) (x : EuclideanSpace ℝ (Fin n)) :
+private theorem heatKernel_nonneg (n : ℕ) (t : ℝ) (ht : 0 < t) (x : EuclideanSpace ℝ (Fin n)) :
     0 ≤ heatKernel n t x := by
   unfold heatKernel
   apply mul_nonneg
@@ -7695,7 +7722,7 @@ theorem heatKernel_nonneg (n : ℕ) (t : ℝ) (ht : 0 < t) (x : EuclideanSpace �
     positivity
   · exact Real.exp_nonneg _
 
-theorem heatKernel_pos (n : ℕ) (t : ℝ) (ht : 0 < t) (x : EuclideanSpace ℝ (Fin n)) :
+private theorem heatKernel_pos (n : ℕ) (t : ℝ) (ht : 0 < t) (x : EuclideanSpace ℝ (Fin n)) :
     0 < heatKernel n t x := by
   unfold heatKernel
   apply mul_pos
@@ -7705,7 +7732,7 @@ theorem heatKernel_pos (n : ℕ) (t : ℝ) (ht : 0 < t) (x : EuclideanSpace ℝ 
   · exact Real.exp_pos _
 
 
-theorem coord_mul_le_norm_sq (n : ℕ) (y : EuclideanSpace ℝ (Fin n)) (i j : Fin n) :
+private theorem coord_mul_le_norm_sq (n : ℕ) (y : EuclideanSpace ℝ (Fin n)) (i j : Fin n) :
     |y i * y j| ≤ ‖y‖ ^ 2 := by
   have hi : |y i| ≤ ‖y‖ := coord_abs_le_norm n y i
   have hj : |y j| ≤ ‖y‖ := coord_abs_le_norm n y j
@@ -7713,7 +7740,7 @@ theorem coord_mul_le_norm_sq (n : ℕ) (y : EuclideanSpace ℝ (Fin n)) (i j : F
     _ ≤ ‖y‖ * ‖y‖ := by gcongr
     _ = ‖y‖ ^ 2 := by ring
 
-theorem n_zero_case {p : ENNReal}
+private theorem n_zero_case {p : ENNReal}
     (_hp1 : 1 ≤ p) (_hp : p < ⊤) {φ : EuclideanSpace ℝ (Fin 0) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ)
     (hRemThm : ∀ (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ},
@@ -7767,7 +7794,7 @@ open MeasureTheory
 
 /-- Jensen for `∫⁻`: for a probability measure `μ`, the `p`-th power of the
 norm of an integral is at most the integral of the `p`-th powers. -/
-theorem lintegral_norm_integral_le {n : ℕ} {p : ℝ} (hp1 : 1 ≤ p)
+private theorem lintegral_norm_integral_le {n : ℕ} {p : ℝ} (hp1 : 1 ≤ p)
     {μ : Measure (EuclideanSpace ℝ (Fin n))} [IsProbabilityMeasure μ]
     {F : EuclideanSpace ℝ (Fin n) → EuclideanSpace ℝ (Fin n) → ℝ}
     (hF_meas : AEStronglyMeasurable (Function.uncurry F) (μ.prod volume))
@@ -7826,7 +7853,7 @@ section LemmaA
 open MeasureTheory
 
 
-theorem volume_ball_euclidean_le (n : ℕ) (r : ℝ) (hr : 0 ≤ r) :
+private theorem volume_ball_euclidean_le (n : ℕ) (r : ℝ) (hr : 0 ≤ r) :
     volume (Metric.ball (0 : EuclideanSpace ℝ (Fin n)) r)
       ≤ ENNReal.ofReal ((2 * r) ^ n) := by
   let a' : Fin n → ℝ := fun _ => -r
@@ -7888,7 +7915,7 @@ theorem volume_ball_euclidean_le (n : ℕ) (r : ℝ) (hr : 0 ≤ r) :
         · rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
           rw [← ENNReal.ofReal_pow (by positivity : (0:ℝ) ≤ 2 * r)]
 
-theorem per_fun_bound (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p < ⊤)
+private theorem per_fun_bound (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p < ⊤)
     (f : EuclideanSpace ℝ (Fin n) → ℝ) (hcont : Continuous f)
     (M R0 : ℝ) (hM0 : 0 ≤ M) (hR0 : 0 ≤ R0)
     (hM : ∀ x, ‖f x‖ ≤ M)
@@ -8056,7 +8083,7 @@ theorem per_fun_bound (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p < ⊤)
     _ = ENNReal.ofReal (((2:ℝ) ^ n * (2 * M) ^ (p.toReal - 1)) * modv * (R0 + ‖y‖) ^ n) := by
         simp only [hBdef, hrdef]
 
-theorem lintegral_diff_le (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 1 ≤ p)
+private theorem lintegral_diff_le (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 1 ≤ p)
     (hp : p < ⊤) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ)
     (hDijThm : ∀ (i j : Fin n),
@@ -8201,7 +8228,7 @@ local instance : IsFiniteMeasure (volume.restrict (Set.Ioc (0 : ℝ) 1)) := ⟨b
   norm_num [ENNReal.ofReal_lt_top]⟩
 
 /-- Integration against the Gaussian density measure is the weighted volume integral. -/
-theorem Dfn_integral_density (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+private theorem Dfn_integral_density (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hDijThm : ∀ (i j : Fin n),
       Continuous (secondPartialFn n φ i j)
         ∧ HasCompactSupport (secondPartialFn n φ i j)
@@ -8243,7 +8270,7 @@ theorem Dfn_integral_density (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
   filter_upwards with y
   rw [NNReal.smul_def, smul_eq_mul, Real.coe_toNNReal _ (hKnonneg y)]
 
-theorem Dfn_integral_measurable (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+private theorem Dfn_integral_measurable (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hDijThm : ∀ (i j : Fin n),
       Continuous (secondPartialFn n φ i j)
         ∧ HasCompactSupport (secondPartialFn n φ i j)
@@ -8522,7 +8549,7 @@ theorem Dfn_integral_measurable (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → �
     continuous_of_dominated hFmeas hBoundEv hBoundInt hContAE
   exact hContIntegral.aestronglyMeasurable
 
-theorem heatKernel_continuous (n : ℕ) (t : ℝ) (ht : 0 < t) :
+private theorem heatKernel_continuous (n : ℕ) (t : ℝ) (ht : 0 < t) :
     Continuous fun x : EuclideanSpace ℝ (Fin n) => heatKernel n t x := by
   unfold heatKernel
   apply Continuous.mul continuous_const
@@ -8533,7 +8560,7 @@ theorem heatKernel_continuous (n : ℕ) (t : ℝ) (ht : 0 < t) :
   · exact fun _ => ne_of_gt (mul_pos (by norm_num) ht)
 
 /-- A coordinate of a Euclidean vector is bounded by its norm. -/
-theorem euclidean_coord_abs_le_norm (n : ℕ) (x : EuclideanSpace ℝ (Fin n))
+private theorem euclidean_coord_abs_le_norm (n : ℕ) (x : EuclideanSpace ℝ (Fin n))
     (i : Fin n) : |x i| ≤ ‖x‖ := by
   have h1 : (‖x i‖) ^ 2 ≤ ∑ j, (‖x j‖) ^ 2 :=
     Finset.single_le_sum (f := fun j => (‖x j‖) ^ 2) (fun _ _ => sq_nonneg _)
@@ -8547,7 +8574,7 @@ theorem euclidean_coord_abs_le_norm (n : ℕ) (x : EuclideanSpace ℝ (Fin n))
   exact abs_le_of_sq_le_sq h2 (norm_nonneg _)
 
 /-- Uniform domination of the Taylor integrand by `C * ‖y‖ ^ 2`. -/
-theorem Dfn_bound (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private theorem Dfn_bound (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (hBnd : ∀ i j, ∃ M : ℝ, 0 ≤ M ∧ ∀ x, |secondPartialFn n φ i j x| ≤ M) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (s : ℝ) (x y : EuclideanSpace ℝ (Fin n)),
       s ∈ Set.Icc 0 1 →
@@ -8604,7 +8631,7 @@ theorem Dfn_bound (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     _ = (∑ i, ∑ j, 2 * M i j) * ‖y‖ ^ 2 := one_mul _
 
 /-- Joint continuity of the Taylor remainder in `(x, y)`. -/
-theorem Dfn_continuous (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private theorem Dfn_continuous (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (hDij : ∀ i j, Continuous (secondPartialFn n φ i j))
     (hBnd : ∀ i j, ∃ M : ℝ, 0 ≤ M ∧ ∀ x, |secondPartialFn n φ i j x| ≤ M) :
     Continuous (Function.uncurry fun x y : EuclideanSpace ℝ (Fin n) =>
@@ -8695,7 +8722,7 @@ theorem Dfn_continuous (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     have hcomp := h1.comp h2
     exact hcomp
 
-theorem integrable_heatKernel_mul_norm_pow (n : ℕ) (t : ℝ) (ht : 0 < t)
+private theorem integrable_heatKernel_mul_norm_pow (n : ℕ) (t : ℝ) (ht : 0 < t)
     (m : ℕ) :
     Integrable (fun a : EuclideanSpace ℝ (Fin n) =>
       heatKernel n t a * ‖a‖ ^ m) volume := by
@@ -8866,7 +8893,7 @@ theorem integrable_heatKernel_mul_norm_pow (n : ℕ) (t : ℝ) (ht : 0 < t)
   rw [heq]
   exact hfin.const_mul _
 
-theorem Dfn_lintegral_x_le (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+private theorem Dfn_lintegral_x_le (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hDijThm : ∀ (i j : Fin n),
       Continuous (secondPartialFn n φ i j)
         ∧ HasCompactSupport (secondPartialFn n φ i j)
@@ -9091,7 +9118,7 @@ theorem Dfn_lintegral_x_le (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     apply ENNReal.ofReal_le_ofReal
     exact le_of_eq hring
 
-theorem isCompact_supportUnion (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private theorem isCompact_supportUnion (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (hDijThm : ∀ (i j : Fin n),
       Continuous (secondPartialFn n φ i j)
         ∧ HasCompactSupport (secondPartialFn n φ i j)
@@ -9109,7 +9136,7 @@ theorem isCompact_supportUnion (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → �
   intro j
   exact ((hDijThm i j).2.1).isCompact
 
-theorem exists_closedBall_superset_supportUnion (n : ℕ)
+private theorem exists_closedBall_superset_supportUnion (n : ℕ)
     (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (hDijThm : ∀ (i j : Fin n),
       Continuous (secondPartialFn n φ i j)
@@ -9133,7 +9160,7 @@ theorem exists_closedBall_superset_supportUnion (n : ℕ)
   rw [Metric.mem_closedBall, dist_eq_norm, sub_zero]
   exact le_trans hxC (le_max_left _ _)
 
-theorem Dfn_norm_le_of_bound (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private theorem Dfn_norm_le_of_bound (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (hDij : ∀ i j, Continuous (secondPartialFn n φ i j))
     (C : ℝ) (hC : ∀ (s : ℝ) (x y : EuclideanSpace ℝ (Fin n)),
       s ∈ Set.Icc 0 1 →
@@ -9181,7 +9208,7 @@ theorem Dfn_norm_le_of_bound (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
   rw [hEq]
   exact le_trans hNorm (le_trans hMono (le_of_eq hConst))
 
-theorem Dfn_eq_zero_of_outside_closedBall (n : ℕ)
+private theorem Dfn_eq_zero_of_outside_closedBall (n : ℕ)
     (φ : EuclideanSpace ℝ (Fin n) → ℝ) (R : ℝ)
     (hR : (⋃ i, ⋃ j, tsupport (secondPartialFn n φ i j)) ⊆
       Metric.closedBall 0 R)
@@ -9255,7 +9282,7 @@ theorem Dfn_eq_zero_of_outside_closedBall (n : ℕ)
   rw [hEq]
   exact setIntegral_eq_zero_of_forall_eq_zero (fun s hs => hZero s hs)
 
-theorem lintegral_Dfn_le_volume_mul (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
+private theorem lintegral_Dfn_le_volume_mul (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ)
     (R C : ℝ)
     (hR : (⋃ i, ⋃ j, tsupport (secondPartialFn n φ i j)) ⊆
       Metric.closedBall 0 R)
@@ -9310,7 +9337,7 @@ theorem lintegral_Dfn_le_volume_mul (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) �
           exact hLe
 
 /-- The heat kernel is nonnegative for positive time. -/
-theorem Dfn_uncurry_integrable (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+private theorem Dfn_uncurry_integrable (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hDijThm : ∀ (i j : Fin n),
       Continuous (secondPartialFn n φ i j)
         ∧ HasCompactSupport (secondPartialFn n φ i j)
@@ -9509,14 +9536,14 @@ theorem Dfn_uncurry_integrable (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → �
   simp only [hnorm] at hfin
   exact hfin
 
-theorem integrable_uncurry_prod_swap {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
+private theorem integrable_uncurry_prod_swap {α β : Type*} [MeasurableSpace α] [MeasurableSpace β]
     {μ : Measure α} {ν : Measure β} [SFinite μ] [SFinite ν] {F : α → β → ℝ} :
     Integrable (Function.uncurry F) (μ.prod ν) →
     Integrable (Function.uncurry (Function.swap F)) (ν.prod μ) := by
   intro h
   exact h.swap
 
-theorem Dfn_Jensen_chain (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p < ⊤)
+private theorem Dfn_Jensen_chain (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p < ⊤)
     {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hJensenThm : ∀ {n : ℕ} {q : ℝ} (_hq1 : 1 ≤ q)
       {μ : Measure (EuclideanSpace ℝ (Fin n))} [IsProbabilityMeasure μ]
@@ -9630,7 +9657,7 @@ theorem Dfn_Jensen_chain (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p < ⊤)
         intro b
         exact (ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) (zero_le_one.trans hq1)).symm
 
-theorem Dfn_Jensen_lintegral (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p < ⊤)
+private theorem Dfn_Jensen_lintegral (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p < ⊤)
     {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hJensenThm : ∀ {n : ℕ} {q : ℝ} (_hq1 : 1 ≤ q)
       {μ : Measure (EuclideanSpace ℝ (Fin n))} [IsProbabilityMeasure μ]
@@ -9682,7 +9709,7 @@ theorem Dfn_Jensen_lintegral (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p < �
       integrable_heatKernel_mul_norm_pow Dfn_lintegral_x_le t ht))
     t ht
 
-theorem jensen_density_bundle (n : ℕ) (_hn : 0 < n) {p : ENNReal} (hp1 : 1 ≤ p)
+private theorem jensen_density_bundle (n : ℕ) (_hn : 0 < n) {p : ENNReal} (hp1 : 1 ≤ p)
     (hp : p < ⊤) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (_hφ : ContDiff ℝ 2 φ) (_hφ_supp : HasCompactSupport φ)
     (hJensenThm : ∀ {n : ℕ} {q : ℝ} (_hq1 : 1 ≤ q)
@@ -9753,7 +9780,7 @@ open MeasureTheory
 open scoped Topology
 
 
-theorem aux_integral_one_sub_rpow_le (H : ℝ → ℝ) (hH : Continuous H)
+private theorem aux_integral_one_sub_rpow_le (H : ℝ → ℝ) (hH : Continuous H)
     (hHnn : ∀ s ∈ Set.Icc (0 : ℝ) 1, 0 ≤ H s) (q : ℝ) (hq : 1 ≤ q) :
     (∫ s in (0 : ℝ)..1, (1 - s) * H s) ^ q
       ≤ ((1 : ℝ) / 2) ^ (q - 1)
@@ -9913,7 +9940,7 @@ theorem aux_integral_one_sub_rpow_le (H : ℝ → ℝ) (hH : Continuous H)
   rw [h2q_eq] at hJ
   linear_combination hJ / 2
 
-theorem Dfn_pointwise_rpow_le (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p < ⊤)
+private theorem Dfn_pointwise_rpow_le (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p < ⊤)
     {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hDijThm : ∀ (i j : Fin n),
       Continuous (secondPartialFn n φ i j)
@@ -10037,7 +10064,7 @@ theorem Dfn_pointwise_rpow_le (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p < 
     hHcont hHnn p.toReal hq1
   exact le_trans hstep2 hstep3
 
-theorem aux_integral_one_sub : ∫ s in (0 : ℝ)..1, (1 - s) = 1 / 2 := by
+private theorem aux_integral_one_sub : ∫ s in (0 : ℝ)..1, (1 - s) = 1 / 2 := by
   have hderiv : ∀ x ∈ Set.uIcc (0 : ℝ) 1,
       HasDerivAt (fun s : ℝ => s - s ^ 2 / 2) (1 - x) x := by
     intro x _
@@ -10061,7 +10088,7 @@ theorem aux_integral_one_sub : ∫ s in (0 : ℝ)..1, (1 - s) = 1 / 2 := by
   simp at hftc
   linarith
 
-theorem aux_rpow_sum_le (n : ℕ) (hn : 0 < n) (q : ℝ) (hq : 0 ≤ q)
+private theorem aux_rpow_sum_le (n : ℕ) (hn : 0 < n) (q : ℝ) (hq : 0 ≤ q)
     (a b : Fin n → Fin n → ℝ)
     (ha : ∀ i j, 0 ≤ a i j) (hb : ∀ i j, 0 ≤ b i j) :
     (∑ i, ∑ j, a i j * b i j) ^ q
@@ -10113,7 +10140,7 @@ theorem aux_rpow_sum_le (n : ℕ) (hn : 0 < n) (q : ℝ) (hq : 0 ≤ q)
     _ ≤ (∑ i, ∑ j, a i j) ^ q * ∑ i, ∑ j, (b i j) ^ q := by
         apply mul_le_mul_of_nonneg_left hsingle (Real.rpow_nonneg hA_nn q)
 
-theorem Dfn_lintegral_of_pointwise (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 1 ≤ p)
+private theorem Dfn_lintegral_of_pointwise (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 1 ≤ p)
     (hp : p < ⊤) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ)
     (hDijThm : ∀ (i j : Fin n),
@@ -10572,7 +10599,7 @@ theorem Dfn_lintegral_of_pointwise (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 1
         * ((∑ i, ∑ j, secondPartialModulus n φ i j ‖y‖) * (R + ‖y‖) ^ n * ‖y‖ ^ (2 * p.toReal))) :=
         ENNReal.ofReal_le_ofReal hReal_le
 
-theorem Dfn_lintegral_le_v2 (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 1 ≤ p)
+private theorem Dfn_lintegral_le_v2 (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 1 ≤ p)
     (hp : p < ⊤) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ)
     (hAthm : ∀ (n : ℕ) (_hn : 0 < n) {p : ENNReal} (_hp1 : 1 ≤ p) (_hp : p < ⊤)
@@ -10643,14 +10670,14 @@ section C3
 
 -- Heat-kernel integral estimate by a small-ball / large-tail split (`δ`).
 -- Gaussian helper lemmas are proved from the Gaussian integral over Euclidean space.
--- The final absorption step is left open; see the note at `habsorb`.
+-- The final absorption step is proved as `habsorb` inside the main estimate below.
 
 open MeasureTheory
 open scoped Topology
 
 
 /-- Global bound on the modulus from a uniform bound on `D_{ij}`. -/
-theorem modulus_le_two_mul_bound (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+private theorem modulus_le_two_mul_bound (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (i j : Fin n) (M : ℝ) (hM0 : 0 ≤ M)
     (hM : ∀ x, |secondPartialFn n φ i j x| ≤ M)
     (r : ℝ) (hr : 0 ≤ r) :
@@ -10669,7 +10696,7 @@ theorem modulus_le_two_mul_bound (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → 
       _ ≤ M + M := add_le_add (hM _) (hM _)
       _ = 2 * M := by ring
 
-theorem add_pow_le_two_pow_mul (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (n : ℕ) :
+private theorem add_pow_le_two_pow_mul (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (n : ℕ) :
     (a + b) ^ n ≤ (2 : ℝ) ^ n * (a ^ n + b ^ n) := by
   have hmax : a + b ≤ 2 * max a b := by
     have h1 : a ≤ max a b := by simp
@@ -10689,7 +10716,7 @@ theorem add_pow_le_two_pow_mul (a b : ℝ) (ha : 0 ≤ a) (hb : 0 ≤ b) (n : �
         mul_le_mul_of_nonneg_left hmaxpow (by positivity)
 
 /-- Pointwise polynomial-exponential bound: `u^s ≤ s^s * exp u`. -/
-theorem rpow_le_rpow_mul_exp (u s : ℝ) (hu : 0 ≤ u) (hs : 0 < s) :
+private theorem rpow_le_rpow_mul_exp (u s : ℝ) (hu : 0 ≤ u) (hs : 0 < s) :
     u ^ s ≤ s ^ s * Real.exp u := by
   rcases eq_or_lt_of_le hu with rfl | hu_pos
   · rw [Real.zero_rpow hs.ne']
@@ -10721,7 +10748,7 @@ theorem rpow_le_rpow_mul_exp (u s : ℝ) (hu : 0 ≤ u) (hs : 0 < s) :
     exact Real.exp_le_exp.mpr hlog
 
 /-- Gaussian lintegral over Euclidean space. -/
-theorem gauss_lintegral (n : ℕ) (b : ℝ) (hb : 0 < b) :
+private theorem gauss_lintegral (n : ℕ) (b : ℝ) (hb : 0 < b) :
     ∫⁻ y : EuclideanSpace ℝ (Fin n), ENNReal.ofReal (Real.exp (-b * ‖y‖ ^ 2))
       = ENNReal.ofReal ((Real.pi / b) ^ ((n : ℝ) / 2)) := by
   have hInt : Integrable (fun y : EuclideanSpace ℝ (Fin n) => Real.exp (-b * ‖y‖ ^ 2)) volume := by
@@ -10744,7 +10771,7 @@ theorem gauss_lintegral (n : ℕ) (b : ℝ) (hb : 0 < b) :
   rw [← ofReal_integral_eq_lintegral_ofReal hInt hae, hval2]
 
 /-- Gaussian moment core estimate (pointwise in the radius). -/
-theorem moment_core (r t s : ℝ) (hr : 0 ≤ r) (ht : 0 < t) (hs : 0 < s) :
+private theorem moment_core (r t s : ℝ) (hr : 0 ≤ r) (ht : 0 < t) (hs : 0 < s) :
     r ^ (2 * s) * Real.exp (-r ^ 2 / (4 * t))
       ≤ (8 * t) ^ s * s ^ s * Real.exp (-r ^ 2 / (8 * t)) := by
   have ht0 : t ≠ 0 := ht.ne'
@@ -10786,7 +10813,7 @@ theorem moment_core (r t s : ℝ) (hr : 0 ≤ r) (ht : 0 < t) (hs : 0 < s) :
 
 /-- Gaussian `2q`-moment bound over a ball (small part of the `δ`-split).
 Proved via a pointwise polynomial-Gaussian bound plus the Gaussian integral. -/
-theorem smallBall_integral_bound (n : ℕ) (q : ℝ) (hq : 1 ≤ q) :
+private theorem smallBall_integral_bound (n : ℕ) (q : ℝ) (hq : 1 ≤ q) :
     ∃ Cmom : ℝ, 0 ≤ Cmom ∧ ∀ (δ t : ℝ), 0 < δ → 0 < t → ∀ (C0 : ℝ), 0 ≤ C0 →
       ∫⁻ y in Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) δ,
         ENNReal.ofReal (heatKernel n t y) * ENNReal.ofReal (C0 * ‖y‖ ^ (2 * q)) ∂volume
@@ -10886,7 +10913,7 @@ theorem smallBall_integral_bound (n : ℕ) (q : ℝ) (hq : 1 ≤ q) :
         _ = C0 * ((8 ^ q * q ^ q * 2 ^ ((n : ℝ) / 2)) * t ^ q) := by ring
     exact (le_trans (le_trans hstep1 hstep2) hstep3.le)
 
-theorem largeCompl_integral_bound (n : ℕ) (q : ℝ) (hq : 1 ≤ q) :
+private theorem largeCompl_integral_bound (n : ℕ) (q : ℝ) (hq : 1 ≤ q) :
     ∃ C1 C2 : ℝ, 0 ≤ C1 ∧ 0 ≤ C2 ∧ ∀ (R δ t : ℝ), 0 ≤ R → 0 < δ → 0 < t →
       ∀ (C0 : ℝ), 0 ≤ C0 →
       ∫⁻ y in (Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) δ)ᶜ,
@@ -11128,7 +11155,7 @@ theorem largeCompl_integral_bound (n : ℕ) (q : ℝ) (hq : 1 ≤ q) :
             * Real.exp (-δ ^ 2 / (16 * t))) := by ring
     exact (le_trans hstep2 (le_trans hstep1 hstep3.le))
 
-theorem y_integral_estimate (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 1 ≤ p)
+private theorem y_integral_estimate (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 1 ≤ p)
     (hp : p < ⊤) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (_hφ : ContDiff ℝ 2 φ) (_hφ_supp : HasCompactSupport φ)
     (_hMomThm : ∀ (n : ℕ) {t : ℝ}, 0 < t →
@@ -11524,7 +11551,7 @@ open MeasureTheory
 open scoped Topology
 
 
-theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
+private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
     {p : ENNReal} (hp1 : 1 ≤ p) (hp : p < ⊤)
     {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ)
@@ -12290,7 +12317,7 @@ section LpEstApplyHelpers
 open MeasureTheory
 open scoped Topology
 
-theorem dij_bounded (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ} (i j : Fin n)
+private theorem dij_bounded (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ} (i j : Fin n)
     (hcont : Continuous (secondPartialFn n φ i j))
     (hsupp : HasCompactSupport (secondPartialFn n φ i j)) :
     ∃ M : ℝ, 0 ≤ M ∧ ∀ x, |secondPartialFn n φ i j x| ≤ M := by
@@ -12300,7 +12327,7 @@ theorem dij_bounded (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ} (i j : F
   rw [Real.norm_eq_abs] at h
   exact h.trans (le_max_left _ _)
 
-theorem eLpNorm_toReal_rpow_eq_lintegral_ofReal (n : ℕ) {p : ENNReal} (hp0 : p ≠ 0)
+private theorem eLpNorm_toReal_rpow_eq_lintegral_ofReal (n : ℕ) {p : ENNReal} (hp0 : p ≠ 0)
     (hpTop : p ≠ ⊤) {f : EuclideanSpace ℝ (Fin n) → ℝ}
     (hae : AEStronglyMeasurable f volume) (hq_pos : 0 < p.toReal) :
     (eLpNorm f p volume).toReal ^ p.toReal
@@ -12330,7 +12357,7 @@ open MeasureTheory
 open scoped Topology
 
 
-theorem isProbability_heatDensity (n : ℕ) {t : ℝ} (ht : 0 < t)
+private theorem isProbability_heatDensity (n : ℕ) {t : ℝ} (ht : 0 < t)
     (hInt : ∫ (y : EuclideanSpace ℝ (Fin n)), heatKernel n t y = 1) :
     IsProbabilityMeasure
       (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y)) :=
@@ -12364,17 +12391,17 @@ open MeasureTheory
 
 
 
-theorem coord_continuous (n : ℕ) (i : Fin n) :
+private theorem coord_continuous (n : ℕ) (i : Fin n) :
     Continuous (fun y : EuclideanSpace ℝ (Fin n) => y i) :=
   PiLp.continuous_apply _ _ i
 
-theorem abs_mul_le_half_sum_sq (a b : ℝ) : |a * b| ≤ (a * a + b * b) / 2 := by
+private theorem abs_mul_le_half_sum_sq (a b : ℝ) : |a * b| ≤ (a * a + b * b) / 2 := by
   have h0 := sq_nonneg (|a| - |b|)
   rw [sub_sq, sq_abs a, sq_abs b] at h0
   rw [abs_mul, ← pow_two a, ← pow_two b]
   linarith
 
-theorem integrable_kernel_coord_mul (n : ℕ) (t : ℝ) (ht : 0 < t)
+private theorem integrable_kernel_coord_mul (n : ℕ) (t : ℝ) (ht : 0 < t)
     (hm2 : ∀ i j : Fin n, ∫ (y : EuclideanSpace ℝ (Fin n)),
       heatKernel n t y * (y i * y j) = if i = j then 2 * t else 0)
     (i j : Fin n) :
@@ -12413,7 +12440,7 @@ theorem integrable_kernel_coord_mul (n : ℕ) (t : ℝ) (ht : 0 < t)
 
 /-- Half-part identification, assembled from Gaussian second moments
 and the Laplacian identification. -/
-theorem gaussian_half_second_order_asm (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+private theorem gaussian_half_second_order_asm (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ)
     {t : ℝ} (ht : 0 < t) (x : EuclideanSpace ℝ (Fin n))
     (hMomentsThm : ∀ (n : ℕ) {t : ℝ}, 0 < t →
@@ -12603,7 +12630,7 @@ section P1Ennreal
 
 open scoped Convolution
 
-theorem integrable_gaussian_euclidean (n : ℕ) (c : ℝ) (hc : 0 < c) :
+private theorem integrable_gaussian_euclidean (n : ℕ) (c : ℝ) (hc : 0 < c) :
     Integrable (fun x : EuclideanSpace ℝ (Fin n) => Real.exp (-c * ‖x‖ ^ 2)) volume := by
   have hb : 0 < ((c : ℝ) : ℂ).re := by simpa using hc
   have h := GaussianFourier.integrable_cexp_neg_mul_sq_norm_add
@@ -12624,12 +12651,12 @@ theorem integrable_gaussian_euclidean (n : ℕ) (c : ℝ) (hc : 0 < c) :
     exact h
   exact Integrable.iff_ofReal.mpr hC
 
-theorem continuous_heatKernel (n : ℕ) (t : ℝ) :
+private theorem continuous_heatKernel (n : ℕ) (t : ℝ) :
     Continuous fun x : EuclideanSpace ℝ (Fin n) => heatKernel n t x := by
   unfold heatKernel
   fun_prop
 
-theorem integrable_heatKernel (n : ℕ) (t : ℝ) (ht : 0 < t) :
+private theorem integrable_heatKernel (n : ℕ) (t : ℝ) (ht : 0 < t) :
     Integrable (fun x : EuclideanSpace ℝ (Fin n) => heatKernel n t x) volume := by
   have hc : (0 : ℝ) < 1 / (4 * t) := by positivity
   have hG := integrable_gaussian_euclidean n (1 / (4 * t)) hc
@@ -12645,7 +12672,7 @@ theorem integrable_heatKernel (n : ℕ) (t : ℝ) (ht : 0 < t) :
   simp_rw [hEq]
   simpa [smul_eq_mul] using hG.const_mul ((4 * Real.pi * t) ^ (-(n : ℝ) / 2))
 
-theorem memLp_top_heatKernel (n : ℕ) (t : ℝ) (ht : 0 < t) :
+private theorem memLp_top_heatKernel (n : ℕ) (t : ℝ) (ht : 0 < t) :
     MemLp (fun x : EuclideanSpace ℝ (Fin n) => heatKernel n t x) ⊤ volume := by
   apply memLp_top_of_bound (continuous_heatKernel n t).aestronglyMeasurable _
   filter_upwards with x
@@ -12666,19 +12693,19 @@ theorem memLp_top_heatKernel (n : ℕ) (t : ℝ) (ht : 0 < t) :
         mul_le_mul_of_nonneg_left hexp hC
     _ = (4 * Real.pi * t) ^ (-(n : ℝ) / 2) := mul_one _
 
-theorem heatConvolution_eq_conv (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ) (t : ℝ)
+private theorem heatConvolution_eq_conv (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ) (t : ℝ)
     (x : EuclideanSpace ℝ (Fin n)) :
     heatConvolution n φ t x
       = (φ ⋆[ContinuousLinearMap.mul ℝ ℝ, volume] heatKernel n t) x := by
   unfold heatConvolution
   rw [MeasureTheory.convolution_mul]
 
-theorem heatConvolution_fun_eq (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ) (t : ℝ) :
+private theorem heatConvolution_fun_eq (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ) (t : ℝ) :
     heatConvolution n φ t
       = φ ⋆[ContinuousLinearMap.mul ℝ ℝ, volume] heatKernel n t :=
   funext (heatConvolution_eq_conv n φ t)
 
-theorem continuous_heatConvolution (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+private theorem continuous_heatConvolution (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ) (t : ℝ) :
     Continuous (heatConvolution n φ t) := by
   have hK : LocallyIntegrable (fun x : EuclideanSpace ℝ (Fin n) => heatKernel n t x) volume :=
@@ -12688,7 +12715,7 @@ theorem continuous_heatConvolution (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) �
   rw [heatConvolution_fun_eq n φ t]
   exact hcont
 
-theorem integrable_heatConvolution (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+private theorem integrable_heatConvolution (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ) (t : ℝ) (ht : 0 < t) :
     Integrable (heatConvolution n φ t) volume := by
   rw [heatConvolution_fun_eq n φ t]
@@ -12698,12 +12725,12 @@ theorem integrable_heatConvolution (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) �
     integrable_heatKernel n t ht
   exact Integrable.integrable_convolution (L := ContinuousLinearMap.mul ℝ ℝ) hφint hKint
 
-theorem memLp_phi_of_contDiff (n : ℕ) {p : ENNReal}
+private theorem memLp_phi_of_contDiff (n : ℕ) {p : ENNReal}
     {φ : EuclideanSpace ℝ (Fin n) → ℝ} (hφ : ContDiff ℝ 2 φ)
     (hφ_supp : HasCompactSupport φ) : MemLp φ p volume :=
   hφ.continuous.memLp_of_hasCompactSupport hφ_supp
 
-theorem continuous_laplacian_phi (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+private theorem continuous_laplacian_phi (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) : Continuous (Laplacian.laplacian φ) := by
   classical
   rw [InnerProductSpace.laplacian_eq_iteratedFDeriv_orthonormalBasis φ
@@ -12713,7 +12740,7 @@ theorem continuous_laplacian_phi (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → 
   exact (ContinuousMultilinearMap.uniformContinuous_eval_const _).continuous.comp
     (hφ.continuous_iteratedFDeriv le_rfl)
 
-theorem hasCompactSupport_laplacian_phi (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+private theorem hasCompactSupport_laplacian_phi (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ_supp : HasCompactSupport φ) : HasCompactSupport (Laplacian.laplacian φ) := by
   apply hφ_supp.mono'
   intro x hx
@@ -12728,13 +12755,13 @@ theorem hasCompactSupport_laplacian_phi (n : ℕ) {φ : EuclideanSpace ℝ (Fin 
   have hx0 : Laplacian.laplacian φ x = 0 := by simpa using h2
   exact hx hx0
 
-theorem memLp_laplacian_phi (n : ℕ) {p : ENNReal}
+private theorem memLp_laplacian_phi (n : ℕ) {p : ENNReal}
     {φ : EuclideanSpace ℝ (Fin n) → ℝ} (hφ : ContDiff ℝ 2 φ)
     (hφ_supp : HasCompactSupport φ) : MemLp (Laplacian.laplacian φ) p volume :=
   (continuous_laplacian_phi n hφ).memLp_of_hasCompactSupport
     (hasCompactSupport_laplacian_phi n hφ_supp)
 
-theorem enorm_heatConvolution_le (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+private theorem enorm_heatConvolution_le (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (_hφ_supp : HasCompactSupport φ) (t : ℝ) (_ht : 0 < t)
     (x : EuclideanSpace ℝ (Fin n)) :
     ‖(heatConvolution n φ t) x‖ₑ ≤ ‖ContinuousLinearMap.mul ℝ ℝ‖ₑ * eLpNorm φ 1 volume
@@ -12743,7 +12770,7 @@ theorem enorm_heatConvolution_le (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → 
   exact enorm_convolution_le (L := ContinuousLinearMap.mul ℝ ℝ) (p := 1) (q := ⊤)
     hφ.continuous.aestronglyMeasurable (continuous_heatKernel n t).aestronglyMeasurable x
 
-theorem eLpNorm_bound_heatConvolution (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+private theorem eLpNorm_bound_heatConvolution (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ) (t : ℝ) (ht : 0 < t) :
     ‖ContinuousLinearMap.mul ℝ ℝ‖ₑ * eLpNorm φ 1 volume
       * eLpNorm (heatKernel n t) ⊤ volume < ⊤ := by
@@ -12751,7 +12778,7 @@ theorem eLpNorm_bound_heatConvolution (n : ℕ) {φ : EuclideanSpace ℝ (Fin n)
   have hKt : eLpNorm (heatKernel n t) ⊤ volume < ⊤ := memLp_top_heatKernel n t ht
   exact ENNReal.mul_lt_top (ENNReal.mul_lt_top enorm_lt_top hφ1) hKt
 
-theorem eLpNorm_lt_top_of_uniform_enorm_bound (n : ℕ) {p : ENNReal}
+private theorem eLpNorm_lt_top_of_uniform_enorm_bound (n : ℕ) {p : ENNReal}
     {f : EuclideanSpace ℝ (Fin n) → ℝ} (hp1 : 1 ≤ p) (hp : p ≠ ⊤)
     (hf : AEStronglyMeasurable f volume) (hint : Integrable f volume) (B : ENNReal)
     (hB : B < ⊤) (hle : ∀ x, ‖f x‖ₑ ≤ B) : eLpNorm f p volume < ⊤ := by
@@ -12780,7 +12807,7 @@ theorem eLpNorm_lt_top_of_uniform_enorm_bound (n : ℕ) {p : ENNReal}
     _ = B ^ (p.toReal - 1) * ∫⁻ x, ‖f x‖ₑ ∂volume := lintegral_const_mul'' _ hmeas
     _ < ⊤ := ENNReal.mul_lt_top (ENNReal.rpow_lt_top_of_nonneg hexp hB.ne) hint'
 
-theorem memLp_heatConvolution (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p ≠ ⊤)
+private theorem memLp_heatConvolution (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p ≠ ⊤)
     {φ : EuclideanSpace ℝ (Fin n) → ℝ} (hφ : ContDiff ℝ 2 φ)
     (hφ_supp : HasCompactSupport φ) (t : ℝ) (ht : 0 < t) :
     MemLp (heatConvolution n φ t) p volume := by
@@ -12790,7 +12817,7 @@ theorem memLp_heatConvolution (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p �
   · exact eLpNorm_bound_heatConvolution n hφ hφ_supp t ht
   · exact fun x => enorm_heatConvolution_le n hφ hφ_supp t ht x
 
-theorem eLpNorm_generator_eventually_ne_top (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p < ⊤)
+private theorem eLpNorm_generator_eventually_ne_top (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p < ⊤)
     {φ : EuclideanSpace ℝ (Fin n) → ℝ} (hφ : ContDiff ℝ 2 φ)
     (hφ_supp : HasCompactSupport φ) (t : ℝ) (ht : 0 < t) :
     eLpNorm (fun x => heatConvolution n φ t x - φ x
@@ -12804,7 +12831,8 @@ theorem eLpNorm_generator_eventually_ne_top (n : ℕ) {p : ENNReal} (hp1 : 1 ≤
       p volume := (hH.sub hP).sub hL
   exact ne_of_lt hmem
 
-theorem heat_semigroup_generator_eq_laplacian_ennreal_of_real (n : ℕ) {p : ENNReal} (_hp1 : 1 ≤ p)
+private theorem heat_semigroup_generator_eq_laplacian_ennreal_of_real (n : ℕ) {p : ENNReal}
+    (_hp1 : 1 ≤ p)
     (_hp : p < ⊤) {φ : EuclideanSpace ℝ (Fin n) → ℝ} (_hφ : ContDiff ℝ 2 φ)
     (_hφ_supp : HasCompactSupport φ)
     (hReal : Filter.Tendsto
@@ -12830,7 +12858,8 @@ theorem heat_semigroup_generator_eq_laplacian_ennreal_of_real (n : ℕ) {p : ENN
   simp only [ENNReal.ofReal_zero] at hT
   exact hT.congr' hEq
 
-theorem heat_semigroup_generator_eq_laplacian_of_ennreal (n : ℕ) {p : ENNReal} (_hp1 : 1 ≤ p)
+private theorem heat_semigroup_generator_eq_laplacian_of_ennreal (n : ℕ) {p : ENNReal}
+    (_hp1 : 1 ≤ p)
     (_hp : p < ⊤) {φ : EuclideanSpace ℝ (Fin n) → ℝ} (_hφ : ContDiff ℝ 2 φ)
     (_hφ_supp : HasCompactSupport φ)
     (hENN : Filter.Tendsto
