@@ -106,10 +106,6 @@ example in the test suite; stage-1 facts about vertex data are stated for any
 structure Poly where
   /-- DEFINITIONAL DATA: the cyclic vertex list. -/
   vertices : List plane
-  /-- DEFINITIONAL EVIDENCE: a polygon has at least three vertices. -/
-  len_ge : 3 ≤ vertices.length
-  -- Note: `len_ge` is now also implied by `simple` (`PolySimple` requires
-  -- `3 ≤ vertices.length`); kept as an explicit field.
   /-- COUPLING DATA: the filled region of the polygon. -/
   region : Set plane
   /-- HYPOTHESIS (coupling): the frontier of the region is exactly the
@@ -125,6 +121,7 @@ structure Poly where
   list: distinct vertices, no degenerate edges, disjoint non-adjacent edge
   occurrences, adjacent occurrences meeting exactly in their common endpoint. -/
   simple : PolySimple vertices
+theorem Poly.len_ge_three (P : Poly) : 3 ≤ P.vertices.length := P.simple.1
 /-- A bounded polygonal workspace: one outer polygon and finitely many holes.
 `outer` and `holes` are data; the remaining fields are HYPOTHESES. -/
 structure Workspace where
