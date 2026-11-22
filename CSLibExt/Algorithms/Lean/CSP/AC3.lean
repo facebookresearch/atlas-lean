@@ -315,7 +315,7 @@ theorem arcConsistent_step (hsym : Symmetric P) (dom : X → Finset D) (x y : X)
 /-- **Arc consistency invariant of AC-3.** Let $P$ be a binary CSP with finitely many variables
 whose constraints are symmetric, that is the arc $(x, y)$ allows $(a, b)$ exactly when the arc
 $(y, x)$ allows $(b, a)$, and whose arcs all join two distinct variables. Let $\mathrm{dom}$ give
-each variable a finite domain, and let $q$ a queue whose entries are arcs of $P$, such that every
+each variable a finite domain, and let $q$ be a queue whose entries are arcs of $P$, such that every
 arc of $P$ not in $q$ is consistent with respect to $\mathrm{dom}$. Then every arc of $P$ is
 consistent with respect to the domains returned by AC-3 run from $\mathrm{dom}$ with queue $q$.
 
