@@ -1,0 +1,15 @@
+# Double-entry ledgers and the accounting equation
+
+- [Account Class](account-class.md)
+- [Is Balanced](is-balanced.md)
+- [Post](post.md)
+- [Assets](assets.md)
+- [Liabilities](liabilities.md)
+- [Equity](equity.md)
+- [Accounting Equation](accounting-equation.md)
+- [Sum post of is Balanced](sum-post-of-is-balanced.md)
+- [Accounting Equation iff sum eq zero](accounting-equation-iff-sum-eq-zero.md)
+- [Accounting Equation post](accounting-equation-post.md)
+- [Post All](post-all.md)
+- [Sum post All of forall is Balanced](sum-post-all-of-forall-is-balanced.md)
+- [Accounting Equation post All](accounting-equation-post-all.md)
