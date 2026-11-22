@@ -4190,9 +4190,9 @@ class ScopedRun(unittest.TestCase):
                                                                        "reason": "Its statement is wrong."}}}}) + "\n")
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["in_step"], report["held"], report["missing"]), (1, False, ["Ext.fresh"], []))
-        self.assertEqual(report["errors"], ["blueprint/roadmap/Algebra/groups/group-basics/fresh.md, which the row of "
-                                            "Ext.fresh names, is not a page: restore it, or remove the row and run the "
-                                            "sync again"])
+        self.assertEqual(report["errors"], ["blueprint/roadmap/Algebra/groups/group-basics/fresh.md, which the row "
+                                            "holding Ext.fresh back names, is not a page: restore it there, keeping the "
+                                            "row, its article id and its held marker"])
 
     def test_an_entry_to_drop_is_dropped_whatever_its_value(self) -> None:
         # The changes remove backlog, whose entry the baseline must lose: an entry left as null is still there.
@@ -4207,6 +4207,36 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual((status, report["digests"]), (1, {"Ext.backlog": None}))
         self.assertEqual(self.run_sync()[0], 0)
         self.assertNotIn("Ext.backlog", json.loads(state.read_text())["docstrings"])
+
+
+    def test_a_link_among_the_files_the_run_reads_or_the_changes_touch_stops_it(self) -> None:
+        # The page map and the Lean the changes add are read too: a link there stops the run before anything is read.
+        outside = self.root.parent / f"{self.root.name}-outside"
+        outside.write_text("")
+        self.addCleanup(outside.unlink)
+        for link in ("blueprint/pages.json", "MathlibExt/Algebra/Linked.lean"):
+            (self.root / link).symlink_to(outside)
+            with patch.object(sync, "numbered_rows", side_effect=AssertionError("read the links")), \
+                    patch.object(wiki, "generate", side_effect=AssertionError("read the Lean")):
+                status, out, err, report = self.run_sync("--check")
+            self.assertEqual((status, report["errors"]), (1, [
+                f"{link} is a link: the sync reads and writes through none; put what it links to in its place"]), link)
+            (self.root / link).unlink()
+
+    def test_a_refusal_reports_the_changes_as_they_are(self) -> None:
+        # A link the base already had stops a Lean-only change, which has no wiki changes and one Lean file.
+        outside = self.root.parent / f"{self.root.name}-outside"
+        outside.write_text("")
+        self.addCleanup(outside.unlink)
+        (self.root / "blueprint/sources").mkdir(parents=True)
+        (self.root / "blueprint/sources/data.json").symlink_to(outside)
+        self.base = self.commit("a link in the wiki")
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"], report["wiki_changes"], report["differences"],
+                          report["counts"]["lean files"]), (1, [
+            "blueprint/sources/data.json is a link: the sync reads and writes through none; put what it links to in its "
+            "place"], "none", [], 1))
 
 
 

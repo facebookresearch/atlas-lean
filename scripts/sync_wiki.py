@@ -3231,7 +3231,7 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
         # Its page, linked or holding it back.
         page = written_at.get(key) or held.get(key)
         if page is not None:
-            found, stale = page_problems(key, page, base["folders"], folder_rows)
+            found, stale = page_problems(key, page, base["folders"], folder_rows, held=key not in written_at)
             problems.update(found)
             parts.update(stale)
     blocking += [f"{path} is a link: the sync writes through none; put what it links to in its place"
@@ -3247,15 +3247,20 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
                         "removed": len(old.keys() - now.keys())})
 
 
-def page_problems(key: str, page: Path, folders: set[str], folder_rows: set[Path]) -> tuple[list[str], list[str]]:
+def page_problems(key: str, page: Path, folders: set[str], folder_rows: set[Path],
+                  held: bool = False) -> tuple[list[str], list[str]]:
     """What keeps an own declaration's *page*, which its row names as written, from being in step: the problems for an
     editor, and the part pages whose copy the sync refreshes. The page must be a file under the roadmap, reached
     through no link, and listed on its folder page. So must each folder on its way that the base did not have
     (*folders*, the base's folder pages by path in the roadmap), up to the first it had, the roadmap's own page
     included; and each such folder needs its folder page, with an annotation row (*folder_rows*, the folder pages that
     rows name). Where a part lists one of them, its copy on its parent's page must list it too (see
-    with_part_lists)."""
+    with_part_lists). A *held* page, a row holding the declaration back, is restored where the row names it, keeping
+    the row: taking the hold away is an editor's call of its own."""
     if (not page.is_relative_to(wiki.ROADMAP) or os.path.realpath(page) != str(page) or not page.is_file()):
+        if held:
+            return [f"{os.path.relpath(page, wiki.ROOT)}, which the row holding {key} back names, is not a page: restore "
+                    "it there, keeping the row, its article id and its held marker"], []
         return [f"{os.path.relpath(page, wiki.ROOT)}, which the row of {key} names, is not a page: restore it, or remove "
                 "the row and run the sync again"], []
     folder, stale = page, []
@@ -3295,12 +3300,15 @@ def copied(readme: Path, part: str, entry: str) -> bool:
     return not found
 
 
-def links_in_wiki() -> list[str]:
-    """The links among the wiki's pages and links files, and the baseline, or that they are reached through, by their
-    path in the repository: a write through one could leave the wiki."""
-    found = [path for path in (wiki.VAULT, wiki.ROADMAP, LINKS, STATE.parent, STATE)
-             if path.is_symlink() or path.exists() and os.path.realpath(path) != str(path)]
-    pending = [folder for folder in (wiki.ROADMAP, LINKS) if folder.is_dir() and folder not in found]
+def links_in_wiki(changed: list[str] = ()) -> list[str]:
+    """The links the sync could read or write through, by their path in the repository: among the wiki's files (all of
+    blueprint/: pages, links files, sources and the rest), at the baseline, the taxonomy and the card move ledger, or
+    the folders they are reached through; and the files of *changed*, the changes' own, the Lean among them. A read
+    through one could lead anywhere, and a write leave the repository."""
+    inputs = (wiki.VAULT, wiki.ROADMAP, LINKS, STATE.parent, STATE, wiki.TAXONOMY,
+              wiki.ROOT / "scripts" / "card-moves.jsonl", *(wiki.ROOT / path for path in changed))
+    found = [path for path in inputs if path.is_symlink() or path.exists() and os.path.realpath(path) != str(path)]
+    pending = [wiki.VAULT] if wiki.VAULT.is_dir() and wiki.VAULT not in found else []
     while pending:
         with os.scandir(pending.pop()) as entries:
             for entry in entries:
@@ -3430,9 +3438,9 @@ def run_scoped(argv: list[str]) -> int:
     lean = frozenset(path for path in paths if lean_source(path))
     graph = [path for path in paths if graph_file(path)]
     fix = f"python3 scripts/sync_wiki.py declarations --base {base}"
-    # A link in the wiki or at the baseline stops the run before it reads any of them: one could lead anywhere, to a
-    # file that has no end among others.
-    if linked := links_in_wiki():
+    # A link among the files the run reads, or the changes' own, stops it before it reads any of them: one could lead
+    # anywhere, to a file that has no end among others.
+    if linked := links_in_wiki(paths):
         errors = [f"{path} is a link: the sync reads and writes through none; put what it links to in its place"
                   for path in linked]
         if options.check:
@@ -3443,12 +3451,15 @@ def run_scoped(argv: list[str]) -> int:
             print("The run wrote nothing: fix the errors above and run it again.", file=sys.stderr)
         if options.report:
             options.report.parent.mkdir(parents=True, exist_ok=True)
+            # The wiki changes as they are: none, or not only the sync's when a link is among them or they cannot
+            # be compared with what it writes.
             options.report.write_text(json.dumps({
                 "schema": "atlas-graph-sync/v1", "base": base, "check": options.check, "fix": fix,
-                "lean_files": sorted(lean), "counts": dict(NOTHING), "new": {}, "missing": [], "held": [],
-                "digests": {}, "parts": [], "changed": [], "errors": errors, "unindexed": [], "in_step": False,
-                "wiki_changes": "other", "written": [],
-                "differences": [f"{path}: the sync writes no link or other kind of file" for path in linked]},
+                "lean_files": sorted(lean), "counts": {**NOTHING, "lean files": len(lean)}, "new": {}, "missing": [],
+                "held": [], "digests": {}, "parts": [], "changed": [], "errors": errors, "unindexed": [],
+                "in_step": False, "wiki_changes": "other" if graph else "none", "written": [],
+                "differences": [f"{path}: the sync writes no link or other kind of file" for path in linked
+                                if path.replace(os.sep, "/") in graph]},
                 indent=1, ensure_ascii=False, sort_keys=True) + "\n")
         return 1
     targets, unindexed, generated, index = [], [], {}, None

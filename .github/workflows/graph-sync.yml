@@ -94,7 +94,7 @@ jobs:
           token="graph-sync-$(od -An -N16 -tx1 /dev/urandom | tr -d ' \n')"
           echo "::stop-commands::$token"
           cat build/graph-sync.txt
-          echo "::$token::"
+          printf '\n::%s::\n' "$token"
           # Not in step only when the report says so: any other failure means the check could not run.
           verdict="$(jq -r 'if .in_step == false then "out" else "other" end' build/graph-sync.json 2>/dev/null || true)"
           if [[ "$status" -ne 0 && "$verdict" != out ]]; then
@@ -105,7 +105,7 @@ jobs:
           {
             echo "### Graph sync"
             echo
-            head -c 60000 build/graph-sync.txt | sed 's/^/    /'
+            head -c 60000 build/graph-sync.txt | sed -e 's/\r$//' -e 's/\r/\n/g' | sed 's/^/    /'
             if [[ "$failed" == yes ]]; then
               echo
               echo "The check could not run (exit $status): the log above says why."

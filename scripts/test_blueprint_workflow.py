@@ -884,6 +884,12 @@ class GraphSyncWorkflowTests(unittest.TestCase):
         self.assertTrue(all(line.startswith("    ") or not line.strip() or line.startswith(("###", "The check"))
                             for line in summary.splitlines()), summary)
         self.assertIn("    ```\n    # Heading", summary)
+        # Lines a carriage return ends, and output with no last line end: every line of the summary stays indented,
+        # and the log's resume marker stands on a line of its own.
+        result, summary, _ = self.run_check(0, extra="one\r# two\r\n```three")
+        self.assertIn("    one\n    # two\n    ```three\n", summary)
+        self.assertNotIn("\r", summary)
+        self.assertTrue(any(line.startswith("::graph-sync-") for line in result.stdout.split("\n")), result.stdout)
 
     def test_the_verdict_goes_to_the_log_and_the_summary_with_the_branchs_command(self):
         if shutil.which("jq") is None:
