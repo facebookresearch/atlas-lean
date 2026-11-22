@@ -126,15 +126,18 @@ class MergeManifestTest(unittest.TestCase):
             self.assertIn(why, problems[0])
 
     def test_rationale_boundaries(self):
-        self.assertEqual(bb.bump_rationale({"rationale": "Base."}, {"rationale": "Base. Also bump."}), "Also bump.")
-        self.assertEqual(bb.bump_rationale({"rationale": "Replace Foo"}, {"rationale": "Replace Foobar with Baz."}),
-                         "Replace Foobar with Baz.")
-        self.assertEqual(bb.bump_rationale({"rationale": "Use Foo"}, {"rationale": "Use Foo bar for the new toolchain"}),
-                         "Use Foo bar for the new toolchain")
-        self.assertEqual(bb.bump_rationale({"rationale": "Use Foo"}, {"rationale": "Use Foo. Also bump."}), "Also bump.")
-        self.assertEqual(bb.bump_rationale({"rationale": "Use Foo"}, {"rationale": "Use Foo, also bump."}),
-                         "Use Foo, also bump.")
-        self.assertEqual(bb.bump_rationale(None, {"rationale": "Adapted."}), "Adapted.")
+        self.assertEqual(bb.appended("Base.", "Base. Also bump."), "Also bump.")
+        self.assertIsNone(bb.appended("Replace Foo", "Replace Foobar with Baz."))
+        self.assertIsNone(bb.appended("Use Foo", "Use Foo bar for the new toolchain"))
+        self.assertEqual(bb.appended("Use Foo", "Use Foo. Also bump."), "Also bump.")
+        self.assertIsNone(bb.appended("Use Foo", "Use Foo, also bump."))
+        self.assertEqual(bb.appended("", "Adapted."), "Adapted.")
+        self.assertEqual(bb.appended("Base.", "Base."), "")
+        rows = lambda *texts: [{"rationale": text} for text in texts]
+        self.assertEqual(bb.combine_rationales(*rows("PR #12.", "PR #12. Bump.", "PR #21.")), "PR #21. Also: Bump.")
+        self.assertEqual(bb.combine_rationales(*rows("PR #12.", "PR #21.", "PR #12. Main.")), "PR #21. Also: Main.")
+        self.assertEqual(bb.combine_rationales(*rows("A.", "A. Bump.", "A. Main.")), "A. Main. Also: Bump.")
+        self.assertIsNone(bb.combine_rationales(*rows("PR #12.", "PR #21.", "PR #13.")), "two rewrites may contradict")
         self.assertEqual(bb.join_rationale("Main.", "Also bump."), "Main. Also bump.")
         self.assertEqual(bb.join_rationale("Main", "Also bump."), "Main. Also bump.")
         self.assertEqual(bb.join_rationale("Main (#1).", "Adapted."), "Main (#1). Also: Adapted.")
@@ -446,7 +449,7 @@ class GitTest(unittest.TestCase):
             (self.repo / bb.MANIFEST).write_text(edited)
             proc = self.tool("resolve-manifest")
             self.assertEqual(proc.returncode, 3, proc.stdout + proc.stderr)
-            self.assertIn("has edits since this tool wrote it", proc.stdout)
+            self.assertIn("changes this tool did not make", proc.stdout)
             self.assertEqual((self.repo / bb.MANIFEST).read_text(), edited)
         # Deleting it starts over.
         (self.repo / bb.MANIFEST).unlink()
@@ -486,6 +489,64 @@ class GitTest(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         merged = bb.manifest_rows((self.repo / bb.MANIFEST).read_text())
         self.assertEqual(merged[a]["rationale"], "The local lemma is from PR #21. Also: Adapted to the new toolchain.")
+
+    def test_a_correction_on_the_bump_survives_a_change_on_main(self):
+        files, rows = self.base_tree()
+        a = "MathlibExt/A.lean"
+        rows = [{**r, "rationale": "The local lemma is from PR #12."} if r["path"] == a else r for r in rows]
+        self.write({}, rows, "provenance")
+        self.git("checkout", "-q", "-b", "bump")
+        self.write({}, [{**r, "rationale": "The local lemma is from PR #21."} if r["path"] == a else r for r in rows],
+                   "bump: correct a transposed reference")
+        self.git("checkout", "-q", "main")
+        self.write(*self.edit(files, rows, a, files[a].replace("def a", "noncomputable def a"),
+                              "The local lemma is from PR #12. Adapted its definition (#6)."), message="Adapt (#6)")
+        self.git("checkout", "-q", "bump")
+        proc = self.tool("merge-main", "--main", "main")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        merged = bb.manifest_rows((self.repo / bb.MANIFEST).read_text())
+        self.assertEqual(merged[a]["rationale"], "The local lemma is from PR #21. Also: Adapted its definition (#6).")
+
+    def test_an_unstaged_manual_manifest_is_never_replaced(self):
+        d = "MathlibExt/D.lean"
+        files, _, mr = self.diverge({d: ("def d := 1", "noncomputable def d := 1", f"Port {d}. {BUMP}")},
+                                    {d: ("def d := 1", "def d : Nat := 1", "Type d (#5).")}, "Type d (#5)")
+        self.assertEqual(self.tool("merge-main", "--main", "main").returncode, 3)
+        resolved = files[d].replace("def d := 1", "noncomputable def d : Nat := 1")
+        (self.repo / d).write_text(resolved)
+        self.git("add", d)
+        # The person writes the manifest themselves before the tool has written any draft.
+        mine = json.loads(self.git("show", f":3:{bb.MANIFEST}").stdout)
+        for row in mine["rows"]:
+            if row["path"] == d:
+                row.update(published_sha256=fms.sha256(resolved.encode()), rationale="Type d (#5); noncomputable.")
+        (self.repo / bb.MANIFEST).write_text(fms.dump_manifest(mine))
+        proc = self.tool("resolve-manifest")
+        self.assertEqual(proc.returncode, 3, proc.stdout + proc.stderr)
+        self.assertIn("changes this tool did not make", proc.stdout)
+        self.assertEqual((self.repo / bb.MANIFEST).read_text(), fms.dump_manifest(mine))
+        self.git("add", bb.MANIFEST)
+        proc = self.tool("resolve-manifest")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(bb.manifest_rows(self.git("show", f"HEAD:{bb.MANIFEST}").stdout)[d]["rationale"],
+                         "Type d (#5); noncomputable.")
+
+    def test_a_merge_can_be_aborted_and_retried(self):
+        a = "MathlibExt/A.lean"
+        self.diverge({a: ("theorem a_eq := rfl", "theorem a_eq : a = 1 := rfl", f"Port {a}. {BUMP}")},
+                     {a: ("/-- A doc -/", "/-- A, restated -/", "Restate docstrings (#961).")})
+        self.assertEqual(self.tool("merge-main", "--main", "main", "--no-commit").returncode, 0)
+        self.git("merge", "--abort")
+        proc = self.tool("merge-main", "--main", "main", "--no-commit")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        # After a merge the person started with git, the tool asks before replacing git's file.
+        self.git("merge", "--abort")
+        self.git("merge", "--no-ff", "--no-commit", "main", check=False)
+        proc = self.tool("resolve-manifest")
+        self.assertEqual(proc.returncode, 3, proc.stdout + proc.stderr)
+        proc = self.tool("resolve-manifest", "--regenerate")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertIn("saved as", proc.stdout)
 
     def test_refuses_a_dirty_tree(self):
         self.base_tree()

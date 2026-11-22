@@ -81,12 +81,16 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
    `merge-main` resolves the manifest row by row. A row that only one side
    changed takes that side's row. For a row both sides changed it looks at the
    merged file: if it is git's own merge of the two sides (or `--adjacent`'s),
-   the row takes main's rationale plus the bump's addition and the new hash; if
-   it is one side's version, it keeps that side's row. With `--adjacent` it
-   also merges a conflict where one side rewrote a whole doc comment and the
-   other edited the single declaration line next to it, which is how docstring
-   campaigns on main usually meet the bump's edits. Before committing it checks
-   the manifest against main on the exact tree it would commit.
+   the row takes the new hash and both rationales: a side that rewrote the
+   rationale keeps its account and the other side's added sentences follow, and
+   if both rewrote it you write one. If it is one side's version, it keeps that
+   side's row. With `--adjacent` it also merges a conflict where one side
+   rewrote one whole doc comment and the other changed the one line next to it
+   (a non-blank line with no `/-` or `-/`), which is how docstring campaigns on
+   main usually meet the bump's edits. Before committing it checks the manifest
+   against main on the exact tree it would commit. It writes the manifest only
+   over the file `git merge` left or its own unedited draft; if you edit the
+   manifest yourself, `git add` it.
 
    Other conflicts are yours:
 

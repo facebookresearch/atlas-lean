@@ -9,14 +9,16 @@
         Merge main into the checked-out bump branch with a merge commit (never a rebase,
         so the bump commit stays exactly what pinned_bump.py produced) and resolve
         provenance/formal-math-sync.json row by row. With --adjacent, a conflict where
-        one side rewrote a whole doc comment and the other edited the single declaration
-        line next to it is merged too. Other conflicts are left for you: resolve them,
-        `git add` them, then run `resolve-manifest`. Before committing, the merge is checked with
+        one side rewrote one whole doc comment and the other changed the one line next to
+        it (a non-blank line with no `/-` or `-/`) is merged too. Other conflicts are left
+        for you: resolve them, `git add` them, then run `resolve-manifest`. Before committing, the merge is checked with
         scripts/check_formal_math_sync.py against main, on the exact tree that would be
         committed. Build before pushing either way.
 
-    scripts/bump/bump_branch.py resolve-manifest [--no-commit] [--adjacent]
-        Finish a merge that `merge-main` left open.
+    scripts/bump/bump_branch.py resolve-manifest [--no-commit] [--adjacent] [--regenerate]
+        Finish a merge that `merge-main` left open. It writes the manifest only over the
+        file `git merge` left or its own unedited draft; after merging main yourself, or to
+        throw away your edits, pass --regenerate (the replaced file is saved first).
 
     scripts/bump/bump_branch.py breakage LOG [--main REF] [--since REV]
         Read a failed `lake build` log and list each failing module with the main pull
@@ -29,6 +31,8 @@ the file resolved and staged:
 - the same file on both sides: every field merged three ways;
 - one side changed only the row (its file is the base's): the other side's file, with the
   fields merged three ways and the two rationales combined;
+  (two rationales combine when at most one side rewrote the base one: the rewrite
+  stays, and the other side's added sentences follow it)
 - the staged file is main's: main's row (or the bump's, for the bump's file), as long as
   the other side changed nothing else in the row;
 - the staged file is git's clean merge of the two sides, or --adjacent's: main's row
@@ -170,21 +174,21 @@ def print_status(report: dict) -> None:
 # ---------------------------------------------------------------- manifest
 
 
-def bump_rationale(base: dict | None, ours: dict) -> str:
-    """What the bump's row says beyond the base row's rationale: the sentences it appended,
-    or all of it when it rewrote the rationale."""
-    mine = ours.get("rationale", "").strip()
-    theirs = (base or {}).get("rationale", "").strip()
-    if theirs and mine.startswith(theirs):
-        rest = mine[len(theirs):]
-        if not rest:
-            return ""
-        # Only at a sentence boundary: "X." + " Also ..." or "X" + ". Also ...".
-        ends_sentence = theirs[-1] in ".!?" and rest[0].isspace()
-        starts_sentence = rest[0] in ".;" and (len(rest) == 1 or rest[1].isspace())
-        if ends_sentence or starts_sentence:
-            return rest.lstrip(" .;").strip()
-    return mine
+def appended(base: str, text: str) -> str | None:
+    """What `text` adds to the rationale `base` as further sentences ("" for nothing), or
+    None when `text` rewrites it rather than adding to it."""
+    base, text = base.strip(), text.strip()
+    if not base:
+        return text
+    if not text.startswith(base):
+        return None
+    rest = text[len(base):]
+    if not rest:
+        return ""
+    # Only at a sentence boundary: "X." + " More." or "X" + ". More.".
+    ends_sentence = base[-1] in ".!?" and rest[0].isspace()
+    starts_sentence = rest[0] in ".;" and (len(rest) == 1 or rest[1].isspace())
+    return rest.lstrip(" .;").strip() if ends_sentence or starts_sentence else None
 
 
 def join_rationale(main_rationale: str, addition: str) -> str:
@@ -225,17 +229,21 @@ def merge_fields(b, o: dict, t: dict, skip: tuple[str, ...]) -> tuple[dict | Non
 
 
 def combine_rationales(b, o: dict, t: dict) -> str | None:
-    """Main's rationale with what the bump added to the base one; None when the bump's
-    change cannot be told apart."""
+    """One rationale for both sides' changes to a row: the side that rewrote the base
+    rationale (a correction, say) keeps its account, and the other side's added sentences
+    follow it. None when both sides rewrote it: their accounts may contradict each other."""
     base = (b or {}).get("rationale", "").strip()
     mine, theirs = o.get("rationale", "").strip(), t.get("rationale", "").strip()
-    if mine == base or mine == theirs:
+    if mine in (base, theirs):
         return theirs
     if theirs == base:
         return mine
-    addition = bump_rationale(b, o)
-    joined = join_rationale(theirs, addition)
-    return None if not addition or joined == theirs else joined
+    added_by_bump, added_by_main = appended(base, mine), appended(base, theirs)
+    if added_by_bump is not None:
+        return join_rationale(theirs, added_by_bump)
+    if added_by_main is not None:
+        return join_rationale(mine, added_by_main)
+    return None
 
 
 def merge_both_changed(path: str, b, o: dict, t: dict, versions) -> tuple[dict | None, str, str | None]:
@@ -255,24 +263,25 @@ def merge_both_changed(path: str, b, o: dict, t: dict, versions) -> tuple[dict |
     def others(row) -> dict:
         return {k: v for k, v in (row or {}).items() if k not in content}
 
-    def combined(sha_row: dict, whose: str):
-        """Fields merged three ways, the hash of `sha_row`, both rationales combined."""
+    def combined(whose: str, file_changed_from_main: bool):
+        """Every field merged three ways, the staged file's hash, both rationales combined."""
         row, clash = merge_fields(b, o, t, content)
         if clash is not None:
             return None, "", f"both sides changed its {clash!r}"
         rationale = combine_rationales(b, o, t)
         if rationale is None:
-            return None, "", "both sides changed the rationale; write one that covers both"
-        row["published_sha256"], row["rationale"] = sha_row["published_sha256"], rationale
+            return None, "", "both sides rewrote the rationale; write one that covers both"
+        if file_changed_from_main and rationale == t.get("rationale", "").strip():
+            return None, "", "the bump's rationale adds nothing to main's; write one for the merged file"
+        row["published_sha256"], row["rationale"] = fms.sha256(data), rationale
         return row, whose, None
 
     if data == ours == theirs:
-        row, clash = merge_fields(b, o, t, ())
-        return (row, "both", None) if clash is None else (None, "", f"both sides changed its {clash!r}")
+        return combined("both", False)
     if data == theirs and ours == base:  # the bump changed only the row
-        return combined(t, "main")
+        return combined("main", False)
     if data == ours and theirs == base:  # main changed only the row, a correction for instance
-        return combined(o, "bump")
+        return combined("bump", True)
     if data == theirs:
         if others(o) != others(b):
             return None, "", "the staged file is main's, but the bump also changed the row's other fields"
@@ -285,16 +294,7 @@ def merge_both_changed(path: str, b, o: dict, t: dict, versions) -> tuple[dict |
         return None, "", "the staged file is back to the merge base, so neither side's rationale holds"
     if data != files["auto"]:
         return None, "", "the file was resolved by hand: record its rationale with --record-divergence"
-    row, clash = merge_fields(b, o, t, content)
-    if clash is not None:
-        return None, "", f"both sides changed its {clash!r}"
-    addition = bump_rationale(b, o)
-    rationale = join_rationale(t.get("rationale", ""), addition)
-    if not addition or rationale == t.get("rationale", "").strip():
-        return None, "", "the bump's rationale adds nothing to main's; write one for the merged change"
-    row["published_sha256"] = fms.sha256(data)
-    row["rationale"] = rationale
-    return row, "both", None
+    return combined("both", True)
 
 
 def merge_manifest(base_text: str, ours_text: str, theirs_text: str, versions) -> tuple[str, dict, list[str]]:
@@ -567,53 +567,69 @@ def check_candidate() -> None:
     print(check.stdout.strip().splitlines()[-1] if check.stdout.strip() else f"{CHECKER} passed")
 
 
-def state_file() -> Path:
-    path = Path(git("rev-parse", "--git-path", "bump-branch-draft.json").stdout.strip())
+def git_path(name: str) -> Path:
+    path = Path(git("rev-parse", "--git-path", name).stdout.strip())
     return path if path.is_absolute() else REPO / path
+
+
+def merge_attempt() -> str | None:
+    """Which merge is open: git writes MERGE_HEAD anew for every merge, so its inode and
+    time tell a retried merge of the same commit from the one before it."""
+    try:
+        info = git_path("MERGE_HEAD").stat()
+    except OSError:
+        return None
+    return f"{merge_head()}-{info.st_ino}-{info.st_mtime_ns}"
 
 
 def load_state() -> dict:
     try:
-        state = json.loads(state_file().read_text(encoding="utf-8"))
+        state = json.loads(git_path("bump-branch-draft.json").read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return {}
-    return state if isinstance(state, dict) and state.get("merge_head") == merge_head() else {}
+    return state if isinstance(state, dict) and state.get("attempt") == merge_attempt() else {}
 
 
-def write_draft(merged: str) -> bool:
-    """Put the merged manifest in the working tree, unless the person edited the draft this
-    tool wrote last. Anything else it replaces is saved in the git directory first."""
+def save_state(state: dict) -> None:
+    git_path("bump-branch-draft.json").write_text(json.dumps({**state, "attempt": merge_attempt()}),
+                                                  encoding="utf-8")
+
+
+def record_preimage() -> None:
+    """Remember the manifest exactly as `git merge` left it, so resolve-manifest knows it may
+    replace that file and nothing else."""
+    target = REPO / MANIFEST
+    preimage = fms.sha256(target.read_bytes()) if target.is_file() and MANIFEST in unmerged_paths() else None
+    save_state({"preimage": preimage, "draft": None})
+
+
+def write_draft(merged: str, regenerate: bool) -> bool:
+    """Put the merged manifest in the working tree. It replaces only the file `git merge`
+    left or a draft this tool wrote and nobody edited since; anything else is the person's
+    work, kept unless they ask for --regenerate, which first saves it in the git directory."""
     target, state = REPO / MANIFEST, load_state()
     data = merged.encode("utf-8")
     current = target.read_bytes() if target.is_file() else None
-    backups = list(state.get("backups", []))
-    if current is not None and current != data:
-        if state.get("draft") and fms.sha256(current) != state["draft"]:
-            print(f"{MANIFEST} has edits since this tool wrote it: `git add {MANIFEST}` when it is finished "
-                  "and run resolve-manifest again, or delete it to start over.")
+    known = {state.get("preimage"), state.get("draft")} - {None}
+    if current is not None and current != data and fms.sha256(current) not in known:
+        if not regenerate:
+            print(f"{MANIFEST} has changes this tool did not make: `git add {MANIFEST}` if it is your "
+                  "resolution and run resolve-manifest again, or run resolve-manifest --regenerate to "
+                  "replace it (it is saved first).")
             return False
-        if not state.get("draft"):
-            backup = state_file().with_name(f"bump-branch-manifest-{time.time_ns()}.json")
-            backup.write_bytes(current)
-            backups.append(str(backup))
-            print(f"{MANIFEST}: the version it replaces is saved as {backup}")
+        backup = git_path(f"bump-branch-manifest-{time.time_ns()}.json")
+        backup.write_bytes(current)
+        print(f"{MANIFEST}: the version it replaces is saved as {backup}")
     target.write_bytes(data)
-    state_file().write_text(json.dumps({"merge_head": merge_head(), "draft": fms.sha256(data),
-                                        "backups": backups}), encoding="utf-8")
+    save_state({**state, "draft": fms.sha256(data)})
     return True
 
 
-def clear_drafts() -> None:
-    try:
-        state = json.loads(state_file().read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        state = {}
-    for backup in state.get("backups", []) if isinstance(state, dict) else []:
-        Path(backup).unlink(missing_ok=True)
-    state_file().unlink(missing_ok=True)
+def clear_state() -> None:
+    git_path("bump-branch-draft.json").unlink(missing_ok=True)
 
 
-def resolve_manifest(commit: bool, adjacent: bool = False) -> int:
+def resolve_manifest(commit: bool, adjacent: bool = False, regenerate: bool = False) -> int:
     if not merge_head():
         raise Stop("no merge in progress; run `merge-main`")
     unmerged = unmerged_paths()
@@ -630,7 +646,7 @@ def resolve_manifest(commit: bool, adjacent: bool = False) -> int:
         if any(text is None for text in texts):
             raise Stop(f"{MANIFEST} has no common base version; resolve it by hand")
         merged, counts, problems = merge_manifest(*texts, versions=file_versions)
-        if not write_draft(merged):
+        if not write_draft(merged, regenerate):
             return 3
         if problems:
             print(f"{MANIFEST}: rows to finish by hand (main's version is in place; record them with "
@@ -648,7 +664,7 @@ def resolve_manifest(commit: bool, adjacent: bool = False) -> int:
     if commit:
         git("commit", "--no-edit")
         print(f"committed {rev('HEAD')[:12]}")
-        clear_drafts()
+        clear_state()
     return 0
 
 
@@ -666,6 +682,7 @@ def merge_main(main_ref: str, commit: bool, adjacent: bool = False) -> int:
     proc = git("merge", "--no-ff", "--no-commit", main, check=False)
     if proc.returncode != 0 and not unmerged_paths():
         raise Stop(f"git merge failed:\n{proc.stdout.strip()}\n{proc.stderr.strip()}")
+    record_preimage()
     return resolve_manifest(commit, adjacent)
 
 
@@ -737,7 +754,11 @@ def main(argv: list[str] | None = None) -> int:
             p.add_argument("--main", default="origin/main")
         p.add_argument("--no-commit", action="store_true")
         p.add_argument("--adjacent", action="store_true",
-                       help="also merge conflicts where the two sides changed different, neighbouring lines")
+                       help="also merge a conflict where one side rewrote a whole doc comment and the other "
+                            "changed the one line next to it")
+        if name == "resolve-manifest":
+            p.add_argument("--regenerate", action="store_true",
+                           help="replace a manifest this tool did not write (it is saved first)")
     p_break = sub.add_parser("breakage", help="name the main pull requests behind failing modules")
     p_break.add_argument("log", type=Path)
     p_break.add_argument("--main", default="origin/main")
@@ -753,7 +774,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "merge-main":
             return merge_main(args.main, commit=not args.no_commit, adjacent=args.adjacent)
         if args.command == "resolve-manifest":
-            return resolve_manifest(commit=not args.no_commit, adjacent=args.adjacent)
+            return resolve_manifest(commit=not args.no_commit, adjacent=args.adjacent, regenerate=args.regenerate)
         return breakage(args.log, args.main, args.since)
     except Stop as stop:
         print(f"bump_branch: {stop}", file=sys.stderr)
