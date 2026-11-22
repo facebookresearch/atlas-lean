@@ -756,10 +756,7 @@ private def ac_noaaCheck : Bool :=
         decide (¬ (u.getD i 0 = u.getD (i + 1) 0 ∧
                    u.getD (i + 1) 0 = u.getD (i + 2) 0)))))))
 
--- Arithmetic: block-index monotonicity and span descent
-private theorem ac_div_mono {i j : ℕ} (h : i ≤ j) : i / 6 ≤ j / 6 :=
-  Nat.div_le_div_right h
-
+-- Arithmetic: span descent
 private theorem ac_span_descent {i0 i3 : ℕ} (h : 6 ≤ i3 - i0) :
     1 ≤ i3 / 6 - i0 / 6 ∧ i3 / 6 - i0 / 6 < i3 - i0 := by
   constructor <;> omega
@@ -1666,9 +1663,9 @@ private theorem ac_delta_no_T_aux : ∀ S : ℕ, ∀ (t : ac_Tpl),
           t i0 i1 i2 i3 h01 h12 h23 hr hspan
       have hpmem : ac_T.contains p = true :=
         ac_closed_spec t ht m0 m1 m2 m3 p hpar
-      have hq01 : i0 / 6 ≤ i1 / 6 := ac_div_mono h01
-      have hq12 : i1 / 6 ≤ i2 / 6 := ac_div_mono h12
-      have hq23 : i2 / 6 ≤ i3 / 6 := ac_div_mono h23
+      have hq01 : i0 / 6 ≤ i1 / 6 := Nat.div_le_div_right h01
+      have hq12 : i1 / 6 ≤ i2 / 6 := Nat.div_le_div_right h12
+      have hq23 : i2 / 6 ≤ i3 / 6 := Nat.div_le_div_right h23
       have hltS : i3 / 6 - i0 / 6 < S := by omega
       exact ih (i3 / 6 - i0 / 6) hltS p hpmem (i0 / 6) (i1 / 6) (i2 / 6)
         (i3 / 6) hq01 hq12 hq23 rfl hpos' hreal
@@ -1814,9 +1811,9 @@ private theorem ac_omega_cubeFree (b : ℕ → Bool) (i ℓ : ℕ) (hℓ : 1 ≤
         _ i (i + ℓ) (i + 2 * ℓ) (i + 3 * ℓ) h01 h12 h23 hr hspan
     have hpmem : ac_T.contains p = true :=
       ac_zero_spec _ _ _ _ m0 m1 m2 m3 p hpar
-    have hq01 : i / 6 ≤ (i + ℓ) / 6 := ac_div_mono h01
-    have hq12 : (i + ℓ) / 6 ≤ (i + 2 * ℓ) / 6 := ac_div_mono h12
-    have hq23 : (i + 2 * ℓ) / 6 ≤ (i + 3 * ℓ) / 6 := ac_div_mono h23
+    have hq01 : i / 6 ≤ (i + ℓ) / 6 := Nat.div_le_div_right h01
+    have hq12 : (i + ℓ) / 6 ≤ (i + 2 * ℓ) / 6 := Nat.div_le_div_right h12
+    have hq23 : (i + 2 * ℓ) / 6 ≤ (i + 3 * ℓ) / 6 := Nat.div_le_div_right h23
     exact ac_delta_no_T p hpmem (i / 6) ((i + ℓ) / 6) ((i + 2 * ℓ) / 6)
       ((i + 3 * ℓ) / 6) hq01 hq12 hq23 hpos' hreal
 
@@ -1943,16 +1940,6 @@ private theorem ac_cnt_block_sum (ω : ℕ → Fin 3) (a : Fin 3) (m q : ℕ) :
       (k := (q + 1) * m) (Nat.zero_le _) hle
     rw [hsplit, ih, Finset.sum_range_succ]
 
-private theorem ac_lt_two_pow_self (n : ℕ) : n < 2 ^ n := by
-  induction n with
-  | zero => decide
-  | succ n ih =>
-    have hpos : 0 < 2 ^ n := pow_pos (by omega) _
-    have hpow : 2 ^ (n + 1) = 2 ^ n * 2 := pow_succ 2 n
-    have hle : n + 1 ≤ 2 ^ n := ih
-    rw [hpow]
-    omega
-
 private theorem ac_two_pow_le_three_pow (n : ℕ) : 2 ^ n ≤ 3 ^ n := by
   gcongr
   omega
@@ -1973,7 +1960,7 @@ private theorem ac_good_window (m : ℕ) :
       set K : ℕ := 3 * m ^ 2 + m with hKdef
       set j : ℕ := K + 1 with hjdef
       have hj_gt_K : K < j := by omega
-      have h2j_gt : K < 2 ^ j := lt_trans hj_gt_K (ac_lt_two_pow_self j)
+      have h2j_gt : K < 2 ^ j := lt_trans hj_gt_K Nat.lt_two_pow_self
       by_contra hcon
       simp only [not_exists] at hcon
       have hbad : ∀ s, 4 * ac_cnt ac_delta 1 s (s + m) + 3 < m := by

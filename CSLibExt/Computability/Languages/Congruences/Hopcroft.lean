@@ -71,7 +71,9 @@ variable {α σ : Type*} [Fintype α] [FinEnum α] [Fintype σ] [DecidableEq σ]
 
 namespace Hopcroft
 
-/-- The states whose `a`-successor lies in `C`. -/
+/-- **Preimage of a set under a letter.** For a DFA $M$ with transition function $\delta$, a set
+$C$ of states and a letter $a$, the preimage of $C$ under $a$ is the set of states $q$ with
+$\delta(q, a) \in C$. -/
 def preimage (C : Finset σ) (a : α) : Finset σ :=
   Finset.univ.filter fun q => M.step q a ∈ C
 
@@ -80,7 +82,9 @@ omit [Fintype α] [FinEnum α] [DecidablePred (· ∈ M.accept)] in
 theorem mem_preimage {C : Finset σ} {a : α} {q : σ} : q ∈ preimage M C a ↔ M.step q a ∈ C := by
   simp [preimage]
 
-/-- `D` meets both `pre` and its complement. -/
+/-- **A set of states split by another.** A set $D$ of states is split by a set $P$ of states
+when $D$ contains both a state in $P$ and a state not in $P$, that is, when $D \cap P$ and
+$D \setminus P$ are both nonempty. -/
 def Splits (pre D : Finset σ) : Prop :=
   (D.filter (· ∈ pre)).Nonempty ∧ (D.filter (· ∉ pre)).Nonempty
 
@@ -88,43 +92,67 @@ instance (pre D : Finset σ) : Decidable (Splits pre D) := by
   unfold Splits
   infer_instance
 
-/-- A block, split by `pre` if it meets both `pre` and its complement. -/
+/-- **Splitting a block by a set.** For sets $P$ and $D$ of states, splitting $D$ by $P$ gives
+the two-element list $[D \cap P,\ D \setminus P]$ if both of these sets are nonempty, and the
+one-element list $[D]$ otherwise. -/
 def splitBlock (pre D : Finset σ) : List (Finset σ) :=
   if Splits pre D then [D.filter (· ∈ pre), D.filter (· ∉ pre)] else [D]
 
-/-- The smaller of two sets (the first on a tie). -/
+/-- **Smaller of two finite sets of states.** For finite sets $A$ and $B$ of states, the
+smaller one is $A$ if $|A| \le |B|$ and $B$ otherwise; on a tie in cardinality it is $A$. -/
 def smaller (A B : Finset σ) : Finset σ := if A.card ≤ B.card then A else B
 
-/-- The waiting entries for a split block `D`: for each letter `b`, both halves if `(D, b)` was
-waiting, and the smaller half otherwise. -/
+/-- **New splitters for a split block.** Given a waiting list $W$ of pairs of a set of states and a
+letter and sets $S$ and $D$ of states, write $D_1 = D \cap S$ and $D_2 = D \setminus S$. The new
+waiting entries for $D$ consist, for each letter $b$ in the enumeration order of the alphabet,
+of both $(D_1, b)$ and $(D_2, b)$ if $(D, b)$ is in $W$, and otherwise of the single entry
+$(E, b)$, where $E$ is the smaller of $D_1$ and $D_2$ by cardinality ($D_1$ on a tie). -/
 def newSplitters (W : List (Finset σ × α)) (pre D : Finset σ) : List (Finset σ × α) :=
   (FinEnum.toList α).flatMap fun b =>
     if (D, b) ∈ W then [(D.filter (· ∈ pre), b), (D.filter (· ∉ pre), b)]
     else [(smaller (D.filter (· ∈ pre)) (D.filter (· ∉ pre)), b)]
 
-/-- The partition after the splitter `(C, a)`. -/
+/-- **One refinement round of the partition.** For a DFA $M$ with transition function $\delta$, a
+list $P$ of blocks of states, a set $C$ of states and a letter $a$, let
+$S = \{q : \delta(q, a) \in C\}$ be the preimage of $C$ under $a$. The partition after the
+splitter $(C, a)$ replaces each block $D$ of $P$, in order, by the two blocks $D \cap S$ and
+$D \setminus S$ when both are nonempty, and keeps $D$ otherwise. -/
 def roundP (P : List (Finset σ)) (C : Finset σ) (a : α) : List (Finset σ) :=
   P.flatMap (splitBlock (preimage M C a))
 
-/-- The waiting list after the splitter `(C, a)`, from the rest `W` of the waiting list: the
-entries whose block was split are replaced as in `newSplitters`. -/
+/-- **One update of the waiting list.** For a DFA $M$ with transition function $\delta$, a list $P$
+of blocks of states, a list $W$ of pairs of a set of states and a letter, a set $C$ of states and a
+letter $a$, let $S = \{q : \delta(q, a) \in C\}$ be the preimage of $C$ under $a$, and say that $S$
+splits a set $D$ when $D$ meets both $S$ and its complement. The waiting list after the splitter
+$(C, a)$, from the rest $W$ of the waiting list, consists of the entries of $W$ whose set is not
+split by $S$, followed, for each block $D$ of $P$ split by $S$ in order, by the new splitters for
+$D$: for each letter $b$ in the enumeration order of the alphabet, both $(D \cap S, b)$ and
+$(D \setminus S, b)$ if $(D, b)$ is in $W$, and otherwise the single entry $(E, b)$, where $E$ is
+the smaller of $D \cap S$ and $D \setminus S$ by cardinality ($D \cap S$ on a tie). -/
 def roundW (P : List (Finset σ)) (W : List (Finset σ × α)) (C : Finset σ) (a : α) :
     List (Finset σ × α) :=
   W.filter (fun cb => !decide (Splits (preimage M C a) cb.1)) ++
     (P.filter fun D => decide (Splits (preimage M C a) D)).flatMap
       (newSplitters W (preimage M C a))
 
-/-- The accepting states. -/
+/-- **Block of accepting states.** For a DFA $M$ with finite state set $Q$, this is the set
+$F \subseteq Q$ of accepting states of $M$, as a finite set. -/
 def accBlock : Finset σ := Finset.univ.filter (· ∈ M.accept)
 
-/-- The rejecting states. -/
+/-- **Rejecting states.** For a DFA $M$ with state set $Q$ and set of accepting states $F$, the
+rejecting block is the set $Q \setminus F$ of states of $M$ that are not accepting. -/
 def rejBlock : Finset σ := Finset.univ.filter (· ∉ M.accept)
 
-/-- The initial partition `{F, Q \ F}`, without an empty block. -/
+/-- **Hopcroft's initial partition.** For a DFA $M$ with finite state set $Q$ and set of accepting
+states $F$, the initial partition is the list of blocks $F$, $Q \setminus F$, in this order, with
+any empty block removed. -/
 def initP : List (Finset σ) := [accBlock M, rejBlock M].filter (·.Nonempty)
 
-/-- The initial waiting list: the smaller of `F` and `Q \ F` with every letter, if both are
-nonempty. -/
+/-- **Hopcroft's initial waiting list.** Let $M$ be a DFA with finite state set $Q$, set of
+accepting states $F$ and finite alphabet $\Sigma$. If $F$ and $Q \setminus F$ are both nonempty,
+the initial waiting list consists of the splitters $(S, b)$ for every letter $b \in \Sigma$, where
+$S = F$ if $|F| \le |Q \setminus F|$ and $S = Q \setminus F$ otherwise; if one of $F$ and
+$Q \setminus F$ is empty, the initial waiting list is empty. -/
 def initW : List (Finset σ × α) :=
   if (accBlock M).Nonempty ∧ (rejBlock M).Nonempty then
     (FinEnum.toList α).map fun b => (smaller (accBlock M) (rejBlock M), b)
@@ -134,19 +162,28 @@ end Hopcroft
 
 open Hopcroft
 
-/-- Hopcroft's refinement loop, for at most `k` rounds: pop a splitter, refine, repeat until the
-waiting list is empty. -/
+/-- **Hopcroft's refinement loop.** Let $M$ be a DFA. Given a round budget $k$, a partition $P$
+of the states of $M$ (a list of blocks) and a waiting list $W$ of splitters $(C, a)$, each a block
+$C$ with a letter $a$, the loop returns the pair $(P, W)$ unchanged if $k = 0$ or $W$ is empty.
+Otherwise it removes the first splitter $(C, a)$ from $W$, replaces $P$ by the partition after the
+splitter $(C, a)$ and the remaining waiting list by the waiting list after the splitter $(C, a)$,
+and continues with budget $k - 1$. -/
 def hopcroftLoop : ℕ → List (Finset σ) → List (Finset σ × α) →
     List (Finset σ) × List (Finset σ × α)
   | 0, P, W => (P, W)
   | _ + 1, P, [] => (P, [])
   | k + 1, P, (C, a) :: W => hopcroftLoop k (roundP M P C a) (roundW M P W C a)
 
-/-- Hopcroft's final partition: at most `|Σ| (|Q| + 1)` rounds from `{F, Q \ F}`. -/
+/-- **Hopcroft's partition.** Let $M$ be a DFA with finite state set $Q$ over a finite alphabet
+$\Sigma$. Hopcroft's partition of $M$ is the partition returned by Hopcroft's loop run from the
+initial partition and the initial waiting list with a budget of $|\Sigma| \cdot (|Q| + 1)$
+rounds. -/
 def hopcroftPartition : List (Finset σ) :=
   (M.hopcroftLoop (Fintype.card α * (Fintype.card σ + 1)) (initP M) (initW M)).1
 
-/-- The pairs of states in a common block of Hopcroft's partition. -/
+/-- **Hopcroft's relation.** For a DFA $M$ with finitely many states, Hopcroft's relation is the
+set of pairs $(p, q)$ of states of $M$ such that $p$ and $q$ lie in a common block of Hopcroft's
+partition. -/
 def hopcroftRel : Finset (σ × σ) :=
   Finset.univ.filter fun pq => ∃ D ∈ M.hopcroftPartition, pq.1 ∈ D ∧ pq.2 ∈ D
 
@@ -156,13 +193,16 @@ namespace Hopcroft
 
 variable {M}
 
-/-- `P` is a partition of the states into nonempty blocks. -/
+/-- **Partitions of the states.** A list $P$ of sets of states is a partition into nonempty
+blocks when entries of $P$ at different positions are disjoint, every entry of $P$ is nonempty,
+and every state lies in some entry of $P$. -/
 structure IsPartition (P : List (Finset σ)) : Prop where
   disjoint : P.Pairwise Disjoint
   nonempty : ∀ D ∈ P, D.Nonempty
   cover : ∀ q, ∃ D ∈ P, q ∈ D
 
-/-- Two states lie in a common block. -/
+/-- **Lying in a common block.** For a list $P$ of sets of states, two states $p$ and $q$ are
+related by $P$ when some block $D$ of $P$ contains both $p$ and $q$. -/
 def Rel (P : List (Finset σ)) (p q : σ) : Prop := ∃ D ∈ P, p ∈ D ∧ q ∈ D
 
 omit [Fintype σ] [DecidableEq σ] in
@@ -190,7 +230,9 @@ theorem IsPartition.rel_trans {P : List (Finset σ)} (hP : IsPartition P) {p q r
   exact ⟨D, hD, hp, hr⟩
 
 omit [Fintype σ] [DecidableEq σ] in
-/-- A block contains both or neither of two related states. -/
+/-- **A block contains both or neither of two related states.** Let $P$ be a list of sets of
+states that is a partition into nonempty blocks, let $C$ be an entry of $P$, and let $p$ and $q$
+be states lying in a common entry of $P$. Then $p \in C$ if and only if $q \in C$. -/
 theorem IsPartition.mem_iff_of_rel {P : List (Finset σ)} (hP : IsPartition P) {C : Finset σ}
     (hC : C ∈ P) {p q : σ} (h : Rel P p q) : p ∈ C ↔ q ∈ C := by
   obtain ⟨D, hD, hp, hq⟩ := h
@@ -211,7 +253,9 @@ theorem IsPartition.nodup {P : List (Finset σ)} (hP : IsPartition P) : P.Nodup 
   exact Finset.disjoint_left.1 hdis hx hx
 
 omit [DecidableEq σ] in
-/-- A partition into nonempty blocks has at most `|Q|` blocks. -/
+/-- **A partition has at most as many blocks as there are states.** If a list $P$ of sets of
+states is a partition into nonempty blocks, then the length of $P$ is at most the number $|Q|$ of
+states. -/
 theorem IsPartition.length_le {P : List (Finset σ)} (hP : IsPartition P) :
     P.length ≤ Fintype.card σ := by
   classical
@@ -234,7 +278,10 @@ theorem subset_of_mem_splitBlock {pre D D' : Finset σ} (h : D' ∈ splitBlock p
     exact h ▸ subset_rfl
 
 omit [Fintype σ] in
-/-- The pieces of a block lie on one side of `pre`. -/
+/-- **Pieces of a split block lie on one side.** Let $S$ and $D$ be sets of states. Every piece of
+$D$ split by $S$ (the two sets $D \cap S$ and $D \setminus S$ if $D$ meets both $S$ and its
+complement, and $D$ itself otherwise) is contained in $S$ or disjoint from $S$: any two states
+$x$ and $y$ of the piece satisfy $x \in S \iff y \in S$. -/
 theorem side_of_mem_splitBlock {pre D D' : Finset σ} (h : D' ∈ splitBlock pre D) {x y : σ}
     (hx : x ∈ D') (hy : y ∈ D') : x ∈ pre ↔ y ∈ pre := by
   unfold splitBlock at h
@@ -258,8 +305,10 @@ theorem side_of_mem_splitBlock {pre D D' : Finset σ} (h : D' ∈ splitBlock pre
       exact ⟨⟨y, by simp [hy, hyp]⟩, ⟨x, by simp [hx, hxp]⟩⟩
 
 omit [Fintype α] [FinEnum α] [DecidablePred (· ∈ M.accept)] in
-/-- After the splitter `(C, a)`, two states share a block exactly when they shared one and agree
-on whether their `a`-successor is in `C`. -/
+/-- **Effect of one splitter on the common-block relation.** Let $M$ be a DFA with transition
+function $\delta$, $P$ a list of blocks of states, $C$ a set of states and $a$ a letter. Two states
+$p$ and $q$ lie in a common block after the splitter $(C, a)$ is applied to $P$ if and only if
+they lie in a common block of $P$ and $\delta(p, a) \in C \iff \delta(q, a) \in C$. -/
 theorem rel_roundP_iff {P : List (Finset σ)} {C : Finset σ} {a : α} {p q : σ} :
     Rel (roundP M P C a) p q ↔ Rel P p q ∧ (p ∈ preimage M C a ↔ q ∈ preimage M C a) := by
   constructor
@@ -307,7 +356,13 @@ theorem IsPartition.roundP {P : List (Finset σ)} (hP : IsPartition P) (C : Fins
     exact ⟨D', hD', hq⟩
 
 omit [Fintype α] [FinEnum α] [DecidablePred (· ∈ M.accept)] in
-/-- A round adds one block per split block. -/
+/-- **Number of blocks after one round.** Let $M$ be a DFA with transition function $\delta$, let
+$P$ be a list of sets of states, $C$ a set of states and $a$ a letter, and let
+$\mathrm{pre} = \{q : \delta(q, a) \in C\}$. The partition after the splitter $(C, a)$, which
+replaces each entry $D$ of $P$ meeting both $\mathrm{pre}$ and its complement by
+$D \cap \mathrm{pre}$ and $D \setminus \mathrm{pre}$, has length equal to the length of $P$ plus
+the number of entries of $P$ (counted with repetition) that meet both $\mathrm{pre}$ and its
+complement. -/
 theorem length_roundP {P : List (Finset σ)} {C : Finset σ} {a : α} :
     (roundP M P C a).length =
       P.length + (P.filter fun D => decide (Splits (preimage M C a) D)).length := by
@@ -338,7 +393,13 @@ theorem length_toList : (FinEnum.toList α).length = Fintype.card α := by
   simp [FinEnum.mem_toList]
 
 omit [DecidablePred (· ∈ M.accept)] in
-/-- A round adds at most `|Σ|` waiting entries per split block. -/
+/-- **Growth of the waiting list in one round.** Let $M$ be a DFA with transition function
+$\delta$ over a finite alphabet $\Sigma$, let $P$ be a list of sets of states with no repeated
+entries, let $W$ be a list of pairs of a set of states and a letter, let $C$ be a set of states
+and $a$ a letter, and let $S = \{q : \delta(q, a) \in C\}$ be the preimage of $C$ under $a$. Then
+the waiting list after the splitter $(C, a)$, computed from the blocks $P$ and the rest $W$ of the
+waiting list, has length at most $|W| + |\Sigma| \cdot k$, where $k$ is the number of entries of
+$P$ split by $S$, that is, meeting both $S$ and its complement. -/
 theorem length_roundW_le {P : List (Finset σ)} (hnd : P.Nodup) {W : List (Finset σ × α)}
     {C : Finset σ} {a : α} :
     (roundW M P W C a).length ≤
@@ -391,7 +452,15 @@ theorem acceptsFrom_step_eq {p q : σ} (h : M.acceptsFrom p = M.acceptsFrom q) (
     ← mem_acceptsFrom] at h'
 
 variable (M) in
-/-- The invariants of Hopcroft's loop on a partition `P` and a waiting list `W`. -/
+/-- **Invariants of Hopcroft's loop.** Let $M$ be a DFA with transition function $\delta$. A list
+$P$ of sets of states and a waiting list $W$ of pairs $(C, b)$ of a set of states $C$ and a letter
+$b$ satisfy the invariants when: (i) $P$ is a partition of the states into nonempty blocks;
+(ii) for every $(C, b)$ in $W$, $C$ is an entry of $P$; (iii) for every letter $b$ and all states
+$p$, $q$ lying in a common entry of $P$, if for every $C$ with $(C, b)$ in $W$ the states
+$\delta(p, b)$ and $\delta(q, b)$ are both in $C$ or both outside $C$, then $\delta(p, b)$ and
+$\delta(q, b)$ lie in a common entry of $P$; (iv) any two states lying in a common entry of $P$
+are both accepting or both rejecting; and (v) any two states from which $M$ accepts the same
+language lie in a common entry of $P$. -/
 structure Inv (P : List (Finset σ)) (W : List (Finset σ × α)) : Prop where
   /-- `P` is a partition into nonempty blocks. -/
   part : IsPartition P
@@ -407,7 +476,11 @@ structure Inv (P : List (Finset σ)) (W : List (Finset σ × α)) : Prop where
   coarse : ∀ p q, M.acceptsFrom p = M.acceptsFrom q → Rel P p q
 
 omit [Fintype α] [DecidablePred (· ∈ M.accept)] in
-/-- **One round preserves the invariants.** -/
+/-- **One round preserves the invariants.** Let $M$ be a DFA, $P$ a list of blocks of states, $W$
+a list of pairs of a set of states and a letter, $C$ a set of states and $a$ a letter. If $P$ and
+the waiting list obtained by putting $(C, a)$ in front of $W$ satisfy the invariants of
+Hopcroft's loop, then so do the partition after the splitter $(C, a)$ and the waiting list after
+the splitter $(C, a)$ from the rest $W$. -/
 theorem Inv.round {P : List (Finset σ)} {C : Finset σ} {a : α} {W : List (Finset σ × α)}
     (h : Inv M P ((C, a) :: W)) : Inv M (roundP M P C a) (roundW M P W C a) where
   part := h.part.roundP C a
@@ -517,8 +590,13 @@ theorem Inv.round {P : List (Finset σ)} {C : Finset σ} {a : α} {W : List (Fin
       (h.coarse _ _ (acceptsFrom_step_eq hpq a))
 
 omit [Fintype α] [FinEnum α] [Fintype σ] [DecidableEq σ] [DecidablePred (· ∈ M.accept)] in
-/-- With an empty waiting list, the partition is a right congruence refining acceptance, so two
-states share a block exactly when they accept the same continuation languages. -/
+/-- **With an empty waiting list, blocks are the classes of equal continuation languages.** Let
+$M$ be a DFA and $P$ a list of blocks of states such that $P$ with the empty waiting list
+satisfies the invariants of Hopcroft's loop. Then two states $p$ and $q$ lie in a common block of
+$P$ if and only if they accept the same continuation languages, that is, $M$ accepts a word from
+$p$ exactly when it accepts it from $q$.
+
+With an empty waiting list the invariants say that $P$ is a right congruence refining acceptance. -/
 theorem Inv.rel_iff {P : List (Finset σ)} (h : Inv M P []) {p q : σ} :
     Rel P p q ↔ M.acceptsFrom p = M.acceptsFrom q := by
   constructor
@@ -558,7 +636,9 @@ theorem rel_initP_iff {x y : σ} : Rel (initP M) x y ↔ (x ∈ M.accept ↔ y �
 
 omit [Fintype α] [DecidableEq σ] in
 variable (M) in
-/-- The invariants hold at the start. -/
+/-- **The invariants hold initially.** For every DFA $M$ with finitely many states over a finite
+alphabet, Hopcroft's initial partition and initial waiting list satisfy the invariants of
+Hopcroft's loop. -/
 theorem inv_init : Inv M (initP M) (initW M) where
   part :=
     { disjoint := by
@@ -621,8 +701,15 @@ end Hopcroft
 open Hopcroft
 
 omit [DecidablePred (· ∈ M.accept)] in
-/-- **Termination**: from a state of the invariants with potential `|W| + |Σ| (|Q| - |P|)` at
-most `k`, `k` rounds empty the waiting list. -/
+/-- **Termination of Hopcroft's loop.** Let $M$ be a DFA with finite state set $Q$ over a finite
+alphabet $\Sigma$, let $P$ be a partition of the states given as a list of blocks, let $W$ be a
+waiting list of splitters, and let $k$ be a natural number. If $P$ and $W$ satisfy the invariants
+of Hopcroft's loop and $|W| + |\Sigma| \cdot (|Q| - |P|) \le k$, where $|P|$ and $|W|$ are the
+lengths of the lists, then Hopcroft's loop run from $(P, W)$ with a budget of $k$ rounds ends with
+an empty waiting list, and the partition and waiting list it returns again satisfy the invariants.
+
+The invariants make $P$ a partition into nonempty blocks, so $|P| \le |Q|$ and the difference
+$|Q| - |P|$ is not truncated. -/
 theorem hopcroftLoop_spec : ∀ (k : ℕ) (P : List (Finset σ)) (W : List (Finset σ × α)),
     Inv M P W → W.length + Fintype.card α * (Fintype.card σ - P.length) ≤ k →
     (M.hopcroftLoop k P W).2 = [] ∧ Inv M (M.hopcroftLoop k P W).1 (M.hopcroftLoop k P W).2
@@ -647,7 +734,9 @@ theorem hopcroftLoop_spec : ∀ (k : ℕ) (P : List (Finset σ)) (W : List (Fins
       omega
     linarith
 
-/-- **The waiting list is exhausted** within `|Σ| (|Q| + 1)` rounds. -/
+/-- **Hopcroft's waiting list is exhausted.** Let $M$ be a DFA with finite state set $Q$ over a
+finite alphabet $\Sigma$. Hopcroft's loop, run from the initial partition and the initial waiting
+list with a budget of $|\Sigma| \cdot (|Q| + 1)$ rounds, ends with an empty waiting list. -/
 theorem hopcroftLoop_waiting_eq_nil :
     (M.hopcroftLoop (Fintype.card α * (Fintype.card σ + 1)) (initP M) (initW M)).2 = [] := by
   refine (hopcroftLoop_spec M _ _ _ (inv_init M) ?_).1
@@ -676,29 +765,37 @@ theorem inv_hopcroftPartition : Inv M M.hopcroftPartition [] := by
   rw [h.1] at h
   exact h.2
 
-/-- Hopcroft's final partition is a partition of the states into nonempty blocks. -/
+/-- **Hopcroft's final partition is a partition.** For a DFA $M$, Hopcroft's final partition of
+$M$ is a partition of the states of $M$ into nonempty blocks. -/
 theorem isPartition_hopcroftPartition : IsPartition M.hopcroftPartition :=
   (inv_hopcroftPartition M).part
 
-/-- **Correctness**: two states share a block of Hopcroft's partition exactly when they accept the
-same continuation languages. -/
+/-- **Correctness of Hopcroft's algorithm.** For a DFA $M$, two states $p$ and $q$ share a block
+of Hopcroft's final partition of $M$ exactly when the language accepted by $M$ from $p$ equals the
+language accepted by $M$ from $q$. -/
 theorem mem_hopcroftRel_iff {p q : σ} :
     (p, q) ∈ M.hopcroftRel ↔ M.acceptsFrom p = M.acceptsFrom q := by
   rw [← (inv_hopcroftPartition M).rel_iff]
   simp [hopcroftRel, Hopcroft.Rel]
 
-/-- **Hopcroft's partition is Moore's relation.** -/
+/-- **Hopcroft's partition is Moore's relation.** For every DFA $M$ with finitely many states over
+a finite alphabet, Hopcroft's relation of $M$, the set of pairs of states lying in a common block
+of Hopcroft's partition, equals Moore's state equivalence of $M$ as a set of pairs of states. -/
 theorem hopcroftRel_eq_mooreRel : M.hopcroftRel = M.mooreRel := by
   ext ⟨p, q⟩
   rw [mem_hopcroftRel_iff, mem_mooreRel_iff]
 
-/-- The classes of Moore's minimal automaton `DFA.mooreDFA` are the blocks of Hopcroft's
-partition (restricted to reachable states). -/
+/-- **Moore classes are Hopcroft blocks.** For a DFA $M$ and reachable states $p$ and $q$ of $M$,
+the classes of $p$ and $q$ under Moore's equivalence on reachable states (the states of Moore's
+minimal automaton) are equal if and only if $p$ and $q$ share a block of Hopcroft's final
+partition of $M$. -/
 theorem mooreClass_eq_iff_mem_hopcroftRel {p q : {s // s ∈ M.reachable}} :
     M.mooreClass p = M.mooreClass q ↔ (p.1, q.1) ∈ M.hopcroftRel := by
   rw [mooreClass_eq_iff, mem_hopcroftRel_iff]
 
-/-- Each block of Hopcroft's partition is the class of states with one continuation language. -/
+/-- **Blocks of Hopcroft's partition are language classes.** Let $M$ be a DFA, $D$ a block of
+Hopcroft's final partition of $M$ and $p$ a state in $D$. Then a state $q$ lies in $D$ if and only
+if the language accepted by $M$ from $q$ equals the language accepted by $M$ from $p$. -/
 theorem mem_block_iff {D : Finset σ} (hD : D ∈ M.hopcroftPartition) {p : σ} (hp : p ∈ D)
     {q : σ} : q ∈ D ↔ M.acceptsFrom q = M.acceptsFrom p := by
   rw [← (inv_hopcroftPartition M).rel_iff]

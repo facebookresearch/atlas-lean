@@ -36,21 +36,31 @@ affect `o(n²)`). `o(n²)` is `ex₃(n, 𝓕) / n² → 0`. Compared with the fo
 
 open Filter Topology
 
-/-- `ex₃(n, 𝓕)` for `𝓕` the `3`-uniform hypergraphs with `6` vertices and `3` edges: the largest
-number of `3`-element subsets of `{1, …, n}` such that no `6` vertices carry `3` of them (every set
-of at most `6` vertices contains at most `2` of the chosen triples). -/
+/-- **The (6, 3) extremal number.** For $n \in \mathbb{N}$, $\mathrm{ex}_3(n)$ is the largest
+number of $3$-element subsets of $\{1, \dots, n\}$ such that every set of at most $6$ of these
+points contains at most $2$ of the chosen subsets.
+
+For $n \ge 6$ this is the extremal number $\mathrm{ex}_3(n, \mathcal{F})$ of the family
+$\mathcal{F}$ of $3$-uniform hypergraphs with $6$ vertices and $3$ edges, since a set of triples
+contains a member of $\mathcal{F}$ exactly when some $6$ points carry $3$ of the triples. -/
 noncomputable def sixThreeExtremalNumber (n : ℕ) : ℕ :=
   sSup {e | ∃ E : Finset (Finset (Fin n)), (∀ t ∈ E, t.card = 3) ∧
     (∀ S : Finset (Fin n), S.card ≤ 6 → (E.filter (· ⊆ S)).card ≤ 2) ∧ E.card = e}
 
-/-- Erdős Problem 716 (Brown, Erdős and Sós): `ex₃(n, 𝓕) = o(n²)`. -/
+/-- **The Brown–Erdős–Sós (6, 3) conjecture.** For $n \in \mathbb{N}$ let $\mathrm{ex}_3(n)$ be
+the largest number of $3$-element subsets of $\{1, \dots, n\}$ such that every set of at most $6$
+of these points contains at most $2$ of the chosen subsets. The conjecture (Erdős Problem 716) is
+the proposition that $\mathrm{ex}_3(n) / n^2 \to 0$ as $n \to \infty$, that is,
+$\mathrm{ex}_3(n) = o(n^2)$. -/
 def sixThreeExtremalNumberLittleO : Prop :=
   Tendsto (fun n : ℕ => (sixThreeExtremalNumber n : ℝ) / (n : ℝ) ^ 2) atTop (𝓝 0)
 
-/--
-Resolved true: Ruzsa and Szemerédi proved that a `3`-uniform hypergraph on `n` vertices in which no
-`6` vertices carry `3` edges has `o(n²)` edges (the `(6, 3)` theorem); erdosproblems.com/716 lists
-the problem as proved. Source: T. F. Bloom, Erdős Problems, Problem #716,
+/-- **The Ruzsa–Szemerédi (6, 3) theorem.** For $n \in \mathbb{N}$ let $\mathrm{ex}_3(n)$ be the
+largest number of $3$-element subsets of $\{1, \dots, n\}$ such that every set of at most $6$ of
+these points contains at most $2$ of the chosen subsets. Then $\mathrm{ex}_3(n) / n^2 \to 0$ as
+$n \to \infty$, that is, $\mathrm{ex}_3(n) = o(n^2)$.
+
+Source: T. F. Bloom, Erdős Problems, Problem #716,
 https://www.erdosproblems.com/716 (status PROVED (LEAN)); resolution: I. Z. Ruzsa and E. Szemerédi,
 Triple systems with no six points carrying three triangles, Combinatorics (Proc. Fifth Hungarian
 Colloq., Keszthely, 1976), Vol. II (1978), 939-945, erdosproblems.com/716: 'The answer is yes,

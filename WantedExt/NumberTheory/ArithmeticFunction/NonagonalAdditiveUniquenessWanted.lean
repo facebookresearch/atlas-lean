@@ -32,8 +32,10 @@ namespace MetaMathlibExt
 
 open ArithmeticFunction
 
-/-- A multiplicative function `f` with `f (a + b) = f a + f b` for all nonzero generalized
-nonagonal numbers `a` and `b` is the identity.
+/-- **Additive uniqueness of generalized nonagonal numbers.** Let $f$ be a multiplicative
+arithmetic function with values in $\mathbb{C}$ such that $f(a + b) = f(a) + f(b)$ for all
+positive integers $a$ and $b$ that are generalized nonagonal numbers, that is, $2a = m(7m - 5)$
+and $2b = k(7k - 5)$ for some integers $m$ and $k$. Then $f(n) = n$ for every natural number $n$.
 
 Source: Poo-Sung Park, *On the Additive Uniqueness of Generalized Nonagonal Numbers for
 Multiplicative Functions*, INTEGERS 25 (2025), Article A99, Theorem 1
@@ -45,8 +47,11 @@ public theorem_wanted multiplicative_nonagonal_additive_eq_id
         f (a + b) = f a + f b) :
     ∀ n : ℕ, f n = n
 
-/-- Lemma 1: under the hypotheses of Theorem 1 (`f` multiplicative and additive on nonzero
-generalized nonagonal numbers), `f n = n` for `1 ≤ n ≤ 11`.
+/-- **Nonagonal additive uniqueness: the values up to 11.** Let $f$ be a multiplicative
+arithmetic function with values in $\mathbb{C}$ such that $f(a + b) = f(a) + f(b)$ for all
+positive integers $a$ and $b$ that are generalized nonagonal numbers, that is, $2a = m(7m - 5)$
+and $2b = k(7k - 5)$ for some integers $m$ and $k$. Then $f(n) = n$ for every integer $n$ with
+$1 \le n \le 11$.
 
 Source: Poo-Sung Park, *On the Additive Uniqueness of Generalized Nonagonal Numbers for
 Multiplicative Functions*, INTEGERS 25 (2025), Article A99, Lemma 1
@@ -58,8 +63,12 @@ public theorem_wanted multiplicative_nonagonal_additive_eq_self_of_le_eleven
         f (a + b) = f a + f b) :
     ∀ n : ℕ, 1 ≤ n → n ≤ 11 → f n = n
 
-/-- Theorem 2 (the step for powers of `3`): under the hypotheses of Theorem 1, with
-`α(x) = (14/17)(2/3)x - 12/17`, if `f n = n` for every `n < α(3^r)`, then `f (3^r) = 3^r`.
+/-- **Nonagonal additive uniqueness: the step at powers of 3.** Let $f$ be a multiplicative
+arithmetic function with values in $\mathbb{C}$ such that $f(a + b) = f(a) + f(b)$ for all
+positive integers $a$ and $b$ that are generalized nonagonal numbers, that is, $2a = m(7m - 5)$
+and $2b = k(7k - 5)$ for some integers $m$ and $k$. Let $r$ be a natural number and put
+$\alpha(x) = \frac{14}{17} \cdot \frac{2}{3} x - \frac{12}{17}$. If $f(n) = n$ for every natural
+number $n < \alpha(3^r)$, then $f(3^r) = 3^r$.
 
 Source: Poo-Sung Park, *On the Additive Uniqueness of Generalized Nonagonal Numbers for
 Multiplicative Functions*, INTEGERS 25 (2025), Article A99, Theorem 2
@@ -72,8 +81,11 @@ public theorem_wanted multiplicative_nonagonal_additive_three_pow
     (hind : ∀ n : ℕ, (n : ℝ) < 14 / 17 * (2 / 3) * (3 : ℝ) ^ r - 12 / 17 → f n = n) :
     f (3 ^ r) = (3 ^ r : ℕ)
 
-/-- Theorem 3 (the step for powers of `5`): under the hypotheses of Theorem 1, with
-`β(x) = x/4`, if `r ≥ 3` and `f n = n` for every `n ≤ β(5^r)`, then `f (5^r) = 5^r`.
+/-- **Nonagonal additive uniqueness: the step at powers of 5.** Let $f$ be a multiplicative
+arithmetic function with values in $\mathbb{C}$ such that $f(a + b) = f(a) + f(b)$ for all
+positive integers $a$ and $b$ that are generalized nonagonal numbers, that is, $2a = m(7m - 5)$
+and $2b = k(7k - 5)$ for some integers $m$ and $k$. Let $r \ge 3$ be a natural number and put
+$\beta(x) = x/4$. If $f(n) = n$ for every natural number $n \le \beta(5^r)$, then $f(5^r) = 5^r$.
 
 Source: Poo-Sung Park, *On the Additive Uniqueness of Generalized Nonagonal Numbers for
 Multiplicative Functions*, INTEGERS 25 (2025), Article A99, Theorem 3
@@ -86,8 +98,11 @@ public theorem_wanted multiplicative_nonagonal_additive_five_pow
     (hind : ∀ n : ℕ, (n : ℝ) ≤ (5 : ℝ) ^ r / 4 → f n = n) :
     f (5 ^ r) = (5 ^ r : ℕ)
 
-/-- Theorem 4 (the step for powers of `7`): under the hypotheses of Theorem 1, if `f n = n` for
-every `n < 7^r`, then `f (7^r) = 7^r`.
+/-- **Nonagonal additive uniqueness: the step at powers of 7.** Let $f$ be a multiplicative
+arithmetic function with values in $\mathbb{C}$ such that $f(a + b) = f(a) + f(b)$ for all
+positive integers $a$ and $b$ that are generalized nonagonal numbers, that is, $2a = m(7m - 5)$
+and $2b = k(7k - 5)$ for some integers $m$ and $k$. Let $r$ be a natural number. If $f(n) = n$
+for every natural number $n < 7^r$, then $f(7^r) = 7^r$.
 
 Source: Poo-Sung Park, *On the Additive Uniqueness of Generalized Nonagonal Numbers for
 Multiplicative Functions*, INTEGERS 25 (2025), Article A99, Theorem 4
@@ -100,8 +115,11 @@ public theorem_wanted multiplicative_nonagonal_additive_seven_pow
     (hind : ∀ n : ℕ, n < 7 ^ r → f n = n) :
     f (7 ^ r) = (7 ^ r : ℕ)
 
-/-- Theorem 5 (the step for powers of `2`): under the hypotheses of Theorem 1, if `f n = n` for
-every `n < 2^r`, then `f (2^r) = 2^r`.
+/-- **Nonagonal additive uniqueness: the step at powers of 2.** Let $f$ be a multiplicative
+arithmetic function with values in $\mathbb{C}$ such that $f(a + b) = f(a) + f(b)$ for all
+positive integers $a$ and $b$ that are generalized nonagonal numbers, that is, $2a = m(7m - 5)$
+and $2b = k(7k - 5)$ for some integers $m$ and $k$. Let $r$ be a natural number. If $f(n) = n$
+for every natural number $n < 2^r$, then $f(2^r) = 2^r$.
 
 Source: Poo-Sung Park, *On the Additive Uniqueness of Generalized Nonagonal Numbers for
 Multiplicative Functions*, INTEGERS 25 (2025), Article A99, Theorem 5
