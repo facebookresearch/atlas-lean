@@ -1,10 +1,10 @@
 # Coase theorem
 
-- [Total Value](total-value.md)
-- [Utility](utility.md)
-- [Feasible](feasible.md)
-- [Pareto Efficient](pareto-efficient.md)
-- [Sum const div card](sum-const-div-card.md)
-- [Pareto Efficient iff](pareto-efficient-iff.md)
+- [Total value of an allocation](total-value.md)
+- [Quasilinear utility of an agent](utility.md)
+- [Budget-balanced money transfers](feasible.md)
+- [Pareto efficient outcome with money transfers](pareto-efficient.md)
+- [Equal shares of an amount sum back to it](sum-const-div-card.md)
+- [Under quasilinear utility, efficiency maximizes total value](pareto-efficient-iff.md)
 - [Coase invariance](total-value-eq-of-pareto-efficient.md)
-- [Exists pareto Efficient individually Rational](exists-pareto-efficient-individually-rat.md)
+- [Efficient, individually rational bargains always exist](exists-pareto-efficient-individually-rat.md)

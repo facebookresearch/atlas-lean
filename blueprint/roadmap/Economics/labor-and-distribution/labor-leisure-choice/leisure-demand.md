@@ -1,4 +1,4 @@
-# Leisure Demand
+# Marshallian leisure demand along the wage
 
 Marshallian (uncompensated) leisure demand along the wage, holding the time endowment
 `T` and nonlabor income `N` fixed. Here `ℓ w M` is leisure demanded at wage (price of

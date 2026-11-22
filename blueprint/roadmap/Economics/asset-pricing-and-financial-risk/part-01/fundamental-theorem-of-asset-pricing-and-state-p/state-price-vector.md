@@ -1,4 +1,4 @@
-# State Price Vector
+# State-price vector from a pricing probability
 
 The state-price vector induced by a normalized pricing probability `q` and gross
 risk-free return `R`: `ψ ω = q ω / R`.

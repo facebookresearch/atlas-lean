@@ -1,4 +1,4 @@
-# Real Exchange Rate
+# Real exchange rate from nominal rate and price levels
 
 Real exchange rate `q = E * P* / P`, under the quote convention:
 `E` is domestic currency per unit of foreign currency, `P*` the foreign price

@@ -1,4 +1,4 @@
-# Forward Market
+# One-period forward market with trading frictions
 
 A one-period forward market with frictions. The underlying can be bought at the ask and sold
 short at the bid; cash is lent at the gross rate `lendRate` and borrowed at the gross rate

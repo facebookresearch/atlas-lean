@@ -1,4 +1,4 @@
-# Gini
+# Gini coefficient of a finite income distribution
 
 Finite Gini coefficient of the income distribution `x` over the population `ι`:
 mean absolute difference over twice the mean,

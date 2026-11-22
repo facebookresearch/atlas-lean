@@ -1,4 +1,4 @@
-# Ricardian tax-timing invariance, two-period finite model (MA07.T04)
+# Ricardian tax-timing invariance in a two-period model
 
 In a finite two-period model with frictionless lump-sum taxes, if two tax paths
 `(t0, t1)` and `(t0', t1')` both finance the SAME government spending path

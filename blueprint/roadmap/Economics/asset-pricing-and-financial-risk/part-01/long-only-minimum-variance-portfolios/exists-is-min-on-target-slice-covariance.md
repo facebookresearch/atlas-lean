@@ -1,4 +1,4 @@
-# Exists is Min On target Slice covariance
+# Long-only minimum variance is attained, covariance form
 
 Covariance form: for square-integrable returns `R` with expectations
 `μv i = ∫ ω, R i ω ∂μ`, a nonempty long-only target slice attains the

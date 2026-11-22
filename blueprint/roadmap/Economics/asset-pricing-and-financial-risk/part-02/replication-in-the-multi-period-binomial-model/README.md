@@ -1,10 +1,10 @@
 # Replication in the multi-period binomial model
 
-- [Price](price.md)
-- [Rn Prob](rn-prob.md)
-- [Claim Value](claim-value.md)
-- [Hedge Ratio](hedge-ratio.md)
-- [Wealth](wealth.md)
-- [Price ne zero](price-ne-zero.md)
-- [Wealth hedge Ratio eq claim Value](wealth-hedge-ratio-eq-claim-value.md)
-- [Replication in the multi-period binomial model](wealth-hedge-ratio-replicates.md)
+- [Binomial stock price along a history of moves](price.md)
+- [Risk-neutral up probability of the binomial model](rn-prob.md)
+- [Backward-induction value of a path-dependent claim](claim-value.md)
+- [Delta-hedging ratio in the binomial tree](hedge-ratio.md)
+- [Wealth of a self-financing strategy in the binomial tree](wealth.md)
+- [Binomial stock prices are nonzero for nonzero S₀, u, d](price-ne-zero.md)
+- [Delta-hedging wealth tracks the claim value at every node](wealth-hedge-ratio-eq-claim-value.md)
+- [Delta hedging replicates every path-dependent claim](wealth-hedge-ratio-replicates.md)

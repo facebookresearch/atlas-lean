@@ -1,4 +1,4 @@
-# The retention price exceeds the no-growth price iff `ROE > r`
+# The retention price exceeds the no-growth price iff ROE > r
 
 **The retention price exceeds the no-growth price iff `ROE > r`** (an algebraic
 extension of value creation by retained earnings). With positive earnings, a positive

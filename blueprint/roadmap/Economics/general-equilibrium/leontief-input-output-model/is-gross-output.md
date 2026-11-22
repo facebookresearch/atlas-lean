@@ -1,4 +1,4 @@
-# Is Gross Output
+# Leontief balance condition for gross output
 
 Leontief balance condition: gross output `x` covers intermediate demand `A x` plus final
 demand `d`. Here `A i j` is the input of sector `i` needed per unit of sector `j`'s output.

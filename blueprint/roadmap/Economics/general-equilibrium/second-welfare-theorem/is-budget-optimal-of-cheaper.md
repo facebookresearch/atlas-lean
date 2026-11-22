@@ -1,4 +1,4 @@
-# Is Budget Optimal of cheaper
+# Budget optimality under the cheaper-bundle condition
 
 From the quasi-equilibrium consumer condition to budget optimality (MWG Prop. 16.D.2): with
 continuous utilities and nonnegative bundles `x i`, if every consumer has a strictly cheaper

@@ -1,4 +1,4 @@
-# Wealth
+# Wealth of a self-financing strategy in the binomial tree
 
 Wealth of the self-financing strategy with initial capital `x₀` that holds `δ s` shares over
 the period following history `s` and keeps the rest in the riskless asset with gross return `R`:

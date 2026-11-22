@@ -1,6 +1,6 @@
 # Stolper–Samuelson theorem
 
-- [Is Cost Minimizing At](is-cost-minimizing-at.md)
-- [Has FDeriv At](has-fderiv-at.md)
-- [Wage magnified rental falls](wage-magnified-rental-falls.md)
-- [Rental magnified wage falls](rental-magnified-wage-falls.md)
+- [Unit-cost minimization at given factor prices](is-cost-minimizing-at.md)
+- [Shephard's lemma for unit cost functions](has-fderiv-at.md)
+- [Magnification effect for the labor-intensive good](wage-magnified-rental-falls.md)
+- [Magnification effect for the capital-intensive good](rental-magnified-wage-falls.md)

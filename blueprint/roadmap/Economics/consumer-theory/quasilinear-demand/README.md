@@ -1,5 +1,5 @@
 # Quasilinear demand
 
-- [Quasilinear Sqrt](quasilinear-sqrt.md)
-- [Quasilinear Sqrt Demand](quasilinear-sqrt-demand.md)
-- [Quasilinear demand](is-marshallian-demand-quasilinear-sqrt.md)
+- [Square-root quasilinear utility](quasilinear-sqrt.md)
+- [Piecewise demand for square-root quasilinear utility](quasilinear-sqrt-demand.md)
+- [Piecewise demand maximizes square-root quasilinear utility](is-marshallian-demand-quasilinear-sqrt.md)

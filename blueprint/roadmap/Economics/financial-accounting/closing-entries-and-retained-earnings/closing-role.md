@@ -1,4 +1,4 @@
-# Closing Role
+# Permanent and temporary accounts for closing
 
 Role of an account under the closing convention: permanent (balance-sheet) accounts,
 including retained earnings, and the temporary revenue, expense and distribution

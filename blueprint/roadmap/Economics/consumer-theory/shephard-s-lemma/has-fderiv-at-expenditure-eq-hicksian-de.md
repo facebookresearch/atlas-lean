@@ -1,4 +1,4 @@
-# Shephard's lemma
+# Shephard's lemma in infimum form
 
 Let `e` be the expenditure function for target
 utility `ubar` on a neighborhood of `p₀` (the infimum of the cost `p ⬝ᵥ x` over

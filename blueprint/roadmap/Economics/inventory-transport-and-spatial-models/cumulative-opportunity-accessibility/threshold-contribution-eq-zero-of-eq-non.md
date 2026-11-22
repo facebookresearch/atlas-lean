@@ -1,3 +1,3 @@
-# Threshold Contribution eq zero of eq none
+# Destinations without a travel time contribute nothing
 
 A destination with no supplied travel time contributes zero.

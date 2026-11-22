@@ -1,4 +1,4 @@
-# Bond Holding
+# Bond position of the one-step replicating portfolio
 
 The bond holding of the one-step replicating portfolio:
 `B = (u * Cd - d * Cu) / ((u - d) * R)`, so that (assuming `S₀ ≠ 0`, `u ≠ d`, `R ≠ 0`)

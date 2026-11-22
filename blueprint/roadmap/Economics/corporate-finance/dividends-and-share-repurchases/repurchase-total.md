@@ -1,4 +1,4 @@
-# Repurchase Total
+# Shareholder wealth after a share repurchase
 
 Total shareholder wealth under a share repurchase: the cash `C` paid to selling
 shareholders plus the market value of the `N - C / P` remaining shares, with the

@@ -1,4 +1,4 @@
-# Retention Price eq gordon Form
+# Retention price as a Gordon formula
 
 `retentionPrice` is exactly the Gordon formula with the reinvestment-model dividend
 and growth substituted in. This is an algebraic identity; on its own it does not say

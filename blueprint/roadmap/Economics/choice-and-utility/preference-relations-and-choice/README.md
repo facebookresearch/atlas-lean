@@ -2,20 +2,20 @@
 
 ## Preference Relation
 
-- [Strict Pref](strict-pref.md)
-- [Choice](choice.md)
-- [Maximal](maximal.md)
-- [Maximal eq choice](maximal-eq-choice.md)
+- [Strict part of an arbitrary preference relation](strict-pref.md)
+- [Choice rule of an arbitrary preference relation](choice.md)
+- [Maximal menu elements under an arbitrary preference relation](maximal.md)
+- [Completeness makes maximal elements greatest](maximal-eq-choice.md)
 
 ## Economics
 
-- [Preference](preference.md)
+- [Rational preference relation](preference.md)
 
 ## Preference
 
-- [Strict Pref](strict-pref-2.md)
-- [Indiff](indiff.md)
-- [Choice](choice-2.md)
-- [Maximal](maximal-2.md)
-- [Maximal eq choice](maximal-eq-choice-2.md)
-- [Choice nonempty](choice-nonempty.md)
+- [Strict part of a rational preference](strict-pref-2.md)
+- [Indifference relation of a rational preference](indiff.md)
+- [Choice rule of a rational preference](choice-2.md)
+- [Maximal menu elements under a rational preference](maximal-2.md)
+- [Maximal and greatest elements coincide for rational preferences](maximal-eq-choice-2.md)
+- [Rational choice from a finite nonempty menu is nonempty](choice-nonempty.md)

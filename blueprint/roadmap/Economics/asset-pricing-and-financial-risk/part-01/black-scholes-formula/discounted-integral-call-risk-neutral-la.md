@@ -1,4 +1,4 @@
-# Black-Scholes formula
+# Black–Scholes price as the discounted expected call payoff
 
 **Black-Scholes formula** (expectation under the assumed law, not a continuous-time
 pricing theorem): for `S0, K, σ, T > 0` and any interest rate `r`, the discounted expected call

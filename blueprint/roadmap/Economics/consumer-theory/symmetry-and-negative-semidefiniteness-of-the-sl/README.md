@@ -1,9 +1,9 @@
 # Symmetry and negative semidefiniteness of the Slutsky matrix
 
-- [Compensated Jacobian](compensated-jacobian.md)
-- [Dot LCLM](dot-lclm.md)
-- [Dot LCLM apply](dot-lclm-apply.md)
+- [Slutsky substitution matrix](compensated-jacobian.md)
+- [Dot product as a continuous linear map into the dual](dot-lclm.md)
+- [Dot-product map agrees with the dot-product functional](dot-lclm-apply.md)
 - [Symmetry of compensated price effects](dot-product-compensated-symm.md)
 - [Negative semidefiniteness of compensated price effects](dot-product-compensated-self-nonpos.md)
-- [Compensated Jacobian is Symm](compensated-jacobian-is-symm.md)
-- [Dot Product compensated Jacobian mul Vec nonpos](dot-product-compensated-jacobian-mul-vec.md)
+- [Symmetry of the substitution matrix](compensated-jacobian-is-symm.md)
+- [Negative semidefiniteness of the substitution matrix](dot-product-compensated-jacobian-mul-vec.md)

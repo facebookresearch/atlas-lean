@@ -1,4 +1,4 @@
-# Linear Policy Matrix
+# Upper-triangular matrix of a two-variable policy model
 
 A fixed 2-variable linear policy model: the state evolves by
 `x_{t+1} = A x_t + c` where `A` is an upper-triangular matrix.

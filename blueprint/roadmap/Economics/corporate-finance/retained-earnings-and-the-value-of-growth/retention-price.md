@@ -1,4 +1,4 @@
-# Retention Price
+# Retention price of equity under reinvestment
 
 Equity price under the constant-return reinvestment model: Gordon's formula with
 `D₁ = E₁ * (1 - b)` and `g = b * ROE` (source clause: "`P = E₁(1-b) / (r - b*ROE)`").

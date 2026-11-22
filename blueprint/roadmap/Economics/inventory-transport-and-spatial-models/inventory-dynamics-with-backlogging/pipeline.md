@@ -1,4 +1,4 @@
-# Pipeline
+# Outstanding order pipeline
 
 Length-`L` outstanding pipeline before the receipts of period `t`.
 Coordinate `j` is the receipt scheduled at `t + j.val`: initial pipeline at

@@ -1,4 +1,4 @@
-# Is Quasi Supporting Price
+# Quasi-equilibrium consumer condition
 
 Consumer condition of a price quasi-equilibrium with transfers (MWG Def. 16.D.1 (ii)), the
 wealth of consumer `i` being `value p (x i)`: every nonnegative bundle strictly preferred to `x i`

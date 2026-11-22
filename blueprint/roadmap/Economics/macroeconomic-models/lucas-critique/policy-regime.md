@@ -1,4 +1,4 @@
-# Policy Regime
+# Policy regime as a rule for expected inflation
 
 A policy regime: the policy rule mapping money growth `m` to expected inflation
 `πe = expectationCoeff * m`. The structural parameter `θ` is the same in every

@@ -1,4 +1,4 @@
-# Exists ssubset specialize Sets iff
+# Mutual gains from specialization iff comparative advantage
 
 A world price at which both countries' consumption sets strictly enlarge (Home
 specializing in good 1, Foreign in good 2) exists iff Home has a comparative

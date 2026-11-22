@@ -1,4 +1,4 @@
-# Tax Shield Value
+# Present value of interest tax shields on perpetual debt
 
 Present value of the perpetual tax shield on riskless debt: in each period
 `t = 1, 2, …` the firm deducts interest `rD * D` at tax rate `τ`, saving

@@ -1,4 +1,4 @@
-# Npv
+# Net present value via discount factors
 
 Net present value at rate `r` of a project with dated cash flows `c 0, c 1, …, c N`
 (`c 0` today, `c k` at the end of period `k`), as the present value over the dates

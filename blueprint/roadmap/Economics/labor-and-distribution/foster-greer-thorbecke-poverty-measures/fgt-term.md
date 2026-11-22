@@ -1,4 +1,4 @@
-# Fgt Term
+# Individual contribution to the FGT measure
 
 Individual Foster–Greer–Thorbecke contribution at poverty line `z` and poverty-aversion
 parameter `α`: the normalized shortfall `((z - y) / z) ^ α` if income `y` is below the line,

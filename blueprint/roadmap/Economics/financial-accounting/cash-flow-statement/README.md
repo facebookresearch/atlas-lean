@@ -1,6 +1,6 @@
 # Cash flow statement
 
-- [Cash Activity](cash-activity.md)
-- [Activity Total](activity-total.md)
-- [Ending Cash](ending-cash.md)
-- [Operating add investing add financing](operating-add-investing-add-financing.md)
+- [Activity classes of the cash flow statement](cash-activity.md)
+- [Net cash flow of an activity class](activity-total.md)
+- [Ending cash balance of the period](ending-cash.md)
+- [The three cash-flow sections sum to the change in cash](operating-add-investing-add-financing.md)

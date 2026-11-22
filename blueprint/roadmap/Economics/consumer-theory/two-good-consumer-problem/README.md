@@ -1,4 +1,4 @@
 # Two-good consumer problem
 
-- [Is Marshallian Demand](is-marshallian-demand.md)
-- [Two Good Set](two-good-set.md)
+- [Utility-maximizing (Marshallian) demand](is-marshallian-demand.md)
+- [Two-good consumption set](two-good-set.md)

@@ -1,4 +1,4 @@
-# Feasible Consumption
+# Feasible first-period consumption
 
 Feasible first-period consumptions: both periods' consumption are
 nonnegative. When `0 < 1 + r`, the constraint `0 ≤ c₁` is the natural borrowing

@@ -1,4 +1,4 @@
-# Fisher time reversal
+# Fisher index satisfies the time-reversal test
 
 Swapping the two periods (base/current, with baskets
 swapped accordingly) gives the reciprocal index: the forward and reversed Fisher indices

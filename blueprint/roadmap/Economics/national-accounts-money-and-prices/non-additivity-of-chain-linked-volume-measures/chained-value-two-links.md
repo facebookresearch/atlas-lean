@@ -1,4 +1,4 @@
-# Chained Value Two Links
+# Two-link chained real value of a basket
 
 Chained real value of a basket over two links: its period-0 nominal value
 times the chained index of its period-0-to-1 Laspeyres volume growth (period-0

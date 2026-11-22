@@ -1,4 +1,4 @@
-# Covered Interest Market
+# One-period two-currency market with a forward
 
 A one-period two-currency market for covered interest parity.
 

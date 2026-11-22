@@ -1,4 +1,4 @@
-# Singly constrained spatial interaction models
+# Positive rescaling of weights leaves the flows unchanged
 
 Positive rescaling of a demand weight row leaves the normalized
 demand unchanged: with `c > 0`, distributing origin total `O` by

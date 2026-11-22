@@ -1,4 +1,4 @@
-# Chained example growths
+# Laspeyres volume growths in the chain-linking example
 
 The two one-period Laspeyres growths of the concrete example.
 Period 0: prices `(1, 1)`, quantities `(100, 100)`.

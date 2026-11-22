@@ -1,4 +1,4 @@
-# Finite-horizon government budget identity (MA07.T01), present-value form
+# Finite-horizon government budget identity, present-value form
 
 Iterating
 the debt recursion, initial debt plus the present value of primary deficits through horizon

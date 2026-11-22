@@ -1,4 +1,4 @@
-# Floor Book Value
+# Book value under depreciation with a salvage floor
 
 Book value under a salvage-floor depreciation recursion: start at `cost`; in period
 `n` charge `charge n v` at current book value `v`, but never write the asset below

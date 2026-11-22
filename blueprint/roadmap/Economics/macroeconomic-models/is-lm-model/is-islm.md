@@ -1,4 +1,4 @@
-# Is ISLM
+# Linear IS–LM equilibrium conditions
 
 The linear IS-LM system. Parameters: `b > 0` is the interest sensitivity of
 investment/demand, `h > 0` the interest sensitivity of money demand, `k > 0` the income

@@ -1,4 +1,4 @@
-# Capital Elasticity
+# Output elasticity with respect to capital
 
 Output elasticity of the production function `F` with respect to capital:
 `K * F_K / F`, where `F_K = fderiv ℝ F (K, L) (1, 0)` is the partial derivative

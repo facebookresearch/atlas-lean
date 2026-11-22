@@ -1,4 +1,4 @@
-# Hedge Ratio one eq delta Hedge
+# Binomial-tree hedge ratio at one step is the delta hedge
 
 The delta-hedging ratio at horizon `1` is the one-step delta hedge, under the payoff
 hypotheses. No nonvanishing

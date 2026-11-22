@@ -1,4 +1,4 @@
-# Replication in the multi-period binomial model
+# Delta hedging replicates every path-dependent claim
 
 **Replication in the multi-period binomial model** (Cox, Ross and Rubinstein 1979): every
 path-dependent claim `V` paid at horizon `N` is replicated by the self-financing delta-hedging

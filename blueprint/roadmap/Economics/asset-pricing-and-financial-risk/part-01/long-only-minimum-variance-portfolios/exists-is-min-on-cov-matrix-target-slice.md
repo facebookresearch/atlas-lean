@@ -1,4 +1,4 @@
-# Exists is Min On cov Matrix target Slice
+# Long-only minimum variance is attained, matrix form
 
 Covariance-matrix form: for returns
 `R` with expectations as the target means, a nonempty long-only target

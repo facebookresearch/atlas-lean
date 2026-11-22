@@ -1,4 +1,4 @@
-# Wage magnified rental falls
+# Magnification effect for the labor-intensive good
 
 Stolper–Samuelson, response to the price of the labor-intensive good 1.
 Goods prices `p = (p₁, p₂)` determine factor prices `f p = (w, r)` through both

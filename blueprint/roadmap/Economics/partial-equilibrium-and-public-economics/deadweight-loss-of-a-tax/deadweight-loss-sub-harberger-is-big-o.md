@@ -1,4 +1,4 @@
-# Deadweight Loss sub harberger is Big O
+# Harberger approximation of deadweight loss for small taxes
 
 Harberger small-tax approximation with a controlled remainder: along any
 equilibrium path continuous at `τ = 0` (the branch through `qstar`), the

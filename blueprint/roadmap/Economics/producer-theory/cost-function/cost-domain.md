@@ -1,4 +1,4 @@
-# Cost Domain
+# Finite-valued domain of the cost function
 
 The finite-valued domain of the cost function: input prices at which the target output is
 attainable (`V` is nonempty) and cost is bounded below on `V`. It is empty when the target is

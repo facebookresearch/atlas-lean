@@ -1,4 +1,4 @@
-# OLG capital-market recurrence (MA08.T03)
+# OLG capital-market recurrence
 
 In the specified two-period
 OLG economy (log utility, Cobb-Douglas exponent `1/2`, full depreciation,

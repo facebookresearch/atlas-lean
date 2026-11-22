@@ -1,5 +1,5 @@
 # Constant returns to scale and zero profit
 
-- [Has Constant Returns](has-constant-returns.md)
+- [Constant returns to scale of a production set](has-constant-returns.md)
 - [Zero profit under constant returns](dot-product-eq-zero-of-has-constant-retu.md)
-- [Dot Product nonpos of has Constant Returns](dot-product-nonpos-of-has-constant-retur.md)
+- [No plan earns positive profit under constant returns](dot-product-nonpos-of-has-constant-retur.md)

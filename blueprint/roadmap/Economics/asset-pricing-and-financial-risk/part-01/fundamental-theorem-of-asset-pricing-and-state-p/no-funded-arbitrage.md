@@ -1,4 +1,4 @@
-# No Funded Arbitrage
+# No arbitrage on funded gains
 
 No arbitrage on funded gains: no portfolio `h` has nonnegative funded gain in
 every state and strictly positive funded gain in some state. The funded gain of

@@ -1,4 +1,4 @@
-# Dividend Stream
+# Dividend stream growing at a constant rate
 
 Dividend stream with first dividend `D₁` at date 1, growing at rate `g` per period.
 `dividendStream D₁ g t` is the dividend paid at date `t`: `0` today (`t = 0`, no

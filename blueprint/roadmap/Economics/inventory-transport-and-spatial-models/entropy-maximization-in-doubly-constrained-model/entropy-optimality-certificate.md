@@ -1,4 +1,4 @@
-# Entropy optimality certificate
+# Biproportional tables minimize relative entropy given margins
 
 Entropy optimality certificate. For finite index sets and
 positive `K`, `a`, `b`, let `T i j = a i * K i j * b j`. Every

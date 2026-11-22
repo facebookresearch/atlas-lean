@@ -1,10 +1,10 @@
 # Allais paradox
 
-- [Prize](prize.md)
-- [Risky Part](risky-part.md)
-- [L1](l1.md)
-- [L2](l2.md)
-- [L3](l3.md)
-- [L4](l4.md)
+- [Prizes of the Allais experiment](prize.md)
+- [Common risky component of the Allais lotteries](risky-part.md)
+- [Allais lottery L₁: USD 1M for sure](l1.md)
+- [Allais lottery L₂: 89% USD 1M, 10% USD 5M, 1% nothing](l2.md)
+- [Allais lottery L₃: 11% USD 1M, 89% nothing](l3.md)
+- [Allais lottery L₄: 10% USD 5M, 90% nothing](l4.md)
 - [The Allais pattern violates independence](not-satisfies-independence-of-allais.md)
-- [Exists is Preference Relation allais](exists-is-preference-relation-allais.md)
+- [Some rational preference exhibits the Allais pattern](exists-is-preference-relation-allais.md)

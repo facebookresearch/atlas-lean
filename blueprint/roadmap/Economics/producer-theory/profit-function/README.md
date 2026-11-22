@@ -1,8 +1,8 @@
 # Profit function
 
-- [Profit Fn](profit-fn.md)
-- [Profit Domain](profit-domain.md)
-- [Convex profit Domain](convex-profit-domain.md)
+- [Profit function of a production set](profit-fn.md)
+- [Finite-valued domain of the profit function](profit-domain.md)
+- [The finite-valued domain of the profit function is convex](convex-profit-domain.md)
 - [The profit function is convex](convex-on-profit-fn.md)
-- [Mem profit Domain](mem-profit-domain.md)
-- [Profit Fn eq](profit-fn-eq.md)
+- [Attained maxima lie in the profit function's domain](mem-profit-domain.md)
+- [The profit function equals the attained maximal profit](profit-fn-eq.md)

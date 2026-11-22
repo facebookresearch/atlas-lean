@@ -1,4 +1,4 @@
-# Debt-ratio recurrence (MA07.T02)
+# Debt-ratio recurrence
 
 Under the ratio timing, with
 output growth `Y[t+1] = (1+g) * Y[t]` and the nominal debt law

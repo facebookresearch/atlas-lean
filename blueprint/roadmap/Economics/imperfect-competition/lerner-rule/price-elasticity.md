@@ -1,4 +1,4 @@
-# Price Elasticity
+# Price elasticity from the inverse-demand slope
 
 Price elasticity of demand at output `q` in reciprocal-slope form, from the inverse demand `P`
 and a slope `P'`: `ε = P(q) / (q P')`. The definition imposes no relation between `P'` and `P`;

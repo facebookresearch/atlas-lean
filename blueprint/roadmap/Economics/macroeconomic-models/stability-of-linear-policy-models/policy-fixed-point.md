@@ -1,4 +1,4 @@
-# Policy Fixed Point
+# Candidate fixed point of the affine policy iteration
 
 The candidate fixed point of the affine policy iteration, solved
 explicitly from the triangular system (`x*_2 = c_2 / (1 - d)`, then

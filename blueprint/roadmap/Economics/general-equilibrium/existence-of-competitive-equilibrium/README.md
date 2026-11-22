@@ -2,24 +2,24 @@
 
 ## Exchange Equilibrium Existence
 
-- [Price Simplex](price-simplex.md)
-- [Exchange Economy](exchange-economy.md)
+- [Price simplex of normalized prices](price-simplex.md)
+- [Exchange economy in demand form](exchange-economy.md)
 
 ## Exchange Economy
 
-- [Excess Demand](excess-demand.md)
-- [Is Free Disposal Equilibrium](is-free-disposal-equilibrium.md)
-- [Exists is Free Disposal Equilibrium of brouwer](exists-is-free-disposal-equilibrium-of-b.md)
-- [Exists excess Demand eq zero of brouwer](exists-excess-demand-eq-zero-of-brouwer.md)
+- [Aggregate excess demand](excess-demand.md)
+- [Competitive equilibrium with free disposal](is-free-disposal-equilibrium.md)
+- [Existence of a free-disposal equilibrium, assuming Brouwer](exists-is-free-disposal-equilibrium-of-b.md)
+- [Existence of market-clearing positive prices, assuming Brouwer](exists-excess-demand-eq-zero-of-brouwer.md)
 
 ## Exchange Equilibrium Existence
 
-- [Price Simplex eq range weights](price-simplex-eq-range-weights.md)
-- [Is Compact price Simplex](is-compact-price-simplex.md)
-- [Convex price Simplex](convex-price-simplex.md)
-- [Price Simplex nonempty](price-simplex-nonempty.md)
+- [Price simplex as the standard simplex](price-simplex-eq-range-weights.md)
+- [The price simplex is compact](is-compact-price-simplex.md)
+- [The price simplex is convex](convex-price-simplex.md)
+- [The price simplex is nonempty](price-simplex-nonempty.md)
 
 ## Exchange Economy
 
-- [Exists is Free Disposal Equilibrium](exists-is-free-disposal-equilibrium.md)
-- [Exists excess Demand eq zero](exists-excess-demand-eq-zero.md)
+- [Existence of a free-disposal equilibrium](exists-is-free-disposal-equilibrium.md)
+- [Existence of market-clearing positive prices](exists-excess-demand-eq-zero.md)

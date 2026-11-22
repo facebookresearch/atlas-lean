@@ -1,4 +1,4 @@
-# Linear factor-price relation (FI07.T04)
+# Linear factor-price relation given a pricing vector
 
 In an exact
 factor-spanning model with finite states and factors, given a pricing

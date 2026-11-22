@@ -2,8 +2,8 @@
 
 - [Fisher relation for an arbitrary nominal rate](fisher-relation-iff.md)
 - [Approximation error for an arbitrary nominal rate](fisher-approx-error-of-relation.md)
-- [Fisher Nominal Rate](fisher-nominal-rate.md)
-- [Fisher Gross Nominal](fisher-gross-nominal.md)
-- [The conversion definition satisfies the Fisher relation:](fisher-exact.md)
-- [Approximation error for the converted rate:](fisher-approx-error.md)
+- [Nominal rate implied by the Fisher relation](fisher-nominal-rate.md)
+- [Gross nominal return from real return and inflation](fisher-gross-nominal.md)
+- [The implied nominal rate satisfies the Fisher relation](fisher-exact.md)
+- [Approximation error for the implied nominal rate](fisher-approx-error.md)
 - [Concrete failure of the approximation](fisher-example.md)

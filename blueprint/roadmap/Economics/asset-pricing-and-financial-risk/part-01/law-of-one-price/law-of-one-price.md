@@ -1,4 +1,4 @@
-# Law of one price (FI08.T04)
+# Law of one price given a pricing vector
 
 Given a pricing vector `ψ` that prices
 every asset (`p a = ∑ ω, ψ ω * X a ω`), two portfolios with the same attainable

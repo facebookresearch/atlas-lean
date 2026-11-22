@@ -1,3 +1,3 @@
-# Cobb Douglas Demand nonneg
+# Conditional factor demands are nonnegative
 
 The conditional factor demands are nonnegative.

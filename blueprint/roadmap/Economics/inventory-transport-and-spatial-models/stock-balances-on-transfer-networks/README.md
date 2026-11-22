@@ -1,4 +1,4 @@
 # Stock balances on transfer networks
 
-- [Urban Stock total eq of no external](urban-stock-total-eq-of-no-external.md)
-- [Urban Stock total multiperiod](urban-stock-total-multiperiod.md)
+- [Internal relocation preserves the total stock](urban-stock-total-eq-of-no-external.md)
+- [Multi-period balance of total stock](urban-stock-total-multiperiod.md)

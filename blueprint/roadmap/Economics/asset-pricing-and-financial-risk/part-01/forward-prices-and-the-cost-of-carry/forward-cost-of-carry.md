@@ -1,4 +1,4 @@
-# Forward cost of carry
+# Cost-of-carry forward price from state prices
 
 Replicating a forward with borrowing and the underlying
 yields the cost-of-carry price: if state prices `ψ` price the riskless unit

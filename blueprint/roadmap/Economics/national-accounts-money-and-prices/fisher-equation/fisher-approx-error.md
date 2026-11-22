@@ -1,4 +1,4 @@
-# Approximation error for the converted rate:
+# Approximation error for the implied nominal rate
 
 The additive
 approximation `i ≈ r + π` drops exactly the cross term `r * π`. Derived from

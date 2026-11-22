@@ -1,4 +1,4 @@
-# Labour Elasticity
+# Output elasticity with respect to labour
 
 Output elasticity of the production function `F` with respect to labour:
 `L * F_L / F`, where `F_L = fderiv ℝ F (K, L) (0, 1)` is the partial derivative

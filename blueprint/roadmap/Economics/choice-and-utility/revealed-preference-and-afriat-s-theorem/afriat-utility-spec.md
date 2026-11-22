@@ -1,4 +1,4 @@
-# Afriat Utility spec
+# Afriat's inequalities yield a concave rationalizing utility
 
 Afriat's theorem, (3) ⇒ (4): with strictly positive prices, Afriat's utility built from a
 certificate is locally nonsatiated, continuous, concave and monotone, takes the value `Uⁱ` at

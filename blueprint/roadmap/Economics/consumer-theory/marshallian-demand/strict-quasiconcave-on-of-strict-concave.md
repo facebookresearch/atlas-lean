@@ -1,3 +1,3 @@
-# Strict Quasiconcave On of strict Concave On
+# Strictly concave functions are strictly quasiconcave
 
 A strictly concave function is strictly quasiconcave.

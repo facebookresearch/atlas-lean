@@ -1,4 +1,4 @@
-# Sector Accounts
+# Sector accounts for one period under SNA 2008 conventions
 
 An assumption bundle of sector accounts for one period, in nominal terms, following
 SNA 2008 under the simplifications pinned below. The law fields are hypotheses: a record is a

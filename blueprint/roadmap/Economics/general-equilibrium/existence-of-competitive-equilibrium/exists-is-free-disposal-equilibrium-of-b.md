@@ -1,4 +1,4 @@
-# Exists is Free Disposal Equilibrium of brouwer
+# Existence of a free-disposal equilibrium, assuming Brouwer
 
 Existence of a normalized competitive equilibrium with free disposal (Gale–Nikaido–Debreu),
 derived from Brouwer's theorem on the price simplex: if every consumer's demand is continuous on

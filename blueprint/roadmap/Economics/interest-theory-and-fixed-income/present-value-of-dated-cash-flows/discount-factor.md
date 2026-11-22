@@ -1,4 +1,4 @@
-# Discount Factor
+# Constant-rate discount factor
 
 Constant-rate discount factor `(1 + r)⁻ᵗ` for a payment at integer date `t`
 (source clause: "discount factor at per-period rate `r`"). The financial factor needs a

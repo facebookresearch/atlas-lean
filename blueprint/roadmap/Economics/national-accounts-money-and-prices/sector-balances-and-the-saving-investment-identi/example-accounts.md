@@ -1,4 +1,4 @@
-# Example Accounts
+# Sector accounts of the worked example
 
 Concrete sector accounts: private consumption `C = 70`, gross capital formation `I = 20`
 (private and government), government consumption `G = 15`, `X = 25`, `M = 20`, so `Y = 110`

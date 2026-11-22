@@ -1,4 +1,4 @@
-# Insured Wealth
+# Final wealth under a fairly priced insurance contract
 
 Final wealth in state `x` of an agent with initial wealth `w` who suffers the loss `ℓ x` and
 holds the insurance contract paying the indemnity `I x`, bought at the actuarially fair premium

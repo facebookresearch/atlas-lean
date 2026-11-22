@@ -1,4 +1,4 @@
-# Accelerationist form (MA06.T03)
+# Accelerationist form of the Phillips curve
 
 If the unemployment gap is constant,
 `u (t + 1) - uₙ = g` for every `t`, then inflation falls (or rises) linearly:

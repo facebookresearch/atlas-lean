@@ -1,4 +1,4 @@
-# Locally Nonsatiated
+# Local nonsatiation of a utility function
 
 Local nonsatiation: every bundle has arbitrarily close bundles of strictly higher utility
 (the "nonsatiated" hypothesis of Afriat's theorem, used as local nonsatiation in Varian 1982,

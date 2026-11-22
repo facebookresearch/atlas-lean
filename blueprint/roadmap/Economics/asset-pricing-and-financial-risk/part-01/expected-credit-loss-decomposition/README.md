@@ -1,10 +1,10 @@
 # Expected credit loss decomposition
 
-- [Expected Loss](expected-loss.md)
-- [Default Probability](default-probability.md)
-- [Conditional Expected Loss](conditional-expected-loss.md)
-- [Expected Loss eq default Probability mul conditional Expected Loss](expected-loss-eq-default-probability-mul.md)
-- [Expected Loss](expected-loss-2.md)
-- [Default Probability](default-probability-2.md)
-- [Expected Loss eq default Probability mul cond Expected LGD mul ead](expected-loss-eq-default-probability-mul-2.md)
-- [Expected Loss eq pd mul lgd mul ead](expected-loss-eq-pd-mul-lgd-mul-ead.md)
+- [Expected credit loss on a default event](expected-loss.md)
+- [Probability of the default event](default-probability.md)
+- [Expected loss conditional on default](conditional-expected-loss.md)
+- [Expected loss is PD times the conditional expected loss](expected-loss-eq-default-probability-mul.md)
+- [Expected credit loss in the PD × LGD × EAD setting](expected-loss-2.md)
+- [Default probability in the PD × LGD × EAD setting](default-probability-2.md)
+- [Expected loss as PD times conditional mean LGD times a constant EAD](expected-loss-eq-default-probability-mul-2.md)
+- [Expected loss is PD × LGD × EAD for constant LGD and EAD](expected-loss-eq-pd-mul-lgd-mul-ead.md)

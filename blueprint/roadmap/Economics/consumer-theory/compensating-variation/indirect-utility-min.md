@@ -1,4 +1,4 @@
-# Indirect Utility min
+# Indirect utility for perfect complements
 
 Worked example: the indirect utility of `min x₀ x₁` at positive prices and nonnegative
 wealth is `v(p, w) = w / (p₀ + p₁)`.

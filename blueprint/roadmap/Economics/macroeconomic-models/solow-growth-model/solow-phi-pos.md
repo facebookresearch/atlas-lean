@@ -1,3 +1,3 @@
-# Solow phi pos
+# The Solow map preserves positivity
 
 The Solow map preserves positivity.

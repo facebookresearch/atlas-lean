@@ -1,4 +1,4 @@
-# Exists is Min On target Slice
+# Long-only minimum of a quadratic form is attained
 
 A nonempty long-only target-return slice attains the minimum of the
 quadratic form `w ⬝ᵥ (Sigma *ᵥ w)`. No definiteness hypothesis on `Sigma`

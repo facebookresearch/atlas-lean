@@ -1,4 +1,4 @@
-# Present Value
+# Present value of a finite cash-flow stream
 
 Present value of the finite cash-flow stream `f 0, f 1, …, f (T - 1)` discounted at
 the per-period interest rate `r`: `∑_{t < T} f t / (1 + r) ^ t`. The economic model takes

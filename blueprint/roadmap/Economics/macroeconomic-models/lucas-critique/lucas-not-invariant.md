@@ -1,4 +1,4 @@
-# Two-regime counterexample (MA06.T04, Lucas critique example)
+# Two-regime counterexample to policy invariance
 
 With the same
 structural parameter `θ = 2`, the reduced-form coefficient is `2` under the regime with

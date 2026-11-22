@@ -1,6 +1,6 @@
 # Growing perpetuities
 
-- [Growing Perpetuity Term](growing-perpetuity-term.md)
-- [Growing Perpetuity](growing-perpetuity.md)
-- [Has Sum growing Perpetuity](has-sum-growing-perpetuity.md)
-- [Growing Perpetuity eq](growing-perpetuity-eq.md)
+- [Discounted cash flow of a growing perpetuity](growing-perpetuity-term.md)
+- [Value of a growing perpetuity](growing-perpetuity.md)
+- [Discounted growing-perpetuity flows sum to C₁/(r − g)](has-sum-growing-perpetuity.md)
+- [Gordon formula for the value of a growing perpetuity](growing-perpetuity-eq.md)

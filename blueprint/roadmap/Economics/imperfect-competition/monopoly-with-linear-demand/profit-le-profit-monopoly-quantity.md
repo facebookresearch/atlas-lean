@@ -1,3 +1,3 @@
-# Profit le profit monopoly Quantity
+# The monopoly quantity maximizes profit
 
 The monopoly quantity maximizes profit.

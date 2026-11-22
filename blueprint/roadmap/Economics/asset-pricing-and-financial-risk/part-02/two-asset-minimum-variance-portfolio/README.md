@@ -1,5 +1,5 @@
 # Two-asset minimum-variance portfolio
 
-- [Two Asset Variance](two-asset-variance.md)
-- [Min Variance Weight](min-variance-weight.md)
+- [Variance of a two-asset portfolio](two-asset-variance.md)
+- [Minimum-variance weight formula for two assets](min-variance-weight.md)
 - [The unconstrained two-asset minimum-variance weight](min-variance-weight-is-minimizer.md)

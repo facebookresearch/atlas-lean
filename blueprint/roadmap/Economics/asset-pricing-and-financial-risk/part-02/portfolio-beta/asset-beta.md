@@ -1,4 +1,4 @@
-# Asset Beta
+# Beta of a return relative to the market return
 
 The formal beta ratio `cov[X, Y; μ] / Var[Y; μ]` of return `X` against
 market return `Y` under `μ`. This is only a totalized expression: `μ` is an

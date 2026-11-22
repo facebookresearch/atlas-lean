@@ -1,4 +1,4 @@
 # Debt tax shield
 
-- [Tax Shield Value](tax-shield-value.md)
+- [Present value of interest tax shields on perpetual debt](tax-shield-value.md)
 - [Perpetual riskless-debt tax shield](perpetual-tax-shield-value.md)

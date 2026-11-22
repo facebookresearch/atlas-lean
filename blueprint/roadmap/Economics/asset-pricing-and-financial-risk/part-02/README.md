@@ -12,4 +12,4 @@
 - [Two-asset minimum-variance portfolio](two-asset-minimum-variance-portfolio/README.md)
 - [Value at risk](value-at-risk/README.md)
 - [Black–Scholes zero-volatility limit](tendsto-black-scholes-call-zero-vol.md)
-- [Hansen--Jagannathan bound](hansen-jagannathan-bound.md)
+- [Hansen–Jagannathan bound](hansen-jagannathan-bound.md)

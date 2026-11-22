@@ -1,4 +1,4 @@
-# Transfer
+# Income transfer between two individuals
 
 Transfer of the amount `δ` from individual `j` to individual `i`; all other incomes are
 unchanged. Meant for distinct `i ≠ j`: for `i = j` the second

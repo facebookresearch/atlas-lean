@@ -1,4 +1,4 @@
-# Is Admissible
+# Admissible strategy with no net exposure at maturity
 
 A strategy is admissible when trade sizes are nonnegative and it is hedged: the net
 underlying exposure at maturity, `buy - sell + fwd`, is zero, so its payoff does not depend on

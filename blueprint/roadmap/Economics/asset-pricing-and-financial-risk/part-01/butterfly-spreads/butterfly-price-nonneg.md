@@ -1,4 +1,4 @@
-# Butterfly Price nonneg
+# Nonnegative butterfly price under positive state prices
 
 A nonnegative butterfly payoff has nonnegative price under positive state
 pricing: with strictly positive state prices `psi`, the state-price-weighted

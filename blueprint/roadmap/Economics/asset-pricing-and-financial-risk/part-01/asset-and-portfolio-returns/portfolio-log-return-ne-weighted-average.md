@@ -1,4 +1,4 @@
-# Portfolio log return is not the weighted average of component log returns
+# Log returns do not aggregate linearly across assets
 
 **Portfolio log return is not the weighted average of component log
 returns.** Explicit two-asset counterexample: equal

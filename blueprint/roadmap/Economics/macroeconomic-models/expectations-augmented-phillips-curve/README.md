@@ -1,7 +1,7 @@
 # Expectations-augmented Phillips curve
 
-- [Adaptive Expectations](adaptive-expectations.md)
-- [Is Phillips Curve](is-phillips-curve.md)
-- [Phillips-curve recurrence (MA06.T03)](phillips-recurrence.md)
-- [Natural rate (MA06.T03)](phillips-natural-rate.md)
-- [Accelerationist form (MA06.T03)](phillips-acceleration.md)
+- [Adaptive inflation expectations](adaptive-expectations.md)
+- [Phillips curve linking inflation to the unemployment gap](is-phillips-curve.md)
+- [Phillips-curve recurrence for inflation](phillips-recurrence.md)
+- [Inflation is constant at the natural rate of unemployment](phillips-natural-rate.md)
+- [Accelerationist form of the Phillips curve](phillips-acceleration.md)

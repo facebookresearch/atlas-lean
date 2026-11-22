@@ -2,14 +2,14 @@
 
 ## Accounting
 
-- [Working Capital Data](working-capital-data.md)
+- [Working-capital data for one period](working-capital-data.md)
 
 ## Working Capital Data
 
-- [Inventory Turnover](inventory-turnover.md)
-- [Receivables Turnover](receivables-turnover.md)
-- [Payables Turnover](payables-turnover.md)
-- [Inventory Conversion Period](inventory-conversion-period.md)
-- [Receivables Collection Period](receivables-collection-period.md)
-- [Payables Deferral Period](payables-deferral-period.md)
-- [Cash Conversion Cycle](cash-conversion-cycle.md)
+- [Inventory turnover ratio](inventory-turnover.md)
+- [Accounts receivable turnover ratio](receivables-turnover.md)
+- [Accounts payable turnover ratio](payables-turnover.md)
+- [Inventory conversion period in days](inventory-conversion-period.md)
+- [Receivables collection period in days](receivables-collection-period.md)
+- [Payables deferral period in days](payables-deferral-period.md)
+- [Cash conversion cycle as DIO plus DSO minus DPO](cash-conversion-cycle.md)

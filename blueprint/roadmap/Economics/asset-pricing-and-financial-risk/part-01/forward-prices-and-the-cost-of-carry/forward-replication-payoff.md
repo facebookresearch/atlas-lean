@@ -1,4 +1,4 @@
-# Forward replication payoff
+# Cash-and-carry replicates the forward payoff
 
 Replication identity: cash-and-carry (long one unit of the underlying, which pays
 terminal spot `S ω` plus known terminal income `inc`, and borrow `S0` at gross rate

@@ -1,4 +1,4 @@
-# Borrowing Feasible
+# Feasible consumption under a borrowing limit
 
 Feasible period-0 consumptions under the borrowing limit `b`: consumption is
 nonnegative in both periods and savings satisfy `y₀ - c₀ ≥ -b`, i.e. the

@@ -1,8 +1,8 @@
 # Ordinal utility representation
 
-- [Utility Choice](utility-choice.md)
-- [Comp strict Mono](comp-strict-mono.md)
-- [Utility Choice comp strict Mono](utility-choice-comp-strict-mono.md)
-- [Choice eq utility Choice](choice-eq-utility-choice.md)
-- [Represents](represents.md)
-- [Exists represents](exists-represents.md)
+- [Utility-maximizing choice from a menu](utility-choice.md)
+- [Ordinal invariance of utility representations](comp-strict-mono.md)
+- [Ordinal invariance of utility-maximizing choice](utility-choice-comp-strict-mono.md)
+- [Choice from a represented preference maximizes utility](choice-eq-utility-choice.md)
+- [Utility representation of a preference](represents.md)
+- [Rational preferences on finite sets have utility representations](exists-represents.md)

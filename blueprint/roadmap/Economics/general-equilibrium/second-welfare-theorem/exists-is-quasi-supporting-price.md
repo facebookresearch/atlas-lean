@@ -1,4 +1,4 @@
-# Exists is Quasi Supporting Price
+# Supporting prices for a Pareto optimum
 
 Supporting prices for a Pareto optimum (MWG Prop. 16.D.1, exchange economy, with continuous
 utilities): a Pareto optimal allocation of an exchange economy with continuous, quasiconcave,

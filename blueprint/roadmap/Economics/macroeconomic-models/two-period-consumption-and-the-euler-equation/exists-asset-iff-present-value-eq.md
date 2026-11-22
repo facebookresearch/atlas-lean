@@ -1,4 +1,4 @@
-# Exists asset iff present Value eq
+# Financing by an asset iff the present-value budget holds
 
 Eliminating the asset holding: a two-date consumption plan `c` is financed by
 some asset holding `a` (date-0 budget `c 0 + a = y 0`, date-1 budget

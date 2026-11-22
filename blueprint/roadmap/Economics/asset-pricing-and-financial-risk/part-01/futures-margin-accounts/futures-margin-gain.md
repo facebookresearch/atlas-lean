@@ -1,4 +1,4 @@
-# Futures Margin Gain
+# Cumulative variation-margin gain of a futures position
 
 Cumulative zero-interest variation-margin gain over `n` settlements for a
 futures position with contract multiplier `multiplier` and futures prices

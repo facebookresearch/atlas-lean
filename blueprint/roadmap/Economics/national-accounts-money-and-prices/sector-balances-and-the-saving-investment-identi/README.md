@@ -1,6 +1,6 @@
 # Sector balances and the saving–investment identity
 
-- [Sector Accounts](sector-accounts.md)
+- [Sector accounts for one period under SNA 2008 conventions](sector-accounts.md)
 - [Saving-investment balance](saving-investment-balance.md)
-- [Example Accounts](example-accounts.md)
-- [Sector Accounts example](sector-accounts-example.md)
+- [Sector accounts of the worked example](example-accounts.md)
+- [Worked example satisfies the GDP and saving–investment identities](sector-accounts-example.md)

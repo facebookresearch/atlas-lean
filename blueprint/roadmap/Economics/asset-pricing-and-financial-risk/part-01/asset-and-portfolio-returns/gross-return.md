@@ -1,4 +1,4 @@
-# Gross Return
+# Gross return over one period
 
 Simple gross return over one period: terminal price divided by initial price.
 A zero terminal price is a valid total loss, `grossReturn 100 0 = 0`. Total: at

@@ -1,10 +1,10 @@
 # Cobb–Douglas cost function
 
-- [Cobb Douglas](cobb-douglas.md)
-- [Cobb Douglas Cost](cobb-douglas-cost.md)
-- [Cobb Douglas Demand](cobb-douglas-demand.md)
-- [Cobb Douglas Cost le dot Product](cobb-douglas-cost-le-dot-product.md)
-- [Cobb Douglas Demand nonneg](cobb-douglas-demand-nonneg.md)
-- [Cobb Douglas cobb Douglas Demand](cobb-douglas-cobb-douglas-demand.md)
-- [Dot Product cobb Douglas Demand](dot-product-cobb-douglas-demand.md)
+- [Cobb–Douglas production function](cobb-douglas.md)
+- [Closed-form Cobb–Douglas cost expression](cobb-douglas-cost.md)
+- [Cobb–Douglas conditional factor demand](cobb-douglas-demand.md)
+- [No feasible bundle costs less than the closed-form cost](cobb-douglas-cost-le-dot-product.md)
+- [Conditional factor demands are nonnegative](cobb-douglas-demand-nonneg.md)
+- [Conditional factor demands produce the target output](cobb-douglas-cobb-douglas-demand.md)
+- [Conditional factor demands attain the closed-form cost](dot-product-cobb-douglas-demand.md)
 - [Cobb–Douglas cost formula](is-least-cobb-douglas-cost.md)

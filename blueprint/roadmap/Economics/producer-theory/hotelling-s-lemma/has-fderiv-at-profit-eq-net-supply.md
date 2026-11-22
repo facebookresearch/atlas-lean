@@ -1,4 +1,4 @@
-# Hotelling's lemma
+# Hotelling's lemma in supremum form
 
 Let `π` be the profit function of the production
 set `Y` on a neighborhood of `p₀` (the supremum of `p ⬝ᵥ y` over `y ∈ Y`), and

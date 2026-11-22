@@ -1,4 +1,4 @@
-# Retention Price eq growing Perpetuity
+# Retention price is the value of a growing perpetuity
 
 `retentionPrice` is the value of the growing perpetuity that pays the
 reinvestment-model dividend `E₁ * (1 - b)` growing at `retentionGrowth b ROE`, under the

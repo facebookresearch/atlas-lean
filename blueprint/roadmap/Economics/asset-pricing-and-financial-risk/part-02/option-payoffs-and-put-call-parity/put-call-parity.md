@@ -1,4 +1,4 @@
-# Put Call Parity
+# Put–call parity for an additive pricing functional
 
 Put-call parity for replicable European claims. `price` is an additive
 pricing functional on terminal payoffs (functions of the terminal underlying

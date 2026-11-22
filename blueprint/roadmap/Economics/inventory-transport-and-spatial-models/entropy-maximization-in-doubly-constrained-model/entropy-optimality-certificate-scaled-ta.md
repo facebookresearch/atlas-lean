@@ -1,4 +1,4 @@
-# Entropy optimality certificate scaled Table
+# The Sinkhorn-scaled table minimizes relative entropy
 
 The certificate for the canonical scaled table
 `SinkhornMargins.scaledTable`: for positive `K`, `a`, `b`, every

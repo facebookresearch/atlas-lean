@@ -1,4 +1,4 @@
-# Retrospective Balance
+# Retrospective balance of a level-payment loan
 
 Retrospective loan balance after `k` level payments `P` made at the ends of
 periods `1, …, k` on a loan `L` at per-period rate `r`: the loan accumulated to

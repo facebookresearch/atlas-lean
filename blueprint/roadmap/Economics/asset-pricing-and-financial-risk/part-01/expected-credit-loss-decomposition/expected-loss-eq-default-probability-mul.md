@@ -1,4 +1,4 @@
-# Expected Loss eq default Probability mul conditional Expected Loss
+# Expected loss is PD times the conditional expected loss
 
 Expected-loss decomposition: expected loss equals the
 probability of default times the expected exposure-times-loss-given-default

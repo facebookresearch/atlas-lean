@@ -1,4 +1,4 @@
-# Weighted Value debt Payoff add european Call Payoff
+# Weighted values of debt and equity sum to the firm value
 
 Weighted-sum additivity for the split of a firm into debt (face `F`) and equity: for any
 weights `ψ`, the weighted values of the debt and equity payoffs add up to the weighted value of

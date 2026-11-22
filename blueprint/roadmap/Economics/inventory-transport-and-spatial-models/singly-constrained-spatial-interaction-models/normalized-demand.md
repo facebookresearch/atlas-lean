@@ -1,4 +1,4 @@
-# Normalized Demand
+# Singly constrained flow to a destination
 
 Singly constrained demand row entry: origin total `O` distributed by
 nonnegative weights `w` over destination set `s`:

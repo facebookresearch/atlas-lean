@@ -1,4 +1,4 @@
-# Euler equation
+# Consumption Euler equation at an interior optimum
 
 Consumption Euler equation: an interior maximizer of lifetime utility over
 the feasible set, with `u` differentiable at both consumption levels, satisfies

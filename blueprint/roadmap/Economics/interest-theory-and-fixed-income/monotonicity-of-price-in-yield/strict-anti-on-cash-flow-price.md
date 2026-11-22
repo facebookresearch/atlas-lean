@@ -1,4 +1,4 @@
-# Strict Anti On cash Flow Price
+# Price of nonnegative cash flows strictly decreases in the yield
 
 With nonnegative payments and at least one positive payment at a date
 `t ≥ 1`, the price is strictly decreasing in the yield on `(-1, ∞)`.

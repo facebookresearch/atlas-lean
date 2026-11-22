@@ -1,4 +1,4 @@
-# Is Unit gram iff
+# Constraint Gram matrix is invertible iff not all means are equal
 
 Under a positive definite covariance, the Gram matrix `Mᵀ S⁻¹ M` of the two constraints is
 invertible iff the budget and mean constraints are independent, i.e. the mean vector `μ` is not

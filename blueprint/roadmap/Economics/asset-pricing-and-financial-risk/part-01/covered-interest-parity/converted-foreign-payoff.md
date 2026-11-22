@@ -1,4 +1,4 @@
-# Converted Foreign Payoff
+# Domestic-currency payoff of a covered foreign investment
 
 Terminal domestic payoff of the covered foreign strategy: convert one unit of
 domestic currency to `1 / spot` units of foreign currency, invest at the foreign

@@ -1,3 +1,3 @@
-# Is Equilibrium iff excess Demand eq zero
+# Equilibrium means zero excess demand
 
 Equilibrium is zero excess demand.

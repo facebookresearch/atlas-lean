@@ -1,11 +1,11 @@
 # Mean–variance frontier
 
-- [Constraint Matrix](constraint-matrix.md)
-- [Is Feasible](is-feasible.md)
-- [Min Variance Portfolio](min-variance-portfolio.md)
-- [Is Unit gram iff](is-unit-gram-iff.md)
-- [Min Variance Portfolio is Feasible](min-variance-portfolio-is-feasible.md)
-- [Portfolio Variance min Variance Portfolio le](portfolio-variance-min-variance-portfoli.md)
-- [Eq min Variance Portfolio of portfolio Variance le](eq-min-variance-portfolio-of-portfolio-v.md)
+- [Constraint matrix of the Markowitz problem](constraint-matrix.md)
+- [Feasible portfolio for a target expected return](is-feasible.md)
+- [Minimum-variance portfolio for a target return](min-variance-portfolio.md)
+- [Constraint Gram matrix is invertible iff not all means are equal](is-unit-gram-iff.md)
+- [Minimum-variance portfolio is feasible](min-variance-portfolio-is-feasible.md)
+- [Optimality of the minimum-variance portfolio](portfolio-variance-min-variance-portfoli.md)
+- [No other feasible portfolio attains the minimum variance](eq-min-variance-portfolio-of-portfolio-v.md)
 - [Unique minimum-variance portfolio](exists-unique-min-variance.md)
 - [Mean-variance frontier in closed form](portfolio-variance-min-variance-portfoli-2.md)

@@ -1,4 +1,4 @@
-# Has Deriv At black Scholes Call sigma
+# Vega is the volatility derivative of the call price
 
 Vega: the derivative of the Black-Scholes call price with
 respect to `σ` is `S0 φ(d₁) √T`. Chain rule: `d₂ = d₁ - σ √T`, so its

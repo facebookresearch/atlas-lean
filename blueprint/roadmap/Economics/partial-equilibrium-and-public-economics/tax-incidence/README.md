@@ -2,4 +2,4 @@
 
 - [Seller-price incidence](has-deriv-at-seller-price.md)
 - [Buyer-price incidence](has-deriv-at-buyer-price.md)
-- [Buyer Share mem Icc](buyer-share-mem-icc.md)
+- [Buyers' share of a small tax lies between 0 and 1](buyer-share-mem-icc.md)

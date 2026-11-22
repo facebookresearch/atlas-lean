@@ -1,4 +1,4 @@
-# Debt Payoff
+# Risky-debt payoff at maturity
 
 Risky-debt payoff `min V F` at terminal firm value `V` and face value `F`: debt holders are
 paid in full when the firm can pay, and take the whole firm otherwise. This reading needs

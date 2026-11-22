@@ -1,4 +1,4 @@
-# Butterfly Payoff nonneg
+# Butterfly payoff is nonnegative when K₁ + K₃ ≤ 2K₂
 
 A butterfly payoff is nonnegative when `K1 ≤ K2 ≤ K3` and
 `K1 + K3 ≤ 2 * K2`. Under the ordering, the inequality is also necessary for

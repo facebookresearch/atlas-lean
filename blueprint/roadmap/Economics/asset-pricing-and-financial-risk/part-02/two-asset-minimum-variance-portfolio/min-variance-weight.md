@@ -1,4 +1,4 @@
-# Min Variance Weight
+# Minimum-variance weight formula for two assets
 
 The unconstrained (in `w ∈ ℝ`, with the budget constraint built into the
 `(w, 1 - w)` parametrization) two-asset minimum-variance weight

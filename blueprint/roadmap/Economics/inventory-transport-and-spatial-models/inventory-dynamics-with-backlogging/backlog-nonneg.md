@@ -1,3 +1,3 @@
-# Backlog nonneg
+# Backlog is nonnegative
 
 Backlog nonnegativity.

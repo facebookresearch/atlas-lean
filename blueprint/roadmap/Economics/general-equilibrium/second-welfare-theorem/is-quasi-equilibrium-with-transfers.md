@@ -1,4 +1,4 @@
-# Is Quasi Equilibrium With Transfers
+# Price quasi-equilibrium with transfers
 
 `(x, p)` is a price quasi-equilibrium with transfers for the aggregate endowment `ω`
 (MWG Def. 16.D.1, exchange economy): `p ≠ 0`, the allocation is feasible, and every nonnegative

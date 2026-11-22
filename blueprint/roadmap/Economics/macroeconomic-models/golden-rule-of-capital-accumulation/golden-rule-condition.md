@@ -1,4 +1,4 @@
-# Golden rule
+# Golden-rule condition on the marginal product
 
 Let `k` be a feasible steady state with saving rate `s₀` whose consumption
 `(1 - s₀) * f k` is at least the consumption `(1 - s) * f x` of every feasible steady state

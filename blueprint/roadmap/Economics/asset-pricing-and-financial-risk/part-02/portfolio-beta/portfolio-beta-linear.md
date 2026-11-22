@@ -1,4 +1,4 @@
-# Portfolio beta is linear in portfolio weights (FI07.T01)
+# Portfolio beta is linear in portfolio weights
 
 When the market
 variance is positive, the beta of the portfolio return `∑ i, w i * R i ω` is the

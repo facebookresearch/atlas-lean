@@ -1,4 +1,4 @@
-# Finite-horizon government budget identity (MA07.T01), raw division form
+# Finite-horizon government budget identity, raw division form
 
 The
 present-value identity `governmentBudgetIdentity_presentValue` with the discount factors

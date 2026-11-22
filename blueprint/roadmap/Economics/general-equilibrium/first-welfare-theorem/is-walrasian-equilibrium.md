@@ -1,4 +1,4 @@
-# Is Walrasian Equilibrium
+# Walrasian equilibrium of an exchange economy
 
 `(p, x)` is a Walrasian equilibrium: prices are nonnegative and not all
 zero, `x` is feasible, every positive-price good clears, and each agent's bundle

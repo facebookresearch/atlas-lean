@@ -1,4 +1,4 @@
-# Value With Education
+# Lifetime value with education
 
 Lifetime value of the education path: present value of the wage stream `wE` earned with
 education (zero, or a reduced wage, in schooling periods, so forgone earnings are inside

@@ -1,6 +1,6 @@
 # Butterfly spreads
 
-- [Butterfly Payoff](butterfly-payoff.md)
-- [Butterfly Payoff nonneg](butterfly-payoff-nonneg.md)
-- [Butterfly Price nonneg](butterfly-price-nonneg.md)
-- [Butterfly Payoff example](butterfly-payoff-example.md)
+- [Payoff of a long butterfly spread](butterfly-payoff.md)
+- [Butterfly payoff is nonnegative when K₁ + K₃ ≤ 2K₂](butterfly-payoff-nonneg.md)
+- [Nonnegative butterfly price under positive state prices](butterfly-price-nonneg.md)
+- [Numerical example of a nonnegative butterfly payoff](butterfly-payoff-example.md)

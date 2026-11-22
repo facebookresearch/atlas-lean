@@ -1,3 +1,3 @@
-# Prod Weights nonneg
+# Product weights are nonnegative
 
 The product weights are nonnegative.

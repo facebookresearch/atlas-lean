@@ -1,4 +1,4 @@
-# Linear factor-price relation under no arbitrage (FI07.T04, unconditional claim)
+# Linear factor-price relation under no arbitrage
 
 **Linear factor-price relation under no arbitrage.** In a finite exact factor-spanning model with no arbitrage on funded
 gains, there is a state-price vector `ψ` with

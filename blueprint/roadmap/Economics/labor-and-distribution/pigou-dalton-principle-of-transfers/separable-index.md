@@ -1,4 +1,4 @@
-# Separable Index
+# Additively separable inequality index
 
 Additively separable inequality index `(∑ i, φ (x i)) / n` of the income distribution
 `x` over the population `ι` (`n = card ι`), for a convex evaluation function `φ`. At a fixed

@@ -1,4 +1,4 @@
-# Keynesian multiplier (MA06.T01)
+# Equilibrium output and the Keynesian multiplier
 
 If `0 ≤ c < 1` and `Y` satisfies the
 Keynesian-cross equilibrium condition, then `Y = A / (1 - c)`. The multiplier is

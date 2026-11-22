@@ -1,5 +1,5 @@
 # Foster–Greer–Thorbecke poverty measures
 
-- [Fgt Term](fgt-term.md)
-- [Fgt](fgt.md)
+- [Individual contribution to the FGT measure](fgt-term.md)
+- [Foster–Greer–Thorbecke measure of a population](fgt.md)
 - [Subgroup decomposability of FGT](fgt-eq-sum-groups.md)

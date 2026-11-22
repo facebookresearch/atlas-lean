@@ -1,7 +1,7 @@
 # Long-only minimum-variance portfolios
 
-- [Target Slice](target-slice.md)
-- [Exists is Min On target Slice](exists-is-min-on-target-slice.md)
-- [Exists is Min On target Slice covariance](exists-is-min-on-target-slice-covariance.md)
-- [Exists is Min On cov Matrix target Slice](exists-is-min-on-cov-matrix-target-slice.md)
-- [Long-only minimum-variance portfolios](exists-unique-is-min-on-target-slice-of.md)
+- [Long-only portfolios with a given expected return](target-slice.md)
+- [Long-only minimum of a quadratic form is attained](exists-is-min-on-target-slice.md)
+- [Long-only minimum variance is attained, covariance form](exists-is-min-on-target-slice-covariance.md)
+- [Long-only minimum variance is attained, matrix form](exists-is-min-on-cov-matrix-target-slice.md)
+- [Positive definite covariance gives a unique long-only optimum](exists-unique-is-min-on-target-slice-of.md)

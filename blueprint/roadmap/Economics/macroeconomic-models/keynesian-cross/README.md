@@ -1,5 +1,5 @@
 # Keynesian cross
 
-- [Is Keynesian Equilibrium](is-keynesian-equilibrium.md)
-- [Keynesian multiplier (MA06.T01)](keynesian-cross-solution.md)
-- [Multiplier form (MA06.T01)](keynesian-cross-multiplier.md)
+- [Keynesian-cross equilibrium condition](is-keynesian-equilibrium.md)
+- [Equilibrium output and the Keynesian multiplier](keynesian-cross-solution.md)
+- [Multiplier form of equilibrium output changes](keynesian-cross-multiplier.md)

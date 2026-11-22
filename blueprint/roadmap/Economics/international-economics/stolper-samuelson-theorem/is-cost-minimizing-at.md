@@ -1,4 +1,4 @@
-# Is Cost Minimizing At
+# Unit-cost minimization at given factor prices
 
 Unit-cost minimization at factor prices `x₀ = (w₀, r₀)`: `c` is the minimum
 cost of producing one unit at factor prices `x = (w, r)`, and the unit input

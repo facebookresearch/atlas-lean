@@ -1,4 +1,4 @@
-# Hansen--Jagannathan bound
+# Hansen–Jagannathan bound
 
 If the excess return is priced at zero by the SDF
 (`E_P[m * Rᵉ] = 0`), the mean SDF is positive and the excess-return variance is nonzero, then

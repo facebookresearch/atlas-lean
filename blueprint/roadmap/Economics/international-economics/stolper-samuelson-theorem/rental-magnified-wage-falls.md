@@ -1,4 +1,4 @@
-# Rental magnified wage falls
+# Magnification effect for the capital-intensive good
 
 Stolper–Samuelson, response to the price of the capital-intensive good 2:
 the rental rate rises more than proportionally (`(p₂ / r) ∂r/∂p₂ > 1`) and the

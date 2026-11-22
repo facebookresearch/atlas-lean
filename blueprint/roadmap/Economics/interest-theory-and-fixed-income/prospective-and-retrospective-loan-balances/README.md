@@ -1,5 +1,5 @@
 # Prospective and retrospective loan balances
 
-- [Retrospective Balance](retrospective-balance.md)
-- [Prospective Balance](prospective-balance.md)
-- [Retrospective Balance eq prospective Balance](retrospective-balance-eq-prospective-bal.md)
+- [Retrospective balance of a level-payment loan](retrospective-balance.md)
+- [Prospective balance of a level-payment loan](prospective-balance.md)
+- [Retrospective and prospective loan balances agree](retrospective-balance-eq-prospective-bal.md)

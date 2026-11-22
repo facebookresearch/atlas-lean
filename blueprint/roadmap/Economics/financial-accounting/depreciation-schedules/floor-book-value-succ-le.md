@@ -1,4 +1,4 @@
-# Floor Book Value succ le
+# Book value never increases under nonnegative charges
 
 With charges that are nonnegative at every book value at or above salvage (and a start at
 or above salvage), book value never increases. This covers declining-balance rules such as

@@ -1,4 +1,4 @@
 # Monotonicity of price in yield
 
-- [Cash Flow Price](cash-flow-price.md)
-- [Strict Anti On cash Flow Price](strict-anti-on-cash-flow-price.md)
+- [Price of a cash-flow stream at a common yield](cash-flow-price.md)
+- [Price of nonnegative cash flows strictly decreases in the yield](strict-anti-on-cash-flow-price.md)

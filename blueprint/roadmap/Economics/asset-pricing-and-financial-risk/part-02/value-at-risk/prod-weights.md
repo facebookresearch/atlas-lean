@@ -1,4 +1,4 @@
-# Prod Weights
+# Product weights of two independent losses
 
 The product weights of two independent losses: each loss is 100 with probability 0.04
 and 0 with probability 0.96, independently (source clause: "two independent losses of 100

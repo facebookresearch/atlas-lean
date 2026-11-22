@@ -1,4 +1,4 @@
-# Beta
+# Beta of an asset relative to a portfolio
 
 The beta `(S w_M)_i / (w_Mᵀ S w_M)` of asset `i` with respect to the portfolio `w_M`: the
 covariance of asset `i`'s return with the portfolio return divided by the portfolio variance,

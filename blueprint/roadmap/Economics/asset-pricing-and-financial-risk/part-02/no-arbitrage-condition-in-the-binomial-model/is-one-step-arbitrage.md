@@ -1,4 +1,4 @@
-# Is One Step Arbitrage
+# One-step arbitrage in the binomial model
 
 A one-step arbitrage in the bond/stock model: holdings `Δ` shares of stock and `B` units
 of the bond (bond price `1` today, `R` at expiry; stock price `S₀` today, `u * S₀` in the

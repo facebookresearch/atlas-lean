@@ -1,4 +1,4 @@
-# Eq of euler of discount mul gross eq one
+# Euler equation with β(1 + r) = 1 equalizes consumption
 
 Consumption equalization from the Euler equation: if `u'(c₀) = β (1 + r) u'(c₁)`
 with `β (1 + r) = 1` and marginal utility `u'` strictly decreasing on positive

@@ -1,10 +1,10 @@
 # Cost function
 
-- [Cost Fn](cost-fn.md)
-- [Cost Domain](cost-domain.md)
-- [Convex cost Domain](convex-cost-domain.md)
+- [Cost function of an input requirement set](cost-fn.md)
+- [Finite-valued domain of the cost function](cost-domain.md)
+- [The finite-valued domain of the cost function is convex](convex-cost-domain.md)
 - [The cost function is concave](concave-on-cost-fn.md)
 - [The cost function is homogeneous of degree one](cost-fn-smul.md)
-- [Nonneg subset cost Domain](nonneg-subset-cost-domain.md)
-- [Concave On cost Fn nonneg](concave-on-cost-fn-nonneg.md)
-- [Cost Fn eq of is Least](cost-fn-eq-of-is-least.md)
+- [Nonnegative prices lie in the cost function's domain](nonneg-subset-cost-domain.md)
+- [The cost function is concave on nonnegative prices](concave-on-cost-fn-nonneg.md)
+- [The cost function equals an attained minimum cost](cost-fn-eq-of-is-least.md)

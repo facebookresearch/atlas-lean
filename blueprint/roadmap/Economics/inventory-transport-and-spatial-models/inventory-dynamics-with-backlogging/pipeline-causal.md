@@ -1,4 +1,4 @@
-# Pipeline causal
+# The pipeline depends only on past orders
 
 Causal meaning for `L > 0`: the pipeline at `t` never depends on orders
 placed at `t` or later. Two order streams agreeing on all `s < t` give equal

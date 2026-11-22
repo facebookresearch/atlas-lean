@@ -1,4 +1,4 @@
-# Growth accounting
+# Output growth decomposes into TFP and factor growth
 
 For `Y = A * F(K, L)` with all paths differentiable at
 `t` and `F` differentiable at `(K t, L t)` (derivative `F'`), the growth rate of

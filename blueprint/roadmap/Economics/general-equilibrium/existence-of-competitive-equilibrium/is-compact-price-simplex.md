@@ -1,3 +1,3 @@
-# Is Compact price Simplex
+# The price simplex is compact
 
 The price simplex is compact.

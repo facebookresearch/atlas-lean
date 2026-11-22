@@ -1,4 +1,4 @@
-# Crowding out
+# A higher deficit lowers equilibrium investment
 
 For `s1 > 0`, `i1 > 0`, a higher government deficit
 lowers equilibrium investment: `D₁ < D₂` implies `I(r*(D₂)) < I(r*(D₁))`

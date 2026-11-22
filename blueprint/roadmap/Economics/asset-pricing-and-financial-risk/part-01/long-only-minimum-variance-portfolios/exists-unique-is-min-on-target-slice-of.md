@@ -1,4 +1,4 @@
-# Long-only minimum-variance portfolios
+# Positive definite covariance gives a unique long-only optimum
 
 Positivity specialization: if `Sigma` is positive definite, the
 distinct-pair positivity hypothesis of

@@ -1,4 +1,4 @@
-# A self-financing one-period portfolio return is the initial-value-weighted average of the asset returns
+# Portfolio return as the value-weighted average of asset returns
 
 **A self-financing one-period portfolio return is the initial-value-weighted
 average of the asset returns** when initial wealth is nonzero (and every initial

@@ -1,9 +1,9 @@
 # Duration and convexity
 
-- [Has Deriv At present Value discount Factor](has-deriv-at-present-value-discount-fact.md)
-- [Convex On present Value discount Factor](convex-on-present-value-discount-factor.md)
+- [Derivative of present value in the yield](has-deriv-at-present-value-discount-fact.md)
+- [Present value is convex in the yield for nonnegative cash flows](convex-on-present-value-discount-factor.md)
 - [Convexity beats the tangent-line duration approximation](present-value-discount-factor-ge-tangent.md)
-- [Macaulay Duration](macaulay-duration.md)
-- [Modified Duration](modified-duration.md)
-- [Has Deriv At cash Flow Price](has-deriv-at-cash-flow-price.md)
-- [Deriv cash Flow Price eq neg modified Duration mul](deriv-cash-flow-price-eq-neg-modified-du.md)
+- [Macaulay duration of a cash-flow stream](macaulay-duration.md)
+- [Modified duration of a cash-flow stream](modified-duration.md)
+- [Termwise derivative of a cash-flow price in the yield](has-deriv-at-cash-flow-price.md)
+- [Price derivative is minus modified duration times price](deriv-cash-flow-price-eq-neg-modified-du.md)

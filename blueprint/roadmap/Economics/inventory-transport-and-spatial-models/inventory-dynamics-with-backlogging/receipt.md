@@ -1,4 +1,4 @@
-# Receipt
+# Scheduled receipt in a period
 
 Scheduled receipt at period `t`.
 

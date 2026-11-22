@@ -1,4 +1,4 @@
-# Is Bertrand Nash
+# Nash equilibrium of the Bertrand pricing game
 
 A price profile is a (pure-strategy) Nash equilibrium of the Bertrand pricing game when no
 firm can raise its profit by a unilateral price change. This is the no-profitable-deviation

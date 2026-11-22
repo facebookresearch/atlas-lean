@@ -1,4 +1,4 @@
-# Expected Utility
+# Investor's two-period utility from an asset position
 
 Objective of an investor who buys `ξ` units of an asset with date-0 price `p` and
 date-1 payoff `X ω` in state `ω`: date-0 consumption is `e0 - ξ * p`, date-1 consumption in

@@ -1,4 +1,4 @@
-# Is Balanced
+# Balanced journal entry
 
 A journal entry `e : α → ℝ` over the chart `α`, written as signed postings in the
 debit-positive convention (a debit of `x` to account `a` is `e a = x`, a credit is

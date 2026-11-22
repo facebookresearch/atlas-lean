@@ -1,4 +1,4 @@
-# Dividend Total
+# Shareholder wealth after a cash dividend
 
 Total shareholder wealth under a cash dividend: the cash `C` paid out plus the
 ex-dividend market value, with the ex-dividend price taken to be `P - C / N`. This price

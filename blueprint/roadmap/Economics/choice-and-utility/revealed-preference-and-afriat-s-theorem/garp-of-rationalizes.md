@@ -1,4 +1,4 @@
-# Garp of rationalizes
+# Data rationalized by a locally nonsatiated utility satisfy GARP
 
 Afriat's theorem, (1) ⇒ (2): data rationalized by a locally nonsatiated utility function
 satisfy GARP.

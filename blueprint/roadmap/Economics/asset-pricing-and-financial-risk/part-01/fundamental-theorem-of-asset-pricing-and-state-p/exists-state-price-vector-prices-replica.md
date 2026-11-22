@@ -1,4 +1,4 @@
-# State-price vector and replication pricing (FI08.T02)
+# State-price vector and replication pricing
 
 Under no arbitrage on
 funded gains, `ψ = q / R` is strictly positive, sums to `1 / R`, and prices every

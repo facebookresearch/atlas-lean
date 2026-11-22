@@ -1,6 +1,6 @@
 # Singly constrained spatial interaction models
 
-- [Normalized Demand](normalized-demand.md)
-- [Normalized Demand nonneg](normalized-demand-nonneg.md)
-- [Normalized Demand sum](normalized-demand-sum.md)
-- [Singly constrained spatial interaction models](normalized-demand-row-scaling.md)
+- [Singly constrained flow to a destination](normalized-demand.md)
+- [Singly constrained flows are nonnegative](normalized-demand-nonneg.md)
+- [Singly constrained flows sum to the origin total](normalized-demand-sum.md)
+- [Positive rescaling of weights leaves the flows unchanged](normalized-demand-row-scaling.md)

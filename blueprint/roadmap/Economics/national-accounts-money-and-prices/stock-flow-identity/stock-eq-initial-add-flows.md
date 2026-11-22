@@ -1,4 +1,4 @@
-# Stock-flow identity
+# Stock as initial stock plus cumulative flows and other changes
 
 If the stock evolves by the per-period accounting
 `K (t + 1) = K t + inflow t - outflow t + otherChange t` in every period `t < n`, where

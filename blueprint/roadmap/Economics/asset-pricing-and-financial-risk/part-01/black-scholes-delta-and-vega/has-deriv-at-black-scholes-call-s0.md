@@ -1,4 +1,4 @@
-# Has Deriv At black Scholes Call S0
+# Delta is the spot derivative of the call price
 
 Delta: the derivative of the Black-Scholes call price with
 respect to `S0` is `Φ(d₁)`. Chain rule through `d₁` and `d₂`: both have the

@@ -1,4 +1,4 @@
-# Put Call Parity example
+# Numerical example of put–call parity
 
 Concrete instance: one terminal state `ω = 110`, `S0 = 110`, `D = 0`,
 `K = 100`, `R = 1` (zero interest), and the one-state pricing functional

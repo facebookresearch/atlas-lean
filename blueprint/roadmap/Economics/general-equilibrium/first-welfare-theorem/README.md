@@ -2,11 +2,11 @@
 
 ## Economics
 
-- [Exchange Economy](exchange-economy.md)
+- [Pure exchange economy](exchange-economy.md)
 
 ## Exchange Economy
 
-- [Is Feasible](is-feasible.md)
-- [Is Walrasian Equilibrium](is-walrasian-equilibrium.md)
-- [Is Pareto Efficient](is-pareto-efficient.md)
-- [First welfare theorem](is-pareto-efficient-of-is-walrasian-equi.md)
+- [Feasible allocation with free disposal](is-feasible.md)
+- [Walrasian equilibrium of an exchange economy](is-walrasian-equilibrium.md)
+- [Pareto efficient allocation](is-pareto-efficient.md)
+- [Walrasian equilibrium allocations are Pareto efficient](is-pareto-efficient-of-is-walrasian-equi.md)

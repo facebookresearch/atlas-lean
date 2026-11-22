@@ -1,4 +1,4 @@
-# Is Certainty Equivalent
+# Certainty equivalent of a finite monetary lottery
 
 `c` is a certainty equivalent on the interval `I` of the finite monetary lottery that pays
 `z x` in state `x` with probability `p.weights x`, for the Bernoulli utility `u`: the sure amount

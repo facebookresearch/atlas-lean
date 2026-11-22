@@ -1,4 +1,4 @@
-# Prospective Balance
+# Prospective balance of a level-payment loan
 
 Prospective loan balance at date `k` of an `n`-payment level loan: the present
 value at date `k` of the remaining payments `P` at dates `k + 1, …, n`

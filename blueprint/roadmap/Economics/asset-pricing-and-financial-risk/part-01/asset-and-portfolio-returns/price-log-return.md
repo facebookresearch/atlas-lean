@@ -1,4 +1,4 @@
-# Price Log Return
+# Log return between two prices
 
 Log return over one price period: the log return of the gross return,
 `logReturn (grossReturn P₀ P₁)`. The definition is total: at nonpositive prices

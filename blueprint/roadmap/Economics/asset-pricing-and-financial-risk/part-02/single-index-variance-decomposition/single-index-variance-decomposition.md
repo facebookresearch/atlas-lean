@@ -1,4 +1,4 @@
-# Systematic plus idiosyncratic variance decomposition (FI07.T03)
+# Systematic plus idiosyncratic variance decomposition
 
 For an
 orthogonal single-index residual (`cov[RM, ε; μ] = 0`), the variance of the

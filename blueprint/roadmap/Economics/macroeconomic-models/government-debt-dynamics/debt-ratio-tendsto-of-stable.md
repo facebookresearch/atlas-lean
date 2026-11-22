@@ -1,4 +1,4 @@
-# Constant-deficit debt-ratio convergence (MA07.T03)
+# Constant-deficit debt-ratio convergence
 
 If the debt ratio
 satisfies the debt-ratio recurrence (`debtRatio_succ`) with a constant deficit ratio `d` and a stable

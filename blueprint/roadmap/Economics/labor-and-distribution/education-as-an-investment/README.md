@@ -1,9 +1,9 @@
 # Education as an investment
 
-- [Present Value](present-value.md)
-- [Value With Education](value-with-education.md)
-- [Value Without Education](value-without-education.md)
-- [Prefers Education](prefers-education.md)
-- [Present Value sub](present-value-sub.md)
+- [Present value of a finite cash-flow stream](present-value.md)
+- [Lifetime value with education](value-with-education.md)
+- [Lifetime value without education](value-without-education.md)
+- [Strict preference for education](prefers-education.md)
+- [Present value of a difference of streams](present-value-sub.md)
 - [Education investment rule](prefers-education-iff.md)
-- [Value Without le value With iff](value-without-le-value-with-iff.md)
+- [Weak education investment rule](value-without-le-value-with-iff.md)

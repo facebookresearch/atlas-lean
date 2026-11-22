@@ -1,4 +1,4 @@
-# Asset Payoff
+# Terminal payoffs of the two deposits and the forward
 
 Terminal domestic payoffs of the three traded assets when the spot rate at
 the end of the period is `ST ω` in state `ω`: the domestic deposit (asset `0`)

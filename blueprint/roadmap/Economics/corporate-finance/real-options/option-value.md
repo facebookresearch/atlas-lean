@@ -1,4 +1,4 @@
-# Option Value
+# Value of the option to act after observing the state
 
 Value of the option to choose, after seeing the state, the best feasible action: the
 expected value of the statewise maximum over `actions`, `E[max_a V_a]` (Raiffa and Schlaifer,

@@ -1,4 +1,4 @@
-# Full Income
+# Full income of a household
 
 Full income `w * T + N`: the market value at wage `w` of the time endowment `T`
 plus nonlabor income `N`. This is the budget the household spends on consumption and

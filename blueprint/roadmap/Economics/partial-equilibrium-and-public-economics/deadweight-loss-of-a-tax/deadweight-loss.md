@@ -1,4 +1,4 @@
-# Deadweight Loss
+# Deadweight loss as lost gains from trade
 
 Deadweight loss of moving traded quantity from the no-tax equilibrium
 `qstar` to `q`, with inverse demand `Pd` and inverse supply `Ps`: the lost

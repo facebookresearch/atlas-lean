@@ -1,4 +1,4 @@
-# IS-LM solution (MA06.T02)
+# Explicit solution of the linear IS–LM system
 
 Under the slope-sign restrictions `0 < b`, `0 < h`,
 `0 < k`, the nonsingular system has the explicit solution

@@ -1,4 +1,4 @@
-# Euler complementary slackness
+# Euler condition with a borrowing constraint (KKT form)
 
 Euler condition with a borrowing constraint (KKT form): at a feasible
 maximizer with positive consumption in both periods, there is a multiplier

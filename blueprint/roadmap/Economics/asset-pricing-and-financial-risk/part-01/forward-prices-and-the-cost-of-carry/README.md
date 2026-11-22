@@ -1,5 +1,5 @@
 # Forward prices and the cost of carry
 
-- [State Price Value](state-price-value.md)
-- [Forward replication payoff](forward-replication-payoff.md)
-- [Forward cost of carry](forward-cost-of-carry.md)
+- [State-price value of a contingent payoff](state-price-value.md)
+- [Cash-and-carry replicates the forward payoff](forward-replication-payoff.md)
+- [Cost-of-carry forward price from state prices](forward-cost-of-carry.md)

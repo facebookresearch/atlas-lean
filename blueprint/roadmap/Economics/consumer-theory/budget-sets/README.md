@@ -1,7 +1,7 @@
 # Budget sets
 
-- [Budget sets](budget-set.md)
-- [Nonneg Budget Set](nonneg-budget-set.md)
-- [Nonneg Budget Set subset Icc](nonneg-budget-set-subset-icc.md)
+- [Budget set within a consumption set](budget-set.md)
+- [Budget set of nonnegative bundles](nonneg-budget-set.md)
+- [Affordable quantities are bounded by wealth over price](nonneg-budget-set-subset-icc.md)
 - [Budget sets are compact](is-compact-nonneg-budget-set.md)
-- [Nonneg Budget Set nonempty](nonneg-budget-set-nonempty.md)
+- [Budget set is nonempty for nonnegative wealth](nonneg-budget-set-nonempty.md)

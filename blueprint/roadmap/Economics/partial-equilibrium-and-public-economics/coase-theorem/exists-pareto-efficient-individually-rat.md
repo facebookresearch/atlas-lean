@@ -1,4 +1,4 @@
-# Exists pareto Efficient individually Rational
+# Efficient, individually rational bargains always exist
 
 Under any property-rights assignment (status quo `a₀`, endowment `ω`), a
 total-value maximizer `a` is reached by feasible transfers that make the outcome

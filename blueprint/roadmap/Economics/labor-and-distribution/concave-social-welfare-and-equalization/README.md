@@ -1,6 +1,6 @@
 # Concave social welfare and equalization
 
-- [Equalize](equalize.md)
-- [Is Symmetric](is-symmetric.md)
-- [Sum equalize](sum-equalize.md)
+- [Mean-preserving equalization of incomes](equalize.md)
+- [Symmetric (anonymous) social welfare function](is-symmetric.md)
+- [Equalization preserves total income](sum-equalize.md)
 - [A symmetric concave welfare function weakly prefers equalization](le-welfare-equalize.md)

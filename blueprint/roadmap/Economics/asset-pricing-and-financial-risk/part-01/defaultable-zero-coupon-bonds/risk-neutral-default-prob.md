@@ -1,4 +1,4 @@
-# Risk Neutral Default Prob
+# Risk-neutral default probability from state prices
 
 The risk-neutral default probability: the state-price mass of the default states divided by
 the risk-free discount factor. It is a genuine risk-neutral probability for positive state

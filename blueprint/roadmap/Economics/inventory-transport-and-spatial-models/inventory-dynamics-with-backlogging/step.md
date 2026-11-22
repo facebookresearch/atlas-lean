@@ -1,4 +1,4 @@
-# Step
+# One-period transition of stock and pipeline
 
 Deterministic backlogging transition on `(net stock, length-L pipeline)`
 with order `q` and demand `d` inputs. The receipt is the pipeline head for

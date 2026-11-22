@@ -1,4 +1,4 @@
-# Pipeline succ last
+# The newest pipeline entry is the latest order
 
 For `L > 0`, successor-pipeline last coordinate: new `j` with
 `j.val + 1 = L` equals the order placed at `t`. With `pipeline_succ_tail`,

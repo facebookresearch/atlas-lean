@@ -1,4 +1,4 @@
-# Solow Map eq law
+# Reduced-form map agrees with the Cobb–Douglas Solow law
 
 The reduced-form map agrees with the per-effective-worker law
 `k' = (s * f(k) + (1 - δ) * k) / D`, written out for Cobb-Douglas production

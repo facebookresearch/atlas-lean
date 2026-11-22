@@ -1,7 +1,7 @@
 # Lucas critique
 
-- [Policy Regime](policy-regime.md)
-- [Reduced Form Coeff](reduced-form-coeff.md)
-- [Policy Outcome](policy-outcome.md)
-- [Reduced form (MA06.T04)](policy-outcome-eq-reduced-coeff.md)
-- [Two-regime counterexample (MA06.T04, Lucas critique example)](lucas-not-invariant.md)
+- [Policy regime as a rule for expected inflation](policy-regime.md)
+- [Reduced-form coefficient of money growth](reduced-form-coeff.md)
+- [Outcome under a policy regime](policy-outcome.md)
+- [Reduced form of the policy outcome](policy-outcome-eq-reduced-coeff.md)
+- [Two-regime counterexample to policy invariance](lucas-not-invariant.md)

@@ -1,4 +1,4 @@
-# Black Scholes Call bounds
+# Bounds on the Black–Scholes call price
 
 Static bounds for the call: `max (S0 - K e^{-rT}) 0 ≤ C ≤ S0`.
 The upper bound is algebra from `0 ≤ Φ ≤ 1`. The lower bound `0 ≤ C` holds

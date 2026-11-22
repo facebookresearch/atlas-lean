@@ -1,3 +1,3 @@
-# Value
+# Value of a bundle at given prices
 
 The value `p · z = ∑ l, p l * z l` of the bundle `z` at prices `p`.

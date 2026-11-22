@@ -1,4 +1,4 @@
-# Phillips-curve recurrence (MA06.T03)
+# Phillips-curve recurrence for inflation
 
 Substituting the stated adaptive-expectation
 rule into the stated Phillips curve yields the recurrence

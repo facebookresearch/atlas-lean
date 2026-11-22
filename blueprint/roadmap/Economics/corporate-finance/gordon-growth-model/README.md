@@ -1,8 +1,8 @@
 # Gordon growth model
 
-- [Dividend Stream](dividend-stream.md)
-- [Discounted Dividend Stream](discounted-dividend-stream.md)
-- [Discounted Dividend Stream succ](discounted-dividend-stream-succ.md)
+- [Dividend stream growing at a constant rate](dividend-stream.md)
+- [Discounted dividends of a constant-growth stream](discounted-dividend-stream.md)
+- [Shifted discounted dividends form a growing perpetuity](discounted-dividend-stream-succ.md)
 - [Dividend stream identification](dividend-gordon-of-has-sum-growing.md)
 - [Gordon formula for constant-growth dividends](dividend-gordon.md)
-- [Dividend Gordon tsum](dividend-gordon-tsum.md)
+- [Sum of discounted constant-growth dividends is D₁/(r − g)](dividend-gordon-tsum.md)

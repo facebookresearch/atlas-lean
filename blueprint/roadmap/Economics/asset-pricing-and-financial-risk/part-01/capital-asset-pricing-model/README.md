@@ -1,4 +1,4 @@
 # Capital asset pricing model
 
-- [Beta](beta.md)
+- [Beta of an asset relative to a portfolio](beta.md)
 - [Security market line (CAPM)](security-market-line.md)

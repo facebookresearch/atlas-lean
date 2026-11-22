@@ -1,4 +1,4 @@
-# Pipeline Total closed Form
+# Closed form of the outstanding pipeline total
 
 Closed form of the terminal pipeline total: remaining initial coordinates
 `H ≤ j.val` plus orders `H - L ≤ t` with `t < H` (that is,

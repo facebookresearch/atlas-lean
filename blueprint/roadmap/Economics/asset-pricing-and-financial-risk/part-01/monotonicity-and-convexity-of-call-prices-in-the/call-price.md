@@ -1,4 +1,4 @@
-# Call Price
+# Call price under state prices
 
 Call price at strike `K` under the state prices `ψ` and terminal underlying values `S`:
 `C(K) = ∑ ω, ψ ω * europeanCallPayoff (S ω) K` (source clause: "call price =

@@ -1,4 +1,4 @@
-# Olg Capital Factor
+# Capital-market factor of the OLG recurrence
 
 Capital-market factor: with population growth `n` (`N[t+1] = (1+n) * N[t]`),
 full depreciation (two-period lives: capital lasts one generation), and capital

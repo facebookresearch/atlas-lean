@@ -1,6 +1,6 @@
 # Expenditure function
 
-- [Expenditure](expenditure.md)
+- [Least cost of reaching a target utility](expenditure.md)
 - [Homogeneity of degree one](expenditure-smul.md)
 - [Concavity in prices](concave-on-expenditure.md)
-- [Concave On expenditure pos](concave-on-expenditure-pos.md)
+- [Concavity on strictly positive prices](concave-on-expenditure-pos.md)
