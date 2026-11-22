@@ -47,6 +47,14 @@ scripts/check.sh
 The existing `Atlas/` developments and archived `v1/` release are not part of
 this root build. They retain their own build configuration.
 
+## Joyal model and quasicategories
+
+The native `JoyalSSet` model has monomorphism cofibrations, categorical weak
+equivalences and genuine categorical fibrations. Its fibrant objects are
+quasicategories, and its Cartesian tensor satisfies the monoidal model axioms.
+See the [Joyal model and mapping APIs](docs/model-category/joyal.md) for the
+model scopes, fibration hypotheses and public mathematical tests.
+
 ## Dependency explorer
 
 The [blueprint](blueprint/README.md) presents the v2 libraries as a
