@@ -24297,7 +24297,7 @@
 "MathlibExt.Analysis.Calculus.SignedRadialNotDifferentiableWanted.not_differentiableAt_signed_norm_zero": "26e009ac21281bc5",
 "MathlibExt.Analysis.Calculus.SixthPowerIntegralLeDerivSqWanted.exists_integral_pow_six_le_integral_deriv_sq_of_integral_sq_eq_one": "01680156d794ef15",
 "MathlibExt.Analysis.Calculus.SmoothVanishingOnAxesBoundWanted.exists_abs_le_mul_abs_mul_abs_of_contDiff_of_eq_zero_on_axes": "1fd194278fcd182b",
-"MathlibExt.Analysis.Calculus.SupNormEpsDerivPlusIntegralWanted.exists_const_sSup_norm_le_mul_sSup_norm_deriv_add_mul_integral": "e58e18706f80a58b",
+"MathlibExt.Analysis.Calculus.SupNormEpsDerivPlusIntegralWanted.exists_const_sSup_norm_le_mul_sSup_norm_deriv_add_mul_integral": "110cbb0201ad5f98",
 "MathlibExt.Analysis.Calculus.SupNormSqLeHalfH1NormWanted.sSup_norm_sq_le_half_integral_sq_add_deriv_sq": "2d2bb9d6736c6aec",
 "MathlibExt.Analysis.Calculus.TaylorLittleoRemainderWanted.taylor_isLittleO_multivariable": "0d6cbe6b22bd76c4",
 "MathlibExt.Analysis.Calculus.UniformlyContinuousIntegrableTendstoZeroWanted.UniformContinuous.tendsto_cocompact_zero_of_integrable": "6fe37f92fa31338a",
