@@ -24,6 +24,7 @@ the connected components of its bidirected part (Tian and Pearl, 2002).
 * `ADMG`: a directed relation with no directed cycle, and a bidirected
   simple graph.
 * `ADMG.cComponent`: the bidirected connected component of a vertex.
+* `ADMG.cComponents`: the c-components as vertex sets.
 * `BayesNet.LatentPath`: a directed path whose internal vertices are latent.
 * `BayesNet.latentProjection`: the ADMG on the observed nodes.
 
@@ -73,6 +74,38 @@ theorem mem_cComponent_iff {v w : V} :
   unfold cComponent
   rw [SimpleGraph.ConnectedComponent.mem_supp_iff, eq_comm,
     SimpleGraph.ConnectedComponent.eq]
+
+open scoped Classical in
+/-- `C(G)`: the c-components (TP02 p. 570), as vertex sets. -/
+noncomputable def cComponents [Fintype V] [DecidableEq V] : Finset (Finset V) :=
+  Finset.univ.image fun v => Finset.univ.filter (· ∈ G.cComponent v)
+
+open scoped Classical in
+/-- C-component vertex sets of bidirectionally reachable vertices coincide. -/
+theorem filter_cComponent_eq_of_reachable [Fintype V] [DecidableEq V]
+    {v w : V} (h : G.bidir.Reachable v w) :
+    Finset.univ.filter (· ∈ G.cComponent v) = Finset.univ.filter (· ∈ G.cComponent w) := by
+  ext x
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and, mem_cComponent_iff]
+  exact ⟨fun hxv => h.symm.trans hxv, fun hxw => h.trans hxw⟩
+
+open scoped Classical in
+/-- C-component vertex sets sharing a vertex coincide. -/
+theorem filter_cComponent_eq_of_shared [Fintype V] [DecidableEq V]
+    {v w x : V}
+    (hxv : x ∈ Finset.univ.filter (· ∈ G.cComponent v))
+    (hxw : x ∈ Finset.univ.filter (· ∈ G.cComponent w)) :
+    Finset.univ.filter (· ∈ G.cComponent v) = Finset.univ.filter (· ∈ G.cComponent w) := by
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and, mem_cComponent_iff] at hxv hxw
+  exact G.filter_cComponent_eq_of_reachable (hxv.trans hxw.symm)
+
+open scoped Classical in
+/-- Membership in `cComponents` unfolds to a choice of root. -/
+theorem mem_cComponents_iff [Fintype V] [DecidableEq V] {S : Finset V} :
+    S ∈ G.cComponents ↔ ∃ v, Finset.univ.filter (· ∈ G.cComponent v) = S := by
+  unfold cComponents
+  rw [Finset.mem_image]
+  simp only [Finset.mem_univ, true_and]
 
 end ADMG
 

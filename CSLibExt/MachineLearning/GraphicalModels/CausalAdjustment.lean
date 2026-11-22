@@ -24,7 +24,6 @@ set `W` of nodes is defined in `CSLibExt/MachineLearning/GraphicalModels/CausalB
 
 ## Main results
 
-* `BayesNet.joint_mutilateSet`: the truncated factorization for a set of nodes.
 * `BayesNet.marginal_intervene_of_not_isDescendant`: an intervention does not change the law of the
   non-descendants of the intervened node.
 * `BayesNet.backdoor_adjustment`: **the back-door adjustment** (Pearl 1995; Pearl 2009,
@@ -99,21 +98,6 @@ namespace BayesNet
 variable {n : ℕ} [Nonempty α] (b : BayesNet α n)
 
 /-! ### Interventions on a set of nodes -/
-
-/-- **The truncated factorization for a set of nodes**: after `do(X_W = w)`, the joint is the
-product of the tables of the nodes outside `W` on assignments agreeing with `w` on `W`. -/
-theorem joint_mutilateSet [DecidableEq α] (W : Finset (Fin n)) (w x : Fin n → α) :
-    (b.mutilateSet W w).joint x = ∏ j, if j ∈ W then (if x j = w j then 1 else 0)
-      else (b.cpt j (b.paVal j x)).weights (x j) := by
-  rw [joint_eq_prod]
-  refine prod_congr rfl fun j _ => ?_
-  by_cases h : j ∈ W
-  · simp only [mutilateSet, h, dite_true, ite_true]
-    by_cases hx : x j = w j
-    · simp [StdSimplex.single, hx]
-    · simp [StdSimplex.single, hx]
-  · simp only [mutilateSet, h, dite_false, ite_false]
-    rfl
 
 omit [Nonempty α] in
 /-- The arrows of `b.mutilateSet W w` are those of `b` not pointing into `W`. -/

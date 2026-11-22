@@ -6,7 +6,6 @@ Author: Adam Kiezun
 
 module
 
-public import CSLibExt.MachineLearning.GraphicalModels.CausalAdjustment
 public import CSLibExt.MachineLearning.GraphicalModels.LatentProjection
 public import MathlibExt.Probability.FiniteWeight
 import Mathlib.Algebra.Order.BigOperators.Ring.Finset
@@ -25,7 +24,7 @@ Q-factor from the observed law along a topological order (in division-free
 form for every `v`, and as a product of conditional ratios when `P(v) > 0`).
 The factorization and prefix identities need no semi-Markovian hypothesis;
 they subsume the source's semi-Markovian statements (whose hypothesis is
-`BayesNet.IsSemiMarkovian`).
+`BayesNet.NoObservedAncestorOfLatent`).
 
 ## References
 
@@ -70,12 +69,6 @@ noncomputable def BayesNet.qFactor (b : BayesNet α n) (L : Finset (Fin n))
     (b.mutilateSet ((Sᶜ).map (Function.Embedding.subtype _)) (extendObs L v)).joint
     ↑(S.map (Function.Embedding.subtype _)) (extendObs L v)
 
-open scoped Classical in
-/-- `C(G)`: the c-components (TP02 p. 570), as vertex sets. -/
-noncomputable def ADMG.cComponents {V : Type*} [Fintype V] [DecidableEq V] (G : ADMG V) :
-    Finset (Finset V) :=
-  Finset.univ.image fun v => Finset.univ.filter (· ∈ G.cComponent v)
-
 end Cslib.MachineLearning.GraphicalModels
 
 namespace Cslib.MachineLearning.GraphicalModels.BayesNet
@@ -83,13 +76,12 @@ open Finset MetaMathlibExt.FiniteWeight
 variable {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α] {n : ℕ}
   (b : BayesNet α n) (L : Finset (Fin n))
 
-/-- Semi-Markovian in TP02's usage (AAAI-02, p. 568): no latent node is a
-descendant of an observed node. This is the weaker of the two conventions in
-the sources: TR (R-290-L, p. 6) instead calls a model semi-Markovian when
-each unobserved variable is a root node with exactly two observed children.
-The name here follows TP02, whose factorization statements are the ones
-formalized below. -/
-def IsSemiMarkovian : Prop := ∀ u ∈ L, ∀ w ∉ L, ¬ b.IsDescendant w u
+/-- No latent node is a descendant of an observed node. TP02 (AAAI-02,
+p. 568) calls this ancestral condition "semi-Markovian"; TR (R-290-L, p. 6)
+uses the same word for the stronger requirement that each unobserved
+variable be a root node with exactly two observed children. The descriptive
+name here avoids conflating the two source conventions. -/
+def NoObservedAncestorOfLatent : Prop := ∀ u ∈ L, ∀ w ∉ L, ¬ b.IsDescendant w u
 
 /-- The Q-factor as a truncated product (TP02 (26), TR (55)), summed over the latent
 coordinates with the observed coordinates fixed at `v`. -/
@@ -1445,34 +1437,6 @@ theorem qFactor_mul_prod_qFactor_pred {H T : Finset {i : Fin n // i ∉ L}} (hTH
     exact hsep
   exact b.qFactor_mul_prod_qFactor_pred_aux L σ v _ T hsub hsep'
 
-open scoped Classical in
-/-- C-component vertex sets of bidirectionally reachable vertices coincide. -/
-theorem filter_cComponent_eq_of_reachable {V : Type*} [Fintype V] [DecidableEq V]
-    (G : ADMG V) {v w : V} (h : G.bidir.Reachable v w) :
-    Finset.univ.filter (· ∈ G.cComponent v) = Finset.univ.filter (· ∈ G.cComponent w) := by
-  ext x
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and, ADMG.mem_cComponent_iff]
-  exact ⟨fun hxv => h.symm.trans hxv, fun hxw => h.trans hxw⟩
-
-open scoped Classical in
-/-- C-component vertex sets sharing a vertex coincide. -/
-theorem filter_cComponent_eq_of_shared {V : Type*} [Fintype V] [DecidableEq V]
-    (G : ADMG V) {v w x : V}
-    (hxv : x ∈ Finset.univ.filter (· ∈ G.cComponent v))
-    (hxw : x ∈ Finset.univ.filter (· ∈ G.cComponent w)) :
-    Finset.univ.filter (· ∈ G.cComponent v) = Finset.univ.filter (· ∈ G.cComponent w) := by
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and, ADMG.mem_cComponent_iff] at hxv hxw
-  exact filter_cComponent_eq_of_reachable G (hxv.trans hxw.symm)
-
-open scoped Classical in
-/-- Membership in `cComponents` unfolds to a choice of root. -/
-theorem mem_cComponents_iff {V : Type*} [Fintype V] [DecidableEq V]
-    (G : ADMG V) {S : Finset V} :
-    S ∈ G.cComponents ↔ ∃ v, Finset.univ.filter (· ∈ G.cComponent v) = S := by
-  unfold ADMG.cComponents
-  rw [Finset.mem_image]
-  simp only [Finset.mem_univ, true_and]
-
 /-- The factorization of the observed law over c-components (TP02 (27)-(28), TR (35),
 (56)), for every `v` with no positivity hypothesis. No semi-Markovian
 hypothesis is needed, so this subsumes TP02's semi-Markovian statement. -/
@@ -1482,7 +1446,7 @@ theorem observedLaw_eq_prod_qFactor (v : {i : Fin n // i ∉ L} → α) :
   have hmem : ∀ S : Finset {i : Fin n // i ∉ L},
       S ∈ (b.latentProjection L).cComponents →
       ∃ v, Finset.univ.filter (· ∈ (b.latentProjection L).cComponent v) = S :=
-    fun S hS => (mem_cComponents_iff _).mp hS
+    fun S hS => (ADMG.mem_cComponents_iff _).mp hS
   have hdisj : ((b.latentProjection L).cComponents :
       Set (Finset {i : Fin n // i ∉ L})).PairwiseDisjoint id := by
     intro S hS T hT hne
@@ -1491,7 +1455,7 @@ theorem observedLaw_eq_prod_qFactor (v : {i : Fin n // i ∉ L} → α) :
     show Disjoint _ _
     rw [Finset.disjoint_left]
     intro x hxv hxw
-    exact hne (filter_cComponent_eq_of_shared _ hxv hxw)
+    exact hne (ADMG.filter_cComponent_eq_of_shared _ hxv hxw)
   have hcov : ((b.latentProjection L).cComponents).biUnion id = Finset.univ := by
     ext x
     rw [Finset.mem_biUnion]
@@ -1500,7 +1464,7 @@ theorem observedLaw_eq_prod_qFactor (v : {i : Fin n // i ∉ L} → α) :
       exact Finset.mem_univ x
     · intro _
       refine ⟨Finset.univ.filter (· ∈ (b.latentProjection L).cComponent x), ?_, ?_⟩
-      · exact (mem_cComponents_iff _).mpr ⟨x, rfl⟩
+      · exact (ADMG.mem_cComponents_iff _).mpr ⟨x, rfl⟩
       · show x ∈ Finset.univ.filter (· ∈ (b.latentProjection L).cComponent x)
         simp only [Finset.mem_filter, Finset.mem_univ, true_and, ADMG.mem_cComponent_iff]
         exact SimpleGraph.Reachable.refl x
@@ -1512,7 +1476,7 @@ theorem observedLaw_eq_prod_qFactor (v : {i : Fin n // i ∉ L} → α) :
     apply hne
     simp only [Finset.mem_filter, Finset.mem_univ, true_and,
       ADMG.mem_cComponent_iff] at huT hwT'
-    exact filter_cComponent_eq_of_reachable _ (huT.trans (hadj.reachable.trans hwT'.symm))
+    exact ADMG.filter_cComponent_eq_of_reachable _ (huT.trans (hadj.reachable.trans hwT'.symm))
   have hG0 := b.qFactor_eq_prod_of_not_adj L (b.latentProjection L).cComponents
     hdisj hcov hsep v
   have huniv := congrFun (b.qFactor_univ L) v
@@ -1523,7 +1487,7 @@ theorem cComponent_no_adj_compl {S : Finset {i : Fin n // i ∉ L}}
     (hS : S ∈ (b.latentProjection L).cComponents) :
     ∀ u ∈ S, ∀ w ∈ univ \ S, ¬ (b.latentProjection L).bidir.Adj u w := by
   classical
-  obtain ⟨v, rfl⟩ := (mem_cComponents_iff _).mp hS
+  obtain ⟨v, rfl⟩ := (ADMG.mem_cComponents_iff _).mp hS
   intro u hu w hw hadj
   simp only [Finset.mem_sdiff, Finset.mem_univ, true_and] at hw
   have hwmem : w ∈ Finset.univ.filter (· ∈ (b.latentProjection L).cComponent w) := by
@@ -1536,7 +1500,7 @@ theorem cComponent_no_adj_compl {S : Finset {i : Fin n // i ∉ L}}
     simp only [Finset.mem_filter, Finset.mem_univ, true_and,
       ADMG.mem_cComponent_iff] at h
     exact h
-  have heq := filter_cComponent_eq_of_reachable (b.latentProjection L)
+  have heq := ADMG.filter_cComponent_eq_of_reachable (b.latentProjection L)
     (hu.trans (hadj.reachable.trans hrw.symm))
   rw [heq] at hw
   exact hw hwmem
