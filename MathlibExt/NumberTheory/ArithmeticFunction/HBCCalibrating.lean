@@ -38,8 +38,8 @@ $\prod_{i=1}^{k} (1 - 1/n_i) = a/(a + d)$; for every $j$ with $1 \le j < k$,
 $\prod_{i=1}^{j} n_i = (d/a)(\alpha^{2^j} - 1)$; and
 $\prod_{i=1}^{k} n_i = (d/a)(\alpha^{2^k} - \alpha^{2^{k-1}})$.
 
-The ATLAS article *Product identities for calibrating numbers* attributes these identities to
-Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*. -/
+Source: Andrew Stone, *Improved Upper Bounds for Odd Perfect Numbers -- Part I*, INTEGERS 24
+(2024), Article A114, Lemma 3. -/
 public theorem hbcCalibrating_prod_identities (a d k : ℕ) (ha : 0 < a) (hd : 0 < d)
     (hk : 1 ≤ k) :
     let α : ℚ := (a + d) / d

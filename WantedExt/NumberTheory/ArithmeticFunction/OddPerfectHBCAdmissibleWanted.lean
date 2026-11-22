@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.NumberTheory.Divisors
+public import MathlibExt.NumberTheory.ArithmeticFunction.HBCCalibrating
 
 namespace MetaMathlibExt
 
