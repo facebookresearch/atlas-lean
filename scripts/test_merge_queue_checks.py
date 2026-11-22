@@ -49,6 +49,13 @@ fails if a required workflow:
   branches, which GitHub creates for each merge group, would report them on
   the merge group's commit and could share its concurrency group.
 
+It also fails if any job of any workflow can write checks: a check run that a
+job creates through the Checks API with its token is reported by the same
+GitHub Actions app as the required checks, so it could stand in for one. Every
+job must therefore have explicit token permissions, at the workflow or job
+level (a job without them gets the repository's default, which may include
+`checks: write`), and none may grant `checks: write` or `write-all`.
+
 It also fails if a required workflow gains another event that could report the
 same checks on a PR's head (such as `pull_request_target`), or unless both
 `repository integrity` and `source-diagnostics` have a step that is exactly the
@@ -243,6 +250,25 @@ def may_be_named(name: str, check: str) -> bool:
             and len(check) >= len(prefix) + len(suffix))
 
 
+def check_writers(name: str, workflow: dict) -> list[str]:
+    """The jobs in a workflow whose token can create check runs, or may: a job's
+    `permissions` replace the workflow's, and a job with neither gets the
+    repository's default."""
+    found = []
+    for job_id, job in (workflow.get("jobs") or {}).items():
+        job = job if isinstance(job, dict) else {}
+        permissions = job.get("permissions", workflow.get("permissions"))
+        if permissions is None:
+            found.append(f"{name} job {job_id!r} has no token permissions, so it gets the "
+                         "repository's default, which may let it write checks")
+        elif permissions not in ("", "read-all") and not (
+                isinstance(permissions, dict)
+                and permissions.get("checks", "none") in ("read", "none")):
+            found.append(f"{name} job {job_id!r} can write checks, so it could report a "
+                         "required check without running it")
+    return found
+
+
 def needs_itself(workflow: dict, job_id: str) -> bool:
     """Whether a job depends on itself, directly or through other jobs."""
     jobs = workflow.get("jobs") or {}
@@ -282,7 +308,8 @@ def changes_later_path(step, allowed: set[str]) -> bool:
         return False
     run, values = texts[0], texts[1:]
     return (any(SETS_LATER_PATH.search(value) for value in values)
-            or any(SETS_LATER_PATH.search(line) and line.strip() not in allowed
+            or any(SETS_LATER_PATH.search(line) and not line.strip().startswith("#")
+                   and re.sub(r"\s+#.*", "", line.strip()) not in allowed
                    for line in run.splitlines()))
 
 
@@ -343,6 +370,8 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
     found = []
     if documented != list(REQUIRED):
         found.append(f"CONTRIBUTING lists {documented}, not {list(REQUIRED)}")
+    for name, workflow in workflows.items():
+        found += check_writers(name, workflow)
     names: dict[str, list[str]] = {}
     for name, workflow in workflows.items():
         names.setdefault(workflow_name(name, workflow).casefold(), []).append(name)
@@ -490,6 +519,7 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
 FIXTURE = {
     "ci.yml": {
         "name": "CI",
+        "permissions": {"contents": "read"},
         "on": {"push": {"branches": ["main"]},
                "pull_request": {"types": ["opened", "synchronize", "reopened"]},
                "merge_group": {"types": ["checks_requested"]}},
@@ -504,6 +534,7 @@ FIXTURE = {
     },
     "source-diagnostics.yml": {
         "name": "Source diagnostics",
+        "permissions": {"contents": "read"},
         "on": {"push": {"branches": "main"}, "pull_request": "", "merge_group": ""},
         "jobs": {"source-diagnostics": {"runs-on": "ubuntu-24.04", "steps": [
             {"uses": "actions/checkout"},
@@ -513,9 +544,9 @@ FIXTURE = {
     "bump-guard.yml": {
         "name": "Bump guard",
         "on": {"pull_request_target": "", "merge_group": ""},
-        "jobs": {"guard": {}},
+        "jobs": {"guard": {"permissions": {"contents": "read", "pull-requests": "read"}}},
     },
-    "lint.yml": {"on": {"pull_request": {"paths": ["docs/**"]}},
+    "lint.yml": {"on": {"pull_request": {"paths": ["docs/**"]}}, "permissions": "read-all",
                  "concurrency": {"group": "lint-${{ github.ref }}"}, "jobs": {"lint": {}}},
 }
 
@@ -581,6 +612,10 @@ class MergeQueueChecks(unittest.TestCase):
                                       {"id": "diagnostics",
                                        "run": DIAGNOSTICS}]}),
                        put("ci.yml", "jobs", "build", "runs-on", ["ubuntu-26.04"]),
+                       put("ci.yml", "jobs", "build", "steps",
+                           [{"run": '# PATH takes $GITHUB_PATH in the next step.\n'
+                                    'echo "$HOME/.elan/bin" >> "$GITHUB_PATH"  # for lake'},
+                            {"run": BUILD}]),
                        put("ci.yml", "jobs", "build", "runs-on", {"labels": ["ubuntu-24.04"]}),
                        lambda workflows: (
                            put("ci.yml", "jobs", "build", "continue-on-error", "false")(workflows),
@@ -591,8 +626,10 @@ class MergeQueueChecks(unittest.TestCase):
                            "ubuntu-26.04-arm"),
                        put("report.yml", {"on": {"pull_request": ""}, "concurrency": {
                            "group": "${{ github.workflow }}-${{ github.ref }}"},
-                           "jobs": {"report": {}}}),
+                           "jobs": {"report": {"permissions": {}}}}),
                        put("nightly.yml", {"name": "CI-nightly", "on": {"schedule": ""},
+                                           "permissions": {"contents": "read",
+                                                           "checks": "read"},
                                            "concurrency": {"group": "${{ github.workflow }}-"
                                                                     "${{ github.ref }}"},
                                            "jobs": {"nightly": {}}})):
@@ -792,6 +829,17 @@ class MergeQueueChecks(unittest.TestCase):
             "a workflow's defaults from an expression": (
                 put("ci.yml", "defaults", "${{ fromJSON(vars.CI_DEFAULTS) }}"),
                 "gets defaults from an expression in its workflow"),
+            "a workflow whose token can write checks": (
+                put("report.yml", {"on": {"pull_request": ""}, "permissions": {"checks": "write"},
+                                   "jobs": {"report": {}}}), "can write checks"),
+            "a job with write-all permissions": (
+                put("ci.yml", "jobs", "build", "permissions", "write-all"), "can write checks"),
+            "checks permission from an expression": (
+                put("ci.yml", "jobs", "build", "permissions",
+                    {"checks": "${{ vars.CHECKS }}"}), "can write checks"),
+            "a job without token permissions": (
+                put("report.yml", {"on": {"pull_request": ""}, "jobs": {"report": {}}}),
+                "gets the repository's default"),
             "the elan PATH line in Source diagnostics": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
                     [{"run": 'echo "$HOME/.elan/bin" >> "$GITHUB_PATH"'},
