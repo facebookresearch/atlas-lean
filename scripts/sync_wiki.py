@@ -2209,10 +2209,15 @@ class Scope:
     written: set[Path] = field(default_factory=set)
 
 
+def page_key(row: dict) -> str:
+    """A row's page as page_name reads it (what its subject says, for a row about no one page), with forward slashes
+    on every platform."""
+    return page_name(row).replace(os.sep, "/")
+
+
 def row_order(row: dict) -> tuple[str, ...]:
-    """Where a links file's row goes among the others: by its page's path, folder by folder, as page_name reads it
-    (what its subject says, for a row about no one page)."""
-    return PurePosixPath(page_name(row)).parts
+    """Where a links file's row goes among the others: by its page's path, folder by folder (see page_key)."""
+    return PurePosixPath(page_key(row)).parts
 
 
 def records(text: str) -> tuple[list[str], list[str]]:
@@ -2232,12 +2237,19 @@ def insert_rows(path: Path, rows: list[dict]) -> None:
     lines, ends = records(path.read_bytes().decode("utf-8") if path.exists() else "")
     placed = [(row_order(json.loads(line)), number) for number, line in enumerate(lines) if line.strip()]
     after: dict[int, list[str]] = defaultdict(list)
-    for row in sorted(rows, key=row_order):
-        number = max(((other, number) for other, number in placed if other < row_order(row)), default=(None, -1))[1]
-        after[number].append(json.dumps(row, ensure_ascii=False))
-    # A row added after a record goes between it and its separator, after a line feed, so every separator stays.
-    text = "".join(row + "\n" for row in after[-1]) + "".join(
-        line + "".join("\n" + row for row in after[number]) + end for number, (line, end) in enumerate(zip(lines, ends)))
+    for order, row in sorted(((row_order(row), json.dumps(row, ensure_ascii=False)) for row in rows),
+                             key=lambda pair: pair[0]):
+        after[max(((other, number) for other, number in placed if other < order), default=(None, -1))[1]].append(row)
+    # Each record keeps its own separator. A row added after one takes that separator too, or, after the last record
+    # when it has none, follows it after the separator before it (a line feed if none): taking the added rows out
+    # gives back the file's bytes.
+    def separator(number: int) -> str:
+        return ends[number] or next((end for end in reversed(ends[:number]) if end), "\n")
+
+    text = "".join(row + separator(0) for row in after[-1])
+    for number, (line, end) in enumerate(zip(lines, ends)):
+        text += line + (end + "".join(row + end for row in after[number]) if end else
+                        "".join(separator(number) + row for row in after[number]))
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(text.encode("utf-8"))
 
@@ -2402,6 +2414,23 @@ def crediting(lean: str) -> list[dict] | None:
     return None
 
 
+def settled(annotation: dict, lean: str | None) -> bool:
+    """Whether *annotation*, a row the sync writes, credits the project's declaration *lean*, or nothing for a folder
+    page's row (None), as Autoform reads the row (page_owner); when the links folder's defaults flag it for Mathlib,
+    the row turns the flag off if that makes it so."""
+    want = ("atlas", lean, None) if lean else ("none", None, None)
+    for unflag in (False, True):
+        if unflag:
+            extensions = annotation.setdefault("extensions", {})
+            extensions[NAMESPACE] = {**extensions.get(NAMESPACE, {}), "mathlib": False}
+        try:
+            if page_owner(annotation) == want:
+                return True
+        except CreditError:
+            pass
+    return False
+
+
 def apply_declarations(targets: list, index, generated: dict[Path, str] | None = None,
                        unindexed: list[str] | None = None, scope: Scope | None = None) -> dict[str, list[str]]:
     """Pages for new declarations, and the report; see the module docstring. ``generated`` holds generate_wiki's
@@ -2427,6 +2456,12 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     if unreadable:
         return {**dict.fromkeys(("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended",
                                  "unlisted", "unassigned", "held", "held_problems"), []), "credit_problems": unreadable}
+    if scope is not None and not settled({"subject": [{"type": "generic", "uri": "../roadmap/README.md"}]}, None):
+        # A folder page's row the run would add could not credit nothing: write nothing.
+        return {**dict.fromkeys(("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended",
+                                 "unlisted", "unassigned", "held", "held_problems"), []),
+                "credit_problems": ["the links folder's defaults give a folder page's row a credit the sync cannot "
+                                    "turn off"]}
     taken = {a["id"] for rows in files.values() for a in rows if "id" in a}
     keyed, pages, held, held_problems = held_markers(files, index)
     current = {declaration_key(target): target for target in targets if declaration_key(target)}
@@ -2536,12 +2571,21 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
             number += 1
             name = f"{target.slug}-{number}"
         target.path = folder / f"{name}.md"
-        # A scoped run writes a page only with a row that credits its declaration as Autoform reads the row.
-        ends = crediting(target.lean) if scope is not None and target.lean else None
-        if scope is not None and target.lean and ends is None:
+        text, fields = page_text(target)
+        # The page's row, whole before anything is written, its id given once the page is: a scoped run writes a
+        # page only with a row that credits its declaration as Autoform reads the row (see crediting and settled).
+        annotation: dict = {"subject": [{"type": "generic", "uri": "../" + target.path.relative_to(wiki.VAULT).as_posix()}],
+                            "id": None}
+        if target.lean:
+            annotation["object"] = ((crediting(target.lean) if scope is not None else None)
+                                    or [{"location": {"declaration": target.lean}}])
+        extensions: dict = {OWN: {"from": "docstring"}}
+        if "origin" in fields:
+            extensions[NAMESPACE] = {"origin": fields["origin"]}
+        annotation["extensions"] = extensions
+        if scope is not None and not settled(annotation, target.lean):
             report["credit_problems"].append(f"no row the sync can write credits {key} to this project")
             continue
-        text, fields = page_text(target)
         folder.mkdir(parents=True, exist_ok=True)
         target.path.write_text(text)
         written.add(target.path)
@@ -2571,14 +2615,7 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
             if kind := listed_on(readme, add_to_listing(readme, line, [entry[0] for entry in earlier],
                                                         [entry[0] for entry in later], section_titles(target))):
                 report[kind].append(target.path.relative_to(wiki.ROADMAP).as_posix())
-        annotation: dict = {"subject": [{"type": "generic", "uri": "../" + target.path.relative_to(wiki.VAULT).as_posix()}],
-                            "id": article_id(target.path)}
-        if target.lean:
-            annotation["object"] = ends or [{"location": {"declaration": target.lean}}]
-        extensions: dict = {OWN: {"from": "docstring"}}
-        if "origin" in fields:
-            extensions[NAMESPACE] = {"origin": fields["origin"]}
-        annotation["extensions"] = extensions
+        annotation["id"] = article_id(target.path)
         files.setdefault(links_file(target.path), []).append(annotation)
         added.append((links_file(target.path), annotation))
         pages[key] = target.path
@@ -2614,6 +2651,9 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         ours = {key: fields[key] for key in ("navigation", "area") if key in fields}
         if ours:
             annotation["extensions"] = {NAMESPACE: ours}
+        if scope is not None and not settled(annotation, None):
+            # The run checked a folder page's row before it wrote anything.
+            raise RuntimeError(f"{readme.relative_to(wiki.ROADMAP)}: its row would credit a declaration")
         files.setdefault(links_file(readme), []).append(annotation)
         added.append((links_file(readme), annotation))
         report["folders"].append(readme.parent.relative_to(wiki.ROADMAP).as_posix())
@@ -2914,8 +2954,9 @@ def link_view(index) -> dict:
     def stable(problem: str) -> str:
         return problem.replace(os.fspath(LINKS), "blueprint/links").replace(os.fspath(wiki.VAULT), "blueprint")
 
-    unreadable = {stable(problem) for problem in credit_problems(files) + owner_problems(files, index)}
-    return {"stale": dict(stale), "held_problems": set(held_markers(readable_rows(files), index)[3]),
+    # Counted, as two rows may have one problem in the same words.
+    unreadable = Counter(stable(problem) for problem in credit_problems(files) + owner_problems(files, index))
+    return {"stale": dict(stale), "held_problems": Counter(held_markers(readable_rows(files), index)[3]),
             "unreadable": unreadable}
 
 
@@ -3064,10 +3105,10 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
                 for (row, name), places in sorted(links["stale"].items()) if (row, name) not in base["stale"]
                 for where in places]
     blocking += [f"{problem}: fix the held marker"
-                 for problem in sorted(links["held_problems"] - base["held_problems"])]
+                 for problem in sorted((links["held_problems"] - base["held_problems"]).elements())]
     # A row Autoform cannot read one way only stops the run as it stops the whole run, and so do the rows of a checkout
     # lean-facts synced; one the base already had is reported by a run that has something to write (see unfinished).
-    blocking += [f"{problem}; fix it" for problem in sorted(links["unreadable"] - base["unreadable"])]
+    blocking += [f"{problem}; fix it" for problem in sorted((links["unreadable"] - base["unreadable"]).elements())]
     blocking += synced_rows()
     folder_rows = {page for _, row in rows if (page := subject_path(row)) is not None and page.name == "README.md"}
     problems, parts = set(), set()
@@ -3210,7 +3251,7 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
     others = [f"{path}: the sync never writes it" for path in paths if not written_by_sync(path)]
     if others:
         return "other", others
-    ids = {page_name(row): row["id"] for _, _, row in numbered_rows()
+    ids = {page_key(row): row["id"] for _, _, row in numbered_rows()
            if isinstance(row.get("id"), str) and subject_path(row) is not None}
     with tempfile.TemporaryDirectory(prefix="atlas-sync-") as folder:
         # Resolved, as the paths the tools compare with it are.
@@ -3220,7 +3261,7 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
         for made in (vault / "roadmap", vault / "links", state.parent):
             made.mkdir(parents=True, exist_ok=True)
         with relocated(vault=vault, state=state):
-            on_base = {page_name(row) for _, _, row in numbered_rows()}
+            on_base = {page_key(row) for _, _, row in numbered_rows()}
             ids = {page: article_id for page, article_id in ids.items() if page not in on_base}
             plan = plan_of()
             if plan.blocking or plan.problems:

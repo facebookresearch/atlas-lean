@@ -3070,6 +3070,37 @@ class ScopedRows(Vault):
         self.assertEqual((sync.LINKS / "Logic.jsonl").read_text(),
                          "".join(json.dumps(self.about(f"Logic/{name}.md")) + "\n" for name in "ab"))
 
+    def test_rows_added_to_a_file_of_carriage_returns_come_out_whole(self) -> None:
+        # Each record keeps its own separator, and the added rows take the file's: taking them out gives back its
+        # bytes, whatever its separators.
+        sync.LINKS.mkdir(parents=True)
+        path = sync.LINKS / "Algebra.jsonl"
+        for separator, last in (("\r\n", "\r\n"), ("\r", "\r"), ("\n", ""), ("\r\n", "")):
+            rows = [json.dumps(self.about(f"Algebra/{name}.md")) for name in "bd"]
+            original = separator.join(rows) + last
+            path.write_bytes(original.encode())
+            added = [self.about(f"Algebra/{name}.md") for name in "ace"]
+            sync.insert_rows(path, added)
+            text = path.read_bytes().decode()
+            lines, ends = sync.records(text)
+            self.assertEqual([json.loads(line)["subject"][0]["uri"] for line in lines if line],
+                             [f"../roadmap/Algebra/{name}.md" for name in "abcde"], repr(separator + last))
+            for row in added:
+                dumped = json.dumps(row)
+                text = text.replace(dumped + separator, "", 1) if dumped + separator in text else text.replace(
+                    separator + dumped, "", 1)
+            self.assertEqual(text, original, repr(separator + last))
+
+    def test_each_row_is_placed_by_its_page_once(self) -> None:
+        sync.LINKS.mkdir(parents=True)
+        path = sync.LINKS / "Algebra.jsonl"
+        path.write_text("".join(json.dumps(self.about(f"Algebra/p{number:02d}.md")) + "\n" for number in range(20)))
+        calls = []
+        real = sync.page_name
+        with patch.object(sync, "page_name", lambda row: calls.append(1) or real(row)):
+            sync.insert_rows(path, [self.about(f"Algebra/q{number}.md") for number in range(3)])
+        self.assertEqual(len(calls), 23)
+
     def test_a_file_without_a_last_line_end_keeps_its_bytes(self) -> None:
         sync.LINKS.mkdir(parents=True)
         path = sync.LINKS / "Algebra.jsonl"
@@ -3850,6 +3881,51 @@ class ScopedRun(unittest.TestCase):
         page.write_text(page.read_text() + "\nMore prose.\n")
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["in_step"], report["errors"], report["wiki_changes"]), (0, True, [], "other"))
+
+
+    def test_a_row_turns_off_a_mathlib_flag_its_defaults_set(self) -> None:
+        # Defaults that flag every row for Mathlib, which the base's rows turn off: the run's new rows turn it off too,
+        # so they credit what they were written for, and the check and a second write agree.
+        self.write("blueprint/links/_defaults.json", json.dumps({**sync.DEFAULTS, "extensions": {
+            "org.autoform": {"mathlib": True}}}) + "\n")
+        for path in ("blueprint/links/Algebra.jsonl", "blueprint/links/roadmap.jsonl"):
+            links = self.root / path
+            rows = [json.loads(line) for line in links.read_text().splitlines()]
+            for row in rows:
+                row.setdefault("extensions", {}).setdefault("org.autoform", {})["mathlib"] = False
+            links.write_text("".join(json.dumps(row) + "\n" for row in rows))
+        self.base = self.commit("defaults that flag rows for Mathlib")
+        self.write("MathlibExt/Algebra/Rings.lean", self.RINGS)
+        self.assertEqual(self.run_sync()[0], 0)
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        new = [json.loads(line) for line in links.read_text().splitlines() if "not-yet-classified" in line]
+        self.assertEqual(len(new), 4)
+        self.assertTrue(all(row["extensions"]["org.autoform"]["mathlib"] is False for row in new))
+        self.assertEqual(sorted(sync.page_owner(row)[1] or "" for row in new), ["", "", "Ext.Rings.fields", "Ext.Rings.units"])
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"))
+        before = self.tree()
+        self.assertEqual(self.run_sync()[0], 0)
+        self.assertEqual(self.tree(), before)
+
+    def test_a_second_row_with_the_same_problem_is_the_changes(self) -> None:
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text() + json.dumps({"subject": [], "id": "af_" + "c" * 24}) + "\n")
+        self.base = self.commit("a refused row")
+        links.write_text(links.read_text() + json.dumps({"subject": [], "id": "af_" + "d" * 24}) + "\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertEqual(len(report["errors"]), 1, report["errors"])
+
+    def test_a_page_key_has_forward_slashes_on_every_platform(self) -> None:
+        # Where page_name gives the platform's separators, ids are still hinted and found by one key.
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        real = sync.page_name
+        with patch.object(sync.os, "sep", "\\"), \
+                patch.object(sync, "page_name", lambda row: real(row).replace("/", "\\")):
+            status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"]), (0, "sync"), report["differences"])
 
 
 
