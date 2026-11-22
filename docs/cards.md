@@ -116,15 +116,25 @@ strict check below passed. Identical inputs give identical bytes.
 - `commit` and `pages`: the source commit, and each statement page the file mentions (in a card, a
   witness, a walk, `supports` or `unassigned`), by path, with its `article_id` (or null), credit,
   markers, Autoform state, declaration kind and card. A row an earlier sync wrote with a module and a
-  name counts as ATLAS credit only when the extraction resolves it; otherwise its page is stale.
+  name counts as ATLAS credit only once lean-facts gave the build's row the Lean link of the one declaration
+  the Lean index finds for it; otherwise its page is stale.
 - Each dependency has an **origin**: `compiled` between two ATLAS-credited pages, an edge the strict check
   matched against the extraction, or `planned` from a page-only page (written by hand, as
   [Writing pages](BLUEPRINT.md#writing-pages) says),
-  whatever its target, a Mathlib-credited page included. An edge from an ATLAS-credited page to a
-  Mathlib-credited one, and any edge a Mathlib-credited page lists, cannot be checked against this
-  extraction, which records only the project's declarations: the strict check rejects them until a
-  registry of Mathlib edges can vouch for them. Only statement pages Autoform loaded count, each by its
-  own file: a row whose page is gone credits nothing, even where a folder page now has its node id.
+  whatever its target, a Mathlib-credited page included; `bridge` from an ATLAS-credited page to a
+  Mathlib-credited one, and `mathlib` between two Mathlib-credited pages, which the strict check matched
+  against the build's Mathlib registry ([Mathlib-credited pages](BLUEPRINT.md#mathlib-credited-pages)). The registry
+  follows uses through declarations of the project and of Mathlib that no page credits, by the rule the
+  extraction applies to the project's own constants, but a bridge comes only from what a statement or a
+  proof names itself: one that reaches a Mathlib-credited page only through other declarations gives no
+  bridge. The check also requires that the registry was made from the committed rows' credited names, that
+  its edges join declarations pages credit to ones it found, none both kept and left out, and that it finds
+  exactly the declarations the build's pages credit to Mathlib,
+  one page each, each page keeping the declaration its committed row credits; a Mathlib main heads a result
+  card exactly when the registry finds that its type is a proposition, and a concept card otherwise.
+  Without the registry, such edges and any edge a Mathlib-credited page lists are errors. Only statement
+  pages Autoform loaded count, each by its own file: a row whose page is gone credits nothing, even where
+  a folder page now has its node id.
 - `uses`: card X uses card Y when a statement of X depends on a statement of Y. Each edge keeps every
   such dependency as a witness (`source`, `target`, `kind`, `origin`) with counts. A compiled dependency
   that is both a statement and a proof dependency is a statement one, as the extraction writes it; a
@@ -157,15 +167,22 @@ main statement (every link of that section to a statement page counts, nested or
 statement's box on a folder page, `#leaf` or `../other/README.md#leaf` (Autoform boxes a leaf that
 declares something), is no way to link it there; other heading anchors are left alone), a forbidden section, an `## In Mathlib` link that is not a source line at the pinned
 Mathlib titled with something of the form of a Lean name, a dependency on a card's folder page or one Autoform reads on it, a card record on a
-statement page, and a bad move ledger. With `--dependencies build/lean-dependencies.json` (the strict
+statement page, a held marker that credit would override (a held row that credits a declaration, or a held
+declaration another row credits), and a bad move ledger. With `--dependencies build/lean-dependencies.json` (the strict
 check), the dependencies of the checkout must equal the extraction's as sets of typed, oriented edges,
-both ways: a dependency only one side has, a flipped kind, a target listed under both kinds, an edge
-from an ATLAS-credited page to a Mathlib-credited one or any edge a Mathlib-credited page lists, or an
-extracted declaration that credits no statement page is an error, and the move ledger must exist. With
-`--base-ledger`, `--base-links` and `--renames` (given together, or not at all), the ledger and the moves
-since the base commit are checked as the move ledger section says. It warns about a `## Background` link that is not a card's
-page, a circle of `## Background` links (a card linking itself there included), an `## Informally uses` link to a card, and a module-and-name
-row the extraction does not resolve.
+both ways: a dependency only one side has, a flipped kind, a target listed under both kinds, an
+extracted declaration that credits no statement page, or a page whose declaration lean-facts found but the
+extraction has no row for is an error, and the move ledger must exist. With
+`--registry build/mathlib-registry.json`, the edges that reach Mathlib-credited pages must likewise equal
+the registry's bridges and Mathlib edges; without it, they are errors, and so is any edge from a
+Mathlib-credited page to a page that is not one, always. A `--registry` file that holds no JSON object is
+an error, never a run without one, and so is a registry not of the extractor's form (a table of another
+type, say), reported before any of its tables is read, or one made with another extraction than the one
+given (the two are valid only as the pair one extractor run wrote). With `--base-ledger`, `--base-links` and
+`--renames` (given together, or not at all), the ledger and the moves since the base commit are checked as
+the move ledger section says. It warns about a `## Background` link that is not a card's page, a circle of
+`## Background` links (a card linking itself there included), an `## Informally uses` link to a card, and a
+module-and-name row lean-facts gave no Lean link (the Lean index resolves it to no one declaration).
 
 The workflow tests the card scripts and runs `rollup`, which checks first, in their own read-only job,
 `check the cards`, after `build the wiki` and from its `blueprint-dependencies` artifact; on a pull
@@ -177,8 +194,9 @@ runs the site hook's tests (`scripts/test_card_pages.py`) with its other tests a
 ([Reading](#reading)). The site's deployment needs only the wiki job.
 
 ```sh
-python scripts/sync_wiki.py lean-facts build/lean-dependencies.json
+python scripts/sync_wiki.py lean-facts build/lean-dependencies.json --registry build/mathlib-registry.json
 python scripts/cards.py rollup build/cards.json --dependencies build/lean-dependencies.json \
+  --registry build/mathlib-registry.json \
   [--base-ledger <the base commit's scripts/card-moves.jsonl> --base-links <its blueprint/links/> \
    --renames <git diff --name-status -M BASE HEAD -- blueprint/roadmap>]
 ```
@@ -230,9 +248,12 @@ the check also reconciles every change since the base with one map of who owns w
 
 The site shows each card on its folder page. `build the wiki` derives the card data itself: after
 `lean-facts` and before render, it runs `scripts/cards.py rollup build/cards.json` on its own checkout with
-the extraction it has just made, the inputs of `check the cards` but for the moves since the base commit,
-which only that job checks. The rollup removes its output first and writes it only once the strict check
-passes. A card error cannot fail the job, which the step delays by at most its ten-minute timeout: it leaves
+the extraction and the Mathlib registry it has just made, the inputs of `check the cards` but for the moves
+since the base commit, which only that job checks. The rollup removes its output first and writes it only once the strict check
+passes, whole, through a temporary file; an output inside `blueprint/` or the `--base-links` folder, one that
+is one of its inputs, a symbolic link or no regular file is refused before anything is touched. A card error
+cannot fail the job, which the step delays by at most
+its ten-minute timeout: it leaves
 no card data, the site renders exactly as without cards, and `check the cards` reports the error. The hook
 itself is site code: its tests (`scripts/test_card_pages.py`) run with the wiki job's other tests, so a
 regression in it fails that job, as a change to any other part of the site does.
@@ -255,7 +276,7 @@ A card's folder page shows, before its first section, a block with:
 - each edge derived from its statements, with the dependencies that witness it in a collapsed list: the
   cards it uses and the cards that use it, each dependency saying which statement uses which, in its
   statement or in its proof, and marked when it is not one Lean compiled between two ATLAS declarations
-  (`planned`, and `bridge` or `Mathlib` once a registry of Mathlib edges provides them); the cards its main
+  (`planned`, and `bridge` or `Mathlib` for an edge the build's Mathlib registry vouches for); the cards its main
   statement needs and the cards whose main statement needs it, each with its walk, which goes through
   statements or, when one of its steps is a proof dependency, through a proof; and the cluster it belongs
   to, a group of cards that each use every other one, directly or through cards of the group, with its members
