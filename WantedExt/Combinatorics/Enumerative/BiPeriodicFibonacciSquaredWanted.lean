@@ -265,17 +265,6 @@ public theorem_wanted fib_succ_sq_sub_parity_eq_sum {n : ℕ} (hn : 1 ≤ n) :
       (Nat.fib (n + 1) : ℤ) ^ 2 - ((n + 1) % 2 : ℕ) =
         ∑ k ∈ Icc 1 n, (k : ℤ) * (Nat.fib (n - k + 1) : ℤ) ^ 2
 
-/-- Corollary 3.12: for `n ≥ 2` and `m ≥ 1`,
-`F²_{m+n} = F²_{m+1} F²_n + F²_m F²_{n-1} + 2 ∑_{i=1}^{m} F²_i ∑_{j=1}^{n-1} F²_j`.
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Corollary 3.12 (`fq-2024-belaggoun01132024-cor-3.12`). -/
-public theorem_wanted fib_add_sq_eq {m n : ℕ} (hm : 1 ≤ m) (hn : 2 ≤ n) :
-    Nat.fib (m + n) ^ 2 =
-      Nat.fib (m + 1) ^ 2 * Nat.fib n ^ 2 + Nat.fib m ^ 2 * Nat.fib (n - 1) ^ 2 +
-        2 * (∑ i ∈ Icc 1 m, Nat.fib i ^ 2) * ∑ j ∈ Icc 1 (n - 1), Nat.fib j ^ 2
-
 /-- Lemma 3.13: for nonzero `a`, `b` and `n ≥ 2`, the weighted number `R_n` of tilings with no
 free bifence satisfies `R_n = (b/a)(ab+1) R_{n-1} + ab R_{n-2}` for even `n` and
 `R_n = (a/b)(ab+1) R_{n-1} + ab R_{n-2}` for odd `n`. The initial values `R_0 = 1`, `R_1 = a²`
