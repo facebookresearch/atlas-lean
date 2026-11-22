@@ -112,6 +112,82 @@ theorem t5_classifier_earthmover :
     · norm_num [Fin.sum_univ_two]
   exact tvDist_inducedDist_le_earthmover t2_const_fair hS hT
 
+/-- The deterministic identity classifier on `Fin 2`: individual `x`
+receives outcome `x` with probability `1`. -/
+def idClassifier : Fin 2 → Fin 2 → ℝ := fun x o => if o = x then 1 else 0
+
+/-- T6: the identity classifier is individually fair for the discrete
+metric, and for the two opposite point masses both sides of the
+earthmover bound are independently computed to be `1` (the induced
+distributions are the point masses themselves, the unique coupling
+has cost `1`). Neither value is obtained from
+`tvDist_inducedDist_le_earthmover`. -/
+theorem t6_identity_values :
+    IsLipschitzFair d2 idClassifier
+    ∧ MathlibExt.Probability.MarkovMixing.tvDist
+        (inducedDist idClassifier
+          (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0))
+        (inducedDist idClassifier
+          (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1)) = 1
+    ∧ earthmover d2 (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0)
+        (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) = 1 := by
+  have hrows : ∀ x : Fin 2, IsDist (idClassifier x) := by
+    intro x
+    fin_cases x <;>
+      refine ⟨fun o => by fin_cases o <;> norm_num [idClassifier], ?_⟩ <;>
+      norm_num [idClassifier, Fin.sum_univ_two]
+  have hind0 : inducedDist idClassifier
+      (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0) =
+      (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0) := by
+    funext o
+    fin_cases o <;> norm_num [inducedDist, idClassifier, Fin.sum_univ_two]
+  have hind1 : inducedDist idClassifier
+      (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) =
+      (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) := by
+    funext o
+    fin_cases o <;> norm_num [inducedDist, idClassifier, Fin.sum_univ_two]
+  refine ⟨⟨hrows, ?_⟩, ?_, ?_⟩
+  · intro x y
+    fin_cases x <;> fin_cases y <;>
+      norm_num [idClassifier, d2,
+        MathlibExt.Probability.MarkovMixing.tvDist, Fin.sum_univ_two]
+  · rw [hind0, hind1]
+    norm_num [MathlibExt.Probability.MarkovMixing.tvDist, Fin.sum_univ_two]
+  · have hcost : ∀ π : {π // IsCoupling
+        (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0)
+        (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) π},
+        transportCost d2 π.1 = 1 := by
+      intro π
+      obtain ⟨hnn, hrow, hcol⟩ := π.2
+      have r0 := hrow 0
+      have r1 := hrow 1
+      have c0 := hcol 0
+      have c1 := hcol 1
+      simp only [Fin.sum_univ_two] at r0 r1 c0 c1
+      norm_num at r0 r1 c0 c1
+      have n00 := hnn 0 0
+      have n01 := hnn 0 1
+      have n10 := hnn 1 0
+      have n11 := hnn 1 1
+      have h01 : π.1 0 1 = 1 := by linarith
+      have h00 : π.1 0 0 = 0 := by linarith
+      have h10 : π.1 1 0 = 0 := by linarith
+      have h11 : π.1 1 1 = 0 := by linarith
+      unfold transportCost
+      norm_num [Fin.sum_univ_two, d2, h00, h01, h10, h11]
+    unfold earthmover
+    have : Nonempty {π // IsCoupling
+        (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0)
+        (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) π} :=
+      ⟨⟨_, t3_coupling_cost.1⟩⟩
+    have hfun : (fun π : {π // IsCoupling
+        (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0)
+        (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) π} =>
+        transportCost d2 π.1) = fun _ => (1 : ℝ) :=
+      funext hcost
+    rw [hfun]
+    exact ciInf_const
+
 end
 
 end Cslib.MachineLearning.IndividualFairness

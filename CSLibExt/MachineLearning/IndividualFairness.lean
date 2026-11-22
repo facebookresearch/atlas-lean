@@ -19,6 +19,46 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
+/-!
+# Individual fairness and the earthmover bound
+
+Individual fairness in the sense of Dwork, Hardt, Pitassi, Reingold and
+Zemel, "Fairness through awareness", *Proceedings of the 3rd Innovations
+in Theoretical Computer Science Conference* (ITCS 2012), 214–226
+(arXiv:1104.3913): a randomized classifier is fair when it is Lipschitz
+from the task metric on individuals to total variation distance on
+outcome distributions.
+
+Correspondence with the paper:
+
+* `IsDist` is a probability vector, and `IsLipschitzFair` is the paper's
+  `(D, d)`-Lipschitz condition of Definition 2.1 with the outcome
+  distance `D` taken to be total variation distance
+  (`MathlibExt.Probability.MarkovMixing.tvDist`); in particular every
+  classifier row must be a probability distribution.
+* `earthmover` is the paper's earthmover distance: the infimum of
+  transport costs over all couplings (`IsCoupling`, `transportCost`).
+* `tvDist_inducedDist_le_earthmover` is the per-classifier form of the
+  paper's earthmover bound: for one Lipschitz-fair classifier, the total
+  variation distance between the induced outcome distributions on two
+  populations (its statistical-parity gap in the sense of
+  Definition 3.1) is at most their earthmover distance. In the paper
+  this bound for a fixed classifier follows by combining Lemma 3.1 with
+  Theorem 3.3, whose statement bounds the worst-case bias
+  `bias_{Dtv, d}` of Definition 3.2, the maximum over all
+  `(D, d)`-Lipschitz binary classifiers. Neither that maximum nor
+  Theorem 3.3's equality case for metrics bounded by `1` is formalized
+  here.
+
+The auxiliary `bias S T f` below is the expectation gap of a single
+real-valued score `f` between two populations, and `bias_le_earthmover`
+bounds that score gap by the earthmover distance for `1`-Lipschitz
+scores. It is neither the fixed-classifier statistical-parity gap of
+Definition 3.1 (a total variation distance between induced outcome
+distributions, bounded in `tvDist_inducedDist_le_earthmover`) nor the
+worst-case `bias_{D, d}` of Definition 3.2.
+-/
+
 set_option autoImplicit false
 
 open scoped BigOperators
@@ -58,8 +98,11 @@ noncomputable def earthmover {V : Type*} [Fintype V] (d : V → V → ℝ)
     (S T : V → ℝ) : ℝ :=
   ⨅ π : {π // IsCoupling S T π}, transportCost d π
 
-/-- Statistical-parity bias of an outcome score `f` between the
-distributions `S` and `T`. -/
+/-- Expectation gap of an outcome score `f` between the distributions
+`S` and `T` (an auxiliary score bias; neither the paper's
+fixed-classifier statistical-parity gap of Definition 3.1, a total
+variation distance between induced distributions, nor its worst-case
+`bias_{D, d}` of Definition 3.2). -/
 def bias {V : Type*} [Fintype V] (S T f : V → ℝ) : ℝ :=
   |∑ x, S x * f x - ∑ x, T x * f x|
 
@@ -303,7 +346,7 @@ theorem exists_coupling {V : Type*} [Fintype V] {S T : V → ℝ}
     show (∑ x, S x * T y) = T y
     rw [← Finset.sum_mul, hS_sum, one_mul]
 
-/-- The statistical-parity bias of a 1-Lipschitz score is bounded by the
+/-- The expectation gap of a 1-Lipschitz score is bounded by the
 transport cost of any coupling. -/
 theorem bias_le_transportCost {V : Type*} [Fintype V] {d : V → V → ℝ}
     {S T f : V → ℝ} {π : V → V → ℝ} (hπ : IsCoupling S T π)
@@ -363,8 +406,8 @@ theorem bias_le_transportCost {V : Type*} [Fintype V] {d : V → V → ℝ}
         intro y _
         exact mul_le_mul_of_nonneg_left (hf x y) (hπ_nonneg x y)
 
-/-- The bias bound against the earthmover distance: the bias is below every
-coupling cost, hence below their infimum. -/
+/-- The score-gap bound against the earthmover distance: the expectation
+gap is below every coupling cost, hence below their infimum. -/
 theorem bias_le_earthmover {V : Type*} [Fintype V]
     {d : V → V → ℝ} {S T f : V → ℝ} (hS : IsDist S) (hT : IsDist T)
     (hf : ∀ x y, |f x - f y| ≤ d x y) :
