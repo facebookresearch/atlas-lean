@@ -116,7 +116,7 @@ noncomputable def interfaceFlux (numFlux : ℝ × ℝ → ℝ × ℝ → ℝ × 
     (hL uL hR uR zL zR : ℝ) : ℝ × ℝ :=
   numFlux (faceState hL uL zL (max zL zR)) (faceState hR uR zR (max zL zR))
 
-/-- **Left numerical flux** `𝓕_l`, source (2.16): the interface flux
+/-- **Left numerical flux** `𝓕_l`, source (2.15): the interface flux
 plus the left hydrostatic correction `(0, g hL² / 2 - g h'² / 2)`, where
 `h'` is the left reconstructed depth. The left cell uses it at its
 right face. -/
@@ -183,7 +183,7 @@ lemma faceState_eq_of_lake_at_rest {η hL uL hR uR zL zR : ℝ}
 /-- **Wet-bed reconstructed face balance.** At a face between two wet
 cells of a lake at rest (free surface `η` strictly above both beds, zero
 discharge), and for any numerical flux consistent on wet states, each
-corrected momentum flux of source (2.16) equals the hydrostatic momentum
+corrected momentum flux of source (2.15)–(2.16) equals the hydrostatic momentum
 flux of the cell on its side: `g * hL ^ 2 / 2` for the left flux, used by
 the left cell, and `g * hR ^ 2 / 2` for the right flux, used by the right
 cell. This is the momentum part of the source's identities
