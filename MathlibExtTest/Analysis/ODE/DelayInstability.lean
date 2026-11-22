@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Analysis.ODE.DelayInstability
-import MathlibExt.Biology.Dynamics.DelayedLogistic
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
@@ -19,10 +18,6 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 * Characteristic roots with a genuine delay, checked from the definitions of `pointDelay` and
   the exponential segments: `r = 1` for `x'(t) = e x(t - 1)`, and the complex root
   `κ = 1 + i` for `x'(t) = κ e^κ x(t - 1)`.
-* Real coefficients, genuine delay, complex unstable root: for Hutchinson's linearization
-  `u'(t) = -r u(t - τ)` beyond the critical delay, the root with positive real part from
-  `DelayedLogistic.exists_charFun_eq_zero_re_pos` is a characteristic root of the
-  point-delay functional.
 * Boundary of the hypothesis `Re κ > 0`: `κ = i` is a characteristic root of
   `x'(t) = -x(t - π/2)` (Hutchinson's equation on its stability boundary `bτ = π/2`), and the
   corresponding time-`T` eigenvalue `e^{iT}` has modulus `1`, so no instability theorem
@@ -65,23 +60,6 @@ example : pointDelay zero_le_one (0 : ℂ →L[ℂ] ℂ)
   ring_nf
   simp
   ring
-
-open MathlibExt.Biology.Dynamics.DelayedLogistic in
-/-- Hutchinson's linearization `u'(t) = -r u(t - τ)` with `τ > π / (2r)`: a root of
-`DelayedLogistic.charFun` with positive real part is a characteristic root of
-`pointDelay hτ 0 (-r)`, i.e. it supplies the spectral hypothesis of
-`exists_escape_of_charRoot`. -/
-theorem hutchinson_unstable_charRoot {r τ : ℝ} (hr : 0 < r) (hτc : criticalDelay r < τ)
-    (hτ : 0 ≤ τ) : ∃ κ : ℂ, 0 < κ.re ∧
-      pointDelay hτ (0 : ℂ →L[ℂ] ℂ) (-(r : ℂ) • ContinuousLinearMap.id ℂ ℂ)
-        (expSegment τ κ 1) = κ • (1 : ℂ) := by
-  obtain ⟨z, hz, hre, -⟩ := exists_charFun_eq_zero_re_pos hr hτc
-  refine ⟨z, hre, ?_⟩
-  rw [pointDelay_expSegment, show -(τ : ℂ) * z = -(z * τ) by ring]
-  simp only [charFun] at hz
-  simp only [zero_apply, zero_add, smul_apply, ContinuousLinearMap.id_apply, smul_eq_mul,
-    mul_one]
-  linear_combination -hz
 
 /-! ### Boundary: a characteristic root on the imaginary axis -/
 

@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Biology.Dynamics.FisherKPP
+public import MathlibExt.Analysis.ODE.PlanarShooting.LogisticProfile
 import Mathlib.Analysis.Calculus.ContDiff.RCLike
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import MathlibExt.Analysis.ODE.MaximalSolution
