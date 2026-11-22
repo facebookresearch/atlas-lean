@@ -25,9 +25,6 @@ the binomial tail `ProbabilityTheory.binomTail n (t + 1) delta`.
 The Hamming (7,4) case (`t = 1`) is included. The binomial tail is
 the canonical `MathlibExt.Probability.Distributions.BinomialTail`
 definition, not a local copy.
-
-Discharges ECE roadmap leaf `ECE.COM.CODECHANNEL.L2` (bounded
-distance decoding error bound).
 -/
 
 @[expose] public section

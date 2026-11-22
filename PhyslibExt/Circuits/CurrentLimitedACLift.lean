@@ -10,6 +10,7 @@ module
 
 public import PhyslibExt.Circuits.ACInjectionLossBalance
 public import Mathlib.LinearAlgebra.Matrix.PosDef
+public import Mathlib.LinearAlgebra.Matrix.Rank
 public import Mathlib.LinearAlgebra.Matrix.Trace
 
 /-!
@@ -19,29 +20,30 @@ public import Mathlib.LinearAlgebra.Matrix.Trace
 
 In the bus-injection model of a finite alternating-current network, given by a
 real signed incidence matrix, branch admittances and shunt admittances, the
-absorbed complex power at every bus is a quadratic function of the complex
-node-voltage vector `V`. Lifting `V` to the matrix `W = V Vᴴ`, entrywise
+complex power each bus supplies to the network is a quadratic function of the
+complex node-voltage vector `V`. Lifting `V` to the matrix `W = V Vᴴ`, entrywise
 `W a b = V a * conj (V b)`, makes every such quadratic function linear. The
-lift is Hermitian and positive semidefinite, and it does not see a global
+lift is Hermitian and positive semidefinite, of rank at most one (the zero
+vector lifts to the zero matrix, of rank zero), and it does not see a global
 unit-modulus phase factor on `V`.
 
-With the bus admittance matrix `Y`, the absorbed complex power at bus `k` is
+With the bus admittance matrix `Y`, the complex power supplied by bus `k` is
 `∑ j, conj (Y k j) * W k j`. Every constraint of a current-limited optimal power
 flow problem, with one aggregate generator per bus, fixed demands, box limits
 on active and reactive generation, bounds on squared voltage magnitudes and
 upper bounds on squared branch-current magnitudes, is a real affine constraint
 `Re (trace (A * W))` in `W` for an explicit Hermitian coefficient matrix `A`,
-and it is exact on rank-one lifts. A linear active-generation cost is
-preserved. Hence a voltage vector is feasible for the AC problem if and only if
-its lift is feasible for the semidefinite problem, with equal cost, and
-dropping the rank-one condition gives a sound relaxation: every lower bound on
-the semidefinite cost bounds the AC cost.
+and it is exact on lifts. A linear active-generation cost is preserved. Hence a
+voltage vector is feasible for the AC problem if and only if its lift is
+feasible for the semidefinite problem, with equal cost, and dropping the
+rank-at-most-one condition gives a sound relaxation: every lower bound on the
+semidefinite cost bounds the AC cost.
 
 Line limits are squared current limits only; apparent-power circles and
 phase-difference limits are not modeled. No voltage is recovered from an
 arbitrary positive semidefinite `W`: on a two-bus network the identity matrix
 is feasible for the relaxation and is the lift of no voltage vector. A
-rank-one witness on the same network is AC feasible with equal costs.
+nonzero, hence rank-one, witness on the same network is AC feasible with equal costs.
 
 The injections, branch drops and nodal power are those of
 `PhyslibExt.Circuits.ACInjectionLossBalance`, in the root-mean-square
@@ -49,7 +51,10 @@ convention of `PhyslibExt.Circuits.BalancedThreePhase.complexPower`.
 
 ## ii. Key results
 
-- `nodeComplexPower_eq_liftedInjection`: the absorbed complex power at a bus is
+- `voltageLift_rank_le_one`: every lift `V Vᴴ` has rank at most one; the zero
+  vector lifts to the zero matrix (`voltageLift_zero`).
+
+- `nodeComplexPower_eq_liftedInjection`: the complex power supplied by a bus is
   the lifted injection `∑ j, conj (Y k j) * W k j` at `W = V Vᴴ`.
 - `acFeasible_iff_sdpFeasible_voltageLift`: a voltage vector is AC feasible iff
   its lift is feasible for the semidefinite relaxation.
@@ -62,7 +67,7 @@ convention of `PhyslibExt.Circuits.BalancedThreePhase.complexPower`.
 - B. The voltage lift
 - C. Injections through the bus admittance matrix
 - D. Hermitian coefficient matrices and real affine constraints
-- E. Exactness on rank-one lifts
+- E. Exactness on lifts
 - F. Feasibility, cost and the sound relaxation
 - G. Two-bus validation
 
@@ -92,7 +97,7 @@ def busAdmittance (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ) (y : Fin nE �
     (ys : Fin nN → ℂ) : Matrix (Fin nN) (Fin nN) ℂ :=
   fun a b => (∑ e : Fin nE, (B a e : ℂ) * y e * (B b e : ℂ)) + Matrix.diagonal ys a b
 
-/-- Rank-one voltage lift `W = V Vᴴ`, entrywise `W a b = V a * conj (V b)`. -/
+/-- Voltage lift `W = V Vᴴ`, entrywise `W a b = V a * conj (V b)`; of rank at most one. -/
 def voltageLift (n : ℕ) (V : Fin n → ℂ) : Matrix (Fin n) (Fin n) ℂ :=
   Matrix.vecMulVec V (star V)
 
@@ -234,6 +239,15 @@ lemma voltageLift_isHermitian (n : ℕ) (V : Fin n → ℂ) :
     (voltageLift n V).IsHermitian :=
   (voltageLift_posSemidef n V).isHermitian
 
+/-- The lift has rank at most one. -/
+lemma voltageLift_rank_le_one (n : ℕ) (V : Fin n → ℂ) :
+    (voltageLift n V).rank ≤ 1 :=
+  Matrix.rank_vecMulVec_le V (star V)
+
+/-- The zero voltage vector lifts to the zero matrix, so a lift can have rank zero. -/
+lemma voltageLift_zero (n : ℕ) : voltageLift n 0 = 0 := by
+  simp [voltageLift]
+
 /-- The lift quotients the global phase: a unit-modulus factor on every voltage leaves
 `W` unchanged. -/
 lemma voltageLift_unit_mul (n : ℕ) (V : Fin n → ℂ) (u : ℂ) (hu : ‖u‖ = 1) :
@@ -264,7 +278,7 @@ lemma busAdmittance_mulVec_eq_nodeInjection (nN nE : ℕ) (B : Matrix (Fin nN) (
   refine Finset.sum_congr rfl fun e _ => Finset.sum_congr rfl fun j _ => ?_
   ring
 
-/-- Lifted injection: the absorbed complex power at bus `k` is
+/-- Lifted injection: the complex power supplied by bus `k` is
 `∑ j, conj (Y k j) * W k j` at `W = V Vᴴ`. -/
 theorem nodeComplexPower_eq_liftedInjection (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ)
     (V : Fin nN → ℂ) (y : Fin nE → ℂ) (ys : Fin nN → ℂ) (k : Fin nN) :
@@ -372,7 +386,7 @@ lemma pairing_voltageCoeff (n : ℕ) (W : Matrix (Fin n) (Fin n) ℂ) (k : Fin n
     pairing n (voltageCoeff n k) W = (W k k).re := by
   simp [pairing, Matrix.trace, Matrix.mul_apply, voltageCoeff, ite_and, ite_mul]
 
-/-! ## E. Exactness on rank-one lifts -/
+/-! ## E. Exactness on lifts -/
 
 /-- Exact active injection on a lift. -/
 lemma pairing_activeCoeff_voltageLift (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ)
@@ -431,7 +445,8 @@ lemma sdpCost_voltageLift (nN nE : ℕ) (P : CurrentLimitedOPF nN nE) (V : Fin n
 
 /-- **Current-limited AC lift.** The lift of every AC-feasible voltage vector is
 relaxation-feasible with the same cost, so every lower bound on the relaxation cost is a
-lower bound on the AC cost: dropping the rank-one constraint gives a sound relaxation. -/
+lower bound on the AC cost: dropping the rank-at-most-one constraint gives a sound
+relaxation. -/
 theorem currentLimitedACLift_sound (nN nE : ℕ) (P : CurrentLimitedOPF nN nE) :
     (∀ V : Fin nN → ℂ, acFeasible nN nE P V →
       sdpFeasible nN nE P (voltageLift nN V) ∧
