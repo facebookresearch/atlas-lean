@@ -13,3 +13,4 @@ Boolean circuits as a model of computation, including arithmetic circuits built 
 - [Smolensky: parity is not in AC0(mod 3)](smolensky.md)
 - [Williams: NEXP is not contained in ACC0](williams-nexp-not-in-acc0.md)
 - [Razborov: majority is not in AC0[mod 2]](razborov-majority-not-in-ac0-mod-two.md)
+- [Unbounded fan-in circuits](unbounded-fan-in-circuits/README.md)
