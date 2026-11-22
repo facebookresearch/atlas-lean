@@ -29,6 +29,7 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Cotangent
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.Analysis.OddWeightedCatalanSeries
 
 namespace MetaMathlibExt
 
@@ -132,15 +133,6 @@ public theorem_wanted tsum_catalan_mul_harmonic_div_four_pow_mul_binom {z : ℂ}
       2 * (Complex.digamma z - Complex.digamma (z + 1 / 2)) *
           (1 - z * (Complex.digamma (z + 1) + Real.eulerMascheroniConstant)) +
         2 * z * ∑' j : ℕ, (1 / ((j : ℂ) + z) ^ 2 - 1 / ((j : ℂ) + z + 1 / 2) ^ 2)
-
-/-- Theorem 5 (general identity): for `Re z > 1/2`,
-`Σ_{n≥0} (2n + 1) C_n/(2^{2n} C(n + z, n)) = 2z(H_{z-1} - H_{z-3/2}) = 2z(ψ(z) - ψ(z - 1/2))`.
-
-Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
-Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 5, identity (11) (`integers-2025-A18-thm-5`). -/
-public theorem_wanted tsum_odd_mul_catalan_div_four_pow_mul_binom {z : ℂ} (hz : 1 / 2 < z.re) :
-    ∑' n : ℕ, (2 * (n : ℂ) + 1) * catalan n / (4 ^ n * ∏ j ∈ Finset.Icc 1 n, (z + j) / j) =
-      2 * z * (Complex.digamma z - Complex.digamma (z - 1 / 2))
 
 /-- Theorem 5 (special values): `Σ_{n≥0} ((2n + 1)/(n + 1)) C_n/2^{2n} = 4 ln 2` and
 `Σ_{n≥0} ((2n + 1)/((n + 1)(n + 2))) C_n/2^{2n} = 4 ln 2 - 2`.
