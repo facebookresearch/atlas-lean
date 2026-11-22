@@ -18,6 +18,7 @@ public import Mathlib.GroupTheory.SpecificGroups.Cyclic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
+public import MathlibExt.NumberTheory.RepetendTable
 
 /-!
 # Repetend tables
