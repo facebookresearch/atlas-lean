@@ -23,51 +23,58 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Rosser–Schoenfeld lower bound quoted as Lemma 2: `x / log x < π(x)` for every real
-`x ≥ 17`.
+/-- **The Rosser–Schoenfeld lower bound $x / \log x$ for the prime-counting function.** For every
+real number $x \ge 17$, the number $\pi(x)$ of primes at most $x$ satisfies
+$x / \log x < \pi(x)$.
 
 Source: Qianxi Zhang and Xinhua Xiong, *New Refinements of Mandl's Inequality*,
 INTEGERS 25 (2025), Article A58, Lemma 2 (`integers-2025-A58-lem-2`). -/
 public theorem_wanted primeCounting_gt_div_log_of_seventeen_le (x : ℝ) (hx : 17 ≤ x) :
     x / Real.log x < (Nat.primeCounting ⌊x⌋₊ : ℝ)
 
-/-- Consequence (2) of Lemma 2: `pₙ < n log pₙ` for every `n ≥ 7` (one-indexed `pₙ`, so
-`pₙ = Nat.nth Nat.Prime (n - 1)`).
+/-- **For $n \ge 7$, the $n$th prime is less than $n$ times its logarithm.** For every integer
+$n \ge 7$, the $n$th prime $p_n$ (counting from $p_1 = 2$) satisfies $p_n < n \log p_n$.
 
 Source: Qianxi Zhang and Xinhua Xiong, *New Refinements of Mandl's Inequality*,
 INTEGERS 25 (2025), Article A58, Lemma 2, inequality (2) (`integers-2025-A58-lem-2`). -/
 public theorem_wanted nthPrime_lt_mul_log_nthPrime (n : ℕ) (hn : 7 ≤ n) :
     (Nat.nth Nat.Prime (n - 1) : ℝ) < n * Real.log (Nat.nth Nat.Prime (n - 1) : ℝ)
 
-/-- Dusart upper bound quoted in Lemma 3: `π(x) < x / (log x - 1.1)` for every real
-`x ≥ 60184`.
-The companion lower bound `π(x) > x / (log x - 1)` for `x ≥ 5393` is
-`MetaMathlibExt.dusart_pi_lower_shifted_log`.
+/-- **Dusart's upper bound $x / (\log x - 1.1)$ for the prime-counting function.** For every
+real number $x \ge 60184$, the number $\pi(x)$ of primes at most $x$ satisfies
+$\pi(x) < x / (\log x - 1.1)$.
 
 Source: Qianxi Zhang and Xinhua Xiong, *New Refinements of Mandl's Inequality*,
 INTEGERS 25 (2025), Article A58, Lemma 3 (`integers-2025-A58-lem-3`). -/
 public theorem_wanted primeCounting_lt_div_log_sub_eleven_tenths (x : ℝ) (hx : 60184 ≤ x) :
     (Nat.primeCounting ⌊x⌋₊ : ℝ) < x / (Real.log x - 1.1)
 
-/-- Consequence (4) of Lemma 3: `pₙ < n (log pₙ - 1)` for every `n ≥ 711 = π(5393)`
-(one-indexed `pₙ`). Consequence (3) is omitted: it fails at `n = 6076`, where `p₆₀₇₆ = 60169` and
-`6076 (log 60169 - 1.1) ≈ 60182.2`.
+/-- **An upper bound for the $n$-th prime in terms of its logarithm.** Let $p_n$ denote the
+$n$-th prime, so that $p_1 = 2$. For every integer $n \ge 711$, $p_n < n(\log p_n - 1)$.
+
+Here $711 = \pi(5393)$, where $\pi(x)$ denotes the number of primes at most $x$. The paper's
+companion inequality (3) is not included: it fails at $n = 6076$, where $p_{6076} = 60169$ and
+$6076(\log 60169 - 1.1) \approx 60182.2$.
 
 Source: Qianxi Zhang and Xinhua Xiong, *New Refinements of Mandl's Inequality*,
 INTEGERS 25 (2025), Article A58, Lemma 3, inequality (4) (`integers-2025-A58-lem-3`). -/
 public theorem_wanted nthPrime_lt_mul_log_nthPrime_sub_one (n : ℕ) (hn : 711 ≤ n) :
     (Nat.nth Nat.Prime (n - 1) : ℝ) < n * (Real.log (Nat.nth Nat.Prime (n - 1) : ℝ) - 1)
 
-/-- Lower bound quoted as Lemma 4: `π(x) > x / (log x - 1 - 1 / log x)` for every real
-`x ≥ 468049`.
+/-- **Lower bound $x / (\log x - 1 - 1 / \log x)$ for the prime-counting function.** For every
+real number $x \ge 468049$, the number $\pi(x)$ of primes at most $x$ satisfies
+$\pi(x) > x / (\log x - 1 - 1 / \log x)$.
 
 Source: Qianxi Zhang and Xinhua Xiong, *New Refinements of Mandl's Inequality*,
 INTEGERS 25 (2025), Article A58, Lemma 4 (`integers-2025-A58-lem-4`). -/
 public theorem_wanted primeCounting_gt_div_log_sub_one_sub_inv_log (x : ℝ) (hx : 468049 ≤ x) :
     x / (Real.log x - 1 - 1 / Real.log x) < (Nat.primeCounting ⌊x⌋₊ : ℝ)
 
-/-- Consequence (5) of Lemma 4: `pₙ < n (log pₙ - 1 - 1 / log pₙ)` for every `n ≥ 39071 =
-π(468049)` (one-indexed `pₙ`).
+/-- **A second-order upper bound for the $n$-th prime in terms of its logarithm.** Let $p_n$
+denote the $n$-th prime, so that $p_1 = 2$. For every integer $n \ge 39071$,
+$$p_n < n\left(\log p_n - 1 - \frac{1}{\log p_n}\right).$$
+
+Here $39071 = \pi(468049)$, where $\pi(x)$ denotes the number of primes at most $x$.
 
 Source: Qianxi Zhang and Xinhua Xiong, *New Refinements of Mandl's Inequality*,
 INTEGERS 25 (2025), Article A58, Lemma 4, inequality (5) (`integers-2025-A58-lem-4`). -/
@@ -76,16 +83,19 @@ public theorem_wanted nthPrime_lt_mul_log_nthPrime_sub_one_sub_inv_log (n : ℕ)
       n * (Real.log (Nat.nth Nat.Prime (n - 1) : ℝ) - 1 -
         1 / Real.log (Nat.nth Nat.Prime (n - 1) : ℝ))
 
-/-- Lemma 6, inequality (15): `log n ≥ 0.914 log pₙ` for every `n ≥ 234057667276344608`
-(one-indexed `pₙ`).
+/-- **Lower bound for $\log n$ in terms of the logarithm of the $n$-th prime.** Let $p_n$ denote
+the $n$-th prime, so that $p_1 = 2$. For every integer $n \ge 234057667276344608$,
+$\log n \ge 0.914 \log p_n$.
 
 Source: Qianxi Zhang and Xinhua Xiong, *New Refinements of Mandl's Inequality*,
 INTEGERS 25 (2025), Article A58, Lemma 6, inequality (15) (`integers-2025-A58-lem-6`). -/
 public theorem_wanted mul_log_nthPrime_le_log (n : ℕ) (hn : 234057667276344608 ≤ n) :
     0.914 * Real.log (Nat.nth Nat.Prime (n - 1) : ℝ) ≤ Real.log n
 
-/-- Proposition 1: for every `n ≥ 1`, with one-indexed `pₙ`,
-`937.5 pₙ² log pₙ + 5674.5 pₙ² > 118.676119576 n² log³ pₙ + 709.7856 n pₙ log² pₙ`.
+/-- **An explicit inequality between $n$ and the $n$th prime.** For every integer $n \ge 1$, the
+$n$th prime $p_n$ (counting from $p_1 = 2$) satisfies
+$$118.676119576 \, n^2 (\log p_n)^3 + 709.7856 \, n \, p_n (\log p_n)^2
+< 937.5 \, p_n^2 \log p_n + 5674.5 \, p_n^2.$$
 
 Source: Qianxi Zhang and Xinhua Xiong, *New Refinements of Mandl's Inequality*,
 INTEGERS 25 (2025), Article A58, Proposition 1 (`integers-2025-A58-prop-1`). -/
@@ -96,8 +106,10 @@ public theorem_wanted nthPrime_sq_log_bound (n : ℕ) (hn : 1 ≤ n) :
       937.5 * (Nat.nth Nat.Prime (n - 1) : ℝ) ^ 2 * Real.log (Nat.nth Nat.Prime (n - 1) : ℝ) +
         5674.5 * (Nat.nth Nat.Prime (n - 1) : ℝ) ^ 2
 
-/-- Proposition 3, inequality (25): for every integer `n ≥ 2`, with `L = log n`,
-`4.151332 (log L - 2) / L + 3.151332 (log L - 1) / L + 3.151332 (log L - 2) / L² ≤ 1`.
+/-- **An auxiliary inequality in $\log n$ and $\log\log n$.** For every integer $n \ge 2$, with
+$L = \log n$,
+$$\frac{4.151332(\log L - 2)}{L} + \frac{3.151332(\log L - 1)}{L} +
+\frac{3.151332(\log L - 2)}{L^2} \le 1.$$
 
 Source: Qianxi Zhang and Xinhua Xiong, *New Refinements of Mandl's Inequality*,
 INTEGERS 25 (2025), Article A58, Proposition 3, inequality (25) (`integers-2025-A58-prop-3`). -/
@@ -106,11 +118,15 @@ public theorem_wanted loglog_ratio_sum_le_one (n : ℕ) (hn : 2 ≤ n) :
         3.151332 * (Real.log (Real.log n) - 1) / Real.log n +
         3.151332 * (Real.log (Real.log n) - 2) / Real.log n ^ 2 ≤ 1
 
-/-- Corollary 1, inequalities (6)-(9): with one-indexed `pₙ` and `L = log pₙ`,
-`pₙ > n (L - 1 - 1.109 / L)` for `n ≥ 2621506158680`,
-`pₙ > n (L - 1 - 1 / L - 3.48 / L²)` for `n ≥ 4605081012945`,
-`pₙ > n (L - 1 - 1 / L - 3.024334 / L² - 14.893 / L³)` for `n ≥ 4514634967572`, and
-`pₙ > n (L - 1 - 1 / L - 3.024334 / L² - 12.975666 / L³ - 79.962 / L⁴)` for `n ≥ 8`.
+/-- **Lower bounds for the $n$-th prime in terms of its logarithm.** Let $p_n$ denote the $n$-th
+prime, so that $p_1 = 2$, and put $L = \log p_n$. Then
+$p_n > n\left(L - 1 - \frac{1.109}{L}\right)$ for every integer $n \ge 2621506158680$,
+$p_n > n\left(L - 1 - \frac{1}{L} - \frac{3.48}{L^2}\right)$ for every integer
+$n \ge 4605081012945$,
+$p_n > n\left(L - 1 - \frac{1}{L} - \frac{3.024334}{L^2} - \frac{14.893}{L^3}\right)$ for every
+integer $n \ge 4514634967572$, and
+$p_n > n\left(L - 1 - \frac{1}{L} - \frac{3.024334}{L^2} - \frac{12.975666}{L^3} -
+\frac{79.962}{L^4}\right)$ for every integer $n \ge 8$.
 
 Source: Qianxi Zhang and Xinhua Xiong, *New Refinements of Mandl's Inequality*,
 INTEGERS 25 (2025), Article A58, Corollary 1 (`integers-2025-A58-cor-1`). -/
@@ -130,10 +146,14 @@ public theorem_wanted nthPrime_gt_mul_log_sub_corollary_one :
       n * (Real.log p - 1 - 1 / Real.log p - 3.024334 / Real.log p ^ 2 -
         12.975666 / Real.log p ^ 3 - 79.962 / Real.log p ^ 4) < p)
 
-/-- Corollary 2, inequalities (10)-(14): with one-indexed `pₙ` and `L = log pₙ`,
-`pₙ < n (L - 1 - 1 / L - 2.975666 / L²)` for `n ≥ 3278841`, and the bounds obtained by further
-subtracting `13.024334 / L³` (`n ≥ 355193892`), `70.951332 / L⁴` (`n ≥ 6226419706`),
-`460.634397856444 / L⁵` (`n ≥ 38900733192`) and `3444.031844143556 / L⁶` (`n ≥ 64497259289`).
+/-- **Zhang–Xiong upper bounds for the $n$th prime.** Let $p_n$ be the $n$th prime (counting from
+$p_1 = 2$) and $L = \log p_n$. Set $c_2 = 2.975666$, $c_3 = 13.024334$, $c_4 = 70.951332$,
+$c_5 = 460.634397856444$ and $c_6 = 3444.031844143556$, and set $N_2 = 3278841$,
+$N_3 = 355193892$, $N_4 = 6226419706$, $N_5 = 38900733192$ and $N_6 = 64497259289$.
+Then for each $k \in \{2, 3, 4, 5, 6\}$ and every integer $n \ge N_k$,
+$$
+p_n < n \left(L - 1 - \frac{1}{L} - \sum_{j=2}^{k} \frac{c_j}{L^j}\right).
+$$
 
 Source: Qianxi Zhang and Xinhua Xiong, *New Refinements of Mandl's Inequality*,
 INTEGERS 25 (2025), Article A58, Corollary 2 (`integers-2025-A58-cor-2`). -/
@@ -160,10 +180,13 @@ public theorem_wanted nthPrime_lt_mul_log_sub_corollary_two :
         13.024334 / Real.log p ^ 3 - 70.951332 / Real.log p ^ 4 -
         460.634397856444 / Real.log p ^ 5 - 3444.031844143556 / Real.log p ^ 6))
 
-/-- Lemma 8 (quoted from the literature):
-`log pₙ ≥ log n + log log n + log(1 + (log log n - 1) / log n)` (one-indexed `pₙ`). The paper
-says "for all positive integers `n`"; the right side is undefined at `n = 1` (`log log 1`) and
-at `n = 2` (the last logarithm's argument is `≈ -0.9715`), so `n ≥ 3`.
+/-- **Lower bound for the logarithm of the $n$-th prime.** Let $p_n$ denote the $n$-th prime, so
+that $p_1 = 2$. For every integer $n \ge 3$,
+$$\log p_n \ge \log n + \log\log n + \log\left(1 + \frac{\log\log n - 1}{\log n}\right).$$
+
+The paper states this for all positive integers $n$; the right side is undefined at $n = 1$
+(where $\log\log 1$ appears) and at $n = 2$ (where the last logarithm's argument is about
+$-0.9715$), so $n \ge 3$ is assumed.
 
 Source: Qianxi Zhang and Xinhua Xiong, *New Refinements of Mandl's Inequality*,
 INTEGERS 25 (2025), Article A58, Lemma 8, inequality (17) (`integers-2025-A58-lem-8`). -/
@@ -172,12 +195,14 @@ public theorem_wanted log_nthPrime_ge_log_add_loglog (n : ℕ) (hn : 3 ≤ n) :
         Real.log (1 + (Real.log (Real.log n) - 1) / Real.log n) ≤
       Real.log (Nat.nth Nat.Prime (n - 1) : ℝ)
 
-/-- Lemma 9 (quoted from the literature): with one-indexed `pₙ`, `L = log pₙ` and
-`S = n pₙ - ∑_{k ≤ n} p_k`, inequality (18):
-`S ≥ pₙ² (1/(2L) + 3/(4L²) + 7/(4L³) + 44.4/(8L⁴) + 92.1/(4L⁵) + 937.5/(8L⁶) + 5674.5/(8L⁷)
-+ 79789.5/(16L⁸))` for `n ≥ 440200309`, and inequality (19):
-`S ≤ pₙ² (1/(2L) + 3/(4L²) + 7/(4L³) + 45.6/(8L⁴) + 93.9/(4L⁵) + 952.5/(8L⁶) + 5755.5/(8L⁷)
-+ 116371/(16L⁸))` for every `n ≥ 1`.
+/-- **Bounds for $n$ times the $n$-th prime minus the sum of the first $n$ primes.** Let $p_k$
+denote the $k$-th prime, so that $p_1 = 2$, and for $n \ge 1$ put $L = \log p_n$ and
+$S(n) = n p_n - \sum_{k=1}^{n} p_k$. For every integer $n \ge 440200309$,
+$$S(n) \ge p_n^2\left(\frac{1}{2L} + \frac{3}{4L^2} + \frac{7}{4L^3} + \frac{44.4}{8L^4} +
+\frac{92.1}{4L^5} + \frac{937.5}{8L^6} + \frac{5674.5}{8L^7} + \frac{79789.5}{16L^8}\right),$$
+and for every integer $n \ge 1$,
+$$S(n) \le p_n^2\left(\frac{1}{2L} + \frac{3}{4L^2} + \frac{7}{4L^3} + \frac{45.6}{8L^4} +
+\frac{93.9}{4L^5} + \frac{952.5}{8L^6} + \frac{5755.5}{8L^7} + \frac{116371}{16L^8}\right).$$
 
 Source: Qianxi Zhang and Xinhua Xiong, *New Refinements of Mandl's Inequality*,
 INTEGERS 25 (2025), Article A58, Lemma 9 (`integers-2025-A58-lem-9`). -/
@@ -197,10 +222,14 @@ public theorem_wanted mul_nthPrime_sub_sum_primes_bounds :
           45.6 * p ^ 2 / (8 * L ^ 4) + 93.9 * p ^ 2 / (4 * L ^ 5) + 952.5 * p ^ 2 / (8 * L ^ 6) +
           5755.5 * p ^ 2 / (8 * L ^ 7) + 116371 * p ^ 2 / (16 * L ^ 8))
 
-/-- Proposition 2: for every `n ≥ 4605081012945`, with one-indexed `pₙ`, `ℓ = log n`,
-`L = log pₙ` and `M(n) = n pₙ / 2 - ∑_{k ≤ n} p_k`,
-`M(n) > n²/4 + n²/(4ℓ) - n² log ℓ/(4ℓ²) + ω(n) n²/ℓ²`, where
-`ω(n) = 3.151332 ℓ²/(4L²) + ℓ²/(4L) + 16.7 ℓ²/(4L³) - ℓ/4 + log ℓ/4`.
+/-- **Explicit lower bound in Mandl's inequality.** Let $p_k$ denote the $k$-th prime, so that
+$p_1 = 2$. For every integer $n \ge 4605081012945$, put $\ell = \log n$, $L = \log p_n$,
+$M(n) = \frac{n p_n}{2} - \sum_{k=1}^{n} p_k$ and
+$$\omega(n) = \frac{3.151332\,\ell^2}{4L^2} + \frac{\ell^2}{4L} + \frac{16.7\,\ell^2}{4L^3} -
+\frac{\ell}{4} + \frac{\log \ell}{4}.$$
+Then
+$$M(n) > \frac{n^2}{4} + \frac{n^2}{4\ell} - \frac{n^2 \log \ell}{4\ell^2} +
+\frac{\omega(n)\, n^2}{\ell^2}.$$
 
 Source: Qianxi Zhang and Xinhua Xiong, *New Refinements of Mandl's Inequality*,
 INTEGERS 25 (2025), Article A58, Proposition 2 (`integers-2025-A58-prop-2`). -/
@@ -214,11 +243,16 @@ public theorem_wanted mandl_sum_gt_omega_bound (n : ℕ) (hn : 4605081012945 ≤
         ω * (n : ℝ) ^ 2 / l ^ 2 <
       n * p / 2 - ∑ k ∈ Finset.range n, (Nat.nth Nat.Prime k : ℝ)
 
-/-- Proposition 4: for every `n ≥ 64497259289`, with one-indexed `pₙ`, `ℓ = log n`,
-`L = log pₙ` and `M(n) = n pₙ / 2 - ∑_{k ≤ n} p_k`,
-`M(n) < n²/4 + n²/(4ℓ) - n² log ℓ/(4ℓ²) + Ω(n) n²/ℓ²`, where
-`Ω(n) = ℓ²/(4L) + 3.848668 ℓ²/(4L²) - ℓ/4 + log ℓ/4 + τ(L) ℓ²/(8L⁶)` and
-`τ(x) = 34.6x³ + 205.592008x² + 1420.426661948448x + 28890.293784512888`.
+/-- **Explicit upper bound in Mandl's inequality.** Let $p_k$ denote the $k$-th prime, so that
+$p_1 = 2$. For every integer $n \ge 64497259289$, put $\ell = \log n$, $L = \log p_n$,
+$M(n) = \frac{n p_n}{2} - \sum_{k=1}^{n} p_k$,
+$$\tau = 34.6L^3 + 205.592008L^2 + 1420.426661948448L + 28890.293784512888$$
+and
+$$\Omega(n) = \frac{\ell^2}{4L} + \frac{3.848668\,\ell^2}{4L^2} - \frac{\ell}{4} +
+\frac{\log \ell}{4} + \frac{\tau\,\ell^2}{8L^6}.$$
+Then
+$$M(n) < \frac{n^2}{4} + \frac{n^2}{4\ell} - \frac{n^2 \log \ell}{4\ell^2} +
+\frac{\Omega(n)\, n^2}{\ell^2}.$$
 
 Source: Qianxi Zhang and Xinhua Xiong, *New Refinements of Mandl's Inequality*,
 INTEGERS 25 (2025), Article A58, Proposition 4 (`integers-2025-A58-prop-4`). -/
@@ -234,10 +268,12 @@ public theorem_wanted mandl_sum_lt_Omega_bound (n : ℕ) (hn : 64497259289 ≤ n
       (n : ℝ) ^ 2 / 4 + (n : ℝ) ^ 2 / (4 * l) - (n : ℝ) ^ 2 * Real.log l / (4 * l ^ 2) +
         Ω * (n : ℝ) ^ 2 / l ^ 2
 
-/-- Theorem 1: with one-indexed `pₙ`, `M(n) = n pₙ / 2 - ∑_{k ≤ n} p_k` and
-`B_η(n) = n²/4 (1 + 1/log n - (log log n - η)/log² n)`, `B_α(n) < M(n)` for
-`n ≥ 234057667276344608` and `M(n) < B_β(n)` for `n ≥ 64497259289`, where `α = 3.151332` and
-`β = 4.168668`.
+/-- **Zhang–Xiong refinement of Mandl's inequality.** Let $p_k$ denote the $k$-th prime, so that
+$p_1 = 2$, and let $M(n) = \frac{n p_n}{2} - \sum_{k=1}^{n} p_k$. For real $\eta$ let
+$$B_\eta(n) = \frac{n^2}{4}\left(1 + \frac{1}{\log n} -
+\frac{\log\log n - \eta}{(\log n)^2}\right).$$
+With $\alpha = 3.151332$ and $\beta = 4.168668$, we have $B_\alpha(n) < M(n)$ for every integer
+$n \ge 234057667276344608$, and $M(n) < B_\beta(n)$ for every integer $n \ge 64497259289$.
 
 Source: Qianxi Zhang and Xinhua Xiong, *New Refinements of Mandl's Inequality*,
 INTEGERS 25 (2025), Article A58, Theorem 1 (`integers-2025-A58-thm-1`). -/

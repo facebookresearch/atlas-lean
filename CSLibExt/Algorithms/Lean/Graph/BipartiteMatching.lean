@@ -92,8 +92,11 @@ namespace Cslib.Algorithms.Lean.BipartiteMatching
 
 variable {a b : ℕ} (adj : Fin a → List (Fin b))
 
-/-- A matching: a set of edges `(i, j)` (with `j ∈ adj i`) in which no left and no right vertex
-occurs twice. -/
+/-- **Matching in a bipartite graph.** Let a bipartite graph have left vertices $0, \dots, a-1$,
+right vertices $0, \dots, b-1$ and an adjacency list for each left vertex. A finite set $M$ of
+pairs $(i, j)$ of a left vertex $i$ and a right vertex $j$ is a matching when every pair in $M$ is
+an edge ($j$ is in the adjacency list of $i$), no two distinct pairs of $M$ have the same left
+vertex, and no two distinct pairs of $M$ have the same right vertex. -/
 structure IsMatching (M : Finset (Fin a × Fin b)) : Prop where
   /-- Every pair is an edge. -/
   edge : ∀ p ∈ M, p.2 ∈ adj p.1
@@ -102,29 +105,43 @@ structure IsMatching (M : Finset (Fin a × Fin b)) : Prop where
   /-- No right vertex is matched twice. -/
   right : ∀ p ∈ M, ∀ q ∈ M, p.2 = q.2 → p = q
 
-/-- The matched pairs of a partner array. -/
+/-- **Matched pairs of a partner assignment.** Given a partner assignment $\mathrm{mate}$ that
+sends each right vertex $j < b$ to a left vertex $i < a$ or to nothing, the matched pairs of
+$\mathrm{mate}$ form the set of all pairs $(i, j)$ of a left vertex $i < a$ and a right vertex
+$j < b$ with $\mathrm{mate}(j) = i$. -/
 def pairs (mate : Fin b → Option (Fin a)) : Finset (Fin a × Fin b) :=
   Finset.univ.filter fun p => mate p.2 = some p.1
 
-/-- A partner array describes a matching: partners are neighbours, and no left vertex is the
-partner of two right vertices. -/
+/-- **Partner arrays that describe a matching.** Consider a bipartite graph with left vertices
+$\{0, \dots, a-1\}$, right vertices $\{0, \dots, b-1\}$ and, for each left vertex $i$, a list of
+its neighbours. A partner array assigns to each right vertex $j$ either no partner or a left
+vertex as its partner. It is valid when every partner is a neighbour (if $i$ is the partner of
+$j$, then $j$ is in the list of neighbours of $i$) and no left vertex is the partner of two
+different right vertices (if $i$ is the partner of both $j$ and $j'$, then $j = j'$). -/
 structure Valid (mate : Fin b → Option (Fin a)) : Prop where
   /-- Partners are neighbours. -/
   edge : ∀ i j, mate j = some i → j ∈ adj i
   /-- No left vertex is the partner of two right vertices. -/
   inj : ∀ i j j', mate j = some i → mate j' = some i → j = j'
 
-/-- `i` is unmatched. -/
+/-- **Unmatched left vertex.** Given a partner array $\mu$, which assigns to each right vertex $j$
+either a left vertex $\mu(j)$ as partner or no partner, a left vertex $i$ is unmatched (free) when
+no right vertex $j$ has $\mu(j) = i$. -/
 def Free (mate : Fin b → Option (Fin a)) (i : Fin a) : Prop := ∀ j, mate j ≠ some i
 
 instance (mate : Fin b → Option (Fin a)) (i : Fin a) : Decidable (Free mate i) := by
   unfold Free; infer_instance
 
-/-- The alternating breadth-first layers, cumulative on both sides: `(layers adj mate k).1` are the
-left vertices reached within `k` rounds (initially the unmatched ones), and `(layers adj mate k).2`
-the right vertices reached within `k` rounds (through a non-matching edge from a left vertex
-reached within `k - 1` rounds). The round where a vertex is first reached is its breadth-first
-level; `pathTo` descends to it. -/
+/-- **Alternating breadth-first layers.** Let $\mu$ give each right vertex $j$ of a bipartite
+graph at most one partner $\mu(j)$ among the left vertices. The layers are pairs $(Z_k, R_k)$ of a
+set $Z_k$ of left vertices and a set $R_k$ of right vertices, defined by recursion on $k$: $Z_0$ is
+the set of unmatched left vertices (those that are the partner of no right vertex) and
+$R_0 = \emptyset$; $R_{k+1}$ is the set of right vertices $j$ adjacent to some $i \in Z_k$ with
+$\mu(j) \ne i$, and $Z_{k+1}$ is $Z_k$ together with the left vertices $\mu(j)$ for $j \in R_{k+1}$.
+
+The layers are cumulative on both sides: $Z_k$ holds the left vertices reached within $k$ rounds
+and $R_k$ the right vertices reached within $k$ rounds. The round where a vertex is first reached
+is its breadth-first level. -/
 def layers (mate : Fin b → Option (Fin a)) : ℕ → Finset (Fin a) × Finset (Fin b)
   | 0 => (Finset.univ.filter fun i => Free mate i, ∅)
   | k + 1 =>
@@ -163,7 +180,10 @@ theorem layers_snd_mono {k m : ℕ} (h : k ≤ m) : (layers adj mate k).2 ⊆ (l
       obtain ⟨i, hi, h1, h2⟩ := mem_layers_succ_snd.1 hj
       exact mem_layers_succ_snd.2 ⟨i, layers_fst_mono (by omega) hi, h1, h2⟩
 
-/-- A reached left vertex that is matched was reached through its partner. -/
+/-- **Matched reached left vertices are reached through a partner.** Let $\mu$ be a partner array
+and $k$ a natural number. If a left vertex $i$ is reached within $k$ rounds of the layered search
+and is matched (some right vertex has partner $i$), then some right vertex $j$ reached within $k$
+rounds has partner $i$, that is, $\mu(j) = i$. -/
 theorem exists_mate_of_mem_layers {k : ℕ} {i : Fin a} (hi : i ∈ (layers adj mate k).1)
     (hfree : ¬ Free mate i) : ∃ j ∈ (layers adj mate k).2, mate j = some i := by
   induction k with
@@ -174,7 +194,9 @@ theorem exists_mate_of_mem_layers {k : ℕ} {i : Fin a} (hi : i ∈ (layers adj 
         exact ⟨j, layers_snd_mono (Nat.le_succ k) hj, hm⟩
       · exact h
 
-/-- Once two consecutive left layers agree, the layers stop growing. -/
+/-- **The left layers stop growing once two consecutive ones agree.** For any partner array, if
+the layered search reaches the same left vertices within $k$ rounds as within $k + 1$ rounds,
+then for every $m \ge k$ it reaches exactly those left vertices within $m$ rounds. -/
 theorem layers_fst_eq_of_eq {k : ℕ} (h : (layers adj mate k).1 = (layers adj mate (k + 1)).1) :
     ∀ m, k ≤ m → (layers adj mate m).1 = (layers adj mate k).1 := by
   intro m hm
@@ -191,7 +213,9 @@ theorem layers_fst_eq_of_eq {k : ℕ} (h : (layers adj mate k).1 = (layers adj m
       · rwa [ih] at hi
       · rw [h]; exact mem_layers_succ_fst.2 (Or.inr ⟨j, hR hj, hm⟩)
 
-/-- The left layers are stable after `a` rounds. -/
+/-- **Rounds $a$ and $a + 1$ reach the same left vertices.** In a bipartite graph with $a$ left
+vertices, for every partner array $\mu$, the alternating layered search for $\mu$ reaches the same
+left vertices within $a + 1$ rounds as within $a$ rounds. -/
 theorem layers_fst_stable : (layers adj mate (a + 1)).1 = (layers adj mate a).1 := by
   by_cases h : ∃ k ≤ a, (layers adj mate k).1 = (layers adj mate (k + 1)).1
   · obtain ⟨k, hk, hkk⟩ := h
@@ -216,9 +240,19 @@ end Layers
 
 /-! ## Augmenting paths -/
 
-/-- Walk the layers back from a reached right vertex `j` (reached by round `k + 1`): go down to
-the round where `j` is first reached, take a predecessor `i` of the round before, and, unless `i`
-is unmatched, continue from the partner of `i`. The result lists the pairs to match, `j` first. -/
+/-- **Walking the layers back.** Given the adjacency lists $\mathrm{adj}$ of a bipartite graph, a
+partner assignment $\mathrm{mate}$, a level $k$ and a right vertex $j$, the walk back from $j$ at
+level $k$ is a list of pairs defined by recursion on $k$. At level $0$ it is $[(i, j)]$ for the
+least unmatched left vertex $i$ with $j \in \mathrm{adj}(i)$ and $\mathrm{mate}(j) \ne i$, and
+empty if there is none. At level $k + 1$, if $j$ is reached within $k + 1$ rounds of the
+alternating layered search, it is the walk back from $j$ at level $k$. Otherwise take the least
+left vertex $i$ reached within $k + 1$ rounds with $j \in \mathrm{adj}(i)$ and
+$\mathrm{mate}(j) \ne i$ (the walk is empty if there is none): if no right vertex has partner $i$
+the walk is $[(i, j)]$, and otherwise it is $(i, j)$ followed by the walk back at level $k$ from
+the least right vertex $j'$ with $\mathrm{mate}(j') = i$.
+
+When $j$ is reached within $k + 1$ rounds, the walk descends to the round where $j$ is first
+reached and lists the pairs to match, $j$ first. -/
 def pathTo (mate : Fin b → Option (Fin a)) : ℕ → Fin b → List (Fin a × Fin b)
   | 0, j =>
       let Z := (layers adj mate 0).1
@@ -237,16 +271,27 @@ def pathTo (mate : Fin b → Option (Fin a)) : ℕ → Fin b → List (Fin a × 
             | none => [(i, j)]
             | some j' => (i, j) :: pathTo mate k j'
 
-/-- Match each listed pair, keeping the other partners. -/
+/-- **Flipping a list of pairs.** Let $\mu$ be a partner array, assigning to each right vertex
+either a left partner or none, and let $P$ be a list of pairs $(i, j)$ of a left vertex $i$ and a
+right vertex $j$. The flip of $\mu$ along $P$ sends each right vertex $j$ to the left vertex of
+the first pair in $P$ whose right vertex is $j$, and to $\mu(j)$ (a partner or none) when no pair
+of $P$ has right vertex $j$. -/
 def flip (mate : Fin b → Option (Fin a)) (P : List (Fin a × Fin b)) : Fin b → Option (Fin a) :=
   fun j => match P.find? (fun p => decide (p.2 = j)) with
     | some p => some p.1
     | none => mate j
 
-/-- An alternating path as listed by `pathTo`: it starts at the right vertex `j`, alternates
-non-matching edges (the listed pairs) with matching edges (each listed right vertex after the
-first is the partner of the previous listed left vertex), and ends at an unmatched left vertex.
-It is an augmenting path when `j` is unmatched too (`IsAugmentingPath`). -/
+/-- **Alternating path.** Let $\mu$ be a partner array, giving each right vertex at most one left
+vertex as its partner, let $k$ be a natural number and $j$ a right vertex. A list $P$ of pairs
+$(i, j')$ of a left vertex $i$ and a right vertex $j'$ is an alternating path from $j$ within
+round $k$ when all of the following hold: $P$ is nonempty and its first pair has right vertex
+$j$; for every pair $(i, j')$ of $P$, $j'$ is a neighbour of $i$ but $i$ is not the partner of
+$j'$; for every pair $(i, j')$ of $P$, the alternating search from the unmatched left vertices
+reaches $i$ within $k$ rounds and $j'$ within $k + 1$ rounds; no left vertex and no right vertex
+occurs twice in $P$; for any two consecutive pairs $(i, j')$ and $(i', j'')$ of $P$, $i$ is the
+partner of $j''$; and the left vertex of the last pair of $P$ is the partner of no right vertex.
+
+When $j$ is unmatched as well, $P$ is an augmenting path. -/
 structure AltPath (mate : Fin b → Option (Fin a)) (k : ℕ) (j : Fin b)
     (P : List (Fin a × Fin b)) : Prop where
   /-- It starts at `j`. -/
@@ -264,8 +309,13 @@ structure AltPath (mate : Fin b → Option (Fin a)) (k : ℕ) (j : Fin b)
   /-- The last left vertex is unmatched. -/
   last : ∀ p ∈ P.getLast?, Free mate p.1
 
-/-- An augmenting path: an alternating path (`AltPath`) whose starting right vertex is unmatched,
-so that both endpoints are unmatched. -/
+/-- **Augmenting path.** Let $\mu$ be a partner array, $k$ a natural number and $j$ a right
+vertex. A list $P$ of pairs of a left vertex and a right vertex is an augmenting path from $j$
+within round $k$ when $P$ is an alternating path from $j$ within round $k$ and $j$ is unmatched:
+$\mu$ gives $j$ no partner.
+
+Since the last left vertex of an alternating path is unmatched, both endpoints of an augmenting
+path are unmatched. -/
 structure IsAugmentingPath (mate : Fin b → Option (Fin a)) (k : ℕ) (j : Fin b)
     (P : List (Fin a × Fin b)) : Prop extends AltPath adj mate k j P where
   /-- The starting right vertex is unmatched. -/
@@ -294,8 +344,13 @@ private theorem find?_some_of_exists {α : Type*} {l : List α} {q : α → Bool
       exact absurd hq (by simpa using List.find?_eq_none.1 hf x hx)
   | some x => exact ⟨x, rfl⟩
 
-/-- `pathTo` lists an alternating path from a reached right vertex to an unmatched left
-vertex. -/
+/-- **The walk back is an alternating path.** Let $\mathrm{mate}$ be a valid partner assignment.
+For every level $k$ and every right vertex $j$ reached within $k + 1$ rounds of the alternating
+layered search, the walk back from $j$ at level $k$ is an alternating path from $j$ at level $k$:
+it starts at $j$, its pairs are non-matching edges, its left vertices are reached within $k$
+rounds and its right vertices within $k + 1$ rounds, no vertex occurs twice, each right vertex
+after the first is the partner of the previous left vertex, and the last left vertex is
+unmatched. -/
 theorem pathTo_spec (hv : Valid adj mate) : ∀ (k : ℕ) (j : Fin b),
     j ∈ (layers adj mate (k + 1)).2 → AltPath adj mate k j (pathTo adj mate k j)
   | 0, j, hj => by
@@ -425,7 +480,10 @@ private theorem head_or_pred {R : Fin a × Fin b → Fin a × Fin b → Prop} :
         · exact Or.inr ⟨x, by simp, hc.1 q h⟩
         · exact Or.inr ⟨p, List.mem_cons_of_mem _ hp, hpq⟩
 
-/-- Flipping an alternating path from `pathTo` gives a matching. -/
+/-- **Flipping an alternating path keeps a matching.** Let $\mu$ be a valid partner array (partners
+are neighbours and no left vertex is the partner of two right vertices), and let $P$ be an
+alternating path for $\mu$ from a right vertex $j$ with round bound $k$. Then the partner array
+obtained from $\mu$ by matching each pair of $P$ and keeping the other partners is valid. -/
 theorem valid_flip (hv : Valid adj mate) {k : ℕ} {j : Fin b} {P : List (Fin a × Fin b)}
     (hP : AltPath adj mate k j P) : Valid adj (flip mate P) := by
   refine ⟨fun i j' h => ?_, fun i j₁ j₂ h₁ h₂ => ?_⟩
@@ -446,12 +504,18 @@ theorem valid_flip (hv : Valid adj mate) {k : ℕ} {j : Fin b} {P : List (Fin a 
     · exact (key _ _ h₂ hall₁ h₁).elim
     · exact hv.inj i j₁ j₂ h₁ h₂
 
-/-- The matched right vertices. -/
+/-- **Matched right vertices.** Let $\mu$ give each right vertex $j$ of a bipartite graph at
+most one partner $\mu(j)$ among the left vertices. The matched right vertices of $\mu$ are the
+right vertices $j$ that have a partner $\mu(j)$. -/
 def matched (mate : Fin b → Option (Fin a)) : Finset (Fin b) :=
   Finset.univ.filter fun j => (mate j).isSome
 
-/-- Flipping an alternating path from `j` matches `j` in addition to the matched right vertices
-(the others on the path change partners but stay matched). -/
+/-- **Flipping an alternating path matches its first vertex.** Let $\mu$ give each right
+vertex of a bipartite graph at most one partner among the left vertices, and let $P$ be an
+alternating path for $\mu$ starting at the right vertex $j$. Then the right vertices matched after
+flipping $P$ are exactly $j$ and the right vertices matched under $\mu$.
+
+The other right vertices of $P$ change partners but stay matched. -/
 theorem matched_flip {k : ℕ} {j : Fin b} {P : List (Fin a × Fin b)} (hP : AltPath adj mate k j P) :
     matched (flip mate P) = insert j (matched mate) := by
   ext j'
@@ -478,13 +542,18 @@ theorem matched_flip {k : ℕ} {j : Fin b} {P : List (Fin a × Fin b)} (hP : Alt
       · push Not at hin
         exact ⟨i, (flip_eq_some hP.nodup_snd).2 (Or.inr ⟨hin, h⟩)⟩
 
-/-- `pathTo` from a reached unmatched right vertex lists an augmenting path. -/
+/-- **The walk back from an unmatched reached vertex is an augmenting path.** Let $\mu$ be a valid
+partner array, $k$ a natural number and $j$ a right vertex that is unmatched and is reached within
+$k + 1$ rounds of the alternating layered search for $\mu$. Then the walk back from $j$ at level
+$k$ is an augmenting path from $j$ within round $k$. -/
 theorem pathTo_isAugmentingPath (hv : Valid adj mate) {k : ℕ} {j : Fin b}
     (hj : j ∈ (layers adj mate (k + 1)).2) (hfree : mate j = none) :
     IsAugmentingPath adj mate k j (pathTo adj mate k j) :=
   { pathTo_spec hv k j hj with start_free := hfree }
 
-/-- Flipping an augmenting path grows the matching by one edge. -/
+/-- **Flipping an augmenting path adds one matched vertex.** If $P$ is an augmenting path for a
+partner array $\mu$, then flipping $P$ in $\mu$ gives a partner array with exactly one more
+matched right vertex than $\mu$. -/
 theorem card_matched_flip {k : ℕ} {j : Fin b} {P : List (Fin a × Fin b)}
     (hP : IsAugmentingPath adj mate k j P) :
     (matched (flip mate P)).card = (matched mate).card + 1 := by
@@ -495,15 +564,25 @@ end Paths
 
 /-! ## The algorithm -/
 
-/-- One augmentation: find an unmatched right vertex reached by the search and flip the path to
-it; `none` if there is none. -/
+/-- **One augmentation step.** Let $\mu$ be a partner array on a bipartite graph with $a$ left
+vertices and $b$ right vertices. Run the alternating search from the unmatched left vertices for
+$a + 1$ rounds and take the first right vertex $j$, in the order $0, \dots, b - 1$, that is
+unmatched and reached. If there is none, the step fails. Otherwise it returns the partner array
+obtained from $\mu$ by flipping the path found by walking back from $j$ through the search
+layers: every right vertex $j'$ on the path gets as partner the left vertex paired with it on the
+path, and every other right vertex keeps its partner. -/
 def augment (mate : Fin b → Option (Fin a)) : Option (Fin b → Option (Fin a)) :=
   let R := (layers adj mate (a + 1)).2
   match (List.finRange b).find? (fun j => decide (mate j = none ∧ j ∈ R)) with
   | none => none
   | some j => some (flip mate (pathTo adj mate a j))
 
-/-- Augment while possible, at most `fuel` times. -/
+/-- **Augmentation loop.** Given a fuel $f \in \mathbb{N}$ and a partner array $\mu$ (assigning to
+each right vertex at most one left partner), the loop returns $\mu$ when $f = 0$. When $f \ge 1$ it
+performs one augmentation step on $\mu$: if the layered search reaches no unmatched right vertex,
+the loop returns $\mu$; otherwise it runs with fuel $f - 1$ on the array that this step returns,
+obtained by flipping the pairs walked back through the layers from the least-indexed unmatched
+right vertex that the search reaches. Thus it augments while possible, at most $f$ times. -/
 def maxMatchingAux : ℕ → (Fin b → Option (Fin a)) → Fin b → Option (Fin a)
   | 0, mate => mate
   | fuel + 1, mate =>
@@ -511,14 +590,18 @@ def maxMatchingAux : ℕ → (Fin b → Option (Fin a)) → Fin b → Option (Fi
       | none => mate
       | some mate' => maxMatchingAux fuel mate'
 
-/-- A maximum matching, as a partner array: augment from the empty matching. -/
+/-- **The augmenting-path maximum matching.** In a bipartite graph with right vertices
+$0, \dots, b-1$, the partner array obtained by running the augmentation loop with fuel $b + 1$ from
+the empty matching, in which no right vertex has a partner. -/
 def maxMatching : Fin b → Option (Fin a) := maxMatchingAux adj (b + 1) fun _ => none
 
 section Correctness
 
 variable {adj} {mate : Fin b → Option (Fin a)}
 
-/-- The matched pairs correspond to the matched right vertices. -/
+/-- **Matched pairs and matched right vertices are equinumerous.** For every partner array
+$\mu$, the number of matched pairs $(i, j)$ of $\mu$, those with $\mu(j) = i$, equals the number
+of matched right vertices of $\mu$. -/
 theorem card_pairs (mate : Fin b → Option (Fin a)) : (pairs mate).card = (matched mate).card := by
   refine Finset.card_bij (fun p _ => p.2) (fun p hp => ?_) (fun p hp q hq h => ?_) (fun j hj => ?_)
   · simp only [pairs, Finset.mem_filter, Finset.mem_univ, true_and] at hp
@@ -531,7 +614,10 @@ theorem card_pairs (mate : Fin b → Option (Fin a)) : (pairs mate).card = (matc
     obtain ⟨i, hi⟩ := hj
     exact ⟨(i, j), by simp [pairs, hi], rfl⟩
 
-/-- A valid partner array describes a matching. -/
+/-- **A valid partner array gives a matching.** Let each right vertex $j$ of a bipartite graph
+have at most one partner, a left vertex. If the partners are valid for the graph (each partner of
+$j$ is adjacent to $j$, and no left vertex is the partner of two right vertices), then the set of
+pairs $(i, j)$ with $i$ the partner of $j$ is a matching of the graph. -/
 theorem isMatching_pairs (hv : Valid adj mate) : IsMatching adj (pairs mate) := by
   refine ⟨fun p hp => ?_, fun p hp q hq h => ?_, fun p hp q hq h => ?_⟩
   · simp only [pairs, Finset.mem_filter, Finset.mem_univ, true_and] at hp
@@ -543,7 +629,10 @@ theorem isMatching_pairs (hv : Valid adj mate) : IsMatching adj (pairs mate) := 
     rw [h, hq, Option.some.injEq] at hp
     exact Prod.ext hp.symm h
 
-/-- A successful augmentation keeps a matching and matches one more right vertex. -/
+/-- **A successful augmentation grows the matching by one edge.** Let $\mu$ be a partner array
+that describes a matching. If the augmentation step on $\mu$ returns a partner array $\mu'$, then
+$\mu'$ also describes a matching, and $\mu'$ has exactly one more matched right vertex than
+$\mu$. -/
 theorem augment_some (hv : Valid adj mate) {mate' : Fin b → Option (Fin a)}
     (h : augment adj mate = some mate') :
     Valid adj mate' ∧ (matched mate').card = (matched mate).card + 1 := by
@@ -559,7 +648,10 @@ theorem augment_some (hv : Valid adj mate) {mate' : Fin b → Option (Fin a)}
       have hP := pathTo_isAugmentingPath hv hq.2 hq.1
       exact ⟨valid_flip hv hP.toAltPath, card_matched_flip hP⟩
 
-/-- A failed augmentation means the search reaches no unmatched right vertex. -/
+/-- **A failed augmentation reaches no unmatched right vertex.** Let $\mu$ be a partner array on a
+bipartite graph with $a$ left vertices. If the augmentation step on $\mu$ fails, then no unmatched
+right vertex is reached within $a + 1$ rounds of the alternating search from the unmatched left
+vertices. -/
 theorem augment_none (h : augment adj mate = none) :
     ∀ j, mate j = none → j ∉ (layers adj mate (a + 1)).2 := by
   intro j hj hR
@@ -570,9 +662,11 @@ theorem augment_none (h : augment adj mate = none) :
       simpa [hj, hR] using List.find?_eq_none.1 hf j (List.mem_finRange j)
   | some j' => rw [hf] at h; exact absurd h (by simp)
 
-/-- **Kőnig's certificate.** If the search reaches no unmatched right vertex, no matching is
-larger: the unreached left vertices and the reached right vertices cover every edge, and each of
-them is matched, to distinct matching edges. -/
+/-- **Kőnig's certificate.** Let $\mu$ be a partner array on a bipartite graph with $a$ left
+vertices that describes a matching. If no unmatched right vertex is reached within $a + 1$ rounds
+of the alternating search from the unmatched left vertices, then no matching has more edges than
+the matching of $\mu$: the unreached left vertices and the reached right vertices cover every
+edge, and each of them is matched, to distinct matching edges. -/
 theorem card_le_of_no_free (hv : Valid adj mate)
     (h : ∀ j, mate j = none → j ∉ (layers adj mate (a + 1)).2) {M : Finset (Fin a × Fin b)}
     (hM : IsMatching adj M) : M.card ≤ (pairs mate).card := by
@@ -623,7 +717,14 @@ theorem card_le_of_no_free (hv : Valid adj mate)
       exact Finset.mem_image.2 ⟨(i, j), by simp [pairs, hi, hiZ], rfl⟩
   exact h1.trans h2
 
-/-- With more fuel than unmatched right vertices, the loop ends with a maximum matching. -/
+/-- **Enough augmentations reach a maximum matching.** In a bipartite graph with right vertices
+$0, \dots, b-1$, let $\mu$ be a valid partner array (it assigns to each right vertex at most one
+left partner, partners are neighbours, and no left vertex is the partner of two right vertices).
+Let $f \in \mathbb{N}$ satisfy $b < |\mathrm{matched}(\mu)| + f$, where $\mathrm{matched}(\mu)$ is
+the set of right vertices with a partner, and let $\mu'$ be the result of the augmentation loop
+from $\mu$ with fuel $f$. Then $\mu'$ is valid, and every matching $M$ of the graph satisfies
+$|M| \le |\mathrm{pairs}(\mu')|$, where $\mathrm{pairs}(\mu')$ is the set of pairs $(i, j)$ with
+$\mu'(j) = i$. -/
 theorem maxMatchingAux_spec : ∀ (fuel : ℕ) (mate : Fin b → Option (Fin a)), Valid adj mate →
     b < (matched mate).card + fuel →
     Valid adj (maxMatchingAux adj fuel mate) ∧
@@ -640,11 +741,18 @@ theorem maxMatchingAux_spec : ∀ (fuel : ℕ) (mate : Fin b → Option (Fin a))
           obtain ⟨hv', hc⟩ := augment_some hv ha
           exact maxMatchingAux_spec fuel mate' hv' (by omega)
 
-/-- The result is a matching. -/
+/-- **The augmenting-path algorithm returns a matching.** For every bipartite graph with left
+vertices $0, \dots, a-1$, right vertices $0, \dots, b-1$ and an adjacency list for each left
+vertex, the pairs $(i, j)$ such that the augmenting-path maximum matching algorithm (from the
+empty matching, repeatedly flip an augmenting path found by the layered search) makes $i$ the
+partner of $j$ form a matching of the graph: each pair is an edge, and no two distinct pairs
+share a left or a right vertex. -/
 theorem isMatching_maxMatching : IsMatching adj (pairs (maxMatching adj)) :=
   isMatching_pairs (maxMatchingAux_spec (b + 1) _ ⟨by simp, by simp⟩ (by omega)).1
 
-/-- **Correctness.** No matching is larger than the result. -/
+/-- **Optimality of the augmenting-path matching algorithm.** In a bipartite graph with $b$ right
+vertices, start from the empty matching and repeat the augmentation step until it fails, at most
+$b + 1$ times. No matching of the graph has more edges than the resulting matching. -/
 theorem card_le_maxMatching {M : Finset (Fin a × Fin b)} (hM : IsMatching adj M) :
     M.card ≤ (pairs (maxMatching adj)).card :=
   (maxMatchingAux_spec (b + 1) _ ⟨by simp, by simp⟩ (by omega)).2 M hM
@@ -653,18 +761,29 @@ end Correctness
 
 /-! ## Hopcroft–Karp phases -/
 
-/-- The partner of a left vertex, if it is matched. -/
+/-- **Partner of a left vertex.** Given a partner assignment $\mathrm{mate}$ that sends each right
+vertex $j < b$ to a left vertex $i < a$ or to nothing, the partner of a left vertex $i$ is the
+least right vertex $j$ with $\mathrm{mate}(j) = i$; it is undefined when there is no such $j$,
+that is, when $i$ is unmatched. -/
 def partnerOf (mate : Fin b → Option (Fin a)) (i : Fin a) : Option (Fin b) :=
   (List.finRange b).find? fun j' => decide (mate j' = some i)
 
-/-- Add `j` to a set of dead right vertices. -/
+/-- **Marking a right vertex dead.** Given a set $D$ of right vertices, represented by its
+indicator function, and a right vertex $j$, the result is the indicator function of
+$D \cup \{j\}$. -/
 def markDead (dead : Fin b → Bool) (j : Fin b) : Fin b → Bool :=
   fun x => dead x || decide (x = j)
 
-/-- Try the candidate predecessors `is` of `j` in order: for the first `i` with `ok i`, if `i` is
-unmatched the path is `[(i, j)]`, otherwise continue from its partner with `search`; a failed
-search leaves its dead vertices marked for the next candidate. If every candidate fails, `j` is
-marked dead too. -/
+/-- **Trying the candidate predecessors of a right vertex.** Let $j$ be a right vertex,
+$\mathrm{ok}$ a test on left vertices, $\pi$ a map giving each left vertex an optional right vertex
+(its partner, if any), and $s$ a search taking a right vertex and a dead set (a set of right
+vertices) to an optional path, a list of pairs of a left and a right vertex, and a new dead set.
+Given a list of left vertices and a dead set $D$, the procedure goes through the list in order,
+skipping the vertices that fail $\mathrm{ok}$. At the first remaining vertex $i$: if $\pi(i)$ is
+undefined, it returns the path $[(i, j)]$ and $D$; if $\pi(i) = j'$ and $s(j', D)$ finds a path
+$P$, it returns the path $(i, j)$ followed by $P$, with the dead set returned by $s$; if
+$s(j', D)$ finds no path, it continues with the rest of the list from the dead set returned by
+$s$. When the list is exhausted, it fails and returns the current dead set with $j$ added. -/
 def tryPreds (ok : Fin a → Bool) (partner : Fin a → Option (Fin b))
     (search : Fin b → (Fin b → Bool) → Option (List (Fin a × Fin b)) × (Fin b → Bool))
     (j : Fin b) : List (Fin a) → (Fin b → Bool) → Option (List (Fin a × Fin b)) × (Fin b → Bool)
@@ -679,12 +798,27 @@ def tryPreds (ok : Fin a → Bool) (partner : Fin a → Option (Fin b))
             | (none, dead') => tryPreds ok partner search j is dead'
       else tryPreds ok partner search j is dead
 
-/-- `pathTo` restricted to unused vertices, as a depth-first search over the layers with the
-pruning of Hopcroft and Karp: from a reached right vertex `j` that is not dead, descend to the
-round where `j` is first reached and try each predecessor `i` of the round before that is not in
-`usedL`, continuing from the partner of `i`. A right vertex from which the search fails is marked
-dead, so each right vertex fails at most once per phase. Returns the path found, if any, and the
-dead set. -/
+/-- **Depth-first search of a Hopcroft–Karp phase.** Fix a partner array $\mu$ assigning each right
+vertex at most one left partner, and a set $U$ of used left vertices. Write $L_n$ and $R_n$ for
+the left and right vertices reached within $n$ rounds of the alternating breadth-first layers of
+$\mu$ (so $R_0 = \emptyset$). A left vertex $i$ is unmatched if no right vertex has partner $i$;
+otherwise its partner is the least right vertex $j'$ with $\mu(j') = i$. The search from a right
+vertex $j$ with bound $n$ and a set $D$ of dead right vertices returns an optional path (a list of
+pairs of a left and a right vertex) together with a new dead set:
+
+* if $j \in D$, it fails and returns $D$ unchanged;
+* otherwise, if $j \in R_n$, it is the search from $j$ with bound $n - 1$ and dead set $D$;
+* otherwise it goes through the candidates, the left vertices $i \in L_n$ in increasing order with
+  $j$ adjacent to $i$, $\mu(j) \ne i$ and $i \notin U$. For an unmatched candidate $i$ it returns
+  the path $[(i, j)]$ and the current dead set. For a matched candidate $i$ it searches from the
+  partner of $i$ with bound $n - 1$ and the current dead set (when $n = 0$ this search fails and
+  returns the dead set unchanged); if that search finds a path $P$, it returns $(i, j)$ followed
+  by $P$, with the dead set that search returned, and otherwise it moves on to the next candidate
+  with the dead set that search returned. If every candidate fails, it fails and returns the
+  current dead set with $j$ added.
+
+This is the pruning of Hopcroft and Karp: a right vertex from which the search fails is marked
+dead and not searched again. -/
 def searchPath (mate : Fin b → Option (Fin a)) (usedL : Fin a → Bool) :
     ℕ → Fin b → (Fin b → Bool) → Option (List (Fin a × Fin b)) × (Fin b → Bool)
   | 0, j, dead =>
@@ -717,7 +851,16 @@ theorem partnerOf_eq_none {i : Fin a} (h : partnerOf mate i = none) : Free mate 
   intro j hj
   simpa [hj] using List.find?_eq_none.1 h j (List.mem_finRange j)
 
-/-- The dead set only grows. -/
+/-- **Trying candidates keeps dead vertices dead.**
+For a right vertex $j$, a test $\mathrm{ok}$ on left vertices, a map $\pi$ giving each left vertex
+an optional right vertex, and a search $s$ taking a right vertex and a dead set (a set of right
+vertices) to an optional path and a new dead set, write $T(l, D)$ for the optional path and the
+dead set returned by trying the left vertices of the list $l$ as predecessors of $j$, starting from
+the dead set $D$.
+Suppose $s$ never shrinks the dead set: for every right vertex $j'$ and every dead set $d$, the
+dead set returned by $s(j', d)$ contains $d$.
+Then for every list $l$ of left vertices and every dead set $D$, the dead set of $T(l, D)$
+contains $D$. -/
 theorem tryPreds_mono {ok : Fin a → Bool} {partner : Fin a → Option (Fin b)}
     {search : Fin b → (Fin b → Bool) → Option (List (Fin a × Fin b)) × (Fin b → Bool)}
     (hs : ∀ j' d x, d x = true → (search j' d).2 x = true) (j : Fin b) :
@@ -740,8 +883,18 @@ theorem tryPreds_mono {ok : Fin a → Bool} {partner : Fin a → Option (Fin b)}
                 | none => exact tryPreds_mono hs j is d x h1
       · exact tryPreds_mono hs j is dead x hx
 
-/-- What `tryPreds` returns comes from one candidate `i` with `ok i`, searched with a dead set
-that contains the initial one. -/
+/-- **A path found by trying candidates comes from one candidate.**
+For a right vertex $j$, a test $\mathrm{ok}$ on left vertices, a map $\pi$ giving each left vertex
+an optional right vertex, and a search $s$ taking a right vertex and a dead set (a set of right
+vertices) to an optional path and a new dead set, write $T(l, D)$ for the optional path and the
+dead set returned by trying the left vertices of the list $l$ as predecessors of $j$, starting from
+the dead set $D$.
+Suppose $s$ never shrinks the dead set: for every right vertex $j'$ and every dead set $d$, the
+dead set returned by $s(j', d)$ contains $d$.
+If $T(l, D)$ returns a path $P$, then there are a vertex $i$ of $l$ with $\mathrm{ok}(i)$ and a
+dead set $D_0$ containing $D$ such that either $\pi(i)$ is undefined and $P = [(i, j)]$, or
+$\pi(i) = j'$ for a right vertex $j'$ and $s(j', D_0)$ returns a path $P'$ with $P$ equal to
+$(i, j)$ followed by $P'$. -/
 theorem tryPreds_some {ok : Fin a → Bool} {partner : Fin a → Option (Fin b)}
     {search : Fin b → (Fin b → Bool) → Option (List (Fin a × Fin b)) × (Fin b → Bool)}
     (hs : ∀ j' d x, d x = true → (search j' d).2 x = true) (j : Fin b) :
@@ -772,9 +925,18 @@ theorem tryPreds_some {ok : Fin a → Bool} {partner : Fin a → Option (Fin b)}
       · obtain ⟨i₁, hi₁, hok₁, d₀, hd₀, hcase⟩ := tryPreds_some hs j is dead P h
         exact ⟨i₁, List.mem_cons_of_mem _ hi₁, hok₁, d₀, hd₀, hcase⟩
 
-/-- `tryPreds` finds a path when some candidate passes `ok` and every such candidate is unmatched
-or has a partner from which `search` succeeds with the initial dead set (the dead set does not
-change until the first candidate that passes `ok`). -/
+/-- **When trying candidates finds a path.**
+For a right vertex $j$, a test $\mathrm{ok}$ on left vertices, a map $\pi$ giving each left vertex
+an optional right vertex, and a search $s$ taking a right vertex and a dead set (a set of right
+vertices) to an optional path and a new dead set, write $T(l, D)$ for the optional path and the
+dead set returned by trying the left vertices of the list $l$ as predecessors of $j$, starting from
+the dead set $D$.
+Suppose some vertex of $l$ passes $\mathrm{ok}$, and for every vertex $i$ of $l$ passing
+$\mathrm{ok}$ and every right vertex $j'$ with $\pi(i) = j'$, the search $s(j', D)$ finds a path.
+Then $T(l, D)$ finds a path.
+
+Only the initial dead set matters: it does not change before the first vertex passing
+$\mathrm{ok}$. -/
 theorem tryPreds_isSome {ok : Fin a → Bool} {partner : Fin a → Option (Fin b)}
     {search : Fin b → (Fin b → Bool) → Option (List (Fin a × Fin b)) × (Fin b → Bool)}
     (j : Fin b) (dead : Fin b → Bool) : ∀ (is : List (Fin a)), (∃ i ∈ is, ok i = true) →
@@ -804,7 +966,9 @@ theorem tryPreds_isSome {ok : Fin a → Bool} {partner : Fin a → Option (Fin b
         · rw [hok] at hok₀; exact absurd hok₀ (by simp)
         · exact ⟨i₀, h, hok₀⟩
 
-/-- The dead set of `searchPath` only grows. -/
+/-- **The dead set of a search only grows.** For every set of used left vertices, every level
+$k$, every right vertex $j$ and every set of dead right vertices, each right vertex that is dead
+before the search at level $k$ from $j$ is still dead after it. -/
 theorem searchPath_mono (usedL : Fin a → Bool) : ∀ (k : ℕ) (j : Fin b) (dead : Fin b → Bool)
     (x : Fin b), dead x = true → (searchPath adj mate usedL k j dead).2 x = true
   | 0, j, dead, x, hx => by
@@ -819,8 +983,12 @@ theorem searchPath_mono (usedL : Fin a → Bool) : ∀ (k : ℕ) (j : Fin b) (de
       · exact searchPath_mono usedL k j dead x hx
       · exact tryPreds_mono (fun j' d x hx => searchPath_mono usedL k j' d x hx) j _ dead x hx
 
-/-- What `searchPath` finds is an alternating path through vertices that were neither used nor
-dead. -/
+/-- **Search paths are alternating paths through unused vertices.** Suppose the partner array
+describes a matching, $k$ is a level and $j$ is a right vertex reached within $k + 1$ rounds of the
+alternating breadth-first search. For every set of used left vertices and every set of dead right
+vertices, if the search at level $k$ from $j$ finds a path $P$, then $P$ is an alternating path at
+level $k$ from $j$, no left vertex of $P$ is used, and no right vertex of $P$ was dead before the
+search. -/
 theorem searchPath_spec (hv : Valid adj mate) (usedL : Fin a → Bool) :
     ∀ (k : ℕ) (j : Fin b) (dead : Fin b → Bool) (P : List (Fin a × Fin b)),
       j ∈ (layers adj mate (k + 1)).2 → (searchPath adj mate usedL k j dead).1 = some P →
@@ -904,7 +1072,10 @@ theorem searchPath_spec (hv : Valid adj mate) (usedL : Fin a → Bool) :
             · rfl
             · exact absurd (hd₀ _ hdp) (by rw [h2]; simp)
 
-/-- With no vertex used or dead, `searchPath` finds a path from every reached right vertex. -/
+/-- **Searches from reached vertices succeed when nothing is used or dead.** If the partner array
+describes a matching, then for every $k$ and every right vertex $j$ reached within $k + 1$ rounds
+of the alternating breadth-first search, the search at level $k$ from $j$, with no left vertex
+used and no right vertex dead, finds a path. -/
 theorem searchPath_isSome (hv : Valid adj mate) : ∀ (k : ℕ) (j : Fin b),
     j ∈ (layers adj mate (k + 1)).2 →
       (searchPath adj mate (fun _ => false) k j (fun _ => false)).1.isSome
@@ -932,17 +1103,28 @@ theorem searchPath_isSome (hv : Valid adj mate) : ∀ (k : ℕ) (j : Fin b),
 
 end Search
 
-/-- Add the left vertices of a path to a used set. -/
+/-- **Marking the left vertices of a path used.** Given a set $U$ of left vertices, represented
+by its indicator function, and a list $P$ of pairs $(i, j)$ of a left vertex $i$ and a right
+vertex $j$, the result is the indicator function of $U$ together with the left vertices of the
+pairs of $P$. -/
 def markL (used : Fin a → Bool) (P : List (Fin a × Fin b)) : Fin a → Bool :=
   fun i => used i || decide (i ∈ P.map Prod.fst)
 
-/-- Add the right vertices of a path to a used set. -/
+/-- **Marking the right vertices of a path used.** Given a set $U$ of right vertices,
+represented by its indicator function, and a list $P$ of pairs $(i, j)$ of a left vertex $i$ and
+a right vertex $j$, the result is the indicator function of $U$ together with the right vertices
+of the pairs of $P$. -/
 def markR (used : Fin b → Bool) (P : List (Fin a × Fin b)) : Fin b → Bool :=
   fun j => used j || decide (j ∈ P.map Prod.snd)
 
-/-- Search from each listed right vertex in turn through the vertices not yet used, collecting the
-paths found; each path's vertices become used, and right vertices from which a search failed stay
-dead. -/
+/-- **Phase search over candidates.** Given a partner assignment $\mathrm{mate}$, a level $k$, a
+list of candidate right vertices, a set $U$ of used left vertices and a set $D$ of used or dead
+right vertices, the phase search tries the candidates in order. For a candidate $j$ it runs the
+layered depth-first search from $j$ at level $k$ with used left vertices $U$ and dead set $D$,
+which returns an optional path and an enlarged dead set $D'$. If it finds no path, the phase
+search continues with the remaining candidates, $U$ and $D'$; if it finds a path $P$, it records
+$P$ and continues with the remaining candidates, $U$ together with the left vertices of $P$, and
+$D'$ together with the right vertices of $P$. The result is the list of the recorded paths. -/
 def phaseAux (mate : Fin b → Option (Fin a)) (k : ℕ) :
     List (Fin b) → (Fin a → Bool) → (Fin b → Bool) → List (List (Fin a × Fin b))
   | [], _, _ => []
@@ -951,14 +1133,19 @@ def phaseAux (mate : Fin b → Option (Fin a)) (k : ℕ) :
       | (none, dead) => phaseAux mate k js usedL dead
       | (some P, dead) => P :: phaseAux mate k js (markL usedL P) (markR dead P)
 
-/-- The earliest round `d` such that round `d + 1` of the search reaches an unmatched right
-vertex, if any round does. -/
+/-- **First free round.** For a partner array $\mu$ of a bipartite graph with $a$ left vertices,
+the first free round of $\mu$ is the least $d \le a$ such that some unmatched right vertex is
+reached within $d + 1$ rounds of the layered search; it is undefined if there is no such $d$. -/
 def firstFreeRound (mate : Fin b → Option (Fin a)) : Option ℕ :=
   (List.range (a + 1)).find? fun k => decide (∃ j, mate j = none ∧ j ∈ (layers adj mate (k + 1)).2)
 
-/-- One Hopcroft–Karp phase: from the layers of one search, vertex-disjoint augmenting paths from
-the unmatched right vertices reached in the earliest round that reaches any, one attempt from
-each. -/
+/-- **Hopcroft–Karp phase.** If no round of the alternating breadth-first search reaches an
+unmatched right vertex, the phase finds no path. Otherwise let $d$ be the earliest round such that
+round $d + 1$ reaches one. The phase runs the search at level $d$ from each unmatched right vertex
+reached within $d + 1$ rounds, in increasing order, starting with no left vertex used and no right
+vertex dead, and lists the paths found. After each search, the left vertices of the path found
+become used and its right vertices become dead, and right vertices that the search marked dead
+stay dead for the later searches. -/
 def phase (mate : Fin b → Option (Fin a)) : List (List (Fin a × Fin b)) :=
   match firstFreeRound adj mate with
   | none => []
@@ -967,12 +1154,17 @@ def phase (mate : Fin b → Option (Fin a)) : List (List (Fin a × Fin b)) :=
       phaseAux adj mate d ((List.finRange b).filter fun j => decide (mate j = none ∧ j ∈ R))
         (fun _ => false) (fun _ => false)
 
-/-- Flip all the paths of a phase at once; `none` if the phase found none. -/
+/-- **Hopcroft–Karp step.** Given a partner array $\mu$, consider the phase of $\mu$, a list of
+paths, each a list of pairs. If the phase is empty, the step returns nothing; otherwise it returns
+the flip of $\mu$ along the concatenation of all the paths of the phase. -/
 def hkStep (mate : Fin b → Option (Fin a)) : Option (Fin b → Option (Fin a)) :=
   let Ps := phase adj mate
   if Ps.isEmpty then none else some (flip mate Ps.flatten)
 
-/-- Run phases while they find paths, at most `fuel` times. -/
+/-- **Hopcroft–Karp phase loop.** Given a fuel $n \in \mathbb{N}$ and a partner array $\mu$, the
+loop returns $\mu$ when $n = 0$ or when the Hopcroft–Karp step on $\mu$ returns nothing; when
+$n \ge 1$ and the step returns a partner array $\mu'$, it returns the loop with fuel $n - 1$ run
+from $\mu'$. So it runs Hopcroft–Karp steps while they find paths, at most $n$ times. -/
 def hopcroftKarpAux : ℕ → (Fin b → Option (Fin a)) → Fin b → Option (Fin a)
   | 0, mate => mate
   | fuel + 1, mate =>
@@ -980,7 +1172,15 @@ def hopcroftKarpAux : ℕ → (Fin b → Option (Fin a)) → Fin b → Option (F
       | none => mate
       | some mate' => hopcroftKarpAux fuel mate'
 
-/-- **Hopcroft–Karp.** A maximum matching by phases, from the empty matching. -/
+/-- **Hopcroft–Karp.** Let a bipartite graph have left vertices $0, \dots, a-1$, right
+vertices $0, \dots, b-1$ and an adjacency list for each left vertex. Starting from the empty
+matching, the Hopcroft–Karp algorithm runs phases, at most $b + 1$ of them, and stops early at
+the first phase that finds no path: each phase computes the layered search once, collects
+vertex-disjoint augmenting paths from the unmatched right vertices reached in the earliest round
+that reaches any, and flips all of them at once. The result is the final matching, given as the
+partner (or the absence of one) of each right vertex.
+
+The result is a maximum matching. -/
 def hopcroftKarp : Fin b → Option (Fin a) := hopcroftKarpAux adj (b + 1) fun _ => none
 
 section Phases
@@ -995,8 +1195,10 @@ theorem markR_eq_false_iff {used : Fin b → Bool} {P : List (Fin a × Fin b)} {
     markR used P j = false ↔ used j = false ∧ j ∉ P.map Prod.snd := by
   simp [markR]
 
-/-- `firstFreeRound` is the earliest round `d` (at most `a`) such that round `d + 1` reaches an
-unmatched right vertex. -/
+/-- **Characterization of the first free round.** For a partner array $\mu$ of a bipartite graph
+with $a$ left vertices and a natural number $d$, the first free round of $\mu$ equals $d$ if and
+only if $d \le a$, some unmatched right vertex is reached within $d + 1$ rounds of the layered
+search, and for every $k < d$ no unmatched right vertex is reached within $k + 1$ rounds. -/
 theorem firstFreeRound_eq_some {d : ℕ} : firstFreeRound adj mate = some d ↔
     d ≤ a ∧ (∃ j, mate j = none ∧ j ∈ (layers adj mate (d + 1)).2) ∧
       ∀ k < d, ∀ j, mate j = none → j ∉ (layers adj mate (k + 1)).2 := by
@@ -1006,7 +1208,9 @@ theorem firstFreeRound_eq_some {d : ℕ} : firstFreeRound adj mate = some d ↔
   · rintro ⟨h1, h2, h3⟩; exact ⟨by omega, h1, h3⟩
   · rintro ⟨h1, h2, h3⟩; exact ⟨h2, by omega, h3⟩
 
-/-- `firstFreeRound` is `none` exactly when the search reaches no unmatched right vertex. -/
+/-- **When there is no first free round.** For a partner array $\mu$ of a bipartite graph with
+$a$ left vertices, the first free round of $\mu$ is undefined if and only if no unmatched right
+vertex is reached within $a + 1$ rounds of the layered search. -/
 theorem firstFreeRound_eq_none : firstFreeRound adj mate = none ↔
     ∀ j, mate j = none → j ∉ (layers adj mate (a + 1)).2 := by
   simp only [firstFreeRound, List.find?_eq_none, List.mem_range, decide_eq_true_eq, not_exists,
@@ -1015,8 +1219,14 @@ theorem firstFreeRound_eq_none : firstFreeRound adj mate = none ↔
   · intro h j hj hR; exact h a (Nat.lt_succ_self a) j hj hR
   · intro h k hk j hj hR; exact h j hj (layers_snd_mono (by omega) hR)
 
-/-- The paths of a phase are augmenting paths, pairwise vertex-disjoint, through vertices not
-initially used. -/
+/-- **Phase paths are disjoint augmenting paths.** Let $\mathrm{mate}$ be a valid partner
+assignment, $k$ a level, $J$ a list of right vertices each unmatched and reached within $k + 1$
+rounds of the alternating layered search, and $U_L$, $U_R$ sets of left and right vertices. Then
+every path that the phase search at level $k$ collects from $J$ with used left vertices $U_L$ and
+used right vertices $U_R$ is an augmenting path from some right vertex, with left vertices reached
+within $k$ rounds and right vertices within $k + 1$ rounds; no left vertex and no right vertex
+occurs twice among all pairs of all these paths; and every pair $(i, j)$ of these paths has
+$i \notin U_L$ and $j \notin U_R$. -/
 theorem phaseAux_spec (hv : Valid adj mate) (k : ℕ) : ∀ (js : List (Fin b))
     (usedL : Fin a → Bool) (usedR : Fin b → Bool),
     (∀ j ∈ js, mate j = none ∧ j ∈ (layers adj mate (k + 1)).2) →
@@ -1073,7 +1283,12 @@ theorem phaseAux_spec (hv : Valid adj mate) (k : ℕ) : ∀ (js : List (Fin b))
               refine ⟨h.1.1, hback dead ?_ _ h.2.1⟩
               intro x hx; have := hmono x hx; rwa [hs] at this
 
-/-- Flipping vertex-disjoint alternating paths at once gives a matching. -/
+/-- **Flipping disjoint alternating paths at once keeps a matching.** Let $\mu$ be a valid partner
+array (partners are neighbours and no left vertex is the partner of two right vertices), $k$ a
+natural number, and $P_1, \dots, P_r$ paths each of which is an alternating path for $\mu$, with
+round bound $k$, from some right vertex. Suppose no left vertex and no right vertex occurs twice in
+the concatenation $P_1 \cdots P_r$. Then the partner array obtained from $\mu$ by matching each
+pair of the concatenation and keeping the other partners is valid. -/
 theorem valid_flip_flatten (hv : Valid adj mate) {k : ℕ} {Ps : List (List (Fin a × Fin b))}
     (hPs : ∀ P ∈ Ps, ∃ j, AltPath adj mate k j P) (h1 : (Ps.flatten.map Prod.fst).Nodup)
     (h2 : (Ps.flatten.map Prod.snd).Nodup) : Valid adj (flip mate Ps.flatten) := by
@@ -1099,9 +1314,12 @@ theorem valid_flip_flatten (hv : Valid adj mate) {k : ℕ} {Ps : List (List (Fin
     · exact (key _ _ h₂ hall₁ h₁).elim
     · exact hv.inj i j₁ j₂ h₁ h₂
 
-/-- Flipping a nonempty set of vertex-disjoint augmenting paths matches at least one more right
-vertex: the right vertices matched before stay matched, and so does the start of the first
-path. -/
+/-- **Flipping disjoint augmenting paths matches at least one more vertex.** Let $\mu$ be a
+partner array and let $P_1, \dots, P_n$, with $n \ge 1$, be augmenting paths for $\mu$, all for
+the same number $k$ of search rounds, such that no right vertex occurs twice in the concatenation
+$P_1 P_2 \cdots P_n$. Then flipping this concatenation in $\mu$ gives a partner array with at
+least one more matched right vertex than $\mu$: the right vertices matched before stay matched,
+and so does the start of the first path. -/
 theorem card_matched_flip_flatten {k : ℕ} {Ps : List (List (Fin a × Fin b))}
     (hPs : ∀ P ∈ Ps, ∃ j, IsAugmentingPath adj mate k j P) (h2 : (Ps.flatten.map Prod.snd).Nodup)
     (hne : Ps ≠ []) : (matched mate).card + 1 ≤ (matched (flip mate Ps.flatten)).card := by
@@ -1136,8 +1354,12 @@ private theorem mem_candidates {d : ℕ} {j : Fin b} :
       j ∈ (layers adj mate (d + 1)).2)) ↔ mate j = none ∧ j ∈ (layers adj mate (d + 1)).2 := by
   simp
 
-/-- The first candidate always yields a path, so a phase finds a path whenever the search reaches
-an unmatched right vertex. -/
+/-- **A phase finds a path when an unmatched right vertex is reached.** If the partner array
+describes a matching and some unmatched right vertex is reached within $a + 1$ rounds of the
+alternating breadth-first search, where $a$ is the number of left vertices, then the phase finds
+at least one path.
+
+The search from the first candidate always yields a path. -/
 theorem phase_ne_nil (hv : Valid adj mate) {j : Fin b} (hj : mate j = none)
     (hR : j ∈ (layers adj mate (a + 1)).2) : phase adj mate ≠ [] := by
   obtain ⟨d, hd⟩ : ∃ d, firstFreeRound adj mate = some d := by
@@ -1162,7 +1384,10 @@ theorem phase_ne_nil (hv : Valid adj mate) {j : Fin b} (hj : mate j = none)
       subst hP
       simp
 
-/-- A phase that finds paths keeps a matching and matches at least one more right vertex. -/
+/-- **A successful Hopcroft–Karp step grows the matching.** Let $\mu$ be a valid partner array (a
+matching of the graph). If the Hopcroft–Karp step on $\mu$ returns a partner array $\mu'$, then
+$\mu'$ is valid and $|\mathrm{matched}(\mu)| + 1 \le |\mathrm{matched}(\mu')|$, where
+$\mathrm{matched}(\nu)$ is the set of right vertices that have a partner in $\nu$. -/
 theorem hkStep_some (hv : Valid adj mate) {mate' : Fin b → Option (Fin a)}
     (h : hkStep adj mate = some mate') :
     Valid adj mate' ∧ (matched mate).card + 1 ≤ (matched mate').card := by
@@ -1187,7 +1412,10 @@ theorem hkStep_some (hv : Valid adj mate) {mate' : Fin b → Option (Fin a)}
       obtain ⟨j, hPj⟩ := h1 P hP
       exact ⟨j, hPj.toAltPath⟩
 
-/-- A phase that finds no path means the search reaches no unmatched right vertex. -/
+/-- **A Hopcroft–Karp step that finds nothing.** Let $\mu$ be a valid partner array (a matching of
+the graph, whose left vertices number $a$). If the Hopcroft–Karp step on $\mu$ returns nothing,
+then no right vertex without a partner in $\mu$ is reached within $a + 1$ rounds of the
+alternating breadth-first layers of $\mu$. -/
 theorem hkStep_none (hv : Valid adj mate) (h : hkStep adj mate = none) :
     ∀ j, mate j = none → j ∉ (layers adj mate (a + 1)).2 := by
   intro j hj hR
@@ -1195,7 +1423,13 @@ theorem hkStep_none (hv : Valid adj mate) (h : hkStep adj mate = none) :
   split_ifs at h with hemp
   · exact phase_ne_nil hv hj hR (List.isEmpty_iff.1 hemp)
 
-/-- With more fuel than unmatched right vertices, the phases end with a maximum matching. -/
+/-- **Correctness of the phase loop.** Let $\mu$ be a valid partner array (a matching of the
+graph) on $b$ right vertices, and let $n \in \mathbb{N}$ be a fuel with
+$b < |\mathrm{matched}(\mu)| + n$, where $\mathrm{matched}(\mu)$ is the set of right vertices with
+a partner in $\mu$; so $n$ exceeds the number of unmatched right vertices. Let $\mu'$ be the
+result of the Hopcroft–Karp phase loop with fuel $n$ from $\mu$. Then $\mu'$ is valid, and every
+matching $M$ of the graph satisfies $|M| \le |\mathrm{pairs}(\mu')|$, where $\mathrm{pairs}(\mu')$
+is the set of pairs $(i, j)$ with $\mu'(j) = i$. -/
 theorem hopcroftKarpAux_spec : ∀ (fuel : ℕ) (mate : Fin b → Option (Fin a)), Valid adj mate →
     b < (matched mate).card + fuel →
     Valid adj (hopcroftKarpAux adj fuel mate) ∧
@@ -1212,7 +1446,10 @@ theorem hopcroftKarpAux_spec : ∀ (fuel : ℕ) (mate : Fin b → Option (Fin a)
           obtain ⟨hv', hc⟩ := hkStep_some hv hs
           exact hopcroftKarpAux_spec fuel mate' hv' (by omega)
 
-/-- The result of Hopcroft–Karp is a matching. -/
+/-- **Hopcroft–Karp returns a matching.** For every bipartite graph with left vertices
+$0, \dots, a-1$, right vertices $0, \dots, b-1$ and an adjacency list for each left vertex, the
+pairs $(i, j)$ such that the Hopcroft–Karp algorithm makes $i$ the partner of $j$ form a matching
+of the graph: each pair is an edge, and no two distinct pairs share a left or a right vertex. -/
 theorem isMatching_hopcroftKarp : IsMatching adj (pairs (hopcroftKarp adj)) :=
   isMatching_pairs (hopcroftKarpAux_spec (b + 1) _ ⟨by simp, by simp⟩ (by omega)).1
 
@@ -1229,9 +1466,13 @@ section Shortest
 
 variable {adj} {mate : Fin b → Option (Fin a)}
 
-/-- An alternating chain of `L` pairs that ends at an unmatched left vertex reaches its first right
-vertex within `L` rounds of the layered search: from the unmatched end, each pair advances one
-round. -/
+/-- **The start of an alternating chain of $L$ pairs is reached within $L$ rounds.** Let $\mu$ be
+a partner array, let $L \ge 1$, and let $(i_1, j_1), \dots, (i_L, j_L)$ be pairs of a left and a
+right vertex such that each $j_t$ is adjacent to $i_t$ with $\mu(j_t) \ne i_t$, each $j_{t+1}$ has
+partner $\mu(j_{t+1}) = i_t$ for $t < L$, and $i_L$ is unmatched. Then $j_1$ is among the right
+vertices reached within $L$ rounds of the alternating layered search for $\mu$.
+
+From the unmatched end, each pair advances one round. -/
 theorem mem_layers_length : ∀ (P : List (Fin a × Fin b)),
     (∀ p ∈ P, p.2 ∈ adj p.1 ∧ mate p.2 ≠ some p.1) →
     List.IsChain (fun p q => mate q.2 = some p.1) P → (∀ p ∈ P.getLast?, Free mate p.1) →
@@ -1254,8 +1495,9 @@ theorem mem_layers_length : ∀ (P : List (Fin a × Fin b)),
         mem_layers_succ_fst.2 (Or.inr ⟨q.2, ih, hm⟩)
       exact mem_layers_succ_snd.2 ⟨i, hi, he (i, j) (by simp)⟩
 
-/-- **No augmenting path is shorter than a phase's.** If `firstFreeRound` is `d`, every augmenting
-path has at least `d + 1` pairs. -/
+/-- **No augmenting path is shorter than a phase's.** Let $\mu$ give each right vertex of a
+bipartite graph at most one partner among the left vertices. If the first free round of $\mu$ is
+$d$, then every augmenting path for $\mu$ has at least $d + 1$ pairs. -/
 theorem le_length_of_isAugmentingPath {d k : ℕ} (hd : firstFreeRound adj mate = some d)
     {j : Fin b} {P : List (Fin a × Fin b)} (hP : IsAugmentingPath adj mate k j P) :
     d + 1 ≤ P.length := by
@@ -1269,7 +1511,9 @@ theorem le_length_of_isAugmentingPath {d k : ℕ} (hd : firstFreeRound adj mate 
       by_contra hlt
       exact hmin P.length (by simp only [List.length_cons] at hlt; omega) j hP.start_free hR
 
-/-- What `searchPath` at level `k` finds has at most `k + 1` pairs. -/
+/-- **Length bound for search paths.** For every set of used left vertices, every level $k$,
+every right vertex $j$ and every set of dead right vertices, a path found by the search at level
+$k$ from $j$ has at most $k + 1$ pairs. -/
 theorem searchPath_length_le (usedL : Fin a → Bool) : ∀ (k : ℕ) (j : Fin b)
     (dead : Fin b → Bool) (P : List (Fin a × Fin b)),
     (searchPath adj mate usedL k j dead).1 = some P → P.length ≤ k + 1
@@ -1292,7 +1536,9 @@ theorem searchPath_length_le (usedL : Fin a → Bool) : ∀ (k : ℕ) (j : Fin b
           simp only [List.length_cons]
           omega
 
-/-- Every path of `phaseAux` at level `k` has at most `k + 1` pairs. -/
+/-- **Length bound for phase paths.** For every partner assignment $\mathrm{mate}$, level $k$,
+list of candidate right vertices and sets of used left and right vertices, every path that the
+phase search at level $k$ collects from these candidates has at most $k + 1$ pairs. -/
 theorem phaseAux_length_le (k : ℕ) : ∀ (js : List (Fin b)) (usedL : Fin a → Bool)
     (usedR : Fin b → Bool), ∀ P ∈ phaseAux adj mate k js usedL usedR, P.length ≤ k + 1
   | [], _, _ => by simp [phaseAux]
@@ -1308,9 +1554,12 @@ theorem phaseAux_length_le (k : ℕ) : ∀ (js : List (Fin b)) (usedL : Fin a �
               · exact searchPath_length_le usedL k j usedR P (by rw [hs])
               · exact phaseAux_length_le k js _ _ P hP
 
-/-- **Phases use shortest augmenting paths.** If `firstFreeRound` is `d`, every path of the phase
-has exactly `d + 1` pairs, the least length of any augmenting path
-(`le_length_of_isAugmentingPath`). -/
+/-- **Phases use shortest augmenting paths.** Let $\mu$ be a valid partner assignment of a
+bipartite graph (a matching) whose first free round is $d$. Then every path of the phase of $\mu$
+has exactly $d + 1$ pairs.
+
+Every augmenting path for $\mu$ has at least $d + 1$ pairs, so these paths are shortest
+augmenting paths. -/
 theorem length_of_mem_phase (hv : Valid adj mate) {d : ℕ} (hd : firstFreeRound adj mate = some d)
     {P : List (Fin a × Fin b)} (hP : P ∈ phase adj mate) : P.length = d + 1 := by
   simp only [phase, hd] at hP
@@ -1323,20 +1572,34 @@ end Shortest
 
 /-! ## Phases find maximal sets of shortest augmenting paths -/
 
-/-- `z` is first reached in round `m + 1` of the layered search. -/
+/-- **Exact level of a right vertex.** For a partner array $\mu$, a natural number $m$ and a
+right vertex $z$, $z$ has exact level $m$ when $z$ is first reached in round $m + 1$ of the
+layered search for $\mu$: it is reached within $m + 1$ rounds but not within $m$ rounds. -/
 def ExactLevel (mate : Fin b → Option (Fin a)) (m : ℕ) (z : Fin b) : Prop :=
   z ∈ (layers adj mate (m + 1)).2 ∧ z ∉ (layers adj mate m).2
 
-/-- An alternating chain from `z` that ends at an unmatched left vertex: an augmenting path from
-`z` without the layer and distinctness conditions of `AltPath`. -/
+/-- **Alternating chain to an unmatched left vertex.** In a bipartite graph, let each right vertex
+have at most one partner, a left vertex (the partners need not form a matching), and let $z$ be a
+right vertex. A list $Q$ of pairs (left vertex, right vertex) is an alternating chain from $z$
+when its first pair has right vertex $z$, each of its pairs $(i, j)$ is an edge with $i$ not the
+partner of $j$, each right vertex after the first is the partner of the preceding left vertex,
+and its last left vertex is the partner of no right vertex.
+
+Unlike an augmenting path, $z$ may be matched, the vertices need not lie in the layers of the
+search, and a vertex may occur more than once. -/
 def IsChainFrom (mate : Fin b → Option (Fin a)) (z : Fin b) (Q : List (Fin a × Fin b)) : Prop :=
   Q.head?.map Prod.snd = some z ∧ (∀ q ∈ Q, q.2 ∈ adj q.1 ∧ mate q.2 ≠ some q.1) ∧
     List.IsChain (fun p q => mate q.2 = some p.1) Q ∧ ∀ q ∈ Q.getLast?, Free mate q.1
 
-/-- No escape from `z` avoiding `U` and `D`: no alternating chain from `z` of shortest length
-(`m + 1` pairs when `z` is first reached in round `m + 1`) whose left vertices are not in `U` and
-whose right vertices after `z` are not in `D`. A phase gives this property to every right vertex
-it marks dead after a failed search (`searchPath_dead`). -/
+/-- **No shortest escape.** Let $\mu$ be a partner array, $U$ a set of left vertices, $D$ a set of
+right vertices and $z$ a right vertex. Then $z$ has no escape avoiding $U$ and $D$ when there are
+no $m \in \mathbb{N}$ and no list of pairs $(i_1, j_1), \dots, (i_{m+1}, j_{m+1})$ such that $z$ is
+first reached in round $m + 1$ of the alternating layered search for $\mu$, the list is an
+alternating chain from $z$, no $i_t$ lies in $U$, and no $j_t$ with $t \ge 2$ lies in $D$. Here
+the list is an alternating chain from $z$ when $j_1 = z$, each $j_t$ is adjacent to $i_t$ with
+$\mu(j_t) \ne i_t$, $\mu(j_{t+1}) = i_t$ for $t \le m$, and $i_{m+1}$ is unmatched.
+
+A phase gives this property to every right vertex it marks dead after a failed search. -/
 def NoEscape (mate : Fin b → Option (Fin a)) (U : Fin a → Bool) (D : Fin b → Bool) (z : Fin b) :
     Prop :=
   ∀ (m : ℕ) (Q : List (Fin a × Fin b)), ExactLevel adj mate m z → IsChainFrom adj mate z Q →
@@ -1369,7 +1632,12 @@ theorem partnerOf_eq_none_of_free {i : Fin a} (h : Free mate i) : partnerOf mate
   simp only [partnerOf, List.find?_eq_none, decide_eq_true_eq]
   exact fun j _ => h j
 
-/-- The second right vertex of a shortest chain is first reached one round earlier. -/
+/-- **The second pair of a shortest alternating chain.** Let $\mu$ be a partner array and $z$ a
+right vertex first reached in round $m + 1$ of the alternating breadth-first layers of $\mu$, and
+let $Q$ be an alternating chain for $\mu$ from $z$ ending at an unmatched left vertex, with exactly
+$m + 1$ pairs, at least two of them. Let $(i', j')$ be the second pair of $Q$. Then $m \ge 1$, the
+right vertex $j'$ is first reached in round $m$, and $Q$ without its first pair is an alternating
+chain for $\mu$ from $j'$ ending at an unmatched left vertex. -/
 theorem ExactLevel.tail {m : ℕ} {z : Fin b} {s s' : Fin a × Fin b} {S : List (Fin a × Fin b)}
     (hz : ExactLevel adj mate m z) (hQ : IsChainFrom adj mate z (s :: s' :: S))
     (hlen : (s :: s' :: S).length = m + 1) :
@@ -1394,8 +1662,12 @@ theorem ExactLevel.tail {m : ℕ} {z : Fin b} {s s' : Fin a × Fin b} {S : List 
           rw [← hsz]; exact mem_layers_succ_snd.2 ⟨s.1, hi, he s List.mem_cons_self⟩
         exact hz.2 (by rw [hm, hS]; exact this)
 
-/-- The partner of a candidate predecessor of a right vertex first reached in round `k + 2` is
-first reached in round `k + 1`. -/
+/-- **Partners of predecessors lie one level earlier.** Let $\mathrm{mate}$ be a valid partner
+assignment for the bipartite graph with adjacency lists $\mathrm{adj}$. Let $z$ be a right
+vertex first reached in round $k + 2$ of the alternating layered search, let $i$ be a left vertex
+reached within $k + 1$ rounds with $z \in \mathrm{adj}(i)$ and $\mathrm{mate}(z) \ne i$, and let
+$j'$ be a right vertex with $\mathrm{mate}(j') = i$. Then $j'$ is first reached in round
+$k + 1$. -/
 theorem ExactLevel.partner (hv : Valid adj mate) {k : ℕ} {z j' : Fin b} {i : Fin a}
     (hz : ExactLevel adj mate (k + 1) z) (hi : i ∈ (layers adj mate (k + 1)).1)
     (hadj : z ∈ adj i) (hm : mate z ≠ some i) (hp : mate j' = some i) :
@@ -1409,8 +1681,19 @@ theorem ExactLevel.partner (hv : Valid adj mate) {k : ℕ} {z j' : Fin b} {i : F
         have hi' : i ∈ (layers adj mate (n + 1)).1 := mem_layers_succ_fst.2 (Or.inr ⟨j', hj', hp⟩)
         exact hz.2 (mem_layers_succ_snd.2 ⟨i, hi', hadj, hm⟩)
 
-/-- Every right vertex that `tryPreds` newly marks dead is either `j` itself, after every candidate
-failed, or was marked by the search from the partner of a candidate. -/
+/-- **Where newly dead vertices come from.**
+For a right vertex $j$, a test $\mathrm{ok}$ on left vertices, a map $\pi$ giving each left vertex
+an optional right vertex, and a search $s$ taking a right vertex and a dead set (a set of right
+vertices) to an optional path and a new dead set, write $T(l, D)$ for the optional path and the
+dead set returned by trying the left vertices of the list $l$ as predecessors of $j$, starting from
+the dead set $D$.
+Suppose $s$ never shrinks the dead set: for every right vertex $j'$ and every dead set $d$, the
+dead set returned by $s(j', d)$ contains $d$.
+Let $E$ be the dead set of $T(l, D)$ and let $y$ be a right vertex in $E$ but not in $D$. Then
+either $T(l, D)$ finds no path and $y = j$, or there are a vertex $i$ of $l$ passing
+$\mathrm{ok}$, a right vertex $j'$ and a dead set $d$ containing $D$ such that $\pi(i) = j'$,
+$y \notin d$, $y$ is in the dead set returned by $s(j', d)$, and that dead set is contained in
+$E$. -/
 theorem tryPreds_dead {ok : Fin a → Bool} {partner : Fin a → Option (Fin b)}
     {search : Fin b → (Fin b → Bool) → Option (List (Fin a × Fin b)) × (Fin b → Bool)}
     (hs : ∀ j' d x, d x = true → (search j' d).2 x = true) (j : Fin b) :
@@ -1465,8 +1748,18 @@ theorem tryPreds_dead {ok : Fin a → Bool} {partner : Fin a → Option (Fin b)}
         · left; exact h
         · right; exact ⟨i₁, List.mem_cons_of_mem _ hi₁, rest⟩
 
-/-- When `tryPreds` fails, `j` is marked dead and every candidate passing `ok` has a partner whose
-search failed with a dead set contained in the final one. -/
+/-- **When trying candidates fails.**
+For a right vertex $j$, a test $\mathrm{ok}$ on left vertices, a map $\pi$ giving each left vertex
+an optional right vertex, and a search $s$ taking a right vertex and a dead set (a set of right
+vertices) to an optional path and a new dead set, write $T(l, D)$ for the optional path and the
+dead set returned by trying the left vertices of the list $l$ as predecessors of $j$, starting from
+the dead set $D$.
+Suppose $s$ never shrinks the dead set: for every right vertex $j'$ and every dead set $d$, the
+dead set returned by $s(j', d)$ contains $d$.
+If $T(l, D)$ finds no path, then $j$ is in the dead set $E$ of $T(l, D)$, and for every vertex $i$
+of $l$ passing $\mathrm{ok}$ there are a right vertex $j'$ and a dead set $d$ such that
+$\pi(i) = j'$, $s(j', d)$ finds no path, and the dead set returned by $s(j', d)$ is contained in
+$E$. -/
 theorem tryPreds_none {ok : Fin a → Bool} {partner : Fin a → Option (Fin b)}
     {search : Fin b → (Fin b → Bool) → Option (List (Fin a × Fin b)) × (Fin b → Bool)}
     (hs : ∀ j' d x, d x = true → (search j' d).2 x = true) (j : Fin b) :
@@ -1500,7 +1793,9 @@ theorem tryPreds_none {ok : Fin a → Bool} {partner : Fin a → Option (Fin b)}
         · rw [hok'] at hok₁; exact absurd hok₁ (by simp)
         · exact h2 i₁ hi₁ hok₁
 
-/-- A failed search marks its start dead. -/
+/-- **A failed search marks its start dead.** For every set of used left vertices, every level
+$k$, every right vertex $z$ and every set of dead right vertices, if the search at level $k$ from
+$z$ finds no path, then $z$ is dead after it. -/
 theorem searchPath_none_marks (U : Fin a → Bool) : ∀ (k : ℕ) (z : Fin b) (D : Fin b → Bool),
     (searchPath adj mate U k z D).1 = none → (searchPath adj mate U k z D).2 z = true
   | 0, z, D, h => by
@@ -1515,9 +1810,15 @@ theorem searchPath_none_marks (U : Fin a → Bool) : ∀ (k : ℕ) (z : Fin b) (
       · exact searchPath_none_marks U k z D h
       · exact (tryPreds_none (fun j' d x hx => searchPath_mono U k j' d x hx) z _ D h).1
 
-/-- **Dead vertices have no escape.** Every right vertex that a search from a vertex first reached
-in round `k + 1` newly marks dead has no shortest escape avoiding the used left vertices and the
-final dead set: Hopcroft and Karp's pruning loses no path. -/
+/-- **Dead vertices have no escape.** Suppose the partner array describes a matching. Run the
+search at level $k$ from a right vertex $z$ first reached in round $k + 1$, with a set $U$ of used
+left vertices and an initial set $D$ of dead right vertices, and let $D'$ be the dead set after
+it. Then every right vertex $y$ in $D'$ but not in $D$ has no escape avoiding $U$ and $D'$: if $y$
+is first reached in round $m + 1$, no alternating chain from $y$ to an unmatched left vertex with
+$m + 1$ pairs has all its left vertices outside $U$ and all its right vertices after $y$ outside
+$D'$.
+
+So Hopcroft and Karp's pruning loses no path. -/
 theorem searchPath_dead (hv : Valid adj mate) (U : Fin a → Bool) : ∀ (k : ℕ) (z : Fin b)
     (D : Fin b → Bool), ExactLevel adj mate k z → ∀ y,
       (searchPath adj mate U k z D).2 y = true → D y = false →
@@ -1589,8 +1890,15 @@ theorem searchPath_dead (hv : Valid adj mate) (U : Fin a → Bool) : ∀ (k : �
             hz.partner hv hiL hiadj him (partnerOf_eq_some hp)
           exact (searchPath_dead hv U k j' d hj' y h1 h2).mono (fun _ h => h) h3
 
-/-- Along a shortest chain that avoids the vertices of earlier paths, a dead set whose members are
-on earlier paths or have no escape contains no right vertex of the chain. -/
+/-- **Shortest chains avoiding earlier paths contain no dead vertex.** Let $\mu$ be a partner
+array, $U$ a set of left vertices and $D$ a set of right vertices, and let $L$ be a set of left
+vertices and $R$ a set of right vertices such that every vertex of $U$ lies in $L$ and every
+vertex of $D$ lies in $R$ or has no escape avoiding $U$ and $D$. Let $m \in \mathbb{N}$, let $z$ be
+a right vertex first reached in round $m + 1$ of the alternating layered search for $\mu$, and let
+$S$ be an alternating chain from $z$ with $m + 1$ pairs such that no left vertex of $S$ lies in $L$
+and no right vertex of $S$ lies in $R$. Then no right vertex of $S$ lies in $D$.
+
+In a phase, $L$ and $R$ are the left and right vertices of the paths found so far. -/
 theorem not_dead_of_chain {U : Fin a → Bool} {D : Fin b → Bool} {Lf : Fin a → Prop}
     {Rf : Fin b → Prop} (hU : ∀ i, U i = true → Lf i)
     (hD : ∀ y, D y = true → NoEscape adj mate U D y ∨ Rf y) :
@@ -1623,9 +1931,15 @@ theorem not_dead_of_chain {U : Fin a → Bool} {D : Fin b → Bool} {Lf : Fin a 
           · exact (havoid q List.mem_cons_self).2 hR
       · exact htail q hq
 
-/-- The invariant of a phase: a shortest chain from `j` (first reached in round `d + 1`) that avoids
-the earlier paths `F` and the paths found from the candidates `js` cannot exist while `j` is still
-a candidate or dead. -/
+/-- **Invariant of a phase.** Let $\mathrm{mate}$ be a valid partner assignment, let $j$ be a
+right vertex first reached in round $d + 1$ of the alternating layered search, and let $Q$ be an
+alternating chain from $j$ with $d + 1$ pairs. Let $J$ be a list of right vertices each first
+reached in round $d + 1$, $U$ a set of left vertices, $D$ a set of right vertices and $F$ a list of
+paths, such that every vertex in $U$ is a left vertex of a path in $F$, and every vertex in $D$
+either has no escape avoiding $U$ and $D$ or is a right vertex of a path in $F$. If $j$ is in $J$
+or in $D$, then some path in $F$, or among the paths that the phase search at level $d$ collects
+from $J$ with used left vertices $U$ and used right vertices $D$, shares a left vertex or a right
+vertex with $Q$. -/
 theorem phaseAux_maximal (hv : Valid adj mate) (d : ℕ) {j : Fin b} {Q : List (Fin a × Fin b)}
     (hQ : IsChainFrom adj mate j Q) (hj : ExactLevel adj mate d j) (hlen : Q.length = d + 1) :
     ∀ (js : List (Fin b)) (U : Fin a → Bool) (D : Fin b → Bool) (F : List (List (Fin a × Fin b))),
@@ -1719,10 +2033,15 @@ theorem phaseAux_maximal (hv : Valid adj mate) (d : ℕ) {j : Fin b} {Q : List (
                 simp only [phaseAux, hs, List.mem_append, List.mem_cons] at hP ⊢
                 tauto
 
-/-- **Phases are maximal.** If `firstFreeRound` is `d`, every shortest augmenting path (`d + 1`
-pairs, the least length by `le_length_of_isAugmentingPath`) shares a vertex with a path of the
-phase: the phase's vertex-disjoint shortest augmenting paths form a maximal set, as Hopcroft and
-Karp require. -/
+/-- **Phases are maximal.** Suppose the partner array describes a matching and $d$ is the earliest
+round such that round $d + 1$ of the alternating breadth-first search reaches an unmatched right
+vertex. Then for every $k$, every augmenting path $Q$ at level $k$ with exactly $d + 1$ pairs
+shares a vertex with some path $P$ of the phase: some pair of $Q$ has its left vertex among the
+left vertices of $P$ or its right vertex among the right vertices of $P$.
+
+Every augmenting path has at least $d + 1$ pairs, so these are the shortest augmenting paths, and
+the phase's vertex-disjoint shortest augmenting paths form a maximal set, as Hopcroft and Karp
+require. -/
 theorem phase_maximal (hv : Valid adj mate) {d k : ℕ} (hd : firstFreeRound adj mate = some d)
     {j : Fin b} {Q : List (Fin a × Fin b)} (hQ : IsAugmentingPath adj mate k j Q)
     (hlen : Q.length = d + 1) :
@@ -1759,14 +2078,21 @@ section Monotone
 
 variable {adj} {mate : Fin b → Option (Fin a)}
 
-/-- A matched right vertex is reached in the same round as its partner. -/
+/-- **A matched right vertex is reached no later than its partner.** Let $\mu$ be a valid partner
+array (partners are neighbours, and no left vertex is the partner of two right vertices), let $j$
+be a right vertex with partner $\mu(j) = i$, and let $k \in \mathbb{N}$. If $i$ is among the left
+vertices reached within $k$ rounds of the alternating layered search for $\mu$, then $j$ is among
+the right vertices reached within $k$ rounds. -/
 theorem mem_layers_snd_of_mate (hv : Valid adj mate) {k : ℕ} {i : Fin a} {j : Fin b}
     (hm : mate j = some i) (hi : i ∈ (layers adj mate k).1) : j ∈ (layers adj mate k).2 := by
   obtain ⟨j'', hj'', hm''⟩ := exists_mate_of_mem_layers hi (fun hf => hf j hm)
   rw [hv.inj i j j'' hm hm'']; exact hj''
 
-/-- Along a shortest chain, each pair `(i, j)` has `j` first reached in some round `m + 1` and `i`
-reached by round `m`. -/
+/-- **Levels along a shortest alternating chain.** Let $\mu$ be a partner array, let
+$m \in \mathbb{N}$, let $z$ be a right vertex first reached in round $m + 1$ of the alternating
+layered search for $\mu$, and let $S$ be an alternating chain from $z$ with $m + 1$ pairs. Then
+for every pair $(i, j)$ of $S$ there is $m' \in \mathbb{N}$ such that $j$ is first reached in round
+$m' + 1$ and $i$ is reached within $m'$ rounds. -/
 theorem pair_levels_of_chain : ∀ (S : List (Fin a × Fin b)) (z : Fin b) (m : ℕ),
     IsChainFrom adj mate z S → ExactLevel adj mate m z → S.length = m + 1 →
     ∀ p ∈ S, ∃ m', ExactLevel adj mate m' p.2 ∧ p.1 ∈ (layers adj mate m').1
@@ -1791,8 +2117,12 @@ theorem pair_levels_of_chain : ∀ (S : List (Fin a × Fin b)) (z : Fin b) (m : 
             exact pair_levels_of_chain (s' :: S') s'.2 m' hS' hz'
               (by simp only [List.length_cons] at hlen ⊢; omega) p hp
 
-/-- Every pair of a phase has its right vertex first reached in some round `m + 1` and its left
-vertex reached by round `m`. -/
+/-- **Levels of the pairs of a phase.** In a bipartite graph with left vertices $0, \dots, a-1$, let
+$\mu$ be a valid partner array (partners are neighbours, and no left vertex is the partner of two
+right vertices), and let $d \le a$ be such that round $d + 1$ of the alternating layered search for
+$\mu$ reaches an unmatched right vertex and no earlier round does. Then for every pair $(i, j)$ on
+a path of the Hopcroft–Karp phase for $\mu$ there is $m \in \mathbb{N}$ such that $j$ is first
+reached in round $m + 1$ and $i$ is among the left vertices reached within $m$ rounds. -/
 theorem pair_levels_of_mem_phase (hv : Valid adj mate) {d : ℕ}
     (hd : firstFreeRound adj mate = some d) {p : Fin a × Fin b}
     (hp : p ∈ (phase adj mate).flatten) :
@@ -1818,9 +2148,13 @@ theorem pair_levels_of_mem_phase (hv : Valid adj mate) {d : ℕ}
     | succ n => exact hmin n (Nat.lt_succ_self n) j hj.start_free h
   exact pair_levels_of_chain P j d ⟨hj.head, hj.edge, hj.chain, hj.last⟩ hjx hlen p hpP
 
-/-- A left vertex unmatched after a phase was unmatched before it: the first pair of each path
-starts at an unmatched right vertex, and every other right vertex of a path had the previous left
-vertex as partner, which the phase rematches. -/
+/-- **A phase leaves no new unmatched left vertex.** Let $\mu$ be a valid partner array (a
+matching of the graph) whose first free round is defined, equal to some $d$. If a left vertex $i$
+is unmatched in the flip of $\mu$ along the concatenation of all the paths of the phase of $\mu$,
+then $i$ is unmatched in $\mu$.
+
+The first pair of each path starts at an unmatched right vertex, and every other right vertex of a
+path had the previous left vertex as partner, which the phase rematches. -/
 theorem free_of_free_flip (hv : Valid adj mate) {d : ℕ} (hd : firstFreeRound adj mate = some d)
     {i : Fin a} (h : Free (flip mate (phase adj mate).flatten) i) : Free mate i := by
   have hspec := phaseAux_spec hv d (((List.finRange b).filter fun j => decide (mate j = none ∧
@@ -1849,9 +2183,14 @@ theorem free_of_free_flip (hv : Valid adj mate) {d : ℕ} (hd : firstFreeRound a
   · push Not at hjP
     exact h j ((flip_eq_some (mate := mate) hn).2 (Or.inr ⟨hjP, hmj⟩))
 
-/-- **Distances do not decrease across a phase** (Hopcroft and Karp): after flipping the paths of a
-phase, every vertex reached by round `k` of the layered search was already reached by round `k`
-before. -/
+/-- **Distances do not decrease across a phase.** Let the partner array of a bipartite graph with
+$a$ left vertices be valid, and suppose that some round $r \le a + 1$ of the layered search
+reaches an unmatched right vertex, so that a phase runs from the earliest such round. After
+flipping all the paths that phase finds, for every $k \in \mathbb{N}$ the left vertices and the
+right vertices reached within $k$ rounds of the layered search were already reached within $k$
+rounds before the flip.
+
+This is a step of Hopcroft and Karp's analysis. -/
 theorem layers_flip_phase_subset (hv : Valid adj mate) {d : ℕ}
     (hd : firstFreeRound adj mate = some d) : ∀ k : ℕ,
     (layers adj (flip mate (phase adj mate).flatten) k).1 ⊆ (layers adj mate k).1 ∧
@@ -1885,8 +2224,10 @@ theorem layers_flip_phase_subset (hv : Valid adj mate) {d : ℕ}
           exact layers_fst_mono (by omega) hpm
         · exact mem_layers_succ_fst.2 (Or.inr ⟨j, hj₀, hm⟩)
 
-/-- The next phase's paths are at least as long: if `firstFreeRound` is `d` before a phase and
-`d'` after it, then `d ≤ d'`. -/
+/-- **The first free round does not decrease across a phase.** Let $\mu$ be a valid partner
+assignment of a bipartite graph (a matching), and let $\mu'$ be obtained from $\mu$ by flipping
+all the paths of the phase of $\mu$ at once. If the first free round of $\mu$ is $d$ and the first
+free round of $\mu'$ is $d'$, then $d \le d'$. -/
 theorem le_firstFreeRound_flip_phase (hv : Valid adj mate) {d d' : ℕ}
     (hd : firstFreeRound adj mate = some d)
     (hd' : firstFreeRound adj (flip mate (phase adj mate).flatten) = some d') : d ≤ d' := by
@@ -1904,7 +2245,11 @@ theorem le_firstFreeRound_flip_phase (hv : Valid adj mate) {d d' : ℕ}
   by_contra hlt
   exact hmin d' (by omega) j hfree ((layers_flip_phase_subset hv hd (d' + 1)).2 hjR)
 
-/-- The paths of a phase are augmenting paths at level `d`, with no left or right vertex twice. -/
+/-- **The paths of a phase are vertex-disjoint augmenting paths.** Suppose the partner array
+describes a matching and $d$ is the earliest round such that round $d + 1$ of the alternating
+breadth-first search reaches an unmatched right vertex. Then every path of the phase is an
+augmenting path at level $d$ from some right vertex, and no left vertex and no right vertex occurs
+twice among the pairs of all the paths of the phase. -/
 theorem phase_spec (hv : Valid adj mate) {d : ℕ} (hd : firstFreeRound adj mate = some d) :
     (∀ P ∈ phase adj mate, ∃ j, IsAugmentingPath adj mate d j P) ∧
       ((phase adj mate).flatten.map Prod.fst).Nodup ∧
@@ -1914,9 +2259,16 @@ theorem phase_spec (hv : Valid adj mate) {d : ℕ} (hd : firstFreeRound adj mate
   simp only [phase, hd]
   exact ⟨hspec.1, hspec.2.1, hspec.2.2.1⟩
 
-/-- A shortest chain after a phase, from a right vertex first reached in the same round before and
-after it, is a chain before the phase too, and its right vertices after the first are not on the
-phase's paths: a flipped edge would step back a round, which a shortest chain cannot afford. -/
+/-- **Shortest chains from a vertex whose level a phase keeps were chains before it.** Let $\mu$
+be a valid partner array whose first free round is defined, and let $\mu'$ be obtained from $\mu$
+by flipping all the paths of the phase of $\mu$. Let $z$ be a right vertex and $m$ a natural
+number such that $z$ is first reached in round $m + 1$ of the layered search both for $\mu$ and
+for $\mu'$, and let $S$ be an alternating chain for $\mu'$ from $z$ to an unmatched left vertex
+with exactly $m + 1$ pairs. Then $S$ is also an alternating chain for $\mu$ from $z$ to an
+unmatched left vertex, and for every pair of $S$ after the first, its right vertex is not the
+right vertex of any pair on the paths of the phase.
+
+A flipped edge would step back a round, which a chain of this length cannot afford. -/
 theorem chain_of_chain_flip_phase (hv : Valid adj mate) {d : ℕ}
     (hd : firstFreeRound adj mate = some d) :
     ∀ (S : List (Fin a × Fin b)) (z : Fin b) (m : ℕ),
@@ -1984,10 +2336,13 @@ theorem chain_of_chain_flip_phase (hv : Valid adj mate) {d : ℕ}
             · exact hlink.2 p hp
             · exact htail q hq p hp
 
-/-- **The next phase's paths are strictly longer** (Hopcroft and Karp): if `firstFreeRound` is `d`
-before a phase and `d'` after it, then `d < d'`. A shortest augmenting path after the phase of the
-same length would be a shortest augmenting chain before it, disjoint from the phase's paths,
-contradicting `phase_maximal`'s invariant. -/
+/-- **The next phase's paths are strictly longer** (Hopcroft and Karp). Let $\mu$ be a valid
+partner assignment of a bipartite graph (a matching), and let $\mu'$ be obtained from $\mu$ by
+flipping all the paths of the phase of $\mu$ at once. If the first free round of $\mu$ is $d$ and
+the first free round of $\mu'$ is $d'$, then $d < d'$.
+
+A shortest augmenting path for $\mu'$ of the same length would be a shortest augmenting chain for
+$\mu$ that is disjoint from the paths of the phase, contradicting the maximality of the phase. -/
 theorem lt_firstFreeRound_flip_phase (hv : Valid adj mate) {d d' : ℕ}
     (hd : firstFreeRound adj mate = some d)
     (hd' : firstFreeRound adj (flip mate (phase adj mate).flatten) = some d') : d < d' := by
@@ -2140,10 +2495,16 @@ theorem card_le_card_pairs_add (hv : Valid adj mate) {M : Finset (Fin a × Fin b
   have h3 : R.card = (R \ R₀).card + R₀.card := (Finset.card_sdiff_add_card_eq_card hR₀R).symm
   omega
 
-/-- **The deficit is at most `b / d`** (the counting step of Hopcroft and Karp's bound): if no
-unmatched right vertex is reached in the first `d` rounds, then `d` times the deficit of the
-current matching against any matching is at most the number of right vertices reached by round
-`d`. -/
+/-- **The deficit is at most $b / d$.** In a bipartite graph with right vertices $0, \dots, b-1$,
+let $\mu$ be a valid partner array (partners are neighbours, and no left vertex is the partner of
+two right vertices), let $M$ be any matching of the graph, and let $d \in \mathbb{N}$. Suppose that
+for every $k < d$, no unmatched right vertex is among the right vertices reached within $k + 1$
+rounds of the alternating layered search for $\mu$. Then $d \cdot \max(|M| - |P_\mu|, 0) \le |R_d|$,
+where $P_\mu$ is the set of pairs $(i, j)$ with $\mu(j) = i$ and $R_d$ is the set of right vertices
+reached within $d$ rounds.
+
+This is the counting step of Hopcroft and Karp's bound: since $R_d$ has at most $b$ elements, the
+deficit of the current matching against any matching is at most $b / d$ when $d \ge 1$. -/
 theorem mul_card_sub_le (hv : Valid adj mate) {M : Finset (Fin a × Fin b)}
     (hM : IsMatching adj M) : ∀ d : ℕ,
     (∀ k < d, ∀ j, mate j = none → j ∉ (layers adj mate (k + 1)).2) →
@@ -2158,13 +2519,17 @@ theorem mul_card_sub_le (hv : Valid adj mate) {M : Finset (Fin a × Fin b)}
       rw [Nat.succ_mul]
       omega
 
-/-- With no phase to run, the matching is maximum and `hopcroftKarpAux` returns it. -/
+/-- **The phase loop stops when a step finds nothing.** If the Hopcroft–Karp step on a partner
+array $\mu$ returns nothing, then for every fuel $f \in \mathbb{N}$ the Hopcroft–Karp phase loop
+with fuel $f$ from $\mu$ returns $\mu$. -/
 theorem hopcroftKarpAux_of_hkStep_none (h : hkStep adj mate = none) :
     ∀ f, hopcroftKarpAux adj f mate = mate
   | 0 => rfl
   | f + 1 => by simp [hopcroftKarpAux, h]
 
-/-- Running `f` phases and then `g` more is running `f + g` phases. -/
+/-- **Fuel adds up in the phase loop.** For all $f, g \in \mathbb{N}$ and every partner array
+$\mu$, the Hopcroft–Karp phase loop with fuel $f + g$ from $\mu$ returns the same partner array as
+the loop with fuel $g$ run from the result of the loop with fuel $f$ from $\mu$. -/
 theorem hopcroftKarpAux_add : ∀ (f g : ℕ) (mate : Fin b → Option (Fin a)),
     hopcroftKarpAux adj (f + g) mate = hopcroftKarpAux adj g (hopcroftKarpAux adj f mate)
   | 0, g, mate => by simp [hopcroftKarpAux]
@@ -2178,8 +2543,11 @@ theorem hopcroftKarpAux_add : ∀ (f g : ℕ) (mate : Fin b → Option (Fin a)),
           simp only [hopcroftKarpAux, h]
           exact hopcroftKarpAux_add f g m'
 
-/-- **Each phase lengthens the shortest augmenting paths.** After `f` phases from a matching whose
-`firstFreeRound` is at least `c`, the `firstFreeRound` is at least `c + f` (or there is none). -/
+/-- **Each phase lengthens the shortest augmenting paths.** Let $\mu$ be a valid partner array
+and $c$ a natural number such that the first free round of $\mu$, if defined, is at least $c$.
+For every natural number $f$, running at most $f$ Hopcroft–Karp phases from $\mu$, stopping
+early when a phase finds no path, gives a valid partner array whose first free round, if
+defined, is at least $c + f$. -/
 theorem firstFreeRound_hopcroftKarpAux : ∀ (f c : ℕ) (mate : Fin b → Option (Fin a)),
     Valid adj mate → (∀ d, firstFreeRound adj mate = some d → c ≤ d) →
     Valid adj (hopcroftKarpAux adj f mate) ∧
@@ -2213,8 +2581,13 @@ theorem firstFreeRound_hopcroftKarpAux : ∀ (f c : ℕ) (mate : Fin b → Optio
           obtain ⟨h1, h2⟩ := firstFreeRound_hopcroftKarpAux f (c + 1) m' hv' hc'
           exact ⟨h1, fun d hd => by have := h2 d hd; omega⟩
 
-/-- Each phase adds an edge until the matching is maximum: if the current matching is within `f`
-of a matching `M`, then `f` more phases reach at least `M`'s size. -/
+/-- **Closing a deficit of $f$ in $f$ Hopcroft–Karp phases.** Let $\mu$ be a valid partner array,
+$M$ a matching of the bipartite graph and $f \in \mathbb{N}$. If $M$ has at most $f$ more pairs
+than the matched pairs of $\mu$, then $M$ has at most as many pairs as the matched pairs of the
+partner array returned by the Hopcroft–Karp phase loop with fuel $f$ from $\mu$.
+
+Each phase that finds a path adds at least one edge, and a phase that finds none leaves a maximum
+matching. -/
 theorem card_le_hopcroftKarpAux_of_le : ∀ (f : ℕ) (mate : Fin b → Option (Fin a)),
     Valid adj mate → ∀ M, IsMatching adj M → M.card ≤ (pairs mate).card + f →
       M.card ≤ (pairs (hopcroftKarpAux adj f mate)).card
@@ -2231,10 +2604,14 @@ theorem card_le_hopcroftKarpAux_of_le : ∀ (f : ℕ) (mate : Fin b → Option (
           rw [card_pairs] at h ⊢
           omega
 
-/-- **Hopcroft and Karp's bound: `2 ⌊√b⌋ + 2` phases suffice.** From the empty matching, after
-`2 ⌊√b⌋ + 2` phases the matching is maximum. After the first `⌊√b⌋ + 1` phases every augmenting
-path has more than `⌊√b⌋` pairs (`firstFreeRound_hopcroftKarpAux`), so the deficit is at most
-`⌊√b⌋` (`mul_card_sub_le`), and each further phase adds an edge. -/
+/-- **Hopcroft and Karp's bound on the number of phases.** In a bipartite graph with $b$ right
+vertices, run at most $2 \lfloor \sqrt{b} \rfloor + 2$ Hopcroft–Karp phases from the empty
+matching, stopping early when a phase finds no augmenting path. Then no matching of the graph has
+more edges than the resulting one.
+
+After the first $\lfloor \sqrt{b} \rfloor + 1$ phases every augmenting path has more than
+$\lfloor \sqrt{b} \rfloor$ pairs, so the deficit against any matching is at most
+$\lfloor \sqrt{b} \rfloor$, and each further phase adds an edge. -/
 theorem card_le_hopcroftKarpAux_sqrt {M : Finset (Fin a × Fin b)} (hM : IsMatching adj M) :
     M.card ≤ (pairs (hopcroftKarpAux adj (2 * Nat.sqrt b + 2) fun _ => none)).card := by
   set s := Nat.sqrt b with hs
