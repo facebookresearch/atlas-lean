@@ -2988,12 +2988,18 @@ def link_view(index) -> dict:
         if name is not None and declared(name, index):
             continue
         if name is None:
-            # A row an earlier sync wrote with a module and a name links the declaration the index resolves them to:
-            # one that resolves to none links one the Lean no longer has.
+            # A row an earlier sync wrote with a module and a name, and that credits nothing else, links the declaration
+            # the index resolves them to, as annotation_key reads it: one that resolves to none, or to several, links
+            # none the Lean has.
             pair = legacy_pair(row)
             if pair is None or "held" in row["extensions"][OWN] or legacy_lean_name(row["extensions"][OWN], index):
                 continue
-            name = f"the declaration named {pair[1]} in {pair[0]}, by the module and name an earlier sync wrote"
+            try:
+                if page_owner(row)[0] != "none":
+                    continue
+            except CreditError:
+                continue  # Left to the rows Autoform cannot read, below.
+            name = f"{pair[1]} in {pair[0]}{BY_MODULE_AND_NAME}"
         # Named as the working tree's file, which a copy of the wiki (see sync_output) stands for.
         where = location(wiki.ROOT / path.relative_to(LINKS.parent.parent), number)
         stale[(row.get("id") or page_name(row), name)].append(f"{where} ({page_name(row)})")
@@ -3052,6 +3058,10 @@ ROWS_OF_A_PAGE = re.compile(r"(.+) has (\d+) rows, which Autoform reads together
 PAGES_CREDITING = re.compile(r".+? and .+ both credit (.+); a declaration has one page")
 PAGES_STANDING_FOR = re.compile(
     r"(.+) (?:both|all) stand for the declaration (\S+) of this project; a declaration has one page")
+
+
+# How link_view names a row an earlier sync wrote with a module and a name (see legacy_pair).
+BY_MODULE_AND_NAME = ", by the module and name an earlier sync wrote"
 
 
 def written_page(row: dict) -> Path | None:
@@ -3194,8 +3204,11 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
                      if old[key] != now[key] and key in named]
     changed_pages += [f"{key} ({os.path.relpath(named[key], wiki.ROADMAP)}; docstring removed)"
                       for key in sorted(old.keys() - now.keys()) if key in named and documented(key, index) is False]
-    blocking = [f"{where} links {name}, which the Lean no longer has: relink the row to the declaration's successor "
-                "and keep its article id, or remove the link and keep the page as a planned page"
+    blocking = [(f"{where} names {name}, which no longer name one declaration of the Lean: link the row to the one it "
+                 "means, by its full name, and keep its article id, or remove them and keep the page as a planned page"
+                 if name.endswith(BY_MODULE_AND_NAME) else
+                 f"{where} links {name}, which the Lean no longer has: relink the row to the declaration's successor "
+                 "and keep its article id, or remove the link and keep the page as a planned page")
                 for (row, name), places in sorted(links["stale"].items()) if (row, name) not in base["stale"]
                 for where in places]
     blocking += [f"{problem}: fix the held marker"

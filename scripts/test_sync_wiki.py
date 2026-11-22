@@ -4053,8 +4053,35 @@ class ScopedRun(unittest.TestCase):
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["in_step"]), (1, False))
         self.assertEqual(len(report["errors"]), 1, report["errors"])
-        self.assertIn("links the declaration named extra in MathlibExt.Algebra.Groups, by the module and name an "
-                      "earlier sync wrote, which the Lean no longer has", report["errors"][0])
+        self.assertIn("names extra in MathlibExt.Algebra.Groups, by the module and name an earlier sync wrote, which no "
+                      "longer name one declaration of the Lean", report["errors"][0])
+        # A second declaration of that name in the module makes the pair name two: the same problem.
+        self.groups(more="theorem extra : True := trivial\n\nnamespace Other\n\ntheorem extra : True := trivial\n\n"
+                         "end Other\n\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, len(report["errors"])), (1, 1), report["errors"])
+        self.assertIn("which no longer name one declaration of the Lean", report["errors"][0])
+
+    def test_a_row_crediting_mathlib_keeps_the_module_and_name_it_once_had(self) -> None:
+        # A row the links folder's defaults credit to Mathlib, which still carries the module and name an earlier sync
+        # wrote: its owner is Mathlib's declaration, whatever becomes of the old one, so removing that one leaves no
+        # stale link (the problems the defaults give other rows are the base's).
+        self.write("blueprint/links/_defaults.json", json.dumps({
+            "object": {"type": "lean", "uri": "https://github.com/leanprover-community/mathlib4",
+                       "location": {"declaration": "Nat.add_comm", "module": "Mathlib.Algebra.Group.Nat"}},
+            "extensions": {"org.autoform": {"mathlib": True}}}) + "\n")
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/extra.md", "# Extra\n\nExtra.\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        row = {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/extra.md"}],
+               "id": "af_" + "e" * 24, "extensions": {sync.OWN: {"module": "MathlibExt.Algebra.Groups", "name": "extra"}}}
+        links.write_text(links.read_text() + json.dumps(row) + "\n")
+        self.groups(more="theorem extra : True := trivial\n\n")
+        self.base = self.commit("a Mathlib-credited row with an old module and name")
+        self.assertEqual((sync.page_owner(row)[0], sync.legacy_pair(row)), ("mathlib", ("MathlibExt.Algebra.Groups",
+                                                                                         "extra")))
+        self.groups()
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (0, []))
 
     def test_a_row_the_run_cannot_settle_stops_it_before_it_writes(self) -> None:
         # Every row the run may add is checked before anything is written: one that would not credit its declaration
