@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.Additive.ConsecutiveZeroSum
 public import Mathlib.Data.Rat.Floor
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.Coset.Defs
@@ -121,13 +122,6 @@ public theorem_wanted consecutive_prod_ge {R M N : Type*} [Ring R] [AddCommGroup
     (hM : IsLeast (consecutiveSet R M A) cM) (hN : IsLeast (consecutiveSet R N A) cN)
     (h : IsLeast (consecutiveSet R (M × N) A) c) :
     cM * cN ≤ c
-
-/-- Theorem 3.1: for a finite abelian group `G`, `C(G) = |G|`.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Theorem 3.1 (`integers-2024-A38-thm-3-1`). -/
-public theorem_wanted consecutive_constant_eq_card (G : Type*) [AddCommGroup G] [Fintype G] :
-    IsLeast (consecutiveSet ℤ G ({1} : Set ℤ)) (Fintype.card G)
 
 /-- Lemma 3.2: if `2^a ≤ m` and `v_1, …, v_a ∈ ℤ_2^m`, some nonzero `w ∈ ℤ_2^m` whose ones
 occupy consecutive positions `s, …, t` satisfies `w · v_i = 0` for all `i`.
