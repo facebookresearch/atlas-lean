@@ -384,7 +384,8 @@ class LeanFacts(Vault):
         # this project is a declaration the Lean does not have, so its page is unlinked.
         self.page("Algebra/in-mathlib.md", "# In Mathlib\n\nProved there.\n")
         self.page("Algebra/gone.md", "# Gone\n\nRemoved upstream.\n")
-        mathlib = {"uri": sync.MATHLIB, "location": {"declaration": "Group.exists", "module": "Mathlib.Algebra.Group"}}
+        mathlib = {"type": "lean", "uri": sync.MATHLIB,
+                   "location": {"declaration": "Group.exists", "module": "Mathlib.Algebra.Group"}}
         credited = self.about("Algebra/in-mathlib.md", object=[mathlib], id="af_1",
                               extensions={"org.autoform": {"mathlib": True}})
         self.annotate([credited, self.about("Algebra/gone.md", object=[{"location": {"declaration": "Group.exists"}}],
