@@ -203,19 +203,15 @@ theorem expMech_toMeasure {R D : Type*} [Fintype R] [Nonempty R]
 /-- The exponential mechanism is `ε`-DP under sensitivity `Δ`
 (Dwork and Roth, 2014, Theorem 3.10). -/
 theorem isDP_expMech {R D : Type*} [Fintype R] [Nonempty R]
-    [MeasurableSpace R] [MeasurableSingletonClass R]
     (u : D → R → ℝ) (ε Δ : ℝ) (hε : 0 ≤ ε) (hΔ : 0 < Δ) (adj : D → D → Prop)
     (hsens : ∀ d d', adj d d' → ∀ r, |u d r - u d' r| ≤ Δ) :
     IsDP (expMech u ε Δ) adj ε := by
-  have hDP : DifferentiallyPrivate adj (expMechanism ε Δ u) ε 0 :=
-    expMechanism_differentiallyPrivate hε hΔ (fun x y hxy => hsens x y hxy)
   refine ⟨hε, fun d d' hadj r => ?_⟩
-  have h := hDP hadj {r} (measurableSet_singleton r)
-  rw [add_zero] at h
-  simp only [← expMech_toMeasure] at h
-  rwa [(expMech u ε Δ d).toMeasure_apply_singleton r (measurableSet_singleton r),
-    (expMech u ε Δ d').toMeasure_apply_singleton r
-      (measurableSet_singleton r)] at h
+  show ENNReal.ofReal (expMechProb ε Δ u d r)
+      ≤ ENNReal.ofReal (Real.exp ε) * ENNReal.ofReal (expMechProb ε Δ u d' r)
+  rw [← ENNReal.ofReal_mul (Real.exp_pos _).le]
+  exact ENNReal.ofReal_le_ofReal
+    (expMechProb_le_exp_mul hε hΔ (hsens d d' hadj) r)
 
 /-- With zero budget the exponential mechanism is uniform. -/
 theorem expMech_eps_zero {R : Type*} [Fintype R] [Nonempty R] {D : Type*}
@@ -439,12 +435,13 @@ noncomputable def expOPT {R : Type*} [Fintype R] [Nonempty R] (u : R → ℝ) : 
 optimal have exponentially small probability
 (Dwork and Roth, 2014, Corollary 3.12). -/
 theorem expMech_utility {R : Type*} [Fintype R] [Nonempty R] {D : Type*}
-    [MeasurableSpace R] [MeasurableSingletonClass R]
     (u : D → R → ℝ) (ε Δ : ℝ) (hε : 0 < ε) (hΔ : 0 < Δ) (d : D) (t : ℝ) :
     (expMech u ε Δ d).toOuterMeasure
         {r | u d r ≤ expOPT (u d)
           - (2 * Δ / ε) * (Real.log (Fintype.card R) + t)}
       ≤ ENNReal.ofReal (Real.exp (-t)) := by
+  let _ : MeasurableSpace R := ⊤
+  have _ : MeasurableSingletonClass R := ⟨fun _ => trivial⟩
   have hOPT : expOPT (u d) = optUtility u d := rfl
   rw [← (expMech u ε Δ d).toMeasure_apply_eq_toOuterMeasure _, expMech_toMeasure,
     hOPT]
@@ -453,13 +450,14 @@ theorem expMech_utility {R : Type*} [Fintype R] [Nonempty R] {D : Type*}
 /-- Sharp utility bound with the optimal-output fraction
 (Dwork and Roth, 2014, Theorem 3.11). -/
 theorem expMech_utility_opt {R : Type*} [Fintype R] [Nonempty R] {D : Type*}
-    [MeasurableSpace R] [MeasurableSingletonClass R]
     (u : D → R → ℝ) (ε Δ : ℝ) (hε : 0 < ε) (hΔ : 0 < Δ) (d : D) (t : ℝ) :
     (expMech u ε Δ d).toOuterMeasure
         {r | u d r ≤ expOPT (u d) - 2 * Δ / ε *
           (Real.log (Fintype.card R / Nat.card {r : R // u d r = expOPT (u d)})
             + t)}
       ≤ ENNReal.ofReal (Real.exp (-t)) := by
+  let _ : MeasurableSpace R := ⊤
+  have _ : MeasurableSingletonClass R := ⟨fun _ => trivial⟩
   have hOPT : expOPT (u d) = optUtility u d := rfl
   rw [← (expMech u ε Δ d).toMeasure_apply_eq_toOuterMeasure _, expMech_toMeasure,
     hOPT]
