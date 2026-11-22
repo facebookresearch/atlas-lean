@@ -36,10 +36,10 @@ public def IsRealStable {σ : Type*} (p : MvPolynomial σ ℂ) : Prop :=
   map (starRingEnd ℂ) p = p ∧ p.IsStable
 
 /-- **Univariate specialization.** Let $R$ be a commutative ring, let $p$ be a multivariate
-polynomial over $R$ in variables $X_j$ indexed by $j \in \sigma$, and let $i \in \sigma$ and
-$x : \sigma \to R$. The univariate specialization of $p$ at $i$ and $x$ is the polynomial in
-$R[X]$ obtained from $p$ by substituting $X$ for $X_i$ and the constant $x_j$ for every $X_j$ with
-$j \ne i$; the value $x_i$ is not used. -/
+polynomial over $R$ in variables $X_j$ indexed by $j \in \sigma$, where $\sigma$ has decidable
+equality, and let $i \in \sigma$ and $x : \sigma \to R$. The univariate specialization of $p$ at $i$
+and $x$ is the polynomial in $R[X]$ obtained from $p$ by substituting $X$ for $X_i$ and the constant
+$x_j$ for every $X_j$ with $j \ne i$; the value $x_i$ is not used. -/
 public noncomputable def univariateSpecialization {σ R : Type*} [CommRing R]
     (i : σ) [DecidableEq σ] (x : σ → R) (p : MvPolynomial σ R) : Polynomial R :=
   eval₂Hom Polynomial.C (fun j ↦ if j = i then Polynomial.X else Polynomial.C (x j)) p
@@ -73,10 +73,10 @@ public theorem derivative_univariateSpecialization {σ R : Type*} [CommRing R]
         rw [hp]
 
 /-- **Evaluating a univariate specialization.** Let $R$ be a commutative ring, let $p$ be a
-multivariate polynomial over $R$ in variables $X_j$ indexed by $j \in \sigma$, and let
-$i \in \sigma$, $x : \sigma \to R$ and $t \in R$. Evaluating at $t$ the univariate specialization
-of $p$ that keeps $X_i$ as the variable and sets every other $X_j$ to $x_j$ gives $p(y)$, where
-$y_i = t$ and $y_j = x_j$ for $j \ne i$. -/
+multivariate polynomial over $R$ in variables $X_j$ indexed by $j \in \sigma$, where $\sigma$ has
+decidable equality, and let $i \in \sigma$, $x : \sigma \to R$ and $t \in R$. Evaluating at $t$ the
+univariate specialization of $p$ that keeps $X_i$ as the variable and sets every other $X_j$ to
+$x_j$ gives $p(y)$, where $y_i = t$ and $y_j = x_j$ for $j \ne i$. -/
 public theorem eval_univariateSpecialization {σ R : Type*} [CommRing R]
     (i : σ) [DecidableEq σ] (x : σ → R) (t : R) (p : MvPolynomial σ R) :
     Polynomial.eval t (univariateSpecialization i x p) =

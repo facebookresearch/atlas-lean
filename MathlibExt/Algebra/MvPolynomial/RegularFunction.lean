@@ -49,13 +49,14 @@ abbrev RegularFunction := τ → MvPolynomial σ k
 
 namespace RegularFunction
 
-/-- **Jacobian matrix of a regular function.** The Jacobian of a regular function
-$F = (F_j)_{j \in \tau}$ from $k^\sigma$ to $k^\tau$ is the $\tau \times \sigma$ matrix, with
-entries in the polynomial ring $k[X_i : i \in \sigma]$, whose entry in row $j$ and column $i$ is
-the formal partial derivative $\partial F_j / \partial X_i$.
+/-- **Jacobian matrix of a regular function.** Let $k$ be a commutative semiring. The Jacobian of a
+regular function $F = (F_j)_{j \in \tau}$ from $k^\sigma$ to $k^\tau$ is the $\tau \times \sigma$
+matrix, with entries in the polynomial ring $k[X_i : i \in \sigma]$, whose entry in row $j$ and
+column $i$ is the formal partial derivative $\partial F_j / \partial X_i$.
 
 Rows are indexed by the components and columns by the variables, following the usual matrix
-convention, so the Jacobian multiplies column vectors indexed by $\sigma$. -/
+convention, so, when $\sigma$ is finite, the Jacobian multiplies column vectors indexed by
+$\sigma$. -/
 noncomputable def Jacobian (F : RegularFunction k σ τ) :
     Matrix τ σ (MvPolynomial σ k) :=
   Matrix.of fun j i => MvPolynomial.pderiv i (F j)
@@ -65,10 +66,11 @@ lemma Jacobian_apply (F : RegularFunction k σ τ) (j : τ) (i : σ) :
     F.Jacobian j i = MvPolynomial.pderiv i (F j) :=
   rfl
 
-/-- **Composition of regular functions.** For regular functions $G$ from $k^\tau$ to $k^\iota$
-and $F$ from $k^\sigma$ to $k^\tau$, the composition $G \circ F$ is the regular function from
-$k^\sigma$ to $k^\iota$ whose $i$-th component, for $i \in \iota$, is the polynomial obtained
-from $G_i$ by substituting $F_t$ for the variable $X_t$ for every $t \in \tau$. -/
+/-- **Composition of regular functions.** Let $k$ be a commutative semiring. For regular functions
+$G$ from $k^\tau$ to $k^\iota$ and $F$ from $k^\sigma$ to $k^\tau$, the composition $G \circ F$ is
+the regular function from $k^\sigma$ to $k^\iota$ whose $i$-th component, for $i \in \iota$, is the
+polynomial obtained from $G_i$ by substituting $F_t$ for the variable $X_t$ for every
+$t \in \tau$. -/
 noncomputable def comp
     (G : RegularFunction k τ ι) (F : RegularFunction k σ τ) :
     RegularFunction k σ ι :=
@@ -86,9 +88,9 @@ lemma comp_apply (G : RegularFunction k τ ι) (F : RegularFunction k σ τ) (i 
 lemma id_apply (i : σ) : id k σ i = MvPolynomial.X i :=
   rfl
 
-/-- **The identity is a left unit for composition.** For every regular function $F$ from
-$k^\sigma$ to $k^\tau$, composing the identity regular function on $k^\tau$, whose components
-are the variables $X_t$ for $t \in \tau$, with $F$ gives $F$, that is,
+/-- **The identity is a left unit for composition.** Let $k$ be a commutative semiring. For every
+regular function $F$ from $k^\sigma$ to $k^\tau$, composing the identity regular function on
+$k^\tau$, whose components are the variables $X_t$ for $t \in \tau$, with $F$ gives $F$, that is,
 $\mathrm{id} \circ F = F$. -/
 lemma id_comp (F : RegularFunction k σ τ) : (id k τ).comp F = F := by
   funext j
@@ -106,9 +108,9 @@ lemma comp_id (F : RegularFunction k σ τ) : F.comp (id k σ) = F := by
   rw [hid, MvPolynomial.bind₁_X_left]
   rfl
 
-/-- **Associativity of composition of regular functions.** For regular functions $H$ from
-$k^\iota$ to $k^\kappa$, $G$ from $k^\tau$ to $k^\iota$ and $F$ from $k^\sigma$ to $k^\tau$,
-we have $(H \circ G) \circ F = H \circ (G \circ F)$. -/
+/-- **Associativity of composition of regular functions.** Let $k$ be a commutative semiring. For
+regular functions $H$ from $k^\iota$ to $k^\kappa$, $G$ from $k^\tau$ to $k^\iota$ and $F$ from
+$k^\sigma$ to $k^\tau$, we have $(H \circ G) \circ F = H \circ (G \circ F)$. -/
 lemma comp_assoc (H : RegularFunction k ι κ) (G : RegularFunction k τ ι)
     (F : RegularFunction k σ τ) :
     (H.comp G).comp F = H.comp (G.comp F) := by

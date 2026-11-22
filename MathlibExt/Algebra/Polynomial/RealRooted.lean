@@ -66,9 +66,9 @@ public theorem root_re_le_maxRealRoot {p : Polynomial ℂ} {z : ℂ} (hz : z ∈
     apply h
     exact ⟨z.re, by simpa using Multiset.mem_map.mpr ⟨z, hz, rfl⟩⟩
 
-/-- **The largest real part of a root is attained.** Let $p$ be a complex polynomial whose
-multiset of roots is nonempty, and let $\rho(p)$ be the largest real part of a root of $p$.
-Then some root $z$ of $p$ satisfies $\operatorname{Re} z = \rho(p)$. -/
+/-- **For a polynomial with a root, the largest real part of a root is attained.** Let $p$ be a
+complex polynomial whose multiset of roots is nonempty, and let $\rho(p)$ be the largest real part
+of a root of $p$. Then some root $z$ of $p$ satisfies $\operatorname{Re} z = \rho(p)$. -/
 public theorem exists_root_re_eq_maxRealRoot {p : Polynomial ℂ} (hp : p.roots ≠ 0) :
     ∃ z ∈ p.roots, z.re = p.maxRealRoot := by
   classical
@@ -92,9 +92,10 @@ public theorem roots_ne_zero_of_natDegree_pos {p : Polynomial ℂ} (hp : 0 < p.n
     (IsAlgClosed.roots_eq_zero_iff_natDegree_eq_zero (k := ℂ) (p := p)).mp hzero
   omega
 
-/-- **For a real-rooted polynomial, the largest real part of a root is a root.** Let $p$ be a
-real-rooted complex polynomial of positive degree, and let $\rho(p)$ be the largest real part of
-a root of $p$. Then the real number $\rho(p)$, viewed as a complex number, is a root of $p$. -/
+/-- **For a real-rooted polynomial of positive degree, the largest real part of a root is a root.**
+Let $p$ be a real-rooted complex polynomial of positive degree, and let $\rho(p)$ be the largest
+real part of a root of $p$. Then the real number $\rho(p)$, viewed as a complex number, is a root of
+$p$. -/
 public theorem coe_maxRealRoot_mem_roots {p : Polynomial ℂ} (hp : p.IsRealRooted)
     (hdegree : 0 < p.natDegree) : (p.maxRealRoot : ℂ) ∈ p.roots := by
   obtain ⟨z, hz, hreal⟩ :=

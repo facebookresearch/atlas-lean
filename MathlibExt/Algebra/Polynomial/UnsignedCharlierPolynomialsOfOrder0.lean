@@ -19,9 +19,10 @@ the $n$-th unsigned Charlier polynomial of order $0$ is
 $$\sum_{k=0}^{n} \binom{n}{k}\, x^{\overline{k}} \in R[x],$$
 where $x^{\overline{k}} = x(x+1)\cdots(x+k-1)$ is the rising factorial polynomial.
 
-It is the terminating hypergeometric series ${}_2F_0(-n, x; ; -1)$, an unsigned version of the
-Charlier polynomials of order 0, and its coefficient array is the exponential Riordan array
-$[e^x, \ln(1/(1-x))]$.
+Over $\mathbb{Q}$ it is the terminating hypergeometric series ${}_2F_0(-n, x; ; -1)$, an unsigned
+version of the Charlier polynomials of order 0, and its coefficient array is the exponential Riordan
+array $[e^x, \ln(1/(1-x))]$. These descriptions involve factorial denominators; over a general
+semiring only the binomial and rising-factorial definition applies.
 
 Source: concept `jis_sem_533e904c33481f2f38f4d596`; sources `jis_5d9eb8b198dc383014683c4a`,
 `jis_f192adf11c41568a1a8f6394`, `jis_9ce0e70844069456decf11dd`, `jis_540a5d48a1eb53d00b45a269`. -/
