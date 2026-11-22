@@ -14,7 +14,8 @@ import Mathlib.Tactic.FinCases
 namespace Cslib.MachineLearning.GraphicalModels.ADMG
 
 variable {V : Type*} [Fintype V] [DecidableEq V] (G : ADMG V)
-  (σ : V ≃ Fin (Fintype.card V))  -- π, "some topological ordering of nodes in G"
+  (σ : V ≃ Fin (Fintype.card V))  -- π, "some topological ordering of nodes in G"; the recursion
+  -- is defined for every ordering, and identifies under a topological one (module doc)
 
 /-- Fig. 1(a) directed edges strictly increase the vertex number. -/
 theorem figDirA_edge {u w : Fin 3}

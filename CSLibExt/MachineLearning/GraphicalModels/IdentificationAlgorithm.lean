@@ -38,6 +38,18 @@ the failure pair `(D, D \ X)` of line 5.
   guards as `k ≠ 1` and `C(G) = {G}` statements.
 * `ADMG.idRec_invariants`: from a top-level disjoint pair, every recursive
   call keeps its arguments inside the current vertex set and disjoint.
+
+The ordering `σ` is a parameter of the recursion, as in the source, where
+`π` is a topological ordering fixed before the algorithm runs: `idRec` is
+defined for every ordering, and only for a topological `σ` (directed edges
+point forward) does the returned expression have its identifying reading.
+Likewise the query sets are meant to be disjoint, as at the top-level calls
+in the source; off that domain (overlapping `X`, `Y`, or a non-topological
+`σ`) the recursion still returns a value, with no identification meaning:
+for example `D \ X = ∅` falls into line 4 with an empty product, a case the
+invariants exclude. Topologicity and disjointness are therefore hypotheses
+of the results about the recursion (as in `ADMG.idRec_invariants`), not of
+its definition.
 -/
 
 @[expose] public section
@@ -72,7 +84,8 @@ end Cslib.MachineLearning.GraphicalModels
 namespace Cslib.MachineLearning.GraphicalModels.ADMG
 
 variable {V : Type*} [Fintype V] [DecidableEq V] (G : ADMG V)
-  (σ : V ≃ Fin (Fintype.card V))  -- π, "some topological ordering of nodes in G"
+  (σ : V ≃ Fin (Fintype.card V))  -- π, "some topological ordering of nodes in G"; the recursion
+  -- is defined for every ordering, and identifies under a topological one (module doc)
 
 /-- `G[D]` on the same vertex type. -/
 def induce (D : Set V) : ADMG V where
@@ -209,7 +222,9 @@ decreasing_by
     rw [Finset.ssubset_iff_subset_ne]
     exact ⟨hSsub, hSne⟩
 
-/-- `ID(y, x, P, G)` at the top level: the whole vertex set and the observed law. -/
+/-- `ID(y, x, P, G)` at the top level: the whole vertex set and the observed law. As in the
+source, the query is meant to have `X` and `Y` disjoint and `σ` a topological ordering; outside
+that domain the returned value carries no identification meaning (module doc). -/
 noncomputable def ID (Y X : Finset V) : Except (Finset V × Finset V) (IdExpr V) :=
   G.idRec σ Y X Finset.univ .obs
 
