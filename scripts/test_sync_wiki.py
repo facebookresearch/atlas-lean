@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import io
 import json
+import re
 import shutil
 import tempfile
 import unittest
@@ -503,8 +504,8 @@ class Declarations(Vault):
         self.assertEqual(rows["new.md"]["object"], [{"location": {"declaration": "Ext.new"}}])
         self.assertEqual(rows["new.md"]["extensions"], {"org.atlas-wiki": {"from": "docstring"}})
         self.assertNotIn("wanted.md", rows)
-        # Each row the sync adds gets a fresh id (Graph rules, Data and metadata); one it already had keeps its own, and one without
-        # stays without until the one-off fill.
+        # Each row the sync adds gets a fresh id (What the tools own); one it already had keeps its own, and one without
+        # stays without, for `ids` to give it one.
         self.assertEqual(rows["old.md"]["id"], "af_000000000000000000000001")
         self.assertNotIn("id", rows["gone.md"])
         added = [rows["new.md"]["id"], rows["lone.md"]["id"]]
@@ -1822,6 +1823,7 @@ class UnindexedDeclarations(Vault):
         # Only the report formats `module:name` or `path:line`, for a reader.
         self.assertEqual([line for line in lines if "}:{" in line], [
             'summary["unindexed"].append(f"{relative.as_posix()}:{number + 1} {written}")',
+            'return f"{path.relative_to(wiki.ROOT).as_posix()}:{line}"',
             '+ [f"{subject_path(a).relative_to(wiki.ROADMAP)} ({a[\'extensions\'][OWN][\'module\']}:{a[\'extensions\'][OWN][\'name\']})"',
         ])
         for helper in ("declaration_identity", "split_identity", "fallback_metadata", "match_fallback", "qualified_name",
@@ -1834,6 +1836,140 @@ class UnindexedDeclarations(Vault):
             'short = target.names[0].split(".")[-1]',
             'if (match := wiki.V2_DECLARATION.match(row)) and match.group("name").split(".")[-1] == short]',
         ])
+
+
+class ArticleIds(Vault):
+    """`ids` gives each annotation without an id a fresh one and changes no other byte (What the tools own, in
+    docs/BLUEPRINT.md)."""
+
+    def links(self, name: str, text: str) -> Path:
+        sync.LINKS.mkdir(parents=True, exist_ok=True)
+        path = sync.LINKS / name
+        path.write_bytes(text.encode("utf-8"))
+        return path
+
+    def row(self, page: str, **fields) -> str:
+        return json.dumps(self.about(page, **fields), ensure_ascii=False)
+
+    def test_each_row_without_an_id_gets_one_after_its_subject_and_keeps_every_other_byte(self) -> None:
+        kept = self.row("Algebra/a.md", object=[{"location": {"declaration": "Ext.a"}}], id="af_000000000000000000000001")
+        rows = [
+            kept,
+            self.row("Algebra/b.md", object=[{"location": {"declaration": "Ext.b"}}],
+                     extensions={"org.atlas-wiki": {"from": "docstring"}}),
+            self.row("Algebra/README.md", extensions={"org.autoform": {"navigation": "module"}}),
+            self.row("Algebra/théorème.md", extensions={"org.atlas-wiki": {"held": {"declaration": "Ext.c", "reason": "false",
+                                                                                     "issue": 1}}}),
+        ]
+        algebra = self.links("Algebra.jsonl", "\n".join(rows) + "\n")
+        root = self.links("roadmap.jsonl", self.row("README.md") + "\n")
+        without, problems = sync.apply_ids()
+        self.assertEqual(problems, [])
+        self.assertEqual(without, ["blueprint/links/Algebra.jsonl:2", "blueprint/links/Algebra.jsonl:3",
+                                   "blueprint/links/Algebra.jsonl:4", "blueprint/links/roadmap.jsonl:1"])
+        filled = algebra.read_bytes().decode("utf-8").split("\n")
+        self.assertEqual((filled[0], filled[-1], len(filled)), (kept, "", len(rows) + 1))
+        ids = ["af_000000000000000000000001"]
+        for before, after in zip([*rows[1:], self.row("README.md")], [*filled[1:-1], root.read_text().rstrip("\n")]):
+            added = re.search(r', "id": "(af_[0-9a-f]{24})"', after)
+            # Without its id the row is the row it was, byte for byte; with it, it is the row declarations would write.
+            self.assertEqual(after[:added.start()] + after[added.end():], before)
+            annotation = json.loads(before)
+            self.assertEqual(after, json.dumps({"subject": annotation.pop("subject"), "id": added.group(1), **annotation},
+                                               ensure_ascii=False))
+            ids.append(added.group(1))
+        self.assertEqual(len(set(ids)), len(ids))
+        # A second run finds no row without an id and changes nothing.
+        written = {path: path.read_bytes() for path in (algebra, root)}
+        self.assertEqual(sync.apply_ids(), ([], []))
+        self.assertEqual({path: path.read_bytes() for path in (algebra, root)}, written)
+
+    def test_a_row_written_another_way_keeps_its_bytes(self) -> None:
+        rows = ['{"subject":[{"uri":"../roadmap/Algebra/a.md","type":"generic"}] , "object": [ ]}\r',
+                '{ "subject" : [{"type": "generic", "uri": "../roadmap/Algebra/b.md"}]}\r']
+        path = self.links("Algebra.jsonl", "\n".join(rows) + "\n")
+        self.assertEqual(sync.apply_ids()[1], [])
+        filled = path.read_bytes().decode("utf-8").split("\n")
+        self.assertRegex(filled[0], r'\A\{"subject":\[\{"uri":"\.\./roadmap/Algebra/a\.md","type":"generic"\}\], "id": "af_[0-9a-f]{24}" , "object": \[ \]\}\r\Z')
+        self.assertRegex(filled[1], r'\A\{ "subject" : \[\{"type": "generic", "uri": "\.\./roadmap/Algebra/b\.md"\}\], "id": "af_[0-9a-f]{24}"\}\r\Z')
+        self.assertEqual(filled[2], "")
+
+    def test_a_malformed_shared_or_repeated_id_or_a_row_it_cannot_read_stops_the_run(self) -> None:
+        text = "\n".join([
+            self.row("Algebra/a.md", id="af_000000000000000000000001"),
+            self.row("Algebra/b.md", id="af_000000000000000000000001"),
+            self.row("Algebra/c.md", id="af_1"),
+            # JSON keeps the last of two ids, so the first, malformed, one would pass unseen.
+            self.row("Algebra/d.md", id="broken")[:-1] + ', "id": "af_000000000000000000000003"}',
+            "{not json",
+            '{"object": []}',
+            '{"subject": [{"type": "generic", "uri": "../roadmap/Algebra/g.md", "uri": "../roadmap/Algebra/h.md"}]}',
+            '{"subject": [{"type": "generic", "uri": "../roadmap/Algebra/i.md"}], "weight": NaN}',
+            self.row("Algebra/e.md"),
+        ]) + "\n"
+        path = self.links("Algebra.jsonl", text)
+        other = self.links("Logic.jsonl", self.row("Logic/f.md") + "\n")
+        self.assertEqual(sync.apply_ids(), (["blueprint/links/Algebra.jsonl:9", "blueprint/links/Logic.jsonl:1"], [
+            "blueprint/links/Algebra.jsonl:2: its id af_000000000000000000000001 is the id of blueprint/links/Algebra.jsonl:1 too",
+            'blueprint/links/Algebra.jsonl:3: its id "af_1" is not af_ and 24 hex digits',
+            "blueprint/links/Algebra.jsonl:4: the row repeats id",
+            "blueprint/links/Algebra.jsonl:5: the row is not a JSON object",
+            "blueprint/links/Algebra.jsonl:6: the row has no subject",
+            "blueprint/links/Algebra.jsonl:7: the row repeats uri",
+            "blueprint/links/Algebra.jsonl:8: the row holds NaN, which JSON does not allow",
+        ]))
+        with redirect_stderr(io.StringIO()) as errors:
+            self.assertEqual(sync.main(["ids"]), 1)
+        self.assertIn("error: 7 rows to fix; the run wrote nothing", errors.getvalue())
+        # Neither file is written, the one without a problem included.
+        self.assertEqual(path.read_bytes().decode("utf-8"), text)
+        self.assertEqual(other.read_bytes().decode("utf-8"), self.row("Logic/f.md") + "\n")
+
+    def test_a_line_that_holds_only_a_form_feed_is_no_blank_line(self) -> None:
+        text = self.row("Algebra/a.md") + "\n\x0c\n\n"
+        path = self.links("Algebra.jsonl", text)
+        other = self.links("Logic.jsonl", self.row("Logic/b.md") + "\n")
+        self.assertEqual(sync.apply_ids(), (["blueprint/links/Algebra.jsonl:1", "blueprint/links/Logic.jsonl:1"],
+                                            ["blueprint/links/Algebra.jsonl:2: the row is not a JSON object"]))
+        self.assertEqual(path.read_bytes().decode("utf-8"), text)
+        self.assertEqual(other.read_bytes().decode("utf-8"), self.row("Logic/b.md") + "\n")
+
+    def test_a_links_file_that_is_a_symbolic_link_stops_the_run(self) -> None:
+        outside = sync.LINKS.parents[1] / "outside.jsonl"
+        outside.write_text(self.row("Logic/b.md") + "\n")
+        sync.LINKS.mkdir(parents=True, exist_ok=True)
+        (sync.LINKS / "Logic.jsonl").symlink_to(outside)
+        text = self.row("Algebra/a.md") + "\n"
+        path = self.links("Algebra.jsonl", text)
+        self.assertEqual(sync.apply_ids(), (["blueprint/links/Algebra.jsonl:1"],
+                                            ["blueprint/links/Logic.jsonl: it is not a regular file"]))
+        self.assertEqual(path.read_text(), text)
+        self.assertEqual(outside.read_text(), self.row("Logic/b.md") + "\n")
+
+    def test_a_row_whose_subject_is_not_first_gets_the_id_right_after_its_subject(self) -> None:
+        kept = '{"extensions": {}, "subject": [{"type": "generic", "uri": "../roadmap/Algebra/a.md"}], "id": "af_000000000000000000000001"}'
+        row = '{"object": [{"location": {"declaration": "Ext.b"}}], "subject": [{"type": "generic", "uri": "../roadmap/Algebra/b.md"}]}'
+        path = self.links("Algebra.jsonl", f"{kept}\n{row}\n")
+        self.assertEqual(sync.apply_ids(), (["blueprint/links/Algebra.jsonl:2"], []))
+        filled = path.read_bytes().decode("utf-8").split("\n")
+        self.assertEqual(filled[0], kept)
+        self.assertRegex(filled[1], r'\A' + re.escape(row[:-1]) + r', "id": "af_[0-9a-f]{24}"\}\Z')
+
+    def test_a_check_writes_nothing(self) -> None:
+        text = self.row("Algebra/a.md") + "\n"
+        path = self.links("Algebra.jsonl", text)
+        self.assertEqual(sync.apply_ids(write=False), (["blueprint/links/Algebra.jsonl:1"], []))
+        self.assertEqual(path.read_bytes().decode("utf-8"), text)
+
+
+class CommittedAnnotations(unittest.TestCase):
+    def test_every_annotation_has_an_id_of_its_own(self) -> None:
+        # What the tools own (docs/BLUEPRINT.md): declarations gives an id to each annotation it adds, and ids to
+        # any other row.
+        without, problems = sync.apply_ids(write=False)
+        self.assertEqual(problems, [])
+        self.assertEqual(len(without), 0, f"annotations without an id, such as {without[:3]}: "
+                                          "`python scripts/sync_wiki.py ids` gives them theirs")
 
 
 class Titles(unittest.TestCase):

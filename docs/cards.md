@@ -170,9 +170,11 @@ row the extraction does not resolve.
 The workflow tests the card scripts and runs `rollup`, which checks first, in their own read-only job,
 `check the cards`, after `build the wiki` and from its `blueprint-dependencies` artifact; on a pull
 request it passes the base commit's ledger and annotations and Git's renames since that commit (the
-workflow does not run in merge groups). It keeps `build/cards.json` as the `cards` artifact. The wiki job runs neither the card
-tests nor the check, and its own tests leave the card files to them; the site's deployment needs only the
-wiki job.
+workflow does not run in merge groups). It keeps `build/cards.json` as the `cards` artifact. The wiki job
+runs the site hook's tests (`scripts/test_card_pages.py`) with its other tests and leaves
+`scripts/test_cards.py` and the strict check of the content and its history to the card job; it runs
+`rollup` once, for the card data its site shows, in a step that fails closed and cannot fail the job
+([Reading](#reading)). The site's deployment needs only the wiki job.
 
 ```sh
 python scripts/sync_wiki.py lean-facts build/lean-dependencies.json
@@ -189,6 +191,10 @@ that retires an address (paths are Autoform ids: below `roadmap/`, without `.md`
 - a moved statement page: `{"page": "<old path>", "to": "<new path>", "article_id": "af_..."}`;
 - a moved or renamed folder that keeps its id: `{"folder": "<old path>", "to": "<new path>", "article_id": "af_..."}`;
 - a retired card: `{"card": "af_...", "folder": "<its last path>", "replaced_by": "af_..."}`.
+
+A folder row moves the folder alone, its folder page and its address: each page and folder inside it that
+moves has its own row, so the history never depends on what the folder holds later. Renaming a folder `a` to
+`b` with its page `a/x` takes two rows, `a` to `b` and `a/x` to `b/x`; a page later added to `b` needs none.
 
 The ledger only grows: the rows the base commit published stay first and unchanged. The check follows
 every chain to its final live destination: the old path is gone; every hop keeps the id the chain
@@ -211,10 +217,78 @@ the check also reconciles every change since the base with one map of who owns w
   one;
 - the rows added since are replayed in order: each moves what its old address holds at that point, with
   that article's `id`, or, for an article that had none, an `id` no article of the base or of the ledger
-  ever had; a retirement names the card's address at that point;
+  ever had, and a folder row moves the folder alone; a retirement names the card's address at that point;
 - afterwards every article stands where the rows leave it and keeps its `id`: an article of the base that
-  is gone, with no row moving it, is an error, since its old address would lead nowhere; an address that
+  is gone, with no row moving it, is an error, since its old address would lead nowhere (a page that moved
+  with its folder but has no row of its own included); an address that
   changed hands is a retired card's, held by its final replacement; a new article takes an `id` no article
   ever had;
 - every card of the base that is no card any more, gone or declassified, has its retirement (a
   declassified folder may keep its `id` as a plain folder).
+
+## Reading
+
+The site shows each card on its folder page. `build the wiki` derives the card data itself: after
+`lean-facts` and before render, it runs `scripts/cards.py rollup build/cards.json` on its own checkout with
+the extraction it has just made, the inputs of `check the cards` but for the moves since the base commit,
+which only that job checks. The rollup removes its output first and writes it only once the strict check
+passes. A card error cannot fail the job, which the step delays by at most its ten-minute timeout: it leaves
+no card data, the site renders exactly as without cards, and `check the cards` reports the error. The hook
+itself is site code: its tests (`scripts/test_card_pages.py`) run with the wiki job's other tests, so a
+regression in it fails that job, as a change to any other part of the site does.
+
+`hooks/card_pages.py` reads `build/cards.json` only when it is an `atlas-cards/v1` rollup of the commit
+being built that names only pages the site publishes and whose parts agree where they restate one another:
+each status with its statement's row in the `pages` table, each count with what it counts, and the clusters
+with the strongly connected parts of `uses`. It also needs the move ledger to lead every address it retired
+to one of those pages. Otherwise, or when there is no card and no moved address to show, as on a commit with
+no card yet, it changes nothing, and every page is byte for byte the page of a build without card data. These
+checks catch a rollup that contradicts itself or the site; they cannot tell a consistent rollup from the true
+one, which is the strict check's work.
+
+A card's folder page shows, before its first section, a block with:
+
+- the card's kind, importance and level;
+- its main statement with its status, as [Status](#status) gives it, and the progress of its other
+  statements, or that it has none;
+- the statements it presents from elsewhere (`supports`), listed apart;
+- each edge derived from its statements, with the dependencies that witness it in a collapsed list: the
+  cards it uses and the cards that use it, each dependency saying which statement uses which, in its
+  statement or in its proof, and marked when it is not one Lean compiled between two ATLAS declarations
+  (`planned`, and `bridge` or `Mathlib` once a registry of Mathlib edges provides them); the cards its main
+  statement needs and the cards whose main statement needs it, each with its walk, which goes through
+  statements or, when one of its steps is a proof dependency, through a proof; and the cluster it belongs
+  to, a group of cards that each use every other one, directly or through cards of the group, with its members
+  and one cycle among them whose steps list their dependencies (no single cycle need pass through them all).
+
+The block is plain HTML, styled by `theme/stylesheets/atlas-cards.css`: a reader without JavaScript reads it
+as it is, and the explorer shows it in the page's reading.
+
+Every address the move ledger retired keeps leading to its page. The hook resolves them all at once, by
+replaying the ledger backwards from the pages the site publishes: each row's old address takes the place of
+its new one, so every address a statement or a folder ever had is followed through every row after it, in
+order. A folder row moves the folder alone, as the move ledger says, so no address is inferred from what a
+folder holds, and a page added to a folder after it moved gets no old address. A retired card's folder that is
+gone leads to the live card its replacements end at, and a folder that is gone with no row of its own to where
+its nearest enclosing folder leads. The same resolution gives every route below.
+
+Render publishes a statement with a declaration kind in a box on its folder's page, at
+`<folder>/index.html#<file name>`, a statement without one as a page of its own, `<path>.html`, and a folder at
+`<folder>/index.html`. A statement can gain or lose its declaration kind when it moves or at any later
+revision, and the ledger does not record which route it had, so each old address of a statement keeps both.
+From the ledger, the hook writes:
+
+- on an old folder page that still exists, an element with the old anchor of each statement that left it,
+  holding a plain link to where the statement went and shown only when the address names it, and a script
+  that follows that link; an old anchor that an element of the page has now, such as a section heading, stays
+  that element's, and the build log reports it;
+- at the old address `<path>.html` of each statement that moved, a notice;
+- at the page of a folder that is gone, a notice with a plain link to where the folder went (by its own rows,
+  to the card that replaced it, or else to its nearest folder that exists) and an element for each old anchor
+  of its statements, linking to where each went, and at its old explorer page
+  `dependencies/scopes/<folder>.html` a notice like the ones render writes for live folders;
+- `javascripts/atlas-card-moves.js`, a table of every old address and where it leads, which each folder page
+  an old explorer link can reach loads first: a link `#node=<old address>` is rewritten to where the address
+  leads before the explorer starts.
+
+Notices are bare redirect pages, as `hooks/trim_pages.py` publishes render's own.

@@ -160,9 +160,10 @@ The tools write these, so they are never edited or committed by hand:
   [Maintaining articles](#maintaining-articles) describes.
 
 Each annotation has an `id` (`af_` and 24 hex digits) that is unique and never
-changes; `autoform work` refuses an unfinished formalizable leaf without one.
-The sync gives each row it adds an `id`. A row without one is not a review
-finding until the one-off fill (#5524).
+changes; `autoform work` refuses an unfinished formalizable leaf without one,
+so one such row stops the task list. `sync_wiki.py declarations` gives each row
+it adds an `id`, and `sync_wiki.py ids` gives one to every row that has none,
+such as a row written by hand; the wiki tests fail on a row without one.
 
 Blueprint Pages' `build the wiki` job runs `autoform check blueprint`, which
 fails on cycles, dangling dependency targets and missing declarations. The job
@@ -222,6 +223,7 @@ python -m unittest \
   scripts.test_site_chrome \
   scripts.test_blueprint_workflow \
   scripts.test_blueprint_taxonomy \
+  scripts.test_card_pages \
   scripts.test_cards
 ```
 
@@ -253,6 +255,8 @@ python scripts/extract_v2_lean_dependencies.py \
   v2-dependencies.jsonl build/lean-dependencies.json
 python scripts/sync_wiki.py lean-facts build/lean-dependencies.json
 autoform check blueprint --lean-root .
+python scripts/cards.py rollup build/cards.json \
+  --dependencies build/lean-dependencies.json
 autoform render blueprint --output site-src --lean-root . \
   --require-declarations --ileans .lake/build/lib/lean
 mkdocs build --strict
@@ -403,8 +407,10 @@ without JavaScript and the explorer's fallback. `theme/partials/nav.html` lists
 Home, the sections above the page, the page's siblings and its own entries;
 each folder page lists its children too. `hooks/trim_pages.py` publishes the
 renderer's notices for moved explorer URLs as bare redirects and collapses the
-theme's indentation, and `hooks/title_only_search.py` keeps one title record
-per page in the search index.
+theme's indentation, `hooks/title_only_search.py` keeps one title record per
+page in the search index, and `hooks/card_pages.py` shows each card on its
+folder page and keeps every address the card move ledger retired leading to its
+page ([cards.md](cards.md#reading)), with `theme/stylesheets/atlas-cards.css`.
 
 ## GitHub Actions and publication
 
@@ -431,8 +437,11 @@ layer is built afterwards in a second read-only job, `build the Mathlib layer`,
 the Mathlib pages in a third, `build the Mathlib pages`, and the card scripts are
 tested and the cards checked in a fourth, `check the cards`, from the wiki job's
 dependency artifact ([cards.md](cards.md#checks-and-ci)); deployment waits for
-none of them. The only write-capable job is the separate Pages deployment job;
-it runs no Lean or Python package code.
+none of them. The wiki job derives the card data its site shows itself, after
+`lean-facts` and before rendering, in a step that fails closed: a card error
+leaves the site exactly as it is without cards and fails `check the cards` only
+([cards.md](cards.md#reading)). The only write-capable job is the separate Pages
+deployment job; it runs no Lean or Python package code.
 
 Publication is disabled until a repository maintainer:
 
