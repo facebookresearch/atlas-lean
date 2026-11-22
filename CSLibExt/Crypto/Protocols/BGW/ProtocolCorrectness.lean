@@ -73,16 +73,6 @@ def arithInterp {F : Type*} [Add F] [Mul F] :
   | .add, x => x 0 + x 1
   | .mul, x => x 0 * x 1
 
-/-- Evaluation at zero distributes over finset sums. -/
-theorem polyEval_zero_sum {F : Type*} [Field F] {Party : Type*} [Fintype Party]
-    (s : Finset Party) (f : Party → Polynomial F) :
-    (∑ i ∈ s, f i).eval 0 = ∑ i ∈ s, (f i).eval 0 := by
-  haveI : DecidableEq Party := fun a b => Classical.propDecidable _
-  induction s using Finset.induction with
-  | empty => simp
-  | insert a s h ih =>
-      rw [Finset.sum_insert h, Finset.sum_insert h, Polynomial.eval_add, ih]
-
 /-- A sum of polynomials of natural degree at most `t` has natural degree at
     most `t`. -/
 theorem polyNatDegree_sum_le {F : Type*} [Field F] {Party : Type*} [Fintype Party]
@@ -250,7 +240,7 @@ theorem newGatePoly_ok {F : Type*} [Field F] {Party : Type*} [Fintype Party]
               sharingPolynomial ((WP (wires 0) * WP (wires 1)).eval (params.point i))
                 (tailPolynomial params.threshold (tape i))).eval 0 =
           Line.eval ⟨ArithOp.mul, wires⟩ arithInterp x P
-      rw [polyEval_zero_sum]
+      rw [Polynomial.eval_finsetSum]
       simp only [Polynomial.eval_C_mul]
       simp only [hBr]
       rw [hrec]
