@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parent.parent
 # The card files: their tests run in the card job (scripts/test_cards.py), not in the wiki job.
 CARD_INPUTS = ("scripts/cards.py", "scripts/card-moves.jsonl", "scripts/test_cards.py", "docs/cards.md")
 WORKFLOW = ROOT / ".github" / "workflows" / "blueprint-pages.yml"
+GRAPH_SYNC = ROOT / ".github" / "workflows" / "graph-sync.yml"
 
 
 class BlueprintWorkflowTests(unittest.TestCase):
@@ -766,6 +767,137 @@ elif "/compare/" in path:
         step = self.step("Check the site against GitHub Pages' size limit")
         upload = self.step("Upload Pages artifact")["if"]
         self.assertEqual(step["env"]["DEPLOYING"], "${{ " + upload + " }}")
+
+
+class GraphSyncWorkflowTests(unittest.TestCase):
+    """The scoped declarations check (docs/BLUEPRINT.md, Maintaining articles) runs on every pull request and merge
+    group, reads the Lean sources only, and reports without failing its job."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.text = GRAPH_SYNC.read_text()
+        cls.workflow = yaml.load(cls.text, Loader=yaml.BaseLoader)
+        cls.job = cls.workflow["jobs"]["check"]
+        cls.steps = {step.get("name"): step for step in cls.job["steps"]}
+
+    def test_every_pull_request_and_merge_group_runs_it(self):
+        # No filter skips a pull request, Lean-only ones included, and nothing skips the job: the merge queue could
+        # require it one day (scripts/test_merge_queue_checks.py holds required checks to this).
+        events = self.workflow["on"]
+        self.assertEqual(set(events), {"pull_request", "merge_group", "workflow_dispatch"})
+        self.assertEqual(events["pull_request"], "")
+        self.assertEqual(events["merge_group"], {"types": ["checks_requested"]})
+        for key in ("if", "needs", "strategy", "continue-on-error"):
+            self.assertNotIn(key, self.job)
+        self.assertIn("github.ref", self.workflow["concurrency"]["group"])
+        # Its check's name is its own: another job of that name could stand in for it.
+        names = [job.get("name", key) for path in sorted(GRAPH_SYNC.parent.glob("*.y*ml"))
+                 for key, job in yaml.load(path.read_text(), Loader=yaml.BaseLoader)["jobs"].items()]
+        self.assertEqual(names.count("graph sync"), 1)
+        self.assertEqual(self.job["name"], "graph sync")
+
+    def test_the_check_only_reports_and_keeps_its_report(self):
+        step = self.steps["Check that the graph is in step with the Lean"]
+        self.assertEqual(step["continue-on-error"], "true")
+        self.assertIn('python scripts/sync_wiki.py declarations --base "$BASE" --check', step["run"])
+        self.assertIn("--report build/graph-sync.json", step["run"])
+        self.assertIn('exit "$status"', step["run"])
+        keep = self.steps["Keep the report"]
+        self.assertEqual((keep["if"], keep["continue-on-error"], keep["with"]["name"]), ("always()", "true", "graph-sync"))
+        # No Lean is built or fetched: the check reads the sources as the declarations sync does.
+        self.assertNotIn("lake", self.text)
+        self.assertNotIn("elan", self.text)
+
+    def test_it_reads_autoform_and_the_markdown_as_the_wiki_build_does(self):
+        wiki = yaml.load(WORKFLOW.read_text(), Loader=yaml.BaseLoader)
+        pins = {step["name"]: step for step in wiki["jobs"]["wiki"]["steps"]}
+        self.assertEqual(self.steps["Read the reviewed Autoform pin"]["run"], pins["Read the reviewed Autoform pin"]["run"])
+        self.assertEqual(self.steps["Install uv"]["with"], pins["Install uv"]["with"])
+        self.assertEqual(self.workflow["env"]["AUTOFORM_SOURCE"], wiki["env"]["AUTOFORM_SOURCE"])
+        check = self.steps["Check that the graph is in step with the Lean"]["run"]
+        self.assertIn('--with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"', check)
+        for pin in re.findall(r"--with ([\w.-]+==[^\s]+)", pins["Build the Markdown site"]["run"]):
+            self.assertIn(f"--with {pin}", check)
+
+    def test_it_holds_no_write_token_or_credentials(self):
+        self.assertEqual(self.workflow["permissions"], {"contents": "read"})
+        self.assertNotIn("permissions", self.job)
+        self.assertEqual(self.steps["Check out project"]["with"]["persist-credentials"], "false")
+        self.assertNotIn("secrets.", self.text)
+        for step in self.job["steps"]:
+            if "uses" in step:
+                self.assertRegex(step["uses"], r"@[0-9a-f]{40}\Z")
+
+    def run_check(self, status: int):
+        """Run the check's step with a uv that prints a verdict and exits with *status*; returns the result, the job
+        summary and the arguments uv got."""
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        root = Path(directory.name)
+        (root / "bin").mkdir()
+        (root / "bin" / "uv").write_text(f'#!/bin/sh\necho "$@" > uv-arguments\necho "In step: no"\necho "error: a link" >&2\n'
+                                        f"exit {status}\n")
+        (root / "bin" / "uv").chmod(0o755)
+        summary = root / "summary.md"
+        result = subprocess.run(
+            ["bash", "-c", self.steps["Check that the graph is in step with the Lean"]["run"]], cwd=root, text=True,
+            capture_output=True, env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}", "BASE": "b" * 40,
+                                      "AUTOFORM_SOURCE": "https://example.invalid/autoform.git", "AUTOFORM_REF": "a" * 40,
+                                      "GITHUB_STEP_SUMMARY": str(summary)})
+        return result, summary.read_text(), (root / "uv-arguments").read_text().split()
+
+    def test_the_verdict_goes_to_the_log_and_the_summary_with_the_branchs_command(self):
+        result, summary, arguments = self.run_check(1)
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(arguments[arguments.index("python"):], ["python", "scripts/sync_wiki.py", "declarations", "--base",
+                                                                "b" * 40, "--check", "--report", "build/graph-sync.json"])
+        self.assertIn("In step: no\nerror: a link\n", result.stdout)
+        self.assertIn("::warning title=Graph sync::", result.stdout)
+        self.assertIn("```text\nIn step: no\nerror: a link\n```", summary)
+        self.assertIn('python3 scripts/sync_wiki.py declarations --base "$(git merge-base FETCH_HEAD HEAD)"\n', summary)
+        result, summary, _ = self.run_check(0)
+        self.assertEqual(result.returncode, 0)
+        self.assertNotIn("::warning", result.stdout)
+        self.assertNotIn("merge-base", summary)
+
+    def find_base(self, event: str, env=lambda main, merge: {}):
+        """Run the step that finds the base in a repository whose HEAD merges a branch into main, as a pull request's
+        merge commit does, with the environment *env* gives for the main and merge commits; returns the result, what
+        the step wrote to GITHUB_ENV, and those commits."""
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        root = Path(directory.name)
+        git = lambda *args: subprocess.run(["git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@t", *args],
+                                           check=True, capture_output=True, text=True).stdout.strip()
+        git("init", "-q", "-b", "main")
+        git("commit", "-q", "--allow-empty", "-m", "first")
+        git("switch", "-q", "-c", "topic")
+        git("commit", "-q", "--allow-empty", "-m", "topic")
+        git("switch", "-q", "main")
+        git("commit", "-q", "--allow-empty", "-m", "second")
+        main = git("rev-parse", "HEAD")
+        git("merge", "-q", "--no-ff", "-m", "merge", "topic")
+        merge = git("rev-parse", "HEAD")
+        output = root / "env"
+        result = subprocess.run(["bash", "-c", self.steps["Find the base commit"]["run"]], cwd=root, text=True,
+                                capture_output=True,
+                                env={**os.environ, "EVENT": event, "GITHUB_ENV": str(output), **env(main, merge)})
+        return result, output.read_text() if output.exists() else "", main, merge
+
+    def test_a_pull_request_compares_with_its_base_and_a_merge_group_with_the_queues(self):
+        env = self.steps["Find the base commit"]["env"]
+        self.assertEqual(env["MERGE_GROUP_BASE"], "${{ github.event.merge_group.base_sha }}")
+        self.assertEqual(env["DISPATCH_BASE"], "${{ inputs.base }}")
+        self.assertEqual(self.steps["Check out project"]["with"]["fetch-depth"], "2")
+        result, written, main, merge = self.find_base("pull_request")
+        self.assertEqual((result.returncode, written), (0, f"BASE={main}\n"), result.stderr)
+        # The queue's base, here the merge commit itself, which the checkout already has.
+        result, written, main, merge = self.find_base("merge_group", lambda main, merge: {"MERGE_GROUP_BASE": merge})
+        self.assertEqual((result.returncode, written), (0, f"BASE={merge}\n"), result.stderr)
+        # A run with no commit to compare with fails rather than checking against nothing.
+        result, written, _, _ = self.find_base("workflow_dispatch", lambda main, merge: {"DISPATCH_BASE": "main"})
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(written, "")
 
 
 if __name__ == "__main__":

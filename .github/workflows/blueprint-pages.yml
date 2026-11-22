@@ -56,6 +56,7 @@ on:
       - "docs/cards.md"
       - "docs/mathgraph-import.md"
       - ".github/workflows/blueprint-pages.yml"
+      - ".github/workflows/graph-sync.yml"
       - ".github/autoform-ref"
       - "lean-toolchain"
       - "lake-manifest.json"
