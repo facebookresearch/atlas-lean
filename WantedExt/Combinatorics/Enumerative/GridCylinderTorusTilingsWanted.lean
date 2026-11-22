@@ -16,6 +16,7 @@ public import Mathlib.Data.Nat.Totient
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.GroupTheory.SpecificGroups.Dihedral
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings
 
 namespace MetaMathlibExt
 
