@@ -15,7 +15,9 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 /-! # Root lemmas for reciprocal sums of `m`th-order linear recursive sequences
 
 Statement-only requests for the self-contained lemmas of Du's paper on reciprocal sums
-and products of `m`th-order linear recursive sequences.
+and products of `m`th-order linear recursive sequences. The Eneström–Kakeya bound
+`norm_le_one_of_aeval_eq_zero_of_monotone_coeff` is proved in
+`MathlibExt.Analysis.Complex.EnestromKakeya`.
 -/
 
 open Polynomial Filter Asymptotics
@@ -23,18 +25,6 @@ open Polynomial Filter Asymptotics
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Eneström–Kakeya theorem.** Let $a_0 + a_1 x + \cdots + a_n x^n$ be a nonzero real
-polynomial of degree $n$ with $0 \le a_0 \le a_1 \le \cdots \le a_n$. Then every complex root $z$
-of this polynomial satisfies $|z| \le 1$.
-
-Source: Tingting Du, *On the Reciprocal Sums and Products of m th-order Linear Recursive
-Sequences*, Journal of Integer Sequences 27 (2024), Article 24.2.3, Lemma 3
-(`jis-2024-24.2.3-lem-3`), quoted there as the Eneström–Kakeya theorem. -/
-public theorem_wanted norm_le_one_of_aeval_eq_zero_of_monotone_coeff
-    (p : ℝ[X]) (hp : p ≠ 0) (h0 : 0 ≤ p.coeff 0)
-    (hmono : ∀ i < p.natDegree, p.coeff i ≤ p.coeff (i + 1))
-    (z : ℂ) (hz : aeval z p = 0) : ‖z‖ ≤ 1
 
 /-- **Dominant root of $x^m - a_1 x^{m-1} - \cdots - a_m$ with positive coefficients.** Let
 $m \ge 2$ and let $a_1, \dots, a_m$ be positive integers. Then the polynomial

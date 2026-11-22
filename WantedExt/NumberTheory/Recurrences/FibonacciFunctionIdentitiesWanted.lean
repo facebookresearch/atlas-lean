@@ -371,34 +371,6 @@ public theorem_wanted five_gibonacci_mul_sub_two_gibonacci
         (-1 : ℝ) ^ (k - r) * 2 *
           (G 0 * (H (r + s) + H (r + s - 2)) + G 1 * (H (r + s + 1) + H (r + s - 1)))
 
-/-- **Addition formula for gibonacci sequences.** Let $F_m$ denote the Fibonacci numbers,
-extended to all integers $m$ by $F_{-m} = (-1)^{m+1} F_m$. If $G : \mathbb{Z} \to \mathbb{R}$
-satisfies $G_{j+2} = G_{j+1} + G_j$ for every integer $j$, then
-$F_{k+1} G_{s+1} + F_k G_s = G_{k+s+1}$ for all integers $k$ and $s$.
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 20
-(`jis-2024-24.6.2-prop-20`). -/
-public theorem_wanted fib_mul_gibonacci_add_eq_gibonacci
-    (G : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j) (k s : ℤ) :
-    (Int.fib (k + 1) : ℝ) * G (s + 1) + (Int.fib k : ℝ) * G s = G (k + s + 1)
-
-/-- **A sum of two gibonacci products in terms of the seeds.** Let
-$G, H : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$ and $j \mapsto H_j$, satisfy
-$G_{j+2} = G_{j+1} + G_j$ and $H_{j+2} = H_{j+1} + H_j$ for every integer $j$. Then for all
-integers $k$ and $s$,
-$$
-H_{k+1} G_{s+1} + H_k G_s = G_0 H_{k+s} + G_1 H_{k+s+1}.
-$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 21
-(`jis-2024-24.6.2-prop-21`). -/
-public theorem_wanted gibonacci_mul_gibonacci_add_eq_seed_combination
-    (G H : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
-    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (k s : ℤ) :
-    H (k + 1) * G (s + 1) + H k * G s = G 0 * H (k + s) + G 1 * H (k + s + 1)
-
 /-- **d'Ocagne-type identity for two gibonacci sequences.** Let $G$ and $H$ be gibonacci
 sequences, that is, functions $X : \mathbb{Z} \to \mathbb{R}$ with $X_{j+2} = X_{j+1} + X_j$
 for every integer $j$. Then for all integers $r$, $s$, $k$,
@@ -637,24 +609,6 @@ public theorem_wanted four_gibonacci_melham_type_identity
           4 * G (k + n - 1) * H (r + n - 1) * I (s + n - 1) * J (t + n - 1) +
           4 * G (k + n) * H (r + n) * I (s + n) * J (t + n) +
           G (k + n + 1) * H (r + n + 1) * I (s + n + 1) * J (t + n + 1))
-
-/-- **Two-sequence gibonacci identity with a Fibonacci factor.** Let
-$G, H : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$ and $j \mapsto H_j$, satisfy
-$G_{j+2} = G_{j+1} + G_j$ and $H_{j+2} = H_{j+1} + H_j$ for every integer $j$, and let $F_m$ be
-the Fibonacci numbers, extended to negative indices by $F_{-m} = (-1)^{m+1} F_m$. Then for all
-integers $r$, $s$ and $k$,
-$$
-H_s G_{k+r} + (-1)^{r-1} H_{s-r} G_k = F_r (G_0 H_{k+s-1} + G_1 H_{k+s}).
-$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 35
-(`jis-2024-24.6.2-prop-35`). -/
-public theorem_wanted gibonacci_mul_add_neg_one_pow_eq_fib_mul
-    (G H : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
-    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (r s k : ℤ) :
-    H s * G (k + r) + (-1 : ℝ) ^ (r - 1) * H (s - r) * G k =
-      (Int.fib r : ℝ) * (G 0 * H (k + s - 1) + G 1 * H (k + s))
 
 /-- **Four-index product identity for two gibonacci sequences.** Let
 $G, H : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$ and $j \mapsto H_j$, satisfy
