@@ -11,3 +11,18 @@ Dirichlet characters, conductors, primitive and quadratic characters, Dirichlet 
 - [Perron's formula](perron-s-formula/README.md)
 - [Subconvexity bounds for Dirichlet L-functions](subconvexity-bounds-for-dirichlet-l-functions/README.md)
 - [Functional equation of the Dirichlet beta function](ramanujan-part1-ch7-entry18-bernoullidif.md)
+
+## Zeros of Dirichlet L-functions
+
+- [Generalized Riemann hypothesis for Dirichlet L-functions, half-plane form](grh-dirichlet-half-plane.md)
+- [Generalized Riemann hypothesis for Dirichlet L-functions, critical-strip form](grh-dirichlet-critical-strip.md)
+- [Primitive Dirichlet L-functions have no zero of real part greater than 1/2](primitive-dirichlet-l-functions-zero-free-half-plane.md)
+- [Classical zero-free region for Dirichlet L-functions of a fixed modulus](dirichlet-l-function-zero-free-region-fixed-modulus.md)
+- [Siegel's theorem](siegel-theorem.md)
+- [Deuring–Heilbronn repulsion of zeros by an exceptional zero](deuring-heilbronn-repulsion.md)
+- [Log-free zero-density estimate for Dirichlet L-functions](log-free-zero-density-estimate.md)
+
+## Explicit formulas
+
+- [Truncated explicit formula for $\psi(x, \chi)$](truncated-explicit-formula.md)
+- [Log-free truncated explicit formula for Dirichlet characters](log-free-truncated-explicit-formula.md)
