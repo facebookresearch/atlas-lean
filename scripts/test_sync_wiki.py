@@ -3220,8 +3220,8 @@ class ScopedRun(unittest.TestCase):
         old = before["blueprint/links/Algebra.jsonl"].decode().splitlines()
         new = after["blueprint/links/Algebra.jsonl"].decode().splitlines()
         self.assertEqual([row for row in new if row in old], old)
-        paths = [json.loads(row)["subject"][0]["uri"] for row in new]
-        self.assertEqual(paths, sorted(paths, key=sync.row_order))
+        rows = [json.loads(row) for row in new]
+        self.assertEqual(rows, sorted(rows, key=sync.row_order))
         ids = [json.loads(row)["id"] for row in new]
         self.assertEqual(len(set(ids)), len(ids))
         self.assertTrue(all(sync.ARTICLE_ID.fullmatch(article_id) for article_id in ids))
@@ -3299,6 +3299,10 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual(status, 1)
         self.assertIn("error: Algebra/groups/group-basics/backlog.md: it holds Ext.backlog back, which the Lean index does "
                       "not resolve: fix the held marker", err)
+
+    def test_a_write_with_nothing_changed_writes_nothing(self) -> None:
+        status, out, err, report = self.run_sync()
+        self.assertEqual((status, "Nothing to write." in out, report.get("written")), (0, True, None))
 
     def test_documentation_alone_is_checked_without_reading_the_lean(self) -> None:
         self.write("README.md", "Documentation.\n")
@@ -3764,6 +3768,89 @@ class ScopedRun(unittest.TestCase):
         groups.write_text(groups.read_text().replace(f"/-- {self.LAGRANGE} -/\n", ""))
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["digests"]), (0, {}))
+
+    def test_a_row_credits_its_declaration_without_the_folders_defaults(self) -> None:
+        # Without defaults to complete the shorthand, the run writes the Lean end whole, so the row credits the
+        # declaration it was written for, the check passes and a second write changes nothing.
+        self.git("rm", "-q", "blueprint/links/_defaults.json")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text().replace('"object": [{"location": {"declaration": "Ext.lagrange"}}]',
+                                                   '"object": [{"type": "lean", "uri": "../..", "location": '
+                                                   '{"declaration": "Ext.lagrange"}}]'))
+        self.base = self.commit("explicit Lean ends, no defaults")
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        row = next(json.loads(line) for line in links.read_text().splitlines() if "fresh.md" in line)
+        self.assertEqual((row["object"], sync.lean_name(row)),
+                         ([{"type": "lean", "uri": "../..", "location": {"declaration": "Ext.fresh"}}], "Ext.fresh"))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"))
+        before = self.tree()
+        self.assertEqual(self.run_sync()[0], 0)
+        self.assertEqual(self.tree(), before)
+
+    def test_a_row_the_build_refuses_hides_no_other_problem(self) -> None:
+        # A flag that is not a Boolean, on an unrelated row the base already had, leaves the held marker the changes
+        # make stale as visible as it would be without it.
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/odd.md", "# Odd\n\nOdd.\n")
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/held.md", "# Held\n\nHeld.\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text() + json.dumps({
+            "subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/odd.md"}],
+            "id": "af_" + "a" * 24, "extensions": {"org.autoform": {"mathlib": "yes"}}}) + "\n" + json.dumps({
+            "subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/held.md"}],
+            "id": "af_" + "b" * 24, "extensions": {sync.OWN: {"held": {"declaration": "Ext.stillHeld",
+                                                                       "reason": "Its statement is wrong."}}}}) + "\n")
+        self.groups(more="theorem stillHeld : True := trivial\n\n")
+        self.base = self.commit("an unreadable flag and a held marker")
+        self.groups()
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False), report["errors"])
+        self.assertTrue(any("Ext.stillHeld" in row for row in report["errors"]), report["errors"])
+        self.assertFalse(any("mathlib" in row for row in report["errors"]), report["errors"])
+
+    def test_rows_are_read_as_autoform_reads_them(self) -> None:
+        # A row whose page its subject's defaults give, a string holding U+2028, records separated by carriage
+        # returns, and a refused row with no subject the base already had: the run orders, keeps and hints rows by the
+        # page Autoform reads, splits records as Autoform does, and keeps every other byte.
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        lines = links.read_text().splitlines()
+        lines[0] = json.dumps({"subject": [{"type": "generic"}], "id": json.loads(lines[0])["id"],
+                               "note": "two\u2028lines"}, ensure_ascii=False)
+        self.write("blueprint/links/_defaults.json", json.dumps({
+            **sync.DEFAULTS, "subject": {"type": "generic", "uri": "../roadmap/Algebra/README.md"}}) + "\n")
+        links.write_text("\r".join(lines) + "\r" + json.dumps({"subject": [], "id": "af_" + "c" * 24}) + "\r")
+        self.base = self.commit("rows as Autoform reads them")
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["missing"], report["errors"]), (1, ["Ext.fresh"], []))
+        kept = links.read_bytes()
+        status, out, err, report = self.run_sync()
+        # The refused row the base had stops the write, which writes nothing.
+        self.assertEqual((status, "the run wrote nothing" in err, links.read_bytes()), (1, True, kept))
+        links.write_bytes(kept.replace(b'\r{"subject": [], "id": "af_' + b"c" * 24 + b'"}', b""))
+        self.git("add", "blueprint/links/Algebra.jsonl")
+        self.git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "no refused row")
+        self.base = self.git("rev-parse", "HEAD")
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 0, err)
+        text = links.read_bytes().decode()
+        self.assertIn("two\u2028lines", text)
+        self.assertEqual([line for line in sync.records(text)[0] if "fresh.md" not in line],
+                         sync.records(kept.decode().replace('\r{"subject": [], "id": "af_' + "c" * 24 + '"}', ""))[0])
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"))
+
+    def test_a_problem_the_base_had_is_not_the_changes(self) -> None:
+        # An annotation file Autoform reads and the sync does not, already on the base, is reported the same way on
+        # both sides, though the base's copy sits in a temporary folder.
+        self.write("blueprint/links/Extra.ndjson", "")
+        self.base = self.commit("a links file Autoform reads and the sync does not")
+        page = self.root / "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md"
+        page.write_text(page.read_text() + "\nMore prose.\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["errors"], report["wiki_changes"]), (0, True, [], "other"))
+
 
 
 class BuildPath(Vault):

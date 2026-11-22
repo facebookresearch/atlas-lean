@@ -2209,9 +2209,18 @@ class Scope:
     written: set[Path] = field(default_factory=set)
 
 
-def row_order(uri: str) -> tuple[str, ...]:
-    """Where a links file's row goes among the others: by its page's path, folder by folder."""
-    return PurePosixPath(uri).parts
+def row_order(row: dict) -> tuple[str, ...]:
+    """Where a links file's row goes among the others: by its page's path, folder by folder, as page_name reads it
+    (what its subject says, for a row about no one page)."""
+    return PurePosixPath(page_name(row)).parts
+
+
+def records(text: str) -> tuple[list[str], list[str]]:
+    """The records of a links file and the separator after each, split as Autoform splits them (see read_rows): at a
+    line feed, a carriage return or both, never at another line separator a string may hold; the last record has
+    none, and is empty when the file ends with a separator."""
+    parts = re.split(r"(\r\n|\r|\n)", text)
+    return parts[0::2], parts[1::2] + [""]
 
 
 def insert_rows(path: Path, rows: list[dict]) -> None:
@@ -2220,15 +2229,15 @@ def insert_rows(path: Path, rows: list[dict]) -> None:
     as it is. A file that is not there yet is made of the rows alone. A row's place depends on its page and the rows
     already there, not on when it is added, so two pull requests that add pages in different places add lines in
     different places, and neither adds them at the end, where every pull request would."""
-    lines = path.read_bytes().decode("utf-8").split("\n") if path.exists() else [""]
-    placed = [(row_order(json.loads(line)["subject"][0]["uri"]), number) for number, line in enumerate(lines)
-              if line.strip()]
+    lines, ends = records(path.read_bytes().decode("utf-8") if path.exists() else "")
+    placed = [(row_order(json.loads(line)), number) for number, line in enumerate(lines) if line.strip()]
     after: dict[int, list[str]] = defaultdict(list)
-    for row in sorted(rows, key=lambda row: row_order(row["subject"][0]["uri"])):
-        order = row_order(row["subject"][0]["uri"])
-        number = max(((other, number) for other, number in placed if other < order), default=(None, -1))[1]
+    for row in sorted(rows, key=row_order):
+        number = max(((other, number) for other, number in placed if other < row_order(row)), default=(None, -1))[1]
         after[number].append(json.dumps(row, ensure_ascii=False))
-    text = "\n".join([*after[-1], *(kept for number, line in enumerate(lines) for kept in (line, *after[number]))])
+    # A row added after a record goes between it and its separator, after a line feed, so every separator stays.
+    text = "".join(row + "\n" for row in after[-1]) + "".join(
+        line + "".join("\n" + row for row in after[number]) + end for number, (line, end) in enumerate(zip(lines, ends)))
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(text.encode("utf-8"))
 
@@ -2382,6 +2391,17 @@ def held_markers(files: dict[Path, list[dict]], index) -> tuple[list, dict[str, 
     return keyed, pages, held, held_problems
 
 
+def crediting(lean: str) -> list[dict] | None:
+    """The object of a new row that credits the project's declaration *lean*, as Autoform reads the row (lean_name):
+    the shorthand the links folder's defaults complete (see DEFAULTS), else a Lean end of this project; None when
+    neither does."""
+    for ends in ([{"location": {"declaration": lean}}],
+                 [{"type": "lean", "uri": "../..", "location": {"declaration": lean}}]):
+        if lean_name({"object": ends}) == lean:
+            return ends
+    return None
+
+
 def apply_declarations(targets: list, index, generated: dict[Path, str] | None = None,
                        unindexed: list[str] | None = None, scope: Scope | None = None) -> dict[str, list[str]]:
     """Pages for new declarations, and the report; see the module docstring. ``generated`` holds generate_wiki's
@@ -2460,8 +2480,7 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     added: list[tuple[Path, dict]] = []
 
     def article_id(page: Path) -> str:
-        uri = "../" + page.relative_to(wiki.VAULT).as_posix()
-        hint = scope.ids.get(uri) if scope is not None else None
+        hint = scope.ids.get(page.relative_to(wiki.ROADMAP).as_posix()) if scope is not None else None
         if hint is not None and ARTICLE_ID.fullmatch(hint) and hint not in taken:
             taken.add(hint)
             return hint
@@ -2517,6 +2536,11 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
             number += 1
             name = f"{target.slug}-{number}"
         target.path = folder / f"{name}.md"
+        # A scoped run writes a page only with a row that credits its declaration as Autoform reads the row.
+        ends = crediting(target.lean) if scope is not None and target.lean else None
+        if scope is not None and target.lean and ends is None:
+            report["credit_problems"].append(f"no row the sync can write credits {key} to this project")
+            continue
         text, fields = page_text(target)
         folder.mkdir(parents=True, exist_ok=True)
         target.path.write_text(text)
@@ -2550,7 +2574,7 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         annotation: dict = {"subject": [{"type": "generic", "uri": "../" + target.path.relative_to(wiki.VAULT).as_posix()}],
                             "id": article_id(target.path)}
         if target.lean:
-            annotation["object"] = [{"location": {"declaration": target.lean}}]
+            annotation["object"] = ends or [{"location": {"declaration": target.lean}}]
         extensions: dict = {OWN: {"from": "docstring"}}
         if "origin" in fields:
             extensions[NAMESPACE] = {"origin": fields["origin"]}
@@ -2853,9 +2877,23 @@ def lean_view(index, targets: list, unindexed: list[str], changed: frozenset[str
 
 
 def numbered_rows() -> list[tuple[Path, int, dict]]:
-    """Every annotation of the links files (see LINKS), with its file and line."""
+    """Every annotation of the links files (see LINKS), with its file and line, its lines split as Autoform splits
+    them (see records)."""
     return [(path, number, json.loads(line)) for path in sorted(LINKS.glob("*.jsonl"))
-            for number, line in enumerate(path.read_text().splitlines(), 1) if line.strip()]
+            for number, line in enumerate(records(path.read_text(encoding="utf-8"))[0], 1) if line.strip()]
+
+
+def readable_rows(files: dict[Path, list[dict]]) -> dict[Path, list[dict]]:
+    """*files* without the rows Autoform cannot read one way only on their own, which credit_problems reports: about
+    no one page, or whose credit raises CreditError; so that one such row hides nothing of the others."""
+    def readable(annotation: dict) -> bool:
+        try:
+            page_owner(annotation)
+        except CreditError:
+            return False
+        return subject_path(annotation) is not None
+
+    return {path: [annotation for annotation in rows if readable(annotation)] for path, rows in files.items()}
 
 
 def link_view(index) -> dict:
@@ -2872,13 +2910,13 @@ def link_view(index) -> dict:
             # Named as the working tree's file, which a copy of the wiki (see sync_output) stands for.
             where = location(wiki.ROOT / path.relative_to(LINKS.parent.parent), number)
             stale[(row.get("id") or page_name(row), name)].append(f"{where} ({page_name(row)})")
-    unreadable = set(credit_problems(files) + owner_problems(files, index))
-    try:
-        held_problems = set(held_markers(files, index)[3])
-    except CreditError:
-        # A row whose credit cannot be read is among the unreadable rows.
-        held_problems = set()
-    return {"stale": dict(stale), "held_problems": held_problems, "unreadable": unreadable}
+    # Named as the working tree's links folder, which a copy of the wiki stands for.
+    def stable(problem: str) -> str:
+        return problem.replace(os.fspath(LINKS), "blueprint/links").replace(os.fspath(wiki.VAULT), "blueprint")
+
+    unreadable = {stable(problem) for problem in credit_problems(files) + owner_problems(files, index)}
+    return {"stale": dict(stale), "held_problems": set(held_markers(readable_rows(files), index)[3]),
+            "unreadable": unreadable}
 
 
 def written_page(row: dict) -> Path | None:
@@ -3005,12 +3043,7 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
     keyed = {key: target for target in targets if (key := declaration_key(target))}
     old, now = base["digests"], head["digests"]
     links = link_view(index)
-    try:
-        rows, named, held, _ = held_markers(read_annotations(), index)
-    except CreditError:
-        # A row whose credit cannot be read stops the run (see link_view): nothing here is a page of its declaration.
-        rows, named, held = [], {}, {}
-    named = {key: page for key, page in named.items() if page is not None}
+    rows, named, held, _ = held_markers(readable_rows(read_annotations()), index)
     # Each page a row names, as Autoform reads it, else as written; neither follows a link.
     written_at = {key: page for key, row in rows if key and (page := subject_path(row) or written_page(row))}
     own = {key: module_file(keyed[key]) for key in sorted(now.keys() - old.keys() | (now.keys() & base["deprecated"]))
@@ -3177,7 +3210,8 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
     others = [f"{path}: the sync never writes it" for path in paths if not written_by_sync(path)]
     if others:
         return "other", others
-    ids = {row["subject"][0]["uri"]: row["id"] for _, _, row in numbered_rows() if isinstance(row.get("id"), str)}
+    ids = {page_name(row): row["id"] for _, _, row in numbered_rows()
+           if isinstance(row.get("id"), str) and subject_path(row) is not None}
     with tempfile.TemporaryDirectory(prefix="atlas-sync-") as folder:
         # Resolved, as the paths the tools compare with it are.
         scratch = Path(folder).resolve()
@@ -3186,8 +3220,8 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
         for made in (vault / "roadmap", vault / "links", state.parent):
             made.mkdir(parents=True, exist_ok=True)
         with relocated(vault=vault, state=state):
-            on_base = {row["subject"][0]["uri"] for _, _, row in numbered_rows()}
-            ids = {uri: article_id for uri, article_id in ids.items() if uri not in on_base}
+            on_base = {page_name(row) for _, _, row in numbered_rows()}
+            ids = {page: article_id for page, article_id in ids.items() if page not in on_base}
             plan = plan_of()
             if plan.blocking or plan.problems:
                 return "other", [f"the sync stops on the base's wiki: {row}" for row in plan.blocking + plan.problems]
@@ -3237,7 +3271,7 @@ def run_scoped(argv: list[str]) -> int:
     lean = frozenset(path for path in paths if lean_source(path))
     graph = [path for path in paths if graph_file(path)]
     fix = f"python3 scripts/sync_wiki.py declarations --base {base}"
-    targets, unindexed, generated = [], [], {}
+    targets, unindexed, generated, index = [], [], {}, None
     try:
         if lean:
             # The base's Lean is read in the background while the working tree's is; it is laid out only for a run
