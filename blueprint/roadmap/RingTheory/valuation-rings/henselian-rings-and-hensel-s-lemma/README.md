@@ -1,0 +1,16 @@
+# Henselian rings and Hensel's lemma
+
+- [Hensel lifting of monic coprime factorizations](exists-monic-coprime-factorization-of-is.md)
+- [Hensel lifting of monic coprime factorizations, with degrees](exists-monic-coprime-factorization-of-is-2.md)
+- [Local homomorphisms reflect coprimality with a monic polynomial](is-coprime-of-is-coprime-map.md)
+- [Unique lift of a monic factor through a nilpotent-kernel surjection](exists-unique-monic-map-eq-dvd-of-is-cop.md)
+- [Hensel lifting of coprime monic factors over a complete ring](exists-monic-mul-eq-and-map-eq-of-is-cop.md)
+- [Hensel's lemma for complete discrete valuation rings](exists-is-root-sub-mem-maximal-ideal-of.md)
+- [Polynomials do not decrease the valuation of differences](add-val-sub-le-add-val-eval-sub.md)
+- [Nearby roots share the derivative valuation](add-val-derivative-eval-eq-of-lt-add-val.md)
+- [Uniqueness of roots near a point](eq-of-is-root-of-add-val-derivative-lt-a.md)
+- [Elements of the maximal ideal have positive valuation](add-val-lt-add-val-add-of-mem-maximal-id.md)
+- [Hensel's lemma with a derivative bound](exists-is-root-of-two-mul-add-val-deriva.md)
+- [Sections of étale algebras over Henselian local rings](exists-alg-hom-lift-of-etale.md)
+- [Complete local rings are Henselian](of-is-adic-complete-maximal-ideal.md)
+- [Valuation subrings of algebraically closed fields are Henselian](henselian-local-ring-of-is-alg-closed.md)

@@ -81,31 +81,16 @@ theorem schurInf_single_le {a : ℕ → ℕ → 𝕜} {R : ℝ}
   simpa using le_trans h (hrow_le i)
 
 /-- Summability of a finite sum of summable sequences. -/
+@[deprecated "Use `summable_sum`." (since := "2026-11-09")]
 theorem summable_sum_finset {f : ℕ → ℕ → ℝ} (hf : ∀ i, Summable fun j => f i j)
-    (s : Finset ℕ) : Summable fun j => ∑ i ∈ s, f i j := by
-  induction s using Finset.induction with
-  | empty => simp
-  | @insert a s ha ih =>
-      have hfun : (fun j => ∑ i ∈ insert a s, f i j) =
-          fun j => f a j + ∑ i ∈ s, f i j :=
-        funext fun j => Finset.sum_insert ha
-      rw [hfun]
-      exact (hf a).add ih
+    (s : Finset ℕ) : Summable fun j => ∑ i ∈ s, f i j :=
+  summable_sum fun i _ => hf i
 
 /-- Swapping a `tsum` with a finite sum. -/
+@[deprecated "Use `Summable.tsum_finsetSum`." (since := "2026-11-09")]
 theorem tsum_sum_finset {f : ℕ → ℕ → ℝ} (hf : ∀ i, Summable fun j => f i j)
-    (s : Finset ℕ) : ∑' j, ∑ i ∈ s, f i j = ∑ i ∈ s, ∑' j, f i j := by
-  induction s using Finset.induction with
-  | empty => simp
-  | @insert a s ha ih =>
-      calc ∑' j, ∑ i ∈ insert a s, f i j
-          = ∑' j, (f a j + ∑ i ∈ s, f i j) :=
-            tsum_congr fun j => Finset.sum_insert ha
-        _ = ∑' j, f a j + ∑' j, ∑ i ∈ s, f i j :=
-            (hf a).tsum_add (summable_sum_finset hf s)
-        _ = ∑' j, f a j + ∑ i ∈ s, ∑' j, f i j := by rw [ih]
-        _ = ∑ i ∈ insert a s, ∑' j, f i j :=
-            (Finset.sum_insert (f := fun i => ∑' j, f i j) ha).symm
+    (s : Finset ℕ) : ∑' j, ∑ i ∈ s, f i j = ∑ i ∈ s, ∑' j, f i j :=
+  Summable.tsum_finsetSum fun i _ => hf i
 
 /-- A single row bound: the row bound `R` is nonnegative. -/
 theorem schurInf_nonneg_of_row {a : ℕ → ℕ → 𝕜} {R : ℝ}
@@ -247,7 +232,7 @@ theorem summable_schurInf_weighted_tsum {a : ℕ → ℕ → 𝕜} {R C : ℝ}
     (fun i => tsum_nonneg fun j => by positivity) (fun s => ?_)
   calc ∑ i ∈ s, ∑' j, ‖a i j‖ * ‖x j‖ ^ 2
       = ∑' j, ∑ i ∈ s, ‖a i j‖ * ‖x j‖ ^ 2 :=
-        (tsum_sum_finset (fun i => summable_schurInf_weighted hrow hrow_le x i) s).symm
+        (Summable.tsum_finsetSum fun i _ => summable_schurInf_weighted hrow hrow_le x i).symm
     _ = ∑' j, ‖x j‖ ^ 2 * (∑ i ∈ s, ‖a i j‖) := by
         apply tsum_congr
         intro j

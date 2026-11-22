@@ -37,7 +37,8 @@ from which the definitions are taken).
 * The paper uses the extended Stirling numbers of the second kind of Knuth, defined for all
   integer arguments by `{n, k} = [-k, -n]` (unsigned first kind) for negative arguments and `0`
   for mixed signs (`extStirlingSecond`); its associated Stirling numbers of the second kind
-  `{{n, k}}` are the canonical `twoAssocStirlingSecond` (integer-valued), and `Ring.choose` is the binomial coefficient with arbitrary
+  `{{n, k}}` are the canonical `twoAssocStirlingSecond` (integer-valued), and `Ring.choose` is the
+  binomial coefficient with arbitrary
   top argument.
 -/
 

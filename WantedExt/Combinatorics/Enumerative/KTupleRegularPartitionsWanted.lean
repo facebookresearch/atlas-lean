@@ -24,7 +24,9 @@ namespace MetaMathlibExt
 $\ell$-regular partitions of $n$ is the number of partitions of $n$ none of whose parts is
 divisible by $\ell$.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction (definition of ℓ-regular partitions).
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction
+(definition of ℓ-regular partitions).
 -/
 public def lRegularPartitionCount (ℓ n : ℕ) : ℕ :=
   ((Finset.univ : Finset (Nat.Partition n)).filter fun p => ∀ a ∈ p.parts, ¬ ℓ ∣ a).card
@@ -39,7 +41,9 @@ Peeling off the first component in this way, $T_{\ell,k}(n)$ counts the $k$-tupl
 $(\lambda_1, \dots, \lambda_k)$ of $\ell$-regular partitions of $n_1, \dots, n_k$ with
 $n_1 + \dots + n_k = n$.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction (definition of `T_{ℓ,k}`).
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction
+(definition of `T_{ℓ,k}`).
 -/
 public def kTupleRegularPartitionCount (ℓ : ℕ) : ℕ → ℕ → ℕ
   | 0, n => if n = 0 then 1 else 0
@@ -50,7 +54,9 @@ public def kTupleRegularPartitionCount (ℓ : ℕ) : ℕ → ℕ → ℕ
 writing $T_{\ell,k}(n)$ for the number of $k$-tuples of $\ell$-regular partitions with total
 $n$, we have $T_{\ell,0}(n) = 1$ if $n = 0$ and $T_{\ell,0}(n) = 0$ otherwise.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction (definition of `T_{ℓ,k}`).
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction
+(definition of `T_{ℓ,k}`).
 -/
 public theorem kTupleRegularPartitionCount_zero (ℓ n : ℕ) :
     kTupleRegularPartitionCount ℓ 0 n = if n = 0 then 1 else 0 := rfl
@@ -60,7 +66,9 @@ and $n$, writing $r_\ell(i)$ for the number of $\ell$-regular partitions of $i$ 
 $T_{\ell,k}(n)$ for the number of $k$-tuples of $\ell$-regular partitions with total $n$,
 $$T_{\ell,k+1}(n) = \sum_{i=0}^{n} r_\ell(i) \, T_{\ell,k}(n-i).$$
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction (definition of `T_{ℓ,k}`).
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction
+(definition of `T_{ℓ,k}`).
 -/
 public theorem kTupleRegularPartitionCount_succ (ℓ k n : ℕ) :
     kTupleRegularPartitionCount ℓ (k + 1) n = ∑ i ∈ Finset.range (n + 1),
@@ -71,7 +79,9 @@ public theorem kTupleRegularPartitionCount_succ (ℓ k n : ℕ) :
 $T_\ell(n) = T_{\ell,3}(n)$ is the number of triples $(\lambda_1, \lambda_2, \lambda_3)$ of
 $\ell$-regular partitions (partitions with no part divisible by $\ell$) whose sizes add up to
 $n$.
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction (definition of `T_ℓ`).
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction (definition
+of `T_ℓ`).
 -/
 public def tripleRegularPartitionCount (ℓ n : ℕ) : ℕ :=
   kTupleRegularPartitionCount ℓ 3 n
@@ -79,7 +89,9 @@ public def tripleRegularPartitionCount (ℓ n : ℕ) : ℕ :=
 /-- **Zero has one $\ell$-regular partition.** For every natural number $\ell$, the number of
 $\ell$-regular partitions of $0$ is $1$; the only one is the empty partition.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction (definition of ℓ-regular partitions).
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction
+(definition of ℓ-regular partitions).
 -/
 public theorem lRegularPartitionCount_zero (ℓ : ℕ) : lRegularPartitionCount ℓ 0 = 1 := by
   simp [lRegularPartitionCount]
@@ -89,7 +101,9 @@ and $k$, writing $T_{\ell,k}(n)$ for the number of $k$-tuples of $\ell$-regular 
 with total $n$, we have $T_{\ell,k}(0) = 1$: the only such tuple of total $0$ is the tuple of
 empty partitions.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction (definition of `T_{ℓ,k}`).
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Introduction
+(definition of `T_{ℓ,k}`).
 -/
 public theorem kTupleRegularPartitionCount_at_zero (ℓ k : ℕ) :
     kTupleRegularPartitionCount ℓ k 0 = 1 := by
@@ -108,7 +122,9 @@ takes no negative values and, for every natural number $n$, every integer $m$ wi
 satisfies $|m| \le n + 1$, as holds for the quadratic exponents used in Lemmas 1, 3 and 5 of
 the source; it is not intended for other exponents.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Encoding for Lemmas 1, 3, and 5.
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Encoding for Lemmas 1,
+3, and 5.
 -/
 public def boundedBilateralSeries (exponent weight : ℤ → ℤ) : PowerSeries ℤ :=
   PowerSeries.mk fun n =>
@@ -121,7 +137,9 @@ $e, w : \mathbb{Z} \to \mathbb{Z}$ and every natural number $n$, the coefficient
 the bounded bilateral series of $e$ and $w$ equals the sum of $w(m)$ over the integers $m$
 with $-n-1 \le m \le n+1$ and $e(m) = n$.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Encoding for Lemmas 1, 3, and 5.
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Encoding for Lemmas 1,
+3, and 5.
 -/
 public theorem coeff_boundedBilateralSeries (exponent weight : ℤ → ℤ) (n : ℕ) :
     PowerSeries.coeff n (boundedBilateralSeries exponent weight) =
@@ -137,7 +155,9 @@ the sum of $w(m)$ over the integers $m$ with $1 \le m \le n$ and $e(m) = n$.
 When $e(m) \ge m$ for every $m \ge 1$, as for the square exponents in Lemma 5 and
 Corollary 3, this series is $\sum_{m \ge 1} w(m) q^{e(m)}$.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Encoding for Lemma 5 and Corollary 3.
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Encoding for Lemma 5
+and Corollary 3.
 -/
 public def positiveUnilateralSeries (exponent : ℕ → ℕ) (weight : ℕ → ℤ) : PowerSeries ℤ :=
   PowerSeries.mk fun n =>
@@ -149,7 +169,9 @@ $e : \mathbb{N} \to \mathbb{N}$ and $w : \mathbb{N} \to \mathbb{Z}$ and every na
 $n$, the coefficient of $q^n$ in the positive unilateral series of $e$ and $w$ equals the sum
 of $w(m)$ over the natural numbers $m$ with $1 \le m \le n$ and $e(m) = n$.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Encoding for Lemma 5 and Corollary 3.
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Encoding for Lemma 5
+and Corollary 3.
 -/
 public theorem coeff_positiveUnilateralSeries (exponent : ℕ → ℕ) (weight : ℕ → ℤ) (n : ℕ) :
     PowerSeries.coeff n (positiveUnilateralSeries exponent weight) =
@@ -164,7 +186,9 @@ number $n$,
 $$T_2\left(9n + \frac{N t^2 - 1}{8}\right) \equiv 0 \pmod{24}.$$
 Here $N t^2 - 1$ is divisible by $8$, so the fraction is an integer.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Theorem 1, equation T29n24.
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Theorem 1, equation
+T29n24.
 -/
 public theorem_wanted tripleTwo_mod_twentyFour (t n N : ℕ) (ht : 0 < t)
     (hcoprime : Nat.gcd t 6 = 1) (hN : N = 33 ∨ N = 57) :
@@ -179,7 +203,9 @@ $1 \le j \le p - 1$,
 $$T_2\left(9t^2 n + \frac{9t^2 j}{p} + \frac{57t^2 - 1}{8}\right) \equiv 0 \pmod{6}.$$
 Both fractions are integers under these hypotheses.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Corollary 1 (Conjecture conj.nss).
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Corollary 1
+(Conjecture conj.nss).
 -/
 public theorem_wanted nathSaikiaSarma_conjecture (p t n j : ℕ) [Fact (Nat.Prime p)]
     (hp : 5 ≤ p) (hlegendre : legendreSym p (-2) = -1) (ht : 0 < t)
@@ -198,7 +224,9 @@ and if moreover $3 \nmid n$, this value is also $\equiv 0 \pmod{24}$.
 
 The division by $8$ is exact because $p$ is odd.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Theorem 2, equations thm.p357mod8 and mod24.
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Theorem 2, equations
+thm.p357mod8 and mod24.
 -/
 public theorem_wanted tripleTwo_primePower_mod_eight_and_twentyFour (p n α : ℕ)
     (hp : Nat.Prime p) (hres : p % 8 = 3 ∨ p % 8 = 5 ∨ p % 8 = 7) (hpn : ¬ p ∣ n) :
@@ -214,7 +242,9 @@ numbers $n$ and $\alpha$ with $p \nmid n$,
 $$T_2\left(9 p^{2\alpha+1} n + \frac{9 p^{2\alpha+2} - 1}{8}\right) \equiv 0 \pmod{24}.$$
 Since $p$ is odd, the fraction is an integer.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Corollary 2, equation cor.9pmod24.
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Corollary 2, equation
+cor.9pmod24.
 -/
 public theorem_wanted tripleTwo_nine_primePower_mod_twentyFour (p n α : ℕ)
     (hp : Nat.Prime p) (hres : p % 8 = 3 ∨ p % 8 = 5 ∨ p % 8 = 7)
@@ -231,7 +261,9 @@ This is the identity $f_1^5 / f_2^2 = \sum_{m \in \mathbb{Z}} (6m + 1)\, q^{m(3m
 denominator cleared. The coefficient of $q^n$ in the sum is computed over the integers $m$ with
 $|m| \le n + 1$, which include every solution of $m(3m+1)/2 = n$.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Lemma 3, equation f15/f22.
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Lemma 3, equation
+f15/f22.
 -/
 public theorem_wanted qEulerProduct_fifth_power_identity :
     qEulerProduct 1 ^ 5 = qEulerProduct 2 ^ 2 * boundedBilateralSeries
@@ -244,7 +276,9 @@ be $f_1$ with $q$ replaced by $-q$. Then
 $$(-q;-q)_\infty \, f_1 f_4 = f_2^3.$$
 This is the identity $(-q;-q)_\infty = f_2^3 / (f_1 f_4)$ with the denominator cleared.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Lemma 4, equation f1-q.
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Lemma 4, equation
+f1-q.
 -/
 public theorem_wanted rescale_neg_one_qEulerProduct_identity :
     PowerSeries.rescale (-1) (qEulerProduct 1) * qEulerProduct 1 * qEulerProduct 4 =
@@ -259,7 +293,9 @@ $\theta = 1 + 2 \sum_{m \ge 1} (-1)^m q^{m^2}$.
 The coefficient of $q^n$ in each sum is computed over the indices $m$ with $|m| \le n + 1$
 (respectively $1 \le m \le n$), which include every solution of $m^2 = n$.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Lemma 5, equation f12/f2.
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Lemma 5, equation
+f12/f2.
 -/
 public theorem_wanted qEulerProduct_square_theta_identity :
     let theta := boundedBilateralSeries (fun m => m ^ 2) (fun m => (-1 : ℤ) ^ m.natAbs)
@@ -272,7 +308,9 @@ $f_k = \prod_{i \ge 1} (1 - q^{ki})$ for the Euler products, as integer power se
 $$f_2^2 = f_4 \left(1 + 2 \sum_{n \ge 1} (-1)^n q^{2n^2}\right).$$
 This is the identity for $f_2^2 / f_4$ with the denominator cleared.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Corollary 3, equation f22/f4.
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Corollary 3, equation
+f22/f4.
 -/
 public theorem_wanted qEulerProduct_two_square_identity :
     qEulerProduct 2 ^ 2 = qEulerProduct 4 *
@@ -285,7 +323,9 @@ $k, l, s, m$ be natural numbers with $l \ge 1$, $s \ge 1$, $m \ge 1$ and $s \le 
 every natural number $n$, the coefficients of $q^n$ in $f_l^{p^k m}$ and in
 $f_{l p^s}^{p^{k-s} m}$ are congruent modulo $p^{k-s+1}$.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Lemma 7, equation cor.modp^k.
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Lemma 7, equation
+cor.modp^k.
 -/
 public theorem_wanted qEulerProduct_iterated_primePower_congruence (p k l s m : ℕ)
     (hp : Nat.Prime p) (hl : 0 < l) (hs : 0 < s) (hm : 0 < m) (hsk : s ≤ k) (n : ℕ) :
@@ -301,7 +341,9 @@ for some natural number $m$.
 
 Allowing integer $m$ gives no new values, since $m$ and $-m-1$ give the same triangular number.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Lemma 8, equation mod2.
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Lemma 8, equation
+mod2.
 -/
 public theorem_wanted tripleTwo_odd_iff_triangular (n : ℕ) :
     tripleRegularPartitionCount 2 n % 2 = 1 ↔ ∃ m : ℕ, n = m * (m + 1) / 2
@@ -315,7 +357,9 @@ $$T_{\ell,p^\alpha m}(p^s n + r) \equiv 0 \pmod{p^{\alpha - s + 1}}.$$
 
 Since $s$ is positive, the hypothesis $\alpha \ge s$ also gives $\alpha \ge 1$.
 
-Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia, and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Theorem 3, equation thm.gen1.1.
+Source: Bishnu Paudel, James A. Sellers, and Haiyang Wang, *Extending Recent Work of Nath, Saikia,
+and Sarma on k-Tuple ℓ-Regular Partitions*, INTEGERS 26 (2026), Article A4, Theorem 3, equation
+thm.gen1.1.
 -/
 public theorem_wanted kTupleRegularPartition_primePower_congruent (p m ℓ α s r n : ℕ)
     (hp : Nat.Prime p) (hm : 0 < m) (hℓ : 0 < ℓ) (hs : 0 < s) (hsα : s ≤ α) (hr₁ : 1 ≤ r) (hrp : r ≤

@@ -106,7 +106,14 @@ example {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} [IsFiniteMeasure
       Tendsto (fun n => μ {ω | ε < |X n ω - Y ω|}) atTop (𝓝 0) :=
   (convergence_in_probability_iff_subsequential_ae_convergence hX).mpr hsub
 
+/-- Chebyshev consistency on a constant sequence: zero variance, convergence to the mean. -/
+example {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ] (θ : ℝ) :
+    TendstoInMeasure μ (fun (_ : ℕ) (_ : Ω) => θ) atTop fun _ => θ :=
+  tendstoInMeasure_of_integral_eq_of_evariance (fun _ => aestronglyMeasurable_const)
+    (fun _ => by simp) (by simp [ProbabilityTheory.evariance])
+
 #print axioms MathlibExt.Probability.ConvergenceInProbability.tendstoInMeasure_iff_tendsto_measure_abs_sub
+#print axioms tendstoInMeasure_of_integral_eq_of_evariance
 #print axioms MathlibExt.Probability.ConvergenceInProbability.convergence_in_probability_iff_subsequential_ae_convergence
 
 end MathlibExtTest.Probability.ConvergenceInProbability

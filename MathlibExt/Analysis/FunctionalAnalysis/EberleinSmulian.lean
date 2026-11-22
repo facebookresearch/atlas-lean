@@ -8,10 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Analysis.Normed.Module.DoubleDual
 import Mathlib.Analysis.Normed.Operator.BanachSteinhaus
 import Mathlib.Topology.MetricSpace.PiNat
-
-public import Mathlib.Analysis.Normed.Module.DoubleDual
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.InnerProductSpace.Basic
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen

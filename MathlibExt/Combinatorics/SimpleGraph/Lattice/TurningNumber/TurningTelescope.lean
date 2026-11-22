@@ -72,7 +72,7 @@ theorem ons_dartRev_involutive (L : ℕ) : Function.Involutive (ons_dartRev L) :
   · exact ons_dirStep_opposite L μ p
   · fin_cases μ <;> decide
 
-theorem ons_dartRev_ne (L : ℕ) [Fact (2 < L)] (d : ons_Dart L) :
+theorem ons_dartRev_ne (L : ℕ) (d : ons_Dart L) :
     ons_dartRev L d ≠ d := by
   obtain ⟨p, μ⟩ := d
   intro hcontra

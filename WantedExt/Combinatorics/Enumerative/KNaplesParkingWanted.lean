@@ -612,10 +612,6 @@ functions equals the number of triples $(D, R, e)$ such that the set of diagonal
 vertex set $R$ form a $(2k + 2)$-in-$s$ dissection of the convex $s$-gon with vertices
 $0, \dots, s - 1$, and $e$ is an edge of the inscribed polygon with vertex set $R$.
 
-Rotations of the $s$-gon act freely on these triples, so this says that descending strictly
-$k$-Naples parking functions of length $n$ are in bijection with $(2k + 2)$-in-$s$ dissections
-up to rotation with a distinguished edge on the $(2k + 2)$-gon.
-
 Source: J. P. Carvalho, P. E. Harris, G. Rojas Kirby, N. Tripeny and A. R. Vindas Meléndez,
 *Enumerating k-Naples Parking Functions through Catalan Objects*, INTEGERS 24 (2024),
 Article A44, Theorem 6.3 (published as Proposition 6). -/

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.FisherInformation
+public import MathlibExt.Probability.Statistics.Slutsky
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import Mathlib.Probability.Distributions.Gaussian.Real
 import Mathlib.Analysis.Calculus.MeanValue
@@ -38,13 +39,13 @@ theorem to `n^{-1/2} ∑ ψ θ₀ (X i)`, the strong law to `n⁻¹ ∑ ∂_θ �
 
 ## Main results
 
-* `MeasureTheory.tendstoInMeasure_of_tendstoInDistribution_const`: convergence in distribution
-  to a constant implies convergence in probability.
 * `MeasureTheory.TendstoInDistribution.mul_tendstoInMeasure_zero`: a sequence converging in
   distribution times a sequence converging in probability to `0` converges in probability
   to `0`.
 * `MeasureTheory.tendstoInMeasure_zero_of_abs_le`: domination by a sequence tending to `0` in
   probability on events whose probability tends to one.
+* `MeasureTheory.tendstoInMeasure_add_zero`: a sum of two sequences tending to `0` in
+  probability tends to `0` in probability.
 * `tendstoInDistribution_score`: the central limit theorem for the score,
   `n^{-1/2} ∑_{i<n} ∂_θ log p θ₀ (X i) → N(0, I(θ₀))`.
 * `tendstoInDistribution_sqrt_mul_sub_of_estimatingEquation`: asymptotic normality of a
@@ -68,29 +69,6 @@ namespace MeasureTheory
 
 variable {ι Ω Ω' E : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω}
   {mΩ' : MeasurableSpace Ω'} {P' : Measure Ω'} {l : Filter ι}
-
-/-- **Convergence in distribution to a constant implies convergence in probability.** If the
-random variables `X i` on one probability space converge in distribution to the constant `c`,
-then they converge to `c` in probability. -/
-theorem tendstoInMeasure_of_tendstoInDistribution_const [IsProbabilityMeasure P]
-    [IsProbabilityMeasure P'] [PseudoMetricSpace E] [MeasurableSpace E] [BorelSpace E]
-    {X : ι → Ω → E} {c : E} (h : TendstoInDistribution X l (fun _ : Ω' => c) (fun _ => P) P') :
-    TendstoInMeasure P X l (fun _ => c) := by
-  rw [tendstoInMeasure_iff_dist]
-  intro ε hε
-  set F : Set E := {y | ε ≤ dist y c}
-  have hF : IsClosed F := isClosed_le continuous_const (continuous_id.dist continuous_const)
-  have hlim := ProbabilityMeasure.limsup_measure_closed_le_of_tendsto h.tendsto hF
-  have hc : (P'.map fun _ : Ω' => c) F = 0 := by
-    rw [Measure.map_const, measure_univ, one_smul, Measure.dirac_apply' _ hF.measurableSet]
-    simp [F, hε.not_ge]
-  simp only [ProbabilityMeasure.coe_mk, hc] at hlim
-  have heq : ∀ i, P {ω | ε ≤ dist (X i ω) c} = (P.map (X i)) F := fun i => by
-    rw [Measure.map_apply_of_aemeasurable (h.forall_aemeasurable i) hF.measurableSet]
-    rfl
-  simp_rw [heq]
-  refine tendsto_order.2 ⟨fun a ha => absurd ha ENNReal.not_lt_zero, fun a ha => ?_⟩
-  exact eventually_lt_of_limsup_lt (hlim.trans_lt ha)
 
 /-- A sequence `A i` converging in distribution, times a sequence `η i` converging in
 probability to `0`, converges in probability to `0` (a consequence of Slutsky's theorem). -/
@@ -122,7 +100,7 @@ theorem tendstoInMeasure_zero_of_abs_le {W V : ι → Ω → ℝ} {G : ι → Se
   · exact Or.inl hG'
 
 /-- A sum of two sequences tending to `0` in probability tends to `0` in probability. -/
-private theorem tendstoInMeasure_add_zero {U V : ι → Ω → ℝ}
+theorem tendstoInMeasure_add_zero {U V : ι → Ω → ℝ}
     (hU : TendstoInMeasure P U l 0) (hV : TendstoInMeasure P V l 0) :
     TendstoInMeasure P (fun i ω => U i ω + V i ω) l 0 := by
   rw [tendstoInMeasure_iff_norm] at hU hV ⊢
@@ -208,8 +186,9 @@ theorem tendstoInDistribution_score {ν : Measure 𝓧} {p : ℝ → 𝓧 → �
   simpa [hmean', Z] using h
 
 open Set in
-/-- Second-order Taylor bound from a bound `m` on the second derivative on a ball. -/
-private theorem abs_sub_sub_mul_deriv_le {f : ℝ → ℝ} {θ₀ δ θ m : ℝ}
+/-- If `f` and `deriv f` are differentiable on `ball θ₀ δ` and `|deriv (deriv f)| ≤ m` there, then
+for `θ` in the ball, `|f θ - f θ₀ - (θ - θ₀) * deriv f θ₀| ≤ m * (θ - θ₀) ^ 2`. -/
+theorem abs_sub_sub_mul_deriv_le {f : ℝ → ℝ} {θ₀ δ θ m : ℝ}
     (hf : ∀ t ∈ Metric.ball θ₀ δ, DifferentiableAt ℝ f t)
     (hf' : ∀ t ∈ Metric.ball θ₀ δ, DifferentiableAt ℝ (deriv f) t)
     (hm : ∀ t ∈ Metric.ball θ₀ δ, |deriv (deriv f) t| ≤ m) (hθ : θ ∈ Metric.ball θ₀ δ) :
@@ -522,5 +501,64 @@ theorem tendstoInDistribution_sqrt_mul_sub_of_likelihoodEquation
     hs'_diff hM_meas hM_int hM hs_meas hs_sq hs_mean hs'_meas hs'_int
     (by rw [h_info]; exact neg_ne_zero.2 hI_pos.ne') hθ_meas hroot hcons ?_
   rwa [hvar]
+
+open scoped NNReal
+
+/-- The affine Gaussian location density `N(c t + m, v)` is differentiable in the parameter `t`,
+with derivative the density times `c (x - (c θ + m)) / v`. -/
+private theorem hasDerivAt_gaussianPDFReal_affine (c m : ℝ) (v : ℝ≥0) (θ x : ℝ) :
+    HasDerivAt (fun t => gaussianPDFReal (c * t + m) v x)
+      (gaussianPDFReal (c * θ + m) v x * (c * (x - (c * θ + m)) / v)) θ := by
+  have h : HasDerivAt (fun t => -(x - (c * t + m)) ^ 2 / (2 * (v : ℝ)))
+      (c * (x - (c * θ + m)) / v) θ := by
+    have h0 : HasDerivAt (fun t => x - (c * t + m)) (-c) θ := by
+      simpa using (((hasDerivAt_id θ).const_mul c).add_const m).const_sub x
+    refine ((h0.fun_pow 2).fun_neg.div_const (2 * (v : ℝ))).congr_deriv ?_
+    rcases eq_or_ne (v : ℝ) 0 with hv | hv
+    · simp [hv]
+    · field_simp; ring
+  unfold gaussianPDFReal
+  exact (h.exp.const_mul (√(2 * Real.pi * v))⁻¹).congr_deriv (by ring)
+
+/-- The law with density `N(c θ + m, v)` with respect to Lebesgue measure is
+`gaussianReal (c θ + m) v`. -/
+private theorem lawOf_gaussianPDFReal_affine (c m : ℝ) {v : ℝ≥0} (hv : v ≠ 0) (θ : ℝ) :
+    lawOf volume (fun t x => gaussianPDFReal (c * t + m) v x) θ =
+      gaussianReal (c * θ + m) v := by
+  rw [gaussianReal_of_var_ne_zero _ hv]
+  rfl
+
+/-- **Score of the affine Gaussian location family.** For the densities `N(c t + m, v)` with
+respect to Lebesgue measure, with known variance `v > 0` not depending on the parameter and
+arbitrary real slope `c` and offset `m` (`c = 0` allowed), the score `∂_θ log p θ x` is
+`c (x - (c θ + m)) / v`. -/
+theorem score_gaussianPDFReal_affine (c m : ℝ) {v : ℝ≥0} (hv : v ≠ 0) (θ x : ℝ) :
+    score (fun t x => gaussianPDFReal (c * t + m) v x) θ x = c * (x - (c * θ + m)) / v := by
+  have hpos : 0 < gaussianPDFReal (c * θ + m) v x := gaussianPDFReal_pos _ _ x hv
+  rw [score, ((hasDerivAt_gaussianPDFReal_affine c m v θ x).log hpos.ne').deriv]
+  field_simp
+
+/-- **Fisher information of the affine Gaussian location family.** For the densities
+`N(c t + m, v)` with respect to Lebesgue measure, with known variance `v > 0` not depending on the
+parameter and arbitrary real slope `c` and offset `m`, the Fisher information of one observation
+is `I(θ) = c² / v` at every `θ`; it vanishes when `c = 0`. It is the second moment of the score
+`c (X - (c θ + m)) / v` under `X ∼ N(c θ + m, v)` (`integral_score_sq`). -/
+theorem fisherInformation_gaussianPDFReal_affine (c m : ℝ) {v : ℝ≥0} (hv : v ≠ 0) (θ : ℝ) :
+    fisherInformation volume (fun t x => gaussianPDFReal (c * t + m) v x) θ = c ^ 2 / v := by
+  rw [← integral_score_sq (fun x => gaussianPDFReal_pos _ _ x hv)
+    (measurable_gaussianPDFReal _ _)
+    (fun x => (hasDerivAt_gaussianPDFReal_affine c m v θ x).differentiableAt),
+    lawOf_gaussianPDFReal_affine c m hv]
+  simp_rw [score_gaussianPDFReal_affine c m hv]
+  have hvar := variance_id_gaussianReal (μ := c * θ + m) (v := v)
+  rw [variance_eq_integral measurable_id.aemeasurable] at hvar
+  simp only [id] at hvar
+  rw [integral_id_gaussianReal] at hvar
+  have e : ∀ x : ℝ, (c * (x - (c * θ + m)) / v) ^ 2
+      = c ^ 2 / (v : ℝ) ^ 2 * (x - (c * θ + m)) ^ 2 := fun x => by ring
+  simp_rw [e]
+  rw [integral_const_mul, hvar]
+  have hv' : (v : ℝ) ≠ 0 := by exact_mod_cast hv
+  field_simp
 
 end MathlibExt.Probability.Statistics.MLEAsymptoticNormality

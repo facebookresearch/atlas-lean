@@ -22,7 +22,8 @@ number of partitions of $m$ in which the even parts are distinct (odd parts may 
 natural number $n$, each of $\mathrm{ped}(225n+43)$, $\mathrm{ped}(225n+88)$,
 $\mathrm{ped}(225n+133)$ and $\mathrm{ped}(225n+223)$ is congruent to $0$ modulo $24$.
 
-Source: Hemjyoti Nath, *New Congruences for Partitions Where the Even Parts Are Distinct*, INTEGERS 24 (2024), Article A79, Theorem 1.1.
+Source: Hemjyoti Nath, *New Congruences for Partitions Where the Even Parts Are Distinct*, INTEGERS
+24 (2024), Article A79, Theorem 1.1.
 -/
 public theorem_wanted partitionsEvenPartsDistinct_mod24_progressions (n : ℕ) :
     Nat.ModEq 24 (distinctEvenPartsCount (225 * n + 43)) 0 ∧
@@ -42,7 +43,8 @@ $$
 
 The quotient is exact, since $57 \cdot 5^{2k} - 1$ is divisible by $8$.
 
-Source: Hemjyoti Nath, *New Congruences for Partitions Where the Even Parts Are Distinct*, INTEGERS 24 (2024), Article A79, Theorem 1.1.
+Source: Hemjyoti Nath, *New Congruences for Partitions Where the Even Parts Are Distinct*, INTEGERS
+24 (2024), Article A79, Theorem 1.1.
 -/
 public theorem_wanted partitionsEvenPartsDistinct_mod24_five_power
     (k n : ℕ) (hk : 1 ≤ k) :
