@@ -28,7 +28,9 @@ set_option autoImplicit false
 
 namespace Cslib.Algorithms.Lean.TimeM
 
-/-- The canonical polynomial represented by the stored input coefficient vector. -/
+/-- **Polynomial of a coefficient vector.** The polynomial of a vector
+$x = (x_0, \dots, x_{n-1}) \in \mathbb{C}^n$ is $\sum_{j=0}^{n-1} x_j X^j \in \mathbb{C}[X]$, the
+complex polynomial whose coefficient of $X^j$ is $x_j$ for $j < n$ and $0$ for $j \ge n$. -/
 noncomputable def fftPolynomial {n : Nat} (xs : Vector ℂ n) : Polynomial ℂ := by
   classical
   exact Polynomial.ofFn n (fun j : Fin n => xs[j.val])
@@ -38,7 +40,9 @@ private theorem fft_sample_zero {n : Nat} (xs : Vector ℂ n)
   rw [Array.getD_eq_getD_getElem?, Array.getD_getElem?]
   rw [dite_eq_right (show ¬ k < xs.toArray.size from by simpa using not_lt_of_ge hk)]
 
-/-- The canonical polynomial's coefficients are exactly the stored zero extension. -/
+/-- **Coefficients of the polynomial of a vector.** For every vector
+$x = (x_0, \dots, x_{n-1}) \in \mathbb{C}^n$ and every natural number $k$, the coefficient of
+$X^k$ in the polynomial of $x$ is $x_k$ if $k < n$ and $0$ if $k \ge n$. -/
 theorem fftPolynomial_coeff {n : Nat} (xs : Vector ℂ n) (k : Nat) :
     (fftPolynomial xs).coeff k = xs.toArray.getD k 0 := by
   classical
@@ -49,7 +53,10 @@ theorem fftPolynomial_coeff {n : Nat} (xs : Vector ℂ n) (k : Nat) :
   · rw [Polynomial.ofFn_coeff_eq_zero_of_ge _ (Nat.le_of_not_gt hk)]
     exact (fft_sample_zero xs k (Nat.le_of_not_gt hk)).symm
 
-/-- Materialized prefix-preserving zero padding represents the same polynomial. -/
+/-- **Zero padding preserves the polynomial.** For every natural number $d$ and every vector
+$x \in \mathbb{C}^{2^d}$, the zero padding of $x$ (the vector of length $2^{d+1}$ whose first
+$2^d$ entries are those of $x$ and whose remaining entries are $0$) has the same polynomial
+as $x$. -/
 theorem fftPolynomial_fftPad (d : Nat) (xs : Vector ℂ (2 ^ d)) :
     fftPolynomial (fftPad d xs).ret = fftPolynomial xs := by
   apply Polynomial.ext
@@ -68,7 +75,9 @@ theorem fftPolynomial_fftPad (d : Nat) (xs : Vector ℂ (2 ^ d)) :
       exact fftPad_ret_high d xs ⟨k, hkpad⟩ (Nat.le_of_not_gt hk)
     · exact fft_sample_zero (fftPad d xs).ret k (Nat.le_of_not_gt hkpad)
 
-/-- Canonical polynomial multiplication gives the full source linear coefficient sum. -/
+/-- **Coefficients of a product of vector polynomials.** Let $x, y \in \mathbb{C}^n$, and set
+$x_i = y_i = 0$ for $i \ge n$. For every natural number $k$, the coefficient of $X^k$ in the
+product of the polynomials of $x$ and $y$ is $\sum_{j=0}^{k} x_j y_{k-j}$. -/
 theorem fftPolynomial_mul_coeff {n : Nat} (xs ys : Vector ℂ n) (k : Nat) :
     (fftPolynomial xs * fftPolynomial ys).coeff k =
       ∑ j ∈ Finset.range (k + 1), xs.toArray.getD j 0 * ys.toArray.getD (k - j) 0 := by
@@ -79,7 +88,9 @@ theorem fftPolynomial_mul_coeff {n : Nat} (xs ys : Vector ℂ n) (k : Nat) :
   intro j _
   rw [fftPolynomial_coeff, fftPolynomial_coeff]
 
-/-- The final slot of the twice-sized output polynomial is zero. -/
+/-- **The last coefficient of a doubled-length product vanishes.** For every natural number $d$
+and all vectors $x, y \in \mathbb{C}^{2^d}$, the coefficient of $X^{2 \cdot 2^d - 1}$ in the
+product of the polynomials of $x$ and $y$ is $0$. -/
 theorem fftPolynomial_mul_last (d : Nat) (xs ys : Vector ℂ (2 ^ d)) :
     (fftPolynomial xs * fftPolynomial ys).coeff (2 * 2 ^ d - 1) = 0 := by
   rw [fftPolynomial_mul_coeff]
@@ -91,7 +102,9 @@ theorem fftPolynomial_mul_last (d : Nat) (xs ys : Vector ℂ (2 ^ d)) :
     rw [fft_sample_zero ys _ hsub, mul_zero]
   · rw [fft_sample_zero xs j (Nat.le_of_not_gt hj), zero_mul]
 
-/-- Every coefficient past the twice-sized output range is zero. -/
+/-- **Coefficients of a product beyond twice the length vanish.** For all vectors
+$x, y \in \mathbb{C}^n$ and every natural number $k \ge 2n$, the coefficient of $X^k$ in the
+product of the polynomials of $x$ and $y$ is $0$. -/
 theorem fftPolynomial_mul_coeff_eq_zero_of_two_mul_le {n : Nat}
     (xs ys : Vector ℂ n) (k : Nat) (hk : 2 * n ≤ k) :
     (fftPolynomial xs * fftPolynomial ys).coeff k = 0 := by
