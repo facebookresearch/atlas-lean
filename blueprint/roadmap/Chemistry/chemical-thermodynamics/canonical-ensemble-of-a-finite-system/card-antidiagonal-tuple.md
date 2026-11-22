@@ -1,4 +1,4 @@
 # Number of Einstein-solid microstates
 
-The Einstein-solid microstates form the `Finset` `Finset.Nat.antidiagonalTuple N q`, which
-has `(N + q - 1).choose q` elements.
+The Einstein-solid microstates, the `N`-tuples of natural numbers with sum `q`, form a finite set
+with `C(N + q - 1, q)` elements.

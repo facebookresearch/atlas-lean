@@ -1,7 +1,6 @@
 # At equal molar mass, effusion rates differ with temperature
 
-Non-claim: under the same model hypothesis, with `k₁ > 0` and `hk : k₁ = k₂`, gases
-of equal molar mass at different temperatures do not effuse at equal rates. As in
-`effusion_rate_ratio`, `hk` is the formal content of "same hole, same number density, molecular
-flow", since `k` packages the hole area, the number density and the flow regime, which the model
-does not resolve; the model holds `k` fixed as the temperature changes.
+Under the effusion model `rate = k * ⟨v⟩(T, M)`, with positive `R`, `M`, `T₁`, `T₂` and the same
+factor `k₁ = k₂ > 0` for both gases (same hole, same number density, molecular flow, with `k` held
+fixed as the temperature changes), gases of equal molar mass at different temperatures `T₁ ≠ T₂`
+effuse at different rates: `rate₁ ≠ rate₂`.

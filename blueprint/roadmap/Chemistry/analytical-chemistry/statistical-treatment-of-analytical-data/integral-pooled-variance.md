@@ -6,6 +6,5 @@ pairwise independent and identically distributed (common laws those of `X i0` an
 finite second moment, and the two variances are equal: `Var Y j0 = Var X i0`, the
 equal-variance model hypothesis. Then the pooled variance of the two samples is integrable and
 its expectation is the common variance. No normality and no independence between the two samples
-are needed: each sample variance is unbiased
-(`MathlibExt.Probability.integral_sampleVariance_of_pairwise_iid_fin`), and the pooled variance
-is their weighted average (`pooledVariance_eq_weighted`).
+are needed: each sample variance is unbiased, and the pooled variance is
+[their weighted average](pooled-variance-eq-weighted.md).

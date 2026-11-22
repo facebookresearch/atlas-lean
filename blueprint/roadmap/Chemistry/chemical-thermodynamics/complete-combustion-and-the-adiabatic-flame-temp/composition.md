@@ -1,4 +1,4 @@
 # Composition matrix of the combustion species
 
-Composition matrix: `composition b s` is the number of atoms of the element `b` in one
-molecule of the species `s`.
+Composition matrix: its entry for the element `b` and the species `s` is the number of atoms of `b`
+in one molecule of `s`.

@@ -1,3 +1,4 @@
 # Strict pointwise bound underlying Gibbs' inequality
 
-The bound `mul_log_div_le_sub` is strict for `p ≠ q`, from `log x < x - 1` for `x ≠ 1`.
+For `0 ≤ p`, `0 < q` and `p ≠ q`, the [pointwise bound](mul-log-div-le-sub.md) is strict:
+`p * log (q / p) < q - p`, from `log x < x - 1` for `x ≠ 1`.

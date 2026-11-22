@@ -1,6 +1,6 @@
 # Molecular symmetry and vibrational modes
 
-## E.1. Translations, rotations and the internal-mode space
+## Translations, rotations and the internal-mode space
 
 - [Centre of mass](centre-of-mass.md)
 - [Rigid-translation map](translation-map.md)
@@ -22,14 +22,14 @@
 - [The 3N − 5 rule for linear molecules](finrank-internal-mode-space-of-collinear.md)
 - [The 3N − 5 rule for configurations spanning a line](finrank-internal-mode-space-of-finrank-v.md)
 
-## E.2. The point-group action and the internal-mode representation
+## The point-group action and the internal-mode representation
 
 - [Cartesian displacement representation](displacement-representation.md)
 - [Rigid translations transform like x, y, z](displacement-representation-translation.md)
 - [Rigid rotations transform like an axial vector](displacement-representation-rotation-map.md)
 - [Internal-mode representation of a point group](internal-mode-representation.md)
 
-## F. IR and Raman activity
+## IR and Raman activity
 
 - [Cartesian matrices of a point group](cartesian-matrix.md)
 - [Vector representation of a point group](vector-representation.md)
@@ -45,7 +45,7 @@
 - [IR activity in the dipole model](is-iractive.md)
 - [Raman activity in the polarizability model](is-raman-active.md)
 
-## G. Worked example: the inversion group `Ci`
+## Worked example: the inversion group Ci
 
 - [Inversion point group Ci](inversion-action.md)
 - [Gerade irreducible representation Ag of Ci](inversion-ag.md)

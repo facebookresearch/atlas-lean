@@ -1,4 +1,4 @@
 # Euler relation for the ideal gas
 
-The ideal gas satisfies the Euler relation `U = TS - pV + μN`: `euler_relation` for
-`idealGas`, stated with componentwise positivity.
+For `U, V, N > 0` and `kB > 0`, the ideal gas satisfies the Euler relation `U = TS - pV + μN`: the
+[Euler relation](euler-relation.md) for the [ideal gas as a fundamental relation](ideal-gas.md).

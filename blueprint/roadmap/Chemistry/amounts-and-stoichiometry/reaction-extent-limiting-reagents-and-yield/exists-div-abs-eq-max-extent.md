@@ -1,4 +1,4 @@
-# Attainment
+# Some consumed species attains the maximal forward extent
 
-Some consumed species has ratio `n₀ i / |ν i|` equal to
-`maxExtent ν n₀ h`.
+If the reaction consumes some species, some consumed species `i` has ratio `n₀ i / |ν i|` equal
+to the [maximal forward extent](max-extent.md) `ξ_max`.

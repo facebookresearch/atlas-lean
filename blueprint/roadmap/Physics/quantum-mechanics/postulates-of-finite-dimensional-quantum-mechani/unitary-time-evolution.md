@@ -1,8 +1,6 @@
 # Time evolution by a Hermitian Hamiltonian is unitary
 
-For a Hermitian Hamiltonian `H`, real time `t`, and real
-`ħ ≠ 0`, the propagator `exp (-(t / ħ) • (I • H))`, i.e. `exp (-i H t / ħ)`, is unitary. The
-exponent is skew-Hermitian, and Mathlib's `NormedSpace.exp_mem_unitary_of_mem_skewAdjoint`
-applies; the norm used is the `L²` operator norm on matrices, under which `Matrix n n ℂ` is a
-complete normed ring with continuous `star`, with the `ℚ`-algebra structure restricted from `ℂ`.
-The hypothesis `ħ ≠ 0` belongs to the physical statement; the proof does not use it.
+For a Hermitian Hamiltonian `H`, real time `t`, and real `ħ ≠ 0`, the propagator
+`exp (-(t / ħ) • (i • H))`, i.e. `exp (-i H t / ħ)`, is unitary: the exponent is skew-Hermitian, and
+the exponential of a skew-Hermitian matrix is unitary. The condition `ħ ≠ 0` is needed only for the
+physical reading.

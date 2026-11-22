@@ -1,4 +1,4 @@
-# Formation count
+# Dimension of the space of formation reactions
 
-With `S = Fintype.card ι` species, the formation reactions form a space
-of dimension `S` minus the rank of the balance matrix.
+With `S` species, the formation reactions form a space of dimension `S` minus the rank of the
+balance matrix.

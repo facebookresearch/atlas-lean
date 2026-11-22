@@ -1,7 +1,7 @@
 # Engine efficiency is at most the Carnot efficiency
 
-The second-law bound: any engine between reservoirs at `0 < Tc ≤ Th`, with heat absorbed
-`Qh`, heat rejected `Qc`, work `W = Qh - Qc` (first law) and the Clausius inequality
-`Qh / Th - Qc / Tc ≤ 0` as the second-law input, satisfies
-`W / Qh ≤ carnotEfficiency Tc Th`. The Clausius inequality is a model hypothesis, not a
-derived theorem.
+The second-law bound: any engine between reservoirs at `0 < Tc ≤ Th`, absorbing heat `Qh > 0`,
+rejecting heat `Qc`, with work `W = Qh - Qc` (first law) and the Clausius inequality
+`Qh / Th - Qc / Tc ≤ 0`, satisfies `W / Qh ≤ 1 - Tc / Th`, the [Carnot
+efficiency](carnot-efficiency.md). The Clausius inequality enters as a hypothesis, the second-law
+input.

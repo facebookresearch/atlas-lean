@@ -1,13 +1,13 @@
 # Charge balance, mass balance and the proton condition
 
-## A. Charge and mass balances
+## Charge and mass balances
 
 - [Charge balance of a solution](charge-balanced.md)
 - [Component mass balances](mass-balanced.md)
 - [Homogeneous mass balances](hom-mass-balanced.md)
 - [Mass balance as a matrix equation](mass-balanced-iff-mul-vec.md)
 
-## B. Linearity in the concentrations
+## Linearity in the concentrations
 
 - [Charge balance is closed under addition](add.md)
 - [Charge balance is closed under scaling](smul.md)
@@ -15,11 +15,11 @@
 - [Homogeneous mass balances are closed under addition](add-2.md)
 - [Homogeneous mass balances are closed under scaling](smul-2.md)
 - [Zero concentrations satisfy the homogeneous mass balances](zero-2.md)
-- [Differences of solutions satisfy the homogeneous balances](sub.md)
+- [Differences of solutions satisfy the homogeneous mass balances](sub.md)
 - [Both homogeneous balances are closed under addition](balances-add.md)
 - [Both homogeneous balances are closed under scaling](balances-smul.md)
 
-## C. The proton condition
+## The proton condition
 
 - [Linear combination of the balance equations](balance-combination.md)
 - [A combination of the balances gives the combined totals](sum-balance-combination-mul-eq.md)
@@ -32,13 +32,13 @@
 - [Hydroxide has proton excess minus one](proton-excess-hydroxide.md)
 - [The proton excess counts protons](proton-excess-eq-of-content.md)
 - [The proton-excess sum equals the weighted totals](sum-proton-excess-mul-eq.md)
-- [Proton condition](proton-condition-of-balances.md)
+- [Charge and mass balances imply the proton condition](proton-condition-of-balances.md)
 - [An electroneutral zero-level recipe has zero weighted total](weighted-total-eq-zero-of-recipe.md)
 - [Proton condition from the recipe](proton-condition-of-recipe.md)
 - [Textbook form of the proton condition](proton-condition-iff.md)
 - [Hydronium alone violates the proton condition](not-proton-condition-single-hydronium.md)
 
-## D. The formation-equilibrium count
+## The formation-equilibrium count
 
 - [Balance matrix of components and charge](balance-matrix.md)
 - [Charge row of the balance matrix](balance-matrix-none.md)
@@ -47,10 +47,10 @@
 - [Balanced reactions as solutions of the homogeneous balances](is-balanced-balance-matrix-iff-balances.md)
 - [Number of independent formation reactions](independent-formation-count.md)
 - [Formation reactions are the balanced reactions](mem-ker-balance-matrix-iff.md)
-- [Formation count](independent-formation-count-eq.md)
+- [Dimension of the space of formation reactions](independent-formation-count-eq.md)
 - [Formation count with charged components](independent-formation-count-eq-of-charge.md)
 
-## E. Change of component basis
+## Change of component basis
 
 - [A concentration balances in either component basis](mass-balanced-basis-change-iff.md)
 - [Basis invariance of the mass balances](solution-set-basis-change.md)

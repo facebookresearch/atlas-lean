@@ -1,3 +1,6 @@
-# Exact differentials have zero loop integral
+# An exact differential has zero integral around a rectangle
 
-The loop integral of an exact energy differential vanishes (path independence).
+Let `U(V, T)` have derivative `P(V, T)` in `V` at every `V` between `V₁` and `V₂` on the edges
+`T = T₁` and `T = T₂`, and derivative `Q(V, T)` in `T` at every `T` between `T₁` and `T₂` on the
+edges `V = V₁` and `V = V₂`, with `P` and `Q` integrable along these edges. Then the integral of the
+exact differential `dU = P dV + Q dT` around the rectangle `[V₁, V₂] × [T₁, T₂]` vanishes.

@@ -1,6 +1,6 @@
 # Angular momentum, rigid rotor and hydrogen-like atom
 
-## A. Angular-momentum matrices
+## Angular-momentum matrices
 
 - [Zero angular-momentum matrix for l = 0](l-zero-l.md)
 - [Spin-1/2 matrix Jx](spin-half-jx.md)
@@ -16,14 +16,14 @@
 - [Commutation relations for l = 1](l-one-commutators.md)
 - [Casimir L² = 2ħ² for l = 1](l-one-casimir.md)
 
-## B. Irreducibility
+## Irreducibility
 
 - [The l = 0 representation is irreducible](l-zero-irreducible.md)
 - [The spin-1/2 representation is irreducible](spin-half-irreducible.md)
 - [The l = 1 representation is irreducible](l-one-irreducible.md)
 - [Representation dimensions 2l + 1 for l = 0, 1/2, 1](angular-momentum-rep-dimensions.md)
 
-## C. Rigid rotor and spherical harmonics
+## Rigid rotor and spherical harmonics
 
 - [Rigid-rotor energy levels](rigid-rotor-energy.md)
 - [Spherical harmonic Y₀₀](spherical-harmonic00.md)
@@ -34,7 +34,7 @@
 - [Value of Y₁₀ at the north pole](spherical-harmonic10-at-pole.md)
 - [Rigid-rotor energy of the J = 1 level](rigid-rotor-energy-l1.md)
 
-## D. Hydrogen-like atom
+## Hydrogen-like atom
 
 - [Hydrogen 1s radial function](hydrogen-radial10.md)
 - [Explicit derivative of the 1s radial function](hydrogen-radial10-2.md)
@@ -57,11 +57,11 @@
 - [First and second derivatives of the 1s radial function](hydrogen-radial-deriv-1s.md)
 - [First and second derivatives of the 2s radial function](hydrogen-radial-deriv-2s.md)
 - [First and second derivatives of the 2p radial function](hydrogen-radial-deriv-2p.md)
-- [Rydberg wavenumbers are positive for n₁ < n₂](rydberg-wavenumber-pos.md)
-- [Hydrogen energy levels agree with the general definition](energy-level-eq-hydrogen-energy.md)
+- [Rydberg wavenumbers are positive for n₁ < n₂ if R > 0 and Z ≠ 0](rydberg-wavenumber-pos.md)
+- [Three-dimensional Bohr levels are the hydrogen-like levels with Z = 1](energy-level-eq-hydrogen-energy.md)
 - [Rydberg formula for inverse transition wavelengths](wavelength-inv-eq-rydberg-wavenumber.md)
 
-## E. Shell capacity and Hund's rule
+## Shell capacity and Hund's rule
 
 - [Number of unpaired electrons by Hund's rule](hund-unpaired.md)
 - [Capacity of the first N principal shells](principal-shells-capacity.md)

@@ -1,3 +1,4 @@
 # Log partition function is differentiable with derivative −U
 
-`d(log Z)/dβ = -U`, as a `HasDerivAt` statement.
+For a nonempty finite system, `log Z` is differentiable at every `β`, with derivative
+`d(log Z)/dβ = -U`.

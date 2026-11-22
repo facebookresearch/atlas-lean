@@ -1,3 +1,3 @@
 # Ideal-gas entropy is differentiable in energy
 
-The ideal-gas `U`-slice is differentiable.
+For `U > 0` and `N > 0` (and any `V`), the ideal-gas entropy is differentiable in `U`.

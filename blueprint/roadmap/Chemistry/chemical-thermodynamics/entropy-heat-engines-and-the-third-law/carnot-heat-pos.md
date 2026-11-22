@@ -1,5 +1,4 @@
 # An isothermal expansion leg absorbs positive heat
 
-An isothermal leg with heat `Q = n * R * T * log (V₂ / V₁)` absorbs positive heat
-for an expansion leg: `0 < Q` needs `V₁ < V₂`. Applied to the hot leg (`V₁ < V₂`) and the
-cold leg (`V₄ < V₃`, with the rejected heat counted positive).
+For `n`, `R`, `T`, `V₁ > 0` and `V₁ < V₂`, the heat `Q = n * R * T * log (V₂ / V₁)` of an isothermal
+expansion leg is positive.

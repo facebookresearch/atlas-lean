@@ -1,3 +1,4 @@
 # Half-life of a first-order reaction
 
-First-order half-life: `ln 2 / k`, from `CompartmentKinetics.amount_bolus_add_halfLife`.
+For `k > 0` and `[A]₀ > 0`, the first-order solution at `t = ln 2 / k` is `[A]₀ / 2`: the half-life
+is `ln 2 / k`.

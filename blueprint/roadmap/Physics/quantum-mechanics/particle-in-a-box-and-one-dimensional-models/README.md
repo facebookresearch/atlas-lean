@@ -1,6 +1,6 @@
 # Particle in a box and one-dimensional models
 
-## Section A: particle in a box.
+## Particle in a box
 
 - [Particle-in-a-box eigenfunctions](box-function.md)
 - [Particle-in-a-box energy levels](box-energy.md)
@@ -17,7 +17,7 @@
 - [Distinct box states are orthogonal](box-orthonormality-offdiag.md)
 - [Orthonormality of the box states](box-orthonormality.md)
 
-## Section B: harmonic oscillator (low-lying states).
+## Harmonic oscillator (low-lying states)
 
 - [Oscillator ground-state normalization constant](osc-c0.md)
 - [Harmonic-oscillator ground state](osc-fun0.md)
@@ -37,7 +37,7 @@
 - [Oscillator states 2 and 1 are orthogonal](osc-orthonormality-21.md)
 - [Oscillator state 2 is normalized](osc-orthonormality-22.md)
 
-## Section C: ladder operators on Schwartz space; box moments.
+## Ladder operators on Schwartz space; box moments
 
 - [Schwartz-class functions on the line](schwartz-carrier.md)
 - [Annihilation operator as a differential expression](ann-fun.md)
@@ -52,7 +52,7 @@
 - [Mean position in a box state is L/2](box-moment-x.md)
 - [Mean square position in a box state](box-moment-x2.md)
 
-## Section D: free-electron polyene model.
+## Free-electron polyene model
 
 - [Free-electron box length of a polyene](polyene-length.md)
 - [Free-electron HOMO–LUMO gap of a polyene](polyene-gap.md)

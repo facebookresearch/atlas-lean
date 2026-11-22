@@ -1,3 +1,3 @@
 # Temperature of the ideal gas
 
-Ideal-gas temperature: `T = 2U / (3NkB)`.
+For `U > 0`, `N > 0` and `kB > 0`, the ideal-gas temperature is `T = 2U / (3NkB)`.

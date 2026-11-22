@@ -1,5 +1,4 @@
 # The predicted concentration lies on the fitted line
 
-The exact algebraic identity for inverse prediction: `b * x₀ + a = y₀` for `b ≠ 0`. This
-is definition unfolding, kept separate so the first-order uncertainty formula below is never
-confused with the definition.
+The exact algebraic identity for inverse prediction: for `b ≠ 0`, the predicted concentration
+`x₀ = (y₀ - a) / b` satisfies `b * x₀ + a = y₀`.

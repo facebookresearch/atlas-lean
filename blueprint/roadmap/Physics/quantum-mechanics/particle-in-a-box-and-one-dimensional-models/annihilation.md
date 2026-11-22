@@ -1,5 +1,5 @@
 # Annihilation operator on Schwartz space
 
-Annihilation operator as an `OperatorWithDomain` record, with the Schwartz
-carrier as its domain. Its values lie in the Schwartz carrier (`annFun_mem_schwartzCarrier`),
-so it composes with `creation` (`annihilation_creation_commutator`).
+The annihilation operator `a f = (x * f + f') / √2` (units `ħ = m = ω = 1`) on the Schwartz space of
+functions `ℝ → ℂ`, which it maps into itself, so it composes with the
+[creation operator](creation.md).

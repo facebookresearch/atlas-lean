@@ -1,4 +1,5 @@
 # Numerical value after a change of units
 
-The numerical value in the new units, `unitFactor u₁ u₂ d * x`, of a quantity of dimension
-`d` with numerical value `x` in the old units. The dimension `d` is unchanged.
+The numerical value `c * x` in the new units `u₂` of a quantity of dimension `d` with numerical
+value `x` in the old units `u₁`, where `c` is the [unit factor](unit-factor.md) of `d` from `u₁` to
+`u₂`. The dimension `d` is unchanged.

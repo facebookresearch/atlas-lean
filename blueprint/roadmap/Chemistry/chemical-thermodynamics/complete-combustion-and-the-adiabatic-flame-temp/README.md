@@ -1,6 +1,6 @@
 # Complete combustion and the adiabatic flame temperature
 
-## A. Species, composition and the reaction
+## Species, composition and the reaction
 
 - [Species of methane combustion with an inert diluent](species.md)
 - [Elements C, H, O and N as balance coordinates](element.md)
@@ -12,7 +12,7 @@
 - [Element conservation at every extent](composition-mul-vec-add-smul.md)
 - [The inert nitrogen amount is unchanged](inert-amount-unchanged.md)
 
-## B. Feasible extents and complete combustion
+## Feasible extents and complete combustion
 
 - [Maximal extent of methane combustion](max-extent-methane-combustion.md)
 - [Feasible forward extents of methane combustion](forward-feasible-extents-methane-combust.md)
@@ -22,11 +22,11 @@
 - [Oxygen is limiting when at most twice the methane](is-limiting-reagent-o2.md)
 - [Maximal extent in the oxygen-limited case](oxygen-limited-max-extent.md)
 
-## C. Reference-state invariance of the reaction enthalpy
+## Reference-state invariance of the reaction enthalpy
 
 - [Methane combustion enthalpy is reference-state invariant](reaction-enthalpy-shift-methane-combusti.md)
 
-## D. The adiabatic enthalpy residual
+## The adiabatic enthalpy residual
 
 - [Adiabatic enthalpy residual](enthalpy-residual.md)
 - [Total heat capacity of the products](total-heat-capacity.md)
@@ -38,7 +38,7 @@
 - [Reference-state invariance of the enthalpy residual](enthalpy-residual-shift-of-is-balanced.md)
 - [Enthalpy residual for constant heat capacities](enthalpy-residual-of-constant-cp.md)
 
-## E. Positive total heat capacity and the unique adiabatic temperature
+## Positive total heat capacity and the unique adiabatic temperature
 
 - [The total heat capacity is positive](total-heat-capacity-pos.md)
 - [Feasible products have positive total heat capacity](total-heat-capacity-pos-of-mem-forward-f.md)

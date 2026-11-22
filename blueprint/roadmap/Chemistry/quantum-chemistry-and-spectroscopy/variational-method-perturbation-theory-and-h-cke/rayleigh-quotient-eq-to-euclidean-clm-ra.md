@@ -1,4 +1,5 @@
 # Rayleigh quotient agrees with the operator definition
 
-Bridge to Mathlib: `rayleighQuotient H x` is Mathlib's `ContinuousLinearMap.rayleighQuotient`
-of the operator `Matrix.toEuclideanCLM H` at `WithLp.toLp 2 x`.
+For a real `n × n` matrix `H` and `x ∈ ℝⁿ`, `xᵀ H x / xᵀ x = ⟨H x, x⟩ / ‖x‖²`: the Rayleigh quotient
+of the matrix is the Rayleigh quotient of the operator `x ↦ H x` on `ℝⁿ` with the Euclidean inner
+product. Both sides are `0` at `x = 0`.

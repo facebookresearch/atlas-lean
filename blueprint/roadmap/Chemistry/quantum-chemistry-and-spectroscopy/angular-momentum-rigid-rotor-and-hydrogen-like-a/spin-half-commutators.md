@@ -1,5 +1,5 @@
 # Commutation relations for spin 1/2
 
-Spin-1/2 angular-momentum commutators `[Jx, Jy] = i * hbar * Jz` (and cyclic), from
-Physlib's Pauli commutators `PauliMatrix.σ1_σ2_commutator`, `PauliMatrix.σ2_σ3_commutator`
-and `PauliMatrix.σ3_σ1_commutator`.
+Spin-1/2 angular-momentum commutators: `[Jx, Jy] = i * hbar * Jz`, `[Jy, Jz] = i * hbar * Jx` and
+`[Jz, Jx] = i * hbar * Jy`, where `[A, B] = A * B - B * A`; they follow from the Pauli commutators
+`[σ₁, σ₂] = 2 * i * σ₃` and its cyclic permutations.

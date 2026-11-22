@@ -1,4 +1,4 @@
-# Molecular formula
+# A formula proportional to a primitive p with molar mass k·M(p) is k·p
 
 Let `p` be a primitive formula with molar mass `M_emp > 0`, and let
 `ν` be a formula vector proportional to `p` over `ℚ`, of molar mass `M`. If `M = k * M_emp` for a

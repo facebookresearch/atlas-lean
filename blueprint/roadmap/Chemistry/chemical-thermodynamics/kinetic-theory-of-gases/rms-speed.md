@@ -1,4 +1,5 @@
 # Root-mean-square speed
 
-Root-mean-square speed `v_rms = √(∫ v in Ioi 0, v ^ 2 * mbSpeed R T M v)`, defined
-from the integral; its closed form is `rmsSpeed_eq`. It is new because `mbSpeed` is.
+Root-mean-square speed `v_rms = √(∫₀^∞ v ^ 2 * f(v) dv)` for the [Maxwell–Boltzmann speed
+density](mb-speed.md) `f`, defined from the integral; its [closed form](rms-speed-eq.md) is
+`√(3 * R * T / M)` for `R, T, M > 0`.

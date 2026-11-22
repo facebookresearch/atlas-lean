@@ -1,10 +1,12 @@
 # Kinetic theory of gases
 
+## Maxwell–Boltzmann speed density
+
 - [Maxwell–Boltzmann speed distribution](mb-speed.md)
 - [The Maxwell–Boltzmann speed density is nonnegative](mb-speed-nonneg.md)
 - [Normalization of the Maxwell–Boltzmann speed density](integral-mb-speed.md)
 
-## B. Characteristic speeds
+## Characteristic speeds
 
 - [Mean molecular speed](mean-speed.md)
 - [Root-mean-square speed](rms-speed.md)
@@ -18,7 +20,7 @@
 - [Most probable speed is below the mean speed](most-probable-speed-lt-mean-speed.md)
 - [Mean speed is below the root-mean-square speed](mean-speed-lt-rms-speed.md)
 
-## C. Pressure from momentum flux
+## Pressure from momentum flux
 
 - [Kinetic pressure on a wall](wall-pressure.md)
 - [Mean square speed under isotropy](expect-speed-sq-of-isotropy.md)
@@ -26,7 +28,7 @@
 - [Kinetic pressure law yields the ideal-gas law](wall-pressure-mul-volume-of-kinetic-ener.md)
 - [Molar ideal-gas law from kinetic theory](wall-pressure-mul-volume-molar.md)
 
-## D. Effusion
+## Effusion
 
 - [Effusion rate at fixed number density scales as √(T/M)](effusion-rate-eq.md)
 - [Graham's law of effusion](effusion-rate-ratio.md)

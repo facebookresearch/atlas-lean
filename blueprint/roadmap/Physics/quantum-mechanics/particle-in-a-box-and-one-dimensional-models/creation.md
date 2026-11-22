@@ -1,4 +1,4 @@
 # Creation operator on Schwartz space
 
-Creation operator as an `OperatorWithDomain` record, like `annihilation`; its values lie in
-the Schwartz carrier by `creFun_mem_schwartzCarrier`.
+The creation operator `a† f = (x * f - f') / √2` (units `ħ = m = ω = 1`) on the Schwartz space of
+functions `ℝ → ℂ`, which it maps into itself.

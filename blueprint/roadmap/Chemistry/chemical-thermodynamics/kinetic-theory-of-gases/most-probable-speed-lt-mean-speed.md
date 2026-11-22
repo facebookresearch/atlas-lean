@@ -1,3 +1,3 @@
 # Most probable speed is below the mean speed
 
-Ordering `v_mp < ⟨v⟩`: `2 < 8 / π` by `Real.pi_lt_four`.
+For `R, T, M > 0`, `v_mp < ⟨v⟩`, since `2 < 8 / π` (as `π < 4`).

@@ -1,5 +1,5 @@
 # The most probable speed is the unique maximizer
 
-The most probable speed is the unique maximizer of the Maxwell-Boltzmann density on
-`[0, ∞)`: for `0 ≤ w`, `w` maximizes `mbSpeed R T M` on `Set.Ici 0` iff
-`w = mostProbableSpeed R T M`.
+For `R, T, M > 0`, the most probable speed is the unique maximizer of the [Maxwell–Boltzmann speed
+density](mb-speed.md) `f` on `[0, ∞)`: for `w ≥ 0`, `w` maximizes `f` on `[0, ∞)` iff
+`w = v_mp = √(2 * R * T / M)`.

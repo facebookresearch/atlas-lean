@@ -1,5 +1,7 @@
 # Analytical calibration and inverse prediction
 
+## Gauss-Markov unbiasedness and BLUE
+
 - [Expectation of an affine map of mean-zero errors](expectation-const-add-mul-vec.md)
 - [Unbiasedness of OLS](expectation-ols-estimator-calibration.md)
 - [Unbiasedness of a linear estimator](expectation-linear-unbiased-calibration.md)
@@ -7,7 +9,7 @@
 - [Covariance minimality of OLS](calibration-covariance-minimality.md)
 - [Gauss-Markov: OLS is BLUE](calibration-blue.md)
 
-## B. Inverse prediction and first-order uncertainty
+## Inverse prediction and first-order uncertainty
 
 - [Inverse prediction from a fitted calibration line](inverse-prediction.md)
 - [The predicted concentration lies on the fitted line](inverse-prediction-mul.md)
@@ -25,7 +27,7 @@
 - [First-order uncertainty of inverse prediction](inverse-prediction-linearized-variance-f.md)
 - [First-order uncertainty of inverse prediction, uncorrelated inputs](inverse-prediction-linearized-variance-f-2.md)
 
-## C. Standard addition and internal standard
+## Standard addition and internal standard
 
 - [Unknown concentration by standard addition](standard-addition-unknown.md)
 - [Standard addition recovers the unknown with an explicit blank](standard-addition-unknown-eq.md)

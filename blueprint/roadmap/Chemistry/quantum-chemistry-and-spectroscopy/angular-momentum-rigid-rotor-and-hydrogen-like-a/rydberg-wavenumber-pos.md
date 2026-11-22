@@ -1,4 +1,4 @@
-# Rydberg wavenumbers are positive for n₁ < n₂
+# Rydberg wavenumbers are positive for n₁ < n₂ if R > 0 and Z ≠ 0
 
-Rydberg lines are positive for `n1 < n2` (emission, `n2 -> n1`); compare Physlib's
-`QuantumMechanics.HydrogenAtom.transitionFrequency_pos`.
+For `R > 0` and `Z ≠ 0`, the Rydberg wavenumber `R * Z ^ 2 * (1 / n1 ^ 2 - 1 / n2 ^ 2)` is positive
+whenever `n1 < n2`: emission lines `n2 → n1` have positive wavenumber.

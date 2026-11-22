@@ -1,5 +1,6 @@
 # Mixing-matrix eigenvalues sum to the trace
 
-Trace matching: the two eigenvalues of `abMixingMatrix` sum to `νA + νB`. Together with
-`ab_eigen_prod` this is the provable form of `(X - λ₁)(X - λ₂)` equaling the
-characteristic polynomial for the 2x2 case.
+Trace matching: the eigenvalues `λ₊`, `λ₋` of the mixing matrix `M = [[νA, J / 2], [J / 2, νB]]`,
+`λ± = (νA + νB) / 2 ± (1 / 2) * √((νA - νB) ^ 2 + J ^ 2)`, sum to its trace `νA + νB`. With
+[the product of the eigenvalues](ab-eigen-prod.md), this shows that `(X - λ₊)(X - λ₋)` is the
+characteristic polynomial of `M`.

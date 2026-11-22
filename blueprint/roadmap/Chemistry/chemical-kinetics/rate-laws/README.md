@@ -1,6 +1,6 @@
 # Rate laws
 
-## A. Extent-rate convention
+## Extent-rate convention
 
 - [Positive reactor volume](reactor-volume.md)
 - [Volumetric rate of reaction](extent-rate.md)
@@ -14,7 +14,7 @@
 - [Differential equation of the second-order law 2A → P](rate-law-second-aa-ode.md)
 - [Differential equations of the second-order law A + B → P](rate-law-second-ab-ode.md)
 
-## B. Order 0
+## Order 0
 
 - [Integrated zero-order rate law](zero-order-sol.md)
 - [The zero-order solution satisfies its rate equation](has-deriv-at-zero-order-sol.md)
@@ -27,7 +27,7 @@
 - [Half-life of a zero-order reaction](zero-order-sol-half-life.md)
 - [Uniqueness of the zero-order half-life](zero-order-sol-half-life-unique.md)
 
-## C. Order 1
+## Order 1
 
 - [Integrated first-order rate law](first-order-sol.md)
 - [First-order decay as a one-compartment bolus](first-order-sol-eq-amount.md)
@@ -38,7 +38,7 @@
 - [Half-life of a first-order reaction](first-order-sol-half-life.md)
 - [Uniqueness of the first-order half-life](first-order-sol-half-life-unique.md)
 
-## D. Order 2: single reactant and `2A → P`
+## Order 2: single reactant and `2A → P`
 
 - [Uniqueness for the general second-order rate equation](second-order-gen-unique.md)
 - [Integrated second-order law for 2A → P](second-order-aasol.md)
@@ -50,7 +50,7 @@
 - [Half-life of a 2A → P reaction](second-order-aasol-half-life.md)
 - [Uniqueness of the 2A → P half-life](second-order-aasol-half-life-unique.md)
 
-## E. Order 2: `A + B → P`
+## Order 2: `A + B → P`
 
 - [Integrated A + B → P law for A, unequal amounts](second-order-absol-a.md)
 - [Integrated A + B → P law for B, unequal amounts](second-order-absol-b.md)
@@ -72,7 +72,7 @@
 - [Uniqueness of the A + B solution for equal amounts](second-order-abequal-sol-unique.md)
 - [Half-life of an A + B → P reaction with equal amounts](second-order-abequal-sol-half-life.md)
 
-## F. Half-lives
+## Half-lives
 
 - [Rate-law models with a closed-form half-life](rate-model.md)
 - [Reaction order of each rate-law model](order.md)
@@ -81,7 +81,7 @@
 - [Each model's half-life halves the concentration](half-life-correct.md)
 - [The half-life is independent of A₀ exactly at first order](half-life-indep-iff-first-order.md)
 
-## G. Scalar rate group
+## Scalar rate group
 
 - [Scalar rate group of an order-n rate law](rate-group.md)
 - [Rate group at order zero](rate-group-zero.md)
@@ -92,7 +92,7 @@
 - [The 2A → P solution in terms of the rate group](second-order-aasol-rate-group.md)
 - [The zero-order solution in terms of the rate group](zero-order-sol-rate-group.md)
 
-## H. Pseudo-first-order approximation
+## Pseudo-first-order approximation
 
 - [Observed pseudo-first-order rate constant](pfo-rate-const.md)
 - [Pseudo-first-order approximation](pfo-sol.md)

@@ -1,4 +1,4 @@
 # The A + B solution for A stays positive
 
-The `A + B` solution for `[A]` stays positive for `t ≥ 0` when `[A]₀ > 0` and the initial
-amounts differ: numerator and denominator both have the sign of `[B]₀ - [A]₀`.
+For `t ≥ 0`, `k > 0`, `[A]₀ > 0` and `[A]₀ ≠ [B]₀`, the `A + B` solution for `A` is positive:
+numerator and denominator both have the sign of `[B]₀ - [A]₀`.

@@ -1,5 +1,7 @@
 # Statistical treatment of analytical data
 
+## Sample mean, variance, and standard deviation
+
 - [The mean of a constant sample is the constant](sample-mean-const.md)
 - [The sample variance is nonnegative](sample-var-unbiased-nonneg.md)
 - [A constant sample has zero sample variance](sample-var-unbiased-const.md)
@@ -9,7 +11,7 @@
 - [A constant sample has zero standard deviation](sample-std-dev-const.md)
 - [Agreement with the random-variable sample standard deviation](sample-std-dev-eq-of-seq.md)
 
-## B. t-intervals and their exact coverage
+## t-intervals and their exact coverage
 
 - [Half-width of a t-interval](t-half-width.md)
 - [The t-interval half-width is nonnegative](t-half-width-nonneg.md)
@@ -18,14 +20,14 @@
 - [Agreement with the random-variable t-interval](student-tinterval-eq-t-interval.md)
 - [Exact coverage of the two-sided t-interval](t-interval-coverage.md)
 
-## C. Pooled variance and two-sample statistics
+## Pooled variance and two-sample statistics
 
 - [Pooled variance as a weighted average of sample variances](pooled-variance-eq-weighted.md)
 - [The pooled variance is nonnegative](pooled-variance-nonneg.md)
 - [The pooled variance is unbiased under the equal-variance model](integral-pooled-variance.md)
 - [The variance ratio is nonnegative](variance-ratio-nonneg.md)
 
-## D. Outlier procedures: Dixon Q and Grubbs
+## Outlier procedures: Dixon Q and Grubbs
 
 - [Range of a sample](sample-range.md)
 - [The sample range is nonnegative](sample-range-nonneg.md)
@@ -51,7 +53,7 @@
 - [Grubbs' test rejects nothing below three observations](not-grubbs-reject-of-lt-three.md)
 - [Grubbs' test rejects nothing in a sample without spread](not-grubbs-reject-of-sd-zero.md)
 
-## E. Multiplicity adjustment and detection limits
+## Multiplicity adjustment and detection limits
 
 - [Bonferroni-adjusted significance level](bonferroni-level.md)
 - [The Bonferroni level is nonnegative](bonferroni-level-nonneg.md)

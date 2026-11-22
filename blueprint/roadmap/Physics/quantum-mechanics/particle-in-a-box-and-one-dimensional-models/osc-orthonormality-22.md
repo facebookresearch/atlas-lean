@@ -1,5 +1,4 @@
 # Oscillator state 2 is normalized
 
-Oscillator `(2, 2)` orthonormality from the zeroth, second, and
-fourth Gaussian moments (this diagonal pins the `(1/√2) * oscC0`
-normalization).
+The second excited oscillator state is normalized: `∫_ℝ ψ_2(x) * ψ_2(x) dx = 1`, from the zeroth,
+second and fourth Gaussian moments; this fixes the factor `(1/√2) * π^(-1/4)` of `ψ_2`.

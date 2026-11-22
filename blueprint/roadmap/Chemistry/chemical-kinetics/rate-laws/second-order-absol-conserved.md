@@ -1,4 +1,5 @@
 # The explicit A + B pair keeps the concentration difference
 
-By construction of `secondOrderABSolB`, the explicit pair keeps `[B] - [A] = [B]₀ - [A]₀`;
-`ab_conservation` proves this for every solution pair.
+The explicit solutions for `A` and `B` keep `c_B(t) - c_A(t) = [B]₀ - [A]₀` at every `t`, since
+`c_B` is defined as `c_A + ([B]₀ - [A]₀)`; [every solution pair](ab-conservation.md) conserves the
+difference.

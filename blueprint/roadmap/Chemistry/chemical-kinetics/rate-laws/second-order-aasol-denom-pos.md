@@ -1,3 +1,3 @@
 # The 2A → P denominator stays positive
 
-The `2A → P` denominator stays positive for `t ≥ 0`.
+For `t ≥ 0`, `k > 0` and `[A]₀ > 0`, the `2A → P` denominator `1 + 2k[A]₀t` is positive.

@@ -1,3 +1,3 @@
 # Ideal-gas entropy is differentiable in particle number
 
-The ideal-gas `N`-slice is differentiable.
+For `U > 0`, `V > 0` and `N > 0`, the ideal-gas entropy is differentiable in `N`.

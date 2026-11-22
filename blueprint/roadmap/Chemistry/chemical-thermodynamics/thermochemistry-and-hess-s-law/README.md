@@ -1,6 +1,6 @@
 # Thermochemistry and Hess's law
 
-## A. Reaction enthalpy as a linear functional (Hess's law)
+## Reaction enthalpy as a linear functional (Hess's law)
 
 - [Reaction enthalpy as a linear functional](reaction-enthalpy.md)
 - [Reaction enthalpy as a coefficient-weighted sum](reaction-enthalpy-apply.md)
@@ -10,19 +10,19 @@
 - [The zero reaction has zero enthalpy](reaction-enthalpy-zero.md)
 - [Hess's law for linear combinations of reactions](hess-law.md)
 
-## B. Formation enthalpies and the reference-state convention
+## Formation enthalpies and the reference-state convention
 
 - [Reference-state convention for formation enthalpies](is-reference-state.md)
 - [Reference-state species contribute nothing](reference-species-contrib-eq-zero.md)
 - [Balanced reaction enthalpy is reference-state invariant](reaction-enthalpy-shift-of-is-balanced.md)
 
-## C. Kirchhoff's law
+## Kirchhoff's law
 
 - [Kirchhoff's law](kirchhoff-law.md)
 - [Kirchhoff's law for continuous ΔCp](kirchhoff-of-continuous.md)
 - [Kirchhoff's law with swapped endpoints](kirchhoff-swapped.md)
 
-## D. Calorimetry energy balance
+## Calorimetry energy balance
 
 - [Heat absorbed by a calorimeter](calorimeter-heat.md)
 - [Reaction heat in an isolated calorimeter](calorimetry-reaction-heat.md)

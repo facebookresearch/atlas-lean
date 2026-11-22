@@ -1,7 +1,5 @@
 # Absolute entropy has derivative Cp/T between transitions
 
-The temperature derivative of absolute entropy is `Cp / T`: for `0 < T`, under
-continuity of `Cp` on positive temperatures and integrability of `Cp t / t` on `0..T`,
-`HasDerivAt (absoluteEntropy Cp trans Tt dH) (Cp T / T) T` at points `T` that are not
-transition temperatures. Via Mathlib's FTC `intervalIntegral.integral_hasDerivAt_right`; the
-transition sum is locally constant near such `T`.
+For `T > 0` not a transition temperature, with `Cp` continuous on positive temperatures and
+`Cp t / t` integrable on `[0, T]`, the absolute entropy has derivative `Cp T / T` at `T`: by the
+fundamental theorem of calculus, the transition sum being locally constant near `T`.

@@ -1,3 +1,3 @@
 # Mole fractions sum to one
 
-Mole fractions sum to `1`.
+For amounts with a positive total, the mole fractions sum to `1`.

@@ -1,5 +1,4 @@
 # Ideal-gas caloric equation fails at zero particle number
 
-Boundary countermodel, equation-of-state failure: at `(U, V, N) = (1, 1, 0)` with
-`kB = 1`, every hypothesis of `sideal_U` except `0 < N` holds, and its conclusion
-`U = (3/2) * N * kB * T` fails, so `0 < N` cannot be dropped from `sideal_U`.
+At `(U, V, N) = (1, 1, 0)` with `kB = 1`, every other hypothesis of the [caloric equation of
+state](sideal-u.md) holds but `U = (3/2) * N * kB * T` fails: the hypothesis `0 < N` is needed.

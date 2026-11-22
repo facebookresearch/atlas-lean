@@ -1,3 +1,3 @@
 # The equal-amount A + B denominator stays positive
 
-The equal-initial-amounts denominator stays positive for `t ≥ 0`.
+For `t ≥ 0`, `k > 0` and `[A]₀ > 0`, the equal-amount denominator `1 + k[A]₀t` is positive.

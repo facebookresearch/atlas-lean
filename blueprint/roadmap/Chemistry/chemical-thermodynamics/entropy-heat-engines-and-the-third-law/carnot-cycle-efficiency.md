@@ -1,5 +1,6 @@
 # The ideal-gas Carnot cycle attains the Carnot efficiency
 
-The reversible ideal-gas Carnot cycle attains the Carnot efficiency: the full chain from
-the adiabatic model hypotheses through `carnot_volume_ratio` and `carnot_heat_ratio` gives
-`1 - Qc / Qh = carnotEfficiency Tc Th`.
+For `0 < Tc < Th`, positive `n`, `R`, `cv` and volumes with `V₁ < V₂` and `V₄ < V₃`, adiabatic legs
+`Th * V₂ ^ (R / cv) = Tc * V₃ ^ (R / cv)` and `Tc * V₄ ^ (R / cv) = Th * V₁ ^ (R / cv)`, and
+isothermal heats `Qh = n * R * Th * log (V₂ / V₁)` and `Qc = n * R * Tc * log (V₃ / V₄)`, the
+reversible ideal-gas Carnot cycle attains the Carnot efficiency: `1 - Qc / Qh = 1 - Tc / Th`.

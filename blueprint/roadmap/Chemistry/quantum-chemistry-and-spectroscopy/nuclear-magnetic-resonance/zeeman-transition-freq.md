@@ -1,5 +1,4 @@
 # Larmor frequency from the Zeeman splitting
 
-Transition frequency from the splitting: with `h = 2 * Real.pi * hbar` and
-`ν = ΔE / h`, one has `ν = γ * B0 / (2 * Real.pi)`. `ΔE` and `ν` are stated as
-explicit equations; `ν` is in Hz.
+Transition frequency from the splitting: for `γ > 0`, `hbar > 0` and `B0 > 0`, if
+`ΔE = γ * hbar * B0`, `h = 2 * π * hbar` and `ν = ΔE / h`, then `ν = γ * B0 / (2 * π)`, in Hz.

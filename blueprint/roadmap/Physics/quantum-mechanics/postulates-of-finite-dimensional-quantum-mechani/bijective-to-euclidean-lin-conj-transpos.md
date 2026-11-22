@@ -1,3 +1,4 @@
 # The adjoint of a unitary matrix acts bijectively
 
-The `Uᴴ`-action of a unitary matrix is bijective, with inverse the `U`-action.
+For a unitary complex `n × n` matrix `U`, the map `x ↦ Uᴴ x` on `ℂⁿ` is bijective. (Its inverse is
+`x ↦ U x`, a remark beyond the statement.)

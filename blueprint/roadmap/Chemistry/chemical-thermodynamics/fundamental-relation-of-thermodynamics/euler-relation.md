@@ -1,4 +1,5 @@
 # Euler relation for the internal energy
 
-Euler relation: `U = T*S - p*V + ∑ μᵢ*Nᵢ`, from homogeneity via
-`euler_homogeneous_function`.
+For a fundamental relation `S` and a state `(U, V, N)` in the domain: `U = T*S - p*V + ∑ μᵢ*Nᵢ`. It
+follows from homogeneity through [Euler's homogeneous-function
+identity](euler-homogeneous-function.md).

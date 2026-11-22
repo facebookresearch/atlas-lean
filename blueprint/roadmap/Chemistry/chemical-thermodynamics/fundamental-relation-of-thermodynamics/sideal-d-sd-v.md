@@ -1,3 +1,4 @@
 # Ideal-gas partial derivative ∂S/∂V
 
-The `∂S/∂V` slice partial of the ideal gas.
+For `V > 0` and `N > 0` (and any `U`), the partial derivative of the ideal-gas entropy in `V` is
+`∂S/∂V = N * kB / V`.

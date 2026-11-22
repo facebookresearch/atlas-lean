@@ -1,4 +1,4 @@
 # Tensor-square action on pure tensors
 
-On rank-one matrices `vecMulVec v w` (pure tensors `v ⊗ w`) the tensor-square action is
-`v ⊗ w ↦ (g • v) ⊗ (g • w)`.
+On rank-one matrices `v * wᵀ` (pure tensors `v ⊗ w`) the tensor-square action is
+`v ⊗ w ↦ (g • v) ⊗ (g • w)`: `A * (v * wᵀ) * Aᵀ = (A * v) * (A * w)ᵀ`.

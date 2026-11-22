@@ -1,3 +1,4 @@
 # Response component of the inverse-prediction gradient
 
-First gradient component.
+The first entry of the [gradient of inverse prediction](inverse-prediction-gradient.md), its
+response component, is `1 / b`.

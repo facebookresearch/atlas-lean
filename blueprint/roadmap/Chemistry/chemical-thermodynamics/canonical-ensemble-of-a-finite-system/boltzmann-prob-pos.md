@@ -1,3 +1,4 @@
 # Boltzmann probabilities are positive
 
-Boltzmann probabilities are positive; the state `i` makes the state space nonempty.
+Every Boltzmann probability is positive: the state `i` exists, so the partition function is
+positive.

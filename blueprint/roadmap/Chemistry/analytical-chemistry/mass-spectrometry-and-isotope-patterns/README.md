@@ -1,6 +1,6 @@
 # Mass spectrometry and isotope patterns
 
-## A. Nominal isotope patterns
+## Nominal isotope patterns
 
 - [Isotope generating polynomial of an atom](atom-pattern.md)
 - [Nominal isotope pattern of a molecule](nominal-pattern.md)
@@ -19,7 +19,7 @@
 - [An atom's isotope polynomial with physical shifts](atom-pattern-isotope-shift.md)
 - [Coefficients of the isotope polynomial with physical shifts](coeff-atom-pattern-isotope-shift.md)
 
-## B. Exact-mass distributions
+## Exact-mass distributions
 
 - [Finite exact-mass distribution](finite-mass-dist.md)
 - [Masses outside the support have probability zero](apply-eq-zero-of-not-mem.md)
@@ -34,7 +34,7 @@
 - [The mean mass as a finite sum](mean-eq-sum.md)
 - [Mean masses add under convolution](mean-conv.md)
 
-## C. Binomial patterns and the `(M+1)/M` ratio
+## Binomial patterns and the `(M+1)/M` ratio
 
 - [Isotope pattern of n atoms of a two-isotope element](two-isotope-pattern.md)
 - [The two-isotope pattern is a nominal pattern](two-isotope-pattern-eq-nominal-pattern.md)
@@ -46,9 +46,9 @@
 - [Closed form of the (M+1)/M ratio](m-plus-one-ratio-eq.md)
 - [First-order approximation of the (M+1)/M ratio](m-plus-one-first-order.md)
 - [The (M+1)/M ratio as first-order term plus remainder](m-plus-one-ratio-eq-first-order-add.md)
-- [The first-order value never exceeds the exact (M+1)/M ratio](m-plus-one-first-order-le-m-plus-one-rat.md)
+- [For p < 1 the first-order value is at most the exact (M+1)/M ratio](m-plus-one-first-order-le-m-plus-one-rat.md)
 
-## D. Resolution, nominal mass and exact mass
+## Resolution, nominal mass and exact mass
 
 - [Resolving power at a given mass](resolution.md)
 - [Characterization of the resolving power](resolution-eq-iff.md)
@@ -59,7 +59,7 @@
 - [Mass defect as a sum of atomic mass defects](exact-mass-sub-nominal-mass.md)
 - [Bound on the mass defect from per-atom bounds](abs-exact-mass-sub-nominal-mass-le.md)
 
-## E. The nitrogen rule
+## The nitrogen rule
 
 - [Elements of the nitrogen-rule model](element.md)
 - [Nucleon numbers of the model elements](mass-number.md)

@@ -1,3 +1,3 @@
 # Free energy A = −kT log Z
 
-`A = -kB T log Z`, the form of Physlib's `CanonicalEnsemble.helmholtzFreeEnergy`.
+For `kB > 0` and `β > 0`, `A = -kB T log Z` with `T = 1 / (kB * β)`.

@@ -1,6 +1,6 @@
 # Quantity calculus and dimensionless groups
 
-## A. Quantity kinds, exponent vectors and changes of units
+## Quantity kinds, exponent vectors and changes of units
 
 - [Indexing of the seven ISQ base quantities](base-of-fin.md)
 - [Index of an ISQ base quantity](fin-of-isq.md)
@@ -53,7 +53,7 @@
 - [Converting to the same units changes nothing](rescale-self.md)
 - [Unit conversions compose transitively](rescale-transitive.md)
 
-## B. Logarithms of ratios
+## Logarithms of ratios
 
 - [Quantity kinds of the same dimension](same-dimension.md)
 - [A ratio is dimensionless exactly for equal dimensions](is-dimensionless-div-iff.md)
@@ -64,7 +64,7 @@
 - [Log-ratios are invariant under common scaling](log-ratio-mul-left.md)
 - [Log-ratios do not depend on the units](log-ratio-rescale.md)
 
-## C. Dimensionless groups
+## Dimensionless groups
 
 - [Rank–nullity theorem](finrank-ker-add-finrank-range.md)
 - [Membership in the kernel of the exponent matrix](mem-ker-mul-vec-lin-iff.md)
@@ -73,7 +73,7 @@
 - [The zero exponent vector gives the dimensionless dimension](dimension-of-vector-zero.md)
 - [Kernel vectors are exactly the dimensionless monomials](is-dimensionless-mul-vec-iff.md)
 
-## D. Celsius temperature
+## Celsius temperature
 
 - [Absolute temperature of a Celsius reading](celsius-to-kelvin.md)
 - [Celsius reading of an absolute temperature](kelvin-to-celsius.md)

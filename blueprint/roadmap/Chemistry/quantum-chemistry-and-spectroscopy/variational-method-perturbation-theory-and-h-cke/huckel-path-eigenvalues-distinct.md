@@ -1,3 +1,4 @@
 # Hückel path eigenvalues are distinct
 
-The path Hückel eigenvalues for distinct `k` are distinct (for `β ≠ 0`).
+For a path with `n ≥ 1` vertices and `β ≠ 0`, the Hückel eigenvalues
+`α + 2 * β * cos (k * π / (n + 1))` for distinct `k` and `l` with `1 ≤ k, l ≤ n` are distinct.

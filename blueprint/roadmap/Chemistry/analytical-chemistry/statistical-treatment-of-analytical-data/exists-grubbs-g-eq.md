@@ -1,3 +1,4 @@
 # Grubbs' G is attained by some observation
 
-Grubbs' statistic is the standardized residual of some observation.
+For a sample with nonzero standard deviation, Grubbs' statistic is the standardized residual of
+some observation.

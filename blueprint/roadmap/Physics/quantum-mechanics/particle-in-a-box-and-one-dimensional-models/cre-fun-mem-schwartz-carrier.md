@@ -1,4 +1,4 @@
 # The creation operator preserves Schwartz functions
 
-The creation function maps the Schwartz carrier to itself:
-`creFun s = (√2)⁻¹ • (x • s - s')` is a Schwartz map.
+The creation expression maps Schwartz functions to Schwartz functions: if `f : ℝ → ℂ` is a Schwartz
+function, so is `a† f = (x * f - f') / √2` (units `ħ = m = ω = 1`).

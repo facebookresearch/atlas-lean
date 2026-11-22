@@ -1,3 +1,4 @@
 # Caloric equation of state of the ideal gas
 
-Ideal-gas caloric equation of state: `U = (3/2) * N * kB * T`.
+For `U > 0`, `N > 0` and `kB > 0` (and any `V`), the ideal-gas caloric equation of state
+`U = (3/2) * N * kB * T` holds.

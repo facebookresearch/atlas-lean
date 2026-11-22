@@ -1,3 +1,4 @@
 # An exponent vector is recovered from its dimension
 
-`exponentVector` is inverse to `dimensionOfVector`.
+An exponent vector is recovered from its dimension: the exponent vector of the ISQ dimension with
+exponent vector `v ∈ ℚ⁷` is `v`.

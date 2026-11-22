@@ -1,5 +1,4 @@
 # The annihilation operator preserves Schwartz functions
 
-The annihilation function maps the Schwartz carrier to itself:
-`annFun s = (√2)⁻¹ • (x • s + s')` is a Schwartz map (Mathlib `SchwartzMap.smulLeftCLM`,
-`SchwartzMap.derivCLM`).
+The annihilation expression maps Schwartz functions to Schwartz functions: if `f : ℝ → ℂ` is a
+Schwartz function, so is `a f = (x * f + f') / √2` (units `ħ = m = ω = 1`).

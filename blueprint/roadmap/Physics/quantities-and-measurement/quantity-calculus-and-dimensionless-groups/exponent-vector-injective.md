@@ -1,3 +1,3 @@
 # Injectivity of the exponent vector
 
-`exponentVector` is injective: a dimension is determined by its exponents.
+The exponent vector is injective: an ISQ dimension is determined by its exponents.

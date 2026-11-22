@@ -1,7 +1,6 @@
 # Pointwise ladder commutator for Schwartz functions
 
-Pointwise ladder identity for Schwartz functions:
-`annFun (creFun f) x - creFun (annFun f) x = f x` for every `f` in `SchwartzCarrier` (Mathlib
-`SchwartzMap.smooth`, `ContDiff.deriv`). This is the identity of the differential
-expressions `annFun` and `creFun`; `annihilation_creation_commutator` states it for the
-records `annihilation` and `creation`.
+Pointwise ladder identity for Schwartz functions: `a (a† f) (x) - a† (a f) (x) = f x` for every
+Schwartz function `f : ℝ → ℂ` and every `x`, Schwartz functions being smooth. This is the identity
+of the differential expressions `a` and `a†`; the
+[commutator on Schwartz space](annihilation-creation-commutator.md) states it for the operators.

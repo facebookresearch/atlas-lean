@@ -1,3 +1,4 @@
 # The mean mass as a finite sum
 
-The mean is the finite sum over the witness, via `PMF.expect_eq_sum_of_finite_support`.
+The mean mass is the finite sum over the support of the probabilities times the masses:
+`mean = ∑ m ∈ support, P(m) * m`.

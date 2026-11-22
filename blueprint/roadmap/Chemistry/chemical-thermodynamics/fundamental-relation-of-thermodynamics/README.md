@@ -1,6 +1,6 @@
 # Fundamental relation of thermodynamics
 
-## A. Equilibrium states and the fundamental relation
+## Equilibrium states and the fundamental relation
 
 - [Equilibrium states of a simple system](thermo-state.md)
 - [Physical domain of equilibrium states](thermo-domain.md)
@@ -20,7 +20,7 @@
 - [Temperature is positive on the domain](temp-pos.md)
 - [Entropy is strictly increasing in energy](strict-mono-on-energy.md)
 
-## B. The first law and the Euler relation
+## The first law and the Euler relation
 
 - [Algebraic core of the first-law identity](first-law-algebra.md)
 - [Algebraic core of the Euler relation](euler-algebra.md)
@@ -29,21 +29,21 @@
 - [Euler's homogeneous-function identity for entropy](euler-homogeneous-function.md)
 - [Euler relation for the internal energy](euler-relation.md)
 
-## C. Gibbs-Duhem
+## Gibbs-Duhem
 
 - [Gibbs–Duhem relation along a curve](gibbs-duhem.md)
 
-## D. Entropy maximum and heat flow
+## Entropy maximum and heat flow
 
 - [Total entropy is differentiable under energy exchange](stot-has-deriv-at.md)
 - [Temperatures agree at a local entropy maximum](entropy-max-temperature-eq.md)
 - [Total entropy rate is the difference of ∂S/∂U values](stot-deriv-eq.md)
 - [Hot-to-cold transfer raises entropy to first order](entropy-flow-sign.md)
 
-## E. The ideal gas
+## The ideal gas
 
 - [Monatomic ideal-gas entropy](sideal.md)
-- [Ideal-gas entropy agrees with the general definition](sideal-eq-entropy.md)
+- [Ideal-gas entropy in reference-state form](sideal-eq-entropy.md)
 - [Ideal-gas entropy on equilibrium states](sideal-gen.md)
 - [Energy derivative of the ideal-gas entropy](sideal-d-sd-u-has-deriv-at.md)
 - [Ideal-gas partial derivative ∂S/∂U](sideal-d-sd-u.md)

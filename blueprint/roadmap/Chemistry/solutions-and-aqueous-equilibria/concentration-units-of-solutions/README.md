@@ -1,6 +1,6 @@
 # Concentration units of solutions
 
-## A. Molarity, molality, and the conversion bijection
+## Molarity, molality, and the conversion bijection
 
 - [Molarity of a solution](molarity.md)
 - [Molality of a solution](molality.md)
@@ -21,23 +21,23 @@
 - [Mass fraction from molarity, molar mass and density](mass-fraction-eq-molarity-mul.md)
 - [Mixture mass fractions as single-solute mass fractions](amounts-mass-fraction-eq-mass-fraction.md)
 
-## B. Dilution from amount conservation
+## Dilution from amount conservation
 
 - [Computed final volume of a dilution](dilution-volume.md)
 - [Amount conservation gives c₁V₁ = c₂V₂](molarity-mul-volume-eq-of-amount-eq.md)
-- [Dilution](dilution-conserved-of-le.md)
+- [Dilution conserves c·V and does not raise the concentration](dilution-conserved-of-le.md)
 - [The computed final volume satisfies c₂V₂ = c₁V₁](dilution-volume-cross-mul.md)
 - [Algebraic molarity identity for the computed volume](molarity-dilution-volume-algebraic.md)
 - [The computed volume attains any positive target molarity](target-volume-achieves-molarity.md)
 - [Dilution to a target concentration](dilution-volume-dilutes.md)
 
-## C. Mixture mole fractions
+## Mixture mole fractions
 
-- [Weighted-average identity](mole-fraction-add-eq-weighted.md)
+- [Mole fractions of a combined mixture as a weighted average](mole-fraction-add-eq-weighted.md)
 - [Mixing as a convex combination](mole-fraction-mix-convex.md)
 - [Molarity is injective in the volume](molarity-inj-on-volume.md)
 
-## D. Temperature change and parts-per-million
+## Temperature change and parts-per-million
 
 - [Molality depends only on solute amount and solvent mass](molality-congr.md)
 - [Molarity changes when the volume changes](molarity-temp-ne.md)

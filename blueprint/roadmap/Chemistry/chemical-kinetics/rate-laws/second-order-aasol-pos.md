@@ -1,3 +1,3 @@
 # The 2A → P solution stays positive
 
-The `2A → P` solution stays positive for `t ≥ 0`.
+For `t ≥ 0`, `k > 0` and `[A]₀ > 0`, the `2A → P` solution `[A]₀ / (1 + 2k[A]₀t)` is positive.

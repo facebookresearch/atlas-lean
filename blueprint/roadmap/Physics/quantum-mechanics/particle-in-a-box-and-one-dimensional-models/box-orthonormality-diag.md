@@ -1,5 +1,5 @@
 # Box states are normalized
 
-Diagonal orthonormality: `∫ x in 0..L, boxFunction n * boxFunction n = 1`,
-via `sin^2 = (1 - cos 2θ)/2` (Mathlib `Real.cos_two_mul`,
-`Real.sin_sq_add_cos_sq`) and `cos_integral_pos`.
+For `n ≥ 1` and `L > 0`, the box state `ψ_n(x) = √(2/L) * sin (n * π * x / L)` is normalized:
+`∫₀ᴸ ψ_n(x)^2 dx = 1`, since `sin^2 θ = (1 - cos 2θ) / 2` and the
+[cosine integral](cos-integral-pos.md) of `cos (2 * n * π * x / L)` over `[0, L]` vanishes.

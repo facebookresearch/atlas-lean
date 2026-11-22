@@ -1,4 +1,4 @@
 # Unit conversions compose transitively
 
-Converting through an intermediate unit choice is the direct conversion, by
-`UnitScale.dimScale_transitive`.
+Converting a numerical value from units `u₁` to `u₂` and then from `u₂` to `u₃` gives its direct
+conversion from `u₁` to `u₃`: the unit factors multiply.

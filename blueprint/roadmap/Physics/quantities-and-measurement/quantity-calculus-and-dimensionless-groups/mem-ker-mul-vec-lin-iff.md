@@ -1,3 +1,3 @@
 # Membership in the kernel of the exponent matrix
 
-A vector lies in the kernel of the exponent matrix `D` exactly when `D *ᵥ v = 0`.
+A vector `v` lies in the kernel of the exponent matrix `D` exactly when `D v = 0`.

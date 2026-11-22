@@ -1,3 +1,3 @@
 # Probabilities over the support sum to one
 
-The real probabilities over the witness sum to `1`, by normalization of the `PMF`.
+The probabilities of the masses in the support sum to `1`: the distribution is normalized.

@@ -1,3 +1,4 @@
 # Box states vanish at the right wall
 
-Dirichlet boundary at `L` (uses `Real.sin_nat_mul_pi`).
+For `n ≥ 1` and `L > 0`, the box state `ψ_n(x) = √(2/L) * sin (n * π * x / L)` vanishes at the right
+wall: `ψ_n(L) = √(2/L) * sin (n * π) = 0`.

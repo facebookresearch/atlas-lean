@@ -1,3 +1,4 @@
 # Mean energy is differentiable with derivative −Var(E)
 
-`dU/dβ = -Var(E)`, as a `HasDerivAt` statement.
+For a nonempty finite system, the mean energy `U` is differentiable at every `β`, with derivative
+`dU/dβ = -Var(E)`.

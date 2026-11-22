@@ -1,3 +1,3 @@
 # Initial value of the A + B solution for A
 
-The `A + B` solution for `[A]` starts at `[A]₀`.
+For `[A]₀ ≠ [B]₀`, the `A + B` solution for `A` starts at `[A]₀`.

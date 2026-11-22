@@ -1,3 +1,4 @@
 # A dimension is recovered from its exponent vector
 
-`dimensionOfVector` is inverse to `exponentVector`.
+A dimension is recovered from its exponent vector: the ISQ dimension whose exponent vector is that
+of `d` is `d`.

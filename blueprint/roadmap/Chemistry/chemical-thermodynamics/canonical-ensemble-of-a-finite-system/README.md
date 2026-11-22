@@ -1,6 +1,6 @@
 # Canonical ensemble of a finite system
 
-## A. Partition function and Boltzmann distribution
+## Partition function and Boltzmann distribution
 
 - [Partition function of a finite system](partition-function.md)
 - [The partition function of a nonempty system is positive](partition-function-pos.md)
@@ -10,7 +10,7 @@
 - [Boltzmann probabilities sum to one](sum-boltzmann-prob-eq-one.md)
 - [Logarithm of a Boltzmann probability](log-boltzmann-prob.md)
 
-## B. Entropy maximization
+## Entropy maximization
 
 - [Shannon entropy of a distribution](shannon-entropy.md)
 - [A function summing to one has a nonempty domain](nonempty-of-sum-eq-one.md)
@@ -25,10 +25,10 @@
 - [Equality in Gibbs' inequality for the Boltzmann distribution](sum-mul-log-div-boltzmann-prob-eq-zero-i.md)
 - [Boltzmann cross entropy depends only on the mean energy](sum-mul-log-boltzmann-prob.md)
 - [Relative entropy as entropy deficit at equal mean energy](sum-mul-log-div-boltzmann-prob-eq.md)
-- [Maximum entropy](shannon-entropy-le-shannon-entropy-boltz.md)
+- [The Boltzmann distribution maximizes entropy at fixed mean energy](shannon-entropy-le-shannon-entropy-boltz.md)
 - [Uniqueness of the maximum-entropy distribution](shannon-entropy-eq-shannon-entropy-boltz.md)
 
-## C. Thermodynamic functions and fluctuations
+## Thermodynamic functions and fluctuations
 
 - [Mean energy of the Boltzmann distribution](mean-energy.md)
 - [Energy variance of the Boltzmann distribution](energy-variance.md)
@@ -41,7 +41,7 @@
 - [Energy variance as mean square minus squared mean](energy-variance-eq-sum-sub-mean-energy-s.md)
 - [Entropy as Boltzmann's constant times Shannon entropy](entropy-eq-mul-shannon-entropy.md)
 - [Free energy in terms of mean energy, entropy and β](helmholtz-free-energy-eq-mean-energy-sub.md)
-- [The temperature is positive for positive β](temperature-pos.md)
+- [The temperature is positive for kB > 0 and β > 0](temperature-pos.md)
 - [Free energy A = U − TS](helmholtz-free-energy-eq-mean-energy-sub-2.md)
 - [Free energy A = −kT log Z](helmholtz-free-energy-eq-neg-mul-tempera.md)
 - [Derivative of a Boltzmann factor in β](has-deriv-at-exp-neg-mul.md)
@@ -51,17 +51,17 @@
 - [Derivative of the log partition function is −U](deriv-log-partition-function.md)
 - [Mean energy is differentiable with derivative −Var(E)](has-deriv-at-mean-energy.md)
 - [Derivative of the mean energy is −Var(E)](deriv-mean-energy.md)
-- [Fluctuation–dissipation](heat-capacity-eq-neg-mul-deriv-mean-ener.md)
+- [Fluctuation–dissipation: kB β² Var E = −kB β² dU/dβ](heat-capacity-eq-neg-mul-deriv-mean-ener.md)
 - [Heat capacity as energy variance over kT²](heat-capacity-eq-energy-variance-div.md)
 
-## D. Independent subsystems
+## Independent subsystems
 
 - [Energy of two independent subsystems](combined-energy.md)
 - [Partition functions of independent subsystems multiply](partition-function-combined-energy.md)
 - [Boltzmann probabilities of independent subsystems multiply](boltzmann-prob-combined-energy.md)
 - [Mean energies of independent subsystems add](mean-energy-combined-energy.md)
 
-## E. Two-level system
+## Two-level system
 
 - [Two-level system with energies 0 and Δ](two-level-energy.md)
 - [State 0 of the two-level system has energy 0](two-level-energy-zero.md)
@@ -77,21 +77,21 @@
 - [Inverse temperature is positive if βΔ = log 3 and Δ > 0](pos-of-mul-eq-log-three.md)
 - [Worked example: the two-level system](two-level-energy-worked-example.md)
 
-## F. Einstein-solid counting and Stirling's formula
+## Einstein-solid counting and Stirling's formula
 
 - [Stars and bars](card-sum-eq-choose.md)
 - [Number of Einstein-solid microstates](card-antidiagonal-tuple.md)
 - [Stirling's approximation underestimates 2!](stirling-two-lt-factorial.md)
 - [Stirling's formula is not exact at n = 2](factorial-two-ne-stirling.md)
 
-## G. The canonical postulate
+## The canonical postulate
 
 - [Canonical distribution at inverse temperature β](is-canonical.md)
 - [The Boltzmann distribution is canonical](is-canonical-boltzmann-prob.md)
 
-## H. Bridge to Physlib's canonical-ensemble API
+## Agreement with the finite canonical ensemble
 
 - [Finite canonical ensemble with counting measure](canonical-ensemble.md)
-- [Partition function agrees with the general definition](partition-function-eq-mathematical-parti.md)
-- [Boltzmann probabilities agree with the general definition](boltzmann-prob-eq-probability-beta-real.md)
-- [Mean energy agrees with the general definition](mean-energy-eq-mean-energy-beta-real.md)
+- [Partition function equals that of the finite canonical ensemble](partition-function-eq-mathematical-parti.md)
+- [Boltzmann probabilities equal those of the finite canonical ensemble](boltzmann-prob-eq-probability-beta-real.md)
+- [Mean energy equals that of the finite canonical ensemble](mean-energy-eq-mean-energy-beta-real.md)

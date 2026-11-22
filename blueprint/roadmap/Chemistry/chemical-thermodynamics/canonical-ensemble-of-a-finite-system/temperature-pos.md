@@ -1,3 +1,3 @@
-# The temperature is positive for positive β
+# The temperature is positive for kB > 0 and β > 0
 
-The temperature is positive.
+For `kB > 0` and `β > 0` the temperature `T = 1 / (kB * β)` is positive.

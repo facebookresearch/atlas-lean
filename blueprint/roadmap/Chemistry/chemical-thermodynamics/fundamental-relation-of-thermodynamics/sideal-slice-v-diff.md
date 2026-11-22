@@ -1,3 +1,3 @@
 # Ideal-gas entropy is differentiable in volume
 
-The ideal-gas `V`-slice is differentiable.
+For `V > 0` and `N > 0` (and any `U`), the ideal-gas entropy is differentiable in `V`.
