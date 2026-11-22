@@ -46,10 +46,10 @@ growth* (with respect to `P`) if this count is bounded by a polynomial in `n`.
   the all-elements generating family would spuriously satisfy the bound. For a finite
   generating family (`[Finite ι]`) balls are finite in the intended applications; the
   predicate records the requirement explicitly rather than hiding it in `Nat.card`.
-* `HasPolynomialGrowth` is defined *per generating family* `P`. The large-scale growth type is a
-  quasi-isometry invariant and hence independent of the finite generating set, but proving this
-  requires the bi-Lipschitz comparison of word metrics for different generating sets, which is not
-  available cheaply here; we therefore do not state generating-set independence.
+* `HasPolynomialGrowth` is defined *per generating family* `P`. Independence of the finite
+  generating set is proved in `MathlibExt.GroupTheory.GroupGrowthGenerators`
+  (`Group.Generators.hasPolynomialGrowth_iff`), from the bi-Lipschitz comparison of word lengths
+  in `MathlibExt.GroupTheory.WordMetricComparison`.
 * The bound uses `(n + 1) ^ d` rather than `n ^ d` so that the `n = 0` boundary (`γ_P(0) = 1`) is
   covered by the same inequality.
 

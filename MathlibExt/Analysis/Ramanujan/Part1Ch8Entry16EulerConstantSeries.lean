@@ -39,14 +39,13 @@ private def Tfun : ℕ → ℝ := fun k =>
     ∑ j ∈ Finset.Icc (Afun k + 1) (Afun (k + 1)),
       (1 : ℝ) / ((3 * (j : ℝ)) ^ 3 - 3 * (j : ℝ))
 
-private lemma one_le_pow3 (k : ℕ) : 1 ≤ 3 ^ k := Nat.one_le_pow k 3 (by norm_num)
 private lemma two_dvd_pow3_sub_one (k : ℕ) : 2 ∣ (3 ^ k - 1) := by
   have hodd : Odd (3 ^ k) := Odd.pow (by norm_num)
   obtain ⟨m, hm⟩ := hodd
-  have h1 : 1 ≤ 3 ^ k := one_le_pow3 k
+  have h1 : 1 ≤ 3 ^ k := Nat.one_le_pow k 3 three_pos
   omega
 private lemma two_mul_A_add_one (k : ℕ) : 2 * ((3 ^ k - 1) / 2) + 1 = 3 ^ k := by
-  have h1 : 1 ≤ 3 ^ k := one_le_pow3 k
+  have h1 : 1 ≤ 3 ^ k := Nat.one_le_pow k 3 three_pos
   have hdvd := two_dvd_pow3_sub_one k
   obtain ⟨t, ht⟩ := hdvd
   omega
@@ -200,7 +199,7 @@ private lemma gfun_le_inv_cube (j : ℕ) (hj : 1 ≤ j) :
 
 private lemma A_cast (k : ℕ) : ((Afun k : ℝ)) = ((((3 ^ k : ℕ) : ℝ)) - 1) / 2 := by
   have hdvd : 2 ∣ (3 ^ k - 1) := two_dvd_pow3_sub_one k
-  have h1 : (1 : ℕ) ≤ 3 ^ k := one_le_pow3 k
+  have h1 : (1 : ℕ) ≤ 3 ^ k := Nat.one_le_pow k 3 three_pos
   have hcast : ((((3 ^ k - 1) : ℕ) : ℝ)) = ((((3 ^ k : ℕ) : ℝ))) - 1 := by
     rw [Nat.cast_sub h1, Nat.cast_one]
   have hA : Afun k = (3 ^ k - 1) / 2 := rfl
@@ -428,7 +427,7 @@ private lemma A_ge (N : ℕ) : 3 ^ N ≤ Afun (N + 1) := by
 
 private lemma A_one_le (m : ℕ) (hm : 1 ≤ m) : 1 ≤ Afun m := by
   obtain ⟨t, rfl⟩ : ∃ t, m = t + 1 := ⟨m - 1, by omega⟩
-  exact le_trans (one_le_pow3 t) (A_ge t)
+  exact le_trans (Nat.one_le_pow t 3 three_pos) (A_ge t)
 
 private lemma pow3R (m : ℕ) : (((3 ^ m : ℕ)) : ℝ) = (3:ℝ)^m := by push_cast; ring
 

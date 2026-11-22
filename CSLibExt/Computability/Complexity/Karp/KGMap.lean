@@ -36,7 +36,10 @@ namespace Cslib.Complexity.Karp.KGMap
 
 open Turing Function MetaMathlibExt.TM2Program Cslib.CookLevin Cslib.Complexity.SatVerifier
 
-/-- The two reductions computed by the machine. -/
+/-- **Modes of the CLIQUE/VERTEX-COVER reduction machine.** A mode is one of two values, the
+flip mode and the vertex-cover mode. They select the reduction that the machine of this module
+computes: CLIQUE to INDEPENDENT-SET in the flip mode, INDEPENDENT-SET to VERTEX-COVER in the
+vertex-cover mode. -/
 inductive Mode | flip | vc
   deriving DecidableEq
 
@@ -44,8 +47,10 @@ instance Mode.instFintypeEnumFix : Fintype Mode where
   elems := ⟨↑[Mode.flip, .vc], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- The map a mode computes: `flipKG` (CLIQUE to INDEPENDENT-SET) or `isToVc`
-(INDEPENDENT-SET to VERTEX-COVER). -/
+/-- **Reduction computed in each mode.** The map on bit strings that a mode of the
+CLIQUE/VERTEX-COVER reduction machine computes: in the flip mode it is the reduction from CLIQUE
+to INDEPENDENT-SET on bit strings, and in the vertex-cover mode it is the reduction from
+INDEPENDENT-SET to VERTEX-COVER on bit strings. -/
 def Mode.f : Mode → List Bool → List Bool
   | .flip => flipKG
   | .vc => isToVc
@@ -59,13 +64,19 @@ instance K.instFintypeEnumFix : Fintype K where
   elems := ⟨↑[K.X, .O, .A, .B, .D, .Y], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- Stack alphabets: the output stack holds `Bool`s, every other stack `Sym`s. -/
+/-- **Stack alphabets of the clique reduction machine.** The alphabet $\Gamma(k)$ of a stack $k$
+is the Booleans if $k$ is the output stack $O$, and the token alphabet $\mathrm{Sym}$ for every
+other stack ($X$, $A$, $B$, $D$ and $Y$). -/
 @[reducible] def Γ : K → Type
   | .O => Bool
   | _ => Sym
 
-/-- Labels: read `k`, read `n`, move the pair bits, subtract (`vc`), output the pair bits, `n`,
-the separator and the last number; `bad` writes `noKG`. -/
+/-- **Labels of the KG-map machine.** The type of the ten instruction labels of the KG-map
+machine: read $k$, read $n$, move the pair bits, subtract, output the pair bits, output $n$, write
+the separator, output the last number, the failure label and the halting label.
+
+The machine reaches the subtraction label only in the vertex-cover mode, and at the failure label
+it writes the fixed no-instance. -/
 inductive Lab | rdK | rdN | mv | sub | outY | outB | sep | outK | bad | done
   deriving DecidableEq
 
@@ -73,15 +84,23 @@ instance Lab.instFintypeEnumFix : Fintype Lab where
   elems := ⟨↑[Lab.rdK, .rdN, .mv, .sub, .outY, .outB, .sep, .outK, .bad, .done], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- The unit symbol of the counters `A`, `B`, `D`. -/
+/-- **Counter unit symbol of the clique reduction machine.** $U$ is the symbol $\mathsf{cl}$ of
+the token alphabet $\mathrm{Sym}$.
+
+It is the unit of the counter stacks $A$, $B$ and $D$, which hold a number $n$ as $n$ copies of
+$U$. -/
 abbrev U : Sym := .cl
 
-/-- Is the popped symbol the input bit `true`? -/
+/-- **Test for the input bit true.** A test on the result of popping a stack: it is true
+exactly when a symbol was popped and that symbol is $\mathrm{bit}(\mathrm{true})$, and false for
+every other symbol and for an empty stack. -/
 def isT : Option Sym → Bool
   | some (.bit true) => true
   | _ => false
 
-/-- Is the popped symbol the moved bit `val true`? -/
+/-- **Test for the moved bit true.** A test on the result of popping a stack: it is true
+exactly when a symbol was popped and that symbol is $\mathrm{val}(\mathrm{true})$, and false for
+every other symbol and for an empty stack. -/
 def isV : Option Sym → Bool
   | some (.val true) => true
   | _ => false
@@ -90,22 +109,55 @@ def isV : Option Sym → Bool
 
 @[simp] theorem isV_val (b : Bool) : isV (some (.val b)) = b := by cases b <;> rfl
 
-/-- What happens to a pair bit: complemented for `flip`, kept for `vc`. -/
+/-- **Pair-bit transform of each mode.** For a mode of the CLIQUE/VERTEX-COVER reduction
+machine, the map on booleans applied to each pair bit as it is written to the output: negation in
+the flip mode and the identity in the vertex-cover mode. -/
 def Mode.fb : Mode → Bool → Bool
   | .flip => not
   | .vc => id
 
-/-- Where the machine goes after moving the pair bits: output (`flip`) or subtract (`vc`). -/
+/-- **Label after the move phase of the KG-map machine.** The map from the modes of the KG-map
+machine to its labels that sends the flip mode to the label output the pair bits and the
+vertex-cover mode to the subtraction label. The machine goes to this label after moving the pair
+bits. -/
 def Mode.next : Mode → Lab
   | .flip => .outY
   | .vc => .sub
 
-/-- The counter holding the output's first number: `A` (`k`, `flip`) or `D` (`n - k`, `vc`). -/
+/-- **Counter of the first output number of the KG-map machine.** The map from the modes of the
+KG-map machine to its stacks that sends the flip mode to the counter $A$ and the vertex-cover
+mode to the counter $D$.
+
+This is the counter the machine drains last, as the first number of its output: $A$ holds $k$,
+and in the vertex-cover mode $D$ holds $n - k$ by then. -/
 def Mode.ctr : Mode → K
   | .flip => .A
   | .vc => .D
 
-/-- The machine. -/
+/-- **The KG-map machine.** For a mode $m$ (flip or vc), the KG-map machine $M_m$ is the
+multi-stack machine with stacks $X$, $A$, $B$, $D$, $Y$ of symbols and an output stack $O$ of
+bits, whose labels act as follows; the counters $A$, $B$, $D$ use a fixed unit symbol.
+
+- Read $k$: if $X$ is empty, go to the failure label. Otherwise pop $X$; if the popped symbol is
+  the input bit $\mathrm{bit}(\mathit{true})$, push a unit onto $A$ and repeat, else go to read $n$.
+- Read $n$: if $X$ is empty, go to the failure label. Otherwise pop $X$; if the popped symbol is
+  $\mathrm{bit}(\mathit{true})$, push a unit onto $B$ and onto $D$ and repeat, else go to move.
+- Move: if $X$ is empty, go to output pair bits (flip) or subtract (vc). Otherwise pop $X$, push
+  $\mathrm{val}(b)$ onto $Y$, where $b$ is true exactly when the popped symbol was
+  $\mathrm{bit}(\mathit{true})$, and repeat.
+- Subtract: pop $A$. If $A$ was empty, go to output pair bits. Otherwise pop $D$; if $D$ was
+  nonempty repeat, else go to the failure label.
+- Output pair bits: if $Y$ is empty, push false onto $O$ and go to output $n$. Otherwise pop $Y$,
+  push $\beta_m(b)$ onto $O$, where $b$ is true exactly when the popped symbol was
+  $\mathrm{val}(\mathit{true})$ and $\beta_m$ is negation for flip and the identity for vc, and
+  repeat.
+- Output $n$: pop $B$; if $B$ was nonempty, push true onto $O$ and repeat, else go to separator.
+- Separator: push false onto $O$ and go to output last number.
+- Output last number: as output $n$, but popping the counter of $m$ ($A$ for flip, $D$ for vc)
+  and going to the halting label when it is empty.
+- Failure: push the bits true, false, false of the fixed no-instance (the encoding of $k = 1$ on
+  the empty graph) onto $O$ so that $O$ starts with them, and go to the halting label.
+- Halting label: halt. -/
 def prog (m : Mode) : Lab → TM2.Stmt Γ Lab Bool
   | .rdK => .peek .X (fun _ o => o.isNone) <| .branch id (.goto fun _ => .bad) <|
       .pop .X (fun _ o => isT o) <| .branch id
@@ -128,7 +180,7 @@ def prog (m : Mode) : Lab → TM2.Stmt Γ Lab Bool
   | .bad => emitR .O noKG .done
   | .done => .halt
 
-/-- The start label. -/
+/-- **Start label of the KG-map machine.** The KG-map machine starts at the label read $k$. -/
 def start : Lab := .rdK
 
 /-! ### One-step lemmas -/
@@ -201,7 +253,13 @@ section Loops
 
 variable (m : Mode)
 
-/-- Reading `k`: each `true` adds a unit to `A`; the closing `false` moves on to `n`. -/
+/-- **Reading the first unary number in the KG-map machine.** Let $m$ be a mode, $k$ and $i$
+natural numbers and $r$ a list of bits. Consider a configuration of the KG-map machine $M_m$ at
+the label read $k$, with any internal bit, in which stack $X$ holds the input symbols
+$\mathrm{bit}(b)$ for the bits $b$ of the list of $k$ trues, a false and then $r$, top first, and
+stack $A$ holds $i$ copies of the unit symbol. Then in exactly $k + 1$ steps $M_m$ reaches the
+label read $n$ with $X$ holding $\mathrm{bit}(b)$ for the bits $b$ of $r$, $A$ holding $i + k$
+copies of the unit symbol, and every stack other than $X$ and $A$ unchanged. -/
 theorem rdK_some (k : ℕ) : ∀ (i : ℕ) (v : Bool) (St : ∀ k, List (Γ k)) (r : List Bool),
     St .X = (List.replicate k true ++ false :: r).map Sym.bit → St .A = cnt U i →
     ∃ v' S', Run (prog m) (k + 1) ⟨some .rdK, v, St⟩ ⟨some .rdN, v', S'⟩ ∧
@@ -223,7 +281,12 @@ theorem rdK_some (k : ℕ) : ∀ (i : ℕ) (v : Bool) (St : ∀ k, List (Γ k)) 
       rw [hS' j h1 h2]
       simp [update_of_ne h1, update_of_ne h2]
 
-/-- A unary `k` that never ends: `bad` within `|r| + 1` steps. -/
+/-- **Unterminated first unary number in the KG-map machine.** Let $m$ be a mode and $r$ a list
+of bits on which reading a unary length prefix fails (this happens exactly when $r$ contains no
+false). From any configuration of the KG-map machine $M_m$ at the label read $k$, with any
+internal bit, in which stack $X$ holds the input symbols $\mathrm{bit}(b)$ for the bits $b$ of
+$r$, top first, $M_m$ reaches the failure label in exactly $|r| + 1$ steps, with every stack
+other than $X$ and $A$ unchanged. -/
 theorem rdK_none : ∀ (r : List Bool), readUnaryLength r = none →
     ∀ (v : Bool) (St : ∀ k, List (Γ k)), St .X = r.map Sym.bit →
       ∃ v' S', Run (prog m) (r.length + 1) ⟨some .rdK, v, St⟩ ⟨some .bad, v', S'⟩ ∧
@@ -239,8 +302,14 @@ theorem rdK_none : ∀ (r : List Bool), readUnaryLength r = none →
       rw [hS' j h1 h2]
       simp [update_of_ne h1, update_of_ne h2]
 
-/-- Reading `n`: each `true` adds a unit to `B` and to `D`; the closing `false` moves on to the
-pair bits. -/
+/-- **Reading the second unary number in the KG-map machine.** Let $m$ be a mode, $n$ and $i$
+natural numbers and $r$ a list of bits. Consider a configuration of the KG-map machine $M_m$ at
+the label read $n$, with any internal bit, in which stack $X$ holds the input symbols
+$\mathrm{bit}(b)$ for the bits $b$ of the list of $n$ trues, a false and then $r$, top first, and
+stacks $B$ and $D$ each hold $i$ copies of the unit symbol. Then in exactly $n + 1$ steps $M_m$
+reaches the label move with $X$ holding $\mathrm{bit}(b)$ for the bits $b$ of $r$, $B$ and $D$
+each holding $i + n$ copies of the unit symbol, and every stack other than $X$, $B$ and $D$
+unchanged. -/
 theorem rdN_some (n : ℕ) : ∀ (i : ℕ) (v : Bool) (St : ∀ k, List (Γ k)) (r : List Bool),
     St .X = (List.replicate n true ++ false :: r).map Sym.bit → St .B = cnt U i →
     St .D = cnt U i →
@@ -266,7 +335,12 @@ theorem rdN_some (n : ℕ) : ∀ (i : ℕ) (v : Bool) (St : ∀ k, List (Γ k)) 
       rw [hS' j h1 h2 h3]
       simp [update_of_ne h1, update_of_ne h2, update_of_ne h3]
 
-/-- A unary `n` that never ends: `bad` within `|r| + 1` steps. -/
+/-- **Unterminated second unary number in the KG-map machine.** Let $m$ be a mode and $r$ a list
+of bits on which reading a unary length prefix fails (this happens exactly when $r$ contains no
+false). From any configuration of the KG-map machine $M_m$ at the label read $n$, with any
+internal bit, in which stack $X$ holds the input symbols $\mathrm{bit}(b)$ for the bits $b$ of
+$r$, top first, $M_m$ reaches the failure label in exactly $|r| + 1$ steps, with every stack
+other than $X$, $B$ and $D$ unchanged. -/
 theorem rdN_none : ∀ (r : List Bool), readUnaryLength r = none →
     ∀ (v : Bool) (St : ∀ k, List (Γ k)), St .X = r.map Sym.bit →
       ∃ v' S', Run (prog m) (r.length + 1) ⟨some .rdN, v, St⟩ ⟨some .bad, v', S'⟩ ∧
@@ -283,7 +357,13 @@ theorem rdN_none : ∀ (r : List Bool), readUnaryLength r = none →
       rw [hS' j h1 h2 h3]
       simp [update_of_ne h1, update_of_ne h2, update_of_ne h3]
 
-/-- Moving the pair bits: `X` is emptied onto `Y` as `Sym.val`s, reversed. -/
+/-- **Moving the pair bits onto stack $Y$.** Fix a mode $m$ of the CLIQUE/VERTEX-COVER
+reduction machine, a list of bits $r$ and a list of symbols $y$. Start the machine for $m$ at the
+label for moving the pair bits, with any internal state and any stacks such that stack $X$ holds
+$r$ as the symbols $\mathrm{bit}(b)$ and stack $Y$ holds $y$. Then after exactly $|r| + 1$ steps
+it is at the label that follows moving the pair bits in mode $m$, with some internal state and
+stacks in which $Y$ holds the symbols $\mathrm{val}(b)$ for the bits $b$ of $r$, in reverse
+order, on top of $y$, and every stack other than $X$ and $Y$ is unchanged. -/
 theorem mv_run (r : List Bool) : ∀ (v : Bool) (St : ∀ k, List (Γ k)) (ys : List Sym),
     St .X = r.map Sym.bit → St .Y = ys →
     ∃ v' S', Run (prog m) (r.length + 1) ⟨some .mv, v, St⟩ ⟨some m.next, v', S'⟩ ∧
@@ -303,7 +383,13 @@ theorem mv_run (r : List Bool) : ∀ (v : Bool) (St : ∀ k, List (Γ k)) (ys : 
       rw [hS' j h1 h2]
       simp [update_of_ne h1, update_of_ne h2]
 
-/-- Subtraction for `k ≤ n`: `D` ends at `n - k`. -/
+/-- **Subtraction loop of the clique reduction machine.** Let $m$ be a mode of the machine, let
+$k \le n$ be natural numbers, and let $S$ be stack contents in which the counter stack $A$ holds
+$U^k$ ($k$ copies of the unit symbol $U$) and the counter stack $D$ holds $U^n$. Then for every
+Boolean local state $v$ there are a local state $v'$ and stack contents $S'$ such that the machine
+of mode $m$ runs in exactly $k + 1$ steps from label $\mathsf{sub}$ with local state $v$ and
+stacks $S$ to label $\mathsf{outY}$ with local state $v'$ and stacks $S'$, the stack $D$ of $S'$
+holds $U^{n-k}$, and every stack other than $A$ and $D$ has the same contents in $S'$ as in $S$. -/
 theorem sub_le (k : ℕ) : ∀ (n : ℕ) (v : Bool) (St : ∀ k, List (Γ k)), k ≤ n →
     St .A = cnt U k → St .D = cnt U n →
     ∃ v' S', Run (prog m) (k + 1) ⟨some .sub, v, St⟩ ⟨some .outY, v', S'⟩ ∧
@@ -325,7 +411,11 @@ theorem sub_le (k : ℕ) : ∀ (n : ℕ) (v : Bool) (St : ∀ k, List (Γ k)), k
       rw [hS' j h1 h2]
       simp [update_of_ne h1, update_of_ne h2]
 
-/-- Subtraction for `k > n`: `bad` after `n + 1` steps. -/
+/-- **Failed subtraction in the KG-map machine.** Let $m$ be a mode and $n < k$ natural numbers.
+From any configuration of the KG-map machine $M_m$ at the label subtract, with any internal bit,
+in which stack $A$ holds $k$ copies of the unit symbol and stack $D$ holds $n$ copies, $M_m$
+reaches the failure label in exactly $n + 1$ steps, with every stack other than $A$ and $D$
+unchanged. -/
 theorem sub_gt (n : ℕ) : ∀ (k : ℕ) (v : Bool) (St : ∀ k, List (Γ k)), n < k →
     St .A = cnt U k → St .D = cnt U n →
     ∃ v' S', Run (prog m) (n + 1) ⟨some .sub, v, St⟩ ⟨some .bad, v', S'⟩ ∧
@@ -347,8 +437,13 @@ theorem sub_gt (n : ℕ) : ∀ (k : ℕ) (v : Bool) (St : ∀ k, List (Γ k)), n
       rw [hS' j h1 h2]
       simp [update_of_ne h1, update_of_ne h2]
 
-/-- Outputting the pair bits: `Y` (as `Sym.val`s, top first) is popped onto `O`, each bit
-through `m.fb`, then `false` is pushed. -/
+/-- **Output loop for the pair bits of the KG-map machine.** Let $m$ be a mode and $y$ and $o$
+lists of bits. Consider a configuration of the KG-map machine $M_m$ at the label output pair
+bits, with any internal bit, in which stack $Y$ holds the symbols $\mathrm{val}(b)$ for the bits
+$b$ of $y$, the first bit of $y$ on top, and the output stack $O$ holds $o$. Then in exactly
+$|y| + 1$ steps $M_m$ reaches the label output $n$ with $O$ equal, top first, to false, then the
+reverse of $\beta_m(y)$, then $o$, where $\beta_m$ negates every bit for flip and leaves the
+bits unchanged for vc; every stack other than $Y$ and $O$ is unchanged. -/
 theorem outY_run (ys : List Bool) : ∀ (v : Bool) (St : ∀ k, List (Γ k)) (o : List Bool),
     St .Y = ys.map Sym.val → St .O = o →
     ∃ v' S', Run (prog m) (ys.length + 1) ⟨some .outY, v, St⟩ ⟨some .outB, v', S'⟩ ∧
@@ -372,7 +467,15 @@ theorem outY_run (ys : List Bool) : ∀ (v : Bool) (St : ∀ k, List (Γ k)) (o 
 theorem ctr_ne : m.ctr ≠ .O ∧ m.ctr ≠ .B ∧ m.ctr ≠ .Y ∧ m.ctr ≠ .X := by
   cases m <;> decide
 
-/-- The numbers: drain `B` as `true`s onto `O`, push `false`, drain `m.ctr` as `true`s. -/
+/-- **Number output of the clique reduction machine.** Let $m$ be a mode of the machine and $C$
+its final counter stack ($A$ for the flip mode, $D$ for the vertex-cover mode). Let $n, c$ be
+natural numbers, $u$ a symbol of the alphabet of $C$, and $S$ stack contents in which the stack
+$B$ holds $U^n$ ($n$ copies of the unit symbol $U$) and $C$ holds $u^c$. Then for every Boolean
+local state $v$ there are a local state $v'$ and stack contents $S'$ such that the machine of
+mode $m$ runs in exactly $n + c + 3$ steps from label $\mathsf{outB}$ with local state $v$ and
+stacks $S$ to label $\mathsf{done}$ with local state $v'$ and stacks $S'$, and the output stack
+$O$ of $S'$ holds, from the top, $c$ copies of $\mathrm{true}$, then $\mathrm{false}$, then $n$
+copies of $\mathrm{true}$, then the contents of $O$ in $S$. -/
 theorem tail_run (n c : ℕ) (u : Γ m.ctr) (v : Bool) (St : ∀ k, List (Γ k))
     (hB : St .B = cnt U n) (hC : St m.ctr = cnt u c) :
     ∃ v' S', Run (prog m) (n + c + 3) ⟨some .outB, v, St⟩ ⟨some .done, v', S'⟩ ∧
@@ -393,8 +496,15 @@ theorem tail_run (n c : ℕ) (u : Γ m.ctr) (v : Bool) (St : ∀ k, List (Γ k))
     update_of_ne (by decide : K.O ≠ K.B)]
   rfl
 
-/-- The output phase: from `outY` with the reversed pair bits on `Y`, `n` on `B`, `c` on
-`m.ctr` and `O` empty, reach `done` with `O = encodeKG c n (r.map m.fb)`. -/
+/-- **Output phase of the KG-map machine.** Let $m$ be a mode, $r$ a list of bits and $n$ and
+$c$ natural numbers. Consider a configuration of the KG-map machine $M_m$ at the label output
+pair bits, with any internal bit, in which stack $Y$ holds the symbols $\mathrm{val}(b)$ for the
+bits $b$ of $r$ in reverse order (the last bit of $r$ on top), stack $B$ holds $n$ copies of the
+unit symbol, the counter of $m$ ($A$ for flip, $D$ for vc) holds $c$ copies of some symbol, and
+the output stack $O$ is empty. Then in exactly $|r| + n + c + 4$ steps $M_m$ reaches the halting
+label with $O$ equal, top first, to the encoding of the instance with numbers $c$ and $n$ and
+pair bits $\beta_m(r)$: $c$ trues, a false, $n$ trues, a false, then $\beta_m(r)$, where
+$\beta_m$ negates every bit for flip and leaves the bits unchanged for vc. -/
 theorem out_run (r : List Bool) (n c : ℕ) (u : Γ m.ctr) (v : Bool) (St : ∀ k, List (Γ k))
     (hY : St .Y = (r.map Sym.val).reverse) (hB : St .B = cnt U n) (hC : St m.ctr = cnt u c)
     (hO : St .O = []) :
@@ -411,8 +521,13 @@ theorem out_run (r : List Bool) (n c : ℕ) (u : Γ m.ctr) (v : Bool) (St : ∀ 
 
 end Loops
 
-/-- **The component.** From `start` with `x` on `X` (as `Sym.bit`s) and the other stacks empty,
-`prog m` reaches `done` within `3 · (|x| + 1)` steps with `m.f x` on `O`, top first. -/
+/-- **Correctness and running time of the KG-map machine.** Let $m$ be a mode and $x$ a list of
+bits, and let $F_m$ be the clique-to-independent-set map on bit strings for flip and the
+independent-set-to-vertex-cover map for vc. From any configuration of the KG-map machine $M_m$
+at its start label, with any internal bit, in which stack $X$ holds the input symbols
+$\mathrm{bit}(b)$ for the bits $b$ of $x$, top first, and every other stack is empty, $M_m$
+reaches the halting label in at most $3(|x| + 1)$ steps with the output stack $O$ equal to
+$F_m(x)$, top first. -/
 theorem run (m : Mode) (x : List Bool) (v : Bool) (St : ∀ k, List (Γ k))
     (hX : St .X = x.map Sym.bit) (h0 : ∀ k, k ≠ .X → St k = []) :
     ∃ v' S', RunLe (prog m) (3 * (x.length + 1)) ⟨some start, v, St⟩ ⟨some .done, v', S'⟩ ∧

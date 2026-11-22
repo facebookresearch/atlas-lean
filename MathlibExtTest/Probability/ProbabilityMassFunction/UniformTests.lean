@@ -81,3 +81,15 @@ example : True := by
     | have : PMF (Fin 0) := PMF.uniformFintype (Fin 0)
       all_goals trivial
   trivial
+
+/-- The counting probability of a singleton event, checked directly through
+`PMF.toOuterMeasure_uniformFintype_apply`. -/
+example : (PMF.uniformFintype (Fin 4)).toOuterMeasure {0} = (4 : ℝ≥0∞)⁻¹ := by
+  rw [PMF.toOuterMeasure_uniformFintype_apply]
+  simp [div_eq_mul_inv]
+
+/-- Uniform on the full finset agrees with uniform on the finite type. -/
+example :
+    PMF.uniformFinset (Finset.univ : Finset (Fin 3)) Finset.univ_nonempty =
+      PMF.uniformFintype (Fin 3) :=
+  PMF.uniformFinset_univ

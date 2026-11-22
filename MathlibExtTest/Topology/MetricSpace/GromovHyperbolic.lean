@@ -9,15 +9,24 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Topology.MetricSpace.GromovHyperbolic
+public import MathlibExt.Topology.MetricSpace.GromovHyperbolicTriangles
 
 @[expose] public section
 
-/-- Regression test for the Gromov-product basepoint ordering: from the public
-`Metric.IsDeltaHyperbolic ℝ 0` hypothesis, the four-point inequality for the
-tree-like configuration with basepoint `0` and points `-R, R, -R` follows
-directly through `IsDeltaHyperbolic.four_point`. With the basepoint mistakenly
-placed first in the definition, this configuration would force `R ≤ 0`. -/
-example (h : Metric.IsDeltaHyperbolic ℝ 0) (R : ℝ) :
-    min (Metric.gromovProduct (-R) R (0 : ℝ)) (Metric.gromovProduct R (-R) (0 : ℝ)) - 0 ≤
-      Metric.gromovProduct (-R) (-R) (0 : ℝ) :=
-  h.four_point 0 (-R) R (-R)
+namespace MathlibExtTest.GromovHyperbolic
+
+open Metric
+
+/-- Regression test for the Gromov-product basepoint order: the real line is an `ℝ`-tree, so it
+is `0`-hyperbolic (`Metric.isDeltaHyperbolic_real`). `Metric.gromovProduct w x y` is the product of
+`x` and `y` at the basepoint `w`. Reading the basepoint as the third argument mixes basepoints in
+the four-point inequality, and `ℝ` then fails it for every `δ`: at `w = 0`, `x = z = -R`, `y = R`
+it reads `R - δ ≤ 0`. -/
+example : IsDeltaHyperbolic ℝ 0 :=
+  isDeltaHyperbolic_real
+
+/-- The real line is Gromov-hyperbolic. -/
+example : IsGromovHyperbolic ℝ :=
+  ⟨0, isDeltaHyperbolic_real⟩
+
+end MathlibExtTest.GromovHyperbolic

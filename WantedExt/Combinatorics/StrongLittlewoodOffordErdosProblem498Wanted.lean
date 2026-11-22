@@ -1,0 +1,52 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+# The strong Littlewood-Offord problem in the plane (Erdős Problem 498)
+
+Erdős Problem 498: for `z₁, …, zₙ ∈ ℂ` with `|zᵢ| ≥ 1` and a disc `D` of radius `1`, do at most
+`C(n, ⌊n/2⌋)` of the sums `∑ εᵢ zᵢ` (`εᵢ = ±1`) lie in `D`?
+-/
+
+module
+
+public import Batteries.Util.ProofWanted
+public import Mathlib.Analysis.CStarAlgebra.Classes
+
+@[expose] public section
+
+namespace MathlibExt.Combinatorics.StrongLittlewoodOffordErdosProblem498Wanted
+
+/-!
+Source: T. F. Bloom, Erdős Problems, Problem #498, https://www.erdosproblems.com/498 (status PROVED
+(LEAN)). UnsolvedMath record UM-30006904 (`EP-498`), dataset ulamai/UnsolvedMath v1.8.0.
+
+The disc is open: for a closed disc the statement fails at `n = 1` (`z₁ = 1`, both `±1` lie in the
+closed unit disc at `0`). Sums are counted by sign vector. Compared with the formal-conjectures
+statement `ErdosProblems/498.lean` (equivalent; no code imported).
+-/
+
+/-- Erdős Problem 498 (strong Littlewood-Offord): for `z₁, …, zₙ ∈ ℂ` with `|zᵢ| ≥ 1` and every
+open disc `D` of radius `1`, at most `C(n, ⌊n / 2⌋)` of the `2 ^ n` signed sums `∑ εᵢ zᵢ`
+(`εᵢ = ±1`, counted by sign vector) lie in `D`. -/
+def signedSumsInUnitDiscBound : Prop :=
+  ∀ (n : ℕ) (z : Fin n → ℂ), (∀ i, 1 ≤ ‖z i‖) → ∀ c : ℂ,
+    {ε : Fin n → Bool | ∑ i, (if ε i then (1 : ℂ) else -1) * z i ∈ Metric.ball c 1}.ncard ≤
+      n.choose (n / 2)
+
+/--
+Resolved true: Kleitman proved the bound `C(n, ⌊n/2⌋)` for complex `zᵢ` (later for vectors in any
+Hilbert space); Erdős had proved it for real `zᵢ`. Source: T. F. Bloom, Erdős Problems, Problem
+#498, https://www.erdosproblems.com/498 (status PROVED (LEAN)); resolution: D. J. Kleitman, On a
+lemma of Littlewood and Offord on the distribution of certain sums, Math. Z. (1965), 251-259,
+erdosproblems.com/498: solved in the affirmative by Kleitman; generalized to Hilbert spaces
+(Kleitman 1970), https://www.erdosproblems.com/498.
+-/
+public theorem_wanted signedSumsInUnitDiscBound_holds : signedSumsInUnitDiscBound
+
+end MathlibExt.Combinatorics.StrongLittlewoodOffordErdosProblem498Wanted
