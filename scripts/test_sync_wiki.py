@@ -4118,7 +4118,39 @@ class ScopedRun(unittest.TestCase):
         self.groups()
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["in_step"], len(report["errors"])), (1, False, 1), report["errors"])
-        self.assertIn("links Ext.helper, which the Lean no longer has", report["errors"][0])
+        self.assertIn("links Ext.helper, which the row names but does not credit, and the Lean no longer has it: point "
+                      "that end at the declaration's successor or remove the end, keeping the row's article id and what "
+                      "it credits", report["errors"][0])
+
+    def test_a_row_by_module_and_name_that_also_uses_a_declaration_is_checked_for_both(self) -> None:
+        # A row whose defaults make it use helper and that credits extra by the module and name an earlier sync wrote:
+        # removing either is the changes' problem, and removing both, two.
+        self.write("blueprint/links/_defaults.json", json.dumps({"object": {
+            **sync.DEFAULTS["object"], "location": {"declaration": "Ext.helper"}, "role": "uses"}}) + "\n")
+        roadmap = self.root / "blueprint/links/roadmap.jsonl"
+        roadmap.write_text("".join(json.dumps({**json.loads(line), "object": []}) + "\n"
+                                   for line in roadmap.read_text().splitlines()))
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        rows = [json.loads(line) for line in links.read_text().splitlines()]
+        for row in rows:
+            row.setdefault("object", [])
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/extra.md", "# Extra\n\nExtra.\n")
+        rows.append({"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/extra.md"}],
+                     "id": "af_" + "e" * 24, "extensions": {sync.OWN: {"module": "MathlibExt.Algebra.Groups",
+                                                                        "name": "extra"}}})
+        links.write_text("".join(json.dumps(row) + "\n" for row in rows))
+        both = "theorem helper : True := trivial\n\ntheorem extra : True := trivial\n\n"
+        self.groups(more=both)
+        self.base = self.commit("a row that uses helper and credits extra by module and name")
+        self.assertEqual(self.run_sync("--check")[3]["errors"], [])
+        for more, expected in ((both.replace("theorem extra : True := trivial\n\n", ""), ["extra in"]),
+                               (both.replace("theorem helper : True := trivial\n\n", ""), ["Ext.helper"]),
+                               ("", ["Ext.helper", "extra in"])):
+            self.groups(more=more)
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual((status, len(report["errors"])), (1, len(expected)), report["errors"])
+            for row, name in zip(sorted(report["errors"], key=lambda row: "extra in" in row), expected):
+                self.assertIn(name, row)
 
 
 

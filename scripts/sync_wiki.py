@@ -2984,21 +2984,20 @@ def link_view(index) -> dict:
     files: dict[Path, list[dict]] = defaultdict(list)
     for path, number, row in rows:
         files[path].append(row)
-        # Each declaration of this project the row names, whatever its role, not only the one it credits.
-        names = list(dict.fromkeys(name for name, _role, _place in lean_ends(row).own))
-        gone = [name for name in names if not declared(name, index)]
-        if not names:
-            # A row an earlier sync wrote with a module and a name, and that credits nothing else, links the declaration
-            # the index resolves them to, as annotation_key reads it: one that resolves to none, or to several, links
-            # none the Lean has.
-            try:
-                owner = page_owner(row)[0]
-            except CreditError:
-                owner = None  # Left to the rows Autoform cannot read, below.
-            pair = legacy_pair(row) if owner == "none" else None
-            if (pair is not None and all(isinstance(part, str) for part in pair) and "held" not in row["extensions"][OWN]
-                    and not legacy_lean_name(row["extensions"][OWN], index)):
-                gone = [f"{pair[1]} in {pair[0]}{BY_MODULE_AND_NAME}"]
+        # Each declaration of this project the row names, whatever its role: the one it credits, and the others.
+        credited = lean_name(row)
+        gone = [name if name == credited else f"{name}{AS_REFERENCE}"
+                for name in dict.fromkeys(name for name, _role, _place in lean_ends(row).own) if not declared(name, index)]
+        # And, for a row that credits nothing else, the declaration the module and name an earlier sync wrote resolve
+        # to, as annotation_key reads it: one that resolves to none, or to several, links none the Lean has.
+        try:
+            owner = page_owner(row)[0]
+        except CreditError:
+            owner = None  # Left to the rows Autoform cannot read, below.
+        pair = legacy_pair(row) if owner == "none" else None
+        if (pair is not None and all(isinstance(part, str) for part in pair) and "held" not in row["extensions"][OWN]
+                and not legacy_lean_name(row["extensions"][OWN], index)):
+            gone.append(f"{pair[1]} in {pair[0]}{BY_MODULE_AND_NAME}")
         for name in gone:
             # Named as the working tree's file, which a copy of the wiki (see sync_output) stands for.
             where = location(wiki.ROOT / path.relative_to(LINKS.parent.parent), number)
@@ -3062,8 +3061,10 @@ PAGES_STANDING_FOR = re.compile(
     r"(.+) (?:both|all) stand for the declaration (\S+) of this project; a declaration has one page")
 
 
-# How link_view names a row an earlier sync wrote with a module and a name (see legacy_pair).
+# How link_view names a row an earlier sync wrote with a module and a name (see legacy_pair), and a declaration a row
+# names that is not the one it credits.
 BY_MODULE_AND_NAME = ", by the module and name an earlier sync wrote"
+AS_REFERENCE = ", which the row names but does not credit"
 
 
 def written_page(row: dict) -> Path | None:
@@ -3209,6 +3210,9 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
     blocking = [(f"{where} names {name}, which no longer name one declaration of the Lean: link the row to the one it "
                  "means, by its full name, and keep its article id, or remove them and keep the page as a planned page"
                  if name.endswith(BY_MODULE_AND_NAME) else
+                 f"{where} links {name}, and the Lean no longer has it: point that end at the declaration's successor "
+                 "or remove the end, keeping the row's article id and what it credits"
+                 if name.endswith(AS_REFERENCE) else
                  f"{where} links {name}, which the Lean no longer has: relink the row to the declaration's successor "
                  "and keep its article id, or remove the link and keep the page as a planned page")
                 for (row, name), places in sorted(links["stale"].items()) if (row, name) not in base["stale"]
