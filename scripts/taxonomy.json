@@ -11147,6 +11147,7 @@
   "MathlibExt/NumberTheory/LucasSequence": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Lucas sequences"},
   "MathlibExt/NumberTheory/LucasSpecialPrime": {"to": "NumberTheory/linear-recurrences/lucas-sequences-primitive-divisors", "title": "Lucas sequences"},
   "MathlibExt/NumberTheory/MelhamGibonacci": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Gibonacci numbers"},
+  "MathlibExt/NumberTheory/ModInverseSwitching": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Modular inverses from the Euclidean algorithm"},
   "MathlibExt/NumberTheory/ModularForms/CongruenceSubgroupReduction": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Modular group and congruence subgroups"},
   "MathlibExt/NumberTheory/ModularForms/CuspFormGamma0Two": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Weight-two cusp forms on Γ₀(2)"},
   "MathlibExt/NumberTheory/ModularForms/JacobiTheta/JacobiCubeEulerProduct": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Jacobi's identity for the cube of Euler's function"},
