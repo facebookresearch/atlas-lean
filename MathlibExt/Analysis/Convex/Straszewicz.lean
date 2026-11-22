@@ -234,10 +234,10 @@ theorem convexOn_line (hconv : ConvexOn ℝ univ h) (v : StrongDual ℝ E) :
   exact hconv.2 (mem_univ _) (mem_univ _) ha hb hab
 
 omit [FiniteDimensional ℝ E] in
-/-- **Forward difference quotients of a convex function at a point are bounded below.** Let $E$ be a
-real normed space, $E^*$ its continuous dual, and $h : E^* \to \mathbb{R}$ a convex function. For
-all $x, v \in E^*$, the set of difference quotients $\{(h(x + t v) - h(x))/t : t > 0\}$ is bounded
-below.
+/-- **Forward difference quotients of a convex function are bounded below along each fixed ray.**
+Let $E$ be a real normed space, $E^*$ its continuous dual, and $h : E^* \to \mathbb{R}$ a convex
+function. For all $x, v \in E^*$, the set of difference quotients
+$\{(h(x + t v) - h(x))/t : t > 0\}$ is bounded below.
 
 The bound comes from comparing slopes of $h$ on the line through $x$ in direction $v$. -/
 theorem dirQuot_bddBelow (hconv : ConvexOn ℝ univ h) (v : StrongDual ℝ E) :
@@ -502,11 +502,11 @@ def GateauxPt (h : StrongDual ℝ E → ℝ) (x : StrongDual ℝ E) : Prop :=
   ∀ v, dirDeriv h x v + dirDeriv h x (-v) ≤ 0
 
 omit [FiniteDimensional ℝ E] in
-/-- **Strict sublevel sets of the symmetrized directional derivative of a support function are
-open.** Let $E$ be a real normed space with continuous dual $E^*$, let $K \subseteq E$ be a nonempty
-compact set with support function $h_K$, and write $h_K'(x; v)$ for the directional derivative of
-$h_K$ at $x$ in direction $v$. For every $v \in E^*$ and every real $c$, the set of $x \in E^*$ with
-$h_K'(x; v) + h_K'(x; -v) < c$ is open. -/
+/-- **For the support function of a nonempty compact set, strict sublevel sets of the symmetrized
+directional derivative are open.** Let $E$ be a real normed space with continuous dual $E^*$, let
+$K \subseteq E$ be a nonempty compact set with support function $h_K$, and write $h_K'(x; v)$ for
+the directional derivative of $h_K$ at $x$ in direction $v$. For every $v \in E^*$ and every real
+$c$, the set of $x \in E^*$ with $h_K'(x; v) + h_K'(x; -v) < c$ is open. -/
 theorem dirDeriv_sublevel_open (hK : IsCompact K) (hKne : K.Nonempty)
     (v : StrongDual ℝ E) (c : ℝ) :
     IsOpen {x | dirDeriv (suppFunc K) x v + dirDeriv (suppFunc K) x (-v) < c} := by
