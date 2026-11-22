@@ -50,9 +50,9 @@ public def indegreeWithin {α : Type u} [DecidableEq α]
     (g : DirectedAdjacency α) (remaining : List α) (v : α) : Nat :=
   remaining.countP (fun u => g.hasEdge u v)
 
-/-- **Indegree.** The indegree of a vertex $v$ in a finite directed graph $G$ is the number of
-vertices $u$ such that $G$ has an edge from $u$ to $v$; repeated entries in adjacency lists
-count once. -/
+/-- **Indegree.** Let the vertices have decidable equality. The indegree of a vertex $v$ in a finite
+directed graph $G$ is the number of vertices $u$ such that $G$ has an edge from $u$ to $v$; repeated
+entries in adjacency lists count once. -/
 public def indegree {α : Type u} [DecidableEq α]
     (g : DirectedAdjacency α) (v : α) : Nat :=
   indegreeWithin g g.vertices v

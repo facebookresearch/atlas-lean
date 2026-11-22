@@ -131,11 +131,11 @@ def uhierholzer (E : List (V × V)) (s : V) : TimeM ℕ (List V) := do
 
 /-! ## Degrees -/
 
-/-- **Degree after removing an edge.** Let $R$ be a finite list of edges of an undirected
-multigraph, each an ordered pair of vertices, let $e = (a, b)$ be an edge in $R$, and let $x$ be a
-vertex. Then the degree of $x$ in $R$ equals the degree of $x$ in the list obtained from $R$ by
-removing the first occurrence of $e$, plus $[x = a] + [x = b]$, where $[P]$ is $1$ if $P$ holds
-and $0$ otherwise. -/
+/-- **Degree after removing an edge.** Let the vertices have decidable equality, and let $R$ be a
+finite list of edges of an undirected multigraph, each an ordered pair of vertices, let $e = (a, b)$
+be an edge in $R$, and let $x$ be a vertex. Then the degree of $x$ in $R$ equals the degree of $x$
+in the list obtained from $R$ by removing the first occurrence of $e$, plus $[x = a] + [x = b]$,
+where $[P]$ is $1$ if $P$ holds and $0$ otherwise. -/
 theorem udeg_erase {R : List (V × V)} {e : V × V} (he : e ∈ R) (x : V) :
     udeg R x = udeg (R.erase e) x + (if x = e.1 then 1 else 0) + (if x = e.2 then 1 else 0) := by
   have hp := List.perm_cons_erase he

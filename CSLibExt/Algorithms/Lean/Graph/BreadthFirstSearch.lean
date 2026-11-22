@@ -1009,10 +1009,11 @@ private theorem bfsModel_eq (g : DirectedAdjacency V) (s : V) :
   unfold bfsModel modelFinal modelInitial modelStep modelScan ModelState.entries
   rfl
 
-/-- **The executable BFS agrees with the list model.** For every finite directed graph $G$ with
-ordered adjacency lists and every source vertex $s$, the result of the executable breadth-first
-search from $s$ equals the result of the list model of breadth-first search from $s$: both
-report the same distance (or none) for every vertex and the same first-discovery order. -/
+/-- **The executable BFS agrees with the list model.** Let the vertices be hashable, with a Boolean
+equality test that agrees with equality. For every finite directed graph $G$ with ordered adjacency
+lists and every source vertex $s$, the result of the executable breadth-first search from $s$ equals
+the result of the list model of breadth-first search from $s$: both report the same distance (or
+none) for every vertex and the same first-discovery order. -/
 theorem bfs_eq_bfsModel (g : DirectedAdjacency V) (s : V) :
     bfs g s = bfsModel g s := by
   rw [bfs_eq, bfsModel_eq]

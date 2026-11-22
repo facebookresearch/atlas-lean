@@ -1079,10 +1079,11 @@ theorem parent_before_child {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
   have hb := (final_forestInv adj roots).1 child parent hrev |>.2.2.2
   simpa [dfs, finish] using before_reverse hb
 
-/-- **A DFS child finishes before its parent.** Let $G$ be a directed graph with ordered
-adjacency lists and fix an ordered list of roots. If $(c, p)$ is one of the (child, parent) pairs
-recorded by the left-first depth-first search of $G$ from these roots, then $c$ occurs before $p$
-in the postorder (finish order) of that search. -/
+/-- **A DFS child finishes before its parent.** Let the vertices be hashable, with a Boolean
+equality test that agrees with equality. Let $G$ be a directed graph with ordered adjacency lists
+and fix an ordered list of roots. If $(c, p)$ is one of the (child, parent) pairs recorded by the
+left-first depth-first search of $G$ from these roots, then $c$ occurs before $p$ in the postorder
+(finish order) of that search. -/
 theorem child_before_parent_postorder {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) (child parent : V)
     (h : (child, parent) ∈ (dfs adj roots).parents) :
@@ -1280,10 +1281,11 @@ theorem mem_dfsAll_preorder {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
   apply preorder_complete adj adj.vertices vertex
   exact ⟨vertex, adj.vertices_complete vertex, Relation.ReflTransGen.refl⟩
 
-/-- **Whole-graph DFS finishes every vertex.** For every finite directed graph $G$ given by ordered
-adjacency lists and every vertex $v$ of $G$, $v$ occurs in the postorder of the whole-graph
-depth-first search of $G$, that is, the left-first depth-first search of $G$ whose roots are all
-vertices of $G$ in the graph's vertex order. -/
+/-- **Whole-graph DFS finishes every vertex.** Let the vertices be hashable, with a Boolean equality
+test that agrees with equality. For every finite directed graph $G$ given by ordered adjacency lists
+and every vertex $v$ of $G$, $v$ occurs in the postorder of the whole-graph depth-first search of
+$G$, that is, the left-first depth-first search of $G$ whose roots are all vertices of $G$ in the
+graph's vertex order. -/
 theorem mem_dfsAll_postorder {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (vertex : V) :
     vertex ∈ (dfsAll adj).postorder := by

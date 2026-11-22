@@ -298,9 +298,10 @@ public theorem mem_flatten_components {V : Type u} [BEq V] [Hashable V]
   exact ⟨fun _ => graph.vertices_complete vertex,
     fun _ => mem_decreasingFinishAll graph vertex⟩
 
-/-- **Vertices share a computed component exactly when strongly connected.** For a directed graph
-$G$ and vertices $u$ and $v$, some block of the computed strongly connected components of $G$
-contains both $u$ and $v$ if and only if $u$ and $v$ are strongly connected in $G$. -/
+/-- **Vertices share a computed component exactly when strongly connected.** Let the vertices be
+hashable, with a Boolean equality test that agrees with equality. For a directed graph $G$ and
+vertices $u$ and $v$, some block of the computed strongly connected components of $G$ contains both
+$u$ and $v$ if and only if $u$ and $v$ are strongly connected in $G$. -/
 public theorem share_component_iff_stronglyConnected {V : Type u} [BEq V]
     [Hashable V] [LawfulBEq V] (graph : DirectedAdjacency V) (left right : V) :
     (∃ block ∈ components graph, left ∈ block ∧ right ∈ block) ↔
@@ -395,10 +396,10 @@ public def CondensationAcyclic {V : Type u} (graph : DirectedAdjacency V)
     ComponentReaches graph source target →
       ComponentReaches graph target source → source = target
 
-/-- **The condensation of the computed components is acyclic.** Let $G$ be a directed graph and
-let $S$ and $T$ be blocks returned by the strongly connected components algorithm on $G$. If some
-vertex of $S$ reaches some vertex of $T$ and some vertex of $T$ reaches some vertex of $S$, then
-$S = T$.
+/-- **The condensation of the computed components is acyclic.** Let the vertices be hashable, with a
+Boolean equality test that agrees with equality. Let $G$ be a directed graph and let $S$ and $T$ be
+blocks returned by the strongly connected components algorithm on $G$. If some vertex of $S$ reaches
+some vertex of $T$ and some vertex of $T$ reaches some vertex of $S$, then $S = T$.
 
 Equivalently, the condensation relation has no nontrivial directed cycle. -/
 public theorem components_condensationAcyclic {V : Type u} [BEq V]

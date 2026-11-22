@@ -171,9 +171,9 @@ theorem lisTable_time (xs : List α) : 2 * (lisTable xs).time = xs.length * (xs.
         rw [Nat.mul_add, ih]
         ring
 
-/-- **Running time of the quadratic LIS program.** For every list $xs$ of length $n$ over a
-preorder, twice the cost of the quadratic longest-increasing-subsequence program on $xs$ equals
-$n(n + 1)$, so the program costs exactly $n(n + 1)/2$.
+/-- **Running time of the quadratic LIS program.** For every list $xs$ of length $n$ over a preorder
+with decidable $<$, twice the cost of the quadratic longest-increasing-subsequence program on $xs$
+equals $n(n + 1)$, so the program costs exactly $n(n + 1)/2$.
 
 The cost model charges one unit for each table entry inspected. -/
 theorem longestIncreasingSubsequence_time (xs : List α) :
