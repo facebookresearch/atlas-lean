@@ -35,6 +35,8 @@ Tardos also assume, gives uniqueness of the equilibrium cost instead
 
 * `RoutingInstance.exists_isWardrop`: if every commodity has a path and the demands are
   nonnegative, some feasible flow is a Wardrop equilibrium.
+* `RoutingInstance.exists_isWardrop_iff`: equilibria exist exactly at admissible demands;
+  commodities without paths are admitted at zero demand.
 
 ## References
 
@@ -183,6 +185,71 @@ theorem exists_isWardrop [Finite E] (hℓ : ∀ e, ContinuousOn (N.latency e) (S
     rw [← sum_pathLatency_mul]
     simp [v, mul_sub, sum_sub_distrib, Pi.single_apply]
   linarith
+
+omit [Fintype E] in
+/-- **Wardrop equilibria exist exactly at admissible demands.** If every latency is continuous
+on `[0, ∞)`, some flow feasible for the demand `r` is a Wardrop equilibrium exactly when `r` is
+nonnegative and vanishes on every commodity that no path serves. This is the admission
+condition of `exists_isFeasible_iff`, so under continuity an equilibrium exists whenever a
+feasible flow does. It drops the hypothesis of `exists_isWardrop` that every commodity has a
+path: a commodity without paths is admitted at zero demand, and positive demand on it admits no
+feasible flow at all. The equilibrium notion is `IsWardrop`, unchanged.
+
+Physical reading: on the OD instance of given link-simple routes — `commodity p` the OD
+pair `(orig p, dest p)`, edge sets `(edges p).toFinset`, link travel times `t`, over finitely
+many links — a user equilibrium meeting the OD demand table `r` exists exactly when `r` is
+nonnegative and zero on every OD pair that no given route joins. On link-simple routes the
+set-based edge flow and path latency are the traversal-count volume and the route travel time
+(`RoutingInstance.edgeFlow_eq_edgeVolume` and `RoutingInstance.pathLatency_eq_sum_map` in
+`MathlibExt.GameTheory.SelfishRoutingArcWalkBridge`). Demand and path flows are in one
+vehicle-flow unit, travel times in one time unit. -/
+theorem exists_isWardrop_iff
+    [Finite E] (hℓ : ∀ e, ContinuousOn (N.latency e) (Set.Ici 0)) (r : ι → ℝ) :
+    (∃ f, N.IsFeasible r f ∧ N.IsWardrop f) ↔
+      (∀ i, 0 ≤ r i) ∧ ∀ i, (∀ p, N.commodity p ≠ i) → r i = 0 := by
+  constructor
+  · rintro ⟨f, hf, hw⟩
+    refine ⟨fun i => ?_, fun i hi => ?_⟩
+    · rw [← hf.2 i]
+      exact Finset.sum_nonneg (fun p _ => hf.1 p)
+    · rw [← hf.2 i]
+      have hempty : Finset.univ.filter (fun p => N.commodity p = i) = ∅ :=
+        Finset.filter_false_of_mem (fun p _ hp => hi p hp)
+      rw [hempty, Finset.sum_empty]
+  · rintro ⟨hr, h0⟩
+    let S : Set ι := {i | ∃ p, N.commodity p = i}
+    have hmem : ∀ p : P, N.commodity p ∈ S := by
+      intro p
+      exact ⟨p, rfl⟩
+    let M : RoutingInstance E S P :=
+      { commodity := fun p => ⟨N.commodity p, hmem p⟩
+        edges := N.edges
+        latency := N.latency }
+    have hpaths : ∀ s : ↥S, ∃ p, M.commodity p = s := by
+      intro s
+      have hex : ∃ p, N.commodity p = s.val := s.property
+      obtain ⟨p, hp⟩ := hex
+      exact ⟨p, Subtype.ext hp⟩
+    obtain ⟨f, hfM, hwM⟩ :=
+      M.exists_isWardrop hℓ (r := fun s => r s.val) (fun s => hr s.val) hpaths
+    refine ⟨f, ⟨hfM.1, fun i => ?_⟩, fun p q hpq hpos => hwM p q (Subtype.ext hpq) hpos⟩
+    by_cases hi : ∃ p, N.commodity p = i
+    · have hMs := hfM.2 ⟨i, hi⟩
+      have hset : Finset.univ.filter (fun p => N.commodity p = i)
+          = Finset.univ.filter (fun p => M.commodity p = ⟨i, hi⟩) := by
+        ext p
+        simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+        constructor
+        · intro h
+          exact Subtype.ext h
+        · intro h
+          exact congrArg Subtype.val h
+      rw [hset]
+      exact hMs
+    · have hri : r i = 0 := h0 i (fun p hp => hi ⟨p, hp⟩)
+      have hempty : Finset.univ.filter (fun p => N.commodity p = i) = ∅ :=
+        Finset.filter_false_of_mem (fun p _ hp => hi ⟨p, hp⟩)
+      rw [hempty, Finset.sum_empty, hri]
 
 end RoutingInstance
 

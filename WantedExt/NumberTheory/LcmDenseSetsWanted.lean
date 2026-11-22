@@ -20,45 +20,61 @@ namespace MetaMathlibExt
 open Filter
 
 
-/-- The paper's truncated logarithm `Log x = max (log x) 1`, made total on all real
-inputs although the paper uses it for positive inputs.
+/-- **Truncated logarithm.** For a real number $x$, the truncated logarithm is
+$\operatorname{Log} x = \max(\log x, 1)$. Here $\log$ is extended to all reals by $\log 0 = 0$
+and $\log x = \log |x|$ for $x < 0$, so the definition is total; the paper uses it only for
+$x > 0$.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Notation.
 -/
 public noncomputable def truncLog (x : ℝ) : ℝ :=
   max (Real.log x) 1
 
-/-- The paper's second iterated truncated logarithm `Log₂ x = Log (Log x)`.
+/-- **Second iterated truncated logarithm.** For a real number $x$, the second iterated truncated
+logarithm is $\operatorname{Log}_2 x = \operatorname{Log}(\operatorname{Log} x)$, where
+$\operatorname{Log}$ is the truncated logarithm.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Notation.
 -/
 public noncomputable def truncLog2 (x : ℝ) : ℝ :=
   truncLog (truncLog x)
 
-/-- The paper's third iterated truncated logarithm `Log₃ x = Log (Log₂ x)`.
+/-- **Third iterated truncated logarithm.** For real $x$, let
+$\operatorname{Log} x = \max(\log x, 1)$ be the truncated logarithm, where $\log$ is the natural
+logarithm extended by $\log x = \log |x|$ for $x < 0$ and $\log 0 = 0$, and let
+$\operatorname{Log}_2 x = \operatorname{Log}(\operatorname{Log} x)$. The third iterated truncated
+logarithm is the function on all of $\mathbb{R}$ given by
+$\operatorname{Log}_3 x = \operatorname{Log}(\operatorname{Log}_2 x)$.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Notation.
 -/
 public noncomputable def truncLog3 (x : ℝ) : ℝ :=
   truncLog (truncLog2 x)
 
-/-- The truncated logarithm is always at least one; this records the effect of the
-`max` in the paper's definition.
+/-- **The truncated logarithm is at least one.** For every real number $x$, the truncated
+logarithm $\operatorname{Log} x = \max(\log x, 1)$ satisfies $\operatorname{Log} x \ge 1$.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Notation.
 -/
 public theorem one_le_truncLog (x : ℝ) : 1 ≤ truncLog x := by
   exact le_max_right _ _
 
-/-- The finite set encoding the paper's positive integers `n ∈ A` with `n ≤ x`.
-The upper endpoint is `⌊x⌋₊`, so the definition is total even for negative `x`.
+/-- **Elements of a set up to a bound.** For a set $A$ of natural numbers and a real number $x$,
+this is the finite set of positive integers $n \in A$ with $n \le x$; it is empty when $x < 1$.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Notation.
 -/
 public noncomputable def naturalsInSetUpTo (A : Set ℕ) (x : ℝ) : Finset ℕ :=
   open Classical in (Finset.Icc 1 ⌊x⌋₊).filter (fun n => n ∈ A)
 
-/-- No positive integer in the empty set occurs in the finite summation range.
+/-- **The empty set has no elements up to any bound.** For every real number $x$, the finite set
+of elements $n$ of the empty set with $1 \le n \le x$ is empty.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Notation.
 -/
@@ -66,23 +82,32 @@ INTEGERS 24 (2024), Article A100, Notation.
     naturalsInSetUpTo ∅ x = ∅ := by
   simp [naturalsInSetUpTo]
 
-/-- The finite harmonic sum `∑_{n ∈ A, n ≤ x} 1 / n`; the range begins at one,
-matching the paper's convention that natural numbers are positive.
+/-- **Harmonic sum of a set up to a bound.** For a set $A$ of natural numbers and a real number
+$x$, this is the finite sum $\sum_{n \in A,\, 1 \le n \le x} 1/n$ of the reciprocals of the
+positive integers in $A$ that are at most $x$; it is $0$ when $x < 1$.
+
+The sum starts at $n = 1$, matching the paper's convention that natural numbers are positive.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Notation.
 -/
 public noncomputable def recipSumUpTo (A : Set ℕ) (x : ℝ) : ℝ :=
   ∑ n ∈ naturalsInSetUpTo A x, 1 / (n : ℝ)
 
-/-- The harmonic sum of the empty set is zero.
+/-- **The harmonic sum over the empty set vanishes.** For every real number $x$,
+$\sum_{n \in \emptyset,\, n \le x} 1/n = 0$.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Notation.
 -/
 @[simp] public theorem recipSumUpTo_empty (x : ℝ) : recipSumUpTo ∅ x = 0 := by
   simp [recipSumUpTo]
 
-/-- The paper's double sum `∑_{n,m ∈ A, n,m ≤ x} 1 / lcm(n,m)`, with all
-natural-number quantities explicitly coerced to real numbers.
+/-- **Double sum of reciprocal least common multiples.** For a set $A$ of natural numbers and a
+real number $x$, the double sum of reciprocal least common multiples of $A$ up to $x$ is the
+real number $\sum 1/\operatorname{lcm}(n, m)$, summed over all ordered pairs $(n, m)$ with
+$n, m \in A$, $1 \le n \le x$ and $1 \le m \le x$.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Equation (12).
 -/
@@ -90,15 +115,23 @@ public noncomputable def lcmReciprocalSum (A : Set ℕ) (x : ℝ) : ℝ :=
   ∑ n ∈ naturalsInSetUpTo A x,
     ∑ m ∈ naturalsInSetUpTo A x, 1 / (Nat.lcm n m : ℝ)
 
-/-- The double least-common-multiple sum of the empty set is zero.
+/-- **Double reciprocal lcm sum of the empty set.** For every real number $x$, the double sum of
+reciprocal least common multiples of the empty set up to $x$ is $0$.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Equation (12).
 -/
 @[simp] public theorem lcmReciprocalSum_empty (x : ℝ) : lcmReciprocalSum ∅ x = 0 := by
   simp [lcmReciprocalSum]
 
-/-- The numerator of the logarithmic expectation of `gcd(n,m)`: expanding the
-two independent logarithmic weights gives `∑ gcd(n,m)/(n*m)` over the finite range.
+/-- **Logarithmic gcd moment.** For a set $A$ of natural numbers and a real number $x$, the
+logarithmic gcd moment of $A$ up to $x$ is the sum of $\gcd(n, m)/(nm)$ over all ordered pairs
+$(n, m)$ with $n, m \in A$, $1 \le n \le x$ and $1 \le m \le x$.
+
+When $A \cap [1, x]$ is nonempty, dividing by $\big(\sum_{n \in A,\ 1 \le n \le x} 1/n\big)^2$
+gives the expected value of $\gcd(n, m)$ for $n$ and $m$ drawn independently from $A \cap [1, x]$,
+each with probability proportional to $1/n$.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Equation (9).
 -/
@@ -107,26 +140,41 @@ public noncomputable def gcdLogarithmicMoment (A : Set ℕ) (x : ℝ) : ℝ :=
     ∑ m ∈ naturalsInSetUpTo A x,
       (Nat.gcd n m : ℝ) / ((n : ℝ) * (m : ℝ))
 
-/-- The defect `E gcd(n,m) - 1` from equation (9), written as the quotient of
-the expanded gcd moment by the square of the harmonic sum, minus one. If the
-finite range is empty, Lean's division by zero makes this value `-1`; the main
-statements use the definition only eventually, or have a zero harmonic left side.
+/-- **Gcd defect.** For a set $A$ of natural numbers and a real number $x$, let
+$S_A(x) = \sum_{n \in A,\ 1 \le n \le x} 1/n$ be the harmonic sum of $A$ up to $x$, and let
+$G_A(x)$ be the sum of $\gcd(n, m)/(nm)$ over all ordered pairs $(n, m)$ with $n, m \in A$,
+$1 \le n \le x$ and $1 \le m \le x$. The gcd defect of $A$ up to $x$ is
+$\mathcal{E}_A(x) = G_A(x)/S_A(x)^2 - 1$, where division by $0$ gives $0$; in particular
+$\mathcal{E}_A(x) = -1$ when $A$ has no element in $[1, x]$.
+
+When $A$ has an element in $[1, x]$, $\mathcal{E}_A(x) + 1$ is the expected value of
+$\gcd(n, m)$ for $n$ and $m$ drawn independently from $A \cap [1, x]$, each with probability
+proportional to $1/n$, so $\mathcal{E}_A(x)$ is the quantity $\mathbb{E} \gcd(n, m) - 1$ of the
+source.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Equation (9).
 -/
 public noncomputable def lcmDefect (A : Set ℕ) (x : ℝ) : ℝ :=
   gcdLogarithmicMoment A x / recipSumUpTo A x ^ 2 - 1
 
-/-- On the empty set the defect is `-1`, as dictated by Lean's total division.
+/-- **The gcd defect of the empty set.** For every real number $x$, the gcd defect of the empty
+set up to $x$ equals $-1$.
+
+The harmonic sum of the empty set is $0$, and division by $0$ gives $0$.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Equation (9).
 -/
 @[simp] public theorem lcmDefect_empty (x : ℝ) : lcmDefect ∅ x = -1 := by
   simp [lcmDefect, gcdLogarithmicMoment]
 
-/-- `primeProductLayer 𝒫 k` is the paper's `𝒫^[k]`: the products of exactly `k`
-distinct primes from `𝒫`. In particular, the squarefree number `1` belongs exactly
-to the zero layer because its set of prime factors is empty.
+/-- **Products of a fixed number of distinct primes.** For a set $\mathcal{P}$ of natural numbers
+and $k \in \mathbb{N}$, $\mathcal{P}^{[k]}$ is the set of squarefree natural numbers $n$ whose prime
+divisors all lie in $\mathcal{P}$ and which have exactly $k$ distinct prime divisors; that is, the
+products of exactly $k$ distinct primes from $\mathcal{P}$. In particular,
+$\mathcal{P}^{[0]} = \{1\}$.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Lemma 1 notation.
 -/
@@ -135,16 +183,23 @@ public noncomputable def primeProductLayer (P : Set ℕ) (k : ℕ) : Set ℕ :=
     (∀ p, p.Prime → p ∣ n → p ∈ P) ∧
     n.primeFactors.card = k}
 
-/-- `primeProductsAtMost 𝒫 k` is the paper's `𝒫^[≤k]`, encoded by membership in
-some exact layer indexed by `j ≤ k` rather than by an explicit set union.
+/-- **Products of at most a fixed number of distinct primes.** For a set $\mathcal{P}$ of natural
+numbers and $k \in \mathbb{N}$, $\mathcal{P}^{[\le k]}$ is the set of natural numbers that lie in
+$\mathcal{P}^{[j]}$ for some $j \le k$, where $\mathcal{P}^{[j]}$ is the set of products of exactly
+$j$ distinct primes from $\mathcal{P}$; that is,
+$\mathcal{P}^{[\le k]} = \bigcup_{j \le k} \mathcal{P}^{[j]}$.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Lemma 1 notation.
 -/
 public noncomputable def primeProductsAtMost (P : Set ℕ) (k : ℕ) : Set ℕ :=
   {n | ∃ j ≤ k, n ∈ primeProductLayer P j}
 
-/-- The at-most-zero prime-product layer is the exact zero layer, a characteristic
-fact about the existential encoding of `𝒫^[≤k]`.
+/-- **At most zero primes means exactly zero primes.** For every set $\mathcal{P}$ of natural
+numbers, $\mathcal{P}^{[\le 0]} = \mathcal{P}^{[0]}$, where $\mathcal{P}^{[\le k]}$ and
+$\mathcal{P}^{[k]}$ are the products of at most, respectively exactly, $k$ distinct primes from
+$\mathcal{P}$.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Lemma 1 notation.
 -/
@@ -153,13 +208,18 @@ public theorem primeProductsAtMost_zero (P : Set ℕ) :
   ext n
   simp [primeProductsAtMost]
 
-/-- The growth function `F` of equations (13)--(15). It takes
-`k = ⌈C₀ * sqrt(Log₂ x)⌉ - 1`, using truncated natural subtraction; sets
-`h(x) = Log₂ x - k²/C₀² + 1`; evaluates the same formula at
-`x_(k+1) = exp(exp((k+1)²/C₀²))`; sets `ψ(x) = 1 + h(x)²/h(x_(k+1))`;
-and returns `ψ(x) * k^(2k) * C₀^(-2k) / k!`. The final negative power is
-encoded by division by `C₀^(2k)`. This total definition is used by the theorem
-only for positive `C₀` and sufficiently large `x`, as in the paper.
+/-- **Growth function of the dense-set construction.** Let $\operatorname{Log}_2$ be the second
+iterated truncated logarithm. For real numbers $C_0$ and $x$, let $k$ be the natural number
+$\max(\lceil C_0 \sqrt{\operatorname{Log}_2 x}\,\rceil - 1, 0)$, and set
+$h = \operatorname{Log}_2 x - k^2/C_0^2 + 1$, $x' = \exp(\exp((k + 1)^2/C_0^2))$,
+$h' = \operatorname{Log}_2 x' - k^2/C_0^2 + 1$ and $\psi = 1 + h^2/h'$. The growth function at
+$(C_0, x)$ is $F_{C_0}(x) = \psi\, k^{2k} / (C_0^{2k}\, k!)$. Here division by $0$ gives $0$ and
+$0^0 = 1$.
+
+In the source, $h'$ is the value at $x_{k+1} = x'$ of the expression defining $h$, with $k$ kept
+fixed, and $F_{C_0}(x)$ is written $\psi(x)\, k^{2k} C_0^{-2k}/k!$; the function is used only for
+$C_0 > 0$ and sufficiently large $x$.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Equations (13)--(15).
 -/
@@ -171,11 +231,15 @@ public noncomputable def lcmDenseGrowthF (C₀ x : ℝ) : ℝ :=
   let ψ : ℝ := 1 + h ^ 2 / hNext
   ψ * (k : ℝ) ^ (2 * k) / C₀ ^ (2 * k) / (k.factorial : ℝ)
 
-/-- Lemma 1 (logarithmic growth rate). The absolute positive constants `c` and
-`C` precede `𝒫`, `k`, and `x`. Assuming every member of `𝒫` is prime, `x ≥ 1`,
-and `k ≤ c*S`, the four inequalities state that both the exact-`k` and at-most-`k`
-harmonic sums are comparable to `S^k/k!`. The paper's `k ≥ 0` is automatic for
-`k : ℕ`; `𝒫^[k]` and `𝒫^[≤k]` use the squarefree-layer definitions above.
+/-- **Harmonic sums over products of distinct primes.** There are constants $c > 0$ and $C > 0$
+such that the following holds. Let $\mathcal{P}$ be a set of primes, let $k$ be a natural number,
+let $x \ge 1$ be real, and put $S = \sum_{p \in \mathcal{P},\, p \le x} 1/p$,
+$T_k = \sum_{n \in \mathcal{P}^{[k]},\, n \le x} 1/n$ and
+$T_{\le k} = \sum_{n \in \mathcal{P}^{[\le k]},\, n \le x} 1/n$, where $\mathcal{P}^{[k]}$ and
+$\mathcal{P}^{[\le k]}$ are the sets of products of exactly $k$, respectively at most $k$,
+distinct primes from $\mathcal{P}$. If $k \le cS$, then
+$S^k/(C\,k!) \le T_k \le C\,S^k/k!$ and $S^k/(C\,k!) \le T_{\le k} \le C\,S^k/k!$.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Lemma 1.
 -/
@@ -194,11 +258,21 @@ public theorem_wanted recipSum_primeProductLayer_asymp :
         (S ^ k / (k.factorial : ℝ)) / C ≤ Tle ∧
         Tle ≤ C * (S ^ k / (k.factorial : ℝ))
 
-/-- Theorem 1 (negative answer to Erdős problem #442), existence portion. For
-every positive `C₀`, there is a set `A` (all sums run over `1 ≤ n ≤ x`, so whether
-`0 ∈ A` is irrelevant); an error `e(x) → 0` gives the eventual equality (11); and a
-positive `C₀`-dependent constant `K` gives the eventual LCM-sum bound (12). The informal
-optimality sentence is omitted because its precise formal content is delegated to Theorem 2(ii).
+/-- **Dense sets with unusually large least common multiples.** Let $\operatorname{Log}_2$ and
+$\operatorname{Log}_3$ be the second and third iterated truncated logarithms. For a set $A$ of
+natural numbers and real $x$, write $S_A(x) = \sum_{n \in A,\ 1 \le n \le x} 1/n$, and write
+$L_A(x)$ for the sum of $1/\operatorname{lcm}(n, m)$ over all ordered pairs $(n, m)$ with
+$n, m \in A$, $1 \le n \le x$ and $1 \le m \le x$. Then for every real $C_0 > 0$ there is a set
+$A$ of natural numbers with the following two properties. First, there is a function
+$\varepsilon : \mathbb{R} \to \mathbb{R}$ with $\varepsilon(x) \to 0$ as $x \to \infty$ such that
+for all sufficiently large real $x$,
+$S_A(x) = \exp((C_0/2 + \varepsilon(x))(\operatorname{Log}_2 x)^{1/2} \operatorname{Log}_3 x)$.
+Second, there is a constant $K > 0$ such that $L_A(x) \le K\, S_A(x)^2$ for all sufficiently
+large real $x$.
+
+The source presents this as a negative answer to Erdős problem #442. Its accompanying claim that
+the exponent is optimal is made precise by Theorem 2(ii) and is stated separately.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Theorem 1.
 -/
@@ -215,13 +289,20 @@ public theorem_wanted exists_dense_set_large_lcm :
           ∀ᶠ x in atTop,
             lcmReciprocalSum A x ≤ K * recipSumUpTo A x ^ 2
 
-/-- Theorem 2(i), construction with controlled defect. A single absolute positive
-constant `C` works for every positive `C₀`. The resulting set (sums over
-`1 ≤ n ≤ x`) has its harmonic sum eventually within a positive factor `K` of
-`lcmDenseGrowthF C₀ x`, and an error `e(x) → 0` gives the eventual equation-(21) defect bound
-`≪ exp(e² C₀²) - 1 + o(1)` as printed in the journal version (the arXiv v1 TeX prints
-`exp(C₀²)`; its proof, through the factor `e^ℓ` of (35), gives `e² C₀²`). The
-dependence of `K` and `e` on `C₀` is represented by choosing them after `C₀`.
+/-- **Dense sets with controlled gcd defect.** Let $e$ be Euler's number. There is an absolute
+constant $C > 0$ with the following property. Let $C_0 > 0$ be real, and let $F_{C_0}$ be the
+growth function of the dense-set construction. Then there is a set $A$ of natural numbers such
+that, writing $S_A(x) = \sum_{n \in A,\ 1 \le n \le x} 1/n$ for its harmonic sum up to $x$ and
+$\mathcal{E}_A(x)$ for its gcd defect up to $x$, the following two statements hold. First, there
+is a constant $K > 0$ with $F_{C_0}(x)/K \le S_A(x) \le K\, F_{C_0}(x)$ for all sufficiently large
+real $x$. Second, there is a function $\varepsilon : \mathbb{R} \to \mathbb{R}$ with
+$\varepsilon(x) \to 0$ as $x \to \infty$ such that
+$\mathcal{E}_A(x) \le C\,(\exp(e^2 C_0^2) - 1 + \varepsilon(x))$ for all sufficiently large
+real $x$.
+
+The factor $e^2$ follows the journal version of the source; the arXiv preprint prints
+$\exp(C_0^2)$, but its proof, through the factor $e^\ell$ of (35), gives $e^2 C_0^2$.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Theorem 2(i).
 -/
@@ -238,16 +319,23 @@ public theorem_wanted exists_dense_set_controlled_defect :
           ∀ᶠ x in atTop,
             lcmDefect A x ≤ C * (Real.exp (Real.exp 2 * C₀ ^ 2) - 1 + e x)
 
-/-- Proposition 1 (baby version of Theorem 2(i)'s construction; the paper's lead-in
-sentence says Theorem 2(ii), but the construction and estimates (31), (21) are those of
-part (i)). There is an absolute
-`C > 0` such that for every `C₀ > 0` there are sets `A_k` (depending on `k` and `C₀`) for
-which (31), `∑_{n ∈ A_k, n ≤ x} 1/n = exp((C₀/2 + o(1)) Log₂^{1/2} x Log₃ x)`, and (21),
-`E gcd(n, m) - 1 ≤ C (exp(e² C₀²) - 1 + o(1))`, hold in the range (32),
-`C₀ Log₂^{1/2} x = (1 + o(1)) k`, all `o(1)` as `k → ∞`. The nested `o(1)` are written in
-`ε`-`δ` form: for every `ε > 0` there are `δ > 0` and `k₀` such that for `k ≥ k₀` and every `x`
-with `|C₀ Log₂^{1/2} x - k| ≤ δ k` both errors are at most `ε`; `A` is chosen before `ε`.
-The constant of `≪` in (21) is absolute, as in Theorem 2(i).
+/-- **Baby version of the dense-set construction.** Let $e$ be Euler's number, let
+$\operatorname{Log}_2$ and $\operatorname{Log}_3$ be the second and third iterated truncated
+logarithms, and for a set $B$ of natural numbers and real $x$ write
+$S_B(x) = \sum_{n \in B,\ 1 \le n \le x} 1/n$ and $\mathcal{E}_B(x)$ for the gcd defect of $B$ up
+to $x$. There is an absolute constant $C > 0$ such that for every real $C_0 > 0$ there are sets
+$A_0, A_1, A_2, \dots$ of natural numbers with the following property: for every $\varepsilon > 0$
+there are a real $\delta > 0$ and a natural number $k_0$ such that for every natural number
+$k \ge k_0$ and every real $x$ with $|C_0 (\operatorname{Log}_2 x)^{1/2} - k| \le \delta k$, there
+is a real $\eta$ with $|\eta| \le \varepsilon$ and
+$S_{A_k}(x) = \exp((C_0/2 + \eta)(\operatorname{Log}_2 x)^{1/2} \operatorname{Log}_3 x)$, and
+moreover $\mathcal{E}_{A_k}(x) \le C(\exp(e^2 C_0^2) - 1 + \varepsilon)$.
+
+In the source this is Proposition 1, a simplified version of the construction for Theorem 2(i)
+(its lead-in sentence refers to Theorem 2(ii)): the sets $A_k$ satisfy (31) and the bound (21)
+in the range (32), with all $o(1)$ terms taken as $k \to \infty$. Above, these $o(1)$ terms are
+written with $\varepsilon$, $\delta$ and $k_0$.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Proposition 1, (31) and (32), with (21)
 (`integers-2024-A100-prop-1`).
@@ -264,11 +352,21 @@ public theorem_wanted exists_dense_sets_baby :
                   Real.exp ((C₀ / 2 + e) * truncLog2 x ^ (1 / 2 : ℝ) * truncLog3 x)) ∧
               lcmDefect (A k) x ≤ C * (Real.exp (Real.exp 2 * C₀ ^ 2) - 1 + ε)
 
-/-- Theorem 2(ii), the uniform converse bound. For each positive `C₀`, the error
-function `e(x) → 0` is chosen before `x` and before the set `A`, so the `o(1)` is
-uniform in `A`. Eventually, every set `A ⊆ ℕ` (sums over `1 ≤ n ≤ x`) whose defect at that `x`
-is at most `C₀²` obeys (23). An empty finite range is harmless because its
-harmonic sum, the left side of the conclusion, is zero.
+/-- **Harmonic sums of sets with small gcd defect.** For a set $A$ of natural numbers and a real
+number $x$, let $S_A(x)$ be the sum of $1/n$ over $n \in A$ with $1 \le n \le x$, and let the
+defect of $A$ at $x$ be the sum of $\gcd(n, m)/(nm)$ over $n, m \in A$ with $1 \le n, m \le x$,
+divided by $S_A(x)^2$, minus $1$ (the defect is $-1$ when $S_A(x) = 0$). Let
+$\operatorname{Log} x = \max(\log x, 1)$ be the truncated logarithm, let
+$\operatorname{Log}_2 x = \operatorname{Log}(\operatorname{Log} x)$ and let
+$\operatorname{Log}_3 x = \operatorname{Log}(\operatorname{Log}_2 x)$. For every real
+$C_0 > 0$ there are a function $e : \mathbb{R} \to \mathbb{R}$ with $e(x) \to 0$ as
+$x \to \infty$ and a real $x_0$ such that for every real $x \ge x_0$ and every set $A$ of natural
+numbers whose defect at $x$ is at most $C_0^2$,
+$$S_A(x) \le \exp\bigl((C_0 + e(x)) (\operatorname{Log}_2 x)^{1/2} \operatorname{Log}_3 x\bigr).$$
+
+The function $e$ and the threshold $x_0$ are chosen before $x$ and $A$, so the $o(1)$ error is
+uniform in $A$.
+
 Source: Terence Tao, *Dense Sets of Natural Numbers with Unusually Large Least Common Multiples*,
 INTEGERS 24 (2024), Article A100, Theorem 2(ii).
 -/

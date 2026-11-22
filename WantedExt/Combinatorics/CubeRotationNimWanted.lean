@@ -40,8 +40,14 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- A move of the cube game `C_R`: `q` is obtained from `p` by removing at least one token in
-total from the four faces of one rotation, leaving the other two faces unchanged.
+/-- **Rotation move on the cube.** Label the faces of a cube $f_a, f_b, f_c, f_A, f_B, f_C$, where
+$f_A$, $f_B$, $f_C$ are opposite $f_a$, $f_b$, $f_c$, and record a position as the tuple
+$p = (a, b, c, A, B, C)$ of numbers of tokens on these faces. A rotation is one of the three
+belts of four faces $\{f_a, f_b, f_A, f_B\}$, $\{f_a, f_c, f_A, f_C\}$ and
+$\{f_b, f_c, f_B, f_C\}$. In the game $C_R$ there is a move from a position $p$ to a position $q$
+when, for some rotation, $q$ agrees with $p$ on the two faces outside the rotation, $q \le p$ on
+every face, and $q \ne p$; that is, at least one token in total is removed from the four faces
+of the rotation.
 
 Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
 INTEGERS 25 (2025), Article G2, Section 2 (the variation `C_R`). -/
@@ -50,7 +56,10 @@ def CubeRotationMove (p q : Fin 6 → ℕ) : Prop :=
     q ≤ p ∧ q ≠ p ∧
     ∀ k : Fin 6, k ≠ i → k ≠ j → k ≠ i + 3 → k ≠ j + 3 → q k = p k
 
-/-- From `(0, 0, 0, 0, 0, 1)` the only moves empty the cube, and the empty cube has no move.
+/-- **Rotation moves at the empty cube.** Write positions as tuples $(a, b, c, A, B, C)$ of numbers
+of tokens on the faces $f_a, f_b, f_c, f_A, f_B, f_C$ of a cube. In the game $C_R$ there is a
+rotation move from $(0, 0, 0, 0, 0, 1)$ to the empty position $(0, 0, 0, 0, 0, 0)$, and there is
+no rotation move from the empty position.
 
 Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
 INTEGERS 25 (2025), Article G2, Section 2 (the variation `C_R`). -/
@@ -61,9 +70,13 @@ theorem cubeRotationMove_examples :
   rintro q ⟨i, j, -, hle, hne, -⟩
   exact hne (le_antisymm hle fun k => Nat.zero_le _)
 
-/-- A move of the cube game `C_V`: `q` is obtained from `p` by removing at least one token in
-total from the three faces at one vertex, one face from each opposite pair (indices `x`, `y`,
-`z` with `x ≡ 0`, `y ≡ 1`, `z ≡ 2 (mod 3)`), leaving the other three faces unchanged.
+/-- **Vertex move on the cube.** Label the faces of a cube $f_a, f_b, f_c, f_A, f_B, f_C$, where
+$f_A$, $f_B$, $f_C$ are opposite $f_a$, $f_b$, $f_c$, and record a position as the tuple
+$p = (a, b, c, A, B, C)$ of numbers of tokens on these faces. In the game $C_V$ there is a move
+from a position $p$ to a position $q$ when, for some choice of one face from each opposite pair
+$\{f_a, f_A\}$, $\{f_b, f_B\}$, $\{f_c, f_C\}$ (three faces that meet at a vertex), $q$ agrees
+with $p$ on the other three faces, $q \le p$ on every face, and $q \ne p$; that is, at least one
+token in total is removed from the three faces at one vertex.
 
 Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
 INTEGERS 25 (2025), Article G2, Section 1 (the variation `C_V`). -/
@@ -71,25 +84,37 @@ def CubeVertexMove (p q : Fin 6 → ℕ) : Prop :=
   ∃ x y z : Fin 6, x.val % 3 = 0 ∧ y.val % 3 = 1 ∧ z.val % 3 = 2 ∧ q ≤ p ∧ q ≠ p ∧
     ∀ k : Fin 6, k ≠ x → k ≠ y → k ≠ z → q k = p k
 
-/-- A move of the cube game `C_E`: `q` is obtained from `p` by removing at least one token in
-total from the two faces sharing one edge (two faces from different opposite pairs), leaving
-the other four faces unchanged.
+/-- **Edge move on the cube.** Label the faces of a cube $f_a, f_b, f_c, f_A, f_B, f_C$, where
+$f_A$, $f_B$, $f_C$ are opposite $f_a$, $f_b$, $f_c$, and record a position as the tuple
+$p = (a, b, c, A, B, C)$ of numbers of tokens on these faces. In the game $C_E$ there is a move
+from a position $p$ to a position $q$ when, for some two faces from different opposite pairs
+(two faces that share an edge), $q$ agrees with $p$ on the other four faces, $q \le p$ on every
+face, and $q \ne p$; that is, at least one token in total is removed from the two faces at one
+edge.
 
 Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
 INTEGERS 25 (2025), Article G2, Section 1 (the variation `C_E`). -/
 def CubeEdgeMove (p q : Fin 6 → ℕ) : Prop :=
   ∃ x y : Fin 6, x.val % 3 ≠ y.val % 3 ∧ q ≤ p ∧ q ≠ p ∧ ∀ k : Fin 6, k ≠ x → k ≠ y → q k = p k
 
-/-- A move of the cube game `C_F`: `q` is obtained from `p` by removing at least one token from
-one face, leaving the other five faces unchanged (Nim on six heaps).
+/-- **Face move on the cube.** Label the faces of a cube $f_a, f_b, f_c, f_A, f_B, f_C$, where
+$f_A$, $f_B$, $f_C$ are opposite $f_a$, $f_b$, $f_c$, and record a position as the tuple
+$p = (a, b, c, A, B, C)$ of numbers of tokens on these faces. In the game $C_F$ there is a move
+from a position $p$ to a position $q$ when, for some face, $q$ agrees with $p$ on the other five
+faces, $q \le p$ on every face, and $q \ne p$; that is, at least one token is removed from one
+face. So $C_F$ is Nim with six heaps.
 
 Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
 INTEGERS 25 (2025), Article G2, Section 1 (the variation `C_F`). -/
 def CubeFaceMove (p q : Fin 6 → ℕ) : Prop :=
   ∃ x : Fin 6, q ≤ p ∧ q ≠ p ∧ ∀ k : Fin 6, k ≠ x → q k = p k
 
-/-- Vertex, edge and face moves from one token on each of `f_a, f_b, f_c` to the empty cube or
-to `(0, 1, 1, 0, 0, 0)`, and the empty cube has no move in any of the three games.
+/-- **Examples of vertex, edge and face moves.** Write positions as tuples $(a, b, c, A, B, C)$ of
+numbers of tokens on the faces $f_a, f_b, f_c, f_A, f_B, f_C$ of a cube. There is a vertex move
+(game $C_V$) from $(1, 1, 1, 0, 0, 0)$ to the empty position $(0, 0, 0, 0, 0, 0)$, an edge move
+(game $C_E$) from $(1, 1, 0, 0, 0, 0)$ to the empty position, and a face move (game $C_F$) from
+$(1, 1, 1, 0, 0, 0)$ to $(0, 1, 1, 0, 0, 0)$. No vertex move, edge move or face move starts at
+the empty position.
 
 Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
 INTEGERS 25 (2025), Article G2, Section 1. -/
@@ -109,9 +134,15 @@ theorem cubeVertexEdgeFaceMove_examples :
   · rintro ⟨-, hle, hne, -⟩
     exact hne (le_antisymm hle fun k => Nat.zero_le _)
 
-/-- In `C_R` the second-player winning positions (P-positions) are exactly those with
-`a + A = b + B = c + C`: no move joins two such positions, and every other position has a
-move to one (for this terminating game this characterizes the P-positions).
+/-- **P-positions of rotation Nim on a cube.** Write positions of the game $C_R$ as tuples
+$(a, b, c, A, B, C)$ of numbers of tokens on the faces $f_a, f_b, f_c, f_A, f_B, f_C$, where
+$f_A$, $f_B$, $f_C$ are opposite $f_a$, $f_b$, $f_c$. Let $\mathcal P$ be the set of positions with
+$a + A = b + B = c + C$. Then no rotation move leads from a position in $\mathcal P$ to a position
+in $\mathcal P$, and from every position outside $\mathcal P$ there is a rotation move to a
+position in $\mathcal P$.
+
+Every move removes a token, so the game terminates and $\mathcal P$ is exactly the set of
+P-positions (second-player wins) under normal play.
 
 Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
 INTEGERS 25 (2025), Article G2, Theorem 5 (`integers-2025-G2-thm-5`). -/
@@ -120,8 +151,16 @@ public theorem_wanted cubeRotationNim_pPositions :
     (∀ p q, p ∈ P → CubeRotationMove p q → q ∉ P) ∧
       ∀ p, p ∉ P → ∃ q, CubeRotationMove p q ∧ q ∈ P
 
-/-- In `C_V` the P-positions are exactly those with `a = A`, `b = B`, `c = C`: no move joins
-two such positions, and every other position has a move to one.
+/-- **P-positions of vertex Nim on a cube.** Write a position of the cube game as
+$p = (a, b, c, A, B, C)$, the numbers of tokens on the six faces of a cube, where the faces
+carrying $A$, $B$, $C$ are opposite those carrying $a$, $b$, $c$; a vertex move removes at
+least one token in total from the three faces at one vertex (one face from each opposite pair).
+Let $P$ be the set of positions with $a = A$, $b = B$ and $c = C$. Then no vertex move leads
+from a position in $P$ to a position in $P$, and from every position not in $P$ some vertex
+move leads to a position in $P$.
+
+Since every play terminates, these two properties make $P$ the set of P-positions
+(second-player wins) under normal play.
 
 Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
 INTEGERS 25 (2025), Article G2, Theorem 2 (`integers-2025-G2-thm-2`). -/
@@ -130,8 +169,16 @@ public theorem_wanted cubeVertexNim_pPositions :
     (∀ p q, p ∈ P → CubeVertexMove p q → q ∉ P) ∧
       ∀ p, p ∉ P → ∃ q, CubeVertexMove p q ∧ q ∈ P
 
-/-- In `C_E` the P-positions are exactly those with `a ⊕ A = b ⊕ B = c ⊕ C` (`⊕` the Nim-sum):
-no move joins two such positions, and every other position has a move to one.
+/-- **P-positions of edge Nim on a cube.** Write positions of the game $C_E$ as tuples
+$(a, b, c, A, B, C)$ of numbers of tokens on the faces $f_a, f_b, f_c, f_A, f_B, f_C$, where
+$f_A$, $f_B$, $f_C$ are opposite $f_a$, $f_b$, $f_c$, and let $\oplus$ be the Nim-sum (bitwise
+exclusive or) of natural numbers. Let $\mathcal P$ be the set of positions with
+$a \oplus A = b \oplus B = c \oplus C$. Then no edge move leads from a position in $\mathcal P$
+to a position in $\mathcal P$, and from every position outside $\mathcal P$ there is an edge
+move to a position in $\mathcal P$.
+
+Every move removes a token, so the game terminates and $\mathcal P$ is exactly the set of
+P-positions (second-player wins) under normal play.
 
 Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
 INTEGERS 25 (2025), Article G2, Theorem 3 (`integers-2025-G2-thm-3`). -/
@@ -140,11 +187,15 @@ public theorem_wanted cubeEdgeNim_pPositions :
     (∀ p q, p ∈ P → CubeEdgeMove p q → q ∉ P) ∧
       ∀ p, p ∉ P → ∃ q, CubeEdgeMove p q ∧ q ∈ P
 
-/-- In `C_V` under misère play, for a position normalized as in the paper (`C = max p`,
-`a ≤ A`, `b ≤ B`, `a ≤ b`), `p` is a P-position iff `a = A`, `b = B`, `c = C ≥ 2`, or `p` is
-one of `(0, 0, 0, 0, 0, 1)`, `(0, 1, 1, 0, 1, 1)`, `(1, 1, 1, 1, 1, 1)`. Here `P` is the set of
-misère P-positions, given by its recursion: `p ∈ P` iff `p` has a move and every move from `p`
-leaves `P`.
+/-- **Misère P-positions of vertex Nim on a cube.** Write a position of the cube game as
+$p = (a, b, c, A, B, C)$, the numbers of tokens on the six faces of a cube, where the faces
+carrying $A$, $B$, $C$ are opposite those carrying $a$, $b$, $c$; a vertex move removes at
+least one token in total from the three faces at one vertex (one face from each opposite pair).
+Let $P$ be any set of positions such that $p \in P$ if and only if $p$ has a vertex move and
+no vertex move from $p$ leads to a position in $P$ (the misère P-positions). Then for every
+position $p$ with $a \le A$, $b \le B$, $a \le b$ and $C$ at least every entry of $p$, we have
+$p \in P$ if and only if either $a = A$, $b = B$, $c = C$ and $C \ge 2$ all hold, or $p$ is one
+of $(0, 0, 0, 0, 0, 1)$, $(0, 1, 1, 0, 1, 1)$ and $(1, 1, 1, 1, 1, 1)$.
 
 Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
 INTEGERS 25 (2025), Article G2, Theorem 6 (`integers-2025-G2-thm-6`). -/
@@ -154,10 +205,15 @@ public theorem_wanted cubeVertexNim_misere_pPositions (P : Set (Fin 6 → ℕ))
     p ∈ P ↔ (p 0 = p 3 ∧ p 1 = p 4 ∧ p 2 = p 5 ∧ 2 ≤ p 5) ∨ p = ![0, 0, 0, 0, 0, 1] ∨
       p = ![0, 1, 1, 0, 1, 1] ∨ p = ![1, 1, 1, 1, 1, 1]
 
-/-- In `C_R` under misère play, for a position normalized as in the paper (`C = max p`,
-`a ≤ A`, `b ≤ B`, `a ≤ b`), `p` is a P-position iff `C ≥ 2` and `a + A = b + B = c + C`, or `p`
-is `(0, 0, 0, 0, 0, 1)` or `(1, 1, 1, 1, 1, 1)`. Here `P` is the set of misère P-positions,
-given by its recursion: `p ∈ P` iff `p` has a move and every move from `p` leaves `P`.
+/-- **Misère P-positions of rotation Nim on a cube.** Write positions of the game $C_R$ as tuples
+$p = (a, b, c, A, B, C)$ of numbers of tokens on the faces $f_a, f_b, f_c, f_A, f_B, f_C$, where
+$f_A$, $f_B$, $f_C$ are opposite $f_a$, $f_b$, $f_c$. Let $\mathcal P$ be any set of positions
+such that a position lies in $\mathcal P$ if and only if it has a rotation move and every
+rotation move from it leads to a position outside $\mathcal P$; this is the set of P-positions
+under misère play, where the player making the last move loses. Let $p$ be a position in which
+every entry is at most $C$, and $a \le A$, $b \le B$ and $a \le b$. Then $p \in \mathcal P$ if
+and only if either $C \ge 2$ and $a + A = b + B = c + C$, or $p = (0, 0, 0, 0, 0, 1)$, or
+$p = (1, 1, 1, 1, 1, 1)$.
 
 Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
 INTEGERS 25 (2025), Article G2, Theorem 8 (`integers-2025-G2-thm-8`). -/
@@ -167,11 +223,16 @@ public theorem_wanted cubeRotationNim_misere_pPositions (P : Set (Fin 6 → ℕ)
     p ∈ P ↔ (2 ≤ p 5 ∧ p 0 + p 3 = p 1 + p 4 ∧ p 1 + p 4 = p 2 + p 5) ∨
       p = ![0, 0, 0, 0, 0, 1] ∨ p = ![1, 1, 1, 1, 1, 1]
 
-/-- In `C_F` (Nim on six heaps) under misère play, for a position normalized as in the paper
-(`C = max p`, `a ≤ A`, `b ≤ B`, `a ≤ b`), `p` is a P-position iff `C ≥ 2` and
-`a ⊕ b ⊕ c ⊕ A ⊕ B ⊕ C = 0`, or `C < 2` and `a ⊕ b ⊕ c ⊕ A ⊕ B ⊕ C = 1`. Here `P` is the set
-of misère P-positions, given by its recursion: `p ∈ P` iff `p` has a move and every move from
-`p` leaves `P`.
+/-- **Misère P-positions of face Nim on a cube.** Write positions of the game $C_F$ (Nim with six
+heaps) as tuples $p = (a, b, c, A, B, C)$ of numbers of tokens on the faces
+$f_a, f_b, f_c, f_A, f_B, f_C$, where $f_A$, $f_B$, $f_C$ are opposite $f_a$, $f_b$, $f_c$, and let
+$\oplus$ be the Nim-sum (bitwise exclusive or) of natural numbers. Let $\mathcal P$ be any set
+of positions such that a position lies in $\mathcal P$ if and only if it has a face move and
+every face move from it leads to a position outside $\mathcal P$; this is the set of
+P-positions under misère play, where the player making the last move loses. Let $p$ be a
+position in which every entry is at most $C$, and $a \le A$, $b \le B$ and $a \le b$. Then
+$p \in \mathcal P$ if and only if either $C \ge 2$ and $a \oplus b \oplus c \oplus A \oplus B
+\oplus C = 0$, or $C < 2$ and $a \oplus b \oplus c \oplus A \oplus B \oplus C = 1$.
 
 Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
 INTEGERS 25 (2025), Article G2, Theorem 9 (`integers-2025-G2-thm-9`). -/
@@ -181,9 +242,17 @@ public theorem_wanted cubeFaceNim_misere_pPositions (P : Set (Fin 6 → ℕ))
     p ∈ P ↔ (2 ≤ p 5 ∧ p 0 ^^^ p 1 ^^^ p 2 ^^^ p 3 ^^^ p 4 ^^^ p 5 = 0) ∨
       (p 5 < 2 ∧ p 0 ^^^ p 1 ^^^ p 2 ^^^ p 3 ^^^ p 4 ^^^ p 5 = 1)
 
-/-- In the slow version of `C_V` (each face at the selected vertex loses at most one token)
-the P-positions are exactly those with `a + A`, `b + B`, `c + C` all even: no move joins two
-such positions, and every other position has a move to one.
+/-- **P-positions of slow vertex Nim on a cube.** Write a position of the cube game as
+$p = (a, b, c, A, B, C)$, the numbers of tokens on the six faces of a cube, where the faces
+carrying $A$, $B$, $C$ are opposite those carrying $a$, $b$, $c$. A slow vertex move is a vertex
+move (removing at least one token in total from the three faces at one vertex, one face from
+each opposite pair) in which each face loses at most one token. Let $P$ be the set of positions
+for which $a + A$, $b + B$ and $c + C$ are all even. Then no slow vertex move leads from a
+position in $P$ to a position in $P$, and from every position not in $P$ some slow vertex move
+leads to a position in $P$.
+
+Since every play terminates, these two properties make $P$ the set of P-positions of the slow
+game under normal play.
 
 Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
 INTEGERS 25 (2025), Article G2, Theorem 10 (`integers-2025-G2-thm-10`). -/
@@ -194,9 +263,17 @@ public theorem_wanted slowCubeVertexNim_pPositions :
       {p | (p 0 + p 3) % 2 = 0 ∧ (p 1 + p 4) % 2 = 0 ∧ (p 2 + p 5) % 2 = 0}
     (∀ p q, p ∈ P → M p q → q ∉ P) ∧ ∀ p, p ∉ P → ∃ q, M p q ∧ q ∈ P
 
-/-- In the slow version of `C_E` (each face at the selected edge loses at most one token) the
-P-positions are exactly those where `a + A`, `b + B`, `c + C` are all even or all odd: no move
-joins two such positions, and every other position has a move to one.
+/-- **P-positions of slow edge Nim on a cube.** Write a position of the cube game as
+$p = (a, b, c, A, B, C)$, the numbers of tokens on the six faces of a cube, where the faces
+carrying $A$, $B$, $C$ are opposite those carrying $a$, $b$, $c$. A slow edge move is an edge
+move (removing at least one token in total from two faces in different opposite pairs) in which
+each face loses at most one token. Let $P$ be the set of positions for which $a + A$, $b + B$
+and $c + C$ are all even or all odd. Then no slow edge move leads from a position in $P$ to a
+position in $P$, and from every position not in $P$ some slow edge move leads to a position in
+$P$.
+
+Since every play terminates, these two properties make $P$ the set of P-positions of the slow
+game under normal play.
 
 Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
 INTEGERS 25 (2025), Article G2, Theorem 11 (`integers-2025-G2-thm-11`). -/
@@ -207,9 +284,14 @@ public theorem_wanted slowCubeEdgeNim_pPositions :
       {p | (p 0 + p 3) % 2 = (p 1 + p 4) % 2 ∧ (p 1 + p 4) % 2 = (p 2 + p 5) % 2}
     (∀ p q, p ∈ P → M p q → q ∉ P) ∧ ∀ p, p ∉ P → ∃ q, M p q ∧ q ∈ P
 
-/-- In the slow version of `C_F` (remove exactly one token from one face) the P-positions are
-exactly those with `a + b + c + A + B + C` even: no move joins two such positions, and every
-other position has a move to one.
+/-- **P-positions of slow face Nim on a cube.** Write a position of the cube game as
+$p = (a, b, c, A, B, C)$, the numbers of tokens on the six faces of a cube. A slow face move is
+a face move that removes exactly one token from one face. Let $P$ be the set of positions with
+$a + b + c + A + B + C$ even. Then no slow face move leads from a position in $P$ to a position
+in $P$, and from every position not in $P$ some slow face move leads to a position in $P$.
+
+Since every play terminates, these two properties make $P$ the set of P-positions of the slow
+game under normal play.
 
 Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
 INTEGERS 25 (2025), Article G2, Theorem 12 (`integers-2025-G2-thm-12`). -/
@@ -219,11 +301,16 @@ public theorem_wanted slowCubeFaceNim_pPositions :
     let P : Set (Fin 6 → ℕ) := {p | (∑ k, p k) % 2 = 0}
     (∀ p q, p ∈ P → M p q → q ∉ P) ∧ ∀ p, p ∉ P → ∃ q, M p q ∧ q ∈ P
 
-/-- In the slow version of `C_R` (each face of the selected rotation loses at most one token),
-for a position normalized as in the paper (`a ≤ A`, `b ≤ B`, `c ≤ C`), `p` is a P-position iff
-its parity vector `(a, b, c, A, B, C) mod 2` lies in
-`Q = {(e,e,e,e,e,e), (e,e,e,o,o,o), (o,o,o,e,e,e), (o,o,o,o,o,o)}`. Here `P` is the set of
-P-positions, given by its recursion: `p ∈ P` iff every move from `p` leaves `P`.
+/-- **P-positions of slow rotation Nim on a cube.** Write a position of the cube game as
+$p = (a, b, c, A, B, C)$, the numbers of tokens on the six faces of a cube, where the faces
+carrying $A$, $B$, $C$ are opposite those carrying $a$, $b$, $c$. A slow rotation move is a
+rotation move (removing at least one token in total from the four faces of one rotation, that is
+from the faces of two opposite pairs) in which each face loses at most one token. Let $P$ be any
+set of positions such that $p \in P$ if and only if no slow rotation move from $p$ leads to a
+position in $P$ (the P-positions under normal play). Then for every position $p$ with
+$a \le A$, $b \le B$ and $c \le C$, we have $p \in P$ if and only if the vector of remainders
+$(a, b, c, A, B, C) \bmod 2$ is one of $(0, 0, 0, 0, 0, 0)$, $(0, 0, 0, 1, 1, 1)$,
+$(1, 1, 1, 0, 0, 0)$ and $(1, 1, 1, 1, 1, 1)$.
 
 Source: Balaji R. Kadam and A. J. Shaiju, *Variations of the Nim Game Played on a Cube*,
 INTEGERS 25 (2025), Article G2, Theorem 13 (`integers-2025-G2-thm-13`). -/

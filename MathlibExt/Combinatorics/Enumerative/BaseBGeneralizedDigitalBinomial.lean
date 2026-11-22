@@ -134,16 +134,11 @@ private theorem digit_ofSum (b N : ℕ) (t : ℕ → ℕ) (hb : 2 ≤ b)
         exact ht (j + 1) (Finset.mem_range.mpr (by omega))
       exact ih (fun j => t (j + 1)) ht' k hkmem
 
-private theorem tuple_digit_le (b N n : ℕ)
-    (x_ : (i : Fin N) → Fin (n / b ^ i.val % b + 1)) (i : ℕ) (hi : i < N) :
-    (x_ ⟨i, hi⟩).val ≤ n / b ^ i % b :=
-  Nat.le_of_lt_succ (x_ ⟨i, hi⟩).isLt
-
 private theorem tuple_digit_lt (b N n : ℕ) (hb : 2 ≤ b)
     (x_ : (i : Fin N) → Fin (n / b ^ i.val % b + 1)) (i : ℕ) (hi : i < N) :
     (x_ ⟨i, hi⟩).val < b := by
   have hbpos : 0 < b := by omega
-  exact lt_of_le_of_lt (tuple_digit_le b N n x_ i hi) (Nat.mod_lt _ hbpos)
+  exact lt_of_le_of_lt (Fin.is_le (x_ ⟨i, hi⟩)) (Nat.mod_lt _ hbpos)
 
 /-- Base-`b` generalized digital binomial theorem.
 
@@ -236,7 +231,7 @@ theorem base_b_generalized_digital_binomial_theorem
       intro i hi
       have hiN : i < N := Finset.mem_range.mp hi
       rw [dite_eq_left hiN]
-      exact tuple_digit_le b N n x_ i hiN
+      exact Fin.is_le (x_ ⟨i, hiN⟩)
     have he_lt : ∀ i ∈ Finset.range N,
         (if h : i < N then (x_ ⟨i, h⟩).val else 0) < b := by
       intro i hi
@@ -339,7 +334,7 @@ theorem base_b_generalized_digital_binomial_theorem
       intro i hi
       have hiN : i < N := Finset.mem_range.mp hi
       rw [dite_eq_left hiN]
-      exact tuple_digit_le b N n x_ i hiN
+      exact Fin.is_le (x_ ⟨i, hiN⟩)
     have he_lt : ∀ i ∈ Finset.range N,
         (if h : i < N then (x_ ⟨i, h⟩).val else 0) < b := by
       intro i hi
