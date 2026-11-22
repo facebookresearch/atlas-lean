@@ -53,23 +53,29 @@ namespace LargeValueEstimates
 
 open Asymptotics Complex
 
-/-- The bound `N^2 V^(-2) + N^(18/5) V^(-4) + T N^(12/5) V^(-4)` appearing in Theorem 1.1. -/
+/-- **The Guth–Maynard large values bound.** For a natural number $N$ and real numbers $V$ and
+$T$, this is the real number $N^2 V^{-2} + N^{18/5} V^{-4} + T N^{12/5} V^{-4}$, the factor
+multiplying $T^{o(T)}$ on the right-hand side of the Guth–Maynard large values estimate for
+Dirichlet polynomials. Here $V^{-2}$ and $V^{-4}$ are read as $0$ when $V = 0$. -/
 noncomputable def bound (N : ℕ) (V T : ℝ) : ℝ :=
   N ^ 2 * V ^ (- 2 : ℤ) + N ^ (18 / 5 : ℝ) * V ^ (- 4 : ℤ) + T * N ^ (12 / 5 : ℝ) * V ^ (- 4 : ℤ)
 
 /--
-Statement of Theorem 1.1 (Large values estimate):
+**Guth–Maynard large values estimate.** There is a function $o : \mathbb{R} \to \mathbb{R}$
+with $o(T) \to 0$ as $T \to \infty$ such that the following holds. Let $(b_n)_{n \ge 0}$ be
+complex numbers with $|b_n| \le 1$ for all $n$, let $N \ge 1$ and $R$ be natural numbers,
+let $V > 0$ and $T > 1$ be real numbers, and let $t_0, \dots, t_{R-1}$ be points of $[0, T]$
+with $|t_r - t_s| \ge 1$ whenever $r \ne s$. Suppose that, with $i$ the imaginary unit,
 
-Suppose `(bₙ)` is a sequence of complex numbers with `|bₙ| ≤ 1`, and `(tᵣ)` for `r ≤ R` is a
-sequence of `1`-separated points in `[0, T]` such that
+$$\left|\sum_{n=N}^{2N} b_n n^{i t_r}\right| \ge V$$
 
-`|∑_N^2N bₙ n^(itᵣ)| ≥ V`
+for every $r < R$. Then
 
-for all `r ≤ R`. Then we have
+$$R \le T^{o(T)} \left(N^2 V^{-2} + N^{18/5} V^{-4} + T N^{12/5} V^{-4}\right).$$
 
-`R ≤ T^(o(1)) * (N^2 V^(-2) + N^(18/5) V^(-4) + T N^(12/5) V^(-4))`.
+The hypotheses $N \ge 1$, $V > 0$ and $T > 1$ are not stated in the paper; the inequality may
+be false at $T = 1$.
 
-Note: The inequality may be false at `T = 1`, so we must impose `T > 1`.
 Source: L. Guth and J. Maynard, `New large value estimates for Dirichlet polynomials`, Annals of Math, 203 (2) 2026. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2026-203-2-LargeValueEstimates.lean Via leanprover/lean-eval@38361be, problem `annals_large_value_estimates`.
 -/
 public theorem_wanted theorem_1_1 : ∃ o : ℝ → ℝ, o =o[Filter.atTop] (1 : ℝ → ℝ) ∧
