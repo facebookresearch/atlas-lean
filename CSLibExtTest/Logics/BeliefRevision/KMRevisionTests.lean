@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Logics.BeliefRevision.KMRevision
+import Mathlib.Tactic.FinCases
 
 /-!
 # Tests for KM belief revision
@@ -106,5 +107,64 @@ theorem dalal_empty_kb :
         unfold dalalLe
         rw [hKey I, hKey J]
       exact hStrict.2 hLe
+
+/-- Dalal revision selects by distance, not just by the KM postulates:
+revising `{00}` by `B = {01, 11}` keeps only `01`, the unique model of `B`
+at Hamming distance `1`; the farther model `11` (distance `2`) is dropped.
+Any operator with reversed or constant distance ordering fails this. -/
+theorem dalal_selects_nearest :
+    dalalRev (σ := Fin 2)
+        {(fun _ => false)}
+        (Finset.univ.filter fun I => I 1 = true)
+      = {fun a => decide (a = 1)} := by
+  unfold dalalRev
+  apply Finset.ext
+  intro I
+  rw [mem_minSet]
+  constructor
+  · intro h
+    have hI : I = (fun a => decide (a = 1)) ∨ I = (fun _ => true) := by
+      have := h.1
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at this
+      by_cases h0 : I 0 = true
+      · right
+        funext a
+        fin_cases a <;> simp [h0, this]
+      · left
+        funext a
+        fin_cases a <;> simp [h0, this]
+    rcases hI with rfl | rfl
+    · exact Finset.mem_singleton_self _
+    · exfalso
+      exact h.2 (fun a => decide (a = 1)) (by simp) (by
+        constructor
+        · show dalalLe _ _ _
+          unfold dalalLe dalalKey dalalDist
+          decide
+        · show ¬ dalalLe _ _ _
+          unfold dalalLe dalalKey dalalDist
+          decide)
+  · intro h
+    rw [Finset.mem_singleton] at h
+    subst h
+    constructor
+    · simp
+    · intro J hJ hStrict
+      have hJ1 : J 1 = true := by
+        simpa using hJ
+      have hJc : J = (fun a => decide (a = 1)) ∨ J = (fun _ => true) := by
+        by_cases h0 : J 0 = true
+        · right
+          funext a
+          fin_cases a <;> simp [h0, hJ1]
+        · left
+          funext a
+          fin_cases a <;> simp [h0, hJ1]
+      rcases hJc with rfl | rfl
+      · exact hStrict.2 (le_refl _)
+      · exact hStrict.2 (by
+          show dalalLe _ _ _
+          unfold dalalLe dalalKey dalalDist
+          decide)
 
 end Cslib.BeliefRevision.KMRevisionTest

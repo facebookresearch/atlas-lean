@@ -30,6 +30,8 @@ assignment), and Dalal's Hamming-distance revision (`dalalRev`,
 
 * H. Katsuno and A. O. Mendelzon, *On the Difference between Updating a
   Knowledge Base and Revising It*, KR 1991, §2.
+* M. Dalal, *Investigations into a Theory of Knowledge Base Revision:
+  Preliminary Report*, AAAI 1988.
 -/
 
 @[expose] public section
@@ -456,8 +458,12 @@ def dalalDist {σ : Type*} [Fintype σ] [DecidableEq σ] (I J : Interp σ) : ℕ
   (Finset.univ.filter fun a => I a ≠ J a).card
 
 /-- The Dalal key of an interpretation `J` relative to a model set `A`: its
-least Hamming distance to a model in `A`, and `0` when `A` is empty (so every
-interpretation is then Dalal-equivalent). -/
+least Hamming distance to a model in `A`. Dalal's original construction
+(AAAI 1988) assumes a consistent knowledge base, so the empty case needs a
+convention: here the key of every interpretation is `0` when `A` is empty
+(so every interpretation is then Dalal-equivalent). This totalization is
+an explicit extension of Dalal's definition, chosen so that `dalalRev`
+satisfies the KM postulates also for the empty base. -/
 noncomputable def dalalKey {σ : Type*} [Fintype σ] [DecidableEq σ]
     (A : Finset (Interp σ)) (J : Interp σ) : ℕ :=
   if h : A.Nonempty then (A.image (fun I => dalalDist I J)).min' (h.image _) else 0
