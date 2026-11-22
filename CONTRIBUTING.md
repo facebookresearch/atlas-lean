@@ -277,11 +277,16 @@ that could report its checks for another tree (such as `pull_request_target`),
 can skip the job that reports the check or, through a step-level condition, the
 job's own check, checks out another ref or repository in it, moves it off Ubuntu
 runners, into a container or out of bash, sets environment variables that could
-change how its steps run (only `PYTHONDONTWRITEBYTECODE` is allowed), renames
-the check or puts an expression in its job name, lets another job report (or
-possibly report) the same name, or uses a concurrency group that the test does
-not know to differ between PRs and between merge groups, or that another
-workflow's group could match.
+change how its steps run (only `PYTHONDONTWRITEBYTECODE` is allowed) or has a
+step that can set them for later steps, renames the check or puts an expression
+in its job name, lets another job report (or possibly report) the same name, or
+uses a concurrency group that the test does not know to differ between PRs and
+between merge groups, or that another workflow's group could match. In GitHub
+Actions, `scripts/check.sh` and `scripts/run_source_diagnostics.sh` also refuse
+any tree but the commit GitHub reports the checks for
+(`scripts/require_ci_checkout.sh`). The test reads workflow files, so it catches
+mistakes in workflow edits but not a deliberately malicious step; review of
+changes to `.github/` and to these scripts has to.
 
 The other checks are advisory. The bump guard's `guard` checks Lean and Mathlib
 pin changes on PRs and merge groups; on PRs it runs through

@@ -26,6 +26,9 @@ case "$scope" in
     ;;
 esac
 
+# In CI, refuse to check any tree but the commit GitHub reports the checks for.
+scripts/require_ci_checkout.sh || exit 1
+
 status=0
 run_check() {
   local label="$1"

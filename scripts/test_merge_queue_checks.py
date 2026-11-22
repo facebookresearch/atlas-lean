@@ -15,9 +15,11 @@ fails if a required workflow:
   container, or runs its steps in a shell other than bash by default or outside
   the repository root;
 - sets an environment variable other than `PYTHONDONTWRITEBYTECODE` for the
-  whole workflow, for the job or on its checked steps, or has a step that
-  writes `$GITHUB_ENV`: a variable such as `BASH_ENV` makes bash run a file
-  before each step's command, which could exit early and report success;
+  whole workflow, for the job or on its checked steps, or has a step that can
+  set variables for the steps after it (one that mentions `$GITHUB_ENV`, the
+  `github.env` context, the runner's command files or `exportVariable`): a
+  variable such as `BASH_ENV` makes bash run a file before each step's
+  command, which could exit early and report success;
 - checks out another ref or repository, or only part of the tree (any checkout
   input beyond credentials, history and progress settings), in that job, so
   that the check would report on the PR or merge group without testing all of
@@ -42,6 +44,16 @@ the same checks on a PR's head (such as `pull_request_target`), or unless both
 `repository integrity` and `source-diagnostics` have a step that is exactly
 the command that runs this whole test, with no condition, so that a change
 that makes one workflow skip its jobs is still caught by the other.
+
+The entry points themselves (`scripts/check.sh` and
+`scripts/run_source_diagnostics.sh`) refuse, in GitHub Actions, any tree but
+the commit GitHub reports the checks for (`scripts/require_ci_checkout.sh`), so
+a step that checks out or edits another tree makes the check fail.
+
+This test reads the workflow files. It cannot see what a step's commands or an
+action do when they run (a step could replace bash itself), so it catches
+mistakes in workflow edits, not a deliberately malicious one: review of
+changes to `.github/` and to the entry points must.
 
 The required checks are the ones listed under "How PRs merge" in
 CONTRIBUTING.md. Locally:
@@ -82,6 +94,10 @@ COMMAND = ('"$RUNNER_TEMP/merge-queue-venv/bin/python" -m unittest discover '
 STEP_KEYS = {"name", "id", "env", "run", "timeout-minutes", "shell"}
 # The only environment variable a required workflow, job or checked step may set.
 ENV_ALLOWED = {"PYTHONDONTWRITEBYTECODE"}
+# Ways a step can set variables for the steps after it.
+SETS_LATER_ENV = re.compile(
+    r"GITHUB_ENV|github\s*(?:\.\s*env\b|\[\s*['\"]env['\"]\s*\])|_runner_file_commands"
+    r"|exportVariable", re.I)
 # Runners with the root access and job length the Lean build needs (it adds
 # swap); the lighter jobs may use any Ubuntu runner.
 FULL_UBUNTU = {"ubuntu-24.04", "ubuntu-22.04", "ubuntu-latest"}
@@ -308,10 +324,14 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
             if env_problems(level):
                 found.append(f"{check!r} gets {env_problems(level)} from its {scope} env, "
                              "which could change how its steps run")
-        if any(isinstance(step, dict) and "GITHUB_ENV" in str(step.get("run", ""))
+        if any(isinstance(step, dict) and SETS_LATER_ENV.search(
+                " ".join([str(step.get("run", ""))]
+                         + [str(v) for key in ("env", "with")
+                            for v in ((step.get(key) or {}).values()
+                                      if isinstance(step.get(key), dict)
+                                      else [step.get(key) or ""])]))
                for step in steps):
-            found.append(f"{check!r} has a step that writes $GITHUB_ENV, which sets variables "
-                         "for the steps after it")
+            found.append(f"{check!r} has a step that can set variables for the steps after it")
         for prerequisite in as_list(job.get("needs")):
             if (name, prerequisite) not in required_jobs:
                 found.append(f"{check!r} needs {prerequisite!r}, which is not required")
@@ -626,7 +646,22 @@ class MergeQueueChecks(unittest.TestCase):
             "a step that writes $GITHUB_ENV": (
                 put("ci.yml", "jobs", "build", "steps",
                     [{"run": 'echo "BASH_ENV=$PWD/scripts/exit0.sh" >> "$GITHUB_ENV"'},
-                     {"run": "scripts/check.sh build"}]), "writes $GITHUB_ENV"),
+                     {"run": "scripts/check.sh build"}]), "set variables for the steps after it"),
+            "a step that writes the github.env context": (
+                put("ci.yml", "jobs", "build", "steps",
+                    [{"run": "echo 'BASH_ENV=scripts/exit0.sh' >> '${{ github.env }}'"},
+                     {"run": "scripts/check.sh build"}]), "set variables for the steps after it"),
+            "github['env'] through a step env alias": (
+                put("ci.yml", "jobs", "build", "steps",
+                    [{"env": {"FILE": "${{ github['env'] }}"},
+                      "run": 'echo BASH_ENV=scripts/exit0.sh >> "$FILE"'},
+                     {"run": "scripts/check.sh build"}]), "set variables for the steps after it"),
+            "exportVariable in an action's script": (
+                put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
+                    [{"uses": "actions/github-script@v7",
+                      "with": {"script": "core.exportVariable('BASH_ENV', 'scripts/exit0.sh')"}},
+                     {"run": COMMAND}, {"run": "scripts/run_source_diagnostics.sh"}]),
+                "set variables for the steps after it"),
             "required job in a container with a bash default": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics",
                     {"container": "python:3.12-bookworm", "runs-on": "ubuntu-24.04",
