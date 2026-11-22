@@ -295,29 +295,22 @@ private theorem tprod_odd_triples :
     congr 1
     ring
 
-/-- MacMahon's partition theorem: for every `n`, the number of partitions of `n`
-with no part occurring exactly once equals the number of partitions of `n` all of
-whose parts are even or congruent to `3` modulo `6`.
+/-- **MacMahon's partition theorem.** For every natural number $n$, the number of partitions of
+$n$ in which no part occurs exactly once equals the number of partitions of $n$ all of whose parts
+are even or congruent to $3$ modulo $6$.
 
-The left side counts `p : Nat.Partition n` satisfying
-`Multiset.count m p.parts ≠ 1` for every part `m ∈ p.parts`. The right side is
-the existing `Nat.Partition.restricted` finset for the per-part predicate
-`m % 2 = 0 ∨ m % 6 = 3`.
+The source states the theorem for $n \ge 1$; for $n = 0$ both counts are $1$, counting the empty
+partition.
 
-Provenance: Beaullah Mugwangwavari and Darlison Nyirenda, "A Note on the
+Proves `Wanted` entry `macmahon_multiplicity_one_free`.
+
+Source: Beaullah Mugwangwavari and Darlison Nyirenda, "A Note on the
 Andrews-Ericksson-Petrov-Romick Bijection for MacMahon's Partition Theorem",
 Journal of Integer Sequences 24 (2021), Article 21.5.6, Theorem `MacMahon`,
 source lines 88–97 with the displayed statement at lines 91–93,
 <https://cs.uwaterloo.ca/journals/JIS/VOL24/Nyirenda/nyir26.tex>.
 The paper attributes the theorem to P. A. MacMahon, *Combinatory Analysis*,
 Vol. 2 (1916).
-
-Scope: the source fixes `n ≥ 1`. The statement here is over all `n : ℕ`; at
-`n = 0` both filtered sets consist solely of the empty partition, so including
-`n = 0` is a proved-by-definition endpoint extension rather than a claim copied
-from the source.
-
-Proves `Wanted` entry `macmahon_multiplicity_one_free`.
 -/
 theorem macmahon_multiplicity_one_free (n : ℕ) :
     (Finset.univ.filter (fun p : Nat.Partition n =>

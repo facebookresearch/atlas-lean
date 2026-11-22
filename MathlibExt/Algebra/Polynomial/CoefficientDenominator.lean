@@ -34,8 +34,10 @@ namespace MetaMathlibExt
 
 open Polynomial
 
-/-- The denominator `denom(P)` of a rational polynomial: the least common multiple of the
-denominators of its coefficients, so `denom(P) = 1` exactly when `P ∈ ℤ[x]`.
+/-- **Denominator of a rational polynomial.** For a polynomial $P \in \mathbb{Q}[x]$, the
+denominator $\operatorname{denom}(P)$ is the least common multiple of the denominators (in lowest
+terms) of the nonzero coefficients of $P$; in particular $\operatorname{denom}(0) = 1$. Thus
+$\operatorname{denom}(P) = 1$ exactly when $P \in \mathbb{Z}[x]$.
 
 Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
 Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Section 2 (notation
@@ -43,7 +45,9 @@ Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, 
 public def polynomialDenominator (P : ℚ[X]) : ℕ :=
   P.support.lcm fun i => (P.coeff i).den
 
-/-- Every coefficient denominator divides `polynomialDenominator P`.
+/-- **Coefficient denominators divide the denominator of a polynomial.** For every polynomial
+$P \in \mathbb{Q}[x]$ and every $i \in \mathbb{N}$, the denominator (in lowest terms) of the
+coefficient of $x^i$ in $P$ divides the denominator $\operatorname{denom}(P)$ of $P$.
 
 Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
 Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Section 2
@@ -55,7 +59,9 @@ public theorem coeff_den_dvd_polynomialDenominator (P : ℚ[X]) (i : ℕ) :
   · rw [Polynomial.notMem_support_iff.mp hi]
     simp
 
-/-- `polynomialDenominator P = 1` exactly when every coefficient of `P` is an integer.
+/-- **Denominator one characterizes integer polynomials.** For every polynomial
+$P \in \mathbb{Q}[x]$, its denominator $\operatorname{denom}(P)$ equals $1$ if and only if, for
+every $i \in \mathbb{N}$, the coefficient of $x^i$ in $P$ is an integer.
 
 Source: Bernd C. Kellner, *On the Finiteness of Bernoulli Polynomials Whose Derivative Has Only
 Integral Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.2.8, Section 1
