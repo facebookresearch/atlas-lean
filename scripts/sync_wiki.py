@@ -2416,19 +2416,40 @@ def crediting(lean: str) -> list[dict] | None:
 
 def settled(annotation: dict, lean: str | None) -> bool:
     """Whether *annotation*, a row the sync writes, credits the project's declaration *lean*, or nothing for a folder
-    page's row (None), as Autoform reads the row (page_owner); when the links folder's defaults flag it for Mathlib,
-    the row turns the flag off if that makes it so."""
+    page's row (None), as Autoform reads the row (page_owner). When the links folder's defaults make it credit
+    otherwise, the row takes the least that settles it: it turns off a Mathlib flag they set, or, a folder page's row,
+    names no declaration in place of theirs, or both."""
     want = ("atlas", lean, None) if lean else ("none", None, None)
-    for unflag in (False, True):
+    for unflag, clear in ((False, False), (True, False), (False, True), (True, True)):
+        if clear and lean:
+            continue
+        tried = json.loads(json.dumps(annotation))
         if unflag:
-            extensions = annotation.setdefault("extensions", {})
+            extensions = tried.setdefault("extensions", {})
             extensions[NAMESPACE] = {**extensions.get(NAMESPACE, {}), "mathlib": False}
+        if clear:
+            tried["object"] = []
         try:
-            if page_owner(annotation) == want:
-                return True
+            owner = page_owner(tried)
         except CreditError:
-            pass
+            continue
+        if owner == want:
+            annotation.clear()
+            annotation.update(tried)
+            return True
     return False
+
+
+def folder_row(readme: Path, page: str) -> dict:
+    """The row of a folder page a run adds, its id to give, from *page*, generate_wiki's page for it: its navigation
+    and area."""
+    fields, _ = split_frontmatter(page)
+    annotation: dict = {"subject": [{"type": "generic", "uri": "../" + readme.relative_to(wiki.VAULT).as_posix()}],
+                        "id": None}
+    ours = {key: fields[key] for key in ("navigation", "area") if key in fields}
+    if ours:
+        annotation["extensions"] = {NAMESPACE: ours}
+    return annotation
 
 
 def apply_declarations(targets: list, index, generated: dict[Path, str] | None = None,
@@ -2456,12 +2477,6 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     if unreadable:
         return {**dict.fromkeys(("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended",
                                  "unlisted", "unassigned", "held", "held_problems"), []), "credit_problems": unreadable}
-    if scope is not None and not settled({"subject": [{"type": "generic", "uri": "../roadmap/README.md"}]}, None):
-        # A folder page's row the run would add could not credit nothing: write nothing.
-        return {**dict.fromkeys(("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended",
-                                 "unlisted", "unassigned", "held", "held_problems"), []),
-                "credit_problems": ["the links folder's defaults give a folder page's row a credit the sync cannot "
-                                    "turn off"]}
     taken = {a["id"] for rows in files.values() for a in rows if "id" in a}
     keyed, pages, held, held_problems = held_markers(files, index)
     current = {declaration_key(target): target for target in targets if declaration_key(target)}
@@ -2558,6 +2573,12 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         occupied = [page for page in missing if (page.parent.parent / f"{page.parent.name}.md").exists()
                     or page.parent.relative_to(wiki.ROADMAP).as_posix() in retired]
         if missing and not occupied and all(laid_out.get(page, page) in generated for page in missing):
+            # A scoped run makes a folder only with a row that credits nothing (see settled).
+            if scope is not None and not all(settled(folder_row(page, generated[laid_out.get(page, page)]), None)
+                                             for page in missing):
+                report["credit_problems"].append(f"no row the sync can write for a folder page {key} needs credits "
+                                                 "nothing")
+                continue
             created.update((page, generated[laid_out.get(page, page)]) for page in missing)
         else:
             folder = up
@@ -2646,11 +2667,8 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
                 if kind := listed_on(readme, add_to_listing(
                         readme, f"- [{wiki.link_text(title(child))}]({child.parent.name}/README.md)")):
                     report[kind].append(child.parent.relative_to(wiki.ROADMAP).as_posix())
-        annotation = {"subject": [{"type": "generic", "uri": "../" + readme.relative_to(wiki.VAULT).as_posix()}],
-                      "id": article_id(readme)}
-        ours = {key: fields[key] for key in ("navigation", "area") if key in fields}
-        if ours:
-            annotation["extensions"] = {NAMESPACE: ours}
+        annotation = folder_row(readme, created[readme])
+        annotation["id"] = article_id(readme)
         if scope is not None and not settled(annotation, None):
             # The run checked a folder page's row before it wrote anything.
             raise RuntimeError(f"{readme.relative_to(wiki.ROADMAP)}: its row would credit a declaration")
@@ -2923,17 +2941,23 @@ def numbered_rows() -> list[tuple[Path, int, dict]]:
             for number, line in enumerate(records(path.read_text(encoding="utf-8"))[0], 1) if line.strip()]
 
 
-def readable_rows(files: dict[Path, list[dict]]) -> dict[Path, list[dict]]:
-    """*files* without the rows Autoform cannot read one way only on their own, which credit_problems reports: about
-    no one page, or whose credit raises CreditError; so that one such row hides nothing of the others."""
-    def readable(annotation: dict) -> bool:
-        try:
-            page_owner(annotation)
-        except CreditError:
-            return False
-        return subject_path(annotation) is not None
+def unreadable(annotation: dict) -> str | None:
+    """Why Autoform cannot read a row one way only on its own, which credit_problems reports too: it is about no one
+    page, or its credit raises CreditError; None when it can."""
+    page, why = read_subject(annotation)
+    if page is None:
+        return why or "it is about no one page"
+    try:
+        page_owner(annotation)
+    except CreditError as error:
+        return str(error)
+    return None
 
-    return {path: [annotation for annotation in rows if readable(annotation)] for path, rows in files.items()}
+
+def readable_rows(files: dict[Path, list[dict]]) -> dict[Path, list[dict]]:
+    """*files* without the rows Autoform cannot read on their own (see unreadable), so that one such row hides
+    nothing of the others."""
+    return {path: [annotation for annotation in rows if unreadable(annotation) is None] for path, rows in files.items()}
 
 
 def link_view(index) -> dict:
@@ -2954,10 +2978,14 @@ def link_view(index) -> dict:
     def stable(problem: str) -> str:
         return problem.replace(os.fspath(LINKS), "blueprint/links").replace(os.fspath(wiki.VAULT), "blueprint")
 
-    # Counted, as two rows may have one problem in the same words.
-    unreadable = Counter(stable(problem) for problem in credit_problems(files) + owner_problems(files, index))
-    return {"stale": dict(stale), "held_problems": Counter(held_markers(readable_rows(files), index)[3]),
-            "unreadable": unreadable}
+    # A row Autoform cannot read on its own goes by its article id, else its page, and why, so that a row the changes
+    # break is theirs though they fix another broken the same way; the other problems, those of the rows it can
+    # read, are counted, as two rows may have one in the same words.
+    readable = readable_rows(files)
+    broken = Counter(f"the row {row['id'] if isinstance(row.get('id'), str) else page_key(row)} is one Autoform cannot "
+                     f"read: {stable(why)}" for rows in files.values() for row in rows if (why := unreadable(row)))
+    problems = broken + Counter(stable(problem) for problem in credit_problems(readable) + owner_problems(readable, index))
+    return {"stale": dict(stale), "held_problems": Counter(held_markers(readable, index)[3]), "unreadable": problems}
 
 
 def written_page(row: dict) -> Path | None:

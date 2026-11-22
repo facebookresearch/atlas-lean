@@ -3763,8 +3763,8 @@ class ScopedRun(unittest.TestCase):
             "object": [{"location": {"declaration": "Ext.Cosets.one"}}]}) + "\n")
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["in_step"]), (1, False))
-        self.assertTrue(any("is one Autoform leaves out" in row and row.endswith("; fix it") for row in report["errors"]),
-                        report["errors"])
+        self.assertEqual(report["errors"], [f"the row af_{'f' * 24} is one Autoform cannot read: its subject names no "
+                                            "page below roadmap/; fix it"])
 
     def test_a_page_whose_declaration_loses_its_docstring_keeps_the_bases_digest(self) -> None:
         # The digest the base reviewed stays, whatever the pull request does to its entry; none is made up when the
@@ -3926,6 +3926,51 @@ class ScopedRun(unittest.TestCase):
                 patch.object(sync, "page_name", lambda row: real(row).replace("/", "\\")):
             status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["wiki_changes"]), (0, "sync"), report["differences"])
+
+
+    def test_a_row_the_changes_break_is_theirs_though_they_fix_another(self) -> None:
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/b.md", "# B\n\nB.\n")
+        b = {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/b.md"}], "id": "af_" + "b" * 24}
+        a = {"subject": [], "id": "af_" + "a" * 24}
+        links.write_text(links.read_text() + json.dumps(a) + "\n" + json.dumps(b) + "\n")
+        self.base = self.commit("a broken row and a sound one")
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/a.md", "# A\n\nA.\n")
+        fixed = {**a, "subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/a.md"}]}
+        links.write_text(links.read_text().replace(json.dumps(a), json.dumps(fixed)).replace(json.dumps(b),
+                                                                                          json.dumps({**b, "subject": []})))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertEqual([row for row in report["errors"] if "af_" + "b" * 24 in row],
+                         [f"the row af_{'b' * 24} is one Autoform cannot read: " + sync.read_subject({**b, "subject": []})[1]
+                          + "; fix it"])
+        self.assertFalse(any("af_" + "a" * 24 in row for row in report["errors"]), report["errors"])
+
+    def test_a_folder_row_clears_a_declaration_its_defaults_name_only_when_one_is_made(self) -> None:
+        # Defaults that name a declaration, which the base's folder rows clear: a docstring edit writes its digest,
+        # with no folder row to check, and a new folder's row clears the declaration too.
+        self.write("blueprint/links/_defaults.json", json.dumps({"object": {**sync.DEFAULTS["object"],
+                                                                            "location": {"declaration": "Ext.lagrange"}}})
+                   + "\n")
+        for path in ("blueprint/links/Algebra.jsonl", "blueprint/links/roadmap.jsonl"):
+            links = self.root / path
+            rows = [json.loads(line) for line in links.read_text().splitlines()]
+            for row in rows:
+                row.setdefault("object", [])
+            links.write_text("".join(json.dumps(row) + "\n" for row in rows))
+        self.base = self.commit("defaults that name a declaration")
+        self.groups(lagrange="The order of a subgroup divides the group's.")
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 0, err)
+        self.assertEqual(report["written"], ["scripts/wiki-sync.json"])
+        self.write("MathlibExt/Algebra/Rings.lean", self.RINGS)
+        self.assertEqual(self.run_sync()[0], 0)
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        folders = [json.loads(line) for line in links.read_text().splitlines() if "not-yet-classified" in line
+                   and "README.md" in line]
+        self.assertEqual([(row.get("object"), sync.page_owner(row)) for row in folders], [([], ("none", None, None))] * 2)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"))
 
 
 
