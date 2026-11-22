@@ -11,8 +11,8 @@ fails if a required workflow:
   a job-level `if`, a matrix, or a prerequisite that is not required itself;
 - can skip the job's own check: the job needs a step that is exactly the
   command running it, with no step-level `if` or `continue-on-error`;
-- leaves Ubuntu runners, or runs its steps in a shell other than bash by default
-  (a job in a container defaults to `sh`);
+- leaves Ubuntu runners (the build needs a full Ubuntu VM), or runs its steps in
+  a shell other than bash by default (a job in a container defaults to `sh`);
 - checks out another ref or repository in that job, so that the check would
   report on the PR or merge group without testing its tree;
 - renames the check, puts an expression in the job's name, lets another job
@@ -73,6 +73,9 @@ RUN_THIS_TEST = ("repository integrity", "source-diagnostics")
 COMMAND = ('"$RUNNER_TEMP/merge-queue-venv/bin/python" -m unittest discover '
            "-s scripts -p test_merge_queue_checks.py -v")
 STEP_KEYS = {"name", "id", "env", "run", "timeout-minutes", "shell"}
+# Runners with the root access and job length the Lean build needs (it adds
+# swap); the lighter jobs may use any Ubuntu runner.
+FULL_UBUNTU = {"ubuntu-24.04", "ubuntu-22.04", "ubuntu-latest"}
 # The command that runs each required job's own check.
 ENTRY_POINTS = {
     "repository integrity": "scripts/check.sh preflight",
@@ -162,13 +165,13 @@ def may_be_named(name: str, check: str) -> bool:
 
 
 def default_shell(job: dict, workflow: dict) -> str:
-    """The shell a step without `shell` inherits from its job, then its
-    workflow; otherwise bash, or sh for a job that runs in a container."""
+    """The shell a step without `shell` runs in. The job's `defaults.run`
+    block, if any, replaces the workflow's as a whole; without a `shell` there,
+    it is bash, or sh for a job that runs in a container."""
     for level in (job, workflow):
-        defaults = level.get("defaults") or {}
-        shell = (defaults.get("run") or {}).get("shell") if isinstance(defaults, dict) else None
-        if shell:
-            return shell
+        defaults = level.get("defaults")
+        if isinstance(defaults, dict) and isinstance(defaults.get("run"), dict):
+            return defaults["run"].get("shell") or ("sh" if job.get("container") else "bash")
     return "sh" if job.get("container") else "bash"
 
 
@@ -253,8 +256,10 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                 found.append(f"{check!r} has a job-level {key!r}")
         steps = as_list(job.get("steps"))
         shell = default_shell(job, workflow)
-        if not str(job.get("runs-on", "")).startswith("ubuntu"):
-            found.append(f"{check!r} runs on {job.get('runs-on')!r}, not an Ubuntu runner")
+        runner = str(job.get("runs-on", ""))
+        if not (runner in FULL_UBUNTU if check == "build" else runner.startswith("ubuntu")):
+            found.append(f"{check!r} runs on {job.get('runs-on')!r}, not an Ubuntu runner "
+                         "it can run on")
         if shell != "bash":
             found.append(f"{check!r} runs its steps in {shell!r} by default, not bash")
         if not any(runs_exactly(step, ENTRY_POINTS[check], shell) for step in steps):
@@ -373,6 +378,12 @@ class MergeQueueChecks(unittest.TestCase):
                        put("ci.yml", "concurrency", "group",
                            "${{github.workflow}}-${{  github.ref }}"),
                        put("ci.yml", "on", "push", {"branches": "main"}),
+                       lambda workflows: (
+                           put("ci.yml", "defaults", {"run": {"shell": "sh"}})(workflows),
+                           put("ci.yml", "jobs", "preflight", "defaults",
+                               {"run": {"shell": "bash"}})(workflows),
+                           put("ci.yml", "jobs", "build", "defaults",
+                               {"run": {"shell": "bash"}})(workflows)),
                        put("source-diagnostics.yml", "jobs", "source-diagnostics",
                            {"container": "python:3.12-bookworm", "runs-on": "ubuntu-24.04",
                             "defaults": {"run": {"shell": "bash"}},
@@ -521,8 +532,21 @@ class MergeQueueChecks(unittest.TestCase):
                     "python:3.12-bookworm"),
                 "'source-diagnostics' has no step that is exactly"),
             "container with bash only on the checked steps": (
-                put("source-diagnostics.yml", "jobs", "source-diagnostics", "container",
-                    "python:3.12-bookworm"), "by default, not bash"),
+                put("source-diagnostics.yml", "jobs", "source-diagnostics",
+                    {"container": "python:3.12-bookworm", "runs-on": "ubuntu-24.04",
+                     "steps": [{"shell": "bash", "run": COMMAND},
+                               {"shell": "bash", "run": "scripts/run_source_diagnostics.sh"}]}),
+                "by default, not bash"),
+            "job defaults replacing a workflow bash default in a container": (
+                lambda workflows: (
+                    put("ci.yml", "defaults", {"run": {"shell": "bash"}})(workflows),
+                    put("ci.yml", "jobs", "preflight", "container", "python:3.12-bookworm")(
+                        workflows),
+                    put("ci.yml", "jobs", "preflight", "defaults",
+                        {"run": {"working-directory": "."}})(workflows)),
+                "by default, not bash"),
+            "build on ubuntu-slim": (put("ci.yml", "jobs", "build", "runs-on", "ubuntu-slim"),
+                                     "not an Ubuntu runner it can run on"),
             "Source diagnostics on Windows": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "runs-on",
                     "windows-latest"), "not an Ubuntu runner"),
