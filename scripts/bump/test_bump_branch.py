@@ -148,23 +148,23 @@ class MergeManifestTest(unittest.TestCase):
         self.assertEqual(bb.join_rationale("Main", "Also bump."), "Main. Also bump.")
         self.assertEqual(bb.join_rationale("Main (#1).", "Adapted."), "Main (#1). Also: Adapted.")
         self.assertEqual(bb.join_rationale("", "Adapted."), "Adapted.")
-        self.assertEqual(bb.join_rationale("Main. Also bump.", "Also bump."), "Main. Also bump.")
         self.assertEqual(bb.join_rationale("A. Backport: PR #130.", "Backport: PR #13"),
                          "A. Backport: PR #130. Also: Backport: PR #13")
-        self.assertTrue(bb.has_sentence("A. Also: Backport: PR #13. B.", "Backport: PR #13"))
-        self.assertFalse(bb.has_sentence("A. Backport: PR #130.", "Backport: PR #13"))
-        self.assertFalse(bb.has_sentence("A. See Backport: PR #13.", "Backport: PR #13"))
-        self.assertFalse(bb.has_sentence("A. Reference: Theorem 4 bis.", "Reference: Theorem 4."))
-        self.assertFalse(bb.has_sentence("A. Reference: Theorem 4.2 holds.", "Reference: Theorem 4."))
-        self.assertTrue(bb.has_sentence("A. Reference: Theorem 4. B.", "Reference: Theorem 4."))
-        self.assertTrue(bb.has_sentence("A. Reference: Theorem 4", "Reference: Theorem 4."))
+        self.assertEqual(bb.join_rationale("A. Also adapted MonoidHom.map_mul.", "map_mul."),
+                         "A. Also adapted MonoidHom.map_mul. Also: map_mul.")
+        # Only exactly equal additions from the two sides are deduplicated; otherwise both stay.
+        rows = lambda *texts: [{"rationale": text} for text in texts]
+        self.assertEqual(bb.combine_rationales(*rows("A.", "A. Same.", "A.  Same."), "distinct"), "A.  Same.")
+        self.assertEqual(bb.combine_rationales(*rows("A.", "A. Same.", "A. Same. More."), "distinct"),
+                         "A. Same. More. Also: Same.")
 
     def test_rows_needing_a_person_are_reported_and_the_text_still_parses(self):
         base = diverged("MathlibExt/A.lean", "A", "x.")
         cases = [
             ([base], [diverged(base["path"], "1", f"x. {BUMP}")], [diverged(base["path"], "2", "y.")], {},
              "not resolved and staged"),
-            ([base], [diverged(base["path"], "1", f"x. {BUMP}")], [diverged(base["path"], "2", f"y. {BUMP}")],
+            # The bump changed the file but kept the base rationale: nothing describes its change.
+            ([base], [diverged(base["path"], "1", "x.")], [diverged(base["path"], "2", "y.")],
              {base["path"]: merged_file(b"3")}, "adds nothing"),
             ([base], [diverged(base["path"], "1", f"x. {BUMP}")],
              [{**base, "disposition": "retired", "line_fingerprint": []}], {base["path"]: merged_file(b"1")},
@@ -616,7 +616,9 @@ class GitTest(unittest.TestCase):
     def test_a_reference_inside_a_longer_one_is_kept(self):
         for bump_note, main_note, kept in (("Backport: PR #13", "Backport: PR #130.", ("PR #13", "PR #130")),
                                            ("Reference: Theorem 4.", "Reference: Theorem 4 bis.",
-                                            ("Theorem 4.", "Theorem 4 bis."))):
+                                            ("Theorem 4.", "Theorem 4 bis.")),
+                                           ("map_mul.", "Also adapted MonoidHom.map_mul.",
+                                            ("map_mul.", "MonoidHom.map_mul."))):
             with self.subTest(bump_note=bump_note):
                 self.tearDown()
                 self.setUp()

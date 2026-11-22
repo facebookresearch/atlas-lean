@@ -192,31 +192,13 @@ def appended(base: str, text: str) -> str | None:
     return rest.lstrip(" .;").strip() if ends_sentence or starts_sentence else None
 
 
-def has_sentence(text: str, sentence: str) -> bool:
-    """Whether `sentence` is already in `text` as a complete sentence: it starts the text or
-    follows a `.`, `!`, `?` or `:`, and ends the text or is followed by its full stop and
-    then a space. "Backport: PR #13" is not in "Backport: PR #130.", nor "Reference:
-    Theorem 4." in "Reference: Theorem 4 bis.". When in doubt the answer is no, and the
-    sentence is kept twice rather than lost."""
-    sentence = sentence.strip()
-    if not sentence:
-        return True
-    core = sentence.rstrip(".!?")
-    if not core:
-        return True
-    for match in re.finditer(re.escape(core), text):
-        before, after = text[:match.start()].rstrip(), text[match.end():]
-        starts = not before or before.endswith((".", "!", "?", ":"))
-        ends = not after.strip() or re.match(r"[.!?]+(\s|$)", after) is not None
-        if starts and ends:
-            return True
-    return False
-
-
 def join_rationale(main_rationale: str, addition: str) -> str:
-    """Main's rationale, then the bump's addition as a further sentence."""
+    """Main's rationale, then the bump's addition as a further sentence. Nothing is dropped
+    here as a duplicate: text inside a rationale cannot be told apart from a sentence (a
+    Lean name such as `MonoidHom.map_mul` has full stops), so only `combine_rationales`
+    drops an addition, and only when both sides added exactly the same text."""
     main_rationale = main_rationale.strip()
-    if not addition or has_sentence(main_rationale, addition):
+    if not addition:
         return main_rationale
     if not main_rationale:
         return addition
@@ -268,6 +250,8 @@ def combine_rationales(b, o: dict, t: dict, mode: str) -> str | None:
     if mode == "same" or (mode == "row" and not base):
         return None
     added_by_bump, added_by_main = appended(base, mine), appended(base, theirs)
+    if added_by_bump is not None and added_by_bump == added_by_main:
+        return theirs
     if added_by_bump is not None:
         return join_rationale(theirs, added_by_bump)
     if added_by_main is not None:
