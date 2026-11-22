@@ -28,9 +28,7 @@ coefficients.
 The coefficient formulas (2.10) and (2.15) survive in the extracted text with their
 numerators only; the denominators used here are the unique ones for which the
 displayed numerators solve the paper's initial-value systems (2.8) and (2.13), and
-they reproduce the paper's worked examples. In Theorem 3.1 the extracted formulas
-for `c` and `d` contradict the paper's own example; the stated reading is the one
-that the example and the initial-value system support (see the source audit table).
+they reproduce the paper's worked examples.
 -/
 
 namespace MetaMathlibExt
@@ -99,34 +97,6 @@ public theorem_wanted fib_quadratic_linear_coeff_isInt_iff (a b c d e : ℚ) :
       b = ((-56 * z₁ - 7 * z₂ + 66 * z₃ - 23 * z₄ : ℤ) : ℚ) / 50 ∧
       c = ((48 * z₁ + 6 * z₂ - 28 * z₃ + 9 * z₄ : ℤ) : ℚ) / 25 ∧
       d = ((-6 * z₁ + 18 * z₂ - 9 * z₃ + 2 * z₄ : ℤ) : ℚ) / 25
-
-/-- The rational sequence `w_n = (a n + b) F_n + (c n + d) F_{n-1} + e + f (-1)^n` is
-an integer sequence if and only if there are integers `w₀, …, w₅` (its initial
-values) with
-`a = (3w₀ + 2w₁ - 7w₂ - w₃ + 4w₄ - w₅) / 5`,
-`b = (-3w₀ - 2w₁ - 3w₂ + 6w₃ + 6w₄ - 4w₅) / 5`,
-`c = (-4w₀ - w₁ + 11w₂ - 2w₃ - 7w₄ + 3w₅) / 5`,
-`d = -2w₁ + w₂ + 2w₃ - w₄`,
-`e = (w₀ + 3w₁ + w₂ - 3w₃ - w₄ + w₅) / 2`,
-`f = (w₀ + w₁ - 3w₂ - w₃ + 3w₄ - w₅) / 2`.
-The extracted text prints `-3w₅` in `c` and `2w₁` in `d`; those versions contradict
-the paper's example `w = (0, 1, 2, 6, 12, 26)`, `c = 3/5`, `d = 0`. Here `F_{n-1}`
-is written as `F_{n+1} - F_n`.
-
-Source: Kálmán Liptai, László Németh, Tamás Szakács and László Szalay,
-*On Certain Fibonacci Representations*, Fibonacci Quarterly 62 (2024), no. 4,
-Theorem 3.1 (`fq-2024-szakacs06212024rev-thm-3.1`). -/
-public theorem_wanted fib_linear_coeff_add_alternating_isInt_iff (a b c d e f : ℚ) :
-    (∀ n : ℕ, ∃ k : ℤ, (k : ℚ) =
-      (a * n + b) * Nat.fib n + (c * n + d) * ((Nat.fib (n + 1) : ℚ) - Nat.fib n) +
-        e + f * (-1) ^ n) ↔
-    ∃ w₀ w₁ w₂ w₃ w₄ w₅ : ℤ,
-      a = ((3 * w₀ + 2 * w₁ - 7 * w₂ - w₃ + 4 * w₄ - w₅ : ℤ) : ℚ) / 5 ∧
-      b = ((-3 * w₀ - 2 * w₁ - 3 * w₂ + 6 * w₃ + 6 * w₄ - 4 * w₅ : ℤ) : ℚ) / 5 ∧
-      c = ((-4 * w₀ - w₁ + 11 * w₂ - 2 * w₃ - 7 * w₄ + 3 * w₅ : ℤ) : ℚ) / 5 ∧
-      d = ((-2 * w₁ + w₂ + 2 * w₃ - w₄ : ℤ) : ℚ) ∧
-      e = ((w₀ + 3 * w₁ + w₂ - 3 * w₃ - w₄ + w₅ : ℤ) : ℚ) / 2 ∧
-      f = ((w₀ + w₁ - 3 * w₂ - w₃ + 3 * w₄ - w₅ : ℤ) : ℚ) / 2
 
 end
 

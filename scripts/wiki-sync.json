@@ -65771,7 +65771,7 @@
 "MetaMathlibExt.fib_eq_integral_one_add_mul_sqrt_five": "86bde95fad352667",
 "MetaMathlibExt.fib_gibonacci_catalan_type_identity": "b5565c08eacf5e40",
 "MetaMathlibExt.fib_jacobsthal_pell_composition_sums": "dbd49f87a6bd69fb",
-"MetaMathlibExt.fib_linear_coeff_add_alternating_isInt_iff": "e892838c6b294fad",
+"MetaMathlibExt.fib_linear_coeff_add_alternating_isInt_iff": "5613dd57c94406f0",
 "MetaMathlibExt.fib_linear_coeff_isInt_iff": "925c7bb122bb1465",
 "MetaMathlibExt.fib_lucas_add_eq_composition_sum": "7e2b9b2aca728c62",
 "MetaMathlibExt.fib_mem_lucasIntervals": "4a44f9c1d86de559",
