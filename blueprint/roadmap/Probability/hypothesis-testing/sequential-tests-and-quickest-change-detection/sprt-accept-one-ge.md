@@ -19,4 +19,4 @@ The proof is the same as for the first inequality, with $R_n = e^{\Lambda_n} \ge
 
 ## Background
 
-- [Wald's equation](../../martingales/wald-s-equations/wald-equation.md): the identity $\mathsf E\,\Lambda_N = \mathsf E\,\Lambda_1 \cdot \mathsf E\, N$ behind Wald's approximations to the average sample number.
+- [Wald's equation](../../martingales/wald-s-equations/wald-s-equation/wald-equation.md): the identity $\mathsf E\,\Lambda_N = \mathsf E\,\Lambda_1 \cdot \mathsf E\, N$ behind Wald's approximations to the average sample number.
