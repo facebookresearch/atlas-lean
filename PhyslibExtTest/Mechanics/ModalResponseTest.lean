@@ -22,7 +22,9 @@ import Mathlib.Tactic.Ring
 
 Concrete consumers of `PhyslibExt.Mechanics.ModalResponse`: three unit masses joined pairwise by
 unit springs (a ring of three, stiffness eigenvalues `0, 3, 3`), released from a mode of the
-repeated eigenvalue with a rigid-translation velocity, and the excluded negative-stiffness branch.
+repeated eigenvalue with a rigid-translation velocity, and the excluded negative-stiffness branch;
+two unequal masses joined by one spring, with a translational velocity, grounding and a
+disconnected network.
 
 ## i. Overview
 
@@ -35,6 +37,7 @@ No new results are introduced here.
 ## iii. Table of contents
 
 - A. The ring of three
+- B. Two masses and one spring
 
 ## iv. References
 
@@ -135,3 +138,73 @@ example :
   have h0 := h 0
   rw [hconst] at h0
   simp at h0
+
+/-! ## B. Two masses and one spring -/
+
+open PhyslibExt.Mechanics.HarmonicMechanics (springEnergy stiffnessMatrix)
+
+/-- Unequal masses `m = (1, 2)` and `k = 3`, so `ω² = 9 / 2`. A pure translational initial
+velocity `(1, 1)` from rest position `0` keeps the rigid drift `x(t) = (t, t)`; from `x₀ = (0, 3)`
+with the same velocity the centre of mass drifts from `2` and the spring extension oscillates from
+`3`, `x(t) = (2 + t - 2 cos (ω t), 2 + t + cos (ω t))`. -/
+example :
+    twoMassFrequencySq 1 2 3 = 9 / 2 ∧
+      (∀ t, twoMassResponse 1 2 3 0 ![1, 1] t = ![t, t]) ∧
+      ∀ t, twoMassResponse 1 2 3 ![0, 3] ![1, 1] t =
+        ![2 + t - 2 * Real.cos (Real.sqrt (9 / 2) * t), 2 + t + Real.cos (Real.sqrt (9 / 2) * t)] := by
+  have hω : twoMassFrequencySq 1 2 3 = 9 / 2 := by norm_num [twoMassFrequencySq]
+  refine ⟨hω, fun t => ?_, fun t => ?_⟩
+  · funext i; fin_cases i <;> simp [twoMassResponse, hω, modalCoordinate] <;> norm_num
+  · funext i; fin_cases i <;> simp [twoMassResponse, hω, modalCoordinate] <;> ring
+
+/-- Removing one degree of freedom is not enough for a disconnected network: three masses with one
+spring of stiffness `k` between the first two and the third mass free. Grounding the first mass
+leaves the stiffness `diag(k, 0)` on the other two, which is not positive definite: the free mass
+is a zero mode. -/
+example (k : ℝ) :
+    (stiffnessMatrix ![![0, k, 0], ![k, 0, 0], ![0, 0, 0]] 0).submatrix Fin.succ Fin.succ =
+        !![k, 0; 0, 0] ∧
+      ¬ ((stiffnessMatrix ![![0, k, 0], ![k, 0, 0], ![0, 0, 0]] 0).submatrix Fin.succ
+        Fin.succ).PosDef := by
+  have hsub : (stiffnessMatrix ![![0, k, 0], ![k, 0, 0], ![0, 0, 0]] 0).submatrix Fin.succ
+      Fin.succ = !![k, 0; 0, 0] := by
+    ext i j; fin_cases i <;> fin_cases j <;> simp [stiffnessMatrix, Fin.sum_univ_three]
+  refine ⟨hsub, ?_⟩
+  intro h
+  rw [hsub] at h
+  have hx : (![0, 1] : Fin 2 → ℝ) ≠ 0 := by
+    intro h0; have := congrFun h0 1; simp at this
+  have := h.dotProduct_mulVec_pos hx
+  simp [dotProduct, Matrix.mulVec, Fin.sum_univ_two] at this
+
+/-- For `m = (1, 2)` and `k = 3` the positive mode is `(2, -1)`, with `ω² = 9 / 2`: the heavier
+mass moves half as far, in the opposite direction. -/
+example : stiffnessMatrix (twoMassWeights 3) 0 *ᵥ ![2, -1] =
+    (9 / 2 : ℝ) • (diagonal ![1, 2] *ᵥ ![2, -1]) := by
+  have h := (twoMass_positiveMode (m₁ := 1) (m₂ := 2) (k := 3) (by norm_num) (by norm_num)
+    (by norm_num)).2.1
+  have hω : twoMassFrequencySq 1 2 3 = 9 / 2 := by norm_num [twoMassFrequencySq]
+  rwa [hω] at h
+
+/-- Every twice continuously differentiable motion of the masses `m = (1, 2)` joined by the
+spring `k = 3` that starts from `(0, 3)` with velocity `(1, 1)` is
+`(2 + t - 2 cos (ω t), 2 + t + cos (ω t))`, `ω = √(9 / 2)`. -/
+example {x : ℝ → Fin 2 → ℝ} (hx : ContDiff ℝ 2 x)
+    (hEq : ∀ t, diagonal ![1, 2] *ᵥ deriv (deriv x) t +
+      stiffnessMatrix (twoMassWeights 3) 0 *ᵥ x t = 0)
+    (h0 : x 0 = ![0, 3]) (hv : deriv x 0 = ![1, 1]) (t : ℝ) :
+    x t = ![2 + t - 2 * Real.cos (Real.sqrt (9 / 2) * t),
+      2 + t + Real.cos (Real.sqrt (9 / 2) * t)] := by
+  have hu := twoMassResponse_unique (by norm_num) (by norm_num) (by norm_num) hx hEq
+  have hω : twoMassFrequencySq 1 2 3 = 9 / 2 := by norm_num [twoMassFrequencySq]
+  rw [hu, h0, hv]
+  funext i
+  fin_cases i <;> simp [twoMassResponse, hω, modalCoordinate] <;> ring
+
+/-- With the first mass grounded, every nonzero displacement `u` of the second stretches the
+spring `k = 3` and stores the positive energy `3 u² / 2`. -/
+example {u : ℝ} (hu : u ≠ 0) : 0 < springEnergy (twoMassWeights 3) 0 ![0, u] := by
+  rw [((grounded_twoMass (k := 3) (by norm_num)).2.2.2 u).1]
+  have h2 := sq_pos_of_ne_zero hu
+  simp [springEnergy]
+  positivity

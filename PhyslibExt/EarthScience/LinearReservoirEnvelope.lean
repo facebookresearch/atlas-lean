@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.EarthScience.CatchmentWaterBalance
-public import MathlibExt.Biology.Biophysics.CompartmentKinetics
+public import MathlibExt.Analysis.ODE.ConstantInputRelaxation
 import Mathlib.Order.Monotone.Basic
 
 /-!
@@ -18,7 +18,7 @@ import Mathlib.Order.Monotone.Basic
 
 The linear reservoir in `PhyslibExt.EarthScience.CatchmentWaterBalance` has
 the same explicit profile as the one-compartment amount in
-`MathlibExt.Biology.Biophysics.CompartmentKinetics`, with recession
+`MathlibExt.Analysis.ODE.ConstantInputRelaxation`, with recession
 coefficient `k`, constant inflow `I`, initial storage `S0`, and steady
 storage `I / k`. This companion module records that bridge and transports
 the compartment envelope facts to storage: nonnegativity in the decay
@@ -47,7 +47,7 @@ profile, empirical validation, or control law is introduced.
 
 - `PhyslibExt.EarthScience.CatchmentWaterBalance` for the reservoir
   profile and its water budget.
-- `MathlibExt.Biology.Biophysics.CompartmentKinetics` for the compartment
+- `MathlibExt.Analysis.ODE.ConstantInputRelaxation` for the compartment
   amount, steady amount, and envelope facts.
 -/
 

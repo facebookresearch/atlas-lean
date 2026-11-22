@@ -57,6 +57,12 @@ coefficient `c = f L ρ / (2 D A ^ 2)`, where `f` is the Darcy friction factor.
   `ControlVolumes.portEnergyRate` (flow work counted once) sum to zero exactly when the
   internal-energy rise carried by the mass flow `ρ A V` equals the pressure-drop power
   `(p_in - p_out) A V`; with the Darcy loss it is `c Q ^ 2 |Q| ≥ 0`.
+* Inversion. For `L, D, ρ > 0` and an oriented drop `Δp` in the direction of the mean velocity
+  `V` (`0 < Δp V`), `darcyFactorOfDrop` solves `Δp = f (L / D) ρ V |V| / 2` for
+  `f = 2 D Δp / (ρ V |V| L)`. The factor is positive, a reversed flow with its reversed drop has
+  the same factor, and the factor of the loss `c Q |Q|` at `Q = A V` is `f` in both flow
+  directions. No factor is defined at zero flow, for a degenerate duct or fluid, or for a drop
+  against the flow, which would describe energy generation rather than friction.
 
 Model inputs: the correlation, its convention, roughness, validity domain and tags are supplied,
 and one positive factor value is assumed, not proved; the Darcy-Weisbach relation is the
@@ -82,6 +88,9 @@ validated, and no empirical adequacy or system safety claim is made.
   `dissipatedPower_eq_internalEnergyRise`, `internalEnergyRise_frictionPressureDrop`: the power
   through the energy ports.
 - `FluidDynamics.PipeFrictionPorts.darcyFactor_frictionPressureDrop`: the guarded chain.
+- `FluidDynamics.PipeFrictionPorts.darcyFactorOfDrop`, `darcyFactorOfDrop_pos`,
+  `frictionPressureDrop_mul_velocity_pos`, `darcyFactorOfDrop_frictionPressureDrop`: the Darcy
+  factor of an oriented pressure drop, its sign, and the inversion of the loss.
 
 ## iii. Table of contents
 
@@ -89,6 +98,7 @@ validated, and no empirical adequacy or system safety claim is made.
 - B. The Darcy-Weisbach loss and its dissipated power
 - C. Dissipated power through the energy ports
 - D. The guarded loss
+- E. The Darcy factor of a pressure drop
 
 ## iv. References
 
@@ -383,5 +393,61 @@ lemma darcyFactor_frictionPressureDrop {C : FrictionCorrelation} {r : FrictionRe
     frictionPressureDrop_neg _ Q⟩
   rw [hRe, reynoldsNumber_val, reynoldsNumber_val]
   simp only [neg_div, abs_neg]
+
+/-! ## E. The Darcy factor of a pressure drop -/
+
+/-- The Darcy friction factor `f = 2 D Δp / (ρ V |V| L)` of an oriented pressure drop `Δp` over a
+length `L > 0` of a duct of diameter `D > 0` carrying a fluid of density `ρ > 0` at the signed
+mean velocity `V`, for a drop in the direction of the flow (`0 < Δp V`): the oriented
+Darcy-Weisbach relation `Δp = f (L / D) ρ V |V| / 2` of `darcyWeisbach_eq` solved for `f`.
+Reversing both `V` and `Δp` keeps the factor, and the factor is positive
+(`darcyFactorOfDrop_pos`), as in the positive-factor loss model of this module. The domain is
+part of the definition: at zero flow, or for a duct of zero length or diameter or a fluid of zero
+density, the relation does not determine `f`, and a drop against the flow (`Δp V < 0`) would
+describe energy generation rather than friction; no factor is defined there. The argument
+`0 < Δp V` implies `V ≠ 0`. -/
+noncomputable def darcyFactorOfDrop (Δp L D ρ V : ℝ) (_hL : 0 < L) (_hD : 0 < D) (_hρ : 0 < ρ)
+    (_hdir : 0 < Δp * V) : ℝ :=
+  2 * D * Δp / (ρ * V * |V| * L)
+
+/-- The friction factor of a drop in the direction of the flow is positive. -/
+lemma darcyFactorOfDrop_pos {Δp L D ρ V : ℝ} (hL : 0 < L) (hD : 0 < D) (hρ : 0 < ρ)
+    (hdir : 0 < Δp * V) : 0 < darcyFactorOfDrop Δp L D ρ V hL hD hρ hdir := by
+  have hV : V ≠ 0 := by
+    rintro rfl
+    simp at hdir
+  have hVa : 0 < |V| := abs_pos.mpr hV
+  have hVV : 0 < V * V := mul_self_pos.mpr hV
+  have h : darcyFactorOfDrop Δp L D ρ V hL hD hρ hdir =
+      2 * D * (Δp * V) / (ρ * (V * V) * |V| * L) := by
+    unfold darcyFactorOfDrop
+    field_simp
+  rw [h]
+  exact div_pos (mul_pos (mul_pos two_pos hD) hdir) (mul_pos (mul_pos (mul_pos hρ hVV) hVa) hL)
+
+/-- For a positive factor, length, diameter, area and density, the pressure drop of the loss at
+the flow rate `Q = A V`, `V ≠ 0`, has the direction of the mean velocity `V`: its product with
+`Q` is the positive dissipated power (`dissipatedPower_pos`). -/
+lemma frictionPressureDrop_mul_velocity_pos {f L D A ρ V : ℝ} (hf : 0 < f) (hL : 0 < L)
+    (hD : 0 < D) (hA : 0 < A) (hρ : 0 < ρ) (hV : V ≠ 0) :
+    0 < frictionPressureDrop (darcyCoefficient f L D A ρ) (A * V) * V := by
+  have h := dissipatedPower_pos (darcyCoefficient_pos hf hL hD hA hρ) (mul_ne_zero hA.ne' hV)
+  have h' : frictionPressureDrop (darcyCoefficient f L D A ρ) (A * V) * (A * V) =
+      A * (frictionPressureDrop (darcyCoefficient f L D A ρ) (A * V) * V) := by
+    ring
+  rw [h'] at h
+  exact pos_of_mul_pos_right h hA.le
+
+/-- **Inversion.** For a positive factor `f`, length, diameter, area and density and a nonzero
+mean velocity `V`, the Darcy factor of the pressure drop `c Q |Q|` that the coefficient
+`c = f L ρ / (2 D A ^ 2)` gives at the flow rate `Q = A V` is `f`, in both flow directions. -/
+lemma darcyFactorOfDrop_frictionPressureDrop {f L D A ρ V : ℝ} (hf : 0 < f) (hL : 0 < L)
+    (hD : 0 < D) (hA : 0 < A) (hρ : 0 < ρ) (hV : V ≠ 0) :
+    darcyFactorOfDrop (frictionPressureDrop (darcyCoefficient f L D A ρ) (A * V)) L D ρ V hL hD
+      hρ (frictionPressureDrop_mul_velocity_pos hf hL hD hA hρ hV) = f := by
+  have hVa : |V| ≠ 0 := abs_ne_zero.mpr hV
+  unfold darcyFactorOfDrop frictionPressureDrop darcyCoefficient
+  rw [abs_mul, abs_of_pos hA]
+  field_simp
 
 end FluidDynamics.PipeFrictionPorts
