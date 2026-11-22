@@ -10854,6 +10854,7 @@
   "MathlibExt/LinearAlgebra/Matrix/SignConditionNumberDecay": {"to": "LinearAlgebra/matrix-decompositions", "title": "Condition numbers of sign matrices"},
   "MathlibExt/LinearAlgebra/Matrix/SimultaneousDiagonalization": {"to": "LinearAlgebra/bilinear-and-quadratic-forms", "title": "Simultaneous diagonalization by congruence"},
   "MathlibExt/LinearAlgebra/Matrix/Sinkhorn": {"to": "LinearAlgebra/special-matrices", "title": "Matrix scaling to doubly stochastic form"},
+  "MathlibExt/LinearAlgebra/Matrix/SpecialLinearGroupTrace": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Generalized Markov triples"},
   "MathlibExt/LinearAlgebra/Matrix/SpecialUnitaryFinTwo": {"to": "GroupTheory/linear-groups", "title": "The special unitary group SU(2)"},
   "MathlibExt/LinearAlgebra/Matrix/StieltjesMatrix": {"to": "Combinatorics/riordan-arrays-transforms/hankel-continued-fractions", "title": "Stieltjes production matrices"},
   "MathlibExt/LinearAlgebra/Matrix/SylvesterCriterion": {"to": "LinearAlgebra/positive-definite-matrices", "title": "Sylvester's criterion"},
