@@ -23,14 +23,20 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.AsphericalHomologySphere` — aspherical_integer_homology_four_sphere (manifest `manifests/problems/aspherical_integer_homology_four_sphere.toml`, rev 1, submitter Kim Morrison, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.AsphericalHomologySphere` —
+aspherical_integer_homology_four_sphere (manifest
+`manifests/problems/aspherical_integer_homology_four_sphere.toml`, rev 1, submitter Kim Morrison,
+status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Topology.AsphericalHomologySphereWanted` namespace. Mathematical
-statements are unchanged. Source: J. G. Ratcliffe and S. T. Tschantz, *Some examples of aspherical 4-manifolds that are homology 4-spheres*, arXiv:math/0312436 (2003), solving [Kir97, Problem 4.17]. Earlier, F. Luo constructed an aspherical rational homology 4-sphere (1988).
+and placed the declarations in the `MathlibExt.Topology.AsphericalHomologySphereWanted` namespace.
+Mathematical
+statements are unchanged. Source: J. G. Ratcliffe and S. T. Tschantz, *Some examples of aspherical
+4-manifolds that are homology 4-spheres*, arXiv:math/0312436 (2003), solving [Kir97, Problem 4.17].
+Earlier, F. Luo constructed an aspherical rational homology 4-sphere (1988).
 -/
 module
 
@@ -52,7 +58,8 @@ open Metric (sphere)
 that is an integer homology 4-sphere. Ratcliffe and Tschantz answered this
 affirmatively, constructing infinitely many aspherical 4-manifolds that are
 homology 4-spheres (J. G. Ratcliffe and S. T. Tschantz, *Some examples of
-aspherical 4-manifolds that are homology 4-spheres*, arXiv:math/0312436). (Earlier, Luo constructed an aspherical *rational*
+aspherical 4-manifolds that are homology 4-spheres*, arXiv:math/0312436). (Earlier, Luo constructed
+an aspherical *rational*
 homology 4-sphere.)
 
 We state the existence of such a manifold. A closed topological 4-manifold is
@@ -125,7 +132,10 @@ $x \in M$ the homotopy group $\pi_k(M, x)$ is trivial, and that is an integer ho
 meaning that for every $k \ge 0$ the integral singular homology $H_k(M; \mathbb{Z})$ is isomorphic
 to $H_k(S^4; \mathbb{Z})$, where $S^4$ is the unit sphere in $\mathbb{R}^5$.
 
-Source: J. G. Ratcliffe and S. T. Tschantz, *Some examples of aspherical 4-manifolds that are homology 4-spheres*, arXiv:math/0312436 (2003), solving [Kir97, Problem 4.17]. Earlier, F. Luo constructed an aspherical rational homology 4-sphere (1988). Via leanprover/lean-eval@38361be, problem `aspherical_integer_homology_four_sphere`. -/
+Source: J. G. Ratcliffe and S. T. Tschantz, *Some examples of aspherical 4-manifolds that are
+homology 4-spheres*, arXiv:math/0312436 (2003), solving [Kir97, Problem 4.17]. Earlier, F. Luo
+constructed an aspherical rational homology 4-sphere (1988). Via leanprover/lean-eval@38361be,
+problem `aspherical_integer_homology_four_sphere`. -/
 public theorem_wanted aspherical_integer_homology_four_sphere :
     ∃ M : Closed4Manifold, M.IsAspherical ∧ M.IsIntegerHomologySphere
 

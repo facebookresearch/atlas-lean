@@ -23,14 +23,19 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.ProgramVerification.CoCStrongNormalization` — coc_strong_normalization (manifest `manifests/problems/coc_strong_normalization.toml`, rev 1, submitter Kim Morrison, status draft) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module
+`LeanEval.ProgramVerification.CoCStrongNormalization` — coc_strong_normalization (manifest
+`manifests/problems/coc_strong_normalization.toml`, rev 1, submitter Kim Morrison, status draft) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.TheoryOfComputation.CoCStrongNormalizationWanted` namespace. Mathematical
-statements are unchanged. Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010).
+and placed the declarations in the `MathlibExt.TheoryOfComputation.CoCStrongNormalizationWanted`
+namespace. Mathematical
+statements are unchanged. Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui
+Luo, 'An Extended Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets'
+(2010).
 -/
 module
 
@@ -322,7 +327,9 @@ $\bot = \Pi (P : \mathrm{Prop}).\, P$ reduces in one beta step to $\lambda (x : 
 
 This is an anti-vacuity guard: it pins down beta reduction and substitution.
 
-Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
+Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended
+Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
+leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
 -/
 public theorem_wanted step_polyId_app :
     Step
@@ -338,7 +345,9 @@ of constructions with universes. If $t$ has type $A$ in $\Gamma$, that is
 $\Gamma \vdash t : A$, and $t$ reduces to $t'$ in one step of beta reduction (anywhere
 inside $t$), then $\Gamma \vdash t' : A$.
 
-Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
+Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended
+Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
+leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
 -/
 public theorem_wanted subject_reduction (Γ : List Tm) (t t' A : Tm) :
     Typing Γ t A → Step t t' → Typing Γ t' A
@@ -349,7 +358,9 @@ public theorem_wanted subject_reduction (Γ : List Tm) (t t' A : Tm) :
 $\Gamma \vdash t : A$ for some context $\Gamma$ and some term $A$, then $t$ is strongly
 normalizing.
 
-Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
+Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended
+Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
+leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
 -/
 public theorem_wanted strong_normalization (Γ : List Tm) (t A : Tm) :
     Typing Γ t A → SN t
@@ -359,7 +370,9 @@ public theorem_wanted strong_normalization (Γ : List Tm) (t A : Tm) :
 **Consistency of CCω.** No closed term has type $\Pi (P : \mathrm{Prop}).\, P$: there is no term
 $t$ with $\vdash t : \Pi (P : \mathrm{Prop}).\, P$ in the empty context.
 
-Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
+Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended
+Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
+leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
 -/
 public theorem_wanted consistency : ¬ ∃ t : Tm, Typing [] t (.pi (.srt .prop) (.var 0))
 

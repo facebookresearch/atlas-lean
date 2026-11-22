@@ -177,7 +177,8 @@ structure MAXSNPProblem extends NPOProblem where
   k : ℕ
   /-- The number of pattern indices in the fixed finite pattern family. -/
   patCount : ℕ
-  /-- The constraint windows of an instance: each window lists variable indices plus a pattern index. -/
+  /-- The constraint windows of an instance: each window lists variable indices plus a pattern
+  index. -/
   windows : List Bool → List (List ℕ × ℕ)
   /-- Whether pattern `j` accepts the assignment restricted to a window. -/
   accepts : ℕ → List Bool → Bool

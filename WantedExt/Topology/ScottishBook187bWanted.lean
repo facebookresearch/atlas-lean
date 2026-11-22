@@ -14,7 +14,7 @@ public import Mathlib.Topology.Connected.Basic
 public import Mathlib.Topology.Separation.Basic
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Topology.Defs.Basic
-public import Mathlib.Topology.SmallInductiveDimension
+public import Mathlib.Topology.InductiveDimension.Functions
 
 @[expose] public section
 

@@ -14,7 +14,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.SimpleGraph.Circumference
 public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.Basic
 public import Mathlib.Topology.MetricSpace.Pseudo.Real
 

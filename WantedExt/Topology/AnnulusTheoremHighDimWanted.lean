@@ -23,14 +23,19 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.AnnulusTheoremHighDim` — annulus_theorem_high_dim (manifest `manifests/problems/annulus_theorem_high_dim.toml`, rev 1, submitter Kim Morrison, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.AnnulusTheoremHighDim` —
+annulus_theorem_high_dim (manifest `manifests/problems/annulus_theorem_high_dim.toml`, rev 1,
+submitter Kim Morrison, status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Topology.AnnulusTheoremHighDimWanted` namespace. The shared annulus infrastructure is imported from `WantedExt.Topology.AnnulusShared` instead of being copied here. Mathematical
-statements are unchanged. Source: R. C. Kirby, *Stable homeomorphisms and the annulus conjecture*, Ann. of Math. 89 (1969).
+and placed the declarations in the `MathlibExt.Topology.AnnulusTheoremHighDimWanted` namespace. The
+shared annulus infrastructure is imported from `WantedExt.Topology.AnnulusShared` instead of being
+copied here. Mathematical
+statements are unchanged. Source: R. C. Kirby, *Stable homeomorphisms and the annulus conjecture*,
+Ann. of Math. 89 (1969).
 -/
 module
 
@@ -55,7 +60,8 @@ The closed region between two disjoint, nested, locally flat embedded
 `Sⁿ⁻¹ × [0,1]`. This was the hard core of Kirby's proof of the stable
 homeomorphism conjecture, via the torus trick.
 
-See `AnnulusShared` (`WantedExt.Topology.AnnulusShared`) for the shared definitions (`FlatSphere`, `inside`,
+See `AnnulusShared` (`WantedExt.Topology.AnnulusShared`) for the shared definitions (`FlatSphere`,
+`inside`,
 `regionBetween`, local flatness). The `n = 4` case (Quinn) is a separate eval
 problem, `annulus_theorem_dim_four`, of a quite different difficulty.
 -/
@@ -73,7 +79,8 @@ the image of $f$ whose connected component in its complement is bounded. Then th
 $f$ and $g$, the closure of the inside of the image of $f$ minus the inside of the image of $g$,
 is homeomorphic to $S^{n-1} \times [0, 1]$.
 
-Source: R. C. Kirby, *Stable homeomorphisms and the annulus conjecture*, Ann. of Math. 89 (1969). Via leanprover/lean-eval@38361be, problem `annulus_theorem_high_dim`. -/
+Source: R. C. Kirby, *Stable homeomorphisms and the annulus conjecture*, Ann. of Math. 89
+(1969). Via leanprover/lean-eval@38361be, problem `annulus_theorem_high_dim`. -/
 public theorem_wanted annulus_theorem_high_dim {n : ℕ} [NeZero n] (hn : 5 ≤ n)
     (f g : FlatSphere n)
     (hdisj : Disjoint (Set.range f.toFun) (Set.range g.toFun))

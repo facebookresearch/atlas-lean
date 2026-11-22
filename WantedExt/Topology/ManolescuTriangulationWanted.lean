@@ -23,14 +23,20 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.ManolescuTriangulation` — manolescu_triangulation_disproof (manifest `manifests/problems/manolescu_triangulation_disproof.toml`, rev 1, submitter Kim Morrison, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.ManolescuTriangulation` —
+manolescu_triangulation_disproof (manifest
+`manifests/problems/manolescu_triangulation_disproof.toml`, rev 1, submitter Kim Morrison, status
+active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Topology.ManolescuTriangulationWanted` namespace. Mathematical
-statements are unchanged. Source: C. Manolescu, *Pin(2)-equivariant Seiberg–Witten Floer homology and the triangulation conjecture*, J. Amer. Math. Soc. 29 (2016), via the Galewski–Stern and Matumoto reduction. Earlier, the triangulation conjecture was known false in dimension 4 (Casson).
+and placed the declarations in the `MathlibExt.Topology.ManolescuTriangulationWanted` namespace.
+Mathematical
+statements are unchanged. Source: C. Manolescu, *Pin(2)-equivariant Seiberg–Witten Floer homology
+and the triangulation conjecture*, J. Amer. Math. Soc. 29 (2016), via the Galewski–Stern and
+Matumoto reduction. Earlier, the triangulation conjecture was known false in dimension 4 (Casson).
 -/
 module
 
@@ -116,7 +122,10 @@ every dimension `≥ 5`. For each `n ≥ 5` there is a closed connected topologi
 /-- **Manolescu's disproof of the triangulation conjecture.** For every natural number $n \ge 5$
 there is a closed connected topological $n$-manifold that is not triangulable.
 
-Source: C. Manolescu, *Pin(2)-equivariant Seiberg–Witten Floer homology and the triangulation conjecture*, J. Amer. Math. Soc. 29 (2016), via the Galewski–Stern and Matumoto reduction. Earlier, the triangulation conjecture was known false in dimension 4 (Casson). Via leanprover/lean-eval@38361be, problem `manolescu_triangulation_disproof`. -/
+Source: C. Manolescu, *Pin(2)-equivariant Seiberg–Witten Floer homology and the triangulation
+conjecture*, J. Amer. Math. Soc. 29 (2016), via the Galewski–Stern and Matumoto reduction.
+Earlier, the triangulation conjecture was known false in dimension 4 (Casson). Via
+leanprover/lean-eval@38361be, problem `manolescu_triangulation_disproof`. -/
 public theorem_wanted manolescu_triangulation_disproof :
     ∀ n : ℕ, 5 ≤ n → ∃ M : ClosedTopManifold n, ¬ Triangulable M
 

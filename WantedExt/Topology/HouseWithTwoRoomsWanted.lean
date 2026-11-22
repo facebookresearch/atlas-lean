@@ -23,13 +23,17 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.HouseWithTwoRooms` — contractibleSpace_houseWithTwoRooms (manifest `manifests/problems/contractibleSpace_houseWithTwoRooms.toml`, rev 1, submitter Junyan Xu, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.HouseWithTwoRooms` —
+contractibleSpace_houseWithTwoRooms (manifest
+`manifests/problems/contractibleSpace_houseWithTwoRooms.toml`, rev 1, submitter Junyan Xu, status
+archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Topology.HouseWithTwoRoomsWanted` namespace. Mathematical
+and placed the declarations in the `MathlibExt.Topology.HouseWithTwoRoomsWanted` namespace.
+Mathematical
 statements are unchanged. Source: Allen Hatcher, *Algebraic Topology*.
 -/
 module
@@ -72,7 +76,8 @@ def HouseWithTwoRooms : Set (ℝ × ℝ × ℝ) :=
 /-- **Bing's house with two rooms is contractible.** Bing's house with two rooms, regarded as a
 subspace of $\mathbb{R} \times \mathbb{R} \times \mathbb{R}$, is contractible.
 
-Source: Allen Hatcher, *Algebraic Topology*. Via leanprover/lean-eval@38361be, problem `contractibleSpace_houseWithTwoRooms`. -/
+Source: Allen Hatcher, *Algebraic Topology*. Via leanprover/lean-eval@38361be, problem
+`contractibleSpace_houseWithTwoRooms`. -/
 public theorem_wanted contractibleSpace_houseWithTwoRooms : ContractibleSpace HouseWithTwoRooms
 
 end Topology

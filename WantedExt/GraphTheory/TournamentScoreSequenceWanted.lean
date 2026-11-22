@@ -27,18 +27,27 @@ criterion, and the circular-triad count were verified
 exhaustively/randomly for small `n` against these
 definitions.
 
-Not stated (see the source audit table): Propositions
-2 and 3 (abstract structure counts) and Theorems 8 and
-10 (which use the paper's `N(k, d)` and `P_d`, not
-defined in the extracted statements).
+Propositions 2 and 3 are the sum and product rules for
+exponential generating functions of labeled structures
+whose counts depend only on the number of players.
+`atomCount n d` is the paper's `N(n, d)` (non-trivial
+atoms, i.e. irreducible tournaments on `n ≥ 2` players,
+with `d` circular triads) and `tournamentCount n d` its
+`g_d(n)`; Theorems 8 and 10 are stated with these.
+
+The tournament definitions and Theorems 1, 4, 5 and 6
+are proved in
+`MathlibExt.Combinatorics.Digraph.TournamentScoreSequence`.
 -/
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.Digraph.TournamentScoreSequence
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Nat.Choose.Basic
-public import Mathlib.RingTheory.PowerSeries.Basic
+public import Mathlib.RingTheory.PowerSeries.Inverse
 
 set_option autoImplicit false
 
@@ -46,107 +55,151 @@ set_option autoImplicit false
 
 namespace MathlibExt.GraphTheory.TournamentScoreSequenceWanted
 
-/-- **Tournament.** A tournament on the players $1, \dots, n$ is a binary relation $T$, where
-$T(i, j)$ means that $i$ beats $j$, such that no player beats itself and for any two distinct
-players $i$ and $j$ exactly one of $T(i, j)$ and $T(j, i)$ holds. -/
-def IsTournament {n : ℕ} (T : Fin n → Fin n → Bool) :
-    Prop :=
-  (∀ i, T i i = false) ∧ ∀ i j, i ≠ j → T i j ≠ T j i
+instance {n : ℕ} (T : Fin n → Fin n → Bool) :
+    Decidable (IsTournament T) :=
+  inferInstanceAs (Decidable ((∀ i, T i i = false) ∧
+    ∀ i j, i ≠ j → T i j ≠ T j i))
 
-/-- **Score of a player.** Let $T$ be a binary relation on the players $1, \dots, n$, where
-$T(i, j)$ means that $i$ beats $j$. The score of a player $i$ is the number of players $j$ such
-that $T(i, j)$ holds, that is, the number of players that $i$ beats.
+instance {n : ℕ} (T : Fin n → Fin n → Bool) :
+    Decidable (IsReducible T) :=
+  inferInstanceAs (Decidable (∃ S : Finset (Fin n),
+    S.Nonempty ∧ S ≠ Finset.univ ∧
+      ∀ i ∈ S, ∀ j, j ∉ S → T i j = false))
 
-In a tournament this is the outdegree of $i$. -/
-def score {n : ℕ} (T : Fin n → Fin n → Bool) (i : Fin n) :
+/-- The number of circular triads of a tournament.
+
+Source: Ian R. Harris and Ryan P. A. McShane, "Counting
+Tournaments with a Specified Number of Circular
+Triads", Journal of Integer Sequences 27 (2024), Article 24.8.7, Section 2. -/
+def circularTriadCount {n : ℕ} (T : Fin n → Fin n → Bool) :
     ℕ :=
-  (Finset.univ.filter (fun j => T i j)).card
+  ((Finset.univ.powersetCard 3).filter
+    (IsCircularTriad T)).card
 
-/-- A tournament is reducible if some nonempty proper
-set of players loses all games against the complement. -/
-def IsReducible {n : ℕ} (T : Fin n → Fin n → Bool) :
-    Prop :=
-  ∃ S : Finset (Fin n), S.Nonempty ∧ S ≠ Finset.univ ∧
-    ∀ i ∈ S, ∀ j, j ∉ S → T i j = false
-
-/-- **Circular triad.** Let $T$ be a binary relation on the players $1, \dots, n$, where
-$T(i, j)$ means that $i$ beats $j$. A set $S$ of players is a circular triad of $T$ if $S$ has
-exactly three elements and every $i \in S$ beats exactly one $j \in S$.
-
-In a tournament this means that the three players form a directed $3$-cycle. -/
-def IsCircularTriad {n : ℕ} (T : Fin n → Fin n → Bool)
-    (S : Finset (Fin n)) : Prop :=
-  S.card = 3 ∧
-    ∀ i ∈ S, (S.filter (fun j => T i j)).card = 1
-
-instance {n : ℕ} (T : Fin n → Fin n → Bool)
-    (S : Finset (Fin n)) :
-    Decidable (IsCircularTriad T S) :=
-  inferInstanceAs (Decidable (S.card = 3 ∧
-    ∀ i ∈ S, (S.filter (fun j => T i j)).card = 1))
-
-/-- **Exponential generating function of a shifted binomial sequence.** For natural numbers $a$
-and $b$, let $g(n) = n! \binom{n-a+b}{b}$ for $n \ge a$ and $g(n) = 0$ for $n < a$, and let
-$A(x) = \sum_{n \ge 0} g(n) x^n / n!$ be its exponential generating function, a formal power
-series over $\mathbb{Q}$. Then $(1 - x)^{b+1} A(x) = x^a$; equivalently,
-$A(x) = x^a (1 - x)^{-(b+1)}$.
+/-- `g_d(n)`: the number of tournaments on the labeled
+players `Fin n` with exactly `d` circular triads.
 
 Source: Ian R. Harris and Ryan P. A. McShane, "Counting
 Tournaments with a Specified Number of Circular
-Triads", Theorem 1. -/
-theorem_wanted egf_factorial_choose (a b : ℕ) :
-    (1 - PowerSeries.X) ^ (b + 1) *
-        PowerSeries.mk (fun n =>
-          if a ≤ n then (Nat.choose (n - a + b) b : ℚ)
-          else 0)
-      = PowerSeries.X ^ a
+Triads", Journal of Integer Sequences 27 (2024), Article 24.8.7, Section 1. -/
+def tournamentCount (n d : ℕ) : ℕ :=
+  (Finset.univ.filter (fun T : Fin n → Fin n → Bool =>
+    IsTournament T ∧ circularTriadCount T = d)).card
 
-/-- **Landau's theorem on score sequences.** Let $s_1 \le s_2 \le \dots \le s_n$ be a
-nondecreasing sequence of natural numbers. There is a tournament on $n$ players in which player
-$i$ has score $s_i$ for every $i$ if and only if $\sum_{i=1}^{k} s_i \ge \binom{k}{2}$ for every
-$k$ with $1 \le k \le n$ and $\sum_{i=1}^{n} s_i = \binom{n}{2}$.
+/-- `N(n, d)`: the number of non-trivial atoms
+(irreducible tournaments on `n ≥ 2` labeled players; the
+single-node atom is trivial) with exactly `d` circular
+triads.
 
 Source: Ian R. Harris and Ryan P. A. McShane, "Counting
 Tournaments with a Specified Number of Circular
-Triads", Theorem 4. -/
-theorem_wanted landau_score_sequence (n : ℕ)
-    (s : Fin n → ℕ)
-    (hs : ∀ i j : Fin n, i ≤ j → s i ≤ s j) :
-    (∃ T : Fin n → Fin n → Bool, IsTournament T ∧
-      ∀ i, score T i = s i) ↔
-    (∀ k : ℕ, ∀ hk : k ≤ n, 1 ≤ k →
-      Nat.choose k 2 ≤
-        ∑ i : Fin k, s (Fin.castLE hk i)) ∧
-    (∑ i, s i) = Nat.choose n 2
+Triads", Journal of Integer Sequences 27 (2024), Article 24.8.7, Section 3. -/
+def atomCount (n d : ℕ) : ℕ :=
+  (Finset.univ.filter (fun T : Fin n → Fin n → Bool =>
+    IsTournament T ∧ ¬ IsReducible T ∧ 1 < n ∧
+      circularTriadCount T = d)).card
 
-/-- **Moon's reducibility criterion.** Let $T$ be a tournament on $n$ players in which the score
-$s_i$ of player $i$ satisfies $s_1 \le s_2 \le \dots \le s_n$. Then $T$ is reducible if and only
-if $\sum_{i=1}^{k} s_i = \binom{k}{2}$ for some integer $k$ with $1 \le k < n$.
+/-- `g_0(3) = 6` (the transitive tournaments) and
+`g_1(3) = 2` (the two directed 3-cycles).
 
 Source: Ian R. Harris and Ryan P. A. McShane, "Counting
 Tournaments with a Specified Number of Circular
-Triads", Theorem 5. -/
-theorem_wanted isReducible_iff (n : ℕ)
-    (T : Fin n → Fin n → Bool) (s : Fin n → ℕ)
-    (hT : IsTournament T)
-    (hs : ∀ i j : Fin n, i ≤ j → s i ≤ s j)
-    (hscore : ∀ i, score T i = s i) :
-    IsReducible T ↔
-      ∃ k : ℕ, ∃ hk : k ≤ n, 1 ≤ k ∧ k < n ∧
-        (∑ i : Fin k, s (Fin.castLE hk i)) =
-          Nat.choose k 2
+Triads", Journal of Integer Sequences 27 (2024), Article 24.8.7, Section 1. -/
+theorem tournamentCount_three :
+    tournamentCount 3 0 = 6 ∧ tournamentCount 3 1 = 2 := by
+  decide +kernel
 
-/-- **Moon's count of circular triads.** In a tournament on $n$ players with scores
-$s_1, \dots, s_n$, the number of circular triads is
-$\binom{n}{3} - \sum_{i=1}^{n} \binom{s_i}{2}$.
+/-- `N(3, 1) = 2`: the two circular triads are the atoms
+on three players (Table 1).
 
 Source: Ian R. Harris and Ryan P. A. McShane, "Counting
 Tournaments with a Specified Number of Circular
-Triads", Theorem 6. -/
-theorem_wanted card_circularTriads (n : ℕ)
-    (T : Fin n → Fin n → Bool) (hT : IsTournament T) :
-    ((Finset.univ.powersetCard 3).filter
-        (IsCircularTriad T)).card =
-      Nat.choose n 3 - ∑ i, Nat.choose (score T i) 2
+Triads", Journal of Integer Sequences 27 (2024), Article 24.8.7, Section 3, Table 1. -/
+theorem atomCount_three_one : atomCount 3 1 = 2 := by
+  decide +kernel
+
+/-- The atomic generator `A_d(x) = ∑_n N(n, d) xⁿ / n!`.
+
+Source: Ian R. Harris and Ryan P. A. McShane, "Counting
+Tournaments with a Specified Number of Circular
+Triads", Journal of Integer Sequences 27 (2024), Article 24.8.7, Section 3. -/
+noncomputable def atomicGenerator (d : ℕ) : PowerSeries ℚ :=
+  PowerSeries.mk fun n => (atomCount n d : ℚ) / n.factorial
+
+/-- **Proposition 2**: if `c_n = a_n + b_n` counts the
+structures on `n` labeled players split into two disjoint
+cases, then the exponential generating functions satisfy
+`C(x) = A(x) + B(x)`.
+
+Source: Ian R. Harris and Ryan P. A. McShane, "Counting
+Tournaments with a Specified Number of Circular
+Triads", Journal of Integer Sequences 27 (2024), Article 24.8.7, Proposition 2
+(`jis-2024-24.8.7-prop-2`). -/
+theorem_wanted egf_add (a b c : ℕ → ℕ)
+    (hc : ∀ n, c n = a n + b n) :
+    PowerSeries.mk (fun n => (c n : ℚ) / n.factorial) =
+      PowerSeries.mk (fun n => (a n : ℚ) / n.factorial) +
+        PowerSeries.mk (fun n => (b n : ℚ) / n.factorial)
+
+/-- **Proposition 3**: if `a_k` and `b_k` count the
+`α`- and `β`-structures on `k` labeled players and `c_n`
+counts the ways to split `{1, …, n}` into sets `S₁`, `S₂`
+and place an `α`-structure on `S₁` and a `β`-structure on
+`S₂` (so `c_n = ∑_{S₁ ⊆ [n]} a_{|S₁|} b_{n - |S₁|}`), then
+`C(x) = A(x) B(x)` for the exponential generating
+functions.
+
+Source: Ian R. Harris and Ryan P. A. McShane, "Counting
+Tournaments with a Specified Number of Circular
+Triads", Journal of Integer Sequences 27 (2024), Article 24.8.7, Proposition 3
+(`jis-2024-24.8.7-prop-3`). -/
+theorem_wanted egf_mul (a b c : ℕ → ℕ)
+    (hc : ∀ n, c n = ∑ S ∈ (Finset.range n).powerset,
+      a S.card * b (n - S.card)) :
+    PowerSeries.mk (fun n => (c n : ℚ) / n.factorial) =
+      PowerSeries.mk (fun n => (a n : ℚ) / n.factorial) *
+        PowerSeries.mk (fun n => (b n : ℚ) / n.factorial)
+
+/-- **Theorem 8**: for `d ≥ 1`,
+`A_d(x) = ∑_{k=L(d)}^{d+2} N(k, d) x^k / k!`, where
+`L(d) = min(I_o(d), I_e(d))` with `I_o(d)` (`I_e(d)`) the
+least positive odd (even) integer solution of
+`x³ - x - 24d ≥ 0` (`x³ - 4x - 24d ≥ 0`). Stated as the
+equivalent support condition `N(k, d) ≠ 0 →
+L(d) ≤ k ≤ d + 2`, with `L(d) ≤ k` written as the
+existence of a positive `j ≤ k` solving the odd or the
+even inequality (both cubics increase on the positive
+integers).
+
+Source: Ian R. Harris and Ryan P. A. McShane, "Counting
+Tournaments with a Specified Number of Circular
+Triads", Journal of Integer Sequences 27 (2024), Article 24.8.7, Theorem 8
+(`jis-2024-24.8.7-thm-8`). -/
+theorem_wanted atomCount_ne_zero_bounds (d k : ℕ) (hd : 1 ≤ d)
+    (hk : atomCount k d ≠ 0) :
+    k ≤ d + 2 ∧ ∃ j : ℕ, 0 < j ∧ j ≤ k ∧
+      ((Odd j ∧ 24 * (d : ℤ) ≤ (j : ℤ) ^ 3 - j) ∨
+        (Even j ∧ 24 * (d : ℤ) ≤ (j : ℤ) ^ 3 - 4 * j))
+
+/-- **Theorem 10**: the exponential generating function
+`G_d(x) = ∑_n g_d(n) xⁿ / n!` of tournaments with `d`
+circular triads is
+`∑_{r ∈ P_d} r!/(r₁! ⋯ r_d!) (1 - x)^{-(1+r)}
+  ∏_{i=1}^d A_i(x)^{r_i}`, the sum over partitions of `d`
+with multiplicities `r_i` and size `r`. Stated for every
+`d` (at `d = 0` both sides are `1/(1 - x)`), with the
+`n = 0` coefficient `g_d(0)` included.
+
+Source: Ian R. Harris and Ryan P. A. McShane, "Counting
+Tournaments with a Specified Number of Circular
+Triads", Journal of Integer Sequences 27 (2024), Article 24.8.7, Theorem 10
+(`jis-2024-24.8.7-thm-10`). -/
+theorem_wanted tournament_egf (d : ℕ) :
+    PowerSeries.mk (fun n => (tournamentCount n d : ℚ) / n.factorial) =
+      ∑ p : Nat.Partition d,
+        ((p.parts.card.factorial : ℚ) /
+            ∏ i ∈ p.parts.toFinset, ((p.parts.count i).factorial : ℚ)) •
+          ((1 - PowerSeries.X)⁻¹ ^ (1 + p.parts.card) *
+            (p.parts.map atomicGenerator).prod)
 
 end MathlibExt.GraphTheory.TournamentScoreSequenceWanted

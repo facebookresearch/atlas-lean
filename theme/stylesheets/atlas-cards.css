@@ -1,0 +1,61 @@
+/* Cards (docs/cards.md#reading). hooks/card_pages.py links this file from every page when the build shows card
+   data: the block on a card's folder page, and the elements that keep the old anchors of moved statements, which
+   show only when the address names them. */
+
+.md-typeset .atlas-card {
+  margin: 1em 0;
+  padding: 0.5rem 0.8rem;
+  border-left: 0.2rem solid var(--md-accent-fg-color);
+  background: var(--md-code-bg-color);
+  font-size: 0.72rem;
+}
+.md-typeset .atlas-card p { margin: 0.3em 0; }
+.md-typeset .atlas-card-state { font-weight: 700; }
+.md-typeset .atlas-card-origin {
+  margin-left: 0.3em;
+  font-size: 0.85em;
+  color: var(--md-default-fg-color--light);
+}
+.md-typeset .atlas-card-edges { margin: 0.4em 0 0; }
+.md-typeset .atlas-card-edges dt { margin-top: 0.4em; font-weight: 700; }
+.md-typeset .atlas-card-edges dd { margin: 0 0 0 1rem; }
+.md-typeset .atlas-card details {
+  margin: 0.15em 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: none;
+  font-size: inherit;
+  color: inherit;
+}
+.md-typeset .atlas-card details > summary {
+  display: list-item;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-weight: 400;
+}
+.md-typeset .atlas-card details > summary::before,
+.md-typeset .atlas-card details > summary::after { display: none; }
+.md-typeset .atlas-card :is(ul, ol) { margin: 0.2em 0 0.4em 1.2rem; }
+.md-typeset .atlas-card li { margin: 0.1em 0; }
+.md-typeset .atlas-card .atlas-card-fully_proved,
+.md-typeset .atlas-card .atlas-card-mathlib { color: #2e7d32; }
+.md-typeset .atlas-card .atlas-card-stale,
+.md-typeset .atlas-card .atlas-card-held,
+.md-typeset .atlas-card .atlas-card-not_ready { color: #c62828; }
+[data-md-color-scheme="slate"] .md-typeset .atlas-card .atlas-card-fully_proved,
+[data-md-color-scheme="slate"] .md-typeset .atlas-card .atlas-card-mathlib { color: #81c784; }
+[data-md-color-scheme="slate"] .md-typeset .atlas-card .atlas-card-stale,
+[data-md-color-scheme="slate"] .md-typeset .atlas-card .atlas-card-held,
+[data-md-color-scheme="slate"] .md-typeset .atlas-card .atlas-card-not_ready { color: #ef9a9a; }
+
+/* An old anchor of a statement that moved: shown only when the address's fragment names it. */
+.atlas-moved:not(:target) { display: none; }
+.md-typeset .atlas-moved {
+  padding: 0.4rem 0.8rem;
+  border-left: 0.2rem solid var(--md-accent-fg-color);
+  background: var(--md-code-bg-color);
+}

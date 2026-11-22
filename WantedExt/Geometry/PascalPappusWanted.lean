@@ -23,14 +23,16 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Geometry.PascalPappus` — pascal (manifest `manifests/problems/pascal.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Geometry.PascalPappus` — pascal
+(manifest `manifests/problems/pascal.toml`, rev 1, submitter Kim Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
 and placed the declarations in the `MathlibExt.Geometry.PascalPappusWanted` namespace. Mathematical
-statements are unchanged. Source: B. Pascal, *Essay pour les coniques* (1640). Knill, *Some fundamental theorems in mathematics*, §146.
+statements are unchanged. Source: B. Pascal, *Essay pour les coniques* (1640). Knill, *Some
+fundamental theorems in mathematics*, §146.
 -/
 module
 
@@ -87,7 +89,8 @@ $p = (a_1 \times b_2) \times (a_2 \times b_1)$, $q = (a_1 \times b_3) \times (a_
 $r = (a_2 \times b_3) \times (a_3 \times b_2)$ be the meets of the opposite sides of the hexagon
 $a_1 b_2 a_3 b_1 a_2 b_3$. Then $p$, $q$ and $r$ are collinear: $p \cdot (q \times r) = 0$.
 
-Source: B. Pascal, *Essay pour les coniques* (1640). Knill, *Some fundamental theorems in mathematics*, §146. Via leanprover/lean-eval@38361be, problem `pascal`. -/
+Source: B. Pascal, *Essay pour les coniques* (1640). Knill, *Some fundamental theorems in
+mathematics*, §146. Via leanprover/lean-eval@38361be, problem `pascal`. -/
 public theorem_wanted pascal
     (M : Matrix (Fin 3) (Fin 3) ℝ) (hMsymm : M.IsSymm) (hMdet : M.det ≠ 0)
     (a₁ a₂ a₃ b₁ b₂ b₃ : Fin 3 → ℝ)

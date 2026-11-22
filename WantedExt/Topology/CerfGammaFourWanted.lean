@@ -23,14 +23,17 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.CerfGammaFour` — cerf_gamma_four (manifest `manifests/problems/cerf_gamma_four.toml`, rev 1, submitter Kim Morrison, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.CerfGammaFour` —
+cerf_gamma_four (manifest `manifests/problems/cerf_gamma_four.toml`, rev 1, submitter Kim Morrison,
+status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
 and placed the declarations in the `MathlibExt.Topology.CerfGammaFourWanted` namespace. Mathematical
-statements are unchanged. Source: J. Cerf, Sur les diffeomorphismes de la sphere de dimension trois, Lecture Notes in Mathematics 53, Springer (1968).
+statements are unchanged. Source: J. Cerf, Sur les diffeomorphismes de la sphere de dimension trois,
+Lecture Notes in Mathematics 53, Springer (1968).
 -/
 module
 
@@ -80,7 +83,8 @@ $F, F' : [0, 1] \times S^3 \to S^3$ such that for every $t \in [0, 1]$ the maps 
 $F'(t, \cdot)$ are inverse to each other, and $F(0, p) = f(p)$ and $F(1, p) = Ap$ for all
 $p \in S^3$.
 
-Source: J. Cerf, Sur les diffeomorphismes de la sphere de dimension trois, Lecture Notes in Mathematics 53, Springer (1968). Via leanprover/lean-eval@38361be, problem `cerf_gamma_four`. -/
+Source: J. Cerf, Sur les diffeomorphismes de la sphere de dimension trois, Lecture Notes in
+Mathematics 53, Springer (1968). Via leanprover/lean-eval@38361be, problem `cerf_gamma_four`. -/
 public theorem_wanted cerf_gamma_four
     (f : sphere (0 : EuclideanSpace ℝ (Fin 4)) 1 ≃ₘ⟮𝓡 3, 𝓡 3⟯
          sphere (0 : EuclideanSpace ℝ (Fin 4)) 1) :

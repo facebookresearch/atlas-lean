@@ -131,7 +131,66 @@ example (s : Fin 2 → ℝ≥0) (j : Fin 2 → Fin 2) :
   rw [isRateMatrix_q2.ctmcInputMeasure_real_ctmcPath_fdd, Fin.prod_univ_two]
   rfl
 
+/-! The step-sequence lemmas for an arbitrary i.i.d. step law, on the countable state space `ℕ`
+(outside the finite-state `IsRateMatrix` setting): the step law of a pure-birth chain, whose
+random map is always `Nat.succ`. -/
+
+instance : IsProbabilityMeasure (expMeasure 1) := isProbabilityMeasure_expMeasure one_pos
+
+/-- The step law of a pure-birth chain on `ℕ`: the map `Nat.succ` and an `Exp(1)` clock. -/
+noncomputable def νBirth : Measure ((ℕ → ℕ) × ℝ) := (Measure.dirac Nat.succ).prod (expMeasure 1)
+
+instance : IsProbabilityMeasure νBirth := by unfold νBirth; infer_instance
+
+-- The clock hypothesis, computed from the definition of `νBirth`.
+theorem νBirth_map_snd : νBirth.map Prod.snd = expMeasure 1 := by
+  rw [νBirth, Measure.map_snd_prod, measure_univ, one_smul]
+
+example : ∀ᵐ ω ∂(Measure.infinitePi fun _ : ℕ => νBirth),
+    Tendsto (fun n => ∑ k ∈ range n, (ω k).2) atTop atTop :=
+  ae_tendsto_sum_clock_infinitePi νBirth νBirth_map_snd
+
+example : (Measure.infinitePi fun _ : ℕ => νBirth).map (fun ω => (ω 0, ctmcShift 1 ω)) =
+    νBirth.prod (Measure.infinitePi fun _ : ℕ => νBirth) :=
+  ctmc_map_first_infinitePi νBirth
+
+example (n : ℕ) :
+    Indep (⨆ k ∈ Set.Iio n, MeasurableSpace.comap (fun ω : ℕ → (ℕ → ℕ) × ℝ => ω k) inferInstance)
+      (⨆ k ∈ Set.Ici n, MeasurableSpace.comap (fun ω : ℕ → (ℕ → ℕ) × ℝ => ω k) inferInstance)
+      (Measure.infinitePi fun _ : ℕ => νBirth) :=
+  ctmc_indep_infinitePi νBirth n
+
+example (n : ℕ) :
+    (Measure.infinitePi fun _ : ℕ => νBirth).map (ctmcShift n) =
+      Measure.infinitePi fun _ : ℕ => νBirth :=
+  ctmc_map_shift_infinitePi νBirth n
+
+-- The clock `E 3` of the pure-birth step sequence is `Exp(1)`.
+example : (Measure.infinitePi fun _ : ℕ => νBirth).map (fun ω => (ω 3).2) = expMeasure 1 :=
+  ctmc_map_clock_infinitePi νBirth νBirth_map_snd 3
+
+-- The finite-state specializations agree with the general statements.
+example : (ctmcInputMeasure isRateMatrix_q2).map (fun ω => (ω 0, ctmcShift 1 ω)) =
+    (ctmcStepMeasure isRateMatrix_q2).prod (ctmcInputMeasure isRateMatrix_q2) :=
+  isRateMatrix_q2.ctmc_map_first
+
+example : ∀ᵐ ω ∂ctmcInputMeasure isRateMatrix_q2,
+    Tendsto (fun n => ∑ k ∈ range n, (ω k).2) atTop atTop :=
+  isRateMatrix_q2.ae_tendsto_sum_clock
+
 #print axioms IsRateMatrix.ae_tendsto_ctmcJumpTime
+#print axioms ctmc_indep_infinitePi
+#print axioms ctmc_map_shift_infinitePi
+#print axioms ctmc_map_first_infinitePi
+#print axioms ctmc_map_clock_infinitePi
+#print axioms ae_tendsto_sum_clock_infinitePi
+#print axioms measurable_ctmcShift
+#print axioms integral_expMeasure_renewal
+#print axioms IsRateMatrix.ctmc_indep
+#print axioms IsRateMatrix.ctmc_map_shift
+#print axioms IsRateMatrix.ctmc_map_first
+#print axioms IsRateMatrix.ae_tendsto_sum_clock
+#print axioms IsRateMatrix.ctmcStepMeasure_map_snd
 #print axioms IsRateMatrix.ctmcInputMeasure_ctmcPath_jumpTime_add
 #print axioms IsRateMatrix.ctmcInputMeasure_real_ctmcPath_eq
 #print axioms IsRateMatrix.ctmcInputMeasure_real_ctmcPath_add

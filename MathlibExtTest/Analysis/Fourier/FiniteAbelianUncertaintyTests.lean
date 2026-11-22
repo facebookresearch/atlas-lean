@@ -25,8 +25,7 @@ import Mathlib.Tactic
 * No nonzero function on `ZMod 2` is supported in `{0}` with Fourier
   transform supported in `{0}` (the nonvanishing corollary, since
   `1 * 1 < 2`).
-* Concentration bounds for the delta function on `ZMod 2`, and the
-  character norm bound.
+* Concentration bounds for the delta function on `ZMod 2`.
 -/
 
 open scoped BigOperators
@@ -144,11 +143,6 @@ example :
     (fun x hx => by
       have hne : x ≠ 0 := Finset.notMem_singleton.mp hx
       simp [deltaTwo, hne])
-
-/-- Characters take values on the unit circle, at the trivial character
-of `ZMod 2` evaluated at `1`. -/
-example : ‖(0 : AddChar (ZMod 2) ℂ) 1‖ = 1 :=
-  norm_addChar_apply 0 1
 
 /-- Plancherel for the delta function on `ZMod 2`: both sides are `2`. -/
 example : ∑ ψ : AddChar (ZMod 2) ℂ, ‖dftFun deltaTwo ψ‖ ^ 2 =

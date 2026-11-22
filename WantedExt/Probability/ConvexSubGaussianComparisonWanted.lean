@@ -14,10 +14,12 @@ public import MathlibExt.Probability.ConvexSubGaussianComparison
 /-!
 # Sharp one-dimensional convex sub-Gaussian comparison: literature requests
 
-All six results below are private unproved data, not proofs. The implemented probability
+All six results below are unproved data, not proofs. The implemented probability
 model and characteristic APIs are upstream. The numerical approximations in Davis–Power
 Remark 2 are not asserted here, and the solved one-dimensional problem is not an open target.
 -/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open MathlibExt.Probability.ConvexSubGaussianComparison
@@ -134,7 +136,7 @@ namespace MathlibExt.Probability.ConvexSubGaussianComparisonWanted
 $(a, p_0, z, c_0)$ of real numbers that is a valid solution of the Davis–Power system.
 
 Source: Davis–Power (2026), equations (3)–(6), existence and uniqueness. -/
-theorem_wanted davisPowerSystem_existsUnique :
+public theorem_wanted davisPowerSystem_existsUnique :
     ∃! q : DavisPowerSolution, q.IsValid
 
 /-- **Finiteness of the convex sub-Gaussian comparison constant.** The comparison constant is
@@ -145,7 +147,7 @@ $E f(X) \le E f(\sqrt{C}\,G)$ for every convex $f : \mathbb{R} \to \mathbb{R}$ f
 expectations are finite, where $G$ is a standard Gaussian. Equivalently, such a factor $C$ exists.
 
 Source: van Handel (2025), historical one-dimensional finiteness consequence. -/
-theorem_wanted historicalFinitenessUpperBound :
+public theorem_wanted historicalFinitenessUpperBound :
     comparisonConstant ≠ ⊤
 
 /-- **Davis–Power upper bound: $c_0^2$ is an admissible variance factor.** Let $c_0$ be the
@@ -157,7 +159,7 @@ $\mathbb{E} f(X) \le \mathbb{E} f(Y)$ for every convex $f : \mathbb{R} \to \math
 $f(X)$ and $f(Y)$ are integrable.
 
 Source: Davis–Power (2026), Theorem 1, the exact `c0^2` comparator upper bound. -/
-theorem_wanted davisPowerSharpUpper :
+public theorem_wanted davisPowerSharpUpper :
     IsAdmissibleConstant (ENNReal.ofReal (davisPowerC0 ^ 2))
 
 /-- **Davis–Power lower bound for admissible variance factors.** Every admissible variance factor
@@ -170,7 +172,7 @@ $\mathbb{E} f(X) \le \mathbb{E} f(Y)$ for every convex $f : \mathbb{R} \to \math
 $f(X)$ and $f(Y)$ are integrable.
 
 Source: Davis–Power (2026), Theorem 1, sharpness for every admissible variance factor. -/
-theorem_wanted davisPowerSharpLower (C : ENNReal) (hC : IsAdmissibleConstant C) :
+public theorem_wanted davisPowerSharpLower (C : ENNReal) (hC : IsAdmissibleConstant C) :
     ENNReal.ofReal (davisPowerC0 ^ 2) ≤ C
 
 /-- **Davis–Power value of the convex sub-Gaussian comparison constant.** The convex
@@ -178,7 +180,7 @@ sub-Gaussian comparison constant, the infimum in $[0, \infty]$ of all admissible
 equals $c_0^2$, where $c_0$ is the Davis–Power constant.
 
 Source: Davis–Power (2026), the exact solved one-dimensional catalogue constant. -/
-theorem_wanted comparisonConstant_eq_davisPowerC0_sq :
+public theorem_wanted comparisonConstant_eq_davisPowerC0_sq :
     comparisonConstant = ENNReal.ofReal (davisPowerC0 ^ 2)
 
 /-- **Davis–Power extremal variable.** Let $c_0$ be the Davis–Power constant and $G$ a standard
@@ -191,7 +193,7 @@ $\mathbb{P}(|X| > t) = \min(1, 2e^{-t^2/2})$ for every $t \ge 0$, and such that 
 with $0 < c < c_0$, $X$ is not dominated by $cG$ in the convex order.
 
 Source: Davis–Power (2026), the tail-saturating extremizer and smaller-factor sharpness. -/
-theorem_wanted davisPowerExtremalAttainment :
+public theorem_wanted davisPowerExtremalAttainment :
     ∃ (Ω : Type) (m : MeasurableSpace Ω)
       (μ : @Measure Ω m) (hμ : @IsProbabilityMeasure Ω m μ) (X : Ω → ℝ),
       @IsOneSubGaussianTail Ω m μ hμ X ∧ SaturatesGaussianTail μ X ∧

@@ -16,19 +16,22 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 /-!
 # Square matrix-multiplication exponent: source-bound requests
 
-All `theorem_wanted` declarations below are private unproved `ProofWanted` data.
+All `theorem_wanted` declarations below are public unproved `ProofWanted` data.
 The optimizer is the aspect-one case of the actual arithmetic-circuit exponent:
 the inner dimension is exactly `n`, each addition, subtraction or multiplication
 node costs one, and constants, input references and output references are free.
 The output-cost lower bound `2 ≤ ω` is proved upstream as
 `two_le_squareMatrixMultiplicationCircuitExponent`.
 
-The catalogue rows are stated for every field. Transfers from approximate or
+The catalogue rows are stated for every field; the bridge and invariance rows
+below are stated for infinite fields. Transfers from approximate or
 border-rank algorithms, recursive tensor constructions, division elimination,
 the operation/rank bridge and characteristic invariance are not proved here.
 The final sharpness proposition records the catalogue comment that `2` is
 conjectured sharp; it is a definition, not an asserted theorem.
 -/
+
+@[expose] public section
 
 set_option autoImplicit false
 
@@ -178,14 +181,15 @@ theorem_wanted dupontEisenbergerEtAl2026Upper :
 /-- Source: C15a additional comments and [B2013]: the arithmetic-operation
 exponent agrees with the tensor-rank exponent. This bridge is not proved. -/
 theorem_wanted squareOperationRankBridge :
-    ∀ (F : Type u) [Field F],
+    ∀ (F : Type u) [Field F] [Infinite F],
       squareMatrixMultiplicationCircuitExponent F =
         MatrixMultiplicationExponent.matrixMultiplicationExponent F
 
 /-- Source: C15a additional comments and [S1981]: the exponent depends only on
 the field characteristic. This circuit-model transfer is not proved. -/
 theorem_wanted characteristicInvariance :
-    ∀ (F : Type u) (K : Type v) [Field F] [Field K], ringChar F = ringChar K →
+    ∀ (F : Type u) (K : Type v) [Field F] [Field K] [Infinite F] [Infinite K],
+      ringChar F = ringChar K →
       squareMatrixMultiplicationCircuitExponent F =
         squareMatrixMultiplicationCircuitExponent K
 
