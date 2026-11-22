@@ -244,17 +244,6 @@ def toyModel (q : ℕ) (hq : 1 < q) : BilinearGroupData where
   e := fun a b => Multiplicative.ofAdd (a.toAdd * b.toAdd)
   compat := fun _ _ => rfl
 
-/-- The uniform exponent sampler on `ZMod q`. -/
-noncomputable def uniformZModPMF (q : ℕ) [NeZero q] : PMF (ZMod q) :=
-  PMF.ofFintype (fun _ => (q : ENNReal)⁻¹) (by
-    simp only [Finset.sum_const, Finset.card_univ, ZMod.card q, nsmul_eq_mul]
-    exact ENNReal.mul_inv_cancel (by simpa only [Ne, Nat.cast_eq_zero] using NeZero.ne q)
-      (ENNReal.natCast_ne_top q))
-
-@[simp]
-theorem uniformZModPMF_apply (q : ℕ) [NeZero q] (a : ZMod q) :
-    uniformZModPMF q a = (q : ENNReal)⁻¹ := rfl
-
 open Classical in
 /-- The BDH win experiment at fixed exponents: run the randomized adversary and
 test whether its output equals `gT ^ (a*b*c)`. -/
@@ -268,9 +257,9 @@ noncomputable def bdhWin (B : BilinearGroupData) (A : B.G1 → B.G1 → B.G2 →
 sampling its coins via `PMF.bind`. -/
 noncomputable def bdhGame (B : BilinearGroupData) (A : B.G1 → B.G1 → B.G2 → PMF B.GT) :
     PMF Bool :=
-  (uniformZModPMF B.q).bind fun a =>
-    (uniformZModPMF B.q).bind fun b =>
-      (uniformZModPMF B.q).bind fun c =>
+  (Cslib.Probability.PMF.uniformOfFintype (ZMod B.q)).bind fun a =>
+    (Cslib.Probability.PMF.uniformOfFintype (ZMod B.q)).bind fun b =>
+      (Cslib.Probability.PMF.uniformOfFintype (ZMod B.q)).bind fun c =>
         B.bdhWin A a b c
 
 /-- The BDH advantage: the winning probability of the BDH game. -/
@@ -317,17 +306,17 @@ theorem toy_bdhAdvantage_eq_one (q : ℕ) (hq : 1 < q) :
 randomized distinguisher's coins via `PMF.bind`. -/
 noncomputable def ddh1RealGame (B : BilinearGroupData)
     (D : B.G1 → B.G1 → B.G1 → PMF Bool) : PMF Bool :=
-  (uniformZModPMF B.q).bind fun a =>
-    (uniformZModPMF B.q).bind fun b =>
+  (Cslib.Probability.PMF.uniformOfFintype (ZMod B.q)).bind fun a =>
+    (Cslib.Probability.PMF.uniformOfFintype (ZMod B.q)).bind fun b =>
       D (B.exp1 (Multiplicative.ofAdd a)) (B.exp1 (Multiplicative.ofAdd b))
         (B.exp1 (Multiplicative.ofAdd (a * b)))
 
 /-- The DDH game in `G1` against the random distribution. -/
 noncomputable def ddh1RandomGame (B : BilinearGroupData)
     (D : B.G1 → B.G1 → B.G1 → PMF Bool) : PMF Bool :=
-  (uniformZModPMF B.q).bind fun a =>
-    (uniformZModPMF B.q).bind fun b =>
-      (uniformZModPMF B.q).bind fun c =>
+  (Cslib.Probability.PMF.uniformOfFintype (ZMod B.q)).bind fun a =>
+    (Cslib.Probability.PMF.uniformOfFintype (ZMod B.q)).bind fun b =>
+      (Cslib.Probability.PMF.uniformOfFintype (ZMod B.q)).bind fun c =>
         D (B.exp1 (Multiplicative.ofAdd a)) (B.exp1 (Multiplicative.ofAdd b))
           (B.exp1 (Multiplicative.ofAdd c))
 
@@ -340,17 +329,17 @@ noncomputable def ddh1Advantage (B : BilinearGroupData)
 randomized distinguisher's coins via `PMF.bind`. -/
 noncomputable def ddh2RealGame (B : BilinearGroupData)
     (D : B.G2 → B.G2 → B.G2 → PMF Bool) : PMF Bool :=
-  (uniformZModPMF B.q).bind fun a =>
-    (uniformZModPMF B.q).bind fun b =>
+  (Cslib.Probability.PMF.uniformOfFintype (ZMod B.q)).bind fun a =>
+    (Cslib.Probability.PMF.uniformOfFintype (ZMod B.q)).bind fun b =>
       D (B.exp2 (Multiplicative.ofAdd a)) (B.exp2 (Multiplicative.ofAdd b))
         (B.exp2 (Multiplicative.ofAdd (a * b)))
 
 /-- The DDH game in `G2` against the random distribution. -/
 noncomputable def ddh2RandomGame (B : BilinearGroupData)
     (D : B.G2 → B.G2 → B.G2 → PMF Bool) : PMF Bool :=
-  (uniformZModPMF B.q).bind fun a =>
-    (uniformZModPMF B.q).bind fun b =>
-      (uniformZModPMF B.q).bind fun c =>
+  (Cslib.Probability.PMF.uniformOfFintype (ZMod B.q)).bind fun a =>
+    (Cslib.Probability.PMF.uniformOfFintype (ZMod B.q)).bind fun b =>
+      (Cslib.Probability.PMF.uniformOfFintype (ZMod B.q)).bind fun c =>
         D (B.exp2 (Multiplicative.ofAdd a)) (B.exp2 (Multiplicative.ofAdd b))
           (B.exp2 (Multiplicative.ofAdd c))
 
