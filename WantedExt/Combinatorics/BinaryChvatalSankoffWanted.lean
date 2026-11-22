@@ -421,7 +421,7 @@ theorem trivialUpperBound_holds : trivialUpperBound :=
 common subsequence of two independent uniformly random binary strings of length $n$. Then for all
 natural numbers $m$ and $n$, $E_m + E_n \le E_{m+n}$.
 
-Source: adapted from the verified gpt-5.6-sol proof in task T292145496. -/
+Adapted from a verified proof found by an automated prover. -/
 theorem expectedLCSLength_superadditive :
     ∀ m n : ℕ,
       expectedLCSLength m + expectedLCSLength n ≤ expectedLCSLength (m + n) := by

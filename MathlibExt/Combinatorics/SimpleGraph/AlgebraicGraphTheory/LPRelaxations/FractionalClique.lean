@@ -12,10 +12,7 @@ Author: Stefan Trandafir
 module
 
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Tactic.NormNum.Basic
 
 @[expose] public section
 

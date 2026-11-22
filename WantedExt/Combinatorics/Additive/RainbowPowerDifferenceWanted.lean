@@ -446,7 +446,8 @@ Only this characterization is stated; the source's further claims (there are $t 
 vertices, and two components exactly when $t = 1$) are not.
 
 Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Theorem 6 (after Lucheta, Miller and Reiter)
+Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Theorem 6 (after
+Lucheta, Miller and Reiter)
 (`integers-2024-A105-thm-6`). -/
 public theorem_wanted isCycleVertex_powMap_iff_orderOf_dvd (p k : ℕ) [Fact p.Prime]
     (hp : p ≠ 2) (t : ℕ) (ht : t ∣ p - 1) (htk : Nat.Coprime t k)

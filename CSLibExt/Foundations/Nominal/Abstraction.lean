@@ -51,6 +51,7 @@ def AbsRel (a b : Atom) (x y : X) : Prop :=
   (a = b ∧ x = y) ∨
     (a ≠ b ∧ Fresh a y ∧ (swap a b : FinPerm Atom) • x = y)
 
+omit [Infinite Atom] [NominalSet Atom X] in
 /-- α-equivalence is reflexive. -/
 theorem absRel_refl (a : Atom) (x : X) : AbsRel a a x x := Or.inl ⟨rfl, rfl⟩
 

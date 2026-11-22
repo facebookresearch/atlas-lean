@@ -145,6 +145,7 @@ of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Section 3 (the op
 theorem zero_mem_oddCombinations (A : Finset G) : (0 : G) ∈ oddCombinations A :=
   ⟨0, fun _ _ => Or.inl rfl, by simp⟩
 
+omit [DecidableEq G] in
 /-- **Elements of a finite set are odd combinations of it.** Let $G$ be an abelian group and $A$ a
 finite subset of $G$, and let $\mathcal{T}(A)$ be the set of combinations $\sum_{y \in A} c_y y$
 in which every integer coefficient $c_y$ is $0$ or odd. Every $x \in A$ lies in $\mathcal{T}(A)$:
@@ -154,6 +155,7 @@ Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Orde
 of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Section 3 (the operator `𝒯`). -/
 theorem mem_oddCombinations_of_mem {A : Finset G} {x : G} (hx : x ∈ A) :
     x ∈ oddCombinations A := by
+  classical
   refine ⟨fun y => if y = x then 1 else 0, fun y _ => ?_, ?_⟩
   · by_cases h : y = x <;> simp [h]
   · simp [ite_smul, Finset.sum_ite_eq', hx]

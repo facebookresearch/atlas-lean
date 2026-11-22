@@ -69,9 +69,10 @@ def chapter5PolynomialShift {R : Type*} [Semiring R]
     (h : R) (p : R[X]) : R[X] :=
   p.comp (Polynomial.X + Polynomial.C h)
 
-/-- The shift is `Polynomial.taylor h p` (see `Polynomial.taylor_apply`); stated to match the
-`chapter5PolynomialShift_eq_taylor` interface of `Entry1Euleriangf`. The local definition is
-kept because the frozen `Wanted` statement references it by name. -/
+/-- **The polynomial shift is the Taylor shift.** For a semiring $R$, an element $h \in R$ and a
+polynomial $p \in R[x]$, the shift $p(x + h)$ (the composition of $p$ with $x + h$) equals the
+Taylor expansion of $p$ at $h$, the polynomial whose coefficient of $x^k$ is the $k$-th Hasse
+derivative of $p$ evaluated at $h$. -/
 theorem chapter5PolynomialShift_eq_taylor {R : Type*} [Semiring R] (h : R) (p : R[X]) :
     chapter5PolynomialShift h p = Polynomial.taylor h p :=
   (Polynomial.taylor_apply h p).symm
@@ -1002,10 +1003,17 @@ private theorem plus_identity (phi : ℝ[X]) :
   rw [sh1, sh2, ← LinearMap.add_apply, ← psAct_add, ← add_mul, hEE, psAct_sub, h2phi,
     h2w, sub_zero, Polynomial.smul_eq_C_mul]
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 5,
-Entry 2(i), pp. 111–112.
+/-- **Ramanujan's solutions of two central difference equations.** Let $\varphi$ be a real
+polynomial of degree $d$ (with $d = 0$ for $\varphi = 0$). For $n \ge 0$ let
+$F_n(x) = \varphi(x) + \sum_{k=1}^{n} \frac{(-1)^k (n!)^2}{(n+k)!\,(n-k)!}
+\bigl(\varphi(x+k) + \varphi(x-k)\bigr)$, and let
+$M = \sum_{n=0}^{\lfloor d/2 \rfloor} \frac{1}{2n+1} F_n$ and
+$P = \sum_{n=0}^{\lfloor d/2 \rfloor} \binom{2n}{n} 2^{-n} F_n$. Then $F_n = 0$ for every $n$
+with $d < 2n$, $M(x+1) - M(x-1) = 2 \varphi'(x)$ and $P(x+1) + P(x-1) = 2 \varphi(x)$, as
+polynomials in $x$.
 
-Proves `Wanted` entry `ramanujan_part1_ch5_entry2i_euleriangf`.
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 5,
+Entry 2(i), pp. 111–112.
 -/
 theorem ramanujan_part1_ch5_entry2i_euleriangf (phi : ℝ[X]) :
     (∀ n : ℕ, phi.natDegree < 2 * n → chapter5Entry2F phi n = 0) ∧

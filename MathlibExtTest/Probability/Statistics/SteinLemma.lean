@@ -72,4 +72,33 @@ example : ∫ x, ∑ i, (jamesStein x i - 0) ^ 2 ∂(Measure.pi fun _ : Fin 3 =>
   rw [integral_sum_sq_sub_pi_gaussianReal] at h
   simpa using h
 
+/-- The mean of `‖X‖⁻²` for `X ~ N(0, I_3)` is `1 / (3 - 2) = 1`. -/
+example : ∫ x, (∑ j, x j ^ 2)⁻¹ ∂(Measure.pi fun _ : Fin 3 => gaussianReal 0 1) = 1 := by
+  rw [integral_inv_sum_sq_pi_gaussianReal_zero (le_refl 3)]
+  norm_num
+
+/-- The James–Stein factor `(p - 2)/‖z‖²` estimates `1 / V` without bias: `p = 3`, `V = 2`. -/
+example : ∫ x, ((3 : ℕ) - 2 : ℝ) / ∑ j, x j ^ 2
+    ∂(Measure.pi fun _ : Fin 3 => gaussianReal 0 2) = 1 / 2 := by
+  have h := integral_jamesStein_factor_pi_gaussianReal (le_refl 3) (V := 2) two_ne_zero
+  simpa using h
+
+/-- The positive-part estimator truncates a negative shrinkage factor: at `x = (1/2, 0, 0)` the
+James–Stein factor is `1 - 4 < 0`, so `δ⁺(x) = 0`. -/
+example : jamesSteinPlus (![1 / 2, 0, 0] : Fin 3 → ℝ) = 0 := by
+  funext i
+  fin_cases i <;> norm_num [jamesSteinPlus, Fin.sum_univ_three]
+
+/-- With all coordinates equal, `S = 0` and the grand-mean estimator returns `x`. -/
+example : jamesSteinGrandMean 1 (![1, 1, 1, 1] : Fin 4 → ℝ) = ![1, 1, 1, 1] := by
+  funext i
+  fin_cases i <;> norm_num [jamesSteinGrandMean, Fin.sum_univ_four]
+
+/-- Grand-mean James–Stein dominance in dimension `4` with unit noise at `θ = 0`. -/
+example : ∫ x, ∑ i, (jamesSteinGrandMean 1 x i - 0) ^ 2
+    ∂(Measure.pi fun _ : Fin 4 => gaussianReal 0 1) < 4 := by
+  have h := (integral_jamesSteinGrandMean_risk_lt (le_refl 4) (σ2 := 1) one_ne_zero
+    (fun _ => (0 : ℝ))).2
+  simpa using h
+
 end MathlibExtTest.Probability.Statistics.SteinLemma
