@@ -207,36 +207,55 @@ A graph PR changes the ATLAS wiki; its content follows the
 
 ## How PRs merge
 
-`main` takes changes through GitHub's merge queue; do not push to it directly.
-When a PR is ready to merge and its required checks have passed, add it to the
-queue. The queue tests it on top of the current `main` and the PRs queued ahead
-of it, and squash-merges it only if the required checks pass on that combined
-tree, so each commit it adds to `main` has passed them on its own tree.
+Once the `main` ruleset requires GitHub's merge queue (#5962), PRs reach `main`
+only through the queue; do not push to `main` directly. When a PR is ready to
+merge and its required checks have passed, add it to the queue. The queue tests
+it on top of the current `main` and the PRs queued ahead of it, and
+squash-merges it only if the required checks pass on that combined tree, so
+each commit it adds to `main` has passed them on its own tree.
 
-To queue a PR, use one of:
+To queue a standalone PR, use one of:
 
 - **Merge when ready** in the PR's merge box.
-- `gh pr merge <number>`, with `--match-head-commit <sha>` to queue only the
-  commit you checked. It queues the PR at once if its required checks have
-  passed; otherwise it turns on auto-merge, which queues the PR when they pass.
-  The queue sets the merge method and the commit message, so `--squash`,
-  `--subject` and `--body` have no effect, and `gh` refuses `--delete-branch`.
+- `gh pr merge <number>`, which needs the repository's **Allow auto-merge**
+  setting: on a queue branch, `gh` 2.105.0 asks GitHub to turn on auto-merge,
+  which GitHub refuses while that setting is off
+  ([cli/cli#13398](https://github.com/cli/cli/issues/13398)). With it on, the
+  PR is queued at once if its required checks have passed, and otherwise when
+  they pass. `--match-head-commit <sha>` checks the head only when you run the
+  command. The queue sets the merge method and the commit message, so
+  `--squash`, `--subject` and `--body` have no effect, and `gh` refuses
+  `--delete-branch`. Before the queue is required, `gh pr merge` can merge
+  directly instead.
 - The GraphQL mutation `enqueuePullRequest` (`pullRequestId`, and
   `expectedHeadOid` to pin the head). It queues the PR only if it can be queued
-  now; otherwise it returns an error that says why.
+  now, and otherwise returns an error that says why; it never merges directly.
 
-The REST endpoint `PUT /repos/{owner}/{repo}/pulls/{number}/merge` does not
-support merge queues, so it stops working for `main` once the queue is
-required. Scripts and bots that merge with it must switch to `gh pr merge`,
-`enqueuePullRequest`, or `PUT /repos/{owner}/{repo}/pulls/{number}/merge-async`
-with `"merge_action": "merge_queue"`. Each of these only queues the PR: read the
-PR's state afterwards to learn whether it merged or left the queue.
+To queue a stack of pull requests, use the merge box of the highest PR you want
+to merge, or `PUT /repos/{owner}/{repo}/pulls/{number}/merge-async` with
+`"merge_action": "merge_queue"` on that PR. Either queues that PR together with
+every open PR below it in the stack.
 
-The queue removes a PR whose required checks fail on its merge group, or do not
-report before the queue's timeout; the PR's timeline says why, and the PRs
-behind it rebuild without it. Fix the PR and queue it again. To take a PR out
-of the queue, use **Remove from queue** on the PR or on the queue's page, or the
-GraphQL mutation `dequeuePullRequest`; `gh` cannot do it.
+Once the queue is required, `main` refuses direct merges, including those of
+the REST endpoint `PUT /repos/{owner}/{repo}/pulls/{number}/merge`, which does
+not support merge queues, and of the GraphQL mutation `mergePullRequest`.
+Scripts and bots that merge directly should switch to `enqueuePullRequest` for
+a standalone PR, or to `PUT /repos/{owner}/{repo}/pulls/{number}/merge-async`
+with `"merge_action": "merge_queue"`, which GitHub requires for a stack of pull
+requests; both only ever queue. `merge-async` answers `202` when it accepts the
+request, `200` if the PR is already queued or merged, and `409` if another
+request is pending; `GET .../merge-async/{uuid}` gives a request's result. A
+queue request is not a merge: read the PR's state afterwards to learn whether
+it was queued, merged, or removed from the queue.
+
+Consecutive PRs that pass land together, up to the queue's merge limit, which
+GitHub may exceed by up to half to keep a stack together. The queue removes a PR
+whose required checks fail on its merge group, or do not conclude before the
+queue's timeout; the PR's timeline says why, and the PRs behind it rebuild
+without it. In a stack of pull requests, the PRs above it in the stack leave the
+queue too. Fix the PR and queue it again. To take a PR out of the queue, use
+**Remove from queue** on the PR or on the queue's page, or the GraphQL mutation
+`dequeuePullRequest`; `gh` cannot do it.
 
 ### Required checks
 
@@ -246,16 +265,19 @@ group before it merges:
 - `repository integrity` (CI): the deterministic repository checks.
 - `build` (CI): the Lean build and its policy checks.
 - `source-diagnostics` (Source diagnostics).
-- `guard` (Bump guard): the Lean and Mathlib pin check. On a merge group it
-  checks a pin change again against the queue's base.
 
-Each of them runs on every PR and every merge group;
-`scripts/test_merge_queue_checks.py`, run by `scripts/check.sh preflight`,
-fails if a change would stop that. The other checks are advisory. Codex runs on
-PR events only. `public-references` runs on PRs and merge groups, but stays
-advisory until the workflow governance described under
-[Public references](#public-references) is in place. Blueprint Pages, Check
-workflows and Binary64 conformance run only on PRs that touch their files, and
+Their workflows run on every PR and every merge group;
+`scripts/test_merge_queue_checks.py`, run by `scripts/check.sh preflight`, fails
+if a change would stop that.
+
+The other checks are advisory. The bump guard's `guard` checks Lean and Mathlib
+pin changes on PRs and merge groups; on PRs it runs through
+`pull_request_target`, which GitHub blocks by default in public repositories
+from 2 December 2026 unless an Actions event policy allows it, so it is not
+required. Codex does not run on merge groups. `public-references` is configured
+to run on PRs and merge groups, but stays advisory until the workflow governance
+described under [Public references](#public-references) is in place. Blueprint
+Pages, Check workflows and Binary64 conformance are path-filtered on PRs, and
 Blueprint Pages also builds `main` once a day.
 
 ## Contributor License Agreement ("CLA")

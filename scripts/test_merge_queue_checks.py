@@ -27,7 +27,6 @@ REQUIRED = {
     "repository integrity": "ci.yml",
     "build": "ci.yml",
     "source-diagnostics": "source-diagnostics.yml",
-    "guard": "bump-guard.yml",
 }
 PR_EVENTS = ("pull_request", "pull_request_target")
 FILTERS = {"branches", "branches-ignore", "paths", "paths-ignore", "tags", "tags-ignore"}
