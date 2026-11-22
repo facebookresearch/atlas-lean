@@ -13,12 +13,12 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Data.Finite.Defs
+public import Mathlib.Basic.Finite.Defs
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Data.Nat.MaxPowDiv
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.Data.Rat.Init
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Batteries.Util.ProofWanted
 
 @[expose] public section

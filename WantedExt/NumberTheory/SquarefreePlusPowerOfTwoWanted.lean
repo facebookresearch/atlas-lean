@@ -19,7 +19,8 @@ namespace MetaMathlibExt
 `1 ≤ k ≤ 13` (a finite verification of Erdős's conjecture; see
 `OpenConjectures/NumberTheory/ErdosProblem11` for the open statement over all odd `n`).
 
-Source: Christian Hercher, *On the Sum of a Squarefree Integer and a Power of Two*, Journal of Integer Sequences 28 (2025), Article 25.3.1, Theorem 5 (`jis-2025-25.3.1-thm-5`). -/
+Source: Christian Hercher, *On the Sum of a Squarefree Integer and a Power of Two*, Journal of
+Integer Sequences 28 (2025), Article 25.3.1, Theorem 5 (`jis-2025-25.3.1-thm-5`). -/
 public theorem_wanted exists_squarefree_add_two_pow_of_odd_lt_two_pow_fifty (n : ℕ) (h1 : 1 < n)
     (h2 : n < 2 ^ 50) (hodd : Odd n) :
     ∃ s k : ℕ, 0 < s ∧ Squarefree s ∧ 1 ≤ k ∧ k ≤ 13 ∧ n = s + 2 ^ k

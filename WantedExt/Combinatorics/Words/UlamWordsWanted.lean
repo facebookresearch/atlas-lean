@@ -230,7 +230,8 @@ public theorem_wanted ulamWordCount_limsup_div_pow_eq_top (α : ℝ) (hα : 1 < 
 /-- `ρ(n)⁻¹ ≍ μ_g(n)`, where `ρ(n) = #U_n / 2ⁿ` and `μ_g(n)` is the mean gap of `π(U_n)`.
 
 Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
-*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 4 (first sentence). -/
+*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 4 (first
+sentence). -/
 public theorem_wanted ulamDensity_inv_isTheta_ulamGapMean :
     (fun n : ℕ => (2 : ℝ) ^ n / ulamWordCount n) =Θ[Filter.atTop]
       fun n => (ulamGapMean n : ℝ)

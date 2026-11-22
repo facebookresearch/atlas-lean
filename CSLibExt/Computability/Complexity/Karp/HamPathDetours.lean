@@ -56,7 +56,10 @@ theorem hpT_add_le {m i i' : ℕ} (h : i < i') : hpT m i + (3 * m + 2) ≤ hpT m
   rw [← hpT_succ]
   exact Nat.add_le_add_left (Nat.mul_le_mul_right _ h) _
 
-/-- Distinct diamonds are `3 m + 2` apart. -/
+/-- **Tops of distinct diamonds are at least $3m + 2$ apart.** In the vertex numbering of the
+Hamiltonian path construction with $m$ clauses, where the top of diamond $i$ is the vertex
+$T(i) = m + i(3m + 2)$, any two indices $i \ne i'$ satisfy $T(i) + 3m + 2 \le T(i')$ or
+$T(i') + 3m + 2 \le T(i)$. -/
 theorem hpT_sep {m i i' : ℕ} (h : i ≠ i') :
     hpT m i + (3 * m + 2) ≤ hpT m i' ∨ hpT m i' + (3 * m + 2) ≤ hpT m i := by
   rcases Nat.lt_or_gt_of_ne h with h | h
@@ -64,8 +67,16 @@ theorem hpT_sep {m i i' : ℕ} (h : i ≠ i') :
 
 /-! ### The arcs -/
 
-/-- The arcs of `hamEdges φ`: in diamond `i` of the variable `x = (hamVars φ).getD i 0`, the frame,
-the row, and the detours of the clauses containing `x` or its negation. -/
+/-- **Arcs of the Hamiltonian path construction.** Let $\varphi$ be a CNF formula with clauses
+$C_0, \dots, C_{m-1}$ and distinct variables $x_0, \dots, x_{k-1}$ (in the order the
+construction lists them), and write $T(i) = m + i(3m + 2)$ for the top of diamond $i$ and
+$R(i, l) = T(i) + 1 + l$ for its row vertex $l$. Then $(u, v)$ is an arc of the Hamiltonian path
+instance of $\varphi$ if and only if there is an $i < k$ such that $(u, v)$ is one of the frame
+arcs $(T(i), R(i, 0))$, $(T(i), R(i, 3m))$, $(R(i, 0), T(i + 1))$ and $(R(i, 3m), T(i + 1))$;
+or $(u, v)$ is a row arc $(R(i, l), R(i, l + 1))$ or $(R(i, l + 1), R(i, l))$ for some
+$l < 3m$; or, for some $j < m$, either $C_j$ contains the literal $x_i$ and $(u, v)$ is
+$(R(i, 3j + 1), j)$ or $(j, R(i, 3j + 2))$, or $C_j$ contains the literal $\lnot x_i$ and
+$(u, v)$ is $(R(i, 3j + 2), j)$ or $(j, R(i, 3j + 1))$. -/
 theorem mem_hamEdges {φ : CNF} {u v : ℕ} :
     (u, v) ∈ hamEdges φ ↔ ∃ i < (hamVars φ).length,
       ((u = hpT φ.length i ∧ v = hpR φ.length i 0 ∨
@@ -83,7 +94,16 @@ theorem mem_hamEdges {φ : CNF} {u v : ℕ} :
   simp only [hamEdges, diamondEdges, List.mem_flatMap, List.mem_range, List.mem_append,
     List.mem_cons, Prod.mk.injEq, List.not_mem_nil, or_false, List.mem_ite_nil_right]
 
-/-- The arcs of `hamEdges φ`, forgetting which literal a detour comes from. -/
+/-- **Classification of the arcs of Sipser's graph.** Let $\varphi$ be a CNF formula with $m$
+clauses and $k$ distinct variables, and write $T_i = m + i(3m + 2)$ and $R_{i,l} = T_i + 1 + l$.
+If $(u, v)$ is an arc of Sipser's construction for $\varphi$, then there is $i < k$ such that one
+of the following holds: $u = T_i$ and $v \in \{R_{i,0}, R_{i,3m}\}$; or
+$u \in \{R_{i,0}, R_{i,3m}\}$ and $v = T_{i+1}$; or there is $l < 3m$ with
+$(u, v) = (R_{i,l}, R_{i,l+1})$ or $(u, v) = (R_{i,l+1}, R_{i,l})$; or there is $j < m$ with
+$u \in \{R_{i,3j+1}, R_{i,3j+2}\}$ and $v = j$, or with $u = j$ and
+$v \in \{R_{i,3j+1}, R_{i,3j+2}\}$.
+
+The last case does not record whether the detour comes from a positive or a negative literal. -/
 theorem hamEdges_cases {φ : CNF} {u v : ℕ} (h : (u, v) ∈ hamEdges φ) :
     ∃ i < (hamVars φ).length,
       (u = hpT φ.length i ∧ (v = hpR φ.length i 0 ∨ v = hpR φ.length i (3 * φ.length))) ∨
@@ -107,8 +127,11 @@ theorem hamEdges_cases {φ : CNF} {u v : ℕ} (h : (u, v) ∈ hamEdges φ) :
   · exact Or.inr (Or.inr (Or.inr ⟨j, hj, Or.inl ⟨Or.inr h.1, h.2⟩⟩))
   · exact Or.inr (Or.inr (Or.inr ⟨j, hj, Or.inr ⟨h.1, Or.inl h.2⟩⟩))
 
-/-- The in-neighbours of the row vertex `hpR m i l`: its row neighbours, the top `hpT m i` if
-it is a row end, and clause `v` if it is a vertex of the pair of `v`. -/
+/-- **In-neighbours of a row vertex in Sipser's graph.** Let $\varphi$ be a CNF formula with $m$
+clauses, and write $T_i = m + i(3m + 2)$ and $R_{i,l} = T_i + 1 + l$. Let $i$ and $l \le 3m$ be
+natural numbers, and let $(v, R_{i,l})$ be an arc of Sipser's construction for $\varphi$. Then
+$l < 3m$ and $v = R_{i,l+1}$; or $0 < l$ and $v = R_{i,l-1}$; or $l \in \{0, 3m\}$ and
+$v = T_i$; or $v < m$ and $l \in \{3v + 1, 3v + 2\}$. -/
 theorem hamEdges_to_hpR {φ : CNF} {v i l : ℕ} (h : (v, hpR φ.length i l) ∈ hamEdges φ)
     (hl : l ≤ 3 * φ.length) :
     (l < 3 * φ.length ∧ v = hpR φ.length i (l + 1)) ∨ (0 < l ∧ v = hpR φ.length i (l - 1)) ∨
@@ -124,8 +147,11 @@ theorem hamEdges_to_hpR {φ : CNF} {v i l : ℕ} (h : (v, hpR φ.length i l) ∈
     simp only [hpR, hpT_succ] at hc
     rcases hc with hc | hc | ⟨l', hl', hc⟩ | ⟨j, hj, hc⟩ <;> omega
 
-/-- The out-neighbours of the row vertex `hpR m i l`: its row neighbours, the next top
-`hpT m (i + 1)` if it is a row end, and clause `v` if it is a vertex of the pair of `v`. -/
+/-- **Out-neighbours of a row vertex in Sipser's graph.** Let $\varphi$ be a CNF formula with $m$
+clauses, and write $T_i = m + i(3m + 2)$ and $R_{i,l} = T_i + 1 + l$. Let $i$ and $l \le 3m$ be
+natural numbers, and let $(R_{i,l}, v)$ be an arc of Sipser's construction for $\varphi$. Then
+$l < 3m$ and $v = R_{i,l+1}$; or $0 < l$ and $v = R_{i,l-1}$; or $l \in \{0, 3m\}$ and
+$v = T_{i+1}$; or $v < m$ and $l \in \{3v + 1, 3v + 2\}$. -/
 theorem hamEdges_from_hpR {φ : CNF} {v i l : ℕ} (h : (hpR φ.length i l, v) ∈ hamEdges φ)
     (hl : l ≤ 3 * φ.length) :
     (l < 3 * φ.length ∧ v = hpR φ.length i (l + 1)) ∨ (0 < l ∧ v = hpR φ.length i (l - 1)) ∨
@@ -141,7 +167,10 @@ theorem hamEdges_from_hpR {φ : CNF} {v i l : ℕ} (h : (hpR φ.length i l, v) �
     simp only [hpR, hpT_succ] at hc
     rcases hc with hc | hc | ⟨l', hl', hc⟩ | ⟨j, hj, hc⟩ <;> omega
 
-/-- The in-neighbours of clause `j` are vertices of its pairs. -/
+/-- **In-neighbours of a clause vertex in Sipser's graph.** Let $\varphi$ be a CNF formula with
+$m$ clauses and $k$ distinct variables, and write $R_{i,l} = m + i(3m + 2) + 1 + l$ for row
+vertex $l$ of diamond $i$. If $j < m$ and $(v, j)$ is an arc of Sipser's construction for
+$\varphi$, then there is $i < k$ with $v = R_{i,3j+1}$ or $v = R_{i,3j+2}$. -/
 theorem hamEdges_to_clause {φ : CNF} {v j : ℕ} (h : (v, j) ∈ hamEdges φ) (hj : j < φ.length) :
     ∃ i < (hamVars φ).length,
       v = hpR φ.length i (3 * j + 1) ∨ v = hpR φ.length i (3 * j + 2) := by
@@ -151,7 +180,10 @@ theorem hamEdges_to_clause {φ : CNF} {v j : ℕ} (h : (v, j) ∈ hamEdges φ) (
   simp only [hpR, hpT_succ] at hc ⊢
   rcases hc with hc | hc | ⟨l', hl', hc⟩ | ⟨j', hj', hc⟩ <;> omega
 
-/-- The out-neighbours of clause `j` are vertices of its pairs. -/
+/-- **Out-neighbours of a clause vertex in Sipser's graph.** Let $\varphi$ be a CNF formula with
+$m$ clauses and $k$ distinct variables, and write $R_{i,l} = m + i(3m + 2) + 1 + l$ for row
+vertex $l$ of diamond $i$. If $j < m$ and $(j, v)$ is an arc of Sipser's construction for
+$\varphi$, then there is $i < k$ with $v = R_{i,3j+1}$ or $v = R_{i,3j+2}$. -/
 theorem hamEdges_from_clause {φ : CNF} {v j : ℕ} (h : (j, v) ∈ hamEdges φ) (hj : j < φ.length) :
     ∃ i < (hamVars φ).length,
       v = hpR φ.length i (3 * j + 1) ∨ v = hpR φ.length i (3 * j + 2) := by
@@ -258,7 +290,9 @@ private theorem pair_infix_forced_false {z w₁ w₂ : α} (hp : p.Nodup) (hin :
 
 end Infix
 
-/-- A Hamiltonian path visits every vertex. -/
+/-- **A Hamiltonian path visits every vertex.** If $p$ is a Hamiltonian path from $s$ to $t$ in
+the digraph on the vertices $0, \dots, n - 1$ with arc list $E$, then every vertex $v < n$
+occurs in $p$. -/
 theorem mem_of_isHamPath {n s t : ℕ} {es : List (ℕ × ℕ)} {p : List ℕ}
     (h : IsHamPath n es s t p) {v : ℕ} (hv : v < n) : v ∈ p := by
   obtain ⟨hnd, hlen, hlt, -⟩ := h
@@ -278,7 +312,11 @@ variable {φ : CNF} {p : List ℕ}
     (hpT φ.length 0) (hpT φ.length (hamVars φ).length) p)
 include h
 
-/-- Consecutive vertices of a Hamiltonian path of `toHam φ` are joined by an arc. -/
+/-- **Consecutive vertices of a Hamiltonian path of Sipser's graph form arcs.** Let $\varphi$ be a
+CNF formula with $m$ clauses and $k$ distinct variables, let $T_i = m + i(3m + 2)$, and let $p$
+be a Hamiltonian path from $T_0$ to $T_k$ in the digraph on the vertices $0, \dots, T_k$ whose
+arcs are those of Sipser's construction for $\varphi$. If $v$ comes immediately after $u$ in $p$,
+then $(u, v)$ is an arc of the construction. -/
 theorem hamEdges_of_infix {u v : ℕ} (hn : [u, v] <:+: p) : (u, v) ∈ hamEdges φ :=
   (List.isChain_pair.1 (h.2.2.2.2.2.infix hn)).1
 
@@ -309,8 +347,12 @@ theorem hamPath_exists_succ_clause {j : ℕ} (hj : j < φ.length) : ∃ w, [j, w
   have := le_hpT φ.length (hamVars φ).length
   exact hamPath_exists_succ h (by omega) (by omega)
 
-/-- A row end entered from the top and left to the next top: then the other row end has its row
-neighbour as both predecessor and successor. -/
+/-- **A Hamiltonian path of Sipser's graph does not cross a diamond through one row end.** Let
+$\varphi$ be a CNF formula with $m \ge 1$ clauses and $k$ distinct variables, write
+$T_i = m + i(3m + 2)$ and $R_{i,l} = T_i + 1 + l$, and let $p$ be a Hamiltonian path from $T_0$
+to $T_k$ in the digraph on the vertices $0, \dots, T_k$ whose arcs are those of Sipser's
+construction for $\varphi$. For $i < k$ and $l \in \{0, 3m\}$, it is impossible that $R_{i,l}$
+comes immediately after $T_i$ in $p$ and $T_{i+1}$ comes immediately after $R_{i,l}$ in $p$. -/
 theorem hamPath_rowEnd_false {i l : ℕ} (hi : i < (hamVars φ).length) (hm : 0 < φ.length)
     (hl : l = 0 ∨ l = 3 * φ.length) (h₁ : [hpT φ.length i, hpR φ.length i l] <:+: p)
     (h₂ : [hpR φ.length i l, hpT φ.length (i + 1)] <:+: p) : False := by
@@ -334,8 +376,12 @@ theorem hamPath_rowEnd_false {i l : ℕ} (hi : i < (hamVars φ).length) (hm : 0 
     simp only [hpR] at this
     omega
 
-/-- A separator `hpR m i l` (`l = 3 j'`) with a row neighbour `hpR m i lw` that is neither its
-predecessor nor its successor. -/
+/-- **A separator is next to each of its row neighbours on a Hamiltonian path.** Let $\varphi$ be
+a CNF formula with $m$ clauses and $k$ distinct variables, write $T_i = m + i(3m + 2)$ and
+$R_{i,l} = T_i + 1 + l$, and let $p$ be a Hamiltonian path from $T_0$ to $T_k$ in the digraph on
+the vertices $0, \dots, T_k$ whose arcs are those of Sipser's construction for $\varphi$. Let
+$i < k$, let $l \le 3m$ be a multiple of $3$, and let $l' \le 3m$ satisfy $l' = l + 1$ or
+$l' + 1 = l$. Then $R_{i,l'}$ comes immediately before or immediately after $R_{i,l}$ in $p$. -/
 theorem hamPath_separator_false {i l lw : ℕ} (hi : i < (hamVars φ).length) (hl3 : l % 3 = 0)
     (hl : l ≤ 3 * φ.length) (hw : lw = l + 1 ∨ lw + 1 = l) (hwm : lw ≤ 3 * φ.length)
     (h₁ : ¬ [hpR φ.length i lw, hpR φ.length i l] <:+: p)
@@ -366,8 +412,13 @@ theorem hamPath_separator_false {i l lw : ℕ} (hi : i < (hamVars φ).length) (h
     · exact h₂ hy
     exact hamPath_rowEnd_false h hi (by omega) (by omega) hx hy
 
-/-- Sipser's separator argument: clause `j`, entered from the pair vertex `hpR m i la`, is left
-to the other pair vertex `hpR m i lc`. -/
+/-- **A clause detour returns to its own pair (Sipser's separator argument).** Let $\varphi$ be a
+CNF formula with $m$ clauses and $k$ distinct variables, write $T_i = m + i(3m + 2)$ and
+$R_{i,l} = T_i + 1 + l$, and let $p$ be a Hamiltonian path from $T_0$ to $T_k$ in the digraph on
+the vertices $0, \dots, T_k$ whose arcs are those of Sipser's construction for $\varphi$. Let
+$i < k$ and $j < m$, and let $(l_a, l_c)$ be $(3j + 1, 3j + 2)$ or $(3j + 2, 3j + 1)$. If the
+clause vertex $j$ comes immediately after $R_{i,l_a}$ in $p$, then every vertex that comes
+immediately after $j$ in $p$ is $R_{i,l_c}$. -/
 theorem hamPath_pair_false {i j la lc b : ℕ} (hi : i < (hamVars φ).length) (hj : j < φ.length)
     (hlac : (la = 3 * j + 1 ∧ lc = 3 * j + 2) ∨ (la = 3 * j + 2 ∧ lc = 3 * j + 1))
     (ha : [hpR φ.length i la, j] <:+: p) (hb : [j, b] <:+: p) (hbc : b ≠ hpR φ.length i lc) :
@@ -415,7 +466,13 @@ theorem hamPath_pair_false {i j la lc b : ℕ} (hi : i < (hamVars φ).length) (h
 
 end Detours
 
-/-- Every Hamiltonian path of `toHam φ` has normal detours. -/
+/-- **Hamiltonian paths of Sipser's graph have normal detours.** Let $\varphi$ be a CNF formula
+with $m$ clauses and $k$ distinct variables, and write $T_i = m + i(3m + 2)$ and
+$R_{i,l} = T_i + 1 + l$ for the top and the row vertices of diamond $i$. Every Hamiltonian path
+from $T_0$ to $T_k$ in the digraph on the vertices $0, \dots, T_k$ whose arcs are those of
+Sipser's construction for $\varphi$ has normal detours: for every clause $j < m$ there is $i < k$
+such that $R_{i,3j+1}, j, R_{i,3j+2}$ or $R_{i,3j+2}, j, R_{i,3j+1}$ occur in this order as
+consecutive vertices of the path. -/
 theorem detoursNormal_of_isHamPath {φ : CNF} {p : List ℕ}
     (h : IsHamPath (hpT φ.length (hamVars φ).length + 1) (hamEdges φ)
       (hpT φ.length 0) (hpT φ.length (hamVars φ).length) p) :

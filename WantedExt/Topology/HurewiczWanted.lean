@@ -23,14 +23,17 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.Hurewicz` — hurewicz_h1_abelianization (manifest `manifests/problems/hurewicz_h1_abelianization.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.Hurewicz` —
+hurewicz_h1_abelianization (manifest `manifests/problems/hurewicz_h1_abelianization.toml`, rev 1,
+submitter Kim Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
 and placed the declarations in the `MathlibExt.Topology.HurewiczWanted` namespace. Mathematical
-statements are unchanged. Source: W. Hurewicz (1935); see Hatcher, *Algebraic Topology*, Theorem 2A.1. Knill, *Some fundamental theorems in mathematics*, §153.
+statements are unchanged. Source: W. Hurewicz (1935); see Hatcher, *Algebraic Topology*, Theorem
+2A.1. Knill, *Some fundamental theorems in mathematics*, §153.
 -/
 module
 
@@ -61,7 +64,9 @@ noncomputable abbrev IntegralHomology (n : ℕ) (X : Type) [TopologicalSpace X] 
 
 /- **Hurewicz (n = 1).** For a path-connected space `X`, `H₁(X;ℤ)` is the
 abelianization of `π₁(X, x)`. -/
-/-- Source: W. Hurewicz (1935); see Hatcher, *Algebraic Topology*, Theorem 2A.1. Knill, *Some fundamental theorems in mathematics*, §153. Via leanprover/lean-eval@38361be, problem `hurewicz_h1_abelianization`. -/
+/-- Source: W. Hurewicz (1935); see Hatcher, *Algebraic Topology*, Theorem 2A.1. Knill, *Some
+fundamental theorems in mathematics*, §153. Via leanprover/lean-eval@38361be, problem
+`hurewicz_h1_abelianization`. -/
 public theorem_wanted hurewicz_h1_abelianization
     (X : Type) [TopologicalSpace X] [PathConnectedSpace X] (x : X) :
     Nonempty (Additive (Abelianization (FundamentalGroup X x)) ≃+

@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import MathlibExt.Analysis.InnerProductSpace.CompactSelfAdjointNormEigenvalue
+
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.InnerProductSpace.Projection.Basic
 public import Mathlib.Analysis.InnerProductSpace.Rayleigh
@@ -38,10 +40,10 @@ orthogonal complement `S` of their span, and apply the first-step argument
 eigenvector lies in `S`, is an eigenvector of `T` itself, and its eigenvalue
 is maximal among Rayleigh quotients on `S`.
 
-The first-step argument (a nonzero compact self-adjoint operator has a unit
-eigenvector whose real eigenvalue has absolute value `‖T‖`) is a private
-helper here; the public content is the deflation step, which is not in
-Mathlib (Mathlib has the compression's self-adjointness as
+The first-step argument is supplied by
+`CompactSelfAdjointNormEigenvalue.exists_unit_eigenvector_real_eigenvalue`.
+The public content here is the deflation step, which is not in Mathlib
+(Mathlib has the compression's self-adjointness as
 `IsSelfAdjoint.conj_starProjection`, but no eigenvalue conclusion for it)
 and not in any earlier batch (Batches 11-13 proved the first step, the
 range decomposition, and finiteness of eigenvalues above `ε`).
@@ -54,69 +56,6 @@ unproved; it is not ported. The statements below are proved from scratch.
 
 variable {𝕜 : Type*} [RCLike 𝕜]
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace 𝕜 H] [CompleteSpace H]
-
-/-- The spectrum of a nonzero self-adjoint operator is nonempty: if it
-were empty, the spectral radius would be `0`, contradicting
-`spectralRadius_eq_nnnorm`. -/
-private theorem spectrum_nonempty_of_ne_zero (T : H →L[𝕜] H) (hT : IsSelfAdjoint T)
-    (hT0 : T ≠ 0) : (spectrum 𝕜 T).Nonempty := by
-  by_contra h
-  rw [Set.not_nonempty_iff_eq_empty] at h
-  have h0 : spectralRadius 𝕜 T = 0 := by
-    rw [spectralRadius_eq_of_unital, h]
-    simp
-  rw [T.spectralRadius_eq_nnnorm hT] at h0
-  exact hT0 (by simpa using h0)
-
-/-- **A nonzero compact self-adjoint operator has an eigenvalue of norm
-`‖T‖`.** -/
-private theorem exists_hasEigenvalue_norm_eq (T : H →L[𝕜] H) (hT : IsSelfAdjoint T)
-    (hc : IsCompactOperator (T : H → H)) (hT0 : T ≠ 0) :
-    ∃ μ : 𝕜, μ ≠ 0 ∧ ‖μ‖ = ‖T‖ ∧ Module.End.HasEigenvalue (T : Module.End 𝕜 H) μ := by
-  obtain ⟨μ, hμspec, hμμ⟩ :=
-    spectrum.exists_nnnorm_eq_spectralRadius_of_nonempty
-      (spectrum_nonempty_of_ne_zero T hT hT0)
-  rw [T.spectralRadius_eq_nnnorm hT] at hμμ
-  have h2 : ‖μ‖₊ = ‖T‖₊ := by exact_mod_cast hμμ
-  have hnorm : ‖μ‖ = ‖T‖ := by
-    calc ‖μ‖ = (‖μ‖₊ : ℝ) := coe_nnnorm μ
-      _ = (‖T‖₊ : ℝ) := by rw [h2]
-      _ = ‖T‖ := (coe_nnnorm T).symm
-  have hμ0 : μ ≠ 0 := by
-    intro h
-    rw [h, norm_zero] at hnorm
-    exact hT0 (norm_eq_zero.mp hnorm.symm)
-  exact ⟨μ, hμ0, hnorm, (hc.hasEigenvalue_iff_mem_spectrum hμ0).mpr hμspec⟩
-
-/-- **The norm of a compact self-adjoint operator is a real eigenvalue,
-attained at a unit vector.** If `T ≠ 0` is compact and self-adjoint,
-there are `r : ℝ` and a unit vector `u` with `T u = r • u` and
-`|r| = ‖T‖`. -/
-private theorem exists_unit_eigenvector_real_eigenvalue (T : H →L[𝕜] H)
-    (hT : IsSelfAdjoint T) (hc : IsCompactOperator (T : H → H)) (hT0 : T ≠ 0) :
-    ∃ r : ℝ, ∃ u : H, ‖u‖ = 1 ∧ T u = (r : 𝕜) • u ∧ |r| = ‖T‖ := by
-  obtain ⟨μ, _hμ0, hnorm, heig⟩ := exists_hasEigenvalue_norm_eq T hT hc hT0
-  have hsym : (T : H →ₗ[𝕜] H).IsSymmetric :=
-    ContinuousLinearMap.isSelfAdjoint_iff_isSymmetric.mp hT
-  have hconj : conj μ = μ := hsym.conj_eigenvalue_eq_self heig
-  have hμreal : (RCLike.re μ : 𝕜) = μ := RCLike.conj_eq_iff_re.mp hconj
-  obtain ⟨u₀, hu₀mem, hu₀ne⟩ := heig.exists_hasEigenvector
-  have hu₀T : T u₀ = μ • u₀ := Module.End.mem_eigenspace_iff.mp hu₀mem
-  have hu₀norm : ‖u₀‖ ≠ 0 := norm_ne_zero_iff.mpr hu₀ne
-  set c : 𝕜 := ((‖u₀‖⁻¹ : ℝ) : 𝕜) with hc_def
-  refine ⟨RCLike.re μ, c • u₀, ?_, ?_, ?_⟩
-  · rw [norm_smul]
-    have hcnorm : ‖c‖ = ‖u₀‖⁻¹ := by
-      rw [hc_def, RCLike.norm_ofReal, abs_of_nonneg (inv_nonneg.mpr (norm_nonneg _))]
-    rw [hcnorm, inv_mul_cancel₀ hu₀norm]
-  · calc T (c • u₀) = c • T u₀ := map_smul T c u₀
-      _ = c • (μ • u₀) := by rw [hu₀T]
-      _ = μ • (c • u₀) := smul_comm c μ u₀
-      _ = (RCLike.re μ : 𝕜) • (c • u₀) := by rw [hμreal]
-  · have hμabs : ‖μ‖ = |RCLike.re μ| := by
-      conv_lhs => rw [← hμreal]
-      exact RCLike.norm_ofReal _
-    rw [← hμabs, hnorm]
 
 /-- **Deflation step.** Let `S` be a submodule invariant under a compact
 self-adjoint `T`, and let `T₁` be the compression of `T` to `S` (via the
@@ -142,7 +81,8 @@ theorem exists_next_eigenvector_of_invariant {S : Submodule 𝕜 H} [S.HasOrthog
     simpa [hT₁def, hP, ContinuousLinearMap.comp_assoc] using h2
   have hT₁0 : T₁ ≠ 0 := hT₁
   obtain ⟨r, v, hv_norm, hv_eig, hr⟩ :=
-    exists_unit_eigenvector_real_eigenvalue T₁ hT₁sa hT₁c hT₁0
+    CompactSelfAdjointNormEigenvalue.exists_unit_eigenvector_real_eigenvalue
+      T₁ hT₁sa hT₁c hT₁0
   have hr0 : r ≠ 0 := by
     intro hrr
     rw [hrr] at hr
