@@ -1405,7 +1405,7 @@ lemma TrapDecomp.exists_freq_trap_of_seq {F : Set plane} (D : TrapDecomp F)
   obtain ⟨t, ht⟩ := hfalse.frequently.exists
   exact ht
 
-/-- Every wall has a trapezoid on its right (LaValle, Planning Algorithms,
+/-- Every wall has a trapezoid on its left (LaValle, Planning Algorithms,
 Sec. 6.2.2: every 1-cell borders two 2-cells). -/
 lemma TrapDecomp.exists_hasOnRight_of_wall {F : Set plane} (D : TrapDecomp F)
     (hF : IsOpen F) (j : Fin D.k) : ∃ i : Fin D.m, (D.trap i).HasOnRight (D.wall j) := by
@@ -1492,7 +1492,7 @@ lemma TrapDecomp.exists_hasOnRight_of_wall {F : Set plane} (D : TrapDecomp F)
           rw [hxeq] at hx₁
           linarith
 
-/-- Points just left of a wall eventually lie in any trapezoid on its right
+/-- Points just left of a wall eventually lie in any trapezoid on its left
 (LaValle, Planning Algorithms, Sec. 6.2.2). -/
 lemma TrapDecomp.eventually_mem_trap_of_hasOnRight {F : Set plane} (D : TrapDecomp F)
     {i : Fin D.m} {j : Fin D.k} (h : (D.trap i).HasOnRight (D.wall j))
@@ -1570,7 +1570,7 @@ theorem TrapDecomp.existsUnique_hasOnRight {F : Set plane} (D : TrapDecomp F)
     Set.not_disjoint_iff.mpr ⟨_, ht₀, ht₀'⟩
   exact hnd hdisj
 
-/-- Every wall has a trapezoid on its left (LaValle, Planning Algorithms,
+/-- Every wall has a trapezoid on its right (LaValle, Planning Algorithms,
 Sec. 6.2.2: every 1-cell borders two 2-cells). -/
 lemma TrapDecomp.exists_hasOnLeft_of_wall {F : Set plane} (D : TrapDecomp F)
     (hF : IsOpen F) (j : Fin D.k) : ∃ i : Fin D.m, (D.trap i).HasOnLeft (D.wall j) := by
@@ -1659,7 +1659,7 @@ lemma TrapDecomp.exists_hasOnLeft_of_wall {F : Set plane} (D : TrapDecomp F)
           rw [hxeq] at hx₂
           linarith
 
-/-- Points just right of a wall eventually lie in any trapezoid on its left
+/-- Points just right of a wall eventually lie in any trapezoid on its right
 (LaValle, Planning Algorithms, Sec. 6.2.2). -/
 lemma TrapDecomp.eventually_mem_trap_of_hasOnLeft {F : Set plane} (D : TrapDecomp F)
     {i : Fin D.m} {j : Fin D.k} (h : (D.trap i).HasOnLeft (D.wall j))
