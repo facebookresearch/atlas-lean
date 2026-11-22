@@ -9,6 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Combinatorics.Graph.ArcNetworkWalk
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 
 @[expose] public section
@@ -21,9 +24,8 @@ set_option relaxedAutoImplicit false
 
 Concrete consumers of `MathlibExt.Combinatorics.Graph.ArcNetworkWalk` on the network
 with nodes `Fin 3` and arcs `Fin 4`: `0 : 0 → 1`, `1 : 0 → 1` (parallel), `2 : 1 → 2`,
-`3 : 2 → 0`. Valid and invalid walks, parallel roads, node balance `![-6, 0, 6]`, the
-link-simple bridge instance with both sides `![1, 2, 3, 0]`, and the non-simple
-counterexample (`edgeFlow` 4 against `edgeVolume` 7 on arc 0).
+`3 : 2 → 0`. Valid and invalid walks, parallel roads, and node balance
+`![-6, 0, 6]`.
 
 These are elaboration and non-vacuity checks, not new results.
 -/
@@ -36,17 +38,12 @@ open Matrix
 example {V E P : Type*} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E] [Fintype P]
     {tail head : E → V} {orig dest : P → V} {edges : P → List E}
     (hwalk : ∀ p, IsArcWalk tail head (orig p) (dest p) (edges p)) (f : P → ℝ)
-    (hf : ∀ p, 0 ≤ f p) (v : V) (e : E) (ℓ : E → ℝ → ℝ)
-    (hsimple : ∀ p, (edges p).Nodup) :
+    (hf : ∀ p, 0 ≤ f p) (v : V) (e : E)
+    :
     0 ≤ edgeVolume edges f e ∧
       (incidenceMatrix tail head).mulVec (edgeVolume edges f) v =
-        ∑ p, f p * ((if dest p = v then 1 else 0) - (if orig p = v then 1 else 0)) ∧
-      MathlibExt.GameTheory.SelfishRouting.RoutingInstance.edgeFlow
-          { commodity := fun p => (orig p, dest p), edges := fun p => (edges p).toFinset,
-            latency := ℓ } f e =
-        edgeVolume edges f e :=
-  ⟨edgeVolume_nonneg edges hf e, incidenceMatrix_mulVec_edgeVolume hwalk f v,
-    edgeFlow_eq_edgeVolume orig dest edges ℓ hsimple f e⟩
+        ∑ p, f p * ((if dest p = v then 1 else 0) - (if orig p = v then 1 else 0)) :=
+  ⟨edgeVolume_nonneg edges hf e, incidenceMatrix_mulVec_edgeVolume hwalk f v⟩
 
 /-- The empty walk at one node is valid. -/
 example :
@@ -152,38 +149,5 @@ example :
   funext v
   rw [incidenceMatrix_mulVec_edgeVolume hwalk]
   fin_cases v <;> simp [Fin.sum_univ_two, Fin.ext_iff] <;> norm_num
-
-/-- Bridge instance: on the arc-simple routes `[0, 2]`, `[1, 2]` with flows `1`, `2`,
-the set-based `edgeFlow` and the multiplicity `edgeVolume` both equal `![1, 2, 3, 0]`
-(the parallel arcs `0` and `1` stay distinct, arc `2` is shared). -/
-example :
-    edgeVolume ![([0, 2] : List (Fin 4)), [1, 2]] ![1, 2] = ![1, 2, 3, 0] ∧
-      (fun e => MathlibExt.GameTheory.SelfishRouting.RoutingInstance.edgeFlow
-        { commodity := fun _ : Fin 2 => ((0 : Fin 3), (2 : Fin 3)),
-          edges := fun p => (![([0, 2] : List (Fin 4)), [1, 2]] p).toFinset,
-          latency := fun _ _ => 0 } ![1, 2] e) = ![1, 2, 3, 0] := by
-  constructor
-  · funext e
-    fin_cases e <;> simp [edgeVolume, Fin.sum_univ_two] <;> norm_num
-  · funext e
-    rw [edgeFlow_eq_edgeVolume (fun _ => 0) (fun _ => 2)
-      ![([0, 2] : List (Fin 4)), [1, 2]] (fun _ _ => 0)
-      (fun p => by fin_cases p <;> decide) ![1, 2] e]
-    fin_cases e <;> simp [edgeVolume, Fin.sum_univ_two] <;> norm_num
-
-/-- Non-simple counterexample: the route `[0, 2, 3, 0, 2]` traverses arc `0` twice, so
-with flows `3` on it and `1` on `[0, 2]`, arc `0` has `edgeVolume` `7` but set-based
-`edgeFlow` `4`; the bridge does not apply. -/
-example :
-    edgeVolume ![([0, 2, 3, 0, 2] : List (Fin 4)), [0, 2]] ![3, 1] 0 = 7 ∧
-      MathlibExt.GameTheory.SelfishRouting.RoutingInstance.edgeFlow
-          { commodity := fun _ : Fin 2 => ((0 : Fin 3), (2 : Fin 3)),
-            edges := fun p => (![([0, 2, 3, 0, 2] : List (Fin 4)), [0, 2]] p).toFinset,
-            latency := fun _ _ => 0 } ![3, 1] 0 = 4 ∧
-      ¬ ([0, 2, 3, 0, 2] : List (Fin 4)).Nodup := by
-  refine ⟨?_, ?_, by decide⟩
-  · simp [edgeVolume, Fin.sum_univ_two] <;> norm_num
-  · simp [MathlibExt.GameTheory.SelfishRouting.RoutingInstance.edgeFlow, Finset.sum_filter,
-      Fin.sum_univ_two] <;> norm_num
 
 end MathlibExt.Combinatorics.Graph.ArcNetwork

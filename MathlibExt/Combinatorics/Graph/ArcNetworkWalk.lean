@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.Graph.ArcNetwork
-public import MathlibExt.GameTheory.SelfishRouting
 
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
@@ -34,10 +33,9 @@ traversal-count edge volumes, and node balance against the signed incidence matr
   twice loads it twice.
 - W2 proves the route boundary identity and the route-by-route node balance of edge
   volumes, in the inflow-minus-outflow sign of `incidenceMatrix`.
-- W3 reconciles this representation with the set-based routing model of
-  `MathlibExt.GameTheory.SelfishRouting`: on routes that repeat no arc, its `edgeFlow`
-  equals `edgeVolume`. A route with a repeated arc is outside the bridge and is never
-  collapsed to a set of arcs.
+The reconciliation with the set-based routing model (on routes that repeat no arc,
+its edge flow equals `edgeVolume`) lives in a separate bridge module in
+`MathlibExt.GameTheory`, so this core module depends only on `ArcNetwork`.
 
 Representation decision: the route representation of this module is the arc list with
 `List.count` multiplicity. The vertex-pair path loads of
@@ -45,8 +43,8 @@ Representation decision: the route representation of this module is the arc list
 paths between states; they are a different representation and are not reused here.
 
 No link costs, equilibria, capacities or algorithms are stated. The demand-side
-consequences (OD balance and admission) live in the consumer module
-`PhyslibExt.FluidDynamics.Traffic.AssignmentBridge`.
+consequences (OD balance and unreachability) live in
+`MathlibExt.Combinatorics.Graph.ArcNetworkDemand`.
 -/
 
 /-- Route validity: the arc list `l` is a directed walk from `o` to `d` in the network
@@ -213,28 +211,5 @@ theorem incidenceMatrix_mulVec_edgeVolume {V E P : Type*} [Fintype V] [Decidable
     intro e _
     ring
   rw [hfac, h2 p]
-
-/-- Link-simple bridge to the set-based routing model: on the OD instance with commodity
-`p ↦ (orig p, dest p)`, arc sets `(edges p).toFinset` and any latency `ℓ`, routes that repeat
-no arc give `edgeFlow f e = edgeVolume edges f e`. Neither side depends on the commodity or
-the latency. `Nodup` is needed: `edgeFlow` counts a repeated arc once. -/
-theorem edgeFlow_eq_edgeVolume {V E P : Type*} [Fintype P] [DecidableEq E]
-    (orig dest : P → V) (edges : P → List E) (ℓ : E → ℝ → ℝ)
-    (hsimple : ∀ p, (edges p).Nodup) (f : P → ℝ) (e : E) :
-    MathlibExt.GameTheory.SelfishRouting.RoutingInstance.edgeFlow
-        { commodity := fun p => (orig p, dest p), edges := fun p => (edges p).toFinset,
-          latency := ℓ } f e =
-      edgeVolume edges f e := by
-  simp only [MathlibExt.GameTheory.SelfishRouting.RoutingInstance.edgeFlow, edgeVolume]
-  rw [Finset.sum_filter]
-  apply Finset.sum_congr rfl
-  intro p _
-  have hnodup := hsimple p
-  by_cases h : e ∈ edges p
-  · rw [List.count_eq_one_of_mem hnodup h, ite_eq_left (List.mem_toFinset.mpr h)]
-    simp
-  · rw [List.count_eq_zero_of_not_mem h,
-      ite_eq_right (fun hm => h (List.mem_toFinset.mp hm))]
-    simp
 
 end MathlibExt.Combinatorics.Graph.ArcNetwork

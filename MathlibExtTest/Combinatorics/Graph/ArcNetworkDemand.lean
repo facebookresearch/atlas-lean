@@ -5,57 +5,43 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
+
 module
 
-import PhyslibExt.FluidDynamics.Traffic.AssignmentBridge
+import MathlibExt.Combinatorics.Graph.ArcNetworkDemand
+import MathlibExt.GameTheory.SelfishRouting
 import Mathlib.Tactic.NormNum
 
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
 /-!
-# OD assignment checks
+# OD demand checks
 
-Concrete consumers of `PhyslibExt.FluidDynamics.Traffic.AssignmentBridge`: OD node
-balance `![-6, 0, 6]` for demand `6` on the pair `(0, 2)`; feasibility of that demand
-table on two parallel supplied routes; and rejection of positive demand on the
-unreachable pair `(2, 0)`.
-
-## i. Overview
+Concrete consumers of `MathlibExt.Combinatorics.Graph.ArcNetworkDemand`: OD node
+balance `![-6, 0, 6]` for demand `6` on the pair `(0, 2)`, and rejection of positive
+demand on the unreachable pair `(2, 0)` through `unserved_of_not_reachable` and the
+generic routing-instance rejection.
 
 These are elaboration and non-vacuity checks, not new results.
-
-## ii. Key results
-
-No new definitions or results are introduced here.
-
-## iii. Table of contents
-
-- A. Balance, admission and rejection
-
-## iv. References
-
-- `PhyslibExt.FluidDynamics.Traffic.AssignmentBridge`
 -/
 
-open FluidDynamics.Traffic.AssignmentBridge
-open MathlibExt.Combinatorics.Graph.ArcNetwork
+namespace MathlibExt.Combinatorics.Graph.ArcNetwork
+
 open Matrix
 
-/-! ## A. Balance, admission and rejection -/
-
-/-- The public statement shapes of the four assignment results. -/
+/-- The public statement shapes of the two demand results. -/
 example {V E P : Type*} [Fintype V] [DecidableEq V] [Fintype E] [DecidableEq E] [Fintype P]
     {tail head : E → V} {orig dest : P → V} {edges : P → List E}
     (hwalk : ∀ p, IsArcWalk tail head (orig p) (dest p) (edges p)) {f : P → ℝ}
     {r : V × V → ℝ} (hdem : ∀ w, ∑ p with (orig p, dest p) = w, f p = r w) (v : V)
-    {w : V × V} (hw : ∀ p, (orig p, dest p) ≠ w) (hr : 0 < r w) {o d : V}
-    (hod : ¬Relation.ReflTransGen (fun u v => ∃ e, tail e = u ∧ head e = v) o d) :
+    {o d : V} (hod : ¬Relation.ReflTransGen (fun u v => ∃ e, tail e = u ∧ head e = v) o d) :
     (incidenceMatrix tail head).mulVec (edgeVolume edges f) v =
         ∑ o, r (o, v) - ∑ d, r (v, d) ∧
-      ((∃ f : P → ℝ, (∀ p, 0 ≤ f p) ∧ ∀ w, ∑ p with (orig p, dest p) = w, f p = r w) ↔
-        (∀ w, 0 ≤ r w) ∧ ∀ w, (∀ p, (orig p, dest p) ≠ w) → r w = 0) ∧
-      (¬∃ f : P → ℝ, ∀ w', ∑ p with (orig p, dest p) = w', f p = r w') ∧
       ∀ p, (orig p, dest p) ≠ (o, d) :=
   ⟨incidenceMatrix_mulVec_edgeVolume_of_demand hwalk hdem v,
-    exists_feasible_pathFlow_iff orig dest r, not_exists_pathFlow_of_unserved hw hr,
     unserved_of_not_reachable hwalk hod⟩
 
 /-- OD node balance at the example table: demand `6` on `(0, 2)` met by flows `4`, `2`
@@ -97,23 +83,6 @@ example :
   rw [incidenceMatrix_mulVec_edgeVolume_of_demand hwalk hdem]
   fin_cases v <;> simp only [Fin.sum_univ_three, Matrix.cons_val_zero, Matrix.cons_val_one,
     Matrix.head_cons] <;> norm_num [Prod.mk.injEq, Fin.ext_iff]
-
-/-- Admission at the example table: demand `5` on `(0, 2)` and `0` elsewhere is met by
-some nonnegative path flow on the two supplied routes. -/
-example :
-    ∃ f : Fin 2 → ℝ, (∀ p, 0 ≤ f p) ∧
-      ∑ p with ((0 : Fin 3), (2 : Fin 3)) = ((0, 2) : Fin 3 × Fin 3), f p = 5 := by
-  have h := (exists_feasible_pathFlow_iff (fun _ : Fin 2 => (0 : Fin 3))
-    (fun _ : Fin 2 => (2 : Fin 3))
-    (fun w => if w = (0, 2) then 5 else 0)).mpr ⟨?_, ?_⟩
-  · obtain ⟨f, hf, hdem⟩ := h
-    exact ⟨f, hf, by simpa using hdem (0, 2)⟩
-  · intro w
-    split <;> norm_num
-  · intro w hun
-    by_cases hw : w = (0, 2)
-    · exact absurd hw.symm (hun 0)
-    · simp [hw]
 
 /-- Rejection: on the network with arcs `0 : 0 → 1`, `1 : 0 → 1`, `2 : 1 → 2` only, the
 pair `(2, 0)` is unreachable, hence unserved by the routes `[0, 2]`, `[1, 2]`, and unit
@@ -157,4 +126,11 @@ example :
           fin_cases e <;> exact absurd ht (by decide)
     exact (by decide : (0 : Fin 3) ≠ 2) (hstay 0 h)
   have hunserved := unserved_of_not_reachable hwalk hunreach
-  exact not_exists_pathFlow_of_unserved hunserved (by norm_num)
+  exact
+    MathlibExt.GameTheory.SelfishRouting.RoutingInstance.not_exists_sum_eq_of_forall_commodity_ne
+      (⟨fun _ : Fin 2 => ((0 : Fin 3), (2 : Fin 3)), fun _ => (∅ : Finset (Fin 1)),
+        fun _ _ => 0⟩ :
+        MathlibExt.GameTheory.SelfishRouting.RoutingInstance (Fin 1) (Fin 3 × Fin 3) (Fin 2))
+      hunserved (by norm_num)
+
+end MathlibExt.Combinatorics.Graph.ArcNetwork
