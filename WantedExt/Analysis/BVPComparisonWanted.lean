@@ -23,7 +23,9 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.ODE.BVPComparison` — bvp_comparison (manifest `manifests/problems/bvp_comparison.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.ODE.BVPComparison` —
+bvp_comparison (manifest `manifests/problems/bvp_comparison.toml`, rev 1, submitter Kim Morrison,
+status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
@@ -61,7 +63,8 @@ boundary, where `ψ ≤ 0`; let `δ → 0`.
 /- **Comparison principle for the Dirichlet BVP.** If two functions are `C²` on an open
 interval `J` containing `[0, 1]`, satisfy `-u'' ≤ -v''` on the interior, and are ordered
 at the boundary, then `u ≤ v` throughout `[0, 1]`. -/
-/-- Source: Standard maximum-principle argument; Protter-Weinberger. Via leanprover/lean-eval@38361be, problem `bvp_comparison`. -/
+/-- Source: Standard maximum-principle argument; Protter-Weinberger. Via
+leanprover/lean-eval@38361be, problem `bvp_comparison`. -/
 public theorem_wanted bvp_comparison
     (J : Set ℝ) (hJ_open : IsOpen J) (hJ_sub : Set.Icc (0 : ℝ) 1 ⊆ J)
     (u v : ℝ → ℝ)

@@ -14,6 +14,8 @@ Original formalization by Zeina Migeed (@migeed-z); ported with permission.
 module
 
 public import CSLibExt.Computability.Languages.Congruences.Regularity
+public import Cslib.Computability.Languages.LanguageHom
+public import Cslib.Computability.Languages.RegularLanguage
 
 /-!
 # Syntactic monoids under alphabet morphisms
@@ -37,6 +39,13 @@ variable {Source : Type u} {Target : Type v}
 /-- The inverse image of a language under letterwise mapping. -/
 def alphabetPreimage (f : Source → Target) (L : Language Target) : Language Source :=
   {x | x.map f ∈ L}
+
+/-- Letterwise alphabet preimages are upstream language preimages under `List.map`.
+Use this equality to rewrite the representation explicitly; membership and identity
+simplification are provided by the alphabet-preimage lemmas. -/
+theorem alphabetPreimage_eq_preimage (f : Source → Target) (L : Language Target) :
+    alphabetPreimage f L = L.preimage (List.map f) :=
+  rfl
 
 @[simp]
 theorem mem_alphabetPreimage_iff (f : Source → Target) (L : Language Target)
@@ -115,9 +124,11 @@ theorem finite_syntacticMonoid_alphabetPreimage (f : Source → Target) (L : Lan
 /-- Regular languages are closed under alphabet preimages. -/
 theorem IsRegular.alphabetPreimage {L : Language Target} (hL : L.IsRegular)
     (f : Source → Target) : (alphabetPreimage f L).IsRegular := by
-  rw [Cslib.Language.isRegular_iff_finite_syntacticMonoid] at hL ⊢
-  let _ : Finite (SyntacticMonoid L) := hL
-  exact finite_syntacticMonoid_alphabetPreimage f L
+  let hom : Language.Hom Source Target := {
+    toFun := List.map f
+    map_nil' := rfl
+    map_append' := fun _ _ => List.map_append }
+  exact IsRegular.preimage hom hL
 
 /-- A bijection of alphabets reflects regularity as well as preserving it. -/
 theorem isRegular_alphabetPreimage_equiv_iff (e : Source ≃ Target) (L : Language Target) :

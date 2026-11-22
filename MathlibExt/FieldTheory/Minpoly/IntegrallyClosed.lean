@@ -19,6 +19,9 @@ For an integrally closed domain `R` with fraction field `K` and a field extensio
 of `K`, an element of `L` algebraic over `K` is integral over `R` if and only if its
 `K`-minimal polynomial lifts to `R`, equivalently every coefficient lies in the range
 of `algebraMap R K`.
+
+The equality `minpoly K x = (minpoly R x).map (algebraMap R K)` gives another
+characterization of integrality.
 -/
 
 variable {R K L : Type*} [CommRing R] [IsDomain R] [IsIntegrallyClosed R]
@@ -50,3 +53,26 @@ theorem isIntegral_iff_coeff_mem_range {x : L} (hx : IsAlgebraic K x) :
   rw [isIntegral_iff_mem_lifts hx, Polynomial.lifts_iff_coeff_lifts]
 
 end minpoly
+
+namespace IsIntegrallyClosed
+
+/-- Proposition 1.28 in equality form: an element integral over the fraction
+field is integral over the integrally closed domain if and only if its
+minimal polynomial over the fraction field is the image of its minimal
+polynomial over the domain. -/
+theorem minpoly_eq_map_iff_isIntegral
+    {A : Type*} [CommRing A] [IsDomain A] [IsIntegrallyClosed A]
+    {K : Type*} [Field K] [Algebra A K] [IsFractionRing A K]
+    {L : Type*} [Field L] [Algebra K L] [Algebra A L] [IsScalarTower A K L]
+    {α : L} (hα : IsIntegral K α) :
+    minpoly K α = (minpoly A α).map (algebraMap A K) ↔ IsIntegral A α := by
+  constructor
+  · intro h
+    rw [minpoly.isIntegral_iff_coeff_mem_range hα.isAlgebraic]
+    intro i
+    rw [h, Polynomial.coeff_map]
+    exact ⟨_, rfl⟩
+  · intro hInt
+    exact minpoly.isIntegrallyClosed_eq_field_fractions' K hInt
+
+end IsIntegrallyClosed
