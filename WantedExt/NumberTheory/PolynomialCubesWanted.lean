@@ -26,6 +26,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Polynomial.Basic
 public import Mathlib.Algebra.Polynomial.Degree.Defs
+public import MathlibExt.NumberTheory.PolynomialCubes
 
 set_option autoImplicit false
 
