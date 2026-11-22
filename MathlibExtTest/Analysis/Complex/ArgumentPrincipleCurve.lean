@@ -10,72 +10,16 @@ module
 
 import Mathlib.Analysis.Meromorphic.NormalForm
 import MathlibExt.Analysis.Complex.ArgumentPrincipleCurve
+import MathlibExtTest.Analysis.Complex.ResidueTheorem
 
 set_option autoImplicit false
 
 open Complex Filter Metric Set Topology
 open scoped Real
 
-/-! The counterclockwise unit circle `circlePath 0 1` satisfies every hypothesis on the curve. -/
-
-theorem range_circlePath_zero_one : range (circlePath 0 1) = sphere (0 : ℂ) 1 := by
-  refine subset_antisymm (by simpa using range_circlePath_subset (0 : ℂ) 1) fun w hw => ?_
-  rw [← abs_one, ← image_circleMap_Ioc] at hw
-  obtain ⟨θ, hθ, rfl⟩ := hw
-  have h2π : (0 : ℝ) < 2 * π := Real.two_pi_pos
-  refine ⟨⟨θ / (2 * π), div_nonneg hθ.1.le h2π.le, (div_le_one h2π).2 hθ.2⟩, ?_⟩
-  change circleMap 0 1 (2 * π * (θ / (2 * π))) = circleMap 0 1 θ
-  rw [mul_div_cancel₀ θ h2π.ne']
-
--- The inside of the unit circle is the open unit disc (as in the residue theorem tests).
-theorem inside_range_circlePath_zero_one :
-    (range (circlePath 0 1)).inside = ball (0 : ℂ) 1 := by
-  rw [range_circlePath_zero_one]
-  ext z
-  refine ⟨fun ⟨hzs, hzb⟩ => ?_, fun hz => ?_⟩
-  · rw [mem_ball_zero_iff]
-    by_contra! hz
-    have hz1 : 1 < ‖z‖ := lt_of_le_of_ne hz fun h => hzs (mem_sphere_zero_iff_norm.2 h.symm)
-    have hsub : (fun t : ℝ => (t : ℂ) * z) '' Ici 1 ⊆ (sphere 0 1)ᶜ := by
-      rintro _ ⟨t, ht, rfl⟩ h
-      rw [mem_sphere_zero_iff_norm, norm_mul, norm_real,
-        Real.norm_of_nonneg (zero_le_one.trans ht)] at h
-      nlinarith [mem_Ici.1 ht]
-    have hray : IsPreconnected ((fun t : ℝ => (t : ℂ) * z) '' Ici 1) :=
-      isPreconnected_Ici.image _ (by fun_prop : Continuous fun t : ℝ => (t : ℂ) * z).continuousOn
-    obtain ⟨C, hC⟩ := (hzb.subset (hray.subset_connectedComponentIn
-      ⟨1, mem_Ici.2 le_rfl, by simp⟩ hsub)).exists_norm_le
-    have h := hC _ ⟨max C 1, mem_Ici.2 (le_max_right C 1), rfl⟩
-    rw [norm_mul, norm_real, Real.norm_of_nonneg (zero_le_one.trans (le_max_right C 1))] at h
-    nlinarith [le_max_left C 1, le_max_right C 1]
-  · have hzs : z ∉ sphere (0 : ℂ) 1 := fun h => by
-      rw [mem_sphere_zero_iff_norm] at h
-      rw [mem_ball_zero_iff, h] at hz
-      exact lt_irrefl 1 hz
-    refine mem_inside.2 ⟨hzs, (isBounded_ball (x := (0 : ℂ)) (r := 1)).subset ?_⟩
-    have hsub : (sphere (0 : ℂ) 1)ᶜ ⊆ ball 0 1 ∪ (closedBall 0 1)ᶜ := by
-      intro w hw
-      rw [mem_compl_iff, mem_sphere_zero_iff_norm] at hw
-      rcases lt_or_gt_of_ne hw with h | h
-      · exact Or.inl (mem_ball_zero_iff.2 h)
-      · exact Or.inr fun h' => (mem_closedBall_zero_iff.1 h').not_gt h
-    exact isPreconnected_connectedComponentIn.subset_left_of_subset_union isOpen_ball
-      isClosed_closedBall.isOpen_compl (disjoint_compl_right_iff_subset.2 ball_subset_closedBall)
-      ((connectedComponentIn_subset _ _).trans hsub) ⟨z, mem_connectedComponentIn hzs, hz⟩
-
-theorem injOn_circlePath_zero_one : InjOn (circlePath 0 1) (Iio 1) := by
-  have h2π : (0 : ℝ) < 2 * π := Real.two_pi_pos
-  have hmem : ∀ u : unitInterval, u ∈ Iio 1 → 2 * π * (u : ℝ) ∈ Ico 0 (2 * π) := fun u hu =>
-    ⟨mul_nonneg h2π.le u.2.1, by
-      have : (u : ℝ) < 1 := hu
-      nlinarith⟩
-  intro s hs t ht hst
-  exact Subtype.ext (mul_left_cancel₀ h2π.ne' (injOn_circleMap_of_abs_sub_le' one_ne_zero
-    (by rw [sub_zero]) (hmem s hs) (hmem t ht) hst))
-
-theorem windingNumber_circlePath_zero_one :
-    ∀ z ∈ (range (circlePath 0 1)).inside, windingNumber (circlePath 0 1) z = 1 := fun _ hz =>
-  windingNumber_circlePath_of_mem_ball (inside_range_circlePath_zero_one ▸ hz)
+/-! The unit circle `circlePath 0 1` satisfies every hypothesis on the curve; the four facts
+(`range_circlePath_zero_one`, `inside_range_circlePath_zero_one`, `injOn_circlePath_zero_one`,
+`windingNumber_circlePath_zero_one`) are proved in the residue theorem tests. -/
 
 /-! The argument principle for `f z = z² (z - 3) / (z - 1/2)` on the unit circle. Inside the
 circle `f` has a double zero at `0` and a simple pole at `1/2`; its simple zero at `3` lies outside.
