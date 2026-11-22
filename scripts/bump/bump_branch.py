@@ -167,8 +167,11 @@ def bump_rationale(base: dict | None, ours: dict) -> str:
         rest = mine[len(theirs):]
         if not rest:
             return ""
-        if theirs[-1] in ".!?;:" or rest[0] in " .;:,":
-            return rest.lstrip(" .;:,").strip()
+        # Only at a sentence boundary: "X." + " Also ..." or "X" + ". Also ...".
+        ends_sentence = theirs[-1] in ".!?" and rest[0].isspace()
+        starts_sentence = rest[0] in ".;" and (len(rest) == 1 or rest[1].isspace())
+        if ends_sentence or starts_sentence:
+            return rest.lstrip(" .;").strip()
     return mine
 
 

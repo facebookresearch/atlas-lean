@@ -80,6 +80,11 @@ class MergeManifestTest(unittest.TestCase):
         self.assertEqual(bb.bump_rationale({"rationale": "Base."}, {"rationale": "Base. Also bump."}), "Also bump.")
         self.assertEqual(bb.bump_rationale({"rationale": "Replace Foo"}, {"rationale": "Replace Foobar with Baz."}),
                          "Replace Foobar with Baz.")
+        self.assertEqual(bb.bump_rationale({"rationale": "Use Foo"}, {"rationale": "Use Foo bar for the new toolchain"}),
+                         "Use Foo bar for the new toolchain")
+        self.assertEqual(bb.bump_rationale({"rationale": "Use Foo"}, {"rationale": "Use Foo. Also bump."}), "Also bump.")
+        self.assertEqual(bb.bump_rationale({"rationale": "Use Foo"}, {"rationale": "Use Foo, also bump."}),
+                         "Use Foo, also bump.")
         self.assertEqual(bb.bump_rationale(None, {"rationale": "Adapted."}), "Adapted.")
         self.assertEqual(bb.join_rationale("Main.", "Also bump."), "Main. Also bump.")
         self.assertEqual(bb.join_rationale("Main", "Also bump."), "Main. Also bump.")
