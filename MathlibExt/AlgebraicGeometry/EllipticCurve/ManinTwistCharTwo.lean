@@ -174,7 +174,8 @@ data for $(2, N)$: a function $d : \mathbb{Z} \to \mathbb{N}$ with $d(0) = 2$, $
 $d(n - 1) + d(n + 1) = 2 d(n) + 2$ for every integer $n$, and no integer $n$ with
 $d(n) = d(n + 1) = 0$.
 
-The proof needs only the elementary bound $N \le 2 \cdot 2 + 1$. -/
+The proof needs only the elementary bounds $1 \le N \le 2 \cdot 2 + 1$; the point at infinity
+gives the lower bound. -/
 theorem manin_degree_data_of_card_eq_two [Finite F] (hF : Nat.card F = 2)
     (W : WeierstrassCurve F) :
     Nonempty (MathlibExt.AlgebraicGeometry.EllipticCurve.ManinDegreeData
@@ -190,7 +191,8 @@ data for $(4, N)$: a function $d : \mathbb{Z} \to \mathbb{N}$ with $d(0) = 4$, $
 $d(n - 1) + d(n + 1) = 2 d(n) + 2$ for every integer $n$, and no integer $n$ with
 $d(n) = d(n + 1) = 0$.
 
-The proof needs only the elementary bound $N \le 2 \cdot 4 + 1$. -/
+The proof needs only the elementary bounds $1 \le N \le 2 \cdot 4 + 1$; the point at infinity
+gives the lower bound. -/
 theorem manin_degree_data_of_card_eq_four [Finite F] (hF : Nat.card F = 4)
     (W : WeierstrassCurve F) :
     Nonempty (MathlibExt.AlgebraicGeometry.EllipticCurve.ManinDegreeData
