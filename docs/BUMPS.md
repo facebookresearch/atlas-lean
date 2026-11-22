@@ -8,19 +8,22 @@ while main takes 100 to 300 pull requests a day through the merge queue.
 
 A bump touches many files, so main keeps conflicting with it, and new code on
 main keeps failing on the new toolchain. Its CI also starts from nothing.
-Measured on #6018 (v4.36.0):
+Measured on #6018 (v4.36.0) on 22 November 2026:
 
-- It changed 623 Lean files and 342 rows of `provenance/formal-math-sync.json`.
-  While it was open, 202 pull requests merged. Each of its first six merges of
-  main conflicted in the manifest, two also in Lean files, and the next
-  conflict came a median of 6 minutes after a merge. Docstring campaigns edit
-  the same files and rows as the bump.
+- At its head `ad8f8942` it changed 623 Lean files and 342 rows of
+  `provenance/formal-math-sync.json`. From its base (00:20 UTC) to its sixth
+  merge of main (main as of 16:00 UTC), 202 pull requests merged into main.
+- Each of its first eight merges of main conflicted in the manifest, and four
+  also in Lean files: docstring campaigns edit the same files and rows as the
+  bump. After each of the first six merges, the next pull request that
+  conflicted landed a median of 6 minutes after the newest main commit the
+  merge had brought in.
 - 7 of those 202 pull requests (3.5%) failed on the new toolchain, each fixed
   in one to four lines.
 - No cached build matches the new pins, because `ci.yml` keys its cache on
   `lean-toolchain` and `lake-manifest.json`. Its only complete CI run took 316
-  minutes against a 360-minute limit, and every push cancelled the run before
-  it.
+  minutes against a 360-minute limit, and each new push cancelled the run in
+  progress.
 
 The merge queue solves the last-minute race: once the bump is at the front of
 the queue, nothing can merge ahead of it, and every pull request behind it is
@@ -29,13 +32,13 @@ main, and gives the queue a warm build.
 
 ## When
 
-Lean releases about monthly (v4.34.0 on 14 September 2026, v4.35.0 on 12
-October, v4.36.0 on 16 November) and publishes the next release candidate a day
-or two later. Mathlib and CSLib tag a release within a day of Lean, Physlib
-three to eleven days later, and Physlib tags no release candidates. `guard`
-accepts only a forward move to a final release that every pinned dependency has
-tagged, so the bump can land once the last of them, usually Physlib, has tagged
-it.
+Lean has released about monthly (v4.34.0 on 14 September 2026, v4.35.0 on 12
+October, v4.36.0 on 16 November), with the next release candidate a day or two
+later. Mathlib and CSLib tagged those releases within a day of Lean, and
+Physlib three to eleven days later; Physlib tagged no release candidate for
+them. `guard` accepts only a forward move to a final release that every pinned
+dependency has tagged, so the bump can land once the last of them, usually
+Physlib, has tagged it.
 
 ## Who
 
@@ -48,10 +51,9 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
 
 1. **Start on the release candidate.** When Lean, Mathlib and CSLib have tagged
    `vX.Y.0-rc1`, build ATLAS on them in a preview branch that is never merged,
-   and fix what fails. Physlib tags only final releases and moves to a new
-   toolchain only then, so leave it at the current release and skip
-   `PhyslibExt` until it moves. Upstream API changes mostly arrive with the
-   first candidate.
+   and fix what fails. If Physlib has no matching tag yet, leave it at the
+   current release and skip `PhyslibExt` until it has one. Upstream API changes
+   mostly arrive with the first candidate.
 
 2. **Land fixes that build on both toolchains.** Many fixes also build on the
    current toolchain: explicit arguments, fully qualified names, type
@@ -78,14 +80,16 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
    `merge-main` resolves the manifest row by row. A row that only one side
    changed takes that side's row. A row that both sides changed starts from
    main's row, takes the hash of the merged file, and appends the bump's
-   rationale. With `--adjacent` it also merges a Lean file where the two sides
-   changed different lines that merely touch, which is how docstring campaigns
-   on main usually meet the bump's edits. It leaves every other conflict to
-   you: resolve it, `git add` it, then run `bump_branch.py resolve-manifest`.
-   Re-run any fixer the bump needs for files main adds, such as a rename
-   script. Then build: what fails is new code from main, and
-   `bump_branch.py breakage <build log>` names the pull requests that changed
-   each failing module. Fix, commit, push.
+   rationale. With `--adjacent` it also merges a file where the two sides
+   replaced different lines that merely touch, which is how docstring
+   campaigns on main usually meet the bump's edits. It leaves every other
+   conflict to you: resolve it, `git add` it, then run
+   `bump_branch.py resolve-manifest`. Before committing it checks the manifest
+   against main on the exact tree it would commit. Re-run any fixer the bump
+   needs for files main adds, such as a rename script. Then build: what fails
+   is mostly new code from main, and `bump_branch.py breakage <build log>`
+   lists, for each failing module, the main pull requests that changed it: the
+   candidates. Fix, commit, push.
 
 5. **Warm CI right before queueing.** Dispatch `bump-cache.yml` from main with
    the pull request number and the head you reviewed:
@@ -95,12 +99,14 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
      -f pull-request=<number> -f head-sha=<full head SHA>
    ```
 
-   It builds and checks that head as CI does and saves the build where the
-   bump's own CI runs, its merge group and the groups behind it find it. The
-   first warm-up for a release is a cold build, about five hours on a CI runner.
-   A run that runs out of time saves what it built, and the next dispatch
-   continues from there. Main saves a new cache entry every 30 to 60 minutes
-   and about five fit, so an entry lasts a few hours unless a build uses it.
+   It runs main's bump guard on that head first, then builds and checks it as
+   CI does, and saves the build where the bump's own CI runs, its merge group
+   and the groups behind it find it. The first warm-up for a release is a cold
+   build, about five hours on a CI runner. A run that runs out of time saves a
+   checkpoint that only another dispatch for the same head uses: dispatch again
+   with the same SHA. Count on the warm cache only once a run reports `Saved`.
+   On 22 November main saved a new cache entry every 30 to 60 minutes and about
+   five fitted, so an entry lasted a few hours unless a build used it.
 
 6. **Queue it at the front of the queue.** Queue it right after a merge of main
    whose required checks passed, at a quiet hour: 11:00 to 13:00 UTC merges

@@ -7,28 +7,31 @@
 
     scripts/bump/bump_branch.py merge-main [--main REF] [--no-commit] [--adjacent]
         Merge main into the checked-out bump branch with a merge commit (never a rebase,
-        so the bump commit stays exactly what pinned_bump.py produced), resolve
-        provenance/formal-math-sync.json row by row, and commit. With --adjacent, a
-        conflicted file whose two sides changed different lines that merely touch (main
-        restated a docstring right above a declaration the bump changed) is merged too.
-        Other conflicts are left for you: resolve them, `git add` them, then run
-        `resolve-manifest`. Build before pushing either way.
+        so the bump commit stays exactly what pinned_bump.py produced) and resolve
+        provenance/formal-math-sync.json row by row. With --adjacent, a conflicted text
+        file whose two sides changed different, neighbouring lines (main restated a
+        docstring right above a declaration the bump changed) is merged too. Other
+        conflicts are left for you: resolve them, `git add` them, then run
+        `resolve-manifest`. Before committing, the merge is checked with
+        scripts/check_formal_math_sync.py against main, on the exact tree that would be
+        committed. Build before pushing either way.
 
     scripts/bump/bump_branch.py resolve-manifest [--no-commit] [--adjacent]
-        Finish a merge that `merge-main` left open: resolve the manifest once every other
-        conflicted file is resolved and staged, then commit.
+        Finish a merge that `merge-main` left open.
 
     scripts/bump/bump_branch.py breakage LOG [--main REF] [--since REV]
         Read a failed `lake build` log and list each failing module with the main pull
-        requests that changed it since REV (default: the main commits that the latest
-        merge of main brought in), so the fix can name them.
+        requests that changed its file since REV (default: the main commits that the
+        latest merge of main brought in): candidates for the cause, not proof of it.
 
 REF defaults to origin/main; fetch it first. The manifest rule: a row only one side
-changed takes that side's row. A row both sides changed starts from main's row, takes the
-SHA-256 of the merged file, and appends the bump's rationale, what the bump added to the
-base rationale, to main's; this needs both rows `diverged` with the same upstream fields,
-and the merged file resolved and staged. Anything else stops with the rows to resolve by
-hand (`scripts/check_formal_math_sync.py --record-divergence`).
+changed takes that side's row. A row both sides changed needs both rows `diverged` and
+the file resolved and staged. If the staged file is main's version, main's row is kept;
+if it is the bump's, the bump's row. Otherwise the row starts from main's, takes the
+hash of the staged file, merges its other fields three ways, and appends what the bump
+added to the base rationale. Anything else, such as a removed row, stops with the rows
+to resolve by hand; the manifest is then left parseable, with main's version of those
+rows, for `scripts/check_formal_math_sync.py --record-divergence` or `--retire`.
 """
 
 from __future__ import annotations
@@ -37,6 +40,7 @@ import argparse
 import difflib
 import json
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -47,10 +51,12 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import check_formal_math_sync as fms  # noqa: E402  (one manifest format and hash for every writer)
 
 MANIFEST = fms.MANIFEST
+CHECKER = "scripts/check_formal_math_sync.py"
 PR_NUMBER = re.compile(r"(?:Merge pull request #(\d+)|\(#(\d+)\)\s*$)")
 # `lake build` marks a failed job `✖ [12/345] Building Some.Module (8.0s)`.
-FAILED_JOB = re.compile(r"✖ \[\d+/\d+\] (?:Building|Built|Compiling|Running) ([A-Za-z0-9_.'«»]+)")
-ERROR_FILE = re.compile(r"^error: (?:\./)*([A-Za-z0-9_/'.-]+\.lean):\d+:\d+:", re.M)
+FAILED_JOB = re.compile(r"✖ \[\d+/\d+\] (?:Building|Built|Compiling|Running) (\S+)")
+ERROR_FILE = re.compile(r"^error: (?:\./)*(\S+?\.lean):\d+:\d+:", re.M)
+MISSING = object()
 
 
 class Stop(Exception):
@@ -68,8 +74,17 @@ def git(*args: str, check: bool = True) -> subprocess.CompletedProcess:
     return proc
 
 
+def git_bytes(*args: str) -> bytes | None:
+    proc = subprocess.run(["git", *args], cwd=REPO, capture_output=True)
+    return proc.stdout if proc.returncode == 0 else None
+
+
 def rev(ref: str) -> str:
-    return git("rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}").stdout.strip()
+    return git("rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}", check=False).stdout.strip()
+
+
+def merge_head() -> str:
+    return git("rev-parse", "-q", "--verify", "MERGE_HEAD", check=False).stdout.strip()
 
 
 def pr_numbers(subjects: list[str]) -> list[int]:
@@ -86,8 +101,8 @@ def manifest_rows(text: str) -> dict[str, dict]:
 
 
 def show(spec: str) -> str | None:
-    proc = git("show", spec, check=False)
-    return proc.stdout if proc.returncode == 0 else None
+    data = git_bytes("show", spec)
+    return None if data is None else data.decode("utf-8")
 
 
 # ---------------------------------------------------------------- status
@@ -99,11 +114,11 @@ def status(main_ref: str) -> dict:
         raise Stop(f"{main_ref} is not a commit; run `git fetch origin main` first")
     base = git("merge-base", head, main).stdout.strip()
     subjects = git("log", "--first-parent", "--format=%s", f"{base}..{main}").stdout.splitlines()
-    tree = git("merge-tree", "--write-tree", "--name-only", "--no-messages", head, main, check=False)
+    tree = git("merge-tree", "--write-tree", "--name-only", "-z", "--no-messages", head, main, check=False)
     if tree.returncode not in (0, 1):
         raise Stop(f"git merge-tree failed:\n{tree.stderr.strip()}")
-    conflicts = tree.stdout.splitlines()[1:] if tree.returncode == 1 else []
-    changed = git("diff", "--name-only", "--no-renames", base, head).stdout.splitlines()
+    conflicts = [p for p in tree.stdout.split("\0")[1:] if p] if tree.returncode == 1 else []
+    changed = [p for p in git("diff", "--name-only", "--no-renames", "-z", base, head).stdout.split("\0") if p]
     rows_changed = 0
     base_text, head_text = show(f"{base}:{MANIFEST}"), show(f"{head}:{MANIFEST}")
     if base_text and head_text:
@@ -144,13 +159,17 @@ def print_status(report: dict) -> None:
 
 
 def bump_rationale(base: dict | None, ours: dict) -> str:
-    """What the bump's row says beyond the base row's rationale: all of it when the bump
-    rewrote the rationale, the appended sentences when it extended it."""
+    """What the bump's row says beyond the base row's rationale: the sentences it appended,
+    or all of it when it rewrote the rationale."""
     mine = ours.get("rationale", "").strip()
     theirs = (base or {}).get("rationale", "").strip()
     if theirs and mine.startswith(theirs):
-        mine = mine[len(theirs):]
-    return mine.lstrip(" .;,").strip()
+        rest = mine[len(theirs):]
+        if not rest:
+            return ""
+        if theirs[-1] in ".!?;:" or rest[0] in " .;:,":
+            return rest.lstrip(" .;:,").strip()
+    return mine
 
 
 def join_rationale(main_rationale: str, addition: str) -> str:
@@ -167,71 +186,115 @@ def join_rationale(main_rationale: str, addition: str) -> str:
     return f"{main_rationale} Also: {addition}"
 
 
-def merge_field(name: str, base, ours, theirs):
+def merge_value(base, ours, theirs):
+    """Three-way merge of one value (MISSING when absent); MISSING marks a clash too."""
     if ours == theirs or theirs == base:
-        return ours
+        return ours, True
     if ours == base:
-        return theirs
-    raise Stop(f"{MANIFEST}: both sides changed the top-level field {name!r}; resolve it by hand")
+        return theirs, True
+    return MISSING, False
 
 
-def merge_manifest(base_text: str, ours_text: str, theirs_text: str, read_file) -> tuple[str, dict]:
-    """Row-level three-way merge of the manifest; `read_file(path)` returns the merged file's bytes,
-    or None when that file is still unresolved."""
+def merge_both_changed(path: str, b, o: dict, t: dict, staged) -> tuple[dict | None, str, str | None]:
+    """The merged row for a row both sides changed: (row, whose, problem)."""
+    if o.get("disposition") != "diverged" or t.get("disposition") != "diverged":
+        return None, "", f"dispositions {o.get('disposition')} (bump) and {t.get('disposition')} (main)"
+    which, data = staged(path)
+    if which is None:
+        return None, "", "the file is not resolved and staged, or differs from what is staged"
+    if which == "theirs":
+        return t, "main", None
+    if which == "ours":
+        return o, "bump", None
+    row = {}
+    for key in dict.fromkeys(list(t) + list(o) + list(b or {})):
+        if key in ("published_sha256", "rationale"):
+            continue
+        value, ok = merge_value((b or {}).get(key, MISSING), o.get(key, MISSING), t.get(key, MISSING))
+        if not ok:
+            return None, "", f"both sides changed its {key!r}"
+        if value is not MISSING:
+            row[key] = value
+    addition = bump_rationale(b, o)
+    rationale = join_rationale(t.get("rationale", ""), addition)
+    if not addition or rationale == t.get("rationale", "").strip():
+        return None, "", "the bump's rationale adds nothing to main's; write one for the merged change"
+    row["published_sha256"] = fms.sha256(data)
+    row["rationale"] = rationale
+    return row, "both", None
+
+
+def merge_manifest(base_text: str, ours_text: str, theirs_text: str, staged) -> tuple[str, dict, list[str]]:
+    """Row-level three-way merge of the manifest: (text, counts, problems).
+
+    `staged(path)` says what the staged file is: ("ours" | "theirs" | "merged", bytes), or
+    (None, None) while it is unresolved. With problems, the text still parses: each such row
+    is main's (or, if main has none, the bump's), for a person to finish."""
     base, ours, theirs = (json.loads(t) for t in (base_text, ours_text, theirs_text))
-    merged = {}
-    for key in list(theirs) + [k for k in ours if k not in theirs]:
-        if key != "rows":
-            merged[key] = merge_field(key, base.get(key), ours.get(key), theirs.get(key))
+    problems, merged = [], {}
+    for key in dict.fromkeys(list(theirs) + list(ours) + list(base)):
+        if key == "rows":
+            continue
+        value, ok = merge_value(base.get(key, MISSING), ours.get(key, MISSING), theirs.get(key, MISSING))
+        if not ok:
+            problems.append(f"top-level field {key!r}: both sides changed it")
+            value = theirs.get(key, MISSING)
+        if value is not MISSING:
+            merged[key] = value
     rows_b = {row["path"]: row for row in base["rows"]}
     rows_o = {row["path"]: row for row in ours["rows"]}
     rows_t = {row["path"]: row for row in theirs["rows"]}
     counts = {"main": 0, "bump": 0, "both": 0}
-    problems, rows = [], {}
+    rows = {}
     for path in sorted(set(rows_b) | set(rows_o) | set(rows_t)):
-        b, o, t = rows_b.get(path), rows_o.get(path), rows_t.get(path)
+        b, o, t = (rows.get(path, MISSING) for rows in (rows_b, rows_o, rows_t))
+        fallback = next((r for r in (t, o, b) if r is not MISSING), MISSING)
         if o == t:
-            if o is not None:
-                rows[path] = o
+            rows[path] = o
+            continue
+        if MISSING in (o, t) and b is not MISSING:
+            side = "the bump" if o is MISSING else "main"
+            problems.append(f"{path}: {side} removed the row; rows are never removed (use --retire)")
+            rows[path] = fallback
             continue
         if o == b:
-            counts["main"] += 1
-            if t is not None:
-                rows[path] = t
+            rows[path], counts["main"] = t, counts["main"] + 1
             continue
         if t == b:
-            counts["bump"] += 1
-            if o is not None:
-                rows[path] = o
+            rows[path], counts["bump"] = o, counts["bump"] + 1
             continue
-        why = None
-        if o is None or t is None:
-            why = "one side removed the row"
-        elif o.get("disposition") != "diverged" or t.get("disposition") != "diverged":
-            why = f"dispositions {o.get('disposition')} (bump) and {t.get('disposition')} (main)"
-        elif any(o.get(k) != t.get(k) for k in ("upstream_sha256", "upstream_commit")):
-            why = "the two rows record different upstream versions"
-        if why is None:
-            data = read_file(path)
-            if data is None:
-                why = "the file is not resolved and staged yet"
-        if why is None:
-            rationale = join_rationale(t.get("rationale", ""), bump_rationale(b, o))
-            row = dict(t)
-            row["published_sha256"] = fms.sha256(data)
-            row["rationale"] = rationale
-            if row["published_sha256"] != t.get("published_sha256") and rationale == t.get("rationale", "").strip():
-                why = "main's rationale already says what the bump's rationale adds; write one for the bump's change"
-            else:
-                rows[path] = row
-                counts["both"] += 1
-                continue
-        problems.append(f"{path}: {why}")
-    if problems:
-        raise Stop("rows to resolve by hand (scripts/check_formal_math_sync.py --record-divergence or --retire):\n  "
-                   + "\n  ".join(problems))
-    merged["rows"] = [rows[path] for path in sorted(rows)]
-    return fms.dump_manifest(merged), counts
+        if MISSING in (o, t, b):
+            problems.append(f"{path}: both sides added a row, differently")
+            rows[path] = fallback
+            continue
+        row, whose, problem = merge_both_changed(path, b, o, t, staged)
+        if problem:
+            problems.append(f"{path}: {problem}")
+            rows[path] = fallback
+        else:
+            rows[path], counts[whose] = row, counts[whose] + 1
+    merged["rows"] = [rows[path] for path in sorted(rows) if rows[path] is not MISSING]
+    return fms.dump_manifest(merged), counts, problems
+
+
+def unmerged_paths() -> list[str]:
+    out = git("diff", "--name-only", "--diff-filter=U", "-z").stdout
+    return [path for path in out.split("\0") if path]
+
+
+def staged_state(path: str):
+    """What the staged, resolved file is, compared with the two sides of the merge."""
+    data = git_bytes("show", f":0:{path}")
+    if data is None or git("diff", "--quiet", "--", path, check=False).returncode != 0:
+        return None, None
+    if data == git_bytes("show", f"MERGE_HEAD:{path}"):
+        return "theirs", data
+    if data == git_bytes("show", f"HEAD:{path}"):
+        return "ours", data
+    return "merged", data
+
+
+# ---------------------------------------------------------------- neighbouring lines
 
 
 def edits(base: list[str], side: list[str]) -> list[tuple[int, int, list[str]]]:
@@ -241,24 +304,26 @@ def edits(base: list[str], side: list[str]) -> list[tuple[int, int, list[str]]]:
 
 
 def merge_adjacent(base: str, ours: str, theirs: str) -> str | None:
-    """Three-way merge that also accepts changes to neighbouring lines: main restated a
-    docstring right above a declaration the bump changed, for instance. None, for a
-    person to resolve, when the sides change the same base lines, insert at the same
-    place or inside the other's change, or when one side's change next to the other's is
-    a pure deletion (what was inserted beside a deleted line may have belonged to it)."""
+    """Three-way merge of one conflict that only puts two replacements side by side: main
+    rewrote a docstring right above a declaration the bump changed, for instance. None, for
+    a person, when the sides change the same lines, when either side inserts or deletes next
+    to the other's change, or when both sides write the same line (one change may contain
+    the other)."""
     b, o, t = (text.splitlines(keepends=True) for text in (base, ours, theirs))
     mine, other = edits(b, o), edits(b, t)
     for s1, e1, new1 in mine:
         for s2, e2, new2 in other:
             if s1 < e2 and s2 < e1:  # both change some of the same lines
                 return None
-            touching = e1 == s2 or e2 == s1 or (s1 == e1 and s2 <= s1 <= e2) or (s2 == e2 and s1 <= s2 <= e1)
-            if not touching:
+            if s1 == e1 or s2 == e2:  # an insertion
+                if s2 <= s1 <= e2 or s1 <= s2 <= e1:
+                    return None
                 continue
-            if s1 == e1 == s2 == e2 or (s1 == e1 and s2 < s1 < e2) or (s2 == e2 and s1 < s2 < e1):
-                return None
-            if not new1 or not new2:
-                return None
+            if e1 == s2 or e2 == s1:  # two replacements, side by side
+                if not new1 or not new2:
+                    return None
+                if {line.strip() for line in new1 if line.strip()} & {line.strip() for line in new2 if line.strip()}:
+                    return None
     merged, position = [], 0
     for start, end, new in sorted(mine + other, key=lambda change: (change[0], change[1])):
         merged += b[position:start] + new
@@ -266,30 +331,39 @@ def merge_adjacent(base: str, ours: str, theirs: str) -> str | None:
     return "".join(merged + b[position:])
 
 
-MARKER = 31  # conflict-marker width: longer than any run of `<`, `=` or `>` in a Lean source
+def marker_size(*texts: str) -> int:
+    """A conflict-marker width that no line of the inputs can be mistaken for."""
+    longest = 0
+    for text in texts:
+        for char in "<|=>":
+            for run in re.findall(r"(?m)^" + re.escape(char) + "+", text):
+                longest = max(longest, len(run))
+    return max(32, longest + 1)
 
 
 def merge_conflicts_adjacent(base: str, ours: str, theirs: str) -> str | None:
     """Git's own merge of the file, with each conflict block that only joins changes to
-    neighbouring lines merged by `merge_adjacent`; None if any block needs a person."""
+    neighbouring lines merged by `merge_adjacent`; None if any block needs a person, or if the
+    result cannot be read back unambiguously."""
+    size = marker_size(base, ours, theirs)
     with tempfile.TemporaryDirectory() as tmp:
         names = []
         for name, text in (("ours", ours), ("base", base), ("theirs", theirs)):
             path = Path(tmp) / name
-            path.write_text(text, encoding="utf-8")
+            path.write_bytes(text.encode("utf-8"))
             names.append(str(path))
-        proc = subprocess.run(["git", "merge-file", "-p", "--diff3", f"--marker-size={MARKER}",
-                               "-L", "ours", "-L", "base", "-L", "theirs", *names],
-                              capture_output=True, text=True)
+        proc = subprocess.run(["git", "merge-file", "-p", "--diff3", f"--marker-size={size}",
+                               "-L", "ours", "-L", "base", "-L", "theirs", *names], capture_output=True)
     if proc.returncode < 0 or proc.returncode > 127:
-        raise Stop(f"git merge-file failed:\n{proc.stderr.strip()}")
+        raise Stop(f"git merge-file failed:\n{proc.stderr.decode('utf-8', 'replace').strip()}")
+    output = proc.stdout.decode("utf-8")
     if proc.returncode == 0:
-        return proc.stdout
-    starts, middle, separator, ends = ("<" * MARKER + " ours", "|" * MARKER + " base", "=" * MARKER,
-                                       ">" * MARKER + " theirs")
-    out, block, state = [], {"ours": [], "base": [], "theirs": []}, None
-    for line in proc.stdout.splitlines(keepends=True):
-        bare = line.rstrip("\n")
+        return output
+    starts, middle, separator, ends = ("<" * size + " ours", "|" * size + " base", "=" * size,
+                                       ">" * size + " theirs")
+    out, block, state, blocks = [], {"ours": [], "base": [], "theirs": []}, None, 0
+    for line in output.splitlines(keepends=True):
+        bare = line.rstrip("\r\n")
         if state is None and bare == starts:
             state = "ours"
         elif state == "ours" and bare == middle:
@@ -301,72 +375,108 @@ def merge_conflicts_adjacent(base: str, ours: str, theirs: str) -> str | None:
             if merged is None:
                 return None
             out.append(merged)
+            blocks += 1
             block, state = {"ours": [], "base": [], "theirs": []}, None
         elif state is None:
             out.append(line)
         else:
             block[state].append(line)
-    return None if state is not None else "".join(out)
+    if state is not None or blocks != proc.returncode:
+        return None
+    return "".join(out)
+
+
+def stage_entries(path: str) -> dict[int, str]:
+    """The unmerged index entries of `path`: stage number -> mode."""
+    entries = {}
+    for entry in git("ls-files", "-u", "-z", "--", path).stdout.split("\0"):
+        if entry:
+            meta = entry.split("\t", 1)[0].split()
+            entries[int(meta[2])] = meta[0]
+    return entries
 
 
 def resolve_adjacent(paths: list[str]) -> list[str]:
     """Resolve and stage each conflicted file whose conflicts only join changes to
-    neighbouring lines; return the files that still need a person."""
+    neighbouring lines; return the files that still need a person. Only regular text files
+    in UTF-8, with all three versions ending in a newline, are tried."""
     left = []
     for path in paths:
-        texts = [show(f":{stage}:{path}") for stage in (1, 2, 3)]
-        merged = None if any(text is None for text in texts) else merge_conflicts_adjacent(*texts)
+        texts = None
+        if stage_entries(path) == {1: "100644", 2: "100644", 3: "100644"}:
+            blobs = [git_bytes("show", f":{stage}:{path}") for stage in (1, 2, 3)]
+            try:
+                texts = [blob.decode("utf-8") for blob in blobs]
+            except (AttributeError, UnicodeDecodeError):
+                texts = None
+        if texts is None or any(text and not text.endswith("\n") for text in texts):
+            left.append(path)
+            continue
+        merged = merge_conflicts_adjacent(*texts)
         if merged is None:
             left.append(path)
             continue
-        (REPO / path).write_text(merged, encoding="utf-8")
+        (REPO / path).write_bytes(merged.encode("utf-8"))
         git("add", "--", path)
         print(f"{path}: merged changes to neighbouring lines")
     return left
 
 
-def unmerged_paths() -> list[str]:
-    return git("diff", "--name-only", "--diff-filter=U").stdout.splitlines()
+# ---------------------------------------------------------------- merge
 
 
-def staged_bytes(path: str) -> bytes | None:
-    """The file as staged at stage 0 (resolved), or None while it is unmerged."""
-    proc = subprocess.run(["git", "show", f":0:{path}"], cwd=REPO, capture_output=True)
-    return proc.stdout if proc.returncode == 0 else None
+def check_candidate() -> None:
+    """Check the manifest on the exact tree that would be committed, against main, the
+    way pull request CI checks it: in a scratch worktree of a temporary merge commit."""
+    tree = git("write-tree").stdout.strip()
+    candidate = git("commit-tree", tree, "-p", "HEAD", "-p", "MERGE_HEAD", "-m", "candidate merge").stdout.strip()
+    if git_bytes("cat-file", "-e", f"{candidate}:{CHECKER}") is None:
+        raise Stop(f"{CHECKER} is missing from the merge; cannot check the manifest")
+    scratch = Path(tempfile.mkdtemp(prefix="bump-branch-check-"))
+    try:
+        git("worktree", "add", "--detach", "--quiet", str(scratch / "tree"), candidate)
+        check = subprocess.run([sys.executable, str(scratch / "tree" / CHECKER), "--root", str(scratch / "tree"),
+                                "--base", merge_head()], cwd=scratch / "tree", capture_output=True, text=True)
+    finally:
+        git("worktree", "remove", "--force", str(scratch / "tree"), check=False)
+        shutil.rmtree(scratch, ignore_errors=True)
+    if check.returncode != 0:
+        raise Stop(f"the merge does not pass {CHECKER} against main; nothing was committed:\n"
+                   f"{check.stdout.strip()}\n{check.stderr.strip()}".rstrip())
+    print(check.stdout.strip().splitlines()[-1] if check.stdout.strip() else f"{CHECKER} passed")
 
 
 def resolve_manifest(commit: bool, adjacent: bool = False) -> int:
-    if not git("rev-parse", "-q", "--verify", "MERGE_HEAD", check=False).stdout.strip():
+    if not merge_head():
         raise Stop("no merge in progress; run `merge-main`")
     unmerged = unmerged_paths()
     others = [path for path in unmerged if path != MANIFEST]
     if adjacent and others:
         others = resolve_adjacent(others)
-    if MANIFEST in unmerged:
-        if others:
-            print("Resolve these first, `git add` them, then run resolve-manifest again:")
-            for path in others:
-                print(f"  {path}")
-            return 3
-        texts = [show(f":{stage}:{MANIFEST}") for stage in (1, 2, 3)]
-        if any(text is None for text in texts):
-            raise Stop(f"{MANIFEST} has no common base version; resolve it by hand")
-        merged, counts = merge_manifest(*texts, read_file=staged_bytes)
-        (REPO / MANIFEST).write_text(merged, encoding="utf-8")
-        git("add", "--", MANIFEST)
-        print(f"{MANIFEST}: {counts['main']} row(s) from main, {counts['bump']} from the bump, "
-              f"{counts['both']} changed on both sides re-recorded")
-    elif others:
-        print("Resolve these, `git add` them, then commit:")
+    if others:
+        print("Resolve these, `git add` them, then run resolve-manifest again:")
         for path in others:
             print(f"  {path}")
         return 3
-    checker = REPO / "scripts" / "check_formal_math_sync.py"
-    if checker.is_file():
-        check = subprocess.run([sys.executable, str(checker)], cwd=REPO)
-        if check.returncode != 0:
-            print("The merged manifest does not check; fix it before committing.", file=sys.stderr)
-            return 1
+    if MANIFEST in unmerged:
+        texts = [show(f":{stage}:{MANIFEST}") for stage in (1, 2, 3)]
+        if any(text is None for text in texts):
+            raise Stop(f"{MANIFEST} has no common base version; resolve it by hand")
+        merged, counts, problems = merge_manifest(*texts, staged=staged_state)
+        (REPO / MANIFEST).write_text(merged, encoding="utf-8")
+        if problems:
+            print(f"{MANIFEST}: rows to finish by hand (main's version is in place; record them with "
+                  f"{CHECKER} --record-divergence or --retire, then `git add {MANIFEST}` and run "
+                  "resolve-manifest again):")
+            for problem in problems:
+                print(f"  {problem}")
+            return 3
+        git("add", "--", MANIFEST)
+        print(f"{MANIFEST}: {counts['main']} row(s) from main, {counts['bump']} from the bump, "
+              f"{counts['both']} changed on both sides re-recorded")
+    if git("diff", "--quiet", check=False).returncode != 0:
+        raise Stop("some tracked files differ from what is staged; `git add` or restore them first")
+    check_candidate()
     if commit:
         git("commit", "--no-edit")
         print(f"committed {rev('HEAD')[:12]}")
@@ -377,7 +487,7 @@ def merge_main(main_ref: str, commit: bool, adjacent: bool = False) -> int:
     main = rev(main_ref)
     if not main:
         raise Stop(f"{main_ref} is not a commit; run `git fetch origin main` first")
-    if git("rev-parse", "-q", "--verify", "MERGE_HEAD", check=False).stdout.strip():
+    if merge_head():
         raise Stop("a merge is already in progress; finish it with `resolve-manifest` or abort it")
     if git("status", "--porcelain", "--untracked-files=no").stdout.strip():
         raise Stop("the working tree has uncommitted changes; commit or stash them first")
@@ -401,16 +511,20 @@ def failing_modules(log: str) -> list[str]:
 
 
 def default_range(main_ref: str) -> str:
-    """The main commits the latest merge of main brought in (or is bringing in)."""
-    merge_head = git("rev-parse", "-q", "--verify", "MERGE_HEAD", check=False).stdout.strip()
-    if merge_head:
-        return f"{git('merge-base', 'HEAD', merge_head).stdout.strip()}..{merge_head}"
+    """The main commits the latest merge of main into this branch brought in (or is bringing
+    in, during a merge). Only the branch's own merges count, not main's history."""
+    pending = merge_head()
+    if pending:
+        return f"{git('merge-base', 'HEAD', pending).stdout.strip()}..{pending}"
     main = rev(main_ref)
-    for line in git("log", "--first-parent", "--merges", "--format=%H %P", "HEAD").stdout.splitlines():
-        commit, first, second = line.split()[:3]
-        if git("merge-base", "--is-ancestor", second, main, check=False).returncode == 0:
-            return f"{git('merge-base', first, second).stdout.strip()}..{second}"
-    raise Stop("the branch has no merge of main yet; pass --since")
+    if not main:
+        raise Stop(f"{main_ref} is not a commit; run `git fetch origin main` first")
+    log = git("log", "--first-parent", "--merges", "--format=%H %P", f"{main}..HEAD").stdout
+    for line in log.splitlines():
+        parents = line.split()[1:]
+        if len(parents) >= 2 and git("merge-base", "--is-ancestor", parents[1], main, check=False).returncode == 0:
+            return f"{git('merge-base', parents[0], parents[1]).stdout.strip()}..{parents[1]}"
+    raise Stop("this branch has no merge of main yet; pass --since")
 
 
 def breakage(log_path: Path, main_ref: str, since: str | None) -> int:
@@ -418,12 +532,22 @@ def breakage(log_path: Path, main_ref: str, since: str | None) -> int:
     if not modules:
         print("no failing module found in the log")
         return 0
-    span = f"{since}..{rev(main_ref)}" if since else default_range(main_ref)
-    print(f"main commits in {span[:12]}..{span.split('..')[1][:12]}")
+    if since:
+        main = rev(main_ref)
+        if not main:
+            raise Stop(f"{main_ref} is not a commit; run `git fetch origin main` first")
+        span = f"{since}..{main}"
+    else:
+        span = default_range(main_ref)
+    start, end = span.split("..")
+    print(f"candidate pull requests: main commits {start[:12]}..{end[:12]} that changed each failing module")
     for module in modules:
         path = module.replace(".", "/") + ".lean"
+        print(module)
+        if git_bytes("cat-file", "-e", f"HEAD:{path}") is None:
+            print("  not a file of this repository (an upstream module, or a missing import)")
+            continue
         lines = git("log", "--first-parent", "--format=%h %s", span, "--", path).stdout.splitlines()
-        print(f"{module}")
         if not lines:
             print("  not changed on main in that range: a dependency changed, or the bump itself breaks it")
         for line in lines:
@@ -437,15 +561,14 @@ def main(argv: list[str] | None = None) -> int:
     p_status = sub.add_parser("status", help="how far the bump branch is behind main")
     p_status.add_argument("--main", default="origin/main")
     p_status.add_argument("--json", action="store_true")
-    p_merge = sub.add_parser("merge-main", help="merge main and resolve the manifest")
-    p_merge.add_argument("--main", default="origin/main")
-    p_merge.add_argument("--no-commit", action="store_true")
-    p_merge.add_argument("--adjacent", action="store_true",
-                         help="also merge conflicts where the two sides changed disjoint neighbouring lines")
-    p_resolve = sub.add_parser("resolve-manifest", help="finish a merge that merge-main left open")
-    p_resolve.add_argument("--no-commit", action="store_true")
-    p_resolve.add_argument("--adjacent", action="store_true",
-                           help="also merge conflicts where the two sides changed disjoint neighbouring lines")
+    for name, help_text in (("merge-main", "merge main and resolve the manifest"),
+                            ("resolve-manifest", "finish a merge that merge-main left open")):
+        p = sub.add_parser(name, help=help_text)
+        if name == "merge-main":
+            p.add_argument("--main", default="origin/main")
+        p.add_argument("--no-commit", action="store_true")
+        p.add_argument("--adjacent", action="store_true",
+                       help="also merge conflicts where the two sides changed different, neighbouring lines")
     p_break = sub.add_parser("breakage", help="name the main pull requests behind failing modules")
     p_break.add_argument("log", type=Path)
     p_break.add_argument("--main", default="origin/main")
@@ -453,8 +576,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     global REPO
     try:
-        top = git("rev-parse", "--show-toplevel").stdout.strip()
-        REPO = Path(top)
+        REPO = Path(git("rev-parse", "--show-toplevel").stdout.strip())
         if args.command == "status":
             report = status(args.main)
             print(json.dumps(report, indent=2)) if args.json else print_status(report)
