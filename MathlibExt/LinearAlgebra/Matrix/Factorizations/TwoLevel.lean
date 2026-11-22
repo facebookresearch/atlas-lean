@@ -58,24 +58,6 @@ private theorem fin_two_sqrt_ne_zero {c₁ c₂ : ℂ}
   have e2 : c₂ = 0 := norm_eq_zero.mp hc2
   exact h ⟨e1, e2⟩
 
-/-- The identity matrix is two-level on any pair of distinct indices. -/
-private theorem isTwoLevel_one {n α : Type*} [DecidableEq n] [Zero α] [One α]
-    (i j : n) (hij : i ≠ j) : (1 : Matrix n n α).IsTwoLevel i j :=
-  ⟨hij, fun _ _ _ => rfl⟩
-
-/-- The conjugate transpose of a two-level matrix is two-level on the same
-pair. -/
-private theorem isTwoLevel_star {n α : Type*} [DecidableEq n] [CommRing α]
-    [StarRing α] {M : Matrix n n α} {i j : n}
-    (hM : M.IsTwoLevel i j) : (star M).IsTwoLevel i j := by
-  obtain ⟨hij, h⟩ := hM
-  refine ⟨hij, fun k l hkl => ?_⟩
-  rw [Matrix.star_apply, h l k (or_comm.mp hkl)]
-  by_cases hlk : l = k
-  · subst hlk
-    simp
-  · simp [hlk, Ne.symm hlk]
-
 /-- A two-dimensional unitary sends any vector to a nonnegative multiple of
 the first standard basis vector with the same Euclidean length. -/
 theorem exists_unitary_fin_two_mulVec_eq (c₁ c₂ : ℂ) :
@@ -149,127 +131,6 @@ theorem exists_unitary_fin_two_mulVec_eq (c₁ c₂ : ℂ) :
         exact hsq.symm
       · rw [div_mul_eq_mul_div, div_mul_eq_mul_div, ← add_div,
           show -c₂ * c₁ + c₁ * c₂ = 0 by ring, zero_div]
-
-/-- The identity matrix is unitary. -/
-private theorem unitary_one {d : ℕ} :
-    (1 : Matrix (Fin d) (Fin d) ℂ) ∈ unitaryGroup (Fin d) ℂ := by
-  simp
-
-/-- Base case: a two-dimensional unitary is a single adjacent factor. -/
-private theorem exists_twoLevel_d_two
-    {U : Matrix (Fin 2) (Fin 2) ℂ} (hU : U ∈ unitaryGroup (Fin 2) ℂ) :
-    ∃ L : List (Matrix (Fin 2) (Fin 2) ℂ),
-      L.length = 2 * (2 - 1) / 2 ∧
-      (∀ M ∈ L, M ∈ unitaryGroup (Fin 2) ℂ ∧
-        ∃ (s : ℕ) (hs : s + 1 < 2),
-          M.IsTwoLevel ⟨s, by omega⟩ ⟨s + 1, hs⟩) ∧
-      L.prod = U := by
-  refine ⟨[U], by simp, ?_, by simp⟩
-  · intro M hM
-    simp at hM
-    subst hM
-    refine ⟨hU, 0, by decide, ?_⟩
-    unfold Matrix.IsTwoLevel
-    refine ⟨by decide, fun k l h => ?_⟩
-    have h2 : ∀ k : Fin 2, k = 0 ∨ k = 1 := by decide
-    cases h2 k with
-    | inl hk0 =>
-      cases h2 l with
-      | inl hl0 =>
-        subst hk0
-        subst hl0
-        exact absurd h (by decide)
-      | inr hl1 =>
-        subst hk0
-        subst hl1
-        exact absurd h (by decide)
-    | inr hk1 =>
-      cases h2 l with
-      | inl hl0 =>
-        subst hk1
-        subst hl0
-        exact absurd h (by decide)
-      | inr hl1 =>
-        subst hk1
-        subst hl1
-        exact absurd h (by decide)
-
-/-- The diagonal-phase form holds vacuously in dimension zero. -/
-private theorem diagonal_d_zero
-    {U : Matrix (Fin 0) (Fin 0) ℂ} (_hU : U ∈ unitaryGroup (Fin 0) ℂ) :
-    ∃ (L : List (Matrix (Fin 0) (Fin 0) ℂ)) (φ : Fin 0 → ℂ),
-      L.length ≤ 0 * (0 - 1) / 2 ∧
-      (∀ M ∈ L, M ∈ unitaryGroup (Fin 0) ℂ ∧ ∃ i j, M.IsTwoLevel i j) ∧
-      (∀ k, ‖φ k‖ = 1) ∧
-      L.prod * diagonal φ = U := by
-  refine ⟨[], fun _ => 1, by decide, by simp, ?_, ?_⟩
-  · intro k
-    exact absurd k.isLt (by omega)
-  · simp only [List.prod_nil, one_mul]
-    ext i j
-    exact absurd i.isLt (by omega)
-
-/-- The diagonal-phase form in dimension one takes no factors. -/
-private theorem diagonal_d_one
-    {U : Matrix (Fin 1) (Fin 1) ℂ} (hU : U ∈ unitaryGroup (Fin 1) ℂ) :
-    ∃ (L : List (Matrix (Fin 1) (Fin 1) ℂ)) (φ : Fin 1 → ℂ),
-      L.length ≤ 1 * (1 - 1) / 2 ∧
-      (∀ M ∈ L, M ∈ unitaryGroup (Fin 1) ℂ ∧ ∃ i j, M.IsTwoLevel i j) ∧
-      (∀ k, ‖φ k‖ = 1) ∧
-      L.prod * diagonal φ = U := by
-  refine ⟨[], fun _ => U 0 0, by decide, by simp, ?_, ?_⟩
-  · intro k
-    show ‖U 0 0‖ = 1
-    rw [Matrix.mem_unitaryGroup_iff] at hU
-    have h00 := congrArg (fun M : Matrix (Fin 1) (Fin 1) ℂ => M 0 0) hU
-    simp only [Matrix.mul_apply, Fin.sum_univ_one, Matrix.star_apply,
-      Matrix.one_apply_eq] at h00
-    have f : U 0 0 * star (U 0 0) = ((‖U 0 0‖ ^ 2 : ℝ) : ℂ) := by
-      simpa using RCLike.mul_conj (U 0 0)
-    rw [f] at h00
-    have h2 : ‖U 0 0‖ ^ 2 = 1 := by
-      have hcon := congrArg Complex.re h00
-      simp only [Complex.ofReal_re, Complex.one_re] at hcon
-      exact hcon
-    have hfac : (‖U 0 0‖ - 1) * (‖U 0 0‖ + 1) = 0 := by
-      linear_combination h2
-    rcases mul_eq_zero.mp hfac with h | h
-    · linarith
-    · exfalso
-      have hnonneg : 0 ≤ ‖U 0 0‖ := norm_nonneg _
-      linarith
-  · simp
-    ext i j
-    have h1 : ∀ i : Fin 1, i = 0 := by decide
-    have hi := h1 i
-    have hj := h1 j
-    subst hi
-    subst hj
-    simp
-
-/-- The diagonal-phase form follows from the exact adjacent-factor form by
-taking the phase to be one. -/
-private theorem diagonal_of_exact {d : ℕ}
-    {U : Matrix (Fin d) (Fin d) ℂ}
-    (h : ∃ L : List (Matrix (Fin d) (Fin d) ℂ),
-      L.length = d * (d - 1) / 2 ∧
-      (∀ M ∈ L, M ∈ unitaryGroup (Fin d) ℂ ∧
-        ∃ (s : ℕ) (hs : s + 1 < d),
-          M.IsTwoLevel ⟨s, by omega⟩ ⟨s + 1, hs⟩) ∧
-      L.prod = U) :
-    ∃ (L : List (Matrix (Fin d) (Fin d) ℂ)) (φ : Fin d → ℂ),
-      L.length ≤ d * (d - 1) / 2 ∧
-      (∀ M ∈ L, M ∈ unitaryGroup (Fin d) ℂ ∧ ∃ i j, M.IsTwoLevel i j) ∧
-      (∀ k, ‖φ k‖ = 1) ∧
-      L.prod * diagonal φ = U := by
-  obtain ⟨L, hlen, hmem, hprod⟩ := h
-  refine ⟨L, fun _ => 1, hlen.le, ?_, ?_, ?_⟩
-  · intro M hM
-    obtain ⟨hu, s, hs, h2l⟩ := hmem M hM
-    exact ⟨hu, ⟨s, by omega⟩, ⟨s + 1, hs⟩, h2l⟩
-  · intro k
-    simp
-  · rw [hprod, Matrix.diagonal_one, mul_one]
 
 /-- Embed a two-by-two matrix at the coordinate pair `i, j`, acting as the
 identity elsewhere. -/
@@ -596,30 +457,6 @@ private theorem embedAdjacent_isTwoLevel {d s : ℕ} (hs : s + 1 < d)
     (embedTwoLevel ⟨s, by omega⟩ ⟨s + 1, hs⟩ V).IsTwoLevel
       ⟨s, by omega⟩ ⟨s + 1, hs⟩ :=
   embedTwoLevel_isTwoLevel (adjacent_ne hs) V
-
-/-- The adjacent embedding acts by `V` on the first of the pair. -/
-private theorem embedAdjacent_mulVec_fst {d s : ℕ} (hs : s + 1 < d)
-    {V : Matrix (Fin 2) (Fin 2) ℂ} (x : Fin d → ℂ) :
-    ((embedTwoLevel ⟨s, by omega⟩ ⟨s + 1, hs⟩ V) *ᵥ x) ⟨s, by omega⟩ =
-      V 0 0 * x ⟨s, by omega⟩ + V 0 1 * x ⟨s + 1, hs⟩ :=
-  embedTwoLevel_mulVec_row_i (adjacent_ne hs) x
-
-/-- The adjacent embedding acts by `V` on the second of the pair. -/
-private theorem embedAdjacent_mulVec_snd {d s : ℕ} (hs : s + 1 < d)
-    {V : Matrix (Fin 2) (Fin 2) ℂ} (x : Fin d → ℂ) :
-    ((embedTwoLevel ⟨s, by omega⟩ ⟨s + 1, hs⟩ V) *ᵥ x) ⟨s + 1, hs⟩ =
-      V 1 0 * x ⟨s, by omega⟩ + V 1 1 * x ⟨s + 1, hs⟩ :=
-  embedTwoLevel_mulVec_row_j (adjacent_ne hs) x
-
-/-- The adjacent embedding fixes coordinates outside the pair. -/
-private theorem embedAdjacent_mulVec_else {d s : ℕ} (hs : s + 1 < d)
-    {V : Matrix (Fin 2) (Fin 2) ℂ} (x : Fin d → ℂ) {k : Fin d}
-    (hki : k ≠ ⟨s, by omega⟩) (hkj : k ≠ ⟨s + 1, hs⟩) :
-    ((embedTwoLevel ⟨s, by omega⟩ ⟨s + 1, hs⟩ V) *ᵥ x) k = x k :=
-  embedTwoLevel_mulVec_row_else x hki hkj
-
-/-- Every unitary of dimension at least two is a product of exactly
-`d * (d - 1) / 2` adjacent two-level unitaries. -/
 
 private theorem tlp_val_ne_zero {n : ℕ} {k : Fin (n + 1)} (hk : k ≠ 0) :
     k.val ≠ 0 := by
