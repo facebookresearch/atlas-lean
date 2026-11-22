@@ -38,7 +38,7 @@ namespace Cslib.Planning.MotionPlanning.PolygonalWorkspace
 
 open Set
 
-/-- DEFINITIONAL: the plane. Coordinates are `p 0` (x) and `p 1` (y). -/
+-- The plane is the provider's Euclidean plane; coordinates are p 0 (x) and p 1 (y).
 
 /-- DEFINITIONAL: close the loop of a vertex list into directed edges.
 `cyclicEdgesAux first vs` links consecutive vertices of `vs` and closes the
