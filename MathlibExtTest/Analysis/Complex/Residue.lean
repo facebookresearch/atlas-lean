@@ -45,4 +45,19 @@ example :
   · rw [circleIntegral.integral_sub_inv_of_mem_ball (by norm_num [mem_ball_zero_iff]),
       smul_eq_mul, inv_mul_cancel₀ two_pi_I_ne_zero]
 
+-- The residue is only defined for complete codomains. On an incomplete space every circle
+-- integral is `0` (`MeasureTheory.integral_of_not_completeSpace`), so a residue there would lose
+-- the coefficient `v` of the simple pole above.
+/--
+error: failed to synthesize instance of type class
+  CompleteSpace E
+
+Hint: Type class instance resolution failures can be inspected with the
+`set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs (whitespace := lax) in
+noncomputable example {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] (f : ℂ → E) (a : ℂ) :
+    E :=
+  residue f a
+
 #print axioms Complex.residue_eq_circleIntegral
