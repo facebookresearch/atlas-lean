@@ -234,9 +234,9 @@ private theorem exists_prime_gt_succ_le_two_mul (n : ℕ) (hn : 3 ≤ n) :
 $n$-th Catalan number $C_n$ is not a perfect power: there are no natural numbers $m$ and $k$
 with $k \ge 2$ and $C_n = m^k$.
 
-The proof of Checcoli and D'Adderio checks small cases directly, and for $n \ge 6$ uses a
-Ramanujan prime $p$ with $n + 2 \le p < 2n$, which divides $C_n$ exactly once, so $C_n = m^k$
-with $k \ge 2$ is impossible.
+The proof of Checcoli and D'Adderio checks small cases directly, and for $n \ge 6$ uses a prime
+$p$ with $n + 2 \le p < 2n$, which exists by Ramanujan's theorem and divides $C_n$ exactly once,
+so $C_n = m^k$ with $k \ge 2$ is impossible.
 
 Proves `Wanted` entry `catalan_not_perfect_power`.
 

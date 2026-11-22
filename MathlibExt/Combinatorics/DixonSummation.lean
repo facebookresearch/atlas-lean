@@ -108,9 +108,10 @@ integers $n < k$, the integer binomial coefficient $\binom{n}{k}$ is $0$. -/
 @[simp] public theorem intBinom_of_lt {n k : ℤ} (h : n < k) : intBinom n k = 0 := by
   simp [intBinom, invFact_of_neg (show n - k < 0 by omega)]
 
-/-- **Term of Dixon's alternating sum.** Write $\binom{n}{m}$ for the integer binomial coefficient
-of integers $n$ and $m$. For integers $a_1, a_2, a_3$ and $k$, the Dixon summand is the rational
-number $(-1)^k \binom{2a_1}{a_1 + k} \binom{2a_2}{a_2 + k} \binom{2a_3}{a_3 + k}$. -/
+/-- **Term of Dixon's alternating sum.** For integers $n$ and $m$ write $\binom{n}{m}$ for the
+ordinary binomial coefficient when $0 \le m \le n$ and $0$ otherwise (so it is $0$ whenever
+$n < 0$). For integers $a_1, a_2, a_3$ and $k$, the Dixon summand is the rational number
+$(-1)^k \binom{2a_1}{a_1 + k} \binom{2a_2}{a_2 + k} \binom{2a_3}{a_3 + k}$. -/
 public def dixonSummand (a₁ a₂ a₃ k : ℤ) : ℚ :=
   (-1 : ℚ) ^ k.natAbs * intBinom (2 * a₁) (a₁ + k) *
     (intBinom (2 * a₂) (a₂ + k) * intBinom (2 * a₃) (a₃ + k))
