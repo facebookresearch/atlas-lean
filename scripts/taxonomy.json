@@ -11242,6 +11242,7 @@
   "MathlibExt/NumberTheory/NumberField/Units": {"to": "NumberTheory/algebraic-number-theory/discriminants-ramification", "title": "Units of a number field"},
   "MathlibExt/NumberTheory/NumberField/Unramified": {"to": "NumberTheory/algebraic-number-theory/discriminants-ramification", "title": "Ramification in extensions of number fields"},
   "MathlibExt/NumberTheory/OddGreedyChoice": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "Odd greedy algorithm for Egyptian fractions"},
+  "MathlibExt/NumberTheory/OddGreedyExpansion": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "Odd greedy algorithm for Egyptian fractions"},
   "MathlibExt/NumberTheory/OddLichtenbergNumbers": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Lichtenberg sequence"},
   "MathlibExt/NumberTheory/OddPerfectPolynomial": {"to": "NumberTheory/function-fields", "title": "Perfect polynomials over finite fields"},
   "MathlibExt/NumberTheory/OppermannCyclicNumbers": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Distribution of cyclic numbers"},
