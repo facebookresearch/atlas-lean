@@ -221,9 +221,10 @@ instance symmetricCategory : SymmetricCategory RelCat.{u} where
     simp only [Hom.rel_comp_apply₂, Hom.rel_id_apply₂, braiding_hom_rel]
     simp [Prod.ext_iff]
 
-/-- Equality is the cup and cap giving every relation object as its own dual. -/
+/-- Equality is the cup and cap giving every relation object as its own dual.
+This is a named choice, not a global instance: the tensor pairing reverses factors. -/
 @[implicit_reducible]
-instance exactPairing (X : RelCat.{u}) : ExactPairing X X where
+def exactPairing (X : RelCat.{u}) : ExactPairing X X where
   coevaluation' := .ofRel {p | p.2.1 = p.2.2}
   evaluation' := .ofRel {p | p.1.1 = p.1.2}
   coevaluation_evaluation' := by
@@ -246,15 +247,19 @@ instance exactPairing (X : RelCat.{u}) : ExactPairing X X where
     simp only [Prod.ext_iff, hy, and_true]
 
 @[simp] theorem coevaluation_rel (X : RelCat.{u}) (p : (𝟙_ RelCat : RelCat))
-    (x : (X ⊗ X : RelCat)) : (p, x) ∈ (η_ X X).rel ↔ x.1 = x.2 := Iff.rfl
+    (x : (X ⊗ X : RelCat)) :
+    (p, x) ∈ (@ExactPairing.coevaluation RelCat _ _ X X (exactPairing X)).rel ↔
+      x.1 = x.2 := Iff.rfl
 
 @[simp] theorem evaluation_rel (X : RelCat.{u}) (x : (X ⊗ X : RelCat))
-    (p : (𝟙_ RelCat : RelCat)) : (x, p) ∈ (ε_ X X).rel ↔ x.1 = x.2 := Iff.rfl
+    (p : (𝟙_ RelCat : RelCat)) :
+    (x, p) ∈ (@ExactPairing.evaluation RelCat _ _ X X (exactPairing X)).rel ↔
+      x.1 = x.2 := Iff.rfl
 
 /-- Choose each object itself as its right dual. -/
 @[implicit_reducible]
 instance rightRigidCategory : RightRigidCategory RelCat.{u} where
-  rightDual X := ⟨X⟩
+  rightDual X := { rightDual := X, exact := exactPairing X }
 
 /-- The canonical relational trace, derived from the equality pairing. -/
 def symmetricTrace : SymmetricTrace RelCat.{u} := symmetricTraceOfRigid RelCat
@@ -262,6 +267,7 @@ def symmetricTrace : SymmetricTrace RelCat.{u} := symmetricTraceOfRigid RelCat
 /-- The categorical trace closes the loop with one existentially chosen value. -/
 @[simp] theorem trace_rel {X Y U : RelCat.{u}} (r : X ⊗ U ⟶ Y ⊗ U) (x : X) (y : Y) :
     (x, y) ∈ (symmetricTrace.trace r).rel ↔ ∃ z : U, ((x, z), (y, z)) ∈ r.rel := by
+  let := exactPairing U
   change (x, y) ∈ (SymmetricTrace.traceOfPairing U r).rel ↔ _
   simp only [SymmetricTrace.traceOfPairing, Hom.rel_comp_apply₂, whiskerLeft_rel,
     whiskerRight_rel, associator_inv_rel, associator_hom_rel,

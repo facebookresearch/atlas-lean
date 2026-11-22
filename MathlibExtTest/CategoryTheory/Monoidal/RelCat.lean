@@ -102,6 +102,48 @@ example : RelCat.symmetricTrace = symmetricTraceOfRigid RelCat := rfl
 #print axioms CategoryTheory.RelCat.exactPairing
 #print axioms CategoryTheory.RelCat.trace_rel
 
+-- Equality self-duality must not override the reversed tensor pairing.
+example (X : RelCat) [ExactPairing (C := RelCat) X X] :
+    ε_ (X ⊗ X) (X ⊗ X) =
+      @ExactPairing.evaluation RelCat _ _ (X ⊗ X) (X ⊗ X)
+        (ExactPairing.tensor (X₁ := X) (X₂ := X) (Y₁ := X) (Y₂ := X)) := rfl
+
+-- The chosen equality cup on a repeated product contains its diagonal.
+example : (PUnit.unit, ((false, true), (false, true))) ∈
+    (@ExactPairing.coevaluation RelCat _ _ (Bool × Bool) (Bool × Bool)
+      (RelCat.exactPairing (Bool × Bool))).rel := by
+  rfl
+
+@[instance_reducible] private def boolTensorPairing : ExactPairing (C := RelCat) (Bool × Bool) (Bool × Bool) :=
+  letI : ExactPairing (C := RelCat) Bool Bool := RelCat.exactPairing Bool
+  ExactPairing.tensor (C := RelCat) (X₁ := Bool) (X₂ := Bool) (Y₁ := Bool) (Y₂ := Bool)
+
+private theorem boolTensorPairing_coevaluation_rel (x y : Bool × Bool) :
+    (PUnit.unit, (x, y)) ∈
+      (@ExactPairing.coevaluation RelCat _ _ (Bool × Bool) (Bool × Bool)
+        boolTensorPairing).rel ↔ x.swap = y := by
+  dsimp +instances [boolTensorPairing, ExactPairing.coevaluation, ExactPairing.tensor,
+    monoidalComp, RelCat.exactPairing, RelCat.monoidalCategory, RelCat.monoidalStruct,
+    whiskerRightIso, whiskerLeftIso, Iso.trans, Iso.refl, Iso.symm, RelCat.isoOfEquiv,
+    RelCat.Hom.ofRel, SetRel.comp, SetRel.id]
+  simp [Prod.exists, Prod.ext_iff, and_comm]
+  rcases x with ⟨a, b⟩
+  rcases y with ⟨c, d⟩
+  cases a <;> cases b <;> cases c <;> cases d <;> decide
+
+-- The tensor cup reverses the factors, so it contains the reversed point only.
+example : (PUnit.unit, ((false, true), (true, false))) ∈
+    (@ExactPairing.coevaluation RelCat _ _ (Bool × Bool) (Bool × Bool)
+      boolTensorPairing).rel := by
+  rw [boolTensorPairing_coevaluation_rel]
+  rfl
+
+example : (PUnit.unit, ((false, true), (false, true))) ∉
+    (@ExactPairing.coevaluation RelCat _ _ (Bool × Bool) (Bool × Bool)
+      boolTensorPairing).rel := by
+  rw [boolTensorPairing_coevaluation_rel]
+  decide
+
 -- Ordinary downstream use also works with default options and the Type tensor imported.
 set_option backward.isDefEq.respectTransparency true
 
