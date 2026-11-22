@@ -38,7 +38,11 @@ of the shared file (polynomial-time next-query / final-decision functions with p
 many adaptive queries and polynomially bounded query lengths).
 -/
 
-/-- **Toda's theorem: PH is contained in P^#P.** Source: S. Toda, "PP is as hard as the
+/-- **Toda's theorem: PH is contained in $\mathsf{P}^{\#\mathsf{P}}$.** Every decision problem in
+the polynomial hierarchy PH lies in $\mathsf{P}^{\#\mathsf{P}}$, the class of decision problems
+decidable in polynomial time with a $\#\mathsf{P}$ oracle.
+
+Source: S. Toda, "PP is as hard as the
 polynomial-time hierarchy", SIAM Journal on Computing 20 (1991), 865-877 (FOCS 1989). -/
 public theorem_wanted toda :
     PH ⊆ PWithSharpP
