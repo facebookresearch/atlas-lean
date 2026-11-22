@@ -15,6 +15,26 @@ import Mathlib.MeasureTheory.Integral.Pi
 import Mathlib.MeasureTheory.Measure.Real
 import MathlibExt.Probability.HoeffdingBounded
 
+/-!
+# Tail bounds for heterogeneous Bernoulli products
+
+Independent heterogeneous Bernoulli coordinates under `randomSubsetLaw`: each coordinate `i`
+is `1` with probability `p i` and `0` otherwise. The probability that the coordinate sum
+reaches a threshold admits an exact finite expansion over outcome strings, and Hoeffding's
+inequality gives exponential upper and lower tail bounds.
+
+## Main results
+
+* `integral_coordVar`: the mean of coordinate `i` is `p i`.
+* `iIndepFun_coordVar`: the coordinates are independent.
+* `measureReal_sum_ge_eq_sum`: exact finite threshold expansion.
+* `measureReal_sum_ge_le_exp`: Hoeffding upper tail bound.
+* `measureReal_sum_le_le_exp`: Hoeffding lower tail bound.
+
+References: W. Hoeffding, Probability inequalities for sums of bounded random variables,
+Journal of the American Statistical Association 58 (1963), 13-30.
+-/
+
 @[expose] public section
 
 namespace MathlibExt.Probability.BernoulliProductTail
@@ -23,33 +43,14 @@ open MeasureTheory ProbabilityTheory Real
 open MathlibExt.Probability.Combinatorics.RandomSubset
 open scoped BigOperators NNReal ProbabilityTheory unitInterval
 
-noncomputable def coordVar {k : ℕ} (i : Fin k) (ω : Fin k → Bool) : ℝ :=
+/-- **Coordinate variable.** The indicator that coordinate `i` of the outcome `ω` is `true`:
+`1` if `ω i` is `true` and `0` otherwise. -/
+noncomputable def coordVar {α : Type*} [Fintype α] (i : α) (ω : α → Bool) : ℝ :=
   if ω i then 1 else 0
 
-theorem randomSubsetLaw_real_singleton {k : ℕ} (p : Fin k → I)
-    (b : Fin k → Bool) :
-    (randomSubsetLaw p).real {b} =
-      ∏ i, if b i then (p i : ℝ) else 1 - (p i : ℝ) := by
-  unfold randomSubsetLaw
-  rw [measureReal_def, Measure.pi_singleton]
-  rw [ENNReal.toReal_prod]
-  apply Finset.prod_congr rfl
-  intro i _
-  cases hbi : b i
-  · have hs : MeasurableSet ({(false : Bool)} : Set Bool) :=
-      MeasurableSet.singleton _
-    have h := bernoulliMeasure_real_apply_of_notMem_of_mem (x := true)
-      (y := false) (p := p i) (s := {(false : Bool)})
-      hs (by simp) (by simp)
-    simp
-  · have hs : MeasurableSet ({(true : Bool)} : Set Bool) :=
-      MeasurableSet.singleton _
-    have h := bernoulliMeasure_real_apply_of_mem_of_notMem (x := true)
-      (y := false) (p := p i) (s := {(true : Bool)})
-      hs (by simp) (by simp)
-    simp
-
-theorem integral_coordVar {k : ℕ} (p : Fin k → I) (i : Fin k) :
+/-- **Mean of a coordinate variable.** The expectation of `coordVar i` under
+`randomSubsetLaw p` equals the success probability `p i`. -/
+theorem integral_coordVar {α : Type*} [Fintype α] (p : α → I) (i : α) :
     (randomSubsetLaw p)[coordVar i] = (p i : ℝ) := by
   have hf : AEStronglyMeasurable (fun b : Bool => if b then (1 : ℝ) else 0)
       (bernoulliMeasure true false (p i)) :=
@@ -65,10 +66,12 @@ theorem integral_coordVar {k : ℕ} (p : Fin k → I) (i : Fin k) :
   rw [hbern]
   simp
 
-theorem iIndepFun_coordVar {k : ℕ} (p : Fin k → I) :
+/-- **Independence of the coordinate variables.** The family `coordVar` of coordinate
+indicators is independent under `randomSubsetLaw p`. -/
+theorem iIndepFun_coordVar {α : Type*} [Fintype α] (p : α → I) :
     iIndepFun coordVar (randomSubsetLaw p) := by
   unfold randomSubsetLaw
-  have hX : ∀ i : Fin k, AEMeasurable
+  have hX : ∀ i : α, AEMeasurable
       (fun b : Bool => if b then (1 : ℝ) else 0)
       (bernoulliMeasure true false (p i)) := by
     intro i
@@ -76,10 +79,13 @@ theorem iIndepFun_coordVar {k : ℕ} (p : Fin k → I) :
   have h := iIndepFun_pi
     (μ := fun i => bernoulliMeasure true false (p i))
     (X := fun _ b => if b then (1 : ℝ) else 0) hX
-  have heq : coordVar (k := k) = fun i ω => (if ω i then (1 : ℝ) else 0) := rfl
+  have heq : coordVar (α := α) = fun i ω => (if ω i then (1 : ℝ) else 0) := rfl
   rw [heq]
   exact h
 
+/-- **Exact finite threshold expansion.** The probability under `randomSubsetLaw p` that the
+coordinate sum reaches `T` equals the sum, over all outcome strings `b` meeting the threshold,
+of the product of the coordinate masses. -/
 theorem measureReal_sum_ge_eq_sum {k : ℕ} (p : Fin k → I) (T : ℝ) :
     (randomSubsetLaw p).real {ω | T ≤ ∑ i, coordVar i ω} =
       ∑ b ∈ Finset.univ.filter (fun b => T ≤ ∑ i, coordVar i b),
@@ -93,6 +99,11 @@ theorem measureReal_sum_ge_eq_sum {k : ℕ} (p : Fin k → I) (T : ℝ) :
   intro b _
   rw [randomSubsetLaw_real_singleton]
 
+/-- **Hoeffding upper tail bound.** If every success probability `p i` is at most `s` and
+`(k : ℝ) * s ≤ T`, the probability that the coordinate sum reaches `T` is at most
+`Real.exp (-2 * (T - k * s) ^ 2 / k)`. At `k = 0` the exponent divides by the real cast of
+`k`, so the bound is `Real.exp 0 = 1` by real division, and the inequality is the trivial
+probability bound. -/
 theorem measureReal_sum_ge_le_exp {k : ℕ} (p : Fin k → I) (s T : ℝ)
     (hs : ∀ i, (p i : ℝ) ≤ s) (hT : (k : ℝ) * s ≤ T) :
     (randomSubsetLaw p).real {ω | T ≤ ∑ i, coordVar i ω} ≤
@@ -183,6 +194,11 @@ theorem measureReal_sum_ge_le_exp {k : ℕ} (p : Fin k → I) (s T : ℝ)
       _ = Real.exp (-2 * (T - (k : ℝ) * s) ^ 2 / (k : ℝ)) := by rw [hexp_eq]
       _ = Real.exp (-2 * (T - k * s) ^ 2 / k) := by norm_cast
 
+/-- **Hoeffding lower tail bound.** If every `c ≤ p i` and `T ≤ (k : ℝ) * c`, the probability
+that the coordinate sum is at most `T` is at most
+`Real.exp (-2 * (k * c - T) ^ 2 / k)`. At `k = 0` the exponent divides by the real cast of
+`k`, so the bound is `Real.exp 0 = 1` by real division, and the inequality is the trivial
+probability bound. -/
 theorem measureReal_sum_le_le_exp {k : ℕ} (p : Fin k → I) (c T : ℝ)
     (hc : ∀ i, c ≤ (p i : ℝ)) (hT : T ≤ (k : ℝ) * c) :
     (randomSubsetLaw p).real {ω | ∑ i, coordVar i ω ≤ T} ≤
