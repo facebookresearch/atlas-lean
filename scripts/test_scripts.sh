@@ -76,7 +76,7 @@ for roots in MathlibExt:Domains MathlibExtTest:DomainsTest; do
 done
 
 # The fixture runs preflight without recursively running this test suite.
-cp "$REPO_ROOT/scripts/"{check.sh,check_diagnostics.sh,check_declaration_collisions.sh,check_declaration_collisions.lean} \
+cp "$REPO_ROOT/scripts/"{check.sh,check_diagnostics.sh,check_declaration_collisions.sh,check_declaration_collisions.lean,list_v2_modules.sh} \
   "$TMP_ROOT/repo/scripts/"
 touch "$TMP_ROOT/repo/"{lean-toolchain,README.md,REVIEWING.md}
 touch "$TMP_ROOT/repo/scripts/"{check_copyright.py,check_formal_math_sync.py}
@@ -358,10 +358,11 @@ if grep -q '^import v1\.' "$FAKE_LEAN_INPUT"; then
 fi
 
 # Declaration collisions: every tracked v2 module, and nothing else, is imported
-# into one environment; a module without its .olean fails before Lean runs; and the
-# module list is the one the wiki's dependency dump imports.
+# into one environment; a module without its .olean, or a failing `git ls-files`,
+# fails before Lean runs; and the module list is the one the wiki's dependency dump
+# imports.
 reset_fixture
-cp "$REPO_ROOT/scripts/check_declaration_collisions.sh" "$TMP_ROOT/repo/scripts/"
+cp "$REPO_ROOT/scripts/"{check_declaration_collisions.sh,list_v2_modules.sh} "$TMP_ROOT/repo/scripts/"
 for library in CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest Domains DomainsTest WantedExt; do
   mkdir -p "$TMP_ROOT/repo/$library/Nested" "$TMP_ROOT/repo/.lake/build/lib/lean/$library/Nested"
   printf '%s\n' 'def sentinel : Nat := 1' >"$TMP_ROOT/repo/$library/Nested/Sentinel.lean"
@@ -397,15 +398,58 @@ if PATH="$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_declaration_collisions.s
   >"$TMP_ROOT/output.log" 2>&1; then
   fail "collision check passed without a compiled module"
 fi
-grep -q 'missing compiled module: Domains/Nested/Sentinel.lean' "$TMP_ROOT/output.log" ||
+grep -q 'Missing compiled module: Domains/Nested/Sentinel.lean' "$TMP_ROOT/output.log" ||
   fail "collision check reported a missing compiled module wrongly"
 [[ ! -s "$FAKE_LAKE_LOG" ]] || fail "collision check ran Lean without every compiled module"
-dump_modules="$(grep -o "read -r -d '' source; do\|git ls-files -z '.*'" \
-  "$REPO_ROOT/.github/workflows/blueprint-pages.yml")"
-check_modules="$(grep -o "read -r -d '' source; do\|git ls-files -z '.*'" \
-  "$REPO_ROOT/scripts/check_declaration_collisions.sh")"
-[[ -n "$dump_modules" && "$dump_modules" == "$check_modules" ]] ||
-  fail "collision check and wiki dump list different modules"
+: >"$TMP_ROOT/repo/.lake/build/lib/lean/Domains/Nested/Sentinel.olean"
+# A `git ls-files` that fails after listing some modules must not pass a partial list.
+FAKE_GIT="$TMP_ROOT/fake-git"
+mkdir -p "$FAKE_GIT"
+cat >"$FAKE_GIT/git" <<'SH'
+#!/usr/bin/env bash
+printf 'MathlibExt/Nested/Sentinel.lean\0'
+exit 74
+SH
+chmod +x "$FAKE_GIT/git"
+: >"$FAKE_LAKE_LOG"
+if PATH="$FAKE_GIT:$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_declaration_collisions.sh" \
+  >"$TMP_ROOT/output.log" 2>&1; then
+  fail "collision check passed a partial module list"
+fi
+grep -q 'could not list the compiled v2 modules' "$TMP_ROOT/output.log" ||
+  fail "collision check reported a failed module listing wrongly"
+[[ ! -s "$FAKE_LAKE_LOG" ]] || fail "collision check ran Lean on a partial module list"
+# The list fails, and leaves no list behind, on a missing .olean, and on a directory or
+# file name with a dot or a line break, which would change the module name read back.
+printf '%s\n' stale >"$TMP_ROOT/repo/modules.txt"
+rm "$TMP_ROOT/repo/.lake/build/lib/lean/WantedExt/Nested/Sentinel.olean"
+if (cd "$TMP_ROOT/repo" && scripts/list_v2_modules.sh modules.txt) >"$TMP_ROOT/output.log" 2>&1; then
+  fail "module list passed without a compiled module"
+fi
+[[ ! -e "$TMP_ROOT/repo/modules.txt" ]] || fail "failed module list left a list behind"
+: >"$TMP_ROOT/repo/.lake/build/lib/lean/WantedExt/Nested/Sentinel.olean"
+for name in 'Dotted.Name' $'Line\nBreak' $'Carriage\rReturn'; do
+  printf '%s\n' 'def odd : Nat := 1' >"$TMP_ROOT/repo/MathlibExt/Nested/$name.lean"
+  : >"$TMP_ROOT/repo/.lake/build/lib/lean/MathlibExt/Nested/$name.olean"
+  git -C "$TMP_ROOT/repo" add "MathlibExt/Nested/$name.lean"
+  if (cd "$TMP_ROOT/repo" && scripts/list_v2_modules.sh modules.txt) >"$TMP_ROOT/output.log" 2>&1; then
+    fail "module list accepted the file name ${name@Q}"
+  fi
+  grep -qF "Module path is not a Lean module name (a directory or file name contains a dot or a line break): MathlibExt/Nested/${name%%[$'\n\r']*}" \
+    "$TMP_ROOT/output.log" || { cat "$TMP_ROOT/output.log" >&2; fail "module list reported ${name@Q} wrongly"; }
+  [[ ! -e "$TMP_ROOT/repo/modules.txt" ]] || fail "failed module list left a list behind"
+  git -C "$TMP_ROOT/repo" rm -q --cached "MathlibExt/Nested/$name.lean"
+done
+(cd "$TMP_ROOT/repo" && scripts/list_v2_modules.sh modules.txt) >"$TMP_ROOT/output.log" 2>&1 ||
+  { cat "$TMP_ROOT/output.log" >&2; fail "module list failed on valid modules"; }
+grep -qx 'MathlibExt.Nested.Étale' "$TMP_ROOT/repo/modules.txt" ||
+  fail "module list dropped a non-ASCII module"
+grep -qx '          scripts/list_v2_modules.sh v2-modules.txt' \
+  "$REPO_ROOT/.github/workflows/blueprint-pages.yml" ||
+  fail "wiki dump does not use the shared module list"
+grep -qx 'scripts/list_v2_modules.sh "$modules" || {' \
+  "$REPO_ROOT/scripts/check_declaration_collisions.sh" ||
+  fail "collision check does not use the shared module list"
 grep -qx '  run_check "declaration collisions" scripts/check_declaration_collisions.sh' \
   "$REPO_ROOT/scripts/check.sh" || fail "build checks do not run the collision check"
 
