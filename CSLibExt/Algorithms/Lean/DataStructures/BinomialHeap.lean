@@ -92,8 +92,8 @@ public inductive Valid {α : Type u} [LE α] : BinomialTree α → Prop
       (root_le : ∀ value ∈ elements (.node rank root children), root ≤ value) :
       Valid (.node rank root children)
 
-/-- **Singleton binomial heap.** For a value $a$ in a linear order, the binomial heap whose list of
-trees consists of exactly one tree: the tree of rank $0$ with root $a$ and no children. -/
+/-- **Singleton binomial tree.** For a value $a$ of any type $\alpha$, the binomial tree of rank $0$
+with root $a$ and no children. -/
 @[expose] public def singleton (value : α) : BinomialTree α :=
   .node 0 value []
 
