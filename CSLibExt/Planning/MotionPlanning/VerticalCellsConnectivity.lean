@@ -68,7 +68,7 @@ theorem TrapDecomp.incidenceGraph_not_adj_inr_inr {F : Set plane} (D : TrapDecom
   fun h => h
 
 /-- Points of a convex set are joined in any larger set, via the segment. -/
-theorem joinedIn_of_convex_subset {s t : Set plane} (hconv : Convex ℝ s)
+private theorem joinedIn_of_convex_subset {s t : Set plane} (hconv : Convex ℝ s)
     (hsub : s ⊆ t) {p q : plane} (hp : p ∈ s) (hq : q ∈ s) : JoinedIn t p q := by
   have hseg : segment ℝ p q ⊆ s := hconv.segment_subset hp hq
   have hconn : IsPathConnected (segment ℝ p q) :=
@@ -78,7 +78,7 @@ theorem joinedIn_of_convex_subset {s t : Set plane} (hconv : Convex ℝ s)
 
 /-- The segment from a point of an open convex set to a point of its closure lies
 in the set except possibly at the far endpoint. -/
-theorem segment_subset_union_of_mem_closure {s : Set plane} (hconv : Convex ℝ s)
+private theorem segment_subset_union_of_mem_closure {s : Set plane} (hconv : Convex ℝ s)
     (ho : IsOpen s) {x y : plane} (hx : x ∈ s) (hy : y ∈ closure s) :
     segment ℝ x y ⊆ s ∪ {y} := by
   have hinter : interior s = s := ho.interior_eq
@@ -163,7 +163,7 @@ theorem joinedIn_of_same_cell {F : Set plane} (D : TrapDecomp F)
 /-- Points in reachable cells are joined in `F`, by induction on the walk.
 Openness of `F` is not needed for this direction. -/
 theorem TrapDecomp.joinedIn_of_reachable {F : Set plane} (D : TrapDecomp F)
-    {qI qG : plane} (_hI : qI ∈ F) (_hG : qG ∈ F) {cI cG : D.Cell}
+    {qI qG : plane} {cI cG : D.Cell}
     (hcI : qI ∈ D.carrier cI) (hcG : qG ∈ D.carrier cG)
     (h : D.incidenceGraph.Reachable cI cG) : JoinedIn F qI qG := by
   obtain ⟨w⟩ := h
@@ -172,8 +172,7 @@ theorem TrapDecomp.joinedIn_of_reachable {F : Set plane} (D : TrapDecomp F)
     exact joinedIn_of_same_cell D hcI hcG
   | cons hadj _ ih =>
     obtain ⟨r, hr⟩ := D.cell_nonempty _
-    have hrF : r ∈ F := D.carrier_subset _ hr
-    exact (D.joinedIn_of_adj_mem hadj hcI hr).trans (ih hrF _hG hr hcG)
+    exact (D.joinedIn_of_adj_mem hadj hcI hr).trans (ih hr hcG)
 
 /-- Union of carriers of cells reachable from `cI` in the incidence graph.
 LaValle, Planning Algorithms, Sec. 6.2.2: reachability classes group 2-cells
@@ -332,10 +331,10 @@ union of carriers of reachable cells is relatively clopen in `F`, so a path in
 `F` cannot leave it.
 LaValle, Planning Algorithms, Sec. 6.2.2. -/
 theorem TrapDecomp.reachable_of_joinedIn {F : Set plane} (D : TrapDecomp F) (hF : IsOpen F)
-    {qI qG : plane} (hI : qI ∈ F) (hG : qG ∈ F) {cI cG : D.Cell}
+    {qI qG : plane} {cI cG : D.Cell}
     (hcI : qI ∈ D.carrier cI) (hcG : qG ∈ D.carrier cG)
     (h : JoinedIn F qI qG) : D.incidenceGraph.Reachable cI cG := by
-  have _ : qI ∈ F := hI
+  have hG : qG ∈ F := D.carrier_subset _ hcG
   have hS_open : IsOpen (D.reachUnion cI) := D.isOpen_reachUnion hF cI
   have hqI_mem : qI ∈ D.reachUnion cI :=
     D.mem_reachUnion cI cI (SimpleGraph.Reachable.refl _) hcI
@@ -395,14 +394,14 @@ theorem TrapDecomp.reachable_of_joinedIn {F : Set plane} (D : TrapDecomp F) (hF 
 /-- Pointwise equivalence between graph reachability and path connectivity.
 LaValle, Planning Algorithms, Sec. 6.2.2. -/
 theorem TrapDecomp.reachable_iff_joinedIn {F : Set plane} (D : TrapDecomp F) (hF : IsOpen F)
-    {qI qG : plane} (hI : qI ∈ F) (hG : qG ∈ F) {cI cG : D.Cell}
+    {qI qG : plane} {cI cG : D.Cell}
     (hcI : qI ∈ D.carrier cI) (hcG : qG ∈ D.carrier cG) :
     D.incidenceGraph.Reachable cI cG ↔ JoinedIn F qI qG := by
   constructor
   · intro h
-    exact D.joinedIn_of_reachable hI hG hcI hcG h
+    exact D.joinedIn_of_reachable hcI hcG h
   · intro h
-    exact D.reachable_of_joinedIn hF hI hG hcI hcG h
+    exact D.reachable_of_joinedIn hF hcI hcG h
 
 end VerticalCells
 

@@ -237,10 +237,7 @@ theorem splitSquare_joined_across_wall (p q : plane)
     (hp : p ∈ splitSquareDecomp.carrier (.inl (0 : Fin 2)))
     (hq : q ∈ splitSquareDecomp.carrier (.inl (1 : Fin 2))) :
     JoinedIn splitSquareF p q :=
-  splitSquareDecomp.joinedIn_of_reachable
-    (splitSquareDecomp.carrier_subset _ hp)
-    (splitSquareDecomp.carrier_subset _ hq)
-    hp hq splitSquare_reachable_through_wall
+  splitSquareDecomp.joinedIn_of_reachable hp hq splitSquare_reachable_through_wall
 
 theorem splitSquare_joined_wall_trap (r p : plane)
     (hr : r ∈ splitSquareDecomp.carrier (.inr (0 : Fin 1)))
@@ -251,159 +248,67 @@ theorem splitSquare_joined_wall_trap (r p : plane)
 #print axioms TrapDecomp.joinedIn_of_reachable
 
 /-!
-Split-square and two-component fixtures for the path-to-graph direction.
-LaValle, Planning Algorithms, Sec. 6.2.2.
+Path-to-graph tests on the split-square fixture above, and the
+two-component fixture. LaValle, Planning Algorithms, Sec. 6.2.2.
 -/
-
-/-- Left cell of the split-square fixture.
-LaValle, Planning Algorithms, Sec. 6.2.2. -/
-def splitTrapL : VTrap where
-  x₁ := 0
-  x₂ := 1
-  bot := AffineMap.const ℝ ℝ (0 : ℝ)
-  top := AffineMap.const ℝ ℝ (2 : ℝ)
-  x₁_lt_x₂ := by norm_num
-  bot_le_top₁ := by simp
-  bot_le_top₂ := by simp
-  nondegenerate := Or.inl (by simp)
-
-/-- Right cell of the split-square fixture. -/
-def splitTrapR : VTrap where
-  x₁ := 1
-  x₂ := 2
-  bot := AffineMap.const ℝ ℝ (0 : ℝ)
-  top := AffineMap.const ℝ ℝ (2 : ℝ)
-  x₁_lt_x₂ := by norm_num
-  bot_le_top₁ := by simp
-  bot_le_top₂ := by simp
-  nondegenerate := Or.inl (by simp)
-
-/-- Middle wall of the split-square fixture. -/
-def splitWall : VSeg where
-  x := 1
-  y₁ := 0
-  y₂ := 2
-  y₁_lt_y₂ := by norm_num
-
-/-- Big square containing the split fixture. -/
-def splitBig : VTrap where
-  x₁ := 0
-  x₂ := 2
-  bot := AffineMap.const ℝ ℝ (0 : ℝ)
-  top := AffineMap.const ℝ ℝ (2 : ℝ)
-  x₁_lt_x₂ := by norm_num
-  bot_le_top₁ := by simp
-  bot_le_top₂ := by simp
-  nondegenerate := Or.inl (by simp)
-
-theorem split_disjoint_LR : Disjoint splitTrapL.carrier splitTrapR.carrier := by
-  rw [Set.disjoint_left]
-  intro p hpL hpR
-  simp [splitTrapL, splitTrapR, VTrap.carrier] at hpL hpR
-  linarith
-
-theorem split_disjoint_LW : Disjoint splitTrapL.carrier splitWall.carrier := by
-  rw [Set.disjoint_left]
-  intro p hpL hpW
-  simp [splitTrapL, splitWall, VTrap.carrier, VSeg.carrier] at hpL hpW
-  linarith
-
-theorem split_disjoint_RW : Disjoint splitTrapR.carrier splitWall.carrier := by
-  rw [Set.disjoint_left]
-  intro p hpR hpW
-  simp [splitTrapR, splitWall, VTrap.carrier, VSeg.carrier] at hpR hpW
-  linarith
-
-def splitF : Set plane := splitBig.carrier
-
-def splitDecomp : TrapDecomp splitF where
-  m := 2
-  k := 1
-  trap := ![splitTrapL, splitTrapR]
-  wall := ![splitWall]
-  pairwise_disjoint := by
-    intro x y hne
-    cases x with
-    | inl i =>
-      cases y with
-      | inl i' =>
-        fin_cases i <;> fin_cases i'
-        · exact absurd rfl hne
-        · exact split_disjoint_LR
-        · exact split_disjoint_LR.symm
-        · exact absurd rfl hne
-      | inr j =>
-        fin_cases i <;> fin_cases j
-        · exact split_disjoint_LW
-        · exact split_disjoint_RW
-    | inr j =>
-      cases y with
-      | inl i =>
-        fin_cases j; fin_cases i
-        · exact split_disjoint_LW.symm
-        · exact split_disjoint_RW.symm
-      | inr j' =>
-        fin_cases j; fin_cases j'
-        exact absurd rfl hne
-  iUnion_eq := by
-    ext p
-    simp only [Set.mem_union, Set.mem_iUnion, splitF]
-    constructor
-    · rintro (⟨i, hi⟩ | ⟨j, hj⟩)
-      · fin_cases i
-        · have hiL : p ∈ splitTrapL.carrier := hi
-          simp [splitTrapL, splitBig, VTrap.carrier] at hiL ⊢
-          obtain ⟨h1, h2, h3, h4⟩ := hiL
-          exact ⟨h1, by linarith, h3, h4⟩
-        · have hiR : p ∈ splitTrapR.carrier := hi
-          simp [splitTrapR, splitBig, VTrap.carrier] at hiR ⊢
-          obtain ⟨h1, h2, h3, h4⟩ := hiR
-          exact ⟨by linarith, h2, h3, h4⟩
-      · fin_cases j
-        have hjW : p ∈ splitWall.carrier := hj
-        simp [splitWall, splitBig, VSeg.carrier, VTrap.carrier] at hjW ⊢
-        obtain ⟨h1, h2, h3⟩ := hjW
-        refine ⟨by linarith, by linarith, h2, h3⟩
-    · intro hp
-      simp [splitBig, VTrap.carrier] at hp
-      obtain ⟨h1, h2, h3, h4⟩ := hp
-      rcases lt_trichotomy (p 0) 1 with hlt | heq | hgt
-      · exact Or.inl ⟨0, by show p ∈ splitTrapL.carrier; simp [splitTrapL, VTrap.carrier]; exact ⟨h1, hlt, h3, h4⟩⟩
-      · exact Or.inr ⟨0, by show p ∈ splitWall.carrier; simp [splitWall, VSeg.carrier]; exact ⟨heq, h3, h4⟩⟩
-      · exact Or.inl ⟨1, by show p ∈ splitTrapR.carrier; simp [splitTrapR, VTrap.carrier]; exact ⟨hgt, h2, h3, h4⟩⟩
 
 def splitQI : plane := !₂[(0.5 : ℝ), 1]
 
 def splitQG : plane := !₂[(1.5 : ℝ), 1]
 
-theorem split_QI_mem_L : splitQI ∈ splitTrapL.carrier := by
-  simp [splitQI, splitTrapL, VTrap.carrier]
+theorem split_QI_mem_L : splitQI ∈ splitSquareLeft.carrier := by
+  rw [mem_splitSquareLeft_carrier]
+  simp [splitQI]
   norm_num
 
-theorem split_QG_mem_R : splitQG ∈ splitTrapR.carrier := by
-  simp [splitQG, splitTrapR, VTrap.carrier]
+theorem split_QG_mem_R : splitQG ∈ splitSquareRight.carrier := by
+  rw [mem_splitSquareRight_carrier]
+  simp [splitQG]
   norm_num
 
-theorem split_QI_mem_F : splitQI ∈ splitF := by
-  simp [splitQI, splitF, splitBig, VTrap.carrier]
+theorem split_QI_mem_F : splitQI ∈ splitSquareF := by
+  simp [splitQI, splitSquareF]
   norm_num
 
-theorem split_QG_mem_F : splitQG ∈ splitF := by
-  simp [splitQG, splitF, splitBig, VTrap.carrier]
+theorem split_QG_mem_F : splitQG ∈ splitSquareF := by
+  simp [splitQG, splitSquareF]
   norm_num
 
-theorem split_isOpen : IsOpen splitF := splitBig.isOpen_carrier
+theorem split_isOpen : IsOpen splitSquareF := by
+  have e : splitSquareF
+      = (fun p : plane => p 0) ⁻¹' Set.Ioo 0 2 ∩ (fun p : plane => p 1) ⁻¹' Set.Ioo 0 2 := by
+    ext p
+    simp only [splitSquareF, Set.mem_ofPred_eq, Set.mem_inter_iff, Set.mem_preimage,
+      Set.mem_Ioo]
+    constructor
+    · rintro ⟨h1, h2, h3, h4⟩
+      exact ⟨⟨h1, h2⟩, ⟨h3, h4⟩⟩
+    · rintro ⟨⟨h1, h2⟩, ⟨h3, h4⟩⟩
+      exact ⟨h1, h2, h3, h4⟩
+  have hc0 : Continuous fun p : plane => p 0 := by fun_prop
+  have hc1 : Continuous fun p : plane => p 1 := by fun_prop
+  rw [e]
+  exact (hc0.isOpen_preimage _ isOpen_Ioo).inter (hc1.isOpen_preimage _ isOpen_Ioo)
 
-theorem split_joined : JoinedIn splitF splitQI splitQG :=
-  joinedIn_of_convex_subset splitBig.convex_carrier (fun _ h => h) split_QI_mem_F split_QG_mem_F
+theorem split_joined : JoinedIn splitSquareF splitQI splitQG := by
+  have hconv : Convex ℝ splitSquareF := by
+    intro a ha b hb x y hx hy hxy
+    simp only [splitSquareF, Set.mem_ofPred_eq] at ha hb ⊢
+    obtain ⟨ha1, ha2, ha3, ha4⟩ := ha
+    obtain ⟨hb1, hb2, hb3, hb4⟩ := hb
+    have h0 := (convex_Ioo (0 : ℝ) 2) ⟨ha1, ha2⟩ ⟨hb1, hb2⟩ hx hy hxy
+    have h1 := (convex_Ioo (0 : ℝ) 2) ⟨ha3, ha4⟩ ⟨hb3, hb4⟩ hx hy hxy
+    simp only [Set.mem_Ioo] at h0 h1
+    exact ⟨h0.1, h0.2, h1.1, h1.2⟩
+  have hne : splitSquareF.Nonempty := ⟨splitQI, split_QI_mem_F⟩
+  exact (hconv.isPathConnected hne).joinedIn splitQI split_QI_mem_F splitQG
+    split_QG_mem_F
 
-theorem split_reachable : splitDecomp.incidenceGraph.Reachable (.inl (0 : Fin 2)) (.inl (1 : Fin 2)) := by
-  have hF : IsOpen splitF := split_isOpen
-  have hI : splitQI ∈ splitF := split_QI_mem_F
-  have hG : splitQG ∈ splitF := split_QG_mem_F
-  have hcI : splitQI ∈ splitDecomp.carrier (.inl (0 : Fin 2)) := split_QI_mem_L
-  have hcG : splitQG ∈ splitDecomp.carrier (.inl (1 : Fin 2)) := split_QG_mem_R
-  exact (splitDecomp.reachable_iff_joinedIn hF hI hG hcI hcG).mpr split_joined
+theorem split_reachable : splitSquareDecomp.incidenceGraph.Reachable (.inl (0 : Fin 2)) (.inl (1 : Fin 2)) := by
+  have hF : IsOpen splitSquareF := split_isOpen
+  have hcI : splitQI ∈ splitSquareDecomp.carrier (.inl (0 : Fin 2)) := split_QI_mem_L
+  have hcG : splitQG ∈ splitSquareDecomp.carrier (.inl (1 : Fin 2)) := split_QG_mem_R
+  exact (splitSquareDecomp.reachable_iff_joinedIn hF hcI hcG).mpr split_joined
 
 /-- Left square of the two-component fixture (0,1)×(0,1).
 LaValle, Planning Algorithms, Sec. 6.2.2. -/
@@ -519,11 +424,9 @@ separation above: a path would give reachability. -/
 theorem two_not_joined : ¬ JoinedIn twoF twoQ0 twoQ1 := by
   intro hjoined
   have hF : IsOpen twoF := two_isOpen
-  have hI : twoQ0 ∈ twoF := two_Q0_mem_F
-  have hG : twoQ1 ∈ twoF := two_Q1_mem_F
   have hcI : twoQ0 ∈ twoDecomp.carrier (.inl (0 : Fin 2)) := two_Q0_mem_A
   have hcG : twoQ1 ∈ twoDecomp.carrier (.inl (1 : Fin 2)) := two_Q1_mem_B
-  have hreach := twoDecomp.reachable_of_joinedIn hF hI hG hcI hcG hjoined
+  have hreach := twoDecomp.reachable_of_joinedIn hF hcI hcG hjoined
   exact two_not_reachable hreach
 
 #print axioms TrapDecomp.reachable_iff_joinedIn
