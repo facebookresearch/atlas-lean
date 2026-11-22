@@ -1,0 +1,15 @@
+# Ulam's floating body problem
+
+- [Unit sphere](s.md)
+- [Origin-symmetric set](is-origin-symmetric.md)
+- [Centrally symmetric set](is-centrally-symmetric.md)
+- [Center of mass](center-of-mass.md)
+- [Lower half-space](h-minus.md)
+- [Cutting hyperplane at a level](cutting-hyperplane-at-level.md)
+- [Direction of the line through the centers of mass](line-through-centers-of-mass.md)
+- [Floating in equilibrium in a direction](floats-in-equilibrium-in-direction-at-le.md)
+- [Floating in equilibrium in every orientation](floats-in-equilibrium-in-every-orientati.md)
+- [Body of revolution](body-of-revolution.md)
+- [Solid of revolution](body.md)
+- [Strictly convex body](is-strictly-convex-body.md)
+- [Ryabogin's negative answer to Ulam's floating body problem](theorem-1.md)

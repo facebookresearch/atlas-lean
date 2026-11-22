@@ -12,20 +12,11 @@ Author: Steven Warner, Nam Trang
 module
 
 public import Mathlib.Algebra.Ring.CharZero
-public import Mathlib.SetTheory.Cardinal.Aleph
 public import Mathlib.SetTheory.Cardinal.Regular
 
 @[expose] public section
 
 -- Source: Lean Definition Library (Airtable) records: Logic 29, Logic 26, Logic 27, Logic 560, Logic 561
-
-/-!
-# `MathlibExt.SetTheory.Cardinal.LargeCardinal.Inaccessible`
-
-## References
-
-* Jech (for `IsWeaklyInaccessible`, `inaccessibleBelow`, `IsInaccessibleFixedPoint`)
--/
 
 /-! ## Beth and aleph bounds below an inaccessible -/
 
@@ -52,6 +43,14 @@ public import Mathlib.SetTheory.Cardinal.Regular
 /-! ## Limit cardinals below a weakly inaccessible -/
 
 open Cardinal Ordinal Set Order
+
+/-!
+# `MathlibExt.SetTheory.Cardinal.LargeCardinal.Inaccessible`
+
+## References
+
+* Jech (for `IsWeaklyInaccessible`, `inaccessibleBelow`, `IsInaccessibleFixedPoint`)
+-/
 
 namespace MetaMathlibExt
 

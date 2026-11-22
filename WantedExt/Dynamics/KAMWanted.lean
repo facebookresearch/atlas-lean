@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Dynamics.KAM` — kam_invariant_curve (manifest `manifests/problems/kam_invariant_curve.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Dynamics.KAM` — kam_invariant_curve
+(manifest `manifests/problems/kam_invariant_curve.toml`, rev 1, submitter Kim Morrison, status
+archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
 and placed the declarations in the `MathlibExt.Dynamics.KAMWanted` namespace. Mathematical
-statements are unchanged. Source: A. N. Kolmogorov (1954); V. I. Arnold (1963); J. Moser, *On invariant curves of area-preserving mappings of an annulus*, Nachr. Akad. Wiss. Göttingen (1962). Knill, *Some fundamental theorems in mathematics*, §83.
+statements are unchanged. Source: A. N. Kolmogorov (1954); V. I. Arnold (1963); J. Moser, *On
+invariant curves of area-preserving mappings of an annulus*, Nachr. Akad. Wiss. Göttingen (1962).
+Knill, *Some fundamental theorems in mathematics*, §83.
 -/
 module
 
@@ -77,7 +81,10 @@ def IsDiophantine (α : ℝ) : Prop :=
 `q(t+α) − 2q(t) + q(t−α) = c·f(q(t))` has a smooth strictly increasing solution
 `q` with `q − id` periodic — the `c = 0` curve `q₀(t) = t` persists as a smooth
 invariant curve of rotation number `α`. -/
-/-- Source: A. N. Kolmogorov (1954); V. I. Arnold (1963); J. Moser, *On invariant curves of area-preserving mappings of an annulus*, Nachr. Akad. Wiss. Göttingen (1962). Knill, *Some fundamental theorems in mathematics*, §83. Via leanprover/lean-eval@38361be, problem `kam_invariant_curve`. -/
+/-- Source: A. N. Kolmogorov (1954); V. I. Arnold (1963); J. Moser, *On invariant curves of
+area-preserving mappings of an annulus*, Nachr. Akad. Wiss. Göttingen (1962). Knill, *Some
+fundamental theorems in mathematics*, §83. Via leanprover/lean-eval@38361be, problem
+`kam_invariant_curve`. -/
 public theorem_wanted kam_invariant_curve
     (α : ℝ) (_hα : IsDiophantine α)
     (f : ℝ → ℝ)

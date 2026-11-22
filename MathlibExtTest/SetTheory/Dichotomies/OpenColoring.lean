@@ -12,7 +12,6 @@ Author: Nam Trang
 module
 
 public import MathlibExt.SetTheory.Dichotomies.OpenColoring
-public import Mathlib.Topology.Bases
 
 @[expose] public section
 

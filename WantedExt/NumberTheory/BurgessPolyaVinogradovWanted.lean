@@ -109,7 +109,8 @@ public theorem_wanted re_sum_div_primes_cpow_le {K : ℝ}
           ((∑ p ∈ (Finset.Iic ⌊exp (1 / α)⌋₊).filter Nat.Prime, (1 : ℝ) / p) -
             log (log (exp (1 / α))) - meisselMertensConstant))
 
-/-- For a completely multiplicative arithmetic function `g` with `|g(n)| ≤ 1` and its Dirichlet series
+/-- For a completely multiplicative arithmetic function `g` with `|g(n)| ≤ 1` and its Dirichlet
+series
 `F(s) = ∑ g(n) n^{-s}`, for `Re s > 1`,
 `|F(s)| ≤ exp(ν₂) · exp(Re ∑_p g(p)/p^s)` with `ν₂ ≤ 0.316`. The paper's `ν₂ = γ - M` is written
 here as its prime-series form `∑_p (-log(1 - 1/p) - 1/p)` (the identity used in its proof).

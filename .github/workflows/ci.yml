@@ -6,6 +6,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
   merge_group:
+    types: [checks_requested]
   workflow_dispatch:
 
 permissions:
@@ -27,6 +28,27 @@ jobs:
 
       - name: Run deterministic repository checks
         run: scripts/check.sh preflight
+
+      - name: Test v1 metadata inventory
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          set -euo pipefail
+          work_dir="$(mktemp -d "${RUNNER_TEMP}/atlas-inventory.XXXXXX")"
+          trap 'rm -rf "$work_dir"' EXIT
+          python3 -m venv "$work_dir/venv"
+          "$work_dir/venv/bin/python" -m pip install --disable-pip-version-check \
+            -r scripts/requirements-inventory.txt
+          "$work_dir/venv/bin/python" -m unittest discover \
+            -s scripts -p test_inventory_v1.py -v
+          "$work_dir/venv/bin/python" scripts/inventory_v1.py \
+            --base HEAD --output "$work_dir/smoke"
+          test -s "$work_dir/smoke/inventory.jsonl"
+          test -s "$work_dir/smoke/manifest.json"
+          "$work_dir/venv/bin/python" -m unittest discover \
+            -s scripts -p test_algebra_notes_migration.py -v
+          "$work_dir/venv/bin/python" scripts/check_algebra_notes_migration.py \
+            --source-revision HEAD
 
   build:
     needs: preflight
@@ -84,12 +106,18 @@ jobs:
           restore-keys: |
             lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
 
+      - name: Test the declaration collision check
+        run: python3 -m unittest discover -s scripts -p test_declaration_collisions_native.py -v
+
       # Each of these peaks at 13-15 GB when built alone. Lake builds several
       # modules at once; on this 16 GB runner the three together exhaust memory
       # and swap until the runner is shut down. Build them first, one at a time;
       # the full build then finds them up to date and replays their logs. When
       # one fails, the full build is skipped: it would retry that module
       # alongside the others.
+      - name: Test initialized compiled-audit isolation
+        run: python3 -m unittest discover -s scripts -p test_compiled_audit_native.py -v
+
       - name: Build memory-heavy modules one at a time
         run: |
           set -euo pipefail
@@ -104,6 +132,15 @@ jobs:
 
       - name: Build extension libraries
         run: scripts/check.sh build
+
+      - name: Check the bounded codec lesson
+        run: lake env lean -DwarningAsError=true docs/teaching/examples/BoundedCodec.lean
+
+      - name: Check the testing-limits lesson
+        run: lake env lean -DwarningAsError=true docs/teaching/examples/TestingLimits.lean
+
+      - name: Check the IMP invariant and variant lesson
+        run: lake env lean -DwarningAsError=true docs/teaching/examples/IMPInvariants.lean
 
       - name: Save local build from main
         if: success() && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && steps.local-build-cache.outputs.cache-hit != 'true'

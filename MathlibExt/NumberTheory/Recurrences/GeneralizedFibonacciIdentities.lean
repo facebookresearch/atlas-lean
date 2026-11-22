@@ -13,7 +13,7 @@ import Mathlib.Algebra.CharP.Defs
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.SpecificLimits.Normed
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import MathlibExt.NumberTheory.BinetClosedForm
 import MathlibExt.NumberTheory.Recurrences.HoradamGeneralizedCatalanIdentity
 
@@ -281,6 +281,7 @@ The four parts are also stated separately, each with only the hypotheses it need
 `0 ≤ m` is not used), `generalizedFibonacci_cassini` and `generalizedFibonacci_tendsto_ratio`.
 Proves `Wanted` entry `generalizedFibonacci_binet_cassini_and_ratio_limit`.
 -/
+@[nolint unusedArguments]
 theorem generalizedFibonacci_binet_cassini_and_ratio_limit (p a b : ℤ) (W F : ℤ → ℝ)
   (m n : ℤ) (hp : 1 ≤ p) (ha : 0 ≤ a) (hb : 0 < b) (hm : 0 ≤ m) (hn : 0 ≤ n) (hW0 : W 0 = (a : ℝ))
   (hW1 : W 1 = (b : ℝ)) (hWrec : ∀ k : ℤ, W (k + 2) = (p : ℝ) * W (k + 1) + W k) (hF0 : F 0 = 0)
