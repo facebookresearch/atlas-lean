@@ -338,6 +338,19 @@ theorem csiszar_kullback_pinsker_of_support {α : Type*} [Fintype α] (x y : α 
   linarith
 
 /--
+Binary Pinsker inequality with the first argument in the closed interval: for `0 ≤ u ≤ 1` and
+`0 < v < 1`, `2 (u - v)² ≤ u log (u / v) + (1 - u) log ((1 - u) / (1 - v))` (natural log, with
+Lean's convention `0 * log 0 = 0`). The right side is the Kullback-Leibler divergence
+`D(Ber(u) ‖ Ber(v))`. It is the case `0 < v < 1` of the support-aware binary inequality above.
+Source: Y. Polyanskiy and Y. Wu, Information Theory: From Coding to Learning (Cambridge University
+Press, 2025), Theorem 7.10 (proof: reduction of Pinsker's inequality to Bernoulli distributions).
+-/
+theorem binary_pinsker_of_mem_Icc {u v : ℝ} (hu0 : 0 ≤ u) (hu1 : u ≤ 1) (hv0 : 0 < v)
+    (hv1 : v < 1) :
+    2 * (u - v)^2 ≤ u * Real.log (u / v) + (1 - u) * Real.log ((1-u)/(1-v)) :=
+  binary_pinsker u v hu0 hu1 hv0.le hv1.le (fun h => absurd h hv0.ne') (fun h => absurd h hv1.ne)
+
+/--
 Finite strictly-positive Csiszar-Kullback-Pinsker inequality: for finite nonempty `α` and pmfs `p, q
 : α → ℝ` with `p a > 0`, `q a > 0` and sums `1`, `(∑ |p a - q a|)² ≤ 2 * ∑ p a * log (p a / q a)`
 with natural log, equivalent to `TV(p,q) ≤ √(D_KL/2)`.
@@ -357,6 +370,23 @@ theorem csiszar_kullback_pinsker
     (∑ a : α, |p a - q a|) ^ 2 ≤ 2 * ∑ a : α, p a * Real.log (p a / q a) := by
   exact csiszar_kullback_pinsker_of_support p q
     (fun a => (hp_pos a).le) (fun a => (hq_pos a).le) hp_sum hq_sum
+    (fun a ha => ((hq_pos a).ne' ha).elim)
+
+/-- **Csiszár–Kullback–Pinsker inequality with zero entries allowed.** For a finite nonempty `α`,
+a probability vector `p` with `p a ≥ 0` and a strictly positive probability vector `q`,
+`(∑ |p a - q a|)² ≤ 2 ∑ p a log (p a / q a)` (with `0 log 0 = 0`). This extends
+`csiszar_kullback_pinsker` to `p` with zero entries; it is the case of
+`csiszar_kullback_pinsker_of_support` where `q` is strictly positive. Sources: as for
+`csiszar_kullback_pinsker` (Pinsker 1960; Csiszár 1967). -/
+theorem csiszar_kullback_pinsker_of_nonneg
+    {α : Type*} [Fintype α] [Nonempty α]
+    (p q : α → ℝ)
+    (hp_nonneg : ∀ a, 0 ≤ p a)
+    (hq_pos : ∀ a, 0 < q a)
+    (hp_sum : ∑ a : α, p a = 1)
+    (hq_sum : ∑ a : α, q a = 1) :
+    (∑ a : α, |p a - q a|) ^ 2 ≤ 2 * ∑ a : α, p a * Real.log (p a / q a) := by
+  exact csiszar_kullback_pinsker_of_support p q hp_nonneg (fun a => (hq_pos a).le) hp_sum hq_sum
     (fun a ha => ((hq_pos a).ne' ha).elim)
 
 end MathlibExt.InformationTheory.Pinsker

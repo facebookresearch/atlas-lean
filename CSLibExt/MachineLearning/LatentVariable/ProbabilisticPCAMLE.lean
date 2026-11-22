@@ -79,12 +79,14 @@ noncomputable def logLik (xs : Fin N → EuclideanSpace ℝ (Fin d)) (μ : Eucli
     (W : Matrix (Fin d) (Fin q) ℝ) (σ2 : ℝ) : ℝ :=
   ∑ n, log (multivariateGaussianPDFReal μ (ppcaCov W σ2) (xs n))
 
-/-- The sample mean. -/
+/-- The sample mean `(1 / N) ∑ n, xₙ`. For an empty sample (`N = 0`) it is `0`, the convention of
+`weightedMean` (`0 / 0`), which is not the mean of any data. -/
 noncomputable abbrev sampleMean (xs : Fin N → EuclideanSpace ℝ (Fin d)) :
     EuclideanSpace ℝ (Fin d) :=
   weightedMean 1 xs
 
-/-- The sample covariance `(1 / N) ∑ n, (xₙ - x̄)(xₙ - x̄)ᵀ`. -/
+/-- The sample covariance `(1 / N) ∑ n, (xₙ - x̄)(xₙ - x̄)ᵀ`. For an empty sample (`N = 0`) it is
+the zero matrix, the convention of `weightedScatter`, which is not the covariance of any data. -/
 noncomputable abbrev sampleCov (xs : Fin N → EuclideanSpace ℝ (Fin d)) :
     Matrix (Fin d) (Fin d) ℝ :=
   weightedScatter 1 xs (sampleMean xs)

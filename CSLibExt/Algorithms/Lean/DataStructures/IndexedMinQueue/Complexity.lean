@@ -102,7 +102,7 @@ private lemma siftUpTracked_depth_bound {W : Type u} [LinearOrder W] {n : Nat}
         dsimp only
         by_cases hlt : a[i] < a[heapParent i]'(heapParent_lt_size a i hi hpos)
         · simp only [ite_eq_left hlt]
-          have hr := ih (heapParent i) (parent_lt i hpos)
+          have hr := ih (heapParent i) (heapParent_lt i hpos)
             (a.swap i (heapParent i) hi (heapParent_lt_size a i hi hpos))
             (swapPosition a position hcap i (heapParent i) hi
               (heapParent_lt_size a i hi hpos)) (by simpa using hcap)

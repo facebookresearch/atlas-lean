@@ -12,8 +12,10 @@ public import PhyslibExt.Mechanics.OrbitalPorts
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Complex.RealDeriv
 import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
@@ -56,6 +58,23 @@ Eccentricity vectors at the position `(1, 0, 0)`:
 * the circular state has `e = 0`, so it has no pericenter direction;
 * a bound radial state has `h = 0` and `|e| = 1`;
 * a polar state has a nonzero node vector and a nonzero eccentricity vector.
+
+A planar Kepler arc in a tilted plane, with the quarter turn about the first axis, `quarterTurnX`:
+
+* the unit circle `x = cos t`, `y = sin t`, with velocity `(-sin t, cos t)`, meets the planar
+  Kepler arc premises with `μ = 1` on `[0, 1]`;
+* embedded by `quarterTurnX`, its specific angular momentum is `(0, -1, 0)` at every time, the
+  planar value `1` along the tilted normal `-e₂`, and its specific energy is `-1/2`, half the
+  planar energy `-1`;
+* at `t = 0` the component along the oriented normal is `1`, and the reflection `reflectX`
+  (determinant `-1`) reverses it to `-1`;
+* with `μ = 0` the body at rest at `(1, 0)` meets every clause but the positivity of `μ`, which
+  rejects it, as it rejects every `μ ≤ 0`.
+
+Equal-speed plane changes in declared planes through the third axis, the line of nodes, with the
+rotation `rotZ` of the frame dictionary: the plane-change lemma at the node `(0, 0, 1)` gives the
+impulse `2 v sin(i / 2)`; a right-angle change at unit speed costs `√2`, no change costs `0`, and
+the reversal `i = π` of the orbital sense costs `2 v`.
 -/
 
 @[expose] public section
@@ -418,5 +437,205 @@ example :
     ext i
     fin_cases i <;> norm_num [cross_apply]
   exact ⟨hn, he⟩
+
+open _root_.Units.EngineeringFrames (reflectX reflectX_mem_orthogonalGroup)
+
+-- The unit circle `x = cos t`, `y = sin t`, `vx = -sin t`, `vy = cos t` is a planar Kepler arc
+-- with `μ = 1` on `[0, 1]`.
+example :
+    IsPlanarKeplerArc 1 0 1 Real.cos Real.sin (fun t => -Real.sin t) Real.cos := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · exact zero_lt_one
+  · exact zero_lt_one
+  · intro t _
+    have h := Real.cos_sq_add_sin_sq t
+    rw [h, Real.sqrt_one]
+    exact zero_lt_one
+  · intro t _
+    exact Real.hasDerivAt_cos t
+  · intro t _
+    exact Real.hasDerivAt_sin t
+  · intro t _
+    have hderiv : HasDerivAt (fun t => -Real.sin t) (-Real.cos t) t :=
+      (Real.hasDerivAt_sin t).neg
+    have h1 : Real.cos t ^ 2 + Real.sin t ^ 2 = 1 := Real.cos_sq_add_sin_sq t
+    have hval : -1 * Real.cos t / Real.sqrt (Real.cos t ^ 2 + Real.sin t ^ 2) ^ 3
+        = -Real.cos t := by
+      rw [h1, Real.sqrt_one, one_pow, div_one]
+      ring
+    rw [hval]
+    exact hderiv
+  · intro t _
+    have hderiv : HasDerivAt Real.cos (-Real.sin t) t := Real.hasDerivAt_cos t
+    have h1 : Real.cos t ^ 2 + Real.sin t ^ 2 = 1 := Real.cos_sq_add_sin_sq t
+    have hval : -1 * Real.sin t / Real.sqrt (Real.cos t ^ 2 + Real.sin t ^ 2) ^ 3
+        = -Real.sin t := by
+      rw [h1, Real.sqrt_one, one_pow, div_one]
+      ring
+    rw [hval]
+    exact hderiv
+
+/-- The quarter turn about the first axis, `e₂ ↦ e₃`, `e₃ ↦ -e₂`: it tilts the plane of the first
+two axes into the plane of the first and third axes, with normal `-e₂`. -/
+def quarterTurnX : Matrix.specialOrthogonalGroup (Fin 3) ℝ :=
+  ⟨!![1, 0, 0; 0, 0, -1; 0, 1, 0], by
+    rw [Matrix.mem_specialOrthogonalGroup_iff, Matrix.mem_orthogonalGroup_iff]
+    refine ⟨?_, ?_⟩
+    · ext i j
+      fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_three]
+    · simp [Matrix.det_fin_three]⟩
+
+-- **Nonzero angular momentum in a rotated plane.** The unit-circle arc embedded by
+-- `quarterTurnX` has angular momentum `(0, -1, 0)` at every time, the planar value `1` times the
+-- tilted normal `-e₂`, and specific energy `-1/2`, half the upstream planar energy `-1`.
+example (t : ℝ) :
+    spatialState quarterTurnX (planarPath Real.cos Real.sin) t ⨯₃
+        spatialState quarterTurnX (planarPath (fun t => -Real.sin t) Real.cos) t =
+      ![0, -1, 0] ∧
+      specificEnergy 1 (spatialState quarterTurnX (planarPath Real.cos Real.sin) t)
+        (spatialState quarterTurnX (planarPath (fun t => -Real.sin t) Real.cos) t) = -1 / 2 := by
+  have hL : Real.cos t * Real.cos t - Real.sin t * (-Real.sin t) = 1 := by
+    have h := Real.cos_sq_add_sin_sq t
+    linear_combination h
+  have hnorm : bodyToInertialVec quarterTurnX ![0, 0, 1] = ![0, -1, 0] := by
+    show ((!![1, 0, 0; 0, 0, -1; 0, 1, 0] : Matrix (Fin 3) (Fin 3) ℝ) *ᵥ ![0, 0, 1])
+      = ![0, -1, 0]
+    ext i
+    fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_three]
+  constructor
+  · simp only [cross_spatialState, hL, hnorm, one_smul]
+  · have hE2 := two_mul_specificEnergy_spatialState quarterTurnX 1 Real.cos Real.sin
+      (fun t => -Real.sin t) Real.cos t
+    have hsq : (-Real.sin t) ^ 2 + Real.cos t ^ 2
+        - 2 * 1 / Real.sqrt (Real.cos t ^ 2 + Real.sin t ^ 2) = -1 := by
+      have h1 : Real.cos t ^ 2 + Real.sin t ^ 2 = 1 := Real.cos_sq_add_sin_sq t
+      have hsq1 : (-Real.sin t) ^ 2 + Real.cos t ^ 2 = 1 := by linear_combination h1
+      rw [hsq1, h1, Real.sqrt_one]
+      norm_num
+    have hE : 2 * specificEnergy 1 (spatialState quarterTurnX (planarPath Real.cos Real.sin) t)
+        (spatialState quarterTurnX (planarPath (fun t => -Real.sin t) Real.cos) t) = -1 := by
+      calc 2 * specificEnergy 1 (spatialState quarterTurnX (planarPath Real.cos Real.sin) t)
+            (spatialState quarterTurnX (planarPath (fun t => -Real.sin t) Real.cos) t)
+          = (-Real.sin t) ^ 2 + Real.cos t ^ 2
+            - 2 * 1 / Real.sqrt (Real.cos t ^ 2 + Real.sin t ^ 2) := hE2
+        _ = -1 := hsq
+    linarith
+
+-- **Reflecting the plane flips the signed angular momentum component.** The unit-circle state
+-- at `t = 0` (position `(1, 0)`, velocity `(0, 1)`, planar angular momentum `1`) has component `1`
+-- along the oriented normal of `quarterTurnX`, and component `-1` along the mapped normal of the
+-- reflection `reflectX` (`det = -1`).
+example :
+    (spatialState quarterTurnX (planarPath Real.cos Real.sin) 0 ⨯₃
+        spatialState quarterTurnX (planarPath (fun t => -Real.sin t) Real.cos) 0) ⬝ᵥ
+        bodyToInertialVec quarterTurnX ![0, 0, 1] = 1 ∧
+      ((reflectX *ᵥ planarToBody ⟨1, 0⟩) ⨯₃ (reflectX *ᵥ planarToBody ⟨0, 1⟩)) ⬝ᵥ
+        (reflectX *ᵥ ![0, 0, 1]) = -1 := by
+  constructor
+  · rw [cross_spatialState_dotProduct_normal]
+    simp [Real.cos_zero, Real.sin_zero]
+  · have hdet : reflectX.det = -1 := by
+      simp [reflectX, Matrix.det_diagonal, Fin.prod_univ_three]
+    rw [cross_dotProduct_normal_of_det_eq_neg_one reflectX_mem_orthogonalGroup hdet]
+    norm_num
+
+-- Zero gravitational parameter is rejected: with `μ = 0` the body at rest at `(1, 0)` stays away
+-- from the center and meets the position and velocity clauses on `[0, 1]` (the central
+-- acceleration vanishes), and only the positivity of `μ` rejects it.
+example :
+    (∀ t ∈ Set.Icc (0 : ℝ) 1, 0 < Real.sqrt ((1 : ℝ) ^ 2 + 0 ^ 2) ∧
+        HasDerivAt (fun _ : ℝ => (1 : ℝ)) 0 t ∧ HasDerivAt (fun _ : ℝ => (0 : ℝ)) 0 t ∧
+        HasDerivAt (fun _ : ℝ => (0 : ℝ)) (-0 * 1 / Real.sqrt ((1 : ℝ) ^ 2 + 0 ^ 2) ^ 3) t ∧
+        HasDerivAt (fun _ : ℝ => (0 : ℝ)) (-0 * 0 / Real.sqrt ((1 : ℝ) ^ 2 + 0 ^ 2) ^ 3) t) ∧
+      ¬ IsPlanarKeplerArc 0 0 1 (fun _ => 1) (fun _ => 0) (fun _ => 0) (fun _ => 0) := by
+  refine ⟨fun t _ => ⟨by norm_num, hasDerivAt_const t 1, hasDerivAt_const t 0, ?_, ?_⟩,
+    fun h => lt_irrefl 0 h.mu_pos⟩
+  · simpa using hasDerivAt_const t (0 : ℝ)
+  · simpa using hasDerivAt_const t (0 : ℝ)
+
+-- A vanishing or repulsive parameter is rejected: no planar Kepler arc has `μ ≤ 0`.
+example {μ t₀ t₁ : ℝ} {x y vx vy : ℝ → ℝ} (hμ : μ ≤ 0) :
+    ¬ IsPlanarKeplerArc μ t₀ t₁ x y vx vy :=
+  fun h => absurd h.mu_pos (not_lt.mpr hμ)
+
+section PlaneChange
+
+open Units.EngineeringFrames (rotZ)
+
+/-- Declared planes through one line of nodes: in a frame whose third axis is the line of nodes,
+the velocity `v₁ = (v, 0, 0)` is tangent at every node `(0, 0, r)`, and the rotation `rotZ i` by the
+plane-change angle `i ∈ [0, π]` about the line of nodes gives the velocity `v₂ = rotZ i v₁` of the
+plane tilted by `i`. The impulse is `|v₂ - v₁| = 2 v sin(i / 2)`. -/
+lemma impulseMagnitude_rotZ {v i : ℝ} (hv : 0 < v) (hi₀ : 0 ≤ i) (hiπ : i ≤ Real.pi) :
+    impulseMagnitude ![v, 0, 0] (rotZ i *ᵥ ![v, 0, 0]) = 2 * v * Real.sin (i / 2) := by
+  have w0 : (rotZ i *ᵥ ![v, 0, 0]) 0 = Real.cos i * v := by simp [rotZ, mulVec]
+  have w1 : (rotZ i *ᵥ ![v, 0, 0]) 1 = Real.sin i * v := by simp [rotZ, mulVec]
+  have w2 : (rotZ i *ᵥ ![v, 0, 0]) 2 = 0 := by simp [rotZ, mulVec]
+  have htrig := Real.sin_sq_add_cos_sq i
+  -- The node `(0, 0, 1)` on the line of nodes, at unit distance from the center.
+  have hr : 0 < radius ![(0 : ℝ), 0, 1] := by
+    unfold radius
+    rw [vec3_dotProduct']
+    norm_num
+  have h₁ : ![(0 : ℝ), 0, 1] ⬝ᵥ ![v, 0, 0] = 0 := by
+    rw [vec3_dotProduct']
+    ring
+  have h₂ : ![(0 : ℝ), 0, 1] ⬝ᵥ (rotZ i *ᵥ ![v, 0, 0]) = 0 := by
+    rw [vec3_dotProduct, w2]
+    simp
+  have hv₁ : speedSq ![v, 0, 0] = v ^ 2 := by
+    unfold speedSq
+    rw [vec3_dotProduct']
+    ring
+  have hv₂ : speedSq (rotZ i *ᵥ ![v, 0, 0]) = v ^ 2 := by
+    unfold speedSq
+    rw [vec3_dotProduct, w0, w1, w2]
+    linear_combination v ^ 2 * htrig
+  -- The specific angular momenta at the node, `(0, v, 0)` and `(-v sin i, v cos i, 0)`, both of
+  -- length `v` and at the angle `i`.
+  have c₁ : ![(0 : ℝ), 0, 1] ⨯₃ ![v, 0, 0] = ![0, v, 0] := by
+    ext k
+    fin_cases k <;> simp [cross_apply]
+  have c₂ : ![(0 : ℝ), 0, 1] ⨯₃ (rotZ i *ᵥ ![v, 0, 0]) =
+      ![-(Real.sin i * v), Real.cos i * v, 0] := by
+    ext k
+    fin_cases k <;> simp [cross_apply, w0, w1]
+  have n₁ : ![(0 : ℝ), v, 0] ⬝ᵥ ![0, v, 0] = v ^ 2 := by
+    rw [vec3_dotProduct']
+    ring
+  have n₂ : ![-(Real.sin i * v), Real.cos i * v, 0] ⬝ᵥ ![-(Real.sin i * v), Real.cos i * v, 0] =
+      v ^ 2 := by
+    rw [vec3_dotProduct']
+    linear_combination v ^ 2 * htrig
+  refine impulseMagnitude_planeChange hr h₁ h₂ hv hv₁ hv₂ hi₀ hiπ ?_
+  rw [c₁, c₂, n₁, n₂, Real.sqrt_sq hv.le, vec3_dotProduct']
+  ring
+
+-- A right-angle plane change at unit speed costs `√2`, a nonzero impulse.
+example :
+    impulseMagnitude ![1, 0, 0] (rotZ (Real.pi / 2) *ᵥ ![1, 0, 0]) = Real.sqrt 2 ∧
+      0 < Real.sqrt 2 := by
+  have h := impulseMagnitude_rotZ (v := 1) (i := Real.pi / 2) (by norm_num)
+    (by linarith [Real.pi_nonneg]) (by linarith [Real.pi_nonneg])
+  refine ⟨?_, Real.sqrt_pos.mpr (by norm_num)⟩
+  rw [h]
+  have h4 : (Real.pi / 2) / 2 = Real.pi / 4 := by ring
+  rw [h4, Real.sin_pi_div_four]
+  ring
+
+-- No plane change costs nothing, and the reversal `i = π` of the orbital sense costs `2 v`.
+example {v : ℝ} (hv : 0 < v) :
+    impulseMagnitude ![v, 0, 0] (rotZ 0 *ᵥ ![v, 0, 0]) = 0 ∧
+      impulseMagnitude ![v, 0, 0] (rotZ Real.pi *ᵥ ![v, 0, 0]) = 2 * v := by
+  have h0 := impulseMagnitude_rotZ (v := v) (i := 0) hv (le_refl 0) Real.pi_nonneg
+  have hpi := impulseMagnitude_rotZ (v := v) (i := Real.pi) hv Real.pi_nonneg le_rfl
+  refine ⟨?_, ?_⟩
+  · rw [h0]
+    have hz : (0 : ℝ) / 2 = 0 := by norm_num
+    rw [hz, Real.sin_zero, mul_zero]
+  · rw [hpi, Real.sin_pi_div_two]
+    ring
+
+end PlaneChange
 
 end PhyslibExtTest.Mechanics.OrbitalPorts

@@ -14,7 +14,7 @@ import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 
 /-!
-# Radial Darcy profile and well-ledger checks
+# Radial Darcy profile, well-ledger and fractional-flow checks
 
 Concrete consumers of `PhyslibExt.EarthScience.PorousEnergyPorts`: on the annulus
 `1 ≤ r ≤ exp 1` with head `0` at the well, signed injection and extraction move the head at
@@ -25,7 +25,11 @@ general ledger predicts, and no no-flux step reproduces it. The cells store the 
 `ρ = 20`, `e = 10` at porosity `1/4` (mass `5`, energy `50` per unit volume), so the producing
 cell's enthalpy `12` follows from its stored mass and energy. A zero density is outside the
 ledger's domain: its positivity premise is false, and the totalized enthalpy at `ρ = 0` would
-drop the flow work.
+drop the flow work. Water at the end point of the mobile range floods three cells
+(`μo = 2`, `μw = 1`, `ΔS = 2 / 5`, `ν B = 9 / 10`): the step keeps every saturation in range,
+matches the normalized upwind step, and raises the water volume by the inflow minus the outflow.
+Dropping `ΔS` from the CFL number admits a step that leaves the range, and the saturation sum of
+the open chain is not conserved.
 
 ## i. Overview
 
@@ -39,6 +43,7 @@ No new definitions or results are introduced here.
 
 - A. Signed discharge and negative transmissivity
 - B. Well and boundary sources in the energy ledger
+- C. Fractional flow and the upwind step
 
 ## iv. References
 
@@ -185,3 +190,101 @@ flux would carry `8` at `ρ = 0` instead of the `10` it carries at `ρ = 1`. -/
 example :
     ControlVolumes.specificEnthalpy 8 2 0 = 8 ∧ ControlVolumes.specificEnthalpy 8 2 1 = 10 := by
   norm_num [ControlVolumes.specificEnthalpy]
+
+/-! ## C. Fractional flow and the upwind step -/
+
+/-- Fixture: oil `μo = 2`, water `μw = 1` (`B = 9 / 4`), `Swc = Sor = 3 / 10` (`ΔS = 2 / 5`),
+pore volume `1 / 4` per cell, `Q dt = 1 / 25`, so `ν = 2 / 5` and `ν B = 9 / 10`. Water at the
+end point `Sin = 1 - Sor = 7 / 10` (`f = 1`) flows into the cells `S = (7 / 10, 1 / 2, 2 / 5)`
+(normalized `(1, 1 / 2, 1 / 4)`, outlet `f = 2 / 11`). The step gives
+`(7 / 10, 83 / 150, 394 / 825)`, and the water volume rises from `2 / 5` to
+`119 / 275 = 2 / 5 + (1 / 25) (1 - 2 / 11)`. -/
+example :
+    cflNumber (1 / 25) 1 (1 / 4) 1 1 (1 - 3 / 10 - 3 / 10) = 2 / 5 ∧
+      cflNumber (1 / 25) 1 (1 / 4) 1 1 (1 - 3 / 10 - 3 / 10) * fracFlowBound 2 1 = 9 / 10 ∧
+      fracFlow 2 1 (normSat (3 / 10) (3 / 10) (7 / 10)) = 1 ∧
+      fracFlow 2 1 (normSat (3 / 10) (3 / 10) (2 / 5)) = 2 / 11 ∧
+      satStep 2 1 (3 / 10) (3 / 10) (1 / 25) 1 (1 / 4) 1 1 (7 / 10) ![7 / 10, 1 / 2, 2 / 5] 0 =
+        7 / 10 ∧
+      satStep 2 1 (3 / 10) (3 / 10) (1 / 25) 1 (1 / 4) 1 1 (7 / 10) ![7 / 10, 1 / 2, 2 / 5] 1 =
+        83 / 150 ∧
+      satStep 2 1 (3 / 10) (3 / 10) (1 / 25) 1 (1 / 4) 1 1 (7 / 10) ![7 / 10, 1 / 2, 2 / 5] 2 =
+        394 / 825 ∧
+      1 / 4 * 1 * 1 * ∑ i, satStep 2 1 (3 / 10) (3 / 10) (1 / 25) 1 (1 / 4) 1 1 (7 / 10)
+        ![7 / 10, 1 / 2, 2 / 5] i = 119 / 275 := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · norm_num [cflNumber]
+  · norm_num [cflNumber, fracFlowBound]
+  · norm_num [fracFlow, normSat]
+  · norm_num [fracFlow, normSat]
+  · norm_num [satStep, fracFlow, normSat, Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.cons_val_succ]
+  · norm_num [satStep, fracFlow, normSat, Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.cons_val_succ]
+  · norm_num [satStep, fracFlow, normSat, Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.cons_val_succ]
+  · rw [Fin.sum_univ_three]
+    norm_num [satStep, fracFlow, normSat, Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.cons_val_succ]
+
+/-- The flood step through the interval theorem: with `ν B = 9 / 10 ≤ 1`, every cell of the step
+stays in `[Swc, 1 - Sor] = [3 / 10, 7 / 10]`. -/
+example (i : Fin 3) :
+    satStep 2 1 (3 / 10) (3 / 10) (1 / 25) 1 (1 / 4) 1 1 (7 / 10) ![7 / 10, 1 / 2, 2 / 5] i ∈
+      Set.Icc (3 / 10) (1 - 3 / 10) :=
+  satStep_mem_Icc (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num [cflNumber, fracFlowBound]) (by norm_num)
+    (fun j => by fin_cases j <;> norm_num) i
+
+/-- The physical flood step is the normalized upwind step with `ν = 2 / 5`: behind the end-point
+inflow, the normalized cell `1` moves from `1 / 2` to `1 / 2 - (2 / 5) (2 / 3 - 1) = 19 / 30`. -/
+example :
+    normSat (3 / 10) (3 / 10)
+        (satStep 2 1 (3 / 10) (3 / 10) (1 / 25) 1 (1 / 4) 1 1 (7 / 10) ![7 / 10, 1 / 2, 2 / 5] 1) =
+      19 / 30 := by
+  rw [normSat_satStep]
+  norm_num [upwindStep, upwindUpdate, cflNumber, fracFlow, normSat]
+
+/-- The flood's water volume through the balance theorem: it changes by the inflow
+`Q dt f (s_in) = 1 / 25` minus the outflow `Q dt f (s_out) = (1 / 25) (2 / 11)`, from `2 / 5` to
+`119 / 275`. -/
+example :
+    1 / 4 * 1 * 1 * ∑ i, satStep 2 1 (3 / 10) (3 / 10) (1 / 25) 1 (1 / 4) 1 1 (7 / 10)
+      ![7 / 10, 1 / 2, 2 / 5] i = 119 / 275 := by
+  rw [satStep_volume_balance _ (by norm_num)]
+  norm_num [fracFlow, normSat, Fin.sum_univ_succ, Fin.last]
+
+/-- The Lipschitz bound on two of the flood's normalized saturations:
+`f (1 / 2) - f (1 / 4) = 2 / 3 - 2 / 11 = 16 / 33` lies in
+`[0, B (1 / 2 - 1 / 4)] = [0, 9 / 16]`. -/
+example :
+    fracFlow 2 1 (1 / 2) - fracFlow 2 1 (1 / 4) ∈
+      Set.Icc 0 (fracFlowBound 2 1 * (1 / 2 - 1 / 4)) :=
+  fracFlow_sub_mem_Icc (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+
+/-- Omitting `ΔS` in the CFL rescaling is wrong. With the fixture's viscosities and saturation
+range, pore volume `1 / 4` and `Q dt = 1 / 9`, the number `Q dt / (φ A dx) = 4 / 9` without `ΔS`
+passes `· * B ≤ 1`, but the CFL number with `ΔS` is `10 / 9` (`ν B = 5 / 2 > 1`), and one step
+of the admissible cell `S = 2 / 5` with inflow `7 / 10` gives `42 / 55 > 1 - Sor`. -/
+example :
+    (2 / 5 : ℝ) ∈ Set.Icc (3 / 10) (1 - 3 / 10) ∧ (7 / 10 : ℝ) ∈ Set.Icc (3 / 10) (1 - 3 / 10) ∧
+      1 / 9 * 1 / (1 / 4 * 1 * 1) * fracFlowBound 2 1 ≤ 1 ∧
+      1 < cflNumber (1 / 9) 1 (1 / 4) 1 1 (1 - 3 / 10 - 3 / 10) * fracFlowBound 2 1 ∧
+      1 - 3 / 10 < satStep 2 1 (3 / 10) (3 / 10) (1 / 9) 1 (1 / 4) 1 1 (7 / 10) ![2 / 5] 0 := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · norm_num
+  · norm_num
+  · norm_num [fracFlowBound]
+  · norm_num [cflNumber, fracFlowBound]
+  · norm_num [satStep, fracFlow, normSat, Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.cons_val_succ, Matrix.cons_val_fin_one]
+
+/-- A periodic conservation identity is wrong for the open chain: in the fixture the sum of the
+saturations changes (`8 / 5` before, `476 / 275` after), because the inlet and outlet terms do not
+cancel. -/
+example :
+    ∑ i, satStep 2 1 (3 / 10) (3 / 10) (1 / 25) 1 (1 / 4) 1 1 (7 / 10) ![7 / 10, 1 / 2, 2 / 5] i ≠
+      ∑ i, ![(7 / 10 : ℝ), 1 / 2, 2 / 5] i := by
+  rw [Fin.sum_univ_three, Fin.sum_univ_three]
+  norm_num [satStep, fracFlow, normSat, Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.cons_val_succ]
