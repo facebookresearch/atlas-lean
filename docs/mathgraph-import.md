@@ -45,10 +45,10 @@ existing page is bound to (`path`, `statement_sha256`, `annotation_sha256`; see
 below), with the importer's own definitions, so that a manifest is built with
 them; it refuses a page that can be no dependency, or that no manifest can name,
 as it does not match the schema's `page` pattern, and writes nothing.
-`--check-map` checks the map and, with `--base`, that it only grows
-([The map](#the-map)); it writes nothing. Here and below, "writes nothing" means
-nothing in the worktree: the checks try their edits of folder pages on copies in
-a temporary folder.
+`--check-map` checks the map and, with `--base`, that it only grows and that
+each new line records a page the change adds ([The map](#the-map)); it writes
+nothing. Here and below, "writes nothing" means nothing in the worktree: the
+checks try their edits of folder pages on copies in a temporary folder.
 
 What a run guarantees:
 
@@ -536,13 +536,30 @@ appended, and the older line and planned page stay as written
 ([Policy](#policy), "`pending` and `not_ready`"). With `--base <commit>`,
 `--check-map` also reads the map at that commit with `git` (a map absent there
 is empty), checks its lines the same way, and refuses the map unless that one is
-its start, ending at a line break, naming the first line that differs. Blueprint
-Pages runs `--check-map` right after the wiki tests: on a pull request that
-touches a path in its filter, the map among them, with the base commit as
+its start, ending at a line break, naming the first line that differs.
+
+It then checks each line appended since that commit against the page it records,
+which the same change must add: the page is not in the commit's tree and is a
+file in the worktree, with no symbolic link on its path, and it has exactly one
+annotation row, whose seed is the line's (`source` `mathgraph`, the line's
+`node` and `revision`), whose `id` is the one that seed gives and whose
+`pending` list, none when it records none, is the line's. The line's
+`statement_sha256` and `sketch_sha256` must be those of the page's statement and
+`## Proof sketch` (the empty string when it has none) as Autoform reads them,
+computed again with the importer's own functions. The line's
+`mg_statement_sha256`, `mg_sketch_sha256`, `reference_sha256` and `edges_sha256`
+come from mathgraph, which the importer does not read, and are not recomputed.
+The check binds a line to its page and annotation; it cannot tell whether the
+importer wrote them. The lines of the map at that commit are never checked
+against the pages, which may have moved since; without `--base`, the lines are
+checked alone.
+
+Blueprint Pages runs `--check-map` right after the wiki tests: on a pull request
+that touches a path in its filter, the map among them, with the base commit as
 `--base`, and on its runs of `main` without. Blueprint Pages is not a required
 check
 ([GitHub Actions and publication](BLUEPRINT.md#github-actions-and-publication)):
-it reports a map that does not only grow, but does not by itself stop a merge.
+it reports a map that fails these checks, but does not by itself stop a merge.
 
 Content PRs add lines to it, so it is a graph file: the
 [graph rules](BLUEPRINT.md#graph-rules) and `REVIEWING.md` list it with the
