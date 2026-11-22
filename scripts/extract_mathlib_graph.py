@@ -493,7 +493,7 @@ def command_bridge(args: argparse.Namespace) -> int:
     del full
     manifest = v2.article_manifest() if args.articles is None else set(
         line.strip() for line in Path(args.articles).read_text(encoding="utf-8").splitlines() if line.strip())
-    atlas_rows = v2.publish_private_targets(v2.read_dump(Path(args.v2_dump)), manifest)
+    atlas_rows = v2.publish_private_targets(v2.read_dump(Path(args.v2_dump))[0], manifest)
     # A reserved name that both a v2 module and a Mathlib module the v2 module does not import realise on
     # demand (`AddMonoidHom.mk.congr_simp`) is in both dumps: the two are the same generated lemma.
     realised_twice = sorted(atlas_rows.keys() & rows.keys())
