@@ -53,18 +53,22 @@ theorem test_support : Support P1 Q1 := by
   rw [h0, ENNReal.toReal_zero] at h2
   norm_num at h2
 
-theorem test_moment_pure_uniform : renyiMoment P1 Q1 2 = 2 := by
+theorem test_momentReal_pure_uniform : renyiMomentReal P1 Q1 2 = 2 := by
   have hP1t : (P1 true).toReal = 1 := by simp [P1]
   have hP1f : (P1 false).toReal = 0 := by simp [P1]
-  unfold renyiMoment
+  unfold renyiMomentReal
   rw [Fintype.sum_bool]
   simp only [hP1t, hP1f, test_uniform_toReal]
   norm_num [Real.rpow_two, Real.rpow_one]
 
+theorem test_moment_pure_uniform : renyiMoment P1 Q1 2 = 2 := by
+  rw [renyiMoment_of_support test_support, test_momentReal_pure_uniform,
+    show ((2 : ℝ) : EReal) = 2 from rfl]
+
 theorem test_div_pure_uniform : renyiDiv P1 Q1 2 = (Real.log 2 : EReal) := by
   rw [renyiDiv_of_support test_support]
   unfold renyiDivReal
-  rw [test_moment_pure_uniform, EReal.coe_eq_coe_iff]
+  rw [test_momentReal_pure_uniform, EReal.coe_eq_coe_iff]
   norm_num
 
 theorem test_one_le_moment : 1 ≤ renyiMoment P1 Q1 2 :=
@@ -86,9 +90,15 @@ theorem test_div_off_support_top : renyiDiv P1 Q0 2 = ⊤ :=
 theorem test_div_off_support_ne_zero : renyiDiv P1 Q0 2 ≠ 0 := by
   simp [test_div_off_support_top]
 
+theorem test_moment_off_support_top : renyiMoment P1 Q0 2 = ⊤ :=
+  renyiMoment_of_not_support test_not_support_off
+
 theorem test_moment_prod :
     renyiMoment (prodPMF P1 P1) (prodPMF Q1 Q1) 2 = 4 := by
-  rw [renyiMoment_prodPMF, test_moment_pure_uniform]
+  rw [renyiMoment_prodPMF, test_moment_pure_uniform,
+    show (2 : EReal) = ((2 : ℝ) : EReal) from rfl,
+    show (4 : EReal) = ((4 : ℝ) : EReal) from rfl,
+    ← EReal.coe_mul, EReal.coe_eq_coe_iff]
   norm_num
 
 theorem test_rdpEps2 :
