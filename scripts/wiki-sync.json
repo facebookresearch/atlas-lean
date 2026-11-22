@@ -66121,7 +66121,7 @@
 "MetaMathlibExt.gcd_eq_neg_emod_emod_five_sub_two": "9eb16f87f77a6ae4",
 "MetaMathlibExt.gcd_lucasU_two_mul_div_p_eq_one": "d89cf36be498f55c",
 "MetaMathlibExt.gcd_p_discr_dvd_four": "f2acb4fd23458aed",
-"MetaMathlibExt.gcd_pow_add_neg_one_pow_mul_eq_one": "8c83627da4356b16",
+"MetaMathlibExt.gcd_pow_add_neg_one_pow_mul_eq_one": "a737afa5a1ac0d7f",
 "MetaMathlibExt.gcd_pow_pow_add_one": "ead5248d37edf3d7",
 "MetaMathlibExt.gcd_prime_root_expansion_coeffs": "5a617e9c62392d57",
 "MetaMathlibExt.gcd_radical_expansion_coeffs_dvd_succ": "dd3a4ebff6c2e00d",
