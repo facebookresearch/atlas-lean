@@ -23,6 +23,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Rat.Init
 public import Mathlib.Data.Set.Card
+public import MathlibExt.NumberTheory.RationalRightTriangleReciprocalSums
 
 set_option autoImplicit false
 
