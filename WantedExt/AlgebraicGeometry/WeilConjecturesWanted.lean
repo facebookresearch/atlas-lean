@@ -91,7 +91,10 @@ of $F$ of degree $m$, the number of morphisms $\operatorname{Spec} E \to X$ over
 $\operatorname{Spec} F$ equals $\sum_{i=0}^{2d} (-1)^i \sum_{\alpha \in A_i} \alpha^m$, where
 the inner sums count multiplicities.
 
-Source: P. Deligne, 'La conjecture de Weil. I', Publications Mathématiques de l'Institut des Hautes Études Scientifiques, Volume 43, pages 273–307 (1974), https://www.numdam.org/item/PMIHES_1974__43__273_0.pdf. See also references in the Lean file. Via leanprover/lean-eval@38361be, problem `weil_conjectures`. -/
+Source: P. Deligne, 'La conjecture de Weil. I', Publications Mathématiques de l'Institut des Hautes
+Études Scientifiques, Volume 43, pages 273–307 (1974),
+https://www.numdam.org/item/PMIHES_1974__43__273_0.pdf. See also references in the Lean file. Via
+leanprover/lean-eval@38361be, problem `weil_conjectures`. -/
 public theorem_wanted weil_conjectures (F : Type*) [Finite F] [Field F]
     (X : Over (Spec (.of F))) [GeometricallyIrreducible X.hom] [IsProper X.hom]
     (d : ℕ) [SmoothOfRelativeDimension d X.hom] :

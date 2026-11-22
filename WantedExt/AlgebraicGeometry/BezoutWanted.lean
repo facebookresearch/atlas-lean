@@ -182,7 +182,11 @@ where $i_p(f_1, \dots, f_n)$ is the intersection multiplicity of $f_1, \dots, f_
 The total degree hypothesis rules out $f_k = 0$, which is homogeneous of every degree but has
 total degree $0$.
 
-Source: É. Bézout, *Théorie générale des équations algébriques*, Paris, 1779. Modern projective formulation: see Eisenbud, *Commutative Algebra*, Chapter 12, or Hartshorne, *Algebraic Geometry*, Ch. I §7. Listed as §50 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `bezout_projective_multiplicity`. -/
+Source: É. Bézout, *Théorie générale des équations algébriques*, Paris, 1779. Modern projective
+formulation: see Eisenbud, *Commutative Algebra*, Chapter 12, or Hartshorne, *Algebraic Geometry*,
+Ch. I §7. Listed as §50 in O. Knill, *Some Fundamental Theorems in Mathematics*
+(https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `bezout_projective_multiplicity`. -/
 public theorem_wanted bezout_multiplicity [IsAlgClosed K] {n : ℕ}
     (f : Fin n → MvPolynomial (Fin (n + 1)) K)
     (d : Fin n → ℕ) (_hd : ∀ k, (f k).IsHomogeneous (d k))
