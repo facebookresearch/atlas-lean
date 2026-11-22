@@ -40,8 +40,8 @@ open Finset
 @[expose] public section
 
 /-- **Bi-periodic Fibonacci numbers squared.** For elements $a$ and $b$ of a field $K$, the
-bi-periodic Fibonacci numbers squared $q^2_n \in K$ ($n \ge 0$) are defined by $q^2_0 = 0$,
-$q^2_1 = 1$, $q^2_2 = a^2$ and, for $n \ge 3$,
+sequence $q^2_n \in K$ ($n \ge 0$) is defined by $q^2_0 = 0$, $q^2_1 = 1$, $q^2_2 = a^2$ and, for
+$n \ge 3$,
 $$
 q^2_n = \frac{a}{b}(ab+1)\,q^2_{n-1} + (ab+1)\,q^2_{n-2} - \frac{a}{b}\,q^2_{n-3}
 $$
@@ -49,9 +49,11 @@ if $n$ is even, and
 $$
 q^2_n = \frac{b}{a}(ab+1)\,q^2_{n-1} + (ab+1)\,q^2_{n-2} - \frac{b}{a}\,q^2_{n-3}
 $$
-if $n$ is odd.
+if $n$ is odd. For nonzero $a$ and $b$, $q^2_n$ is the square of the $n$th bi-periodic Fibonacci
+number.
 
-Division by zero gives $0$, so the sequence is defined for all $a$ and $b$.
+Division by zero gives $0$, so the sequence is defined for all $a$ and $b$; when $a = 0$ or
+$b = 0$ its terms need not be squares of bi-periodic Fibonacci numbers.
 
 Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
 Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
@@ -99,7 +101,8 @@ theorem biPeriodicFibonacciSq_two {K : Type*} [Field K] (a b : K) :
     biPeriodicFibonacciSq a b 2 = a ^ 2 := rfl
 
 /-- **Recurrence for the bi-periodic Fibonacci numbers squared.** For elements $a$ and $b$ of a
-field $K$ and every $n \ge 0$, the bi-periodic Fibonacci numbers squared $q^2_m$ satisfy
+field $K$ and every $n \ge 0$, the recursively defined sequence $q^2_m$ (for nonzero $a$ and $b$,
+the squares of the bi-periodic Fibonacci numbers) satisfies
 $$
 q^2_{n+3} = \frac{a}{b}(ab+1)\,q^2_{n+2} + (ab+1)\,q^2_{n+1} - \frac{a}{b}\,q^2_n
 $$
