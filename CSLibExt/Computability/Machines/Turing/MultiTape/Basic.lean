@@ -33,11 +33,11 @@ lemmas the rest of `CSLibExt/Computability/Machines/Turing/MultiTape/` needs and
 CSLib lacks.
 
 CSLib v4.36.0 (leanprover/cslib#1117) dropped the exact halting step `MultiTapeTM.HaltsAt`, its
-API and the run lemmas `MultiTapeTM.runFrom_succ` and `MultiTapeTM.runFrom_add`. They are restated
-below, unchanged and in their original namespace, from
+API and the run lemmas `MultiTapeTM.runFrom_succ` and `MultiTapeTM.runFrom_add`. Those of them that
+ATLAS uses are restated below, unchanged and in their original namespace, from
 `Cslib/Computability/Machines/Turing/MultiTape/Deterministic.lean` of CSLib v4.35.0 (commit
 `5b56df99362532c46e1175381fbbdd755bd56030`), whose copyright and authors are given at the top of
-this file.
+this file; the others, such as `existsUnique_haltsAt`, are not.
 
 The upstream step of a machine built from a transition function (`MultiTapeTM.ofTr`) goes
 through `Classical.choose`; `stepWith tr` is the same successor written directly in terms of

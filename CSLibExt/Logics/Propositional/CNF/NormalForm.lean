@@ -19,8 +19,9 @@ public import CSLibExt.Logics.Propositional.NaturalDeduction.Semantics
 
 Every proposition is equivalent to a formula in conjunctive normal form. This file computes such a
 CNF, in the CSLibExt CNF representation, for the propositions of CSLib v4.35 restored in
-`Cslib.Logic.LegacyPL`, over any type of atoms named by `ι : Atom → ℕ`, and proves that it has the
-same truth value as the proposition under every valuation.
+`Cslib.Logic.LegacyPL`, over any type of atoms named by `ι : Atom → ℕ`, and proves that under every
+assignment `σ` of the CNF's variables it has the truth value of the proposition under the valuation
+`σ ∘ ι` of its atoms.
 
 The construction pushes Boolean complements to the atoms (as negative literals)
 and distributes `∨` over `∧`. `cnfOf ι pos A` is a CNF of `A` (if `pos`) or of

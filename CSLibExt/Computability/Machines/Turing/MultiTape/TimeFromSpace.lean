@@ -42,11 +42,11 @@ These results use the existing multi-tape machine and resource predicates.
 
 CSLib v4.36.0 (leanprover/cslib#1117) dropped the space of a deterministic run,
 `MultiTapeTM.spaceUsed` with `MultiTapeTM.visitedByTapeHead` and `MultiTapeTM.spaceUsedByTape`,
-in favour of the space of computation paths, and dropped `core_step_eq_of_core_eq`. They are
-restated below, unchanged and in their original namespace, from
+in favour of the space of computation paths, and dropped `core_step_eq_of_core_eq`. Those of them
+that ATLAS uses are restated below, unchanged and in their original namespace, from
 `Cslib/Computability/Machines/Turing/MultiTape/Deterministic.lean` and `ConfigBound.lean` of
 CSLib v4.35.0 (commit `5b56df99362532c46e1175381fbbdd755bd56030`), whose copyright and authors
-are given at the top of this file.
+are given at the top of this file; the others, such as `spaceUsedByTape_le_spaceUsed`, are not.
 -/
 
 @[expose] public section
