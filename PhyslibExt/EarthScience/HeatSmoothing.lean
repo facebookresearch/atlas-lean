@@ -20,6 +20,7 @@ public import Mathlib.Analysis.Calculus.ParametricIntegral
 public import Mathlib.Order.CompletePartialOrder
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Analysis.Convex.Integral
+public import Mathlib.Analysis.Convolution
 public import Mathlib.MeasureTheory.Measure.Lebesgue.VolumeOfBalls
 public import Mathlib.Topology.Algebra.MvPolynomial
 
@@ -7135,8 +7136,9 @@ lemma euclid_norm_sq (n : ℕ) (x : EuclideanSpace ℝ (Fin n)) :
     _ = ∑ i, ‖x i‖ ^ 2 := Real.sq_sqrt hnonneg
     _ = ∑ i, (x i) ^ 2 := by simp only [Real.norm_eq_abs, sq_abs]
 
-lemma int_gauss (t : ℝ) :
+lemma int_gauss (t : ℝ) (ht : 0 < t) :
     ∫ x : ℝ, Real.exp (-x ^ 2 / (4 * t)) = √(4 * Real.pi * t) := by
+  have _ := ht
   have h1 : (fun x : ℝ => Real.exp (-x ^ 2 / (4 * t)))
       = (fun x : ℝ => Real.exp (-(4 * t)⁻¹ * x ^ 2)) := by
     congr with x
@@ -7254,7 +7256,7 @@ lemma coord_second_moment (n : ℕ) (t : ℝ) (ht : 0 < t) (k : Fin n) :
     · simp only [ite_eq_left hl]
       exact int_gauss_sq t ht
     · simp only [ite_eq_right hl, one_mul]
-      exact int_gauss t
+      exact int_gauss t ht
   simp_rw [hfactor]
   rw [prod_ite_eq_mul_pow]
   have hBn : ∀ m : ℕ, (√(4*Real.pi*t))^m = (4*Real.pi*t)^((m:ℝ)/2) := by
@@ -7599,258 +7601,6 @@ theorem heatKernel_tail_secondMoment_div_tendsto (n : ℕ) {δ : ℝ} (hδ : 0 <
 
 end GaussMom2
 
-section HalfAsm
-
-open MeasureTheory
-
-/-- Gaussian heat kernel. -/
-noncomputable def gaussKernel (n : ℕ) (t : ℝ) (y : EuclideanSpace ℝ (Fin n)) : ℝ :=
-  (4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-‖y‖ ^ 2 / (4 * t))
-
-theorem gaussKernel_nonneg (n : ℕ) (t : ℝ) (ht : 0 < t) (y : EuclideanSpace ℝ (Fin n)) :
-    0 ≤ gaussKernel n t y := by
-  unfold gaussKernel
-  have hpos : (0 : ℝ) ≤ 4 * Real.pi * t := by positivity
-  exact mul_nonneg (Real.rpow_nonneg hpos _) (Real.exp_pos _).le
-
-theorem gaussKernel_continuous (n : ℕ) (t : ℝ) : Continuous (gaussKernel n t) := by
-  unfold gaussKernel
-  fun_prop
-
-theorem coord_continuous (n : ℕ) (i : Fin n) :
-    Continuous (fun y : EuclideanSpace ℝ (Fin n) => y i) :=
-  PiLp.continuous_apply _ _ i
-
-theorem abs_mul_le_half_sum_sq (a b : ℝ) : |a * b| ≤ (a * a + b * b) / 2 := by
-  have h0 := sq_nonneg (|a| - |b|)
-  rw [sub_sq, sq_abs a, sq_abs b] at h0
-  rw [abs_mul, ← pow_two a, ← pow_two b]
-  linarith
-
-theorem integrable_kernel_coord_mul (n : ℕ) (t : ℝ) (ht : 0 < t)
-    (hm2 : ∀ i j : Fin n, ∫ (y : EuclideanSpace ℝ (Fin n)),
-      gaussKernel n t y * (y i * y j) = if i = j then 2 * t else 0)
-    (i j : Fin n) :
-    Integrable (fun y : EuclideanSpace ℝ (Fin n) => gaussKernel n t y * (y i * y j)) := by
-  have hdiag : ∀ k : Fin n, Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
-      gaussKernel n t y * (y k * y k)) := by
-    intro k
-    by_contra hnot
-    have hval := hm2 k k
-    rw [integral_undef hnot, ite_eq_left rfl] at hval
-    have hne : (2 : ℝ) * t ≠ 0 := ne_of_gt (by linarith)
-    exact hne hval.symm
-  by_cases hij : i = j
-  · subst hij
-    exact hdiag i
-  · have hg : Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
-        (gaussKernel n t y * (y i * y i) + gaussKernel n t y * (y j * y j)) / 2) :=
-      ((hdiag i).add (hdiag j)).div_const 2
-    have hf : AEStronglyMeasurable
-        (fun y : EuclideanSpace ℝ (Fin n) => gaussKernel n t y * (y i * y j)) volume :=
-      ((gaussKernel_continuous n t).mul
-        ((coord_continuous n i).mul (coord_continuous n j))).aestronglyMeasurable
-    have hbound : ∀ y : EuclideanSpace ℝ (Fin n),
-        ‖gaussKernel n t y * (y i * y j)‖ ≤
-          (gaussKernel n t y * (y i * y i) + gaussKernel n t y * (y j * y j)) / 2 := by
-      intro y
-      have hk : 0 ≤ gaussKernel n t y := gaussKernel_nonneg n t ht y
-      have hmain := abs_mul_le_half_sum_sq (y i) (y j)
-      rw [Real.norm_eq_abs]
-      calc |gaussKernel n t y * (y i * y j)|
-          = gaussKernel n t y * |y i * y j| := by rw [abs_mul, abs_of_nonneg hk]
-        _ ≤ gaussKernel n t y * ((y i * y i + y j * y j) / 2) :=
-            mul_le_mul_of_nonneg_left hmain hk
-        _ = (gaussKernel n t y * (y i * y i) + gaussKernel n t y * (y j * y j)) / 2 := by ring
-    exact Integrable.mono' hg hf (ae_of_all _ hbound)
-
-/-- Half-part identification, assembled from Gaussian second moments
-and the Laplacian identification. -/
-theorem gaussian_half_second_order_asm (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
-    (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ)
-    {t : ℝ} (ht : 0 < t) (x : EuclideanSpace ℝ (Fin n))
-    (hMomentsThm : ∀ (n : ℕ) {t : ℝ}, 0 < t →
-      (∫ (y : EuclideanSpace ℝ (Fin n)), (4 * Real.pi * t) ^ (-(n : ℝ) / 2)
-          * Real.exp (-‖y‖ ^ 2 / (4 * t)) = 1)
-      ∧ (∀ i : Fin n, ∫ (y : EuclideanSpace ℝ (Fin n)), ((4 * Real.pi * t) ^ (-(n : ℝ) / 2)
-          * Real.exp (-‖y‖ ^ 2 / (4 * t))) * y i = 0)
-      ∧ (∀ i j : Fin n, ∫ (y : EuclideanSpace ℝ (Fin n)), ((4 * Real.pi * t) ^ (-(n : ℝ) / 2)
-          * Real.exp (-‖y‖ ^ 2 / (4 * t))) * (y i * y j)
-        = if i = j then 2 * t else 0))
-    (hLapBridgeThm : ∀ (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ},
-      ContDiff ℝ 2 φ → ∀ (x : EuclideanSpace ℝ (Fin n)),
-      Laplacian.laplacian φ x
-        = ∑ i, deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-            (WithLp.toLp 2 (Function.update x i v)) i r)))
-            ((WithLp.toLp 2 (Function.update x i v)) i))
-            (x i)) :
-    ∫ (y : EuclideanSpace ℝ (Fin n)), ((4 * Real.pi * t) ^ (-(n : ℝ) / 2)
-        * Real.exp (-‖y‖ ^ 2 / (4 * t)))
-      * ((1 / 2 : ℝ) * ∑ i, ∑ j, y i * y j *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i))
-      = t * Laplacian.laplacian φ x := by
-  have _ := hφ_supp
-  have hm2K : ∀ i j : Fin n, ∫ (y : EuclideanSpace ℝ (Fin n)),
-      gaussKernel n t y * (y i * y j) = if i = j then 2 * t else 0 :=
-    fun i j => (hMomentsThm n ht).2.2 i j
-  have hInt : ∀ i j : Fin n, Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
-      gaussKernel n t y * (y i * y j)) :=
-    fun i j => integrable_kernel_coord_mul n t ht hm2K i j
-  have hpt : ∀ y : EuclideanSpace ℝ (Fin n),
-      gaussKernel n t y * ((1 / 2 : ℝ) * ∑ i, ∑ j, y i * y j *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i))
-        = ∑ i, ∑ j, gaussKernel n t y * ((1 / 2) * (y i * y j) *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i)) := by
-    intro y
-    rw [Finset.mul_sum, Finset.mul_sum]
-    apply Finset.sum_congr rfl
-    intro i _
-    rw [Finset.mul_sum, Finset.mul_sum]
-    apply Finset.sum_congr rfl
-    intro j _
-    ring
-  have hSumm : ∀ i j : Fin n, Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
-      gaussKernel n t y * ((1 / 2) * (y i * y j) *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i))) := by
-    intro i j
-    have h := (hInt i j).const_mul ((1 / 2 : ℝ) *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i))
-    have heq : ∀ y : EuclideanSpace ℝ (Fin n),
-        ((1 / 2 : ℝ) *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i)) * (gaussKernel n t y * (y i * y j))
-          = gaussKernel n t y * ((1 / 2) * (y i * y j) *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i)) :=
-      fun y => by ring
-    exact h.congr (ae_of_all _ heq)
-  have hIn : ∀ i : Fin n, ∀ j ∈ (Finset.univ : Finset (Fin n)),
-      Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
-        gaussKernel n t y * ((1 / 2) * (y i * y j) *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i))) :=
-    fun i j _ => hSumm i j
-  have hOut : ∀ i ∈ (Finset.univ : Finset (Fin n)),
-      Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
-        ∑ j, gaussKernel n t y * ((1 / 2) * (y i * y j) *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i))) :=
-    fun i _ => integrable_finsetSum _ (fun j _ => hSumm i j)
-  have hval : ∀ i j : Fin n, (∫ y : EuclideanSpace ℝ (Fin n),
-      gaussKernel n t y * ((1 / 2) * (y i * y j) *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i)))
-      = (1 / 2 : ℝ) *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i) * (if i = j then 2 * t else 0) := by
-    intro i j
-    have heq : ∀ y : EuclideanSpace ℝ (Fin n),
-        gaussKernel n t y * ((1 / 2) * (y i * y j) *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i))
-          = ((1 / 2 : ℝ) *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i)) * (gaussKernel n t y * (y i * y j)) :=
-      fun y => by ring
-    simp only [heq, integral_const_mul, hm2K i j]
-  have hcoll : ∀ i : Fin n, (∑ j, (1 / 2 : ℝ) *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i) * (if i = j then 2 * t else 0))
-      = t *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) i r)))
-          ((WithLp.toLp 2 (Function.update x i v)) i))
-          (x i) := by
-    intro i
-    have hper : ∀ j : Fin n, (1 / 2 : ℝ) *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i) * (if i = j then 2 * t else 0)
-        = (if j = i then (1 / 2 : ℝ) *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) i r)))
-          ((WithLp.toLp 2 (Function.update x i v)) i))
-          (x i) * (2 * t) else 0) := by
-      intro j
-      by_cases hji : j = i
-      · subst hji
-        rw [ite_eq_left rfl, ite_eq_left rfl]
-      · rw [ite_eq_right hji, ite_eq_right (Ne.symm hji), mul_zero]
-    simp only [hper]
-    rw [Finset.sum_ite_eq']
-    simp only [Finset.mem_univ, ite_true]
-    ring
-  change ∫ (y : EuclideanSpace ℝ (Fin n)),
-      gaussKernel n t y * ((1 / 2 : ℝ) * ∑ i, ∑ j, y i * y j *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i))
-      = t * Laplacian.laplacian φ x
-  calc ∫ (y : EuclideanSpace ℝ (Fin n)),
-          gaussKernel n t y * ((1 / 2 : ℝ) * ∑ i, ∑ j, y i * y j *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i))
-        = ∑ i, ∑ j, ∫ (y : EuclideanSpace ℝ (Fin n)),
-            gaussKernel n t y * ((1 / 2) * (y i * y j) *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) j r)))
-          ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i)) := by
-          simp only [hpt]
-          rw [integral_finsetSum _ hOut]
-          apply Finset.sum_congr rfl
-          intro i _
-          rw [integral_finsetSum _ (hIn i)]
-      _ = ∑ i, t *
-        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
-          (WithLp.toLp 2 (Function.update x i v)) i r)))
-          ((WithLp.toLp 2 (Function.update x i v)) i))
-          (x i) := by
-          apply Finset.sum_congr rfl
-          intro i _
-          simp only [hval]
-          exact hcoll i
-      _ = t * Laplacian.laplacian φ x := by
-          rw [← Finset.mul_sum, hLapBridgeThm n hφ x]
-
-end HalfAsm
 
 section LpEstNposHelpers
 
@@ -8446,11 +8196,11 @@ open MeasureTheory Filter
 open scoped Topology Pointwise
 
 
-instance : IsFiniteMeasure (volume.restrict (Set.Ioc (0 : ℝ) 1)) := ⟨by
+local instance : IsFiniteMeasure (volume.restrict (Set.Ioc (0 : ℝ) 1)) := ⟨by
   rw [Measure.restrict_apply_univ, Real.volume_Ioc]
   norm_num [ENNReal.ofReal_lt_top]⟩
 
-/-- The heat kernel is nonnegative for positive time. -/
+/-- Integration against the Gaussian density measure is the weighted volume integral. -/
 theorem Dfn_integral_density (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hDijThm : ∀ (i j : Fin n),
       Continuous (secondPartialFn n φ i j)
@@ -12606,17 +12356,518 @@ theorem isProbability_heatDensity (n : ℕ) {t : ℝ} (ht : 0 < t)
 
 end IsProb
 
+section HalfAsm
+
+open MeasureTheory
+
+
+
+
+
+theorem coord_continuous (n : ℕ) (i : Fin n) :
+    Continuous (fun y : EuclideanSpace ℝ (Fin n) => y i) :=
+  PiLp.continuous_apply _ _ i
+
+theorem abs_mul_le_half_sum_sq (a b : ℝ) : |a * b| ≤ (a * a + b * b) / 2 := by
+  have h0 := sq_nonneg (|a| - |b|)
+  rw [sub_sq, sq_abs a, sq_abs b] at h0
+  rw [abs_mul, ← pow_two a, ← pow_two b]
+  linarith
+
+theorem integrable_kernel_coord_mul (n : ℕ) (t : ℝ) (ht : 0 < t)
+    (hm2 : ∀ i j : Fin n, ∫ (y : EuclideanSpace ℝ (Fin n)),
+      heatKernel n t y * (y i * y j) = if i = j then 2 * t else 0)
+    (i j : Fin n) :
+    Integrable (fun y : EuclideanSpace ℝ (Fin n) => heatKernel n t y * (y i * y j)) := by
+  have hdiag : ∀ k : Fin n, Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
+      heatKernel n t y * (y k * y k)) := by
+    intro k
+    by_contra hnot
+    have hval := hm2 k k
+    rw [integral_undef hnot, ite_eq_left rfl] at hval
+    have hne : (2 : ℝ) * t ≠ 0 := ne_of_gt (by linarith)
+    exact hne hval.symm
+  by_cases hij : i = j
+  · subst hij
+    exact hdiag i
+  · have hg : Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
+        (heatKernel n t y * (y i * y i) + heatKernel n t y * (y j * y j)) / 2) :=
+      ((hdiag i).add (hdiag j)).div_const 2
+    have hf : AEStronglyMeasurable
+        (fun y : EuclideanSpace ℝ (Fin n) => heatKernel n t y * (y i * y j)) volume :=
+      ((heatKernel_continuous n t ht).mul
+        ((coord_continuous n i).mul (coord_continuous n j))).aestronglyMeasurable
+    have hbound : ∀ y : EuclideanSpace ℝ (Fin n),
+        ‖heatKernel n t y * (y i * y j)‖ ≤
+          (heatKernel n t y * (y i * y i) + heatKernel n t y * (y j * y j)) / 2 := by
+      intro y
+      have hk : 0 ≤ heatKernel n t y := heatKernel_nonneg n t ht y
+      have hmain := abs_mul_le_half_sum_sq (y i) (y j)
+      rw [Real.norm_eq_abs]
+      calc |heatKernel n t y * (y i * y j)|
+          = heatKernel n t y * |y i * y j| := by rw [abs_mul, abs_of_nonneg hk]
+        _ ≤ heatKernel n t y * ((y i * y i + y j * y j) / 2) :=
+            mul_le_mul_of_nonneg_left hmain hk
+        _ = (heatKernel n t y * (y i * y i) + heatKernel n t y * (y j * y j)) / 2 := by ring
+    exact Integrable.mono' hg hf (ae_of_all _ hbound)
+
+/-- Half-part identification, assembled from Gaussian second moments
+and the Laplacian identification. -/
+theorem gaussian_half_second_order_asm (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+    (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ)
+    {t : ℝ} (ht : 0 < t) (x : EuclideanSpace ℝ (Fin n))
+    (hMomentsThm : ∀ (n : ℕ) {t : ℝ}, 0 < t →
+      (∫ (y : EuclideanSpace ℝ (Fin n)), (4 * Real.pi * t) ^ (-(n : ℝ) / 2)
+          * Real.exp (-‖y‖ ^ 2 / (4 * t)) = 1)
+      ∧ (∀ i : Fin n, ∫ (y : EuclideanSpace ℝ (Fin n)), ((4 * Real.pi * t) ^ (-(n : ℝ) / 2)
+          * Real.exp (-‖y‖ ^ 2 / (4 * t))) * y i = 0)
+      ∧ (∀ i j : Fin n, ∫ (y : EuclideanSpace ℝ (Fin n)), ((4 * Real.pi * t) ^ (-(n : ℝ) / 2)
+          * Real.exp (-‖y‖ ^ 2 / (4 * t))) * (y i * y j)
+        = if i = j then 2 * t else 0))
+    (hLapBridgeThm : ∀ (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ},
+      ContDiff ℝ 2 φ → ∀ (x : EuclideanSpace ℝ (Fin n)),
+      Laplacian.laplacian φ x
+        = ∑ i, deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+            (WithLp.toLp 2 (Function.update x i v)) i r)))
+            ((WithLp.toLp 2 (Function.update x i v)) i))
+            (x i)) :
+    ∫ (y : EuclideanSpace ℝ (Fin n)), ((4 * Real.pi * t) ^ (-(n : ℝ) / 2)
+        * Real.exp (-‖y‖ ^ 2 / (4 * t)))
+      * ((1 / 2 : ℝ) * ∑ i, ∑ j, y i * y j *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i))
+      = t * Laplacian.laplacian φ x := by
+  have _ := hφ_supp
+  have hm2K : ∀ i j : Fin n, ∫ (y : EuclideanSpace ℝ (Fin n)),
+      heatKernel n t y * (y i * y j) = if i = j then 2 * t else 0 :=
+    fun i j => (hMomentsThm n ht).2.2 i j
+  have hInt : ∀ i j : Fin n, Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
+      heatKernel n t y * (y i * y j)) :=
+    fun i j => integrable_kernel_coord_mul n t ht hm2K i j
+  have hpt : ∀ y : EuclideanSpace ℝ (Fin n),
+      heatKernel n t y * ((1 / 2 : ℝ) * ∑ i, ∑ j, y i * y j *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i))
+        = ∑ i, ∑ j, heatKernel n t y * ((1 / 2) * (y i * y j) *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i)) := by
+    intro y
+    rw [Finset.mul_sum, Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro i _
+    rw [Finset.mul_sum, Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro j _
+    ring
+  have hSumm : ∀ i j : Fin n, Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
+      heatKernel n t y * ((1 / 2) * (y i * y j) *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i))) := by
+    intro i j
+    have h := (hInt i j).const_mul ((1 / 2 : ℝ) *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i))
+    have heq : ∀ y : EuclideanSpace ℝ (Fin n),
+        ((1 / 2 : ℝ) *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i)) * (heatKernel n t y * (y i * y j))
+          = heatKernel n t y * ((1 / 2) * (y i * y j) *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i)) :=
+      fun y => by ring
+    exact h.congr (ae_of_all _ heq)
+  have hIn : ∀ i : Fin n, ∀ j ∈ (Finset.univ : Finset (Fin n)),
+      Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
+        heatKernel n t y * ((1 / 2) * (y i * y j) *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i))) :=
+    fun i j _ => hSumm i j
+  have hOut : ∀ i ∈ (Finset.univ : Finset (Fin n)),
+      Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
+        ∑ j, heatKernel n t y * ((1 / 2) * (y i * y j) *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i))) :=
+    fun i _ => integrable_finsetSum _ (fun j _ => hSumm i j)
+  have hval : ∀ i j : Fin n, (∫ y : EuclideanSpace ℝ (Fin n),
+      heatKernel n t y * ((1 / 2) * (y i * y j) *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i)))
+      = (1 / 2 : ℝ) *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i) * (if i = j then 2 * t else 0) := by
+    intro i j
+    have heq : ∀ y : EuclideanSpace ℝ (Fin n),
+        heatKernel n t y * ((1 / 2) * (y i * y j) *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i))
+          = ((1 / 2 : ℝ) *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i)) * (heatKernel n t y * (y i * y j)) :=
+      fun y => by ring
+    simp only [heq, integral_const_mul, hm2K i j]
+  have hcoll : ∀ i : Fin n, (∑ j, (1 / 2 : ℝ) *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i) * (if i = j then 2 * t else 0))
+      = t *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) i r)))
+          ((WithLp.toLp 2 (Function.update x i v)) i))
+          (x i) := by
+    intro i
+    have hper : ∀ j : Fin n, (1 / 2 : ℝ) *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i) * (if i = j then 2 * t else 0)
+        = (if j = i then (1 / 2 : ℝ) *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) i r)))
+          ((WithLp.toLp 2 (Function.update x i v)) i))
+          (x i) * (2 * t) else 0) := by
+      intro j
+      by_cases hji : j = i
+      · subst hji
+        rw [ite_eq_left rfl, ite_eq_left rfl]
+      · rw [ite_eq_right hji, ite_eq_right (Ne.symm hji), mul_zero]
+    simp only [hper]
+    rw [Finset.sum_ite_eq']
+    simp only [Finset.mem_univ, ite_true]
+    ring
+  change ∫ (y : EuclideanSpace ℝ (Fin n)),
+      heatKernel n t y * ((1 / 2 : ℝ) * ∑ i, ∑ j, y i * y j *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i))
+      = t * Laplacian.laplacian φ x
+  calc ∫ (y : EuclideanSpace ℝ (Fin n)),
+          heatKernel n t y * ((1 / 2 : ℝ) * ∑ i, ∑ j, y i * y j *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i))
+        = ∑ i, ∑ j, ∫ (y : EuclideanSpace ℝ (Fin n)),
+            heatKernel n t y * ((1 / 2) * (y i * y j) *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) j r)))
+          ((WithLp.toLp 2 (Function.update x i v)) j))
+          (x i)) := by
+          simp only [hpt]
+          rw [integral_finsetSum _ hOut]
+          apply Finset.sum_congr rfl
+          intro i _
+          rw [integral_finsetSum _ (hIn i)]
+      _ = ∑ i, t *
+        deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
+          (WithLp.toLp 2 (Function.update x i v)) i r)))
+          ((WithLp.toLp 2 (Function.update x i v)) i))
+          (x i) := by
+          apply Finset.sum_congr rfl
+          intro i _
+          simp only [hval]
+          exact hcoll i
+      _ = t * Laplacian.laplacian φ x := by
+          rw [← Finset.mul_sum, hLapBridgeThm n hφ x]
+
+end HalfAsm
+
+section P1Ennreal
+
+open scoped Convolution
+
+theorem integrable_gaussian_euclidean (n : ℕ) (c : ℝ) (hc : 0 < c) :
+    Integrable (fun x : EuclideanSpace ℝ (Fin n) => Real.exp (-c * ‖x‖ ^ 2)) volume := by
+  have hb : 0 < ((c : ℝ) : ℂ).re := by simpa using hc
+  have h := GaussianFourier.integrable_cexp_neg_mul_sq_norm_add
+    (V := EuclideanSpace ℝ (Fin n)) (b := (c : ℂ)) (c := 0)
+    (w := (0 : EuclideanSpace ℝ (Fin n))) hb
+  have hEq : (fun v : EuclideanSpace ℝ (Fin n) => ((Real.exp (-c * ‖v‖ ^ 2) : ℝ) : ℂ))
+      = fun v => Complex.exp
+        (-(c : ℂ) * ‖v‖ ^ 2 + 0 * ((inner ℝ (0 : EuclideanSpace ℝ (Fin n)) v : ℝ) : ℂ)) := by
+    funext v
+    simp only [inner_zero_left, Complex.ofReal_zero, mul_zero, add_zero]
+    rw [Complex.ofReal_exp]
+    congr 1
+    push_cast
+    ring
+  have hC : Integrable
+      (fun v : EuclideanSpace ℝ (Fin n) => ((Real.exp (-c * ‖v‖ ^ 2) : ℝ) : ℂ)) volume := by
+    rw [hEq]
+    exact h
+  exact Integrable.iff_ofReal.mpr hC
+
+theorem continuous_heatKernel (n : ℕ) (t : ℝ) :
+    Continuous fun x : EuclideanSpace ℝ (Fin n) => heatKernel n t x := by
+  unfold heatKernel
+  fun_prop
+
+theorem integrable_heatKernel (n : ℕ) (t : ℝ) (ht : 0 < t) :
+    Integrable (fun x : EuclideanSpace ℝ (Fin n) => heatKernel n t x) volume := by
+  have hc : (0 : ℝ) < 1 / (4 * t) := by positivity
+  have hG := integrable_gaussian_euclidean n (1 / (4 * t)) hc
+  have hEq : ∀ x : EuclideanSpace ℝ (Fin n),
+      heatKernel n t x
+        = (4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-(1 / (4 * t)) * ‖x‖ ^ 2) := by
+    intro x
+    unfold heatKernel
+    congr 1
+    congr 1
+    have ht4 : (4 : ℝ) * t ≠ 0 := by positivity
+    field_simp
+  simp_rw [hEq]
+  simpa [smul_eq_mul] using hG.const_mul ((4 * Real.pi * t) ^ (-(n : ℝ) / 2))
+
+theorem memLp_top_heatKernel (n : ℕ) (t : ℝ) (ht : 0 < t) :
+    MemLp (fun x : EuclideanSpace ℝ (Fin n) => heatKernel n t x) ⊤ volume := by
+  apply memLp_top_of_bound (continuous_heatKernel n t).aestronglyMeasurable _
+  filter_upwards with x
+  have hC : (0 : ℝ) ≤ (4 * Real.pi * t) ^ (-(n : ℝ) / 2) := by
+    apply Real.rpow_nonneg
+    positivity
+  have hx2 : (0 : ℝ) ≤ ‖x‖ ^ 2 := by positivity
+  have he : -‖x‖ ^ 2 / (4 * t) ≤ (0 : ℝ) :=
+    div_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr hx2) (by positivity)
+  have hexp : Real.exp (-‖x‖ ^ 2 / (4 * t)) ≤ 1 := Real.exp_le_one_iff.mpr he
+  have hK : (0 : ℝ) ≤ heatKernel n t x := by
+    unfold heatKernel
+    exact mul_nonneg hC (Real.exp_pos _).le
+  rw [Real.norm_of_nonneg hK]
+  unfold heatKernel
+  calc (4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-‖x‖ ^ 2 / (4 * t))
+      ≤ (4 * Real.pi * t) ^ (-(n : ℝ) / 2) * 1 :=
+        mul_le_mul_of_nonneg_left hexp hC
+    _ = (4 * Real.pi * t) ^ (-(n : ℝ) / 2) := mul_one _
+
+theorem heatConvolution_eq_conv (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ) (t : ℝ)
+    (x : EuclideanSpace ℝ (Fin n)) :
+    heatConvolution n φ t x
+      = (φ ⋆[ContinuousLinearMap.mul ℝ ℝ, volume] heatKernel n t) x := by
+  unfold heatConvolution
+  rw [MeasureTheory.convolution_mul]
+
+theorem heatConvolution_fun_eq (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ) (t : ℝ) :
+    heatConvolution n φ t
+      = φ ⋆[ContinuousLinearMap.mul ℝ ℝ, volume] heatKernel n t :=
+  funext (heatConvolution_eq_conv n φ t)
+
+theorem continuous_heatConvolution (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+    (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ) (t : ℝ) :
+    Continuous (heatConvolution n φ t) := by
+  have hK : LocallyIntegrable (fun x : EuclideanSpace ℝ (Fin n) => heatKernel n t x) volume :=
+    (continuous_heatKernel n t).locallyIntegrable
+  have hcont := HasCompactSupport.continuous_convolution_left
+    (L := ContinuousLinearMap.mul ℝ ℝ) hφ_supp hφ.continuous hK
+  rw [heatConvolution_fun_eq n φ t]
+  exact hcont
+
+theorem integrable_heatConvolution (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+    (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ) (t : ℝ) (ht : 0 < t) :
+    Integrable (heatConvolution n φ t) volume := by
+  rw [heatConvolution_fun_eq n φ t]
+  have hφint : Integrable φ volume :=
+    hφ.continuous.integrable_of_hasCompactSupport hφ_supp
+  have hKint : Integrable (fun x : EuclideanSpace ℝ (Fin n) => heatKernel n t x) volume :=
+    integrable_heatKernel n t ht
+  exact Integrable.integrable_convolution (L := ContinuousLinearMap.mul ℝ ℝ) hφint hKint
+
+theorem memLp_phi_of_contDiff (n : ℕ) {p : ENNReal}
+    {φ : EuclideanSpace ℝ (Fin n) → ℝ} (hφ : ContDiff ℝ 2 φ)
+    (hφ_supp : HasCompactSupport φ) : MemLp φ p volume :=
+  hφ.continuous.memLp_of_hasCompactSupport hφ_supp
+
+theorem continuous_laplacian_phi (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+    (hφ : ContDiff ℝ 2 φ) : Continuous (Laplacian.laplacian φ) := by
+  classical
+  rw [InnerProductSpace.laplacian_eq_iteratedFDeriv_orthonormalBasis φ
+    (stdOrthonormalBasis ℝ (EuclideanSpace ℝ (Fin n)))]
+  apply continuous_finsetSum
+  intro i _
+  exact (ContinuousMultilinearMap.uniformContinuous_eval_const _).continuous.comp
+    (hφ.continuous_iteratedFDeriv le_rfl)
+
+theorem hasCompactSupport_laplacian_phi (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+    (hφ_supp : HasCompactSupport φ) : HasCompactSupport (Laplacian.laplacian φ) := by
+  apply hφ_supp.mono'
+  intro x hx
+  rw [Function.mem_support] at hx
+  by_contra hxout
+  rw [notMem_tsupport_iff_eventuallyEq] at hxout
+  have hΔ := InnerProductSpace.laplacian_congr_nhds hxout
+  have hΔ0 : Laplacian.laplacian (0 : EuclideanSpace ℝ (Fin n) → ℝ) = 0 :=
+    InnerProductSpace.laplacian_const
+  rw [hΔ0] at hΔ
+  have h2 := Filter.Eventually.self_of_nhds hΔ
+  have hx0 : Laplacian.laplacian φ x = 0 := by simpa using h2
+  exact hx hx0
+
+theorem memLp_laplacian_phi (n : ℕ) {p : ENNReal}
+    {φ : EuclideanSpace ℝ (Fin n) → ℝ} (hφ : ContDiff ℝ 2 φ)
+    (hφ_supp : HasCompactSupport φ) : MemLp (Laplacian.laplacian φ) p volume :=
+  (continuous_laplacian_phi n hφ).memLp_of_hasCompactSupport
+    (hasCompactSupport_laplacian_phi n hφ_supp)
+
+theorem enorm_heatConvolution_le (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+    (hφ : ContDiff ℝ 2 φ) (_hφ_supp : HasCompactSupport φ) (t : ℝ) (_ht : 0 < t)
+    (x : EuclideanSpace ℝ (Fin n)) :
+    ‖(heatConvolution n φ t) x‖ₑ ≤ ‖ContinuousLinearMap.mul ℝ ℝ‖ₑ * eLpNorm φ 1 volume
+      * eLpNorm (heatKernel n t) ⊤ volume := by
+  rw [heatConvolution_fun_eq n φ t]
+  exact enorm_convolution_le (L := ContinuousLinearMap.mul ℝ ℝ) (p := 1) (q := ⊤)
+    hφ.continuous.aestronglyMeasurable (continuous_heatKernel n t).aestronglyMeasurable x
+
+theorem eLpNorm_bound_heatConvolution (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+    (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ) (t : ℝ) (ht : 0 < t) :
+    ‖ContinuousLinearMap.mul ℝ ℝ‖ₑ * eLpNorm φ 1 volume
+      * eLpNorm (heatKernel n t) ⊤ volume < ⊤ := by
+  have hφ1 : eLpNorm φ 1 volume < ⊤ := memLp_phi_of_contDiff n hφ hφ_supp (p := 1)
+  have hKt : eLpNorm (heatKernel n t) ⊤ volume < ⊤ := memLp_top_heatKernel n t ht
+  exact ENNReal.mul_lt_top (ENNReal.mul_lt_top enorm_lt_top hφ1) hKt
+
+theorem eLpNorm_lt_top_of_uniform_enorm_bound (n : ℕ) {p : ENNReal}
+    {f : EuclideanSpace ℝ (Fin n) → ℝ} (hp1 : 1 ≤ p) (hp : p ≠ ⊤)
+    (hf : AEStronglyMeasurable f volume) (hint : Integrable f volume) (B : ENNReal)
+    (hB : B < ⊤) (hle : ∀ x, ‖f x‖ₑ ≤ B) : eLpNorm f p volume < ⊤ := by
+  have hp0 : p ≠ 0 := (zero_lt_one.trans_le hp1).ne'
+  rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top hp0 hp hf]
+  have hq1 : (1 : ℝ) ≤ p.toReal := by
+    have h := (ENNReal.toReal_le_toReal ENNReal.one_ne_top hp).mpr hp1
+    simpa using h
+  have hexp : (0 : ℝ) ≤ p.toReal - 1 := by linarith
+  have hpt : ∀ x : EuclideanSpace ℝ (Fin n),
+      ‖f x‖ₑ ^ p.toReal ≤ B ^ (p.toReal - 1) * ‖f x‖ₑ := by
+    intro x
+    have hsplit : ‖f x‖ₑ ^ p.toReal = ‖f x‖ₑ ^ (p.toReal - 1) * ‖f x‖ₑ ^ (1 : ℝ) := by
+      have h := ENNReal.rpow_add_of_nonneg (p.toReal - 1) 1 hexp zero_le_one (x := ‖f x‖ₑ)
+      rw [show p.toReal - 1 + 1 = p.toReal by ring] at h
+      exact h
+    rw [hsplit, ENNReal.rpow_one]
+    exact mul_le_mul_left (ENNReal.rpow_le_rpow (hle x) hexp) _
+  have hmeas : AEMeasurable (fun x : EuclideanSpace ℝ (Fin n) => ‖f x‖ₑ) volume :=
+    hf.aemeasurable.enorm
+  have hint' : ∫⁻ x, ‖f x‖ₑ ∂volume < ⊤ :=
+    hasFiniteIntegral_iff_enorm.mp hint.hasFiniteIntegral
+  calc ∫⁻ x, ‖f x‖ₑ ^ p.toReal ∂volume
+      ≤ ∫⁻ x, B ^ (p.toReal - 1) * ‖f x‖ₑ ∂volume :=
+        lintegral_mono_ae (Filter.Eventually.of_forall hpt)
+    _ = B ^ (p.toReal - 1) * ∫⁻ x, ‖f x‖ₑ ∂volume := lintegral_const_mul'' _ hmeas
+    _ < ⊤ := ENNReal.mul_lt_top (ENNReal.rpow_lt_top_of_nonneg hexp hB.ne) hint'
+
+theorem memLp_heatConvolution (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p ≠ ⊤)
+    {φ : EuclideanSpace ℝ (Fin n) → ℝ} (hφ : ContDiff ℝ 2 φ)
+    (hφ_supp : HasCompactSupport φ) (t : ℝ) (ht : 0 < t) :
+    MemLp (heatConvolution n φ t) p volume := by
+  apply eLpNorm_lt_top_of_uniform_enorm_bound n hp1 hp
+  · exact (continuous_heatConvolution n hφ hφ_supp t).aestronglyMeasurable
+  · exact integrable_heatConvolution n hφ hφ_supp t ht
+  · exact eLpNorm_bound_heatConvolution n hφ hφ_supp t ht
+  · exact fun x => enorm_heatConvolution_le n hφ hφ_supp t ht x
+
+theorem eLpNorm_generator_eventually_ne_top (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p < ⊤)
+    {φ : EuclideanSpace ℝ (Fin n) → ℝ} (hφ : ContDiff ℝ 2 φ)
+    (hφ_supp : HasCompactSupport φ) (t : ℝ) (ht : 0 < t) :
+    eLpNorm (fun x => heatConvolution n φ t x - φ x
+      - t * Laplacian.laplacian φ x) p volume ≠ ⊤ := by
+  have hH : MemLp (heatConvolution n φ t) p volume :=
+    memLp_heatConvolution n hp1 hp.ne hφ hφ_supp t ht
+  have hP : MemLp φ p volume := memLp_phi_of_contDiff n hφ hφ_supp
+  have hL : MemLp (fun x => t * Laplacian.laplacian φ x) p volume :=
+    (memLp_laplacian_phi n hφ hφ_supp).const_mul t
+  have hmem : MemLp (fun x => heatConvolution n φ t x - φ x - t * Laplacian.laplacian φ x)
+      p volume := (hH.sub hP).sub hL
+  exact ne_of_lt hmem
+
+theorem heat_semigroup_generator_eq_laplacian_ennreal_of_real (n : ℕ) {p : ENNReal} (_hp1 : 1 ≤ p)
+    (_hp : p < ⊤) {φ : EuclideanSpace ℝ (Fin n) → ℝ} (_hφ : ContDiff ℝ 2 φ)
+    (_hφ_supp : HasCompactSupport φ)
+    (hReal : Filter.Tendsto
+      (fun t : ℝ => (eLpNorm (fun x => heatConvolution n φ t x - φ x
+          - t * Laplacian.laplacian φ x) p volume).toReal / t)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds 0))
+    (hFinite : ∀ (t : ℝ), 0 < t →
+      eLpNorm (fun x => heatConvolution n φ t x - φ x - t * Laplacian.laplacian φ x) p volume ≠ ⊤) :
+    Filter.Tendsto
+      (fun t : ℝ => eLpNorm (fun x => heatConvolution n φ t x - φ x
+          - t * Laplacian.laplacian φ x) p volume / ENNReal.ofReal t)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) := by
+  have hEq : (fun t : ℝ => ENNReal.ofReal
+      ((eLpNorm (fun x => heatConvolution n φ t x - φ x
+          - t * Laplacian.laplacian φ x) p volume).toReal / t))
+      =ᶠ[nhdsWithin 0 (Set.Ioi 0)]
+      fun t : ℝ => eLpNorm (fun x => heatConvolution n φ t x - φ x
+          - t * Laplacian.laplacian φ x) p volume / ENNReal.ofReal t := by
+    filter_upwards [self_mem_nhdsWithin] with t htmem
+    simp only [Set.mem_Ioi] at htmem
+    rw [ENNReal.ofReal_div_of_pos htmem, ENNReal.ofReal_toReal (hFinite t htmem)]
+  have hT := ENNReal.tendsto_ofReal hReal
+  simp only [ENNReal.ofReal_zero] at hT
+  exact hT.congr' hEq
+
+theorem heat_semigroup_generator_eq_laplacian_of_ennreal (n : ℕ) {p : ENNReal} (_hp1 : 1 ≤ p)
+    (_hp : p < ⊤) {φ : EuclideanSpace ℝ (Fin n) → ℝ} (_hφ : ContDiff ℝ 2 φ)
+    (_hφ_supp : HasCompactSupport φ)
+    (hENN : Filter.Tendsto
+      (fun t : ℝ => eLpNorm (fun x => heatConvolution n φ t x - φ x
+          - t * Laplacian.laplacian φ x) p volume / ENNReal.ofReal t)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds 0)) :
+    Filter.Tendsto
+      (fun t : ℝ => (eLpNorm (fun x => heatConvolution n φ t x - φ x
+          - t * Laplacian.laplacian φ x) p volume).toReal / t)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) := by
+  have hEq : (fun t : ℝ => (eLpNorm (fun x => heatConvolution n φ t x - φ x
+          - t * Laplacian.laplacian φ x) p volume / ENNReal.ofReal t).toReal)
+      =ᶠ[nhdsWithin 0 (Set.Ioi 0)]
+      fun t : ℝ => (eLpNorm (fun x => heatConvolution n φ t x - φ x
+          - t * Laplacian.laplacian φ x) p volume).toReal / t := by
+    filter_upwards [self_mem_nhdsWithin] with t htmem
+    simp only [Set.mem_Ioi] at htmem
+    rw [ENNReal.toReal_div, ENNReal.toReal_ofReal htmem.le]
+  have hT := (ENNReal.tendsto_toReal ENNReal.zero_ne_top).comp hENN
+  simp only [ENNReal.toReal_zero] at hT
+  exact hT.congr' hEq
+
+end P1Ennreal
+
 section FinalGlueH5
 
 /-- The `L^p` heat-semigroup generator equals the Laplacian on compactly
-supported `C²` functions. -/
-theorem heat_semigroup_generator_eq_laplacian (n : ℕ) {p : ENNReal}
+supported `C²` functions, stated directly with `eLpNorm` in `ENNReal` (the
+`ENNReal`-valued form is the genuine `L^p` statement: `ENNReal.toReal` sends
+`⊤` to `0`, so a real-valued limit alone could report convergence even when
+the remainder is not in `L^p`). -/
+theorem heat_semigroup_generator_eq_laplacian_ennreal (n : ℕ) {p : ENNReal}
     (hp1 : 1 ≤ p) (hp : p < ⊤) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ) :
     Filter.Tendsto
-      (fun t : ℝ =>
-        (eLpNorm (fun x => heatConvolution n φ t x - φ x
-          - t * Laplacian.laplacian φ x) p volume).toReal / t)
+      (fun t : ℝ => eLpNorm (fun x => heatConvolution n φ t x - φ x
+          - t * Laplacian.laplacian φ x) p volume / ENNReal.ofReal t)
       (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) := by
   have hMoments : ∀ (n : ℕ) {t : ℝ}, 0 < t →
       (∫ (y : EuclideanSpace ℝ (Fin n)), (4 * Real.pi * t) ^ (-(n : ℝ) / 2)
@@ -12778,12 +13029,29 @@ theorem heat_semigroup_generator_eq_laplacian (n : ℕ) {p : ENNReal}
     fun n hn p hp1 hp φ hφ hφ_supp hAthm hSumThm hDijThm =>
       Dfn_lintegral_le_v2 n hn hp1 hp hφ hφ_supp hAthm hSumThm hDijThm
   rcases Nat.eq_zero_or_pos n with rfl | hn
-  · exact n_zero_case hp1 hp hφ hφ_supp hRem
-  · exact tendsto_generator_of_diff_le n hn hp1 hp hφ hφ_supp
-      lintegral_norm_integral_le hMoments hDij hRem hSubThm sum_abs_mul_le_norm_sq
-      eLpNorm_toReal_rpow_eq_lintegral_ofReal isProbability_heatDensity dij_bounded
-      hModMonoThm lintegral_diff_le jensen_density_bundle hC2bypass y_integral_estimate
-      smallBall_integral_bound largeCompl_integral_bound
+  · exact heat_semigroup_generator_eq_laplacian_ennreal_of_real 0 hp1 hp hφ hφ_supp
+      (n_zero_case hp1 hp hφ hφ_supp hRem)
+      (eLpNorm_generator_eventually_ne_top 0 hp1 hp hφ hφ_supp)
+  · exact heat_semigroup_generator_eq_laplacian_ennreal_of_real n hp1 hp hφ hφ_supp
+      (tendsto_generator_of_diff_le n hn hp1 hp hφ hφ_supp
+        lintegral_norm_integral_le hMoments hDij hRem hSubThm sum_abs_mul_le_norm_sq
+        eLpNorm_toReal_rpow_eq_lintegral_ofReal isProbability_heatDensity dij_bounded
+        hModMonoThm lintegral_diff_le jensen_density_bundle hC2bypass y_integral_estimate
+        smallBall_integral_bound largeCompl_integral_bound)
+      (eLpNorm_generator_eventually_ne_top n hp1 hp hφ hφ_supp)
+
+/-- The `L^p` heat-semigroup generator equals the Laplacian on compactly
+supported `C²` functions (real-valued corollary of the `ENNReal` form). -/
+theorem heat_semigroup_generator_eq_laplacian (n : ℕ) {p : ENNReal}
+    (hp1 : 1 ≤ p) (hp : p < ⊤) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
+    (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ) :
+    Filter.Tendsto
+      (fun t : ℝ =>
+        (eLpNorm (fun x => heatConvolution n φ t x - φ x
+          - t * Laplacian.laplacian φ x) p volume).toReal / t)
+      (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) := by
+  exact heat_semigroup_generator_eq_laplacian_of_ennreal n hp1 hp hφ hφ_supp
+    (heat_semigroup_generator_eq_laplacian_ennreal n hp1 hp hφ hφ_supp)
 
 
 end FinalGlueH5

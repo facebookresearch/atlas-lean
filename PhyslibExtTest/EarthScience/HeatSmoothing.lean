@@ -362,3 +362,28 @@ example : Filter.Tendsto
     (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) :=
   EarthScience.heat_semigroup_generator_eq_laplacian 1 (by norm_num) (by norm_num)
     bump_contDiff_compactSupport.1 bump_contDiff_compactSupport.2
+
+/-- Generator in `ENNReal`: the `L^p` heat-semigroup generator equals the
+Laplacian for the `(1 - x^2)^3` cutoff bump in dimension `1` (non-vacuous). -/
+example : Filter.Tendsto
+    (fun t : ℝ =>
+      (eLpNorm (fun x : EuclideanSpace ℝ (Fin 1) => EarthScience.heatConvolution 1 (fun x : EuclideanSpace ℝ (Fin 1) =>
+          if |x 0| < 1 then (1 - (x 0)^2)^3 else 0) t x
+        - (fun x : EuclideanSpace ℝ (Fin 1) =>
+          if |x 0| < 1 then (1 - (x 0)^2)^3 else 0) x
+        - t * Laplacian.laplacian (fun x : EuclideanSpace ℝ (Fin 1) =>
+          (if |x 0| < 1 then (1 - (x 0)^2)^3 else 0 : ℝ)) x) 2 volume) / ENNReal.ofReal t)
+    (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) :=
+  EarthScience.heat_semigroup_generator_eq_laplacian_ennreal 1 (by norm_num) (by norm_num)
+    bump_contDiff_compactSupport.1 bump_contDiff_compactSupport.2
+
+/-- Generator in `ENNReal`: the `L^p` heat-semigroup generator equals the
+Laplacian for the constant function `1` in dimension `0` (boundary case). -/
+example : Filter.Tendsto
+    (fun t : ℝ =>
+      (eLpNorm (fun x : EuclideanSpace ℝ (Fin 0) => EarthScience.heatConvolution 0 (fun _ => (1 : ℝ)) t x
+        - (fun _ => (1 : ℝ)) x
+        - t * Laplacian.laplacian (fun _ : EuclideanSpace ℝ (Fin 0) => (1 : ℝ)) x) 2 volume) / ENNReal.ofReal t)
+    (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) :=
+  EarthScience.heat_semigroup_generator_eq_laplacian_ennreal 0 (by norm_num) (by norm_num)
+    contDiff_const (IsClosed.isCompact (isClosed_tsupport _))
