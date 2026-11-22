@@ -255,15 +255,16 @@ private lemma padicVal_fib_five (m : ℕ) (hm : 1 ≤ m) :
       padicValNat.eq_zero_of_not_dvd hR5, add_zero]
   rw [hR_eq, padicValNat.mul hFm h5R, h1]
 
-/-- 5-adic valuation of Fibonacci numbers: for `1 ≤ n`,
-`padicValNat 5 (Nat.fib n) = padicValNat 5 n`.
+/-- **The $5$-adic valuation of Fibonacci numbers.** Writing $F_n$ for the $n$-th Fibonacci number
+and $v_5$ for the $5$-adic valuation, $v_5(F_n) = v_5(n)$ for every integer $n \ge 1$.
 
-Provenance: Fatehizadeh–Yaqubi, Lemma `Leg1`, citing Lengyel (1995).
+Proves `Wanted` entry `lengyel_fibonacci_five_adic`.
+
+Source: Fatehizadeh–Yaqubi, Lemma `Leg1`, citing Lengyel (1995).
 The source prints `n ≥ 0`, but its p-adic valuation is defined for positive
 integers, so this formalizes the audited `1 ≤ n` restriction. Only the 5-adic
 clause is formalized; the source's separate 2-adic and 3-adic clauses are out
 of scope.
-Proves `Wanted` entry `lengyel_fibonacci_five_adic`.
 -/
 theorem lengyel_fibonacci_five_adic
     (n : ℕ) (hn : 1 ≤ n) :

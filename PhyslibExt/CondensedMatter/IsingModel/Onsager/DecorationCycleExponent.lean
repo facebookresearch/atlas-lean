@@ -54,23 +54,9 @@ open Finset SimpleGraph
 
 /-! ## A. Uniqueness of internal paths -/
 
-lemma ons_portLine_isTree : (SimpleGraph.pathGraph 4).IsTree := by
-  rw [SimpleGraph.isTree_iff_connected_and_card]
-  constructor
-  · simp
-  · rw [Nat.card_eq_fintype_card, ← SimpleGraph.edgeFinset_card,
-      Nat.card_eq_fintype_card]
-    have hedges : (SimpleGraph.pathGraph 4).edgeFinset =
-        {s((0 : Fin 4), (1 : Fin 4)), s((1 : Fin 4), (2 : Fin 4)),
-          s((2 : Fin 4), (3 : Fin 4))} := by
-      ext edge
-      induction edge using Sym2.inductionOn with
-      | _ u v =>
-          fin_cases u <;> fin_cases v <;>
-            simp [SimpleGraph.mem_edgeFinset,
-              SimpleGraph.pathGraph_adj]
-    rw [hedges]
-    decide
+@[deprecated "Use `SimpleGraph.isTree_pathGraph_add_one 3`." (since := "2026-11-12")]
+lemma ons_portLine_isTree : (SimpleGraph.pathGraph 4).IsTree :=
+  SimpleGraph.isTree_pathGraph_add_one 3
 
 lemma ons_internalPath_unique
     {L : ℕ} (site : ZMod L × ZMod L) (a b : Fin 4)
@@ -121,7 +107,7 @@ lemma ons_internalPath_unique
     simpa [qqWalk] using hqqnodup
   have hwalk : ppWalk = qqWalk := by
     exact congrArg Subtype.val
-      ((ons_portLine_isTree.isAcyclic.subsingleton_path _ _).elim
+      (((SimpleGraph.isAcyclic_pathGraph 4).subsingleton_path _ _).elim
         ⟨ppWalk, hppath⟩ ⟨qqWalk, hqpath⟩)
   have hports : pp = qq := by
     have hs := congrArg SimpleGraph.Walk.support hwalk
