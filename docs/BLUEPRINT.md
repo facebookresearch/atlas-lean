@@ -140,27 +140,14 @@ changes; `autoform work` refuses an unfinished formalizable leaf without one.
 The sync gives each row it adds an `id`. A row without one is not a review
 finding until the one-off fill (#5524).
 
-The tools also decide these:
-
-- **Child limits.** `scripts/generate_wiki.py` splits a topic listing into
-  parts above 20 entries. `autoform audit` (`overfull-container`) reports a
-  `navigation: module` page above 120 articles, the root page above 64, and
-  any other article above 24 direct children.
-- **Tasks** are the articles `autoform work` finds ready after `lean-facts`,
-  as the wiki build runs it: ready to state (a `def_wanted`, or a definition in
-  a module with `sorry`) once their statement prerequisites are stated, ready
-  to prove (a `theorem_wanted`, or a theorem in a module with `sorry`) once
-  their proof prerequisites are proved. Proved and Mathlib-backed articles
-  never are. Committed annotations carry no `kind`, so on the committed tree
-  it lists none.
-
 Blueprint Pages' `build the wiki` job runs `autoform check blueprint`, which
 fails on cycles, dangling dependency targets and missing declarations. The job
 is advisory, so a reviewer skips those only once it has passed on the PR's
 head commit, and otherwise reports them. Nothing runs `autoform audit` in CI;
 authors may run `autoform audit blueprint --lean-root .`, and reviewers still
-check what it reports, such as overfull folders and two pages for one
-declaration (`duplicate-lean-target`).
+check what it reports, such as overfull folders (`overfull-container`) and two
+pages for one declaration (`duplicate-lean-target`). `autoform work` lists the
+tasks once `lean-facts` has run.
 
 ### Procedures
 
