@@ -1128,18 +1128,26 @@ private theorem subst_to_pseudo (p : PowerSeries ℝ)
 
 /-! # Twin Powers theorem for pseudo-involutory Riordan arrays -/
 
-/-- The Twin Powers theorem relating the B-functions of an odd aeration and its
-twin power: with `n = 2 * l + 1`, if either `f = X * g.subst (X ^ n)` or
-`h = X * g ^ n` is pseudo-involutory then both are, and
-`(X * Bh ^ 2).subst (X ^ n) = (X * P ^ 2).subst (X * Bf ^ 2)` where `P` is the
-explicit polynomial built from the coefficients `(2l+1)/(2j+1) * C(l+j, 2j)`.
+/-- **Twin Powers Theorem for pseudo-involutions.** Let $l$ be a natural number, let
+$n = 2l + 1$, and let $g$ be a formal power series over $\mathbb{R}$ with $g(0) \ne 0$. Put
+$f(x) = x\, g(x^n)$ and $h(x) = x\, g(x)^n$. Call a power series $p$ pseudo-involutory if
+$p(0) = 0$, the coefficient of $x$ in $p$ is nonzero, and the compositional inverse $\bar p$ of
+$p$ satisfies $\bar p(x) = -p(-x)$; call $B$ a B-function of $p$ if
+$p(x) - x = x\, p(x)\, B(x\, p(x))$. Let
+
+$$P(x) = \sum_{j=0}^{l} \frac{2l+1}{2j+1} \binom{l+j}{2j} x^j.$$
+
+Suppose that $B_f$ is a B-function of $f$, that $B_h$ is a B-function of $h$, and that $f$ or $h$
+is pseudo-involutory. Then $f$ and $h$ are both pseudo-involutory, and
+
+$$x^n B_h(x^n)^2 = x B_f(x)^2 \, P\bigl(x B_f(x)^2\bigr)^2.$$
+
+Proves `Wanted` entry `twin_powers`.
 
 Source: Alexander Burstein and Louis W. Shapiro, "Pseudo-Involutions in the
 Riordan Group," Journal of Integer Sequences 25 (2022), Article 22.3.6,
 The Twin Powers Theorem (label thm:aeration), lines 1129–1146,
 https://cs.uwaterloo.ca/journals/JIS/VOL25/Burstein/burstein14.tex
-
-Proves `Wanted` entry `twin_powers`.
 -/
 theorem twin_powers
     (l : ℕ)
