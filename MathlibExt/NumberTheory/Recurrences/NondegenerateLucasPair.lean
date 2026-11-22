@@ -15,9 +15,12 @@ public import Mathlib.GroupTheory.OrderOfElement
 
 namespace MetaMathlibExt
 
-/-- Nondegeneracy predicate for Lucas pairs.
+/-- **Nondegenerate Lucas pair.** A pair of integers $(P, Q)$ is nondegenerate when $Q \ne 0$ and,
+for all complex numbers $\alpha$ and $\beta$ with $\alpha + \beta = P$ and $\alpha \beta = Q$, the
+quotient $\alpha / \beta$ is not a root of unity. Such $\alpha$ and $\beta$ are the two roots of
+$x^2 - P x + Q$, in either order.
 
-Grounded in the frozen source
+Source: grounded in the frozen source
 `https://cs.uwaterloo.ca/journals/JIS/VOL13/Smyth/smyth2.tex`
 (file SHA-256 `eb765815f14b18e047ccd51b0ed4ec17305d9410f60516b290425a6cd7a49d05`):
 exact lines 621-622, bytes 31221-31556,
@@ -27,11 +30,6 @@ where `α` and `β` are the two roots of `x² - P x + Q`.
 Supporting lines 114-122, bytes 3175-3840,
 SHA-256 `dce48c9908ba3e56bb82b2792cbb734d489dc1558763f1c1284855dc2de7ea4f`,
 establish `α + β = P` and `α * β = Q`.
-
-This predicate requires `Q ≠ 0` and requires `α / β` not to be of finite order
-for every complete complex root pair satisfying both `α + β = (P : ℂ)` and
-`α * β = (Q : ℂ)`.
-
 Stable record: `jis_grounded_7e37bcd48e7477bda602ca6e`. -/
 public def IsNondegenerateLucasPair (P Q : ℤ) : Prop :=
   Q ≠ 0 ∧ ∀ α β : ℂ, α + β = (P : ℂ) → α * β = (Q : ℂ) → ¬ IsOfFinOrder (α / β)
