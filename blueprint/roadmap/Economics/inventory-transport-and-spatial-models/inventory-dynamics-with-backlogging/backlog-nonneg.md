@@ -1,3 +1,3 @@
 # Backlog nonneg
 
-C2: backlog nonnegativity.
+Backlog nonnegativity.

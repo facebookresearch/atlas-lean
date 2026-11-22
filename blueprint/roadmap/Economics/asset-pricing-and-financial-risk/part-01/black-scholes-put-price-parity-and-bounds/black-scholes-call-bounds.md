@@ -1,6 +1,6 @@
 # Black Scholes Call bounds
 
-Static bounds for the call (FI17.T02): `max (S0 - K e^{-rT}) 0 ≤ C ≤ S0`.
+Static bounds for the call: `max (S0 - K e^{-rT}) 0 ≤ C ≤ S0`.
 The upper bound is algebra from `0 ≤ Φ ≤ 1`. The lower bound `0 ≤ C` holds
 because `C` is the discounted expectation of the nonnegative payoff
 `max (x - K) 0` (`discounted_integral_call_riskNeutralLaw`); the lower bound

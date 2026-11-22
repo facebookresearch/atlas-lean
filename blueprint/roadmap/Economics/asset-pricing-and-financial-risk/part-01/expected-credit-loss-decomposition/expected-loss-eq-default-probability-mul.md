@@ -1,6 +1,6 @@
 # Expected Loss eq default Probability mul conditional Expected Loss
 
-Expected-loss decomposition (FI16.T03): expected loss equals the
+Expected-loss decomposition: expected loss equals the
 probability of default times the expected exposure-times-loss-given-default
 conditional on default. `ProbabilityTheory.cond μ D` is always defined as the
 `(μ D)⁻¹`-scaled restriction, even if `μ D = 0`. The nonzero hypothesis is

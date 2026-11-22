@@ -1,3 +1,3 @@
 # Run succ
 
-C6: iteration step equation.
+Iteration step equation.

@@ -2,4 +2,5 @@
 
 For nonzero values the log change is
 `log x₁ - log x₀`; it is a log change of a quantity when both values are positive (for negative
-values Lean reads both logarithms through absolute values).
+values both logarithms are taken of absolute values, by the convention
+`Real.log x = Real.log |x|`).

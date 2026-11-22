@@ -9,7 +9,7 @@ are assumed here, not derived from transaction-level data.
   gross capital formation plus exports less imports (SNA 2008, §16.47). Gross means no
   depreciation is subtracted; domestic means production inside the borders, not the product of
   nationals.
-* The expenditure components are read as nonoverlapping (a convention, not checked by Lean):
+* The expenditure components are read as nonoverlapping (a convention):
   `C` is private final consumption expenditure (households and non-profit institutions serving
   households), `G` is government final consumption expenditure (consumption only, no
   investment), `I` is gross capital formation of all resident sectors, private and government
