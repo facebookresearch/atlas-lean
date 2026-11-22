@@ -30,7 +30,7 @@ jobs:
       # condition.
       - name: Install PyYAML for the merge-queue test
         run: |
-          set -euo pipefail
+          set -eu
           python3 -m venv "$RUNNER_TEMP/merge-queue-venv"
           "$RUNNER_TEMP/merge-queue-venv/bin/python" -m pip install \
             --disable-pip-version-check -r scripts/requirements-inventory.txt

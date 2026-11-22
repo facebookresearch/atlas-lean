@@ -11,6 +11,8 @@ fails if a required workflow:
   a job-level `if`, a matrix, or a prerequisite that is not required itself;
 - can skip the job's own check: the job needs a step that is exactly the
   command running it, with no step-level `if` or `continue-on-error`;
+- leaves Ubuntu runners, or runs its steps in a shell other than bash by default
+  (a job in a container defaults to `sh`);
 - checks out another ref or repository in that job, so that the check would
   report on the PR or merge group without testing its tree;
 - renames the check, puts an expression in the job's name, lets another job
@@ -251,6 +253,10 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                 found.append(f"{check!r} has a job-level {key!r}")
         steps = as_list(job.get("steps"))
         shell = default_shell(job, workflow)
+        if not str(job.get("runs-on", "")).startswith("ubuntu"):
+            found.append(f"{check!r} runs on {job.get('runs-on')!r}, not an Ubuntu runner")
+        if shell != "bash":
+            found.append(f"{check!r} runs its steps in {shell!r} by default, not bash")
         if not any(runs_exactly(step, ENTRY_POINTS[check], shell) for step in steps):
             found.append(f"{check!r} has no step that is exactly {ENTRY_POINTS[check]!r}")
         for step in as_list(job.get("steps")):
@@ -292,10 +298,10 @@ FIXTURE = {
                "pull_request": {"types": ["opened", "synchronize", "reopened"]},
                "merge_group": {"types": ["checks_requested"]}},
         "concurrency": {"group": "${{ github.workflow }}-${{ github.ref }}"},
-        "jobs": {"preflight": {"name": "repository integrity",
+        "jobs": {"preflight": {"name": "repository integrity", "runs-on": "ubuntu-24.04",
                                "steps": [{"run": "scripts/check.sh preflight"},
                                          {"run": "pip install"}, {"run": COMMAND}]},
-                 "build": {"needs": "preflight", "steps": [
+                 "build": {"needs": "preflight", "runs-on": "ubuntu-24.04", "steps": [
                      {"uses": "actions/checkout@v7", "with": {"persist-credentials": "false"}},
                      {"name": "Build", "run": "scripts/check.sh build"},
                      {"if": "github.ref == 'refs/heads/main'", "uses": "actions/cache/save@v5"}]}},
@@ -303,7 +309,7 @@ FIXTURE = {
     "source-diagnostics.yml": {
         "name": "Source diagnostics",
         "on": {"push": {"branches": "main"}, "pull_request": "", "merge_group": ""},
-        "jobs": {"source-diagnostics": {"steps": [
+        "jobs": {"source-diagnostics": {"runs-on": "ubuntu-24.04", "steps": [
             {"uses": "actions/checkout"},
             {"name": "Test", "run": COMMAND.replace(" -s", "  -s") + "\n"},
             {"id": "diagnostics", "shell": "bash", "run": "scripts/run_source_diagnostics.sh"}]}},
@@ -368,7 +374,7 @@ class MergeQueueChecks(unittest.TestCase):
                            "${{github.workflow}}-${{  github.ref }}"),
                        put("ci.yml", "on", "push", {"branches": "main"}),
                        put("source-diagnostics.yml", "jobs", "source-diagnostics",
-                           {"container": "python:3.12-bookworm",
+                           {"container": "python:3.12-bookworm", "runs-on": "ubuntu-24.04",
                             "defaults": {"run": {"shell": "bash"}},
                             "steps": FIXTURE["source-diagnostics.yml"]["jobs"]
                                             ["source-diagnostics"]["steps"]}),
@@ -514,6 +520,12 @@ class MergeQueueChecks(unittest.TestCase):
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "container",
                     "python:3.12-bookworm"),
                 "'source-diagnostics' has no step that is exactly"),
+            "container with bash only on the checked steps": (
+                put("source-diagnostics.yml", "jobs", "source-diagnostics", "container",
+                    "python:3.12-bookworm"), "by default, not bash"),
+            "Source diagnostics on Windows": (
+                put("source-diagnostics.yml", "jobs", "source-diagnostics", "runs-on",
+                    "windows-latest"), "not an Ubuntu runner"),
             "CI defaulting to sh": (
                 put("ci.yml", "defaults", {"run": {"shell": "sh"}}),
                 "no step that is exactly 'scripts/check.sh preflight'"),
