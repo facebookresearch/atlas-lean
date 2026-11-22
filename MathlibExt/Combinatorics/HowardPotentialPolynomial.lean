@@ -307,17 +307,6 @@ private theorem howardRsummand_self (n j : ℕ) (hj : j ≤ n) :
   rw [hC]
   ring
 
-private theorem howard_prod_monomial {ι : Type*} (s : Finset ι) (d : ι → ℕ)
-    (a : ι → Rat) :
-    ∏ i ∈ s, PowerSeries.monomial (d i) (a i)
-      = PowerSeries.monomial (∑ i ∈ s, d i) (∏ i ∈ s, a i) := by
-  classical
-  induction s using Finset.induction with
-  | empty => simp
-  | insert x s hx ih =>
-    rw [Finset.prod_insert hx, Finset.sum_insert hx, Finset.prod_insert hx, ih,
-        PowerSeries.monomial_mul_monomial]
-
 private theorem howard_bell_index_set (n k : ℕ) :
     (Finset.univ.piAntidiag k).filter (fun κ : Fin (n + 1) → ℕ => n = ∑ i, (κ i) * (i.val + 1))
       = (Fintype.piFinset (fun _ : Fin (n + 1) => Finset.range (n + 1))).filter
@@ -382,7 +371,7 @@ private theorem howard_bell_coeff_pow (c : ℕ → Rat) (n k : ℕ) :
     intro κ _
     have hp : ∏ i, (PowerSeries.monomial (i.val + 1) (c (i.val + 1)) : PowerSeries Rat) ^ (κ i)
         = PowerSeries.monomial (∑ i, (κ i) * (i.val + 1)) (∏ i, c (i.val + 1) ^ (κ i)) := by
-      simp_rw [PowerSeries.monomial_pow]; rw [howard_prod_monomial]
+      simp_rw [PowerSeries.monomial_pow]; rw [PowerSeries.prod_monomial]
     rw [hp, ← nsmul_eq_mul, map_nsmul, PowerSeries.coeff_monomial, nsmul_eq_mul]
   rw [hA, hB]
   simp_rw [mul_ite, mul_zero]
@@ -957,15 +946,6 @@ private theorem bell_denom_dvd (M : ℕ) : ∀ (N : ℕ) (m : Fin M → ℕ),
         ∣ N'.factorial * T.factorial := hmul
       _ ∣ N.factorial := hprod
 
-private theorem prod_monomial {K : Type*} [CommSemiring K] (s : Finset ℕ) (a : ℕ → ℕ)
-    (b : ℕ → K) :
-    (∏ i ∈ s, PowerSeries.monomial (a i) (b i))
-    = PowerSeries.monomial (∑ i ∈ s, a i) (∏ i ∈ s, b i) := by
-  refine Finset.induction ?_ ?_ s
-  · simp
-  · intro x t hxt ih
-    rw [Finset.prod_insert hxt, Finset.sum_insert hxt, Finset.prod_insert hxt, ih,
-      PowerSeries.monomial_mul_monomial]
 private theorem coeff_trunc_eq {K : Type*} [Field K] (N k : ℕ) (c : ℕ → K) :
     PowerSeries.coeff N ((PowerSeries.mk (fun m => if m = 0 then 0 else c m)) ^ k)
     = PowerSeries.coeff N
@@ -1047,7 +1027,7 @@ private theorem coeff_trunc_expand {K : Type*} [Field K] (N k : ℕ) (c : ℕ �
           (PowerSeries.monomial i (if i = 0 then 0 else c i)) ^ e i)
         = PowerSeries.monomial (∑ i ∈ Finset.range (N + 1), e i * i)
           (∏ i ∈ Finset.range (N + 1), (if i = 0 then 0 else c i) ^ e i) := by
-      rw [← prod_monomial]
+      rw [← PowerSeries.prod_monomial]
       apply Finset.prod_congr rfl
       intro i _
       rw [PowerSeries.monomial_pow]

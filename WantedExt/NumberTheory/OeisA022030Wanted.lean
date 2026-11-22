@@ -26,7 +26,9 @@ recurrence sequence (core Lean only). Test evaluations omitted (proofs
 live upstream). Status: resolved true (Barker's linear recurrence holds;
 formal proof upstream). -/
 
-/-- A nonlinear recurrence sequence. -/
+/-- **The sequence OEIS A022030.** The sequence of natural numbers with $a(0) = 4$, $a(1) = 16$ and,
+for every natural number $n$, $a(n + 2) = \lfloor (a(n + 1)^2 + a(n) - 1) / a(n) \rfloor - 1$ if
+$n$ is even and $a(n + 2) = \lfloor a(n + 1)^2 / a(n) \rfloor + 1$ if $n$ is odd. -/
 def a (n : ℕ) : ℕ :=
   match n with
   | 0 => 4
@@ -37,13 +39,19 @@ def a (n : ℕ) : ℕ :=
     else
       (a (n + 1) ^ 2) / a n + 1
 
-/-- The sequence satisfies a linear recurrence from `n ≥ 4`. -/
+/-- **Barker's linear recurrence for A022030.** The statement that for every natural number
+$n \ge 4$, the sequence $a$ of OEIS A022030 satisfies $a(n) = 4a(n - 1) - a(n - 3) + a(n - 4)$,
+with the subtraction taken in the natural numbers (truncated at $0$). -/
 def conjecture : Prop :=
   ∀ (n : ℕ) (_hn : 4 ≤ n),
     a n = 4 * a (n - 1) - a (n - 3) + a (n - 4)
 
 /--
-Resolved true: Barker's (2012) linear recurrence holds (formal proof upstream). Source: Kenta
+**Barker's linear recurrence for A022030 holds.** For every natural number $n \ge 4$, the
+sequence $a$ of OEIS A022030 satisfies $a(n) = 4a(n - 1) - a(n - 3) + a(n - 4)$, with the
+subtraction taken in the natural numbers (truncated at $0$).
+
+Source: Kenta
 Kitamura, Lean formal proof of Barker's linear recurrence,
 https://github.com/KitaKen1/oeis-a022030-lean/blob/f74afc2/lean/OeisA022030FC.lean#L270-L275.
 Moved from `OpenConjectures/NumberTheory/OeisA022030`.

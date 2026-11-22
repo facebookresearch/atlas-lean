@@ -46,9 +46,11 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.MahlerPopkenComplexityWanted
 
-/-- Expressions built from leaves in `{1, …, m}` using `+` and `*`,
-with bracketing given by the tree structure.  A leaf `i : Fin m`
-stands for the number `i + 1`. -/
+/-- **Mahler–Popken expressions.** For a natural number $m$, the $m$-ary Mahler–Popken expressions
+are the formal expressions built from leaves using the binary operations $+$ and $\times$; the
+tree structure plays the role of brackets. Each leaf carries a label $i \in \{0, \dots, m - 1\}$
+(so there are $m$ kinds of leaf), and a leaf with label $i$ stands for the number
+$i + 1 \in \{1, \dots, m\}$. -/
 inductive MahlerPopkenExpr (m : ℕ) where
   | leaf : Fin m → MahlerPopkenExpr m
   | add : MahlerPopkenExpr m → MahlerPopkenExpr m → MahlerPopkenExpr m
@@ -57,15 +59,17 @@ inductive MahlerPopkenExpr (m : ℕ) where
 
 namespace MahlerPopkenExpr
 
-/-- The natural number expressed by an `m`-ary complexity
-expression. -/
+/-- **Value of an $m$-ary expression.** The natural number expressed by an $m$-ary Mahler–Popken
+expression: the leaf with index $i \in \{0, \dots, m-1\}$ has value $i + 1$, and the value of a
+sum or of a product of two expressions is the sum or the product of their values. -/
 def eval {m : ℕ} : MahlerPopkenExpr m → ℕ
   | .leaf i => i.val + 1
   | .add a b => a.eval + b.eval
   | .mul a b => a.eval * b.eval
 
-/-- The number of leaf selections (counting repetitions) in an
-`m`-ary complexity expression. -/
+/-- **Number of leaves of an $m$-ary expression.** The number of leaf selections of an $m$-ary
+Mahler–Popken expression, counting repetitions: a leaf counts $1$, and the count of a sum or of a
+product of two expressions is the sum of their counts. -/
 def count {m : ℕ} : MahlerPopkenExpr m → ℕ
   | .leaf _ => 1
   | .add a b => a.count + b.count
@@ -103,16 +107,18 @@ theorem eval_pos {m : ℕ} (e : MahlerPopkenExpr m) : 0 < e.eval := by
 
 end MahlerPopkenExpr
 
-/-- The `m`-ary Mahler-Popken complexity `∥n∥ₘ`: the smallest
-number of possibly repeated selections from `{1, …, m}` needed to
-express `n` with addition, multiplication, and legal bracketing.
-For `1 ≤ m` and `1 ≤ n` the set is nonempty (a sum of ones), so
-the infimum is attained. -/
+/-- **Mahler–Popken complexity.** For natural numbers $m$ and $n$, the $m$-ary Mahler–Popken
+complexity $\lVert n \rVert_m$ is the smallest number of leaves (counted with repetition) of an
+$m$-ary Mahler–Popken expression whose value is $n$: the smallest number of possibly repeated
+selections from $\{1, \dots, m\}$ needed to express $n$ with addition, multiplication and legal
+bracketing. If no expression has value $n$ (which happens exactly when $m = 0$ or $n = 0$), the
+value is $0$. -/
 noncomputable def mahlerPopkenComplexity (m n : ℕ) : ℕ :=
   sInf {k : ℕ | ∃ e : MahlerPopkenExpr m, e.eval = n ∧ e.count = k}
 
-/-- Every positive natural is expressed by some `m`-ary expression
-when `1 ≤ m` (a sum of ones). -/
+/-- **Every positive integer has an $m$-ary expression.** For natural numbers $m \ge 1$ and
+$n \ge 1$, there is an $m$-ary Mahler–Popken expression whose value is $n$ (for instance a sum of
+ones). -/
 theorem exists_mahlerPopkenExpr_eval {m n : ℕ} (hm : 1 ≤ m)
     (hn : 1 ≤ n) : ∃ e : MahlerPopkenExpr m, e.eval = n := by
   induction n with
@@ -124,8 +130,9 @@ theorem exists_mahlerPopkenExpr_eval {m n : ℕ} (hm : 1 ≤ m)
     · obtain ⟨e, he⟩ := ih (by omega)
       exact ⟨.add e (.leaf ⟨0, hm⟩), by simp [he]⟩
 
-/-- Specification: for `1 ≤ m` and `1 ≤ n`, the complexity is
-attained by an optimal expression. -/
+/-- **The Mahler–Popken complexity is attained.** For all natural numbers $m \ge 1$ and $n \ge 1$,
+there is an $m$-ary Mahler–Popken expression whose value is $n$ and whose number of leaves
+(counted with repetition) equals the $m$-ary Mahler–Popken complexity $\lVert n \rVert_m$. -/
 theorem mahlerPopkenComplexity_spec {m n : ℕ} (hm : 1 ≤ m)
     (hn : 1 ≤ n) :
     ∃ e : MahlerPopkenExpr m, e.eval = n ∧
@@ -136,22 +143,27 @@ theorem mahlerPopkenComplexity_spec {m n : ℕ} (hm : 1 ≤ m)
     Nat.sInf_mem ⟨e.count, e, he, rfl⟩
   exact hmem
 
-/-- Minimality: the complexity is at most the leaf count of any
-expression for `n`. -/
+/-- **Expressions bound the $m$-ary complexity from above.** For natural numbers $m$ and $n$ and
+every $m$-ary Mahler–Popken expression $e$ whose value is $n$, the $m$-ary Mahler–Popken
+complexity $\|n\|_m$ is at most the number of leaves of $e$. -/
 theorem mahlerPopkenComplexity_min_le {m n : ℕ}
     (e : MahlerPopkenExpr m) (he : e.eval = n) :
     mahlerPopkenComplexity m n ≤ e.count :=
   Nat.sInf_le ⟨e, he, rfl⟩
 
-/-- The complexity of a positive natural is positive. -/
+/-- **The $m$-ary complexity is positive.** For natural numbers $m \ge 1$ and $n \ge 1$, the
+$m$-ary Mahler–Popken complexity $\|n\|_m$ is positive. -/
 theorem mahlerPopkenComplexity_pos {m n : ℕ} (hm : 1 ≤ m)
     (hn : 1 ≤ n) : 0 < mahlerPopkenComplexity m n := by
   obtain ⟨e, -, hcount⟩ := mahlerPopkenComplexity_spec hm hn
   rw [← hcount]
   exact e.count_pos
 
-/-- Subadditivity under addition, the analogue of
-`IntegerComplexity.complexity_add_le`. -/
+/-- **Subadditivity of the $m$-ary complexity under addition.** For natural numbers $m \ge 1$,
+$a \ge 1$ and $b \ge 1$, the $m$-ary Mahler–Popken complexity $\|\cdot\|_m$ satisfies
+$\|a + b\|_m \le \|a\|_m + \|b\|_m$.
+
+This is the analogue of subadditivity under addition for the classical integer complexity. -/
 theorem mahlerPopkenComplexity_add_le {m a b : ℕ} (hm : 1 ≤ m)
     (ha : 1 ≤ a) (hb : 1 ≤ b) :
     mahlerPopkenComplexity m (a + b) ≤
@@ -162,8 +174,12 @@ theorem mahlerPopkenComplexity_add_le {m a b : ℕ} (hm : 1 ≤ m)
     (.add ea eb) (by simp [hea, heb])
   simpa [hca, hcb] using h
 
-/-- Subadditivity under multiplication, the analogue of
-`IntegerComplexity.complexity_mul_le`. -/
+/-- **Subadditivity of the $m$-ary complexity under multiplication.** For natural numbers
+$m \ge 1$, $a \ge 1$ and $b \ge 1$, the $m$-ary Mahler–Popken complexity $\|\cdot\|_m$ satisfies
+$\|a b\|_m \le \|a\|_m + \|b\|_m$.
+
+This is the analogue of subadditivity under multiplication for the classical integer
+complexity. -/
 theorem mahlerPopkenComplexity_mul_le {m a b : ℕ} (hm : 1 ≤ m)
     (ha : 1 ≤ a) (hb : 1 ≤ b) :
     mahlerPopkenComplexity m (a * b) ≤
@@ -174,8 +190,10 @@ theorem mahlerPopkenComplexity_mul_le {m a b : ℕ} (hm : 1 ≤ m)
     (.mul ea eb) (by simp [hea, heb])
   simpa [hca, hcb] using h
 
-/-- Translation of classical integer-complexity expressions to
-`1`-ary Mahler-Popken expressions. -/
+/-- **Integer-complexity expressions as $1$-ary Mahler–Popken expressions.** The translation of
+an expression built from one, addition and multiplication into a $1$-ary Mahler–Popken expression
+replaces each occurrence of $1$ by the leaf standing for $1$ and keeps every addition and
+multiplication, so the expression tree is unchanged. -/
 def MahlerPopkenExpr.ofIntegerComplexityExpr :
     IntegerComplexity.Expr → MahlerPopkenExpr 1
   | .one => .leaf 0
@@ -184,8 +202,10 @@ def MahlerPopkenExpr.ofIntegerComplexityExpr :
   | .mul a b => .mul (MahlerPopkenExpr.ofIntegerComplexityExpr a)
       (MahlerPopkenExpr.ofIntegerComplexityExpr b)
 
-/-- Translation of `1`-ary Mahler-Popken expressions back to
-classical integer-complexity expressions; the only leaf is `1`. -/
+/-- **$1$-ary Mahler–Popken expressions as integer-complexity expressions.** The translation of a
+$1$-ary Mahler–Popken expression into an expression built from one, addition and multiplication
+replaces each leaf (the only leaf stands for $1$) by $1$ and keeps every addition and
+multiplication, so the expression tree is unchanged. -/
 def MahlerPopkenExpr.toIntegerComplexityExpr :
     MahlerPopkenExpr 1 → IntegerComplexity.Expr
   | .leaf _ => .one
@@ -226,9 +246,11 @@ theorem MahlerPopkenExpr.count_toIntegerComplexityExpr
   | add a b iha ihb => simp [toIntegerComplexityExpr, iha, ihb]
   | mul a b iha ihb => simp [toIntegerComplexityExpr, iha, ihb]
 
-/-- The case `m = 1` of Definition 1 is the classical
-Mahler-Popken integer complexity `IntegerComplexity.complexity`
-(Example 2 of the paper). -/
+/-- **The $1$-ary complexity is the integer complexity.** For every natural number $n \ge 1$, the
+$1$-ary Mahler–Popken complexity $\|n\|_1$ equals the classical integer complexity of $n$, the
+least number of ones needed to write $n$ using $1$, $+$, $\times$ and parentheses.
+
+This is the case $m = 1$ of Definition 1 in Campbell's paper (its Example 2). -/
 theorem mahlerPopkenComplexity_one_eq {n : ℕ} (hn : 1 ≤ n) :
     mahlerPopkenComplexity 1 n =
       IntegerComplexity.complexity ⟨n, hn⟩ := by
@@ -247,9 +269,12 @@ theorem mahlerPopkenComplexity_one_eq {n : ℕ} (hn : 1 ≤ n) :
     rwa [MahlerPopkenExpr.count_toIntegerComplexityExpr, hcount]
       at h
 
-/-- The right-hand side of the recursion (9): the minimum of
-`∥d∥ₘ + ∥n/d∥ₘ` over divisors `d ∣ n` with `d ≠ 1` and `d ≠ n`,
-and of `∥η∥ₘ + ∥n - η∥ₘ` over `0 < η < n`. -/
+/-- **Right-hand side of the Mahler–Popken recursion.** For natural numbers $m$ and $n$, write
+$\lVert k \rVert_m$ for the $m$-ary Mahler–Popken complexity of $k$. The recursion value of $n$
+is the smallest of the sums $\lVert d \rVert_m + \lVert n/d \rVert_m$ over the divisors $d$ of
+$n$ with $d \ne 1$ and $d \ne n$, and of the sums $\lVert \eta \rVert_m + \lVert n - \eta \rVert_m$
+over $0 < \eta < n$; it is $0$ when there are no such sums. This is the right-hand side of the
+recursion (9) in Campbell's paper. -/
 noncomputable def mahlerPopkenRecursionValue (m n : ℕ) : ℕ :=
   sInf {k : ℕ |
     (∃ d : ℕ, d ∣ n ∧ d ≠ 1 ∧ d ≠ n ∧
@@ -259,8 +284,11 @@ noncomputable def mahlerPopkenRecursionValue (m n : ℕ) : ℕ :=
       k = mahlerPopkenComplexity m η +
         mahlerPopkenComplexity m (n - η))}
 
-/-- **Proposition 1, general case**: for fixed `m`, the recursion
-(9) holds for all sufficiently large `n`.
+/-- **The $m$-ary complexity eventually satisfies its recursion.** For every natural number
+$m \ge 1$ there is $N$ such that for every $n \ge N$, the $m$-ary Mahler–Popken complexity
+$\|n\|_m$ equals the right-hand side of the recursion (9), that is, the least of the values
+$\|d\|_m + \|n/d\|_m$ over divisors $d$ of $n$ with $d \ne 1$ and $d \ne n$, and the values
+$\|\eta\|_m + \|n - \eta\|_m$ over $0 < \eta < n$.
 
 Source: John M. Campbell, "A Binary Version of the Mahler-Popken
 Complexity Function", Proposition 1. -/
@@ -269,8 +297,11 @@ theorem_wanted mahlerPopkenComplexity_eq_recursionValue_eventually
     ∃ N : ℕ, ∀ n : ℕ, N ≤ n →
       mahlerPopkenComplexity m n = mahlerPopkenRecursionValue m n
 
-/-- **Proposition 1, binary case**: for `m = 2`, the recursion (9)
-holds for every `n ≥ 3`.
+/-- **Recursion for the binary Mahler–Popken complexity.** For every natural number $n \ge 3$,
+the binary ($2$-ary) Mahler–Popken complexity $\lVert n \rVert_2$ equals the minimum of the sums
+$\lVert d \rVert_2 + \lVert n/d \rVert_2$ over the divisors $d$ of $n$ with $d \ne 1$ and
+$d \ne n$, and of the sums $\lVert \eta \rVert_2 + \lVert n - \eta \rVert_2$ over $0 < \eta < n$.
+This is the recursion (9) for $m = 2$.
 
 Source: John M. Campbell, "A Binary Version of the Mahler-Popken
 Complexity Function", Proposition 1. -/
@@ -278,8 +309,8 @@ theorem_wanted mahlerPopkenComplexity_two_eq_recursionValue
     (n : ℕ) (hn : 3 ≤ n) :
     mahlerPopkenComplexity 2 n = mahlerPopkenRecursionValue 2 n
 
-/-- **Theorem 1**: the binary complexity is bounded below by
-`log₂ n`.
+/-- **Logarithmic lower bound for the binary Mahler–Popken complexity.** For every natural number
+$n \ge 1$, the $2$-ary (binary) Mahler–Popken complexity $\|n\|_2$ satisfies $\log_2 n \le \|n\|_2$.
 
 Source: John M. Campbell, "A Binary Version of the Mahler-Popken
 Complexity Function", Theorem 1. -/
@@ -287,9 +318,10 @@ theorem_wanted logb_two_le_mahlerPopkenComplexity_two
     (n : ℕ) (hn : 1 ≤ n) :
     Real.logb 2 (n : ℝ) ≤ (mahlerPopkenComplexity 2 n : ℝ)
 
-/-- **Theorem 2**: the binary complexity is at most
-`⌊log₂ n⌋ + ν₂(n) - 1` for `n ≥ 2`, where `ν₂(n)` is the number of
-ones in the base-2 expansion of `n`.
+/-- **Upper bound for the binary Mahler–Popken complexity.** For every natural number $n \ge 2$,
+the binary ($2$-ary) Mahler–Popken complexity $\lVert n \rVert_2$ is at most
+$\lfloor \log_2 n \rfloor + \nu_2(n) - 1$, where $\nu_2(n)$ is the number of ones in the base-$2$
+expansion of $n$.
 
 Source: John M. Campbell, "A Binary Version of the Mahler-Popken
 Complexity Function", Theorem 2. -/

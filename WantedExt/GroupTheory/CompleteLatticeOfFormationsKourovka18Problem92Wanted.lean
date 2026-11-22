@@ -43,70 +43,102 @@ intersections, as in the problem's definition. The resolution is an AI-generated
 by A. N. Skiba.
 -/
 
-/-- A class of groups closed under isomorphism, given by a membership predicate on groups in
-`Type`. -/
+/-- **Isomorphism-closed classes of groups (Kourovka 18.92).** A class of groups $\mathfrak{X}$ is
+given by a membership predicate on groups whose underlying type lies in the lowest universe, such
+that whenever a group $H$ belongs to $\mathfrak{X}$ and $K$ is a group isomorphic to $H$, the group
+$K$ also belongs to $\mathfrak{X}$. -/
 structure GroupClass where
   /-- Membership predicate. -/
   mem : ∀ (H : Type) [Group H], Prop
   /-- Closure under isomorphism. -/
   iso : ∀ (H K : Type) [Group H] [Group K], (H ≃* K) → mem H → mem K
 
-/-- A formation of finite groups: its members are finite, it contains the trivial group, it is
-closed under quotients, and `G ⧸ N₁, G ⧸ N₂ ∈ X` implies `G ⧸ (N₁ ⊓ N₂) ∈ X`. -/
+/-- **Formations of finite groups (Kourovka 18.92).** A class $\mathfrak{X}$ of groups is a
+formation if every group in $\mathfrak{X}$ is finite, $\mathfrak{X}$ contains the trivial group,
+for every finite group $G$ in $\mathfrak{X}$ and every normal subgroup $N$ of $G$ the quotient
+$G/N$ lies in $\mathfrak{X}$, and for every finite group $G$ with normal subgroups $N_1$ and $N_2$
+such that $G/N_1$ and $G/N_2$ lie in $\mathfrak{X}$, the quotient $G/(N_1 \cap N_2)$ lies in
+$\mathfrak{X}$. -/
 def IsFormation (X : GroupClass) : Prop :=
   (∀ (H : Type) [Group H], X.mem H → Finite H) ∧ X.mem Unit ∧
   (∀ (G : Type) [Group G] [Finite G] (N : Subgroup G) [N.Normal], X.mem G → X.mem (G ⧸ N)) ∧
   ∀ (G : Type) [Group G] [Finite G] (N₁ N₂ : Subgroup G) [N₁.Normal] [N₂.Normal],
     X.mem (G ⧸ N₁) → X.mem (G ⧸ N₂) → X.mem (G ⧸ (N₁ ⊓ N₂))
 
-/-- Inclusion of classes. -/
+/-- **Inclusion of group classes.** For classes of groups $\mathfrak{X}$ and $\mathfrak{Y}$, the
+class $\mathfrak{X}$ is included in $\mathfrak{Y}$, written $\mathfrak{X} \subseteq \mathfrak{Y}$,
+if every group that belongs to $\mathfrak{X}$ also belongs to $\mathfrak{Y}$. -/
 def Incl (X Y : GroupClass) : Prop :=
   ∀ (H : Type) [Group H], X.mem H → Y.mem H
 
-/-- `Θ` is a complete lattice of formations: a nonempty set of formations, containing the
-intersection of each of its nonempty subsets and having a largest element. -/
+/-- **Complete lattices of formations.** A set $\Theta$ of classes of groups is a complete lattice
+of formations if it is nonempty, every member of $\Theta$ is a formation, for every nonempty subset
+$S \subseteq \Theta$ the intersection of the classes in $S$ (the class of groups belonging to every
+member of $S$) belongs to $\Theta$, and $\Theta$ has a member that contains every member of
+$\Theta$. -/
 def IsCompleteLatticeOfFormations (Θ : Set GroupClass) : Prop :=
   Θ.Nonempty ∧ (∀ X ∈ Θ, IsFormation X) ∧
   (∀ S ⊆ Θ, S.Nonempty → ∃ Y ∈ Θ, ∀ (H : Type) [Group H], Y.mem H ↔ ∀ X ∈ S, X.mem H) ∧
   ∃ T ∈ Θ, ∀ X ∈ Θ, Incl X T
 
-/-- `J` is the join of `S` in `Θ`: the least member of `Θ` containing every member of `S`. -/
+/-- **Joins in a set of group classes.** Let $\Theta$ and $S$ be sets of classes of groups. A class
+$\mathfrak{J}$ is the join of $S$ in $\Theta$ if $\mathfrak{J} \in \Theta$, every member of $S$ is
+contained in $\mathfrak{J}$, and $\mathfrak{J}$ is contained in every member of $\Theta$ that
+contains every member of $S$. -/
 def IsJoinIn (Θ S : Set GroupClass) (J : GroupClass) : Prop :=
   J ∈ Θ ∧ (∀ X ∈ S, Incl X J) ∧ ∀ U ∈ Θ, (∀ X ∈ S, Incl X U) → Incl J U
 
-/-- `A` is compact in `Θ`: whenever `A` lies below the join of `S ⊆ Θ`, it lies below the join of
-some finite `S₁ ⊆ S`. -/
+/-- **Compact elements of a set of group classes.** Let $\Theta$ be a set of classes of groups and
+$\mathfrak{A}$ a class of groups. Then $\mathfrak{A}$ is compact in $\Theta$ if, for every subset
+$S \subseteq \Theta$ and every join $\mathfrak{J}$ of $S$ in $\Theta$ with
+$\mathfrak{A} \subseteq \mathfrak{J}$, there are a finite subset $S_1 \subseteq S$ and a join
+$\mathfrak{J}_1$ of $S_1$ in $\Theta$ with $\mathfrak{A} \subseteq \mathfrak{J}_1$. -/
 def IsCompactIn (Θ : Set GroupClass) (A : GroupClass) : Prop :=
   ∀ S ⊆ Θ, ∀ J, IsJoinIn Θ S J → Incl A J →
     ∃ S₁ ⊆ S, S₁.Finite ∧ ∃ J₁, IsJoinIn Θ S₁ J₁ ∧ Incl A J₁
 
-/-- `Θ` is algebraic: every member is the join of a set of compact members. -/
+/-- **Algebraic sets of group classes.** A set $\Theta$ of classes of groups is algebraic if every
+member $\mathfrak{A}$ of $\Theta$ is the join in $\Theta$ of some subset $S \subseteq \Theta$ all of
+whose members are compact in $\Theta$. -/
 def IsAlgebraicIn (Θ : Set GroupClass) : Prop :=
   ∀ A ∈ Θ, ∃ S ⊆ Θ, (∀ C ∈ S, IsCompactIn Θ C) ∧ IsJoinIn Θ S A
 
-/-- `Θ` is modular: `A ∨ (B ∧ C) = (A ∨ B) ∧ C` whenever `A ≤ C`, with joins taken in `Θ` and meets
-the intersections (the meets in `Θ`). -/
+/-- **Modular sets of group classes.** A set $\Theta$ of classes of groups is modular if for all
+$\mathfrak{A}, \mathfrak{B}, \mathfrak{C} \in \Theta$ with $\mathfrak{A} \subseteq \mathfrak{C}$
+the following holds: whenever $\mathfrak{J}_1$ is the join in $\Theta$ of the set
+$\{\mathfrak{A}, \mathfrak{B} \cap \mathfrak{C}\}$ and $\mathfrak{D}$ is the join in $\Theta$ of
+the set $\{\mathfrak{A}, \mathfrak{B}\}$, the classes $\mathfrak{J}_1$ and
+$\mathfrak{D} \cap \mathfrak{C}$ contain the same groups. This is the modular law
+$\mathfrak{A} \vee (\mathfrak{B} \wedge \mathfrak{C}) = (\mathfrak{A} \vee \mathfrak{B}) \wedge
+\mathfrak{C}$, with joins taken in $\Theta$ and meets the intersections. -/
 def IsModularIn (Θ : Set GroupClass) : Prop :=
   ∀ A ∈ Θ, ∀ B ∈ Θ, ∀ C ∈ Θ, Incl A C → ∀ BC J₁ AB J₂ : GroupClass,
     (∀ (H : Type) [Group H], BC.mem H ↔ B.mem H ∧ C.mem H) → IsJoinIn Θ {A, BC} J₁ →
     IsJoinIn Θ {A, B} AB → (∀ (H : Type) [Group H], J₂.mem H ↔ AB.mem H ∧ C.mem H) →
     Incl J₁ J₂ ∧ Incl J₂ J₁
 
-/-- Kourovka 18.92(a) (A. N. Skiba): there is a non-algebraic complete lattice of formations of
-finite groups. -/
+/-- **Kourovka Problem 18.92(a) (A. N. Skiba).** The proposition that some set $\Theta$ of classes
+of groups is a complete lattice of formations of finite groups and is not algebraic. -/
 def nonAlgebraicCompleteLatticeOfFormations : Prop :=
   ∃ Θ : Set GroupClass, IsCompleteLatticeOfFormations Θ ∧ ¬ IsAlgebraicIn Θ
 
-/-- Kourovka 18.92(b) (A. N. Skiba): there is a non-modular complete lattice of formations of finite
-groups. -/
+/-- **The non-modular formation lattice problem (Kourovka 18.92(b), A. N. Skiba).** The proposition
+that there is a complete lattice of formations of finite groups that is not modular, joins being
+least upper bounds in the lattice and meets being intersections. -/
 def nonModularCompleteLatticeOfFormations : Prop :=
   ∃ Θ : Set GroupClass, IsCompleteLatticeOfFormations Θ ∧ ¬ IsModularIn Θ
 
-/--
-Resolved true: the Kourovka Notebook (21st issue) answers 18.92(a) "Yes", by an AI-generated
-solution confirmed by A. N. Skiba (Kinyon-Urban, 2026): for `𝔉_S` the finite groups with all prime
-divisors of the order in `S`, the family of `𝔉_S` with `S` finite together with the class of all
-finite groups is a complete lattice of formations whose only compact element is the bottom. Source:
+/-- **Non-algebraic complete lattices of formations exist.** There is a set $\Theta$ of classes of
+groups that is a complete lattice of formations of finite groups and is not algebraic; that is,
+Kourovka Problem 18.92(a) has a positive answer.
+
+The Kourovka Notebook (21st issue) answers 18.92(a) "Yes", by an AI-generated solution confirmed by
+A. N. Skiba (Kinyon–Urban, 2026): for a set $S$ of primes let $\mathfrak{F}_S$ be the class of
+finite groups whose order has all its prime divisors in $S$; the classes $\mathfrak{F}_S$ with $S$
+finite, together with the class of all finite groups, form a complete lattice of formations whose
+only compact element is the bottom.
+
+Source:
 E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook,
 21st issue, arXiv:1401.0300v49 (2026), Problem 18.92 (A. N. Skiba); resolution: M. Kinyon and J.
 Urban, Results on problems from the Kourovka Notebook, preprint, version 4, 19 September 2026,
@@ -120,9 +152,18 @@ public theorem_wanted nonAlgebraicCompleteLatticeOfFormations_holds :
     nonAlgebraicCompleteLatticeOfFormations
 
 /--
-Resolved true: the Kourovka Notebook (21st issue) answers 18.92(b) "Yes" (Kinyon-Urban, 2026,
-confirmed by A. N. Skiba): the formations `𝔉_S` with prime sets `∅, {2}, {2, 3}, {5}` and all primes
-are closed under intersections and form the pentagon `N₅`. Source: E. I. Khukhro and V. D. Mazurov
+**A non-modular complete lattice of formations exists (Kourovka 18.92(b)).** There is a complete
+lattice of formations of finite groups that is not modular: a nonempty set $\Theta$ of formations
+of finite groups, ordered by inclusion, that contains the intersection of each of its nonempty
+subsets and has a largest element, in which the modular law $A \vee (B \wedge C) = (A \vee B)
+\wedge C$ for $A \le C$ fails, joins being least upper bounds in $\Theta$ and meets intersections.
+
+The Kourovka Notebook (21st issue) answers 18.92(b) "Yes" (Kinyon-Urban, 2026, confirmed by A. N.
+Skiba): writing $\mathfrak{F}_S$ for the finite groups whose order has all prime divisors in $S$,
+the formations $\mathfrak{F}_S$ with $S = \emptyset, \{2\}, \{2, 3\}, \{5\}$ and $S$ the set of all
+primes are closed under intersections and form the pentagon $N_5$.
+
+Source: E. I. Khukhro and V. D. Mazurov
 (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49
 (2026), Problem 18.92 (A. N. Skiba); resolution: M. Kinyon and J. Urban, Results on problems from
 the Kourovka Notebook, preprint, version 4, 19 September 2026, Section 3.29 (Problem 18.92): with
