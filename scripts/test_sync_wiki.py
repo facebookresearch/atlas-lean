@@ -2615,6 +2615,40 @@ class ScopedRun(unittest.TestCase):
         self.assertTrue(all(path.startswith(("blueprint/", "scripts/")) for path in report["written"]),
                         report["written"])
 
+    def test_a_page_whose_declaration_loses_its_docstring_keeps_the_bases_digest(self) -> None:
+        # The digest the base reviewed stays, whatever the pull request does to its entry; none is made up when the
+        # base had none.
+        state = self.root / "scripts/wiki-sync.json"
+        reviewed = sync.digest(self.LAGRANGE)
+        groups = self.root / "MathlibExt/Algebra/Groups.lean"
+        groups.write_text(groups.read_text().replace(f"/-- {self.LAGRANGE} -/\n", ""))
+        self.assertEqual(self.run_sync()[0], 0)
+        self.assertEqual(json.loads(state.read_text())["docstrings"]["Ext.lagrange"], reviewed)
+        for entry in (None, sync.digest("Something else.")):
+            digests = json.loads(state.read_text())["docstrings"]
+            if entry is None:
+                digests.pop("Ext.lagrange")
+            else:
+                digests["Ext.lagrange"] = entry
+            state.write_text(json.dumps({"docstrings": digests}, indent=0) + "\n")
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual((status, report["in_step"], report["digests"]), (1, False, {"Ext.lagrange": reviewed}),
+                             entry)
+            self.assertEqual(self.run_sync()[0], 0)
+            self.assertEqual(json.loads(state.read_text())["docstrings"]["Ext.lagrange"], reviewed)
+            # The baseline is the base's again, as are the wiki's other files.
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "none"))
+        # A base without the entry: nothing to keep.
+        digests = json.loads(state.read_text())["docstrings"]
+        digests.pop("Ext.lagrange")
+        state.write_text(json.dumps({"docstrings": digests}, indent=0) + "\n")
+        groups.write_text(self.GROUPS.format(lagrange=self.LAGRANGE, more=""))
+        self.base = self.commit("no entry for lagrange")
+        groups.write_text(groups.read_text().replace(f"/-- {self.LAGRANGE} -/\n", ""))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["digests"]), (0, {}))
+
 
 class CommittedAnnotations(unittest.TestCase):
     def test_every_annotation_has_an_id_of_its_own(self) -> None:

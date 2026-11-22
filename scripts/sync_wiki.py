@@ -1863,8 +1863,8 @@ def load_targets(index, taxonomy: dict) -> tuple[list, list[str]]:
 
 
 def base_view(base: str, taxonomy: dict, changed: frozenset[str]) -> dict:
-    """lean_view and link_view of commit *base*, its Lean read with the working tree's tools and *taxonomy*, and the
-    folder pages its wiki has."""
+    """lean_view and link_view of commit *base*, its Lean read with the working tree's tools and *taxonomy*, the folder
+    pages its wiki has, and its docstring baseline."""
     from autoform_cli.lean import index_project
 
     with tempfile.TemporaryDirectory(prefix="atlas-base-") as folder:
@@ -1874,7 +1874,15 @@ def base_view(base: str, taxonomy: dict, changed: frozenset[str]) -> dict:
         index = index_project(root, exclude_roots=EXCLUDED)
         with relocated(root=root, vault=root / "blueprint"):
             view = {**lean_view(index, *load_targets(index, taxonomy), changed), **link_view(index)}
-    return {**view, "folders": base_folders(base)}
+    return {**view, "folders": base_folders(base), "baseline": base_baseline(base)}
+
+
+def base_baseline(base: str) -> dict[str, str]:
+    """The docstring baseline of commit *base* (see STATE), empty if it has none."""
+    path = STATE.relative_to(wiki.ROOT).as_posix()
+    if not git("ls-tree", "--name-only", "--full-tree", base, "--", path).strip():
+        return {}
+    return json.loads(git("cat-file", "blob", ":".join((base, path))))["docstrings"]
 
 
 def base_folders(base: str) -> set[str]:
@@ -1944,16 +1952,17 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
     """What a run scoped to the changes from a base has to do on the wiki at hand, given *base*, the base's views (see
     lean_view, link_view and base_view), and *head*, the working tree's Lean view.
 
-    The pull request's own declarations are those a page may be keyed by that the working tree has and the base has
-    not, or that the base deprecates, and that the working tree does not deprecate: what its changes add, document,
-    make public or undeprecate. A declaration the base already had, with or without a page, is none of them. The
-    baseline entries the changes own are those a whole run would change because of them, compared with the base:
-    each own declaration's and each whose docstring they edit takes its digest, and each declaration they remove from
-    the pages, or from the Lean, loses its entry, but for a page whose declaration lost its docstring, which keeps
-    it; the baseline at hand only says which of them are still to write. A page whose declaration's docstring the
-    changes edit or remove is named for a reader whatever the baseline says. A link that names a declaration the Lean
-    no longer has, or a held marker's problem, is the changes' when the base did not have it. An own declaration's
-    page must be a file, listed on its folder page, as must each folder on its way that the base did not have."""
+    The pull request's own declarations are those a page may be keyed by that the working tree has and the base has not,
+    or that the base deprecates, and that the working tree does not deprecate: what its changes add, document, make
+    public or undeprecate. A declaration the base already had, with or without a page, is none of them. The baseline
+    entries the changes own are those a whole run would change because of them, compared with the base: each own
+    declaration's and each whose docstring they edit takes its digest, and each declaration they remove from the pages,
+    or from the Lean, loses its entry, but for a page whose declaration lost its docstring, which keeps the entry the
+    base's baseline had; the baseline at hand only says which of them are still to write. A page whose declaration's
+    docstring the changes edit or remove is named for a reader whatever the baseline says. A link that names a
+    declaration the Lean no longer has, or a held marker's problem, is the changes' when the base did not have it. An
+    own declaration's page must be a file, listed on its folder page, as must each folder on its way that the base did
+    not have."""
     keyed = {key: target for target in targets if (key := declaration_key(target))}
     old, now = base["digests"], head["digests"]
     links = link_view(index)
@@ -1965,8 +1974,9 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
     state = json.loads(STATE.read_text())["docstrings"] if STATE.is_file() else {}
     entries: dict[str, str | None] = {key: value for key, value in now.items() if old.get(key) != value or key in own}
     gone = (old.keys() | (base["declared"] - head["declared"])) - now.keys()
-    kept = {key for key in gone if key in named and key in state and documented(key, index) is False}
-    entries.update({key: None for key in gone - kept})
+    # A page whose declaration lost its docstring keeps the digest the base's baseline had for it, if any.
+    kept = {key for key in gone if key in named and key in base["baseline"] and documented(key, index) is False}
+    entries.update({key: base["baseline"][key] if key in kept else None for key in gone})
     # Named as their rows write them, which need not lead into the roadmap.
     changed_pages = [f"{key} ({os.path.relpath(named[key], wiki.ROADMAP)})" for key in sorted(now.keys() & old.keys())
                      if old[key] != now[key] and key in named]
@@ -2199,7 +2209,7 @@ def run_scoped(argv: list[str]) -> int:
             with tempfile.TemporaryDirectory(prefix="atlas-base-") as folder:
                 extract(base, Path(folder).resolve(), LINKS_FILE.fullmatch)
                 with relocated(vault=Path(folder).resolve() / "blueprint"):
-                    old = {**head, **link_view(index), "folders": base_folders(base)}
+                    old = {**head, **link_view(index), "folders": base_folders(base), "baseline": base_baseline(base)}
             plan = scoped_plan(old, head, index, targets, lean)
         else:
             # Nothing the sync reads changed, as in a pull request of documentation or tooling alone.
