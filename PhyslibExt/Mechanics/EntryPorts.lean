@@ -41,12 +41,13 @@ drag-dominated motion without gravity or lift, and finite entry data `(he, ve)`,
 equations of motion are assumed only on a nonempty finite time window `[t₀, t₁]`, `t₀ ≤ t₁`,
 that starts at entry, which is how the fixed finite altitude band enters. The infinite-entry
 normalization (dropping `exp (-he / H)`) does not meet the entry condition
-(`omitted_entry_term_ne`). The derivative and equation-of-motion results assume `β > 0` and a
-downward path, `sin γ > 0`: at `β = 0` Lean's convention `x / 0 = 0` turns the drag term into
-`0`, and at `sin γ = 0` the altitude rate vanishes, so `dv/dh` is undefined. The isothermal
-corollary asks the trajectory to stay in a declared altitude band, where the isothermal layer
-model holds. Apart from the window condition `t₀ ≤ t₁`, that band and the radiator's `ε ≤ 1` and
-`0 ≤ Tenv` in section E, which restrict statements to their physical regime, each result assumes
+(`omitted_entry_term_ne`). The derivative and equation-of-motion results assume `H ≠ 0`, `β > 0`
+and a downward path, `sin γ > 0`: at `H = 0` Lean's convention `x / 0 = 0` makes the density
+constant and `K = 0`, so the profile is constant; at `β = 0` the same convention turns the drag
+term into `0`; and at `sin γ = 0` the altitude rate vanishes, so `dv/dh` is undefined. The
+isothermal corollary asks the trajectory to stay in a declared altitude band, where the isothermal
+layer model holds. Apart from the window condition `t₀ ≤ t₁`, that band and the radiator's `ε ≤ 1`
+and `0 ≤ Tenv` in section E, which restrict statements to their physical regime, each result assumes
 only the hypotheses its proof uses. The identity `ballisticVelocity_eq_exp_integral` holds for
 `H ≠ 0`, all other parameters arbitrary; it is the integrated drag equation for `β > 0` and
 `sin γ > 0`.
@@ -60,8 +61,9 @@ finite horizon `[0, tf]`, `0 ≤ tf`, with an interval-integrable flux, the heat
 obeys `∫ t in 0..tf, q t ≤ tf * kSG * sqrt (ρmax / rmin) * vmax ^ 3`; along the profile in a band
 `[hmin, he]` below the entry altitude, the band maxima `ρ(hmin)` and `ve` replace `ρmax` and
 `vmax`. A gray radiator of emissivity `0 < ε ≤ 1` that absorbs the flux `qabs ≥ 0` and exchanges
-radiation with large surroundings at `Tenv ≥ 0` has exactly one nonnegative equilibrium temperature,
-`ε * σ * T ^ 4 = qabs + ε * σ * Tenv ^ 4`, by the fourth-power equilibrium theorem of
+radiation with large surroundings at `Tenv ≥ 0` has, for `σ > 0`, exactly one nonnegative
+equilibrium temperature, `ε * σ * T ^ 4 = qabs + ε * σ * Tenv ^ 4`, by the fourth-power
+equilibrium theorem of
 `PhyslibExt.EarthScience.PlanetaryEnergyBalance` with coefficient `ε * σ`. The correlation, its
 coefficient and its validity box are supplied calibration evidence, not a proved law. The heat
 load is heat per unit area; the heat into a surface needs a declared area to multiply it. No
@@ -205,8 +207,8 @@ lemma ballisticVelocity_eq_exp_integral {H : ℝ} (hH : H ≠ 0) (ρ0 β γ he v
   congr 1
   ring
 
-/-- For `β > 0` and a downward path, `sin γ > 0`, the profile solves the altitude form of the
-equations of motion, `dv/dh = ρ(h) * v / (2 * β * sin γ)`. -/
+/-- For `H ≠ 0`, `β > 0` and a downward path, `sin γ > 0`, the profile solves the altitude form
+of the equations of motion, `dv/dh = ρ(h) * v / (2 * β * sin γ)`. -/
 lemma hasDerivAt_ballisticVelocity {H : ℝ} (hH : H ≠ 0) (ρ0 β γ he ve h : ℝ) (hβ : 0 < β)
     (hγ : 0 < Real.sin γ) :
     HasDerivAt (ballisticVelocity ρ0 H β γ he ve)
@@ -234,11 +236,11 @@ lemma hasDerivAt_ballisticVelocity {H : ℝ} (hH : H ≠ 0) (ρ0 β γ he ve h :
 /-! ## B. The equations of motion -/
 
 set_option linter.unusedVariables false in
-/-- Derivation from the equations of motion: for `β > 0` and a downward path, `sin γ > 0`, if on
-the window `[t₀, t₁]`, `t₀ ≤ t₁`, the altitude and speed satisfy `h' = -v * sin γ` and
-`v' = -ρ(h) * v ^ 2 / (2 * β)` with entry state `h(t₀) = he`, `v(t₀) = ve`, then
-`v(t) = ballisticVelocity (h(t))` throughout the window. The proof does not use `t₀ ≤ t₁`; the
-hypothesis excludes the empty window, on which the statement says nothing. -/
+/-- Derivation from the equations of motion: for `H ≠ 0`, `β > 0` and a downward path,
+`sin γ > 0`, if on the window `[t₀, t₁]`, `t₀ ≤ t₁`, the altitude and speed satisfy
+`h' = -v * sin γ` and `v' = -ρ(h) * v ^ 2 / (2 * β)` with entry state `h(t₀) = he`,
+`v(t₀) = ve`, then `v(t) = ballisticVelocity (h(t))` throughout the window. The proof does not use
+`t₀ ≤ t₁`; the hypothesis excludes the empty window, on which the statement says nothing. -/
 lemma ballisticVelocity_of_ode {ρ0 H β γ he ve t₀ t₁ : ℝ} {h v : ℝ → ℝ} (hH : H ≠ 0)
     (hβ : 0 < β) (hγ : 0 < Real.sin γ) (hwin : t₀ ≤ t₁)
     (hh : ∀ t ∈ Set.Icc t₀ t₁, HasDerivAt h (-(v t) * Real.sin γ) t)
@@ -312,9 +314,9 @@ lemma ballisticVelocity_of_ode {ρ0 H β γ he ve t₀ t₁ : ℝ} {h v : ℝ �
           (Real.exp (-he / H) - Real.exp (-h t / H))) := by rw [h1]
   exact h2
 
-/-- Converse: for `β > 0` and a downward path, `sin γ > 0`, along an altitude trajectory with
-`h' = -v * sin γ` for `v = ballisticVelocity ∘ h`, the speed `ballisticVelocity ∘ h` satisfies the
-drag equation `v' = -ρ(h) * v ^ 2 / (2 * β)`. -/
+/-- Converse: for `H ≠ 0`, `β > 0` and a downward path, `sin γ > 0`, along an altitude trajectory
+with `h' = -v * sin γ` for `v = ballisticVelocity ∘ h`, the speed `ballisticVelocity ∘ h`
+satisfies the drag equation `v' = -ρ(h) * v ^ 2 / (2 * β)`. -/
 lemma hasDerivAt_ballisticVelocity_comp {ρ0 H β γ he ve t : ℝ} {h : ℝ → ℝ} (hH : H ≠ 0)
     (hβ : 0 < β) (hγ : 0 < Real.sin γ)
     (hh : HasDerivAt h (-(ballisticVelocity ρ0 H β γ he ve (h t)) * Real.sin γ) t) :
@@ -380,11 +382,11 @@ lemma omitted_entry_term_ne {ρ0 H β γ ve : ℝ} (hρ0 : 0 < ρ0) (hH : 0 < H)
 /-! ## D. The isothermal layer -/
 
 set_option linter.unusedVariables false in
-/-- With the isothermal-layer density `isothermalDensity ρ0 g Rs T` as the atmosphere, `β > 0`, a
-downward path and the window `t₀ ≤ t₁`, the derivation gives the same profile with `H` the scale
-height `Rs * T / |g|`. The isothermal layer model holds only on a declared altitude band
-`[z₁, z₂]`, so the trajectory is required to stay in it on the window. The proof does not use the
-band; the hypothesis restricts the statement to the model's regime. -/
+/-- With the isothermal-layer density `isothermalDensity ρ0 g Rs T` as the atmosphere,
+`g, Rs, T > 0`, `β > 0`, a downward path and the window `t₀ ≤ t₁`, the derivation gives the same
+profile with `H` the scale height `Rs * T / |g|`. The isothermal layer model holds only on a
+declared altitude band `[z₁, z₂]`, so the trajectory is required to stay in it on the window. The
+proof does not use the band; the hypothesis restricts the statement to the model's regime. -/
 lemma ballisticVelocity_of_ode_isothermalDensity {ρ0 g Rs T β γ he ve t₀ t₁ z₁ z₂ : ℝ}
     {h v : ℝ → ℝ} (hg : 0 < g) (hRs : 0 < Rs) (hT : 0 < T) (hβ : 0 < β) (hγ : 0 < Real.sin γ)
     (hwin : t₀ ≤ t₁) (hband : ∀ t ∈ Set.Icc t₀ t₁, h t ∈ Set.Icc z₁ z₂)
@@ -461,7 +463,8 @@ private lemma flux_le_of_bounds {k ρ rn v ρm rm vm : ℝ} (hk : 0 ≤ k) (hρ0
   exact mul_le_mul (mul_le_mul_of_nonneg_left h2 hk) h3 (pow_nonneg hv0 3)
     (mul_nonneg hk (Real.sqrt_nonneg _))
 
-/-- An interval-integrable integrand at most `M` on `[0, tf]` integrates to at most `tf * M`. -/
+/-- For `0 ≤ tf`, an interval-integrable integrand at most `M` on `[0, tf]` integrates to at most
+`tf * M`. -/
 private lemma integral_le_of_forall_le {f : ℝ → ℝ} {tf M : ℝ} (htf : 0 ≤ tf)
     (hint : IntervalIntegrable f MeasureTheory.volume 0 tf) (hf : ∀ t ∈ Set.Icc 0 tf, f t ≤ M) :
     ∫ t in (0 : ℝ)..tf, f t ≤ tf * M := by
