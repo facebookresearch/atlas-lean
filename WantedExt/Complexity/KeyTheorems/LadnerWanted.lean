@@ -37,7 +37,11 @@ strictly between `P` and the `NP`-complete languages, where `NP`-completeness is
 time many-one completeness (`Cslib.CookLevin.PolyManyOneRed`) for the canonical classes.
 -/
 
-/-- **Ladner's theorem: NP-intermediate languages exist.** Source: R. E. Ladner, "On the
+/-- **Ladner's theorem: NP-intermediate languages exist.** If P $\ne$ NP, then there is a decision
+problem $L$ in NP that is not in P and to which not every decision problem in NP reduces by a
+polynomial-time many-one reduction; that is, $L$ is in NP but is neither in P nor NP-complete.
+
+Source: R. E. Ladner, "On the
 structure of polynomial time reducibility", Journal of the ACM 22 (1975), 155-171. -/
 public theorem_wanted ladner :
     MetaMathlibExt.ComplexityTheory.P ≠ MetaMathlibExt.ComplexityTheory.NP →

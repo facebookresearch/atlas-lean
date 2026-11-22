@@ -40,7 +40,14 @@ directions.
 -/
 
 open Classical in
-/-- Directed graph isomorphism as a decision problem over bitstrings. -/
+/-- **Directed graph isomorphism as a decision problem.** The decision problem accepts a bitstring
+$x$ exactly when $x$ decodes, under the canonical bitstring encoding, to a triple $(n, E_1, E_2)$
+of a natural number $n$ and two lists $E_1$ and $E_2$ of pairs of natural numbers for which
+there is a bijection $f$ of $\{0, \dots, n - 1\}$ such that for all $a, b < n$, $(a, b) \in E_1$
+if and only if $(f(a), f(b)) \in E_2$. Bitstrings that do not decode to such a triple are
+rejected.
+
+Pairs in $E_1$ or $E_2$ with an entry at least $n$ play no role. -/
 noncomputable def graphIsoDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -50,7 +57,10 @@ noncomputable def graphIsoDec :
         ((a.val, b.val) ∈ i.2.1 ↔ ((f a).val, (f b).val) ∈ i.2.2))
   | none => false
 
-/-- **Graph isomorphism is in NP and coAM.** Source: O. Goldreich, "On the complexity of graph
+/-- **Graph isomorphism is in NP and coAM.** The directed graph isomorphism decision problem
+belongs to NP and to coAM.
+
+Source: O. Goldreich, "On the complexity of graph
 isomorphism" and the Goldreich-Micali-Wigderson interactive proof for graph non-
 isomorphism; see J. Köbler, U. Schöning, and J. Torán, The Graph Isomorphism Problem: Its
 Structural Complexity, Birkhäuser, 1993. -/
