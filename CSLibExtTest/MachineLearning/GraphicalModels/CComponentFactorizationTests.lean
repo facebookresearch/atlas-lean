@@ -8,6 +8,8 @@ module
 
 public import CSLibExt.MachineLearning.GraphicalModels.CComponentFactorization
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
 
 @[expose] public section
 
@@ -424,5 +426,298 @@ theorem latentParent_factorization
   rw [latentParentNet.observedLaw_eq_prod_qFactor, latentParent_cComponents]
   exact Finset.prod_pair (by decide)
 
+
+/-! ### Independent Q-factor semantics on a concrete network
+
+The values below are computed directly from the network tables: the observed
+law by summing the two latent completions, and each Q-factor from its
+truncated-product characterization. The final identity only rewrites those
+three independently computed values. -/
+
+/-- Biased coin with true-weight `p`. -/
+noncomputable def semanticCoin (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
+    Convexity.StdSimplex ℝ Bool :=
+  Convexity.StdSimplex.duple true false hp0 (sub_nonneg.mpr hp1) (by linarith)
+
+/-- Four-node network: fork `0 → 1`, `0 → 2` with isolated node `3`. -/
+noncomputable def semanticNet : BayesNet Bool 4 where
+  pa := fun k => match k with
+    | ⟨0, _⟩ => ∅
+    | ⟨1, _⟩ => ({0} : Finset (Fin 1))
+    | ⟨2, _⟩ => ({0} : Finset (Fin 2))
+    | ⟨3, _⟩ => ∅
+  cpt := fun k => match k with
+    | ⟨0, _⟩ => fun _ => semanticCoin (1/3) (by norm_num) (by norm_num)
+    | ⟨1, _⟩ => fun z => if z ⟨0, Finset.mem_singleton_self 0⟩ then semanticCoin (3/4) (by norm_num) (by norm_num) else semanticCoin (1/5) (by norm_num) (by norm_num)
+    | ⟨2, _⟩ => fun z => if z ⟨0, Finset.mem_singleton_self 0⟩ then semanticCoin (2/7) (by norm_num) (by norm_num) else semanticCoin (5/6) (by norm_num) (by norm_num)
+    | ⟨3, _⟩ => fun _ => semanticCoin (4/9) (by norm_num) (by norm_num)
+
+/-- Observed nodes outside latent `{0}`. -/
+def semanticX : {i : Fin 4 // i ∉ ({0} : Finset (Fin 4))} := ⟨1, by decide⟩
+
+def semanticZ : {i : Fin 4 // i ∉ ({0} : Finset (Fin 4))} := ⟨2, by decide⟩
+
+def semanticY : {i : Fin 4 // i ∉ ({0} : Finset (Fin 4))} := ⟨3, by decide⟩
+
+/-- Constant-true assignment. -/
+def semanticAllTrue : Fin 4 → Bool := fun _ => true
+
+/-- True assignment with the latent node set to false. -/
+def semanticLatentFalse : Fin 4 → Bool := Function.update (fun _ => true) 0 false
+
+theorem semanticCoin_true (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
+    (semanticCoin p hp0 hp1).weights true = p := by
+  simp [semanticCoin, Convexity.StdSimplex.weights_duple]
+
+theorem semanticCoin_false (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) :
+    (semanticCoin p hp0 hp1).weights false = 1 - p := by
+  simp [semanticCoin, Convexity.StdSimplex.weights_duple]
+
+theorem semantic_extendObs_of_mem_compl (v : Fin 4)
+    (hv : v ∈ (({0} : Finset (Fin 4))ᶜ : Finset (Fin 4))) :
+    extendObs ({0} : Finset (Fin 4)) (fun _ => true) v = true := by
+  unfold extendObs
+  simp only [dite_eq_right (Finset.mem_compl.mp hv)]
+
+theorem semantic_ne : semanticAllTrue ≠ semanticLatentFalse := by
+  intro h
+  have h0 := congrFun h 0
+  simp [semanticAllTrue, semanticLatentFalse] at h0
+
+theorem semantic_filter_eq :
+    Finset.univ.filter (fun y : Fin 4 → Bool =>
+      ∀ v ∈ (↑(({0} : Finset (Fin 4))ᶜ) : Set (Fin 4)),
+        y v = extendObs ({0} : Finset (Fin 4)) (fun _ => true) v) =
+      {semanticAllTrue, semanticLatentFalse} := by
+  ext y
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert,
+    Finset.mem_singleton]
+  constructor
+  · intro h
+    have hfin1 : (1 : Fin 4) ∈ (({0} : Finset (Fin 4))ᶜ : Finset (Fin 4)) := by decide
+    have hmem1 : (1 : Fin 4) ∈ (↑(({0} : Finset (Fin 4))ᶜ) : Set (Fin 4)) :=
+      Finset.mem_coe.mpr hfin1
+    have h1 : y 1 = true := by
+      have e := h 1 hmem1
+      rw [semantic_extendObs_of_mem_compl 1 hfin1] at e
+      exact e
+    have hfin2 : (2 : Fin 4) ∈ (({0} : Finset (Fin 4))ᶜ : Finset (Fin 4)) := by decide
+    have hmem2 : (2 : Fin 4) ∈ (↑(({0} : Finset (Fin 4))ᶜ) : Set (Fin 4)) :=
+      Finset.mem_coe.mpr hfin2
+    have h2 : y 2 = true := by
+      have e := h 2 hmem2
+      rw [semantic_extendObs_of_mem_compl 2 hfin2] at e
+      exact e
+    have hfin3 : (3 : Fin 4) ∈ (({0} : Finset (Fin 4))ᶜ : Finset (Fin 4)) := by decide
+    have hmem3 : (3 : Fin 4) ∈ (↑(({0} : Finset (Fin 4))ᶜ) : Set (Fin 4)) :=
+      Finset.mem_coe.mpr hfin3
+    have h3 : y 3 = true := by
+      have e := h 3 hmem3
+      rw [semantic_extendObs_of_mem_compl 3 hfin3] at e
+      exact e
+    have hall : ∀ v : Fin 4, v = 0 ∨ v = 1 ∨ v = 2 ∨ v = 3 := by decide
+    by_cases h0 : y 0 = true
+    · left
+      funext v
+      simp only [semanticAllTrue]
+      rcases hall v with rfl | rfl | rfl | rfl
+      · exact h0
+      · exact h1
+      · exact h2
+      · exact h3
+    · right
+      have h0f : y 0 = false := by
+        cases hy0 : y 0
+        · rfl
+        · exact absurd hy0 h0
+      funext v
+      by_cases hv : v = 0
+      · subst hv
+        simp [semanticLatentFalse, h0f]
+      · have hyv : y v = true := by
+          rcases hall v with rfl | rfl | rfl | rfl
+          · exact absurd rfl hv
+          · exact h1
+          · exact h2
+          · exact h3
+        simp [semanticLatentFalse, Function.update_of_ne hv _ _, hyv]
+  · rintro (rfl | rfl)
+    · intro v hv
+      simp only [semanticAllTrue]
+      rw [semantic_extendObs_of_mem_compl v (Finset.mem_coe.mp hv)]
+    · intro v hv
+      have hmem : v ∈ (({0} : Finset (Fin 4))ᶜ : Finset (Fin 4)) :=
+        Finset.mem_coe.mp hv
+      have hne : v ≠ 0 := by
+        intro h
+        subst h
+        simp at hmem
+      simp [semanticLatentFalse, Function.update_of_ne hne _ _,
+        semantic_extendObs_of_mem_compl v hmem]
+
+theorem semantic_factor0_allTrue :
+    (semanticNet.cpt 0 (semanticNet.paVal 0 semanticAllTrue)).weights true = 1/3 :=
+  semanticCoin_true _ (by norm_num) (by norm_num)
+
+theorem semantic_factor1_allTrue :
+    (semanticNet.cpt 1 (semanticNet.paVal 1 semanticAllTrue)).weights true = 3/4 :=
+  semanticCoin_true _ (by norm_num) (by norm_num)
+
+theorem semantic_factor2_allTrue :
+    (semanticNet.cpt 2 (semanticNet.paVal 2 semanticAllTrue)).weights true = 2/7 :=
+  semanticCoin_true _ (by norm_num) (by norm_num)
+
+theorem semantic_factor3_allTrue :
+    (semanticNet.cpt 3 (semanticNet.paVal 3 semanticAllTrue)).weights true = 4/9 :=
+  semanticCoin_true _ (by norm_num) (by norm_num)
+
+theorem semantic_factor0_latentFalse :
+    (semanticNet.cpt 0 (semanticNet.paVal 0 semanticLatentFalse)).weights false = 2/3 := by
+  calc (semanticNet.cpt 0 (semanticNet.paVal 0 semanticLatentFalse)).weights false
+      = 1 - 1/3 := semanticCoin_false _ (by norm_num) (by norm_num)
+    _ = 2/3 := by norm_num
+
+theorem semantic_factor1_latentFalse :
+    (semanticNet.cpt 1 (semanticNet.paVal 1 semanticLatentFalse)).weights true = 1/5 :=
+  semanticCoin_true _ (by norm_num) (by norm_num)
+
+theorem semantic_factor2_latentFalse :
+    (semanticNet.cpt 2 (semanticNet.paVal 2 semanticLatentFalse)).weights true = 5/6 :=
+  semanticCoin_true _ (by norm_num) (by norm_num)
+
+theorem semantic_factor3_latentFalse :
+    (semanticNet.cpt 3 (semanticNet.paVal 3 semanticLatentFalse)).weights true = 4/9 :=
+  semanticCoin_true _ (by norm_num) (by norm_num)
+
+theorem semantic_joint_allTrue : semanticNet.joint semanticAllTrue = 2/63 := by
+  rw [BayesNet.joint_eq_prod, Fin.prod_univ_four]
+  show (semanticNet.cpt 0 (semanticNet.paVal 0 semanticAllTrue)).weights true *
+    (semanticNet.cpt 1 (semanticNet.paVal 1 semanticAllTrue)).weights true *
+    (semanticNet.cpt 2 (semanticNet.paVal 2 semanticAllTrue)).weights true *
+    (semanticNet.cpt 3 (semanticNet.paVal 3 semanticAllTrue)).weights true = 2 / 63
+  rw [semantic_factor0_allTrue, semantic_factor1_allTrue, semantic_factor2_allTrue,
+    semantic_factor3_allTrue]
+  norm_num
+
+theorem semantic_joint_latentFalse : semanticNet.joint semanticLatentFalse = 4/81 := by
+  rw [BayesNet.joint_eq_prod, Fin.prod_univ_four]
+  show (semanticNet.cpt 0 (semanticNet.paVal 0 semanticLatentFalse)).weights false *
+    (semanticNet.cpt 1 (semanticNet.paVal 1 semanticLatentFalse)).weights true *
+    (semanticNet.cpt 2 (semanticNet.paVal 2 semanticLatentFalse)).weights true *
+    (semanticNet.cpt 3 (semanticNet.paVal 3 semanticLatentFalse)).weights true = 4 / 81
+  rw [semantic_factor0_latentFalse, semantic_factor1_latentFalse, semantic_factor2_latentFalse,
+    semantic_factor3_latentFalse]
+  norm_num
+
+theorem semantic_observedLaw_true :
+    semanticNet.observedLaw ({0} : Finset (Fin 4)) (fun _ => true) = 46/567 := by
+  unfold BayesNet.observedLaw MetaMathlibExt.FiniteWeight.marginal
+  trans ∑ y ∈ Finset.univ.filter (fun y : Fin 4 → Bool =>
+      ∀ v ∈ (↑(({0} : Finset (Fin 4))ᶜ) : Set (Fin 4)),
+        y v = extendObs ({0} : Finset (Fin 4)) (fun _ => true) v),
+    semanticNet.joint y
+  · congr 1
+    ext y
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  · rw [semantic_filter_eq, Finset.sum_pair semantic_ne, semantic_joint_allTrue,
+      semantic_joint_latentFalse]
+    norm_num
+
+private theorem semantic_qXZ_filter_eq :
+    Finset.univ.filter (fun y : Fin 4 → Bool =>
+      ∀ i : {i : Fin 4 // i ∉ ({0} : Finset (Fin 4))}, y i = (fun _ => true) i) =
+      {semanticAllTrue, semanticLatentFalse} := by
+  have h : (Finset.univ.filter (fun y : Fin 4 → Bool =>
+      ∀ i : {i : Fin 4 // i ∉ ({0} : Finset (Fin 4))}, y i = (fun _ => true) i)) =
+      Finset.univ.filter (fun y : Fin 4 → Bool =>
+        ∀ v ∈ (↑(({0} : Finset (Fin 4))ᶜ) : Set (Fin 4)),
+          y v = extendObs ({0} : Finset (Fin 4)) (fun _ => true) v) := by
+    ext y
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    constructor
+    · intro h v hv
+      have hmem : v ∈ (({0} : Finset (Fin 4))ᶜ : Finset (Fin 4)) := Finset.mem_coe.mp hv
+      have hni : v ∉ ({0} : Finset (Fin 4)) := Finset.mem_compl.mp hmem
+      have e := h ⟨v, hni⟩
+      rw [semantic_extendObs_of_mem_compl v hmem]
+      exact e
+    · intro h i
+      have hmem : (i : Fin 4) ∈ (({0} : Finset (Fin 4))ᶜ : Finset (Fin 4)) :=
+        Finset.mem_compl.mpr i.2
+      have e := h (i : Fin 4) (Finset.mem_coe.mpr hmem)
+      rw [semantic_extendObs_of_mem_compl (i : Fin 4) hmem] at e
+      exact e
+  rw [h, semantic_filter_eq]
+
+theorem semantic_qXZ_true :
+    semanticNet.qFactor ({0} : Finset (Fin 4)) {semanticX, semanticZ} (fun _ => true) = 23/126 := by
+  rw [semanticNet.qFactor_eq_sum_prod]
+  rw [semantic_qXZ_filter_eq]
+  have hidx : (({0} : Finset (Fin 4)) ∪
+      (({semanticX, semanticZ} : Finset {i : Fin 4 // i ∉ ({0} : Finset (Fin 4))}).map
+        (Function.Embedding.subtype _))) = {0, 1, 2} := by
+    decide
+  rw [hidx]
+  rw [Finset.sum_pair semantic_ne]
+  have hAT : ∏ j ∈ ({0, 1, 2} : Finset (Fin 4)),
+      (semanticNet.cpt j (semanticNet.paVal j semanticAllTrue)).weights (semanticAllTrue j) =
+      1 / 14 := by
+    rw [Finset.prod_insert (by decide), Finset.prod_insert (by decide), Finset.prod_singleton]
+    have e0 : semanticAllTrue 0 = true := rfl
+    have e1 : semanticAllTrue 1 = true := rfl
+    have e2 : semanticAllTrue 2 = true := rfl
+    rw [e0, e1, e2]
+    rw [semantic_factor0_allTrue, semantic_factor1_allTrue, semantic_factor2_allTrue]
+    norm_num
+  have hLF : ∏ j ∈ ({0, 1, 2} : Finset (Fin 4)),
+      (semanticNet.cpt j (semanticNet.paVal j semanticLatentFalse)).weights (semanticLatentFalse j) =
+      1 / 9 := by
+    rw [Finset.prod_insert (by decide), Finset.prod_insert (by decide), Finset.prod_singleton]
+    have e0 : semanticLatentFalse 0 = false := by decide
+    have e1 : semanticLatentFalse 1 = true := by decide
+    have e2 : semanticLatentFalse 2 = true := by decide
+    rw [e0, e1, e2]
+    rw [semantic_factor0_latentFalse, semantic_factor1_latentFalse, semantic_factor2_latentFalse]
+    norm_num
+  rw [hAT, hLF]
+  norm_num
+
+theorem semantic_qY_true :
+    semanticNet.qFactor ({0} : Finset (Fin 4)) {semanticY} (fun _ => true) = 4/9 := by
+  rw [semanticNet.qFactor_eq_sum_prod]
+  rw [semantic_qXZ_filter_eq]
+  have hidx : (({0} : Finset (Fin 4)) ∪
+      (({semanticY} : Finset {i : Fin 4 // i ∉ ({0} : Finset (Fin 4))}).map
+        (Function.Embedding.subtype _))) = {0, 3} := by
+    decide
+  rw [hidx]
+  rw [Finset.sum_pair semantic_ne]
+  have hAT : ∏ j ∈ ({0, 3} : Finset (Fin 4)),
+      (semanticNet.cpt j (semanticNet.paVal j semanticAllTrue)).weights (semanticAllTrue j) =
+      4 / 27 := by
+    rw [Finset.prod_insert (by decide), Finset.prod_singleton]
+    have e0 : semanticAllTrue 0 = true := rfl
+    have e3 : semanticAllTrue 3 = true := rfl
+    rw [e0, e3]
+    rw [semantic_factor0_allTrue, semantic_factor3_allTrue]
+    norm_num
+  have hLF : ∏ j ∈ ({0, 3} : Finset (Fin 4)),
+      (semanticNet.cpt j (semanticNet.paVal j semanticLatentFalse)).weights (semanticLatentFalse j) =
+      8 / 27 := by
+    rw [Finset.prod_insert (by decide), Finset.prod_singleton]
+    have e0 : semanticLatentFalse 0 = false := by decide
+    have e3 : semanticLatentFalse 3 = true := by decide
+    rw [e0, e3]
+    rw [semantic_factor0_latentFalse, semantic_factor3_latentFalse]
+    norm_num
+  rw [hAT, hLF]
+  norm_num
+
+theorem semantic_factorization_values :
+    semanticNet.observedLaw ({0} : Finset (Fin 4)) (fun _ => true) =
+      semanticNet.qFactor ({0} : Finset (Fin 4)) {semanticX, semanticZ} (fun _ => true) *
+        semanticNet.qFactor ({0} : Finset (Fin 4)) {semanticY} (fun _ => true) := by
+  rw [semantic_observedLaw_true, semantic_qXZ_true, semantic_qY_true]
+  norm_num
 
 end Cslib.MachineLearning.GraphicalModels.BayesNet
