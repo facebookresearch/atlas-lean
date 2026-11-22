@@ -315,8 +315,8 @@ lemma N1_le {m n : ℕ} : N1m m n ≤ 10 * Q9 * n := by
   exact le_trans h1 h2
 
 -- N10 = N9 + N1 (needs m ∣ Q for the division to distribute).
-/-- **N₁₀ splits as N₉ + N₁.** For natural numbers $m$ and $n$ with $m \ge 1$ and $m$ dividing
-$Q_9 = 210$, write $N_k(m, n) = kn \lfloor Q_9 / m \rfloor$ for $k = 1, 9, 10$. Then
+/-- **N₁₀ splits as N₉ + N₁.** For natural numbers $m$ and $n$ with $m \ge 1$ and $m$
+dividing $Q_9 = 210$, write $N_k(m, n) = kn \lfloor Q_9 / m \rfloor$ for $k = 1, 9, 10$. Then
 $N_{10}(m, n) = N_9(m, n) + N_1(m, n)$. -/
 lemma Nadd9 {m n : ℕ} (hm1 : 1 ≤ m) (hd : m ∣ Q9) :
     N10m m n = N9m m n + N1m m n := by

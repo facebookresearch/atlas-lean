@@ -2386,7 +2386,9 @@ finite-field conic counts, followed by a two-step induction on the exponent.
 
 Proves `Wanted` entry `r3_legendre_recursion`.
 
-Source: Liuquan Wang, "Another Proof of a Conjecture by Hirschhorn and Sellers on Overpartitions", Journal of Integer Sequences 17 (2014), Article 14.9.8, Lemma `r3relation`, lines 228-232, <https://cs.uwaterloo.ca/journals/JIS/VOL17/Wang2/wang15.tex>.
+Source: Liuquan Wang, "Another Proof of a Conjecture by Hirschhorn and Sellers on Overpartitions",
+Journal of Integer Sequences 17 (2014), Article 14.9.8, Lemma `r3relation`, lines 228-232,
+<https://cs.uwaterloo.ca/journals/JIS/VOL17/Wang2/wang15.tex>.
 -/
 public theorem r3_legendre_recursion
     {p n α : ℕ} [Fact (Nat.Prime p)] (hp3 : 3 ≤ p) (hn : 1 ≤ n) :

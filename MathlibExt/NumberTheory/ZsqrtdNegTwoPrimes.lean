@@ -25,8 +25,8 @@ namespace Zsqrtd.NegTwo
 
 open Zsqrtd
 
-/-- **Units of ℤ[√−2].** An element $x$ of $\mathbb{Z}[\sqrt{-2}]$ is a unit if and only if $x = 1$
-or $x = -1$. -/
+/-- **Units of ℤ[√−2].** An element $x$ of $\mathbb{Z}[\sqrt{-2}]$ is a unit if and only if
+$x = 1$ or $x = -1$. -/
 public theorem zsqrtd_neg_two_isUnit_iff (x : ℤ√(-2 : ℤ)) :
     IsUnit x ↔ x = 1 ∨ x = -1 := by
   rw [← Zsqrtd.norm_eq_one_iff]
@@ -347,8 +347,8 @@ public theorem zsqrtd_neg_two_split_conj {p : ℕ} [Fact p.Prime] {π : ℤ√(-
     have hbb : 2 * (b * b) = (p : ℤ) := by linear_combination hnorm'
     exact h2b b hbb
 
-/-- **Enumeration of the units of ℤ[√−2].** The map $\{0, 1\} \to \mathbb{Z}[\sqrt{-2}]$ sending
-$0$ to $1$ and $1$ to $-1$, which lists the two units of $\mathbb{Z}[\sqrt{-2}]$. -/
+/-- **Enumeration of the units of ℤ[√−2].** The map $\{0, 1\} \to \mathbb{Z}[\sqrt{-2}]$
+sending $0$ to $1$ and $1$ to $-1$, which lists the two units of $\mathbb{Z}[\sqrt{-2}]$. -/
 public def unitVal : Fin 2 → ℤ√(-2 : ℤ) :=
   fun i => if i = 0 then 1 else -1
 
@@ -359,24 +359,25 @@ public theorem unitVal_inj : Function.Injective unitVal := by
   intro i j h
   fin_cases i <;> fin_cases j <;> first | rfl | exact absurd h (by decide)
 
-/-- **Every unit of ℤ[√−2] is enumerated.** Let $\varepsilon_0 = 1$ and $\varepsilon_1 = -1$ be the
-enumeration of the units of $\mathbb{Z}[\sqrt{-2}]$. Every unit $u$ of $\mathbb{Z}[\sqrt{-2}]$
-equals $\varepsilon_i$ for some $i \in \{0, 1\}$. -/
+/-- **Every unit of ℤ[√−2] is enumerated.** Let $\varepsilon_0 = 1$ and $\varepsilon_1 = -1$
+be the enumeration of the units of $\mathbb{Z}[\sqrt{-2}]$. Every unit $u$ of
+$\mathbb{Z}[\sqrt{-2}]$ equals $\varepsilon_i$ for some $i \in \{0, 1\}$. -/
 public theorem unitVal_complete (u : ℤ√(-2 : ℤ)) (hu : IsUnit u) :
     ∃ i, unitVal i = u := by
   rcases (zsqrtd_neg_two_isUnit_iff u).mp hu with rfl | rfl
   · exact ⟨0, by decide⟩
   · exact ⟨1, by decide⟩
 
-/-- **Inverses of the enumerated units of ℤ[√−2].** The map $\{0, 1\} \to \mathbb{Z}[\sqrt{-2}]$
-sending $0$ to $1$ and $1$ to $-1$. Since $1$ and $-1$ are their own inverses, its value at $i$ is
-the inverse of the $i$-th enumerated unit. -/
+/-- **Inverses of the enumerated units of ℤ[√−2].** The map
+$\{0, 1\} \to \mathbb{Z}[\sqrt{-2}]$ sending $0$ to $1$ and $1$ to $-1$. Since $1$ and $-1$ are
+their own inverses, its value at $i$ is the inverse of the $i$-th enumerated unit. -/
 public def unitValInv : Fin 2 → ℤ√(-2 : ℤ) :=
   fun i => if i = 0 then 1 else -1
 
-/-- **Each enumerated unit of ℤ[√−2] times its listed inverse is one.** Let $\varepsilon_0 = 1$,
-$\varepsilon_1 = -1$ be the enumerated units of $\mathbb{Z}[\sqrt{-2}]$ and $\eta_0 = 1$,
-$\eta_1 = -1$ their listed inverses. Then $\varepsilon_i \eta_i = 1$ for each $i \in \{0, 1\}$. -/
+/-- **Each enumerated unit of ℤ[√−2] times its listed inverse is one.** Let
+$\varepsilon_0 = 1$, $\varepsilon_1 = -1$ be the enumerated units of $\mathbb{Z}[\sqrt{-2}]$ and
+$\eta_0 = 1$, $\eta_1 = -1$ their listed inverses. Then $\varepsilon_i \eta_i = 1$ for each
+$i \in \{0, 1\}$. -/
 public theorem unitVal_mul_unitValInv (i : Fin 2) :
     unitVal i * unitValInv i = 1 := by
   fin_cases i <;> decide

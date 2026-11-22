@@ -79,7 +79,9 @@ $m = \lfloor a^2/8 \rfloor + \lfloor b^2/8 \rfloor + \lfloor c^2/8 \rfloor$.
 
 Proves `Wanted` entry `every_nat_eq_sum_three_sq_div_eight`.
 
-Source: Bakir Farhi, "On the Representation of the Natural Numbers as the Sum of Three Terms of the Sequence floor(n^2/a)", Journal of Integer Sequences 16 (2013), Article 13.6.4, Theorem 1, lines 104-106, <https://cs.uwaterloo.ca/journals/JIS/VOL16/Farhi/farhi7.tex>.
+Source: Bakir Farhi, "On the Representation of the Natural Numbers as the Sum of Three Terms of the
+Sequence floor(n^2/a)", Journal of Integer Sequences 16 (2013), Article 13.6.4, Theorem 1, lines
+104-106, <https://cs.uwaterloo.ca/journals/JIS/VOL16/Farhi/farhi7.tex>.
 -/
 public theorem every_nat_eq_sum_three_sq_div_eight (m : ℕ) :
     ∃ a b c : ℕ, m = a ^ 2 / 8 + b ^ 2 / 8 + c ^ 2 / 8 := by
