@@ -131,7 +131,7 @@ noncomputable def huckelMatrix {n : ℕ} (α β : ℝ) (G : SimpleGraph (Fin n))
     [DecidableRel G.Adj] : Matrix (Fin n) (Fin n) ℝ :=
   α • 1 + β • G.adjMatrix ℝ
 
-/-- First-order energy correction: `(H1) 0 0`. -/
+/-- First-order energy correction of level `0`, for `n ≥ 1` levels: `(H1) 0 0`. -/
 noncomputable def pertE1 {n : ℕ} [NeZero n] (H1 : Matrix (Fin n) (Fin n) ℝ) : ℝ :=
   H1 0 0
 

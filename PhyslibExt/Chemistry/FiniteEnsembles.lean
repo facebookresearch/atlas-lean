@@ -483,7 +483,7 @@ lemma heatCapacity_nonneg {ι : Type*} [Fintype ι] {kB : ℝ} (hkB : 0 < kB) (E
     0 ≤ heatCapacity kB E β :=
   mul_nonneg (mul_nonneg hkB.le (sq_nonneg β)) (energyVariance_nonneg E β)
 
-/-- `Var(E) = ∑ i, p i * E i ^ 2 - U ^ 2`. -/
+/-- For a nonempty finite system, `Var(E) = ∑ i, p i * E i ^ 2 - U ^ 2`. -/
 lemma energyVariance_eq_sum_sub_meanEnergy_sq {ι : Type*} [Fintype ι] [Nonempty ι] (E : ι → ℝ)
     (β : ℝ) :
     energyVariance E β = ∑ i, boltzmannProb E β i * E i ^ 2 - meanEnergy E β ^ 2 := by
@@ -495,8 +495,8 @@ lemma energyVariance_eq_sum_sub_meanEnergy_sq {ι : Type*} [Fintype ι] [Nonempt
     Finset.sum_sub_distrib, ← Finset.mul_sum, ← Finset.mul_sum, hU, sum_boltzmannProb_eq_one]
   ring
 
-/-- `S = kB * H(p)`: the entropy is `kB` times the Shannon entropy of the Boltzmann
-distribution. -/
+/-- For a nonempty finite system, `S = kB * H(p)`: the entropy is `kB` times the Shannon entropy of
+the Boltzmann distribution. -/
 lemma entropy_eq_mul_shannonEntropy {ι : Type*} [Fintype ι] [Nonempty ι] (kB : ℝ) (E : ι → ℝ)
     (β : ℝ) : entropy kB E β = kB * shannonEntropy (boltzmannProb E β) := by
   rw [entropy, shannonEntropy, sum_mul_log_boltzmannProb E β (sum_boltzmannProb_eq_one E β),
@@ -555,18 +555,18 @@ lemma meanEnergy_eq_div {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ) :
   rw [meanEnergy, Finset.sum_div]
   exact Finset.sum_congr rfl fun i _ => by rw [boltzmannProb]; ring
 
-/-- `d(log Z)/dβ = -U`, as a `HasDerivAt` statement. -/
+/-- For a nonempty finite system, `d(log Z)/dβ = -U`, as a `HasDerivAt` statement. -/
 lemma hasDerivAt_log_partitionFunction {ι : Type*} [Fintype ι] [Nonempty ι] (E : ι → ℝ)
     (β : ℝ) : HasDerivAt (fun b => Real.log (partitionFunction E b)) (-meanEnergy E β) β := by
   rw [meanEnergy_eq_div, ← neg_div]
   exact (hasDerivAt_partitionFunction E β).log (partitionFunction_pos E β).ne'
 
-/-- `d(log Z)/dβ = -U`. -/
+/-- For a nonempty finite system, `d(log Z)/dβ = -U`. -/
 lemma deriv_log_partitionFunction {ι : Type*} [Fintype ι] [Nonempty ι] (E : ι → ℝ) (β : ℝ) :
     deriv (fun b => Real.log (partitionFunction E b)) β = -(meanEnergy E β) :=
   (hasDerivAt_log_partitionFunction E β).deriv
 
-/-- `dU/dβ = -Var(E)`, as a `HasDerivAt` statement. -/
+/-- For a nonempty finite system, `dU/dβ = -Var(E)`, as a `HasDerivAt` statement. -/
 lemma hasDerivAt_meanEnergy {ι : Type*} [Fintype ι] [Nonempty ι] (E : ι → ℝ) (β : ℝ) :
     HasDerivAt (fun b => meanEnergy E b) (-energyVariance E β) β := by
   have hN : HasDerivAt (fun b => ∑ i, E i * Real.exp (-b * E i))
@@ -590,7 +590,7 @@ lemma hasDerivAt_meanEnergy {ι : Type*} [Fintype ι] [Nonempty ι] (E : ι → 
   convert hN.div (hasDerivAt_partitionFunction E β) hZ using 1
   exact key _ _ _ hZ
 
-/-- `dU/dβ = -Var(E)`. -/
+/-- For a nonempty finite system, `dU/dβ = -Var(E)`. -/
 lemma deriv_meanEnergy {ι : Type*} [Fintype ι] [Nonempty ι] (E : ι → ℝ) (β : ℝ) :
     deriv (fun b => meanEnergy E b) β = -(energyVariance E β) :=
   (hasDerivAt_meanEnergy E β).deriv

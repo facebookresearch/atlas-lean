@@ -327,8 +327,8 @@ lemma isLimitingReagent_iff {ι : Type*} [Fintype ι] {ν n₀ : ι → ℝ} (h 
   · rintro ⟨hi, heq⟩
     exact ⟨hn₀, hi, fun _ hj => heq.trans_le (maxExtent_le n₀ h hj)⟩
 
-/-- **A limiting reagent exists.** A reaction that consumes some species, from nonnegative
-initial amounts, has a limiting reagent. -/
+/-- **A limiting reagent exists.** A reaction with finitely many species that consumes some
+species, from nonnegative initial amounts, has a limiting reagent. -/
 lemma exists_isLimitingReagent {ι : Type*} [Finite ι] (ν n₀ : ι → ℝ)
     (hn₀ : ∀ i, 0 ≤ n₀ i) (h : ∃ i, ν i < 0) :
     ∃ i, IsLimitingReagent ν n₀ i := by
