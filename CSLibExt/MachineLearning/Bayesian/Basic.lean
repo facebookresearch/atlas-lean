@@ -67,7 +67,7 @@ $\Theta$ with
 $$\pi_x(s) = E(x)^{-1} \int_s \kappa_\theta(\{x\}) \, d\mu(\theta)$$
 for every measurable $s \subseteq \Theta$, where $E(x) = (\kappa \circ \mu)(\{x\})$ is the evidence
 of $x$: the mass of $\{x\}$ under the composition $\kappa \circ \mu$ of $\mu$ with $\kappa$, the
-marginal law of the observation. The inverse is taken in $[0, \infty]$, with $0^{-1} = \infty$,
+marginal measure of the observation. The inverse is taken in $[0, \infty]$, with $0^{-1} = \infty$,
 $\infty^{-1} = 0$ and $\infty \cdot 0 = 0$; in particular $\pi_x$ is the zero measure when the
 evidence is zero. -/
 noncomputable def bayesPosterior (κ : Kernel Θ 𝓧) (μ : Measure Θ) (x : 𝓧) : Measure Θ :=
@@ -77,8 +77,8 @@ noncomputable def bayesPosterior (κ : Kernel Θ 𝓧) (μ : Measure Θ) (x : �
 space $\Theta$ to a measurable space $\mathcal X$ with measurable singletons, and $\mu$ a measure on
 $\Theta$. For every $x \in \mathcal X$,
 $$(\kappa \circ \mu)(\{x\}) = \int_\Theta \kappa_\theta(\{x\}) \, d\mu(\theta),$$
-where $\kappa \circ \mu$ is the composition of $\mu$ with $\kappa$ (the marginal law of the
-observation) and the right side is the Lebesgue integral of a $[0, \infty]$-valued function. -/
+where $\kappa \circ \mu$ is the composition of $\mu$ with $\kappa$ (the marginal measure of
+the observation) and the right side is the Lebesgue integral of a $[0, \infty]$-valued function. -/
 theorem comp_apply_singleton [MeasurableSingletonClass 𝓧] (κ : Kernel Θ 𝓧) (μ : Measure Θ)
     (x : 𝓧) : (κ ∘ₘ μ) {x} = ∫⁻ θ, κ θ {x} ∂μ :=
   Measure.bind_apply (measurableSet_singleton x) κ.aemeasurable
@@ -201,8 +201,8 @@ singletons. Let $\kappa$ be a Markov kernel from $\Theta$ to $\mathcal X$ (the l
 writing $\kappa_\theta$ for the probability measure it assigns to $\theta \in \Theta$, let $\mu$
 be a finite measure on $\Theta$ (the prior), and let $\kappa^\dagger\mu$ be Mathlib's posterior
 kernel from $\mathcal X$ to $\Theta$. If the observation $x \in \mathcal X$ has nonzero evidence
-$(\kappa \circ \mu)(\{x\})$, where $\kappa \circ \mu$ is the law of the observation under the
-prior, then the posterior measure $\kappa^\dagger\mu(x)$ equals the Bayes posterior after
+$(\kappa \circ \mu)(\{x\})$, where $\kappa \circ \mu$ is the marginal measure of the observation
+under the prior, then the posterior measure $\kappa^\dagger\mu(x)$ equals the Bayes posterior after
 observing $x$: the prior $\mu$ reweighted by the likelihood $\theta \mapsto \kappa_\theta(\{x\})$
 and divided by the evidence. -/
 theorem posterior_eq_bayesPosterior (κ : Kernel Θ 𝓧) [IsMarkovKernel κ] (μ : Measure Θ)
@@ -224,8 +224,8 @@ omit [Countable 𝓧] in
 $\mathcal X$ a measurable space, both with measurable singletons, let $\kappa$ be a kernel from
 $\Theta$ to $\mathcal X$ and $\mu$ a measure on $\Theta$. For every $x \in \mathcal X$,
 $$(\kappa \circ \mu)(\{x\}) = \sum_{\theta \in \Theta} \mu(\{\theta\}) \, \kappa_\theta(\{x\}),$$
-where $\kappa \circ \mu$ is the composition of $\mu$ with $\kappa$ (the marginal law of the
-observation) and the sum is taken in $[0, \infty]$. -/
+where $\kappa \circ \mu$ is the composition of $\mu$ with $\kappa$ (the marginal measure of
+the observation) and the sum is taken in $[0, \infty]$. -/
 theorem comp_apply_singleton_eq_tsum (κ : Kernel Θ 𝓧) (μ : Measure Θ) (x : 𝓧) :
     (κ ∘ₘ μ) {x} = ∑' θ, μ {θ} * κ θ {x} := by
   rw [comp_apply_singleton, lintegral_countable']
@@ -256,7 +256,8 @@ a Markov kernel from $\Theta$ to $\mathcal X$ (the likelihood), writing $\kappa_
 probability measure it assigns to $\theta \in \Theta$, let $\mu$ be a finite measure on $\Theta$
 (the prior), and let $\kappa^\dagger\mu$ be Mathlib's posterior kernel from $\mathcal X$ to
 $\Theta$. If the observation $x \in \mathcal X$ has nonzero evidence $(\kappa \circ \mu)(\{x\})$,
-where $\kappa \circ \mu$ is the law of the observation under the prior, then for every
+where $\kappa \circ \mu$ is the marginal measure of the observation under the prior, then
+for every
 $\theta \in \Theta$
 
 $$
@@ -317,8 +318,8 @@ Borel space, $\mathcal X$ a countable measurable space with measurable singleton
 kernel from $\Theta$ to $\mathcal X$, $\mu$ a finite measure on $\Theta$, and $x \in \mathcal X$ an
 observation with $(\kappa \circ \mu)(\{x\}) \neq 0$, where $\kappa \circ \mu$ is the composition of
 $\mu$ with $\kappa$. Write $\kappa^\dagger_\mu$ for the posterior kernel from $\mathcal X$ to
-$\Theta$, the fixed disintegration of the joint law of hypothesis and observation along the
-observation. Then $\theta \in \Theta$ is a MAP hypothesis for $x$ under the prior $\mu$ and the
+$\Theta$, the fixed disintegration of the joint measure of hypothesis and observation along
+the observation. Then $\theta \in \Theta$ is a MAP hypothesis for $x$ under the prior $\mu$ and the
 likelihood $\kappa$ if and only if
 $\kappa^\dagger_\mu(x)(\{\theta'\}) \le \kappa^\dagger_\mu(x)(\{\theta\})$ for every
 $\theta' \in \Theta$. -/
