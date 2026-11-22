@@ -167,8 +167,7 @@ such as a row written by hand; the wiki tests fail on a row without one.
 
 CI's required `check the graph` job runs `autoform check blueprint` on the
 committed graph, which fails on cycles, dangling dependency targets and missing
-declarations, and `scripts/check_folder_listings.py`, which fails on a page or
-folder missing from its folder page's list. Nothing runs `autoform audit` in CI;
+declarations. Nothing runs `autoform audit` in CI;
 authors may run `autoform audit blueprint --lean-root .`, and reviewers still
 check what it reports, such as overfull folders (`overfull-container`) and two
 pages for one declaration (`duplicate-lean-target`). `autoform work` lists the

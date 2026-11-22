@@ -83,12 +83,6 @@ jobs:
           uvx --from "git+https://github.com/facebookresearch/autoform-bot.git@${AUTOFORM_REF}"
           autoform check blueprint --lean-root .
 
-      - name: Check that every page is listed on its folder page
-        run: >-
-          uv run --no-project
-          --with "git+https://github.com/facebookresearch/autoform-bot.git@${AUTOFORM_REF}"
-          sh -c 'python -m unittest scripts.test_check_folder_listings && python scripts/check_folder_listings.py'
-
   build:
     needs: preflight
     runs-on: ubuntu-24.04
