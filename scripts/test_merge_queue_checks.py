@@ -39,7 +39,8 @@ fails if a required workflow:
   differ between any two PRs and any two merge groups, or one that another
   workflow's group could match: GitHub concurrency groups are repository-wide
   and case-insensitive, so one run could cancel or replace another's. In a
-  reusable workflow, `github.workflow` is the caller's name;
+  reusable workflow, `github.workflow` is the caller's name, and a workflow
+  without `name` is known by its path, `.github/workflows/<file>`;
 - runs on pushes to any ref but the `main` branch. A push to a PR's branch, or
   of a tag on a PR's head commit, would report the same checks on that commit
   for another tree, and a push to one of the queue's `gh-readonly-queue/...`
@@ -136,6 +137,8 @@ SETS_LATER_ENV = re.compile(
 # Runners with the root access and job length the Lean build needs (it adds
 # swap); the lighter jobs may use any Ubuntu runner.
 FULL_UBUNTU = {"ubuntu-24.04", "ubuntu-22.04", "ubuntu-latest"}
+# Every GitHub-hosted Ubuntu label; `build` needs one of the full x64 VMs above.
+UBUNTU = FULL_UBUNTU | {"ubuntu-slim", "ubuntu-24.04-arm", "ubuntu-22.04-arm"}
 # Checkout inputs that leave the checked-out tree whole and unchanged.
 CHECKOUT_INPUTS = {"persist-credentials", "fetch-depth", "fetch-tags", "show-progress", "clean"}
 # The command that runs each required job's own check.
@@ -236,6 +239,12 @@ def may_be_named(name: str, check: str) -> bool:
             and len(check) >= len(prefix) + len(suffix))
 
 
+def workflow_name(filename: str, workflow: dict) -> str:
+    """`github.workflow` for a workflow file: its `name`, or its path in the
+    repository when it has none."""
+    return str(workflow.get("name") or f".github/workflows/{filename}")
+
+
 def step_texts(step) -> list[str]:
     """A step's command and its `env` and `with` values, as text."""
     if not isinstance(step, dict):
@@ -310,7 +319,7 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
         found.append(f"CONTRIBUTING lists {documented}, not {list(REQUIRED)}")
     names: dict[str, list[str]] = {}
     for name, workflow in workflows.items():
-        names.setdefault(str(workflow.get("name", name)).casefold(), []).append(name)
+        names.setdefault(workflow_name(name, workflow).casefold(), []).append(name)
     for title, files in names.items():
         if len(files) > 1:
             found.append(f"workflows {files} share the name {title!r}, so their "
@@ -324,7 +333,7 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                 if may_be_named(job.get("name", job_id), check):
                     reporters.setdefault(check, []).append((name, job_id))
     groups = [(name, None if "workflow_call" in events(workflow)
-               else str(workflow.get("name", name)), scope, concurrency_group(setting))
+               else workflow_name(name, workflow), scope, concurrency_group(setting))
               for name, workflow in workflows.items()
               for scope, setting in [("workflow", workflow.get("concurrency"))] + [
                   (f"job {job_id}", job.get("concurrency"))
@@ -374,7 +383,7 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
         steps = as_list(job.get("steps"))
         shells = default_shells(job, workflow)
         runner = str(job.get("runs-on", ""))
-        if not (runner in FULL_UBUNTU if check == "build" else runner.startswith("ubuntu")):
+        if runner not in (FULL_UBUNTU if check == "build" else UBUNTU):
             found.append(f"{check!r} runs on {job.get('runs-on')!r}, not an Ubuntu runner "
                          "it can run on")
         for shell in shells:
@@ -424,7 +433,7 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
             if normalised(group) not in SAFE_GROUPS[pr_event]:
                 found.append(f"{name} concurrency group {group!r} is not one of the forms "
                              f"known to differ per {pr_event} and per merge group")
-            start = literal_start(str(workflow.get("name", name)), group)
+            start = literal_start(workflow_name(name, workflow), group)
             for owner, title, scope, other in groups:
                 if (owner, scope) == (name, "workflow"):
                     continue
@@ -537,6 +546,9 @@ class MergeQueueChecks(unittest.TestCase):
                             "steps": [{"env": {"PYTHONDONTWRITEBYTECODE": "1"}, "run": TEST},
                                       {"id": "diagnostics",
                                        "run": DIAGNOSTICS}]}),
+                       put("report.yml", {"on": {"pull_request": ""}, "concurrency": {
+                           "group": "${{ github.workflow }}-${{ github.ref }}"},
+                           "jobs": {"report": {}}}),
                        put("nightly.yml", {"name": "CI-nightly", "on": {"schedule": ""},
                                            "concurrency": {"group": "${{ github.workflow }}-"
                                                                     "${{ github.ref }}"},
@@ -737,6 +749,16 @@ class MergeQueueChecks(unittest.TestCase):
             "a workflow's defaults from an expression": (
                 put("ci.yml", "defaults", "${{ fromJSON(vars.CI_DEFAULTS) }}"),
                 "gets defaults from an expression in its workflow"),
+            "Source diagnostics on an unknown Ubuntu label": (
+                put("source-diagnostics.yml", "jobs", "source-diagnostics", "runs-on",
+                    "ubuntu-typo"), "not an Ubuntu runner"),
+            "an unnamed workflow known by the path CI is named after": (
+                lambda workflows: (
+                    put("ci.yml", "name", ".github/workflows/report.yml")(workflows),
+                    put("report.yml", {"on": {"pull_request": ""}, "concurrency": {
+                        "group": "${{ github.workflow }}-${{ github.ref }}"},
+                        "jobs": {"report": {}}})(workflows)),
+                "share the name"),
             "push of tags only": (put("ci.yml", "on", "push", {"tags": ["v*"]}),
                                   "pushes to refs other than the main branch"),
             "push of main and tags": (
