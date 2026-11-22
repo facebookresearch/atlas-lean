@@ -12,6 +12,10 @@ import MathlibExt.RingTheory.MvPowerSeries.ColeHopf
 
 open MvPowerSeries
 
+-- Pin the sign and factor independently of the heat-to-Burgers theorem.
+example : constantCoeff (coleHopf (1 : ℚ) (1 : Fin 2) (1 + X 1)) = -2 := by
+  simp [coleHopf]
+
 -- Zero viscosity is admitted; no positivity assumption is needed formally.
 example (φ : MvPowerSeries (Fin 2) ℚ) : coleHopf 0 1 φ = 0 := by
   simp [coleHopf]
