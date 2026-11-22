@@ -43,7 +43,7 @@ and error bounds) is not formalized.
 ## Attribution
 
 Moved verbatim (statements and proofs unchanged) from section `Davies` of
-`MathlibExt/Biology/StatisticalGenetics/RareVariantInference/BurdenSKATO.lean` (T88, PR #1621),
+`Domains/Biology/StatisticalGenetics/RareVariantInference/BurdenSKATO.lean` (T88, PR #1621),
 which now imports this module; only the namespace changed.
 -/
 

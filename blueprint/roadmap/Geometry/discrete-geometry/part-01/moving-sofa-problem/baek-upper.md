@@ -1,10 +1,11 @@
 # Baek upper bound for the ambidextrous sofa
 
-The supremum of the areas of ambidextrous sofas, taken in $[0, \infty]$, is at most the area
-$2.21953\ldots$ of Gerver's sofa.
+The supremum of the areas of ambidextrous sofas, taken in $[0, \infty]$, is at most
+$22196/10000 = 2.2196$.
 
-Every ambidextrous sofa is a sofa, and by Baek's theorem the maximal area of a sofa is the area of
-Gerver's sofa.
+Every ambidextrous sofa is a sofa, and by Baek's theorem the maximal area of a sofa is the area
+$2.21953166\ldots$ of Gerver's sofa. The stated rational bound rounds that area up;
+it does not identify the supremum with Gerver's area.
 
 ## Sources
 

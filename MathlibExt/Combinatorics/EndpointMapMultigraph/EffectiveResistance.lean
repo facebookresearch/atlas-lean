@@ -59,7 +59,17 @@ noncomputable def effectiveConductance (w : E → ℝ) (s t : V) : ℝ :=
 /-- **Effective resistance.** The reciprocal of the effective conductance (D. A. Spielman,
 *Spectral and Algebraic Graph Theory*, draft of 2 April 2025, Section 12.2,
 `R_eff(s, t) = 1 / C_eff(s, t)`). With Lean's convention `0⁻¹ = 0` it is `0` when the effective
-conductance vanishes, for instance between different connected components. -/
+conductance vanishes: for `s = t`, and also, for nonnegative conductances, for distinct vertices
+that no path of positive-conductance edges joins, between which the resistance of the network is
+infinite. That value makes the function non-monotone in the conductances. Take vertices `a`, `b`,
+`c` and two edges, `a—b` of conductance `1` and `a—c` of conductance `0`, so that `c` is isolated
+in the graph of positive-conductance edges: then `R(a, c) = 0 < R(a, b) = 1`, and raising the
+conductance of `a—c` to `1` raises `R(a, c)` from `0` to `1`. The results about the effective
+resistance therefore assume that its endpoints are connected: a positive effective conductance
+(`effectiveResistance_anti`), a solution of `L v = δ_s - δ_t`
+(`effectiveResistance_eq_sub_of_laplacian_mulVec`), a connected graph
+(`sum_mul_effectiveResistance`), or, in the files that use it, reachability or a unit flow
+between the endpoints. -/
 noncomputable def effectiveResistance (w : E → ℝ) (s t : V) : ℝ :=
   (effectiveConductance end₁ end₂ w s t)⁻¹
 

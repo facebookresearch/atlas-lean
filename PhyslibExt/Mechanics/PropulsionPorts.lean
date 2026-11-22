@@ -9,17 +9,22 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 public import PhyslibExt.Mechanics.PowerPorts
+public import PhyslibExt.ContinuumMechanics.ControlVolumes
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
-# Variable-mass propulsion: logarithmic velocity increment and parcel consistency
+# Variable-mass propulsion: velocity increment, parcel consistency, stationary thrust, staging
 
 Reduced collinear model of an ideal rocket burn on `[0, tb]`: positive mass `m`, velocity `v`,
 constant exhaust speed `ve > 0` relative to the vehicle, directed backward, and the declared law
-`m t * v' t = -ve * m' t` (thrust equals mass flow `-m'` times exhaust speed).
+`m t * v' t = -ve * m' t` (thrust equals mass flow `-m'` times exhaust speed). Separately, the
+steady momentum port balance of an engine at rest gives the separate-flow thrust with inlet, fuel
+and exhaust flows and port pressures, and its exhaust velocity and specific impulses.
 
 ## i. Overview
 
@@ -52,6 +57,46 @@ expelled momentum gives the slope limit `(q v + F) / m` instead, wrong whenever 
 This is local consistency of the parcel model, not convergence of a discrete integration scheme
 or an exact finite-step logarithmic law.
 
+Sections G-I treat an engine at rest on a test stand in an inertial frame. Its control volume has
+an inlet (capture) port of area `A_in` and an exhaust port of area `A_e`, normal to the engine
+axis, and a fuel feed. The axis points aft, the direction of the exhaust: the port velocities
+`v_in`, `v_e` are axial components relative to the engine, positive aft, so the outward unit
+normals of the inlet and exhaust ports are `-1` and `+1` and the port mass flows are `ṁ_in`,
+`ṁ_out ≥ 0`. The port pressures are `p_in`, `p_e`, the ambient pressure is `p_a`, the fuel enters
+with the mass flow `ṁ_f` and the axial velocity `v_f`, and the thrust `T` is positive forward.
+The axial momentum balance in the port form of `ControlVolumes.hasDerivAt_momentum_twoPort` (a
+uniform ambient pressure has zero resultant over the closed surface) gives the axial force of the
+stand on the contents as `F = T + P' - ṁ_f v_f` with
+`T = ṁ_out v_e - ṁ_in v_in + (p_e - p_a) A_e - (p_in - p_a) A_in`; in a steady state with
+negligible fuel feed momentum (`v_f = 0`) the stand force is the thrust, which the engine exerts
+forward on the stand. For a box with equal port areas, `ControlVolumes.hasDerivAt_momentum_twoPort`
+itself gives the balance from the local Cauchy momentum law: with a stationary momentum and no
+axial body force, the axial traction resultant of the duct walls on the fluid is the
+separate-flow thrust. The steady mass balance is `ṁ_out = ṁ_in + ṁ_f`. A rocket has no inlet
+stream and no air-capture area, so `T = ṁ_f v_e + (p_e - p_a) A_e`, positive for `ṁ_f, v_e > 0`
+and `p_e ≥ p_a`; an air-breather with `p_in = p_a` at its capture plane has
+`T = (ṁ_in + ṁ_f) v_e - ṁ_in v_in + (p_e - p_a) A_e`, and with fuel the exhaust flow exceeds the
+inlet flow, the equal-flow formula being the special case `ṁ_f = 0`. The effective exhaust
+velocity is `c = T / ṁ_out`; the total-flow specific impulse is `T / (ṁ_out g0) = c / g0` and the
+fuel-flow specific impulse `T / (ṁ_f g0)`, both with `specificImpulse`. They coincide for a rocket
+and differ by the factor `ṁ_out / ṁ_f > 1` for an air-breather with positive inlet flow and
+thrust. For an accelerating vehicle this thrust is only an adopted quasisteady engine-port law,
+unless the storage term `P'` and the acceleration of the engine frame are included; it is not an
+exact transient control-volume identity.
+
+Section J treats a staged vehicle. It flies a finite sequence of burns `i = 0, …, n` in one fixed
+direction, burn `i` on its own interval `[0, tb i]` with positive mass `m i`, velocity `v i` and
+exhaust speed `ve i` under the law above. Between burn `i` and burn `i + 1` it jettisons the dry
+mass `m i (tb i) - m (i + 1) 0 ≥ 0` with zero velocity relative to itself; momentum conservation
+`m (i + 1) 0 w + (m i (tb i) - m (i + 1) 0) v = m i (tb i) v` leaves the velocity unchanged,
+`w = v`, while the mass drops without any continuity across the event. Summing the burn
+increments, the velocity gained over the whole sequence is
+`∑ i, ve i * log (m i 0 / m i (tb i))` with stage-specific exhaust speeds, and no jettisoned mass
+enters a logarithm. Counting a dry-mass drop from `m₁` to `m₂ < m₁` as propellant instead adds
+`ve * log (m₁ / m₂) > 0` for `ve > 0`: it overstates the available increment. For collinear burns
+the sum is a net velocity increment; for burns in different directions it would be only a scalar
+burn cost, about which nothing is stated here.
+
 ## ii. Key results
 
 - `velocity_increment_eq_log`: the ideal rocket equation from derivative data, positive mass and
@@ -73,6 +118,24 @@ or an exact finite-step logarithmic law.
 - `parcel_accel_pos`, `naive_slope_tendsto`, `naive_limit_ne`: for `m > 0`, a positive flow at a
   positive exhaust speed accelerates the vehicle, and ignoring the expelled momentum gives the
   wrong derivative whenever `q (v - ve) ≠ 0`.
+- `separateFlowThrust`, `standForce_eq_separateFlowThrust_add`, `standForce_eq_separateFlowThrust`:
+  the thrust expression and the stand force from the port balance, with the storage and feed
+  terms, and the steady thrust.
+- `wallForce_eq_separateFlowThrust`: the box balance of `ControlVolumes` gives the thrust with
+  equal port areas.
+- `separateFlowThrust_rocket`, `separateFlowThrust_rocket_pos`, `separateFlowThrust_airBreather`,
+  `airBreather_exhaustFlow`: the rocket and air-breather instances.
+- `effectiveExhaustVelocity`, `specificImpulse_totalFlow_eq`, `specificImpulse_fuelFlow_eq`,
+  `specificImpulse_rocket_flows_eq`, `specificImpulse_totalFlow_lt_fuelFlow`,
+  `effectiveExhaustVelocity_rocket_matched`: the exhaust velocity and the total-flow and
+  fuel-flow specific impulses.
+- `jettison_velocity_eq`: a zero-relative-velocity jettison conserves momentum exactly when the
+  velocity is unchanged.
+- `staged_velocity_increment`: the velocity gained over burns separated by such jettisons is the
+  sum of the burn increments, with stage-specific exhaust speeds and the jettisoned masses outside
+  every logarithm.
+- `jettison_as_propellant_overstates`: counting a dry-mass drop as propellant overstates the
+  increment.
 
 ## iii. Table of contents
 
@@ -82,15 +145,25 @@ or an exact finite-step logarithmic law.
 - D. One parcel step
 - E. The first-order limit and the continuum model
 - F. Validation
+- G. Separate-flow thrust from the port balance
+- H. Rocket and air-breather
+- I. Effective exhaust velocity and specific impulse
+- J. Staged burns and dry-mass jettison
 
 ## iv. References
 
-- G. P. Sutton and O. Biblarz, *Rocket Propulsion Elements*, 9th edition, chapters 2 and 4
-  (specific impulse, effective exhaust velocity, ideal rocket equation).
-- H. D. Curtis, *Orbital Mechanics for Engineering Students*, rocket vehicle dynamics chapter.
+- G. P. Sutton and O. Biblarz, *Rocket Propulsion Elements*, 9th edition, chapters 2 to 4
+  (thrust with the pressure term, specific impulse, effective exhaust velocity, ideal rocket
+  equation; multistage vehicles).
+- P. G. Hill and C. R. Peterson, *Mechanics and Thermodynamics of Propulsion*, 2nd edition,
+  Addison-Wesley (1992), chapters 6 and 11 (thrust of air-breathing and rocket engines).
+- H. D. Curtis, *Orbital Mechanics for Engineering Students*, rocket vehicle dynamics chapter
+  (staging).
 - D. Kleppner and R. Kolenkow, *An Introduction to Mechanics*, 2nd edition, chapter 4 (momentum
   of a system with a varying mass; the rocket).
 - `PhyslibExt.Mechanics.PowerPorts`: the fixed-mass constant-force velocity.
+- `ControlVolumes.hasDerivAt_momentum_twoPort` (`PhyslibExt.ContinuumMechanics.ControlVolumes`):
+  the two-port momentum balance.
 -/
 
 @[expose] public section
@@ -502,5 +575,286 @@ lemma naive_limit_ne {m q v ve : ℝ} (hm : 0 < m) (hq : q ≠ 0) (hv : v ≠ ve
     · exact absurd hq0 hq
     · exact hv0
   exact hv (sub_eq_zero.mp h4)
+
+section SeparateFlowThrust
+
+open MeasureTheory ControlVolumes
+open MathlibExt.Probability.FokkerPlanck (divergence)
+
+/-! ## G. Separate-flow thrust from the port balance -/
+
+/-- The separate-flow thrust `T = ṁ_out v_e - ṁ_in v_in + (p_e - p_a) A_e - (p_in - p_a) A_in`,
+positive forward, of an engine at rest with an inlet port (mass flow `ṁ_in`, axial velocity
+`v_in`, pressure `p_in`, area `A_in`) and an exhaust port (`ṁ_out`, `v_e`, `p_e`, `A_e`) in an
+ambient at pressure `p_a`; the velocities are relative to the engine, positive aft. -/
+def separateFlowThrust (mdotIn vIn pIn AIn mdotOut vE pE AE pA : ℝ) : ℝ :=
+  mdotOut * vE - mdotIn * vIn + (pE - pA) * AE - (pIn - pA) * AIn
+
+/-- **Stand force from the port balance.** Take the axial momentum balance of the control volume
+in the port form of `ControlVolumes.hasDerivAt_momentum_twoPort`: the momentum rate `P'` is the
+inflow `ṁ_in v_in + ṁ_f v_f` minus the outflow `ṁ_out v_e`, minus the port pressure forces with
+outward normals `-1` (inlet) and `+1` (exhaust), plus the ambient force `F_lat` on the rest of the
+surface and the axial force `F` of the stand on the contents. A uniform ambient pressure has zero
+resultant over the closed surface (`hamb`). Then `F = T + P' - ṁ_f v_f`. -/
+lemma standForce_eq_separateFlowThrust_add {mdotIn vIn pIn AIn mdotF vF mdotOut vE pE AE pA Flat
+    F dP : ℝ} (hamb : Flat - pA * AIn * (-1) - pA * AE * 1 = 0)
+    (hbal : dP = mdotIn * vIn + mdotF * vF - mdotOut * vE - (pIn * AIn * (-1) + pE * AE * 1) +
+      Flat + F) :
+    F = separateFlowThrust mdotIn vIn pIn AIn mdotOut vE pE AE pA + dP - mdotF * vF := by
+  unfold separateFlowThrust
+  linear_combination -hbal - hamb
+
+/-- **Steady separate-flow thrust.** In a steady state (`P' = 0`) with negligible fuel feed
+momentum (`v_f = 0`), the axial force of the stand on the control volume, which the engine exerts
+forward on the stand, is `T = ṁ_out v_e - ṁ_in v_in + (p_e - p_a) A_e - (p_in - p_a) A_in`. -/
+lemma standForce_eq_separateFlowThrust {mdotIn vIn pIn AIn mdotF vF mdotOut vE pE AE pA Flat
+    F : ℝ} (hamb : Flat - pA * AIn * (-1) - pA * AE * 1 = 0) (hfeed : vF = 0)
+    (hbal : 0 = mdotIn * vIn + mdotF * vF - mdotOut * vE - (pIn * AIn * (-1) + pE * AE * 1) +
+      Flat + F) :
+    F = separateFlowThrust mdotIn vIn pIn AIn mdotOut vE pE AE pA := by
+  rw [standForce_eq_separateFlowThrust_add hamb hbal, hfeed]
+  ring
+
+/-- **The box balance of `ControlVolumes`.** For a fluid in a fixed box with the inlet on the face
+`x₀ = a₀` and the exhaust on the face `x₀ = b₀`, both of area `A₀ = faceArea a b 0`, under the
+hypotheses of `ControlVolumes.hasDerivAt_momentum_twoPort` (pressure-only uniform port data,
+impermeable side walls), with a stationary momentum and no axial body force, the axial component of
+the traction resultant of the side walls on the fluid is the separate-flow thrust with equal port
+areas and port mass flows `ṁ = ρ A₀ v₀`, for every ambient pressure `p_a`. -/
+lemma wallForce_eq_separateFlowThrust {n : ℕ} {a b : Fin (n + 1) → ℝ} (hab : ∀ i, a i < b i)
+    {ρ : ℝ → (Fin (n + 1) → ℝ) → ℝ} {v f : ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → ℝ}
+    {σ : ℝ → (Fin (n + 1) → ℝ) → Fin (n + 1) → Fin (n + 1) → ℝ} {t : ℝ}
+    {U : Set (Fin (n + 1) → ℝ)} (hU : IsOpen U) (hbox : Icc a b ⊆ U)
+    (hρ : ContDiff ℝ 1 (Function.uncurry ρ)) (hv : ContDiff ℝ 1 (Function.uncurry v))
+    (hσ : ContDiffOn ℝ 1 (σ t) U) (hf : ∀ j, IntegrableOn (fun x => f t x j) (Icc a b))
+    (hlaw : ∀ j, ∀ x ∈ Icc a b,
+      deriv (fun τ => ρ τ x * v τ x j) t + divergence (momentumFlux (ρ t) (v t) (σ t) j) x =
+        f t x j)
+    {ρi ρo pi po : ℝ} {vi vo : Fin (n + 1) → ℝ}
+    (hρi : ∀ y ∈ Icc (a ∘ (0 : Fin (n + 1)).succAbove) (b ∘ (0 : Fin (n + 1)).succAbove),
+      ρ t ((0 : Fin (n + 1)).insertNth (a 0) y) = ρi)
+    (hvi : ∀ y ∈ Icc (a ∘ (0 : Fin (n + 1)).succAbove) (b ∘ (0 : Fin (n + 1)).succAbove),
+      v t ((0 : Fin (n + 1)).insertNth (a 0) y) = vi)
+    (hσi : ∀ y ∈ Icc (a ∘ (0 : Fin (n + 1)).succAbove) (b ∘ (0 : Fin (n + 1)).succAbove),
+      (fun j => σ t ((0 : Fin (n + 1)).insertNth (a 0) y) j 0) = -(pi • Pi.single 0 1))
+    (hρo : ∀ y ∈ Icc (a ∘ (0 : Fin (n + 1)).succAbove) (b ∘ (0 : Fin (n + 1)).succAbove),
+      ρ t ((0 : Fin (n + 1)).insertNth (b 0) y) = ρo)
+    (hvo : ∀ y ∈ Icc (a ∘ (0 : Fin (n + 1)).succAbove) (b ∘ (0 : Fin (n + 1)).succAbove),
+      v t ((0 : Fin (n + 1)).insertNth (b 0) y) = vo)
+    (hσo : ∀ y ∈ Icc (a ∘ (0 : Fin (n + 1)).succAbove) (b ∘ (0 : Fin (n + 1)).succAbove),
+      (fun j => σ t ((0 : Fin (n + 1)).insertNth (b 0) y) j 0) = -(po • Pi.single 0 1))
+    (hwall : ∀ i, i ≠ 0 → ∀ y ∈ Icc (a ∘ i.succAbove) (b ∘ i.succAbove),
+      v t (i.insertNth (b i) y) i = 0 ∧ v t (i.insertNth (a i) y) i = 0)
+    (hsteady : HasDerivAt (fun τ => fun j => ∫ x in Icc a b, ρ τ x * v τ x j) 0 t)
+    (hbody : ∫ x in Icc a b, f t x 0 = 0) (pa : ℝ) :
+    (∑ i : Fin n, faceTractionResultant a b (σ t) i.succ) 0 =
+      separateFlowThrust (ρi * faceArea a b 0 * vi 0) (vi 0) pi (faceArea a b 0)
+        (ρo * faceArea a b 0 * vo 0) (vo 0) po (faceArea a b 0) pa := by
+  have h := hasDerivAt_momentum_twoPort hab hU hbox hρ hv hσ hf hlaw hρi hvi hσi hρo hvo hσo hwall
+  have h0 := congrFun (h.unique hsteady) 0
+  simp only [Pi.add_apply, Pi.sub_apply, Pi.smul_apply, Pi.neg_apply, smul_eq_mul,
+    Pi.single_eq_same, Pi.zero_apply, Finset.sum_apply, hbody] at h0
+  unfold separateFlowThrust
+  simp only [Finset.sum_apply]
+  linarith
+
+/-! ## H. Rocket and air-breather -/
+
+/-- **Rocket.** With no inlet stream and no air-capture area (`ṁ_in = 0`, `A_in = 0`) the steady
+mass balance `ṁ_out = ṁ_in + ṁ_f` makes the exhaust carry the propellant flow, and
+`T = ṁ_f v_e + (p_e - p_a) A_e`, whatever `v_in` and `p_in`. -/
+lemma separateFlowThrust_rocket {mdotIn AIn mdotF mdotOut : ℝ} (hin : mdotIn = 0) (hA : AIn = 0)
+    (hmass : mdotOut = mdotIn + mdotF) (vIn pIn vE pE AE pA : ℝ) :
+    separateFlowThrust mdotIn vIn pIn AIn mdotOut vE pE AE pA = mdotF * vE + (pE - pA) * AE := by
+  rw [hmass, hin, hA, separateFlowThrust]
+  ring
+
+/-- **A rocket burn gives nonzero thrust.** A rocket (`ṁ_in = 0`, `A_in = 0`) with propellant
+flow `ṁ_f > 0`, exhaust velocity `v_e > 0` and `p_e ≥ p_a`, `A_e ≥ 0` has positive thrust. -/
+lemma separateFlowThrust_rocket_pos {mdotIn AIn mdotF mdotOut vE pE AE pA : ℝ} (hin : mdotIn = 0)
+    (hA : AIn = 0) (hmass : mdotOut = mdotIn + mdotF) (hf : 0 < mdotF) (hvE : 0 < vE)
+    (hp : pA ≤ pE) (hAE : 0 ≤ AE) (vIn pIn : ℝ) :
+    0 < separateFlowThrust mdotIn vIn pIn AIn mdotOut vE pE AE pA := by
+  rw [separateFlowThrust_rocket hin hA hmass]
+  have h1 : 0 < mdotF * vE := mul_pos hf hvE
+  have h2 : 0 ≤ (pE - pA) * AE := mul_nonneg (by linarith) hAE
+  linarith
+
+/-- **Air-breather.** With `p_in = p_a` at the capture plane and the steady mass balance
+`ṁ_out = ṁ_in + ṁ_f`, `T = (ṁ_in + ṁ_f) v_e - ṁ_in v_in + (p_e - p_a) A_e`. -/
+lemma separateFlowThrust_airBreather {mdotIn pIn mdotF mdotOut pA : ℝ} (hcap : pIn = pA)
+    (hmass : mdotOut = mdotIn + mdotF) (vIn AIn vE pE AE : ℝ) :
+    separateFlowThrust mdotIn vIn pIn AIn mdotOut vE pE AE pA =
+      (mdotIn + mdotF) * vE - mdotIn * vIn + (pE - pA) * AE := by
+  rw [hmass, hcap, separateFlowThrust]
+  ring
+
+/-- **Exhaust flow of an air-breather.** Under the steady mass balance `ṁ_out = ṁ_in + ṁ_f`,
+fuel `ṁ_f > 0` makes the exhaust flow exceed the inlet flow; the exhaust and inlet flows are equal
+exactly when `ṁ_f = 0`, and the equal-flow thrust (exhaust flow replaced by `ṁ_in`) falls short
+of the thrust by `ṁ_f v_e`. -/
+lemma airBreather_exhaustFlow {mdotIn mdotF mdotOut : ℝ} (hmass : mdotOut = mdotIn + mdotF)
+    (vIn pIn AIn vE pE AE pA : ℝ) :
+    (0 < mdotF → mdotIn < mdotOut) ∧ (mdotOut = mdotIn ↔ mdotF = 0) ∧
+      separateFlowThrust mdotIn vIn pIn AIn mdotOut vE pE AE pA -
+          separateFlowThrust mdotIn vIn pIn AIn mdotIn vE pE AE pA = mdotF * vE := by
+  subst hmass
+  refine ⟨fun h => by linarith, ⟨fun h => by linarith, fun h => by rw [h, add_zero]⟩, ?_⟩
+  unfold separateFlowThrust
+  ring
+
+/-! ## I. Effective exhaust velocity and specific impulse -/
+
+/-- The effective exhaust velocity `c = T / ṁ_out` of a thrust `T` at the exhaust mass flow
+`ṁ_out`. -/
+noncomputable def effectiveExhaustVelocity (T mdotOut : ℝ) : ℝ := T / mdotOut
+
+/-- **Total-flow specific impulse.** `T / (ṁ_out g0) = c / g0`. -/
+lemma specificImpulse_totalFlow_eq (T mdotOut g0 : ℝ) :
+    specificImpulse T mdotOut g0 = effectiveExhaustVelocity T mdotOut / g0 := by
+  unfold specificImpulse effectiveExhaustVelocity
+  rw [div_div]
+
+/-- **Fuel-flow specific impulse.** For positive exhaust and fuel flows, the fuel-flow specific
+impulse `T / (ṁ_f g0)` is the total-flow one times `ṁ_out / ṁ_f`. -/
+lemma specificImpulse_fuelFlow_eq {mdotOut mdotF : ℝ} (hout : 0 < mdotOut) (hf : 0 < mdotF)
+    (T g0 : ℝ) :
+    specificImpulse T mdotF g0 = specificImpulse T mdotOut g0 * (mdotOut / mdotF) := by
+  unfold specificImpulse
+  rcases eq_or_ne g0 0 with rfl | hg
+  · simp
+  · field_simp
+
+/-- **Rocket: the two specific impulses coincide.** With no inlet stream the exhaust flow is the
+propellant flow, so the total-flow and fuel-flow specific impulses are equal. -/
+lemma specificImpulse_rocket_flows_eq {mdotIn mdotF mdotOut : ℝ} (hin : mdotIn = 0)
+    (hmass : mdotOut = mdotIn + mdotF) (T g0 : ℝ) :
+    specificImpulse T mdotOut g0 = specificImpulse T mdotF g0 := by
+  rw [hmass, hin, zero_add]
+
+/-- **Air-breather: the two specific impulses differ.** With inlet flow `ṁ_in > 0`, fuel flow
+`ṁ_f > 0`, thrust `T > 0` and `g0 > 0`, the total-flow specific impulse is strictly smaller than
+the fuel-flow one. -/
+lemma specificImpulse_totalFlow_lt_fuelFlow {mdotIn mdotF mdotOut T g0 : ℝ} (hin : 0 < mdotIn)
+    (hf : 0 < mdotF) (hmass : mdotOut = mdotIn + mdotF) (hT : 0 < T) (hg0 : 0 < g0) :
+    specificImpulse T mdotOut g0 < specificImpulse T mdotF g0 := by
+  unfold specificImpulse
+  rw [hmass]
+  apply div_lt_div_of_pos_left hT (by positivity)
+  nlinarith
+
+/-- **Pressure-matched rocket.** A rocket with `p_e = p_a` and positive propellant flow has the
+effective exhaust velocity `c = v_e`, so its specific impulse is `v_e / g0`, as in
+`specificImpulse_eq_of_law`. -/
+lemma effectiveExhaustVelocity_rocket_matched {mdotIn AIn mdotF mdotOut pE pA : ℝ}
+    (hin : mdotIn = 0) (hA : AIn = 0) (hmass : mdotOut = mdotIn + mdotF) (hf : 0 < mdotF)
+    (hp : pE = pA) (vIn pIn vE AE g0 : ℝ) :
+    effectiveExhaustVelocity (separateFlowThrust mdotIn vIn pIn AIn mdotOut vE pE AE pA)
+        mdotOut = vE ∧
+      specificImpulse (separateFlowThrust mdotIn vIn pIn AIn mdotOut vE pE AE pA) mdotOut g0 =
+        vE / g0 := by
+  have hc : effectiveExhaustVelocity (separateFlowThrust mdotIn vIn pIn AIn mdotOut vE pE AE pA)
+      mdotOut = vE := by
+    rw [effectiveExhaustVelocity, separateFlowThrust_rocket hin hA hmass, hp, hmass, hin,
+      zero_add, sub_self, zero_mul, add_zero]
+    field_simp
+  exact ⟨hc, by rw [specificImpulse_totalFlow_eq, hc]⟩
+
+end SeparateFlowThrust
+
+/-! ## J. Staged burns and dry-mass jettison -/
+
+/-- A jettison with zero relative velocity leaves the velocity unchanged: a vehicle of mass `m₁` at
+velocity `v` drops the mass `m₁ - m₂`, which keeps the velocity `v`, and the remaining mass `m₂`
+moves at `w`. If `m₂ ≠ 0` (a positive remaining mass in the model), momentum is conserved,
+`m₂ w + (m₁ - m₂) v = m₁ v`, exactly when `w = v`. The identity needs only `m₂ ≠ 0`; a jettison
+is the case `m₂ ≤ m₁`, which `staged_velocity_increment` requires of every transition. -/
+lemma jettison_velocity_eq {m₁ m₂ v w : ℝ} (hm₂ : m₂ ≠ 0) :
+    m₂ * w + (m₁ - m₂) * v = m₁ * v ↔ w = v := by
+  constructor
+  · intro h
+    have h2 : m₂ * w = m₂ * v := by linear_combination h
+    exact mul_left_cancel₀ hm₂ h2
+  · intro h
+    rw [h]
+    ring
+
+/-- Staged burn and jettison accounting. Burns `i ≤ n` on `[0, tb i]` with positive mass, exhaust
+speed `ve i` and the reduced law; between burn `i` and burn `i + 1` a jettison with zero relative
+velocity from mass `m i (tb i)` to mass `m (i + 1) 0 ≤ m i (tb i)` that conserves momentum. The
+velocity gained from the start of burn `0` to the end of burn `n` is the sum of the burn increments
+`ve i * log (m i 0 / m i (tb i))`; the jettisoned masses enter no logarithm. Neither the mass drop
+nor the sign of the exhaust speeds is needed for the identity: the drop restricts the statement to
+jettisons, and the model's positive stage-specific `ve i` are a special case. -/
+lemma staged_velocity_increment (n : ℕ) {m v m' v' : ℕ → ℝ → ℝ} {ve tb : ℕ → ℝ}
+    (htb : ∀ i ≤ n, 0 ≤ tb i) (hm : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), HasDerivAt (m i) (m' i t) t)
+    (hv : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), HasDerivAt (v i) (v' i t) t)
+    (hpos : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), 0 < m i t)
+    (hlaw : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), m i t * v' i t = -ve i * m' i t)
+    (_hdrop : ∀ i < n, m (i + 1) 0 ≤ m i (tb i))
+    (hjet : ∀ i < n, m (i + 1) 0 * v (i + 1) 0 + (m i (tb i) - m (i + 1) 0) * v i (tb i) =
+      m i (tb i) * v i (tb i)) :
+    v n (tb n) - v 0 0 = ∑ i ∈ Finset.range (n + 1), ve i * Real.log (m i 0 / m i (tb i)) := by
+  clear _hdrop
+  revert htb hm hv hpos hlaw hjet
+  induction n with
+  | zero =>
+    intro htb hm hv hpos hlaw hjet
+    change v 0 (tb 0) - v 0 0 = ∑ i ∈ Finset.range 1, ve i * Real.log (m i 0 / m i (tb i))
+    rw [Finset.sum_range_one]
+    exact velocity_increment_eq_log (htb 0 le_rfl) (hm 0 le_rfl) (hv 0 le_rfl)
+      (hpos 0 le_rfl) (hlaw 0 le_rfl)
+  | succ n ih =>
+    intro htb hm hv hpos hlaw hjet
+    have htb' : ∀ i ≤ n, 0 ≤ tb i := fun i hi => htb i (le_trans hi (Nat.le_succ n))
+    have hm' : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), HasDerivAt (m i) (m' i t) t :=
+      fun i hi => hm i (le_trans hi (Nat.le_succ n))
+    have hv' : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), HasDerivAt (v i) (v' i t) t :=
+      fun i hi => hv i (le_trans hi (Nat.le_succ n))
+    have hpos' : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), 0 < m i t :=
+      fun i hi => hpos i (le_trans hi (Nat.le_succ n))
+    have hlaw' : ∀ i ≤ n, ∀ t ∈ Icc 0 (tb i), m i t * v' i t = -ve i * m' i t :=
+      fun i hi => hlaw i (le_trans hi (Nat.le_succ n))
+    have hjet' : ∀ i < n, m (i + 1) 0 * v (i + 1) 0 + (m i (tb i) - m (i + 1) 0) *
+        v i (tb i) = m i (tb i) * v i (tb i) :=
+      fun i hi => hjet i (lt_of_lt_of_le hi (Nat.le_succ n))
+    have ih' := ih htb' hm' hv' hpos' hlaw' hjet'
+    have hburn := velocity_increment_eq_log (htb (n + 1) le_rfl) (hm (n + 1) le_rfl)
+      (hv (n + 1) le_rfl) (hpos (n + 1) le_rfl) (hlaw (n + 1) le_rfl)
+    have hjmass : m (n + 1) 0 ≠ 0 :=
+      ne_of_gt (hpos (n + 1) le_rfl 0 ⟨le_refl 0, htb (n + 1) le_rfl⟩)
+    have hveq : v (n + 1) 0 = v n (tb n) :=
+      (jettison_velocity_eq hjmass).mp (hjet n (Nat.lt_succ_self n))
+    rw [Finset.sum_range_succ]
+    linear_combination hburn + hveq + ih'
+
+/-- Counting dry mass as propellant overstates the increment: for `ve > 0`, `m₀ > 0` and a
+nonzero drop from `m₁` to `m₂ > 0`, a burn logarithm that also covers the drop exceeds the true
+burn increment by `ve * log (m₁ / m₂) > 0`. -/
+lemma jettison_as_propellant_overstates {ve m₀ m₁ m₂ : ℝ} (hve : 0 < ve) (hm₀ : 0 < m₀)
+    (hm₂ : 0 < m₂) (hdrop : m₂ < m₁) :
+    ve * Real.log (m₀ / m₂) = ve * Real.log (m₀ / m₁) + ve * Real.log (m₁ / m₂) ∧
+      ve * Real.log (m₀ / m₁) < ve * Real.log (m₀ / m₂) := by
+  have hm₁ : 0 < m₁ := lt_trans hm₂ hdrop
+  have hne₀₁ : m₀ / m₁ ≠ 0 := div_ne_zero (ne_of_gt hm₀) (ne_of_gt hm₁)
+  have hne₁₂ : m₁ / m₂ ≠ 0 := div_ne_zero (ne_of_gt hm₁) (ne_of_gt hm₂)
+  have hm₁' : m₁ ≠ 0 := ne_of_gt hm₁
+  have hm₂' : m₂ ≠ 0 := ne_of_gt hm₂
+  have hsplit : m₀ / m₂ = (m₀ / m₁) * (m₁ / m₂) := by
+    field_simp
+  have hlog : Real.log (m₀ / m₂) = Real.log (m₀ / m₁) + Real.log (m₁ / m₂) := by
+    rw [hsplit, Real.log_mul hne₀₁ hne₁₂]
+  have heq : ve * Real.log (m₀ / m₂)
+      = ve * Real.log (m₀ / m₁) + ve * Real.log (m₁ / m₂) := by
+    rw [hlog]
+    ring
+  have hpos : 0 < ve * Real.log (m₁ / m₂) := by
+    apply mul_pos hve
+    apply Real.log_pos
+    rw [one_lt_div hm₂]
+    exact hdrop
+  refine ⟨heq, ?_⟩
+  rw [heq]
+  linarith
 
 end PhyslibExt.Mechanics.PropulsionPorts

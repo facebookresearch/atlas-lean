@@ -21,8 +21,11 @@ the strong data-processing inequality for total variation,
 
 `TV(κ ∘ μ, κ ∘ ν) ≤ η_TV(κ) · TV(μ, ν)` for all probability measures `μ`, `ν` on `X`,
 
-and that `η_TV(κ)` is the best constant when singletons of `X` are measurable (point masses
-attain it). Since `η_TV(κ) ≤ 1`, the ordinary data-processing inequality for total variation
+and that `η_TV(κ)` is the least such constant when singletons of `X` are measurable: the
+inequality for the point masses `δ_x` and `δ_{x'}` bounds each `TV(κ x, κ x')`, hence their
+supremum. The supremum need not be attained by a pair of point masses: for the kernel on `ℕ`
+whose rows are `Bernoulli(n / (n + 1))` it is `1`, while every pair of rows is at total variation
+below `1`. Since `η_TV(κ) ≤ 1`, the ordinary data-processing inequality for total variation
 follows. No countability or standard-Borel hypothesis is used: the proof splits `μ` and `ν` into
 their common part (mass `1 - TV`) and two remainders of mass `TV`, and compares the remainders
 through an averaged pair of inputs.
@@ -182,8 +185,10 @@ theorem totalVariationDist_comp_le_self (κ : Kernel X Y) [IsMarkovKernel κ] (�
 
 /-- **Sharpness of Dobrushin's coefficient**: if singletons of `X` are measurable and a constant
 `c ≥ 0` satisfies `TV(κ ∘ₘ μ, κ ∘ₘ ν) ≤ c · TV(μ, ν)` for all probability measures `μ`, `ν`, then
-`dobrushinCoeff κ ≤ c`. Point masses attain the coefficient, so together with
-`totalVariationDist_comp_le` the best contraction constant `η_TV(κ)` equals `dobrushinCoeff κ`.
+`dobrushinCoeff κ ≤ c`: the inequality for the point masses `δ_x` and `δ_{x'}` gives
+`TV(κ x, κ x') ≤ c` for every pair, so `c` bounds their supremum. Together with
+`totalVariationDist_comp_le`, `dobrushinCoeff κ` is therefore the least contraction constant
+`η_TV(κ)`, although no pair of point masses need attain it.
 Source: Y. Polyanskiy and Y. Wu, Information Theory: From Coding to Learning (Cambridge
 University Press, 2025), Theorem 33.4 (the inequality `η_TV ≥ sup_{x ≠ x'} TV(P_{Y|X=x},
 P_{Y|X=x'})`, from `P_X = δ_x`, `Q_X = δ_{x'}`). -/
