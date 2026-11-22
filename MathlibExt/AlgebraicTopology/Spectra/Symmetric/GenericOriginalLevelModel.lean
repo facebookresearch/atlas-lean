@@ -1,0 +1,137 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+import MathlibExt.AlgebraicTopology.Spectra.Symmetric.GenericLevelModel
+import MathlibExt.AlgebraicTopology.ModelCategory.SourceEvaluationProperties
+
+/-!
+# Projective level models on the existing ordinary symmetric S(T)-module carrier
+
+The sphere and genuine operator models are produced from T and the actual
+base/cardinal source data. The proved S3 comparison retains every original
+ordinary evaluation/free map. All five source classes and complete actual
+functorial factors are constructed on the same original sphere-module carrier.
+-/
+
+set_option autoImplicit false
+
+noncomputable section
+
+universe w uV vV
+
+open CategoryTheory Limits MorphismProperty Opposite MonoidalCategory
+open scoped MonoidalClosed
+
+namespace HomotopicalAlgebra.GenericSymmetricLevel
+
+local notation "I" => CategoryTheory.Operad.SmallFinBijGroupoid
+
+variable {V : Type uV} [Category.{vV} V] [MonoidalCategory V] [SymmetricCategory V]
+  [MonoidalClosed V] [ModelCategory V] [IsClosedSymmetricMonoidalModelCategory V]
+  [HasColimitsOfSize.{w, w} V] [LocallySmall.{w} V]
+  {κ : Cardinal.{w}} [Fact κ.IsRegular] [OrderBot κ.ord.ToType]
+
+local instance originalSmallColimits : HasColimitsOfSize.{0, 0} V := hasColimitsOfSizeShrink.{0, 0, w, w} V
+
+/-- Every original finite-index evaluation on the existing ordinary sphere-module carrier. -/
+def originalLevelProperty (T : V) (P : MorphismProperty V) :
+    MorphismProperty (SymmetricSpectrum (genericSphereDayMonoid T)) :=
+  EvaluationTransfer.evaluationProperty (fun a : I => genericSpectrumEvaluation T a) P
+
+/-- Every original ordinary free spectrum image, retaining its original finite index and base-arrow label. -/
+abbrev originalGenerators (T : V) (P : MorphismProperty V) :
+    MorphismProperty (SymmetricSpectrum (genericSphereDayMonoid T)) :=
+  adjointFamilyGenerators (fun a : I => genericSpectrumFreeAt T a) P
+
+variable (T : V) [IsCofibrant T] (d : CofibrantGenerationData V κ)
+  (hSourceI : SourceCondition (κ := κ) T d.I) (hSourceJ : SourceCondition (κ := κ) T d.J)
+
+/-- The actual projective level model is constructed on the same original ordinary S(T)-module carrier. -/
+@[instance_reducible]
+def originalModelCategory : ModelCategory (SymmetricSpectrum (genericSphereDayMonoid T)) := by
+  letI : EnrichedCategory V I := CategoryTheory.Spectra.Symmetric.OperatorCoend.enrichedCategory T
+  exact EnrichedProjective.MappedSources.sourceModelCategory d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ (genericSphereModuleOperatorEquivalence T)
+
+/-- The actual ordinary module weak class is precisely every original level weak equivalence. -/
+theorem original_weakEquivalences_eq :
+    letI : ModelCategory (SymmetricSpectrum (genericSphereDayMonoid T)) := originalModelCategory T d hSourceI hSourceJ
+    weakEquivalences (SymmetricSpectrum (genericSphereDayMonoid T)) = originalLevelProperty T (weakEquivalences V) := by
+  let _ : EnrichedCategory V I := CategoryTheory.Spectra.Symmetric.OperatorCoend.enrichedCategory T
+  exact EnrichedProjective.MappedSources.sourceWeak_eq d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ (genericSphereModuleOperatorEquivalence T)
+    (fun a => genericSpectrumEvaluation T a) (genericSphereModuleOperatorEvaluationIso T)
+
+/-- The actual ordinary module fibration class is precisely every original level fibration. -/
+theorem original_fibrations_eq :
+    letI : ModelCategory (SymmetricSpectrum (genericSphereDayMonoid T)) := originalModelCategory T d hSourceI hSourceJ
+    fibrations (SymmetricSpectrum (genericSphereDayMonoid T)) = originalLevelProperty T (fibrations V) := by
+  let _ : EnrichedCategory V I := CategoryTheory.Spectra.Symmetric.OperatorCoend.enrichedCategory T
+  exact EnrichedProjective.MappedSources.sourceFibration_eq d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ (genericSphereModuleOperatorEquivalence T)
+    (fun a => genericSpectrumEvaluation T a) (genericSphereModuleOperatorEvaluationIso T)
+
+/-- The actual ordinary module trivial-fibration class is precisely every original level trivial fibration. -/
+theorem original_trivialFibrations_eq :
+    letI : ModelCategory (SymmetricSpectrum (genericSphereDayMonoid T)) := originalModelCategory T d hSourceI hSourceJ
+    trivialFibrations (SymmetricSpectrum (genericSphereDayMonoid T)) =
+      originalLevelProperty T (trivialFibrations V) := by
+  let _ : EnrichedCategory V I := CategoryTheory.Spectra.Symmetric.OperatorCoend.enrichedCategory T
+  exact EnrichedProjective.MappedSources.sourceTrivialFibration_eq d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ (genericSphereModuleOperatorEquivalence T)
+    (fun a => genericSpectrumEvaluation T a) (genericSphereModuleOperatorEvaluationIso T)
+
+/-- Cofibrations are generated by every actual original ordinary free I image. -/
+theorem original_cofibrations_eq :
+    letI : ModelCategory (SymmetricSpectrum (genericSphereDayMonoid T)) := originalModelCategory T d hSourceI hSourceJ
+    cofibrations (SymmetricSpectrum (genericSphereDayMonoid T)) = (originalGenerators T d.I).rlp.llp := by
+  let _ : EnrichedCategory V I := CategoryTheory.Spectra.Symmetric.OperatorCoend.enrichedCategory T
+  exact EnrichedProjective.MappedSources.sourceCofibration_generators_eq d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ (genericSphereModuleOperatorEquivalence T)
+    (fun a => genericSpectrumEvaluation T a) (genericSphereModuleOperatorEvaluationIso T)
+    (fun a => genericSpectrumFreeAt T a) (fun a => genericSpectrumFreeAtEvaluationAdjunction T a)
+
+/-- Trivial cofibrations are generated by every actual original ordinary free J image. -/
+theorem original_trivialCofibrations_eq :
+    letI : ModelCategory (SymmetricSpectrum (genericSphereDayMonoid T)) := originalModelCategory T d hSourceI hSourceJ
+    trivialCofibrations (SymmetricSpectrum (genericSphereDayMonoid T)) = (originalGenerators T d.J).rlp.llp := by
+  let _ : EnrichedCategory V I := CategoryTheory.Spectra.Symmetric.OperatorCoend.enrichedCategory T
+  exact EnrichedProjective.MappedSources.sourceTrivialCofibration_generators_eq d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ (genericSphereModuleOperatorEquivalence T)
+    (fun a => genericSpectrumEvaluation T a) (genericSphereModuleOperatorEvaluationIso T)
+    (fun a => genericSpectrumFreeAt T a) (fun a => genericSpectrumFreeAtEvaluationAdjunction T a)
+
+/-- Every actual original ordinary free/evaluation adjunction is Quillen for this same constructed model. -/
+theorem original_freeAtEvaluation_isQuillenAdjunction (n : I) :
+    letI : ModelCategory (SymmetricSpectrum (genericSphereDayMonoid T)) := originalModelCategory T d hSourceI hSourceJ
+    (genericSpectrumFreeAtEvaluationAdjunction T n).IsQuillenAdjunction := by
+  let _ : EnrichedCategory V I := CategoryTheory.Spectra.Symmetric.OperatorCoend.enrichedCategory T
+  exact EnrichedProjective.MappedSources.sourceFreeEvaluation_isQuillenAdjunction d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ (genericSphereModuleOperatorEquivalence T)
+    (fun a => genericSpectrumEvaluation T a) (genericSphereModuleOperatorEvaluationIso T)
+    (fun a => genericSpectrumFreeAt T a) (fun a => genericSpectrumFreeAtEvaluationAdjunction T a) n
+
+/-- The actual same-κ I factor value retains every original sphere-module source map. -/
+def originalCofibrantFactorizationData :
+    letI : ModelCategory (SymmetricSpectrum (genericSphereDayMonoid T)) := originalModelCategory T d hSourceI hSourceJ
+    FunctorialFactorizationData (cofibrations (SymmetricSpectrum (genericSphereDayMonoid T)))
+      (trivialFibrations (SymmetricSpectrum (genericSphereDayMonoid T))) := by
+  letI : EnrichedCategory V I := CategoryTheory.Spectra.Symmetric.OperatorCoend.enrichedCategory T
+  exact EnrichedProjective.MappedSources.sourceCofibrantFactorizationData d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ (genericSphereModuleOperatorEquivalence T)
+
+/-- The actual same-κ J factor value retains every original sphere-module source map. -/
+def originalFibrantFactorizationData :
+    letI : ModelCategory (SymmetricSpectrum (genericSphereDayMonoid T)) := originalModelCategory T d hSourceI hSourceJ
+    FunctorialFactorizationData (trivialCofibrations (SymmetricSpectrum (genericSphereDayMonoid T)))
+      (fibrations (SymmetricSpectrum (genericSphereDayMonoid T))) := by
+  letI : EnrichedCategory V I := CategoryTheory.Spectra.Symmetric.OperatorCoend.enrichedCategory T
+  exact EnrichedProjective.MappedSources.sourceFibrantFactorizationData d
+    (generatorsJ_tensor_trivialCofibration T d) hSourceI hSourceJ (genericSphereModuleOperatorEquivalence T)
+
+end HomotopicalAlgebra.GenericSymmetricLevel
