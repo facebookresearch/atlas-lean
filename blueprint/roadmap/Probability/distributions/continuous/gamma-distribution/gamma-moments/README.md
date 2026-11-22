@@ -21,3 +21,5 @@ Multiplying the gamma density by $x^p$ gives another gamma integrand, with shape
 - [Mean of the gamma law](integral-id-gamma-measure.md): special case: the mean
 - [Second moment of the gamma law](integral-sq-gamma-measure.md): special case: second moment
 - [Variance of the gamma law](variance-id-gamma-measure.md): consequence: the variance $a/r^2$
+- [Real moments of the gamma density](lintegral-gamma-pdf-mul-rpow.md): the main formula as an integral against the density
+- [Euler's gamma integral](lintegral-rpow-mul-exp-neg-mul-ioi.md): the normalising integral of the gamma density
