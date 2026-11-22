@@ -64,7 +64,8 @@ noncomputable def encode (g m : F[X]) : F[X] := m * X ^ g.natDegree - m * X ^ g.
 /-- **CRC encoding in characteristic 2.** Let $F$ be a field of characteristic 2 (for example
 $\mathbb{F}_2$), let $g$ and $m$ be polynomials over $F$, and let $r$ be the degree of $g$ (with
 $r = 0$ when $g = 0$). Then the CRC encoding of $m$ with generator $g$ equals
-$m X^r + (m X^r \bmod g)$: the encoder appends the remainder to the shifted message. -/
+$m X^r + (m X^r \bmod g)$. When $g \ne 0$, this means that the encoder appends the remainder to the
+shifted message. -/
 theorem encode_eq_add [CharP F 2] (g m : F[X]) :
     encode g m = m * X ^ g.natDegree + m * X ^ g.natDegree % g := by
   rw [encode, CharTwo.sub_eq_add]
@@ -75,10 +76,10 @@ theorem dvd_encode (g m : F[X]) : g ∣ encode g m := by
   rw [encode, EuclideanDomain.mod_eq_sub_mul_div, sub_sub_cancel]
   exact dvd_mul_right g _
 
-/-- **CRC encoding is systematic.** Let $F$ be a field and $g \ne 0$ a polynomial over $F$ of
-degree $r$. For every message polynomial $m$ over $F$ and every natural number $i$, the
-coefficient of $X^{i+r}$ in the CRC encoding of $m$ with generator $g$ equals the coefficient of
-$X^i$ in $m$. -/
+/-- **CRC encoding with a nonzero generator is systematic.** Let $F$ be a field and $g \ne 0$ a
+polynomial over $F$ of degree $r$. For every message polynomial $m$ over $F$ and every natural
+number $i$, the coefficient of $X^{i+r}$ in the CRC encoding of $m$ with generator $g$ equals the
+coefficient of $X^i$ in $m$. -/
 theorem coeff_encode_add {g : F[X]} (hg : g ≠ 0) (m : F[X]) (i : ℕ) :
     (encode g m).coeff (i + g.natDegree) = m.coeff i := by
   have hrem : (m * X ^ g.natDegree % g).coeff (i + g.natDegree) = 0 := by
@@ -95,9 +96,9 @@ divides the error. -/
 theorem dvd_encode_add_iff (g m e : F[X]) : g ∣ encode g m + e ↔ g ∣ e :=
   dvd_add_right (dvd_encode g m)
 
-/-- **Single-symbol errors are detected.** Let $F$ be a field and $g$ a polynomial over $F$ with
-at least two nonzero coefficients. Then $g$ does not divide $a X^i$ for any nonzero $a \in F$ and
-any natural number $i$.
+/-- **A generator with at least two nonzero coefficients detects single-symbol errors.** Let $F$ be
+a field and $g$ a polynomial over $F$ with at least two nonzero coefficients. Then $g$ does not
+divide $a X^i$ for any nonzero $a \in F$ and any natural number $i$.
 
 The divisors of $X^i$ are the monomials $c X^j$ with $c \in F$ nonzero and $j \le i$, each of
 which has only one nonzero coefficient. -/

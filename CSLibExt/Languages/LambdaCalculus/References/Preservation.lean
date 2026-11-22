@@ -102,8 +102,8 @@ theorem subst {Γ Δ S : List (Ty Base)} {t : Term Base} {T : Ty Base}
 /-- **Substitution lemma for the lambda calculus with references.** Let $\Gamma$ be a variable
 context and $S$ a store typing. If a term $t$ has type $T$ under $S$ and the context that extends
 $\Gamma$ by a new innermost variable (index $0$) of type $A$, and a term $s$ has type $A$ under
-$\Gamma$ and $S$, then substituting $s$ for variable $0$ in $t$ (and lowering every other variable
-by one) gives a term of type $T$ under $\Gamma$ and $S$.
+$\Gamma$ and $S$, then substituting $s$ for variable $0$ in $t$ (and lowering every other free
+variable of $t$ by one) gives a term of type $T$ under $\Gamma$ and $S$.
 
 This is TAPL Lemma 13.5.4 in de Bruijn form. -/
 theorem instantiate {Γ S : List (Ty Base)} {body s : Term Base} {A T : Ty Base}

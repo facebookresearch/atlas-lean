@@ -102,9 +102,10 @@ theorem encode_mem_code (α : Fin n → F) {p : F[X]} (hp : p.degree < k) : enco
 
 variable [DecidableEq F]
 
-/-- **Root count at distinct points.** Let $F$ be a field, let $\alpha_0, \dots, \alpha_{n-1}$
-be pairwise distinct elements of $F$, and let $p \in F[X]$ be a nonzero polynomial. Then the
-number of indices $i < n$ with $p(\alpha_i) = 0$ is at most the degree of $p$. -/
+/-- **Root count at distinct points.** Let $F$ be a field with decidable equality, let
+$\alpha_0, \dots, \alpha_{n-1}$ be pairwise distinct elements of $F$, and let $p \in F[X]$ be a
+nonzero polynomial. Then the number of indices $i < n$ with $p(\alpha_i) = 0$ is at most the degree
+of $p$. -/
 theorem card_eval_eq_zero_le {α : Fin n → F} (hα : Function.Injective α) {p : F[X]}
     (hp : p ≠ 0) : #{i | p.eval (α i) = 0} ≤ p.natDegree := by
   classical
@@ -128,10 +129,10 @@ theorem hammingNorm_encode (α : Fin n → F) (p : F[X]) :
     congr 1
   omega
 
-/-- **Nonzero Reed-Solomon codewords are heavy.** Let $F$ be a field, let $\alpha_0, \dots,
-\alpha_{n-1} \in F$ be pairwise distinct and let $k \le n$. For every nonzero polynomial
-$p \in F[X]$ of degree less than $k$, the encoding $(p(\alpha_0), \dots, p(\alpha_{n-1}))$ has at
-least $n - k + 1$ nonzero coordinates. -/
+/-- **Nonzero Reed-Solomon codewords are heavy.** Let $F$ be a field with decidable equality, let
+$\alpha_0, \dots, \alpha_{n-1} \in F$ be pairwise distinct and let $k \le n$. For every nonzero
+polynomial $p \in F[X]$ of degree less than $k$, the encoding
+$(p(\alpha_0), \dots, p(\alpha_{n-1}))$ has at least $n - k + 1$ nonzero coordinates. -/
 theorem le_hammingNorm_encode {α : Fin n → F} (hα : Function.Injective α) (hkn : k ≤ n)
     {p : F[X]} (hp : p ≠ 0) (hdeg : p.degree < k) : n - k + 1 ≤ hammingNorm (encode α p) := by
   have h1 := card_eval_eq_zero_le hα hp

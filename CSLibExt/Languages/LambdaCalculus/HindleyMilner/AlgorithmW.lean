@@ -159,10 +159,10 @@ def W (Γ : Ctx B) : Expr → ℕ → Option (Subst B × Ty B × ℕ)
     return (s₁ ≫ s₂, τ₂, n₂)
 termination_by e => sizeOf e
 
-/-- **Type inference for closed expressions.** Type inference on an expression $e$ runs
-Algorithm W on $e$ in the empty context with fresh-variable counter $0$. If W succeeds with a
-substitution $s$, a monotype $\tau$ and a counter $n'$, the inferred type of $e$ is $\tau$;
-if W fails, $e$ has no inferred type. -/
+/-- **Type inference in the empty context.** Let equality of base types be decidable. Type inference
+on an expression $e$ runs Algorithm W on $e$ in the empty context with fresh-variable counter $0$.
+If W succeeds with a substitution $s$, a monotype $\tau$ and a counter $n'$, the inferred type of
+$e$ is $\tau$; if W fails, $e$ has no inferred type. -/
 def infer (e : Expr) : Option (Ty B) := (W [] e 0).map fun r ↦ r.2.1
 
 /-! ### Soundness -/
