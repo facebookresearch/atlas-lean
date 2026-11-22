@@ -25,12 +25,15 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Kalman–Mena `(a, b)`-generalized Fibonacci sequence
-(concept `jis_sem_34b8a222e3026d94d1de5306`;
-source statement `jis_34b8a222e3026d94d1de5306`): real parameters `a`, `b`
-together with a real-valued sequence satisfying `F 0 = 0`, `F 1 = 1`, the
-recurrence `F (n + 2) = a * F (n + 1) + b * F n`, and the formal-power-series
-identity for the ordinary generating series `x / (1 - a * x - b * x ^ 2)`. -/
+/-- **Kalman–Mena generalized Fibonacci sequence.** A Kalman–Mena $(a,b)$-generalized
+Fibonacci sequence consists of real parameters $a$ and $b$ together with a real sequence
+$(F_n)_{n \ge 0}$ such that $F_0 = 0$, $F_1 = 1$, $F_{n+2} = a F_{n+1} + b F_n$ for every
+$n \ge 0$, and its ordinary generating series in the formal variable $x$ satisfies the
+identity of formal power series $(1 - a x - b x^2) \sum_{n \ge 0} F_n x^n = x$, that is,
+$\sum_{n \ge 0} F_n x^n = x / (1 - a x - b x^2)$.
+
+Source: concept `jis_sem_34b8a222e3026d94d1de5306`, source statement
+`jis_34b8a222e3026d94d1de5306`. -/
 structure AbGeneralizedFibonacciSequence where
   /-- Real parameter `a` (clause `domain`;
   concept `jis_sem_34b8a222e3026d94d1de5306`;
@@ -65,8 +68,9 @@ structure AbGeneralizedFibonacciSequence where
     (1 - PowerSeries.C a * PowerSeries.X - PowerSeries.C b * PowerSeries.X ^ 2) *
       PowerSeries.mk F = PowerSeries.X
 
-/-- Two generalized Fibonacci sequence packages are equal when their parameters and sequence
-values agree. -/
+/-- **Extensionality for Kalman–Mena generalized Fibonacci sequences.** Two Kalman–Mena
+$(a,b)$-generalized Fibonacci sequences are equal when they have the same parameter $a$, the same
+parameter $b$ and the same sequence $(F_n)_{n \ge 0}$. -/
 @[ext]
 theorem AbGeneralizedFibonacciSequence.ext
     {x y : AbGeneralizedFibonacciSequence}
