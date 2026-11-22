@@ -17,8 +17,6 @@ public import Mathlib.SetTheory.Cardinal.Finite
 
 A monic polynomial of degree `d` is determined by its `d` lower coefficients.
 Summing the counts for the individual degrees gives a finite geometric sum.
-The ATLAS wiki page *Number of monic polynomials of bounded degree* attributes the formula
-to Habib Jaber and Matilde Lalín.
 -/
 
 open Polynomial
@@ -26,7 +24,11 @@ open Polynomial
 namespace MetaMathlibExt
 
 /-- Over a field with `q` elements, the number of monic polynomials of degree at most `N`
-is `(q ^ (N + 1) - 1) / (q - 1)`. -/
+is `(q ^ (N + 1) - 1) / (q - 1)`.
+
+The original statement cites Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor
+Problems over B-Free Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80,
+Proposition 4 (`integers-2026-A80-prop-4`), case `h = 1`, `m = 1`. -/
 public theorem monic_count_natDegree_le {F : Type*} [Field F] [Fintype F] (N : ℕ) :
     (Nat.card {f : F[X] // f.Monic ∧ f.natDegree ≤ N} : ℚ) =
       ((Fintype.card F : ℚ) ^ (N + 1) - 1) / (Fintype.card F - 1) := by
