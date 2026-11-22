@@ -63,8 +63,9 @@ $T_{n+3} = T_{n+2} + T_{n+1} + T_n$. There are infinitely many natural numbers $
 $T_k$ is not a sum of two prime powers.
 
 The paper proves the stronger statement that this holds for every sufficiently large
-$k \equiv 3817 \pmod{163843680}$. That form is not stated here, since the residue class depends
-on how the sequence is indexed.
+$k \equiv 3818 \pmod{163843680}$; that form is not stated here. The paper starts the sequence
+at $T_0 = 0$, $T_1 = T_2 = 1$, so its $k$-th term is $T_{k+1}$ here and it states the class as
+$k \equiv 3817 \pmod{163843680}$.
 
 Source: Baczkowski and Keener, *Third-Order Recurrence Sequences with
 Infinitely Many Terms not Equal to the Sum of Two Prime Powers*, Journal
@@ -79,9 +80,9 @@ $a_{n+3} = a_{n+1} + a_n$, so that $a_{n+2} = P_n$ is the $n$-th Padovan number,
 $P_0 = P_1 = P_2 = 1$ and $P_{n+3} = P_{n+1} + P_n$. There are infinitely many natural numbers
 $k$ such that $a_k$ is not a sum of two prime powers.
 
-The paper proves the stronger statement that this holds for every sufficiently large
-$k \equiv 45750 \pmod{967206240}$. That form is not stated here, since the residue class depends
-on how the sequence is indexed.
+The paper proves the stronger statement that $P_k$ is not a sum of two prime powers for every
+sufficiently large $k \equiv 45750 \pmod{967206240}$, that is, $a_k$ is not one for every
+sufficiently large $k \equiv 45752 \pmod{967206240}$; that form is not stated here.
 
 Source: Baczkowski and Keener, *Third-Order Recurrence Sequences with
 Infinitely Many Terms not Equal to the Sum of Two Prime Powers*, Journal
@@ -108,9 +109,9 @@ public theorem_wanted vanDerLaan_not_isSumOfTwoPrimePowers_of_modEq :
 the Perrin sequence, given by $E_0 = 3$, $E_1 = 0$, $E_2 = 2$ and $E_{n+3} = E_{n+1} + E_n$.
 There are infinitely many natural numbers $k$ such that $E_k$ is not a sum of two prime powers.
 
-The paper proves the stronger statement that this holds for every sufficiently large
-$k \equiv 472190 \pmod{967206240}$. That form is not stated here, since the residue class
-depends on how the sequence is indexed.
+The paper, which indexes the sequence in the same way, proves the stronger statement that this
+holds for every sufficiently large $k \equiv 472190 \pmod{967206240}$; that form is not stated
+here.
 
 Source: Baczkowski and Keener, *Third-Order Recurrence Sequences with
 Infinitely Many Terms not Equal to the Sum of Two Prime Powers*, Journal
@@ -124,9 +125,9 @@ be the Leonardo numbers, the generalized Leonardo numbers $L_{1,n}$ with paramet
 by $L_0 = L_1 = 1$ and $L_{n+2} = L_{n+1} + L_n + 1$. There are infinitely many natural numbers
 $k$ such that $L_k$ is not a sum of two prime powers.
 
-The paper proves the stronger statement that this holds for every sufficiently large
-$k \equiv 539073 \pmod{3543120}$. That form is not stated here, since the residue class depends
-on how the sequence is indexed.
+The paper, which indexes the sequence in the same way, proves the stronger statement that this
+holds for every sufficiently large $k \equiv 539073 \pmod{3543120}$; that form is not stated
+here.
 
 Source: Baczkowski and Keener, *Third-Order Recurrence Sequences with
 Infinitely Many Terms not Equal to the Sum of Two Prime Powers*, Journal
