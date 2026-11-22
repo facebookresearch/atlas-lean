@@ -54,4 +54,22 @@ example (p : ℝ) :
       ((2 : ℝ), (3 : ℝ)) ≠ (1, 6) := by
   refine ⟨linear_identifies_only_product (by norm_num), by norm_num⟩
 
+-- The identification converse itself under both nondegeneracy guards:
+-- equal linearized observations at a nonzero pressure excursion recover
+-- the product equality, through `linearProducedMass_eq_iff`.
+example (h : linearProducedMass 2 1 3 0 1 =
+    linearProducedMass 1 1 6 0 1) : (2 : ℝ) * 3 = 1 * 6 := by
+  exact (linearProducedMass_eq_iff (by norm_num) (by norm_num)).mp h
+
+-- Both guards are necessary. With zero reference density every
+-- linearized observation is zero, so distinct products agree.
+example : linearProducedMass 2 0 3 0 1 = linearProducedMass 1 0 5 0 1 ∧
+    ¬ ((2 : ℝ) * 3 = 1 * 5) := by
+  refine ⟨by simp [linearProducedMass], by norm_num⟩
+
+-- With no pressure excursion every linearized observation is also zero.
+example : linearProducedMass 2 1 3 0 0 = linearProducedMass 1 1 5 0 0 ∧
+    ¬ ((2 : ℝ) * 3 = 1 * 5) := by
+  refine ⟨by simp [linearProducedMass], by norm_num⟩
+
 end Engineering.Resource.ReservoirBalance.Tests

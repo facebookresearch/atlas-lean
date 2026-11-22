@@ -53,13 +53,18 @@ These are stipulated-law identities, not reserves inference.
 
 namespace Engineering.Resource.ReservoirBalance
 
+/-! ## A. Inventory and identification -/
+
 /-- Fluid density under the exponential compressibility law. -/
 noncomputable def density (rho0 cfl p0 p : ℝ) : ℝ :=
   rho0 * Real.exp (cfl * (p - p0))
 
 /-- Produced mass on depleting a constant pore volume `Vp` from `p0` to
-`p`: initial inventory minus current inventory. Positive on depletion
-(`p < p0`), negative on injection (`p > p0`). -/
+`p`: initial inventory minus current inventory. In the physical regime
+`0 < Vp`, `0 < rho0` and `0 < cfl` it is positive on depletion
+(`p < p0`) and negative on injection (`p > p0`); outside that regime no
+sign is claimed (zero pore volume gives zero, and negative parameters
+reverse the sign). -/
 noncomputable def producedMass (Vp rho0 cfl p0 p : ℝ) : ℝ :=
   Vp * (density rho0 cfl p0 p0 - density rho0 cfl p0 p)
 
