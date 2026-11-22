@@ -25,8 +25,8 @@ midpoint) and the film that closes at the outlet (no solution). Scalar contact: 
 complementarity), separation `f = 1`, and the failure of coercivity at `k = 0`. Coulomb
 friction: the public shapes of Section C, separated and closed contact at friction
 coefficient `1`, the non-convex admissible set, the frictionless bridge to Section B, and
-invalid controls (negative friction coefficient, tension admitted by the cone alone, a
-non-unit normal).
+invalid controls (negative friction coefficient, tension excluded by the cone at
+`μ = 0`, a non-unit normal).
 
 ## i. Overview
 
@@ -241,21 +241,34 @@ example : IsAdmissibleContact 1 0 1 (0 : ℝ) ∧
   ⟨by norm_num [IsAdmissibleContact], fun h hg =>
     IsAdmissibleContact.eq_zero_of_gap_pos h hg⟩
 
-/-- Closed loaded contact at `g = 0` (the removed pin target, as a test): admission is a
-nonnegative normal force with `(N, t)` in the friction cone. At `μ = 1`, `N = 1` the stick
+/-- Closed loaded contact at `g = 0` (the removed pin target, as a test): at zero gap,
+admission is exactly cone membership. At `μ = 1`, `N = 1` the stick
 state `t = 1 / 2` and the slip threshold `t = 1` are admissible over `ℝ`, and `t = 2` is not. -/
 example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {μ N : ℝ} {t : E} :
-    (IsAdmissibleContact μ N 0 t ↔ 0 ≤ N ∧ (N, t) ∈ frictionCone μ) ∧
+    (IsAdmissibleContact μ N 0 t ↔ (N, t) ∈ frictionCone μ) ∧
       IsAdmissibleContact 1 1 0 (1 / 2 : ℝ) ∧ IsAdmissibleContact 1 1 0 (1 : ℝ) ∧
       ¬ IsAdmissibleContact 1 1 0 (2 : ℝ) := by
   refine ⟨?_, by norm_num [IsAdmissibleContact], by norm_num [IsAdmissibleContact],
     by norm_num [IsAdmissibleContact]⟩
-  simp [IsAdmissibleContact, frictionCone]
+  simp [IsAdmissibleContact, frictionCone, and_comm]
 
-/-- Tension is excluded by admission, not by the cone: `(-1, 0)` lies in `frictionCone 0`
-over `ℝ`, but the state with `N = -1` is not admissible. -/
-example : ((-1, 0) : ℝ × ℝ) ∈ frictionCone 0 ∧ ¬ IsAdmissibleContact 0 (-1) 0 (0 : ℝ) := by
-  norm_num [frictionCone, IsAdmissibleContact]
+/-- At `μ = 0` the cone is the nonnegative normal ray; tension is excluded by the cone and
+by admission: `(-1, 0)` is outside `frictionCone 0`, `(1, 0)` is inside, and the state
+with `N = -1` is not admissible. Universally, `frictionCone 0` is the ray
+`{p | 0 ≤ p.1 ∧ p.2 = 0}`. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] :
+    ((-1, 0) : ℝ × ℝ) ∉ frictionCone 0 ∧ ((1, 0) : ℝ × ℝ) ∈ frictionCone 0 ∧
+      ¬ IsAdmissibleContact 0 (-1) 0 (0 : ℝ) ∧
+      frictionCone (E := E) 0 = {p | 0 ≤ p.1 ∧ p.2 = 0} := by
+  refine ⟨by norm_num [frictionCone], by norm_num [frictionCone],
+    by norm_num [IsAdmissibleContact], ?_⟩
+  ext ⟨N, t⟩
+  simp only [frictionCone, Set.mem_ofPred_eq, zero_mul]
+  constructor
+  · rintro ⟨h1, h2⟩
+    exact ⟨h2, norm_le_zero_iff.mp h1⟩
+  · rintro ⟨h1, h2⟩
+    exact ⟨by rw [h2, norm_zero], h1⟩
 
 /-- The full admissible set in `(N, g, t)` over `ℝ` at `μ = 1` is not convex: the midpoint
 of the closed state `(1, 0, 0)` and the separated state `(0, 1, 0)` has `N * g = 1 / 4`. -/
