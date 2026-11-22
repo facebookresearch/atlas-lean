@@ -10493,6 +10493,7 @@
   "MathlibExt/Data/Fintype/FiberTransport": {"to": "Combinatorics/elementary-enumeration", "title": "Fibre and double counting"},
   "MathlibExt/Data/Fintype/PiFinsetOn": {"to": "Combinatorics/elementary-enumeration", "title": "Functions with prescribed values"},
   "MathlibExt/Data/Fintype/PrescribedFunctions": {"to": "Combinatorics/elementary-enumeration", "title": "Functions with prescribed values"},
+  "MathlibExt/Data/Int/GCD": {"to": "Combinatorics/elementary-enumeration", "title": "Necklaces over a group with identity product"},
   "MathlibExt/Data/List/PairwiseIdxOf": {"to": "ComputerScience/data-structures/linear-structures", "title": "List operations"},
   "MathlibExt/Data/List/PairwiseProduct": {"to": "ComputerScience/data-structures/linear-structures", "title": "List operations"},
   "MathlibExt/Data/List/SplitLengths": {"to": "ComputerScience/data-structures/linear-structures", "title": "List operations"},
