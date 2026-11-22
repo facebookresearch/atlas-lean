@@ -22,12 +22,11 @@ of distinct values of `∑ a^2`; the Shannon index is
 values. The bounds on `γ` were verified by partition
 enumeration for `N ≤ 30`.
 
-Not stated (see the source audit table): Propositions
-1 and 2 (quoted bounds of Rosenberg relating the
-maximal cell probability to `∑ p_i^2` and to the
-Shannon index) and Theorem 3 (whose bounding
-functions `M_min`, `M_max`, `S_min`, `S_max` are
-defined in missing equations).
+Propositions 1 and 2 (bounds quoted from Rosenberg and
+from Aw and Rosenberg) and Theorem 3 use the paper's
+bounding functions `M_min`, `M_max`, `S_min`, `S_max`
+(Eqs. (1)-(4) of Section 2), here `diversityMmin`,
+`diversityMmax`, `diversitySmin`, `diversitySmax`.
 -/
 module
 
@@ -122,5 +121,133 @@ theorem_wanted shannonCount_superpolynomial
     Filter.Tendsto
       (fun N : ℕ => (shannonCount N : ℝ) / |q.eval (N : ℝ)|)
       Filter.atTop Filter.atTop
+
+/-- `M_min(J) = (1 + √((⌈J⁻¹⌉ J - 1) / (⌈J⁻¹⌉ - 1))) / ⌈J⁻¹⌉`,
+the lower bound for the maximal cell probability given
+`J = ∑ p_i^2`.
+
+Source: Bradley K. Moon and Noah A. Rosenberg,
+"Integer Sequences for Diversity Statistics", Journal of
+Integer Sequences 29 (2026), Article 26.1.5, Eq. (1) (`M_min`). -/
+noncomputable def diversityMmin (J : ℝ) : ℝ :=
+  (1 + Real.sqrt (((⌈J⁻¹⌉ : ℝ) * J - 1) / ((⌈J⁻¹⌉ : ℝ) - 1))) / (⌈J⁻¹⌉ : ℝ)
+
+/-- `M_max(J) = (1 + √((I J - 1)(I - 1))) / I`, the upper
+bound for the maximal cell probability given `J = ∑ p_i^2`
+over `I` cells.
+
+Source: Bradley K. Moon and Noah A. Rosenberg,
+"Integer Sequences for Diversity Statistics", Journal of
+Integer Sequences 29 (2026), Article 26.1.5, Eq. (2) (`M_max`). -/
+noncomputable def diversityMmax (I : ℕ) (J : ℝ) : ℝ :=
+  (1 + Real.sqrt (((I : ℝ) * J - 1) * ((I : ℝ) - 1))) / I
+
+/-- `S_min(M) = ⌊M⁻¹⌋ M log(1/M) + (1 - ⌊M⁻¹⌋ M) log(1 / (1 - ⌊M⁻¹⌋ M))`,
+the lower bound for the Shannon index given the maximal
+cell probability `M`.
+
+Source: Bradley K. Moon and Noah A. Rosenberg,
+"Integer Sequences for Diversity Statistics", Journal of
+Integer Sequences 29 (2026), Article 26.1.5, Eq. (3) (`S_min`), with the argument of the second
+logarithm `1 / (1 - ⌊M⁻¹⌋ M)` as in Proposition 2 (Eq. (3)
+misplaces a floor bracket). -/
+noncomputable def diversitySmin (M : ℝ) : ℝ :=
+  (⌊M⁻¹⌋ : ℝ) * M * Real.log (1 / M) +
+    (1 - (⌊M⁻¹⌋ : ℝ) * M) * Real.log (1 / (1 - (⌊M⁻¹⌋ : ℝ) * M))
+
+/-- `S_max(M) = M log(1/M) + (1 - M) log((I - 1) / (1 - M))`,
+the upper bound for the Shannon index given the maximal
+cell probability `M` over `I` cells.
+
+Source: Bradley K. Moon and Noah A. Rosenberg,
+"Integer Sequences for Diversity Statistics", Journal of
+Integer Sequences 29 (2026), Article 26.1.5, Eq. (4) (`S_max`). -/
+noncomputable def diversitySmax (I : ℕ) (M : ℝ) : ℝ :=
+  M * Real.log (1 / M) + (1 - M) * Real.log (((I : ℝ) - 1) / (1 - M))
+
+/-- Characteristic value: `M_min(1) = 1`.
+
+Source: Bradley K. Moon and Noah A. Rosenberg,
+"Integer Sequences for Diversity Statistics", Journal of
+Integer Sequences 29 (2026), Article 26.1.5, Eq. (1). -/
+theorem diversityMmin_one : diversityMmin 1 = 1 := by
+  simp [diversityMmin]
+
+/-- Characteristic value: `M_max(1) = 1` for `I ≥ 1` cells.
+
+Source: Bradley K. Moon and Noah A. Rosenberg,
+"Integer Sequences for Diversity Statistics", Journal of
+Integer Sequences 29 (2026), Article 26.1.5, Eq. (2). -/
+theorem diversityMmax_one {I : ℕ} (hI : 1 ≤ I) : diversityMmax I 1 = 1 := by
+  have hI' : (1 : ℝ) ≤ I := by exact_mod_cast hI
+  have h : Real.sqrt (((I : ℝ) * 1 - 1) * ((I : ℝ) - 1)) = (I : ℝ) - 1 := by
+    rw [mul_one]
+    exact Real.sqrt_mul_self (by linarith)
+  rw [diversityMmax, h]
+  field_simp
+  ring
+
+/-- Characteristic value: `S_min(1) = 0`.
+
+Source: Bradley K. Moon and Noah A. Rosenberg,
+"Integer Sequences for Diversity Statistics", Journal of
+Integer Sequences 29 (2026), Article 26.1.5, Eq. (3). -/
+theorem diversitySmin_one : diversitySmin 1 = 0 := by
+  simp [diversitySmin]
+
+/-- Characteristic value: `S_max(1) = 0`.
+
+Source: Bradley K. Moon and Noah A. Rosenberg,
+"Integer Sequences for Diversity Statistics", Journal of
+Integer Sequences 29 (2026), Article 26.1.5, Eq. (4). -/
+theorem diversitySmax_one (I : ℕ) : diversitySmax I 1 = 0 := by
+  simp [diversitySmax]
+
+/-- **Proposition 1** (quoted from Rosenberg, Thm. 2.7): for a
+probability vector `p` on `I ≥ 2` cells with at least two
+nonzero entries, `J = ∑ p_i^2` and `M = max p_i`,
+`M_min(J) ≤ M ≤ M_max(J)`.
+
+Source: Bradley K. Moon and Noah A. Rosenberg,
+"Integer Sequences for Diversity Statistics", Journal of
+Integer Sequences 29 (2026), Article 26.1.5, Proposition 1 (`jis-2026-26.1.5-prop-1`). `M` is any
+greatest value of `p`. -/
+theorem_wanted diversityMmin_le_max_le_diversityMmax {I : ℕ} (hI : 2 ≤ I) (p : Fin I → ℝ)
+    (hp0 : ∀ i, 0 ≤ p i) (hp1 : ∑ i, p i = 1)
+    (hp2 : ∃ i j, i ≠ j ∧ p i ≠ 0 ∧ p j ≠ 0)
+    (M : ℝ) (hM : IsGreatest (Set.range p) M) :
+    diversityMmin (∑ i, p i ^ 2) ≤ M ∧ M ≤ diversityMmax I (∑ i, p i ^ 2)
+
+/-- **Proposition 2** (quoted from Aw and Rosenberg,
+Cor. 3.16): for a probability vector `p` on `I ≥ 2` cells
+with at least two nonzero entries, `M = max p_i` and Shannon
+index `S = -∑ p_i log p_i`, `S_min(M) ≤ S ≤ S_max(M)`.
+
+Source: Bradley K. Moon and Noah A. Rosenberg,
+"Integer Sequences for Diversity Statistics", Journal of
+Integer Sequences 29 (2026), Article 26.1.5, Proposition 2 (`jis-2026-26.1.5-prop-2`). `0 log 0 = 0`
+matches `Real.log 0 = 0`. -/
+theorem_wanted diversitySmin_le_shannon_le_diversitySmax {I : ℕ} (hI : 2 ≤ I) (p : Fin I → ℝ)
+    (hp0 : ∀ i, 0 ≤ p i) (hp1 : ∑ i, p i = 1)
+    (hp2 : ∃ i j, i ≠ j ∧ p i ≠ 0 ∧ p j ≠ 0)
+    (M : ℝ) (hM : IsGreatest (Set.range p) M) :
+    diversitySmin M ≤ -∑ i, p i * Real.log (p i) ∧
+      -∑ i, p i * Real.log (p i) ≤ diversitySmax I M
+
+/-- **Theorem 3**: for a probability vector `p` on `I ≥ 2`
+cells with at least two nonzero entries and Gini-Simpson index
+`H = 1 - ∑ p_i^2`, the Shannon index satisfies
+`S_min(M_max(1 - H)) ≤ S ≤ S_max(M_min(1 - H))`.
+
+Source: Bradley K. Moon and Noah A. Rosenberg,
+"Integer Sequences for Diversity Statistics", Journal of
+Integer Sequences 29 (2026), Article 26.1.5, Theorem 3 (`jis-2026-26.1.5-thm-3`). The paper's
+hypothesis `0 < H ≤ 1 - 1/I` holds for every such `p` and is
+not repeated; `1 - H` is written as `∑ p_i^2`. -/
+theorem_wanted diversitySmin_diversityMmax_le_shannon_le {I : ℕ} (hI : 2 ≤ I) (p : Fin I → ℝ)
+    (hp0 : ∀ i, 0 ≤ p i) (hp1 : ∑ i, p i = 1)
+    (hp2 : ∃ i j, i ≠ j ∧ p i ≠ 0 ∧ p j ≠ 0) :
+    diversitySmin (diversityMmax I (∑ i, p i ^ 2)) ≤ -∑ i, p i * Real.log (p i) ∧
+      -∑ i, p i * Real.log (p i) ≤ diversitySmax I (diversityMmin (∑ i, p i ^ 2))
 
 end MathlibExt.Probability.DiversityStatisticsWanted

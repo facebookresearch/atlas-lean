@@ -9,6 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.GroupTheory.SpecificGroups.Dihedral.IndexTwo
+public import Mathlib.Algebra.Group.TypeTags.Finite
+import Mathlib.Algebra.Group.Equiv.TypeTags
+import Mathlib.Data.ZMod.Basic
 import Mathlib.GroupTheory.IndexNormal
 import Mathlib.GroupTheory.Perm.Cycle.Type
 import Mathlib.GroupTheory.SpecificGroups.Cyclic
@@ -17,12 +20,23 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
-# Noncyclic groups of order ten
+# Groups of order ten
 
-Adapted from `v1/Atlas/AlgebraNotes/code/SylowTheorems.lean`, lines 108-313 at
+Adapted from `v1/Atlas/AlgebraNotes/code/SylowTheorems.lean`, lines 108-325 at
 commit `8de8f74fa5760eb8b768a9804494ca2ab631cf87`.
-The public statement preserves the archived code's domains and hypotheses.
-This provenance is code-to-code, not verification of the unavailable textbook PDF.
+The `C₁₀` corollaries preserve the archived Lean classification's domains and
+hypotheses. The recorded target in `v1/Atlas/AlgebraNotes/targets.yaml`, lines
+297-301, instead writes the cyclic alternative as `C₅ × C₂`.
+`groups_of_order_10_classification_prod` gives those alternatives, and
+`groups_of_order_10_classification_prod_xor` states that exactly one holds.
+This provenance compares archived code and its recorded target with this file;
+the unavailable textbook PDF has not been verified.
+
+All classification corollaries reuse the canonical noncyclic theorem.
+The product corollary constructs `C₁₀ ≃* C₅ × C₂` with Mathlib's Chinese
+remainder equivalence and the multiplicative type-tag product equivalence.
+The `C₁₀` and `D₅` alternatives are exclusive, as recorded by
+`groups_of_order_10_classification_xor`.
 -/
 set_option autoImplicit false
 
@@ -168,6 +182,84 @@ theorem nonempty_mulEquiv_dihedralGroup_of_card_eq_ten_of_not_isCyclic
     rw [Nat.card_zpowers, hx5]
   rw [hcard] at h
   exact h
+
+/-- **Classification of groups of order 10.** Every group of order 10 is
+isomorphic either to the cyclic group `C₁₀` (as `Multiplicative (ZMod 10)`)
+or to the dihedral group `D₅` (`DihedralGroup 5`). See
+`groups_of_order_10_classification_xor` for the exclusive form: exactly one
+of the two alternatives holds. -/
+theorem groups_of_order_10_classification
+    (G : Type*) [Group G] [Fintype G] (hG : Fintype.card G = 10) :
+    Nonempty (G ≃* Multiplicative (ZMod 10)) ∨ Nonempty (G ≃* DihedralGroup 5) := by
+  by_cases hcyc : IsCyclic G
+  · left
+    have hcard : Nat.card G = 10 := by rwa [Nat.card_eq_fintype_card]
+    have e := zmodCyclicMulEquiv hcyc
+    rw [hcard] at e
+    exact ⟨e.symm⟩
+  · right
+    exact MetaMathlibExt.nonempty_mulEquiv_dihedralGroup_of_card_eq_ten_of_not_isCyclic G hG hcyc
+
+/-- **Exclusive classification of groups of order 10.** Exactly one of the two
+alternatives in `groups_of_order_10_classification` holds: a group of order 10
+cannot be isomorphic to both `C₁₀` and `D₅`, since `C₁₀` is cyclic while
+`DihedralGroup 5` is not (`DihedralGroup.not_isCyclic`), and cyclicity is
+preserved under multiplicative equivalences. -/
+theorem groups_of_order_10_classification_xor
+    (G : Type*) [Group G] [Fintype G] (hG : Fintype.card G = 10) :
+    (Nonempty (G ≃* Multiplicative (ZMod 10)) ∧ ¬Nonempty (G ≃* DihedralGroup 5)) ∨
+      (¬Nonempty (G ≃* Multiplicative (ZMod 10)) ∧ Nonempty (G ≃* DihedralGroup 5)) := by
+  have hnotboth : ¬(Nonempty (G ≃* Multiplicative (ZMod 10)) ∧
+      Nonempty (G ≃* DihedralGroup 5)) := by
+    rintro ⟨⟨e⟩, ⟨f⟩⟩
+    have h : IsCyclic (DihedralGroup 5) :=
+      (f.symm.trans e).isCyclic.mpr inferInstance
+    exact DihedralGroup.not_isCyclic (by norm_num : (5 : ℕ) ≠ 1) h
+  rcases groups_of_order_10_classification G hG with ⟨⟨e⟩⟩ | ⟨⟨f⟩⟩
+  · exact Or.inl ⟨⟨e⟩, fun h => hnotboth ⟨⟨e⟩, h⟩⟩
+  · exact Or.inr ⟨fun h => hnotboth ⟨h, ⟨f⟩⟩, ⟨f⟩⟩
+
+/-- **Classification in the recorded product form.** Every group of order ten
+is isomorphic to `C₅ × C₂` or `D₅`, as stated in
+`v1/Atlas/AlgebraNotes/targets.yaml`, lines 297-301. The cyclic branch is
+transported from `C₁₀` by Mathlib's Chinese remainder equivalence. See
+`groups_of_order_10_classification_prod_xor` for the exclusive form. -/
+theorem groups_of_order_10_classification_prod
+    (G : Type*) [Group G] [Fintype G] (hG : Fintype.card G = 10) :
+    Nonempty (G ≃* (Multiplicative (ZMod 5) × Multiplicative (ZMod 2))) ∨
+      Nonempty (G ≃* DihedralGroup 5) := by
+  let eProd : Multiplicative (ZMod 10) ≃*
+      (Multiplicative (ZMod 5) × Multiplicative (ZMod 2)) :=
+    (ZMod.chineseRemainder (by decide : Nat.Coprime 5 2)).toAddEquiv.toMultiplicative.trans
+      (MulEquiv.prodMultiplicative (ZMod 5) (ZMod 2))
+  rcases groups_of_order_10_classification G hG with hC | hD
+  · rcases hC with ⟨e⟩
+    exact Or.inl ⟨e.trans eProd⟩
+  · exact Or.inr hD
+
+/-- **Exclusive classification in the recorded product form.** Exactly one of
+the `C₅ × C₂` and `D₅` alternatives holds for a group of order ten, as in
+`v1/Atlas/AlgebraNotes/targets.yaml`, lines 297-301. The product is cyclic
+and `D₅` is not, so the ordinary product classification is exclusive. -/
+theorem groups_of_order_10_classification_prod_xor
+    (G : Type*) [Group G] [Fintype G] (hG : Fintype.card G = 10) :
+    (Nonempty (G ≃* (Multiplicative (ZMod 5) × Multiplicative (ZMod 2))) ∧
+      ¬Nonempty (G ≃* DihedralGroup 5)) ∨
+    (¬Nonempty (G ≃* (Multiplicative (ZMod 5) × Multiplicative (ZMod 2))) ∧
+      Nonempty (G ≃* DihedralGroup 5)) := by
+  have hcyc : IsCyclic (Multiplicative (ZMod 5) × Multiplicative (ZMod 2)) := by
+    apply Group.isCyclic_prod_iff.mpr
+    refine ⟨inferInstance, inferInstance, ?_⟩
+    simpa only [Nat.card_eq_fintype_card, Fintype.card_multiplicative, ZMod.card]
+      using (by decide : Nat.Coprime 5 2)
+  have hnotboth : ¬(Nonempty (G ≃* (Multiplicative (ZMod 5) × Multiplicative (ZMod 2))) ∧
+      Nonempty (G ≃* DihedralGroup 5)) := by
+    rintro ⟨⟨e⟩, ⟨f⟩⟩
+    exact DihedralGroup.not_isCyclic (by decide : (5 : ℕ) ≠ 1)
+      ((f.symm.trans e).isCyclic.mpr hcyc)
+  rcases groups_of_order_10_classification_prod G hG with hP | hD
+  · exact Or.inl ⟨hP, fun hD => hnotboth ⟨hP, hD⟩⟩
+  · exact Or.inr ⟨fun hP => hnotboth ⟨hP, hD⟩, hD⟩
 
 end
 

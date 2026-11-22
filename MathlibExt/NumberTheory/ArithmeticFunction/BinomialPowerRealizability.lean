@@ -10,9 +10,8 @@ module
 
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 import Mathlib.Algebra.Field.ZMod
-import Mathlib.Algebra.Order.Archimedean.Basic
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Nat.Choose.Lucas
+import Mathlib.Data.Nat.Factorial.BigOperators
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 import MathlibExt.NumberTheory.DoldSequence
@@ -593,14 +592,6 @@ private theorem choose_add_unit_eq (p N M K J : ℕ) (hp : 0 < p)
     exact e1
   exact Nat.mul_left_cancel hposPE heq
 
-private theorem prod_range_add_one_eq_factorial (K : ℕ) :
-    ∏ t ∈ Finset.range K, (t + 1) = Nat.factorial K := by
-  induction K with
-  | zero =>
-    simp
-  | succ K ih =>
-    rw [Finset.prod_range_succ, ih, Nat.factorial_succ, mul_comm]
-
 private theorem prod_range_sub_mul_factorial (N K : ℕ) (hKN : K ≤ N) :
     (∏ t ∈ Finset.range K, (N - t)) * Nat.factorial (N - K)
       = Nat.factorial N := by
@@ -703,7 +694,7 @@ private theorem prod_range_dvd_succ_eq (p J : ℕ) (hp : 0 < p) :
   have h2 := prod_filter_dvd_eq p J hp
   have h3 : (∏ t ∈ Finset.Icc 1 J, t)
       = ∏ s ∈ Finset.range J, (s + 1) := by
-    rw [prod_Icc_one_eq_factorial, prod_range_add_one_eq_factorial]
+    rw [prod_Icc_one_eq_factorial, Finset.prod_range_add_one_eq_factorial]
   rw [h1, h2, h3]
 
 private theorem filter_range_eq_filter_Icc (p K J : ℕ) (hK : K = p * J) :
@@ -735,7 +726,7 @@ private theorem filter_range_eq_filter_Icc (p K J : ℕ) (hK : K = p * J) :
 private theorem prod_range_notdvd_eq (p K : ℕ) :
     ∏ t ∈ (Finset.range K).filter (fun t => ¬ p ∣ t + 1), (t + 1)
       = ∏ i ∈ (Finset.Icc 1 K).filter (fun i => ¬ p ∣ i), i := by
-  have hfullR := prod_range_add_one_eq_factorial K
+  have hfullR := Finset.prod_range_add_one_eq_factorial K
   have hfullI := prod_Icc_one_eq_factorial K
   have hsplitR := Finset.prod_filter_mul_prod_filter_not
     (Finset.range K) (fun t => p ∣ t + 1) (fun t => t + 1)
@@ -907,7 +898,7 @@ private theorem choose_mul_prod_range_aux (N K : ℕ) :
   by_cases hKN : K ≤ N
   · have h1 := Nat.choose_mul_factorial_mul_factorial hKN
     have h2 := prod_range_sub_mul_factorial N K hKN
-    have h3 := prod_range_add_one_eq_factorial K
+    have h3 := Finset.prod_range_add_one_eq_factorial K
     have hpos : 0 < Nat.factorial (N - K) := Nat.factorial_pos _
     have hmul : (Nat.choose N K * (∏ t ∈ Finset.range K, (t + 1)))
         * Nat.factorial (N - K)
@@ -977,38 +968,6 @@ private theorem choose_range_unit_eq (p N M K J : ℕ) (hp : 0 < p)
     ring_nf at e1 ⊢
     exact e1
   exact Nat.mul_left_cancel hposPE heq
-
-private theorem choose_mul_prod_range (N K : ℕ) :
-    Nat.choose N K * (∏ t ∈ Finset.range K, (t + 1))
-      = ∏ t ∈ Finset.range K, (N - t) := by
-  by_cases hKN : K ≤ N
-  · have h1 := Nat.choose_mul_factorial_mul_factorial hKN
-    have h2 := prod_range_sub_mul_factorial N K hKN
-    have h3 := prod_range_add_one_eq_factorial K
-    have hpos : 0 < Nat.factorial (N - K) := Nat.factorial_pos _
-    have hmul : (Nat.choose N K * (∏ t ∈ Finset.range K, (t + 1)))
-        * Nat.factorial (N - K)
-        = (∏ t ∈ Finset.range K, (N - t)) * Nat.factorial (N - K) := by
-      rw [mul_assoc, h3]
-      have hcomm : Nat.factorial K * Nat.factorial (N - K)
-          = Nat.factorial (N - K) * Nat.factorial K := by
-        rw [mul_comm]
-      rw [hcomm, ← mul_assoc]
-      have h1' : Nat.choose N K * Nat.factorial (N - K)
-          * Nat.factorial K = Nat.factorial N := by
-        rw [mul_assoc] at h1 ⊢
-        rw [mul_comm (Nat.factorial K) (Nat.factorial (N - K))] at h1
-        exact h1
-      rw [h1']
-      exact h2.symm
-    exact Nat.mul_right_cancel hpos hmul
-  · have hlt : N < K := by omega
-    have hC0 : Nat.choose N K = 0 := Nat.choose_eq_zero_of_lt hlt
-    have hP0 : (∏ t ∈ Finset.range K, (N - t)) = 0 := by
-      have hmem : N ∈ Finset.range K := Finset.mem_range.mpr hlt
-      have hterm : N - N = 0 := Nat.sub_self N
-      exact Finset.prod_eq_zero hmem hterm
-    rw [hC0, hP0, Nat.zero_mul]
 
 private theorem choose_add_prime_pow_congr (p t n j : ℕ)
     [Fact (Nat.Prime p)] :
@@ -1324,175 +1283,6 @@ private theorem binomialPowerSeq_moebius_nonneg (r s n : ℕ) (hr : 0 < r)
     exact_mod_cast hnat
   omega
 
-private theorem prime_dvd_choose_mul_of_not_dvd (p n k : ℕ) [Fact (Nat.Prime p)]
-    (_hle : k ≤ p * n) (hk : ¬ p ∣ k) : p ∣ (p * n).choose k := by
-  have hp : Nat.Prime p := Fact.out
-  have hp1 : 1 < p := hp.one_lt
-  obtain ⟨a, ha⟩ := pow_unbounded_of_one_lt (p * n + k + 1) hp1
-  have hpn : p * n < p ^ a := by omega
-  have hk2 : k < p ^ a := by omega
-  have hluc := Choose.lucas_theorem_nat (n := p * n) (k := k) (p := p) hpn hk2
-  have hpm : p * n % p = 0 := Nat.mul_mod_right p n
-  have hkr : k % p ≠ 0 := fun h => hk (Nat.dvd_of_mod_eq_zero h)
-  have hpos : 0 < k % p := Nat.pos_of_ne_zero hkr
-  have e1 : p * n / p ^ 0 % p = 0 := by
-    simp only [pow_zero, Nat.div_one]
-    exact hpm
-  have e2 : k / p ^ 0 % p = k % p := by simp
-  have hfactor : (p * n / p ^ 0 % p).choose (k / p ^ 0 % p) = 0 := by
-    rw [e1, e2]
-    exact Nat.choose_eq_zero_of_lt hpos
-  have ha0 : 0 < a := by
-    rcases Nat.eq_zero_or_pos a with rfl | h
-    · rw [pow_zero] at ha; omega
-    · exact h
-  have hprod : ∏ i ∈ Finset.range a, (p * n / p ^ i % p).choose (k / p ^ i % p) = 0 := by
-    exact Finset.prod_eq_zero (Finset.mem_range.mpr ha0) hfactor
-  have h0 : (p * n).choose k ≡ 0 [MOD p] := hluc.trans (by rw [hprod])
-  exact (Nat.modEq_zero_iff_dvd).mp h0
-
-private theorem prime_choose_mul_congr (p N Q : ℕ) [Fact (Nat.Prime p)] :
-    (p * N).choose (p * Q) ≡ N.choose Q [MOD p] := by
-  have hp : Nat.Prime p := Fact.out
-  have hp1 : 1 < p := hp.one_lt
-  have hp0 : 0 < p := hp.pos
-  obtain ⟨b, hb⟩ := pow_unbounded_of_one_lt (p * N + p * Q + 1) hp1
-  have hPN : p * N < p ^ b := by omega
-  have hPQ : p * Q < p ^ b := by omega
-  have hN : N < p ^ b :=
-    lt_of_le_of_lt (Nat.le_mul_of_pos_left N hp0) hPN
-  have hQ : Q < p ^ b :=
-    lt_of_le_of_lt (Nat.le_mul_of_pos_left Q hp0) hPQ
-  have hle : p ^ b ≤ p ^ (b + 1) :=
-    Nat.pow_le_pow_right hp0 (Nat.le_succ b)
-  have hPN' : p * N < p ^ (b + 1) := lt_of_lt_of_le hPN hle
-  have hPQ' : p * Q < p ^ (b + 1) := lt_of_lt_of_le hPQ hle
-  have hN' : N < p ^ (b + 1) := lt_of_lt_of_le hN hle
-  have hQ' : Q < p ^ (b + 1) := lt_of_lt_of_le hQ hle
-  have hluc1 := Choose.lucas_theorem_nat (n := p * N) (k := p * Q) (p := p) hPN' hPQ'
-  have hluc2 := Choose.lucas_theorem_nat (n := N) (k := Q) (p := p) hN' hQ'
-  have hshift : ∀ j : ℕ, (p * N) / p ^ (j + 1) % p = N / p ^ j % p := by
-    intro j
-    have e : p ^ (j + 1) = p * p ^ j := pow_succ' p j
-    rw [e, Nat.mul_div_mul_left _ _ hp0]
-  have hshift2 : ∀ j : ℕ, (p * Q) / p ^ (j + 1) % p = Q / p ^ j % p := by
-    intro j
-    have e : p ^ (j + 1) = p * p ^ j := pow_succ' p j
-    rw [e, Nat.mul_div_mul_left _ _ hp0]
-  have htop2 : N / p ^ b % p = 0 := by
-    have h : N / p ^ b = 0 := Nat.div_eq_of_lt hN
-    rw [h, Nat.zero_mod]
-  have htop2' : Q / p ^ b % p = 0 := by
-    have h : Q / p ^ b = 0 := Nat.div_eq_of_lt hQ
-    rw [h, Nat.zero_mod]
-  have hbot : (p * N) / p ^ 0 % p = 0 := by
-    simp only [pow_zero, Nat.div_one]
-    exact Nat.mul_mod_right p N
-  have hbot' : (p * Q) / p ^ 0 % p = 0 := by
-    simp only [pow_zero, Nat.div_one]
-    exact Nat.mul_mod_right p Q
-  have hF0 : ((p * N) / p ^ 0 % p).choose ((p * Q) / p ^ 0 % p) = 1 := by
-    simp only [hbot, hbot', Nat.choose_zero_right]
-  have hGb : (N / p ^ b % p).choose (Q / p ^ b % p) = 1 := by
-    simp only [htop2, htop2', Nat.choose_zero_right]
-  have hmid : (∏ k ∈ Finset.range b, ((p * N) / p ^ (k + 1) % p).choose ((p * Q) / p ^ (k + 1) % p))
-      = ∏ k ∈ Finset.range b, (N / p ^ k % p).choose (Q / p ^ k % p) := by
-    apply Finset.prod_congr rfl
-    intro j hj
-    rw [hshift j, hshift2 j]
-  have hprod_eq : (∏ i ∈ Finset.range (b + 1), ((p * N) / p ^ i % p).choose ((p * Q) / p ^ i % p))
-      = ∏ j ∈ Finset.range (b + 1), (N / p ^ j % p).choose (Q / p ^ j % p) := by
-    rw [Finset.prod_range_succ' (fun i => ((p * N) / p ^ i % p).choose ((p * Q) / p ^ i % p)) b]
-    rw [Finset.prod_range_succ (fun j => (N / p ^ j % p).choose (Q / p ^ j % p)) b]
-    rw [hmid, hF0, hGb, mul_one]
-  exact hluc1.trans (by rw [hprod_eq]; exact hluc2.symm)
-
-private theorem binomialPowerSeq_prime_mul_zmod (p r s n : ℕ) [Fact (Nat.Prime p)] (hr : 0 < r) :
-    ((binomialPowerSeq r s (p * n) : ℕ) : ZMod p) = ((binomialPowerSeq r s n : ℕ) : ZMod p) := by
-  have hp : Nat.Prime p := Fact.out
-  have hp0 : 0 < p := hp.pos
-  have hrne : r ≠ 0 := ne_of_gt hr
-  have hcast : ∀ m : ℕ, ((binomialPowerSeq r s m : ℕ) : ZMod p)
-      = ∑ k ∈ Finset.range (m + 1),
-        (((Nat.choose m k : ℕ) : ZMod p) ^ r * (((Nat.choose (m + k) k : ℕ)) : ZMod p) ^ s) := by
-    intro m
-    unfold binomialPowerSeq
-    rw [Nat.cast_sum]
-    apply Finset.sum_congr rfl
-    intro k _
-    simp [Nat.cast_mul, Nat.cast_pow]
-  rw [hcast (p * n), hcast n]
-  set F : ℕ → ZMod p := fun k =>
-    (((Nat.choose (p * n) k : ℕ) : ZMod p) ^ r *
-      (((Nat.choose (p * n + k) k : ℕ)) : ZMod p) ^ s) with hF
-  set G : ℕ → ZMod p := fun q =>
-    (((Nat.choose n q : ℕ) : ZMod p) ^ r * (((Nat.choose (n + q) q : ℕ)) : ZMod p) ^ s) with hG
-  have hzero : ∀ k ∈ Finset.range (p * n + 1), ¬ p ∣ k → F k = 0 := by
-    intro k hk hkd
-    have hle : k ≤ p * n := Nat.lt_succ_iff.mp (Finset.mem_range.mp hk)
-    have hdvd : p ∣ (p * n).choose k := prime_dvd_choose_mul_of_not_dvd p n k hle hkd
-    have hcast0 : (((Nat.choose (p * n) k : ℕ)) : ZMod p) = 0 :=
-      (CharP.cast_eq_zero_iff (ZMod p) p _).mpr hdvd
-    simp [hF, hcast0, zero_pow hrne]
-  have hsumfilter : ∑ k ∈ Finset.range (p * n + 1), F k
-      = ∑ k ∈ (Finset.range (p * n + 1)).filter (fun k => p ∣ k), F k := by
-    apply Eq.symm
-    apply Finset.sum_subset (Finset.filter_subset _ _)
-    intro k hk hnk
-    have hkd : ¬ p ∣ k := fun hd => hnk (Finset.mem_filter.mpr ⟨hk, hd⟩)
-    exact hzero k hk hkd
-  have hbij : ∑ k ∈ (Finset.range (p * n + 1)).filter (fun k => p ∣ k), F k
-      = ∑ q ∈ Finset.range (n + 1), G q := by
-    apply Finset.sum_bij (fun k _ => k / p)
-    · intro k hk
-      rw [Finset.mem_filter] at hk
-      rw [Finset.mem_range] at hk ⊢
-      obtain ⟨q, rfl⟩ := hk.2
-      have hqn : q ≤ n := by
-        apply Nat.le_of_mul_le_mul_left _ hp0
-        exact Nat.lt_succ_iff.mp hk.1
-      have e : p * q / p = q := (by rw [mul_comm p q]; exact Nat.mul_div_cancel q hp0)
-      rw [e]
-      exact Nat.lt_succ_iff.mpr hqn
-    · intro k1 h1 k2 h2 h12
-      rw [Finset.mem_filter] at h1 h2
-      obtain ⟨q1, rfl⟩ := h1.2
-      obtain ⟨q2, rfl⟩ := h2.2
-      have e1 : p * q1 / p = q1 := (by rw [mul_comm p q1]; exact Nat.mul_div_cancel q1 hp0)
-      have e2 : p * q2 / p = q2 := (by rw [mul_comm p q2]; exact Nat.mul_div_cancel q2 hp0)
-      rw [e1, e2] at h12
-      rw [h12]
-    · intro q hq
-      rw [Finset.mem_range] at hq
-      have hqn : q ≤ n := Nat.lt_succ_iff.mp hq
-      refine ⟨p * q, ?_, (by rw [mul_comm p q]; exact Nat.mul_div_cancel q hp0)⟩
-      rw [Finset.mem_filter]
-      refine ⟨Finset.mem_range.mpr (Nat.lt_succ_of_le (Nat.mul_le_mul_left p hqn)), ?_⟩
-      exact ⟨q, rfl⟩
-    · intro k hk
-      rw [Finset.mem_filter] at hk
-      obtain ⟨q, rfl⟩ := hk.2
-      have e : p * q / p = q := (by rw [mul_comm p q]; exact Nat.mul_div_cancel q hp0)
-      rw [e]
-      have e1 : (((Nat.choose (p * n) (p * q) : ℕ)) : ZMod p)
-          = (((Nat.choose n q : ℕ)) : ZMod p) :=
-        (ZMod.natCast_eq_natCast_iff _ _ _).mpr (prime_choose_mul_congr p n q)
-      have eeq : p * n + p * q = p * (n + q) := by ring
-      have h2 : (p * (n + q)).choose (p * q) ≡ (n + q).choose q [MOD p] :=
-        prime_choose_mul_congr p (n + q) q
-      have e2 : (((Nat.choose (p * n + p * q) (p * q) : ℕ)) : ZMod p)
-          = (((Nat.choose (n + q) q : ℕ)) : ZMod p) := by
-        rw [eeq]
-        exact (ZMod.natCast_eq_natCast_iff _ _ _).mpr h2
-      simp only [hF, hG]
-      rw [e1, e2]
-  rw [hsumfilter]
-  exact hbij
-
-private theorem binomialPowerSeq_prime_mul_modEq (p r s n : ℕ) [Fact (Nat.Prime p)] (hr : 0 < r) :
-    binomialPowerSeq r s (p * n) ≡ binomialPowerSeq r s n [MOD p] :=
-  (ZMod.natCast_eq_natCast_iff _ _ _).mp (binomialPowerSeq_prime_mul_zmod p r s n hr)
-
 private theorem binomialPowerSeq_prime_pow_zmod (p t r s n : ℕ)
     [Fact (Nat.Prime p)] (hr : 0 < r) :
     ((binomialPowerSeq r s (p ^ (t + 1) * n) : ℕ) : ZMod (p ^ (t + 1)))
@@ -1650,10 +1440,6 @@ private theorem mul_dvd_pow_mul_of_dvd (p t m0 e : ℕ) (he : e ∣ m0) :
   have hppow : p ∣ p ^ (t + 1) := dvd_pow_self p (Nat.succ_ne_zero t)
   exact Nat.mul_dvd_mul hppow he
 
-private theorem div_pow_mul_eq (p t m0 e : ℕ) (he : e ∣ m0) :
-    (p ^ (t + 1) * m0) / e = p ^ (t + 1) * (m0 / e) :=
-  Nat.mul_div_assoc _ he
-
 private theorem div_pow_mul_prime_eq (p t m0 e : ℕ) (hp0 : 0 < p)
     (he0 : 0 < e) (he : e ∣ m0) :
     (p ^ (t + 1) * m0) / (p * e) = p ^ t * (m0 / e) := by
@@ -1720,7 +1506,7 @@ private theorem moebius_sum_reorg (p t m0 : ℕ) [Fact (Nat.Prime p)]
     have hdvd0 : e ∣ m0 :=
       Nat.dvd_of_mem_divisors ((Finset.mem_filter.mp he).1)
     have hdiv : (p ^ (t + 1) * m0) / e = p ^ (t + 1) * (m0 / e) :=
-      div_pow_mul_eq p t m0 e hdvd0
+      Nat.mul_div_assoc _ hdvd0
     rw [hdiv]
   have hS0 : (∑ d ∈ ((Nat.divisors (p ^ (t + 1) * m0)).filter
         (fun d => p ∣ d)).filter (fun d => p * p ∣ d),

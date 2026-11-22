@@ -37,7 +37,7 @@ theorem_wanted zhang2014UpperBound : primeGapLiminf ≤ (70000000 : WithTop ℕ)
 Source: Polymath, Algebra & Number Theory 8 (2014), 2067-2199; Polymath8b v4, Introduction. -/
 theorem_wanted polymath8a2014UpperBound : primeGapLiminf ≤ (4680 : WithTop ℕ)
 
-/-- Maynard's unconditional bound, also obtained independently by Tao.
+/-- Maynard's unconditional bound; Tao independently obtained only a weaker bound.
 Source: Maynard, Annals of Mathematics 181 (2015), 383-413; Polymath8b v4, Theorem 1.3(i). -/
 theorem_wanted maynard2015UpperBound : primeGapLiminf ≤ (600 : WithTop ℕ)
 

@@ -69,7 +69,6 @@ theorem Delannoy_one_one :
 
 -- Combinatorics 462: Southeast Path
 
-
 theorem SoutheastPath_nonempty_isEmpty :
     Nonempty (SoutheastPath (0, 1) (2, 0)) ∧
       IsEmpty (SoutheastPath (0, 0) (0, 1)) := by
@@ -99,7 +98,6 @@ theorem SoutheastPath_nonempty_isEmpty :
 
 -- Combinatorics 463: Southeast Path Weight
 
-
 theorem SoutheastPath.weight_eastSouthEast
     {R : Type*} [CommMonoid R] (x : ℕ → R) :
     SoutheastPath.weight x
@@ -108,7 +106,6 @@ theorem SoutheastPath.weight_eastSouthEast
   simp [SoutheastPath.weight]
 
 -- Combinatorics 465: Nonintersecting Path Family
-
 
 theorem isNonintersectingPathFamily_twoPaths :
     IsNonintersectingPathFamily
@@ -127,7 +124,6 @@ theorem isNonintersectingPathFamily_twoPaths :
   exact ⟨by decide, by decide⟩
 
 -- Combinatorics 464: Nonintersecting Path Weight Sum
-
 
 theorem nonintersectingPathWeightSum_two
     {R : Type*} [CommSemiring R] (x : ℕ → R) :

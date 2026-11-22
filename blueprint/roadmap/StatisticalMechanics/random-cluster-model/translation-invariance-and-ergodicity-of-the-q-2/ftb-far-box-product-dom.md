@@ -1,0 +1,3 @@
+# Far-box product domination of multi-open events
+
+For $d \in \mathbb{N}$, $0 < p < 1$, measures $(\mu_m)_{m \in \mathbb{N}}$ and $\mu$ on configurations of $\mathbb{Z}^d$ (assignments of open/closed states to all unordered pairs of sites), far-box product domination holds when for every finite family $\mathcal{P}$ of finite sets of pairs of sites, every $m \in \mathbb{N}$ and every $\delta > 0$ there is $g \in \mathbb{Z}^d$ with $\mu(O_T \cap \tau_g^{-1}(O_{T'})) \le \mu_m(O_T)\,\mu_m(O_{T'}) + \delta$ for all $T, T' \in \mathcal{P}$; here $O_T$ is the event that every pair of the finite set $T$ is open, $\mathbb{Z}^d$ acts on configurations by $(\tau_g\omega)(e) = \omega(e - g)$, where $e - g$ is the pair $e$ translated by $-g$, and measures are taken as real values.

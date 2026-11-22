@@ -49,7 +49,8 @@ function `g` is existentially quantified in each statement. -/
 as: every such congruence in exactly `k` variables is solvable.
 
 Source: Todd Cochrane, Misty Ostergaard, Craig Spencer, and Kathryn Wilson, *A Note on Small
-Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Lemma 2 (`integers-2026-A14-lem-2`). -/
+Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Lemma 2
+(`integers-2026-A14-lem-2`). -/
 public theorem_wanted diagonal_congruence_solvable_of_card_eq_exponent (p : ℕ) [Fact p.Prime]
     {k : ℕ} (hk : 1 ≤ k) (a : Fin k → ℤ) (ha : ∀ i, ¬ (p : ℤ) ∣ a i) (c : ℤ) :
     ∃ x : Fin k → ℤ, ∑ i, a i * x i ^ k ≡ c [ZMOD p]
@@ -61,7 +62,8 @@ subsum, `s ≥ s_0(k)` and `0 < η ≤ η_0(k)`, the number of `x ∈ A(N, N^η)
 `s_0(2) = 5`, `s_0(3) = 8` and `s_0(k) = k (log k + log log k + 2 + O(log log k / log k))`.
 
 Source: Todd Cochrane, Misty Ostergaard, Craig Spencer, and Kathryn Wilson, *A Note on Small
-Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Theorem 2 (`integers-2026-A14-thm-2`), quoting Chow, Lindqvist and Prendiville,
+Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Theorem 2
+(`integers-2026-A14-thm-2`), quoting Chow, Lindqvist and Prendiville,
 *Rado's criterion over squares and higher powers*, J. Eur. Math. Soc. 23 (2021),
 Theorem B.1. -/
 public theorem_wanted smooth_diagonal_solution_count_asymp :
@@ -88,7 +90,8 @@ integers `a_i` prime to `p`, the set
 `S_{A^n} = {∑ a_i x_i^k mod p : x ∈ A(B, B^η)^n}` has at least `C B^k` elements.
 
 Source: Todd Cochrane, Misty Ostergaard, Craig Spencer, and Kathryn Wilson, *A Note on Small
-Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Lemma 1 (`integers-2026-A14-lem-1`). -/
+Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Lemma 1
+(`integers-2026-A14-lem-1`). -/
 public theorem_wanted card_smooth_diagonal_values_ge :
     ∃ g : ℕ → ℝ, (g =O[Filter.atTop] fun k : ℕ => Real.log (Real.log k) / Real.log k) ∧
       ∀ k : ℕ, 2 ≤ k → ∃ η₀ : ℝ, 0 < η₀ ∧
@@ -108,7 +111,8 @@ public theorem_wanted card_smooth_diagonal_values_ge :
 `a_1 x_1^k + ⋯ + a_n x_n^k ≡ c (mod p)` has a solution with `1 ≤ x_i ≤ C p^{1/k}`.
 
 Source: Todd Cochrane, Misty Ostergaard, Craig Spencer, and Kathryn Wilson, *A Note on Small
-Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Theorem 1 (`integers-2026-A14-thm-1`). -/
+Solutions to Diagonal Congruences*, INTEGERS 26 (2026), Article A14, Theorem 1
+(`integers-2026-A14-thm-1`). -/
 public theorem_wanted exists_small_solution_diagonal_congruence :
     ∃ g : ℕ → ℝ, (g =O[Filter.atTop] fun k : ℕ => Real.log (Real.log k) / Real.log k) ∧
       ∀ k : ℕ, 2 ≤ k → ∃ C : ℝ, 0 < C ∧

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Finset.Max
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.ParkingFunction
 import Mathlib.Data.ZMod.Basic
@@ -276,8 +277,10 @@ private theorem parkEmpty_translate (s t : ℕ) (g : Fin s → ZMod (t + 1)) (hs
 
 
 
-/-- First free spot at or after `a` in the linear lot, if any. -/
-private noncomputable def linFirstFree (t : ℕ) (occ : Finset (Fin t)) (a : ℕ) :
+/-- **First free cell at or after a hash address.** In a table of cells `0, …, t - 1` whose
+occupied cells form `occ`, the least free cell `k` with `a ≤ k`, or `none` when every cell from
+`a` to `t - 1` is occupied (the overflow case of linear probing without wrap-around). -/
+noncomputable def linFirstFree (t : ℕ) (occ : Finset (Fin t)) (a : ℕ) :
     Option (Fin t) :=
   if h : (Finset.univ.filter (fun k : Fin t => a ≤ k.val ∧ k ∉ occ)).Nonempty then
     some ((Finset.univ.filter (fun k : Fin t => a ≤ k.val ∧ k ∉ occ)).min' h)
@@ -321,9 +324,12 @@ private theorem linFirstFree_none (t : ℕ) (occ : Finset (Fin t)) (a : ℕ)
     apply h
     exact ⟨y, Finset.mem_filter.mpr ⟨Finset.mem_univ y, hy1, hycon⟩⟩
 
-/-- Occupied spots after the first `n` cars park in the linear lot, if all
-succeeded. Carries the cardinality invariant; `none` on failure. -/
-private noncomputable def linOccAux (s t : ℕ) (f : Fin s → Fin t) :
+/-- **Occupied cells after linear probing without wrap-around.** For a hash sequence
+`f : Fin s → Fin t`, the set of cells occupied after the items `0, …, n - 1` have been inserted in
+order, each into the first free cell at or after its hash address (`linFirstFree`), together with
+the bound `card ≤ n`; `none` as soon as some item finds no free cell (overflow). Items with index
+`≥ s` do not exist, so the set stops changing after step `s`. -/
+noncomputable def linOccAux (s t : ℕ) (f : Fin s → Fin t) :
     (n : ℕ) → Option { occ : Finset (Fin t) // occ.card ≤ n }
   | 0 => some ⟨∅, by simp⟩
   | n + 1 =>
@@ -340,8 +346,11 @@ private noncomputable def linOccAux (s t : ℕ) (f : Fin s → Fin t) :
         | none => none
       else some ⟨occ.val, le_trans occ.property (Nat.le_succ n)⟩
 
-/-- Successful parking of all cars. -/
-private def LinSuccess (s t : ℕ) (f : Fin s → Fin t) : Prop :=
+/-- **Linear probing without overflow.** The hash sequence `f : Fin s → Fin t` places all `s`
+items in a table of `t` cells by linear probing without wrap-around (equivalently, all `s` cars
+park on a one-way street of `t` spots): no item runs past the last cell. These are the
+non-overflow sequences counted in Lemma 1 of Knuth's 1963 note on open addressing. -/
+def LinSuccess (s t : ℕ) (f : Fin s → Fin t) : Prop :=
   (linOccAux s t f s).isSome
 
 private theorem linOccAux_zero (s t : ℕ) (f : Fin s → Fin t) :
@@ -1284,6 +1293,18 @@ private theorem card_circle_fibers (s t : ℕ) (hst : s ≤ t) :
     Finset.sum_congr rfl (fun x _ => Fintype.card_congr (fiberEquiv s t hst x))
   rw [hsum, Finset.sum_const, Finset.card_univ, ZMod.card, smul_eq_mul]
 
+
+/-- **Linear probing succeeds exactly on partial parking functions.** For `s ≤ t`, a hash
+sequence `f : Fin s → Fin t` places all `s` items by linear probing without wrap-around in a table
+of `t` cells if and only if `f` is a partial parking function: for every cell `k`, at most `t - k`
+items have hash address `≥ k`.
+
+The forward direction counts the cells at or after `k` that the items hashing there must fill; the
+converse is the cluster argument. Both are the two halves of the bijection used for Pollak's count
+below (`pollak_partial_parking_functions_card`). -/
+theorem linSuccess_iff_isPartialParkingFunction (s t : ℕ) (f : Fin s → Fin t) (hst : s ≤ t) :
+    LinSuccess s t f ↔ IsPartialParkingFunction s t f :=
+  ⟨linSuccess_imp_threshold s t f, fun h => threshold_imp_linSuccess s t f h hst⟩
 
 /-- Pollak's circle trick for partial parking functions: for positive `s ≤ t`,
 the number of preference lists `f : Fin s → Fin t` satisfying the standard
