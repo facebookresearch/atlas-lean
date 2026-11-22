@@ -75,11 +75,6 @@ noncomputable def lmsrPrice (b : ℝ) (q : ι → ℝ) (i : ι) : ℝ :=
 noncomputable def lmsrLoss (b : ℝ) (q : ι → ℝ) (i : ι) : ℝ :=
   q i - (lmsrCost b q - lmsrCost b (0 : ι → ℝ))
 
-/-- (C1 cost/prices) The softmax denominator is strictly positive. -/
-theorem sum_exp_div_pos (b : ℝ) (q : ι → ℝ) :
-    0 < ∑ i, Real.exp (q i / b) :=
-  Finset.sum_pos (fun _ _ => Real.exp_pos _) Finset.univ_nonempty
-
 /-- (C1 cost/prices) LMSR prices are nonnegative (no hypothesis on `b`). -/
 theorem lmsrPrice_nonneg (b : ℝ) (q : ι → ℝ) (i : ι) :
     0 ≤ lmsrPrice b q i :=
@@ -133,7 +128,7 @@ theorem lmsrCost_le (b : ℝ) (hb : 0 < b) (q : ι → ℝ) (M : ℝ)
   have hcard : (0 : ℝ) < Fintype.card ι := by exact_mod_cast Fintype.card_pos
   have hlog : Real.log (∑ j, Real.exp (q j / b))
       ≤ Real.log ((Fintype.card ι : ℝ) * Real.exp (M / b)) :=
-    Real.log_le_log (sum_exp_div_pos b q) hsum
+    Real.log_le_log (Real.sum_exp_pos (fun i => q i / b)) hsum
   rw [Real.log_mul hcard.ne' (Real.exp_pos _).ne', Real.log_exp] at hlog
   have hbne : b ≠ 0 := ne_of_gt hb
   have hcancel : b * (M / b) = M := mul_div_cancel₀ _ hbne
@@ -222,7 +217,7 @@ theorem deriv_update_lmsrCost [DecidableEq ι] (b : ℝ) (hb : 0 < b) (q : ι �
   simp only [lmsrPrice, Real.softmax]
   have hbne : b ≠ 0 := ne_of_gt hb
   have hSne : (∑ j, Real.exp (q j / b)) ≠ 0 :=
-    ne_of_gt (sum_exp_div_pos b q)
+    ne_of_gt (Real.sum_exp_pos (fun i => q i / b))
   field_simp
   ring
 
@@ -234,7 +229,7 @@ theorem tradeProfit_eq_logScore (b : ℝ) (hb : 0 < b) (q q' : ι → ℝ) (i : 
       = r i / b - Real.log (∑ j, Real.exp (r j / b)) := by
     intro r
     simp only [lmsrPrice, Real.softmax]
-    rw [Real.log_div (Real.exp_pos _).ne' (sum_exp_div_pos b r).ne',
+    rw [Real.log_div (Real.exp_pos _).ne' (Real.sum_exp_pos (fun i => r i / b)).ne',
       Real.log_exp]
   rw [hlog q', hlog q]
   simp only [lmsrCost, Real.logSumExp]
