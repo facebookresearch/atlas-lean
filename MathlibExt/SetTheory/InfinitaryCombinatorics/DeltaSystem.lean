@@ -11,7 +11,6 @@ Author: Nam Trang
 -/
 module
 
-public import Mathlib.Data.Set.Basic
 public import Mathlib.Logic.Pairwise
 
 @[expose] public section

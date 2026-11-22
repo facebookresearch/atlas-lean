@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.SmaleConjecture` — smale_conjecture (manifest `manifests/problems/smale_conjecture.toml`, rev 1, submitter Kim Morrison, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.SmaleConjecture` —
+smale_conjecture (manifest `manifests/problems/smale_conjecture.toml`, rev 1, submitter Kim
+Morrison, status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Topology.SmaleConjectureWanted` namespace. Mathematical
-statements are unchanged. Source: A. Hatcher, A proof of the Smale conjecture, Diff(S3) = O(4), Ann. of Math. 117 (1983).
+and placed the declarations in the `MathlibExt.Topology.SmaleConjectureWanted` namespace.
+Mathematical
+statements are unchanged. Source: A. Hatcher, A proof of the Smale conjecture, Diff(S3) = O(4), Ann.
+of Math. 117 (1983).
 -/
 module
 
@@ -88,7 +92,8 @@ For every compact smooth manifold-with-boundary `X` and every smooth family `F` 
 self-diffeomorphisms of `S³` parameterized by `X` whose boundary restriction already
 factors through the linear action of `O(4)`, there is a smooth isotopy of `F`, rel
 `∂X`, to a family fully factoring through `O(4)`. -/
-/-- Source: A. Hatcher, A proof of the Smale conjecture, Diff(S3) = O(4), Ann. of Math. 117 (1983). Via leanprover/lean-eval@38361be, problem `smale_conjecture`. -/
+/-- Source: A. Hatcher, A proof of the Smale conjecture, Diff(S3) = O(4), Ann. of Math. 117 (1983).
+Via leanprover/lean-eval@38361be, problem `smale_conjecture`. -/
 public theorem_wanted smale_conjecture
     {n : ℕ} [NeZero n]
     (X : Type) [TopologicalSpace X] [T2Space X] [SecondCountableTopology X]

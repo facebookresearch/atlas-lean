@@ -10,7 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Analytic.Basic
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.NumberTheory.Real.Irrational
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Topology.Order.Basic
@@ -59,7 +59,9 @@ degree-one periodicity F (x + 1) = F x + 1 (circle map), two-sided inverse
 (diffeomorphism), and strict monotonicity (orientation-preserving).
 Cites: Hayman (2018), Problem 2.90; https://arxiv.org/abs/1809.07200. -/
 structure AnalyticCircleDiffeo where
+  /-- The degree-one lift `ℝ → ℝ` of the circle diffeomorphism. -/
   toLift : ℝ → ℝ
+  /-- The lift of the inverse diffeomorphism, a two-sided inverse of `toLift`. -/
   invLift : ℝ → ℝ
   analytic_to : AnalyticOn ℝ toLift Set.univ
   analytic_inv : AnalyticOn ℝ invLift Set.univ

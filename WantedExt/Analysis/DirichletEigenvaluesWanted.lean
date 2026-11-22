@@ -23,13 +23,16 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.ODE.DirichletEigenvalues` — dirichlet_eigenvalues_eq_nat_sq (manifest `manifests/problems/dirichlet_eigenvalues_eq_nat_sq.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.ODE.DirichletEigenvalues` —
+dirichlet_eigenvalues_eq_nat_sq (manifest `manifests/problems/dirichlet_eigenvalues_eq_nat_sq.toml`,
+rev 1, submitter Kim Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Analysis.DirichletEigenvaluesWanted` namespace. Mathematical
+and placed the declarations in the `MathlibExt.Analysis.DirichletEigenvaluesWanted` namespace.
+Mathematical
 statements are unchanged. Source: Classical Sturm-Liouville theory.
 -/
 module
@@ -64,7 +67,8 @@ zero solution), and for `λ > 0` showing that `√λ` must be a positive integer
 `-y'' = λ y` on `[0, π]` (i.e. there is a nontrivial `C²` solution on some open interval
 containing `[0, π]`, vanishing at both endpoints) iff `λ = n²` for some positive natural
 number `n`. -/
-/-- Source: Classical Sturm-Liouville theory. Via leanprover/lean-eval@38361be, problem `dirichlet_eigenvalues_eq_nat_sq`. -/
+/-- Source: Classical Sturm-Liouville theory. Via leanprover/lean-eval@38361be, problem
+`dirichlet_eigenvalues_eq_nat_sq`. -/
 public theorem_wanted dirichlet_eigenvalues_eq_nat_sq (lam : ℝ) :
     (∃ (y : ℝ → ℝ) (J : Set ℝ),
         IsOpen J ∧ Set.Icc (0 : ℝ) Real.pi ⊆ J ∧

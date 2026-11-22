@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Analysis.InnerProductSpace.LineIsometry
 public import MathlibExt.Probability.Geometry.LogConcaveUniform
 public import Mathlib.Tactic.FieldSimp
 
@@ -25,14 +26,7 @@ namespace MathlibExt.Probability.ThinShell
 open MeasureTheory
 open scoped ENNReal
 
-/-- **Identification of the line with one-dimensional Euclidean space.** The linear isometric
-isomorphism from $\mathbb{R}$ onto one-dimensional Euclidean space $\mathbb{R}^1$ that sends a
-real number $x$ to the vector whose only coordinate is $x$. -/
-noncomputable def lineIsometry : ℝ ≃ₗᵢ[ℝ] EuclideanSpace ℝ (Fin 1) :=
-  (OrthonormalBasis.singleton (Fin 1) ℝ).repr
-
-@[simp] theorem lineIsometry_apply (x : ℝ) (i : Fin 1) : lineIsometry x i = x :=
-  OrthonormalBasis.singleton_repr x i
+export MathlibExt.Analysis.InnerProductSpace.LineIsometry (lineIsometry lineIsometry_apply)
 
 /-- **Symmetric interval in one-dimensional Euclidean space.** For a real number $a$, the set of
 points of one-dimensional Euclidean space $\mathbb{R}^1$ whose only coordinate lies in the closed

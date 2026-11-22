@@ -16,7 +16,7 @@ import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Basic.Real.Basic
 import Mathlib.Data.Finset.Max
 import Mathlib.Data.Finset.Powerset
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Linarith.Lemmas
 import Mathlib.Tactic.NormNum.Ineq
@@ -572,6 +572,7 @@ Proves `Wanted` entry `strassen_coupling_finite_poset`.
 Source: V. Strassen, "The Existence of Probability Measures with Given Marginals", Ann. Math.
 Statist. 36 (1965), 423-439, DOI 10.1214/aoms/1177700153.
 -/
+@[nolint unusedArguments]
 theorem strassen_coupling_finite_poset
     {α : Type*} [Fintype α] [PartialOrder α] [DecidableEq α]
     [DecidableLE α]

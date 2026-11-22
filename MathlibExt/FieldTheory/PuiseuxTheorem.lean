@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.RingTheory.LaurentSeries
+public import MathlibExt.FieldTheory.HahnSeriesRatAlgClosed
 
 import Mathlib.Algebra.Polynomial.OfFn
 import Mathlib.RingTheory.AdicCompletion.Completeness
@@ -991,12 +992,6 @@ end MetaMathlibExt
 namespace HahnSeries
 
 noncomputable section
-
-/-- Rational-exponent Hahn series over an algebraically closed field of
-characteristic zero form an algebraically closed field. -/
-theorem isAlgClosed_rat {K : Type*} [Field K] [IsAlgClosed K] [CharZero K] :
-    IsAlgClosed (HahnSeries Rat K) :=
-  MetaMathlibExt.puiseux.hahnSeries_isAlgClosed
 
 end
 

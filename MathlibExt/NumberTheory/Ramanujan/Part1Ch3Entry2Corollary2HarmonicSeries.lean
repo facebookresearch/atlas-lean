@@ -22,7 +22,7 @@ import Mathlib.Analysis.Normed.Ring.InfiniteSum
 import Mathlib.Analysis.SpecialFunctions.Exponential
 import Mathlib.Analysis.SpecificLimits.Normed
 import Mathlib.Data.Nat.Choose.Basic
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Topology.Algebra.InfiniteSum.NatInt
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -47,6 +47,7 @@ namespace Entry2Corollary2HarmonicSeries
 -- Retained only because the frozen target
 -- `ramanujan_part1_ch3_entry2_corollary2_harmonic_series` is stated with it.
 -- Every proof below is carried out with Mathlib's `_root_.harmonic` instead.
+/-- The `n`-th harmonic number `∑ k ∈ Finset.range n, 1 / (k + 1)`, in `ℚ`. -/
 def harmonic (n : ℕ) : ℚ :=
   (Finset.range n).sum fun k => (1 : ℚ) / ((k + 1 : ℕ) : ℚ)
 

@@ -1,0 +1,142 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+import Atlas.HighDimensionalStatistics.code.BuildVerification
+import Atlas.HighDimensionalStatistics.code.Chapter1.Aliases
+import Atlas.HighDimensionalStatistics.code.Chapter1.Ch1_Bernstein_Section
+import Atlas.HighDimensionalStatistics.code.Chapter1.Cor_1_7
+import Atlas.HighDimensionalStatistics.code.Chapter1.Def_1_11
+import Atlas.HighDimensionalStatistics.code.Chapter1.Def_1_17
+import Atlas.HighDimensionalStatistics.code.Chapter1.Def_1_2
+import Atlas.HighDimensionalStatistics.code.Chapter1.Lemma_1_10
+import Atlas.HighDimensionalStatistics.code.Chapter1.Lemma_1_12
+import Atlas.HighDimensionalStatistics.code.Chapter1.Lemma_1_15
+import Atlas.HighDimensionalStatistics.code.Chapter1.Lemma_1_18
+import Atlas.HighDimensionalStatistics.code.Chapter1.Lemma_1_3
+import Atlas.HighDimensionalStatistics.code.Chapter1.Lemma_1_4
+import Atlas.HighDimensionalStatistics.code.Chapter1.Lemma_1_5
+import Atlas.HighDimensionalStatistics.code.Chapter1.Lemma_1_8
+import Mathlib.Probability.Independence.Basic
+import Mathlib.Analysis.Normed.Group.Constructions
+import Atlas.HighDimensionalStatistics.code.Chapter1.Problem_1_2
+
+import Atlas.HighDimensionalStatistics.code.Chapter1.Problem_1_4
+import Atlas.HighDimensionalStatistics.code.Chapter1.Problem_1_5
+import Atlas.HighDimensionalStatistics.code.Chapter1.Problem_1_6
+import Atlas.HighDimensionalStatistics.code.Chapter1.Problem_1_7
+import Mathlib
+import Atlas.HighDimensionalStatistics.code.Chapter1.Prop_1_1
+import Atlas.HighDimensionalStatistics.code.Chapter1.Prop_1_1_full
+import Atlas.HighDimensionalStatistics.code.Chapter1.Thm_1_13
+import Atlas.HighDimensionalStatistics.code.Chapter1.Thm_1_14
+import Atlas.HighDimensionalStatistics.code.Chapter1.Thm_1_16
+import Atlas.HighDimensionalStatistics.code.Chapter1.Thm_1_19
+import Atlas.HighDimensionalStatistics.code.Chapter1.Thm_1_6
+import Atlas.HighDimensionalStatistics.code.Chapter1.Thm_1_9
+import Atlas.HighDimensionalStatistics.code.Chapter10.Schwartz_Repr
+import Atlas.HighDimensionalStatistics.code.Chapter11.AdvancedResults
+import Atlas.HighDimensionalStatistics.code.Chapter11.Defs_and_Props
+import Atlas.HighDimensionalStatistics.code.Chapter12.MicrolocalAnalysis
+import Atlas.HighDimensionalStatistics.code.Chapter16.Props
+import Atlas.HighDimensionalStatistics.code.Chapter2.Cor_2_8
+import Atlas.HighDimensionalStatistics.code.Chapter2.Cor_2_9
+import Atlas.HighDimensionalStatistics.code.Chapter2.Def_2_10
+import Atlas.HighDimensionalStatistics.code.Chapter2.Def_2_12
+import Atlas.HighDimensionalStatistics.code.Chapter2.EpsilonNetBridge
+import Atlas.HighDimensionalStatistics.code.Chapter2.Lemma_2_17
+import Atlas.HighDimensionalStatistics.code.Chapter2.Lemma_2_7
+import Atlas.HighDimensionalStatistics.code.Chapter2.Problem_2_1
+import Atlas.HighDimensionalStatistics.code.Chapter2.Problem_2_2
+import Atlas.HighDimensionalStatistics.code.Chapter2.Problem_2_3
+import Atlas.HighDimensionalStatistics.code.Chapter2.Problem_2_4
+
+import Atlas.HighDimensionalStatistics.code.Chapter2.Problem_2_6
+
+import Atlas.HighDimensionalStatistics.code.Chapter2.Prop_2_1
+import Atlas.HighDimensionalStatistics.code.Chapter2.Prop_2_16
+
+import Atlas.HighDimensionalStatistics.code.Chapter2.Thm_2_11
+import Atlas.HighDimensionalStatistics.code.Chapter2.Thm_2_14
+import Atlas.HighDimensionalStatistics.code.Chapter2.Thm_2_14_Bridge
+import Atlas.HighDimensionalStatistics.code.Chapter2.Thm_2_14_SubspaceBound
+import Atlas.HighDimensionalStatistics.code.Chapter2.Thm_2_15
+import Atlas.HighDimensionalStatistics.code.Chapter2.Thm_2_18
+import Atlas.HighDimensionalStatistics.code.Chapter2.Thm_2_2
+import Atlas.HighDimensionalStatistics.code.Chapter2.Thm_2_4
+import Atlas.HighDimensionalStatistics.code.Chapter2.Thm_2_6
+import Atlas.HighDimensionalStatistics.code.Chapter3.Assumption_ORT
+import Atlas.HighDimensionalStatistics.code.Chapter3.Cor_3_16
+import Atlas.HighDimensionalStatistics.code.Chapter3.Cor_3_7
+import Atlas.HighDimensionalStatistics.code.Chapter3.Def_3_10
+import Atlas.HighDimensionalStatistics.code.Chapter3.Def_3_2
+import Atlas.HighDimensionalStatistics.code.Chapter3.Ex_3_8
+import Atlas.HighDimensionalStatistics.code.Chapter3.Ex_3_9
+import Atlas.HighDimensionalStatistics.code.Chapter3.Lemma_3_13
+import Atlas.HighDimensionalStatistics.code.Chapter3.Lemma_3_14
+
+import Atlas.HighDimensionalStatistics.code.Chapter3.Problem_3_3
+import Atlas.HighDimensionalStatistics.code.Chapter3.Problem_3_4
+
+import Atlas.HighDimensionalStatistics.code.Chapter3.Prop_3_12
+import Atlas.HighDimensionalStatistics.code.Chapter3.Remark_3_1
+import Mathlib.LinearAlgebra.Matrix.DotProduct
+import Mathlib.Analysis.InnerProductSpace.Basic
+import Atlas.HighDimensionalStatistics.code.Chapter3.Thm_3_11
+import Atlas.HighDimensionalStatistics.code.Chapter3.Thm_3_15
+import Atlas.HighDimensionalStatistics.code.Chapter3.Thm_3_3
+
+import Atlas.HighDimensionalStatistics.code.Chapter3.Thm_3_4
+import Atlas.HighDimensionalStatistics.code.Chapter3.Thm_3_5
+import Atlas.HighDimensionalStatistics.code.Chapter3.Thm_3_6
+import Atlas.HighDimensionalStatistics.code.Chapter3.TrigOrtho
+
+import Atlas.HighDimensionalStatistics.code.Chapter4.Background_Hoffman_Wielandt
+import Atlas.HighDimensionalStatistics.code.Chapter4.Background_Holder_Schatten
+import Atlas.HighDimensionalStatistics.code.Chapter4.Background_Weyl
+import Atlas.HighDimensionalStatistics.code.Chapter4.Cor_4_9
+import Atlas.HighDimensionalStatistics.code.Chapter4.Def_4_1
+import Atlas.HighDimensionalStatistics.code.Chapter4.Def_4_7
+import Atlas.HighDimensionalStatistics.code.Chapter4.EuclideanBridge
+import Atlas.HighDimensionalStatistics.code.Chapter4.ExpCauchySchwarz
+import Atlas.HighDimensionalStatistics.code.Chapter4.Lemma_4_2
+import Atlas.HighDimensionalStatistics.code.Chapter4.Problem_4_1
+import Atlas.HighDimensionalStatistics.code.Chapter4.Problem_4_2
+import Atlas.HighDimensionalStatistics.code.Chapter4.Problem_4_3
+import Atlas.HighDimensionalStatistics.code.Chapter4.Remark_4_5
+import Atlas.HighDimensionalStatistics.code.Chapter4.Thm_4_10
+import Atlas.HighDimensionalStatistics.code.Chapter4.Thm_4_10_Bridges
+import Atlas.HighDimensionalStatistics.code.Chapter4.Thm_4_3
+import Atlas.HighDimensionalStatistics.code.Chapter4.Thm_4_4
+import Atlas.HighDimensionalStatistics.code.Chapter4.Thm_4_6
+import Atlas.HighDimensionalStatistics.code.Chapter4.Thm_4_8
+import Atlas.HighDimensionalStatistics.code.Chapter5.ChernoffAnalyticHelpers
+import Atlas.HighDimensionalStatistics.code.Chapter5.ChernoffHelpers
+import Atlas.HighDimensionalStatistics.code.Chapter5.Cor_5_13
+import Atlas.HighDimensionalStatistics.code.Chapter5.Cor_5_15
+import Atlas.HighDimensionalStatistics.code.Chapter5.Cor_5_16
+
+import Atlas.HighDimensionalStatistics.code.Chapter5.DefProp_5_4_Helpers
+import Atlas.HighDimensionalStatistics.code.Chapter5.Def_5_1_5_2
+import Atlas.HighDimensionalStatistics.code.Chapter5.Def_5_5
+import Atlas.HighDimensionalStatistics.code.Chapter5.Ex_5_7
+
+import Atlas.HighDimensionalStatistics.code.Chapter5.InfoTheory
+import Atlas.HighDimensionalStatistics.code.Chapter5.Lemma_5_12
+import Atlas.HighDimensionalStatistics.code.Chapter5.Lemma_5_14
+import Atlas.HighDimensionalStatistics.code.Chapter5.Lemma_5_3_5_4_5_8
+import Atlas.HighDimensionalStatistics.code.Chapter5.Problem_5_1
+import Atlas.HighDimensionalStatistics.code.Chapter5.Problem_5_2
+import Atlas.HighDimensionalStatistics.code.Chapter5.Problem_5_3
+import Atlas.HighDimensionalStatistics.code.Chapter5.Problem_5_4
+import Atlas.HighDimensionalStatistics.code.Chapter5.Problem_5_5
+import Atlas.HighDimensionalStatistics.code.Chapter5.Prop_5_6
+import Atlas.HighDimensionalStatistics.code.Chapter5.Remark_5_17
+import Atlas.HighDimensionalStatistics.code.Chapter5.SparseBallCard
+import Atlas.HighDimensionalStatistics.code.Chapter5.Thm_5_10
+import Atlas.HighDimensionalStatistics.code.Chapter5.Thm_5_11
+import Atlas.HighDimensionalStatistics.code.Chapter5.Thm_5_9

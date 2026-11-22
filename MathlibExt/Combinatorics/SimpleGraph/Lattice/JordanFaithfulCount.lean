@@ -210,7 +210,6 @@ theorem jfc_flankingEdge_present (P : PlanarZ2Subgraph) (K : SimpleGraph P.V) {x
   exact hnotK hKuv
 
 theorem jfc_whb_delete_dichotomy (G : SimpleGraph (Site 2)) {p q f0 g0 : Site 2}
-    [Finite (whb_faceRegion G).ConnectedComponent]
     [Finite (whb_faceRegion (G ⊔ edge p q)).ConnectedComponent]
     (hpq : p ≠ q) (hfg : (hypercubicLattice 2).Adj f0 g0)
     (hshared : sharedPrimalEdge f0 g0 = s(p, q))

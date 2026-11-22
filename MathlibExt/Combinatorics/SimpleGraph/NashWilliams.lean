@@ -882,6 +882,7 @@ Source: C. St. J. A. Nash-Williams, J. London Math. Soc. 39 (1964), DOI 10.1112/
 
 Proves `Wanted` entry `nash_williams_arboricity`.
 -/
+@[nolint unusedArguments] -- stated-problem binder: the statement matches its `Wanted` entry
 theorem nash_williams_arboricity
     {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (k : ℕ) :
