@@ -123,12 +123,13 @@ lemma eLpNorm_one_le_sqrt_integral_sq {f : Ω → ℝ} (hf : MemLp f 2 μ) {C : 
     exact Real.rpow_le_rpow (integral_nonneg (fun x => by positivity)) h_int_sq (by norm_num)
   exact h1.trans h2
 
-/-- Key step toward the Kolmogorov three-series theorem: if the `Zₙ` are
-independent centered (mean zero) integrable random variables whose
-partial sums `Sₙ = ∑_{k ≤ n} Zₖ` are uniformly bounded in `L¹`, then
-`Sₙ` converges almost surely. This is proved by realizing `Sₙ` as a
-martingale and applying the `L¹`-bounded martingale convergence
-theorem. -/
+/-- **Almost-sure convergence of L¹-bounded sums of independent centered variables.** Let
+$Z_0, Z_1, \dots$ be independent integrable real random variables on a probability space with
+$E[Z_n] = 0$ for every $n$, and let $S_n = \sum_{k \le n} Z_k$. If there is a constant $R \ge 0$
+with $E|S_n| \le R$ for every $n$, then $S_n$ converges almost surely to a finite limit.
+
+This is a key step toward the Kolmogorov three-series theorem: $(S_n)$ is a martingale for the
+natural filtration, so the $L^1$-bounded martingale convergence theorem applies. -/
 theorem ae_tendsto_sum_of_indep_centered_L1bdd {Z : ℕ → Ω → ℝ}
     [IsProbabilityMeasure μ]
     (hZ_sm : ∀ n, StronglyMeasurable (Z n))
@@ -174,8 +175,11 @@ namespace ProbabilityTheory.KolmogorovThreeSeries
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 
-/-- The truncation `Yₙ = Xₙ · 1_{|Xₙ| ≤ A}` of the random variable `Xₙ` at
-threshold `A`, i.e. `Yₙ(ω) = Xₙ(ω)` when `|Xₙ(ω)| ≤ A` and `0` otherwise.
+/-- **Truncation of a random variable.** For a sequence $X_0, X_1, \dots$ of real-valued functions
+on $\Omega$, a threshold $A \in \mathbb{R}$ and an index $n$, the truncation of $X_n$ at $A$ is
+$Y_n = X_n \mathbf{1}_{\{|X_n| \le A\}}$, that is, $Y_n(\omega) = X_n(\omega)$ when
+$|X_n(\omega)| \le A$ and $Y_n(\omega) = 0$ otherwise.
+
 This is the key construction in the Kolmogorov three-series theorem. -/
 noncomputable def truncatedRV (X : ℕ → Ω → ℝ) (A : ℝ) (n : ℕ) : Ω → ℝ :=
   fun ω => X n ω * Set.indicator {ω | |X n ω| ≤ A} 1 ω
@@ -357,8 +361,13 @@ theorem ae_tendsto_centered_of_indep_summableVar [IsProbabilityMeasure μ]
   filter_upwards [h] with ω ⟨c, hc⟩
   exact ⟨c, (Filter.tendsto_add_atTop_iff_nat 1).mp hc⟩
 
-/-- If `∑ₙ P{|Xₙ| > A} < ∞`, then by the first Borel–Cantelli lemma, almost
-surely the truncation eventually coincides with `Xₙ`. -/
+/-- **Truncations eventually agree with the variables.** Let $X_0, X_1, \dots$ be real-valued
+functions on a probability space $(\Omega, P)$, let $A$ be a real number, and let
+$Y_n = X_n \mathbf{1}_{\{|X_n| \le A\}}$ be the truncation of $X_n$ at $A$. If
+$\sum_n P(|X_n| > A) < \infty$, then for almost every $\omega$ we have $X_n(\omega) = Y_n(\omega)$
+for all sufficiently large $n$.
+
+This follows from the first Borel–Cantelli lemma. -/
 theorem ae_eventually_truncation_eq [IsProbabilityMeasure μ]
     {X : ℕ → Ω → ℝ} {A : ℝ}
     (h1 : (∑' n, μ {ω | A < |X n ω|}) < ⊤) :
@@ -371,10 +380,12 @@ theorem ae_eventually_truncation_eq [IsProbabilityMeasure μ]
     have hle : |X n ω| ≤ A := not_lt.mp hn
     simp [hle, mul_one]
 
-/-- If two sequences `f, g` of random variables agree eventually (almost
-surely) and the partial sums of `f` converge almost surely, then the
-partial sums of `g` also converge almost surely (to a possibly different
-limit). -/
+/-- **Eventually equal series inherit almost-everywhere convergence.** Let $\mu$ be a measure on
+$\Omega$ and let $f_n, g_n : \Omega \to \mathbb{R}$ ($n \ge 0$) be functions such that for
+$\mu$-almost every $\omega$ we have $f_n(\omega) = g_n(\omega)$ for all sufficiently large $n$. If
+there is a function $S : \Omega \to \mathbb{R}$ with $\sum_{i < n} f_i(\omega) \to S(\omega)$ as
+$n \to \infty$ for $\mu$-almost every $\omega$, then there is a function $T : \Omega \to \mathbb{R}$
+with $\sum_{i < n} g_i(\omega) \to T(\omega)$ as $n \to \infty$ for $\mu$-almost every $\omega$. -/
 theorem ae_tendsto_of_ae_eventually_eq_and_ae_tendsto
     {f g : ℕ → Ω → ℝ}
     (hfg : ∀ᵐ ω ∂μ, ∀ᶠ n in atTop, f n ω = g n ω)
@@ -406,10 +417,15 @@ theorem ae_tendsto_of_ae_eventually_eq_and_ae_tendsto
       atTop (nhds L) then h.choose else 0,
     key.mono fun ω hω => by simp only; rw [dite_eq_left hω]; exact hω.choose_spec⟩
 
-/-- If the means and variances of the truncations are summable then the
-partial sums of the truncations `∑ Yᵢ` converge almost surely. This
-combines the centered convergence result with the (deterministic)
-convergence of the mean series. -/
+/-- **Truncated sums converge almost surely.** Let $X_0, X_1, \dots$ be independent real random
+variables on a probability space $(\Omega, P)$, let $A > 0$, and let
+$Y_n = X_n \mathbf{1}_{\{|X_n| \le A\}}$ be the truncation of $X_n$ at $A$. If the series
+$\sum_n E[Y_n]$ converges absolutely and $\sum_n \operatorname{Var}(Y_n) < \infty$, then there is
+a function $S : \Omega \to \mathbb{R}$ with $\sum_{i < n} Y_i(\omega) \to S(\omega)$ as
+$n \to \infty$ for almost every $\omega$.
+
+This combines the convergence of the centered truncated sums with the convergence of the series
+of means. -/
 theorem ae_tendsto_truncated_of_conditions [IsProbabilityMeasure μ]
     {X : ℕ → Ω → ℝ} (hX_meas : ∀ n, Measurable (X n))
     (hX_indep : iIndepFun X μ) {A : ℝ} (hA : A > 0)
@@ -440,13 +456,16 @@ theorem ae_tendsto_truncated_of_conditions [IsProbabilityMeasure μ]
       truncatedRV X A i ω) atTop (nhds L) then h.choose else 0,
     key.mono fun ω hω => by simp only; rw [dite_eq_left hω]; exact hω.choose_spec⟩
 
-/-- **Kolmogorov's three-series theorem (sufficiency direction).** Let
-`X₁, X₂, …` be independent random variables and fix `A > 0`. Write
-`Yᵢ = Xᵢ · 1_{|Xᵢ| ≤ A}` for the truncations. If the three series
-(1) `∑ₙ P{|Xₙ| > A}`,
-(2) `∑ₙ E[Yₙ]`, and
-(3) `∑ₙ Var(Yₙ)`
-all converge, then `∑ Xₙ` converges almost surely. -/
+/-- **Kolmogorov's three-series theorem (sufficiency direction).** Let $X_0, X_1, \dots$ be
+independent real random variables on a probability space $(\Omega, P)$, fix $A > 0$, and write
+$Y_n = X_n \mathbf{1}_{\{|X_n| \le A\}}$ for the truncations. If
+$\sum_n P(|X_n| > A) < \infty$, the series $\sum_n E[Y_n]$ converges absolutely, and
+$\sum_n \operatorname{Var}(Y_n) < \infty$, then there is a function $S : \Omega \to \mathbb{R}$
+with $\sum_{i < n} X_i(\omega) \to S(\omega)$ as $n \to \infty$ for almost every $\omega$; that
+is, $\sum_n X_n$ converges almost surely.
+
+The classical theorem only requires the series $\sum_n E[Y_n]$ to converge; here it must converge
+absolutely. -/
 theorem kolmogorov_three_series_sufficiency
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     {X : ℕ → Ω → ℝ} (hX_meas : ∀ n, Measurable (X n))
