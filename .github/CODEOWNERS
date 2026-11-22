@@ -1,5 +1,5 @@
 # The ATLAS wiki and its tooling. A change here needs one approval from the
-# code owners below (docs/BLUEPRINT.md, Graph rules, rule 16). GitHub enforces
+# code owners below (CONTRIBUTING.md, Graph PRs). GitHub enforces
 # this only once a maintainer turns on "Require review from Code Owners" for main.
 /blueprint/                                       @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
 /scripts/generate_wiki.py                         @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua

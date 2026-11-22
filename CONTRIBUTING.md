@@ -6,6 +6,29 @@ possible.
 ## Our Development Process
 ... (in particular how this is synced with internal changes to the project)
 
+## Picking a task
+
+The [site](https://facebookresearch.github.io/atlas-lean/) lists the
+formalization tasks that are ready now: statements to write in Lean and
+statements to prove, as `autoform work` finds them
+([What the tools own](docs/BLUEPRINT.md#what-the-tools-own)). It publishes
+them as
+[`tasks.json`](https://facebookresearch.github.io/atlas-lean/tasks.json), which
+each `main` build writes with `autoform work list --json`, together with the
+commit it was computed from. You don't need to build the repository to pick
+one, and people and agents follow the same steps:
+
+1. Take a task from `tasks.json`. `python3 scripts/next_task.py` prints the
+   next ones; `--json` prints them for agents.
+2. Skip a task that an open pull request names, by its article id (`af_…`) or
+   its Lean declaration, in its title, body or branch. `next_task.py` skips
+   those, including those an older pull request names, in its title, branch or
+   code, by the end of a declaration's name that no other task shares, and the
+   tasks of pull requests merged into `main` since `tasks.json` was computed.
+3. Open a draft pull request early, with the task's article id in its body, so
+   that others see the task is taken. Mark it ready for review when it is done,
+   or close it if you stop.
+
 ## Pull Requests
 We actively welcome your pull requests.
 
@@ -186,6 +209,77 @@ code. A required job name alone cannot prevent another workflow from reporting
 the same name. Verify ordinary PR, fork, and merge-queue delivery after an
 authorized deployment before enabling required enforcement. Until then this
 is advisory CI, not a standalone merge barrier.
+
+### Graph PRs
+
+A graph PR changes the ATLAS wiki; its content follows the
+[graph rules](docs/BLUEPRINT.md#graph-rules).
+
+- **Keep it under 3,000 changed files and name its issue** (`Closes #…` or
+  `Part of #…`). GitHub shows at most 3,000 files in one diff.
+- **An expansion changes no Lean outside `WantedExt`,** so its reviewer need
+  not also review proofs.
+- **Leave what the tools own alone** ([What the tools
+  own](docs/BLUEPRINT.md#what-the-tools-own)).
+- **A code owner approves it** (`.github/CODEOWNERS`) **and Codex reviews it:**
+  automatically for the repository's owners, members and collaborators and for
+  forks on `codex.yml`'s trusted list; on any other fork PR a maintainer
+  comments `@codex` for an advisory review. Agents produce graph changes faster
+  than people can check them, and a poor expansion spreads into every task
+  below it.
+
+## How PRs merge
+
+`main` takes changes through GitHub's merge queue; do not push to it directly.
+When a PR is ready to merge and its required checks have passed, add it to the
+queue. The queue tests it on top of the current `main` and the PRs queued ahead
+of it, and squash-merges it only if the required checks pass on that combined
+tree, so each commit it adds to `main` has passed them on its own tree.
+
+To queue a PR, use one of:
+
+- **Merge when ready** in the PR's merge box.
+- `gh pr merge <number>`, with `--match-head-commit <sha>` to queue only the
+  commit you checked. It queues the PR at once if its required checks have
+  passed; otherwise it turns on auto-merge, which queues the PR when they pass.
+  The queue sets the merge method and the commit message, so `--squash`,
+  `--subject` and `--body` have no effect, and `gh` refuses `--delete-branch`.
+- The GraphQL mutation `enqueuePullRequest` (`pullRequestId`, and
+  `expectedHeadOid` to pin the head). It queues the PR only if it can be queued
+  now; otherwise it returns an error that says why.
+
+The REST endpoint `PUT /repos/{owner}/{repo}/pulls/{number}/merge` does not
+support merge queues, so it stops working for `main` once the queue is
+required. Scripts and bots that merge with it must switch to `gh pr merge`,
+`enqueuePullRequest`, or `PUT /repos/{owner}/{repo}/pulls/{number}/merge-async`
+with `"merge_action": "merge_queue"`. Each of these only queues the PR: read the
+PR's state afterwards to learn whether it merged or left the queue.
+
+The queue removes a PR whose required checks fail on its merge group, or do not
+report before the queue's timeout; the PR's timeline says why, and the PRs
+behind it rebuild without it. Fix the PR and queue it again. To take a PR out
+of the queue, use **Remove from queue** on the PR or on the queue's page, or the
+GraphQL mutation `dequeuePullRequest`; `gh` cannot do it.
+
+### Required checks
+
+A PR needs these checks to pass before it can be queued, and again on its merge
+group before it merges:
+
+- `repository integrity` (CI): the deterministic repository checks.
+- `build` (CI): the Lean build and its policy checks.
+- `source-diagnostics` (Source diagnostics).
+- `guard` (Bump guard): the Lean and Mathlib pin check. On a merge group it
+  checks a pin change again against the queue's base.
+
+Each of them runs on every PR and every merge group;
+`scripts/test_merge_queue_checks.py`, run by `scripts/check.sh preflight`,
+fails if a change would stop that. The other checks are advisory. Codex runs on
+PR events only. `public-references` runs on PRs and merge groups, but stays
+advisory until the workflow governance described under
+[Public references](#public-references) is in place. Blueprint Pages, Check
+workflows and Binary64 conformance run only on PRs that touch their files, and
+Blueprint Pages also builds `main` once a day.
 
 ## Contributor License Agreement ("CLA")
 In order to accept your pull request, we need you to submit a CLA. You only need

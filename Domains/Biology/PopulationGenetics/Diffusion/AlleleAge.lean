@@ -98,22 +98,6 @@ open scoped Topology
 
 namespace MathlibExt.Biology.PopulationGenetics.Diffusion
 
-/-- The slope constant of Kimura's formula is positive. -/
-theorem kimuraSlope_pos (σ : ℝ) : 0 < kimuraSlope σ := by
-  unfold kimuraSlope
-  split_ifs with h
-  · exact one_pos
-  rcases lt_or_gt_of_ne h with hσ | hσ
-  · have : 1 < exp (-2 * σ) := one_lt_exp_iff.2 (by linarith)
-    exact div_pos_of_neg_of_neg (by linarith) (by linarith)
-  · have : exp (-2 * σ) < 1 := exp_lt_one_iff.2 (by linarith)
-    exact div_pos (by linarith) (by linarith)
-
-/-- Kimura's fixation probability is strictly increasing in the initial frequency. -/
-theorem strictMono_kimuraFixation (σ : ℝ) : StrictMono (kimuraFixation σ) :=
-  strictMono_of_hasDerivAt_pos (hasDerivAt_kimuraFixation σ) fun _ =>
-    mul_pos (kimuraSlope_pos σ) (exp_pos _)
-
 /-- An allele present at positive frequency has positive fixation probability. -/
 theorem kimuraFixation_pos (σ : ℝ) {x : ℝ} (hx : 0 < x) : 0 < kimuraFixation σ x := by
   simpa using strictMono_kimuraFixation σ hx

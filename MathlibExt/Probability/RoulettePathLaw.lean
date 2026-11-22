@@ -160,11 +160,13 @@ theorem tsum_listPathWeight_eq {S : Type*} [Fintype S] [DecidableEq S]
   exact hF n
 
 theorem hasSum_listPathWeight {S : Type*} [Fintype S] [DecidableEq S]
-    (q : S → ℝ) (Q : S → S → ℝ) (c : ℝ) (hc0 : 0 ≤ c) (hc1 : c < 1)
-    (hq : ∀ a : S, 0 ≤ q a) (hQ : ∀ a b : S, 0 ≤ Q a b)
+    (q : S → ℝ) (Q : S → S → ℝ) (c : ℝ) (hc1 : c < 1)
+    (hQ : ∀ a b : S, 0 ≤ Q a b)
     (hrow : ∀ j : S, q j + ∑ k : S, Q j k = 1)
     (hsurv : ∀ a : S, ∑ b : S, Q a b ≤ c) (i : S) :
     HasSum (listPathWeight q Q i) 1 := by
+  have hc0 : 0 ≤ c := le_trans (Finset.sum_nonneg fun b _ => hQ i b) (hsurv i)
+  have hq : ∀ a : S, 0 ≤ q a := fun a => by linarith [hrow a, hsurv a]
   have hnonneg : ∀ n : ℕ, 0 ≤ stoppedMass q Q i n :=
     fun n => stoppedMass_nonneg q Q hq hQ i n
   have hpart : ∀ n : ℕ, (∑ k ∈ Finset.range n,
@@ -217,19 +219,19 @@ theorem hasSum_listPathWeight {S : Type*} [Fintype S] [DecidableEq S]
 
 /-- The normalized completed-path law from start `i`, as a PMF on lists. -/
 noncomputable def pathPMF {S : Type*} [Fintype S] [DecidableEq S] (q : S → ℝ)
-    (Q : S → S → ℝ) (c : ℝ) (hc0 : 0 ≤ c) (hc1 : c < 1)
-    (hq : ∀ a : S, 0 ≤ q a) (hQ : ∀ a b : S, 0 ≤ Q a b)
+    (Q : S → S → ℝ) (c : ℝ) (hc1 : c < 1)
+    (hQ : ∀ a b : S, 0 ≤ Q a b)
     (hrow : ∀ j : S, q j + ∑ k : S, Q j k = 1)
     (hsurv : ∀ a : S, ∑ b : S, Q a b ≤ c) (i : S) : PMF (List S) :=
   ⟨listPathWeight q Q i, by
-    simpa using hasSum_listPathWeight q Q c hc0 hc1 hq hQ hrow hsurv i⟩
+    simpa using hasSum_listPathWeight q Q c hc1 hQ hrow hsurv i⟩
 
 theorem pathPMF_apply {S : Type*} [Fintype S] [DecidableEq S] (q : S → ℝ)
-    (Q : S → S → ℝ) (c : ℝ) (hc0 : 0 ≤ c) (hc1 : c < 1)
-    (hq : ∀ a : S, 0 ≤ q a) (hQ : ∀ a b : S, 0 ≤ Q a b)
+    (Q : S → S → ℝ) (c : ℝ) (hc1 : c < 1)
+    (hQ : ∀ a b : S, 0 ≤ Q a b)
     (hrow : ∀ j : S, q j + ∑ k : S, Q j k = 1)
     (hsurv : ∀ a : S, ∑ b : S, Q a b ≤ c) (i : S) (l : List S) :
-    pathPMF q Q c hc0 hc1 hq hQ hrow hsurv i l = listPathWeight q Q i l := by
+    pathPMF q Q c hc1 hQ hrow hsurv i l = listPathWeight q Q i l := by
   rfl
 
 

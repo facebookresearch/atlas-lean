@@ -89,7 +89,7 @@ example : (∑ k ∈ Finset.range 2, survivalMass
     (stepKernel (fun _ : Fin 1 => (1/100 : ℝ)) (fun _ _ : Fin 1 => (1 : ℝ))) 0 k)
     ≤ 100 := by
   have h := sum_survivalMass_le (fun _ : Fin 1 => (1/100 : ℝ))
-    (fun _ _ : Fin 1 => (1 : ℝ)) (1/100) (by norm_num) (by norm_num)
+    (fun _ _ : Fin 1 => (1 : ℝ)) (1/100) (by norm_num)
     (fun a => ⟨by norm_num, by norm_num⟩)
     (fun a b => zero_le_one) (fun a => by simp) 0 2
   calc (∑ k ∈ Finset.range 2, survivalMass

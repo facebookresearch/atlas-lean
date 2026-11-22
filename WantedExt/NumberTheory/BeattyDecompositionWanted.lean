@@ -30,10 +30,14 @@ namespace MetaMathlibExt
 
 open Set
 
-/-- Beatty's theorem with its converse: for positive reals `α` and `β`, the positive
-Beatty sets of `α` and `β` partition the positive integers if and only if `α` is
-irrational and `α⁻¹ + β⁻¹ = 1`. Positivity of `β` is the paper's definition of a Beatty
-sequence; without it the statement fails (for `0 < α < 1` the dual slope is negative).
+/-- **Beatty's theorem and its converse.** Let $\alpha$ and $\beta$ be positive real numbers. The
+set of the numbers $\lfloor k\alpha\rfloor$ for positive integers $k$ and the set of the numbers
+$\lfloor k\beta\rfloor$ for positive integers $k$ are disjoint and their union is the set of
+positive integers if and only if $\alpha$ is irrational and $\alpha^{-1} + \beta^{-1} = 1$.
+
+The hypothesis $\beta > 0$ cannot be dropped: for irrational $0 < \alpha < 1$ the number $\beta$
+with $\alpha^{-1} + \beta^{-1} = 1$ is negative, and the two sets do not partition the positive
+integers.
 
 Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
 INTEGERS 25 (2025), Article A104, Theorem 1 (Beatty–Rayleigh) (`integers-2025-A104-thm-1`). -/
@@ -43,9 +47,14 @@ public theorem_wanted beatty_complementary_iff_irrational_inv_add_inv {α β : �
         {beattySeq α k | k > 0} ∪ {beattySeq β k | k > 0} = {n : ℤ | 0 < n}) ↔
       (Irrational α ∧ α⁻¹ + β⁻¹ = 1)
 
-/-- For complementary Beatty sequences with slopes `1 < α < 2` and `β`, the number
-`r n` of elements of `B` strictly between `⌊nα⌋` and `⌊nβ⌋` equals `⌊(2 - α) n⌋` for
-every positive integer `n`.
+/-- **Counting $\beta$-Beatty terms between $\lfloor n\alpha\rfloor$ and $\lfloor n\beta\rfloor$.**
+Let $\alpha$ be an irrational number with $1 < \alpha < 2$, let $\beta$ be a real number with
+$\alpha^{-1} + \beta^{-1} = 1$, and let $B$ be the set of the numbers $\lfloor k\beta\rfloor$ for
+positive integers $k$. Then for every positive integer $n$, the number of elements of $B$ in the
+open interval $(\lfloor n\alpha\rfloor, \lfloor n\beta\rfloor)$ equals
+$\lfloor n(2 - \alpha)\rfloor$.
+
+By Beatty's theorem, the Beatty sequences of $\alpha$ and $\beta$ are then complementary.
 
 Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
 INTEGERS 25 (2025), Article A104, Theorem 3 (`integers-2025-A104-thm-3`). -/
@@ -54,9 +63,14 @@ public theorem_wanted beatty_card_compl_between_eq_floor {α β : ℝ} (hirr : I
     ((Ioo (beattySeq α n) (beattySeq β n) ∩ {beattySeq β k | k > 0}).ncard : ℤ) =
       beattySeq (2 - α) n
 
-/-- For complementary Beatty sequences with slopes `1 < α < 2` and `β`, the number
-`c n` of elements of `A` strictly between `⌊nα⌋` and `⌊nβ⌋` equals `⌊(β - 2) n⌋` for
-every positive integer `n`.
+/-- **Counting $\alpha$-Beatty terms between $\lfloor n\alpha\rfloor$ and $\lfloor n\beta\rfloor$.**
+Let $\alpha$ be an irrational number with $1 < \alpha < 2$, let $\beta$ be a real number with
+$\alpha^{-1} + \beta^{-1} = 1$, and let $A$ be the set of the numbers $\lfloor k\alpha\rfloor$ for
+positive integers $k$. Then for every positive integer $n$, the number of elements of $A$ in the
+open interval $(\lfloor n\alpha\rfloor, \lfloor n\beta\rfloor)$ equals
+$\lfloor n(\beta - 2)\rfloor$.
+
+By Beatty's theorem, the Beatty sequences of $\alpha$ and $\beta$ are then complementary.
 
 Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
 INTEGERS 25 (2025), Article A104, Theorem 4 (`integers-2025-A104-thm-4`). -/
@@ -65,9 +79,19 @@ public theorem_wanted beatty_card_self_between_eq_floor {α β : ℝ} (hirr : Ir
     ((Ioo (beattySeq α n) (beattySeq β n) ∩ {beattySeq α k | k > 0}).ncard : ℤ) =
       beattySeq (β - 2) n
 
-/-- Identity (7): for complementary Beatty sequences `a n = ⌊nα⌋`, `b n = ⌊nβ⌋` with
-`1 < α < 2` and every positive integer `n`,
-`⌊β⁻¹ (b (n - 1) + 1)⌋ - ⌊β⁻¹ a n⌋ = ⌊(2 - α) n⌋`.
+/-- **Polanco's floor identity for $\lfloor (2 - \alpha) n \rfloor$.** Let $\alpha$ be an
+irrational real number with $1 < \alpha < 2$, let $\beta$ be a real number with
+$\alpha^{-1} + \beta^{-1} = 1$, and write $a_m = \lfloor m\alpha \rfloor$ and
+$b_m = \lfloor m\beta \rfloor$ for integers $m$ (so $b_0 = 0$). Then for every positive
+integer $n$,
+$$
+\lfloor \beta^{-1} (b_{n-1} + 1) \rfloor - \lfloor \beta^{-1} a_n \rfloor
+= \lfloor (2 - \alpha) n \rfloor.
+$$
+
+Since $\alpha > 1$, Beatty's theorem says that the conditions "$\alpha$ is irrational and
+$\alpha^{-1} + \beta^{-1} = 1$" mean exactly that $(a_n)_{n \ge 1}$ and $(b_n)_{n \ge 1}$ are
+complementary Beatty sequences.
 
 Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
 INTEGERS 25 (2025), Article A104, Theorem 5, identity (7) (`integers-2025-A104-thm-5`). -/
@@ -76,9 +100,18 @@ public theorem_wanted beatty_floor_inv_sub_eq_floor_two_sub {α β : ℝ} (hirr 
     ⌊β⁻¹ * ((beattySeq β (n - 1) + 1 : ℤ) : ℝ)⌋ - ⌊β⁻¹ * (beattySeq α n : ℝ)⌋ =
       beattySeq (2 - α) n
 
-/-- Identity (8): for complementary Beatty sequences `a n = ⌊nα⌋`, `b n = ⌊nβ⌋` with
-`1 < α < 2` and every positive integer `n`,
-`⌊α⁻¹ b n⌋ - ⌊α⁻¹ (a n + 1)⌋ = ⌊(β - 2) n⌋`.
+/-- **Polanco's floor identity for $\lfloor (\beta - 2) n \rfloor$.** Let $\alpha$ be an
+irrational real number with $1 < \alpha < 2$, let $\beta$ be a real number with
+$\alpha^{-1} + \beta^{-1} = 1$, and write $a_n = \lfloor n\alpha \rfloor$ and
+$b_n = \lfloor n\beta \rfloor$. Then for every positive integer $n$,
+$$
+\lfloor \alpha^{-1} b_n \rfloor - \lfloor \alpha^{-1} (a_n + 1) \rfloor
+= \lfloor (\beta - 2) n \rfloor.
+$$
+
+Since $\alpha > 1$, Beatty's theorem says that the conditions "$\alpha$ is irrational and
+$\alpha^{-1} + \beta^{-1} = 1$" mean exactly that $(a_n)_{n \ge 1}$ and $(b_n)_{n \ge 1}$ are
+complementary Beatty sequences.
 
 Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
 INTEGERS 25 (2025), Article A104, Theorem 5, identity (8) (`integers-2025-A104-thm-5`). -/
@@ -87,9 +120,14 @@ public theorem_wanted beatty_floor_inv_sub_eq_floor_sub_two {α β : ℝ} (hirr 
     ⌊α⁻¹ * (beattySeq β n : ℝ)⌋ - ⌊α⁻¹ * ((beattySeq α n + 1 : ℤ) : ℝ)⌋ =
       beattySeq (β - 2) n
 
-/-- For complementary Beatty sequences with slopes `1 < α < 2` and `β`, the sequence
-`r n` of elements of `B` strictly between `⌊nα⌋` and `⌊nβ⌋` is a Beatty sequence with
-a slope strictly between `0` and `1`.
+/-- **The $\beta$-Beatty counts between $\lfloor n\alpha\rfloor$ and $\lfloor n\beta\rfloor$ form a
+Beatty sequence.** Let $\alpha$ be an irrational number with $1 < \alpha < 2$, let $\beta$ be a
+real number with $\alpha^{-1} + \beta^{-1} = 1$, and let $B$ be the set of the numbers
+$\lfloor k\beta\rfloor$ for positive integers $k$. Then there is a real number $r$ with
+$0 < r < 1$ such that for every positive integer $n$, the number of elements of $B$ in the open
+interval $(\lfloor n\alpha\rfloor, \lfloor n\beta\rfloor)$ equals $\lfloor nr\rfloor$.
+
+By Beatty's theorem, the Beatty sequences of $\alpha$ and $\beta$ are then complementary.
 
 Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
 INTEGERS 25 (2025), Article A104, Corollary 3 (`integers-2025-A104-cor-3`). -/
@@ -99,9 +137,11 @@ public theorem_wanted beatty_card_compl_between_isBeatty {α β : ℝ} (hirr : I
       ((Ioo (beattySeq α n) (beattySeq β n) ∩ {beattySeq β k | k > 0}).ncard : ℤ) =
         beattySeq r n
 
-/-- If `1 / (k + 1) < α < 1 / k`, every non-negative integer `t` is attained by
-`⌊nα⌋` (`n ≥ 1`) exactly `k` or `k + 1` times, and both multiplicities occur for
-infinitely many `t`.
+/-- **Multiplicities of the values of $\lfloor n\alpha\rfloor$ for $1/(k + 1) < \alpha < 1/k$.**
+Let $k$ be a positive integer and let $\alpha$ be a real number with
+$1/(k + 1) < \alpha < 1/k$. Then every non-negative integer $t$ equals $\lfloor n\alpha\rfloor$
+for exactly $k$ or exactly $k + 1$ positive integers $n$, there are infinitely many $t$ for which
+it is exactly $k$, and there are infinitely many $t$ for which it is exactly $k + 1$.
 
 Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
 INTEGERS 25 (2025), Article A104, Lemma 1 (`integers-2025-A104-lem-1`). -/
@@ -112,9 +152,11 @@ public theorem_wanted beatty_floor_fiber_card_eq_or_eq_succ {α : ℝ} {k : ℕ}
       {t : ℕ | {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k}.Infinite ∧
       {t : ℕ | {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k + 1}.Infinite
 
-/-- If `1 / (k + 1) < α < 1 / k` and `β = α / (1 - α)`, then a non-negative integer `t`
-is attained by `⌊nα⌋` (`n ≥ 1`) exactly `k + 1` times if and only if it is attained by
-`⌊nβ⌋` exactly `k` times.
+/-- **Multiplicity $k + 1$ for $\alpha$ is multiplicity $k$ for $\alpha/(1 - \alpha)$.** Let $k$ be
+a positive integer, let $\alpha$ be a real number with $1/(k + 1) < \alpha < 1/k$, and let
+$\beta = \alpha/(1 - \alpha)$. Then a non-negative integer $t$ equals $\lfloor n\alpha\rfloor$ for
+exactly $k + 1$ positive integers $n$ if and only if it equals $\lfloor n\beta\rfloor$ for exactly
+$k$ positive integers $n$.
 
 Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
 INTEGERS 25 (2025), Article A104, Lemma 2 (`integers-2025-A104-lem-2`). -/
@@ -123,9 +165,13 @@ public theorem_wanted beatty_floor_fiber_card_succ_iff {α : ℝ} {k : ℕ}
     {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k + 1 ↔
       {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * (α / (1 - α))⌋ = t}.ncard = k
 
-/-- For irrational `α` with `1 / (k + 1) < α < 1 / k`, the positive integers attained by
-`⌊nα⌋` (`n ≥ 1`) exactly `k + 1` times and those attained exactly `k` times are two
-positive Beatty sets.
+/-- **The values of $\lfloor n\alpha\rfloor$ of each multiplicity form Beatty sets.** Let $k$ be a
+positive integer and let $\alpha$ be an irrational number with $1/(k + 1) < \alpha < 1/k$. Then
+there are real numbers $\gamma > 0$ and $\delta > 0$ such that the positive integers $t$ that
+equal $\lfloor n\alpha\rfloor$ for exactly $k + 1$ positive integers $n$ are exactly the numbers
+$\lfloor m\gamma\rfloor$ for positive integers $m$, and the positive integers $t$ that equal
+$\lfloor n\alpha\rfloor$ for exactly $k$ positive integers $n$ are exactly the numbers
+$\lfloor m\delta\rfloor$ for positive integers $m$.
 
 Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
 INTEGERS 25 (2025), Article A104, Corollary 1 (`integers-2025-A104-cor-1`). -/
@@ -137,9 +183,12 @@ public theorem_wanted beatty_floor_fiber_card_sets_isBeatty {α : ℝ} {k : ℕ}
       {t : ℤ | 0 < t ∧ {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard = k} =
         {beattySeq δ m | m > 0}
 
-/-- For irrational `α` with `1 / (k + 1) < α < 1 / k`, the sequence `⌊nα⌋` (`n ≥ 1`) is
-the sortjoin of `k` copies of the non-negative integers with a Beatty set `D`: every
-non-negative integer `t` is attained `k` times, plus one more time exactly when `t ∈ D`.
+/-- **Multiplicities of $\lfloor n\alpha\rfloor$ are $k$ plus the indicator of a Beatty set.** Let
+$k$ be a positive integer and let $\alpha$ be an irrational number with
+$1/(k + 1) < \alpha < 1/k$. Then there is a real number $\delta > 0$ such that, writing $D$ for
+the set of the numbers $\lfloor m\delta\rfloor$ for positive integers $m$, every non-negative
+integer $t$ equals $\lfloor n\alpha\rfloor$ for exactly $k + 1$ positive integers $n$ if $t \in D$,
+and for exactly $k$ positive integers $n$ if $t \notin D$.
 
 Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
 INTEGERS 25 (2025), Article A104, Corollary 2 (`integers-2025-A104-cor-2`). -/
@@ -148,9 +197,15 @@ public theorem_wanted beatty_floor_fiber_card_eq_add_indicator {α : ℝ} {k : �
     ∃ δ : ℝ, 0 < δ ∧ ∀ t : ℕ, {n : ℕ | 0 < n ∧ ⌊(n : ℝ) * α⌋ = t}.ncard =
       k + {beattySeq δ m | m > 0}.indicator (1 : ℤ → ℕ) t
 
-/-- For complementary Beatty sequences with slopes `1 < α < 2` and `β`, let `r n` count
-the elements of `B` strictly between `⌊nα⌋` and `⌊nβ⌋`. Then `r (n + 1) - r n` is `0` or
-`1`, and it is `1` exactly when `⌊(n + 1)α⌋ - ⌊nα⌋ = 1`.
+/-- **Increments of the $\beta$-Beatty counts between $\lfloor n\alpha\rfloor$ and
+$\lfloor n\beta\rfloor$.** Let $\alpha$ be an irrational number with $1 < \alpha < 2$, let $\beta$
+be a real number with $\alpha^{-1} + \beta^{-1} = 1$, let $B$ be the set of the numbers
+$\lfloor k\beta\rfloor$ for positive integers $k$, and for an integer $m$ let $r(m)$ be the number
+of elements of $B$ in the open interval $(\lfloor m\alpha\rfloor, \lfloor m\beta\rfloor)$. Then for
+every positive integer $n$, the difference $r(n + 1) - r(n)$ is $0$ or $1$, and it equals $1$ if
+and only if $\lfloor (n + 1)\alpha\rfloor - \lfloor n\alpha\rfloor = 1$.
+
+By Beatty's theorem, the Beatty sequences of $\alpha$ and $\beta$ are then complementary.
 
 Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
 INTEGERS 25 (2025), Article A104, Lemma 4 (`integers-2025-A104-lem-4`). -/
@@ -161,10 +216,16 @@ public theorem_wanted beatty_card_compl_between_succ_sub {α β : ℝ} (hirr : I
     (r (n + 1) - r n = 0 ∨ r (n + 1) - r n = 1) ∧
       (r (n + 1) - r n = 1 ↔ beattySeq α (n + 1) - beattySeq α n = 1)
 
-/-- For complementary Beatty sequences with slopes `α` and `β > 2`, let `q = ⌊β⌋` and let
-`c n` count the elements of `A` strictly between `⌊nα⌋` and `⌊nβ⌋`. Then
-`c (n + 1) - c n` is `q - 2` or `q - 1`, and it is `q - 2` exactly when
-`⌊(n + 1)β⌋ - ⌊nβ⌋ = q`.
+/-- **Increments of the $\alpha$-Beatty counts between $\lfloor n\alpha\rfloor$ and
+$\lfloor n\beta\rfloor$.** Let $\beta$ be an irrational number with $\beta > 2$, let $\alpha$ be a
+real number with $\alpha^{-1} + \beta^{-1} = 1$, let $A$ be the set of the numbers
+$\lfloor k\alpha\rfloor$ for positive integers $k$, and for an integer $m$ let $c(m)$ be the number
+of elements of $A$ in the open interval $(\lfloor m\alpha\rfloor, \lfloor m\beta\rfloor)$. Then for
+every positive integer $n$, the difference $c(n + 1) - c(n)$ is $\lfloor\beta\rfloor - 2$ or
+$\lfloor\beta\rfloor - 1$, and it equals $\lfloor\beta\rfloor - 2$ if and only if
+$\lfloor (n + 1)\beta\rfloor - \lfloor n\beta\rfloor = \lfloor\beta\rfloor$.
+
+By Beatty's theorem, the Beatty sequences of $\alpha$ and $\beta$ are then complementary.
 
 Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
 INTEGERS 25 (2025), Article A104, Lemma 5 (`integers-2025-A104-lem-5`). -/
@@ -175,13 +236,20 @@ public theorem_wanted beatty_card_self_between_succ_sub {α β : ℝ} (hirr : Ir
     (c (n + 1) - c n = ⌊β⌋ - 2 ∨ c (n + 1) - c n = ⌊β⌋ - 1) ∧
       (c (n + 1) - c n = ⌊β⌋ - 2 ↔ beattySeq β (n + 1) - beattySeq β n = ⌊β⌋)
 
-/-- Let `α` be irrational with `(2k - 1) / k < α < (2k + 1) / (k + 1)` for an integer
-`k ≥ 1`, and `α⁻¹ + β⁻¹ = 1`. Let `c n` count the elements of `A` strictly between `⌊nα⌋`
-and `⌊nβ⌋` (the MES skipping sequence producing `A`), and let
-`δ = -1 + 1 / (2 - 1 / (2 - ⋯ - 1 / (2 - 1 / (α - 1))))` with `k - 1` twos. Then every
-non-negative integer `m` occurs among the `c n` (`n ≥ 1`) exactly `k` times if `m` lies in
-the positive Beatty set of `δ` and exactly `k - 1` times otherwise. For `k = 1` this
-gives `δ = 1 / (α - 1) - 1 = β - 2`, and the multiplicity is one or zero.
+/-- **Multiplicities of Polanco's skipping sequence.** Let $k \ge 1$ be an integer, let
+$\alpha$ be an irrational real number with $(2k - 1)/k < \alpha < (2k + 1)/(k + 1)$, and let
+$\beta$ be a real number with $\alpha^{-1} + \beta^{-1} = 1$. Let
+$A = \{\lfloor j\alpha \rfloor : j \ge 1\}$ and, for each positive integer $n$, let $c_n$ be
+the number of elements of $A$ strictly between $\lfloor n\alpha \rfloor$ and
+$\lfloor n\beta \rfloor$. Let $f(x) = 2 - 1/x$, let $f^{k-1}$ be its $(k-1)$-fold iterate, and
+let $\delta = -1 + 1/f^{k-1}(\alpha - 1)$, that is,
+$\delta = -1 + 1/(2 - 1/(2 - \cdots - 1/(\alpha - 1)))$ with $k - 1$ twos. Then for every
+non-negative integer $m$, the number of positive integers $n$ with $c_n = m$ is $k$ if
+$m = \lfloor j\delta \rfloor$ for some integer $j \ge 1$, and $k - 1$ otherwise, where an
+infinite set is counted as having $0$ elements.
+
+For $k = 1$ this gives $\delta = 1/(\alpha - 1) - 1 = \beta - 2$, and the multiplicity is one
+or zero.
 
 Source: Geremias Polanco, *Decomposition of Beatty and Complementary Sequences*,
 INTEGERS 25 (2025), Article A104, Lemma 6 (`integers-2025-A104-lem-6`). -/

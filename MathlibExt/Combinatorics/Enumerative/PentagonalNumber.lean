@@ -129,16 +129,6 @@ private theorem filter_one_eq_erase (n : ℕ) :
   simp only [Finset.mem_filter, Finset.mem_range, Finset.mem_erase]
   omega
 
-private theorem filter_image_eq (p : ℤ → Prop) [DecidablePred p] (f : ℕ → ℤ) (s : Finset ℕ) :
-    Finset.filter p (Finset.image f s) = Finset.image f (Finset.filter (fun m => p (f m)) s) := by
-  ext y
-  simp only [Finset.mem_filter, Finset.mem_image]
-  constructor
-  · rintro ⟨⟨m, hm, rfl⟩, hpy⟩
-    exact ⟨m, ⟨hm, hpy⟩, rfl⟩
-  · rintro ⟨m, ⟨hm, hpfm⟩, rfl⟩
-    exact ⟨⟨m, hm, rfl⟩, hpfm⟩
-
 private theorem natAbs_le_pentagonal (j : ℤ) (hj : j ≠ 0) :
     (j.natAbs : ℤ) ≤ (pentagonal j : ℤ) := by
   have h2 := two_mul_natCast_pentagonal j
@@ -254,8 +244,8 @@ private theorem sum_s0_split (n : ℕ) (F : ℤ → ℤ) :
         (Finset.mem_of_subset (Finset.filter_subset _ _) hx1)
         (Finset.mem_of_subset (Finset.filter_subset _ _) hx2)
   rw [Finset.filter_union, Finset.sum_union hdisjF,
-    filter_image_eq (fun j : ℤ => pentagonal j ≤ n) (fun m : ℕ => (m : ℤ)),
-    filter_image_eq (fun j : ℤ => pentagonal j ≤ n) (fun m : ℕ => (-(m : ℤ)))]
+    Finset.filter_image (f := fun m : ℕ => (m : ℤ)),
+    Finset.filter_image (f := fun m : ℕ => (-(m : ℤ)))]
   rw [Finset.sum_image (fun _ _ _ _ h => Nat.cast_injective h),
     Finset.sum_image (fun _ _ _ _ h => Nat.cast_injective (neg_injective h)),
     ← Finset.sum_filter, ← Finset.sum_filter]

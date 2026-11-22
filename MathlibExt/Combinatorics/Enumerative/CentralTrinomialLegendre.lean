@@ -65,10 +65,6 @@ private lemma sqrt_pow_succ' (n : ℕ) (hn : 1 ≤ n) :
     rw [h93, Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 3)]
   rw [h9]
 
-private lemma powI_succ (n : ℕ) :
-    Complex.I ^ (n + 1) = Complex.I * Complex.I ^ n :=
-  pow_succ' Complex.I n
-
 private lemma powI_succ' (n : ℕ) (hn : 1 ≤ n) :
     Complex.I ^ (n + 1) = -Complex.I ^ (n - 1) := by
   have hn2 : n + 1 = (n - 1) + 2 := by omega
@@ -400,17 +396,11 @@ private lemma legSeq_one : legSeq 1 = 1 := by
   simp only [legSeq, hI1, s1, g1]
   exact leg_scalar
 
-private lemma tri_zero_legendre : trinomialCoefficient 0 0 = 1 := by
-  simp [trinomialCoefficient]
+private lemma base0 : triSeq 0 = legSeq 0 := by
+  simp [triSeq, trinomialCoefficient_zero_zero, legSeq_zero]
 
-private lemma tri_one : trinomialCoefficient 1 1 = 1 := by
-  unfold trinomialCoefficient
-  simp [pow_one, Polynomial.coeff_add, Polynomial.coeff_one, Polynomial.coeff_X,
-    Polynomial.coeff_X_pow]
-
-private lemma base0 : triSeq 0 = legSeq 0 := by simp [triSeq, tri_zero_legendre, legSeq_zero]
-
-private lemma base1 : triSeq 1 = legSeq 1 := by simp [triSeq, tri_one, legSeq_one]
+private lemma base1 : triSeq 1 = legSeq 1 := by
+  simp [triSeq, trinomialCoefficient_one_one, legSeq_one]
 
 /-- The Legendre sequence satisfies the central trinomial recurrence. -/
 private lemma f_rec (n : ℕ) :
@@ -424,7 +414,7 @@ private lemma f_rec (n : ℕ) :
     simp
   · have hn1 : 1 ≤ n := by omega
     have hB := bl_bonnet_eval n
-    have hI1 := powI_succ n
+    have hI1 := pow_succ' Complex.I n
     have hs1 : (Real.sqrt ((3 : ℝ) ^ (n + 1)) : ℂ)
         = (Real.sqrt 3 : ℂ) * (Real.sqrt ((3 : ℝ) ^ n) : ℂ) := by
       exact_mod_cast sqrt_pow_succ n
