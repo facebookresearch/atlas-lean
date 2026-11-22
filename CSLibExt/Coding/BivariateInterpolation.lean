@@ -196,43 +196,88 @@ theorem exists_bivariate_interpolant (F : Type*) [Field F] (n : ℕ)
   exact ⟨Q, hQ0, hQdeg,
     fun i => (hasRootMult_one_iff F Q (α i) (y i)).mp (hQvan i)⟩
 
-/-- Interpolant with `D` one more than the source ceiling choice of
-`√(2 * (k - 1) * n)`; it works by the same (12.8)-(12.9) estimate through
-`two_mul_card_weighted_monomials_ge`. -/
+def ceilSqrt (x : ℕ) : ℕ :=
+  if Nat.sqrt x ^ 2 = x then Nat.sqrt x else Nat.sqrt x + 1
+
+private theorem ceilSqrt_sq_eq (x : ℕ) (h : Nat.sqrt x ^ 2 = x) :
+    ceilSqrt x ^ 2 = x := by
+  unfold ceilSqrt
+  simp [h]
+
+private theorem ceilSqrt_lt_sq (x : ℕ) (h : Nat.sqrt x ^ 2 ≠ x) :
+    x < ceilSqrt x ^ 2 := by
+  unfold ceilSqrt
+  simp [h]
+  have hlt : Nat.sqrt x < Nat.sqrt x + 1 := by omega
+  have hub : x < (Nat.sqrt x + 1) * (Nat.sqrt x + 1) := Nat.sqrt_lt.mp hlt
+  rw [pow_two]
+  exact hub
+
+private theorem ceilSqrt_le (x : ℕ) : x ≤ ceilSqrt x ^ 2 := by
+  by_cases h : Nat.sqrt x ^ 2 = x
+  · have heq := ceilSqrt_sq_eq x h
+    omega
+  · have hlt := ceilSqrt_lt_sq x h
+    omega
+
+private theorem ceilSqrt_pos (x : ℕ) (hx : 0 < x) : 0 < ceilSqrt x := by
+  unfold ceilSqrt
+  split_ifs with h
+  · by_contra hz
+    have h0 : Nat.sqrt x = 0 := by omega
+    rw [h0] at h
+    simp at h
+    omega
+  · omega
+
+/-- Interpolant with `D` the source ceiling choice `⌈√(2 * (k - 1) * n)⌉`,
+via the (12.8)-(12.9) estimate through `two_mul_card_weighted_monomials_ge`. -/
 theorem exists_bivariate_interpolant_sqrt (F : Type*) [Field F] (n : ℕ)
     (α y : Fin n → F) (k : ℕ) (hk : 2 ≤ k) :
     ∃ Q : F[X][X], Q ≠ 0 ∧
       Cslib.CodingTheory.GuruswamiSudan.WeightedDegLE (k - 1)
-        (Nat.sqrt (2 * (k - 1) * n) + 1) Q ∧
+        (ceilSqrt (2 * (k - 1) * n)) Q ∧
       ∀ i, (Q.eval (C (y i))).eval (α i) = 0 := by
   have hw : 0 < k - 1 := by omega
-  set D : ℕ := Nat.sqrt (2 * (k - 1) * n) + 1 with hD
+  set D : ℕ := ceilSqrt (2 * (k - 1) * n) with hD
   have hcount : n * (1 * (1 + 1) / 2)
       < (((range (D + 1) ×ˢ range (D + 1)).filter
         fun ij : ℕ × ℕ => ij.1 + (k - 1) * ij.2 ≤ D).card) := by
     have heq : n * (1 * (1 + 1) / 2) = n := by simp
-    have hL := two_mul_card_weighted_monomials_ge (k - 1) D hw
-    have hsq : 2 * (k - 1) * n < D * D := by
-      rw [hD]
-      have hlt : Nat.sqrt (2 * (k - 1) * n)
-          < Nat.sqrt (2 * (k - 1) * n) + 1 := by omega
-      exact Nat.sqrt_lt.mp hlt
-    have hmul : D * D ≤ D * (D + 2) := by
-      have he : D * (D + 2) = D * D + D * 2 := Nat.left_distrib _ _ _
+    by_cases hn : n = 0
+    · subst hn
+      rw [heq]
+      have hle := card_weighted_monomials_ge (k - 1) D
       omega
-    have hnc : n < (((range (D + 1) ×ˢ range (D + 1)).filter
-        fun ij : ℕ × ℕ => ij.1 + (k - 1) * ij.2 ≤ D).card) := by
-      have hchain : 2 * (k - 1) * n < 2 * (k - 1) *
-          (((range (D + 1) ×ˢ range (D + 1)).filter
-            fun ij : ℕ × ℕ => ij.1 + (k - 1) * ij.2 ≤ D).card) :=
-        lt_of_lt_of_le hsq (le_trans hmul hL)
-      by_contra hcon
-      have hle : (((range (D + 1) ×ˢ range (D + 1)).filter
-          fun ij : ℕ × ℕ => ij.1 + (k - 1) * ij.2 ≤ D).card) ≤ n := by
+    · have hn_pos : 0 < n := by omega
+      have hL := two_mul_card_weighted_monomials_ge (k - 1) D hw
+      have hXpos : 0 < 2 * (k - 1) * n :=
+        Nat.mul_pos (Nat.mul_pos (show (0 : ℕ) < 2 by omega) hw) hn_pos
+      have hDpos : 0 < D := by
+        rw [hD]
+        exact ceilSqrt_pos _ hXpos
+      have hle : 2 * (k - 1) * n ≤ D ^ 2 := by
+        rw [hD]
+        exact ceilSqrt_le _
+      have hsq : 2 * (k - 1) * n ≤ D * D := by
+        rw [pow_two] at hle
+        exact hle
+      have hmul : D * D < D * (D + 2) := by
+        have he : D * (D + 2) = D * D + D * 2 := Nat.left_distrib _ _ _
         omega
-      have hmul_le := Nat.mul_le_mul_left (2 * (k - 1)) hle
+      have hnc : n < (((range (D + 1) ×ˢ range (D + 1)).filter
+          fun ij : ℕ × ℕ => ij.1 + (k - 1) * ij.2 ≤ D).card) := by
+        have hchain : 2 * (k - 1) * n < 2 * (k - 1) *
+            (((range (D + 1) ×ˢ range (D + 1)).filter
+              fun ij : ℕ × ℕ => ij.1 + (k - 1) * ij.2 ≤ D).card) :=
+          lt_of_le_of_lt hsq (lt_of_lt_of_le hmul hL)
+        by_contra hcon
+        have hle : (((range (D + 1) ×ˢ range (D + 1)).filter
+            fun ij : ℕ × ℕ => ij.1 + (k - 1) * ij.2 ≤ D).card) ≤ n := by
+          omega
+        have hmul_le := Nat.mul_le_mul_left (2 * (k - 1)) hle
+        omega
       omega
-    omega
   obtain ⟨Q, hQ0, hQdeg, hQvan⟩ :=
     Cslib.CodingTheory.GuruswamiSudan.exists_interpolant α y (k - 1) D 1
       hcount
