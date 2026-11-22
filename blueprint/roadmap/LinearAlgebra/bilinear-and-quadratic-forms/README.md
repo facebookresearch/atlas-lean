@@ -9,6 +9,3 @@ Bilinear and quadratic forms on vector spaces and modules: rank, orthogonal sums
 - [Simultaneous diagonalization by congruence](simultaneous-diagonalization-by-congruence/README.md)
 - [Systems of quadratic forms](systems-of-quadratic-forms/README.md)
 - [Sylvester's law of inertia](sylvester-law-of-inertia.md)
-- [Local–global principle for Hermitian spaces over a quadratic extension](hermitian-local-global-principle.md)
-- [Strong approximation for special unitary groups](strong-approximation-special-unitary.md)
-- [Mass ratio of the standard unimodular Hermitian lattices in consecutive ranks](hermitian-unimodular-mass-ratio.md)

@@ -31,7 +31,7 @@ principle to H. Minkowski, H. Hasse, W. Landherr, M. Kneser and T. Springer and 
 
 ## Proof depends on
 
-- [Hasse norm theorem for cyclic extensions](../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/hasse-norm-theorem.md)
+- [Hasse norm theorem for cyclic extensions](../algebraic-number-theory/adeles-class-field-theory/hasse-norm-theorem.md)
 
 ## Sources
 
