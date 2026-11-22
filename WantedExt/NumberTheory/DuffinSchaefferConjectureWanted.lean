@@ -60,66 +60,93 @@ open NNReal ENNReal MeasureTheory
 
 open scoped Nat
 
-/-- Inequality 1.7: `|α - a / q| ≤ ψ q / q`. Here `α ∈ ℝ` and `ψ : ℕ → ℝ≥0` is a function. -/
+/-- **The approximation inequality (1.7).** For a function $\psi$ from the positive integers to
+the nonnegative reals, a real number $\alpha$, a natural number $a$ and a positive integer $q$,
+inequality (1.7) is the condition $|\alpha - a/q| \le \psi(q)/q$. -/
 def inequality_1_7 (ψ : ℕ+ → ℝ≥0) (α : ℝ) (a : ℕ) (q : ℕ+) : Prop :=
   |α - a / q| ≤ ψ q / q
 
-/-- Definition of the set `𝒜` appearing in Theorem 1. -/
+/-- **The set $\mathcal{A}$ of the Duffin–Schaeffer conjecture.** For a function $\psi$ from the
+positive integers to the nonnegative reals, $\mathcal{A}(\psi)$ is the set of real numbers
+$\alpha \in [0, 1]$ for which inequality (1.7), $|\alpha - a/q| \le \psi(q)/q$, has infinitely
+many solutions $(a, q)$ with $a$ a natural number, $q$ a positive integer and $\gcd(a, q) = 1$. -/
 def 𝒜 (ψ : ℕ+ → ℝ≥0) : Set ℝ :=
   {α ∈ Set.Icc 0 1 | {(a, q) : ℕ × ℕ+ | Nat.Coprime a q ∧ inequality_1_7 ψ α a q}.Infinite}
 
-/--
-Statement of Theorem 1:
+/-- **Koukoulopoulos–Maynard Theorem 1 (Duffin–Schaeffer conjecture).** Let $\psi$ be a function
+from the positive integers to the nonnegative reals such that the series
+$\sum_{q \ge 1} \psi(q)\varphi(q)/q$ diverges, where $\varphi$ is Euler's totient function. Let
+$\mathcal{A}(\psi)$ be the set of real numbers $\alpha \in [0, 1]$ for which
+$|\alpha - a/q| \le \psi(q)/q$ has infinitely many solutions with $a$ a natural number, $q$ a
+positive integer and $\gcd(a, q) = 1$. Then $\mathcal{A}(\psi)$ is a Borel set and has
+Lebesgue measure $1$.
 
-If for `ψ : ℕ → ℝ≥0`, the infinite series `∑ (ψ q * φ q) / q`, where `φ` is the
-Euler totient function, diverges, then the set `𝒜` defined above has Lebesgue measure `1`.
 Source: D. Koukoulopoulos and J. Maynard, `On the Duffin-Schaeffer conjecture`, Annals of Math, 192 (1) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-192-1-DuffinSchaefferConjecture.lean Via leanprover/lean-eval@38361be, problem `annals_duffin_schaeffer_conjecture`.
 -/
 public theorem_wanted theorem_1 (ψ : ℕ+ → ℝ≥0) (hdivergence : ¬ Summable fun q ↦ (ψ q * φ q) / q) :
     MeasurableSet (𝒜 ψ) ∧ volume (𝒜 ψ) = 1
 
-/-- The set `𝒦` as defined in Theorem 2:
-The `α ∈ [0,1]` such that inequality 1.7 `|α - a/q| ≤ ψ(q)/q` has infinitely many solutions `(a, q)`
-with `0 ≤ a ≤ q`.
+/-- **The set $\mathcal{K}$ of Catlin's conjecture.** For a function $\psi$ from the positive
+integers to the nonnegative reals, $\mathcal{K}(\psi)$ is the set of real numbers
+$\alpha \in [0, 1]$ for which inequality (1.7), $|\alpha - a/q| \le \psi(q)/q$, has infinitely
+many solutions $(a, q)$ with $a$ a natural number and $q$ a positive integer such that $a \le q$.
 
-Note: we allow non-coprime `(a, q)` and we explicitly rule out `q = 0`. -/
+The fractions $a/q$ need not be reduced. -/
 def 𝒦 (ψ : ℕ+ → ℝ≥0) : Set ℝ :=
   {α ∈ Set.Icc 0 1 | {(a, q) : ℕ × ℕ+ | a ≤ q ∧ inequality_1_7 ψ α a q}.Infinite}
 
-/-- Define `ψ⋆ : ℕ → ℝ≥0∞` by `ψ⋆ : q ↦ φ(q) * sup {ψ(n)/n : n ∈ ℕ+, q|n}`, where `φ` denotes
-Euler's totient function. -/
+/-- **The function $\psi^*$ of Catlin's conjecture.** For a function $\psi$ from the positive
+integers to the nonnegative reals, $\psi^*$ sends each positive integer $q$ to
+$\psi^*(q) = \varphi(q) \cdot \sup \{\psi(n)/n : n \text{ a positive integer with } q \mid n\}$,
+where $\varphi$ is Euler's totient function and the supremum is taken in $[0, \infty]$. -/
 noncomputable def ψ_star (ψ : ℕ+ → ℝ≥0) : ℕ+ → ℝ≥0∞ :=
   fun q ↦ φ q * sSup {r : ℝ≥0∞ | ∃ n : ℕ+, q ∣ n ∧ r = ψ n / n}
 
-/--
-Statement of Theorem 2(a):
+/-- **Koukoulopoulos–Maynard Theorem 2(a) (Catlin's conjecture, convergent case).** Let $\psi$
+be a function from the positive integers to the nonnegative reals, and for each positive integer
+$q$ let $\psi^*(q) = \varphi(q) \cdot \sup \{\psi(n)/n : n \text{ a positive integer with }
+q \mid n\}$, where $\varphi$ is Euler's totient function and the supremum is taken in
+$[0, \infty]$. Let $\mathcal{K}(\psi)$ be the set of real numbers $\alpha \in [0, 1]$ for which
+$|\alpha - a/q| \le \psi(q)/q$ has infinitely many solutions with $a$ a natural number and $q$ a
+positive integer such that $a \le q$. If $\sum_{q \ge 1} \psi^*(q) < \infty$, then
+$\mathcal{K}(\psi)$ is a Borel set and has Lebesgue measure $0$.
 
-Let `ψ : ℕ → ℝ≥0`, `𝒦` and `ψ⋆` be as above. Then, if `∑ ψ⋆ (q)` converges, `𝒦` has Lebesgue
-measure `0`.
 Source: D. Koukoulopoulos and J. Maynard, `On the Duffin-Schaeffer conjecture`, Annals of Math, 192 (1) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-192-1-DuffinSchaefferConjecture.lean Via leanprover/lean-eval@38361be, problem `annals_duffin_schaeffer_conjecture`.
 -/
 public theorem_wanted theorem_2_a (ψ : ℕ+ → ℝ≥0) (hψ : ∑' q, ψ_star ψ q < ∞) :
     MeasurableSet (𝒦 ψ) ∧ volume (𝒦 ψ) = 0
 
-/--
-Statement of Theorem 2(b):
+/-- **Koukoulopoulos–Maynard Theorem 2(b) (Catlin's conjecture, divergent case).** Let $\psi$
+be a function from the positive integers to the nonnegative reals, and for each positive integer
+$q$ let $\psi^*(q) = \varphi(q) \cdot \sup \{\psi(n)/n : n \text{ a positive integer with }
+q \mid n\}$, where $\varphi$ is Euler's totient function and the supremum is taken in
+$[0, \infty]$. Let $\mathcal{K}(\psi)$ be the set of real numbers $\alpha \in [0, 1]$ for which
+$|\alpha - a/q| \le \psi(q)/q$ has infinitely many solutions with $a$ a natural number and $q$ a
+positive integer such that $a \le q$. If $\sum_{q \ge 1} \psi^*(q) = \infty$, then
+$\mathcal{K}(\psi)$ is a Borel set and has Lebesgue measure $1$.
 
-Let `ψ : ℕ → ℝ≥0`, `𝒦` and `ψ⋆` be as above. Then, if `∑ ψ⋆ (q)` diverges, `𝒦` has Lebesgue
-measure `1`.
 Source: D. Koukoulopoulos and J. Maynard, `On the Duffin-Schaeffer conjecture`, Annals of Math, 192 (1) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-192-1-DuffinSchaefferConjecture.lean Via leanprover/lean-eval@38361be, problem `annals_duffin_schaeffer_conjecture`.
 -/
 public theorem_wanted theorem_2_b (ψ : ℕ+ → ℝ≥0) (hψ : ∑' q, ψ_star ψ q = ∞) :
     MeasurableSet (𝒦 ψ) ∧ volume (𝒦 ψ) = 1
 
-/-- The element `s` in the statement of Corollary 3. -/
+/-- **The convergence exponent $s(\psi)$.** For a function $\psi$ from the positive integers to
+the nonnegative reals, $s(\psi)$ is the infimum, taken in the nonnegative reals, of the set of
+real numbers $\beta \ge 0$ for which the series $\sum_{q \ge 1} \varphi(q) (\psi(q)/q)^{\beta}$
+converges, where $\varphi$ is Euler's totient function. If there is no such $\beta$, then
+$s(\psi) = 0$. -/
 noncomputable def s_inf (ψ : ℕ+ → ℝ≥0) : ℝ≥0 :=
   sInf {β | Summable fun q : ℕ+ ↦ φ q * (ψ q / q) ^ β.1}
 
-/--
-Statement of Corollary 3:
+/-- **Koukoulopoulos–Maynard Corollary 3 (Hausdorff dimension of $\mathcal{A}$).** Let $\psi$
+be a function from the positive integers to $[0, 1/2]$. Let $\mathcal{A}(\psi)$ be the set of
+real numbers $\alpha \in [0, 1]$ for which $|\alpha - a/q| \le \psi(q)/q$ has infinitely many
+solutions with $a$ a natural number, $q$ a positive integer and $\gcd(a, q) = 1$. Let $s(\psi)$
+be the infimum, taken in the nonnegative reals (where the empty set has infimum $0$), of the
+real numbers $\beta \ge 0$ for which the series $\sum_{q \ge 1} \varphi(q) (\psi(q)/q)^{\beta}$
+converges, where $\varphi$ is Euler's totient function. Then the Hausdorff dimension of
+$\mathcal{A}(\psi)$ equals $\min(s(\psi), 1)$.
 
-For a function `ψ : ℕ → [0, 1/2]`, the set `𝒜` and the element `s` defined as above,
-the Hausdorff dimension of `𝒜` is the minimum of `s` and `1`.
 Source: D. Koukoulopoulos and J. Maynard, `On the Duffin-Schaeffer conjecture`, Annals of Math, 192 (1) 2020. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2020-192-1-DuffinSchaefferConjecture.lean Via leanprover/lean-eval@38361be, problem `annals_duffin_schaeffer_conjecture`.
 -/
 public theorem_wanted corollary_3 (ψ : ℕ+ → ℝ≥0) (hψ : ∀ n, ψ n ∈ Set.Icc 0 (1 / 2)) :
