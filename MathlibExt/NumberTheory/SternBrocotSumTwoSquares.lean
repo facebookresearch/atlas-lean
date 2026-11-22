@@ -13,16 +13,19 @@ public import Mathlib.LinearAlgebra.Matrix.Notation
 /-!
 # Continued fraction convergents as matrix paths
 
-The alternating product of the right and left moves in the Stern–Brocot tree records two
-consecutive convergents in its columns. We use the recurrences from Hongshen Chua,
+The columns of an alternating Stern–Brocot matrix product satisfy the continued fraction
+recurrences even when some coefficients are zero. We use the recurrences from Hongshen Chua,
 [Binary Trees and Sum of Two Squares, Theorem 1](https://arxiv.org/html/2606.24931v1#S3).
 -/
 
 namespace MetaMathlibExt
 
-/-- The columns of the alternating matrix path are consecutive convergent pairs, with the
-latest pair on the right for even indices and on the left for odd indices. The sequences
-`A` and `B` start with the initial values for the convergent of index `-1`. -/
+/-- For all natural coefficients, the columns of the alternating matrix path are `(A n, B n)`
+and `(A (n + 1), B (n + 1))`. The latter is on the right for even `n` and on the left for odd `n`.
+
+The initial pair `(A 0, B 0) = (1, 0)` has conventional index `-1`. When every `q i` is positive,
+`A (k + 1)` and `B (k + 1)` are the numerator and denominator of the `k`-th convergent
+`[q₀; q₁, …, qₖ]`. -/
 public theorem continuedFraction_path_eq_convergents (q A B : ℕ → ℕ)
     (hA₀ : A 0 = 1) (hA₁ : A 1 = q 0) (hA : ∀ k, A (k + 2) = q (k + 1) * A (k + 1) + A k)
     (hB₀ : B 0 = 0) (hB₁ : B 1 = 1) (hB : ∀ k, B (k + 2) = q (k + 1) * B (k + 1) + B k)

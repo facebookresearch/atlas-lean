@@ -10,7 +10,7 @@ module
 
 import MathlibExt.NumberTheory.SternBrocotSumTwoSquares
 
-/-! # Tests for consecutive convergents in the columns of a Stern–Brocot path -/
+/-! # Tests for the columns of a Stern–Brocot matrix path -/
 
 namespace MetaMathlibExt.continuedFraction_path_eq_convergents
 
@@ -22,7 +22,7 @@ private def entry (q : ℕ → ℕ) (u v : ℕ) : ℕ → ℕ
   | 1 => v
   | k + 2 => q (k + 1) * entry q u v (k + 1) + entry q u v k
 
--- The odd endpoint puts the new convergent in the left column.
+-- The odd endpoint updates the left column.
 example (a b : ℕ) : R ^ a * L ^ b = !![b * a + 1, a; b, 1] := by
   let q : ℕ → ℕ := fun i => if i = 0 then a else b
   have h := continuedFraction_path_eq_convergents q (entry q 1 a) (entry q 0 1)

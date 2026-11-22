@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.LinearAlgebra.Matrix.Notation
+public import MathlibExt.NumberTheory.SternBrocotSumTwoSquares
 
 /-!
 # Binary trees, continued fractions and sums of two squares
