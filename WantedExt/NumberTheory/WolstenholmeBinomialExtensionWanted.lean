@@ -16,6 +16,7 @@ public import Mathlib.NumberTheory.Padics.PadicNumbers
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import Mathlib.RingTheory.Binomial
 public import MathlibExt.NumberTheory.HigherOrderHarmonic
+public import MathlibExt.NumberTheory.WolstenholmeBinomialExtension
 
 /-!
 # Extensions of Wolstenholme's theorem by binomial coefficients
