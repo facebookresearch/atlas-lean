@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Computability.Complexity.QMA.BlockEigenbasis
+public import MathlibExt.Probability.Distributions.PoissonBinomial
 public import Mathlib.LinearAlgebra.Matrix.DotProduct
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Matrix.Order
@@ -30,10 +31,12 @@ namespace Cslib.Complexity.Classes.QMA
 
 set_option autoImplicit false
 
-/-- number of accepting blocks; definitionally equal to ∑ i, coordVar i b of PR #5840 head (coordVar i ω := if ω i then 1 else 0) -/
+/-- Number of accepting blocks in an outcome string. -/
 noncomputable def acceptCount {k : ℕ} (b : Fin k → Bool) : ℝ := ∑ i, if b i then (1 : ℝ) else 0
 
-/-- heterogeneous Bernoulli upper-tail weight as a finite sum (same shape as the RHS of measureReal_sum_ge_eq_sum at PR #5840 head); no measure -/
+/-- Heterogeneous Bernoulli upper-tail weight as a finite sum over outcome
+strings; identified with the Poisson-binomial tail in
+`tailWeight_eq_poissonBinomialTail` below. -/
 noncomputable def tailWeight {k : ℕ} (μ : Fin k → ℝ) (T : ℝ) : ℝ := ∑ b ∈ Finset.univ.filter (fun b : Fin k → Bool => T ≤ acceptCount b), ∏ i, if b i then μ i else 1 - μ i
 
 /-- T_k = Σ_{|S| ≥ T} ⊗_{i∈S} Q ⊗_{i∉S} (1 - Q) in Atlas block form (merged thresholdBlockOp is the single-subset operator) -/
@@ -294,6 +297,101 @@ theorem tailWeight_mem_Icc {k : ℕ} {μ : Fin k → ℝ} (hμ : ∀ i, μ i ∈
       simp only [hper, Finset.prod_const_one]
     rw [hfull] at hsub
     exact hsub
+
+/-- The outcome-string upper-tail weight is the Poisson-binomial tail at
+the ceiling threshold. -/
+theorem tailWeight_eq_poissonBinomialTail {k : ℕ} (μ : Fin k → ℝ) (T : ℝ) :
+    tailWeight μ T = ProbabilityTheory.poissonBinomialTail μ ⌈T⌉₊ := by
+  classical
+  have hcount : ∀ b : Fin k → Bool,
+      acceptCount b = ((Finset.univ.filter (fun i => b i)).card : ℝ) := by
+    intro b
+    exact Finset.sum_boole (fun i : Fin k => b i) Finset.univ (R := ℝ)
+  have hpred : ∀ b : Fin k → Bool,
+      (T ≤ acceptCount b) ↔ (⌈T⌉₊ ≤ (Finset.univ.filter (fun i => b i)).card) := by
+    intro b
+    rw [hcount b]
+    exact Nat.ceil_le.symm
+  have hprod : ∀ b : Fin k → Bool,
+      (∏ i, if b i then μ i else 1 - μ i)
+        = (∏ i ∈ Finset.univ.filter (fun i => b i), μ i)
+          * ∏ i ∈ Finset.univ \ Finset.univ.filter (fun i => b i), (1 - μ i) := by
+    intro b
+    have hset : Finset.univ.filter (fun i : Fin k => ¬ (b i : Prop))
+        = Finset.univ \ Finset.univ.filter (fun i => b i) := by
+      ext i
+      simp
+    rw [Finset.prod_ite]
+    congr 1
+    rw [hset]
+  have hleft : ∀ b : Fin k → Bool,
+      (fun i => decide (i ∈ Finset.univ.filter (fun j => b j))) = b := by
+    intro b
+    funext i
+    by_cases hb : b i <;> simp [hb]
+  have hright : ∀ A : Finset (Fin k),
+      Finset.univ.filter (fun i => decide (i ∈ A)) = A := by
+    intro A
+    ext i
+    simp
+  have hregroup : tailWeight μ T
+      = ∑ A ∈ Finset.univ.powerset.filter (fun A => ⌈T⌉₊ ≤ A.card),
+        (∏ i ∈ A, μ i) * ∏ i ∈ Finset.univ \ A, (1 - μ i) := by
+    unfold tailWeight
+    apply Finset.sum_nbij (fun b => Finset.univ.filter (fun j => b j))
+    · intro b hb
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_powerset] at hb ⊢
+      constructor
+      · exact Finset.filter_subset _ _
+      · exact (hpred b).mp hb
+    · intro x₁ _ x₂ _ heq
+      simp only at heq
+      have e1 := hleft x₁
+      have e2 := hleft x₂
+      rw [← e1, ← e2, heq]
+    · intro A hA
+      simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_powerset] at hA
+      refine ⟨fun i => decide (i ∈ A), ?_, ?_⟩
+      · simp only [Finset.mem_coe, Finset.mem_filter, Finset.mem_univ, true_and]
+        apply (hpred _).mpr
+        have hr := hright A
+        have hcard : (Finset.univ.filter (fun j => decide (j ∈ A))).card = A.card := by
+          rw [hr]
+        rw [hcard]
+        exact hA.2
+      · exact hright A
+    · intro b _
+      exact hprod b
+  have hexpand : ProbabilityTheory.poissonBinomialTail μ ⌈T⌉₊
+      = ∑ A ∈ Finset.univ.powerset.filter (fun A => ⌈T⌉₊ ≤ A.card),
+        (∏ i ∈ A, μ i) * ∏ i ∈ Finset.univ \ A, (1 - μ i) := by
+    unfold ProbabilityTheory.poissonBinomialTail ProbabilityTheory.poissonBinomialPMF
+    have hset : (Finset.Icc ⌈T⌉₊ k).biUnion
+        (fun j => (Finset.univ : Finset (Fin k)).powersetCard j)
+        = Finset.univ.powerset.filter (fun A => ⌈T⌉₊ ≤ A.card) := by
+      ext A
+      simp only [Finset.mem_biUnion, Finset.mem_powersetCard, Finset.mem_Icc,
+        Finset.mem_filter, Finset.mem_powerset]
+      constructor
+      · rintro ⟨j, ⟨hcj, _⟩, hsub, hcard⟩
+        refine ⟨hsub, ?_⟩
+        rw [hcard]
+        exact hcj
+      · rintro ⟨hsub, hcc⟩
+        refine ⟨A.card, ⟨hcc, ?_⟩, hsub, rfl⟩
+        have h1 : A.card ≤ (Finset.univ : Finset (Fin k)).card :=
+          Finset.card_le_card hsub
+        rwa [Finset.card_univ, Fintype.card_fin] at h1
+    have hdisj : ((↑(Finset.Icc ⌈T⌉₊ k) : Set ℕ)).PairwiseDisjoint
+        (fun j => (Finset.univ : Finset (Fin k)).powersetCard j) := by
+      intro x _ y _ hne
+      exact Finset.disjoint_powersetCard_of_ne hne _ _
+    have hbi := Finset.sum_biUnion (s := Finset.Icc ⌈T⌉₊ k)
+      (t := fun j => (Finset.univ : Finset (Fin k)).powersetCard j)
+      (f := fun A => (∏ i ∈ A, μ i) * ∏ i ∈ Finset.univ \ A, (1 - μ i)) hdisj
+    rw [hset] at hbi
+    exact hbi.symm
+  rw [hregroup, hexpand]
 
 /-- entangled-witness reduction: acceptance ≤ worst product-eigenvalue tail (the exponential bound on that tail is the residual) -/
 theorem re_star_dotProduct_thresholdOp_mulVec_le {k m : ℕ} {Q : Matrix (Fin (2 ^ m)) (Fin (2 ^ m)) ℂ} (hQ : Q.IsHermitian) (T B : ℝ) (Ψ : Fin (2 ^ (k * m)) → ℂ) (hΨ : sqNorm Ψ = 1) (hB : ∀ j : Fin k → Fin (2 ^ m), tailWeight (fun i => hQ.eigenvalues (j i)) T ≤ B) : (star Ψ ⬝ᵥ (thresholdOp k Q T *ᵥ Ψ)).re ≤ B := by
