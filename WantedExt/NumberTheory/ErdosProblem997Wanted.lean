@@ -14,7 +14,7 @@ public import Mathlib.Data.Nat.Notation
 public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Order.Interval.Set.Basic

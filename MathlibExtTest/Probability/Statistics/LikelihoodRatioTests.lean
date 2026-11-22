@@ -47,16 +47,10 @@ noncomputable def chiBarSq : Measure ℝ :=
 instance : IsProbabilityMeasure chiBarSq :=
   ⟨by simp [chiBarSq, ENNReal.inv_two_add_inv_two]⟩
 
-/-- `χ²₁` has no atom at `0`: it is the image of `N(0, 1)`, which has no atoms. -/
-theorem chiSquareMeasure_one_zero : chiSquareMeasure 1 {0} = 0 := by
-  rw [← gaussianReal_map_sq, Measure.map_apply (by fun_prop) (measurableSet_singleton 0)]
-  have : (fun x : ℝ => x ^ 2) ⁻¹' {0} = {0} := by ext x; simp
-  rw [this]
-  exact (gaussianReal_absolutelyContinuous 0 one_ne_zero) Real.volume_singleton
-
-/-- The mixture `½ δ₀ + ½ χ²₁` has an atom of mass exactly `½` at `0`. -/
+/-- The mixture `½ δ₀ + ½ χ²₁` has an atom of mass exactly `½` at `0` (`χ²₁` itself has none:
+`chiSquareMeasure_singleton`, used by `simp` through the `NullSingletonClass` instance). -/
 example : chiBarSq {0} = 2⁻¹ := by
-  simp [chiBarSq, chiSquareMeasure_one_zero]
+  simp [chiBarSq]
 
 /-- The law identity for `N(0, 4)`: `Y² / 4 ~ χ²₁`. -/
 example : (gaussianReal 0 4).map (fun x : ℝ => x ^ 2 / 4) = chiSquareMeasure 1 := by

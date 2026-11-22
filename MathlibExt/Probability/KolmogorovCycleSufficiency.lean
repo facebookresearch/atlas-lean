@@ -49,6 +49,8 @@ the reversible distribution.
 
 * `StochasticMatrix.kolmogorov_cycle_sufficiency`: the cycle condition
   implies reversibility for an irreducible finite chain.
+* `StochasticMatrix.kolmogorov_cycle_theorem`: the combined iff, from
+  sufficiency here and necessity in `KolmogorovCycleNecessity`.
 
 ## Shared API
 
@@ -606,5 +608,14 @@ theorem kolmogorov_cycle_sufficiency {M : ℕ} (P : StochasticMatrix M)
   exact ⟨π, hstat, hdb⟩
 
 
+
+/-- **Kolmogorov's cycle theorem.** For an irreducible finite Markov chain,
+reversibility is equivalent to Kolmogorov's cycle condition: positive
+transitions have positive reverse transitions, and the product of transition
+probabilities around every loop equals the product along the reversed loop. -/
+theorem kolmogorov_cycle_theorem {M : ℕ} (P : StochasticMatrix M)
+    (hirr : P.IsIrreducible) :
+    P.IsReversible ↔ P.KolmogorovCycleCondition :=
+  ⟨kolmogorov_cycle_necessity P hirr, kolmogorov_cycle_sufficiency P hirr⟩
 
 end StochasticMatrix

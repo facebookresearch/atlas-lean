@@ -57,8 +57,8 @@ an equivalent sample size (`bdeHyper`).
   so does any sequence of covered-edge reversals.
 
 Chickering's theorem that any two Markov-equivalent DAGs are connected by covered-edge
-reversals is stated in `WantedExt/ComputerScience/BayesianNetworkEquivalenceWanted.lean`;
-together with `bdeScore_eq_of_reflTransGen` it gives the score equivalence of BDe.
+reversals, and the resulting score equivalence of BDe, are in
+`CSLibExt/MachineLearning/GraphicalModels/MarkovEquivalence.lean`.
 Acyclicity of `Pa` is not needed for the identities proved here.
 
 ## References

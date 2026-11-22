@@ -12,7 +12,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Computability.Encoding
-public import MathlibExt.Computability.Complexity
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Logics.Propositional.CNF.Basic
 
 /-!
@@ -438,12 +438,5 @@ when $x$ lies in the SAT language, that is, when $x$ encodes a satisfiable CNF f
 false otherwise. -/
 noncomputable def satDec : MetaMathlibExt.ComplexityTheory.DecisionProblem :=
   fun x => if x ∈ SATLang then true else false
-
-/-- **Polynomial-time many-one reduction.** A decision problem $L_1$ reduces to a decision problem
-$L_2$ in polynomial time when there is a polynomial-time computable function $f$ from lists of
-Booleans to lists of Booleans such that $L_1(x) = L_2(f(x))$ for every list $x$ of Booleans. -/
-def PolyManyOneRed (L₁ L₂ : MetaMathlibExt.ComplexityTheory.DecisionProblem) : Prop :=
-  ∃ reduce : List Bool → List Bool,
-    MetaMathlibExt.ComplexityTheory.IsPolyTime reduce ∧ ∀ x, L₁ x = L₂ (reduce x)
 
 end Cslib.CookLevin
