@@ -21,7 +21,10 @@ converging film `h0 = 2`, `hL = 1`, `μ = U = L = 1` (existence, uniqueness, pos
 the load `6 log 2 - 4 > 0`), the diverging film `h0 = 1`, `hL = 2` (pressure `-2/9` at the
 midpoint) and the film that closes at the outlet (no solution). Scalar contact: loaded contact
 `k = 2`, `g = 1`, `f = 4` (the hypotheses of Stampacchia's theorem, existence, uniqueness and
-complementarity), separation `f = 1`, and the failure of coercivity at `k = 0`.
+complementarity), separation `f = 1`, and the failure of coercivity at `k = 0`. Coulomb
+friction at `μ = 1/2`, `N = 10`: nonzero slip in each direction with its nonpositive power,
+non-unique stick forces and the static-equilibrium criterion; and the negative coefficient
+`μ = -1/2`, which admits no stick force and makes slip supply power.
 
 ## i. Overview
 
@@ -35,6 +38,7 @@ No new definitions or results are introduced here.
 
 - A. Plane-slider lubrication
 - B. Scalar unilateral contact
+- C. Coulomb friction
 
 ## iv. References
 
@@ -206,3 +210,71 @@ example :
   rw [hmap, inner_zero_left] at h1
   simp only [norm_one, one_pow, mul_one] at h1
   linarith
+
+/-! ## C. Coulomb friction -/
+
+/-- Nonzero slip in each direction, `μ = 1/2`, `N = 10`: at `v = 2` the only admissible force is
+`-5` (power `-10`), at `v = -3` it is `5` (power `-15`). -/
+example :
+    (∀ F, IsCoulombFriction (1 / 2) 10 2 F ↔ F = -5) ∧
+      ∀ F, IsCoulombFriction (1 / 2) 10 (-3) F ↔ F = 5 := by
+  constructor
+  · intro F
+    rw [isCoulombFriction_of_ne_zero (by norm_num : (2:ℝ) ≠ 0),
+      Real.sign_of_pos (by norm_num : (0:ℝ) < 2)]
+    norm_num
+  · intro F
+    rw [isCoulombFriction_of_ne_zero (by norm_num : (-3:ℝ) ≠ 0),
+      Real.sign_of_neg (by norm_num : (-3:ℝ) < 0)]
+    norm_num
+
+/-- Friction power on the slip fixture `μ = 1/2`, `N = 10`: every graph force at `v = 2` delivers
+the power `-μ N |v| = -10`, which is nonpositive. -/
+example : ∀ F, IsCoulombFriction (1 / 2) 10 2 F → F * 2 = -10 ∧ F * 2 ≤ 0 := by
+  intro F h
+  refine ⟨?_, coulomb_power_nonpos (by norm_num) (by norm_num) h⟩
+  rw [coulomb_power_eq h]
+  norm_num
+
+/-- At rest, `μ = 1/2`, `N = 10`: the forces `0` and `5` are both admissible and `6` is not; the
+applied force `4` is held in static equilibrium and `6` is not. -/
+example :
+    IsCoulombFriction (1 / 2) 10 0 0 ∧ IsCoulombFriction (1 / 2) 10 0 5 ∧
+      ¬ IsCoulombFriction (1 / 2) 10 0 6 ∧
+      (∃ F, IsCoulombFriction (1 / 2) 10 0 F ∧ 4 + F = 0) ∧
+      ¬ ∃ F, IsCoulombFriction (1 / 2) 10 0 F ∧ 6 + F = 0 := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · rw [isCoulombFriction_zero]
+    norm_num [Set.mem_Icc]
+  · rw [isCoulombFriction_zero]
+    norm_num [Set.mem_Icc]
+  · rw [isCoulombFriction_zero]
+    norm_num [Set.mem_Icc]
+  · exact coulomb_static_equilibrium_iff.mpr (by norm_num [Set.mem_Icc])
+  · intro h
+    have hFa := coulomb_static_equilibrium_iff.mp h
+    norm_num [Set.mem_Icc] at hFa
+
+/-- At rest the friction force is not determined: for `μ = 1/2`, `N = 10` two different forces
+are admissible at `v = 0`. -/
+example :
+    ∃ F₁ F₂ : ℝ, F₁ ≠ F₂ ∧ IsCoulombFriction (1 / 2) 10 0 F₁ ∧ IsCoulombFriction (1 / 2) 10 0 F₂ :=
+  coulomb_stick_not_unique (by norm_num) (by norm_num)
+
+/-- A negative coefficient, `μ = -1/2`, `N = 10`: no force is admissible at rest, and at `v = 1`
+the only graph force is `5`, along the motion, which supplies the power `5`. -/
+example :
+    (¬ ∃ F, IsCoulombFriction (-1 / 2) 10 0 F) ∧
+      ∀ F, IsCoulombFriction (-1 / 2) 10 1 F ↔ F = 5 := by
+  constructor
+  · exact coulomb_not_exists_stick_of_neg (by norm_num : (-1 / 2 : ℝ) < 0)
+      (by norm_num : (0:ℝ) < 10)
+  · intro F
+    rw [isCoulombFriction_of_ne_zero (by norm_num : (1:ℝ) ≠ 0),
+      Real.sign_of_pos (by norm_num : (0:ℝ) < 1)]
+    norm_num
+
+/-- A negative coefficient makes slip supply power: for `μ = -1/2`, `N = 10` every graph force at
+`v = 1` delivers positive power. -/
+example : ∀ F, IsCoulombFriction (-1 / 2) 10 1 F → 0 < F * 1 :=
+  fun _ h => coulomb_slip_power_pos_of_neg (by norm_num) (by norm_num) one_ne_zero h

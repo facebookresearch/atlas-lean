@@ -118,6 +118,129 @@ example : Competitive ToyP ((Simulation.refl ToyP).F AlwaysTrue) 1 0 := by
 example : ∃ A : Strategy Bool Bool, StrategyFeasible ToyP A :=
   exists_strategyFeasible ToyP
 
+def ScaledToyP (k : ℝ) (hk : 0 ≤ k) : OnlineProblem Bool Bool where
+  legal := fun _ => True
+  legal_nil := trivial
+  legal_prefix := fun {_ _} _ => trivial
+  feasible := fun _ => True
+  feasible_nil := trivial
+  feasible_prefix := fun {_ _} _ => trivial
+  feasible_requests := fun {_} _ => trivial
+  nonblocking := fun {_ _} _ _ => ⟨true, trivial⟩
+  cost := fun τ => k * (τ.length : ℝ)
+  cost_nonneg := fun _ => mul_nonneg hk (Nat.cast_nonneg _)
+
+def sim63 : Simulation (ScaledToyP 6 (by norm_num)) (ScaledToyP 3 (by norm_num)) where
+  F := fun A h => !(A h)
+  G := fun _ τ => τ.map (fun p => (p.1, !p.2))
+  legal_mono := fun _ _ => trivial
+  F_feasible := fun _ _ _ _ => trivial
+  G_feasible := by
+    intro σ τ _ hστ
+    refine ⟨trivial, ?_⟩
+    have hfun : (Prod.fst ∘ fun p : Bool × Bool => (p.1, !p.2)) = Prod.fst := by
+      funext p
+      rfl
+    simpa [hfun] using hστ
+  a := 2
+  p := 1
+  d := 1
+  q := 4
+  ha := by norm_num
+  hp := by norm_num
+  hd := by norm_num
+  hq := by norm_num
+  costF := by
+    intro A σ _
+    simp only [algCost, ScaledToyP]
+    have hlenF : (run (fun h : List Bool => !(A h)) σ).length = σ.length :=
+      runFrom_length _ [] σ
+    have hlenA : (run A σ).length = σ.length := runFrom_length _ [] σ
+    rw [hlenF, hlenA]
+    have e : (6 : ℝ) * (σ.length : ℝ) = 2 * (3 * (σ.length : ℝ)) := by ring
+    rw [e, ENNReal.ofReal_mul zero_le_two]
+    apply le_add_of_nonneg_right
+    positivity
+  costG := by
+    intro _ τ _ _
+    simp only [ScaledToyP, List.length_map]
+    have hn : (0 : ℝ) ≤ (τ.length : ℝ) := Nat.cast_nonneg _
+    have hle : (3 : ℝ) * (τ.length : ℝ) ≤ 1 * (6 * (τ.length : ℝ)) + 4 := by
+      linarith
+    have hnn : (0 : ℝ) ≤ 1 * (6 * (τ.length : ℝ)) := by positivity
+    calc ENNReal.ofReal ((3 : ℝ) * (τ.length : ℝ))
+        ≤ ENNReal.ofReal (1 * (6 * (τ.length : ℝ)) + 4) :=
+          ENNReal.ofReal_le_ofReal hle
+      _ = ENNReal.ofReal 1 * ENNReal.ofReal ((6 : ℝ) * (τ.length : ℝ)) +
+          ENNReal.ofReal 4 := by
+        rw [ENNReal.ofReal_add hnn (by norm_num : (0 : ℝ) ≤ 4),
+          ENNReal.ofReal_mul zero_le_one]
+
+def sim31 : Simulation (ScaledToyP 3 (by norm_num)) ToyP where
+  F := fun A h => !(A h)
+  G := fun _ τ => τ.map (fun p => (p.1, !p.2))
+  legal_mono := fun _ _ => trivial
+  F_feasible := fun _ _ _ _ => trivial
+  G_feasible := by
+    intro σ τ _ hστ
+    refine ⟨trivial, ?_⟩
+    have hfun : (Prod.fst ∘ fun p : Bool × Bool => (p.1, !p.2)) = Prod.fst := by
+      funext p
+      rfl
+    simpa [hfun] using hστ
+  a := 3
+  p := 2
+  d := 1
+  q := 2
+  ha := by norm_num
+  hp := by norm_num
+  hd := by norm_num
+  hq := by norm_num
+  costF := by
+    intro A σ _
+    simp only [algCost, ScaledToyP, ToyP]
+    have hlenF : (run (fun h : List Bool => !(A h)) σ).length = σ.length :=
+      runFrom_length _ [] σ
+    have hlenA : (run A σ).length = σ.length := runFrom_length _ [] σ
+    rw [hlenF, hlenA]
+    rw [ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 3)]
+    apply le_add_of_nonneg_right
+    positivity
+  costG := by
+    intro _ τ _ _
+    simp only [ScaledToyP, ToyP, List.length_map]
+    have hn : (0 : ℝ) ≤ (τ.length : ℝ) := Nat.cast_nonneg _
+    have hle : (τ.length : ℝ) ≤ 1 * (3 * (τ.length : ℝ)) + 2 := by linarith
+    have hnn : (0 : ℝ) ≤ 1 * (3 * (τ.length : ℝ)) := by positivity
+    calc ENNReal.ofReal (τ.length : ℝ)
+        ≤ ENNReal.ofReal (1 * (3 * (τ.length : ℝ)) + 2) :=
+          ENNReal.ofReal_le_ofReal hle
+      _ = ENNReal.ofReal 1 * ENNReal.ofReal ((3 : ℝ) * (τ.length : ℝ)) +
+          ENNReal.ofReal 2 := by
+        rw [ENNReal.ofReal_add hnn (by norm_num : (0 : ℝ) ≤ 2),
+          ENNReal.ofReal_mul zero_le_one]
+
+def sim61 := sim63.comp sim31
+
+example : sim61.a = 6 := by norm_num [sim61, Simulation.comp, sim63, sim31]
+example : sim61.p = 5 := by norm_num [sim61, Simulation.comp, sim63, sim31]
+example : sim61.d = 1 := by norm_num [sim61, Simulation.comp, sim63, sim31]
+example : sim61.q = 6 := by norm_num [sim61, Simulation.comp, sim63, sim31]
+example : sim61.F AlwaysTrue = AlwaysTrue := rfl
+example : sim61.G [true, false] [(true, true), (false, false)] =
+    [(true, true), (false, false)] := rfl
+example : run (sim61.F AlwaysTrue) [true, false] = [(true, true), (false, true)] :=
+  rfl
+
+example : Competitive (ScaledToyP 6 (by norm_num)) (sim61.F AlwaysTrue) 6 41 := by
+  have h := Simulation.competitive_transfer sim61 AlwaysTrue toy_competitive
+  have e1 : sim61.a * 1 * sim61.d = 6 := by
+    norm_num [sim61, Simulation.comp, sim63, sim31]
+  have e2 : sim61.a * 1 * sim61.q + sim61.a * 0 + sim61.p = 41 := by
+    norm_num [sim61, Simulation.comp, sim63, sim31]
+  rw [e1, e2] at h
+  exact h
+
 end Cslib.Algorithms.Lean.Online.CompetitiveFrameworkTest
 
 end
