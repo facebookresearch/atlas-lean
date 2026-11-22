@@ -89,14 +89,14 @@ private def ctorIdxPair? : Lean.Name → Option (Lean.Name × Lean.Name × Lean.
   | .str t "ctorIdx" => some (t, .str t "ctorIdx", .str (.str t "ctorIdx") "_impl")
   | _ => none
 
-/-- Since Lean v4.36, an inductive type `T` that is not a family of propositions and eliminates
-into `Type` gets a compiler-generated `T.ctorIdx` (`Lean.mkCtorIdx`, in Lean's
-`src/Lean/Meta/Constructions/CtorIdx.lean`). Unless `T` has exactly one constructor (or is a
-runtime builtin type), `T.ctorIdx` is `implemented_by` an unsafe `T.ctorIdx._impl` that reads the
-runtime tag of its argument with `getObjTagNat`. Both are compiler output, not library code, so the
-safety checks skip this pair, but only in exactly that generated form, in the module that declares
-`T` and without declaration ranges (`isGeneratedCtorIdxDecl`): a hand-written `T.ctorIdx._impl`, or
-a `T.ctorIdx` implemented by anything else, is still reported. -/
+/-- An inductive type `T` that is not a family of propositions and eliminates into `Type` gets a
+compiler-generated `T.ctorIdx` (`Lean.mkCtorIdx`, in Lean's
+`src/Lean/Meta/Constructions/CtorIdx.lean`). Since Lean v4.36, unless `T` has exactly one
+constructor (or is a runtime builtin type), `T.ctorIdx` is `implemented_by` an unsafe
+`T.ctorIdx._impl` that reads the runtime tag of its argument with `getObjTagNat`. Both are compiler
+output, not library code, so the safety checks skip this pair, but only in exactly that generated
+form, in the module that declares `T` and without declaration ranges (`isGeneratedCtorIdxDecl`): a
+hand-written `T.ctorIdx._impl`, or a `T.ctorIdx` implemented by anything else, is still reported. -/
 private def isGeneratedCtorIdx (env : Lean.Environment) (name : Lean.Name) : Bool :=
   match ctorIdxPair? name with
   | none => false

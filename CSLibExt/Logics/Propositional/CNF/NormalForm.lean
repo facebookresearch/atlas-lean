@@ -17,10 +17,10 @@ public import CSLibExt.Logics.Propositional.NaturalDeduction.Semantics
 /-!
 # Equivalent conjunctive normal form by distribution
 
-Every proposition is equivalent to a formula in conjunctive normal form.  This
-file computes such a CNF, in the CSLibExt CNF representation, for upstream CSLib
-propositions over any type of atoms named by `ι : Atom → ℕ`, and proves that it
-has the same truth value as the proposition under every valuation.
+Every proposition is equivalent to a formula in conjunctive normal form. This file computes such a
+CNF, in the CSLibExt CNF representation, for the propositions of CSLib v4.35 restored in
+`Cslib.Logic.LegacyPL`, over any type of atoms named by `ι : Atom → ℕ`, and proves that it has the
+same truth value as the proposition under every valuation.
 
 The construction pushes Boolean complements to the atoms (as negative literals)
 and distributes `∨` over `∧`. `cnfOf ι pos A` is a CNF of `A` (if `pos`) or of
@@ -30,7 +30,7 @@ and `A → B` the product of the complement's CNF of `A` with the CNF of `B`.
 Each call builds only the polarity it needs, conjunction-like nodes thread an
 accumulator (`cnfAcc`), and a chain of disjunction-like nodes is distributed one
 disjunct at a time (`cnfOr`), so deep chains of either kind do not recopy their
-partial results; no cost theorem is claimed. The complement is not upstream's
+partial results; no cost theorem is claimed. The complement is not that logic's
 `¬A`, which is `A → ⊥` with `⊥` an atom; the two agree when `⊥` is false.
 
 The output can be exponentially larger than the input, which is unavoidable for
@@ -55,7 +55,7 @@ equisatisfiable alternative.
   for every assignment `σ`; `satisfies_toCNF_iff` and `satisfies_toNegCNF_iff`
   are its two polarities.
 - `Proposition.cnfSat_toCNF_bot_iff` : for injective `ι`, `A.toCNF ι` with the
-  unit clause `¬⊥` added is satisfiable iff `A` has a model with upstream's atom
+  unit clause `¬⊥` added is satisfiable iff `A` has a model with the atom
   `⊥` false. (Without that clause the question is trivial: every proposition
   over atoms alone is true under the all-true valuation.)
 -/
@@ -132,7 +132,7 @@ def cnfOf (ι : Atom → ℕ) (pos : Bool) (A : Proposition Atom) : CNF := cnfAc
 def toCNF (ι : Atom → ℕ) (A : Proposition Atom) : CNF := cnfOf ι true A
 
 /-- A CNF of the Boolean complement of `A`: it holds exactly when `A` is false
-(`satisfies_toNegCNF_iff`). This is not upstream's `¬A = A → ⊥`, which can be true when
+(`satisfies_toNegCNF_iff`). This is not that logic's `¬A = A → ⊥`, which can be true when
 `A` is, if the atom `⊥` is true. -/
 def toNegCNF (ι : Atom → ℕ) (A : Proposition Atom) : CNF := cnfOf ι false A
 

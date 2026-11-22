@@ -39,8 +39,8 @@ below has no memo table and no cost bound is claimed.
   two (variables from `0`).
 - `BDD.mk v lo hi` : the node constructor that removes a redundant test.
 - `BDD.apply op t₁ t₂` : Bryant's apply for a binary Boolean operation `op`.
-- `BDD.ofProposition A` : the ROBDD of an upstream CSLib proposition over
-  `Nat` atoms, built by `apply`.
+- `BDD.ofProposition A` : the ROBDD of a proposition of CSLib v4.35 (restored in
+  `Cslib.Logic.LegacyPL`) over `Nat` atoms, built by `apply`.
 
 ## Main results
 
@@ -292,7 +292,7 @@ theorem isROBDD_apply (op : Bool → Bool → Bool) {t₁ t₂ : BDD} (h₁ : Is
 
 /-! ### ROBDDs of propositions -/
 
-/-- The ROBDD of an upstream CSLib proposition over `Nat` atoms, built bottom-up with
+/-- The ROBDD of a proposition of CSLib v4.35 over `Nat` atoms, built bottom-up with
 `apply`. -/
 def ofProposition : Proposition Nat → BDD
   | .atom x => node x (leaf false) (leaf true)

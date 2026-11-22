@@ -25,9 +25,9 @@ logic (CLL) by marking every hypothesis as reusable with `!`:
 * `(A → B)° = !A° ⊸ B°`,
 
 and atoms go to CLL propositions through a map `f`. This file proves that the translation
-**preserves provability** (the forward direction). If `Γ ⊢ A` is derivable in CSLib's natural
-deduction (minimal logic, `Cslib.Logic.LegacyPL`) from a theory whose axioms translate to
-CLL-provable propositions, then the CLL sequent `⊢ ?Γ°⫠, A°` is provable
+**preserves provability** (the forward direction). If `Γ ⊢ A` is derivable in CSLib v4.35's natural
+deduction (minimal logic, restored in `Cslib.Logic.LegacyPL`) from a theory whose axioms translate
+to CLL-provable propositions, then the CLL sequent `⊢ ?Γ°⫠, A°` is provable
 (`derivable_of_derivation`). Here `?Γ°⫠` is the multiset of the propositions `ʔ(B°⫠)` for `B ∈ Γ`,
 the one-sided form of `!Γ° ⊢ A°`.
 

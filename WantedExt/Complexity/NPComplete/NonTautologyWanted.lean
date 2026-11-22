@@ -38,11 +38,11 @@ INSTANCE: a Boolean expression `E` over a set `U` of variables, using the connec
 (not), `∨` (or), `∧` (and), and `→` (implies). QUESTION: is `E` not a tautology, i.e., is
 there a truth assignment for `U` that makes `E` false?
 
-The expression is CSLib's `Cslib.Logic.LegacyPL.Proposition` over the atoms `WithBot ℕ`: the atom
-`(x : ℕ)` is the variable `uₓ`, and negation is CSLib's `Proposition.neg A = A → ⊥`, where `⊥`
-is the atom `⊥`. Truth values are CSLibExt's `Proposition.evalBool`, under the valuation that
-sends `⊥` to `false` and `uₓ` to `σ x`; with `⊥` false, `¬A` evaluates to `!A`
-(`Proposition.evalBool_neg`).
+The expression is a proposition of CSLib v4.35, restored as `Cslib.Logic.LegacyPL.Proposition`, over
+the atoms `WithBot ℕ`: the atom `(x : ℕ)` is the variable `uₓ`, and negation is that logic's
+`Proposition.neg A = A → ⊥`, where `⊥` is the atom `⊥`. Truth values are CSLibExt's
+`Proposition.evalBool`, under the valuation that sends `⊥` to `false` and `uₓ` to `σ x`; with `⊥`
+false, `¬A` evaluates to `!A` (`Proposition.evalBool_neg`).
 
 Encoding: `U = {u₀, …, u_{n-1}}`, and `E` is written in postfix (reverse Polish) notation as a
 list of tokens `(code, x)`: `(0, x)` is the variable `uₓ`, `(1, _)` is `¬`, and `(2, _)`,

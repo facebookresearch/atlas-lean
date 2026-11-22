@@ -19,8 +19,8 @@ public import CSLibExt.Logics.Propositional.NaturalDeduction.Completeness
 Every Boolean function of finitely many atoms is the truth table of a
 proposition, and `→` with `⊥` alone already suffice.
 
-As elsewhere in this directory, `⊥` is upstream CSLib's atom `.atom ⊥`, read as
-false; `⊤` is written `⊥ → ⊥`.
+As elsewhere in this directory, `⊥` is the atom `.atom ⊥` of CSLib v4.35's propositions, restored
+in `Cslib.Logic.LegacyPL`, read as false; `⊤` is written `⊥ → ⊥`.
 
 ## Main definitions
 

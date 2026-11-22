@@ -22,7 +22,8 @@ equisatisfiable CNF formula of linear size by naming every compound
 subformula with a fresh variable and adding three clauses that force the name
 to agree with its connective.
 
-Formulas are upstream CSLib's `Proposition Atom` (atoms, `∧`, `∨`, `→`), read by
+Formulas are CSLib v4.35's `Proposition Atom` (atoms, `∧`, `∨`, `→`), restored in
+`Cslib.Logic.LegacyPL` and read by
 `Proposition.evalBool`.  CNF variables are natural numbers
 (`CSLibExt/Logics/Propositional/CNF`, shared with the DPLL solver): an injective
 `ι : Atom → ℕ` sends the atom `a` to the variable `2 * ι a`, and the compound

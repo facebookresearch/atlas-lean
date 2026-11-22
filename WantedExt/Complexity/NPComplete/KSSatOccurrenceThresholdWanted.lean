@@ -45,7 +45,7 @@ Kratochvíl, Savický and Tuza prove that for every `k ≥ 3` such an `f(k)` exi
 NP-complete for every `s ≥ f(k) + 1`; the case `s = f(k) + 1` is the occurrence threshold. They
 also show `⌊2^k / (e k)⌋ ≤ f(k) ≤ 2^(k-1) - 2^(k-4) - 1` for `k ≥ 4`.
 
-Formulas are CSLib's `Cslib.Logic.LegacyPL.CNF` (clauses are lists of literals
+Formulas are ATLAS's CNF encoding `Cslib.Logic.LegacyPL.CNF` (clauses are lists of literals
 `(variable, polarity)`, a formula is a list of clauses) and satisfiability is
 `Cslib.Logic.LegacyPL.CNFSat`. A clause contains exactly `k` distinct variables when it has `k`
 literals whose variables are pairwise distinct. A variable occurs in a clause when the clause

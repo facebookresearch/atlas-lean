@@ -16,8 +16,8 @@ public import CSLibExt.Logics.Propositional.Legacy.NaturalDeduction.Theory
 /-!
 # Truth-table semantics and soundness of natural deduction
 
-Upstream CSLib's natural deduction (`Cslib.Logic.LegacyPL.Theory.Derivation`) has the
-introduction and elimination rules of *minimal* logic only.  Falsum is not a
+The natural deduction of CSLib v4.35, restored as `Cslib.Logic.LegacyPL.Theory.Derivation`, has
+the introduction and elimination rules of *minimal* logic only.  Falsum is not a
 connective: under `[Bot Atom]` the proposition `⊥` is the atom `.atom ⊥`, and
 intuitionistic or classical reasoning comes from axioms in the theory `T`
 (`Theory.IPL`, `Theory.CPL`, or any `T` with an `IsClassical` instance).

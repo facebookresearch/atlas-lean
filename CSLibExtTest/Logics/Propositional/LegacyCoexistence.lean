@@ -88,9 +88,10 @@ public import CSLibExt.Logics.Propositional.NaturalDeduction.Semantics
 
 CSLib v4.36 declares its `falsum`-based propositions as `Cslib.Logic.PL.Proposition`. ATLAS keeps
 CSLib v4.35's propositions, which have no `falsum`, in `CSLibExt/Logics/Propositional/Legacy/`
-under the namespace `Cslib.Logic.LegacyPL`, together with every development built on them. This
-module imports CSLib's propositional logic together with every `CSLibExt` module that uses that
-namespace, so a declaration of one that takes a name of the other makes it fail to build.
+under the namespace `Cslib.Logic.LegacyPL`, and every ATLAS declaration once in `Cslib.Logic.PL`
+moved there too; other developments refer to them in that namespace. This module imports CSLib's
+propositional logic together with every `CSLibExt` module that declares or uses `LegacyPL`
+names, so a declaration of one that takes a name of the other makes it fail to build.
 -/
 
 set_option autoImplicit false
