@@ -15,3 +15,4 @@ Geometry of inner product spaces: nearest-point projections, orthonormal and Hil
 - [Separable Hilbert spaces](separable-hilbert-spaces/README.md)
 - [Weak convergence of orthonormal sequences](weak-convergence-of-orthonormal-sequences/README.md)
 - [Hilbert basis of orthogonal polynomials on $(-1, 1)$](orthogonal-polynomial-hilbert-basis.md)
+- [A complete subspace has an orthogonal projection](of-complete-space.md)
