@@ -4153,6 +4153,22 @@ class ScopedRun(unittest.TestCase):
                 self.assertIn(name, row)
 
 
+    def test_a_stale_link_the_base_had_stays_the_bases_when_the_row_gains_a_credit(self) -> None:
+        # The base's row links only a declaration the Lean lacks; the changes add the declaration it states, leaving
+        # that end as it was: no new problem.
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text().replace(
+            '"object": [{"location": {"declaration": "Ext.lagrange"}}]',
+            '"object": [{"location": {"declaration": "Ext.alreadyGone"}}]'))
+        self.base = self.commit("a stale link")
+        links.write_text(links.read_text().replace(
+            '"object": [{"location": {"declaration": "Ext.alreadyGone"}}]',
+            '"object": [{"location": {"declaration": "Ext.alreadyGone"}}, {"location": {"declaration": "Ext.lagrange"}, '
+            '"role": "states"}]'))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (0, []))
+
+
 
 class BuildPath(Vault):
     """What the build's own steps refuse before they write, beside what credit_problems refuses everywhere."""

@@ -2981,13 +2981,16 @@ def link_view(index) -> dict:
     owner_problems), for which a run writes nothing."""
     rows = numbered_rows()
     stale: dict[tuple[str, str], list[str]] = defaultdict(list)
+    # Which of them name a declaration the row does not credit: the repair differs, not the link.
+    references: set[tuple[str, str]] = set()
     files: dict[Path, list[dict]] = defaultdict(list)
     for path, number, row in rows:
         files[path].append(row)
         # Each declaration of this project the row names, whatever its role: the one it credits, and the others.
         credited = lean_name(row)
-        gone = [name if name == credited else f"{name}{AS_REFERENCE}"
-                for name in dict.fromkeys(name for name, _role, _place in lean_ends(row).own) if not declared(name, index)]
+        gone = [name for name in dict.fromkeys(name for name, _role, _place in lean_ends(row).own)
+                if not declared(name, index)]
+        references.update((row.get("id") or page_name(row), name) for name in gone if name != credited)
         # And, for a row that credits nothing else, the declaration the module and name an earlier sync wrote resolve
         # to, as annotation_key reads it: one that resolves to none, or to several, links none the Lean has.
         try:
@@ -3049,8 +3052,8 @@ def link_view(index) -> dict:
     others = Counter(stable(problem) for problem in credit_problems(files) + owner_problems(files, index)
                      if not any(kind.fullmatch(problem) for kind in (ROWS_OF_A_PAGE, PAGES_CREDITING,
                                                                      PAGES_STANDING_FOR))) - own_words
-    return {"stale": dict(stale), "held_problems": Counter(held_markers(readable_rows(files), index)[3]),
-            "unreadable": broken + +excess + others}
+    return {"stale": dict(stale), "references": references,
+            "held_problems": Counter(held_markers(readable_rows(files), index)[3]), "unreadable": broken + +excess + others}
 
 
 # The problems credit_problems and owner_problems give a page with several rows, and a declaration with several pages,
@@ -3061,10 +3064,8 @@ PAGES_STANDING_FOR = re.compile(
     r"(.+) (?:both|all) stand for the declaration (\S+) of this project; a declaration has one page")
 
 
-# How link_view names a row an earlier sync wrote with a module and a name (see legacy_pair), and a declaration a row
-# names that is not the one it credits.
+# How link_view names a row an earlier sync wrote with a module and a name (see legacy_pair).
 BY_MODULE_AND_NAME = ", by the module and name an earlier sync wrote"
-AS_REFERENCE = ", which the row names but does not credit"
 
 
 def written_page(row: dict) -> Path | None:
@@ -3210,9 +3211,10 @@ def scoped_plan(base: dict, head: dict, index, targets: list, changed: frozenset
     blocking = [(f"{where} names {name}, which no longer name one declaration of the Lean: link the row to the one it "
                  "means, by its full name, and keep its article id, or remove them and keep the page as a planned page"
                  if name.endswith(BY_MODULE_AND_NAME) else
-                 f"{where} links {name}, and the Lean no longer has it: point that end at the declaration's successor "
-                 "or remove the end, keeping the row's article id and what it credits"
-                 if name.endswith(AS_REFERENCE) else
+                 f"{where} links {name}, which the row names but does not credit, and the Lean no longer has it: "
+                 "point that end at the declaration's successor or remove the end, keeping the row's article id and "
+                 "what it credits"
+                 if (row, name) in links["references"] else
                  f"{where} links {name}, which the Lean no longer has: relink the row to the declaration's successor "
                  "and keep its article id, or remove the link and keep the page as a planned page")
                 for (row, name), places in sorted(links["stale"].items()) if (row, name) not in base["stale"]
