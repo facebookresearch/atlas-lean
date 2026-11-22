@@ -18,6 +18,32 @@ import Mathlib.Tactic
 
 @[expose] public section
 
+/-!
+# Russian-roulette path weights and masses
+
+This module is the finite-level layer only: it defines raw weights and masses of
+fixed-length paths in a finite state space. It does not by itself define a
+probability law or an estimator expectation.
+
+A path is `x : Fin (n + 1) → S` with `n` transitions, starting at `x 0`; the
+level-`n` sums run over such paths with `x 0 = i`.
+
+Here `q` is the stop (termination) probability and `P` the conditional next-state
+kernel given survival, so the survival kernel is `Q = (1 − q) • P` entrywise
+(`stepKernel`), and the stop factor `q` is applied at the path's final state. This
+is the termination-probability convention, not a continuation probability.
+
+This is the finite translation of Kong and Spanier, "A new proof of geometric
+convergence for general transport problems based on sequential correlated sampling
+methods", Journal of Computational Physics 227(23), 2008, pp. 9762–9777,
+DOI 10.1016/j.jcp.2008.07.016: their equations (8)–(9) (substochastic kernel with
+row mass `1 − p̂`, conditional law, termination probability `p̂`, here `p̂ ↦ q`,
+kernel ↦ `Q`, conditional law ↦ `P`) and equation (11) (accumulated-score
+estimator). See also M. Pharr, W. Jakob and G. Humphreys, Physically Based
+Rendering, 4th edition, MIT Press, 2023, §2.2.4 (Russian Roulette), which uses the
+same termination-probability convention.
+-/
+
 namespace RussianRoulette
 
 /-- Continuation (survival) kernel `Q i j = (1 - q i) * P i j`, where `q` is the
