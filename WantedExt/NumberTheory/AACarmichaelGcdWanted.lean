@@ -10,34 +10,14 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.GCDMonoid.Finset
-public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Data.Nat.PrimeFin
 public import Mathlib.Data.Set.Card
 public import Mathlib.NumberTheory.ArithmeticFunction.Carmichael
+public import MathlibExt.NumberTheory.AACarmichaelGcd
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- An `(a, a)`-Carmichael number: a squarefree natural number `n` such that `p - a ∣ n - a`
-for every prime `p ∣ n`, the divisibility taken in `ℤ`.
-
-Source: Thomas Wright, *(a,a)-Carmichael Numbers and Greatest Common Divisors of p-a*,
-INTEGERS 26 (2026), Article A123, abstract and Section 1 (definition read from the arXiv version,
-arXiv:2607.02738; the journal display could not be checked). -/
-def IsAACarmichael (a : ℤ) (n : ℕ) : Prop :=
-  Squarefree n ∧ ∀ p ∈ n.primeFactors, ((p : ℤ) - a) ∣ ((n : ℤ) - a)
-
-/-- Every prime is an `(a, a)`-Carmichael number, for every integer `a`.
-
-Source: Thomas Wright, *(a,a)-Carmichael Numbers and Greatest Common Divisors of p-a*,
-INTEGERS 26 (2026), Article A123, characteristic lemma of the definition in Section 1. -/
-theorem isAACarmichael_of_prime (a : ℤ) {p : ℕ} (hp : p.Prime) : IsAACarmichael a p := by
-  refine ⟨hp.prime.squarefree, fun q hq => ?_⟩
-  rw [hp.primeFactors, Finset.mem_singleton] at hq
-  subst hq
-  exact dvd_rfl
 
 /-- Conditional lower bound for `(a, a)`-Carmichael numbers with prescribed gcd. Assume
 Conjecture 2 (there are `A ≥ 2` and `l₀` such that for every `l ≥ l₀` and every `b` coprime to
@@ -103,25 +83,6 @@ public theorem_wanted carmichael_prod_primes_eq_mul_add_one_le_exp
           g ∣ ∏ r ∈ (Finset.Iic z).filter (fun r : ℕ => r.Prime ∧ (z : ℝ) / 2 ≤ r), r ∧
           g.primeFactors.card = ⌊Real.log z⌋₊ ∧ q = g * j + 1) →
         (ArithmeticFunction.carmichael (∏ q ∈ S, q) : ℝ) ≤ Real.exp (4 * z / 5)
-
-/-- The gcd of `p₁ - a` and `p₂ - a` is exactly `ν`. Let `L₁, L₂` be coprime, let `k₁, k₂` be
-coprime to each other and to `ν L₁ L₂`, and let `pᵢ = dᵢ kᵢ ν + a` with `dᵢ ∣ Lᵢ`. Then
-`gcd(p₁ - a, p₂ - a) = ν`.
-
-In the paper `pᵢ ∈ 𝒫^i_{kᵢ} = {p prime : p = dᵢ kᵢ ν + a, dᵢ ∣ Lᵢ, ω(dᵢ) = z}` with
-`Lᵢ = ∏_{q ∈ 𝒬ᵢ} q` for disjoint sets of primes `𝒬₁, 𝒬₂` and `k₁, k₂` from Lemmas 4 and 5; the
-statement keeps only the hypotheses the conclusion uses (`(L₁, L₂) = 1`, `(kᵢ, νL₁L₂) = 1`,
-`(k₁, k₂) = 1`, `dᵢ ∣ Lᵢ`) and drops primality of `pᵢ` and `ω(dᵢ) = z`.
-
-Source: Thomas Wright, *(a,a)-Carmichael Numbers and Greatest Common Divisors of p-a*,
-INTEGERS 26 (2026), Article A123, Section 5 (definition of `𝒫^i_k`) and Lemma 6
-(`integers-2026-A123-lem-6`). -/
-public theorem_wanted int_gcd_sub_eq_of_eq_mul_mul_add
-    (a : ℤ) (ν L₁ L₂ k₁ k₂ d₁ d₂ : ℕ) (hL : Nat.Coprime L₁ L₂)
-    (hk₁ : Nat.Coprime k₁ (ν * L₁ * L₂)) (hk₂ : Nat.Coprime k₂ (ν * L₁ * L₂))
-    (hk : Nat.Coprime k₁ k₂) (hd₁ : d₁ ∣ L₁) (hd₂ : d₂ ∣ L₂) (p₁ p₂ : ℤ)
-    (hp₁ : p₁ = d₁ * k₁ * ν + a) (hp₂ : p₂ = d₂ * k₂ * ν + a) :
-    Int.gcd (p₁ - a) (p₂ - a) = ν
 
 end
 
