@@ -35,7 +35,8 @@ paper's `e_n(P)` and `polyPowerSum P n` its `p_n(P)`, defined through Newton's i
 finitely many variables (`MvPolynomial σ ℚ`, `σ` finite), which loses nothing for identities
 between them.
 
-Proposition 3, `pow_mem_prime_pow_padicValNat_factorial_iff`, is proved in
+Proposition 3, `pow_mem_prime_pow_padicValNat_factorial_iff`, and Corollary 24,
+`padicValNat_sum_le_add_padicValNat_multinomial`, are proved in
 `MathlibExt.Algebra.DeepPowerSumCongruences`.
 -/
 
@@ -262,15 +263,6 @@ public theorem_wanted padicValNat_multinomial_eq_sum_carries {p : ℕ} [Fact p.P
     (s : Finset ι) (r : ι → ℕ) :
     padicValNat p (Nat.multinomial s r) =
       ∑ i ∈ Finset.Icc 1 (∑ j ∈ s, r j), (∑ j ∈ s, r j % p ^ i) / p ^ i
-
-/-- `v_p(r_i) ≥ v_p(m) - v_p((m; r_1, …, r_k))` for `m = r_1 + ⋯ + r_k` and `r_i ≠ 0` (the paper
-has `v_p(0) = ∞`; with `r = (0, p)` and Mathlib's `v_p(0) = 0` the inequality fails).
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Corollary 24 (`integers-2024-A46-cor-24`). -/
-public theorem_wanted padicValNat_sum_le_add_padicValNat_multinomial {p : ℕ} [Fact p.Prime]
-    {ι : Type*} (s : Finset ι) (r : ι → ℕ) {j : ι} (hj : j ∈ s) (hr : r j ≠ 0) :
-    padicValNat p (∑ i ∈ s, r i) ≤ padicValNat p (r j) + padicValNat p (Nat.multinomial s r)
 
 /-- In a `ℤ_(p)`-algebra with divided-power ideal `𝔞`, `x ≡ y mod 𝔞` implies
 `x ^ (p ^ m) ≡ y ^ (p ^ m) mod p ^ m 𝔞` for all `m` and `xⁿ ≡ yⁿ mod n𝔞` for all `n`.
