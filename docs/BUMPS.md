@@ -86,7 +86,8 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
    other side's added sentences follow. If both rewrote it, or both wrote a first
    one and the edits are not provably on different lines, you write one.
    If you resolved a conflict by keeping one side's version, it keeps that
-   side's row. With `--adjacent` it also merges a conflict where one side
+   side's row, unless the other side corrected the rationale: then you write
+   one. With `--adjacent` it also merges a conflict where one side
    rewrote one whole doc comment and the other changed the one line next to it
    (a non-blank line with no `/-` or `-/`), which is how docstring campaigns on
    main usually meet the bump's edits. Before committing it checks the manifest

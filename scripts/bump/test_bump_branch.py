@@ -77,7 +77,7 @@ class MergeManifestTest(unittest.TestCase):
     def test_a_resolution_that_keeps_one_side_keeps_that_sides_row(self):
         base = diverged("MathlibExt/A.lean", "A", "Port the lemma.")
         ours = diverged(base["path"], "A-bump", f"Port the lemma. {BUMP}")
-        theirs = diverged(base["path"], "A-main", "Change zero to two.")
+        theirs = diverged(base["path"], "A-main", "Port the lemma. Change zero to two.")
         kept_main = merged_file(b"A-main", ours=b"A-bump", theirs=b"A-main", base=b"A", auto=b"x")
         text, counts, _ = self.merge([base], [ours], [theirs], {base["path"]: kept_main})
         self.assertEqual((bb.manifest_rows(text)[base["path"]], counts["main"]), (theirs, 1))
@@ -88,6 +88,13 @@ class MergeManifestTest(unittest.TestCase):
         ours_backport = {**ours, "backport": "https://example.org/2"}
         _, _, problems = self.merge([base], [ours_backport], [theirs], {base["path"]: kept_main})
         self.assertIn("also changed the row's other fields", problems[0])
+        # A correction to the rationale made by the discarded side is not dropped silently.
+        corrected = {**ours, "rationale": "Port the lemma from PR #21."}
+        _, _, problems = self.merge([base], [corrected], [theirs], {base["path"]: kept_main})
+        self.assertIn("the bump also rewrote the rationale", problems[0])
+        corrected_main = {**theirs, "rationale": "Port the lemma from PR #21."}
+        _, _, problems = self.merge([base], [ours], [corrected_main], {base["path"]: kept_bump})
+        self.assertIn("main also rewrote the rationale", problems[0])
 
     def test_a_row_only_correction_on_one_side_survives(self):
         base = diverged("MathlibExt/A.lean", "A", "The local lemma is from PR #12.")

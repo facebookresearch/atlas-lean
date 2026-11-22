@@ -39,7 +39,8 @@ the file resolved and staged:
   combined only when the two edits provably touch different lines; otherwise they may
   describe the same edit and go to a person);
 - a conflict resolved by keeping main's file: main's row (or the bump's, for the bump's
-  file), as long as the other side changed nothing else in the row.
+  file), as long as the other side changed nothing else in the row and only added to
+  its rationale (a rewrite, such as a corrected reference, goes to a person).
 Anything else, such as a removed row, a file resolved by hand or put back to the merge
 base, stops with the rows to finish by hand. The manifest is then left parseable, with
 main's version of those rows, for `scripts/check_formal_math_sync.py
@@ -309,14 +310,21 @@ def merge_both_changed(path: str, b, o: dict, t: dict, versions) -> tuple[dict |
         # equal to one side because that side's change contains the other's.
         disjoint = data not in (ours, theirs) and disjoint_changes(base, ours, theirs)
         return combined("both", "distinct" if disjoint else "overlap", data != theirs)
-    # A conflict resolved by keeping one side's file drops the other side's change.
+    # A conflict resolved by keeping one side's file drops the other side's change, and the
+    # sentences that side added to describe it; a rewrite of the base rationale (a correction)
+    # is not about that change alone, so it needs a person.
+    base_rationale = (b or {}).get("rationale", "")
     if data == theirs:
         if others(o) != others(b):
             return None, "", "the staged file is main's, but the bump also changed the row's other fields"
+        if appended(base_rationale, o.get("rationale", "")) is None:
+            return None, "", "the staged file is main's, but the bump also rewrote the rationale; write one"
         return t, "main", None
     if data == ours:
         if others(t) != others(b):
             return None, "", "the staged file is the bump's, but main also changed the row's other fields"
+        if appended(base_rationale, t.get("rationale", "")) is None:
+            return None, "", "the staged file is the bump's, but main also rewrote the rationale; write one"
         return o, "bump", None
     return None, "", "the file was resolved by hand: record its rationale with --record-divergence"
 
