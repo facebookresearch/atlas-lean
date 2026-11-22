@@ -36,7 +36,7 @@ run_check() {
 
 check_structure() {
   local path
-  for path in CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest WantedExt scripts; do
+  for path in CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest Domains DomainsTest WantedExt scripts; do
     if [[ ! -d "$path" ]]; then
       echo "missing required directory: $path" >&2
       return 1
@@ -44,7 +44,10 @@ check_structure() {
   done
   for path in \
     lakefile.toml lake-manifest.json lean-toolchain README.md REVIEWING.md \
-    scripts/check_axioms.sh scripts/check_diagnostics.sh scripts/check_health.sh \
+    scripts/check_axioms.sh scripts/check_axioms.lean scripts/audit_compiled_modules.py \
+    scripts/check_diagnostics.sh scripts/check_health.sh \
+    scripts/check_declaration_collisions.sh scripts/check_declaration_collisions.lean \
+    scripts/list_v2_modules.sh \
     scripts/check_lake_surface.py scripts/check_copyright.py scripts/test_scripts.sh; do
     if [[ ! -f "$path" ]]; then
       echo "missing required file: $path" >&2
@@ -53,12 +56,19 @@ check_structure() {
   done
 }
 
+# `bash -n` parses only its first operand (the others become its arguments),
+# so parse each script separately.
+check_shell_syntax() {
+  local path failed=0
+  for path in "$@"; do
+    bash -n "$path" || failed=1
+  done
+  return "$failed"
+}
+
 if [[ "$scope" == all || "$scope" == preflight ]]; then
   run_check "repository structure" check_structure
-  run_check "shell syntax" \
-    bash -n \
-      scripts/check.sh scripts/check_axioms.sh scripts/check_diagnostics.sh \
-      scripts/check_health.sh scripts/test_scripts.sh
+  run_check "shell syntax" check_shell_syntax scripts/*.sh
   run_check "maintenance script regressions" scripts/test_scripts.sh
   run_check "library policy" scripts/check_health.sh
   run_check "copyright headers" python3 scripts/check_copyright.py --all
@@ -70,6 +80,9 @@ fi
 if [[ "$scope" == all || "$scope" == build ]]; then
   run_check "compiler diagnostics" scripts/check_diagnostics.sh
   run_check "compiled environment policy" scripts/check_axioms.sh
+  # The compiled-policy audit imports modules in groups and splits a group on a name
+  # collision; this check imports every v2 module at once, as the wiki does.
+  run_check "declaration collisions" scripts/check_declaration_collisions.sh
 fi
 
 exit "$status"

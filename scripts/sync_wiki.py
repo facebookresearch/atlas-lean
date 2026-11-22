@@ -10,17 +10,23 @@ tree under blueprint/roadmap/. Each article's annotation in blueprint/links/
 (literature-links, read by Autoform) ties it to its Lean declaration and holds its
 article id and origin. The Lean owns what lean-facts adds on the build's checkout:
 an article's `## Depends on` and `## Proof depends on`, from the dependency dump,
-and its annotation's kind and status, from the Lean sources.
+and its annotation's kind and status, from the Lean sources. A planned page, one
+whose annotation has no Lean link, keeps the prerequisites it records by hand,
+and gets no kind or status.
 
 declarations gives each declaration with a docstring and no page a page from its
 docstring, beside its module's other pages and listed on their page in source
-order, and marks it as taken from the docstring. A module with no pages yet gets
+order, and marks it as taken from the docstring. Each annotation it adds, for a
+page or a folder page, gets a fresh article id. A module with no pages yet gets
 the folders and folder pages generate_wiki lays out where scripts/taxonomy.json
 places it, and its topmost new folder joins its parent's list. A deprecated
 declaration gets no page: upstream is retiring it, and the wiki may have dropped
-its page. It lists pages whose declaration is gone and docstrings that changed
-since the last run (scripts/wiki-sync.json keeps their digests), and changes no
-article that exists. Its first run records the digests only. The source-derived
+its page. Nor does a held declaration (see held_name): its page stays unlinked
+until the Lean is fixed, and the run lists it as held; a marker it cannot use
+is an error, and the run then writes nothing. It lists pages whose
+declaration is gone and docstrings that changed since the last run
+(scripts/wiki-sync.json keeps their digests), and changes no article that
+exists. Its first run records the digests only. The source-derived
 area catalog and coverage summary are refreshed with the same source snapshot.
 A folder page is edited within only when it is simple (see simple_page): a page
 with no listed neighbour then ends the folder page's own list, ahead of "Related
@@ -30,13 +36,17 @@ section holds. On any other page, it goes at the end, after a blank line, and is
 reported for an editor to place; if the page has raw HTML or a code fence, it is
 left out and reported as an error. A folder the wiki has keeps its layout and each
 topic its folder (see kept_layout), and a folder page split into parts lists what
-its parts list when both pages are simple; any other part list is reported. Each
-edit is checked before it is written (see verify_edit): Autoform's check of what
-the site may publish must pass on the page, as render would otherwise show it as
-typed, with no link, and the text it publishes is rendered with the site's
-Markdown extensions and read as a browser builds it. An edit that would lose a
-link, move a heading or its id, or show its new link elsewhere or not at all is
-left out and reported too, and a page keeps its line ends and bytes.
+its parts list when both pages are simple; any other part list is reported. A
+card (docs/cards.md) holds only the statements its editors placed in it: a new
+page that would land in a card or in a folder below one goes in the card's
+parent folder, and the run lists it as unassigned; no new page takes the name
+of a folder or an address the card move ledger records. Each edit is checked
+before it is written (see verify_edit): Autoform's check of what the site may
+publish must pass on the page, as render would otherwise show it as typed, with
+no link, and the text it publishes is rendered with the site's Markdown
+extensions and read as a browser builds it. An edit that would lose a link, move
+a heading or its id, or show its new link elsewhere or not at all is left out
+and reported too, and a page keeps its line ends and bytes.
 
 import runs once, on a tree whose Lean still holds the wiki's English. TITLES.jsonl
 holds checked titles, one {"file", "name", "opening", "title"} per line: a
@@ -54,6 +64,7 @@ import hashlib
 import importlib
 import json
 import re
+import secrets
 import sys
 import unicodedata
 from collections import Counter, defaultdict
@@ -269,11 +280,16 @@ def lean_facts_for(name: str | None, own: dict | None, index, sorry) -> tuple[st
     return None, None
 
 
+def has_legacy_name(own: dict | None) -> bool:
+    """Whether an earlier sync wrote this page with only a module and a name (see legacy_lean_name)."""
+    return bool(own and "module" in own and "name" in own)
+
+
 def legacy_lean_name(own: dict | None, index) -> str | None:
     """The Lean name of a page an earlier sync wrote with only a module and a name (no Lean link), read through
     the Lean index: the one declaration of that module whose last name component is that name; None when the
     index has none, or more than one, so no page is ever bound to a declaration by a guess."""
-    if not (own and "module" in own and "name" in own):
+    if not has_legacy_name(own):
         return None
     source = Path(*own["module"].split(".")).with_suffix(".lean")
     names = [name for name, declaration in index.declarations.items()
@@ -305,6 +321,11 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
             if path.name == "README.md":
                 continue
             name, own = lean_name(annotation), annotation.get("extensions", {}).get(OWN)
+            if not name and not has_legacy_name(own):
+                # A planned page: its prerequisites are its own, and with no declaration it has no kind or status.
+                annotation.pop("kind", None)
+                annotation.pop("status", None)
+                continue
             kind, status = lean_facts_for(name, own, index, sorry)
             if kind is None:
                 counts["unresolved"] += 1
@@ -441,6 +462,33 @@ def declaration_key(target) -> str | None:
     """How the sync finds a declaration's page: its Lean name. A declaration the Lean index lacks has none, and
     gets no page (generate_wiki leaves it out and the sync reports it)."""
     return target.lean
+
+
+def held_name(annotation: dict) -> str | None:
+    """The declaration an annotation holds back, from `"held"` under OWN: its page states the mathematics the
+    declaration fails to (it is false, vacuous or mis-specified), or the declaration is private, so the page carries no
+    Lean link until the Lean is fixed and gets no second page from the declaration's docstring (see docs/BLUEPRINT.md)."""
+    own = annotation.get("extensions", {}).get(OWN)
+    held = own.get("held") if isinstance(own, dict) else None
+    name = held.get("declaration") if isinstance(held, dict) else None
+    return name if isinstance(name, str) and name else None
+
+
+def held_problem(annotation: dict, key: str | None, index) -> str | None:
+    """What is wrong with an annotation's held marker, if it has one: it names no declaration, the row is linked
+    as well, or the Lean index does not resolve the declaration it names (renamed by its fix, say, or declared twice).
+    apply_declarations also reports a held declaration that another row links or holds back."""
+    own = annotation.get("extensions", {}).get(OWN)
+    if not isinstance(own, dict) or "held" not in own:
+        return None
+    name = held_name(annotation)
+    if name is None:
+        return "its held marker names no declaration"
+    if key:
+        return f"it holds {name} back but is linked to {key}"
+    if not declared(name, index):
+        return f"it holds {name} back, which the Lean index does not resolve"
+    return None
 
 
 def annotation_key(annotation: dict, index=None) -> str | None:
@@ -1068,6 +1116,30 @@ def kept_layout(folder: Path, created: dict[Path, str]) -> tuple[Path, dict[Path
     return (parts(at)[-1] if (at / "README.md").is_file() else at), pages
 
 
+def retired_addresses() -> set[str]:
+    """Every address the card move ledger (scripts/card-moves.jsonl, docs/cards.md) records as left: a moved page's
+    or folder's old path and a retired card's folder. Each leads to its article through the ledger, so no new page
+    takes it."""
+    path = wiki.ROOT / "scripts" / "card-moves.jsonl"
+    if not path.is_file():
+        return set()
+    found = set()
+    for line in path.read_text().splitlines():
+        if line.strip():
+            row = json.loads(line)
+            found.update(value for key, value in row.items() if key in ("page", "folder") and isinstance(value, str))
+    return found
+
+
+def new_article_id(taken: set[str]) -> str:
+    """A fresh article id, `af_` and 24 hex digits, none of `taken`, which it joins. Random, so a page that replaces a
+    deleted one never takes its id."""
+    while (article_id := "af_" + secrets.token_hex(12)) in taken:
+        pass
+    taken.add(article_id)
+    return article_id
+
+
 def apply_declarations(targets: list, index, generated: dict[Path, str] | None = None,
                        unindexed: list[str] | None = None) -> dict[str, list[str]]:
     """Pages for new declarations, and the report; see the module docstring. ``generated`` holds generate_wiki's
@@ -1081,11 +1153,45 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     rendered.cache_clear()
     rendered(published("") or "")
     files = read_annotations()
+    taken = {a["id"] for rows in files.values() for a in rows if "id" in a}
     keyed = [(annotation_key(a, index), a) for rows in files.values() for a in rows]
     pages = {key: subject_path(a) for key, a in keyed if key}
+    problems = {id(a): problem for key, a in keyed if (problem := held_problem(a, key, index))}
+    holders: dict[str, list[dict]] = defaultdict(list)
+    for _, a in keyed:
+        if id(a) not in problems and (name := held_name(a)):
+            holders[name].append(a)
+    for name, rows in holders.items():
+        if name in pages:
+            for a in rows:
+                problems[id(a)] = f"it holds {name} back, which {pages[name].relative_to(wiki.ROADMAP)} links"
+        for a in rows[1:] if name not in pages else []:
+            problems[id(a)] = f"it holds {name} back, as {subject_path(rows[0]).relative_to(wiki.ROADMAP)} does"
+    held = {name: subject_path(a) for _, a in keyed if (name := held_name(a)) and id(a) not in problems}
+    held_problems = sorted(f"{subject_path(a).relative_to(wiki.ROADMAP)}: {problems[id(a)]}" for _, a in keyed
+                           if id(a) in problems)
     current = {declaration_key(target): target for target in targets if declaration_key(target)}
+    # A card holds only the statements its editors placed in it (docs/cards.md), and an address the move ledger
+    # records stays its article's for good.
+    cards = {subject_path(a).parent for rows in files.values() for a in rows
+             if subject_path(a).name == "README.md" and "card" in a.get("extensions", {}).get(OWN, {})}
+    retired = retired_addresses()
+
+    def card_above(path: Path) -> Path | None:
+        for up in (path, *path.parents):
+            if up in cards:
+                return up
+            if up == wiki.ROADMAP:
+                break
+        return None
+
     report: dict[str, list[str]] = {"added": [], "folders": [], "gone": [], "changed": [], "unindexed": [], "parts": [],
-                                  "replaced": [], "appended": [], "unlisted": []}
+                                  "replaced": [], "appended": [], "unlisted": [], "unassigned": [],
+                                  "held": sorted(f"{name} ({path.relative_to(wiki.ROADMAP)})" for name, path in held.items()),
+                                  "held_problems": held_problems}
+    if held_problems:
+        # A marker the run cannot use could let its declaration through as a second page: write nothing.
+        return report
     # A declaration the index lacks, and a page an earlier sync wrote for one, wait for an editor: no page is ever
     # keyed by a name rebuilt from the source.
     report["unindexed"] = sorted(
@@ -1101,7 +1207,7 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         in_source_order[target.module].append(target)
     created: dict[Path, str] = {}
     for key, target in sorted(current.items()):
-        if key in pages or deprecated(target):
+        if key in pages or key in held or deprecated(target):
             continue
         # Beside the module's pages: in the folder that holds most of them, or, when that folder is split into parts,
         # as a module of many pages is, in the last of its parts that holds one, so that a module whose pages share a
@@ -1116,16 +1222,31 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
             folder = max((held for held in folders[target.module] if held in order), key=order.index)
         else:
             folder, laid_out = kept_layout(target.path.parent, created)
+        # A new page that would land in a card, or in a folder below one, goes beside the card, for an editor to
+        # place in one: a card never gains a page or a folder it was not given.
+        holder = card_above(folder)
+        unassigned = holder is not None
+        if holder is not None:
+            folder, laid_out = holder.parent, {}
         up, missing = folder, []
         while not (up / "README.md").is_file() and up / "README.md" not in created and up != wiki.ROADMAP:
             missing.append(up / "README.md")
             up = up.parent
-        if missing and all(laid_out.get(page, page) in generated for page in missing):
+        # A folder the run makes takes no address a page or the move ledger holds: a page `x.md` and a folder `x/`
+        # share a node id, and a recorded address keeps leading to its article.
+        occupied = [page for page in missing if (page.parent.parent / f"{page.parent.name}.md").exists()
+                    or page.parent.relative_to(wiki.ROADMAP).as_posix() in retired]
+        if missing and not occupied and all(laid_out.get(page, page) in generated for page in missing):
             created.update((page, generated[laid_out.get(page, page)]) for page in missing)
         else:
             folder = up
+        if (holder := card_above(folder)) is not None:
+            folder, unassigned = holder.parent, True
+        # A name no page, no folder (a folder page has the folder's node id) and no recorded address has.
         name, number = target.slug, 1
-        while name in wiki.RESERVED_SLUGS or (folder / f"{name}.md").exists():
+        while (name in wiki.RESERVED_SLUGS or (folder / f"{name}.md").exists() or (folder / name).exists()
+               or folder / name / "README.md" in created
+               or (folder / name).relative_to(wiki.ROADMAP).as_posix() in retired):
             number += 1
             name = f"{target.slug}-{number}"
         target.path = folder / f"{name}.md"
@@ -1155,7 +1276,8 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
                                       [entry[0] for entry in earlier], [entry[0] for entry in later],
                                       section_titles(target)):
                 report[kind].append(target.path.relative_to(wiki.ROADMAP).as_posix())
-        annotation: dict = {"subject": [{"type": "generic", "uri": "../" + target.path.relative_to(wiki.VAULT).as_posix()}]}
+        annotation: dict = {"subject": [{"type": "generic", "uri": "../" + target.path.relative_to(wiki.VAULT).as_posix()}],
+                            "id": new_article_id(taken)}
         if target.lean:
             annotation["object"] = [{"location": {"declaration": target.lean}}]
         extensions: dict = {OWN: {"from": "docstring"}}
@@ -1165,6 +1287,8 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         files.setdefault(links_file(target.path), []).append(annotation)
         pages[key] = target.path
         report["added"].append(f"{key} -> {target.path.relative_to(wiki.ROADMAP)}")
+        if unassigned:
+            report["unassigned"].append(target.path.relative_to(wiki.ROADMAP).as_posix())
     def title(path: Path) -> str | None:
         if path.is_file():
             return page_heading(path.read_text()) or path.stem
@@ -1178,7 +1302,8 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
         for page in sorted(path for path in pages.values() if path.parent == readme.parent and path.name not in listed):
             if kind := add_to_listing(readme, f"- [{wiki.link_text(title(page))}]({page.name})"):
                 report[kind].append(page.relative_to(wiki.ROADMAP).as_posix())
-        annotation = {"subject": [{"type": "generic", "uri": "../" + readme.relative_to(wiki.VAULT).as_posix()}]}
+        annotation = {"subject": [{"type": "generic", "uri": "../" + readme.relative_to(wiki.VAULT).as_posix()}],
+                      "id": new_article_id(taken)}
         ours = {key: fields[key] for key in ("navigation", "area") if key in fields}
         if ours:
             annotation["extensions"] = {NAMESPACE: ours}
@@ -1236,6 +1361,12 @@ def run_declarations() -> int:
     unindexed: list[str] = []
     generated = wiki.generate(None, None, targets, index, unindexed)
     report = apply_declarations(targets, index, generated, unindexed)
+    if report["held_problems"]:
+        # The run stopped before writing anything: only the markers to fix are worth reporting.
+        print(f"Held markers to fix: {len(report['held_problems'])}; the run wrote nothing")
+        for row in report["held_problems"]:
+            print(f"error: {row}; fix the marker and run again (the run wrote nothing)", file=sys.stderr)
+        return 1
     refresh_catalog(generated)
     for kind, title in (("added", "New pages, taken from docstrings"), ("folders", "New folders, as the taxonomy places their modules"),
                         ("gone", "Pages whose declaration is gone"), ("changed", "Pages whose declaration's docstring changed"),
@@ -1245,7 +1376,10 @@ def run_declarations() -> int:
                          "part's own entries, to check"),
                         ("appended", "New pages and folders listed at the end of a page that is not simple, to place"),
                         ("unlisted", "New pages and folders listed nowhere, as their page may hold raw HTML or code, the "
-                         "site would show it as typed, or their item would not show where placed")):
+                         "site would show it as typed, or their item would not show where placed"),
+                        ("held", "Declarations held back, whose pages stay unlinked until the Lean is fixed"),
+                        ("unassigned", "New pages placed beside the card that holds their module's other pages, for an "
+                         "editor to place in a card")):
         print(f"{title}: {len(report[kind])}")
         for row in report[kind]:
             print(f"  {row}")

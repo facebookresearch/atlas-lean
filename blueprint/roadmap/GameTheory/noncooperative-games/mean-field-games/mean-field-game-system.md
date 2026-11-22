@@ -28,9 +28,9 @@ $\Delta u = \operatorname{div} \nabla u$.
 
 ## Background
 
-- Fokker–Planck equation:
+- [Fokker–Planck equation](../../../Probability/stochastic-calculus/fokker-planck-equation/fokker-planck-op.md):
   the operator used for the forward equation.
-- Viscosity solutions of Hamilton–Jacobi equations:
+- [Viscosity solutions of Hamilton–Jacobi equations](../../../Analysis/partial-differential-equations/viscosity-solutions-of-hamilton-jacobi-equations/README.md):
   the first-order system, without the Laplacians, is solved with viscosity solutions of the
   Hamilton–Jacobi–Bellman equation (Cardaliaguet, §4).
 - [Mean field equilibrium on a finite state space](is-mean-field-equilibrium.md): the one-shot

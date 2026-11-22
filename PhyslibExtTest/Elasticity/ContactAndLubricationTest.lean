@@ -19,7 +19,9 @@ import Mathlib.Tactic.Ring
 Concrete consumers of `PhyslibExt.Elasticity.ContactAndLubrication`. Plane slider: the
 converging film `h0 = 2`, `hL = 1`, `μ = U = L = 1` (existence, uniqueness, positive pressure,
 the load `6 log 2 - 4 > 0`), the diverging film `h0 = 1`, `hL = 2` (pressure `-2/9` at the
-midpoint) and the film that closes at the outlet (no solution).
+midpoint) and the film that closes at the outlet (no solution). Scalar contact: loaded contact
+`k = 2`, `g = 1`, `f = 4` (the hypotheses of Stampacchia's theorem, existence, uniqueness and
+complementarity), separation `f = 1`, and the failure of coercivity at `k = 0`.
 
 ## i. Overview
 
@@ -32,6 +34,7 @@ No new definitions or results are introduced here.
 ## iii. Table of contents
 
 - A. Plane-slider lubrication
+- B. Scalar unilateral contact
 
 ## iv. References
 
@@ -118,3 +121,88 @@ example (p p' : ℝ → ℝ) :
   ⟨sliderPressure_neg_of_diverging (by norm_num) (by norm_num) (by norm_num) (by norm_num)
       (by norm_num) ⟨by norm_num, by norm_num⟩,
     not_isReynoldsSolution_of_hL_eq_zero (by norm_num) (by norm_num) (by norm_num) (by norm_num)⟩
+
+/-! ## B. Scalar unilateral contact -/
+
+open scoped InnerProductSpace
+
+/-- End-to-end consumer for loaded contact `k = 2`, `g = 1`, `f = 4`: the hypotheses of
+Stampacchia's theorem hold, the contact variational inequality has exactly one solution, every
+solution is the obstacle position `1`, and it satisfies complementarity with contact force `2`. -/
+example {u : ℝ}
+    (hu : u ∈ admissibleSet 1 ∧ ∀ v ∈ admissibleSet 1, 0 ≤ ⟪stiffnessMap 2 u - 4, v - u⟫_ℝ) :
+    (admissibleSet 1).Nonempty ∧ IsClosed (admissibleSet 1) ∧ Convex ℝ (admissibleSet 1) ∧
+      (∃ α : ℝ, 0 < α ∧ ∀ w : ℝ, α * ‖w‖ ^ 2 ≤ ⟪stiffnessMap 2 w, w⟫_ℝ) ∧
+      (∃! w, w ∈ admissibleSet 1 ∧ ∀ v ∈ admissibleSet 1, 0 ≤ ⟪stiffnessMap 2 w - 4, v - w⟫_ℝ) ∧
+      u = 1 ∧ contactForce 2 4 u = 2 ∧ 0 ≤ contactGap 1 u ∧
+      contactForce 2 4 u * contactGap 1 u = 0 := by
+  have hu1 : u = 1 := by
+    rw [(contact_vi_iff (by norm_num) 1 4 u).mp hu]
+    norm_num [contactDisplacement]
+  obtain ⟨_, hgap, hprod⟩ := complementarity_of_vi hu
+  refine ⟨admissibleSet_nonempty 1, isClosed_admissibleSet 1, convex_admissibleSet 1,
+    stiffnessMap_coercive (by norm_num), existsUnique_contact (by norm_num) 1 4, hu1, ?_, hgap,
+    hprod⟩
+  rw [hu1]
+  norm_num [contactForce]
+
+/-- Separation `k = 2`, `g = 1`, `f = 1`: the displacement `1 / 2` solves the contact
+variational inequality, the contact displacement satisfies complementarity, and on `ℝ` the
+inequality's inner product is a product, for example `⟪2 · 3 - 1, 2⟫ = 10`. -/
+example :
+    ((1 / 2 : ℝ) ∈ admissibleSet 1 ∧
+        ∀ v ∈ admissibleSet 1, 0 ≤ ⟪stiffnessMap 2 (1 / 2) - 1, v - 1 / 2⟫_ℝ) ∧
+      ⟪stiffnessMap 2 3 - 1, 2⟫_ℝ = 10 ∧
+      0 ≤ contactForce 2 1 (contactDisplacement 2 1 1) ∧
+      0 ≤ contactGap 1 (contactDisplacement 2 1 1) ∧
+      contactForce 2 1 (contactDisplacement 2 1 1) * contactGap 1 (contactDisplacement 2 1 1) =
+        0 := by
+  refine ⟨(contact_vi_iff (by norm_num) 1 1 (1 / 2)).mpr ?_, ?_,
+    contactDisplacement_complementarity (by norm_num) 1 1⟩
+  · norm_num [contactDisplacement]
+  · rw [inner_stiffnessMap_sub]
+    norm_num
+
+/-- Loaded contact: `k = 2`, `g = 1`, `f = 4` give `u = 1` on the obstacle, the positive contact
+force `λ = 2` and zero gap. -/
+example :
+    contactDisplacement 2 1 4 = 1 ∧ contactForce 2 4 (contactDisplacement 2 1 4) = 2 ∧
+      contactGap 1 (contactDisplacement 2 1 4) = 0 := by
+  have h42 : (4 : ℝ) / 2 = 2 := by norm_num
+  have h1 : contactDisplacement 2 1 4 = 1 := by
+    show min (1 : ℝ) ((4 : ℝ) / 2) = 1
+    rw [h42]
+    exact min_eq_left (by norm_num)
+  refine ⟨h1, ?_, ?_⟩
+  · rw [h1]
+    simp only [contactForce]
+    norm_num
+  · rw [h1]
+    simp only [contactGap]
+    norm_num
+
+/-- Separation: `k = 2`, `g = 1`, `f = 1` give `u = 1 / 2` below the obstacle, zero contact
+force and the positive gap `1 / 2`. -/
+example :
+    contactDisplacement 2 1 1 = 1 / 2 ∧ contactForce 2 1 (contactDisplacement 2 1 1) = 0 ∧
+      contactGap 1 (contactDisplacement 2 1 1) = 1 / 2 := by
+  have h1 : contactDisplacement 2 1 1 = 1 / 2 := by
+    show min (1 : ℝ) ((1 : ℝ) / 2) = 1 / 2
+    exact min_eq_right (by norm_num)
+  refine ⟨h1, ?_, ?_⟩
+  · rw [h1]
+    simp only [contactForce]
+    norm_num
+  · rw [h1]
+    simp only [contactGap]
+    norm_num
+
+/-- At zero stiffness the coercivity hypothesis fails for every `α > 0`. -/
+example :
+    ¬ ∃ α : ℝ, 0 < α ∧ ∀ u : ℝ, α * ‖u‖ ^ 2 ≤ ⟪stiffnessMap 0 u, u⟫_ℝ := by
+  rintro ⟨α, hα, h⟩
+  have h1 := h 1
+  have hmap : stiffnessMap (0 : ℝ) (1 : ℝ) = 0 := by simp [stiffnessMap]
+  rw [hmap, inner_zero_left] at h1
+  simp only [norm_one, one_pow, mul_one] at h1
+  linarith

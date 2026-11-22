@@ -9,7 +9,7 @@ index $i \in \mathbb{N}$, which costs nothing since unused variables can be set 
 
 ## Background
 
-- Linear programming: (LP) is a
+- [Linear programming](../../../Geometry/convex-geometry/linear-programming/README.md): (LP) is a
   linear program; Goemans and Williamson solve it in strongly polynomial time with Tardos'
   algorithm.
 

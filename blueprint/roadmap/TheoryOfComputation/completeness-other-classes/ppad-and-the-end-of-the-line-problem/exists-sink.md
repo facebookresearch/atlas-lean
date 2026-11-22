@@ -16,5 +16,5 @@ a sink" quoted in Daskalakis, Goldberg and Papadimitriou (2009).
 ## Background
 
 - As a search problem, asking for a sink only (rather than a sink or a nonstandard source) defines the class PPADS, apparently larger than PPAD (Daskalakis, Goldberg and Papadimitriou 2009); existence is not the issue there, finding one is.
-- Sperner's lemma in dimension two (parity form): a parity argument of the same kind.
-- A nondegenerate bimatrix game has an odd number of Nash equilibria: the Lemke–Howson instance of the principle.
+- [Sperner's lemma in dimension two (parity form)](../../../Combinatorics/polytopes-simplicial-complexes/sperner-s-lemma/odd-card-rainbow.md): a parity argument of the same kind.
+- [A nondegenerate bimatrix game has an odd number of Nash equilibria](../../../GameTheory/noncooperative-games/bimatrix-games-and-the-lemke-howson-algorithm/odd-ncard-is-bimatrix-nash.md): the Lemke–Howson instance of the principle.

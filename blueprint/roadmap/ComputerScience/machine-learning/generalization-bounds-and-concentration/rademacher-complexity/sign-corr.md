@@ -4,4 +4,4 @@ For a sign vector $\sigma \in \{-1, 1\}^n$, encoded by $\varepsilon \in \{\mathr
 
 ## Background
 
-- Rademacher type and cotype 2 of Hilbert spaces: the same encoding of sign vectors and the same uniform average over them.
+- [Rademacher type and cotype 2 of Hilbert spaces](../../../../Analysis/banach-spaces/geometry-of-banach-spaces/rademacher-type-and-cotype/README.md): the same encoding of sign vectors and the same uniform average over them.

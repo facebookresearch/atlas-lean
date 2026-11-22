@@ -189,9 +189,10 @@ def main() -> None:
         "MathlibExt",
         "CSLibExt",
         "PhyslibExt",
+        "Domains",
         "WantedExt",
     ]:
-        fail("root default targets must be MathlibExt, CSLibExt, PhyslibExt, and WantedExt")
+        fail("root default targets must be MathlibExt, CSLibExt, PhyslibExt, Domains, and WantedExt")
     if config.get("testDriver") != "MathlibExtTest":
         fail("root test driver must be MathlibExtTest")
 
@@ -222,6 +223,8 @@ def main() -> None:
         "MathlibExtTest": ["MathlibExtTest.+"],
         "PhyslibExt": ["PhyslibExt.+"],
         "PhyslibExtTest": ["PhyslibExtTest.+"],
+        "Domains": ["Domains.+"],
+        "DomainsTest": ["DomainsTest.+"],
         "WantedExt": ["WantedExt.+"],
     }
     libraries = config.get("lean_lib")
@@ -236,7 +239,7 @@ def main() -> None:
     if len(names) != len(set(names)) or set(names) != set(expected_globs):
         fail(
             "root Lean libraries must be CSLibExt, CSLibExtTest, "
-            "MathlibExt, MathlibExtTest, PhyslibExt, PhyslibExtTest, and WantedExt"
+            "MathlibExt, MathlibExtTest, PhyslibExt, PhyslibExtTest, Domains, DomainsTest, and WantedExt"
         )
 
     allowed_library_keys = {"name", "globs", "leanOptions"}

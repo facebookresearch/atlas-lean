@@ -30,6 +30,9 @@ weight. Section B adds the Mohr–Coulomb resisting stress as a
 supplied model input and the safety-ratio admission: on a genuine
 slope the driving stress is positive, and resisting over driving
 stress is at least one exactly when resisting stress dominates.
+Section C adds pore-pressure monotonicity: on the contact domain
+`0 ≤ u ≤ σn`, raising `u` cannot raise the safety ratio, strictly
+exactly when `φ > 0`, and constantly at `φ = 0`.
 No global stability criterion is stated.
 
 ## ii. Key results
@@ -45,11 +48,16 @@ No global stability criterion is stated.
   stress.
 - `EarthScience.effectiveNormalStress_eq`: the slip-plane normal
   component of effective stress is total normal stress minus `u`.
+- `EarthScience.infiniteSlopeSafetyRatio_porePressure_monotonicity`
+  and `infiniteSlopeSafetyRatio_antitoneOn_porePressure`: the
+  safety ratio is antitone in pore pressure on `[0, σn]`,
+  strictly exactly for positive friction.
 
 ## iii. Table of contents
 
 - A. Slab volume and resolved stresses
 - B. Safety-ratio admission
+- C. Pore-pressure monotonicity
 
 ## iv. References
 
@@ -185,5 +193,188 @@ theorem effectiveNormalStress_eq {m : ℕ} (σc : Matrix (Fin m) (Fin m) ℝ)
   unfold effectiveStressCompressionPositive
   rw [Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec, dotProduct_sub,
     dotProduct_smul, hv, smul_eq_mul, mul_one]
+
+/-! ## C. Pore-pressure monotonicity -/
+
+/-- Two safety ratios differ by the change in effective normal
+stress times `tan phi` over the driving stress:
+`F u₁ - F u₂ = (u₂ - u₁) * tan phi / τd`. An algebraic identity
+of the totalized definitions for all real inputs, not a
+monotonicity claim. -/
+lemma infiniteSlopeSafetyRatio_porePressure_sub
+    (c phi gamma z beta u₁ u₂ : ℝ) :
+    infiniteSlopeSafetyRatio
+        (infiniteSlopeResistingStress c phi gamma z beta u₁)
+        gamma z beta
+      - infiniteSlopeSafetyRatio
+        (infiniteSlopeResistingStress c phi gamma z beta u₂)
+        gamma z beta
+      = (u₂ - u₁) * Real.tan phi
+        / infiniteSlopeDrivingStress gamma z beta := by
+  unfold infiniteSlopeSafetyRatio infiniteSlopeResistingStress
+  ring
+
+/-- Raising the pore pressure within the contact domain
+`0 ≤ u ≤ σn` cannot raise the safety ratio of an admissible
+slab with `0 ≤ phi < π / 2`. Nothing is claimed for
+`u > σn` (tensile effective stress; no tension cutoff) or
+`u < 0` (suction). The cohesion `c` is unrestricted (it
+cancels in the difference; physically `c ≥ 0`). The bound
+`phi < π / 2` is needed because `tan` is totalized at
+`π / 2`, and the slab premises because the ratio is
+totalized to `0` at `τd = 0`. -/
+theorem infiniteSlopeSafetyRatio_antitoneOn_porePressure
+    {c phi gamma z beta : ℝ}
+    (hgamma : 0 < gamma) (hz : 0 < z) (hbeta0 : 0 < beta)
+    (hbeta : beta < Real.pi / 2)
+    (hphi0 : 0 ≤ phi) (hphi : phi < Real.pi / 2) :
+    AntitoneOn
+        (fun u => infiniteSlopeSafetyRatio
+          (infiniteSlopeResistingStress c phi gamma z beta u)
+          gamma z beta)
+        (Set.Icc 0 (infiniteSlopeNormalStress gamma z beta)) := by
+  intro x _ y _ hxy
+  have hτd : 0 < infiniteSlopeDrivingStress gamma z beta :=
+    infiniteSlopeDrivingStress_pos hgamma hz hbeta0 hbeta
+  have htan : 0 ≤ Real.tan phi :=
+    Real.tan_nonneg_of_nonneg_of_le_pi_div_two hphi0 (le_of_lt hphi)
+  have hdiff := infiniteSlopeSafetyRatio_porePressure_sub
+    c phi gamma z beta y x
+  have hle : (x - y) * Real.tan phi
+      / infiniteSlopeDrivingStress gamma z beta ≤ 0 :=
+    div_nonpos_of_nonpos_of_nonneg
+      (mul_nonpos_of_nonpos_of_nonneg (sub_nonpos.mpr hxy) htan)
+      (le_of_lt hτd)
+  have hle' : infiniteSlopeSafetyRatio
+        (infiniteSlopeResistingStress c phi gamma z beta y)
+        gamma z beta
+      - infiniteSlopeSafetyRatio
+        (infiniteSlopeResistingStress c phi gamma z beta x)
+        gamma z beta ≤ 0 := by
+    rw [hdiff]
+    exact hle
+  exact sub_nonpos.mp hle'
+
+/-- With positive friction `0 < phi < π / 2` the decrease is
+strict: for `0 ≤ u₁ < u₂ ≤ σn` the ratio at `u₂` is strictly
+below the ratio at `u₁`. -/
+theorem infiniteSlopeSafetyRatio_strictAntiOn_porePressure
+    {c phi gamma z beta : ℝ}
+    (hgamma : 0 < gamma) (hz : 0 < z) (hbeta0 : 0 < beta)
+    (hbeta : beta < Real.pi / 2)
+    (hphi0 : 0 < phi) (hphi : phi < Real.pi / 2) :
+    StrictAntiOn
+        (fun u => infiniteSlopeSafetyRatio
+          (infiniteSlopeResistingStress c phi gamma z beta u)
+          gamma z beta)
+        (Set.Icc 0 (infiniteSlopeNormalStress gamma z beta)) := by
+  intro x _ y _ hxy
+  have hτd : 0 < infiniteSlopeDrivingStress gamma z beta :=
+    infiniteSlopeDrivingStress_pos hgamma hz hbeta0 hbeta
+  have htan : 0 < Real.tan phi :=
+    Real.tan_pos_of_pos_of_lt_pi_div_two hphi0 hphi
+  have hdiff := infiniteSlopeSafetyRatio_porePressure_sub
+    c phi gamma z beta y x
+  have hlt : (x - y) * Real.tan phi
+      / infiniteSlopeDrivingStress gamma z beta < 0 :=
+    div_neg_of_neg_of_pos
+      (mul_neg_of_neg_of_pos (sub_neg.mpr hxy) htan) hτd
+  have hlt' : infiniteSlopeSafetyRatio
+        (infiniteSlopeResistingStress c phi gamma z beta y)
+        gamma z beta
+      - infiniteSlopeSafetyRatio
+        (infiniteSlopeResistingStress c phi gamma z beta x)
+        gamma z beta < 0 := by
+    rw [hdiff]
+    exact hlt
+  exact sub_neg.mp hlt'
+
+/-- Without friction the pore pressure drops out: at
+`phi = 0` the ratio is `c / τd` on the whole contact domain,
+for all data, by `tan 0 = 0` (`c / τd` is the genuine ratio
+only on a genuine slope, where `τd > 0`). -/
+lemma infiniteSlopeSafetyRatio_eqOn_porePressure_of_phi_eq_zero
+    {c gamma z beta : ℝ} :
+    Set.EqOn
+        (fun u => infiniteSlopeSafetyRatio
+          (infiniteSlopeResistingStress c 0 gamma z beta u)
+          gamma z beta)
+        (fun _ => c / infiniteSlopeDrivingStress gamma z beta)
+        (Set.Icc 0 (infiniteSlopeNormalStress gamma z beta)) := by
+  intro u _
+  change infiniteSlopeSafetyRatio
+      (infiniteSlopeResistingStress c 0 gamma z beta u)
+      gamma z beta
+    = c / infiniteSlopeDrivingStress gamma z beta
+  unfold infiniteSlopeSafetyRatio infiniteSlopeResistingStress
+  simp [Real.tan_zero]
+
+/-- Main result: for an admissible slab and
+`0 ≤ phi < π / 2`, the safety ratio is antitone in the pore
+pressure on `[0, σn]`, strictly antitone there exactly when
+`0 < phi`, and constant (`c / τd`) there when `phi = 0`. The
+premise `_hc` marks the admission domain (physically
+nonnegative effective cohesion) and is not used by the
+proof. No global stability or safety certification is
+claimed. -/
+theorem infiniteSlopeSafetyRatio_porePressure_monotonicity
+    {c phi gamma z beta : ℝ}
+    (hgamma : 0 < gamma) (hz : 0 < z) (hbeta0 : 0 < beta)
+    (hbeta : beta < Real.pi / 2)
+    (hphi0 : 0 ≤ phi) (hphi : phi < Real.pi / 2) (_hc : 0 ≤ c) :
+    AntitoneOn
+        (fun u => infiniteSlopeSafetyRatio
+          (infiniteSlopeResistingStress c phi gamma z beta u)
+          gamma z beta)
+        (Set.Icc 0 (infiniteSlopeNormalStress gamma z beta)) ∧
+      (StrictAntiOn
+          (fun u => infiniteSlopeSafetyRatio
+            (infiniteSlopeResistingStress c phi gamma z beta u)
+            gamma z beta)
+          (Set.Icc 0 (infiniteSlopeNormalStress gamma z beta))
+        ↔ 0 < phi) ∧
+      (phi = 0 → Set.EqOn
+          (fun u => infiniteSlopeSafetyRatio
+            (infiniteSlopeResistingStress c phi gamma z beta u)
+            gamma z beta)
+          (fun _ => c / infiniteSlopeDrivingStress gamma z beta)
+          (Set.Icc 0 (infiniteSlopeNormalStress gamma z beta))) := by
+  refine ⟨?_, ?_, ?_⟩
+  · exact infiniteSlopeSafetyRatio_antitoneOn_porePressure
+      hgamma hz hbeta0 hbeta hphi0 hphi
+  · constructor
+    · intro hstrict
+      refine not_le.mp ?_
+      intro hle
+      have hphi0' : phi = 0 := le_antisymm hle hphi0
+      have hcos : 0 < Real.cos beta := by
+        apply Real.cos_pos_of_mem_Ioo
+        refine ⟨?_, hbeta⟩
+        have hpi := Real.pi_pos
+        linarith
+      have hsign : 0 < infiniteSlopeNormalStress gamma z beta := by
+        unfold infiniteSlopeNormalStress
+        exact mul_pos (mul_pos hgamma hz) (pow_pos hcos 2)
+      have h0mem : (0 : ℝ) ∈
+          Set.Icc 0 (infiniteSlopeNormalStress gamma z beta) :=
+        ⟨le_rfl, le_of_lt hsign⟩
+      have hσmem : infiniteSlopeNormalStress gamma z beta ∈
+          Set.Icc 0 (infiniteSlopeNormalStress gamma z beta) :=
+        ⟨le_of_lt hsign, le_rfl⟩
+      subst hphi0'
+      have hlt := hstrict h0mem hσmem hsign
+      have heq :=
+        infiniteSlopeSafetyRatio_eqOn_porePressure_of_phi_eq_zero
+          (c := c) (gamma := gamma) (z := z) (beta := beta)
+      have e0 := heq h0mem
+      have eσ := heq hσmem
+      rw [eσ, e0] at hlt
+      exact lt_irrefl _ hlt
+    · intro hpos
+      exact infiniteSlopeSafetyRatio_strictAntiOn_porePressure
+        hgamma hz hbeta0 hbeta hpos hphi
+  · intro h
+    subst h
+    exact infiniteSlopeSafetyRatio_eqOn_porePressure_of_phi_eq_zero
 
 end EarthScience

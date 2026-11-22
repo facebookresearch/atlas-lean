@@ -54,4 +54,22 @@ example {ρ : Measure α} [IsProbabilityMeasure ρ] (f : α → ℝ) :
     ∫ x, (2 : ℝ≥0∞).toReal * f x ∂ρ = ∫ x, f x ∂(ρ.withDensity fun _ ↦ 2) :=
   integral_weight_mul measurable_const (ae_of_all _ fun _ ↦ ENNReal.ofNat_lt_top) f
 
+/-- The integrable-integrand variants need no `Measurable f` hypothesis. -/
+example {μ : Measure Ω} {ν : Measure α} {f : α → ℝ} (hfi : Integrable f ν) {X : ℕ → Ω → α}
+    (hX : ∀ i, Measurable (X i)) (hlaw : ∀ i, μ.map (X i) = ν)
+    (hindep : Pairwise fun i j ↦ IndepFun (X i) (X j) μ) {n : ℕ} (hn : n ≠ 0) :
+    (∫ ω, mcEstimate f X n ω ∂μ = ∫ x, f x ∂ν) ∧
+      ∀ᵐ ω ∂μ, Tendsto (fun k ↦ mcEstimate f X k ω) atTop (𝓝 (∫ x, f x ∂ν)) :=
+  ⟨integral_mcEstimate_of_integrable hfi hX hlaw hn,
+    tendsto_mcEstimate_of_integrable hfi hX hlaw hindep⟩
+
+example {μ : Measure Ω} {ν : Measure α} {f g : α → ℝ} (hfg : f =ᵐ[ν] g) {X : ℕ → Ω → α}
+    (hX : ∀ i, Measurable (X i)) (hlaw : ∀ i, μ.map (X i) = ν) :
+    ∀ᵐ ω ∂μ, ∀ n, mcEstimate f X n ω = mcEstimate g X n ω :=
+  mcEstimate_ae_eq hfg hX hlaw
+
+#print axioms integral_mcEstimate_of_integrable
+#print axioms tendsto_mcEstimate_of_integrable
+#print axioms mcEstimate_ae_eq
+
 end CSLibExtTest.MachineLearning.Sampling.MonteCarlo

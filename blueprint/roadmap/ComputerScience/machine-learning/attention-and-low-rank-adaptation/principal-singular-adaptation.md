@@ -28,10 +28,10 @@ has $r$ rows.
 
 ## Informally uses
 
-- Real singular value decomposition with nonincreasing singular values:
+- [Real singular value decomposition with nonincreasing singular values](../../../LinearAlgebra/matrix-decompositions/singular-value-decomposition/exists-orthogonal-group-rectangular-diag.md):
   mathematical prerequisite, the existence of the ordered decomposition from which the
   initialisation is defined (its first $\min(m, n)$ columns give the economy form).
-- Truncated singular value decomposition:
+- [Truncated singular value decomposition](../../../Probability/linear-models-multivariate/principal-component-analysis/trunc-svd.md):
   mathematical prerequisite, since $AB$ is the rank-$r$ truncated decomposition, which equals
   $W V_{[:, :r]} V_{[:, :r]}^{\mathsf{T}}$ for the same decomposition; that page sits in the
   principal component analysis chapter.
