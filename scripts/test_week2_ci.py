@@ -419,7 +419,9 @@ class WorkflowTests(DiagnosticFixture):
         checkout = re.search(r"actions/checkout@[0-9a-f]{40}", workflow)
         self.assertIsNotNone(checkout)
         self.assertIn(checkout.group(), current_ci)
-        self.assertNotIn("continue-on-error", workflow)
+        # Only `continue-on-error: false`, the default, may appear.
+        self.assertNotRegex(
+            workflow, r"(?m)continue-on-error:(?![ \t]*(?:false|False|FALSE)[ \t]*(?:#.*)?$)")
         self.assertIn('PYTHONDONTWRITEBYTECODE: "1"', workflow)
         # The job runs scripts/run_source_diagnostics.sh; the merge-queue test
         # (CONTRIBUTING.md, How PRs merge) checks that wiring.

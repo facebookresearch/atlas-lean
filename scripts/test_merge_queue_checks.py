@@ -129,7 +129,8 @@ STEP_KEYS = {"name", "id", "env", "run", "timeout-minutes", "shell"}
 # The only environment variable a required workflow, job or checked step may set.
 ENV_ALLOWED = {"PYTHONDONTWRITEBYTECODE"}
 # Ways a step can set variables for the steps after it.
-# Ways a step can change PATH for the steps after it, and the one such line allowed.
+# Ways a step can change PATH for the steps after it, and the one such line
+# allowed, in `build` only.
 SETS_LATER_PATH = re.compile(
     r"GITHUB_PATH|github\s*(?:\.\s*path\b|\[\s*['\"]path['\"]\s*\])|addPath", re.I)
 ALLOWED_PATH_LINES = {'echo "$HOME/.elan/bin" >> "$GITHUB_PATH"'}
@@ -273,7 +274,7 @@ def step_texts(step) -> list[str]:
     return texts
 
 
-def changes_later_path(step) -> bool:
+def changes_later_path(step, allowed: set[str]) -> bool:
     """Whether a step can change PATH for the steps after it, other than with an
     allowed line."""
     texts = step_texts(step)
@@ -281,7 +282,7 @@ def changes_later_path(step) -> bool:
         return False
     run, values = texts[0], texts[1:]
     return (any(SETS_LATER_PATH.search(value) for value in values)
-            or any(SETS_LATER_PATH.search(line) and line.strip() not in ALLOWED_PATH_LINES
+            or any(SETS_LATER_PATH.search(line) and line.strip() not in allowed
                    for line in run.splitlines()))
 
 
@@ -313,9 +314,17 @@ def runs_exactly(step, command: str, shell: str = "bash") -> bool:
     if not isinstance(step, dict):
         return False
     run = str(step.get("run", "")).strip()
-    return (set(step) <= STEP_KEYS and not env_problems(step)
-            and step.get("shell", shell) == "bash"
+    # Spelling out the defaults (the repository root, failures not ignored) is fine.
+    return (set(step) <= STEP_KEYS | {"working-directory", "continue-on-error"}
+            and step.get("working-directory", ".") in (".", "./")
+            and is_false(step.get("continue-on-error", "false"))
+            and not env_problems(step) and step.get("shell", shell) == "bash"
             and "\n" not in run and " ".join(run.split()) == exact(command))
+
+
+def is_false(value) -> bool:
+    """Whether a YAML value is the literal boolean false."""
+    return isinstance(value, str) and value in ("false", "False", "FALSE")
 
 
 def env_problems(level: dict) -> list[str]:
@@ -399,8 +408,10 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                 found.append(f"{check!r} has a job-level {key!r}")
         steps = as_list(job.get("steps"))
         shells = default_shells(job, workflow)
-        # One label, written alone or as a one-item list.
+        # One label, written alone, as a one-item list, or under `labels` alone.
         labels = job.get("runs-on")
+        if isinstance(labels, dict) and set(labels) == {"labels"}:
+            labels = labels["labels"]
         runner = labels[0] if isinstance(labels, list) and len(labels) == 1 else labels
         if not isinstance(runner, str) or runner not in (
                 FULL_UBUNTU if check == "build" else UBUNTU):
@@ -426,7 +437,7 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                     found.append(f"{check!r} checks out with {extra}, which can change the tree")
         if job.get("container"):
             found.append(f"{check!r} runs in a container")
-        if "continue-on-error" in job:
+        if not is_false(job.get("continue-on-error", "false")):
             found.append(f"{check!r} has a job-level continue-on-error, which can report a "
                          "failed job as successful")
         for scope, level in (("workflow", workflow), ("job", job)):
@@ -435,7 +446,8 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                              "which could change how its steps run")
         if any(SETS_LATER_ENV.search(text) for step in steps for text in step_texts(step)):
             found.append(f"{check!r} has a step that can set variables for the steps after it")
-        if any(changes_later_path(step) for step in steps):
+        allowed = ALLOWED_PATH_LINES if check == "build" else set()
+        if any(changes_later_path(step, allowed) for step in steps):
             found.append(f"{check!r} has a step that can change PATH for the steps after it")
         for scope, level in (("workflow", workflow), ("job", job)):
             defaults = level.get("defaults")
@@ -569,6 +581,12 @@ class MergeQueueChecks(unittest.TestCase):
                                       {"id": "diagnostics",
                                        "run": DIAGNOSTICS}]}),
                        put("ci.yml", "jobs", "build", "runs-on", ["ubuntu-26.04"]),
+                       put("ci.yml", "jobs", "build", "runs-on", {"labels": ["ubuntu-24.04"]}),
+                       lambda workflows: (
+                           put("ci.yml", "jobs", "build", "continue-on-error", "false")(workflows),
+                           put("ci.yml", "jobs", "build", "steps",
+                               [{"working-directory": "./", "continue-on-error": "false",
+                                 "run": BUILD}])(workflows)),
                        put("source-diagnostics.yml", "jobs", "source-diagnostics", "runs-on",
                            "ubuntu-26.04-arm"),
                        put("report.yml", {"on": {"pull_request": ""}, "concurrency": {
@@ -774,6 +792,21 @@ class MergeQueueChecks(unittest.TestCase):
             "a workflow's defaults from an expression": (
                 put("ci.yml", "defaults", "${{ fromJSON(vars.CI_DEFAULTS) }}"),
                 "gets defaults from an expression in its workflow"),
+            "the elan PATH line in Source diagnostics": (
+                put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
+                    [{"run": 'echo "$HOME/.elan/bin" >> "$GITHUB_PATH"'},
+                     {"run": TEST}, {"run": DIAGNOSTICS}]),
+                "change PATH for the steps after it"),
+            "build on a runner group": (
+                put("ci.yml", "jobs", "build", "runs-on",
+                    {"group": "large", "labels": "ubuntu-24.04"}), "not an Ubuntu runner"),
+            "build step in another directory": (
+                put("ci.yml", "jobs", "build", "steps",
+                    [{"working-directory": "scripts", "run": BUILD}]),
+                "followed by 'scripts/check.sh build'"),
+            "job-level continue-on-error from an expression": (
+                put("ci.yml", "jobs", "build", "continue-on-error", "${{ false }}"),
+                "job-level continue-on-error"),
             "build behind a deployment environment": (
                 put("ci.yml", "jobs", "build", "environment", "production"),
                 "has a job-level 'environment'"),
