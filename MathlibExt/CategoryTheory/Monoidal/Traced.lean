@@ -9,15 +9,15 @@ LICENSE file in the root directory of this source tree.
 module
 public import Mathlib.CategoryTheory.Monoidal.Braided.Basic
 public import Mathlib.CategoryTheory.Monoidal.Rigid.Basic
-import Mathlib.CategoryTheory.Monoidal.Rigid.Braided
 
 /-!
-# Canonical trace in symmetric rigid monoidal categories
+# Canonical trace in symmetric right rigid monoidal categories
 
 The trace structure records naturality, dinaturality, both vanishing axioms,
 superposing and yanking, with associators and unitors explicit. The proved
-construction equips a symmetric rigid (compact closed) category with this
-structure; no trace is asserted to exist on an arbitrary symmetric category.
+construction equips a symmetric right rigid category with this structure;
+left duals need not be supplied. No trace is asserted to exist on an arbitrary
+symmetric category.
 The feedback operation uses a right dual, evaluation, coevaluation and the
 symmetry. Independence of the exact pairing permits the unit and tensor
 axioms to use convenient pairings instead of requiring chosen duals to agree
@@ -240,9 +240,9 @@ theorem traceOfPairing_tensor {X Y U V D E : C} [ExactPairing U D]
   monoidal
 
 end SymmetricTrace
-/-- The canonical symmetric trace induced by duality in a rigid category. -/
+/-- The canonical symmetric trace induced by duality in a right rigid category. -/
 def symmetricTraceOfRigid (C : Type u) [Category.{v} C]
-    [MonoidalCategory C] [SymmetricCategory C] [RigidCategory C] : SymmetricTrace C where
+    [MonoidalCategory C] [SymmetricCategory C] [RightRigidCategory C] : SymmetricTrace C where
   trace {X Y U} f := SymmetricTrace.traceOfPairing (Uᘁ) f
   naturality f g h := SymmetricTrace.traceOfPairing_naturality _ f g h
   dinaturality f g := by
