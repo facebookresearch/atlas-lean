@@ -23,8 +23,17 @@ defines the observed law `BayesNet.observedLaw`, the Q-factor
 proves the factorization together with the prefix identity that recovers each
 Q-factor from the observed law along a topological order (in division-free
 form for every `v`, and as a product of conditional ratios when `P(v) > 0`).
-Corollaries under Tian and Pearl's semi-Markovian hypothesis
-(`BayesNet.IsSemiMarkovian`) are the `_hSM` variants.
+The factorization and prefix identities need no semi-Markovian hypothesis;
+they subsume the source's semi-Markovian statements (whose hypothesis is
+`BayesNet.IsSemiMarkovian`).
+
+## References
+
+* J. Tian and J. Pearl, *A General Identification Condition for Causal
+  Effects*, Proceedings of the Eighteenth National Conference on Artificial
+  Intelligence (AAAI-02), AAAI Press (2002), 567–573. Cited as TP02.
+* J. Tian and J. Pearl, *On the Identification of Causal Effects*, UCLA
+  Cognitive Systems Laboratory, Technical Report R-290-L (2003). Cited as TR.
 -/
 
 @[expose] public section
@@ -331,8 +340,8 @@ theorem dependsOn_prod_cpt (B : Finset (Fin n)) :
   rw [hpa, hj]
 
 omit [Fintype α] [DecidableEq α] [Nonempty α] in
-/-- An edge from a latent node is a latent path. -/
-theorem latentPath_of_edge_mem (l j : Fin n) (h : b.Edge l j) (_hl : l ∈ L) :
+/-- A direct edge is a latent path. -/
+theorem latentPath_of_edge_direct (l j : Fin n) (h : b.Edge l j) :
     b.LatentPath L l j :=
   ⟨l, Relation.ReflTransGen.refl, h⟩
 
@@ -354,7 +363,7 @@ theorem mem_latentsInto_of_edge_mem (H : Finset {i : Fin n // i ∉ L}) (l j : F
   · exact ⟨u, huH, b.latentPath_of_edge_latentPath L _ _ _ h hjL hpath⟩
   · rw [Finset.mem_map] at hjmap
     obtain ⟨a, haH, rfl⟩ := hjmap
-    exact ⟨a, haH, b.latentPath_of_edge_mem L _ _ h hl⟩
+    exact ⟨a, haH, b.latentPath_of_edge_direct L _ _ h⟩
 
 omit [Fintype α] [DecidableEq α] [Nonempty α] in
 /-- Bidirected projection edges are latent common causes. -/
@@ -865,12 +874,6 @@ theorem qFactor_eq_prod_of_not_adj {H : Finset {i : Fin n // i ∉ L}}
         hne u hu w hw
     have ih' := ih hdisj' rfl hsep' v
     rw [hbin, hHT, ih', Finset.prod_insert hTmem]
-
-omit [Fintype α] [DecidableEq α] [Nonempty α] in
-/-- A direct edge is a latent path. -/
-theorem latentPath_of_edge_direct (u j : Fin n) (h : b.Edge u j) :
-    b.LatentPath L u j :=
-  ⟨u, Relation.ReflTransGen.refl, h⟩
 
 omit [Fintype α] [DecidableEq α] [Nonempty α] in
 /-- `latentsInto` is monotone. -/
@@ -1475,7 +1478,8 @@ theorem mem_cComponents_iff {V : Type*} [Fintype V] [DecidableEq V]
   simp only [Finset.mem_univ, true_and]
 
 /-- The factorization of the observed law over c-components (TP02 (27)-(28), TR (35),
-(56)), for every `v` with no positivity hypothesis. -/
+(56)), for every `v` with no positivity hypothesis. No semi-Markovian
+hypothesis is needed, so this subsumes TP02's semi-Markovian statement. -/
 theorem observedLaw_eq_prod_qFactor (v : {i : Fin n // i ∉ L} → α) :
     b.observedLaw L v = ∏ S ∈ (b.latentProjection L).cComponents, b.qFactor L S v := by
   classical
@@ -1590,7 +1594,9 @@ theorem marginal_insert_pred_eq_qFactor
   rw [hset, b.qFactor_univ L] at h
   exact h
 
-/-- T2, TP02 Lemma 1(i) without division; `σ` any topological order of the projection. -/
+/-- T2, TP02 Lemma 1(i) without division; `σ` any topological order of the projection.
+No semi-Markovian hypothesis is needed, so this subsumes the source's
+semi-Markovian statement. -/
 theorem qFactor_mul_prod_marginal_pred
     (σ : {i : Fin n // i ∉ L} ≃ Fin (Fintype.card {i : Fin n // i ∉ L}))
     (hσ : ∀ ⦃u w⦄, (b.latentProjection L).dir u w → σ u < σ w)
@@ -1611,7 +1617,8 @@ theorem qFactor_mul_prod_marginal_pred
   rw [e1, e2]
   exact hL4
 
-/-- The prefix identity in ratio form, TP02 eq. (29). -/
+/-- The prefix identity in ratio form, TP02 eq. (29). No semi-Markovian
+hypothesis is needed, so this subsumes the source's semi-Markovian statement. -/
 theorem qFactor_eq_prod_cond
     (σ : {i : Fin n // i ∉ L} ≃ Fin (Fintype.card {i : Fin n // i ∉ L}))
     (hσ : ∀ ⦃u w⦄, (b.latentProjection L).dir u w → σ u < σ w)
@@ -1631,37 +1638,5 @@ theorem qFactor_eq_prod_cond
     ne_of_gt (Finset.prod_pos hpos)
   rw [Finset.prod_div_distrib, eq_div_iff hden]
   exact hT2
-
--- The factorization and prefix identities restated with TP02's semi-Markovian
--- hypothesis `(_hSM : b.IsSemiMarkovian L)`, as in the source.
-
-/-- The factorization under TP02's semi-Markovian hypothesis. -/
-theorem observedLaw_eq_prod_qFactor_hSM (_hSM : b.IsSemiMarkovian L)
-    (v : {i : Fin n // i ∉ L} → α) :
-    b.observedLaw L v = ∏ S ∈ (b.latentProjection L).cComponents, b.qFactor L S v := by
-  exact b.observedLaw_eq_prod_qFactor L v
-
-/-- The division-free prefix identity under TP02's semi-Markovian hypothesis. -/
-theorem qFactor_mul_prod_marginal_pred_hSM (_hSM : b.IsSemiMarkovian L)
-    (σ : {i : Fin n // i ∉ L} ≃ Fin (Fintype.card {i : Fin n // i ∉ L}))
-    (hσ : ∀ ⦃u w⦄, (b.latentProjection L).dir u w → σ u < σ w)
-    {S : Finset {i : Fin n // i ∉ L}} (hS : S ∈ (b.latentProjection L).cComponents)
-    (v : {i : Fin n // i ∉ L} → α) :
-    b.qFactor L S v * ∏ i ∈ S, marginal (b.observedLaw L) ↑(univ.filter fun u => σ u < σ i) v =
-      ∏ i ∈ S, marginal (b.observedLaw L) ↑({i} ∪ univ.filter fun u => σ u < σ i) v := by
-  exact b.qFactor_mul_prod_marginal_pred L σ hσ hS v
-
-/-- The prefix identity in ratio form, TP02 eq. (29), under TP02's semi-Markovian
-hypothesis. -/
-theorem qFactor_eq_prod_cond_hSM (_hSM : b.IsSemiMarkovian L)
-    (σ : {i : Fin n // i ∉ L} ≃ Fin (Fintype.card {i : Fin n // i ∉ L}))
-    (hσ : ∀ ⦃u w⦄, (b.latentProjection L).dir u w → σ u < σ w)
-    {S : Finset {i : Fin n // i ∉ L}} (hS : S ∈ (b.latentProjection L).cComponents)
-    {v : {i : Fin n // i ∉ L} → α} (hv : 0 < b.observedLaw L v) :
-    b.qFactor L S v = ∏ i ∈ S,
-      marginal (b.observedLaw L) ↑({i} ∪ univ.filter fun u => σ u < σ i) v /
-        marginal (b.observedLaw L) ↑(univ.filter fun u => σ u < σ i) v := by
-  exact b.qFactor_eq_prod_cond L σ hσ hS hv
-
 
 end Cslib.MachineLearning.GraphicalModels.BayesNet
