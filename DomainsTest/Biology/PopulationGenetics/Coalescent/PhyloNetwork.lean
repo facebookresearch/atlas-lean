@@ -48,7 +48,7 @@ theorem isAcyclic_graph : graph.IsAcyclic := by
     | tail _ h ih => exact ih.trans (lt_of_adj _ _ h)
   exact lt_irrefl v (key v v hv)
 
-theorem parentsOf_graph_three : parentsOf graph 3 = {1, 2} := by decide
+theorem parentsOf_graph_three : Digraph.parentsOf graph 3 = {1, 2} := by decide
 
 /-- Node ages: root `3`, tree nodes `2` and `3/2`, reticulation `1`, species `0`. -/
 noncomputable def time : Fin 7 → ℝ := ![3, 2, 3 / 2, 1, 0, 0, 0]
@@ -82,13 +82,13 @@ noncomputable def network (γ : ℝ) (hγ : γ ∈ Set.Icc (0 : ℝ) 1) : PhyloN
     · subst h3; subst h1; exact absurd (by decide) hu
     · subst h3; subst h2; exact absurd (by decide) hu
     · rfl
-    · exact absurd (by simp only [parentsOf, Finset.mem_filter, Finset.mem_univ, true_and]; exact he) hu
+    · exact absurd (by simp only [Digraph.parentsOf, Finset.mem_filter, Finset.mem_univ, true_and]; exact he) hu
     · rfl
   sum_inherit := by
     intro v hv
     fin_cases v
     · exact absurd rfl hv
-    all_goals simp [parentsOf, graph, edges, inherit, Finset.sum_filter, Fin.sum_univ_succ]
+    all_goals simp [Digraph.parentsOf, graph, edges, inherit, Finset.sum_filter, Fin.sum_univ_succ]
 
 theorem parents_three (γ : ℝ) (hγ : γ ∈ Set.Icc (0 : ℝ) 1) :
     (network γ hγ).parents 3 = {1, 2} := parentsOf_graph_three
@@ -107,13 +107,13 @@ example (γ : ℝ) (hγ : γ ∈ Set.Icc (0 : ℝ) 1) :
 
 /-- With `γ = 3/10` the reticulation uses both parent edges: the active graph is not a
 rooted tree (the network still displays trees by selecting one reticulation edge). -/
-example : ¬ PhyloNetwork.IsRootedTree (network (3 / 10) (by norm_num)).activeGraph
+example : ¬ Digraph.IsRootedTree (network (3 / 10) (by norm_num)).activeGraph
     (network (3 / 10) (by norm_num)).root :=
   (network (3 / 10) (by norm_num)).not_isRootedTree_activeGraph (parents_three _ _)
     (by decide) (by simp [network, inherit]; norm_num)
 
 /-- With `γ = 1` (`γ ∈ {0, 1}`) the network displays a rooted tree. -/
-example : PhyloNetwork.IsRootedTree (network 1 (by norm_num)).activeGraph
+example : Digraph.IsRootedTree (network 1 (by norm_num)).activeGraph
     (network 1 (by norm_num)).root := by
   refine (network 1 (by norm_num)).isRootedTree_activeGraph fun v u => ?_
   simp only [network, inherit]

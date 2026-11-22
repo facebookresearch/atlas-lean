@@ -47,10 +47,6 @@ open Finset
 
 namespace MathlibExt.Biology.PopulationGenetics.Coalescent
 
-/-- The parents of `v` in a digraph whose edges run from ancestor to descendant. -/
-def parentsOf {V : Type*} [Fintype V] (G : Digraph V) [DecidableRel G.Adj] (v : V) : Finset V :=
-  {u | G.Adj u v}
-
 /-- An **age-monotone parent-bounded routing network**: the routing skeleton of a rooted
 phylogenetic network with inheritance probabilities (Yu–Degnan–Nakhleh 2012;
 Zhang–Ogilvie–Drummond–Stadler 2018), without the binary out-degree classification, leaf
@@ -75,9 +71,9 @@ structure PhyloNetwork (V : Type*) [Fintype V] where
   /-- No directed cycle. -/
   isAcyclic : G.IsAcyclic
   /-- The root has no parent. -/
-  parentsOf_root : parentsOf G root = ∅
+  parentsOf_root : Digraph.parentsOf G root = ∅
   /-- Every other node has one parent (tree node) or two parents (reticulation node). -/
-  card_parentsOf : ∀ v, v ≠ root → (parentsOf G v).card = 1 ∨ (parentsOf G v).card = 2
+  card_parentsOf : ∀ v, v ≠ root → (Digraph.parentsOf G v).card = 1 ∨ (Digraph.parentsOf G v).card = 2
   /-- Node ages, measured backward in time. -/
   time : V → ℝ
   /-- Age monotonicity: a parent is at least as old as its child. -/
@@ -87,9 +83,9 @@ structure PhyloNetwork (V : Type*) [Fintype V] where
   /-- Inheritance probabilities are nonnegative. -/
   inherit_nonneg : ∀ v u, 0 ≤ inherit v u
   /-- A lineage only moves to a parent. -/
-  inherit_eq_zero : ∀ v u, u ∉ parentsOf G v → inherit v u = 0
+  inherit_eq_zero : ∀ v u, u ∉ Digraph.parentsOf G v → inherit v u = 0
   /-- The inheritance probabilities at a non-root node sum to `1` over its parents. -/
-  sum_inherit : ∀ v, v ≠ root → ∑ u ∈ parentsOf G v, inherit v u = 1
+  sum_inherit : ∀ v, v ≠ root → ∑ u ∈ Digraph.parentsOf G v, inherit v u = 1
 
 attribute [instance] PhyloNetwork.decAdj
 
@@ -98,7 +94,7 @@ namespace PhyloNetwork
 variable {V : Type*} [Fintype V] (N : PhyloNetwork V)
 
 /-- The parents of `v`. -/
-def parents (v : V) : Finset V := parentsOf N.G v
+def parents (v : V) : Finset V := Digraph.parentsOf N.G v
 
 /-- `v` is a reticulation node: it has two parents. -/
 def IsReticulation (v : V) : Prop := (N.parents v).card = 2
@@ -113,8 +109,8 @@ def NonnegLengths : Prop := ∀ u v, N.G.Adj u v → 0 ≤ N.branchLength u v
 theorem nonnegLengths : N.NonnegLengths := fun u v h => sub_nonneg.2 (N.time_le u v h)
 
 /-- Membership in `parents v` is adjacency into `v`. -/
-theorem mem_parents {u v : V} : u ∈ N.parents v ↔ N.G.Adj u v := by
-  simp [parents, parentsOf]
+theorem mem_parents {u v : V} : u ∈ N.parents v ↔ N.G.Adj u v :=
+  Digraph.mem_parentsOf
 
 /-- **Inheritance probabilities lie in `[0, 1]`** (`γ ∈ [0, 1]`). -/
 theorem inherit_le_one (v u : V) : N.inherit v u ≤ 1 := by
@@ -138,7 +134,7 @@ theorem inherit_eq_one_sub [DecidableEq V] {v u₁ u₂ : V} (h : N.parents v = 
     rw [this] at h
     exact (Finset.insert_ne_empty u₁ {u₂}) h.symm
   have hs := N.sum_inherit v hv
-  have : ∑ u ∈ N.parents v, N.inherit v u = ∑ u ∈ parentsOf N.G v, N.inherit v u := rfl
+  have : ∑ u ∈ N.parents v, N.inherit v u = ∑ u ∈ Digraph.parentsOf N.G v, N.inherit v u := rfl
   rw [← this, h, Finset.sum_pair hne] at hs
   linarith
 
@@ -179,24 +175,10 @@ theorem sum_routeProb {v : V} (hv : v ≠ N.root) (k : ℕ) :
 def activeGraph : Digraph V where
   Adj u v := N.G.Adj u v ∧ 0 < N.inherit v u
 
-/-- A **rooted tree** (arborescence) with root `r`: acyclic, `r` has no parent, every other
-vertex has exactly one parent, and every vertex is reachable from `r`. (Reachability is
-needed only for infinite `V`; on a finite vertex type it follows from the first three
-conditions by chasing parents, cf. `isRootedTree_activeGraph`.) -/
-def IsRootedTree (H : Digraph V) (r : V) : Prop :=
-  H.IsAcyclic ∧ (∀ u, ¬ H.Adj u r) ∧ (∀ v, v ≠ r → ∃! u, H.Adj u v) ∧
-    ∀ v, Relation.ReflTransGen H.Adj r v
-
-omit [Fintype V] in
-/-- A subgraph of an acyclic digraph is acyclic. -/
-theorem isAcyclic_of_le {G H : Digraph V} (hGH : ∀ u v, H.Adj u v → G.Adj u v)
-    (hG : G.IsAcyclic) : H.IsAcyclic := fun v hv =>
-  hG v (Relation.TransGen.mono (r := H.Adj) (p := G.Adj) (fun a b h => hGH a b h) v v hv)
-
 /-- **`γ ∈ {0, 1}` gives a tree.** If every inheritance probability is `0` or `1`, the edges
 used with positive probability form a rooted tree on the nodes of the network. -/
 theorem isRootedTree_activeGraph [DecidableEq V] (h01 : ∀ v u, N.inherit v u = 0 ∨ N.inherit v u = 1) :
-    IsRootedTree N.activeGraph N.root := by
+    Digraph.IsRootedTree N.activeGraph N.root := by
   have huniq : ∀ v, v ≠ N.root → ∃! u, N.activeGraph.Adj u v := by
     intro v hv
     have hs := N.sum_inherit v hv
@@ -220,7 +202,7 @@ theorem isRootedTree_activeGraph [DecidableEq V] (h01 : ∀ v u, N.inherit v u =
     have hle := sum_le_sum_of_subset_of_nonneg hsub fun x _ _ => N.inherit_nonneg v x
     rw [sum_pair hwu, hw1, hu1] at hle
     linarith
-  have hacyc : N.activeGraph.IsAcyclic := isAcyclic_of_le (fun u v h => h.1) N.isAcyclic
+  have hacyc : N.activeGraph.IsAcyclic := Digraph.isAcyclic_of_le (fun u v h => h.1) N.isAcyclic
   have hreach : ∀ v, Relation.ReflTransGen N.activeGraph.Adj N.root v := by
     have hwf : WellFounded N.activeGraph.Adj := Digraph.isAcyclic_iff_wellFounded.1 hacyc
     intro v
@@ -260,7 +242,7 @@ theorem routeProb_of_zero_one [DecidableEq V] (h01 : ∀ v u, N.inherit v u = 0 
 is not a rooted tree. -/
 theorem not_isRootedTree_activeGraph [DecidableEq V] {v u₁ u₂ : V} (h : N.parents v = {u₁, u₂}) (hne : u₁ ≠ u₂)
     (hγ : 0 < N.inherit v u₁ ∧ N.inherit v u₁ < 1) :
-    ¬ IsRootedTree N.activeGraph N.root := by
+    ¬ Digraph.IsRootedTree N.activeGraph N.root := by
   rintro ⟨-, -, hT, -⟩
   have hv : v ≠ N.root := by
     rintro rfl
