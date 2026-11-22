@@ -589,6 +589,7 @@ class BaseGuardTest(unittest.TestCase):
 
         self.edit_row(path, published_sha256=c.sha256(original),
                       line_fingerprint=c.line_fingerprint(original))
+        run_git(self.root, "add", c.MANIFEST)
         code, out = self.run_check()
         self.assertEqual(code, 1, out)
         self.assertIn("retiring the row changed published_sha256", out)
@@ -609,6 +610,34 @@ class BaseGuardTest(unittest.TestCase):
         code, out = self.run_check()
         self.assertEqual(code, 1, out)
         self.assertIn(f"{path}: copied from tracked", out)
+
+    def test_pending_merge_rejects_changes_left_out_of_the_index(self) -> None:
+        """The merge commit is the index, so a row or file only in the working tree must not pass."""
+        del os.environ["GITHUB_ACTIONS"]
+        run_git(self.root, "switch", "-c", "topic")
+        write(self.root, "README.md", "topic\n")
+        self.commit("edit on topic")
+        run_git(self.root, "switch", "main")
+        run_git(self.root, "update-ref", "refs/remotes/origin/main", "HEAD")
+        run_git(self.root, "merge", "--no-ff", "--no-commit", "topic")
+        source = (self.root / "MathlibExt/Identical.lean").read_text()
+        path = "WantedExt/NearCopy.lean"
+        write(self.root, path, source.replace("def x7 ", "def y7 "))
+        run_git(self.root, "add", path)
+        self.assertEqual(self.run_check(None, "--record-divergence", path, "--rationale", "Copy",
+                                        "--backport", "not-needed")[0], 0)
+        code, out = self.run_check()  # the new row is in the working tree only
+        self.assertEqual(code, 1, out)
+        self.assertIn(f"the working tree differs from the index at {c.MANIFEST};", out)
+
+        run_git(self.root, "add", c.MANIFEST)
+        write(self.root, f"{path}~", source)  # an untracked editor backup is not a Lean file: no effect
+        code, out = self.run_check()
+        self.assertEqual(code, 0, out)
+        write(self.root, "CSLibExtTest/Scratch.lean", FRESH)  # untracked: not in the merge commit
+        code, out = self.run_check()
+        self.assertEqual(code, 1, out)
+        self.assertIn("the working tree differs from the index at CSLibExtTest/Scratch.lean;", out)
 
     def test_backport_link_update_passes(self) -> None:
         self.edit_row("CSLibExt/Diverged.lean", backport="https://github.com/fairinternal/formal-math/pull/1")

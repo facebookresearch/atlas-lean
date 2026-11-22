@@ -605,6 +605,24 @@ def copy_and_rename_status(root: Path, commit: str, *, staged: bool) -> str | No
     return done.stdout
 
 
+def unstaged_problems(root: Path, manifest: str) -> list[str]:
+    """A pending merge commits the index, but this check reads the working tree: they must agree at
+    the manifest and at the Lean files under the roots (no unstaged edit or deletion, unmerged path,
+    or untracked file)."""
+    pathspec = ("--", manifest, *ROOTS)
+    changed = git(root, "diff", "--no-ext-diff", "--name-only", "-z", *pathspec)
+    untracked = git(root, "ls-files", "--others", "--exclude-standard", "-z", *pathspec)
+    if changed is None or untracked is None:
+        return ["manifest: a merge is pending, but git cannot compare the working tree with the index"]
+    paths = sorted({path for path in f"{changed}\0{untracked}".split("\0")
+                    if path == manifest or path.endswith(".lean")})
+    if not paths:
+        return []
+    shown = ", ".join(paths[:5]) + (f" and {len(paths) - 5} more" if len(paths) > 5 else "")
+    return [f"manifest: a merge is pending, and the working tree differs from the index at {shown}; the merge "
+            "commit is built from the index, so stage (git add) or discard those changes"]
+
+
 def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[list[str], list[str]]:
     """Compare the manifest with the base manifest. Returns (problems, warnings).
 
@@ -655,6 +673,8 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
                 "--record-divergence for a changed file or --retire for a deleted one"
                 for path in sorted(old.keys() - new.keys())]
     tracked = {path for path, row in old.items() if row.get("disposition") in (*SYNCED, "diverged")}
+    if merge_heads:  # moves are read from the index, the manifest and files from the working tree
+        problems += unstaged_problems(root, rel)
     moves = copy_and_rename_status(root, commit, staged=bool(merge_heads))
     if moves is None:
         target = "index" if merge_heads else "HEAD"
