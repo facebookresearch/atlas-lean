@@ -477,18 +477,8 @@ public theorem_wanted squareGrid_r3f {T : Type*} [Fintype T] [DecidableEq T]
     fixedTilingCount (cellR3F n) σ =
       Fintype.card T ^ ((n ^ 2 - n) / 2) * tileFixedCount σ 1 ^ n
 
-/-- If `n` is odd, the solutions in `ZMod n` of `x = -1-x-a` form the singleton containing
-`((n+1)/2) • (-1-a)`.  Natural-number division is deliberately performed before casting the
-coefficient into `ZMod n`, matching the integer representative convention of Lemma 25.
-
-Formalization deviation: none beyond the representation choices stated above.
-
-Source: Peter Kagey, William Keehn, *Counting Tilings of the n × m Grid, Cylinder, and Torus*,
-        Journal of Integer Sequences 27 (2024), Article 24.6.1, Lemma 25. -/
-public theorem_wanted reflection_shift_solutions_odd (n : ℕ) [NeZero n]
-    (a : ZMod n) (hn : Odd n) :
-    {x : ZMod n | x = -1 - x - a} =
-      {(((n + 1) / 2 : ℕ) : ZMod n) * (-1 - a)}
+-- The case of an odd modulus, `reflection_shift_solutions_odd`, is proved in
+-- `MathlibExt.Combinatorics.Enumerative.GridCylinderTorusTilings`.
 
 /-- If `n` is even and the canonical representative `a.val` is odd, the solutions of
 `x = -1-x-a` are exactly the displayed two residues.  This makes the paper's ambiguous phrase
