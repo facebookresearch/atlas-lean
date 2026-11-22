@@ -35,27 +35,31 @@ constructions, which are not formalized.
 
 open scoped ENNReal
 
+@[expose] public section
+
 namespace AmbidextrousSofaWanted
 
 /-- Source: catalogue upper row, Hammersley (1968), adapted from C41a. -/
-theorem_wanted hammersley_upper :
+public theorem_wanted hammersley_upper :
     MovingSofa.ambidextrousOptimalArea ≤ ENNReal.ofReal (2 * Real.sqrt 2)
 
-/-- Source: catalogue upper row, Baek (2024) naive bound from C41a,
-exact decimal endpoint `22195 / 10000`. -/
-theorem_wanted baek_upper :
+/-- Source: catalogue upper row, Baek (2024) naive bound from C41a. The catalogue
+prints Gerver's constant truncated as `2.2195`; the endpoint here is rounded up to
+`22196 / 10000` so that it dominates Gerver's constant `2.21953166…`, as Baek's
+theorem requires. -/
+public theorem_wanted baek_upper :
     MovingSofa.ambidextrousOptimalArea ≤
-      ENNReal.ofReal ((22195 : ℝ) / 10000)
+      ENNReal.ofReal ((22196 : ℝ) / 10000)
 
 /-- Source: catalogue lower row, Gibbs (2014) numerical construction,
 exact decimal endpoint `164495 / 100000`. -/
-theorem_wanted gibbs_lower :
+public theorem_wanted gibbs_lower :
     ENNReal.ofReal ((164495 : ℝ) / 100000) ≤
       MovingSofa.ambidextrousOptimalArea
 
 /-- Source: catalogue lower row, Romik (2016), exact decimal endpoint
 `164495521 / 100000000`. -/
-theorem_wanted romik_lower :
+public theorem_wanted romik_lower :
     ENNReal.ofReal ((164495521 : ℝ) / 100000000) ≤
       MovingSofa.ambidextrousOptimalArea
 

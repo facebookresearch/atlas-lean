@@ -21,7 +21,7 @@ so delete the repeated entries (`List.destutter (· ≠ ·)`); the resulting lis
 partitions of `Fin n` is distributed as the path of the `n`-chain.
 
 The time-`t` form of consistency is proved in
-`MathlibExt/Biology/PopulationGenetics/Coalescent/PartitionCoalescent.lean`
+`Domains/Biology/PopulationGenetics/Coalescent/PartitionCoalescent.lean`
 (`sum_timeLaw_restrict`); the path-level statement for the jump chains is deferred here.
 
 Sources: J. F. C. Kingman, "The coalescent", Stochastic Process. Appl. 13 (1982) 235–248;
@@ -30,7 +30,9 @@ R. Durrett, *Probability Models for DNA Sequence Evolution*, 2nd ed. (2008), ch.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Biology.PopulationGenetics.Coalescent.PartitionCoalescent
+public import Mathlib.Data.List.Destutter
+public import MathlibExt.Combinatorics.Finpartition.Comap
+public import MathlibExt.Combinatorics.Finpartition.PairMerge
 
 @[expose] public section
 
@@ -38,7 +40,7 @@ open Finset
 
 namespace MathlibExt.Biology.PopulationGenetics.Coalescent.PartitionCoalescentWanted
 
-open PartitionCoalescent
+local notation "SamplePartition" n => Finpartition (univ : Finset (Fin n))
 
 open scoped Classical in
 /-- The probability that the jump chain of Kingman's `n`-coalescent, started from the partition
@@ -47,7 +49,8 @@ into singletons, and otherwise the product of the one-step transition probabilit
 `jumpMatrix n` along `l`. The empty list has probability `0`. -/
 noncomputable def pathProb (n : ℕ) : List (SamplePartition n) → ℝ
   | [] => 0
-  | π :: l => (if π = ⊥ then 1 else 0) * (List.zipWith (jumpMatrix n) (π :: l) l).prod
+  | π :: l => (if π = ⊥ then 1 else 0) *
+      (List.zipWith (Finpartition.pairMergeMatrix univ) (π :: l) l).prod
 
 open scoped Classical in
 /-- **Consistency of the jump chains** (Kingman 1982): for `n ≥ 1`, restricting each
