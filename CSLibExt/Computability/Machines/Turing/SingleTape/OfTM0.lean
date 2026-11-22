@@ -57,64 +57,93 @@ namespace Cslib.Turing.SingleTapeTM
 
 variable {Γ₀ Λ : Type} [Inhabited Γ₀] [Inhabited Λ]
 
-/-- The non-blank symbols of a `TM0` alphabet: the tape alphabet of the simulating machine. -/
+/-- **Non-blank symbols.** For an alphabet $\Gamma_0$ with a distinguished blank symbol $b$, the
+non-blank symbols of $\Gamma_0$ are the elements $x \in \Gamma_0$ with $x \ne b$. They form the
+tape alphabet of the single-tape machine that simulates a Post–Turing machine over $\Gamma_0$. -/
 abbrev NonBlank (Γ₀ : Type) [Inhabited Γ₀] : Type := {x : Γ₀ // x ≠ default}
 
 section Tape
 
 variable [DecidableEq Γ₀]
 
-/-- A cell over the non-blank symbols read as a `TM0` symbol, the blank cell `none` being the
-blank symbol `default`: the pointed map `Equiv.optionSubtypeNe default`. -/
+/-- **Cell symbol.** Let $\Gamma_0$ be an alphabet with blank symbol $b$. A tape cell over the
+non-blank symbols of $\Gamma_0$ is either blank or holds a symbol $x \ne b$ of $\Gamma_0$. Its cell
+symbol is $b$ for the blank cell and $x$ for the cell holding $x$. This map from cells to
+$\Gamma_0$ sends the blank cell to the blank symbol, so it is a pointed map. -/
 def cellSymbol : PointedMap (Option (NonBlank Γ₀)) Γ₀ :=
   ⟨Equiv.optionSubtypeNe default, rfl⟩
 
-/-- `cellSymbol` reads a cell through `Equiv.optionSubtypeNe default`. -/
+/-- **Value of the cell-symbol map.** For every cell $o$ over the non-blank symbols of an alphabet
+$\Gamma_0$ with blank symbol $b$, the cell symbol of $o$ is $b$ when $o$ is the blank cell and is
+$x$ when $o$ holds the non-blank symbol $x$. -/
 @[simp]
 theorem cellSymbol_apply (o : Option (NonBlank Γ₀)) :
     cellSymbol o = Equiv.optionSubtypeNe default o :=
   rfl
 
-/-- `cellSymbol` is injective. -/
+/-- **The cell-symbol map is injective.** Distinct cells over the non-blank symbols of an alphabet
+$\Gamma_0$ have distinct cell symbols in $\Gamma_0$. -/
 theorem cellSymbol_injective : Function.Injective (cellSymbol (Γ₀ := Γ₀)) :=
   (Equiv.optionSubtypeNe default).injective
 
-/-- Read a `StackTape` over the non-blank symbols as a `TM0` half-tape, cell by cell: the cells of
-`StackTape.toListBlank` through `cellSymbol`. -/
+/-- **Half-tape of a stack tape of non-blank symbols.** Let $\Gamma_0$ be an alphabet with blank
+symbol $b$ and $N = \Gamma_0 \setminus \{b\}$ its non-blank symbols. A stack tape $s$ over $N$, a
+finite list of cells each blank or holding a symbol of $N$ and not ending in a blank cell, is read
+as the TM0 half-tape over $\Gamma_0$ whose $i$-th symbol is that of the $i$-th cell of $s$: $b$
+for a blank cell, $x$ for a cell holding $x$, and $b$ past the end of $s$. -/
 def toListBlank (s : StackTape (NonBlank Γ₀)) : ListBlank Γ₀ :=
   s.toListBlank.map cellSymbol
 
-/-- Read a `BiTape` over the non-blank symbols as a `TM0` tape, cell by cell: the cells of
-`BiTape.toTape` through `cellSymbol`. -/
+/-- **Post–Turing reading of a tape over the non-blank symbols.** Let $\Gamma_0$ be an alphabet
+whose default symbol is the blank. The Post–Turing reading of a two-way tape $t$ whose cells are
+blank or hold non-blank symbols of $\Gamma_0$ is the Post–Turing machine tape over $\Gamma_0$
+obtained cell by cell: take the view of $t$ as a tape of cells, each cell at its position relative
+to the head and blank cells past the ends, and replace each cell by its symbol, a non-blank symbol
+$x$ by $x$ itself and the blank cell by the blank of $\Gamma_0$. -/
 def toTape (t : BiTape (NonBlank Γ₀)) : Tape Γ₀ :=
   t.toTape.map cellSymbol
 
-/-- The empty `StackTape` reads as the all-blank half-tape. -/
+/-- **The empty stack tape reads as the blank half-tape.** For an alphabet $\Gamma_0$ with blank
+symbol $b$, the empty stack tape over the non-blank symbols of $\Gamma_0$ reads as the half-tape
+of the empty list, all of whose symbols are $b$. -/
 @[simp]
 theorem toListBlank_nil : toListBlank (StackTape.nil : StackTape (NonBlank Γ₀)) = ListBlank.mk [] :=
   rfl
 
-/-- Pushing a cell onto a `StackTape` pushes its symbol onto the half-tape; for the blank cell
-this holds because the half-tape is blank beyond its end. -/
+/-- **Pushing a cell onto a stack tape of non-blank symbols.** Let $\Gamma_0$ be an alphabet with
+blank symbol $b$ and $N = \Gamma_0 \setminus \{b\}$. Read a cell over $N$ as a symbol of
+$\Gamma_0$: $b$ for the blank cell, $x$ for a cell holding $x$. For every cell $o$ and every stack
+tape $s$ over $N$, the half-tape read from the stack tape obtained by pushing $o$ onto $s$ is the
+half-tape read from $s$ with the symbol of $o$ pushed onto its front.
+
+For the blank cell this holds because the half-tape is blank beyond its end. -/
 @[simp]
 theorem toListBlank_cons (o : Option (NonBlank Γ₀)) (s : StackTape (NonBlank Γ₀)) :
     toListBlank (StackTape.cons o s) =
       (toListBlank s).cons (Equiv.optionSubtypeNe default o) := by
   simp [toListBlank, ListBlank.map_cons]
 
-/-- The first symbol of the half-tape is that of the first cell. -/
+/-- **First symbol of a half-tape read from non-blank cells.** Let $\Gamma_0$ be an alphabet with
+blank symbol $b$. For every stack tape $s$ of cells over the non-blank symbols of $\Gamma_0$ (a
+finite list of cells, blank beyond its end), the first symbol of the half-tape over $\Gamma_0$
+read from $s$ is the cell symbol of the first cell of $s$; when $s$ is empty this is $b$. -/
 @[simp]
 theorem head_toListBlank (s : StackTape (NonBlank Γ₀)) :
     (toListBlank s).head = Equiv.optionSubtypeNe default s.head := by
   simp [toListBlank, ListBlank.head_map]
 
-/-- Dropping the first cell drops the first symbol of the half-tape. -/
+/-- **Dropping the first cell of a stack tape of non-blank symbols.** For an alphabet $\Gamma_0$
+with blank symbol $b$ and every stack tape $s$ over the non-blank symbols of $\Gamma_0$, dropping
+the first symbol of the half-tape read from $s$ gives the half-tape read from $s$ with its first
+cell removed (the empty stack tape staying empty). -/
 @[simp]
 theorem tail_toListBlank (s : StackTape (NonBlank Γ₀)) :
     (toListBlank s).tail = toListBlank s.tail := by
   simp [toListBlank, ListBlank.tail_map]
 
-/-- A word of non-blank symbols reads as itself. -/
+/-- **A word of non-blank symbols reads as itself.** For an alphabet $\Gamma_0$ with blank symbol
+$b$ and a word $w$ of non-blank symbols of $\Gamma_0$, the half-tape read from the stack tape whose
+cells hold the letters of $w$ in order is the half-tape of $w$, viewed as a word over $\Gamma_0$. -/
 @[simp]
 theorem toListBlank_mapSome (l : List (NonBlank Γ₀)) :
     toListBlank (StackTape.mapSome l) = ListBlank.mk (l.map Subtype.val) := by
@@ -126,41 +155,68 @@ private theorem listBlank_map_injective {Γ Γ' : Type*} [Inhabited Γ] [Inhabit
     {f : PointedMap Γ Γ'} (hf : Function.Injective f) : Function.Injective (ListBlank.map f) :=
   fun _ _ h ↦ ListBlank.ext fun i ↦ hf (by rw [← ListBlank.nth_map, ← ListBlank.nth_map, h])
 
-/-- `toListBlank` is injective: a `StackTape` does not end in a blank, so trailing blanks of a
-half-tape do not come from cells. -/
+/-- **Distinct stack tapes of non-blank symbols read as distinct half-tapes.** For an alphabet
+$\Gamma_0$ with blank symbol $b$, two stack tapes over the non-blank symbols of $\Gamma_0$ that read
+as the same half-tape over $\Gamma_0$ are equal.
+
+A stack tape does not end in a blank, so the trailing blanks of a half-tape do not come from
+cells. -/
 theorem toListBlank_injective : Function.Injective (toListBlank (Γ₀ := Γ₀)) :=
   (listBlank_map_injective cellSymbol_injective).comp StackTape.toListBlank_injective
 
-/-- The symbol under the head of `toTape t` is that of the head cell of `t`. -/
+/-- **Head symbol of a tape read from non-blank cells.** For every two-way tape $t$ of cells over
+the non-blank symbols of an alphabet $\Gamma_0$, the symbol under the head of the tape over
+$\Gamma_0$ read from $t$ is the cell symbol of the cell under the head of $t$. -/
 @[simp]
 theorem head_toTape (t : BiTape (NonBlank Γ₀)) :
     (toTape t).head = Equiv.optionSubtypeNe default t.head :=
   rfl
 
-/-- `toTape` turns writing a cell into writing its symbol. -/
+/-- **Writing commutes with the Post–Turing reading of a tape.** Let $\Gamma_0$ be an alphabet
+whose default symbol is the blank, and for a two-way tape $t$ whose cells are blank or hold
+non-blank symbols of $\Gamma_0$, let $\tau(t)$ be the Post–Turing reading of $t$, a Post–Turing
+machine tape over $\Gamma_0$. For every such $t$ and every cell $o$, blank or holding a non-blank
+symbol, $\tau$ of $t$ with $o$ written under the head is $\tau(t)$ with the symbol of $o$ written
+under the head, where the symbol of $o$ is $x$ if $o$ holds $x$ and the blank of $\Gamma_0$ if $o$
+is blank. -/
 @[simp]
 theorem toTape_write (t : BiTape (NonBlank Γ₀)) (o : Option (NonBlank Γ₀)) :
     toTape (t.write o) = (toTape t).write (Equiv.optionSubtypeNe default o) := by
   rw [toTape, BiTape.toTape_write, Tape.map_write, cellSymbol_apply, toTape]
 
-/-- `toTape` commutes with moving the head. -/
+/-- **Head moves commute with the Post–Turing reading of a tape.** Let $\Gamma_0$ be an alphabet
+whose default symbol is the blank, and for a two-way tape $t$ whose cells are blank or hold
+non-blank symbols of $\Gamma_0$, let $\tau(t)$ be the Post–Turing reading of $t$, a Post–Turing
+machine tape over $\Gamma_0$. For every such $t$ and every direction $d$, left or right, $\tau$ of
+$t$ with its head moved in direction $d$ is $\tau(t)$ with its head moved in direction $d$. -/
 @[simp]
 theorem toTape_move (t : BiTape (NonBlank Γ₀)) (d : Dir) :
     toTape (t.move d) = (toTape t).move d := by
   rw [toTape, BiTape.toTape_move, Tape.map_move, toTape]
 
-/-- `toTape` commutes with an optional move of the head. -/
+/-- **Optional head moves commute with the Post–Turing reading of a tape.** Let $\Gamma_0$ be an
+alphabet whose default symbol is the blank, and for a two-way tape $t$ whose cells are blank or
+hold non-blank symbols of $\Gamma_0$, let $\tau(t)$ be the Post–Turing reading of $t$, a
+Post–Turing machine tape over $\Gamma_0$. For every such $t$ and every optional move $d$, which is
+either no move or a direction, $\tau$ of $t$ after the optional move $d$ is $\tau(t)$ when $d$ is
+no move, and $\tau(t)$ with its head moved in direction $d$ when $d$ is a direction. -/
 theorem toTape_optionMove (t : BiTape (NonBlank Γ₀)) (d : Option Dir) :
     toTape (t.optionMove d) = d.elim (toTape t) fun d ↦ (toTape t).move d := by
   cases d <;> simp [BiTape.optionMove]
 
-/-- The input tape of a word of non-blank symbols reads as the `TM0` input tape of the word. -/
+/-- **The Post–Turing reading of an input tape.** Let $\Gamma_0$ be an alphabet whose default
+symbol is the blank. For every word $l$ of non-blank symbols of $\Gamma_0$, the Post–Turing
+reading of the two-way input tape of $l$ (the head on the first symbol of $l$, the rest of $l$ to
+its right, every other cell blank) is the Post–Turing machine input tape of $l$ read as a word
+over $\Gamma_0$, with the head on the first symbol of $l$ and the rest of $l$ to its right. -/
 @[simp]
 theorem toTape_mk₁ (l : List (NonBlank Γ₀)) :
     toTape (BiTape.mk₁ l) = Tape.mk₁ (l.map Subtype.val) := by
   simp [toTape, Tape.map_mk₁, Function.comp_def]
 
-/-- `toTape` is injective. -/
+/-- **Distinct tapes of non-blank symbols read as distinct TM0 tapes.** For an alphabet
+$\Gamma_0$ with blank symbol $b$, two tapes over the non-blank symbols of $\Gamma_0$ that read,
+cell by cell, as the same TM0 tape over $\Gamma_0$ are equal. -/
 theorem toTape_injective : Function.Injective (toTape (Γ₀ := Γ₀)) := by
   refine Function.Injective.comp (fun T₁ T₂ h ↦ ?_) BiTape.toTape_injective
   obtain ⟨a₁, L₁, R₁⟩ := T₁
@@ -175,12 +231,19 @@ end Tape
 variable [Fintype Γ₀] [DecidableEq Γ₀] [Inhabited (NonBlank Γ₀)]
 variable (M : TM0.Machine Γ₀ Λ) (S : Finset Λ) (hS : TM0.Supports M ↑S)
 
-/-- The single-tape machine running the `TM0` machine `M`, supported by `S`, step for step. Its
-states are the elements of `S`, and it reads a cell `s` as the symbol
-`Equiv.optionSubtypeNe default s`. A `TM0` move writes `s` back and moves; a `TM0` write of `a`
-writes the cell of `a`; where `M` halts, the machine writes `s` back and halts. CSLib machines need
-an inhabited alphabet, hence the instance `Inhabited (NonBlank Γ₀)`: an alphabet whose only
-symbol is the blank is excluded. -/
+/-- **Single-tape simulation of a Post–Turing machine.** Let $\Gamma_0$ be a finite alphabet with
+blank symbol $b$ and at least one non-blank symbol, and let $M$ be a Post–Turing machine over
+$\Gamma_0$ with start state $q_0$, supported by the finite set of states $S$ (so $q_0 \in S$, and
+from a state in $S$ the machine $M$ only enters states in $S$). The single-tape machine simulating
+$M$ has the non-blank symbols of $\Gamma_0$ as tape alphabet, $S$ as set of states and $q_0$ as
+start state. In a state $q$, reading a cell $s$ whose cell symbol is $a$, it acts as follows. If
+$M$ halts in $q$ on $a$, it writes $s$ back and halts. If $M$ moves the head in direction $d$ and
+enters $q'$, it writes $s$ back, moves in direction $d$ and enters $q'$. If $M$ writes $a'$ and
+enters $q'$, it writes the blank cell when $a' = b$ and otherwise the cell holding $a'$, does not
+move, and enters $q'$.
+
+CSLib machines need a chosen symbol of their alphabet, so an alphabet whose only symbol is the
+blank is excluded. -/
 def ofTM0 : SingleTapeTM (NonBlank Γ₀) where
   State := {q // q ∈ S}
   q₀ := ⟨default, hS.1⟩
@@ -215,8 +278,13 @@ private theorem ofTM0_tr_of_eq_write {q q' : Λ} (hq : q ∈ S) {s : Option (Non
   split <;> rename_i heq <;> rw [heq] at h <;> cases h
   rfl
 
-/-- Where the `TM0` machine halts in a supported state, `ofTM0 M S hS` takes one step into its
-halting state and leaves the tape unchanged. -/
+/-- **The simulation halts one step after the TM0 machine.** Let $M$ be a TM0 machine over a
+finite alphabet $\Gamma_0$ with blank symbol $b$ and at least one non-blank symbol, supported by a
+finite set $S$ of states, and let $\widehat{M}$ be the single-tape machine over the non-blank
+symbols $N = \Gamma_0 \setminus \{b\}$ simulating $M$. For a tape $t$ over $N$, write $\tau(t)$
+for the TM0 tape read from $t$ cell by cell. If $q \in S$ and $M$ has no step from the
+configuration $(q, \tau(t))$, then one step of $\widehat{M}$ from the configuration $(q, t)$
+leads to its halting state with the tape $t$ unchanged. -/
 theorem step_ofTM0_of_step_eq_none {q : Λ} (hq : q ∈ S) {t : BiTape (NonBlank Γ₀)}
     (h : TM0.step M ⟨q, toTape t⟩ = none) :
     (ofTM0 M S hS).step ⟨some ⟨q, hq⟩, t⟩ = some ⟨none, t⟩ := by
@@ -225,8 +293,14 @@ theorem step_ofTM0_of_step_eq_none {q : Λ} (hq : q ∈ S) {t : BiTape (NonBlank
   simp only [step, ofTM0_tr_of_eq_none M S hS hq hM]
   rfl
 
-/-- A `TM0` step from a supported state is one step of `ofTM0 M S hS`, between configurations
-whose tapes correspond. -/
+/-- **Each TM0 step is one step of the simulation.** Let $M$ be a TM0 machine over a finite
+alphabet $\Gamma_0$ with blank symbol $b$ and at least one non-blank symbol, supported by a finite
+set $S$ of states, and let $\widehat{M}$ be the single-tape machine over the non-blank symbols
+$N = \Gamma_0 \setminus \{b\}$ simulating $M$. For a tape $t$ over $N$, write $\tau(t)$ for the
+TM0 tape read from $t$ cell by cell. If $q \in S$ and one step of $M$ takes the configuration
+$(q, \tau(t))$ to a configuration $(q', T')$, then $q' \in S$ and there is a tape $t'$ over $N$
+with $\tau(t') = T'$ such that one step of $\widehat{M}$ takes the configuration $(q, t)$ to the
+configuration $(q', t')$. -/
 theorem step_ofTM0_of_step_eq_some {q : Λ} (hq : q ∈ S) {t : BiTape (NonBlank Γ₀)}
     {c : TM0.Cfg Γ₀ Λ} (h : TM0.step M ⟨q, toTape t⟩ = some c) :
     ∃ (hc : c.q ∈ S) (t' : BiTape (NonBlank Γ₀)), toTape t' = c.Tape ∧
@@ -245,8 +319,14 @@ theorem step_ofTM0_of_step_eq_some {q : Λ} (hq : q ∈ S) {t : BiTape (NonBlank
     simp only [step, ofTM0_tr_of_eq_write M S hS hq hM]
     rfl
 
-/-- A run of `n` `TM0` steps from a supported state is a run of `n` steps of `ofTM0 M S hS`,
-between configurations whose tapes correspond. -/
+/-- **Runs of a TM0 machine are runs of its single-tape simulation.** Let $M$ be a TM0 machine
+over a finite alphabet $\Gamma_0$ with blank symbol $b$ and at least one non-blank symbol,
+supported by a finite set $S$ of states, and let $\widehat{M}$ be the single-tape machine over
+the non-blank symbols $N = \Gamma_0 \setminus \{b\}$ simulating $M$. For a tape $t$ over $N$,
+write $\tau(t)$ for the TM0 tape read from $t$ cell by cell. If $M$ goes from a configuration
+$(q, T)$ to a configuration $(q', T')$ in exactly $n$ steps, $q \in S$, and $\tau(t) = T$, then
+$q' \in S$ and there is a tape $t'$ over $N$ with $\tau(t') = T'$ such that $\widehat{M}$ goes
+from the configuration $(q, t)$ to the configuration $(q', t')$ in exactly $n$ steps. -/
 theorem relatesInSteps_ofTM0 {c c' : TM0.Cfg Γ₀ Λ} {n : ℕ}
     (h : RelatesInSteps (fun a b ↦ b ∈ TM0.step M a) c c' n) (hc : c.q ∈ S)
     {t : BiTape (NonBlank Γ₀)} (ht : toTape t = c.Tape) :
@@ -298,7 +378,11 @@ private theorem relatesInSteps_ofTM0_halt {l : List (NonBlank Γ₀)} {c : TM0.C
   rw [ht]
   exact hh
 
-/-- `ofTM0 M S hS` halts on `l` exactly when the `TM0` machine `M` halts on `l`. -/
+/-- **The simulating machine halts exactly when the Post–Turing machine halts.** Let $\Gamma_0$
+be a finite alphabet with at least one non-blank symbol, let $M$ be a Post–Turing machine over
+$\Gamma_0$ supported by the finite set of states $S$, and let $l$ be a word of non-blank symbols
+of $\Gamma_0$. The single-tape machine simulating $M$ halts on the input $l$ if and only if $M$,
+started on $l$, halts. -/
 theorem haltsOn_ofTM0_iff (l : List (NonBlank Γ₀)) :
     (ofTM0 M S hS).HaltsOn l ↔ (TM0.eval M (l.map Subtype.val)).Dom := by
   constructor
@@ -313,8 +397,14 @@ theorem haltsOn_ofTM0_iff (l : List (NonBlank Γ₀)) :
     obtain ⟨t, -, hrun⟩ := relatesInSteps_ofTM0_halt M S hS hn hh
     exact ⟨_, hrun.reflTransGen, rfl⟩
 
-/-- A `TM0` run of `n` steps on `l` that halts with the tape `Tape.mk₁ l'` makes `ofTM0 M S hS`
-output `l'` on `l` within `n + 1` steps. -/
+/-- **The single-tape simulation outputs within one extra step.** Let $\Gamma_0$ be a finite
+alphabet with at least one non-blank symbol, let $M$ be a Post–Turing machine over $\Gamma_0$
+supported by the finite set of states $S$, and let $l$ and $l'$ be words of non-blank symbols of
+$\Gamma_0$. If $M$, started on $l$, reaches in exactly $n$ steps a configuration $c$ in which it
+halts, and the tape of $c$ holds $l'$ starting at the head with blanks everywhere else, then the
+single-tape machine simulating $M$ outputs $l'$ on the input $l$ within $n + 1$ steps: its run
+from the initial configuration on $l$ reaches, in at most $n + 1$ steps, the halting state with
+the tape holding exactly $l'$, starting at the head. -/
 theorem outputsWithinTime_ofTM0 {l l' : List (NonBlank Γ₀)} {c : TM0.Cfg Γ₀ Λ} {n : ℕ}
     (hc : RelatesInSteps (fun a b ↦ b ∈ TM0.step M a) (TM0.init (l.map Subtype.val)) c n)
     (hh : TM0.step M c = none) (ht : c.Tape = Tape.mk₁ (l'.map Subtype.val)) :
@@ -323,8 +413,13 @@ theorem outputsWithinTime_ofTM0 {l l' : List (NonBlank Γ₀)} {c : TM0.Cfg Γ�
   obtain rfl : t = BiTape.mk₁ l' := toTape_injective (by rw [ht', ht, toTape_mk₁])
   exact RelatesWithinSteps.of_relatesInSteps hrun
 
-/-- When the `TM0` machine `M` halts on `l` with the tape `Tape.mk₁ l'`, `ofTM0 M S hS` outputs
-`l'` on `l`. -/
+/-- **The single-tape simulation has the same output.** Let $\Gamma_0$ be a finite alphabet with
+at least one non-blank symbol, let $M$ be a Post–Turing machine over $\Gamma_0$ supported by the
+finite set of states $S$, and let $l$ and $l'$ be words of non-blank symbols of $\Gamma_0$. If
+$M$, started on $l$, halts in a configuration whose tape holds $l'$ starting at the head, with
+blanks everywhere else, then the single-tape machine simulating $M$ outputs $l'$ on the input
+$l$: its run from the initial configuration on $l$ reaches the halting state with the tape
+holding exactly $l'$, starting at the head. -/
 theorem outputs_ofTM0 {l l' : List (NonBlank Γ₀)} {c : TM0.Cfg Γ₀ Λ}
     (hc : c ∈ StateTransition.eval (TM0.step M) (TM0.init (l.map Subtype.val)))
     (ht : c.Tape = Tape.mk₁ (l'.map Subtype.val)) : (ofTM0 M S hS).Outputs l l' := by

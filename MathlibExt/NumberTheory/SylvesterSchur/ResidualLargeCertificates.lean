@@ -670,8 +670,11 @@ private lemma factorial_mul_scaled_primeCounting_lt_of_segment {lo n P k : ℕ}
     scaled_pow_le_of_le hpi (hPlo.trans hlo) (by omega)
   exact hlhs.trans_lt (hfixedk.trans_le hrhs)
 
-/-- The mid residual range `38 ≤ n < 945` satisfies the prime-counting conditional
-estimate once `1291 ≤ k`, using the finite certificates in this file. -/
+/-- **Prime-counting estimate for Sylvester–Schur when $38 \le n < 945$.** For all natural
+numbers $n$ and $k$ with $38 \le n < 945$ and $k \ge 1291$, we have
+$n! \cdot (k + n - 1)^{\pi(n)} < k^n$, where $\pi(n)$ denotes the number of primes at most $n$.
+
+The proof checks finitely many explicit numerical certificates. -/
 lemma second_residual_mid_primeCounting_lt_start_pow {n k : ℕ}
     (hn38 : 38 ≤ n) (hnlt945 : n < 945) (hk1291 : 1291 ≤ k) :
     Nat.factorial n * (k + n - 1) ^ Nat.primeCounting n < k ^ n := by
