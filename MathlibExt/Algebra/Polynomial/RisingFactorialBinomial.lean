@@ -19,9 +19,11 @@ open scoped BigOperators
 namespace MetaMathlibExt
 
 /--
-Binomial theorem for rising factorials: `(a + b)` raised to the rising
-`n`-th power expands as the choose-weighted sum of products of the rising
-powers of `a` and `b`.
+**Binomial theorem for rising factorials.** For every natural number $n$ and all real numbers
+$a$ and $b$, writing $x^{\overline{m}} = x(x+1)\cdots(x+m-1)$ for the rising factorial,
+$$(a+b)^{\overline{n}} = \sum_{k=0}^{n} \binom{n}{k}\, a^{\overline{k}}\, b^{\overline{n-k}}.$$
+
+Proves `Wanted` entry `ascPochhammer_eval_add`.
 
 Source: Paul Eloe and Catherine Kublik,
 "When Numerical Analysis Crosses Paths with Catalan and Generalized Motzkin Numbers,"
@@ -29,10 +31,6 @@ Journal of Integer Sequences 21 (2018), Article 18.8.4,
 Theorem (label binomthm_risingpoly), equation (label `binomial theorem`),
 lines 156–161,
 https://cs.uwaterloo.ca/journals/JIS/VOL21/Kublik/kublik2.tex
-
-The source proves this by induction on `n`, using the Pascal recurrence;
-verified computationally for `n = 0..8` over five real pairs `(a, b)`.
-Proves `Wanted` entry `ascPochhammer_eval_add`.
 -/
 theorem ascPochhammer_eval_add (n : ℕ) (a b : ℝ) :
     (ascPochhammer ℝ n).eval (a + b) =

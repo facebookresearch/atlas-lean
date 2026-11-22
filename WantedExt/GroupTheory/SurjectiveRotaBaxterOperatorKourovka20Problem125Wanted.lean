@@ -32,22 +32,27 @@ A Rota-Baxter operator (of weight `1`) satisfies `B(g) B(h) = B(g B(g) h B(g)⁻
 Guo-Lang-Sheng and Bardakov-Gubarev used in the resolving preprints.
 -/
 
-/-- A Rota-Baxter operator (of weight `1`) on a group `G`: a map `B : G → G` with
-`B(g) B(h) = B(g B(g) h B(g)⁻¹)` for all `g, h ∈ G`. -/
+/-- **Rota–Baxter operators on groups.** A Rota–Baxter operator (of weight $1$) on a group $G$ is
+a map $B \colon G \to G$ such that $B(g)\,B(h) = B\bigl(g\,B(g)\,h\,B(g)^{-1}\bigr)$ for all
+$g, h \in G$. -/
 def IsRotaBaxterOperator {G : Type} [Group G] (B : G → G) : Prop :=
   ∀ g h : G, B g * B h = B (g * B g * h * (B g)⁻¹)
 
-/-- Kourovka 20.125 (V. G. Bardakov): there exist a non-abelian group `G` and a Rota-Baxter
-operator on `G` that is surjective but not injective. -/
+/-- **Kourovka Problem 20.125 (surjective non-injective Rota–Baxter operators).** The statement,
+asked by V. G. Bardakov, that there exist a non-abelian group $G$ and a Rota–Baxter operator $B$ on
+$G$ such that $B$ is surjective but not injective. -/
 def surjectiveNonInjectiveRotaBaxterOperatorExists : Prop :=
   ∃ (G : Type) (_ : Group G), (∃ x y : G, x * y ≠ y * x) ∧
     ∃ B : G → G, IsRotaBaxterOperator B ∧ Function.Surjective B ∧ ¬ Function.Injective B
 
 /--
-Resolved true: the Kourovka Notebook (21st issue) answers 20.125 "Yes, it does exist", by an
-AI-generated solution of Monticone confirmed by V. G. Bardakov; van Doorn, Judin, Monticone and
-Morrison (Theorem 5.1) take `G = S₃ × ℤ^ℕ` and `B(σ, f) = (σ⁻¹, s(f))` with `s` the left shift,
-which is surjective and not injective. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
+**A surjective, non-injective Rota–Baxter operator on a non-abelian group.** There exist a
+non-abelian group $G$ and a Rota–Baxter operator $B$ on $G$ that is surjective but not injective.
+
+For example, van Doorn, Judin, Monticone and Morrison take $G = S_3 \times \mathbb{Z}^{\mathbb{N}}$
+and $B(\sigma, f) = (\sigma^{-1}, s(f))$, where $s$ is the left shift.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
 Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem
 20.125 (V. G. Bardakov); resolution: P. Monticone, Kourovka Notebook Problem 20.125, solution note,
 23 March 2026; W. van Doorn, E. Judin, P. Monticone and D. Morrison, On some problems from the
