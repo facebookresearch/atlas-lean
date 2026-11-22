@@ -74,27 +74,9 @@ theorem pathLatency_eq_sum_map {V E P : Type*} [Fintype P] [DecidableEq E]
       = (edges p).toFinset.sum (fun e => ℓ e (edgeVolume edges f e)) :=
     (List.sum_toFinset _ (hsimple p)).symm
   rw [hsum]
-  simp only [RoutingInstance.pathLatency, RoutingInstance.edgeFlow]
+  simp only [RoutingInstance.pathLatency]
   apply Finset.sum_congr rfl
   intro e _
-  congr 1
-  simp only [edgeVolume]
-  have hfil : (∑ q ∈ Finset.univ.filter (fun q => e ∈ (edges q).toFinset),
-        f q * ((((edges q).count e : ℕ) : ℝ)))
-      = ∑ q, f q * ((((edges q).count e : ℕ) : ℝ)) := by
-    apply Finset.sum_subset (Finset.filter_subset _ _)
-    intro q _ hq
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hq
-    rw [List.mem_toFinset] at hq
-    rw [List.count_eq_zero_of_not_mem hq]
-    simp
-  rw [← hfil]
-  apply Finset.sum_congr rfl
-  intro q hq
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hq
-  rw [List.mem_toFinset] at hq
-  have hc : (edges q).count e = 1 := List.count_eq_one_of_mem (hsimple q) hq
-  rw [hc]
-  simp
+  rw [edgeFlow_eq_edgeVolume orig dest edges ℓ hsimple f e]
 
 end MathlibExt.GameTheory.SelfishRouting.RoutingInstance
