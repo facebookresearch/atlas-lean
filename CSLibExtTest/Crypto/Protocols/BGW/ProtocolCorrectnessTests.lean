@@ -33,7 +33,7 @@ open CSLibExt.Crypto.Protocols.BGW
 namespace CSLibExtTest.Crypto.Protocols.BGW
 
 /-- Seven is prime, so `ZMod 7` is a field. -/
-instance testFactPrime7 : Fact (Nat.Prime 7) := ⟨by norm_num⟩
+instance testFactPrime7Protocol : Fact (Nat.Prime 7) := ⟨by norm_num⟩
 
 /-- Three parties over `ZMod 7` with threshold one. -/
 def params7 : Cslib.Crypto.Protocols.SecretSharing.Shamir.Params (ZMod 7) (Fin 3) where
@@ -212,7 +212,7 @@ theorem test_mul_concrete_shares :
         ⟨⟨1, by decide⟩, Finset.mem_univ _⟩ = 5 ∧
       protoShares params7 nzLam mulCirc nzX nzTapeIn nzTapeMul 0
         ⟨⟨2, by decide⟩, Finset.mem_univ _⟩ = 1 := by
-  refine ⟨?_, ?_, ?_⟩ <;>
+  refine ⟨?_, ?_⟩ <;>
     simp only [protoShares, execShare, mulCirc_program, fin_one_zero_last,
       mulCirc_outputs_zero, mulProg, gateShares, mulLine_op, newGateShare,
       mulLine_wires_zero, mulLine_wires_one, Wire.elim_input, inputShares,

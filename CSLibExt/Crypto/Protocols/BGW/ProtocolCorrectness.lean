@@ -73,22 +73,6 @@ def arithInterp {F : Type*} [Add F] [Mul F] :
   | .add, x => x 0 + x 1
   | .mul, x => x 0 * x 1
 
-/-- A sum of polynomials of natural degree at most `t` has natural degree at
-    most `t`. -/
-theorem polyNatDegree_sum_le {F : Type*} [Field F] {Party : Type*} [Fintype Party]
-    (s : Finset Party) (f : Party → Polynomial F) (t : ℕ) :
-    (∀ i ∈ s, (f i).natDegree ≤ t) → (∑ i ∈ s, f i).natDegree ≤ t := by
-  haveI : DecidableEq Party := fun a b => Classical.propDecidable _
-  induction s using Finset.induction with
-  | empty => intro _; simp [Polynomial.natDegree_zero]
-  | insert a s h ih =>
-      intro hf
-      rw [Finset.sum_insert h]
-      refine (Polynomial.natDegree_add_le _ _).trans ?_
-      rw [max_le_iff]
-      exact ⟨hf _ (Finset.mem_insert_self _ _),
-        ih (fun i hi => hf i (Finset.mem_insert_of_mem hi))⟩
-
 /-- From a degree bound below `t + 1` to a natural-degree bound by `t`. -/
 theorem polyNatDegree_le_of_degree_lt_succ {F : Type*} [Field F]
     (p : Polynomial F) (t : ℕ) (h : p.degree < (t + 1 : WithBot ℕ)) :
@@ -251,7 +235,7 @@ theorem newGatePoly_ok {F : Type*} [Field F] {Party : Type*} [Fintype Party]
               sharingPolynomial ((WP (wires 0) * WP (wires 1)).eval (params.point i))
                 (tailPolynomial params.threshold (tape i))).natDegree ≤
           params.threshold
-      refine polyNatDegree_sum_le _ _ _ (fun i _ => ?_)
+      refine Polynomial.natDegree_sum_le_of_forall_le _ _ (fun i _ => ?_)
       exact (Polynomial.natDegree_C_mul_le _ _).trans (hCr i)
 
 /-- Every gate polynomial shares the gate's true value with degree at most the
