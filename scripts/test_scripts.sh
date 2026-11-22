@@ -391,10 +391,11 @@ printf 'module\nimport MathlibExt.A\n' >"$TMP_ROOT/graph/MathlibExt/B.lean"
 printf 'module\npublic import\n  MathlibExt.B--note\n' >"$TMP_ROOT/graph/WantedExt/C.lean"
 printf 'module\nimport MathlibExt.D\n' >"$TMP_ROOT/graph/WantedExt/E.lean"
 printf 'module\nimport «WantedExt».C\n' >"$TMP_ROOT/graph/WantedExt/F.lean"
+printf 'module\nimport /- a /- nested -/ note -/ WantedExt.F -- why\n' >"$TMP_ROOT/graph/WantedExt/G.lean"
 PYTHONPATH="$TMP_ROOT/repo/scripts" python3 -c '
 import sys; from pathlib import Path
 import audit_rebuilt_modules as scoped
-assert scoped.importers(Path(sys.argv[1]), {"MathlibExt.A"}) == {"MathlibExt.A", "MathlibExt.B", "WantedExt.C", "WantedExt.F"}
+assert scoped.importers(Path(sys.argv[1]), {"MathlibExt.A"}) == {"MathlibExt.A", "MathlibExt.B", "WantedExt.C", "WantedExt.F", "WantedExt.G"}
 assert scoped.importers(Path(sys.argv[1]), set()) == set()' "$TMP_ROOT/graph" ||
   fail "scoped compiled audit missed an importer"
 : >"$OLEANS/DomainsTest/Sentinel.olean"

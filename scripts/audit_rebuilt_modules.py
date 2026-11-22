@@ -25,6 +25,14 @@ import audit_compiled_modules as full
 POLICY = ('scripts/audit_compiled_modules.py', 'scripts/check_axioms.lean', 'scripts/audit_rebuilt_modules.py')
 # Generous on purpose: any `import X` in a source, comments included, counts.
 IMPORT = re.compile(r"\bimport\s+(?:all\s+)?([\w.'«»!?]+)")
+COMMENT = re.compile(r'/-(?:(?!/-|-/).)*-/|--[^\n]*', re.S)
+
+
+def uncommented(text: str) -> str:
+    """The text with Lean comments, nested block comments included, replaced by spaces."""
+    while (stripped := COMMENT.sub(' ', text)) != text:
+        text = stripped
+    return text
 
 
 def olean(root: Path, module: str) -> list[int] | None:
@@ -56,7 +64,8 @@ def importers(root: Path, changed: set[str]) -> set[str]:
     for library in full.ROOTS:
         for path in (root / library).rglob('*.lean'):
             module = path.relative_to(root).as_posix().removesuffix('.lean').replace('/', '.')
-            for target in IMPORT.findall(path.read_text(encoding='utf-8', errors='replace')):
+            text = path.read_text(encoding='utf-8', errors='replace')
+            for target in set(IMPORT.findall(text)) | set(IMPORT.findall(uncommented(text))):
                 imported_by[target.replace('«', '').replace('»', '')].add(module)
     affected, pending = set(changed), list(changed)
     while pending:
