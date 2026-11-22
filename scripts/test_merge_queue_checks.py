@@ -15,7 +15,8 @@ fails if a required workflow:
   job-level `continue-on-error`;
 - leaves Ubuntu runners (the build needs a full Ubuntu VM), runs in a
   container, or runs its steps in a shell other than bash by default or outside
-  the repository root;
+  the repository root, whether the job's `defaults.run` replaces the
+  workflow's or is merged with it key by key;
 - sets an environment variable other than `PYTHONDONTWRITEBYTECODE` for the
   whole workflow, for the job or on its checked steps, or has a step that can
   set variables for the steps after it (one that mentions `$GITHUB_ENV`, the
@@ -35,11 +36,11 @@ fails if a required workflow:
   workflow's group could match: GitHub concurrency groups are repository-wide
   and case-insensitive, so one run could cancel or replace another's. In a
   reusable workflow, `github.workflow` is the caller's name;
-- runs on pushes to any branch but `main`. A push to a PR's branch would report
-  the same checks on the PR's head commit for another tree, and a push to one
-  of the queue's `gh-readonly-queue/...` branches, which GitHub creates for
-  each merge group, would report them on the merge group's commit and could
-  share its concurrency group.
+- runs on pushes to any ref but the `main` branch. A push to a PR's branch, or
+  of a tag on a PR's head commit, would report the same checks on that commit
+  for another tree, and a push to one of the queue's `gh-readonly-queue/...`
+  branches, which GitHub creates for each merge group, would report them on
+  the merge group's commit and could share its concurrency group.
 
 It also fails if a required workflow gains another event that could report
 the same checks on a PR's head (such as `pull_request_target`), or unless both
@@ -203,12 +204,12 @@ def literal_start(workflow_name: str | None, group: str) -> str:
     return head.casefold()
 
 
-def pushes_to_other_branches(push: dict) -> bool:
-    """Whether a push trigger can run for a branch other than `main`. A filter
-    on tags alone does not run for branches."""
-    if "branches" in push:
-        return set(as_list(push["branches"])) != {"main"}
-    return "branches-ignore" in push or not ({"tags", "tags-ignore"} & set(push))
+def pushes_to_other_refs(push) -> bool:
+    """Whether a push trigger can run for any ref but the `main` branch: another
+    branch, or a tag, which can point at a PR's head commit."""
+    push = push if isinstance(push, dict) else {}
+    return (set(as_list(push.get("branches"))) != {"main"}
+            or bool({"branches-ignore", "tags", "tags-ignore"} & set(push)))
 
 
 def may_be_named(name: str, check: str) -> bool:
@@ -220,20 +221,25 @@ def may_be_named(name: str, check: str) -> bool:
             and len(check) >= len(prefix) + len(suffix))
 
 
-def default_run(job: dict, workflow: dict) -> dict:
-    """The `defaults.run` block a job's steps inherit: the job's, if it has
-    one, replaces the workflow's as a whole."""
-    for level in (job, workflow):
+def default_runs(job: dict, workflow: dict) -> list[dict]:
+    """The `defaults.run` settings a job's steps may inherit. GitHub's runner
+    replaces the workflow's block with the job's as a whole, but GitHub's
+    documentation can be read as merging them key by key, so return both."""
+    def block(level):
         defaults = level.get("defaults")
-        if isinstance(defaults, dict) and isinstance(defaults.get("run"), dict):
-            return defaults["run"]
-    return {}
+        run = defaults.get("run") if isinstance(defaults, dict) else None
+        return run if isinstance(run, dict) else None
+
+    job_run, workflow_run = block(job), block(workflow)
+    replaced = job_run if job_run is not None else workflow_run or {}
+    return [replaced, {**(workflow_run or {}), **(job_run or {})}]
 
 
-def default_shell(job: dict, workflow: dict) -> str:
-    """The shell a step without `shell` runs in: the inherited default, or
+def default_shells(job: dict, workflow: dict) -> list[str]:
+    """The shells a step without `shell` may run in: the inherited default, or
     bash, or sh for a job that runs in a container."""
-    return default_run(job, workflow).get("shell") or ("sh" if job.get("container") else "bash")
+    return sorted({run.get("shell") or ("sh" if job.get("container") else "bash")
+                   for run in default_runs(job, workflow)})
 
 
 def runs_exactly(step, command: str, shell: str = "bash") -> bool:
@@ -313,8 +319,8 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
             missing = PR_TYPES - set(as_list(settings.get("types", sorted(PR_TYPES))))
             if missing:
                 found.append(f"{name} does not run on {pr_event} {sorted(missing)}")
-        if "push" in triggers and pushes_to_other_branches(triggers["push"]):
-            found.append(f"{name} runs on pushes to branches other than main")
+        if "push" in triggers and pushes_to_other_refs(triggers["push"]):
+            found.append(f"{name} runs on pushes to refs other than the main branch")
         extra = sorted(set(triggers) - OTHER_EVENTS - {pr_event})
         if extra:
             found.append(f"{name} also runs on {extra}, which could report its checks "
@@ -328,16 +334,19 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
             if key in job:
                 found.append(f"{check!r} has a job-level {key!r}")
         steps = as_list(job.get("steps"))
-        shell = default_shell(job, workflow)
+        shells = default_shells(job, workflow)
         runner = str(job.get("runs-on", ""))
         if not (runner in FULL_UBUNTU if check == "build" else runner.startswith("ubuntu")):
             found.append(f"{check!r} runs on {job.get('runs-on')!r}, not an Ubuntu runner "
                          "it can run on")
-        if shell != "bash":
-            found.append(f"{check!r} runs its steps in {shell!r} by default, not bash")
-        if default_run(job, workflow).get("working-directory", ".") not in (".", "./"):
+        for shell in shells:
+            if shell != "bash":
+                found.append(f"{check!r} runs its steps in {shell!r} by default, not bash")
+        if any(run.get("working-directory", ".") not in (".", "./")
+               for run in default_runs(job, workflow)):
             found.append(f"{check!r} runs its steps outside the repository root by default")
-        if not any(runs_exactly(step, ENTRY_POINTS[check], shell) for step in steps):
+        if not all(any(runs_exactly(step, ENTRY_POINTS[check], shell) for step in steps)
+                   for shell in shells):
             found.append(f"{check!r} has no step that is exactly the workspace check followed "
                          f"by {ENTRY_POINTS[check]!r}")
         for step in as_list(job.get("steps")):
@@ -386,7 +395,8 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                                  f"{name}'s {group!r}")
         if job.get("concurrency"):
             found.append(f"{check!r} has a job-level concurrency group, which is unverified")
-        if check in RUN_THIS_TEST and not any(runs_exactly(step, COMMAND, shell) for step in steps):
+        if check in RUN_THIS_TEST and not all(any(runs_exactly(step, COMMAND, shell)
+                                                  for step in steps) for shell in shells):
             found.append(f"{check!r} has no step that is exactly the workspace check followed "
                          f"by {COMMAND!r}")
     return found
@@ -487,7 +497,6 @@ class MergeQueueChecks(unittest.TestCase):
                             "steps": [{"env": {"PYTHONDONTWRITEBYTECODE": "1"}, "run": TEST},
                                       {"id": "diagnostics",
                                        "run": DIAGNOSTICS}]}),
-                       put("ci.yml", "on", "push", {"tags": ["v*"]}),
                        put("nightly.yml", {"name": "CI-nightly", "on": {"schedule": ""},
                                            "concurrency": {"group": "${{ github.workflow }}-"
                                                                     "${{ github.ref }}"},
@@ -569,16 +578,16 @@ class MergeQueueChecks(unittest.TestCase):
                                     "${{ github.workflow }}-${{ github.ref }}"),
                                 "job-level concurrency group"),
             "push on every branch": (put("ci.yml", "on", "push", ""),
-                                     "branches other than main"),
+                                     "refs other than the main branch"),
             "push on queue branches": (
                 put("source-diagnostics.yml", "on", "push", "branches",
-                    ["main", "gh-readonly-queue/main/**"]), "branches other than main"),
+                    ["main", "gh-readonly-queue/main/**"]), "refs other than the main branch"),
             "push on every branch but the queue's": (
                 put("ci.yml", "on", "push", {"branches-ignore": ["gh-readonly-queue/**"]}),
-                "branches other than main"),
+                "refs other than the main branch"),
             "push on release branches too": (
                 put("ci.yml", "on", "push", {"branches": ["main", "release/*"]}),
-                "branches other than main"),
+                "refs other than the main branch"),
             "this test dropped from Source diagnostics": (
                 put("source-diagnostics.yml", "jobs", "source-diagnostics", "steps",
                     [{"uses": "actions/checkout"}]), "has no step that is exactly"),
@@ -662,6 +671,25 @@ class MergeQueueChecks(unittest.TestCase):
                 put("ci.yml", "jobs", "build", "defaults",
                     {"run": {"working-directory": "scripts"}}),
                 "outside the repository root"),
+            "push of tags only": (put("ci.yml", "on", "push", {"tags": ["v*"]}),
+                                  "pushes to refs other than the main branch"),
+            "push of main and tags": (
+                put("ci.yml", "on", "push", {"branches": ["main"], "tags": ["v*"]}),
+                "pushes to refs other than the main branch"),
+            "workflow shell kept under a job's working-directory default": (
+                lambda workflows: (
+                    put("ci.yml", "defaults", {"run": {"shell": "bash {0} || true"}})(
+                        workflows),
+                    put("ci.yml", "jobs", "build", "defaults",
+                        {"run": {"working-directory": "."}})(workflows)),
+                "'build' runs its steps in 'bash {0} || true' by default"),
+            "workflow working directory kept under a job's shell default": (
+                lambda workflows: (
+                    put("ci.yml", "defaults", {"run": {"working-directory": "scripts"}})(
+                        workflows),
+                    put("ci.yml", "jobs", "build", "defaults",
+                        {"run": {"shell": "bash"}})(workflows)),
+                "'build' runs its steps outside the repository root"),
             "build without the workspace check": (
                 put("ci.yml", "jobs", "build", "steps", [{"run": "scripts/check.sh build"}]),
                 "followed by 'scripts/check.sh build'"),
@@ -765,12 +793,21 @@ class WorkspaceCheck(unittest.TestCase):
     repository, before a command that prints RAN."""
 
     def run_check(self, change=None, sha=None):
-        with tempfile.TemporaryDirectory() as directory:
-            repo = Path(directory)
+        with tempfile.TemporaryDirectory() as scratch:
+            repo, home = Path(scratch, "repo"), Path(scratch, "home")
+            repo.mkdir()
+            home.mkdir()
+            directory = str(repo)
+            # Isolate every git command from the contributor's configuration, with
+            # a home outside the repository: some git builds write files there.
+            environment = {"PATH": os.environ["PATH"], "HOME": str(home),
+                           "XDG_CONFIG_HOME": str(home), "GIT_CONFIG_NOSYSTEM": "1",
+                           "GIT_CONFIG_GLOBAL": os.devnull}
 
             def git(*args):
                 return subprocess.run(["git", "-C", directory, *args], check=True,
-                                      capture_output=True, text=True).stdout.strip()
+                                      capture_output=True, text=True,
+                                      env=environment).stdout.strip()
 
             git("init", "-q")
             (repo / ".gitignore").write_text(".lake/\n")
@@ -782,10 +819,9 @@ class WorkspaceCheck(unittest.TestCase):
             head = git("rev-parse", "HEAD")
             if change:
                 change(repo, git)
-            environment = {"PATH": os.environ["PATH"], "HOME": directory,
-                           "GIT_CONFIG_NOSYSTEM": "1", "GITHUB_SHA": sha or head}
             result = subprocess.run(["bash", "-e", "-c", exact("echo RAN")], cwd=directory,
-                                    env=environment, capture_output=True, text=True)
+                                    env={**environment, "GITHUB_SHA": sha or head},
+                                    capture_output=True, text=True)
             try:
                 return result.returncode, result.stdout
             finally:
