@@ -20,59 +20,11 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+public import MathlibExt.NumberTheory.FareyStaircase
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- The Farey staircase of order `n`: `A_n(x) = (1/n) Σ_{k=1}^n ⌊kx⌋/k`, the average of the
-first `n`
-lower rational approximations `⌊kx⌋/k` of `x` (`A_0 = 0`).
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Section 1, equation (2). -/
-public noncomputable def fareyStaircase (n : ℕ) (x : ℝ) : ℝ :=
-  (n : ℝ)⁻¹ * ∑ k ∈ Finset.Icc 1 n, (⌊(k : ℝ) * x⌋ : ℝ) / k
-
-/-- `A_0 = 0`.
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Section 1, equation (2). -/
-public theorem fareyStaircase_zero (x : ℝ) : fareyStaircase 0 x = 0 := by
-  simp [fareyStaircase]
-
-/-- `A_1(x) = ⌊x⌋`.
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Section 1, equation (2). -/
-public theorem fareyStaircase_one (x : ℝ) : fareyStaircase 1 x = ⌊x⌋ := by
-  simp [fareyStaircase]
-
-/-- The zoomed Farey staircase `B_n(x) = n A_n(x/n) = Σ_{k=1}^n ⌊(k/n) x⌋/k`.
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Section 1.1, equation (4). -/
-public noncomputable def fareyZoom (n : ℕ) (x : ℝ) : ℝ :=
-  n * fareyStaircase n (x / n)
-
-/-- `B_n(x) = Σ_{k=1}^n ⌊(k/n) x⌋/k` for `n ≥ 1`.
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Section 1.1, equation (4). -/
-public theorem fareyZoom_eq_sum {n : ℕ} (hn : 1 ≤ n) (x : ℝ) :
-    fareyZoom n x = ∑ k ∈ Finset.Icc 1 n, (⌊(k : ℝ) / n * x⌋ : ℝ) / k := by
-  have hn' : (n : ℝ) ≠ 0 := by positivity
-  simp only [fareyZoom, fareyStaircase, ← mul_assoc, mul_inv_cancel₀ hn', one_mul]
-  refine Finset.sum_congr rfl fun k _ => ?_
-  rw [div_mul_eq_mul_div, mul_div_assoc]
-
-/-- `B_1(x) = ⌊x⌋`.
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Section 1.1, equation (4). -/
-public theorem fareyZoom_one (x : ℝ) : fareyZoom 1 x = ⌊x⌋ := by
-  simp [fareyZoom, fareyStaircase_one]
 
 /-- Theorem 1: for `x ≥ 0`, `B_n(x) → Σ_{k=1}^{⌊x⌋} log(x/k)` as `n → ∞`.
 
@@ -150,18 +102,6 @@ Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases
 public theorem_wanted fareyStaircase_sub_mem_Icc {n : ℕ} (hn : 2 ≤ n) (x : ℝ) :
     0 ≤ fareyStaircase n x - fareyStaircase (n - 1) x ∧
       fareyStaircase n x - fareyStaircase (n - 1) x ≤ Real.log n / (n * (n - 1))
-
-/-- Lemma 9: if `a_n ≤ b_n` are natural numbers with `a_n → ∞`, then
-`Σ_{k=a_n}^{b_n} 1/k - ∫_{a_n}^{b_n} dt/t → 0`, i.e. the two limits agree whenever either exists.
-The paper's positivity of `a_n, b_n` and `b_n → ∞` follow eventually from `a_n ≤ b_n`, `a_n → ∞`.
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Lemma 9 (`integers-2024-A37-lem-9`). -/
-public theorem_wanted tendsto_harmonic_block_sub_integral {a b : ℕ → ℕ} (hab : ∀ n, a n ≤ b n)
-    (ha : Filter.Tendsto a Filter.atTop Filter.atTop) :
-    Filter.Tendsto
-      (fun n => ∑ k ∈ Finset.Icc (a n) (b n), (1 / k : ℝ) - ∫ t in (a n : ℝ)..(b n), t⁻¹)
-      Filter.atTop (nhds 0)
 
 /-- Proposition 12: if `f` has derivative `f'` at `x`, the dilation derivative
 `lim_{λ → 1} (λ⁻¹ f(λx) - f(x))/(λ - 1)` exists and equals `x f' - f(x)`.

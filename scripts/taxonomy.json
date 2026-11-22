@@ -11063,6 +11063,7 @@
   "MathlibExt/NumberTheory/ExtremelyAbundantNumber": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Extremely abundant numbers"},
   "MathlibExt/NumberTheory/FactorialRatio": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Integral factorial ratios"},
   "MathlibExt/NumberTheory/Farey": {"to": "NumberTheory/continued-fractions-expansions", "title": "Farey sequences"},
+  "MathlibExt/NumberTheory/FareyStaircase": {"to": "NumberTheory/continued-fractions-expansions", "title": "Farey staircase"},
   "MathlibExt/NumberTheory/FermatPolygonal": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Fermat polygonal number theorem"},
   "MathlibExt/NumberTheory/FermatPrime": {"to": "NumberTheory/primes-primality/special-primes", "title": "Fermat numbers"},
   "MathlibExt/NumberTheory/FermatQuotient": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Fermat quotients"},
