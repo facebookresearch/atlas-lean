@@ -166,7 +166,8 @@ public theorem_wanted gaussKuzmin_string_frequency :
               (GenContFract.of x).partDens.get? (i + j) = some (a[j] : ℝ))).card : ℝ) / N)
         atTop (𝓝 (gaussKuzminMass a))
 
-/-- Symmetry property: `μ_GK(I(a)) = μ_GK(I(a⃖))`, i.e. `P_GK(a) = P_GK(a⃖)`, where `a⃖` is the reverse
+/-- Symmetry property: `μ_GK(I(a)) = μ_GK(I(a⃖))`, i.e. `P_GK(a) = P_GK(a⃖)`, where `a⃖` is
+the reverse
 of `a`.
 
 Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
@@ -293,7 +294,8 @@ public theorem_wanted density_cfValue_eq_of_append_symmetric (f : ℝ → ℝ)
     f ((convergentMatrix a 0 1 : ℝ) / (convergentMatrix a 1 1 : ℝ)) = f 0 / (1 +
         (convergentMatrix a 0 1 : ℝ) / (convergentMatrix a 1 1 : ℝ))
 
-/-- If a probability measure `μ` agrees with `μ_GK` on `I(a)` for all strings of positive integers of
+/-- If a probability measure `μ` agrees with `μ_GK` on `I(a)` for all strings of positive integers
+of
 length exactly `N`, then `μ(I(a)) = μ(I(a⃖))` for all strings of length `n ≤ N`.
 
 Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the

@@ -1,0 +1,116 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+# F2;R1|p_ij=1;t_i;r_i|ΣC_i (two-machine unit flow shop, single transport robot, release dates,
+total completion time) is NP-complete
+
+Source:
+P. Brucker and S. Knust, *Complexity results for scheduling problems*, online classification,
+class `f_1ro` (flow-shop problems with transportation times and a single robot), Universität
+Osnabrück (last update 2004), entry `F2;R1|p_ij=1;t_i;r_i|ΣC_i` (minimal NP-hard,
+strongly), citing S. Knust, *Shop-scheduling problems with transportation*, PhD thesis, Universität
+Osnabrück, Fachbereich Mathematik/Informatik (1999) (the thesis text was not available);
+robot model: J. Hurink and S. Knust, "Makespan minimization for flow-shop problems with
+transportation times and a single robot", Discrete Applied Mathematics 112 (2001), 199-216,
+doi:10.1016/S0166-218X(00)00316-4.
+-/
+module
+
+public import Batteries.Util.ProofWanted
+public import CSLibExt.Computability.CookLevin
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import WantedExt.Complexity.NPComplete.RobotFlowShopUnitWeightedTardinessWanted
+public import WantedExt.Complexity.NPComplete.UnitFlowShopTransportationDelaysReleaseTimesWanted
+
+@[expose] public section
+
+namespace MetaMathlibExt.Complexity.NPComplete.RobotFlowShopUnitReleaseTotalCompletion
+
+open RobotFlowShopUnitWeightedTardiness (IsUnitRobotFlowShopSchedule)
+open UnitFlowShopTransportationDelaysReleaseTimes
+
+/-!
+# F2;R1|p_ij=1;t_i;r_i|ΣC_i is NP-complete
+
+INSTANCE: two machines `M₁, M₂` in a flow shop and `n` jobs, each job `j` consisting of an operation
+of unit length on `M₁` (`p₁ⱼ = 1`) followed by an operation of unit length on `M₂` (`p₂ⱼ = 1`), each
+machine processing at most one operation at a time; between its two operations job `j` is
+transported from `M₁` to `M₂` by a single robot, the transport taking `tⱼ ∈ ℤ₀⁺`; each job `j` has a
+release date `rⱼ ∈ ℤ₀⁺`, before which it cannot start; and a bound `K`. QUESTION: is there a
+feasible schedule whose total completion time `Σⱼ Cⱼ` is at most `K`, where `Cⱼ` is the completion
+time of job `j` on `M₂`?
+
+The instance (pairs `(rⱼ, tⱼ)` and `K`) and its well-formedness are those of the flow shop with
+transportation delays F2|p_ij=1;t_i;r_i|ΣC_i (`UnitFlowShopTransportationDelaysReleaseTimes`, whose
+`delay i j` is `tⱼ`); here a single robot performs the transports. The schedules are those of
+F2;R1|p_ij=1;t_i|Σw_iT_i (`IsUnitRobotFlowShopSchedule` of `RobotFlowShopUnitWeightedTardiness`),
+with release dates added. The robot model is that of Hurink and Knust (2001), Section 1: one robot
+carries every job from `M₁` to `M₂`, at most one job at a time, the transport of job `j` taking `tⱼ`
+time units; empty moves of the robot take no time; buffers before and after the machines are
+unlimited. A schedule gives the start times `σ 0 j`, `σ 1 j` of job `j`'s operations on `M₁`, `M₂`
+and the start time `ρ j` of its transport: the machines run a schedule of the unit-time flow shop
+with transportation delays `t`, each transport starts after the job's operation on `M₁` and ends by
+the start of its operation on `M₂`, and the transports of distinct jobs do not overlap. Job `j`
+starts on `M₁` no earlier than `rⱼ`. `Cⱼ = σ 1 j + 1`. Start times are natural numbers: with integer
+data, starting every operation as early as the release dates and the order of the operations on
+`M₁`, on the robot and on `M₂` allow gives an integral schedule whose completion times are no later,
+so this does not change the answer. Every decoded instance is well formed (all data, `K` included,
+are non-negative integers). Binary encoding of all numbers.
+
+Zero transport times: the robot "can only handle one job at a time" (Hurink and Knust, Section
+1), also at the instant of a transport of length `tⱼ = 0`, so such a transport cannot take place
+while the robot is carrying another job. `IsUnitRobotFlowShopSchedule` therefore asks the
+transports of distinct jobs to satisfy `ρ j + t j ≤ ρ k ∨ ρ k + t k ≤ ρ j` (the pairwise reading
+of FLOW-SHOP SCHEDULING), not disjointness of the half-open intervals `[ρ j, ρ j + t j)`, under
+which an instantaneous transport could fall inside another one.
+
+Membership in NP: some optimal schedule starts every operation by `maxⱼ rⱼ + Σⱼ (tⱼ + 2)`, so
+start times form a certificate of polynomial size.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
+
+NP-completeness is stated in the same form as the proved results in
+`CSLibExt.Computability.Complexity.Karp`: membership in
+`MetaMathlibExt.ComplexityTheory.NP`, plus a polynomial-time many-one
+reduction from every language in `NP`
+(`Cslib.CookLevin.PolyManyOneRed`).
+-/
+
+/-- Some single-robot schedule starts every job on `M₁` no earlier than its release date and
+has total completion time `Σⱼ Cⱼ` at most `K`, where `Cⱼ = σ 1 j + 1`. -/
+def RobotFlowShopUnitReleaseTotalCompletionFeasible
+    (i : UnitFlowShopTransportationDelaysReleaseTimesInstance) : Prop :=
+  ∃ σ : Fin 2 → Job i → ℕ, ∃ ρ : Job i → ℕ,
+    IsUnitRobotFlowShopSchedule (delay i) σ ρ ∧
+      (∀ j, releaseDate i j ≤ σ 0 j) ∧
+      ∑ j, (σ 1 j + 1) ≤ i.2
+
+open Classical in
+/-- F2;R1|p_ij=1;t_i;r_i|ΣC_i as a decision problem over bitstrings. -/
+noncomputable def robotFlowShopUnitReleaseTotalCompletionDec :
+    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
+  match MetaMathlibExt.BitstringEncoding.bitDecode
+      (α := UnitFlowShopTransportationDelaysReleaseTimesInstance) x with
+  | some i => decide (WellFormed i ∧ RobotFlowShopUnitReleaseTotalCompletionFeasible i)
+  | none => false
+
+/-- **F2;R1|p_ij=1;t_i;r_i|ΣC_i is NP-complete.**
+Source: Brucker and Knust's classification, class `f_1ro`, citing Knust (1999); robot model of
+Hurink and Knust (2001). -/
+public theorem_wanted robotFlowShopUnitReleaseTotalCompletion_npComplete :
+    robotFlowShopUnitReleaseTotalCompletionDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
+      ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
+        L ∈ MetaMathlibExt.ComplexityTheory.NP →
+          Cslib.CookLevin.PolyManyOneRed L robotFlowShopUnitReleaseTotalCompletionDec
+
+end MetaMathlibExt.Complexity.NPComplete.RobotFlowShopUnitReleaseTotalCompletion

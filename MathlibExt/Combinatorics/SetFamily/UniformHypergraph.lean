@@ -47,4 +47,16 @@ public theorem containsSubgraph_iff {V : Type*} [DecidableEq V]
       ∃ S : Finset V, S.card = m ∧ k ≤ (H.filter fun e => e ⊆ S).card :=
   Iff.rfl
 
+/-- A finite family is intersecting when every two *distinct* members meet.
+The distinctness is load-bearing: the singleton family `{∅}` is intersecting. -/
+public def IsIntersecting {α : Type*} [DecidableEq α] (F : Finset (Finset α)) :
+    Prop :=
+  ∀ A ∈ F, ∀ B ∈ F, A ≠ B → (A ∩ B).Nonempty
+
+/-- Unfolding characterization of intersecting families. -/
+public theorem isIntersecting_iff {α : Type*} [DecidableEq α]
+    (F : Finset (Finset α)) :
+    IsIntersecting F ↔ ∀ A ∈ F, ∀ B ∈ F, A ≠ B → (A ∩ B).Nonempty :=
+  Iff.rfl
+
 end SetFamily
