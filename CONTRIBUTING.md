@@ -23,40 +23,42 @@ piece of work before you start it, so that others can steer around it:
 
 - **Open a draft pull request** when you start. Its title names the topic, and
   its description names each ready task it takes by article id, on a line
-  `Tasks: af_…`. An open draft is a claim while it has had a push in the last
-  7 days.
+  `Tasks: af_…`.
 - **Or open an issue** whose title starts with `[Claim]` and that names the
-  area, the modules or the task ids you are taking. It is a claim while it is
-  open and has been updated in the last 30 days: comment on it to renew it, and
-  close it to release it.
+  area, the modules or the task ids you are taking. Comment on it to renew it,
+  and close it to release it. Link it from the pull request that continues it.
 
-Look for an open claim before you start. If two open pull requests take the
-same task, the newer one gives way. A claim only saves duplicated work: it
-reserves nothing else, and anyone may still review, fix or improve merged code.
+A claim is active while it is open and, for a draft pull request, has had a
+push in the last 7 days or, for an issue, has been updated in the last 30
+days. A pull request that is ready for review stays active until it is closed.
+Look for an active claim before you start. When two active claims cover the
+same task, the earlier one keeps it; a pull request that continues a `[Claim]`
+issue dates from the issue. A claim only saves duplicated work: it reserves
+nothing else, and anyone may still review, fix or improve merged code.
 
-When you push to a branch that someone else may also push to, such as another
-contributor's pull request, use
-`git push --force-with-lease=<branch>:<the commit you started from>`, so that a
-push made since you started makes yours fail instead of being overwritten.
+To update a branch that someone else may also push to, such as another
+contributor's pull request, push a fast-forward of the tip you fetched. If you
+must rewrite it, use
+`git push --force-with-lease=<branch>:<tip you fetched> <remote> HEAD:<branch>`,
+which fails if anyone has pushed to it since.
 
 ### Say how a pull request touches the graph
 
 Each pull request description has one `Graph:` line, which ties its Lean to
-the [graph](docs/BLUEPRINT.md#graph-rules):
+the [graph](docs/BLUEPRINT.md#graph-rules). It lists the article ids (`af_…`)
+of the pages the pull request proves, fixes or extends, such as the ready tasks
+it takes, and adds `new` when it adds declarations that get pages under
+[Maintaining articles](docs/BLUEPRINT.md#maintaining-articles). It is
+`Graph: none` only when the pull request changes nothing the graph shows.
 
-- `Graph: af_…`, with the article ids of the pages it proves, fixes or extends,
-  such as the ready tasks it takes.
-- `Graph: new` when it adds documented public declarations, instances aside,
-  to `MathlibExt`, `CSLibExt`, `PhyslibExt`, `Domains` or `WantedExt`. The same
-  pull request adds their pages, which `scripts/sync_wiki.py declarations`
-  writes ([Maintaining articles](docs/BLUEPRINT.md#maintaining-articles)). It
-  places each new module in `scripts/taxonomy.json`, or leaves it under
-  `not-yet-classified/` for an editor.
-- `Graph: none` for refactors, tests, tooling and dependency bumps.
+- **A new declaration gets its page in the same pull request.** Commit what
+  `scripts/sync_wiki.py declarations` writes for the pull request's own
+  declarations. When the sync cannot find a new module's subject, or puts it in
+  the wrong place, also place the module in `scripts/taxonomy.json`.
+- **A renamed, moved or removed declaration keeps its pages.** Update the
+  annotation of each page that links it, in the same pull request.
 
-A pull request whose only graph changes are what `sync_wiki.py declarations`
-writes for its own declarations, and the places of its new modules in
-`scripts/taxonomy.json`, is not a [graph PR](#graph-prs).
+These are graph changes; [Graph PRs](#graph-prs) says what they need.
 
 ### Public references
 
@@ -232,7 +234,11 @@ is advisory CI, not a standalone merge barrier.
 ### Graph PRs
 
 A graph PR changes the ATLAS wiki; its content follows the
-[graph rules](docs/BLUEPRINT.md#graph-rules).
+[graph rules](docs/BLUEPRINT.md#graph-rules). When a pull request's only wiki
+changes are what `scripts/sync_wiki.py declarations` writes for its own
+declarations, it needs no issue and no code owner's approval; Codex still
+reviews it. Any other wiki change, a new place in `scripts/taxonomy.json`
+included, makes it a graph PR in full.
 
 - **Keep it under 3,000 changed files and name its issue** (`Closes #…` or
   `Part of #…`). GitHub shows at most 3,000 files in one diff.
