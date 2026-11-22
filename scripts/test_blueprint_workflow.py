@@ -270,6 +270,7 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertEqual(packages["id"], "package-builds")
         self.assertEqual(restore["id"], "build-cache")
         self.assertEqual(names.index("Remove a failed restore"), names.index("Restore local build") + 1)
+        self.assertLess(names.index("Restore the package builds"), names.index("Remove a failed restore"))
         self.assertLess(names.index("Remove a failed restore"), names.index("Build memory-heavy modules one at a time"))
         builds = (".lake/packages/cslib/.lake/build", ".lake/packages/Physlib/.lake/build", ".lake/build")
         for matched, kept in ((("", ""), ()), (("lake-deps-k", ""), builds[:2]), (("", "lake-build-k"), builds[2:]),
