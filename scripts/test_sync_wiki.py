@@ -3763,8 +3763,9 @@ class ScopedRun(unittest.TestCase):
             "object": [{"location": {"declaration": "Ext.Cosets.one"}}]}) + "\n")
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["in_step"]), (1, False))
-        self.assertEqual(report["errors"], [f"the row af_{'f' * 24} is one Autoform cannot read: its subject names no "
-                                            "page below roadmap/; fix it"])
+        self.assertEqual(report["errors"], [f"the row af_{'f' * 24} is one Autoform cannot read: a row of Algebra.jsonl "
+                                            "about ../../outside/one.md is one Autoform leaves out: its subject names no "
+                                            "page below roadmap/; a row names its page whole; fix it"])
 
     def test_a_page_whose_declaration_loses_its_docstring_keeps_the_bases_digest(self) -> None:
         # The digest the base reviewed stays, whatever the pull request does to its entry; none is made up when the
@@ -3942,8 +3943,9 @@ class ScopedRun(unittest.TestCase):
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["in_step"]), (1, False))
         self.assertEqual([row for row in report["errors"] if "af_" + "b" * 24 in row],
-                         [f"the row af_{'b' * 24} is one Autoform cannot read: " + sync.read_subject({**b, "subject": []})[1]
-                          + "; fix it"])
+                         [f"the row af_{'b' * 24} is one Autoform cannot read: a row of Algebra.jsonl about ? is one "
+                          f"Autoform leaves out: {sync.read_subject({**b, 'subject': []})[1]}; a row names its page whole; "
+                          "fix it"])
         self.assertFalse(any("af_" + "a" * 24 in row for row in report["errors"]), report["errors"])
 
     def test_a_folder_row_clears_a_declaration_its_defaults_name_only_when_one_is_made(self) -> None:
@@ -3971,6 +3973,24 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual([(row.get("object"), sync.page_owner(row)) for row in folders], [([], ("none", None, None))] * 2)
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"))
+
+
+    def test_a_broken_row_still_counts_among_its_pages_rows(self) -> None:
+        # The base's row of a page has a flag that is not a Boolean; a second row of that page, which the changes add,
+        # is a new problem, though the inherited one is not.
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/planned.md", "# Planned\n\nPlanned.\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        row = {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/planned.md"}],
+               "id": "af_" + "a" * 24, "extensions": {"org.autoform": {"mathlib": "yes"}}}
+        links.write_text(links.read_text() + json.dumps(row) + "\n")
+        self.base = self.commit("a row with a flag that is not a Boolean")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (0, []))
+        links.write_text(links.read_text() + json.dumps({"subject": row["subject"], "id": "af_" + "b" * 24}) + "\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertEqual(report["errors"], ["Algebra/groups/group-basics/planned.md has 2 rows, which Autoform reads "
+                                            "together; a page has one row; fix it"])
 
 
 

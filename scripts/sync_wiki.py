@@ -2978,14 +2978,30 @@ def link_view(index) -> dict:
     def stable(problem: str) -> str:
         return problem.replace(os.fspath(LINKS), "blueprint/links").replace(os.fspath(wiki.VAULT), "blueprint")
 
-    # A row Autoform cannot read on its own goes by its article id, else its page, and why, so that a row the changes
-    # break is theirs though they fix another broken the same way; the other problems, those of the rows it can
-    # read, are counted, as two rows may have one in the same words.
-    readable = readable_rows(files)
-    broken = Counter(f"the row {row['id'] if isinstance(row.get('id'), str) else page_key(row)} is one Autoform cannot "
-                     f"read: {stable(why)}" for rows in files.values() for row in rows if (why := unreadable(row)))
-    problems = broken + Counter(stable(problem) for problem in credit_problems(readable) + owner_problems(readable, index))
-    return {"stale": dict(stale), "held_problems": Counter(held_markers(readable, index)[3]), "unreadable": problems}
+    # A row Autoform cannot read on its own goes by its article id, else its page, and the words credit_problems gives
+    # it, so that a row the changes break is theirs though they fix another broken the same way. The other problems,
+    # of pages and declarations, are read over every row, as a broken row still counts among its page's rows, and
+    # counted, as two may be in the same words.
+    own_words: Counter = Counter()
+    broken: Counter = Counter()
+    for path, rows in files.items():
+        for row in rows:
+            page, why = read_subject(row)
+            if page is None:
+                words = (f"a row of {path.name} about {page_name(row)} is one Autoform leaves out: {why}; a row names "
+                         "its page whole")
+            else:
+                try:
+                    page_owner(row)
+                    continue
+                except CreditError as error:
+                    words = str(error)
+            own_words[stable(words)] += 1
+            identity = row["id"] if isinstance(row.get("id"), str) else page_key(row)
+            broken[f"the row {identity} is one Autoform cannot read: {stable(words)}"] += 1
+    others = Counter(stable(problem) for problem in credit_problems(files) + owner_problems(files, index)) - own_words
+    return {"stale": dict(stale), "held_problems": Counter(held_markers(readable_rows(files), index)[3]),
+            "unreadable": broken + others}
 
 
 def written_page(row: dict) -> Path | None:
