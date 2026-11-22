@@ -23,16 +23,11 @@ set_option autoImplicit false
 
 open scoped BigOperators
 
-namespace MathlibExt.GameTheory.Fairness.IndividualFairness
+namespace Cslib.MachineLearning.IndividualFairness
 
 @[expose] public section
 
 noncomputable section
-
-/-- Total variation distance between two real-valued functions on a finite
-type: half the sum of pointwise absolute differences. -/
-def tvDist {α : Type*} [Fintype α] (p q : α → ℝ) : ℝ :=
-  MathlibExt.Probability.MarkovMixing.tvDist p q
 
 /-- A probability vector on a finite type: nonnegative entries summing to 1. -/
 def IsDist {α : Type*} [Fintype α] (p : α → ℝ) : Prop :=
@@ -43,7 +38,8 @@ distance between the outcome distributions of any two individuals is at most
 their task-metric distance. -/
 def IsLipschitzFair {V O : Type*} [Fintype O] (d : V → V → ℝ)
     (M : V → O → ℝ) : Prop :=
-  ∀ x y, tvDist (M x) (M y) ≤ d x y
+  (∀ x, IsDist (M x)) ∧
+    ∀ x y, MathlibExt.Probability.MarkovMixing.tvDist (M x) (M y) ≤ d x y
 
 /-- A coupling of `S` and `T`: a nonnegative matrix with row sums `S` and
 column sums `T`. -/
@@ -69,26 +65,16 @@ def bias {V : Type*} [Fintype V] (S T f : V → ℝ) : ℝ :=
 
 /-- Total variation distance is nonnegative. -/
 theorem tvDist_nonneg {α : Type*} [Fintype α] (p q : α → ℝ) :
-    0 ≤ tvDist p q := by
-  unfold tvDist MathlibExt.Probability.MarkovMixing.tvDist
+    0 ≤ MathlibExt.Probability.MarkovMixing.tvDist p q := by
+  unfold MathlibExt.Probability.MarkovMixing.tvDist
   apply mul_nonneg
   · norm_num
   · exact Finset.sum_nonneg (fun i _ => abs_nonneg _)
 
-/-- Total variation distance is symmetric. -/
-theorem tvDist_comm {α : Type*} [Fintype α] (p q : α → ℝ) :
-    tvDist p q = tvDist q p :=
-  MathlibExt.Probability.MarkovMixing.tvDist_comm p q
-
-/-- Total variation distance from a function to itself is zero. -/
-theorem tvDist_self {α : Type*} [Fintype α] (p : α → ℝ) :
-    tvDist p p = 0 :=
-  MathlibExt.Probability.MarkovMixing.tvDist_self p
-
 /-- Total variation distance satisfies the triangle inequality. -/
 theorem tvDist_triangle {α : Type*} [Fintype α] (p q r : α → ℝ) :
-    tvDist p r ≤ tvDist p q + tvDist q r := by
-  unfold tvDist MathlibExt.Probability.MarkovMixing.tvDist
+    MathlibExt.Probability.MarkovMixing.tvDist p r ≤ MathlibExt.Probability.MarkovMixing.tvDist p q + MathlibExt.Probability.MarkovMixing.tvDist q r := by
+  unfold MathlibExt.Probability.MarkovMixing.tvDist
   have h : ∀ i : α, |p i - r i| ≤ |p i - q i| + |q i - r i| :=
     fun i => abs_sub_le _ _ _
   have hsum : ∑ i, |p i - r i| ≤ ∑ i, (|p i - q i| + |q i - r i|) :=
@@ -105,7 +91,7 @@ theorem tvDist_triangle {α : Type*} [Fintype α] (p q r : α → ℝ) :
 variation distance, when both functions have equal total mass. -/
 theorem abs_event_sub_le_tvDist {α : Type*} [Fintype α] (p q : α → ℝ)
     (hsum : ∑ i, p i = ∑ i, q i) (E : Finset α) :
-    |∑ i ∈ E, p i - ∑ i ∈ E, q i| ≤ tvDist p q := by
+    |∑ i ∈ E, p i - ∑ i ∈ E, q i| ≤ MathlibExt.Probability.MarkovMixing.tvDist p q := by
   classical
   have hsum0 : ∑ i, (p i - q i) = 0 := by
     rw [Finset.sum_sub_distrib, hsum, sub_self]
@@ -144,10 +130,10 @@ theorem abs_event_sub_le_tvDist {α : Type*} [Fintype α] (p q : α → ℝ)
     rw [hsum0] at hsplit
     exact hsplit
   have hkey : (∑ i ∈ Finset.univ.filter (fun i => 0 < p i - q i), (p i - q i))
-      = tvDist p q := by
-    unfold tvDist MathlibExt.Probability.MarkovMixing.tvDist
+      = MathlibExt.Probability.MarkovMixing.tvDist p q := by
+    unfold MathlibExt.Probability.MarkovMixing.tvDist
     linarith [h0, hS]
-  have hle : ∀ F : Finset α, ∑ i ∈ F, (p i - q i) ≤ tvDist p q := by
+  have hle : ∀ F : Finset α, ∑ i ∈ F, (p i - q i) ≤ MathlibExt.Probability.MarkovMixing.tvDist p q := by
     intro F
     have hsplitF : (∑ i ∈ F.filter (fun i => 0 < p i - q i), (p i - q i))
         + (∑ i ∈ F.filter (fun i => ¬ 0 < p i - q i), (p i - q i))
@@ -176,8 +162,8 @@ theorem abs_event_sub_le_tvDist {α : Type*} [Fintype α] (p q : α → ℝ)
         = (∑ i ∈ F.filter (fun i => 0 < p i - q i), (p i - q i))
           + (∑ i ∈ F.filter (fun i => ¬ 0 < p i - q i), (p i - q i)) :=
           hsplitF.symm
-      _ ≤ tvDist p q + 0 := add_le_add hmono hnonpos
-      _ = tvDist p q := add_zero _
+      _ ≤ MathlibExt.Probability.MarkovMixing.tvDist p q + 0 := add_le_add hmono hnonpos
+      _ = MathlibExt.Probability.MarkovMixing.tvDist p q := add_zero _
   have hE : (∑ i ∈ E, p i) - (∑ i ∈ E, q i) = ∑ i ∈ E, (p i - q i) := by
     rw [Finset.sum_sub_distrib]
   rw [hE]
@@ -194,10 +180,10 @@ theorem abs_event_sub_le_tvDist {α : Type*} [Fintype α] (p q : α → ℝ)
 /-- Total variation distance between probability vectors is at most one. -/
 theorem tvDist_le_one {α : Type*} [Fintype α] {p q : α → ℝ}
     (hp : IsDist p) (hq : IsDist q) :
-    tvDist p q ≤ 1 := by
+    MathlibExt.Probability.MarkovMixing.tvDist p q ≤ 1 := by
   obtain ⟨hp_nonneg, hp_sum⟩ := hp
   obtain ⟨hq_nonneg, hq_sum⟩ := hq
-  unfold tvDist MathlibExt.Probability.MarkovMixing.tvDist
+  unfold MathlibExt.Probability.MarkovMixing.tvDist
   have hpt : ∀ i : α, |p i - q i| ≤ p i + q i := by
     intro i
     rw [abs_sub_le_iff]
@@ -210,11 +196,12 @@ theorem tvDist_le_one {α : Type*} [Fintype α] {p q : α → ℝ}
 /-- Constant classifiers, giving every individual the same outcome
 distribution, are individually fair for any nonnegative task metric. -/
 theorem isLipschitzFair_const {V O : Type*} [Fintype O] {d : V → V → ℝ}
-    (hd : ∀ x y, 0 ≤ d x y) (r : O → ℝ) :
+    (hd : ∀ x y, 0 ≤ d x y) (r : O → ℝ) (hr : IsDist r) :
     IsLipschitzFair d (fun _ => r) := by
+  refine ⟨fun _ => hr, ?_⟩
   intro x y
-  show tvDist r r ≤ d x y
-  rw [tvDist_self]
+  show MathlibExt.Probability.MarkovMixing.tvDist r r ≤ d x y
+  rw [MathlibExt.Probability.MarkovMixing.tvDist_self]
   exact hd x y
 
 /-- Fairness implies per-outcome closeness: for a fair classifier with
@@ -222,14 +209,14 @@ distribution rows, each outcome probability differs by at most the
 task-metric distance. -/
 theorem abs_outcome_sub_le_of_fair {V O : Type*} [Fintype O]
     {d : V → V → ℝ} {M : V → O → ℝ} (hM : IsLipschitzFair d M)
-    (hrows : ∀ x, IsDist (M x)) (x y : V) (o : O) :
+    (x y : V) (o : O) :
     |M x o - M y o| ≤ d x y := by
-  obtain ⟨_, hMx_sum⟩ := hrows x
-  obtain ⟨_, hMy_sum⟩ := hrows y
+  obtain ⟨_, hMx_sum⟩ := hM.1 x
+  obtain ⟨_, hMy_sum⟩ := hM.1 y
   have hsum : ∑ i, M x i = ∑ i, M y i := by rw [hMx_sum, hMy_sum]
   have h := abs_event_sub_le_tvDist (M x) (M y) hsum {o}
   rw [Finset.sum_singleton, Finset.sum_singleton] at h
-  exact h.trans (hM x y)
+  exact h.trans (hM.2 x y)
 
 /-- Convex combinations (mixtures) of individually fair classifiers are
 individually fair. -/
@@ -238,10 +225,19 @@ theorem isLipschitzFair_convexCombo {V O : Type*} [Fintype O]
     (hM' : IsLipschitzFair d M') {a : ℝ} (ha : 0 ≤ a) (ha' : a ≤ 1) :
     IsLipschitzFair d (fun x o => a * M x o + (1 - a) * M' x o) := by
   have ha1 : 0 ≤ 1 - a := by linarith
+  refine ⟨?_, ?_⟩
+  · intro x
+    obtain ⟨hMnn, hMsum⟩ := hM.1 x
+    obtain ⟨hMnn', hMsum'⟩ := hM'.1 x
+    refine ⟨fun o => add_nonneg (mul_nonneg ha (hMnn o))
+      (mul_nonneg ha1 (hMnn' o)), ?_⟩
+    rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum, hMsum,
+      hMsum']
+    ring
   intro x y
-  show tvDist (fun o => a * M x o + (1 - a) * M' x o)
+  show MathlibExt.Probability.MarkovMixing.tvDist (fun o => a * M x o + (1 - a) * M' x o)
       (fun o => a * M y o + (1 - a) * M' y o) ≤ d x y
-  unfold tvDist MathlibExt.Probability.MarkovMixing.tvDist
+  unfold MathlibExt.Probability.MarkovMixing.tvDist
   show (1 / 2 : ℝ) * ∑ o, |(a * M x o + (1 - a) * M' x o)
       - (a * M y o + (1 - a) * M' y o)| ≤ d x y
   have hpt : ∀ o : O, |(a * M x o + (1 - a) * M' x o)
@@ -263,9 +259,9 @@ theorem isLipschitzFair_convexCombo {V O : Type*} [Fintype O]
       ≤ ∑ o, (a * |M x o - M y o| + (1 - a) * |M' x o - M' y o|) :=
     Finset.sum_le_sum (fun o _ => hpt o)
   rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum] at hsum
-  have h1 : tvDist (M x) (M y) ≤ d x y := hM x y
-  have h2 : tvDist (M' x) (M' y) ≤ d x y := hM' x y
-  unfold tvDist MathlibExt.Probability.MarkovMixing.tvDist at h1 h2
+  have h1 : MathlibExt.Probability.MarkovMixing.tvDist (M x) (M y) ≤ d x y := hM.2 x y
+  have h2 : MathlibExt.Probability.MarkovMixing.tvDist (M' x) (M' y) ≤ d x y := hM'.2 x y
+  unfold MathlibExt.Probability.MarkovMixing.tvDist at h1 h2
   have hmul : (1 / 2 : ℝ) * (∑ o, |(a * M x o + (1 - a) * M' x o)
       - (a * M y o + (1 - a) * M' y o)|)
       ≤ (1 / 2) * (a * ∑ o, |M x o - M y o|
@@ -412,7 +408,7 @@ that coupling's transport cost. -/
 theorem tvDist_inducedDist_le_transportCost {V O : Type*} [Fintype V]
     [Fintype O] {d : V → V → ℝ} {M : V → O → ℝ} {S T : V → ℝ}
     {π : V → V → ℝ} (hM : IsLipschitzFair d M) (hπ : IsCoupling S T π) :
-    tvDist (inducedDist M S) (inducedDist M T) ≤ transportCost d π := by
+    MathlibExt.Probability.MarkovMixing.tvDist (inducedDist M S) (inducedDist M T) ≤ transportCost d π := by
   obtain ⟨hπ_nonneg, hπ_row, hπ_col⟩ := hπ
   have hdiff : ∀ o : O, inducedDist M S o - inducedDist M T o
       = ∑ x, ∑ y, π x y * (M x o - M y o) := by
@@ -453,7 +449,7 @@ theorem tvDist_inducedDist_le_transportCost {V O : Type*} [Fintype V]
   have hfactor : ∀ x y : V, (∑ o, π x y * |M x o - M y o|)
       = π x y * ∑ o, |M x o - M y o| :=
     fun x y => (Finset.mul_sum ..).symm
-  unfold tvDist MathlibExt.Probability.MarkovMixing.tvDist transportCost
+  unfold MathlibExt.Probability.MarkovMixing.tvDist transportCost
   calc (1 / 2) * ∑ o, |inducedDist M S o - inducedDist M T o|
       ≤ (1 / 2) * ∑ o, ∑ x, ∑ y, π x y * |M x o - M y o| :=
         mul_le_mul_of_nonneg_left hsum (by norm_num)
@@ -466,7 +462,7 @@ theorem tvDist_inducedDist_le_transportCost {V O : Type*} [Fintype V]
         ring
     _ ≤ ∑ x, ∑ y, π x y * d x y := by
         refine Finset.sum_le_sum fun x _ => Finset.sum_le_sum fun y _ => ?_
-        exact mul_le_mul_of_nonneg_left (hM x y) (hπ_nonneg x y)
+        exact mul_le_mul_of_nonneg_left (hM.2 x y) (hπ_nonneg x y)
 
 /-- **Classifier-level earthmover bound.** For an individually fair
 classifier, the total variation distance between the induced outcome
@@ -474,10 +470,10 @@ distributions on two populations is at most their earthmover distance. -/
 theorem tvDist_inducedDist_le_earthmover {V O : Type*} [Fintype V]
     [Fintype O] {d : V → V → ℝ} {M : V → O → ℝ} {S T : V → ℝ}
     (hM : IsLipschitzFair d M) (hS : IsDist S) (hT : IsDist T) :
-    tvDist (inducedDist M S) (inducedDist M T) ≤ earthmover d S T := by
+    MathlibExt.Probability.MarkovMixing.tvDist (inducedDist M S) (inducedDist M T) ≤ earthmover d S T := by
   obtain ⟨π, hπ⟩ := exists_coupling hS hT
   have hne : Nonempty {π // IsCoupling S T π} := ⟨⟨π, hπ⟩⟩
-  show tvDist (inducedDist M S) (inducedDist M T)
+  show MathlibExt.Probability.MarkovMixing.tvDist (inducedDist M S) (inducedDist M T)
     ≤ ⨅ π : {π // IsCoupling S T π}, transportCost d π
   exact @le_ciInf _ _ _ hne _ _
     (fun π' => tvDist_inducedDist_le_transportCost hM π'.2)
@@ -486,4 +482,4 @@ end
 
 end
 
-end MathlibExt.GameTheory.Fairness.IndividualFairness
+end Cslib.MachineLearning.IndividualFairness
