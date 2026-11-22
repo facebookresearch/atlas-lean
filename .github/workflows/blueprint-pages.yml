@@ -231,29 +231,38 @@ jobs:
       - name: Check routes, anchors, and article cards
         run: python scripts/check_blueprint_site.py site-src site
 
-      # GitHub Pages refuses a site over 1 GB, and the deploy then fails without
-      # naming the size. Report the size on every build and warn from 900 MB;
-      # fail only a build that would be published.
+      # GitHub Pages officially supports a site of at most 1 GB, the size of the archive the
+      # Pages upload builds; a larger deployment is not guaranteed to succeed, and its failure
+      # does not name the size. Measure that archive on every build and warn from 900 MB; fail
+      # only a build that would publish more than 1 GB.
       - name: Check the site against GitHub Pages' size limit
         env:
           DEPLOYING: ${{ vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group' }}
         run: |
           set -euo pipefail
-          bytes=$(du -sb site | cut -f1)
+          # The archive actions/upload-pages-artifact builds from `site`: links dereferenced,
+          # hidden files and .git and .github left out.
+          if ! bytes=$(tar --dereference --hard-dereference --directory site -cf - \
+              --exclude=.git --exclude=.github --exclude='.[^/]*' . | wc -c); then
+            echo "::error title=Site size unknown::Could not archive the built site to measure it."
+            exit 1
+          fi
+          bytes="${bytes//[[:space:]]/}"
           if ! [[ "$bytes" =~ ^[0-9]+$ ]]; then
-            echo "::error title=Site size unknown::du did not report the built site's size in bytes."
+            echo "::error title=Site size unknown::Could not read the size of the built site's archive."
             exit 1
           fi
           mb=$((bytes / 1000000))
-          echo "The built site is ${mb} MB. GitHub Pages publishes at most 1,000 MB." | tee -a "$GITHUB_STEP_SUMMARY"
+          limit="the 1 GB (1,000,000,000 bytes) GitHub Pages officially supports"
+          echo "The built site's Pages archive is ${bytes} bytes (${mb} MB); GitHub Pages officially supports at most 1,000,000,000 bytes." | tee -a "$GITHUB_STEP_SUMMARY"
           if [ "$bytes" -gt 1000000000 ]; then
             if [ "$DEPLOYING" = true ]; then
-              echo "::error title=Site over the Pages limit::The built site is ${mb} MB, over GitHub Pages' 1 GB limit, so Pages would refuse it."
+              echo "::error title=Site over the Pages limit::The built site's Pages archive is ${bytes} bytes, over ${limit}, so this build does not publish it."
               exit 1
             fi
-            echo "::warning title=Site over the Pages limit::The built site is ${mb} MB, over GitHub Pages' 1 GB limit. It could not be published."
+            echo "::warning title=Site over the Pages limit::The built site's Pages archive is ${bytes} bytes, over ${limit}; a publishing build would stop here."
           elif [ "$bytes" -ge 900000000 ]; then
-            echo "::warning title=Site near the Pages limit::The built site is ${mb} MB, within 100 MB of GitHub Pages' 1 GB limit."
+            echo "::warning title=Site near the Pages limit::The built site's Pages archive is ${bytes} bytes, within 100 MB of ${limit}."
           fi
 
       - name: Keep dependency diagnostics
