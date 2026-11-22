@@ -11279,6 +11279,7 @@
   "MathlibExt/NumberTheory/PellCassiniIdentity": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Pell and Pell–Lucas numbers"},
   "MathlibExt/NumberTheory/PellLucasSequence": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Pell and Pell–Lucas numbers"},
   "MathlibExt/NumberTheory/PellNumberSequence": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Pell and Pell–Lucas numbers"},
+  "MathlibExt/NumberTheory/PellThreeNegTwo": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Consecutive powerful numbers"},
   "MathlibExt/NumberTheory/PentanacciNumber": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Tetranacci and pentanacci numbers"},
   "MathlibExt/NumberTheory/PerrinSequence": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Padovan and Perrin sequences"},
   "MathlibExt/NumberTheory/PierceExpansion": {"to": "NumberTheory/continued-fractions-expansions", "title": "Pierce expansions"},
