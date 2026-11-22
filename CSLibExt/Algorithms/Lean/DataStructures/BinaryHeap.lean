@@ -39,7 +39,8 @@ def heapLeft (i : Nat) : Nat := 2 * i + 1
 tree in an array indexed from $0$, the right child of the node at index $i$ is at index $2i + 2$. -/
 def heapRight (i : Nat) : Nat := 2 * i + 2
 
-private theorem heapParent_lt (i : Nat) (hi : 0 < i) : heapParent i < i := by
+/-- A positive index's heap parent comes before it. -/
+theorem heapParent_lt (i : Nat) (hi : 0 < i) : heapParent i < i := by
   unfold heapParent
   have hdiv : (i - 1) / 2 ≤ i - 1 := Nat.div_le_self _ _
   omega

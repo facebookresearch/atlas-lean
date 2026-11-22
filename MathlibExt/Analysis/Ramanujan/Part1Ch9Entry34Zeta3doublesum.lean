@@ -74,13 +74,6 @@ def chapter9Entry34RightTerm (x : ℝ) (k : ℕ) : ℝ :=
       chapter9OddHarmonic (k + 1) * x ^ (k + 1) /
     ((2 * k + 1).factorial : ℝ)
 
-private lemma chapter9OddHarmonic_nonneg (n : ℕ) :
-    0 ≤ chapter9OddHarmonic n := by
-  unfold chapter9OddHarmonic
-  apply Finset.sum_nonneg
-  intro j _
-  positivity
-
 private lemma chapter9OddHarmonic_le (n : ℕ) :
     chapter9OddHarmonic n ≤ (n : ℝ) := by
   unfold chapter9OddHarmonic
@@ -164,7 +157,7 @@ private lemma summable_chapter9Entry34RightTerm (x : ℝ)
     rw [heq]; exact h3
   apply Summable.of_norm_bounded hpoly
   intro k
-  have hHnn := chapter9OddHarmonic_nonneg (k + 1)
+  have hHnn := Entry8Arcsin.oddHarmonic_nonneg (k + 1)
   have hHle : chapter9OddHarmonic (k + 1) ≤ ((k : ℝ) + 1) := by
     have h := chapter9OddHarmonic_le (k + 1)
     push_cast at h ⊢
@@ -1047,7 +1040,7 @@ private def chapter9CoeffC (n : ℕ) : ℝ :=
 private lemma chapter9CoeffC_bound (n : ℕ) :
     |chapter9CoeffC n| ≤ (n : ℝ) + 1 := by
   have hCnn := le_of_lt (chapter9Central_pos n)
-  have hHnn := chapter9OddHarmonic_nonneg (n + 1)
+  have hHnn := Entry8Arcsin.oddHarmonic_nonneg (n + 1)
   have hC1 := chapter9Central_le_one n
   have hH := chapter9OddHarmonic_le (n + 1)
   push_cast at hH

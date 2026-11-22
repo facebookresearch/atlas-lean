@@ -39,10 +39,10 @@ relation (`TwoWayDFA.tr_functional`).
 * `Cslib.Automata.TwoWayDFA.exists_ofDFA_of_isRegular`: every regular language is accepted
   by a deterministic two-way automaton.
 * `Cslib.Automata.TwoWayNA.language_isRegular` and
-  `Cslib.Automata.exists_twoWayNA_of_isRegular`: the same equivalence for upstream's
-  nondeterministic two-way automata, stated against Mathlib's `Language.IsRegular`.
-  Upstream already defines `TwoWayNA` and proves the hard direction by Vardi's
-  rejection-certificate construction (`TwoWayNA.complToNA`); it is not redefined here.
+  `Cslib.Automata.exists_twoWayNA_of_isRegular`: compatibility aliases for the two
+  directions of upstream `Cslib.Language.IsRegular.iff_twoWayNA`, which already uses
+  Mathlib's `Language.IsRegular`. Upstream defines `TwoWayNA` and proves the hard
+  direction by Vardi's rejection-certificate construction (`TwoWayNA.complToNA`).
 -/
 
 @[expose] public section
@@ -147,14 +147,16 @@ theorem exists_ofDFA_of_isRegular {L : Language Symbol} (hL : L.IsRegular) :
 
 end TwoWayDFA
 
-/-- Every upstream nondeterministic two-way automaton over finitely many states accepts
-a regular language. The state type is in `Type`, matching Mathlib's `Language.IsRegular`. -/
+/-- Compatibility alias for the reverse direction of upstream
+`Cslib.Language.IsRegular.iff_twoWayNA`: a nondeterministic two-way automaton with
+finitely many states in `Type` accepts a regular language. -/
 theorem TwoWayNA.language_isRegular {State : Type} [Finite State] (a : TwoWayNA State Symbol) :
     (Acceptor.language a).IsRegular :=
   Cslib.Language.IsRegular.iff_twoWayNA.2 ⟨State, inferInstance, a, rfl⟩
 
-/-- Every regular language is accepted by an upstream nondeterministic two-way
-automaton. -/
+/-- Compatibility alias for the forward direction of upstream
+`Cslib.Language.IsRegular.iff_twoWayNA`: every regular language is accepted by a
+nondeterministic two-way automaton with finitely many states in `Type`. -/
 theorem exists_twoWayNA_of_isRegular {L : Language Symbol} (hL : L.IsRegular) :
     ∃ (S : Type) (_ : Finite S) (a : TwoWayNA S Symbol),
       Acceptor.language a = L :=

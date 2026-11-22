@@ -11,6 +11,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import CSLibExt.Algorithms.Concurrency.DeadlockDetection
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Algebra.Order.Pi
 public import Mathlib.Data.List.Perm.Basic
@@ -48,6 +49,18 @@ its allocation twice, so `safetyCheck` rejects lists with repetitions.
   process's remaining need and the free resources and the resulting state is
   safe (`request_eq_some_iff`); in particular granted states are safe
   (`request_safe`).
+* For a duplicate-free pending list, safety is the complete reducibility of
+  `DeadlockDetection.lean` with each process requesting its remaining need
+  (`toDetectionState`, `safe_iff_detect_eq_nil`): safe sequences are reduction
+  sequences (`safeSeq_iff_reduces`, which also holds for lists with
+  repetitions), with equal fuel the safety loop succeeds exactly when the
+  detection loop leaves no process (`safetyCheckAux_iff_reduceAux`), and the
+  safety check succeeds exactly when the pending list has no repetitions and
+  deadlock detection reports no process
+  (`safetyCheck_eq_true_iff_detect_eq_nil`). Detection alone does not reject
+  repeated processes: it lets each copy finish and credits its allocation
+  each time. `SafeSeq.erase` and `safetyCheckAux_iff` are derived from the
+  detection results.
 -/
 
 @[expose] public section
@@ -78,6 +91,18 @@ allocation, computed for each resource type by truncated subtraction of natural 
 is $0$ for every resource type where the allocation exceeds the claim. -/
 def need (p : P) : R → ℕ := S.claim p - S.alloc p
 
+/-- The banker's state as a deadlock-detection state: each process holds its
+allocation and requests its remaining need. -/
+def toDetectionState (S : System P R) : DeadlockDetection.State P R :=
+  ⟨S.alloc, S.need⟩
+
+@[simp] theorem toDetectionState_alloc (S : System P R) : S.toDetectionState.alloc = S.alloc :=
+  rfl
+
+@[simp] theorem toDetectionState_request (S : System P R) :
+    S.toDetectionState.request = S.need :=
+  rfl
+
 /-- **Safe sequence.** Let $S$ be a system with processes $P$ and resource types $R$, where
 process $p$ has maximum claim $\mathrm{claim}(p)$ and allocation $\mathrm{alloc}(p)$ in
 $R \to \mathbb{N}$. A list $p_1, \dots, p_k$ of processes is a safe sequence from the free
@@ -97,6 +122,14 @@ def SafeSeq : (R → ℕ) → List P → Prop
 @[simp] theorem safeSeq_cons (work : R → ℕ) (p : P) (rest : List P) :
     S.SafeSeq work (p :: rest) ↔ S.need p ≤ work ∧ S.SafeSeq (work + S.alloc p) rest :=
   Iff.rfl
+
+/-- A safe sequence is a deadlock-detection reduction sequence in which every
+process requests its remaining need. -/
+theorem safeSeq_iff_reduces (S : System P R) (work : R → ℕ) (σ : List P) :
+    S.SafeSeq work σ ↔ S.toDetectionState.Reduces work σ := by
+  induction σ generalizing work with
+  | nil => simp
+  | cons p rest ih => simp [ih]
 
 /-- **Safe state.** Let $S$ be a system of claims and allocations with processes $P$ and
 resource types $R$. A list of pending processes is safe from the free resource vector
@@ -127,21 +160,12 @@ from $w$. If $p$ occurs in $\sigma$, then the list obtained from $\sigma$ by del
 occurrence of $p$ is a safe sequence for $S$ from $w + \mathrm{alloc}(p)$, where
 $\mathrm{alloc}(p)$ is the current allocation of $p$ and the sum is taken componentwise.
 
-In other words, letting a member of a safe sequence finish first and release its allocation
-leaves the rest of the sequence safe. This is why the greedy safety check is complete. -/
+In other words, crediting the allocation of a member in advance preserves the safe sequence with
+one occurrence of that process removed. -/
 theorem SafeSeq.erase {work : R → ℕ} {σ : List P} {p : P} (h : S.SafeSeq work σ)
     (hp : p ∈ σ) : S.SafeSeq (work + S.alloc p) (σ.erase p) := by
-  induction σ generalizing work with
-  | nil => simp at hp
-  | cons q rest ih =>
-      by_cases hqp : q = p
-      · subst hqp
-        simpa using h.2
-      · rw [List.erase_cons_tail (by simpa using hqp)]
-        refine ⟨h.1.trans fun r => Nat.le_add_right _ _, ?_⟩
-        have hp' : p ∈ rest := (List.mem_cons.mp hp).resolve_left (Ne.symm hqp)
-        have := ih h.2 hp'
-        rwa [add_right_comm] at this
+  rw [safeSeq_iff_reduces] at h ⊢
+  exact h.erase_of_mem hp
 
 omit [DecidableEq P] in
 theorem safe_nil (work : R → ℕ) : S.Safe work [] :=
@@ -178,6 +202,19 @@ theorem safe_iff_safe_erase {work : R → ℕ} {pending : List P} {p : P} (hnd :
 
 variable (S) [Fintype R]
 
+/-- A state is safe exactly when the pending list has no repetitions and the
+deadlock-detection algorithm, run with the remaining needs as requests, reports
+no process. -/
+theorem safe_iff_detect_eq_nil (S : System P R) (work : R → ℕ) (pending : List P) :
+    S.Safe work pending ↔ pending.Nodup ∧ S.toDetectionState.detect work pending = [] := by
+  constructor
+  · rintro ⟨hnd, σ, hperm, hsafe⟩
+    exact ⟨hnd, (DeadlockDetection.State.detect_eq_nil_iff hnd).mpr
+      ⟨σ, hperm, (S.safeSeq_iff_reduces work σ).mp hsafe⟩⟩
+  · rintro ⟨hnd, hnil⟩
+    obtain ⟨σ, hperm, hred⟩ := (DeadlockDetection.State.detect_eq_nil_iff hnd).mp hnil
+    exact ⟨hnd, σ, hperm, (S.safeSeq_iff_reduces work σ).mpr hred⟩
+
 /-- **Banker's safety algorithm with fuel.** Let $S$ be a system with processes $P$ and a
 finite set $R$ of resource types, where process $p$ has maximum claim $\mathrm{claim}(p)$ and
 allocation $\mathrm{alloc}(p)$ in $R \to \mathbb{N}$. Given a fuel $n \in \mathbb{N}$, a free
@@ -193,6 +230,28 @@ def safetyCheckAux : ℕ → (R → ℕ) → List P → Bool
       match pending.find? (fun p => decide (S.need p ≤ work)) with
       | none => pending.isEmpty
       | some p => safetyCheckAux fuel (work + S.alloc p) (pending.erase p)
+
+/-- With the same fuel, the safety loop succeeds exactly when the detection
+loop leaves no processes. No duplicate-free assumption is needed for the loops. -/
+theorem safetyCheckAux_iff_reduceAux (fuel : ℕ) (work : R → ℕ) (pending : List P) :
+    S.safetyCheckAux fuel work pending = true ↔
+      (S.toDetectionState.reduceAux fuel work pending).2 = [] := by
+  induction fuel generalizing work pending with
+  | zero => simp [safetyCheckAux, DeadlockDetection.State.reduceAux]
+  | succ fuel ih =>
+      rw [safetyCheckAux, DeadlockDetection.State.reduceAux]
+      change
+        (match pending.find? (fun p => decide (S.need p ≤ work)) with
+          | none => pending.isEmpty
+          | some p => S.safetyCheckAux fuel (work + S.alloc p) (pending.erase p)) = true ↔
+        (match pending.find? (fun p => decide (S.need p ≤ work)) with
+          | none => ([], pending)
+          | some p =>
+              let r := S.toDetectionState.reduceAux fuel (work + S.alloc p) (pending.erase p)
+              (p :: r.1, r.2)).2 = []
+      cases hfind : pending.find? (fun p => decide (S.need p ≤ work)) with
+      | none => simp
+      | some p => exact ih (work + S.alloc p) (pending.erase p)
 
 /-- **Banker's safety algorithm.** Let $S$ be a system of claims and allocations with processes
 $P$ and a finite set $R$ of resource types. Given a free resource vector $w : R \to \mathbb{N}$
@@ -210,31 +269,10 @@ variable {S}
 theorem safetyCheckAux_iff (fuel : ℕ) (work : R → ℕ) (pending : List P)
     (hlen : pending.length = fuel) (hnd : pending.Nodup) :
     S.safetyCheckAux fuel work pending = true ↔ S.Safe work pending := by
-  induction fuel generalizing work pending with
-  | zero =>
-      rw [List.length_eq_zero_iff.mp hlen]
-      simpa [safetyCheckAux] using safe_nil work
-  | succ fuel ih =>
-    rw [safetyCheckAux]
-    split
-    next hnone =>
-      rw [List.find?_eq_none] at hnone
-      constructor
-      · intro hempty
-        rw [List.isEmpty_iff.mp hempty]
-        exact safe_nil work
-      · intro hsafe
-        by_contra hne
-        rw [Bool.not_eq_true, List.isEmpty_eq_false_iff] at hne
-        obtain ⟨p, hp, hfit⟩ := hsafe.exists_runnable hne
-        exact hnone p hp (decide_eq_true hfit)
-    next p hsome =>
-      have hp := List.mem_of_find?_eq_some hsome
-      have hfit : S.need p ≤ work := by simpa using List.find?_some hsome
-      rw [safe_iff_safe_erase hnd hp hfit]
-      refine ih _ _ ?_ (hnd.erase p)
-      rw [List.length_erase_of_mem hp, hlen]
-      rfl
+  rw [safetyCheckAux_iff_reduceAux, ← hlen]
+  change S.toDetectionState.detect work pending = [] ↔ S.Safe work pending
+  rw [safe_iff_detect_eq_nil]
+  simp only [hnd, true_and]
 
 /-- **Correctness of the safety algorithm.** For every system $S$ of claims and allocations over
 a finite set $R$ of resource types, every free resource vector $w : R \to \mathbb{N}$ and every
@@ -343,6 +381,17 @@ theorem request_safe {available : R → ℕ} {pending : List P} {p : P} {req : R
     S'.Safe available' pending := by
   obtain ⟨-, -, -, -, hsafe, rfl, rfl⟩ := request_eq_some_iff.mp h
   exact hsafe
+
+/-! ## Safety as deadlock-detection reducibility -/
+
+/-- The banker's safety check succeeds exactly when the pending list has no
+repetitions and deadlock detection with the remaining needs as requests reports
+no process. -/
+theorem safetyCheck_eq_true_iff_detect_eq_nil (S : System P R) (work : R → ℕ)
+    (pending : List P) :
+    S.safetyCheck work pending = true ↔
+      pending.Nodup ∧ S.toDetectionState.detect work pending = [] :=
+  (safetyCheck_iff work pending).trans (S.safe_iff_detect_eq_nil work pending)
 
 end System
 

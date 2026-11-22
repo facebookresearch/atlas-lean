@@ -24,8 +24,8 @@ zero-length run of the opposite bit.
 Bits are `Bool` values (`false` is the zero bit); counts are naturals, each
 emitted count at most 255. Stream framing is outside this module.
 
-Retained Lean was authored for the algorithms campaign P2546521337 lane
-`run_length_encoding` (contract SHA recorded in the campaign workspace).
+Retained Lean was authored for the algorithms campaign lane
+`run_length_encoding`.
 -/
 
 namespace Cslib.Algorithms.Lean.RunLength

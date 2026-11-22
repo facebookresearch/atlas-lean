@@ -62,15 +62,6 @@ public def delete {α : Type u} [LinearOrder α] (x : α) :
       else if key < x then .node key left (delete x right)
       else join left right
 
-@[simp] private theorem mem_nil {α : Type u} {x : α} :
-    x ∈ (BinaryTree.nil : BinaryTree α) ↔ False :=
-  Iff.rfl
-
-@[simp] private theorem mem_node {α : Type u} {x key : α}
-    {left right : BinaryTree α} :
-    x ∈ BinaryTree.node key left right ↔ x ∈ left ∨ x = key ∨ x ∈ right :=
-  Iff.rfl
-
 /--
 **Membership in a join.** For binary trees $L$ and $R$, a key $x$ occurs in the join of $L$ and
 $R$ if and only if $x$ occurs in $L$ or $x$ occurs in $R$.
@@ -268,11 +259,6 @@ private theorem erase_cons_tail_of_ne {α : Type u} [LinearOrder α] {a b : α}
     {l : List α} (h : b ≠ a) : (b :: l).erase a = b :: l.erase a :=
   List.erase_cons_tail (fun hb => h (beq_iff_eq.mp hb))
 
-private theorem erase_append_of_not_mem_left {α : Type u} [LinearOrder α]
-    {x : α} {left right : List α} (hx : x ∉ left) :
-    (left ++ right).erase x = left ++ right.erase x := by
-  rw [List.erase_append, ite_eq_right hx]
-
 private theorem erase_append_of_not_mem_right {α : Type u} [LinearOrder α]
     {x : α} {left right : List α} (hx : x ∉ right) :
     (left ++ right).erase x = left.erase x ++ right := by
@@ -314,7 +300,7 @@ public theorem inorder_delete {α : Type u} [LinearOrder α] {x : α}
           exact lt_asymm hKeyX ((all_iff_forall_mem.mp hAllLeft) x hx)
         simp only [delete, ite_eq_right hxKey, ite_eq_left hKeyX, inorder_node,
           ihRight hRight]
-        rw [erase_append_of_not_mem_left hxLeft,
+        rw [List.erase_append_right _ hxLeft,
           erase_cons_tail_of_ne (ne_of_lt hKeyX)]
       · have hxEq : x = key :=
           le_antisymm (le_of_not_gt hKeyX) (le_of_not_gt hxKey)
@@ -324,7 +310,7 @@ public theorem inorder_delete {α : Type u} [LinearOrder α] {x : α}
           intro hx
           exact lt_irrefl key ((all_iff_forall_mem.mp hAllLeft) key hx)
         simp only [delete, ite_eq_right hxKey, inorder_join, inorder_node]
-        rw [erase_append_of_not_mem_left hKeyLeft, List.erase_cons_head]
+        rw [List.erase_append_right _ hKeyLeft, List.erase_cons_head]
 
 end BinarySearchTree
 end Cslib.Algorithms.Lean
