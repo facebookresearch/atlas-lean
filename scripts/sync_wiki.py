@@ -13,7 +13,9 @@ article id and origin. The Lean owns what lean-facts adds on the build's checkou
 an article's `## Depends on` and `## Proof depends on`, from the dependency dump,
 and its annotation's kind and status, from the Lean sources. A planned page, one
 whose annotation has no Lean link, keeps the prerequisites it records by hand,
-and gets no kind or status.
+and gets no kind or status. So does a page Autoform credits to Mathlib: its
+annotation sets the `org.autoform` extension's `mathlib: true`, and its Lean link
+names a declaration of Mathlib's repository (MATHLIB), which lean-facts keeps.
 
 declarations gives each declaration with a docstring and no page a page from its
 docstring, beside its module's other pages and listed on their page in source
@@ -89,6 +91,8 @@ NAMESPACE = "org.autoform"
 # Where an article with no Lean name in the index keeps its module and name, for lean-facts.
 OWN = "org.atlas-wiki"
 DEFAULTS = {"object": {"type": "lean", "uri": "../.."}}
+# The repository an annotation's Lean link names when the page credits a Mathlib declaration (Autoform's links format).
+MATHLIB = "https://github.com/leanprover-community/mathlib4"
 STATE = wiki.ROOT / "scripts" / "wiki-sync.json"
 # The site's build configuration, whose Markdown extensions a folder page is rendered with to check an edit.
 SITE = wiki.ROOT / "mkdocs.yml"
@@ -200,9 +204,10 @@ def subject_path(annotation: dict) -> Path:
 
 
 def lean_name(annotation: dict) -> str | None:
+    """The declaration of this project that the annotation links; a link to Mathlib's repository names none."""
     for end in annotation.get("object", []):
         name = end.get("location", {}).get("declaration")
-        if name:
+        if name and end.get("uri") != MATHLIB:
             return name
     return None
 

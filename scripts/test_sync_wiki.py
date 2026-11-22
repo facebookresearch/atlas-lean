@@ -378,6 +378,25 @@ class LeanFacts(Vault):
         self.assertEqual(row, {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/gone.md"}], "id": "af_1"})
         self.assertEqual((wiki.ROADMAP / "Algebra" / "gone.md").read_text(), "# Gone\n\nRemoved upstream.\n")
 
+    def test_a_mathlib_credited_page_keeps_its_link(self) -> None:
+        # Autoform credits a page to Mathlib from a Lean link to Mathlib's repository and the mathlib flag; the Lean
+        # index has no such name, yet the link stays and the page gets no kind or status. The same name as a link of
+        # this project is a declaration the Lean does not have, so its page is unlinked.
+        self.page("Algebra/in-mathlib.md", "# In Mathlib\n\nProved there.\n")
+        self.page("Algebra/gone.md", "# Gone\n\nRemoved upstream.\n")
+        mathlib = {"uri": sync.MATHLIB, "location": {"declaration": "Group.exists", "module": "Mathlib.Algebra.Group"}}
+        credited = self.about("Algebra/in-mathlib.md", object=[mathlib], id="af_1",
+                              extensions={"org.autoform": {"mathlib": True}})
+        self.annotate([credited, self.about("Algebra/gone.md", object=[{"location": {"declaration": "Group.exists"}}],
+                                            id="af_2")])
+        counts, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations={}), {})
+        self.assertEqual(counts, {"articles": 0, "unresolved": 1, "edges": 0})
+        self.assertEqual(unlinked, ["Group.exists (Algebra/gone.md)"])
+        rows = {sync.subject_path(row).name: row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
+        self.assertEqual(rows["in-mathlib.md"], credited)
+        self.assertNotIn("object", rows["gone.md"])
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "in-mathlib.md").read_text(), "# In Mathlib\n\nProved there.\n")
+
     def test_pages_the_declarations_sync_wrote_get_their_facts(self) -> None:
         # declarations marks its pages with {"from": "docstring"}; an earlier sync also wrote a module and a name for
         # a page without a Lean link, which lean-facts reads through the index.
