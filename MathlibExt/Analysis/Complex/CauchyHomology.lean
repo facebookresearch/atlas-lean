@@ -29,7 +29,8 @@ Main results:
 * `Complex.isHomologousToZero_of_isPreconnected`: if the complement of `Ω` in the extended plane
   `OnePoint ℂ` is connected, every closed piecewise `C¹` path in `Ω` is homologous to zero.
 * `Complex.curveIntegral_eq_zero_of_differentiableOn`: Cauchy's theorem, both parts: `∫_γ f = 0`
-  for `γ ∼ 0`, and for every closed `γ` in `Ω` if `Ω` is simply connected.
+  for `γ ∼ 0`, and for every closed `γ` in `Ω` if the complement of `Ω` in the extended plane is
+  connected (for a region, this is the notes' definition of simply connected).
 * `Complex.windingNumber_mul_eq_two_pi_I_inv_mul_curveIntegral`: Cauchy's integral formula
   `n(γ, z) f(z) = (2πi)⁻¹ ∫_γ f(ζ) / (ζ - z) dζ` for `γ ∼ 0` and `z` off `γ`.
 * `Complex.exists_differentiable_of_isHomologousToZero` and
@@ -44,8 +45,8 @@ holomorphic on `Ω` (holomorphic dependence on a parameter, using the joint cont
 `∑ mᵢ ∫_{γᵢ} f(ζ) / (ζ - w) dζ - 2πi f(w) ∑ mᵢ n(γᵢ, w)`, and the total winding number is locally
 constant and vanishes outside `Ω`, so `H` is holomorphic there too. `H` is therefore entire and
 tends to `0` at infinity, so `H ≡ 0` by Liouville's theorem. Applied to `ζ ↦ (ζ - w) f(ζ)`, whose
-divided difference at `w` is `f`, this gives Cauchy's theorem. The simply connected case holds
-because `n(γ, ·)` is locally constant off `γ` and zero near `∞`.
+divided difference at `w` is `f`, this gives Cauchy's theorem. The case of a connected complement
+in the extended plane holds because `n(γ, ·)` is locally constant off `γ` and zero near `∞`.
 
 Rubric-guided revision of v1 ComplexVariables targets 13, 15, 16, 20, 21
 (`ClosedCurve.IsHomologousToZero`, `ClosedCurve.cauchy_theorem`,
@@ -183,8 +184,9 @@ public theorem sum_curveIntegral_eq_zero {ι : Type*} [Fintype ι] {x : ι → �
     (f := fun ζ => (ζ - x i₀) * f ζ) ((differentiableOn_id.sub_const _).mul hf) (x i₀)
   rwa [hds] at key
 
-/-- If the complement of `Ω` in the extended plane `OnePoint ℂ` is connected (`Ω` is simply
-connected), then every closed piecewise `C¹` path in `Ω` is homologous to zero in `Ω`. -/
+/-- If the complement of `Ω` in the extended plane `OnePoint ℂ` is connected, then every closed
+piecewise `C¹` path in `Ω` is homologous to zero in `Ω`. For a region `Ω` (an open connected set),
+a connected complement is the notes' definition of `Ω` being simply connected (Definition 2). -/
 public theorem isHomologousToZero_of_isPreconnected {Ω : Set ℂ}
     (hΩc : IsPreconnected (((↑) : ℂ → OnePoint ℂ) '' Ω)ᶜ) {x : ℂ} {γ : Path x x}
     (hγ : γ.IsPiecewiseC1) (hγΩ : range γ ⊆ Ω) : IsHomologousToZero γ Ω := by
@@ -251,9 +253,9 @@ private theorem curveIntegral_dslope_eq_zero (hΩ : IsOpen Ω) (hf : Differentia
 /-- **Cauchy's theorem** (homology form). Let `f` be holomorphic on an open set `Ω ⊆ ℂ`. Then:
 * `∫_γ f(z) dz = 0` for every closed piecewise `C¹` path `γ` that is homologous to zero in `Ω`
   (it lies in `Ω` and `n(γ, a) = 0` for every `a ∉ Ω`);
-* in particular, if `Ω` is simply connected, in the sense that its complement in the extended
-  plane `OnePoint ℂ` is connected, then `∫_γ f(z) dz = 0` for every closed piecewise `C¹` path
-  `γ` in `Ω`.
+* in particular, if the complement of `Ω` in the extended plane `OnePoint ℂ` is connected (for a
+  region `Ω`, the notes' definition of simply connected), then `∫_γ f(z) dz = 0` for every closed
+  piecewise `C¹` path `γ` in `Ω`.
 
 The source states the second part for regions; it holds without assuming `Ω` connected. -/
 public theorem curveIntegral_eq_zero_of_differentiableOn (hΩ : IsOpen Ω)
