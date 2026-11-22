@@ -9,7 +9,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Planning.MotionPlanning.ConfigurationSpace
-public import Mathlib
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.Normed.Lp.PiLp
+public import Mathlib.Analysis.Convex.Basic
+public import Mathlib.Analysis.Convex.Segment
+public import Mathlib.Topology.Bornology.Basic
+public import Mathlib.Topology.MetricSpace.Pseudo.Defs
+public import Mathlib.Topology.Order.OrderClosed
+public import Mathlib.LinearAlgebra.AffineSpace.AffineMap
+public import Mathlib.Data.Real.Sqrt
 
 @[expose] public section
 
