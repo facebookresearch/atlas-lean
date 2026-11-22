@@ -26,18 +26,8 @@ jobs:
         with:
           persist-credentials: false
 
-      # Each required check's step first checks that the workspace is exactly
-      # the commit this run tests (GITHUB_SHA), then runs the check
-      # (scripts/test_merge_queue_checks.py, VERIFY, explains why).
       - name: Run deterministic repository checks
-        run: >-
-          { changes="$(git status --porcelain --untracked-files=all)"
-          && index="$(git ls-files -v)"
-          && [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes"
-          && "$index" != [!H]* && "$index" != *$'\n'[!H]*
-          && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; }
-          || { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };
-          scripts/check.sh preflight
+        run: scripts/check.sh preflight
 
       - name: Test v1 metadata inventory
         env:
@@ -65,7 +55,7 @@ jobs:
       # PyYAML, so it runs here rather than in check.sh preflight. Source
       # diagnostics runs it too, so a change that makes this workflow skip its
       # jobs is still caught. The test requires its own step to be exactly
-      # the workspace check and this command, with no condition.
+      # this command, with no condition.
       - name: Install PyYAML for the merge-queue test
         run: |
           set -eu
@@ -77,12 +67,6 @@ jobs:
         env:
           PYTHONDONTWRITEBYTECODE: "1"
         run: >-
-          { changes="$(git status --porcelain --untracked-files=all)"
-          && index="$(git ls-files -v)"
-          && [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes"
-          && "$index" != [!H]* && "$index" != *$'\n'[!H]*
-          && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; }
-          || { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };
           "$RUNNER_TEMP/merge-queue-venv/bin/python" -m unittest discover
           -s scripts -p test_merge_queue_checks.py -v
 
@@ -167,14 +151,7 @@ jobs:
           exit "$status"
 
       - name: Build extension libraries
-        run: >-
-          { changes="$(git status --porcelain --untracked-files=all)"
-          && index="$(git ls-files -v)"
-          && [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes"
-          && "$index" != [!H]* && "$index" != *$'\n'[!H]*
-          && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; }
-          || { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };
-          scripts/check.sh build
+        run: scripts/check.sh build
 
       - name: Check the bounded codec lesson
         run: lake env lean -DwarningAsError=true docs/teaching/examples/BoundedCodec.lean

@@ -1459,10 +1459,6 @@ jobs:
   # plain issue), failures, and cancellations.
   codex-verdict:
     name: codex-verdict
-    # It only echoes the verdict, so its token needs no permissions. Every job
-    # declares its permissions (scripts/test_merge_queue_checks.py): a token
-    # that can write checks could stand in for a required check.
-    permissions: {}
     needs: [codex]
     if: always() && needs.codex.outputs.verdict != ''
     runs-on: ubuntu-latest

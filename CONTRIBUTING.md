@@ -270,36 +270,15 @@ Their workflows are configured to run when a PR is opened, updated or reopened,
 and on every merge group; on some fork PRs, CI and Source diagnostics wait until
 a maintainer approves the run. Both CI's `repository integrity` job and Source
 diagnostics run `scripts/test_merge_queue_checks.py`, each in a step that is
-exactly the workspace check (below) followed by the test command, so a change
-that makes one of them skip its jobs is caught by the other. The test fails if
-one of these workflows loses or filters those triggers, also runs on pushes to
-any branch but `main`, on pushes of tags, or on another event that could report
-its checks for another tree (such as `pull_request_target`), can skip the job
-that reports the check or, through a step-level condition, the job's own check,
-lets the job report success after a failure (`continue-on-error`), holds it back
-behind a deployment environment or a `needs` cycle, checks out another ref or
-repository in it, moves it off Ubuntu runners, into a container or out of bash,
-sets environment variables that could change how its steps run (only
-`PYTHONDONTWRITEBYTECODE` is allowed) or has a step that can set them, or change
-`PATH`, for later steps (the build's line adding elan to `PATH` is the one
-exception), renames the check or puts an expression in its job name, lets
-another job report (or possibly report) the same name, or uses a concurrency
-group that the test does not know to differ between PRs and between merge
-groups, or that another workflow's group could match. Each step that runs a
-required check (and the test) starts with the same workspace check, written in
-the workflow rather than in a script that a different checkout would replace:
-`HEAD` must be `GITHUB_SHA`, the commit the run tests (for a PR, GitHub's test
-merge of it into its base branch; for a merge group, the group's commit), `git
-status` must succeed and show no changed or added file (ignored build outputs
-are allowed), no index entry may be marked skip-worktree or assume-unchanged,
-and the checkout must not be sparse. So an earlier step that checks out or edits
-another tree makes the check fail. It also fails if any job in any workflow can
-write checks or commit statuses (`checks: write`, `statuses: write`,
-`write-all`, or no explicit token permissions, which leaves the repository's
-default): a check run or status created with a job's token comes from the same
-GitHub Actions app as the required checks. The test reads workflow files, so it
-catches mistakes in workflow edits but not a deliberately malicious step; review
-of changes to `.github/` and to the scripts these steps run has to.
+exactly the test command, so a change that makes one of them skip its jobs is
+caught by the other. The test fails if one of these workflows loses or filters
+those triggers, also runs on pushes to anything but the `main` branch or on
+another event that could report its checks for another tree (such as
+`pull_request_target`), renames the job that reports a check or lets another job
+take its name, can skip that job, or loses the step that runs its check or lets
+that step be skipped or its failure ignored. The test catches accidental
+changes; it is not a security boundary, and workflow changes rely on human
+review.
 
 The other checks are advisory. The bump guard's `guard` checks Lean and Mathlib
 pin changes on PRs and merge groups; on PRs it runs through

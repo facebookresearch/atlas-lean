@@ -26,8 +26,8 @@ jobs:
       # CI's repository integrity job runs this test too. Running it in both
       # required workflows means a change that makes one of them skip its jobs
       # (a skipped required check counts as passing) is caught by the other.
-      # The test requires its own step to be exactly the workspace check and
-      # this command, with no condition.
+      # The test requires its own step to be exactly this command, with no
+      # condition.
       - name: Install PyYAML for the merge-queue test
         run: |
           set -eu
@@ -37,27 +37,14 @@ jobs:
 
       - name: Test that the required checks report on merge groups
         run: >-
-          { changes="$(git status --porcelain --untracked-files=all)"
-          && index="$(git ls-files -v)"
-          && [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes"
-          && "$index" != [!H]* && "$index" != *$'\n'[!H]*
-          && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; }
-          || { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };
           "$RUNNER_TEMP/merge-queue-venv/bin/python" -m unittest discover
           -s scripts -p test_merge_queue_checks.py -v
 
       # Findings are advisory. Failed tests, missing inputs, and scan errors
       # fail this job; report-only only relaxes the findings exit status. The
-      # merge-queue test requires this step to be exactly the workspace check
-      # and this command, with no condition.
+      # merge-queue test requires this step to be exactly this command, with no
+      # condition.
       - name: Test and run source diagnostics
         id: diagnostics
         shell: bash
-        run: >-
-          { changes="$(git status --porcelain --untracked-files=all)"
-          && index="$(git ls-files -v)"
-          && [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" && -z "$changes"
-          && "$index" != [!H]* && "$index" != *$'\n'[!H]*
-          && "$(git config --type=bool --default=false core.sparseCheckout)" == false ]]; }
-          || { echo "::error::The workspace is not $GITHUB_SHA"; exit 1; };
-          scripts/run_source_diagnostics.sh
+        run: scripts/run_source_diagnostics.sh

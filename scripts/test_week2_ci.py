@@ -419,10 +419,10 @@ class WorkflowTests(DiagnosticFixture):
         checkout = re.search(r"actions/checkout@[0-9a-f]{40}", workflow)
         self.assertIsNotNone(checkout)
         self.assertIn(checkout.group(), current_ci)
+        self.assertNotIn("continue-on-error", workflow)
         self.assertIn('PYTHONDONTWRITEBYTECODE: "1"', workflow)
         # The job runs scripts/run_source_diagnostics.sh; the merge-queue test
-        # (CONTRIBUTING.md, How PRs merge) checks that wiring, and that neither
-        # the job nor that step can ignore a failure.
+        # (CONTRIBUTING.md, How PRs merge) checks that wiring.
         return (ROOT / "run_source_diagnostics.sh").read_text()
 
     def prepare_workflow(self) -> None:
