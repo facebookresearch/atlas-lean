@@ -2,7 +2,9 @@
 """Keep the ATLAS wiki's committed pages and the Lean in step.
 
     python scripts/sync_wiki.py import TITLES.jsonl DEPENDENCIES.json   seed blueprint/ once from the Lean docstrings
-    python scripts/sync_wiki.py lean-facts DEPENDENCIES.json            the Lean's facts, at build; never committed
+    python scripts/sync_wiki.py lean-facts DEPENDENCIES.json [--registry REGISTRY.json]
+                                                                        the Lean's facts, at build; never committed
+    python scripts/sync_wiki.py mathlib-names OUTPUT.txt                the Mathlib declarations pages credit, for the dump
     python scripts/sync_wiki.py declarations                            new declarations' pages, after an upstream merge
     python scripts/sync_wiki.py ids                                     an article id for each annotation without one
 
@@ -14,6 +16,45 @@ an article's `## Depends on` and `## Proof depends on`, from the dependency dump
 and its annotation's kind and status, from the Lean sources. A planned page, one
 whose annotation has no Lean link, keeps the prerequisites it records by hand,
 and gets no kind or status.
+
+Every command reads a row as Autoform's loader reads it (read_subject and
+page_owner, with Autoform's own helpers): merged over the folder defaults of
+blueprint/links/ (`_defaults.json`), so that a link with no uri is a Lean link to
+this project, while one with a uri and no type is no Lean link at all; about the
+one page its subject names whole, percent-decoded; and crediting its Lean link to
+this project with role `states`, or its only one when none has a role, unless a
+Lean link that is not one of this project's declarations, or a link of a type
+Autoform does not know, states the page. A link of another type (PDF, HTML, ...)
+is a reference, whatever its role. A row Autoform would read otherwise, or not at
+all (one about part of a page, several pages or none, a second row for a page, a
+flagged row as below that is ambiguous, or an annotation file other than
+blueprint/links/*.jsonl), stops mathlib-names, lean-facts and declarations before
+they write anything (credit_problems); so does a declaration two pages stand
+for, a row an earlier sync wrote with a module and a name only counting as the
+declaration the Lean index gives it (owner_problems, in lean-facts and
+declarations, which have the index). The defaults never set a page's `kind` or
+`status`, which lean-facts derives from the Lean. The rows are written back as
+committed: the defaults are never written into them.
+
+A page may instead credit a Mathlib declaration: its annotation sets the
+`org.autoform` extension's `mathlib: true`, which makes Autoform show it as in
+Mathlib, and its one link with a declaration is a Lean link to Mathlib's
+repository (MATHLIB, with or without `.git`). A Mathlib link on a row without the
+flag is a reference and credits nothing; a flagged row with any other declaration
+is ambiguous, and so are two pages crediting one declaration: mathlib-names and
+lean-facts then stop before writing. With
+--registry (the file extract_v2_lean_dependencies.py writes from a dump made with
+the names mathlib-names lists), lean-facts first checks that the registry is well
+formed and was made from this checkout's credited names (their digest, which
+depends on no Mathlib checkout) at its Mathlib revision, that its found and
+missing names split them, and that a module a row names is the declaration's; then
+it gives each page its declaration's kind and its dependencies on the other
+Mathlib-credited pages, and adds to ATLAS pages the Mathlib-credited pages they
+use. A credited name the registry reports missing (or the project's own) is
+unlinked like a declaration the Lean no longer has: the Lean link, the kind, the
+status, the `mathlib` flag and a module and name an earlier sync wrote go, and its
+other links stay. Without --registry,
+such a page is left as committed.
 
 declarations gives each declaration with a docstring and no page a page from its
 docstring, beside its module's other pages and listed on their page in source
@@ -72,16 +113,23 @@ import functools
 import hashlib
 import importlib
 import json
+import os
 import re
 import secrets
+import stat
+import subprocess
 import sys
 import unicodedata
+from urllib.parse import urlsplit
 from collections import Counter, defaultdict
 from pathlib import Path
+from typing import NamedTuple
 
 if __package__:
+    from . import extract_v2_lean_dependencies as extract
     from . import generate_wiki as wiki
 else:
+    import extract_v2_lean_dependencies as extract
     import generate_wiki as wiki
 
 LINKS = wiki.VAULT / "links"
@@ -89,6 +137,8 @@ NAMESPACE = "org.autoform"
 # Where an article with no Lean name in the index keeps its module and name, for lean-facts.
 OWN = "org.atlas-wiki"
 DEFAULTS = {"object": {"type": "lean", "uri": "../.."}}
+# The repository an annotation's Lean link names when the page credits a Mathlib declaration (Autoform's links format).
+MATHLIB = "https://github.com/leanprover-community/mathlib4"
 STATE = wiki.ROOT / "scripts" / "wiki-sync.json"
 # The site's build configuration, whose Markdown extensions a folder page is rendered with to check an edit.
 SITE = wiki.ROOT / "mkdocs.yml"
@@ -195,23 +245,712 @@ def links_file(path: Path) -> Path:
     return LINKS / f"{parts[0] if len(parts) > 1 else 'roadmap'}.jsonl"
 
 
-def subject_path(annotation: dict) -> Path:
-    return (LINKS / annotation["subject"][0]["uri"]).resolve()
+def reader():
+    """Autoform's annotation reader (autoform_cli.annotations, at the commit .github/autoform-ref pins): a row's page,
+    its ends and their credit are read with its own helpers, so that they cannot drift from it."""
+    from autoform_cli import annotations
+
+    return annotations
+
+
+@functools.lru_cache(maxsize=16)
+def folder_template(path: str, signature: tuple[int, ...]) -> dict | None:
+    """The template Autoform's reader merges each row of a links file over when the defaults file of its folder is
+    *path* (*signature*, the file's stat, keys the cache), made as autoform_cli.annotations._annotations makes it with
+    literature-links' companion: the file's JSON object, its references rebased to the file, merged with
+    `defaults=True`; None when the file is not UTF-8 JSON holding one object."""
+    from literature_links import companion
+
+    try:
+        with open(path, "rb") as handle:
+            value = companion.loads(handle.read().decode("utf-8"))
+    except (OSError, UnicodeError, companion.LoadError):
+        return None
+    if not isinstance(value, dict):
+        return None
+    try:
+        return companion.merge({}, companion.rebase(value, reader()._DEFAULTS), defaults=True)
+    except RecursionError:
+        return None
+
+
+def links_template() -> dict | None:
+    """The template of LINKS (folder_template of its `_defaults.json`, which import writes as DEFAULTS): {} when it
+    has none, and None when Autoform cannot use it, as when it is not a regular file; Autoform then reads no row of
+    the folder."""
+    path = os.path.join(LINKS, reader()._DEFAULTS)
+    try:
+        found = os.lstat(path)
+    except FileNotFoundError:
+        return {}
+    except OSError:
+        return None
+    if not stat.S_ISREG(found.st_mode):
+        return None
+    return folder_template(path, (found.st_dev, found.st_ino, found.st_size, found.st_mtime_ns, found.st_ctime_ns))
+
+
+def effective(annotation: dict) -> dict | None:
+    """A row of a links file in LINKS as Autoform reads it: merged over the folder's template by literature-links'
+    companion merge, as autoform_cli.annotations._annotations merges it, or as written when there is none; None when
+    Autoform cannot use the template, as it then leaves the row unread. An end with no `uri` takes the template's
+    type and uri; an end with one keeps only what it says, so it is no Lean end of this project by default. Only
+    read: the files keep their rows as committed."""
+    template = links_template()
+    if template is None or not isinstance(annotation, dict):
+        return None
+    if not template:
+        return annotation
+    from literature_links import companion
+
+    try:
+        return companion.merge(template, annotation)
+    except RecursionError:
+        return None
+
+
+def read_subject(annotation: dict) -> tuple[Path | None, str | None]:
+    """The page a row is about, as Autoform's reader finds it (autoform_cli.annotations.read_links), or None and why
+    not. Each end of the row's effective subject names the path its `uri` names from the links folder, percent-decoded
+    and without its query or fragment (autoform_cli.annotations._local), so `t%2Dmain.md` is `t-main.md`. The row is
+    about a page when they name exactly one Markdown file below roadmap/ and one of them names all of it, with no
+    query, fragment or location; Autoform leaves out a row about part of a page, about several pages or about none."""
+    return subject_of(effective(annotation))
+
+
+def subject_of(read: dict | None) -> tuple[Path | None, str | None]:
+    """read_subject of an effective row."""
+    if read is None:
+        return None, "Autoform cannot use the links folder's defaults, so it reads no row there"
+    base = os.fspath(LINKS)
+    roadmap = os.path.join(os.path.dirname(base), "roadmap", "")
+    pages: dict[str, bool] = {}
+    subjects = read.get("subject")
+    for end in subjects if isinstance(subjects, list) else []:
+        uri = end.get("uri") if isinstance(end, dict) else None
+        if (page := reader()._local(uri, base)) and page.startswith(roadmap) and page.endswith(".md"):
+            split = urlsplit(uri)
+            pages[page] = pages.get(page, False) or not (split.query or split.fragment or "location" in end)
+    if len(pages) > 1:
+        return None, "its subject names several pages"
+    if pages and not any(pages.values()):
+        return None, "its subject names only part of its page, by a query, a fragment or a location"
+    if not pages:
+        return None, "its subject names no page below roadmap/"
+    return Path(next(iter(pages))), None
+
+
+def subject_path(annotation: dict) -> Path | None:
+    """The page a row is about (read_subject), or None for a row Autoform leaves out: extraction, the sync and the
+    cards join a row to its page through it alone. As Autoform's, the path is normalized, not resolved: its loader
+    refuses a roadmap with a symbolic link."""
+    return read_subject(annotation)[0]
+
+
+def page_name(annotation: dict) -> str:
+    """A row's page, relative to the roadmap, as one file: `Algebra/./a.md`, `Algebra/a.md` and `Algebra/%61.md` are
+    one page. For a row about no one page, what its subject says."""
+    page, _ = read_subject(annotation)
+    if page is not None:
+        return os.path.relpath(page, os.path.join(os.path.dirname(os.fspath(LINKS)), "roadmap"))
+    subjects = annotation.get("subject")
+    first = subjects[0] if isinstance(subjects, list) and subjects else None
+    return str(first.get("uri", "?")) if isinstance(first, dict) else "?"
+
+
+def is_mathlib(uri: object) -> bool:
+    """Whether a Lean end's uri is Mathlib's repository, as Autoform reads it (autoform_cli.annotations._mathlib):
+    with or without a trailing `/` or `.git`, and a query or a fragment selects nothing there."""
+    return reader()._mathlib(uri)
+
+
+def printable(value: object) -> bool:
+    """Whether Autoform reads a value as text: a nonempty string with nothing that breaks a line."""
+    return isinstance(value, str) and bool(value) and value.isprintable()
+
+
+class LeanEnds(NamedTuple):
+    """A row's Lean ends that name a declaration, as Autoform's reader sorts them (autoform_cli.annotations._facts),
+    each with its place in the row's `object` list: this project's, with their roles, and Mathlib's, with the module
+    the end names when that is text; and whether the article is stated elsewhere, which leaves this project's
+    declarations no credit."""
+
+    own: tuple[tuple[str, object, int], ...]
+    mathlib: tuple[tuple[str, str | None, int], ...]
+    stated_elsewhere: bool
+
+
+def lean_ends(annotation: dict) -> LeanEnds:
+    """A row's effective ends (effective), in their order, as Autoform's reader sorts them. An end of a type it does
+    not know is left out, but with role `states` it still states the article elsewhere. An end of another type it
+    knows (PDF, LaTeX, HTML, generic) is a reference, whatever its role. A Lean end with no location names a whole
+    project, and states the article elsewhere when it has role `states` and is not this project. A Lean end naming
+    a declaration is this project's when its uri, read from the links folder (autoform_cli.annotations._local), is
+    the project's root, and Mathlib's when its uri is Mathlib's repository; any Lean end with role `states` that is
+    not one of this project's declarations states the article elsewhere."""
+    return ends_of(effective(annotation))
+
+
+def ends_of(read: dict | None) -> LeanEnds:
+    """lean_ends of an effective row."""
+    autoform = reader()
+    objects = read.get("object", []) if read is not None else []
+    base = os.fspath(LINKS)
+    project = os.path.dirname(os.path.dirname(base))
+    own, mathlib, elsewhere = [], [], False
+    for place, end in enumerate(objects if isinstance(objects, list) else []):
+        if not isinstance(end, dict) or not isinstance(end.get("type"), str) or end["type"] not in autoform._END_TYPES:
+            elsewhere = elsewhere or (isinstance(end, dict) and end.get("role") == "states")
+            continue
+        if end["type"] != "lean":
+            continue
+        location = end.get("location")
+        if location is None:
+            elsewhere = elsewhere or (end.get("role") == "states" and autoform._local(end.get("uri"), base) != project)
+            continue
+        name = location.get("declaration") if isinstance(location, dict) else None
+        if printable(name) and autoform._local(end.get("uri"), base) == project:
+            own.append((name, end.get("role"), place))
+            continue
+        if printable(name) and autoform._mathlib(end.get("uri")):
+            module = location.get("module")
+            mathlib.append((name, module if printable(module) else None, place))
+        elsewhere = elsewhere or end.get("role") == "states"
+    return LeanEnds(tuple(own), tuple(mathlib), elsewhere)
 
 
 def lean_name(annotation: dict) -> str | None:
-    for end in annotation.get("object", []):
-        name = end.get("location", {}).get("declaration")
-        if name:
-            return name
+    """The ATLAS declaration a row credits, as Autoform's reader credits it: among the row's declarations of this
+    project (lean_ends), the one with role `states`, or its only one when none has a role; never the first by
+    position. None when that is ambiguous, or when the article is stated elsewhere, by an end with role `states`
+    that is a Lean end but no declaration of this project, or of a type Autoform does not know: Autoform then gives
+    none of the project's declarations the credit. Every other end is a reference."""
+    return atlas_credit(lean_ends(annotation))
+
+
+def atlas_credit(ends: LeanEnds) -> str | None:
+    """lean_name of a row's sorted ends."""
+    if ends.stated_elsewhere:
+        return None
+    states = list(dict.fromkeys(name for name, role, _place in ends.own if role == "states"))
+    if len(states) == 1:
+        return states[0]
+    names = list(dict.fromkeys(name for name, _role, _place in ends.own))
+    if len(names) == 1 and all(role is None for _name, role, _place in ends.own):
+        return names[0]
     return None
 
 
+def unowned(files: dict[Path, list[dict]]) -> list[str]:
+    """The pages whose rows name declarations of this project without crediting one (page_owner gives `none`)."""
+    pages = []
+    for rows in files.values():
+        for annotation in rows:
+            read = effective(annotation)
+            try:
+                owner = owner_of(annotation, read)[0]
+            except CreditError:
+                continue  # reported where the Mathlib credit is read
+            if owner == "none" and ends_of(read).own and subject_of(read)[0] is not None:
+                pages.append(page_name(annotation))
+    return sorted(pages)
+
+
+def mathlib_flag(annotation: dict) -> bool:
+    """Whether a row sets Autoform's `mathlib` flag, as its effective row says; a flag that is not a JSON Boolean
+    raises CreditError."""
+    return flag_of(annotation, effective(annotation))
+
+
+def flag_of(annotation: dict, read: dict | None) -> bool:
+    """mathlib_flag of a row, given its effective row."""
+    extensions = (read or {}).get("extensions", {})
+    autoform = extensions.get(NAMESPACE, {}) if isinstance(extensions, dict) else {}
+    flag = autoform.get("mathlib") if isinstance(autoform, dict) else None
+    if flag is not None and not isinstance(flag, bool):
+        raise CreditError(f"{page_name(annotation)} sets `mathlib` to {flag!r}, not true or false")
+    return flag is True
+
+
+# The registry format this checkout reads (extract_v2_lean_dependencies.DUMP_FORMAT["format"]).
+REGISTRY_FORMAT = 5
+
+
+class CreditError(ValueError):
+    """A row whose Mathlib credit cannot be read one way only."""
+
+
+def page_owner(annotation: dict) -> tuple[str, str | None, str | None]:
+    """Which declaration a row credits, the one rule extraction, `lean-facts`, `mathlib-names`, `declarations` and
+    the cards all read: (`mathlib`, name, module) for a Mathlib-credited row (`mathlib_credit`), (`atlas`, name,
+    None) for a row crediting a declaration of this project (`lean_name`), else (`none`, None, None): an unresolved
+    or ambiguous owner credits nothing. Both read the row as Autoform's reader does (lean_ends), and every other end
+    is a reference. A flagged row whose credit is ambiguous, or a flag that is not a Boolean, raises CreditError."""
+    return owner_of(annotation, effective(annotation))
+
+
+def owner_of(annotation: dict, read: dict | None) -> tuple[str, str | None, str | None]:
+    """page_owner of a row, given its effective row."""
+    ends = ends_of(read)
+    mathlib = credit_of(annotation, read, ends)
+    if mathlib is not None:
+        return "mathlib", mathlib[0], mathlib[1]
+    name = atlas_credit(ends)
+    return ("atlas", name, None) if name is not None else ("none", None, None)
+
+
+def mathlib_credit(annotation: dict) -> tuple[str, str | None] | None:
+    """The Mathlib declaration a row credits, with the module the row names: the row sets Autoform's `mathlib`
+    flag, which is what makes Autoform show the page as in Mathlib, and its one Lean end with a declaration names
+    Mathlib's repository (lean_ends). A Mathlib end on a row without the flag is a reference: it credits nothing, and
+    the row's own declaration keeps its credit. A flagged row that names no Mathlib declaration, several, or a
+    declaration of the project as well raises CreditError."""
+    read = effective(annotation)
+    return credit_of(annotation, read, ends_of(read))
+
+
+def credit_of(annotation: dict, read: dict | None, ends: LeanEnds) -> tuple[str, str | None] | None:
+    """mathlib_credit of a row, given its effective row and its sorted ends."""
+    if not flag_of(annotation, read):
+        return None
+    if len(ends.mathlib) != 1 or ends.own:
+        raise CreditError(f"{page_name(annotation)} sets `mathlib` but names {len(ends.mathlib)} Mathlib declarations "
+                          f"in Lean links and {len(ends.own)} of this project; a Mathlib-credited row names exactly "
+                          "one Mathlib declaration and none of this project")
+    name, module, _place = ends.mathlib[0]
+    return name, module
+
+
+def mathlib_name(annotation: dict) -> str | None:
+    """The Mathlib declaration a row credits, or None (see mathlib_credit)."""
+    credit = mathlib_credit(annotation)
+    return credit[0] if credit else None
+
+
+def links_problems() -> list[str]:
+    """What blueprint/links/ holds that Autoform and the sync would read differently: a defaults file Autoform cannot
+    use, as it then reads no row of the folder, or one that sets a page's `kind` or `status`, which lean-facts derives
+    from the Lean and would not mask; an annotation file Autoform reads that the sync does not (in a
+    subfolder, or named `.json`, `.ndjson` or in capitals), or one the sync reads that Autoform does not (hidden, a
+    symbolic link or not a regular file); and what Autoform's reader leaves out as it reads the files (reader_warnings),
+    such as a line literature-links does not read as one JSON object, which the sync would read. The sync reads
+    blueprint/links/*.jsonl; Autoform, as its reader walks the folder (autoform_cli.annotations._walk)."""
+    autoform = reader()
+    if not LINKS.is_dir():
+        return []
+    where = LINKS.relative_to(wiki.ROOT).as_posix() if LINKS.is_relative_to(wiki.ROOT) else os.fspath(LINKS)
+    template = links_template()
+    if template is None:
+        return [f"Autoform cannot use {where}/{autoform._DEFAULTS}, so it reads no row of {where}"]
+    # lean-facts derives a page's kind and status from the Lean, and removes them where the Lean gives none: one the
+    # defaults gave would show through.
+    inherited = [f"{where}/{autoform._DEFAULTS} sets `{key}`, which lean-facts derives for each page from the Lean; "
+                 "remove it" for key in ("kind", "status") if key in template]
+    drops = autoform.Drops()
+    contents, broken = autoform._walk(LINKS, drops)
+    theirs = {relative for relative in contents if (name := relative.rpartition("/")[2]) != autoform._DEFAULTS
+              and name.lower().endswith(autoform._SUFFIXES)}
+    ours = {path.name for path in LINKS.glob("*.jsonl")}
+    problems = inherited + [f"Autoform reads {where}/{relative}, which the sync does not; keep annotations in "
+                            f"{where}/*.jsonl" for relative in sorted(theirs - ours)]
+    problems += [f"the sync reads {where}/{name}, which Autoform does not: it is hidden, a symbolic link or not a "
+                 "regular file" for name in sorted(ours - theirs)]
+    return problems + [f"Autoform's reader leaves out what it cannot read: {warning}"
+                       for warning in (*drops.warnings(), *reader_warnings(contents, broken))]
+
+
+# What Autoform's reader warns about as it reads the files of a links folder, by the folder and the files' digest.
+READER_WARNINGS: dict[tuple[str, str], tuple[str, ...]] = {}
+
+
+def reader_warnings(contents: dict[str, bytes], broken: set[str]) -> tuple[str, ...]:
+    """What Autoform's reader warns about as it reads the annotations of LINKS (autoform_cli.annotations._annotations),
+    *contents* and *broken* as its walk gives them: a file or a line it leaves out, such as one that is not UTF-8, or a
+    line that literature-links' parser does not read as one JSON object (a key given twice, say). Kept by the files'
+    digest: reading them takes a second on the wiki."""
+    autoform = reader()
+    digest = hashlib.sha256()
+    for part in (*(piece for relative in sorted(contents) for piece in (relative.encode("utf-8", "surrogateescape"),
+                                                                        contents[relative])),
+                 *(f"\0{parent}".encode("utf-8", "surrogateescape") for parent in sorted(broken))):
+        digest.update(len(part).to_bytes(8, "big"))
+        digest.update(part)
+    key = (os.fspath(LINKS), digest.hexdigest())
+    if key not in READER_WARNINGS:
+        drops = autoform.Drops()
+        autoform._annotations(LINKS, contents, broken, drops)
+        READER_WARNINGS[key] = tuple(drops.warnings())
+    return READER_WARNINGS[key]
+
+
+def credit_problems(files: dict[Path, list[dict]]) -> list[str]:
+    """Why the rows cannot be read one way only, as Autoform reads them, found before anything is extracted or
+    written: what the links folder holds that Autoform reads otherwise (links_problems); a row Autoform leaves out,
+    about part of a page, several pages or none (read_subject); a row whose credit CreditError refuses; a page with
+    several rows, which Autoform reads together, while a page has one row; credit, or `kind` and `status`, on a folder
+    page's row; and a declaration, Mathlib's or this project's, that several statement pages credit, while a
+    declaration has one page. It has no Lean index, so a row an
+    earlier sync wrote with a module and a name only stands for no declaration here: owner_problems compares those
+    where the index is at hand (lean-facts, declarations), and the cards' strict check where the extraction is."""
+    problems = links_problems()
+    if links_template() is None:
+        return problems
+    roadmap = os.path.join(os.path.dirname(os.fspath(LINKS)), "roadmap")
+    rows_of: Counter = Counter()
+    pages_of: dict[tuple[str, str], dict[str, None]] = defaultdict(dict)
+    for file, rows in files.items():
+        for annotation in rows:
+            read = effective(annotation)
+            page, why = subject_of(read)
+            if page is None:
+                problems.append(f"a row of {Path(file).name} about {page_name(annotation)} is one Autoform leaves out: "
+                                f"{why}; a row names its page whole")
+                continue
+            rows_of[page] += 1
+            where = os.path.relpath(page, roadmap)
+            try:
+                owner, name, _module = owner_of(annotation, read)
+            except CreditError as error:
+                problems.append(str(error))
+                continue
+            if page.name == "README.md":
+                # A folder page states nothing, so it credits nothing and has no facts (Autoform would show it so).
+                if owner != "none":
+                    problems.append(f"{where} is a folder page, which credits no declaration, but its row credits "
+                                    f"{name}")
+                if {"kind", "status"} & annotation.keys():
+                    problems.append(f"{where} is a folder page, but its row has `kind` or `status`, which lean-facts "
+                                    "writes on statement pages only")
+            elif owner != "none":
+                pages_of[(owner, name)][where] = None
+    problems += [f"{os.path.relpath(page, roadmap)} has {count} rows, which Autoform reads together; a page has one row"
+                 for page, count in sorted(rows_of.items()) if count > 1]
+    for (owner, name), pages in pages_of.items():
+        what = f"the Mathlib declaration {name}" if owner == "mathlib" else f"the declaration {name} of this project"
+        first, *others = pages
+        problems += [f"{first} and {page} both credit {what}; a declaration has one page" for page in others]
+    return problems
+
+
+def pageless_rows(files: dict[Path, list[dict]]) -> list[str]:
+    """The rows whose page does not exist, which the build's steps (the extraction, lean-facts and the cards) refuse
+    before writing: Autoform leaves such a row out, so a declaration it credits would have no page, and a step would
+    otherwise take the extraction for stale."""
+    roadmap = os.path.join(os.path.dirname(os.fspath(LINKS)), "roadmap")
+    return [f"{os.path.relpath(page, roadmap)}: its row names a page that does not exist; remove the row or restore "
+            "the page" for rows in files.values() for row in rows
+            if (page := subject_path(row)) is not None and not page.is_file()]
+
+
+def credited_mathlib(files: dict[Path, list[dict]]) -> tuple[dict[str, tuple[str | None, str]], list[str]]:
+    """Every Mathlib declaration the statement pages credit, with the module its row names and its page, and the
+    problems that leave the credit ambiguous (credit_problems, two pages crediting one declaration among them)."""
+    credited: dict[str, tuple[str | None, str]] = {}
+    problems = credit_problems(files)
+    for rows in files.values():
+        for annotation in rows:
+            read = effective(annotation)
+            page, _ = subject_of(read)
+            if page is None or page.name == "README.md":
+                continue
+            try:
+                credit = credit_of(annotation, read, ends_of(read))
+            except CreditError:
+                continue  # among the problems
+            if credit is None:
+                continue
+            name, module = credit
+            credited.setdefault(name, (module, page_name(annotation)))
+    return credited, problems
+
+
+def names_digest(names) -> str:
+    """The digest of the credited names, sorted, one per line, as the registry records it: it depends on the
+    annotations alone, whatever modules a checkout has."""
+    return hashlib.sha256("".join(f"{name}\n" for name in sorted(names)).encode("utf-8")).hexdigest()
+
+
+def registry_form_problems(registry: object) -> list[str]:
+    """Whether a registry has the form extract_v2_lean_dependencies.py --registry writes, checked before anything
+    reads its tables: an object whose tables have their types, whose entries are well formed (registry_shape_problems),
+    in the current format."""
+    if not isinstance(registry, dict) or not all(isinstance(registry.get(key), dict) for key in
+                                                ("bridges", "left_out", "mathlib", "inputs")) or \
+            not all(isinstance(registry.get(key), list) for key in ("missing", "project")):
+        return ["the registry is not one extract_v2_lean_dependencies.py --registry writes"]
+    problems = registry_shape_problems(registry)
+    if problems:
+        return problems
+    if registry["inputs"].get("format") != REGISTRY_FORMAT:
+        return [f"the registry's format is {registry['inputs'].get('format')!r}, not {REGISTRY_FORMAT}; make it "
+                "again with extract_v2_lean_dependencies.py"]
+    return []
+
+
+def registry_shape_problems(registry: dict) -> list[str]:
+    """What in a registry's tables is not as extract_v2_lean_dependencies.py writes it, checked before any write: each
+    entry of `bridges`, `left_out` and `mathlib` lists its statement and its proof edges, none under both."""
+    def names(value) -> bool:
+        return isinstance(value, list) and all(isinstance(item, str) for item in value)
+
+    problems = []
+    for table in ("bridges", "left_out", "mathlib"):
+        for name, entry in registry[table].items():
+            if not (isinstance(entry, dict) and names(entry.get("statement")) and names(entry.get("proof"))) or \
+                    set(entry["statement"]) & set(entry["proof"]) or \
+                    (table == "mathlib" and not (isinstance(entry.get("module"), str) and
+                                                 isinstance(entry.get("kind"), str) and
+                                                 isinstance(entry.get("proposition"), bool))):
+                problems.append(f"the registry's {table} entry for {name} is malformed")
+    for key in ("missing", "project", "unplaced"):
+        if key in registry and not names(registry[key]):
+            problems.append(f"the registry's {key} list is malformed")
+    return problems
+
+
+def names_text(credited: dict[str, tuple[str | None, str]]) -> str:
+    """The input of the dump's Mathlib registry: each credited declaration, sorted, with a tab and its module when
+    the row names one the build has."""
+    lines = []
+    for name in sorted(credited):
+        module = mathlib_module(credited[name][0])
+        lines.append(f"{name}\t{module}\n" if module else f"{name}\n")
+    return "".join(lines)
+
+
+def mathlib_module(module: str | None) -> str | None:
+    """A row's Mathlib module when the build has it (a Mathlib file in Lake's package checkout), else None: the
+    dump imports every module it is given, and one that does not exist would stop the build."""
+    if not module or not re.fullmatch(r"Mathlib(?:\.[A-Za-z0-9_']+)+", module):
+        return None
+    path = wiki.ROOT / ".lake" / "packages" / "mathlib" / (module.replace(".", "/") + ".lean")
+    return module if path.is_file() else None
+
+
+def checkout_problem() -> str | None:
+    """Why lean-facts may not write into this checkout: its blueprint/ is not as committed at HEAD (a file changed,
+    staged, deleted or untracked there, an earlier lean-facts run's output among them), or it is no Git checkout."""
+    try:
+        changed = subprocess.run(["git", "-C", str(wiki.ROOT), "status", "--porcelain", "--untracked-files=all", "--",
+                                  "blueprint"], check=True, capture_output=True, text=True).stdout.splitlines()
+    except (OSError, subprocess.CalledProcessError):
+        return (f"{wiki.ROOT} is not a Git checkout; lean-facts runs on a clean checkout of the wiki, whose blueprint/ "
+                "is as committed")
+    if changed:
+        return (f"blueprint/ is not as committed ({len(changed)} paths differ, first {changed[0][3:]}); lean-facts "
+                "runs on a clean checkout, never on its own output: run the build in a fresh disposable checkout or "
+                "worktree (save or stash your own work first); in a disposable checkout, `git restore --source=HEAD "
+                "--staged --worktree -- blueprint` restores it, once you have reviewed any untracked files there")
+    return None
+
+
+def synced_rows() -> list[str]:
+    """Where rows carry `kind` or `status`, which only lean-facts writes, at build time: rows of a checkout it synced,
+    which no command that writes committed rows (declarations, ids) may write back. A check of those two fields, not
+    of every edit lean-facts makes; a line that is no row is left to the command."""
+    found = []
+    for path in sorted(LINKS.glob("*.jsonl")):
+        for number, line in enumerate(path.read_text(encoding="utf-8").replace("\r\n", "\n").split("\n"), 1):
+            try:
+                row = json.loads(line) if line.strip() else None
+            except ValueError:
+                continue
+            if isinstance(row, dict) and {"kind", "status"} & row.keys():
+                found.append(f"{path.name}, line {number}: the row carries `kind` or `status`, which lean-facts writes "
+                             "at build time, so lean-facts has run on this checkout; run this on one it has not (in a "
+                             "disposable checkout, `git restore --source=HEAD --staged --worktree -- blueprint`)")
+    return found
+
+
+def run_mathlib_names(output: Path) -> int:
+    """Write the Mathlib declarations pages credit (names_text): the input of the dump's Mathlib registry. A name
+    whose module is unknown is listed alone; the dump then finds it only if another module brings it, and otherwise
+    reports it missing. An ambiguous credit writes nothing."""
+    credited, problems = credited_mathlib(read_annotations())
+    if problems:
+        for problem in problems:
+            print(f"error: {problem}", file=sys.stderr)
+        return 1
+    files = {"OUTPUT": output, **{f"the links file {path.name}": path for path in sorted(LINKS.glob("*.jsonl"))}}
+    problem = extract.file_problem(files, ("OUTPUT",), {"blueprint/": wiki.VAULT})
+    if problem:
+        print(f"error: {problem}", file=sys.stderr)
+        return 2
+    extract.write_whole({output: names_text(credited)})
+    print(f"{len(credited)} Mathlib declarations credited -> {output}")
+    return 0
+
+
+def registry_edge_problems(registry: dict, owners: set[str]) -> list[str]:
+    """What in a registry's edges no consumer may act on: a bridge, kept or left out, from a declaration no page
+    credits to the project (`owners`), an edge to a declaration the registry does not find, or one pair both kept and
+    left out, of either kind."""
+    found = set(registry["mathlib"])
+    problems = []
+    for table in ("bridges", "left_out", "mathlib"):
+        for name, entry in sorted(registry[table].items()):
+            if table != "mathlib" and name not in owners:
+                problems.append(f"the registry's {table} name {name}, which no page credits to this project")
+            for target in sorted(set(entry["statement"]) | set(entry["proof"])):
+                if target not in found:
+                    problems.append(f"the registry's {table} entry for {name} names {target}, which it does not find")
+    for name in sorted(registry["bridges"].keys() & registry["left_out"].keys()):
+        kept, out = registry["bridges"][name], registry["left_out"][name]
+        both = (set(kept["statement"]) | set(kept["proof"])) & (set(out["statement"]) | set(out["proof"]))
+        problems += [f"the registry both keeps and leaves out the bridge {name} -> {target}" for target in sorted(both)]
+    return problems
+
+
+def registry_problems(registry: object, files: dict[Path, list[dict]], owners: set[str] | None = None) -> list[str]:
+    """Why a registry cannot speak for the checkout's Mathlib credit, before anything is written: its shape and
+    format, the list of credited names it was made from (by digest), found and missing names that do not split exactly
+    that list, edges no consumer may act on (registry_edge_problems, from the declarations pages credit: *owners*,
+    or those their Lean links name), a module a row names that is not the declaration's, or an ambiguous credit."""
+    credited, problems = credited_mathlib(files)
+    if problems:
+        return problems
+    problems = registry_form_problems(registry)
+    if problems:
+        return problems
+    inputs = registry["inputs"]
+    if inputs.get("names_sha256") != names_digest(credited):
+        return ["the registry was made for another list of credited Mathlib names than the checkout's; make the "
+                "dump and the registry from `sync_wiki.py mathlib-names` of this checkout"]
+    if not (isinstance(inputs.get("dump_sha256"), str) and re.fullmatch(r"[0-9a-f]{64}", inputs["dump_sha256"])):
+        return ["the registry does not name the dump it was made from (`inputs.dump_sha256`)"]
+    if inputs.get("mathlib_rev") != mathlib_revision():
+        return [f"the registry was made at Mathlib {inputs.get('mathlib_rev')}, but this checkout pins "
+                f"{mathlib_revision()} in lake-manifest.json"]
+    if inputs.get("requested") != len(credited):
+        return ["the registry answers another number of credited Mathlib names than the checkout's"]
+    found, missing = set(registry["mathlib"]), set(registry["missing"])
+    if found & missing or found | missing != credited.keys() or not set(registry["project"]) <= missing:
+        return ["the registry's found and missing names do not split the checkout's credited names"]
+    problems = registry_edge_problems(registry, project_owners(files) if owners is None else owners)
+    if problems:
+        return problems
+    for name, (module, path) in sorted(credited.items()):
+        if not (wiki.ROADMAP / path).is_file():
+            problems.append(f"{path} credits {name}, but the page is missing")
+        if name in found and module is not None and module != registry["mathlib"][name].get("module"):
+            problems.append(f"{path} names the module {module} for {name}, which is in "
+                            f"{registry['mathlib'][name].get('module')}")
+    return problems
+
+
+def extraction_problems(registry: dict, dependency_file: Path) -> list[str]:
+    """Whether a registry was made in the one run that made *dependency_file*: the extractor records the digest of the
+    extraction it wrote beside it (`inputs.extraction_sha256`), and the two are valid only as that pair."""
+    if registry["inputs"].get("extraction_sha256") != hashlib.sha256(dependency_file.read_bytes()).hexdigest():
+        return [f"the registry was not made with {dependency_file} (its `inputs.extraction_sha256` differs); make the "
+                "extraction and the registry again, in one run"]
+    return []
+
+
+def mathlib_revision() -> str | None:
+    """Mathlib's revision in the checkout's lake-manifest.json, which the registry records it was made at."""
+    manifest = wiki.ROOT / "lake-manifest.json"
+    if not manifest.is_file():
+        return None
+    packages = json.loads(manifest.read_text()).get("packages", [])
+    return next((package.get("rev") for package in packages if package.get("name") == "mathlib"), None)
+
+
+class UnlinkError(ValueError):
+    """A row that unlinking would leave crediting a declaration, as Autoform reads it."""
+
+
+def drop_ends(annotation: dict, places: set[int], references: set[int] = frozenset()) -> None:
+    """Take the ends at *places* (lean_ends' places) out of a row's `object` list, and give those at *references*, its
+    other declarations of this project with no role, role `uses`: they stay, as references, so that none of them takes
+    the credit. Its other ends stay as committed. A list left empty goes, unless the folder defaults would then give
+    the row a declaration of this project; an empty list masks them."""
+    objects = annotation.get("object")
+    kept = [end if place not in references or not isinstance(end, dict) else {**end, "role": "uses"}
+            for place, end in enumerate(objects if isinstance(objects, list) else []) if place not in places]
+    if kept:
+        annotation["object"] = kept
+        return
+    annotation.pop("object", None)
+    if lean_ends(annotation).own:
+        annotation["object"] = []
+
+
+def unlink(annotation: dict, name: str) -> None:
+    """Unlink a row whose credited declaration of this project, *name*, the Lean no longer has: the ends naming it go,
+    as Autoform's render refuses a `lean:` name the Lean does not declare; the row's other declarations of this
+    project stay as references (drop_ends), its other links as committed, and a module and name an earlier sync wrote
+    go (retire_legacy). The row, read again as Autoform reads it, credits nothing and stands for nothing, so a second
+    pass leaves it as it is; else nothing is written (UnlinkError)."""
+    ends = lean_ends(annotation)
+    drop_ends(annotation, {place for other, _role, place in ends.own if other == name},
+              {place for other, role, place in ends.own if other != name and role is None})
+    retire_legacy(annotation)
+    unowned_after(annotation, name)
+
+
+def retire_legacy(annotation: dict) -> None:
+    """Take the module and name an earlier sync wrote under OWN (legacy_pair's) out of a row being unlinked: the row's
+    Lean link stood in their place, and once it goes a later pass would resolve them and read the page as another
+    declaration's. The row's other OWN keys stay."""
+    extensions = annotation.get("extensions")
+    own = extensions.get(OWN) if isinstance(extensions, dict) else None
+    if not (isinstance(own, dict) and has_legacy_name(own)):
+        return
+    del own["module"], own["name"]
+    if not own:
+        del extensions[OWN]
+    if not extensions:
+        del annotation["extensions"]
+
+
+def unowned_after(annotation: dict, name: str) -> None:
+    """Raise UnlinkError unless the row, read again over the folder defaults, credits nothing and keeps no module and
+    name an earlier sync wrote, which a later pass would resolve to a declaration (legacy_pair)."""
+    try:
+        owner = page_owner(annotation)
+    except CreditError as error:
+        raise UnlinkError(f"unlinking {name} from {page_name(annotation)} would leave it ambiguous: {error}") from error
+    if owner[0] != "none":
+        raise UnlinkError(f"unlinking {name} from {page_name(annotation)} would leave it crediting {owner[1]}; fix its "
+                          "row")
+    if legacy_pair(annotation) is not None:
+        raise UnlinkError(f"unlinking {name} from {page_name(annotation)} would leave the module and name an earlier "
+                          "sync wrote, which a later pass would read as its declaration; fix its row")
+
+
+def drop_mathlib_credit(annotation: dict) -> None:
+    """Unlink a Mathlib-credited row whose declaration is missing: its credited Lean end, the kind and status derived
+    from it, the `mathlib` flag that makes Autoform show it as in Mathlib, and a module and name an earlier sync wrote
+    (retire_legacy) all go; its other ends stay. A flag the folder defaults would still give it is masked
+    (`mathlib: false`). Read again, the row credits nothing and stands for nothing (else UnlinkError, before anything
+    is written)."""
+    name = mathlib_name(annotation) or "?"
+    drop_ends(annotation, {place for _name, _module, place in lean_ends(annotation).mathlib})
+    annotation.pop("kind", None)
+    annotation.pop("status", None)
+    extensions = annotation.get("extensions", {})
+    autoform = extensions.get("org.autoform")
+    if isinstance(autoform, dict):
+        autoform.pop("mathlib", None)
+        if not autoform:
+            del extensions["org.autoform"]
+    if isinstance(extensions, dict) and not extensions:
+        annotation.pop("extensions", None)
+    retire_legacy(annotation)
+    if mathlib_flag(annotation):
+        annotation.setdefault("extensions", {}).setdefault(NAMESPACE, {})["mathlib"] = False
+    unowned_after(annotation, name)
+
+
+def read_rows(text: str) -> list[dict]:
+    """The rows of a links file, one JSON object a line, its lines split as Autoform splits them: at a line feed or a
+    carriage return, never at another line separator a string may hold (U+2028, say)."""
+    return [json.loads(line) for line in text.replace("\r\n", "\n").replace("\r", "\n").split("\n") if line.strip()]
+
+
 def read_annotations() -> dict[Path, list[dict]]:
-    return {
-        path: [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
-        for path in sorted(LINKS.glob("*.jsonl"))
-    }
+    return {path: read_rows(path.read_text(encoding="utf-8")) for path in sorted(LINKS.glob("*.jsonl"))}
 
 
 def write_annotations(files: dict[Path, list[dict]]) -> None:
@@ -297,6 +1036,104 @@ def has_legacy_name(own: dict | None) -> bool:
     return bool(own and "module" in own and "name" in own)
 
 
+def legacy_pair(annotation: dict | None) -> tuple[str, str] | None:
+    """The module and name an earlier sync wrote under OWN on a row with no Lean link (no `object`), which lean-facts,
+    declarations and the extraction resolve through the Lean index (legacy_lean_name); lean-facts then gives the build's
+    row that declaration's Lean link, which the cards read. None for any other row: a row with a Lean link is read by
+    page_owner alone. The one test of such a row everywhere."""
+    if not isinstance(annotation, dict) or annotation.get("object"):
+        return None
+    extensions = annotation.get("extensions")
+    own = extensions.get(OWN) if isinstance(extensions, dict) else None
+    if not (isinstance(own, dict) and has_legacy_name(own)):
+        return None
+    return own["module"], own["name"]
+
+
+def shared_owner(name: str, pages: dict[str, bool]) -> str:
+    """The problem of a declaration of this project that several pages stand for, each with whether it does so by the
+    module and name an earlier sync wrote (legacy_pair)."""
+    shown = [f"{page} (by the module and name an earlier sync wrote)" if legacy else page
+             for page, legacy in pages.items()]
+    return (f"{', '.join(shown[:-1])} and {shown[-1]} {'both' if len(shown) == 2 else 'all'} stand for the declaration "
+            f"{name} of this project; a declaration has one page")
+
+
+def owner_problems(files: dict[Path, list[dict]], index) -> list[str]:
+    """The declarations of this project several statement pages stand for once the Lean index resolves the rows an
+    earlier sync wrote with a module and a name only (annotation_key), one of those pages at least such a row: a
+    declaration has one page; and such a row that also holds back a declaration (held_problem), which it cannot both
+    stand for and hold back. credit_problems compares the pages' own credit alone, as it has no index to resolve
+    these rows; a row the index does not resolve stands for nothing (it is stale), and a row credit_problems refuses
+    is left to it."""
+    roadmap = os.path.join(os.path.dirname(os.fspath(LINKS)), "roadmap")
+    pages_of: dict[str, dict[str, bool]] = defaultdict(dict)
+    problems = []
+    for rows in files.values():
+        for annotation in rows:
+            page = subject_path(annotation)
+            if page is None or page.name == "README.md":
+                continue
+            try:
+                owner, name, _module = page_owner(annotation)
+            except CreditError:
+                continue
+            legacy = owner == "none" and legacy_pair(annotation) is not None
+            where = os.path.relpath(page, roadmap)
+            if legacy:
+                name = legacy_lean_name(annotation["extensions"][OWN], index)
+                if name and "held" in annotation["extensions"][OWN]:
+                    problems.append(f"{where} (by the module and name an earlier sync wrote): "
+                                    f"{held_problem(annotation, name, index)}")
+                    continue
+            elif owner != "atlas":
+                continue
+            if name:
+                pages_of[name][where] = pages_of[name].get(where, False) or legacy
+    return problems + [shared_owner(name, pages) for name, pages in pages_of.items()
+                       if len(pages) > 1 and any(pages.values())]
+
+
+def held_conflicts(files: dict[Path, list[dict]], index=None) -> list[str]:
+    """The held markers that credit would override on the build's path, which the extraction, lean-facts and the
+    cards refuse before writing (declarations reports them with its other held-marker problems): a row that holds a
+    declaration back but credits one, of this project or of Mathlib, by a Lean link, or by a module and a name the
+    Lean index resolves (with *index*); and a held declaration that another row credits. Rows credit_problems refuses
+    are left to it."""
+    roadmap = os.path.join(os.path.dirname(os.fspath(LINKS)), "roadmap")
+    credited: dict[str, str] = {}
+    holders: list[tuple[str, dict, str | None, bool]] = []
+    for rows in files.values():
+        for annotation in rows:
+            page = subject_path(annotation)
+            if page is None:
+                continue
+            try:
+                owner, name, _module = page_owner(annotation)
+            except CreditError:
+                continue
+            legacy = owner == "none" and legacy_pair(annotation) is not None
+            if legacy and index is not None:
+                name = legacy_lean_name(annotation["extensions"][OWN], index)
+            elif owner == "none":
+                name = None
+            where = os.path.relpath(page, roadmap)
+            own = annotation.get("extensions", {}).get(OWN)
+            if isinstance(own, dict) and "held" in own:
+                holders.append((where, annotation, name, legacy))
+            elif name:
+                credited.setdefault(name, where)
+    problems = []
+    for where, annotation, name, legacy in holders:
+        held = held_name(annotation) or "a declaration"
+        if name:
+            how = " (by the module and name an earlier sync wrote)" if legacy else ""
+            problems.append(f"{where}{how}: it holds {held} back but is linked to {name}")
+        elif held in credited:
+            problems.append(f"{where}: it holds {held} back, which {credited[held]} links")
+    return problems
+
+
 def legacy_lean_name(own: dict | None, index) -> str | None:
     """The Lean name of a page an earlier sync wrote with only a module and a name (no Lean link), read through
     the Lean index: the one declaration of that module whose last name component is that name; None when the
@@ -310,12 +1147,15 @@ def legacy_lean_name(own: dict | None, index) -> str | None:
     return names[0] if len(names) == 1 else None
 
 
-def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[str]]:
+def apply_lean_facts(index, dependencies: dict, registry: dict | None = None) -> tuple[dict[str, int], list[str]]:
     """Write the Lean's facts into the checkout's pages and annotations, and name each page whose declaration the
-    Lean no longer has. Such a page loses its link here, so it builds unlinked: a Lean change that renames or
-    deletes a declaration never fails the wiki's build, and `declarations` reports the page for an editor."""
+    Lean no longer has. Such a page loses its link here (unlink), so it builds unlinked: a Lean change that renames
+    or deletes a declaration never fails the wiki's build, and `declarations` reports the page for an editor. With a
+    registry, Mathlib-credited pages get their kind and their dependencies, and ATLAS pages the Mathlib-credited
+    pages they use (see the module docstring)."""
     files = read_annotations()
-    counts = {"articles": 0, "unresolved": 0, "edges": 0}
+    counts = {"articles": 0, "unresolved": 0, "edges": 0, "mathlib": 0}
+    mathlib_pages: dict[Path, str] = {}
     unlinked: list[str] = []
     stale: list[Path] = []
     sorry_cache: dict[Path, bool] = {}
@@ -327,22 +1167,63 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
         return sorry_cache[path]
 
     articles: dict[Path, dict] = {}
+    names: dict[Path, str | None] = {}
     for rows in files.values():
         for annotation in rows:
             path = subject_path(annotation)
-            if path.name == "README.md":
+            if path is None or path.name == "README.md":
+                # A row Autoform leaves out, which lean-facts refuses first, or a folder page's.
                 continue
-            name, own = lean_name(annotation), annotation.get("extensions", {}).get(OWN)
-            if not name and not has_legacy_name(own):
+            try:
+                owner, credited, module = page_owner(annotation)
+            except CreditError:
+                # Autoform shows a flagged row as in Mathlib; lean-facts refuses it first.
+                continue
+            if owner == "mathlib":
+                if registry is None:
+                    continue
+                found = registry["mathlib"].get(credited)
+                if found is None:
+                    counts["unresolved"] += 1
+                    drop_mathlib_credit(annotation)
+                    why = ("the project's, not Mathlib's" if credited in registry["project"] else
+                           (f"not in the modules the build imported; the build's Mathlib has no module {module}"
+                            if module else "not in the modules the build imported; its row names no module")
+                           if credited in registry.get("unplaced", []) else "missing from Mathlib")
+                    unlinked.append(f"{credited} ({path.relative_to(wiki.ROADMAP)}, credited to Mathlib, {why})")
+                    stale.append(path)
+                    continue
+                annotation["kind"] = found["kind"]
+                annotation.pop("status", None)
+                mathlib_pages[path] = credited
+                counts["mathlib"] += 1
+                continue
+            name = credited if owner == "atlas" else None
+            own = annotation["extensions"][OWN] if legacy_pair(annotation) else None
+            if own is not None and "held" not in own:
+                # A row an earlier sync wrote with only a module and a name stands for the one declaration the Lean
+                # index gives it (legacy_lean_name), and the build's row then carries that declaration's Lean link,
+                # which Autoform and the cards read as they read any other; one the index does not resolve credits
+                # nothing and is stale. A row that also holds a declaration back credits none (owner_problems
+                # refuses it first).
+                name = legacy_lean_name(own, index)
+                if name is None:
+                    counts["unresolved"] += 1
+                    annotation.pop("kind", None)
+                    annotation.pop("status", None)
+                    stale.append(path)
+                    continue
+                annotation["object"] = [{"location": {"declaration": name}, "role": "states"}]
+            if not name:
                 # A planned page: its prerequisites are its own, and with no declaration it has no kind or status.
                 annotation.pop("kind", None)
                 annotation.pop("status", None)
                 continue
-            kind, status = lean_facts_for(name, own, index, sorry)
+            kind, status = lean_facts_for(name, None, index, sorry)
             if kind is None:
                 counts["unresolved"] += 1
                 if name:
-                    annotation.pop("object", None)
+                    unlink(annotation, name)
                     unlinked.append(f"{name} ({path.relative_to(wiki.ROADMAP)})")
                 # A fact an earlier pass derived no longer holds.
                 annotation.pop("kind", None)
@@ -354,13 +1235,9 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
                 annotation["status"] = status
             else:
                 annotation.pop("status", None)
-            articles[path] = annotation
+            articles[path], names[path] = annotation, name
             counts["articles"] += 1
-    by_name = {lean_name(a): path for path, a in articles.items() if lean_name(a)}
-    for path, a in articles.items():
-        resolved = None if lean_name(a) else legacy_lean_name(a.get("extensions", {}).get(OWN), index)
-        if resolved:
-            by_name.setdefault(resolved, path)
+    by_name = {name: path for path, name in names.items() if name}
     # declarations marks a page it wrote with {"from": "docstring"} under OWN; only a page whose declaration the
     # index can't see also keeps its module and name there.
     def find(name: str) -> Path | None:
@@ -381,6 +1258,22 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
                     bucket.append(other)
                     seen.add(other)
                     counts["edges"] += 1
+    by_mathlib = {name: path for path, name in mathlib_pages.items()}
+
+    def add_mathlib(path: Path, entry: dict, statement: list[Path], proof: list[Path]) -> None:
+        seen = set(statement + proof)
+        for kind, bucket in (("statement", statement), ("proof", proof)):
+            for dependency in entry.get(kind, []):
+                other = by_mathlib.get(dependency)
+                if other is not None and other != path and other not in seen:
+                    bucket.append(other)
+                    seen.add(other)
+                    counts["edges"] += 1
+
+    for name, entry in (registry or {}).get("bridges", {}).items():
+        path = find(name)
+        if path is not None and path in covered:
+            add_mathlib(path, entry, *depends[path])
     titles: dict[Path, str] = {}
 
     def title(path: Path) -> str:
@@ -390,7 +1283,7 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
         return titles[path]
 
     for path, (statement, proof) in depends.items():
-        if path not in covered and not lean_name(articles[path]):
+        if path not in covered and not names[path]:
             # A page with no Lean link and no compiled row: its dependencies are unknown, so no section claims none.
             body = path.read_text()
             if has_lean_sections(body):
@@ -406,6 +1299,20 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
             sections.append(("Proof depends on", [link(other) for other in proof]))
         # Both Lean sections are rewritten, so a dependency that is gone leaves no section behind.
         path.write_text(with_sections(without_sections(path.read_text(), LEAN_SECTIONS), sections))
+    for path, name in mathlib_pages.items():
+        # The registry follows uses through every declaration no page credits, so, as for an ATLAS page, a page it
+        # lists nothing for has no prerequisites among the pages.
+        statement, proof = [], []
+        add_mathlib(path, registry["mathlib"][name], statement, proof)
+        page = path.relative_to(wiki.VAULT)
+
+        def mathlib_link(other: Path) -> str:
+            return f"- [{wiki.link_text(title(other))}]({wiki.rel(page, other.relative_to(wiki.VAULT))})"
+
+        sections = [("Depends on", [mathlib_link(other) for other in statement] or ["This node has no prerequisites."])]
+        if proof:
+            sections.append(("Proof depends on", [mathlib_link(other) for other in proof]))
+        path.write_text(with_sections(without_sections(path.read_text(), LEAN_SECTIONS), sections))
     for path in stale:
         if path.is_file():
             body = path.read_text()
@@ -413,6 +1320,37 @@ def apply_lean_facts(index, dependencies: dict) -> tuple[dict[str, int], list[st
                 path.write_text(without_sections(body, LEAN_SECTIONS))
     write_annotations(files)
     return counts, unlinked
+
+
+def project_owners(files: dict[Path, list[dict]], index=None) -> set[str]:
+    """The declarations of this project that statement pages credit, as page_owner reads their rows, and, given the
+    Lean index, those it gives the rows an earlier sync wrote with only a module and a name (legacy_lean_name)."""
+    owners = set()
+    for rows in files.values():
+        for annotation in rows:
+            path = subject_path(annotation)
+            if path is None or path.name == "README.md":
+                continue
+            try:
+                owner, name, _ = page_owner(annotation)
+            except CreditError:
+                continue
+            if owner == "atlas":
+                owners.add(name)
+            elif owner == "none" and index is not None and legacy_pair(annotation) is not None and \
+                    (resolved := legacy_lean_name(annotation["extensions"][OWN], index)):
+                owners.add(resolved)
+    return owners
+
+
+def uncovered_owners(files: dict[Path, list[dict]], extracted: dict, index) -> list[str]:
+    """The declarations of this project that pages credit, by their Lean link or by the module and name an earlier
+    sync wrote, and the Lean sources declare, but that the extraction has neither a row for nor lists as missing: it
+    was made for another state of the wiki, and the page would list no prerequisites (a missing one the sources
+    declare is uncompiled_articles'; one they no longer declare is unlinked by apply_lean_facts)."""
+    listed = set(extracted.get("articles", {})) | {name for names in extracted.get("missing_articles", {}).values()
+                                                   for name in names}
+    return sorted(name for name in project_owners(files, index) if name in index.declarations and name not in listed)
 
 
 def uncompiled_articles(extracted: dict, index) -> list[str]:
@@ -428,16 +1366,28 @@ def uncompiled_articles(extracted: dict, index) -> list[str]:
 def pages_without_rows() -> list[Path]:
     """The roadmap pages that no annotation row names. Such a page has no node and no navigation metadata, so it
     would build as a stray page: an editor gives it a row (a folder page takes its sibling folders' navigation)."""
-    named = {subject_path(row) for rows in read_annotations().values() for row in rows}
+    named = {page for rows in read_annotations().values() for row in rows if (page := subject_path(row))}
     return sorted(path.resolve() for path in wiki.ROADMAP.rglob("*.md") if path.resolve() not in named)
 
 
-def run_lean_facts(dependency_file: Path) -> int:
+def run_lean_facts(dependency_file: Path, registry_file: Path | None = None) -> int:
     from autoform_cli.lean import index_project
 
     if not dependency_file.is_file():
         # Without it every page would build with no dependencies, which looks like a site and isn't one.
         print(f"error: {dependency_file} is missing; the Pages build's dependency dump writes it", file=sys.stderr)
+        return 1
+    # Its writes are derived from the authored rows and pages: it runs on blueprint/ as committed, never on its own
+    # output, whose derived links, sections and unlinked rows would read as authored.
+    problem = checkout_problem()
+    if problem:
+        print(f"error: {problem}", file=sys.stderr)
+        return 1
+    # Nothing is written for rows Autoform would read otherwise, or not at all, or that name no page.
+    problems = credit_problems(read_annotations()) + pageless_rows(read_annotations())
+    if problems:
+        for problem in problems:
+            print(f"error: {problem}", file=sys.stderr)
         return 1
     stray = pages_without_rows()
     if stray:
@@ -447,8 +1397,30 @@ def run_lean_facts(dependency_file: Path) -> int:
               file=sys.stderr)
         return 1
     index = index_project(wiki.ROOT, exclude_roots=("v1", "Atlas"))
-    extracted = json.loads(dependency_file.read_text())
+    # With the index, a row an earlier sync wrote with a module and a name stands for a declaration too; and no credit
+    # overrides a held marker.
+    problems = owner_problems(read_annotations(), index) + held_conflicts(read_annotations(), index)
+    if problems:
+        for problem in problems:
+            print(f"error: {problem}", file=sys.stderr)
+        return 1
+    try:
+        extracted = json.loads(dependency_file.read_text())
+    except ValueError as error:
+        print(f"error: {dependency_file} is not JSON: {error}", file=sys.stderr)
+        return 1
+    if not isinstance(extracted, dict) or not isinstance(extracted.get("articles"), dict):
+        print(f"error: {dependency_file} is not an extraction extract_v2_lean_dependencies.py writes", file=sys.stderr)
+        return 1
     dependencies = extracted["articles"]
+    uncovered = uncovered_owners(read_annotations(), extracted, index)
+    if uncovered:
+        for name in uncovered[:20]:
+            print(f"error: a page credits {name}, which the Lean sources declare, but {dependency_file} has no row "
+                  "for it", file=sys.stderr)
+        print(f"error: {len(uncovered)} credited declarations are missing from {dependency_file}, which was made for "
+              "another state of the wiki; make the dump and the extraction again", file=sys.stderr)
+        return 1
     uncompiled = uncompiled_articles(extracted, index)
     if uncompiled:
         for name in uncompiled[:20]:
@@ -459,14 +1431,46 @@ def run_lean_facts(dependency_file: Path) -> int:
         return 1
     if not dependencies:
         print(f"warning: no dependencies in {dependency_file}, so no article lists any", file=sys.stderr)
-    counts, unlinked = apply_lean_facts(index, dependencies)
+    registry = None
+    if registry_file is not None:
+        if not registry_file.is_file():
+            print(f"error: {registry_file} is missing; extract_v2_lean_dependencies.py --registry writes it",
+                  file=sys.stderr)
+            return 1
+        try:
+            registry = json.loads(registry_file.read_text())
+        except ValueError as error:
+            print(f"error: {registry_file} is not JSON: {error}", file=sys.stderr)
+            return 1
+        # Nothing is written from a registry that does not speak for this checkout's credit, or that another run made
+        # than the extraction's.
+        problems = registry_problems(registry, read_annotations(), project_owners(read_annotations(), index))
+        problems = problems or extraction_problems(registry, dependency_file)
+        if problems:
+            for problem in problems:
+                print(f"error: {problem}", file=sys.stderr)
+            return 1
+    for page in unowned(read_annotations()):
+        print(f"warning: {page} names declarations of this project but credits none of them: none has role "
+              "`states`, and they are not a single one with no role, or a link elsewhere states the page; Autoform "
+              "reads it the same way", file=sys.stderr)
+    try:
+        counts, unlinked = apply_lean_facts(index, dependencies, registry)
+    except UnlinkError as error:
+        # Raised while the rows are read, before anything is written.
+        print(f"error: {error}", file=sys.stderr)
+        return 1
     for page in unlinked:
-        print(f"warning: the Lean no longer declares {page}, so the page builds unlinked; "
-              "sync_wiki.py declarations lists it for an editor", file=sys.stderr)
+        if "credited to Mathlib" in page:
+            print(f"warning: the build does not find {page}, so the page builds unlinked", file=sys.stderr)
+        else:
+            print(f"warning: the Lean no longer declares {page}, so the page builds unlinked; "
+                  "sync_wiki.py declarations lists it for an editor", file=sys.stderr)
     if counts["unresolved"] > len(unlinked):
         print(f"warning: {counts['unresolved'] - len(unlinked)} articles name no declaration the Lean sources hold, "
               "so they get no kind or status", file=sys.stderr)
-    print(f"{counts['articles']} articles, {counts['edges']} dependency links")
+    print(f"{counts['articles']} articles, {counts['mathlib']} Mathlib-credited pages, "
+          f"{counts['edges']} dependency links")
     return 0
 
 
@@ -498,18 +1502,20 @@ def held_problem(annotation: dict, key: str | None, index) -> str | None:
         return "its held marker names no declaration"
     if key:
         return f"it holds {name} back but is linked to {key}"
-    if not declared(name, index):
+    if index is not None and not declared(name, index):
         return f"it holds {name} back, which the Lean index does not resolve"
     return None
 
 
 def annotation_key(annotation: dict, index=None) -> str | None:
-    """A page's Lean name: its Lean link, or, for a page an earlier sync wrote with a module and a name only, the
-    name the Lean index gives it (see legacy_lean_name); None when there is none."""
-    name = lean_name(annotation)
-    if name or index is None:
-        return name
-    return legacy_lean_name(annotation.get("extensions", {}).get(OWN), index)
+    """A page's Lean name: the declaration of this project its row credits (page_owner), or, for a page an earlier
+    sync wrote with a module and a name only, the name the Lean index gives it (see legacy_lean_name); None when
+    there is none. A Mathlib-credited row names no declaration of the project, whatever an earlier sync left on it,
+    and a row whose credit page_owner refuses raises CreditError."""
+    owner, name, _module = page_owner(annotation)
+    if owner != "none" or index is None:
+        return name if owner == "atlas" else None
+    return legacy_lean_name(annotation["extensions"][OWN], index) if legacy_pair(annotation) else None
 
 
 def digest(text: str) -> str:
@@ -1223,13 +2229,14 @@ def location(path: Path, line: int) -> str:
 def apply_ids(write: bool = True) -> tuple[list[str], list[str]]:
     """Give each annotation that has no id a fresh one (see new_article_id and with_article_id). Returns the rows
     without an id and the problems that stop the run, each as `file:line`: a row that is not strict JSON holding one
-    object (see members) or has no subject, and an id that is not `af_` and 24 hex digits or that another row has too.
+    object (see members) or has no subject, an id that is not `af_` and 24 hex digits or that another row has too, and
+    a row lean-facts synced (synced_rows).
     A links file that is not a regular file is a problem too, as writing through a symbolic link would change a file
     outside the folder. With a problem, or with *write* false, nothing is written."""
     paths = sorted(LINKS.glob("*.jsonl"))
     regular = [path for path in paths if path.is_file() and not path.is_symlink()]
     problems = [f"{path.relative_to(wiki.ROOT).as_posix()}: it is not a regular file"
-                for path in paths if path not in regular]
+                for path in paths if path not in regular] + synced_rows()
     lines = {path: path.read_bytes().decode("utf-8").split("\n") for path in regular}
     owners: dict[str, str] = {}
     missing: list[tuple[Path, int]] = []
@@ -1287,10 +2294,22 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     rendered.cache_clear()
     rendered(published("") or "")
     files = read_annotations()
+    # A row Autoform would read otherwise, or not at all, such as a flagged row that also names a declaration of the
+    # project, and a declaration several pages stand for, the rows an earlier sync wrote with a module and a name
+    # included, neither place a page nor keep one from being written: the run reports them and writes nothing, as
+    # lean-facts and mathlib-names refuse them.
+    # Nor does a checkout lean-facts synced, whose derived rows it would commit.
+    unreadable = credit_problems(files) + owner_problems(files, index) + synced_rows()
+    if unreadable:
+        return {**dict.fromkeys(("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended",
+                                 "unlisted", "unassigned", "held", "held_problems"), []), "credit_problems": unreadable}
     taken = {a["id"] for rows in files.values() for a in rows if "id" in a}
     keyed = [(annotation_key(a, index), a) for rows in files.values() for a in rows]
     pages = {key: subject_path(a) for key, a in keyed if key}
-    problems = {id(a): problem for key, a in keyed if (problem := held_problem(a, key, index))}
+    # A held row that credits a declaration is linked, whether to this project or to Mathlib.
+    problems = {id(a): problem for key, a in keyed
+                if (problem := held_problem(a, key or (page_owner(a)[1] if page_owner(a)[0] == "mathlib" else None),
+                                            index))}
     holders: dict[str, list[dict]] = defaultdict(list)
     for _, a in keyed:
         if id(a) not in problems and (name := held_name(a)):
@@ -1322,7 +2341,7 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     report: dict[str, list[str]] = {"added": [], "folders": [], "gone": [], "changed": [], "unindexed": [], "parts": [],
                                   "replaced": [], "appended": [], "unlisted": [], "unassigned": [],
                                   "held": sorted(f"{name} ({path.relative_to(wiki.ROADMAP)})" for name, path in held.items()),
-                                  "held_problems": held_problems}
+                                  "held_problems": held_problems, "credit_problems": []}
     if held_problems:
         # A marker the run cannot use could let its declaration through as a second page: write nothing.
         return report
@@ -1331,7 +2350,7 @@ def apply_declarations(targets: list, index, generated: dict[Path, str] | None =
     report["unindexed"] = sorted(
         [*(unindexed or []), *(f"{target.names[0]} (no Lean name)" for target in targets if not declaration_key(target))]
         + [f"{subject_path(a).relative_to(wiki.ROADMAP)} ({a['extensions'][OWN]['module']}:{a['extensions'][OWN]['name']})"
-           for key, a in keyed if key is None and {"module", "name"} <= a.get("extensions", {}).get(OWN, {}).keys()])
+           for key, a in keyed if key is None and legacy_pair(a)])
     folders: dict[tuple[str, ...], Counter] = defaultdict(Counter)
     for key, target in current.items():
         if key in pages:
@@ -1495,6 +2514,12 @@ def run_declarations() -> int:
     unindexed: list[str] = []
     generated = wiki.generate(None, None, targets, index, unindexed)
     report = apply_declarations(targets, index, generated, unindexed)
+    if report.get("credit_problems"):
+        # The run stopped before writing anything: only the rows to fix are worth reporting.
+        print(f"Rows to fix: {len(report['credit_problems'])}; the run wrote nothing")
+        for row in report["credit_problems"]:
+            print(f"error: {row}; fix it and run again (the run wrote nothing)", file=sys.stderr)
+        return 1
     if report["held_problems"]:
         # The run stopped before writing anything: only the markers to fix are worth reporting.
         print(f"Held markers to fix: {len(report['held_problems'])}; the run wrote nothing")
@@ -1540,6 +2565,10 @@ def main(argv: list[str]) -> int:
         return run_import(Path(argv[1]), Path(argv[2]))
     if len(argv) == 2 and argv[0] == "lean-facts":
         return run_lean_facts(Path(argv[1]))
+    if len(argv) == 4 and argv[0] == "lean-facts" and argv[2] == "--registry":
+        return run_lean_facts(Path(argv[1]), Path(argv[3]))
+    if len(argv) == 2 and argv[0] == "mathlib-names":
+        return run_mathlib_names(Path(argv[1]))
     if argv == ["declarations"]:
         return run_declarations()
     if argv == ["ids"]:

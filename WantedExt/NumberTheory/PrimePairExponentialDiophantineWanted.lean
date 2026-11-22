@@ -86,16 +86,6 @@ theorem_wanted two_mul_sq_add_one_eq_three_pow_iff (x y : ℕ) :
     2 * x ^ 2 + 1 = 3 ^ y ↔
       (x, y) = (0, 0) ∨ (x, y) = (1, 1) ∨ (x, y) = (2, 2) ∨ (x, y) = (11, 5)
 
-/-- **Squares of the form $p^x + (2p - 1)^y$ for prime pairs.** Let $p$ be an odd prime such that
-$2p - 1$ is prime. Then non-negative integers $x$, $y$ and $z$ satisfy $p^x + (2p - 1)^y = z^2$
-if and only if $p = 3$ and $(x, y, z) = (1, 0, 2)$.
-
-Source: Jing Zhang and Yuan Li, *On the Equation (-1)^α p^x + (-1)^β (2^k(2p - 1))^y = z^2 for
-Prime Pairs (p, 2p - 1)*, INTEGERS 24 (2024), Article A64, Theorem 1. -/
-theorem_wanted prime_pair_pow_add_pow_eq_sq_iff {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
-    (hq : (2 * p - 1).Prime) (x y z : ℕ) :
-    p ^ x + (2 * p - 1) ^ y = z ^ 2 ↔ (p, x, y, z) = (3, 1, 0, 2)
-
 /-- **No squares of the form $p^x + (2^{2k+1}(2p - 1))^y$ for prime pairs with
 $p \equiv 5, 7 \pmod 8$.** Let $p$ be a prime with $p \equiv 5 \pmod 8$ or $p \equiv 7 \pmod 8$
 such that $2p - 1$ is prime. Then for all non-negative integers $k$, $x$, $y$ and $z$,
