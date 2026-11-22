@@ -16,9 +16,10 @@ $\sqrt{n}$ instead gives the normal law with variance $1/2$.
 
 Kac's Problem 161 of the Scottish Book asks whether the same conclusion holds for sequences with
 $r_n - (r_0 + r_1 + \dots + r_{n-1}) \to +\infty$, and notes that $r_n = 2^n$ does not satisfy this
-condition. The statement of that problem for all integer sequences is held back here: the constant
-sequence $r_k = -1$ satisfies the condition, since $r_n - (r_0 + \dots + r_{n-1}) = n - 1$, but its
-normalized sum $-\sqrt{n} \sin(2 \pi x)$ is not asymptotically normal (issue #5966).
+condition. The terms must be positive: the constant sequence $r_k = -1$ satisfies the condition, since
+$r_n - (r_0 + \dots + r_{n-1}) = n - 1$, but its normalized sum $-\sqrt{n} \sin(2 \pi x)$ is not
+asymptotically normal. The statement of that problem for positive integers is held back here, since
+Kac's condition is not the Hadamard-gap condition of this page (issue #6310).
 
 ## Proof
 
