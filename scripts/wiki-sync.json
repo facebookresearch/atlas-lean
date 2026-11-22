@@ -71903,7 +71903,7 @@
 "MetaMathlibExt.sum_choose_div_choose_mul_signedStirlingFirst": "02234cff70ba9520",
 "MetaMathlibExt.sum_choose_div_choose_mul_stirlingSecond_eq_bernoulli": "97716496c3eb92b0",
 "MetaMathlibExt.sum_choose_div_choose_mul_stirlingSecond_eq_zero": "8340360a808c1007",
-"MetaMathlibExt.sum_choose_div_succ": "8895f7926f5f6822",
+"MetaMathlibExt.sum_choose_div_succ": "574a49ca5df13414",
 "MetaMathlibExt.sum_choose_even_centralBinom_div_four_pow": "6a1c4a1efd659c14",
 "MetaMathlibExt.sum_choose_even_centralBinom_div_succ": "2c8a590ae8cdd0a7",
 "MetaMathlibExt.sum_choose_even_div_eq_sum_choose_odd_div": "d7ecb692b5999728",
