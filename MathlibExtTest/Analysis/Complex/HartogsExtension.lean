@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Analysis.Calculus.FDeriv.WithLp
+
 public import MathlibExt.Analysis.Complex.HartogsExtension
 
 import Mathlib.Analysis.Calculus.ContDiff.Defs
@@ -36,7 +38,8 @@ example :
   have hpoly : Differentiable ℂ
       (fun x : EuclideanSpace ℂ (Fin 2) ↦
         WithLp.ofLp x 0 * WithLp.ofLp x 1) := by
-    fun_prop
+    exact ((differentiable_piLp 2).mp differentiable_id 0).mul
+      ((differentiable_piLp 2).mp differentiable_id 1)
   constructor
   · exact continuousOn_fderiv_of_differentiableOn isOpen_ball hpoly.differentiableOn
   · apply hartogs_extension (n := 2) (by norm_num) isOpen_univ isConnected_univ

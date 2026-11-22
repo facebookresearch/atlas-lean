@@ -117,7 +117,7 @@ private lemma indicator_memLp {n : Nat} (i : Fin n) :
   let : IsProbabilityMeasure (cond (volume : Measure Real) (Ico 0 1)) :=
     cond_real_probability
   exact (memLp_const (1 : Real)).indicator
-    ((classifier_measurable n) (measurableSet_singleton _))
+    ((classifier_measurable n) (measurableSet_singleton _)).nullMeasurableSet
 
 private lemma indicator_integral {n : Nat} (hn : 0 < n) (i : Fin n) :
     (∫ x : Real, ((fun x : Real => Nat.floor ((n : Real) * x)) ⁻¹' {i.val}).indicator

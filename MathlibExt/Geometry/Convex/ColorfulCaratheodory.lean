@@ -14,6 +14,7 @@ import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.Convex.Caratheodory
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 import Mathlib.Analysis.Normed.Affine.AddTorsorBases
+import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.RingTheory.Etale.Weakly
 import Mathlib.RingTheory.Flat.TorsionFree

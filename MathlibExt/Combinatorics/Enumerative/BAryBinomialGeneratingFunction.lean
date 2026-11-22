@@ -18,6 +18,7 @@ import Mathlib.Data.List.GetD
 import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.Data.Nat.Digits.Lemmas
 import Mathlib.Tactic.Ring
+import Mathlib.Data.Fintype.BigOperators
 
 @[expose] public section
 

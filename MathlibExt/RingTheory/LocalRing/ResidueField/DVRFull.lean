@@ -11,6 +11,8 @@ module
 public import MathlibExt.RingTheory.LocalRing.ResidueField.DVR
 public import Mathlib.RingTheory.LocalRing.Etale
 public import Mathlib.RingTheory.Henselian
+import Mathlib.RingTheory.IsAdjoinRoot
+import Mathlib.RingTheory.Smooth.Flat
 
 /-!
 # DVR residue-field fullness: source-map stage for ATLAS N211

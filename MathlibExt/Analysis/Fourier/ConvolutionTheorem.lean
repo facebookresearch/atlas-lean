@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 public import Mathlib.Analysis.Convolution
 public import Mathlib.Analysis.Fourier.FourierTransform
+import Mathlib.MeasureTheory.Integral.Prod
 
 /-! # Convolution theorem for Fourier integrals on the real line
 

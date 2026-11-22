@@ -24,6 +24,7 @@ import Mathlib.Tactic.GCongr
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+import Mathlib.Analysis.Normed.Group.FunctionSeries
 
 @[expose] public section
 

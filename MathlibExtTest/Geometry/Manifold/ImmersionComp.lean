@@ -55,7 +55,7 @@ example [I.Boundaryless] [J.Boundaryless] [IsManifold I n M]
 example [J.Boundaryless] [J'.Boundaryless] (x : M) (hn : n ≠ 0)
     (hf : IsImmersionAt I J n f x) (hg : IsImmersionAt J J' n g (f x)) :
     Function.Injective (mfderiv I J' (g ∘ f) x) :=
-  (hg.comp hf).injective_mfderiv hn
+  (hg.comp hf).mfderiv_injective hn
 
 -- Fixed complements compose after swapping the product complement factors.
 example {F₁ F₂ : Type*}

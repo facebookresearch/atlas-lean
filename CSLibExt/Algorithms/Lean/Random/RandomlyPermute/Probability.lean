@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.Algorithms.Lean.Random.RandomlyPermute.Basic
 public import Cslib.Probability.PMF
+public import CSLibExt.Algorithms.Lean.Random.ExpectedCost
 import all CSLibExt.Algorithms.Lean.Random.RandomlyPermute.Correctness
 import Mathlib.Data.Fintype.Pi
 import Mathlib.Data.Fintype.BigOperators
@@ -83,8 +84,9 @@ private theorem output_reindex {α : Type u} {n : Nat} (xs : Vector α n)
 
 private theorem uniform_output {α : Type u} {n : Nat}
     [Nonempty ((i : Fin n) → Fin (n - i.val))] (xs : Vector α n) :
-    (PMF.uniformOfFintype ((i : Fin n) → Fin (n - i.val))).map (randomlyPermute xs) =
-      (PMF.uniformOfFintype (Equiv.Perm (Fin n))).map
+    (Cslib.Probability.PMF.uniformOfFintype ((i : Fin n) → Fin (n - i.val))).map
+        (randomlyPermute xs) =
+      (Cslib.Probability.PMF.uniformOfFintype (Equiv.Perm (Fin n))).map
         (fun σ => (⟨Vector.ofFn (fun p => xs[(σ p).val]), (n, n)⟩ :
           Cslib.Algorithms.Lean.TimeM (Nat × Nat) (Vector α n))) := by
   rw [← Cslib.Probability.PMF.uniformOfFintype_map_equiv (historyEquiv n)]
@@ -95,9 +97,9 @@ private theorem uniform_output {α : Type u} {n : Nat}
 
 private theorem uniform_pair {α β : Type*} [Fintype α] [Fintype β]
     [Nonempty α] [Nonempty β] :
-    ((PMF.uniformOfFintype α).bind fun a =>
-      (PMF.uniformOfFintype β).bind fun b => PMF.pure (a, b)) =
-      PMF.uniformOfFintype (α × β) := by
+    ((Cslib.Probability.PMF.uniformOfFintype α).bind fun a =>
+      (Cslib.Probability.PMF.uniformOfFintype β).bind fun b => PMF.pure (a, b)) =
+      Cslib.Probability.PMF.uniformOfFintype (α × β) := by
   ext x
   rw [Cslib.Probability.PMF.bind_pair_apply]
   simp [Fintype.card_prod, ENNReal.mul_inv]
@@ -117,12 +119,13 @@ not a second saved-vector executor or a public sampler API. -/
 @[no_expose] private def sequentialHistory :
     (n : Nat) → PMF ((i : Fin n) → Fin (n - i.val))
   | 0 => PMF.pure (fun i => Fin.elim0 i)
-  | n + 1 => (PMF.uniformOfFintype (Fin (n + 1))).bind fun head =>
+  | n + 1 => (Cslib.Probability.PMF.uniformOfFintype (Fin (n + 1))).bind fun head =>
       (sequentialHistory n).map fun tail => historyConsEquiv n (head, tail)
 
 private theorem sequentialHistory_eq_uniform (n : Nat)
     [h : Nonempty ((i : Fin n) → Fin (n - i.val))] :
-    sequentialHistory n = PMF.uniformOfFintype ((i : Fin n) → Fin (n - i.val)) := by
+    sequentialHistory n =
+      Cslib.Probability.PMF.uniformOfFintype ((i : Fin n) → Fin (n - i.val)) := by
   induction n generalizing h with
   | zero =>
     ext draws
@@ -132,12 +135,12 @@ private theorem sequentialHistory_eq_uniform (n : Nat)
     let : Nonempty ((i : Fin n) → Fin (n - i.val)) := ⟨fun i => ⟨0, by omega⟩⟩
     rw [sequentialHistory, ih]
     calc
-      _ = ((PMF.uniformOfFintype (Fin (n + 1))).bind fun head =>
-          (PMF.uniformOfFintype ((i : Fin n) → Fin (n - i.val))).bind
+      _ = ((Cslib.Probability.PMF.uniformOfFintype (Fin (n + 1))).bind fun head =>
+          (Cslib.Probability.PMF.uniformOfFintype ((i : Fin n) → Fin (n - i.val))).bind
             fun tail => PMF.pure (head, tail)).map (historyConsEquiv n) := by
         simp only [PMF.map_bind, PMF.pure_map]
         rfl
-      _ = (PMF.uniformOfFintype
+      _ = (Cslib.Probability.PMF.uniformOfFintype
           (Fin (n + 1) × ((i : Fin n) → Fin (n - i.val)))).map (historyConsEquiv n) := by
         rw [uniform_pair]
       _ = _ := Cslib.Probability.PMF.uniformOfFintype_map_equiv (historyConsEquiv n)
@@ -158,7 +161,8 @@ private theorem sequentialHistory_weight (n : Nat)
     (draws : (i : Fin n) → Fin (n - i.val)) :
     sequentialHistory n draws = ∏ i : Fin n, ((n - i.val : Nat) : ENNReal)⁻¹ := by
   let : Nonempty ((i : Fin n) → Fin (n - i.val)) := ⟨fun i => ⟨0, by omega⟩⟩
-  rw [sequentialHistory_eq_uniform, PMF.uniformOfFintype_apply, history_card, history_weight]
+  rw [sequentialHistory_eq_uniform, Cslib.Probability.PMF.uniformOfFintype_apply,
+    history_card, history_weight]
 
 open scoped Classical in
 private theorem independent_output_apply {α : Type u} {n : Nat} (xs : Vector α n)
@@ -229,7 +233,8 @@ obtained from uniform complete legal suffix-draw histories. -/
 public def randomlyPermuteDistribution {α : Type u} {n : Nat}
     (xs : Vector α n) : PMF (Cslib.Algorithms.Lean.TimeM (Nat × Nat) (Vector α n)) := by
   letI : Nonempty ((i : Fin n) → Fin (n - i.val)) := ⟨fun i => ⟨0, by omega⟩⟩
-  exact (PMF.uniformOfFintype ((i : Fin n) → Fin (n - i.val))).map (randomlyPermute xs)
+  exact (Cslib.Probability.PMF.uniformOfFintype ((i : Fin n) → Fin (n - i.val))).map
+    (randomlyPermute xs)
 
 private theorem distribution_eq_sequential {α : Type u} {n : Nat} (xs : Vector α n) :
     randomlyPermuteDistribution xs = (sequentialHistory n).map (randomlyPermute xs) := by
@@ -254,12 +259,27 @@ position permutation. This equation retains the saved vector and the exact same-
 public theorem randomlyPermuteDistribution_eq_map_uniform {α : Type u} {n : Nat}
     (xs : Vector α n) :
     randomlyPermuteDistribution xs =
-      (PMF.uniformOfFintype (Equiv.Perm (Fin n))).map
+      (Cslib.Probability.PMF.uniformOfFintype (Equiv.Perm (Fin n))).map
         (fun σ => (⟨Vector.ofFn (fun p => xs[(σ p).val]), (n, n)⟩ :
           Cslib.Algorithms.Lean.TimeM (Nat × Nat) (Vector α n))) := by
   let : Nonempty ((i : Fin n) → Fin (n - i.val)) := ⟨fun i => ⟨0, by omega⟩⟩
   rw [distribution_eq_sequential, sequentialHistory_eq_uniform]
   exact uniform_output xs
+
+/-- **Fisher–Yates samples `uniformPermutation`**: forgetting the cost and reading the saved
+vector as a list, the law of the actual run is the uniform-permutation input distribution of
+`ExpectedCost.lean`. Expected-cost results stated over `uniformPermutation xs.toList` therefore
+apply to the output of `randomlyPermute`. -/
+public theorem randomlyPermuteDistribution_map_toList {α : Type u} {n : Nat}
+    (xs : Vector α n) :
+    (randomlyPermuteDistribution xs).map (fun r => r.ret.toList) =
+      uniformPermutation xs.toList := by
+  rw [randomlyPermuteDistribution_eq_map_uniform, PMF.map_comp]
+  obtain ⟨⟨l⟩, rfl⟩ := xs
+  simp only [uniformPermutation]
+  congr 1
+  funext σ
+  simp [Function.comp, List.ofFn, Vector.toList]
 
 /-- Every injective labelled prefix has mass `(n - k)! / n!` in the actual run.
 The finite sum uses the proved complete independent-history mass `1 / n!`;

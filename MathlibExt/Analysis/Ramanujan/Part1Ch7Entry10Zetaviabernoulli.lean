@@ -36,12 +36,17 @@ open Asymptotics Filter Finset Complex Topology MeasureTheory
 noncomputable section
 
 
-/-- The left side `∑_{k=1}^{n-1} φ_r(-k/n)` of the corollary to Entry 10, for a given `φ`. -/
+/-- **Left side of the corollary to Entry 10.** For a function
+$\varphi : \mathbb{C} \to \mathbb{C} \to \mathbb{C}$, a natural number $n$ and $r \in \mathbb{C}$,
+the left side of the corollary to Entry 10 is $\sum_{k=1}^{n-1} \varphi(r, -k/n)$, the empty sum
+$0$ when $n \le 1$. In Berndt's notation, $\varphi(r, x)$ is written $\varphi_r(x)$. -/
 def chapter7Entry10CorollaryLeft
     (phi : ℂ → ℂ → ℂ) (n : ℕ) (r : ℂ) : ℂ :=
   ∑ k ∈ Icc 1 (n - 1), phi r (-((k : ℂ) / n))
 
-/-- The right side `(n - n⁻ʳ) ζ(-r)` of the corollary to Entry 10. -/
+/-- **Right side of the corollary to Entry 10.** For a natural number $n$ and $r \in \mathbb{C}$,
+the right side of the corollary to Entry 10 is $(n - n^{-r})\,\zeta(-r)$, where $n^{-r}$ is the
+principal complex power and $\zeta$ is the Riemann zeta function. -/
 def chapter7Entry10CorollaryRight (n : ℕ) (r : ℂ) : ℂ :=
   ((n : ℂ) - Complex.cpow (n : ℂ) (-r)) * riemannZeta (-r)
 
@@ -73,7 +78,11 @@ private lemma adm_aux {n k j : ℕ} (hn : 0 < n) (hkn : k < n)
   have h5 : n ≤ n * (j + 1) := Nat.le_mul_of_pos_right n (Nat.succ_pos j)
   omega
 
-/-- The points `-k/n`, `1 ≤ k ≤ n - 1`, at which the left side evaluates `φ`, are admissible. -/
+/-- **The points $-k/n$ are admissible.** For natural numbers $n$ and $k$ with
+$1 \le k \le n - 1$, the point $x = -k/n$ is admissible, that is, $j + 1 + x \neq 0$ for every
+natural number $j$.
+
+These are the points at which the left side of the corollary to Entry 10 evaluates $\varphi$. -/
 theorem chapter7Admissible_neg_div {n k : ℕ} (hk : k ∈ Finset.Icc 1 (n - 1)) :
     chapter7Admissible (-((k : ℂ) / (n : ℂ))) := by
   intro j hj
@@ -586,7 +595,15 @@ private lemma agree_of_re_lt (phi : ℂ → ℂ → ℂ)
   field_simp
   linear_combination hSeq
 
-/-- For `re r < -1` the two sides of the corollary agree. -/
+/-- **The corollary to Entry 10 in the half-plane $\operatorname{Re} r < -1$.** Call
+$x \in \mathbb{C}$ admissible if $j + 1 + x \neq 0$ for every natural number $j$. Let
+$\varphi : \mathbb{C} \to \mathbb{C} \to \mathbb{C}$ be such that, for every $r \in \mathbb{C}$ with
+$\operatorname{Re} r < 0$ and every admissible $x$, the series
+$\sum_{j \ge 0} \bigl((j + 1)^r - (j + 1 + x)^r\bigr)$ of principal complex powers is
+unconditionally summable with sum $\varphi(r, x)$. Then for every natural number $n$ and every
+$r \in \mathbb{C}$ with $\operatorname{Re} r < -1$,
+$\sum_{k=1}^{n-1} \varphi(r, -k/n) = (n - n^{-r})\,\zeta(-r)$, where $\zeta$ is the Riemann zeta
+function. -/
 theorem chapter7Entry10CorollaryLeft_eq_right (phi : ℂ → ℂ → ℂ)
     (hphi_series : ∀ r x, r.re < 0 → chapter7Admissible x →
       HasSum (chapter7PowerDifferenceTerm r x) (phi r x))
@@ -606,7 +623,18 @@ theorem chapter7Entry10CorollaryLeft_eq_right (phi : ℂ → ℂ → ℂ)
   · have hn2 : 2 ≤ n := by omega
     exact agree_of_re_lt phi hphi_series n hn hn2 r hr
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7.
+/-- **Ramanujan's corollary to Entry 10 of Chapter 7.** Call $x \in \mathbb{C}$ admissible if
+$j + 1 + x \neq 0$ for every natural number $j$. Let
+$\varphi : \mathbb{C} \to \mathbb{C} \to \mathbb{C}$ be such that, for every admissible $x$, the
+function $r \mapsto \varphi(r, x)$ is entire, and, for every $r \in \mathbb{C}$ with
+$\operatorname{Re} r < 0$ and every admissible $x$, the series
+$\sum_{j \ge 0} \bigl((j + 1)^r - (j + 1 + x)^r\bigr)$ of principal complex powers is
+unconditionally summable with sum $\varphi(r, x)$. Then for every positive integer $n$ the
+functions $L(r) = \sum_{k=1}^{n-1} \varphi(r, -k/n)$ and $R(r) = (n - n^{-r})\,\zeta(-r)$, where
+$\zeta$ is the Riemann zeta function, are meromorphic on $\mathbb{C}$, and the set of
+$r \in \mathbb{C}$ with $L(r) \neq R(r)$ has no accumulation point in $\mathbb{C}$.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7.
 Proves `Wanted` entry `ramanujan_part1_ch7_entry10_zetaviabernoulli`.
 -/
 theorem ramanujan_part1_ch7_entry10_zetaviabernoulli
@@ -675,20 +703,21 @@ directly. -/
 noncomputable abbrev chapter7PowerDifferenceTerm (r x : ℂ) (j : ℕ) : ℂ :=
   MathlibExt.Analysis.Ramanujan.Part1Ch7.chapter7PowerDifferenceTerm r x j
 
-/-- Compatibility alias for the former `Entry10Zetaviabernoulli.chapter7Admissible_zero`. -/
+/-- **Zero is admissible.** The point $x = 0$ is admissible: $j + 1 + x \neq 0$ for every natural
+number $j$. -/
 @[simp]
 theorem chapter7Admissible_zero : chapter7Admissible 0 :=
   MathlibExt.Analysis.Ramanujan.Part1Ch7.chapter7Admissible_zero
 
-/-- Compatibility alias for the former
-`Entry10Zetaviabernoulli.chapter7PowerDifferenceTerm_zero_left`. -/
+/-- **Power-difference terms vanish at exponent zero.** For every $x \in \mathbb{C}$ and every
+natural number $j$, the power-difference term $(j + 1)^r - (j + 1 + x)^r$ vanishes at $r = 0$. -/
 @[simp]
 theorem chapter7PowerDifferenceTerm_zero_left (x : ℂ) (j : ℕ) :
     chapter7PowerDifferenceTerm 0 x j = 0 :=
   MathlibExt.Analysis.Ramanujan.Part1Ch7.chapter7PowerDifferenceTerm_zero_left x j
 
-/-- Compatibility alias for the former
-`Entry10Zetaviabernoulli.chapter7PowerDifferenceTerm_zero_right`. -/
+/-- **Power-difference terms vanish at $x = 0$.** For every $r \in \mathbb{C}$ and every natural
+number $j$, the power-difference term $(j + 1)^r - (j + 1 + x)^r$ vanishes at $x = 0$. -/
 @[simp]
 theorem chapter7PowerDifferenceTerm_zero_right (r : ℂ) (j : ℕ) :
     chapter7PowerDifferenceTerm r 0 j = 0 :=

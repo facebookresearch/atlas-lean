@@ -14,6 +14,7 @@ import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.CStarAlgebra.Classes
 import Mathlib.NumberTheory.Niven
 import Mathlib.RingTheory.Polynomial.IsIntegral
+import Mathlib.RingTheory.Polynomial.RationalRoot
 import Mathlib.RingTheory.SimpleRing.Principal
 import Mathlib.Tactic.ComputeDegree
 import Mathlib.Tactic.FieldSimp
@@ -455,12 +456,12 @@ private theorem int_dvd_of_complex (d : ℕ) (z : ℤ) (q : ℂ)
     have hcast : ((((z : ℚ) / (d : ℚ)) : ℚ) : ℂ) = ((z : ℤ) : ℂ) / ((d : ℕ) : ℂ) := by
       push_cast
       ring
-    have hqrat : ∃ r : ℚ, q = ((r : ℚ) : ℂ) := by
+    have hqrat : q ∈ Set.range (Rat.cast : ℚ → ℂ) := by
       refine ⟨(z : ℚ) / (d : ℚ), ?_⟩
       rw [hqeq, hcast]
-    obtain ⟨k, hk⟩ := (IsIntegral.exists_int_iff_exists_rat hqInt).mp hqrat
+    obtain ⟨k, hk⟩ := hqInt.mem_range_ratCast_iff.mp hqrat
     have hzk : ((z : ℤ) : ℂ) = ((((d : ℤ) * k : ℤ)) : ℂ) := by
-      rw [hdiv, hk]
+      rw [hdiv, ← hk]
       push_cast
       ring
     have hzz : z = (d : ℤ) * k := Int.cast_injective hzk
@@ -484,12 +485,12 @@ private theorem int_dvd_of_complex_int (d z : ℤ) (q : ℂ)
         = ((z : ℤ) : ℂ) / ((d : ℤ) : ℂ) := by
       push_cast
       ring
-    have hqrat : ∃ r : ℚ, q = ((r : ℚ) : ℂ) := by
+    have hqrat : q ∈ Set.range (Rat.cast : ℚ → ℂ) := by
       refine ⟨(z : ℚ) / (d : ℚ), ?_⟩
       rw [hqeq, hcast]
-    obtain ⟨k, hk⟩ := (IsIntegral.exists_int_iff_exists_rat hqInt).mp hqrat
+    obtain ⟨k, hk⟩ := hqInt.mem_range_ratCast_iff.mp hqrat
     have hzk : ((z : ℤ) : ℂ) = ((((d * k : ℤ))) : ℂ) := by
-      rw [hdiv, hk]
+      rw [hdiv, ← hk]
       push_cast
       ring
     have hzz : z = d * k := Int.cast_injective hzk

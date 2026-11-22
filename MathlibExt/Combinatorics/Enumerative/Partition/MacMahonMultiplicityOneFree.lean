@@ -11,13 +11,14 @@ module
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Combinatorics.Enumerative.Partition.Glaisher
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.RingTheory.PowerSeries.Substitution
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.Separation.Lemmas
+import Mathlib.RingTheory.PowerSeries.NoZeroDivisors
 
 @[expose] public section
 

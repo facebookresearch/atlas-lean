@@ -16,7 +16,7 @@ public import MathlibExt.GroupTheory.BurnsidePaqb.ClassSum
 Solvable-induction stage of the complete Burnside proof.
 
 Authors: Muse Spark 1.3
-Source archive: genai_web_search/tree/users/akiezun/burnside_proof.zip
+Source archive: burnside_proof.zip
 SHA-256: d9da7df82e467d9fa587892eeef9f51e2b83df0588175653bd1d16264b09dd00
 
 This module is mechanically ported from the audited source
@@ -214,7 +214,7 @@ theorem burnside_paqb_of_simple_prime
           have hmem : g ∈ (⊥ : Subgroup H) := hcon ▸ hcenter
           exact Subgroup.mem_bot.mp hmem
         have hcenterTop :=
-          (IsSimpleGroup.eq_bot_or_eq_top_of_normal _ inferInstance).resolve_left
+          (IsSimpleGroup.eq_bot_or_eq_top_of_normal _).resolve_left
             hcenterBot
         have hcomm : ∀ x y : H, x * y = y * x := by
           intro x y

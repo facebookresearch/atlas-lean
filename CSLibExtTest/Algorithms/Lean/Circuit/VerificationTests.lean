@@ -21,103 +21,105 @@ open scoped BigOperators
 
 public meta section
 
-private def runOne {i g : Nat} (name : String) (c : Circuit booleanSignature i g 1)
+private def runOne {i : Nat} (name : String) (c : Circuit booleanSignature i 1)
     (cert : Array Bool) (expectedRet : Bool) (expectedTime : Nat) : IO Unit := do
   let actual := verifyBooleanCertificate c cert
   unless actual.ret == expectedRet && actual.time == expectedTime do
     let expected := s!"expected ({expectedRet},{expectedTime})"
     let observed := s!"actual ({actual.ret},{actual.time})"
     throw (IO.userError s!"U118 assertion {name}: {expected}, {observed}")
-  let trace := Array.ofFn (c.program.trace booleanInterpretation (fun k => cert.getD k.val false))
+  let input := fun k : Fin i => cert.getD k.val false
+  let trace := Array.ofFn (Fin.addCases input (c.program.eval booleanInterpretation input))
   let data := s!"{name}|cert={repr cert.toList}|ret={actual.ret}|time={actual.time}"
-  let state := s!"|trace={repr trace.toList}|inputCount={i}|gateCount={g}"
-  let source := s!"|arguments={∑ j : Fin g, booleanSignature.Arity (c.program.lines j).op}|sourceSize={i + 2 * g}"
+  let state := s!"|trace={repr trace.toList}|inputCount={i}|gateCount={c.size}"
+  let arguments := ∑ j : Fin c.size, booleanSignature.Arity (c.program.lines j).op
+  let source := s!"|arguments={arguments}|sourceSize={i + 2 * c.size}"
   IO.println (data ++ state ++ source)
 
-private def circuit0 : Circuit booleanSignature 3 7 1 :=
+private def circuit0 : Circuit booleanSignature 3 1 :=
   let p0 : Program booleanSignature 3 0 := .empty
   let p1 : Program booleanSignature 3 1 :=
     .gate p0 ⟨.or 1, fun k =>
-        if k.val = 0 then ⟨0, by decide⟩ else
-        ⟨1, by decide⟩⟩
+        if k.val = 0 then .input ⟨0, by decide⟩ else
+        .input ⟨1, by decide⟩⟩
   let p2 : Program booleanSignature 3 2 :=
     .gate p1 ⟨.not, fun k =>
-        ⟨2, by decide⟩⟩
+        .input ⟨2, by decide⟩⟩
   let p3 : Program booleanSignature 3 3 :=
     .gate p2 ⟨.and 2, fun k =>
-        if k.val = 0 then ⟨0, by decide⟩ else
-        if k.val = 1 then ⟨1, by decide⟩ else
-        ⟨4, by decide⟩⟩
+        if k.val = 0 then .input ⟨0, by decide⟩ else
+        if k.val = 1 then .input ⟨1, by decide⟩ else
+        .gate ⟨1, by decide⟩⟩
   let p4 : Program booleanSignature 3 4 :=
     .gate p3 ⟨.not, fun k =>
-        ⟨4, by decide⟩⟩
+        .gate ⟨1, by decide⟩⟩
   let p5 : Program booleanSignature 3 5 :=
     .gate p4 ⟨.or 1, fun k =>
-        if k.val = 0 then ⟨3, by decide⟩ else
-        ⟨6, by decide⟩⟩
+        if k.val = 0 then .gate ⟨0, by decide⟩ else
+        .gate ⟨3, by decide⟩⟩
   let p6 : Program booleanSignature 3 6 :=
     .gate p5 ⟨.or 1, fun k =>
-        if k.val = 0 then ⟨6, by decide⟩ else
-        ⟨5, by decide⟩⟩
+        if k.val = 0 then .gate ⟨3, by decide⟩ else
+        .gate ⟨2, by decide⟩⟩
   let p7 : Program booleanSignature 3 7 :=
     .gate p6 ⟨.and 2, fun k =>
-        if k.val = 0 then ⟨7, by decide⟩ else
-        if k.val = 1 then ⟨8, by decide⟩ else
-        ⟨5, by decide⟩⟩
-  ⟨p7, fun _ => ⟨9, by decide⟩⟩
+        if k.val = 0 then .gate ⟨4, by decide⟩ else
+        if k.val = 1 then .gate ⟨5, by decide⟩ else
+        .gate ⟨2, by decide⟩⟩
+  ⟨p7, fun _ => .gate ⟨6, by decide⟩⟩
 
-private def circuit1 : Circuit booleanSignature 3 7 1 :=
+private def circuit1 : Circuit booleanSignature 3 1 :=
   let p0 : Program booleanSignature 3 0 := .empty
   let p1 : Program booleanSignature 3 1 :=
     .gate p0 ⟨.or 1, fun k =>
-        if k.val = 0 then ⟨0, by decide⟩ else
-        ⟨1, by decide⟩⟩
+        if k.val = 0 then .input ⟨0, by decide⟩ else
+        .input ⟨1, by decide⟩⟩
   let p2 : Program booleanSignature 3 2 :=
     .gate p1 ⟨.not, fun k =>
-        ⟨2, by decide⟩⟩
+        .input ⟨2, by decide⟩⟩
   let p3 : Program booleanSignature 3 3 :=
     .gate p2 ⟨.and 2, fun k =>
-        if k.val = 0 then ⟨0, by decide⟩ else
-        if k.val = 1 then ⟨1, by decide⟩ else
-        ⟨4, by decide⟩⟩
+        if k.val = 0 then .input ⟨0, by decide⟩ else
+        if k.val = 1 then .input ⟨1, by decide⟩ else
+        .gate ⟨1, by decide⟩⟩
   let p4 : Program booleanSignature 3 4 :=
     .gate p3 ⟨.not, fun k =>
-        ⟨4, by decide⟩⟩
+        .gate ⟨1, by decide⟩⟩
   let p5 : Program booleanSignature 3 5 :=
     .gate p4 ⟨.and 1, fun k =>
-        if k.val = 0 then ⟨3, by decide⟩ else
-        ⟨6, by decide⟩⟩
+        if k.val = 0 then .gate ⟨0, by decide⟩ else
+        .gate ⟨3, by decide⟩⟩
   let p6 : Program booleanSignature 3 6 :=
     .gate p5 ⟨.or 1, fun k =>
-        if k.val = 0 then ⟨6, by decide⟩ else
-        ⟨5, by decide⟩⟩
+        if k.val = 0 then .gate ⟨3, by decide⟩ else
+        .gate ⟨2, by decide⟩⟩
   let p7 : Program booleanSignature 3 7 :=
     .gate p6 ⟨.and 2, fun k =>
-        if k.val = 0 then ⟨7, by decide⟩ else
-        if k.val = 1 then ⟨8, by decide⟩ else
-        ⟨5, by decide⟩⟩
-  ⟨p7, fun _ => ⟨9, by decide⟩⟩
+        if k.val = 0 then .gate ⟨4, by decide⟩ else
+        if k.val = 1 then .gate ⟨5, by decide⟩ else
+        .gate ⟨2, by decide⟩⟩
+  ⟨p7, fun _ => .gate ⟨6, by decide⟩⟩
 
-private def circuit2 : Circuit booleanSignature 1 2 1 :=
+private def circuit2 : Circuit booleanSignature 1 1 :=
   let p0 : Program booleanSignature 1 0 := .empty
   let p1 : Program booleanSignature 1 1 :=
     .gate p0 ⟨.and 0, fun k =>
-        ⟨0, by decide⟩⟩
+        .input ⟨0, by decide⟩⟩
   let p2 : Program booleanSignature 1 2 :=
     .gate p1 ⟨.or 0, fun k =>
-        ⟨1, by decide⟩⟩
-  ⟨p2, fun _ => ⟨2, by decide⟩⟩
+        .gate ⟨0, by decide⟩⟩
+  ⟨p2, fun _ => .gate ⟨1, by decide⟩⟩
 
-private def circuit3 : Circuit booleanSignature 1 0 1 :=
+private def circuit3 : Circuit booleanSignature 1 1 :=
   let p0 : Program booleanSignature 1 0 := .empty
-  ⟨p0, fun _ => ⟨0, by decide⟩⟩
+  ⟨p0, fun _ => .input ⟨0, by decide⟩⟩
 
-private def circuit4 : Circuit booleanSignature 1 1 1 :=
+private def circuit4 : Circuit booleanSignature 1 1 :=
   let p0 : Program booleanSignature 1 0 := .empty
   let p1 : Program booleanSignature 1 1 :=
     .gate p0 ⟨.not, fun k =>
-        ⟨0, by decide⟩⟩
-  ⟨p1, fun _ => ⟨0, by decide⟩⟩
+        .input ⟨0, by decide⟩⟩
+  ⟨p1, fun _ => .input ⟨0, by decide⟩⟩
 
 private def runAllCases : IO Unit := do
   runOne "figure34.8a" circuit0

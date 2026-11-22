@@ -389,7 +389,8 @@ private theorem dick_null
     intro hx
     exact Set.indicator_of_mem hx _
   rw [hcongr] at hmax
-  rcases hT.toPreErgodic.measure_self_or_compl_eq_zero hDmeas hinv with h0 | hc0
+  rcases hT.toPreErgodic.measure_self_or_compl_eq_zero hDmeas.nullMeasurableSet
+      (Filter.Eventually.of_forall (fun x => by rw [hinv])) with h0 | hc0
   · exact h0
   · exfalso
     have hgc : Integrable (fun y => g y - c) μ := hgi.sub (integrable_const c)

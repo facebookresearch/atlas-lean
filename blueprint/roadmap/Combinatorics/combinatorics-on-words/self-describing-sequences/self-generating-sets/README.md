@@ -1,0 +1,17 @@
+# Self-generating sets
+
+- [Strict growth of a set of generators](strict-growth.md)
+- [Self-generating sets](sg.md)
+- [Fixed-point sets for a seed and generators](fixed-point.md)
+- [Reachability from a seed by generators](gen.md)
+- [Set generated from a seed](generated-set.md)
+- [Fixed-point sets are self-generating](fixed-point-is-sg.md)
+- [The generated set is self-generating](generated-is-sg.md)
+- [The generated set lies in every self-generating set](generated-le-of-sg.md)
+- [The generated set is a fixed-point set](generated-fixed-point.md)
+- [Under strict growth, a fixed-point set is the generated set](fixed-point-eq-generated.md)
+- [The generated set is the intersection of all self-generating sets](generated-eq-s-inter.md)
+- [Under strict growth, a fixed-point set is the intersection of all self-generating sets](fixed-point-eq-s-inter.md)
+- [Under strict growth, a fixed-point set is the least self-generating set](fixed-point-is-least.md)
+- [The least self-generating set is the generated set](is-least-eq-generated.md)
+- [Under strict growth, fixed-point sets are unique](fixed-point-unique.md)

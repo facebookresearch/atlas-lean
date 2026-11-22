@@ -64,15 +64,15 @@ theorem LinearMap.BilinForm.dualSubmodule_flip_dualSubmodule_of_isLattice
         rw [LinearEquiv.symm_apply_apply] at h
         exact h
       have h2 : (e z) m =
-          B.flip.dualSubmoduleParing ⟨(m : V), hme⟩ z := by
+          B.flip.dualSubmodulePairing ⟨(m : V), hme⟩ z := by
         apply FaithfulSMul.algebraMap_injective A K
-        change algebraMap A K (B.dualSubmoduleParing z m) = _
-        rw [BilinForm.dualSubmoduleParing_spec, BilinForm.dualSubmoduleParing_spec,
+        change algebraMap A K (B.dualSubmodulePairing z m) = _
+        rw [BilinForm.dualSubmodulePairing_spec, BilinForm.dualSubmodulePairing_spec,
           BilinForm.flip_apply]
       have h3 : ((B.flip.dualSubmoduleToDual (B.dualSubmodule M)) ⟨x, hx⟩) z =
           φ z := rfl
       have h4 : ((B.flip.dualSubmoduleToDual (B.dualSubmodule M)) ⟨(m : V), hme⟩) z =
-          B.flip.dualSubmoduleParing ⟨(m : V), hme⟩ z := rfl
+          B.flip.dualSubmodulePairing ⟨(m : V), hme⟩ z := rfl
       rw [h3, h4, h1, h2]
     have hveq : x = (m : V) := congrArg Subtype.val (hinj hfun)
     rw [hveq]

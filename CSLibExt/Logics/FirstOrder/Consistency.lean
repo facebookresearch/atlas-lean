@@ -12,6 +12,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Logics.FirstOrder.NaturalDeduction
+public import Mathlib.Data.Set.Finite.Lattice
 
 /-!
 # Consistent and maximal consistent sets, Lindenbaum's lemma, Henkin witnesses
@@ -134,7 +135,7 @@ many hypotheses, which lie in one member (Mathlib's
 theorem consistent_sUnion_of_isChain {C : Set (Set (L.Formula α))} (hC : IsChain (· ⊆ ·) C)
     (hne : C.Nonempty) (hcons : ∀ c ∈ C, Consistent c) : Consistent (⋃₀ C) := by
   rintro ⟨Γ, hΓ, hd⟩
-  obtain ⟨c, hc, hΓc⟩ := hC.directedOn.exists_mem_subset_of_finite_of_subset_sUnion hne
+  obtain ⟨c, hc, hΓc⟩ := DirectedOn.exists_mem_subset_of_finite_of_subset_sUnion hne hC.directedOn
     (List.finite_toSet Γ) fun ψ hψ ↦ hΓ ψ hψ
   exact hcons c hc ⟨Γ, fun ψ hψ ↦ hΓc hψ, hd⟩
 

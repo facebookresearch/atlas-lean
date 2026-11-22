@@ -36,6 +36,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Complex.Exponential
+public import Mathlib.Data.Nat.Prime.Defs
 
 @[expose] public section
 

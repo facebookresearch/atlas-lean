@@ -13,6 +13,7 @@ public import Mathlib.Data.List.MinMax
 public import Mathlib.Data.List.Nodup
 public import Mathlib.Data.Nat.Basic
 public import Mathlib.Order.Defs.LinearOrder
+import Mathlib.Order.MinMax
 
 /-!
 # Cartesian trees

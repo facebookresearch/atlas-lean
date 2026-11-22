@@ -14,6 +14,7 @@ public import Mathlib.Algebra.Group.Prod
 public import Mathlib.Algebra.Group.Nat.Defs
 
 import Init.Data.List.MinMaxIdx
+import Mathlib.Data.List.Induction
 
 /-!
 # Deterministic hiring
@@ -32,6 +33,9 @@ set_option autoImplicit false
 namespace Cslib.Algorithms.Lean.TimeM
 
 universe u
+
+private instance {α : Type u} [LinearOrder α] : Std.LawfulOrderLeftLeaningMax α :=
+  .of_eq (fun a b => max_def' a b)
 
 @[no_expose] private def interview {α : Type u} [LinearOrder α]
     (state : Option (α × Nat) × Array Nat) (candidate : α × Nat) :

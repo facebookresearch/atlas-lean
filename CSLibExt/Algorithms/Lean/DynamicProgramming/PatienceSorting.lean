@@ -242,7 +242,14 @@ theorem PatienceInv.scan {P : List α} {tails : Array α} (h : PatienceInv P tai
       rw [show P ++ x :: xs = (P ++ [x]) ++ xs by simp]
       apply ih
       rw [patienceStep_ret_toList]
-      have hs : tails.Pairwise (fun a b => a ≤ b) := h.sorted.imp (fun hab => le_of_lt hab)
+      have hs : tails.Pairwise (fun a b => a ≤ b) := by
+        rw [Array.pairwise_iff_getElem]
+        intro i j hi hj hij
+        rw [← Array.getElem_toList (by simpa using hi),
+          ← Array.getElem_toList (by simpa using hj)]
+        exact List.pairwise_iff_getElem.mp
+          (h.sorted.imp (fun hab => le_of_lt hab)) i j (by simpa using hi)
+          (by simpa using hj) hij
       obtain ⟨hi, hlt, hge⟩ := lowerBound_spec tails x hs
       refine h.step x (by simpa using hi) (fun j hj hjt => ?_) (fun j hj hjt => ?_)
       · simpa using hlt j hj (by simpa using hjt)

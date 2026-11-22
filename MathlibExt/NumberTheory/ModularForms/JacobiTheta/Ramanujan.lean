@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Topology.Instances.Complex
 import Mathlib.Analysis.Normed.Module.FiniteDimension
+import Mathlib.LinearAlgebra.Complex.FiniteDimensional
 import Mathlib.Tactic.Ring
 
 /-!

@@ -10,6 +10,7 @@ module
 
 public import Mathlib.NumberTheory.RamificationInertia.Galois
 import Mathlib.FieldTheory.PurelyInseparable.Basic
+import Mathlib.RingTheory.Finiteness.Quotient
 
 @[expose] public section
 

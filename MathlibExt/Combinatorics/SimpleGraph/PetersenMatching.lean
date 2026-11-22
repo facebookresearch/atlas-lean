@@ -11,6 +11,7 @@ module
 public import Mathlib.Combinatorics.SimpleGraph.Matching
 import Mathlib.Combinatorics.SimpleGraph.Tutte
 import Mathlib.Order.CompletePartialOrder
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 @[expose] public section
 

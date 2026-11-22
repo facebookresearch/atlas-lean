@@ -21,13 +21,16 @@ Mathlib's `ComputablePred` is closed under negation (`ComputablePred.not`). This
 closure of `ComputablePred` under `∧` and `∨`, of `REPred` under `∧` and `∨` (the latter by
 running both in parallel with `Partrec.merge'`), and of `REPred` under existential and
 universal quantification over a primitive recursive finite list of candidates, by
-dovetailing with the step-bounded evaluator `Nat.Partrec.Code.evaln`. It also shows that
-`List.any` with a computable test is computable.
+dovetailing with the step-bounded evaluator `Nat.Partrec.Code.evaln`. Dovetailing over all
+candidates also selects a witness of an r.e. relation partial recursively
+(`REPred.exists_partrec_choose`), whose domain is the unbounded existential projection. It also
+shows that `List.any` with a computable test is computable.
 
 ## Main results
 
 - `ComputablePred.and`, `ComputablePred.or`, `REPred.and`, `REPred.or`.
 - `REPred.exists_mem`, `REPred.forall_mem`, and the unbounded `REPred.exists`.
+- `REPred.exists_partrec_choose`: selection of witnesses for r.e. relations.
 - `computable_list_any`.
 -/
 
@@ -219,10 +222,12 @@ theorem computable_list_any {γ β : Type*} [Primcodable γ] [Primcodable β]
     obtain ⟨i, hi⟩ := List.mem_iff_getElem?.mp hb
     exact ⟨i, (List.getElem?_eq_some_iff.mp hi).1, b, hi, hgb⟩
 
-/-- R.e. predicates are closed under (unbounded) existential projection: search over pairs of
-a candidate and a step bound, by dovetailing with `Nat.Partrec.Code.evaln`. -/
-theorem REPred.exists {β : Type*} [Primcodable β] {R : α → β → Prop}
-    (hR : REPred fun p : α × β ↦ R p.1 p.2) : REPred fun a ↦ ∃ b, R a b := by
+/-- **Selection for r.e. relations.** A partial recursive function picks a witness of `R a`
+whenever one exists: search over pairs of a candidate and a step bound, by dovetailing with
+`Nat.Partrec.Code.evaln`. -/
+theorem REPred.exists_partrec_choose {β : Type*} [Primcodable β] {R : α → β → Prop}
+    (hR : REPred fun p : α × β ↦ R p.1 p.2) :
+    ∃ g : α →. β, Partrec g ∧ (∀ a b, b ∈ g a → R a b) ∧ ∀ a, (∃ b, R a b) → (g a).Dom := by
   have hG : Partrec fun n : ℕ ↦ (Part.ofOption (Encodable.decode₂ (α × β) n)).bind fun p ↦
       (Part.assert (R p.1 p.2) fun _ ↦ Part.some ()).map fun _ ↦ (0 : ℕ) :=
     Partrec.bind (Computable.ofOption Primrec.decode₂.to_comp)
@@ -244,24 +249,49 @@ theorem REPred.exists {β : Type*} [Primcodable β] {R : α → β → Prop}
           (Primrec.encode.comp (Primrec.pair (Primrec.fst.comp Primrec.fst)
             Primrec.snd))))).to₂)
       (Primrec.const false)
-  refine (Partrec.rfind htest.to_comp.partrec₂).dom_re.of_eq fun a ↦ ?_
-  refine Nat.rfind_dom'.trans ?_
-  simp only [PFun.coe_val, Part.mem_some_iff, Part.some_dom, implies_true, and_true]
-  constructor
-  · rintro ⟨m, hm⟩
+  -- a found index decodes to a witness
+  have hfound : ∀ a m, test a m = true → ∃ b, Encodable.decode (α := β) m.unpair.1 = some b ∧
+      R a b := by
+    intro a m hm
     simp only [test] at hm
     cases hb : Encodable.decode (α := β) m.unpair.1 with
     | none => simp [hb] at hm
     | some b =>
       simp only [hb, Option.map_some, Option.getD_some] at hm
-      obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp hm.symm
-      exact ⟨b, (hspec (a, b)).mp
+      obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp hm
+      exact ⟨b, rfl, (hspec (a, b)).mp
         (Part.dom_iff_mem.mpr ⟨v, Nat.Partrec.Code.evaln_sound hv⟩)⟩
-  · rintro ⟨b, hb⟩
-    obtain ⟨v, hv⟩ := Part.dom_iff_mem.mp ((hspec (a, b)).mpr hb)
+  refine ⟨fun a ↦ (Nat.rfind fun m ↦ Part.some (test a m)).bind fun m ↦
+      Part.ofOption (Encodable.decode (α := β) m.unpair.1),
+    Partrec.bind (Partrec.rfind htest.to_comp.partrec₂)
+      (Computable.ofOption (Computable.decode.comp (Computable.fst.comp
+        (Computable.unpair.comp Computable.snd)))).to₂, fun a b hb ↦ ?_, fun a ⟨b, hb⟩ ↦ ?_⟩
+  · obtain ⟨m, hm, hbm⟩ := Part.mem_bind_iff.mp hb
+    have hspec' := Nat.rfind_spec hm
+    simp only [Part.mem_some_iff] at hspec'
+    obtain ⟨b', hb', hR'⟩ := hfound a m hspec'.symm
+    rw [hb', Part.mem_ofOption, Option.mem_def, Option.some_inj] at hbm
+    exact hbm ▸ hR'
+  · obtain ⟨v, hv⟩ := Part.dom_iff_mem.mp ((hspec (a, b)).mpr hb)
     obtain ⟨k, hk⟩ := Nat.Partrec.Code.evaln_complete.mp hv
-    refine ⟨Nat.pair (Encodable.encode b) k, ?_⟩
-    simp only [test, Nat.unpair_pair, Encodable.encodek, Option.map_some, Option.getD_some]
-    exact (Option.isSome_iff_exists.mpr ⟨v, hk⟩).symm
+    have htrue : test a (Nat.pair (Encodable.encode b) k) = true := by
+      simp only [test, Nat.unpair_pair, Encodable.encodek, Option.map_some, Option.getD_some]
+      exact Option.isSome_iff_exists.mpr ⟨v, hk⟩
+    have hd : (Nat.rfind fun m ↦ Part.some (test a m)).Dom :=
+      Nat.rfind_dom.mpr ⟨_, by simpa using htrue, fun _ ↦ trivial⟩
+    have hm := Part.get_mem hd
+    have hspec' := Nat.rfind_spec hm
+    simp only [Part.mem_some_iff] at hspec'
+    obtain ⟨b', hb', -⟩ := hfound a _ hspec'.symm
+    exact ⟨hd, by simp [hb']⟩
+
+/-- R.e. predicates are closed under (unbounded) existential projection: the domain of the
+selection function `REPred.exists_partrec_choose`. -/
+theorem REPred.exists {β : Type*} [Primcodable β] {R : α → β → Prop}
+    (hR : REPred fun p : α × β ↦ R p.1 p.2) : REPred fun a ↦ ∃ b, R a b := by
+  obtain ⟨g, hg, hsound, hdom⟩ := REPred.exists_partrec_choose hR
+  refine hg.dom_re.of_eq fun a ↦ ⟨fun h ↦ ?_, hdom a⟩
+  obtain ⟨b, hb⟩ := Part.dom_iff_mem.mp h
+  exact ⟨b, hsound a b hb⟩
 
 end MetaMathlibExt

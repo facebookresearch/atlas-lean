@@ -16,6 +16,7 @@ import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Analysis.SpecialFunctions.Gamma.BohrMollerup
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import MathlibExt.Analysis.SpecialFunctions.Gamma.Digamma
+import Mathlib.Analysis.Convex.Deriv
 
 /-!
 # Ramanujan's centered digamma asymptotic

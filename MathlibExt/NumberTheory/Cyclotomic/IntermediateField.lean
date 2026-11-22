@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Galois
+import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
 public import Mathlib.Order.ModularLattice
 public import Mathlib.RingTheory.ZMod.UnitsCyclic
 public import MathlibExt.FieldTheory.Galois.Abelian

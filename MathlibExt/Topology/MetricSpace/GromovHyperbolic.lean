@@ -21,7 +21,7 @@ four-point / Gromov-product inequality.
 
 * `Metric.IsDeltaHyperbolic X δ`: the space `X` is `δ`-hyperbolic, i.e. for all points the Gromov
   product satisfies `(x ∣ z)_w ≥ min (x ∣ y)_w (y ∣ z)_w - δ`, where
-  `(x ∣ y)_w = Metric.gromovProduct x y w` (basepoint third, as in Mathlib). The constant
+  `(x ∣ y)_w = Metric.gromovProduct w x y` (basepoint first, as in Mathlib). The constant
   `δ` is nonnegative by definition.
 * `Metric.IsGromovHyperbolic X`: the space `X` is `δ`-hyperbolic for some `δ`.
 
@@ -51,16 +51,16 @@ variable {X : Type*} [PseudoMetricSpace X]
 /-- A pseudometric space `X` is `δ`-hyperbolic (in the sense of Gromov) if `0 ≤ δ` and the
 Gromov product satisfies the four-point inequality
 `(x ∣ z)_w ≥ min (x ∣ y)_w (y ∣ z)_w - δ` for all points `w x y z`, where
-`(x ∣ y)_w = Metric.gromovProduct x y w` (basepoint third, as in Mathlib). -/
+`(x ∣ y)_w = Metric.gromovProduct w x y` (basepoint first, as in Mathlib). -/
 def IsDeltaHyperbolic (X : Type*) [PseudoMetricSpace X] (δ : ℝ) : Prop :=
-  0 ≤ δ ∧ ∀ w x y z : X, min (gromovProduct x y w) (gromovProduct y z w) - δ ≤ gromovProduct x z w
+  0 ≤ δ ∧ ∀ w x y z : X, min (gromovProduct w x y) (gromovProduct w y z) - δ ≤ gromovProduct w x z
 
 /-- A pseudometric space is Gromov-hyperbolic if it is `δ`-hyperbolic for some `δ`. -/
 def IsGromovHyperbolic (X : Type*) [PseudoMetricSpace X] : Prop := ∃ δ : ℝ, IsDeltaHyperbolic X δ
 
 /-- The defining four-point inequality of a `δ`-hyperbolic space. -/
 theorem IsDeltaHyperbolic.four_point {δ : ℝ} (h : IsDeltaHyperbolic X δ) (w x y z : X) :
-    min (gromovProduct x y w) (gromovProduct y z w) - δ ≤ gromovProduct x z w :=
+    min (gromovProduct w x y) (gromovProduct w y z) - δ ≤ gromovProduct w x z :=
   h.2 w x y z
 
 /-- Enlarging the constant preserves `δ`-hyperbolicity. -/
@@ -86,4 +86,3 @@ end Metric
 -- A single point is `0`-hyperbolic (boundary case `δ = 0`).
 example : Metric.IsDeltaHyperbolic (PUnit : Type) 0 :=
   Metric.isDeltaHyperbolic_zero_of_subsingleton
-

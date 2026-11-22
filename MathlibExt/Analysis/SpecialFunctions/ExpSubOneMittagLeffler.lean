@@ -16,6 +16,7 @@ import Mathlib.Analysis.Calculus.SmoothSeries
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Cotangent
 import Mathlib.NumberTheory.ZetaValues
 import Mathlib.Tactic
+import Mathlib.Analysis.PSeries
 
 /-!
 # Mittag-Leffler expansion of the Bose-Einstein kernel

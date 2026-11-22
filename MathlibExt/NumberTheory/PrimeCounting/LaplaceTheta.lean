@@ -145,7 +145,7 @@ private lemma abel_integrableOn_prime_summand (p : Nat.Primes)
     ext t
     simp only [Set.indicator, Set.mem_Ici]
     split_ifs with h <;> simp [mul_comm]
-  rw [h_eq, integrableOn_indicator_iff measurableSet_Ici]
+  rw [h_eq, integrableOn_indicator_iff measurableSet_Ici.nullMeasurableSet]
   have hIci : Set.Ici (Real.log ↑(↑p : ℕ)) ∩ Set.Ioi (0 : ℝ) =
       Set.Ici (Real.log ↑(↑p : ℕ)) := by
     ext x

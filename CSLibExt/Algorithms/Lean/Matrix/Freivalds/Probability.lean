@@ -26,12 +26,13 @@ namespace Cslib.Algorithms.Lean.Matrix
 This law supplies no PRNG implementation or assumed error oracle. -/
 noncomputable def freivaldsTrialLaw {n : Nat}
     (A B C : _root_.Vector (_root_.Vector (ZMod 2) n) n) : PMF Bool :=
-  (PMF.uniformOfFintype (Fin n → ZMod 2)).map fun r => (freivaldsTrial A B C r).ret
+  (Cslib.Probability.PMF.uniformOfFintype (Fin n → ZMod 2)).map
+    fun r => (freivaldsTrial A B C r).ret
 
 /-- Each complete binary assignment has its exact uniform point mass. -/
 theorem freivaldsSeed_pointMass {n : Nat} (r : Fin n → ZMod 2) :
-    PMF.uniformOfFintype (Fin n → ZMod 2) r = ((2 : ℝ≥0∞) ^ n)⁻¹ := by
-  simp [PMF.uniformOfFintype_apply]
+    Cslib.Probability.PMF.uniformOfFintype (Fin n → ZMod 2) r = ((2 : ℝ≥0∞) ^ n)⁻¹ := by
+  simp [Cslib.Probability.PMF.uniformOfFintype_apply]
 
 /-- Acceptance is the canonical uniform mass of seeds accepted by the actual
 executor. Canonical outer-measure pushforward supplies the fiber count. -/
@@ -44,11 +45,18 @@ theorem freivaldsTrialLaw_acceptance {n : Nat}
   calc
     freivaldsTrialLaw A B C true = (freivaldsTrialLaw A B C).toOuterMeasure {true} :=
       (PMF.toOuterMeasure_apply_singleton (freivaldsTrialLaw A B C) true).symm
-    _ = (PMF.uniformOfFintype (Fin n → ZMod 2)).toOuterMeasure
+    _ = (Cslib.Probability.PMF.uniformOfFintype (Fin n → ZMod 2)).toOuterMeasure
         {r | (freivaldsTrial A B C r).ret = true} := by
       rw [freivaldsTrialLaw, PMF.toOuterMeasure_map_apply]
       rfl
-    _ = _ := PMF.toOuterMeasure_uniformOfFintype_apply _
+    _ = _ := by
+      rw [PMF.toOuterMeasure_apply, tsum_fintype]
+      simp only [Set.indicator_apply, Set.mem_ofPred_eq,
+        Cslib.Probability.PMF.uniformOfFintype_apply]
+      rw [← Finset.sum_filter]
+      simp only [Finset.sum_const, nsmul_eq_mul]
+      rw [← Fintype.card_subtype]
+      rfl
 
 /-- A correct product has acceptance probability one under the same actual
 trial law, including empty matrices. -/

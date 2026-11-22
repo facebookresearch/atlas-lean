@@ -17,6 +17,7 @@ public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.Data.Nat.Sqrt
 public import MathlibExt.NumberTheory.SylvesterSchur.BlockReductions
 
+import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.Ring
 
 /-!

@@ -90,8 +90,8 @@ theorem LinearMap.BilinForm.dualSubmoduleToDual_surjective [IsDomain A]
   refine ⟨⟨x, hmem⟩, ?_⟩
   ext y
   apply FaithfulSMul.algebraMap_injective A K
-  change algebraMap A K (B.dualSubmoduleParing ⟨x, hmem⟩ y) = algebraMap A K (f y)
-  rw [LinearMap.BilinForm.dualSubmoduleParing_spec, key y]
+  change algebraMap A K (B.dualSubmodulePairing ⟨x, hmem⟩ y) = algebraMap A K (f y)
+  rw [LinearMap.BilinForm.dualSubmodulePairing_spec, key y]
 
 /-- The pairing map from the dual submodule to the module dual is bijective. -/
 theorem LinearMap.BilinForm.dualSubmoduleToDual_bijective [IsDomain A]

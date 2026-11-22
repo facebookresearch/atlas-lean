@@ -537,7 +537,7 @@ private theorem spectralMulExtend_eLpNorm
     eLpNorm (spectralMulExtend T hT i f) 2 (spectralMulSumMeasure T hT) =
       eLpNorm f 2 (spectralMulMeasure T hT (i : E)) := by
   rw [spectralMulExtend, eLpNorm_indicator_eq_eLpNorm_restrict
-      (spectralMulFiber_measurableSet T hT i),
+      (spectralMulFiber_measurableSet T hT i).nullMeasurableSet,
     spectralMulSumMeasure_restrict_fiber, spectralMulFiberMeasure,
     (measurableEmbedding_prodMk_left i).eLpNorm_map_measure]
   rfl

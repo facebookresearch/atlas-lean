@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Cslib.Foundations.Semantics.LTS.Basic
-public import Cslib.Foundations.Data.RelatesInSteps
+public import Cslib.Foundations.Relation.RelatesInSteps
 public import Mathlib.Combinatorics.Digraph.Basic
 public import Mathlib.Logic.Relation
 

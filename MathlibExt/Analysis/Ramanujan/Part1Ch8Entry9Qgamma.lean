@@ -52,6 +52,7 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
+import Mathlib.Analysis.Convex.Deriv
 
 @[expose] public section
 

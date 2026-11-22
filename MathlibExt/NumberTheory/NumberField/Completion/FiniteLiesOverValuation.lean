@@ -89,7 +89,8 @@ theorem valuation_adicCompletionMap (x : v.adicCompletion K) :
       v.asIdeal.ramificationIdx' w.asIdeal
   rw [adicCompletionMap_algebraMap v w]
   simp only [algebraMap_adicCompletion, Function.comp_apply,
-    valuedAdicCompletion_eq_valuation']
+    valuedAdicCompletion_eq_valuation', Algebra.algebraMap_self_apply]
+  rw [Ideal.ramificationIdx'_eq_ramificationIdx v.asIdeal w.asIdeal v.ne_bot]
   exact (valuation_liesOver L v w k).symm
 
 /-- The canonical completion map preserves integrality. -/

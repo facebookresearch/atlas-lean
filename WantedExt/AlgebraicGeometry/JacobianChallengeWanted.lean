@@ -202,8 +202,8 @@ This is the Mordell-Weil theorem; it is what gives Theorem 1.1's `ρ` a meaning.
 upstream, named here so that it can be addressed as a hole. -/
 /-- Source: V. Dimitrov, Z. Gao, and P. Habegger, `Uniformity in Mordell–Lang for curves`, Annals of Math, 194 (1) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-194-1-UniformMordellLang.lean Via leanprover/lean-eval@38361be, problem `annals_uniform_mordell_lang`. -/
 public instance_wanted instFG [NumberField k] :
-    @Group.FG (𝟙_ (Over (Spec (.of k))) ⟶ ❰Jacobian❱ C)
-      (❰instCommGroup❱).toGroup
+    @IsMulFG (𝟙_ (Over (Spec (.of k))) ⟶ ❰Jacobian❱ C)
+      (❰instCommGroup❱).toMul
 
 end JacobianChallenge
 

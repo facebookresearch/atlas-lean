@@ -181,7 +181,7 @@ theorem malcev_residuallyFinite
     (G : Subgroup (Matrix.GeneralLinearGroup (Fin n) K))
     (hFG : Group.FG G) : Group.ResiduallyFinite G := by
   classical
-  obtain ⟨S, hS⟩ := Group.fg_def.mp hFG
+  obtain ⟨_, S, _, hS⟩ := Group.fg_iff'.mp hFG
   set E : ↥G → Matrix (Fin n) (Fin n) K :=
     fun g => ((g : Matrix.GeneralLinearGroup (Fin n) K) : Matrix (Fin n) (Fin n) K) with hE
   set T : Finset K := (S.biUnion fun s => Finset.univ.biUnion fun i =>

@@ -16,8 +16,8 @@ public import MathlibExt.GroupTheory.BurnsidePaqb.CharacterOrthogonality
 /-!
 Simple-prime-power stage of the complete Burnside proof.
 
-Authors: Muse Spark 1.3, @toskua, Avocado
-Source archive: genai_web_search/tree/users/akiezun/burnside_proof.zip
+Authors: Muse Spark 1.3, @toskua, Meta Muse
+Source archive: burnside_proof.zip
 SHA-256: d9da7df82e467d9fa587892eeef9f51e2b83df0588175653bd1d16264b09dd00
 
 This module is mechanically ported from the audited source `extracted/Burnside/SimplePrime.lean`.
@@ -130,7 +130,6 @@ theorem card_eq_prime_of_nontrivial_linear [IsSimpleGroup G]
     rw [hg]
     exact h1
   have hker_cases := IsSimpleGroup.eq_bot_or_eq_top_of_normal lam.ker
-    inferInstance
   rcases hker_cases with hbot | htop
   · have hinj : Function.Injective lam :=
       (MonoidHom.ker_eq_bot_iff lam).mp hbot
@@ -166,8 +165,7 @@ theorem char_zero_of_nonlinear_of_coprime [IsSimpleGroup G]
     have hgmem : g ∈ charCenter ρ := mem_charCenter_of_eq_smul ρ g μ₀ hsm
     have hproper : charCenter ρ ≠ ⊤ := charCenter_proper_of_nonlinear ρ hd
     have hbot : charCenter ρ = ⊥ := by
-      rcases IsSimpleGroup.eq_bot_or_eq_top_of_normal (charCenter ρ)
-        inferInstance with h | h
+      rcases IsSimpleGroup.eq_bot_or_eq_top_of_normal (charCenter ρ) with h | h
       · exact h
       · exact absurd h hproper
     have hmem : g ∈ (⊥ : Subgroup G) := hbot ▸ hgmem

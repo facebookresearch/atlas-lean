@@ -19,6 +19,7 @@ import Mathlib.Data.List.NodupEquivFin
 import Mathlib.Data.List.OfFn
 import Mathlib.Data.List.Sort
 import Mathlib.Data.Fin.Tuple.Take
+import Mathlib.Data.Fintype.BigOperators
 
 @[expose] public section
 

@@ -9,8 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Nat.PrimeFin
+import Mathlib.Data.Nat.Prime.Int
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.NumberTheory.Pell
 import Mathlib.NumberTheory.Primorial
 import Mathlib.Tactic.Linarith

@@ -9,6 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Geometry.Manifold.MorseFunction
+import Mathlib.Analysis.InnerProductSpace.EuclideanDist
+import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
+import Mathlib.LinearAlgebra.Dual.Lemmas
 import MathlibExt.Geometry.Manifold.MorseLemma
 import MathlibExt.Geometry.Manifold.Sard
 import Mathlib.Geometry.Manifold.PartitionOfUnity
@@ -828,17 +831,7 @@ private lemma mfe_D2term_cont (x : M) (j : ι) :
   have hinner : Continuous (fun p : (ι → (E →L[ℝ] ℝ)) × E =>
       ContinuousLinearMap.compL ℝ E E ℝ (p.1 j)) :=
     ((ContinuousLinearMap.compL ℝ E E ℝ).continuous.comp hj1).comp continuous_fst
-  have hL : Continuous (fun p : (ι → (E →L[ℝ] ℝ)) × E =>
-      ContinuousLinearMap.compL ℝ E (E →L[ℝ] E) (E →L[ℝ] ℝ)
-        (ContinuousLinearMap.compL ℝ E E ℝ (p.1 j))) :=
-    (ContinuousLinearMap.compL ℝ E (E →L[ℝ] E) (E →L[ℝ] ℝ)).continuous.comp hinner
-  have hmain : ContinuousOn (fun p : (ι → (E →L[ℝ] ℝ)) × E =>
-      (ContinuousLinearMap.compL ℝ E (E →L[ℝ] E) (E →L[ℝ] ℝ)
-        (ContinuousLinearMap.compL ℝ E E ℝ (p.1 j)))
-        (fderiv ℝ (fderiv ℝ (mfe_h fs x j)) p.2))
-      (Set.univ ×ˢ mfe_Omega fs x) :=
-    (hL.continuousOn.mono (Set.subset_univ _)).clm_apply hD
-  simpa [ContinuousLinearMap.compL_apply] using hmain
+  exact hinner.continuousOn.clm_comp hD
 
 omit [SecondCountableTopology M] [Countable ι] in
 /-- Joint continuity of the second-derivative sum. -/

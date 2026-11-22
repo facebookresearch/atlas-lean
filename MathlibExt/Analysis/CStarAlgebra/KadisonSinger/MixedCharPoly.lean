@@ -18,6 +18,7 @@ import MathlibExt.LinearAlgebra.Matrix.MvPolynomial
 import Mathlib.Algebra.CharZero.Infinite
 import Mathlib.Algebra.MvPolynomial.Funext
 import Mathlib.Algebra.Polynomial.Derivation
+import Mathlib.Algebra.Polynomial.Roots
 import Mathlib.Algebra.Polynomial.Degree.SmallDegree
 import Mathlib.LinearAlgebra.Matrix.Charpoly.Coeff
 

@@ -15,6 +15,7 @@ public import Batteries.Data.UnionFind.Lemmas
 public import Cslib.Algorithms.Lean.TimeM
 public import Mathlib.Algebra.Group.Prod
 public import Mathlib.Algebra.Group.Nat.Defs
+import all Batteries.Data.UnionFind.Basic
 
 /-!
 # Connected components using the canonical union-find

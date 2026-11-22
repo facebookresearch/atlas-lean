@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Analysis.Analytic.Polynomial
+
 public import Mathlib.LinearAlgebra.Matrix.Permanent
 public import Mathlib.Analysis.Convex.DoublyStochasticMatrix
 import MathlibExt.Analysis.Complex.Hurwitz

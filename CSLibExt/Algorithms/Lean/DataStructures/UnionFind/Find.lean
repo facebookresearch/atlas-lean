@@ -14,6 +14,7 @@ public import Mathlib.Logic.Function.Iterate
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Algebra.Group.Prod
 public import Mathlib.Algebra.Group.Nat.Defs
+import all Batteries.Data.UnionFind.Basic
 
 /-!
 # Exact path compression for canonical Batteries union-find

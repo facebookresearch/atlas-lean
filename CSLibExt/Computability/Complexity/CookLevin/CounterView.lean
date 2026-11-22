@@ -6,6 +6,20 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Copyright 2026 Joshua Tan.
+Authors: Joshua Tan (original development); ported by Adam Kiezun and Metamate.
+
+Adapted from the `[LIB]` section of `D3OneHot.lean` and from `D3Fam.lean` of
+`JoshuaTan42/millennium-cook-levin` at commit `879c4835640119ad009abeb62ebd7a96f87eb9e8`
+(<https://github.com/JoshuaTan42/millennium-cook-levin/blob/879c4835640119ad009abeb62ebd7a96f87eb9e8/D3OneHot.lean>),
+licensed under the Apache License, Version 2.0
+(<https://www.apache.org/licenses/LICENSE-2.0>). Changes: module-system header and imports,
+`Cslib.Complexity.CookLevin` namespaces, deprecated lemma names updated; the generic counter view
+moved out of the one-hot family module so that every generator, including the transition family
+(which had a specialized copy in the source), shares one API.
+-/
+
 module
 
 public import Mathlib.Data.Fintype.Basic

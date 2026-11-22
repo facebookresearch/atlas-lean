@@ -11,6 +11,10 @@ module
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 import MathlibExt.Analysis.Ramanujan.Part1Ch7Entry13Bernoullipolyadd
 import MathlibExt.Analysis.Ramanujan.Part1Ch7Entry13Bernoullirecurrence
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Analysis.Calculus.SmoothSeries
+import Mathlib.Analysis.PSeriesComplex
 
 @[expose] public section
 

@@ -6,6 +6,22 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Copyright 2026 Joshua Tan.
+Authors: Joshua Tan (original development); ported by Adam Kiezun and Metamate.
+
+Adapted from `D3Init.lean` of `JoshuaTan42/millennium-cook-levin` at commit
+`879c4835640119ad009abeb62ebd7a96f87eb9e8`
+(<https://github.com/JoshuaTan42/millennium-cook-levin/blob/879c4835640119ad009abeb62ebd7a96f87eb9e8/D3Init.lean>),
+licensed under the Apache License, Version 2.0
+(<https://www.apache.org/licenses/LICENSE-2.0>). Changes: module-system header and imports,
+`Cslib.Complexity.CookLevin` namespaces, deprecated lemma
+names updated, manual `Fintype` instances for enumeration types (`deriving Fintype` fails on them at
+the pinned Mathlib), and a heartbeat bump for `pre_run`; module docstring rewritten for this
+repository (the source's notes and status lines dropped), missing docstrings added, long lines
+wrapped.
+-/
+
 module
 
 public import MathlibExt.Computability.TuringMachine.StackEmbedding

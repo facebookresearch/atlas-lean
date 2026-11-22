@@ -14,8 +14,8 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Order.Floor.Defs
 public import Mathlib.Data.Finset.Basic
-public import Mathlib.Data.Real.Basic
-public import Mathlib.Data.Real.Sqrt
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Interval.Finset.Basic
 public import Mathlib.Order.Interval.Set.Defs

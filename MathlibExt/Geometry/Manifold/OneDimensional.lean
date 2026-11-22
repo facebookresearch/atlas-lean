@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Geometry.Manifold.Instances.Sphere
+import Mathlib.Topology.Algebra.Order.ArchimedeanDiscrete
+import Mathlib.GroupTheory.SpecificGroups.Cyclic.Subgroup
 import MathlibExt.Geometry.Manifold.RiemannianMetricExistence
 import Mathlib.Geometry.Manifold.LocalDiffeomorph
 import Mathlib.Geometry.Manifold.Instances.Icc
@@ -1981,7 +1983,10 @@ private theorem om_exists_minimal_period
       exact Set.mem_Ioo.mpr ⟨by linarith, hxδ⟩
     have hx0 := hdisc x hxP hxI'
     linarith
-  obtain ⟨a, ha⟩ := (AddSubgroup.dense_or_cyclic P).resolve_left hndense
+  obtain ⟨a, ha'⟩ := P.isAddCyclic_iff_exists_zmultiples_eq_top.mp
+    (P.dense_or_isCyclic.resolve_left hndense)
+  have ha : P = AddSubgroup.closure {a} :=
+    ha'.symm.trans (AddSubgroup.zmultiples_eq_closure a)
   have ha0 : a ≠ 0 := by
     intro h0
     have hTmem' : T ∈ AddSubgroup.closure ({a} : Set ℝ) := by

@@ -36,15 +36,15 @@ namespace Cslib.Algorithms.Lean.Matrix
 /-- Uniform complete binary histories mapped through the repeated executor. -/
 noncomputable def freivaldsRepeatLaw {n : Nat} (k : Nat)
     (A B C : _root_.Vector (_root_.Vector (ZMod 2) n) n) : PMF Bool :=
-  (PMF.uniformOfFintype (Fin k → Fin n → ZMod 2)).map fun history =>
+  (Cslib.Probability.PMF.uniformOfFintype (Fin k → Fin n → ZMod 2)).map fun history =>
     (freivaldsRepeat A B C history).ret
 
 /-- Every complete history has its exact uniform mass, including zero trials
 and zero-dimensional matrices. -/
 theorem freivaldsHistory_pointMass {n k : Nat} (history : Fin k → Fin n → ZMod 2) :
-    PMF.uniformOfFintype (Fin k → Fin n → ZMod 2) history =
+    Cslib.Probability.PMF.uniformOfFintype (Fin k → Fin n → ZMod 2) history =
       ((2 : ℝ≥0∞) ^ (n * k))⁻¹ := by
-  simp [PMF.uniformOfFintype_apply, pow_mul]
+  simp [Cslib.Probability.PMF.uniformOfFintype_apply, pow_mul]
 
 /-- An accepted history chooses an accepted seed independently at every position. -/
 theorem freivaldsRepeat_acceptanceCard {n k : Nat}
@@ -83,11 +83,18 @@ theorem freivaldsRepeatLaw_acceptance_power {n : Nat} (k : Nat)
       freivaldsRepeatLaw k A B C true =
           (freivaldsRepeatLaw k A B C).toOuterMeasure {true} :=
         (PMF.toOuterMeasure_apply_singleton (freivaldsRepeatLaw k A B C) true).symm
-      _ = (PMF.uniformOfFintype (Fin k → Fin n → ZMod 2)).toOuterMeasure
+      _ = (Cslib.Probability.PMF.uniformOfFintype (Fin k → Fin n → ZMod 2)).toOuterMeasure
           {history | (freivaldsRepeat A B C history).ret = true} := by
         rw [freivaldsRepeatLaw, PMF.toOuterMeasure_map_apply]
         rfl
-      _ = _ := PMF.toOuterMeasure_uniformOfFintype_apply _
+      _ = _ := by
+        rw [PMF.toOuterMeasure_apply, tsum_fintype]
+        simp only [Set.indicator_apply, Set.mem_ofPred_eq,
+          Cslib.Probability.PMF.uniformOfFintype_apply]
+        rw [← Finset.sum_filter]
+        simp only [Finset.sum_const, nsmul_eq_mul]
+        rw [← Fintype.card_subtype]
+        rfl
   rw [fiber, freivaldsTrialLaw_acceptance, freivaldsRepeat_acceptanceCard,
     Fintype.card_pi_const]
   simp only [Nat.cast_pow, div_eq_mul_inv, mul_pow, ENNReal.inv_pow]

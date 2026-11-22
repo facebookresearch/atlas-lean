@@ -110,6 +110,6 @@ theorem primeCounting_le_three_mul_div_eight {r : ℕ} (hr : 38 ≤ r) :
     Nat.primeCounting r ≤ 3 * r / 8 := by
   by_cases h91 : 91 ≤ r
   · exact (primeCounting_le_mod_thirty r).trans (by omega)
-  · interval_cases r <;> decide
+  · interval_cases r <;> decide +kernel
 
 end Nat.SylvesterSchur

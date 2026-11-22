@@ -1351,6 +1351,7 @@ theorem finrank_freeLieMultihomogeneousComponent
     finrank_span_eq_card (wittLyndonFamily_linearIndependent K degree)]
   exact card_lyndonWordsOfContent_eq_wittMultigradedValue degree hdegree
 
+set_option linter.unusedVariables false in
 /-- Witt's multigraded dimension formula for free Lie algebras: the
 multihomogeneous component of multidegree `(n_1, ..., n_r)` of the free Lie
 algebra has dimension `M(n_1, ..., n_r)`. The component is imported from
@@ -1367,6 +1368,7 @@ Proves `Wanted` entry `witt_multigraded_dimension_formula`.
 Proof: The Lyndon-word basis identifies the component with the Lyndon words of
 the prescribed content, which are counted by Möbius inversion.
 -/
+@[nolint unusedArguments] -- `hr` keeps the stated hypothesis of the formula
 theorem witt_multigraded_dimension_formula
     (K : Type) [Field K] (r : ℕ) (hr : 0 < r)
     (degree : Fin r → ℕ) (hdegree : 0 < ∑ i, degree i) :

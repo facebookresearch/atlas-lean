@@ -173,4 +173,45 @@ theorem starValue_empty (h : Index.empty.IsAdmissibleOrEmpty) :
     funext i
     exact Fin.elim0 (Index.empty_depth ▸ i)
 
+/-- The index `{e}^k` of `k` entries all equal to the positive natural number `e`; for example
+`starValue` at `Index.replicate k 2` is the multiple-zeta-star value `ζ*({2}^k)`.
+Source: Serge Iovleff, *About Some Nested Sums of Reciprocal Squared Numbers*, INTEGERS 26
+(2026), Article A114, Section 1 (notation `ζ*({2}^k)` and `ζ({2}^k)`). -/
+def Index.replicate (k : ℕ) (e : PNat) : Index :=
+  ⟨k * e, ⟨List.replicate k (e : ℕ), fun h => by
+      rw [List.eq_of_mem_replicate h]
+      exact e.pos, by simp⟩⟩
+
+@[simp]
+theorem Index.replicate_entries (k : ℕ) (e : PNat) :
+    (Index.replicate k e).entries = List.replicate k (e : ℕ) :=
+  rfl
+
+@[simp]
+theorem Index.replicate_weight (k : ℕ) (e : PNat) :
+    (Index.replicate k e).weight = k * e :=
+  rfl
+
+@[simp]
+theorem Index.replicate_depth (k : ℕ) (e : PNat) : (Index.replicate k e).depth = k := by
+  simp [Index.replicate, Index.depth, Composition.length]
+
+@[simp]
+theorem Index.replicate_entry (k : ℕ) (e : PNat) (i : Fin (Index.replicate k e).depth) :
+    (Index.replicate k e).entry i = e := by
+  apply PNat.eq
+  simp only [Index.entry, Index.replicate, Composition.blocksFun, PNat.mk_coe]
+  exact List.eq_of_mem_replicate (List.get_mem _ _)
+
+/-- `{e}^k` with `e ≥ 2` is admissible (or empty when `k = 0`), so its multiple-zeta and
+multiple-zeta-star values are defined. Source: Iovleff, INTEGERS 26 (2026), Article A114,
+Section 1 (`ζ*({2}^k)`). -/
+theorem Index.replicate_isAdmissibleOrEmpty (k : ℕ) {e : PNat} (he : 2 ≤ (e : ℕ)) :
+    (Index.replicate k e).IsAdmissibleOrEmpty := by
+  cases k with
+  | zero => exact Or.inr (Index.replicate_depth 0 e)
+  | succ k =>
+      left
+      simpa [Index.replicate, Index.IsAdmissible, List.replicate_succ] using he
+
 end MetaMathlibExt.MultipleZeta

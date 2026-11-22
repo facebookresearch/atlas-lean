@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.RingTheory.RamificationInertia.Ramification
+public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 
 /-!
 # Valuation bridge for ramified DVR extensions

@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.Computability.Languages.ContextFree.Closure
 public import Mathlib.Computability.DFA
+public import Mathlib.Data.Fintype.Prod
 
 /-!
 # Regular languages are context-free

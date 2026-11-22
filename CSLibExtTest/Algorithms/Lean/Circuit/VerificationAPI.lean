@@ -15,45 +15,45 @@ import CSLibExt.Algorithms.Lean.Circuit.Verification
 open Cslib.Circuits Cslib.Circuits.Circuit Cslib.Algorithms.Lean
 open scoped BigOperators
 
-example {i g : Nat} (c : Circuit booleanSignature i g 1) (cert : Array Bool) :
+example {i : Nat} (c : Circuit booleanSignature i 1) (cert : Array Bool) :
     TimeM Nat Bool := verifyBooleanCertificate c cert
 
-example {i g : Nat} (c : Circuit booleanSignature i g 1) (cert : Array Bool) :
+example {i : Nat} (c : Circuit booleanSignature i 1) (cert : Array Bool) :
     (verifyBooleanCertificate c cert).ret = true ↔
-      cert.size = i + g ∧
-      (∀ j : Fin g, booleanInterpretation (c.program.lines j).op
-        (fun k => cert.getD ((c.program.lines j).wires k).val false) =
-          cert.getD (i + j.val) false) ∧ cert.getD (c.outputs 0).val false = true :=
+      cert.size = i + c.size ∧
+      (∀ j : Fin c.size, booleanInterpretation (c.program.lines j).op
+        (fun k => cert.getD ((c.program.lines j).wires k).toFin.val false) =
+          cert.getD (i + j.val) false) ∧ cert.getD (c.outputs 0).toFin.val false = true :=
   verifyBooleanCertificate_iff c cert
 
-example {i g : Nat} (c : Circuit booleanSignature i g 1) (cert : Array Bool)
+example {i : Nat} (c : Circuit booleanSignature i 1) (cert : Array Bool)
     (h : (verifyBooleanCertificate c cert).ret = true) :
-    (∀ w : Wire i g, c.program.trace booleanInterpretation
-      (fun k => cert.getD k.val false) w = cert.getD w.val false) ∧
+    (∀ w : Wire i c.size, c.program.trace booleanInterpretation
+      (fun k => cert.getD k.val false) w = cert.getD w.toFin.val false) ∧
       c.eval booleanInterpretation (fun k => cert.getD k.val false) 0 = true :=
   verifyBooleanCertificate_sound c cert h
 
-example {i g : Nat} (c : Circuit booleanSignature i g 1) (input : Fin i → Bool)
+example {i : Nat} (c : Circuit booleanSignature i 1) (input : Fin i → Bool)
     (h : c.eval booleanInterpretation input 0 = true) :
-    let cert := Array.ofFn (c.program.trace booleanInterpretation input)
-    cert.size = i + g ∧ (verifyBooleanCertificate c cert).ret = true :=
+    let cert := Array.ofFn (Fin.addCases input (c.program.eval booleanInterpretation input))
+    cert.size = i + c.size ∧ (verifyBooleanCertificate c cert).ret = true :=
   verifyBooleanCertificate_complete c input h
 
-example {i g : Nat} (c : Circuit booleanSignature i g 1) :
+example {i : Nat} (c : Circuit booleanSignature i 1) :
     (∃ cert : Array Bool, (verifyBooleanCertificate c cert).ret = true ∧
-      cert.size ≤ i + 2 * g) ↔
+      cert.size ≤ i + 2 * c.size) ↔
       ∃ input : Fin i → Bool, c.eval booleanInterpretation input 0 = true :=
   verifyBooleanCertificate_satisfiable_iff c
 
-example {i g : Nat} (c : Circuit booleanSignature i g 1) (cert : Array Bool) :
+example {i : Nat} (c : Circuit booleanSignature i 1) (cert : Array Bool) :
     (verifyBooleanCertificate c cert).time =
-      if cert.size = i + g then
-        2 + g + ∑ j : Fin g, booleanSignature.Arity (c.program.lines j).op
+      if cert.size = i + c.size then
+        2 + c.size + ∑ j : Fin c.size, booleanSignature.Arity (c.program.lines j).op
       else 1 := verifyBooleanCertificate_time c cert
 
-example {i g K : Nat} (c : Circuit booleanSignature i g 1) (cert : Array Bool)
+example {i K : Nat} (c : Circuit booleanSignature i 1) (cert : Array Bool)
     (hfan : c.FanInAtMost K) :
-    (verifyBooleanCertificate c cert).time ≤ 2 + (K + 1) * g :=
+    (verifyBooleanCertificate c cert).time ≤ 2 + (K + 1) * c.size :=
   verifyBooleanCertificate_time_le_of_fanInAtMost c cert hfan
 
 example (f : Fin 1 → Bool) : booleanInterpretation .not f = !(f 0) :=

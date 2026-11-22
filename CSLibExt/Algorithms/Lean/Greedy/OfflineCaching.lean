@@ -674,6 +674,138 @@ theorem furthestInFuture_min_misses {α : Type u} [DecidableEq α]
       events.countP (fun event => match event with | .hit _ => false | .miss _ _ => true) :=
   manager_min capacity requests initialCache events finalCache hnodup hcapacity hlegal hrequests
 
+/-! ## Event API
+
+Shared vocabulary for cache traces, used by online policies (`Online/Paging.lean`). -/
+
+namespace CacheEvent
+
+/-- The page an event serves. -/
+def request {α : Type u} : CacheEvent α → α
+  | .hit r => r
+  | .miss r _ => r
+
+/-- Whether an event is a miss. -/
+def isMiss {α : Type u} : CacheEvent α → Bool
+  | .hit _ => false
+  | .miss _ _ => true
+
+@[simp] theorem request_hit {α : Type u} (r : α) : (CacheEvent.hit r).request = r := rfl
+
+@[simp] theorem request_miss {α : Type u} (r : α) (v : Option α) :
+    (CacheEvent.miss r v).request = r := rfl
+
+@[simp] theorem isMiss_hit {α : Type u} (r : α) : (CacheEvent.hit r).isMiss = false := rfl
+
+@[simp] theorem isMiss_miss {α : Type u} (r : α) (v : Option α) :
+    (CacheEvent.miss r v).isMiss = true := rfl
+
+end CacheEvent
+
+/-- The number of misses in a trace. -/
+def misses {α : Type u} (events : List (CacheEvent α)) : Nat := events.countP CacheEvent.isMiss
+
+theorem misses_append {α : Type u} (events events' : List (CacheEvent α)) :
+    misses (events ++ events') = misses events + misses events' := List.countP_append
+
+/-- Legal transitions keep the cache duplicate-free and within capacity. -/
+theorem cacheLTS_valid {α : Type u} [DecidableEq α] {capacity : Nat} {before after : List α}
+    {event : CacheEvent α} (hstep : (cacheLTS capacity).Tr before event after)
+    (hnodup : before.Nodup) (hcapacity : before.length ≤ capacity) :
+    after.Nodup ∧ after.length ≤ capacity :=
+  transition_valid hstep hnodup hcapacity
+
+/-- Legal traces keep the cache duplicate-free and within capacity. -/
+theorem cacheLTS_mtr_valid {α : Type u} [DecidableEq α] {capacity : Nat} {before after : List α}
+    {events : List (CacheEvent α)} (h : (cacheLTS capacity).MTr before events after)
+    (hnodup : before.Nodup) (hcapacity : before.length ≤ capacity) :
+    after.Nodup ∧ after.length ≤ capacity := by
+  induction h with
+  | refl => exact ⟨hnodup, hcapacity⟩
+  | stepL htr _ ih =>
+      obtain ⟨h1, h2⟩ := cacheLTS_valid htr hnodup hcapacity
+      exact ih h1 h2
+
+/-- With positive capacity, the served page is cached afterwards. -/
+theorem request_mem_of_tr {α : Type u} [DecidableEq α] {capacity : Nat} (hpos : 0 < capacity)
+    {before after : List α} {event : CacheEvent α}
+    (h : (cacheLTS capacity).Tr before event after) : event.request ∈ after := by
+  cases event with
+  | hit r =>
+      obtain ⟨hr, hperm⟩ := h
+      exact hperm.mem_iff.2 hr
+  | miss r v =>
+      cases v with
+      | none =>
+          obtain ⟨_, (⟨h0, _, _⟩ | ⟨_, hperm⟩)⟩ := h
+          · omega
+          · exact hperm.mem_iff.2 List.mem_cons_self
+      | some v =>
+          obtain ⟨_, _, _, _, hperm⟩ := h
+          exact hperm.mem_iff.2 List.mem_cons_self
+
+/-- A trace without misses only serves pages already cached. -/
+theorem request_mem_of_misses_eq_zero {α : Type u} [DecidableEq α] {capacity : Nat}
+    {before after : List α} {events : List (CacheEvent α)}
+    (h : (cacheLTS capacity).MTr before events after) (h0 : misses events = 0) :
+    ∀ event ∈ events, event.request ∈ before := by
+  induction h with
+  | refl => simp
+  | @stepL s1 e s2 es s3 htr _ ih =>
+      have he : e.isMiss = false := by
+        cases hm : e.isMiss
+        · rfl
+        · have : misses (e :: es) = misses es + 1 := List.countP_cons_of_pos hm
+          omega
+      have hes : misses es = 0 := by
+        have : misses (e :: es) = misses es := List.countP_cons_of_neg (by simp [he])
+        omega
+      cases e with
+      | miss r v => simp [CacheEvent.isMiss] at he
+      | hit r =>
+          obtain ⟨hr, hperm⟩ := htr
+          intro e' he'
+          rcases List.mem_cons.1 he' with rfl | he'
+          · exact hr
+          · exact hperm.mem_iff.1 (ih hes e' he')
+
+/-- **A legal trace misses at least once** on a segment that, together with a page `p` already
+cached, requests `capacity + 1` distinct pages. -/
+theorem one_le_misses {α : Type u} [DecidableEq α] {capacity : Nat} {before after : List α}
+    {events : List (CacheEvent α)} (h : (cacheLTS capacity).MTr before events after)
+    (hcapacity : before.length ≤ capacity) {p : α} (hp : p ∈ before) {distinct : List α}
+    (hdistinct : distinct.Nodup) (hlength : capacity + 1 ≤ distinct.length)
+    (hsub : ∀ x ∈ distinct, x = p ∨ x ∈ events.map CacheEvent.request) : 1 ≤ misses events := by
+  by_contra h0
+  have h0 : misses events = 0 := by omega
+  have hmem := request_mem_of_misses_eq_zero h h0
+  have hsubset : distinct ⊆ before := fun x hx => by
+    rcases hsub x hx with rfl | hx
+    · exact hp
+    · obtain ⟨e, he, rfl⟩ := List.mem_map.1 hx
+      exact hmem e he
+  have := (hdistinct.subperm hsubset).length_le
+  omega
+
+/-- `furthestInFuture_min_misses` in the event API: the manager misses no more than any legal
+trace serving the same requests. -/
+theorem furthestInFuture_misses_le {α : Type u} [DecidableEq α]
+    (capacity : Nat) (requests initialCache : List α)
+    (hnodup : initialCache.Nodup) (hcapacity : initialCache.length ≤ capacity)
+    (events : List (CacheEvent α)) (finalCache : List α)
+    (hlegal : (cacheLTS capacity).MTr initialCache events finalCache)
+    (hrequests : events.map CacheEvent.request = requests) :
+    misses (furthestInFuture capacity requests initialCache).1 ≤ misses events :=
+  furthestInFuture_min_misses capacity requests initialCache hnodup hcapacity events finalCache
+    hlegal hrequests
+
+/-- `furthestInFuture_legal` in the event API. -/
+theorem furthestInFuture_requests {α : Type u} [DecidableEq α]
+    (capacity : Nat) (requests initialCache : List α)
+    (hnodup : initialCache.Nodup) (hcapacity : initialCache.length ≤ capacity) :
+    (furthestInFuture capacity requests initialCache).1.map CacheEvent.request = requests :=
+  (furthestInFuture_legal capacity requests initialCache hnodup hcapacity).2.1
+
 end
 
 end Cslib.Algorithms.Lean.OfflineCaching

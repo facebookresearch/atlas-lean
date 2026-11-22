@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Cslib.Probability.PMF
+
 public import MathlibExt.InformationTheory.FiniteChannelSimulation
 public import MathlibExt.InformationTheory.FunctionalRepresentation
 public import Mathlib.Probability.Distributions.Uniform
@@ -53,32 +55,32 @@ theorem zero_le_worstCaseOptimum_zero : (0 : EReal) ≤ worstCaseOptimum 0 := by
 /-- An actual fair bit copied into both coordinates. -/
 noncomputable def binaryCopyLaw : FiniteJointLaw :=
   ⟨2, 2, by decide, by decide,
-    (PMF.uniformOfFintype (Fin 2)).map (fun b => (b, b))⟩
+    (Cslib.Probability.PMF.uniformOfFintype (Fin 2)).map (fun b => (b, b))⟩
 
 /-- The copied fair-bit law has the actual fair-bit input marginal. -/
-theorem binaryCopyLaw_input : binaryCopyLaw.inputLaw = PMF.uniformOfFintype (Fin 2) := by
-  change ((PMF.uniformOfFintype (Fin 2)).map (fun b => (b, b))).map Prod.fst = _
+theorem binaryCopyLaw_input : binaryCopyLaw.inputLaw = Cslib.Probability.PMF.uniformOfFintype (Fin 2) := by
+  change ((Cslib.Probability.PMF.uniformOfFintype (Fin 2)).map (fun b => (b, b))).map Prod.fst = _
   rw [PMF.map_comp]
   exact PMF.map_id _
 
 /-- The copied fair-bit law has the actual fair-bit output marginal. -/
-theorem binaryCopyLaw_output : binaryCopyLaw.outputLaw = PMF.uniformOfFintype (Fin 2) := by
-  change ((PMF.uniformOfFintype (Fin 2)).map (fun b => (b, b))).map Prod.snd = _
+theorem binaryCopyLaw_output : binaryCopyLaw.outputLaw = Cslib.Probability.PMF.uniformOfFintype (Fin 2) := by
+  change ((Cslib.Probability.PMF.uniformOfFintype (Fin 2)).map (fun b => (b, b))).map Prod.snd = _
   rw [PMF.map_comp]
   exact PMF.map_id _
 
 /-- The actual fair-bit Shannon sum is one bit. -/
-theorem fairBitEntropy : shannonEntropy (PMF.uniformOfFintype (Fin 2)) = 1 := by
+theorem fairBitEntropy : shannonEntropy (Cslib.Probability.PMF.uniformOfFintype (Fin 2)) = 1 := by
   have hlog : Real.log 2 ≠ 0 := ne_of_gt (Real.log_pos (by norm_num))
-  norm_num [shannonEntropy, PMF.uniformOfFintype_apply, Fin.sum_univ_two,
+  norm_num [shannonEntropy, Cslib.Probability.PMF.uniformOfFintype_apply, Fin.sum_univ_two,
     Real.negMulLog, Real.log_div, hlog]
   field_simp [hlog]
 
 /-- Copying a fair bit does not create additional joint entropy. -/
 theorem binaryCopyLaw_entropy : shannonEntropy binaryCopyLaw.law = 1 := by
-  change shannonEntropy ((PMF.uniformOfFintype (Fin 2)).map (fun b => (b, b))) = 1
+  change shannonEntropy ((Cslib.Probability.PMF.uniformOfFintype (Fin 2)).map (fun b => (b, b))) = 1
   have hlog : Real.log 2 ≠ 0 := ne_of_gt (Real.log_pos (by norm_num))
-  norm_num [shannonEntropy, PMF.map_apply, PMF.uniformOfFintype_apply,
+  norm_num [shannonEntropy, PMF.map_apply, Cslib.Probability.PMF.uniformOfFintype_apply,
     tsum_fintype, Fintype.sum_prod_type, Fin.sum_univ_two,
     Real.negMulLog, Real.log_div, hlog]
   field_simp [hlog]
@@ -86,19 +88,19 @@ theorem binaryCopyLaw_entropy : shannonEntropy binaryCopyLaw.law = 1 := by
 
 /-- The input coordinate of the actual copied bit has one bit of entropy. -/
 theorem binaryCopyLaw_inputEntropy : shannonEntropy binaryCopyLaw.inputLaw = 1 := by
-  change shannonEntropy (((PMF.uniformOfFintype (Fin 2)).map (fun b => (b, b))).map
+  change shannonEntropy (((Cslib.Probability.PMF.uniformOfFintype (Fin 2)).map (fun b => (b, b))).map
     Prod.fst) = 1
   rw [PMF.map_comp]
-  change shannonEntropy ((PMF.uniformOfFintype (Fin 2)).map id) = 1
+  change shannonEntropy ((Cslib.Probability.PMF.uniformOfFintype (Fin 2)).map id) = 1
   rw [PMF.map_id]
   exact fairBitEntropy
 
 /-- The output coordinate of the actual copied bit has one bit of entropy. -/
 theorem binaryCopyLaw_outputEntropy : shannonEntropy binaryCopyLaw.outputLaw = 1 := by
-  change shannonEntropy (((PMF.uniformOfFintype (Fin 2)).map (fun b => (b, b))).map
+  change shannonEntropy (((Cslib.Probability.PMF.uniformOfFintype (Fin 2)).map (fun b => (b, b))).map
     Prod.snd) = 1
   rw [PMF.map_comp]
-  change shannonEntropy ((PMF.uniformOfFintype (Fin 2)).map id) = 1
+  change shannonEntropy ((Cslib.Probability.PMF.uniformOfFintype (Fin 2)).map id) = 1
   rw [PMF.map_id]
   exact fairBitEntropy
 
@@ -119,17 +121,17 @@ noncomputable def correlatedAuxiliary : FiniteExtension binaryCopyLaw where
 
 /-- The correlated auxiliary carries one actual bit. -/
 theorem correlatedAuxiliary_entropy : shannonEntropy correlatedAuxiliary.auxiliaryLaw = 1 := by
-  change shannonEntropy ((((PMF.uniformOfFintype (Fin 2)).map (fun b => (b, b))).map
+  change shannonEntropy ((((Cslib.Probability.PMF.uniformOfFintype (Fin 2)).map (fun b => (b, b))).map
     (fun z => (z, z.1))).map Prod.snd) = 1
   rw [PMF.map_comp, PMF.map_comp]
-  change shannonEntropy ((PMF.uniformOfFintype (Fin 2)).map id) = 1
+  change shannonEntropy ((Cslib.Probability.PMF.uniformOfFintype (Fin 2)).map id) = 1
   rw [PMF.map_id]
   exact fairBitEntropy
 
 /-- The correlated input/auxiliary pair has the entropy of the original copied bit. -/
 theorem correlatedAuxiliary_inputEntropy :
     shannonEntropy correlatedAuxiliary.inputAuxiliaryLaw = 1 := by
-  change shannonEntropy ((((PMF.uniformOfFintype (Fin 2)).map (fun b => (b, b))).map
+  change shannonEntropy ((((Cslib.Probability.PMF.uniformOfFintype (Fin 2)).map (fun b => (b, b))).map
     (fun z => (z, z.1))).map (fun z => (z.1.1, z.2))) = 1
   rw [PMF.map_comp, PMF.map_comp]
   exact binaryCopyLaw_entropy
@@ -143,7 +145,7 @@ theorem correlatedAuxiliary_information : correlatedAuxiliary.auxiliaryInformati
 
 /-- An actual nontrivial probability measure for the general Shannon tests. -/
 noncomputable def fairBitProbability : ProbabilityMeasure (Fin 2) :=
-  ⟨(PMF.uniformOfFintype (Fin 2)).toMeasure, inferInstance⟩
+  ⟨(Cslib.Probability.PMF.uniformOfFintype (Fin 2)).toMeasure, inferInstance⟩
 
 /-- The nonconstant measurable fair-bit observation has one bit without conditioning. -/
 theorem fairBitQuantizedEntropy :
@@ -161,7 +163,7 @@ theorem fairBitQuantizedEntropy :
   have hmass (i : Fin 2) :
       (∫ z, (if z = i then (1 : ℝ) else 0) ∂fairBitProbability.toMeasure) = 1 / 2 := by
     rw [integral_fintype (hi i)]
-    simp [Measure.real, fairBitProbability, PMF.uniformOfFintype_apply, smul_eq_mul]
+    simp [Measure.real, fairBitProbability, Cslib.Probability.PMF.uniformOfFintype_apply, smul_eq_mul]
   have hlog : Real.log 2 ≠ 0 := ne_of_gt (Real.log_pos (by norm_num))
   norm_num [quantizedConditionalEntropy, condExp_bot, hmass, Fin.sum_univ_two,
     Real.negMulLog, Real.log_div, hlog]
@@ -238,9 +240,9 @@ example : correlatedAuxiliary.inputAuxiliaryLaw.map Prod.snd = correlatedAuxilia
 example : correlatedAuxiliary.outputAuxiliaryLaw.map Prod.snd = correlatedAuxiliary.auxiliaryLaw :=
   correlatedAuxiliary.outputAuxiliaryLaw_map_snd
 
-example : shannonEntropy ((PMF.uniformOfFintype (Fin 2)).map (Equiv.swap (0 : Fin 2) 1)) = 1 := by
+example : shannonEntropy ((Cslib.Probability.PMF.uniformOfFintype (Fin 2)).map (Equiv.swap (0 : Fin 2) 1)) = 1 := by
   simpa only [fairBitEntropy] using shannonEntropy_map_equiv
-    (PMF.uniformOfFintype (Fin 2)) (Equiv.swap (0 : Fin 2) 1)
+    (Cslib.Probability.PMF.uniformOfFintype (Fin 2)) (Equiv.swap (0 : Fin 2) 1)
 
 example : quantizedConditionalEntropy fairBitProbability ⟨⊥, bot_le⟩
     (fun _ : Fin 2 => (0 : Fin 2)) measurable_const = 0 :=

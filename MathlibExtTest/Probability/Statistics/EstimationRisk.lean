@@ -1,0 +1,1614 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import MathlibExt.Probability.Statistics.EstimationRisk
+public import MathlibExt.Probability.Statistics.ModelInterop
+public import MathlibExt.MeasureTheory.Function.ConditionalExpectation.BestPredictor
+public import MathlibExt.Probability.MonteCarloRate
+public import Mathlib.Probability.ProbabilityMassFunction.Integrals
+public import Mathlib.MeasureTheory.Measure.DiracProba
+public import Mathlib.Probability.Distributions.Geometric
+public import Mathlib.Probability.Distributions.Bernoulli
+public import Mathlib.Probability.Moments.Variance
+public import Mathlib.MeasureTheory.Measure.Module
+public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
+
+/-!
+# Tests for estimation risk: bias, mean squared error, and unbiasedness
+
+Positive cases use a genuine fair two-point law, a full Bernoulli family, and
+Dirac laws with a fixed estimator. The MSE decomposition is verified
+numerically on laws with nonzero bias and variance. Negative cases exhibit a
+genuine infinite-moment geometric law, reject zero and infinite sampling
+measures as probability laws, and record empty-domain vacuity explicitly.
+Deterministic-kernel receipts identify the squared-error risk of the kernel
+bind with the finite MSE on the L² domain, including a regression split, and
+with `∞` off that domain.
+-/
+
+@[expose] public section
+
+open MeasureTheory ProbabilityTheory
+open scoped BigOperators ENNReal Topology
+
+open MathlibExt.Probability.Statistics.EstimationRisk
+
+namespace EstimationRiskTest
+
+/-- Fixed nonconstant real estimator on a two-point sample space. -/
+def twoPointW : Bool → ℝ
+  | false => 0
+  | true => 1
+
+/-- Fair two-point law as a PMF. -/
+noncomputable def twoPointP : PMF Bool :=
+  PMF.ofFintype (fun _ => ENNReal.ofReal (1 / 2 : ℝ)) (by
+    simp only [Fintype.univ_bool,
+      Finset.sum_insert (show true ∉ ({false} : Finset Bool) from by decide),
+      Finset.sum_singleton]
+    rw [← ENNReal.ofReal_add (by norm_num) (by norm_num),
+      show (1 / 2 : ℝ) + 1 / 2 = 1 from by norm_num, ENNReal.ofReal_one])
+
+/-- The fair two-point law as a probability measure. -/
+noncomputable def twoPointμ : ProbabilityMeasure Bool :=
+  ⟨twoPointP.toMeasure, inferInstance⟩
+
+/-- Expected value of the fixed estimator under the fair two-point law. -/
+theorem twoPoint_integral :
+    ∫ b, twoPointW b ∂(twoPointμ : Measure Bool) = (1 / 2 : ℝ) := by
+  have hμ : (twoPointμ : Measure Bool) = twoPointP.toMeasure := rfl
+  rw [hμ, PMF.integral_eq_sum]
+  simp only [Fintype.univ_bool,
+    Finset.sum_insert (show true ∉ ({false} : Finset Bool) from by decide),
+    Finset.sum_singleton, twoPointP, PMF.ofFintype_apply]
+  rw [show twoPointW true = (1 : ℝ) from rfl,
+    show twoPointW false = (0 : ℝ) from rfl,
+    ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 1 / 2)]
+  simp [smul_eq_mul]
+
+/-- The fixed estimator is genuinely nonconstant. -/
+example : twoPointW false ≠ twoPointW true := by
+  show (0 : ℝ) ≠ 1
+  norm_num
+
+/-- Both points carry mass: this is a genuine two-point law. -/
+example : false ∈ twoPointP.support ∧ true ∈ twoPointP.support := by
+  have hpos : ENNReal.ofReal (1 / 2 : ℝ) ≠ 0 :=
+    (ENNReal.ofReal_pos.mpr (by norm_num)).ne'
+  simp only [PMF.mem_support_iff, twoPointP, PMF.ofFintype_apply]
+  exact ⟨hpos, hpos⟩
+
+/-- Bias of the fixed estimator at target `0` under the two-point law. -/
+theorem twoPoint_bias :
+    bias twoPointW twoPointμ 0 Integrable.of_finite = (1 / 2 : ℝ) := by
+  rw [bias_eq_integral, twoPoint_integral, sub_zero]
+
+/-- Nonzero bias: the fixed nonconstant estimator is biased at target `0`. -/
+example : bias twoPointW twoPointμ 0 Integrable.of_finite ≠ 0 := by
+  rw [twoPoint_bias]
+  norm_num
+
+/-- Finite MSE of the fixed estimator at target `0` under the two-point law. -/
+theorem twoPoint_mse :
+    meanSquaredError twoPointW twoPointμ 0 Integrable.of_finite
+      = (1 / 2 : ℝ) := by
+  have hsq : ∀ b : Bool, (twoPointW b - 0) ^ 2 = twoPointW b := by
+    intro b
+    cases b
+    · show ((0 : ℝ) - 0) ^ 2 = 0
+      norm_num
+    · show ((1 : ℝ) - 0) ^ 2 = 1
+      norm_num
+  rw [meanSquaredError_eq_integral,
+    integral_congr_ae (Filter.Eventually.of_forall hsq)]
+  exact twoPoint_integral
+
+/-- Positive MSE for the fixed nonconstant estimator at target `0`. -/
+example : 0 < meanSquaredError twoPointW twoPointμ 0 Integrable.of_finite := by
+  rw [twoPoint_mse]
+  norm_num
+
+/-- A single fixed estimator serves every parameter of a nonempty family. -/
+example (θ : Bool) :
+    familyBias twoPointW (fun _ => twoPointμ) (fun _ => 0)
+        (fun _ => Integrable.of_finite) θ = (1 / 2 : ℝ) := by
+  simp only [familyBias_apply, twoPoint_integral, sub_zero]
+
+/-- Family finite MSE on a nonempty parameter type with a fixed estimator. -/
+example (θ : Bool) :
+    familyMeanSquaredError twoPointW (fun _ => twoPointμ) (fun _ => 0)
+        (fun _ => Integrable.of_finite) θ = (1 / 2 : ℝ) := by
+  simp only [familyMeanSquaredError_apply]
+  have hsq : ∀ b : Bool, (twoPointW b - (0 : ℝ)) ^ 2 = twoPointW b := by
+    intro b
+    cases b
+    · show ((0 : ℝ) - 0) ^ 2 = 0
+      norm_num
+    · show ((1 : ℝ) - 0) ^ 2 = 1
+      norm_num
+  rw [integral_congr_ae (Filter.Eventually.of_forall hsq)]
+  exact twoPoint_integral
+
+/-- Dirac laws are probability laws. -/
+example (a : Bool) : IsProbabilityMeasure (Measure.dirac a) :=
+  Measure.dirac.isProbabilityMeasure
+
+/-- Dirac boundary: bias is evaluation minus target. -/
+example (W : Bool → ℝ) (a : Bool) (θ : ℝ)
+    (hW : Integrable W ((diracProba a : ProbabilityMeasure Bool) : Measure Bool)) :
+    bias W (diracProba a) θ hW = W a - θ := by
+  have hcoe : ((diracProba a : ProbabilityMeasure Bool) : Measure Bool)
+      = Measure.dirac a := rfl
+  rw [bias_eq_integral, hcoe, integral_dirac]
+
+/-- Dirac boundary: finite MSE is squared error at the support point. -/
+example (W : Bool → ℝ) (a : Bool) (θ : ℝ)
+    (hW2 : Integrable (fun x => (W x - θ) ^ 2)
+      ((diracProba a : ProbabilityMeasure Bool) : Measure Bool)) :
+    meanSquaredError W (diracProba a) θ hW2 = (W a - θ) ^ 2 := by
+  have hcoe : ((diracProba a : ProbabilityMeasure Bool) : Measure Bool)
+      = Measure.dirac a := rfl
+  rw [meanSquaredError_eq_integral, hcoe, integral_dirac]
+
+/-- Boundary Dirac law with constructed integrability evidence: bias is the
+estimator value minus the target. -/
+example (a θ : ℝ) :
+    bias id ⟨Measure.dirac a, inferInstance⟩ θ
+        (integrable_dirac (by simp)) = a - θ := by
+  have h1 :=
+    bias_eq_integral id (⟨Measure.dirac a, inferInstance⟩ : ProbabilityMeasure ℝ) θ
+      (integrable_dirac (by simp))
+  have h2 :
+      ∫ x, id x ∂((⟨Measure.dirac a, inferInstance⟩ : ProbabilityMeasure ℝ) : Measure ℝ)
+        = a :=
+    integral_dirac _ _
+  exact h1.trans (congrArg (· - θ) h2)
+
+/-- Boundary Dirac law with constructed integrability evidence: MSE is the
+squared error at the support point. -/
+example (a θ : ℝ) :
+    meanSquaredError id ⟨Measure.dirac a, inferInstance⟩ θ
+        (integrable_dirac (by simp)) = (a - θ) ^ 2 := by
+  have h1 :=
+    meanSquaredError_eq_integral id (⟨Measure.dirac a, inferInstance⟩ : ProbabilityMeasure ℝ) θ
+      (integrable_dirac (by simp))
+  have h2 :
+      ∫ x, (id x - θ) ^ 2
+          ∂((⟨Measure.dirac a, inferInstance⟩ : ProbabilityMeasure ℝ) : Measure ℝ)
+        = (a - θ) ^ 2 :=
+    integral_dirac _ _
+  exact h1.trans h2
+
+/-- A constant estimator exactly at its target has MSE exactly `0`. -/
+example (S : Type*) [MeasurableSpace S] (μ : ProbabilityMeasure S) (c : ℝ) :
+    meanSquaredError (fun _ => c) μ c
+      (by
+        have h0 : ∀ x : S, (0 : ℝ) = ((fun _ => c) x - c) ^ 2 :=
+          fun x => by norm_num
+        exact (integrable_const (0 : ℝ)).congr
+          (Filter.Eventually.of_forall h0)) = 0 := by
+  have h0 : ∀ x : S, ((fun _ => c) x - c) ^ 2 = (0 : ℝ) :=
+    fun x => by norm_num
+  show ∫ x, ((fun _ => c) x - c) ^ 2 ∂(μ : Measure S) = 0
+  rw [integral_congr_ae (Filter.Eventually.of_forall h0)]
+  simp
+
+/-- Constant zero estimator at target zero has exact zero MSE. -/
+example : meanSquaredError (fun _ : Bool => (0 : ℝ)) (diracProba true) 0
+    Integrable.of_finite = 0 := by
+  have h0 : ∀ x : Bool, ((fun _ : Bool => (0 : ℝ)) x - 0) ^ 2 = (0 : ℝ) :=
+    fun x => by norm_num
+  show ∫ x, ((fun _ : Bool => (0 : ℝ)) x - 0) ^ 2
+    ∂((diracProba true : ProbabilityMeasure Bool) : Measure Bool) = 0
+  rw [integral_congr_ae (Filter.Eventually.of_forall h0)]
+  simp
+
+/-- The zero measure is not a probability law. -/
+example (Ω : Type*) [MeasurableSpace Ω] :
+    ¬ IsProbabilityMeasure (0 : Measure Ω) := by
+  intro h
+  have h1 := h.measure_univ
+  have h0 : (0 : Measure Ω) Set.univ = 0 := rfl
+  rw [h0] at h1
+  exact zero_ne_one h1
+
+/-- An infinite-mass scaled Dirac measure is not a probability law. -/
+example (Ω : Type*) [MeasurableSpace Ω] [MeasurableSingletonClass Ω] (a : Ω) :
+    ¬ IsProbabilityMeasure ((∞ : ℝ≥0∞) • Measure.dirac a) := by
+  intro h
+  have h1 := h.measure_univ
+  rw [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ a),
+    smul_eq_mul, mul_one] at h1
+  exact ENNReal.one_ne_top h1.symm
+
+/-- Any infinite-mass measure fails to be a probability law. -/
+example {S : Type*} [MeasurableSpace S] (μ : Measure S)
+    (hinf : μ Set.univ = ∞) : ¬ IsProbabilityMeasure μ := by
+  intro hprob
+  have huniv := hprob.measure_univ
+  rw [hinf] at huniv
+  exact ENNReal.one_ne_top huniv.symm
+
+/-- Every probability law has total mass one. -/
+example {S : Type*} [MeasurableSpace S] (μ : ProbabilityMeasure S) :
+    (μ : Measure S) Set.univ = 1 :=
+  μ.property.measure_univ
+
+/-- Over an empty parameter type there is no nonzero-bias instance: vacuity,
+not a positive claim. -/
+example (S : Type*) [MeasurableSpace S] (W : S → ℝ)
+    (P : Empty → ProbabilityMeasure S) (τ : Empty → ℝ)
+    (h : ∀ θ, Integrable W ↑(P θ)) :
+    ¬ ∃ θ : Empty, familyBias W P τ h θ ≠ 0 := fun ⟨θ, _⟩ => nomatch θ
+
+/-- Over an empty parameter type there is no positive-MSE instance: vacuity,
+not a positive claim. -/
+example (S : Type*) [MeasurableSpace S] (W : S → ℝ)
+    (P : Empty → ProbabilityMeasure S) (τ : Empty → ℝ)
+    (h : ∀ θ, Integrable (fun x => (W x - τ θ) ^ 2) ↑(P θ)) :
+    ¬ ∃ θ : Empty, 0 < familyMeanSquaredError W P τ h θ :=
+  fun ⟨θ, _⟩ => nomatch θ
+
+/-- No probability law exists on an empty sample space. -/
+example (Ω : Type*) [MeasurableSpace Ω] [IsEmpty Ω] (μ : Measure Ω) :
+    ¬ IsProbabilityMeasure μ := by
+  intro h
+  have h1 := h.measure_univ
+  rw [Set.univ_eq_empty_iff.mpr inferInstance, measure_empty] at h1
+  exact zero_ne_one h1
+
+/-- The type of probability laws on an empty sample space is empty. -/
+example (Ω : Type*) [MeasurableSpace Ω] [IsEmpty Ω] :
+    ¬ Nonempty (ProbabilityMeasure Ω) := by
+  rintro ⟨⟨μ, hμ⟩⟩
+  have h1 := hμ.measure_univ
+  rw [Set.univ_eq_empty_iff.mpr inferInstance, measure_empty] at h1
+  exact zero_ne_one h1
+
+/-- Geometric half success probability in the unit interval. -/
+noncomputable def geomHalf : unitInterval :=
+  ⟨(1 / 2 : ℝ), Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩⟩
+
+/-- The geometric half parameter is nonzero. -/
+theorem geomHalf_ne_zero : geomHalf ≠ 0 := by
+  have h12 : ((geomHalf : unitInterval) : ℝ) = 1 / 2 := rfl
+  intro h
+  have hcoe : ((geomHalf : unitInterval) : ℝ) = 0 := by rw [h]; rfl
+  rw [h12] at hcoe
+  norm_num at hcoe
+
+/-- Geometric half law is a probability law. -/
+example : IsProbabilityMeasure
+    (ProbabilityTheory.geometricMeasure geomHalf) :=
+  inferInstance
+
+/-- Constant one is not summable over the naturals. -/
+theorem not_summable_one_nat : ¬ Summable (fun _ : ℕ => (1 : ℝ)) := by
+  intro hsum
+  have htend0 := hsum.tendsto_cofinite_zero
+  have htend1 : Filter.Tendsto (fun _ : ℕ => (1 : ℝ)) Filter.cofinite (nhds 1) :=
+    tendsto_const_nhds
+  have h10 : (1 : ℝ) = 0 := tendsto_nhds_unique htend1 htend0
+  norm_num at h10
+
+/-- Doubling estimator has infinite absolute moment under the geometric half
+law, so it fails the finite-bias domain gate. -/
+theorem geom_abs_notIntegrable :
+    ¬ Integrable (fun n : ℕ => (2 : ℝ) ^ (n + 1))
+      (ProbabilityTheory.geometricMeasure geomHalf) := by
+  rw [ProbabilityTheory.integrable_geometricMeasure_iff geomHalf_ne_zero]
+  have hone : (fun n : ℕ => (1 - ((geomHalf : unitInterval) : ℝ)) ^ n *
+      ((geomHalf : unitInterval) : ℝ) * ‖(2 : ℝ) ^ (n + 1)‖)
+      = fun _ : ℕ => (1 : ℝ) := by
+    funext n
+    have hp : ((geomHalf : unitInterval) : ℝ) = 1 / 2 := rfl
+    rw [hp]
+    have hnorm : ‖(2 : ℝ) ^ (n + 1)‖ = (2 : ℝ) ^ (n + 1) := by
+      rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+    rw [hnorm]
+    have h2 : (1 - 1 / 2 : ℝ) = 1 / 2 := by norm_num
+    rw [h2, pow_add, pow_one]
+    have hmul : (1 / 2 : ℝ) ^ n * (2 : ℝ) ^ n = 1 := by
+      rw [← mul_pow]
+      norm_num
+    calc (1 / 2 : ℝ) ^ n * (1 / 2) * ((2 : ℝ) ^ n * 2)
+        = ((1 / 2 : ℝ) ^ n * (2 : ℝ) ^ n) * ((1 / 2 : ℝ) * 2) := by ring
+      _ = 1 * 1 := by rw [hmul]; norm_num
+      _ = 1 := by norm_num
+  rw [hone]
+  exact not_summable_one_nat
+
+/-- Doubling estimator has infinite square moment under the geometric half law
+at target zero, so it fails the finite-MSE domain gate. -/
+theorem geom_sq_notIntegrable :
+    ¬ Integrable (fun n : ℕ => ((2 : ℝ) ^ (n + 1) - 0) ^ 2)
+      (ProbabilityTheory.geometricMeasure geomHalf) := by
+  rw [ProbabilityTheory.integrable_geometricMeasure_iff geomHalf_ne_zero]
+  have hform : (fun n : ℕ => (1 - ((geomHalf : unitInterval) : ℝ)) ^ n *
+      ((geomHalf : unitInterval) : ℝ) *
+      ‖((2 : ℝ) ^ (n + 1) - 0) ^ 2‖)
+      = fun n : ℕ => (2 : ℝ) ^ (n + 1) := by
+    funext n
+    have hp : ((geomHalf : unitInterval) : ℝ) = 1 / 2 := rfl
+    rw [hp]
+    have hsq : ((2 : ℝ) ^ (n + 1) - 0) ^ 2 = (2 : ℝ) ^ (2 * (n + 1)) := by
+      rw [sub_zero, ← pow_mul, mul_comm (n + 1) 2]
+    have hnorm : ‖((2 : ℝ) ^ (n + 1) - 0) ^ 2‖
+        = (2 : ℝ) ^ (2 * (n + 1)) := by
+      rw [hsq, Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+    rw [hnorm]
+    have h2 : (1 - 1 / 2 : ℝ) = 1 / 2 := by norm_num
+    rw [h2]
+    have hmul : (1 / 2 : ℝ) ^ n * (1 / 2) * (2 : ℝ) ^ (2 * (n + 1))
+        = (2 : ℝ) ^ (n + 1) := by
+      have hpow2 : (2 : ℝ) ^ (2 * (n + 1)) = ((2 : ℝ) ^ (n + 1)) ^ 2 := by
+        rw [mul_comm 2 (n + 1), pow_mul]
+      have hhalf : (1 / 2 : ℝ) ^ n * (1 / 2) = ((2 : ℝ) ^ (n + 1))⁻¹ := by
+        have h1 : (1 / 2 : ℝ) ^ n * (1 / 2) = (1 / 2 : ℝ) ^ (n + 1) := by
+          rw [pow_add, pow_one]
+        rw [h1, div_pow, one_pow, one_div]
+      have hpos : (0 : ℝ) < (2 : ℝ) ^ (n + 1) := by positivity
+      rw [hpow2, hhalf, pow_two, ← mul_assoc,
+        inv_mul_cancel₀ (ne_of_gt hpos), one_mul]
+    exact hmul
+  rw [hform]
+  intro hsum
+  have hsum1 : Summable (fun _ : ℕ => (1 : ℝ)) := by
+    apply Summable.of_nonneg_of_le (fun _ => by norm_num) _ hsum
+    intro n
+    exact one_le_pow₀ (by norm_num)
+  exact not_summable_one_nat hsum1
+
+/-- Genuine infinite-moment estimator fails both finite gates and has infinite
+extended squared error under the geometric half law at target zero. -/
+example :
+    ¬ Integrable (fun n : ℕ => (2 : ℝ) ^ (n + 1))
+        (((ProbabilityTheory.geometricMeasure geomHalf).toProbabilityMeasure :
+          ProbabilityMeasure ℕ) : Measure ℕ) ∧
+    ¬ Integrable (fun n : ℕ => ((fun m : ℕ => (2 : ℝ) ^ (m + 1)) n - 0) ^ 2)
+        (((ProbabilityTheory.geometricMeasure geomHalf).toProbabilityMeasure :
+          ProbabilityMeasure ℕ) : Measure ℕ) ∧
+    meanSquaredErrorENN (fun n : ℕ => (2 : ℝ) ^ (n + 1))
+      (ProbabilityTheory.geometricMeasure geomHalf).toProbabilityMeasure
+      0 = ∞ := by
+  have hcoe : ((((ProbabilityTheory.geometricMeasure geomHalf).toProbabilityMeasure :
+      ProbabilityMeasure ℕ)) : Measure ℕ)
+      = ProbabilityTheory.geometricMeasure geomHalf := rfl
+  have hAbs : ¬ Integrable (fun n : ℕ => (2 : ℝ) ^ (n + 1))
+      (((ProbabilityTheory.geometricMeasure geomHalf).toProbabilityMeasure :
+        ProbabilityMeasure ℕ) : Measure ℕ) := by
+    rw [hcoe]
+    exact geom_abs_notIntegrable
+  have hSq : ¬ Integrable
+      (fun n : ℕ => ((fun m : ℕ => (2 : ℝ) ^ (m + 1)) n - 0) ^ 2)
+      (((ProbabilityTheory.geometricMeasure geomHalf).toProbabilityMeasure :
+        ProbabilityMeasure ℕ) : Measure ℕ) := by
+    have hfun : (fun n : ℕ => ((fun m : ℕ => (2 : ℝ) ^ (m + 1)) n - 0) ^ 2)
+        = fun n : ℕ => ((2 : ℝ) ^ (n + 1) - 0) ^ 2 := rfl
+    rw [hfun, hcoe]
+    exact geom_sq_notIntegrable
+  have hMeas : AEStronglyMeasurable
+      (fun n : ℕ => ((fun m : ℕ => (2 : ℝ) ^ (m + 1)) n - (0 : ℝ)) ^ 2)
+      (((ProbabilityTheory.geometricMeasure geomHalf).toProbabilityMeasure :
+        ProbabilityMeasure ℕ) : Measure ℕ) :=
+    (measurable_of_countable _).aestronglyMeasurable
+  have hTop : meanSquaredErrorENN (fun n : ℕ => (2 : ℝ) ^ (n + 1))
+      (ProbabilityTheory.geometricMeasure geomHalf).toProbabilityMeasure
+      0 = ∞ :=
+    meanSquaredErrorENN_eq_top_of_not_finite hMeas hSq
+  exact ⟨hAbs, hSq, hTop⟩
+
+/-- Bernoulli family over the unit interval: mass `p` on `true`, `1 - p` on
+`false`. -/
+noncomputable def bernoulliP : unitInterval → ProbabilityMeasure Bool :=
+  fun p => ⟨ProbabilityTheory.bernoulliMeasure true false p, inferInstance⟩
+
+/-- The fixed 0/1 estimator has expectation `p` under the Bernoulli law:
+derived from the Bernoulli integral, never assumed. -/
+theorem bernoulli_integral (p : unitInterval) :
+    ∫ b, twoPointW b ∂((bernoulliP p : ProbabilityMeasure Bool) : Measure Bool)
+      = (p : ℝ) := by
+  have hcoe : ((bernoulliP p : ProbabilityMeasure Bool) : Measure Bool)
+      = ProbabilityTheory.bernoulliMeasure true false p := rfl
+  rw [hcoe, ProbabilityTheory.integral_bernoulliMeasure]
+  show (p : ℝ) • twoPointW true + (1 - (p : ℝ)) • twoPointW false = (p : ℝ)
+  show (p : ℝ) • (1 : ℝ) + (1 - (p : ℝ)) • (0 : ℝ) = (p : ℝ)
+  simp [smul_eq_mul]
+
+/-- The fixed 0/1 estimator is integrable under every Bernoulli law. -/
+theorem bernoulli_integrable (p : unitInterval) :
+    Integrable twoPointW
+      ((bernoulliP p : ProbabilityMeasure Bool) : Measure Bool) := by
+  have hcoe : ((bernoulliP p : ProbabilityMeasure Bool) : Measure Bool)
+      = ProbabilityTheory.bernoulliMeasure true false p := rfl
+  rw [hcoe]
+  exact ProbabilityTheory.integrable_bernoulliMeasure true false p twoPointW
+
+/-- Positive unbiased instance: the fixed 0/1 estimator is unbiased for the
+identity target across the full Bernoulli family. -/
+theorem bernoulli_isUnbiased :
+    IsUnbiased twoPointW bernoulliP (fun p => (p : ℝ)) := by
+  intro p
+  exact ⟨bernoulli_integrable p, bernoulli_integral p⟩
+
+/-- The Bernoulli parameter family is nonempty. -/
+example : Nonempty unitInterval :=
+  ⟨⟨0, Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩⟩⟩
+
+/-- The Bernoulli target is genuinely nonconstant across the family. -/
+example : ∃ p q : unitInterval, (p : ℝ) ≠ (q : ℝ) := by
+  refine ⟨⟨0, Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩⟩,
+    ⟨1, Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩⟩, ?_⟩
+  show (0 : ℝ) ≠ (1 : ℝ)
+  norm_num
+
+/-- Boundary `p = 0`: expectation is exactly `0`. -/
+example :
+    ∫ b, twoPointW b ∂((bernoulliP
+      ⟨0, Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩⟩ :
+      ProbabilityMeasure Bool) : Measure Bool) = 0 :=
+  bernoulli_integral _
+
+/-- Boundary `p = 1`: expectation is exactly `1`. -/
+example :
+    ∫ b, twoPointW b ∂((bernoulliP
+      ⟨1, Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩⟩ :
+      ProbabilityMeasure Bool) : Measure Bool) = 1 :=
+  bernoulli_integral _
+
+/-- Target value `0` is attained at the `p = 0` endpoint. -/
+example : (fun p : unitInterval => (p : ℝ))
+    ⟨0, Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩⟩ = 0 := rfl
+
+/-- Unbiasedness makes the Bernoulli family bias vanish everywhere. -/
+example (p : unitInterval) :
+    familyBias twoPointW bernoulliP (fun q => (q : ℝ))
+        (fun q => bernoulli_integrable q) p = 0 :=
+  (isUnbiased_iff_forall_familyBias_eq_zero _).mp bernoulli_isUnbiased p
+
+/-- Unbiased Bernoulli family has MSE equal to variance at every parameter. -/
+example (p : unitInterval) :
+    familyMeanSquaredError twoPointW bernoulliP (fun q => (q : ℝ))
+        (fun _ => integrable_sq_sub_of_memLp_two MemLp.of_discrete) p
+      = ProbabilityTheory.variance twoPointW
+          ((bernoulliP p : ProbabilityMeasure Bool) : Measure Bool) :=
+  bernoulli_isUnbiased.familyMeanSquaredError_eq_variance
+    (fun _ => MemLp.of_discrete) _ p
+
+/-- Constant zero is not unbiased for a nonzero target. -/
+example : ¬ IsUnbiased (fun _ : Bool => (0 : ℝ)) (fun _ : Bool => twoPointμ)
+    (fun _ : Bool => (1 : ℝ)) := by
+  intro h
+  obtain ⟨_, hexp⟩ := h true
+  simp at hexp
+
+/-- The totalized integral of the doubling estimator under the geometric half
+law is `0`: nonintegrability makes the integral junk. -/
+example : ∫ n : ℕ, (2 : ℝ) ^ (n + 1)
+    ∂(ProbabilityTheory.geometricMeasure geomHalf) = 0 :=
+  integral_undef geom_abs_notIntegrable
+
+/-- A nonintegrable estimator is not unbiased even when the totalized integral
+matches a zero target. -/
+example : ¬ IsUnbiased (fun n : ℕ => (2 : ℝ) ^ (n + 1))
+    (fun _ : Unit =>
+      (ProbabilityTheory.geometricMeasure geomHalf).toProbabilityMeasure)
+    (fun _ => 0) := by
+  intro h
+  obtain ⟨hint, _⟩ := h ()
+  have hcoe : ((((ProbabilityTheory.geometricMeasure geomHalf).toProbabilityMeasure :
+      ProbabilityMeasure ℕ)) : Measure ℕ)
+      = ProbabilityTheory.geometricMeasure geomHalf := rfl
+  rw [hcoe] at hint
+  exact geom_abs_notIntegrable hint
+
+/-- Over an empty parameter type every estimator is vacuously unbiased: this
+is vacuity, not a positive claim. -/
+example (W : Bool → ℝ) (P : Empty → ProbabilityMeasure Bool)
+    (τ : Empty → ℝ) : IsUnbiased W P τ :=
+  fun θ => nomatch θ
+
+/-- Variance of the fixed estimator under the fair two-point law. -/
+theorem twoPoint_variance :
+    ProbabilityTheory.variance twoPointW
+      ((twoPointμ : ProbabilityMeasure Bool) : Measure Bool)
+      = (1 / 4 : ℝ) := by
+  have hfun : ∀ b : Bool, (twoPointW ^ 2) b = twoPointW b := by
+    intro b
+    cases b
+    · rw [Pi.pow_apply]
+      show ((0 : ℝ) ^ 2) = 0
+      norm_num
+    · rw [Pi.pow_apply]
+      show ((1 : ℝ) ^ 2) = 1
+      norm_num
+  have hsq : ∫ b, (twoPointW ^ 2) b
+      ∂((twoPointμ : ProbabilityMeasure Bool) : Measure Bool)
+      = (1 / 2 : ℝ) := by
+    rw [integral_congr_ae (Filter.Eventually.of_forall hfun)]
+    exact twoPoint_integral
+  have hmem : MemLp twoPointW 2
+      ((twoPointμ : ProbabilityMeasure Bool) : Measure Bool) :=
+    MemLp.of_discrete
+  have hvar := ProbabilityTheory.variance_eq_sub
+    (μ := ((twoPointμ : ProbabilityMeasure Bool) : Measure Bool)) hmem
+  rw [hsq, twoPoint_integral] at hvar
+  rw [hvar]
+  norm_num
+
+/-- Headline decomposition on the fair law at target `0`: nonzero bias and
+nonzero variance, `1/2 = 1/4 + (1/2)²`. -/
+example : meanSquaredError twoPointW twoPointμ 0 Integrable.of_finite
+    = ProbabilityTheory.variance twoPointW
+        ((twoPointμ : ProbabilityMeasure Bool) : Measure Bool)
+      + (bias twoPointW twoPointμ 0 Integrable.of_finite) ^ 2 := by
+  rw [twoPoint_mse, twoPoint_variance, twoPoint_bias]
+  norm_num
+
+/-- Bias of the fixed estimator at nonzero target `1` under the fair law. -/
+theorem twoPoint_bias_one :
+    bias twoPointW twoPointμ 1 Integrable.of_finite = (-1 / 2 : ℝ) := by
+  show (∫ b, twoPointW b
+      ∂((twoPointμ : ProbabilityMeasure Bool) : Measure Bool)) - 1 = _
+  rw [twoPoint_integral]
+  norm_num
+
+/-- Finite MSE of the fixed estimator at nonzero target `1` under the fair
+law, computed directly from the two-point law. -/
+theorem twoPoint_mse_one :
+    meanSquaredError twoPointW twoPointμ 1 Integrable.of_finite
+      = (1 / 2 : ℝ) := by
+  have hμ : ((twoPointμ : ProbabilityMeasure Bool) : Measure Bool)
+      = twoPointP.toMeasure := rfl
+  show ∫ b, (twoPointW b - 1) ^ 2
+      ∂((twoPointμ : ProbabilityMeasure Bool) : Measure Bool) = _
+  rw [hμ, PMF.integral_eq_sum]
+  simp only [Fintype.univ_bool,
+    Finset.sum_insert (show true ∉ ({false} : Finset Bool) from by decide),
+    Finset.sum_singleton, twoPointP, PMF.ofFintype_apply]
+  rw [show (twoPointW true - 1) ^ 2 = (0 : ℝ) from by norm_num [twoPointW],
+    show (twoPointW false - 1) ^ 2 = (1 : ℝ) from by norm_num [twoPointW],
+    ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 1 / 2)]
+  simp [smul_eq_mul]
+
+/-- Decomposition at nonzero target `1`: `1/2 = 1/4 + (-1/2)²`. -/
+example : meanSquaredError twoPointW twoPointμ 1 Integrable.of_finite
+    = ProbabilityTheory.variance twoPointW
+        ((twoPointμ : ProbabilityMeasure Bool) : Measure Bool)
+      + (bias twoPointW twoPointμ 1 Integrable.of_finite) ^ 2 := by
+  rw [twoPoint_mse_one, twoPoint_variance, twoPoint_bias_one]
+  norm_num
+
+/-- Bias of the fixed estimator at negative target `-1` under the fair law. -/
+theorem twoPoint_bias_neg_one :
+    bias twoPointW twoPointμ (-1) Integrable.of_finite = (3 / 2 : ℝ) := by
+  show (∫ b, twoPointW b
+      ∂((twoPointμ : ProbabilityMeasure Bool) : Measure Bool)) - (-1) = _
+  rw [twoPoint_integral]
+  norm_num
+
+/-- Finite MSE of the fixed estimator at negative target `-1`: `5/2`. -/
+theorem twoPoint_mse_neg_one :
+    meanSquaredError twoPointW twoPointμ (-1) Integrable.of_finite
+      = (5 / 2 : ℝ) := by
+  have hμ : ((twoPointμ : ProbabilityMeasure Bool) : Measure Bool)
+      = twoPointP.toMeasure := rfl
+  show ∫ b, (twoPointW b - (-1)) ^ 2
+      ∂((twoPointμ : ProbabilityMeasure Bool) : Measure Bool) = _
+  rw [hμ, PMF.integral_eq_sum]
+  simp only [Fintype.univ_bool,
+    Finset.sum_insert (show true ∉ ({false} : Finset Bool) from by decide),
+    Finset.sum_singleton, twoPointP, PMF.ofFintype_apply]
+  rw [show (twoPointW true - (-1)) ^ 2 = (4 : ℝ) from by norm_num [twoPointW],
+    show (twoPointW false - (-1)) ^ 2 = (1 : ℝ) from by norm_num [twoPointW],
+    ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 1 / 2)]
+  simp only [smul_eq_mul]
+  norm_num
+
+/-- Decomposition at negative target `-1`: `5/2 = 1/4 + (3/2)²`. -/
+example : meanSquaredError twoPointW twoPointμ (-1) Integrable.of_finite
+    = ProbabilityTheory.variance twoPointW
+        ((twoPointμ : ProbabilityMeasure Bool) : Measure Bool)
+      + (bias twoPointW twoPointμ (-1) Integrable.of_finite) ^ 2 := by
+  rw [twoPoint_mse_neg_one, twoPoint_variance, twoPoint_bias_neg_one]
+  norm_num
+
+/-- Dirac laws have exactly zero variance for the fixed estimator. -/
+theorem dirac_variance_zero (a : Bool) :
+    ProbabilityTheory.variance twoPointW
+      (((diracProba a : ProbabilityMeasure Bool)) : Measure Bool) = 0 := by
+  have hcoe : (((diracProba a : ProbabilityMeasure Bool)) : Measure Bool)
+      = Measure.dirac a := rfl
+  have hmeas : AEMeasurable twoPointW (Measure.dirac a) :=
+    (measurable_of_countable _).aemeasurable
+  have hvar := ProbabilityTheory.variance_eq_integral
+    (X := twoPointW) (μ := Measure.dirac a) hmeas
+  rw [hcoe, hvar]
+  have hmean : ∫ b, twoPointW b ∂(Measure.dirac a) = twoPointW a :=
+    integral_dirac _ _
+  rw [hmean, integral_dirac, sub_self]
+  norm_num
+
+/-- Decomposition on Dirac laws at any real target: squared error equals zero
+variance plus squared bias. -/
+example (a : Bool) (θ : ℝ) :
+    meanSquaredError twoPointW (diracProba a) θ Integrable.of_finite
+      = ProbabilityTheory.variance twoPointW
+          (((diracProba a : ProbabilityMeasure Bool)) : Measure Bool)
+        + (bias twoPointW (diracProba a) θ Integrable.of_finite) ^ 2 := by
+  have hcoe : (((diracProba a : ProbabilityMeasure Bool)) : Measure Bool)
+      = Measure.dirac a := rfl
+  have hmse : meanSquaredError twoPointW (diracProba a) θ Integrable.of_finite
+      = (twoPointW a - θ) ^ 2 := by
+    show ∫ b, (twoPointW b - θ) ^ 2
+        ∂(((diracProba a : ProbabilityMeasure Bool)) : Measure Bool) = _
+    rw [hcoe, integral_dirac]
+  have hbias : bias twoPointW (diracProba a) θ Integrable.of_finite
+      = twoPointW a - θ := by
+    show (∫ b, twoPointW b
+        ∂(((diracProba a : ProbabilityMeasure Bool)) : Measure Bool)) - θ = _
+    rw [hcoe, integral_dirac]
+  rw [hmse, hbias, dirac_variance_zero]
+  ring
+
+/-- The doubling estimator fails the decomposition's finite-moment gate under
+the geometric half law. -/
+example : ¬ MemLp (fun n : ℕ => (2 : ℝ) ^ (n + 1)) 2
+    (ProbabilityTheory.geometricMeasure geomHalf) := by
+  intro hmem
+  exact geom_abs_notIntegrable (hmem.integrable one_le_two)
+
+/-- The extended bridge records the `ofReal` of the decomposed value on the
+fair law at target `0`. -/
+example : ENNReal.ofReal (ProbabilityTheory.variance twoPointW
+        ((twoPointμ : ProbabilityMeasure Bool) : Measure Bool)
+      + (bias twoPointW twoPointμ 0 Integrable.of_finite) ^ 2)
+    = meanSquaredErrorENN twoPointW twoPointμ 0 :=
+  ofReal_variance_add_sq_bias MemLp.of_discrete
+
+/-- Quarter success probability in the unit interval. -/
+noncomputable def q14 : unitInterval :=
+  ⟨(1 / 4 : ℝ), Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩⟩
+
+/-- Three-quarter success probability in the unit interval. -/
+noncomputable def q34 : unitInterval :=
+  ⟨(3 / 4 : ℝ), Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩⟩
+
+/-- Real labels for the two-parameter risk model. -/
+def riskTau : Bool → ℝ
+  | false => 0
+  | true => 1
+
+/-- Squared-error NNReal loss at the two-parameter labels. -/
+def riskSqLoss : Bool → ℝ → NNReal :=
+  fun θ a => ⟨(a - riskTau θ) ^ 2, sq_nonneg _⟩
+
+/-- Two-parameter Bernoulli family: success `1/4` at `false`, `1/2` at `true`. -/
+noncomputable def riskP : Bool → ProbabilityMeasure Bool
+  | false => bernoulliP q14
+  | true => bernoulliP geomHalf
+
+/-- Replacement family: success `3/4` at `true`, unchanged at `false`. -/
+noncomputable def riskP34 : Bool → ProbabilityMeasure Bool
+  | false => bernoulliP q14
+  | true => bernoulliP q34
+
+/-- Squared cost at label `0` integrates to the success probability. -/
+theorem riskSq_integral_zero (p : unitInterval) :
+    ∫ b, ((riskSqLoss false (twoPointW b)) : ℝ)
+      ∂((bernoulliP p : ProbabilityMeasure Bool) : Measure Bool)
+      = (p : ℝ) := by
+  have hcoe : ((bernoulliP p : ProbabilityMeasure Bool) : Measure Bool)
+      = ProbabilityTheory.bernoulliMeasure true false p := rfl
+  rw [hcoe, ProbabilityTheory.integral_bernoulliMeasure]
+  have htrue : ((riskSqLoss false (twoPointW true)) : ℝ) = (1 : ℝ) := by
+    show ((1 : ℝ) - 0) ^ 2 = 1
+    norm_num
+  have hfalse : ((riskSqLoss false (twoPointW false)) : ℝ) = (0 : ℝ) := by
+    show ((0 : ℝ) - 0) ^ 2 = 0
+    norm_num
+  rw [htrue, hfalse]
+  simp [smul_eq_mul]
+
+/-- Squared cost at label `1` integrates to one minus the success probability. -/
+theorem riskSq_integral_one (p : unitInterval) :
+    ∫ b, ((riskSqLoss true (twoPointW b)) : ℝ)
+      ∂((bernoulliP p : ProbabilityMeasure Bool) : Measure Bool)
+      = 1 - (p : ℝ) := by
+  have hcoe : ((bernoulliP p : ProbabilityMeasure Bool) : Measure Bool)
+      = ProbabilityTheory.bernoulliMeasure true false p := rfl
+  rw [hcoe, ProbabilityTheory.integral_bernoulliMeasure]
+  have htrue : ((riskSqLoss true (twoPointW true)) : ℝ) = (0 : ℝ) := by
+    show ((1 : ℝ) - 1) ^ 2 = 0
+    norm_num
+  have hfalse : ((riskSqLoss true (twoPointW false)) : ℝ) = (1 : ℝ) := by
+    show ((0 : ℝ) - 1) ^ 2 = 1
+    norm_num
+  rw [htrue, hfalse]
+  simp [smul_eq_mul]
+
+/-- Risk at label `0` under success `1/4` is `1/4`. -/
+theorem riskP_false_risk :
+    frequentistRisk twoPointW riskP riskSqLoss
+        (fun _ => Integrable.of_finite) false = (1 / 4 : ℝ) := by
+  rw [frequentistRisk_apply]
+  show ∫ b, ((riskSqLoss false (twoPointW b)) : ℝ)
+    ∂((bernoulliP q14 : ProbabilityMeasure Bool) : Measure Bool) = _
+  rw [riskSq_integral_zero]
+  rfl
+
+/-- Risk at label `1` under success `1/2` is `1/2`. -/
+theorem riskP_true_risk :
+    frequentistRisk twoPointW riskP riskSqLoss
+        (fun _ => Integrable.of_finite) true = (1 / 2 : ℝ) := by
+  rw [frequentistRisk_apply]
+  show ∫ b, ((riskSqLoss true (twoPointW b)) : ℝ)
+    ∂((bernoulliP geomHalf : ProbabilityMeasure Bool) : Measure Bool) = _
+  rw [riskSq_integral_one]
+  have hp : ((geomHalf : unitInterval) : ℝ) = 1 / 2 := rfl
+  rw [hp]
+  norm_num
+
+/-- Varying-family bias at `false`: expectation `1/4` minus target `0`. -/
+theorem riskP_false_bias :
+    familyBias twoPointW riskP riskTau (fun _ => Integrable.of_finite) false
+      = (1 / 4 : ℝ) := by
+  rw [familyBias_apply]
+  show (∫ b, twoPointW b
+      ∂((bernoulliP q14 : ProbabilityMeasure Bool) : Measure Bool)) - 0 = _
+  rw [bernoulli_integral]
+  have hp : ((q14 : unitInterval) : ℝ) = 1 / 4 := rfl
+  rw [hp, sub_zero]
+
+/-- Varying-family MSE at `false`: squared error at label `0` is `1/4`. -/
+theorem riskP_false_mse :
+    familyMeanSquaredError twoPointW riskP riskTau
+        (fun _ => Integrable.of_finite) false = (1 / 4 : ℝ) := by
+  rw [familyMeanSquaredError_apply]
+  show ∫ b, ((riskSqLoss false (twoPointW b)) : ℝ)
+    ∂((bernoulliP q14 : ProbabilityMeasure Bool) : Measure Bool) = _
+  rw [riskSq_integral_zero]
+  rfl
+
+/-- Varying-family bias at `true`: expectation `1/2` minus target `1`. -/
+theorem riskP_true_bias :
+    familyBias twoPointW riskP riskTau (fun _ => Integrable.of_finite) true
+      = (-1 / 2 : ℝ) := by
+  rw [familyBias_apply]
+  show (∫ b, twoPointW b
+      ∂((bernoulliP geomHalf : ProbabilityMeasure Bool) : Measure Bool)) - 1
+      = _
+  rw [bernoulli_integral]
+  have hp : ((geomHalf : unitInterval) : ℝ) = 1 / 2 := rfl
+  rw [hp]
+  norm_num
+
+/-- Varying-family MSE at `true`: squared error at label `1` is `1/2`. -/
+theorem riskP_true_mse :
+    familyMeanSquaredError twoPointW riskP riskTau
+        (fun _ => Integrable.of_finite) true = (1 / 2 : ℝ) := by
+  rw [familyMeanSquaredError_apply]
+  show ∫ b, ((riskSqLoss true (twoPointW b)) : ℝ)
+    ∂((bernoulliP geomHalf : ProbabilityMeasure Bool) : Measure Bool) = _
+  rw [riskSq_integral_one]
+  have hp : ((geomHalf : unitInterval) : ℝ) = 1 / 2 := rfl
+  rw [hp]
+  norm_num
+
+/-- Replacing the `true` law by success `3/4` changes only its risk to `1/4`. -/
+theorem riskP34_true_risk :
+    frequentistRisk twoPointW riskP34 riskSqLoss
+        (fun _ => Integrable.of_finite) true = (1 / 4 : ℝ) := by
+  rw [frequentistRisk_apply]
+  show ∫ b, ((riskSqLoss true (twoPointW b)) : ℝ)
+    ∂((bernoulliP q34 : ProbabilityMeasure Bool) : Measure Bool) = _
+  rw [riskSq_integral_one]
+  show 1 - ((q34 : unitInterval) : ℝ) = _
+  have hp : ((q34 : unitInterval) : ℝ) = 3 / 4 := rfl
+  rw [hp]
+  norm_num
+
+/-- The `false` risk is unchanged by the `true`-only replacement. -/
+theorem riskP34_false_risk :
+    frequentistRisk twoPointW riskP34 riskSqLoss
+        (fun _ => Integrable.of_finite) false = (1 / 4 : ℝ) := by
+  rw [frequentistRisk_apply]
+  show ∫ b, ((riskSqLoss false (twoPointW b)) : ℝ)
+    ∂((bernoulliP q14 : ProbabilityMeasure Bool) : Measure Bool) = _
+  rw [riskSq_integral_zero]
+  rfl
+
+/-- Fixed constant-zero rule. -/
+def constZeroW : Bool → ℝ := fun _ => 0
+
+/-- Fixed constant-one rule. -/
+def constOneW : Bool → ℝ := fun _ => 1
+
+/-- Crossing laws: success `1/4` at `false`, `3/4` at `true`. -/
+noncomputable def riskCrossP : Bool → ProbabilityMeasure Bool
+  | false => bernoulliP q14
+  | true => bernoulliP q34
+
+/-- Constant-zero risks cross as `(0, 1)`. -/
+theorem constZero_risks :
+    frequentistRisk constZeroW riskCrossP riskSqLoss
+          (fun _ => Integrable.of_finite) false = 0 ∧
+      frequentistRisk constZeroW riskCrossP riskSqLoss
+          (fun _ => Integrable.of_finite) true = 1 := by
+  constructor
+  · rw [frequentistRisk_apply]
+    have h0 : ∀ b : Bool, ((riskSqLoss false (constZeroW b)) : ℝ) = 0 := by
+      intro b
+      show ((0 : ℝ) - 0) ^ 2 = 0
+      norm_num
+    rw [integral_congr_ae (Filter.Eventually.of_forall h0)]
+    simp
+  · rw [frequentistRisk_apply]
+    have h1 : ∀ b : Bool, ((riskSqLoss true (constZeroW b)) : ℝ) = 1 := by
+      intro b
+      show ((0 : ℝ) - 1) ^ 2 = 1
+      norm_num
+    rw [integral_congr_ae (Filter.Eventually.of_forall h1)]
+    show ∫ _ : Bool, (1 : ℝ)
+      ∂((bernoulliP q34 : ProbabilityMeasure Bool) : Measure Bool) = _
+    have hcoe : ((bernoulliP q34 : ProbabilityMeasure Bool) : Measure Bool)
+        = ProbabilityTheory.bernoulliMeasure true false q34 := rfl
+    rw [hcoe, ProbabilityTheory.integral_bernoulliMeasure]
+    have hp : ((q34 : unitInterval) : ℝ) = 3 / 4 := rfl
+    rw [hp]
+    simp only [smul_eq_mul]
+    norm_num
+
+/-- Constant-one risks cross as `(1, 0)`. -/
+theorem constOne_risks :
+    frequentistRisk constOneW riskCrossP riskSqLoss
+          (fun _ => Integrable.of_finite) false = 1 ∧
+      frequentistRisk constOneW riskCrossP riskSqLoss
+          (fun _ => Integrable.of_finite) true = 0 := by
+  constructor
+  · rw [frequentistRisk_apply]
+    have h1 : ∀ b : Bool, ((riskSqLoss false (constOneW b)) : ℝ) = 1 := by
+      intro b
+      show ((1 : ℝ) - 0) ^ 2 = 1
+      norm_num
+    rw [integral_congr_ae (Filter.Eventually.of_forall h1)]
+    show ∫ _ : Bool, (1 : ℝ)
+      ∂((bernoulliP q14 : ProbabilityMeasure Bool) : Measure Bool) = _
+    have hcoe : ((bernoulliP q14 : ProbabilityMeasure Bool) : Measure Bool)
+        = ProbabilityTheory.bernoulliMeasure true false q14 := rfl
+    rw [hcoe, ProbabilityTheory.integral_bernoulliMeasure]
+    have hp : ((q14 : unitInterval) : ℝ) = 1 / 4 := rfl
+    rw [hp]
+    simp only [smul_eq_mul]
+    norm_num
+  · rw [frequentistRisk_apply]
+    have h0 : ∀ b : Bool, ((riskSqLoss true (constOneW b)) : ℝ) = 0 := by
+      intro b
+      show ((1 : ℝ) - 1) ^ 2 = 0
+      norm_num
+    rw [integral_congr_ae (Filter.Eventually.of_forall h0)]
+    simp
+
+/-- No universal best-estimator claim is stored: the two constant risks cross. -/
+example :
+    frequentistRisk constZeroW riskCrossP riskSqLoss
+          (fun _ => Integrable.of_finite) false <
+        frequentistRisk constOneW riskCrossP riskSqLoss
+          (fun _ => Integrable.of_finite) false ∧
+      frequentistRisk constOneW riskCrossP riskSqLoss
+          (fun _ => Integrable.of_finite) true <
+        frequentistRisk constZeroW riskCrossP riskSqLoss
+          (fun _ => Integrable.of_finite) true := by
+  obtain ⟨hz0, hz1⟩ := constZero_risks
+  obtain ⟨ho0, ho1⟩ := constOne_risks
+  rw [hz0, ho0, ho1, hz1]
+  norm_num
+
+/-- Finite NNReal loss with `A = Bool` independent of real `Θ`: unequal cells. -/
+def boolLossR : ℝ → Bool → NNReal :=
+  fun θ a => ⟨(match a with | true => (1 : ℝ) | false => 0) + θ ^ 2, by
+    cases a <;> positivity⟩
+
+/-- Dirac at `false`: risk `0` at `θ = 0`, risk `1` at `θ = 1`. -/
+theorem boolLossR_dirac_false :
+    frequentistRisk id (fun _ : ℝ => diracProba false) boolLossR
+          (fun _ => Integrable.of_finite) 0 = 0 ∧
+      frequentistRisk id (fun _ : ℝ => diracProba false) boolLossR
+          (fun _ => Integrable.of_finite) 1 = 1 := by
+  constructor
+  · rw [frequentistRisk_apply]
+    have hcoe : ((diracProba false : ProbabilityMeasure Bool) : Measure Bool)
+        = Measure.dirac false := rfl
+    show ∫ b, ((boolLossR 0 b) : ℝ)
+      ∂((diracProba false : ProbabilityMeasure Bool) : Measure Bool) = _
+    rw [hcoe, integral_dirac]
+    show (0 : ℝ) + (0 : ℝ) ^ 2 = 0
+    norm_num
+  · rw [frequentistRisk_apply]
+    have hcoe : ((diracProba false : ProbabilityMeasure Bool) : Measure Bool)
+        = Measure.dirac false := rfl
+    show ∫ b, ((boolLossR 1 b) : ℝ)
+      ∂((diracProba false : ProbabilityMeasure Bool) : Measure Bool) = _
+    rw [hcoe, integral_dirac]
+    show (0 : ℝ) + (1 : ℝ) ^ 2 = 1
+    norm_num
+
+/-- Dirac at `true`: positive unequal risks `1` and `2`. -/
+theorem boolLossR_dirac_true :
+    frequentistRisk id (fun _ : ℝ => diracProba true) boolLossR
+          (fun _ => Integrable.of_finite) 0 = 1 ∧
+      frequentistRisk id (fun _ : ℝ => diracProba true) boolLossR
+          (fun _ => Integrable.of_finite) 1 = 2 := by
+  constructor
+  · rw [frequentistRisk_apply]
+    have hcoe : ((diracProba true : ProbabilityMeasure Bool) : Measure Bool)
+        = Measure.dirac true := rfl
+    show ∫ b, ((boolLossR 0 b) : ℝ)
+      ∂((diracProba true : ProbabilityMeasure Bool) : Measure Bool) = _
+    rw [hcoe, integral_dirac]
+    show (1 : ℝ) + (0 : ℝ) ^ 2 = 1
+    norm_num
+  · rw [frequentistRisk_apply]
+    have hcoe : ((diracProba true : ProbabilityMeasure Bool) : Measure Bool)
+        = Measure.dirac true := rfl
+    show ∫ b, ((boolLossR 1 b) : ℝ)
+      ∂((diracProba true : ProbabilityMeasure Bool) : Measure Bool) = _
+    rw [hcoe, integral_dirac]
+    show (1 : ℝ) + (1 : ℝ) ^ 2 = 2
+    norm_num
+
+/-- Bernoulli `1/4`: risks `1/4` at `θ = 0` and `5/4` at `θ = 1`. -/
+theorem boolLossR_bernoulli :
+    frequentistRisk id (fun _ : ℝ => bernoulliP q14) boolLossR
+          (fun _ => Integrable.of_finite) 0 = (1 / 4 : ℝ) ∧
+      frequentistRisk id (fun _ : ℝ => bernoulliP q14) boolLossR
+          (fun _ => Integrable.of_finite) 1 = (5 / 4 : ℝ) := by
+  constructor
+  · rw [frequentistRisk_apply]
+    have hcoe : ((bernoulliP q14 : ProbabilityMeasure Bool) : Measure Bool)
+        = ProbabilityTheory.bernoulliMeasure true false q14 := rfl
+    show ∫ b, ((boolLossR 0 b) : ℝ)
+      ∂((bernoulliP q14 : ProbabilityMeasure Bool) : Measure Bool) = _
+    rw [hcoe, ProbabilityTheory.integral_bernoulliMeasure]
+    have htrue : ((boolLossR 0 true) : ℝ) = (1 : ℝ) := by
+      show (1 : ℝ) + (0 : ℝ) ^ 2 = 1
+      norm_num
+    have hfalse : ((boolLossR 0 false) : ℝ) = (0 : ℝ) := by
+      show (0 : ℝ) + (0 : ℝ) ^ 2 = 0
+      norm_num
+    have hp : ((q14 : unitInterval) : ℝ) = 1 / 4 := rfl
+    rw [htrue, hfalse, hp]
+    simp [smul_eq_mul]
+  · rw [frequentistRisk_apply]
+    have hcoe : ((bernoulliP q14 : ProbabilityMeasure Bool) : Measure Bool)
+        = ProbabilityTheory.bernoulliMeasure true false q14 := rfl
+    show ∫ b, ((boolLossR 1 b) : ℝ)
+      ∂((bernoulliP q14 : ProbabilityMeasure Bool) : Measure Bool) = _
+    rw [hcoe, ProbabilityTheory.integral_bernoulliMeasure]
+    have htrue : ((boolLossR 1 true) : ℝ) = (2 : ℝ) := by
+      show (1 : ℝ) + (1 : ℝ) ^ 2 = 2
+      norm_num
+    have hfalse : ((boolLossR 1 false) : ℝ) = (1 : ℝ) := by
+      show (0 : ℝ) + (1 : ℝ) ^ 2 = 1
+      norm_num
+    have hp : ((q14 : unitInterval) : ℝ) = 1 / 4 := rfl
+    rw [htrue, hfalse, hp]
+    simp only [smul_eq_mul]
+    norm_num
+
+/-- Wrong-law family: both parameters use the `1/4` law. -/
+noncomputable def riskPwrong : Bool → ProbabilityMeasure Bool
+  | false => bernoulliP q14
+  | true => bernoulliP q14
+
+/-- Using the wrong parameter law changes the nonconstant risk to `3/4`. -/
+theorem riskPwrong_true_risk :
+    frequentistRisk twoPointW riskPwrong riskSqLoss
+        (fun _ => Integrable.of_finite) true = (3 / 4 : ℝ) := by
+  rw [frequentistRisk_apply]
+  show ∫ b, ((riskSqLoss true (twoPointW b)) : ℝ)
+    ∂((bernoulliP q14 : ProbabilityMeasure Bool) : Measure Bool) = _
+  rw [riskSq_integral_one]
+  show 1 - ((q14 : unitInterval) : ℝ) = _
+  have hp : ((q14 : unitInterval) : ℝ) = 1 / 4 := rfl
+  rw [hp]
+  norm_num
+
+/-- Wrong-law value differs from the correct-law value. -/
+example :
+    frequentistRisk twoPointW riskPwrong riskSqLoss
+          (fun _ => Integrable.of_finite) true ≠
+        frequentistRisk twoPointW riskP riskSqLoss
+          (fun _ => Integrable.of_finite) true := by
+  rw [riskPwrong_true_risk, riskP_true_risk]
+  norm_num
+
+/-- Swapped loss parameters: `false` uses the `true` loss and conversely. -/
+def riskSqLossSwap : Bool → ℝ → NNReal
+  | false, a => riskSqLoss true a
+  | true, a => riskSqLoss false a
+
+/-- Swapping the loss parameter changes the risk from `1/4` to `3/4`. -/
+theorem riskSwap_false_risk :
+    frequentistRisk twoPointW riskP riskSqLossSwap
+        (fun _ => Integrable.of_finite) false = (3 / 4 : ℝ) := by
+  rw [frequentistRisk_apply]
+  have hcoe : ((riskP false : ProbabilityMeasure Bool) : Measure Bool)
+      = ProbabilityTheory.bernoulliMeasure true false q14 := rfl
+  show ∫ b, ((riskSqLossSwap false (twoPointW b)) : ℝ)
+    ∂((riskP false : ProbabilityMeasure Bool) : Measure Bool) = _
+  rw [hcoe, ProbabilityTheory.integral_bernoulliMeasure]
+  have htrue : ((riskSqLossSwap false (twoPointW true)) : ℝ) = (0 : ℝ) := by
+    show ((1 : ℝ) - 1) ^ 2 = 0
+    norm_num
+  have hfalse : ((riskSqLossSwap false (twoPointW false)) : ℝ) = (1 : ℝ) := by
+    show ((0 : ℝ) - 1) ^ 2 = 1
+    norm_num
+  have hp : ((q14 : unitInterval) : ℝ) = 1 / 4 := rfl
+  rw [htrue, hfalse, hp]
+  simp only [smul_eq_mul]
+  norm_num
+
+/-- Swapped-loss value differs from the correct-loss value. -/
+example :
+    frequentistRisk twoPointW riskP riskSqLossSwap
+          (fun _ => Integrable.of_finite) false ≠
+        frequentistRisk twoPointW riskP riskSqLoss
+          (fun _ => Integrable.of_finite) false := by
+  rw [riskSwap_false_risk, riskP_false_risk]
+  norm_num
+
+/-- Zero finite loss gives zero risk under every actual law. -/
+example (θ : Bool) :
+    frequentistRisk twoPointW riskP (fun _ _ => 0)
+        (fun _ => Integrable.of_finite) θ = 0 := by
+  rw [frequentistRisk_apply]
+  have h0 : ∀ b : Bool, ((((fun _ _ => (0 : NNReal)) θ (twoPointW b))) : ℝ)
+      = 0 := fun b => rfl
+  rw [integral_congr_ae (Filter.Eventually.of_forall h0)]
+  simp
+
+/-- Finite constant loss `2` gives risk `2` by probability normalization. -/
+example (θ : Bool) :
+    frequentistRisk twoPointW riskP
+        (fun _ _ => NNReal.mk (2 : ℝ) (by norm_num))
+        (fun _ => Integrable.of_finite) θ = 2 := by
+  cases θ
+  · rw [frequentistRisk_apply]
+    have h2 : ∀ b : Bool,
+        ((((fun _ _ => NNReal.mk (2 : ℝ) (by norm_num)) false
+          (twoPointW b))) : ℝ) = 2 := fun b => rfl
+    rw [integral_congr_ae (Filter.Eventually.of_forall h2)]
+    show ∫ _ : Bool, (2 : ℝ)
+      ∂((bernoulliP q14 : ProbabilityMeasure Bool) : Measure Bool) = _
+    have hcoe : ((bernoulliP q14 : ProbabilityMeasure Bool) : Measure Bool)
+        = ProbabilityTheory.bernoulliMeasure true false q14 := rfl
+    rw [hcoe, ProbabilityTheory.integral_bernoulliMeasure]
+    have hp : ((q14 : unitInterval) : ℝ) = 1 / 4 := rfl
+    rw [hp]
+    simp only [smul_eq_mul]
+    norm_num
+  · rw [frequentistRisk_apply]
+    have h2 : ∀ b : Bool,
+        ((((fun _ _ => NNReal.mk (2 : ℝ) (by norm_num)) true
+          (twoPointW b))) : ℝ) = 2 := fun b => rfl
+    rw [integral_congr_ae (Filter.Eventually.of_forall h2)]
+    show ∫ _ : Bool, (2 : ℝ)
+      ∂((bernoulliP geomHalf : ProbabilityMeasure Bool) : Measure Bool) = _
+    have hcoe : ((bernoulliP geomHalf : ProbabilityMeasure Bool) : Measure Bool)
+        = ProbabilityTheory.bernoulliMeasure true false geomHalf := rfl
+    rw [hcoe, ProbabilityTheory.integral_bernoulliMeasure]
+    have hp : ((geomHalf : unitInterval) : ℝ) = 1 / 2 := rfl
+    rw [hp]
+    simp only [smul_eq_mul]
+    norm_num
+
+/-- Doubling estimator on the naturals. -/
+noncomputable def geomDouble : ℕ → ℝ := fun n => (2 : ℝ) ^ (n + 1)
+
+/-- Squared loss at target `0` for the geometric boundary. -/
+noncomputable def geomSqLoss : Unit → ℝ → NNReal :=
+  fun _ a => ⟨(a - 0) ^ 2, sq_nonneg _⟩
+
+/-- Geometric half family on a single parameter. -/
+noncomputable def geomP : Unit → ProbabilityMeasure ℕ :=
+  fun _ => (ProbabilityTheory.geometricMeasure geomHalf).toProbabilityMeasure
+
+/-- The geometric squared cost is not integrable: finite pointwise NNReal
+cost with no finite-risk evidence. Reuses the accepted MSE boundary proof. -/
+theorem geomRisk_notIntegrable :
+    ¬ Integrable (fun n => ((geomSqLoss () (geomDouble n)) : ℝ))
+      (((geomP ()) : ProbabilityMeasure ℕ) : Measure ℕ) := by
+  have hcoe : ((((geomP ()) : ProbabilityMeasure ℕ)) : Measure ℕ)
+      = ProbabilityTheory.geometricMeasure geomHalf := rfl
+  rw [hcoe]
+  show ¬ Integrable (fun n : ℕ => ((2 : ℝ) ^ (n + 1) - 0) ^ 2) _
+  exact geom_sq_notIntegrable
+
+/-- The extended risk bridge preserves `∞` for the nonintegrable cost. -/
+theorem geomRisk_top :
+    frequentistRiskENN geomDouble geomP geomSqLoss () = ∞ :=
+  frequentistRiskENN_eq_top_of_not_integrable
+    (measurable_of_countable _).aestronglyMeasurable
+    geomRisk_notIntegrable
+
+/-- No finite-risk integrability evidence exists on this boundary. -/
+example (h : ∀ θ : Unit, Integrable
+    (fun n => ((geomSqLoss θ (geomDouble n)) : ℝ))
+    (((geomP θ) : ProbabilityMeasure ℕ) : Measure ℕ)) : False :=
+  geomRisk_notIntegrable (h ())
+
+/-- Constant top ENNReal loss under a genuine probability law stays top. -/
+example : ∫⁻ b, (∞ : ℝ≥0∞)
+    ∂((twoPointμ : ProbabilityMeasure Bool) : Measure Bool) = ∞ := by
+  have huniv : ((twoPointμ : ProbabilityMeasure Bool) : Measure Bool)
+      Set.univ = 1 := twoPointμ.property.measure_univ
+  rw [lintegral_const, huniv, mul_one]
+
+/-- Finite NNReal values never equal top, so infinite loss cannot enter the
+finite source loss type. -/
+example (n : NNReal) : (n : ℝ≥0∞) ≠ ∞ :=
+  ENNReal.coe_ne_top
+
+/-- `toReal` maps top to junk zero; the finite risk API never uses it. -/
+example : ENNReal.toReal (∞ : ℝ≥0∞) = 0 := rfl
+
+/-- A negative real value cannot inhabit the nonnegative loss type. -/
+example : ¬ ∃ n : NNReal, (n : ℝ) = (-1 : ℝ) := by
+  rintro ⟨n, hn⟩
+  have hnn : 0 ≤ (n : ℝ) := NNReal.coe_nonneg n
+  rw [hn] at hnn
+  norm_num at hnn
+
+/-- Over an empty parameter type there is no nonzero-risk instance: vacuity,
+not a positive claim. -/
+example (S : Type*) [MeasurableSpace S] (A : Type*) (δ : S → A)
+    (P : Empty → ProbabilityMeasure S) (ℓ : Empty → A → NNReal)
+    (h : ∀ θ, Integrable (fun x => (ℓ θ (δ x) : ℝ)) ↑(P θ)) :
+    ¬ ∃ θ : Empty, frequentistRisk δ P ℓ h θ ≠ 0 :=
+  fun ⟨θ, _⟩ => nomatch θ
+
+/-- No decision rule maps a nonempty sample into an empty action type. -/
+example (S : Type*) [Nonempty S] (δ : S → Empty) : False := by
+  obtain ⟨s⟩ := ‹Nonempty S›
+  exact nomatch δ s
+
+/-- Finite risk evaluates to its native integral. -/
+example (θ : Bool) :
+    frequentistRisk twoPointW riskP riskSqLoss
+          (fun _ => Integrable.of_finite) θ =
+        ∫ b, ((riskSqLoss θ (twoPointW b)) : ℝ)
+          ∂(((riskP θ) : ProbabilityMeasure Bool) : Measure Bool) :=
+  frequentistRisk_apply θ
+
+/-- Finite risk is nonnegative. -/
+example (θ : Bool) :
+    0 ≤ frequentistRisk twoPointW riskP riskSqLoss
+      (fun _ => Integrable.of_finite) θ :=
+  frequentistRisk_nonneg θ
+
+/-- The extended bridge agrees with the finite risk on its domain. -/
+example (θ : Bool) :
+    ENNReal.ofReal (frequentistRisk twoPointW riskP riskSqLoss
+        (fun _ => Integrable.of_finite) θ) =
+      frequentistRiskENN twoPointW riskP riskSqLoss θ :=
+  ofReal_frequentistRisk θ
+
+/-- Squared-loss risk agrees pointwise with the accepted family MSE leaf. -/
+example (θ : Bool) :
+    frequentistRisk twoPointW riskP riskSqLoss
+          (fun _ => Integrable.of_finite) θ =
+        familyMeanSquaredError twoPointW riskP riskTau
+          (fun _ => Integrable.of_finite) θ :=
+  congrFun (frequentistRisk_squared_eq_familyMeanSquaredError
+    (W := twoPointW) (P := riskP) (τ := riskTau)
+    (fun _ => Integrable.of_finite) (fun _ => Integrable.of_finite)) θ
+
+/-- A fair coin on `Bool`. -/
+noncomputable def fairCoin : Measure Bool :=
+  (2 : ENNReal)⁻¹ • (Measure.dirac true + Measure.dirac false)
+
+instance : IsProbabilityMeasure fairCoin := by
+  constructor
+  simp [fairCoin, ← two_mul, ENNReal.mul_inv_cancel two_ne_zero ENNReal.ofNat_ne_top]
+
+/-- The sign `±1` of a coin toss. -/
+noncomputable def coinSign (b : Bool) : ℝ := if b then 1 else -1
+
+/-- Two fair signs on `Bool × Bool`: coordinate `0` reads the first coin, coordinate `1` the
+second. -/
+noncomputable def twoSigns (i : Fin 2) (ω : Bool × Bool) : ℝ :=
+  if i = 0 then coinSign ω.1 else coinSign ω.2
+
+/-- Finite-risk Pythagorean split: the finite squared-loss risk of a `G`-measurable
+predictor is noise plus excess, and the finite value agrees with the extended bridge. The
+first conjunct goes through `frequentistRisk_squared_eq_familyMeanSquaredError`; the
+second is exactly `ofReal_frequentistRisk`. -/
+example {Ω : Type*} {m mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsFiniteMeasure μ]
+    [IsProbabilityMeasure μ] {Y g : Ω → ℝ} (hm : m ≤ mΩ)
+    (hY : MemLp Y 2 μ) (hg : MemLp g 2 μ) (hgm : StronglyMeasurable[m] g) :
+    let hMSE : ∀ _ : Unit, Integrable (fun x => ((Y x - g x) - 0) ^ 2) μ :=
+      fun _ => ((hY.sub hg).sub (memLp_const (0 : ℝ))).integrable_sq;
+    let hRisk : ∀ _ : Unit, Integrable
+      (fun x => ((⟨((Y x - g x) - 0) ^ 2, sq_nonneg _⟩ : NNReal) : ℝ)) μ :=
+      fun _ => by simpa using ((hY.sub hg).sub (memLp_const (0 : ℝ))).integrable_sq;
+    (MathlibExt.Probability.Statistics.EstimationRisk.frequentistRisk
+      (fun ω => Y ω - g ω) (fun _ : Unit => (⟨μ, inferInstance⟩ : ProbabilityMeasure Ω))
+      (fun _ a => ⟨(a - 0) ^ 2, sq_nonneg _⟩) hRisk () =
+      ∫ ω, (Y ω - μ[Y|m] ω) ^ 2 ∂μ + ∫ ω, (μ[Y|m] ω - g ω) ^ 2 ∂μ) ∧
+    ENNReal.ofReal (MathlibExt.Probability.Statistics.EstimationRisk.frequentistRisk
+      (fun ω => Y ω - g ω) (fun _ : Unit => (⟨μ, inferInstance⟩ : ProbabilityMeasure Ω))
+      (fun _ a => ⟨(a - 0) ^ 2, sq_nonneg _⟩) hRisk ()) =
+      MathlibExt.Probability.Statistics.EstimationRisk.frequentistRiskENN
+        (fun ω => Y ω - g ω) (fun _ : Unit => (⟨μ, inferInstance⟩ : ProbabilityMeasure Ω))
+        (fun _ a => ⟨(a - 0) ^ 2, sq_nonneg _⟩) () := by
+  intro hMSE hRisk
+  constructor
+  · have hEq := MathlibExt.Probability.Statistics.EstimationRisk.frequentistRisk_squared_eq_familyMeanSquaredError
+      (Θ := Unit)
+      (W := fun ω => Y ω - g ω)
+      (P := fun _ : Unit => (⟨μ, inferInstance⟩ : ProbabilityMeasure Ω))
+      (τ := fun _ : Unit => (0 : ℝ))
+      (hRisk := hRisk) (hMSE := hMSE)
+    have hAt := congrFun hEq ()
+    rw [hAt]
+    unfold MathlibExt.Probability.Statistics.EstimationRisk.familyMeanSquaredError
+      MathlibExt.Probability.Statistics.EstimationRisk.meanSquaredError
+    simp only [sub_zero]
+    exact MeasureTheory.integral_sq_sub_eq_integral_sq_sub_condExp_add (μ := μ) hm hY hg hgm
+  · exact MathlibExt.Probability.Statistics.EstimationRisk.ofReal_frequentistRisk ()
+
+/-- Average of a function against a single fair coin. -/
+private theorem integral_fairCoin (g : Bool → ℝ) :
+    ∫ b, g b ∂fairCoin = (g true + g false) / 2 := by
+  rw [fairCoin, integral_smul_measure, integral_add_measure (integrable_dirac (by simp))
+    (integrable_dirac (by simp)), integral_dirac, integral_dirac, ENNReal.toReal_inv,
+    ENNReal.toReal_ofNat, smul_eq_mul]
+  ring
+
+/-- Mean of the sign against a fair coin. -/
+private theorem integral_coinSign : ∫ b, coinSign b ∂fairCoin = 0 := by
+  rw [integral_fairCoin]
+  norm_num [coinSign]
+
+/-- The two coordinate signs are independent under the product of two fair coins,
+proved from the definitions via the finite preimage identity. -/
+private theorem iIndepFun_twoSigns : iIndepFun twoSigns (fairCoin.prod fairCoin) := by
+  have key : ∀ S : Finset (Fin 2), S = ∅ ∨ S = {0} ∨ S = {1} ∨ S = Finset.univ := by decide
+  rw [iIndepFun_iff_measure_inter_preimage_eq_mul]
+  intro S sets _
+  have h0 : twoSigns 0 ⁻¹' sets 0 = (coinSign ⁻¹' sets 0) ×ˢ Set.univ := by
+    ext ω; simp [twoSigns]
+  have h1 : twoSigns 1 ⁻¹' sets 1 = Set.univ ×ˢ (coinSign ⁻¹' sets 1) := by
+    ext ω; simp [twoSigns]
+  rcases key S with rfl | rfl | rfl | rfl
+  · simp
+  · simp
+  · simp
+  · have : (⋂ i ∈ (Finset.univ : Finset (Fin 2)), twoSigns i ⁻¹' sets i)
+        = (coinSign ⁻¹' sets 0) ×ˢ (coinSign ⁻¹' sets 1) := by
+      ext ω; simp [Fin.forall_fin_two, twoSigns]
+    rw [this, Fin.prod_univ_two, h0, h1]
+    simp only [Measure.prod_prod, measure_univ, mul_one, one_mul]
+
+private theorem identDistrib_fst : IdentDistrib Prod.fst id (fairCoin.prod fairCoin) fairCoin :=
+  ⟨measurable_fst.aemeasurable, aemeasurable_id, by
+    rw [Measure.map_fst_prod, measure_univ, one_smul, Measure.map_id]⟩
+
+private theorem identDistrib_snd : IdentDistrib Prod.snd id (fairCoin.prod fairCoin) fairCoin :=
+  ⟨measurable_snd.aemeasurable, aemeasurable_id, by
+    rw [Measure.map_snd_prod, measure_univ, one_smul, Measure.map_id]⟩
+
+/-- Mean of the first coordinate sign, from the definitions. -/
+private theorem mean_twoSigns0 : ∫ ω, twoSigns 0 ω ∂(fairCoin.prod fairCoin) = 0 := by
+  have h0 : twoSigns 0 = coinSign ∘ Prod.fst := by funext ω; simp [twoSigns]
+  rw [h0, ← integral_coinSign]
+  exact (identDistrib_fst.comp (measurable_of_finite coinSign)).integral_eq
+
+/-- Mean of the second coordinate sign, from the definitions. -/
+private theorem mean_twoSigns1 : ∫ ω, twoSigns 1 ω ∂(fairCoin.prod fairCoin) = 0 := by
+  have h1 : twoSigns 1 = coinSign ∘ Prod.snd := by funext ω; simp [twoSigns]
+  rw [h1, ← integral_coinSign]
+  exact (identDistrib_snd.comp (measurable_of_finite coinSign)).integral_eq
+
+/-- Common variance of a fair sign, from the definitions. -/
+private theorem variance_coinSign : variance coinSign fairCoin = 1 := by
+  rw [variance_eq_integral (measurable_of_finite _).aemeasurable]
+  simp only [integral_fairCoin, coinSign]
+  norm_num
+
+/-- The product of two fair coins as a probability measure, elaborated once so that
+all later wrapped-measure occurrences are syntactically identical. -/
+private noncomputable def prodPM : ProbabilityMeasure (Bool × Bool) :=
+  ⟨fairCoin.prod fairCoin, inferInstance⟩
+
+private theorem hW0 : MemLp (twoSigns 0) 2 (fairCoin.prod fairCoin) := by
+  refine MemLp.of_bound (measurable_of_finite (twoSigns 0)).aestronglyMeasurable 1
+    (Filter.Eventually.of_forall fun ω => ?_)
+  rcases ω with ⟨_ | _, _ | _⟩ <;> norm_num [twoSigns, coinSign]
+
+private theorem hW1 : MemLp (twoSigns 1) 2 (fairCoin.prod fairCoin) := by
+  refine MemLp.of_bound (measurable_of_finite (twoSigns 1)).aestronglyMeasurable 1
+    (Filter.Eventually.of_forall fun ω => ?_)
+  rcases ω with ⟨_ | _, _ | _⟩ <;> norm_num [twoSigns, coinSign]
+
+private theorem hW2 : MemLp (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2) 2
+    (fairCoin.prod fairCoin) := by
+  refine MemLp.of_bound (measurable_of_finite _).aestronglyMeasurable 1
+    (Filter.Eventually.of_forall fun ω => ?_)
+  have : ∀ ω : Bool × Bool, ‖(twoSigns 0 ω + twoSigns 1 ω) / 2‖ ≤ 1 := by
+    intro ω
+    rcases ω with ⟨_ | _, _ | _⟩ <;> norm_num [twoSigns, coinSign]
+  exact this _
+
+/-- Mean of the two-sign average, from the definitions. -/
+private theorem hmeanW2 : ∫ ω, (twoSigns 0 ω + twoSigns 1 ω) / 2
+    ∂(fairCoin.prod fairCoin) = 0 := by
+  have hI0 : Integrable (twoSigns 0) (fairCoin.prod fairCoin) :=
+    hW0.integrable one_le_two
+  have hI1 : Integrable (twoSigns 1) (fairCoin.prod fairCoin) :=
+    hW1.integrable one_le_two
+  have hEq : (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2)
+      = fun ω => (1 / 2 : ℝ) * (twoSigns 0 ω + twoSigns 1 ω) := by
+    funext ω
+    ring
+  rw [hEq, integral_const_mul, integral_add hI0 hI1, mean_twoSigns0, mean_twoSigns1]
+  norm_num
+
+private theorem variance_twoSigns0 :
+    variance (twoSigns 0) (fairCoin.prod fairCoin) = 1 := by
+  have h0 : twoSigns 0 = coinSign ∘ Prod.fst := by funext ω; simp [twoSigns]
+  rw [h0, ← variance_coinSign]
+  exact (identDistrib_fst.comp (measurable_of_finite coinSign)).variance_eq
+
+private theorem variance_twoSigns1 :
+    variance (twoSigns 1) (fairCoin.prod fairCoin) = 1 := by
+  have h1 : twoSigns 1 = coinSign ∘ Prod.snd := by funext ω; simp [twoSigns]
+  rw [h1, ← variance_coinSign]
+  exact (identDistrib_snd.comp (measurable_of_finite coinSign)).variance_eq
+
+private theorem variance_twoSigns (i : Fin 2) :
+    variance (twoSigns i) (fairCoin.prod fairCoin) = 1 :=
+  (Fin.forall_fin_two.mpr ⟨variance_twoSigns0, variance_twoSigns1⟩ :
+    ∀ i, variance (twoSigns i) (fairCoin.prod fairCoin) = 1) i
+
+/-- Two unbiased estimators, different variances, MSEs and risks: the single fair sign and
+the two-sign mean are mean-zero with variances `1` and `1 / 2` and finite mean squared
+errors `1` and `1 / 2` (all derived above from the definitions, not assumed). Unbiasedness
+does not imply smallest risk. -/
+example :
+    MathlibExt.Probability.Statistics.EstimationRisk.IsUnbiased (twoSigns 0)
+      (fun _ : Unit => ⟨fairCoin.prod fairCoin, inferInstance⟩) (fun _ => 0) ∧
+    MathlibExt.Probability.Statistics.EstimationRisk.IsUnbiased
+      (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2)
+      (fun _ : Unit => ⟨fairCoin.prod fairCoin, inferInstance⟩) (fun _ => 0) ∧
+    variance (twoSigns 0) (fairCoin.prod fairCoin) = 1 ∧
+    variance (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2) (fairCoin.prod fairCoin) = 1 / 2 ∧
+    MathlibExt.Probability.Statistics.EstimationRisk.meanSquaredError (twoSigns 0)
+      prodPM 0
+      (MathlibExt.Probability.Statistics.EstimationRisk.integrable_sq_sub_of_memLp_two
+        (μ := prodPM) hW0) = 1 ∧
+    MathlibExt.Probability.Statistics.EstimationRisk.meanSquaredError
+      (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2)
+      prodPM 0
+      (MathlibExt.Probability.Statistics.EstimationRisk.integrable_sq_sub_of_memLp_two
+        (μ := prodPM) hW2) = 1 / 2 := by
+  have hIndep : iIndepFun (fun i : Fin 2 => twoSigns i) (fairCoin.prod fairCoin) :=
+    iIndepFun_twoSigns
+  have hLp : ∀ i : Fin 2, MemLp (twoSigns i) 2 (fairCoin.prod fairCoin) :=
+    Fin.forall_fin_two.mpr ⟨hW0, hW1⟩
+  have hVar : ∀ i : Fin 2, variance (twoSigns i) (fairCoin.prod fairCoin) = 1 :=
+    fun i => variance_twoSigns i
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro θ
+    exact ⟨hW0.integrable one_le_two, mean_twoSigns0⟩
+  · intro θ
+    exact ⟨hW2.integrable one_le_two, hmeanW2⟩
+  · exact variance_twoSigns0
+  · have hCard : (Fintype.card (Fin 2) : ℝ) = 2 := by simp [Fintype.card_fin]
+    have hW2Eq : (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2)
+        = (fun ω => (∑ i, twoSigns i ω) / 2) := by
+      funext ω
+      rw [Fin.sum_univ_two]
+    have hV := MathlibExt.Probability.variance_sample_mean
+      (X := fun i : Fin 2 => twoSigns i) (sigma2 := (1 : ℝ)) hLp hIndep hVar
+    have hV2 : variance (fun ω => (∑ i, twoSigns i ω) / 2) (fairCoin.prod fairCoin)
+        = 1 / 2 := by
+      have h1 : (fun ω => (∑ i, twoSigns i ω) / 2)
+          = (fun ω => (∑ i, twoSigns i ω) / (Fintype.card (Fin 2) : ℝ)) := by
+        rw [hCard]
+      rw [h1, hV, hCard]
+    rw [hW2Eq]
+    exact hV2
+  · have h := MathlibExt.Probability.Statistics.EstimationRisk.meanSquaredError_eq_variance_add_sq_bias
+      (μ := prodPM) (θ := 0) hW0
+    have hmean0 : ∫ x, twoSigns 0 x ∂↑prodPM = 0 := mean_twoSigns0
+    have hbias : MathlibExt.Probability.Statistics.EstimationRisk.bias (twoSigns 0)
+        prodPM 0 ((hW0).integrable one_le_two) = 0 := by
+      show (∫ x, twoSigns 0 x ∂↑prodPM) - 0 = 0
+      rw [hmean0, sub_zero]
+    have hvar : variance (twoSigns 0) ↑prodPM = 1 := variance_twoSigns0
+    rw [hvar, hbias] at h
+    exact h.trans (by norm_num)
+  · have h := MathlibExt.Probability.Statistics.EstimationRisk.meanSquaredError_eq_variance_add_sq_bias
+      (μ := prodPM) (θ := 0) hW2
+    have hmeanW2w : ∫ x, (twoSigns 0 x + twoSigns 1 x) / 2 ∂↑prodPM = 0 := hmeanW2
+    have hbias : MathlibExt.Probability.Statistics.EstimationRisk.bias
+        (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2)
+        prodPM 0 ((hW2).integrable one_le_two) = 0 := by
+      show (∫ x, (twoSigns 0 x + twoSigns 1 x) / 2 ∂↑prodPM) - 0 = 0
+      rw [hmeanW2w, sub_zero]
+    have hV2 : variance (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2) ↑prodPM
+        = 1 / 2 := by
+      show variance (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2) (fairCoin.prod fairCoin) = 1 / 2
+      -- (reproved below via the finite-family identity)
+      have hCard : (Fintype.card (Fin 2) : ℝ) = 2 := by simp [Fintype.card_fin]
+      have hW2Eq : (fun ω => (twoSigns 0 ω + twoSigns 1 ω) / 2)
+          = (fun ω => (∑ i, twoSigns i ω) / 2) := by
+        funext ω
+        rw [Fin.sum_univ_two]
+      have hV := MathlibExt.Probability.variance_sample_mean
+        (X := fun i : Fin 2 => twoSigns i) (sigma2 := (1 : ℝ)) hLp hIndep hVar
+      have hV2' : variance (fun ω => (∑ i, twoSigns i ω) / 2) (fairCoin.prod fairCoin)
+          = 1 / 2 := by
+        have h1 : (fun ω => (∑ i, twoSigns i ω) / 2)
+            = (fun ω => (∑ i, twoSigns i ω) / (Fintype.card (Fin 2) : ℝ)) := by
+          rw [hCard]
+        rw [h1, hV, hCard]
+      rw [hW2Eq]
+      exact hV2'
+    rw [hV2, hbias] at h
+    exact h.trans (by norm_num)
+
+/-- Boundary: a constant predictor has zero squared-loss risk. -/
+example (c : ℝ)
+    (hW : Integrable (fun _ : Bool => (c - c) ^ 2) fairCoin) :
+    MathlibExt.Probability.Statistics.EstimationRisk.meanSquaredError
+      (fun _ : Bool => c) ⟨fairCoin, inferInstance⟩ c hW = 0 := by
+  unfold MathlibExt.Probability.Statistics.EstimationRisk.meanSquaredError
+  have h0 : (fun _ : Bool => ((c - c) ^ 2)) = fun _ => (0 : ℝ) := by
+    funext x
+    simp [sub_self]
+  rw [h0, integral_const]
+  simp
+
+/-- Boundary: the irreducible noise is nonzero for a non-degenerate response. With the
+trivial `G = ⊥`, `Y = coinSign`, and constant predictor `1`, the noise term is `1`. -/
+example :
+    (∫ ω, (coinSign ω - fairCoin[coinSign|⊥] ω) ^ 2 ∂fairCoin) ≠ 0 := by
+  have hMean : ∫ ω, coinSign ω ∂fairCoin = 0 := by
+    unfold fairCoin
+    rw [integral_smul_measure,
+      integral_add_measure Integrable.of_finite Integrable.of_finite,
+      integral_dirac, integral_dirac]
+    simp [coinSign]
+  have hCond : fairCoin[coinSign|⊥] = fun _ => ∫ ω, coinSign ω ∂fairCoin :=
+    condExp_bot coinSign
+  rw [hCond, hMean]
+  have hOne : (fun ω : Bool => (coinSign ω - 0) ^ 2) = fun _ => (1 : ℝ) := by
+    funext ω
+    rw [sub_zero]
+    cases ω with
+    | false => simp [coinSign]
+    | true => simp [coinSign]
+  rw [hOne, integral_const, probReal_univ]
+  norm_num
+
+/-- Negative: a predictor that reads the unobserved response is rejected by the
+`G`-measurability hypothesis. `coinSign` is not `⊥`-measurable: the fiber over `1` is
+`{true}`, which is neither `∅` nor `univ`. -/
+example : ¬ StronglyMeasurable[⊥] coinSign := by
+  intro h
+  have hm : Measurable[⊥] coinSign := h.measurable
+  have hset : MeasurableSet[⊥] (coinSign ⁻¹' {(1 : ℝ)}) :=
+    hm (MeasurableSingletonClass.measurableSet_singleton 1)
+  rw [MeasurableSpace.measurableSet_bot_iff] at hset
+  have hpre : coinSign ⁻¹' {(1 : ℝ)} = ({true} : Set Bool) := by
+    ext b
+    simp only [Set.mem_preimage, Set.mem_singleton_iff]
+    unfold coinSign
+    cases b with
+    | false => simp; norm_num
+    | true => simp
+  rw [hpre] at hset
+  rcases hset with h | h
+  · have hmem : (true : Bool) ∈ ({true} : Set Bool) := Set.mem_singleton true
+    rw [h] at hmem
+    exact Set.notMem_empty true hmem
+  · have hnot : (false : Bool) ∉ ({true} : Set Bool) := by simp
+    rw [h] at hnot
+    exact hnot (Set.mem_univ false)
+
+/-- L² receipt: for a measurable square-integrable estimator, the squared-error risk of the
+deterministic kernel bind is the finite mean squared error, embedded in `ℝ≥0∞`. The finite-domain
+evidence is derived from `MemLp W 2`, not assumed. -/
+theorem deterministic_bind_sq_risk_eq_ofReal_meanSquaredError_of_memLp {S : Type*}
+    [MeasurableSpace S] {W : S → ℝ} (hW : Measurable W) {μ : ProbabilityMeasure S}
+    (hW2 : MemLp W 2 (μ : Measure S)) (θ : ℝ) :
+    ∫⁻ a, ENNReal.ofReal ((a - θ) ^ 2) ∂((μ : Measure S).bind (Kernel.deterministic W hW)) =
+      ENNReal.ofReal (meanSquaredError W μ θ (hW2.sub (memLp_const θ)).integrable_sq) := by
+  rw [lintegral_deterministic_bind_ofReal_sq_eq_meanSquaredErrorENN, ofReal_meanSquaredError]
+
+/-- Supervised-regression receipt: for a square-integrable response `Y` and a square-integrable
+`m`-measurable predictor `g`, the deterministic-kernel squared-error risk of the residual
+`Y - g` at target `0` is the finite noise `E[(Y - E[Y | m])²]` plus the finite excess
+`E[(E[Y | m] - g)²]`, embedded in `ℝ≥0∞`. -/
+theorem regression_bind_sq_risk_eq_noise_add_excess {Ω : Type*} {m mΩ : MeasurableSpace Ω}
+    (μ : ProbabilityMeasure Ω) (hm : m ≤ mΩ) {Y g : Ω → ℝ} (hYm : Measurable Y)
+    (hY : MemLp Y 2 (μ : Measure Ω)) (hg : MemLp g 2 (μ : Measure Ω))
+    (hgm : StronglyMeasurable[m] g) :
+    ∫⁻ a, ENNReal.ofReal ((a - 0) ^ 2) ∂((μ : Measure Ω).bind
+        (Kernel.deterministic (fun ω => Y ω - g ω) (hYm.sub (hgm.measurable.mono hm le_rfl)))) =
+      ENNReal.ofReal (∫ ω, (Y ω - (μ : Measure Ω)[Y|m] ω) ^ 2 ∂(μ : Measure Ω) +
+        ∫ ω, ((μ : Measure Ω)[Y|m] ω - g ω) ^ 2 ∂(μ : Measure Ω)) := by
+  have hW2 : Integrable (fun ω => ((Y ω - g ω) - 0) ^ 2) (μ : Measure Ω) :=
+    ((hY.sub hg).sub (memLp_const (0 : ℝ))).integrable_sq
+  rw [lintegral_deterministic_bind_ofReal_sq_eq_meanSquaredErrorENN,
+    ← ofReal_meanSquaredError hW2, meanSquaredError_eq_integral]
+  simp only [sub_zero]
+  rw [integral_sq_sub_eq_integral_sq_sub_condExp_add hm hY hg hgm]
+
+/-- Positive Bernoulli family: the constant estimator `1 / 2` for the target `p` has
+deterministic-kernel squared-error risk equal to its finite mean squared error, and that value is
+`(1 / 2 - p)²` at every `p`. -/
+theorem bernoulliP_const_bind_sq_risk (p : unitInterval) :
+    ∫⁻ a, ENNReal.ofReal ((a - (p : ℝ)) ^ 2) ∂(((bernoulliP p : ProbabilityMeasure Bool) :
+        Measure Bool).bind (Kernel.deterministic (fun _ : Bool => (1 / 2 : ℝ))
+          (measurable_const : Measurable fun _ : Bool => (1 / 2 : ℝ)))) =
+      ENNReal.ofReal (meanSquaredError (fun _ : Bool => (1 / 2 : ℝ)) (bernoulliP p) (p : ℝ)
+        Integrable.of_finite) ∧
+    meanSquaredError (fun _ : Bool => (1 / 2 : ℝ)) (bernoulliP p) (p : ℝ) Integrable.of_finite =
+      (1 / 2 - (p : ℝ)) ^ 2 := by
+  have hMSE : meanSquaredError (fun _ : Bool => (1 / 2 : ℝ)) (bernoulliP p) (p : ℝ)
+        Integrable.of_finite = (1 / 2 - (p : ℝ)) ^ 2 := by
+    rw [meanSquaredError_eq_integral, integral_const, probReal_univ, one_smul]
+  refine ⟨?_, hMSE⟩
+  rw [lintegral_deterministic_bind_ofReal_sq_eq_meanSquaredErrorENN, ofReal_meanSquaredError]
+
+/-- Endpoint `p = 0`: both the kernel risk and the finite mean squared error equal `1 / 4`. -/
+theorem bernoulliP_zero_const_bind_sq_risk :
+    ∫⁻ a, ENNReal.ofReal ((a - ((0 : unitInterval) : ℝ)) ^ 2) ∂(((bernoulliP 0 :
+        ProbabilityMeasure Bool) : Measure Bool).bind
+          (Kernel.deterministic (fun _ : Bool => (1 / 2 : ℝ))
+          (measurable_const : Measurable fun _ : Bool => (1 / 2 : ℝ)))) =
+      ENNReal.ofReal (1 / 4) ∧
+    meanSquaredError (fun _ : Bool => (1 / 2 : ℝ)) (bernoulliP 0) ((0 : unitInterval) : ℝ)
+      Integrable.of_finite = 1 / 4 := by
+  obtain ⟨hbind, hmse⟩ := bernoulliP_const_bind_sq_risk 0
+  have hval : (1 / 2 - ((0 : unitInterval) : ℝ)) ^ 2 = 1 / 4 := by norm_num
+  have hmse4 := hmse.trans hval
+  have hbind4 := hbind.trans (congrArg ENNReal.ofReal hmse4)
+  exact ⟨hbind4, hmse4⟩
+
+/-- Negative: off the L² domain the kernel risk stays `∞`. The doubling estimator under the
+geometric half law has a nonintegrable squared error at target `0`, so no finite mean squared
+error exists, and the deterministic-kernel squared-error risk is `∞`. -/
+theorem geom_double_bind_sq_risk_eq_top :
+    ∫⁻ a, ENNReal.ofReal ((a - 0) ^ 2) ∂((((ProbabilityTheory.geometricMeasure
+        geomHalf).toProbabilityMeasure : ProbabilityMeasure ℕ) : Measure ℕ).bind
+          (Kernel.deterministic (fun n : ℕ => (2 : ℝ) ^ (n + 1)) (measurable_of_countable _))) =
+      ∞ ∧
+    ¬ Integrable (fun n : ℕ => ((2 : ℝ) ^ (n + 1) - 0) ^ 2)
+      (((ProbabilityTheory.geometricMeasure geomHalf).toProbabilityMeasure :
+        ProbabilityMeasure ℕ) : Measure ℕ) := by
+  have hcoe : ((((ProbabilityTheory.geometricMeasure geomHalf).toProbabilityMeasure :
+      ProbabilityMeasure ℕ) : Measure ℕ)) =
+      ProbabilityTheory.geometricMeasure geomHalf := rfl
+  have hSq : ¬ Integrable (fun n : ℕ => ((2 : ℝ) ^ (n + 1) - 0) ^ 2)
+      ((((ProbabilityTheory.geometricMeasure geomHalf).toProbabilityMeasure :
+        ProbabilityMeasure ℕ) : Measure ℕ)) := by
+    rw [hcoe]
+    exact geom_sq_notIntegrable
+  refine ⟨?_, hSq⟩
+  rw [lintegral_deterministic_bind_ofReal_sq_eq_meanSquaredErrorENN]
+  exact meanSquaredErrorENN_eq_top_of_not_finite
+    (measurable_of_countable _).aestronglyMeasurable hSq
+
+end EstimationRiskTest

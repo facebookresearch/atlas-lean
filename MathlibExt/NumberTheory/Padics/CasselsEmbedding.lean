@@ -11,6 +11,7 @@ module
 public import Mathlib.NumberTheory.Padics.PadicIntegers
 
 import Mathlib.Algebra.AlgebraicCard
+import Mathlib.Algebra.Group.Commute.Defs
 import Mathlib.Algebra.MvPolynomial.Cardinal
 import Mathlib.Algebra.MvPolynomial.Funext
 import Mathlib.Analysis.Normed.Group.Ultra
@@ -341,6 +342,9 @@ private theorem cassels_extend {K : Type*} [Field K] [CharZero K] (E : Intermedi
 private theorem cassels_derivative_scaleRoots {R : Type*} [CommRing R] [IsAddTorsionFree R]
     (f : Polynomial R) (s : R) :
     Polynomial.derivative (f.scaleRoots s) = (Polynomial.derivative f).scaleRoots s := by
+  have : HasUniqueDiv R := {
+    nsmul_right_injective := fun _ hn _ _ h =>
+      eq_of_nsmul_eq_nsmul_of_addCommute hn (AddCommute.all _ _) h }
   apply Polynomial.ext
   intro i
   rw [Polynomial.coeff_derivative, Polynomial.coeff_scaleRoots,

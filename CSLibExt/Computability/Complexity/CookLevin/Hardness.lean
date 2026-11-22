@@ -6,6 +6,22 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Copyright 2026 Joshua Tan.
+Authors: Joshua Tan (original development); ported and adapted by Adam Kiezun and Metamate.
+
+The helper lemmas (`eval_le_pow`, `pull`, `encX`) and the shape of `v_correct` are adapted from the
+final section of `Pkg.lean` of `JoshuaTan42/millennium-cook-levin` at commit
+`879c4835640119ad009abeb62ebd7a96f87eb9e8`
+(<https://github.com/JoshuaTan42/millennium-cook-levin/blob/879c4835640119ad009abeb62ebd7a96f87eb9e8/Pkg.lean>),
+licensed under the Apache License, Version 2.0
+(<https://www.apache.org/licenses/LICENSE-2.0>). Changes: the verifier, the certificate bound and
+the reduction are restated against formal-math's `MetaMathlibExt.ComplexityTheory.NP`,
+`IsPolyTime` and `Cslib.CookLevin.PolyManyOneRed` (the source used its own `Millennium`
+definitions): the certificate bound is an arbitrary polynomial `p` (the precomputation evaluates it
+by Horner's rule), and the verifier and the reduction are wrapped in encoding-converter machines.
+-/
+
 module
 
 public import CSLibExt.Computability.CookLevin

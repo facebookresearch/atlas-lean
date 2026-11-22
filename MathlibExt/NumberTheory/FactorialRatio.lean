@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.List.Basic
 public import Mathlib.Data.Nat.Choose.Basic
+import Mathlib.Algebra.Divisibility.Basic
 
 /-!
 # Integral factorial ratios

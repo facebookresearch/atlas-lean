@@ -43,7 +43,8 @@ private theorem le_of_dvd_of_odd {a b n : Nat} (ha : 2 ^ a ∣ n)
     exact Nat.mul_left_cancel (Nat.two_pow_pos a) hmul
   have hdvd : 2 ∣ n / 2 ^ a := by
     rw [hq]
-    exact Dvd.dvd.mul_right (dvd_pow_self 2 (by omega : b - a ≠ 0)) d
+    exact Nat.dvd_mul_right_of_dvd
+      (by simpa using Nat.pow_dvd_pow 2 (by omega : 1 ≤ b - a)) d
   obtain ⟨e, he⟩ := hdvd
   rw [he, Nat.mul_mod_right] at hodd
   exact absurd hodd (by decide)

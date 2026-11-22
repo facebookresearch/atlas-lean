@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Data.List.Basic
+import all Batteries.Data.List.Basic
 import Init.Data.Array.Lemmas
 import Lean.Elab.Tactic.Omega
 
@@ -94,13 +95,13 @@ private theorem length_toChunks_go {α : Type u} (n : Nat) (hn : 0 < n) :
   induction xs with
   | nil =>
     intro acc groups hpos hle
-    rw [toChunks.go.eq_1, Array.length_toList, Array.size_push]
+    rw [toChunks.go, Array.length_toList, Array.size_push]
     have hz : (acc.size + ([] : List α).length - 1) / n = 0 :=
       Nat.div_eq_of_lt (by simp; omega)
     omega
   | cons y ys ih =>
     intro acc groups hpos hle
-    rw [toChunks.go.eq_2]
+    rw [toChunks.go]
     simp only [List.length_cons]
     split
     · rename_i h
@@ -149,7 +150,7 @@ private theorem ne_nil_of_mem_toChunks_go {α : Type u} (n : Nat) :
   induction xs with
   | nil =>
     intro acc groups hg hpos c hc
-    rw [toChunks.go.eq_1, Array.toList_push, List.mem_append] at hc
+    rw [toChunks.go, Array.toList_push, List.mem_append] at hc
     rcases hc with hc | hc
     · exact hg c (Array.mem_def.mpr hc)
     · rw [List.mem_singleton] at hc
@@ -160,7 +161,7 @@ private theorem ne_nil_of_mem_toChunks_go {α : Type u} (n : Nat) :
       omega
   | cons y ys ih =>
     intro acc groups hg hpos c hc
-    rw [toChunks.go.eq_2] at hc
+    rw [toChunks.go] at hc
     split at hc
     · refine ih ((Array.mkEmpty n).push y) (groups.push acc.toList) ?_ (by simp) c hc
       intro g hgmem
@@ -200,11 +201,11 @@ private theorem length_eq_of_mem_dropLast_toChunks_go {α : Type u} (n : Nat) :
   induction xs with
   | nil =>
     intro acc groups hg c hc
-    rw [toChunks.go.eq_1, Array.toList_push, List.dropLast_concat] at hc
+    rw [toChunks.go, Array.toList_push, List.dropLast_concat] at hc
     exact hg c (Array.mem_def.mpr hc)
   | cons y ys ih =>
     intro acc groups hg c hc
-    rw [toChunks.go.eq_2] at hc
+    rw [toChunks.go] at hc
     split at hc
     · rename_i h
       refine ih ((Array.mkEmpty n).push y) (groups.push acc.toList) ?_ c hc

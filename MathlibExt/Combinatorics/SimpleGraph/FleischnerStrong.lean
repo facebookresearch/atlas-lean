@@ -5587,7 +5587,7 @@ private theorem cutAugmentedTrailEdge_cases (c : G.Walk x x)
             left
             apply congrArg Sum.inl
             apply congrArg Sum.inl
-            exact ULift.ext _ _ h
+            exact ULift.ext h
           left
           exact ⟨j.down, hj, by rfl⟩
       | inr f =>

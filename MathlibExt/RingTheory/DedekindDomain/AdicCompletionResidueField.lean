@@ -105,7 +105,8 @@ theorem surjective_completionResidueMap :
   have hkval : 𝔭.valuation K k ≤ 1 := by
     rw [show Valued.v (algebraMap K (𝔭.adicCompletion K) k) = 𝔭.valuation K k
       from by
-      erw [Valued.valuedCompletion_apply]; rfl] at hkle
+      simpa only [algebraMap_adicCompletion, Function.comp_apply,
+        Algebra.algebraMap_self_apply] using 𝔭.valuedAdicCompletion_eq_valuation' k] at hkle
     exact hkle
   obtain ⟨a, ⟨b, hb⟩, hkab⟩ := 𝔭.exists_primeCompl_mul_eq_of_integer k hkval
   obtain ⟨t, hbt⟩ := 𝔭.exists_mul_sub_mem_of_not_mem b hb
@@ -145,7 +146,9 @@ theorem surjective_completionResidueMap :
     rw [show Valued.v
         (algebraMap K (𝔭.adicCompletion K) (algebraMap A K (a * t) - k)) =
         𝔭.valuation K (algebraMap A K (a * t) - k) from by
-      erw [Valued.valuedCompletion_apply]; rfl]
+      simpa only [algebraMap_adicCompletion, Function.comp_apply,
+        Algebra.algebraMap_self_apply] using
+          𝔭.valuedAdicCompletion_eq_valuation' (algebraMap A K (a * t) - k)]
     exact hval_bound
   have hsplit : algebraMap K (𝔭.adicCompletion K) (algebraMap A K (a * t)) - ↑x =
     (algebraMap K (𝔭.adicCompletion K) (algebraMap A K (a * t)) -

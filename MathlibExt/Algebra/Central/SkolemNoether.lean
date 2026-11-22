@@ -15,6 +15,8 @@ import Mathlib.Algebra.Central.Basic
 import Mathlib.LinearAlgebra.Dual.Lemmas
 import Mathlib.LinearAlgebra.GeneralLinearGroup.AlgEquiv
 import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
+import Mathlib.LinearAlgebra.FreeModule.Finite.Matrix
+import Mathlib.RingTheory.TensorProduct.Finite
 import Mathlib.RingTheory.RegularLocalRing.Defs
 
 /-!

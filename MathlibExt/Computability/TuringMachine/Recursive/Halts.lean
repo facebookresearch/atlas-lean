@@ -33,7 +33,8 @@ recursively enumerable (`REPred p`) iff some `FinTM2` halts exactly on the input
 - `TM2HaltsOn` : a `FinTM2` halts on an input word.
 - `dom_eval_iff_exists_iterate` : a run halts iff some iterate is a configuration without a
   successor.
-- `rePred_tm2HaltsOn`, `exists_tm2HaltsOn_iff_of_rePred`, and together
+- `rePred_tm2HaltsOn`, `exists_tm2HaltsOn_iff_of_rePred` (and
+  `exists_finite_tm2HaltsOn_iff_of_rePred`, with finite stack alphabets), and together
   `rePred_iff_exists_tm2HaltsOn`.
 -/
 
@@ -243,14 +244,19 @@ theorem tm2HaltsOn_fwdTM_iff (n : ℕ) (hc : ∀ v ∈ c.eval [n], ∃ m, v = [m
 
 end Wrapped
 
-/-- **Every r.e. predicate is the halting set of a multi-stack machine (`FinTM2`).** -/
-theorem exists_tm2HaltsOn_iff_of_rePred {p : ℕ → Prop} (hp : REPred p) :
-    ∃ (tm : FinTM2) (e : tm.Γ tm.k₀ ≃ Bool),
+/-- **Every r.e. predicate is the halting set of a multi-stack machine (`FinTM2`)** whose stack
+alphabets are all finite. -/
+theorem exists_finite_tm2HaltsOn_iff_of_rePred {p : ℕ → Prop} (hp : REPred p) :
+    ∃ (tm : FinTM2) (_ : ∀ k, Finite (tm.Γ k)) (e : tm.Γ tm.k₀ ≃ Bool),
       ∀ n, p n ↔ TM2HaltsOn tm ((Computability.encodeNat n).map e.symm) := by
   have hg : Partrec fun n ↦ (Part.assert (p n) fun _ ↦ Part.some ()).map fun _ ↦ (0 : ℕ) :=
     Partrec.map hp (Computable.const 0).to₂
   obtain ⟨c, hc⟩ := ToPartrec.Code.exists_code (Nat.Partrec'.part_iff₁.mpr hg)
-  refine ⟨fwdTM c, Equiv.refl Bool, fun n ↦ ?_⟩
+  have hfin : ∀ k, Finite ((fwdTM c).Γ k) := fun k ↦ by
+    rcases k with k | k
+    · exact inferInstanceAs (Finite Turing.PartrecToTM2.Γ')
+    · exact inferInstanceAs (Finite Bool)
+  refine ⟨fwdTM c, hfin, Equiv.refl Bool, fun n ↦ ?_⟩
   have hcn : c.eval [n] = (Part.assert (p n) fun _ ↦ Part.some ()).map fun _ ↦ [0] := by
     have := hc ⟨[n], rfl⟩
     simp only [Part.map_eq_map, Part.map_map] at this
@@ -261,6 +267,13 @@ theorem exists_tm2HaltsOn_iff_of_rePred {p : ℕ → Prop} (hp : REPred p) :
   · rw [hcn] at hv
     obtain ⟨_, -, rfl⟩ := Part.mem_map_iff _ |>.mp hv
     rfl
+
+/-- **Every r.e. predicate is the halting set of a multi-stack machine (`FinTM2`).** -/
+theorem exists_tm2HaltsOn_iff_of_rePred {p : ℕ → Prop} (hp : REPred p) :
+    ∃ (tm : FinTM2) (e : tm.Γ tm.k₀ ≃ Bool),
+      ∀ n, p n ↔ TM2HaltsOn tm ((Computability.encodeNat n).map e.symm) :=
+  let ⟨tm, _, e, h⟩ := exists_finite_tm2HaltsOn_iff_of_rePred hp
+  ⟨tm, e, h⟩
 
 /-- **R.e. equals halting set of a multi-stack machine (`FinTM2`).** -/
 theorem rePred_iff_exists_tm2HaltsOn {p : ℕ → Prop} :
