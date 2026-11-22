@@ -13,11 +13,11 @@ public import CSLibExt.Languages.OperationalSemantics
 /-!
 Program behaviors and homogeneous semantic preservation after Leroy's
 "Formal verification of a realistic compiler" (§2.1), over the operational-semantics anchor.
-A behavior is one of three observable forms: termination with a finite trace and final
-configuration, divergence with an infinite label trace, or going wrong with a finite trace
-at a stuck configuration. Excluded: silent (finite reactive trace) divergence and any tau
-companion (the anchor has no tau), cross-language preservation with a label map, and any
-soundness claim about a compiler.
+A behavior is observational: termination or going wrong after a finite label trace, or
+divergence with an infinite label trace. Final and stuck configurations stay existential in
+`Beh`; every anchor label counts as an observable event, and results are observed only as labels.
+Excluded: silent (finite reactive trace) divergence and any tau companion (the anchor has no
+tau), cross-language preservation with a label map, and any soundness claim about a compiler.
 -/
 
 @[expose] public section
@@ -30,37 +30,37 @@ namespace Cslib.Languages.ProgramBehaviors
 
 open Cslib.Languages.OperationalSemantics
 
-/-- Observable program behaviors: termination, divergence, or going wrong. -/
-inductive Behavior (Config : Type u) (Label : Type v) where
-  | terminates (trace : List Label) (final : Config)
+/-- Observable program behaviors over label traces: termination, divergence, or going wrong. -/
+inductive Behavior (Label : Type v) where
+  | terminates (trace : List Label)
   | diverges (trace : Cslib.ωSequence Label)
-  | goesWrong (trace : List Label) (stuck : Config)
+  | goesWrong (trace : List Label)
 
-/-- The behavior set of a configuration in an operational semantics. -/
+/-- The behavior set of a configuration; final and stuck configurations stay existential. -/
 def Beh {Config : Type u} {Label : Type v} (S : OpSem Config Label) (c : Config) :
-    Set (Behavior Config Label) :=
+    Set (Behavior Label) :=
   fun b => match b with
-    | .terminates μs c' => S.lts.MTr c μs c' ∧ S.Final c'
+    | .terminates μs => ∃ c' : Config, S.lts.MTr c μs c' ∧ S.Final c'
     | .diverges μs => ∃ ss : Cslib.ωSequence Config, ss 0 = c ∧ S.lts.OmegaExecution ss μs
-    | .goesWrong μs c' => S.lts.MTr c μs c' ∧ S.Stuck c'
+    | .goesWrong μs => ∃ c' : Config, S.lts.MTr c μs c' ∧ S.Stuck c'
 
-/-- Termination membership unfolds to a multistep plus a final configuration. -/
+/-- Termination membership unfolds to a multistep reaching some final configuration. -/
 theorem terminates_mem_iff {Config : Type u} {Label : Type v} (S : OpSem Config Label)
-    {c c' : Config} {μs : List Label} :
-    Behavior.terminates μs c' ∈ Beh S c ↔ S.lts.MTr c μs c' ∧ S.Final c' := by
+    {c : Config} {μs : List Label} :
+    Behavior.terminates μs ∈ Beh S c ↔ ∃ c' : Config, S.lts.MTr c μs c' ∧ S.Final c' := by
   exact Iff.rfl
 
 /-- Divergence membership unfolds to an infinite omega execution. -/
 theorem diverges_mem_iff {Config : Type u} {Label : Type v} (S : OpSem Config Label)
-    {c c' : Config} {μs : Cslib.ωSequence Label} :
+    {c : Config} {μs : Cslib.ωSequence Label} :
     Behavior.diverges μs ∈ Beh S c ↔
       ∃ ss : Cslib.ωSequence Config, ss 0 = c ∧ S.lts.OmegaExecution ss μs := by
   exact Iff.rfl
 
-/-- Wrong-going membership unfolds to a multistep plus a stuck configuration. -/
+/-- Wrong-going membership unfolds to a multistep reaching some stuck configuration. -/
 theorem goesWrong_mem_iff {Config : Type u} {Label : Type v} (S : OpSem Config Label)
-    {c c' : Config} {μs : List Label} :
-    Behavior.goesWrong μs c' ∈ Beh S c ↔ S.lts.MTr c μs c' ∧ S.Stuck c' := by
+    {c : Config} {μs : List Label} :
+    Behavior.goesWrong μs ∈ Beh S c ↔ ∃ c' : Config, S.lts.MTr c μs c' ∧ S.Stuck c' := by
   exact Iff.rfl
 
 /-- Every configuration terminates, goes wrong, or diverges. -/
@@ -101,9 +101,9 @@ theorem trichotomy {Config : Type u} {Label : Type v} (S : OpSem Config Label) (
         ⟨Nat.rec (motive := fun _ => {x // S.Steps c x}) ⟨c, hbase⟩
           (fun _ x => Classical.choose (hsucc x)), rfl, fun n => rfl⟩
       refine Or.inr (Or.inr ((OpSem.diverges_iff S).mpr ⟨fun n => (seq n).1, ?_, ?_⟩))
-      · show (seq 0).1 = c
+      · change (seq 0).1 = c
         rw [hseq0]
-      · show ∀ i, S.Step (seq i).1 (seq (i + 1)).1
+      · change ∀ i, S.Step (seq i).1 (seq (i + 1)).1
         intro i
         rw [hseqS i]
         exact Classical.choose_spec (hsucc (seq i))
@@ -113,11 +113,11 @@ theorem exists_behavior {Config : Type u} {Label : Type v} (S : OpSem Config Lab
     (Beh S c).Nonempty := by
   obtain hterm | hwrong | hdiv := trichotomy S c
   · obtain ⟨μs, c', hmtr, hfin⟩ := hterm
-    exact ⟨Behavior.terminates μs c', (terminates_mem_iff S).mpr ⟨hmtr, hfin⟩⟩
+    exact ⟨Behavior.terminates μs, (terminates_mem_iff S).mpr ⟨c', hmtr, hfin⟩⟩
   · obtain ⟨μs, c', hmtr, hstuck⟩ := hwrong
-    exact ⟨Behavior.goesWrong μs c', (goesWrong_mem_iff S).mpr ⟨hmtr, hstuck⟩⟩
+    exact ⟨Behavior.goesWrong μs, (goesWrong_mem_iff S).mpr ⟨c', hmtr, hstuck⟩⟩
   · obtain ⟨ss, μs, h0, hexec⟩ := hdiv
-    exact ⟨Behavior.diverges μs, (diverges_mem_iff S (c' := c)).mpr ⟨ss, h0, hexec⟩⟩
+    exact ⟨Behavior.diverges μs, (diverges_mem_iff S).mpr ⟨ss, h0, hexec⟩⟩
 
 /-- Leroy form (1): source and target share exactly the same behaviors. -/
 def Preserves1 {Config : Type u} {Label : Type v} (S T : OpSem Config Label) (src tgt : Config) :
@@ -139,13 +139,13 @@ theorem Preserves2.safe_target {Config : Type u} {Label : Type v} {S T : OpSem C
   intro d hsteps hstuck
   unfold OpSem.Steps at hsteps
   obtain ⟨μs, hmtr⟩ := hsteps
-  have hmemT : Behavior.goesWrong μs d ∈ Beh T tgt :=
-    (goesWrong_mem_iff T).mpr ⟨hmtr, hstuck⟩
+  have hmemT : Behavior.goesWrong μs ∈ Beh T tgt :=
+    (goesWrong_mem_iff T).mpr ⟨d, hmtr, hstuck⟩
   have hmemS := hsub hmemT
   rw [goesWrong_mem_iff] at hmemS
-  obtain ⟨hmtrS, hstuckS⟩ := hmemS
+  obtain ⟨s, hmtrS, hstuckS⟩ := hmemS
   unfold OpSem.Safe at hsafeS
-  exact hsafeS d ⟨μs, hmtrS⟩ hstuckS
+  exact hsafeS s ⟨μs, hmtrS⟩ hstuckS
 
 /-- Preservation in form (2) composes vertically. -/
 theorem Preserves2.trans {Config : Type u} {Label : Type v} {S T U : OpSem Config Label}
@@ -167,15 +167,15 @@ inductive NondetToyCfg where
   | b2
 deriving DecidableEq
 
-/-- Nondeterministic toy: `a` steps to `b1` or to `b2`. -/
-def nondetToy : OpSem NondetToyCfg Unit where
-  lts := { Tr := fun x _ y => (x = .a ∧ y = .b1) ∨ (x = .a ∧ y = .b2) }
+/-- Nondeterministic toy: `a` emits `true` to reach `b1` or `false` to reach `b2`. -/
+def nondetToy : OpSem NondetToyCfg Bool where
+  lts := { Tr := fun x μ y => (x = .a ∧ μ = true ∧ y = .b1) ∨ (x = .a ∧ μ = false ∧ y = .b2) }
   Final := fun c => c = .b1 ∨ c = .b2
   final_terminal := by intro c hc μ s' h; cases c <;> simp_all
 
-/-- Deterministic toy: `a` steps only to `b1`. -/
-def detToy : OpSem NondetToyCfg Unit where
-  lts := { Tr := fun x _ y => x = .a ∧ y = .b1 }
+/-- Deterministic toy: `a` emits `true` and steps only to `b1`. -/
+def detToy : OpSem NondetToyCfg Bool where
+  lts := { Tr := fun x μ y => x = .a ∧ μ = true ∧ y = .b1 }
   Final := fun c => c = .b1 ∨ c = .b2
   final_terminal := by intro c hc μ s' h; cases c <;> simp_all
 
@@ -184,19 +184,19 @@ theorem preserves1_fails_nondet_to_det :
     ¬ Preserves1 nondetToy detToy NondetToyCfg.a NondetToyCfg.a := by
   unfold Preserves1
   intro heq
-  have hTrN : nondetToy.lts.Tr NondetToyCfg.a () NondetToyCfg.b2 :=
-    Or.inr ⟨rfl, rfl⟩
-  have hMTrN : nondetToy.lts.MTr NondetToyCfg.a [()] NondetToyCfg.b2 :=
+  have hTrN : nondetToy.lts.Tr NondetToyCfg.a false NondetToyCfg.b2 :=
+    Or.inr ⟨rfl, rfl, rfl⟩
+  have hMTrN : nondetToy.lts.MTr NondetToyCfg.a [false] NondetToyCfg.b2 :=
     Cslib.LTS.MTr.single _ hTrN
   have hFinN : nondetToy.Final NondetToyCfg.b2 := Or.inr rfl
-  have hmemN : Behavior.terminates [()] NondetToyCfg.b2 ∈
+  have hmemN : Behavior.terminates [false] ∈
       Beh nondetToy NondetToyCfg.a :=
-    (terminates_mem_iff nondetToy).mpr ⟨hMTrN, hFinN⟩
+    (terminates_mem_iff nondetToy).mpr ⟨NondetToyCfg.b2, hMTrN, hFinN⟩
   rw [heq] at hmemN
-  obtain ⟨hMTrD, hFinD⟩ := (terminates_mem_iff detToy).mp hmemN
-  have hTrD : detToy.lts.Tr NondetToyCfg.a () NondetToyCfg.b2 :=
+  obtain ⟨e, hMTrD, _⟩ := (terminates_mem_iff detToy).mp hmemN
+  have hTrD : detToy.lts.Tr NondetToyCfg.a false e :=
     (Cslib.LTS.MTr.singleton_iff detToy.lts _ _ _).mp hMTrD
-  obtain ⟨ha, hb⟩ := hTrD
-  cases hb
+  obtain ⟨_, hlabel, _⟩ := hTrD
+  cases hlabel
 
 end Cslib.Languages.ProgramBehaviors
