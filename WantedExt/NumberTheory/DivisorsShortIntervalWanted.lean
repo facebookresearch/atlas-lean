@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.NumberTheory.LegendreSymbol.Basic
+public import MathlibExt.Algebra.BigOperators.PrefixSumReordering
 
 namespace MetaMathlibExt
 
