@@ -66,6 +66,23 @@ def Expr.Args.length : Expr.Args -> Nat
   | .nil => 0
   | .cons _ tail => tail.length + 1
 
+mutual
+  /-- Class names referenced by an expression (helper for WellFormed). -/
+  def Expr.classRefs : Expr → List CName :=
+    fun e => match e with
+    | .var _ => []
+    | .fld recv _ => Expr.classRefs recv
+    | .invk recv _ args => Expr.classRefs recv ++ Expr.Args.classRefs args
+    | .new cls args => cls :: Expr.Args.classRefs args
+    | .cast cls expr => cls :: Expr.classRefs expr
+
+  /-- Class names referenced by an argument list (helper for WellFormed). -/
+  def Expr.Args.classRefs : Expr.Args → List CName :=
+    fun args => match args with
+    | .nil => []
+    | .cons head tail => Expr.classRefs head ++ Expr.Args.classRefs tail
+end
+
 /-- Method declaration: return, params, body (Lecture #30). -/
 structure MethodDecl where
   ret : CName
@@ -81,6 +98,12 @@ structure ClassDecl where
   ctorParams : List (CName × FName)
   methods : List (MName × MethodDecl)
 deriving DecidableEq
+
+/-- Class names a class declaration references (helper for WellFormed). -/
+def ClassDecl.classRefs (cd : ClassDecl) : List CName :=
+  cd.super :: (cd.fields.map Prod.fst ++ cd.ctorParams.map Prod.fst ++
+    cd.methods.flatMap fun p =>
+      p.2.ret :: (p.2.params.map Prod.fst ++ Expr.classRefs p.2.body))
 
 /-- Class table as a list of declarations (Lecture #30). -/
 abbrev ClassTable := List ClassDecl
@@ -150,12 +173,12 @@ def override (ct : ClassTable) (m : MName) (D : CName)
     (sig : List CName × CName) : Prop :=
   ∀ sig', mtype ct m D = some sig' → sig' = sig
 
-/-- Well-formedness: distinct names, declared supers, nodup, override. -/
+/-- Well-formedness: IPW sanity (distinct, declared, acyclic), nodup, override. -/
 structure WellFormed (ct : ClassTable) : Prop where
   objectUndeclared : ∀ cd ∈ ct, cd.name ≠ Object
   namesNodup : (ct.map ClassDecl.name).Nodup
-  superDeclared : ∀ cd ∈ ct, cd.super = Object ∨ ∃ parent ∈ ct,
-    parent.name = cd.super
+  refsDeclared : ∀ cd ∈ ct, ∀ C ∈ cd.classRefs, C = Object ∨ ∃ d ∈ ct,
+    d.name = C
   supersNodup : ∀ cd ∈ ct, (supers ct cd.name).Nodup
   methodNamesNodup : ∀ cd ∈ ct, (cd.methods.map Prod.fst).Nodup
   fieldNamesNodup : ∀ (C : CName) (fs : List (CName × FName)),
@@ -270,9 +293,13 @@ def ClassOk (ct : ClassTable) (cd : ClassDecl) : Prop :=
     cd.ctorParams = fs ++ cd.fields) ∧
   ∀ p ∈ cd.methods, MethodOk ct cd p
 
-/-- Table well-formedness: all classes ok (CLASS-OK). -/
+/-- All classes ok (CLASS-OK); table validity is ValidTable. -/
 def TableOk (ct : ClassTable) : Prop :=
   ∀ cd ∈ ct, ClassOk ct cd
+
+/-- Valid class table: sanity plus every class ok (Lecture #30 program check). -/
+def ValidTable (ct : ClassTable) : Prop :=
+  WellFormed ct ∧ TableOk ct
 
 mutual
   /-- Single-step reduction (E-CONTEXT/E-PROJ/E-INVK/E-CAST). -/
@@ -1029,9 +1056,8 @@ theorem mbody_step_none {ct : ClassTable} (h : WellFormed ct) {C : CName}
   simp only [mbody, hLM]
 
 /-- Single-step reduction is deterministic (helper). -/
-theorem Step.deterministic {ct : ClassTable} (h : WellFormed ct)
+theorem Step.deterministic {ct : ClassTable}
     {e e1 e2 : Expr} : Step ct e e1 → Step ct e e2 → e1 = e2 := by
-  have _hwf := h
   have noStep : ∀ {e e' : Expr}, Value e → Step ct e e' → False := by
     intro e e' hv hs
     refine Value.rec (motive_1 := fun e _ => ∀ e', Step ct e e' → False)

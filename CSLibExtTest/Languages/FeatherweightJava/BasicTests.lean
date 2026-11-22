@@ -91,6 +91,30 @@ def subPairTable : ClassTable :=
                    (Expr.Args.cons (Expr.fld (Expr.var thisVar) sndF)
                      Expr.Args.nil)) })] }]
 
+/-- Table whose only class references an undeclared class in a signature. -/
+def undeclaredSigTable : ClassTable :=
+  [{ name := classA, super := Object, fields := [], ctorParams := [],
+     methods :=
+       [(swapM,
+         { ret := 99, params := [(99, newfstV)],
+           body := Expr.var newfstV })] }]
+
+/-- Table whose only undeclared reference is a cast inside a method body. -/
+def undeclaredBodyTable : ClassTable :=
+  [{ name := classA, super := Object, fields := [], ctorParams := [],
+     methods :=
+       [(swapM,
+         { ret := classA, params := [],
+           body :=
+             Expr.invk (Expr.var thisVar) swapM
+               (Expr.Args.cons (Expr.cast 99 (Expr.var thisVar))
+                 Expr.Args.nil) })] }]
+
+/-- Table whose constructor parameters do not match its fields. -/
+def badCtorTable : ClassTable :=
+  [{ name := classA, super := Object, fields := [],
+     ctorParams := [(Object, fstF)], methods := [] }]
+
 /-- Pair table is well-formed (T3). -/
 theorem pairTable_wellFormed : WellFormed pairTable := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
@@ -114,15 +138,15 @@ theorem pairTable_wellFormed : WellFormed pairTable := by
     cases hmem with
     | inl h1 =>
       subst h1
-      exact Or.inl rfl
+      decide
     | inr h2 =>
       cases h2 with
       | inl h3 =>
         subst h3
-        exact Or.inr ⟨ClassDecl.mk classA Object [] [] [], by decide, rfl⟩
+        decide
       | inr h4 =>
         subst h4
-        exact Or.inl rfl
+        decide
   · intro cd hmem
     simp only [pairTable, List.mem_cons, List.not_mem_nil, or_false] at hmem
     cases hmem with
@@ -789,6 +813,537 @@ theorem typing_pair_swap :
     Typing.new fields_pair
       (ArgsTyping.cons hA hAO (ArgsTyping.cons hB hBO ArgsTyping.nil))
   exact Typing.invk hRecv hM ArgsTyping.nil
+
+/-- Undeclared signature class is not well-formed. -/
+theorem undeclaredSig_not_wellFormed : ¬ WellFormed undeclaredSigTable := by
+  intro h
+  have hd := h.refsDeclared (ClassDecl.mk classA Object [] []
+    [(swapM,
+      { ret := 99, params := [(99, newfstV)],
+        body := Expr.var newfstV })]) (by decide) 99 (by decide)
+  exact (by decide : ¬ (99 = Object ∨
+    ∃ d ∈ undeclaredSigTable, d.name = 99)) hd
+
+/-- Undeclared class inside a method body is not well-formed. -/
+theorem undeclaredBody_not_wellFormed : ¬ WellFormed undeclaredBodyTable := by
+  intro h
+  have hd := h.refsDeclared (ClassDecl.mk classA Object [] []
+    [(swapM,
+      { ret := classA, params := [],
+        body :=
+          Expr.invk (Expr.var thisVar) swapM
+            (Expr.Args.cons (Expr.cast 99 (Expr.var thisVar))
+              Expr.Args.nil) })]) (by decide) 99 (by decide)
+  exact (by decide : ¬ (99 = Object ∨
+    ∃ d ∈ undeclaredBodyTable, d.name = 99)) hd
+
+/-- Pair table classes are ok. -/
+theorem pairTable_tableOk : TableOk pairTable := by
+  intro cd hmem
+  simp only [pairTable, List.mem_cons, List.not_mem_nil, or_false] at hmem
+  cases hmem with
+  | inl h1 =>
+    subst h1
+    refine ⟨?_, ?_⟩
+    · exact ⟨[], by decide, rfl⟩
+    · intro p hpmem
+      simp only [List.not_mem_nil] at hpmem
+  | inr h2 =>
+    cases h2 with
+    | inl h3 =>
+      subst h3
+      refine ⟨?_, ?_⟩
+      · exact ⟨[], by decide, rfl⟩
+      · intro p hpmem
+        simp only [List.not_mem_nil] at hpmem
+    | inr h4 =>
+      subst h4
+      refine ⟨?_, ?_⟩
+      · exact ⟨[], by decide, rfl⟩
+      · intro p hpmem
+        simp only [List.mem_cons, List.not_mem_nil, or_false] at hpmem
+        cases hpmem with
+        | inl h5 =>
+          subst h5
+          refine ⟨?_, ?_⟩
+          · refine ⟨classPair, ?_, ?_⟩
+            · have hCtxThis : contextOf classPair [] thisVar =
+                some classPair := by decide
+              have hThis : Typing pairTable (contextOf classPair [])
+                (Expr.var thisVar) classPair :=
+                Typing.var hCtxThis
+              have hSndMem : (Object, sndF) ∈
+                [(Object, fstF), (Object, sndF)] := by decide
+              have hFstMem : (Object, fstF) ∈
+                [(Object, fstF), (Object, sndF)] := by decide
+              have hSnd : Typing pairTable (contextOf classPair [])
+                (Expr.fld (Expr.var thisVar) sndF) Object :=
+                Typing.field hThis fields_pair hSndMem
+              have hFst : Typing pairTable (contextOf classPair [])
+                (Expr.fld (Expr.var thisVar) fstF) Object :=
+                Typing.field hThis fields_pair hFstMem
+              have hSubR : Subtype pairTable Object Object :=
+                Relation.ReflTransGen.refl
+              have hArgs : ArgsTyping pairTable (contextOf classPair [])
+                (Expr.Args.cons (Expr.fld (Expr.var thisVar) sndF)
+                  (Expr.Args.cons (Expr.fld (Expr.var thisVar) fstF)
+                    Expr.Args.nil)) [Object, Object] :=
+                ArgsTyping.cons hSnd hSubR
+                  (ArgsTyping.cons hFst hSubR ArgsTyping.nil)
+              exact Typing.new fields_pair hArgs
+            · exact Relation.ReflTransGen.refl
+          · show override pairTable swapM Object ([], classPair)
+            intro sig' hEq
+            have hNone : mtype pairTable swapM Object = none := by decide
+            rw [hNone] at hEq
+            cases hEq
+        | inr h6 =>
+          subst h6
+          refine ⟨?_, ?_⟩
+          · refine ⟨classPair, ?_, ?_⟩
+            · have hCtxNew : contextOf classPair [(Object, newfstV)]
+                newfstV = some Object := by decide
+              have hNew : Typing pairTable
+                (contextOf classPair [(Object, newfstV)])
+                (Expr.var newfstV) Object :=
+                Typing.var hCtxNew
+              have hCtxThis2 : contextOf classPair [(Object, newfstV)]
+                thisVar = some classPair := by decide
+              have hThis2 : Typing pairTable
+                (contextOf classPair [(Object, newfstV)])
+                (Expr.var thisVar) classPair :=
+                Typing.var hCtxThis2
+              have hSndMem2 : (Object, sndF) ∈
+                [(Object, fstF), (Object, sndF)] := by decide
+              have hSnd2 : Typing pairTable
+                (contextOf classPair [(Object, newfstV)])
+                (Expr.fld (Expr.var thisVar) sndF) Object :=
+                Typing.field hThis2 fields_pair hSndMem2
+              have hSubR2 : Subtype pairTable Object Object :=
+                Relation.ReflTransGen.refl
+              have hArgs2 : ArgsTyping pairTable
+                (contextOf classPair [(Object, newfstV)])
+                (Expr.Args.cons (Expr.var newfstV)
+                  (Expr.Args.cons (Expr.fld (Expr.var thisVar) sndF)
+                    Expr.Args.nil)) [Object, Object] :=
+                ArgsTyping.cons hNew hSubR2
+                  (ArgsTyping.cons hSnd2 hSubR2 ArgsTyping.nil)
+              exact Typing.new fields_pair hArgs2
+            · exact Relation.ReflTransGen.refl
+          · show override pairTable setfstM Object ([Object], classPair)
+            intro sig' hEq
+            have hNone : mtype pairTable setfstM Object = none := by decide
+            rw [hNone] at hEq
+            cases hEq
+
+/-- SubPair table is well-formed. -/
+theorem subPairTable_wellFormed : WellFormed subPairTable := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · intro cd hmem
+    simp only [subPairTable, List.mem_append] at hmem
+    cases hmem with
+    | inl hLeft =>
+      simp only [pairTable, List.mem_cons, List.not_mem_nil, or_false] at hLeft
+      cases hLeft with
+      | inl h1 =>
+        subst h1
+        decide
+      | inr h2 =>
+        cases h2 with
+        | inl h3 =>
+          subst h3
+          decide
+        | inr h4 =>
+          subst h4
+          decide
+    | inr hRight =>
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hRight
+      subst hRight
+      decide
+  · decide
+  · intro cd hmem
+    simp only [subPairTable, List.mem_append] at hmem
+    cases hmem with
+    | inl hLeft =>
+      simp only [pairTable, List.mem_cons, List.not_mem_nil, or_false] at hLeft
+      cases hLeft with
+      | inl h1 =>
+        subst h1
+        decide
+      | inr h2 =>
+        cases h2 with
+        | inl h3 =>
+          subst h3
+          decide
+        | inr h4 =>
+          subst h4
+          decide
+    | inr hRight =>
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hRight
+      subst hRight
+      decide
+  · intro cd hmem
+    simp only [subPairTable, List.mem_append] at hmem
+    cases hmem with
+    | inl hLeft =>
+      simp only [pairTable, List.mem_cons, List.not_mem_nil, or_false] at hLeft
+      cases hLeft with
+      | inl h1 =>
+        subst h1
+        decide
+      | inr h2 =>
+        cases h2 with
+        | inl h3 =>
+          subst h3
+          decide
+        | inr h4 =>
+          subst h4
+          decide
+    | inr hRight =>
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hRight
+      subst hRight
+      decide
+  · intro cd hmem
+    simp only [subPairTable, List.mem_append] at hmem
+    cases hmem with
+    | inl hLeft =>
+      simp only [pairTable, List.mem_cons, List.not_mem_nil, or_false] at hLeft
+      cases hLeft with
+      | inl h1 =>
+        subst h1
+        decide
+      | inr h2 =>
+        cases h2 with
+        | inl h3 =>
+          subst h3
+          decide
+        | inr h4 =>
+          subst h4
+          decide
+    | inr hRight =>
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hRight
+      subst hRight
+      decide
+  · intro C fs h
+    by_cases h0 : C = Object
+    · subst h0
+      have hObj : fields subPairTable Object = some [] := by decide
+      have hEq := Option.some_inj.mp (hObj.symm.trans h)
+      subst hEq
+      decide
+    · by_cases h1 : C = classA
+      · subst h1
+        have hA : fields subPairTable classA = some [] := by decide
+        have hEq := Option.some_inj.mp (hA.symm.trans h)
+        subst hEq
+        decide
+      · by_cases h2 : C = classB
+        · subst h2
+          have hB : fields subPairTable classB = some [] := by decide
+          have hEq := Option.some_inj.mp (hB.symm.trans h)
+          subst hEq
+          decide
+        · by_cases h3 : C = classPair
+          · subst h3
+            have hPair : fields subPairTable classPair =
+              some [(Object, fstF), (Object, sndF)] := by decide
+            have hEq := Option.some_inj.mp (hPair.symm.trans h)
+            subst hEq
+            decide
+          · by_cases h4 : C = classSubPair
+            · subst h4
+              have hSub : fields subPairTable classSubPair =
+                some [(Object, fstF), (Object, sndF)] := by decide
+              have hEq := Option.some_inj.mp (hSub.symm.trans h)
+              subst hEq
+              decide
+            · have hNe1 : ¬ (classA == C) = true := by
+                intro hEq
+                have hEq2 := beq_iff_eq.mp hEq
+                exact h1 hEq2.symm
+              have hNe2 : ¬ (classB == C) = true := by
+                intro hEq
+                have hEq2 := beq_iff_eq.mp hEq
+                exact h2 hEq2.symm
+              have hNe3 : ¬ (classPair == C) = true := by
+                intro hEq
+                have hEq2 := beq_iff_eq.mp hEq
+                exact h3 hEq2.symm
+              have hNe4 : ¬ (classSubPair == C) = true := by
+                intro hEq
+                have hEq2 := beq_iff_eq.mp hEq
+                exact h4 hEq2.symm
+              have hLk : lookupClass subPairTable C = none := by
+                simp only [lookupClass, subPairTable, pairTable, List.cons_append,
+                  List.nil_append, List.find?, hNe1, hNe2, hNe3, hNe4]
+              have hSup : supers subPairTable C = [C] := by
+                simp only [supers, supersAux, h0, hLk, ite_false]
+              have hNone : fields subPairTable C = none := by
+                simp only [fields, h0, hSup, hLk, ite_false, List.foldl_cons,
+                  List.foldl_nil]
+              have hContra := hNone.symm.trans h
+              cases hContra
+  · intro cd hmem p hpmem
+    simp only [subPairTable, List.mem_append] at hmem
+    cases hmem with
+    | inl hLeft =>
+      simp only [pairTable, List.mem_cons, List.not_mem_nil, or_false] at hLeft
+      cases hLeft with
+      | inl h1 =>
+        subst h1
+        simp only [List.not_mem_nil] at hpmem
+      | inr h2 =>
+        cases h2 with
+        | inl h3 =>
+          subst h3
+          simp only [List.not_mem_nil] at hpmem
+        | inr h4 =>
+          subst h4
+          simp only [List.mem_cons, List.not_mem_nil, or_false] at hpmem
+          cases hpmem with
+          | inl h5 =>
+            subst h5
+            show override subPairTable swapM Object ([], classPair)
+            intro sig' hEq
+            have hNone : mtype subPairTable swapM Object = none := by decide
+            rw [hNone] at hEq
+            cases hEq
+          | inr h6 =>
+            subst h6
+            show override subPairTable setfstM Object ([Object], classPair)
+            intro sig' hEq
+            have hNone : mtype subPairTable setfstM Object = none := by decide
+            rw [hNone] at hEq
+            cases hEq
+    | inr hRight =>
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hRight
+      subst hRight
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hpmem
+      subst hpmem
+      show override subPairTable setfstM classPair ([Object], classPair)
+      intro sig' hEq
+      have hM : mtype subPairTable setfstM classPair =
+        some ([Object], classPair) := by decide
+      rw [hM] at hEq
+      exact (Option.some_inj.mp hEq).symm
+  · intro cd hmem p hpmem
+    simp only [subPairTable, List.mem_append] at hmem
+    cases hmem with
+    | inl hLeft =>
+      simp only [pairTable, List.mem_cons, List.not_mem_nil, or_false] at hLeft
+      cases hLeft with
+      | inl h1 =>
+        subst h1
+        simp only [List.not_mem_nil] at hpmem
+      | inr h2 =>
+        cases h2 with
+        | inl h3 =>
+          subst h3
+          simp only [List.not_mem_nil] at hpmem
+        | inr h4 =>
+          subst h4
+          simp only [List.mem_cons, List.not_mem_nil, or_false] at hpmem
+          cases hpmem with
+          | inl h5 =>
+            subst h5
+            show ([] : List VName).Nodup ∧ thisVar ∉ ([] : List VName)
+            exact ⟨by decide, by decide⟩
+          | inr h6 =>
+            subst h6
+            show ([newfstV] : List VName).Nodup ∧ thisVar ∉ ([newfstV] : List VName)
+            exact ⟨by decide, by decide⟩
+    | inr hRight =>
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hRight
+      subst hRight
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hpmem
+      subst hpmem
+      show ([newfstV] : List VName).Nodup ∧ thisVar ∉ ([newfstV] : List VName)
+      exact ⟨by decide, by decide⟩
+
+/-- SubPair table classes are ok. -/
+theorem subPairTable_tableOk : TableOk subPairTable := by
+  intro cd hmem
+  simp only [subPairTable, List.mem_append] at hmem
+  cases hmem with
+  | inl hLeft =>
+    simp only [pairTable, List.mem_cons, List.not_mem_nil, or_false] at hLeft
+    cases hLeft with
+    | inl h1 =>
+      subst h1
+      refine ⟨?_, ?_⟩
+      · exact ⟨[], by decide, rfl⟩
+      · intro p hpmem
+        simp only [List.not_mem_nil] at hpmem
+    | inr h2 =>
+      cases h2 with
+      | inl h3 =>
+        subst h3
+        refine ⟨?_, ?_⟩
+        · exact ⟨[], by decide, rfl⟩
+        · intro p hpmem
+          simp only [List.not_mem_nil] at hpmem
+      | inr h4 =>
+        subst h4
+        refine ⟨?_, ?_⟩
+        · exact ⟨[], by decide, rfl⟩
+        · intro p hpmem
+          simp only [List.mem_cons, List.not_mem_nil, or_false] at hpmem
+          have hFieldsPair : fields subPairTable classPair =
+              some [(Object, fstF), (Object, sndF)] := by decide
+          cases hpmem with
+          | inl h5 =>
+            subst h5
+            refine ⟨?_, ?_⟩
+            · refine ⟨classPair, ?_, ?_⟩
+              · have hCtxThis : contextOf classPair [] thisVar =
+                  some classPair := by decide
+                have hThis : Typing subPairTable (contextOf classPair [])
+                  (Expr.var thisVar) classPair :=
+                  Typing.var hCtxThis
+                have hSndMem : (Object, sndF) ∈
+                  [(Object, fstF), (Object, sndF)] := by decide
+                have hFstMem : (Object, fstF) ∈
+                  [(Object, fstF), (Object, sndF)] := by decide
+                have hSnd : Typing subPairTable (contextOf classPair [])
+                  (Expr.fld (Expr.var thisVar) sndF) Object :=
+                  Typing.field hThis hFieldsPair hSndMem
+                have hFst : Typing subPairTable (contextOf classPair [])
+                  (Expr.fld (Expr.var thisVar) fstF) Object :=
+                  Typing.field hThis hFieldsPair hFstMem
+                have hSubR : Subtype subPairTable Object Object :=
+                  Relation.ReflTransGen.refl
+                have hArgs : ArgsTyping subPairTable (contextOf classPair [])
+                  (Expr.Args.cons (Expr.fld (Expr.var thisVar) sndF)
+                    (Expr.Args.cons (Expr.fld (Expr.var thisVar) fstF)
+                      Expr.Args.nil)) [Object, Object] :=
+                  ArgsTyping.cons hSnd hSubR
+                    (ArgsTyping.cons hFst hSubR ArgsTyping.nil)
+                exact Typing.new hFieldsPair hArgs
+              · exact Relation.ReflTransGen.refl
+            · show override subPairTable swapM Object ([], classPair)
+              intro sig' hEq
+              have hNone : mtype subPairTable swapM Object = none := by decide
+              rw [hNone] at hEq
+              cases hEq
+          | inr h6 =>
+            subst h6
+            refine ⟨?_, ?_⟩
+            · refine ⟨classPair, ?_, ?_⟩
+              · have hCtxNew : contextOf classPair [(Object, newfstV)]
+                  newfstV = some Object := by decide
+                have hNew : Typing subPairTable
+                  (contextOf classPair [(Object, newfstV)])
+                  (Expr.var newfstV) Object :=
+                  Typing.var hCtxNew
+                have hCtxThis2 : contextOf classPair [(Object, newfstV)]
+                  thisVar = some classPair := by decide
+                have hThis2 : Typing subPairTable
+                  (contextOf classPair [(Object, newfstV)])
+                  (Expr.var thisVar) classPair :=
+                  Typing.var hCtxThis2
+                have hSndMem2 : (Object, sndF) ∈
+                  [(Object, fstF), (Object, sndF)] := by decide
+                have hSnd2 : Typing subPairTable
+                  (contextOf classPair [(Object, newfstV)])
+                  (Expr.fld (Expr.var thisVar) sndF) Object :=
+                  Typing.field hThis2 hFieldsPair hSndMem2
+                have hSubR2 : Subtype subPairTable Object Object :=
+                  Relation.ReflTransGen.refl
+                have hArgs2 : ArgsTyping subPairTable
+                  (contextOf classPair [(Object, newfstV)])
+                  (Expr.Args.cons (Expr.var newfstV)
+                    (Expr.Args.cons (Expr.fld (Expr.var thisVar) sndF)
+                      Expr.Args.nil)) [Object, Object] :=
+                  ArgsTyping.cons hNew hSubR2
+                    (ArgsTyping.cons hSnd2 hSubR2 ArgsTyping.nil)
+                exact Typing.new hFieldsPair hArgs2
+              · exact Relation.ReflTransGen.refl
+            · show override subPairTable setfstM Object ([Object], classPair)
+              intro sig' hEq
+              have hNone : mtype subPairTable setfstM Object = none := by decide
+              rw [hNone] at hEq
+              cases hEq
+  | inr hRight =>
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hRight
+    subst hRight
+    refine ⟨?_, ?_⟩
+    · exact ⟨[(Object, fstF), (Object, sndF)], by decide, rfl⟩
+    · intro p hpmem
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hpmem
+      subst hpmem
+      refine ⟨?_, ?_⟩
+      · refine ⟨classSubPair, ?_, ?_⟩
+        · have hCtxNewS : contextOf classSubPair [(Object, newfstV)]
+            newfstV = some Object := by decide
+          have hNewS : Typing subPairTable
+            (contextOf classSubPair [(Object, newfstV)])
+            (Expr.var newfstV) Object :=
+            Typing.var hCtxNewS
+          have hCtxThisS : contextOf classSubPair [(Object, newfstV)]
+            thisVar = some classSubPair := by decide
+          have hThisS : Typing subPairTable
+            (contextOf classSubPair [(Object, newfstV)])
+            (Expr.var thisVar) classSubPair :=
+            Typing.var hCtxThisS
+          have hFieldsSub : fields subPairTable classSubPair =
+            some [(Object, fstF), (Object, sndF)] := by decide
+          have hSndMemS : (Object, sndF) ∈
+            [(Object, fstF), (Object, sndF)] := by decide
+          have hSndS : Typing subPairTable
+            (contextOf classSubPair [(Object, newfstV)])
+            (Expr.fld (Expr.var thisVar) sndF) Object :=
+            Typing.field hThisS hFieldsSub hSndMemS
+          have hSubRS : Subtype subPairTable Object Object :=
+            Relation.ReflTransGen.refl
+          have hArgsS : ArgsTyping subPairTable
+            (contextOf classSubPair [(Object, newfstV)])
+            (Expr.Args.cons (Expr.var newfstV)
+              (Expr.Args.cons (Expr.fld (Expr.var thisVar) sndF)
+                Expr.Args.nil)) [Object, Object] :=
+            ArgsTyping.cons hNewS hSubRS
+              (ArgsTyping.cons hSndS hSubRS ArgsTyping.nil)
+          exact Typing.new hFieldsSub hArgsS
+        · have hExt : directExtends subPairTable classSubPair classPair :=
+            ⟨ClassDecl.mk classSubPair classPair []
+              [(Object, fstF), (Object, sndF)]
+              [(setfstM,
+                { ret := classPair, params := [(Object, newfstV)],
+                  body :=
+                    Expr.new classSubPair
+                      (Expr.Args.cons (Expr.var newfstV)
+                        (Expr.Args.cons (Expr.fld (Expr.var thisVar) sndF)
+                          Expr.Args.nil)) })],
+              by decide, rfl, rfl⟩
+          exact Relation.ReflTransGen.single hExt
+      · show override subPairTable setfstM classPair ([Object], classPair)
+        intro sig' hEq
+        have hM : mtype subPairTable setfstM classPair =
+          some ([Object], classPair) := by decide
+        rw [hM] at hEq
+        exact (Option.some_inj.mp hEq).symm
+
+/-- Pair table is valid. -/
+theorem pairTable_valid : ValidTable pairTable :=
+  ⟨pairTable_wellFormed, pairTable_tableOk⟩
+
+/-- SubPair table is valid. -/
+theorem subPairTable_valid : ValidTable subPairTable :=
+  ⟨subPairTable_wellFormed, subPairTable_tableOk⟩
+
+/-- Cyclic table is not valid. -/
+theorem cyclic_not_valid : ¬ ValidTable cyclicTable := by
+  exact fun h => cyclic_not_wellFormed h.1
+
+/-- Bad-constructor table is not valid. -/
+theorem badCtor_not_valid : ¬ ValidTable badCtorTable := by
+  intro h
+  have hOk := h.2 (ClassDecl.mk classA Object [] [(Object, fstF)] [])
+    (by decide)
+  obtain ⟨fs, hFields, hCtor⟩ := hOk.1
+  have hObj : fields badCtorTable Object = some [] := by decide
+  have hEq : fs = [] := Option.some_inj.mp (hFields.symm.trans hObj)
+  subst hEq
+  exact (by decide : ¬ ([(Object, fstF)] = [] ++ [])) hCtor
 
 end Tests
 end Cslib.FeatherweightJava
