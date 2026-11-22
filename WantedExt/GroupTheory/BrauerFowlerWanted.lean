@@ -76,7 +76,8 @@ centralizer. -/
 for every finite nonabelian simple group $G$ and every element $t \in G$ of order $2$, with
 centralizer $C_G(t)$ in $G$, the order of $G$ satisfies $|G| \le f(|C_G(t)|)$.
 
-Source: R. Brauer and K. A. Fowler, On groups of even order, Ann. of Math. (2) 62 (1955), 565-583. https://doi.org/10.2307/1970080 Via leanprover/lean-eval@38361be, problem `brauer_fowler`. -/
+Source: R. Brauer and K. A. Fowler, On groups of even order, Ann. of Math. (2) 62 (1955), 565-583.
+https://doi.org/10.2307/1970080 Via leanprover/lean-eval@38361be, problem `brauer_fowler`. -/
 public theorem_wanted brauer_fowler :
     ∃ f : ℕ → ℕ, ∀ (G : Type) [Group G] [Finite G],
       IsSimpleGroup G → (∃ a b : G, a * b ≠ b * a) →

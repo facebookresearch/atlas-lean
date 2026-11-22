@@ -38,9 +38,10 @@ group structure on `Fin n` whose group is the derived subgroup of some finite gr
 /-- **Integrable group tables.** A finite list $t = (t_0, \dots, t_{n-1})$ of finite lists of
 natural numbers is an integrable group table when there is a group structure on
 $\{0, \dots, n-1\}$ such that, for all $i, j < n$, the product of $i$ and $j$ is the entry of $t_i$
-at index $j$, counting from $0$ (an entry missing from a short row is read as $0$), and some finite
-group $H$ has derived subgroup $[H, H]$ isomorphic to this group. Lists that are not the
-multiplication table of a group on $\{0, \dots, n-1\}$ do not satisfy the predicate. -/
+at index $j$, counting from $0$, and some finite group $H$ has derived subgroup $[H, H]$ isomorphic
+to this group. Only the entries of $t_i$ at indices $j < n$ are read: an entry missing from a short
+row is read as $0$, and entries of a row beyond index $n - 1$ are ignored (so $[[0, 1]]$ is the
+table of the one-element group). -/
 def IsIntegrableGroupTable (t : List (List ℕ)) : Prop :=
   ∃ inst : Group (Fin t.length),
     (∀ i j : Fin t.length, ((inst.mul i j : Fin t.length) : ℕ) = (t.getD i []).getD j 0) ∧
@@ -52,8 +53,8 @@ tables form a decidable set: some computable function decides, for every finite 
 $t = (t_0, \dots, t_{n-1})$ of finite lists of natural numbers, whether $t$ is an integrable group
 table, that is, whether there is a group structure on $\{0, \dots, n-1\}$ in which, for all
 $i, j < n$, the product of $i$ and $j$ is the entry of $t_i$ at index $j$, counting from $0$ (an
-entry missing from a short row is read as $0$), and which is isomorphic to the derived subgroup of
-some finite group. -/
+entry missing from a short row is read as $0$ and entries beyond index $n - 1$ are ignored), and
+which is isomorphic to the derived subgroup of some finite group. -/
 def integrabilityDecidable : Prop :=
   ComputablePred IsIntegrableGroupTable
 
@@ -62,8 +63,9 @@ def integrabilityDecidable : Prop :=
 computable function decides, for every finite list $t = (t_0, \dots, t_{n-1})$ of finite lists of
 natural numbers, whether there is a group structure on $\{0, \dots, n-1\}$ in which, for all
 $i, j < n$, the product of $i$ and $j$ is the entry of $t_i$ at index $j$, counting from $0$ (an
-entry missing from a short row is read as $0$), and which is isomorphic to the derived subgroup of
-some finite group. That is, the decidability part of Kourovka Problem 21.32 has a positive answer.
+entry missing from a short row is read as $0$ and entries beyond index $n - 1$ are ignored), and
+which is isomorphic to the derived subgroup of some finite group. That is, the decidability part of
+Kourovka Problem 21.32 has a positive answer.
 
 Kalithasan and Thomas bound the order of some integral of an integrable finite group $G$ (their
 Theorem 3.3 and its Corollary), which makes the problem decidable; the 21st issue of the Kourovka

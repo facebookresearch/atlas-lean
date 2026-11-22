@@ -23,14 +23,19 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.RepresentationTheory.BrauerCharacterInCyclotomic` — brauer_character_in_cyclotomic (manifest `manifests/problems/brauer_character_in_cyclotomic.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module
+`LeanEval.RepresentationTheory.BrauerCharacterInCyclotomic` — brauer_character_in_cyclotomic
+(manifest `manifests/problems/brauer_character_in_cyclotomic.toml`, rev 1, submitter Kim Morrison,
+status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.GroupTheory.BrauerCharacterInCyclotomicWanted` namespace. Mathematical
-statements are unchanged. Source: R. Brauer, On the representation of a group of order g in the field of g-th roots of unity, Amer. J. Math. 67 (1945).
+and placed the declarations in the `MathlibExt.GroupTheory.BrauerCharacterInCyclotomicWanted`
+namespace. Mathematical
+statements are unchanged. Source: R. Brauer, On the representation of a group of order g in the
+field of g-th roots of unity, Amer. J. Math. 67 (1945).
 -/
 module
 
@@ -71,7 +76,9 @@ homomorphism $\varphi \colon \mathbb{Q}(\zeta_n) \to \mathbb{C}$ such that for e
 finite-dimensional complex representation $\rho$ of $G$ on a vector space $V$ and every $g \in G$,
 the trace of $\rho(g)$ lies in the image of $\varphi$.
 
-Source: R. Brauer, On the representation of a group of order g in the field of g-th roots of unity, Amer. J. Math. 67 (1945). Via leanprover/lean-eval@38361be, problem `brauer_character_in_cyclotomic`. -/
+Source: R. Brauer, On the representation of a group of order g in the field of g-th roots of
+unity, Amer. J. Math. 67 (1945). Via leanprover/lean-eval@38361be, problem
+`brauer_character_in_cyclotomic`. -/
 public theorem_wanted brauer_character_in_cyclotomic
     (G : Type) [Group G] [Fintype G] :
     ∃ φ : CyclotomicField (Monoid.exponent G) ℚ →+* ℂ,

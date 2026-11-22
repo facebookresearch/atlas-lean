@@ -125,17 +125,24 @@ theorem valueIterationVec_get {m : ℕ} (M : MDP (Fin m) A K) (γ : K) :
 /-! ## Order and contraction facts, in any ordered field -/
 
 omit [Fintype A] [Nonempty A] in
+/-- **Action values are monotone in the value estimate**: for a stochastic MDP and `γ ≥ 0`, if
+`V ≤ W` pointwise then `qValue M γ V s a ≤ qValue M γ W s a`. -/
 theorem qValue_mono (hM : M.Stochastic) (hγ : 0 ≤ γ) {V W : S → K} (h : V ≤ W) (s : S) (a : A) :
     qValue M γ V s a ≤ qValue M γ W s a := by
   unfold qValue
   gcongr with s'
   all_goals first | exact hM.1 s a s' | exact h s'
 
+/-- **The Bellman optimality operator is monotone**: for a stochastic MDP and `γ ≥ 0`, if
+`V ≤ W` pointwise then `bellman M γ V ≤ bellman M γ W`. -/
 theorem bellman_mono (hM : M.Stochastic) (hγ : 0 ≤ γ) {V W : S → K} (h : V ≤ W) :
     bellman M γ V ≤ bellman M γ W := fun s =>
   Finset.sup'_le _ _ fun a _ => (qValue_mono hM hγ h s a).trans (Finset.le_sup' _ (by simp))
 
 omit [Fintype A] [Nonempty A] in
+/-- **A policy's Bellman operator is monotone**: for a stochastic MDP, `γ ≥ 0` and a
+deterministic stationary policy `π`, if `V ≤ W` pointwise then
+`policyBellman M γ π V ≤ policyBellman M γ π W`. -/
 theorem policyBellman_mono (hM : M.Stochastic) (hγ : 0 ≤ γ) (π : S → A) {V W : S → K}
     (h : V ≤ W) : policyBellman M γ π V ≤ policyBellman M γ π W := fun s =>
   qValue_mono hM hγ h s (π s)
@@ -154,10 +161,16 @@ theorem qValue_greedy (V : S → K) (s : S) :
   exact le_antisymm (Finset.le_sup' _ h.1) (Finset.sup'_le _ _ fun a ha => h.2 a ha)
 
 omit [IsStrictOrderedRing K] in
+/-- **A greedy policy's Bellman update is the optimal update**: for any value estimate `V`,
+`policyBellman M γ (greedy M γ V) V = bellman M γ V`; no stochasticity or condition on `γ` is
+needed. -/
 theorem policyBellman_greedy (V : S → K) : policyBellman M γ (greedy M γ V) V = bellman M γ V :=
   funext fun s => qValue_greedy V s
 
 omit [Fintype A] [Nonempty A] in
+/-- **Action values contract by γ**: for a stochastic MDP and `γ ≥ 0`, if `|V s' - W s'| ≤ d` for
+all `s'`, then `|qValue M γ V s a - qValue M γ W s a| ≤ γ * d` for every state `s` and action
+`a`. -/
 theorem abs_qValue_sub_le (hM : M.Stochastic) (hγ : 0 ≤ γ) {V W : S → K} {d : K}
     (h : ∀ s, |V s - W s| ≤ d) (s : S) (a : A) :
     |qValue M γ V s a - qValue M γ W s a| ≤ γ * d := by
@@ -192,6 +205,9 @@ theorem abs_bellman_sub_le (hM : M.Stochastic) (hγ : 0 ≤ γ) {V W : S → K} 
     unfold bellman; linarith
 
 omit [Fintype A] [Nonempty A] in
+/-- **A policy's Bellman operator contracts by γ**: for a stochastic MDP, `γ ≥ 0` and a
+deterministic stationary policy `π`, if `|V s' - W s'| ≤ d` for all `s'`, then
+`|policyBellman M γ π V s - policyBellman M γ π W s| ≤ γ * d` for every state `s`. -/
 theorem abs_policyBellman_sub_le (hM : M.Stochastic) (hγ : 0 ≤ γ) (π : S → A) {V W : S → K}
     {d : K} (h : ∀ s, |V s - W s| ≤ d) (s : S) :
     |policyBellman M γ π V s - policyBellman M γ π W s| ≤ γ * d :=
@@ -217,6 +233,10 @@ theorem bellman_contracting (hM : M.Stochastic) (hγ0 : 0 ≤ γ) (hγ1 : γ < 1
   contractingWith_of_abs_le hγ0 hγ1 fun _ _ _ h => abs_bellman_sub_le hM hγ0 h
 
 omit [Fintype A] [Nonempty A] in
+/-- **A policy's Bellman operator is a contraction**: for a stochastic MDP with real rewards and
+probabilities, `0 ≤ γ < 1` and a deterministic stationary policy `π`, `policyBellman M γ π` is
+`ContractingWith γ.toNNReal` in the sup metric on `S → ℝ`. Its unique fixed point is
+`policyValue`. -/
 theorem policyBellman_contracting (hM : M.Stochastic) (hγ0 : 0 ≤ γ) (hγ1 : γ < 1)
     (π : S → A) : ContractingWith γ.toNNReal (policyBellman M γ π) :=
   contractingWith_of_abs_le hγ0 hγ1 fun _ _ _ h => abs_policyBellman_sub_le hM hγ0 π h

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Cslib.Algorithms.Lean.TimeM
+public import Mathlib.Data.Nat.Digits.Lemmas
 public import Mathlib.Data.Nat.Dist
 public import Mathlib.Data.Nat.Log
 public import Mathlib.Algebra.Order.Group.Nat
@@ -32,21 +33,33 @@ subtraction form used by Erickson, *Algorithms* (2019), Section 1.9; Kleinberg�
 *Algorithm Design*, Section 5.5, present the equivalent addition form with third product
 `(a + b) * (c + d)`. Working on natural numbers, `karatsuba` multiplies the magnitudes
 `Nat.dist a b = |a - b|` and `Nat.dist c d` and adds or subtracts that product according to the
-signs of `a - b` and `c - d`, so every recursive operand of an `n`-digit input has at most
-`⌈n/2⌉` digits (`karatsuba_operands_lt`).
+signs of `a - b` and `c - d`, so under `1 ≤ n`, `2 ≤ B`, `x < B^n` and `y < B^n` the six
+split quantities have at most `⌈n/2⌉` digits (`karatsuba_operands_lt` gives the numeric
+bounds; `karatsuba_digits_and_charge_le` states the digit form); they are the operands
+of the three recursive calls only when `n ≥ 2`.
 
 `karatsuba B n x y` returns `x * y` for all `B`, `n`, `x`, `y` (`karatsuba_ret`); the digit
 count `n` only steers the recursion. Its cost depends only on `n`.
 
 ## Cost model
 
-A call with `n ≤ 1` multiplies two digits and costs `1`. A call with `n ≥ 2` costs `n` for all
-of its linear digit work (splitting, the two magnitude differences and their comparisons, the
+A call with `n ≤ 1` costs `1`. A call with `n ≥ 2` is charged `n` for its linear work
+(splitting, the two magnitude differences and their comparisons, the
 additions and the shifts) plus its three recursive calls on `⌈n/2⌉` digits; recursion itself is
-free. So the cost is `karatsubaCost n`, with `karatsubaCost n = 3 * karatsubaCost ⌈n/2⌉ + n`,
-which is exactly `3^(k+1) - 2^(k+1) = 3 * n^(log₂ 3) - 2 * n` at `n = 2^k`, at most
-`3^(⌈log₂ n⌉ + 1)` in general, and at most `9 * n^(log₂ 3)` for `n ≥ 1`. The model counts
-base-`B` digit operations for inputs below `B^n`; it says nothing about machine words.
+free. So the cost is `karatsubaCost n`, with `karatsubaCost n = 3 * karatsubaCost ⌈n/2⌉ + n`
+for `n ≥ 2` (`karatsubaCost_of_two_le`), which is exactly
+`3^(k+1) - 2^(k+1) = 3 * n^(log₂ 3) - 2 * n` at `n = 2^k`, at most
+`3^(⌈log₂ n⌉ + 1)` in general, and at most `9 * n^(log₂ 3)` for `n ≥ 1`. The cost is a
+declared total charge (charge `1` for `n ≤ 1`; for `n ≥ 2` the per-call charge `n` summed
+with the three recursive charges): the cost theorems
+hold for every `B`, `x` and `y`, because nothing in
+them inspects the operands. This charge is an abstract accounting convention, not a count of
+digit operations performed: no instrumented model of digit-primitive operations is formalized,
+and no cost bound for actual `Nat` arithmetic, division, or intermediate operations is proved.
+`karatsuba_digits_and_charge_le` states digit-size bounds on the inputs and on the six split
+quantities
+that feed the recursive calls when `n ≥ 2` alongside this charge bound, as separate conjuncts.
+It says nothing about machine words.
 -/
 
 @[expose] public section
@@ -55,7 +68,8 @@ set_option autoImplicit false
 
 namespace Cslib.Algorithms.Lean.TimeM
 
-/-- Karatsuba multiplication of `x` and `y`, viewed as `n`-digit numbers in base `B`. -/
+/-- Karatsuba multiplication with recursion parameter `n` and a declared per-call charge.
+The charge is an abstract accounting annotation, not a count of digit operations performed. -/
 def karatsuba (B : ℕ) (n x y : ℕ) : TimeM ℕ ℕ :=
   if n ≤ 1 then do
     ✓
@@ -75,8 +89,9 @@ def karatsuba (B : ℕ) (n x y : ℕ) : TimeM ℕ ℕ :=
 termination_by n
 decreasing_by all_goals omega
 
-/-- The cost recurrence of `karatsuba`: `1` for at most one digit, otherwise three half-size
-calls plus `n`. -/
+/-- The declared cost recurrence of `karatsuba`: `1` for `n ≤ 1`, otherwise three calls with
+parameter `⌈n/2⌉` plus the per-call charge `n`. This is an abstract accounting convention:
+no instrumented model of digit-primitive operations is formalized. -/
 def karatsubaCost (n : ℕ) : ℕ :=
   if n ≤ 1 then 1 else 3 * karatsubaCost ((n + 1) / 2) + n
 termination_by n
@@ -146,9 +161,10 @@ theorem karatsuba_ret (B n x y : ℕ) : (karatsuba B n x y).ret = x * y := by
 
 /-! ## Operand sizes -/
 
-/-- For an input below `B^n`, its high part, low part and their difference are below `B^⌈n/2⌉`.
-Applied to both inputs, all six recursive operands stay within the digit model, and the base case
-multiplies single digits. -/
+/-- For positive `B` and `x < B^n`, the high part, low part and their difference are below
+`B^⌈n/2⌉`. Applied to both inputs, these are the six operands of the three recursive calls
+when `n ≥ 2`. At `n = 1`, the input bound itself makes the base-case operand a single
+base-`B` digit. -/
 theorem karatsuba_operands_lt {B n x : ℕ} (hB : 0 < B) (hx : x < B ^ n) :
     x / B ^ ((n + 1) / 2) < B ^ ((n + 1) / 2) ∧ x % B ^ ((n + 1) / 2) < B ^ ((n + 1) / 2) ∧
       Nat.dist (x / B ^ ((n + 1) / 2)) (x % B ^ ((n + 1) / 2)) < B ^ ((n + 1) / 2) := by
@@ -164,6 +180,11 @@ theorem karatsuba_operands_lt {B n x : ℕ} (hB : 0 < B) (hx : x < B ^ n) :
 
 /-! ## Cost -/
 
+/-- The declared total charge of `karatsuba` is the recurrence `karatsubaCost n` (charge `1`
+for `n ≤ 1`; for `n ≥ 2` the per-call charge `n` summed with the three recursive charges),
+for every base and input. The charge is not a count of
+operations performed; digit-size bounds under `1 ≤ n`, `2 ≤ B`, `x < B ^ n` and `y < B ^ n`
+are stated separately in `karatsuba_digits_and_charge_le`. -/
 theorem karatsuba_time (B n x y : ℕ) : (karatsuba B n x y).time = karatsubaCost n := by
   induction n using Nat.strong_induction_on generalizing x y with
   | _ n ih =>
@@ -183,7 +204,7 @@ theorem karatsubaCost_of_two_le {n : ℕ} (hn : 2 ≤ n) :
   rw [karatsubaCost]
   simp only [show ¬ n ≤ 1 by omega, ite_false]
 
-/-- At `n = 2^k` digits the cost is exactly `3^(k+1) - 2^(k+1)`, that is
+/-- At parameter `n = 2^k` the declared total charge is exactly `3^(k+1) - 2^(k+1)`, that is
 `3 * n^(log₂ 3) - 2 * n`. -/
 theorem karatsubaCost_two_pow (k : ℕ) : karatsubaCost (2 ^ k) + 2 ^ (k + 1) = 3 ^ (k + 1) := by
   induction k with
@@ -210,20 +231,22 @@ theorem karatsubaCost_mono {n n' : ℕ} (h : n ≤ n') : karatsubaCost n ≤ kar
       have := ih _ hlt hle
       omega
 
-/-- The cost is at most `3^(⌈log₂ n⌉ + 1)`: pad `n` up to the next power of two. -/
+/-- The declared total charge is at most `3^(⌈log₂ n⌉ + 1)`: pad `n` up to the next power of two. -/
 theorem karatsubaCost_le (n : ℕ) : karatsubaCost n ≤ 3 ^ (Nat.clog 2 n + 1) := by
   have h := karatsubaCost_two_pow (Nat.clog 2 n)
   have := karatsubaCost_mono (Nat.le_pow_clog (by norm_num : 1 < 2) n)
   have : 0 < 2 ^ (Nat.clog 2 n + 1) := Nat.pow_pos (by norm_num)
   omega
 
-/-- Karatsuba's cost on `n` digits is at most `3^(⌈log₂ n⌉ + 1)`, for every input. -/
+/-- The declared total charge is at most `3^(⌈log₂ n⌉ + 1)`. The bound holds
+for every input because the charge depends only on `n`; it is not a count of digit
+operations performed (see `karatsuba_digits_and_charge_le` for the separate digit-size bounds). -/
 theorem karatsuba_time_le (B n x y : ℕ) :
     (karatsuba B n x y).time ≤ 3 ^ (Nat.clog 2 n + 1) := by
   rw [karatsuba_time]
   exact karatsubaCost_le n
 
-/-- The `O(n^(log₂ 3))` bound: for `n ≥ 1` digits the cost is at most `9 * n^(log₂ 3)`. -/
+/-- The `O(n^(log₂ 3))` bound: for `n ≥ 1` the declared total charge is at most `9 * n^(log₂ 3)`. -/
 theorem karatsubaCost_le_rpow {n : ℕ} (hn : 1 ≤ n) :
     (karatsubaCost n : ℝ) ≤ 9 * (n : ℝ) ^ Real.logb 2 3 := by
   have hk := karatsubaCost_le n
@@ -251,10 +274,38 @@ theorem karatsubaCost_le_rpow {n : ℕ} (hn : 1 ≤ n) :
     _ ≤ 9 * 3 ^ (k - 1) := h9
     _ ≤ 9 * (n : ℝ) ^ Real.logb 2 3 := by gcongr
 
-/-- Karatsuba multiplication of `n ≥ 1` digit numbers costs at most `9 * n^(log₂ 3)`. -/
+/-- For `n ≥ 1`, the declared total charge is at most `9 * n^(log₂ 3)`. The bound holds for
+every `B`, `x` and `y` because the charge depends only on `n`; it is not a count of digit
+operations performed (see `karatsuba_digits_and_charge_le` for the separate digit-size bounds). -/
 theorem karatsuba_time_le_rpow (B : ℕ) {n : ℕ} (hn : 1 ≤ n) (x y : ℕ) :
     ((karatsuba B n x y).time : ℝ) ≤ 9 * (n : ℝ) ^ Real.logb 2 3 := by
   rw [karatsuba_time]
   exact karatsubaCost_le_rpow hn
+
+/-- Digit-size bounds alongside the declared-charge bound. In base `B ≥ 2`, for inputs below
+`B ^ n` with `n ≥ 1`: both inputs have at most `n` base-`B` digits, and each of the six split
+quantities (the high and low halves of both inputs and their distances, which are the operands of
+the three recursive calls when `n ≥ 2`) has at most `⌈n/2⌉` digits. The final conjunct is the
+charge bound of `karatsuba_time_le_rpow`, which holds for arbitrary operands, so this theorem
+proves no digit-operation semantics and no cost bound for actual `Nat` arithmetic, division,
+or intermediate operations. -/
+theorem karatsuba_digits_and_charge_le {B n x y : ℕ} (hB : 2 ≤ B) (hn : 1 ≤ n)
+    (hx : x < B ^ n) (hy : y < B ^ n) :
+    (B.digits x).length ≤ n ∧ (B.digits y).length ≤ n ∧
+      (∀ z ∈ [x / B ^ ((n + 1) / 2), x % B ^ ((n + 1) / 2),
+          Nat.dist (x / B ^ ((n + 1) / 2)) (x % B ^ ((n + 1) / 2)),
+          y / B ^ ((n + 1) / 2), y % B ^ ((n + 1) / 2),
+          Nat.dist (y / B ^ ((n + 1) / 2)) (y % B ^ ((n + 1) / 2))],
+        (B.digits z).length ≤ (n + 1) / 2) ∧
+      ((karatsuba B n x y).time : ℝ) ≤ 9 * (n : ℝ) ^ Real.logb 2 3 := by
+  have hB1 : 1 < B := hB
+  obtain ⟨hx1, hx2, hx3⟩ := karatsuba_operands_lt (by omega : 0 < B) hx
+  obtain ⟨hy1, hy2, hy3⟩ := karatsuba_operands_lt (by omega : 0 < B) hy
+  refine ⟨(Nat.digits_length_le_iff hB1 x).2 hx, (Nat.digits_length_le_iff hB1 y).2 hy, ?_,
+    karatsuba_time_le_rpow B hn x y⟩
+  intro z hz
+  rw [Nat.digits_length_le_iff hB1]
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hz
+  rcases hz with rfl | rfl | rfl | rfl | rfl | rfl <;> assumption
 
 end Cslib.Algorithms.Lean.TimeM

@@ -18,6 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Index
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -29,7 +30,10 @@ Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 11.116 (L. N. Shevrin).
 UM-00700808 (`KOU-11.116`), dataset ulamai/UnsolvedMath v1.8.0.
 
 A quasicyclic group is an infinite abelian group all of whose proper subgroups are finite (this
-characterizes the Prüfer groups `C_{p^∞}`). A Chernikov group has a normal subgroup of finite index
+characterizes the Prüfer groups `C_{p^∞}`). A Chernikov group is `IsChernikov` of
+`GroupClassesShared`: it has an abelian subgroup of finite index with the minimal condition on
+subgroups. Since an abelian group with the minimal condition is a direct product of finitely many
+quasicyclic groups and a finite group, this is the same as having a normal subgroup of finite index
 isomorphic to a finite direct product of quasicyclic groups; finite groups are the case of zero
 factors. "Contains a direct product of two quasicyclic groups over the same prime" is read as an
 embedding of `Q × Q` for a quasicyclic `Q`, since quasicyclic groups over one prime are isomorphic.
@@ -44,14 +48,7 @@ These are exactly the Prüfer groups $C_{p^\infty}$ for primes $p$. -/
 def IsQuasicyclic (Q : Type*) [Group Q] : Prop :=
   (∀ a b : Q, a * b = b * a) ∧ Infinite Q ∧ ∀ K : Subgroup Q, K ≠ ⊤ → (K : Set Q).Finite
 
-/-- **Chernikov group.** A group $G$ is a Chernikov group if it has a normal subgroup of finite
-index that is isomorphic to a direct product $Q_1 \times \dots \times Q_r$ of finitely many
-quasicyclic groups $Q_1, \dots, Q_r$. The case $r = 0$ is allowed, so every finite group is a
-Chernikov group. -/
-def IsChernikov (G : Type*) [Group G] : Prop :=
-  ∃ D : Subgroup G, D.Normal ∧ D.FiniteIndex ∧
-    ∃ (r : ℕ) (Q : Fin r → Type) (_ : ∀ i, Group (Q i)),
-      (∀ i, IsQuasicyclic (Q i)) ∧ Nonempty (D ≃* ((i : Fin r) → Q i))
+open MathlibExt.GroupTheory.GroupClassesShared (IsChernikov)
 
 /-- **Groups containing the square of a quasicyclic group.** A group $G$ contains a direct product
 of two quasicyclic groups over the same prime when there are a quasicyclic group $Q$ and an

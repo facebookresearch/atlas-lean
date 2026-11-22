@@ -23,14 +23,19 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.ProgramVerification.CoCStrongNormalization` — coc_strong_normalization (manifest `manifests/problems/coc_strong_normalization.toml`, rev 1, submitter Kim Morrison, status draft) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module
+`LeanEval.ProgramVerification.CoCStrongNormalization` — coc_strong_normalization (manifest
+`manifests/problems/coc_strong_normalization.toml`, rev 1, submitter Kim Morrison, status draft) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.TheoryOfComputation.CoCStrongNormalizationWanted` namespace. Mathematical
-statements are unchanged. Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010).
+and placed the declarations in the `MathlibExt.TheoryOfComputation.CoCStrongNormalizationWanted`
+namespace. Mathematical
+statements are unchanged. Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui
+Luo, 'An Extended Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets'
+(2010).
 -/
 module
 
@@ -219,7 +224,9 @@ namespace CoCStrongNormalization
 /--
 Anti-vacuity guard: the polymorphic identity `λ (A : Prop). λ (x : A). x` has type
 `Π (A : Prop). Π (x : A). A`. This is typable only because `Prop` is impredicative.
-Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
+Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus
+of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
+leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
 -/
 public theorem_wanted typing_polyId :
     Typing [] (.lam (.srt .prop) (.lam (.var 0) (.var 0)))
@@ -228,7 +235,9 @@ public theorem_wanted typing_polyId :
 /--
 Anti-vacuity guard: applying the polymorphic identity to `False` exercises application typing.
 Here `False` is encoded as `Π (P : Prop). P`.
-Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
+Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus
+of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
+leanprover/lean-eval@38361be, problem `coc_strong_normalization`.
 -/
 public theorem_wanted typing_polyId_app :
     Typing []
@@ -238,7 +247,9 @@ public theorem_wanted typing_polyId_app :
       (.pi (.pi (.srt .prop) (.var 0)) (.pi (.srt .prop) (.var 0)))
 
 /- Anti-vacuity guard: the same application takes its expected beta step. -/
-/-- Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via leanprover/lean-eval@38361be, problem `coc_strong_normalization`. -/
+/-- Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended
+Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
+leanprover/lean-eval@38361be, problem `coc_strong_normalization`. -/
 public theorem_wanted step_polyId_app :
     Step
       (.app
@@ -247,17 +258,23 @@ public theorem_wanted step_polyId_app :
       (.lam (.pi (.srt .prop) (.var 0)) (.var 0))
 
 /- Types are preserved by reduction. -/
-/-- Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via leanprover/lean-eval@38361be, problem `coc_strong_normalization`. -/
+/-- Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended
+Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
+leanprover/lean-eval@38361be, problem `coc_strong_normalization`. -/
 public theorem_wanted subject_reduction (Γ : List Tm) (t t' A : Tm) :
     Typing Γ t A → Step t t' → Typing Γ t' A
 
 /- Every well-typed term is strongly normalizing. -/
-/-- Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via leanprover/lean-eval@38361be, problem `coc_strong_normalization`. -/
+/-- Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended
+Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
+leanprover/lean-eval@38361be, problem `coc_strong_normalization`. -/
 public theorem_wanted strong_normalization (Γ : List Tm) (t A : Tm) :
     Typing Γ t A → SN t
 
 /- The system is logically consistent: `Π (P : Prop). P` is not inhabited. -/
-/-- Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via leanprover/lean-eval@38361be, problem `coc_strong_normalization`. -/
+/-- Source: Coquand and Huet, 'The calculus of constructions' (1988); Zhaohui Luo, 'An Extended
+Calculus of Constructions' (1990); Bruno Barras, 'Sets in Coq, Coq in Sets' (2010). Via
+leanprover/lean-eval@38361be, problem `coc_strong_normalization`. -/
 public theorem_wanted consistency : ¬ ∃ t : Tm, Typing [] t (.pi (.srt .prop) (.var 0))
 
 end CoCStrongNormalization

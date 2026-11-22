@@ -31,7 +31,8 @@ namespace MetaMathlibExt
 The backward half of the normalized Tribonacci sequence: `tribonacciBackward m`
 is `T_{-m}`. The first three clauses encode `T₀ = 0`, `T₋₁ = 0`, and
 `T₋₂ = 1`; the last clause is the forward recurrence solved for `T_{-m-3}`.
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public def tribonacciBackward : ℕ → ℤ
   | 0 => 0
@@ -44,7 +45,8 @@ public def tribonacciBackward : ℕ → ℤ
 The two-sided Tribonacci sequence normalized by `T₀ = 0` and `T₁ = T₂ = 1`.
 Nonnegative indices use `generalizedTribonacci 0 1 1`; a negative index
 `-(m+1)` uses the backward value at `m+1`.
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public def tribonacciInt : ℤ → ℤ
   | .ofNat n => generalizedTribonacci 0 1 1 n
@@ -53,7 +55,8 @@ public def tribonacciInt : ℤ → ℤ
 /--
 The normalized two-sided sequence has `T₀ = 0`, the first characteristic
 initial value used by Proposition 1.
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public theorem tribonacciInt_zero : tribonacciInt 0 = 0 := by
   rfl
@@ -61,7 +64,8 @@ public theorem tribonacciInt_zero : tribonacciInt 0 = 0 := by
 /--
 The normalized two-sided sequence has `T₁ = 1`, one of Proposition 1's five
 indices whose value lies in `{±1}`.
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public theorem tribonacciInt_one : tribonacciInt 1 = 1 := by
   rfl
@@ -69,7 +73,8 @@ public theorem tribonacciInt_one : tribonacciInt 1 = 1 := by
 /--
 The normalized two-sided sequence has `T₂ = 1`, one of Proposition 1's five
 indices whose value lies in `{±1}`.
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public theorem tribonacciInt_two : tribonacciInt 2 = 1 := by
   rfl
@@ -77,7 +82,8 @@ public theorem tribonacciInt_two : tribonacciInt 2 = 1 := by
 /--
 The backward extension has `T₋₁ = 0`, fixing the first value across the
 negative/nonnegative boundary.
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public theorem tribonacciInt_neg_one : tribonacciInt (-1) = 0 := by
   rfl
@@ -85,7 +91,8 @@ public theorem tribonacciInt_neg_one : tribonacciInt (-1) = 0 := by
 /--
 The backward extension has `T₋₂ = 1`, one of Proposition 1's five indices
 whose value lies in `{±1}`.
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public theorem tribonacciInt_neg_two : tribonacciInt (-2) = 1 := by
   rfl
@@ -93,7 +100,8 @@ public theorem tribonacciInt_neg_two : tribonacciInt (-2) = 1 := by
 /--
 The backward extension has `T₋₃ = -1`, one of Proposition 1's five indices
 whose value lies in `{±1}`.
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public theorem tribonacciInt_neg_three : tribonacciInt (-3) = -1 := by
   rfl
@@ -101,7 +109,8 @@ public theorem tribonacciInt_neg_three : tribonacciInt (-3) = -1 := by
 /--
 The backward extension has `T₋₇ = 1`, one of Proposition 1's five indices
 whose value lies in `{±1}`.
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public theorem tribonacciInt_neg_seven : tribonacciInt (-7) = 1 := by
   rfl
@@ -109,7 +118,8 @@ public theorem tribonacciInt_neg_seven : tribonacciInt (-7) = 1 := by
 /--
 The two-sided sequence satisfies `T_{n+3} = T_{n+2} + T_{n+1} + T_n` at every
 integer index, including the three indices that cross zero.
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public theorem tribonacciInt_add_three (n : ℤ) :
     tribonacciInt (n + 3) =
@@ -147,7 +157,8 @@ public theorem tribonacciInt_add_three (n : ℤ) :
 For every natural `n`, the normalized two-sided term `T_n` is the integer cast
 of the repository Tribonacci term at `n+1`. This is the bridge between
 Proposition 1's normalization and Theorem 1's natural-indexed sequence.
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Theorem 1 and Proposition 1 notation.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Theorem 1 and Proposition 1 notation.
 -/
 public theorem tribonacciInt_nat_eq (n : ℕ) :
     tribonacciInt (n : ℤ) = (tribonacci (n + 1) : ℤ) := by

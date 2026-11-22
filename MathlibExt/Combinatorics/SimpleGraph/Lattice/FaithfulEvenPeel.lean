@@ -42,7 +42,7 @@ namespace StatMech
 
 namespace Lattice
 
-theorem jcx_faceCount_eq_nullity_add_one {V : Type*} [Finite V]
+theorem jcx_faceCount_eq_nullity_add_one {V : Type*}
     (K : SimpleGraph V) : faceCount K = nullity K + 1 := rfl
 
 theorem jcx_nullity_bot {V : Type*} [Finite V] :

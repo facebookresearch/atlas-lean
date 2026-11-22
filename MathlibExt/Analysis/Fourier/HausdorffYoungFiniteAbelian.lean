@@ -77,13 +77,6 @@ open MathlibExt.Analysis.FunctionalAnalysis.RieszThorinWanted
 private theorem enorm_complex_eq_ofReal (z : ℂ) : ‖z‖ₑ = ENNReal.ofReal ‖z‖ := by
   rw [enorm_eq_nnnorm, ← coe_nnnorm z, ENNReal.ofReal_coe_nnreal]
 
-/-- Every complex-valued function on a finite measurable space is
-almost-everywhere strongly measurable for counting measure. -/
-private theorem aemeas_of_finite {ι : Type*} [MeasurableSpace ι]
-    [MeasurableSingletonClass ι] [Finite ι] (y : ι → ℂ) :
-    AEStronglyMeasurable y (Measure.count : Measure ι) :=
-  (measurable_of_finite y).aestronglyMeasurable
-
 /-- For counting measure on a finite type, the `eLpNorm` with exponent
 `ENNReal.ofReal r` is the `ENNReal.ofReal` of the familiar finite-sum
 `ℓ^r` norm. -/
@@ -96,8 +89,7 @@ private theorem eLpNorm_count_eq_ofReal_sum {ι : Type*} [Fintype ι]
     rw [Ne, ENNReal.ofReal_eq_zero]
     exact not_le.mpr hr0
   have hrEtop : (ENNReal.ofReal r) ≠ ⊤ := ENNReal.ofReal_ne_top
-  have hmeas : AEStronglyMeasurable y (Measure.count : Measure ι) :=
-    aemeas_of_finite y
+  have hmeas : AEStronglyMeasurable y (Measure.count : Measure ι) := .of_discrete
   rw [eLpNorm_eq_lintegral_rpow_enorm_toReal hrE0 hrEtop hmeas, lintegral_count,
     tsum_fintype, ENNReal.toReal_ofReal hr0.le]
   have hsum : (∑ i, ‖y i‖ₑ ^ r) = ENNReal.ofReal (∑ i, ‖y i‖ ^ r) := by
@@ -174,7 +166,7 @@ private theorem eLpNorm_dft_top_le {G : Type*} [AddCommGroup G] [Fintype G]
       eLpNorm f (ENNReal.ofReal 1) (Measure.count : Measure G) := by
   have htop : eLpNorm (dftFun f) ⊤ (Measure.count : Measure (AddChar G ℂ)) =
       ⨆ ψ, ‖dftFun f ψ‖ₑ := by
-    rw [eLpNorm_exponent_top (aemeas_of_finite (dftFun f)), eLpNormEssSup_count]
+    rw [eLpNorm_exponent_top (.of_discrete (f := dftFun f)), eLpNormEssSup_count]
   rw [htop, eLpNorm_count_eq_ofReal_sum f (by norm_num : (0:ℝ) < 1)]
   apply iSup_le
   intro ψ

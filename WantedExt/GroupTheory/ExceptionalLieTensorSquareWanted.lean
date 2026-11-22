@@ -87,7 +87,8 @@ $V$ is irreducible, and the tensor square $V \otimes_{\mathbb{C}} V$, with the r
 $x \cdot (v \otimes w) = (x \cdot v) \otimes w + v \otimes (x \cdot w)$ viewed as a module over the
 universal enveloping algebra of $\mathfrak{g}_2$, has exactly $14$ isotypic components.
 
-Source: Classical: representation theory of the exceptional Lie algebra g₂. Via leanprover/lean-eval@38361be, problem `g2_irrep_tensor_square_decomp`. -/
+Source: Classical: representation theory of the exceptional Lie algebra g₂. Via
+leanprover/lean-eval@38361be, problem `g2_irrep_tensor_square_decomp`. -/
 public theorem_wanted g2_irrep_tensor_square_decomp :
     ∃ (V : Type) (_ : AddCommGroup V) (_ : Module ℂ V)
       (_ : LieRingModule (LieAlgebra.g₂ ℂ) V) (_ : LieModule ℂ (LieAlgebra.g₂ ℂ) V),
@@ -103,7 +104,8 @@ $V$ is irreducible, and the tensor square $V \otimes_{\mathbb{C}} V$, with the r
 $x \cdot (v \otimes w) = (x \cdot v) \otimes w + v \otimes (x \cdot w)$ viewed as a module over the
 universal enveloping algebra of $\mathfrak{e}_8$, has exactly $40$ isotypic components.
 
-Source: Classical: representation theory of the exceptional Lie algebra e₈. Via leanprover/lean-eval@38361be, problem `e8_irrep_tensor_square_decomp`. -/
+Source: Classical: representation theory of the exceptional Lie algebra e₈. Via
+leanprover/lean-eval@38361be, problem `e8_irrep_tensor_square_decomp`. -/
 public theorem_wanted e8_irrep_tensor_square_decomp :
     ∃ (V : Type) (_ : AddCommGroup V) (_ : Module ℂ V)
       (_ : LieRingModule (LieAlgebra.e₈ ℂ) V) (_ : LieModule ℂ (LieAlgebra.e₈ ℂ) V),

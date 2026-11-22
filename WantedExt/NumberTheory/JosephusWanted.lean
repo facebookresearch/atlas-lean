@@ -38,10 +38,13 @@ grid. Proposition 4 carries the domain hypothesis
 `J_k(0) = 0` is a spurious fixed point for which the
 fourth case fails (`J_k(1) = 1 ≠ 0`). Not stated (see the
 source audit table): Lemma 8(b), 8(c), Theorem 9(b),
-9(c), 9(d), and Corollaries 10, 11, which use the paper's
-auxiliary functions `δ_k`, `M_k`, `a_k` and the "next
-extremal point" notation, none of which are defined in
-the extracted statements.
+9(c), 9(d). Corollaries 10 and 11 ("next" extremal point
+= the least extremal point beyond the given one) use
+`IsHighExtremal`, which for `m ≥ 2k - 3` agrees with the
+paper's Definition 1 (`J_k(m) ∈ [[m - k + 2, m]]`; checked
+for `k ≤ 9`, `m < 3000`); Corollary 11's last formula is
+omitted, false as printed (`k = 2`, `ň = 1`, `n = 2`:
+`J_2(2) = 1`, the formula gives `3`).
 -/
 module
 
@@ -200,5 +203,49 @@ Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
 Josephus Function", Theorem 13. -/
 theorem_wanted infinite_fixedPoints (k : ℕ) (hk : 2 ≤ k) :
     {n : ℕ | MetaMathlibExt.josephus k n = n}.Infinite
+
+/-- **Corollary 10**: for a high extremal point `n_e ≥ 2k - 3`, with
+`r = n_e mod (k - 1)` and `c = 1` if `r < k - 2 - n_e + J_k(n_e)`, else `0`,
+the next high extremal point is
+`n_e' = (k(n_e + 1) - (r + 1))/(k - 1) - c`, with
+`J_k(n_e') = (k - 1) - n_e + J_k(n_e) + k⌊(2n_e - J_k(n_e) - (k - 2))/(k - 1)⌋`,
+and `J_k(n) = k(n - n_e') + J_k(n_e')` for `n ∈ [[n_e + 1, n_e']]`
+(integer division by the positive `k - 1` is the floor).
+
+Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
+"Analytical Study and Efficient Evaluation of the Josephus
+Function", Journal of Integer Sequences 27 (2024), Article
+24.3.8, Corollary 10. -/
+theorem_wanted josephus_next_high_extremal (k ne : ℕ) (hk : 2 ≤ k) (hne : 2 * k - 3 ≤ ne)
+    (hh : IsHighExtremal k ne) :
+    let r := ne % (k - 1)
+    let c : ℕ := if (r : ℤ) < (k : ℤ) - 2 - ne + MetaMathlibExt.josephus k ne then 1 else 0
+    let ne' := (k * (ne + 1) - (r + 1)) / (k - 1) - c
+    ne < ne' ∧ IsHighExtremal k ne' ∧ (∀ m, ne < m → m < ne' → ¬ IsHighExtremal k m) ∧
+      (MetaMathlibExt.josephus k ne' : ℤ) =
+        ((k : ℤ) - 1) - ne + MetaMathlibExt.josephus k ne +
+          k * ((2 * (ne : ℤ) - MetaMathlibExt.josephus k ne - ((k : ℤ) - 2)) / ((k : ℤ) - 1)) ∧
+      ∀ n, ne + 1 ≤ n → n ≤ ne' →
+        (MetaMathlibExt.josephus k n : ℤ) = k * ((n : ℤ) - ne') + MetaMathlibExt.josephus k ne'
+
+/-- **Corollary 11** (first two formulas): for a low extremal point `ň ≥ 2k - 3`, with
+`ř = ň mod (k - 1)` and `č = 1` if `ř < J_k(ň)`, else `0`, the next low extremal
+point is `ň' = (kň - ř)/(k - 1) - č + 1`, with
+`J_k(ň') = k - ň' + J_k(ň) + k⌊(ň - J_k(ň))/(k - 1)⌋`. The corollary's last
+formula is omitted: false as printed (`k = 2`, `ň = 1`, `n = 2`).
+
+Source: Yunier Bello-Cruz and Roy Quintero-Contreras,
+"Analytical Study and Efficient Evaluation of the Josephus
+Function", Journal of Integer Sequences 27 (2024), Article
+24.3.8, Corollary 11. -/
+theorem_wanted josephus_next_low_extremal (k ne : ℕ) (hk : 2 ≤ k) (hne : 2 * k - 3 ≤ ne)
+    (hl : IsLowExtremal k ne) :
+    let r := ne % (k - 1)
+    let c : ℕ := if r < MetaMathlibExt.josephus k ne then 1 else 0
+    let ne' := (k * ne - r) / (k - 1) - c + 1
+    ne < ne' ∧ IsLowExtremal k ne' ∧ (∀ m, ne < m → m < ne' → ¬ IsLowExtremal k m) ∧
+      (MetaMathlibExt.josephus k ne' : ℤ) =
+        (k : ℤ) - ne' + MetaMathlibExt.josephus k ne +
+          k * (((ne : ℤ) - MetaMathlibExt.josephus k ne) / ((k : ℤ) - 1))
 
 end MathlibExt.NumberTheory.JosephusWanted

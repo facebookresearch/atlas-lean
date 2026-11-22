@@ -23,14 +23,17 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.GroupTheory.BaerSuzuki` — baer_suzuki (manifest `manifests/problems/baer_suzuki.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.GroupTheory.BaerSuzuki` — baer_suzuki
+(manifest `manifests/problems/baer_suzuki.toml`, rev 1, submitter Kim Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
 and placed the declarations in the `MathlibExt.GroupTheory.BaerSuzukiWanted` namespace. Mathematical
-statements are unchanged. Source: R. Baer, Engelsche Elemente Noetherscher Gruppen, Math. Ann. 133 (1957), 256-270; M. Suzuki, Finite groups in which the centralizer of any element of order 2 is 2-closed, Ann. of Math. (2) 82 (1965), 191-212.
+statements are unchanged. Source: R. Baer, Engelsche Elemente Noetherscher Gruppen, Math. Ann. 133
+(1957), 256-270; M. Suzuki, Finite groups in which the centralizer of any element of order 2 is
+2-closed, Ann. of Math. (2) 82 (1965), 191-212.
 -/
 module
 
@@ -94,7 +97,9 @@ the `p`-core `O_p(G)` iff every pair `(x, x^g)` of conjugates generates a
 in the $p$-core $O_p(G)$ of $G$ if and only if, for every $g \in G$, the subgroup of $G$ generated
 by $x$ and $g x g^{-1}$ is a $p$-group, that is, every element of it has order a power of $p$.
 
-Source: R. Baer, Engelsche Elemente Noetherscher Gruppen, Math. Ann. 133 (1957), 256-270; M. Suzuki, Finite groups in which the centralizer of any element of order 2 is 2-closed, Ann. of Math. (2) 82 (1965), 191-212. Via leanprover/lean-eval@38361be, problem `baer_suzuki`. -/
+Source: R. Baer, Engelsche Elemente Noetherscher Gruppen, Math. Ann. 133 (1957), 256-270; M.
+Suzuki, Finite groups in which the centralizer of any element of order 2 is 2-closed, Ann. of Math.
+(2) 82 (1965), 191-212. Via leanprover/lean-eval@38361be, problem `baer_suzuki`. -/
 public theorem_wanted baer_suzuki {G : Type*} [Group G] [Finite G]
     {p : ℕ} [Fact p.Prime] (x : G) :
     x ∈ pCore p G ↔
