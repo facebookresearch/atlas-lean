@@ -396,7 +396,9 @@ a literal dollar of that shape as `&#36;`, or inside inline code.
 
 Changing AutoformBot requires a reviewed `.github/autoform-ref` update and
 passing tests. The workflow has no automatic pin push, upstream-sync bot,
-model-driven audit, or required personal token.
+model-driven audit, or required personal token. The same commit writes the
+library index that the Autoform index workflow publishes, and CI runs that
+indexing on every pull request, so a new pin must also index the libraries.
 
 ## Page chrome
 

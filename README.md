@@ -49,17 +49,20 @@ this root build. They retain their own build configuration.
 
 ## Searching ATLAS from an AutoformBot project
 
-When CI passes on a commit of `main`, a workflow tags
-`autoform-index/<first 12 characters of the commit>`: a commit on top of it
-that adds `autoform-library-index.jsonl`, the index of `MathlibExt`,
-`CSLibExt`, and `WantedExt` that AutoformBot searches. Commits on `main` carry
-no index, so require ATLAS at one of these tags:
+Once a day, a workflow indexes the latest commit of `main` and tags
+`autoform-index/<first 12 characters of the commit>`: a commit on top of it that
+adds `autoform-library-index.jsonl`, the index of `MathlibExt`, `CSLibExt`,
+`PhyslibExt`, `Domains`, and `WantedExt` that AutoformBot searches, written with
+the AutoformBot revision in `.github/autoform-ref`. Commits on `main` carry no
+index, so require ATLAS at one of these tags (`git ls-remote --tags
+https://github.com/facebookresearch/atlas-lean.git 'autoform-index/*'` lists
+them):
 
 ```toml
 [[require]]
 name = "atlas"
 git = "https://github.com/facebookresearch/atlas-lean.git"
-rev = "autoform-index/64c2773ffad3"
+rev = "autoform-index/<commit>"
 ```
 
 `autoform library list .` then reports ATLAS as usable, and
