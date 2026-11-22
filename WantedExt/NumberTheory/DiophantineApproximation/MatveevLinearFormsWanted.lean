@@ -30,7 +30,8 @@ $$\log|\Gamma| > -1.4 \cdot 30^{s+3} \, s^{4.5} \, D^2 (1 + \log D)(1 + \log B) 
 No integrality is assumed on the $\eta_i$, so the statement also covers non-integral algebraic
 numbers, such as the element in the source's application whose minimal polynomial has leading
 coefficient $23$. The source states the bound with $B = \max_i |d_i|$; since the right-hand side
-increases with $B$, any real $B \ge 1$ bounding every $|d_i|$ may be used.
+decreases (becomes more negative) as $B$ grows, any real $B \ge 1$ bounding every $|d_i|$ may be
+used.
 
 Source: archive provenance `wanted317_306_matveev_linear_forms_logarithms_d52ec211.zip`,
 archive SHA-256
