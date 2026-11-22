@@ -221,13 +221,6 @@ def inducedLoss (cost : ι → (∀ i, S i) → ℝ) (σ : ∀ i, S i → ℝ) (
     (a : S i) : ℝ :=
   MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost cost σ i a
 
-/-- The induced loss is the correlated-equilibrium pure cost. -/
-theorem inducedLoss_eq_pureCost (cost : ι → (∀ i, S i) → ℝ)
-    (σ : ∀ i, S i → ℝ) (i : ι) (a : S i) :
-    inducedLoss cost σ i a
-      = MathlibExt.GameTheory.CorrelatedEquilibrium.pureCost cost σ i a :=
-  rfl
-
 /-- The induced loss as the cost weighted by the opponents' mixed play,
 summed over profiles where player `i` plays `a`. -/
 theorem inducedLoss_eq_sum_filter (cost : ι → (∀ i, S i) → ℝ)
@@ -245,23 +238,23 @@ theorem inducedLoss_eq_sum_filter (cost : ι → (∀ i, S i) → ℝ)
 
 /-- Induced losses are nonnegative for nonnegative costs. (C3 game layer) -/
 theorem inducedLoss_nonneg {cost : ι → (∀ i, S i) → ℝ} {σ : ∀ i, S i → ℝ}
-    {i : ι} {a : S i} (hσ : ∀ j, IsSimplex (σ j))
-    (hcost : ∀ j s, 0 ≤ cost j s) : 0 ≤ inducedLoss cost σ i a := by
+    {i : ι} {a : S i} (hσ : ∀ j, j ≠ i → IsSimplex (σ j))
+    (hcost : ∀ s, 0 ≤ cost i s) : 0 ≤ inducedLoss cost σ i a := by
   rw [inducedLoss_eq_sum_filter]
   refine Finset.sum_nonneg fun s _ => ?_
-  refine mul_nonneg (hcost i s) ?_
-  refine Finset.prod_nonneg fun j _ => ?_
-  obtain ⟨hjn, -⟩ := (isSimplex_iff _).mp (hσ j)
+  refine mul_nonneg (hcost s) ?_
+  refine Finset.prod_nonneg fun j hj => ?_
+  obtain ⟨hjn, -⟩ := (isSimplex_iff _).mp (hσ j (Finset.mem_erase.mp hj).1)
   exact hjn _
 
 /-- Induced losses are at most one for [0,1] costs. (C3 game layer) -/
 theorem inducedLoss_le_one {cost : ι → (∀ i, S i) → ℝ} {σ : ∀ i, S i → ℝ}
-    {i : ι} {a : S i} (hσ : ∀ j, IsSimplex (σ j))
-    (hcost : ∀ j s, cost j s ≤ 1) : inducedLoss cost σ i a ≤ 1 := by
+    {i : ι} {a : S i} (hσ : ∀ j, j ≠ i → IsSimplex (σ j))
+    (hcost : ∀ s, cost i s ≤ 1) : inducedLoss cost σ i a ≤ 1 := by
   have hW : ∀ s : ∀ j, S j, 0 ≤ ∏ j ∈ Finset.univ.erase i, σ j (s j) := by
     intro s
-    refine Finset.prod_nonneg fun j _ => ?_
-    obtain ⟨hjn, -⟩ := (isSimplex_iff _).mp (hσ j)
+    refine Finset.prod_nonneg fun j hj => ?_
+    obtain ⟨hjn, -⟩ := (isSimplex_iff _).mp (hσ j (Finset.mem_erase.mp hj).1)
     exact hjn _
   have hBridge : Finset.univ.filter (fun s : ∀ j, S j => s i = a)
       = Fintype.piFinset (Function.update (fun _ => Finset.univ) i {a}) := by
@@ -277,7 +270,7 @@ theorem inducedLoss_le_one {cost : ι → (∀ i, S i) → ℝ} {σ : ∀ i, S i
     · subst hj
       rw [Function.update_self, Function.update_self, Finset.sum_singleton]
     · rw [Function.update_of_ne hj, Function.update_of_ne hj]
-      obtain ⟨-, hjsum⟩ := (isSimplex_iff _).mp (hσ j)
+      obtain ⟨-, hjsum⟩ := (isSimplex_iff _).mp (hσ j hj)
       exact hjsum
   have hLHS : ∏ j, ∑ b ∈ Function.update (fun _ => Finset.univ) i {a} j,
       Function.update (fun j b => σ j b) i (fun _ => 1) j b = 1 :=
@@ -315,7 +308,7 @@ theorem inducedLoss_le_one {cost : ι → (∀ i, S i) → ℝ} {σ : ∀ i, S i
   refine Finset.sum_le_sum fun s _ => ?_
   calc cost i s * ∏ j ∈ Finset.univ.erase i, σ j (s j)
       ≤ 1 * ∏ j ∈ Finset.univ.erase i, σ j (s j) :=
-        mul_le_mul_of_nonneg_right (hcost i s) (hW s)
+        mul_le_mul_of_nonneg_right (hcost s) (hW s)
     _ = ∏ j ∈ Finset.univ.erase i, σ j (s j) := one_mul _
 
 end MathlibExt.GameTheory.Regret
