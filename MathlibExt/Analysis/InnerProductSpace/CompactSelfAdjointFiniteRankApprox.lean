@@ -68,21 +68,6 @@ here, only the finite-rank approximation above.
 variable {𝕜 : Type*} [RCLike 𝕜]
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace 𝕜 H] [CompleteSpace H]
 
-/-- **A nonzero compact self-adjoint operator has an eigenvalue of norm
-`‖T‖`.** -/
-private theorem exists_hasEigenvalue_norm_eq (T : H →L[𝕜] H) (hT : IsSelfAdjoint T)
-    (hc : IsCompactOperator (T : H → H)) (hT0 : T ≠ 0) :
-    ∃ μ : 𝕜, μ ≠ 0 ∧ ‖μ‖ = ‖T‖ ∧ Module.End.HasEigenvalue (T : Module.End 𝕜 H) μ := by
-  exact CompactSelfAdjointNormEigenvalue.exists_hasEigenvalue_norm_eq T hT hc hT0
-
-/-- **Finiteness of eigenvalues bounded away from zero.** For a compact
-self-adjoint operator `T` and any `ε > 0`, the set of eigenvalues `μ` of `T`
-with `ε ≤ ‖μ‖` is finite. -/
-private theorem finite_eigenvalues_of_ge {T : H →L[𝕜] H} (hT : IsSelfAdjoint T)
-    (hc : IsCompactOperator (T : H → H)) {ε : ℝ} (hε : 0 < ε) :
-    Set.Finite {μ : 𝕜 | Module.End.HasEigenvalue (T : H →ₗ[𝕜] H) μ ∧ ε ≤ ‖μ‖} := by
-  exact CompactSelfAdjointFiniteEigenvalues.finite_eigenvalues_of_ge hT hc hε
-
 omit [CompleteSpace H] in
 /-- The span of a finite family of eigenspaces is invariant under `T`:
 every eigenspace is invariant, and the span of invariant subspaces is
@@ -147,7 +132,8 @@ private theorem norm_compression_le {T : H →L[𝕜] H} (hT : IsSelfAdjoint T)
     intro h0
     rw [h0, norm_zero] at hgt
     exact absurd hgt (not_lt_of_ge (le_of_lt hε))
-  obtain ⟨μ, hμ0, hμnorm, heig⟩ := exists_hasEigenvalue_norm_eq C hCsa hCcomp hC0
+  obtain ⟨μ, hμ0, hμnorm, heig⟩ :=
+    CompactSelfAdjointNormEigenvalue.exists_hasEigenvalue_norm_eq C hCsa hCcomp hC0
   obtain ⟨v, hv_mem, hv_ne⟩ := heig.exists_hasEigenvector
   have hvC : C v = μ • v := Module.End.mem_eigenspace_iff.mp hv_mem
   have hv_orth : v ∈ Eᗮ := by
@@ -184,7 +170,7 @@ theorem exists_finiteRank_approx {T : H →L[𝕜] H} (hT : IsSelfAdjoint T)
     ∃ F : H →L[𝕜] H, IsSelfAdjoint F ∧
       FiniteDimensional 𝕜 ↥(LinearMap.range (F : H →ₗ[𝕜] H)) ∧ ‖T - F‖ ≤ ε := by
   classical
-  have hfin := finite_eigenvalues_of_ge hT hc hε
+  have hfin := CompactSelfAdjointFiniteEigenvalues.finite_eigenvalues_of_ge hT hc hε
   set s : Finset 𝕜 := hfin.toFinset with hsdef
   set E : Submodule 𝕜 H :=
     ⨆ μ ∈ s, Module.End.eigenspace (T : H →ₗ[𝕜] H) μ with hEdef

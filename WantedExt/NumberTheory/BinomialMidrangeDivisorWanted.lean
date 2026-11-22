@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 import Batteries.Util.ProofWanted
 import Mathlib.Data.Nat.Choose.Basic
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Real.Basic
 
 /-!
 # Mid-sized divisors of binomial coefficients

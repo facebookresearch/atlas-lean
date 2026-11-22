@@ -152,7 +152,8 @@ public theorem_wanted f2_div_f1_f4_dissection :
       + X * 𝔣 1 * 𝔣 3 * 𝔣 4 * 𝔣 6 ^ 2 * 𝔣 9 ^ 3 * 𝔣 12 * 𝔣 18 ^ 6 * 𝔣 36 ^ 3
       + X ^ 2 * 𝔣 1 * 𝔣 4 * 𝔣 6 ^ 4 * 𝔣 9 ^ 6 * 𝔣 36 ^ 6
 
-/-- `f_1 f_2 = f_6 f_9^4 / (f_3 f_18^2) - q f_9 f_18 - 2 q^2 f_3 f_18^4 / (f_6 f_9^2)`, stated with denominators cleared
+/-- `f_1 f_2 = f_6 f_9^4 / (f_3 f_18^2) - q f_9 f_18 - 2 q^2 f_3 f_18^4 / (f_6 f_9^2)`, stated with
+denominators cleared
 (both sides multiplied by the product of all denominators).
 
 Source: James A. Sellers, *Elementary Proofs of Congruences for POND and PEND Partitions*,

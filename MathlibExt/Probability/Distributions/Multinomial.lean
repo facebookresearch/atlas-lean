@@ -40,7 +40,8 @@ with probability `p i`. The vector of cell counts `x : ι → ℕ` has the multi
   `Xᵢ ~ Po(λᵢ)` conditioned on their total `∑ᵢ Xᵢ = N` are multinomial with
   `pᵢ = λᵢ / ∑ⱼ λⱼ`.
 * `cond_measureReal_eq_binomial`: the two-cell case: for independent `X ~ Po(a)`,
-  `Y ~ Po(b)`, the law of `X` given `X + Y = N` is `Bin(N, a / (a + b))`.
+  `Y ~ Po(b)`, the law of `X` given `X + Y = N` is `Bin(N, a / (a + b))`;
+  `hasLaw_cond_binomial` states it as a `HasLaw`.
 
 ## References
 
@@ -470,6 +471,32 @@ theorem cond_measureReal_eq_binomial {X Y : Ω → ℕ} {a b : ℝ≥0} (hab : 0
       omega
     rw [hset, measureReal_empty, mul_zero, Nat.choose_eq_zero_of_lt hk]
     simp
+
+/-- **Poisson conditioning, two cells, as a law.** For independent `X ~ Po(a)` and `Y ~ Po(b)`
+with `a + b > 0`, given `X + Y = N` the count `X` has law `Bin(N, a / (a + b))`. -/
+theorem hasLaw_cond_binomial {X Y : Ω → ℕ} {a b : ℝ≥0} (hab : 0 < a + b)
+    (hXm : Measurable X) (hYm : Measurable Y) (hX : HasLaw X (poissonMeasure a) μ)
+    (hY : HasLaw Y (poissonMeasure b) μ) (hXY : IndepFun X Y μ) (N : ℕ) :
+    HasLaw X (binomial N ⟨(a : ℝ) / (a + b), div_nonneg a.2 (add_nonneg a.2 b.2),
+        div_le_one_of_le₀ (le_add_of_nonneg_right b.2) (add_nonneg a.2 b.2)⟩)
+      (μ[|{ω | X ω + Y ω = N}]) where
+  aemeasurable := hXm.aemeasurable
+  map_eq := by
+    have := hX.isProbabilityMeasure
+    have hab' : (0 : ℝ) < a + b := by exact_mod_cast hab
+    have hsum : μ.real {ω | X ω + Y ω = N} = Real.exp (-(a + b : ℝ)) * (a + b : ℝ) ^ N /
+        N.factorial := by
+      have h := measureReal_eq_poisson (hXY.hasLaw_add_poissonMeasure hX hY) N
+      push_cast at h
+      exact h
+    have hpos : 0 < μ.real {ω | X ω + Y ω = N} := by
+      rw [hsum]
+      positivity
+    have := cond_isProbabilityMeasure (μ := μ) (s := {ω | X ω + Y ω = N})
+      fun h0 => hpos.ne' (by simp [measureReal_def, h0])
+    refine Measure.ext_of_measureReal_singleton fun k => ?_
+    rw [map_measureReal_apply hXm (measurableSet_singleton k)]
+    exact cond_measureReal_eq_binomial hab hXm hYm hX hY hXY N k
 
 end PoissonConditioning
 

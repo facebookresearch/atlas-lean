@@ -68,7 +68,8 @@ inductive OGFO where
   | lfp : ℕ → ℕ → OGFO → List ℕ → OGFO
 
 mutual
-/-- `R` occurs only positively in the formula: every occurrence of relation `R` is under an even number of negations. -/
+/-- `R` occurs only positively in the formula: every occurrence of relation `R` is under an even
+number of negations. -/
 def PositiveIn (R : ℕ) : OGFO → Prop
   | .eq _ _ => True
   | .rel _ _ => True
@@ -78,7 +79,8 @@ def PositiveIn (R : ℕ) : OGFO → Prop
   | .exists φ => PositiveIn R φ
   | .lfp _ _ φ _ => PositiveIn R φ
 
-/-- `R` occurs only negatively in the formula: every occurrence of relation `R` is under an odd number of negations. -/
+/-- `R` occurs only negatively in the formula: every occurrence of relation `R` is under an odd
+number of negations. -/
 def NegativeIn (R : ℕ) : OGFO → Prop
   | .eq _ _ => True
   | .rel i _ => if i = R then False else True
