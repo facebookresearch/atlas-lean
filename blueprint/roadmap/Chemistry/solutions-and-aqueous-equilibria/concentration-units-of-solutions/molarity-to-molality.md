@@ -2,5 +2,4 @@
 
 Molarity-to-molality conversion `b = c / (ρ - c * M)` for solution density `ρ` and solute
 molar mass `M`, meant for the physical domain `0 ≤ c ∧ c < ρ / M`, which it maps bijectively
-onto `b ≥ 0` for positive `ρ` and `M` (`bijOn_molarityToMolality`). No Mathlib definition
-provides this conversion, so it is defined here.
+onto `b ≥ 0` for positive `ρ` and `M` (`bijOn_molarityToMolality`).

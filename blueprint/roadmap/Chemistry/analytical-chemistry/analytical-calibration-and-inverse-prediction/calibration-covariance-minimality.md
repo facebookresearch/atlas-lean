@@ -1,6 +1,6 @@
 # Covariance minimality of OLS
 
-**Covariance minimality of OLS** (CH24.3b). Under fixed design `X` with
+**Covariance minimality of OLS**. Under fixed design `X` with
 `IsUnit (Xᵀ * X)`, the model equation `y ω = X *ᵥ β + ε ω`, and homoscedastic uncorrelated
 errors `covMatrix p ε = σ ^ 2 • 1` in finite matrix form, any linear estimator
 `β̃ ω = A *ᵥ y ω` with `A * X = 1` has covariance at least that of OLS: the difference of the

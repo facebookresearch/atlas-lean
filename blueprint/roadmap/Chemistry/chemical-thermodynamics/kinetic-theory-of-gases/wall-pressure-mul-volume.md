@@ -1,6 +1,6 @@
 # Wall Pressure mul volume
 
-Elastic-wall pressure law (CH08.3): `p * V = (1 / 3) * N * m * ⟨v²⟩`.
+Elastic-wall pressure law: `p * V = (1 / 3) * N * m * ⟨v²⟩`.
 
 Model hypotheses: the gas is the finite ensemble `s` of `N` particles of mass `m` in a cube of
 side `L > 0` and volume `V = L ^ 3`, with wall area `L ^ 2`; particle `i` has velocity

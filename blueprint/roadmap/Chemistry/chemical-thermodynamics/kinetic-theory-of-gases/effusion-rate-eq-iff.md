@@ -1,6 +1,6 @@
 # Effusion rate eq iff
 
-Equal effusion rates at fixed number density (CH08.4): under the model hypothesis of
+Equal effusion rates at fixed number density: under the model hypothesis of
 `effusion_rate_eq` for each gas, with its own factor
 (`rate₁ = k₁ * meanSpeed R T₁ M₁`, `rate₂ = k₂ * meanSpeed R T₂ M₂`), and with `k₁ > 0` and
 `hk : k₁ = k₂`, `rate₁ = rate₂ ↔ T₁ / M₁ = T₂ / M₂`; equal rates need the temperature ratio to

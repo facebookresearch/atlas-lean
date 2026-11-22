@@ -75,7 +75,7 @@
 - [Energy Variance two Level Energy](energy-variance-two-level-energy.md)
 - [Heat Capacity two Level Energy](heat-capacity-two-level-energy.md)
 - [Pos of mul eq log three](pos-of-mul-eq-log-three.md)
-- [CHEM-C5 worked example](two-level-energy-worked-example.md)
+- [Worked example: the two-level system](two-level-energy-worked-example.md)
 
 ## F. Einstein-solid counting and Stirling's formula
 

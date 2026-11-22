@@ -1,6 +1,6 @@
 # Inverse Prediction Gradient
 
-The gradient of inverse prediction with respect to `(y₀, a, b)` (CH24.4): the partial
+The gradient of inverse prediction with respect to `(y₀, a, b)`: the partial
 derivatives `1 / b`, `-1 / b` and `-(y₀ - a) / b ^ 2`. For `b ≠ 0` they are the derivatives of
 the one-variable slices (`hasDerivAt_inversePredictionGradient`) and the coefficients of the
 Fréchet derivative of the three-input map (`hasFDerivAt_inversePredictionMap`). At `b = 0`

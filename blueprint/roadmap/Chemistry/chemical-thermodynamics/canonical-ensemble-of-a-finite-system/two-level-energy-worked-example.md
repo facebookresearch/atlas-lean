@@ -1,4 +1,4 @@
-# CHEM-C5 worked example
+# Worked example: the two-level system
 
 For the two-level system with energies `0` and `Δ > 0` at
 `β * Δ = log 3`: `0 < β`, `Z = exp 0 + exp (-β * Δ) = 4 / 3`, the excited state has probability

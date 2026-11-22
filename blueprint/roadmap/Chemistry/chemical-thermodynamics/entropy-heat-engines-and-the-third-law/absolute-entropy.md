@@ -15,6 +15,6 @@ an entropy assume this integrability (`hasDerivAt_absoluteEntropy`, `absoluteEnt
 `absoluteEntropy_zero` needs none because the interval `0..0` is degenerate, and
 `absoluteEntropy_insert_of_lt` is an identity of the transition sum. Likewise a transition at
 `Tt k = 0` would contribute Lean's junk `ΔH k / 0 = 0`; the lemmas that use transition values
-assume `0 < Tt k`. Debye remark (EF = empirical fit): the low-`T` Debye `T³` extrapolation
-`Cp t ≈ a * t^3` makes `Cp t / t ≈ a * t^2` integrable at `0`; Debye's law itself is NOT
-proved here.
+assume `0 < Tt k`. Debye remark: the low-`T` Debye `T³` extrapolation
+`Cp t ≈ a * t^3`, an empirical fit, makes `Cp t / t ≈ a * t^2` integrable at `0`; Debye's law
+itself is not part of the statement.

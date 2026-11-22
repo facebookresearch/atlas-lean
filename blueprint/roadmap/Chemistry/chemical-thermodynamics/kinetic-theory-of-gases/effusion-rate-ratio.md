@@ -1,6 +1,6 @@
 # Effusion rate ratio
 
-Graham's law of effusion (CH08.4): two gases at the same temperature `T`, with rates
+Graham's law of effusion: two gases at the same temperature `T`, with rates
 proportional to their mean speeds with their own factors (model hypothesis),
 `rate₁ = k₁ * meanSpeed R T M₁` and `rate₂ = k₂ * meanSpeed R T M₂`, and with `k₁ > 0` and
 `hk : k₁ = k₂`, satisfy `rate₁ / rate₂ = √(M₂ / M₁)`. In this model the factor `k` packages the
