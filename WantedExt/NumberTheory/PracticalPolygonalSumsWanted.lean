@@ -12,7 +12,7 @@ import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.PolygonalNumber
 public import MathlibExt.NumberTheory.PracticalNumber
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
-public import Mathlib.Data.Nat.ModEq
+public import MathlibExt.NumberTheory.PracticalPolygonalSums
 
 /-!
 # Sums of practical numbers and polygonal numbers
@@ -54,15 +54,6 @@ Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Theorem 2
 public theorem_wanted eventually_practical_add_two_polygonal (s : ℕ) (hs : 3 < s) :
     ∃ N : ℕ, ∀ n > N, ∃ q x y : ℕ,
       IsPracticalNumber q ∧ n = q + Nat.polygonalNumber s x + Nat.polygonalNumber s y
-
-/-- **Square roots modulo powers of two.** For all natural numbers $m > 0$ and $n > 0$ there is
-a natural number $x$ with $1 \le x \le 2^m - 1$ and $x^2 \equiv 8n + 1 \pmod{2^{m+2}}$.
-
-Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
-Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 3
-(arXiv Lemma 3.1; `jis-2024-24.5.1-lem-3`). -/
-public theorem_wanted exists_sq_modEq_eight_mul_add_one (m n : ℕ) (hm : 0 < m) (hn : 0 < n) :
-    ∃ x : ℕ, 1 ≤ x ∧ x ≤ 2 ^ m - 1 ∧ x ^ 2 ≡ 8 * n + 1 [MOD 2 ^ (m + 2)]
 
 /-- **Products of a practical number with small factors.** Let $m$ be a practical number and let
 $\sigma(m)$ denote the sum of the positive divisors of $m$. Then for every natural number $n$

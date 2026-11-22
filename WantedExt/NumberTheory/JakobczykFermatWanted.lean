@@ -24,6 +24,10 @@ Numbers*, INTEGERS 26 (2026), Article A77, about the Fermat numbers
 `F_n = 2^{2^n} + 1` (Mathlib's `Nat.fermatNumber`), their generalizations
 `F_n(a, b) = a^{b^n} + 1`, and Wieferich primes to base `2` (`Nat.IsWieferichPrime`, i.e.
 `p² ∣ 2^{p-1} - 1`) and to base `a` (`a^{p-1} ≡ 1 (mod p²)`).
+
+The characterization of Wieferich primes to base `a` by multiplicative orders,
+`MetaMathlibExt.pow_sub_one_modEq_one_sq_iff_orderOf_eq`, is proved in
+`MathlibExt.NumberTheory.WieferichOrder`.
 -/
 
 namespace MetaMathlibExt
@@ -170,20 +174,6 @@ INTEGERS 26 (2026), Article A77, Theorem 5 (`integers-2026-A77-thm-5`). -/
 public theorem_wanted sq_dvd_pow_two_pow_add_one_iff_wieferich {a n p : ℕ} (hp : p.Prime)
     (hp2 : p ≠ 2) (hpa : ¬ p ∣ a) :
     p ^ 2 ∣ a ^ 2 ^ n + 1 ↔ a ^ (p - 1) ≡ 1 [MOD p ^ 2] ∧ orderOf (a : ZMod p) = 2 ^ (n + 1)
-
-/-- **Wieferich primes to base $a$ via multiplicative orders.** Let $p$ be a prime and $a$ a
-natural number not divisible by $p$. Then $a^{p-1} \equiv 1 \pmod{p^2}$, that is, $p$ is a
-Wieferich prime to base $a$, if and only if the multiplicative order of $a$ modulo $p^2$ equals
-the multiplicative order of $a$ modulo $p$.
-
-The congruence $a^{p-1} \equiv 1 \pmod{p^2}$ is the source's equation (8) defining $p \in W(a)$.
-The source assumes $a \ge 2$; both sides also hold for $a = 1$.
-
-Source: Klaška, *Several Notes on Jakóbczyk's Hypothesis on Fermat Numbers*,
-INTEGERS 26 (2026), Article A77, Lemma 1 (iii) (`integers-2026-A77-lem-1`). -/
-public theorem_wanted pow_sub_one_modEq_one_sq_iff_orderOf_eq {a p : ℕ} (hp : p.Prime)
-    (hpa : ¬ p ∣ a) :
-    a ^ (p - 1) ≡ 1 [MOD p ^ 2] ↔ orderOf (a : ZMod (p ^ 2)) = orderOf (a : ZMod p)
 
 /-- **Divisibility of later generalized Fermat numbers.** For natural numbers $a$, $b$ and $m$
 write $F_m(a, b) = a^{b^m} + 1$. Let $a, b, D \ge 2$ and $n$ be natural numbers such that $D$
