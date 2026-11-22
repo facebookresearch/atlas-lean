@@ -59,29 +59,44 @@ variable {d : ℕ}
 
 local notation "ℝᵈ" => EuclideanSpace ℝ (Fin d)
 
-/-- We say a set `X ⊂ ℝᵈ` is `ν`-porous on balls from scales `α₀` to `α₁` if, for every ball `B` of
-diameter `α₀ < R < α₁`, there is some `x ∈ B` such that `closedBall x (ν * R) ∩ X = ∅`. -/
+/-- **Porosity on balls.** Let $d$ be a natural number and let $\nu$, $\alpha_0$ and $\alpha_1$ be
+real numbers. A set $X$ in the Euclidean space $\mathbb{R}^d$ is $\nu$-porous on balls from scales
+$\alpha_0$ to $\alpha_1$ if for every $y \in \mathbb{R}^d$ and every $R$ with
+$\alpha_0 < R < \alpha_1$, the closed ball of radius $R/2$ about $y$ contains a point $x$ such that
+the closed ball of radius $\nu R$ about $x$ is disjoint from $X$. -/
 def PorousOnBalls (ν α₀ α₁ : ℝ) (X : Set ℝᵈ) : Prop :=
   ∀ y, ∀ R ∈ Set.Ioo α₀ α₁, ∃ x ∈ closedBall y (R / 2), closedBall x (ν * R) ∩ X = ∅
 
-/-- We say a set `X` is `ν`-porous on lines from scales `α₀` to `α₁` if for all line segments `τ`
-with length `α₀ < R < α₁`, there is some `x ∈ τ` such that `closedBall x (ν * R) ∩ X = ∅`. -/
+/-- **Porosity on lines.** Let $d$ be a natural number and let $\nu$, $\alpha_0$ and $\alpha_1$ be
+real numbers. A set $X$ in the Euclidean space $\mathbb{R}^d$ is $\nu$-porous on lines from scales
+$\alpha_0$ to $\alpha_1$ if for every $R$ with $\alpha_0 < R < \alpha_1$ and all points
+$y_1, y_2 \in \mathbb{R}^d$ at distance $R$, the closed segment from $y_1$ to $y_2$ contains a point
+$x$ such that the closed ball of radius $\nu R$ about $x$ is disjoint from $X$. -/
 def PorousOnLines (ν α₀ α₁ : ℝ) (X : Set ℝᵈ) : Prop :=
   ∀ (R : ℝ), R ∈ Set.Ioo α₀ α₁ → ∀ (y₁ y₂ : ℝᵈ), dist y₁ y₂ = R →
     ∃ x ∈ segment ℝ y₁ y₂, closedBall x (ν * R) ∩ X = ∅
 
-/-- Given `a b : ℝ`, the cube `[a,b]ᵈ` in `ℝᵈ`. -/
+/-- **Closed cubes in Euclidean space.** Let $d$ be a natural number. For real numbers $a$ and $b$,
+the cube $[a,b]^d$ is the set of points $x$ of the Euclidean space $\mathbb{R}^d$ with
+$a \le x_i \le b$ for every coordinate $i$. -/
 abbrev cube (a b : ℝ) : Set ℝᵈ := EuclideanSpace.equiv (Fin d) ℝ ⁻¹' Set.univ.pi fun _ ↦ Set.Icc a b
 
 /--
-Statement of Theorem 1.1:
+**Cohen's fractal uncertainty principle for line-porous sets.** Let $d$ be a natural number and
+$\nu > 0$. Then there are real numbers $\beta > 0$ and $C > 0$ such that for every $h$ with
+$0 < h < 1/100$ and all measurable sets $X, Y$ in the Euclidean space $\mathbb{R}^d$ the following
+holds: if $X \subseteq [-1,1]^d$ is $\nu$-porous on balls from scales $h$ to $1$ and
+$Y \subseteq [-h^{-1},h^{-1}]^d$ is $\nu$-porous on lines from scales $1$ to $h^{-1}$, then every
+$f \in L^2(\mathbb{R}^d)$ whose Fourier transform $\mathcal{F}f$ vanishes almost everywhere outside
+$Y$ satisfies $\|\mathbf{1}_X f\|_2 \le C h^{\beta} \|f\|_2$. Thus $\beta$ and $C$ depend only on
+$\nu$ and $d$.
 
-Let `ν > 0` and assume that
-- `X ⊆ [−1,1]ᵈ` is `ν`-porous on balls from scales `h` to `1`, and
-- `Y ⊆ [−h⁻¹,h⁻¹]ᵈ` is `ν`-porous on lines from scales `1` to `h⁻¹`.
-Then there exist `β,C > 0` depending only on `ν` and `d` such that for all `f ∈ L²(ℝᵈ)`,
-`supp (𝓕 f) ⊆ Y => ‖f * 1_X‖₂ ≤ C * h ^ β * ‖f‖₂`.
-Note: We require `X` and `Y` to be measurable to make the statement more natural.
+Here $\mathcal{F}$ is the Fourier transform on $L^2(\mathbb{R}^d)$, extended by continuity from
+$\mathcal{F}f(\xi) = \int_{\mathbb{R}^d} e^{-2\pi i \langle x, \xi \rangle} f(x)\,dx$ on Schwartz
+functions.
+
+We require $X$ and $Y$ to be measurable to make the statement more natural.
+
 Source: A. Cohen, `Fractal uncertainty in higher dimensions`, Annals of Math, 202 (1) 2025. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2025-202-1-FractalUncertainty.lean Via leanprover/lean-eval@38361be, problem `annals_fractal_uncertainty`.
 -/
 public theorem_wanted theorem_1_1 (ν : ℝ) (hν₀ : 0 < ν) :
