@@ -23,6 +23,8 @@ written out inline: `∑ x ∈ Finset.Icc 1 B, Complex.exp (2 * π * I * f(x) / 
 `Φ(f, p) = max_{0 ≤ y ≤ p-1} |∑_{x=1}^{p} e_p(f(x) + y x)|` of (1.1) is written inline as a
 `Finset.sup` of `‖·‖₊` over `Finset.range p`, and `d_p(f)` as the `natDegree` of the image of
 `f` in `(ZMod p)[X]`.
+
+Lemma 3.1 (`one_div_sin_pi_lt`) is proved in `MathlibExt.NumberTheory.IncompleteExponentialSum`.
 -/
 
 namespace MetaMathlibExt
@@ -30,14 +32,6 @@ namespace MetaMathlibExt
 open Complex Finset
 
 @[expose] public section
-
-/-- For `0 < x < 1`, `1 / sin(πx) < (1/π) (1/x + 2x / (1 - x²))`: the first two terms of the
-partial-fraction expansion of `π / sin(πx)` bound it from above.
-
-Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
-(2025), Article A48, Lemma 3.1 (quoted from [3, Lemma 2.2]) (`integers-2025-A48-lem-3-1`). -/
-public theorem_wanted one_div_sin_pi_lt (x : ℝ) (hx₀ : 0 < x) (hx₁ : x < 1) :
-    1 / Real.sin (Real.pi * x) < (1 / Real.pi) * (1 / x + 2 * x / (1 - x ^ 2))
 
 /-- For a prime `p`, an integer `a` with `p ∤ a`, and `1 ≤ B < p/2`,
 `∑_{h=1}^{B} 1 / |sin(π a h / p)| < (p/π)(log B + γ + 1/(2B)) + p B (B + 1) / (π (p² - B²))`,
