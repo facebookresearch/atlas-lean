@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import CSLibExt.Planning.MotionPlanning.ConfigurationSpace
+public import CSLibExt.Planning.MotionPlanning.PathShortening
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Normed.Lp.PiLp
 public import Mathlib.Analysis.Convex.Basic
@@ -34,20 +34,8 @@ open EuclideanSpace Matrix WithLp Topology Filter Metric Set
 
 namespace Cslib.Planning.MotionPlanning.VisibilityInstance
 
--- LOCAL RESTATEMENT (integration will refactor onto the provider):
--- polyline length as the sum of consecutive distances.
-noncomputable def polyLen : List plane → ℝ
-  | [] => 0
-  | [_] => 0
-  | a :: b :: rest => dist a b + polyLen (b :: rest)
-
--- LOCAL RESTATEMENT (integration will refactor onto the provider):
--- a polyline is feasible for G when every closed segment between
--- consecutive vertices lies in G and the final vertex is in G.
-def Feasible (G : Set plane) : List plane → Prop
-  | [] => True
-  | [v] => v ∈ G
-  | a :: b :: rest => segment ℝ a b ⊆ G ∧ Feasible G (b :: rest)
+-- Polyline API comes from the provider module (imported at integration).
+open Cslib.Planning.MotionPlanning.PathShortening
 
 -- Closed square obstacles as sets of the plane.
 def O1 : Set plane :=
