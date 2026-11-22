@@ -44,8 +44,12 @@ open Polynomial Finset
 
 @[expose] public section
 
-/-- Lemma 3.1 (1) (quoted from Flórez and Saunders): for `n ≥ 1`, the Fibonacci-type GFP is
-`F_n = ∑_{i=0}^{⌊(n-1)/2⌋} C(n-i-1, i) d^{n-2i-1} g^i`.
+/-- **Explicit formula for Fibonacci-type generalized Fibonacci polynomials.** Let $d$ and $g$ be
+polynomials with integer coefficients, and let $F_n$ be the generalized Fibonacci polynomials
+defined by $F_0 = 0$, $F_1 = 1$ and $F_{n+2} = d F_{n+1} + g F_n$. Then for every $n \ge 1$,
+$$F_n = \sum_{i=0}^{\lfloor (n-1)/2 \rfloor} \binom{n-i-1}{i} d^{n-2i-1} g^i.$$
+
+The source quotes this formula from Flórez and Saunders.
 
 Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
 *Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
@@ -54,9 +58,16 @@ public theorem_wanted gfp_fib_eq_sum_choose (d g : ℤ[X]) {n : ℕ} (hn : 1 ≤
     generalizedFibonacciPolynomial 0 1 d g n =
       ∑ i ∈ range ((n - 1) / 2 + 1), ((n - i - 1).choose i : ℤ[X]) * d ^ (n - 2 * i - 1) * g ^ i
 
-/-- Lemma 3.1 (2) (quoted from Flórez and Saunders): for `n ≥ 1`, the Lucas-type GFP satisfies
-`α L_n = ∑_{i=0}^{⌊n/2⌋} (n/(n-i)) C(n-i, i) d^{n-2i} g^i`. The integer `n/(n-i) · C(n-i, i)`
-is written as an exact `ℕ` quotient.
+/-- **Explicit formula for Lucas-type generalized Fibonacci polynomials.** Let $\alpha$ and $p_0$
+be integers with $\alpha p_0 = 2$, let $p_1$ and $g$ be polynomials with integer coefficients, and
+put $d = \alpha p_1$. Let $L_n$ be the generalized Fibonacci polynomials defined by $L_0 = p_0$,
+$L_1 = p_1$ and $L_{n+2} = d L_{n+1} + g L_n$. Then for every $n \ge 1$, writing
+$c_i = \lfloor n \binom{n-i}{i} / (n-i) \rfloor$,
+$$\alpha L_n = \sum_{i=0}^{\lfloor n/2 \rfloor} c_i \, d^{n-2i} g^i.$$
+
+The quotient $n \binom{n-i}{i} / (n-i)$ is always an integer, so the floor does not change it;
+the source writes the coefficient as $\frac{n}{n-i} \binom{n-i}{i}$ and quotes the formula from
+Flórez and Saunders.
 
 Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
 *Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
@@ -67,8 +78,9 @@ public theorem_wanted gfp_lucas_eq_sum_choose {α p₀ : ℤ} (hα : α * p₀ =
       ∑ i ∈ range (n / 2 + 1),
         ((n * (n - i).choose i / (n - i) : ℕ) : ℤ[X]) * d ^ (n - 2 * i) * g ^ i
 
-/-- Lemma 3.2 (1) (Webb and Parberry): for `0 ≤ m < n`,
-`C(n-m-1, m) = 2^{2m-n+1} ∑_{j=m}^{⌊(n-1)/2⌋} C(j, m) C(n, 2j+1)`.
+/-- **Webb–Parberry binomial identity.** For natural numbers $m < n$,
+$$\binom{n-m-1}{m} = 2^{2m-n+1} \sum_{j=m}^{\lfloor (n-1)/2 \rfloor} \binom{j}{m} \binom{n}{2j+1},$$
+an identity of rational numbers in which the exponent $2m-n+1$ may be negative.
 
 Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
 *Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
@@ -78,8 +90,10 @@ public theorem_wanted choose_sub_sub_one_eq_two_zpow_mul_sum {m n : ℕ} (hmn : 
       (2 : ℚ) ^ (2 * (m : ℤ) - n + 1) *
         ∑ j ∈ Icc m ((n - 1) / 2), (j.choose m : ℚ) * (n.choose (2 * j + 1) : ℚ)
 
-/-- Lemma 3.2 (2): for `0 ≤ k < ⌊(n-1)/2⌋`,
-`C(n, 2k+1) = ∑_{i=k}^{⌊(n-1)/2⌋} (-1)^{i-k} 2^{n-2i-1} C(n-i-1, i) C(i, k)`.
+/-- **Binomial coefficients of odd lower index as an alternating sum.** For natural numbers $n$
+and $k$ with $k < \lfloor (n-1)/2 \rfloor$,
+$$\binom{n}{2k+1} = \sum_{i=k}^{\lfloor (n-1)/2 \rfloor} (-1)^{i-k} \, 2^{n-2i-1}
+  \binom{n-i-1}{i} \binom{i}{k}.$$
 
 Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
 *Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
@@ -90,8 +104,11 @@ public theorem_wanted choose_two_mul_add_one_eq_alternating_sum {n k : ℕ}
       ∑ i ∈ Icc k ((n - 1) / 2),
         (-1) ^ (i - k) * 2 ^ (n - 2 * i - 1) * ((n - i - 1).choose i : ℤ) * (i.choose k : ℤ)
 
-/-- Lemma 3.2 (3): for `0 ≤ k < ⌊n/2⌋`,
-`C(n, 2k) = n ∑_{i=k}^{⌊n/2⌋} ((-1)^{i-k}/(n-i)) 2^{n-2i-1} C(n-i, i) C(i, k)`.
+/-- **Binomial coefficients of even lower index as an alternating sum.** For natural numbers $n$
+and $k$ with $k < \lfloor n/2 \rfloor$,
+$$\binom{n}{2k} = n \sum_{i=k}^{\lfloor n/2 \rfloor} \frac{(-1)^{i-k}}{n-i} \, 2^{n-2i-1}
+  \binom{n-i}{i} \binom{i}{k},$$
+an identity of rational numbers in which the exponent $n-2i-1$ may be $-1$.
 
 Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
 *Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
@@ -102,8 +119,11 @@ public theorem_wanted choose_two_mul_eq_alternating_sum {n k : ℕ} (hk : k < n 
         (-1) ^ (i - k) / ((n : ℚ) - i) * (2 : ℚ) ^ ((n : ℤ) - 2 * i - 1) *
           ((n - i).choose i : ℚ) * (i.choose k : ℚ)
 
-/-- Theorem 3.3 (1) (Catalan identity for GFPs of Fibonacci type): for `n ≥ 0`,
-`2^{n-1} F_n = ∑_{i=0}^{⌊(n-1)/2⌋} C(n, 2i+1) d^{n-2i-1} (4g + d²)^i`.
+/-- **Catalan identity for Fibonacci-type generalized Fibonacci polynomials.** Let $d$ and $g$ be
+polynomials with integer coefficients, and let $F_n$ be the generalized Fibonacci polynomials
+defined by $F_0 = 0$, $F_1 = 1$ and $F_{n+2} = d F_{n+1} + g F_n$. Then for every natural number
+$n$ (for $n = 0$ both sides are $0$),
+$$2^{n-1} F_n = \sum_{i=0}^{\lfloor (n-1)/2 \rfloor} \binom{n}{2i+1} d^{n-2i-1} (4g + d^2)^i.$$
 
 Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
 *Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
@@ -113,9 +133,14 @@ public theorem_wanted gfp_fib_catalan (d g : ℤ[X]) (n : ℕ) :
       ∑ i ∈ range ((n - 1) / 2 + 1),
         (n.choose (2 * i + 1) : ℤ[X]) * d ^ (n - 2 * i - 1) * (4 * g + d ^ 2) ^ i
 
-/-- Theorem 3.3 (2) (Catalan identity for GFPs of Lucas type): for `n ≥ 0`,
-`α 2^{n-1} L_n = ∑_{i=0}^{⌊n/2⌋} C(n, 2i) d^{n-2i} (4g + d²)^i`, stated as
-`2^n α L_n = 2 ∑ …` so that `n = 0` is included.
+/-- **Catalan identity for Lucas-type generalized Fibonacci polynomials.** Let $\alpha$ and $p_0$
+be integers with $\alpha p_0 = 2$, let $p_1$ and $g$ be polynomials with integer coefficients, and
+put $d = \alpha p_1$. Let $L_n$ be the generalized Fibonacci polynomials defined by $L_0 = p_0$,
+$L_1 = p_1$ and $L_{n+2} = d L_{n+1} + g L_n$. Then for every natural number $n$,
+$$2^n \alpha L_n = 2 \sum_{i=0}^{\lfloor n/2 \rfloor} \binom{n}{2i} d^{n-2i} (4g + d^2)^i.$$
+
+Dividing both sides by $2$ gives the source's form, with $\alpha 2^{n-1} L_n$ on the left; the
+factor $2$ is cleared so that $n = 0$ is included.
 
 Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
 *Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
@@ -125,10 +150,13 @@ public theorem_wanted gfp_lucas_catalan {α p₀ : ℤ} (hα : α * p₀ = 2) {p
     2 ^ n * C α * generalizedFibonacciPolynomial (C p₀) p₁ d g n =
       2 * ∑ i ∈ range (n / 2 + 1), (n.choose (2 * i) : ℤ[X]) * d ^ (n - 2 * i) * (4 * g + d ^ 2) ^ i
 
-/-- Lemma 4.1: for `1 ≤ ℓ ≤ n`, `s ≥ 0` and `j ≤ ⌊(n-s)/ℓ⌋`,
-`∑_i C(ℓ, i) (-1)^i C(n-i, ℓj+s) = C(n-ℓ, ℓ(j-1)+s)`. Stated for `j ≥ 1` (the paper's range
-also admits `⌊(1-s)/ℓ⌋ ≤ j ≤ 0`, where the right side can have a negative lower index), with
-`j ≤ ⌊(n-s)/ℓ⌋` written as `ℓ j + s ≤ n`; the sum runs over `i ≤ ℓ`.
+/-- **Alternating sum of shifted binomial coefficients.** Let $\ell$, $n$, $j$ and $s$ be natural
+numbers with $1 \le \ell \le n$, $j \ge 1$ and $\ell j + s \le n$. Then
+$$\sum_{i=0}^{\ell} (-1)^i \binom{\ell}{i} \binom{n-i}{\ell j+s} = \binom{n-\ell}{\ell(j-1)+s}.$$
+
+The paper states this for $\lfloor (1-s)/\ell \rfloor \le j \le \lfloor (n-s)/\ell \rfloor$; only
+$j \ge 1$ is stated here, since for $j \le 0$ the right side can have a negative lower index. For
+$j \ge 1$ the bound $j \le \lfloor (n-s)/\ell \rfloor$ is the condition $\ell j + s \le n$.
 
 Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
 *Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
@@ -138,8 +166,11 @@ public theorem_wanted alternating_sum_choose_mul_choose_sub {ℓ n j s : ℕ} (h
     ∑ i ∈ range (ℓ + 1), (ℓ.choose i : ℤ) * (-1) ^ i * ((n - i).choose (ℓ * j + s) : ℤ) =
       ((n - ℓ).choose (ℓ * (j - 1) + s) : ℤ)
 
-/-- Theorem 4.2: for `n ≥ 0` and `ℓ ≥ 1`, the sums `T_ℓ(n; t) = ∑_i C(n, i) t^{⌊i/ℓ⌋}` satisfy
-`∑_{i=0}^{ℓ} C(ℓ, i) (-1)^i T_ℓ(n+ℓ-i; t) - t T_ℓ(n; t) = 0`.
+/-- **Recurrence for the floor-exponent binomial sums.** Let $R$ be a commutative ring, $t \in R$
+and $\ell \ge 1$ an integer, and for $m \ge 0$ let
+$T_\ell(m; t) = \sum_{j=0}^{m} \binom{m}{j} t^{\lfloor j/\ell \rfloor}$. Then for every integer
+$n \ge 0$,
+$$\sum_{i=0}^{\ell} (-1)^i \binom{\ell}{i} T_\ell(n+\ell-i; t) - t\, T_\ell(n; t) = 0.$$
 
 Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
 *Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
@@ -150,10 +181,12 @@ public theorem_wanted floorPowBinomialSum_recurrence {R : Type*} [CommRing R] (t
         ∑ j ∈ range (n + ℓ - i + 1), ((n + ℓ - i).choose j : R) * t ^ (j / ℓ) -
       t * ∑ j ∈ range (n + 1), (n.choose j : R) * t ^ (j / ℓ) = 0
 
-/-- Lemma 4.3: for `n ≥ 0`,
-`∑_{i=0}^{n} C(ℓ, i) (-1)^i ∑_{j=0}^{n-i} C(n-i, j) = ∑_{i=0}^{n} (-1)^i C(i+ℓ-n-1, i)`.
-The right side has an integer upper index, read as the generalized binomial coefficient
-`Ring.choose`; it is the ordinary one for `n < ℓ`, the case used in Theorem 4.4.
+/-- **Alternating sum of binomial row sums.** For all natural numbers $\ell$ and $n$,
+$$\sum_{i=0}^{n} (-1)^i \binom{\ell}{i} \sum_{j=0}^{n-i} \binom{n-i}{j}
+  = \sum_{i=0}^{n} (-1)^i \binom{i+\ell-n-1}{i},$$
+where on the right $\binom{a}{i} = a(a-1)\cdots(a-i+1)/i!$ is the binomial coefficient with
+integer upper index $a$. For $n < \ell$ the upper index $i + \ell - n - 1$ is nonnegative and this
+is the ordinary binomial coefficient, the case used in Theorem 4.4.
 
 Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
 *Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
@@ -163,9 +196,15 @@ public theorem_wanted alternating_choose_mul_sum_choose (ℓ n : ℕ) :
         ∑ j ∈ range (n - i + 1), ((n - i).choose j : ℤ) =
       ∑ i ∈ range (n + 1), (-1) ^ i * Ring.choose ((i : ℤ) + ℓ - n - 1) i
 
-/-- Theorem 4.4: for `ℓ ≥ 1`, the generating function of `T_ℓ(n; t) = ∑_i C(n, i) t^{⌊i/ℓ⌋}` is
-`(∑_{k=0}^{ℓ-1} ∑_{i=0}^{k} (-1)^i C(i+ℓ-k-1, i) x^k) / ((1-x)^ℓ - t x^ℓ)`, stated as a
-product identity of formal power series.
+/-- **Generating function of the floor-exponent binomial sums.** Let $R$ be a commutative ring,
+$t \in R$ and $\ell \ge 1$ an integer, and for $n \ge 0$ let
+$T_\ell(n; t) = \sum_{i=0}^{n} \binom{n}{i} t^{\lfloor i/\ell \rfloor}$. Then in the ring $R[[x]]$
+of formal power series,
+$$\Big(\sum_{n \ge 0} T_\ell(n; t)\, x^n\Big) \big((1-x)^\ell - t x^\ell\big)
+  = \sum_{k=0}^{\ell-1} \Big(\sum_{i=0}^{k} (-1)^i \binom{i+\ell-k-1}{i}\Big) x^k.$$
+
+So the generating function of the $T_\ell(n; t)$ is this polynomial divided by the series
+$(1-x)^\ell - t x^\ell$, which is invertible since its constant term is $1$.
 
 Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
 *Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
@@ -177,12 +216,19 @@ public theorem_wanted floorPowBinomialSum_generatingFunction {R : Type*} [CommRi
       ∑ k ∈ range ℓ, PowerSeries.C (∑ i ∈ range (k + 1),
         (-1 : R) ^ i * ((i + ℓ - k - 1).choose i : R)) * PowerSeries.X ^ k
 
-/-- Theorem 4.5: for `0 ≤ s < ℓ`, the generating function of
-`T_{ℓ,s}(n; t) = ∑_i C(n, ℓ i + s) t^i` is
-`(∑_{k=0}^{ℓ-1} ∑_{i=0}^{k} (-1)^i C(ℓ, i) ∑_{r=0}^{k} C(k-i, rℓ+s) t^r x^k) / ((1-x)^ℓ - t x^ℓ)`,
-stated as a product identity of formal power series. The printed numerator has `t^t`, a typo
-for `t^r` (the summation index); the range `s < ℓ` is the one of (4.4). For `s ≥ ℓ` the identity
-fails (`ℓ = 1`, `s = 1`, `t = 2`: the left side is `x/(1 - x)`, the right side `0`).
+/-- **Generating function of the binomial section sums.** Let $R$ be a commutative ring, $t \in R$,
+and let $\ell$ and $s$ be natural numbers with $s < \ell$. Put
+$T_{\ell,s}(n; t) = \sum_{i=0}^{n} \binom{n}{\ell i + s} t^i$. Then, as formal power series in $x$
+over $R$,
+$$\Big( \sum_{n \ge 0} T_{\ell,s}(n; t) x^n \Big) \big( (1-x)^\ell - t x^\ell \big) =
+\sum_{k=0}^{\ell-1} \Big( \sum_{i=0}^{k} (-1)^i \binom{\ell}{i} \sum_{r=0}^{k} \binom{k-i}{r\ell+s}
+t^r \Big) x^k.$$
+That is, the generating function of $T_{\ell,s}(n; t)$ is this polynomial divided by
+$(1-x)^\ell - t x^\ell$.
+
+The printed numerator in the source has $t^t$, a typo for $t^r$ ($r$ is the summation index), and
+the range $s < \ell$ is the one of (4.4). For $s \ge \ell$ the identity fails: for $\ell = 1$,
+$s = 1$, $t = 2$ the left side is $x/(1-x)$ and the right side is $0$.
 
 Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
 *Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
@@ -194,8 +240,11 @@ public theorem_wanted sectionBinomialSum_generatingFunction {R : Type*} [CommRin
       ∑ k ∈ range ℓ, PowerSeries.C (∑ i ∈ range (k + 1), (-1 : R) ^ i * (ℓ.choose i : R) *
         ∑ r ∈ range (k + 1), ((k - i).choose (r * ℓ + s) : R) * t ^ r) * PowerSeries.X ^ k
 
-/-- Proposition 5.1: for `n ≥ 2` and a real `x` with `d(x)² + 4 g(x) ≥ 0`,
-`F_n(x) = (n / 2^n) ∫_{-1}^{1} (d(x) + y √(d(x)² + 4 g(x)))^{n-1} dy`.
+/-- **Integral representation of Fibonacci-type generalized Fibonacci polynomials.** Let $d$ and
+$g$ be polynomials with integer coefficients, and let $F_n$ be the generalized Fibonacci
+polynomials defined by $F_0 = 0$, $F_1 = 1$ and $F_{n+2} = d F_{n+1} + g F_n$. If $x$ is a real
+number with $d(x)^2 + 4 g(x) \ge 0$, then for every $n \ge 2$,
+$$F_n(x) = \frac{n}{2^n} \int_{-1}^{1} \left( d(x) + y \sqrt{d(x)^2 + 4 g(x)} \right)^{n-1} dy.$$
 
 Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
 *Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
@@ -206,8 +255,9 @@ public theorem_wanted gfp_fib_eval_eq_integral (d g : ℤ[X]) (x : ℝ)
       n / 2 ^ n * ∫ y in (-1 : ℝ)..1,
         (aeval x d + y * Real.sqrt (aeval x d ^ 2 + 4 * aeval x g)) ^ (n - 1)
 
-/-- Corollary 5.1 (Stewart): `F_n = (n / 2^n) ∫_{-1}^{1} (1 + y √5)^{n-1} dy`. The corollary
-states no range; it is stated for `n ≥ 1`, where the exponent `n - 1` is a natural number.
+/-- **Stewart's integral formula for the Fibonacci numbers.** For every integer $n \ge 1$, the
+$n$-th Fibonacci number $F_n$ (with $F_0 = 0$ and $F_1 = 1$) satisfies
+$$F_n = \frac{n}{2^n} \int_{-1}^{1} \left(1 + y\sqrt{5}\right)^{n-1} dy.$$
 
 Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
 *Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
@@ -215,14 +265,17 @@ Article florez11012023, Corollary 5.1 (`fq-2024-florez11012023-cor-5.1`). -/
 public theorem_wanted fib_eq_integral_one_add_mul_sqrt_five {n : ℕ} (hn : 1 ≤ n) :
     (Nat.fib n : ℝ) = n / 2 ^ n * ∫ y in (-1 : ℝ)..1, (1 + y * Real.sqrt 5) ^ (n - 1)
 
-/-- Proposition 5.2: for real `k ≥ 2`, `n ≥ 1` and a real `x` with `d(x)² + 4 g(x) ≥ 0`,
-`∑_{i=0}^{n} (-1)^{n+1} C(n, i) (k+1)^i (k-1)^{n-i} g^i F_{n-2i}
-  = n ∫_{-k}^{k} (y √(d² + 4g) + d)^{n-1} dy`.
-The indices `n - 2i < 0` use the extension `F : ℤ → ℝ` of `m ↦ F_m(x)` by the same recurrence
-(the Binet formula of the paper's proof). This extension exists only when `g(x) ≠ 0` (if
-`g(x) = 0`, the recurrence at `m = -1` forces `F_1 = d(x) F_0 = 0`), so the paper's assumption
-`g ≠ 0` is kept as `g(x) ≠ 0`. The paper states no range for `n`; `n ≥ 1` makes the exponent
-`n - 1` a natural number.
+/-- **Binomial sum of generalized Fibonacci polynomials as an integral.** Let $d$ and $g$ be
+polynomials with integer coefficients, let $F_m$ be the generalized Fibonacci polynomials with
+$F_0 = 0$, $F_1 = 1$ and $F_{m+2} = d F_{m+1} + g F_m$, and let $x$ be a real number with
+$d(x)^2 + 4 g(x) \ge 0$ and $g(x) \ne 0$. Let $\Phi \colon \mathbb{Z} \to \mathbb{R}$ satisfy
+$\Phi(m) = F_m(x)$ for $m \ge 0$ and $\Phi(m+2) = d(x) \Phi(m+1) + g(x) \Phi(m)$ for every integer
+$m$. Then for every real $k \ge 2$ and every integer $n \ge 1$,
+$$\sum_{i=0}^{n} (-1)^{n+1} \binom{n}{i} (k+1)^i (k-1)^{n-i} g(x)^i \, \Phi(n-2i)
+  = n \int_{-k}^{k} \Big(y \sqrt{d(x)^2 + 4 g(x)} + d(x)\Big)^{n-1} dy.$$
+
+The extension $\Phi$ of $m \mapsto F_m(x)$ to negative indices exists only when $g(x) \ne 0$: if
+$g(x) = 0$, the recurrence at $m = -1$ forces $F_1(x) = d(x) F_0(x) = 0$.
 
 Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
 *Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
@@ -236,10 +289,12 @@ public theorem_wanted gfp_fib_binomial_sum_eq_integral (d g : ℤ[X]) (x : ℝ)
         aeval x g ^ i * F ((n : ℤ) - 2 * i) =
       n * ∫ y in -k..k, (y * Real.sqrt (aeval x d ^ 2 + 4 * aeval x g) + aeval x d) ^ (n - 1)
 
-/-- Corollary 5.2: for real `k ≥ 2` and `n ≥ 1`,
-`∑_{i=0}^{n} (-1)^{n+1} C(n, i) (k+1)^i (k-1)^{n-i} F_{n-2i} = n ∫_{-k}^{k} (√5 y + 1)^{n-1} dy`,
-where `F : ℤ → ℝ` is the Fibonacci sequence extended to negative indices by its recurrence. The
-paper states no range for `n`; `n ≥ 1` makes the exponent `n - 1` a natural number.
+/-- **Binomial sum of Fibonacci numbers as an integral.** Let $F \colon \mathbb{Z} \to \mathbb{R}$
+be a function whose value $F_m$ at every $m \ge 0$ is the $m$-th Fibonacci number (with $F_0 = 0$
+and $F_1 = 1$) and which satisfies $F_{m+2} = F_{m+1} + F_m$ for every integer $m$. Then for every
+real $k \ge 2$ and every integer $n \ge 1$,
+$$\sum_{i=0}^{n} (-1)^{n+1} \binom{n}{i} (k+1)^i (k-1)^{n-i} F_{n-2i}
+  = n \int_{-k}^{k} (\sqrt{5}\, y + 1)^{n-1} \, dy.$$
 
 Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
 *Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
