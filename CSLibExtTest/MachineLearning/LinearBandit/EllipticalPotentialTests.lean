@@ -14,6 +14,7 @@ import Mathlib.Algebra.Order.Star.Real
 import Mathlib.LinearAlgebra.Matrix.Diagonal
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum.Basic
+import MathlibExt.LinearAlgebra.Matrix.PosSemidefDeterminant
 
 /-!
 # Elliptical potential lemma tests
@@ -96,7 +97,7 @@ example : (Matrix.diagonal ![2, 3] : Matrix (Fin 2) (Fin 2) ℝ).det = 6 ∧
     Matrix.PosSemidef.diagonal (fun i => by
       fin_cases i <;> norm_num [Matrix.cons_val_one, Matrix.cons_val_zero])
   have hd2 : 0 < Fintype.card (Fin 2) := by rw [Fintype.card_fin]; norm_num
-  have h := posSemidef_det_le_pow_trace_div_card hpsd2 hd2
+  have h := hpsd2.det_le_pow_trace_div_card hd2
   rw [hdet2, htr2, Fintype.card_fin] at h
   refine ⟨hdet2, htr2, ?_⟩
   simpa using h
@@ -126,7 +127,7 @@ example : ellipticalQuadratic ((2 : ℝ) • (1 : Matrix (Fin 1) (Fin 1) ℝ))
 
 -- T5: axiom checks for the five main theorems.
 #print axioms Cslib.MachineLearning.LinearBandit.ellipticalGram_posDef
-#print axioms Cslib.MachineLearning.LinearBandit.posSemidef_det_le_pow_trace_div_card
+#print axioms Matrix.PosSemidef.det_le_pow_trace_div_card
 #print axioms Cslib.MachineLearning.LinearBandit.sum_ellipticalPotential_le_two_log_det_ratio
 #print axioms Cslib.MachineLearning.LinearBandit.log_det_ellipticalGram_ratio_le
 #print axioms Cslib.MachineLearning.LinearBandit.elliptical_potential_lemma

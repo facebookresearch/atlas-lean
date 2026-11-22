@@ -18,6 +18,7 @@ import Mathlib.Analysis.Matrix.PosDef
 import Mathlib.Analysis.Matrix.Spectrum
 import Mathlib.Analysis.MeanInequalities
 import MathlibExt.Analysis.Control.RecursiveLeastSquares
+import MathlibExt.LinearAlgebra.Matrix.PosSemidefDeterminant
 
 /-!
 # Elliptical potential lemma
@@ -88,36 +89,6 @@ theorem ellipticalGram_trace {ι : Type*} [Fintype ι] [DecidableEq ι]
       V0.trace + ∑ k ∈ Finset.range t, a k ⬝ᵥ a k := by
   simp only [ellipticalGram, Matrix.trace_add, Matrix.trace_sum,
     Matrix.trace_vecMulVec]
-
-theorem posSemidef_det_le_pow_trace_div_card {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {A : Matrix ι ι ℝ} (hA : A.PosSemidef) (hd : 0 < Fintype.card ι) :
-    A.det ≤ (A.trace / (Fintype.card ι : ℝ)) ^ Fintype.card ι := by
-  have hH := hA.isHermitian
-  rw [hH.det_eq_prod_eigenvalues, hH.trace_eq_sum_eigenvalues]
-  change ∏ i, hH.eigenvalues i ≤
-    ((∑ i, hH.eigenvalues i) / (Fintype.card ι : ℝ)) ^ Fintype.card ι
-  have hnn : ∀ i ∈ (Finset.univ : Finset ι), 0 ≤ hH.eigenvalues i :=
-    fun i _ => hA.eigenvalues_nonneg i
-  have hsum1 : 0 < ∑ i ∈ (Finset.univ : Finset ι), (1 : ℝ) := by
-    rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
-    exact_mod_cast hd
-  have hgeom := Real.geom_mean_le_arith_mean (Finset.univ : Finset ι)
-    (fun _ => (1 : ℝ)) hH.eigenvalues (fun i _ => zero_le_one) hsum1 hnn
-  simp only [Real.rpow_one, one_mul, Finset.sum_const, Finset.card_univ,
-    nsmul_eq_mul, mul_one] at hgeom
-  have hprod_nn : 0 ≤ ∏ i, hH.eigenvalues i :=
-    Finset.prod_nonneg (fun i _ => hA.eigenvalues_nonneg i)
-  have hcard_ne : (Fintype.card ι : ℝ) ≠ 0 := by exact_mod_cast ne_of_gt hd
-  have hround :
-      ((∏ i, hH.eigenvalues i) ^ ((Fintype.card ι : ℝ))⁻¹) ^ Fintype.card ι =
-        ∏ i, hH.eigenvalues i := by
-    rw [← Real.rpow_natCast, ← Real.rpow_mul hprod_nn, inv_mul_cancel₀ hcard_ne,
-      Real.rpow_one]
-  calc ∏ i, hH.eigenvalues i
-      = (((∏ i, hH.eigenvalues i) ^ ((Fintype.card ι : ℝ))⁻¹)) ^ Fintype.card ι :=
-        hround.symm
-    _ ≤ ((∑ i, hH.eigenvalues i) / (Fintype.card ι : ℝ)) ^ Fintype.card ι :=
-        pow_le_pow_left₀ (Real.rpow_nonneg hprod_nn _) hgeom _
 
 theorem ellipticalQuadratic_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]
     {V0 : Matrix ι ι ℝ} (hV0 : V0.PosDef) (a : ℕ → ι → ℝ) (k : ℕ) :
@@ -200,7 +171,7 @@ theorem log_det_ellipticalGram_ratio_le
           ((Fintype.card ι : ℝ) * V0.det ^ ((Fintype.card ι : ℝ)⁻¹))) := by
   have hGpd : (ellipticalGram V0 a n).PosDef := ellipticalGram_posDef hV0 a n
   have hGps : (ellipticalGram V0 a n).PosSemidef := hGpd.posSemidef
-  have hdet := posSemidef_det_le_pow_trace_div_card hGps hd
+  have hdet := hGps.det_le_pow_trace_div_card hd
   have htrace := ellipticalGram_trace V0 a n
   have hsum : ∑ k ∈ Finset.range n, a k ⬝ᵥ a k ≤ (n : ℝ) * L ^ 2 := by
     calc ∑ k ∈ Finset.range n, a k ⬝ᵥ a k
