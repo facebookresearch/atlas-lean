@@ -10107,6 +10107,7 @@
   "MathlibExt/Combinatorics/Enumerative/StirlingPermutation": {"to": "Combinatorics/permutations/permutation-statistics", "title": "Stirling permutations"},
   "MathlibExt/Combinatorics/Enumerative/StirlingSecondAddition": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Stirling numbers of the second kind"},
   "MathlibExt/Combinatorics/Enumerative/StirlingSecondExplicit": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Stirling numbers of the second kind"},
+  "MathlibExt/Combinatorics/Enumerative/SumsOfPowersA304330": {"to": "Combinatorics/stirling-bell-eulerian/bernoulli-euler-genocchi", "title": "Faulhaber coefficients and sums of powers"},
   "MathlibExt/Combinatorics/Enumerative/TangentNumberDivisibility": {"to": "Combinatorics/stirling-bell-eulerian/bernoulli-euler-genocchi", "title": "Tangent numbers"},
   "MathlibExt/Combinatorics/Enumerative/TotalDescentsParkingFunctions": {"to": "Combinatorics/parking-functions", "title": "Descents, peaks and valleys of parking functions"},
   "MathlibExt/Combinatorics/Enumerative/TotienomialCoefficient": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Totienomial coefficients"},
