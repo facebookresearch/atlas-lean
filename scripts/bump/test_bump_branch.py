@@ -255,16 +255,28 @@ class MergeAdjacentTest(unittest.TestCase):
         self.assertEqual(bb.merge_conflicts_adjacent(self.BASE, ours, theirs), expected)
 
     def test_disjoint_changes(self):
+        def disjoint(base, ours, theirs):
+            return bb.disjoint_changes(base, ours, theirs, bb.auto_merge(base, ours, theirs) or b"")
+
         base = b"a\n/-- doc -/\ndef x := 1\nb\nc\n"
         neighbours = (b"a\n/-- doc -/\nnoncomputable def x := 1\nb\nc\n", b"a\n/-- new doc -/\ndef x := 1\nb\nc\n")
-        self.assertTrue(bb.disjoint_changes(base, *neighbours), "edits on neighbouring lines are different edits")
+        self.assertTrue(disjoint(base, *neighbours), "edits on neighbouring lines are different edits")
         shared = (b"a\n/-- doc -/\nnoncomputable def x := 1\nB\nc\n", b"a\n/-- doc -/\nnoncomputable def x := 1\nb\nC\n")
-        self.assertFalse(bb.disjoint_changes(base, *shared), "a line changed the same way on both sides")
-        self.assertFalse(bb.disjoint_changes(base, b"a\nX\n/-- doc -/\ndef x := 1\nb\nc\n",
-                                             b"a\nY\n/-- doc -/\ndef x := 1\nb\nc\n"), "insertions at one place")
-        self.assertFalse(bb.disjoint_changes(base, b"a\nnew line\n/-- doc -/\ndef x := 1\nb\nc\n",
-                                             b"a\n/-- doc -/\ndef x := 1\nb\nc\nnew line\n"), "a line added by both")
-        self.assertFalse(bb.disjoint_changes(base, base, neighbours[1]), "one side changed nothing")
+        self.assertFalse(disjoint(base, *shared), "a line changed the same way on both sides")
+        self.assertFalse(disjoint(base, b"a\nX\n/-- doc -/\ndef x := 1\nb\nc\n",
+                                  b"a\nY\n/-- doc -/\ndef x := 1\nb\nc\n"), "insertions at one place")
+        self.assertFalse(disjoint(base, b"a\nnew line\n/-- doc -/\ndef x := 1\nb\nc\n",
+                                  b"a\n/-- doc -/\ndef x := 1\nb\nc\nnew line\n"), "a line added by both")
+        self.assertFalse(disjoint(base, base, neighbours[1]), "one side changed nothing")
+        # One of two repeated lines removed by both sides, plus an edit each: the edits as
+        # aligned here would remove both lines, while git's merge removes one.
+        base = b"by\n  skip\n  have h := 1\n  skip\n  skip\n  have k := 2\n  skip\n  done\n"
+        ours = b"by\n  skip\n  have h := 1\n  skip\n  have k := 2\n  -- later\n  done\n"
+        theirs = b"by\n  -- earlier\n  have h := 1\n  skip\n  have k := 2\n  skip\n  done\n"
+        merged = bb.auto_merge(base, ours, theirs)
+        self.assertIsNotNone(merged)
+        self.assertEqual(merged.count(b"  skip\n"), 1, merged)
+        self.assertFalse(bb.disjoint_changes(base, ours, theirs, merged))
 
     def test_what_needs_a_person(self):
         same_line = (self.BASE.replace("def x := 1", "noncomputable def x := 1"),
@@ -806,6 +818,35 @@ class GitTest(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         row = bb.manifest_rows((self.repo / bb.MANIFEST).read_text())[i]
         self.assertEqual(row["rationale"], "Typed i17 (#22). Also: Adapted i1 to the new toolchain.")
+
+    def test_a_shared_deletion_among_repeated_lines_needs_a_person(self):
+        files, rows = self.base_tree()
+        i = "MathlibExt/I.lean"
+        body = "theorem t : True := by\n  skip\n  have h := 1\n  skip\n  skip\n  have k := 2\n  skip\n  trivial\n"
+        synced = META + "\n" + body
+        identical = {"path": i, "disposition": "identical", "published_sha256": fms.sha256(synced.encode()),
+                     "upstream_sha256": fms.sha256(body.encode())}
+        rows = rows + [identical]
+        self.write({i: synced}, rows, "sync I")
+
+        def diverge_i(text, rationale):
+            row = {**identical, "disposition": "diverged", "published_sha256": fms.sha256(text.encode()),
+                   "rationale": rationale, "backport": "pending"}
+            return [row if r["path"] == i else r for r in rows]
+
+        middle = "  skip\n  skip\n  have k"
+        bump_text = synced.replace(middle, "  skip\n  have k").replace("  have k := 2\n  skip\n", "  have k := 2\n  -- later\n")
+        main_text = synced.replace(middle, "  skip\n  have k").replace("by\n  skip\n", "by\n  -- earlier\n")
+        self.git("checkout", "-q", "-b", "bump")
+        self.write({i: bump_text}, diverge_i(bump_text, "Removal of the redundant skip solely from PR #12."), "bump")
+        self.git("checkout", "-q", "main")
+        self.write({i: main_text}, diverge_i(main_text, "Removal of the redundant skip solely from PR #21."), "I (#21)")
+        self.git("checkout", "-q", "bump")
+        head = self.git("rev-parse", "HEAD").stdout
+        proc = self.tool("merge-main", "--main", "main")
+        self.assertEqual(proc.returncode, 3, proc.stdout + proc.stderr)
+        self.assertIn("edits may overlap", proc.stdout)
+        self.assertEqual(self.git("rev-parse", "HEAD").stdout, head)
 
     def test_refuses_a_dirty_tree(self):
         self.base_tree()

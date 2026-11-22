@@ -308,7 +308,7 @@ def merge_both_changed(path: str, b, o: dict, t: dict, versions) -> tuple[dict |
     if data == files["auto"]:
         # Git's own merge (or --adjacent's) keeps both sides' changes, even when it comes out
         # equal to one side because that side's change contains the other's.
-        disjoint = data not in (ours, theirs) and disjoint_changes(base, ours, theirs)
+        disjoint = data not in (ours, theirs) and disjoint_changes(base, ours, theirs, data)
         return combined("both", "distinct" if disjoint else "overlap", data != theirs)
     # A conflict resolved by keeping one side's file drops the other side's change, and the
     # sentences that side added to describe it; a rewrite of the base rationale (a correction)
@@ -437,11 +437,13 @@ def edits(base: list[str], side: list[str]) -> list[tuple[int, int, list[str]]]:
     return [(i1, i2, side[j1:j2]) for tag, i1, i2, j1, j2 in matcher.get_opcodes() if tag != "equal"]
 
 
-def disjoint_changes(base: bytes, ours: bytes, theirs: bytes) -> bool:
+def disjoint_changes(base: bytes, ours: bytes, theirs: bytes, merged: bytes) -> bool:
     """Whether the two sides provably made different edits: no base line is changed by both,
-    neither inserts at the same place as the other or inside the other's change, and no
-    line with a letter or digit was added by both. A shared edit (the same line changed the
-    same way on both sides) always fails this; two edits on neighbouring lines pass."""
+    neither inserts at the same place as the other or inside the other's change, no line
+    with a letter or digit was added by both, and applying both sides' edits to the base
+    gives exactly `merged`. The last check catches a line alignment that differs from git's
+    (repeated lines can make one shared deletion look like two). A shared edit always fails
+    this; two edits on neighbouring lines pass."""
     try:
         b, o, t = (lines_of(data.decode("utf-8")) for data in (base, ours, theirs))
     except UnicodeDecodeError:
@@ -456,7 +458,13 @@ def disjoint_changes(base: bytes, ours: bytes, theirs: bytes) -> bool:
             if (s1 == e1 and s2 <= s1 <= e2) or (s2 == e2 and s1 <= s2 <= e1):  # an insertion there
                 return False
     added = lambda changes: {line.strip() for _, _, new in changes for line in new if re.search(r"\w", line)}
-    return not added(mine) & added(other)
+    if added(mine) & added(other):
+        return False
+    rebuilt, position = [], 0
+    for start, end, new in sorted(mine + other, key=lambda change: (change[0], change[1])):
+        rebuilt += b[position:start] + new
+        position = end
+    return "".join(rebuilt + b[position:]).encode("utf-8") == merged
 
 
 DOC_OPENERS = ("/--", "/-!")
