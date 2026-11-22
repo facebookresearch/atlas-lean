@@ -7,6 +7,7 @@ import gzip
 import io
 import json
 import os
+import re
 import sys
 import tempfile
 import unittest
@@ -14,6 +15,7 @@ import urllib.error
 import urllib.request
 from contextlib import redirect_stderr, redirect_stdout
 from email.message import Message
+from html import escape
 from pathlib import Path
 from unittest import mock
 
@@ -52,9 +54,18 @@ TASKS = {"schema": "autoform-work/v2", "open_statements": False, "source_revisio
 
 
 def pull(number: int, title: str = "", body: str | None = "", branch: str = "topic", merged_at: str | None = None,
-         updated_at: str = "2026-11-21T00:00:00Z", base: str = "main") -> dict:
-    return {"number": number, "title": title, "body": body, "head": {"ref": branch}, "base": {"ref": base},
-            "merged_at": merged_at, "updated_at": updated_at}
+         updated_at: str = "2026-11-21T00:00:00Z", base: str = "main", html: str | None = None) -> dict:
+    """A pull request as the API lists it with next_task.RENDERED: *html* is its body as GitHub renders it, by default
+    a paragraph of text, which holds no code."""
+    if html is None and body:
+        html = f"<p>{escape(body)}</p>"
+    return {"number": number, "title": title, "body": body, "body_html": html, "head": {"ref": branch},
+            "base": {"ref": base}, "merged_at": merged_at, "updated_at": updated_at}
+
+
+def inline(body: str) -> str:
+    """A paragraph with code spans in single backticks, as GitHub renders it."""
+    return "<p>" + re.sub(r"`([^`]+)`", r"<code>\1</code>", escape(body)) + "</p>"
 
 
 OPEN_PULLS = [
@@ -81,9 +92,12 @@ class Site:
             for number, rows in enumerate(pages, 1):
                 self.pages[f"{prefix}{number}"] = json.dumps(rows).encode()
         self.read: list[tuple[str, str | None]] = []
+        self.media: list[str] = []
 
-    def __call__(self, url: str, token: str | None = None) -> bytes:
+    def __call__(self, url: str, token: str | None = None, media: str | None = None) -> bytes:
         self.read.append((url, token))
+        if url.startswith(next_task.API):
+            self.media.append(media)
         return self.pages.get(url, b"[]")
 
 
@@ -111,8 +125,10 @@ class Picking(unittest.TestCase):
                                               {"node_id": "Algebra/t8", "pull_requests": [3]}])
         self.assertEqual((result["ready"], result["taken"], result["free"]), (8, 4, 4))
         self.assertEqual((result["commit"], result["autoform_ref"]), ("c" * 40, "a" * 40))
-        # One page of each kind, as each holds fewer than a full page; no token was set.
+        # One page of each kind, as each holds fewer than a full page; no token was set. They come with their bodies as
+        # GitHub renders them.
         self.assertEqual(site.read, [(next_task.TASKS, None), (OPEN + "1", None), (CLOSED + "1", None)])
+        self.assertEqual(site.media, [next_task.RENDERED] * 2)
 
     def test_the_text_lists_the_next_n_with_what_takes_them(self) -> None:
         code, out, _ = run(Site(), "-n", "2")
@@ -244,14 +260,17 @@ class Picking(unittest.TestCase):
         pulls = [
             # As an older pull request claims a statement: its short name in code, with the module it is in.
             pull(31, title="Prove Fejér's theorem",
-                 body="Proves the `fejer` statement in `WantedExt/Analysis/FourierConvergenceWanted.lean`."),
+                 body=(body := "Proves the `fejer` statement in `WantedExt/Analysis/FourierConvergenceWanted.lean`."),
+                 html=inline(body)),
             # A distinctive short name in a title.
             pull(32, title="WantedExt: require a finite set in breuillard_green_tao_approximate_subgroup"),
             # A common word, an ambiguous name, a short name without its module, and one in prose.
-            pull(33, body="A Möbius map `S z = (a z + b) / (c z + d)` with `add` and `succ` from `A`."),
-            pull(34, body="The naive bound `naiveUpperThree` of `SquareBoundsWanted`, as green_tao_density says."),
+            pull(33, body=(body := "A Möbius map `S z = (a z + b) / (c z + d)` with `add` and `succ` from `A`."),
+                 html=inline(body)),
+            pull(34, body=(body := "The naive bound `naiveUpperThree` of `SquareBoundsWanted`, as green_tao_density "
+                                   "says."), html=inline(body)),
             # Another declaration that ends with the same name.
-            pull(35, body="Uses `Other.breuillard_green_tao_approximate_subgroup`."),
+            pull(35, body=(body := "Uses `Other.breuillard_green_tao_approximate_subgroup`."), html=inline(body)),
         ]
         self.assertEqual(next_task.taken(items, pulls), {"Algebra/t11": [31], "Algebra/t12": [32]})
         site = Site(tasks=tasks, open_pages=(pulls,), closed_pages=([],))
@@ -263,56 +282,65 @@ class Picking(unittest.TestCase):
                  item(72, "statement", "MathlibExt.AlgebraicGeometry.JacobianChallengeWanted.JacobianChallenge.genus"),
                  item(73, "statement", "MathlibExt.AlgebraicGeometry.FaltingsWanted.Faltings.genus")]
         self.assertEqual(next_task.taken(items, [pull(81, title="Define Faltings.genus")]), {"Algebra/t73": [81]})
-        longer = pull(85, body="`Geometry.JacobianChallengeWanted.JacobianChallenge.genus`")
+        body = "`Geometry.JacobianChallengeWanted.JacobianChallenge.genus`"
+        longer = pull(85, body=body, html=inline(body))
         self.assertEqual(next_task.taken(items, [longer]), {"Algebra/t71": [85]})
         # Two declarations end with `JacobianChallenge.genus` and three with `genus`, and a name in prose is no code.
         self.assertEqual(next_task.taken(items, [pull(82, title="Define JacobianChallenge.genus"),
-                                                 pull(83, body="`genus`"), pull(84, body="As in Faltings.genus.")]), {})
+                                                 pull(83, body="`genus`", html=inline("`genus`")),
+                                                 pull(84, body="As in Faltings.genus.")]), {})
 
-    def test_code_is_read_as_markdown_reads_it(self) -> None:
+    def test_code_is_what_github_renders_as_code(self) -> None:
         name = "breuillard_green_tao_approximate_subgroup"
         items = [item(91, "proof", f"MetaMathlibExt.{name}"), item(92, "proof", "MetaMathlibExt.green_tao_density")]
-        # The prose between a fenced block and a code span is no code, and the span after the block is.
-        prose = f"```lean\n#check Nat\n```\n\nUnlike {name}, this changes `foo`."
-        self.assertEqual(next_task.taken(items, [pull(101, body=prose)]), {})
-        claim = f"```lean\n#check Nat\n```\n\nProves `{name}`."
-        self.assertEqual(next_task.taken(items, [pull(104, body=claim)]), {"Algebra/t91": [104]})
-        # Fenced blocks of backticks or tildes, one left open, and a span of two backticks are code.
-        for body in (f"```lean\n#check {name}\n```", f"~~~\n{name}\n~~~", f"````\n{name}", f"Proves ``{name}``."):
-            self.assertEqual(next_task.taken(items, [pull(102, body=body)]), {"Algebra/t91": [102]}, body)
-        # A backtick fence's info string holds no backtick, so this line is a code span, not a fence.
-        self.assertEqual(next_task.taken(items, [pull(103, body="``` `green_tao_density` ```\nUnlike " + name)]),
-                         {"Algebra/t92": [103]})
-        # A code span over two lines of a paragraph, and fenced blocks in a quote and in a list, are code too.
-        for body in (f"Proves `theorem\n{name} : True`.", f"> ```lean\n> #check {name}\n> ```",
-                     f"- ```lean\n  #check {name}\n  ```"):
-            self.assertEqual(next_task.taken(items, [pull(105, body=body)]), {"Algebra/t91": [105]}, body)
-        # A fence indented by four spaces opens no block, and a block in a quote ends with the quote, so the prose after
-        # either is no code.
-        for body in (f"    ```lean\n{name}\n    ```", f"> ```lean\n> #check Nat\nUnlike {name}, this changes `foo`.",
-                     f"> ```lean\n> #check Nat\n\nUnlike {name}, this changes `foo`."):
-            self.assertEqual(next_task.taken(items, [pull(107, body=body)]), {}, body)
-        # Escaped backticks are prose, and a blank line ends a paragraph and any span in it.
-        for body in (f"Unlike \\`{name}\\`, this changes `foo`.", f"A ` here.\n\nUnlike {name}, this changes `foo`."):
-            self.assertEqual(next_task.taken(items, [pull(106, body=body)]), {}, body)
+        # Bodies with what GitHub renders them as (POST /markdown, gfm, in the repository).
+        lean = '<div class="highlight highlight-source-lean" dir="auto"><pre class="notranslate">'
+        code = '<code class="notranslate">'
+        # A code block, highlighted or not and in a quote in a list too, and a code span are code.
+        claims = [(f"```lean\n#check {name}\n```", f'{lean}<span class="pl-k">#check</span> {name}</pre></div>'),
+                  (f"~~~\n{name}\n~~~", f'<pre class="notranslate">{code}{name}\n</code></pre>'),
+                  (f"Proves ``{name}``.", f'<p dir="auto">Proves {code}{name}</code>.</p>'),
+                  (f"- > ~~~lean\n  > #check {name}\n  > ~~~\n  > Unlike other_name.",
+                   f'<ul dir="auto">\n<li>\n<blockquote>\n{lean}<span class="pl-k">#check</span> {name}</pre></div>\n'
+                   '<p dir="auto">Unlike other_name.</p>\n</blockquote>\n</li>\n</ul>')]
+        for body, html in claims:
+            self.assertEqual(next_task.taken(items, [pull(101, body=body, html=html)]), {"Algebra/t91": [101]}, body)
+        # The rest is prose, where the end of a declaration takes nothing: after a block in a list item, whose lines a
+        # tab may indent, after a code span whose backslash escapes nothing, and in a link's title or a block that
+        # GitHub renders as text. An HTML comment it does not render at all.
+        prose = [(f"-   ```lean\n    #check Nat\n    ```\n\nUnlike {name}, this changes `foo`.",
+                  f'<ul dir="auto">\n<li>\n{lean}<span class="pl-k">#check</span> Nat</pre></div>\n</li>\n</ul>\n'
+                  f'<p dir="auto">Unlike {name}, this changes {code}foo</code>.</p>'),
+                 (f"- ~~~lean\n\t#check Nat\n  ~~~\nUnlike {name}, this checks `foo`.",
+                  f'<ul dir="auto">\n<li>\n{lean}  <span class="pl-k">#check</span> Nat</pre></div>\n</li>\n</ul>\n'
+                  f'<p dir="auto">Unlike {name}, this checks {code}foo</code>.</p>'),
+                 (f"Use `C:\\` then {name}, not `foo`.",
+                  f'<p dir="auto">Use {code}C:\\</code> then {name}, not {code}foo</code>.</p>'),
+                 (f'[note](guide.md "see `{name}`")',
+                  f'<p dir="auto"><a href="guide.md" title="see `{name}`">note</a></p>'),
+                 (f"<details>\n```\n{name}\n```\n</details>",
+                  f"<details><summary>Details</summary>\n```\n{name}\n```\n</details>"),
+                 (f"<!-- Remove this example: `{name}`. -->", "")]
+        for body, html in prose:
+            self.assertEqual(next_task.taken(items, [pull(102, body=body, html=html)]), {}, body)
+        # The copy of a block that GitHub keeps in an attribute is no text either.
+        copied = f'<div data-snippet-clipboard-copy-content="{name}"><pre>{code}#check Nat</code></pre></div>'
+        self.assertEqual(next_task.taken(items, [pull(103, body="```\n#check Nat\n```", html=copied)]), {})
+        # A full declaration takes its task wherever the Markdown holds it, in a comment too; text either side of an
+        # element that does not run inline is two words; and entities are the characters they stand for.
+        for body, html in ((f"<!-- MetaMathlibExt.{name} -->", ""),
+                           ("Proves", f"<p>MetaMathlibExt.{name}</p><p>green_tao_density</p>"),
+                           ("Proves", f"<p>{code}MetaMathlibExt.{name.replace('_s', '&#95;s')}</code></p>")):
+            self.assertEqual(next_task.taken(items, [pull(104, body=body, html=html)]), {"Algebra/t91": [104]}, html)
 
-    def test_a_block_ends_with_the_list_item_or_quote_that_holds_it(self) -> None:
-        name = "breuillard_green_tao_approximate_subgroup"
-        items = [item(91, "proof", f"MetaMathlibExt.{name}"), item(92, "proof", "MetaMathlibExt.green_tao_density")]
-        # A list item's lines are indented to where its content starts, so is the fence that closes a block in it, and
-        # the block is code, a block opened on a later line of the item and a paragraph's lazy line included.
-        for body in (f"-   ```lean\n    #check {name}\n    ```",
-                     f"- Proves\nthe bound:\n  ```lean\n  #check {name}\n  ```"):
-            self.assertEqual(next_task.taken(items, [pull(111, body=body)]), {"Algebra/t91": [111]}, body)
-        # The prose after such a block is no code, nor is the line that ends the list item, and the block with it. A
-        # quote opening ends a paragraph, so a span does not run into it, and a list item that began with a blank
-        # line ends at a second one.
-        for body in (f"-   ```lean\n    #check Nat\n    ```\n\nUnlike {name}, this changes `foo`.",
-                     f"1.  ```lean\n    #check Nat\n    ```\n\nUnlike {name}, this changes `foo`.",
-                     f"-   ```lean\n    #check Nat\nUnlike {name}, this changes `foo`.",
-                     f"- Tests:\n\n  ```\n  #check Nat\nUnlike {name}, this changes `foo`.",
-                     f"A ` here\n> Unlike {name}, this changes `foo`.", f"-\n\n    ```\n    {name}\n    ```"):
-            self.assertEqual(next_task.taken(items, [pull(112, body=body)]), {}, body)
+    def test_a_titles_code_spans_are_read_as_commonmark_reads_them(self) -> None:
+        items = [item(45, "proof", "Ext.sum"), item(46, "proof", "Ext.sum?")]
+        # In a code span a backslash escapes nothing, so `C:\` is one; out of one, an escaped backslash leaves the
+        # backtick after it to open one, and an escaped backtick opens none.
+        for title in ("Use `C:\\` and `Ext.sum?`", "A \\\\`Ext.sum?` here", "``Ext.sum?``"):
+            self.assertEqual(next_task.taken(items, [pull(57, title=title)]), {"Algebra/t46": [57]}, title)
+        self.assertEqual(next_task.taken(items, [pull(58, title="Is it \\`Ext.sum?\\`")]),
+                         {"Algebra/t45": [58], "Algebra/t46": [58]})
 
     def test_a_prime_is_part_of_the_name(self) -> None:
         items = [item(41, "proof", "Ext.sum"), item(42, "proof", "Ext.sum'"), item(43, "proof", "Ext.prod"),
@@ -326,12 +354,15 @@ class Picking(unittest.TestCase):
         fejer = "MathlibExt.Analysis.FourierConvergenceWanted.Analysis.fejer"
         items = [item(45, "proof", "Ext.sum"), item(46, "proof", "Ext.sum?"), item(47, "proof", fejer)]
         # In code, "?" ends the name; in prose, it may end the sentence.
-        self.assertEqual(next_task.taken(items, [pull(54, body="Proves `Ext.sum?`.")]), {"Algebra/t46": [54]})
+        self.assertEqual(next_task.taken(items, [pull(54, body=(body := "Proves `Ext.sum?`."), html=inline(body))]),
+                         {"Algebra/t46": [54]})
         self.assertEqual(next_task.taken(items, [pull(55, body="Is it Ext.sum?")]),
                          {"Algebra/t45": [55], "Algebra/t46": [55]})
         # Emphasis around a name, Lean's `_root_.` prefix, and universes after it.
-        for body in (f"Proves _{fejer}_.", f"Proves `_root_.{fejer}`.", f"Proves `{fejer}.{{u}}`."):
-            self.assertEqual(next_task.taken(items, [pull(56, body=body)]), {"Algebra/t47": [56]}, body)
+        for body, html in ((f"Proves _{fejer}_.", f"<p>Proves <em>{fejer}</em>.</p>"),
+                           (f"Proves `_root_.{fejer}`.", inline(f"Proves `_root_.{fejer}`.")),
+                           (f"Proves `{fejer}.{{u}}`.", inline(f"Proves `{fejer}.{{u}}`."))):
+            self.assertEqual(next_task.taken(items, [pull(56, body=body, html=html)]), {"Algebra/t47": [56]}, body)
 
     def test_a_pull_request_merged_into_another_branch_takes_nothing(self) -> None:
         merged = [pull(61, body="Ext.p1", merged_at="2026-11-20T13:00:00Z", updated_at="2026-11-20T13:00:00Z",
@@ -364,7 +395,7 @@ class Requests(unittest.TestCase):
         self.assertIsNone(sent[0].get_header("Authorization"))
         for request in sent[1:]:
             self.assertEqual(request.get_header("Authorization"), "Bearer secret")
-            self.assertEqual(request.get_header("Accept"), "application/vnd.github+json")
+            self.assertEqual(request.get_header("Accept"), next_task.RENDERED)
         self.assertEqual(self.requests({"GITHUB_TOKEN": "other"})[1].get_header("Authorization"), "Bearer other")
 
     def test_without_a_token_nothing_is_sent(self) -> None:

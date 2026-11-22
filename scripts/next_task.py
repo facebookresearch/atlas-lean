@@ -13,15 +13,17 @@ Such a pull request takes a task when its title, body or branch name holds, as a
 - the task's article id (af_...), or one of its Lean declarations in full; or
 - the end of such a declaration, its last components (`Faltings.genus`) or its last one alone (`fejer` for
   `MathlibExt.Analysis.FourierConvergenceWanted.Analysis.fejer`), when no other task's declaration ends the same
-  way (two end with `JacobianChallenge.genus`, so that takes neither) and it is in the title, the branch name or code
-  (a fenced block or a code span, as Markdown reads them, in a quote or a list too). A last
+  way (two end with `JacobianChallenge.genus`, so that takes neither) and it is in the title, the branch name or code:
+  a code span of the title, or a code block or span of the body as GitHub renders it. A last
   component alone also has to hold an underscore or a digit, or come with another component of the declaration
   that at most five tasks' declarations share (`FourierConvergenceWanted`, say). Older pull requests name the
   declaration they prove that way; a common word alone, such as `c` or `add`, takes nothing.
 
 In code a name counts as written, but for a dot after it (`Foo.bar.{u}`); in prose it also counts without a stop after
 it and without the quotes or the emphasis around it. A prime is part of a name, and `_root_.` before one changes
-nothing.
+nothing. The pull requests are listed with their bodies as GitHub renders them, so that the code of a body is what
+GitHub shows as code: an HTML comment, a link's title, or a block that GitHub shows as text, is none. An article id
+or a full declaration counts wherever the body's Markdown holds it, though, and counts as written there.
 
 Of the free tasks it prints the next N: the statements still to write first, as they are what the results still
 waiting are waiting for, then the proofs, each in tasks.json's order, which is by article path. --json prints them
@@ -36,9 +38,11 @@ from __future__ import annotations
 
 import argparse
 import gzip
+import html.parser
 import json
 import os
 import re
+import string
 import sys
 import urllib.error
 import urllib.parse
@@ -65,22 +69,17 @@ RARE = 5
 # An article id, and a run of the characters a Lean name is written with, dots, primes, "!" and "?" included.
 ARTICLE_ID = re.compile(r"(?<![0-9A-Za-z])af_[0-9a-f]{24}(?![0-9A-Za-z])", re.IGNORECASE)
 WORD = re.compile(r"[\w.'!?]+")
-# Markdown code, as CommonMark reads it. A fence of three or more backticks or tildes opens a block, which a fence of
-# the same character and at least as long closes, as does the end of its container: a quote (>), or a list item, whose
-# lines are indented to where its content starts; each fence is indented by at most three spaces in its container. A
-# container ends at a line that is not in it, unless that line continues a paragraph (lazily), and a paragraph ends
-# where a block opens. In a paragraph, a run of backticks that no backslash escapes opens a code span, which the next
-# run of the same length closes. Code indented by four spaces or more opens no block: such code is read as prose,
-# which takes fewer tasks.
-QUOTE = re.compile(r" {0,3}> ?")
-# A list marker: a bullet, or a number of at most nine digits and "." or ")", before a space or the end of the line.
-MARKER = re.compile(r" {0,3}(?:[-*+]|\d{1,9}[.)])(?= |$)")
-FENCE = re.compile(r" {0,3}(`{3,}|~{3,})")
-# A thematic break, which opens no list item; a heading; and the line under a paragraph that makes it a heading.
-BREAK = re.compile(r" {0,3}([-*_])(?: *\1){2,} *$")
-HEADING = re.compile(r" {0,3}#{1,6}(?: |$)")
-UNDERLINE = re.compile(r" {0,3}(?:=+|-+) *$")
-SPAN = re.compile(r"(?<!`)(`+)(?!`)(.+?)(?<!`)\1(?!`)", re.DOTALL)
+# The API's media type for pull requests with their bodies as GitHub renders them (body_html), besides their Markdown.
+RENDERED = "application/vnd.github.full+json"
+# In a body as GitHub renders it, the elements that hold code, and those that run inside a line of text, so that the
+# text on either side of any other element is not one word.
+CODE = {"pre", "code"}
+INLINE = {"a", "abbr", "b", "bdi", "bdo", "cite", "code", "del", "dfn", "em", "g-emoji", "i", "img", "ins", "kbd",
+          "mark", "math-renderer", "q", "s", "samp", "small", "span", "strong", "sub", "sup", "time", "tt", "u", "var"}
+# In a title, as CommonMark reads it, a run of backticks that no backslash escapes opens a code span, which the next
+# run of the same length closes; a backslash escapes punctuation, but not in a span.
+TICKS = re.compile(r"`+")
+ESCAPABLE = frozenset(string.punctuation)
 
 
 class Failure(Exception):
@@ -100,12 +99,12 @@ class SameOriginRedirects(urllib.request.HTTPRedirectHandler):
 OPENER = urllib.request.build_opener(SameOriginRedirects)
 
 
-def request(url: str, token: str | None = None) -> bytes:
+def request(url: str, token: str | None = None, media: str = "application/vnd.github+json") -> bytes:
     """The body *url* answers with, compressed on the way when the server can; only a request to the GitHub API
-    sends *token*."""
+    sends *token*, and asks for *media*."""
     headers = {"User-Agent": "atlas-next-task", "Accept-Encoding": "gzip"}
     if url.startswith(API + "/"):
-        headers.update({"Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"})
+        headers.update({"Accept": media, "X-GitHub-Api-Version": "2022-11-28"})
         if token:
             headers["Authorization"] = f"Bearer {token}"
     try:
@@ -182,7 +181,7 @@ def pull_requests(repository: str, since: str | None, token: str | None) -> list
     def page(query: str, number: int) -> list[dict]:
         url = f"{API}/repos/{repository}/pulls?{query}&per_page={PER_PAGE}&page={number}"
         try:
-            rows = json.loads(request(url, token))
+            rows = json.loads(request(url, token, media=RENDERED))
         except ValueError:
             rows = None
         if not isinstance(rows, list):
@@ -235,120 +234,65 @@ def words(text: str, code: bool = False) -> set[str]:
     return found
 
 
-def indentation(line: str) -> int:
-    return len(line) - len(line.lstrip(" "))
-
-
-def fence_opening(line: str) -> re.Match[str] | None:
-    """The fence that opens a block at the start of *line*, if any: a backtick fence's info string holds no backtick."""
-    opening = FENCE.match(line)
-    if opening and not (opening.group(1)[0] == "`" and "`" in line[opening.end():]):
-        return opening
-    return None
-
-
-def markdown(text: str) -> tuple[list[str], str]:
-    """A Markdown text's code, as CommonMark reads it (its fenced blocks, a block left open running to the end of its
-    quote, of its list item or of the text, and its code spans, also over several lines of a paragraph), and its
-    prose, the rest."""
-    code, prose, paragraph, block = [], [], [], []
-    fence, depth_of_fence, indent_of_fence = None, 0, 0
-    # The open list items, by the column where their content starts, innermost last, and the quote depth they are at.
-    items: list[int] = []
-    depth_of_items = 0
-    # The quote depth of the open paragraph, which a deeper quote ends, and whether the last line opened a list item
-    # with nothing after its marker.
-    depth_of_paragraph, empty_item = 0, False
-
-    def close_paragraph() -> None:
-        # An escaped backtick is a backtick in the prose, so it opens no code span.
-        joined = "\n".join(paragraph).replace("\\`", "\0")
-        code.extend(match.group(2) for match in SPAN.finditer(joined))
-        prose.append(SPAN.sub(" ", joined))
-        paragraph.clear()
-
-    def interrupts(content: str, lazy: bool) -> bool:
-        """Whether *content* opens a block, which ends a paragraph instead of continuing it. In the paragraph's own
-        containers, a list item does only when something follows its marker and, numbered, it starts from 1."""
-        marker = MARKER.match(content)
-        return bool(fence_opening(content) or BREAK.match(content) or HEADING.match(content)
-                    or marker and (lazy or content[marker.end():].strip() != ""
-                                   and (not re.match(r" *\d", content) or re.match(r" *0*1[.)]", content))))
-
-    for line in text.splitlines():
-        depth = 0
-        # In a block, a ">" beyond the quotes that hold it is the block's own text.
-        while (fence is None or depth < depth_of_fence) and (quote := QUOTE.match(line)):
-            line, depth = line[quote.end():], depth + 1
-        if fence is not None:
-            if depth < depth_of_fence or (line.strip() and indentation(line) < indent_of_fence):
-                # The quote or the list item that held the block has ended, and the block with it.
-                code.append("\n".join(block))
-                fence = None
-                while quote := QUOTE.match(line):
-                    line, depth = line[quote.end():], depth + 1
-            elif re.fullmatch(rf" {{{indent_of_fence},{indent_of_fence + 3}}}{re.escape(fence[0])}{{{len(fence)},}}"
-                              r"[ \t]*", line):
-                code.append("\n".join(block))
-                fence = None
-                continue
+def code_spans(title: str) -> tuple[list[str], str]:
+    """A title's code spans, as CommonMark reads them (see TICKS), and its prose, the rest."""
+    code, prose, start, at = [], [], 0, 0
+    while at < len(title):
+        if title[at] == "\\" and title[at + 1:at + 2] in ESCAPABLE:
+            at += 2
+        elif title[at] == "`":
+            run = TICKS.match(title, at).group()
+            closing = next((match for match in TICKS.finditer(title, at + len(run)) if match.group() == run), None)
+            if closing is None:
+                at += len(run)
             else:
-                block.append(line)
-                continue
-        if not line.strip():
-            close_paragraph()
-            if depth != depth_of_items:
-                # A blank line outside the quote of the list items ends them.
-                items = []
-            elif empty_item:
-                # A list item that began with a blank line is empty, and a second one ends it.
-                items.pop()
-            empty_item = False
-            continue
-        empty_item = False
-        # The list items of the line's quote that its indentation reaches: a line that does not reach them all, or
-        # the paragraph's quote, can continue a paragraph only lazily.
-        open_items = items if depth == depth_of_items else []
-        reached = [column for column in open_items if indentation(line) >= column]
-        content = line[reached[-1] if reached else 0:]
-        lazy = len(reached) < len(open_items) or depth < depth_of_paragraph
-        if paragraph:
-            if depth == depth_of_paragraph and not lazy and UNDERLINE.match(content):
-                # The paragraph was a heading.
-                close_paragraph()
-                continue
-            if depth <= depth_of_paragraph and not interrupts(content, lazy):
-                paragraph.append(line)
-                continue
-            close_paragraph()
-        if depth != depth_of_items:
-            items, depth_of_items = [], depth
-        del items[len(reached):]
-        base = items[-1] if items else 0
-        # The list items the line opens, then what the innermost one holds.
-        while not BREAK.match(line[base:]) and (marker := MARKER.match(line[base:])):
-            after = line[base + marker.end():]
-            base += marker.end() + (indentation(after) if after.strip() and indentation(after) <= 4 else 1)
-            items.append(base)
-            empty_item = not after.strip()
-        rest = line[base:]
-        if opening := fence_opening(rest):
-            fence, depth_of_fence, indent_of_fence, block = opening.group(1), depth, base, []
-        elif HEADING.match(rest):
-            paragraph.append(line)
-            close_paragraph()
-        elif not rest.strip() or BREAK.match(rest):
-            pass
-        elif indentation(rest) >= 4:
-            # Indented code, read as prose, and never part of a code span.
-            prose.append(line)
+                prose.append(title[start:at])
+                code.append(title[at + len(run):closing.start()])
+                start = at = closing.end()
         else:
-            depth_of_paragraph = depth
-            paragraph.append(line)
-    close_paragraph()
-    if fence is not None:
-        code.append("\n".join(block))
-    return code, "\n".join(prose)
+            at += 1
+    prose.append(title[start:])
+    return code, " ".join(prose)
+
+
+class Rendered(html.parser.HTMLParser):
+    """A body as GitHub renders it: the text of each pre or code element, its code, and the rest of its text, its
+    prose. An attribute, such as a link's title, is neither."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.code: list[list[str]] = []
+        self.prose: list[str] = []
+        self.depth = 0
+
+    def handle_starttag(self, tag: str, attrs: list) -> None:
+        self.boundary(tag)
+        if tag in CODE:
+            if not self.depth:
+                self.code.append([])
+            self.depth += 1
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag in CODE and self.depth:
+            self.depth -= 1
+        self.boundary(tag)
+
+    def boundary(self, tag: str) -> None:
+        if tag not in INLINE:
+            self.handle_data("\n")
+
+    def handle_data(self, data: str) -> None:
+        (self.code[-1] if self.depth else self.prose).append(data)
+
+
+def rendered(body_html: object) -> tuple[list[str], str]:
+    """The code and the prose of a body that GitHub rendered as *body_html* (see Rendered): none if it rendered none."""
+    if not isinstance(body_html, str):
+        return [], ""
+    reader = Rendered()
+    reader.feed(body_html)
+    reader.close()
+    return ["".join(block) for block in reader.code], "".join(reader.prose)
 
 
 def declarations(item: dict) -> list[str]:
@@ -371,10 +315,11 @@ def taken(items: list[dict], pulls: list[dict]) -> dict[str, list[int]]:
     for pull in pulls:
         title, body, branch = (part if isinstance(part, str) else ""
                                for part in (pull.get("title"), pull.get("body"), (pull.get("head") or {}).get("ref")))
-        (title_code, title_prose), (body_code, body_prose) = markdown(title), markdown(body)
+        (title_code, title_prose), (body_code, body_prose) = code_spans(title), rendered(pull.get("body_html"))
         code = {word for block in title_code + body_code for word in words(block, code=True)}
         ids = {match.group(0).lower() for match in ARTICLE_ID.finditer("\n".join((title, body, branch)))}
-        every = words("\n".join((title_prose, body_prose, branch))) | code | ids
+        # An article id or a full declaration counts wherever the body's Markdown holds it, as written.
+        every = words("\n".join((title_prose, body_prose, branch))) | words(body, code=True) | code | ids
         for word in every:
             by_word.setdefault(word, set()).add(pull["number"])
         # The end of a declaration counts where code is meant: the title, the branch name and the code.
