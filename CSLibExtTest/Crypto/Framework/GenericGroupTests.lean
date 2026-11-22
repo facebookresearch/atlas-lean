@@ -22,6 +22,8 @@ identity label differs from the literal label `0`): exponentiation correctness a
 
 namespace Cslib.Crypto.Framework.GenericGroup.Tests
 
+instance : Fact (1 < 7) := ⟨by decide⟩
+
 /-- A concrete encoding on `ZMod 7` moving `0`: the transposition `(0 3)`. -/
 def enc7 : Equiv.Perm (ZMod 7) := Equiv.swap 0 3
 
