@@ -333,6 +333,16 @@ class Picking(unittest.TestCase):
                            ("Proves", f"<p>{code}MetaMathlibExt.{name.replace('_s', '&#95;s')}</code></p>")):
             self.assertEqual(next_task.taken(items, [pull(104, body=body, html=html)]), {"Algebra/t91": [104]}, html)
 
+    def test_code_or_an_image_in_a_word_does_not_join_its_two_sides(self) -> None:
+        items = [item(93, "proof", "Demo.map_id"), item(94, "proof", "Demo.map_left_id")]
+        # As GitHub renders them (POST /markdown, gfm, in the repository).
+        code = '<p dir="auto">Note the added qualifier in Demo.map<code class="notranslate">_left</code>_id.</p>'
+        image = ('<p dir="auto">Demo.map<a target="_blank" rel="noopener noreferrer" href="x.png">'
+                 '<img src="x.png" alt="x" style="max-width: 100%;"></a>_id</p>')
+        for body, html in (("Note the added qualifier in Demo.map`_left`_id.", code),
+                           ("Demo.map![x](x.png)_id", image)):
+            self.assertEqual(next_task.taken(items, [pull(105, body=body, html=html)]), {}, body)
+
     def test_a_titles_code_spans_are_read_as_commonmark_reads_them(self) -> None:
         items = [item(45, "proof", "Ext.sum"), item(46, "proof", "Ext.sum?")]
         # In a code span a backslash escapes nothing, so `C:\` is one; out of one, an escaped backslash leaves the

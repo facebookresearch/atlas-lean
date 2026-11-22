@@ -71,11 +71,11 @@ ARTICLE_ID = re.compile(r"(?<![0-9A-Za-z])af_[0-9a-f]{24}(?![0-9A-Za-z])", re.IG
 WORD = re.compile(r"[\w.'!?]+")
 # The API's media type for pull requests with their bodies as GitHub renders them (body_html), besides their Markdown.
 RENDERED = "application/vnd.github.full+json"
-# In a body as GitHub renders it, the elements that hold code, and those that run inside a line of text, so that the
-# text on either side of any other element is not one word.
+# In a body as GitHub renders it, the elements that hold code, and those that run inside a line of text, whose text
+# joins the text on either side of them; the text on either side of any other element, or of code, is not one word.
 CODE = {"pre", "code"}
-INLINE = {"a", "abbr", "b", "bdi", "bdo", "cite", "code", "del", "dfn", "em", "g-emoji", "i", "img", "ins", "kbd",
-          "mark", "math-renderer", "q", "s", "samp", "small", "span", "strong", "sub", "sup", "time", "tt", "u", "var"}
+INLINE = {"a", "abbr", "b", "bdi", "bdo", "cite", "code", "del", "dfn", "em", "g-emoji", "i", "ins", "kbd", "mark",
+          "math-renderer", "q", "s", "samp", "small", "span", "strong", "time", "tt", "u", "var"}
 # In a title, as CommonMark reads it, a run of backticks that no backslash escapes opens a code span, which the next
 # run of the same length closes; a backslash escapes punctuation, but not in a span.
 TICKS = re.compile(r"`+")
@@ -269,12 +269,15 @@ class Rendered(html.parser.HTMLParser):
         self.boundary(tag)
         if tag in CODE:
             if not self.depth:
+                self.prose.append(" ")
                 self.code.append([])
             self.depth += 1
 
     def handle_endtag(self, tag: str) -> None:
         if tag in CODE and self.depth:
             self.depth -= 1
+            if not self.depth:
+                self.prose.append(" ")
         self.boundary(tag)
 
     def boundary(self, tag: str) -> None:
