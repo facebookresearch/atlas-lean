@@ -26,15 +26,25 @@ This module defines the optimal level-`R` Selberg weights for an arbitrary
 
 namespace MathlibExt.SelbergSieve
 
-/-- The Selberg level set consists of the divisors of `s.prodPrimes` at most `R`. -/
+/-- **Selberg level set.** For a bounding sieve whose sifting primes have product $P$ and a
+natural number $R$, the level-$R$ set is the set of divisors $l$ of $P$ with $l \le R$. -/
 def levelSet (s : BoundingSieve) (R : ℕ) : Finset ℕ :=
   s.prodPrimes.divisors.filter fun l ↦ l ≤ R
 
-/-- The Selberg level sum is the sum of `s.selbergTerms` over the level set. -/
+/-- **Selberg level sum.** For a bounding sieve whose sifting primes have product $P$, with
+multiplicative density function $\nu$, and a natural number $R$, the level-$R$ Selberg sum is
+$G = \sum_{l \mid P,\ l \le R} g(l)$, where $g(l) = \nu(l) \prod_{p \mid l} (1 - \nu(p))^{-1}$,
+the product running over the primes $p$ dividing $l$. -/
 noncomputable def levelSum (s : BoundingSieve) (R : ℕ) : ℝ :=
   ∑ l ∈ levelSet s R, s.selbergTerms l
 
-/-- The normalized Selberg `y`-coefficient at `l`, extended by zero off the level set. -/
+/-- **Normalized Selberg coefficients.** Let $s$ be a bounding sieve with density function $\nu$
+and Selberg terms $g(l) = \nu(l) \prod_{p \mid l} (1 - \nu(p))^{-1}$, the product running over
+the primes $p$ dividing $l$, and let $R$ be a natural number. Write $D_R$ for the level set of $s$
+at level $R$ (the divisors of the sifting product of $s$ that are at most $R$) and
+$G(R) = \sum_{l \in D_R} g(l)$ for the level sum. The normalized Selberg coefficient of $s$ at
+level $R$ is the function on natural numbers given by $y_l = \mu(l)\, g(l) / G(R)$ for
+$l \in D_R$ and $y_l = 0$ otherwise, where $\mu$ is the Möbius function. -/
 noncomputable def levelY
     (s : BoundingSieve) (R l : ℕ) : ℝ :=
   if l ∈ levelSet s R then
@@ -42,15 +52,21 @@ noncomputable def levelY
       levelSum s R
   else 0
 
-/-- The level-`R` Selberg weights obtained from the normalized `y`-coefficients by
-Moebius inversion. -/
+/-- **Selberg sieve weights.** Let $s$ be a bounding sieve with sifting product $P$ (the product
+of its sifting primes) and density function $\nu$, let $R$ be a natural number, and let $y_m$
+denote the normalized Selberg coefficients of $s$ at level $R$. For a natural number $d$, the
+level-$R$ Selberg weight of $s$ at $d$ is
+$$\lambda_d = \nu(d)^{-1} \sum_{m \mid P,\ d \mid m} \mu(m/d)\, y_m,$$
+where $\mu$ is the Möbius function, $m$ runs over the divisors of $P$, and $\nu(d)^{-1}$ is read
+as $0$ when $\nu(d) = 0$. -/
 noncomputable def levelWeights
     (s : BoundingSieve) (R d : ℕ) : ℝ :=
   (s.nu d)⁻¹ * ∑ m ∈ s.prodPrimes.divisors,
     if d ∣ m then ((ArithmeticFunction.moebius (m / d) : ℤ) : ℝ) *
       levelY s R m else 0
 
-/-- The Selberg level sum is at least one when the level is at least one. -/
+/-- **The Selberg level sum is at least one.** For every bounding sieve and every natural number
+$R \ge 1$, the level-$R$ Selberg sum is at least $1$. -/
 theorem levelSum_ge_one (s : BoundingSieve) (R : ℕ)
     (hR : 1 ≤ R) : 1 ≤ levelSum s R := by
   have hP0 := BoundingSieve.prodPrimes_ne_zero (s := s)
@@ -153,7 +169,10 @@ private theorem sum_moebius_div_filter_dvd (m l : ℕ) (hm : m ≠ 0) :
       exact hlm dvd_rfl
     simp [hne]
 
-/-- The divisor sum of the level weights diagonalizes to the normalized `y`-coefficient. -/
+/-- **Inversion formula for the Selberg level weights.** For a bounding sieve whose sifting primes
+have product $P$, with density function $\nu$, a natural number $R$ and a divisor $l$ of $P$, the
+level-$R$ Selberg weights $\lambda_d$ satisfy $\sum_{d \mid P,\ l \mid d} \nu(d)\,\lambda_d = y_l$,
+where $y_l$ is the normalized level-$R$ Selberg $y$-coefficient at $l$. -/
 theorem levelWeights_inner (s : BoundingSieve) (R l : ℕ)
     (hl : l ∣ s.prodPrimes) :
     (∑ d ∈ s.prodPrimes.divisors,
@@ -229,7 +248,8 @@ theorem levelWeights_inner (s : BoundingSieve) (R l : ℕ)
   rw [Finset.sum_congr rfl hinner, Finset.sum_ite_eq']
   simp [hlD]
 
-/-- The level-`R` Selberg weight at `1` is `1` when `1 ≤ R`. -/
+/-- **The Selberg level weight at one.** For every bounding sieve and every natural number
+$R \ge 1$, the level-$R$ Selberg weight at $1$ equals $1$. -/
 theorem levelWeights_one (s : BoundingSieve) (R : ℕ)
     (hR : 1 ≤ R) : levelWeights s R 1 = 1 := by
   have hG1 := levelSum_ge_one s R hR
@@ -291,7 +311,12 @@ theorem levelWeights_one (s : BoundingSieve) (R : ℕ)
   change levelSum s R / levelSum s R = 1
   exact div_self hG0
 
-/-- The main sum of the squared level weights is the reciprocal of the level sum. -/
+/-- **Main term of the Selberg level weights.** For a bounding sieve whose sifting primes have
+product $P$, with density function $\nu$, and a natural number $R \ge 1$, let $\lambda_d$ be the
+level-$R$ Selberg weights and
+$\Lambda_d = \sum_{d_1, d_2 \mid d,\ \operatorname{lcm}(d_1, d_2) = d} \lambda_{d_1} \lambda_{d_2}$
+their $\Lambda^2$ coefficients. Then $\sum_{d \mid P} \Lambda_d\,\nu(d) = 1/G$, where $G$ is the
+level-$R$ Selberg sum. -/
 theorem levelWeights_mainSum (s : BoundingSieve) (R : ℕ)
     (hR : 1 ≤ R) :
     s.mainSum (BoundingSieve.lambdaSquared (levelWeights s R)) =
@@ -353,7 +378,9 @@ theorem levelWeights_mainSum (s : BoundingSieve) (R : ℕ)
     1 / levelSum s R
   field_simp
 
-/-- The absolute value of `s.nu d` times the level weight at a divisor `d` is at most one. -/
+/-- **Weighted bound for the Selberg level weights.** For a bounding sieve whose sifting primes
+have product $P$, with density function $\nu$, a natural number $R \ge 1$ and a divisor $d$ of
+$P$, the level-$R$ Selberg weight $\lambda_d$ at $d$ satisfies $|\nu(d)\,\lambda_d| \le 1$. -/
 theorem levelWeights_nu_mul_abs_le
     (s : BoundingSieve) (R d : ℕ) (hR : 1 ≤ R) (hd : d ∣ s.prodPrimes) :
     |s.nu d * levelWeights s R d| ≤ 1 := by
@@ -637,8 +664,9 @@ private theorem levelWeights_nu_mul_abs_le_filter
     _ = (∑ m ∈ (levelSet s R).filter (fun n ↦ d ∣ n),
         s.selbergTerms m) / levelSum s R := by rw [Finset.sum_div]
 
-/-- The absolute value of a level-`R` Selberg weight at a divisor of `s.prodPrimes` is at
-most one. -/
+/-- **Selberg level weights are bounded by one.** For a bounding sieve whose sifting primes have
+product $P$, a natural number $R \ge 1$ and a divisor $d$ of $P$, the level-$R$ Selberg weight
+$\lambda_d$ at $d$ satisfies $|\lambda_d| \le 1$. -/
 theorem levelWeights_abs_le
     (s : BoundingSieve) (R d : ℕ) (hR : 1 ≤ R) (hd : d ∣ s.prodPrimes) :
     |levelWeights s R d| ≤ 1 := by
@@ -682,7 +710,8 @@ private theorem levelWeights_abs_le_nat
     _ = (s.nu d)⁻¹ := one_div _
     _ ≤ (d : ℝ) := hinv
 
-/-- A nonzero level-`R` Selberg weight is supported at an integer at most `R`. -/
+/-- **Support of the Selberg level weights.** For every bounding sieve and all natural numbers $R$
+and $d$, if the level-$R$ Selberg weight $\lambda_d$ at $d$ is nonzero, then $d \le R$. -/
 theorem levelWeights_support
     (s : BoundingSieve) (R d : ℕ)
     (hd : levelWeights s R d ≠ 0) : d ≤ R := by
@@ -818,8 +847,13 @@ private theorem lambdaSquared_support
   · rw [ite_eq_right heq] at hterm
     exact (hterm rfl).elim
 
-/-- Under linear bounds for `s.nu` and the remainders, the level-weight error sum is at most
-`R ^ 12`. -/
+/-- **Error bound for the Selberg level weights.** Take a bounding sieve whose sifting primes have
+product $P$, with density function $\nu$ and remainders $r_d = A_d - \nu(d) X$, where $A_d$ is the
+total weight of the multiples of $d$ in the set to be sifted and $X$ approximates its total
+weight. Let $R \ge 1$ be a natural number and suppose that $d\,\nu(d) \ge 1$ and $|r_d| \le d$ for
+every divisor $d$ of $P$. Let $\lambda_d$ be the level-$R$ Selberg weights and
+$\Lambda_d = \sum_{d_1, d_2 \mid d,\ \operatorname{lcm}(d_1, d_2) = d} \lambda_{d_1} \lambda_{d_2}$
+their $\Lambda^2$ coefficients. Then $\sum_{d \mid P} |\Lambda_d|\,|r_d| \le R^{12}$. -/
 theorem levelWeights_errSum_le
     (s : BoundingSieve) (R : ℕ) (hR : 1 ≤ R)
     (hnu : ∀ d : ℕ, d ∣ s.prodPrimes → 1 ≤ (d : ℝ) * s.nu d)

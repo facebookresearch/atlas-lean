@@ -78,7 +78,10 @@ noncomputable def psi (x z : ℂ) : ℂ :=
   ∑' (j : ℕ), if ∏ i ∈ Finset.range (j + 1), (z + ((i + 1 : ℕ) : ℂ)) = (0 : ℂ) then (0 : ℂ) else
       ((-1 : ℂ) ^ j * x ^ (j + 1) / ∏ i ∈ Finset.range (j + 1), (z + ((i + 1 : ℕ) : ℂ)))
 
-/-- `fCoeff` is the `a = 0, b = 1` case of Ramanujan's generalized Bell function. -/
+/-- **Entry 3 coefficients as generalized Bell values.** Let $F$ be Ramanujan's generalized Bell
+function. For every complex number $x$ and every natural number $j$, let
+$f(x, j) = e^{-x} \sum_{k=0}^{\infty} \frac{(k+1)^j x^{k+1}}{k!}$. Then
+$f(x, j) = F(0, 1, x; j)$. -/
 theorem fCoeff_eq_generalizedBellGenerating (x : ℂ) (j : ℕ) :
     fCoeff x j =
       Entry9IiGeneralizedbellgeneratingDefining.generalizedBellGenerating 0 1 x j := by
@@ -99,8 +102,13 @@ private lemma prod_entry9_eq (z : ℂ) (j : ℕ) :
   rw [hcast]
   ring
 
-/-- `psi` is pointwise `entry9_P 0 1`: the guard in `psi` is redundant because
-complex division by zero is already zero. -/
+/-- **Ramanujan's factorial series as the Entry 9 product series at $a = 0$, $b = 1$.** Let $P$ be
+Ramanujan's Entry 9(i) product series. For all complex numbers $x$ and $z$, let
+$\psi(x, z) = \sum_{j=0}^{\infty} t_j$, where $t_j = \frac{(-1)^j x^{j+1}}{(z+1)(z+2)\cdots(z+j+1)}$
+when the product in the denominator is nonzero and $t_j = 0$ otherwise. Then
+$\psi(x, z) = P(0, 1, x; z)$.
+
+Since division by zero is taken to give zero, the case distinction in $t_j$ changes nothing. -/
 theorem psi_eq_entry9_P (x z : ℂ) :
     psi x z = Entry9Odd.entry9_P 0 1 x z := by
   unfold psi Entry9Odd.entry9_P
@@ -114,9 +122,16 @@ theorem psi_eq_entry9_P (x z : ℂ) :
     simp
   · rw [ite_eq_right h, ← hprod]
 
-/-- `ramanujan_part1_ch3_entry3` without the hypothesis `x ≠ 0`. It follows from
-`Entry9Odd.ramanujan_part1_ch3_entry9_odd` with `a = 0, b = 1`, which has no nonzero
-hypothesis on `x`. -/
+/-- **Asymptotic expansion of Ramanujan's factorial series, for every $x$.** Let $x$ be a complex
+number. For natural numbers $j$ let
+$f(x, j) = e^{-x} \sum_{k=0}^{\infty} \frac{(k+1)^j x^{k+1}}{k!}$, and for complex $z$ let
+$\psi(x, z) = \sum_{j=0}^{\infty} t_j$, where
+$t_j = \frac{(-1)^j x^{j+1}}{(z+1)(z+2)\cdots(z+j+1)}$ when the denominator is nonzero and
+$t_j = 0$ otherwise. Let $\varepsilon$ be a real number with $0 < \varepsilon < \pi$, and let
+$S_\varepsilon$ be the set of complex $z$ whose principal argument satisfies
+$-\pi + \varepsilon \le \arg z \le \pi - \varepsilon$. Then for every natural number $N$,
+$$\psi(x, z) - \sum_{j=0}^{N} \frac{(-1)^j f(x, j)}{z^{j+1}} = O\left(\frac{1}{z^{N+2}}\right)$$
+as $|z| \to \infty$ with $z \in S_\varepsilon$. -/
 theorem ramanujan_part1_ch3_entry3_general (x : ℂ)
     (ε : ℝ) (hε_pos : 0 < ε) (hε_lt : ε < Real.pi) (N : ℕ) :
     Asymptotics.IsBigO (Filter.cocompact ℂ ⊓ Filter.principal (sector ε))
@@ -157,12 +172,21 @@ theorem ramanujan_part1_ch3_entry3_general (x : ℂ)
   rw [hLHS]
   exact h9.neg_left
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 3, printed p. 47 / PDF p.
-    57.
+/-- **Ramanujan's asymptotic expansion of a factorial series.** Let $x$ be a nonzero complex
+number. For natural numbers $j$ let
+$f(x, j) = e^{-x} \sum_{k=0}^{\infty} \frac{(k+1)^j x^{k+1}}{k!}$, and for complex $z$ let
+$\psi(x, z) = \sum_{j=0}^{\infty} t_j$, where
+$t_j = \frac{(-1)^j x^{j+1}}{(z+1)(z+2)\cdots(z+j+1)}$ when the denominator is nonzero and
+$t_j = 0$ otherwise. Let $\varepsilon$ be a real number with $0 < \varepsilon < \pi$, and let
+$S_\varepsilon$ be the set of complex $z$ whose principal argument satisfies
+$-\pi + \varepsilon \le \arg z \le \pi - \varepsilon$. Then for every natural number $N$,
+$$\psi(x, z) - \sum_{j=0}^{N} \frac{(-1)^j f(x, j)}{z^{j+1}} = O\left(\frac{1}{z^{N+2}}\right)$$
+as $|z| \to \infty$ with $z \in S_\varepsilon$.
 
-Proves `Wanted` entry `ramanujan_part1_ch3_entry3`. It follows from
-`ramanujan_part1_ch3_entry3_general`; the hypothesis `x ≠ 0` is unused and keeps the
-source's shape.
+The hypothesis $x \neq 0$ is not needed for the proof; it is kept to match the source.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 3, printed p. 47 / PDF p.
+    57.
 -/
 theorem ramanujan_part1_ch3_entry3 (x : ℂ)
     (hx : x ≠ 0) (ε : ℝ) (hε_pos : 0 < ε) (hε_lt : ε < Real.pi) (N : ℕ) :
