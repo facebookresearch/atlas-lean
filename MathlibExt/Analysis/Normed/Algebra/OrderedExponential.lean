@@ -11,6 +11,7 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Exponential
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Topology.UniformSpace.UniformConvergence
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import MathlibExt.Analysis.Normed.Algebra.ExponentialLimit
 
 /-!
@@ -64,114 +65,6 @@ def IsOrderedExp (Y U : ℝ → 𝔸) (t : ℝ) : Prop :=
 noncomputable def gridProd (Y : ℝ → 𝔸) (t : ℝ) (M : ℕ) : 𝔸 :=
   ((List.range ⌈t * M⌉₊).map fun g : ℕ => 1 + (M : ℝ)⁻¹ • Y (g / M)).prod
 
-private lemma eq_of_forall_right_small_aux {E : Type*} [NormedAddCommGroup E] {G : ℝ → E}
-    {a b : ℝ} (hab : a ≤ b) (hG : ContinuousOn G (Icc a b))
-    (hd : ∀ x ∈ Ico a b, ∀ ε > 0, ∀ᶠ y in 𝓝[>] x, ‖G y - G x‖ ≤ ε * (y - x)) :
-    G b = G a := by
-  have key : ∀ ε > 0, ‖G b - G a‖ ≤ ε * (b - a) := by
-    intro ε hε
-    set s : Set ℝ := {x | ‖G x - G a‖ ≤ ε * (x - a)} with hs_def
-    have hs : IsClosed (s ∩ Icc a b) := by
-      have h := ContinuousOn.preimage_isClosed_of_isClosed
-        (f := fun x => ε * (x - a) - ‖G x - G a‖) (t := Ici 0)
-        ((continuousOn_const.mul (continuousOn_id.sub continuousOn_const)).sub
-          ((hG.sub continuousOn_const).norm)) isClosed_Icc isClosed_Ici
-      convert h using 1
-      ext x
-      simp only [hs_def, mem_inter_iff, mem_preimage, mem_Ici, sub_nonneg]
-      exact and_comm
-    have hsub : Icc a b ⊆ s := by
-      refine IsClosed.Icc_subset_of_forall_exists_gt hs (by simp [hs_def]) ?_
-      intro x hx y hy
-      obtain ⟨z, hz1, hz2⟩ := ((hd x hx.2 ε hε).and (Ioc_mem_nhdsGT hy)).exists
-      refine ⟨z, ?_, hz2⟩
-      have hxa : ‖G x - G a‖ ≤ ε * (x - a) := hx.1
-      show ‖G z - G a‖ ≤ ε * (z - a)
-      calc ‖G z - G a‖ = ‖(G z - G x) + (G x - G a)‖ := by rw [sub_add_sub_cancel]
-        _ ≤ ‖G z - G x‖ + ‖G x - G a‖ := norm_add_le _ _
-        _ ≤ ε * (z - x) + ε * (x - a) := add_le_add hz1 hxa
-        _ = ε * (z - a) := by ring
-    exact hsub ⟨hab, le_rfl⟩
-  by_contra hne
-  have hpos : 0 < ‖G b - G a‖ := norm_pos_iff.2 (sub_ne_zero.2 hne)
-  have hba : 0 ≤ b - a := sub_nonneg.2 hab
-  have h := key (‖G b - G a‖ / (b - a + 1)) (by positivity)
-  rw [div_mul_eq_mul_div, le_div_iff₀ (by linarith)] at h
-  nlinarith
-
-private lemma continuousOn_primitive_aux {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    {f : ℝ → E} {a b K : ℝ} (hf : IntervalIntegrable f volume a b)
-    (hK : ∀ x ∈ Icc a b, ‖f x‖ ≤ K) :
-    ContinuousOn (fun x => ∫ r in a..x, f r) (Icc a b) := by
-  rw [Metric.continuousOn_iff]
-  intro x hx ε hε
-  have hK1 : 0 < |K| + 1 := by positivity
-  refine ⟨ε / (|K| + 1), by positivity, fun y hy hxy => ?_⟩
-  have hsub : ∀ z ∈ Icc a b, uIcc a z ⊆ uIcc a b := fun z hz =>
-    uIcc_subset_uIcc left_mem_uIcc (Icc_subset_uIcc hz)
-  rw [dist_eq_norm, intervalIntegral.integral_interval_sub_left (hf.mono_set (hsub y hy))
-    (hf.mono_set (hsub x hx))]
-  have hb : ∀ r ∈ uIoc x y, ‖f r‖ ≤ |K| := fun r hr =>
-    (hK r (uIcc_subset_Icc hx hy (uIoc_subset_uIcc hr))).trans (le_abs_self K)
-  have hyx : |y - x| < ε / (|K| + 1) := by rwa [← Real.dist_eq]
-  calc ‖∫ r in x..y, f r‖ ≤ |K| * |y - x| :=
-        intervalIntegral.norm_integral_le_of_norm_le_const hb
-    _ ≤ |K| * (ε / (|K| + 1)) := mul_le_mul_of_nonneg_left hyx.le (abs_nonneg K)
-    _ < ε := by
-        rw [mul_div_assoc', div_lt_iff₀ hK1]
-        nlinarith [abs_nonneg K]
-
-private lemma integral_eq_sub_of_hasDerivAt_aux {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℝ E] [CompleteSpace E] {F f : ℝ → E} {a b : ℝ} (hab : a ≤ b)
-    (hF : ∀ x ∈ Icc a b, HasDerivAt F (f x) x) (hf : ContinuousOn f (Icc a b)) :
-    ∫ x in a..b, f x = F b - F a := by
-  have hfi : IntervalIntegrable f volume a b := hf.intervalIntegrable_of_Icc hab
-  obtain ⟨K, hK⟩ := isCompact_Icc.exists_bound_of_continuousOn hf
-  have hsub : ∀ z ∈ Icc a b, uIcc a z ⊆ uIcc a b := fun z hz =>
-    uIcc_subset_uIcc left_mem_uIcc (Icc_subset_uIcc hz)
-  have hFc : ContinuousOn F (Icc a b) := fun x hx => (hF x hx).continuousAt.continuousWithinAt
-  have hGc : ContinuousOn (fun x => F x - ∫ r in a..x, f r) (Icc a b) :=
-    hFc.sub (continuousOn_primitive_aux hfi hK)
-  have hd : ∀ x ∈ Ico a b, ∀ ε > 0, ∀ᶠ y in 𝓝[>] x,
-      ‖(F y - ∫ r in a..y, f r) - (F x - ∫ r in a..x, f r)‖ ≤ ε * (y - x) := by
-    intro x hx ε hε
-    have hxI : x ∈ Icc a b := Ico_subset_Icc_self hx
-    have h1 := (hasDerivAt_iff_isLittleO.1 (hF x hxI)).def (half_pos hε)
-    obtain ⟨δ, hδ, hδf⟩ := Metric.continuousWithinAt_iff.1 (hf x hxI) (ε / 2) (half_pos hε)
-    have hlt : x < min (x + δ) b := lt_min (by linarith) hx.2
-    filter_upwards [h1.filter_mono nhdsWithin_le_nhds, Ioo_mem_nhdsGT hlt] with y hy1 hy2
-    have hxy : x < y := hy2.1
-    have hyb : y < b := hy2.2.trans_le (min_le_right _ _)
-    have hyδ : y < x + δ := hy2.2.trans_le (min_le_left _ _)
-    have hyI : y ∈ Icc a b := ⟨hx.1.trans hxy.le, hyb.le⟩
-    have hint : IntervalIntegrable f volume x y :=
-      hfi.mono_set (uIcc_subset_uIcc (Icc_subset_uIcc hxI) (Icc_subset_uIcc hyI))
-    have hdiff := intervalIntegral.integral_interval_sub_left (hfi.mono_set (hsub y hyI))
-      (hfi.mono_set (hsub x hxI))
-    have hGyx : (F y - ∫ r in a..y, f r) - (F x - ∫ r in a..x, f r) =
-        (F y - F x - (y - x) • f x) - ∫ r in x..y, (f r - f x) := by
-      rw [intervalIntegral.integral_sub hint intervalIntegrable_const,
-        intervalIntegral.integral_const, ← hdiff]
-      abel
-    have h2 : ‖∫ r in x..y, (f r - f x)‖ ≤ ε / 2 * |y - x| := by
-      refine intervalIntegral.norm_integral_le_of_norm_le_const fun r hr => ?_
-      rw [uIoc_of_le hxy.le] at hr
-      have hrI : r ∈ Icc a b := ⟨hx.1.trans hr.1.le, hr.2.trans hyb.le⟩
-      have hrd : dist r x < δ := by
-        rw [Real.dist_eq, abs_of_pos (sub_pos.2 hr.1)]
-        linarith [hr.2]
-      rw [← dist_eq_norm]
-      exact (hδf hrI hrd).le
-    rw [hGyx]
-    calc ‖(F y - F x - (y - x) • f x) - ∫ r in x..y, (f r - f x)‖
-        ≤ ‖F y - F x - (y - x) • f x‖ + ‖∫ r in x..y, (f r - f x)‖ := norm_sub_le _ _
-      _ ≤ ε / 2 * ‖y - x‖ + ε / 2 * |y - x| := add_le_add hy1 h2
-      _ = ε * (y - x) := by rw [Real.norm_eq_abs, abs_of_pos (sub_pos.2 hxy)]; ring
-  have hGb := eq_of_forall_right_small_aux hab hGc hd
-  simp only [intervalIntegral.integral_same, sub_zero] at hGb
-  rw [← hGb]
-  abel
-
 private lemma hasDerivAt_mul_left_aux {R : Type*} [NormedRing R] [NormedAlgebra ℝ R]
     {f : ℝ → R} {f' : R} {x : ℝ} (c : R)
     (hf : HasDerivAt f f' x) : HasDerivAt (fun y => c * f y) (c * f') x := by
@@ -191,15 +84,17 @@ private lemma continuous_exp_smul_aux {R : Type*} [NormedRing R] [NormedAlgebra 
 private lemma integral_exp_smul_aux {R : Type*} [NormedRing R] [NormedAlgebra ℝ R]
     [CompleteSpace R] (A : R) {a b : ℝ} (hab : a ≤ b) :
     ∫ r in a..b, exp (r • A) * A = exp (b • A) - exp (a • A) :=
-  integral_eq_sub_of_hasDerivAt_aux hab (fun x _ => hasDerivAt_exp_smul_aux A x)
-    ((continuous_exp_smul_aux A).mul continuous_const).continuousOn
+  intervalIntegral.integral_eq_sub_of_hasDerivAt (fun x _ => hasDerivAt_exp_smul_aux A x)
+    (((continuous_exp_smul_aux A).mul continuous_const).continuousOn.intervalIntegrable_of_Icc hab)
 
 private lemma integral_mul_exp_smul_aux {R : Type*} [NormedRing R] [NormedAlgebra ℝ R]
     [CompleteSpace R] (c A : R) {a b : ℝ} (hab : a ≤ b) :
     ∫ r in a..b, c * (exp (r • A) * A) = c * exp (b • A) - c * exp (a • A) :=
-  integral_eq_sub_of_hasDerivAt_aux (F := fun u => c * exp (u • A)) hab
+  intervalIntegral.integral_eq_sub_of_hasDerivAt (f := fun u => c * exp (u • A))
     (fun x _ => hasDerivAt_mul_left_aux c (hasDerivAt_exp_smul_aux A x))
-    (continuous_const.mul ((continuous_exp_smul_aux A).mul continuous_const)).continuousOn
+    ((continuous_const.mul
+      ((continuous_exp_smul_aux A).mul continuous_const)).continuousOn.intervalIntegrable_of_Icc
+        hab)
 
 private lemma integral_real_exp_aux {L s : ℝ} (hs : 0 ≤ s) :
     ∫ r in (0 : ℝ)..s, Real.exp (r * L) * L = Real.exp (s * L) - 1 := by
@@ -211,7 +106,8 @@ private lemma integral_real_exp_aux {L s : ℝ} (hs : 0 ≤ s) :
     exact h
   have hc : Continuous fun u : ℝ => Real.exp (u * L) * L :=
     (Real.continuous_exp.comp (continuous_id.mul continuous_const)).mul continuous_const
-  rw [integral_eq_sub_of_hasDerivAt_aux hs (fun x _ => hd x) hc.continuousOn]
+  rw [intervalIntegral.integral_eq_sub_of_hasDerivAt (fun x _ => hd x)
+    (hc.continuousOn.intervalIntegrable_of_Icc hs)]
   simp
 
 private lemma norm_integral_mul_le_aux {R : Type*} [NormedRing R] [NormedAlgebra ℝ R]
@@ -318,12 +214,9 @@ theorem existsUnique_isOrderedExp {Y : ℝ → 𝔸} {t : ℝ} (ht : 0 ≤ t)
     induction n with
     | zero => exact continuousOn_const.congr fun s _ => hu0 s
     | succ n ih =>
-      obtain ⟨K, hK⟩ := isCompact_Icc.exists_bound_of_continuousOn ih
-      refine (continuousOn_const.add (continuousOn_primitive_aux (K := K * C)
-        (hmulI _ ih t ⟨ht, le_rfl⟩) fun r hr => ?_)).congr fun s _ => husucc n s
-      calc ‖u n r * Y r‖ ≤ ‖u n r‖ * ‖Y r‖ := norm_mul_le _ _
-        _ ≤ K * C := mul_le_mul (hK r hr) (hYC r hr) (norm_nonneg _)
-            ((norm_nonneg _).trans (hK r hr))
+      refine (continuousOn_const.add (uIcc_of_le ht ▸
+        intervalIntegral.continuousOn_primitive_interval' (hmulI _ ih t ⟨ht, le_rfl⟩)
+          left_mem_uIcc)).congr fun s _ => husucc n s
   have hdiff : ∀ n : ℕ, ∀ s ∈ Icc 0 t,
       ‖u (n + 1) s - u n s‖ ≤ (1 / 2) ^ (n + 1) * Real.exp (s * (2 * C + 1)) := by
     intro n
