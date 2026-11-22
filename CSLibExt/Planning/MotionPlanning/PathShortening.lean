@@ -106,20 +106,24 @@ theorem polyLen_append_cons (a : plane) (rest : List plane) :
     rw [ih]
     ring
 
-/-- (L) Local shortening at an interior non-between bend. -/
-theorem local_shortening (F : Set plane) (l₁ l₂ : List plane) (a b c : plane)
+/-- (L-core) Shared shortening core: shortcut a non-between bend given a
+locally convex feasible neighborhood. Both `local_shortening` and
+`local_shortening_of_locally_convex` derive from this lemma. -/
+theorem local_shortening_core (F : Set plane) (l₁ l₂ : List plane) (a b c : plane)
     (hfeas : Feasible F (l₁ ++ [a, b, c] ++ l₂))
-    (hb : b ∈ interior F) (hbc : ¬ Wbtw ℝ a b c) (ε : ℝ) (hε : 0 < ε) :
+    (hconv : ∃ U ∈ nhds b, Convex ℝ (U ∩ F))
+    (hbc : ¬ Wbtw ℝ a b c) (ε : ℝ) (hε : 0 < ε) :
     ∃ a' c' : plane, a' ∈ segment ℝ a b ∧ c' ∈ segment ℝ b c ∧
       dist a' b < ε ∧ dist c' b < ε ∧
       Feasible F (l₁ ++ [a, a', c', c] ++ l₂) ∧
       polyLen (l₁ ++ [a, a', c', c] ++ l₂) < polyLen (l₁ ++ [a, b, c] ++ l₂) := by
-  have hab_ne : a ≠ b := fun h => hbc (by subst h; exact wbtw_self_left ℝ _ _)
-  have hbc_ne : b ≠ c := fun h => hbc (by subst h; exact wbtw_self_right ℝ _ _)
+  have hab_ne : a ≠ b := fun h' => hbc (by subst h'; exact wbtw_self_left ℝ _ _)
+  have hbc_ne : b ≠ c := fun h' => hbc (by subst h'; exact wbtw_self_right ℝ _ _)
   have hD1 : 0 < dist a b := dist_pos.mpr hab_ne
   have hD2 : 0 < dist b c := dist_pos.mpr hbc_ne
-  rw [mem_interior_iff_mem_nhds, Metric.mem_nhds_iff] at hb
-  obtain ⟨δ, hδpos, hδsub⟩ := hb
+  obtain ⟨U, hU_mem, hU_conv⟩ := hconv
+  rw [Metric.mem_nhds_iff] at hU_mem
+  obtain ⟨δ, hδpos, hδsub⟩ := hU_mem
   set M : ℝ := max (dist a b) (dist b c) with hM_def
   have hM1 : dist a b ≤ M := le_max_left _ _
   have hM2 : dist b c ≤ M := le_max_right _ _
@@ -207,8 +211,11 @@ theorem local_shortening (F : Set plane) (l₁ l₂ : List plane) (a b c : plane
   obtain ⟨hpre, hab_seg, hbc_seg, hsuf⟩ := hfeas
   have hseg1 : segment ℝ a a' ⊆ F :=
     ((convex_segment a b).segment_subset (left_mem_segment ℝ a b) ha'_mem).trans hab_seg
+  have ha'_U : a' ∈ U := hδsub ha'_ball
+  have hc'_U : c' ∈ U := hδsub hc'_ball
   have hseg2 : segment ℝ a' c' ⊆ F :=
-    ((convex_ball b δ).segment_subset ha'_ball hc'_ball).trans hδsub
+    (hU_conv.segment_subset ⟨ha'_U, hab_seg ha'_mem⟩
+      ⟨hc'_U, hbc_seg hc'_mem⟩).trans Set.inter_subset_right
   have hseg3 : segment ℝ c' c ⊆ F :=
     ((convex_segment b c).segment_subset hc'_mem (right_mem_segment ℝ b c)).trans hbc_seg
   have hcons4 : [a, a', c', c] ++ l₂ = a :: a' :: c' :: c :: l₂ := by simp
@@ -235,6 +242,22 @@ theorem local_shortening (F : Set plane) (l₁ l₂ : List plane) (a b c : plane
       ring
     rw [hlen_orig, hlen_new]
     linarith [hmid]
+
+/-- (L) Local shortening at an interior non-between bend. -/
+theorem local_shortening (F : Set plane) (l₁ l₂ : List plane) (a b c : plane)
+    (hfeas : Feasible F (l₁ ++ [a, b, c] ++ l₂))
+    (hb : b ∈ interior F) (hbc : ¬ Wbtw ℝ a b c) (ε : ℝ) (hε : 0 < ε) :
+    ∃ a' c' : plane, a' ∈ segment ℝ a b ∧ c' ∈ segment ℝ b c ∧
+      dist a' b < ε ∧ dist c' b < ε ∧
+      Feasible F (l₁ ++ [a, a', c', c] ++ l₂) ∧
+      polyLen (l₁ ++ [a, a', c', c] ++ l₂) < polyLen (l₁ ++ [a, b, c] ++ l₂) := by
+  rw [mem_interior_iff_mem_nhds, Metric.mem_nhds_iff] at hb
+  obtain ⟨δ, hδpos, hδsub⟩ := hb
+  exact local_shortening_core F l₁ l₂ a b c hfeas
+    ⟨ball b δ, ball_mem_nhds b hδpos, by
+      rw [Set.inter_eq_self_of_subset_left hδsub]
+      exact convex_ball b δ⟩
+    hbc ε hε
 
 /-- (T0) A length-minimal feasible polyline is weakly between at every interior bend. -/
 theorem wbtw_of_minimal (F : Set plane) (l₁ l₂ : List plane) (a b c : plane)
