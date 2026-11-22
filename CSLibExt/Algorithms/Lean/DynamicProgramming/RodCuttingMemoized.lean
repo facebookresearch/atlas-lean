@@ -280,13 +280,6 @@ private lemma scan_optimal {α : Type u} [AddCommMonoid α] [LinearOrder α]
             (le_max_right _ _)
 
 
-private lemma revenue_cast {α : Type u} [AddCommMonoid α] {n k l : Nat}
-    (prices : Vector α n) (parts : Composition k) (hkl : k = l) (hl : l ≤ n) :
-    compositionRevenue prices (parts.cast hkl) hl =
-      compositionRevenue prices parts (by omega) := by
-  subst l
-  rfl
-
 private lemma firstCuts_optimal {α : Type u} [AddCommMonoid α] [LinearOrder α]
     [IsOrderedAddMonoid α] {n : Nat} (prices : Vector α n) (j : Nat)
     (hjn : j ≤ n) (hpos : 0 < j) (best : α)
@@ -300,7 +293,7 @@ private lemma firstCuts_optimal {α : Type u} [AddCommMonoid α] [LinearOrder α
   · obtain ⟨i, parts, hparts⟩ := hattain
     refine ⟨((Composition.single (i.val + 1) (by omega)).append parts).cast (by omega), ?_⟩
     dsimp only
-    rw [revenue_cast, compositionRevenue_append, compositionRevenue_single]
+    rw [compositionRevenue_cast, compositionRevenue_append, compositionRevenue_single]
     simpa only [Nat.add_sub_cancel] using hparts
   · rintro value ⟨parts, rfl⟩
     induction parts using Composition.recOnSingleAppend with
@@ -310,7 +303,7 @@ private lemma firstCuts_optimal {α : Type u} [AddCommMonoid α] [LinearOrder α
         rw [compositionRevenue_append, compositionRevenue_single]
         have hcut := hupper ⟨k, by omega⟩ (tail.cast (by dsimp; omega))
         dsimp only at hcut
-        rw [revenue_cast] at hcut
+        rw [compositionRevenue_cast] at hcut
         simpa only [Nat.add_sub_cancel] using hcut
 
 
