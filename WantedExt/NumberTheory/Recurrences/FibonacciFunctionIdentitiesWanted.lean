@@ -529,18 +529,6 @@ public theorem_wanted four_gibonacci_melham_type_identity
           4 * G (k + n) * H (r + n) * I (s + n) * J (t + n) +
           G (k + n + 1) * H (r + n + 1) * I (s + n + 1) * J (t + n + 1))
 
-/-- For gibonacci sequences `G`, `H` and integers `r`, `s`, `k`:
-`H_s G_(k+r) + (-1)^(r-1) H_(s-r) G_k = F_r (G_0 H_(k+s-1) + G_1 H_(k+s))`.
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 35
-(`jis-2024-24.6.2-prop-35`). -/
-public theorem_wanted gibonacci_mul_add_neg_one_pow_eq_fib_mul
-    (G H : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
-    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (r s k : ℤ) :
-    H s * G (k + r) + (-1 : ℝ) ^ (r - 1) * H (s - r) * G k =
-      (Int.fib r : ℝ) * (G 0 * H (k + s - 1) + G 1 * H (k + s))
-
 /-- For gibonacci sequences `G`, `H` and integers `k`, `r`, `s`, `t`:
 `F_s (G_0 H_(k+r+t-1) + G_1 H_(k+r+t)) - (-1)^r F_(s-r) G_k (H_(t+1)+H_(t-1))
  + (-1)^r G_k H_(s-r+t) = G_(k+s) H_(r+t)`.

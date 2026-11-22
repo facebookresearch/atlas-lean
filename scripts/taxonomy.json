@@ -11416,6 +11416,7 @@
   "MathlibExt/NumberTheory/Recurrences/GeneralizedBiPeriodicFibonacciZeroIndices": {"to": "NumberTheory/linear-recurrences/recurrences-modulo-m", "title": "Bi-periodic Fibonacci sequences modulo primes"},
   "MathlibExt/NumberTheory/Recurrences/GeneralizedFibonacciIdentities": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Horadam and generalized Fibonacci sequences"},
   "MathlibExt/NumberTheory/Recurrences/GeneralizedPellNumbers": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Generalized Pell numbers and compositions"},
+  "MathlibExt/NumberTheory/Recurrences/GibonacciFibonacciFactorIdentity": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci identities via Fibonacci functions"},
   "MathlibExt/NumberTheory/Recurrences/GibonacciSquaresRecurrence": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Gibonacci numbers"},
   "MathlibExt/NumberTheory/Recurrences/GolombLikeSequence": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Golomb-like sequences"},
   "MathlibExt/NumberTheory/Recurrences/HonsbergerFibonacciP": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Fibonacci p-numbers"},

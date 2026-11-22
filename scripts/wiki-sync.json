@@ -66409,7 +66409,7 @@
 "MetaMathlibExt.gibonacci_lucas_like_mul_add_eq_fib_mul": "1200c416964d8627",
 "MetaMathlibExt.gibonacci_mul_add_eq_composition_sum": "b84582ad81e4cad6",
 "MetaMathlibExt.gibonacci_mul_add_eq_toeplitzHessenberg_det_iff": "5b3587365e6969a6",
-"MetaMathlibExt.gibonacci_mul_add_neg_one_pow_eq_fib_mul": "aa4fcf51f320e816",
+"MetaMathlibExt.gibonacci_mul_add_neg_one_pow_eq_fib_mul": "73703b2402364d3e",
 "MetaMathlibExt.gibonacci_mul_gibonacci_add_eq_seed_combination": "96e8ec387f8bad3c",
 "MetaMathlibExt.gibonacci_powerSeries_mul": "2e0197b9140ff448",
 "MetaMathlibExt.gibonacci_product_four_index_identity": "1226a704e1bae19a",
