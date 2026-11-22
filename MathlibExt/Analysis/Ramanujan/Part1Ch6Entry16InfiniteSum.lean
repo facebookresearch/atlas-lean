@@ -33,14 +33,19 @@ open Asymptotics Filter Finset Complex Topology
 
 noncomputable section
 
+/-- The `j`-th term `r ^ k / (1 - a * x ^ k)`, with `k = j + 1`, of the left side of Entry 16. -/
 def chapter6Entry16LeftTerm (a r x : ℂ) (j : ℕ) : ℂ :=
   let k := j + 1
   r ^ k / (1 - a * x ^ k)
 
+/-- The `j`-th term `(a * r * x ^ k) ^ k / (1 - a * x ^ k)`, with `k = j + 1`, of the first
+series on the right side of Entry 16. -/
 def chapter6Entry16MiddleTerm (a r x : ℂ) (j : ℕ) : ℂ :=
   let k := j + 1
   (a * r * x ^ k) ^ k / (1 - a * x ^ k)
 
+/-- The `j`-th term `a ^ (k - 1) * r ^ k * x ^ ((k - 1) * k) / (1 - r * x ^ (k - 1))`, with
+`k = j + 1`, of the second series on the right side of Entry 16. -/
 def chapter6Entry16RightTerm (a r x : ℂ) (j : ℕ) : ℂ :=
   let k := j + 1
   a ^ (k - 1) * r ^ k * x ^ ((k - 1) * k) /
@@ -148,7 +153,7 @@ private lemma summable_left_of_denom_bound {a r x : ℂ} (hr : ‖r‖ < 1)
   apply Summable.of_norm_bounded (g := fun j : ℕ => δ⁻¹ * ‖r‖ ^ (j + 1))
   · exact summable_shifted_geometric (norm_nonneg _) hr
   · intro j
-    show ‖r ^ (j + 1) / (1 - a * x ^ (j + 1))‖ ≤ δ⁻¹ * ‖r‖ ^ (j + 1)
+    change ‖r ^ (j + 1) / (1 - a * x ^ (j + 1))‖ ≤ δ⁻¹ * ‖r‖ ^ (j + 1)
     rw [norm_div, norm_pow]
     exact div_norm_le_of_denom_le (pow_nonneg (norm_nonneg _) _) (hδ _ (by omega)) hδ0
 
@@ -160,7 +165,7 @@ private lemma summable_middle_of_boundary {a r x : ℂ} (har : ‖a‖ * ‖r‖
   apply Summable.of_norm_bounded (g := fun j : ℕ => δ⁻¹ * (‖a‖ * ‖r‖) ^ (j + 1))
   · exact summable_shifted_geometric har0 har
   · intro j
-    show ‖(a * r * x ^ (j + 1)) ^ (j + 1) / (1 - a * x ^ (j + 1))‖ ≤ _
+    change ‖(a * r * x ^ (j + 1)) ^ (j + 1) / (1 - a * x ^ (j + 1))‖ ≤ _
     simp only [norm_div, norm_pow, norm_mul, hξ1, one_pow, mul_one]
     exact div_norm_le_of_denom_le (pow_nonneg har0 _) (hδ _ (by omega)) hδ0
 
@@ -173,7 +178,7 @@ private lemma summable_right_of_boundary {a r x : ℂ} (hr : ‖r‖ < 1)
     (g := fun j : ℕ => (‖r‖ / (1 - ‖r‖)) * (‖a‖ * ‖r‖) ^ j)
   · exact (summable_real_geometric har0 har).mul_left _
   · intro j
-    show ‖a ^ (j + 1 - 1) * r ^ (j + 1) * x ^ ((j + 1 - 1) * (j + 1)) /
+    change ‖a ^ (j + 1 - 1) * r ^ (j + 1) * x ^ ((j + 1 - 1) * (j + 1)) /
         (1 - r * x ^ (j + 1 - 1))‖ ≤ _
     rw [Nat.add_sub_cancel]
     have hD : (1 : ℝ) - ‖r‖ ≤ ‖1 - r * x ^ j‖ := by
@@ -201,7 +206,7 @@ private lemma summable_left_of_interior {a r x : ℂ} (hr : ‖r‖ < 1)
   · exact summable_shifted_geometric (norm_nonneg _) hr
   · have h1 := eventually_cofinite_of_atTop h2
     filter_upwards [h1] with j hj
-    show ‖r ^ (j + 1) / (1 - a * x ^ (j + 1))‖ ≤ 2 * ‖r‖ ^ (j + 1)
+    change ‖r ^ (j + 1) / (1 - a * x ^ (j + 1))‖ ≤ 2 * ‖r‖ ^ (j + 1)
     rw [norm_div, norm_pow]
     have hD := half_le_denom_of_small hj
     have hN : (0 : ℝ) ≤ ‖r‖ ^ (j + 1) := pow_nonneg (norm_nonneg _) _
@@ -230,7 +235,7 @@ private lemma summable_middle_of_interior {a r x : ℂ} (hr : ‖r‖ < 1)
   · have h1 := eventually_cofinite_of_atTop hboth
     filter_upwards [h1] with j hj
     obtain ⟨hj1, hj2⟩ := hj
-    show ‖(a * r * x ^ (j + 1)) ^ (j + 1) / (1 - a * x ^ (j + 1))‖ ≤ _
+    change ‖(a * r * x ^ (j + 1)) ^ (j + 1) / (1 - a * x ^ (j + 1))‖ ≤ _
     simp only [norm_div, norm_pow]
     have hD := half_le_denom_of_small hj1
     have hnum : ‖a * r * x ^ (j + 1)‖ ^ (j + 1) ≤ (1 / 2 : ℝ) ^ (j + 1) :=
@@ -258,7 +263,7 @@ private lemma summable_right_of_interior {a r x : ℂ} (hr : ‖r‖ < 1) (hx : 
       Filter.eventually_atTop.mpr ⟨N, fun j _ => hN (j + 1) (by omega)⟩
     have h1 := eventually_cofinite_of_atTop h2
     filter_upwards [h1] with j hj
-    show ‖a ^ (j + 1 - 1) * r ^ (j + 1) * x ^ ((j + 1 - 1) * (j + 1)) /
+    change ‖a ^ (j + 1 - 1) * r ^ (j + 1) * x ^ ((j + 1 - 1) * (j + 1)) /
         (1 - r * x ^ (j + 1 - 1))‖ ≤ (‖r‖ / (1 - ‖r‖)) * (1 / 2 : ℝ) ^ j
     rw [Nat.add_sub_cancel, norm_div]
     have hD : (1 : ℝ) - ‖r‖ ≤ ‖1 - r * x ^ j‖ := by
@@ -427,7 +432,7 @@ private lemma column_tsum {a r x : ℂ} (hr : ‖r‖ < 1) (hx : ‖x‖ ≤ 1) 
   have hval := hmul.tsum_eq
   have hR : chapter6Entry16RightTerm a r x n
       = (a ^ n * r ^ (n + 1) * x ^ (n * (n + 1))) * (1 - r * x ^ n)⁻¹ := by
-    show a ^ (n + 1 - 1) * r ^ (n + 1) * x ^ ((n + 1 - 1) * (n + 1)) /
+    change a ^ (n + 1 - 1) * r ^ (n + 1) * x ^ ((n + 1 - 1) * (n + 1)) /
         (1 - r * x ^ (n + 1 - 1))
       = (a ^ n * r ^ (n + 1) * x ^ (n * (n + 1))) * (1 - r * x ^ n)⁻¹
     rw [Nat.add_sub_cancel, div_eq_mul_inv]
@@ -530,7 +535,7 @@ private lemma row_tsum {a r x : ℂ}
     rw [eq_div_iff hA]
     linear_combination -hgeom
   rw [hval, hS, ← mul_div_assoc]
-  show r ^ (m + 1) * (1 - (a * x ^ (m + 1)) ^ (m + 1)) / (1 - a * x ^ (m + 1))
+  change r ^ (m + 1) * (1 - (a * x ^ (m + 1)) ^ (m + 1)) / (1 - a * x ^ (m + 1))
     = (r ^ (m + 1) / (1 - a * x ^ (m + 1))
       - (a * r * x ^ (m + 1)) ^ (m + 1) / (1 - a * x ^ (m + 1)))
   rw [← sub_div]
@@ -558,7 +563,16 @@ private lemma fubini_step {a r x : ℂ}
   rw [hsub] at hcomm
   linear_combination hcomm
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 6.
+/-- **Ramanujan's infinite identity for $\sum_k r^k/(1-ax^k)$.** Let $a, r, x$ be complex
+numbers with $|r| < 1$ and $|x| \le 1$ such that $1 - a x^k \ne 0$ for every integer $k \ge 1$,
+and such that, if $|x| = 1$, then $|a r| < 1$ and there is a real $\delta > 0$ with
+$|1 - a x^k| \ge \delta$ for every $k \ge 1$. Then $1 - r x^{k-1} \ne 0$ for every $k \ge 1$, the
+three series $\sum_{k=1}^{\infty} \frac{r^k}{1 - a x^k}$,
+$\sum_{k=1}^{\infty} \frac{(a r x^k)^k}{1 - a x^k}$ and
+$\sum_{k=1}^{\infty} \frac{a^{k-1} r^k x^{(k-1)k}}{1 - r x^{k-1}}$ are summable, and the first
+equals the sum of the other two.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 6.
 The infinite form of `Entry16FiniteSum.ramanujan_part1_ch6_entry16_finite_sum`.
 Proves `Wanted` entry `ramanujan_part1_ch6_entry9_centralbinomialasymptotic`.
 -/

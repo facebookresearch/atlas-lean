@@ -50,11 +50,11 @@ otherwise `w` would vanish identically, contradicting `w' 0 = 1`. Choosing
 
 Source: `v1/Atlas/IntroductionToFunctionalAnalysis/code/SpectralTheory.lean`,
 `SpectralTheory.sturm_liouville_existence` (Theorem, Section on solving the
-Dirichlet problem). The v1 formalization of this theorem is left unproved and
-is not ported; the proof here is original. The
-uniqueness half (`SpectralTheory.sturm_liouville_uniqueness`) is not re-proved:
-the energy argument below is an independent uniqueness proof, in the form
-needed for the shooting argument.
+Dirichlet problem). The v1 formalization of this theorem is left unproved,
+so this module gives an original proof. The separate uniqueness theorem
+`SpectralTheory.sturm_liouville_uniqueness` is formalized in
+`MathlibExt/Analysis/ODE/SturmLiouvilleUniqueness.lean`. The energy argument
+below proves the homogeneous uniqueness property needed for shooting.
 -/
 
 /-- Clamp a real number into `[0, 1]`, as a point of the subtype. -/

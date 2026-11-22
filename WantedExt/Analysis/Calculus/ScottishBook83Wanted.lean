@@ -24,14 +24,16 @@ function `f` satisfies, at every point `x`, that the difference
 quotients `|f (x + h) - f x| / |h| ^ a` stay below a constant `M` for
 all sufficiently small nonzero `h` — that is, if the limsup of the
 quotients as `h → 0` is `< M`, with `0 < a < 1` — does `f` then satisfy
-a Hölder condition of exponent `a`? -/
+a Hölder condition of exponent `a` on `[0, 1]`? The conclusion is on a
+compact interval: on all of `ℝ`, `f = id` already fails it. -/
 def ScottishBookProblem83Claim : Prop :=
   ∀ (a M : ℝ), 0 < a → a < 1 → 0 < M → ∀ f : ℝ → ℝ,
     Continuous f →
     (∀ x : ℝ, ∃ M' : ℝ, M' < M ∧ ∃ δ : ℝ, 0 < δ ∧ ∀ h : ℝ,
       0 < |h| → |h| < δ →
       |f (x + h) - f x| / Real.rpow |h| a ≤ M') →
-    ∃ C : ℝ, ∀ x y : ℝ, |f x - f y| ≤ C * Real.rpow |x - y| a
+    ∃ C : ℝ, ∀ x ∈ Set.Icc (0 : ℝ) 1, ∀ y ∈ Set.Icc (0 : ℝ) 1,
+      |f x - f y| ≤ C * Real.rpow |x - y| a
 
 /--
 Auerbach's Problem 83 is false: the pointwise limsup condition does

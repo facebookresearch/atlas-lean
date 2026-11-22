@@ -1,0 +1,145 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import MathlibExt.Algebra.PointDerivations
+import Mathlib.Algebra.Polynomial.Derivative
+import Mathlib.Algebra.Polynomial.AlgebraMap
+import Mathlib.Tactic.NormNum
+
+@[expose] public section
+
+example (k : Type) [Field k] (A : Type) [CommRing A] [Algebra k A] (ev : A →ₐ[k] k)
+    (M : Type) [AddCommGroup M] [Module k M] :
+    Submodule k (A →ₗ[k] M) :=
+  Algebra.PointDerivations k A ev M
+
+example (k : Type) [Field k] (A : Type) [CommRing A] [Algebra k A] (ev : A →ₐ[k] k)
+    (M : Type) [AddCommGroup M] [Module k M] {D : A →ₗ[k] M}
+    (hD : D ∈ Algebra.PointDerivations k A ev M) : D 1 = 0 :=
+  Algebra.PointDerivations.apply_one hD
+
+example (k : Type) [Field k] (A : Type) [CommRing A] [Algebra k A] (ev : A →ₐ[k] k)
+    (M : Type) [AddCommGroup M] [Module k M] {D : A →ₗ[k] M}
+    (hD : D ∈ Algebra.PointDerivations k A ev M) (c : k) : D (algebraMap k A c) = 0 :=
+  Algebra.PointDerivations.apply_algebraMap hD c
+
+open Polynomial
+
+private noncomputable def evalDerivativeAt (x : ℚ) : ℚ[X] →ₗ[ℚ] ℚ :=
+  (aeval x).toLinearMap.comp derivative
+
+private noncomputable def evalDerivativeAtPoint (x : ℚ) :
+    ↥(Algebra.PointDerivations ℚ ℚ[X] (aeval x) ℚ) :=
+  ⟨evalDerivativeAt x, by
+    intro p q
+    simp only [evalDerivativeAt, LinearMap.comp_apply, derivative_mul, map_add,
+      AlgHom.toLinearMap_apply, map_mul, smul_eq_mul]
+    ac_rfl⟩
+
+private def scale (c : ℚ) : ℚ →ₗ[ℚ] ℚ :=
+  c • LinearMap.id
+
+example : (evalDerivativeAtPoint 2).1 X = 1 := by
+  simp [evalDerivativeAtPoint, evalDerivativeAt]
+
+example : (evalDerivativeAtPoint 2).1 (X ^ 3) = 12 := by
+  norm_num [evalDerivativeAtPoint, evalDerivativeAt, derivative_X_pow]
+
+example : (evalDerivativeAtPoint 2).1 (X * (X + C 3)) = 7 := by
+  norm_num [evalDerivativeAtPoint, evalDerivativeAt, derivative_mul]
+
+example :
+    (Algebra.PointDerivations.map (aeval 2) (scale 3) (evalDerivativeAtPoint 2)).1 X = 3 := by
+  norm_num [Algebra.PointDerivations.map_apply_coe, scale, evalDerivativeAtPoint,
+    evalDerivativeAt]
+
+example :
+    Algebra.PointDerivations.map (aeval 2) (LinearMap.id : ℚ →ₗ[ℚ] ℚ)
+        (evalDerivativeAtPoint 2) = evalDerivativeAtPoint 2 :=
+  Algebra.PointDerivations.map_id (aeval 2) (evalDerivativeAtPoint 2)
+
+example :
+    Algebra.PointDerivations.map (aeval 2) ((scale 3).comp (scale 2))
+        (evalDerivativeAtPoint 2) =
+      Algebra.PointDerivations.map (aeval 2) (scale 3)
+        (Algebra.PointDerivations.map (aeval 2) (scale 2) (evalDerivativeAtPoint 2)) :=
+  Algebra.PointDerivations.map_comp (aeval 2) (scale 2) (scale 3) (evalDerivativeAtPoint 2)
+
+example :
+    (Algebra.PointDerivations.map (aeval 2) ((scale 3).comp (scale 2))
+        (evalDerivativeAtPoint 2)).1 X = 6 := by
+  norm_num [Algebra.PointDerivations.map_apply_coe, scale, evalDerivativeAtPoint,
+    evalDerivativeAt]
+
+/-- `map_comp` is universe-polymorphic in the third coefficient module: the
+target of `ψ` may live in a strictly larger universe than the source modules. -/
+example (M'' : Type 1) [AddCommGroup M''] [Module ℚ M''] (ψ : ℚ →ₗ[ℚ] M'') :
+    Algebra.PointDerivations.map (aeval 2) (ψ.comp (scale 2)) (evalDerivativeAtPoint 2) =
+      Algebra.PointDerivations.map (aeval 2) ψ
+        (Algebra.PointDerivations.map (aeval 2) (scale 2) (evalDerivativeAtPoint 2)) :=
+  Algebra.PointDerivations.map_comp (aeval 2) (scale 2) ψ (evalDerivativeAtPoint 2)
+
+open scoped TensorProduct
+
+universe u w
+
+/-- Consumer with the original binders: the field, algebra and coefficient
+modules share one universe, as in the source statement. -/
+theorem exactSource (k : Type u) [Field k] (A : Type u) [CommRing A]
+    [Algebra k A] [Algebra.FiniteType k A] (ev : A →ₐ[k] k) :
+    ∃ Ψ : ∀ (M : Type u) [AddCommGroup M] [Module k M],
+        ↥(Algebra.PointDerivations k A ev M) ≃ₗ[k]
+          (↥(Algebra.PointDerivations k A ev k) ⊗[k] M),
+      (∀ (M M' : Type u) [AddCommGroup M] [Module k M] [AddCommGroup M']
+          [Module k M'] (g : M →ₗ[k] M')
+          (δ : ↥(Algebra.PointDerivations k A ev M)),
+        Ψ M' (Algebra.PointDerivations.map ev g δ) =
+          LinearMap.lTensor (↥(Algebra.PointDerivations k A ev k)) g
+            (Ψ M δ)) ∧
+      (∀ δ : ↥(Algebra.PointDerivations k A ev k),
+        Ψ k δ = δ ⊗ₜ[k] (1 : k)) :=
+  Algebra.PointDerivations.exists_linearEquiv_tensor_forall_map_eq_of_finiteType
+    ev
+
+/-- The coefficient module may live in a higher universe than the field and
+the algebra. -/
+example (k : Type u) [Field k] (A : Type u) [CommRing A] [Algebra k A]
+    [Algebra.FiniteType k A] (ev : A →ₐ[k] k) (M : Type (u + 1))
+    [AddCommGroup M] [Module k M] :
+    Nonempty (↥(Algebra.PointDerivations k A ev M) ≃ₗ[k]
+      (↥(Algebra.PointDerivations k A ev k) ⊗[k] M)) := by
+  exact ⟨Algebra.PointDerivations.tensorEquiv ev M⟩
+
+/-- Naturality and the self-case also hold with coefficient modules in
+higher universes, through the universe-polymorphic identification. -/
+example (k : Type u) [Field k] (A : Type u) [CommRing A] [Algebra k A]
+    [Algebra.FiniteType k A] (ev : A →ₐ[k] k) (M : Type (u + 1))
+    (M' : Type (u + 2)) [AddCommGroup M] [Module k M] [AddCommGroup M']
+    [Module k M'] (g : M →ₗ[k] M')
+    (δ : ↥(Algebra.PointDerivations k A ev M))
+    (δk : ↥(Algebra.PointDerivations k A ev k)) :
+    Algebra.PointDerivations.tensorEquiv ev M'
+        (Algebra.PointDerivations.map ev g δ) =
+      LinearMap.lTensor (↥(Algebra.PointDerivations k A ev k)) g
+        (Algebra.PointDerivations.tensorEquiv ev M δ) ∧
+    Algebra.PointDerivations.tensorEquiv ev k δk = δk ⊗ₜ[k] (1 : k) :=
+  ⟨Algebra.PointDerivations.tensorEquiv_natural ev g δ,
+   Algebra.PointDerivations.tensorEquiv_self ev δk⟩
+
+/-- On polynomial derivations at `2`, the tensor identification sends a
+derivation to itself tensored with `1`. -/
+example : True := by
+  obtain ⟨Ψ, -, hself⟩ :=
+    Algebra.PointDerivations.exists_linearEquiv_tensor_forall_map_eq_of_finiteType
+      (aeval (2 : ℚ) : ℚ[X] →ₐ[ℚ] ℚ)
+  have h := hself (evalDerivativeAtPoint 2)
+  guard_hyp h : Ψ ℚ (evalDerivativeAtPoint 2) =
+    evalDerivativeAtPoint 2 ⊗ₜ[ℚ] (1 : ℚ)
+  trivial

@@ -291,24 +291,10 @@ private lemma add_lowbit_le_of_sub_lowbit_lt {s x : Nat} (hs : 0 < s) (hx : 0 < 
     rw [← hk] at hle
     omega
 
-private lemma mem_range'_one {s n m : Nat} :
-    m ∈ List.range' s n ↔ s ≤ m ∧ m < s + n := by
-  rw [List.mem_range']
-  constructor
-  · rintro ⟨i, hi, rfl⟩
-    simp only [Nat.one_mul]
-    omega
-  · rintro ⟨h1, h2⟩
-    exact ⟨m - s, by omega, by simp; omega⟩
-
 private lemma getD_range_map {α : Type u} (f : Nat → α) (n i : Nat) (d : α) (hi : i < n) :
     ((List.range n).map f).getD i d = f i := by
   rw [List.getD_eq_getElem?_getD, List.getElem?_map, List.getElem?_range hi]
   rfl
-
-private lemma getD_cons_succ {α : Type u} (x : α) (l : List α) (i : Nat) (d : α) :
-    (x :: l).getD (i + 1) d = l.getD i d := by
-  simp [List.getD_eq_getElem?_getD]
 
 private lemma take_sum_eq {α : Type u} [AddCommMonoid α] (a : List α) (k : Nat) :
     (a.take k).sum = ((List.range k).map (fun i => a.getD i 0)).sum := by
@@ -396,7 +382,7 @@ private lemma blockSum_set {α : Type u} [AddCommMonoid α] (a : List α) {i : N
   congr 1
   have hmem : i ∈ List.range' (j - lowbit j) (lowbit j) ↔
       (j - lowbit j ≤ i ∧ i < j) := by
-    rw [mem_range'_one, Nat.sub_add_cancel (lowbit_le j)]
+    rw [List.mem_range'_1, Nat.sub_add_cancel (lowbit_le j)]
   by_cases hc : j - lowbit j ≤ i ∧ i < j
   · rw [ite_eq_left hc, ite_eq_left (hmem.mpr hc)]
   · rw [ite_eq_right hc, ite_eq_right (fun h => hc (hmem.mp h))]
@@ -481,7 +467,7 @@ public theorem valid_build {α : Type u} [AddCommMonoid α] (arr : List α) :
         (fun i => blockSumArray arr.toArray (i + 1))).toArray from
     rfl, array_getD_toArray]
   obtain ⟨j, rfl⟩ : ∃ j', j = j' + 1 := ⟨j - 1, by omega⟩
-  rw [getD_cons_succ, getD_range_map _ _ _ _ (by omega : j < arr.length),
+  rw [List.getD_cons_succ, getD_range_map _ _ _ _ (by omega : j < arr.length),
     blockSumArray_toArray]
 
 /-- Fuelled prefix-sum walk from `k` down to `0`, stepping by `lowbit`; the fuel
