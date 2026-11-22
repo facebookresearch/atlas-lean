@@ -738,4 +738,20 @@ private theorem gen_finite :
 #print axioms const_basic_pt
 #print axioms gen_basic_opt
 
+/-! ### OPT-005b: basic points are extreme points -/
+
+private theorem att_e0_mem_extremePoints :
+    ![1, 0, (0 : ℝ)] ∈ Set.extremePoints ℝ {w | 0 ≤ w ∧ attL w = ![1]} :=
+  (isBasicPt_iff_mem_extremePoints attL ![1] att_e0_nonneg att_e0_eq).mp att_e0_basic
+
+private theorem att_mid_not_mem_extremePoints :
+    ![1 / 2, 1 / 2, (0 : ℝ)] ∉ Set.extremePoints ℝ {w | 0 ≤ w ∧ attL w = ![1]} := by
+  intro hmem
+  exact att_not_basic
+    ((isBasicPt_iff_mem_extremePoints attL ![1] att_z_nonneg att_z_eq).mpr hmem)
+
+private theorem iota_zero_mem_extremePoints :
+    (0 : Fin 0 → ℝ) ∈ Set.extremePoints ℝ {w | 0 ≤ w ∧ iotaL w = 0} :=
+  (isBasicPt_iff_mem_extremePoints iotaL 0 le_rfl (map_zero _)).mp iota_basic
+
 end MathlibExtTest.Analysis.Convex.LinearProgrammingBasic

@@ -54,8 +54,6 @@ Applications*, fifth edition, McGraw-Hill, 1999: the telegrapher equations, Poyn
   stored line energy.
 
 ## A. Line energy and the telegrapher system
-
-Discharges ECE roadmap leaf `ECE.EM.TLINE.L1` (line energy).
 -/
 
 @[expose] public section

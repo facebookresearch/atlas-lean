@@ -82,6 +82,7 @@ through monotonicity of measures, and are retained as stronger corollaries.
 * `satisfiesLDP_of_borel_bounds`: measurable-set bounds imply the open/closed LDP.
 * `satisfiesLDP_dirac`: the Dirac mass at `x₀` satisfies the LDP with
   the rate function that is `0` at `x₀` and `∞` elsewhere.
+* `isGoodRateFunction_diracRate`: the Dirac rate function is a good rate function.
 * `isGoodRateFunction_abs`: `x ↦ ENNReal.ofReal |x|` is a good rate
   function on `ℝ`, showing the corrected definition is non-vacuous
   there (under v1's definition, no good rate function on `ℝ` exists).
@@ -321,6 +322,37 @@ theorem satisfiesLDP_dirac [BorelSpace X] [T1Space X] (x₀ : X) :
         rw [limsup_congr hev]
         exact limsup_const ⊥
       rw [iInf_diracRate_of_notMem hx, EReal.neg_top, hlim]
+
+omit [MeasurableSpace X] in
+/-- **The Dirac rate function is good.** On a `T1` space, the rate function that is `0` at
+`x₀` and `∞` elsewhere is lower semicontinuous, and each of its finite sub-level sets is the
+compact singleton `{x₀}`. -/
+theorem isGoodRateFunction_diracRate [T1Space X] (x₀ : X) :
+    IsGoodRateFunction (diracRate x₀) := by
+  refine ⟨⟨?_⟩, fun a => ?_⟩
+  · rw [lowerSemicontinuous_iff_isClosed_preimage]
+    intro b
+    by_cases hb : b = ⊤
+    · subst hb
+      simp only [Set.Iic_top, Set.preimage_univ, isClosed_univ]
+    · have hpre : diracRate x₀ ⁻¹' Set.Iic b = {x₀} := by
+        ext x
+        simp only [Set.mem_preimage, Set.mem_Iic, Set.mem_singleton_iff]
+        refine ⟨fun h => ?_, fun h => by rw [h, diracRate_apply_self]; exact zero_le⟩
+        by_contra hne
+        rw [diracRate_apply_of_ne hne] at h
+        exact hb (top_le_iff.mp h)
+      rw [hpre]
+      exact isClosed_singleton
+  · have hset : {x | diracRate x₀ x ≤ ENNReal.ofReal a} = {x₀} := by
+      ext x
+      simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff]
+      refine ⟨fun h => ?_, fun h => by rw [h, diracRate_apply_self]; exact zero_le⟩
+      by_contra hne
+      rw [diracRate_apply_of_ne hne] at h
+      exact ENNReal.ofReal_ne_top (top_le_iff.mp h)
+    rw [hset]
+    exact isCompact_singleton
 
 /-- `x ↦ ENNReal.ofReal |x|` is a good rate function on `ℝ`: it is
 continuous, hence lower semicontinuous, and its finite sub-level sets

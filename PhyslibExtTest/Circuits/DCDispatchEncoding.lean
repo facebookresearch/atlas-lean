@@ -29,6 +29,7 @@ canonical LP is feasible.
 namespace PhyslibExtTest.Circuits.DCDispatchEncoding
 
 open Matrix
+open PhyslibExt.Circuits.ArcPortSigns
 open PhyslibExt.Circuits.LosslessDCFlowModel
 open PhyslibExt.Circuits.DCDispatchEncoding
 
