@@ -207,7 +207,7 @@ namespace CongruenceSubgroup
 /-- If `p` does not divide `N`, then reduction modulo `p` maps `Γ(N)` onto
 `SL(2, ZMod p)`. -/
 theorem exists_mem_Gamma_map_eq_of_not_dvd
-    (N p : ℕ) [NeZero N] [Fact p.Prime] (hpN : ¬ p ∣ N) :
+    (N p : ℕ) [Fact p.Prime] (hpN : ¬ p ∣ N) :
     ∀ g : SL(2, ZMod p), ∃ γ : SL(2, ℤ), γ ∈ CongruenceSubgroup.Gamma N ∧
         Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod p)) γ = g := by
   intro g

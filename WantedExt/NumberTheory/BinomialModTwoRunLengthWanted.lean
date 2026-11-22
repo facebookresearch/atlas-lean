@@ -111,118 +111,151 @@ public theorem_wanted runLengthTransform_linearRecurrence_eq_linearRep (r : ℕ)
             if (i : ℕ) < r then (if (j : ℕ) = i + 1 then 1 else 0) else d (Fin.rev j)).prod) *ᵥ
         fun i => S i)
 
-/-- **Theorem 2.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n - k, 2k)` binom(n, k) mod 2]` is the run length transform
+/-- **Theorem 2.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n - k, 2k)` binom(n, k) mod 2]` is the run
+length transform
 of the Fibonacci sequence `1, 1, 2, 3, 5, 8, …` (`Nat.fib (i + 1)`).
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 2. -/
 public theorem_wanted runLengthTransform_choose_sub_two_mul_fib (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((n - k).choose (2 * k) * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform (fun i => (Nat.fib (i + 1) : ℤ)) n
 
-/-- **Theorem 3.** The sum `T(n) = ∑_{k=0}^{n} [`binom(3k, k)` binom(n, k) mod 2]` is the run length transform
+/-- **Theorem 3.** The sum `T(n) = ∑_{k=0}^{n} [`binom(3k, k)` binom(n, k) mod 2]` is the run
+length transform
 of the truncated Fibonacci sequence `1, 2, 3, 5, 8, …` (`Nat.fib (i + 2)`).
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 3. -/
 public theorem_wanted runLengthTransform_choose_three_mul_fib (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((3 * k).choose k * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform (fun i => (Nat.fib (i + 2) : ℤ)) n
 
-/-- **Theorem 4.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n, 2k)` binom(n, k) mod 2]` is the run length transform
+/-- **Theorem 4.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n, 2k)` binom(n, k) mod 2]` is the run
+length transform
 of `1, 1, 2, 4, 8, …`, i.e. `1` followed by the positive powers of `2`.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 4. -/
 public theorem_wanted runLengthTransform_choose_two_mul_pow_two (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), (n.choose (2 * k) * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform (fun i => if i = 0 then 1 else 2 ^ (i - 1)) n
 
-/-- **Theorem 5.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n + 2k, 2k)` binom(n, k) mod 2]` is the run length transform
+/-- **Theorem 5.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n + 2k, 2k)` binom(n, k) mod 2]` is the run
+length transform
 of `1, 2, 2, 2, …`, the sequence of `2`s prepended with a `1`.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 5. -/
 public theorem_wanted runLengthTransform_choose_add_two_mul_one_two (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((n + 2 * k).choose (2 * k) * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform (fun i => if i = 0 then 1 else 2) n
 
-/-- **Theorem 6.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n + k, n - k)` binom(n, k) mod 2]` is the run length transform
+/-- **Theorem 6.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n + k, n - k)` binom(n, k) mod 2]` is the
+run length transform
 of the positive integers `1, 2, 3, …`.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 6. -/
 public theorem_wanted runLengthTransform_choose_add_sub_succ (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((n + k).choose (n - k) * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform (fun i => (i + 1 : ℤ)) n
 
-/-- **Theorem 7.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n - k, 6k)` binom(n, k) mod 2]` is the run length transform
+/-- **Theorem 7.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n - k, 6k)` binom(n, k) mod 2]` is the run
+length transform
 of Narayana's cows sequence `1, 1, 1, 2, 3, 4, 6, 9, …` (`narayanaCowsSequence (i + 1)`).
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 7. -/
 public theorem_wanted runLengthTransform_choose_sub_six_mul_narayanaCows (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((n - k).choose (6 * k) * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform (fun i => (narayanaCowsSequence (i + 1) : ℤ)) n
 
-/-- **Theorem 8.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n + 3k, 6k)` binom(n, k) mod 2]` is the run length transform
+/-- **Theorem 8.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n + 3k, 6k)` binom(n, k) mod 2]` is the run
+length transform
 of the doubled positive integers `1, 1, 2, 2, 3, 3, …`.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 8. -/
 public theorem_wanted runLengthTransform_choose_add_three_mul_six_mul_doubled (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((n + 3 * k).choose (6 * k) * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform (fun i => (i / 2 + 1 : ℤ)) n
 
-/-- **Theorem 9.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n + 2k, 2n - k)` binom(n, k) mod 2]` is the run length transform
+/-- **Theorem 9.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n + 2k, 2n - k)` binom(n, k) mod 2]` is the
+run length transform
 of the Lucas numbers prepended with `1, 1`, i.e. `1, 1, 2, 1, 3, 4, 7, 11, …`.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 9. -/
 public theorem_wanted runLengthTransform_choose_add_two_mul_two_mul_sub_lucas (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((n + 2 * k).choose (2 * n - k) * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform (fun i => if i < 2 then 1 else (lucasNumber (i - 2) : ℤ)) n
 
-/-- **Theorem 12.** The sum `T(n) = ∑_{k=0}^{n} [`binom(-n + 7k, n + k)` binom(n, k) mod 2]` is the run length transform
-of the Padovan numbers (OEIS A000931) from offset `5`, i.e. `1, 1, 1, 2, 2, 3, 4, 5, …` (`shiftedPadovanSequence (i + 2)`). The top entry is negative for small `k`; there the paper's convention `binom(a, b) = 0` for `a < b` agrees with truncated subtraction, since the bottom entry `n + k` is positive whenever the top entry is truncated.
+/-- **Theorem 12.** The sum `T(n) = ∑_{k=0}^{n} [`binom(-n + 7k, n + k)` binom(n, k) mod 2]` is
+the run length transform
+of the Padovan numbers (OEIS A000931) from offset `5`, i.e. `1, 1, 1, 2, 2, 3, 4, 5, …`
+(`shiftedPadovanSequence (i + 2)`). The top entry is negative for small `k`; there the paper's
+convention `binom(a, b) = 0` for `a < b` agrees with truncated subtraction, since the bottom entry
+`n + k` is positive whenever the top entry is truncated.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 12. -/
 public theorem_wanted runLengthTransform_choose_seven_mul_sub_padovan_five (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((7 * k - n).choose (n + k) * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform (fun i => (shiftedPadovanSequence (i + 2) : ℤ)) n
 
-/-- **Theorem 13.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n + 7k, 3n + k)` binom(n, k) mod 2]` is the run length transform
-of the Padovan numbers (OEIS A000931) from offset `3`, i.e. `1, 0, 1, 1, 1, 2, 2, 3, …` (`shiftedPadovanSequence i`).
+/-- **Theorem 13.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n + 7k, 3n + k)` binom(n, k) mod 2]` is
+the run length transform
+of the Padovan numbers (OEIS A000931) from offset `3`, i.e. `1, 0, 1, 1, 1, 2, 2, 3, …`
+(`shiftedPadovanSequence i`).
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 13. -/
 public theorem_wanted runLengthTransform_choose_add_seven_mul_padovan_three (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((n + 7 * k).choose (3 * n + k) * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform (fun i => (shiftedPadovanSequence i : ℤ)) n
 
-/-- **Theorem 14.** The sum `T(n) = ∑_{k=0}^{n} [`binom(6k, n + 3k)` binom(n, k) mod 2]` is the run length transform
+/-- **Theorem 14.** The sum `T(n) = ∑_{k=0}^{n} [`binom(6k, n + 3k)` binom(n, k) mod 2]` is the
+run length transform
 of the sequence alternating between `1` and the positive integers, `1, 1, 1, 2, 1, 3, 1, 4, …`.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 14. -/
 public theorem_wanted runLengthTransform_choose_six_mul_alternating (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((6 * k).choose (n + 3 * k) * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform (fun i => if Even i then 1 else (i / 2 + 1 : ℤ)) n
 
-/-- **Theorem 15.** The sum `T(n) = ∑_{k=0}^{n} [`binom(-2n + 8k, n + k)` binom(n, k) mod 2]` is the run length transform
-of the periodic sequence `1, 1, 0, 1, 1, 0, …`. The top entry is negative for small `k`; there the paper's convention `binom(a, b) = 0` for `a < b` agrees with truncated subtraction, since the bottom entry `n + k` is positive whenever the top entry is truncated.
+/-- **Theorem 15.** The sum `T(n) = ∑_{k=0}^{n} [`binom(-2n + 8k, n + k)` binom(n, k) mod 2]` is
+the run length transform
+of the periodic sequence `1, 1, 0, 1, 1, 0, …`. The top entry is negative for small `k`; there the
+paper's convention `binom(a, b) = 0` for `a < b` agrees with truncated subtraction, since the bottom
+entry `n + k` is positive whenever the top entry is truncated.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 15. -/
 public theorem_wanted runLengthTransform_choose_eight_mul_sub_period_three (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((8 * k - 2 * n).choose (n + k) * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform (fun i => if i % 3 = 2 then 0 else 1) n
 
-/-- **Theorem 10.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n + 5k, 2n + 2k)` binom(n, k) mod 2]` is the run length transform
-of the sequence `S(n) = S(n - 1) + S(n - 2) - S(n - 3) + S(n - 4)` for `n ≥ 4` with `S(0) = S(1) = S(2) = S(3) = 1`.
+/-- **Theorem 10.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n + 5k, 2n + 2k)` binom(n, k) mod 2]` is
+the run length transform
+of the sequence `S(n) = S(n - 1) + S(n - 2) - S(n - 3) + S(n - 4)` for `n ≥ 4` with
+`S(0) = S(1) = S(2) = S(3) = 1`.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 10. -/
 public theorem_wanted runLengthTransform_choose_add_five_mul_two_mul_add_two_mul (S : ℕ → ℤ)
     (h0 : S 0 = 1) (h1 : S 1 = 1) (h2 : S 2 = 1)
@@ -231,10 +264,13 @@ public theorem_wanted runLengthTransform_choose_add_five_mul_two_mul_add_two_mul
     ((∑ k ∈ Finset.range (n + 1), ((n + 5 * k).choose (2 * n + 2 * k) * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform S n
 
-/-- **Theorem 11.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n + 5k, 2k)` binom(n, k) mod 2]` is the run length transform
-of the sequence `S(n) = S(n - 1) + S(n - 2) - S(n - 3) + S(n - 4)` for `n ≥ 4` with `S(0) = 1`, `S(1) = S(2) = 2`, `S(3) = 3`.
+/-- **Theorem 11.** The sum `T(n) = ∑_{k=0}^{n} [`binom(n + 5k, 2k)` binom(n, k) mod 2]` is the
+run length transform
+of the sequence `S(n) = S(n - 1) + S(n - 2) - S(n - 3) + S(n - 4)` for `n ≥ 4` with `S(0) = 1`,
+`S(1) = S(2) = 2`, `S(3) = 3`.
 
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and 2-Regular
+Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
+2-Regular
 Sequences*, INTEGERS 24 (2024), Article A73, Theorem 11. -/
 public theorem_wanted runLengthTransform_choose_add_five_mul_two_mul (S : ℕ → ℤ) (h0 : S 0 = 1)
     (h1 : S 1 = 2) (h2 : S 2 = 2)

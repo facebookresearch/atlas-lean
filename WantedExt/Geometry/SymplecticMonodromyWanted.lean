@@ -23,13 +23,16 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Geometry.SymplecticMonodromy` — annals_symplectic_monodromy (manifest `manifests/problems/annals_symplectic_monodromy.toml`, rev 1, submitter Justus Springer, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Geometry.SymplecticMonodromy` —
+annals_symplectic_monodromy (manifest `manifests/problems/annals_symplectic_monodromy.toml`, rev 1,
+submitter Justus Springer, status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Geometry.SymplecticMonodromyWanted` namespace. Mathematical
+and placed the declarations in the `MathlibExt.Geometry.SymplecticMonodromyWanted` namespace.
+Mathematical
 statements are unchanged. Source: J. Fernández de Bobadilla and T. Pełka, `Symplectic monodromy at radius zero and equimultiplicity of μ-constant families`, Annals of Math, 200 (1) 2024. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2024-200-1-SymplecticMonodromy.lean
 -/
 module
@@ -76,7 +79,8 @@ Even though not explicitly mentioned by the paper, we need to require the consta
 to vanish. This is equivalent to saying that `fₜ` is a germ `(ℂⁿ, 0) → (ℂ, 0)`, i.e. that it's
 a family of isolated hypersurface singularities through the origin, which is mentioned both in the
 abstract and in Corollary 1.3, but not explicitly in Theorem 1.1. For an example showing that we
-need this assumption, consider `fₜ = z + t`: The Milnor number is `0` for all `t` (the Jacobian quotient is the zero module since the derivative ideal contains `1`), but
+need this assumption, consider `fₜ = z + t`: The Milnor number is `0` for all `t` (the Jacobian
+quotient is the zero module since the derivative ideal contains `1`), but
 `order(f₀) = 1` while `order(f₁) = 0`.
 Source: J. Fernández de Bobadilla and T. Pełka, `Symplectic monodromy at radius zero and equimultiplicity of μ-constant families`, Annals of Math, 200 (1) 2024. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2024-200-1-SymplecticMonodromy.lean Via leanprover/lean-eval@38361be, problem `annals_symplectic_monodromy`.
 -/

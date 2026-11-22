@@ -34,14 +34,19 @@ public def Mem {α : Type u} (x : α) : BinaryTree α → Prop
   | .nil => False
   | .node key left right => Mem x left ∨ x = key ∨ Mem x right
 
-public instance {α : Type u} : Membership α (BinaryTree α) :=
+-- Preserve the instance name when consumers add a module prefix.
+public instance instMembershipBinaryTree_cSLibExt {α : Type u} :
+    Membership α (BinaryTree α) :=
   ⟨fun tree x => Mem x tree⟩
 
-@[simp] private theorem mem_nil {α : Type u} {x : α} :
+/-- Nothing is a member of the empty tree. -/
+@[simp] theorem mem_nil {α : Type u} {x : α} :
     x ∈ (BinaryTree.nil : BinaryTree α) ↔ False :=
   Iff.rfl
 
-@[simp] private theorem mem_node {α : Type u} {x key : α}
+/-- A member of a node is a member of its left subtree, its key, or a member of its right
+subtree. -/
+@[simp] theorem mem_node {α : Type u} {x key : α}
     {left right : BinaryTree α} :
     x ∈ BinaryTree.node key left right ↔ x ∈ left ∨ x = key ∨ x ∈ right :=
   Iff.rfl

@@ -11,6 +11,7 @@ module
 public import Cslib.Computability.URM.Computable
 public import CSLibExt.Computability.Machines.Turing.SingleTape.Bridge
 public import CSLibExt.Computability.Decidability.TuringReducible
+public import MathlibExt.Computability.TuringMachine.Recursive.ToTM2
 public import Mathlib.Computability.Partrec
 public import Mathlib.Computability.RE
 
@@ -47,6 +48,8 @@ exactly the machine's reachable states (`execN_toCoded_steps`).
 
 - `Cslib.URM.partrec_of_computable`: a URM-computable partial function `ℕ →. ℕ` is
   partial recursive.
+- `Cslib.URM.Computable.tm2Computable`: a URM-computable total function `ℕ → ℕ` is computed
+  by a multi-stack Turing machine (`FinTM2`).
 - `Cslib.URM.Decidable.computablePred`, `Cslib.URM.Recognizable.rePred`: URM-decidable
   predicates are `ComputablePred`, URM-recognizable predicates are `REPred`.
 - `Cslib.URM.Decidable.singleTapeDecidable`, `Cslib.URM.Decidable.tm2Decidable`,
@@ -263,7 +266,7 @@ theorem toRegs_update (σ : Regs) {n v : ℕ} (hn : n ≤ regBound p) :
       rw [hset]
       by_cases h : i = n
       · subst h
-        simp [length_toRegs, hi]
+        simp [hi]
       · simp [h, ne_comm.mp h, toRegs, List.getElem?_map, e1]
     rw [lhs, rhs]
     by_cases h : i = n
@@ -324,12 +327,12 @@ theorem toCoded_ofCoded {c : ℕ × List ℕ} (hlen : c.2.length = regBound p + 
     toCoded p (ofCoded c) = c := by
   obtain ⟨pc, regs⟩ := c
   change regs.length = regBound p + 1 at hlen
-  simp only [toCoded, ofCoded]
+  simp only [toCoded]
   congr 1
   apply List.ext_getElem
   · rw [length_toRegs]; exact hlen.symm
   · intro i hi hi'
-    simp only [toRegs, List.getElem_map, List.getElem_range, hi]
+    simp only [toRegs, List.getElem_map, List.getElem_range]
     exact List.getD_eq_getElem regs 0 hi'
 
 end Coded
@@ -627,7 +630,7 @@ theorem primrec_execN : Primrec fun a : ℕ × ℕ ↦
 
 /-- The initial coded state is the coded initial machine state. -/
 theorem initCoded_eq_toCoded (x : ℕ) : initCoded p x = toCoded p (State.init [x]) := by
-  simp only [initCoded, toCoded, State.init, Regs.ofInputs, toRegs]
+  simp only [initCoded, toCoded, State.init, toRegs]
   congr 1
   apply List.map_congr_left
   intro n _
@@ -816,6 +819,14 @@ theorem partrec_of_computable (hf : URM.Computable 1 (fun inputs ↦ f (inputs 0
         rw [hnone t] at ht
         exact Option.not_mem_none hy ht
   exact (Partrec.rfindOpt (computable₂_haltedOutput prog)).of_eq hmain
+
+/-- **A URM-computable total function is computed by a multi-stack Turing machine**
+(`FinTM2`) under the natural-number encoding: it is partial recursive by
+`partrec_of_computable`, and every computable function is `FinTM2`-computable. -/
+theorem Computable.tm2Computable {f : ℕ → ℕ}
+    (h : URM.Computable 1 fun inputs ↦ Part.some (f (inputs 0))) :
+    Nonempty (Turing.TM2Computable Computability.encodeNat Computability.encodeNat f) :=
+  MetaMathlibExt.TM2Recursive.tm2Computable_of_computable (partrec_of_computable h)
 
 /-- **A URM-decidable predicate is computable.** -/
 theorem Decidable.computablePred {P : ℕ → Prop} (h : Decidable P) : ComputablePred P := by

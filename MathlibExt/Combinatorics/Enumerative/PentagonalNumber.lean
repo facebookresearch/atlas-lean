@@ -13,7 +13,7 @@ public import Mathlib.Combinatorics.Enumerative.Pentagonal.PowerSeries
 import Mathlib.Algebra.EuclideanDomain.Basic
 import Mathlib.Algebra.EuclideanDomain.Int
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Topology.Connected.Separation
 import Mathlib.Topology.Separation.Lemmas
 

@@ -11,10 +11,10 @@ module
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Topology.MetricSpace.Lipschitz
-import Mathlib.Analysis.Calculus.Deriv.Comp
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.ODE.DiscreteGronwall
 import MathlibExt.Analysis.ODE.MaximalSolution
+import Mathlib.Analysis.Calculus.Deriv.Comp
 
 /-!
 # Explicit Euler convergence
@@ -285,6 +285,7 @@ theorem explicit_euler_first_order_convergence
         (mul_nonneg (mul_nonneg hC₁0 hD0) hh.1.le)
     _ = (C₁ * D * Real.exp ((L : ℝ) * D)) * h := by ring
 
+set_option linter.unusedVariables false in
 /-- Explicit Euler consistency: one step from the exact solution has local
 truncation error `O(h^2)`.
 Sources: `Mathlib/docs/undergrad.yaml`, section `Numerical Analysis` /
@@ -297,6 +298,7 @@ Proves `Wanted` entry `explicit_euler_local_truncation_error`.
 Proof: differentiate the velocity by the chain rule, bound that derivative on the compact time
 interval, and apply the mean value inequality twice.
 -/
+@[nolint unusedArguments] -- `[CompleteSpace E]`, `hx0` keep the `Wanted` entry's statement
 theorem explicit_euler_local_truncation_error
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     (f : ℝ → E → E) (t₀ T : ℝ) (x₀ : E)

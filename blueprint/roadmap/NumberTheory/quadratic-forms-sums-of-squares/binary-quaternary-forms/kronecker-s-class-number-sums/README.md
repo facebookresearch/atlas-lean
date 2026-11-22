@@ -1,0 +1,16 @@
+# Kronecker's class number sums
+
+- [Reduced forms of a given discriminant](reduced-forms-of-discriminant.md)
+- [Gauss class number of a discriminant](gauss-class-number.md)
+- [Unweighted Hurwitz class number](unweighted-hurwitz-class-number.md)
+- [Weight of a reduced binary quadratic form](reduced-form-weight.md)
+- [Kronecker's sum $F_o(n)$](kronecker-fodd.md)
+- [Kronecker's sum $F_e(n)$](kronecker-feven.md)
+- [The discriminant $d(\alpha, g)$ attached to $n = 2^\alpha g h^2$](kronecker-discriminant.md)
+- [Kronecker's class-number multiplier](kronecker-class-multiplier.md)
+- [Class numbers of the discriminants $-3$, $-4$ and $-12$](gauss-class-number-small.md)
+- [Kronecker's sums at $n = 1$ and $n = 3$](kronecker-f-small.md)
+- [Small values of the discriminant $d(\alpha, g)$ and the multiplier $\ell(d, h)$](kronecker-discriminant-kronecker-class-m.md)
+- [Gauss's three-square formula after Aygin and Williams](three-square-representation-count-eq-kro.md)
+- [Aygin–Williams evaluation of Kronecker's sums](kronecker-fodd-kronecker-feven-eq-class.md)
+- [Unweighted Hurwitz class numbers via Gauss class numbers](unweighted-hurwitz-class-number-neg-four.md)
