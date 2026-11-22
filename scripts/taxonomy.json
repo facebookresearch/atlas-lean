@@ -9127,6 +9127,7 @@
   "MathlibExt/Algebra/PatchingDatum": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Taylor–Wiles patching"},
   "MathlibExt/Algebra/PointDerivations": {"to": "RingTheory/algebras-and-differentials", "title": "Point derivations"},
   "MathlibExt/Algebra/Polynomial/AevalFrobenius": {"to": "FieldTheory/finite-fields", "title": "Frobenius endomorphism of finite fields"},
+  "MathlibExt/Algebra/Polynomial/ArithmeticProgressionAuxiliaryRoot": {"to": "Algebra/polynomials", "title": "The positive root of the arithmetic-progression auxiliary equation"},
   "MathlibExt/Algebra/Polynomial/BesselPolynomial": {"to": "Algebra/orthogonal-polynomials", "title": "Bessel polynomials"},
   "MathlibExt/Algebra/Polynomial/BitVec": {"to": "ComputerScience/algebraic-and-numerical-algorithms", "title": "Binary polynomial arithmetic on bitvectors"},
   "MathlibExt/Algebra/Polynomial/ChebyshevUCoefficients": {"to": "Algebra/orthogonal-polynomials", "title": "Chebyshev polynomials of the second kind"},

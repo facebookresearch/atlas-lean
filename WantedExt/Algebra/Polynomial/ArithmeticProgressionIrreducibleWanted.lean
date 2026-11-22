@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Algebra.Polynomial.ArithmeticProgressionAuxiliaryRoot
 public import Mathlib.Algebra.Polynomial.AlgebraMap
 public import Mathlib.Algebra.Polynomial.Monic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
@@ -106,20 +107,6 @@ public theorem_wanted arithProgPoly_root_pow_eq (m a d : ℕ) (hd : 0 < d) (z : 
     (hz : aeval z (∑ i ∈ Finset.range (m + 1), C ((a : ℤ) + i * d) * X ^ (m - i)) = 0 ∨ z = 1) :
     z ^ (m + 1) =
       (((a : ℂ) + (m + 1) * d) * z - ((a : ℂ) + m * d)) / ((a : ℂ) * z - ((a : ℂ) - d))
-
-/-- For `m ≥ 2` and positive integers `a ≥ d`, the equation
-`a_1 x^{m+2} + a_0 x^{m+1} - a_{m+2} x - a_{m+1} = 0` (`a_n = a + (n - 1)d`), equation (3), has
-exactly one positive real solution, and it is larger than `1`.
-
-Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
-Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Proposition 1
-(`integers-2026-A92-prop-1`). -/
-public theorem_wanted arithProgPoly_eq3_existsUnique_pos {m a d : ℕ} (hm : 2 ≤ m) (hd : 0 < d)
-    (hda : d ≤ a) :
-    (∃! x : ℝ, 0 < x ∧ (a : ℝ) * x ^ (m + 2) + ((a : ℝ) - d) * x ^ (m + 1) -
-      ((a : ℝ) + (m + 1) * d) * x - ((a : ℝ) + m * d) = 0) ∧
-    ∀ x : ℝ, 0 < x → (a : ℝ) * x ^ (m + 2) + ((a : ℝ) - d) * x ^ (m + 1) -
-      ((a : ℝ) + (m + 1) * d) * x - ((a : ℝ) + m * d) = 0 → 1 < x
 
 /-- For `m ≥ 2`, positive integers `a ≥ d`, and `λ` the positive solution of equation (3),
 every zero `z ∈ ℂ` of `A_m(x)` has `|z| ≤ λ`, with equality only at `z = -λ`.
