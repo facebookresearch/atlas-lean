@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
+public import MathlibExt.NumberTheory.MultiplicativeAdditivePairedSquares
 
 namespace MetaMathlibExt
 
