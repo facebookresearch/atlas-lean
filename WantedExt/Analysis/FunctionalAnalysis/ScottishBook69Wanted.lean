@@ -44,7 +44,8 @@ $p, q \in E$ there is exactly one point $c \in E$ that is the metric center of $
 (2) for all $p, q \in E$ there is exactly one point $x \in E$ such that $q$ is the metric
 center of $(p, x)$. Here "isometric to a real Banach space" means that there are a complete
 real normed space $F$ and an isometric bijection $E \to F$. This is the affirmative answer to
-Problem 69 of S. Mazur and S. Ulam in the Scottish Book.
+Problem 69 of S. Mazur and S. Ulam in the Scottish Book; the claim is false
+(`mazurUlam69_refuted`).
 
 The space is required to be nonempty: the empty space has properties (1) and (2) vacuously but
 is not isometric to a Banach space. -/

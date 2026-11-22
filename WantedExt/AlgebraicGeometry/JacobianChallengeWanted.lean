@@ -99,7 +99,7 @@ $k$-scheme that is proper, smooth of relative dimension $1$ and geometrically ir
 genus of $C$ is a natural number.
 
 Source:
-https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685
+https://leanprover.zulipchat.com/#narrow/stream/583336/topic/Jacobian%20challenge/near/587802685
 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
 public def_wanted genus (C : Over (Spec (.of k))) [IsProper C.hom] [SmoothOfRelativeDimension 1 C.hom]
     [GeometricallyIrreducible C.hom] : ℕ
@@ -111,7 +111,7 @@ $k$-scheme that is proper, smooth of relative dimension $1$ and geometrically ir
 Jacobian $J(C)$ of $C$ is a $k$-scheme.
 
 Source:
-https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685
+https://leanprover.zulipchat.com/#narrow/stream/583336/topic/Jacobian%20challenge/near/587802685
 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
 public def_wanted Jacobian (C : Over (Spec (.of k))) [IsProper C.hom] [SmoothOfRelativeDimension 1 C.hom]
     [GeometricallyIrreducible C.hom] : Over (Spec (.of k))
@@ -132,7 +132,7 @@ irreducible curve over a field $k$. The Jacobian $J(C)$ is smooth of relative di
 $k$, where $g$ is the genus of $C$.
 
 Source:
-https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685
+https://leanprover.zulipchat.com/#narrow/stream/583336/topic/Jacobian%20challenge/near/587802685
 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
 public theorem_wanted smoothOfRelativeDimension_genus :
     SmoothOfRelativeDimension (❰genus❱ C) (❰Jacobian❱ C).hom
@@ -153,7 +153,7 @@ $k$. Each $k$-rational point $P$ of $C$ gives a morphism of $k$-schemes $C \to J
 its Jacobian, the Abel–Jacobi map based at $P$.
 
 Source:
-https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685
+https://leanprover.zulipchat.com/#narrow/stream/583336/topic/Jacobian%20challenge/near/587802685
 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
 public def_wanted ofCurve (P : 𝟙_ (Over (Spec (.of k))) ⟶ C) : C ⟶ ❰Jacobian❱ C
 
@@ -165,7 +165,7 @@ $k$-rational point of $C$. The Abel–Jacobi map $C \to J(C)$ based at $P$ sends
 identity point of $J(C)$ for its group scheme structure.
 
 Source:
-https://leanprover.zulipchat.com/#narrow/stream/583336-Autoformalization/topic/Jacobian%20challenge/near/587802685
+https://leanprover.zulipchat.com/#narrow/stream/583336/topic/Jacobian%20challenge/near/587802685
 Via leanprover/lean-eval@38361be, problem `jacobian_challenge_alggeo`. -/
 public theorem_wanted comp_ofCurve (C : Over (Spec (.of k))) [IsProper C.hom]
     [SmoothOfRelativeDimension 1 C.hom] [GeometricallyIrreducible C.hom]
@@ -285,9 +285,9 @@ public theorem_wanted c_pos (g d : ℕ) : 1 ≤ ❰c❱ g d
 
 /-- **Uniform Mordell–Lang for curves.** Let $g \ge 2$ and $d \ge 1$ be natural numbers, let $F$
 be a number field with $[F : \mathbb{Q}] \le d$, and let $C$ be a proper, smooth, geometrically
-irreducible curve over $F$. If $C$ has genus $g$, then the number of $F$-rational points of $C$,
-possibly infinite, is at most $c(g, d)^{1 + \rho}$, where $c$ is the uniform constant and $\rho$
-is the free rank of the group of $F$-rational points of the Jacobian of $C$.
+irreducible curve over $F$. If $C$ has genus $g$, then $C$ has at most $c(g, d)^{1 + \rho}$
+$F$-rational points (in particular only finitely many), where $c$ is the uniform constant and
+$\rho$ is the free rank of the group of $F$-rational points of the Jacobian of $C$.
 
 Source: V. Dimitrov, Z. Gao, and P. Habegger, `Uniformity in Mordell–Lang for curves`, Annals of
 Math, 194 (1) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge
