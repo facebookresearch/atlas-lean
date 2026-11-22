@@ -11,11 +11,13 @@ module
 public import MathlibExt.CategoryTheory.Monoidal.Mod.ScalarUnitTensor
 
 /-!
-Actual noncommutative right-left module tensor functors.
+# Balanced tensor functors for right and left modules
 
-All objects and maps below use the existing monadic balanced tensor. The
-standard right-module carrier is `Mod (D := C) (mop A)`. In particular no
-commutative conversion, supplied quotient, or model conclusion is used.
+For a monoid object in a monoidal category, the right-module carrier is
+`Mod (D := C) (mop A)`. The monadic balanced tensor gives functors in both
+the right and left module variables when the required small colimits exist.
+Their maps satisfy projection and composition formulas; natural
+transformations and scalar-change computations retain the same tensor objects.
 -/
 
 @[expose] public section

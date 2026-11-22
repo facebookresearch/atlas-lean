@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
 module
 
 public import MathlibExt.CategoryTheory.Operad.Colored.Collection
@@ -19,41 +14,23 @@ public import Mathlib.Logic.Equiv.Option
 public import Mathlib.Data.Fintype.Option
 
 /-!
-# Analytic indexing for a fixed colored symmetric collection
+# Analytic indexing for colored symmetric collections
 
-For a fixed output color `d`, this file packages the KQ-independent indexing layer used by the
-analytic algebra monad: fixed-output profiles reusing `ColoredProfile`, the finite input
-family of a varying carrier family `A`, the combined family containing the operation object
-`O(P)` and all carrier objects `A (P.inputColor i)`, and its finite-tensor analytic summand.
-Carrier and collection maps induce natural transformations with identity, composition, and
-mixed laws; summand maps are obtained by whiskering with the finite tensor.
+For a fixed output color, color-preserving profile relabellings form an indexing groupoid
+for a colored symmetric collection. The input carrier family and the combined family of one
+operation object with all input carriers define covariant finite-family functors; a
+FiniteTensor structure turns the combined family into the analytic summand. Pointwise
+carrier maps and collection maps induce natural transformations satisfying identity,
+composition and mixed compatibility laws.
 
-Provenance (verified 2026-09-09): the summand is the profilewise
-operation-tensor-carriers piece of the classical one-colored Schur/analytic-functor
-archetype, before symmetric-group coinvariants: J. P. May, _The Geometry of Iterated
-Loop Spaces_, opening sections "Operads and C-spaces" and "Operads and Monads"
-(stable DOI https://doi.org/10.1007/BFb0067491; author PDF
+The operation-tensor-carriers formula is the profilewise term of the classical Schur
+construction before symmetric-group coinvariants. References are J. P. May,
+_The Geometry of Iterated Loop Spaces_, opening sections "Operads and C-spaces" and
+"Operads and Monads" (DOI https://doi.org/10.1007/BFb0067491; author PDF
 https://www.math.uchicago.edu/~may/BOOKS/gils.pdf), and J.-L. Loday and B. Vallette,
-_Algebraic Operads_, Chapter 5, §5.1 "S-module and Schur functor" (stable DOI
+_Algebraic Operads_, Chapter 5, §5.1 "S-module and Schur functor" (DOI
 https://doi.org/10.1007/978-3-642-30362-3; author PDF
-https://www.math.univ-paris13.fr/~vallette/Operads.pdf). Colored indexing via
-`ColoredProfile` and O7B shapes is local. Local engineering
-only: `FiniteFamily` packaging, the fixed-output `AnalyticIndex` fiber, and tensor
-whiskering. The cited uncolored formula does not itself prove the colored
-construction. O7G fixes one operad and indexes its algebras; O7E's free colored-operad
-monad has operads as algebras instead.
-
-Variance: morphisms are color-preserving input relabellings inside that fixed-output fiber
-and everything is covariant under them; the input family, combined family, and summand are
-separately covariant in pointwise carrier maps and in maps of the fixed colored symmetric
-collection.
-
-Nonclaims: no colimit, orbit quotient, analytic endofunctor, unit, multiplication, monad,
-algebra, Eilenberg--Moore, bar-construction, Kan--Quillen, or homotopical claim is made.
-No change-of-output-color or change-of-colors action is provided here.
-Operad substitution and unit laws are unused at this indexing layer. The enriched
-fixed-carrier algebra interface in `Algebra/Basic.lean` is neither used nor modified.
-No nested substitution bridge is constructed here; it belongs in a later one-file bridge.
+https://www.math.univ-paris13.fr/~vallette/Operads.pdf).
 -/
 
 @[expose] public section

@@ -6,17 +6,21 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.CategoryTheory.SmallObject.TransfiniteIteration
 public import Mathlib.CategoryTheory.Presentable.Basic
 public import MathlibExt.CategoryTheory.Presentable.Colimits
+
+/-!
+# Accessibility of transfinite iteration
+
+For a pointed `μ`-accessible endofunctor and a well-ordered successor shape
+with bottom and the required iteration colimits, every stage of its
+transfinite iteration is `μ`-accessible. The final iteration functor is
+also `μ`-accessible. The proof uses the bottom and successor comparison
+isomorphisms and the universal colimit cocones at limit stages.
+-/
 
 @[expose] public section
 

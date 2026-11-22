@@ -6,16 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.Topology.Category.TopCat.ProdPushoutFiberDesc
 public import MathlibExt.Topology.Category.TopCat.ProdPushoutFiberFormula
+
+/-!
+# Factorization through the fixed-left product pushout quotient
+
+Short composition of the pointwise descent and fiber formula helpers.
+-/
 
 @[expose] public section
 
@@ -24,12 +24,6 @@ open CategoryTheory CategoryTheory.Limits TopCat
 universe u
 
 namespace TopCat
-
-/-!
-# Factorization through the fixed-left product pushout quotient
-
-Short composition of the pointwise descent and fiber formula helpers.
--/
 
 /-- Factorization of the competing descent through the product quotient. -/
 theorem prodPushoutFactors_of_isPushout

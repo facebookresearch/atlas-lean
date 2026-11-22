@@ -1,22 +1,7 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
-Authors: Julian Komaromy, Joël Riou
--/
-
--- Author: @toskua, Avocado
-/-
 Copyright (c) 2025 Julian Komaromy. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Julian Komaromy, Joël Riou
+See NOTICE in the repository root for the original Mathlib attribution.
 -/
 module
 
@@ -32,7 +17,7 @@ public import Mathlib.AlgebraicTopology.Quasicategory.TwoTruncated
 
 This file backports witness-level and functor-construction APIs introduced in
 Mathlib PR #42435 which are absent from the pinned Mathlib `v4.33.0` (`db584cd`)
-but required for the KQ2 weak-equivalence / fundamental-groupoid layer.
+but required for the simplicial weak-equivalence and fundamental-groupoid constructions.
 
 ## Source
 

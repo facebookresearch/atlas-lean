@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.SimplicialRealization.Product.SSetRealizationFiniteProductComparisonFinite
@@ -21,21 +15,13 @@ public import Mathlib.CategoryTheory.Monoidal.Closed.FunctorToTypes
 public import MathlibExt.Topology.Category.TopCat.ProdColimit
 
 /-!
-# Finite-times-arbitrary realization product comparison
+# Realization products with a finite simplicial factor
 
-For finite `K : SSet.{u}` and arbitrary `Y : SSet.{u}`, the product
-comparison `Limits.prodComparison SSet.toTop K Y` is an isomorphism.
-
-The proof presents `Y` as the colimit of its monogenous subcomplexes, applies
-the finite-by-finite comparison at every stage, and transports along fixed-left
-product and realization colimit preservation. On the topological side,
-fixed-left product preserves the colimit because a finite realization is
-locally compact. Comparison naturality and colimit uniqueness identify the
-resulting isomorphism with the product comparison.
-
-Explicit nonclaims: no arbitrary-times-arbitrary theorem, global realization
-product-preservation instance, fibration, anodyne, weak-equivalence, or
-model-category result.
+For a finite simplicial set K and an arbitrary simplicial set Y, the comparison
+Limits.prodComparison SSet.toTop K Y is an isomorphism. The proof writes Y as a colimit of
+monogenous subcomplexes and applies the finite-by-finite comparison at each stage. Local
+compactness of the finite realization ensures the fixed-left topological product preserves
+this colimit.
 -/
 
 @[expose] public section

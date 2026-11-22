@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.Topology.Category.TopCat.Limits.Products
@@ -20,12 +14,15 @@ public import Mathlib.Topology.Homeomorph.Lemmas
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Products
 
 /-!
-Module contract for fixed-left `TopCat` product/coproduct compatibility.
+# Products distribute over topological coproducts
 
-This module proves fixed-left product compatibility with coproducts, uses only
-canonical TopCat/product/sigma isomorphisms, requires no local-compactness
-hypothesis, and does not prove coequalizer, pushout, general-colimit, or
-model-category results.
+For any topological space `K` and indexed family `F`,
+`prodCoproductComparisonIso` identifies the coproduct of `K ⨯ F j` with
+`K ⨯ ∐ F`.
+Its restriction to each coproduct summand is the product of the identity
+of `K` with the corresponding coproduct inclusion.
+Thus product with a fixed left factor preserves coproducts in `TopCat`,
+for arbitrary spaces without a local-compactness assumption.
 -/
 
 @[expose] public section

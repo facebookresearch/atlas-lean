@@ -6,16 +6,22 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.ModelCategory.Basic
 public import Mathlib.AlgebraicTopology.ModelCategory.IsCofibrant
+
+/-!
+# Functorial cofibrant and fibrant replacements
+
+Functorial factorization of the initial maps as cofibrations followed by
+trivial fibrations gives a cofibrant replacement functor with a natural
+trivial-fibration counit. Dually, factorization of terminal maps as trivial
+cofibrations followed by fibrations gives a fibrant replacement functor with a
+natural trivial-cofibration unit. The replacement maps satisfy the original
+factorization identities, and their replacement objects are cofibrant or
+fibrant, respectively.
+-/
 
 @[expose] public section
 

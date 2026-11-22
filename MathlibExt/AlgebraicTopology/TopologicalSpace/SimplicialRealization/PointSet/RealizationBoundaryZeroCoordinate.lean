@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.Boundary
@@ -19,38 +13,14 @@ public import Mathlib.AlgebraicTopology.SimplicialSet.TopAdj
 public import Mathlib.Analysis.Convex.StdSimplex
 
 /-!
-# Realized simplex-boundary zero-coordinate lift (reverse direction)
+# Zero barycentric coordinates and realized simplex boundaries
 
-For `n : ℕ` and `p : Convexity.StdSimplex ℝ (Fin (n + 1))`, if some
-coordinate vanishes (`p.weights j = 0`) then the corresponding realized
-point lies in the realized boundary: `(⦋n⦌.toTopHomeo).symm p ∈
-Set.range (SSet.toTop.map (SSet.boundary n).ι)`.
-
-This is the reverse zero-coordinate-to-boundary-range implication. The forward
-implication is supplied separately by
-`SSet.boundary.mem_zeroCoord_of_mem_realizedBoundaryRange` in `Boundary.lean`:
-membership in the realized boundary range forces a zero barycentric coordinate.
-Together they give the
-iff used by the barycenter-complement radial retraction and
-`TopPair.GoodPairData` for `( |Δ[n]|, |∂Δ[n]| )`; only the reverse is
-proved here to avoid duplicating that public forward theorem.
-
-Reuse map (all pinned, no new abstraction):
-* `Convexity.StdSimplex.mem_range_map_iff` for the coordinate-to-face
-  range step (`p` with `p.weights j = 0` lies in `map (Fin.succAbove j)`);
-* `SSet.face_singleton_compl_le_boundary` for the face-to-boundary
-  inclusion (the `j`-th leg of `SSet.boundary_eq_iSup`, cited here as
-  the SSet presentation rather than re-proved);
-* `SimplexCategory.toTopHomeo_symm_naturality_apply`,
-  `SSet.stdSimplex.faceSingletonComplIso_hom_ι`, and
-  `SSet.Subcomplex.homOfLE_ι` with `Functor.map_comp` for the
-  realization transport (same idiom as `SSet.boundary.singleton_face_coord_zero`).
-The coordinate-to-face consequence is proved directly via
-`Convexity.StdSimplex.mem_range_map_iff`, without importing private
-OpenCell or horn helpers.
-
-Nonclaims: no horn substitution, no subdivision, no Kan filling, and no
-model-category, fibration, or weak-equivalence result is asserted.
+A point of the standard simplex with a zero barycentric coordinate lies in
+the realized boundary of `Δ[n]`. The proof uses
+`Convexity.StdSimplex.mem_range_map_iff` to place it in the opposite face,
+then transports the face inclusion through realization. Together with
+`SSet.boundary.mem_zeroCoord_of_mem_realizedBoundaryRange`, this characterizes
+boundary-range membership by the existence of a zero coordinate.
 -/
 
 @[expose] public section

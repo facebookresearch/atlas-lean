@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
 module
 
 public import MathlibExt.CategoryTheory.Operad.Collection
@@ -19,6 +14,16 @@ import Mathlib.Logic.Equiv.Defs
 import Mathlib.Logic.Equiv.Option
 import Mathlib.Basic.Finite.Sigma
 public import Mathlib.Data.Fintype.Option
+
+/-!
+# Finite indexing for operadic substitution
+
+A substitution datum is a finite family of finite bijection-groupoid
+objects. Its total arity is the dependent sum of the inner arities,
+functorial in bijections of the outer and inner indices. For a symmetric
+collection, these indices specify the outer and inner substitution factors;
+a finite tensor structure assembles the substitution source and target.
+-/
 
 @[expose] public section
 

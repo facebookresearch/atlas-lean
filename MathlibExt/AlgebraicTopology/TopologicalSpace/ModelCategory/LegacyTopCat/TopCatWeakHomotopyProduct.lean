@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.LegacyTopCat.TopCatWeakHomotopyEquivalence
@@ -21,9 +15,10 @@ public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.BinaryProducts
 public import Mathlib.CategoryTheory.Adjunction.Limits
 public import Mathlib.CategoryTheory.MorphismProperty.Basic
 
-/-! # Binary-product closure for TopCat weak homotopy equivalences
+/-!
+# Binary-product closure for TopCat weak homotopy equivalences
 
-Staged KQ3 packet. This file imports and reuses the sibling provider
+This file imports and uses the sibling provider
 `MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.LegacyTopCat.TopCatWeakHomotopyEquivalence`,
 which supplies
 `TopCat.weakHomotopyEquivalences =

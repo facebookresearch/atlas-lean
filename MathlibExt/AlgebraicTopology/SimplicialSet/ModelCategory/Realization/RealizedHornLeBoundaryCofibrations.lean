@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import
@@ -23,7 +17,7 @@ public import Mathlib.CategoryTheory.MorphismProperty.Composition
 /-!
 # Realized horns lie in boundary-generated cofibrations
 
-This file is part of the KQ3 layer. In every universe, every realized horn
+In every universe, every realized horn
 inclusion lies in the left class of the realized boundary inclusions. Each
 horn is reached from the top simplex by a finite SSet attachment chain whose
 steps are pushouts of boundary inclusions; realizing the chain puts each

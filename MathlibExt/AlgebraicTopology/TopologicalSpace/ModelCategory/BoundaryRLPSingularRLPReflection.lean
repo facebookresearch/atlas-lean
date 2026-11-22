@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.BoundaryRLPSingularRLP
@@ -19,15 +13,15 @@ public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.Bounda
 /-!
 # Boundary-RLP reflection across the realization/singular adjunction
 
-This file is part of the KQ3 layer. It is the converse of the staged
+This file is the converse of the
 `BoundaryRLPSingularRLP` transport: a `TopCat` map whose singular image lifts
 against all simplicial boundary inclusions already lifts against all realized
 boundary inclusions. Each realized generator is a realized simplicial boundary,
 so `sSetTopAdj.hasLiftingProperty_iff` moves the problem back to `SSet`, where
-`SSet.modelCategoryQuillen.boundary_ι_mem_I` applies. Combined with the staged
+`SSet.modelCategoryQuillen.boundary_ι_mem_I` applies. Combined with the
 forward inclusion, the two `rlp` properties agree.
 
-This proves only the formal KQ3 adjunction reflection isolated by `v0973`. It
+This proves only the adjunction reflection. It
 assumes no external `J.rlp` theorem, no model structure, and no target
 trivial-fibration inclusion.
 -/

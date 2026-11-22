@@ -6,23 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import Mathlib.CategoryTheory.ObjectProperty.FullSubcategory
 public import Mathlib.Data.Finset.Basic
 public import MathlibExt.AlgebraicTopology.SimplexCategory.Reedy
-
-section
-
--- Author: @toskua, Codex
-
 
 /-!
 # Actual partial epi-factor latching categories
@@ -32,6 +20,8 @@ opposite-simplex latching category through whose original proper epimorphism `α
 The category is full: all original comparison triangles are retained. Their actual
 residual factors are unique, and their complete naturality is the original epi equation.
 -/
+
+section
 
 @[expose] public section
 
@@ -124,7 +114,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -181,7 +170,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -272,7 +260,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -486,7 +473,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -661,7 +647,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -875,7 +860,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1064,7 +1048,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1150,7 +1133,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1345,7 +1327,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!

@@ -6,21 +6,9 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import MathlibExt.CategoryTheory.Enriched.EnrichedHomTransport
-
-section
-
--- Author: @toskua, Codex
-
 
 /-!
 # Full Hom-isomorphism transport on the original enriched objects
@@ -30,6 +18,8 @@ selected Hom objects and unchanged objects. These bidirectional readbacks and
 identity-on-object enriched functors retain both actual inverse Hom maps,
 all scalar inputs, and the original monoidal unit and associativity arrows.
 -/
+
+section
 
 @[expose] public section
 

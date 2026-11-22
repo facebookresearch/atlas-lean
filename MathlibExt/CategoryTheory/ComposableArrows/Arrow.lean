@@ -10,6 +10,17 @@ module
 
 public import Mathlib.CategoryTheory.ComposableArrows.Basic
 
+/-!
+# Arrows as one-step composable diagrams
+
+`ofArrowFunctor` turns an arrow and a commutative square into a
+one-step composable diagram and a natural transformation.
+`arrowFunctor` sends a one-step diagram back to its arrow and sends a
+natural transformation to the square formed by its two components.
+The component formulas identify the sources, targets, arrows, and square
+maps for both constructions in any category.
+-/
+
 @[expose] public section
 
 namespace CategoryTheory

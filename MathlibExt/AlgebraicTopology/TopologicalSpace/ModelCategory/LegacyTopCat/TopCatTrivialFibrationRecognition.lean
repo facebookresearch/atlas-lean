@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.BoundaryRLPSingularRLPReflection
@@ -21,7 +15,7 @@ public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.Legacy
 /-!
 # Trivial-fibration recognition for realized horns in `TopCat`
 
-This file is part of the KQ3 layer. It proves the first remaining cross
+This file proves the first cross
 inclusion directly by singular/realization transport: a map in
 `TopCat.realizedHornInclusions.rlp` that is a weak homotopy equivalence
 lies in `TopCat.realizedBoundaryInclusions.rlp`, conditional on the
@@ -47,7 +41,7 @@ in `SSet` through simplicial generators, so neither side implies the other.
 Moreover the two Top cross inclusions are interdependent through the
 retract/factorization lemmas in `TopCatModelCompatibilityConditional`, so
 the Top-side inclusions alone cannot yield the target. This file supplies
-the missing premise unlocking those lemmas: with the target proved,
+the premise needed for those lemmas: with the target proved,
 `TopCat.boundaryLLP_inf_W_le_hornLLP` gives the opposite cross inclusion
 from horn-cell closure, with no retract argument duplicated here.
 

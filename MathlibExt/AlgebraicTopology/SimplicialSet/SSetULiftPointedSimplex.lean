@@ -6,19 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.SSetULiftHomEquiv
 public import MathlibExt.AlgebraicTopology.SimplicialSet.KanComplex.HomotopyGroup
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ULiftKan
-
-@[expose] public section
 
 /-!
 # Full original pointed simplices under universe lift
@@ -28,6 +20,8 @@ its same scalar Yoneda dictionary. Every original boundary face and
 constant endpoint remains fixed, in all original dimensions and
 independent coefficient universes.
 -/
+
+@[expose] public section
 
 noncomputable section
 

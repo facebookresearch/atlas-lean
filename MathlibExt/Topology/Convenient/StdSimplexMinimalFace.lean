@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.Analysis.Convex.StdSimplex
@@ -19,35 +13,14 @@ public import Mathlib.AlgebraicTopology.SimplexCategory.Basic
 public import Mathlib.Data.Finset.Sort
 
 /-!
-# Minimal support face of a standard-simplex point
+# Minimal support faces of standard-simplex points
 
-Smallest reusable support-face input for open-cell injectivity:
-every point of `Convexity.StdSimplex ℝ (Fin (n + 1))` factors through the
-injective coordinate inclusion of its support by a strictly positive interior
-point, packaged as a simplex-category monomorphism. Uniqueness of such
-interior-presented support faces is `supportFace_eq` below.
-
-Reuse map:
-- `Convexity.StdSimplex.exists_strictly_positive_preimage`
-  (`MathlibExt.Analysis.Convex.StdSimplex`): `reuse`.
-  Strictly positive factorization through the support enumeration.
-- `Convexity.StdSimplex.map_surjective_pos` (same module): `reuse`.
-  Transported positivity along the surjective support reparametrization.
-- `Convexity.StdSimplex.map_comp`, `Convexity.StdSimplex.weights_map`
-  (pinned Mathlib): `reuse`.
-- `Convexity.StdSimplex.range_eq_support_of_map_strictly_positive`
-  (`MathlibExt.Analysis.Convex.StdSimplex`): `reuse`.
-  Support-range equality for the mono-is-iso argument.
-- `Finset.orderEmbOfFin`, `Finset.range_orderEmbOfFin`
-  (`Mathlib.Data.Finset.Sort`): `reuse`.
-- `SimplexCategory.Hom.mk`, `SimplexCategory.mono_iff_injective`,
-  `SimplexCategory.epi_iff_surjective`,
-  `CategoryTheory.isIso_of_mono_of_epi`: `reuse`.
-- No new reusable construction beyond the support-face packaging below.
-
-Nonclaims: no realization quotient, carrier theorem, products,
-or model-category result. Next corollary (not proved here): open-cell
-injectivity via this face plus the closed-embedding face API.
+Every point of a standard simplex factors through a simplex-category
+monomorphism from its support face, with a strictly positive preimage.
+The theorem `supportFace_eq` shows that two such presentations have equal
+dimensions and agree on vertices after that identification. A simplex-category
+monomorphism whose image point has strictly positive coordinates is an
+isomorphism, since its range contains every target vertex.
 -/
 
 @[expose] public section
@@ -56,29 +29,10 @@ namespace Convexity.StdSimplex
 
 variable {n : ℕ}
 
-/-- New-carrier support face as a simplex-category monomorphism with strictly
-positive preimage.
-
-Derived from `Convexity.StdSimplex.exists_strictly_positive_preimage` (no proof
-duplication): `Finset.orderEmbOfFin` supplies the monotone support enumeration,
-`SimplexCategory.Hom.mk` the morphism, `SimplexCategory.mono_iff_injective`
-the monomorphism, and `Convexity.StdSimplex.map_surjective_pos` with pinned
-`Convexity.StdSimplex.map_comp` the transported positivity and map equation.
-Support cardinality is `k + 1` (explicitly positive, so the dimension-zero
-empty case is impossible).
-
-Reuse map:
-- `Convexity.StdSimplex.exists_strictly_positive_preimage`,
-  `Convexity.StdSimplex.map_surjective_pos` (`MathlibExt/Analysis/Convex/StdSimplex.lean`): `reuse`.
-- `Convexity.StdSimplex.map_comp` (pinned Mathlib): `reuse`.
-- `Finset.orderEmbOfFin`, `Finset.range_orderEmbOfFin`
-  (`Mathlib/Data/Finset/Sort.lean`): `reuse`.
-- `SimplexCategory.Hom.mk`, `SimplexCategory.mono_iff_injective`: `reuse`.
-- `Finset.card_image_of_injective`, `Finset.mem_image`, `Finset.mem_coe`,
-  `Nat.exists_eq_succ_of_ne_zero` (pinned Mathlib): `reuse`.
-
-Nonclaim: no open-cell, realization, quotient, compact-support,
-model-category, or KQ4 result. -/
+/-- Every standard-simplex point is the image of a strictly positive point
+under a simplex-category monomorphism. The monotone support enumeration
+gives its vertex map, with one source vertex for each nonzero barycentric
+coordinate. -/
 theorem exists_support_face_mono (p : StdSimplex ℝ (Fin (n + 1))) :
     ∃ (k : ℕ) (φ : SimplexCategory.mk k ⟶ SimplexCategory.mk n),
       CategoryTheory.Mono φ ∧
@@ -147,13 +101,10 @@ theorem exists_support_face_mono (p : StdSimplex ℝ (Fin (n + 1))) :
   have h3 : (q.map σ).map ⇑e.toOrderHom = p := h1.trans h2
   simpa only [hφ, SimplexCategory.Hom.toOrderHom_mk] using h3
 
-/-- Any two simplex-category support faces presenting the same point by interior
-points are equal. Both underlying functions enumerate the support strictly
-monotonically (injectivity plus order-hom monotonicity gives strict
-monotonicity), so `orderEmbOfFin_unique` identifies both with the canonical
-enumeration. Dimensions agree by cardinality.
-Dimension zero is explicit: both maps out of `Fin 1` agree by subsingleton
-after the dimension identification. -/
+/-- Two monomorphisms presenting the same point as the image of strictly
+positive points have equal source dimensions and agree on vertices after
+that identification. Both enumerate the same support strictly monotonically,
+so uniqueness of `orderEmbOfFin` gives the equality. -/
 theorem supportFace_eq
     {p : StdSimplex ℝ (Fin (n + 1))}
     {k₁ : ℕ} {φ₁ : SimplexCategory.mk k₁ ⟶ SimplexCategory.mk n}
@@ -274,25 +225,9 @@ theorem supportFace_eq
     Finset.orderEmbOfFin_unique hcard hmem₂ hstrict₂
   exact ⟨rfl, fun i => by rw [congrFun e1 i, congrFun e2 _]⟩
 
-/-- New-carrier mono face with strictly positive image is an isomorphism.
-
-If `φ` is mono and its simplex image is strictly positive in every
-coordinate, then `φ` is surjective on vertices, hence an isomorphism.
-Dimension zero needs no special case: `Fin (k + 1)` is always nonempty,
-so the surjectivity argument below is uniform in `k`.
-
-Reuse:
-- `Convexity.StdSimplex.range_eq_support_of_map_strictly_positive`
-  (`MathlibExt/Analysis/Convex/StdSimplex.lean`): `reuse`.
-- `SimplexCategory.mono_iff_injective`, `SimplexCategory.epi_iff_surjective`,
-  `CategoryTheory.isIso_of_mono_of_epi`: `reuse`.
-- Pinned `Convexity.StdSimplex.weights_map`,
-  `Finsupp.mapDomain_apply_of_injective`, `Set.range_eq_univ`,
-  `ne_of_gt`: `reuse`.
-- No new reusable construction beyond this packaging.
-
-Nonclaim: no open-cell uniqueness, realization, quotient, compact-support,
-model-category, or KQ4 result. -/
+/-- A simplex-category monomorphism whose image point has strictly positive
+barycentric coordinates is an isomorphism. Positivity makes its vertex range
+the whole target, so it is both mono and epi. -/
 theorem isIso_of_mono_map_strictly_positive {k n : ℕ}
     (φ : SimplexCategory.mk k ⟶ SimplexCategory.mk n)
     [CategoryTheory.Mono φ]

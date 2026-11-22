@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.Boundary
@@ -384,7 +378,7 @@ minimality. For `X := Δ[N]`, `A := boundary N`, `J := ⊤`, dimension bounds
 `sup_ofSimplex_top_eq_top`/`attachment_apex_eq_top` where the import layer
 permits. No realized-boundary-range/complement equality, openness,
 collar/shrink/chart/Serre/fibration/model, arbitrary product preservation, or
-KQ3 claim. -/
+topological model-structure claim. -/
 theorem exists_isPushout_of_lt_with_witness {X : SSet.{u}} (A J : X.Subcomplex)
     (h : A < J) :
     ∃ (B : X.Subcomplex) (hAB : A < B) (_ : B ≤ J) (n : ℕ)

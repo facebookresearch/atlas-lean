@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.ModelCategory.Basic
@@ -20,6 +14,17 @@ public import Mathlib.AlgebraicTopology.ModelCategory.Opposite
 public import Mathlib.CategoryTheory.Adjunction.Limits
 public import Mathlib.CategoryTheory.Adjunction.Opposites
 public import Mathlib.CategoryTheory.LiftingProperties.Adjunction
+
+/-!
+# Quillen adjunctions and preservation properties
+
+For an adjunction between model categories, `IsQuillenAdjunction` requires
+the left adjoint to preserve cofibrations and trivial cofibrations. This is
+equivalent to preservation of fibrations and trivial fibrations by the right
+adjoint, and implies preservation of cofibrant and fibrant objects on the
+respective sides. Quillen adjunctions are stable under natural isomorphisms,
+opposites and composition; identity adjunctions are Quillen.
+-/
 
 @[expose] public section
 

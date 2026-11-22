@@ -6,28 +6,17 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.LegacyTopCat.TopCatWeakHomotopyIdentities
 
-/-! # Category instance for TopCat weak homotopy equivalences
+/-!
+# Weak homotopy equivalences in `TopCat`
 
-Staged KQ3 packet at universe zero. The sibling providers
-`LegacyTopCat.TopCatWeakHomotopyEquivalence`
-(supplying `TopCat.weakHomotopyEquivalences`) and
-`LegacyTopCat.TopCatWeakHomotopyIdentities`
-(supplying `ContainsIdentities` at `TopCat.{0}`) are staged; this file defines no fallback.
-
-Provides only the `CategoryWithWeakEquivalences TopCat.{0}` instance with
-`weakEquivalences := weakHomotopyEquivalences`, reusing the already proved
-`ContainsIdentities` instance. No model structure, product theorem,
-or KQ4 statement is added.
+At universe zero, `TopCat.weakHomotopyEquivalences` defines the
+`CategoryWithWeakEquivalences TopCat.{0}` instance. The identity-closure
+instance is inherited from `TopCatWeakHomotopyIdentities` and identified
+with the installed weak-equivalence class.
 
 Mathematical source: Goerss--Jardine, Simplicial Homotopy Theory, I.3.
 -/

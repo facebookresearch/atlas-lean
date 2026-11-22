@@ -6,13 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import MathlibExt.AlgebraicTopology.ModelCategory.FiniteResolutionTensor
@@ -20,11 +13,6 @@ public import MathlibExt.AlgebraicTopology.ModelCategory.FramingHomotopy
 public import MathlibExt.AlgebraicTopology.ModelCategory.GeneratedFramings
 public import MathlibExt.AlgebraicTopology.ModelCategory.GeneratedReplacementConstruction
 public import MathlibExt.AlgebraicTopology.ModelCategory.RightFrameHomKan
-
-section
-
--- Author: @toskua, Codex
-
 
 /-!
 # Function-complex diagrams from the genuine original generated frames
@@ -34,6 +22,8 @@ cosimplicial Q and simplicial R frames. Their natural comparisons use
 the same original frame resolutions and every original coefficient map.
 Each represented vertex retains the actual original q and r arrows.
 -/
+
+section
 
 @[expose] public section
 
@@ -176,7 +166,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -304,7 +293,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -549,7 +537,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!

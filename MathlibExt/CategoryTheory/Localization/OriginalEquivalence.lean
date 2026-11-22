@@ -6,16 +6,23 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.CategoryTheory.Localization.Equivalence
 public import Mathlib.CategoryTheory.Localization.Construction
+
+/-!
+# Equivalences induced on localizations
+
+Given an equivalence `e : C ≌ D`, suppose `e.functor ⋙ W'.Q` inverts `W`
+and `e.inverse ⋙ W.Q` inverts `W'`.
+`originalForward` and `originalInverse` lift these two functors to the
+localizations and commute strictly with the canonical projections.
+The unit and counit lift those of `e`, with formulas for their projected
+components and the forward triangle identity.
+`originalEquivalence` packages the resulting equivalence, and its unit
+and counit are compatible with replacing `e` by `e.symm`.
+-/
 
 @[expose] public section
 

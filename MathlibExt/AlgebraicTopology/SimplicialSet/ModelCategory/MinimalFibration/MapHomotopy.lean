@@ -6,63 +6,27 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.MinimalFibration.Basic
 
-@[expose] public section
-
 /-!
-# Map-level fiberwise homotopy and the simplex over-relation
+# Fiberwise map homotopies and simplex over-relations
 
-This module provides the smallest reusable pure-simplicial foundation needed by
-the next minimal-fibration comparison/rigidity packets.
+SSet.FiberwiseHomotopy records a map homotopy whose cylinder is constant over the specified
+base map in the interval direction, together with its endpoint equations and reflexive
+constructor. At simplex level, MinimalFibration.OverRelation records a boundary-stationary
+homotopy over an arbitrary fixed base simplex and derives the common base and boundary
+values. Its conversion to the simplex-level FiberwiseHomotopy implies equality of the two
+simplices when the map is minimal.
+
+## References
 
 * Goerss–Jardine, *Simplicial Homotopy Theory*, Chapter I §10.
 * Hovey, *Model Categories*, §3.5.
-
-## Map-level fiberwise homotopy
-
-For maps `p : E ⟶ B` and `p' : E' ⟶ B`, a witness
-`H : SSet.FiberwiseHomotopy p p' f g` between `f g : E ⟶ E'` extends an
-ordinary `SSet.Homotopy f g` (cylinder `E ⊗ Δ[1] ⟶ E'`) with the exact
-over-base equation `H.hom.h ≫ p' = fst ≫ p`: the cylinder is constant over
-`p` in the interval direction. The name is unambiguous beside the existing
-simplex-level `SSet.MinimalFibration.FiberwiseHomotopy`, which relates
-`n`-simplices relative to `SSet.boundary n` over a constant base. Only the
-documented endpoint consequences `fac₀`/`fac₁` and the reflexive constructor
-from `f ≫ p' = p` are exposed.
-
-## Simplex over-relation
-
-`SSet.MinimalFibration.OverRelation p x y` is a simplex-level witness
-carrying a boundary-stationary cylinder homotopy between the `n`-simplices
-`x y : X _⦋n⦌`, an arbitrary base simplex `base : Δ[n] ⟶ S`, a common
-boundary map `bd : ∂Δ[n] ⟶ X`, and the two compatibility equations `over`
-and `boundary`. Only the derived base/boundary equalities, the over-base
-square, extensionality, the reflexive constructor, and the conversion into
-the existing constant-base `FiberwiseHomotopy` (hence an `IsMinimal p`
-equality) are exposed.
-
-## Nonclaims
-
-* Does not prove symmetry, transitivity, or any equivalence-relation
-  structure for either relation.
-* Does not introduce `SSet.FiberwiseHomotopyEquiv`: the pinned/local audit
-  shows no immediately following rigidity statement needs it, so it is
-  explicitly deferred rather than exposed as a redundant wrapper.
-* Does not prove rigidity, `IsIso`, weak equivalences, or any
-  model-categorical consequence.
-* Does not introduce internal-hom, fundamental-groupoid, quotient, or
-  selection machinery, and does not generalize or duplicate the accepted
-  simplex-level relation.
 -/
+
+@[expose] public section
 
 open CategoryTheory Simplicial SSet
 open MonoidalCategory CartesianMonoidalCategory

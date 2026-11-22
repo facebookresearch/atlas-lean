@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.LegacyTopCat.BoundaryRLPWeakHomotopyConditional
@@ -20,7 +14,7 @@ public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.Legacy
 /-!
 # TopCat compatibility equalities from simplicial-set inputs
 
-This file is part of the KQ3 layer. From exactly the three explicit inputs
+From exactly the three explicit inputs
 `realizedHornInclusions.rlp.llp ≤ weakHomotopyEquivalences`,
 `∀ {X Y : SSet.{u}} [SSet.KanComplex X] [SSet.KanComplex Y] {f : X ⟶ Y},
 SSet.modelCategoryQuillen.I.{u}.rlp f → SSet.KanComplex.W.{u} f`, and
@@ -31,7 +25,7 @@ realizedBoundaryInclusions.rlp` and
 `realizedBoundaryInclusions.rlp.llp ⊓ weakHomotopyEquivalences =
 realizedHornInclusions.rlp.llp`.
 
-Each equality reuses the staged providers with no proof duplicated here: the
+Each equality reuses the providers with no proof duplicated here: the
 boundary bridge
 `boundaryRLP_le_weakHomotopyEquivalences_of_kanRestricted_Irlp_le_W`, the
 direct recognition `hornRLP_inf_W_le_boundaryRLP_of_sSet`, the cofibration

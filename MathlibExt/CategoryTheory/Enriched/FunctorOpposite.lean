@@ -6,14 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 public import Mathlib.CategoryTheory.Enriched.Opposite
+
+/-!
+# Opposite enriched functors
+
+An enriched functor over a braided monoidal category induces an enriched
+functor between the opposite source and target categories. Its hom-object
+maps reverse the arguments, and braiding naturality verifies compatibility
+with opposite composition. The formulas `opposite_obj` and `opposite_map`
+describe its object and hom-object maps.
+-/
 
 @[expose] public section
 set_option autoImplicit false

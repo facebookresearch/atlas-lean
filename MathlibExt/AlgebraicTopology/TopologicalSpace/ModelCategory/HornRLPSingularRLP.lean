@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.CategoryWithFibrations
@@ -23,7 +17,7 @@ public import
 /-!
 # Horn-RLP transport across the realization/singular adjunction
 
-This file is part of the KQ3 layer. A map in `TopCat` with the right lifting
+A map in `TopCat` with the right lifting
 property against all realized horn inclusions is sent by the singular
 functor `TopCat.toSSet` to a map with the right lifting property against
 `SSet.modelCategoryQuillen.J`, and conversely. For a simplicial horn
@@ -32,7 +26,7 @@ lifting problem across the adjunction, where
 `TopCat.horn_mem_realizedHornInclusions` and
 `SSet.modelCategoryQuillen.horn_ι_mem_J` apply.
 
-This proves only the formal KQ3 transport isolated by `v0974`. It does not
+This proves only the adjunction transport. It does not
 place `SSet.modelCategoryQuillen.J.rlp` maps in `SSet.KanComplex.W`, claims no
 weak-equivalence result, no model structure, and no TopCat cross inclusion.
 -/

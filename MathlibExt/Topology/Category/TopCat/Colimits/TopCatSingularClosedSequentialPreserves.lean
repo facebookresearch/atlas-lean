@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.SingularSet
@@ -20,6 +14,7 @@ public import Mathlib.CategoryTheory.Limits.Types.Filtered
 public import MathlibExt.Topology.Category.TopCat.Embedding.ClosedT1Embedding
 public import
   MathlibExt.Topology.Category.TopCat.Colimits.TopCatSingularClosedSequentialColimit
+
 /-!
 # `toSSet` keeps closed-T1 sequential colimits
 

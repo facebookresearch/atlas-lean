@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.SimplicialRealization.PointSet.Boundary
@@ -20,35 +14,15 @@ public import MathlibExt.Topology.Convenient.StdSimplexRadialBoundary
 public import Mathlib.Topology.Order
 
 /-!
-# Realized simplex boundary cutoff
+# Boundary cutoffs on realized simplices
 
-For `N : ℕ`, the smallest continuous cutoff on `SSet.toTop.obj Δ[N]` needed
-for the honest overlapping shrink: transport through `SimplexCategory.toTopHomeo`
-and take the minimum barycentric weight.
-
-`cutoff N q = StdSimplexRadialBoundary.radMin N ((⦋N⦌.toTopHomeo) q)`.
-Its zero locus is exactly the realized boundary range, and the sublevel sets
-`{q | cutoff N q < ε}` package open boundary thickenings.
-
-Reuse map (no new abstraction):
-* `reuse` `StdSimplexRadialBoundary.radMin`, `continuous_radMin`,
-  `exists_radMin_eq`, `radMin_le`, `radMin_nonneg` for the minimum weight, its
-  continuity, and its zero locus (`cutoff` is `radMin` transported through
-  `toTopHomeo`; no `Finset.inf'`/`inf'_le`/`exists_mem_eq_inf'` duplicate);
-* `reuse` `SimplexCategory.toTopHomeo` (`continuous`, `apply_symm_apply`,
-  `symm_apply_apply`) for the realized/simplex transport, consumed downstream
-  by the honest overlapping shrink;
-* `reuse` `SSet.mem_realizedBoundary_of_zeroCoord` and
-  `SSet.boundary.mem_zeroCoord_of_mem_realizedBoundaryRange` for the reverse
-  and forward boundary-range lifts;
-* `reuse` `isOpen_Iio.preimage` for openness of the thickenings.
-No `OpenCell` forward duplicate is re-proved; the two lifts above give the iff.
-
-Nonclaims: no global chart/collar, no disjoint partition, no WE/model result,
-no new axiom, and no placeholder. No claim is made about an arbitrary caller's
-`closure U`; only the realized boundary range itself is shown to lie in every
-positive thickening.
-Direct consumer: the honest overlapping shrink localizing without a global chart.
+Transporting the minimum barycentric weight `StdSimplexRadialBoundary.radMin`
+through `SimplexCategory.toTopHomeo` defines the continuous function `cutoff N`
+on the realization of `Δ[N]`. Its zero locus is exactly the realized boundary
+range. The sublevel sets `thickening N ε` are open, contain that range for
+positive `ε`, and are preserved by the stated radial homotopy. The boundary
+identification uses `SSet.mem_realizedBoundary_of_zeroCoord` and the converse
+zero-coordinate lift.
 -/
 
 @[expose] public section

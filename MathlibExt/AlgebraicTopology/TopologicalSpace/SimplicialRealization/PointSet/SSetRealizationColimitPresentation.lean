@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.CategoryTheory.Limits.Presheaf
@@ -20,29 +14,13 @@ public import Mathlib.AlgebraicTopology.SimplicialSet.TopAdj
 public import MathlibExt.AlgebraicTopology.SimplicialSet.RealizationPresentation
 
 /-!
-# Colimit presentation of the sigma-presentation kernel
+# The colimit relation on simplex realization presentations
 
-For `X : SSet.{u}`, equality of two `SSet.sigmaToTop X`
-presentations implies the corresponding `Relation.EqvGen` relation for the
-realized tautological diagram
-`CostructuredArrow.proj uliftYoneda X ⋙ uliftYoneda ⋙ SSet.toTop ⋙ forget TopCat`.
-
-The proof uses the following colimit and realization constructions:
-- tautological cocone and its colimit: `Presheaf.tautologicalCocone'` and
-  `Presheaf.isColimitTautologicalCocone'` (prime version, as in
-  `SSet.exists_nonDegenerate_toTop_presentation`), transported by
-  `isColimitOfPreserves` through `SSet.toTop` and then `forget TopCat`;
-- element objects: `CostructuredArrow.mk` applied to `SSet.yonedaEquiv.symm`
-  (which is `uliftYonedaEquiv`, matching the prime diagram, since
-  `SSet.stdSimplex` is `uliftYoneda` by definition);
-- element points: `(SimplexCategory.toTopHomeo _).symm`;
-- cocone-point identification: `Limits.IsColimit.coconePointUniqueUpToIso`
-  with `Limits.IsColimit.comp_coconePointUniqueUpToIso_hom`;
-- kernel extraction: `Limits.Types.colimit_eq`.
-
-Explicit nonclaims: no induction over the generated relation, no simplex
-epi/mono argument, no open-cell injectivity or compact-support argument, and
-no change to any generated root or import graph.
+Equal values of `SSet.sigmaToTop X` determine points related by the
+equivalence closure of `ColimitTypeRel` for the realized tautological
+presheaf diagram. The prime tautological cocone remains colimiting after
+realization and passage to underlying types. Identifying its legs with
+`sigmaToTop` and applying `Limits.Types.colimit_eq` gives the relation.
 -/
 
 @[expose] public section

@@ -1,22 +1,7 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Attribution for this imported development.
-Author: @toskua
-Authors: Joël Riou
--/
-
--- Author: @toskua
-/-
 Copyright (c) 2026 Joël Riou. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Joël Riou
+See NOTICE in the repository root for the original Mathlib attribution.
 -/
 module
 

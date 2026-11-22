@@ -6,17 +6,9 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.SSetULiftFundamentalGroupoid
-
-@[expose] public section
 
 /-!
 # Exact original fundamental-groupoid lift equivalence and source naturality
@@ -26,6 +18,8 @@ native two-simplex relations. Their exact inverse identities give the
 actual equivalence. Every same original simplicial source map commutes
 with those full original lift functors.
 -/
+
+@[expose] public section
 
 noncomputable section
 

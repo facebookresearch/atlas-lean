@@ -6,17 +6,12 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 import MathlibExt.AlgebraicTopology.ModelCategory.PushoutProductBrown
 import Mathlib.CategoryTheory.Monoidal.Cartesian.Basic
 import Mathlib.CategoryTheory.Limits.Preserves.Shapes.BinaryProducts
 
-/-! # Actual Cartesian products of cofibrant weak maps
+/-!
+# Actual Cartesian products of cofibrant weak maps
 
 The existing tensor Brown theorem applies to the genuine Cartesian
 tensor. Its canonical product-functor Iso transfers each fixed-factor

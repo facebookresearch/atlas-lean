@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.Fiber
@@ -30,7 +24,7 @@ For a Kan fibration `p : E ⟶ B` and an edge `e : b₀ ⟶ b₁` in `B`,
 * Backward transport (`b₁ → b₀`) fills `Λ[1,1]`.
 * Only `[Fibration p]` is assumed; no fibrancy of source/base.
 
-This is the generic KQ2 provider; no equivalence/isomorphism,
+This is a generic construction; no equivalence/isomorphism,
 `π₀`/groupoid action, `W`/minimal fibration, internal-hom, or
 model-category instance is claimed.
 -/

@@ -6,16 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
-
 module
 
 public import Mathlib.AlgebraicTopology.ModelCategory.BrownLemma
+
+/-!
+# Brown's lemma for contravariant functors
+
+A functor `F : Cᵒᵖ ⥤ D` between model categories sends weak equivalences
+between cofibrant objects to weak equivalences if it sends every trivial
+cofibration to a weak equivalence. The proof uses the cofibrant Brown
+factorization and its section.
+-/
 
 @[expose] public section
 

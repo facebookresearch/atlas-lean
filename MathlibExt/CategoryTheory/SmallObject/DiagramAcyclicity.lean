@@ -6,16 +6,21 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
-
 import MathlibExt.CategoryTheory.SmallObject.DiagramEligibility
 import MathlibExt.CategoryTheory.SmallObject.Image
 import MathlibExt.CategoryTheory.MorphismProperty.FunctorCategory
+
+/-!
+# Evaluation of generated free-diagram classes
+
+For a small and locally small index category `J`, Hom-indexed coproducts
+give the free-at-object functors used to generate diagram morphisms. If
+`P` admits a small-object argument at a regular cardinal and `P ≤ Q`, with
+`Q` stable under retracts, coproducts, cobase change and the corresponding
+transfinite compositions, the generated left class evaluates into `Q` at
+every object. If also `Q ≤ W`, this class lies in the objectwise property
+`W.functorCategory J`.
+-/
 
 set_option autoImplicit false
 noncomputable section

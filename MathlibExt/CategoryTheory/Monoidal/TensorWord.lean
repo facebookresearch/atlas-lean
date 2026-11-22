@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
 module
 
 public import MathlibExt.CategoryTheory.Monoidal.TensorPowers
@@ -19,96 +14,19 @@ public import Mathlib.CategoryTheory.Limits.Preserves.Limits
 public import Mathlib.CategoryTheory.Monoidal.Mon
 
 /-!
-# Generic tensor-word monoid carrier
+# Tensor-word monoids and their generator maps
 
-For `X : C` in an arbitrary monoidal category, package the coproduct of
-finite tensor powers `∐ n, tensorPowObj X n` with multiplication induced by
-`tensorPowObj_add`. Under explicit countable-coproduct existence and
-preservation by tensoring on both sides, this gives a monoid object and a
-functor `C ⥤ Mon C`.
+In a monoidal category with coproducts indexed by `ℕ` and `Σ _ : ℕ, ℕ`,
+the coproduct `∐ n, tensorPowObj X n` becomes a monoid object using the
+finite-power concatenation isomorphisms. Tensoring on either side must
+preserve the stated `Discrete ℕ` colimits, and tensoring on the right
+must also preserve the stated pair-index colimits. These hypotheses give
+associativity without a triple-index coproduct assumption.
 
-This is one direct consumer of the generic `TensorPowers` foundation; the DG
-`TensorPowers` file is a separate specialization and is not counted. It uses
-only ambient `tensorPowObj` / `tensorPowObj_add` coherence, pinned coproduct
-`Sigma` APIs, pinned `PreservesColimit` comparisons, and pinned `Mon`
-packaging. Distribution constructors remain public only because reducible
-public `tensorWordMul` depends on them, while their injection lemmas are
-private.
-
-## Declaration inventory
-
-Public API:
-
-* `tensorWordObj`: coproduct of finite powers.
-* `tensorWordι`, `tensorWordι_desc`: degree inclusion and its computation law.
-* `tensorWordMap`: functorial map via `Sigma.map` and `tensorPowMap`.
-* `tensorWordMap_ι`, `tensorWordMap_id`, `tensorWordMap_comp`: computation laws.
-* `tensorWordOne`: unit via degree-zero inclusion.
-* `tensorWord_hom_ext`, `tensorWord_hom_ext_triple`: epi elimination on injections.
-* `tensorWordMul`: multiplication via distribution plus `tensorPowObj_add`.
-* `tensorWordMul_ι`: characteristic injection computation for `tensorWordMul`.
-* `tensorWordOneMul`, `tensorWordMulOne`, `tensorWordMulAssoc`: unit/multiplication laws.
-* `tensorWordMonObj`: `MonObj` instance with unit/multiplication laws.
-* `tensorWordMon`: bundled monoid object.
-* `tensorWordIsMonHom`: functorial map preserves unit/multiplication.
-* `tensorWordFunctor`: bundled functor `C ⥤ Mon C`.
-* `tensorWordFunctor_obj_carrier`, `tensorWordFunctor_map_hom`: functor projections.
-* `tensorWordGenerator`: degree-one generator via the left unitor.
-* `tensorWordGenerator_naturality`: naturality of the generator under functorial maps.
-* `tensorWordLift`: coproduct-descended lift of a generator map.
-* `tensorWordLift_beta`: the single generator beta law.
-* `tensorWordLiftIsMonHom`, `tensorWordLiftHom`: monoid-morphism structure and bundle.
-* `tensorWordLiftUnique`: uniqueness via coproduct extensionality and induction.
-* `tensorWordHomEquiv`: generator-map/monoid-hom equivalence.
-* `tensorWordHomEquiv_target`, `tensorWordHomEquiv_source`: target/source naturality.
-* `tensorWordι_one_comp_monHom`, `tensorWordι_two_comp_monHom`: length-one
-  and length-two evaluation of a monoid morphism via its generator value.
-
-Implementation-detail assembly (not for downstream use; kept public only
-because public `tensorWordMul` references it, which the module system
-requires — cf. public `copowerTensorComparison`):
-
-* `tensorWordComparison`, `tensorWordDistribInv`, `tensorWordDistrib`:
-  single distribution/comparison assembly (not duplicated).
-
-Private implementation-only evaluation and injection computations:
-
-* `tensorPowEval`: single recursive evaluation assembly (not duplicated).
-* `tensorWordComparison_ι`, `tensorWordDistrib_ι`,
-  `tensorWordDistrib_inv_ι`.
-
-## Hypotheses
-
-* Existence for `ℕ` and `Σ _ : ℕ, ℕ` families
-  (only shapes used: carrier and distribution target).
-* Preservation of `Discrete ℕ` colimits by `tensorLeft M` and `tensorRight T`
-  for all `M T` (distribution steps and unit epis), plus preservation of
-  `Discrete (Σ _ : ℕ, ℕ)` colimits by `tensorRight T` (triple ext check).
-  No stronger preservation is used. No triple-index coproduct hypothesis:
-  associativity follows from pair-index coproducts plus left/right
-  preservation.
-
-## Nonclaims
-
-* No `free` name, adjunction, tensor algebra, filtration,
-  completion, conilpotence, bar/cobar, operadic, derived, or model-categorical
-  result is claimed. The universal property is the `HomEquiv` interface only.
-* `tensorWordMonObj`, `tensorWordIsMonHom`, and `tensorWordLiftIsMonHom` are
-  the only global instances; `tensorWordFunctor` is an ordinary bundled definition.
-* This is a monoid carrier with explicit laws and a generator/monoid-hom
-  equivalence, not a named free-monoid construction. DG specialization and
-  shifted-Cobar wiring are supplied in downstream modules; this generic file
-  itself makes no DG/bar--cobar claim.
-
-## Import justification
-
-* `TensorPowers` supplies `tensorPowObj`, `tensorPowMap`, `tensorPowObj_add`,
-  and its naturality/associativity/unit coherence.
-* `Limits.Shapes.Products` supplies `HasCoproduct`, `Sigma.ι/desc/map`,
-  `Sigma.hom_ext`, `Sigma.isoColimit`, and `Sigma.eqToHom_comp_ι`.
-* `Limits.Preserves.Limits` supplies `preservesColimitIso` and its
-  `ι` computation lemmas.
-* `Monoidal.Mon` supplies `MonObj`, `Mon`, `IsMonHom`, and `Mon.ofHom`.
+The construction is functorial in `X`. Degree-one inclusion determines a
+natural equivalence `tensorWordHomEquiv` between maps from `X` to a monoid's
+carrier and monoid morphisms from the tensor-word monoid, with the generator
+computation and uniqueness laws.
 -/
 
 @[expose] public section

@@ -6,24 +6,12 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import MathlibExt.AlgebraicTopology.Reedy.SimplexCategory
 public import Mathlib.AlgebraicTopology.SimplicialObject.Basic
 public import Mathlib.CategoryTheory.Limits.Shapes.FiniteLimits
 public import MathlibExt.CategoryTheory.Reedy.FiniteBoundaries
-
-section
-
--- Author: @toskua, Codex
-
 
 /-!
 # The original simplex category and its opposite are Reedy
@@ -33,6 +21,8 @@ original monomorphisms and the inverse maps are exactly the original
 epimorphisms. The complete factor record is the original epi--image--mono
 factorization; uniqueness retains that middle simplex and both maps.
 -/
+
+section
 
 @[expose] public section
 
@@ -118,7 +108,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!

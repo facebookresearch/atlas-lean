@@ -6,16 +6,23 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.ModelCategory.QuillenEquivalence
 public import MathlibExt.AlgebraicTopology.ModelCategory.QuillenBrown
+
+/-!
+# A fibrant-source criterion for Quillen equivalences
+
+For a Quillen adjunction, it suffices to check the adjoint-map
+weak-equivalence criterion on sources that are both cofibrant and fibrant,
+with fibrant targets.
+`mkOfFibrantSourceCriterion` extends this criterion to every cofibrant source
+by factoring its terminal map as a trivial cofibration followed by a
+fibration.
+The Quillen preservation properties and adjunction equations identify the
+weak-equivalence conditions before and after this replacement.
+-/
 
 set_option autoImplicit false
 noncomputable section

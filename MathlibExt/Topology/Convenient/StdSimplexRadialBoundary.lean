@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.Analysis.Convex.StdSimplex
@@ -20,29 +14,14 @@ public import Mathlib.Topology.Algebra.GroupWithZero
 public import Mathlib.Topology.Homotopy.Basic
 public import Mathlib.Algebra.BigOperators.Field
 
-/-! # Standard-simplex radial boundary core
+/-!
+# Radial projection to the standard simplex boundary
 
-For `n : ℕ`, work with `Convexity.StdSimplex ℝ (Fin (n + 1))` and its barycenter.
-Define the minimum coordinate and the normalized radial projection
-
-`r(x)_i = (x_i - min_j x_j) / (1 - (n + 1) * min_j x_j)`
-
-on the complement of the barycenter. The packet proves denominator
-positivity, membership in the simplex, a zero output coordinate,
-continuity of the radial map, and identity on points that already have
-a zero coordinate. It provides `radialCoord`, `radialMap`,
-`radialMap_weights`, `radial_has_zero`,
-`exists_radialMap_weights_eq_zero`, `continuous_radialMap`,
-`radial_id_of_has_zero`, `radialMap_eq_of_has_zero`,
-`radialMap_ne_bary`, `radialMapComplement`, `homotopyCoord`,
-`homotopyMem`, `homotopyPoint`, `homotopyPoint_weights`,
-`homotopyPoint_zero`, `homotopyPoint_one`,
-`homotopyPoint_eq_of_has_zero`, `homotopy_ne_bary`,
-`continuous_homotopyFun`, `radialHomotopy`, and `radialHomotopyRel`.
-
-Nonclaims: no map into a realized boundary, no global chart, no
-fibration or model-category result. The immediate consumer is the
-realized-boundary radial retraction via the zero-coordinate bridge.
+On the standard real n-simplex with its barycenter removed, the radial projection has
+coordinates (xᵢ - minⱼ xⱼ) / (1 - (n + 1) * minⱼ xⱼ). The denominator is positive on this
+domain, the projection is continuous and its image has a zero coordinate. A continuous
+homotopy from the identity to the projection stays in the barycenter complement and fixes
+every point that already has a zero coordinate.
 -/
 
 @[expose] public section

@@ -6,35 +6,19 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.SSetIhomDeformation
 public import MathlibExt.AlgebraicTopology.SimplicialSet.StdSimplexContraction
 
 /-!
-# Coherent transport of a boundary lifting square to constant base
+# Boundary lifting squares over constant simplices
 
-Given a Kan fibration `f : X ⟶ Y` and a commuting boundary square
-`CommSq t (SSet.boundary n).ι f b`, this module reduces lift existence to the
-case of a constant base simplex. The last vertex of `b` determines a vertex
-`y : Y _⦋0⦌`; the accepted simplex contraction
-`SSet.stdSimplex.homotopyIdConstLast n` pushes forward along `b` to a cylinder
-with endpoints `b` and `SSet.const y`. Its restriction to the boundary cylinder
-lifts along `f` (the endpoint inclusion `∂Δ[n] ⊗ Δ[0] ⟶ ∂Δ[n] ⊗ Δ[1]` is
-anodyne as the whisker of the anodyne vertex inclusion `δ 1`), producing a
-cylinder square to which the accepted `SSet.CommSq.hasLift_iff_of_deformation`
-applies. The construction is uniform in `n` (including `n = 0`) and in the
-universe.
-
-Explicit nonclaims: no `KanComplex` or `KanComplex.W` result, no sphere filler,
-no fixed-top boundary-lifting theorem, no model-category instance, and no claim
-that the simplex contraction is boundary-stationary.
+For a Kan fibration and a commuting boundary square over an n-simplex, this file constructs
+a new top map over the constant simplex at the last vertex. The original square has a lift
+exactly when the new square does. The construction contracts the simplex onto that vertex,
+lifts the induced boundary-cylinder homotopy and applies deformation invariance of lift
+existence for every n.
 -/
 
 @[expose] public section
@@ -98,7 +82,7 @@ theorem exists_const_base_reduction (sq₀ : CommSq t (SSet.boundary n).ι f b) 
     ∃ (y : Y _⦋0⦌) (t₁ : (∂Δ[n] : SSet.{u}) ⟶ X)
       (sq₁ : CommSq t₁ (SSet.boundary n).ι f (SSet.const y)),
       t₁ ≫ f = SSet.const y ∧ (sq₀.HasLift ↔ sq₁.HasLift) := by
-  -- The accepted contraction of the simplex onto its last vertex.
+  -- Contract the simplex onto its last vertex.
   set H : SSet.Homotopy (𝟙 (Δ[n] : SSet.{u}))
     (SSet.const (SSet.stdSimplex.obj₀Equiv.symm (Fin.last n))) :=
     SSet.stdSimplex.homotopyIdConstLast n with hH

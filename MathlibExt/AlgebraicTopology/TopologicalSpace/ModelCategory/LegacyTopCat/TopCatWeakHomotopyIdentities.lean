@@ -6,19 +6,14 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.LegacyTopCat.TopCatWeakHomotopyEquivalence
 public import
   MathlibExt.Topology.Homotopy.TopCat.Singular.SingularKanPolymorphic
 
-/-! # Identity closure for TopCat weak homotopy equivalences
+/-!
+# Identity closure for TopCat weak homotopy equivalences
 
 The sibling providers
 `TopCatWeakHomotopyEquivalence` in the same legacy-model directory
@@ -32,8 +27,8 @@ identity closure and defines no fallback.
 Identities are weak homotopy equivalences via `SSet.KanComplex.W.id` after
 rewriting `TopCat.toSSet.map` of an identity with `TopCat.toSSet.map_id`.
 `ContainsIdentities` is proved in every universe. No
-`CategoryWithWeakEquivalences` instance, model structure, product theorem,
-or KQ4 statement is added.
+`CategoryWithWeakEquivalences` instance, model structure, product theorem
+is added.
 
 Mathematical source: Goerss--Jardine, Simplicial Homotopy Theory, I.3.
 -/

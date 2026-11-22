@@ -6,25 +6,24 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
-
 import MathlibExt.AlgebraicTopology.ModelCategory.CellularLocalEquivalenceClosure
 import MathlibExt.AlgebraicTopology.ModelCategory.LeftBousfieldLocalization.OriginalRelativeMapping
 import Mathlib.AlgebraicTopology.SimplicialSet.StdSimplex
 import MathlibExt.AlgebraicTopology.ModelCategory.CosimplicialHomCornerLifting
 
-/-!+# Original local fibrancy and lifting
+/-!
+# Cellular recognition of local fibrancy
 
-The actual right function complex gives strict terminal lifts from its
-trivial-fibration vertex map. The original R unit and its original
-degree-zero frame isomorphism retain the same target and its actual
-retraction. The original relative pushout/factor argument then transfers
-this lifting property to every arbitrary-endpoint original cofibration.
+For cofibrant generation data `d` and a family of arrows `S`, the labelled
+attaching class consists of local trivial cofibrations, and its right lifting
+property against a terminal map implies `generatedLocalFibrant d S`.
+In a left proper model category, `original_terminal_lifting` applies to local
+trivial cofibrations with arbitrary source and target, giving the terminal-map
+characterization of local fibrancy.
+Given `CellularSource d` and the stated smallness of the indexing family,
+`hornObjectFunctor` produces local fibrant objects; under left properness its
+unit is a local trivial cofibration and it recognizes local equivalences as
+weak equivalences between the resulting objects.
 -/
 
 set_option autoImplicit false

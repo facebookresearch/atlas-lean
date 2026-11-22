@@ -11,6 +11,17 @@ module
 public import Mathlib.CategoryTheory.Limits.Types.Pushouts
 public import Mathlib.Topology.Category.TopCat.Limits.Pullbacks
 
+/-!
+# Pushout topology away from the attaching locus
+
+For a pushout square in `TopCat`, the map from the disjoint union of its two
+legs to the pushout is a quotient map. If an open subset of the pushout has
+empty preimage under one leg and its preimage under the other avoids the
+attaching range, restriction of that second leg is a homeomorphism onto the
+open subset. The underlying set-pushout lemmas show that points outside the
+attaching range remain distinct and separate from the first leg’s image.
+-/
+
 @[expose] public section
 
 open CategoryTheory CategoryTheory.Limits Topology

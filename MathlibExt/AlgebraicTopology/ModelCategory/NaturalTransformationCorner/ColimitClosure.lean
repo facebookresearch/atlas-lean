@@ -14,11 +14,17 @@ public import Mathlib.CategoryTheory.Limits.Comma
 public import Mathlib.CategoryTheory.MorphismProperty.Retract
 
 /-!
-Weak corners at the colimit of the original complete Arrow diagram.
+# Colimit closure of natural-transformation corners
 
-Both source cocones and their actual legs form the Arrow cocone; no abstract
-endpoint comparison is substituted. Preservation of the actual Leibniz
-colimit and the original base weak comparison law prove its weak corner.
+Colimits of a natural transformation are represented by colimits in the
+arrow category using both source and target cocones. If the corner functor
+preserves the diagram shape and weak equivalences are stable under its
+colimits, objectwise weak corners give a weak corner on the colimit comparison
+map. Adding h-cofibration conditions on both mapped source arrows gives a
+guarded property closed under composition, cobase change and suitable
+connected or filtered colimits under the stated preservation and properness
+hypotheses. Weak corners also pass along source-arrow retracts, and the guarded
+property is stable under transfinite composition.
 -/
 
 @[expose] public section

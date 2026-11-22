@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.CategoryTheory.SmallObject.IsCardinalForSmallObjectArgument
@@ -28,7 +22,7 @@ public import Mathlib.CategoryTheory.EssentiallySmall
 /-!
 # Relative-cell colimit smallness for realized boundary inclusions in `TopCat`
 
-This file is part of the KQ3 layer. It proves the caller-specific
+This file proves the caller-specific
 `PreservesColimit` result needed for the
 `IsCardinalForSmallObjectArgument.preservesColimit` field at
 `realizedGeneratorCardinal` for `TopCat.realizedBoundaryInclusions`, when the

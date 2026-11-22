@@ -6,49 +6,21 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.SimplicialRealization.PointSet.SSetRealizationCellInterior
 public import MathlibExt.Analysis.Convex.StdSimplex
 
 /-!
-# Open-cell cover of the geometric realization
+# Open-cell covers of geometric realizations
 
-Every point of `SSet.toTop.obj Y` is presented by a nondegenerate simplex
-together with a strictly positive coordinate, i.e. a point of
-`SSet.realizationCellInterior.openCell`. The presentation is
-universe-polymorphic (`SSet.{u}`) and transports points through
-`SimplexCategory.toTopHomeo`; for `SSet.{0}` this agrees with the former
-`SSet.stdSimplex.toTopIso` form by `rfl`, so universe-zero callers keep the
-same effective call shape.
-
-Scope: `SSet.{u}` for any universe `u`. No dimension-zero special casing is
-needed beyond the interior provider.
-
-Reuse map (accepted for this consolidation):
-- `SSet.OpenCell.exists_openCell`
-  (`SSetRealizationCellInterior.lean`): `reuse` for the initial interior
-  (strictly positive) presentation.
-- `SSet.exists_nonDegenerate` (pinned Eilenberg--Zilber): `reuse` for the
-  degeneracy epi onto a nondegenerate simplex.
-- `Convexity.StdSimplex.map_surjective_pos`
-  (`MathlibExt/Analysis/Convex/StdSimplex.lean`): `reuse` (degeneracy
-  pushforward preserves strict positivity).
-- `SSet.yonedaEquiv_symm_naturality_left`
-  (pinned `Mathlib/AlgebraicTopology/SimplicialSet/StdSimplex.lean`): `reuse`.
-- `SimplexCategory.toTopHomeo_symm_naturality_apply`
-  (pinned `Mathlib/AlgebraicTopology/SimplicialSet/TopAdj.lean`): `reuse`
-  for the realized degeneracy transport.
-- No new reusable construction beyond the existence statement below.
-
-Nonclaims: no uniqueness of the cell, no injectivity, no compact-support or
-local-finiteness, no product/pullback preservation, no KQ4 result.
+Every point of the realization of `Y : SSet.{u}` has a presentation by a
+nondegenerate simplex with strictly positive barycentric coordinates.
+The proof combines `SSet.OpenCell.exists_openCell` with Eilenberg–Zilber
+degeneracy decomposition and `Convexity.StdSimplex.map_surjective_pos`.
+Transport through `SimplexCategory.toTopHomeo` is universe-polymorphic;
+in universe zero the presentation agrees definitionally with the
+`SSet.stdSimplex.toTopIso` form.
 -/
 
 @[expose] public section

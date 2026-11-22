@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.KanComplexW
@@ -20,18 +14,13 @@ public import Mathlib.CategoryTheory.MorphismProperty.Composition
 public import MathlibExt.AlgebraicTopology.SimplicialSet.RealizationWeakEquivalence
 
 /-!
-This module establishes the precomposition-cancellation direction for `KanComplex.W`:
-if `f` and `f ≫ g` lie in `W` then so does `g`. Bijectivity is first obtained at
-points in the image of `f` by cancelling homotopy-group maps, then transported to
-arbitrary basepoints via the fundamental-groupoid action for basepoint transport,
-using essential surjectivity of `SSet.mapFundamentalGroupoid f`. This yields
-`W.precomp_iff` and the resulting `HasTwoOutOfThreeProperty` instance for `W`.
+# Cancellation for simplicial weak equivalences
 
-It also establishes the left-map two-out-of-six closure
-`SSet.KanComplex.W.left_of_comp_comp` (if `a ≫ b` and `b ≫ c` lie in `W`
-then so does `a`), proved from the defining invariants of `W`, and its
-transport `SSet.realizationWeakEquivalences.left_of_comp_comp` along
-realization–singularization.
+Precomposition cancellation for KanComplex.W follows by cancelling homotopy-group maps at
+vertices in the image and transporting to arbitrary basepoints through the fundamental
+groupoid. Together with the other composition laws, it gives W.precomp_iff and the
+two-out-of-three instance. The file also proves that a lies in W whenever a ≫ b and b ≫ c
+do, and transports this implication to realization weak equivalences.
 -/
 
 @[expose] public section

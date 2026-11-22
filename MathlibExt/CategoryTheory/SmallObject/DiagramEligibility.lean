@@ -6,16 +6,19 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
-
 import MathlibExt.CategoryTheory.SmallObject.DiagramSourceSmallness
 import MathlibExt.CategoryTheory.SmallObject.AdjointFamilyCells
 import Mathlib.CategoryTheory.EssentiallySmall
+
+/-!
+# Small-object cardinal eligibility for free diagrams
+
+If a morphism property P admits the small-object argument at a regular cardinal κ, the
+free-diagram images of P under the evaluation left adjoints admit it at the same cardinal.
+The indexing category is required to be small and locally small in the universe of κ, and
+the ordinal type of κ has a bottom element. The proof transports smallness through the
+evaluation adjunctions and the pointwise colimits of diagrams.
+-/
 
 set_option autoImplicit false
 noncomputable section

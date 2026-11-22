@@ -6,15 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 public import MathlibExt.CategoryTheory.Enriched.FunctorCategory
 public import MathlibExt.CategoryTheory.Enriched.GradedYoneda
+
+/-!
+# Restriction of enriched functors and transformations
+
+For braided monoidal closed coefficients, restriction along an enriched
+functor composes the enriched Hom maps. Unit-graded natural transformations
+restrict by evaluating their components on the image objects. The
+computation lemmas retain these object, component and full Hom-map formulas.
+-/
 
 @[expose] public section
 set_option autoImplicit false

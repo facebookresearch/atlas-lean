@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 public import Mathlib.AlgebraicTopology.SingularSet
 public import Mathlib.Topology.Compactness.Compact
@@ -19,6 +13,7 @@ public import Mathlib.Geometry.Convex.ConvexSpace.CompactSpaceStdSimplex
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.Topology.Category.TopCat.Colimits.FilteredClosedColimit
 public import MathlibExt.Topology.Category.TopCat.Embedding.ClosedT1Embedding
+
 /-!
 # Compact maps factor through closed-T1 sequential colimits
 For `ℕ`-chains in `TopCat.{u}` whose maps lie in `closedT1Embeddings`,
@@ -27,6 +22,7 @@ hence each `TopCat.toSSet` simplex does. Pointwise half of the premise isolated
 by `TopCatWeakHomotopyTransfiniteClosed`. Base `78759f34`; no colimit instance
 or preservation claimed.
 -/
+
 @[expose] public section
 universe w u
 open CategoryTheory Limits Topology

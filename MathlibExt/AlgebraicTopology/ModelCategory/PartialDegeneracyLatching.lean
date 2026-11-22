@@ -6,13 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import Mathlib.AlgebraicTopology.ModelCategory.Basic
@@ -25,11 +18,6 @@ public import MathlibExt.CategoryTheory.Limits.Shapes.RelativePushoutPasting
 public import MathlibExt.CategoryTheory.Reedy.Boundary
 public import MathlibExt.CategoryTheory.Reedy.Corner
 
-section
-
--- Author: @toskua, Codex
-
-
 /-!
 # Actual partial degeneracy latching maps and their original relative corners
 
@@ -38,6 +26,8 @@ Its cocone retains every original degeneracy map. Canonical and caller-chosen co
 cocones give the same natural relative pushout corner. No partial class-preservation or
 tensor/model compatibility outcome is an input.
 -/
+
+section
 
 @[expose] public section
 
@@ -243,7 +233,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -327,7 +316,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -428,7 +416,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -558,7 +545,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -655,7 +641,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -800,7 +785,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -923,7 +907,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1080,7 +1063,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1229,7 +1211,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1361,7 +1342,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!

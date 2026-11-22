@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 import MathlibExt.AlgebraicTopology.ModelCategory.FunctorProjective.Restriction
 import MathlibExt.AlgebraicTopology.ModelCategory.CofibrantlyGenerated.LeftKanExtensions
 import Mathlib.CategoryTheory.Functor.KanExtension.Adjunction

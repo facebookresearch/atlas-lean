@@ -6,16 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 import Mathlib.CategoryTheory.Adjunction.Limits
 import Mathlib.CategoryTheory.Limits.Preserves.Shapes.BinaryProducts
 
-/-! # Whole product mates of an actual adjunction
+/-!
+# Whole product mates of an actual adjunction
 
 The canonical left product comparison is read by the same adjunction as
 the product of both original Hom mates followed by the inverse right

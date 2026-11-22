@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.PiZero
@@ -22,15 +16,14 @@ public import Mathlib.Topology.Connected.PathConnected
 public import Mathlib.Topology.Homotopy.TopCat.Path
 
 /-!
-# Simplicial `π₀` to realized path components
+# Simplicial components and realized path components
 
-For `X : SSet`, the canonical map from simplicial connected components `SSet.π₀ X`
-to topological path components `ZerothHomotopy ↑(SSet.toTop.obj X)`, sending a vertex
-to its realized vertex. Edge coherence uses `SSet.realizedEdgePath` with `δ 1` source
-(`0 : TopCat.I`) / `δ 0` target (`1 : TopCat.I`) orientation, transported across
-`TopCat.pathEquiv` and quotiented by `ZerothHomotopy.sound`.
-
-Nonclaims: no surjectivity, no injectivity, no `π₀ K ≃ K₀`, no additivity, no spectrum claim.
+`piZeroToZerothHomotopy` sends the simplicial connected component of a
+vertex to the path component of its realized vertex.
+A realized edge supplies the path needed to descend to `SSet.π₀`, with
+`δ 1` as its source and `δ 0` as its target.
+`piZeroToZerothHomotopy_naturality` shows that this map commutes with every
+simplicial map and its topological realization.
 -/
 
 @[expose] public section

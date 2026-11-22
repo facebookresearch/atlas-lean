@@ -6,14 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
-Author: @tosku
--/
-
--- Author: @toskua, Codex
 module
 
 public import Mathlib.CategoryTheory.Limits.FunctorCategory.Basic
@@ -24,11 +16,6 @@ public import MathlibExt.AlgebraicTopology.ModelCategory.GeneratedFramings
 public import MathlibExt.AlgebraicTopology.ModelCategory.ReedyFiniteTensorBoundaryClasses
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.SSetModelStructure
 
-section
-
--- Author: @toskua, Codex
-
-
 /-!
 # Covariant Brown weak preservation from actual trivial-fibration maps
 
@@ -36,6 +23,8 @@ The original fibrant Brown factorization proves weak preservation on fibrant
 objects from the actual trivial-fibration mapping law. No global tensor or
 adjunction is required for this source calculation.
 -/
+
+section
 
 @[expose] public section
 
@@ -76,7 +65,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -220,7 +208,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -270,7 +257,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -352,7 +338,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!

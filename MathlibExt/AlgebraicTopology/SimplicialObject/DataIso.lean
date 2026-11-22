@@ -6,16 +6,12 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialObject.FromData
 
-/-! # Degreewise isomorphisms of simplicial data
+/-!
+# Degreewise isomorphisms of simplicial data
 
 Morphisms and isomorphisms of `Data` assembled from compatible degreewise
 isomorphisms `X.obj n ≅ Y.obj n`. The forward family gives `X ⟶ Y`,

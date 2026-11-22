@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.SimplicialRealization.PointSet.Boundary
@@ -21,11 +15,10 @@ public import MathlibExt.AlgebraicTopology.TopologicalSpace.SimplicialRealizatio
 /-!
 # Generating realized boundary and horn inclusions in `TopCat`
 
-This file is part of the KQ3 layer. It packages the realized boundary
+This file packages the realized boundary
 inclusions `|∂Δ[n]| → |Δ[n]|` and horn inclusions `|Λ[n, i]| → |Δ[n]|` as
 `MorphismProperty.ofHoms` families, mirroring `SSet.modelCategoryQuillen.I/J`,
-and shows both families lie in `TopCat.closedT1Embeddings` via the accepted
-Boundary/Horn providers. This is not a smallness, factorization, cofibration,
+and shows both families lie in `TopCat.closedT1Embeddings` via the Boundary/Horn providers. This is not a smallness, factorization, cofibration,
 weak-equivalence, or model-category claim.
 -/
 

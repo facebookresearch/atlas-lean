@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Copyright (c) 2026 Tsutomu Okano. All rights reserved.
-Authors: Tsutomu Okano <toskua@meta.com>
--/
-
-
 import MathlibExt.CategoryTheory.HomotopyExtension
 import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Square
 import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic

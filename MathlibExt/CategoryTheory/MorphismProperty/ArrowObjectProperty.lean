@@ -6,19 +6,14 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.CategoryTheory.Comma.Arrow
 public import Mathlib.CategoryTheory.MorphismProperty.Basic
 public import Mathlib.CategoryTheory.ObjectProperty.Basic
 
-/-! # The ordinary Arrow view of a morphism property
+/-!
+# The ordinary Arrow view of a morphism property
 
 The same original morphism property is viewed as a property of ordinary
 Arrow objects. Object and Hom universes remain independent. This neutral

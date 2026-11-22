@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.LegacyTopCat.TopCatGeneratorPresentability
@@ -19,7 +13,7 @@ public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.Legacy
 /-!
 # Small-object structural inputs for realized TopCat generators
 
-This file is part of the KQ3 layer. It supplies only the two missing
+This file supplies only the two
 structural inputs for the eventual `IsCardinalForSmallObjectArgument` at
 `realizedGeneratorCardinal`:
 

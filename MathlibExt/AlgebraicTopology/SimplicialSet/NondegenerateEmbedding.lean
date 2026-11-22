@@ -11,6 +11,15 @@ module
 public import Mathlib.AlgebraicTopology.SimplicialSet.Degenerate
 public import Mathlib.AlgebraicTopology.SimplicialSet.Monomorphisms
 
+/-!
+# Embeddings of nondegenerate simplices
+
+A simplicial monomorphism `f : X ⟶ Y` induces a function embedding from
+the nondegenerate `n`-simplices of `X` to those of `Y`. Its underlying map
+is the degree-`n` component of `f`, and the associated computation lemma
+is definitional.
+-/
+
 @[expose] public section
 
 universe u

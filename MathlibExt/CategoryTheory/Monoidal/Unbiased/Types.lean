@@ -6,16 +6,21 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
 module
 
 public import MathlibExt.CategoryTheory.Monoidal.Unbiased.FiniteTensor
 import Mathlib.CategoryTheory.Types.Basic
 import Mathlib.Logic.Equiv.Basic
+
+/-!
+# Finite dependent products as an unbiased tensor
+
+A finite family of types is tensored by taking its dependent product, and morphisms act by
+reindexing along their supplied bijections and applying the component maps. Singleton and
+flattening equivalences satisfy the finite-tensor coherence laws and define a FiniteTensor
+instance on Type u. The file gives evaluation formulas for these equivalences and proves
+that the tensor of the empty family is terminal.
+-/
 
 @[expose] public section
 

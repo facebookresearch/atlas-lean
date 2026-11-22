@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.FundamentalGroupoidPiOne
@@ -20,28 +14,18 @@ public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.Fibration
 import MathlibExt.AlgebraicTopology.SimplicialSet.BoundaryDesc
 
 /-!
-# Boundary-RLP recognition between Kan complexes
+# Boundary lifting between Kan complexes
 
-For a map between Kan complexes, the right lifting property with respect to
-all boundary inclusions implies `SSet.KanComplex.W`. Together with the
-already-proved fixed-top converse for fibrations, this identifies boundary
-RLP and `W` for Kan fibrations.
-
-The forward proof shows that every strict fiber has one connected component
-and trivial pointed homotopy groups, then uses the existing fibration-sequence
-exactness API. Boundary maps used internally are glued through Mathlib's
-Apache-licensed multicoequalizer presentation of subcomplex covers.
-
-Mathematical source: Goerss--Jardine, *Simplicial Homotopy Theory*, Chapter I.
-The result follows the mathematical lineage of Joël Riou's TopCat model-
-category development, but no unpublished proof text or horn contraction is
-ported.
-
-## Nonclaims
-
-There is no endpoint-free inclusion `I.rlp ≤ KanComplex.W`: membership in
-`W` itself requires Kan source and target. This module does not define
-arbitrary simplicial weak equivalences or a model-category instance.
+For a map between Kan complexes, the right lifting property against all
+boundary inclusions implies membership in `SSet.KanComplex.W`.
+For a fibration between Kan complexes, `I_rlp_iff_W_of_fibration` identifies
+this lifting property with `W`.
+The forward argument proves that each strict fiber is connected and has
+trivial pointed homotopy groups, and uses the fibration-sequence exactness
+results.
+See Goerss–Jardine, *Simplicial Homotopy Theory*, Chapter I, for the
+boundary-lifting criterion; both Kan-complex hypotheses are part of these
+statements.
 -/
 
 @[expose] public section

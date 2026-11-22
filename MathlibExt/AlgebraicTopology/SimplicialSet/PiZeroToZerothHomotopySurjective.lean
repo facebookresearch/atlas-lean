@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.PiZeroToZerothHomotopy
@@ -20,16 +14,15 @@ public import Mathlib.AlgebraicTopology.SimplicialSet.StdSimplex
 public import Mathlib.Geometry.Convex.ConvexSpace.PathConnectedSpaceStdSimplex
 
 /-!
-# Surjectivity of simplicial `π₀` to realized path components
+# Surjectivity of simplicial π₀ to realized path components
 
-For `X : SSet`, every topological path component of `|X|` contains a realized
-vertex. A realization point is presented by a nondegenerate simplex and a point
-of `|Δ[n]|` (`SSet.exists_nonDegenerate_toTop_presentation`); the standard
-simplex is path-connected, so that point is joined to a realized vertex; the
-join maps forward under Yoneda (`SSet.realizedVertex_naturality`) and is
-quotiented by `ZerothHomotopy.sound` to hit `SSet.piZeroToZerothHomotopy`.
-
-Nonclaims: no injectivity, no equivalence, no `π₀ K ≃ K₀`, no additivity, no spectra.
+For any simplicial set `X`, the canonical map
+`SSet.piZeroToZerothHomotopy X` to the path components of its realization is
+surjective. The presentation `SSet.exists_nonDegenerate_toTop_presentation`
+places each realization point in a realized standard simplex, whose path
+connectedness joins it to a vertex. Naturality of realized vertices and
+`ZerothHomotopy.sound` identify the resulting path component with the image
+of that vertex.
 -/
 
 @[expose] public section

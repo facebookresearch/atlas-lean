@@ -6,13 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import Mathlib.AlgebraicTopology.ModelCategory.Bifibrant
@@ -24,11 +17,6 @@ public import MathlibExt.AlgebraicTopology.ModelCategory.QuillenBrown
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.SSetModelStructure
 public import MathlibExt.CategoryTheory.Enriched.Ordinary.Basic
 
-section
-
--- Author: @toskua, Codex
-
-
 /-!
 # Compatible external simplicial actions and the original mapping spaces
 
@@ -39,6 +27,8 @@ cofibrant sources give actual Quillen adjunctions and fibrant mapping spaces.
 Brown's lemma then gives precomposition and postcomposition weak invariance
 at the original cofibrant and fibrant endpoints.
 -/
+
+section
 
 @[expose] public section
 
@@ -191,7 +181,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -430,7 +419,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -565,7 +553,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -653,7 +640,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -841,7 +827,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!

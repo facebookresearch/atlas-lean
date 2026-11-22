@@ -6,13 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import Mathlib.CategoryTheory.MorphismProperty.FunctorCategory
@@ -28,11 +21,6 @@ public import MathlibExt.CategoryTheory.Reedy.FactorizationCorners
 public import MathlibExt.CategoryTheory.Reedy.DegreeZero
 public import MathlibExt.CategoryTheory.Reedy.Corner
 
-section
-
--- Author: @toskua, Codex
-
-
 /-!
 # Actual functorial resolution diagrams from the original generated Q and R
 
@@ -45,6 +33,8 @@ The least-degree identity normalization keeps the same original Q and R endpoint
 natural isomorphisms. Both original replacement arrows remain in the augmentation and
 coaugmentation. The framing class and weak-constancy proofs use these actual diagrams.
 -/
+
+section
 
 @[expose] public section
 
@@ -330,7 +320,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -465,7 +454,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -644,7 +632,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -826,7 +813,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1029,7 +1015,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1099,7 +1084,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1192,7 +1176,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!

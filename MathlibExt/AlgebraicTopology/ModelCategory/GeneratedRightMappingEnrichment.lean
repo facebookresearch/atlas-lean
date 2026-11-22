@@ -6,13 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialCategory.SimplicialObject
@@ -27,11 +20,6 @@ public import MathlibExt.AlgebraicTopology.SimplicialSet.RealizationWeakPiZero
 public import MathlibExt.CategoryTheory.Enriched.HomTransport
 public import MathlibExt.CategoryTheory.Enriched.Ordinary.Basic
 
-section
-
--- Author: @toskua, Codex
-
-
 /-!
 # Canonical composition on the actual generated simplicial frames
 
@@ -43,6 +31,8 @@ are induced by the unchanged original Q and right-frame functors.
 The comparison of these objects with the left and right function complexes, and
 the homotopical properties of those comparisons, are proved separately.
 -/
+
+section
 
 @[expose] public section
 
@@ -276,7 +266,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -478,7 +467,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -593,7 +581,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -703,7 +690,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -870,7 +856,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1309,7 +1294,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!

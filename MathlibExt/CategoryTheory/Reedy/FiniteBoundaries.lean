@@ -6,24 +6,12 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import Mathlib.Basic.Finite.Sigma
 public import Mathlib.CategoryTheory.EqToHom
 public import MathlibExt.CategoryTheory.Reedy.Basic
 public import MathlibExt.CategoryTheory.Reedy.Boundary
-
-section
-
--- Author: @toskua, Codex
-
 
 /-!
 # Opposite ordinary Reedy structures
@@ -32,6 +20,8 @@ The opposite structure keeps the original degree and reverses the two
 original factor arrows. Its direct and inverse properties are the opposite
 of the original inverse and direct properties, respectively.
 -/
+
+section
 
 @[expose] public section
 
@@ -145,7 +135,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -282,7 +271,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!

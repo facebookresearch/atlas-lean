@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 import
@@ -22,14 +16,6 @@ public import
   MathlibExt.Topology.Homotopy.TopCat.Singular.SingularKanPolymorphic
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.KanComplexWHomotopy
 public import Mathlib.Topology.Homotopy.TopCat.ToSSet
-
-@[expose] public section
-
-universe u
-
-open CategoryTheory CategoryTheory.Limits
-
-namespace TopCat
 
 /-!
 # Pushout legs of strong deformation retracts are weak homotopy equivalences
@@ -56,6 +42,14 @@ with `cancel_right_of_respectsIso`. The tensor-cylinder route through
 `isPushout_prodMap_right_of_isPushout` and `Homotopy.ofCylinder` is left to
 callers that already hold a descended cylinder map.
 -/
+
+@[expose] public section
+
+universe u
+
+open CategoryTheory CategoryTheory.Limits
+
+namespace TopCat
 
 /-- Pushout legs of strong deformation retracts are weak homotopy
 equivalences. -/

@@ -12,12 +12,13 @@ public import MathlibExt.CategoryTheory.Monoidal.Mod.RightLeftTensorUniversal
 public import Mathlib.CategoryTheory.Monoidal.Closed.Basic
 
 /-!
-The actual noncommutative relative tensor--Hom adjunction.
+# Relative tensor–Hom adjunction for modules
 
-For a standard right A-module N, the ambient internal Hom from N acquires
-its left A-action by currying N's original right action followed by evaluation.
-The tensor quotient and both adjunct maps are those of the existing balanced
-tensor. This earns colimit preservation needed in the genuine free-cell proof.
+For a monoid object A in a monoidal closed category, the internal Hom from a right A-module
+N carries a left A-action induced by the right action on N and evaluation. When C has the
+required small colimits, the balanced tensor functor N ⊗[A] (-) is left adjoint to this
+internal-Hom module functor and therefore preserves colimits. The adjunct maps are expressed
+by the tensor quotient projection and ambient currying or uncurrying.
 -/
 
 @[expose] public section

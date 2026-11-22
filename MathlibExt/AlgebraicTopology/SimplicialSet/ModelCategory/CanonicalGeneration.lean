@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
 import MathlibExt.AlgebraicTopology.ModelCategory.CofibrantlyGenerated
 import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.SSetModelStructure
 
@@ -21,6 +16,7 @@ The existing Kan--Quillen model has its actual boundary and horn
 generators at the original countable cardinal. This data supplies the
 existing projective diagram constructor without any diagram-model input.
 -/
+
 set_option autoImplicit false
 set_option relaxedAutoImplicit false
 noncomputable section

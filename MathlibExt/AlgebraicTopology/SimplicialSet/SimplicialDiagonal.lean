@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.Basic
@@ -19,25 +13,13 @@ public import MathlibExt.AlgebraicTopology.SimplicialObject.Diagonal
 public import MathlibExt.AlgebraicTopology.SimplicialObject.DiagonalPreservesLimits
 
 /-!
-# Canonical diagonal functor for simplicial objects in simplicial sets
+# Diagonal simplicial sets
 
-For `X : SimplicialObject SSet.{u}`, `simplicialDiagonalFunctor.obj X` is the
-single `SSet` diagonal with degree `a` given by the `a`-simplices of the
-level-`a` set. For `α : X ⟶ Y`, `simplicialDiagonalFunctor.map α` is the
-induced diagonal map with component `(α.app a).app a`.
-
-Universe and variance: everything lives over one universe `u`; both simplicial
-directions use `SimplexCategoryᵒᵖ`, so `Functor.diag` applies squarely. The
-`flip` orientation puts the outer index on the level and the inner index on
-the nerve simplices.
-
-The weak-stage diagonal consumes this functor directly: `stageWeakDiagonal C`
-is `simplicialDiagonalFunctor.obj (stageWeakNerve C)`, and exact-functor maps
-are `simplicialDiagonalFunctor.map (stageWeakNerveMap C D F)` with component
-`((stageWeakNerveMap C D F).app a).app a`.
-
-Nonclaims: no realization, weak equivalence, additivity, `π₀`, spectra, or Q/S
-comparison.
+The diagonal functor sends a simplicial object in simplicial sets to the simplicial set
+whose n-simplices are the n-simplices of its n-th level. A natural transformation induces
+the diagonal map with component (α.app a).app a. Both simplicial directions use
+SimplexCategoryᵒᵖ in the same universe. The diagonal preserves each limit shape available in
+Type u and identifies a constant simplicial object with its underlying simplicial set.
 -/
 
 @[expose] public section

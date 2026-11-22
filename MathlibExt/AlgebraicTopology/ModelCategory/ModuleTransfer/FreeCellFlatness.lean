@@ -14,13 +14,16 @@ public import MathlibExt.AlgebraicTopology.ModelCategory.ModuleTransfer.CellComp
 public import MathlibExt.CategoryTheory.SmallObject.Image
 
 /-!
-Relative flatness from the original free-I module cell history.
+# Relative flatness from free module cells
 
-No module flatness outcome is an input. The inputs concern the original base
-generator coefficients and the specified base weak-comparison closures. The
-actual SmallObject factor at the caller's original cardinal produces the
-cell module and its entire lifting-derived source retract. Right coefficient
-endpoints and the scalar algebra remain arbitrary.
+The small-object argument for `freeI I` at a regular cardinal constructs a
+cell module and a retract onto each cofibrant left module when its left
+class equals the module cofibrations. Generating coefficient flatness,
+the stated coproduct, pushout and ordinal-colimit comparison closures,
+and the tensor-class conditions imply relative flatness of these modules.
+Right coefficient endpoints are arbitrary. For a weak monoid morphism,
+this yields a scalar Quillen equivalence when weak equivalences and
+fibrations in both module models are created by their forgetful functors.
 -/
 
 @[expose] public section

@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.HomotopyGroupMap
@@ -20,7 +14,8 @@ public import MathlibExt.AlgebraicTopology.SimplicialSet.FundamentalGroupoid.Bas
 public import MathlibExt.AlgebraicTopology.ModelCategory.IsFibrant
 public import Mathlib.AlgebraicTopology.SimplicialSet.CategoryWithFibrations
 
-/-! # Kan-complex weak equivalences
+/-!
+# Kan-complex weak equivalences
 
 `KanComplex.W` is the class of maps between Kan complexes inducing an equivalence
 of fundamental groupoids and bijections on every pointed homotopy group, together

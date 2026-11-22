@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.Skeleton
@@ -21,7 +15,7 @@ public import MathlibExt.Topology.Category.TopCat.Embedding.ClosedT1EmbeddingCop
 /-!
 # Realization of arbitrary simplicial subcomplex inclusions
 
-This file is part of the KQ3 layer. It shows that the realization of an arbitrary
+This file shows that the realization of an arbitrary
 simplicial subcomplex inclusion `S.ι : S ↪ X` is a closed T1-embedding. The proof is
 the skeletal filtration via `SSet.relativeCellComplexOfMono`: `S.ι` is an ℕ-indexed
 transfinite composition of pushouts of coproducts of boundary inclusions

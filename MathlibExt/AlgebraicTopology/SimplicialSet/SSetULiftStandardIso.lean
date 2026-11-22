@@ -6,18 +6,10 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.StdSimplex
 public import Mathlib.CategoryTheory.Limits.Preserves.Ulift
-
-@[expose] public section
 
 /-!
 # The same original standard simplices under universe lift
@@ -26,6 +18,8 @@ Both full inverse maps retain every original ordinal operator inside
 its literal ULift wrapper. The full natural comparison uses the same
 standard-simplex functor at the enlarged coefficient universe.
 -/
+
+@[expose] public section
 
 noncomputable section
 

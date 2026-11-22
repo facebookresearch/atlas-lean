@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.Finite
@@ -21,22 +15,13 @@ public import Mathlib.AlgebraicTopology.SimplicialSet.NonDegenerateSimplices
 public import Mathlib.AlgebraicTopology.SimplicialSet.Subcomplex
 
 /-!
-# Finite ambient cells contained in a finite subcomplex
+# Finite ambient cells in a finite subcomplex
 
-For `A : X.Subcomplex` with `[SSet.Finite (A : SSet)]`, the ambient
-nondegenerate cells `s : X.N` satisfying `s.subcomplex ≤ A` (equivalently
-`s.simplex ∈ A.obj _`) form a finite type. This is the smallest public fact
-the closed-discrete selector caller needs.
-
-API-reuse map (all `reuse`; no `local` invention): already-finite
-`(A : SSet).N` from `SSet.Finite`, mono injectivity of `A.ι.app`
-(`injective_of_mono`), nondegeneracy reflection
-`SSet.Subcomplex.mem_nonDegenerate_iff`, membership coherence
-`SSet.Subcomplex.ofSimplex_le_iff`, equality characterization
-`SSet.N.ext_iff`, and finiteness transport `Finite.of_injective`.
-
-Nonclaims: no colimit, topology, product comparison, weak-equivalence,
-model-category, or general subcomplex lattice content appears here.
+For a finite subcomplex `A` of a simplicial set `X`, the ambient
+nondegenerate simplices whose generated subcomplex lies in `A` form a finite
+type. This subcomplex condition is equivalent to membership of the
+representative simplex in `A`. The map `ambientCellsEmbedding` embeds these
+cells into `(A : SSet).N` and transports its finiteness.
 -/
 
 @[expose] public section

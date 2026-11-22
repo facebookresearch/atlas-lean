@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Authors: @toskua, Avocado, Codex
--/
-
--- Authors: @toskua, Avocado, Codex
 module
 
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.PullbackObjObj

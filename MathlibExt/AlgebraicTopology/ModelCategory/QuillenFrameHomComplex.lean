@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import MathlibExt.AlgebraicTopology.ModelCategory.GeneratedHomotopyFunctionComplex
@@ -22,8 +16,6 @@ public import Mathlib.CategoryTheory.Adjunction.Whiskering
 public import Mathlib.CategoryTheory.Adjunction.Mates
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.ULiftFibration
 
-open HomotopicalAlgebra.GeneratedFunctorialReplacements
-
 /-!
 # The original right function complexes of a Quillen adjunction
 
@@ -33,6 +25,8 @@ comparison. The common frame uses the original coaugmentations and generated
 Reedy factorization, so neither a mapping-complex comparison nor a weak
 comparison of frames is supplied as a premise.
 -/
+
+open HomotopicalAlgebra.GeneratedFunctorialReplacements
 
 @[expose] public section
 

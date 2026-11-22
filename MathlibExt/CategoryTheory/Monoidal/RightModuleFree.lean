@@ -6,18 +6,24 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.CategoryTheory.Monoidal.CommutativeModuleConversion
 public import MathlibExt.CategoryTheory.Monoidal.RightModulePresentation
 public import MathlibExt.CategoryTheory.Monoidal.Mod.ColimitsFree
 public import Mathlib.CategoryTheory.Adjunction.Unique
+
+/-!
+# Free right modules and their adjunction
+
+The free right-module functor is constructed from `Mod.free` in the
+monoidal opposite and the wrapping equivalence for right modules. Its
+carrier on `X` is `X ⊗ S`, its unit inserts the monoid unit on the right,
+and its counit is the right action. The adjunction extends a map `f : X ⟶ M.X`
+to `(f ▷ S) ≫ M.action`. When the base category is symmetric and `S` is
+commutative, uniqueness of left adjoints compares this functor with the
+converted left free functor, respecting their generators, units and counits.
+-/
 
 @[expose] public section
 set_option autoImplicit false
@@ -79,7 +85,8 @@ def mopModules : Carrier S ⥤ Mod (Cᴹᵒᵖ) (mop S) where
   map_id _ := by apply Mod.hom_ext; rfl
   map_comp _ _ := by apply Mod.hom_ext; rfl
 
-/-- No module law or mapping-object value changes when the carrier wrapper is removed. -/
+/-- Wrapping and unwrapping right modules gives an equivalence with left
+modules in the monoidal opposite. -/
 def moduleEquivalence : Mod (Cᴹᵒᵖ) (mop S) ≌ Carrier S where
   functor := unmopModules S
   inverse := mopModules S
@@ -171,7 +178,8 @@ theorem moduleEquivalence_inverse_triangle (M : Carrier S) :
       (mopModules S).map ((moduleEquivalence S).counitIso.hom.app M) = 𝟙 _ :=
   (moduleEquivalence S).unit_inverse_comp M
 
-/-- The selected functor is the actual complete Mod.free construction, not a supplied free law. -/
+/-- The free right-module functor is the composite of `mopFunctor`, the
+left free-module functor and `unmopModules`. -/
 theorem functor_eq : functor S =
     mopFunctor C ⋙ Mod.free (mop S) ⋙ unmopModules S := by rfl
 
@@ -191,12 +199,13 @@ section Commutative
 
 variable [SymmetricCategory C] [IsCommMonObj S]
 
-/-- Capture the exact old left free followed by the proved right conversion. -/
+/-- The left free-module functor followed by conversion to right modules. -/
 @[no_expose]
 def convertedLeftFree : C ⥤ Carrier S := Mod.free S ⋙
   CommutativeModuleConversion.leftToRight S
 
-/-- The old underlying free value is unchanged before the standard right comparison. -/
+/-- The converted left free functor is `Mod.free S` followed by
+`CommutativeModuleConversion.leftToRight S`. -/
 theorem convertedLeftFree_eq : convertedLeftFree S =
     Mod.free S ⋙ CommutativeModuleConversion.leftToRight S := by rfl
 

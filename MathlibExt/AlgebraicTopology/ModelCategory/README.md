@@ -14,6 +14,7 @@ Import the entry point for the construction you need:
 | Homotopy and total derived functors | [HomotopyCategory](HomotopyCategory.lean), [GeneratedFunctorialReplacements](GeneratedFunctorialReplacements.lean), [DerivedFunctorCoherence](DerivedFunctorCoherence.lean), [DerivedAdjunctionCoherence](DerivedAdjunctionCoherence.lean) |
 | Framings and homotopy function complexes | [FunctorialFramings](FunctorialFramings.lean), [HomotopyFunctionComplex](HomotopyFunctionComplex.lean), [GeneratedHomotopyFunctionComplex](GeneratedHomotopyFunctionComplex.lean), [DerivedMapping](DerivedMapping/FunctionComplex.lean) |
 | Diagram models and Kan extensions | [FunctorProjective](FunctorProjective.lean), [Injective models](FunctorInjective/SourceConstruction.lean), [Projective Kan extensions](FunctorProjective/KanExtensions.lean), [Reedy](Reedy.lean) |
+| Derived diagram limits and colimits | [DerivedDiagramConstructions](DerivedDiagramConstructions.lean), [Projective cofinality](OriginalProjectiveRightAdjointCofinality.lean), [Sequential homotopy colimits](NatProjectiveTailHomotopyColimit.lean) |
 | Properness and under/over constructions | [Proper](Proper.lean), [Projective properness](FunctorProjective/Proper.lean), [Under](Under.lean), [UnderOverProperQuillen](UnderOverProperQuillen.lean) |
 | Monoidal models and derived tensor | [Monoidal](Monoidal.lean), [MonoidalQuillen](MonoidalQuillen.lean), [DerivedTensorCoherence](DerivedTensorCoherence.lean), [DerivedTensorClosedStructure](DerivedTensorClosedStructure.lean) |
 | Transfer to monoids and modules | [RightTransfer](RightTransfer.lean), [MonoidTransfer](MonoidTransfer.lean), [ModuleTransfer](ModuleTransfer.lean), [Module monoidal models](ModuleTransfer/Monoidal.lean) |
@@ -36,7 +37,9 @@ Derived constructions retain their chosen cofibrant and fibrant replacement
 functors. Quillen adjunctions induce adjunctions on homotopy categories;
 coherence and comparison modules describe their natural transformations,
 units and counits. The hypotheses specifying replacements and their
-factorizations remain explicit.
+factorizations remain explicit. Generation and factor-factory constructors
+couple replacements to the actual factor records; arbitrary replacement
+data specifies those fields separately.
 
 `HomotopyFunctionComplex` packages a chosen simplicial enrichment, both
 factorizations, weak-equivalence invariance, comparison with alternative
@@ -50,6 +53,14 @@ hypotheses are stated by the corresponding factories. Reedy constructions
 require the latching and matching shapes and their needed limits and
 colimits. Properness conclusions require the relevant coefficient
 properness assumptions.
+
+Derived diagram constructions start with `lim (R F)` and `colim (Q F)` for
+supplied whole-diagram replacements and the required limits or colimits.
+Their Quillen and homotopy-invariance results use the stated objectwise
+morphism-class identifications. The projective and injective factories
+provide these identifications under their source and presentability
+hypotheses. Reedy mapping comparisons additionally retain their stated
+cofibrant- or fibrant-constant hypotheses.
 
 Monoidal results start with a compatible closed symmetric monoidal model
 category. Transfer requires the stated smallness and acyclicity conditions

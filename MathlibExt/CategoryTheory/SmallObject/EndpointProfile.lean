@@ -6,18 +6,23 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.CategoryTheory.Presentable.LocallyPresentable
 public import Mathlib.CategoryTheory.ObjectProperty.Small
 public import Mathlib.CategoryTheory.SmallObject.IsCardinalForSmallObjectArgument
 public import Mathlib.SetTheory.Cardinal.HasCardinalLT
+
+/-!
+# Cardinal bounds for generator endpoint profiles
+
+In an accessible category, a generating morphism property with small-object cardinal
+eligibility has both endpoints of every generator presentable at one regular cardinal larger
+than a supplied fixed type. For a supplied functor C ⥤ Dᵒᵖ ⥤ Type, a second construction
+bounds the generator index copy, both endpoint total-point types, the given cardinals and
+the fixed type by an infinite cardinal ξ. Its power-set cardinal satisfies (2 ^ ξ) ^ ξ = 2 ^
+ξ and ξ < 2 ^ ξ.
+-/
 
 @[expose] public section
 set_option autoImplicit false
@@ -86,10 +91,8 @@ end AbsolutePresentability
 section NumericProfile
 universe u w vD
 
-/-- An infinite fixed numeric profile for the same original family and κ. It
-bounds κ, μ, the working index copy, both endpoint total-point types, and the
-supplied fixed type. It gives no bound on a replacement output and constructs
-no replacement functor or `Q`. -/
+/-- An infinite profile cardinal bounding κ, μ, the generator index copy,
+both endpoint total-point types and the supplied fixed type. -/
 theorem exists_original_fixed_total_point_profile
     (M : MorphismProperty C) (κ : Cardinal.{max u w})
     [Fact κ.IsRegular] [OrderBot κ.ord.ToType]

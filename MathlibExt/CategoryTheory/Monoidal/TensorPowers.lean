@@ -6,79 +6,19 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
 module
 
 public import Mathlib.CategoryTheory.Monoidal.CoherenceLemmas
 public import Mathlib.CategoryTheory.Monoidal.FunctorCategory
 
 /-!
-# Generic monoidal finite tensor powers
+# Finite tensor powers in monoidal categories
 
-For `X : C` in an arbitrary monoidal category define the left-associated
-finite power `tensorPowObj X n` (`0 ↦ 𝟙`, `n+1 ↦ pow n ⊗ X`), functorial
-`tensorPowMap`, and the finite add/coherence isomorphism
-`pow (m + n) ≅ pow m ⊗ pow n`.  For a lax monoidal functor `G`, it also
-constructs the ordered multiplication and unit on the objects
-`G.obj (tensorPowObj X n)`, with naturality, unit, and associativity laws.
-
-This supplies reusable category-level finite tensor powers. It uses only ambient `tensorObj` /
-`tensorHom` (notation `⊗` / `⊗ₘ`), `associator`, unitors, and generic
-coherence lemmas. No `ModuleCat`, `GradedObject`, `HomologicalComplex`,
-preadditive, zero-morphism, dg/sign, coproduct, free/cofree, completion, or
-operad content is provided here.
-
-## Declaration inventory
-
-* `tensorPowObj`: left-associated `n`-fold power.
-* `tensorPowObj_zero` / `tensorPowObj_succ`: computation rules.
-* `tensorPowMap`: functorial map by recursion via `⊗ₘ`.
-* `tensorPowMap_zero` / `tensorPowMap_succ`: computation rules.
-* `tensorPowMap_id` / `tensorPowMap_comp`: functoriality laws.
-* `tensorPowFunctor`: the bundled power functor for each `n`.
-* `tensorPowObj_add`: finite add/coherence iso by induction on `n`
-  (base via `rightUnitor`, step via `tensorIso` + `associator`).
-* `tensorPowAddNatIso`: the add/coherence isomorphism bundled naturally in `X`.
-* `tensorPowObj_add_zero_right` / `tensorPowObj_add_zero_left`: unit coherence.
-* `tensorPowObj_eqToHom_whiskerRight`: generic right-whisker transport for
-  `tensorPowObj` equalities, derived from `MonoidalCategory.eqToHom_whiskerRight`.
-* `tensorPowObj_add_naturality`: the add iso commutes with `tensorPowMap`.
-* `tensorPowObj_add_assoc`: the two `(m+n)+k` reassociation routes agree
-  (by induction on `k` via `pentagon` + associator naturality).
-* `laxTensorPowerPairing` / `laxTensorPowerUnit`: the ordered multiplication
-  and unit on tensor powers after applying a lax monoidal functor.
-* `laxTensorPowerPairing_naturality`: naturality in the base object.
-* `laxTensorPowerPairing_zero_left` / `laxTensorPowerPairing_zero_right`:
-  the lax unit laws.
-* `laxTensorPowerPairing_assoc`: ordered associativity.
-
-## Finite-support note
-
-For fixed `n`, `tensorPowObj X n` is an `n`-fold binary iteration. No
-infinite sum, tensor coalgebra carrier, or colimit beyond binary `⊗`
-is constructed here. This is explicitly *not* a graded direct sum.
-
-## Nonclaims
-
-* No infinite sums, (co)free objects, filtrations, completeness, or
-  adjunction data.
-* No derived, Koszul, operadic, or model-category claim.
-* No new global instances are declared.
-
-## Import justification
-
-`CoherenceLemmas` (which transitively imports `Monoidal.Category`) supplies
-`Category` / `MonoidalCategory`, `tensorObj` / `tensorHom` (`⊗` / `⊗ₘ`),
-`tensorIso`, `associator`, `leftUnitor` / `rightUnitor`, and the
-`tensorHom_comp`, `associator_naturality`, `leftUnitor_naturality`,
-`rightUnitor_naturality`, `pentagon`, and `triangle` coherence fields.
-`Monoidal.Category` supplies `leftUnitor_tensor_hom` for the `0+n` step and
-`rightUnitor_tensor_inv` for the associativity base case; `CoherenceLemmas`
-contributes `unitors_equal` for the `0+n` base case.
+In a monoidal category, tensorPowObj X n is the left-associated n-fold tensor power, with
+the unit object as the zeroth power. The file constructs its functorial maps and a natural
+isomorphism between the (m + n)-th power and the tensor product of the m-th and n-th powers,
+with unit and associativity coherence. A lax monoidal functor induces ordered pairings and a
+unit on the images of these powers, satisfying naturality, unit and associativity laws.
 -/
 
 @[expose] public section

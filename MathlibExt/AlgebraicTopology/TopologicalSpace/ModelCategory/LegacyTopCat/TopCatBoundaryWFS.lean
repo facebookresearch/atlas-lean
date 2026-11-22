@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import
@@ -21,7 +15,7 @@ public import Mathlib.CategoryTheory.MorphismProperty.WeakFactorizationSystem
 /-!
 # Boundary-generated weak factorization system in `TopCat`
 
-This file is part of the KQ3 layer. It packages the small-object factorization
+This file packages the small-object factorization
 for `TopCat.realizedBoundaryInclusions` as a weak factorization system with
 left class `realizedBoundaryInclusions.rlp.llp` and right class
 `realizedBoundaryInclusions.rlp`, via `IsWeakFactorizationSystem.mk'` with the

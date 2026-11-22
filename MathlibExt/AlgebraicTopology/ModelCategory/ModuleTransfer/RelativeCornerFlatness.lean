@@ -16,12 +16,18 @@ public import MathlibExt.CategoryTheory.MorphismProperty.CoproductClosure
 public import MathlibExt.CategoryTheory.SmallObject.Closure
 
 /-!
-The full conventional original free-I relative-flatness producer.
+# Relative flatness from generating pushout products
 
-The base certificate concerns actual base pushout products with the original
-I arrows. The actual relative Leibniz functor, its original free reductions,
-the original caller-cardinal SOA history and whole source retract then prove
-relative flatness. No module-flatness or scalar-unit weak outcome is an input.
+In a closed symmetric model category, a generator condition requires the
+pushout product of a weak equivalence with an `I`-arrow to be weak. Under
+h-monoidality, filtered-colimit stability of weak equivalences and a
+small-object argument for free-`I` at a regular cardinal whose left class
+is the module cofibrations, every cofibrant left module is relatively flat.
+Closure of the natural-transformation corner property under transfinite
+composition and retracts transfers the condition from generators to
+cofibrations. For a weak monoid morphism and module model structures detected
+by their forgetful functors, it yields a Quillen equivalence between extension
+and restriction of scalars.
 -/
 
 @[expose] public section

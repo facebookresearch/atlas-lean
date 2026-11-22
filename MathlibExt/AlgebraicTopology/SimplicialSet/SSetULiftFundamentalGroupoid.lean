@@ -6,18 +6,10 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.SSetULiftHomEquiv
 public import MathlibExt.AlgebraicTopology.SimplicialSet.FundamentalGroupoid.Basic
-
-@[expose] public section
 
 /-!
 # Full original fundamental-groupoid universe lift
@@ -27,6 +19,8 @@ native simplices. The original two-simplex composition relation is
 retained. The canonical native universal groupoid constructor supplies
 actual inverse functors with all original objects and arrows kept.
 -/
+
+@[expose] public section
 
 noncomputable section
 

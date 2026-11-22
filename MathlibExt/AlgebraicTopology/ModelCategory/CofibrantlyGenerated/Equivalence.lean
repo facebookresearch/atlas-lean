@@ -6,13 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
-
 import MathlibExt.AlgebraicTopology.ModelCategory.CofibrantlyGeneratedFactorization
 import MathlibExt.AlgebraicTopology.ModelCategory.SmallGenerator
 import MathlibExt.CategoryTheory.SmallObject.FullyFaithful

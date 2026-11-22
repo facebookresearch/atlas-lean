@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.CategoryTheory.MorphismProperty.Basic
@@ -21,14 +15,11 @@ public import Mathlib.CategoryTheory.NatIso
 /-!
 # Functor-category closure for morphism properties
 
-For `W : MorphismProperty C` and a category `J`, the pointwise property
-`W.functorCategory J` inherits `IsMultiplicative`,
-`HasTwoOutOfThreeProperty`, and `RespectsIso` from `W`. Proofs are pointwise
-in `j : J`, using functor-category identity/composition laws with
-`NatTrans.isIso_iff_isIso_app` and `RespectsIso.precomp/postcomp`.
-
-Nonclaims: no Waldhausen or stage specialization, no saturation, no nerve,
-no realization, no operad-specific weak property, and no K-theory.
+For a morphism property `W` on `C` and a category `J`, its pointwise property
+`W.functorCategory J` inherits multiplicativity, two-out-of-three and
+invariance under isomorphisms from `W`. The proofs evaluate natural
+transformations at each object and use the functor-category identity,
+composition and componentwise-isomorphism formulas.
 -/
 
 @[expose] public section

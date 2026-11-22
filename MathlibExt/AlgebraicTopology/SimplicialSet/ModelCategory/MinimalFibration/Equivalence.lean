@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.MinimalFibration.MapHomotopy
@@ -19,30 +13,16 @@ public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.HomotopyR
 public import Mathlib.AlgebraicTopology.SimplicialSet.Degenerate
 
 /-!
-# Equivalence and functoriality of simplex-level fiberwise homotopy
+# Equivalence of fiberwise homotopy of simplices
 
-This module proves that the existing relation
-`SSet.MinimalFibration.FiberwiseHomotopic p` is an equivalence relation when
-`p` is a fibration. The proof converts its bundled witnesses to the existing
-`SSet.HomotopyRelOver` API and reuses that API's reflexivity, symmetry, and
-transitivity constructions.
-
-It also gives functoriality along a morphism of arrows and the elementary
-rigidity statement that two degenerate simplices related by such a homotopy
-are equal. The rigidity proof is derived independently from Mathlib's
-Eilenberg--Zilber factorization and uniqueness API: it compares the canonical
-nondegenerate cores and then recovers the degeneracy maps pointwise from
-their faces.
-
-Mathematical source: the minimal-fibration strategy of Goerss--Jardine,
-*Simplicial Homotopy Theory*, Chapter I, Section 10. No unpublished proof is
-backported, and the obsolete internal-hom/fundamental-groupoid presentation
-is not reproduced.
-
-## Nonclaims
-
-This file constructs no minimal subfibration, factorization, rigidity
-isomorphism, weak equivalence, or model-category instance.
+The relation `SSet.MinimalFibration.FiberwiseHomotopic p` is an equivalence
+relation when `p` is a fibration. Its bundled witnesses correspond to
+`SSet.HomotopyRelOver` relative to the simplex boundary, giving reflexivity,
+symmetry and transitivity. Fiberwise homotopy is functorial under commuting
+squares of base maps, and boundary stationarity together with Eilenberg–Zilber
+factorization and uniqueness forces fiberwise homotopic degenerate simplices
+to be equal. These results belong to the minimal-fibration strategy of
+Goerss–Jardine, *Simplicial Homotopy Theory*, Chapter I, Section 10.
 -/
 
 @[expose] public section
@@ -62,17 +42,16 @@ namespace FiberwiseHomotopy
 
 variable {p : X ⟶ S} {n : ℕ} {x y z : X _⦋n⦌}
 
-/-- Regard a simplex-level fiberwise homotopy as a relative homotopy over the
-base. This changes only the packaging: the cylinder, endpoints,
-stationarity, and over-base equation are unchanged. -/
+/-- Regard simplex-level fiberwise homotopy as homotopy relative to the
+boundary over the base, preserving the cylinder, endpoints and stationarity. -/
 def toHomotopyRelOver (H : FiberwiseHomotopy (n := n) p x y) :
     SSet.HomotopyRelOver p (yonedaEquiv.symm x) (yonedaEquiv.symm y)
       (boundary n) where
   toHomotopyRel := H.homotopyRel
   over := H.over
 
-/-- Package a relative homotopy over the base as the existing simplex-level
-fiberwise homotopy. -/
+/-- Package a relative homotopy over the base as a simplex-level fiberwise
+homotopy. -/
 def ofHomotopyRelOver
     (H : SSet.HomotopyRelOver p (yonedaEquiv.symm x)
       (yonedaEquiv.symm y) (boundary n)) :
@@ -93,8 +72,7 @@ lemma toHomotopyRelOver_ofHomotopyRelOver
     (ofHomotopyRelOver H).toHomotopyRelOver = H := by
   rfl
 
-/-- Reflexive simplex-level fiberwise homotopy. No fibration hypothesis is
-needed. -/
+/-- Reflexive simplex-level fiberwise homotopy for an arbitrary base map. -/
 noncomputable def refl (p : X ⟶ S) (x : X _⦋n⦌) :
     FiberwiseHomotopy (n := n) p x x :=
   ofHomotopyRelOver
@@ -362,9 +340,8 @@ namespace FiberwiseHomotopy
 
 variable {p : X ⟶ S} {n : ℕ} {x y : X _⦋n⦌}
 
-/-- Degenerate simplices joined by a simplex-level fiberwise homotopy are
-equal. This uses only stationarity on the boundary, not minimality or the
-fibration hypothesis. -/
+/-- Boundary stationarity and uniqueness of nondegenerate factorizations
+force fiberwise homotopic degenerate simplices to be equal. -/
 theorem eq_of_degenerate (H : FiberwiseHomotopy (n := n) p x y)
     (hx : x ∈ X.degenerate n) (hy : y ∈ X.degenerate n) : x = y := by
   obtain _ | n := n

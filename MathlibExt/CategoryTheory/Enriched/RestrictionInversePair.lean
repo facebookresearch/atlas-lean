@@ -6,15 +6,22 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
 module
 
 public import MathlibExt.CategoryTheory.Enriched.Restriction
 public import Mathlib.CategoryTheory.Equivalence
+
+/-!
+# Restriction along inverse enriched functors
+
+Restriction along enriched functors respects composition and identity as
+equalities of functors on enriched diagram categories.
+If `F` and `G` are mutually inverse as enriched functors, their restriction
+functors form `diagramEquivalence`, with unit and counit induced by the two
+recovery equalities.
+The module proves both triangle identities and identifies the equivalence's
+functor, inverse, unit, and counit with these constructions.
+-/
 
 @[expose] public section
 set_option autoImplicit false

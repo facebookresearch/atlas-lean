@@ -6,15 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import Mathlib.CategoryTheory.Monoidal.Mod
+
+/-!
+# Transport of module structures along isomorphisms
+
+For a monoid object A in a monoidal category, an isomorphism from a left A-module carrier
+H.X to G transports the action to G by conjugation. The transported module is isomorphic to
+H, and the underlying maps of the module isomorphism are exactly the supplied isomorphism
+and its inverse.
+-/
 
 @[expose] public section
 

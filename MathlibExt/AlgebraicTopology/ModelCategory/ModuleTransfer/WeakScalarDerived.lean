@@ -11,13 +11,15 @@ import MathlibExt.AlgebraicTopology.ModelCategory.QuillenEquivalenceTotalDerived
 import Mathlib.CategoryTheory.Adjunction.FullyFaithful
 
 /-!
-Weak scalar invariance on M4's actual chosen derived functors.
+# Derived equivalences from weak scalar change
 
-The Quillen equivalence is earned from the tensor criterion. Derived uniqueness
-identifies the original chosen-Q left functor with the canonical total derived
-equivalence. The existing chosen-Q/chosen-R derived adjunction then becomes an
-equivalence with its same functors, actual unit, and actual counit. No unrelated
-isomorphisms or assumed unit/counit outcome are supplied.
+For a weak monoid morphism, relative flatness of every cofibrant source
+module yields a scalar Quillen equivalence under the stated tensor-colimit
+preservation and forgetful-functor identifications of weak equivalences
+and fibrations. Derived uniqueness compares the chosen cofibrant-replacement
+left functor with the canonical total derived functor. Both the direct
+localized restriction adjunction and the chosen cofibrant/fibrant-replacement
+adjunction become equivalences with their original functors, units and counits.
 -/
 
 noncomputable section

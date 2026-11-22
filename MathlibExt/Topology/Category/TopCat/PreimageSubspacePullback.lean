@@ -6,30 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.Topology.Category.TopCat.Subspace
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
 
-/-! # Canonical preimage-subspace pullback in `TopCat`
+/-!
+# Preimage subspaces as topological pullbacks
 
-Purpose: the preimage subspace with its restriction map and inclusions forms
-the categorical pullback of a subspace inclusion along an arbitrary map.
-
-Orientation: top edge is `subspaceMap` into `TopCat.of U`, left edge is the
-inclusion of `TopCat.of (f ⁻¹' U)` into `X`, right edge is the inclusion of
-`TopCat.of U` into `Y`, bottom edge is `f`. Commutativity is
-`subspaceMap_comp_subspaceIncl`.
-
-Nonclaims: no bundle, no chart, no descent, no varying-fiber comparison, no
-realization, no model-category instance, and no weak-equivalence result. No
-one-cell restriction theorem.
+For a continuous map f : X ⟶ Y and an arbitrary subset U of Y, the preimage subspace forms a
+categorical pullback of the inclusion of U along f. The theorem retains the restriction map
+and both subspace inclusions. A second theorem restricts a supplied total-space pullback to
+base subspaces identified by a preimage equality.
 -/
 
 @[expose] public section

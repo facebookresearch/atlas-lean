@@ -1,22 +1,7 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
-Authors: Johan Commelin, Kim Morrison, Adam Topaz, Joël Riou
--/
-
--- Author: @toskua, Avocado
-/-
 Copyright (c) 2021 Kim Morrison. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Johan Commelin, Kim Morrison, Adam Topaz, Joël Riou
+See NOTICE in the repository root for the original Mathlib attribution.
 -/
 module
 
@@ -92,7 +77,6 @@ provider extension for horn-face discharge):
 * PR head: `e09070f786c9fc0a688e6239d71230b618b045ff`
 * File: `Mathlib/AlgebraicTopology/SimplicialSet/StdSimplex.lean`
 * Blob: `01377b85904978d402c830501e4615606021df8c`
-* Upstream author: Joël Riou
 
 ## Adaptations for 4.33 pin
 

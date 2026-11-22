@@ -6,13 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import Mathlib.CategoryTheory.Enriched.Basic
@@ -20,11 +13,6 @@ public import Mathlib.CategoryTheory.Localization.Monoidal.Braided
 public import MathlibExt.AlgebraicTopology.ModelCategory.QuillenBrown
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.SSetModelStructure
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.SimplicialModel
-
-section
-
--- Author: @toskua, Codex
-
 
 /-!
 # The actual monoidal category of homotopy mapping spaces
@@ -34,6 +22,8 @@ simplicial tensor products. Their actual localization therefore has the
 localized monoidal structure and its original natural tensor comparisons.
 This is the target category for coherent derived mapping enrichment.
 -/
+
+section
 
 @[expose] public section
 

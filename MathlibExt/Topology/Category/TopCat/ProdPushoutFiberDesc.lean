@@ -6,16 +6,17 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.Topology.Category.TopCat.ProdMapPointwise
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
+
+/-!
+# Pointwise descent along a fixed-left product pushout
+
+For one fixed `k : K`, the two product legs land at inverse-pair points.
+A TopCat pushout then supplies the single-fiber descent function.
+-/
 
 @[expose] public section
 
@@ -24,13 +25,6 @@ open CategoryTheory CategoryTheory.Limits TopCat
 universe u
 
 namespace TopCat
-
-/-!
-# Pointwise descent along a fixed-left product pushout
-
-For one fixed `k : K`, the two product legs land at inverse-pair points.
-A TopCat pushout then supplies the single-fiber descent function.
--/
 
 /-- Single-fiber descent of a fixed-left product cocone along a pushout. -/
 theorem exists_prodMap_fiber_desc_of_isPushout

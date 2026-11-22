@@ -6,15 +6,20 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 public import MathlibExt.CategoryTheory.Enriched.PointwiseLimitAction
 public import MathlibExt.CategoryTheory.Enriched.GradedYoneda
+
+/-!
+# Pointwise limits of enriched functors
+
+Let `V` be braided monoidal closed, and let every evaluation of a diagram
+`K : J ⥤ EnrichedFunctorCat V A` admit a limit in `V`.
+The pointwise limit objects carry an enriched functor structure whose
+identity and composition laws follow from their projection equations.
+The pointwise projections and lifts form a limiting cone on `K`, and each
+evaluation functor preserves this limit.
+-/
 
 @[expose] public section
 set_option autoImplicit false

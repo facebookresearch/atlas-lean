@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.CategoryTheory.MorphismProperty.Limits
@@ -19,9 +13,14 @@ public import Mathlib.CategoryTheory.Limits.Preserves.Basic
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
 
 /-!
-Base-change stability passes to `P.inverseImage F` when `F` preserves
-`WalkingCospan` limits. This file makes no converse, reflection, or
-limit-existence claim.
+# Inverse images of morphism properties
+
+A morphism property stable under base change remains stable after taking
+its inverse image along a functor preserving `WalkingCospan` limits.
+For an isomorphism-invariant property, naturally isomorphic functors induce
+equal inverse-image properties.
+Taking inverse images along the functor and inverse of an equivalence
+recovers the starting property in either direction.
 -/
 
 @[expose] public section

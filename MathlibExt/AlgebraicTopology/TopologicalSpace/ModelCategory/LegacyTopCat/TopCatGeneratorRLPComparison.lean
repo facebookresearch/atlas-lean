@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.Realization.RealizedHornLeBoundaryCofibrations
@@ -19,7 +13,7 @@ public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.Realizati
 /-!
 # Boundary/horn right-class comparison in `TopCat`
 
-This file is part of the KQ3 layer. The KQ3 provider
+The provider
 `TopCat.realizedHornInclusions_le_boundaryRLPLLP` places every realized horn
 inclusion in the left class of the realized boundary inclusions. The
 lifting-property Galois connection

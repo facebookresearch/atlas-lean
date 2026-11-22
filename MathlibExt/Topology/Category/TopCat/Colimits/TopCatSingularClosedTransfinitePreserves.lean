@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.SingularSet
@@ -24,6 +18,7 @@ public import
   MathlibExt.Topology.Category.TopCat.Colimits.TopCatSingularClosedTransfiniteColimit
 public import
  MathlibExt.Topology.Category.TopCat.Colimits.TopCatSingularClosedSequentialPreserves
+
 /-!
 # `toSSet` keeps closed-T1 transfinite colimits
 

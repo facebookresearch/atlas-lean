@@ -12,9 +12,15 @@ public import MathlibExt.AlgebraicTopology.ModelCategory.ModuleTransfer.FreeCell
 public import MathlibExt.AlgebraicTopology.ModelCategory.OperadicAcyclicCells
 
 /-!
-The exact original coefficient flatness certificate and h-monoidality give
-base generating-arrow flatness, with no added cofibrancy of either original
-I-domain or weak-map endpoint. The whole base pushout corner is retained.
+# Generating pushout-product flatness
+
+In a symmetric monoidal model category, h-monoidality implies that tensoring
+a cofibration on the left by any object gives an h-cofibration.
+If `I ≤ cofibrations C` and `GeneratingCoefficientFlatness I` holds, the
+pushout-product of a weak equivalence with any arrow in `I` is a weak
+equivalence.
+The flatness certificate concerns both endpoints of the generating arrow;
+the theorem allows arbitrary endpoints of the weak equivalence.
 -/
 
 @[expose] public section

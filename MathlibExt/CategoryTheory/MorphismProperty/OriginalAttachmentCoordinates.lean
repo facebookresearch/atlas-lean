@@ -6,18 +6,23 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import MathlibExt.CategoryTheory.MorphismProperty.CoproductCellDecomposition
 public import MathlibExt.CategoryTheory.MorphismProperty.TransfiniteComposition
 public import Mathlib.AlgebraicTopology.RelativeCellComplex.AttachCells
 public import Mathlib.SetTheory.Cardinal.Order
+
+/-!
+# Well-ordered coordinates for cell attachments
+
+In a category with pushouts and the required coproducts, an attachment of
+`I`-cells can be expressed as a well-ordered continuous chain whose steps
+are isomorphisms or pushouts of individual `I`-arrows. The construction
+orders the supplied cell labels and transports the coproduct coordinate
+chain through the cofan isomorphisms and attachment square. It retains the
+source and endpoint arrow, with isomorphism stages handling empty labels.
+-/
 
 @[expose] public section
 

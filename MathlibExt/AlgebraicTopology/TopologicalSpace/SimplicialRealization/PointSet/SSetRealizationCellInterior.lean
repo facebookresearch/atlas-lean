@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.Analysis.Convex.StdSimplex
@@ -22,31 +16,17 @@ public import MathlibExt.AlgebraicTopology.SimplicialSet.RealizationPresentation
 public import Mathlib.Topology.Order
 
 /-!
-# Realized standard-simplex open cell
+# Open cells in simplicial realization
 
-For `n : ℕ`, the positive-coordinate open-cell locus in
-`StdSimplex ℝ (Fin (n + 1))` and its identification with the complement of the
-realized-boundary range under `SSet.stdSimplex.toTopIso`, covering both
-positive-dimensional simplices and the `n = 0` (`∂Δ[0] = ⊥`) base case.
-Consumes `SSet.stdSimplex.toTopIso`,
-`SSet.boundaryProductFace.exists_face_cover`,
-`SSet.boundary.singleton_face_coord_zero`,
-`Convexity.StdSimplex.mem_range_map_iff`,
-`SSet.stdSimplex.faceSingletonComplIso` and its `hom_ι` law,
-`SSet.face_singleton_compl_le_boundary` with `SSet.Subcomplex.homOfLE_ι`,
-`SimplexCategory.toTopHomeo` and its naturality, and
-`Convexity.StdSimplex.continuous_weights_apply` for the openness corollary, plus
-`SSet.boundary_zero`, `Convexity.StdSimplex` uniqueness
-(`weights_apply_eq_one`), and the initial-object bridge
-(`SSet.Subcomplex.isInitialBot`, `TopCat.isInitialPEmpty`) for the `n = 0` case.
-Mathematical source: standard affine simplex description, cf. Goerss--Jardine,
-*Simplicial Homotopy Theory*, Chapter I, §1; simplicial boundary ▷ faces via
-the pinned `SSet.boundary` APIs.
-
-Nonclaims: no unique cell carrier, no compact-subset finite-support theorem,
-no arbitrary product, no fibration or model-category result. The `IsOpen`
-corollary is included only because it follows directly from coordinate
-continuity.
+The open cell of the real standard simplex consists of points whose
+barycentric coordinates are all strictly positive.
+Under `SSet.stdSimplex.toTopIso`, it is exactly the complement of the range
+of the realized boundary inclusion, including the zero-dimensional case.
+Every point of the realization of a simplicial set has a simplex
+presentation with strictly positive coordinates, obtained by reducing the
+dimension whenever a coordinate vanishes.
+See Goerss–Jardine, *Simplicial Homotopy Theory*, Chapter I §1, for the
+affine-simplex description.
 -/
 
 @[expose] public section
@@ -238,53 +218,22 @@ theorem toTopIso_preimage_openCell_compl_range_zero :
 end realizationCellInterior
 
 /-!
-# Interior (open-cell) presentation for realized points (4.34.1)
+## Interior presentations of realized points
 
-Prerequisite for the zero-fiber support-reduction route, ported to
-`Convexity.StdSimplex` with `.weights`.
 Every point of `SSet.toTop.obj T` has a presentation by a realized
-standard simplex at a strictly-positive (interior) point.
-
-Reuse map (4.34.1):
-* `SSet.exists_nonDegenerate_toTop_presentation` for the initial
-  (arbitrary-coordinate) presentation;
-* `SimplexCategory.toTopHomeo` / `SSet.yonedaEquiv` for the
-  simplex/realization transport;
-* `Convexity.StdSimplex.fin1_pos` (`MathlibExt/Analysis/Convex/StdSimplex.lean`)
-  for the `Fin 1` base case;
-* `Convexity.StdSimplex.face_factor_succAbove` (same file) for the single
-  zero-coordinate face factor;
-* `SimplexCategory.toTopHomeo_symm_naturality_apply`,
-  `SSet.stdSimplex.δ` (`= SSet.stdSimplex.map (SimplexCategory.δ _)`),
-  and `SSet.stdSimplex.δ_comp_yonedaEquiv_symm` for the one-step
-  SSet dimension reduction (same idiom as
-  `RealizationBoundaryZeroCoordinate`).
-
-No legacy simplex carrier is restored here: this file uses
-`Convexity.StdSimplex`, `.weights`, and `SimplexCategory.toTopHomeo` directly,
-so no legacy carrier bridge is needed.
-File order: private single-step SSet reduction, public interior existence.
-The former private `fin1_pos` / single-step new-simplex factor now live in
-`MathlibExt/Analysis/Convex/StdSimplex.lean` and are reused.
-Minimal imports only; no new abstraction.
-
-Nonclaims: no `boundary_complement_all` (neither direction is claimed
-here beyond the interior existence itself), no density/presentation
-duplication, no subdivision, simplicial approximation, Kan filling, fibration,
-model-category, or weak-equivalence result, no KQ3 claim, no global
-finite-base chart (per blueprint monodromy warning), no
-reverse/iff characterization of boundary membership.
-Additional files that still mention the legacy simplex carrier
-(`SSetRealizationFiberPointSurjective`) keep their one-file scope and need a
-separate migration; they are not edited here.
+standard simplex at a point with strictly positive barycentric coordinates.
+A zero coordinate allows a factorization through the corresponding face
+and reduces the presentation dimension; the zero-dimensional case uses
+`Convexity.StdSimplex.fin1_pos`.
+The dimension reduction uses `face_factor_succAbove`,
+`SimplexCategory.toTopHomeo_symm_naturality_apply`, and
+`SSet.stdSimplex.δ_comp_yonedaEquiv_symm`.
 -/
 
-/-- One-step SSet dimension reduction: a presentation whose simplex
-coordinate vanishes at `j` factors through the `j`-th face, giving a
-presentation in one lower dimension with the same realized image.
-Transport follows the `RealizationBoundaryZeroCoordinate`
-idiom (`toTopHomeo` naturality + `δ_comp_yonedaEquiv_symm`); no
-subdivision, model, or KQ3 input. -/
+/-- A vanishing coordinate at `j` factors a simplex presentation through
+the `j`-th face, giving a presentation in one lower dimension with the
+same realized image. The realization comparison follows from
+`toTopHomeo` naturality and `δ_comp_yonedaEquiv_symm`. -/
 private theorem exists_openCell_rep {m : ℕ} (T : SSet.{u})
     (s : T _⦋m + 1⦌) (y : SSet.toTop.obj (SSet.stdSimplex.obj ⦋m + 1⦌))
     (j : Fin (m + 2))

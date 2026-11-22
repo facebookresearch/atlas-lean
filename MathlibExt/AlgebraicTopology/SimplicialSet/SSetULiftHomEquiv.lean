@@ -6,18 +6,10 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.SSetULiftStandardIso
 public import Mathlib.AlgebraicTopology.SimplicialSet.KanComplex.MulStruct
-
-@[expose] public section
 
 /-!
 # Full original standard-simplex maps under universe lift
@@ -26,6 +18,8 @@ Both inverse directions lift or lower the same entire original simplex
 map. Every face and original constant vertex equation is retained.
 This is the exact scalar dictionary for original pointed homotopy maps.
 -/
+
+@[expose] public section
 
 noncomputable section
 

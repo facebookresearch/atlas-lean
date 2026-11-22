@@ -6,24 +6,12 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import MathlibExt.AlgebraicTopology.ModelCategory.GeneratedFrameHomComplex
 public import MathlibExt.AlgebraicTopology.ModelCategory.GeneratedFramings
 public import MathlibExt.AlgebraicTopology.ModelCategory.GeneratedReplacementComparisons
 public import MathlibExt.AlgebraicTopology.ModelCategory.GeneratedRightMappingEnrichment
-
-section
-
--- Author: @toskua, Codex
-
 
 /-!
 # Full natural weak mapping comparisons for independent original generated choices
@@ -34,6 +22,8 @@ comparison retains both original Q counits, the original R coaugmentations, and
 all coefficient and simplex maps. Its weakness is proved by the genuine Reedy
 mapping calculus, without an incoming mapping comparison outcome.
 -/
+
+section
 
 @[expose] public section
 
@@ -189,7 +179,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -356,7 +345,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -574,7 +562,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!

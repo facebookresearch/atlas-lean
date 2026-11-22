@@ -7,12 +7,6 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Attribution for this imported development.
-Author : @toskua
--/
-
-/-
-Author : @toskua
 -/
 module
 

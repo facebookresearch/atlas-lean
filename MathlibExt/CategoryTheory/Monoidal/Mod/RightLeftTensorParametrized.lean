@@ -13,8 +13,15 @@ public import Mathlib.CategoryTheory.Adjunction.Parametrized
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.PullbackObjObj
 
 /-!
-The full parametrized adjunction for the existing noncommutative module
-tensor, and its existing Leibniz pushout/pullback adjunction. -/
+# The parametrized tensor–Hom adjunction for modules
+
+For a monoid object in a monoidal closed category with the required small
+colimits, the balanced right-left module tensor has a parametrized
+adjunction with the contravariant internal Hom. This includes naturality
+in the right-module coefficient. Under the stated pullback hypothesis on
+left modules, it induces the relative pushout-product/pullback adjunction
+and colimit preservation by each relative pushout-product functor.
+-/
 
 @[expose] public section
 

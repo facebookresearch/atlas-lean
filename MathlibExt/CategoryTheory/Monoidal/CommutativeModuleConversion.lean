@@ -6,18 +6,23 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.CategoryTheory.Monoidal.Mod
 public import Mathlib.CategoryTheory.Monoidal.Action.Opposites
 public import Mathlib.CategoryTheory.Monoidal.Opposite.Mon
 public import Mathlib.CategoryTheory.Equivalence
+
+/-!
+# Left and right modules over commutative monoids
+
+For a commutative monoid object `S` in a braided monoidal category, positive
+braidings convert left `S`-modules to right modules and conversely,
+preserving their underlying objects and morphisms. In a symmetric monoidal
+category, the two braidings recover the original actions and give natural
+recovery isomorphisms and an equivalence of module categories. Its unit,
+counit and morphism round-trip formulas are expressed as module morphisms.
+-/
 
 @[expose] public section
 
@@ -30,9 +35,6 @@ open CategoryTheory CategoryTheory.MonoidalCategory CategoryTheory.MonoidalOppos
 open scoped CategoryTheory.MonObj
 
 namespace CategoryTheory.CommutativeModuleConversion
-
-/-! Both conversions use positive braidings. They are opposite-direction functors here;
-the recovery isomorphisms and inverse equivalence require the symmetric section below. -/
 
 section Braided
 

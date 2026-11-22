@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.FundamentalGroupoid.Basic
@@ -24,54 +18,18 @@ public import MathlibExt.AlgebraicTopology.Quasicategory.TwoTruncatedCompat
 public import Mathlib.AlgebraicTopology.Quasicategory.TwoTruncatedQuasicategory
 public import MathlibExt.AlgebraicTopology.SimplicialSet.StdSimplexCompat
 
-/-! # Binary-product comparison for `SSet.mapFundamentalGroupoid`
+/-!
+# Fundamental groupoids and binary products
 
-For simplicial sets `X` and `A`, the canonical comparison functor
-
-  `prodComparison X A : FundamentalGroupoid (X ⨯ A) ⥤ FundamentalGroupoid X × FundamentalGroupoid A`
-
-is `(mapFundamentalGroupoid prod.fst).prod' (mapFundamentalGroupoid prod.snd)`.
-For maps `f : X ⟶ Y` and `g : A ⟶ B` it is natural up to the isomorphism
-`prodMapNatIso f g`, built purely from functor-level isos (interchange with
-`Iso.refl` components, `mapFundamentalGroupoidComp`, and
-`congrMapFundamentalGroupoidOfEq` applied to `Limits.prod.map_fst` /
-`Limits.prod.map_snd`); no edge/`homMk` manipulation is needed. Stability of
-functor equivalences under products (`Equivalence.prod`) plus cancellation
-along the static comparison (`isEquivalence_of_comp_right`) then yields the
-public consumer theorem `isEquivalence_mapFundamentalGroupoid_prodMap`, which
-has exactly the signature of the `KanComplexWProduct.lean` groupoid seam.
-
-Proved layers in this file:
-- `essSurj_prodComparison`, via the Yoneda pairing `Δ[0] ⟶ X ⨯ A`.
-- `hc₂ProdComparison`, the `Truncated.HomotopyCategory₂` binary-product
-  comparison for quasicategories, built with pinned `desc`, proved functorial
-  with pointwise `CompStruct.map` plus `homotopyCategory₂_fac`, compared with
-  `functor_ext`, and described on `homMk` with `homMk_eq_iff_homotopicL`.
-  It is the quotient-level precursor of the groupoid comparison.
-- `full_prodComparison`, fullness of the static groupoid comparison for
-  arbitrary simplicial sets, via Yoneda edge pairing (`pairedSimplex1`,
-  `pairEdge`) and zigzag induction (`hom_rec`) factored through
-  `(fX, 𝟙)` and `(𝟙, fA)`. No homotopy quotient input is needed.
-- `faithful_prodComparison`, faithfulness of the static groupoid comparison,
-  via the wall-free Option A paired inverse: `invObj`/`invMap`/`invProd`
-  built from the commuting left/right inclusions (`leftFunctor`,
-  `rightFunctor`, whose commutation is `interchange`), with the left-inverse
-  law `hUnit : prodComparison X A ⋙ invProd X A = 𝟭 _` proved by
-  `functor_ext` (objects by the vertex pairing `pairEta`, morphisms by
-  pairing the projected `homMk`s and refolding with
-  `pairEdge_comp_left_then_right` plus the edge `eta`). A functor with a
-  left inverse is faithful, so the former `ax_faithful_prodComparison` seam
-  is deleted with no replacement.
-
-Assumption inventory: no axiom remains in this file. The comparison
-equivalence is fully proved from the Yoneda pairing, the `desc`/`hom_rec`
-interfaces, and the `CompStruct` pairing, with all naturality and transport
-steps proved. No map-level or `W`-level assumption is introduced.
-
-Explicit nonclaims: no `ModelCategory SSet` instance is used or constructed;
-no public or private assumption is added. The product is
-never treated as definitional, and the proof never routes through
-realization/singular.
+For simplicial sets `X` and `A`, the projection functor `prodComparison X A`
+from the fundamental groupoid of `X ⨯ A` to the product of their fundamental
+groupoids is an equivalence. Yoneda pairing of simplices gives fullness and essential surjectivity, and
+commuting left and right inclusions construct a left inverse proving
+faithfulness. The natural comparison
+`prodMapNatIso` yields `isEquivalence_mapFundamentalGroupoid_prodMap`: the
+product of maps inducing fundamental-groupoid equivalences induces an
+equivalence. A companion `Truncated.HomotopyCategory₂` comparison is also
+constructed for products of quasicategories.
 -/
 
 @[expose] public section
@@ -260,8 +218,8 @@ private lemma pairEta {X A : SSet.{u}} (v : (X ⨯ A) _⦋0⦌) :
     have h := SSet.yonedaEquiv_symm_comp v (Limits.prod.snd : X ⨯ A ⟶ A)
     exact h
 
-/-- Product `eqToHom` splits as the paired component `eqToHom`s.
-Proved by `cases`, so no pinned transparency unfolding is needed. -/
+/-- For equal objects in a product category, `eqToHom` is the pair of the
+component transports. -/
 private theorem prod_eqToHom_mkHom {C D : Type*} [Category C] [Category D]
     {p q : C × D} (h : p = q) :
     eqToHom h =
@@ -825,9 +783,8 @@ private lemma pairEdge_comp_right_then_left {X A : SSet.{u}}
 private lemma pt_mk {X : SSet.{u}} (x : X _⦋0⦌) :
     (FundamentalGroupoid.mk x).pt = x := rfl
 
-/-- Groupoid cancellation: if `a ≫ b = c ≫ d` then `d ≫ b⁻¹ = c⁻¹ ≫ a`.
-Stated for a concrete fundamental groupoid so the global `IsIso`
-instances fire without local provision. -/
+/-- Groupoid cancellation: if `a ≫ b = c ≫ d`, then
+`d ≫ b⁻¹ = c⁻¹ ≫ a`. -/
 private theorem swap_inv {Z : SSet.{u}} {P Q R S : FundamentalGroupoid Z}
     {a : P ⟶ Q} {b : Q ⟶ R} {c : P ⟶ S} {d : S ⟶ R}
     (h : a ≫ b = c ≫ d) : d ≫ inv b = inv c ≫ a := by
@@ -839,9 +796,7 @@ private theorem swap_inv {Z : SSet.{u}} {P Q R S : FundamentalGroupoid Z}
     _ = inv c ≫ a := by
         simp only [Category.assoc, IsIso.hom_inv_id, Category.comp_id]
 
-/-- Groupoid cancellation dual: if `a ≫ b = c ≫ d` then `a⁻¹ ≫ c = b ≫ d⁻¹`.
-Stated for a concrete fundamental groupoid so the global `IsIso`
-instances fire without local provision. -/
+/-- Dually, if `a ≫ b = c ≫ d`, then `a⁻¹ ≫ c = b ≫ d⁻¹`. -/
 private theorem swap_inv' {Z : SSet.{u}} {P Q R S : FundamentalGroupoid Z}
     {a : P ⟶ Q} {b : Q ⟶ R} {c : P ⟶ S} {d : S ⟶ R}
     (h : a ≫ b = c ≫ d) : inv a ≫ c = b ≫ inv d := by
@@ -951,11 +906,10 @@ private noncomputable def invObj (X A : SSet.{u})
   FundamentalGroupoid.mk (SSet.yonedaEquiv (Limits.prod.lift
     (SSet.yonedaEquiv.symm p.1.pt) (SSet.yonedaEquiv.symm p.2.pt)))
 
-/-- Morphism part of the paired inverse: left inclusion of the `X`-component
-(indexed by the source right object) followed by right inclusion of the
-`A`-component (indexed by the target left object). The indexing makes the
-middle objects agree definitionally and reduces `map_comp` to a single middle
-interchange. -/
+/-- The inverse sends a pair of morphisms to the left inclusion of its first
+component followed by the right inclusion of its second component. The
+inclusions are indexed by the source right object and target left object,
+respectively. -/
 private noncomputable def invMap (X A : SSet.{u})
     {p q : FundamentalGroupoid X × FundamentalGroupoid A} (f : p ⟶ q) :
     invObj X A p ⟶ invObj X A q :=
@@ -1003,11 +957,9 @@ private noncomputable def invProd (X A : SSet.{u}) :
           (Category.assoc _ _ _))).trans
         (Category.assoc _ _ _).symm)).symm
 
-/-- The paired inverse is a left inverse of the comparison, by `functor_ext`:
-objects by the vertex pairing `pairEta`, morphisms by pairing the projected
-`homMk`s and refolding with `pairEdge_comp_left_then_right` plus the edge
-`eta`. This is the exact content replacing the faithfulness seam: a functor
-with a left inverse is faithful. -/
+/-- The paired inverse is a left inverse of `prodComparison`. Vertex pairing
+and the factorization of paired edges verify the identity on objects and
+morphisms. -/
 private theorem hUnit (X A : SSet.{u}) :
     prodComparison X A ⋙ invProd X A = 𝟭 _ := by
   refine FundamentalGroupoid.functor_ext (fun v => ?_) (fun {x y} e => ?_)
@@ -1082,10 +1034,8 @@ private theorem hUnit (X A : SSet.{u}) :
         hInv, hEdge, homMk_ofEq]
     exact hLHS
 
-/-- `HomotopyCategory₂` binary-product comparison for quasicategories, via
-pinned `desc` with pointwise projections. The quotient-level precursor of
-`prodComparison`, retained for its independent interface value now that the
-groupoid comparison is proved directly. -/
+/-- The `HomotopyCategory₂` product comparison for quasicategories sends
+vertices and edge classes to their projections. -/
 private noncomputable def hc₂ProdComparison (X A : SSet.{u})
     [Quasicategory X] [Quasicategory A] [Quasicategory (X ⨯ A)] :
     Truncated.HomotopyCategory₂ ((truncation 2).obj (X ⨯ A)) ⥤
@@ -1163,8 +1113,8 @@ private lemma hc₂ProdComparison_homMk_eq (X A : SSet.{u})
       (e'.map ((truncation 2).map (Limits.prod.snd : X ⨯ A ⟶ A)))) := by
   simp only [Truncated.HomotopyCategory₂.homMk_eq_iff_homotopicL]
 
-/-- Congruence of `Functor.prod'` for natural isomorphisms. (The library only
-provides `NatIso.prod` for `.prod`.) -/
+/-- Natural isomorphisms between functors induce a natural isomorphism of
+their `Functor.prod'` pairings. -/
 private def natIsoProd' {A : Type u₁} [Category.{v₁} A] {B : Type u₂}
     [Category.{v₂} B] {C : Type u₃} [Category.{v₃} C] {F G : A ⥤ B}
     {H K : A ⥤ C} (e₁ : F ≅ G) (e₂ : H ≅ K) : F.prod' H ≅ G.prod' K where
@@ -1192,9 +1142,8 @@ private noncomputable def isoG {X Y A B : SSet.{u}} (f : X ⟶ Y) (g : A ⟶ B) 
       mapFundamentalGroupoid (Limits.prod.map f g) ⋙ prodComparison Y B :=
   eqToIso rfl
 
-/-- Naturality of the comparison for `Limits.prod.map f g`, as an isomorphism
-of functors. Built entirely from functor-level isos, so no `homMk`/edge
-coherence proof is needed. -/
+/-- The product comparison is natural under `Limits.prod.map`, as an
+isomorphism of functors. -/
 private noncomputable def prodMapNatIso {X Y A B : SSet.{u}} (f : X ⟶ Y) (g : A ⟶ B) :
     prodComparison X A ⋙
         (mapFundamentalGroupoid f).prod (mapFundamentalGroupoid g) ≅
@@ -1208,9 +1157,7 @@ private noncomputable def prodMapNatIso {X Y A B : SSet.{u}} (f : X ⟶ Y) (g : 
       (mapFundamentalGroupoidComp _ _).symm ≪≫
     isoG f g
 
-/-- Faithfulness of the comparison, from the left inverse `hUnit`: a functor
-with a left inverse is faithful. This deletes the former
-`ax_faithful_prodComparison` seam with no replacement. -/
+/-- The comparison is faithful because its paired inverse is a left inverse. -/
 private theorem faithful_prodComparison (X A : SSet.{u}) :
     (prodComparison X A).Faithful where
   map_injective := by
@@ -1221,18 +1168,16 @@ private theorem faithful_prodComparison (X A : SSet.{u}) :
       (Eq.symm (hUnit X A)) ▸ inferInstance
     exact hF.map_injective h2
 
-/-- The proved fullness, faithfulness, and essential surjectivity give the
-comparison equivalence consumed by the public theorem. No axiom remains. -/
+/-- Fullness, faithfulness and essential surjectivity make the product
+comparison an equivalence. -/
 private instance isEquivalence_prodComparison (X A : SSet.{u}) :
     (prodComparison X A).IsEquivalence :=
   { faithful := faithful_prodComparison X A
     full := full_prodComparison X A
     essSurj := essSurj_prodComparison X A }
 
-/-- The mapped fundamental groupoid sends a product of maps to an equivalence
-when both factors do. This is the minimum public statement deleting the
-`KanComplexWProduct.lean` groupoid seam: its caller `W.prodMap` applies it to
-the two factor equivalences. -/
+/-- If `mapFundamentalGroupoid f` and `mapFundamentalGroupoid g` are
+equivalences, then so is the functor induced by `Limits.prod.map f g`. -/
 theorem isEquivalence_mapFundamentalGroupoid_prodMap {X Y A B : SSet.{u}}
     {f : X ⟶ Y} {g : A ⟶ B}
     (hF : (mapFundamentalGroupoid f).IsEquivalence)

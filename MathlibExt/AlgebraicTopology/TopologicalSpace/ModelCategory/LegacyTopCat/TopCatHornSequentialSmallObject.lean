@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.CategoryTheory.SmallObject.Basic
@@ -27,17 +21,14 @@ public import
 /-!
 # Sequential small-object characterization for realized horns in `TopCat`
 
-This file is part of the KQ3 layer, at exact base
-`3ad70266a3a1a614d98acf2dedbffb7e39b943cb`.
-
 Mathlib's small-object API fixes the transfinite shape to the witnessing
-cardinal's `ord.ToType`. With the staged horn
+cardinal's `ord.ToType`. With the horn
 `IsCardinalForSmallObjectArgument` instance at `realizedGeneratorCardinal`,
 `realizedHornInclusions.rlp.llp` is exactly the retracts of
 `realizedGeneratorCardinal.ord.ToType`-shaped transfinite compositions of
 pushouts of coproducts of realized horns
 (`horn_rlp_llp_eq_cardinalOrd`). That shaped equality is the exact-shape
-output of the current pin; the unshaped `transfiniteCompositions` equality
+output of Mathlib's small-object API; the unshaped `transfiniteCompositions` equality
 already used by the conditional horn-cell assembly is not restated here.
 
 At universe zero, realized horns are additionally `aleph0`-small for the
@@ -53,7 +44,7 @@ reverse inclusion (`horn_sequentialRetracts_le_rlp_llp`) is retained as the
 universe-general half.
 
 No weak-equivalence, factorization-system, or model-category claim is made
-here, and no KQ4 content is used.
+here.
 -/
 
 @[expose] public section

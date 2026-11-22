@@ -6,20 +6,19 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.SSetIhomZero
 
 /-!
-This module defines the internal-hom pullback comparison and the target vertex
-associated to a commuting square. It requires no fibrancy or model hypotheses
-and leaves fiber and lifting results to later files.
+# Internal-Hom pullback comparison for simplicial sets
+
+For maps `i : A ⟶ B` and `p : X ⟶ Y` of simplicial sets, the internal-Hom
+square gives the comparison `ihomToPullback` from `Hom(B, X)` to the pullback
+of `Hom(A, X)` and `Hom(B, Y)` over `Hom(A, Y)`. Its target zero-simplices
+correspond to commuting squares with `i` and `p`, through `ihom₀Equiv`. The
+construction `ihomToPullbackTgt₀Mk` satisfies both projection formulas, and
+every target vertex arises from such a square.
 -/
 
 @[expose] public section

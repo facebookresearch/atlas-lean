@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.CategoryTheory.TrivialBundleWithFiberOver
@@ -21,25 +15,19 @@ public import MathlibExt.AlgebraicTopology.SimplicialSet.MinimalFibration.Realiz
 public import MathlibExt.AlgebraicTopology.SimplicialSet.MinimalFibration.Realization.OneCellOpenComplement
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
 
-/-! # Point-local triviality for one-cell induction
+/-!
+# Point-local triviality over a one-cell pushout
 
-Purpose: predicate for finite-base local induction plus old-range/complement
-restriction and canonical-fiber adapters around a one-cell pushout.
-Given old-range data over `range r` and new-cell data over `(range l)ᶜ`,
-produce open neighborhoods with fixed-fiber data, without assembling
-boundary points or global charts.
-
-Route: predicate as open neighborhood with `Nonempty` over-presentation;
-old-range restriction by `baseChange` with `subspaceInclOfSubset_comp`;
-complement restriction by `trivialBundleWithFiberOver_oneCellComplement`
-then base change; complement constructor with `isOpen_oneCellOpenComplement`;
-conditional old-range constructor as thin wrapper; canonical fiber by
-`toCanonical` then `pullback`.
-
-Nonclaims: no boundary-point assembler, no binary gluing, no global or
-finite-base chart, no collar or descent data, no varying-fiber or monodromy
-claim, no fibration, weak-equivalence, realization, or model-instance result,
-and no KQ3 content.
+`OneCellPointLocalTriviality p F pt` means that `pt` has an open neighborhood
+on which `p` admits a product presentation with fixed fiber `F`.
+A product presentation over the image of the old-piece map restricts to
+subsets of that image, and yields point-local triviality when the subset is
+open and contains the point.
+For a pushout with closed-embedding old-piece map and the stated pullback
+square, product data on the new-cell complement yields point-local
+triviality at every point of the open complement.
+The resulting presentations also transport to canonical pullbacks while
+keeping the same fiber.
 -/
 
 @[expose] public section

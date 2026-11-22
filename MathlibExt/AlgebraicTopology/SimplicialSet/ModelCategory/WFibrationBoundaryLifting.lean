@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.SSetSquareTransport
@@ -19,30 +13,15 @@ public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.WFibratio
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.KanSphereFiller
 
 /-!
-# Fixed-top boundary lifting for weak-equivalence fibrations between Kan complexes
+# Fixed-top boundary lifting for weak-equivalence Kan fibrations
 
-Orientation: the boundary inclusion `(SSet.boundary n).ι` is on the left and
-the fibration `f : X ⟶ Y` is on the right; the top map `top` is fixed while
-the bottom map varies.
-
-Hypotheses: `X` and `Y` are Kan complexes, `f` is a Kan fibration, and
-`SSet.KanComplex.W f` holds (all pointed homotopy-group maps are bijective).
-
-Conclusion: every boundary square with the given fixed top admits a lift.
-
-Proof (Goerss--Jardine, *Simplicial Homotopy Theory*, Chapter I, fiber
-sphere-filling argument): reduce to constant base via
-`SSet.CommSq.exists_const_base_reduction`, pick a vertex over the constant
-value via `SSet.KanComplex.W.exists_vertex_over`, note all pointed homotopy
-groups of that fibrant strict fiber vanish via
-`SSet.subsingleton_π_fiber_of_W_fibration`, fill the induced boundary sphere
-in the fiber via `SSet.KanComplex.exists_boundary_filler_of_subsingleton_pi`,
-compose with the fiber inclusion, and transport the lift back through the
-reduction equivalence.
-
-Explicit nonclaims: no arbitrary `I.rlp`, no `W.mem_rlp_I`, no
-model-category instance, no factorization, no filtered-colimit or anodyne
-stability, and no result for non-Kan endpoints.
+Let `f : X ⟶ Y` be a Kan fibration between Kan complexes satisfying
+`KanComplex.W f`. Every commuting square with a boundary inclusion on the
+left admits a lift when its top map is fixed. The proof reduces to a strict
+fiber, uses the vanishing of its pointed homotopy groups to fill the boundary
+sphere, and transports the lift back to the original square. This is the
+fiber sphere-filling argument of Goerss–Jardine, *Simplicial Homotopy Theory*,
+Chapter I.
 -/
 
 @[expose] public section
@@ -54,12 +33,9 @@ universe u
 
 namespace SSet
 
-/-- Fixed-top boundary lifting for a weak-equivalence fibration between Kan
-complexes: with the top map `top` fixed, every boundary square over `f`
-admits a lift. The left map is the boundary inclusion `(SSet.boundary n).ι`
-and the right map is `f`. This is the Kan-restricted fixed-top half of the
-key weak-equivalence-fibration characterization; it claims nothing about
-arbitrary `I.rlp`, model structures, or non-Kan endpoints. -/
+/-- For a weak-equivalence Kan fibration between Kan complexes, every
+boundary square with a fixed top map admits a lift. The boundary inclusion
+is the left map and `f` is the right map. -/
 theorem KanComplex.W.hasLiftingPropertyFixedTop
     {X Y : SSet.{u}} [KanComplex X] [KanComplex Y]
     {f : X ⟶ Y} [Fibration f] (hf : KanComplex.W f) {n : ℕ}

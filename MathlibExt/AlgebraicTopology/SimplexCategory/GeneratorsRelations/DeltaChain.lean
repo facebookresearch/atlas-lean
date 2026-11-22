@@ -6,18 +6,12 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
 module
 
 public import Mathlib.AlgebraicTopology.SimplexCategory.GeneratorsRelations.EpiMono
 
-@[expose] public section
-
-/-! # Indexed face chains for the `P_δ` normal form
+/-!
+# Indexed face chains for the `P_δ` normal form
 
 `DeltaChain n m` stores a composite of `m - n` face maps `δ` with `Fin`
 indices and target degrees carried definitionally in the type. `Admissible`
@@ -25,6 +19,8 @@ selects the strictly increasing normal form and `normalize` sorts an arbitrary
 chain by insertion, preserving evaluation. Indexing the endpoints keeps all
 `eqToHom` transports at the boundary and avoids internal `Fin.ofNat`
 reconstructions. -/
+
+@[expose] public section
 
 namespace SimplexCategoryGenRel
 

@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 import MathlibExt.AlgebraicTopology.ModelCategory.ProperSpanGluing
 
 /-!
@@ -21,6 +15,7 @@ Objectwise weak maps of two cospans induce a weak map of their actual chosen
 pullbacks when the same designated cospan leg in both is a fibration. The
 proof uses the existing chosen-span gluing theorem in the opposite model.
 -/
+
 set_option autoImplicit false
 noncomputable section
 universe u v

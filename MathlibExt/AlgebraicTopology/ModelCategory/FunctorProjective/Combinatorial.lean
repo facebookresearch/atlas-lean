@@ -6,13 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
-
 import MathlibExt.AlgebraicTopology.ModelCategory.FunctorProjective.EssentialIndex
 import MathlibExt.AlgebraicTopology.ModelCategory.Combinatorial
 import MathlibExt.CategoryTheory.Presentable.FunctorCategory

@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
 module
 
 public import Mathlib.CategoryTheory.Enriched.Limits.HasConicalProducts
@@ -19,6 +14,19 @@ public import Mathlib.Basic.Finite.Sigma
 public import MathlibExt.CategoryTheory.Enriched.Ordinary.Basic
 
 public import MathlibExt.CategoryTheory.Limits.Shapes.IteratedProducts
+
+/-!
+# Conical products and enriched hom objects
+
+Finite conical products in an enriched ordinary category imply ordinary
+finite products, and conical products indexed by arbitrary finite types
+follow from those indexed by `Fin n`.
+For any conical product `∏ᶜ Y`, `eHomProductIso` identifies
+`X ⟶[V] ∏ᶜ Y` with the product of the enriched hom objects `X ⟶[V] Y i`.
+The module gives the induced lifts, their projection and extensionality
+laws, and compatibility with source maps, reindexing, singleton products,
+and iterated products.
+-/
 
 namespace CategoryTheory.Enriched
 

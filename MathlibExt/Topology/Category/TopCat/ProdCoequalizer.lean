@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.Topology.Category.TopCat.Limits.Pullbacks
@@ -24,14 +18,6 @@ public import Mathlib.CategoryTheory.Limits.Shapes.Equalizers
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Equalizers
 public import Mathlib.CategoryTheory.Limits.Preserves.Basic
 
-@[expose] public section
-
-open CategoryTheory CategoryTheory.Limits TopCat Topology
-
-universe u
-
-namespace TopCat
-
 /-!
 # Fixed-left product preserves TopCat coequalizers
 
@@ -42,6 +28,14 @@ the bijection half uses underlying-Type product preservation via the
 cartesian-closed left-adjoint instance; the assembly uses the minimal
 `Cofork.IsColimit.mk` universal property with quotient lift.
 -/
+
+@[expose] public section
+
+open CategoryTheory CategoryTheory.Limits TopCat Topology
+
+universe u
+
+namespace TopCat
 
 /-- Fixed-left product of a coequalizer projection is a quotient map. -/
 theorem isQuotientMap_prodMap_cofork_π_of_isColimit

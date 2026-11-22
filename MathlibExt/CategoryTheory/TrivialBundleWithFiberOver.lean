@@ -6,23 +6,9 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.CategoryTheory.TrivialBundleWithFiberIso
-
-@[expose] public section
-
-universe v u
-
-namespace CategoryTheory
-
-variable {C : Type u} [Category.{v} C]
 
 /-!
 # Fixed-fiber trivial bundle over a pullback presentation
@@ -44,6 +30,14 @@ pullback square over the same maps and a total-space isomorphism commuting
 with the projection to `B'`, the second presentation inherits its
 trivialization by `ofIso` while preserving its explicit square.
 -/
+
+@[expose] public section
+
+universe v u
+
+namespace CategoryTheory
+
+variable {C : Type u} [Category.{v} C]
 
 namespace MorphismProperty
 
@@ -141,7 +135,7 @@ this returns the composite presentation over `f_new : B'' ⟶ B_new` with the
 same fiber `F`. The new trivialization is the parent pullback
 `h.trivial.pullback sq2`; the new square is the left cancellation
 `IsPullback.of_right'` of the pasted outer against `sqA`. No global chart,
-monodromy, Serre, weak-equivalence, model, or KQ3 claim is made. -/
+monodromy, Serre, weak-equivalence, model, or topological model-structure claim is made. -/
 noncomputable def forwardOfAmbientPullback {E_old B_old E_new B_new B' B'' : C}
     {p_old : E_old ⟶ B_old} {p_new : E_new ⟶ B_new}
     {f_old : B' ⟶ B_old} {f_new : B'' ⟶ B_new}

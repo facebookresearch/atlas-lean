@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.CategoryTheory.NerveHomotopy
@@ -19,19 +13,15 @@ public import MathlibExt.CategoryTheory.NerveHomotopy
 /-!
 # Contraction of the standard simplex onto its last vertex
 
-The standard `n`-simplex is the nerve of the ordinal `ULift (Fin (n + 1))`
-(`SSet.stdSimplex.isoNerve`). The unique natural transformation from the identity
-functor to the constant functor at the top element `ULift.up (Fin.last n)`
-induces a cylinder homotopy on the nerve via
-`CategoryTheory.NatTrans.nerveHomotopy`; conjugating by `isoNerve` gives a
-cylinder homotopy from the identity of `Δ[n]` to the constant map at its last
-vertex.
+The standard simplex is the nerve of the finite ordinal
+`ULift (Fin (n + 1))`. The unique natural transformation from the identity
+to the constant functor at its terminal object induces a nerve homotopy;
+transport through `SSet.stdSimplex.isoNerve` gives a cylinder homotopy from
+the identity of `Δ[n]` to the constant map at the last vertex.
 
 Mathematical source: Goerss–Jardine, *Simplicial Homotopy Theory*, Chapter I
 (the standard simplex is the nerve of a finite ordinal and contracts along the
 unique map to its terminal object).
-
-Nonclaims: no fibrancy, Kan, fibration, lifting, or model-category content.
 -/
 
 @[expose] public section

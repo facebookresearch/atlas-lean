@@ -6,17 +6,12 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 import MathlibExt.AlgebraicTopology.ModelCategory.QuillenAdjunction
 import MathlibExt.CategoryTheory.MorphismProperty.PushoutProduct
 import Mathlib.CategoryTheory.Adjunction.Whiskering
 
-/-! # Postcomposition preserves the two global injective right classes
+/-!
+# Postcomposition preserves the two global injective right classes
 
 Base Quillen preservation gives the literal strict images of the objectwise
 left classes. Native right-orthogonal antitonicity and the existing adjunction

@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.SimplicialRealization.PointSet.Boundary
@@ -19,7 +13,7 @@ public import MathlibExt.AlgebraicTopology.TopologicalSpace.SimplicialRealizatio
 /-!
 # Boundary face covers
 
-This file is part of the KQ3 layer. Every realized boundary point lies over a
+Every realized boundary point lies over a
 singleton face (`exists_face_cover`), and every point of the product of a realized
 boundary with a realized simplex lies over a singleton-face product leg
 (`exists_face_cover_prod`). This gives no filling, anodyne, retract, or

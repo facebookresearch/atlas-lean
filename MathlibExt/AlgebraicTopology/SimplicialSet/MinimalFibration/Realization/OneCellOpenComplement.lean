@@ -6,30 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.Topology.Category.TopCat.PushoutOpenComplement
 
-/-! # One-cell open complement homeomorphism
+/-!
+# The open complement of a one-cell pushout
 
-Purpose: trivialize the complement of the old-cell image in a one-cell
-pushout as the preimage homeomorphism needed for the ambient cover.
-
-Hypotheses: a `TopCat` pushout `sq : IsPushout t l r b` and a closed-embedding
-hypothesis `IsClosedEmbedding r.hom` on the old leg.
-
-Route: take `U := (Set.range r.hom)ᶜ`; openness from the closed range,
-`r ⁻¹' U = ∅` since every `r x` lies in its range, `b ⁻¹' U ⊆ (range l.hom)ᶜ`
-from `sq.w`, then `isHomeomorph_restrictPreimage_inr_of_isPushout`.
-
-Nonclaims: no whole-apex GoodPair pushout, no raw-image openness, no global
-chart, and no model-category instance.
+For a `TopCat` pushout square `sq : IsPushout t l r b` with a closed-embedding
+old leg `r`, the complement `U := (Set.range r.hom)ᶜ` is open. Its preimage
+under `r` is empty, and its preimage under `b` is the complement of the range
+of `l`. Restricting the new leg to this preimage gives the homeomorphism
+used in the ambient open cover.
 -/
 
 @[expose] public section

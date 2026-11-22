@@ -13,9 +13,13 @@ public import MathlibExt.CategoryTheory.Monoidal.Mod.RightLeftTensorFree
 public import Mathlib.CategoryTheory.Monoidal.PushoutProduct
 
 /-!
-The whole actual relative Leibniz Arrow on a free left-module generator is
-the original base pushout-product Arrow. All four quotient reductions and
-both original coefficient/generator maps enter the comparison.
+# Relative pushout products of free module maps
+
+In a monoidal closed category with the stated colimits, the relative
+pushout product of a right-module map `f` with `(Mod.free A).map i` is
+isomorphic to the base pushout-product arrow `Arrow.mk f.hom □ Arrow.mk i`.
+The four free-tensor reductions and their coefficient and generator
+naturality identify both corner objects and all attaching maps.
 -/
 
 @[expose] public section

@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 import Mathlib.AlgebraicTopology.ModelCategory.RightHomotopy
 import Mathlib.CategoryTheory.MorphismProperty.Factorization
 
@@ -24,6 +18,7 @@ For a fibration, the endpoint projections are trivial fibrations.
 The original factorization also gives a compatible whole map to any
 given good absolute path object, with the diagonal retained.
 -/
+
 set_option autoImplicit false
 set_option relaxedAutoImplicit false
 noncomputable section

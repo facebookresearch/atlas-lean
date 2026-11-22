@@ -6,14 +6,17 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 public import MathlibExt.CategoryTheory.Enriched.PointwiseShapeInstances
+
+/-!
+# Size-indexed pointwise limits of enriched functors
+
+For a braided monoidal closed category V and a V-enriched category A, limits and colimits of
+enriched functors A ⟶ V are computed pointwise whenever the corresponding size-indexed
+limits or colimits exist in V. Evaluation preserves them with the same index and morphism
+universes.
+-/
 
 @[expose] public section
 set_option autoImplicit false

@@ -13,11 +13,14 @@ public import MathlibExt.AlgebraicTopology.ModelCategory.HCofibrationGluing
 public import MathlibExt.AlgebraicTopology.ModelCategory.HCofibrationFilteredColimits
 
 /-!
-Actual weak pushout corners under source composition and cobase change.
+# Stability of weak natural-transformation corners
 
-All maps are the original domain maps of the natural-transformation corner
-functor. The two mapped source legs remain genuine h-cofibrations. No weakness
-of an individual natural-transformation component is assumed.
+For a natural transformation P ⟶ Q, this file describes the pushout domains and
+factorization equations of its corners under source composition and cobase change. In a
+model category, composition preserves corner weakness when the mapped second source leg
+under P is an h-cofibration. Cobase change preserves corner weakness under left properness
+when P and Q preserve pushouts and both images of the original source leg are
+h-cofibrations.
 -/
 
 @[expose] public section

@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.MinimalFibration.Equivalence
@@ -21,20 +15,13 @@ public import Mathlib.CategoryTheory.MorphismProperty.Retract
 /-!
 # Stability of minimal fibrations
 
-This module packages the existing predicate
-`SSet.MinimalFibration.IsMinimalFibration` as a morphism property and proves
-that it contains identities and is stable under retracts, isomorphisms, and
-base change. The proofs map the existing simplex-level fiberwise-homotopy
-witnesses along morphisms of arrows; no parallel minimal-fibration class or
-simplex relation is introduced.
+The predicate `SSet.MinimalFibration.IsMinimalFibration`, regarded as a
+morphism property, contains identities and is stable under retracts,
+isomorphisms and base change. The proofs transport simplex-level
+fiberwise-homotopy witnesses along morphisms of arrows.
 
 Mathematical source: Joël Riou's minimal-fibration construction, following
 Goerss--Jardine, *Simplicial Homotopy Theory*, Chapter I, Section 10.
-
-## Nonclaims
-
-This file proves no selection or existence theorem, rigidity isomorphism,
-factorization, weak equivalence, or model-category instance.
 -/
 
 @[expose] public section

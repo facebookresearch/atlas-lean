@@ -6,13 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Authors: Toskua
--/
-
--- Author: @toskua, Codex
 module
 
 public import Mathlib.AlgebraicTopology.ModelCategory.Basic
@@ -27,15 +20,6 @@ public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.PullbackObjObj
 public import MathlibExt.AlgebraicTopology.SimplexCategory.Reedy
 public import MathlibExt.CategoryTheory.Reedy.Boundary
 
-section
-
-/-
-Copyright (c) 2026 Toskua. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Toskua
--/
-
-
 /-!
 # Hom complexes of resolution diagrams
 
@@ -46,6 +30,13 @@ both diagrams. This construction is a bifunctor, contravariant in `A` and covari
 The left and right resolution Hom complexes specialize one diagram to a constant object.
 This file proves their algebraic functoriality and the comparisons induced by the actual
 augmentation and coaugmentation. Homotopical properties require separate framing theorems.
+-/
+
+section
+
+/-
+Copyright (c) 2026 Toskua. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
 -/
 
 @[expose] public section
@@ -341,7 +332,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -530,7 +520,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -681,7 +670,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -823,7 +811,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -969,7 +956,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1180,7 +1166,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-! # Original finite-pair tensor pushout products -/
@@ -1235,7 +1220,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-! # Finite-pair tensor and canonical mapping corner transposition -/
@@ -1550,7 +1534,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!

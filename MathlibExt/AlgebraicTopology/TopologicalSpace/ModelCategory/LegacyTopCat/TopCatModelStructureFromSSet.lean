@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.LegacyTopCat.TopCatModelStructureConditional
@@ -20,8 +14,8 @@ public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.Legacy
 /-!
 # Conditional `TopCat` model structure from simplicial inputs
 
-This file is part of the KQ3 layer. It assembles in every universe the
-`ModelCategory TopCat` from exactly three explicit inputs: KQ3 horn-cell
+This file assembles in every universe the
+`ModelCategory TopCat` from exactly three explicit inputs: horn-cell
 closure `realizedHornInclusions.rlp.llp ≤ weakHomotopyEquivalences`,
 the Kan-restricted boundary-RLP premise
 `∀ {X Y : SSet.{u}} [SSet.KanComplex X] [SSet.KanComplex Y] {f : X ⟶ Y},
@@ -31,7 +25,7 @@ so no universal `I.rlp ≤ W` is claimed), and
 `SSet.modelCategoryQuillen.J.rlp ⊓ SSet.KanComplex.W ≤
 SSet.modelCategoryQuillen.I.rlp`.
 
-It reuses the staged bridge
+It reuses the bridge
 `TopCat.boundaryRLP_le_weakHomotopyEquivalences_of_kanRestricted_Irlp_le_W`, the direct
 first recognition `TopCat.hornRLP_inf_W_le_boundaryRLP_of_sSet`, the direct
 second recognition `TopCat.boundaryLLP_inf_W_le_hornLLP_of_sSet`, the

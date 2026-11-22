@@ -6,18 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
 module
 
 public import MathlibExt.Topology.MetricSpace.CompactCover
 public import Mathlib.Geometry.Convex.ConvexSpace.CompactSpaceStdSimplex
 public import Mathlib.Topology.Algebra.Ring.Real
-
-@[expose] public section
 
 /-!
 # Canonical metric and cover specialization for the finite standard simplex
@@ -27,6 +20,8 @@ The weights embedding induces a canonical `MetricSpace` on
 plus the `n / (n + 1)` diameter-subordination specialization of the neutral
 compact-cover theorem.
 -/
+
+@[expose] public section
 
 namespace Convexity.StdSimplex
 

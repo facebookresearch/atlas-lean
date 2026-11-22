@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import Mathlib.CategoryTheory.Limits.Constructions.EventuallyConstant
@@ -20,7 +14,8 @@ public import Mathlib.CategoryTheory.Limits.Shapes.Products
 public import Mathlib.CategoryTheory.MorphismProperty.TransfiniteComposition
 public import Mathlib.Order.SuccPred.Basic
 
-/-! # Original coproduct arrows and their coordinate cell chains
+/-!
+# Original coproduct arrows and their coordinate cell chains
 
 Each coordinate switches along its original arrow exactly once. The actual
 coproduct diagram is continuous, each genuine cell is an original pushout,

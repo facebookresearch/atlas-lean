@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import
@@ -22,9 +16,8 @@ public import Mathlib.CategoryTheory.MorphismProperty.TransfiniteComposition
 /-!
 # Horn coproduct pushouts as closed T1-embeddings in `TopCat`
 
-This file is part of the KQ3 layer. It composes the accepted horn bound
-`TopCat.realizedHornInclusions_le_closedT1Embeddings` with the accepted
-closed T1-embedding stability package (coproducts, pushouts, transfinite
+This file composes the horn bound
+`TopCat.realizedHornInclusions_le_closedT1Embeddings` with the closed T1-embedding stability package (coproducts, pushouts, transfinite
 composition). No geometric proof is restated and no small-object,
 factorization, weak-equivalence, or model-structure claim is made here.
 The shape-indexed closure feeds both omega-small and actual-cardinal

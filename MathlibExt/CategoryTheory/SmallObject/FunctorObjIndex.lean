@@ -6,17 +6,12 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.CategoryTheory.SmallObject.Construction
 
-/-! # Original whole attaching-square label actions
+/-!
+# Original whole attaching-square label actions
 
 Map the native labels through a functor and postcompose them by an original
 Arrow map, retaining the generator index and both prescribed square maps.

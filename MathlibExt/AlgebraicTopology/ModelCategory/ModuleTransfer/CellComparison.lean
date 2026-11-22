@@ -13,12 +13,14 @@ public import MathlibExt.CategoryTheory.SmallObject.Closure
 public import Mathlib.CategoryTheory.MorphismProperty.Retract
 
 /-!
-Comparison induction through actual original relative cell histories.
+# Natural comparison maps along relative cell complexes
 
-The closure certificate concerns only the base weak class, actual base
-pushout squares, and controlled continuous base diagrams. It has no module
-flatness or all-cofibrant comparison field. Its inputs will be supplied by
-h-monoidality/weak closure or the earned original native HEP closures.
+A natural transformation between colimit-preserving functors has weak components along a
+relative cell complex when it is weak on the initial object and on both endpoints of every
+generating cell. The induction assumes specified coproduct, pushout and continuous
+ordinal-colimit closure conditions for W and H, and requires both functors to send the
+generating maps into H. Separate lemmas transport comparison components through
+isomorphisms, coproducts and retracts under the corresponding closure hypotheses on W.
 -/
 
 @[expose] public section

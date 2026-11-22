@@ -6,19 +6,14 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 import Mathlib.CategoryTheory.Adjunction.Evaluation
 import Mathlib.CategoryTheory.LiftingProperties.Adjunction
 import Mathlib.CategoryTheory.Limits.EssentiallySmall
 import Mathlib.AlgebraicTopology.ModelCategory.Basic
 import Mathlib.AlgebraicTopology.ModelCategory.Instances
 
-/-! # Coefficient evaluation of the global injective right classes
+/-!
+# Coefficient evaluation of the global injective right classes
 
 The original Hom-indexed free maps lie in the objectwise coefficient left
 class. Native whole-square lifting transposition at each original index and

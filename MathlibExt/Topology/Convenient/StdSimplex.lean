@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.Topology.Compactness.DeltaGeneratedSpace
@@ -21,6 +15,18 @@ public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Topology.Separation.Hausdorff
 public import Mathlib.Data.Fin.SuccPred
 public import MathlibExt.Analysis.Convex.StdSimplex
+
+/-!
+# Delta-generated topology on real standard simplices
+
+The real standard simplex on `Fin (n + 1)` is a delta-generated space.
+The construction uses a continuous retraction from its finite-dimensional
+coordinate space: it truncates negative coordinates, normalizes their sum,
+and assigns the remaining mass to one coordinate.
+This retraction fixes every nonnegative vector whose coordinates sum to
+one, inducing the stated `DeltaGeneratedSpace` instance.
+-/
+
 @[expose] public section
 
 open Set Topology

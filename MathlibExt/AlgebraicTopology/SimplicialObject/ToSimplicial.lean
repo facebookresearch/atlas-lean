@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialObject.FromData
@@ -18,19 +13,15 @@ public import MathlibExt.AlgebraicTopology.SimplexCategory.GeneratorsRelations.E
 public import Mathlib.AlgebraicTopology.SimplicialObject.Basic
 
 /-!
-Transports simplicial data to genuine simplicial objects.
+# Simplicial objects from face and degeneracy data
 
-`Data C` packages degree objects with face and degeneracy maps satisfying the
-six simplicial identities. `toSimplicialObject` precomposes `X.toGenRelFunctor`
-with the opposite of the explicit canonical-object inverse
-`SimplexCategoryGenRel.fromSimplexCategory`, and `toSimplicialFunctor` packages
-this functorially in `Data` morphisms. Degree `n` is definitionally `X.obj n`;
-faces and degeneracies compute to `X.δ` and `X.σ`.
-
-Orientation: the transport uses the canonical inverse (`Δ ↦ mk Δ.len`), not the
-opaque `asEquivalence` quasi-inverse, so no unit/counit transport enters the
-computation lemmas. This file only performs the transport; the
-generators-relations presentation comparison itself lives elsewhere.
+`Data C` records objects, faces and degeneracies satisfying the six simplicial
+identities. Precomposition with the explicit canonical-object inverse
+`SimplexCategoryGenRel.fromSimplexCategory` gives `toSimplicialObject` and
+`toSimplicialFunctor`. Their degree objects are definitionally the supplied
+objects, and faces, degeneracies and transformation components compute to
+the supplied maps. The construction also has natural comparisons with
+postcomposition by a functor on the coefficient category.
 -/
 
 @[expose] public section

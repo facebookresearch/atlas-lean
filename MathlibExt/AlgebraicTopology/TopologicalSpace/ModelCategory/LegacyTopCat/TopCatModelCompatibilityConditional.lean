@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import
@@ -23,10 +17,10 @@ public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.Legacy
 /-!
 # Conditional model compatibility equalities for the two `TopCat` WFSs
 
-This file is part of the KQ3 layer. Let `W` be
-`TopCat.weakHomotopyEquivalences` with its staged two-out-of-three and
+Let `W` be
+`TopCat.weakHomotopyEquivalences` with its two-out-of-three and
 retract stability, and let the boundary/horn weak factorization systems be
-the staged small-object instances. From the hard inclusions
+the small-object instances. From the hard inclusions
 `realizedHornInclusions.rlp.llp ≤ W` and
 `realizedBoundaryInclusions.rlp ≤ W`, the easy halves of the two model
 compatibility equalities hold directly: every boundary-RLP map is a

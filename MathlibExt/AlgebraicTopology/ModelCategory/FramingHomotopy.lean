@@ -6,13 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import Mathlib.AlgebraicTopology.ModelCategory.FundamentalLemma
@@ -31,11 +24,6 @@ public import MathlibExt.CategoryTheory.Reedy.Boundary
 public import MathlibExt.CategoryTheory.Reedy.Corner
 public import MathlibExt.AlgebraicTopology.ModelCategory.HomotopyCategory
 
-section
-
--- Author: @toskua, Codex
-
-
 /-!
 # Original endpoint diagrams for functorial framings
 
@@ -45,6 +33,8 @@ original map, and are naturally isomorphisms in degree zero. Restricting
 these same diagrams along the original generated Q and R retains both
 replacement arrows. No frame or homotopical mapping outcome is asserted.
 -/
+
+section
 
 @[expose] public section
 
@@ -300,7 +290,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -491,7 +480,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -601,7 +589,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -723,7 +710,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -820,7 +806,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1366,7 +1351,6 @@ section
 /-
 Copyright (c) 2026 Toskua. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Toskua
 -/
 
 
@@ -1803,7 +1787,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!

@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.Boundary
@@ -21,19 +15,12 @@ public import Mathlib.Topology.Category.TopCat.Basic
 public import Mathlib.Topology.Homeomorph.Lemmas
 
 /-!
-# Realized boundary-zero has empty range
+# The realized zero-dimensional boundary is empty
 
-The realized inclusion of `∂Δ[0]` has empty range: `SSet.boundary_zero`
-identifies the zero boundary with `⊥`, `SSet.Subcomplex.isInitialBot` makes
-it initial in `SSet`, realization preserves the initial object, and the
-TopCat initial-object comparison (`uniqueUpToIso` with
-`TopCat.isInitialPEmpty` transported by `TopCat.homeoOfIso`) supplies an
-honest empty-domain elimination. The range emptiness follows by exhibiting
-no domain inhabitant, not by assuming one impossible.
-
-Nonclaims: no chart, cover, gluing, local-Serre, finite-base, or model
-result. Direct consumer: zero-cell range/complement steps over the realized
-boundary-zero inclusion.
+The realization of the inclusion ∂Δ[0] ⟶ Δ[0] has empty range. The proof identifies the
+zero-dimensional boundary with the initial simplicial set, uses preservation of the initial
+object by realization, and transports the resulting initial TopCat object to the empty
+space.
 -/
 
 @[expose] public section

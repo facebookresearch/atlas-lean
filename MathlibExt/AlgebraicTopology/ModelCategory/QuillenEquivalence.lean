@@ -6,16 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.ModelCategory.QuillenAdjunction
 public import Mathlib.AlgebraicTopology.ModelCategory.IsCofibrant
+
+/-!
+# Quillen equivalences (Hovey criterion)
+
+A Quillen adjunction `L ⊣ R` is a Quillen equivalence when, for every
+cofibrant `X : C` and fibrant `Y : D`, a map `f : L.obj X ⟶ Y` is a weak
+equivalence iff its adjunct `adj.homEquiv X Y f : X ⟶ R.obj Y` is.
+-/
 
 @[expose] public section
 
@@ -28,14 +30,6 @@ namespace CategoryTheory.Adjunction
 variable {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Category.{v₂} D]
   [ModelCategory C] [ModelCategory D]
   {L : C ⥤ D} {R : D ⥤ C}
-
-/-!
-# Quillen equivalences (Hovey criterion)
-
-A Quillen adjunction `L ⊣ R` is a Quillen equivalence when, for every
-cofibrant `X : C` and fibrant `Y : D`, a map `f : L.obj X ⟶ Y` is a weak
-equivalence iff its adjunct `adj.homEquiv X Y f : X ⟶ R.obj Y` is.
--/
 
 /--
 A Quillen equivalence is a Quillen adjunction satisfying Hovey's

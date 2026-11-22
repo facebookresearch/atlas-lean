@@ -6,15 +6,19 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.CategoryTheory.TrivialBundleWithFiber
+
+/-!
+# Isomorphism transport of fixed-fiber trivial bundles
+
+A `TrivialBundleWithFiber F p` is transported along an isomorphism of total
+objects over the same base, with fixed fiber `F`. The inverse isomorphism
+gives the reverse transport. An isomorphism of fibers changes the second
+product projection while preserving the bundle map and total object. Each
+construction verifies the product-cone universal property.
+-/
 
 @[expose] public section
 
@@ -29,14 +33,9 @@ namespace TrivialBundleWithFiber
 variable {C : Type u} [Category.{v} C]
 variable {F E E' B : C}
 
-/-- Transport a fixed-fiber presentation across an over-base isomorphism.
-
-Given `e : E ≅ E'` with `e.hom ≫ p' = p` and a presentation `h'` of `p'`
-with fixed fiber `F`, this builds a presentation of `p` with the same fiber
-and second projection `e.hom ≫ h'.r`. The proof uses the existing
-product-cone limit structure with explicit isomorphism composition; inverse
-equations are handled by `Category.assoc`. Only the fixed fiber is preserved;
-no chart beyond the two presentations is claimed. -/
+/-- An isomorphism `e : E ≅ E'` satisfying `e.hom ≫ p' = p` transports a
+presentation of `p'` with fixed fiber `F` to one of `p`. The second projection
+is `e.hom ≫ h'.r`. -/
 noncomputable def ofIso {p : E ⟶ B} {p' : E' ⟶ B} (e : E ≅ E')
     (heq : e.hom ≫ p' = p) (h' : TrivialBundleWithFiber F p') :
     TrivialBundleWithFiber F p where
@@ -81,10 +80,8 @@ noncomputable def ofIso {p : E ⟶ B} {p' : E' ⟶ B} (e : E ≅ E')
         _ = BinaryFan.IsLimit.lift h'.isLimit s.fst s.snd ≫ e.inv := by
             rw [hE]
 
-/-- Reverse transport across the same over-base equation.
-
-This is exactly `ofIso` applied to `e.symm`; no separate limit argument is
-made. It moves a presentation of `p` to one of `p'`. -/
+/-- Reverse transport of a fixed-fiber presentation along the same
+over-base isomorphism. -/
 noncomputable def ofIso_rev {p : E ⟶ B} {p' : E' ⟶ B} (e : E ≅ E')
     (heq : e.hom ≫ p' = p) (h : TrivialBundleWithFiber F p) :
     TrivialBundleWithFiber F p' :=
@@ -93,13 +90,9 @@ noncomputable def ofIso_rev {p : E ⟶ B} {p' : E' ⟶ B} (e : E ≅ E')
       rw [← heq, ← Category.assoc, Iso.inv_hom_id, Category.id_comp]
     exact this) h
 
-/-- Fiber-side transport along a fiber isomorphism.
-
-Given `e : F ≅ G` and a presentation `h` of `p` with fixed fiber `G`, this
-builds a presentation of the same `p` with the same total object and base,
-but fixed fiber `F` and second projection `h.r ≫ e.inv`. Only the fixed
-fiber is changed along the supplied iso; no bundle gluing, descent, chart,
-or model claim is made. -/
+/-- An isomorphism `e : F ≅ G` transports a presentation with fiber `G`
+to one with fiber `F`, preserving its total object, base and bundle map.
+The second projection becomes `h.r ≫ e.inv`. -/
 noncomputable def mapFiber {G : C} {p : E ⟶ B} (e : F ≅ G)
     (h : TrivialBundleWithFiber G p) :
     TrivialBundleWithFiber F p where

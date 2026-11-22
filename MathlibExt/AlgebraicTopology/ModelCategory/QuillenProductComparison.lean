@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 import MathlibExt.AlgebraicTopology.ModelCategory.FibrantProducts
 import MathlibExt.AlgebraicTopology.ModelCategory.CartesianProductWeakEquivalence
 import MathlibExt.AlgebraicTopology.ModelCategory.QuillenEquivalence
@@ -19,7 +13,8 @@ import MathlibExt.CategoryTheory.AdjunctionProductMate
 import Mathlib.CategoryTheory.Monoidal.Cartesian.Basic
 import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Terminal
 
-/-! # Product comparisons of actual Quillen equivalences
+/-!
+# Product comparisons of actual Quillen equivalences
 
 The two actual fibrant replacement maps give derived units. Their product
 is weak by the fibrant Brown lemma, and its original adjoint mate is the

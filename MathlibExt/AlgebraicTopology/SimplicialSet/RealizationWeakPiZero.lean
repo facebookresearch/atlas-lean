@@ -6,19 +6,14 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.RealizationWeakEquivalence
 public import MathlibExt.AlgebraicTopology.SimplicialSet.RealizationUnitPiZero
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.FundamentalGroupoidPiOne
 
-/-! # Realization weak equivalences preserve original simplicial components
+/-!
+# Realization weak equivalences preserve original simplicial components
 
 The original component map is bijective at every value universe. No Kan,
 nonempty, connectedness, basepoint or model-category input is required for

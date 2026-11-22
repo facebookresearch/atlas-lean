@@ -6,16 +6,19 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
-
 import Mathlib.CategoryTheory.MorphismProperty.Limits
 import Mathlib.CategoryTheory.Limits.Preserves.Shapes.BinaryProducts
 import Mathlib.CategoryTheory.Adjunction.Basic
+
+/-!
+# Homotopy extension for a functorial interval
+
+Given an endofunctor T and a natural endpoint 𝟭 C ⟶ T, this file defines the maps along
+which every compatible homotopy extends with both endpoint and restriction equations. The
+property is closed under composition and, when T preserves pushouts, under cobase change.
+With pushouts, it is equivalent to a retraction of the universal comparison T(A) ⊔[A] X ⟶
+T(X). A compatible interval isomorphism transfers the property along a left adjoint.
+-/
 
 set_option autoImplicit false
 set_option maxRecDepth 512

@@ -6,18 +6,13 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.AnodyneExtensions.Basic
 public import Mathlib.AlgebraicTopology.ModelCategory.IsCofibrant
 
-/-! # Lifting consequences of anodyne extensions
+/-!
+# Lifting consequences of anodyne extensions
 
 This module packages two generic facts that follow directly from the definition
 `SSet.anodyneExtensions = (fibrations SSet).llp` in Mathlib v4.33.

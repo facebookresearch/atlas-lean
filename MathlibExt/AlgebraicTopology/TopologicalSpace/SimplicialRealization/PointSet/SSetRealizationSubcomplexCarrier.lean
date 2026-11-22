@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.NonDegenerateSimplices
@@ -21,29 +15,14 @@ public import MathlibExt.AlgebraicTopology.SimplicialSet.NondegenerateEmbedding
 public import MathlibExt.AlgebraicTopology.SimplicialSet.RealizationPresentation
 
 /-!
-# Naturality of nondegenerate carriers along subcomplex inclusions
+# Realization presentations under subcomplex inclusions
 
-For `A : X.Subcomplex`, map a nondegenerate carrier `s : (A : SSet).N` along
-the mono `A.ι` using the existing nondegenerate embedding, and show that
-`SSet.sigmaToTop X` of the mapped carrier at the same standard-simplex
-coordinate equals `SSet.toTop.map A.ι` applied to `SSet.sigmaToTop A` of the
-original presentation.
-
-API-reuse map (all `reuse`; no `local` entry):
-* mapped carrier: `SSet.nonDegenerateEmbeddingOfMono`
-  (`MathlibExt/AlgebraicTopology/SimplicialSet/NondegenerateEmbedding.lean`);
-* classifier identification: `SSet.yonedaEquiv_symm_comp`
-  (`Mathlib/AlgebraicTopology/SimplicialSet/StdSimplex.lean`);
-* same-coordinate realization point: `SSet.sigmaToTop`
-  (`RealizationPresentation`), which already bundles `SSet.yonedaEquiv.symm`
-  with `SimplexCategory.toTopHomeo.symm`; the mapped carrier has definitionally
-  the same dimension as the original, so the homeomorphism needs no transport
-  (`SimplexCategory.toTopHomeo_naturality_apply` is the designated tool when
-  dimensions genuinely differ);
-* map fusion: `SSet.toTop.map_comp` with `CategoryTheory.comp_apply`.
-
-Nonclaims: no new quotient relation, no carrier uniqueness theorem, no
-compact-support theorem, no fibration or model-category result.
+The map `SSet.Subcomplex.mapCarrier A` sends nondegenerate simplices of a
+subcomplex `A` to ambient nondegenerate simplices through
+`SSet.nonDegenerateEmbeddingOfMono`, preserving their dimension. The theorem
+`sigmaToTop_mapCarrier` states that realization of the mapped carrier at a
+given standard-simplex point agrees with applying the realization of `A.ι`
+to the original presentation.
 -/
 
 @[expose] public section
@@ -78,8 +57,8 @@ theorem sigmaToTop_mapCarrier (s : (A : SSet.{u}).N)
   have hMap : SSet.toTop.map (SSet.yonedaEquiv.symm s.simplex ≫ A.ι) =
       SSet.toTop.map (SSet.yonedaEquiv.symm s.simplex) ≫ SSet.toTop.map A.ι :=
     SSet.toTop.map_comp _ _
-  -- The mapped carrier has definitionally the same dimension as `s`, so both
-  -- sides use the same homeomorphism; state the unfolded goal with `s.dim`.
+  -- The carrier map preserves dimension, so both presentations use the
+  -- same standard-simplex coordinate.
   change SSet.toTop.map (SSet.yonedaEquiv.symm ((mapCarrier A s).simplex))
         ((SimplexCategory.toTopHomeo ⦋s.dim⦌).symm x) =
       SSet.toTop.map A.ι (SSet.toTop.map (SSet.yonedaEquiv.symm s.simplex)

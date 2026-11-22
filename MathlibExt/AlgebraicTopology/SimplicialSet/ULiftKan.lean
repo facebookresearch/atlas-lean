@@ -6,17 +6,9 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.KanComplex
-
-@[expose] public section
 
 /-!
 # Actual universe lifting of Kan simplicial sets
@@ -25,6 +17,8 @@ A compatible original horn face family in the lifted simplicial set is
 lowered vertexwise to the same original simplicial set. Its actual Kan
 filler lifts back with every whole supplied face equation preserved.
 -/
+
+@[expose] public section
 
 noncomputable section
 universe u v

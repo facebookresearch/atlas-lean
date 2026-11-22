@@ -6,18 +6,10 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import MathlibExt.CategoryTheory.Functor.Iteration
 public import Mathlib.CategoryTheory.Functor.OfSequence
-
-@[expose] public section
 
 /-!
 # Iterating a natural coaugmentation on its original input
@@ -32,6 +24,8 @@ diagram, its functoriality in the original input, and transport through an
 isomorphism of endofunctors. All transport maps are the canonical maps of the
 same given functors.
 -/
+
+@[expose] public section
 
 set_option autoImplicit false
 universe u v

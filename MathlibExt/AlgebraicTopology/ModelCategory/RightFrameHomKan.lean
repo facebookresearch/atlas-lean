@@ -6,13 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import Mathlib.AlgebraicTopology.ModelCategory.IsCofibrant
@@ -26,11 +19,6 @@ public import MathlibExt.AlgebraicTopology.ModelCategory.FiniteResolutionTensor
 public import MathlibExt.AlgebraicTopology.ModelCategory.Reedy
 public import MathlibExt.AlgebraicTopology.SimplexCategory.Reedy
 
-section
-
--- Author: @toskua, Codex
-
-
 /-!
 # Actual finite partial face-matching categories
 
@@ -40,6 +28,8 @@ whose original image omits one selected vertex. All original Under triangles
 and all original simplex maps are retained. Horn matching is the specialization
 to every original face index except the supplied horn index.
 -/
+
+section
 
 @[expose] public section
 
@@ -151,7 +141,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-! # Actual original finite partial face-matching cones and maps -/
@@ -290,7 +279,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -405,7 +393,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-! # The whole selected face family is the original complete matching category -/
@@ -490,7 +477,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -641,7 +627,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-! # Original coface residuals and finite selected face families -/
@@ -810,7 +795,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-! # Original face subdivision in the actual opposite-simplex matching source -/
@@ -1111,7 +1095,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-! # Actual add-one original face matching pullback -/
@@ -1466,7 +1449,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-! # Original finite partial matching restriction identities and compositions -/
@@ -1511,7 +1493,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1646,7 +1627,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1750,7 +1730,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!

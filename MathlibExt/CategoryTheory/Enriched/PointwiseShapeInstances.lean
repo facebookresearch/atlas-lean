@@ -6,15 +6,19 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 public import MathlibExt.CategoryTheory.Enriched.PointwiseLimit
 public import MathlibExt.CategoryTheory.Enriched.PointwiseColimit
+
+/-!
+# Pointwise limits and colimits of enriched functors
+
+For an enriched category `A` over a braided monoidal closed base `V`, limits
+and colimits of a diagram shape `J` in `V` give limits and colimits of that
+shape in `EnrichedFunctorCat V A`. The constructions use the pointwise
+limits and colimits together with enriched naturality. Evaluation at every
+object of `A` preserves these limits and colimits.
+-/
 
 @[expose] public section
 set_option autoImplicit false

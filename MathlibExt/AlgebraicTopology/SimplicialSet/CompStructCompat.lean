@@ -1,22 +1,7 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
-Authors: Joël Riou, Arnoud van der Leer
--/
-
--- Author: @toskua, Avocado
-/-
 Copyright (c) 2025 Joël Riou. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Joël Riou, Arnoud van der Leer
+See NOTICE in the repository root for the original Mathlib attribution.
 -/
 module
 
@@ -42,8 +27,6 @@ structures introduced in PR #42435 which is absent from the pinned Mathlib
 * PR head: `e09070f786c9fc0a688e6239d71230b618b045ff`
 * File: `Mathlib/AlgebraicTopology/SimplicialSet/CompStruct.lean`
 * Blob: `4d0cc316cfe55c9021a59dca3a16b6bbcf6838bd`
-* Upstream authors: Joël Riou, Arnoud van der Leer (copyright header in upstream source)
-* Base: canonical KQ2 `10d0a5123c58a6c79020ae9490f71d906b7cd3bf`
 
 ## Ported declarations
 

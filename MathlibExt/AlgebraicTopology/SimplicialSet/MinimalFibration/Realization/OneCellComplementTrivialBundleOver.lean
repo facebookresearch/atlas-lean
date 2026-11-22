@@ -6,39 +6,21 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.MinimalFibration.Realization.OneCellOpenComplement
 public import MathlibExt.CategoryTheory.TrivialBundleWithFiberOver
 public import MathlibExt.Topology.Category.TopCat.Subspace
 
-/-! # One-cell complement trivial-over transport
+/-!
+# Trivial bundles over one-cell complements
 
-Purpose: transport a fixed-fiber over-presentation from the new-cell complement
-to the ambient complement across a one-cell pushout. Given a base pushout with
-closed old leg, a total pullback along the new leg, and an over-presentation
-over the new-cell complement, produce an over-presentation over the ambient
-complement.
-
-Hypotheses: a `TopCat` pushout `sqBase`, closed-embedding `hr` on the old leg,
-a total pullback `sqQ` along the new leg, a fixed fiber `F`, and an
-over-presentation `h_new` over the new-cell complement.
-
-Route: rewrite the new-side base along the preimage equality, turn the
-preimage homeomorphism into a base iso via the iso-homeomorph equivalence,
-pull the presentation back along the iso inverse, paste twice with the given
-squares, and identify the pasted bottom with the ambient inclusion by iso
-cancellation and the subspace-map equation. No extra squares are assumed.
-
-Nonclaims: no global chart, no cover assembly, no local-Serre step, no
-model-category instance, and no claim about weak equivalences or realization
-geometry.
+For a base pushout IsPushout t l r b with r a closed embedding and a total-space pullback
+along b, a fixed-fiber trivial-bundle presentation over the complement of the range of l
+gives one over the complement of the range of r. The construction identifies the new-cell
+complement with the preimage of the ambient complement and transports the presentation
+through that base isomorphism. A second construction restricts an ambient presentation to
+the new-cell complement when b maps that complement into the ambient one.
 -/
 
 @[expose] public section

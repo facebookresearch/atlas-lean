@@ -11,9 +11,16 @@ module
 public import MathlibExt.CategoryTheory.Monoidal.Mod.RightLeftTensorHom
 
 /-!
-The full naturality of the original free-left-module tensor reduction.
-Both the right coefficient and the original base generator vary. The Arrow
-comparisons retain the chosen tensor quotient maps and actual free functor.
+# Naturality of balanced tensor with a free module
+
+For a right module carrier `N` and a base object `X`, `freeTensorIso`
+identifies the balanced tensor of `N` with the free left module on `X`
+with `N.X ⊗ X`.
+The isomorphism is natural jointly in morphisms of right module carriers
+and maps of generators, and gives natural isomorphisms of tensor functors.
+`freeCoefficientArrowIso` and `freeGeneratorArrowIso` express the same
+comparisons in the arrow category, while the inverse formula uses the
+free–forgetful adjunction unit and the balanced-tensor projection.
 -/
 
 @[expose] public section

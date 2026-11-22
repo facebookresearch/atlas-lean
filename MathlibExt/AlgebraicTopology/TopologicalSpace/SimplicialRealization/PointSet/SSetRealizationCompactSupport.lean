@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.RealizationPresentation
@@ -29,36 +23,13 @@ public import MathlibExt.Topology.Convenient.StdSimplexMinimalFace
 public import Mathlib.Topology.Order
 
 /-!
-# Compact subsets of a realization have finite simplicial support
+# Finite simplicial support of compact realization subsets
 
-For `Y : SSet.{u}`, every compact `K ⊆ SSet.toTop.obj Y` lies in the range of
-the realization of a finite subcomplex. The proof follows the closed-discrete
-selector route: one interior point is chosen per nondegenerate carrier meeting
-`K`; every subset of the selector image is closed by testing the finite
-monogenous stages with finite `AmbientCells`; hence the selector image is discrete,
-closed in the compact `K`, and finite; a finite supremum of carrier
-subcomplexes then covers `K`.
-
-Reuse map (all `reuse`; no `local` entry):
-- `SSet.sigmaToTop`, `SSet.exists_nonDegenerate_toTop_presentation`
-  (`RealizationPresentation.lean`);
-- `SSet.exists_nonDegenerate_interior_presentation`
-  (`SSetRealizationOpenCellCover.lean`);
-- `SSet.carrier_eq_of_sigmaToTop_eq_of_interior`
-  (`SSetRealizationOpenCellInjective.lean`);
-- `SSet.isColimitCoconeN` (`NonDegenerateSimplicesColimit.lean`) and
-  `TopCat.isClosed_iff_of_isColimit` (pinned Mathlib);
-- `SSet.Subcomplex.mapCarrier`, `SSet.Subcomplex.sigmaToTop_mapCarrier`
-  (`SSetRealizationSubcomplexCarrier.lean`);
-- `SSet.Subcomplex.AmbientCells` finiteness (`FiniteSubcomplexCells.lean`);
-- `SSet.Subcomplex.finite_iSup_ofSimplex` (`FiniteGeneratedSubcomplex.lean`);
-- `SSet.Subcomplex.closedT1Embeddings_toTop_map_ι` (`Subcomplex.lean`);
-- `IsCompact.of_isClosed_subset`, `IsCompact.finite`, `Set.Finite.isClosed`,
-  `discreteTopology_iff_forall_isClosed` (pinned Mathlib).
-
-Nonclaims: no coordinate uniqueness, no finite subcover of open cells, no
-barycentric-coordinate finiteness, no ambient separation beyond finite stages,
-no product or pullback preservation, no KQ4 result.
+Every compact subset of the realization of a simplicial set is contained in the realized
+image of a finite subcomplex. The proof selects an interior point from each nondegenerate
+simplex carrier meeting the compact set and shows that these points form a closed discrete
+subset. Compactness makes this set finite, and the finite union of its carrier subcomplexes
+gives the required support.
 -/
 
 @[expose] public section

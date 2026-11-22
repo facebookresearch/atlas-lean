@@ -6,13 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import MathlibExt.AlgebraicTopology.ModelCategory.CompatibleCotensorFraming
@@ -25,13 +18,6 @@ public import MathlibExt.AlgebraicTopology.ModelCategory.GeneratedRightMappingEn
 public import MathlibExt.AlgebraicTopology.ModelCategory.ResolutionMappingWeakPreservation
 public import MathlibExt.CategoryTheory.Enriched.HomTransport
 
-open HomotopicalAlgebra.GeneratedFunctorialReplacements
-
-section
-
--- Author: @toskua, Codex
-
-
 /-!
 # Actual common fibrant frames for the compatible right comparison
 
@@ -40,6 +26,10 @@ Reedy J factory. Its genuine trivial-cofibration middle augmentation and the
 original RF augmentation form a functorial pushout. The same terminal factory
 gives the common fibrant frame, retaining every original augmentation and map.
 -/
+
+open HomotopicalAlgebra.GeneratedFunctorialReplacements
+
+section
 
 @[expose] public section
 
@@ -257,7 +247,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -401,7 +390,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -532,7 +520,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -699,7 +686,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -884,7 +870,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -976,7 +961,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1085,7 +1069,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!

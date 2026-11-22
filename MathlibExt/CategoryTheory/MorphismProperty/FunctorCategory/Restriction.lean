@@ -6,18 +6,13 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.CategoryTheory.MorphismProperty.Basic
 public import Mathlib.CategoryTheory.Whiskering
 
-/-!# Original restriction of pointwise morphism properties -/
+/-!
+# Original restriction of pointwise morphism properties -/
 
 @[expose] public section
 set_option autoImplicit false

@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.KanComplex
@@ -87,7 +81,7 @@ theorem ofIsFilteredColimit {F : J ⥤ SSet.{u}}
 
 /-- Reusable closure form: the predicate `KanComplex` is stable under filtered
 colimits in `SSet`. This is the `Prop`-level form of `ofIsFilteredColimit`
-packaged for later KQ3/KQ4 callers. -/
+for topological applications. -/
 theorem isClosedUnderFilteredColimits :
     ∀ {J : Type u} [Category.{u} J] [IsFiltered J] (F : J ⥤ SSet.{u}),
       (∀ j, KanComplex (F.obj j)) → ∀ {c : Cocone F}, IsColimit c → KanComplex c.pt :=

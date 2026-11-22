@@ -6,35 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.HomotopyGroupMap
 
-/-! # Pointed homotopy-group binary-product comparison
+/-!
+# Homotopy sets of products of simplicial sets
 
-Pure-simplicial comparison `π n (X ⨯ A) x ≃ π n X _ × π n A _` and its
-naturality for `Limits.prod.map f g`. Built from maps into categorical
-products (`Limits.prod.lift`), componentwise boundary-constant conditions
-(`Subcomplex.ofSimplex_ι`, `SSet.const_comp`, `SSet.comp_const`),
-componentwise relative homotopies, and `π.rec` / `mk_surjective`. Handles
-`n = 0` without group assumptions and assumes no `KanComplex` hypotheses.
-
-Dependent target basepoints are aligned with `Limits.prod.map_fst` /
-`map_snd` and `π.map_congr` proof irrelevance, keeping the target
-basepoint implicit where possible.
-
-Exposes only the comparison, its bijectivity, and its naturality needed to
-delete `ax_bijective_piProdComparison` from `KanComplexWProduct`. Uses no
-realization, `W.prodMap`, or `ModelCategory SSet`.
-
-Explicit nonclaims: no `ModelCategory SSet` instance is used or constructed;
-no public axiom is added; no group structure is assumed (works at `n = 0`).
+For arbitrary simplicial sets X and A and a vertex of X ⨯ A, this file constructs an
+equivalence between its n-th pointed homotopy set and the product of the corresponding
+pointed homotopy sets of X and A. The comparison is bijective and natural under
+Limits.prod.map f g for every n, including n = 0. Its inverse combines pointed simplices and
+relative homotopies componentwise using the categorical product.
 -/
 
 @[expose] public section

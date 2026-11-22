@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.KanComplexWTwoOfThree
@@ -22,7 +16,7 @@ public import Mathlib.CategoryTheory.MorphismProperty.Retract
 /-!
 # Weak homotopy equivalences of spaces
 
-This file is part of the KQ3 layer. It packages the universe-polymorphic property
+This file packages the universe-polymorphic property
 `TopCat.weakHomotopyEquivalences` as the inverse image of `SSet.KanComplex.W`
 along the singular-complex functor `TopCat.toSSet`, following Goerss--Jardine,
 Simplicial Homotopy Theory, I.3. Only the categorical inverse-image packaging
@@ -41,8 +35,8 @@ open CategoryTheory MorphismProperty
 namespace TopCat
 
 /-- Weak homotopy equivalences of spaces: maps whose singular complex lies in
-`SSet.KanComplex.W`. Universe-polymorphic packaging of the KQ2 weak-equivalence class
-for the KQ3 topological model-structure lane. -/
+`SSet.KanComplex.W`. The simplicial weak-equivalence class is packaged for topological spaces
+in every universe. -/
 def weakHomotopyEquivalences : MorphismProperty TopCat.{u} :=
   SSet.KanComplex.W.inverseImage TopCat.toSSet.{u}
 

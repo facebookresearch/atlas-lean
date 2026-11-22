@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.Topology.Category.TopCat.PushoutOpenComplement
@@ -20,6 +14,11 @@ public import MathlibExt.Topology.Convenient.QuotientProduct
 public import Mathlib.Topology.Category.TopCat.Limits.Products
 public import Mathlib.CategoryTheory.Limits.Types.Colimits
 
+/-!
+# Fixed-left product/pushout quotient half
+Binary comparison homeomorphism plus the locally-compact descent quotient theorem.
+-/
+
 @[expose] public section
 
 open CategoryTheory CategoryTheory.Limits TopCat Topology
@@ -27,11 +26,6 @@ open CategoryTheory CategoryTheory.Limits TopCat Topology
 universe u
 
 namespace TopCat
-
-/-!
-# Fixed-left product/pushout quotient half
-Binary comparison homeomorphism plus the locally-compact descent quotient theorem.
--/
 
 /-- Product/coproduct comparison with the product factor fixed on the left. -/
 noncomputable def prodCoproductEmbed (K X Y : TopCat.{u}) :

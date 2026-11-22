@@ -6,48 +6,25 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.SSetDeformationRetract
 
-@[expose] public section
-
 /-!
-# Minimal fibrations – basic definitions
+# Fiberwise homotopy and minimal fibrations
 
-This module provides the pure simplicial-set foundation for the minimal-fibration lane.
-
-* Goerss–Jardine, *Simplicial Homotopy Theory*, Chapter I §10, Definitions 10.2 and the
-  minimality criterion around Proposition 10.4.
-* Hovey, *Model Categories*, §3.5.
-
-We work with a map `p : X ⟶ S` of simplicial sets.  An `n`-simplex `x : X _⦋n⦌`
-is identified with a map `Δ[n] ⟶ X` via `SSet.yonedaEquiv.symm`.  Two `n`-simplices
-with the same image in `S` and the same restriction to `∂Δ[n]` are *fiberwise
-homotopic relative to the boundary* when there exists `H : Δ[n] ⊗ Δ[1] ⟶ X`
-stationary on `boundary n` (in the sense of the existing `SSet.HomotopyRel`)
-and lying over the constant base simplex: `H ≫ p = fst ≫ (Δ[n] → S)`.
-
-`FiberwiseHomotopic` is the existence proposition.  `IsMinimal` says that
-fiberwise homotopic simplices over the same base with the same boundary are equal;
-`IsMinimalFibration` adds the `Fibration` requirement.  No equivalence-relation
-structure, minimal subfibration construction, Zorn argument, factorization, or
-isomorphism theorem is proved here, to keep the module independent of
-`KanComplex.W`, SSet weak equivalences, `TopCat`, realization, and the final
-model-category instance.
-
-## Nonclaims
-
-* Does not prove `FiberwiseHomotopic` is an equivalence relation.
-* Does not construct a minimal subfibration or prove factorization.
-* Does not prove a trivial-fibration or isomorphism theorem.
+For a simplicial map `p : X ⟶ S`, `FiberwiseHomotopy p x y` is a homotopy
+between two simplices that is stationary on their boundary and lies over
+the constant base simplex.
+`FiberwiseHomotopic` records the existence of such a homotopy, and
+`IsMinimal p` requires its endpoints to be equal.
+`IsMinimalFibration p` combines this minimality condition with `Fibration p`.
+The definitions follow Goerss–Jardine, *Simplicial Homotopy Theory*,
+Chapter I §10, Definition 10.2 and the criterion around Proposition 10.4;
+see also Hovey, *Model Categories*, §3.5.
 -/
+
+@[expose] public section
 
 open CategoryTheory Simplicial SSet HomotopicalAlgebra
 open MonoidalCategory CartesianMonoidalCategory

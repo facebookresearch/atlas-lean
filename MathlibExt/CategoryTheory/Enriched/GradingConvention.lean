@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.CategoryTheory.Enriched.CentralGradedInputActions
@@ -22,10 +16,15 @@ public import MathlibExt.CategoryTheory.Enriched.GradedInputComposition
 public import MathlibExt.CategoryTheory.Enriched.Limits.WeightedEnd
 
 /-!
-The original end relation and the positive canonical center grade have explicit
-inverse component normalizations. Genuine coefficient and input actions are
-retained. The conditional end comparison uses only that original end's products
-and equalizer; it adds no end hypothesis to Kan construction.
+# Grading conventions for enriched ends
+
+For braided monoidal closed coefficients, the reverse end relation and
+the positive canonical-center grade have inverse component normalizations.
+These respect coefficient regrading and both input actions. Under the
+specified product and equalizer hypotheses for the weighted end, maps
+into that end correspond naturally to the positively graded natural
+transformations. The corresponding Kan constructions retain their own
+hypotheses.
 -/
 
 @[expose] public section

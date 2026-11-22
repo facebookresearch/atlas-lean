@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.LegacyTopCat.TopCatWeakHomotopyEquivalence
@@ -23,7 +17,7 @@ public import MathlibExt.Topology.Category.TopCat.Colimits.TopCatSingularClosedT
 /-!
 # Transfinite closed-T1 stability for weak homotopy equivalences
 
-Universe-polymorphic KQ3 packet. A transfinite composite of shape `J`
+In every universe, a transfinite composite of shape `J`
 whose steps are both TopCat weak homotopy equivalences and closed-T1
 embeddings is again a weak homotopy equivalence, assuming only
 `SSet.KanComplex.W` stability under transfinite composition of shape `J`. Both mapped
@@ -34,12 +28,12 @@ preservation is assumed.
 The proof builds the mapped `W` witness directly on the original diagram
 and closes with
 `MorphismProperty.transfiniteCompositionsOfShape_le`. The
-`closedT1Embeddings` half records the KQ3 cell-complex hypothesis fed by
+`closedT1Embeddings` half records the cell-complex hypothesis fed by
 `TopCat.relativeCellComplex_mem_closedT1Embeddings`; no closed-T1 fact is
 reproved here.
 
 This adds no unconditional closure, no plain-closed variant, no coproduct
-or pushout closure, no model structure, and no KQ4 statement.
+or pushout closure, no model structure.
 
 Mathematical source: Goerss--Jardine, Simplicial Homotopy Theory, I.3,
 plus the Mathlib transfinite-composition API.

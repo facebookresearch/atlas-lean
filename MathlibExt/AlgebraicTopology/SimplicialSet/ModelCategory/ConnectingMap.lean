@@ -6,18 +6,22 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.KanComplex.HomotopyGroup
 public import Mathlib.AlgebraicTopology.SimplicialSet.AnodyneExtensions.PushoutProduct
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.Fiber
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.HomotopyGroupMap
+
+/-!
+# Representative connecting map for a Kan fibration
+
+For a Kan fibration `p : E ⟶ B` with basepoints `e : E _⦋0⦌` and
+`b = p.app _ e`, this file constructs the representative connecting map:
+the pointed `n`-simplex in the strict fiber `fiber p b`, its quotient
+descent to homotopy groups, its naturality under commutative squares, and
+the three exactness results at `π (n + 1) B`, `π n (fiber p b)` and `π n E`.
+-/
 
 public section
 
@@ -33,16 +37,6 @@ namespace SSet
 namespace ConnectingMap
 
 variable {E B : SSet.{u}} {e : E _⦋0⦌} {b : B _⦋0⦌}
-
-/-!
-# Representative connecting map for a Kan fibration
-
-For a Kan fibration `p : E ⟶ B` with basepoints `e : E _⦋0⦌` and
-`b = p.app _ e`, this file constructs the representative connecting map:
-the pointed `n`-simplex in the strict fiber `fiber p b`, its quotient
-descent to homotopy groups, its naturality under commutative squares, and
-the three exactness results at `π (n + 1) B`, `π n (fiber p b)` and `π n E`.
--/
 
 -- =========================================================================
 -- Layer 1: private horn / boundary lift choice data

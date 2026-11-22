@@ -6,10 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Copyright (c) 2026 Tsutomu Okano. All rights reserved.
-Authors: Tsutomu Okano <toskua@meta.com>
--/
 module
 
 public import MathlibExt.CategoryTheory.Enriched.FreeHomTransport

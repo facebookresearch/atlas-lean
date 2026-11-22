@@ -6,13 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
-
 import MathlibExt.CategoryTheory.MorphismProperty.Factorization.MappedFactorArrows
 import MathlibExt.CategoryTheory.MorphismProperty.Factorization.EquivalenceComposition
 import MathlibExt.CategoryTheory.MorphismProperty.Factorization.RoundtripData

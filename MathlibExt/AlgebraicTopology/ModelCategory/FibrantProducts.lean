@@ -6,24 +6,12 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
-Authors: Tsutomu Okano <toskua@meta.com>
--/
-
--- Author: @toskua
-/-
-Copyright (c) 2026 Tsutomu Okano. All rights reserved.
-Authors: Tsutomu Okano <toskua@meta.com>
--/
 module
 
 public import Mathlib.AlgebraicTopology.ModelCategory.BrownLemma
 public import Mathlib.CategoryTheory.MorphismProperty.Limits
 public import Mathlib.CategoryTheory.Limits.Shapes.Products
 public import Mathlib.Combinatorics.Quiver.ReflQuiver
-
 
 /-!
 # Original products and limiting fans of fibrant weak maps

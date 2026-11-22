@@ -6,20 +6,9 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
 module
 
 public import Mathlib.Topology.MetricSpace.Bounded
-
-@[expose] public section
-
-namespace Metric
-
-universe w
 
 /-!
 # Neutral compact-cover subordination
@@ -28,6 +17,12 @@ Lebesgue-number/diameter corollaries for a continuous map from a compact
 pseudometric space, plus the coefficient-free geometric-decay variant used by
 iterated subdivision. No homology, simplex, or convexity API.
 -/
+
+@[expose] public section
+
+namespace Metric
+
+universe w
 
 /-- Lebesgue-number estimate for a continuous map from an arbitrary compact
 pseudometric space: every sufficiently small-diameter nonempty set has `g`-image

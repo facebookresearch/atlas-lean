@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.LegacyTopCat.TopCatModelCompatibilityConditional
@@ -20,15 +14,15 @@ public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.Legacy
 /-!
 # Conditional trivial-cofibration recognition for realized horns in `TopCat`
 
-This file is part of the KQ3 layer. It proves the second remaining cross
-inclusion directly by composing the two staged inputs, with no proof
+This file proves the second cross
+inclusion directly by composing the two inputs, with no proof
 duplicated here: the singular/realization transport
 `TopCat.hornRLP_inf_W_le_boundaryRLP_of_sSet` turns the external simplicial
 recognition hypothesis
 `SSet.modelCategoryQuillen.J.rlp ⊓ SSet.KanComplex.W ≤
 SSet.modelCategoryQuillen.I.rlp` into the fibration cross inclusion, and the
-staged retract theorem `TopCat.boundaryLLP_inf_W_le_hornLLP` turns that plus
-the KQ3 horn-cell closure hypothesis
+retract theorem `TopCat.boundaryLLP_inf_W_le_hornLLP` turns that plus
+the horn-cell closure hypothesis
 `realizedHornInclusions.rlp.llp ≤ weakHomotopyEquivalences` into the target
 cofibration cross inclusion.
 

@@ -10,14 +10,17 @@ import MathlibExt.AlgebraicTopology.ModelCategory.ModuleTransfer.FreeCellFlatnes
 import MathlibExt.AlgebraicTopology.ModelCategory.ModuleTransfer.WeakScalarDerived
 
 /-!
-Weak scalar invariance from the actual full module transfers.
+# Weak scalar invariance for transferred module models
 
-The two original generator universes and source bounds are independent.
-The source module cell proof uses precisely its returned generation
-cardinal, ordinal bottom and original free-I class.  Its base coefficient
-and closure inputs prove flatness; no module flatness conclusion is given
-as a producer premise.  The actual M4 replacements, functors, unit and
-counit are retained in both resulting derived equivalences.
+Let `tA` and `tB` be full model transfers to modules over monoid objects `A`
+and `B` in a monoidal closed model category, with their stated independent
+source-smallness data.
+Generating coefficient flatness and the specified tensor and cellular-closure
+conditions imply relative flatness for every cofibrant source module.
+For a weak-equivalence monoid morphism `p : A ⟶ B`, these conditions make the
+extension–restriction adjunction a Quillen equivalence.
+The module constructs both its direct total-derived equivalence and its
+replacement-based derived equivalence, using the transferred models.
 -/
 
 noncomputable section

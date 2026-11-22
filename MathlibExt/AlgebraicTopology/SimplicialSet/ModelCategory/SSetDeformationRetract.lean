@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.AnodyneExtensions.Basic
@@ -25,6 +19,19 @@ public import Mathlib.AlgebraicTopology.SimplicialSet.Homotopy
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.PathSpace
 public import Mathlib.CategoryTheory.MorphismProperty.Limits
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.HasPullback
+
+/-!
+# Relative homotopies and simplicial deformation retracts
+
+`HomotopyRel` records a simplicial homotopy stationary on a specified
+subcomplex, and `StrongDeformationRetract` combines a retraction with a
+homotopy relative to the image of the inclusion.
+The associated morphism property respects isomorphisms and is stable under
+cobase change.
+The module also constructs the mapping-path pullback with its section and
+retraction, and proves that the boundary-cylinder inclusion
+`∂Δ[n] ⊗ Δ[1] ∪ Δ[n] ⊗ {0} ↪ Δ[n] ⊗ Δ[1]` is anodyne.
+-/
 
 @[expose] public section
 
@@ -374,13 +381,14 @@ instance : (strongDeformationRetract : MorphismProperty SSet.{u}).IsStableUnderC
         _ = x := hb
     exact ⟨⟨r', hr', ⟨H', h₀, h₁, fun {n} x hx t => h_stationary (n := n) x hx t⟩⟩⟩
 
-/-! ## Mapping-path space
+/-!
+## Mapping-path space
 
-For `f : X ⟶ Y`, the mapping-path space is the pullback
-`X ×_Y pathSpace Y` along `f` and `eval₀ : pathSpace Y ⟶ Y`.
-It comes with a section `X ⟶ mappingPathSpace f` and retraction
-`mappingPathSpace f ⟶ X`. Reuses `SSet.pathSpace`, `SSet.constPath`,
-`SSet.eval₀` without duplication. -/
+For `f : X ⟶ Y`, `mappingPathSpace f` is the pullback of `pathSpace Y`
+along `f` and `eval₀`.
+It has a section from `X`, a retraction to `X`, and an evaluation to
+`pathSpace Y`; the accompanying equations identify these maps.
+-/
 
 noncomputable def mappingPathSpace {X Y : SSet.{u}} (f : X ⟶ Y) : SSet.{u} :=
   pullback f (SSet.eval₀ (X := Y))
@@ -414,15 +422,14 @@ lemma mappingPathSection_comp_fst {X Y : SSet.{u}} (f : X ⟶ Y) :
   simp only [mappingPathSection]
   exact pullback.lift_fst _ _ _
 
-/-! ## Cylinder
+/-!
+## Anodyne boundary-cylinder inclusions
 
-The generating cylinder inclusion
-`∂Δ[n] ⊗ Δ[1] ∪ Δ[n] ⊗ {0} ↪ Δ[n] ⊗ Δ[1]` as
-`(boundary n).unionProd (face {0})`. This is the SSet analogue of
-the topological cylinder inclusion and the reusable HEP (homotopy extension)
-input. Its already proved anodyne property, obtained from the pushout-product
-theorem `anodyneExtensions_unionProd_ι` via the horn `Δ[0] → Δ[1]`
-(i.e. `face {0}`), is the reusable HEP input, without invoking `W`. -/
+`cylinderSubcomplex n` is the union of the boundary cylinder
+`∂Δ[n] ⊗ Δ[1]` and the initial face `Δ[n] ⊗ {0}`.
+Its inclusion is anodyne by `anodyneExtensions_unionProd_ι`, applied
+to the boundary inclusion and the horn `Δ[0] → Δ[1]`.
+-/
 
 noncomputable def cylinderSubcomplex (n : ℕ) :
     (Δ[n] ⊗ (Δ[1] : SSet.{u})).Subcomplex :=
@@ -454,46 +461,14 @@ theorem cylinderInclusion_mem_anodyneExtensions (n : ℕ) :
 
 end SSet
 
-/-! ## Remaining exact lemmas (second packet, not claimed in this file)
+/-!
+## Cylinder inclusions and deformation retracts
 
-The following are *not* proved in this first scaffold-free packet.
-They are listed explicitly as required follow-up work, separated to avoid
-circular use of `trivialFibration_iff` or filtered-colimit stability.
-`IsStableUnderCobaseChange strongDeformationRetract` is proved above via
-`Limits.IsPushout` and `⊗ Δ[1]` preserving colimits (cartesian closedness).
-
-Nonclaim: the cylinder inclusion
-`∂Δ[n] ⊗ Δ[1] ∪ Δ[n] ⊗ {0} ↪ Δ[n] ⊗ Δ[1]` is not in general a simplicial
-strong deformation retract (e.g. `n = 1`: the subcomplex contains every vertex
-of `Δ[1] × Δ[1]` but omits the top edge, so no simplicial retraction fixing
-all vertices can exist; `n = 0` endpoint orientation also fails via monotone
-interval maps). Future work must therefore use its already proved anodyne
-property from the pushout-product theorem, not attempt
-`cylinderInclusion_isStrongDeformationRetract` nor the dependent
-`strongDeformationRetract_mono_isAnodyne_of_cylinder`.
-
-Remaining work:
-
-1. `theorem subsingleton_π_fiber_of_W_fibration {f : X ⟶ Y} [KanComplex X]
-     [KanComplex Y] [Fibration f] (hf : W f) (y) (n) (x) :
-     Subsingleton (π n (fiber f y) x)` — uses LES from
-   `FibrationSequence`/`ConnectingExactness` + `W`'s `π`-bijectivity +
-   `isFibrant_fiber`; reuses `π.map` naturality. No colimits.
-
-2. `theorem KanComplex.W.hasLiftingPropertyFixedTop {X Y} {f : X ⟶ Y}
-     [KanComplex X] [KanComplex Y] [Fibration f] (hf : W f) {n}
-     (top : SSet.boundary n ⟶ X) : HasLiftingPropertyFixedTop (SSet.boundary n).ι f top`
-   (equivalently `HasLiftingProperty ((boundary n).unionProd (face {0})).ι f`
-   after adjunction). Proof reduces via `unionProd.isPushout` to
-   sphere-filling in `fiber f y` using (1) instead of `I.rlp`.
-
-3. Packet-2 stability (separated, gated on colimit lane):
-   `horn_memW`, `anodyneExtensions_le_W`, and downstream
-   `trivialFibration_iff` converse via `anodyne ≤ W` + 2/3 + retract
-   argument and small-object factorization. Requires
-   `W.isStableUnderFilteredColimits` / `IsStableAnodyne`.
-
-No `ModelCategory SSet`, no `W.IsStableUnderFilteredColimits`,
-no `anodyne = trivialCofibrations`, no `trivialFibration_iff` proof are
-claimed in this file.
+The anodyne property of `cylinderInclusion` gives the lifting input for
+homotopy extension into Kan complexes.
+Anodyne inclusions need not be simplicial strong deformation retracts:
+for `n = 1`, this cylinder subcomplex contains every vertex of
+`Δ[1] × Δ[1]` but omits the top edge, so a simplicial retraction
+fixing all vertices cannot exist.
+The cylinder result here is `cylinderInclusion_mem_anodyneExtensions`.
 -/

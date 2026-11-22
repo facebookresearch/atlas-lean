@@ -6,19 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.SSetULiftPiNaturality
 public import MathlibExt.AlgebraicTopology.SimplicialSet.SSetULiftGroupoidNaturality
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.KanComplexW
-
-@[expose] public section
 
 /-!
 # Genuine original Kan weak class under universe lift
@@ -28,6 +20,8 @@ lift equivalences retain every source map and original basepoint. The
 canonical original Kan weak class is preserved and reflected by the
 same full coefficient universe lift, with no desired weak-map input.
 -/
+
+@[expose] public section
 
 noncomputable section
 

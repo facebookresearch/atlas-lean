@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import
@@ -24,9 +18,9 @@ public import Mathlib.AlgebraicTopology.ModelCategory.Basic
 /-!
 # Conditional TopCat model-structure assembly
 
-This file is part of the KQ3 layer. It packages the smallest conditional
+This file packages the smallest conditional
 assembly of the intended `TopCat` model structure in every universe from the
-existing KQ3 providers: the boundary/horn weak factorization systems
+existing providers: the boundary/horn weak factorization systems
 (`TopCatBoundaryWFS`, `TopCatHornWFS`) and weak homotopy equivalences
 (`TopCatWeakHomotopyCategory`), via the pinned `ModelCategory.mk'`
 constructor.
@@ -44,7 +38,7 @@ in scope):
 Neither equality is proved here. No unconditional global `ModelCategory`
 instance is created; the conclusion is a definition returning the packaged
 structure only under both hypotheses. This proves no weak-equivalence,
-fibration, or cofibration identification and adds no KQ4 statement.
+fibration, or cofibration identification.
 -/
 
 @[expose] public section

@@ -11,11 +11,14 @@ module
 public import MathlibExt.AlgebraicTopology.ModelCategory.OperadicAcyclicCells
 
 /-!
-Gluing for the actual pushout squares along genuine h-cofibrations.
-The proof retains arbitrary endpoints and uses the original cofibration/trivial
-fibration factorization of the other target leg. Conventional h-monoidality
-supplies the stated left properness. This extends the existing proper span
-proof with the actual h-cofibration cobase-change witnesses.
+# Gluing along h-cofibrations
+
+In a left proper model category, a commutative map between pushout squares
+along h-cofibrations induces a weak equivalence on the pushout objects when
+its three span maps are weak equivalences. The proof factors the remaining
+leg as a cofibration followed by a trivial fibration and uses weak-equivalence
+preservation under cobase change along h-cofibrations. The span endpoints are
+arbitrary, and conventional h-monoidality supplies the left-properness hypothesis.
 -/
 
 @[expose] public section

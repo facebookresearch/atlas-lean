@@ -6,23 +6,9 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.Topology.Category.TopCat.Limits.Products
-
-@[expose] public section
-
-open CategoryTheory CategoryTheory.Limits TopCat
-
-universe u
-
-namespace TopCat
 
 /-!
 # Pointwise transport for fixed-left product maps
@@ -31,6 +17,14 @@ The `prodIsoProd` inverse point `(k, x)` transported through
 `Limits.prod.map (𝟙 K) f` is the inverse point `(k, f x)`.
 Helper for the next fixed-left factorization packet.
 -/
+
+@[expose] public section
+
+open CategoryTheory CategoryTheory.Limits TopCat
+
+universe u
+
+namespace TopCat
 
 /-- Pointwise transport of a `prodIsoProd` inverse point through a fixed-left
 product map. -/

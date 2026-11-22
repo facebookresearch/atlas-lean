@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.HornColimits
@@ -21,7 +15,7 @@ public import
 /-!
 # Realized horn inclusions are closed embeddings
 
-This file is part of the KQ3 layer. For `n : ℕ` and `i : Fin (n + 1)`, the horn
+For `n : ℕ` and `i : Fin (n + 1)`, the horn
 `Λ[n, i]` is a subcomplex of `Δ[n]`, hence its inclusion is a monomorphism; both
 facts below are one-line corollaries of the generic subcomplex-mono provider
 `SSet.closedT1Embeddings_toTop_map_of_mono`, with the closed-embedding form via

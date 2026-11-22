@@ -6,16 +6,21 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import Mathlib.CategoryTheory.Functor.Category
 public import Mathlib.CategoryTheory.Whiskering
+
+/-!
+# Iteration of endofunctors and intertwining transformations
+
+The construction `iterate F n` composes an endofunctor with itself, starting
+from the identity functor, and preserves every object property preserved by
+`F`. A natural transformation `τ : G ⋙ F ⟶ F ⋙ H` induces a comparison
+`iterate G n ⋙ F ⟶ F ⋙ iterate H n`. Its zero component is the identity,
+and each successor component is the corresponding component of `τ`
+followed by `H` applied to the preceding comparison.
+-/
 
 @[expose] public section
 

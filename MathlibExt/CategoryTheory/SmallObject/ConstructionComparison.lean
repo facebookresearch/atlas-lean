@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.CategoryTheory.SmallObject.Construction
@@ -20,7 +14,8 @@ public import Mathlib.CategoryTheory.Functor.FullyFaithful
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Products
 public import Mathlib.CategoryTheory.Limits.Preserves.Shapes.Square
 
-/-! # Canonical comparison of one-step small-object attachments
+/-!
+# Canonical comparison of one-step small-object attachments
 
 The original whole generator labels, chosen coproducts and pushouts are
 mapped through a full faithful colimit-preserving functor. Their universal

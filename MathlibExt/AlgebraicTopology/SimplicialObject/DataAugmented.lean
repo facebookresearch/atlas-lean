@@ -6,29 +6,25 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialObject.FromData
 public import Mathlib.CategoryTheory.Comma.Arrow
 
-@[expose] public section
-
-open CategoryTheory
-
-universe v u
-
-/-! # Augmented simplicial data
+/-!
+# Augmented simplicial data
 
 `Augmented C` is the comma category over the constant-data functor,
 mirroring `SimplicialObject.Augmented`. A degree-zero map `p : X.obj 0 ⟶ Q`
 lifts to `X ⟶ constData Q` iff it equalizes the two degree-one faces
 (`IsBalanced`); the lift iterates the zeroth face (`balancedExtension`).
 -/
+
+@[expose] public section
+
+open CategoryTheory
+
+universe v u
 
 namespace CategoryTheory.SimplicialObject.Data
 

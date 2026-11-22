@@ -1,22 +1,7 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
-Authors: Joël Riou
--/
-
--- Author: @toskua, Avocado
-/-
 Copyright (c) 2026 Joël Riou. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Joël Riou
+See NOTICE in the repository root for the original Mathlib attribution.
 -/
 module
 
@@ -52,7 +37,6 @@ pinned Mathlib `v4.33.0` (`db584cd`) on Lean `4.33`.
 * PR head: `28fbf220a205c47649528c7daacf165f7618caf8`
 * File: `Mathlib/AlgebraicTopology/SimplicialSet/FundamentalGroupoid/Homotopy.lean`
 * Blob: `863ff98a547c483d74dac8629e8f11d9d8b3ca3b`
-* Upstream author: Joël Riou (copyright header in upstream source)
 * Durable provenance: `BACKPORTS.md`
 
 ## Copied surface

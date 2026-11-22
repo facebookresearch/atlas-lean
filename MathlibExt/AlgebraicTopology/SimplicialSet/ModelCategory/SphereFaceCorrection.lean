@@ -6,68 +6,23 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.SSetDeformationRetract
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.SSetAnodyneLifting
 
-/-! # Correcting one face of a simplex along a rel-boundary homotopy
+/-!
+# Correcting a simplex face by a relative homotopy
 
-Given `w : Δ[m + 1] ⟶ F` into a Kan complex and a homotopy
-`H : HomotopyRel (δ k ≫ w) v (boundary m)` from the `k`-th face of `w`
-to `v`, stationary on the boundary `∂Δ[m]`, this module builds
-`w' : Δ[m + 1] ⟶ F` with `δ k ≫ w' = v` and all other faces unchanged.
-
-## Homotopy-extension (HEP) argument
-
-Write `B = ∂Δ[m + 1]`, `Hk = Λ[m + 1, k]`, `Fk = face {k}ᶜ` (the image of
-`δ k`), so `B = Hk ⊔ Fk` (`sup_horn_face`, via `horn_eq_iSup` and
-`boundary_eq_iSup`).
-
-1. **Boundary cylinder side.** On `Hk ⊗ Δ[1]` take the constant homotopy
-   `fst ≫ Hk.ι ≫ w` (`gHorn`); on `Fk ⊗ Δ[1]` take the transported
-   homotopy `(e.inv ▷ Δ[1]) ≫ H.h` (`gFace`), where
-   `e = faceSingletonComplIso k : Δ[m] ≅ Fk`. They agree on
-   `(Hk ⊓ Fk) ⊗ Δ[1]` (`agree_inf`): a simplex there lies over
-   `∂Δ[m]` under `e.inv` (`face_data`, a `succAbove` range argument),
-   where `H` is stationary (`HomotopyRel.stationary`). Gluing along the
-   tensored pushout `sqT` (the `BicartSq` `bicart` pushed through
-   `_ ⊗ Δ[1]`, which preserves colimits) yields
-   `gBd : B ⊗ Δ[1] ⟶ F`.
-2. **Prism extension.** Let `R = B.unionProd (face {0}) ≤ Δ[m + 1] ⊗ Δ[1]`.
-   Its inclusion is anodyne (`prismR_mem_anodyne`, via
-   `anodyneExtensions_unionProd_ι` and `horn_ι`, as in
-   `cylinderInclusion_mem_anodyneExtensions`). Glue `fst ≫ w` on
-   `Δ[m + 1] ⊗ {0}` (`gZero`) with `gBd` on `B ⊗ Δ[1]`; they agree on
-   `B ⊗ {0}` (`agree_prism`: both sides are `w` on `B`, using that
-   `{0}`-simplices of `Δ[1]` are constant `0` and `H` starts at
-   `δ k ≫ w`). This gives `gR : R ⟶ F`, extended across the anodyne
-   inclusion to `Φ : Δ[m + 1] ⊗ Δ[1] ⟶ F` by Kan fibrancy
-   (`anodyneExtensions.exists_lift_of_isFibrant`).
-3. **Endpoints.** `w' = ι₁ ≫ Φ`. On face `k`, `Φ` restricts through
-   `gBd` to `gFace`, whose `ι₁` end is `e.inv ≫ v`, cancelled by
-   `e.hom` to `v`. On face `j ≠ k`, which factors through the horn
-   (`horn.ι_ι`), `Φ` restricts to the constant `gHorn` side, whose `ι₁`
-   end is the original face of `w` (`ι₁_fst`).
-
-## Nonclaims
-
-* No `π`, sphere-filler theorem, `KanComplex.W`, fixed-top lifting, or
-  model structure is used: only Kan extension across an anodyne prism
-  inclusion plus the supplied homotopy.
-* The boundary decomposition `B = Hk ⊔ Fk` is proved from the
-  `iSup` presentations; the intersection `Hk ⊓ Fk` is never computed as
-  a subcomplex — agreement is proved pointwise via `face_data`.
-* `m = 0` needs no special case: then `H` is relative to
-  `boundary 0 = ⊥` and the `succAbove` range argument in `face_data`
-  still produces the required boundary membership (vacuously, from an
-  empty intersection).
+Let `F` be a Kan complex, `w : Δ[m + 1] ⟶ F`, and let a homotopy relative
+to `boundary m` connect the face `δ k ≫ w` to `v : Δ[m] ⟶ F`.
+`KanComplex.exists_correct_face_of_HomotopyRel` produces a simplex whose
+`k`-th face is exactly `v` and whose other faces agree with those of `w`.
+The construction glues the supplied homotopy with the constant homotopy on
+the complementary horn, then extends across an anodyne boundary-cylinder
+inclusion.
+The argument also applies when `m = 0`, where the relative boundary is
+empty.
 -/
 
 @[expose] public section

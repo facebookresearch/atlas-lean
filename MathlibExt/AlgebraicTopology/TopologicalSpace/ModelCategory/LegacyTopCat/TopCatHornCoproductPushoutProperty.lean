@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import
@@ -19,22 +13,16 @@ public import
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.LegacyTopCat.TopCatHornCoproductPushoutWeakHomotopy
 
 /-!
-# Horn-coproduct pushout legs are weak homotopy equivalences
+# Pushouts of coproducts of realized horns
 
-Provenance: exact base `d26b838e56fbeb0d9d71f605237e10d0f0aa72c5`;
-continues accepted `hornFamily_arrow_eq` extraction and
-`hornCoproduct_pushout_of_arrow_iso` bridge. No transfinite
-composition, further closure, or model structure is claimed.
-
-What is proved: every `Type u` horn family is pointwise an `Arrow`
-realized inclusion with `N j = n j + 1` (positivity `Nat.succ_pos _`);
-any pushout with top `Arrow`-iso to the categorical `Sigma.map` of
-such a family has its leg in `weakHomotopyEquivalences`; hence an
-arbitrary `colimitsOfShape (Discrete J)` coproduct presentation is
-`Arrow`-iso to that `Sigma.map` (via `Sigma.isoColimit`,
-`coconePointUniqueUpToIso`, pointwise `Sigma.mapIso`/`Arrow.isoMk`),
-closing `(coproducts realizedHornInclusions).pushouts ≤
-weakHomotopyEquivalences`.
+Every family of arrows in `realizedHornInclusions` admits a presentation
+by realized horn inclusions, and every categorical coproduct presentation
+is isomorphic in `Arrow TopCat` to the corresponding `Sigma.map`.
+A pushout whose top arrow is isomorphic to such a coproduct has its other
+leg in `weakHomotopyEquivalences`.
+Consequently, `coproducts_pushouts_le_weakHomotopyEquivalences` proves
+`(coproducts realizedHornInclusions).pushouts ≤ weakHomotopyEquivalences`
+for arbitrary indexing types in the stated universe.
 -/
 
 @[expose] public section

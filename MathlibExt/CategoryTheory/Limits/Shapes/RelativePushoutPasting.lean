@@ -6,21 +6,9 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import Mathlib.CategoryTheory.MorphismProperty.Limits
-
-section
-
--- Author: @toskua, Codex
-
 
 /-!
 # Relative source enlargement for a morphism of actual pushout squares
@@ -30,6 +18,8 @@ give a pushout square whose left map is the actual lower relative corner and who
 map enlarges the relative source. No class preservation or relative-corner outcome is an
 input to the construction.
 -/
+
+section
 
 @[expose] public section
 
@@ -259,7 +249,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!

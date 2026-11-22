@@ -15,12 +15,18 @@ public import Mathlib.CategoryTheory.Limits.Connected
 public import Mathlib.CategoryTheory.Adjunction.Limits
 
 /-!
-P&S 1510.04969v3, lemma i.cofibrations (iv), from actual weak colimit
-comparisons.
-For the original maps of a connected diagram, construct both functor-category
-pushouts under the actual colimit source. Their colimit endpoint isos retain
-the original caller pushout legs. The original weak map then passes to its
-actual pushout through the given weak colimit-comparison closure.
+# Connected colimits of h-cofibrations
+
+In a model category with colimits of a connected shape `J`, stability of weak
+equivalences under `J`-colimits implies stability of h-cofibrations under the
+same colimits.
+The proof identifies colimits of pushout diagrams with pushouts of colimit
+maps, preserving both pushout legs.
+Filtered-colimit stability of weak equivalences, together with the stated
+colimit existence, then yields transfinite-composition stability of
+h-cofibrations.
+This is the colimit argument in Pavlov–Scholbach, arXiv:1510.04969v3,
+Lemma `i.cofibrations` (iv).
 -/
 
 @[expose] public section

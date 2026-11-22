@@ -6,14 +6,20 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
-
 import MathlibExt.CategoryTheory.SmallObject.DiagramEvaluation
+
+/-!
+# Evaluation of relative cells in diagram categories
+
+Consider a relative cell complex whose generators are images of base
+arrows under the left adjoints to diagram evaluation.
+If evaluation at `k` preserves the stated total and limit-stage colimits,
+attaching coproducts, and pushout squares, `evaluateFreeDiagrams` gives a
+relative cell complex for the evaluated arrow using the base generators.
+Its diagram and inclusions are the evaluations of the starting complex;
+`evaluateFreeDiagramsOfSmall` keeps the original cell universe when each
+expanded attachment-label type satisfies the stated smallness bound.
+-/
 
 set_option autoImplicit false
 noncomputable section

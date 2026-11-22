@@ -6,29 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
-
 import MathlibExt.AlgebraicTopology.ModelCategory.FunctorProjective.SourceConstruction
 
 /-!
-# Independence of the original ordinary projective construction
+# Independence of projective model constructions
 
-For one fixed coefficient model, two actual generating/index witnesses give
-the same projective model on the unchanged original functor category. Their
-working universes and selected small-index categories may be independent.
-
-Their native small-object algorithms retain their own ranks and choices.
-For each original whole Arrow, lifting constructs actual natural transformations
-between the middle diagrams, preserving both original triangles. These maps
-are objectwise weak, and the associated Arrow maps have identity endpoints.
-No equality of algorithms, inverse law, or Arrow-variable naturality of the
-separately selected lifts is asserted. These are derived consequences of the
-original class formulas and weak factorization systems.
+Two cofibrant-generation and small-index witnesses for the same coefficient
+model define the same projective model structure on the functor category,
+even when their working universes and chosen small index categories differ.
+For each arrow, lifting gives comparison maps between the two factorization
+objects that preserve both triangles. These maps are objectwise weak
+equivalences, and the corresponding arrow maps have identity endpoints.
+The comparison maps are chosen separately for each arrow.
 -/
 
 set_option autoImplicit false
@@ -212,8 +201,8 @@ variable {D : Type uD} [Category.{vD} D] {C : Type uC} [Category.{vC} C]
   {kappa' : Cardinal.{w'}} [Fact kappa'.IsRegular] [OrderBot kappa'.ord.ToType]
   (d' : CofibrantGenerationData C kappa') (s' : Functor.EssentialIndexData.{w'} D C)
 
-/-- The conventional source-only entry agrees with every independently chosen
-actual coefficient generation and complete original small-index equivalence. -/
+/-- The combinatorial projective construction agrees with the construction from
+independently chosen coefficient generation and small-index equivalence data. -/
 theorem modelCategory_eq_fromData :
     modelCategory (D := D) (C := C) = FromData.modelCategory d' s' := by
   let : Fact (cardinal C).IsRegular := cardinal_regular C

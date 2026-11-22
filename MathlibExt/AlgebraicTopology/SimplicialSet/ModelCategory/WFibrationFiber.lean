@@ -6,17 +6,20 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.FibrationSequence
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.KanComplexW
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.SSetFiberEdge
+
+/-!
+# Fibers of weak Kan fibrations
+
+A Kan fibration between Kan complexes that belongs to KanComplex.W is surjective on
+vertices. Every fiber therefore has a vertex, and each of its pointed homotopy sets is a
+subsingleton in every degree. The proofs use the fiber homotopy sequence and the bijectivity
+conditions defining W.
+-/
 
 @[expose] public section
 

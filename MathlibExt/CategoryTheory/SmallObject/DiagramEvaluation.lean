@@ -6,15 +6,19 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
-
 import Mathlib.CategoryTheory.Adjunction.Evaluation
 import MathlibExt.CategoryTheory.SmallObject.SelectiveMapping
+
+/-!
+# Evaluation of free-diagram cell attachments
+
+Evaluation at `k` sends a free-diagram cell at `loc t` to a coproduct of
+the base generator indexed by morphisms `loc t ⟶ k`. Flattening the nested
+coproducts transports a free-diagram attachment square to a base-category
+attachment square, retaining its evaluated point, map and legs. The cell
+labels are pairs of an original label and an index morphism; an explicit
+smallness hypothesis allows these labels to be reindexed in the chosen universe.
+-/
 
 set_option autoImplicit false
 noncomputable section

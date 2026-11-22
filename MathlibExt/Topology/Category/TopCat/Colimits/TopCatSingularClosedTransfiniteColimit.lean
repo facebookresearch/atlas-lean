@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 public import Mathlib.AlgebraicTopology.SingularSet
 public import Mathlib.Topology.Compactness.Compact
@@ -22,10 +16,11 @@ public import
   MathlibExt.Topology.Category.TopCat.Embedding.ClosedT1Embedding
 public import
   MathlibExt.Topology.Category.TopCat.Colimits.TopCatSingularClosedSequentialColimit
+
 /-!
 # Compact-separable maps factor through closed-T1 transfinite colimits
 
-For `J`-chains in KQ3 `closedT1Embeddings` with `J` linear and bottomed,
+For `J`-chains in `closedT1Embeddings` with `J` linear and bottomed,
 compact-separable-domain maps into the colimit factor through a stage;
 hence each `TopCat.toSSet` simplex does. Countable density splits the
 cover into a bounded case (closure inside a closed leg range) and a
@@ -35,6 +30,7 @@ covers every `TransfiniteCompositionOfShape` witness shape.
 The compact/separable source has an independent universe from the ambient
 spaces. Base `f3d3b99b`; no colimit instance or preservation claimed.
 -/
+
 @[expose] public section
 universe w v u
 open CategoryTheory Limits Topology

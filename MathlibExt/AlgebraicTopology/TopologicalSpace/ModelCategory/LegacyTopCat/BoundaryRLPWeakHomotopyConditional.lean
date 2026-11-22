@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.BoundaryRLPSingularRLP
@@ -23,9 +17,8 @@ import
 /-!
 # Conditional boundary-RLP weak-equivalence bridge
 
-This file is part of the KQ3 layer. It composes the staged KQ3
-adjunction-transport provider `TopCat.boundaryRLP_le_inverseImage_I_rlp`
-with an explicit Kan-restricted KQ2 hypothesis
+This file composes the adjunction-transport provider `TopCat.boundaryRLP_le_inverseImage_I_rlp`
+with an explicit Kan-restricted simplicial hypothesis
 `∀ {X Y : SSet.{u}} [SSet.KanComplex X] [SSet.KanComplex Y] {f : X ⟶ Y},
 SSet.modelCategoryQuillen.I.{u}.rlp f → SSet.KanComplex.W.{u} f` to obtain
 `TopCat.realizedBoundaryInclusions.rlp ≤ TopCat.weakHomotopyEquivalences`.
@@ -49,7 +42,7 @@ universe u
 
 namespace TopCat
 
-/-- Conditional bridge: the Kan-restricted KQ2 boundary-RLP hypothesis implies realized
+/-- Conditional bridge: the Kan-restricted simplicial boundary-RLP hypothesis implies realized
 boundary-RLP maps are weak homotopy equivalences. The unrestricted `I.rlp ≤ W`
 is false by the non-Kan identity counterexample. -/
 theorem boundaryRLP_le_weakHomotopyEquivalences_of_kanRestricted_Irlp_le_W

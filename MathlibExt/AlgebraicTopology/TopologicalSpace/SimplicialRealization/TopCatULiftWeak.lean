@@ -6,20 +6,12 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.SimplicialRealization.TopCatULiftSingularIso
 public import MathlibExt.AlgebraicTopology.SimplicialSet.SSetULiftKanWeak
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.LegacyTopCat.TopCatWeakHomotopyEquivalence
 public import MathlibExt.Topology.Homotopy.TopCat.Singular.SingularKanPolymorphic
-
-@[expose] public section
 
 /-!
 # Genuine original topological weak class under universe lift
@@ -29,6 +21,8 @@ continuous source map. Actual singular Kan fibrancy and the genuine
 coefficient-lift Kan weak iff prove preservation and reflection of the
 same original topological weak class, across independent universes.
 -/
+
+@[expose] public section
 
 noncomputable section
 

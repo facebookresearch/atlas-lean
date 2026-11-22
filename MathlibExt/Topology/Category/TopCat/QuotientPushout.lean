@@ -10,6 +10,16 @@ module
 
 public import MathlibExt.Topology.Category.TopCat.QuotientHomotopy
 
+/-!
+# Topological pushouts and quotient homotopies
+
+The coproduct map to a pushout in TopCat is a quotient map. Conversely, a pushout cocone is
+colimiting when its coproduct map is quotient and every competing cocone map factors through
+it. The file identifies categorical coproducts with topological sums and combines homotopies
+on their two summands. Homotopies on pushout legs descend when they agree on the gluing
+space at every time, with explicit formulas on both legs.
+-/
+
 @[expose] public section
 
 open CategoryTheory CategoryTheory.Limits TopCat Topology

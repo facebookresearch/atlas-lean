@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.Analysis.Real.Cardinality
@@ -24,7 +18,7 @@ public import
 /-!
 # Cardinal bound for realized TopCat generators
 
-This file is part of the KQ3 layer. It fixes one regular cardinal,
+This file fixes one regular cardinal,
 `realizedGeneratorCardinal = succ 𝔠`, and bounds real standard simplices,
 realized standard simplices, realized finite simplicial sets, realized
 boundaries, and realized horns by `𝔠`. The index types `ℕ` and

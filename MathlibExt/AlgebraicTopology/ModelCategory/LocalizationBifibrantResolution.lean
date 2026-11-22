@@ -1,13 +1,16 @@
 /-
-Copyright (c) 2026 Tsutomu Okano. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: @toskua, Avocado
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
 -/
 
 import MathlibExt.AlgebraicTopology.ModelCategory.HomotopyCategory
 import Mathlib.CategoryTheory.HomCongr
 
-/-! # Actual bifibrant resolutions of localization morphisms
+/-!
+# Actual bifibrant resolutions of localization morphisms
 
 The model factorization axioms supply a fibrant resolution and then a
 cofibrant resolution of that fibrant object. Both original weak arrows

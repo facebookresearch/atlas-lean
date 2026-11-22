@@ -10,6 +10,16 @@ module
 
 public import Mathlib.CategoryTheory.Limits.Preserves.Basic
 
+/-!
+# Preservation of colimits by retract functors
+
+If `F` is a retract of `G` in the functor category and `G` preserves the
+colimit of a diagram `K`, then `F` preserves that colimit. Consequently,
+preservation of all colimits of a given shape is stable under retracts
+of functors. The proof transports the cocone's universal property through
+the inclusion and retraction natural transformations.
+-/
+
 @[expose] public section
 
 universe w' w v₁ v₂ u₁ u₂

@@ -1,12 +1,15 @@
 /-
-Copyright (c) 2026 Tsutomu Okano. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: @toskua, Avocado
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
 -/
 
 import MathlibExt.AlgebraicTopology.ModelCategory.LocalizationBifibrantResolution
 
-/-! # The actual chosen bifibrant resolution is a full homotopy-category equivalence
+/-!
+# The actual chosen bifibrant resolution is a full homotopy-category equivalence
 
 The same model-factorization choices and fundamental-lemma representatives
 define an actual functor on every ordinary homotopy-category arrow. The

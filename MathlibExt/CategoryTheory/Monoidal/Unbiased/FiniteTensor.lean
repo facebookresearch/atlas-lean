@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
 module
 
 public import MathlibExt.CategoryTheory.Monoidal.Unbiased.FiniteFamily
@@ -18,6 +13,17 @@ import Mathlib.Logic.Equiv.Defs
 import Mathlib.Logic.Equiv.Prod
 import Mathlib.CategoryTheory.Whiskering
 import Mathlib.CategoryTheory.Functor.Category
+
+/-!
+# Coherent tensor products of finite families
+
+`FiniteTensor V` is an unbiased tensor functor `FiniteFamily V ⥤ V`
+equipped with singleton and flattening natural isomorphisms.
+Its two unit laws and its flattening associativity law express the
+pseudoalgebra coherence for the finite-family construction.
+The module constructs the finite-family reindexing isomorphisms and derives
+componentwise coherence and interchange formulas for fibered maps.
+-/
 
 @[expose] public section
 

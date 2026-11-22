@@ -6,17 +6,9 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.SSetULiftPointedSimplex
-
-@[expose] public section
 
 /-!
 # Both original pointed relation directions under universe lift
@@ -25,6 +17,8 @@ The same full original relation simplex lifts and lowers by the actual
 scalar Hom dictionary. Every distinguished face and all other original
 constant faces are retained at independent coefficient universes.
 -/
+
+@[expose] public section
 
 noncomputable section
 

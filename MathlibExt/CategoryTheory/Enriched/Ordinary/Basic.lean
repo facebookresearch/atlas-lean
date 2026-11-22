@@ -6,16 +6,22 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
 module
 
 public import Mathlib.CategoryTheory.Enriched.Basic
 public import Mathlib.CategoryTheory.Enriched.Ordinary.Basic
 public import Mathlib.CategoryTheory.Monoidal.Closed.Enrichment
+
+/-!
+# Ordinary maps and enriched Hom objects
+
+For an enriched ordinary category, ordinary identities and composition agree with the
+induced whiskering maps on enriched Hom objects. Commutative ordinary squares give
+corresponding enriched whiskering equations, and ordinary isomorphisms induce enriched Hom
+isomorphisms. An enriched functor has an underlying ordinary functor with explicit object
+and Hom-map formulas; for a monoidal closed target, an additional formula describes its
+uncurried action on ordinary maps.
+-/
 
 @[expose] public section
 

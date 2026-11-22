@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.AnodyneExtensions.Basic
@@ -19,6 +13,17 @@ public import Mathlib.AlgebraicTopology.SimplicialSet.Monomorphisms
 public import Mathlib.AlgebraicTopology.SimplicialSet.Presentable
 
 import Mathlib.CategoryTheory.MorphismProperty.TransfiniteComposition
+
+/-!
+# Small-object factorizations of simplicial maps
+
+The boundary inclusions `I` admit the small-object argument at `aleph0`,
+and `I.rlp.llp` is the class of simplicial monomorphisms. This gives a
+functorial factorization into a monomorphism followed by an `I.rlp` map.
+The anodyne-extension small-object argument gives a second functorial
+factorization into an anodyne extension followed by a fibration, with
+explicit factorization data for each simplicial map.
+-/
 
 @[expose] public section
 

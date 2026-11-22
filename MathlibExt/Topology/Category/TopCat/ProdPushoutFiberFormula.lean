@@ -6,25 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.Topology.Category.TopCat.ProdMapPointwise
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
 public import Mathlib.CategoryTheory.Limits.Types.Colimits
-
-@[expose] public section
-
-open CategoryTheory CategoryTheory.Limits TopCat
-
-universe u
-
-namespace TopCat
 
 /-!
 # Pointwise formula for fixed-left product-pushout fibers
@@ -33,6 +19,14 @@ For one product cocone, a family agreeing with both legs on
 inverse-pair points agrees everywhere with the coproduct descent map
 applied through the product comparison. Only a one-point descent formula.
 -/
+
+@[expose] public section
+
+open CategoryTheory CategoryTheory.Limits TopCat
+
+universe u
+
+namespace TopCat
 
 /-- One-point descent formula for a fixed-left product cocone. -/
 theorem prodPushout_fiber_formula

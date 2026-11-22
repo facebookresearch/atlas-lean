@@ -6,17 +6,9 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.SSetULiftPiEquivalence
-
-@[expose] public section
 
 /-!
 # Exact original source-map naturality of Kan homotopy universe lift
@@ -26,6 +18,8 @@ commute with the canonical coefficient lift. The original quotient
 representative induction proves the whole based homotopy-group square
 in every dimension and independent coefficient universe.
 -/
+
+@[expose] public section
 
 noncomputable section
 

@@ -6,40 +6,22 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.KanComplex.HomotopyGroup
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.SphereFaceCorrection
 public import MathlibExt.AlgebraicTopology.SimplicialSet.StdSimplexContraction
 
-/-! # Sphere fillers in weakly contractible Kan complexes
+/-!
+# Sphere fillers in weakly contractible Kan complexes
 
-Given a Kan complex `F` with a chosen vertex `x₀` whose pointed homotopy
-groups `π n F x` are subsingletons for every `n` and every basepoint `x`,
-every boundary sphere `s : ∂Δ[n] ⟶ F` extends over `Δ[n]`.
-
-Live proof by ordinary induction on `n`. The `n = 0` case is the constant map
-at `x₀` by boundary extensionality. For the step `A(m) → A(m + 1)`, fill the
-strictly lower-dimensional ridge of the chosen face by the induction
-hypothesis, contract that filler with `homotopyIdConstLast`, use two strict
-`{0}`-cap anodyne homotopy extensions (first in `Δ[m]` to a constant-ridge
-face, second from the face subcomplex into the boundary to a modified boundary
-map), fill the resulting horn by Kan filling, use pointed `π`
-subsingletonness plus the accepted face-correction theorem
-`exists_correct_face_of_HomotopyRel` to swap in the true face, then transport
-back through a strict `{1}`-capped prism (anodyne by pushout-product),
-restricting at `ι₀` to a filler of the original sphere. Only strictly
-lower-dimensional fillers, Kan horn fillers, single-cap anodyne lifts, and the
-provider are used.
-
-Explicit nonclaims: no `I.rlp` characterization, no minimal-fibration theorem,
-no model-category instance, and no generated-root change.
+In a Kan complex with a chosen vertex and subsingleton pointed homotopy
+groups at every degree and basepoint, each boundary sphere `∂Δ[n] ⟶ F`
+extends over `Δ[n]`. The induction uses lower-dimensional fillers,
+`homotopyIdConstLast`, single-cap anodyne extensions and Kan horn filling.
+The theorem `exists_correct_face_of_HomotopyRel` corrects the distinguished
+face using pointed homotopy-group subsingletonness, and a capped prism
+transports the result back to a filler of the original sphere.
 -/
 
 @[expose] public section

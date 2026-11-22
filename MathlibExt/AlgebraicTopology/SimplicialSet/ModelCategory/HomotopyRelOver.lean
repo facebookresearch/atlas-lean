@@ -6,27 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.SSetDeformationRetract
 
 /-!
-This module defines `HomotopyRelOver p f g A`: a homotopy relative to `A`
-with source endpoint `f`, target endpoint `g`, stationary on `A`, and lying
-over `f ≫ p`.
+# Relative homotopies over a simplicial map
 
-* `refl` is unconditional and constant from `f` to `f`.
-* `symm` requires `[Fibration p]` and uses outer horn `Λ[2,2]`.
-* `trans` requires `[Fibration p]` and uses inner horn `Λ[2,1]`.
-
-This module provides no associativity/unit/coherence laws and no
-minimal-fibration wrapper.
+`HomotopyRelOver p f g A` is a homotopy from `f` to `g`, stationary on the
+subcomplex `A` and lying over `f ≫ p`. Reflexivity is unconditional.
+Symmetry requires `[Fibration p]` and uses the outer horn `Λ[2,2]`;
+composition requires the same hypothesis and uses the inner horn `Λ[2,1]`.
+The constructions preserve the relative and over-map conditions.
 -/
 
 @[expose] public section

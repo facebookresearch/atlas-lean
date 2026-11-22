@@ -6,17 +6,20 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.Topology.Category.TopCat.ProdCoproduct
 public import MathlibExt.Topology.Category.TopCat.ProdCoequalizer
 public import Mathlib.CategoryTheory.Limits.Constructions.LimitsOfProductsAndEqualizers
+
+/-!
+# Colimit preservation by products in `TopCat`
+
+For a locally compact space `K : TopCat.{u}`, the fixed-left product
+functor preserves all `u`-small colimits. The result combines preservation
+of coproducts and coequalizers; local compactness is required on the
+fixed factor.
+-/
 
 @[expose] public section
 
@@ -28,9 +31,8 @@ namespace TopCat
 
 variable (K : TopCat.{u}) [LocallyCompactSpace (↑K : Type u)]
 
-/-- Fixed-left TopCat product with a locally compact left factor preserves all `u`-small
-colimits. Requires `[LocallyCompactSpace (↑K : Type u)]` on the fixed left factor `K`.
-This proves no arbitrary-left-factor result and carries no model-category claim. -/
+/-- Fixed-left product with a locally compact factor `K` preserves all `u`-small
+colimits. -/
 instance preservesColimits_prodFunctorObj :
     PreservesColimitsOfSize.{u, u} (Limits.prod.functor.obj K) :=
   preservesColimits_of_preservesCoequalizers_and_coproducts _

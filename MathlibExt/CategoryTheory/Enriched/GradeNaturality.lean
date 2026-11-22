@@ -6,17 +6,21 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.CategoryTheory.Enriched.GradedYoneda
 public import MathlibExt.CategoryTheory.Enriched.GradedComposition
 public import Mathlib.CategoryTheory.Monoidal.Center
+
+/-!
+# Grade-first components of graded natural transformations
+
+For a monoidal closed category V and a grade Γ in its center, graded natural transformations
+between V-valued enriched functors are described by components Γ ⊗ F(a) ⟶ G(a). Currying and
+the half-braiding translate enriched naturality into an equation with the grade in the first
+tensor factor. The file reconstructs transformations from such components and proves the
+roundtrip, extensionality and regrading formulas.
+-/
 
 @[expose] public section
 set_option autoImplicit false

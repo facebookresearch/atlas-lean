@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import
@@ -25,8 +19,8 @@ public import Mathlib.Logic.Small.Defs
 /-!
 # Realized-cell closed-embedding bridge in `TopCat`
 
-This file is part of the KQ3 layer. It composes the accepted realized-generator
-bounds with the accepted closed-embedding stability package: both
+This file composes the realized-generator
+bounds with the closed-embedding stability package: both
 `TopCat.realizedBoundaryInclusions` and `TopCat.realizedHornInclusions` lie in
 `TopCat.closedT1Embeddings`, hence in `TopCat.closedEmbeddings`, and the latter
 is stable under coproducts, pushouts, and transfinite composition. The final

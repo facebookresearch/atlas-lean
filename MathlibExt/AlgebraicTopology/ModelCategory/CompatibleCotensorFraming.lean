@@ -6,13 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import Mathlib.AlgebraicTopology.SimplicialSet.StdSimplex
@@ -29,11 +22,6 @@ public import MathlibExt.AlgebraicTopology.TopologicalSpace.SimplicialRealizatio
 public import MathlibExt.CategoryTheory.Reedy.FiniteBoundaries
 public import MathlibExt.CategoryTheory.Reedy.Boundary
 
-section
-
--- Author: @toskua, Codex
-
-
 /-!
 # The original cotensor Hom equivalence and all three naturalities
 
@@ -41,6 +29,8 @@ Both actual parametrized adjunctions of the compatible action identify morphisms
 the actual cotensor with simplicial maps into the original enriched Hom. Every source,
 simplicial-parameter, and target map is retained, in both directions of the equivalence.
 -/
+
+section
 
 @[expose] public section
 
@@ -129,7 +119,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -231,7 +220,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -350,7 +338,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -436,7 +423,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -528,7 +514,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -588,7 +573,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -740,7 +724,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -869,7 +852,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -973,7 +955,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1109,7 +1090,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1226,7 +1206,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!

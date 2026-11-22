@@ -6,11 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
 module
 
 public import Mathlib.Topology.Connected.PathConnected
@@ -19,19 +14,12 @@ public import Mathlib.AlgebraicTopology.SimplicialSet.TopAdj
 public import Mathlib.Topology.Homotopy.TopCat.ZerothHomotopy
 
 /-!
-# Functoriality of `TopCat` zeroth homotopy
+# Functoriality of zeroth homotopy in `TopCat`
 
-Lightweight shared module holding the generic `TopCat` zeroth-homotopy API:
-the map on `ZerothHomotopy` induced by a continuous map, its `mk`/`id`/`comp`
-laws, the functor to `Type`, and both `zerothHomotopyEquiv` naturality
-directions. The block is moved verbatim in public names, types, and semantics
-from `MathlibExt.AlgebraicTopology.SingularHomology.HomologyZero` so that the
-singular-homology and simplicial `π₀` consumers can share one low module below
-the homology layer; their migrations follow in subsequent one-file steps and
-are neither edited nor imported here.
-
-Nonclaims: no homology theorem, no additivity, no `π₀`-identification beyond the
-two stated naturalities, and no coproduct functor (that stays with homology).
+A continuous map induces a map on `ZerothHomotopy`, with computation on
+representatives and identity and composition laws. These maps form the
+functor `zerothHomotopyFunctor : TopCat ⥤ Type`. The equivalence
+`zerothHomotopyEquiv` is natural in both its forward and inverse directions.
 -/
 
 @[expose] public section

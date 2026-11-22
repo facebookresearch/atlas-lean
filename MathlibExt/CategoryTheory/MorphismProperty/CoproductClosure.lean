@@ -6,19 +6,14 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 -- Original coproduct closure from cobase and transfinite composition.
 module
 
 public import MathlibExt.CategoryTheory.MorphismProperty.CoproductCellDecomposition
 public import Mathlib.SetTheory.Cardinal.Order
 
-/-! # Coproduct closure from original pushout cells
+/-!
+# Coproduct closure from original pushout cells
 
 The original Sigma.map is the SAME native colimit composite of the supplied
 original arrows. Only cobase/transfinite stability and structural coproduct

@@ -6,19 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.RealizationUniverseLift
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.SimplicialRealization.TopCatULiftWeak
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.RealizationWeakEquivalence
-
-@[expose] public section
 
 /-!
 # Genuine same-map realization weak universe lift
@@ -29,6 +21,8 @@ reflects the original weak class through its genuine singular Iso.
 Consequently the same arbitrary original simplicial weak map is
 preserved and reflected across independent coefficient universes.
 -/
+
+@[expose] public section
 
 noncomputable section
 

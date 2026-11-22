@@ -6,16 +6,21 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
-
 import MathlibExt.CategoryTheory.SmallObject.DiagramRelativeCells
 import MathlibExt.CategoryTheory.Adjunction.SourceHomColimit
 import Mathlib.CategoryTheory.SmallObject.IsCardinalForSmallObjectArgument
+
+/-!
+# Source smallness for free-diagram cell complexes
+
+Evaluation of a relative free-diagram cell complex gives a base `P`-cell
+complex when its evaluated Hom-indexed cell families are small and evaluation
+preserves the attaching coproducts, pushouts, limit stages and total colimit.
+The evaluated diagram and its endpoint inclusions are preserved. At a
+regular cardinal for which `P` admits the small-object argument, the base
+source-Hom preservation theorem and the free-at-object/evaluation adjunction
+then give colimit preservation for the corresponding free-diagram sources.
+-/
 
 set_option autoImplicit false
 noncomputable section

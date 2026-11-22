@@ -6,13 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import Mathlib.AlgebraicTopology.ModelCategory.Basic
@@ -25,12 +18,10 @@ public import MathlibExt.AlgebraicTopology.SimplexCategory.EpiInsertion
 public import MathlibExt.AlgebraicTopology.SimplexCategory.Reedy
 public import MathlibExt.CategoryTheory.Reedy.Corner
 
+/-!
+# Original coefficient copies in the actual finite tensor PP source -/
+
 section
-
--- Author: @toskua, Codex
-
-
-/-! # Original coefficient copies in the actual finite tensor PP source -/
 
 @[expose] public section
 
@@ -127,7 +118,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-! # The original coefficient and lower maps of a Reedy latching-corner datum -/
@@ -192,7 +182,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -264,7 +253,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-! # Original standard-boundary labels under the original epi operators -/
@@ -318,7 +306,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -584,7 +571,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -678,7 +664,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -827,7 +812,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1027,7 +1011,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1162,7 +1145,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-! # Original partial-factor coefficients in the actual tensor latching colimit -/
@@ -1234,7 +1216,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-! # Original old boundary coefficient lifts inside the actual native corner datum -/
@@ -1319,7 +1300,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-! # Original partial corner data extracted from an actual native tensor boundary corner -/
@@ -1517,7 +1497,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!
@@ -1672,7 +1651,6 @@ end
 
 section
 
--- Author: @toskua, Codex
 
 
 /-!

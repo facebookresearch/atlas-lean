@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import
@@ -22,18 +16,13 @@ public import Mathlib.AlgebraicTopology.SimplicialSet.FiniteProd
 public import Mathlib.Topology.Homeomorph.Lemmas
 
 /-!
-# Finite-by-finite realization product comparison
+# Finite-by-finite realization product comparisons
 
-For finite simplicial sets `K L : SSet.{u}`, the product comparison
-`Limits.prodComparison SSet.toTop K L` is an isomorphism.
-
-The underlying comparison is bijective because underlying realization
-preserves finite limits. The source realization is compact, while the product
-of the two target realizations is Hausdorff, so the continuous bijection is a
-homeomorphism.
-
-Explicit nonclaims: no arbitrary-product preservation, weak-equivalence,
-fibration, cofibration, DeltaGenerated-space, or model-category result.
+For finite simplicial sets `K L : SSet.{u}`, the comparison
+`Limits.prodComparison SSet.toTop K L` is an isomorphism. Underlying
+realization preserves finite limits, so the comparison is bijective.
+Its source is compact and its target is Hausdorff, making the continuous
+bijection a homeomorphism.
 -/
 
 @[expose] public section

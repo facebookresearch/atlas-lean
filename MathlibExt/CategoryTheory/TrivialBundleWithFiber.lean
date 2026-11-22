@@ -6,17 +6,21 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.CategoryTheory.Limits.Shapes.BinaryProducts.ProdComparison
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.HasPullback
 public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.IsPullback.Basic
+
+/-!
+# Fixed-fiber product presentations
+
+`TrivialBundleWithFiber F p` equips `p : E ⟶ B` with a second projection
+`E ⟶ F` exhibiting `E` as the categorical product of `B` and `F`.
+Such presentations are determined by their second projection.
+A pullback square over `p` transports the presentation to the pulled-back
+map, preserving `F` and composing the second projection with the map to `E`.
+-/
 
 @[expose] public section
 
@@ -28,12 +32,9 @@ open Limits
 
 variable {C : Type u} [Category.{v} C]
 
-/-- Fixed-fiber product presentation of a map.
-
-For a fixed fiber `F` and a map `p : E ⟶ B`, this packages a second
-projection `r : E ⟶ F` together with the limit structure exhibiting `E`
-as the binary product `B × F`. Only the fixed fiber is claimed; no chart
-beyond this single presentation, no gluing, and no model structure. -/
+/-- A product presentation of `p : E ⟶ B` with fixed fiber `F`,
+consisting of a second projection `r : E ⟶ F` and the limit structure
+exhibiting `E` as the binary product of `B` and `F`. -/
 structure TrivialBundleWithFiber (F : C) {E B : C} (p : E ⟶ B) where
   /-- Second projection to the fixed fiber. -/
   r : E ⟶ F

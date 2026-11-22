@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.LegacyTopCat.TopCatHomotopyEquivWeakHomotopy
@@ -28,12 +22,12 @@ public import Mathlib.CategoryTheory.MorphismProperty.Basic
 /-!
 # Coproducts of topological homotopy equivalences
 
-This file is part of the KQ3 layer. For a `Type u` family of topological
+For a `Type u` family of topological
 homotopy equivalences, the coproduct maps assemble into a homotopy equivalence
 of disjoint unions via `ContinuousMap.sigma` and product-coproduct
 distributivity. The categorical `Limits.Sigma.map` is identified with the
 bundled coproduct map through `TopCat.sigmaIsoSigma`, hence lies in
-`TopCat.weakHomotopyEquivalences` by the staged bridge.
+`TopCat.weakHomotopyEquivalences` by the bridge.
 No `SSet` coproduct, pushout, transfinite, factorization, or model claim.
 -/
 

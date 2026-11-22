@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 
 public import Mathlib.CategoryTheory.MorphismProperty.TransfiniteComposition
@@ -29,19 +23,16 @@ public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.Legacy
 /-!
 # Actual-cardinal and sequential horn closure using per-diagram singular preservation
 
-This file is part of the KQ3 layer, at exact base
-`0ac4b23289d86403f3cd7e195e6533b2eb53e5b5`.
-
-It combines `horn_rlp_llp_eq_cardinalOrd` or `horn_rlp_llp_eq_sequential`,
+This file combines `horn_rlp_llp_eq_cardinalOrd` or `horn_rlp_llp_eq_sequential`,
 horn-coproduct closed-`T1` inclusion, and
 `TopCat.weakHomotopyEquivalences.of_transfiniteComposition_closedT1`
 to prove `realizedHornInclusions.rlp.llp ≤ weakHomotopyEquivalences` without any
 global `PreservesColimitsOfShape` premise, delegating per-diagram preservation
 and well-order continuity to the provider.
 
-Remaining premise (either route suffices): `SSet.KanComplex.W` transfinite
+Required premise (either route suffices): `SSet.KanComplex.W` transfinite
 stability for the actual cardinal ordinal or the sequential (`ℕ`) shape.
-No global preservation, no model structure, no KQ4 content.
+No global preservation, no model structure.
 -/
 
 @[expose] public section

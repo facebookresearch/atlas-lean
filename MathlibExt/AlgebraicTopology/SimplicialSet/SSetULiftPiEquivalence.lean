@@ -6,18 +6,10 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua
--/
-
--- Author: @toskua
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialSet.SSetULiftPointedRelation
 public import MathlibExt.AlgebraicTopology.SimplicialSet.ModelCategory.HomotopyGroupMap
-
-@[expose] public section
 
 /-!
 # The same original Kan homotopy groups under coefficient universe lift
@@ -27,6 +19,8 @@ actual original relation simplex. The existing canonical quotient of
 that genuine relation gives the full homotopy-group equivalence in
 every degree and its exact original source-map naturality.
 -/
+
+@[expose] public section
 
 noncomputable section
 

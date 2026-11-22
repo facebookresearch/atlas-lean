@@ -6,13 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
-
 import MathlibExt.AlgebraicTopology.ModelCategory.CellularLocalEquivalenceClosure
 import MathlibExt.AlgebraicTopology.ModelCategory.LeftBousfieldLocalization.OriginalLocalMappingTests
 import MathlibExt.AlgebraicTopology.ModelCategory.LeftBousfieldLocalization.GeneratedLocalReplacement

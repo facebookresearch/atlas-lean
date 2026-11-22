@@ -6,15 +6,19 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Avocado
--/
-
--- Author: @toskua, Avocado
 module
 public import MathlibExt.CategoryTheory.Enriched.FunctorCategory
 public import Mathlib.CategoryTheory.EssentiallySmall
+
+/-!
+# Local smallness of enriched functor categories
+
+Over a braided monoidal closed base `V`, the category `EnrichedFunctorCat V A`
+is locally small whenever `A` is small and `V` is locally small in the same
+universe. A unit-graded natural transformation is determined by its ordinary
+components, embedding each morphism type into the corresponding family of
+base morphism types.
+-/
 
 @[expose] public section
 set_option autoImplicit false

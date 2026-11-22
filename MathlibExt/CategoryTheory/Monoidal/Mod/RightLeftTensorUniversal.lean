@@ -12,9 +12,16 @@ public import MathlibExt.CategoryTheory.Monoidal.Mod.RightLeftTensor
 public import Mathlib.CategoryTheory.Limits.Shapes.SplitCoequalizer
 
 /-!
-Universal properties and genuine free-left-module reduction for the existing
-noncommutative balanced tensor. The coequalizer is the existing degree-one
-monadic quotient; evaluation and the split free presentation supply the maps.
+# Universal property of the balanced module tensor
+
+For a monoid object `A` in a monoidal category with the stated small
+colimits, the balanced tensor of a right module carrier and a left module
+is the coequalizer of their two action maps.
+`tensorHomEquiv` identifies maps from this tensor with maps from the
+underlying tensor that equalize the action maps, giving descent,
+uniqueness, and extensionality laws.
+For a free left module, the split coequalizer yields `freeTensorIso` to
+`N.X ⊗ X`, with formulas for its projection and inverse.
 -/
 
 @[expose] public section

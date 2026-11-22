@@ -6,23 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Attribution for this imported development.
-Author: @toskua, Codex
-Author: @toskua, Codex
--/
-
--- Author: @toskua, Codex
 module
 
 public import Mathlib.CategoryTheory.Functor.Category
 public import Mathlib.CategoryTheory.Functor.Const
 public import Mathlib.CategoryTheory.Products.Basic
-
-section
-
--- Author: @toskua, Codex
-
 
 /-!
 # Actual evaluation comparisons for flipped framing parameters
@@ -31,6 +19,8 @@ Evaluation of a flipped bifunctor retains the original fixed-variable functor. F
 a constant-valued prolongation retains the original coefficient functor. The complete
 natural comparisons in both directions use the original identity component maps.
 -/
+
+section
 
 @[expose] public section
 
