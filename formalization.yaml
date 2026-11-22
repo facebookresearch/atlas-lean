@@ -39,10 +39,10 @@ project:
   # ATLAS contributors: the primary authors and Co-authored-by people of the
   # non-merge commits that touch the Lean sources of the live libraries,
   # counted once per commit after merging aliases, in decreasing order of
-  # commits (ties alphabetical); the Git history is authoritative. Authors of
-  # imported or adapted work are credited under related_formalizations, in
-  # provenance/ and in the files themselves. AI systems are credited under
-  # automation, not here.
+  # commits (ties alphabetical); the Git history is authoritative. Imported or
+  # adapted work is credited under related_formalizations, in provenance/ and,
+  # where the credit is available, in the files themselves. AI systems are
+  # credited under automation, not here.
   authors:
     - "Adam Kiezun"
     - "Jack McCarthy"
@@ -182,17 +182,20 @@ related_formalizations:
     relationship: "adapts"
     note: >-
       About half of the files of MathlibExt, CSLibExt, WantedExt and their test
-      libraries, including the Hasse and Kadison–Singer developments, were
-      imported from Formal-Math, a source snapshot written at Meta by its
-      employees with AI agents. The manifest provenance/formal-math-sync.json records, for each
-      imported file, its upstream hash and whether ATLAS keeps it identical or
-      diverges from it, and why; provenance/README.md describes the scheme.
+      libraries, including the Hasse and Kadison–Singer developments, came from
+      Formal-Math, a source snapshot maintained at Meta that includes
+      third-party work. The manifest provenance/formal-math-sync.json records
+      each tracked path's status, upstream hashes where available and the
+      reasons for divergences; provenance/README.md describes the scheme. Code
+      provenance and the available author credits are recorded across that
+      manifest and the files' headers and module documentation.
   - id: "https://github.com/facebookresearch/atlas-lean/tree/main/Atlas/StatisticalMechanics"
     relationship: "adapts"
     note: >-
       The Kingman, percolation-sharpness and Ising-sharpness results, with the
       modules they depend on, were ported from this archived development to the
-      root libraries; its MIGRATED.md maps each source file to its new module.
+      root libraries; its MIGRATED.md maps the ported source files to their
+      root modules.
   - id: "https://github.com/leanprover-community/mathlib4"
     relationship: "builds-on"
     note: >-
@@ -207,9 +210,8 @@ related_formalizations:
   - id: "https://github.com/anthropics/fermats-last-theorem"
     relationship: "adapts"
     note: >-
-      Several hundred MathlibExt files adapt declarations from this project.
-      Adapted files credit their sources in their headers or module
-      documentation, as do the files adapted from other projects.
+      Several hundred MathlibExt files adapt declarations from this project and
+      name their source files in attribution headers.
   - id: "https://github.com/facebookresearch/atlas-lean/tree/main/v1"
     relationship: "other"
     note: >-
@@ -315,11 +317,12 @@ fidelity:
   divergences: >-
     The Lean statements come from imported formalizations, ports and
     agent-written code (see related_formalizations and provenance/), and not
-    every statement has been checked by a person against its source. Where a
-    Lean statement differs from its source, for example a finite-dimensional or
-    squared form, its docstring says so; the notes on the main results above
-    summarize their scope. WantedExt states its entries without proofs, and
-    some of them are open conjectures.
+    every statement has been checked by a person against its source. Known
+    discrepancies with a source may be recorded in docstrings, in blueprint
+    pages or in held annotations in blueprint/links; the notes on the main
+    results above summarize their scope. WantedExt states its entries without
+    proofs: some are open conjectures, and some requested statements are known
+    to need correction rather than proof.
 
 review:
   status: "agent-reviewed"
@@ -342,6 +345,6 @@ alignment:
     explorer at https://facebookresearch.github.io/atlas-lean/ renders it.
 
 acknowledgements: >-
-  ATLAS builds on Mathlib, Batteries, CSLib and Physlib. Code imported or
-  adapted from other formalizations keeps its authors' attribution, in
-  provenance/ or in the headers and documentation of the files that use it.
+  ATLAS builds on Mathlib, Batteries, CSLib and Physlib. The provenance of
+  imported or adapted code, and the author credits available for it, are
+  recorded in provenance/ and in the headers and documentation of the files.
