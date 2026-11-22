@@ -47,4 +47,14 @@ example (ν : ℚ) :
     simp [map_mul, map_ofNat, smul_eq_mul, htwo]
     ring
 
+-- A non-heat profile exercises the residual identity with a nonzero result.
+example (ν : ℚ) :
+    constantCoeff
+      (pderiv (0 : Fin 2) (coleHopf ν 1 (1 + X 0 * X 1)) +
+        coleHopf ν 1 (1 + X 0 * X 1) *
+          pderiv 1 (coleHopf ν 1 (1 + X 0 * X 1)) -
+        C ν * pderiv 1 (pderiv 1 (coleHopf ν 1 (1 + X 0 * X 1)))) = -2 * ν := by
+  rw [coleHopf_residual ν (0 : Fin 2) 1 _ (by simp)]
+  simp [smul_eq_mul]
+
 #print axioms MvPowerSeries.pderiv_coleHopf_of_heat
