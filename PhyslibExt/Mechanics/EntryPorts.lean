@@ -67,15 +67,17 @@ coefficient and its validity box are supplied calibration evidence, not a proved
 load is heat per unit area; the heat into a surface needs a declared area to multiply it. No
 ablation, thermal-protection, empirical adequacy or system safety claim is made.
 
-Section F finds the peak drag deceleration along the profile. The deceleration
-`a(h) = ρ(h) * v(h) ^ 2 / (2 * β)` has altitude derivative
-`a'(h) = a(h) * (2 * K * exp (-h / H) - 1) / H`, so for `K > 0` its only stationary point is
-`hstar = H * log (2 * K)`: `a` increases with altitude below `hstar`, decreases above it, and
-`hstar` is its strict global maximum. On the finite band `[hmin, he]`, `hmin < he`, the peak is
-selected as `hstar` when `hstar` lies in the band and as the nearer endpoint otherwise (`hmin`
-when `hstar < hmin`, the entry altitude `he` when `hstar > he`); the selected altitude is the
-unique maximizer on the band. A stationary point below the band, for example below the ground
-when `2 * K < 1`, is not reached: every deceleration in the band stays strictly below its value.
+Section F finds the peak drag deceleration along the profile. For `H ≠ 0`, `β > 0` and
+`sin γ > 0` the deceleration `a(h) = ρ(h) * v(h) ^ 2 / (2 * β)` has altitude derivative
+`a'(h) = a(h) * (2 * K * exp (-h / H) - 1) / H`. For `ρ0, H, β, ve > 0` and `sin γ > 0`, which
+give `K > 0`, its only stationary point is `hstar = H * log (2 * K)`: `a` increases with altitude
+below `hstar`, decreases above it, and `hstar` is its strict global maximum. On the finite band
+`[hmin, he]`, `hmin < he`, the peak is selected as `hstar` when `hstar` lies in the band and as
+the nearer endpoint otherwise (`hmin` when `hstar < hmin`, the entry altitude `he` when
+`hstar > he`); under the same hypotheses the selected altitude is the unique maximizer on the
+band, and a stationary point below the band is not reached: every deceleration in the band stays
+strictly below its value. Since `H > 0` and `K > 0`, `hstar` lies below the ground `h = 0`
+exactly when `2 * K < 1`.
 
 ## ii. Key results
 
@@ -98,11 +100,11 @@ when `2 * K < 1`, is not reached: every deceleration in the band stays strictly 
 - `EntryPorts.ballisticDeceleration`, `EntryPorts.hasDerivAt_ballisticDeceleration`: the
   deceleration and its altitude derivative.
 - `EntryPorts.deriv_ballisticDeceleration_eq_zero_iff`,
-  `EntryPorts.ballisticDeceleration_lt_peak`: `hstar` is the only stationary point and the strict
-  global maximum.
+  `EntryPorts.ballisticDeceleration_lt_peak`: for `ρ0, H, β, ve > 0` and `sin γ > 0`, `hstar` is
+  the only stationary point and the strict global maximum.
 - `EntryPorts.bandPeakAltitude`, `EntryPorts.isMaxOn_bandPeakAltitude`,
-  `EntryPorts.ballisticDeceleration_lt_bandPeakAltitude`: the selected altitude on the band and its
-  maximality.
+  `EntryPorts.ballisticDeceleration_lt_bandPeakAltitude`: the selected altitude on the band and,
+  under the same hypotheses and `hmin < he`, its maximality.
 
 ## iii. Table of contents
 
@@ -607,21 +609,24 @@ lemma radiator_equilibrium_unique {ε σ qabs Tenv T₁ T₂ : ℝ} (hε : 0 < �
 
 /-! ## F. Peak deceleration on the entry band -/
 
-/-- Drag deceleration along the finite-entry profile, `a(h) = ρ(h) * v(h) ^ 2 / (2 * β)`: the
-magnitude of `v' = -ρ(h) * v ^ 2 / (2 * β)` at altitude `h`, for the exponential density and the
-profile `ballisticVelocity` with entry state `(he, ve)`. -/
+/-- Drag deceleration along the finite-entry profile, `a(h) = ρ(h) * v(h) ^ 2 / (2 * β)`, for the
+exponential density and the profile `ballisticVelocity` with entry state `(he, ve)`; for
+`ρ0 ≥ 0` and `β > 0` it is the magnitude of `v' = -ρ(h) * v ^ 2 / (2 * β)` at altitude `h`. -/
 noncomputable def ballisticDeceleration (ρ0 H β γ he ve h : ℝ) : ℝ :=
   exponentialDensity ρ0 H h * ballisticVelocity ρ0 H β γ he ve h ^ 2 / (2 * β)
 
-/-- Candidate peak-deceleration altitude `hstar = H * log (2 * K)`, `K = ballisticK ρ0 H β γ`,
-the only stationary point of the deceleration when `K > 0`; it does not depend on the entry
-state. It lies at or below `h = 0` when `2 * K ≤ 1`. -/
+/-- Candidate peak-deceleration altitude `hstar = H * log (2 * K)`, `K = ballisticK ρ0 H β γ`; it
+does not depend on the entry state. For `ρ0, H, β, ve > 0` and `sin γ > 0`, which give `K > 0`,
+it is the only stationary point and the strict global maximum of the deceleration
+(`deriv_ballisticDeceleration_eq_zero_iff`, `ballisticDeceleration_lt_peak`). For `H > 0` and
+`0 < 2 * K ≤ 1` it lies at or below `h = 0`. -/
 noncomputable def peakDecelerationAltitude (ρ0 H β γ : ℝ) : ℝ :=
   H * Real.log (2 * ballisticK ρ0 H β γ)
 
-/-- The peak altitude selected on the band `[hmin, he]`: `hstar` when it lies in the band,
-otherwise the nearer endpoint (`hmin` below the band, `he` above it), that is, `hstar` clamped to
-the band. -/
+/-- The peak altitude selected on the band `[hmin, he]`: `hstar` clamped to the band, which for
+`hmin < he` is `hstar` when it lies in the band and otherwise the nearer endpoint (`hmin` below the
+band, `he` above it). For `ρ0, H, β, ve > 0`, `sin γ > 0` and `hmin < he` it maximizes the
+deceleration on the band (`isMaxOn_bandPeakAltitude`). -/
 noncomputable def bandPeakAltitude (ρ0 H β γ hmin he : ℝ) : ℝ :=
   max hmin (min (peakDecelerationAltitude ρ0 H β γ) he)
 
@@ -645,7 +650,7 @@ lemma ballisticDeceleration_pos {ρ0 β ve : ℝ} (hρ0 : 0 < ρ0) (hβ : 0 < β
   exact div_pos (mul_pos (mul_pos hρ0 (Real.exp_pos _))
     (pow_pos (ballisticVelocity_pos hve ρ0 H β γ he h) 2)) (mul_pos two_pos hβ)
 
-/-- Derivative in altitude: for `β > 0` and a downward path, `sin γ > 0`,
+/-- Derivative in altitude: for `H ≠ 0`, `β > 0` and a downward path, `sin γ > 0`,
 `a'(h) = a(h) * (2 * K * exp (-h / H) - 1) / H`. -/
 lemma hasDerivAt_ballisticDeceleration {H : ℝ} (hH : H ≠ 0) (ρ0 β γ he ve h : ℝ) (hβ : 0 < β)
     (hγ : 0 < Real.sin γ) :
