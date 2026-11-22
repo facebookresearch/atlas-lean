@@ -32,9 +32,11 @@ UnsolvedMath record UM-00701349 (`KOU-17.47`), dataset ulamai/UnsolvedMath v1.8.
 `[G, G]` is `commutator G` and the class is `Group.nilpotencyClass`; groups are taken in `Type`.
 -/
 
-/-- Kourovka 17.47 (S. H. Ghate, A. S. Muktibodh): there is a bound `c` on the nilpotency class of
-the nilpotent groups `G` in which every coset `x[G, G]` with `x ∉ [G, G]` equals the conjugacy
-class `x^G`. -/
+/-- **Bounded class for nilpotent Camina-type groups.** Kourovka Problem 17.47 (S. H. Ghate,
+A. S. Muktibodh) asks whether this proposition holds: there is a natural number $c$ such that
+every nilpotent group $G$ in which, for every $x \notin [G, G]$, the coset $x[G, G]$ of the
+commutator subgroup $[G, G]$ equals the conjugacy class $x^G$ of $x$, has nilpotency class at
+most $c$. -/
 def nilpotentCaminaClassBounded : Prop :=
   ∃ c : ℕ, ∀ (G : Type) [Group G], Group.IsNilpotent G →
     (∀ x : G, x ∉ commutator G →
@@ -42,9 +44,16 @@ def nilpotentCaminaClassBounded : Prop :=
     Group.nilpotencyClass G ≤ c
 
 /--
-Resolved false: Ionin and Semidetnov (Answer 4.2) construct, for every integer `c ≥ 2`, a nilpotent
-group of class exactly `c` in which `x^G = x[G, G]` for every `x ∉ [G, G]`. The Kourovka Notebook
-(21st issue) answers 17.47 "No, there is no such bound". Source: E. I. Khukhro and V. D. Mazurov
+**Nilpotent Camina-type groups have unbounded class.** There is no natural number $c$ such that
+every nilpotent group $G$ in which, for every $x \notin [G, G]$, the coset $x[G, G]$ of the
+commutator subgroup $[G, G]$ equals the conjugacy class $x^G$ of $x$, has nilpotency class at
+most $c$. So Kourovka Problem 17.47 has a negative answer.
+
+Ionin and Semidetnov (Answer 4.2) construct, for every integer $c \ge 2$, a nilpotent group of
+class exactly $c$ in which $x^G = x[G, G]$ for every $x \notin [G, G]$. The Kourovka Notebook
+(21st issue) answers 17.47 "No, there is no such bound".
+
+Source: E. I. Khukhro and V. D. Mazurov
 (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49
 (2026), Problem 17.47 (S. H. Ghate, A. S. Muktibodh); resolution: V. Ionin and A. Semidetnov, On
 some more problems from the Kourovka Notebook, preprint, arXiv:2608.29219 (2026; solutions found
