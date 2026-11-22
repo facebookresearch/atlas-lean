@@ -31,6 +31,9 @@ page, `planned`. With --base-ledger, the ledger the base commit published must s
 with --base-links (the base commit's blueprint/links/) and --renames (`git diff --name-status -M BASE HEAD --
 blueprint/roadmap`), every change since the base commit is checked against the rows added since. Run
 with a Python that has Autoform and the site's Markdown extensions installed (see blueprint-pages.yml).
+
+The wiki job runs rollup the same way before render, for the card data the site shows (hooks/card_pages.py):
+rollup removes its output first and writes it, whole, only once the check passed, so an error leaves no card data.
 """
 
 from __future__ import annotations
@@ -915,8 +918,9 @@ def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict],
     else by Git's rename of its file (``renames``), which never overrides a known `id` or declaration. Two
     articles never become one, and one never becomes two. The rows added since are replayed in order over the
     base's addresses: each moves what its old address holds at that point, with that article's `id` (or, for an
-    article that had none, an `id` no other article of the base or the ledger ever had); a retirement names the
-    card's address at that point. Afterwards every article stands where the rows leave it and keeps its `id`; an
+    article that had none, an `id` no other article of the base or the ledger ever had), and a folder row moves the
+    folder alone, so each page and folder inside it that moves needs its own row; a retirement names the card's
+    address at that point. Afterwards every article stands where the rows leave it and keeps its `id`; an
     address that changed hands is a retired card's, held by its final replacement; and every card of the base
     that is no card any more has its retirement."""
     errors: list[str] = []
@@ -1005,16 +1009,13 @@ def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict],
             elif current != article_id:
                 errors.append(f"{MOVES}:{number}: {old_address} is {current}, not {article_id}")
                 continue
-            inside = [(key, article) for key, article in owner.items()
-                      if key == (kind, old_address) or kind == "folder" and key[1].startswith(f"{old_address}/")]
-            for key, article in inside:
-                del owner[key]
-            for (key_kind, address), article in inside:
-                moved = (key_kind, new_address + address[len(old_address):])
-                if ("page", moved[1]) in owner or ("folder", moved[1]) in owner:
-                    errors.append(f"{MOVES}:{number}: {moved[1]} already holds another article")
-                owner[moved] = article
-                where[id(article)] = moved
+            # A folder row moves the folder alone, its folder page and its address: each page and folder inside it
+            # that moves has its own row, so the history never depends on what the folder holds later.
+            del owner[(kind, old_address)]
+            if ("page", new_address) in owner or ("folder", new_address) in owner:
+                errors.append(f"{MOVES}:{number}: {new_address} already holds another article")
+            owner[(kind, new_address)] = moving
+            where[id(moving)] = (kind, new_address)
         elif set(row) == {"card", "folder", "replaced_by"}:
             card = by_base_id.get(row["card"])
             if card is None or not card.card:
@@ -1497,6 +1498,11 @@ def run(argv: list[str]) -> int:
     if argv not in (["check"],) and not (len(argv) == 2 and argv[0] == "rollup" and dependency_file is not None):
         print(__doc__, file=sys.stderr)
         return 2
+    output = Path(argv[1]) if argv[0] == "rollup" else None
+    if output is not None:
+        # The site shows card data only from a rollup that passed: an earlier rollup's file never outlives a
+        # failure of this one.
+        output.unlink(missing_ok=True)
     history = (base_file, base_links, renames_file)
     if any(option is not None for option in history) and not all(option is not None for option in history):
         # Half a history would check the ledger's prefix and skip the moves since the base commit.
@@ -1520,9 +1526,11 @@ def run(argv: list[str]) -> int:
     if errors or argv[0] == "check":
         return 1 if errors else 0
     result = rollup(dependencies, annotations, graph, committed, source_commit(), checked=True)
-    output = Path(argv[1])
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(result, ensure_ascii=False, indent=1, sort_keys=True) + "\n")
+    # Written whole or not at all.
+    partial = output.with_name(f".{output.name}.partial")
+    partial.write_text(json.dumps(result, ensure_ascii=False, indent=1, sort_keys=True) + "\n")
+    partial.replace(output)
     counts = result["counts"]
     print(f"{counts['uses']} card edges, {counts['needs']} main-statement edges, {counts['clusters']} cyclic clusters, "
           f"{counts['unassigned']} statement pages in no card of their subjects")
