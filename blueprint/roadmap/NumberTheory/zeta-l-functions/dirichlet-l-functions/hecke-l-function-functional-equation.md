@@ -17,8 +17,12 @@ $\mathbb{C}$, also when $\chi = |\cdot|^{i\tau}$. As an equality of finite value
 $s$, except, when $\chi = |\cdot|^{i\tau}$, at $s = -i\tau$ and $s = 1 - i\tau$, the possible poles of
 both sides (Poonen, Definition 5.20, Theorem 5.22 and the formula after it).
 
-The value $W(\chi) = \varepsilon(1/2, \chi)$ is the root number of this normalization, the constant
-in the equation written from $\Lambda(s, \chi)$ to $\Lambda(1 - s, \chi^{-1})$. Hecke completed his
+The value $W(\chi) = \varepsilon(1/2, \chi)$ is the root number of $\chi$, the central value of its
+$\varepsilon$-factor. Since $\varepsilon(s, \chi) = a e^{bs}$, the equation reads
+$\Lambda(s, \chi) = W(\chi) \, e^{b(s - 1/2)} \Lambda(1 - s, \chi^{-1})$; the factor $e^{b(s - 1/2)}$ is
+not constant unless $b = 0$, and the constant becomes $W(\chi)$ only after $\Lambda$ is normalized
+symmetrically, by a factor $e^{-bs/2}$ (applying the equation twice shows that $\chi^{-1}$ has the
+same $b$). Hecke completed his
 $L$-functions differently, as
 $\xi(s; \lambda) = \gamma(\lambda) \Gamma(s; \lambda) A^s \zeta(s; \lambda)$, with a product of Gamma
 factors $\Gamma(s; \lambda)$ and a constant $A$, and wrote his functional equation for a primitive
