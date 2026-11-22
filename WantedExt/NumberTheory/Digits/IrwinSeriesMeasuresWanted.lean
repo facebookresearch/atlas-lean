@@ -316,13 +316,24 @@ Article A11, definition of `μ_k` and Remark `rem:zero`. -/
 public theorem stringAtom_nil (b : ℕ) : stringAtom b [] = Measure.dirac 0 := by
   simp [stringAtom, stringWeight, normalizedStringValue, stringValue]
 
-/-- Theorem 1(a): under exactly the two displayed recurrences (packaged in
-`OrdinaryMomentRecurrence`), the family indexed by `m≥1` has ordered sum
-(`OrderedHasSum`: its partial sums over `Finset.range N` converge) equal to the
-Irwin sum minus the exact short block and `b` times the at-most-`k` length-`l`
-block. `HasSum` would be wrong here: in `ℝ` it forces absolute summability, but
-at `l = 1` the series can converge only conditionally (for example `b = 10`,
-`d = 0`, `k = 0`).
+/-- **Alternating series for the Irwin sum.** Let $b > 1$ and $d < b$ be natural numbers, let
+$(u_{j;m})_{j, m \in \mathbb{N}}$ be a family of real numbers satisfying the ordinary moment
+recurrence for $b$ and $d$, and let $k$ and $l \ge 1$ be natural numbers. For a natural number
+$n$ write $c(n)$ for the number of occurrences of the digit $d$ in the base-$b$ expansion of $n$,
+and let $H^{(k)}_{b,d}$ be the Irwin sum, the sum of $1/n$ over the positive integers $n$ with
+$c(n) = k$. For $m \ge 1$ put
+$$
+a_m = (-1)^m \sum_{\substack{b^{l-1} \le n < b^l \\ c(n) \le k}} \frac{u_{k - c(n);m}}{n^{m+1}}.
+$$
+Then the partial sums $a_1 + \dots + a_M$ converge, as $M \to \infty$, to
+$$
+H^{(k)}_{b,d} - \sum_{\substack{1 \le n < b^{l-1} \\ c(n) = k}} \frac{1}{n} -
+b \sum_{\substack{b^{l-1} \le n < b^l \\ c(n) \le k}} \frac{1}{n}.
+$$
+Only the convergence of these ordered partial sums is asserted, not unconditional (absolute)
+summability: for $l = 1$ the series can converge only conditionally, for example for $b = 10$,
+$d = 0$ and $k = 0$.
+
 Source: Jean-François Burnol, *Measures for the Summation of Irwin Series*,
 INTEGERS 26 (2026), Article A11, Theorem 1. -/
 public theorem_wanted irwinSum_orderedHasSum_alternating
@@ -464,12 +475,18 @@ public theorem_wanted integral_eq_leadingReciprocal_hasSum
     HasSum (leadingReciprocalTerm b d (digitCount b d n + k) n)
       (∫ x in Set.Ico (0 : ℝ) 1, ((n : ℝ) + x)⁻¹ ∂irwinMeasure b d k hd)
 
-/-- Corollary 1: when `k(n)≤k`, the prefix-restricted reciprocal series and
-the alternating ordinary-moment series have a common sum. The reciprocal
-family has positive terms and is stated with `HasSum`; the alternating series
-is stated with `OrderedHasSum` (ordered partial sums), because at `n = 1` it can
-converge only conditionally (for example `b = 10`, `d = 0`, `k = 0`), as in
-Theorem 1. The length is `integerLength b n`. Source: Jean-François Burnol,
+/-- **Prefix sums as alternating ordinary-moment series.** Let $b > 1$, let $d < b$ be a digit, let
+$n$ be a positive integer, let $k(n)$ be the number of occurrences of $d$ in the base-$b$
+expansion of $n$, and let $k \ge k(n)$. Write $u_{j;m} = \int_{[0,1)} x^m \, d\mu_j(x)$ for the
+ordinary moments of the Irwin measure $\mu_j$. Then there is a real number $S$ such that the
+reciprocals $1/N$ of the positive integers $N$ whose base-$b$ expansion begins with that of $n$
+and contains exactly $k$ occurrences of $d$ have sum $S$, and the partial sums
+$\sum_{m=0}^{M} (-1)^m u_{k - k(n);m} / n^{m+1}$ converge to $S$ as $M \to \infty$. The first
+sum is unconditional; for the alternating series only the convergence of the ordered partial
+sums is asserted, since for $n = 1$ it can converge only conditionally (for example for
+$b = 10$, $d = 0$ and $k = 0$).
+
+Source: Jean-François Burnol,
 *Measures for the Summation of Irwin Series*, INTEGERS 26 (2026), Article A11,
 Corollary 1. -/
 public theorem_wanted leadingReciprocal_hasSum_ordinaryMoments
@@ -591,13 +608,22 @@ public theorem_wanted irwinMeasure_open_local_mass
           (irwinMeasure b d (k - (if 0 < d then j else j + l' - l)) hd
             (affineScaleSet b l' x U)).toReal)
 
-/-- Lemma 3: under the same depth, string, adjusted digit-count, and scale
-hypotheses as Lemma 2, the rescaling identity also holds for every subset of
-the half-open interval, under the added atom hypothesis `0 < d → l' = l ∨ j < k`
-omitted by the paper's Lemma 3; without it the identity fails at the atom at `x`
-(the strings `X 0^r`) when `0 < d`, `l < l'`, `k = j` and `x ∈ U`. For example,
-`b = 2`, `d = 1`, `x = 0`, `l = 0`, `l' = 1`, `j = k = 0`, `U = {0}` gives left
-side `2` and right side `1`. Masses use `.toReal`. Source: Jean-François Burnol,
+/-- **Local structure of the Irwin measures on half-open intervals.** Let $b > 1$ and $d < b$ be
+natural numbers, and for each natural number $k$ let $\mu_k$ be the Irwin measure of base $b$ and
+digit $d$ with index $k$. Let $x \in [0, 1)$ have base-$b$ depth $l$, that is, $l$ is the least
+natural number such that $b^l x$ is an integer; let $X$ be a string of $l$ base-$b$ digits, read
+most significant digit first, whose value $n(X)$ satisfies $n(X)/b^l = x$; and let $j$ be the
+number of occurrences of $d$ in $X$. Let $l' \ge l$ be a natural number, put $j' = j$ if $d > 0$
+and $j' = j + l' - l$ if $d = 0$, and let $k \ge j'$ be a natural number such that, if $d > 0$,
+then $l' = l$ or $j < k$. Then for every set $U \subseteq [x, x + b^{-l'})$, as real numbers,
+$\mu_k(U) = b^{-l'} \mu_{k-j'}(b^{l'} U - b^{l'} x)$, where $b^{l'} U - b^{l'} x$ is the image
+of $U$ under $y \mapsto b^{l'} y - b^{l'} x$.
+
+The paper's Lemma 3 omits the condition that $l' = l$ or $j < k$ when $d > 0$. Without it the
+identity fails at the atom at $x$: for $b = 2$, $d = 1$, $x = 0$, $l = 0$, $l' = 1$, $j = k = 0$
+and $U = \{0\}$ the left side is $2$ and the right side is $1$.
+
+Source: Jean-François Burnol,
 *Measures for the Summation of Irwin Series*, INTEGERS 26 (2026), Article A11,
 Lemma 3. -/
 public theorem_wanted irwinMeasure_halfOpen_deeper_local_mass

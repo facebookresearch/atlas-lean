@@ -27,7 +27,8 @@ $T_{n+3} = T_{n+2} + T_{n+1} + T_n$ for all integers $n$. Then $T_{-10} = 5$.
 Since $4! + 1 = 5^2$, the equation $m! + 1 = T_n^2$ has a solution once negative indices $n$ are
 allowed.
 
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Theorem 1 normalization note.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Theorem 1 normalization note.
 -/
 public theorem tribonacciInt_neg_ten : tribonacciInt (-10) = 5 := by
   rfl
@@ -40,7 +41,8 @@ for $n \ge 0$. For all natural numbers $m$ and $n$, $m! + 1 \ne T_n^2$.
 Only nonnegative indices are allowed: the extension of the Tribonacci sequence to negative indices
 by the same recurrence takes the value $5$, and $4! + 1 = 5^2$.
 
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Theorem 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Theorem 1.
 -/
 public theorem_wanted brocardRamanujan_not_tribonacci :
     ∀ m n : ℕ, Nat.factorial m + 1 ≠ tribonacci n ^ 2
@@ -51,7 +53,8 @@ Tetranacci sequence, given by $Q_0 = Q_1 = Q_2 = 0$, $Q_3 = 1$ and
 $Q_{n+4} = Q_{n+3} + Q_{n+2} + Q_{n+1} + Q_n$ for $n \ge 0$. For all natural numbers $m$ and $n$,
 $m! + 1 \ne Q_n^2$.
 
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Theorem 2.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Theorem 2.
 -/
 public theorem_wanted brocardRamanujan_not_tetranacci :
     ∀ m n : ℕ, Nat.factorial m + 1 ≠ tetranacci n ^ 2
@@ -69,7 +72,8 @@ $T_n - 1$ nor $T_n + 1$ is divisible by $47$.
 The condition $r \ne 0$ is needed because $\nu_{47}(0)$ is $0$ here, whereas the paper uses an
 infinite valuation at $0$.
 
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public theorem_wanted tribonacci_padicValInt_fortySeven :
     (∀ j ∈ ({1, 2, -2, -3, -7} : Finset ℤ),

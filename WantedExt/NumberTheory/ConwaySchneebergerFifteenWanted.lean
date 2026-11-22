@@ -96,7 +96,11 @@ only if it represents every integer $k$ with $1 \le k \le 15$.
 The forward direction is immediate; the content is the converse. Bhargava's refinement reduces
 the critical set to $\{1, 2, 3, 5, 6, 7, 10, 14, 15\}$.
 
-Source: Conway–Schneeberger 1993 (unpublished, communicated by Conway in lectures); full proof M. Bhargava, 'On the Conway–Schneeberger fifteen theorem', in *Quadratic Forms and their Applications* (Contemp. Math. 272, AMS 2000). Listed as §95 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `conway_schneeberger_fifteen`. -/
+Source: Conway–Schneeberger 1993 (unpublished, communicated by Conway in lectures); full proof M.
+Bhargava, 'On the Conway–Schneeberger fifteen theorem', in *Quadratic Forms and their Applications*
+(Contemp. Math. 272, AMS 2000). Listed as §95 in O. Knill, *Some Fundamental Theorems in
+Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via
+leanprover/lean-eval@38361be, problem `conway_schneeberger_fifteen`. -/
 public theorem_wanted conway_schneeberger_fifteen {n : ℕ}
     (Q : Matrix (Fin n) (Fin n) ℤ)
     (_hpos : Q.PosDef) :
