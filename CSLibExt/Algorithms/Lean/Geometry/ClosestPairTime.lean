@@ -48,13 +48,19 @@ open Cslib.Algorithms.Lean TimeM
 open Cslib.Algorithms.Lean.SparseTable (omin)
 open scoped List
 
-/-- A strip point with its side of the dividing line (`false` left, `true` right). -/
+/-- **Side-tagged points.** A tagged point is a pair $(p, s)$ of a point $p \in \mathbb{R}^2$ and a
+Boolean $s$, read as the side of the dividing line on which $p$ lies: false for left, true for
+right. -/
 abbrev Tagged := (ℝ × ℝ) × Bool
 
-/-- Two points of the same side are at squared distance at least `δ`. -/
+/-- **Same-side points far apart.** For a real $\delta$, two tagged points $a$ and $b$ are
+same-side far apart when, if $a$ and $b$ carry the same side, the squared distance between their
+points is at least $\delta$. -/
 def SameSideFar (δ : ℝ) (a b : Tagged) : Prop := a.2 = b.2 → δ ≤ dist2 a.1 b.1
 
-/-- A strip point: within squared distance `δ` of the line `x = xmid`, on its own side. -/
+/-- **Strip points.** Given reals $\delta$ and $x_{\mathrm{mid}}$, a tagged point $((x, y), s)$ lies
+in the strip when $(x - x_{\mathrm{mid}})^2 < \delta$, and moreover $x \le x_{\mathrm{mid}}$ if its
+side $s$ is left ($s$ false) and $x_{\mathrm{mid}} \le x$ if its side $s$ is right ($s$ true). -/
 def InStrip (δ xmid : ℝ) (a : Tagged) : Prop :=
   (a.1.1 - xmid) ^ 2 < δ ∧ (a.2 = false → a.1.1 ≤ xmid) ∧ (a.2 = true → xmid ≤ a.1.1)
 
@@ -108,7 +114,14 @@ private theorem dist2_le_of_same_cell {s xmid y₀ : ℝ} {a b : Tagged}
   simp only [dist2]
   nlinarith
 
-/-- CLRS's packing bound: at most seven strip points follow `p` within `y` gap `√δ`. -/
+/-- **Packing bound for the strip.** Let $\delta$ and $x_{\mathrm{mid}}$ be reals, $p$ a tagged
+point, $Z$ a list of tagged points, and $L$ the list $p$ followed by $Z$; write $y_a$ for the
+$y$-coordinate of a tagged point $a$. Suppose every point of $L$ lies in the strip for $\delta$ and
+$x_{\mathrm{mid}}$, any two points of $L$ at different positions with the same side are at squared
+distance at least $\delta$, and every point $a$ of $Z$ satisfies $y_p \le y_a$ and
+$(y_a - y_p)^2 < \delta$. Then $Z$ has at most $7$ entries.
+
+Source: CLRS, third edition, Section 33.4, the packing argument. -/
 theorem length_le_seven {δ xmid : ℝ} (p : Tagged) (Z : List Tagged)
     (hpair : (p :: Z).Pairwise (SameSideFar δ))
     (hstrip : ∀ a ∈ p :: Z, InStrip δ xmid a)
@@ -161,6 +174,10 @@ theorem length_le_seven {δ xmid : ℝ} (p : Tagged) (Z : List Tagged)
 
 /-! ## The strip scan -/
 
+/-- **Cost of the scan from one strip point.** Let $\delta$ be a real, $q = (q_1, q_2)$ a point of
+$\mathbb{R}^2$ and $L$ a list of points of $\mathbb{R}^2$. The cost of the scan from $q$ over $L$
+with threshold $\delta$, one unit per squared distance computed, equals the length of the longest
+initial segment of $L$ all of whose points $r = (r_1, r_2)$ satisfy $(r_2 - q_2)^2 < \delta$. -/
 theorem scanFrom_time (δ : ℝ) (q : ℝ × ℝ) (L : List (ℝ × ℝ)) :
     (scanFrom δ q L).time = (L.takeWhile fun r => decide ((r.2 - q.2) ^ 2 < δ)).length := by
   induction L with
@@ -172,7 +189,12 @@ theorem scanFrom_time (δ : ℝ) (q : ℝ × ℝ) (L : List (ℝ × ℝ)) :
         omega
       · simp [scanFrom, h]
 
-/-- A strip sorted by `y` whose same-side points are `δ` apart costs at most `7` per point. -/
+/-- **Cost of the strip scan.** Let $\delta$ and $x_{\mathrm{mid}}$ be reals and $Y$ a list of
+tagged points that is sorted by nondecreasing $y$-coordinate, whose points all lie in the strip for
+$\delta$ and $x_{\mathrm{mid}}$, and in which any two points at different positions with the same
+side are at squared distance at least $\delta$. Then the strip scan with parameter $\delta$ over the
+underlying points of $Y$ (tags forgotten) computes at most $7m$ squared distances, where $m$ is the
+length of $Y$. -/
 theorem stripScan_time_le (δ xmid : ℝ) (Y : List Tagged)
     (hsorted : Y.Pairwise fun a b => a.1.2 ≤ b.1.2) (hpair : Y.Pairwise (SameSideFar δ))
     (hstrip : ∀ a ∈ Y, InStrip δ xmid a) :
@@ -214,7 +236,10 @@ private theorem omin_some_le_right {b c : ℝ} {a : Option ℝ} (h : omin a (som
       simp only [omin, Option.some.injEq] at h
       exact h ▸ min_le_right a b
 
-/-- On `n` points sorted by `x`, the recursion computes at most `7 n ⌈log₂ n⌉ + n` distances. -/
+/-- **Running time of the closest-pair recursion.** For every list of $n$ points in $\mathbb{R}^2$
+sorted by nondecreasing $x$-coordinate, the divide-and-conquer recursion of the closest-pair
+algorithm computes at most $7 n \lceil \log_2 n \rceil + n$ squared distances, where
+$\lceil \log_2 0 \rceil$ is read as $0$. -/
 theorem closestRec_time_le (xs : List (ℝ × ℝ)) (hs : xs.Pairwise fun a b => a.1 ≤ b.1) :
     (closestRec xs).time ≤ 7 * xs.length * Nat.clog 2 xs.length + xs.length := by
   induction h : xs.length using Nat.strong_induction_on generalizing xs with
@@ -351,8 +376,11 @@ theorem closestRec_time_le (xs : List (ℝ × ℝ)) (hs : xs.Pairwise fun a b =>
       have e3 : 7 * n * c = 7 * (n * c) := Nat.mul_assoc _ _ _
       omega
 
-/-- CLRS Section 33.4: the closest-pair algorithm computes `O(n lg n)` distances, at most
-`7 n ⌈log₂ n⌉ + n` on `n` points. -/
+/-- **Running time of the closest-pair algorithm.** For every list of $n$ points in $\mathbb{R}^2$,
+the closest-pair algorithm computes at most $7 n \lceil \log_2 n \rceil + n$ squared distances,
+where $\lceil \log_2 0 \rceil$ is read as $0$. In particular it computes $O(n \log n)$ distances.
+
+Source: CLRS, third edition, Section 33.4. -/
 theorem closestPair_time_le (ps : List (ℝ × ℝ)) :
     (closestPair ps).time ≤ 7 * ps.length * Nat.clog 2 ps.length + ps.length := by
   have hsorted : (ps.mergeSort fun a b => decide (a.1 ≤ b.1)).Pairwise fun a b => a.1 ≤ b.1 :=
