@@ -363,8 +363,8 @@ theorem measurableSet_convergesFinite_from (X : ℕ → Ω → ℝ) (n : ℕ) :
       linarith
     exact cauchySeq_tendsto_of_complete hcauchy
 
-/-- **Drift of a random walk to +∞ is a tail event.** Let $X_0, X_1, \dots$ be real-valued functions
-on a set $\Omega$ and let $S_m = \sum_{i < m} X_i$ be their partial sums. The set of
+/-- **Drift of a random walk to +∞ is a tail event.** Let $X_0, X_1, \dots$ be real-valued
+functions on a set $\Omega$ and let $S_m = \sum_{i < m} X_i$ be their partial sums. The set of
 $\omega \in \Omega$ with $S_m(\omega) \to +\infty$ as $m \to \infty$ belongs to the tail σ-algebra
 $\bigcap_{n} \sigma(X_n, X_{n+1}, \dots)$ of the sequence, where $\sigma(X_n, X_{n+1}, \dots)$ is
 the smallest σ-algebra on $\Omega$ for which every $X_i$ with $i \ge n$ is Borel measurable. -/
@@ -373,8 +373,8 @@ theorem measurableSet_driftsToTop (X : ℕ → Ω → ℝ) :
       {ω | Tendsto (fun m => randomWalkPartialSum X m ω) atTop atTop} :=
   measurableSet_iInf.mpr fun n => measurableSet_driftsToTop_from X n
 
-/-- **Drift of a random walk to −∞ is a tail event.** Let $X_0, X_1, \dots$ be real-valued functions
-on a set $\Omega$ and let $S_m = \sum_{i < m} X_i$ be their partial sums. The set of
+/-- **Drift of a random walk to −∞ is a tail event.** Let $X_0, X_1, \dots$ be real-valued
+functions on a set $\Omega$ and let $S_m = \sum_{i < m} X_i$ be their partial sums. The set of
 $\omega \in \Omega$ with $S_m(\omega) \to -\infty$ as $m \to \infty$ belongs to the tail σ-algebra
 $\bigcap_{n} \sigma(X_n, X_{n+1}, \dots)$ of the sequence, where $\sigma(X_n, X_{n+1}, \dots)$ is
 the smallest σ-algebra on $\Omega$ for which every $X_i$ with $i \ge n$ is Borel measurable. -/

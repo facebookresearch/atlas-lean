@@ -94,18 +94,22 @@ noncomputable def bmCenteredShift (B : ℝ≥0 → Ω → ℝ) (s : ℝ≥0) :
   fun ω t => B (s + t) ω - B s ω
 
 /-- **Law of the centered shifted path.** Let $(B_t)_{t \ge 0}$ be a real-valued process on a
-measure space $(\Omega, \mu)$ and let $s \ge 0$. This is the pushforward of $\mu$ under the map
-sending $\omega \in \Omega$ to the path $t \mapsto B_{s+t}(\omega) - B_s(\omega)$, a measure on
-the space of functions $\mathbb{R}_{\ge 0} \to \mathbb{R}$ with its product σ-algebra. -/
+measure space $(\Omega, \mu)$ and let $s \ge 0$. This is the measure `Measure.map` gives on the
+space of functions $\mathbb{R}_{\ge 0} \to \mathbb{R}$, with its product σ-algebra, for the map
+sending $\omega \in \Omega$ to the path $t \mapsto B_{s+t}(\omega) - B_s(\omega)$: the pushforward
+of $\mu$ under that map when the map is $\mu$-almost everywhere measurable; otherwise the zero
+measure if $\mu = 0$ and a Dirac measure at an unspecified path if $\mu \ne 0$. -/
 noncomputable def bmCenteredLaw (B : ℝ≥0 → Ω → ℝ) (μ : Measure Ω) (s : ℝ≥0) :
     Measure (ℝ≥0 → ℝ) :=
   Measure.map (bmCenteredShift B s) μ
 
 /-- **Time-dependent path expectation.** Let $\mu$ be a measure on $\Omega$, let
 $(B_t)_{t \ge 0}$ be a real process on $\Omega$ indexed by $t \in \mathbb{R}_{\ge 0}$, let
-$s \ge 0$, and let $\nu_s$ be the law under $\mu$ (the pushforward of $\mu$) of the centered
-shifted path $\omega \mapsto (t \mapsto B_{s+t}(\omega) - B_s(\omega))$. For a real function $Y$
-on paths $\mathbb{R}_{\ge 0} \to \mathbb{R}$ and $x \in \mathbb{R}$, the path expectation is the
+$s \ge 0$, and let $\nu_s$ be the law under $\mu$ of the centered shifted path
+$\omega \mapsto (t \mapsto B_{s+t}(\omega) - B_s(\omega))$, given by `Measure.map`: the
+pushforward of $\mu$ when this map is $\mu$-almost everywhere measurable, and otherwise the zero
+measure if $\mu = 0$ and a Dirac measure at an unspecified path if $\mu \ne 0$. For a real function
+$Y$ on paths $\mathbb{R}_{\ge 0} \to \mathbb{R}$ and $x \in \mathbb{R}$, the path expectation is the
 Bochner integral $\int Y(t \mapsto x + f(t))\, d\nu_s(f)$, which is $0$ when the integrand is
 not integrable.
 

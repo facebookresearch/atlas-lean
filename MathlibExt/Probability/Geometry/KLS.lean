@@ -113,9 +113,9 @@ def IsSmoothPoincareBound {n : ℕ} (μ : Measure (EuclideanSpace ℝ (Fin n)))
     (∫⁻ x, ENNReal.ofReal ((f x - ∫ y, f y ∂μ) ^ 2) ∂μ) ≤
       C * ∫⁻ x, ENNReal.ofReal (‖fderiv ℝ f x‖ ^ 2) ∂μ
 
-/-- **Smooth Poincaré constant.** The smooth Poincaré constant of a measure $\mu$ on $\mathbb{R}^n$
-is the infimum in $[0, \infty]$ of all $C \in [0, \infty]$ that are smooth Poincaré bounds for
-$\mu$; it is $\infty$ when $\mu$ has no smooth Poincaré bound. -/
+/-- **Smooth Poincaré constant.** The smooth Poincaré constant of a measure $\mu$ on
+$\mathbb{R}^n$ is the infimum in $[0, \infty]$ of all $C \in [0, \infty]$ that are smooth Poincaré
+bounds for $\mu$; it is $\infty$ when $\mu$ has no smooth Poincaré bound. -/
 noncomputable def smoothPoincareConstant {n : ℕ}
     (μ : Measure (EuclideanSpace ℝ (Fin n))) : ℝ≥0∞ :=
   sInf {C | IsSmoothPoincareBound μ C}
