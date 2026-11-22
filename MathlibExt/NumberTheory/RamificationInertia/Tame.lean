@@ -56,62 +56,84 @@ namespace Algebra
 variable (R : Type*) {S : Type*} [CommRing R] [CommRing S] [Algebra R S]
 variable (q : Ideal S) [q.IsPrime]
 
-/-- Residue separability at `q`: the residue-field extension
-`(q.under R).ResidueField → q.ResidueField` is separable, using the canonical
-localization algebra `Localization.AtPrime.algebraOfLiesOver (q.under R) q`
-installed locally, so callers supply no localization-algebra instances. -/
+/-- **Residue separability at a prime.** Let $R$ and $S$ be commutative rings with $S$ an
+$R$-algebra, let $q$ be a prime ideal of $S$, and let $p$ be its preimage in $R$. Then $q$ is
+residue separable over $R$ when the residue field $\kappa(q)$ is separable over the residue field
+$\kappa(p)$, for the algebra structure induced by the canonical local homomorphism $R_p \to S_q$
+of localizations. -/
 def IsResidueSeparableAt : Prop :=
   letI := Localization.AtPrime.algebraOfLiesOver (q.under R) q;
     Algebra.IsSeparable (q.under R).ResidueField q.ResidueField
 
-/-- A prime `q` of `S` is *tamely ramified* over `R` if the residue-field
-extension is separable and the residue characteristic does not divide the
-ramification index. -/
+/-- **Tamely ramified prime.** Let $R$ and $S$ be commutative rings with $S$ an $R$-algebra, and
+let $q$ be a prime ideal of $S$. Then $q$ is *tamely ramified* over $R$ when $q$ is residue
+separable over $R$ and the characteristic of the residue field $\kappa(q)$ does not divide the
+ramification index of $q$ over $R$. -/
 def IsTamelyRamifiedAt : Prop :=
   IsResidueSeparableAt R q ∧ ¬ ringChar q.ResidueField ∣ q.ramificationIdx R
 
-/-- A prime `q` of `S` is *wildly ramified* over `R` if it is not tamely
-ramified over `R`. -/
+/-- **Wildly ramified prime.** Let $R$ be a commutative ring, $S$ a commutative $R$-algebra and
+$q$ a prime ideal of $S$. Then $q$ is *wildly ramified* over $R$ if it is not tamely ramified
+over $R$. -/
 def IsWildlyRamifiedAt : Prop :=
   ¬ IsTamelyRamifiedAt R q
 
-/-- The helper unfolds to separability under the canonical algebra. -/
+/-- **Residue separability, unfolded.** Let $R$ and $S$ be commutative rings with $S$ an
+$R$-algebra, let $q$ be a prime ideal of $S$, and let $p$ be its preimage in $R$. Then $q$ is
+residue separable over $R$ if and only if the residue field $\kappa(q)$ is separable over the
+residue field $\kappa(p)$, for the algebra structure induced by the canonical local homomorphism
+$R_p \to S_q$ of localizations. -/
 theorem isResidueSeparableAt_iff :
     IsResidueSeparableAt R q ↔
       letI := Localization.AtPrime.algebraOfLiesOver (q.under R) q;
       Algebra.IsSeparable (q.under R).ResidueField q.ResidueField :=
   Iff.rfl
 
-/-- Unfolding of tame ramification into its two defining parts. -/
+/-- **Characterization of tame ramification.** Let $R$ and $S$ be commutative rings with $S$ an
+$R$-algebra, and let $q$ be a prime ideal of $S$. Then $q$ is tamely ramified over $R$ if and only
+if $q$ is residue separable over $R$ and the characteristic of the residue field $\kappa(q)$ does
+not divide the ramification index of $q$ over $R$. -/
 theorem isTamelyRamifiedAt_iff :
     IsTamelyRamifiedAt R q ↔
       IsResidueSeparableAt R q ∧
         ¬ ringChar q.ResidueField ∣ q.ramificationIdx R :=
   Iff.rfl
 
-/-- Unfolding of wild ramification as the negation of tame ramification. -/
+/-- **Wild ramification is the failure of tame ramification.** Let $R$ be a commutative ring,
+$S$ a commutative $R$-algebra and $q$ a prime ideal of $S$. Then $q$ is wildly ramified over $R$
+if and only if $q$ is not tamely ramified over $R$. -/
 theorem isWildlyRamifiedAt_iff :
     IsWildlyRamifiedAt R q ↔ ¬ IsTamelyRamifiedAt R q :=
   Iff.rfl
 
-/-- Constructor for tame ramification from its two defining parts. -/
+/-- **Criterion for tame ramification.** Let $R$ and $S$ be commutative rings with $S$ an
+$R$-algebra, and let $q$ be a prime ideal of $S$. If $q$ is residue separable over $R$ and the
+characteristic of the residue field $\kappa(q)$ does not divide the ramification index of $q$ over
+$R$, then $q$ is tamely ramified over $R$. -/
 theorem isTamelyRamifiedAt_mk (hsep : IsResidueSeparableAt R q)
     (hchar : ¬ ringChar q.ResidueField ∣ q.ramificationIdx R) :
     IsTamelyRamifiedAt R q :=
   ⟨hsep, hchar⟩
 
-/-- The residue-separability part of tame ramification. -/
+/-- **Tame primes are residue separable.** Let $R$ and $S$ be commutative rings with $S$ an
+$R$-algebra, and let $q$ be a prime ideal of $S$. If $q$ is tamely ramified over $R$, then $q$ is
+residue separable over $R$. -/
 theorem IsTamelyRamifiedAt.isSeparable (h : IsTamelyRamifiedAt R q) :
     IsResidueSeparableAt R q :=
   h.1
 
-/-- The characteristic/index part of tame ramification. -/
+/-- **The residue characteristic of a tame prime does not divide its ramification index.** Let
+$R$ be a commutative ring, $S$ a commutative $R$-algebra and $q$ a prime ideal of $S$ with residue
+field $\kappa(q)$. If $q$ is tamely ramified over $R$, then the characteristic of $\kappa(q)$ does
+not divide the ramification index of $q$ over $R$. -/
 theorem IsTamelyRamifiedAt.not_dvd (h : IsTamelyRamifiedAt R q) :
     ¬ ringChar q.ResidueField ∣ q.ramificationIdx R :=
   h.2
 
-/-- Under residue separability, wild ramification holds iff the residue
-characteristic divides the ramification index. -/
+/-- **Wild ramification under residue separability.** Let $R$ and $S$ be commutative rings with $S$
+an $R$-algebra, and let $q$ be a prime ideal of $S$ that is residue separable over $R$. Then $q$ is
+wildly ramified over $R$ if and only if the characteristic of the residue field $\kappa(q)$ divides
+the ramification index of $q$ over $R$. -/
 theorem isWildlyRamifiedAt_iff_char_dvd (hsep : IsResidueSeparableAt R q) :
     IsWildlyRamifiedAt R q ↔ ringChar q.ResidueField ∣ q.ramificationIdx R := by
   constructor
@@ -121,21 +143,29 @@ theorem isWildlyRamifiedAt_iff_char_dvd (hsep : IsResidueSeparableAt R q) :
   · intro hdvd htame
     exact htame.2 hdvd
 
-/-- Wild ramification follows from the residue characteristic dividing the
-ramification index, with no separability hypothesis: divisibility alone
-contradicts the `.not_dvd` projection of any putative tame proof. -/
+/-- **Divisibility of the ramification index forces wild ramification.** Let $R$ be a
+commutative ring, $S$ a commutative $R$-algebra and $q$ a prime ideal of $S$ with residue field
+$\kappa(q)$. If the characteristic of $\kappa(q)$ divides the ramification index of $q$ over $R$,
+then $q$ is wildly ramified over $R$.
+
+No separability hypothesis on the residue field extension is needed. -/
 theorem isWildlyRamifiedAt_of_char_dvd
     (hdvd : ringChar q.ResidueField ∣ q.ramificationIdx R) :
     IsWildlyRamifiedAt R q :=
   fun htame => htame.2 hdvd
 
-/-- Wild ramification follows from residue inseparability: inseparability alone
-contradicts the `.isSeparable` projection of any putative tame proof. -/
+/-- **An inseparable residue field extension forces wild ramification.** Let $R$ be a
+commutative ring, $S$ a commutative $R$-algebra, $q$ a prime ideal of $S$ and $p$ the preimage
+of $q$ in $R$. If the residue field extension $\kappa(p) \to \kappa(q)$ is not separable, then
+$q$ is wildly ramified over $R$. -/
 theorem isWildlyRamifiedAt_of_not_isResidueSeparableAt
     (h : ¬ IsResidueSeparableAt R q) : IsWildlyRamifiedAt R q :=
   fun htame => h htame.1
 
-/-- Residue separability at an unramified prime. -/
+/-- **Unramified primes are residue separable.** Let $R$ and $S$ be commutative rings with $S$ an
+$R$-algebra that is essentially of finite type, and let $q$ be a prime ideal of $S$ at which $S$ is
+unramified over $R$, that is, the localization $S_q$ is formally unramified over $R$. Then $q$ is
+residue separable over $R$. -/
 theorem isResidueSeparableAt_of_isUnramifiedAt [Algebra.EssFiniteType R S]
     [Algebra.IsUnramifiedAt R q] : IsResidueSeparableAt R q := by
   let := Localization.AtPrime.algebraOfLiesOver (q.under R) q
@@ -143,15 +173,20 @@ theorem isResidueSeparableAt_of_isUnramifiedAt [Algebra.EssFiniteType R S]
     inferInstance
   exact h
 
-/-- An unramified prime is tamely ramified. -/
+/-- **Unramified primes are tamely ramified.** Let $R$ and $S$ be commutative rings with $S$ an
+$R$-algebra that is essentially of finite type, and let $q$ be a prime ideal of $S$ at which $S$ is
+unramified over $R$, that is, the localization $S_q$ is formally unramified over $R$. Then $q$ is
+tamely ramified over $R$. -/
 theorem isTamelyRamifiedAt_of_isUnramifiedAt [Algebra.EssFiniteType R S]
     [Algebra.IsUnramifiedAt R q] : IsTamelyRamifiedAt R q := by
   refine ⟨isResidueSeparableAt_of_isUnramifiedAt R q, ?_⟩
   rw [Ideal.ramificationIdx_eq_one q R]
   exact fun h => CharP.ringChar_ne_one (Nat.eq_one_of_dvd_one h)
 
-/-- In residue characteristic zero, tame ramification is equivalent to
-residue separability. -/
+/-- **Tameness in residue characteristic zero.** Let $R$ and $S$ be commutative rings with $S$ an
+$R$-algebra that is finite as an $R$-module, and let $q$ be a prime ideal of $S$ whose residue
+field $\kappa(q)$ has characteristic $0$. Then $q$ is tamely ramified over $R$ if and only if $q$
+is residue separable over $R$. -/
 theorem isTamelyRamifiedAt_iff_isSeparable_of_charZero [Module.Finite R S]
     (hchar : ringChar q.ResidueField = 0) :
     IsTamelyRamifiedAt R q ↔ IsResidueSeparableAt R q := by

@@ -20,10 +20,13 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Ballot's Lemma 1: for an odd prime `p` and an integer discriminant `D ≡ 0` or `1 (mod 4)`
-prime to `p`, every odd prime of the form `p' = p + D x` (`x ∈ ℤ`) has the same Kronecker
-symbol `(D | p') = (D | p)`. For odd primes the symbol is the Jacobi (Legendre) symbol
-`jacobiSym D p`.
+/-- **Jacobi symbols of a discriminant $D$ agree at odd primes congruent modulo $D$.** Let $p$ and
+$p'$ be odd primes and let $D$ be an integer with $D \equiv 0$ or $1 \pmod 4$ that is coprime to
+$p$. If $p' = p + D x$ for some integer $x$, then the Jacobi symbols agree:
+$\left(\frac{D}{p'}\right) = \left(\frac{D}{p}\right)$.
+
+For an odd prime $p$ the Jacobi symbol $\left(\frac{D}{p}\right)$ is the Legendre symbol and agrees
+with the Kronecker symbol.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Lemma 1 (`integers-2026-A102-lem-1`). -/
@@ -32,11 +35,14 @@ public theorem_wanted jacobiSym_prime_add_mul_eq {p p' : ℕ} (hp : p.Prime) (hp
     (hDp : IsCoprime D p) {x : ℤ} (hx : (p' : ℤ) = p + D * x) :
     jacobiSym D p' = jacobiSym D p
 
-/-- Ballot's Lemma 2: let `ε₁, ε₂, ε₃ ∈ {±1}`, let `c₁, c₂, c₃` be positive pairwise coprime
-integers, let `g ≠ 0`, and put `n = (c₁ g + ε₁)(c₂ g + ε₂)(c₃ g + ε₃)` and
-`εₙ = ε₁ ε₂ ε₃`. Then `cᵢ g ∣ n - εₙ` for `i = 1, 2, 3` if and only if
-`g (ε₃ c₁ c₂ + ε₂ c₁ c₃ + ε₁ c₂ c₃) + εₙ (ε₁ c₁ + ε₂ c₂ + ε₃ c₃) ≡ 0 (mod c₁ c₂ c₃)`
-(the paper's congruence (9)).
+/-- **Ballot's Lemma 2: three divisibilities as one congruence.** Let
+$\varepsilon_1, \varepsilon_2, \varepsilon_3 \in \{1, -1\}$, let $c_1, c_2, c_3$ be pairwise coprime
+positive integers, let $g \ne 0$ be an integer, and put
+$n = (c_1 g + \varepsilon_1)(c_2 g + \varepsilon_2)(c_3 g + \varepsilon_3)$ and
+$\varepsilon_n = \varepsilon_1 \varepsilon_2 \varepsilon_3$. Then $c_i g \mid n - \varepsilon_n$ for
+$i = 1, 2, 3$ if and only if
+$$c_1 c_2 c_3 \mid g (\varepsilon_3 c_1 c_2 + \varepsilon_2 c_1 c_3 + \varepsilon_1 c_2 c_3) +
+\varepsilon_n (\varepsilon_1 c_1 + \varepsilon_2 c_2 + \varepsilon_3 c_3).$$
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Lemma 2 (`integers-2026-A102-lem-2`). -/
@@ -53,12 +59,15 @@ public theorem_wanted mul_dvd_prod_sub_sign_iff {ε₁ ε₂ ε₃ c₁ c₂ c�
 
 /-! ## Absolute Lucas pseudoprimes -/
 
-/-- Williams' absolute Lucas `D`-pseudoprime, called a `D`-Carmichael number in the paper: for
-a discriminant `D ≡ 0, 1 (mod 4)` (the paper's standing assumption; for other `D` no Lucas
-sequence has discriminant `D`, so the last clause would be vacuous), an odd composite integer
-`n`, prime to `D`, such that `n ∣ U_{n - εₙ}(P, Q)` with `εₙ = (D | n)`
-for every Lucas sequence `U(P, Q)` with coprime parameters, discriminant `P² - 4Q = D` and `Q`
-prime to `n`.
+/-- **$D$-Carmichael number.** Let $D$ be an integer. A natural number $n$ is a $D$-Carmichael
+number when $D \equiv 0$ or $1 \pmod 4$, $n > 1$ is odd and composite, $D$ and $n$ are coprime,
+and for all integers $P$ and $Q \ne 0$ with $P$ and $Q$ coprime, $P^2 - 4Q = D$ and $Q$ coprime
+to $n$, the number $n$ divides the term $U_{n - \varepsilon_n}(P, Q)$ of the Lucas sequence
+$U(P, Q)$, where $\varepsilon_n = \left(\frac{D}{n}\right)$ is the Jacobi symbol.
+
+These are Williams' absolute Lucas $D$-pseudoprimes. The condition on $D$ is the paper's standing
+assumption; for other $D$ no Lucas sequence has discriminant $D$, so the last clause would be
+vacuous.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Section 1 (definition of absolute Lucas `D`-pseudoprimes, after [17]). -/
@@ -67,15 +76,17 @@ def IsDCarmichael (D : ℤ) (n : ℕ) : Prop :=
     ∀ params : LucasSequenceParams, params.IsCoprime → params.p ^ 2 - 4 * params.q = D →
       IsCoprime params.q n → (n : ℤ) ∣ lucasU params (n - jacobiSym D n).toNat
 
-/-- A `D`-Carmichael number is composite.
+/-- **$D$-Carmichael numbers are not prime.** For every integer $D$ and every natural number $n$,
+if $n$ is a $D$-Carmichael number, then $n$ is not prime.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Section 1. -/
 theorem IsDCarmichael.not_prime {D : ℤ} {n : ℕ} (h : IsDCarmichael D n) : ¬ n.Prime :=
   h.2.2.2.1
 
-/-- `9` is not a `5`-Carmichael number: `(5 | 9) = 1` and the Fibonacci sequence
-`U(1, -1)` has `F₈ = 21`, which `9` does not divide.
+/-- **$9$ is not a $5$-Carmichael number.** The number $9$ is not a $D$-Carmichael number for
+$D = 5$. Indeed, the Jacobi symbol $(5 \mid 9)$ equals $1$, and the Fibonacci sequence
+$U(1, -1)$ has $F_8 = 21$, which $9$ does not divide.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Section 1. -/
@@ -88,16 +99,22 @@ theorem not_isDCarmichael_five_nine : ¬ IsDCarmichael 5 9 := by
   rw [hj, lucasU_fibonacciLucasParams] at h9
   norm_num [Nat.fib_add_two] at h9
 
-/-- The paper's extended digit function `s_p(n) = ∑ cᵢ εₚⁱ`, where `n = ∑ cᵢ pⁱ` is the base-`p`
-expansion and `εₚ = (D | p)`.
+/-- **Extended digit sum.** Let $D$ be an integer and let $p \ge 2$ and $n$ be natural numbers, with
+base-$p$ expansion $n = \sum_i c_i p^i$, $0 \le c_i < p$. With
+$\varepsilon_p = \left(\frac{D}{p}\right)$ the Jacobi symbol, the extended digit sum of $n$ is
+$s_p(n) = \sum_i c_i \varepsilon_p^i$.
+
+For $p \le 1$ the definition gives $s_p(n) = n$.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 equation (6). -/
 def lucasDigitSum (D : ℤ) (p n : ℕ) : ℤ :=
   ((Nat.digits p n).mapIdx fun i c => (c : ℤ) * jacobiSym D p ^ i).sum
 
-/-- The paper's example: `6601 = 5·7 + 7² + 5·7³ + 2·7⁴` and `(5 | 7) = -1`, so
-`s₇(6601) = -5 + 1 - 5 + 2 = -7`.
+/-- **The extended digit sum of $6601$ in base $7$ for $D = 5$.** The base-$7$ expansion is
+$6601 = 5 \cdot 7 + 7^2 + 5 \cdot 7^3 + 2 \cdot 7^4$ and the Jacobi symbol is
+$\left(\frac{5}{7}\right) = -1$, so the extended digit sum with $D = 5$ is
+$s_7(6601) = -5 + 1 - 5 + 2 = -7$.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 equation (6) and the example `m = 6601`. -/
@@ -105,9 +122,15 @@ theorem lucasDigitSum_five_seven_6601 : lucasDigitSum 5 7 6601 = -7 := by
   have hj : jacobiSym 5 7 = -1 := by norm_num
   norm_num [lucasDigitSum, hj]
 
-/-- A primary `D`-Carmichael number: a `D`-Carmichael number `n` whose degree is at most one,
-i.e. for every prime `p ∣ n` the integer `dₚ` with `sₚ(n) = εₙ + dₚ (p - εₚ)` has `|dₚ| ≤ 1`,
-stated as `|sₚ(n) - εₙ| ≤ p - εₚ`.
+/-- **Primary $D$-Carmichael number.** Let $D$ be an integer. A natural number $n$ is a primary
+$D$-Carmichael number when $n$ is a $D$-Carmichael number and
+$|s_p(n) - \varepsilon_n| \le p - \varepsilon_p$ for every prime $p \mid n$, where
+$\varepsilon_m = \left(\frac{D}{m}\right)$ is the Jacobi symbol and $s_p(n) = \sum_i c_i
+\varepsilon_p^i$ is the extended digit sum of the base-$p$ expansion $n = \sum_i c_i p^i$.
+
+In the paper's terms, $n$ has degree at most one: the number $d_p$ with
+$s_p(n) = \varepsilon_n + d_p (p - \varepsilon_p)$ satisfies $|d_p| \le 1$ for every prime
+$p \mid n$.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Definition 3. -/
@@ -115,8 +138,16 @@ def IsPrimaryDCarmichael (D : ℤ) (n : ℕ) : Prop :=
   IsDCarmichael D n ∧ ∀ p ∈ n.primeFactors,
     |lucasDigitSum D p n - jacobiSym D n| ≤ p - jacobiSym D p
 
-/-- A secondary `D`-Carmichael number: a `D`-Carmichael number of degree exactly two, i.e.
-`|dₚ| ≤ 2` for all primes `p ∣ n` and `|dₚ| > 1` for some.
+/-- **Secondary $D$-Carmichael number.** Let $D$ be an integer. A natural number $n$ is a
+secondary $D$-Carmichael number when $n$ is a $D$-Carmichael number,
+$|s_p(n) - \varepsilon_n| \le 2 (p - \varepsilon_p)$ for every prime $p \mid n$, and
+$|s_p(n) - \varepsilon_n| > p - \varepsilon_p$ for some prime $p \mid n$, where
+$\varepsilon_m = \left(\frac{D}{m}\right)$ is the Jacobi symbol and $s_p(n) = \sum_i c_i
+\varepsilon_p^i$ is the extended digit sum of the base-$p$ expansion $n = \sum_i c_i p^i$.
+
+In the paper's terms, $n$ has degree exactly two: the number $d_p$ with
+$s_p(n) = \varepsilon_n + d_p (p - \varepsilon_p)$ satisfies $|d_p| \le 2$ for every prime
+$p \mid n$ and $|d_p| > 1$ for some.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Definition 3. -/
@@ -125,7 +156,8 @@ def IsSecondaryDCarmichael (D : ℤ) (n : ℕ) : Prop :=
     (∀ p ∈ n.primeFactors, |lucasDigitSum D p n - jacobiSym D n| ≤ 2 * (p - jacobiSym D p)) ∧
     ∃ p ∈ n.primeFactors, p - jacobiSym D p < |lucasDigitSum D p n - jacobiSym D n|
 
-/-- A primary `D`-Carmichael number is `D`-Carmichael.
+/-- **Primary $D$-Carmichael numbers are $D$-Carmichael.** For every integer $D$ and natural
+number $n$, if $n$ is a primary $D$-Carmichael number, then $n$ is a $D$-Carmichael number.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Definition 3. -/
@@ -133,10 +165,11 @@ theorem IsPrimaryDCarmichael.isDCarmichael {D : ℤ} {n : ℕ} (h : IsPrimaryDCa
     IsDCarmichael D n :=
   h.1
 
-/-- A `σ`-Carmichael number for a signature `σ = (ε₁, …, εᵣ)` of signs (`r ≥ 2`, as signatures
-are defined in the paper): an odd squarefree `n = p₁ ⋯ pᵣ`, `p₁ < ⋯ < pᵣ`, that is
-`D`-Carmichael for every discriminant `D ≡ 0, 1 (mod 4)`
-with `(D | pᵢ) = εᵢ` for all `i`. `Nat.primeFactorsList` lists the `pᵢ` in increasing order.
+/-- **Carmichael numbers of a signature.** Let $\sigma = (\varepsilon_1, \dots, \varepsilon_r)$ be a
+list of integers. A natural number $n$ is $\sigma$-Carmichael when every $\varepsilon_i$ is $1$ or
+$-1$, $r \ge 2$, $n$ is odd and squarefree with exactly $r$ prime factors $p_1 < \dots < p_r$, and
+$n$ is $D$-Carmichael for every integer $D \equiv 0$ or $1 \pmod 4$ whose Jacobi symbols satisfy
+$\left(\frac{D}{p_i}\right) = \varepsilon_i$ for all $i$.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Definition 4. -/
@@ -146,7 +179,8 @@ def IsSignatureCarmichael (σ : List ℤ) (n : ℕ) : Prop :=
     ∀ D : ℤ, (D % 4 = 0 ∨ D % 4 = 1) →
       n.primeFactorsList.map (fun p => jacobiSym D p) = σ → IsDCarmichael D n
 
-/-- `4` is not `σ`-Carmichael for any signature: it is not squarefree.
+/-- **$4$ is not a signature Carmichael number.** For every finite sequence $\sigma$ of integers,
+$4$ is not a $\sigma$-Carmichael number, because $4$ is not squarefree.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Definition 4. -/
@@ -154,13 +188,16 @@ theorem not_isSignatureCarmichael_four (σ : List ℤ) : ¬ IsSignatureCarmichae
   rintro ⟨h, -⟩
   exact absurd h (by decide)
 
-/-- A universal `D`-form with respect to a signature `σ`, for products of linear factors
-`aᵢ x + bᵢ` (all forms in the paper are of this shape): every factor is irreducible
-(`aᵢ ≠ 0`, `gcd(aᵢ, bᵢ) = 1`), the product is not identically zero modulo any prime, and
-whenever all factors take (positive) prime values at some integer `x`, their product is a
-`D`-Carmichael number with signature `σ`. The paper says "for some `n ≥ 0`"; integer `x` is
-used because its forms `p + D x` (Theorem 4) and Chernick forms (Theorem 5) allow `D < 0`,
-where `x ≥ 0` would leave only finitely many positive values.
+/-- **Universal $D$-forms.** Let $D$ be an integer, $\sigma$ a list of integers, and
+$f(x) = (a_1 x + b_1) \cdots (a_k x + b_k)$ a product of linear factors with integer coefficients.
+Then $f$ is a universal $D$-form with respect to $\sigma$ when: every factor has $a_i \ne 0$ and
+$\gcd(a_i, b_i) = 1$; for every prime $\ell$ there is an integer $x$ with $\ell \nmid f(x)$; and
+for every integer $x$ at which every factor $a_i x + b_i$ is a positive prime, the product $f(x)$
+is $D$-Carmichael and the Jacobi symbols $\left(\frac{D}{p}\right)$, for $p$ running through the
+prime factors of $f(x)$ in increasing order and counted with multiplicity, form the list $\sigma$.
+
+Here $x$ ranges over all integers rather than $x \ge 0$, since forms such as $p + D x$ are
+used with $D < 0$.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Section 1 (definition of a universal `D`-form). -/
@@ -172,7 +209,10 @@ def IsUniversalLinearDForm (D : ℤ) (σ : List ℤ) (l : List (ℤ × ℤ)) : P
         ((l.map fun ab => (ab.1 * x + ab.2).natAbs).prod.primeFactorsList.map
           fun p => jacobiSym D p) = σ
 
-/-- `x (x + 1)` is not a universal form for any `D` and `σ`: it is always even.
+/-- **$x(x+1)$ is never a universal form.** For every integer $D$ and every finite sequence
+$\sigma$ of integers, the product of the linear factors $x$ and $x + 1$ is not a universal
+$D$-form with respect to $\sigma$: since $x(x+1)$ is even for every integer $x$, the prime $2$
+divides every value of the product.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Section 1 (definition of a universal `D`-form). -/
@@ -185,10 +225,14 @@ theorem not_isUniversalLinearDForm_mul_succ (D : ℤ) (σ : List ℤ) :
 
 /-! ## Results -/
 
-/-- Williams' criterion: for `D ≡ 0, 1 (mod 4)` and an odd composite `n` prime to `D`, `n` is
-`D`-Carmichael iff `n` is squarefree and `p - εₚ ∣ n - εₙ` for every prime `p ∣ n`. The record
-states it for every odd positive `n`; primes (and `1`) satisfy the criterion but are not
-`D`-Carmichael, so `n` is taken composite and prime to `D` as in the definition.
+/-- **Williams' Korselt criterion for $D$-Carmichael numbers.** Let $D$ be an integer with
+$D \equiv 0$ or $1 \pmod 4$, and let $n > 1$ be an odd composite natural number coprime to $D$.
+Then $n$ is a $D$-Carmichael number if and only if $n$ is squarefree and
+$p - \left(\frac{D}{p}\right)$ divides $n - \left(\frac{D}{n}\right)$ for every prime $p \mid n$,
+where $\left(\frac{D}{m}\right)$ is the Jacobi symbol.
+
+Primes and $1$ satisfy the condition on the right but are not $D$-Carmichael, which is why $n$ is
+assumed composite; it is assumed coprime to $D$ as in the definition.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Theorem 1 (`integers-2026-A102-thm-1`). -/
@@ -197,12 +241,14 @@ public theorem_wanted isDCarmichael_iff_korselt {D : ℤ} (hD : D % 4 = 0 ∨ D 
     IsDCarmichael D n ↔
       Squarefree n ∧ ∀ p ∈ n.primeFactors, ((p : ℤ) - jacobiSym D p) ∣ ((n : ℤ) - jacobiSym D n)
 
-/-- Wagstaff: the prime `k`-tuples conjecture implies there are infinitely many primary
-Carmichael numbers with three prime factors (Carmichael: composite with `aⁿ⁻¹ ≡ 1 (mod n)` for
-all `a` prime to `n`; primary: the base-`p` digit sum of `n` is `p` for every prime `p ∣ n`).
-The prime `k`-tuples conjecture (the paper's Conjecture 1) is the hypothesis `hk`: for linear
-forms `aᵢ x + bᵢ` with `aᵢ ≥ 1` whose product has no fixed prime divisor, infinitely many `x`
-make every form a (positive) prime.
+/-- **Prime $k$-tuples give infinitely many primary Carmichael numbers (Wagstaff).** Suppose the
+prime $k$-tuples conjecture holds in the following form: for every finite list of integer pairs
+$(a_1, b_1), \dots, (a_k, b_k)$ with all $a_i \ge 1$ such that for every prime $\ell$ there is an
+integer $x$ with $\ell \nmid \prod_i (a_i x + b_i)$, there are infinitely many natural numbers $x$
+for which every $a_i x + b_i$ is a positive prime. Then there are infinitely many composite natural
+numbers $n > 1$ such that $a^{n-1} \equiv 1 \pmod n$ for every natural number $a$ coprime to $n$,
+$n$ has exactly three distinct prime factors, and for every prime $p \mid n$ the sum of the
+base-$p$ digits of $n$ equals $p$.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Theorem 2 (`integers-2026-A102-thm-2`). -/
@@ -214,11 +260,12 @@ public theorem_wanted infinite_primary_carmichael_of_primeKTuples
     {n : ℕ | 1 < n ∧ ¬ n.Prime ∧ (∀ a : ℕ, a.Coprime n → a ^ (n - 1) ≡ 1 [MOD n]) ∧
       n.primeFactors.card = 3 ∧ ∀ p ∈ n.primeFactors, (Nat.digits p n).sum = p}.Infinite
 
-/-- Korselt criterion for `σ`-Carmichael numbers: for a signature `σ = (ε₁, …, εᵣ)` of length
-`r ≥ 2` and an odd positive `n`, `n` is `σ`-Carmichael iff `n` is squarefree with exactly `r`
-prime factors `p₁ < ⋯ < pᵣ` and `pᵢ - εᵢ ∣ n - ε_σ` for all `i`, where `ε_σ = ∏ εᵢ`. The
-length condition `r ≥ 2` comes from the paper's definition of signatures; the record leaves
-the matching of `εₚ` to `p` implicit, here `p = pᵢ` pairs with `εᵢ`.
+/-- **Korselt criterion for $\sigma$-Carmichael numbers.** Let
+$\sigma = (\varepsilon_1, \dots, \varepsilon_r)$ be a list of signs $\varepsilon_i \in \{1, -1\}$ of
+length $r \ge 2$, put $\varepsilon_\sigma = \varepsilon_1 \cdots \varepsilon_r$, and let $n$ be an
+odd natural number. Then $n$ is $\sigma$-Carmichael if and only if $n$ is squarefree, has exactly
+$r$ prime factors $p_1 < \dots < p_r$, and satisfies
+$p_i - \varepsilon_i \mid n - \varepsilon_\sigma$ for every $i$.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Theorem 3 (`integers-2026-A102-thm-3`). -/
@@ -228,15 +275,20 @@ public theorem_wanted isSignatureCarmichael_iff {σ : List ℤ} (hσ : ∀ e ∈
       Squarefree n ∧ n.primeFactorsList.length = σ.length ∧
         ∀ pe ∈ n.primeFactorsList.zip σ, ((pe.1 : ℤ) - pe.2) ∣ ((n : ℤ) - σ.prod)
 
-/-- Two-prime-factor `D`-Carmichael numbers: if `p < q` are primes with `pq` `D`-Carmichael
-(`D ≡ 0, 1 (mod 4)`), then `q = p + 2`, `(p + Dx)(q + Dx)` is a universal `D`-form of
-signature `(-1, 1)` whose prime-factor values are primary `D`-Carmichael numbers, and the prime
-`k`-tuples conjecture gives infinitely many primary `D`-Carmichael numbers of signature
-`(-1, 1)`. Moreover the two-prime-factor `5`-Carmichael numbers are exactly the products
-`(10x + 7)(10x + 9)` with `x ≥ 1` and both factors prime. The prime `k`-tuples conjecture (the
-paper's Conjecture 1) is the hypothesis `hk`: for linear
-forms `aᵢ x + bᵢ` with `aᵢ ≥ 1` whose product has no fixed prime divisor, infinitely many `x`
-make every form a (positive) prime.
+/-- **Two-prime-factor $D$-Carmichael numbers.** Let $D$ be an integer and assume the prime
+$k$-tuples conjecture (the paper's Conjecture 1) in the following form: for every finite list
+of linear forms $a_i x + b_i$ with integers $a_i \ge 1$ and $b_i$ such that for every prime
+$\ell$ there is an integer $x$ with $\ell \nmid \prod_i (a_i x + b_i)$, there are infinitely
+many natural numbers $x$ at which every $a_i x + b_i$ is a positive prime.
+Then, first, for all primes $p < q$ such that $pq$ is a $D$-Carmichael number: the product of
+the linear factors $Dx + p$ and $Dx + q$ is a universal $D$-form with respect to the signature
+$(-1, 1)$; $q = p + 2$; for every integer $x$ at which $p + Dx$ and $q + Dx$ are both positive
+primes, their product is a primary $D$-Carmichael number; and there are infinitely many
+primary $D$-Carmichael numbers $n$ whose Jacobi symbols $(D \mid \cdot)$ at the prime factors
+of $n$, listed in increasing order with multiplicity, are $-1, 1$. Second, a natural number
+$n$ is a $5$-Carmichael number with exactly two prime factors counted with multiplicity if and
+only if $n = (10x + 7)(10x + 9)$ for some natural number $x \ge 1$ with $10x + 7$ and
+$10x + 9$ both prime.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Theorem 4 (`integers-2026-A102-thm-4`). -/
@@ -255,11 +307,16 @@ public theorem_wanted twoFactor_isDCarmichael {D : ℤ}
     ∀ n : ℕ, (IsDCarmichael 5 n ∧ n.primeFactorsList.length = 2) ↔
       ∃ x : ℕ, 1 ≤ x ∧ (10 * x + 7).Prime ∧ (10 * x + 9).Prime ∧ n = (10 * x + 7) * (10 * x + 9)
 
-/-- Chernick-type universal forms for three-prime-factor `D`-Carmichael numbers: let
-`3 < p₁ < p₂ < p₃` be primes with `p₁p₂p₃` `D`-Carmichael of signature `σ = (ε₁, ε₂, ε₃)`, let
-`g = gcd(pᵢ - εᵢ)` and `g cᵢ = pᵢ - εᵢ` with the `cᵢ` pairwise coprime. Then
-`(D c₁² c₂ c₃ x + p₁)(D c₁ c₂² c₃ x + p₂)(D c₁ c₂ c₃² x + p₃)` is a universal `D`-form with
-respect to `σ`. `D ≡ 0, 1 (mod 4)` (the paper's standing assumption) is part of `IsDCarmichael`.
+/-- **Chernick-type universal forms for three prime factors.** Let $D$ be an integer and let
+$3 < p_1 < p_2 < p_3$ be primes such that $p_1 p_2 p_3$ is $D$-Carmichael, and write
+$\varepsilon_i = \left(\frac{D}{p_i}\right)$ for the Jacobi symbols. Let $g$ be the greatest common
+divisor of $p_1 - \varepsilon_1$, $p_2 - \varepsilon_2$ and $p_3 - \varepsilon_3$, and let
+$c_1, c_2, c_3$ be pairwise coprime integers with $g c_i = p_i - \varepsilon_i$ for each $i$. Then
+$$(D c_1^2 c_2 c_3 x + p_1)(D c_1 c_2^2 c_3 x + p_2)(D c_1 c_2 c_3^2 x + p_3)$$
+is a universal $D$-form with respect to the signature
+$(\varepsilon_1, \varepsilon_2, \varepsilon_3)$.
+
+Being $D$-Carmichael includes the condition $D \equiv 0$ or $1 \pmod 4$.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Theorem 5 (`integers-2026-A102-thm-5`). -/
@@ -275,11 +332,15 @@ public theorem_wanted isUniversalLinearDForm_chernick {D : ℤ} {p₁ p₂ p₃ 
     IsUniversalLinearDForm D [jacobiSym D p₁, jacobiSym D p₂, jacobiSym D p₃]
       [(D * c₁ ^ 2 * c₂ * c₃, p₁), (D * c₁ * c₂ ^ 2 * c₃, p₂), (D * c₁ * c₂ * c₃ ^ 2, p₃)]
 
-/-- The prime `k`-tuples conjecture implies that for every signature `σ` of length three there
-are infinitely many primary `5`-Carmichael numbers of signature `σ`. The prime `k`-tuples
-conjecture (the paper's Conjecture 1) is the hypothesis `hk`: for linear
-forms `aᵢ x + bᵢ` with `aᵢ ≥ 1` whose product has no fixed prime divisor, infinitely many `x`
-make every form a (positive) prime.
+/-- **Prime $k$-tuples give primary $5$-Carmichael numbers of every three-term signature.**
+Suppose the prime $k$-tuples conjecture holds in the following form: for every finite list of
+integer pairs $(a_1, b_1), \dots, (a_k, b_k)$ with all $a_i \ge 1$ such that for every prime
+$\ell$ there is an integer $x$ with $\ell \nmid \prod_i (a_i x + b_i)$, there are infinitely many
+natural numbers $x$ for which every $a_i x + b_i$ is a positive prime. Then for all signs
+$\sigma_1, \sigma_2, \sigma_3 \in \{1, -1\}$ there are infinitely many primary $5$-Carmichael
+numbers $n$ that have exactly three prime factors $p_1 \le p_2 \le p_3$ counted with multiplicity
+and satisfy $\left(\frac{5}{p_i}\right) = \sigma_i$ for $i = 1, 2, 3$, where
+$\left(\frac{5}{p}\right)$ is the Jacobi symbol.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Theorem 6 (`integers-2026-A102-thm-6`). -/
@@ -292,9 +353,11 @@ public theorem_wanted infinite_primary_fiveCarmichael_of_primeKTuples
     {n : ℕ | IsPrimaryDCarmichael 5 n ∧
       n.primeFactorsList.map (fun p => jacobiSym 5 p) = σ}.Infinite
 
-/-- `105, 195, 255, 399, 561, 2703` are the only numbers `3qr` (`3 < q < r` primes) that are
-`D`-Carmichael for some discriminant `D ≡ 0, 1 (mod 4)`, and each is so for only one
-signature: any two such `D`, `D'` give the same signs at `3`, `q` and `r`.
+/-- **The $D$-Carmichael numbers of the form $3qr$.** Let $q < r$ be primes with $3 < q$. Then
+$3qr$ is a $D$-Carmichael number for some integer $D$ if and only if $3qr$ is one of $105$,
+$195$, $255$, $399$, $561$ and $2703$. Moreover, for all integers $D$ and $D'$ such that $3qr$
+is both $D$-Carmichael and $D'$-Carmichael, the Jacobi symbols agree at $3$, $q$ and $r$:
+$(D \mid 3) = (D' \mid 3)$, $(D \mid q) = (D' \mid q)$ and $(D \mid r) = (D' \mid r)$.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Theorem 7 (`integers-2026-A102-thm-7`). -/
@@ -306,12 +369,16 @@ public theorem_wanted threeQR_isDCarmichael_iff {q r : ℕ} (hq : q.Prime) (hr :
       jacobiSym D 3 = jacobiSym D' 3 ∧ jacobiSym D q = jacobiSym D' q ∧
         jacobiSym D r = jacobiSym D' r
 
-/-- The prime `k`-tuples conjecture implies infinitely many `x ≥ 0` with `p = 30x + 17`, `q = 30x
-+ 19`, `r = 180x + 107`, `s = 180x + 109` all prime; for every such `x`, `m = pqr` and `n = pqs`
-are primary `5`-Carmichael numbers and `N = pqrs` is a secondary `5`-Carmichael number. The prime
-`k`-tuples conjecture (the paper's Conjecture 1) is the hypothesis `hk`: for linear
-forms `aᵢ x + bᵢ` with `aᵢ ≥ 1` whose product has no fixed prime divisor, infinitely many `x`
-make every form a (positive) prime.
+/-- **Primary and secondary $5$-Carmichael numbers from prime quadruples.** Assume the prime
+$k$-tuples conjecture (the paper's Conjecture 1) in the following form: for every finite list
+of linear forms $a_i x + b_i$ with integers $a_i \ge 1$ and $b_i$ such that for every prime
+$\ell$ there is an integer $x$ with $\ell \nmid \prod_i (a_i x + b_i)$, there are infinitely
+many natural numbers $x$ at which every $a_i x + b_i$ is a positive prime.
+For a natural number $x$ put $p = 30x + 17$, $q = 30x + 19$, $r = 180x + 107$ and
+$s = 180x + 109$. Then, first, for every natural number $x$ with $p$, $q$, $r$ and $s$ all
+prime, $pqr$ and $pqs$ are primary $5$-Carmichael numbers and $pqrs$ is a secondary
+$5$-Carmichael number; and second, there are infinitely many natural numbers $x$ with $p$,
+$q$, $r$ and $s$ all prime.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Theorem 8 (`integers-2026-A102-thm-8`). -/
@@ -329,13 +396,18 @@ public theorem_wanted primaryFiveCarmichael_pairs_of_primeKTuples
     {x : ℕ | (30 * x + 17).Prime ∧ (30 * x + 19).Prime ∧ (180 * x + 107).Prime ∧
       (180 * x + 109).Prime}.Infinite
 
-/-- The prime `k`-tuples conjecture implies infinitely many `x ≥ 0` with `p = 78x + 137`, `q = 78x
-+ 139`, `r = 468x + 827`, `s = 468x + 829` all prime; for every such `x`, `m = pqr` and `n = pqs`
-are primary `13`-Carmichael numbers of signatures `- + -` and `- + +`, and `N = pqrs` is a
-secondary `13`-Carmichael number. The prime `k`-tuples conjecture (the paper's Conjecture 1) is
-the hypothesis `hk`: for linear
-forms `aᵢ x + bᵢ` with `aᵢ ≥ 1` whose product has no fixed prime divisor, infinitely many `x`
-make every form a (positive) prime.
+/-- **Primary and secondary $13$-Carmichael numbers from prime quadruples.** Assume the prime
+$k$-tuples conjecture (the paper's Conjecture 1) in the following form: for every finite list
+of linear forms $a_i x + b_i$ with integers $a_i \ge 1$ and $b_i$ such that for every prime
+$\ell$ there is an integer $x$ with $\ell \nmid \prod_i (a_i x + b_i)$, there are infinitely
+many natural numbers $x$ at which every $a_i x + b_i$ is a positive prime.
+For a natural number $x$ put $p = 78x + 137$, $q = 78x + 139$, $r = 468x + 827$ and
+$s = 468x + 829$. Then, first, for every natural number $x$ with $p$, $q$, $r$ and $s$ all
+prime: $pqr$ and $pqs$ are primary $13$-Carmichael numbers; the Jacobi symbols
+$(13 \mid \cdot)$ at the prime factors of $pqr$, listed in increasing order, are $-1, 1, -1$,
+and those at the prime factors of $pqs$ are $-1, 1, 1$; and $pqrs$ is a secondary
+$13$-Carmichael number. Second, there are infinitely many natural numbers $x$ with $p$, $q$,
+$r$ and $s$ all prime.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Theorem 9 (`integers-2026-A102-thm-9`). -/
@@ -357,17 +429,25 @@ public theorem_wanted primaryThirteenCarmichael_pairs_of_primeKTuples
     {x : ℕ | (78 * x + 137).Prime ∧ (78 * x + 139).Prime ∧ (468 * x + 827).Prime ∧
       (468 * x + 829).Prime}.Infinite
 
-/-- The forms `(390z + 137)(390z + 139)(2340z + 827)` and `(390z + 137)(390z + 139)(2340z + 829)`
-are universal `5`- and `13`-forms with respective signatures `- + -` and `- + +`, yielding only
-primary `5`- and `13`-Carmichael numbers; the four-factor form with both last factors is a
-universal `5`- and `13`-form of signature `- + - +` yielding secondary `5`- and `13`-Carmichael
-numbers; and the prime `k`-tuples conjecture gives infinitely many `z` with all four factors
-prime. The paper (and the record) print "universal 7- and 13-forms"; `7 ≢ 0, 1 (mod 4)` is not
-a discriminant, and the next sentence and the proof (combining the `5`-form of Theorem 8 with
-the `13`-form of Theorem 9) fix it as `5`. The prime `k`-tuples conjecture (the paper's Conjecture
-1) is the hypothesis `hk`: for linear
-forms `aᵢ x + bᵢ` with `aᵢ ≥ 1` whose product has no fixed prime divisor, infinitely many `x`
-make every form a (positive) prime.
+/-- **Universal $5$- and $13$-forms from prime quadruples.** Assume the prime
+$k$-tuples conjecture (the paper's Conjecture 1) in the following form: for every finite list
+of linear forms $a_i x + b_i$ with integers $a_i \ge 1$ and $b_i$ such that for every prime
+$\ell$ there is an integer $x$ with $\ell \nmid \prod_i (a_i x + b_i)$, there are infinitely
+many natural numbers $x$ at which every $a_i x + b_i$ is a positive prime.
+Then, first, for $D = 5$ and for $D = 13$: the products of linear factors
+$(390z + 137)(390z + 139)(2340z + 827)$ and $(390z + 137)(390z + 139)(2340z + 829)$ are
+universal $D$-forms with respect to the signatures $(-1, 1, -1)$ and $(-1, 1, 1)$
+respectively; the product $(390z + 137)(390z + 139)(2340z + 827)(2340z + 829)$ is a
+universal $D$-form with respect to the signature $(-1, 1, -1, 1)$; and for every natural
+number $z$ with $390z + 137$ and $390z + 139$ prime, the first product is a primary
+$D$-Carmichael number if $2340z + 827$ is prime, the second is a primary $D$-Carmichael
+number if $2340z + 829$ is prime, and the four-factor product is a secondary $D$-Carmichael
+number if both are prime. Second, there are infinitely many natural numbers $z$ at which all
+four factors are prime.
+
+The paper (and the record) print "universal 7- and 13-forms"; $7 \not\equiv 0, 1 \pmod 4$ is
+not a discriminant, and the next sentence and the proof (combining the $5$-form of Theorem 8
+with the $13$-form of Theorem 9) fix it as $5$.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Theorem 10 (`integers-2026-A102-thm-10`). -/
@@ -392,10 +472,16 @@ public theorem_wanted universal_fiveThirteen_forms
     {z : ℕ | (390 * z + 137).Prime ∧ (390 * z + 139).Prime ∧ (2340 * z + 827).Prime ∧
       (2340 * z + 829).Prime}.Infinite
 
-/-- Schinzel's H-hypothesis implies infinitely many numbers are simultaneously primary
-`5`-Carmichael of signature `+ - -` and primary `(-11)`-Carmichael of signature `- + -`. The
-H-hypothesis (the paper's Conjecture 2) is the hypothesis `hH`, phrased with the canonical
-`Polynomial.BunyakovskyCondition` and `Polynomial.SchinzelCondition`.
+/-- **Schinzel's Hypothesis H gives numbers that are primary $5$- and $(-11)$-Carmichael.**
+Suppose Schinzel's Hypothesis H holds in the following form: for every finite set $F$ of integer
+polynomials, each satisfying the Bunyakovsky condition, such that $F$ satisfies the Schinzel
+condition, there are infinitely many natural numbers $n$ for which $|f(n)|$ is prime for every
+$f \in F$. Then there are infinitely many natural numbers $n$ that are both primary
+$5$-Carmichael and primary $(-11)$-Carmichael and have exactly three prime factors
+$p_1 \le p_2 \le p_3$ counted with multiplicity, with Jacobi symbols
+$\left(\frac{5}{p_1}\right) = 1$, $\left(\frac{5}{p_2}\right) = \left(\frac{5}{p_3}\right) = -1$,
+$\left(\frac{-11}{p_1}\right) = \left(\frac{-11}{p_3}\right) = -1$ and
+$\left(\frac{-11}{p_2}\right) = 1$.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Theorem 11 (`integers-2026-A102-thm-11`). -/
@@ -408,10 +494,14 @@ public theorem_wanted infinite_primary_five_negEleven_of_schinzelH
       IsPrimaryDCarmichael (-11) n ∧
       n.primeFactorsList.map (fun p => jacobiSym (-11) p) = [-1, 1, -1]}.Infinite
 
-/-- If `n` is `D`-Carmichael and `D'`-Carmichael for two signatures of opposite signs
-(`(D | n) ≠ (D' | n)`), then the signatures have opposite entries (`(D' | p) = -(D | p)` for
-every prime `p ∣ n`), `ω(n)` is odd and `3 ∤ n`. The paper's `n ∈ C(σ) ∩ C(σ')` is read as `n`
-being `D`-Carmichael with signature `σ` and `D'`-Carmichael with signature `σ'`.
+/-- **Bi-Carmichael numbers for signatures of opposite signs.** Let $D$ and $D'$ be integers and
+let $n$ be both a $D$-Carmichael and a $D'$-Carmichael number whose Jacobi symbols satisfy
+$\left(\frac{D}{n}\right) \ne \left(\frac{D'}{n}\right)$. Then
+$\left(\frac{D'}{p}\right) = -\left(\frac{D}{p}\right)$ for every prime $p \mid n$, the number of
+distinct prime factors of $n$ is odd, and $3 \nmid n$.
+
+This reads the paper's $n \in C(\sigma) \cap C(\sigma')$ as $n$ being $D$-Carmichael with
+signature $\sigma$ and $D'$-Carmichael with signature $\sigma'$.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Theorem 12 (`integers-2026-A102-thm-12`). -/
@@ -421,9 +511,10 @@ public theorem_wanted isDCarmichael_opposite_signs {D D' : ℤ} {n : ℕ} (h : I
     (∀ p ∈ n.primeFactors, jacobiSym D' p = -jacobiSym D p) ∧ Odd n.primeFactors.card ∧
       ¬ 3 ∣ n
 
-/-- There are no three-prime-factor numbers that are bi-Carmichael with respect to two signatures
-of opposite signs: if `n` has three prime factors and is `D`- and `D'`-Carmichael, then
-`(D | n) = (D' | n)`.
+/-- **Three-prime-factor $D$-Carmichael numbers have a single Jacobi sign.** Let $D$ and $D'$ be
+integers and let $n$ be a natural number with exactly three distinct prime factors. If $n$ is both
+$D$-Carmichael and $D'$-Carmichael, then the Jacobi symbols agree:
+$\left(\frac{D}{n}\right) = \left(\frac{D'}{n}\right)$.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Theorem 13 (`integers-2026-A102-thm-13`). -/
@@ -431,12 +522,19 @@ public theorem_wanted jacobiSym_eq_of_isDCarmichael_three {D D' : ℤ} {n : ℕ}
     (h3 : n.primeFactors.card = 3) (h : IsDCarmichael D n) (h' : IsDCarmichael D' n) :
     jacobiSym D n = jacobiSym D' n
 
-/-- Ballot's Lemma 3: with `εᵢ`, `cᵢ`, `g`, `n = (c₁g + ε₁)(c₂g + ε₂)(c₃g + ε₃)` as in Lemma 2
-and `cᵢ g ∣ n - εₙ` for `i = 1, 2, 3`, every nonzero `h ≡ g (mod c₁c₂c₃)` gives
-`cᵢ h ∣ m - εₙ` for `m = (c₁h + ε₁)(c₂h + ε₂)(c₃h + ε₃)`. The record omits the divisibility
-hypothesis on `g`, without which the claim fails (`c = (1, 2, 3)`, `ε = (1, 1, 1)`, `g = h = 1`:
-`2 ∤ 24 - 1`); the paper's proof ("replace
-`g` by `h` in (9)") uses it.
+/-- **Ballot's Lemma 3: the three divisibilities persist modulo $c_1 c_2 c_3$.** Let
+$\varepsilon_1, \varepsilon_2, \varepsilon_3 \in \{1, -1\}$, let $c_1, c_2, c_3$ be pairwise coprime
+positive integers, let $\varepsilon = \varepsilon_1 \varepsilon_2 \varepsilon_3$, and let $g \ne 0$
+be an integer such that $c_i g$ divides
+$(c_1 g + \varepsilon_1)(c_2 g + \varepsilon_2)(c_3 g + \varepsilon_3) - \varepsilon$ for
+$i = 1, 2, 3$. Then every nonzero integer $h \equiv g \pmod{c_1 c_2 c_3}$ satisfies the same
+divisibilities: $c_i h$ divides
+$(c_1 h + \varepsilon_1)(c_2 h + \varepsilon_2)(c_3 h + \varepsilon_3) - \varepsilon$ for
+$i = 1, 2, 3$.
+
+The divisibility hypothesis on $g$ is needed: for $(c_1, c_2, c_3) = (1, 2, 3)$,
+$\varepsilon_1 = \varepsilon_2 = \varepsilon_3 = 1$ and $g = h = 1$, the product is $24$ and
+$2 \nmid 24 - 1$.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Lemma 3 (`integers-2026-A102-lem-3`). -/
@@ -450,9 +548,11 @@ public theorem_wanted mul_dvd_prod_sub_sign_of_modEq {ε₁ ε₂ ε₃ c₁ c�
     ∀ c ∈ ({c₁, c₂, c₃} : Finset ℤ),
       c * h ∣ (c₁ * h + ε₁) * (c₂ * h + ε₂) * (c₃ * h + ε₃) - ε₁ * ε₂ * ε₃
 
-/-- If `3qr` (`3 < q < r` primes) is `D`-Carmichael of signature `(α, β, γ)` (`D ≡ 0, 1 (mod 4)`),
-then `q - β ∣ 3r - αγ` and `r - γ ∣ 3q - αβ`; moreover `r = 3q + 2γ` if `γ = -αβ`, and
-`2r = 3q + γ` if `γ = αβ`.
+/-- **Divisibility conditions for $D$-Carmichael numbers $3qr$.** Let $D$ be an integer, let
+$q < r$ be primes with $3 < q$, and write $\alpha = (D \mid 3)$, $\beta = (D \mid q)$ and
+$\gamma = (D \mid r)$ for the Jacobi symbols. If $3qr$ is a $D$-Carmichael number, then
+$q - \beta$ divides $3r - \alpha\gamma$ and $r - \gamma$ divides $3q - \alpha\beta$; moreover
+$r = 3q + 2\gamma$ if $\gamma = -\alpha\beta$, and $2r = 3q + \gamma$ if $\gamma = \alpha\beta$.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Lemma 4 (`integers-2026-A102-lem-4`). -/
@@ -464,8 +564,10 @@ public theorem_wanted threeQR_isDCarmichael_divisibility {D : ℤ} {q r : ℕ} (
     (jacobiSym D r = -(jacobiSym D 3 * jacobiSym D q) → (r : ℤ) = 3 * q + 2 * jacobiSym D r) ∧
     (jacobiSym D r = jacobiSym D 3 * jacobiSym D q → 2 * (r : ℤ) = 3 * q + jacobiSym D r)
 
-/-- Williams: for `D ≡ 0, 1 (mod 4)` and primes `p₁ < p₂`, the product `p₁p₂` is `D`-Carmichael
-iff `p₂ = p₁ + 2`, `(D | p₁) = -1` and `(D | p₂) = 1`.
+/-- **Williams' characterization of two-prime $D$-Carmichael numbers.** Let $D$ be an integer
+with $D \equiv 0$ or $1 \pmod 4$ and let $p_1 < p_2$ be primes. Then $p_1 p_2$ is a
+$D$-Carmichael number if and only if $p_2 = p_1 + 2$, $\left(\frac{D}{p_1}\right) = -1$ and
+$\left(\frac{D}{p_2}\right) = 1$, where $\left(\frac{D}{p}\right)$ is the Jacobi symbol.
 
 Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
 Proposition 1 (`integers-2026-A102-prop-1`). -/

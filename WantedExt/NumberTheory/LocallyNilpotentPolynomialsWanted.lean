@@ -20,27 +20,33 @@ open Polynomial
 
 @[expose] public section
 
-/-- A polynomial `u ∈ ℤ[x]` is weakly locally nilpotent at `r` outside a set `A` of primes
-if for every prime `p ∉ A` some iterate `u^{(m)}(r)`, `m ≥ 1`, is divisible by `p`. For
-`A = ∅` this is "locally nilpotent at `r`".
+/-- **Weakly locally nilpotent polynomial at a point.** Let $u \in \mathbb{Z}[x]$ and
+$r \in \mathbb{Z}$, and let $A$ be a set of natural numbers. Write $u^{(m)}$ for the $m$-fold
+iterate of $u$ as a map $\mathbb{Z} \to \mathbb{Z}$. Then $u$ is weakly locally nilpotent at $r$
+outside $A$ if for every prime $p \notin A$ there is $m \ge 1$ such that $p$ divides
+$u^{(m)}(r)$. For $A = \emptyset$ this is called locally nilpotent at $r$.
+
+Only the primes in $A$ matter, so $A$ is usually taken to be a set of primes.
 
 Source: Sayak Sengupta, *Locally Nilpotent Polynomials over Z*, INTEGERS 24 (2024),
 Article A13, Section 2. -/
 public def IsWeaklyLocallyNilpotentAt (u : ℤ[X]) (r : ℤ) (A : Set ℕ) : Prop :=
   ∀ p : ℕ, p.Prime → p ∉ A → ∃ m, 0 < m ∧ (p : ℤ) ∣ (fun x => u.eval x)^[m] r
 
-/-- A polynomial `u ∈ ℤ[x]` is nilpotent at `r` if some iterate `u^{(n)}(r)`, `n ≥ 1`,
-is `0`.
+/-- **Nilpotent polynomial at a point.** Let $u \in \mathbb{Z}[x]$ and $r \in \mathbb{Z}$, and
+write $u^{(n)}$ for the $n$-fold iterate of $u$ as a map $\mathbb{Z} \to \mathbb{Z}$. Then $u$ is
+nilpotent at $r$ if $u^{(n)}(r) = 0$ for some $n \ge 1$.
 
 Source: Sayak Sengupta, *Locally Nilpotent Polynomials over Z*, INTEGERS 24 (2024),
 Article A13, Section 2. -/
 public def IsNilpotentAt (u : ℤ[X]) (r : ℤ) : Prop :=
   ∃ n, 0 < n ∧ (fun x => u.eval x)^[n] r = 0
 
-/-- CRS lemma: if `α, β, γ` are nonzero integers and `β / γ` is not an integer power `α^k`
-(`k ∈ ℤ`), then infinitely many primes divide none of `γ αⁿ - β`, `n ≥ 1`. The condition
-`β / γ ≠ α^k` is stated division-free: `β ≠ γ αᵏ` and `β αᵏ ≠ γ` for all `k ∈ ℕ` (the cases
-`k ≥ 0` and `k ≤ 0`).
+/-- **Infinitely many primes avoid $\gamma \alpha^n - \beta$.** Let $\alpha, \beta, \gamma$ be
+nonzero integers such that $\beta \ne \gamma \alpha^k$ and $\beta \alpha^k \ne \gamma$ for every
+natural number $k$, that is, $\beta / \gamma$ is not $\alpha^k$ for any integer $k$. Then there
+are infinitely many primes $p$ such that $p$ divides none of the integers $\gamma \alpha^n - \beta$
+with $n \ge 1$.
 
 Source: Sayak Sengupta, *Locally Nilpotent Polynomials over Z*, INTEGERS 24 (2024),
 Article A13, Lemma 3.2. -/
@@ -48,7 +54,9 @@ public theorem_wanted infinite_primes_not_dvd_mul_pow_sub (α β γ : ℤ) (hα 
     (hγ : γ ≠ 0) (h : ∀ k : ℕ, β ≠ γ * α ^ k ∧ β * α ^ k ≠ γ) :
     {p : ℕ | p.Prime ∧ ∀ n : ℕ, 0 < n → ¬ (p : ℤ) ∣ γ * α ^ n - β}.Infinite
 
-/-- Iterates of `x + 1`: `u^{(m)}(r) = r + m`.
+/-- **Iterates of $x + 1$.** Let $u(x) = x + 1 \in \mathbb{Z}[x]$ and write $u^{(m)}$ for its
+$m$-fold iterate as a map $\mathbb{Z} \to \mathbb{Z}$. For every integer $r$ and every natural
+number $m$, $u^{(m)}(r) = r + m$.
 
 Source: Sayak Sengupta, *Locally Nilpotent Polynomials over Z*, INTEGERS 24 (2024),
 Article A13, Section 2, example (e). -/
@@ -61,7 +69,11 @@ public theorem iterate_eval_X_add_one (r : ℤ) (m : ℕ) :
     simp
     ring
 
-/-- `x + 1` is locally nilpotent at `1`: `u^{(p-1)}(1) = p`.
+/-- **$x + 1$ is locally nilpotent at $1$.** Let $u(x) = x + 1 \in \mathbb{Z}[x]$ and write
+$u^{(m)}$ for the $m$-fold iterate of $u$ as a map $\mathbb{Z} \to \mathbb{Z}$. Then for every
+prime $p$ there is $m \ge 1$ such that $p$ divides $u^{(m)}(1)$.
+
+One can take $m = p - 1$, since $u^{(p-1)}(1) = p$.
 
 Source: Sayak Sengupta, *Locally Nilpotent Polynomials over Z*, INTEGERS 24 (2024),
 Article A13, Section 2, example (e). -/
@@ -74,7 +86,10 @@ public theorem isWeaklyLocallyNilpotentAt_X_add_one :
   rw [this]
   simp
 
-/-- `x + 1` is not nilpotent at `1`: `u^{(n)}(1) = n + 1 ≠ 0`.
+/-- **$x + 1$ is not nilpotent at $1$.** The polynomial $x + 1 \in \mathbb{Z}[x]$ is not nilpotent
+at $1$.
+
+Writing $u(x) = x + 1$, the iterates satisfy $u^{(n)}(1) = n + 1 \ne 0$ for every $n \ge 1$.
 
 Source: Sayak Sengupta, *Locally Nilpotent Polynomials over Z*, INTEGERS 24 (2024),
 Article A13, Section 2, example (e). -/
@@ -83,10 +98,10 @@ public theorem not_isNilpotentAt_X_add_one : ¬ IsNilpotentAt (X + 1) 1 := by
   rw [iterate_eval_X_add_one] at hn
   omega
 
-/-- Classification of the locally nilpotent polynomials at `1` (degree `≥ 1`): exactly
-`(x-1)p(x)` with `p ≠ 0`, `-2x + 4 + p(x)(x-1)(x-2)`,
-`-2x^2 + 7x - 3 + p(x)(x-1)(x-2)(x-3)` (`p ∈ ℤ[x]`), and `x + 1`. The paper's
-nilpotency-index annotations are not part of this statement.
+/-- **Classification of locally nilpotent polynomials at $1$.** A polynomial $u \in \mathbb{Z}[x]$
+of positive degree is locally nilpotent at $1$ if and only if it has one of the following forms,
+for some $p \in \mathbb{Z}[x]$: $(x-1)p(x)$ with $p \ne 0$; $-2x + 4 + p(x)(x-1)(x-2)$;
+$-2x^2 + 7x - 3 + p(x)(x-1)(x-2)(x-3)$; or $u = x + 1$.
 
 Source: Sayak Sengupta, *Locally Nilpotent Polynomials over Z*, INTEGERS 24 (2024),
 Article A13, Theorem 4.1. -/
@@ -97,10 +112,12 @@ public theorem_wanted locallyNilpotentAt_one_classification :
         {u | ∃ p : ℤ[X], u = -2 * X ^ 2 + 7 * X - 3 + p * (X - 1) * (X - 2) * (X - 3)} ∪
         {X + 1}
 
-/-- Classification of the locally nilpotent polynomials at `-1` (degree `≥ 1`), the image of
-Theorem 4.1 under `u(x) ↦ -u(-x)`: exactly `(x+1)p(x)` with `p ≠ 0`,
-`-2x - 4 + p(x)(x+1)(x+2)`, `2x^2 + 7x + 3 + p(x)(x+1)(x+2)(x+3)` (`p ∈ ℤ[x]`), and `x - 1`.
-The nilpotency-index annotations are not part of this statement.
+/-- **Classification of locally nilpotent polynomials at $-1$.** A polynomial $u \in \mathbb{Z}[x]$
+of positive degree is locally nilpotent at $-1$ if and only if it has one of the following forms,
+for some $p \in \mathbb{Z}[x]$: $(x+1)p(x)$ with $p \ne 0$; $-2x - 4 + p(x)(x+1)(x+2)$;
+$2x^2 + 7x + 3 + p(x)(x+1)(x+2)(x+3)$; or $u = x - 1$.
+
+These are the images of the polynomials locally nilpotent at $1$ under $u(x) \mapsto -u(-x)$.
 
 Source: Sayak Sengupta, *Locally Nilpotent Polynomials over Z*, INTEGERS 24 (2024),
 Article A13, Corollary 4.2. -/
@@ -111,8 +128,10 @@ public theorem_wanted locallyNilpotentAt_neg_one_classification :
         {u | ∃ p : ℤ[X], u = 2 * X ^ 2 + 7 * X + 3 + p * (X + 1) * (X + 2) * (X + 3)} ∪
         {X - 1}
 
-/-- The locally nilpotent but non-nilpotent polynomials at `1` and at `-1` are exactly
-`x + 1` and `x - 1` respectively (`S_1 = {x + 1}`, `S_{-1} = {x - 1}`).
+/-- **Locally nilpotent but not nilpotent polynomials at $\pm 1$.** The only polynomial
+$u \in \mathbb{Z}[x]$ of positive degree that is locally nilpotent at $1$ but not nilpotent at $1$
+is $x + 1$, and the only polynomial of positive degree that is locally nilpotent at $-1$ but not
+nilpotent at $-1$ is $x - 1$.
 
 Source: Sayak Sengupta, *Locally Nilpotent Polynomials over Z*, INTEGERS 24 (2024),
 Article A13, Corollary 4.3. -/
@@ -122,10 +141,12 @@ public theorem_wanted locallyNilpotent_not_nilpotentAt_one_neg_one :
       {u : ℤ[X] | 0 < u.natDegree ∧ IsWeaklyLocallyNilpotentAt u (-1) ∅ ∧
         ¬ IsNilpotentAt u (-1)} = {X - 1}
 
-/-- Classification of the locally nilpotent polynomials at `0` (degree `≥ 1`): exactly
-`x + b` with `b ≠ 0`; `ax + b` with `b ≠ 0` and `P(b) ⊇ P(a) ≠ ∅` (`P(n)` the set of prime
-divisors of `n`); `x p(x)` with `p ≠ 0`; and `(x - a) p(x)` with `a ≠ 0`, `p(0) = -1`.
-The nilpotency annotations are not part of this statement.
+/-- **Classification of locally nilpotent polynomials at $0$.** A polynomial $u \in \mathbb{Z}[x]$
+of positive degree is locally nilpotent at $0$ if and only if it has one of the following forms:
+$x + b$ with $b \in \mathbb{Z}$, $b \ne 0$; $ax + b$ with $a, b \in \mathbb{Z}$, $b \ne 0$, $a$
+divisible by at least one prime, and every prime divisor of $a$ dividing $b$; $x\,p(x)$ with
+$p \in \mathbb{Z}[x]$, $p \ne 0$; or $(x - a)p(x)$ with $a \in \mathbb{Z}$, $a \ne 0$, and
+$p \in \mathbb{Z}[x]$ with $p(0) = -1$.
 
 Source: Sayak Sengupta, *Locally Nilpotent Polynomials over Z*, INTEGERS 24 (2024),
 Article A13, Theorem 4.4. -/
@@ -137,8 +158,10 @@ public theorem_wanted locallyNilpotentAt_zero_classification :
         {u | ∃ p : ℤ[X], p ≠ 0 ∧ u = X * p} ∪
         {u | ∃ (a : ℤ) (p : ℤ[X]), a ≠ 0 ∧ p.eval 0 = -1 ∧ u = (X - C a) * p}
 
-/-- The locally nilpotent but non-nilpotent polynomials at `0` (`S_0`) are exactly
-`x + b` with `b ≠ 0` and `ax + b` with `b ≠ 0` and `P(b) ⊇ P(a) ≠ ∅`.
+/-- **Polynomials locally nilpotent but not nilpotent at $0$.** A polynomial $u \in \mathbb{Z}[x]$
+of degree at least $1$ is locally nilpotent at $0$ and not nilpotent at $0$ if and only if either
+$u = x + b$ for some integer $b \ne 0$, or $u = ax + b$ for some integers $a$ and $b$ with
+$b \ne 0$ such that $a$ has at least one prime divisor and every prime divisor of $a$ divides $b$.
 
 Source: Sayak Sengupta, *Locally Nilpotent Polynomials over Z*, INTEGERS 24 (2024),
 Article A13, Corollary 4.5. -/
@@ -148,11 +171,14 @@ public theorem_wanted locallyNilpotent_not_nilpotentAt_zero :
         {u | ∃ a b : ℤ, b ≠ 0 ∧ (∃ p : ℕ, p.Prime ∧ (p : ℤ) ∣ a) ∧
           (∀ p : ℕ, p.Prime → (p : ℤ) ∣ a → (p : ℤ) ∣ b) ∧ u = C a * X + C b}
 
-/-- For a finite set `A` of primes, the linear polynomials weakly locally nilpotent at `1`
-outside `A` and not nilpotent at `1` are exactly `x + c`, `x - c` with `c ≠ 1`,
-`±c x + 1` with `c ≠ 1`, and (only when `2 ∈ A`) `-2x - 1`, where `c` ranges over the
-positive integers all of whose prime factors lie in `A` (`c = q_1^{s_1} ⋯ q_k^{s_k}`;
-`c ≠ 1` is the paper's `∑ s_i ≥ 1`).
+/-- **Linear polynomials weakly locally nilpotent but not nilpotent at $1$.** Let $A$ be a finite
+set of primes, and let $c$ range over the positive integers all of whose prime factors lie in $A$.
+A polynomial $u \in \mathbb{Z}[x]$ of degree $1$ is weakly locally nilpotent at $1$ outside $A$ and
+not nilpotent at $1$ if and only if $u$ is one of: $x + c$; $x - c$ with $c \ne 1$; $cx + 1$ or
+$-cx + 1$ with $c \ne 1$; or $-2x - 1$, the last only when $2 \in A$.
+
+Writing $c = q_1^{s_1} \cdots q_k^{s_k}$ with the $q_i$ the primes of $A$, the condition $c \ne 1$
+is the paper's $\sum s_i \ge 1$.
 
 Source: Sayak Sengupta, *Locally Nilpotent Polynomials over Z*, INTEGERS 24 (2024),
 Article A13, Corollary 5.2. -/

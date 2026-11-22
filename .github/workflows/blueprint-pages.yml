@@ -20,6 +20,7 @@ on:
       - "scripts/extract_mathlib_graph.py"
       - "scripts/dump_mathlib_dependencies.lean"
       - "scripts/check_blueprint_site.py"
+      - "scripts/next_task.py"
       - "scripts/build_mathlib_pages.py"
       - "scripts/mathlib_link.py"
       - "scripts/mathlib_pages.css"
@@ -110,6 +111,15 @@ jobs:
           scripts.test_blueprint_workflow
           scripts.test_blueprint_taxonomy
           scripts.test_card_pages
+
+      # The committed graph, as authors wrote it. `lean-facts` below unlinks a
+      # page whose declaration is gone, so the check after it cannot see a
+      # stale link. Report-only for now (#4273, step 4).
+      - name: Check the committed graph
+        continue-on-error: true
+        run: >-
+          uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          autoform check blueprint --lean-root .
 
       - name: Free disk space for Lean caches
         run: |
@@ -218,6 +228,49 @@ jobs:
           uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
           autoform render blueprint --output site-src --lean-root .
           --require-declarations --ileans .lake/build/lib/lean
+
+      # The formalization tasks Autoform finds ready (docs/BLUEPRINT.md, What the tools own), so that people and
+      # agents can pick one without building the project (CONTRIBUTING.md, Picking a task). The site publishes
+      # them as tasks.json, with the commit they come from and the Autoform pin. Autoform's output must be one
+      # object of its format, with tasks in it, each with its node, article id, ready phase and Lean declarations
+      # (which only a statement still to write may lack), and no node or article id twice, as next_task.py checks
+      # too; else the step fails and writes no tasks.json.
+      - name: List the ready formalization tasks
+        run: |
+          set -euo pipefail
+          uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}" autoform work list . --json > build/work-list.json
+          jq --slurp --compact-output --arg commit "$(git rev-parse HEAD)" \
+            --arg commit_date "$(git log -1 --format=%cI HEAD)" --arg autoform_ref "$AUTOFORM_REF" \
+            'if length != 1 or (.[0] | type) != "object"
+             then error("autoform work list did not write one JSON object") else .[0] end
+             | if .schema != "autoform-work/v2" or (.items | type) != "array"
+               then error("autoform work list wrote another format than autoform-work/v2")
+               elif .items == [] then error("autoform work list found no ready task")
+               elif any(.items[]; type != "object"
+                        or ((.node_id | type) == "string" and (.node_id | test("\\S")) | not)
+                        or ((.article_id | type) == "string" and (.article_id | test("\\Aaf_[0-9a-f]{24}\\z")) | not)
+                        or .ready != true
+                        or ([.phase, .state] | IN(["statement", "can_state"], ["proof", "can_prove"]) | not)
+                        or (.lean_targets | type) != "array" or (.phase == "proof" and .lean_targets == [])
+                        or any(.lean_targets[]; type != "object"
+                               or ((.declaration | type) == "string" and (.declaration | test("\\S")) | not)))
+               then error("autoform work list wrote a task without its node, id, ready phase or Lean declarations")
+               elif (.items | map(.node_id) | unique | length) != (.items | length)
+                 or (.items | map(.article_id) | unique | length) != (.items | length)
+               then error("autoform work list gave two tasks one node or article id")
+               else . + {commit: $commit, commit_date: $commit_date, autoform_ref: $autoform_ref} end' \
+            build/work-list.json > build/tasks.json.part
+          mv build/tasks.json.part build/tasks.json
+          cp build/tasks.json site-src/tasks.json
+
+      # Right away, so that every run's task list can be read, a pull request's too, whatever the later steps do.
+      - name: Keep the task list
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: tasks
+          path: build/tasks.json
+          if-no-files-found: error
+          retention-days: 14
 
       - name: Build the Markdown site
         run: >-
