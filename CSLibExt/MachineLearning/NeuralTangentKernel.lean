@@ -20,6 +20,16 @@ square loss (assuming the trajectory satisfies the gradient-flow ODE and `F`
 is globally `C¹`) and a one-step descent remainder bound (assuming `F` is
 globally `C²` with a Hessian bound). There is no infinite-width limit and no
 claim that the NTK stays constant during training.
+
+## References
+
+* Arthur Jacot, Franck Gabriel and Clement Hongler, *Neural Tangent Kernel:
+Convergence and Generalization in Neural Networks*, Advances in Neural
+Information Processing Systems 31 (2018), arXiv:1806.07572, Section 4.
+* Matan Telgarsky, *Deep Learning Theory*, lecture notes, Sections 4.1 and 4.3.
+
+These references fix the finite-width kernel and linearization conventions
+used here.
 -/
 
 @[expose] public section
@@ -42,12 +52,6 @@ noncomputable def ntk (P n : ℕ)
     (θ : EuclideanSpace ℝ (Fin P)) : Matrix (Fin n) (Fin n) ℝ :=
   jac P n F θ * (jac P n F θ)ᵀ
 
-/-- Coordinate gradient of a scalar loss: the `p`-th coordinate is the
-directional derivative along `EuclideanSpace.single p 1`. -/
-noncomputable def grad (P : ℕ) (L : EuclideanSpace ℝ (Fin P) → ℝ)
-    (θ : EuclideanSpace ℝ (Fin P)) : EuclideanSpace ℝ (Fin P) :=
-  WithLp.toLp 2 (fun p => fderiv ℝ L θ (EuclideanSpace.single p 1))
-
 /-- Square loss against fixed targets `y`: half the squared distance
 between the outputs `F θ` and the targets. -/
 noncomputable def sqLoss (P n : ℕ)
@@ -56,7 +60,7 @@ noncomputable def sqLoss (P n : ℕ)
   (1 / 2) * ∑ i, (F θ i - y i) ^ 2
 
 /-- Expansion of a vector in the `single` basis. -/
-theorem single_expand (P : ℕ) (v : EuclideanSpace ℝ (Fin P)) :
+private theorem single_expand (P : ℕ) (v : EuclideanSpace ℝ (Fin P)) :
     v = ∑ p, v p • EuclideanSpace.single p 1 := by
   apply PiLp.ext
   intro j
@@ -68,14 +72,14 @@ theorem single_expand (P : ℕ) (v : EuclideanSpace ℝ (Fin P)) :
   simp
 
 /-- A `C^1` map has the expected Fréchet derivative. -/
-theorem hasFDerivAt_of_contDiff_one (P n : ℕ)
+private theorem hasFDerivAt_of_contDiff_one (P n : ℕ)
     (F : EuclideanSpace ℝ (Fin P) → EuclideanSpace ℝ (Fin n))
     (θ : EuclideanSpace ℝ (Fin P)) (hF : ContDiff ℝ 1 F) :
     HasFDerivAt F (fderiv ℝ F θ) θ :=
   hF.differentiable_one.differentiableAt.hasFDerivAt
 
 /-- Fréchet derivative of an output coordinate. -/
-theorem hasFDerivAt_coord (P n : ℕ)
+private theorem hasFDerivAt_coord (P n : ℕ)
     (F : EuclideanSpace ℝ (Fin P) → EuclideanSpace ℝ (Fin n))
     (θ : EuclideanSpace ℝ (Fin P)) (i : Fin n) (hF : ContDiff ℝ 1 F) :
     HasFDerivAt (fun θ' => F θ' i)
@@ -87,7 +91,7 @@ theorem hasFDerivAt_coord (P n : ℕ)
 
 /-- The derivative of an output coordinate is the matching coordinate of
 the Fréchet derivative. -/
-theorem fderiv_coord_apply (P n : ℕ)
+private theorem fderiv_coord_apply (P n : ℕ)
     (F : EuclideanSpace ℝ (Fin P) → EuclideanSpace ℝ (Fin n))
     (θ : EuclideanSpace ℝ (Fin P)) (i : Fin n)
     (v : EuclideanSpace ℝ (Fin P)) (hF : ContDiff ℝ 1 F) :
@@ -95,7 +99,8 @@ theorem fderiv_coord_apply (P n : ℕ)
   rw [(hasFDerivAt_coord P n F θ i hF).fderiv]
   rfl
 
-/-- The Fréchet derivative acts by the Jacobian matrix. -/
+/-- The Fréchet derivative acts by the Jacobian matrix: characteristic
+interface lemma for `jac`. -/
 theorem fderiv_eq_jac_mulVec (P n : ℕ)
     (F : EuclideanSpace ℝ (Fin P) → EuclideanSpace ℝ (Fin n))
     (θ : EuclideanSpace ℝ (Fin P)) (v : EuclideanSpace ℝ (Fin P))
@@ -115,7 +120,7 @@ theorem fderiv_eq_jac_mulVec (P n : ℕ)
   exact (fderiv_coord_apply P n F θ i v hF).symm.trans (hsum.trans htol)
 
 /-- Derivative of the scaled square. -/
-theorem hasDerivAt_half_sq (c : ℝ) :
+private theorem hasDerivAt_half_sq (c : ℝ) :
     HasDerivAt (fun t : ℝ => (1 / 2) * t ^ 2) c c := by
   have h := (hasDerivAt_pow 2 c).const_mul (1 / 2)
   have e : (2 : ℕ) - 1 = 1 := rfl
@@ -124,14 +129,28 @@ theorem hasDerivAt_half_sq (c : ℝ) :
   rw [show (1 / 2 : ℝ) * (2 * c) = c by ring] at h
   exact h
 
+/-- Coordinate characterization of Mathlib's `gradient` (proof-only). -/
+private theorem gradient_coord (P : ℕ) (L : EuclideanSpace ℝ (Fin P) → ℝ)
+    (θ : EuclideanSpace ℝ (Fin P)) :
+    gradient L θ
+      = WithLp.toLp 2 (fun p => fderiv ℝ L θ (EuclideanSpace.single p 1)) := by
+  apply PiLp.ext
+  intro p
+  have h1 := inner_gradient_right (𝕜 := ℝ) (f := L)
+    (x := EuclideanSpace.single p (1 : ℝ)) (y := θ)
+  rw [EuclideanSpace.inner_single_left, RCLike.conj_to_real, one_mul,
+    RCLike.conj_to_real] at h1
+  rw [h1]
+
 /-- Gradient of the square loss: the transposed Jacobian applied to the
 residual. -/
-theorem grad_sqLoss (P n : ℕ)
+theorem gradient_sqLoss (P n : ℕ)
     (F : EuclideanSpace ℝ (Fin P) → EuclideanSpace ℝ (Fin n))
     (y : EuclideanSpace ℝ (Fin n)) (θ : EuclideanSpace ℝ (Fin P))
     (hF : ContDiff ℝ 1 F) :
-    grad P (sqLoss P n F y) θ
+    gradient (sqLoss P n F y) θ
       = WithLp.toLp 2 ((jac P n F θ)ᵀ *ᵥ ⇑(F θ - y)) := by
+  rw [gradient_coord P (sqLoss P n F y) θ]
   have hJ : ∀ i : Fin n, HasFDerivAt (fun θ' => F θ' i - y i)
       ((PiLp.proj 2 (fun _ : Fin n => ℝ) i).comp (fderiv ℝ F θ)) θ :=
     fun i => by
@@ -178,25 +197,10 @@ theorem grad_sqLoss (P n : ℕ)
     simp only [smul_apply, smul_eq_mul, Matrix.transpose_apply,
       PiLp.sub_apply, hci]
     exact mul_comm _ _
-  change WithLp.toLp 2 (fun p => fderiv ℝ (sqLoss P n F y) θ
-      (EuclideanSpace.single p 1))
-    = WithLp.toLp 2 ((jac P n F θ)ᵀ *ᵥ ⇑(F θ - y))
   rw [hcoord]
 
-/-- The coordinate gradient agrees with Mathlib's `gradient`. -/
-theorem grad_eq_gradient (P : ℕ) (L : EuclideanSpace ℝ (Fin P) → ℝ)
-    (θ : EuclideanSpace ℝ (Fin P)) : grad P L θ = gradient L θ := by
-  apply PiLp.ext
-  intro p
-  have h1 := inner_gradient_right (𝕜 := ℝ) (f := L)
-    (x := EuclideanSpace.single p (1 : ℝ)) (y := θ)
-  rw [EuclideanSpace.inner_single_left, RCLike.conj_to_real, one_mul,
-    RCLike.conj_to_real] at h1
-  rw [h1]
-  rfl
-
 /-- Coercing a `toLp` vector back to a function. -/
-theorem coe_toLp (n : ℕ) (f : Fin n → ℝ) : ⇑(WithLp.toLp 2 f) = f :=
+private theorem coe_toLp (n : ℕ) (f : Fin n → ℝ) : ⇑(WithLp.toLp 2 f) = f :=
   WithLp.ofLp_toLp 2 f
 
 /-- Gradient-flow identity: if a trajectory satisfies the gradient-flow ODE
@@ -210,17 +214,17 @@ theorem gradient_flow_identity (P n : ℕ)
     (F : EuclideanSpace ℝ (Fin P) → EuclideanSpace ℝ (Fin n))
     (y : EuclideanSpace ℝ (Fin n)) (θ : ℝ → EuclideanSpace ℝ (Fin P))
     (hF : ContDiff ℝ 1 F) (t : ℝ)
-    (hθ : HasDerivAt θ (-grad P (sqLoss P n F y) (θ t)) t) :
+    (hθ : HasDerivAt θ (-gradient (sqLoss P n F y) (θ t)) t) :
     HasDerivAt (fun s => F (θ s))
       (-(WithLp.toLp 2 ((ntk P n F (θ t)) *ᵥ ⇑(F (θ t) - y)))) t := by
   have hFAt : HasFDerivAt F (fderiv ℝ F (θ t)) (θ t) :=
     hasFDerivAt_of_contDiff_one P n F (θ t) hF
   have hcomp := HasFDerivAt.comp_hasDerivAt t hFAt hθ
-  have hval : (fderiv ℝ F (θ t)) (-grad P (sqLoss P n F y) (θ t))
+  have hval : (fderiv ℝ F (θ t)) (-gradient (sqLoss P n F y) (θ t))
       = -(WithLp.toLp 2 ((ntk P n F (θ t)) *ᵥ ⇑(F (θ t) - y))) := by
     unfold ntk
     rw [map_neg, fderiv_eq_jac_mulVec _ _ _ _ _ hF,
-      grad_sqLoss _ _ _ _ _ hF, coe_toLp, Matrix.mulVec_mulVec]
+      gradient_sqLoss _ _ _ _ _ hF, coe_toLp, Matrix.mulVec_mulVec]
   rw [hval] at hcomp
   exact hcomp
 
@@ -230,20 +234,20 @@ theorem one_step_gd_remainder (P n : ℕ)
     (F : EuclideanSpace ℝ (Fin P) → EuclideanSpace ℝ (Fin n))
     (y : EuclideanSpace ℝ (Fin n)) (θ : EuclideanSpace ℝ (Fin P))
     (η β : ℝ) (hF : ContDiff ℝ 2 F) (hβ : 0 ≤ β)
-    (hH : ∀ θ' ∈ segment ℝ θ (θ - η • grad P (sqLoss P n F y) θ),
+    (hH : ∀ θ' ∈ segment ℝ θ (θ - η • gradient (sqLoss P n F y) θ),
       ∀ u v, ‖(fderiv ℝ (fderiv ℝ F) θ' u) v‖ ≤ β * ‖u‖ * ‖v‖) :
-    ‖F (θ - η • grad P (sqLoss P n F y) θ) - F θ
+    ‖F (θ - η • gradient (sqLoss P n F y) θ) - F θ
         + η • WithLp.toLp 2 ((ntk P n F θ) *ᵥ ⇑(F θ - y))‖
-      ≤ (β / 2) * η ^ 2 * ‖grad P (sqLoss P n F y) θ‖ ^ 2 := by
+      ≤ (β / 2) * η ^ 2 * ‖gradient (sqLoss P n F y) θ‖ ^ 2 := by
   have hF1 : ContDiff ℝ 1 F := hF.of_le (by norm_num)
   have hFd : ContDiff ℝ 1 (fderiv ℝ F) := hF.fderiv_right (by norm_num)
-  have hFO : fderiv ℝ F θ (-η • grad P (sqLoss P n F y) θ)
+  have hFO : fderiv ℝ F θ (-η • gradient (sqLoss P n F y) θ)
       = -η • WithLp.toLp 2 ((ntk P n F θ) *ᵥ ⇑(F θ - y)) := by
     rw [map_smul, fderiv_eq_jac_mulVec _ _ _ _ _ hF1,
-      grad_sqLoss _ _ _ _ _ hF1, coe_toLp]
+      gradient_sqLoss _ _ _ _ _ hF1, coe_toLp]
     unfold ntk
     rw [Matrix.mulVec_mulVec]
-  set g : EuclideanSpace ℝ (Fin P) := grad P (sqLoss P n F y) θ with hg
+  set g : EuclideanSpace ℝ (Fin P) := gradient (sqLoss P n F y) θ with hg
   set h : EuclideanSpace ℝ (Fin P) := -η • g with hh
   have hstep : θ - η • g = θ + h := by rw [hh, sub_eq_add_neg, ← neg_smul]
   rw [hstep] at hH
