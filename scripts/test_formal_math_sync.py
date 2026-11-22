@@ -567,6 +567,49 @@ class BaseGuardTest(unittest.TestCase):
         self.commit("delete a synced file")
         self.assertEqual(self.run_check()[0], 0)
 
+    def test_local_pending_merge_checks_retirement_against_updated_main(self) -> None:
+        del os.environ["GITHUB_ACTIONS"]
+        path = "CSLibExt/Diverged.lean"
+        original = (self.root / path).read_text()
+        updated = original + "-- Updated on main.\n"
+        run_git(self.root, "branch", "topic")
+        write(self.root, path, updated)
+        self.edit_row(path, published_sha256=c.sha256(updated), rationale="Update the documentation")
+        self.commit("update tracked file on main")
+        run_git(self.root, "update-ref", "refs/remotes/origin/main", "HEAD")
+        run_git(self.root, "switch", "topic")
+        run_git(self.root, "merge", "--no-ff", "--no-commit", "main")
+
+        (self.root / path).unlink()
+        self.edit_row(path, disposition="retired", backport=None, rationale=None,
+                      line_fingerprint=c.line_fingerprint(updated))
+        run_git(self.root, "add", "-u")
+        code, out = self.run_check()
+        self.assertEqual(code, 0, out)
+
+        self.edit_row(path, published_sha256=c.sha256(original),
+                      line_fingerprint=c.line_fingerprint(original))
+        code, out = self.run_check()
+        self.assertEqual(code, 1, out)
+        self.assertIn("retiring the row changed published_sha256", out)
+        self.assertIn("line_fingerprint does not match", out)
+
+    def test_pending_merge_checks_staged_copies(self) -> None:
+        del os.environ["GITHUB_ACTIONS"]
+        run_git(self.root, "switch", "-c", "topic")
+        write(self.root, "README.md", "topic\n")
+        self.commit("edit on topic")
+        run_git(self.root, "switch", "main")
+        run_git(self.root, "update-ref", "refs/remotes/origin/main", "HEAD")
+        run_git(self.root, "merge", "--no-ff", "--no-commit", "topic")
+        source = (self.root / "MathlibExt/Identical.lean").read_text()
+        path = "WantedExt/NearCopy.lean"
+        write(self.root, path, source.replace("def x7 ", "def y7 "))
+        run_git(self.root, "add", path)
+        code, out = self.run_check()
+        self.assertEqual(code, 1, out)
+        self.assertIn(f"{path}: copied from tracked", out)
+
     def test_backport_link_update_passes(self) -> None:
         self.edit_row("CSLibExt/Diverged.lean", backport="https://github.com/fairinternal/formal-math/pull/1")
         self.commit("link the backport PR")

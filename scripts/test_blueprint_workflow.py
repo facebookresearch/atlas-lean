@@ -489,6 +489,95 @@ class BlueprintWorkflowTests(unittest.TestCase):
             self.assertNotIn("continue-on-error", step)
             self.assertFalse(step.get("uses", "").startswith(("actions/upload-pages-artifact@", "actions/deploy-pages@")))
 
+    def run_size_step(self, deploying, stubs):
+        """Run the size step on an empty `site` with the commands in `stubs` (name -> script) ahead
+        of the system's; return its result and summary."""
+        step = self.step("Check the site against GitHub Pages' size limit")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "bin").mkdir()
+            (root / "site").mkdir()
+            for name, script in stubs.items():
+                command = root / "bin" / name
+                command.write_text(script)
+                command.chmod(0o755)
+            summary = root / "summary.md"
+            env = {"PATH": f"{root / 'bin'}:/usr/bin:/bin", "GITHUB_STEP_SUMMARY": str(summary),
+                   "DEPLOYING": "true" if deploying else "false"}
+            result = subprocess.run(["bash", "-e", "-c", step["run"]], cwd=root, env=env,
+                                    text=True, capture_output=True, check=False)
+            return result, summary.read_text() if summary.exists() else ""
+
+    def run_size_check(self, size, deploying):
+        # `wc` reads the archive and reports `size` bytes.
+        result, summary = self.run_size_step(
+            deploying, {"wc": f"#!/bin/sh\ncat >/dev/null\nprintf '%s\\n' {size}\n"})
+        self.assertIn(f"The built site's Pages archive is {size} bytes ({size // 1000000} MB)", summary)
+        return result
+
+    def test_site_size_warns_from_900_mb_and_fails_only_a_publishing_build_over_1_gb(self):
+        for size, deploying, code, annotation in (
+            (899_999_999, True, 0, None),
+            (900_000_000, True, 0, "::warning title=Site near the Pages limit::"),
+            (1_000_000_000, True, 0, "::warning title=Site near the Pages limit::"),
+            (1_000_000_001, False, 0, "::warning title=Site over the Pages limit::"),
+            (1_000_000_001, True, 1, "::error title=Site over the Pages limit::"),
+        ):
+            with self.subTest(size=size, deploying=deploying):
+                result = self.run_size_check(size, deploying)
+                self.assertEqual(result.returncode, code, result.stderr)
+                if annotation is None:
+                    self.assertNotIn("::", result.stdout)
+                else:
+                    self.assertIn(annotation, result.stdout)
+                    self.assertIn(f"archive is {size} bytes", result.stdout)
+
+    def test_site_size_check_fails_when_the_size_cannot_be_measured(self):
+        # A failing archive, or a count that is not a number of bytes, fails the step on every
+        # build with its own annotation, instead of reporting 0 MB and passing.
+        for stubs in ({"tar": "#!/bin/sh\necho 'tar: site: Cannot open' >&2\nexit 2\n"},
+                      {"wc": "#!/bin/sh\ncat >/dev/null\necho unknown\n"},
+                      {"wc": "#!/bin/sh\ncat >/dev/null\n"}):
+            for deploying in (False, True):
+                with self.subTest(stubs=stubs, deploying=deploying):
+                    result, summary = self.run_size_step(deploying, stubs)
+                    self.assertNotEqual(result.returncode, 0, result.stdout)
+                    self.assertIn("::error title=Site size unknown::", result.stdout)
+                    self.assertNotIn("Pages archive is", summary)
+
+    def test_site_size_check_measures_the_archive_the_pages_upload_builds(self):
+        step = self.step("Check the site against GitHub Pages' size limit")
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            site = root / "site"
+            (site / "assets").mkdir(parents=True)
+            (site / "index.html").write_text("hello")
+            (site / "assets" / "page.html").write_text("x" * 3000)
+            (root / "outside.txt").write_text("content behind a link")
+            (site / "linked.txt").symlink_to(root / "outside.txt")
+            (site / ".git").mkdir()
+            (site / ".git" / "objects").write_bytes(b"\0" * 4096)
+            # A hidden sparse file larger than the limit: the upload leaves it out.
+            with open(site / ".hidden", "wb") as hidden:
+                hidden.truncate(2_000_000_000)
+            # The archive of actions/upload-pages-artifact's Linux "Archive artifact" step.
+            archive = subprocess.run(
+                ["tar", "--dereference", "--hard-dereference", "--directory", str(site), "-cf", "-",
+                 "--exclude=.git", "--exclude=.github", "--exclude=.[^/]*", "."],
+                capture_output=True, check=True).stdout
+            summary = root / "summary.md"
+            env = {"PATH": "/usr/bin:/bin", "GITHUB_STEP_SUMMARY": str(summary), "DEPLOYING": "true"}
+            result = subprocess.run(["bash", "-e", "-c", step["run"]], cwd=root, env=env,
+                                    text=True, capture_output=True, check=False)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertNotIn("::", result.stdout)
+            self.assertIn(f"The built site's Pages archive is {len(archive)} bytes", summary.read_text())
+
+    def test_site_size_check_deploys_exactly_when_the_upload_does(self):
+        step = self.step("Check the site against GitHub Pages' size limit")
+        upload = self.step("Upload Pages artifact")["if"]
+        self.assertEqual(step["env"]["DEPLOYING"], "${{ " + upload + " }}")
+
 
 if __name__ == "__main__":
     unittest.main()

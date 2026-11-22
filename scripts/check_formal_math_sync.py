@@ -512,7 +512,20 @@ def ci_base(root: Path) -> tuple[str | None, str]:
     return first_parent(root), "first parent of HEAD"
 
 
-def base_commit(root: Path, base: str | None) -> tuple[str | None, str | None]:
+def local_merge_heads(root: Path) -> list[str]:
+    """Other parents of a pending local merge, including in a linked worktree."""
+    if os.environ.get("GITHUB_ACTIONS"):
+        return []
+    path = git(root, "rev-parse", "--git-path", "MERGE_HEAD")
+    if path is None:
+        return []
+    try:
+        return (root / path).read_text(encoding="ascii").splitlines()
+    except FileNotFoundError:
+        return []
+
+
+def base_commit(root: Path, base: str | None, merge_heads: list[str]) -> tuple[str | None, str | None]:
     """The commit whose manifest this tree is compared with: (commit, None) or (None, why not)."""
     if git(root, "rev-parse", "--show-toplevel") != str(root.resolve()):
         return None, "not a git checkout"
@@ -526,7 +539,9 @@ def base_commit(root: Path, base: str | None) -> tuple[str | None, str | None]:
         if candidate and git(root, "cat-file", "-e", f"{candidate}^{{commit}}") is not None:
             return candidate, None
         return None, f"cannot read the base commit ({source})"
-    for candidate in (git(root, "merge-base", "HEAD", "origin/main"), first_parent(root)):
+    # With several tips after origin/main, git uses their hypothetical merge as the other side.
+    merge_base = git(root, "merge-base", "origin/main", "HEAD", *merge_heads)
+    for candidate in (merge_base, first_parent(root)):
         if candidate and git(root, "cat-file", "-e", f"{candidate}^{{commit}}") is not None:
             return candidate, None
     return None, "no origin/main merge-base and no readable parent commit"
@@ -574,13 +589,14 @@ def row_transition_problems(path: str, before: dict | None, row: dict, short: st
     return []
 
 
-def copy_and_rename_status(root: Path, commit: str) -> str | None:
+def copy_and_rename_status(root: Path, commit: str, *, staged: bool) -> str | None:
     """`git diff --name-status -z` of the roots with rename (50%) and near-copy (90%) detection,
     copies searched from every base file, not only modified ones. None if git fails or skips
     detection (too many files for the limit)."""
+    revisions = ["--cached", commit] if staged else [commit, "HEAD"]
     try:
         done = subprocess.run(["git", "-C", str(root), "diff", "--no-ext-diff", "-M", "-C90%", "--find-copies-harder",
-                               "-l100000", "--name-status", "-z", commit, "HEAD", "--", *ROOTS],
+                               "-l100000", "--name-status", "-z", *revisions, "--", *ROOTS],
                               capture_output=True, text=True, timeout=600)
     except (OSError, subprocess.TimeoutExpired):
         return None
@@ -604,7 +620,8 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
             return [f"manifest: {why}; cannot compare with the base manifest"], []
         return [], [f"skipping the base-manifest comparison: {why}"]
 
-    commit, why = base_commit(root, base)
+    merge_heads = local_merge_heads(root)
+    commit, why = base_commit(root, base, merge_heads)
     if commit is None:
         return unreadable(why or "no base commit")
     if symlinked_component(root, manifest_path):
@@ -638,9 +655,10 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
                 "--record-divergence for a changed file or --retire for a deleted one"
                 for path in sorted(old.keys() - new.keys())]
     tracked = {path for path, row in old.items() if row.get("disposition") in (*SYNCED, "diverged")}
-    moves = copy_and_rename_status(root, commit)
+    moves = copy_and_rename_status(root, commit, staged=bool(merge_heads))
     if moves is None:
-        found, note = unreadable(f"cannot diff base {commit} with HEAD for renames")
+        target = "index" if merge_heads else "HEAD"
+        found, note = unreadable(f"cannot diff base {commit} with {target} for renames")
         problems += found
         warnings = note
     else:
