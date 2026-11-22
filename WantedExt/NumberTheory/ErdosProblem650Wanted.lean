@@ -31,14 +31,22 @@ its `variants`) and checked against erdosproblems.com/650. The upstream
 `answer(False)` is elaborated to a negation. Status: resolved
 ([ErSu59], Erdős–Selfridge, [VLT26]; formalized in Lean by van Doorn). -/
 
-/-- Matching-number bound for multiples in intervals. -/
+/-- **Erdős's matching function for multiples in intervals.** For a natural number $m$, $f(m)$ is
+the largest natural number $r$ such that for every natural number $N$, every set
+$A \subseteq \{1, \dots, N\}$ with exactly $m$ elements and every real $x \ge 1$, there are
+distinct $a_1, \dots, a_r \in A$ and distinct natural numbers $b_1, \dots, b_r$ in the open
+interval $(x, x + 2N)$ with $a_i \mid b_i$ for every $i$. -/
 noncomputable def f (m : ℕ) : ℕ :=
   sSup {r : ℕ | ∀ N : ℕ, ∀ A ⊆ Finset.Icc 1 N, A.card = m → ∀ x : ℝ, 1 ≤ x →
     ∃ a b : Fin r → ℕ, Function.Injective a ∧ Function.Injective b ∧
       (∀ i, a i ∈ A) ∧ (∀ i, (b i : ℝ) ∈ Set.Ioo x (x + 2 * (N : ℝ))) ∧
       (∀ i, a i ∣ b i)}
 
-/-- `f(m) = min(m, ⌈2√m⌉)`, not `≤ √m`; plus the classical bounds. -/
+/-- **Statement of Erdős Problem 650.** Let $f$ be Erdős's matching function for multiples in
+intervals. The statement is the conjunction of four claims: for every natural number $m$,
+$f(m) = \min(m, \lceil 2\sqrt{m}\,\rceil)$; it is not the case that $f(m) \le \sqrt{m}$ for every
+natural number $m$; $\sqrt{m} \le f(m)$ for every natural number $m$; and $f(m^2) \le 2m$ for
+every natural number $m$. -/
 def conjecture : Prop :=
   (∀ m : ℕ, f m = min m ⌈2 * Real.sqrt m⌉₊) ∧
   (¬ ∀ m : ℕ, (f m : ℝ) ≤ Real.sqrt m) ∧
@@ -46,8 +54,18 @@ def conjecture : Prop :=
   (∀ m : ℕ, f (m ^ 2) ≤ 2 * m)
 
 /--
-Resolved true: Solved (Erdős–Surányi [ErSu59], Erdős–Selfridge [Er78][Er86c], van Doorn–Li–Tang
-[VLT26]); formalized in Lean. Source: [VLT26] W. van Doorn, Y. Li and Q. Tang, Optimal bounds
+**Erdős Problem 650: matching integers to distinct multiples.** For a natural number $m$, let
+$f(m)$ be the largest natural number $r$ such that for every natural number $N$, every set
+$A \subseteq \{1, \dots, N\}$ with exactly $m$ elements and every real $x \ge 1$, there are
+distinct $a_1, \dots, a_r \in A$ and distinct natural numbers $b_1, \dots, b_r$ in the open
+interval $(x, x + 2N)$ with $a_i \mid b_i$ for every $i$. Then $f(m) = \min(m,
+\lceil 2\sqrt{m}\,\rceil)$ for every natural number $m$; it is not the case that
+$f(m) \le \sqrt{m}$ for every natural number $m$; $\sqrt{m} \le f(m)$ for every natural number
+$m$; and $f(m^2) \le 2m$ for every natural number $m$.
+
+Solved by Erdős–Surányi [ErSu59], Erdős–Selfridge [Er78], [Er86c] and van Doorn–Li–Tang [VLT26].
+
+Source: [VLT26] W. van Doorn, Y. Li and Q. Tang, Optimal bounds
 for an Erdős problem on matching integers to distinct multiples, arXiv:2603.28636 (2026),
 https://arxiv.org/abs/2603.28636; W. van Doorn, Lean formalization of Erdős Problem 650
 (Aristotle-assisted),

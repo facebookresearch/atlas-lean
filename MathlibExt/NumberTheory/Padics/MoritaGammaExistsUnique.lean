@@ -486,14 +486,17 @@ private lemma moritaGammaExtend_coe (p : ℕ) [Fact p.Prime] (hp2 : p ≠ 2) (n 
   rw [moritaGammaPre_eq _ _ n rfl] at h1
   exact h1
 
-/-- For every odd prime, Morita's finite p-adic gamma values have a unique continuous,
-unit-valued extension to the p-adic integers.
+/-- **Existence and uniqueness of Morita's p-adic gamma function.** For every odd prime $p$
+there is exactly one continuous function $\Gamma : \mathbb{Z}_p \to \mathbb{Z}_p$ that is a Morita
+$p$-adic gamma function, that is, $\Gamma(0) = 1$,
+$\Gamma(n) = (-1)^n \prod_{0 < j < n,\ p \nmid j} j$ for every positive integer $n$, and
+$\Gamma(x)$ is a unit of $\mathbb{Z}_p$ for every $x \in \mathbb{Z}_p$.
+
+Proves `Wanted` entry `existsUnique_moritaPadicGamma`.
 
 Source: Y. Morita, "A p-adic analogue of the Γ-function", J. Fac. Sci. Univ. Tokyo Sect. IA
 Math. 22 (1975), 255–266. The definition and extension theorem are reproduced in
 arXiv:2307.08940, arXiv:2307.10000, arXiv:2307.11982, arXiv:2310.15207, and arXiv:2311.03259.
-
-Proves `Wanted` entry `existsUnique_moritaPadicGamma`.
 -/
 theorem existsUnique_moritaPadicGamma (p : ℕ) [Fact p.Prime] (hp : p ≠ 2) :
     ∃! Γ : C(PadicInt p, PadicInt p), IsMoritaPadicGamma p Γ := by

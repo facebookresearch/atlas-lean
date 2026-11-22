@@ -50,26 +50,34 @@ theorem (`AnnulusTheoremDimFour` — Quinn (1982), and `AnnulusTheoremHighDim` �
 Kirby (1969)), so both entries use the same `FlatSphere` API.
 -/
 
-/-- Ambient Euclidean space `ℝⁿ`. -/
+/-- **Ambient Euclidean space.** For a natural number $n$, the ambient space is the real
+Euclidean space $\mathbb{R}^n$ of dimension $n$, with coordinates indexed by $0, \dots, n-1$ and
+the Euclidean norm. -/
 abbrev Amb (n : ℕ) : Type := EuclideanSpace ℝ (Fin n)
 
-/-- The unit `(n-1)`-sphere `Sⁿ⁻¹ ⊂ ℝⁿ`. -/
+/-- **Unit sphere in Euclidean space.** For a natural number $n$, the unit sphere
+$S^{n-1} \subseteq \mathbb{R}^n$ is the set of points of $\mathbb{R}^n$ at Euclidean distance $1$
+from the origin. -/
 abbrev Sph (n : ℕ) : Set (Amb n) := sphere (0 : Amb n) 1
 
-/-- The model hyperplane `{x | x₀ = 0}` in `ℝⁿ`, the local model for a flatly
-embedded sphere. -/
+/-- **Model hyperplane.** For $n \ge 1$, the model hyperplane in $\mathbb{R}^n$ is the set of
+points $x = (x_0, \dots, x_{n-1})$ whose first coordinate $x_0$ is $0$. It is the local model for
+a locally flat embedded sphere. -/
 def modelHyperplane (n : ℕ) [NeZero n] : Set (Amb n) := {x | x 0 = 0}
 
-/-- An embedding `c : Sⁿ⁻¹ → ℝⁿ` is **locally flat** if near every image point
-there is an ambient partial homeomorphism of `ℝⁿ` carrying the image of the
-sphere locally onto the model hyperplane. -/
+/-- **Locally flat maps of the sphere.** Let $n \ge 1$, let $S^{n-1} \subseteq \mathbb{R}^n$ be the
+unit sphere and let $H = \{x \in \mathbb{R}^n : x_0 = 0\}$ be the model hyperplane. A map
+$c : S^{n-1} \to \mathbb{R}^n$ is locally flat if for every point $p \in S^{n-1}$ there are open
+sets $U, V \subseteq \mathbb{R}^n$ with $c(p) \in U$ and a homeomorphism $h : U \to V$ such that
+$h(U \cap c(S^{n-1})) = V \cap H$. -/
 def LocallyFlat {n : ℕ} [NeZero n] (c : Sph n → Amb n) : Prop :=
   ∀ p : Sph n, ∃ h : OpenPartialHomeomorph (Amb n) (Amb n),
     c p ∈ h.source ∧
     h.toFun '' (h.source ∩ Set.range c) = h.target ∩ modelHyperplane n
 
-/-- A **locally flat embedded `(n-1)`-sphere** in `ℝⁿ`: a continuous injective
-locally flat map from the unit sphere. -/
+/-- **Locally flat embedded sphere.** For $n \ge 1$, a locally flat embedded $(n-1)$-sphere in
+$\mathbb{R}^n$ is a map $f : S^{n-1} \to \mathbb{R}^n$ from the unit sphere that is continuous,
+injective and locally flat. -/
 structure FlatSphere (n : ℕ) [NeZero n] where
   /-- The embedding. -/
   toFun : Sph n → Amb n
@@ -80,14 +88,19 @@ structure FlatSphere (n : ℕ) [NeZero n] where
   /-- It is locally flat. -/
   flat : LocallyFlat toFun
 
-/-- The **inside** of a set `S ⊆ ℝⁿ`: the points of the complement whose
-connected component there is bounded. For a locally flat sphere this is the open
-ball it bounds. -/
+/-- **Inside of a set.** For a set $S \subseteq \mathbb{R}^n$, the inside of $S$ is the set of
+points $x \notin S$ whose connected component in the complement $\mathbb{R}^n \setminus S$ is
+bounded.
+
+For the image of a locally flat embedded sphere, this is the open ball it bounds. -/
 def inside {n : ℕ} (S : Set (Amb n)) : Set (Amb n) :=
   {x | x ∉ S ∧ Bornology.IsBounded (connectedComponentIn Sᶜ x)}
 
-/-- The closed region between an outer flat sphere `f` and an inner flat sphere
-`g`: the closed ball bounded by `f` with the open ball bounded by `g` removed. -/
+/-- **Region between two flat spheres.** Let $n \ge 1$ and let $f$ and $g$ be locally flat
+embedded $(n-1)$-spheres in $\mathbb{R}^n$. The region between $f$ and $g$ is the closure of the
+inside of the image of $f$ with the inside of the image of $g$ removed, where the inside of a set
+$S$ is the set of points $x \notin S$ whose connected component in $\mathbb{R}^n \setminus S$ is
+bounded. -/
 def regionBetween {n : ℕ} [NeZero n] (f g : FlatSphere n) : Set (Amb n) :=
   closure (inside (Set.range f.toFun)) \ inside (Set.range g.toFun)
 

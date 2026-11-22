@@ -33,16 +33,24 @@ Sozutov). UnsolvedMath record UM-00701523 (`KOU-18.94`), dataset ulamai/Unsolved
 Without involutions means `g² = 1 → g = 1`; `⟨(aⁿ)^G⟩` is the normal closure of `aⁿ`.
 -/
 
-/-- Kourovka 18.94 (A. I. Sozutov): let `G` be a group without involutions, `a ∈ G` an element that
-is not the square of any element, and `n` an odd positive integer. Then the quotient
-`G ⧸ ⟨(aⁿ)^G⟩` has no involutions. -/
+/-- **Sozutov's question on involutions in quotients (Kourovka 18.94).** This is the statement
+that whenever $G$ is a group without involutions (if $g^2 = 1$ then $g = 1$), $a \in G$ is not the
+square of any element of $G$, and $n$ is an odd natural number, the quotient of $G$ by the normal
+closure of $a^n$ has no involutions: every element $y$ of the quotient with $y^2 = 1$ is $1$. -/
 def involutionFreeQuotientByNonSquarePower : Prop :=
   ∀ (G : Type) [Group G], (∀ g : G, g ^ 2 = 1 → g = 1) → ∀ a : G, (¬ ∃ x : G, x ^ 2 = a) →
     ∀ n : ℕ, Odd n → ∀ y : G ⧸ Subgroup.normalClosure {a ^ n}, y ^ 2 = 1 → y = 1
 
 /--
-Resolved false: the Kourovka Archive answers 18.94 "No, not always" (an example of V. I. Trofimov);
-another example is `G = ⟨a, b | a² = b²⟩` with `n = 1`, whose quotient by `⟨a^G⟩` has order `2`.
+**Quotients by the normal closure of an odd power of a non-square can have involutions.** There
+exist a group $G$ without involutions (if $g^2 = 1$ then $g = 1$), an element $a \in G$ that is
+not the square of any element of $G$, and an odd natural number $n$ such that the quotient of $G$
+by the normal closure of $a^n$ contains an involution, that is, an element $y \ne 1$ with
+$y^2 = 1$. This answers Kourovka Problem 18.94 in the negative.
+
+Besides an example of V. I. Trofimov, the group $G = \langle a, b \mid a^2 = b^2 \rangle$ with
+$n = 1$ is an example: its quotient by the normal closure of $a$ has order $2$.
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 18.94 (A. I.
 Sozutov); resolution: V. I. Trofimov (example), as recorded in the Kourovka Archive, Problem 18.94,
