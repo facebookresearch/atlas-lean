@@ -10,6 +10,8 @@ module
 
 public import Mathlib.Probability.StrongLaw
 
+import Mathlib.MeasureTheory.Measure.Decomposition.RadonNikodym
+
 /-!
 # Monte Carlo and importance sampling
 
@@ -27,7 +29,8 @@ Estimate `∫ f dν` by averaging `f` over samples.
 * `isEstimate w f X n`: the **importance-sampling** average of `w (X i) f (X i)` with samples from a
   proposal `ρ` and target `ν = ρ.withDensity w`. `integral_weight_mul` is the change of measure,
   `integral_isEstimate` says the estimator is unbiased for `∫ f dν`, and `tendsto_isEstimate` that
-  it is consistent.
+  it is consistent. The `*_of_integrable` variants need only integrability of the integrand, and
+  the `*_rnDeriv` variants take the target through its Radon–Nikodym derivative.
 
 ## References
 
@@ -171,5 +174,53 @@ theorem tendsto_isEstimate {ρ : Measure α} {w : α → ℝ≥0∞}
   rw [← integral_weight_mul hw hwt]
   exact tendsto_mcEstimate (hw.ennreal_toReal.mul hf)
     ((integrable_withDensity_iff_integrable_smul' hw hwt).mp hfi) hX hlaw hindep
+
+/-- **Importance sampling is unbiased** for an integrand that is only integrable under the
+target `ρ.withDensity w`. -/
+theorem integral_isEstimate_of_integrable {ρ : Measure α} {w : α → ℝ≥0∞}
+    (hw : Measurable w) (hwt : ∀ᵐ x ∂ρ, w x < ∞) {f : α → ℝ}
+    (hfi : Integrable f (ρ.withDensity w)) {X : ℕ → Ω → α} (hX : ∀ i, Measurable (X i))
+    (hlaw : ∀ i, μ.map (X i) = ρ) {n : ℕ} (hn : n ≠ 0) :
+    ∫ ω, isEstimate w f X n ω ∂μ = ∫ x, f x ∂(ρ.withDensity w) := by
+  rw [← integral_weight_mul hw hwt]
+  exact integral_mcEstimate_of_integrable ((integrable_withDensity_iff_integrable_smul' hw hwt).mp hfi) hX hlaw hn
+
+/-- **Importance sampling is consistent** for an integrand that is only integrable under the
+target `ρ.withDensity w`, with pairwise independent samples from `ρ`. -/
+theorem tendsto_isEstimate_of_integrable {ρ : Measure α} {w : α → ℝ≥0∞}
+    (hw : Measurable w) (hwt : ∀ᵐ x ∂ρ, w x < ∞) {f : α → ℝ}
+    (hfi : Integrable f (ρ.withDensity w)) {X : ℕ → Ω → α} (hX : ∀ i, Measurable (X i))
+    (hlaw : ∀ i, μ.map (X i) = ρ) (hindep : Pairwise fun i j ↦ IndepFun (X i) (X j) μ) :
+    ∀ᵐ ω ∂μ, Tendsto (fun n ↦ isEstimate w f X n ω) atTop
+      (𝓝 (∫ x, f x ∂(ρ.withDensity w))) := by
+  rw [← integral_weight_mul hw hwt]
+  exact tendsto_mcEstimate_of_integrable ((integrable_withDensity_iff_integrable_smul' hw hwt).mp hfi) hX hlaw
+    hindep
+
+/-- **Importance sampling is unbiased** for a target `ν ≪ ρ` with the Radon–Nikodym weight
+`ν.rnDeriv ρ`. -/
+theorem integral_isEstimate_rnDeriv {ν ρ : Measure α} [SigmaFinite ν] [SigmaFinite ρ]
+    (hνρ : ν ≪ ρ) {f : α → ℝ} (hfi : Integrable f ν) {X : ℕ → Ω → α}
+    (hX : ∀ i, Measurable (X i)) (hlaw : ∀ i, μ.map (X i) = ρ) {n : ℕ} (hn : n ≠ 0) :
+    ∫ ω, isEstimate (ν.rnDeriv ρ) f X n ω ∂μ = ∫ x, f x ∂ν := by
+  have h := integral_isEstimate_of_integrable (Measure.measurable_rnDeriv ν ρ)
+    (Measure.rnDeriv_lt_top ν ρ) (by rwa [Measure.withDensity_rnDeriv_eq ν ρ hνρ]) hX hlaw hn
+  rwa [Measure.withDensity_rnDeriv_eq ν ρ hνρ] at h
+
+/-- **Importance sampling is consistent** for a target `ν ≪ ρ` with the Radon–Nikodym weight
+`ν.rnDeriv ρ` and pairwise independent samples from `ρ`. -/
+theorem tendsto_isEstimate_rnDeriv {ν ρ : Measure α} [SigmaFinite ν] [SigmaFinite ρ]
+    (hνρ : ν ≪ ρ) {f : α → ℝ} (hfi : Integrable f ν) {X : ℕ → Ω → α}
+    (hX : ∀ i, Measurable (X i)) (hlaw : ∀ i, μ.map (X i) = ρ)
+    (hindep : Pairwise fun i j ↦ IndepFun (X i) (X j) μ) :
+    ∀ᵐ ω ∂μ, Tendsto (fun n ↦ isEstimate (ν.rnDeriv ρ) f X n ω) atTop (𝓝 (∫ x, f x ∂ν)) := by
+  have h := tendsto_isEstimate_of_integrable (Measure.measurable_rnDeriv ν ρ)
+    (Measure.rnDeriv_lt_top ν ρ) (by rwa [Measure.withDensity_rnDeriv_eq ν ρ hνρ]) hX hlaw hindep
+  rwa [Measure.withDensity_rnDeriv_eq ν ρ hνρ] at h
+
+/-- With the weight `1` (target = proposal), importance sampling is plain Monte Carlo. -/
+theorem isEstimate_one (f : α → ℝ) (X : ℕ → Ω → α) (n : ℕ) (ω : Ω) :
+    isEstimate 1 f X n ω = mcEstimate f X n ω := by
+  simp [isEstimate]
 
 end Cslib.MachineLearning.Sampling
