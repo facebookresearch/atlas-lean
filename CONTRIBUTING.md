@@ -16,6 +16,48 @@ We actively welcome your pull requests.
 5. Make sure your code lints.
 6. If you haven't already, complete the Contributor License Agreement ("CLA").
 
+### Claim the work you start
+
+Many people and agents open pull requests here at once. Claim a substantial
+piece of work before you start it, so that others can steer around it:
+
+- **Open a draft pull request** when you start. Its title names the topic, and
+  its description names each ready task it takes by article id, on a line
+  `Tasks: af_…`. An open draft is a claim while it has had a push in the last
+  7 days.
+- **Or open an issue** whose title starts with `[Claim]` and that names the
+  area, the modules or the task ids you are taking. It is a claim while it is
+  open and has been updated in the last 30 days: comment on it to renew it, and
+  close it to release it.
+
+Look for an open claim before you start. If two open pull requests take the
+same task, the newer one gives way. A claim only saves duplicated work: it
+reserves nothing else, and anyone may still review, fix or improve merged code.
+
+When you push to a branch that someone else may also push to, such as another
+contributor's pull request, use
+`git push --force-with-lease=<branch>:<the commit you started from>`, so that a
+push made since you started makes yours fail instead of being overwritten.
+
+### Say how a pull request touches the graph
+
+Each pull request description has one `Graph:` line, which ties its Lean to
+the [graph](docs/BLUEPRINT.md#graph-rules):
+
+- `Graph: af_…`, with the article ids of the pages it proves, fixes or extends,
+  such as the ready tasks it takes.
+- `Graph: new` when it adds documented public declarations, instances aside,
+  to `MathlibExt`, `CSLibExt`, `PhyslibExt`, `Domains` or `WantedExt`. The same
+  pull request adds their pages, which `scripts/sync_wiki.py declarations`
+  writes ([Maintaining articles](docs/BLUEPRINT.md#maintaining-articles)). It
+  places each new module in `scripts/taxonomy.json`, or leaves it under
+  `not-yet-classified/` for an editor.
+- `Graph: none` for refactors, tests, tooling and dependency bumps.
+
+A pull request whose only graph changes are what `sync_wiki.py declarations`
+writes for its own declarations, and the places of its new modules in
+`scripts/taxonomy.json`, is not a [graph PR](#graph-prs).
+
 ### Public references
 
 Files, filenames, branch names, PR titles/descriptions, and complete commit

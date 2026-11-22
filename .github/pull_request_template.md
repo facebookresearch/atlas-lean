@@ -2,6 +2,14 @@
 
 <!-- Describe the mathematical or infrastructure change and its scope. -->
 
+<!--
+One `Graph:` line, as CONTRIBUTING.md asks: `Graph: af_…` with the pages this
+pull request proves, fixes or extends, `Graph: new` when it adds documented
+declarations (their pages are in this pull request), or `Graph: none`. Name each
+ready task it takes on a `Tasks: af_…` line.
+-->
+Graph:
+
 ## Validation
 
 - [ ] I ran `scripts/check.sh` from the repository root.
