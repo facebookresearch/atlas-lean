@@ -12,7 +12,7 @@ import MathlibExt.Analysis.Fourier.Fejer
 
 set_option autoImplicit false
 
-open Filter Topology MathlibExt.Analysis.Fourier
+open Filter Topology MathlibExt.Analysis.FourierConvergenceWanted.Analysis
 
 -- `σ_0 = S_0` is the constant term `f̂_0`.
 example (f : ℝ → ℂ) (x : ℝ) :
@@ -23,7 +23,7 @@ example (f : ℝ → ℂ) (x : ℝ) :
 example :
     TendstoUniformly (fun N : ℕ => fourierCesaroMean (fun x : ℝ => Complex.exp (x * Complex.I)) N)
       (fun x : ℝ => Complex.exp (x * Complex.I)) atTop :=
-  tendstoUniformly_fourierCesaroMean
+  fejer
     (fun x => by
       push_cast
       rw [add_mul, Complex.exp_add, Complex.exp_two_pi_mul_I, mul_one])
@@ -32,6 +32,6 @@ example :
 -- Uniform convergence gives convergence at every point.
 example {f : ℝ → ℂ} (hper : Function.Periodic f (2 * Real.pi)) (hcont : Continuous f) (x : ℝ) :
     Tendsto (fun N : ℕ => fourierCesaroMean f N x) atTop (𝓝 (f x)) :=
-  (tendstoUniformly_fourierCesaroMean hper hcont).tendsto_at x
+  (fejer hper hcont).tendsto_at x
 
-#print axioms tendstoUniformly_fourierCesaroMean
+#print axioms fejer
