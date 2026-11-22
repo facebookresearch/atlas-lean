@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Computability.Encoding
-public import Mathlib.Tactic
 
 
 /-!
@@ -610,7 +609,7 @@ def LZ78.encode {A : Type u} [DecidableEq A] (x : List A) : List (LZ78.Token A) 
 private theorem LZ78.aux_parse_encode_eq {A : Type u} [DecidableEq A] (x : List A) :
     LZ78.parseEncodeAux [] x (x.length + 1) = (LZ78.parse x, LZ78.encode x) := rfl
 
-def LZ78.decode {A : Type u} [DecidableEq A] (ts : List (LZ78.Token A)) : Option (List A) :=
+def LZ78.decode {A : Type u} (ts : List (LZ78.Token A)) : Option (List A) :=
   (LZ78.decodeAux [] ts).map List.flatten
 
 theorem LZ78.decode_encode {A : Type u} [DecidableEq A] (x : List A) : LZ78.decode (LZ78.encode x) = some x := by
