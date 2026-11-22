@@ -38,6 +38,12 @@ private theorem lucas_add_two (j : ℤ) :
   rw [show j + 1 - 1 = j by ring, show j + 1 + 1 = j + 2 by ring]
   linarith
 
+-- At shift `k = -2` the addition formula recovers one backward step of the recurrence.
+example (G : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j) (s : ℤ) :
+    G (s + 1) - G s = G (s - 1) := by
+  simpa [sub_eq_add_neg, show (-2 : ℤ) + s + 1 = s - 1 by ring] using
+    fib_mul_gibonacci_add_eq_gibonacci G hG (-2) s
+
 -- Test section: with `G = H = F` the identity reads
 -- `F_s F_(k+r) + (-1)^(r-1) F_(s-r) F_k = F_r F_(k+s)`.
 example (r s k : ℤ) :

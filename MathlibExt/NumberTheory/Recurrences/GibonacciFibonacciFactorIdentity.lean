@@ -122,6 +122,21 @@ private theorem neg_one_zpow_mul_sub {H : ℤ → ℝ} (hH : ∀ j : ℤ, H (j +
 end gibonacci_mul_add_neg_one_pow_eq_fib_mul
 
 open gibonacci_mul_add_neg_one_pow_eq_fib_mul in
+/-- **Addition formula for gibonacci sequences.** Let $F_m$ denote the Fibonacci numbers,
+extended to all integers $m$ by $F_{-m} = (-1)^{m+1} F_m$. If $G : \mathbb{Z} \to \mathbb{R}$
+satisfies $G_{j+2} = G_{j+1} + G_j$ for every integer $j$, then
+$F_{k+1} G_{s+1} + F_k G_s = G_{k+s+1}$ for all integers $k$ and $s$.
+
+Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
+Integer Sequences 27 (2024), Article 24.6.2, Proposition 20
+(`jis-2024-24.6.2-prop-20`). -/
+theorem fib_mul_gibonacci_add_eq_gibonacci
+    (G : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j) (k s : ℤ) :
+    (Int.fib (k + 1) : ℝ) * G (s + 1) + (Int.fib k : ℝ) * G s = G (k + s + 1) := by
+  rw [add_comm (_ * _) (_ * _), ← add_comm s k, add_assoc]
+  simpa using (add_eq hG s (k + 1)).symm
+
+open gibonacci_mul_add_neg_one_pow_eq_fib_mul in
 /-- **Two-sequence gibonacci identity with a Fibonacci factor.** Let
 $G, H : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$ and $j \mapsto H_j$, satisfy
 $G_{j+2} = G_{j+1} + G_j$ and $H_{j+2} = H_{j+1} + H_j$ for every integer $j$, and let $F_m$ be
@@ -155,9 +170,8 @@ theorem gibonacci_mul_add_neg_one_pow_eq_fib_mul
   have hG1 : G k = (Int.fib (k - 1) : ℝ) * G 0 + (Int.fib k : ℝ) * G 1 := by
     have h := add_eq hG 0 k
     rwa [zero_add, zero_add] at h
-  have hG2 : G (k + 1) = (Int.fib k : ℝ) * G 0 + (Int.fib (k + 1) : ℝ) * G 1 := by
-    have h := add_eq hG 0 (k + 1)
-    rwa [zero_add, add_sub_cancel_right, zero_add] at h
+  have hG2 := (fib_mul_gibonacci_add_eq_gibonacci G hG k 0).symm
+  simp only [zero_add, add_zero] at hG2
   have hF : (Int.fib (k + 1) : ℝ) = Int.fib k + Int.fib (k - 1) := by
     have h := Int.fib_add_two (k - 1)
     rw [show k - 1 + 2 = k + 1 by ring, sub_add_cancel] at h
@@ -167,5 +181,23 @@ theorem gibonacci_mul_add_neg_one_pow_eq_fib_mul
   rw [hGkr, hH1, hH2]
   linear_combination G k * hHsr + H s * Int.fib r * hG2 + Int.fib r * H (s - 1) * hG1 -
     Int.fib r * G 1 * Int.fib k * hH3 + Int.fib r * G 1 * H s * hF
+
+/-- **A sum of two gibonacci products in terms of the seeds.** Let
+$G, H : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$ and $j \mapsto H_j$, satisfy
+$G_{j+2} = G_{j+1} + G_j$ and $H_{j+2} = H_{j+1} + H_j$ for every integer $j$. Then for all
+integers $k$ and $s$,
+$$
+H_{k+1} G_{s+1} + H_k G_s = G_0 H_{k+s} + G_1 H_{k+s+1}.
+$$
+
+Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
+Integer Sequences 27 (2024), Article 24.6.2, Proposition 21
+(`jis-2024-24.6.2-prop-21`). -/
+theorem gibonacci_mul_gibonacci_add_eq_seed_combination
+    (G H : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
+    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (k s : ℤ) :
+    H (k + 1) * G (s + 1) + H k * G s = G 0 * H (k + s) + G 1 * H (k + s + 1) := by
+  simpa [show s + (k + 1) = k + s + 1 by ring] using
+    gibonacci_mul_add_neg_one_pow_eq_fib_mul G H hG hH 1 (k + 1) s
 
 end MetaMathlibExt
