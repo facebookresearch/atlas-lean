@@ -2844,6 +2844,7 @@ private theorem polyGauss_integrable (n : ℕ) (D : ℕ) (t : ℝ) (ht : 0 < t) 
         field_simp
         ring
 
+/-- Coordinate linear functional: the continuous linear map sending `h` to `∑ i, h i * D i`. -/
 private noncomputable def mkSpaceLin (n : ℕ) (D : Fin n → ℝ) : EuclideanSpace ℝ (Fin n) →L[ℝ] ℝ :=
   let Llin : EuclideanSpace ℝ (Fin n) →ₗ[ℝ] ℝ :=
     { toFun := fun h => ∑ i, h i * D i
