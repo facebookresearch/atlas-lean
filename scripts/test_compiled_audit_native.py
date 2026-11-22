@@ -36,28 +36,29 @@ class CompiledAuditTests(unittest.TestCase):
             # these: several constructors, parameters and indices, a universe, no constructor at all.
             'GeneratedCtorIdx': (
                 'module\n@[expose] public section\nuniverse u\n'
-                'inductive Colour where\n  | red\n  | green\n  | blue\n'
-                'inductive Tagged (α : Type u) : Nat → Type u where\n'
-                '  | zero (a : α) : Tagged α 0\n  | succ (a : α) (n : Nat) (t : Tagged α n) : Tagged α (n + 1)\n'
-                'inductive Void : Type\n'
-                'structure Box where\n  x : Nat\n'),
+                'inductive AuditColour where\n  | red\n  | green\n  | blue\n'
+                'inductive AuditTagged (α : Type u) : Nat → Type u where\n'
+                '  | zero (a : α) : AuditTagged α 0\n'
+                '  | succ (a : α) (n : Nat) (t : AuditTagged α n) : AuditTagged α (n + 1)\n'
+                'inductive AuditEmpty : Type\n'
+                'structure AuditBox where\n  x : Nat\n'),
             # A hand-written unsafe `_impl` for a type whose generated `ctorIdx` uses none.
             'HandWrittenCtorIdxImpl': (
                 'module\n@[expose] public section\n'
-                'inductive One where\n  | only\n'
-                'unsafe def One.ctorIdx._impl (x : One) : Nat := 7\n'),
+                'inductive AuditOne where\n  | only\n'
+                'unsafe def AuditOne.ctorIdx._impl (_ : AuditOne) : Nat := 7\n'),
             # A hand-written pair in place of the generated one.
             'HandWrittenCtorIdx': (
                 'module\n@[expose] public section\n'
-                'set_option genCtorIdx false in\ninductive Two where\n  | first\n  | second\n'
-                'unsafe def Two.ctorIdx._impl (x : Two) : Nat := 7\n'
-                '@[implemented_by Two.ctorIdx._impl] def Two.ctorIdx (x : Two) : Nat := 0\n'),
+                'set_option genCtorIdx false in\ninductive AuditTwo where\n  | first\n  | second\n'
+                'unsafe def AuditTwo.ctorIdx._impl (_ : AuditTwo) : Nat := 7\n'
+                '@[implemented_by AuditTwo.ctorIdx._impl] def AuditTwo.ctorIdx (_ : AuditTwo) : Nat := 0\n'),
             # The generated `_impl`, but a `ctorIdx` whose value is not the generated one.
             'ForgedCtorIdxValue': (
                 'module\n@[expose] public section\n'
-                'set_option genCtorIdx false in\ninductive Three where\n  | first\n  | second\n'
-                'unsafe def Three.ctorIdx._impl (x : Three) : Nat := getObjTagNat x\n'
-                '@[implemented_by Three.ctorIdx._impl] def Three.ctorIdx (x : Three) : Nat := 5\n'),
+                'set_option genCtorIdx false in\ninductive AuditThree where\n  | first\n  | second\n'
+                'unsafe def AuditThree.ctorIdx._impl (x : AuditThree) : Nat := getObjTagNat x\n'
+                '@[implemented_by AuditThree.ctorIdx._impl] def AuditThree.ctorIdx (_ : AuditThree) : Nat := 5\n'),
         }
         for name, text in sources.items():
             path = cls.fixture / f'MathlibExtTest/AuditFixture/{name}.lean'
@@ -123,20 +124,20 @@ class CompiledAuditTests(unittest.TestCase):
         self.assertEqual(audit.audit(self.fixture, [module], self.checker)['checkedModules'], [module])
 
     def test_hand_written_ctor_idx_impl_fails(self):
-        with self.assertRaisesRegex(audit.AuditFailure, r'One\.ctorIdx\._impl is an unsafe declaration'):
+        with self.assertRaisesRegex(audit.AuditFailure, r'AuditOne\.ctorIdx\._impl is an unsafe declaration'):
             audit.audit(self.fixture, ['MathlibExtTest.AuditFixture.HandWrittenCtorIdxImpl'], self.checker)
 
     def test_hand_written_ctor_idx_pair_fails(self):
         with self.assertRaises(audit.AuditFailure) as failure:
             audit.audit(self.fixture, ['MathlibExtTest.AuditFixture.HandWrittenCtorIdx'], self.checker)
-        self.assertIn('Two.ctorIdx._impl is an unsafe declaration', str(failure.exception))
-        self.assertIn('Two.ctorIdx uses implemented_by', str(failure.exception))
+        self.assertIn('AuditTwo.ctorIdx._impl is an unsafe declaration', str(failure.exception))
+        self.assertIn('AuditTwo.ctorIdx uses implemented_by', str(failure.exception))
 
     def test_forged_ctor_idx_value_fails(self):
         with self.assertRaises(audit.AuditFailure) as failure:
             audit.audit(self.fixture, ['MathlibExtTest.AuditFixture.ForgedCtorIdxValue'], self.checker)
-        self.assertIn('Three.ctorIdx._impl is an unsafe declaration', str(failure.exception))
-        self.assertIn('Three.ctorIdx uses implemented_by', str(failure.exception))
+        self.assertIn('AuditThree.ctorIdx._impl is an unsafe declaration', str(failure.exception))
+        self.assertIn('AuditThree.ctorIdx uses implemented_by', str(failure.exception))
 
     def test_other_import_failure_still_fails(self):
         with self.assertRaisesRegex(audit.AuditFailure, 'does not exist'):
