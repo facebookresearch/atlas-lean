@@ -240,11 +240,10 @@ lemma ratLpMatrix_map (nN nE nG : ℕ) (tail head : Fin nE → Fin nN)
       lpMatrix nN nE nG tail head (castVec b) gbus ref := by
   have hc : (fun q : ℚ => (q : ℝ)) = ⇑(Rat.castHom ℝ) := rfl
   have hI : Matrix.map (ratIncidence nN nE tail head) (fun q : ℚ => (q : ℝ)) =
-      PhyslibExt.Circuits.LosslessDCFlowModel.electricalIncidence nN nE tail head := by
+      PhyslibExt.Circuits.ArcPortSigns.electricalIncidence tail head := by
     ext v e
     simp only [Matrix.map_apply, ratIncidence,
-      PhyslibExt.Circuits.LosslessDCFlowModel.electricalIncidence, Matrix.neg_apply,
-      MathlibExt.Combinatorics.Graph.ArcNetwork.incidenceMatrix]
+      PhyslibExt.Circuits.ArcPortSigns.electricalIncidence_apply]
     split_ifs <;> norm_num
   have hD : Matrix.map (Matrix.diagonal b) (fun q : ℚ => (q : ℝ)) =
       Matrix.diagonal (castVec b) := Matrix.diagonal_map (by simp)
