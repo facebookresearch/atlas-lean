@@ -55,6 +55,8 @@ set_option autoImplicit false
 
 namespace Turing
 
+section
+
 variable {k : ℕ} {State Symbol : Type*} {input : List Symbol} {tm : MultiTapeTM k Symbol State}
 
 /-- `step` never reads the output tape, so the core of the next configuration is determined by the
@@ -69,7 +71,11 @@ lemma core_step_eq_of_core_eq {c₁ c₂ : Cfg k Symbol State input} (h : c₁.c
   | none => rw [MultiTapeTM.step_of_halt rfl, MultiTapeTM.step_of_halt rfl]; rfl
   | some q => rw [MultiTapeTM.step_of_state rfl, MultiTapeTM.step_of_state rfl]; rfl
 
+end
+
 namespace MultiTapeTM
+
+variable {k : ℕ} {State Symbol : Type*} {tm : MultiTapeTM k Symbol State} {input : List Symbol}
 
 /-- The set of positions visited by the head of work tape `i` in the computation starting from
 configuration `cfg` up to step `t`. -/
