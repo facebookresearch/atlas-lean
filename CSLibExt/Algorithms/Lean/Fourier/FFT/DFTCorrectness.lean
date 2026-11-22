@@ -69,7 +69,10 @@ private theorem fftSplit_dft_odd (d : Nat) (root : ℂ)
     _ = xs[2 * j + 1] := fftSplit_ret_odd xs ⟨j, h⟩
     _ = _ := (fftSample_eq xs (2 * j + 1) hxs).symm
 
-/-- Every coefficient of the actual executed FFT is the complete source DFT sum. -/
+/-- **Correctness of the radix-two FFT.** For every natural number $d$, every primitive $2^d$-th
+root of unity $\omega \in \mathbb{C}$, every vector $x = (x_0, \dots, x_{2^d - 1})$ in
+$\mathbb{C}^{2^d}$ and every $k < 2^d$, the $k$-th entry of the radix-two FFT of $x$ with root
+$\omega$ equals the discrete Fourier sum $\sum_{j=0}^{2^d - 1} \omega^{jk} x_j$. -/
 theorem fft_correct (d : Nat) (omega : ℂ) (hroot : IsPrimitiveRoot omega (2 ^ d))
     (xs : Vector ℂ (2 ^ d)) (k : Fin (2 ^ d)) :
     (fft d omega xs).ret[k.val] =
