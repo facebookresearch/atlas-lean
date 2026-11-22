@@ -634,9 +634,9 @@ $\tau(24m + r + 1) \equiv 0 \pmod 3$ for $r \in \{8, 16\}$; and
 $\tau(24m + 13) \equiv 0 \pmod 2$.
 
 The paper prints the moduli of the second, fourth and fifth congruences as $12$, $6$ and $4$,
-which is false (for instance $\tau(5) = 4830$ is not divisible by $12$); the moduli used are
-$24/\gcd(r, 24)$, which the paper's Proposition 2.4 at $k = 24$ gives. The first and third
-congruences are as printed.
+which is false (for instance $\tau(5) = 4830$ is not divisible by $12$); the moduli used for
+these three are $24/\gcd(r, 24)$, which the paper's Proposition 2.4 at $k = 24$ gives. The first
+and third congruences are as printed.
 
 Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
 Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
