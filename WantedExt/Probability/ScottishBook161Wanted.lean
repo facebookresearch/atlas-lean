@@ -45,7 +45,8 @@ such that $r_n - (r_0 + r_1 + \dots + r_{n-1})$ tends to $+\infty$ as $n \to \in
 satisfies the central limit theorem for lacunary sine sums. The sequence $r_n = 2^n$ satisfies
 it as well.
 
-Positivity is needed: the constant sequence $r_n = -1$ satisfies the gap hypothesis, since
+Without a sign restriction the statement is false for integer sequences, so the terms are taken
+positive here: the constant sequence $r_n = -1$ satisfies the gap hypothesis, since
 $r_n - (r_0 + \dots + r_{n-1}) = n - 1$, but its normalized sum $-\sqrt{n} \sin(2 \pi x)$ is not
 asymptotically normal.
 
