@@ -269,7 +269,10 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
         if not any(runs_exactly(step, ENTRY_POINTS[check], shell) for step in steps):
             found.append(f"{check!r} has no step that is exactly {ENTRY_POINTS[check]!r}")
         for step in as_list(job.get("steps")):
-            if isinstance(step, dict) and "actions/checkout" in str(step.get("uses", "")):
+            # GitHub resolves action names case-insensitively.
+            action = str(step.get("uses", "")).split("@", 1)[0].casefold() if isinstance(
+                step, dict) else ""
+            if action == "actions/checkout":
                 extra = sorted(set(step.get("with") or {}) - CHECKOUT_INPUTS)
                 if extra:
                     found.append(f"{check!r} checks out with {extra}, which can change the tree")
@@ -556,6 +559,11 @@ class MergeQueueChecks(unittest.TestCase):
                 put("ci.yml", "jobs", "build", "steps",
                     [{"uses": "actions/checkout@v7",
                       "with": {"sparse-checkout": "MathlibExt/\n!DomainsTest/Biology/"}},
+                     {"run": "scripts/check.sh build"}]), "which can change the tree"),
+            "build sparse checkout with a mixed-case action name": (
+                put("ci.yml", "jobs", "build", "steps",
+                    [{"uses": "Actions/Checkout@v7",
+                      "with": {"sparse-checkout": "MathlibExt/"}},
                      {"run": "scripts/check.sh build"}]), "which can change the tree"),
             "build in a container": (
                 put("ci.yml", "jobs", "build", "container", "ubuntu:24.04"),
