@@ -37,7 +37,7 @@ terminal set is contained in the state constraint set and the terminal
 feedback keeps terminal states admissible and inside the terminal set.
 
 Provenance: the finite-horizon model-predictive-control attainment
-fact; control-theory roadmap leaf `SSC-S03.T01` (clause `SSC-S03.c01`).
+fact.
 -/
 
 open Set
@@ -109,8 +109,8 @@ private theorem cost_continuous {X U : Type*} [TopologicalSpace X]
     exact hℓ.comp ((traj_continuous hf x₀ k.val (Nat.le_of_lt k.2)).prodMk (continuous_apply k))
   · exact hV.comp (traj_continuous hf x₀ N le_rfl)
 
-/-- Finite-horizon constrained optimizer attainment (roadmap leaf
-`SSC-S03.T01`, clause `SSC-S03.c01`): with continuous dynamics `f`,
+/-- Finite-horizon constrained optimizer attainment: with continuous
+dynamics `f`,
 compact input set `Us` (in a Hausdorff input space), closed state and
 terminal constraint sets, continuous stage and terminal costs, and at
 least one feasible finite input sequence, the `N`-step problem attains
