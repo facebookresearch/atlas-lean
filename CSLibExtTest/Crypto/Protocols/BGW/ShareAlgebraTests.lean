@@ -112,7 +112,6 @@ theorem test_vanish_at_zero_ne : testVanish.eval 0 ≠ 0 := by
   decide
 
 #print axioms CSLibExt.Crypto.Protocols.BGW.natDegree_mul_le_two_mul
-#print axioms CSLibExt.Crypto.Protocols.BGW.prod_share_eval
 #print axioms CSLibExt.Crypto.Protocols.BGW.exists_recombination_vector
 #print axioms CSLibExt.Crypto.Protocols.BGW.exists_ambiguous_sharings
 #print axioms CSLibExt.Crypto.Protocols.BGW.no_recombination_vector_of_le

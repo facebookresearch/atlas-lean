@@ -29,8 +29,6 @@ evaluations of a polynomial `p` with `p.natDegree ≤ t` and `p.eval 0 = s`.
 
 - `natDegree_mul_le_two_mul` (B1): the product polynomial has degree at most
   `2 * t`.
-- `prod_share_eval` (B1): local share products are evaluations of the product
-  polynomial.
 - `exists_recombination_vector` (B2): when `2 * t < n`, Lagrange interpolation
   at `0` gives a recombination vector recovering `p.eval 0` from all `n`
   shares, uniformly in `p`.
@@ -46,6 +44,35 @@ evaluations of a polynomial `p` with `p.natDegree ≤ t` and `p.eval 0 = s`.
 Reconstruction needs `t + 1` shares while at most `t` corruptions are
 tolerated; the two thresholds are kept distinct throughout. Re-sharing the
 product with fresh randomness (degree reduction proper) is out of scope here.
+
+## References
+
+* [M. Ben-Or, S. Goldwasser, A. Wigderson,
+  *Completeness theorems for non-cryptographic fault-tolerant distributed
+  computation* (extended abstract), Proc. 20th Annual ACM Symp. on Theory of
+  Computing (STOC), Chicago, May 1988, pp. 1–10, ACM][BGW1988],
+  DOI `10.1145/62212.62213`. Section and page numbers below were verified
+  against the copy at `https://mit6875.github.io/PAPERS/BGW.pdf` (10 pages;
+  printed page numbers match the proceedings pagination; ACM line
+  `0-89791-264-0/88/0005/0001` on p. 1).
+
+Claim correspondence (all locators in [BGW1988], proof of Theorem 1):
+`natDegree_mul_le_two_mul` (B1) is the degree fact behind "The multiplication
+step" (p. 4): for `h = f * g` the paper notes the degree "is `2t` instead of
+`t`". The local-share equation `Si = h(αi) = f(αi) * g(αi)` and the fixed
+linear recombination `R = S * A` (with `A = B⁻¹PB` for the Vandermonde matrix
+`B`) are in "The degree reduction step" (p. 4), building on the Lemma (Linear
+Functional, p. 3) and the Corollary (Matrix Multiplication, p. 4).
+`exists_recombination_vector` (B2) formalizes this interpolation step as a
+Lagrange-at-`0` recombination vector, which exists exactly when `2 * t < n`,
+i.e. the proof's standing hypothesis `n ≥ 2 * t + 1` (p. 3); the boundary
+results (`exists_ambiguous_sharings`, `no_recombination_vector_of_le`, B3)
+are its converse. Threshold convention: `t` is the corruption bound
+(Theorem 1, `t < n / 2`, Abstract on p. 1, restated p. 4); reconstruction
+needs `t + 1` shares for a degree-`t` sharing ("The input stage" and "The
+final stage", p. 3) and `2 * t + 1` for the degree-`2 * t` product. Full
+re-sharing with fresh randomness ("The randomization step", p. 4) and the
+`t < n / 3` Byzantine case (Theorems 3–4, stated p. 3) are out of scope here.
 -/
 
 @[expose] public section
@@ -63,14 +90,6 @@ theorem natDegree_mul_le_two_mul
       ≤ p.natDegree + q.natDegree := _root_.Polynomial.natDegree_mul_le
     _ ≤ t + t := Nat.add_le_add hp hq
     _ = 2 * t := (two_mul t).symm
-
-/-- Local share products are evaluations of the product polynomial: the share
-of party `i` for the product secret is `p (x i) * q (x i)`. -/
-theorem prod_share_eval
-    {F Party : Type*} [Field F] (p q : _root_.Polynomial F)
-    (x : Party → F) (i : Party) :
-    (p * q).eval (x i) = p.eval (x i) * q.eval (x i) :=
-  _root_.Polynomial.eval_mul
 
 /-- Recombination vector for degree-`2 * t` sharings (BGW multiplication step).
 
