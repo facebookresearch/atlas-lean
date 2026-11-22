@@ -15,6 +15,8 @@ What a PR may change in the graph, and how to expand a node, is in
 - `scripts/taxonomy.json` and `blueprint/atlas.json`: subject organization.
 - Card records in `blueprint/links/` and `scripts/card-moves.jsonl`: the cards readers navigate by,
   and the addresses moves retire ([cards.md](cards.md)).
+- `scripts/mathgraph-map.jsonl`: the mathgraph results imported and the page
+  each was written at ([mathgraph-import.md](mathgraph-import.md#the-map)).
 - Lean sources: declaration kinds and statement/proof status.
 - Compiled Lean: dependencies of declarations' types and values. The values of
   `def`, `abbrev` and `inductive` declarations, and of `instance` declarations
@@ -39,7 +41,8 @@ and docstring changes should be reviewed with the sync report below.
 
 These rules apply to any PR that changes the graph: `blueprint/roadmap/`,
 `blueprint/links/`, `blueprint/atlas.json`, `blueprint/coverage/`,
-`scripts/taxonomy.json`, `scripts/wiki-sync.json` or `scripts/card-moves.jsonl`. They add only what ATLAS
+`scripts/taxonomy.json`, `scripts/wiki-sync.json`, `scripts/card-moves.jsonl` or
+`scripts/mathgraph-map.jsonl`. They add only what ATLAS
 needs to AutoformBot's
 [blueprint format](https://github.com/facebookresearch/autoform-bot/blob/6126f7fce521c0040796d0b67d952d36ee051f3f/autoform_cli/reference/blueprint-format.md),
 at the commit in `.github/autoform-ref`; where ATLAS needs something the
@@ -158,6 +161,8 @@ The tools write these, so they are never edited or committed by hand:
   `site/`, the dependency dump.
 - `scripts/wiki-sync.json` and `blueprint/atlas.json`, which change only as
   [Maintaining articles](#maintaining-articles) describes.
+- `scripts/mathgraph-map.jsonl`, to which `import_mathgraph.py` appends a line
+  for each page it imports ([mathgraph-import.md](mathgraph-import.md#the-map)).
 
 Each annotation has an `id` (`af_` and 24 hex digits) that is unique and never
 changes; `autoform work` refuses an unfinished formalizable leaf without one,
@@ -221,6 +226,7 @@ python -m unittest \
   scripts.test_generate_wiki_navigation \
   scripts.test_generate_wiki_docstrings \
   scripts.test_sync_wiki \
+  scripts.test_import_mathgraph \
   scripts.test_extract_v2_lean_dependencies \
   scripts.test_extract_mathlib_graph \
   scripts.test_check_blueprint_site_navigation \
@@ -421,8 +427,11 @@ page ([cards.md](cards.md#reading)), with `theme/stylesheets/atlas-cards.css`.
 `Blueprint Pages` runs on `main` once a day at 03:17 UTC and on manual runs
 (**Actions → Blueprint Pages → Run workflow**), and on
 PRs that touch the wiki: `blueprint/`, the wiki scripts and
-their tests, `scripts/taxonomy.json`, `scripts/wiki-sync.json`, the site
-configuration (`mkdocs.yml`, `theme/`, `hooks/`), this document, the workflow,
+their tests, `scripts/check_public_references.py`, which the importer imports,
+`scripts/taxonomy.json`, `scripts/wiki-sync.json`,
+`scripts/mathgraph-map.jsonl`, the site
+configuration (`mkdocs.yml`, `theme/`, `hooks/`), this document,
+`docs/mathgraph-import.md`, the workflow,
 `.github/autoform-ref`, or the toolchain pins (`lean-toolchain`,
 `lake-manifest.json`, `lakefile.toml`). A Lean-only PR skips it, because
 `lean-facts` turns a renamed or deleted declaration into an unlinked page rather
