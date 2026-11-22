@@ -50,6 +50,8 @@ transduction.
 
 namespace Cslib.Automata
 
+universe v
+
 variable {State State₁ State₂ In Mid Out σ : Type*}
 
 /-- **Sequential transducer.** A sequential transducer with states in a type $Q$, input letters in
@@ -169,10 +171,16 @@ def Translates (S : SequentialTransducer State In Out) (xs : List In)
   S.runState S.start xs ∈ S.accept ∧
     S.initOut ++ S.runOut S.start xs ++ S.finalOut (S.runState S.start xs) = ys
 
--- Note: there is no global instance of upstream's `Transducer` class for
--- `SequentialTransducer`: that class requires the input and output alphabets to live in the
--- same universe, while `SequentialTransducer` is universe-polymorphic. Use
--- `SequentialTransducer.Translates` directly.
+/-- Sequential transducers use the upstream interface when both alphabets share a universe.
+For alphabets in different universes, use `SequentialTransducer.Translates` directly. -/
+instance {In Out : Type v} : Transducer (SequentialTransducer State In Out) In Out where
+  Translates := SequentialTransducer.Translates
+
+/-- Upstream translation is exactly the sequential transducer's translation relation. -/
+theorem translates_iff {In Out : Type v} (S : SequentialTransducer State In Out)
+    (xs : List In) (ys : List Out) :
+    Transducer.Translates S xs ys ↔ S.Translates xs ys :=
+  Iff.rfl
 
 /-- **Composition of sequential transducers.** Let $S_1$ be a sequential transducer from $I$ to
 $M$ with start state $s_1$, initial output $\iota_1$ and final output map $\phi_1$, and let $S_2$
@@ -321,7 +329,7 @@ theorem comp_output_eq (S₁ : SequentialTransducer State₁ In Mid)
           (S₁.initOut ++ S₁.runOut S₁.start xs ++
             S₁.finalOut (S₁.runState S₁.start xs))) := by
   rw [comp_runState, comp_runOut]
-  show (S₂.initOut ++ S₂.runOut S₂.start S₁.initOut) ++
+  change (S₂.initOut ++ S₂.runOut S₂.start S₁.initOut) ++
       S₂.runOut (S₂.runState S₂.start S₁.initOut) (S₁.runOut S₁.start xs) ++
         (S₂.runOut (S₂.runState (S₂.runState S₂.start S₁.initOut)
             (S₁.runOut S₁.start xs)) (S₁.finalOut (S₁.runState S₁.start xs)) ++
@@ -361,7 +369,7 @@ theorem translates_comp_iff (S₁ : SequentialTransducer State₁ In Mid)
     rw [comp_runState_initOut] at hacc₂
     constructor
     · rw [comp_runState]
-      show S₁.runState S₁.start xs ∈ S₁.accept ∧ _
+      change S₁.runState S₁.start xs ∈ S₁.accept ∧ _
       exact ⟨hacc₁, hacc₂⟩
     · exact (comp_output_eq S₁ S₂ xs).trans hout₂
 
@@ -425,10 +433,10 @@ theorem preimageDFA_accepts (S : SequentialTransducer State In Out) (M : DFA Out
       M.evalFrom (M.evalFrom (M.evalFrom M.start S.initOut) (S.runOut S.start xs))
         (S.finalOut (S.runState S.start xs)) ∈ M.accept at h
     obtain ⟨hacc, hmem⟩ := h
-    show ∃ ys ∈ M.accepts, S.Translates xs ys
+    change ∃ ys ∈ M.accepts, S.Translates xs ys
     refine ⟨S.initOut ++ S.runOut S.start xs ++ S.finalOut (S.runState S.start xs),
       ?_, ⟨hacc, rfl⟩⟩
-    show M.evalFrom M.start
+    change M.evalFrom M.start
         (S.initOut ++ S.runOut S.start xs ++ S.finalOut (S.runState S.start xs)) ∈
         M.accept
     have h1 : M.evalFrom M.start
@@ -605,6 +613,16 @@ theorem translates_toSequential_iff (M : MealyMachine State In Out) (xs : List I
   rw [seq_runOut_eq]
   rfl
 
+/-- A Mealy machine uses the upstream transducer interface through its sequential rendering. -/
+instance {In Out : Type v} : Transducer (MealyMachine State In Out) In Out where
+  Translates M xs ys := M.toSequential.Translates xs ys
+
+/-- Upstream translation by a Mealy machine is equality with its output word. -/
+theorem translates_iff {In Out : Type v} (M : MealyMachine State In Out)
+    (xs : List In) (ys : List Out) :
+    Transducer.Translates M xs ys ↔ M.transduce xs = ys :=
+  translates_toSequential_iff M xs ys
+
 end MealyMachine
 
 /-- **Moore machine.** A Moore machine with state type $Q$, input alphabet $\Sigma$ and output
@@ -734,6 +752,17 @@ theorem translates_toSequential_iff (M : MooreMachine State In Out) (xs : List I
     exact runOut_eq_cons M xs M.start]
   simp only [List.cons_append, List.nil_append]
   rfl
+
+/-- A Moore machine uses the upstream transducer interface through its sequential rendering. -/
+instance {In Out : Type v} : Transducer (MooreMachine State In Out) In Out where
+  Translates M xs ys := M.toSequential.Translates xs ys
+
+/-- Upstream translation by a Moore machine is equality with its output word,
+including the output of the starting state. -/
+theorem translates_iff {In Out : Type v} (M : MooreMachine State In Out)
+    (xs : List In) (ys : List Out) :
+    Transducer.Translates M xs ys ↔ M.transduce xs = ys :=
+  translates_toSequential_iff M xs ys
 
 end MooreMachine
 

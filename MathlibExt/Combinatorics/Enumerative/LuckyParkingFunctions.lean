@@ -16,7 +16,7 @@ import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 import Mathlib.Data.Fin.Basic
 import Mathlib.Data.Finset.Max
 import Mathlib.Data.Fintype.Card
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity

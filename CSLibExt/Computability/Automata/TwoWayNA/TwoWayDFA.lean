@@ -39,10 +39,10 @@ relation (`TwoWayDFA.tr_functional`).
 * `Cslib.Automata.TwoWayDFA.exists_ofDFA_of_isRegular`: every regular language is accepted
   by a deterministic two-way automaton.
 * `Cslib.Automata.TwoWayNA.language_isRegular` and
-  `Cslib.Automata.exists_twoWayNA_of_isRegular`: the same equivalence for upstream's
-  nondeterministic two-way automata, stated against Mathlib's `Language.IsRegular`.
-  Upstream already defines `TwoWayNA` and proves the hard direction by Vardi's
-  rejection-certificate construction (`TwoWayNA.complToNA`); it is not redefined here.
+  `Cslib.Automata.exists_twoWayNA_of_isRegular`: compatibility aliases for the two
+  directions of upstream `Cslib.Language.IsRegular.iff_twoWayNA`, which already uses
+  Mathlib's `Language.IsRegular`. Upstream defines `TwoWayNA` and proves the hard
+  direction by Vardi's rejection-certificate construction (`TwoWayNA.complToNA`).
 -/
 
 @[expose] public section
@@ -171,26 +171,33 @@ theorem exists_ofDFA_of_isRegular {L : Language Symbol} (hL : L.IsRegular) :
 end TwoWayDFA
 
 /-- **Finite two-way nondeterministic automata accept regular languages.** Every
-nondeterministic two-way automaton with finitely many states accepts a regular language.
+nondeterministic two-way automaton with finitely many states accepts a regular language. The
+state type is in `Type`, matching Mathlib's `Language.IsRegular`.
 
 A run of such an automaton on a word starts in a start state with the head at the first
 position; each step reads the symbol under the head, changes the state and moves the head one
 position left, keeps it in place, or moves it one position right, and the run is stuck if the
 head would move left of the first position. A word is accepted when some run ends in an
-accepting state with the head just past the last symbol. -/
+accepting state with the head just past the last symbol.
+
+This is a compatibility alias for the reverse direction of upstream
+`Cslib.Language.IsRegular.iff_twoWayNA`. -/
 theorem TwoWayNA.language_isRegular {State : Type} [Finite State] (a : TwoWayNA State Symbol) :
     (Acceptor.language a).IsRegular :=
   Cslib.Language.IsRegular.iff_twoWayNA.2 ⟨State, inferInstance, a, rfl⟩
 
 /-- **Regular languages are accepted by two-way nondeterministic automata.** For every
 regular language $L$ over an alphabet, there is a nondeterministic two-way automaton with
-finitely many states that accepts exactly the words of $L$.
+finitely many states, its state type in `Type`, that accepts exactly the words of $L$.
 
 A run of such an automaton on a word starts in a start state with the head at the first
 position; each step reads the symbol under the head, changes the state and moves the head one
 position left, keeps it in place, or moves it one position right, and the run is stuck if the
 head would move left of the first position. A word is accepted when some run ends in an
-accepting state with the head just past the last symbol. -/
+accepting state with the head just past the last symbol.
+
+This is a compatibility alias for the forward direction of upstream
+`Cslib.Language.IsRegular.iff_twoWayNA`. -/
 theorem exists_twoWayNA_of_isRegular {L : Language Symbol} (hL : L.IsRegular) :
     ∃ (S : Type) (_ : Finite S) (a : TwoWayNA S Symbol),
       Acceptor.language a = L :=

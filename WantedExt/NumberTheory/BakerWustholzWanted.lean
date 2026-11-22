@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.NumberTheory.BakerWustholz` — bakerWustholz_linearForms_logs (manifest `manifests/problems/bakerWustholz_linearForms_logs.toml`, rev 1, submitter Ralf Stephan, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.NumberTheory.BakerWustholz` —
+bakerWustholz_linearForms_logs (manifest `manifests/problems/bakerWustholz_linearForms_logs.toml`,
+rev 1, submitter Ralf Stephan, status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.NumberTheory.BakerWustholzWanted` namespace. Mathematical
-statements are unchanged. Source: A. Baker, G. Wüstholz, Logarithmic forms and group varieties, J. reine angew. Math. 442 (1993), 19-62.
+and placed the declarations in the `MathlibExt.NumberTheory.BakerWustholzWanted` namespace.
+Mathematical
+statements are unchanged. Source: A. Baker, G. Wüstholz, Logarithmic forms and group varieties, J.
+reine angew. Math. 442 (1993), 19-62.
 -/
 module
 
@@ -102,7 +106,8 @@ where `C(n, d)` is `BakerWustholz.C n d` and `h'(α)` is
 `BakerWustholz.modifiedHeight φ α`. The `max(log B, 1/d)` factor (rather
 than bare `log B`) is the standard Baker–Wüstholz formulation; it avoids
 spuriously sharpening the bound at `d = 1`, `B = 2`. -/
-/-- Source: A. Baker, G. Wüstholz, Logarithmic forms and group varieties, J. reine angew. Math. 442 (1993), 19-62. Via leanprover/lean-eval@38361be, problem `bakerWustholz_linearForms_logs`. -/
+/-- Source: A. Baker, G. Wüstholz, Logarithmic forms and group varieties, J. reine angew. Math. 442
+(1993), 19-62. Via leanprover/lean-eval@38361be, problem `bakerWustholz_linearForms_logs`. -/
 public theorem_wanted bakerWustholz_linearForms_logs
     {n : ℕ} (hn : 0 < n)
     {K : Type*} [Field K] [NumberField K] (φ : K →+* ℂ)

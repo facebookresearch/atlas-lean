@@ -22,6 +22,23 @@ with direct and indirect addressing. They are one of the standard models in
 the Church–Turing equivalence; the equivalence with Turing machines is
 registered as a wanted theorem in
 `WantedExt/TheoryOfComputation/RAMMachineEquivalence.lean`.
+
+## Differences from the Aho–Hopcroft–Ullman RAM
+
+The addressing modes (immediate, direct, indirect) and the instructions `load`,
+`store`, `add`, `sub`, `jump`, `jz` and `halt` are those of the cited model. The
+model here differs from it as follows.
+
+* Registers and the accumulator hold natural numbers, not integers, so `sub`
+  saturates at `0`.
+* The accumulator is a separate field, not register `0`.
+* There are no `MULT`, `DIV` or `JGTZ` instructions.
+* There are no input and output tapes (`READ`, `WRITE`): the inputs start in
+  registers `0, 1, …` (`ramInit`), and the output is the accumulator once the
+  machine has halted (`ramEval`).
+
+This module proves halting stability and output membership, but provides no
+simulation into URM or Turing machines.
 -/
 
 set_option autoImplicit false
@@ -31,9 +48,7 @@ namespace Cslib.Decidability
 /-- A **RAM addressing mode**: immediate (the literal value `n` itself),
 direct (the contents of register `n`), or indirect (the contents of the
 register whose index is the contents of register `n`, i.e. `regs (regs n)`).
-The earlier version of this file mislabelled the immediate mode `dir` and
-the direct mode `ind`, and had no indirect mode; the three modes below are
-the Aho–Hopcroft–Ullman modes.
+These are the three Aho–Hopcroft–Ullman addressing modes.
 Source: Aho–Hopcroft–Ullman, *The Design and Analysis of Computer Algorithms*, 1974, §1.2. -/
 inductive RAMAddr where
   | imm : ℕ → RAMAddr

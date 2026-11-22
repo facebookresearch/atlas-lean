@@ -49,11 +49,6 @@ namespace MathlibExt.Analysis.InnerProductSpace.CeaLemma
 
 variable {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
 
-/-- For real `a`, `a ≤ ‖a‖`. -/
-private theorem le_norm_self_real (a : ℝ) : a ≤ ‖a‖ := by
-  rw [Real.norm_eq_abs]
-  exact le_abs_self a
-
 /-- Restriction of a bounded bilinear form to a submodule. -/
 noncomputable def restrictBilin (B : V →L[ℝ] V →L[ℝ] ℝ) (W : Submodule ℝ V) :
     W →L[ℝ] W →L[ℝ] ℝ where
@@ -232,7 +227,7 @@ theorem norm_sub_galerkinSolution_le {B : V →L[ℝ] V →L[ℝ] ℝ} (hB : IsC
     have h2 : B e e = B e ((u - v) - (uh - v)) := congrArg (fun z => B e z) hdecomp
     rw [h2, h1, hort, sub_zero]
   have hbound : B e (u - v) ≤ ‖B‖ * ‖e‖ * ‖u - v‖ := by
-    calc B e (u - v) ≤ ‖B e (u - v)‖ := le_norm_self_real _
+    calc B e (u - v) ≤ ‖B e (u - v)‖ := Real.le_norm_self _
       _ ≤ ‖B‖ * ‖e‖ * ‖u - v‖ := ContinuousLinearMap.le_opNorm₂ B e (u - v)
   have hmain : α * ‖e‖ * ‖e‖ ≤ (‖B‖ * ‖u - v‖) * ‖e‖ := by
     calc α * ‖e‖ * ‖e‖ ≤ B e e := hco e
@@ -264,7 +259,7 @@ theorem norm_variationalSolution_le {B : V →L[ℝ] V →L[ℝ] ℝ} (hB : IsCo
   have hmain : α * ‖u‖ * ‖u‖ ≤ ‖L‖ * ‖u‖ := by
     calc α * ‖u‖ * ‖u‖ ≤ B u u := hco u
       _ = L u := hspec
-      _ ≤ ‖L u‖ := le_norm_self_real _
+      _ ≤ ‖L u‖ := Real.le_norm_self _
       _ ≤ ‖L‖ * ‖u‖ := L.le_opNorm u
   exact norm_le_div_of_sq_le (M := ‖L‖) hα (norm_nonneg _) hmain
 
@@ -281,7 +276,7 @@ theorem norm_galerkinSolution_le {B : V →L[ℝ] V →L[ℝ] ℝ} (hB : IsCoerc
           ≤ B (galerkinSolution hB hW L : V) (galerkinSolution hB hW L : V) :=
         hco _
       _ = L (galerkinSolution hB hW L : V) := hspec
-      _ ≤ ‖L (galerkinSolution hB hW L : V)‖ := le_norm_self_real _
+      _ ≤ ‖L (galerkinSolution hB hW L : V)‖ := Real.le_norm_self _
       _ ≤ ‖L‖ * ‖(galerkinSolution hB hW L : V)‖ := L.le_opNorm _
   have h := norm_le_div_of_sq_le (E := V) (M := ‖L‖) hα (norm_nonneg _) hmain
   rwa [Submodule.norm_coe] at h

@@ -39,22 +39,37 @@ the variant recorded in its docstring:
   gates; `AC0Mod m` allows only `mod` gates of modulus `m`; `ACC0` is the
   union over fixed `m` of `AC0Mod m`. A `mod m` gate outputs `true` iff the
   number of true inputs is `≡ 0 (mod m)` (`m = 0` is defined as `false`).
+  `AC0`, `AC0Mod m` and `ACC0` are non-uniform: the circuit family is an
+  arbitrary function of the input length, so every language that depends only
+  on the input length, including undecidable ones, is in `AC0`. This is the
+  setting of the lower bounds of Furst-Saxe-Sipser, Håstad, Smolensky and
+  Williams.
 * `NC^k` (`NCK`) is log-space uniform circuits of polynomial size and
   depth `O(log^k n)`: uniformity is a log-space computable description
   function from the unary input `replicate n true` to the bit-encoding of
-  the serial circuit, `NC` is the union over `k`.
+  the serial circuit, `NC` is the union over `k`. Unlike `AC0`, `AC0Mod`,
+  `ACC0` and `PPoly`, these classes contain only decidable languages. The
+  inclusion `AC⁰ ⊆ NC¹` (replace each unbounded fan-in gate by a balanced tree
+  of fan-in-two gates) holds when both classes follow the same uniformity
+  convention, both non-uniform or both uniform. Here they do not: `AC0` is
+  non-uniform and `NCK 1` is log-space uniform, so `AC0` contains undecidable
+  languages that `NCK 1` does not, and comparing them needs matching
+  conventions, for example `UniformCircuitFamily` added to `AC0`.
 * Quantum circuits are 2-local unitary gates with rational entries
   (`QGate`, canonical in this file and reused by the Local Hamiltonian
   `QMA` file):
   states are `Fin (2 ^ N) → ℂ` vectors, `applyGate`/`applyCircuit` evolve
   them, `acceptProb` is the Born-rule probability that qubit `0` measures
   `1`. `BQP` is polynomial-size uniform quantum circuits with bounded error.
-* Optimization problems (`OptProblem`) are value / feasibility / bound
-  bundles; `IsNPO` is the separate computational-content predicate
+* Optimization problems (`OptProblem`) are maximization value / feasibility /
+  bound bundles; `IsNPO` is the separate computational-content predicate
   (poly-time feasibility and poly-time objective encoding, as in the
   `MAXSNP` file's `NPOProblem`), and `APX`, `PTAS`, `FPTAS` all require it,
   sharing one call convention (the algorithm takes `(instance, unary
   precision tape)`) so that the inclusions `FPTAS ⊆ PTAS ⊆ APX` are direct.
+  These classes contain maximization problems only: `ApproxAt` rewards larger
+  values, so a minimization problem such as vertex cover or metric TSP cannot be
+  stated by taking its cost as `val`.
 * One-way functions (`IsOneWayFunction`) are polynomially balanced families
   with a uniform polynomial-time evaluator that no uniform polynomial-time
   probabilistic inverter (receiving `(n, output, coins)`) inverts with
@@ -780,7 +795,9 @@ refers only to earlier gates; $C_n$ has no mod gates; $C_n$ has at most $p(n)$ g
 most $d$; and for every bitstring $x$ of length $n$, $L(x)$ is true if and only if $C_n$ has a
 last gate and the value of that gate on input $x$ is true.
 
-The and and or gates have unbounded fan-in, and the family $(C_n)$ need not be uniform. -/
+The and and or gates have unbounded fan-in. The family $(C_n)$ is an arbitrary function of the
+input length, with no uniformity condition, so $\mathsf{AC}^0$ contains undecidable unary
+languages; compare the log-space uniform `NCK`. -/
 def AC0 : DecisionComplexityClass :=
   {L | ∃ d, ∃ p : Polynomial ℕ, ∃ C : (n : ℕ) → List (ACGate n),
     ∀ n, WellFormedCircuit (C n) ∧ IsModFree (C n) ∧ (C n).length ≤ p.eval n ∧
@@ -810,7 +827,8 @@ def AC0Mod (m : ℕ) : DecisionComplexityClass :=
 /-- **The class $\mathsf{ACC}^0$.** $\mathsf{ACC}^0$ is the union of the classes
 $\mathsf{AC}^0[m]$ over all natural numbers $m$: a decision problem is in $\mathsf{ACC}^0$ when it
 is in $\mathsf{AC}^0[m]$ for some $m$. A circuit family witnessing membership uses one fixed
-modulus $m$ throughout. -/
+modulus $m$ throughout. As for $\mathsf{AC}^0[m]$, there is no uniformity condition, as in
+Williams' $\mathsf{NEXP} \not\subseteq \mathsf{ACC}^0$. -/
 def ACC0 : DecisionComplexityClass := ⋃ m, AC0Mod m
 
 /-- **The parity language.** The parity decision problem accepts a bitstring exactly when an odd
@@ -1394,6 +1412,8 @@ precision $2$: for every instance $x$ and every feasible solution $s$ of $x$, th
 $A$ on $x$ and the unary precision string $11$ is a feasible solution of $x$ whose value is at
 least $\rho$ times the value of $s$.
 
+Minimization problems are not covered (see `ApproxAt`).
+
 Source: C. H. Papadimitriou and M. Yannakakis, "Optimization, approximation,
 and complexity classes", Journal of Computer and System Sciences 43 (1991),
 425-440. -/
@@ -1416,13 +1436,15 @@ def IsPTAS (P : OptProblem) : Prop :=
   IsNPO P ∧ ∀ k : ℕ, 1 ≤ k → ∃ A : List Bool × List Bool → List Bool,
     IsPolyTime A ∧ ApproxAt P A k (1 - 1 / (k : ℚ))
 
-/-- **The class PTAS.** PTAS is the set of optimization problems $P$ that are NPO problems
+/-- **The class PTAS.** PTAS is the set of maximization problems $P$ that are NPO problems
 (feasibility is decidable in polynomial time and the objective value is given by a
 polynomial-time computable rational encoding) and that have a polynomial-time approximation
 scheme: for every natural number $k \ge 1$ there is a polynomial-time algorithm $A$ such that,
 for every instance $x$ and every feasible solution $s$ of $x$, the output of $A$ on $x$ and the
 string of $k$ ones is a feasible solution of $x$ whose value is at least $(1 - 1/k)$ times the
 value of $s$.
+
+Minimization problems are not covered (see `ApproxAt`).
 
 Source: C. H. Papadimitriou and M. Yannakakis, "Optimization, approximation,
 and complexity classes", Journal of Computer and System Sciences 43 (1991),
@@ -1446,8 +1468,15 @@ def IsFPTAS (P : OptProblem) : Prop :=
   IsNPO P ∧ ∃ A : List Bool × List Bool → List Bool, IsPolyTime A ∧
     ∀ k : ℕ, 1 ≤ k → ApproxAt P A k (1 - 1 / (k : ℚ))
 
-/-- **The class FPTAS.** FPTAS is the class of optimization problems that have a fully
-polynomial-time approximation scheme.
+/-- **The class FPTAS.** FPTAS is the set of maximization problems $P$ that are NPO problems
+(feasibility is decidable in polynomial time and the objective value is given by a
+polynomial-time computable rational encoding) and that have a fully polynomial-time
+approximation scheme: a single polynomial-time algorithm $A$ such that, for every natural
+number $k \ge 1$, every instance $x$ and every feasible solution $s$ of $x$, the output of $A$
+on $x$ and the string of $k$ ones is a feasible solution of $x$ whose value is at least
+$(1 - 1/k)$ times the value of $s$.
+
+Minimization problems are not covered (see `ApproxAt`).
 
 Source: C. H. Papadimitriou and M. Yannakakis, "Optimization, approximation,
 and complexity classes", Journal of Computer and System Sciences 43 (1991),
