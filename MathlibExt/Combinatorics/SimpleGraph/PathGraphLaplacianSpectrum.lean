@@ -109,7 +109,10 @@ private theorem neighborFinset_pathGraph_interior {n : ℕ} {i : Fin n}
       have hu : u.val = i.val + 1 := Fin.ext_iff.mp h
       omega
 
-/-- Each cosine mode is an eigenvector of the half path Laplacian. -/
+/-- Each cosine mode satisfies the eigen-equation of the half path Laplacian.
+
+This holds for every `k`, including indices where the mode vanishes (such as
+`k = n`), so it does not by itself make the mode an eigenvector. -/
 theorem halfPathLaplacian_mulVec_pathCosineMode {n : ℕ} (hn : 0 < n) (k : ℕ) :
     halfPathLaplacian n *ᵥ pathCosineMode n k =
       (1 - Real.cos (Real.pi * k / n)) • pathCosineMode n k := by
@@ -287,6 +290,15 @@ theorem pathCosineMode_ne_zero {n k : ℕ} (hk : k < n) :
           mul_lt_mul_of_pos_left hkn1 hpi2
       _ = Real.pi / 2 := mul_one _
 
+/-- Each cosine mode indexed below `n` is an eigenvector of the half path
+Laplacian: it is nonzero and satisfies the eigen-equation. -/
+theorem halfPathLaplacian_eigenvector_pathCosineMode {n k : ℕ} (hn : 0 < n)
+    (hk : k < n) :
+    pathCosineMode n k ≠ 0 ∧
+      halfPathLaplacian n *ᵥ pathCosineMode n k =
+        (1 - Real.cos (Real.pi * k / n)) • pathCosineMode n k :=
+  ⟨pathCosineMode_ne_zero hk, halfPathLaplacian_mulVec_pathCosineMode hn k⟩
+
 private theorem cos_arg_nonneg {n k : ℕ} (hn : 0 < n) :
     (0 : ℝ) ≤ Real.pi * (k : ℝ) / (n : ℝ) := by
   have hnR : (0 : ℝ) < (n : ℝ) := by exact_mod_cast hn
@@ -432,6 +444,27 @@ theorem halfPathLaplacian_hasEigenvalue_iff {n : ℕ} (hn : 0 < n) (μ : ℝ) :
   · rintro ⟨k, hk, rfl⟩
     exact ⟨pathCosineMode n k, pathCosineMode_ne_zero hk,
       halfPathLaplacian_mulVec_pathCosineMode hn k⟩
+
+/-- Each cosine value indexed below `n` is an eigenvalue of the half path
+Laplacian, viewed as a linear map. -/
+theorem halfPathLaplacian_hasEigenvalue {n k : ℕ} (hn : 0 < n) (hk : k < n) :
+    Module.End.HasEigenvalue (Matrix.toLin' (halfPathLaplacian n))
+      (1 - Real.cos (Real.pi * k / n)) := by
+  apply Module.End.hasEigenvalue_of_hasEigenvector
+    (x := pathCosineMode n k)
+  rw [Module.End.hasEigenvector_iff]
+  constructor
+  · rw [Module.End.mem_eigenspace_iff, Matrix.toLin'_apply]
+    exact halfPathLaplacian_mulVec_pathCosineMode hn k
+  · exact pathCosineMode_ne_zero hk
+
+/-- Each cosine value indexed below `n` lies in the spectrum of the half
+path Laplacian. -/
+theorem halfPathLaplacian_mem_spectrum {n k : ℕ} (hn : 0 < n) (hk : k < n) :
+    (1 - Real.cos (Real.pi * k / n)) ∈ spectrum ℝ (halfPathLaplacian n) := by
+  rw [← Matrix.spectrum_toLin']
+  exact Module.End.hasEigenvalue_iff_mem_spectrum.mp
+    (halfPathLaplacian_hasEigenvalue hn hk)
 
 private theorem pathCosineMode_zero_apply {n : ℕ} (j : Fin n) :
     pathCosineMode n 0 j = 1 := by

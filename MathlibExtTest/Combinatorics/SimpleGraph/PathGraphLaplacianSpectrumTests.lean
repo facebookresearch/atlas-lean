@@ -75,10 +75,69 @@ example :
     norm_num
   rwa [harg] at h
 
+/-- The `n`-th cosine mode vanishes. -/
+theorem pathCosineMode_self {n : ℕ} (hn : 0 < n) :
+    pathCosineMode n n = 0 := by
+  funext j
+  simp only [pathCosineMode, Pi.zero_apply]
+  have hnR : (n : ℝ) ≠ 0 := by exact_mod_cast ne_of_gt hn
+  have harg : Real.pi * (n : ℝ) * ((j : ℝ) + 1 / 2) / (n : ℝ)
+      = (j : ℝ) * Real.pi + Real.pi / 2 := by
+    field_simp
+  rw [harg]
+  have h1 := Real.cos_add ((j : ℝ) * Real.pi) (Real.pi / 2)
+  rw [Real.cos_pi_div_two, Real.sin_pi_div_two,
+    Real.sin_nat_mul_pi] at h1
+  rw [h1]
+  ring
+
+/-- The `k = n` boundary case in dimension one. -/
+example : pathCosineMode 1 1 = 0 :=
+  pathCosineMode_self (n := 1) (by norm_num)
+
+/-- The first mode in dimension two is nonzero, by the eigenvector statement. -/
+theorem eigenvector_two_ne_zero : pathCosineMode 2 1 ≠ 0 :=
+  (halfPathLaplacian_eigenvector_pathCosineMode (n := 2) (k := 1)
+    (by norm_num) (by norm_num)).1
+
+/-- The first mode in dimension two satisfies its eigen-equation with value one. -/
+theorem eigenvector_two_mulVec :
+    halfPathLaplacian 2 *ᵥ pathCosineMode 2 1
+      = (1 : ℝ) • pathCosineMode 2 1 := by
+  have h := (halfPathLaplacian_eigenvector_pathCosineMode (n := 2) (k := 1)
+    (by norm_num) (by norm_num)).2
+  have harg : Real.pi * ((1 : ℕ) : ℝ) / ((2 : ℕ) : ℝ) = Real.pi / 2 := by
+    norm_num
+  rw [harg, Real.cos_pi_div_two] at h
+  simpa using h
+
+/-- One is an eigenvalue of the two-vertex half Laplacian as a linear map. -/
+theorem one_hasEigenvalue_two :
+    Module.End.HasEigenvalue (Matrix.toLin' (halfPathLaplacian 2)) 1 := by
+  have h := halfPathLaplacian_hasEigenvalue (n := 2) (k := 1)
+    (by norm_num) (by norm_num)
+  have harg : Real.pi * ((1 : ℕ) : ℝ) / ((2 : ℕ) : ℝ) = Real.pi / 2 := by
+    norm_num
+  rw [harg, Real.cos_pi_div_two] at h
+  simpa using h
+
+/-- One lies in the spectrum of the two-vertex half Laplacian. -/
+theorem one_mem_spectrum_two :
+    (1 : ℝ) ∈ spectrum ℝ (halfPathLaplacian 2) := by
+  have h := halfPathLaplacian_mem_spectrum (n := 2) (k := 1)
+    (by norm_num) (by norm_num)
+  have harg : Real.pi * ((1 : ℕ) : ℝ) / ((2 : ℕ) : ℝ) = Real.pi / 2 := by
+    norm_num
+  rw [harg, Real.cos_pi_div_two] at h
+  simpa using h
+
 #print axioms halfPathLaplacian_mulVec_pathCosineMode
 #print axioms pathCosineMode_ne_zero
+#print axioms halfPathLaplacian_eigenvector_pathCosineMode
 #print axioms pathCosineMode_dotProduct_eq_zero
 #print axioms halfPathLaplacian_hasEigenvalue_iff
+#print axioms halfPathLaplacian_hasEigenvalue
+#print axioms halfPathLaplacian_mem_spectrum
 #print axioms halfPathLaplacian_quadForm_ge
 #print axioms halfPathLaplacian_eigenvalue_ge
 #print axioms two_div_sq_le_one_sub_cos_pi_div
