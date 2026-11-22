@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.RoulettePathMass
+public import Mathlib.Probability.ProbabilityMassFunction.Basic
 public import Mathlib.Basic.ENNReal.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
 import Mathlib.Tactic
@@ -157,6 +158,81 @@ theorem tsum_listPathWeight_eq {S : Type*} [Fintype S] [DecidableEq S]
   apply tsum_congr
   intro n
   exact hF n
+
+theorem hasSum_listPathWeight {S : Type*} [Fintype S] [DecidableEq S]
+    (q : S → ℝ) (Q : S → S → ℝ) (c : ℝ) (hc1 : c < 1)
+    (hQ : ∀ a b : S, 0 ≤ Q a b)
+    (hrow : ∀ j : S, q j + ∑ k : S, Q j k = 1)
+    (hsurv : ∀ a : S, ∑ b : S, Q a b ≤ c) (i : S) :
+    HasSum (listPathWeight q Q i) 1 := by
+  have hc0 : 0 ≤ c := le_trans (Finset.sum_nonneg fun b _ => hQ i b) (hsurv i)
+  have hq : ∀ a : S, 0 ≤ q a := fun a => by linarith [hrow a, hsurv a]
+  have hnonneg : ∀ n : ℕ, 0 ≤ stoppedMass q Q i n :=
+    fun n => stoppedMass_nonneg q Q hq hQ i n
+  have hpart : ∀ n : ℕ, (∑ k ∈ Finset.range n,
+        ENNReal.ofReal (stoppedMass q Q i k))
+      = ENNReal.ofReal (∑ k ∈ Finset.range n, stoppedMass q Q i k) := by
+    intro n
+    exact (ENNReal.ofReal_sum_of_nonneg (fun k _ => hnonneg k)).symm
+  have hcons : ∀ n : ℕ, (∑ k ∈ Finset.range n, stoppedMass q Q i k)
+      = 1 - survivalMass Q i n := by
+    intro n
+    linarith [sum_stoppedMass_add_survival q Q hrow i n]
+  have hsurv0 : Filter.Tendsto (fun n : ℕ => survivalMass Q i n) Filter.atTop (nhds 0) :=
+    squeeze_zero (fun n => survivalMass_nonneg Q hQ i n)
+      (fun n => survivalMass_le_pow Q c hQ hsurv i n)
+      (tendsto_pow_atTop_nhds_zero_of_lt_one hc0 hc1)
+  have hle : (∑' n : ℕ, ENNReal.ofReal (stoppedMass q Q i n)) ≤ 1 := by
+    rw [ENNReal.tsum_eq_iSup_nat]
+    apply iSup_le
+    intro n
+    simp only [hpart n, hcons n]
+    calc ENNReal.ofReal (1 - survivalMass Q i n)
+        ≤ ENNReal.ofReal 1 := ENNReal.ofReal_le_ofReal (by
+          linarith [survivalMass_nonneg Q hQ i n])
+      _ = 1 := ENNReal.ofReal_one
+  have hge : 1 ≤ ∑' n : ℕ, ENNReal.ofReal (stoppedMass q Q i n) := by
+    have h1 : Filter.Tendsto (fun n : ℕ => 1 - survivalMass Q i n) Filter.atTop (nhds 1) := by
+      have h : Filter.Tendsto (fun n : ℕ => 1 - survivalMass Q i n) Filter.atTop (nhds (1 - 0)) :=
+        tendsto_const_nhds.sub hsurv0
+      rwa [sub_zero] at h
+    have hlim : Filter.Tendsto (fun n : ℕ => ∑ k ∈ Finset.range n,
+        ENNReal.ofReal (stoppedMass q Q i k)) Filter.atTop (nhds 1) := by
+      have hfun : (fun n : ℕ => ∑ k ∈ Finset.range n,
+            ENNReal.ofReal (stoppedMass q Q i k))
+          = fun n => ENNReal.ofReal (1 - survivalMass Q i n) := by
+        funext n
+        simp only [hpart n, hcons n]
+      rw [hfun]
+      have h2 := (ENNReal.continuous_ofReal.tendsto 1).comp h1
+      rw [ENNReal.ofReal_one] at h2
+      exact h2
+    apply le_of_tendsto hlim
+    apply Filter.Eventually.of_forall
+    intro n
+    rw [ENNReal.tsum_eq_iSup_nat]
+    exact le_iSup (fun m => ∑ a ∈ Finset.range m, ENNReal.ofReal (stoppedMass q Q i a)) n
+  have htsum : (∑' l : List S, listPathWeight q Q i l) = 1 := by
+    rw [tsum_listPathWeight_eq q Q hq hQ i]
+    exact le_antisymm hle hge
+  exact ENNReal.summable.hasSum_iff.mpr htsum
+
+/-- The normalized completed-path law from start `i`, as a PMF on lists. -/
+noncomputable def pathPMF {S : Type*} [Fintype S] [DecidableEq S] (q : S → ℝ)
+    (Q : S → S → ℝ) (c : ℝ) (hc1 : c < 1)
+    (hQ : ∀ a b : S, 0 ≤ Q a b)
+    (hrow : ∀ j : S, q j + ∑ k : S, Q j k = 1)
+    (hsurv : ∀ a : S, ∑ b : S, Q a b ≤ c) (i : S) : PMF (List S) :=
+  ⟨listPathWeight q Q i, by
+    simpa using hasSum_listPathWeight q Q c hc1 hQ hrow hsurv i⟩
+
+theorem pathPMF_apply {S : Type*} [Fintype S] [DecidableEq S] (q : S → ℝ)
+    (Q : S → S → ℝ) (c : ℝ) (hc1 : c < 1)
+    (hQ : ∀ a b : S, 0 ≤ Q a b)
+    (hrow : ∀ j : S, q j + ∑ k : S, Q j k = 1)
+    (hsurv : ∀ a : S, ∑ b : S, Q a b ≤ c) (i : S) (l : List S) :
+    pathPMF q Q c hc1 hQ hrow hsurv i l = listPathWeight q Q i l := by
+  rfl
 
 end RussianRoulette
 

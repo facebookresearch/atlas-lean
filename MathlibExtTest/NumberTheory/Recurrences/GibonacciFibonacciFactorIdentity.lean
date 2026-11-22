@@ -16,20 +16,18 @@ import Mathlib.Tactic.Ring
 
 /-! # Tests for `MathlibExt.NumberTheory.Recurrences.GibonacciFibonacciFactorIdentity` -/
 
-namespace MathlibExtTest.GibonacciFibonacciFactorIdentity
-
-open MetaMathlibExt
+namespace MetaMathlibExt.gibonacci_mul_add_neg_one_pow_eq_fib_mul.Tests
 
 /-- The signed Fibonacci numbers, cast to `ℝ`, form a gibonacci sequence with seeds `0` and `1`,
 so the hypotheses of the identity are satisfiable. -/
-theorem fib_add_two (j : ℤ) : (Int.fib (j + 2) : ℝ) = Int.fib (j + 1) + Int.fib j := by
+private theorem fib_add_two (j : ℤ) : (Int.fib (j + 2) : ℝ) = Int.fib (j + 1) + Int.fib j := by
   rw [Int.fib_add_two]
   push_cast
   ring
 
 /-- The Lucas numbers `L_j = F_(j-1) + F_(j+1)` form a gibonacci sequence with seeds `2`
 and `1`. -/
-theorem lucas_add_two (j : ℤ) :
+private theorem lucas_add_two (j : ℤ) :
     (Int.fib (j + 2 - 1) + Int.fib (j + 2 + 1) : ℝ) =
       (Int.fib (j + 1 - 1) + Int.fib (j + 1 + 1) : ℝ) + (Int.fib (j - 1) + Int.fib (j + 1)) := by
   have h1 := fib_add_two (j - 1)
@@ -83,4 +81,4 @@ example (G H : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
   norm_num at h
   linarith
 
-end MathlibExtTest.GibonacciFibonacciFactorIdentity
+end MetaMathlibExt.gibonacci_mul_add_neg_one_pow_eq_fib_mul.Tests

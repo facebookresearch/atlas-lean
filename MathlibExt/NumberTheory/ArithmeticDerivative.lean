@@ -23,8 +23,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The arithmetic derivative `D(n) = ∑_{p ∣ n} ν_p(n) · (n / p)` on `ℕ`, with
-`D(0) = D(1) = 0`.
+/-- **Arithmetic derivative.** For a natural number $n$, the arithmetic derivative of $n$ is
+$$D(n) = \sum_{p} \nu_p(n) \cdot \frac{n}{p},$$
+where the sum runs over the prime factors $p$ of $n$ and $\nu_p(n)$ is the exponent of $p$ in
+the prime factorization of $n$. Since $0$ and $1$ have no prime factors, $D(0) = D(1) = 0$.
 
 Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
 Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8, Section 2,
@@ -32,28 +34,33 @@ equation (2). -/
 def arithmeticDerivative (n : ℕ) : ℕ :=
   ∑ p ∈ n.primeFactors, n.factorization p * (n / p)
 
-/-- `D(0) = 0`.
+/-- **Arithmetic derivative of zero.** The arithmetic derivative of $0$ is $0$: $D(0) = 0$.
 
 Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
 Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8, Section 2. -/
 theorem arithmeticDerivative_zero : arithmeticDerivative 0 = 0 := by
   simp [arithmeticDerivative]
 
-/-- `D(1) = 0`.
+/-- **Arithmetic derivative of one.** The arithmetic derivative of $1$ is $0$: $D(1) = 0$.
 
 Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
 Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8, Section 2. -/
 theorem arithmeticDerivative_one : arithmeticDerivative 1 = 0 := by
   simp [arithmeticDerivative]
 
-/-- `D(p) = 1` for every prime `p`.
+/-- **Arithmetic derivative of a prime.** For every prime $p$, the arithmetic derivative of $p$
+is $1$: $D(p) = 1$.
 
 Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
 Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8, Section 2. -/
 theorem arithmeticDerivative_prime {p : ℕ} (hp : p.Prime) : arithmeticDerivative p = 1 := by
   simp [arithmeticDerivative, hp.primeFactors, hp.factorization_self, Nat.div_self hp.pos]
 
-/-- The defining sum may be taken over any finite set containing the prime factors.
+/-- **Arithmetic derivative over a superset of the prime factors.** Let $n$ be a natural number
+and let $s$ be a finite set of natural numbers containing every prime factor of $n$. Then the
+arithmetic derivative of $n$ is $D(n) = \sum_{p \in s} \nu_p(n) \cdot (n / p)$, where $\nu_p(n)$
+is the exponent of $p$ in the prime factorization of $n$ (zero when $p$ is not a prime factor
+of $n$) and $n / p$ is division in the natural numbers, rounded down.
 
 Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
 Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8, Section 2,
@@ -65,7 +72,8 @@ theorem arithmeticDerivative_eq_sum_of_subset {n : ℕ} {s : Finset ℕ}
   rw [← Nat.support_factorization, Finsupp.notMem_support_iff] at hp
   simp [hp]
 
-/-- The Leibniz rule `D(mn) = D(m) n + m D(n)`.
+/-- **Leibniz rule for the arithmetic derivative.** For all natural numbers $m$ and $n$, the
+arithmetic derivative $D$ satisfies $D(mn) = D(m)\,n + m\,D(n)$.
 
 Source: Zachary P. Bradshaw, *On a Family of Solutions to Arithmetic Differential Equations
 Involving the Collatz Map*, Journal of Integer Sequences 28 (2025), Article 25.1.8, Section 2,
