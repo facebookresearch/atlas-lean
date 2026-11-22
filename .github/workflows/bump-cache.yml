@@ -5,34 +5,35 @@ name: Bump build cache
 # ci.yml keys its cache of .lake/build on lean-toolchain and lake-manifest.json,
 # so a bump, which changes both, matches no cached build. Its pull request
 # build, its merge group, and every merge group queued behind it then build the
-# libraries from scratch: 316 minutes for the v4.36.0 bump (#6018), against a
-# 360-minute job limit and the queue's 360-minute check timeout, and the
-# libraries keep growing. Pull request runs never save a cache, and merge
+# libraries from scratch. That took 316 minutes for the v4.36.0 bump (#6018),
+# against a 360-minute job limit and the queue's 360-minute check timeout, and
+# the libraries keep growing. Pull request runs never save a cache, and merge
 # groups read only caches saved from main, so the warm build has to be saved
 # from main.
 #
 # A maintainer dispatches this workflow from main with the bump's pull request
-# number and the head commit they reviewed. The run checks that the commit is
-# the pull request's current head, that the pull request changes the pins, and
-# that `guard` passed on that head. It then builds and checks the head as
-# ci.yml's `build` job does (scripts/check.sh build) and saves .lake/build under
-# ci.yml's key for the new pins. The bump's pull request runs and its merge
-# group, and the merge groups queued behind it, restore that build through
-# ci.yml's restore-keys prefix, as does main's first build after the bump
-# merges.
+# number and the head commit they reviewed. Before it checks out that commit,
+# the run checks that it is the pull request's current head and that the Bump
+# guard workflow passed on it. It then checks that the head keeps main's guard
+# code and changes the contents of the pin files, so that its cache key
+# differs from main's. It builds and checks the head with the same commands as
+# ci.yml's `build` job (the memory-heavy modules, then scripts/check.sh build)
+# and saves .lake/build under ci.yml's key for the new pins. The bump's pull
+# request runs, its merge group, the merge groups queued behind it and main's
+# first build after it merges find it through ci.yml's restore-keys prefix. It
+# does not run ci.yml's regression suites or lesson checks: it warms the cache,
+# it does not stand in for CI.
 #
 # Trust: the run executes the bump's code, and later builds on the new pins
-# restore what it saves, so dispatch it only for a head you reviewed. The key
-# carries the hash of the new pins, so no build on the current pins can restore
-# it. The job's token can only read.
+# restore what it saves, so dispatch it only for a head you reviewed. Only
+# builds on the new pins can restore it. The job's token can only read.
 #
-# A run that runs out of time saves what it built under a `partial` key and
-# fails; dispatching again resumes from that build. A head that does not build
-# or check cleanly also saves under a `partial` key, so only a fully checked
-# build gets ci.yml's key for its commit. Main saves a new entry every 30 to 60
-# minutes and the repository keeps about five, so a warm entry lasts a few
-# hours unless a build restores it: warm the cache right before queueing the
-# bump.
+# A run that runs out of time, or whose head fails a check, saves what it built
+# as a checkpoint under its own prefix, which only a later dispatch for the same
+# head restores; ci.yml never sees it. Only a fully checked build gets ci.yml's
+# key. Main saves a new cache entry every 30 to 60 minutes and the repository
+# keeps about five, so a warm entry lasts a few hours unless a build restores
+# it: warm the cache right before queueing the bump.
 
 on:
   workflow_dispatch:
@@ -47,12 +48,13 @@ on:
         type: string
 
 permissions:
+  actions: read
+  checks: read
   contents: read
   pull-requests: read
-  checks: read
 
-# One run per pull request at a time, never cancelled: two runs would build the
-# same commit twice, and a cancelled run saves nothing.
+# One run per pull request at a time: a later dispatch waits for the running
+# one instead of building the same commit alongside it.
 concurrency:
   group: ${{ github.workflow }}-${{ inputs.pull-request }}
   cancel-in-progress: false
@@ -103,13 +105,13 @@ jobs:
             echo "::error::#${PR}'s head is ${head}, not ${HEAD_SHA}: review the new head and dispatch with it"
             exit 1
           fi
-          # The latest guard run on this head must have passed: the bump guard
-          # accepts only a forward move to a final release that every pinned
-          # dependency shares.
-          guard="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${HEAD_SHA}/check-runs?check_name=guard&filter=latest" \
-            --jq '[.check_runs[] | select(.status == "completed")] | sort_by(.completed_at) | last | .conclusion // ""')"
+          # The latest completed pull_request run of the Bump guard workflow on
+          # this head must have passed. The next step checks that the head
+          # leaves the guard code as main has it, so this is main's guard.
+          guard="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/bump-guard.yml/runs?head_sha=${HEAD_SHA}&event=pull_request&per_page=50" \
+            --jq '[.workflow_runs[] | select(.status == "completed")] | sort_by(.run_started_at) | last | .conclusion // ""')"
           if [ "$guard" != success ]; then
-            echo "::error::guard has not passed on ${HEAD_SHA} (latest completed run: '${guard:-none}')"
+            echo "::error::the Bump guard workflow has not passed on ${HEAD_SHA} (latest completed run: '${guard:-none}')"
             exit 1
           fi
 
@@ -118,28 +120,61 @@ jobs:
           ref: ${{ inputs.head-sha }}
           persist-credentials: false
 
-      # With main's pins this would save under main's own key prefix, where
-      # every pull request and merge group could restore it.
-      - name: Require new pins
+      # ci.yml keys its cache on the contents of lean-toolchain and
+      # lake-manifest.json (hashFiles hashes contents, not modes or names).
+      # With main's contents this run would save under the prefix every pull
+      # request and merge group restores, so at least one file must differ.
+      - name: Compare the head with main
         run: |
           set -euo pipefail
           git fetch --quiet --no-tags --depth=1 origin main
-          if git diff --quiet FETCH_HEAD HEAD -- lean-toolchain lake-manifest.json; then
-            echo "::error::this head has main's lean-toolchain and lake-manifest.json, so it is not a bump; ci.yml's cache already covers it"
+          main_sha="$(git rev-parse FETCH_HEAD)"
+          guard_code=(.github/workflows/bump-guard.yml .github/workflows/bump-pinned-release.yml scripts/bump/pinned_bump.py)
+          changed="$(git diff --name-only "$main_sha" HEAD -- "${guard_code[@]}")"
+          if [ -n "$changed" ]; then
+            echo "::error::the head changes the guard code (${changed//$'\n'/, }), so a passing guard run proves nothing"
+            exit 1
+          fi
+          differs=0
+          for file in lean-toolchain lake-manifest.json; do
+            mode="$(git ls-tree HEAD -- "$file" | cut -d' ' -f1)"
+            if [ "$mode" != 100644 ] || [ -L "$file" ] || [ ! -f "$file" ]; then
+              echo "::error::${file} must be a regular file in the head (git mode '${mode:-missing}')"
+              exit 1
+            fi
+            git show "${main_sha}:${file}" > "${RUNNER_TEMP}/main-${file}"
+            rc=0
+            cmp -s "${RUNNER_TEMP}/main-${file}" "$file" || rc=$?
+            case "$rc" in
+              0) ;;
+              1) differs=1 ;;
+              *) echo "::error::could not compare ${file} with main's"; exit 1 ;;
+            esac
+          done
+          if [ "$differs" != 1 ]; then
+            echo "::error::the head has main's lean-toolchain and lake-manifest.json, so it is not a bump; ci.yml's cache already covers it"
             exit 1
           fi
 
       - name: Name the cache entries
         id: key
         env:
-          PREFIX: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+          NEW_PINS: ${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}
+          OS: ${{ runner.os }}
           HEAD_SHA: ${{ inputs.head-sha }}
         run: |
           set -euo pipefail
+          if ! [[ "$NEW_PINS" =~ ^[0-9a-f]{64}$ ]]; then
+            echo "::error::could not hash the pin files (got '${NEW_PINS}')"
+            exit 1
+          fi
+          prefix="lake-build-${OS}-${NEW_PINS}-"
+          checkpoints="bump-cache-checkpoint-${OS}-${NEW_PINS}-${HEAD_SHA}-"
           {
-            echo "prefix=${PREFIX}"
-            echo "complete=${PREFIX}${HEAD_SHA}"
-            echo "partial=${PREFIX}partial-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+            echo "prefix=${prefix}"
+            echo "complete=${prefix}${HEAD_SHA}"
+            echo "checkpoints=${checkpoints}"
+            echo "checkpoint=${checkpoints}${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
           } >> "$GITHUB_OUTPUT"
 
       # From here to the build, the same steps as ci.yml's build job.
@@ -181,8 +216,9 @@ jobs:
       - name: Fetch Mathlib cache
         run: lake exe cache get
 
-      # An exact hit means this head is already warm. Otherwise this picks up
-      # the newest build on the new pins, such as an earlier run's partial one.
+      # An exact hit means this head is already warm. Otherwise this resumes
+      # from an earlier dispatch's checkpoint for this head, or else starts
+      # from the newest complete build on the new pins.
       - name: Restore an earlier build on the new pins
         id: restore
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -190,12 +226,14 @@ jobs:
           path: .lake/build
           key: ${{ steps.key.outputs.complete }}
           restore-keys: |
+            ${{ steps.key.outputs.checkpoints }}
             ${{ steps.key.outputs.prefix }}
 
       # The memory-heavy modules first, one at a time, as in ci.yml (keep the
       # list the same; scripts/test_bump_cache_workflow.py checks it), then
       # ci.yml's `scripts/check.sh build`. Each command gets the time left
-      # before the deadline, which leaves room to save the build.
+      # before the deadline, which leaves room to save the build. The step's
+      # shell runs with -e, so each exit status is caught where it happens.
       - name: Build and check the head
         id: build
         if: steps.restore.outputs.cache-hit != 'true'
@@ -209,20 +247,21 @@ jobs:
             local minutes=$(( (deadline - $(date +%s)) / 60 ))
             if [ "$minutes" -lt 1 ]; then
               status=timeout
-              return
+              return 0
             fi
-            local began
+            local began rc=0
             began=$(date +%s)
-            timeout --signal=TERM --kill-after=5m "${minutes}m" "$@"
-            local rc=$?
-            # 124: timed out; 137: killed after the grace period. An exit at
-            # the limit is the deadline, any other failure is the build's.
-            if { [ "$rc" -eq 124 ] || [ "$rc" -eq 137 ]; } \
-              && [ $(( $(date +%s) - began )) -ge $(( minutes * 60 )) ]; then
+            timeout --signal=TERM --kill-after=5m "${minutes}m" "$@" || rc=$?
+            # 124: the time ran out. 137: killed, either after the time ran
+            # out and the grace period passed, or by something else.
+            if [ "$rc" -eq 124 ]; then
+              status=timeout
+            elif [ "$rc" -eq 137 ] && [ $(( $(date +%s) - began )) -ge $(( minutes * 60 )) ]; then
               status=timeout
             elif [ "$rc" -ne 0 ]; then
               status=failed
             fi
+            return 0
           }
           for module in \
             MathlibExt.Combinatorics.Enumerative.Nontrivial1234_3412Classes \
@@ -240,39 +279,56 @@ jobs:
           echo "status=${status}" >> "$GITHUB_OUTPUT"
 
       - name: Save the build
+        id: save
         if: ${{ !cancelled() && steps.build.outputs.status != '' }}
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .lake/build
-          key: ${{ steps.build.outputs.status == 'ok' && steps.key.outputs.complete || steps.key.outputs.partial }}
+          key: ${{ steps.build.outputs.status == 'ok' && steps.key.outputs.complete || steps.key.outputs.checkpoint }}
+
+      # actions/cache/save only warns when an upload fails, so look the entry up.
+      - name: Confirm the save
+        id: confirm
+        if: ${{ !cancelled() && steps.build.outputs.status != '' }}
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lake/build
+          key: ${{ steps.build.outputs.status == 'ok' && steps.key.outputs.complete || steps.key.outputs.checkpoint }}
+          lookup-only: true
 
       - name: Report
         if: ${{ !cancelled() }}
         env:
           HIT: ${{ steps.restore.outputs.cache-hit }}
           STATUS: ${{ steps.build.outputs.status }}
+          SAVED: ${{ steps.confirm.outputs.cache-hit }}
           COMPLETE: ${{ steps.key.outputs.complete }}
-          PARTIAL: ${{ steps.key.outputs.partial }}
+          CHECKPOINT: ${{ steps.key.outputs.checkpoint }}
         run: |
           set -euo pipefail
+          say() { echo "$1" | tee -a "$GITHUB_STEP_SUMMARY"; }
           if [ "$HIT" = true ]; then
-            echo "Already warm: ${COMPLETE}" | tee -a "$GITHUB_STEP_SUMMARY"
+            say "Already warm: ${COMPLETE}"
             exit 0
+          fi
+          if [ -n "$STATUS" ] && [ "$SAVED" != true ]; then
+            say "The build ran (${STATUS}) but its cache entry is missing: see the save step."
+            exit 1
           fi
           case "$STATUS" in
             ok)
-              echo "Saved ${COMPLETE}" | tee -a "$GITHUB_STEP_SUMMARY"
+              say "Saved ${COMPLETE}"
               ;;
             timeout)
-              echo "Out of time: saved the partial build as ${PARTIAL}. Dispatch again with the same inputs to continue." | tee -a "$GITHUB_STEP_SUMMARY"
+              say "Out of time: saved a checkpoint as ${CHECKPOINT}. Dispatch again with the same inputs to continue from it."
               exit 1
               ;;
             failed)
-              echo "The head does not build or check cleanly (see the build step): saved what was built as ${PARTIAL}." | tee -a "$GITHUB_STEP_SUMMARY"
+              say "The head does not build or check cleanly (see the build step): saved a checkpoint as ${CHECKPOINT}."
               exit 1
               ;;
             *)
-              echo "The build did not run; nothing was saved." | tee -a "$GITHUB_STEP_SUMMARY"
+              say "The build did not run; nothing was saved."
               exit 1
               ;;
           esac

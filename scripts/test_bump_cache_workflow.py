@@ -3,16 +3,24 @@
 
 bump-cache.yml warms ci.yml's build cache for a Lean/Mathlib bump: it builds a
 bump's head and saves .lake/build where ci.yml's restore step finds it. That
-only helps while the two agree on the cache path and key prefix and on what
-the build runs, and it is only safe while the workflow stays dispatch-only,
-read-only, and passes its inputs to scripts through the environment.
+only helps while the two agree on the cache path, the key prefix and what the
+build runs. It is only safe while the workflow stays dispatch-only and
+read-only, passes its inputs to scripts through the environment, and keeps its
+partial builds out of ci.yml's key space. The build step itself runs here with
+stand-ins for `lake`, `timeout` and `scripts/check.sh`, under `bash -e` as
+GitHub runs it, to check the order of the commands and the status it reports.
 
 Run with: python3 -m unittest discover -s scripts -p test_bump_cache_workflow.py
 """
 
 from __future__ import annotations
 
+import os
 import re
+import subprocess
+import tempfile
+import textwrap
+import time
 import unittest
 from pathlib import Path
 
@@ -21,7 +29,8 @@ WORKFLOWS = ROOT / ".github" / "workflows"
 CI = WORKFLOWS / "ci.yml"
 WARM = WORKFLOWS / "bump-cache.yml"
 
-KEY_PREFIX = "lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-"
+HASH = "${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}"
+CI_PREFIX = "lake-build-${{ runner.os }}-" + HASH + "-"
 HEAVY = re.compile(r"for module in \\\n((?:[ \t]+[A-Za-z0-9_.']+ \\\n)*[ \t]+[A-Za-z0-9_.']+); do")
 
 
@@ -42,6 +51,14 @@ def top_level_block(lines: list[str], key: str) -> list[str]:
                 body.append(nested)
             return body
     return []
+
+
+def step(text: str, marker: str) -> str:
+    """The text of the step whose first line contains `marker`, up to the next step."""
+    start = text.index(marker)
+    start = text.rindex("\n      - ", 0, start) + 1
+    end = text.find("\n      - ", start + 1)
+    return text[start:end if end != -1 else len(text)]
 
 
 def run_blocks(lines: list[str]) -> list[str]:
@@ -79,9 +96,8 @@ class BumpCacheWorkflowTest(unittest.TestCase):
     def test_read_only_token(self) -> None:
         permissions = top_level_block(self.warm_lines, "permissions")
         granted = dict(re.findall(r"^  ([a-z-]+): (\S+)", "\n".join(permissions), re.M))
-        self.assertEqual(granted, {"contents": "read", "pull-requests": "read", "checks": "read"})
+        self.assertEqual(granted, {"actions": "read", "checks": "read", "contents": "read", "pull-requests": "read"})
         self.assertIsNone(re.search(r"(?m)^[ \t]+permissions:", self.warm), "no job may widen the token")
-        self.assertNotIn("write", "\n".join(permissions))
 
     def test_inputs_reach_scripts_only_through_the_environment(self) -> None:
         for script in run_blocks(self.warm_lines):
@@ -94,28 +110,167 @@ class BumpCacheWorkflowTest(unittest.TestCase):
         self.assertEqual(warm_lists[0], ci_lists[0],
                          "build the same memory-heavy modules one at a time as ci.yml")
 
-    def test_same_build_as_ci(self) -> None:
-        self.assertIn("run: scripts/check.sh build", self.ci)
-        self.assertIn("scripts/check.sh build", "\n".join(run_blocks(self.warm_lines)))
+    def test_ci_restores_what_the_warm_up_saves(self) -> None:
+        restore = step(self.ci, "name: Restore local build")
+        self.assertIn("path: .lake/build", restore)
+        fallback = [line.strip() for line in restore.split("restore-keys: |", 1)[1].splitlines() if line.strip()]
+        self.assertIn(CI_PREFIX, fallback, "ci.yml no longer falls back to lake-build-<os>-<pins>-; update bump-cache.yml")
+        key = step(self.warm, "name: Name the cache entries")
+        self.assertIn(f"NEW_PINS: {HASH}", key)
+        self.assertIn("OS: ${{ runner.os }}", key)
+        self.assertIn('prefix="lake-build-${OS}-${NEW_PINS}-"', key)
+        self.assertIn('echo "complete=${prefix}${HEAD_SHA}"', key)
+        checkpoints = re.search(r'checkpoints="([^"]+)"', key).group(1)
+        self.assertFalse(checkpoints.startswith("lake-build-"), "checkpoints must stay out of ci.yml's key space")
+        for marker in ("name: Restore an earlier build", "name: Save the build", "name: Confirm the save"):
+            self.assertIn("path: .lake/build", step(self.warm, marker), marker)
 
-    def test_same_cache_path_and_key_prefix_as_ci(self) -> None:
-        ci_restore = self.ci.split("actions/cache/restore@", 1)[1].split("\n      - ", 1)[0]
-        self.assertIn("path: .lake/build", ci_restore)
-        self.assertIn(KEY_PREFIX, ci_restore, "ci.yml's restore key changed; update bump-cache.yml and this test")
-        self.assertIn(f"PREFIX: {KEY_PREFIX}", self.warm)
-        for action in ("actions/cache/restore@", "actions/cache/save@"):
-            step = self.warm.split(action, 1)[1].split("\n      - ", 1)[0]
-            self.assertIn("path: .lake/build", step, action)
+    def test_checks_before_checkout(self) -> None:
+        order = [self.warm.index(m) for m in (
+            "name: Check the pull request and its head", "uses: actions/checkout@",
+            "name: Compare the head with main", "name: Name the cache entries", "name: Build and check the head")]
+        self.assertEqual(order, sorted(order))
+        self.assertIn("actions/workflows/bump-guard.yml/runs?head_sha=${HEAD_SHA}&event=pull_request",
+                      step(self.warm, "name: Check the pull request and its head"))
+        compare = step(self.warm, "name: Compare the head with main")
+        for guard_file in (".github/workflows/bump-guard.yml", ".github/workflows/bump-pinned-release.yml",
+                           "scripts/bump/pinned_bump.py"):
+            self.assertIn(guard_file, compare)
 
-    def test_head_checked_before_it_is_checked_out(self) -> None:
-        check = self.warm.index("name: Check the pull request and its head")
-        checkout = self.warm.index("uses: actions/checkout@")
-        pins = self.warm.index("name: Require new pins")
-        build = self.warm.index("name: Build and check the head")
-        self.assertLess(check, checkout)
-        self.assertLess(checkout, pins)
-        self.assertLess(pins, build)
 
+class BuildStepTest(unittest.TestCase):
+    """Run the workflow's build step with stand-ins, under `bash -e` as GitHub does."""
+
+    def setUp(self) -> None:
+        text = WARM.read_text(encoding="utf-8")
+        body = step(text, "name: Build and check the head")
+        self.script = textwrap.dedent(body.split("run: |\n", 1)[1])
+        self.tmp = tempfile.TemporaryDirectory()
+        self.dir = Path(self.tmp.name)
+        (self.dir / "bin").mkdir()
+        (self.dir / "scripts").mkdir()
+        self.log = self.dir / "calls.log"
+        stubs = {
+            # timeout [options] DURATION COMMAND...: log, then fake a timeout or run COMMAND.
+            "bin/timeout": 'echo "timeout $*" >> "$LOG"\n'
+                           'while [[ "$1" == -* ]]; do shift; done; shift\n'
+                           'if [ -n "${FAKE_RC:-}" ] && [[ "$*" == *"$FAKE_ON"* ]]; then exit "$FAKE_RC"; fi\n'
+                           'exec "$@"\n',
+            "bin/lake": 'echo "lake $*" >> "$LOG"\n[ "$*" != "build ${LAKE_FAILS:-none}" ]\n',
+            "scripts/check.sh": 'echo "check.sh $*" >> "$LOG"\nexit "${CHECK_RC:-0}"\n',
+        }
+        for name, body in stubs.items():
+            path = self.dir / name
+            path.write_text("#!/usr/bin/env bash\n" + body)
+            path.chmod(0o755)
+
+    def tearDown(self) -> None:
+        self.tmp.cleanup()
+
+    def run_step(self, started_ago: int = 0, **env: str) -> tuple[str, list[str]]:
+        output = self.dir / "github_output"
+        output.write_text("")
+        self.log.write_text("")
+        environment = dict(os.environ, START=str(int(time.time()) - started_ago), GITHUB_OUTPUT=str(output),
+                           LOG=str(self.log), PATH=f"{self.dir / 'bin'}:{os.environ['PATH']}", **env)
+        proc = subprocess.run(["bash", "-e", "-c", self.script], cwd=self.dir, env=environment,
+                              capture_output=True, text=True)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        status = re.findall(r"^status=(\w+)$", output.read_text(), re.M)
+        self.assertEqual(len(status), 1, output.read_text())
+        # timeout --signal=TERM --kill-after=5m <minutes>m COMMAND...
+        calls = [line.split(" ", 4)[4] for line in self.log.read_text().splitlines() if line.startswith("timeout ")]
+        return status[0], calls
+
+    def test_success_runs_heavy_modules_then_check(self) -> None:
+        status, calls = self.run_step()
+        heavy = heavy_modules(WARM.read_text(encoding="utf-8"))[0]
+        self.assertEqual(status, "ok")
+        self.assertEqual(calls, [f"lake build {m}" for m in heavy] + ["scripts/check.sh build"])
+        self.assertTrue(all("--kill-after=5m" in line for line in self.log.read_text().splitlines()
+                            if line.startswith("timeout ")))
+
+    def test_failures_are_reported_not_fatal(self) -> None:
+        heavy = heavy_modules(WARM.read_text(encoding="utf-8"))[0]
+        status, calls = self.run_step(LAKE_FAILS=heavy[0])
+        self.assertEqual((status, calls), ("failed", [f"lake build {heavy[0]}"]))
+        status, calls = self.run_step(CHECK_RC="1")
+        self.assertEqual((status, calls[-1]), ("failed", "scripts/check.sh build"))
+
+    def test_timeouts(self) -> None:
+        status, calls = self.run_step(FAKE_RC="124", FAKE_ON="check.sh")
+        self.assertEqual((status, calls[-1]), ("timeout", "scripts/check.sh build"))
+        # 137 well before the limit is a kill from elsewhere (memory), not the deadline.
+        status, _ = self.run_step(FAKE_RC="137", FAKE_ON="check.sh")
+        self.assertEqual(status, "failed")
+        status, calls = self.run_step(started_ago=330 * 60)
+        self.assertEqual((status, calls), ("timeout", []))
+
+
+
+class CompareStepTest(unittest.TestCase):
+    """Run the workflow's check of the head against main on scratch repositories."""
+
+    GUARD_CODE = (".github/workflows/bump-guard.yml", ".github/workflows/bump-pinned-release.yml",
+                  "scripts/bump/pinned_bump.py")
+
+    def setUp(self) -> None:
+        text = WARM.read_text(encoding="utf-8")
+        self.script = textwrap.dedent(step(text, "name: Compare the head with main").split("run: |\n", 1)[1])
+        self.tmp = tempfile.TemporaryDirectory()
+        root = Path(self.tmp.name)
+        self.work, self.temp = root / "work", root / "runner-temp"
+        self.temp.mkdir()
+        subprocess.run(["git", "init", "-q", "--bare", str(root / "origin.git")], check=True)
+        self.git("init", "-q", "-b", "main", str(self.work), cwd=root)
+        self.git("config", "user.name", "Test")
+        self.git("config", "user.email", "test@example.com")
+        self.write({"lean-toolchain": "leanprover/lean4:v4.35.0\n", "lake-manifest.json": "{}\n",
+                    **{path: "guard\n" for path in self.GUARD_CODE}})
+        self.git("remote", "add", "origin", f"file://{root / 'origin.git'}")
+        self.git("push", "-q", "origin", "main")
+        self.git("checkout", "-q", "-b", "bump")
+
+    def tearDown(self) -> None:
+        self.tmp.cleanup()
+
+    def git(self, *args: str, cwd: Path | None = None) -> None:
+        subprocess.run(["git", *args], cwd=cwd or self.work, check=True, capture_output=True)
+
+    def write(self, files: dict[str, str]) -> None:
+        for path, text in files.items():
+            target = self.work / path
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(text)
+        self.git("add", "-A")
+        self.git("commit", "-q", "--allow-empty", "-m", "change")
+
+    def run_step(self) -> subprocess.CompletedProcess:
+        return subprocess.run(["bash", "-e", "-c", self.script], cwd=self.work, capture_output=True, text=True,
+                              env=dict(os.environ, RUNNER_TEMP=str(self.temp)))
+
+    def test_new_pins_pass(self) -> None:
+        self.write({"lean-toolchain": "leanprover/lean4:v4.36.0\n"})
+        self.assertEqual(self.run_step().returncode, 0)
+
+    def test_main_pins_fail(self) -> None:
+        self.write({})
+        proc = self.run_step()
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("not a bump", proc.stdout)
+
+    def test_mode_only_change_fails(self) -> None:
+        (self.work / "lean-toolchain").chmod(0o755)
+        self.write({})
+        proc = self.run_step()
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("must be a regular file", proc.stdout)
+
+    def test_changed_guard_code_fails(self) -> None:
+        self.write({"lean-toolchain": "leanprover/lean4:v4.36.0\n", self.GUARD_CODE[2]: "weakened\n"})
+        proc = self.run_step()
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("changes the guard code", proc.stdout)
 
 if __name__ == "__main__":
     unittest.main()
