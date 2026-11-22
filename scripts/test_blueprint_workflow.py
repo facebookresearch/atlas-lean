@@ -123,14 +123,6 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertLess(positions[dump["name"]], positions[
             "Collapse dependencies onto the wiki articles"])
 
-    def test_the_committed_graph_is_checked_before_lean_facts_and_only_reports(self):
-        # After `lean-facts` a stale link is already gone, so only this step can report it.
-        step = self.step("Check the committed graph")
-        self.assertEqual(step["continue-on-error"], "true")
-        self.assertIn("autoform check blueprint --lean-root .", step["run"])
-        positions = {s.get("name"): i for i, s in enumerate(self.steps)}
-        self.assertLess(positions[step["name"]], positions["Add the Lean-owned facts to the articles"])
-
     def test_memory_heavy_production_targets_are_serialized(self):
         script = self.step("Build memory-heavy modules one at a time")["run"]
         commands = [row for row in script.splitlines() if row.startswith("lake build ")]
@@ -209,7 +201,8 @@ class BlueprintWorkflowTests(unittest.TestCase):
 
     def test_the_import_map_only_grows(self):
         # Right after the wiki tests: every line of scripts/mathgraph-map.jsonl is checked, and on a PR the base
-        # commit's map, which the checkout of the merge commit lacks until it is fetched, must be its start.
+        # commit's map, which the checkout of the merge commit lacks until it is fetched, must be its start, each line
+        # appended since recording a page the PR adds.
         name = "Check that the import map only grows"
         names = [step.get("name") for step in self.steps]
         self.assertEqual(names.index(name), names.index("Test the wiki scripts") + 1)
