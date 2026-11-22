@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.Privacy.DifferentialPrivacyComposition
 public import CSLibExt.Privacy.ApproximateDifferentialPrivacy
+public import Cslib.Foundations.Relation.RelatesInSteps
 import CSLibExt.Crypto.Privacy.Basic
 
 /-!
@@ -160,12 +161,8 @@ Exactly `k` steps; `ReflTransGen` alone does not track length.
 This is bounded replace-one adjacency on `Fin n → X`, not identified with
 histogram ℓ₁ distance or add/remove adjacency. No conversion between the
 privacy budgets of those notions is asserted here. -/
-inductive ReplaceOneChain {n : ℕ} {X : Type*} :
-    ℕ → (Fin n → X) → (Fin n → X) → Prop
-  | refl (d : Fin n → X) : ReplaceOneChain 0 d d
-  | step {k : ℕ} {d d' d'' : Fin n → X} :
-      ReplaceOneChain k d d' → ReplaceOne d' d'' →
-      ReplaceOneChain (k + 1) d d''
+abbrev ReplaceOneChain {n : ℕ} {X : Type*} (k : ℕ) (d d' : Fin n → X) : Prop :=
+  Relation.RelatesInSteps ReplaceOne d d' k
 
 /-- A `ReplaceOneChain` yields a step-indexed neighbour chain. -/
 private theorem ReplaceOneChain.to_chain {n : ℕ} {X : Type*} {k : ℕ}
@@ -173,24 +170,24 @@ private theorem ReplaceOneChain.to_chain {n : ℕ} {X : Type*} {k : ℕ}
     ∃ z : ℕ → (Fin n → X), z 0 = d ∧ z k = d' ∧
       ∀ i < k, ReplaceOne (z i) (z (i + 1)) := by
   induction h with
-  | refl d => exact ⟨fun _ => d, rfl, rfl, fun i hi => (Nat.not_lt_zero i hi).elim⟩
-  | @step k d d' d'' _ hstep ih =>
-    obtain ⟨z, hz0, hzk, hz⟩ := ih
-    refine ⟨fun i => if i ≤ k then z i else d'', ?_, ?_, ?_⟩
-    · show (if (0 : ℕ) ≤ k then z 0 else d'') = d
-      rw [ite_eq_left (Nat.zero_le k), hz0]
-    · show (if k + 1 ≤ k then z (k + 1) else d'') = d''
+  | refl => exact ⟨fun _ => d, rfl, rfl, fun i hi => (Nat.not_lt_zero i hi).elim⟩
+  | tail mid fin j _ hstep ih =>
+    obtain ⟨z, hz0, hzj, hz⟩ := ih
+    refine ⟨fun i => if i ≤ j then z i else fin, ?_, ?_, ?_⟩
+    · show (if (0 : ℕ) ≤ j then z 0 else fin) = d
+      rw [ite_eq_left (Nat.zero_le j), hz0]
+    · show (if j + 1 ≤ j then z (j + 1) else fin) = fin
       rw [ite_eq_right (by omega)]
     · intro i hi
-      have h1 : i ≤ k := by omega
-      show ReplaceOne (if i ≤ k then z i else d'') (if i + 1 ≤ k then z (i + 1) else d'')
+      have h1 : i ≤ j := by omega
+      show ReplaceOne (if i ≤ j then z i else fin) (if i + 1 ≤ j then z (i + 1) else fin)
       rw [ite_eq_left h1]
-      by_cases h2 : i + 1 ≤ k
+      by_cases h2 : i + 1 ≤ j
       · rw [ite_eq_left h2]
         exact hz i (by omega)
-      · have hik : i = k := by omega
-        subst hik
-        rw [ite_eq_right h2, hzk]
+      · have hij : i = j := by omega
+        subst hij
+        rw [ite_eq_right h2, hzj]
         exact hstep
 
 /-- PMF pure DP gives measure DP with `δ = 0` on the induced measures. -/

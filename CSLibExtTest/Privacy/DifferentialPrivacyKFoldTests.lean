@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Privacy.DifferentialPrivacyKFold
+public import Cslib.Foundations.Relation.RelatesInSteps
 public import Cslib.Probability.PMF
 
 /-!
@@ -183,8 +184,8 @@ theorem test_replaceOne_fin1 {X : Type*} (d d' : Fin 1 → X) :
 /-- A two-step chain over `Fin 1`. -/
 theorem test_chain_two {X : Type*} (d d' d'' : Fin 1 → X) :
     ReplaceOneChain 2 d d'' :=
-  ReplaceOneChain.step
-    (ReplaceOneChain.step (ReplaceOneChain.refl d)
+  Relation.RelatesInSteps.tail _ _ _ _
+    (Relation.RelatesInSteps.tail _ _ _ _ (Relation.RelatesInSteps.refl d)
       (test_replaceOne_fin1 d d'))
     (test_replaceOne_fin1 d' d'')
 
