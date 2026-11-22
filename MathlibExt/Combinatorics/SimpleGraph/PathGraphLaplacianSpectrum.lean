@@ -21,6 +21,9 @@ The cosine eigenvectors and eigenvalues of one half of the Laplacian of a
 finite path graph, with the resulting spectral-gap estimate. The formulas
 follow Kitaev, Shen and Vyalyi, Classical and Quantum Computation,
 Sections 14.4.2 and 14.4.4.
+The eigenvalue and eigenvector formulas are those already recorded for the
+path graph in the archived development at
+`v1/Atlas/AnAlgorithmistsToolkit/code/PathSpectrum.lean`.
 -/
 
 @[expose] public section
