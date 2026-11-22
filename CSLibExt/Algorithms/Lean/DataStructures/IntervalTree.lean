@@ -29,9 +29,10 @@ an existing identifier before replacement or deletion.
 
 namespace Cslib.Algorithms.Lean.IntervalTree
 
-local instance : DecidableLE Int := Int.decLe
-local instance : DecidableLT Int := Int.decLt
-local instance : DecidableEq Int := Int.decEq
+-- Preserve the instance names when consumers add a module prefix.
+local instance instDecidableLEInt_cSLibExt : DecidableLE Int := Int.decLe
+local instance instDecidableLTInt_cSLibExt : DecidableLT Int := Int.decLt
+local instance instDecidableEqInt_cSLibExt : DecidableEq Int := Int.decEq
 
 /-- A closed interval.  Public updates accept it only when `low ≤ high`. -/
 structure Interval where

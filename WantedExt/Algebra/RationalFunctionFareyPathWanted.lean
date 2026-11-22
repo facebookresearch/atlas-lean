@@ -317,7 +317,8 @@ Each fraction is thus represented by exactly one such pair.
 
 Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
 *An Interpretation of Continued Fractions and Farey Graphs in the Field of
-Rational Functions*, INTEGERS 26 (2026), Article A3, Definition 1 (quoted from [6], there over `𝔽_{p^r}`). -/
+Rational Functions*, INTEGERS 26 (2026), Article A3, Definition 1 (quoted from [6], there over
+`𝔽_{p^r}`). -/
 public def polyFareySeries (n : ℕ) : Set (F[X] × F[X]) :=
   {w | w.1.degree < w.2.degree ∧ w.2.natDegree ≤ n ∧ IsCoprime w.1 w.2 ∧ w.2.Monic}
 

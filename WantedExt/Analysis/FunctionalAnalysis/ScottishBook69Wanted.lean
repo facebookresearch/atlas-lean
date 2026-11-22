@@ -38,28 +38,20 @@ def IsMetricCenter (E : Type*) [PseudoMetricSpace E] (p q c : E) : Prop :=
   (∀ n, c ∈ metricCenterSets E p q n) ∧
   ∀ y, (∀ n, y ∈ metricCenterSets E p q n) → y = c
 
-/-- **Scottish Book Problem 69 claim.** The statement that every complete pseudometric space
-$E$ with the following two properties is isometric to a real Banach space: (1) for all
-$p, q \in E$ there is exactly one point $c \in E$ that is the metric center of $(p, q)$, and
-(2) for all $p, q \in E$ there is exactly one point $x \in E$ such that $q$ is the metric
-center of $(p, x)$. Here "isometric to a real Banach space" means that there are a complete
-real normed space $F$ and an isometric bijection $E \to F$. This is the affirmative answer to
-Problem 69 of S. Mazur and S. Ulam in the Scottish Book. -/
+/-- Mazur and Ulam's Problem 69 from the Scottish Book: is a nonempty complete
+metric space `E` in which (1) every pair has exactly one metric center
+and (2) for every `p, q` there is exactly one `x` such that `q` is the
+metric center of `(p, x)` necessarily isometric to a Banach space? -/
 def ScottishBookProblem69Claim : Prop :=
-  ∀ (E : Type) [PseudoMetricSpace E] [CompleteSpace E],
+  ∀ (E : Type) [PseudoMetricSpace E] [CompleteSpace E] [Nonempty E],
     (∀ p q : E, ∃! c, IsMetricCenter E p q c) →
     (∀ p q : E, ∃! x, IsMetricCenter E p x q) →
     ∃ (F : Type) (_ : NormedAddCommGroup F) (_ : NormedSpace ℝ F)
       (_ : CompleteSpace F), Nonempty (E ≃ᵢ F)
 
 /--
-**Mazur–Ulam Problem 69 refuted.** The Scottish Book Problem 69 claim is false: there is a
-complete pseudometric space $E$ such that (1) for all $p, q \in E$ there is exactly one point
-$c \in E$ that is the metric center of $(p, q)$, and (2) for all $p, q \in E$ there is exactly
-one point $x \in E$ such that $q$ is the metric center of $(p, x)$, but there is no complete
-real normed space $F$ with an isometric bijection $E \to F$.
-
-Source: S. Mazur and
+Mazur–Ulam Problem 69 is false: properties (1) and (2) do not
+characterize Banach spaces among nonempty metric spaces. Source: S. Mazur and
 S. Ulam, Problem 69 of the Scottish Book; typescript Ad 69 records the
 negative answer (S. Mazur, December 21, 1936).
 -/

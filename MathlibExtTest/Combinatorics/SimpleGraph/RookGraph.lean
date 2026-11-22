@@ -27,4 +27,16 @@ example {n m : ℕ} {s : Finset (Fin n × Fin m)} :
         (∃ j' : Fin m, (i, j') ∈ s) ∨ ∃ i' : Fin n, (i', j) ∈ s :=
   rookGraph_isDominating_iff
 
+/-- A single full row dominates the rook graph. -/
+example : (rookGraph 2 3).IsDominating
+    ↑({(0, 0), (0, 1), (0, 2)} : Finset (Fin 2 × Fin 3)) :=
+  rookGraph_isDominating_iff_or.2 (Or.inr (by decide))
+
+/-- Two cells in one row of the `3 × 3` board meet neither every row nor
+every column, so they do not dominate. -/
+example : ¬(rookGraph 3 3).IsDominating
+    ↑({(0, 0), (0, 1)} : Finset (Fin 3 × Fin 3)) := by
+  rw [rookGraph_isDominating_iff_or]
+  decide
+
 end SimpleGraph

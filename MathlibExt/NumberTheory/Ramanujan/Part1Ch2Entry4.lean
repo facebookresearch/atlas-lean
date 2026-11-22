@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.CharP.Defs
@@ -179,6 +179,7 @@ It follows from `ramanujan_part1_ch2_entry4_general`, which extends it to `n = 0
 hypothesis `hn` is unused and keeps the source's shape.
 Proves `Wanted` entry `ramanujan_part1_ch2_entry4`.
 -/
+@[nolint unusedArguments]
 theorem ramanujan_part1_ch2_entry4 (n : ℕ) (hn : 0 < n) :
     (∑ k ∈ Finset.Icc 1 n, (1 : ℝ) / ((n : ℝ) + (k : ℝ))) + (∑ k ∈ Finset.Icc 0 n, (1 : ℝ) /
         (2 * (n : ℝ) + 2 * (k : ℝ) + 1)) =

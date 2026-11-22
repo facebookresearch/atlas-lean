@@ -23,14 +23,17 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.RieszBrothers` — riesz_brothers_theorem (manifest `manifests/problems/riesz_brothers_theorem.toml`, rev 1, submitter Yongxi Lin, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.RieszBrothers` —
+riesz_brothers_theorem (manifest `manifests/problems/riesz_brothers_theorem.toml`, rev 1, submitter
+Yongxi Lin, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
 and placed the declarations in the `MathlibExt.Analysis.RieszBrothersWanted` namespace. Mathematical
-statements are unchanged. Source: W. Rudin, Real and Complex Analysis; N. K. Nikolski, Operators, Functions, and Systems: An Easy Reading, Volume I: Hardy, Hankel, and Toeplitz.
+statements are unchanged. Source: W. Rudin, Real and Complex Analysis; N. K. Nikolski, Operators,
+Functions, and Systems: An Easy Reading, Volume I: Hardy, Hankel, and Toeplitz.
 -/
 module
 
@@ -68,7 +71,9 @@ $\mathbb{T} = \mathbb{R}/\mathbb{Z}$. If $\int_{\mathbb{T}} e^{2\pi i n z} \, d\
 every integer $n \ge 1$, then $\mu$ is absolutely continuous with respect to the Haar probability
 measure on $\mathbb{T}$.
 
-Source: W. Rudin, Real and Complex Analysis; N. K. Nikolski, Operators, Functions, and Systems: An Easy Reading, Volume I: Hardy, Hankel, and Toeplitz. Via leanprover/lean-eval@38361be, problem `riesz_brothers_theorem`. -/
+Source: W. Rudin, Real and Complex Analysis; N. K. Nikolski, Operators, Functions, and Systems:
+An Easy Reading, Volume I: Hardy, Hankel, and Toeplitz. Via leanprover/lean-eval@38361be, problem
+`riesz_brothers_theorem`. -/
 public theorem_wanted riesz_brothers_theorem (μ : ComplexMeasure UnitAddCircle)
     (hμ : ∀ n : ℕ, 1 ≤ n → ∫ᵛ z, fourier n z ∂[ContinuousLinearMap.mul ℝ ℂ; μ] = 0) :
     μ ≪ᵥ AddCircle.haarAddCircle.toENNRealVectorMeasure

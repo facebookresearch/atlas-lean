@@ -10,14 +10,14 @@ module
 
 public import Mathlib.Algebra.Group.ConjFinite
 public import Mathlib.Algebra.MonoidAlgebra.Basic
-public import Mathlib.Data.Complex.Basic
+public import Mathlib.Basic.Complex.Basic
 public import MathlibExt.GroupTheory.BurnsidePaqbReduction
 
 /-!
 Conjugacy-class-algebra stage of the complete Burnside proof.
 
 Authors: Muse Spark 1.3
-Source archive: genai_web_search/tree/users/akiezun/burnside_proof.zip
+Source archive: burnside_proof.zip
 SHA-256: d9da7df82e467d9fa587892eeef9f51e2b83df0588175653bd1d16264b09dd00
 
 This module is the conjugacy-class-algebra stage of the complete Burnside proof,

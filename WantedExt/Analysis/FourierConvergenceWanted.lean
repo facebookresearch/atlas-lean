@@ -23,13 +23,16 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.FourierConvergence` — fourier_dirichlet_fejer (manifest `manifests/problems/fourier_dirichlet_fejer.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.FourierConvergence` —
+fourier_dirichlet_fejer (manifest `manifests/problems/fourier_dirichlet_fejer.toml`, rev 1,
+submitter Kim Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Analysis.FourierConvergenceWanted` namespace. Mathematical
+and placed the declarations in the `MathlibExt.Analysis.FourierConvergenceWanted` namespace.
+Mathematical
 statements are unchanged. Source: P. G. L. Dirichlet (1829) and L. Fejér (1900). Listed as §46 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf).
 -/
 module
@@ -55,13 +58,12 @@ namespace Analysis
   to `f` uniformly on `ℝ`.
 
 mathlib has the circle, the Fourier characters, `fourierCoeffOn`, the `L²`
-Fourier series, and uniform convergence under `ℓ¹`-summability
-(`hasSum_fourier_series_of_summable`). It has neither the Dirichlet kernel nor
-the statement that `C¹` forces pointwise convergence of the symmetric partial
-sums — the `C¹` bound `|f̂_n| ≤ C/n` is not `ℓ¹`-summable, so the summable case
-does not apply. The
-symmetric partial-sum order `Finset.Icc (-N) N` is essential, since the Fourier
-series of a `C¹` function need not converge absolutely.
+Fourier series, Parseval's identity (`hasSum_sq_fourierCoeffOn`), and uniform
+convergence under `ℓ¹`-summability (`hasSum_fourier_series_of_summable`). It has
+neither the Dirichlet kernel nor the statement that a `C¹` periodic function has
+summable Fourier coefficients. The `C¹` bound `|f̂_n| ≤ C/n` alone is not
+`ℓ¹`-summable; summability follows from Parseval's identity for `f'` and the
+Cauchy–Schwarz inequality.
 
 `MathlibExt/Analysis/Fourier/AddCircle/FejerTheorem.lean` supplies the Fejér
 kernel, Cesàro–Fourier means, and uniform convergence on `AddCircle T`.
@@ -71,6 +73,14 @@ requires descending a continuous periodic function to `AddCircle (2 * Real.pi)`,
 identifying `fourierCoeffOn` and the exponential modes with the circle coefficients
 and modes, and pulling uniform convergence back to `ℝ`. This catalogue does not
 supply those interface bridges.
+
+`MathlibExt/Analysis/Fourier/AddCircle/C1FourierSummable.lean` proves that
+summability for a `T`-periodic `C¹` function
+(`summable_fourierCoeffOn_of_hasDerivAt`) and the resulting convergence of its
+Fourier series, uniformly on `AddCircle T` (`hasSum_fourier_series_of_hasDerivAt`)
+and at each point of `(0, T]` (`hasSum_fourier_series_of_hasDerivAt_apply`), as
+unordered sums over `ℤ`. This catalogue does not supply the bridge from those
+statements to `dirichlet_pointwise`.
 -/
 
 open Filter Topology

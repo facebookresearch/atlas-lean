@@ -1,0 +1,3 @@
+# Subadditivity of $-\log Z$ along a juxtaposition sequence
+
+Let $(G_n)_{n \in \mathbb{N}}$ be finite simple graphs such that $G_{m+n}$ is isomorphic to the disjoint union $G_m \sqcup G_n$ for all $m, n$, and let $0 < p < 1$ and $q > 0$. Then $n \mapsto -\log Z_{G_n}(p, q)$ is subadditive ($u_{m+n} \le u_m + u_n$ for all $m, n \in \mathbb{N}$), where $Z_G(p, q)$ denotes the [ambient random-cluster normalizer](../random-cluster-measures-on-finite-graphs/fk-z.md) $Z_G(p, q) = \sum_\omega p^{o(\omega)}(1 - p)^{c(\omega)} q^{k(\omega)}$ (sum over all assignments $\omega$ of open/closed states to the unordered pairs of vertices, loops and non-edges included; $o, c$ count open and closed edges, $k$ the open clusters).

@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Dynamics.BourgainErgodic` — bourgain_polynomial_ergodic (manifest `manifests/problems/bourgain_polynomial_ergodic.toml`, rev 1, submitter Kim Morrison, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Dynamics.BourgainErgodic` —
+bourgain_polynomial_ergodic (manifest `manifests/problems/bourgain_polynomial_ergodic.toml`, rev 1,
+submitter Kim Morrison, status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Dynamics.BourgainErgodicWanted` namespace. Mathematical
-statements are unchanged. Source: J. Bourgain, *Pointwise ergodic theorems for arithmetic sets*, Publ. Math. IHÉS 69 (1989). Knill, *Some fundamental theorems in mathematics*, §173.
+and placed the declarations in the `MathlibExt.Dynamics.BourgainErgodicWanted` namespace.
+Mathematical
+statements are unchanged. Source: J. Bourgain, *Pointwise ergodic theorems for arithmetic sets*,
+Publ. Math. IHÉS 69 (1989). Knill, *Some fundamental theorems in mathematics*, §173.
 -/
 module
 
@@ -87,7 +91,9 @@ $\mu$-almost every $x \in X$ the polynomial ergodic averages
 $\frac{1}{n} \sum_{k=0}^{n-1} f(T^{a(k)}(x))$, $n \ge 1$, where $T^{a(k)}$ is the $a(k)$-fold
 iterate of $T$, converge to $F(x)$ as $n \to \infty$.
 
-Source: J. Bourgain, *Pointwise ergodic theorems for arithmetic sets*, Publ. Math. IHÉS 69 (1989). Knill, *Some fundamental theorems in mathematics*, §173. Via leanprover/lean-eval@38361be, problem `bourgain_polynomial_ergodic`. -/
+Source: J. Bourgain, *Pointwise ergodic theorems for arithmetic sets*, Publ. Math. IHÉS 69
+(1989). Knill, *Some fundamental theorems in mathematics*, §173. Via leanprover/lean-eval@38361be,
+problem `bourgain_polynomial_ergodic`. -/
 public theorem_wanted bourgain_polynomial_ergodic
     [IsProbabilityMeasure μ] {p : ℝ≥0∞} (hp : 1 < p) (hp_ne_top : p ≠ ∞)
     {T : X → X} (hT : MeasurePreserving T μ μ)

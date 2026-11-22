@@ -22,16 +22,18 @@ matching the paper's normalizations. All statements
 were checked numerically on initial ranges (square
 terms and gcds for `n < 200`; the two Diophantine
 statements on bounded grids, where `(n, x, y) = (1, 1, 2)`
-is the unique solution of Theorem 2).
-
-Not stated (see the source audit table): Lemma 1,
-whose exponents are lost in the extracted statement.
+is the unique solution of Theorem 2). Lemma 1 (quoted
+from the paper's reference [6]) is stated over `ℤ` with
+its exponents read from the journal PDF and was checked
+for `p ∈ {3, 5, 7}`, `|a|, |b| ≤ 60`, `2 ≤ k < 12`.
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Even
+public import Mathlib.Data.Int.GCD
 public import Mathlib.Data.Nat.GCD.Basic
+public import Mathlib.Data.Nat.Prime.Defs
 public import MathlibExt.NumberTheory.PellLucasSequence
 public import MathlibExt.NumberTheory.PellNumberSequence
 
@@ -40,6 +42,21 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.PellLucasDiophantineWanted
+
+/-- **Lemma 1** (quoted from [6]): let `p` be an odd
+prime and `a, b, c, k` integers with `gcd(a, b) = 1` and
+`k ≥ 2`. If `a^p + b^p = c^k`, then `a + b = d^k` or
+`a + b = p^(k-1) d^k` for some integer `d`. The exponent
+`k` is a natural number (`k ≥ 2`).
+
+Source: Sérgio Mendes, "The Diophantine Equation
+`Q_n^x + Q_{n+1}^x = y^2`", *INTEGERS* 26 (2026),
+Article A72, Lemma 1. -/
+theorem_wanted add_eq_pow_or_eq_prime_pow_mul_pow_of_pow_add_pow_eq_pow
+    {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) {a b c : ℤ}
+    (hab : Int.gcd a b = 1) {k : ℕ} (hk : 2 ≤ k)
+    (h : a ^ p + b ^ p = c ^ k) :
+    ∃ d : ℤ, a + b = d ^ k ∨ a + b = (p : ℤ) ^ (k - 1) * d ^ k
 
 /-- **Lemma 2**: the only square terms in the
 Pell–Lucas sequence are `Q_0 = 1` and `Q_1 = 1`.

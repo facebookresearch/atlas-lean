@@ -13,7 +13,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecificLimits.Basic
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Topology.Basic
 
 @[expose] public section

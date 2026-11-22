@@ -23,14 +23,22 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.Choquet` — bauer_extreme_point_uniqueness (manifest `manifests/problems/bauer_extreme_point_uniqueness.toml`, rev 1, submitter Kim Morrison, status archived); choquet_representation_theorem (manifest `manifests/problems/choquet_representation_theorem.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.Choquet` —
+bauer_extreme_point_uniqueness (manifest `manifests/problems/bauer_extreme_point_uniqueness.toml`,
+rev 1, submitter Kim Morrison, status archived); choquet_representation_theorem (manifest
+`manifests/problems/choquet_representation_theorem.toml`, rev 1, submitter Kim Morrison, status
+archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
 and placed the declarations in the `MathlibExt.Analysis.ChoquetWanted` namespace. Mathematical
-statements are unchanged. Source: H. Bauer, *Minimalstellen von Funktionen und Extremalpunkte*, Arch. Math. 9 (1958), 389–393; see also Phelps, *Lectures on Choquet's Theorem*. Knill, *Some fundamental theorems in mathematics*, §88. G. Choquet, *Existence et unicité des représentations intégrales au moyen des points extrémaux dans les cônes convexes*, Séminaire Bourbaki (1956). Knill, *Some fundamental theorems in mathematics*, §88.
+statements are unchanged. Source: H. Bauer, *Minimalstellen von Funktionen und Extremalpunkte*,
+Arch. Math. 9 (1958), 389–393; see also Phelps, *Lectures on Choquet's Theorem*. Knill, *Some
+fundamental theorems in mathematics*, §88. G. Choquet, *Existence et unicité des représentations
+intégrales au moyen des points extrémaux dans les cônes convexes*, Séminaire Bourbaki (1956).
+Knill, *Some fundamental theorems in mathematics*, §88.
 -/
 module
 
@@ -81,7 +89,10 @@ Borel σ-algebra and let $K \subseteq X$ be compact and convex. For every $x \in
 probability measure $\mu$ on $X$ such that the complement of the set of extreme points of $K$ has
 $\mu$-measure $0$ and the barycenter $\int y \, d\mu(y)$ (a Bochner integral) equals $x$.
 
-Source: G. Choquet, *Existence et unicité des représentations intégrales au moyen des points extrémaux dans les cônes convexes*, Séminaire Bourbaki (1956). Knill, *Some fundamental theorems in mathematics*, §88. Via leanprover/lean-eval@38361be, problem `choquet_representation_theorem`. -/
+Source: G. Choquet, *Existence et unicité des représentations intégrales au moyen des points
+extrémaux dans les cônes convexes*, Séminaire Bourbaki (1956). Knill, *Some fundamental theorems
+in mathematics*, §88. Via leanprover/lean-eval@38361be, problem
+`choquet_representation_theorem`. -/
 public theorem_wanted choquet [MeasurableSpace X] [BorelSpace X]
     (K : Set X) (hK_cpt : IsCompact K) (hK_cvx : Convex ℝ K)
     {x : X} (hx : x ∈ K) :
@@ -100,7 +111,9 @@ probability measures on `K`, not only those already supported on `ext K`.) -/
 $\mu$ is a probability measure on $X$ with $\mu(X \setminus K) = 0$ whose barycenter
 $\int y \, d\mu(y)$ (a Bochner integral) equals $x$, then $\mu$ is the Dirac measure at $x$.
 
-Source: H. Bauer, *Minimalstellen von Funktionen und Extremalpunkte*, Arch. Math. 9 (1958), 389–393; see also Phelps, *Lectures on Choquet's Theorem*. Knill, *Some fundamental theorems in mathematics*, §88. Via leanprover/lean-eval@38361be, problem `bauer_extreme_point_uniqueness`. -/
+Source: H. Bauer, *Minimalstellen von Funktionen und Extremalpunkte*, Arch. Math. 9 (1958),
+389–393; see also Phelps, *Lectures on Choquet's Theorem*. Knill, *Some fundamental theorems in
+mathematics*, §88. Via leanprover/lean-eval@38361be, problem `bauer_extreme_point_uniqueness`. -/
 public theorem_wanted bauer_unique [MeasurableSpace X] [BorelSpace X]
     (K : Set X) (hK_cpt : IsCompact K) (hK_cvx : Convex ℝ K)
     {x : X} (hx : x ∈ K.extremePoints ℝ)

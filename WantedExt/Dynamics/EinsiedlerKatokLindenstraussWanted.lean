@@ -30,12 +30,14 @@ into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
 and placed the declarations in the `MathlibExt.Dynamics.EinsiedlerKatokLindenstraussWanted` namespace. Mathematical
-statements are unchanged. Source:
+statements are unchanged. The local `distToNearestInt` helper was later replaced by the identical
+shared definition `MetaMathlibExt.distToNearestInt` (`|x - round x|`). Source:
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib
+public import MathlibExt.NumberTheory.DiophantineApproximation.DistToNearestInt
 
 @[expose] public section
 
@@ -74,10 +76,7 @@ Katok and Lindenstrauss proved this conjecture under the additional hypothesis t
 
 namespace Dynamics.EinsiedlerKatokLindenstrauss
 
-/-- **Distance to the nearest integer.** For a real number $x$, this is $|x - r|$, where $r$
-is the integer nearest to $x$ (halves rounded up); equivalently, it is the minimum of
-$|x - n|$ over all integers $n$. -/
-noncomputable def distToNearestInt (x : ℝ) : ℝ := |x - round x|
+open MetaMathlibExt (distToNearestInt)
 
 /-- **Einsiedler–Katok–Lindenstrauss theorem.** For a real number $x$, write $\lVert x \rVert$
 for the distance from $x$ to the nearest integer. The set of pairs $(\alpha, \beta)$ of real

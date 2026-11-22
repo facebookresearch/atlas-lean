@@ -12,6 +12,8 @@ public import CSLibExt.Algorithms.Lean.DataStructures.Treap
 
 set_option autoImplicit false
 
+universe u v
+
 @[expose] public section
 
 namespace Cslib.Algorithms.Lean
@@ -78,6 +80,86 @@ example : ¬HeapOrdered mutatedMerge := by
 example : ¬Valid mutatedMerge := by
   simp [mutatedMerge, rightSingleton, Valid, HeapOrdered, AllNodes]
 
+/-! Projections to `BinarySearchTree` and `CartesianTree`. -/
+
+example : keyTree populated = .node 2 (.node 1 .nil .nil) (.node 3 .nil .nil) := rfl
+example : priorityTree populated = .node 10 (.node 20 .nil .nil) (.node 30 .nil .nil) := rfl
+example : keyTree leftSingleton = .node 1 .nil .nil := by simp [leftSingleton]
+example : priorityTree leftSingleton = .node 20 .nil .nil := by simp [leftSingleton]
+example : BinarySearchTree.Ordered (keyTree populated) :=
+  ordered_keyTree.mp populated_valid.1
+example : CartesianTree.HeapOrdered (priorityTree populated) :=
+  heapOrdered_priorityTree.mp populated_valid.2
+example : ¬CartesianTree.HeapOrdered (priorityTree mutatedMerge) := fun hHeap =>
+  (show ¬HeapOrdered mutatedMerge by simp [HeapOrdered, AllNodes])
+    (heapOrdered_priorityTree.mpr hHeap)
+example : (2 : Nat) ∈ keyTree populated := mem_keyTree.mp (Or.inr (Or.inl rfl))
+example : BinarySearchTree.All (· < 4) (keyTree populated) :=
+  allNodes_keyTree.mp (by simp [AllNodes])
+example : BinarySearchTree.All (10 ≤ ·) (priorityTree populated) :=
+  allNodes_priorityTree.mp (by simp [AllNodes])
+
+/- Both bridges hold in arbitrary universes. -/
+example {κ : Type u} {ν : Type v} [LT κ] (tree : Tree κ ν) :
+    Ordered tree ↔ BinarySearchTree.Ordered (keyTree tree) :=
+  ordered_keyTree
+example {κ : Type u} {ν : Type v} (tree : Tree κ ν) :
+    HeapOrdered tree ↔ CartesianTree.HeapOrdered (priorityTree tree) :=
+  heapOrdered_priorityTree
+
+/-! Lookup frame lemmas. -/
+
+example : lookup 1 inserted = lookup 1 populated :=
+  lookup_insert_ne populated_valid.1 (by decide)
+example : lookup 3 erased = some "three" :=
+  (lookup_erase_ne populated_valid.1 (by decide)).trans (by decide)
+example {κ : Type u} {ν : Type v} [LinearOrder κ] {query key : κ} {value : ν}
+    {priority : Nat} {tree : Tree κ ν} (hOrdered : Ordered tree) (hNe : query ≠ key) :
+    lookup query (insert key value priority tree) = lookup query tree ∧
+      lookup query (erase key tree) = lookup query tree :=
+  ⟨lookup_insert_ne hOrdered hNe, lookup_erase_ne hOrdered hNe⟩
+
+/- Edge cases: replacing an existing key, querying an absent key, erasing a missing
+key, and the empty tree in arbitrary universes. -/
+example : lookup 1 (insert 2 "replacement" 0 populated) = lookup 1 populated :=
+  lookup_insert_ne populated_valid.1 (by decide)
+example : lookup 9 (insert 2 "replacement" 50 populated) = lookup 9 populated :=
+  lookup_insert_ne populated_valid.1 (by decide)
+example : lookup 9 (erase 4 populated) = lookup 9 populated :=
+  lookup_erase_ne populated_valid.1 (by decide)
+example {κ : Type u} {ν : Type v} [LinearOrder κ] (query key : κ) (value : ν)
+    (priority : Nat) (hNe : query ≠ key) :
+    lookup query (insert key value priority (.empty : Tree κ ν)) = none :=
+  lookup_insert_ne (by trivial) hNe
+example {κ : Type u} {ν : Type v} [LinearOrder κ] (query key : κ) (hNe : query ≠ key) :
+    lookup query (erase key (.empty : Tree κ ν)) = none :=
+  lookup_erase_ne (by trivial) hNe
+
+/- The frame lemmas need key order but not heap order: this tree is ordered
+and violates the heap invariant. -/
+private abbrev orderedNotHeap : Tree Nat String :=
+  .node .empty 1 "one" 20 (.node .empty 2 "two" 10 .empty)
+
+example : ¬HeapOrdered orderedNotHeap := by simp [HeapOrdered, AllNodes]
+example : lookup 2 (insert 3 "three" 5 orderedNotHeap) = some "two" :=
+  (lookup_insert_ne (by simp [Ordered, AllNodes]) (by decide)).trans (by decide)
+example : Ordered (insert 3 "three" 5 orderedNotHeap) :=
+  ordered_insert (by simp [Ordered, AllNodes])
+example : Ordered (erase 1 orderedNotHeap) :=
+  ordered_erase (by simp [Ordered, AllNodes])
+
+/- Key order cannot be dropped: in this unordered tree, lookup misses key 5,
+and removing or replacing key 3 exposes it. -/
+private abbrev unordered : Tree Nat String :=
+  .node (.node .empty 5 "five" 1 .empty) 3 "three" 0 .empty
+
+example : ¬Ordered unordered := by simp [Ordered, AllNodes]
+example : lookup 5 unordered = none := by decide
+example : lookup 5 (erase 3 unordered) = some "five" := by
+  simp [erase, split, merge, lookup]
+example : lookup 5 (Tree.insert 3 "new" 2 unordered) = some "five" := by
+  simp [Tree.insert, split, merge, lookup]
+
 #check Tree
 #check SplitResult
 #check lookup
@@ -92,6 +174,12 @@ example : ¬Valid mutatedMerge := by
 #check valid_erase
 #check lookup_contents
 #check lookupWithCost_le_size
+#check keyTree
+#check priorityTree
+#check ordered_keyTree
+#check heapOrdered_priorityTree
+#check lookup_insert_ne
+#check lookup_erase_ne
 
 #print axioms allNodes_iff_forall_mem
 #print axioms memKey_of_memNode
@@ -122,6 +210,17 @@ example : ¬Valid mutatedMerge := by
 #print axioms contents_erase
 #print axioms lookup_insert_eq
 #print axioms lookup_erase_eq_none
+#print axioms ordered_insert
+#print axioms ordered_erase
+#print axioms lookup_insert_ne
+#print axioms lookup_erase_ne
+#print axioms keyTree_node
+#print axioms priorityTree_node
+#print axioms allNodes_keyTree
+#print axioms allNodes_priorityTree
+#print axioms mem_keyTree
+#print axioms ordered_keyTree
+#print axioms heapOrdered_priorityTree
 
 end TreapTests
 end Cslib.Algorithms.Lean

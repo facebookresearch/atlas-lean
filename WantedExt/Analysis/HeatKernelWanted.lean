@@ -23,7 +23,10 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.ODE.HeatKernel` — heat_kernel_solves_heat_equation (manifest `manifests/problems/heat_kernel_solves_heat_equation.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.ODE.HeatKernel` —
+heat_kernel_solves_heat_equation (manifest
+`manifests/problems/heat_kernel_solves_heat_equation.toml`, rev 1, submitter Kim Morrison, status
+archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
@@ -96,7 +99,8 @@ $y \in \mathbb{R}$, $u_x$ has derivative $u_{xx}$ at $x$, and $u(\cdot, x)$ has 
 $u_{xx}$ at $t$; that is, $\partial_t u = \partial_x^2 u$ on $(0, \infty) \times \mathbb{R}$.
 Moreover, for every $x \in \mathbb{R}$, $u(t, x) \to f(x)$ as $t \to 0$ from above.
 
-Source: Classical heat-equation theory. Via leanprover/lean-eval@38361be, problem `heat_kernel_solves_heat_equation`. -/
+Source: Classical heat-equation theory. Via leanprover/lean-eval@38361be, problem
+`heat_kernel_solves_heat_equation`. -/
 public theorem_wanted heat_kernel_solves_heat_equation
     (f : ℝ → ℝ) (hf_cont : Continuous f) (hf_bdd : ∃ M : ℝ, ∀ x, |f x| ≤ M) :
     -- The PDE on (0, ∞) × ℝ.

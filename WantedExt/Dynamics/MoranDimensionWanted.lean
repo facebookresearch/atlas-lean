@@ -23,14 +23,19 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Dynamics.MoranDimension` — moran_equality_affine (manifest `manifests/problems/moran_equality_affine.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Dynamics.MoranDimension` —
+moran_equality_affine (manifest `manifests/problems/moran_equality_affine.toml`, rev 1, submitter
+Kim Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Dynamics.MoranDimensionWanted` namespace. Mathematical
-statements are unchanged. Source: P. A. P. Moran, *Additive functions of intervals and Hausdorff measure*, Proc. Cambridge Philos. Soc. 42 (1946); J. E. Hutchinson, *Fractals and self similarity*, Indiana Univ. Math. J. 30 (1981). Knill, *Some fundamental theorems in mathematics*, §105.
+and placed the declarations in the `MathlibExt.Dynamics.MoranDimensionWanted` namespace.
+Mathematical
+statements are unchanged. Source: P. A. P. Moran, *Additive functions of intervals and Hausdorff
+measure*, Proc. Cambridge Philos. Soc. 42 (1946); J. E. Hutchinson, *Fractals and self similarity*,
+Indiana Univ. Math. J. 30 (1981). Knill, *Some fundamental theorems in mathematics*, §105.
 -/
 module
 
@@ -107,7 +112,10 @@ contraction factor $\lambda \in (0,1)$ that satisfies the open set condition. Th
 $S \subseteq \mathbb{R}^d$ of the system has Hausdorff dimension
 $$\dim_H S = -\frac{\log n}{\log \lambda}.$$
 
-Source: P. A. P. Moran, *Additive functions of intervals and Hausdorff measure*, Proc. Cambridge Philos. Soc. 42 (1946); J. E. Hutchinson, *Fractals and self similarity*, Indiana Univ. Math. J. 30 (1981). Knill, *Some fundamental theorems in mathematics*, §105. Via leanprover/lean-eval@38361be, problem `moran_equality_affine`. -/
+Source: P. A. P. Moran, *Additive functions of intervals and Hausdorff measure*, Proc. Cambridge
+Philos. Soc. 42 (1946); J. E. Hutchinson, *Fractals and self similarity*, Indiana Univ. Math. J. 30
+(1981). Knill, *Some fundamental theorems in mathematics*, §105. Via leanprover/lean-eval@38361be,
+problem `moran_equality_affine`. -/
 public theorem_wanted moran_equality_affine
     {d n : ℕ} (hn : 1 ≤ n)
     (f : Fin n → EuclideanSpace ℝ (Fin d) → EuclideanSpace ℝ (Fin d)) (lam : ℝ)

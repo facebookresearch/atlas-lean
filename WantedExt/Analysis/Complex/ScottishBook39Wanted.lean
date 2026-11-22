@@ -16,17 +16,19 @@ public import Mathlib.Topology.Instances.Complex
 
 namespace MathlibExt.Analysis.Complex.ScottishBook39Wanted
 
-/-- **Discontinuous subadditive multiplicative functions on $\mathbb{C}$.** There is a function
-$\varphi : \mathbb{C} \to \mathbb{R}$ that is not continuous, satisfies $\varphi(x) \ge 0$ for
-all $x \in \mathbb{C}$, is not identically $0$ and not identically $1$, and satisfies
-$\varphi(x + y) \le \varphi(x) + \varphi(y)$ and $\varphi(xy) = \varphi(x)\varphi(y)$ for all
-$x, y \in \mathbb{C}$.
-
-This answers Problem 39 of the Scottish Book (Auerbach), which notes that the continuous
-functions with these properties are exactly $\varphi(x) = |x|^\alpha$ with $0 < \alpha \le 1$ and
-asks whether discontinuous ones exist. Mazur's answer is $\varphi(x) = |f(x)|$ for a
-discontinuous field automorphism $f$ of $\mathbb{C}$.
-
+/--
+Auerbach, Problem 39 of the Scottish Book. A function `φ` is said to satisfy:
+(1) `φ(x) ≥ 0` for all `x`, and `φ` is neither identically `0` nor the
+trivial absolute value (`φ 0 = 0` and `φ x = 1` for `x ≠ 0`); (2)
+`φ(x + y) ≤ φ(x) + φ(y)`; (3) `φ(x * y) = φ(x) * φ(y)`.
+The continuous functions meeting these conditions are exactly
+`φ(x) = |x|^α` with constant `α`, `0 < α ≤ 1`. The problem asks whether
+discontinuous functions meeting these conditions exist. The answer is yes:
+there is a discontinuous field automorphism `f` of the complex numbers, and
+`φ(x) = |f(x)|` satisfies (1), (2), (3) and is discontinuous. Condition (1)
+is read as in the addendum: the source's "not identically `1`" excludes the
+trivial absolute value, which is discontinuous at `0` and meets (2) and (3).
+For `φ(x) = |f(x)|` one has `φ(2) = 2`.
 Source: H. Auerbach, Problem 39 of the Scottish Book; addendum of S. Mazur,
 10 April 1937, in the Scottish Book, via Lebesgue's theorem on the existence
 of a discontinuous automorphism of `ℂ` (Kamke); see the commentary in
@@ -34,7 +36,7 @@ R. D. Mauldin (ed.), The Scottish Book, 2nd ed. (Birkhäuser, 2015).
 -/
 theorem_wanted exists_discontinuous_subadditive_multiplicative :
     ∃ φ : ℂ → ℝ, ¬ Continuous φ ∧ (∀ x, 0 ≤ φ x) ∧
-      ¬ (∀ x, φ x = 0) ∧ ¬ (∀ x, φ x = 1) ∧
+      ¬ (∀ x, φ x = 0) ∧ ¬ (∀ x, x ≠ 0 → φ x = 1) ∧
       (∀ x y, φ (x + y) ≤ φ x + φ y) ∧ (∀ x y, φ (x * y) = φ x * φ y)
 
 end MathlibExt.Analysis.Complex.ScottishBook39Wanted

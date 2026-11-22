@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.HausdorffAbsoluteContinuity` — hausdorff_absolute_continuity (manifest `manifests/problems/hausdorff_absolute_continuity.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.HausdorffAbsoluteContinuity` —
+hausdorff_absolute_continuity (manifest `manifests/problems/hausdorff_absolute_continuity.toml`, rev
+1, submitter Kim Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Analysis.HausdorffAbsoluteContinuityWanted` namespace. Mathematical
-statements are unchanged. Source: F. Hausdorff (1921–1923); see Shohat–Tamarkin, *The Problem of Moments*. Knill, *Some fundamental theorems in mathematics*, §115.
+and placed the declarations in the `MathlibExt.Analysis.HausdorffAbsoluteContinuityWanted`
+namespace. Mathematical
+statements are unchanged. Source: F. Hausdorff (1921–1923); see Shohat–Tamarkin, *The Problem of
+Moments*. Knill, *Some fundamental theorems in mathematics*, §115.
 -/
 module
 
@@ -119,7 +123,9 @@ and only if there is a real constant $C$ such that
 $(\Delta^k m_\mu)_n \le C \, (\Delta^k m_\lambda)_n$ for all multi-indices $k \le n$
 (coordinatewise), where $\Delta^k$ is the iterated backward difference.
 
-Source: F. Hausdorff (1921–1923); see Shohat–Tamarkin, *The Problem of Moments*. Knill, *Some fundamental theorems in mathematics*, §115. Via leanprover/lean-eval@38361be, problem `hausdorff_absolute_continuity`. -/
+Source: F. Hausdorff (1921–1923); see Shohat–Tamarkin, *The Problem of Moments*.
+Knill, *Some fundamental theorems in mathematics*, §115. Via leanprover/lean-eval@38361be, problem
+`hausdorff_absolute_continuity`. -/
 public theorem_wanted hausdorff_absolute_continuity {d : ℕ}
     (μ : Measure (EuclideanSpace ℝ (Fin d)))
     [IsProbabilityMeasure μ] (hμ : μ ((cube d)ᶜ) = 0) :

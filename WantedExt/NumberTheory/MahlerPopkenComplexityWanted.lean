@@ -299,3 +299,7 @@ theorem_wanted mahlerPopkenComplexity_two_le_log_add_digitCount_sub_one
       Nat.log 2 n + (Nat.digits 2 n).count 1 - 1
 
 end MahlerPopkenComplexityWanted
+
+end NumberTheory
+
+end MathlibExt
