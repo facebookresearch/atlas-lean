@@ -109,6 +109,14 @@ class BlueprintWorkflowTests(unittest.TestCase):
         self.assertLess(positions[dump["name"]], positions[
             "Collapse dependencies onto the wiki articles"])
 
+    def test_the_committed_graph_is_checked_before_lean_facts_and_only_reports(self):
+        # After `lean-facts` a stale link is already gone, so only this step can report it.
+        step = self.step("Check the committed graph")
+        self.assertEqual(step["continue-on-error"], "true")
+        self.assertIn("autoform check blueprint --lean-root .", step["run"])
+        positions = {s.get("name"): i for i, s in enumerate(self.steps)}
+        self.assertLess(positions[step["name"]], positions["Add the Lean-owned facts to the articles"])
+
     def test_memory_heavy_production_targets_are_serialized(self):
         script = self.step("Build memory-heavy modules one at a time")["run"]
         commands = [row for row in script.splitlines() if row.startswith("lake build ")]
