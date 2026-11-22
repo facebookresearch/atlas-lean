@@ -210,9 +210,11 @@ A graph PR changes the ATLAS wiki; its content follows the
 Once the `main` ruleset requires GitHub's merge queue (#5962), PRs reach `main`
 only through the queue; do not push to `main` directly. When a PR is ready to
 merge and its required checks have passed, add it to the queue. The queue tests
-it on top of the current `main` and the PRs queued ahead of it, and
-squash-merges it only if the required checks pass on that combined tree, so
-each commit it adds to `main` has passed them on its own tree.
+it on top of the current `main` and the PRs queued ahead of it. The proposed
+queue squash-merges and has **Only merge non-failing pull requests**
+(`ALLGREEN`) enabled, so it merges a PR only if the required checks pass on that
+combined tree, and each commit it adds to `main` has passed them on its own
+tree.
 
 To queue a standalone PR, use one of:
 
@@ -266,9 +268,11 @@ group before it merges:
 - `build` (CI): the Lean build and its policy checks.
 - `source-diagnostics` (Source diagnostics).
 
-Their workflows run on every PR and every merge group;
-`scripts/test_merge_queue_checks.py`, run by `scripts/check.sh preflight`, fails
-if a change would stop that.
+Their workflows are configured to run on PRs and merge groups.
+`scripts/test_merge_queue_checks.py`, run by `scripts/check.sh preflight`,
+checks their pull-request and merge-group triggers, filters and concurrency
+groups, and that each required check comes from exactly one job, with no
+job-level `if` or `strategy`.
 
 The other checks are advisory. The bump guard's `guard` checks Lean and Mathlib
 pin changes on PRs and merge groups; on PRs it runs through
