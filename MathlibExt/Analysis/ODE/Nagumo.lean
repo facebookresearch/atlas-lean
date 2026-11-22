@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.Analysis.Calculus.LocalExtr.Basic
 public import Mathlib.Analysis.Normed.Module.FiniteDimension
 public import Mathlib.Topology.EMetricSpace.Lipschitz
 import Mathlib.Analysis.ODE.Gronwall
@@ -27,6 +28,10 @@ points exist by finite-dimensional properness. A compact ball containing both
 the trajectory and its nearest points supplies one Lipschitz constant, so the
 liminf form of Grönwall keeps the distance zero. Necessity uses local existence.
 
+`invariant_iff_mem_posTangentConeAt` states the criterion using Mathlib's cone.
+`isContingent_iff_mem_posTangentConeAt` identifies the epsilon–delta condition
+used in the distance estimates with that cone at every point of the set.
+
 Source: M. Nagumo, Über die Lage der Integralkurven gewöhnlicher
 Differentialgleichungen, Proc. Phys.-Math. Soc. Japan 24 (1942), 551–559.
 See also Ghorbal et al., A Hierarchy of Proof Rules for Checking Positive
@@ -44,6 +49,85 @@ def IsContingent {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     ∃ h : ℝ, 0 < h ∧ h < δ ∧ ∃ y ∈ s, ‖y - x - h • v‖ ≤ ε * h
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+
+private theorem mem_posTangentConeAt_iff_approx {s : Set E} {x v : E} :
+    v ∈ posTangentConeAt s x ↔
+      ∀ r > 0, ∀ ε > 0, ∃ (c : ℝ≥0) (d : E),
+        ‖d‖ < r ∧ x + d ∈ s ∧ ‖c • d - v‖ < ε := by
+  rw [posTangentConeAt, Metric.nhds_basis_ball.tangentConeAt_eq_biInter_closure]
+  simp only [mem_iInter, Metric.mem_closure_iff]
+  constructor
+  · intro h r hr ε hε
+    obtain ⟨z, hz, hdist⟩ := h r hr ε hε
+    rcases hz with ⟨c, _, d, hd, rfl⟩
+    exact ⟨c, d, by simpa using hd.1, hd.2,
+      by simpa [dist_eq_norm, norm_sub_rev] using hdist⟩
+  · intro h r hr ε hε
+    obtain ⟨c, d, hd, hs, he⟩ := h r hr ε hε
+    exact ⟨c • d, ⟨c, mem_univ _, d, ⟨by simpa using hd, hs⟩, rfl⟩,
+      by simpa [dist_eq_norm, norm_sub_rev] using he⟩
+
+/-- The epsilon–delta contingent condition agrees with Mathlib's positive
+tangent cone at a point of the set. No closedness or dimension assumption is needed. -/
+theorem isContingent_iff_mem_posTangentConeAt {s : Set E} {x v : E} (hx : x ∈ s) :
+    IsContingent s x v ↔ v ∈ posTangentConeAt s x := by
+  rw [mem_posTangentConeAt_iff_approx]
+  constructor
+  · intro ht r hr ε hε
+    let η := min (ε / 2) 1
+    have hη : 0 < η := lt_min (half_pos hε) zero_lt_one
+    obtain ⟨h, hh, hhr, y, hy, he⟩ :=
+      ht η hη (r / (‖v‖ + 1)) (div_pos hr (by positivity))
+    refine ⟨⟨h⁻¹, (inv_pos.mpr hh).le⟩, y - x, ?_, by simpa using hy, ?_⟩
+    · have hb := norm_add_le (y - x - h • v) (h • v)
+      rw [sub_add_cancel, norm_smul, Real.norm_eq_abs, abs_of_pos hh] at hb
+      have hηle : η ≤ 1 := min_le_right _ _
+      have hmul := (lt_div_iff₀ (by positivity : 0 < ‖v‖ + 1)).mp hhr
+      nlinarith
+    · have hid : h⁻¹ • (y - x) - v = h⁻¹ • (y - x - h • v) := by
+        simp only [smul_sub, inv_smul_smul₀ hh.ne']
+      change ‖h⁻¹ • (y - x) - v‖ < ε
+      rw [hid, norm_smul, Real.norm_eq_abs, abs_of_pos (inv_pos.mpr hh)]
+      have hb := mul_le_mul_of_nonneg_left he (inv_pos.mpr hh).le
+      have hηlt : η < ε := (min_le_left _ _).trans_lt (half_lt_self hε)
+      calc
+        h⁻¹ * ‖y - x - h • v‖ ≤ h⁻¹ * (η * h) := hb
+        _ = η := by field_simp
+        _ < ε := hηlt
+  · intro ht ε hε δ hδ
+    by_cases hv : v = 0
+    · subst v
+      refine ⟨δ / 2, half_pos hδ, half_lt_self hδ, x, hx, ?_⟩
+      simp only [sub_self, smul_zero, norm_zero]
+      positivity
+    have hvpos : 0 < ‖v‖ := norm_pos_iff.mpr hv
+    obtain ⟨c, d, hd, hs, he⟩ := ht (δ * ‖v‖ / 2) (by positivity)
+      (min ε (‖v‖ / 2)) (lt_min hε (half_pos hvpos))
+    have heε := he.trans_le (min_le_left _ _)
+    have hev := he.trans_le (min_le_right _ _)
+    simp only [NNReal.smul_def] at heε hev
+    have htri := norm_sub_le (c • d) (c • d - v)
+    have hid : c • d - (c • d - v) = v := by abel
+    rw [hid, NNReal.smul_def, norm_smul, Real.norm_eq_abs,
+      abs_of_nonneg c.coe_nonneg] at htri
+    have hc : 0 < (c : ℝ) := by
+      by_contra hc
+      have hz : (c : ℝ) = 0 := le_antisymm (not_lt.mp hc) c.coe_nonneg
+      rw [hz] at hev
+      simp only [zero_smul, zero_sub, norm_neg] at hev
+      linarith
+    have hδc : 1 < δ * (c : ℝ) := by
+      have hm := mul_lt_mul_of_pos_left hd hc
+      nlinarith
+    refine ⟨(c : ℝ)⁻¹, inv_pos.mpr hc, ?_, x + d, hs, ?_⟩
+    · exact (inv_lt_iff_one_lt_mul₀ hc).mpr hδc
+    · have heq : x + d - x - (c : ℝ)⁻¹ • v =
+          (c : ℝ)⁻¹ • (c • d - v) := by
+        simp only [add_sub_cancel_left, smul_sub, NNReal.smul_def,
+          inv_smul_smul₀ hc.ne']
+      rw [heq, norm_smul, Real.norm_eq_abs, abs_of_pos (inv_pos.mpr hc)]
+      simpa [mul_comm, NNReal.smul_def] using
+        mul_le_mul_of_nonneg_left heε.le (inv_pos.mpr hc).le
 
 private theorem derivative_error {u : ℝ → E} {v : E} {t ε : ℝ}
     (hu : HasDerivWithinAt u v (Ici t) t) (hε : 0 < ε) :
@@ -208,5 +292,25 @@ theorem invariant_iff_contingent [FiniteDimensional ℝ E]
   · intro htan T _ u hu hu₀
     exact mapsTo_of_contingent hf hs htan hu hu₀
   · exact contingent_of_invariant hf
+
+/-- Mathlib positive-tangent-cone membership preserves a closed set along an
+existing solution. -/
+theorem mapsTo_of_mem_posTangentConeAt [FiniteDimensional ℝ E]
+    {f : E → E} (hf : LocallyLipschitz f) {s : Set E} (hs : IsClosed s)
+    (htan : ∀ x ∈ s, f x ∈ posTangentConeAt s x) {a b : ℝ} {u : ℝ → E}
+    (hu : ∀ t ∈ Icc a b, HasDerivWithinAt u (f (u t)) (Icc a b) t)
+    (hu₀ : u a ∈ s) : MapsTo u (Icc a b) s :=
+  mapsTo_of_contingent hf hs
+    (fun x hx => (isContingent_iff_mem_posTangentConeAt hx).mpr (htan x hx)) hu hu₀
+
+/-- Nagumo's criterion stated with Mathlib's positive tangent cone. -/
+theorem invariant_iff_mem_posTangentConeAt [FiniteDimensional ℝ E]
+    (f : E → E) (hf : LocallyLipschitz f) (s : Set E) (hs : IsClosed s) :
+    (∀ x ∈ s, f x ∈ posTangentConeAt s x) ↔
+      ∀ (T : ℝ), 0 < T → ∀ u : ℝ → E,
+        (∀ t ∈ Icc 0 T, HasDerivWithinAt u (f (u t)) (Icc 0 T) t) →
+        u 0 ∈ s → ∀ t ∈ Icc 0 T, u t ∈ s := by
+  rw [← invariant_iff_contingent f hf s hs]
+  exact forall₂_congr fun x hx => (isContingent_iff_mem_posTangentConeAt hx).symm
 
 end Nagumo

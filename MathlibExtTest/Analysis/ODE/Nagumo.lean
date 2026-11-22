@@ -15,6 +15,39 @@ import MathlibExt.Analysis.ODE.Nagumo
 
 open Set
 
+-- The criterion interoperates with Mathlib's positive tangent cone.
+example {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [FiniteDimensional ℝ E] (f : E → E) (hf : LocallyLipschitz f)
+    (s : Set E) (hs : IsClosed s) :
+    (∀ x ∈ s, f x ∈ posTangentConeAt s x) ↔
+      ∀ T : ℝ, 0 < T → ∀ u : ℝ → E,
+        (∀ t ∈ Icc 0 T, HasDerivWithinAt u (f (u t)) (Icc 0 T) t) →
+        u 0 ∈ s → ∀ t ∈ Icc 0 T, u t ∈ s :=
+  Nagumo.invariant_iff_mem_posTangentConeAt f hf s hs
+
+-- An existing Mathlib convex-segment lemma supplies the tangency hypothesis.
+example {a b : ℝ} {u : ℝ → ℝ}
+    (hu : ∀ t ∈ Icc a b, HasDerivWithinAt u 1 (Icc a b) t)
+    (hu₀ : 0 ≤ u a) : ∀ t ∈ Icc a b, 0 ≤ u t := by
+  apply Nagumo.mapsTo_of_mem_posTangentConeAt
+    (LipschitzWith.const (1 : ℝ)).locallyLipschitz isClosed_Ici _ hu hu₀
+  intro x hx
+  apply mem_posTangentConeAt_of_segment_subset
+  exact (convex_Ici (0 : ℝ)).segment_subset hx (by
+    change 0 ≤ x + 1
+    linarith [show 0 ≤ x from hx])
+
+-- The bridge itself does not require finite dimension or a closed set.
+example {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {s : Set E} {x v : E} (hx : x ∈ s) (hv : Nagumo.IsContingent s x v) :
+    v ∈ posTangentConeAt s x :=
+  (Nagumo.isContingent_iff_mem_posTangentConeAt hx).mp hv
+
+-- Isolated points retain their zero tangent direction.
+example (x : Fin 0 → ℝ) : Nagumo.IsContingent {x} x 0 :=
+  (Nagumo.isContingent_iff_mem_posTangentConeAt (mem_singleton x)).mpr
+    (zero_mem_tangentConeAt (subset_closure (mem_singleton x)))
+
 -- The exact general criterion is available for a closed, not necessarily convex set.
 example {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [FiniteDimensional ℝ E] (f : E → E) (hf : LocallyLipschitz f)
@@ -59,7 +92,8 @@ example {T : ℝ} {u : ℝ → ℝ}
       norm_num)
 
 -- Positive-time tangency detects an outward vector at the endpoint.
-example : ¬ Nagumo.IsContingent (Ici (0 : ℝ)) 0 (-1) := by
+private theorem outward_not_contingent :
+    ¬ Nagumo.IsContingent (Ici (0 : ℝ)) 0 (-1) := by
   intro ht
   obtain ⟨h, hh, _, y, hy, he⟩ := ht (1 / 2) (by norm_num) 1 (by norm_num)
   change 0 ≤ y at hy
@@ -67,6 +101,11 @@ example : ¬ Nagumo.IsContingent (Ici (0 : ℝ)) 0 (-1) := by
     simpa [Real.norm_eq_abs] using he
   rw [abs_of_nonneg (by linarith [hy] : 0 ≤ y + h)] at he'
   linarith
+
+example : (-1 : ℝ) ∉ posTangentConeAt (Ici 0) 0 := fun h =>
+  outward_not_contingent
+    ((Nagumo.isContingent_iff_mem_posTangentConeAt
+      (show (0 : ℝ) ∈ Ici 0 from le_rfl)).mpr h)
 
 -- The field x'=x² is only locally Lipschitz. The theorem asserts invariance
 -- on the supplied finite interval, not global existence past blow-up.
@@ -104,3 +143,5 @@ example (T : ℝ) (hT : 0 < T) (u : ℝ → Fin 0 → ℝ)
       (by simp) T hT u hu hu₀
 
 #print axioms Nagumo.invariant_iff_contingent
+#print axioms Nagumo.isContingent_iff_mem_posTangentConeAt
+#print axioms Nagumo.invariant_iff_mem_posTangentConeAt
