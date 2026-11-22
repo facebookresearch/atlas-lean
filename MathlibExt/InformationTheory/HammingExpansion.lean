@@ -34,8 +34,10 @@ proved here.
 
 variable {ι F : Type*} [Fintype ι] [DecidableEq ι] [Fintype F] [DecidableEq F]
 
-/-- The `t`-expansion of `A`: all points at Hamming distance at most `t` from some
-element of `A`, as the union of `ball a t` over `a ∈ A`. -/
+/-- **Hamming expansion.** Let $\iota$ and $F$ be finite, and view functions $\iota \to F$ as
+words with the Hamming distance. For a finite set $A$ of words and $t \in \mathbb{N}$, the
+$t$-expansion of $A$ is the set of words at Hamming distance at most $t$ from some element of
+$A$, that is, the union over $a \in A$ of the closed Hamming balls of radius $t$ about $a$. -/
 def expansion (A : Finset (ι → F)) (t : ℕ) : Finset (ι → F) :=
   A.biUnion fun a => ball a t
 
@@ -70,8 +72,10 @@ theorem expansion_mono {A B : Finset (ι → F)} {t : ℕ} (h : A ⊆ B) :
   obtain ⟨a, ha, hdist⟩ := hx
   exact ⟨a, h ha, hdist⟩
 
-/-- A subset `B` of the Hamming space is a Hamming ball if `B = ball c e`
-for some center `c` and radius `e`. -/
+/-- **Hamming ball predicate.** Let $\iota$ and $F$ be finite, and view functions $\iota \to F$
+as words with the Hamming distance. A set $B$ of words is a Hamming ball if there are a word
+$c$ and a radius $e \in \mathbb{N}$ such that $B$ is the closed Hamming ball of radius $e$
+about $c$. -/
 def IsBall (B : Finset (ι → F)) : Prop :=
   ∃ c : ι → F, ∃ e : ℕ, B = ball c e
 
