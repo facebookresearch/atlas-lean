@@ -6,7 +6,9 @@ Authors: Thomas Waring
 
 /-
 Restored from cslib v4.35.0 (commit 5b56df99362532c46e1175381fbbdd755bd56030), file
-`Cslib/Logics/Propositional/Defs.lean`, keeping its names and namespaces.
+`Cslib/Logics/Propositional/Defs.lean`. Its names are kept, but in the namespace
+`Cslib.Logic.LegacyPL` instead of `Cslib.Logic.PL`: CSLib v4.36 declares its new `Proposition`
+as `Cslib.Logic.PL.Proposition`, and the two must build together.
 Upstream removed this development in cslib #1200, which added `falsum` to `Proposition` and
 dropped `Theory`, `MPL` and the `IPL` theory of axioms `⊥ → A`. Atlas keeps its v4.35 statements
 and so keeps this copy. Adapted to v4.36: cslib #1208 moved the module
@@ -53,7 +55,7 @@ universe u
 
 variable {Atom : Type u} [DecidableEq Atom]
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 /-- Propositions. -/
 inductive Proposition (Atom : Type u) : Type u where
@@ -155,4 +157,4 @@ class IsClassical (Atom : Type u) [Bot Atom] (S : Type*)
   /-- Double-negation elimination. -/
   dne (A : Proposition Atom) : S⇓(¬¬A → A)
 
-end Cslib.Logic.PL.Theory
+end Cslib.Logic.LegacyPL.Theory

@@ -42,10 +42,10 @@ every formula variable to be quantified.
 
 
 /-- Evaluation of a quantified Boolean formula over an assignment. -/
-def EvalQBF (pref : List (Bool × ℕ)) (φ : Cslib.Logic.PL.CNF)
+def EvalQBF (pref : List (Bool × ℕ)) (φ : Cslib.Logic.LegacyPL.CNF)
     (assign : ℕ → Bool) : Prop :=
   match pref with
-  | [] => Cslib.Logic.PL.CNF.Satisfies assign φ
+  | [] => Cslib.Logic.LegacyPL.CNF.Satisfies assign φ
   | (isEx, v) :: rest =>
     if isEx then
       EvalQBF rest φ (Function.update assign v true) ∨
@@ -59,7 +59,7 @@ open Classical in
 noncomputable def tqbfDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := List (Bool × ℕ) × Cslib.Logic.PL.CNF) x with
+      (α := List (Bool × ℕ) × Cslib.Logic.LegacyPL.CNF) x with
   | some i => decide (
       List.Perm (i.1.map Prod.snd) (List.range i.1.length) ∧
       (∀ clause ∈ i.2, ∀ l ∈ clause, l.1 < i.1.length) ∧

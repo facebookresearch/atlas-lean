@@ -47,7 +47,7 @@ the filter always passes (`ans_false`).
 namespace Cslib.Complexity.SatVerifier.Machine
 
 open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program MetaMathlibExt.TM2Embedding
-  Cslib.CookLevin Cslib.Logic.PL Computability
+  Cslib.CookLevin Cslib.Logic.LegacyPL Computability
 
 /-- The `x # w` alphabet of the input stack. -/
 abbrev G := Cslib.Complexity.DenseSAT.Verifier.G

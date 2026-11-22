@@ -43,7 +43,7 @@ reduction from every language in `NP`
 -/
 
 /-- A MAX-SAT instance: number of variables, CNF formula, bound. -/
-abbrev MaxSatInstance := ℕ × Cslib.Logic.PL.CNF × ℕ
+abbrev MaxSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF × ℕ
 
 /-- Well-formedness of an instance. -/
 def WellFormed (i : MaxSatInstance) : Prop :=
@@ -53,8 +53,8 @@ def WellFormed (i : MaxSatInstance) : Prop :=
 def MaxSatFeasible
     (i : MaxSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
-    ∃ sub : Cslib.Logic.PL.CNF, sub.Sublist i.2.1 ∧ i.2.2 ≤ sub.length ∧
-      ∀ clause ∈ sub, Cslib.Logic.PL.CNFClause.Satisfies
+    ∃ sub : Cslib.Logic.LegacyPL.CNF, sub.Sublist i.2.1 ∧ i.2.2 ≤ sub.length ∧
+      ∀ clause ∈ sub, Cslib.Logic.LegacyPL.CNFClause.Satisfies
         (fun x => assign.getD x false) clause
 
 open Classical in

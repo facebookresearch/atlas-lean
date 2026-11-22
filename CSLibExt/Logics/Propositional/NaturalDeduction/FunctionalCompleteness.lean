@@ -52,7 +52,7 @@ false; `⊤` is written `⊥ → ⊥`.
 
 universe u
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 open Proposition Theory InferenceSystem
 
@@ -170,4 +170,4 @@ theorem derivableIn_cpl_toImpBot_iff [DecidableEq Atom] (A : Proposition Atom) :
     derivableIn_cpl_iff]
   exact forall_congr' fun v ↦ imp_congr_right fun hv ↦ by rw [evalBool_toImpBot A hv]
 
-end Cslib.Logic.PL
+end Cslib.Logic.LegacyPL

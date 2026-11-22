@@ -45,7 +45,7 @@ reduction from every language in `NP`
 -/
 
 /-- A not-all-equal 3-SAT instance: number of variables, 3-CNF formula. -/
-abbrev NaeThreeSatInstance := ℕ × Cslib.Logic.PL.CNF
+abbrev NaeThreeSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF
 
 /-- Well-formedness of an instance. -/
 def WellFormed (i : NaeThreeSatInstance) : Prop :=
@@ -55,8 +55,8 @@ def WellFormed (i : NaeThreeSatInstance) : Prop :=
 def NaeThreeSatFeasible
     (i : NaeThreeSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
-    ∀ clause ∈ i.2, Cslib.Logic.PL.CNFClause.Satisfies (fun x => assign.getD x false) clause ∧
-      ∃ l ∈ clause, ¬ Cslib.Logic.PL.CNFLiteral.Satisfies (fun x => assign.getD x false) l
+    ∀ clause ∈ i.2, Cslib.Logic.LegacyPL.CNFClause.Satisfies (fun x => assign.getD x false) clause ∧
+      ∃ l ∈ clause, ¬ Cslib.Logic.LegacyPL.CNFLiteral.Satisfies (fun x => assign.getD x false) l
 
 open Classical in
 /-- NOT-ALL-EQUAL 3-SAT as a decision problem over bitstrings. -/

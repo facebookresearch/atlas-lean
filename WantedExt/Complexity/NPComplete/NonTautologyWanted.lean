@@ -29,7 +29,7 @@ public import CSLibExt.Logics.Propositional.NaturalDeduction.Semantics
 
 namespace MetaMathlibExt.Complexity.NPComplete.NonTautology
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 /-!
 # NON-TAUTOLOGY is NP-complete
@@ -38,7 +38,7 @@ INSTANCE: a Boolean expression `E` over a set `U` of variables, using the connec
 (not), `∨` (or), `∧` (and), and `→` (implies). QUESTION: is `E` not a tautology, i.e., is
 there a truth assignment for `U` that makes `E` false?
 
-The expression is CSLib's `Cslib.Logic.PL.Proposition` over the atoms `WithBot ℕ`: the atom
+The expression is CSLib's `Cslib.Logic.LegacyPL.Proposition` over the atoms `WithBot ℕ`: the atom
 `(x : ℕ)` is the variable `uₓ`, and negation is CSLib's `Proposition.neg A = A → ⊥`, where `⊥`
 is the atom `⊥`. Truth values are CSLibExt's `Proposition.evalBool`, under the valuation that
 sends `⊥` to `false` and `uₓ` to `σ x`; with `⊥` false, `¬A` evaluates to `!A`

@@ -64,7 +64,7 @@ equisatisfiable alternative.
 
 universe u
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 namespace CNF
 
@@ -204,4 +204,4 @@ theorem cnfSat_toCNF_bot_iff [Bot Atom] {ι : Atom → ℕ} (hι : Function.Inje
 
 end Proposition
 
-end Cslib.Logic.PL
+end Cslib.Logic.LegacyPL

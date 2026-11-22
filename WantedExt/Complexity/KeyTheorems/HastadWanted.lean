@@ -62,7 +62,8 @@ clauses (`0` on malformed inputs). Valid instances have exactly three
 nondegenerate literals per clause; other formulas get value `0`, so the
 `7 / 8` random-assignment bound holds on every instance with nonzero value. -/
 def hastadVal (x : List Bool) (a : List Bool) : ℚ :=
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := List Bool × Cslib.Logic.PL.CNF) x with
+  match MetaMathlibExt.BitstringEncoding.bitDecode
+      (α := List Bool × Cslib.Logic.LegacyPL.CNF) x with
   | some (u, φ) =>
     if (∀ clause ∈ φ, ∀ l ∈ clause, l.1 < u.length) ∧
         ∀ clause ∈ φ, hastadNondegenerate clause then

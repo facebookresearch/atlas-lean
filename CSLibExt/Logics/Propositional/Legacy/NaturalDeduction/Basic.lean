@@ -6,7 +6,9 @@ Authors: Thomas Waring
 
 /-
 Restored from cslib v4.35.0 (commit 5b56df99362532c46e1175381fbbdd755bd56030), file
-`Cslib/Logics/Propositional/NaturalDeduction/Basic.lean`, keeping its names and namespaces.
+`Cslib/Logics/Propositional/NaturalDeduction/Basic.lean`. Its names are kept, but in the namespace
+`Cslib.Logic.LegacyPL` instead of `Cslib.Logic.PL`: CSLib v4.36 declares its new `Proposition`
+as `Cslib.Logic.PL.Proposition`, and the two must build together.
 Upstream removed this development in cslib #1200, which added `falsum` to `Proposition` and
 dropped `Theory`, `MPL` and the `IPL` theory of axioms `⊥ → A`. Atlas keeps its v4.35 statements
 and so keeps this copy. Adapted to v4.36: the import of `Defs` points to the restored
@@ -74,7 +76,7 @@ references welcome!)
 
 universe u
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 open Proposition Theory InferenceSystem DerivableIn
 
@@ -391,4 +393,4 @@ theorem equiv_equivalence (T : Theory Atom) : Equivalence (T.Equiv (Atom := Atom
 protected def propositionSetoid (T : Theory Atom) : Setoid (Proposition Atom) :=
   ⟨T.Equiv, T.equiv_equivalence⟩
 
-end Cslib.Logic.PL.Theory
+end Cslib.Logic.LegacyPL.Theory

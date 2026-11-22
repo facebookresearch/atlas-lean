@@ -31,7 +31,7 @@ sub-program `lk` on `LL`, started at `l0` and returning to `DLab.ret`, and `run`
 
 namespace Cslib.Complexity.SatVerifier.Check
 
-open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program Cslib.CookLevin Cslib.Logic.PL
+open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program Cslib.CookLevin Cslib.Logic.LegacyPL
   Computability
 
 /-- Stacks: tokens, table, the lookup's side, scratch and value stacks, polarity, clause flag. -/

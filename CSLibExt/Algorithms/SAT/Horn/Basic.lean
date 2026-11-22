@@ -56,7 +56,7 @@ set_option autoImplicit false
 
 namespace Cslib.Algorithms.SAT.Horn
 
-open Cslib.Logic.PL Cslib.Algorithms.SAT.DPLL
+open Cslib.Logic.LegacyPL Cslib.Algorithms.SAT.DPLL
 
 /-- A Horn formula: every clause has at most one positive literal. -/
 def IsHorn (φ : CNF) : Prop :=

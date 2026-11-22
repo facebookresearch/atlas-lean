@@ -66,7 +66,8 @@ padding a solution with trailing bits does not change its value; this matches
 `feas_canonical`, under which every `a` with `a.length ≤ bound.eval |x|` (here
 `bound = X`) is feasible. -/
 def max3SATVal (x : List Bool) (a : List Bool) : ℚ :=
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := List Bool × Cslib.Logic.PL.CNF) x with
+  match MetaMathlibExt.BitstringEncoding.bitDecode
+      (α := List Bool × Cslib.Logic.LegacyPL.CNF) x with
   | some (u, φ) =>
     if a.length ≤ x.length ∧
         (∀ clause ∈ φ, ∀ l ∈ clause, l.1 < u.length) ∧

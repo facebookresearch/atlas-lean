@@ -44,10 +44,10 @@ open Classical in
 noncomputable def satDec' :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := List Bool × Cslib.Logic.PL.CNF) x with
+      (α := List Bool × Cslib.Logic.LegacyPL.CNF) x with
   | some i => decide (∀ clause ∈ i.2, ∀ l ∈ clause, l.1 < i.1.length) ∧
       decide (∃ a : Fin i.1.length → Bool,
-        Cslib.Logic.PL.CNF.Satisfies
+        Cslib.Logic.LegacyPL.CNF.Satisfies
           (fun v => if h : v < i.1.length then a ⟨v, h⟩ else false) i.2)
   | none => false
 
@@ -56,10 +56,10 @@ open Classical in
 noncomputable def uniqueSatDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := List Bool × Cslib.Logic.PL.CNF) x with
+      (α := List Bool × Cslib.Logic.LegacyPL.CNF) x with
   | some i => decide (∀ clause ∈ i.2, ∀ l ∈ clause, l.1 < i.1.length) ∧
       decide (∃! a : Fin i.1.length → Bool,
-        Cslib.Logic.PL.CNF.Satisfies
+        Cslib.Logic.LegacyPL.CNF.Satisfies
           (fun v => if h : v < i.1.length then a ⟨v, h⟩ else false) i.2)
   | none => false
 

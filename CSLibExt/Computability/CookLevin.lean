@@ -38,9 +38,9 @@ Information Transmission* 9.3 (1973), 265–266.
 namespace Cslib.CookLevin
 
 /- Compatibility aliases: the CNF representation now lives in
-`Cslib.Logic.PL` (`CSLibExt.Logics.Propositional.CNF.Basic`); these keep
+`Cslib.Logic.LegacyPL` (`CSLibExt.Logics.Propositional.CNF.Basic`); these keep
 the `Cslib.CookLevin` names resolving to the same constants. -/
-export Cslib.Logic.PL (CNFClause CNF CNFSat)
+export Cslib.Logic.LegacyPL (CNFClause CNF CNFSat)
 
 /-- Read a unary length prefix, returning the length and the unconsumed suffix. -/
 def readUnaryLength : List Bool → Option (Nat × List Bool)

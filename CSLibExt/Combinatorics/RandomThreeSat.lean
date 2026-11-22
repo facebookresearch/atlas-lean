@@ -232,14 +232,14 @@ theorem card_clause (n : ℕ) :
 
 The model's own `clauseSat`/`Satisfiable` are the finite counting model's
 native predicates. For interoperability with the library's SAT
-infrastructure, a clause converts to a canonical `Cslib.Logic.PL`
+infrastructure, a clause converts to a canonical `Cslib.Logic.LegacyPL`
 clause (literals as `(variable index, polarity)` pairs) and a formula to
-a canonical CNF formula; satisfiability agrees with `Cslib.Logic.PL.CNFSat`
+a canonical CNF formula; satisfiability agrees with `Cslib.Logic.LegacyPL.CNFSat`
 under the obvious extension of a finite assignment to all of `ℕ`. -/
 
 /-- The canonical literal list of a model clause: one `(index, polarity)`
 literal per chosen variable. -/
-noncomputable def toCNFClause {n : ℕ} (c : Clause n) : Cslib.Logic.PL.CNFClause :=
+noncomputable def toCNFClause {n : ℕ} (c : Clause n) : Cslib.Logic.LegacyPL.CNFClause :=
   c.1.1.toList.map (fun i => (i.val, c.1.2 i))
 
 /-- Extend a finite assignment to all natural variable indices, defaulting
@@ -249,7 +249,7 @@ def extendAssign {n : ℕ} (a : Fin n → Bool) : ℕ → Bool :=
 
 theorem clauseSat_iff {n : ℕ} (a : Fin n → Bool) (c : Clause n) :
     clauseSat a c ↔
-      Cslib.Logic.PL.CNFClause.Satisfies (extendAssign a) (toCNFClause c) := by
+      Cslib.Logic.LegacyPL.CNFClause.Satisfies (extendAssign a) (toCNFClause c) := by
   constructor
   · rintro ⟨i, hi, hsat⟩
     refine ⟨(i.val, c.1.2 i),
@@ -275,7 +275,7 @@ theorem clauseSat_iff {n : ℕ} (a : Fin n → Bool) (c : Clause n) :
 the model's variables, is canonical clause satisfaction. -/
 theorem clauseSat_restrict_iff {n : ℕ} (A : ℕ → Bool) (c : Clause n) :
     clauseSat (fun i => A i.val) c ↔
-      Cslib.Logic.PL.CNFClause.Satisfies A (toCNFClause c) := by
+      Cslib.Logic.LegacyPL.CNFClause.Satisfies A (toCNFClause c) := by
   constructor
   · rintro ⟨i, hi, hsat⟩
     exact ⟨(i.val, c.1.2 i),
@@ -291,14 +291,14 @@ theorem clauseSat_restrict_iff {n : ℕ} (A : ℕ → Bool) (c : Clause n) :
     exact hsat'
 
 /-- The canonical CNF formula of a model formula. -/
-noncomputable def toCNF {n m : ℕ} (F : Formula n m) : Cslib.Logic.PL.CNF :=
+noncomputable def toCNF {n m : ℕ} (F : Formula n m) : Cslib.Logic.LegacyPL.CNF :=
   (List.ofFn F).map toCNFClause
 
 /-- Model satisfiability is canonical CNF satisfiability of the converted
 formula. -/
 theorem satisfiable_iff {n m : ℕ} (F : Formula n m) :
-    Satisfiable F ↔ Cslib.Logic.PL.CNFSat (toCNF F) := by
-  rw [Cslib.Logic.PL.cnfSat_iff_exists_satisfies]
+    Satisfiable F ↔ Cslib.Logic.LegacyPL.CNFSat (toCNF F) := by
+  rw [Cslib.Logic.LegacyPL.cnfSat_iff_exists_satisfies]
   constructor
   · rintro ⟨a, ha⟩
     refine ⟨extendAssign a, ?_⟩

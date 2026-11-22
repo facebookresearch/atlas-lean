@@ -17,14 +17,14 @@ module
 A `CNFClause` is a list of literals `(variable index, polarity)`; a `CNF`
 formula is a list of clauses; `CNFSat` is satisfiability. Semantics and
 restriction live in the neighbouring `Semantics` and `Restriction` modules.
-The namespace is `Cslib.Logic.PL`; the pre-rename `Cslib.CookLevin` names
+The namespace is `Cslib.Logic.LegacyPL`; the pre-rename `Cslib.CookLevin` names
 survive as `export` aliases in the legacy AutomatedReasoning shims and in
 `Computability/CookLevin.lean`.
 -/
 
 @[expose] public section
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 /-- A CNF clause: a list of literals `(variable index, polarity)`. -/
 abbrev CNFClause := List (Nat × Bool)
@@ -36,4 +36,4 @@ abbrev CNF := List CNFClause
 def CNFSat (φ : CNF) : Prop :=
   ∃ v : Nat → Bool, ∀ C ∈ φ, ∃ (x : Nat) (b : Bool), (x, b) ∈ C ∧ v x = b
 
-end Cslib.Logic.PL
+end Cslib.Logic.LegacyPL

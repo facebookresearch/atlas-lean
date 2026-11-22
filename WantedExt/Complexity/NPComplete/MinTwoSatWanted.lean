@@ -44,7 +44,7 @@ reduction from every language in `NP`
 -/
 
 /-- A MIN-2SAT instance: number of variables, 2-CNF formula, bound. -/
-abbrev MinTwoSatInstance := ℕ × Cslib.Logic.PL.CNF × ℕ
+abbrev MinTwoSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF × ℕ
 
 /-- Well-formedness of an instance. -/
 def WellFormed (i : MinTwoSatInstance) : Prop :=
@@ -56,7 +56,7 @@ def MinTwoSatFeasible
   ∃ assign : List Bool, assign.length = i.1 ∧
     ∃ S : Finset ℕ, S ⊆ Finset.range i.2.1.length ∧ S.card ≤ i.2.2 ∧
       ∀ j < i.2.1.length,
-        Cslib.Logic.PL.CNFClause.Satisfies (fun x => assign.getD x false)
+        Cslib.Logic.LegacyPL.CNFClause.Satisfies (fun x => assign.getD x false)
           (i.2.1.getD j []) ↔ j ∈ S
 
 open Classical in

@@ -18,7 +18,7 @@ public import Mathlib.ModelTheory.Semantics
 # Embedding propositional logic into first-order logic
 
 Propositional atoms become nullary relation symbols. The embedding
-`Proposition.embed` sends a `Cslib.Logic.PL.Proposition` to a sentence over
+`Proposition.embed` sends a `Cslib.Logic.LegacyPL.Proposition` to a sentence over
 `propLanguage Atom`, and `realize_embed_iff_evalBool` says the sentence is true
 in the `Bool` structure for a valuation `v` exactly when the proposition's
 truth-table value under `v` is `true`. This is the propositional-to-first-order
@@ -42,7 +42,7 @@ universe u
 namespace Cslib.Logic.FOL
 
 open FirstOrder FirstOrder.Language
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 /-- Nullary relation symbols are the propositional atoms; there are no function symbols
 and no relation symbols of positive arity. -/

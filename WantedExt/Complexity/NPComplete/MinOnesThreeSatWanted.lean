@@ -43,7 +43,7 @@ reduction from every language in `NP`
 -/
 
 /-- A MIN-ONES 3-SAT instance: number of variables, 3-CNF formula, bound. -/
-abbrev MinOnesThreeSatInstance := ℕ × Cslib.Logic.PL.CNF × ℕ
+abbrev MinOnesThreeSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF × ℕ
 
 /-- Well-formedness of an instance. -/
 def WellFormed (i : MinOnesThreeSatInstance) : Prop :=
@@ -53,7 +53,7 @@ def WellFormed (i : MinOnesThreeSatInstance) : Prop :=
 def MinOnesThreeSatFeasible
     (i : MinOnesThreeSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
-    (Cslib.Logic.PL.CNF.Satisfies (fun x => assign.getD x false) i.2.1) ∧
+    (Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) i.2.1) ∧
     (assign.filter (fun b => b)).length ≤ i.2.2
 
 open Classical in

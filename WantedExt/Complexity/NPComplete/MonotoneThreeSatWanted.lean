@@ -43,7 +43,7 @@ reduction from every language in `NP`
 -/
 
 /-- A monotone 3-SAT instance: number of variables, monotone 3-CNF formula. -/
-abbrev MonotoneThreeSatInstance := ℕ × Cslib.Logic.PL.CNF
+abbrev MonotoneThreeSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF
 
 /-- Well-formedness of an instance. -/
 def WellFormed (i : MonotoneThreeSatInstance) : Prop :=
@@ -54,7 +54,7 @@ def WellFormed (i : MonotoneThreeSatInstance) : Prop :=
 def MonotoneThreeSatFeasible
     (i : MonotoneThreeSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
-    Cslib.Logic.PL.CNF.Satisfies (fun x => assign.getD x false) i.2
+    Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) i.2
 
 open Classical in
 /-- MONOTONE 3-SAT as a decision problem over bitstrings. -/

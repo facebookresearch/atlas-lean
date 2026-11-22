@@ -30,7 +30,7 @@ when its block closes.
 
 namespace Cslib.Complexity.SatVerifier.Tokenizer
 
-open Turing MetaMathlibExt TM2Program Function Cslib.CookLevin Cslib.Logic.PL Computability
+open Turing MetaMathlibExt TM2Program Function Cslib.CookLevin Cslib.Logic.LegacyPL Computability
 open MetaMathlibExt.BitstringEncoding
 
 /-- Stacks: formula bits `X`, witness bits `W`, token output `T`, table output `B`, and the clause

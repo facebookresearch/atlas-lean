@@ -6,7 +6,9 @@ Authors: Thomas Waring
 
 /-
 Restored from cslib v4.35.0 (commit 5b56df99362532c46e1175381fbbdd755bd56030), file
-`Cslib/Logics/Propositional/NaturalDeduction/Theory.lean`, keeping its names and namespaces.
+`Cslib/Logics/Propositional/NaturalDeduction/Theory.lean`. Its names are kept, but in the namespace
+`Cslib.Logic.LegacyPL` instead of `Cslib.Logic.PL`: CSLib v4.36 declares its new `Proposition`
+as `Cslib.Logic.PL.Proposition`, and the two must build together.
 Upstream removed this development in cslib #1200, which added `falsum` to `Proposition` and
 dropped `Theory`, `MPL` and the `IPL` theory of axioms `⊥ → A`. Atlas keeps its v4.35 statements
 and so keeps this copy. Adapted to v4.36: only the import, which now points to the restored `Basic`.
@@ -27,7 +29,7 @@ proof patterns.
 
 universe u
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 open Proposition Theory InferenceSystem DerivableIn Derivation IsIntuitionistic IsClassical
 
@@ -107,4 +109,4 @@ instance instIsClassicalPierce : IsClassical Atom (Pierce Atom ∪ IPL Atom : Th
     apply implE (A := ⊥) (ax <| Set.mem_union_right _ (efq_mem_ipl A))
     apply implE (A := ¬ A) <;> exact ass (by grind)
 
-end Cslib.Logic.PL.Theory
+end Cslib.Logic.LegacyPL.Theory

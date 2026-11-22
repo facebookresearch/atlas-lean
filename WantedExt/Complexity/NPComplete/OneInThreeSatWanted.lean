@@ -44,7 +44,7 @@ reduction from every language in `NP`
 -/
 
 /-- A 1-in-3-SAT instance: number of variables, 3-CNF formula. -/
-abbrev OneInThreeSatInstance := ℕ × Cslib.Logic.PL.CNF
+abbrev OneInThreeSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF
 
 /-- Well-formedness of an instance. -/
 def WellFormed (i : OneInThreeSatInstance) : Prop :=
@@ -55,10 +55,10 @@ def OneInThreeSatFeasible
     (i : OneInThreeSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
     ∀ clause ∈ i.2, ∃ k < clause.length,
-      Cslib.Logic.PL.CNFLiteral.Satisfies (fun x => assign.getD x false)
+      Cslib.Logic.LegacyPL.CNFLiteral.Satisfies (fun x => assign.getD x false)
         (clause.getD k (0, false)) ∧
         ∀ j < clause.length,
-          Cslib.Logic.PL.CNFLiteral.Satisfies (fun x => assign.getD x false)
+          Cslib.Logic.LegacyPL.CNFLiteral.Satisfies (fun x => assign.getD x false)
             (clause.getD j (0, false)) → j = k
 
 open Classical in

@@ -61,7 +61,7 @@ NP-completeness claim.
 
 namespace Cslib.CookLevin
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 open Cslib.Algorithms.Lean (TimeM)
 open Polynomial

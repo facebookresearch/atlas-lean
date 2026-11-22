@@ -26,10 +26,10 @@ logic (CLL) by marking every hypothesis as reusable with `!`:
 
 and atoms go to CLL propositions through a map `f`. This file proves that the translation
 **preserves provability** (the forward direction). If `Γ ⊢ A` is derivable in CSLib's natural
-deduction (minimal logic, `Cslib.Logic.PL`) from a theory whose axioms translate to CLL-provable
-propositions, then the CLL sequent `⊢ ?Γ°⫠, A°` is provable (`derivable_of_derivation`). Here
-`?Γ°⫠` is the multiset of the propositions `ʔ(B°⫠)` for `B ∈ Γ`, the one-sided form of
-`!Γ° ⊢ A°`.
+deduction (minimal logic, `Cslib.Logic.LegacyPL`) from a theory whose axioms translate to
+CLL-provable propositions, then the CLL sequent `⊢ ?Γ°⫠, A°` is provable
+(`derivable_of_derivation`). Here `?Γ°⫠` is the multiset of the propositions `ʔ(B°⫠)` for `B ∈ Γ`,
+the one-sided form of `!Γ° ⊢ A°`.
 
 * `mpl`: theorems of minimal logic (theory `MPL`) translate to CLL theorems, for any `f`.
 * `ipl`: theorems of intuitionistic logic (theory `IPL`, with `⊥` an atom and ex falso as axioms)
@@ -58,32 +58,33 @@ end Cslib.Logic.CLL
 
 namespace Cslib.Logic.CLL.Girard
 
-open Cslib.Logic CLL PL PL.Theory InferenceSystem
+open Cslib.Logic CLL LegacyPL LegacyPL.Theory InferenceSystem
 
 universe u v
 
 variable {Atom : Type u} {Atom' : Type v}
 
 /-- **Girard's translation** of a propositional formula into CLL, with atoms translated by `f`. -/
-def translate (f : Atom → CLL.Proposition Atom') : PL.Proposition Atom → CLL.Proposition Atom'
+def translate (f : Atom → CLL.Proposition Atom') : LegacyPL.Proposition Atom → CLL.Proposition Atom'
   | .atom a => f a
   | .and A B => .with (translate f A) (translate f B)
   | .or A B => .oplus (.bang (translate f A)) (.bang (translate f B))
   | .imp A B => .parr (.quest (translate f A)⫠) (translate f B)
 
 /-- The translation of an implication is a linear implication out of `!`. -/
-theorem translate_imp (f : Atom → CLL.Proposition Atom') (A B : PL.Proposition Atom) :
+theorem translate_imp (f : Atom → CLL.Proposition Atom') (A B : LegacyPL.Proposition Atom) :
     translate f (.imp A B) = (.bang (translate f A) ⊸ translate f B) := rfl
 
 /-- The CLL form `ʔ(A°⫠)` of a reusable hypothesis `A`. -/
-def hyp (f : Atom → CLL.Proposition Atom') (A : PL.Proposition Atom) : CLL.Proposition Atom' :=
+def hyp (f : Atom → CLL.Proposition Atom') (A : LegacyPL.Proposition Atom) :
+    CLL.Proposition Atom' :=
   .quest (translate f A)⫠
 
-theorem hyp_def (f : Atom → CLL.Proposition Atom') (A : PL.Proposition Atom) :
+theorem hyp_def (f : Atom → CLL.Proposition Atom') (A : LegacyPL.Proposition Atom) :
     hyp f A = .quest (translate f A)⫠ := rfl
 
 /-- The hypotheses of a context, as a CLL sequent of `?`-propositions. -/
-def hyps (f : Atom → CLL.Proposition Atom') (Γ : Multiset (PL.Proposition Atom)) :
+def hyps (f : Atom → CLL.Proposition Atom') (Γ : Multiset (LegacyPL.Proposition Atom)) :
     CLL.Sequent Atom' :=
   Γ.map (hyp f)
 
@@ -99,7 +100,7 @@ section Structural
 variable (f : Atom → CLL.Proposition Atom')
 
 
-theorem allQuest_hyps (Γ : Multiset (PL.Proposition Atom)) : (hyps f Γ).allQuest := by
+theorem allQuest_hyps (Γ : Multiset (LegacyPL.Proposition Atom)) : (hyps f Γ).allQuest := by
   induction Γ using Multiset.induction_on with
   | empty => simp [hyps, Sequent.allQuest]
   | cons A Γ ih =>
@@ -108,7 +109,7 @@ theorem allQuest_hyps (Γ : Multiset (PL.Proposition Atom)) : (hyps f Γ).allQue
 
 /-- Weakening by a whole `?`-context. -/
 theorem weaken_hyps {Δ : CLL.Sequent Atom'} (p : Derivable Δ)
-    (Γ : Multiset (PL.Proposition Atom)) : Derivable (hyps f Γ + Δ) := by
+    (Γ : Multiset (LegacyPL.Proposition Atom)) : Derivable (hyps f Γ + Δ) := by
   induction Γ using Multiset.induction_on with
   | empty => simpa [hyps] using p
   | cons A Γ ih =>
@@ -117,7 +118,7 @@ theorem weaken_hyps {Δ : CLL.Sequent Atom'} (p : Derivable Δ)
     exact ⟨.weaken q⟩
 
 /-- Contraction of a duplicated `?`-context. -/
-theorem contract_hyps {Δ : CLL.Sequent Atom'} (Γ : Multiset (PL.Proposition Atom))
+theorem contract_hyps {Δ : CLL.Sequent Atom'} (Γ : Multiset (LegacyPL.Proposition Atom))
     (p : Derivable (hyps f Γ + hyps f Γ + Δ)) : Derivable (hyps f Γ + Δ) := by
   induction Γ using Multiset.induction_on generalizing Δ with
   | empty => simpa [hyps] using p
@@ -128,20 +129,20 @@ theorem contract_hyps {Δ : CLL.Sequent Atom'} (Γ : Multiset (PL.Proposition At
     exact ⟨r.rwConclusion (by msimp)⟩
 
 /-- From `⊢ ?Γ, A` derive `⊢ ?Γ, !A` (promotion). -/
-theorem bang_hyps {Γ : Multiset (PL.Proposition Atom)} {a : CLL.Proposition Atom'}
+theorem bang_hyps {Γ : Multiset (LegacyPL.Proposition Atom)} {a : CLL.Proposition Atom'}
     (p : Derivable (a ::ₘ hyps f Γ)) : Derivable (.bang a ::ₘ hyps f Γ) :=
   let ⟨q⟩ := p
   ⟨.bang (allQuest_hyps f Γ) q⟩
 
 /-- Cut against a closed proof. -/
-theorem cut_closed {Γ : Multiset (PL.Proposition Atom)} {a c : CLL.Proposition Atom'}
+theorem cut_closed {Γ : Multiset (LegacyPL.Proposition Atom)} {a c : CLL.Proposition Atom'}
     (p : Derivable (a ::ₘ hyps f Γ)) (q : ⇓(a⫠ ::ₘ ({c} : CLL.Sequent Atom'))) :
     Derivable (c ::ₘ hyps f Γ) :=
   let ⟨p⟩ := p
   ⟨(Proof.cut p q).rwConclusion (by msimp)⟩
 
 /-- Cut against a proof in the same `?`-context, followed by contraction. -/
-theorem cut_hyps {Γ : Multiset (PL.Proposition Atom)} {a c : CLL.Proposition Atom'}
+theorem cut_hyps {Γ : Multiset (LegacyPL.Proposition Atom)} {a c : CLL.Proposition Atom'}
     (p : Derivable (a ::ₘ hyps f Γ)) (q : Derivable (a⫠ ::ₘ c ::ₘ hyps f Γ)) :
     Derivable (c ::ₘ hyps f Γ) := by
   obtain ⟨p⟩ := p
@@ -157,7 +158,8 @@ variable [DecidableEq Atom] (f : Atom → CLL.Proposition Atom')
 
 omit [DecidableEq Atom] in
 /-- A hypothesis in the context: `⊢ ?Γ°⫠, A°` for `A ∈ Γ`. -/
-theorem hyp_mem {Γ : Multiset (PL.Proposition Atom)} {A : PL.Proposition Atom} (h : A ∈ Γ) :
+theorem hyp_mem {Γ : Multiset (LegacyPL.Proposition Atom)} {A : LegacyPL.Proposition Atom}
+    (h : A ∈ Γ) :
     Derivable (translate f A ::ₘ hyps f Γ) := by
   obtain ⟨Γ', rfl⟩ := Multiset.exists_cons_of_mem h
   have hax : ⇓(hyp f A ::ₘ ({translate f A} : CLL.Sequent Atom')) := Proof.quest Proof.ax'
@@ -166,7 +168,7 @@ theorem hyp_mem {Γ : Multiset (PL.Proposition Atom)} {A : PL.Proposition Atom} 
 
 /-- A context extended by `A`, in the translation: the hypotheses of `insert A Γ` are those of `Γ`
 plus `ʔ(A°⫠)`, up to weakening when `A` was already in `Γ`. -/
-theorem of_insert {Γ : Ctx Atom} {A : PL.Proposition Atom} {c : CLL.Proposition Atom'}
+theorem of_insert {Γ : Ctx Atom} {A : LegacyPL.Proposition Atom} {c : CLL.Proposition Atom'}
     (p : Derivable ((c ::ₘ hyps f (insert A Γ).val))) :
     Derivable (hyp f A ::ₘ c ::ₘ hyps f Γ.val) := by
   obtain ⟨p⟩ := p
@@ -180,7 +182,7 @@ theorem of_insert {Γ : Ctx Atom} {A : PL.Proposition Atom} {c : CLL.Proposition
 from a theory whose axioms translate to CLL theorems, then `⊢ ?Γ°⫠, A°` is provable in CLL. -/
 theorem derivable_of_derivation {T : Theory Atom}
     (hT : ∀ B ∈ T, Derivable ({translate f B} : CLL.Sequent Atom')) {Γ : Ctx Atom}
-    {A : PL.Proposition Atom} (d : T.Derivation Γ A) :
+    {A : LegacyPL.Proposition Atom} (d : T.Derivation Γ A) :
     Derivable (translate f A ::ₘ hyps f Γ.val) := by
   induction d with
   | @ax Γ A h =>
@@ -218,7 +220,7 @@ theorem derivable_of_derivation {T : Theory Atom}
     msimp
 
 /-- Theorems of minimal logic translate to CLL theorems. -/
-theorem mpl {A : PL.Proposition Atom} (d : (MPL Atom).Derivation ∅ A) :
+theorem mpl {A : LegacyPL.Proposition Atom} (d : (MPL Atom).Derivation ∅ A) :
     Derivable ({translate f A} : CLL.Sequent Atom') := by
   obtain ⟨p⟩ := derivable_of_derivation f (fun _ h ↦ absurd h (Set.notMem_empty _)) d
   exact ⟨p.rwConclusion (by simp [hyps])⟩
@@ -231,7 +233,7 @@ theorem botToZero_bot [Bot Atom] : botToZero (⊥ : Atom) = .zero := by simp [bo
 
 omit [DecidableEq Atom] in
 /-- Ex falso `⊥ → B` translates to `ʔ⊤ ⅋ B°` when `⊥ ↦ 0`, which is provable by the `⊤` rule. -/
-theorem efq [Bot Atom] (hf : f ⊥ = .zero) (B : PL.Proposition Atom) :
+theorem efq [Bot Atom] (hf : f ⊥ = .zero) (B : LegacyPL.Proposition Atom) :
     Derivable ({translate f (.imp ⊥ B)} : CLL.Sequent Atom') := by
   have p : ⇓(Proposition.quest Proposition.top ::ₘ ({translate f B} : CLL.Sequent Atom')) :=
     Proof.quest Proof.top
@@ -241,7 +243,7 @@ theorem efq [Bot Atom] (hf : f ⊥ = .zero) (B : PL.Proposition Atom) :
   rfl
 
 /-- **Theorems of intuitionistic logic translate to CLL theorems**, with `⊥` read as `0`. -/
-theorem ipl [Bot Atom] (hf : f ⊥ = .zero) {A : PL.Proposition Atom}
+theorem ipl [Bot Atom] (hf : f ⊥ = .zero) {A : LegacyPL.Proposition Atom}
     (d : (IPL Atom).Derivation ∅ A) : Derivable ({translate f A} : CLL.Sequent Atom') := by
   obtain ⟨p⟩ := derivable_of_derivation f (fun C hC ↦ by
     obtain ⟨B, rfl⟩ := hC

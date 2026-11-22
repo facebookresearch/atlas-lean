@@ -45,7 +45,7 @@ reduction from every language in `NP`
 -/
 
 /-- A bounded-occurrence 3-SAT instance: number of variables, 3-CNF formula. -/
-abbrev BoundedOccurrenceThreeSatInstance := ℕ × Cslib.Logic.PL.CNF
+abbrev BoundedOccurrenceThreeSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF
 
 /-- Well-formedness of an instance. -/
 def WellFormed (i : BoundedOccurrenceThreeSatInstance) : Prop :=
@@ -56,7 +56,7 @@ def WellFormed (i : BoundedOccurrenceThreeSatInstance) : Prop :=
 def BoundedOccurrenceThreeSatFeasible
     (i : BoundedOccurrenceThreeSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
-    Cslib.Logic.PL.CNF.Satisfies (fun x => assign.getD x false) i.2
+    Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) i.2
 
 open Classical in
 /-- 3-SAT WITH BOUNDED OCCURRENCES as a decision problem over bitstrings. -/

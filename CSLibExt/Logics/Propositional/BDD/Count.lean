@@ -47,7 +47,7 @@ those on which `f` is true.
 
 set_option autoImplicit false
 
-namespace Cslib.Logic.PL.BDD
+namespace Cslib.Logic.LegacyPL.BDD
 
 /-- Every variable tested in the diagram is below `m`. -/
 def VarsLT (m : Nat) : BDD → Prop
@@ -142,4 +142,4 @@ theorem satCount_eq_countModels {m : Nat} {t : BDD} (ht : OrderedFrom 0 t) (hm :
   rw [satCount, satCountFrom_eq_countModels m _ 0 rfl ht hm σ, List.range_eq_range']
   simp
 
-end Cslib.Logic.PL.BDD
+end Cslib.Logic.LegacyPL.BDD

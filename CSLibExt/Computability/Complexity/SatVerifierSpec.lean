@@ -35,7 +35,7 @@ both stacks; (3) clause check: walk the token stack, looking literals up, giving
 
 namespace Cslib.Complexity.SatVerifier
 
-open Cslib.CookLevin Cslib.Logic.PL Computability
+open Cslib.CookLevin Cslib.Logic.LegacyPL Computability
 
 /-- Symbols of the token and table stacks. -/
 inductive Sym

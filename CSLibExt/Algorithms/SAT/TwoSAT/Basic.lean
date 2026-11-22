@@ -69,7 +69,7 @@ set_option autoImplicit false
 
 namespace Cslib.Algorithms.SAT.TwoSAT
 
-open Cslib.Logic.PL Cslib.Algorithms.Lean Cslib.Algorithms.Lean.StronglyConnectedComponents
+open Cslib.Logic.LegacyPL Cslib.Algorithms.Lean Cslib.Algorithms.Lean.StronglyConnectedComponents
 
 /-- A CNF formula in which every clause has at most two literals. -/
 def IsTwoCNF (φ : CNF) : Prop := ∀ C ∈ φ, C.length ≤ 2

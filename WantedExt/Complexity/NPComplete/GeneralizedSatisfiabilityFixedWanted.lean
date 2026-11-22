@@ -33,7 +33,7 @@ public import WantedExt.Complexity.NPComplete.GeneralizedSatisfiabilityWanted
 
 namespace MetaMathlibExt.Complexity.NPComplete.GeneralizedSatisfiabilityFixed
 
-open Cslib.Logic.PL Matrix
+open Cslib.Logic.LegacyPL Matrix
 
 /-!
 # GENERALIZED SATISFIABILITY, FIXED NON-SCHAEFER RELATIONS is NP-complete
@@ -58,7 +58,7 @@ which none of (1)-(6) holds, the problem is NP-complete.
 
 A relation is given as in GENERALIZED SATISFIABILITY, by its arity `k` and the list of its
 tuples (`true` for `T`). Its coordinates are the variables `0, ..., k - 1`: a CNF expression
-(CSLib's `Cslib.Logic.PL.CNF`, literals `(variable, polarity)`, polarity `false` for a negated
+(CSLib's `Cslib.Logic.LegacyPL.CNF`, literals `(variable, polarity)`, polarity `false` for a negated
 literal) or a linear system is equivalent to the relation when it uses only these variables
 and its models are exactly the tuples of the relation. The instance carries the number `n` of
 variables and the collections `C₁, ..., Cₘ`; it is turned into a GENERALIZED SATISFIABILITY

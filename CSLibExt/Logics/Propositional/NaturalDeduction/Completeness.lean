@@ -59,7 +59,7 @@ same construction gives compactness.
 
 universe u
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 open Proposition Theory InferenceSystem Derivation
 
@@ -266,4 +266,4 @@ theorem boolSatisfiable_iff_forall_finset {S : Set (Proposition Atom)} :
     simp [hv] at this
   exact hcons.boolSatisfiable.mono Set.subset_union_right
 
-end Cslib.Logic.PL
+end Cslib.Logic.LegacyPL

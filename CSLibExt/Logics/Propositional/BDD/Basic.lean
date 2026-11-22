@@ -64,7 +64,7 @@ below has no memo table and no cost bound is claimed.
 
 set_option autoImplicit false
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 /-- Binary decision diagrams in tree form: Boolean leaves and nodes testing a variable,
 with the `lo` child for `false` and the `hi` child for `true`. -/
@@ -333,4 +333,4 @@ theorem ofProposition_ne_leaf_false_iff {A : Proposition Nat} :
 
 end BDD
 
-end Cslib.Logic.PL
+end Cslib.Logic.LegacyPL

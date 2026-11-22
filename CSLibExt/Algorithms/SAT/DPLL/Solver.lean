@@ -26,7 +26,7 @@ The fuel used by `dpll` is the number of distinct variables in the input.
 
 namespace Cslib.Algorithms.SAT.DPLL
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 /-- The first unit literal in source order. -/
 def firstUnit : CNF → Option (Nat × Bool)

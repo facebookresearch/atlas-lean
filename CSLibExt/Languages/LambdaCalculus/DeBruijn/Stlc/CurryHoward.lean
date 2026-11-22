@@ -34,7 +34,7 @@ formalized here.
 
 namespace Cslib.Languages.LambdaCalculus.Stlc
 
-open Cslib.Logic Cslib.Logic.PL InferenceSystem
+open Cslib.Logic Cslib.Logic.LegacyPL InferenceSystem
 
 universe u
 

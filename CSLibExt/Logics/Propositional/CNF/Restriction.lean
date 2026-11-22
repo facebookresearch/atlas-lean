@@ -26,7 +26,7 @@ the selected literal.
 
 @[expose] public section
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 namespace CNFClause
 
@@ -277,4 +277,4 @@ theorem sat_iff_restrict_of_unit {formula : CNF} {literal : Nat × Bool}
 
 end CNF
 
-end Cslib.Logic.PL
+end Cslib.Logic.LegacyPL
