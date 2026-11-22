@@ -83,19 +83,20 @@ private def isGeneratedCtorIdxImpl (info : Lean.InductiveVal) (ctorIdxType : Lea
       | none => false
   | _ => false
 
-/-- Since Lean v4.36, an inductive type `T` that is not a family of propositions and eliminates
-into `Type` gets a compiler-generated `T.ctorIdx` (`Lean.mkCtorIdx`, in Lean's
-`src/Lean/Meta/Constructions/CtorIdx.lean`). Unless `T` has exactly one constructor (or is a
-runtime builtin type), `T.ctorIdx` is `implemented_by` an unsafe `T.ctorIdx._impl` that reads the
-runtime tag of its argument with `getObjTagNat`. Both are compiler output, not library code, so the
-safety checks skip this pair, but only in exactly that generated form and in the module that
-declares `T`: a hand-written `T.ctorIdx._impl`, or a `T.ctorIdx` implemented by anything else, is
-still reported. -/
+/-- `(T, T.ctorIdx, T.ctorIdx._impl)` for either declaration of that pair. -/
 private def ctorIdxPair? : Lean.Name → Option (Lean.Name × Lean.Name × Lean.Name)
   | .str (.str t "ctorIdx") "_impl" => some (t, .str t "ctorIdx", .str (.str t "ctorIdx") "_impl")
   | .str t "ctorIdx" => some (t, .str t "ctorIdx", .str (.str t "ctorIdx") "_impl")
   | _ => none
 
+/-- Since Lean v4.36, an inductive type `T` that is not a family of propositions and eliminates
+into `Type` gets a compiler-generated `T.ctorIdx` (`Lean.mkCtorIdx`, in Lean's
+`src/Lean/Meta/Constructions/CtorIdx.lean`). Unless `T` has exactly one constructor (or is a
+runtime builtin type), `T.ctorIdx` is `implemented_by` an unsafe `T.ctorIdx._impl` that reads the
+runtime tag of its argument with `getObjTagNat`. Both are compiler output, not library code, so the
+safety checks skip this pair, but only in exactly that generated form, in the module that declares
+`T` and without declaration ranges (`isGeneratedCtorIdxDecl`): a hand-written `T.ctorIdx._impl`, or
+a `T.ctorIdx` implemented by anything else, is still reported. -/
 private def isGeneratedCtorIdx (env : Lean.Environment) (name : Lean.Name) : Bool :=
   match ctorIdxPair? name with
   | none => false
@@ -111,14 +112,17 @@ private def isGeneratedCtorIdx (env : Lean.Environment) (name : Lean.Name) : Boo
         env.getModuleIdxFor? impl == env.getModuleIdxFor? t
     | _, _, _ => false
 
-/-- Whether `name` is one of the pair Lean generated: it has the form `isGeneratedCtorIdx` checks, and
-neither declaration has declaration ranges. Lean records ranges for every declaration a source file
-writes, the elaborator's own auxiliary ones included, but none for what `mkCtorIdx` adds, so a
-hand-written pair of exactly the generated form is still reported. -/
+/-- Whether `name` is one of the pair Lean generated: it has the form `isGeneratedCtorIdx` checks,
+and neither declaration has declaration ranges. Lean records ranges for every declaration a source
+file writes, the elaborator's own auxiliary ones included, but none for what `mkCtorIdx` adds, so a
+hand-written pair of exactly the generated form is still reported. Having no ranges does not prove
+that Lean made a declaration: a metaprogram that adds declarations directly adds none either. Such
+a pair passes only in the generated form, which reads the constructor index from the runtime tag. -/
 private def isGeneratedCtorIdxDecl (name : Lean.Name) : CommandElabM Bool := do
   let some (_, ctorIdx, impl) := ctorIdxPair? name | return false
   unless isGeneratedCtorIdx (← Lean.getEnv) name do return false
-  return (← Lean.findDeclarationRanges? ctorIdx).isNone && (← Lean.findDeclarationRanges? impl).isNone
+  return (← Lean.findDeclarationRanges? ctorIdx).isNone &&
+    (← Lean.findDeclarationRanges? impl).isNone
 
 private def containsWantedWrapper (type : Lean.Expr) : Bool :=
   (type.find? fun

@@ -66,6 +66,37 @@ class CompiledAuditTests(unittest.TestCase):
                 'unsafe def AuditFour.ctorIdx._impl : AuditFour → Nat := fun x => getObjTagNat x\n'
                 '@[implemented_by AuditFour.ctorIdx._impl] def AuditFour.ctorIdx : AuditFour → Nat :=\n'
                 '  fun x => AuditFour.casesOn (motive := fun _ => Nat) x (nat_lit 0) (nat_lit 1)\n'),
+            # Pairs a metaprogram adds, so without declaration ranges, that differ from the generated pair in
+            # one part only: each shape check must reject its part on its own.
+            'RangeFreeForgedImpl': (
+                'import Lean\n'
+                'set_option genCtorIdx false in\ninductive AuditFive where\n  | first\n  | second\n'
+                'open Lean Meta in\nrun_meta do\n'
+                '  let T := `AuditFive\n'
+                '  let ty ← mkArrow (mkConst T) (mkConst ``Nat)\n'
+                '  let impl := Expr.lam `x (mkConst T) (mkRawNatLit 7) .default\n'
+                '  addDecl (.defnDecl { name := `AuditFive.ctorIdx._impl, levelParams := [], type := ty, '
+                'value := impl, hints := ReducibilityHints.opaque, safety := DefinitionSafety.unsafe })\n'
+                '  let motive := Expr.lam `x (mkConst T) (mkConst ``Nat) .default\n'
+                '  let value := Expr.lam `x (mkConst T) (mkAppN (mkConst `AuditFive.casesOn [Level.one]) '
+                '#[motive, .bvar 0, mkRawNatLit 0, mkRawNatLit 1]) .default\n'
+                '  addDecl (.defnDecl { name := `AuditFive.ctorIdx, levelParams := [], type := ty, '
+                'value := value, hints := ReducibilityHints.abbrev, safety := DefinitionSafety.safe })\n'
+                '  setImplementedBy `AuditFive.ctorIdx `AuditFive.ctorIdx._impl\n'),
+            'RangeFreeForgedValue': (
+                'import Lean\n'
+                'set_option genCtorIdx false in\ninductive AuditSix where\n  | first\n  | second\n'
+                'open Lean Meta in\nrun_meta do\n'
+                '  let T := `AuditSix\n'
+                '  let ty ← mkArrow (mkConst T) (mkConst ``Nat)\n'
+                '  let impl := Expr.lam `x (mkConst T) (mkAppN (mkConst ``getObjTagNat [Level.one]) '
+                '#[mkConst T, .bvar 0]) .default\n'
+                '  addDecl (.defnDecl { name := `AuditSix.ctorIdx._impl, levelParams := [], type := ty, '
+                'value := impl, hints := ReducibilityHints.opaque, safety := DefinitionSafety.unsafe })\n'
+                '  let value := Expr.lam `x (mkConst T) (mkRawNatLit 5) .default\n'
+                '  addDecl (.defnDecl { name := `AuditSix.ctorIdx, levelParams := [], type := ty, '
+                'value := value, hints := ReducibilityHints.abbrev, safety := DefinitionSafety.safe })\n'
+                '  setImplementedBy `AuditSix.ctorIdx `AuditSix.ctorIdx._impl\n'),
         }
         for name, text in sources.items():
             path = cls.fixture / f'MathlibExtTest/AuditFixture/{name}.lean'
@@ -151,6 +182,18 @@ class CompiledAuditTests(unittest.TestCase):
             audit.audit(self.fixture, ['MathlibExtTest.AuditFixture.ExactHandWrittenCtorIdx'], self.checker)
         self.assertIn('AuditFour.ctorIdx._impl is an unsafe declaration', str(failure.exception))
         self.assertIn('AuditFour.ctorIdx uses implemented_by', str(failure.exception))
+
+    def test_range_free_forged_impl_fails(self):
+        with self.assertRaises(audit.AuditFailure) as failure:
+            audit.audit(self.fixture, ['MathlibExtTest.AuditFixture.RangeFreeForgedImpl'], self.checker)
+        self.assertIn('AuditFive.ctorIdx._impl is an unsafe declaration', str(failure.exception))
+        self.assertIn('AuditFive.ctorIdx uses implemented_by', str(failure.exception))
+
+    def test_range_free_forged_value_fails(self):
+        with self.assertRaises(audit.AuditFailure) as failure:
+            audit.audit(self.fixture, ['MathlibExtTest.AuditFixture.RangeFreeForgedValue'], self.checker)
+        self.assertIn('AuditSix.ctorIdx._impl is an unsafe declaration', str(failure.exception))
+        self.assertIn('AuditSix.ctorIdx uses implemented_by', str(failure.exception))
 
     def test_other_import_failure_still_fails(self):
         with self.assertRaisesRegex(audit.AuditFailure, 'does not exist'):
