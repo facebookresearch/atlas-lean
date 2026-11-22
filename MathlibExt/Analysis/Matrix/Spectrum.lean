@@ -39,8 +39,9 @@ private lemma ksL2_opNorm_eq_norm_eigenvalues
         Matrix.l2_opNorm_diagonal]
       rfl
 
-/-- **Hermitian matrices have real-rooted characteristic polynomials.** The characteristic
-polynomial of a Hermitian complex matrix is real-rooted. -/
+/-- **Hermitian matrices have real-rooted characteristic polynomials.** Let $n$ be a finite type
+with decidable equality. The characteristic polynomial of a Hermitian complex matrix indexed by $n$
+is real-rooted. -/
 public theorem IsHermitian.charpoly_isRealRooted
     {n : Type*} [Fintype n] [DecidableEq n] {A : Matrix n n ℂ}
     (hA : A.IsHermitian) : A.charpoly.IsRealRooted := by

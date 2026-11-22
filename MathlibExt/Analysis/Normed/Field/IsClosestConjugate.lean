@@ -72,8 +72,9 @@ theorem IsClosestConjugate.lt_spectralNorm_sub_of_isConjRoot
 
 /-- **Krasner's lemma for closest conjugates.** Let $K$ be a complete nontrivially normed field
 whose norm is ultrametric, with algebraic closure $\overline{K}$, and let
-$\alpha, \beta \in \overline{K}$. If $\alpha$ is the closest conjugate to $\beta$ and $\alpha$ is
-separable over $K$, then $K(\alpha) \subseteq K(\beta)$. -/
+$\alpha, \beta \in \overline{K}$. If $\alpha$ is the closest conjugate to $\beta$ (that is, $\beta$
+is strictly closer to $\alpha$, in the spectral norm, than to every other $K$-conjugate of $\alpha$)
+and $\alpha$ is separable over $K$, then $K(\alpha) \subseteq K(\beta)$. -/
 theorem IsClosestConjugate.adjoin_le
     {K : Type*} [NontriviallyNormedField K] [IsUltrametricDist K] [CompleteSpace K]
     {α β : AlgebraicClosure K} (h : IsClosestConjugate K α β)
