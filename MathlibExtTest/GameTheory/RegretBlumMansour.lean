@@ -57,4 +57,92 @@ theorem t2_consensus_value :
     simp
     norm_num
 
+/-- T3: the Blum-Mansour decomposition on the test fixture, with the swap
+regret and both copies' external regrets evaluated. -/
+theorem t3_blum_mansour_decomposition_example :
+    swapRegret pU l0 = 2 ∧
+      externalRegret (fun t => qId t 0) (scaledLoss pU l0 0) = 0 ∧
+      externalRegret (fun t => qId t 1) (scaledLoss pU l0 1) = 2 ∧
+      swapRegret pU l0 ≤
+        ∑ j, externalRegret (fun t => qId t j) (scaledLoss pU l0 j) := by
+  have h01 : ∀ i : Fin 2, i = 0 ∨ i = 1 := by
+    intro i
+    fin_cases i
+    · exact Or.inl rfl
+    · exact Or.inr rfl
+  have hswap : swapRegret pU l0 = 2 := by
+    have hmin : Finset.univ.inf' Finset.univ_nonempty
+        (fun δ : Fin 2 → Fin 2 => ∑ t, ∑ a, pU t a * l0 t (δ a)) = 2 := by
+      apply le_antisymm
+      · calc Finset.univ.inf' Finset.univ_nonempty
+              (fun δ : Fin 2 → Fin 2 => ∑ t, ∑ a, pU t a * l0 t (δ a))
+            ≤ (fun δ : Fin 2 → Fin 2 => ∑ t, ∑ a, pU t a * l0 t (δ a))
+                (fun _ => 0) :=
+              Finset.inf'_le _ (Finset.mem_univ _)
+          _ = 2 := by
+              simp only [pU, l0, Fin.sum_univ_one, Fin.sum_univ_two]
+              simp
+              norm_num
+      · apply Finset.le_inf' _ _ (fun δ _ => ?_)
+        simp only [pU, l0, Fin.sum_univ_one, Fin.sum_univ_two]
+        rcases h01 (δ 0) with h | h <;> rcases h01 (δ 1) with h' | h' <;>
+          simp [h, h'] <;> norm_num
+    rw [swapRegret, t2_consensus_value.1, hmin]
+    norm_num
+  have hcum : ∀ j a : Fin 2,
+      cumulativeLoss (scaledLoss pU l0 j) a = if a = 0 then 1 else 3 := by
+    intro j a
+    fin_cases a <;> norm_num [cumulativeLoss, scaledLoss, pU, l0, Fin.sum_univ_one]
+  have hmin_scaled : ∀ j : Fin 2, Finset.univ.inf' Finset.univ_nonempty
+      (cumulativeLoss (scaledLoss pU l0 j)) = 1 := by
+    intro j
+    apply le_antisymm
+    · calc Finset.univ.inf' Finset.univ_nonempty
+            (cumulativeLoss (scaledLoss pU l0 j))
+          ≤ cumulativeLoss (scaledLoss pU l0 j) 0 :=
+            Finset.inf'_le _ (Finset.mem_univ _)
+        _ = 1 := by simp [hcum]
+    · apply Finset.le_inf' _ _ (fun a _ => ?_)
+      fin_cases a <;> simp [hcum]
+  have h0 : externalRegret (fun t => qId t 0) (scaledLoss pU l0 0) = 0 := by
+    have hexp : expectedLoss (fun t => qId t 0) (scaledLoss pU l0 0) = 1 := by
+      norm_num [expectedLoss, scaledLoss, qId, pU, l0, Fin.sum_univ_one,
+        Fin.sum_univ_two]
+    rw [externalRegret, hexp, hmin_scaled]
+    norm_num
+  have h1 : externalRegret (fun t => qId t 1) (scaledLoss pU l0 1) = 2 := by
+    have hexp : expectedLoss (fun t => qId t 1) (scaledLoss pU l0 1) = 3 := by
+      norm_num [expectedLoss, scaledLoss, qId, pU, l0, Fin.sum_univ_one,
+        Fin.sum_univ_two]
+    rw [externalRegret, hexp, hmin_scaled]
+    norm_num
+  exact ⟨hswap, h0, h1,
+    swapRegret_le_sum_externalRegret_scaled qId pU l0 t1_stationary⟩
+
+/-- Swap recommendations for the existence test: copy `j` plays the other action. -/
+def qSwap : Fin 1 → Fin 2 → Fin 2 → ℝ :=
+  fun _ j a => if a = j then 0 else 1
+
+/-- T4: stationary-play existence applied to the swap recommendations; the
+stationary play is forced to be uniform. -/
+theorem t4_exists_stationary_swap :
+    ∃ p : Fin 1 → Fin 2 → ℝ, IsStationaryPlay qSwap p ∧
+      ∀ t, p t 0 = 1 / 2 ∧ p t 1 = 1 / 2 := by
+  have hq : ∀ t j, IsSimplex (qSwap t j) := by
+    intro t j
+    refine ⟨?_, ?_⟩
+    · intro a
+      fin_cases j <;> fin_cases a <;> simp [qSwap]
+    · fin_cases j <;> simp [qSwap, Fin.sum_univ_two]
+  obtain ⟨p, hp⟩ := exists_isStationaryPlay qSwap hq
+  refine ⟨p, hp, ?_⟩
+  intro t
+  have hsum : p t 0 + p t 1 = 1 := by
+    have h := (hp.1 t).2
+    rwa [Fin.sum_univ_two] at h
+  have h0 : p t 0 = p t 1 := by
+    have h := hp.2 t 0
+    simpa [qSwap, Fin.sum_univ_two] using h
+  constructor <;> linarith
+
 end MathlibExtTest.GameTheory.RegretBlumMansour

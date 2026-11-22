@@ -15,6 +15,22 @@ set_option autoImplicit false
 
 @[expose] public section
 
+/-!
+# Blum-Mansour swap-regret decomposition
+
+For a stationary master play, the master's swap regret is bounded by the
+sum of the per-action copies' external regrets against their scaled loss
+sequences. The module also proves that a stationary master play exists
+whenever every copy plays a distribution at every time.
+
+## References
+
+* A. Blum and Y. Mansour, "From external to internal regret", *Journal of
+  Machine Learning Research* 8 (2007), 1307-1324.
+* T. Roughgarden, CS364A Lecture 18, "From External Regret to Swap Regret
+  and the Minimax Theorem" (Stanford, 2013), Theorem 2.1.
+-/
+
 namespace MathlibExt.GameTheory.Regret
 
 open scoped BigOperators
