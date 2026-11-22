@@ -34,8 +34,9 @@ at a tree vertex the unique parent has inheritance probability `1`.
 The derived digraph `toDigraph` (also written `G`) has `Adj u v ↔ u ∈ parents v`; it is
 acyclic (`PhyloNetwork.isAcyclic`). The routing kernel `routeProb v a` is the underlying
 graph's multi-lineage kernel: the probability that `k` lineages at `v` choose the parents
-`a : Fin k → V`; its rows sum to `1` over all parent choices, and over the parents of `v` for
-one lineage.
+`a : Fin k → V`; at non-root `v` its rows sum to `1` over all parent choices (and over the
+parents of `v`), while at the root, where no lineage can move, the row is `0` for `k > 0`
+(`routeProb_root`, `sum_routeProb_root`).
 
 The `activeGraph` keeps the edges used with positive probability. When every inheritance
 probability is `0` or `1`, the active graph is a rooted tree and the routing is
@@ -177,10 +178,22 @@ theorem sum_routeProb_parents {v : V} (hv : v ≠ N.root) (k : ℕ) :
     ∑ a ∈ Fintype.piFinset (fun _ : Fin k => N.parents v), N.routeProb v a = 1 :=
   N.toAdmixtureGraph.sum_routeProb_parents hv k
 
-/-- **The routing kernel rows sum to `1`** over all maps from the lineages to the nodes. -/
+/-- **The routing kernel rows sum to `1`** over all maps from the lineages to the nodes, at a
+non-root node. -/
 theorem sum_routeProb {v : V} (hv : v ≠ N.root) (k : ℕ) :
     ∑ a : Fin k → V, N.routeProb v a = 1 :=
   N.toAdmixtureGraph.sum_routeProb hv k
+
+/-- At the root there is no parent to move to: for `k > 0` every assignment has
+probability `0`. -/
+theorem routeProb_root {k : ℕ} (hk : 0 < k) (a : Fin k → V) :
+    N.routeProb N.root a = 0 :=
+  N.toAdmixtureGraph.routeProb_root hk a
+
+/-- The root row of the routing kernel has total mass `0` for `k > 0`. -/
+theorem sum_routeProb_root {k : ℕ} (hk : 0 < k) :
+    ∑ a : Fin k → V, N.routeProb N.root a = 0 :=
+  N.toAdmixtureGraph.sum_routeProb_root hk
 
 /-- The edges used with positive inheritance probability. -/
 def activeGraph : Digraph V where

@@ -90,6 +90,12 @@ example (γ : ℝ) (hγ : γ ∈ Set.Icc (0 : ℝ) 1) :
     simp [PhyloNetwork.routeProb, MathlibExt.Biology.PopulationGenetics.AdmixtureGraph.routeProb,
       network, pr, Fin.prod_univ_two] <;> ring_nf
 
+/-- At the root a lineage has nowhere to move: the root row of the routing kernel has
+total mass `0` (for one lineage, and by `routeProb_root` every assignment is `0`). -/
+example (γ : ℝ) (hγ : γ ∈ Set.Icc (0 : ℝ) 1) :
+    ∑ a : Fin 1 → Fin 7, (network γ hγ).routeProb 0 a = 0 :=
+  (network γ hγ).sum_routeProb_root one_pos
+
 /-- With `γ = 3/10` the reticulation uses both parent edges: the active graph is not a
 rooted tree (the network still displays trees by selecting one reticulation edge). -/
 example : ¬ Digraph.IsRootedTree (network (3 / 10) (by norm_num)).activeGraph
