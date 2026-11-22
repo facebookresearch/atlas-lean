@@ -49,8 +49,13 @@ variable {H : Type*} [TopologicalSpace H]
 variable {I : ModelWithCorners ℝ E H}
 variable {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [IsManifold I ∞ M]
 
-/-- The coordinate expression of a smooth metric in a chart, as a field of bilinear
-forms on the model space obtained by pullback along the inverse extended chart. -/
+/-- **Coordinate expression of a Riemannian metric.** Let $g$ be a smooth Riemannian metric on
+the tangent bundle of a smooth manifold $M$ modeled through a model with corners $I : H \to E$,
+and let $e$ be an open partial homeomorphism from $M$ to $H$. Write $\psi$ for the inverse of the
+extended chart $I \circ e$, $T$ for the target of $I \circ e$, and $D\psi(x)$ for the derivative
+of $\psi$ at $x$ within $T$. The coordinate expression of $g$ in $e$ is the field of continuous
+bilinear forms on $E$ that assigns to each $x \in E$ the pullback form
+$(v, w) \mapsto g_{\psi(x)}(D\psi(x)\,v, D\psi(x)\,w)$. -/
 noncomputable def metricInCoordinates
     (g : ContMDiffRiemannianMetric I ∞ E (fun x : M ↦ TangentSpace I x))
     (e : OpenPartialHomeomorph M H) : E → E →L[ℝ] E →L[ℝ] ℝ :=
@@ -61,7 +66,13 @@ noncomputable def metricInCoordinates
       (show E →L[ℝ] E from
         mfderivWithin 𝓘(ℝ, E) I (e.extend I).symm (e.extend I).target x)
 
-/-- Pointwise formula for the coordinate expression of a metric. -/
+/-- **Pointwise formula for a metric in coordinates.** Let $g$ be a smooth Riemannian metric
+on the tangent bundle of a smooth manifold $M$ modeled through a model with corners
+$I : H \to E$, and let $e$ be an open partial homeomorphism from $M$ to $H$. Write $g^e$ for the
+coordinate expression of $g$ in $e$, $\psi$ for the inverse of the extended chart $I \circ e$,
+$T$ for the target of $I \circ e$, and $D\psi(x)$ for the derivative of $\psi$ at $x$ within
+$T$. Then for all $x, v, w \in E$ we have
+$g^e(x)(v, w) = g_{\psi(x)}(D\psi(x)\,v, D\psi(x)\,w)$. -/
 @[simp]
 theorem metricInCoordinates_apply
     (g : ContMDiffRiemannianMetric I ∞ E (fun x : M ↦ TangentSpace I x))
@@ -73,7 +84,13 @@ theorem metricInCoordinates_apply
   simp only [metricInCoordinates]
   exact ContinuousLinearMap.bilinearComp_apply _ _ _ _ _
 
-/-- The coordinate expression of a conformal change is the scaled coordinate expression. -/
+/-- **Conformal scaling of a metric in coordinates.** Let $g$ be a smooth Riemannian metric on
+the tangent bundle of a smooth manifold $M$ modeled through a model with corners $I : H \to E$,
+let $u : M \to \mathbb{R}$ be a smooth function with $u(p) > 0$ for every $p \in M$, and let $e$
+be an open partial homeomorphism from $M$ to $H$. Write $g^e$ for the coordinate expression of
+$g$ in $e$ and $\psi$ for the inverse of the extended chart $I \circ e$. Then for every $x \in E$
+the coordinate expression of the conformally scaled metric $u g$ satisfies
+$(u g)^e(x) = u(\psi(x))\, g^e(x)$. -/
 theorem metricInCoordinates_conformalScale
     (g : ContMDiffRiemannianMetric I ∞ E (fun x : M ↦ TangentSpace I x))
     (u : M → ℝ) (hu : ContMDiff I 𝓘(ℝ) ∞ u) (hpos : ∀ x, 0 < u x)
@@ -85,7 +102,11 @@ theorem metricInCoordinates_conformalScale
     Bundle.ContMDiffRiemannianMetric.conformalScale_inner_apply, smul_apply,
     smul_eq_mul]
 
-/-- The coordinate expression of a smooth metric is smooth on the chart target. -/
+/-- **Smoothness of a metric in coordinates.** Let $E$ be a finite-dimensional real normed
+space, let $M$ be a smooth manifold modeled through a model with corners $I : H \to E$, and let
+$g$ be a smooth Riemannian metric on the tangent bundle of $M$. For every chart $e$ in the maximal
+smooth atlas of $M$, the coordinate expression of $g$ in $e$, viewed as a map from $E$ to the
+continuous bilinear forms on $E$, is $C^\infty$ on the target of the extended chart $I \circ e$. -/
 theorem contDiffOn_metricInCoordinates [FiniteDimensional ℝ E]
     (g : ContMDiffRiemannianMetric I ∞ E (fun x : M ↦ TangentSpace I x))
     {e : OpenPartialHomeomorph M H} (he : e ∈ IsManifold.maximalAtlas I ∞ M) :
