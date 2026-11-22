@@ -53,6 +53,5 @@ which relates idèles to ray class groups.
 - J. S. Milne, *The fundamental theorem of complex multiplication*, arXiv:0705.3446v1 (2007),
   Theorem 3.10 (the same theorem, for $\sigma$ fixing the reflex field).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses an analytic form of this result, for curves $\mathbb{C}/\mathfrak{a}$ with
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses an analytic form of this result, for curves $\mathbb{C}/\mathfrak{a}$ with
   $\mathfrak{a}$ a fractional ideal, as `GroundTheory.Global.Elliptic.main_theorem_complexMultiplication`.

@@ -32,7 +32,6 @@ $\mathrm{GL}_n(\mathbb{C})$, so the decomposition is the same for the groups.
   Schur Lectures, Israel Math. Conf. Proc. 8, Tel Aviv (1992), 1–182, the reference Cheng and Wang give
   for the classical duality.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this result, for polynomial functions on matrices and for the groups
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this result, for polynomial functions on matrices and for the groups
   $\mathrm{GL}_m(\mathbb{C}) \times \mathrm{GL}_n(\mathbb{C})$ and $\mathrm{U}(m) \times \mathrm{U}(n)$,
   as `GlobalTheory.Published.GLHoweDuality`.

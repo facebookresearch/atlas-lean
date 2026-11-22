@@ -32,6 +32,11 @@ $\lambda(L_{\mathfrak{p}}) = 1$ at split and at inert primes. Dividing the formu
 formula for $m = M - 1$ gives the ratio. (The division is carried out here; Kirschmer states the mass
 formula.)
 
+This node is still to be broken down. A good expansion has a page for Siegel's mass formula for
+Hermitian lattices over a quadratic extension in Kirschmer's form, pages for the local factors
+$\lambda(L_{\mathfrak{p}})$ of the unimodular lattices $I_m$ at split and at inert primes, and the ratio
+above as their consequence.
+
 ## Sources
 
 - M. Kirschmer, *Definite quadratic and hermitian forms with small class number*, Habilitationsschrift,
@@ -41,6 +46,5 @@ formula.)
   primes), and the definition of the $L$-series $\mathfrak{L}_K(\chi, s)$ before Corollary 4.1.5;
   Definition 3.5.1 (good prime ideals).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this ratio for $M \ge 3$, as `Formalism.HermitianLatticesTheory.SiegelMassRatio`,
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this ratio for $M \ge 3$, as `Formalism.HermitianLatticesTheory.SiegelMassRatio`,
   proved as `GlobalTheory.Mass.siegelMassRatio_holds`.

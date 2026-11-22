@@ -54,7 +54,6 @@ language of ideals (Hecke 1920, §6).
   Theorem 4.1.3 (continuation of $\zeta_K$ to $\mathbb{C} \setminus \{1\}$, after Hecke) and
   Theorem 4.1.4 (simple pole at $1$).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this result, as `GroundTheory.Global.HeckeCharacter.exists_LFunction_continuation`
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this result, as `GroundTheory.Global.HeckeCharacter.exists_LFunction_continuation`
   (the first case) and `GroundTheory.Global.HeckeCharacter.exists_LFunction_continuation_of_forall`
   (the second).

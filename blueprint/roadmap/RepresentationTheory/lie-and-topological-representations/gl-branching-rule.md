@@ -37,6 +37,5 @@ basis of $L(\lambda)$, indexed by patterns.
   Gelfand and Tsetlin, proved by Zhelobenko; two other proofs in Goodman and Wallach, Chapters 8
   and 12); Theorem 2.3 (patterns).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this result, for $\mathrm{GL}_n(\mathbb{C}) \subset \mathrm{GL}_{n+1}(\mathbb{C})$ and
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this result, for $\mathrm{GL}_n(\mathbb{C}) \subset \mathrm{GL}_{n+1}(\mathbb{C})$ and
   for $\mathrm{U}(n) \subset \mathrm{U}(n+1)$, as `GlobalTheory.Published.WeylBranching`.

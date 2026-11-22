@@ -40,6 +40,5 @@ the leading term of the standard bracketing of a Lyndon word (Lothaire, Lemma 5.
 - D. E. Radford, *A natural ring basis for the shuffle algebra and an application to group schemes*,
   J. Algebra 58 (1979), 432–454, the original source, as cited by Melançon and Reutenauer.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this result, over a field of characteristic $0$, as
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this result, over a field of characteristic $0$, as
   `GlobalTheory.Published.RadfordShufflePolynomial`.

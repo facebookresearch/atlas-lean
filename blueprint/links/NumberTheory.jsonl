@@ -8677,15 +8677,15 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/algebraic-number-theory/adeles-class-field-theory/hilbert-class-field/artin-action-on-cm-j-invariants.md"}], "id": "af_aa377418ba63ad380a2e3f29"}
 {"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/algebraic-number-theory/adeles-class-field-theory/hilbert-class-field/hilbert-class-field-generated-by-j.md"}], "id": "af_c3ddd48e8067d71581e681ed"}
 {"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/algebraic-number-theory/adeles-class-field-theory/hilbert-class-field/main-theorem-of-complex-multiplication.md"}], "id": "af_cc8124f1c3620362176cbc58"}
-{"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/algebraic-number-theory/adeles-class-field-theory/idele-class-tate-cohomology-of-cyclic-extension.md"}], "id": "af_8c3b1f7cbd289256a6751243"}
+{"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/algebraic-number-theory/adeles-class-field-theory/idele-class-tate-cohomology-of-cyclic-extension.md"}], "id": "af_8c3b1f7cbd289256a6751243", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/algebraic-number-theory/adeles-class-field-theory/global-artin-reciprocity.md"}], "extensions": {"org.autoform": {"not_ready": true}}, "id": "af_2b8e2467c266d5c9a87465e2"}
-{"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/algebraic-number-theory/adeles-class-field-theory/global-existence-theorem.md"}], "id": "af_df7647adc7d1d58ab4627873"}
+{"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/algebraic-number-theory/adeles-class-field-theory/global-existence-theorem.md"}], "id": "af_df7647adc7d1d58ab4627873", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/algebraic-number-theory/adeles-class-field-theory/hasse-norm-theorem.md"}], "id": "af_64ba6742bbd380604555adca"}
 {"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/algebraic-number-theory/adeles-class-field-theory/chebotarev-density-theorem.md"}], "id": "af_d073a624f988a3d6790b1030"}
-{"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/modular-forms-q-series/modular-forms/chowla-selberg-eta-class-average.md"}], "id": "af_cabe1f8f2103ad2c3c861c24"}
+{"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/modular-forms-q-series/modular-forms/chowla-selberg-eta-class-average.md"}], "id": "af_cabe1f8f2103ad2c3c861c24", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/zeta-l-functions/dirichlet-l-functions/hecke-l-function-meromorphic-continuation.md"}], "id": "af_30a1d53860d710b9c6669f60"}
 {"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/zeta-l-functions/dirichlet-l-functions/hecke-l-function-functional-equation.md"}], "id": "af_bfb783d0b59b58a427694198"}
 {"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/zeta-l-functions/dirichlet-l-functions/hecke-l-function-nonvanishing-on-re-one.md"}], "id": "af_2fb2b39c0a3848b002c47ce5"}
 {"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/quadratic-forms-sums-of-squares/hermitian-local-global-principle.md"}], "id": "af_d784131dda90fc5c00ca20a0"}
 {"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/quadratic-forms-sums-of-squares/strong-approximation-special-unitary.md"}], "id": "af_4144b2c54b652605331be286"}
-{"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/quadratic-forms-sums-of-squares/hermitian-unimodular-mass-ratio.md"}], "id": "af_f0ec3f33dc571f43bd7e537c"}
+{"subject": [{"type": "generic", "uri": "../roadmap/NumberTheory/quadratic-forms-sums-of-squares/hermitian-unimodular-mass-ratio.md"}], "id": "af_f0ec3f33dc571f43bd7e537c", "extensions": {"org.autoform": {"not_ready": true}}}

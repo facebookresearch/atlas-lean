@@ -40,8 +40,7 @@ principle to H. Minkowski, H. Hasse, W. Landherr, M. Kneser and T. Springer and 
   Theorem 2.4.1 (Local-Global Principle), Definitions 2.1.1–2.1.3, Theorem 2.1.4, Proposition 2.1.5,
   Theorem 3.2.3 and Remark 3.4.2(3).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this result, stated for Gram matrices, as
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this result, stated for Gram matrices, as
   `GlobalTheory.Published.HermitianHassePrinciple`, proved as
   `GlobalTheory.Published.hermitianHassePrinciple_holds` with the quadratic case of the Hasse norm
   theorem.

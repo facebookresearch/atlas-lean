@@ -60,5 +60,4 @@ triviality on the principal idèles and Frobenius compatibility at unramified pl
   the Chebotarev density theorem", <https://math.mit.edu/classes/18.785/2021fa/LectureNotes28.pdf>:
   Definition 28.2, Proposition 28.3 and Theorem 28.4 (Global Artin Reciprocity).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this result, as `GroundTheory.Global.reciprocityMapEquiv`.
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this result, as `GroundTheory.Global.reciprocityMapEquiv`.

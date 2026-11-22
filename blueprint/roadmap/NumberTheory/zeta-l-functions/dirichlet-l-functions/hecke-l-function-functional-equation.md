@@ -53,6 +53,5 @@ the local $\varepsilon$-factors (Poonen, Theorems 5.16(c) and 4.18(e) and the pr
 - E. Hecke, *Eine neue Art von Zetafunktionen und ihre Beziehungen zur Verteilung der Primzahlen
   (Zweite Mitteilung)*, Math. Z. 6 (1920), 11–51, end of §6: the Hauptsatz and equation (45).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this result, normalised with a constant root number, as
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this result, normalised with a constant root number, as
   `GroundTheory.Global.HeckeCharacter.completedLFunction_eq_rootNumber_mul`.

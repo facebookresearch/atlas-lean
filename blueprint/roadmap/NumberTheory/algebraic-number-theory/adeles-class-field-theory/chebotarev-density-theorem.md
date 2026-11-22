@@ -69,5 +69,4 @@ second route, with the Reciprocity Law for the abelian case.
   <https://math.mit.edu/classes/18.785/2021fa/LectureNotes28.pdf>: Theorem 28.9 (Chebotarev density
   theorem) and its proof.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this result, as `GroundTheory.Global.hasDirichletDensity_chebotarevSet`.
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this result, as `GroundTheory.Global.hasDirichletDensity_chebotarevSet`.

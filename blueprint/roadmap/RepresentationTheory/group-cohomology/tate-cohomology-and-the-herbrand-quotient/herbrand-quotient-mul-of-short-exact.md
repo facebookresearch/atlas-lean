@@ -23,13 +23,18 @@ the cokernels of $\hat H^{-1}(G, B) \to \hat H^{-1}(G, C)$ and of $H^1(G, B) \to
 isomorphic, and this turns the long exact sequence into a finite exact sequence through
 $\hat H^0$ and $H^1$ of $A$, $B$ and $C$. The alternating product of the orders of the groups in a
 finite exact sequence of finite groups is $1$, which gives the formula. The comparison of the two
-cokernels uses that the periodicity isomorphisms commute with the maps induced by $B \to C$, which is
-more than the [existence of an isomorphism for each representation](nonempty-periodicity-iso.md).
+cokernels uses that the periodicity isomorphisms commute with the maps induced by $B \to C$, their
+[naturality](natural-periodicity-iso.md), which is more than the
+[existence of an isomorphism for each representation](nonempty-periodicity-iso.md).
 
 ## Depends on
 
 - [Herbrand quotient](herbrand-quotient.md)
 - [Finiteness hypothesis for the Herbrand quotient](herbrand-finite.md)
+
+## Proof depends on
+
+- [Naturality of the periodicity isomorphisms of Tate cohomology for finite cyclic groups](natural-periodicity-iso.md)
 
 ## Sources
 
@@ -39,6 +44,5 @@ more than the [existence of an isomorphism for each representation](nonempty-per
   finite exact sequence); Proposition 3.4 (periodicity) and the definition of the Herbrand quotient
   before Proposition 3.6.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this result, as `GroundTheory.GroupCoh.herbrandQuotient_eq_mul_of_shortExact`, in
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this result, as `GroundTheory.GroupCoh.herbrandQuotient_eq_mul_of_shortExact`, in
   its proof of the first inequality of global class field theory.

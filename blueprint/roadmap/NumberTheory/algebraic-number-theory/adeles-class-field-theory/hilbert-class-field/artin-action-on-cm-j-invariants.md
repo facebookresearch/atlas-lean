@@ -53,5 +53,4 @@ law, then identifies the Galois action with the Artin map.
   both have complex multiplication by $\mathbb{Z}[i]$ but are not isomorphic). Milne proves it for
   $\mathbb{C}$ only: "We omit the proof of the general case, although this is a key point."
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this result, as `GroundTheory.Global.Elliptic.hilbertClassFieldArtinEquiv_apply_j`.
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this result, as `GroundTheory.Global.Elliptic.hilbertClassFieldArtinEquiv_apply_j`.

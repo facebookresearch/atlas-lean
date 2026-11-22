@@ -45,5 +45,4 @@ out here; it is not Milne's text.)
   <https://www.jmilne.org/math/CourseNotes/CM.pdf>, Preface: the statement as the first result of the
   theory, due to Kronecker and Weber.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this result, as `GroundTheory.Global.Elliptic.adjoin_j_eq_hilbertClassField`.
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this result, as `GroundTheory.Global.Elliptic.adjoin_j_eq_hilbertClassField`.

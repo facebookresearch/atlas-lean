@@ -29,6 +29,13 @@ Milne proves it with Kummer theory (Section VII.6); Theorem VI.4.9 gives an anal
 $|\hat H^0(G, C_L)| = n \, |\hat H^{-1}(G, C_L)| \ge n$ and $|\hat H^0(G, C_L)| \le n$ give both
 statements (Lemma VII.5.2).
 
+This node is still to be broken down. A good expansion follows Milne's Chapter VII and has pages for
+the Herbrand quotient of the $T$-idèles (Proposition VII.2.7), for the Herbrand quotient of the
+$T$-units (Proposition VII.3.1) with Dirichlet's $S$-unit theorem, for the first inequality
+$h(C_L) = n$ (Theorem VII.4.3), and for the second inequality (Theorem VII.5.1(a)), by Kummer theory
+(Section VII.6) or analytically (Theorem VI.4.9), with the two statements of this page as their
+consequence (Lemma VII.5.2).
+
 ## Depends on
 
 - [Topological idele class group](adeles-and-ideles/topological-idele-class-group.md)
@@ -47,7 +54,6 @@ statements (Lemma VII.5.2).
   inequality, $H^1(G, C_L) = 0$ and $|H^2(G, C_L)| = [L : K]$ are equivalent, and the index equals
   $[L : K]$), Section 6 (algebraic proof of the second inequality).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this result, as `GroundTheory.Global.natCard_cycTateZero_ideleClassGroup_eq_finrank`
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this result, as `GroundTheory.Global.natCard_cycTateZero_ideleClassGroup_eq_finrank`
   and `GroundTheory.Global.natCard_cycTateNegOne_ideleClassGroup`, derived from its
   `GroundTheory.Global.firstInequality` and `GroundTheory.Global.secondInequality`.

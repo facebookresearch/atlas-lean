@@ -26,6 +26,5 @@ Proposition VII.2.5).
   <https://www.jmilne.org/math/CourseNotes/CFT.pdf>: Theorem VIII.3.1 (Hasse norm theorem) with its
   proof, and Remark VIII.3.2.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this result, as `GroundTheory.Global.mem_range_norm_iff_forall_local`, and its
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this result, as `GroundTheory.Global.mem_range_norm_iff_forall_local`, and its
   quadratic case as `GroundTheory.Global.mem_range_norm_iff_forall_local_of_finrank_eq_two`.

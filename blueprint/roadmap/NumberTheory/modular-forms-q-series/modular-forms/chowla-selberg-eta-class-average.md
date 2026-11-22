@@ -36,6 +36,16 @@ formula into $\frac{1}{h} \sum_c \log(4\pi \operatorname{Im}(\tau_c) |\eta(\tau_
 and the functional equation of $L(s, \chi)$, an odd real primitive character, moves the right-hand side
 to $s = 1$.
 
+This node is still to be broken down. A good expansion has pages for Kronecker's first limit formula in
+the form above, for the formula expressing $L'(0, \chi)$ through the gamma function, and for the
+Chowla–Selberg product formula, with the rewriting above as the last step; the functional equation of
+$L(s, \chi)$ that it uses is a case of the
+[functional equation of Hecke L-functions](../../zeta-l-functions/dirichlet-l-functions/hecke-l-function-functional-equation.md).
+
+## Proof depends on
+
+- [Functional equation of Hecke L-functions](../../zeta-l-functions/dirichlet-l-functions/hecke-l-function-functional-equation.md)
+
 ## Sources
 
 - M. Kaneko, *A generalization of the Chowla–Selberg formula and the zeta functions of quadratic
@@ -47,5 +57,4 @@ to $s = 1$.
 - S. Chowla and A. Selberg, *On Epstein's zeta-function*, J. Reine Angew. Math. 227 (1967), 86–110, the
   original source, as cited by Kaneko.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this identity, for $|D| > 4$, as `GlobalTheory.chowla_selberg_eta`.
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this identity, for $|D| > 4$, as `GlobalTheory.chowla_selberg_eta`.

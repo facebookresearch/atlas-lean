@@ -47,5 +47,4 @@ Example 5.2(1)).
 - J. A. Green, *The characters of the finite general linear groups*, Trans. Amer. Math. Soc. 80 (1955),
   402–447, the original source, as cited by both notes.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this result for $q = p$ prime, as `GlobalTheory.Published.GreenRegularCharacters`.
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this result for $q = p$ prime, as `GlobalTheory.Published.GreenRegularCharacters`.

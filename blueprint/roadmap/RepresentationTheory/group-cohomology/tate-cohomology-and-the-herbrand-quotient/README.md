@@ -1,6 +1,7 @@
 # Tate cohomology and the Herbrand quotient
 
 - [Periodicity of Tate cohomology for finite cyclic groups](nonempty-periodicity-iso.md)
+- [Naturality of the periodicity isomorphisms of Tate cohomology for finite cyclic groups](natural-periodicity-iso.md)
 - [Cardinality of Tate cohomology](tate-cohomology-card.md)
 - [Cardinality of Tate homology](tate-homology-card.md)
 - [Cardinality of Tate homology in degree zero](tate-homology-card-zero.md)

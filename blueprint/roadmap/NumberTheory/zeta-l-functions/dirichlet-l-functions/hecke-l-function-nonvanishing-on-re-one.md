@@ -69,6 +69,5 @@ gives a singularity of $F$ there, contradicting that $F$ is entire. (This sketch
   <https://kskedlaya.org/ant/part-1-3.html>: Theorem 2.4 (Landau) and its proof, with Lemma 2.2 and
   Definition 2.3 (abscissa of absolute convergence).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this result, in this form with the continuation supplied, as
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this result, in this form with the continuation supplied, as
   `GroundTheory.Global.HeckeCharacter.continuation_ne_zero_of_one_le_re`.

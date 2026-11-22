@@ -22,6 +22,12 @@ $\mathrm{Nm}_{K'/K}^{-1}(U)$ is one for some finite extension $K'/K$, whose proo
 limitation theorem: $\mathrm{Nm}_{E/K} C_E = \mathrm{Nm}_{M/K} C_M$ for a finite extension $E/K$ with
 maximal abelian subextension $M$ (Theorem VIII.4.8).
 
+This node is still to be broken down. A good expansion follows Milne's Section VII.9 and has pages
+for the norm limitation theorem (Theorem VIII.4.8, which Milne proves from the reciprocity isomorphism
+$\mathrm{Gal}(L/K)^{\mathrm{ab}} \cong C_K / \mathrm{Nm}_{L/K}(C_L)$ for finite Galois extensions given by
+the fundamental class), for Lemma VII.9.1, for the Kummer case of Lemma VII.9.3, for Lemma VII.9.4, and
+for the induction of Theorem VII.9.5 that gives this statement.
+
 ## Depends on
 
 - [Topological idele class group](adeles-and-ideles/topological-idele-class-group.md)
@@ -40,6 +46,5 @@ maximal abelian subextension $M$ (Theorem VIII.4.8).
   <https://math.mit.edu/classes/18.785/2021fa/LectureNotes28.pdf>: Theorem 28.6 (Global Existence
   Theorem) and Theorem 28.7.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
-  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>,
-  no licence) uses this result, as
+  <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>) uses this result, as
   `GroundTheory.Global.exists_isAbelianGalois_range_ideleClassNorm_eq_of_finiteIndex`.
