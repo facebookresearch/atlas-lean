@@ -26,7 +26,7 @@ Focused checks for `PhyslibExt.FluidDynamics.Traffic.JunctionBoundaryFlow`:
 a two-commodity merge (conservation value `3`, supply bound tight, an
 over-supply certificate rejected although each commodity fits alone, and three
 different node splits admitted by the same certificate interface), a diverge
-(turning fractions `1/3`, `2/3` and the zero-outflow endpoint, signed flows
+(turning fractions `1/4`, `3/4` and the zero-outflow endpoint, signed flows
 breaking the factorization), spillback at a jammed first cell with cancellation
 and off-junction controls, support and feasibility premise controls, per-commodity
 conservation, incidence-bridge values and total-count conservation, route

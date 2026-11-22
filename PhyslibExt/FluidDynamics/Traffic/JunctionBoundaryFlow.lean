@@ -210,8 +210,8 @@ theorem sum_linkInflow_le_supply {V E C : Type*} [DecidableEq V] [Fintype E] [Fi
 
 /-- **Spillback.** For a nonnegative certificate supported on movements and satisfying the
 junction-local receiving constraint, if the first cell of link `e'` is at jam density, then
-every turning flow of every commodity into `e'` is zero: a saturated downstream link blocks the
-demand toward it. -/
+every turning flow of every commodity into `e'` is zero: a saturated downstream link blocks all
+realized turning flow into it. -/
 lemma eq_zero_of_kFirst_eq_kj {V E C : Type*} [DecidableEq V] [Fintype E] [Fintype C]
     {tail head : E → V} {vf w kj kFirst : E → ℝ} {q : C → E → E → ℝ}
     (hnn : ∀ c e e', 0 ≤ q c e e') (hq : ∀ c e e', head e ≠ tail e' → q c e e' = 0)
