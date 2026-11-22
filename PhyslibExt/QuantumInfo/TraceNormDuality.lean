@@ -19,7 +19,7 @@ import Mathlib.Order.Bounds.Basic
 /-!
 # Trace-norm duality
 
-## 1 Overview
+## i. Overview
 
 This module proves trace-norm duality for complex matrices with attainment:
 the trace norm of a matrix is the greatest value of the norm of the trace
@@ -31,7 +31,7 @@ The proofs build on the provider real-part form
 `Matrix.traceNorm_eq_max_re_tr_U` and the supplied provider definition of
 `Matrix.traceNorm`, which are not reproved here.
 
-## 2 Key results
+## ii. Key results
 
 * `traceNorm_eq_max_norm_tr_U`: trace-norm duality with attainment.
 * `exists_unitary_norm_tr_eq_traceNorm`: attainment for trace-norm duality.
@@ -40,15 +40,15 @@ The proofs build on the provider real-part form
 * `traceNorm_diagonal`: the trace norm of a diagonal matrix is the sum of
   the norms of its diagonal entries.
 
-## 3 Table of contents
+## iii. Table of contents
 
-* §5: instance transport across decidable-equality instances.
-* §6: trace-norm duality with attainment.
-* §7: attainment for trace-norm duality.
-* §8: the upper bound for trace-norm duality.
-* §9: the trace norm of a diagonal matrix.
+* §A: instance transport across decidable-equality instances.
+* §B: trace-norm duality with attainment.
+* §C: attainment for trace-norm duality.
+* §D: the upper bound for trace-norm duality.
+* §E: the trace norm of a diagonal matrix.
 
-## 4 References
+## iv. References
 
 * John Watrous, The Theory of Quantum Information, Eqs. (1.181)-(1.182).
 -/
@@ -57,7 +57,7 @@ The proofs build on the provider real-part form
 
 namespace PhyslibExt.QuantumInfo.TraceNormDuality
 
-/-! ## 5 Instance transport across decidable-equality instances -/
+/-! ## A Instance transport across decidable-equality instances -/
 
 open Classical in
 /-- Classical-instance form of `traceNorm_diagonal`, proved from the supplied
@@ -128,7 +128,7 @@ private theorem isometry_of_mem_unitaryGroup_classical {n : Type*} [Fintype n]
     M.Isometry ∧ M.conjTranspose.Isometry :=
   (Matrix.mem_unitaryGroup_iff_isometry M).mp hM
 
-/-! ## 6 Trace-norm duality with attainment -/
+/-! ## B Trace-norm duality with attainment -/
 
 /-- Trace-norm duality with attainment (Watrous, Eq. (1.182)).
 Derived from the provider real-part form `Matrix.traceNorm_eq_max_re_tr_U`,
@@ -171,7 +171,7 @@ theorem traceNorm_eq_max_norm_tr_U {n : Type*} [Fintype n] [DecidableEq n]
   obtain ⟨U, rfl⟩ := hx
   exact bound U
 
-/-! ## 7 Attainment for trace-norm duality -/
+/-! ## C Attainment for trace-norm duality -/
 
 /-- Attainment for trace-norm duality (Watrous, Eq. (1.182)).
 Derived from the provider real-part form `Matrix.traceNorm_eq_max_re_tr_U`,
@@ -180,25 +180,10 @@ theorem exists_unitary_norm_tr_eq_traceNorm {n : Type*} [Fintype n] [DecidableEq
     (A : Matrix n n ℂ) :
     ∃ U : Matrix.unitaryGroup n ℂ,
       ‖((U : Matrix n n ℂ).conjTranspose * A).trace‖ = A.traceNorm := by
-  obtain ⟨U₀, hU₀⟩ := (Matrix.traceNorm_eq_max_re_tr_U A).1
-  have hU₀mem := isometry_of_mem_unitaryGroup_classical U₀.val U₀.2
-  have hmem : U₀.val.conjTranspose ∈ Matrix.unitaryGroup n ℂ := by
-    have hstar := mem_unitaryGroup_ambient_of_classical _ (star U₀).2
-    have hval : (star U₀).val = star (U₀.val) := rfl
-    rw [hval, Matrix.star_eq_conjTranspose] at hstar
-    exact hstar
-  have hle : ‖(U₀.val * A).trace‖ ≤ A.traceNorm := by
-    calc ‖(U₀.val * A).trace‖
-        ≤ (U₀.val * A).traceNorm := Matrix.abs_trace_le_traceNorm _
-      _ = A.traceNorm := Matrix.traceNorm_isometry_left hU₀mem.1
-  refine ⟨⟨U₀.val.conjTranspose, hmem⟩, ?_⟩
-  change ‖((U₀.val.conjTranspose).conjTranspose * A).trace‖ = A.traceNorm
-  rw [Matrix.conjTranspose_conjTranspose]
-  apply le_antisymm hle
-  rw [← hU₀]
-  exact Complex.re_le_norm _
+  obtain ⟨U, hU⟩ := (traceNorm_eq_max_norm_tr_U A).1
+  exact ⟨U, hU⟩
 
-/-! ## 8 The upper bound for trace-norm duality -/
+/-! ## D The upper bound for trace-norm duality -/
 
 /-- Upper bound for trace-norm duality (Watrous, Eq. (1.182)).
 Derived from the provider real-part form `Matrix.traceNorm_eq_max_re_tr_U`,
@@ -206,15 +191,9 @@ which is not reproved here. -/
 theorem norm_tr_unitary_conjTranspose_mul_le_traceNorm {n : Type*} [Fintype n] [DecidableEq n]
     (A : Matrix n n ℂ) (U : Matrix.unitaryGroup n ℂ) :
     ‖((U : Matrix n n ℂ).conjTranspose * A).trace‖ ≤ A.traceNorm := by
-  have hU :=
-    (isometry_of_mem_unitaryGroup_classical _
-      (mem_unitaryGroup_classical_of_ambient _ U.2)).2
-  calc ‖((U : Matrix n n ℂ).conjTranspose * A).trace‖
-      ≤ ((U : Matrix n n ℂ).conjTranspose * A).traceNorm :=
-        Matrix.abs_trace_le_traceNorm _
-    _ = A.traceNorm := Matrix.traceNorm_isometry_left hU
+  exact (traceNorm_eq_max_norm_tr_U A).2 ⟨U, rfl⟩
 
-/-! ## 9 The trace norm of a diagonal matrix -/
+/-! ## E The trace norm of a diagonal matrix -/
 
 /-- Diagonal trace norm is the sum of entry norms (Watrous, Eq. (1.181)).
 Computed from the supplied provider definition of `Matrix.traceNorm`;
