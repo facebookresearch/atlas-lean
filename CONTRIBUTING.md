@@ -257,7 +257,8 @@ queue's timeout; the PR's timeline says why, and the PRs behind it rebuild
 without it. In a stack of pull requests, the PRs above it in the stack leave the
 queue too. Fix the PR and queue it again. To take a PR out of the queue, use
 **Remove from queue** on the PR or on the queue's page, or the GraphQL mutation
-`dequeuePullRequest`; `gh` cannot do it.
+`dequeuePullRequest` (for example through `gh api graphql`); there is no `gh pr`
+command for it.
 
 ### Required checks
 
@@ -274,15 +275,17 @@ checks their pull-request and merge-group triggers, filters and concurrency
 groups, and that each required check comes from exactly one job, with no
 job-level `if` or `strategy`.
 
-The other checks are advisory. The bump guard's `guard` checks Lean and Mathlib
-pin changes on PRs and merge groups; on PRs it runs through
-`pull_request_target`, which GitHub blocks by default in public repositories
-from 2 December 2026 unless an Actions event policy allows it, so it is not
-required. Codex does not run on merge groups. `public-references` is configured
-to run on PRs and merge groups, but stays advisory until the workflow governance
-described under [Public references](#public-references) is in place. Blueprint
-Pages, Check workflows and Binary64 conformance are path-filtered on PRs, and
-Blueprint Pages also builds `main` once a day.
+No other check is required. The bump guard's `guard` checks Lean and Mathlib pin
+changes on PRs and merge groups; on PRs it runs through `pull_request_target`,
+which GitHub blocks by default in public repositories from 2 December 2026
+unless an Actions event policy allows it, so it is not required. Codex does not
+run on merge groups, but when its formal review of a PR requests changes it
+cancels that PR's CI build, so the PR cannot be queued until a later CI run
+passes. `public-references` is configured to run on PRs and merge groups, but
+stays advisory until the workflow governance described under
+[Public references](#public-references) is in place. Blueprint Pages, Check
+workflows and Binary64 conformance are path-filtered on PRs, and Blueprint Pages
+also builds `main` once a day.
 
 ## Contributor License Agreement ("CLA")
 In order to accept your pull request, we need you to submit a CLA. You only need
