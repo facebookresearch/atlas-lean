@@ -57,18 +57,6 @@ theorem_wanted fib_odd_mul_goldenRatio (k : ℕ) :
       (Nat.fib (2 * k + 1) : ℝ) * (1 + Real.goldenRatio) =
         Nat.fib (2 * k + 3) + ((Real.sqrt 5 - 1) / 2) ^ (2 * k + 1)
 
-/-- Every positive integer `t` is `∑_{k=0}^{n} a_{2k+1} F_{2k+1}` (here `a k` is the paper's
-`a_{2k+1}`) with `F_{2n+1} ≤ t < F_{2n+3}`, `a_1 ≤ 1`, `a_{2k+1} ≤ 2` for `k ≥ 1`, no
-`2F_3 + F_1`, and no `2F_{2k+1} + 2F_{2k-1}`.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Theorem 1. -/
-theorem_wanted exists_odd_fib_representation {t : ℕ} (ht : 0 < t) :
-    ∃ (n : ℕ) (a : ℕ → ℕ), Nat.fib (2 * n + 1) ≤ t ∧ t < Nat.fib (2 * n + 3) ∧
-      t = ∑ k ∈ range (n + 1), a k * Nat.fib (2 * k + 1) ∧
-      a 0 ≤ 1 ∧ (∀ k, 1 ≤ k → a k ≤ 2) ∧ ¬ (a 1 = 2 ∧ a 0 = 1) ∧
-      ∀ k, ¬ (a (k + 1) = 2 ∧ a k = 2)
-
 /-- For `k ≥ 0` and `α = 1 + √2`: `P_{2k+1} α = P_{2k+2} + (√2 - 1)^{2k+1}` and
 `H_{2k} α = H_{2k+1} + √2 (√2 - 1)^{2k}`.
 
