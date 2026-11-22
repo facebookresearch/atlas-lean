@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Set.Card
 public import Mathlib.LinearAlgebra.Lagrange
 public import Mathlib.RingTheory.Ideal.Span
+public import MathlibExt.Algebra.Polynomial.FactorialEvalBound
 
 /-!
 # Locally integer polynomial functions
@@ -173,15 +174,6 @@ Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (
 Article A41, Lemma 4 (`integers-2025-A41-lem-4`). -/
 public theorem_wanted lipSubring_units_eq {U : Set ℤ} (hU : U.Infinite)
     (u : (lipSubring U)ˣ) : u = 1 ∨ u = -1
-
-/-- **Lemma 5.** An integer polynomial of degree `d` satisfies `|f(x)| ≥ d!/2^d` for some
-`x ∈ {0, 1, …, d}`.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Lemma 5 (`integers-2025-A41-lem-5`). -/
-public theorem_wanted exists_factorial_div_two_pow_le_abs_eval (f : ℤ[X]) (d : ℕ)
-    (hf : f.degree = d) :
-    ∃ x ∈ Finset.range (d + 1), (d.factorial : ℚ) / 2 ^ d ≤ |((f.eval (x : ℤ) : ℤ) : ℚ)|
 
 /-- **Lemma 6** (Exchange Formula). For a finite `X ⊆ ℤ` and `a, b ∉ X`,
 `f_{X ⊔ {a}} = f_{X ⊔ {b}} + c (a - b) ∏_{z ∈ X} (x - z)`, where `c` is the coefficient of
