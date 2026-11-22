@@ -14,6 +14,8 @@ on:
       - "blueprint/**"
       - "scripts/generate_wiki.py"
       - "scripts/sync_wiki.py"
+      - "scripts/import_mathgraph.py"
+      - "scripts/check_public_references.py"
       - "scripts/extract_v2_lean_dependencies.py"
       - "scripts/dump_v2_dependencies.lean"
       - "scripts/list_v2_modules.sh"
@@ -27,10 +29,12 @@ on:
       - "scripts/card-moves.jsonl"
       - "scripts/taxonomy.json"
       - "scripts/wiki-sync.json"
+      - "scripts/mathgraph-map.jsonl"
       - "scripts/requirements-blueprint.txt"
       - "scripts/test_generate_wiki_navigation.py"
       - "scripts/test_generate_wiki_docstrings.py"
       - "scripts/test_sync_wiki.py"
+      - "scripts/test_import_mathgraph.py"
       - "scripts/test_extract_v2_lean_dependencies.py"
       - "scripts/test_extract_mathlib_graph.py"
       - "scripts/test_check_blueprint_site_navigation.py"
@@ -45,6 +49,7 @@ on:
       - "hooks/**"
       - "docs/BLUEPRINT.md"
       - "docs/cards.md"
+      - "docs/mathgraph-import.md"
       - ".github/workflows/blueprint-pages.yml"
       - ".github/autoform-ref"
       - "lean-toolchain"
@@ -99,10 +104,12 @@ jobs:
           --with mkdocs==1.6.1
           --with mkdocs-material==9.8.0
           --with mkdocs-literate-nav==0.6.2
+          --with jsonschema==4.26.0
           python -m unittest
           scripts.test_generate_wiki_navigation
           scripts.test_generate_wiki_docstrings
           scripts.test_sync_wiki
+          scripts.test_import_mathgraph
           scripts.test_extract_v2_lean_dependencies
           scripts.test_extract_mathlib_graph
           scripts.test_check_blueprint_site_navigation
@@ -110,6 +117,27 @@ jobs:
           scripts.test_blueprint_workflow
           scripts.test_blueprint_taxonomy
           scripts.test_card_pages
+
+      # Check scripts/mathgraph-map.jsonl (docs/mathgraph-import.md#the-map): each line valid and, on a PR, the map at
+      # the base commit the start of the checked-out one, unchanged.
+      - name: Check that the import map only grows
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
+        run: |
+          set -euo pipefail
+          base=()
+          if [[ -n "$BASE_SHA" ]]; then
+            # The checkout holds the pull request's merge commit alone (refs/pull/N/merge), not its base.
+            git fetch --no-tags --depth=1 origin "$BASE_SHA"
+            base=(--base "$BASE_SHA")
+          fi
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}" \
+            --with PyYAML==6.0.3 \
+            --with mkdocs==1.6.1 \
+            --with mkdocs-material==9.8.0 \
+            --with mkdocs-literate-nav==0.6.2 \
+            --with jsonschema==4.26.0 \
+            python scripts/import_mathgraph.py --check-map "${base[@]}"
 
       # The committed graph, as authors wrote it. `lean-facts` below unlinks a
       # page whose declaration is gone, so the check after it cannot see a

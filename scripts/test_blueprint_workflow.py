@@ -45,8 +45,10 @@ class BlueprintWorkflowTests(unittest.TestCase):
             "scripts/extract_v2_lean_dependencies.py", "scripts/dump_v2_dependencies.lean",
             "scripts/list_v2_modules.sh",
             "scripts/check_blueprint_site.py", "scripts/taxonomy.json", "scripts/wiki-sync.json",
+            "scripts/mathgraph-map.jsonl", "scripts/import_mathgraph.py", "scripts/check_public_references.py",
             "scripts/requirements-blueprint.txt", "mkdocs.yml", "theme/**", "hooks/**",
-            "docs/BLUEPRINT.md", ".github/workflows/blueprint-pages.yml", ".github/autoform-ref",
+            "docs/BLUEPRINT.md", "docs/mathgraph-import.md", ".github/workflows/blueprint-pages.yml",
+            ".github/autoform-ref",
             "lean-toolchain", "lake-manifest.json", "lakefile.toml",
         ):
             self.assertIn(path, paths)
@@ -54,11 +56,18 @@ class BlueprintWorkflowTests(unittest.TestCase):
         tests = self.step("Test the wiki scripts")["run"]
         for module in re.findall(r"scripts\.(test_\w+)", tests):
             self.assertIn(f"scripts/{module}.py", paths)
+        # So is every module of scripts/ the importer imports, whose tests run only in this job.
+        importer = (ROOT / "scripts" / "import_mathgraph.py").read_text()
+        modules = re.findall(r"(?m)^    from \. import (\w+)", importer)
+        self.assertIn("check_public_references", modules)
+        for module in modules:
+            self.assertIn(f"scripts/{module}.py", paths)
         # A path that no longer exists would silently stop triggering the check. The sync baseline
-        # scripts/wiki-sync.json arrives with the wiki's last page batch, so it may not exist yet. The card
+        # scripts/wiki-sync.json arrives with the wiki's last page batch, and the import map
+        # scripts/mathgraph-map.jsonl with the first imported manifest, so they may not exist yet. The card
         # inputs are checked by the card tests, in their own job, so that no card file can fail this one.
         for path in paths:
-            if path == "scripts/wiki-sync.json" or path in CARD_INPUTS:
+            if path in ("scripts/wiki-sync.json", "scripts/mathgraph-map.jsonl") or path in CARD_INPUTS:
                 continue
             target = ROOT / path.removesuffix("/**")
             self.assertTrue(target.is_dir() if path.endswith("/**") else target.is_file(), path)
@@ -192,6 +201,48 @@ class BlueprintWorkflowTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertFalse((root / "v2-dependencies.jsonl").exists())
             self.assertFalse((root / "v2-dependencies.jsonl.gz").exists())
+
+    def test_the_import_map_only_grows(self):
+        # Right after the wiki tests: every line of scripts/mathgraph-map.jsonl is checked, and on a PR the base
+        # commit's map, which the checkout of the merge commit lacks until it is fetched, must be its start.
+        name = "Check that the import map only grows"
+        names = [step.get("name") for step in self.steps]
+        self.assertEqual(names.index(name), names.index("Test the wiki scripts") + 1)
+        step = self.step(name)
+        self.assertNotIn("continue-on-error", step)
+        # The base commit arrives through the environment, never interpolated into the script.
+        self.assertEqual(step["env"], {"BASE_SHA": "${{ github.event.pull_request.base.sha || '' }}"})
+        self.assertNotIn("merge_group", step["env"]["BASE_SHA"])
+        self.assertNotIn("${{", step["run"])
+        # The importer imports Autoform: the step runs with the wiki tests' packages.
+        def packages(script):
+            return re.findall(r"--with (\S+)", script)
+
+        self.assertEqual(packages(step["run"]), packages(self.step("Test the wiki scripts")["run"]))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "bin").mkdir()
+            for tool in ("git", "uv"):
+                (root / "bin" / tool).write_text(f'#!/usr/bin/env bash\nprintf \'%s\\n\' "{tool} $*" >> calls.txt\n')
+                (root / "bin" / tool).chmod(0o755)
+            for base in ("", "0123456789abcdef0123456789abcdef01234567"):
+                with self.subTest(base=base):
+                    (root / "calls.txt").write_text("")
+                    result = subprocess.run(
+                        ["bash", "-c", step["run"]], cwd=root, text=True, capture_output=True, check=False,
+                        env={**os.environ, "PATH": f"{root / 'bin'}:{os.environ['PATH']}", "BASE_SHA": base,
+                             "AUTOFORM_SOURCE": "https://example.com/autoform.git", "AUTOFORM_REF": "0" * 40},
+                    )
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    calls = (root / "calls.txt").read_text().splitlines()
+                    command = "python scripts/import_mathgraph.py --check-map"
+                    if base:
+                        self.assertEqual(calls[0], f"git fetch --no-tags --depth=1 origin {base}")
+                        self.assertTrue(calls[1].startswith("uv run --no-project"))
+                        self.assertTrue(calls[1].endswith(f"{command} --base {base}"))
+                    else:
+                        self.assertEqual(len(calls), 1)
+                        self.assertTrue(calls[0].endswith(command))
 
     def test_the_build_cache_is_restored_from_ci_and_never_saved(self):
         restore = self.step("Restore local build")
