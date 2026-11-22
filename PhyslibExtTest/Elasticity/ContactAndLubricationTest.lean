@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.Elasticity.ContactAndLubrication
+import PhyslibExt.CondensedMatter.Elasticity.StressStrain
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
@@ -21,7 +22,11 @@ converging film `h0 = 2`, `hL = 1`, `μ = U = L = 1` (existence, uniqueness, pos
 the load `6 log 2 - 4 > 0`), the diverging film `h0 = 1`, `hL = 2` (pressure `-2/9` at the
 midpoint) and the film that closes at the outlet (no solution). Scalar contact: loaded contact
 `k = 2`, `g = 1`, `f = 4` (the hypotheses of Stampacchia's theorem, existence, uniqueness and
-complementarity), separation `f = 1`, and the failure of coercivity at `k = 0`.
+complementarity), separation `f = 1`, and the failure of coercivity at `k = 0`. Coulomb
+friction: the public shapes of Section C, separated and closed contact at friction
+coefficient `1`, the non-convex admissible set, the frictionless bridge to Section B, and
+invalid controls (negative friction coefficient, tension admitted by the cone alone, a
+non-unit normal).
 
 ## i. Overview
 
@@ -35,6 +40,7 @@ No new definitions or results are introduced here.
 
 - A. Plane-slider lubrication
 - B. Scalar unilateral contact
+- C. Unilateral contact with Coulomb friction
 
 ## iv. References
 
@@ -206,3 +212,81 @@ example :
   rw [hmap, inner_zero_left] at h1
   simp only [norm_one, one_pow, mul_one] at h1
   linarith
+
+/-! ## C. Unilateral contact with Coulomb friction -/
+
+/-- The public statement shape of the frame bridge. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {n τ t : E} {N : ℝ}
+    (hn : ‖n‖ = 1) :
+    (τ = t - N • n ∧ ⟪t, n⟫_ℝ = 0) ↔ (N = -⟪τ, n⟫_ℝ ∧ t = τ - ⟪τ, n⟫_ℝ • n) :=
+  normal_tangent_decomposition_iff hn
+
+/-- The public statement shapes of the cone results. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {μ : ℝ} (hμ : 0 ≤ μ) :
+    Convex ℝ (frictionCone (E := E) μ) ∧
+      ¬ Convex ℝ {p : ℝ × ℝ | 0 ≤ p.1 ∧ 0 ≤ p.2 ∧ p.1 * p.2 = 0} :=
+  ⟨convex_frictionCone hμ, not_convex_complementarity⟩
+
+/-- Frame coordinates directly from a traction: `N = -⟪τ, n⟫` and
+`t = τ - ⟪τ, n⟫ • n` give the decomposition `τ = t - N • n` with `t` orthogonal to `n`. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {n τ : E}
+    (hn : ‖n‖ = 1) :
+    τ = (τ - ⟪τ, n⟫_ℝ • n) - (-⟪τ, n⟫_ℝ) • n ∧ ⟪τ - ⟪τ, n⟫_ℝ • n, n⟫_ℝ = 0 :=
+  (normal_tangent_decomposition_iff hn).mpr ⟨rfl, rfl⟩
+
+/-- Separated contact: the state `N = 0`, `g = 1`, `t = 0` over `ℝ` is admissible at
+friction coefficient `1`, and every admissible state with `0 < g` has zero force. -/
+example : IsAdmissibleContact 1 0 1 (0 : ℝ) ∧
+    ∀ {μ N g : ℝ} {t : ℝ}, IsAdmissibleContact μ N g t → 0 < g → N = 0 ∧ t = 0 :=
+  ⟨by norm_num [IsAdmissibleContact], fun h hg =>
+    IsAdmissibleContact.eq_zero_of_gap_pos h hg⟩
+
+/-- Closed loaded contact at `g = 0` (the removed pin target, as a test): admission is a
+nonnegative normal force with `(N, t)` in the friction cone. At `μ = 1`, `N = 1` the stick
+state `t = 1 / 2` and the slip threshold `t = 1` are admissible over `ℝ`, and `t = 2` is not. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {μ N : ℝ} {t : E} :
+    (IsAdmissibleContact μ N 0 t ↔ 0 ≤ N ∧ (N, t) ∈ frictionCone μ) ∧
+      IsAdmissibleContact 1 1 0 (1 / 2 : ℝ) ∧ IsAdmissibleContact 1 1 0 (1 : ℝ) ∧
+      ¬ IsAdmissibleContact 1 1 0 (2 : ℝ) := by
+  refine ⟨?_, by norm_num [IsAdmissibleContact], by norm_num [IsAdmissibleContact],
+    by norm_num [IsAdmissibleContact]⟩
+  simp [IsAdmissibleContact, frictionCone]
+
+/-- Tension is excluded by admission, not by the cone: `(-1, 0)` lies in `frictionCone 0`
+over `ℝ`, but the state with `N = -1` is not admissible. -/
+example : ((-1, 0) : ℝ × ℝ) ∈ frictionCone 0 ∧ ¬ IsAdmissibleContact 0 (-1) 0 (0 : ℝ) := by
+  norm_num [frictionCone, IsAdmissibleContact]
+
+/-- The full admissible set in `(N, g, t)` over `ℝ` at `μ = 1` is not convex: the midpoint
+of the closed state `(1, 0, 0)` and the separated state `(0, 1, 0)` has `N * g = 1 / 4`. -/
+example : ¬ Convex ℝ {p : ℝ × ℝ × ℝ | IsAdmissibleContact 1 p.1 p.2.1 p.2.2} := by
+  intro h
+  have hx : ((1, 0, 0) : ℝ × ℝ × ℝ) ∈ {p : ℝ × ℝ × ℝ | IsAdmissibleContact 1 p.1 p.2.1 p.2.2} := by
+    norm_num [IsAdmissibleContact]
+  have hy : ((0, 1, 0) : ℝ × ℝ × ℝ) ∈ {p : ℝ × ℝ × ℝ | IsAdmissibleContact 1 p.1 p.2.1 p.2.2} := by
+    norm_num [IsAdmissibleContact]
+  have hm := h hx hy (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (0 : ℝ) ≤ 1 / 2)
+    (by norm_num : (1 / 2 : ℝ) + 1 / 2 = 1)
+  simp only [Set.mem_ofPred_eq, Prod.smul_mk, Prod.mk_add_mk, smul_eq_mul, IsAdmissibleContact]
+    at hm
+  norm_num at hm
+
+/-- Frictionless bridge to Section B: the scalar contact solution's complementarity triple is
+an admissible Section C state with zero tangent traction, for every `0 ≤ μ`. -/
+example {k g f u μ : ℝ} (hμ : 0 ≤ μ)
+    (hu : u ∈ admissibleSet g ∧ ∀ v ∈ admissibleSet g, 0 ≤ ⟪stiffnessMap k u - f, v - u⟫_ℝ) :
+    IsAdmissibleContact μ (contactForce k f u) (contactGap g u) (0 : ℝ) :=
+  (isAdmissibleContact_zero_tangent_iff hμ).mpr (complementarity_of_vi hu)
+
+/-- Compression-positive traction sign binding: `compressionPositiveTraction` is the negative
+of the Cauchy traction, the sign behind `N = -⟪τ, n⟫`. -/
+example {n : ℕ} (σ : Matrix (Fin n) (Fin n) ℝ) (v : Fin n → ℝ) :
+    Elasticity.compressionPositiveTraction σ v = -Elasticity.traction σ v := rfl
+
+/-- Invalid controls: a negative friction coefficient admits no zero-tangent state with
+`N = 1`; the frame formulas need a unit normal (`n = 2` over `ℝ` satisfies the left side of
+the decomposition for `τ = -2`, `t = 0`, `N = 1`, but `N ≠ -⟪τ, n⟫ = 4`). -/
+example : ¬ IsAdmissibleContact (-1) 1 0 (0 : ℝ) ∧
+    ((-(2 : ℝ)) = (0 : ℝ) - (1 : ℝ) • (2 : ℝ) ∧ ⟪(0 : ℝ), (2 : ℝ)⟫_ℝ = 0) ∧
+      (1 : ℝ) ≠ -⟪(-(2 : ℝ)), (2 : ℝ)⟫_ℝ := by
+  norm_num [IsAdmissibleContact, RCLike.inner_apply]
