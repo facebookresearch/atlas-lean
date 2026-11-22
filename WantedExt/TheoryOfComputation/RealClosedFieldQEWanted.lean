@@ -23,14 +23,21 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.ProgramVerification.RealClosedFieldQE` — rcf_quantifier_elimination (manifest `manifests/problems/rcf_quantifier_elimination.toml`, rev 1, submitter Kim Morrison, status draft) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.ProgramVerification.RealClosedFieldQE`
+— rcf_quantifier_elimination (manifest `manifests/problems/rcf_quantifier_elimination.toml`, rev
+1, submitter Kim Morrison, status draft) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.TheoryOfComputation.RealClosedFieldQEWanted` namespace. Mathematical
-statements are unchanged. Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012).
+and placed the declarations in the `MathlibExt.TheoryOfComputation.RealClosedFieldQEWanted`
+namespace. Mathematical
+statements are unchanged. Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry'
+(1951); Collins, 'Quantifier elimination for real closed fields by cylindrical algebraic
+decomposition' (1975); Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system'
+(2006); Cohen and Mahboubi, 'Formal proofs in real algebraic geometry: from ordered fields to
+quantifier elimination' (2012).
 -/
 module
 
@@ -190,23 +197,39 @@ def Formula.IsQF : Formula → Prop
 /--
 Quantifier elimination: `qe φ` is a quantifier-free formula equivalent to `φ` over `ℝ` in
 every environment. Its syntax may mention additional variables vacuously.
-Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012). Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`.
+Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier
+elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi,
+'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal
+proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012). Via
+leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`.
 -/
 public def_wanted qe (φ : Formula) : Formula
 
 /- The output of `qe` is quantifier free. -/
-/-- Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012). Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`. -/
+/-- Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins,
+'Quantifier elimination for real closed fields by cylindrical algebraic decomposition' (1975);
+Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi,
+'Formal proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012).
+Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`. -/
 public theorem_wanted isQF_qe (φ : Formula) : (❰qe❱ φ).IsQF
 
 /- The output of `qe` is equivalent to its input, under every environment. -/
-/-- Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012). Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`. -/
+/-- Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins,
+'Quantifier elimination for real closed fields by cylindrical algebraic decomposition' (1975);
+Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi,
+'Formal proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012).
+Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`. -/
 public theorem_wanted holds_qe (φ : Formula) (env : Nat → ℝ) :
     (❰qe❱ φ).Holds env ↔ φ.Holds env
 
 /--
 Anti-vacuity guard for the semantics and de Bruijn convention: a real number is a square
 exactly when it is nonnegative.
-Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012). Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`.
+Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier
+elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi,
+'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal
+proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012). Via
+leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`.
 -/
 public theorem_wanted holds_ex_sq (env : Nat → ℝ) :
     (Formula.ex (.eq (.mul (.var 0) (.var 0)) (.var 1))).Holds env ↔

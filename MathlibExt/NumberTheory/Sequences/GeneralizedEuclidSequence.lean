@@ -2384,12 +2384,6 @@ private theorem chainL_eval_stable (P : Finset ℕ) (hP : ∀ p ∈ P, Nat.Prime
     eVal (chainL P hP s) i = eVal (chainL P hP t) i :=
   eVal_prefix _ _ (chainL_prefix_le P hP s t hst) i hs
 
-private theorem prefix_mem {l₁ l₂ : List ℕ} (h : l₁ <+: l₂) (a : ℕ) (hm : a ∈ l₁) :
-    a ∈ l₂ := by
-  have heq := List.prefix_iff_eq_append.mp h
-  rw [← heq]
-  exact List.mem_append.mpr (Or.inl hm)
-
 /-- The final sequence: stabilization of the tower. -/
 private noncomputable def seqA (P : Finset ℕ) (hP : ∀ p ∈ P, Nat.Prime p) (i : ℕ) : ℕ :=
   eVal (chainL P hP (i + 1)) i
@@ -2509,7 +2503,7 @@ private theorem chainL_qstrict (P : Finset ℕ) (hP : ∀ p ∈ P, Nat.Prime p) 
     have hcon' := not_le.mp hcon
     have hnotin : sInf {p | p.Prime ∧ p ∉ chainL P hP (s + 1)} ∉ chainL P hP s := by
       intro hin
-      exact hnot (prefix_mem (chainL_step P hP s) _ hin)
+      exact hnot ((chainL_step P hP s).mem hin)
     have hmem2 : sInf {p | p.Prime ∧ p ∉ chainL P hP (s + 1)} ∈
         {p | p.Prime ∧ p ∉ chainL P hP s} :=
       ⟨(chainL_qprop P hP (s + 1)).1, hnotin⟩

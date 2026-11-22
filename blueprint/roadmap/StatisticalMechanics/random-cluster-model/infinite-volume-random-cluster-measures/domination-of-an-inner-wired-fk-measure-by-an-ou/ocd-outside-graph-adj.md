@@ -1,0 +1,3 @@
+# Outside-graph adjacency: open non-inner edge or boundary pair
+
+Let $G_{\mathrm{in}}$ and $G_{\mathrm{out}}$ be simple graphs on finite sets $V_{\mathrm{in}}$ and $V_{\mathrm{out}}$, and $\iota : V_{\mathrm{in}} \to V_{\mathrm{out}}$ a map, and let $\partial_{\mathrm{out}} \subseteq V_{\mathrm{out}}$ be a set of boundary vertices, and let $\psi$ be a configuration on $V_{\mathrm{out}}$. Two vertices $x, y \in V_{\mathrm{out}}$ are adjacent in the [outside graph](ocd-outside-graph.md) $O_\psi$ if and only if either $\{x, y\}$ is an edge of $G_{\mathrm{out}}$ that is open in $\psi$ and not an [inner pair](ocd-inner-edge-finset.md), or $x \ne y$ and $x, y \in \partial_{\mathrm{out}}$.

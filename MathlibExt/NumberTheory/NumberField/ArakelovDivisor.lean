@@ -225,6 +225,7 @@ noncomputable def ArakelovDivisor.sectionSet (D : ArakelovDivisor K) : Set K :=
   { x | x ∈ (D.1 : FractionalIdeal (𝓞 K)⁰ K) ∧
     ∀ w : InfinitePlace K, w x ≤ (D.2 w : ℝ) }
 
+omit [NumberField K] in
 /-- **Membership in the section set.** Let $D$ be an Arakelov divisor of a number field $K$, with
 invertible fractional ideal $I$ and positive real number $r_w$ at each infinite place $w$ of $K$.
 An element $x \in K$ lies in the section set of $D$ if and only if $x \in I$ and

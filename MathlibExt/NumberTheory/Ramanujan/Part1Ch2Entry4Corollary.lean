@@ -224,15 +224,10 @@ private lemma hM : Filter.Tendsto (fun N:ℕ => Real.log (4 + 1/(N:ℝ)) - 1/2*R
     Filter.atTop (nhds (Real.log 4 - 1/2*Real.log 2)) :=
   hlog.sub_const _
 
-private lemma hlog4 : Real.log 4 = 2*Real.log 2 := by
-  have h4eq : (4:ℝ) = 2^2 := by norm_num
-  rw [h4eq, Real.log_pow]
-  norm_num
-
 private lemma hM2 : Filter.Tendsto (fun N:ℕ => Real.log (4 + 1/(N:ℝ)) - 1/2*Real.log 2)
     Filter.atTop (nhds (3/2*Real.log 2)) := by
   have h := hM
-  rw [hlog4] at h
+  rw [Real.log_four_eq] at h
   have e : (2*Real.log 2 - 1/2*Real.log 2) = 3/2*Real.log 2 := by ring
   rwa [e] at h
 

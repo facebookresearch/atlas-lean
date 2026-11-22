@@ -9,9 +9,14 @@ LICENSE file in the root directory of this source tree.
 /-
 # Yao's XOR lemma: hardness amplification by XOR
 
-Source:
-A. C. Yao, "Theory and applications of trapdoor functions", Proceedings of the Twenty-Third
-Annual Symposium on Foundations of Computer Science (FOCS 1982), 80-91.
+Attribution: A. C. Yao, "Theory and applications of trapdoor functions", Proceedings of the
+Twenty-Third Annual Symposium on Foundations of Computer Science (FOCS 1982), 80-91. According
+to O. Goldreich, N. Nisan and A. Wigderson, "On Yao's XOR-Lemma" (ECCC TR95-050, revision 2,
+Section 1), the lemma was presented in Yao's talks on that work rather than in the paper, and
+its first published proof is L. Levin, "One-way functions and pseudorandom generators",
+Combinatorica 7 (1987). Textbook statements: Goldreich-Nisan-Wigderson, Lemmas 1 and 2
+(asymptotic, non-uniform); S. Arora and B. Barak, *Computational Complexity: A Modern
+Approach*, web draft of 2007-01-08, Theorem 17.2 (concrete parameters).
 -/
 module
 
@@ -70,15 +75,19 @@ def xorOf {n k : ℕ} (f : (Fin n → Bool) → Bool) (xs : Fin k → Fin n → 
   xorFold (fun i => f (xs i))
 
 /-- Agreement of a circuit with a function `g` on inputs encoded by `enc`: the fraction
-of inputs on which the circuit's last gate value equals `g`. -/
-noncomputable def agreement {α : Type*} [Fintype α]
+of inputs of the nonempty finite type `α` on which the circuit's last gate value equals `g`. For an
+empty type every circuit would get agreement `0`. -/
+noncomputable def agreement {α : Type*} [Fintype α] [Nonempty α]
     (C : List XORGate) (g : α → Bool) (enc : α → List Bool) : ℚ :=
   (Set.ncard {a | (xorCircuitEval C (enc a)).getLast? = some (g a)} : ℚ) /
     (Fintype.card α : ℚ)
 
-/-- **Yao's XOR lemma: hardness amplification by XOR.** Source: A. C. Yao, "Theory and
-applications of trapdoor functions", Proceedings of the Twenty-Third Annual Symposium on
-Foundations of Computer Science (FOCS 1982), 80-91. -/
+/-- **Yao's XOR lemma: hardness amplification by XOR.** Attributed to A. C. Yao, "Theory and
+applications of trapdoor functions" (FOCS 1982, 80-91); by O. Goldreich, N. Nisan and
+A. Wigderson, "On Yao's XOR-Lemma" (ECCC TR95-050, revision 2, Section 1), the lemma was
+presented in Yao's talks rather than in that paper, with a first published proof by L. Levin
+(1987). Compare Goldreich-Nisan-Wigderson, Lemma 2, and S. Arora and B. Barak, *Computational
+Complexity*, web draft of 2007-01-08, Theorem 17.2. -/
 public theorem_wanted yao_xor_lemma :
     ∃ c : ℕ, ∀ (n k : ℕ) (hn : 1 ≤ n), ∀ (δ : ℚ), 0 < δ → δ ≤ 1 / 2 →
       ∀ f : (Fin n → Bool) → Bool, ∀ s : ℕ,

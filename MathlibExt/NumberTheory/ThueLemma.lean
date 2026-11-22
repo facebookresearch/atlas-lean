@@ -11,7 +11,7 @@ module
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Data.Int.ModEq
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.RingTheory.Coprime.Lemmas
 import Mathlib.Tactic.IntervalCases
 
@@ -288,6 +288,7 @@ Lemma [Thue's lemma] (label `lem:thue's`), lines 217–218,
 Original: V. Shoup, "A Computational Introduction to Number Theory and
 Algebra", Cambridge University Press, 2005, p. 43.
 -/
+@[nolint unusedArguments]
 theorem thue_lemma (a n : ℤ) (ha : 1 < a) (hn : 1 < n)
     (hcop : Int.gcd a n = 1) :
     ∃ x y : ℤ,

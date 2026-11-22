@@ -8,9 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Algebra.Order.Floor.Semifield
-
 public import Mathlib.NumberTheory.Chebyshev
+import Mathlib.Algebra.Order.Floor.Semifield
 import Mathlib.Analysis.SpecialFunctions.Stirling
 import Mathlib.Analysis.Real.Pi.Bounds
 import Mathlib.Analysis.Convex.SpecificFunctions.Basic

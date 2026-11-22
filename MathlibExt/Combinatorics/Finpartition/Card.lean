@@ -8,14 +8,16 @@ LICENSE file in the root directory of this source tree.
 
 /-
 Ported from fairinternal/formal-math at `306b05307ce5e07e232dc0c0f350c714e8df4107`.
-Original formalization by Tsutomu Okano (@toskua) with Avocado (internal agent
-identity); ported with permission.
+Original formalization by Tsutomu Okano (@toskua) with Meta Muse;
+ported with permission.
 -/
 
 module
 
+public import Mathlib.Combinatorics.Enumerative.Bell
 public import Mathlib.Order.Partition.Finpartition
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Tactic.Tauto
 
 @[expose] public section
 
@@ -240,5 +242,277 @@ theorem cardProd_mapMonoidHom {R S : Type*} [CommMonoid R] [CommMonoid S]
     (P : Finpartition s) (f : ℕ → R) (g : R →* S) :
     g (P.cardProd f) = P.cardProd (g ∘ f) := by
   simp [cardProd, map_prod]
+
+/-! ### Bell numbers count finpartitions -/
+
+private theorem sdiff_part_eq {α : Type*} [DecidableEq α] {s : Finset α} (P : Finpartition s)
+    {a : α} (ha : a ∈ s) :
+    s \ P.part a = (s.erase a) \ (P.part a).erase a := by
+  have hB : P.part a = insert a ((P.part a).erase a) :=
+    (Finset.insert_erase (P.mem_part ha)).symm
+  rw [hB]
+  ext x
+  simp only [Finset.mem_sdiff, Finset.mem_insert, Finset.mem_erase]
+  tauto
+
+private def blockProps {α : Type*} [DecidableEq α] (s : Finset α) (a : α)
+    (t : { t : Finset α // t ∈ (s.erase a).powerset }) (d : Finset (Finset α)) : Prop :=
+  (∀ p ∈ d, p ⊆ (s.erase a) \ t.val) ∧
+  (∀ x ∈ (s.erase a) \ t.val, ∃! q, q ∈ d ∧ x ∈ q) ∧
+  ∅ ∉ d
+
+private def rebuild {α : Type*} [DecidableEq α] (s : Finset α) (a : α)
+    (t : { t : Finset α // t ∈ (s.erase a).powerset }) (d : Finset (Finset α))
+    (h : blockProps s a t d) : Finpartition ((s.erase a) \ t.val) :=
+  Finpartition.ofExistsUnique d h.1 h.2.1 h.2.2
+
+private theorem parts_rebuild {α : Type*} [DecidableEq α] (s : Finset α) (a : α)
+    (t : { t : Finset α // t ∈ (s.erase a).powerset }) (d : Finset (Finset α))
+    (h : blockProps s a t d) : (rebuild s a t d h).parts = d := rfl
+
+private def addBlock {α : Type*} [DecidableEq α] {s : Finset α} {a : α} (ha : a ∈ s)
+    (t : Finset α) (ht : t ∈ (s.erase a).powerset) (Q : Finpartition ((s.erase a) \ t)) :
+    Finpartition s :=
+  Finpartition.ofExistsUnique (insert (insert a t) Q.parts)
+    (fun p hp => by
+      have htsub : t ⊆ s.erase a := Finset.mem_powerset.mp ht
+      have hts : t ⊆ s := htsub.trans (Finset.erase_subset a s)
+      rw [Finset.mem_insert] at hp
+      rcases hp with rfl | hp
+      · exact Finset.insert_subset_iff.mpr ⟨ha, hts⟩
+      · exact (Q.subset hp).trans (Finset.sdiff_subset.trans (Finset.erase_subset a s)))
+    (fun x hxs => by
+      have htsub : t ⊆ s.erase a := Finset.mem_powerset.mp ht
+      have hat : a ∉ t := fun h => Finset.notMem_erase a s (htsub h)
+      have haT : a ∉ (s.erase a) \ t :=
+        fun h => Finset.notMem_erase a s (Finset.mem_sdiff.mp h).1
+      have haQ : ∀ q ∈ Q.parts, a ∉ q := fun q hq haq => haT (Q.subset hq haq)
+      by_cases hx : x = a
+      · subst x
+        refine ⟨insert a t, ⟨Finset.mem_insert_self _ _, Finset.mem_insert_self _ _⟩,
+          fun q hq => ?_⟩
+        obtain ⟨hq1, hxq⟩ := hq
+        rw [Finset.mem_insert] at hq1
+        rcases hq1 with rfl | hq1
+        · rfl
+        · exact absurd hxq (haQ q hq1)
+      · by_cases hxt : x ∈ t
+        · refine ⟨insert a t, ⟨Finset.mem_insert_self _ _,
+            Finset.mem_insert.mpr (Or.inr hxt)⟩, fun q hq => ?_⟩
+          obtain ⟨hq1, hxq⟩ := hq
+          rw [Finset.mem_insert] at hq1
+          rcases hq1 with rfl | hq1
+          · rfl
+          · have hxT := Q.subset hq1 hxq
+            rw [Finset.mem_sdiff] at hxT
+            exact absurd hxt hxT.2
+        · have hxT : x ∈ (s.erase a) \ t :=
+            Finset.mem_sdiff.mpr ⟨Finset.mem_erase.mpr ⟨hx, hxs⟩, hxt⟩
+          obtain ⟨q, ⟨hq, hxq⟩, huniq⟩ := Q.existsUnique_mem hxT
+          refine ⟨q, ⟨Finset.mem_insert.mpr (Or.inr hq), hxq⟩, fun p hpp => ?_⟩
+          obtain ⟨hpp1, hxp⟩ := hpp
+          rw [Finset.mem_insert] at hpp1
+          rcases hpp1 with rfl | hpp1
+          · rw [Finset.mem_insert] at hxp
+            rcases hxp with hxa | hxt'
+            · exact absurd hxa hx
+            · exact absurd hxt' hxt
+          · exact huniq p ⟨hpp1, hxp⟩)
+    (by
+      rw [Finset.mem_insert]
+      rintro (h | h)
+      · have hcon := Finset.mem_insert_self a t
+        rw [← h] at hcon
+        exact Finset.notMem_empty a hcon
+      · exact Q.empty_notMem_parts h)
+
+private theorem parts_addBlock {α : Type*} [DecidableEq α] {s : Finset α} {a : α}
+    (ha : a ∈ s) (t : Finset α) (ht : t ∈ (s.erase a).powerset)
+    (Q : Finpartition ((s.erase a) \ t)) :
+    (addBlock ha t ht Q).parts = insert (insert a t) Q.parts := rfl
+
+private def outerEquiv {α : Type*} [DecidableEq α] (s : Finset α) {a : α} (ha : a ∈ s) :
+    Finpartition s ≃ { x : { t : Finset α // t ∈ (s.erase a).powerset } × Finset (Finset α) //
+      blockProps s a x.1 x.2 } where
+  toFun P :=
+    ⟨(⟨(P.part a).erase a,
+      Finset.mem_powerset.mpr (Finset.erase_subset_erase a (P.part_subset a))⟩,
+      P.parts.erase (P.part a)), by
+      refine ⟨?_, ?_, ?_⟩
+      · intro p hp
+        rw [Finset.mem_erase] at hp
+        rw [← sdiff_part_eq P ha]
+        intro x hxp
+        rw [Finset.mem_sdiff]
+        exact ⟨P.subset hp.2 hxp,
+          fun hxB => hp.1 (P.eq_of_mem_parts hp.2 (P.part_mem.2 ha) hxp hxB)⟩
+      · intro x hx
+        rw [← sdiff_part_eq P ha] at hx
+        rw [Finset.mem_sdiff] at hx
+        obtain ⟨hxs, hxB⟩ := hx
+        obtain ⟨p, ⟨hp, hxp⟩, huniq⟩ := P.existsUnique_mem hxs
+        have hpB : p ≠ P.part a := fun h => hxB (h ▸ hxp)
+        exact ⟨p, ⟨Finset.mem_erase.mpr ⟨hpB, hp⟩, hxp⟩,
+          fun q hq => huniq q ⟨Finset.mem_of_mem_erase hq.1, hq.2⟩⟩
+      · exact fun h => P.empty_notMem_parts (Finset.mem_of_mem_erase h)⟩
+  invFun x := addBlock ha x.val.1.val x.val.1.property
+    (rebuild s a x.val.1 x.val.2 x.property)
+  left_inv P := by
+    apply Finpartition.ext_iff.mpr
+    change (addBlock ha ((P.part a).erase a)
+      (Finset.mem_powerset.mpr (Finset.erase_subset_erase a (P.part_subset a)))
+      (rebuild s a ⟨(P.part a).erase a,
+        Finset.mem_powerset.mpr (Finset.erase_subset_erase a (P.part_subset a))⟩
+        (P.parts.erase (P.part a)) _)).parts = P.parts
+    rw [parts_addBlock, parts_rebuild, Finset.insert_erase (P.mem_part ha),
+      Finset.insert_erase (P.part_mem.2 ha)]
+  right_inv x := by
+    obtain ⟨⟨⟨tval, ht⟩, d⟩, h⟩ := x
+    have hat : a ∉ tval :=
+      fun hh => Finset.notMem_erase a s ((Finset.mem_powerset.mp ht) hh)
+    have hpart : (addBlock ha tval ht (rebuild s a ⟨tval, ht⟩ d h)).part a
+        = insert a tval :=
+      (addBlock ha tval ht _).part_eq_of_mem (Finset.mem_insert_self _ _)
+        (Finset.mem_insert_self _ _)
+    have hmem : insert a tval ∉ d := by
+      obtain ⟨h1, _, _⟩ := h
+      intro hmd
+      have haT := h1 _ hmd (Finset.mem_insert_self a tval)
+      rw [Finset.mem_sdiff] at haT
+      exact Finset.notMem_erase a s haT.1
+    apply Subtype.ext
+    apply Prod.ext_iff.mpr
+    constructor
+    · apply Subtype.ext
+      change ((addBlock ha tval ht (rebuild s a ⟨tval, ht⟩ d h)).part a).erase a = tval
+      rw [hpart, Finset.erase_insert hat]
+    · change ((addBlock ha tval ht (rebuild s a ⟨tval, ht⟩ d h)).parts.erase
+        ((addBlock ha tval ht (rebuild s a ⟨tval, ht⟩ d h)).part a)) = d
+      rw [parts_addBlock, parts_rebuild, hpart]
+      exact Finset.erase_insert hmem
+
+private def subtypeProdEquivSigmaSubtype {T D : Type*} (p : T × D → Prop) :
+    { x : T × D // p x } ≃ Σ t : T, { d : D // p (t, d) } where
+  toFun x := ⟨x.val.1, ⟨x.val.2, x.property⟩⟩
+  invFun x := ⟨(x.1, x.2.val), x.2.property⟩
+  left_inv x := by obtain ⟨⟨t, d⟩, h⟩ := x; rfl
+  right_inv x := by obtain ⟨t, ⟨d, h⟩⟩ := x; rfl
+
+private def fiberEquiv {α : Type*} [DecidableEq α] (s : Finset α) (a : α)
+    (t : { t : Finset α // t ∈ (s.erase a).powerset }) :
+    { d : Finset (Finset α) // blockProps s a t d } ≃ Finpartition ((s.erase a) \ t.val) where
+  toFun x := rebuild s a t x.val x.property
+  invFun Q := ⟨Q.parts, by
+    refine ⟨?_, ?_, ?_⟩
+    · exact fun p hp => Q.subset hp
+    · exact fun x hx => Q.existsUnique_mem hx
+    · exact Q.empty_notMem_parts⟩
+  left_inv x := by
+    obtain ⟨d, h⟩ := x
+    apply Subtype.ext
+    exact parts_rebuild s a t d h
+  right_inv Q := by
+    apply Finpartition.ext_iff.mpr
+    exact parts_rebuild s a t Q.parts _
+
+set_option linter.style.haveILetI false in
+/-- **Bell numbers count set partitions.** The number of partitions of a finite set `s` into
+nonempty, pairwise disjoint blocks whose union is `s` (Mathlib's `Finpartition s`, whose parts
+exclude `∅`) is the Bell number `Nat.bell (#s)`, where `Nat.bell` is defined by `B 0 = 1` and
+`B (n + 1) = ∑ i ≤ n, (n choose i) * B (n - i)`. This is the counting statement left as a TODO
+in `Mathlib.Combinatorics.Enumerative.Bell`. -/
+theorem card_eq_bell {α : Type*} [DecidableEq α] (s : Finset α) :
+    Fintype.card (Finpartition s) = s.card.bell := by
+  have hempty : Fintype.card (Finpartition (∅ : Finset α)) = (∅ : Finset α).card.bell := by
+    have h1 : Fintype.card (Finpartition (∅ : Finset α)) = 1 := by
+      apply Fintype.card_eq_one_iff_nonempty_unique.mpr
+      rw [← Finset.bot_eq_empty]
+      exact ⟨inferInstance⟩
+    calc Fintype.card (Finpartition (∅ : Finset α)) = 1 := h1
+      _ = (∅ : Finset α).card.bell := by rw [Finset.card_empty]; exact Nat.bell_zero.symm
+  have key : ∀ (n : ℕ) (s : Finset α),
+      s.card ≤ n → Fintype.card (Finpartition s) = s.card.bell := by
+    intro n
+    induction n with
+    | zero =>
+        intro s hs
+        have hs0 : s = ∅ := Finset.card_eq_zero.mp (Nat.le_zero.mp hs)
+        rw [hs0]
+        exact hempty
+    | succ n ih =>
+        intro s hs
+        by_cases hne : s = ∅
+        · rw [hne]; exact hempty
+        · obtain ⟨a, ha⟩ := Finset.nonempty_iff_ne_empty.mpr hne
+          have hpos : 0 < s.card := Finset.card_pos.mpr ⟨a, ha⟩
+          have hsu : s.card = (s.erase a).card + 1 := by
+            have h2 := Finset.card_erase_of_mem ha
+            omega
+          have hcard : Fintype.card (Finpartition s)
+              = ∑ t ∈ (s.erase a).powerset, Fintype.card (Finpartition ((s.erase a) \ t)) := by
+            haveI : Fintype { x : { t : Finset α // t ∈ (s.erase a).powerset } ×
+                Finset (Finset α) // blockProps s a x.1 x.2 } :=
+              Fintype.ofEquiv (Finpartition s) (outerEquiv s ha)
+            haveI : ∀ t : { t : Finset α // t ∈ (s.erase a).powerset },
+                Fintype { d : Finset (Finset α) // blockProps s a t d } := fun t =>
+              Fintype.ofEquiv (Finpartition ((s.erase a) \ t.val)) (fiberEquiv s a t).symm
+            calc Fintype.card (Finpartition s)
+                = Fintype.card { x : { t : Finset α // t ∈ (s.erase a).powerset } ×
+                    Finset (Finset α) // blockProps s a x.1 x.2 } :=
+                  Fintype.card_congr (outerEquiv s ha)
+              _ = Fintype.card (Σ t : { t : Finset α // t ∈ (s.erase a).powerset },
+                    { d : Finset (Finset α) // blockProps s a t d }) :=
+                  Fintype.card_congr (subtypeProdEquivSigmaSubtype
+                    (fun x : { t : Finset α // t ∈ (s.erase a).powerset } × Finset (Finset α) =>
+                      blockProps s a x.1 x.2))
+              _ = ∑ t : { t : Finset α // t ∈ (s.erase a).powerset },
+                    Fintype.card { d : Finset (Finset α) // blockProps s a t d } :=
+                  Fintype.card_sigma
+              _ = ∑ t : { t : Finset α // t ∈ (s.erase a).powerset },
+                    Fintype.card (Finpartition ((s.erase a) \ t.val)) := by
+                  have hfib : ∀ t : { t : Finset α // t ∈ (s.erase a).powerset },
+                      Fintype.card { d : Finset (Finset α) // blockProps s a t d }
+                      = Fintype.card (Finpartition ((s.erase a) \ t.val)) :=
+                    fun t => Fintype.card_congr (fiberEquiv s a t)
+                  simp only [hfib]
+              _ = ∑ t ∈ (s.erase a).powerset, Fintype.card (Finpartition ((s.erase a) \ t)) :=
+                  Finset.sum_coe_sort (s.erase a).powerset
+                    (fun t => Fintype.card (Finpartition ((s.erase a) \ t)))
+          have hIH : ∀ t ∈ (s.erase a).powerset,
+              Fintype.card (Finpartition ((s.erase a) \ t))
+              = ((s.erase a).card - t.card).bell := by
+            intro t ht
+            have hsub : t ⊆ s.erase a := Finset.mem_powerset.mp ht
+            have hle : ((s.erase a) \ t).card ≤ n := by
+              have h1 : ((s.erase a) \ t).card ≤ (s.erase a).card :=
+                Finset.card_le_card Finset.sdiff_subset
+              have h2 : (s.erase a).card = s.card - 1 := Finset.card_erase_of_mem ha
+              omega
+            have hIHt := ih _ hle
+            rw [Finset.card_sdiff_of_subset hsub] at hIHt
+            exact hIHt
+          rw [hcard]
+          trans ∑ t ∈ (s.erase a).powerset, ((s.erase a).card - t.card).bell
+          · exact Finset.sum_congr rfl hIH
+          · have hfib : ∀ t ∈ (s.erase a).powerset,
+                t.card ∈ Finset.range ((s.erase a).card + 1) := by
+              intro t ht
+              rw [Finset.mem_range]
+              exact Nat.lt_succ_of_le (Finset.card_le_card (Finset.mem_powerset.mp ht))
+            trans ∑ k ∈ Finset.range ((s.erase a).card + 1),
+              ∑ i ∈ (s.erase a).powerset with i.card = k, ((s.erase a).card - i.card).bell
+            · exact (Finset.sum_fiberwise_of_maps_to hfib _).symm
+            · rw [Nat.range_succ_eq_Iic, hsu, Nat.bell_succ]
+              apply Finset.sum_congr rfl
+              intro k hk
+              rw [← Finset.powersetCard_eq_filter]
+              have hconst : ∀ i ∈ Finset.powersetCard k (s.erase a),
+                  ((s.erase a).card - i.card).bell = ((s.erase a).card - k).bell := by
+                intro i hi
+                rw [(Finset.mem_powersetCard.mp hi).2]
+              rw [Finset.sum_congr rfl hconst]
+              rw [Finset.sum_const, Finset.card_powersetCard, nsmul_eq_mul, Nat.cast_id]
+  exact key s.card s le_rfl
+
 
 end Finpartition

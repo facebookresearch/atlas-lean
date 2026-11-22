@@ -26,37 +26,10 @@ namespace MathlibExt.NumberTheory.Ramanujan.Part1Ch2
 
 namespace Entry7Example5Alternating
 
-private lemma arctan_ne_odd (x : ℝ) (k : ℤ) :
-    Real.arctan x ≠ (2 * (k : ℝ) + 1) * Real.pi / 2 := by
-  intro h
-  have hlt := Real.arctan_lt_pi_div_two x
-  have hgt := Real.neg_pi_div_two_lt_arctan x
-  rw [h] at hlt hgt
-  have hpi : (0 : ℝ) < Real.pi / 2 := div_pos Real.pi_pos (by norm_num)
-  have e1 : (2 : ℝ) * (k : ℝ) + 1 < 1 := by
-    have h' : ((2 : ℝ) * (k : ℝ) + 1) * (Real.pi / 2) < 1 * (Real.pi / 2) := by
-      linear_combination hlt
-    exact lt_of_mul_lt_mul_right h' (le_of_lt hpi)
-  have e2 : (-1 : ℝ) < (2 : ℝ) * (k : ℝ) + 1 := by
-    have h'' : (-1 : ℝ) * (Real.pi / 2) < ((2 : ℝ) * (k : ℝ) + 1) * (Real.pi / 2) := by
-      linear_combination hgt
-    exact lt_of_mul_lt_mul_right h'' (le_of_lt hpi)
-  have h1 : (2 * k + 1 : ℤ) < 1 := by
-    have : (((2 * k + 1 : ℤ)) : ℝ) < ((1 : ℤ) : ℝ) := by
-      push_cast
-      linarith
-    exact_mod_cast this
-  have h2 : (-1 : ℤ) < 2 * k + 1 := by
-    have : (((-1 : ℤ)) : ℝ) < (((2 * k + 1 : ℤ)) : ℝ) := by
-      push_cast
-      linarith
-    exact_mod_cast this
-  omega
-
 private lemma arctan_sub_of_nonneg {x y : ℝ} (_hx : 0 ≤ x) (hy : 0 ≤ y) (h : y ≤ x) :
     Real.arctan x - Real.arctan y = Real.arctan ((x - y) / (1 + x * y)) := by
   have htan : Real.tan (Real.arctan x - Real.arctan y) = (x - y) / (1 + x * y) := by
-    rw [Real.tan_sub (Or.inl ⟨fun k => arctan_ne_odd x k, fun k => arctan_ne_odd y k⟩),
+    rw [Real.tan_sub (Or.inl ⟨Real.arctan_ne_mul_pi_div_two, Real.arctan_ne_mul_pi_div_two⟩),
       Real.tan_arctan, Real.tan_arctan]
   have hle : Real.arctan y ≤ Real.arctan x := Real.arctan_le_arctan_iff.mpr h
   have hnn : (0 : ℝ) ≤ Real.arctan y := Real.arctan_nonneg.mpr hy

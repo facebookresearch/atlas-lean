@@ -744,6 +744,7 @@ private theorem brunTitchmarsh_primeCount_le_uniform (X k ell : ℕ)
     _ = 42 * (X : ℝ) /
         ((Nat.totient k : ℝ) * Real.log y) := by ring
 
+set_option linter.unusedVariables false in
 /-- **Uniform Brun–Titchmarsh bound.** Write $\pi(X; k, \ell)$ for the number of primes $p \le X$
 with $p \equiv \ell \pmod{k}$, and $\varphi$ for Euler's totient function. For every real $\beta$
 with $0 < \beta < 1$ there is a real constant $\xi_1 > 0$ such that for all natural numbers $X$,
@@ -770,6 +771,7 @@ cites E. C. Titchmarsh, "A divisor problem," Rend. Palermo 54 (1930), 414–429
 and 57 (1933), 478–479. The bound `2 ≤ X` makes the source's implicit analytic
 lower range explicit, and the source prints no coprimality hypothesis.
 -/
+@[nolint unusedArguments] -- `hβ0` keeps the `Wanted` entry's statement
 public theorem brun_titchmarsh_uniform (β : ℝ) (hβ0 : 0 < β)
     (hβ1 : β < 1) :
     ∃ ξ₁ : ℝ, 0 < ξ₁ ∧ ∀ X k ell : ℕ, 2 ≤ X → 1 ≤ k →

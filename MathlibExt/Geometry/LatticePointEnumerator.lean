@@ -12,7 +12,7 @@ public import Mathlib.Algebra.Group.Pointwise.Set.Basic
 public import Mathlib.Algebra.Group.Pointwise.Set.Scalar
 public import Mathlib.Algebra.Module.Submodule.Defs
 public import Mathlib.Analysis.Normed.Group.Constructions
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Set.Card
 public import Mathlib.LinearAlgebra.Span.Defs
 public import Mathlib.LinearAlgebra.StdBasis

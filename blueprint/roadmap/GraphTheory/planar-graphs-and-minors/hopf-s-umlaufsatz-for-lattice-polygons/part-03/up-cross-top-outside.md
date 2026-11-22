@@ -1,0 +1,3 @@
+# No upward crossings for cells above a walk
+
+Let $n \ge 1$ and let $d = (d_0, \dots, d_{n-1})$ be a cyclic sequence of directions $d_i \in \mathbb{Z}/4\mathbb{Z}$, indices taken modulo $n$. Direction $k$ is the unit step $s(k)$, with $s(0) = (1, 0)$ (east), $s(1) = (0, 1)$ (north), $s(2) = (-1, 0)$ (west), $s(3) = (0, -1)$ (south), and the walk with step directions $d$ has vertices $p_k = \sum_{0 \le i < k} s(d_i)$ for $k = 0, \dots, n-1$ (so $p_0 = 0$; vertex indices are also taken modulo $n$). Let $a, b, T$ be integers with $y(p_j) \le T$ for every vertex $p_j$ and $T \le b$. Then the upward crossing count of the cell $[a, a+1] \times [b, b+1]$ (the number of horizontal steps $k$ with $\min(x(p_k), x(p_{k+1})) = a$ and $y(p_k) > b$) is $0$.

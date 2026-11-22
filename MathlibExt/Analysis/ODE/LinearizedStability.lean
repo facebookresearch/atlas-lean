@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.LinearAlgebra.Matrix.MMatrix
+import MathlibExt.Analysis.Normed.Algebra.MatrixExponentialIntertwining
 public import Mathlib.Analysis.Calculus.FDeriv.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Normed.Algebra.MatrixExponential
@@ -275,21 +276,6 @@ private theorem complex_semigroup_bound {ι : Type*} [Fintype ι]
     _ ≤ ((∑ j, C j) + 1) * Real.exp (-(α * t)) * ‖v‖ := by gcongr; linarith
 
 open scoped Matrix.Norms.Operator in
-private theorem matrix_exp_to_clm {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (B : Matrix ι ι ℂ) (t : ℝ) (v : ι → ℂ) :
-    (NormedSpace.exp (t • LinearMap.toContinuousLinearMap B.toLin')) v =
-      NormedSpace.exp (t • B) *ᵥ v := by
-  let e : Matrix ι ι ℂ ≃ₐ[ℂ] ((ι → ℂ) →L[ℂ] (ι → ℂ)) :=
-    Matrix.toLinAlgEquiv'.trans (Module.End.toContinuousLinearMap (ι → ℂ))
-  let := NormedAlgebra.restrictScalars ℚ ℂ ((ι → ℂ) →L[ℂ] (ι → ℂ))
-  have he : e (t • B) = t • e B := e.toLinearMap.map_smul_of_tower t B
-  have hexp := NormedSpace.map_exp e e.toLinearMap.continuous_of_finiteDimensional (t • B)
-  rw [he] at hexp
-  change (NormedSpace.exp (t • e B)) v = _
-  rw [← hexp]
-  rfl
-
-open scoped Matrix.Norms.Operator in
 private theorem matrix_exp_ofReal {ι : Type*} [Fintype ι] [DecidableEq ι]
     (A : Matrix ι ι ℝ) :
     (NormedSpace.exp A).map (algebraMap ℝ ℂ) =
@@ -334,7 +320,7 @@ theorem IsHurwitz.exists_norm_exp_smul_mulVec_le {A : Matrix ι ι ℝ} (hA : A.
     rw [← hmap, ← matrix_exp_ofReal]
     exact RingHom.map_mulVec (algebraMap ℝ ℂ) _ _ i
   have h := hbound t ht (fun i => (v i : ℂ))
-  rw [matrix_exp_to_clm B t, ← hvec, complexification_norm, complexification_norm] at h
+  rw [Matrix.exp_to_clm B t, ← hvec, complexification_norm, complexification_norm] at h
   exact h
 
 end Matrix

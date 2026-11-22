@@ -36,14 +36,6 @@ private lemma pascal_even (n k : ℕ) :
   rw [Nat.succ_eq_add_one n, show (2 * k + 1).succ = 2 * (k + 1) from by omega] at h
   exact h
 
-/-- Pascal's rule at an odd index. -/
-private lemma pascal_odd (n k : ℕ) :
-    Nat.choose (n + 1) (2 * (k + 1) + 1)
-      = Nat.choose n (2 * (k + 1)) + Nat.choose n (2 * (k + 1) + 1) := by
-  have h := Nat.choose_succ_succ n (2 * (k + 1))
-  rw [Nat.succ_eq_add_one n, Nat.succ_eq_add_one (2 * (k + 1))] at h
-  exact h
-
 /-- First-order relation for the even part. -/
 private lemma evenSum_step (n : ℕ) :
     evenSum (n + 1) = evenSum n + 5 * oddSum n := by
@@ -104,7 +96,7 @@ private lemma oddSum_step (n : ℕ) :
         = ((Nat.choose n (2 * (k + 1) + 1) : ℤ) * 5 ^ (k + 1))
           + ((Nat.choose n (2 * (k + 1)) : ℤ) * 5 ^ (k + 1)) := by
     intro k _
-    rw [pascal_odd n k]
+    rw [Nat.choose_succ_succ' n (2 * (k + 1))]
     push_cast
     ring
   have hL1 : (∑ k ∈ Finset.range (n + 1 + 1),

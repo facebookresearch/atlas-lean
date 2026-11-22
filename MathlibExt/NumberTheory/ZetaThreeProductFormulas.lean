@@ -573,8 +573,6 @@ private lemma z3p_clausen_three_pi :
   rw [tsum_congr hz]
   exact z3p_tsum_alternating_inv_cube
 
-private lemma z3p_fact_two : Nat.factorial 2 = 2 := by decide
-
 private lemma z3p_neg_one_pow_three : (-1 : ℝ) ^ (3 : ℕ) = -1 := by norm_num
 
 private lemma z3p_entry13_one :
@@ -627,7 +625,7 @@ private lemma z3p_entry13_two :
     show ((2 - 2 : ℕ)) = 0 from rfl]
   simp only [pow_zero, pow_one, one_mul, mul_one, div_one, mul_zero,
     Nat.cast_one, Nat.cast_ofNat, Nat.factorial_one, Nat.factorial_zero,
-    z3p_fact_two, z3p_neg_one_pow_three, z3p_clausen_one_pi,
+    Nat.factorial_two, z3p_neg_one_pow_three, z3p_clausen_one_pi,
     z3p_clausen_two_pi, z3p_clausen_three_pi]
   ring
 

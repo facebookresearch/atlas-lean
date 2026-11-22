@@ -277,14 +277,6 @@ private lemma r3leg_zmod_two_parity :
       (a = b ∧ c = d) ∨ (a = c ∧ b = d) ∨ (a = d ∧ b = c) := by
   decide
 
-private lemma r3leg_zmod_two_sq (a : ZMod 2) : a ^ 2 = a := by
-  revert a
-  decide
-
-private lemma r3leg_zmod_two_add_self (a : ZMod 2) : a + a = 0 := by
-  revert a
-  decide
-
 private lemma r3leg_eps_norm (e : Quaternion ℤ)
     (h : e = r3legEpsI ∨ e = r3legEpsJ ∨ e = r3legEpsK) :
     Quaternion.normSq e = 2 := by
@@ -306,7 +298,7 @@ private lemma r3leg_even_right_factor (q : Quaternion ℤ)
   have hsum : (q.re : ZMod 2) + q.imI + q.imJ + q.imK = 0 := by
     rw [Quaternion.normSq_def'] at hn
     push_cast at hn
-    simpa only [r3leg_zmod_two_sq] using hn
+    simpa only [ZMod.pow_card] using hn
   rcases r3leg_zmod_two_parity _ _ _ _ hsum with h | h | h
   · refine ⟨r3legEpsI, r3leg_eps_norm _ (Or.inl rfl), ?_⟩
     obtain ⟨h₁, h₂⟩ := h
@@ -321,16 +313,16 @@ private lemma r3leg_even_right_factor (q : Quaternion ℤ)
     · apply r3leg_two_dvd_of_cast_eq_zero
       push_cast
       rw [h₁]
-      simp [r3leg_zmod_two_add_self]
+      simp [CharTwo.add_self_eq_zero]
     constructor
     · apply r3leg_two_dvd_of_cast_eq_zero
       push_cast
       rw [h₂]
-      simp [r3leg_zmod_two_add_self]
+      simp [CharTwo.add_self_eq_zero]
     · apply r3leg_two_dvd_of_cast_eq_zero
       push_cast
       rw [h₂]
-      simp [r3leg_zmod_two_add_self]
+      simp [CharTwo.add_self_eq_zero]
   · refine ⟨r3legEpsJ, r3leg_eps_norm _ (Or.inr (Or.inl rfl)), ?_⟩
     obtain ⟨h₁, h₂⟩ := h
     simp only [Quaternion.re_mul, Quaternion.imI_mul, Quaternion.imJ_mul,
@@ -349,11 +341,11 @@ private lemma r3leg_even_right_factor (q : Quaternion ℤ)
     · apply r3leg_two_dvd_of_cast_eq_zero
       push_cast
       rw [h₁]
-      simp [r3leg_zmod_two_add_self]
+      simp [CharTwo.add_self_eq_zero]
     · apply r3leg_two_dvd_of_cast_eq_zero
       push_cast
       rw [h₂]
-      simp [r3leg_zmod_two_add_self]
+      simp [CharTwo.add_self_eq_zero]
   · refine ⟨r3legEpsK, r3leg_eps_norm _ (Or.inr (Or.inr rfl)), ?_⟩
     obtain ⟨h₁, h₂⟩ := h
     simp only [Quaternion.re_mul, Quaternion.imI_mul, Quaternion.imJ_mul,
@@ -367,16 +359,16 @@ private lemma r3leg_even_right_factor (q : Quaternion ℤ)
     · apply r3leg_two_dvd_of_cast_eq_zero
       push_cast
       rw [h₂]
-      simp [r3leg_zmod_two_add_self]
+      simp [CharTwo.add_self_eq_zero]
     constructor
     · apply r3leg_two_dvd_of_cast_eq_zero
       push_cast
       rw [h₂]
-      simp [r3leg_zmod_two_add_self]
+      simp [CharTwo.add_self_eq_zero]
     · apply r3leg_two_dvd_of_cast_eq_zero
       push_cast
       rw [h₁]
-      simp [r3leg_zmod_two_add_self]
+      simp [CharTwo.add_self_eq_zero]
 
 private def r3legQuatDiv (q : Quaternion ℤ) (c : ℤ) : Quaternion ℤ :=
   { re := q.re / c, imI := q.imI / c, imJ := q.imJ / c, imK := q.imK / c }

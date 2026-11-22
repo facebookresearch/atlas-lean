@@ -234,6 +234,7 @@ private theorem honsberger_generic
     · exact honsberger_induction_step p m n f hzero hone hrec (by omega)
         (ih (m - 1) (by omega)) (ih (m - p - 1) (by omega))
 
+set_option linter.unusedVariables false in
 /-- **Honsberger identity for Fibonacci p-numbers.** Let $p$, $m$ and $n$ be positive integers
 with $p \le m + 1$ and $p \le n + 2$, and write $F_p(r)$ for the Fibonacci $p$-numbers. Suppose
 that $F_p(0) = 0$, that $F_p(r) = 1$ for $1 \le r \le p$, and that
@@ -255,6 +256,7 @@ stable ID `jis_grounded_9dbbcac802edaa76c96bd1ff`. Corrected accounting:
 Leonardo identity and the separate finite-sum identity. Definition from lines 79-85.
 Proves `Wanted` entry `honsberger_fibonacciP`.
 -/
+@[nolint unusedArguments] -- `hm`, `hm_pos`, `hn`, `hn_pos` keep the `Wanted` entry's statement
 theorem honsberger_fibonacciP
     (p m n : ℕ) (hp : 0 < p) (hm_pos : 0 < m) (hn_pos : 0 < n)
     (hm : p ≤ m + 1) (hn : p ≤ n + 2) :

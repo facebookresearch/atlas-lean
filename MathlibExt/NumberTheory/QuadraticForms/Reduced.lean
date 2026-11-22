@@ -7,9 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 
 module
-
-import Mathlib.Algebra.Order.Group.Abs
 public import Mathlib.Algebra.QuadraticDiscriminant
+import Mathlib.Algebra.Order.Group.Abs
 
 /-!
 # Gauss-reduced integral binary quadratic forms

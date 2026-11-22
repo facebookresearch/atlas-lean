@@ -76,22 +76,13 @@ public def delete {α : Type u} [LinearOrder α] (x : α) (tree : Tree α) :
     Tree α :=
   rebalance (del x tree)
 
-@[simp] private theorem mem_empty_delete {α : Type u} {x : α} :
-    x ∈ (Tree.empty : Tree α) ↔ False :=
-  Iff.rfl
-
-@[simp] private theorem mem_node_delete {α : Type u} {x key : α}
-    {color : Color} {left right : Tree α} :
-    x ∈ Tree.node color left key right ↔ x ∈ left ∨ x = key ∨ x ∈ right :=
-  Iff.rfl
-
 /-- A key is in a splice exactly when it is in one of the two parts. -/
 public theorem mem_join {α : Type u} {x : α} {left right : Tree α} :
     x ∈ join left right ↔ x ∈ left ∨ x ∈ right := by
   induction left with
   | empty => simp [join]
   | node color leftLeft key leftRight _ ihRight =>
-    simp only [join, mem_node_delete, ihRight]
+    simp only [join, mem_node, ihRight]
     constructor
     · rintro (hx | hx | hx | hx)
       · exact Or.inl (Or.inl hx)
@@ -148,14 +139,14 @@ private theorem mem_of_mem_del {α : Type u} [LinearOrder α] {x y : α}
   | empty => simp [del] at hy
   | node color left key right ihLeft ihRight =>
     by_cases hxKey : x < key
-    · simp only [del, ite_eq_left hxKey, mem_node_delete] at hy
+    · simp only [del, ite_eq_left hxKey, mem_node] at hy
       rcases hy with hy | hy | hy
       · exact Or.inl (ihLeft hy)
       · exact Or.inr (Or.inl hy)
       · exact Or.inr (Or.inr hy)
     · by_cases hKeyX : key < x
       · simp only [del, ite_eq_right hxKey, ite_eq_left hKeyX,
-          mem_node_delete] at hy
+          mem_node] at hy
         rcases hy with hy | hy | hy
         · exact Or.inl hy
         · exact Or.inr (Or.inl hy)
@@ -169,17 +160,17 @@ private theorem mem_of_mem_del {α : Type u} [LinearOrder α] {x y : α}
 private theorem mem_del_of_mem {α : Type u} [LinearOrder α] {x y : α}
     {tree : Tree α} (hy : y ∈ tree) (hxy : y ≠ x) : y ∈ del x tree := by
   induction tree with
-  | empty => exact (mem_empty_delete.mp hy).elim
+  | empty => exact (mem_empty.mp hy).elim
   | node color left key right ihLeft ihRight =>
-    rw [mem_node_delete] at hy
+    rw [mem_node] at hy
     by_cases hxKey : x < key
-    · simp only [del, ite_eq_left hxKey, mem_node_delete]
+    · simp only [del, ite_eq_left hxKey, mem_node]
       rcases hy with hy | hy | hy
       · exact Or.inl (ihLeft hy)
       · exact Or.inr (Or.inl hy)
       · exact Or.inr (Or.inr hy)
     · by_cases hKeyX : key < x
-      · simp only [del, ite_eq_right hxKey, ite_eq_left hKeyX, mem_node_delete]
+      · simp only [del, ite_eq_right hxKey, ite_eq_left hKeyX, mem_node]
         rcases hy with hy | hy | hy
         · exact Or.inl hy
         · exact Or.inr (Or.inl hy)
@@ -199,13 +190,13 @@ private theorem not_mem_del_self {α : Type u} [LinearOrder α] {x : α}
   | node color left key right ihLeft ihRight =>
     rcases hTree with ⟨hLeft, hRight, hAllLeft, hAllRight⟩
     by_cases hxKey : x < key
-    · simp only [del, ite_eq_left hxKey, mem_node_delete]
+    · simp only [del, ite_eq_left hxKey, mem_node]
       rintro (hx | hx | hx)
       · exact ihLeft hLeft hx
       · exact ne_of_lt hxKey hx
       · exact lt_asymm hxKey ((all_iff_forall_mem.mp hAllRight) x hx)
     · by_cases hKeyX : key < x
-      · simp only [del, ite_eq_right hxKey, ite_eq_left hKeyX, mem_node_delete]
+      · simp only [del, ite_eq_right hxKey, ite_eq_left hKeyX, mem_node]
         rintro (hx | hx | hx)
         · exact lt_asymm hKeyX ((all_iff_forall_mem.mp hAllLeft) x hx)
         · exact ne_of_gt hKeyX hx
@@ -255,11 +246,6 @@ private theorem erase_cons_tail_of_ne {α : Type u} [LinearOrder α] {a b : α}
     {l : List α} (h : b ≠ a) : (b :: l).erase a = b :: l.erase a :=
   List.erase_cons_tail (fun hb => h (beq_iff_eq.mp hb))
 
-private theorem erase_append_of_not_mem_left {α : Type u} [LinearOrder α]
-    {x : α} {left right : List α} (hx : x ∉ left) :
-    (left ++ right).erase x = left ++ right.erase x := by
-  rw [List.erase_append, ite_eq_right hx]
-
 private theorem erase_append_of_not_mem_right {α : Type u} [LinearOrder α]
     {x : α} {left right : List α} (hx : x ∉ right) :
     (left ++ right).erase x = left.erase x ++ right := by
@@ -295,7 +281,7 @@ private theorem inorder_del {α : Type u} [LinearOrder α] {x : α}
           exact lt_asymm hKeyX ((all_iff_forall_mem.mp hAllLeft) x hx)
         simp only [del, ite_eq_right hxKey, ite_eq_left hKeyX, inorder_node,
           ihRight hRight]
-        rw [erase_append_of_not_mem_left hxLeft,
+        rw [List.erase_append_right _ hxLeft,
           erase_cons_tail_of_ne (ne_of_lt hKeyX)]
       · have hxEq : x = key :=
           le_antisymm (le_of_not_gt hKeyX) (le_of_not_gt hxKey)
@@ -305,7 +291,7 @@ private theorem inorder_del {α : Type u} [LinearOrder α] {x : α}
           intro hx
           exact lt_irrefl key ((all_iff_forall_mem.mp hAllLeft) key hx)
         simp only [del, ite_eq_right hxKey, inorder_join, inorder_node]
-        rw [erase_append_of_not_mem_left hKeyLeft, List.erase_cons_head]
+        rw [List.erase_append_right _ hKeyLeft, List.erase_cons_head]
 
 private theorem mem_rebalance {α : Type u} [LinearOrder α] {y : α}
     {tree : Tree α} : y ∈ rebalance tree ↔ y ∈ tree := by

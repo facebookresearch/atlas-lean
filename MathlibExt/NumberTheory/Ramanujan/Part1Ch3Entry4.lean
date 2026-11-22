@@ -225,17 +225,12 @@ private lemma tail_exp_series' (w : ℂ) :
   rw [heq, tsum_mul_left]
   exact h
 
-private lemma coe_add_one_ne_zero (j : ℕ) : ((j : ℂ) + 1) ≠ 0 := by
-  have h : ((j : ℂ) + 1) = ((j + 1 : ℕ) : ℂ) := by push_cast; ring
-  rw [h]
-  exact Nat.cast_ne_zero.mpr (Nat.succ_ne_zero j)
-
 /-- Exact value of each fiber sum (for a ≠ 0). -/
 private lemma fiber_value (a x : ℂ) (ha : a ≠ 0) (j : ℕ) :
     (∑' n, T a x j n) = Complex.exp (-x) *
       (x ^ (j + 1) * (Complex.exp (a * ((j : ℂ) + 1)) - 1) /
         ((Nat.factorial (j + 1) : ℕ) : ℂ)) := by
-  have hw : a * ((j : ℂ) + 1) ≠ 0 := mul_ne_zero ha (coe_add_one_ne_zero j)
+  have hw : a * ((j : ℂ) + 1) ≠ 0 := mul_ne_zero ha (Nat.cast_add_one_ne_zero j)
   have heq : (fun n => T a x j n)
       = (fun n => (a * (Complex.exp (-x) * (x ^ (j + 1) / (Nat.factorial j : ℂ))))
         * ((a * ((j : ℂ) + 1)) ^ n / ((Nat.factorial (n + 1) : ℕ) : ℂ))) := by

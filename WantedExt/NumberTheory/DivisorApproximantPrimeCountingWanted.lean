@@ -78,7 +78,8 @@ public theorem_wanted one_le_pi_sq_mul_sq_div_two_mul_sin_sq (k n : ℕ) (hk : 1
 Lemma 2 with `A(j, k) = π² j²/2`) satisfies `τ̃(k) = τ(k) + O(1/(eᵏ - 1))` as `k → ∞`.
 
 Source: Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
-Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Theorem 1 (`integers-2026-A46-thm-1`). -/
+Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Theorem 1
+(`integers-2026-A46-thm-1`). -/
 public theorem_wanted divisorCountApprox_one_sub_isBigO :
     (fun k : ℕ => ∑ j ∈ Icc 1 k,
         Real.exp (-(Real.pi ^ 2 / 2 * k * j ^ 3 * Real.sin (k * Real.pi / j) ^ 2)) -
@@ -90,7 +91,8 @@ value bars; the constant is `0.684 + 1/(e³(e - 1))`, the sum of the one-sided b
 two-sided reading requires).
 
 Source: Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
-Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Theorem 2 (`integers-2026-A46-thm-2`). -/
+Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Theorem 2
+(`integers-2026-A46-thm-2`). -/
 public theorem_wanted primeCountingApprox_abs_sub_lt (n : ℕ) (hn : 2 ≤ n) :
     let τ' : ℕ → ℝ := fun k => ∑ j ∈ Icc 1 k,
       Real.exp (-(Real.pi ^ 2 / 2 * k * j ^ 3 * Real.sin (k * Real.pi / j) ^ 2))
@@ -100,7 +102,8 @@ public theorem_wanted primeCountingApprox_abs_sub_lt (n : ℕ) (hn : 2 ≤ n) :
 satisfies `σ̃(n) - σ(n) < n/(eⁿ - 1)` for all `n ≥ 1`.
 
 Source: Carlos M. Alberto and Mavacala N. Saidi, *A New Asymptotic Formula for π(n) with the
-Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Theorem 3 (`integers-2026-A46-thm-3`). -/
+Divisor Counting Function*, INTEGERS 26 (2026), Article A46, Theorem 3
+(`integers-2026-A46-thm-3`). -/
 public theorem_wanted divisorSumApprox_sub_lt (A : ℕ → ℕ → ℝ)
     (hA : ∀ k n, 1 ≤ k → k ≤ n → ¬ k ∣ n →
       1 ≤ A k n * Real.sin (n * Real.pi / k) ^ 2)

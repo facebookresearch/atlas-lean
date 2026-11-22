@@ -35,7 +35,8 @@ every $m \ge 0$.
 Writing $B_m = T_{-m}$, the initial values are $T_0 = 0$, $T_{-1} = 0$, $T_{-2} = 1$, and the
 recursion is the Tribonacci recurrence $T_{n+3} = T_{n+2} + T_{n+1} + T_n$ solved for $T_n$.
 
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public def tribonacciBackward : ℕ → ℤ
   | 0 => 0
@@ -51,7 +52,8 @@ for $n \ge 0$, and on the negative indices by $T_{-1} = 0$, $T_{-2} = 1$ and
 $T_{-m-3} = T_{-m} - T_{-m-1} - T_{-m-2}$ for $m \ge 0$, the recurrence solved for its lowest
 term.
 
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public def tribonacciInt : ℤ → ℤ
   | .ofNat n => generalizedTribonacci 0 1 1 n
@@ -65,7 +67,8 @@ $m \ge 0$. Then $T_0 = 0$.
 
 This is the first initial value used by Proposition 1.
 
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public theorem tribonacciInt_zero : tribonacciInt 0 = 0 := by
   rfl
@@ -78,7 +81,8 @@ $m \ge 0$. Then $T_1 = 1$.
 
 This is one of Proposition 1's five indices at which the value lies in $\{\pm 1\}$.
 
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public theorem tribonacciInt_one : tribonacciInt 1 = 1 := by
   rfl
@@ -91,7 +95,8 @@ $m \ge 0$. Then $T_2 = 1$.
 
 This is one of Proposition 1's five indices at which the value lies in $\{\pm 1\}$.
 
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public theorem tribonacciInt_two : tribonacciInt 2 = 1 := by
   rfl
@@ -104,7 +109,8 @@ $m \ge 0$. Then $T_{-1} = 0$.
 
 This fixes the first value across the boundary between negative and nonnegative indices.
 
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public theorem tribonacciInt_neg_one : tribonacciInt (-1) = 0 := by
   rfl
@@ -117,7 +123,8 @@ $m \ge 0$. Then $T_{-2} = 1$.
 
 This is one of Proposition 1's five indices at which the value lies in $\{\pm 1\}$.
 
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public theorem tribonacciInt_neg_two : tribonacciInt (-2) = 1 := by
   rfl
@@ -130,7 +137,8 @@ $m \ge 0$. Then $T_{-3} = -1$.
 
 This is one of Proposition 1's five indices at which the value lies in $\{\pm 1\}$.
 
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public theorem tribonacciInt_neg_three : tribonacciInt (-3) = -1 := by
   rfl
@@ -143,7 +151,8 @@ $m \ge 0$. Then $T_{-7} = 1$.
 
 This is one of Proposition 1's five indices at which the value lies in $\{\pm 1\}$.
 
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public theorem tribonacciInt_neg_seven : tribonacciInt (-7) = 1 := by
   rfl
@@ -156,7 +165,8 @@ $T_{-m-3} = T_{-m} - T_{-m-1} - T_{-m-2}$ for $m \ge 0$. Then
 $T_{n+3} = T_{n+2} + T_{n+1} + T_n$ for every integer $n$, including the three indices
 $n = -3, -2, -1$ at which the recurrence crosses zero.
 
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Proposition 1.
 -/
 public theorem tribonacciInt_add_three (n : ℤ) :
     tribonacciInt (n + 3) =
@@ -201,7 +211,8 @@ Then $T_n = t_{n+1}$ for every natural number $n$.
 This is the bridge between Proposition 1's normalization and Theorem 1's natural-indexed
 sequence.
 
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci Numbers*, INTEGERS 24 (2024), Article A92, Theorem 1 and Proposition 1 notation.
+Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
+Numbers*, INTEGERS 24 (2024), Article A92, Theorem 1 and Proposition 1 notation.
 -/
 public theorem tribonacciInt_nat_eq (n : ℕ) :
     tribonacciInt (n : ℤ) = (tribonacci (n + 1) : ℤ) := by

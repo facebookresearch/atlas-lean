@@ -285,6 +285,7 @@ theorem exists_isBisectionSequence_nested
   have h := hseq.invariants hab ha hb n
   exact mul_nonpos_of_nonpos_of_nonneg h.2.2.2.1 h.2.2.2.2
 
+set_option linter.unusedVariables false in
 /-- Bisection method: nested bracketing intervals halving in length at each
 step while keeping a sign change.
 Sources: `Mathlib/docs/undergrad.yaml`, section `Numerical Analysis` /
@@ -298,6 +299,7 @@ Proves `Wanted` entry `bisection_nested_intervals`.
 Proof: The endpoint pairs are defined recursively by the sign of each midpoint, and induction
 proves the nesting, sign, and exact halving invariants from Burden and Faires, Section 2.1.
 -/
+@[nolint unusedArguments] -- `hf` keeps the stated hypothesis
 theorem bisection_nested_intervals
     {f : ℝ → ℝ} {a b : ℝ} (hab : a ≤ b)
     (hf : ContinuousOn f (Set.Icc a b)) (ha : f a ≤ 0) (hb : 0 ≤ f b) :

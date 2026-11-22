@@ -68,16 +68,19 @@ variable {K L : Type*} [Field K] [Field L] [NumberField K] [NumberField L]
 variable {v : HeightOneSpectrum (𝓞 K)} (w : v.placesOver L)
 
 /-- Lying-over instance from places-over membership. -/
-scoped instance : w.val.asIdeal.LiesOver v.asIdeal :=
+scoped instance instLiesOverRingOfIntegersAsIdealVal_mathlibExt :
+    w.val.asIdeal.LiesOver v.asIdeal :=
   w.property
 
 /-- Algebra from the base completion to the place completion. -/
-noncomputable scoped instance : Algebra (v.adicCompletion K) (w.val.adicCompletion L) :=
+noncomputable scoped instance instAlgebraAdicCompletionRingOfIntegersValLiesOverAsIdeal_mathlibExt :
+    Algebra (v.adicCompletion K) (w.val.adicCompletion L) :=
   let _ : w.val.asIdeal.LiesOver v.asIdeal := w.property
   (adicCompletionMap v w.val).toAlgebra
 
 /-- Scalar tower over the base field through the base completion. -/
-scoped instance : IsScalarTower K (v.adicCompletion K) (w.val.adicCompletion L) := by
+scoped instance instIsScalarTowerAdicCompletionRingOfIntegersValLiesOverAsIdeal_mathlibExt :
+    IsScalarTower K (v.adicCompletion K) (w.val.adicCompletion L) := by
   let _ : w.val.asIdeal.LiesOver v.asIdeal := w.property
   apply IsScalarTower.of_algebraMap_eq
   intro x
