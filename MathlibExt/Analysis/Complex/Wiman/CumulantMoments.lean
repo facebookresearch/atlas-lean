@@ -18,7 +18,10 @@ open MeasureTheory ProbabilityTheory
 
 noncomputable section
 
-/-- The logarithmic radial majorant is twice continuously differentiable. -/
+/-- **The logarithmic majorant is $C^2$.** Let $f$ be an entire function with Taylor
+coefficients $a_n$ at the origin, and let $\Phi(x) = \log \sum_{n \ge 0} |a_n| e^{nx}$ be the
+logarithm of its radial Taylor majorant at radius $e^x$ (with $\log 0 = 0$). Then $\Phi$ is
+twice continuously differentiable on $\mathbb{R}$. -/
 theorem contDiff_two_wimanGrowth
     (f : ℂ → ℂ) (hf : Differentiable ℂ f) :
     ContDiff ℝ 2 (wimanGrowth f) := by
@@ -37,8 +40,12 @@ theorem contDiff_two_wimanGrowth
         (X := fun n : ℕ => (n : ℝ)) (μ := wimanCoefficientMeasure f))
   exact hAnalytic.contDiff
 
-/-- The first derivative of the logarithmic majorant is the mean index under the tilted
-coefficient distribution. -/
+/-- **Derivative of the logarithmic majorant as a mean.** Let $f$ be an entire function whose
+Taylor coefficients $a_n$ at the origin are not all zero, and let
+$\Phi(x) = \log \sum_{n \ge 0} |a_n| e^{nx}$. For real $x$, let $\nu_x$ be the coefficient
+measure tilted at $x$, the probability measure on $\mathbb{N}$ with
+$\nu_x(\{n\}) = |a_n| e^{nx} / \sum_{m \ge 0} |a_m| e^{mx}$. Then
+$\Phi'(x) = \int n \, d\nu_x(n)$, the mean of $n$ under $\nu_x$. -/
 theorem deriv_wimanGrowth_eq_expectation
     (f : ℂ → ℂ) (hf : Differentiable ℂ f)
     (_hne : ∃ n, wimanTaylorCoefficient f n ≠ 0) (x : ℝ) :
@@ -55,8 +62,12 @@ theorem deriv_wimanGrowth_eq_expectation
       (X := fun n : ℕ => (n : ℝ)) (μ := wimanCoefficientMeasure f) (t := x)
       (mem_interior_integrableExpSet_wimanCoefficientMeasure f hf x)).symm
 
-/-- The second derivative of the logarithmic majorant is the variance of the index under the
-tilted coefficient distribution. -/
+/-- **Second derivative of the logarithmic majorant as a variance.** Let $f$ be an entire
+function whose Taylor coefficients $a_n$ at the origin are not all zero, and let
+$\Phi(x) = \log \sum_{n \ge 0} |a_n| e^{nx}$. For real $x$, let $\nu_x$ be the coefficient
+measure tilted at $x$, the probability measure on $\mathbb{N}$ with
+$\nu_x(\{n\}) = |a_n| e^{nx} / \sum_{m \ge 0} |a_m| e^{mx}$. Then $\Phi''(x)$ is the variance
+of $n$ under $\nu_x$. -/
 theorem iteratedDeriv_two_wimanGrowth_eq_variance
     (f : ℂ → ℂ) (hf : Differentiable ℂ f)
     (_hne : ∃ n, wimanTaylorCoefficient f n ≠ 0) (x : ℝ) :
@@ -74,7 +85,9 @@ theorem iteratedDeriv_two_wimanGrowth_eq_variance
       (X := fun n : ℕ => (n : ℝ)) (μ := wimanCoefficientMeasure f) (t := x)
       (mem_interior_integrableExpSet_wimanCoefficientMeasure f hf x)).symm
 
-/-- The logarithmic radial majorant has nonnegative second derivative. -/
+/-- **The logarithmic majorant has nonnegative second derivative.** Let $f$ be an entire
+function whose Taylor coefficients $a_n$ at the origin are not all zero, and let
+$\Phi(x) = \log \sum_{n \ge 0} |a_n| e^{nx}$. Then $\Phi''(x) \ge 0$ for every real $x$. -/
 theorem iteratedDeriv_two_wimanGrowth_nonneg
     (f : ℂ → ℂ) (hf : Differentiable ℂ f)
     (hne : ∃ n, wimanTaylorCoefficient f n ≠ 0) (x : ℝ) :

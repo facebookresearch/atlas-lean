@@ -27,23 +27,31 @@ coefficients" are stated as the existence of such a polynomial
 `MvPolynomial (Fin 2) ℤ`, and rational identities are cleared
 of denominators, as in the paper's proofs.
 
-Of the paper's thirteen numbered statements, ten are
+Of the paper's thirteen numbered statements, twelve are
 formalized below (including the super FiboCatalan half of
 Corollary 5). One further statement is already covered in
 MathlibExt and is not restated: Corollary 9, via
 `MetaMathlibExt.generalizedFibonacciCatalan_isPosInt` (with
 `generalizedFibonacciCatalan_r1`), which also proves the
-generalized half of Corollary 5. Theorem 1 and Lemma 2, which
-concern the Sagan-Tirrell Lucas-atom factorization
-(`log_d` exponents of the atoms `P_d`), are not formalized
-here: that factorization infrastructure does not exist in the
-repository.
+generalized half of Corollary 5. Theorem 1 and Lemma 2 (quoted
+from Sagan and Tirrell) use the Lucas atoms `P_d`, which the
+paper introduces only through `{n} = ∏_{d ∣ n} P_d(s,t)`; in
+Lemma 2 they enter as a function `P` with that property for
+`n ≥ 1`, which determines `P d` for every `d ≥ 1`
+(`MvPolynomial (Fin 2) ℤ` is a domain). Theorem 1's criterion
+is stated through the exponents alone, so it takes no atoms.
+The exponent `log_d` of `P_d` in a product of Lucas
+polynomials is the number of factors `{n_i}` with `d ∣ n_i`
+(Theorem 1), and in Lemma 2 it is the exact power of `P d`
+dividing `{n}!`.
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.MvPolynomial.Basic
 public import Mathlib.Data.Nat.Fib.Basic
+public import Mathlib.Data.Rat.Floor
+public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.GeneralizedFibocatalanNumber
 
 set_option autoImplicit false
@@ -233,5 +241,40 @@ theorem_wanted exists_nonneg_poly_kDivLucasCatalan
       p * (lucasKDivFactorial k m * lucasKDivFactorial k n *
           lucasKDivFactorial k (m + n)) =
         lucasKDivFactorial k (2 * m) * lucasKDivFactorial k (2 * n)
+
+/-- **Theorem 1** (Sagan and Tirrell, Theorem 1.1, quoted): for
+`f = ∏ {n_i}` and `g = ∏ {k_j}` with positive indices, whose
+decompositions into the Lucas atoms `P_d` (`{n} = ∏_{d ∣ n} P_d`)
+have exponents `a_d = #{i : d ∣ n_i}` and `b_d = #{j : d ∣ k_j}`,
+`f/g` is a polynomial iff `a_d ≥ b_d` for all `d ≥ 2`; in that
+case `f/g` has non-negative integer coefficients. The criterion
+involves only the exponents, so the atoms do not appear.
+
+Source: Kendra Killpatrick, *Super FiboCatalan Numbers and Their
+Lucas Analogues*, Journal of Integer Sequences 28 (2025), Article
+25.5.8, Theorem 1. -/
+theorem_wanted lucasPoly_prod_quotient_iff
+    (ns ks : List ℕ) (hns : ∀ n ∈ ns, 1 ≤ n) (hks : ∀ k ∈ ks, 1 ≤ k) :
+    ((∃ q : MvPolynomial (Fin 2) ℤ,
+        q * (ks.map lucasPoly).prod = (ns.map lucasPoly).prod) ↔
+      ∀ d, 2 ≤ d → ks.countP (fun k => d ∣ k) ≤ ns.countP (fun n => d ∣ n)) ∧
+    ∀ q : MvPolynomial (Fin 2) ℤ,
+      q * (ks.map lucasPoly).prod = (ns.map lucasPoly).prod →
+        ∀ σ : Fin 2 →₀ ℕ, 0 ≤ q.coeff σ
+
+/-- **Lemma 2** (Sagan and Tirrell, Lemma 3.1, quoted): for
+`d ≥ 2`, `log_d {n}! = ⌊n/d⌋`, i.e. `P_d^{⌊n/d⌋}` exactly divides
+`{n}!`, where `P` is the Lucas atoms (`{n} = ∏_{d ∣ n} P_d` for
+`n ≥ 1`); and
+`⌊m/d⌋ + ⌊n/d⌋ ≤ ⌊(m+n)/d⌋` for integers `m`, `n`, `d`.
+
+Source: Kendra Killpatrick, *Super FiboCatalan Numbers and Their
+Lucas Analogues*, Journal of Integer Sequences 28 (2025), Article
+25.5.8, Lemma 2. -/
+theorem_wanted lucasAtom_pow_dvd_lucasFactorial (P : ℕ → MvPolynomial (Fin 2) ℤ)
+    (hP : ∀ n, 1 ≤ n → lucasPoly n = ∏ d ∈ n.divisors, P d) :
+    (∀ d n : ℕ, 2 ≤ d →
+      P d ^ (n / d) ∣ lucasFactorial n ∧ ¬ P d ^ (n / d + 1) ∣ lucasFactorial n) ∧
+    ∀ m n d : ℤ, ⌊(m : ℚ) / d⌋ + ⌊(n : ℚ) / d⌋ ≤ ⌊((m + n : ℤ) : ℚ) / d⌋
 
 end MathlibExt.NumberTheory.SuperFibocatalanWanted

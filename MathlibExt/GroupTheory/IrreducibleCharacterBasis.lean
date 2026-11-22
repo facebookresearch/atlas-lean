@@ -9,11 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.RepresentationTheory.Character
+public import Mathlib.RepresentationTheory.Maschke
+public import Mathlib.Algebra.Category.FGModuleCat.Abelian
+public import Mathlib.CategoryTheory.Action.Limits
 public import Mathlib.Algebra.Group.Conj
-public import Mathlib.Data.Complex.Basic
+public import Mathlib.Basic.Complex.Basic
 
-import Mathlib.Algebra.Category.FGModuleCat.Abelian
-import Mathlib.RepresentationTheory.Maschke
 import Mathlib.Algebra.Module.Shrink
 import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
@@ -124,6 +125,7 @@ public theorem linearIndependent_character {I G : Type*} [Group G] [Finite G]
   simp_rw [hpair] at hp
   simpa [hi] using hp
 
+@[nolint unusedArguments] -- Without `[Finite G]`, `∑ᶠ` collapses to `0` on infinite support.
 private noncomputable def irrCharOp {G V : Type*} [Group G] [Finite G]
     [AddCommGroup V] [Module ℂ V] (ρ : Representation ℂ G V) (f : G → ℂ) :
     Module.End ℂ V :=
@@ -230,6 +232,7 @@ private theorem irrCharOp_smul_eq_zero {G V : Type*} [Group G] [Finite G]
   · intro c b hb x hx
     rw [smul_assoc, map_smul, map_smul, hb x hx, smul_zero]
 
+@[nolint unusedArguments] -- Without `[Finite G]`, `∑ᶠ` collapses to `0` on infinite support.
 private noncomputable def irrCharModuleOp {G M : Type*} [Group G] [Finite G]
     [AddCommGroup M] [Module ℂ[G] M] [Module ℂ M] [IsScalarTower ℂ ℂ[G] M]
     (f : G → ℂ) : Module.End ℂ M :=

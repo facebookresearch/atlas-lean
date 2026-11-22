@@ -91,13 +91,17 @@ arXiv2111.02974v1, Theorem 1.1. -/
 def kunisky2023LowerBound : Prop :=
   ENNReal.ofReal (1 + Real.sqrt 2) ≤ komlosConstant
 
-/-- The catalogue's literal infinite-dimension endpoint assertion is unverified.
+/-- Kunisky's finite lower bound in every dyadic dimension `2 ^ k`.
 
-Source: optimization catalogue C24a, line 53. Retained Kunisky v1 only gives
-a sequence approaching the endpoint from below; the journal2023 comparison
-is unresolved. This request does not certify exact finite attainment. -/
+Source: Kunisky, SIAM J. Discrete Math. 37 (2023), arXiv:2111.02974,
+Theorem 1.1. The bound equals `1 + √2 - √2 * 2 ^ (-k / 2)`, so it approaches
+`1 + √2` from below; no finite-dimensional attainment of that endpoint is
+asserted. -/
 def kuniskyInfinitelyManyDimensionsLowerBound : Prop :=
-  {n : ℕ | 1 ≤ n ∧ ENNReal.ofReal (1 + Real.sqrt 2) ≤ dimensionConstant n}.Infinite
+  ∀ k : ℕ,
+    ENNReal.ofReal
+      ((2 : ℝ) ^ (-(k : ℝ) / 2) + ∑ a ∈ Finset.Icc 1 k, (2 : ℝ) ^ (-(a : ℝ) / 2)) ≤
+      dimensionConstant (2 ^ k)
 
 /-- Nikolov's actual unit-vector witness for admitted rectangular matrices.
 
@@ -141,7 +145,8 @@ theorem_wanted bansalJiang2025LittleSqrtLogUpperBound_holds :
 /-- Source: Kunisky, arXiv2111.02974v1, Theorem 1.1; catalogue C24a, line 45. -/
 theorem_wanted kunisky2023LowerBound_holds : kunisky2023LowerBound
 
-/-- Source: catalogue C24a, line 53, unverified exact finite-endpoint assertion. -/
+/-- Source: Kunisky, SIAM J. Discrete Math. 37 (2023), arXiv:2111.02974,
+Theorem 1.1, at each dyadic dimension `2 ^ k`. -/
 theorem_wanted kuniskyInfinitelyManyDimensionsLowerBound_holds :
   kuniskyInfinitelyManyDimensionsLowerBound
 

@@ -103,20 +103,6 @@ private theorem foldl_testBit_false : ∀ (l : List ℕ) (k : ℕ),
     have e := ih ht
     rw [cons_fold a t, Nat.testBit_xor, ha, e, Bool.false_xor]
 
-/-- `Nat.xor` vanishes exactly on equal arguments. -/
-private theorem xor_eq_zero_iff (a b : ℕ) : (a ^^^ b = 0) ↔ a = b := by
-  constructor
-  · intro h
-    have h2 : (a ^^^ b) ^^^ b = a := by
-      calc (a ^^^ b) ^^^ b
-          = a ^^^ (b ^^^ b) := Nat.xor_assoc _ _ _
-        _ = a := by rw [Nat.xor_self, Nat.xor_zero]
-    rw [h, Nat.zero_xor] at h2
-    exact h2.symm
-  · intro h
-    subst h
-    exact Nat.xor_self _
-
 /-- The `Fin`-indexed version of `foldl_set`, for the main theorem. -/
 private theorem foldl_set_fin (pos : List ℕ) (i : Fin pos.length) (y : ℕ) :
     List.foldl Nat.xor 0 (pos.set i.val y)
@@ -166,7 +152,7 @@ theorem bouton_nim_p_positions
     have hset := foldl_set_fin pos i y
     rw [hs0, Nat.zero_xor] at hset
     have h0 : pos.get i ^^^ y = 0 := hset.symm.trans hcon
-    have heq : pos.get i = y := (xor_eq_zero_iff _ _).mp h0
+    have heq : pos.get i = y := xor_eq_zero_iff.mp h0
     exact (ne_of_lt hylt) heq.symm
   · intro hne
     obtain ⟨k, hk_true, hk_above⟩ := Nat.exists_most_significant_bit hne

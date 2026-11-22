@@ -1,0 +1,4 @@
+# Variables occurring in a string atom
+
+Let $\alpha$ be an alphabet and $V$ a set of variables. String terms over $\alpha$ with variables in $V$ are built from constant words $w \in \alpha^*$, variables $x \in V$, concatenations $t_1 \cdot t_2$ and morphism applications $h(t)$, where $h$ is a map $\alpha \to \alpha^*$ extended letter by letter to words. An atom is an equation $t_1 = t_2$, a membership $t \in L(e)$ for a regular expression $e$ over $\alpha$, or a length bound $|t| \le k$ or $|t| \ge k$ with $k \in \mathbb{N}$, where $t, t_1, t_2$ are terms. The variables of a term are those occurring in it: none for a constant word, $x$ for a variable $x$, those of $t_1$ and $t_2$ for $t_1 \cdot t_2$, and those of $t$ for $h(t)$. The list of variables of an atom is: for $t_1 = t_2$, the variables of $t_1$ followed by those of
+$t_2$; for $t \in L(e)$, $|t| \le k$ and $|t| \ge k$, the variables of $t$ (repetitions allowed).

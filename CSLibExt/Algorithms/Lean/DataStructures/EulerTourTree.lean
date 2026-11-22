@@ -26,8 +26,8 @@ recorded in `Tree.valid_link`. Without those hypotheses `link`/`tour` are
 still total list operations on labelled trees, but they do not describe a
 forest link.
 
-Link and cut are recorded at the level of tours. `link t₁ t₂` attaches `t₂` as the
-last child of the root of `t₁`, and its tour is the list splice
+The tour operations link at the root and cut its last child. `link t₁ t₂`
+attaches `t₂` as the last child of the root of `t₁`, and its tour is the list splice
 `tour t₁ ++ tour t₂ ++ [t₁.root]`: the tour of `t₁` is a prefix and the tour of `t₂`
 occurs as a contiguous block. `cutLast` removes the last child subtree of the root
 and inverts `link`. These are the sequence operations underlying Euler-tour trees
@@ -35,9 +35,15 @@ for dynamic forests.
 
 Out of scope: balance and complexity (tours are plain lists here, so splicing is
 linear in this representation, not the logarithmic bound of a balanced sequence),
-subtree aggregate queries over tours, and the link-cut tree proper. The splay-based
-link-cut tree is deferred until a splay tree module is present in this library; this
-file provides the Euler-tour representation and its splice specification only.
+subtree aggregate queries over tours, rerooting, arbitrary-vertex linking, and
+connectivity queries. This file provides the Euler-tour representation and its
+splice specification only. `SplayTree.lean` provides splay trees. `LinkCutTree.lean`
+uses this tree type for its specification-level represented forest and
+preferred-path decomposition. In `LinkCutTree.State`, see `makeRoot` and `link`
+for rerooting and links at arbitrary vertices, `cut` and `cutEdge` for subtree
+and edge cuts, and `Connected` with `connected_iff_tour` for connectivity and
+its Euler-tour characterization. This model has no auxiliary splay trees or
+amortized complexity bounds.
 -/
 
 @[expose] public section
@@ -294,7 +300,8 @@ theorem valid_singleton (r : V) : Valid (.node r []) := by
   rw [Valid, vertices_node]
   simp
 
-/-- Records `t₂` as a new last child subtree of the root of `t₁`. -/
+/-- Root link: attach `t₂` as the last child subtree of the root of `t₁`,
+without rerooting either tree or choosing another attachment vertex. -/
 def link : Tree V → Tree V → Tree V
   | .node r cs, t₂ => .node r (cs ++ [t₂])
 

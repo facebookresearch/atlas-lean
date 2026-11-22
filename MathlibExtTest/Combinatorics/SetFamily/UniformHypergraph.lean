@@ -49,3 +49,18 @@ example : ¬ SetFamily.ContainsSubgraph ({{0, 1}} : Finset (Finset (Fin 3))) 1 1
   have h2 : ({0, 1} : Finset (Fin 3)).card ≤ S.card := Finset.card_le_card hsub
   have h01 : ({0, 1} : Finset (Fin 3)).card = 2 := by decide
   omega
+
+/-- Distinct-member semantics accept the singleton family containing the empty edge. -/
+example : SetFamily.IsIntersecting ({∅} : Finset (Finset (Fin 2))) := by
+  rw [SetFamily.isIntersecting_iff]
+  decide
+
+/-- Two distinct disjoint singleton edges are not an intersecting family. -/
+example : ¬ SetFamily.IsIntersecting ({{0}, {1}} : Finset (Finset (Fin 2))) := by
+  rw [SetFamily.isIntersecting_iff]
+  decide
+
+/-- The predicate also accepts distinct edges sharing a vertex. -/
+example : SetFamily.IsIntersecting ({{0}, {0, 1}} : Finset (Finset (Fin 2))) := by
+  rw [SetFamily.isIntersecting_iff]
+  decide
