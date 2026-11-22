@@ -54,6 +54,8 @@ from the superficial flux.
 
 namespace Engineering.Resource.PorousStorage
 
+/-! ## A. Pore volumes and mass inventory -/
+
 /-- Pore volume of a bulk volume `V_bulk` at porosity `phi`. -/
 def poreVolume (phi V_bulk : ℝ) : ℝ :=
   phi * V_bulk
@@ -89,16 +91,15 @@ lemma poreInventory_nonneg {ι : Type*} {phi V_bulk : ℝ} (hphi : 0 ≤ phi)
   unfold poreInventory
   exact mul_nonneg (mul_nonneg (mul_nonneg hphi hV) (hS i)) (hrho i)
 
-set_option linter.unusedVariables false in
-/-- **Saturation partition.** For admissible data (nonnegative porosity,
-bulk volume, and saturations) with saturations summing to one, the phase
-volumes are nonnegative volumes filling the pore volume:
-`∑ i, phi * V_bulk * S_i = phi * V_bulk`. Nonnegativity is part of the
-physical statement: signed weights summing to one, such as `(-1, 2)`, are
-not saturations and are excluded here. -/
+/-- **Saturation partition.** For weights summing to one, the phase
+volumes fill the pore volume:
+`∑ i, phi * V_bulk * S_i = phi * V_bulk`. This sum identity is purely
+algebraic: it needs only that the weights sum to one and also holds for
+signed weights such as `(-1, 2)`. The physical partition content —
+nonnegative phase volumes bounded by the pore volume — is the separate
+admissibility lemmas below, whose hypotheses signed weights fail. -/
 lemma sum_phaseVolume_eq {ι : Type*} [Fintype ι] {phi V_bulk : ℝ}
-    (hphi : 0 ≤ phi) (hV : 0 ≤ V_bulk) {S : ι → ℝ} (hS0 : ∀ i, 0 ≤ S i)
-    (hS : ∑ i, S i = 1) :
+    {S : ι → ℝ} (hS : ∑ i, S i = 1) :
     ∑ i, phaseVolume phi V_bulk S i = poreVolume phi V_bulk := by
   unfold phaseVolume poreVolume
   simp only [← Finset.mul_sum, hS, mul_one]
