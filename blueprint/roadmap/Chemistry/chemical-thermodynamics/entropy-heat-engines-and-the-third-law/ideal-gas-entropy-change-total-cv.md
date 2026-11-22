@@ -1,0 +1,5 @@
+# Ideal Gas Entropy Change total CV
+
+No-double-counting: with total heat capacity `CV = n * cv`, the change is
+`CV * log (T₂ / T₁) + n * R * log (V₂ / V₁)` — using total `CV` one does NOT multiply by
+`n` again.

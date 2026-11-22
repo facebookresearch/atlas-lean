@@ -1,0 +1,4 @@
+# Has Deriv At internal Energy
+
+The constant-`Cv` internal energy has temperature derivative `Cv`, at every real `T` and for
+every real `Cv`.

@@ -1,0 +1,5 @@
+# Arrhenius Rate neg at upper
+
+At the upper bracket point `Ta + G / H` the rate is negative for
+`G, H, B > 0` (with `Ta > 0`): generation is below `G` since
+`exp(-B / T) < 1`, and cooling equals `G`.

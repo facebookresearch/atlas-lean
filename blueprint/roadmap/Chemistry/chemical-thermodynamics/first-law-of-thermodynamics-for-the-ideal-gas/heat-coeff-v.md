@@ -1,0 +1,5 @@
+# Heat Coeff V
+
+The `dV` coefficient of the reversible heat 1-form `δq = p dV + Cv dT` of an ideal gas: the
+pressure `n * R * T / V`. Physical states have `V > 0`; at `V = 0` it is Lean's junk value
+`0`.
