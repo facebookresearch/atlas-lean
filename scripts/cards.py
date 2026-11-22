@@ -39,6 +39,10 @@ with a Python that has Autoform and the site's Markdown extensions installed (se
 
 The wiki job runs rollup the same way before render, for the card data the site shows (hooks/card_pages.py):
 rollup removes its output first and writes it, whole, only once the check passed, so an error leaves no card data.
+
+A planned statement page may record its counterparts under `extensions["org.atlas-wiki"]["counterpart"]`
+(docs/cards.md#counterparts): check verifies their form and their place, a live statement page Autoform reads whose
+own row links no Lean declaration; they are data only, and nothing else here reads them.
 """
 
 from __future__ import annotations
@@ -93,6 +97,12 @@ MATHLIB_SOURCE = re.compile(r"/leanprover-community/mathlib4/blob/([0-9a-f]{40})
 LEAN_PART = r"(?:[^\W\d][\w'!?\u2080-\u209c\u1d62-\u1d6a]*|«[^»]+»)"
 LEAN_NAME = re.compile(rf"{LEAN_PART}(?:\.{LEAN_PART})*")
 MOVES = "card-moves.jsonl"
+# A planned page's counterparts (docs/cards.md#counterparts): each record names one declaration, of Mathlib or of
+# the project, says how it compares with the page's statement, and may list the other declarations a combination
+# takes.
+LIBRARIES = ("mathlib", "atlas")
+RELATIONS = ("same", "stronger", "weaker", "variant")
+COUNTERPART_KEYS = {*LIBRARIES, "relation", "needs"}
 # A statement's headline and its progress bucket: the first marker that applies, then Autoform's state key of a
 # credited statement (`stated`: stated, its proof blocked; `planned`: blocked, not ready to state). A page-only
 # statement is never shown as ready: with no declaration kind it is no task (the graph rules' planned pages and
@@ -411,6 +421,175 @@ def misplaced_records(annotations: dict[Path, dict]) -> list[str]:
     return errors
 
 
+def lean_linked(annotation: dict | None) -> bool:
+    """Whether a row links a Lean declaration, as Autoform reads it over the folder defaults: a Lean end naming a
+    declaration, of this project, of Mathlib or of another one, or the module and name an earlier sync wrote, which
+    lean-facts reads as a link. A statement page whose row links none is planned."""
+    if not isinstance(annotation, dict):
+        return False
+    read = sync.effective(annotation) or annotation
+    objects = read.get("object", [])
+    return sync.legacy_pair(annotation) is not None or any(
+        isinstance(end, dict) and end.get("type") == "lean" and isinstance(end.get("location"), dict)
+        and end["location"].get("declaration") is not None for end in (objects if isinstance(objects, list) else []))
+
+
+def name_components(name: str) -> tuple[str, ...]:
+    """A Lean name's components as Lean reads them, each without the «» that may quote it: `Matrix.«det»` and
+    `Matrix.det` are one name, while `«a.b».c`, two components, is not `a.b.c`, three. *name* has the form
+    LEAN_NAME gives."""
+    return tuple(part[1:-1] if part.startswith("«") else part for part in re.findall(LEAN_PART, name))
+
+
+def spelled(first: str, second: str) -> str:
+    """How a problem shows a second spelling of a name it has shown as *first*: nothing when they are the same."""
+    return "" if first == second else f" (once as {second})"
+
+
+def named(entry: dict, what: str) -> tuple[tuple[str, str] | None, list[str]]:
+    """The library and name of the one declaration *entry* names (exactly one of `mathlib` and `atlas`, a Lean
+    name), and what is wrong with it."""
+    libraries = [library for library in LIBRARIES if library in entry]
+    if len(libraries) != 1:
+        given = "no declaration" if not libraries else "two declarations"
+        return None, [f"{what} names {given}; give exactly one of `mathlib` and `atlas`"]
+    library = libraries[0]
+    name = entry[library]
+    if not (isinstance(name, str) and LEAN_NAME.fullmatch(name)):
+        return None, [f"{what}: `{library}` is {name!r}, not a Lean name"]
+    if name_components(name)[0] == "_root_":
+        return None, [f"{what}: `{library}` is {name!r}; write the full name without `_root_.`, a prefix only Lean "
+                      "source writes, never part of a declaration's name"]
+    return (library, name), []
+
+
+def counterpart_shape(value: object) -> list[str]:
+    """What is wrong with the form of a `counterpart` list: a non-empty list of records, each naming exactly one
+    declaration (`mathlib` or `atlas`, a Lean name), with its `relation` and an optional non-empty `needs` list of
+    such declarations, each `{"mathlib": name}` or `{"atlas": name}`, and no other key; no declaration twice in a
+    list, and a record's own declaration not among its needs, a declaration being its library and its name as Lean
+    reads it (name_components), whatever the spelling."""
+    if not isinstance(value, list) or not value:
+        return ["`counterpart` must be a non-empty list of records"]
+    problems: list[str] = []
+    recorded: dict[tuple[str, tuple[str, ...]], str] = {}
+    for number, record in enumerate(value, 1):
+        what = f"`counterpart` record {number}"
+        if not isinstance(record, dict):
+            problems.append(f"{what} is not an object")
+            continue
+        problems += [f"{what} has the unknown key `{key}`" for key in sorted(set(record) - COUNTERPART_KEYS)]
+        target, found = named(record, what)
+        problems += found
+        if "relation" not in record:
+            problems.append(f"{what} has no `relation`; give one of {', '.join(RELATIONS)}")
+        elif record["relation"] not in RELATIONS:
+            problems.append(f"{what}: `relation` is {record['relation']!r}; expected one of {', '.join(RELATIONS)}")
+        own = None if target is None else (target[0], name_components(target[1]))
+        if own is not None:
+            if own in recorded:
+                first = recorded[own]
+                problems.append(f"`counterpart` names {target[0]} {first} twice{spelled(first, target[1])}")
+            else:
+                recorded[own] = target[1]
+        if "needs" not in record:
+            continue
+        needs = record["needs"]
+        if not isinstance(needs, list) or not needs:
+            problems.append(f'{what}: `needs` must be a non-empty list of declarations, each {{"mathlib": name}} or '
+                            '{"atlas": name}; leave it out when the declaration needs no other')
+            continue
+        listed: dict[tuple[str, tuple[str, ...]], str] = {}
+        for index, entry in enumerate(needs, 1):
+            where = f"{what}, `needs` entry {index}"
+            if not isinstance(entry, dict):
+                problems.append(f"{where} is not an object naming one declaration")
+                continue
+            problems += [f"{where} has the unknown key `{key}`" for key in sorted(set(entry) - set(LIBRARIES))]
+            other, found = named(entry, where)
+            problems += found
+            if other is None:
+                continue
+            key = (other[0], name_components(other[1]))
+            if key in listed:
+                problems.append(f"{what}: `needs` names {other[0]} {listed[key]} twice{spelled(listed[key], other[1])}")
+                continue
+            if key == own:
+                shown = "" if other[1] == target[1] else f" (as {other[1]})"
+                problems.append(f"{what}: `needs` names the record's own declaration, {target[0]} {target[1]}{shown}")
+            listed[key] = other[1]
+    return problems
+
+
+def counterpart_keys(value: object, path: str) -> list[str]:
+    """Where a `counterpart` key sits in *value*, at any depth, in an object or a list, each as a path from *path*."""
+    found = []
+    if isinstance(value, dict):
+        for key, inner in value.items():
+            here = f"{path}[{json.dumps(key, ensure_ascii=False)}]"
+            found += [here] if key == "counterpart" else counterpart_keys(inner, here)
+    elif isinstance(value, list):
+        for index, inner in enumerate(value):
+            found += counterpart_keys(inner, f"{path}[{index}]")
+    return found
+
+
+def counterpart_pages(annotations: dict[Path, dict]) -> list[Path]:
+    """The rows' pages that record a counterpart."""
+    return sorted(page for page, annotation in annotations.items()
+                  if isinstance(own := (annotation.get("extensions") or {}).get(OWN), dict) and "counterpart" in own)
+
+
+def counterpart_problems(annotations: dict[Path, dict], committed: dict[Path, dict]) -> list[str]:
+    """What is wrong with the counterparts the rows record (docs/cards.md#counterparts): a counterpart belongs to a
+    planned statement page, one whose row links no Lean declaration (lean_linked), as checked out and as committed,
+    since lean-facts may drop a committed link; it has the form counterpart_shape gives; and the links folder's
+    defaults give none, anywhere under their `org.atlas-wiki` extension, a card record included, as they would give
+    it to every row, a credited or a folder page's included (counterpart_keys). Only the form
+    is checked: that a record is true is for review. A card record that holds one is check_record's, and a row whose
+    page Autoform does not read, check's, which has Autoform's graph (live_counterparts)."""
+    errors = []
+    template = sync.links_template()
+    inherited = template.get("extensions") if isinstance(template, dict) else None
+    folder = sync.LINKS.relative_to(wiki.ROOT).as_posix() if sync.LINKS.is_relative_to(wiki.ROOT) else sync.LINKS
+    for path in counterpart_keys(inherited.get(OWN) if isinstance(inherited, dict) else None, f'extensions["{OWN}"]'):
+        errors.append(f"{folder}/_defaults.json sets `counterpart` at `{path}`, which would give every row that "
+                      "counterpart; a counterpart belongs on a planned statement page's own row: remove it from the "
+                      "defaults")
+    for page, annotation in sorted(annotations.items()):
+        extensions = annotation.get("extensions")
+        own = extensions.get(OWN) if isinstance(extensions, dict) else None
+        if not isinstance(own, dict) or "counterpart" not in own:
+            continue  # an `org.atlas-wiki` extension that is no object is misplaced_records'
+        where = node_id(page)
+        if page.name == "README.md":
+            errors.append(f"{where}: a counterpart belongs on a planned statement page, not on a folder page")
+            continue
+        if lean_linked(annotation) or lean_linked(committed.get(page)):
+            errors.append(f"{where}: a counterpart belongs on a planned page, whose annotation links no Lean "
+                          "declaration; this one links one")
+        errors += [f"{where}: {problem}" for problem in counterpart_shape(own["counterpart"])]
+    return errors
+
+
+def live_counterparts(annotations: dict[Path, dict], graph) -> list[str]:
+    """A counterpart on a row whose page is no live statement page Autoform reads, under its node id: its file is
+    missing (an orphan row), or Autoform's loader passes it over (a hidden page, say)."""
+    errors = []
+    read = statement_nodes(graph)
+    for page in counterpart_pages(annotations):
+        if page.name == "README.md":
+            continue  # counterpart_problems reports it
+        if not page.is_file():
+            errors.append(f"{node_id(page)}: a counterpart belongs on a statement page Autoform reads; its page is "
+                          "missing")
+        elif read.get(node_id(page)) != page.resolve():
+            shown = page.resolve().relative_to(wiki.ROADMAP.resolve()).as_posix()
+            errors.append(f"{node_id(page)}: a counterpart belongs on a statement page Autoform reads; Autoform does "
+                          f"not read {shown} as one")
+    return errors
+
+
 def card_folders(annotations: dict[Path, dict]) -> dict[Path, Card]:
     """Every card, by its folder: a folder page whose annotation carries a card record."""
     cards = {}
@@ -461,7 +640,10 @@ def check_record(card: Card, by_id: dict[str, Path], annotations: dict[Path, dic
     record = card.record
     if not isinstance(record, dict):
         return ["the card record is not an object"], None
-    errors += [f"unknown card key `{key}`" for key in sorted(set(record) - RECORD_KEYS)]
+    errors += [f"unknown card key `{key}`" for key in sorted(set(record) - RECORD_KEYS - {"counterpart"})]
+    if "counterpart" in record:
+        errors.append("a card records no counterpart; a counterpart belongs on a planned statement page's "
+                      "annotation (docs/cards.md#counterparts)")
     errors += [f"the card record has no `{key}`" for key in REQUIRED if key not in record]
     for key, allowed in (("kind", KINDS), ("importance", IMPORTANCE), ("level", LEVELS)):
         if key in record and record[key] not in allowed:
@@ -535,7 +717,7 @@ def check(annotations: dict[Path, dict] | None = None, graph=None, committed: di
     main_pages = {folder: by_id.get(card.record.get("main_article_id")) for folder, card in cards.items()
                   if isinstance(card.record, dict) and isinstance(card.record.get("main_article_id"), str)}
     # No credit overrides a held marker (sync_wiki.held_conflicts, as the extraction and lean-facts refuse it).
-    errors: list[str] = misplaced_records(annotations)
+    errors: list[str] = misplaced_records(annotations) + counterpart_problems(annotations, committed)
     errors += sync.held_conflicts({Path("links"): list(annotations.values())})
     warnings: list[str] = []
     mains: dict[Path, str] = {}
@@ -714,11 +896,13 @@ def check(annotations: dict[Path, dict] | None = None, graph=None, committed: di
                               "pinned Mathlib, titled with the declaration's Lean name")
             elif pin is not None and source != pin:
                 errors.append(f"{card.node}: `## In Mathlib` links Mathlib {source}, not the pinned {pin}")
-    if graph is None and (cards or dependencies is not None):
+    if graph is None and (cards or dependencies is not None or counterpart_pages(annotations)):
         try:
             graph = load_graph()
         except Exception as error:  # Autoform refuses the wiki, e.g. two articles on one address.
             return errors + [f"Autoform cannot load the wiki: {error}"], warnings
+    if graph is not None:
+        errors += live_counterparts(annotations, graph)
     if graph is not None and cards:
         nodes = {card.node for card in cards.values()}
         # A `supports` entry names a statement page Autoform reads: that very file, under its node id.

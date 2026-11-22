@@ -148,6 +148,11 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   map honest about what uses what.
 - **A move that retires an address goes into `scripts/card-moves.jsonl`,**
   and a page gets an `id` before it moves. `scripts/cards.py check` must pass.
+- **A planned page may record its counterparts,** the Mathlib or ATLAS
+  declarations that state its result or a close form, with how each compares
+  ([cards.md](cards.md#counterparts)). Each is verified clause by clause against
+  its declaration before it is written; it is data only, and gives no credit,
+  makes no edge and never changes readiness.
 
 ### What the tools own
 

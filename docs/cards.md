@@ -106,6 +106,41 @@ and tasks say, so it is never shown as ready), then Autoform's state of the cred
 state, blocked. Its **supporting progress** counts its other statements, each once, by the same
 precedence; the main statement is never among them. Readiness and tasks stay Autoform's.
 
+## Counterparts
+
+A planned statement page, a live page Autoform reads whose annotation links no Lean declaration (no Lean
+link naming one, of any repository, and no module and name an earlier sync wrote), may record its
+counterparts: the Mathlib or ATLAS declarations that state its result or a form close to it, as when a
+card's planned main states an imported result that no declaration states exactly. They go under
+`extensions["org.atlas-wiki"]["counterpart"]` of the page's own row, never anywhere in the links folder's
+defaults (`_defaults.json`, a card record there included), which would give them to every row; they are a
+list of one or more records:
+
+```json
+"counterpart": [{"mathlib": "<Mathlib name>", "relation": "weaker",
+                 "needs": [{"mathlib": "<Mathlib name>"}, {"atlas": "<ATLAS name>"}]}]
+```
+
+- exactly one of `mathlib` and `atlas`: the declaration's full Lean name, as Lean stores it, without the
+  `_root_.` prefix that only Lean source writes;
+- `relation`: how the declaration compares with the page's statement: `same` (it states it), `stronger`
+  (it implies it), `weaker` (the statement implies it) or `variant` (a related form, neither);
+- `needs` (optional): the other declarations that, with it, give the page's statement, as when the
+  statement combines several results; each is `{"mathlib": name}` or `{"atlas": name}`, since a
+  combination may take declarations of both.
+
+A record has no other key, a list names no declaration twice, and a record's own declaration is not among
+its needs; names are compared as Lean reads them, so `Matrix.«det»` is `Matrix.det`, while `«a.b».c` is
+not `a.b.c`. Each record is verified clause by clause against its declaration, at the pinned Mathlib or in
+the project's Lean, before it is written. A counterpart is data only: it gives the page no credit, makes
+no edge, and never changes readiness, status or the derived data. `needs` lists no prerequisites: the
+page's own `## Depends on` and `## Proof depends on` follow the proof it states, as for any planned page.
+`scripts/cards.py check` verifies the form (the keys, the relation, and that each name has the form of a
+Lean name, not that the declaration exists or says what the record claims, which is for review) and the
+place: a counterpart on a row whose page is missing or that Autoform does not read, on a page whose
+annotation links a Lean declaration, as checked out or as committed, on a folder page, in a card record or
+in the links folder's defaults is an error.
+
 ## Derived data
 
 `scripts/cards.py rollup` writes `build/cards.json` (schema `atlas-cards/v1`), a build output that is
@@ -168,8 +203,9 @@ statement's box on a folder page, `#leaf` or `../other/README.md#leaf` (Autoform
 declares something), is no way to link it there; other heading anchors are left alone), a forbidden section, an `## In Mathlib` link that is not a source line at the pinned
 Mathlib titled with something of the form of a Lean name, a dependency on a card's folder page or one Autoform reads on it, a card record on a
 statement page, a held marker that credit would override (a held row that credits a declaration, or a held
-declaration another row credits), and a bad move ledger. With `--dependencies build/lean-dependencies.json` (the strict
-check), the dependencies of the checkout must equal the extraction's as sets of typed, oriented edges,
+declaration another row credits), a malformed or misplaced counterpart ([Counterparts](#counterparts)), and
+a bad move ledger. With `--dependencies build/lean-dependencies.json` (the strict check), the dependencies
+of the checkout must equal the extraction's as sets of typed, oriented edges,
 both ways: a dependency only one side has, a flipped kind, a target listed under both kinds, an
 extracted declaration that credits no statement page, or a page whose declaration lean-facts found but the
 extraction has no row for is an error, and the move ledger must exist. With

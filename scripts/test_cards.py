@@ -1793,6 +1793,242 @@ class InMathlib(Vault):
         self.assertTrue(any("not the pinned" in error for error in errors), errors)
 
 
+class Counterparts(Vault):
+    """A planned statement page may record its counterparts (docs/cards.md#counterparts): data only, which the check
+    verifies in form and place and nothing else reads."""
+
+    RECORDS = [{"mathlib": "MeasureTheory.dominated", "relation": "weaker",
+                "needs": [{"mathlib": "MeasureTheory.limit_integrable"}, {"atlas": "Ext.b_main"}]},
+               {"atlas": "Ext.a_main", "relation": "variant"}, {"mathlib": "Matrix.det_apply'", "relation": "stronger"},
+               {"mathlib": "«odd name».x", "relation": "same"},
+               # One name in both libraries names two declarations, and `«a.b».c` (two components) is not `a.b.c`.
+               {"atlas": "Matrix.det_apply'", "relation": "variant"},
+               {"mathlib": "a.b.c", "relation": "variant"}, {"mathlib": "«a.b».c", "relation": "variant"},
+               # Only Lean's own `_root_` component is the source-only prefix.
+               {"mathlib": "root_.Matrix.det", "relation": "variant"}]
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.g = "Algebra/groups"
+        self.leaf(f"{self.g}/a/a-main.md", 10)
+        self.leaf(f"{self.g}/a/p.md", 12, facts=None)
+        self.card(f"{self.g}/a", 1, 10, ["a-main", "p"])
+
+    def row(self, name: str) -> dict:
+        return next(row for row in self.rows if row["subject"][0]["uri"].endswith(f"/{name}"))
+
+    def record(self, name: str, counterpart: object) -> None:
+        self.row(name).setdefault("extensions", {}).setdefault("org.atlas-wiki", {})["counterpart"] = counterpart
+
+    def test_verified_counterparts_pass(self) -> None:
+        self.record("p.md", self.RECORDS)
+        self.assertEqual(self.run_check(), ([], []))
+
+    def test_each_malformed_counterpart_is_reported(self) -> None:
+        relations = "same, stronger, weaker, variant"
+        cases = {
+            "not a list": ({"mathlib": "M.a", "relation": "same"}, "`counterpart` must be a non-empty list of records"),
+            "an empty list": ([], "`counterpart` must be a non-empty list of records"),
+            "a record that is no object": (["M.a"], "`counterpart` record 1 is not an object"),
+            "two declarations": ([{"mathlib": "M.a", "atlas": "Ext.a", "relation": "same"}],
+                                 "`counterpart` record 1 names two declarations; give exactly one of `mathlib` and "
+                                 "`atlas`"),
+            "no declaration": ([{"relation": "same"}], "`counterpart` record 1 names no declaration"),
+            "a name with a space": ([{"mathlib": "M.a b", "relation": "same"}],
+                                    "`counterpart` record 1: `mathlib` is 'M.a b', not a Lean name"),
+            "a name opening with a digit": ([{"mathlib": "M.1a", "relation": "same"}], "not a Lean name"),
+            "a name that is no text": ([{"atlas": 7, "relation": "same"}], "`atlas` is 7, not a Lean name"),
+            "no relation": ([{"mathlib": "M.a"}], f"`counterpart` record 1 has no `relation`; give one of {relations}"),
+            "an unknown relation": ([{"mathlib": "M.a", "relation": "equivalent"}],
+                                    f"`relation` is 'equivalent'; expected one of {relations}"),
+            "an unknown key": ([{"mathlib": "M.a", "relation": "same", "note": "x"}],
+                               "`counterpart` record 1 has the unknown key `note`"),
+            "a declaration twice": ([{"mathlib": "M.a", "relation": "same"}, {"mathlib": "M.a", "relation": "weaker"}],
+                                    "`counterpart` names mathlib M.a twice"),
+            "needs that is no list": ([{"mathlib": "M.a", "relation": "weaker", "needs": "M.b"}],
+                                      "`needs` must be a non-empty list of declarations"),
+            "empty needs": ([{"mathlib": "M.a", "relation": "weaker", "needs": []}],
+                            "`needs` must be a non-empty list of declarations"),
+            "a plain name in needs": (
+                [{"mathlib": "M.a", "relation": "weaker", "needs": ["M.b"]}],
+                "`counterpart` record 1, `needs` entry 1 is not an object naming one declaration"),
+            "two declarations in a needs entry": (
+                [{"mathlib": "M.a", "relation": "weaker", "needs": [{"mathlib": "M.b", "atlas": "Ext.b"}]}],
+                "`needs` entry 1 names two declarations"),
+            "a bad name in needs": ([{"mathlib": "M.a", "relation": "weaker", "needs": [{"mathlib": "M b"}]}],
+                                    "`needs` entry 1: `mathlib` is 'M b', not a Lean name"),
+            "an unknown key in needs": ([{"mathlib": "M.a", "relation": "weaker",
+                                          "needs": [{"mathlib": "M.b", "why": "x"}]}],
+                                        "`needs` entry 1 has the unknown key `why`"),
+            "needs naming one twice": ([{"mathlib": "M.a", "relation": "weaker",
+                                         "needs": [{"atlas": "Ext.b"}, {"atlas": "Ext.b"}]}],
+                                       "`needs` names atlas Ext.b twice"),
+            "needs naming its own": ([{"mathlib": "M.a", "relation": "weaker", "needs": [{"mathlib": "M.a"}]}],
+                                     "`needs` names the record's own declaration, mathlib M.a"),
+            # Lean's quotes change no name: `Matrix.«det»` is `Matrix.det`.
+            "a declaration twice, quoted once": (
+                [{"mathlib": "Matrix.det", "relation": "same"}, {"mathlib": "Matrix.«det»", "relation": "weaker"}],
+                "`counterpart` names mathlib Matrix.det twice (once as Matrix.«det»)"),
+            "needs naming one twice, quoted once": (
+                [{"mathlib": "M.a", "relation": "weaker", "needs": [{"atlas": "Ext.b"}, {"atlas": "«Ext».«b»"}]}],
+                "`needs` names atlas Ext.b twice (once as «Ext».«b»)"),
+            "needs naming its own, quoted": (
+                [{"mathlib": "M.a", "relation": "weaker", "needs": [{"mathlib": "M.«a»"}]}],
+                "`needs` names the record's own declaration, mathlib M.a (as M.«a»)"),
+            # `_root_.` is a prefix only Lean source writes: `_root_.Matrix.det` is `Matrix.det`.
+            "a `_root_.` prefix": ([{"mathlib": "_root_.Matrix.det", "relation": "same"}],
+                                   "`counterpart` record 1: `mathlib` is '_root_.Matrix.det'; write the full name "
+                                   "without `_root_.`"),
+            "a quoted `_root_.` prefix": ([{"atlas": "«_root_».Ext.a", "relation": "same"}],
+                                          "`atlas` is '«_root_».Ext.a'; write the full name without `_root_.`"),
+            "a `_root_.` prefix in needs": (
+                [{"mathlib": "M.a", "relation": "weaker", "needs": [{"atlas": "_root_.Ext.b"}]}],
+                "`counterpart` record 1, `needs` entry 1: `atlas` is '_root_.Ext.b'; write the full name without "
+                "`_root_.`"),
+        }
+        for case, (counterpart, message) in cases.items():
+            with self.subTest(case=case):
+                self.record("p.md", counterpart)
+                errors = self.run_check()[0]
+                self.assertTrue(any(f"{self.g}/a/p: " in error and message in error for error in errors),
+                                (message, errors))
+                self.assertTrue(all(error.startswith(f"{self.g}/a/p: ") for error in errors), errors)
+
+    def test_a_counterpart_belongs_on_a_planned_statement_page(self) -> None:
+        linked = ("a counterpart belongs on a planned page, whose annotation links no Lean declaration; this one links "
+                  "one")
+        mathlib = {"type": "lean", "uri": cards.sync.MATHLIB, "location": {"declaration": "M.q"}}
+        pages = {
+            # A page linked to a declaration of this project, through the folder defaults.
+            "credited": ("q.md", {"object": [{"location": {"declaration": "Ext.q"}}]}, linked),
+            # A Lean link that credits nothing is still a link.
+            "a reference": ("q.md", {"object": [{"location": {"declaration": "Ext.q"}, "role": "uses"}]}, linked),
+            "Mathlib-credited": ("q.md", {"object": [mathlib], "extensions": {"org.autoform": {"mathlib": True}}},
+                                 linked),
+            "another repository": ("q.md", {"object": [{"type": "lean", "uri": "https://github.com/x/y",
+                                                         "location": {"declaration": "Y.q"}}]}, linked),
+            "an earlier sync's module and name": ("q.md", {"extensions": {"org.atlas-wiki": {"module": "Ext",
+                                                                                             "name": "q"}}}, linked),
+            # Planned pages: references of other types, and a page that holds its declaration back.
+            "a PDF and an HTML reference": ("q.md", {"object": [{"type": "pdf", "uri": "https://e.org/b.pdf"},
+                                                                 {"type": "html", "uri": "https://e.org/n.html",
+                                                                  "role": "states"}]}, None),
+            "held": ("q.md", {"extensions": {"org.atlas-wiki": {"held": {"declaration": "Ext.q", "reason": "false",
+                                                                         "issue": 1}}}}, None),
+        }
+        for case, (name, fields, message) in pages.items():
+            with self.subTest(case=case):
+                self.rows = [row for row in self.rows if not row["subject"][0]["uri"].endswith("/q.md")]
+                self.page(f"{self.g}/a/{name}", "# q\n\nA statement.\n",
+                          {"id": af(13), **json.loads(json.dumps(fields))})
+                self.record(name, self.RECORDS[:1])
+                errors = self.run_check()[0]
+                if message is None:
+                    self.assertFalse(any("counterpart" in error for error in errors), errors)
+                else:
+                    self.assertIn(f"{self.g}/a/q: {message}", errors)
+        self.rows = [row for row in self.rows if not row["subject"][0]["uri"].endswith("/q.md")]
+        # A folder page, a card's or not, and a card record hold none.
+        self.record("a/README.md", self.RECORDS[:1])
+        self.record("groups/README.md", self.RECORDS[:1])
+        errors = self.run_check()[0]
+        for folder in (f"{self.g}/a", self.g):
+            self.assertIn(f"{folder}: a counterpart belongs on a planned statement page, not on a folder page", errors)
+        del self.row("a/README.md")["extensions"]["org.atlas-wiki"]["counterpart"]
+        del self.row("groups/README.md")["extensions"]["org.atlas-wiki"]["counterpart"]
+        self.row("a/README.md")["extensions"]["org.atlas-wiki"]["card"]["counterpart"] = self.RECORDS[:1]
+        errors = self.run_check()[0]
+        self.assertIn(f"{self.g}/a: a card records no counterpart; a counterpart belongs on a planned statement page's "
+                      "annotation (docs/cards.md#counterparts)", errors)
+        self.assertFalse(any("unknown card key `counterpart`" in error for error in errors), errors)
+
+    def test_names_are_compared_as_lean_reads_them(self) -> None:
+        self.assertEqual(cards.name_components("Matrix.«det»"), ("Matrix", "det"))
+        self.assertEqual(cards.name_components("«a.b».c"), ("a.b", "c"))
+        self.assertEqual(cards.name_components("a.b.c"), ("a", "b", "c"))
+        self.assertEqual(cards.name_components("«odd name».x'"), ("odd name", "x'"))
+
+    def test_a_counterpart_belongs_on_a_statement_page_autoform_reads(self) -> None:
+        # A row whose page is missing (an orphan) or one Autoform's loader passes over (a hidden page): the check
+        # and so the strict rollup refuse its counterpart, with or without a card in the vault.
+        self.page(f"{self.g}/a/.hidden.md", "# Hidden\n\nA statement.\n", {"id": af(15)})
+        self.record(".hidden.md", self.RECORDS[:1])
+        self.rows.append({"subject": [{"type": "generic", "uri": f"../roadmap/{self.g}/a/no-file.md"}], "id": af(16),
+                          "extensions": {"org.atlas-wiki": {"counterpart": self.RECORDS[:1]}}})
+        missing = f"{self.g}/a/no-file: a counterpart belongs on a statement page Autoform reads; its page is missing"
+        hidden = (f"{self.g}/a/.hidden: a counterpart belongs on a statement page Autoform reads; Autoform does not "
+                  f"read {self.g}/a/.hidden.md as one")
+        errors = self.run_check()[0]
+        self.assertIn(missing, errors)
+        self.assertIn(hidden, errors)
+        self.ledger_file()
+        with self.assertRaises(ValueError) as raised:
+            cards.rollup(self.extraction())
+        self.assertIn(missing, str(raised.exception))
+        # Without a card, the check still loads Autoform's graph for them.
+        self.rows = [row for row in self.rows if not row["subject"][0]["uri"].endswith("/a/README.md")]
+        errors = self.run_check()[0]
+        self.assertIn(missing, errors)
+        self.assertIn(hidden, errors)
+
+    def test_the_links_folder_s_defaults_give_no_counterpart(self) -> None:
+        # Defaults would give a counterpart to every row, a credited or a folder page's included: the check names the
+        # defaults file, whether the counterpart there is well formed or not, and the rows' own are checked as ever.
+        def message(path: str) -> str:
+            return (f"blueprint/links/_defaults.json sets `counterpart` at `{path}`, which would give every row that "
+                    "counterpart; a counterpart belongs on a planned statement page's own row: remove it from the "
+                    "defaults")
+
+        defaults = wiki.VAULT / "links" / "_defaults.json"
+        own = 'extensions["org.atlas-wiki"]'
+        cases = [({"counterpart": [{"mathlib": "M b"}]}, f'{own}["counterpart"]'),
+                 ({"counterpart": self.RECORDS[:1]}, f'{own}["counterpart"]'),
+                 # Inside a card record too, which the defaults would give the vault's card, and at any depth.
+                 ({"card": {"counterpart": self.RECORDS[:1]}}, f'{own}["card"]["counterpart"]'),
+                 ({"card": {"seeds": [{"counterpart": self.RECORDS[:1]}]}},
+                  f'{own}["card"]["seeds"][0]["counterpart"]')]
+        self.ledger_file()
+        for extension, path in cases:
+            with self.subTest(path=path):
+                defaults.write_text(json.dumps({"object": {"type": "lean", "uri": "../.."},
+                                                "extensions": {"org.atlas-wiki": extension}}))
+                self.assertEqual(self.run_check()[0], [message(path)])
+                with self.assertRaises(ValueError) as raised:
+                    cards.rollup(self.extraction())
+                self.assertIn(message(path), str(raised.exception))
+        defaults.write_text('{"object": {"type": "lean", "uri": "../.."}}\n')
+        self.assertEqual(self.run_check(), ([], []))
+
+    def test_a_committed_link_is_a_link_though_lean_facts_dropped_it(self) -> None:
+        # The build's row is planned (lean-facts unlinked a declaration the Lean no longer has), but the authors
+        # committed the counterpart beside that link.
+        self.record("p.md", self.RECORDS[:1])
+        self.write()
+        annotations = cards.read_annotations()
+        committed = {page: json.loads(json.dumps(row)) for page, row in annotations.items()}
+        page = next(page for page in committed if page.name == "p.md")
+        committed[page]["object"] = [{"location": {"declaration": "Ext.gone"}}]
+        errors = cards.check(annotations, committed=committed)[0]
+        self.assertIn(f"{self.g}/a/p: a counterpart belongs on a planned page, whose annotation links no Lean "
+                      "declaration; this one links one", errors)
+        self.assertEqual(cards.check(annotations)[0], [])
+
+    def test_counterparts_change_no_derived_data(self) -> None:
+        # Counterparts naming credited declarations, Ext.b_main of another card among them, make no edge and change
+        # no status: the rollup is the same, byte for byte.
+        self.leaf(f"{self.g}/b/b-main.md", 20)
+        self.leaf(f"{self.g}/a/r.md", 14, facts=None, statement=(f"{self.g}/a/a-main.md",))
+        self.card(f"{self.g}/b", 2, 20, ["b-main"])
+        self.rows = [row for row in self.rows if not row["subject"][0]["uri"].endswith("/a/README.md")]
+        self.card(f"{self.g}/a", 1, 10, ["a-main", "p", "r"])
+        before = json.dumps(self.rollup(), sort_keys=True)
+        self.record("p.md", self.RECORDS)
+        self.record("r.md", [{"atlas": "Ext.b_main", "relation": "same"}])
+        after = self.rollup()
+        self.assertEqual(json.dumps(after, sort_keys=True), before)
+        self.assertEqual(after["uses"], [])
+
+
 class Arguments(Vault):
     def test_the_history_options_go_together(self) -> None:
         self.write()
