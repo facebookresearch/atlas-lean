@@ -102,7 +102,8 @@ theorem measurable_piFinset_of_dependsOn [Nonempty D] {E : Type*} [MeasurableSpa
   rw [hfac, Filtration.piFinset_eq_comap_restrict]
   exact (hΦ.comp measurable_updateFinset).comp (comap_measurable _)
 
-/-- The law of the input path: independent inputs, each distributed as `law`. -/
+/-- For a probability law `law`, the law of the input path consists of independent
+inputs, each distributed as `law`. -/
 noncomputable def pathMeasure (law : Measure D) : Measure (ℕ → D) :=
   Measure.infinitePi (fun _ : ℕ => law)
 
@@ -316,9 +317,9 @@ theorem lintegral_run_stopped_le {f : S → D → S}
     (fun x => by simpa only [one_mul] using lintegral_stopped_le law hdrift x) x₀ n).trans ?_
   simp [mul_comm]
 
-/-- The horizon breach bound: if `E V(f x d) ≤ V(x) + β` at every state below the level
-`c`, the probability that `V` reaches `c` at some mark `n ≤ N` is at most
-`(V(x₀) + N β) / c`. -/
+/-- The horizon breach bound for a finite positive threshold `c`: if
+`E V(f x d) ≤ V(x) + β` at every state below `c`, the probability that `V` reaches
+`c` at some mark `n ≤ N` is at most `(V(x₀) + N β) / c`. -/
 theorem meas_breachSet_le_div {f : S → D → S} (hf : Measurable (fun p : S × D => f p.1 p.2))
     {V : S → ℝ≥0∞} (hV : Measurable V) {c β : ℝ≥0∞} (hc : c ≠ 0) (hc' : c ≠ ∞)
     (hdrift : ∀ x, V x < c → ∫⁻ d, V (f x d) ∂law ≤ V x + β) (x₀ : S) (N : ℕ) :
