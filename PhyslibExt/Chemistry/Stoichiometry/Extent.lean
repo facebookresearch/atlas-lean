@@ -267,8 +267,8 @@ lemma forwardFeasibleExtents_eq_Ici {ι : Type*} (ν n₀ : ι → ℝ) (hn₀ :
   exact and_iff_left_of_imp fun hξ i => add_nonneg (hn₀ i) (mul_nonneg (h i) hξ)
 
 /-- **Feasible reverse extents.** If every initial amount is nonnegative and some species is
-produced, the feasible reverse extents form the closed interval from `minExtent ν n₀ h`, minus
-the smallest ratio `n₀ i / ν i` over the produced species, to `0`. -/
+produced, the feasible reverse extents form the closed interval from `minExtent ν n₀ h`, which
+is minus the smallest ratio `n₀ i / ν i` over the produced species, to `0`. -/
 lemma reverseFeasibleExtents_eq_Icc {ι : Type*} [Fintype ι] (ν n₀ : ι → ℝ)
     (hn₀ : ∀ i, 0 ≤ n₀ i) (h : ∃ i, 0 < ν i) :
     reverseFeasibleExtents ν n₀ = Set.Icc (minExtent ν n₀ h) 0 := by

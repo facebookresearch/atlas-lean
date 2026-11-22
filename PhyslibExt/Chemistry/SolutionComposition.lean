@@ -242,7 +242,7 @@ lemma injOn_molarityToMolality {ρ M : ℝ} (hM : 0 < M) :
   rw [e₂] at e₁
   exact e₁.symm
 
-/-- Molality-to-molarity is injective on `b ≥ 0`. -/
+/-- Molality-to-molarity is injective on `b ≥ 0`, for positive `ρ` and `M`. -/
 lemma injOn_molalityToMolarity {ρ M : ℝ} (hρ : 0 < ρ) (hM : 0 < M) :
     Set.InjOn (molalityToMolarity ρ M) {b | 0 ≤ b} := by
   intro b₁ hb₁ b₂ hb₂ h
@@ -281,7 +281,7 @@ lemma bijOn_molalityToMolarity {ρ M : ℝ} (hρ : 0 < ρ) (hM : 0 < M) :
     simp only [Set.mem_ofPred_eq] at hc
     exact molalityToMolarity_molarityToMolality hM hc.1 hc.2
 
-/-- At the boundary `c = ρ / M` the conversion denominator vanishes. -/
+/-- At the boundary `c = ρ / M` the conversion denominator vanishes, for `M ≠ 0`. -/
 lemma boundary_denom_eq_zero {ρ M : ℝ} (hM : M ≠ 0) : ρ - ρ / M * M = 0 := by
   rw [div_mul_cancel₀ _ hM, sub_self]
 
@@ -510,8 +510,8 @@ lemma ppmByMass_eq_mul_ppmByVolume {mSolute mSoln vSolute vSoln ρs ρ : ℝ}
   rw [ppmByMass_eq, massFraction_of_volumes hs h hρ hv, ppmByVolume]
   ring
 
-/-- For a nonzero volume fraction, ppm by mass equals ppm by volume exactly when the solute
-and solution densities agree. -/
+/-- For a nonzero volume fraction and a nonzero solution density, ppm by mass equals ppm by
+volume exactly when the solute and solution densities agree. -/
 lemma ppmByMass_eq_ppmByVolume_iff {mSolute mSoln vSolute vSoln ρs ρ : ℝ}
     (hs : mSolute = ρs * vSolute) (h : mSoln = ρ * vSoln)
     (hρ : ρ ≠ 0) (hv : vSoln ≠ 0) (hvs : vSolute ≠ 0) :

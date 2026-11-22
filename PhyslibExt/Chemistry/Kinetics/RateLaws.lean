@@ -125,7 +125,7 @@ lemma concOfExtent_zero (c₀ ν : ℝ) (V : ReactorVolume) (ξ : ℝ → ℝ) :
     concOfExtent c₀ ν V ξ 0 = c₀ := by
   simp [concOfExtent]
 
-/-- Concentration rate from the extent rate: `dc/dt = ν v`. -/
+/-- Concentration rate from the extent rate, for `ξ` differentiable at `t`: `dc/dt = ν v`. -/
 lemma hasDerivAt_concOfExtent (c₀ ν : ℝ) (V : ReactorVolume) (ξ : ℝ → ℝ) (t : ℝ)
     (hξ : DifferentiableAt ℝ ξ t) :
     HasDerivAt (concOfExtent c₀ ν V ξ) (ν * extentRate V ξ t) t := by
@@ -272,7 +272,7 @@ noncomputable def depletionTime (A0 k : ℝ) : ℝ := A0 / k
 /-- Physical zero-order concentration, piecewise at depletion. -/
 def zeroOrderConc (A0 k : ℝ) (t : ℝ) : ℝ := max (A0 - k * t) 0
 
-/-- Before depletion the physical concentration tracks `A₀ - kt`. -/
+/-- For `0 < k`, before depletion the physical concentration tracks `A₀ - kt`. -/
 lemma zeroOrderConc_before (A0 k t : ℝ) (hk : 0 < k)
     (ht : t ≤ depletionTime A0 k) : zeroOrderConc A0 k t = A0 - k * t := by
   have ht' : t ≤ A0 / k := ht
@@ -284,7 +284,7 @@ lemma zeroOrderConc_before (A0 k t : ℝ) (hk : 0 < k)
   show max (A0 - k * t) 0 = A0 - k * t
   exact max_eq_left hle
 
-/-- After depletion the physical concentration is zero. -/
+/-- For `0 < k`, after depletion the physical concentration is zero. -/
 lemma zeroOrderConc_after (A0 k t : ℝ) (hk : 0 < k)
     (ht : depletionTime A0 k ≤ t) : zeroOrderConc A0 k t = 0 := by
   have ht' : A0 / k ≤ t := ht
@@ -296,14 +296,14 @@ lemma zeroOrderConc_after (A0 k t : ℝ) (hk : 0 < k)
   show max (A0 - k * t) 0 = 0
   exact max_eq_right hle
 
-/-- Zero-order half-life: `[A]₀ / (2k)`. -/
+/-- Zero-order half-life for `0 < k` and `0 < A0`: `[A]₀ / (2k)`. -/
 theorem zeroOrderSol_halfLife (A0 k : ℝ) (hk : 0 < k) (hA0 : 0 < A0) :
     zeroOrderSol A0 k (A0 / (2 * k)) = A0 / 2 := by
   have h2kne : (2:ℝ) * k ≠ 0 := ne_of_gt (by positivity)
   show A0 - k * (A0 / (2 * k)) = A0 / 2
   field_simp; ring
 
-/-- The zero-order half-life time is unique. -/
+/-- For `0 < k` and `0 < A0` the zero-order half-life time is unique. -/
 lemma zeroOrderSol_halfLife_unique (A0 k t : ℝ) (hk : 0 < k) (_hA0 : 0 < A0)
     (h : zeroOrderSol A0 k t = A0 / 2) : t = A0 / (2 * k) := by
   have h2kpos : (0:ℝ) < 2 * k := by positivity
@@ -327,7 +327,7 @@ lemma firstOrderSol_eq_amount (A0 k : ℝ) :
 lemma firstOrderSol_zero (A0 k : ℝ) : firstOrderSol A0 k 0 = A0 := by
   rw [firstOrderSol_eq_amount, MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_zero]
 
-/-- The first-order solution stays positive. -/
+/-- For `0 < A0` the first-order solution stays positive. -/
 lemma firstOrderSol_pos (A0 k t : ℝ) (hA0 : 0 < A0) :
     0 < firstOrderSol A0 k t := by
   show 0 < A0 * Real.exp (-k * t)
@@ -351,7 +351,8 @@ theorem firstOrderSol_unique (A0 k : ℝ) (g : ℝ → ℝ)
   rw [firstOrderSol_eq_amount, ← hg0]
   exact hsol.eq_amount ht
 
-/-- First-order half-life: `ln 2 / k`, from `CompartmentKinetics.amount_bolus_add_halfLife`. -/
+/-- First-order half-life for `0 < k`: `ln 2 / k`, from
+`CompartmentKinetics.amount_bolus_add_halfLife`. -/
 theorem firstOrderSol_halfLife (A0 k : ℝ) (hk : 0 < k) (_hA0 : 0 < A0) :
     firstOrderSol A0 k (Real.log 2 / k) = A0 / 2 := by
   have h :=
@@ -360,7 +361,7 @@ theorem firstOrderSol_halfLife (A0 k : ℝ) (hk : 0 < k) (_hA0 : 0 < A0) :
   rw [firstOrderSol_eq_amount]
   exact h
 
-/-- The first-order half-life time is unique. -/
+/-- For `0 < k` and `0 < A0` the first-order half-life time is unique. -/
 lemma firstOrderSol_halfLife_unique (A0 k t : ℝ) (hk : 0 < k) (hA0 : 0 < A0)
     (h : firstOrderSol A0 k t = A0 / 2) : t = Real.log 2 / k := by
   have hA0ne : A0 ≠ 0 := ne_of_gt hA0
@@ -438,17 +439,17 @@ noncomputable def secondOrderAASol (A0 k : ℝ) (t : ℝ) : ℝ := A0 / (1 + 2 *
 lemma secondOrderAASol_zero (A0 k : ℝ) : secondOrderAASol A0 k 0 = A0 := by
   simp [secondOrderAASol]
 
-/-- The `2A → P` denominator stays positive for `t ≥ 0`. -/
+/-- For `0 < k` and `0 < A0` the `2A → P` denominator stays positive for `t ≥ 0`. -/
 lemma secondOrderAASol_denom_pos (A0 k t : ℝ) (hk : 0 < k) (hA0 : 0 < A0)
     (ht : 0 ≤ t) : 0 < 1 + 2 * k * A0 * t := by positivity
 
-/-- The `2A → P` solution stays positive for `t ≥ 0`. -/
+/-- For `0 < k` and `0 < A0` the `2A → P` solution stays positive for `t ≥ 0`. -/
 lemma secondOrderAASol_pos (A0 k t : ℝ) (hk : 0 < k) (hA0 : 0 < A0)
     (ht : 0 ≤ t) : 0 < secondOrderAASol A0 k t := by
   show 0 < A0 / (1 + 2 * k * A0 * t)
   exact div_pos hA0 (secondOrderAASol_denom_pos A0 k t hk hA0 ht)
 
-/-- The `2A → P` solution satisfies `f' = -(2k) f²`. -/
+/-- Where `1 + 2 * k * A0 * t ≠ 0`, the `2A → P` solution satisfies `f' = -(2k) f²`. -/
 lemma hasDerivAt_secondOrderAASol (A0 k t : ℝ)
     (hM : 1 + 2 * k * A0 * t ≠ 0) :
     HasDerivAt (secondOrderAASol A0 k)
@@ -481,7 +482,7 @@ theorem secondOrderAASol_unique (A0 k : ℝ) (g : ℝ → ℝ) (hk : 0 < k)
     congr 1
   exact hgen.trans hbridge
 
-/-- `2A → P` half-life: `1 / (2k[A]₀)`. -/
+/-- `2A → P` half-life for `0 < k` and `0 < A0`: `1 / (2k[A]₀)`. -/
 theorem secondOrderAASol_halfLife (A0 k : ℝ) (hk : 0 < k) (hA0 : 0 < A0) :
     secondOrderAASol A0 k (1 / (2 * k * A0)) = A0 / 2 := by
   have hpos : (0:ℝ) < 2 * k * A0 := by positivity
@@ -491,7 +492,7 @@ theorem secondOrderAASol_halfLife (A0 k : ℝ) (hk : 0 < k) (hA0 : 0 < A0) :
   rw [hD]
   norm_num
 
-/-- The `2A → P` half-life time is unique. -/
+/-- For `0 < k` and `0 < A0` the `2A → P` half-life time is unique. -/
 lemma secondOrderAASol_halfLife_unique (A0 k t : ℝ) (hk : 0 < k)
     (hA0 : 0 < A0)
     (h : secondOrderAASol A0 k t = A0 / 2) : t = 1 / (2 * k * A0) := by
@@ -522,19 +523,20 @@ noncomputable def secondOrderABSolA (A0 B0 k : ℝ) (t : ℝ) : ℝ :=
 noncomputable def secondOrderABSolB (A0 B0 k : ℝ) (t : ℝ) : ℝ :=
   secondOrderABSolA A0 B0 k t + (B0 - A0)
 
-/-- The `A + B` solution for `[A]` starts at `[A]₀`. -/
+/-- For `[A]₀ ≠ [B]₀` the `A + B` solution for `[A]` starts at `[A]₀`. -/
 lemma secondOrderABSolA_zero (A0 B0 k : ℝ) (hΔ : B0 - A0 ≠ 0) :
     secondOrderABSolA A0 B0 k 0 = A0 := by
   simp only [secondOrderABSolA, mul_zero, Real.exp_zero, mul_one]
   rw [div_eq_iff hΔ]
 
-/-- The `A + B` solution for `[B]` starts at `[B]₀`. -/
+/-- For `[A]₀ ≠ [B]₀` the `A + B` solution for `[B]` starts at `[B]₀`. -/
 lemma secondOrderABSolB_zero (A0 B0 k : ℝ) (hΔ : B0 - A0 ≠ 0) :
     secondOrderABSolB A0 B0 k 0 = B0 := by
   rw [secondOrderABSolB, secondOrderABSolA_zero A0 B0 k hΔ]
   ring
 
-/-- The `A + B` denominator stays nonzero for `t ≥ 0` when amounts differ. -/
+/-- For positive `A0`, `B0` and `k`, the `A + B` denominator stays nonzero for `t ≥ 0` when amounts
+differ. -/
 lemma secondOrderAB_denom_ne (A0 B0 k t : ℝ) (hA0 : 0 < A0) (_hB0 : 0 < B0)
     (hk : 0 < k) (hΔ : B0 - A0 ≠ 0) (ht : 0 ≤ t) :
     B0 - A0 * Real.exp (-k * (B0 - A0) * t) ≠ 0 := by
@@ -560,8 +562,8 @@ lemma secondOrderAB_denom_ne (A0 B0 k t : ℝ) (hA0 : 0 < A0) (_hB0 : 0 < B0)
     have hMpos : (0:ℝ) < B0 - A0 * Real.exp (-k * (B0 - A0) * t) := by linarith
     exact ne_of_gt hMpos
 
-/-- The `A + B` solution for `[A]` stays positive for `t ≥ 0` when `[A]₀ > 0` and the initial
-amounts differ: numerator and denominator both have the sign of `[B]₀ - [A]₀`. -/
+/-- The `A + B` solution for `[A]` stays positive for `t ≥ 0` when `[A]₀ > 0`, `k > 0` and the
+initial amounts differ: numerator and denominator both have the sign of `[B]₀ - [A]₀`. -/
 lemma secondOrderABSolA_pos (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hk : 0 < k)
     (hΔ : B0 - A0 ≠ 0) (ht : 0 ≤ t) : 0 < secondOrderABSolA A0 B0 k t := by
   unfold secondOrderABSolA
@@ -583,9 +585,9 @@ lemma secondOrderABSolA_pos (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hk : 0 < k)
     · exact mul_pos (mul_pos hA0 hpos) hEpos
     · nlinarith
 
-/-- The `A + B` solution for `[B]` stays positive for `t ≥ 0` under the same hypotheses: it equals
-`([B]₀ - [A]₀) [B]₀ / ([B]₀ - [A]₀ exp(-k([B]₀ - [A]₀)t))`, a quotient of two terms with the sign
-of `[B]₀ - [A]₀`. -/
+/-- The `A + B` solution for `[B]` stays positive for `t ≥ 0` under the same hypotheses and
+`[B]₀ > 0`: it equals `([B]₀ - [A]₀) [B]₀ / ([B]₀ - [A]₀ exp(-k([B]₀ - [A]₀)t))`, a quotient of two
+terms with the sign of `[B]₀ - [A]₀`. -/
 lemma secondOrderABSolB_pos (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hB0 : 0 < B0) (hk : 0 < k)
     (hΔ : B0 - A0 ≠ 0) (ht : 0 ≤ t) : 0 < secondOrderABSolB A0 B0 k t := by
   rcases lt_or_gt_of_ne hΔ with hneg | hpos
@@ -605,7 +607,7 @@ lemma secondOrderABSolB_pos (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hB0 : 0 < B0) (hk 
   · rw [secondOrderABSolB]
     exact add_pos (secondOrderABSolA_pos A0 B0 k t hA0 hk hΔ ht) hpos
 
-/-- The `A + B` solution for `[A]` satisfies the system ODE. -/
+/-- Where its denominator is nonzero, the `A + B` solution for `[A]` satisfies the system ODE. -/
 lemma hasDerivAt_secondOrderABSolA (A0 B0 k t : ℝ)
     (hM : B0 - A0 * Real.exp (-k * (B0 - A0) * t) ≠ 0) :
     HasDerivAt (secondOrderABSolA A0 B0 k)
@@ -647,7 +649,8 @@ lemma hasDerivAt_secondOrderABSolA (A0 B0 k t : ℝ)
         / (B0 - A0 * Real.exp (-k * (B0 - A0) * t))) + (B0 - A0))) t
   exact hfinal
 
-/-- The `A + B` solution for `[B]` satisfies the system ODE. -/
+/-- Where the denominator of the solution for `[A]` is nonzero, the `A + B` solution for `[B]`
+satisfies the system ODE. -/
 lemma hasDerivAt_secondOrderABSolB (A0 B0 k t : ℝ)
     (hM : B0 - A0 * Real.exp (-k * (B0 - A0) * t) ≠ 0) :
     HasDerivAt (secondOrderABSolB A0 B0 k)
@@ -780,17 +783,17 @@ lemma secondOrderABEqualSol_zero (A0 k : ℝ) :
     secondOrderABEqualSol A0 k 0 = A0 := by
   simp [secondOrderABEqualSol]
 
-/-- The equal-initial-amounts denominator stays positive for `t ≥ 0`. -/
+/-- For `0 < k` and `0 < A0` the equal-initial-amounts denominator stays positive for `t ≥ 0`. -/
 lemma secondOrderABEqualSol_denom_pos (A0 k t : ℝ) (hk : 0 < k)
     (hA0 : 0 < A0) (ht : 0 ≤ t) : 0 < 1 + k * A0 * t := by positivity
 
-/-- The equal-initial-amounts solution stays positive for `t ≥ 0`. -/
+/-- For `0 < k` and `0 < A0` the equal-initial-amounts solution stays positive for `t ≥ 0`. -/
 lemma secondOrderABEqualSol_pos (A0 k t : ℝ) (hk : 0 < k) (hA0 : 0 < A0)
     (ht : 0 ≤ t) : 0 < secondOrderABEqualSol A0 k t := by
   show 0 < A0 / (1 + k * A0 * t)
   exact div_pos hA0 (secondOrderABEqualSol_denom_pos A0 k t hk hA0 ht)
 
-/-- The equal-initial-amounts solution satisfies `f' = -k f²`. -/
+/-- Where `1 + k * A0 * t ≠ 0`, the equal-initial-amounts solution satisfies `f' = -k f²`. -/
 lemma hasDerivAt_secondOrderABEqualSol (A0 k t : ℝ)
     (hM : 1 + k * A0 * t ≠ 0) :
     HasDerivAt (secondOrderABEqualSol A0 k)
@@ -835,7 +838,7 @@ theorem secondOrderABEqualSol_unique (A0 k : ℝ) (gA gB : ℝ → ℝ)
   have hgen := secondOrderGen_unique A0 k gA hk hA0 hgA' hposA hgA0 t ht
   exact hgen
 
-/-- Equal-initial-amounts half-life: `1 / (k[A]₀)`. -/
+/-- Equal-initial-amounts half-life for `0 < k` and `0 < A0`: `1 / (k[A]₀)`. -/
 theorem secondOrderABEqualSol_halfLife (A0 k : ℝ) (hk : 0 < k) (hA0 : 0 < A0) :
     secondOrderABEqualSol A0 k (1 / (k * A0)) = A0 / 2 := by
   have hpos : (0:ℝ) < k * A0 := by positivity
@@ -882,7 +885,7 @@ noncomputable def halfLife : RateModel → ℝ → ℝ → ℝ
   | .secondOrderAA, k, A0 => 1 / (2 * k * A0)
   | .secondOrderABEqual, k, A0 => 1 / (k * A0)
 
-/-- Each model's half-life halves its integrated concentration. -/
+/-- For `0 < k` and `0 < A0`, each model's half-life halves its integrated concentration. -/
 theorem halfLife_correct (m : RateModel) (A0 k : ℝ) (hk : 0 < k) (hA0 : 0 < A0) :
     m.sol A0 k (halfLife m k A0) = A0 / 2 := by
   cases m
@@ -891,8 +894,8 @@ theorem halfLife_correct (m : RateModel) (A0 k : ℝ) (hk : 0 < k) (hA0 : 0 < A0
   · exact secondOrderAASol_halfLife A0 k hk hA0
   · exact secondOrderABEqualSol_halfLife A0 k hk hA0
 
-/-- Among the models of `RateModel`, the half-life is independent of `[A]₀` iff the reaction is
-first order. -/
+/-- For `0 < k`, among the models of `RateModel`, the half-life is independent of `[A]₀` iff the
+reaction is first order. -/
 theorem halfLife_indep_iff_first_order (m : RateModel) (k : ℝ) (hk : 0 < k) :
     (∀ A0 A0' : ℝ, 0 < A0 → 0 < A0' → halfLife m k A0 = halfLife m k A0') ↔
       m.order = 1 := by
@@ -939,7 +942,8 @@ lemma rateGroup_two (k t A0 : ℝ) : rateGroup 2 k t A0 = k * t * A0 := by
   have e : ((2:ℕ):ℤ) - 1 = 1 := by norm_num
   simp only [rateGroup, e, zpow_one]
 
-/-- `k` is recovered from the rate group by dividing by `t * [A]₀ ^ (n - 1)`. -/
+/-- For `t ≠ 0` and `0 < A0`, `k` is recovered from the rate group by dividing by
+`t * [A]₀ ^ (n - 1)`. -/
 lemma k_of_rateGroup (n : ℕ) (k t A0 : ℝ) (ht : t ≠ 0) (hA0 : 0 < A0) :
     rateGroup n k t A0 / (t * A0 ^ ((n:ℤ) - 1)) = k := by
   have he : (0:ℝ) < A0 ^ ((n:ℤ) - 1) := by positivity
@@ -989,8 +993,8 @@ lemma hasDerivAt_pfoSol (A0 B0 k t : ℝ) :
 /-- Excess ratio `r = [A]₀ / [B]₀`, meaningful for `[B]₀ > 0`, which the bounds below assume. -/
 noncomputable def pfoRatio (A0 B0 : ℝ) : ℝ := A0 / B0
 
-/-- Pseudo-first-order error bound, explicit in `r = [A]₀ / [B]₀ < 1`:
-`|[A](t) - [A]₀ exp(-k[B]₀t)| ≤ [A]₀ r (1 / (1 - r) + k[B]₀t)` for `t ≥ 0`. -/
+/-- Pseudo-first-order error bound, explicit in `r = [A]₀ / [B]₀ < 1`: for `0 < [A]₀ < [B]₀`,
+`k > 0` and `t ≥ 0`, `|[A](t) - [A]₀ exp(-k[B]₀t)| ≤ [A]₀ r (1 / (1 - r) + k[B]₀t)`. -/
 lemma pfo_error_bound (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hB0 : 0 < B0)
     (hk : 0 < k) (hlt : A0 < B0) (ht : 0 ≤ t) :
     |secondOrderABSolA A0 B0 k t - pfoSol A0 B0 k t|
@@ -1115,7 +1119,8 @@ lemma pfo_error_bound (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hB0 : 0 < B0)
   rw [← hfin]
   linarith [s1, s2, s3]
 
-/-- Pseudo-first-order error normalized by the initial concentration `[A]₀`:
+/-- Pseudo-first-order error normalized by the initial concentration `[A]₀`: for
+`0 < [A]₀ < [B]₀`, `k > 0` and `t ≥ 0`,
 `|[A](t) - [A]₀ exp(-k[B]₀t)| / [A]₀ ≤ r (1 / (1 - r) + k[B]₀t)`. The denominator is `[A]₀`, not
 the concentration at time `t`, so this is not a relative error at time `t`. -/
 lemma pfo_error_div_initial_bound (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hB0 : 0 < B0)

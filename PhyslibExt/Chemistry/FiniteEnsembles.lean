@@ -355,7 +355,8 @@ theorem sum_mul_log_div_nonneg {ι : Type*} [Fintype ι] {p q : ι → ℝ} (hp 
     (fun i _ => hq i)
   rwa [hp1, hq1, div_one, Real.log_one, mul_zero] at h
 
-/-- Equality in Gibbs' inequality: the relative entropy vanishes exactly when `p = q`. -/
+/-- Equality in Gibbs' inequality: for probability distributions `p` and `q` with `0 < q i`, the
+relative entropy vanishes exactly when `p = q`. -/
 lemma sum_mul_log_div_eq_zero_iff {ι : Type*} [Fintype ι] {p q : ι → ℝ} (hp : ∀ i, 0 ≤ p i)
     (hp1 : ∑ i, p i = 1) (hq : ∀ i, 0 < q i) (hq1 : ∑ i, q i = 1) :
     ∑ i, p i * Real.log (p i / q i) = 0 ↔ p = q := by
@@ -375,8 +376,8 @@ lemma sum_mul_log_div_boltzmannProb_nonneg {ι : Type*} [Fintype ι] (E : ι →
   have := nonempty_of_sum_eq_one hp1
   exact sum_mul_log_div_nonneg hp hp1 (boltzmannProb_pos E β) (sum_boltzmannProb_eq_one E β)
 
-/-- The relative entropy to the Boltzmann distribution vanishes exactly at the Boltzmann
-distribution. -/
+/-- For a probability distribution `p`, the relative entropy to the Boltzmann distribution vanishes
+exactly at the Boltzmann distribution. -/
 lemma sum_mul_log_div_boltzmannProb_eq_zero_iff {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ)
     {p : ι → ℝ} (hp : ∀ i, 0 ≤ p i) (hp1 : ∑ i, p i = 1) :
     ∑ i, p i * Real.log (p i / boltzmannProb E β i) = 0 ↔ p = boltzmannProb E β := by
@@ -477,7 +478,7 @@ lemma energyVariance_nonneg {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ
     0 ≤ energyVariance E β :=
   Finset.sum_nonneg fun i _ => mul_nonneg (boltzmannProb_nonneg E β i) (sq_nonneg _)
 
-/-- The heat capacity is nonnegative. -/
+/-- For `0 < kB` the heat capacity is nonnegative. -/
 lemma heatCapacity_nonneg {ι : Type*} [Fintype ι] {kB : ℝ} (hkB : 0 < kB) (E : ι → ℝ) (β : ℝ) :
     0 ≤ heatCapacity kB E β :=
   mul_nonneg (mul_nonneg hkB.le (sq_nonneg β)) (energyVariance_nonneg E β)
@@ -502,7 +503,7 @@ lemma entropy_eq_mul_shannonEntropy {ι : Type*} [Fintype ι] [Nonempty ι] (kB 
     meanEnergy]
   ring
 
-/-- `A = U - S / (kB * β)`. -/
+/-- For `0 < kB` and `0 < β`, `A = U - S / (kB * β)`. -/
 lemma helmholtzFreeEnergy_eq_meanEnergy_sub_entropy_div {ι : Type*} [Fintype ι] {kB β : ℝ}
     (hkB : 0 < kB) (hβ : 0 < β) (E : ι → ℝ) :
     helmholtzFreeEnergy E β = meanEnergy E β - entropy kB E β / (kB * β) := by
@@ -512,18 +513,19 @@ lemma helmholtzFreeEnergy_eq_meanEnergy_sub_entropy_div {ι : Type*} [Fintype ι
   field_simp
   ring
 
-/-- The temperature is positive. -/
+/-- For `0 < kB` and `0 < β` the temperature is positive. -/
 lemma temperature_pos {kB β : ℝ} (hkB : 0 < kB) (hβ : 0 < β) : 0 < temperature kB β :=
   one_div_pos.mpr (mul_pos hkB hβ)
 
-/-- `A = U - T S` with `T = 1 / (kB * β)`. -/
+/-- For `0 < kB` and `0 < β`, `A = U - T S` with `T = 1 / (kB * β)`. -/
 lemma helmholtzFreeEnergy_eq_meanEnergy_sub_temperature_mul_entropy {ι : Type*} [Fintype ι]
     {kB β : ℝ} (hkB : 0 < kB) (hβ : 0 < β) (E : ι → ℝ) :
     helmholtzFreeEnergy E β = meanEnergy E β - temperature kB β * entropy kB E β := by
   rw [helmholtzFreeEnergy_eq_meanEnergy_sub_entropy_div hkB hβ, temperature]
   ring
 
-/-- `A = -kB T log Z`, the form of Physlib's `CanonicalEnsemble.helmholtzFreeEnergy`. -/
+/-- For `0 < kB` and `0 < β`, `A = -kB T log Z`, the form of Physlib's
+`CanonicalEnsemble.helmholtzFreeEnergy`. -/
 lemma helmholtzFreeEnergy_eq_neg_mul_temperature_mul_log {ι : Type*} [Fintype ι] {kB β : ℝ}
     (hkB : 0 < kB) (hβ : 0 < β) (E : ι → ℝ) :
     helmholtzFreeEnergy E β =
@@ -600,7 +602,7 @@ theorem heatCapacity_eq_neg_mul_deriv_meanEnergy {ι : Type*} [Fintype ι] [None
   rw [deriv_meanEnergy, heatCapacity]
   ring
 
-/-- `C = Var(E) / (kB * T ^ 2)`, the form of Physlib's
+/-- For `0 < kB` and `0 < β`, `C = Var(E) / (kB * T ^ 2)`, the form of Physlib's
 `CanonicalEnsemble.fluctuation_dissipation_theorem_finite`. -/
 lemma heatCapacity_eq_energyVariance_div {ι : Type*} [Fintype ι] {kB β : ℝ} (hkB : 0 < kB)
     (hβ : 0 < β) (E : ι → ℝ) :
@@ -641,7 +643,7 @@ lemma boltzmannProb_combinedEnergy {ι κ : Type*} [Fintype ι] [Fintype κ] (E�
     Real.exp_add]
   exact mul_div_mul_comm _ _ _ _
 
-/-- The mean energy of independent subsystems is the sum of their mean energies. -/
+/-- The mean energy of two independent nonempty subsystems is the sum of their mean energies. -/
 lemma meanEnergy_combinedEnergy {ι κ : Type*} [Fintype ι] [Fintype κ] [Nonempty ι]
     [Nonempty κ] (E₁ : ι → ℝ) (E₂ : κ → ℝ) (β : ℝ) :
     meanEnergy (combinedEnergy E₁ E₂) β = meanEnergy E₁ β + meanEnergy E₂ β := by

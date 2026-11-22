@@ -485,13 +485,13 @@ balance coordinates are the components and charge. -/
 def balanceMatrix {κ ι : Type*} (z : ι → ℤ) (B : Matrix κ ι ℚ) : Matrix (Option κ) ι ℚ :=
   Matrix.of fun r i => r.elim (z i : ℚ) fun k => B k i
 
-/-- The charge row of the balance matrix. -/
+/-- The charge row of the balance matrix: its entries are the species charges `z i`. -/
 @[simp]
 lemma balanceMatrix_none {κ ι : Type*} (z : ι → ℤ) (B : Matrix κ ι ℚ) (i : ι) :
     balanceMatrix z B none i = z i :=
   rfl
 
-/-- The component rows of the balance matrix. -/
+/-- The component rows of the balance matrix: the row of component `k` is row `k` of `B`. -/
 @[simp]
 lemma balanceMatrix_some {κ ι : Type*} (z : ι → ℤ) (B : Matrix κ ι ℚ) (k : κ) (i : ι) :
     balanceMatrix z B (some k) i = B k i :=
@@ -552,7 +552,7 @@ theorem independentFormationCount_eq {κ ι : Type*} [Fintype ι] (z : ι → �
 /-- **Formation count with charged components.** If every species charge is the combination
 `zc ᵥ* B` of its component content, as when each component carries a fixed charge `zc k`,
 conserving the components conserves charge, and the formation reactions form a space of
-dimension `S - C` with `C = Matrix.rank B`. -/
+dimension `S - C` with `S = Fintype.card ι` and `C = Matrix.rank B`. -/
 theorem independentFormationCount_eq_of_charge_eq {κ ι : Type*} [Fintype ι] [Fintype κ]
     (z : ι → ℤ) (B : Matrix κ ι ℚ) (zc : κ → ℚ) (hz : ∀ i, (z i : ℚ) = (zc ᵥ* B) i) :
     independentFormationCount z B = Fintype.card ι - B.rank := by

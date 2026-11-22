@@ -143,8 +143,9 @@ lemma expectation_olsEstimator_calibration {m n : ℕ} (X : Matrix (Fin m) (Fin 
   exact expectation_const_add_mulVec p ε (olsMatrix X) β hp1 hmean j
 
 /-- **Unbiasedness of a linear estimator** (CH24.3a). Any estimator `β̃ ω = A *ᵥ y ω` whose
-matrix satisfies the unbiasedness condition `A * X = 1` has `E[β̃ j] = β j` under the same
-model hypotheses, including a finite error distribution `p` (`0 ≤ p ω` and `∑ ω, p ω = 1`). As
+matrix satisfies the unbiasedness condition `A * X = 1` has `E[β̃ j] = β j` under the model
+equation `y ω = X *ᵥ β + ε ω`, mean-zero errors `E[ε i] = 0` and a finite error distribution `p`
+(`0 ≤ p ω` and `∑ ω, p ω = 1`); no invertibility of `Xᵀ * X` is assumed. As
 in `expectation_olsEstimator_calibration`, the proof uses only `∑ ω, p ω = 1`, and `0 ≤ p ω` is
 what makes `expectation p` the mean under a probability distribution. -/
 lemma expectation_linearUnbiased_calibration {m n : ℕ} (X : Matrix (Fin m) (Fin n) ℝ)
@@ -258,43 +259,43 @@ lemma inversePrediction_mul (a b y₀ : ℝ) (hb : b ≠ 0) :
 derivatives `1 / b`, `-1 / b` and `-(y₀ - a) / b ^ 2`. For `b ≠ 0` they are the derivatives of
 the one-variable slices (`hasDerivAt_inversePredictionGradient`) and the coefficients of the
 Fréchet derivative of the three-input map (`hasFDerivAt_inversePredictionMap`). At `b = 0`
-inverse prediction is undefined and the slope derivative does not exist; Lean's totalized
-division makes all three entries `0` there, which is not a gradient, so every lemma that treats
-this vector as the gradient requires `b ≠ 0`. This is an explicit `3`-vector of sensitivity
-coefficients, not Mathlib's inner-product-space gradient, whose Hilbert-space setup the
-first-order law does not need. -/
+inverse prediction is undefined, and for `y₀ ≠ a` its slice in the slope `b` has no derivative
+there; Lean's totalized division makes all three entries `0` there, which is not a gradient, so
+every lemma that treats this vector as the gradient requires `b ≠ 0`. This is an explicit
+`3`-vector of sensitivity coefficients, not Mathlib's inner-product-space gradient, whose
+Hilbert-space setup the first-order law does not need. -/
 noncomputable def inversePredictionGradient (a b y₀ : ℝ) : Fin 3 → ℝ :=
   ![1 / b, -1 / b, -(y₀ - a) / b ^ 2]
 
-/-- First gradient component. -/
+/-- First gradient component: `1 / b`. -/
 lemma inversePredictionGradient_zero (a b y₀ : ℝ) :
     inversePredictionGradient a b y₀ 0 = 1 / b := by
   simp [inversePredictionGradient]
 
-/-- Second gradient component. -/
+/-- Second gradient component: `-1 / b`. -/
 lemma inversePredictionGradient_one (a b y₀ : ℝ) :
     inversePredictionGradient a b y₀ 1 = -1 / b := by
   simp [inversePredictionGradient]
 
-/-- Third gradient component. -/
+/-- Third gradient component: `-(y₀ - a) / b ^ 2`. -/
 lemma inversePredictionGradient_two (a b y₀ : ℝ) :
     inversePredictionGradient a b y₀ 2 = -(y₀ - a) / b ^ 2 := by
   simp [inversePredictionGradient]
 
-/-- Partial derivative of inverse prediction with respect to the new response `y₀`. -/
+/-- Partial derivative of inverse prediction with respect to the new response `y₀`: `1 / b`. -/
 lemma hasDerivAt_inversePrediction_response (a b y₀ : ℝ) :
     HasDerivAt (fun t => inversePrediction a b t) (1 / b) y₀ := by
   simp only [inversePrediction]
   exact ((hasDerivAt_id y₀).sub_const a).div_const b
 
-/-- Partial derivative of inverse prediction with respect to the fitted intercept `a`. -/
+/-- Partial derivative of inverse prediction with respect to the fitted intercept `a`: `-1 / b`. -/
 lemma hasDerivAt_inversePrediction_intercept (a b y₀ : ℝ) :
     HasDerivAt (fun t => inversePrediction t b y₀) (-1 / b) a := by
   simp only [inversePrediction]
   exact ((hasDerivAt_id a).const_sub y₀).div_const b
 
 /-- Partial derivative of inverse prediction with respect to the fitted slope `b`, at
-`b ≠ 0`. -/
+`b ≠ 0`: `-(y₀ - a) / b ^ 2`. -/
 lemma hasDerivAt_inversePrediction_slope (a y₀ : ℝ) {b : ℝ} (hb : b ≠ 0) :
     HasDerivAt (fun t => inversePrediction a t y₀) (-(y₀ - a) / b ^ 2) b := by
   simp only [inversePrediction]
@@ -380,8 +381,9 @@ lemma inversePrediction_linearizedVariance_firstOrder {Ω : Type*} {mΩ : Measur
   simp only [fderiv_inversePredictionMap_single a y₀ hb]
 
 /-- **First-order uncertainty of inverse prediction, uncorrelated inputs** (CH24.4). For a
-nonzero slope `b` and random inputs `X 0`, `X 1`, `X 2` for `(y₀, a, b)` that are pairwise
-uncorrelated, with standard uncertainties `u 0`, `u 1`, `u 2` (`Var[X i] = u i ^ 2`), the
+nonzero slope `b` and random inputs `X 0`, `X 1`, `X 2` for `(y₀, a, b)` with finite second
+moments on a probability space that are pairwise uncorrelated, with standard uncertainties
+`u 0`, `u 1`, `u 2` (`Var[X i] = u i ^ 2`), the
 variance of the first-order linearization of `inversePredictionMap` at `(y₀, a, b)` is
 `(u 0 ^ 2 + u 1 ^ 2) / b ^ 2 + (y₀ - a) ^ 2 / b ^ 4 * u 2 ^ 2`, including the
 response-uncertainty term `u(y₀) ^ 2 / b ^ 2`. This is
@@ -414,7 +416,7 @@ noncomputable def standardAdditionUnknown (intercept slope : ℝ) : ℝ :=
   intercept / slope
 
 /-- Standard addition with an explicit blank (CH24.5a): under the linear-response model
-`y s = a₀ + b * (x_u + s)` with the same blank `a₀` and sensitivity `b` for all additions,
+`y s = a₀ + b * (x_u + s)` with the same blank `a₀` and nonzero sensitivity `b` for all additions,
 and the fitted line `y s = a + b * s` exact in the model, the unknown is
 `x_u = (a - a₀) / b`. -/
 lemma standardAddition_unknown_eq (x_u a₀ a b : ℝ) (t : ℝ) (y : ℝ → ℝ)
@@ -428,7 +430,7 @@ lemma standardAddition_unknown_eq (x_u a₀ a b : ℝ) (t : ℝ) (y : ℝ → �
   field_simp
 
 /-- Standard addition (CH24.5a): under zero-blank linear response `y s = b * (x_u + s)` with
-the same sensitivity `b` for all additions, and the fitted line `y s = a + b * s` exact in
+the same nonzero sensitivity `b` for all additions, and the fitted line `y s = a + b * s` exact in
 the model, the unknown is the fitted intercept over the fitted slope. -/
 lemma standardAdditionUnknown_eq (x_u a b : ℝ) (t : ℝ) (y : ℝ → ℝ)
     (hmodel : ∀ s, y s = b * (x_u + s))
@@ -453,8 +455,8 @@ lemma internalStandardRatio_commonDrift (ya0 ys0 d : ℝ) (hd : d ≠ 0) (hys : 
   simp only [internalStandardRatio]
   field_simp
 
-/-- Independent drift factors do not cancel (CH24.5b): the drifted ratio is the drift ratio
-times the undrifted ratio, `(d₁ / d₂) * R⁰`. -/
+/-- Independent drift factors scale the ratio (CH24.5b): the drifted ratio is the drift ratio
+times the undrifted ratio `R⁰ = y_a / y_s`, `(d₁ / d₂) * R⁰`. -/
 lemma internalStandardRatio_independentDrift (ya0 ys0 d₁ d₂ : ℝ) (hd₂ : d₂ ≠ 0)
     (hys : ys0 ≠ 0) :
     internalStandardRatio (d₁ * ya0) (d₂ * ys0) =

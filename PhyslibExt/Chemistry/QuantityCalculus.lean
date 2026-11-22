@@ -413,8 +413,8 @@ lemma rescale_div_rescale_same (u₁ u₂ : UnitScale ISQDimensionBase)
   rw [rescale_div_rescale, h,
     rescale_of_isDimensionless u₁ u₂ (isDimensionless_iff.mpr rfl)]
 
-/-- Converting a value to other units and back recovers it: the self-scaling case of
-transitivity. -/
+/-- Converting a value from a choice of units to the same choice leaves it unchanged; with
+transitivity, converting to other units and back recovers it. -/
 lemma rescale_self (u : UnitScale ISQDimensionBase) (d : Dimension ISQDimensionBase)
     (x : ℝ) : rescale u u d x = x := by
   simp only [rescale, unitFactor, UnitScale.dimScale_self, NNReal.coe_one, one_mul]

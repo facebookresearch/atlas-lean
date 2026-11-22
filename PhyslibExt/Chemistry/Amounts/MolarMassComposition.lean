@@ -125,13 +125,13 @@ assume only `0 < N_A`. -/
 noncomputable def amountOfSubstance (N : ℕ) (N_A : ℝ) : ℝ :=
   N / N_A
 
-/-- `N = n N_A`: the number of entities is the amount of substance times the Avogadro
-constant. -/
+/-- `N = n N_A` for `N_A > 0`: the number of entities is the amount of substance times the
+Avogadro constant. -/
 lemma amountOfSubstance_mul (N : ℕ) {N_A : ℝ} (hN_A : 0 < N_A) :
     amountOfSubstance N N_A * N_A = N :=
   div_mul_cancel₀ _ hN_A.ne'
 
-/-- The amount of substance of `N` entities is the unique `n` with `N = n N_A`. -/
+/-- For `N_A > 0`, the amount of substance of `N` entities is the unique `n` with `N = n N_A`. -/
 lemma amountOfSubstance_eq_iff (N : ℕ) {N_A n : ℝ} (hN_A : 0 < N_A) :
     amountOfSubstance N N_A = n ↔ (N : ℝ) = n * N_A :=
   div_eq_iff hN_A.ne'
@@ -141,7 +141,7 @@ lemma amountOfSubstance_add (N₁ N₂ : ℕ) (N_A : ℝ) :
     amountOfSubstance (N₁ + N₂) N_A = amountOfSubstance N₁ N_A + amountOfSubstance N₂ N_A := by
   rw [amountOfSubstance, amountOfSubstance, amountOfSubstance, Nat.cast_add, add_div]
 
-/-- A sample of at least one entity has a positive amount of substance. -/
+/-- For `N_A > 0`, a sample of at least one entity has a positive amount of substance. -/
 lemma amountOfSubstance_pos {N : ℕ} {N_A : ℝ} (hN : 0 < N) (hN_A : 0 < N_A) :
     0 < amountOfSubstance N N_A :=
   div_pos (Nat.cast_pos.mpr hN) hN_A
@@ -170,7 +170,8 @@ lemma molarMass_eq_iff {m n M : ℝ} (hn : n ≠ 0) : molarMass m n hn = M ↔ m
 lemma molarMass_pos {m n : ℝ} (hm : 0 < m) (hn : 0 < n) : 0 < molarMass m n hn.ne' :=
   div_pos hm hn
 
-/-- A sample of `N > 0` entities, each of mass `m₀`, has molar mass `M = m₀ N_A`. -/
+/-- For `N_A > 0`, a sample of `N > 0` entities, each of mass `m₀`, has molar mass
+`M = m₀ N_A`. -/
 lemma molarMass_of_entities {N : ℕ} {m₀ N_A : ℝ} (hN : 0 < N) (hN_A : 0 < N_A) :
     molarMass (N * m₀) (amountOfSubstance N N_A) (amountOfSubstance_pos hN hN_A).ne' =
       m₀ * N_A := by
@@ -559,7 +560,7 @@ lemma moleFraction_nonneg {ι : Type*} [Fintype ι] {n : ι → ℝ} (hn₀ : �
     0 ≤ moleFraction n i :=
   div_nonneg (hn₀ i) (Finset.sum_nonneg fun j _ => hn₀ j)
 
-/-- Mole fractions sum to `1`. -/
+/-- For amounts with a positive total, mole fractions sum to `1`. -/
 lemma sum_moleFraction {ι : Type*} [Fintype ι] {n : ι → ℝ} (hn : 0 < ∑ i, n i) :
     ∑ i, moleFraction n i = 1 := by
   simp only [moleFraction]
@@ -571,21 +572,23 @@ lemma massFraction_nonneg {ι : Type*} [Fintype ι] {M n : ι → ℝ} (hn₀ : 
   div_nonneg (mul_nonneg (hn₀ i) (hM i).le)
     (Finset.sum_nonneg fun j _ => mul_nonneg (hn₀ j) (hM j).le)
 
-/-- Mass fractions sum to `1`. -/
+/-- For nonnegative amounts with a positive total and positive molar masses, mass fractions sum
+to `1`. -/
 lemma sum_massFraction {ι : Type*} [Fintype ι] {M n : ι → ℝ} (hn₀ : ∀ i, 0 ≤ n i)
     (hn : 0 < ∑ i, n i) (hM : ∀ i, 0 < M i) : ∑ i, massFraction M n i = 1 := by
   simp only [massFraction]
   rw [← Finset.sum_div, div_self (sum_amount_mul_molarMass_pos hn₀ hn hM).ne']
 
-/-- Mass fractions computed from the mole fractions equal the mass fractions computed from the
-amounts. -/
+/-- For amounts with a positive total, mass fractions computed from the mole fractions equal the
+mass fractions computed from the amounts. -/
 lemma massFraction_moleFraction {ι : Type*} [Fintype ι] (M : ι → ℝ) {n : ι → ℝ}
     (hn : 0 < ∑ i, n i) : massFraction M (moleFraction n) = massFraction M n := by
   funext i
   simp only [massFraction, moleFraction, div_mul_eq_mul_div]
   rw [← Finset.sum_div, div_div_div_cancel_right₀ hn.ne']
 
-/-- Converting the mass fractions of a mixture to mole fractions gives its mole fractions. -/
+/-- For nonnegative amounts with a positive total and positive molar masses, converting the mass
+fractions of a mixture to mole fractions gives its mole fractions. -/
 lemma moleFractionOfMassFraction_massFraction {ι : Type*} [Fintype ι] {M n : ι → ℝ}
     (hn₀ : ∀ i, 0 ≤ n i) (hn : 0 < ∑ i, n i) (hM : ∀ i, 0 < M i) :
     moleFractionOfMassFraction M (massFraction M n) = moleFraction n := by

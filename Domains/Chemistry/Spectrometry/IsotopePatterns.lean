@@ -478,7 +478,8 @@ abundances. -/
 noncomputable def FiniteMassDist.mean (d : FiniteMassDist) : ℝ :=
   d.pmf.expect id
 
-/-- The mean is the finite sum over the witness, via `PMF.expect_eq_sum_of_finite_support`. -/
+/-- The mean is the finite sum `∑ m ∈ support, P(m) * m` over the witness, via
+`PMF.expect_eq_sum_of_finite_support`. -/
 lemma FiniteMassDist.mean_eq_sum (d : FiniteMassDist) :
     d.mean = ∑ m ∈ d.support, (d.pmf m).toReal * m := by
   unfold FiniteMassDist.mean

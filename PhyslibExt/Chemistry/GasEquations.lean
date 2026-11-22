@@ -200,9 +200,9 @@ theorem vdW_critical_point (a b R T Vm : ℝ) (ha : 0 < a) (hb : 0 < b) (hR : 0 
   rw [compressibilityFactor, hp, hTc]
   field_simp
 
-/-- Van der Waals model, critical point stated with the derivatives themselves: if
-`deriv p = 0` and `deriv (deriv p) = 0` at `Vm > b` for the van der Waals pressure `p`, then
-`Vm = 3 b`, `T = 8 a / (27 R b)`, `p = a / (27 b ^ 2)` and `Z = 3 / 8`. -/
+/-- Van der Waals model, critical point stated with the derivatives themselves: for
+`a, b, R, T > 0`, if `deriv p = 0` and `deriv (deriv p) = 0` at `Vm > b` for the van der Waals
+pressure `p`, then `Vm = 3 b`, `T = 8 a / (27 R b)`, `p = a / (27 b ^ 2)` and `Z = 3 / 8`. -/
 lemma vdW_critical_point_of_deriv (a b R T Vm : ℝ) (ha : 0 < a) (hb : 0 < b) (hR : 0 < R)
     (hT : 0 < T) (hVm : b < Vm) (h₁ : deriv (fun V => vdWPressure a b R T V) Vm = 0)
     (h₂ : deriv (deriv fun V => vdWPressure a b R T V) Vm = 0) :
@@ -226,10 +226,11 @@ noncomputable def vdWReducedVolume (b Vm : ℝ) : ℝ := Vm / (3 * b)
 `T_c = 8 a / (27 R b)`. -/
 noncomputable def vdWReducedTemperature (a b R T : ℝ) : ℝ := T / (8 * a / (27 * R * b))
 
-/-- Van der Waals model: the reduced equation `(P_r + 3 / V_r ^ 2) (3 V_r - 1) = 8 T_r`, in which
-`a, b, R` no longer appear. This is exact within the van der Waals model; for real gases the law
-of corresponding states is an empirical regularity. The hypotheses `_hR` and `_hT` record the
-domain of the model; the identity holds for every `R` and `T`. -/
+/-- Van der Waals model: for `0 < a`, `0 < b` and `b < Vm`, the reduced equation
+`(P_r + 3 / V_r ^ 2) (3 V_r - 1) = 8 T_r`, in which `a, b, R` no longer appear. This is exact
+within the van der Waals model; for real gases the law of corresponding states is an empirical
+regularity. The hypotheses `_hR` and `_hT` record the domain of the model; the identity holds for
+every `R` and `T`. -/
 theorem reduced_vdW_equation (a b R T Vm p Pr Vr Tr : ℝ) (ha : 0 < a) (hb : 0 < b)
     (_hR : 0 < R) (_hT : 0 < T) (hVm : b < Vm) (hp : p = vdWPressure a b R T Vm)
     (hPr : Pr = vdWReducedPressure a b p) (hVr : Vr = vdWReducedVolume b Vm)
@@ -247,11 +248,12 @@ theorem reduced_vdW_equation (a b R T Vm p Pr Vr Tr : ℝ) (ha : 0 < a) (hb : 0 
 /-- The second virial coefficient `B(T) = b - a / (R T)` of the van der Waals gas. -/
 noncomputable def vdWSecondVirialCoeff (a b R T : ℝ) : ℝ := b - a / (R * T)
 
-/-- Van der Waals model, exact virial identity: `Z = 1 + B / V_m + b ^ 2 / (V_m (V_m - b))` with
-`B = b - a / (R T)`. So `B` is the coefficient of `1 / V_m` in the expansion of `Z`, with the
-exact remainder `b ^ 2 / (V_m (V_m - b))`, which is of order `1 / V_m ^ 2` as `V_m → ∞` (that
-asymptotic remark is not formalized here); the truncation `Z ≈ 1 + B / V_m` is not an equality.
-The hypothesis `_ha` records the domain of the model; the identity holds for every `a`. -/
+/-- Van der Waals model, exact virial identity for `0 < b`, `0 < R`, `0 < T` and `b < Vm`:
+`Z = 1 + B / V_m + b ^ 2 / (V_m (V_m - b))` with `B = b - a / (R T)`. So `B` is the coefficient
+of `1 / V_m` in the expansion of `Z`, with the exact remainder `b ^ 2 / (V_m (V_m - b))`, which is
+of order `1 / V_m ^ 2` as `V_m → ∞` (that asymptotic remark is not formalized here); the
+truncation `Z ≈ 1 + B / V_m` is not an equality. The hypothesis `_ha` records the domain of the
+model; the identity holds for every `a`. -/
 theorem vdW_virial_expansion (a b R T Vm p : ℝ) (_ha : 0 < a) (hb : 0 < b) (hR : 0 < R)
     (hT : 0 < T) (hVm : b < Vm) (hp : p = vdWPressure a b R T Vm) :
     compressibilityFactor p Vm R T =
