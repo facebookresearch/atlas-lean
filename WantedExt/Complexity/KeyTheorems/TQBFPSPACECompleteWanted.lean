@@ -41,7 +41,16 @@ every formula variable to be quantified.
 -/
 
 
-/-- Evaluation of a quantified Boolean formula over an assignment. -/
+/-- **Evaluation of a quantified CNF formula.** Let $\varphi$ be a CNF formula, let
+$a : \mathbb{N} \to \{\mathrm{true}, \mathrm{false}\}$ be an assignment, and let $Q$ be a
+quantifier prefix, a list of pairs $(e, v)$ of a flag $e$ (true for $\exists$, false for
+$\forall$) and a variable $v \in \mathbb{N}$. Write $a[v \mapsto b]$ for the assignment that
+agrees with $a$ except that it sends $v$ to $b$. With the empty prefix, the formula holds under
+$a$ when $a$ satisfies $\varphi$. With a prefix whose first entry is $(e, v)$ and whose remaining
+entries form $Q'$, it holds under $a$ when, if $e$ is true, the formula with prefix $Q'$ holds
+under $a[v \mapsto \mathrm{true}]$ or under $a[v \mapsto \mathrm{false}]$, and, if $e$ is false,
+the formula with prefix $Q'$ holds under both $a[v \mapsto \mathrm{true}]$ and
+$a[v \mapsto \mathrm{false}]$. -/
 def EvalQBF (pref : List (Bool × ℕ)) (φ : Cslib.Logic.PL.CNF)
     (assign : ℕ → Bool) : Prop :=
   match pref with
@@ -55,7 +64,13 @@ def EvalQBF (pref : List (Bool × ℕ)) (φ : Cslib.Logic.PL.CNF)
         EvalQBF rest φ (Function.update assign v false)
 
 open Classical in
-/-- TQBF as a decision problem over bitstrings. -/
+/-- **TQBF as a decision problem.** The TQBF decision problem accepts a bitstring $x$ exactly when
+$x$ decodes, under the canonical bitstring encoding, to a pair $(Q, \varphi)$, where $Q$ is a
+quantifier prefix, a list of $m$ pairs $(e_1, v_1), \dots, (e_m, v_m)$ of a flag $e_i$ (true for
+$\exists$, false for $\forall$) and a variable $v_i \in \mathbb{N}$, and $\varphi$ is a CNF
+formula, such that $v_1, \dots, v_m$ are $0, 1, \dots, m - 1$ in some order, every variable
+occurring in $\varphi$ is less than $m$, and the quantified formula with prefix $Q$ and matrix
+$\varphi$ holds under the assignment that sends every variable to false. -/
 noncomputable def tqbfDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -66,7 +81,11 @@ noncomputable def tqbfDec :
       EvalQBF i.1 i.2 (fun _ => false))
   | none => false
 
-/-- **TQBF is PSPACE-complete.** Source: L. J. Stockmeyer and A. R. Meyer, "Word problems
+/-- **TQBF is PSPACE-complete.** The TQBF decision problem, of true quantified Boolean formulas
+with a CNF matrix, lies in the class PSPACE of decision problems, and every decision problem in
+PSPACE has a polynomial-time many-one reduction to it.
+
+Source: L. J. Stockmeyer and A. R. Meyer, "Word problems
 requiring exponential time", Proceedings of the Fifth Annual ACM Symposium on Theory of
 Computing (STOC 1973), 1-9; C. H. Papadimitriou, Computational Complexity, 1994, Theorem
 7.4. -/
