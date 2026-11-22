@@ -169,10 +169,13 @@ theorem pcp_iff_of_subsingleton (P : List (Domino α)) :
 
 /-! ### Decidability -/
 
-/-- **The unary PCP test.** Let $\alpha$ be an alphabet with at most one letter, and write $|w|$
-for the length of a word $w$. For a finite list $P$ of dominoes over $\alpha$, the unary test of
-$P$ is the Boolean value that is true exactly when some domino $(t, b)$ in $P$ has $|t| = |b|$, or
-some domino $(t, b)$ in $P$ has $|t| < |b|$ and some domino $(t', b')$ in $P$ has $|b'| < |t'|$. -/
+/-- **The unary PCP test.** Write $|w|$ for the length of a word $w$. For a finite list $P$ of
+dominoes over an alphabet $\alpha$, the unary test of $P$ is the Boolean value that is true exactly
+when some domino $(t, b)$ in $P$ has $|t| = |b|$, or some domino $(t, b)$ in $P$ has $|t| < |b|$
+and some domino $(t', b')$ in $P$ has $|b'| < |t'|$.
+
+The test is defined over any alphabet; on an alphabet with at most one letter it decides the Post
+correspondence problem. -/
 def unaryTest (P : List (Domino α)) : Bool :=
   P.any (fun d ↦ d.1.length == d.2.length) ||
     (P.any (fun d ↦ decide (d.1.length < d.2.length)) &&
