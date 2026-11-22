@@ -13,12 +13,15 @@ reporting, or let it pass without running. It fails if a required workflow:
   `pull_request_target`). A push to a PR's branch, or of a tag on a PR's head,
   would report them there for a tree other than the merge;
 - loses or renames the job that reports a check, or another job in any
-  workflow takes the same name;
+  workflow reports the same name (a matrix job's name includes its matrix
+  values);
 - can skip that job, which counts as passing: a job-level `if`, a matrix, a
   reusable workflow, a prerequisite that is not required itself, or
   `continue-on-error`;
 - loses the step that runs the check's entry point, or lets that step be
-  skipped or its failure ignored.
+  skipped or its failure ignored;
+- uses a concurrency group that is not specific to each run's ref or commit,
+  so that one merge group's run could cancel another's.
 
 Both `repository integrity` and `source-diagnostics` must also run this test,
 each in a step that is exactly its command, so that a change that makes one
@@ -36,6 +39,7 @@ Locally:
 from __future__ import annotations
 
 import copy
+import itertools
 import re
 import unittest
 from pathlib import Path
@@ -63,6 +67,10 @@ COMMAND = ('"$RUNNER_TEMP/merge-queue-venv/bin/python" -m unittest discover '
            "-s scripts -p test_merge_queue_checks.py -v")
 PR_TYPES = {"opened", "synchronize", "reopened"}
 FILTERS = {"branches", "branches-ignore", "paths", "paths-ignore", "tags", "tags-ignore"}
+# Each merge group has its own ref and commit, so a concurrency group keyed by
+# one of these never lets one merge group's run cancel another's.
+PER_MERGE_GROUP = ("github.ref", "github.sha", "github.run_id",
+                   "github.event.merge_group.head_ref", "github.event.merge_group.head_sha")
 # Events a required workflow may also run on. Checks from workflow_dispatch and
 # schedule runs never satisfy a branch ruleset's required checks (GitHub Docs,
 # "Troubleshooting required status checks").
@@ -96,16 +104,47 @@ def events(workflow: dict) -> dict[str, dict]:
 
 
 def is_false(value) -> bool:
-    return value in (None, "false", "False", "FALSE")
+    return (value in (None, "false", "False", "FALSE")
+            or re.fullmatch(r"\$\{\{\s*false\s*\}\}", str(value)) is not None)
 
 
 def runs(step, command: str) -> bool:
-    """Whether a step runs exactly this one command line, unconditionally, with
-    its failure not ignored."""
+    """Whether a step runs exactly this one command (comment lines aside),
+    unconditionally, with its failure not ignored."""
     if not isinstance(step, dict) or "if" in step or not is_false(step.get("continue-on-error")):
         return False
-    run = str(step.get("run", "")).strip()
-    return "\n" not in run and " ".join(run.split()) == command
+    lines = [line.strip() for line in str(step.get("run", "")).splitlines()]
+    lines = [line for line in lines if line and not line.startswith("#")]
+    return len(lines) == 1 and " ".join(lines[0].split()) in (command, "./" + command)
+
+
+def check_names(job_id: str, job) -> list[str]:
+    """The names a job's checks report: its `name`, or its id, with a literal
+    matrix substituted for `${{ matrix.<key> }}` or, when the name does not use
+    the matrix, appended in parentheses."""
+    if not isinstance(job, dict):
+        return [job_id]
+    name = str(job.get("name", job_id))
+    strategy = job.get("strategy")
+    matrix = strategy.get("matrix") if isinstance(strategy, dict) else None
+    if not isinstance(matrix, dict):
+        return [name]
+    axes = {key: values for key, values in matrix.items()
+            if key not in ("include", "exclude") and isinstance(values, list)}
+    combos = [dict(zip(axes, values))
+              for values in itertools.product(*axes.values())] if axes else []
+    combos += [entry for entry in as_list(matrix.get("include")) if isinstance(entry, dict)]
+    used = re.findall(r"\$\{\{\s*matrix\.([\w-]+)\s*\}\}", name)
+    if not used:
+        return [f"{name} ({', '.join(map(str, combo.values()))})" for combo in combos] or [name]
+    return [re.sub(r"\$\{\{\s*matrix\.([\w-]+)\s*\}\}",
+                   lambda match: str(combo.get(match.group(1), "")), name) for combo in combos]
+
+
+def concurrency_group(setting) -> str:
+    if isinstance(setting, dict):
+        return str(setting.get("group", ""))
+    return "" if setting in (None, "") else str(setting)
 
 
 def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
@@ -118,9 +157,9 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
     reporters: dict[str, list[tuple[str, str]]] = {}
     for name, workflow in workflows.items():
         for job_id, job in (workflow.get("jobs") or {}).items():
-            title = job.get("name", job_id) if isinstance(job, dict) else job_id
-            if title in REQUIRED:
-                reporters.setdefault(title, []).append((name, job_id))
+            for title in check_names(job_id, job):
+                if title in REQUIRED:
+                    reporters.setdefault(title, []).append((name, job_id))
     required_jobs = {reporter for check, name in REQUIRED.items()
                      for reporter in reporters.get(check, []) if reporter[0] == name}
     for check, name in REQUIRED.items():
@@ -152,9 +191,19 @@ def problems(workflows: dict[str, dict], documented: list[str]) -> list[str]:
                          "on a PR's head for another tree")
         (_, job_id), = reporters[check]
         job = workflow["jobs"][job_id]
-        for key in ("if", "strategy", "uses"):
+        for key in ("if", "uses"):
             if key in job:
                 found.append(f"{check!r} has a job-level {key!r}")
+        strategy = job.get("strategy")
+        if strategy is not None and not (isinstance(strategy, dict) and "matrix" not in strategy):
+            found.append(f"{check!r} has a job-level matrix")
+        # A new run in a concurrency group cancels the group's pending run even
+        # without cancel-in-progress.
+        for setting in (workflow.get("concurrency"), job.get("concurrency")):
+            group = concurrency_group(setting)
+            if group and not any(key in group for key in PER_MERGE_GROUP):
+                found.append(f"{name} concurrency group {group!r} could let one merge group's "
+                             "run cancel another's")
         if not is_false(job.get("continue-on-error")):
             found.append(f"{check!r} has a job-level continue-on-error")
         # A job whose prerequisite is skipped is skipped too, which counts as
@@ -176,6 +225,7 @@ FIXTURE = {
         "on": {"push": {"branches": ["main"]},
                "pull_request": {"types": ["opened", "synchronize", "reopened"]},
                "merge_group": {"types": ["checks_requested"]}},
+        "concurrency": {"group": "${{ github.workflow }}-${{ github.ref }}"},
         "jobs": {"preflight": {"name": "repository integrity",
                                "steps": [{"run": "scripts/check.sh preflight"},
                                          {"run": "pip install"}, {"run": COMMAND}]},
@@ -241,7 +291,15 @@ class MergeQueueChecks(unittest.TestCase):
                        put("ci.yml", "on", "workflow_dispatch", ""),
                        put("ci.yml", "jobs", "build", "continue-on-error", "false"),
                        put("source-diagnostics.yml", "on",
-                           ["pull_request", "merge_group", "workflow_dispatch"])):
+                           ["pull_request", "merge_group", "workflow_dispatch"]),
+                       put("ci.yml", "jobs", "build", "strategy", {"fail-fast": "false"}),
+                       put("ci.yml", "jobs", "build", "steps",
+                           [{"run": "./scripts/check.sh build"}]),
+                       put("ci.yml", "jobs", "build", "steps",
+                           [{"continue-on-error": "${{ false }}",
+                             "run": "# Build every library.\nscripts/check.sh build\n"}]),
+                       put("bump-guard.yml", "jobs", "build",
+                           {"strategy": {"matrix": {"cc": ["gcc", "clang"]}}})):
             with self.subTest(change):
                 self.assertEqual(self.check(change), [])
 
@@ -277,8 +335,26 @@ class MergeQueueChecks(unittest.TestCase):
                 put("source-diagnostics.yml", "jobs", {}), "'source-diagnostics' is reported by"),
             "job-level if": (put("ci.yml", "jobs", "build", "if", "github.event_name == 'push'"),
                              "job-level 'if'"),
-            "matrix": (put("ci.yml", "jobs", "build", "strategy",
-                           {"matrix": {"os": ["ubuntu-24.04"]}}), "job-level 'strategy'"),
+            "matrix, which renames the check": (
+                put("ci.yml", "jobs", "build", "strategy", {"matrix": {"os": ["ubuntu-24.04"]}}),
+                "'build' is reported by []"),
+            "matrix keeping the check's name": (
+                lambda workflows: (
+                    put("ci.yml", "jobs", "build", "name", "${{ matrix.check }}")(workflows),
+                    put("ci.yml", "jobs", "build", "strategy",
+                        {"matrix": {"check": ["build"]}})(workflows)),
+                "job-level matrix"),
+            "an advisory matrix job reporting build": (
+                put("bump-guard.yml", "jobs", "phases",
+                    {"name": "${{ matrix.phase }}",
+                     "strategy": {"matrix": {"phase": ["build", "test"]}}}),
+                "'build' is reported by"),
+            "a constant concurrency group": (put("ci.yml", "concurrency", {"group": "ci"}),
+                                             "could let one merge group's run cancel"),
+            "a group keyed only by the PR": (
+                put("source-diagnostics.yml", "concurrency",
+                    "diagnostics-${{ github.event.pull_request.number }}"),
+                "could let one merge group's run cancel"),
             "reusable workflow": (
                 put("ci.yml", "jobs", "build", "uses", "./.github/workflows/b.yml"),
                 "job-level 'uses'"),

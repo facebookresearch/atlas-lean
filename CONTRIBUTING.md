@@ -275,8 +275,9 @@ caught by the other. The test fails if one of these workflows loses or filters
 those triggers, also runs on pushes to anything but the `main` branch or on
 another event that could report its checks for another tree (such as
 `pull_request_target`), renames the job that reports a check or lets another job
-take its name, can skip that job, or loses the step that runs its check or lets
-that step be skipped or its failure ignored. The test catches accidental
+report its name, can skip that job, loses the step that runs its check or lets
+that step be skipped or its failure ignored, or uses a concurrency group in
+which one merge group's run could cancel another's. The test catches accidental
 changes; it is not a security boundary, and workflow changes rely on human
 review.
 
