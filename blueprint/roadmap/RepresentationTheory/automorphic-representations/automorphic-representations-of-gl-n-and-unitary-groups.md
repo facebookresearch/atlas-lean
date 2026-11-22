@@ -119,8 +119,9 @@ each citing the source and locator below.
 - L. Clozel, "Motifs et formes automorphes : applications du principe de fonctorialité", in
   *Automorphic Forms, Shimura Varieties, and L-functions*, Vol. I, Perspect. Math. 10, Academic
   Press, 1990, 77–159; the purity lemma as stated in D. Ramakrishnan, "Decomposition and parity of
-  p-adic representations attached to algebraic automorphic forms on GL(4)", arXiv:1301.1668
-  (version 2), introduction.
+  Galois representations attached to GL(4)", arXiv:1301.1668
+  (version 2), introduction, p. 1, which defines a fixed archimedean weight $w$ as on this page and
+  states "Every cuspidal algebraic π has such a weight ([Cℓ1])", with no regularity hypothesis.
 - Proof of the Riemann hypothesis and of the generalized Riemann hypothesis for Dirichlet
   L-functions: L. Alpöge, released 2026-11-20 as a Lean library (<https://alpo.ge/remark.pdf>).
   Statement and proof of the Riemann hypothesis certified by the Lean and Mathlib communities in a

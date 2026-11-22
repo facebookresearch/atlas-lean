@@ -46,9 +46,10 @@ complex conjugation, and $d^c = \frac{i}{4\pi}(\bar\partial - \partial)$.
   curvature, Abbes–Bouche, Zhang). By Minkowski's theorem the number of sections of sup norm at most
   $1$ satisfies $\log \#\{s : \lVert s \rVert_{\sup} \le 1\} \ge \chi_{\sup}(H^0(X, L^n)) + O(n^d)$, and
   for nef $\bar L$ it equals $\frac{(\bar L^{d+1})}{(d+1)!}\, n^{d+1} + o(n^{d+1})$ (Moriwaki).
-- **Heights of cycles.** For a cycle $Z$ of dimension $p$, the height
-  $h_{\bar L}(Z) = \widehat{\deg}(\hat c_1(\bar L)^p \mid Z)$ is a real number; on projective space
-  with the Fubini–Study metric it is the height introduced by Faltings (Bost–Gillet–Soulé).
+- **Heights of cycles.** For a cycle $Z$ of dimension $p$ on $X$, the dimension being that of the
+  arithmetic variety (a cycle flat over $\mathbb{Z}$ has generic fibre of dimension $p - 1$), the
+  height $h_{\bar L}(Z) = \widehat{\deg}(\hat c_1(\bar L)^p \mid Z)$ is a real number; on projective
+  space with the Fubini–Study metric it is the height introduced by Faltings (Bost–Gillet–Soulé).
 - **Arithmetic volume.** The volume
   $\widehat{\operatorname{vol}}(\bar L) = \limsup_{m \to \infty} \frac{\log \#\{s \in H^0(X, mL) : \lVert s \rVert_{\sup} \le 1\}}{m^{d+1}/(d+1)!}$
   is positive exactly when $\bar L$ is big, is continuous on hermitian $\mathbb{Q}$-line bundles in
@@ -115,7 +116,7 @@ each citing the source and locator below.
   J. Amer. Math. Soc. 7 (1994), 903–1027,
   <https://www.ams.org/journals/jams/1994-07-04/S0894-0347-1994-1260106-X/>: introduction, §2.1.1
   (arithmetic Chow groups, with the relations $(0, \partial u + \bar\partial v)$ and
-  $(\operatorname{div} f, -\log \lvert f \rvert^2)$), §2.1.2 (arithmetic Chern classes), definition (3.1.1) (heights of cycles) and 3.1.2.3 (Faltings's height,
+  $(\operatorname{div} f, -\log \lvert f \rvert^2)$), §2.1.2 (arithmetic Chern classes), definition (3.1.1), p. 945 ("For any cycle $Z \in Z_p(X)$ we define the height of $Z$ with respect to $\bar L$ to be the real number $h_{\bar L}(Z) = \widehat{\deg}(\hat c_1(\bar L)^p \mid Z)$", $Z_p(X)$ being the cycles of dimension $p$ on the arithmetic variety $X$) and 3.1.2.3 (Faltings's height,
   from G. Faltings, Ann. of Math. (2) 133 (1991), 549–576), Theorem 3.2.8.
 - A. Moriwaki, "Continuity of volumes on arithmetic varieties", J. Algebraic Geom. 18 (2009),
   407–457, arXiv:math/0612269 (version 2): introduction (the arithmetic volume), Conventions and
