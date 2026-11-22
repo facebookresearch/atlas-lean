@@ -9,6 +9,7 @@ module
 
 public import Mathlib.LinearAlgebra.Matrix.Notation
 public import CSLibExt.MachineLearning.NeuralTangentKernel
+public import MathlibExt.Analysis.Calculus.Jacobian
 import Mathlib.Analysis.Calculus.ContDiff.Operations
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.FDeriv.Mul
@@ -75,17 +76,32 @@ theorem test_scalar_flow (y : EuclideanSpace ℝ (Fin 1))
 
 private theorem jac_scalar_identity (θ : EuclideanSpace ℝ (Fin 1)) :
     jac 1 1 (fun θ' => θ') θ = 1 := by
-  ext i p
-  fin_cases i
-  fin_cases p
-  simp only [jac]
-  show fderiv ℝ (fun θ' => (fun θ'' : EuclideanSpace ℝ (Fin 1) => θ'') θ' 0) θ
-    (EuclideanSpace.single 0 1) = (1 : Matrix (Fin 1) (Fin 1) ℝ) 0 0
-  have hfun : (fun θ' : EuclideanSpace ℝ (Fin 1) =>
-    (fun θ'' : EuclideanSpace ℝ (Fin 1) => θ'') θ' 0)
-      = ⇑(PiLp.proj 2 (𝕜 := ℝ) (fun _ : Fin 1 => ℝ) 0) := rfl
-  rw [hfun, ContinuousLinearMap.fderiv]
-  simp
+  have hfun : (fun x : Fin 1 → ℝ =>
+      ⇑((fun θ' : EuclideanSpace ℝ (Fin 1) => θ') (WithLp.toLp 2 x)))
+      = fun y => (1 : Matrix (Fin 1) (Fin 1) ℝ) *ᵥ y := by
+    funext x
+    show ⇑(WithLp.toLp 2 x) = (1 : Matrix (Fin 1) (Fin 1) ℝ) *ᵥ x
+    rw [Matrix.one_mulVec]
+  show MetaMathlibExt.jacobianMatrix
+    (fun x : Fin 1 → ℝ =>
+      ⇑((fun θ' : EuclideanSpace ℝ (Fin 1) => θ') (WithLp.toLp 2 x))) ⇑θ = 1
+  rw [hfun]
+  exact MetaMathlibExt.jacobianMatrix_fun_mulVec (1 : Matrix (Fin 1) (Fin 1) ℝ) ⇑θ
+
+/-- The transported `jac` agrees with the canonical Jacobian on the scalar identity. -/
+theorem test_jac_agrees_canonical (θ : EuclideanSpace ℝ (Fin 1)) :
+    jac 1 1 (fun θ' => θ') θ
+      = MetaMathlibExt.jacobianMatrix (fun x : Fin 1 → ℝ => x) ⇑θ := by
+  have hfun : (fun x : Fin 1 → ℝ =>
+      ⇑((fun θ' : EuclideanSpace ℝ (Fin 1) => θ') (WithLp.toLp 2 x)))
+      = fun x : Fin 1 → ℝ => x := by
+    funext x
+    exact WithLp.ofLp_toLp 2 x
+  show MetaMathlibExt.jacobianMatrix
+    (fun x : Fin 1 → ℝ =>
+      ⇑((fun θ' : EuclideanSpace ℝ (Fin 1) => θ') (WithLp.toLp 2 x))) ⇑θ
+    = MetaMathlibExt.jacobianMatrix (fun x : Fin 1 → ℝ => x) ⇑θ
+  rw [hfun]
 
 /-- Scalar identity model: the square-loss gradient at distinct parameter and target. -/
 theorem test_scalar_gradient :

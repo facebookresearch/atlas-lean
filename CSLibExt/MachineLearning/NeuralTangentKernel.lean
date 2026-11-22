@@ -9,6 +9,8 @@ module
 
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.Calculus.Gradient.Basic
+public import MathlibExt.Analysis.Calculus.Jacobian
+import Mathlib.Analysis.Calculus.FDeriv.WithLp
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 /-!
@@ -38,12 +40,12 @@ open scoped Matrix
 
 namespace Cslib.MachineLearning.NeuralTangentKernel
 
-/-- Jacobian of `F` at parameters `θ`: `(jac F θ) i p` is the derivative of
-the `i`-th output coordinate in the `p`-th parameter direction. -/
+/-- Jacobian of `F` at parameters `θ`: the canonical Jacobian matrix of the
+plain finite-function transport of `F`, evaluated at the plain coercion of `θ`. -/
 noncomputable def jac (P n : ℕ)
     (F : EuclideanSpace ℝ (Fin P) → EuclideanSpace ℝ (Fin n))
     (θ : EuclideanSpace ℝ (Fin P)) : Matrix (Fin n) (Fin P) ℝ :=
-  fun i p => fderiv ℝ (fun θ' => F θ' i) θ (EuclideanSpace.single p 1)
+  MetaMathlibExt.jacobianMatrix (fun x : Fin P → ℝ => ⇑(F (WithLp.toLp 2 x))) ⇑θ
 
 /-- Empirical neural tangent kernel at parameters `θ`: the sum over the
 parameters of outer products of output gradients, in matrix form `J Jᵀ`. -/
@@ -58,18 +60,6 @@ noncomputable def sqLoss (P n : ℕ)
     (F : EuclideanSpace ℝ (Fin P) → EuclideanSpace ℝ (Fin n))
     (y : EuclideanSpace ℝ (Fin n)) (θ : EuclideanSpace ℝ (Fin P)) : ℝ :=
   (1 / 2) * ∑ i, (F θ i - y i) ^ 2
-
-/-- Expansion of a vector in the `single` basis. -/
-private theorem single_expand (P : ℕ) (v : EuclideanSpace ℝ (Fin P)) :
-    v = ∑ p, v p • EuclideanSpace.single p 1 := by
-  apply PiLp.ext
-  intro j
-  have h : ∀ x : EuclideanSpace ℝ (Fin P),
-      PiLp.projₗ 2 (𝕜 := ℝ) (fun _ : Fin P => ℝ) j x = x j := fun x => rfl
-  symm
-  rw [← h (∑ p, v p • EuclideanSpace.single p 1), map_sum]
-  simp only [h]
-  simp
 
 /-- A `C^1` map has the expected Fréchet derivative. -/
 private theorem hasFDerivAt_of_contDiff_one (P n : ℕ)
@@ -99,6 +89,47 @@ private theorem fderiv_coord_apply (P n : ℕ)
   rw [(hasFDerivAt_coord P n F θ i hF).fderiv]
   rfl
 
+/-- Fréchet derivative of the plain finite-function transport of `F`. -/
+private theorem hasFDerivAt_transport (P n : ℕ)
+    (F : EuclideanSpace ℝ (Fin P) → EuclideanSpace ℝ (Fin n))
+    (θ : EuclideanSpace ℝ (Fin P)) (hF : ContDiff ℝ 1 F) :
+    HasFDerivAt (fun x : Fin P → ℝ => ⇑(F (WithLp.toLp 2 x)))
+      (ContinuousLinearMap.comp
+        (ContinuousLinearEquiv.toContinuousLinearMap
+          (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin n => ℝ)))
+        (ContinuousLinearMap.comp (fderiv ℝ F θ)
+          (ContinuousLinearEquiv.toContinuousLinearMap (ContinuousLinearEquiv.symm
+            (PiLp.continuousLinearEquiv 2 ℝ (fun _ : Fin P => ℝ))))))
+      ⇑θ := by
+  have hF' : HasFDerivAt F (fderiv ℝ F θ) θ :=
+    hF.differentiable_one.differentiableAt.hasFDerivAt
+  have hto :=
+    PiLp.hasFDerivAt_toLp (𝕜 := ℝ) (p := 2) (E := fun _ : Fin P => ℝ) ⇑θ
+  have hFo := HasFDerivAt.comp ⇑θ hF' hto
+  have hof :=
+    PiLp.hasFDerivAt_ofLp (𝕜 := ℝ) (p := 2) (E := fun _ : Fin n => ℝ) (F θ)
+  exact HasFDerivAt.comp ⇑θ hof hFo
+
+/-- The transported canonical Jacobian entries agree with the Fréchet
+derivative of the output coordinates. -/
+private theorem jac_apply_eq_fderiv_coord (P n : ℕ)
+    (F : EuclideanSpace ℝ (Fin P) → EuclideanSpace ℝ (Fin n))
+    (θ : EuclideanSpace ℝ (Fin P)) (hF : ContDiff ℝ 1 F)
+    (i : Fin n) (p : Fin P) :
+    jac P n F θ i p
+      = fderiv ℝ (fun θ' => F θ' i) θ (EuclideanSpace.single p 1) := by
+  have hdiff : DifferentiableAt ℝ (fun x : Fin P → ℝ => ⇑(F (WithLp.toLp 2 x))) ⇑θ :=
+    (hasFDerivAt_transport P n F θ hF).differentiableAt
+  have hentry := MetaMathlibExt.jacobianMatrix_apply_of_differentiableAt
+    (fun x : Fin P → ℝ => ⇑(F (WithLp.toLp 2 x))) ⇑θ hdiff i p
+  have hval : (fderiv ℝ (fun x : Fin P → ℝ => ⇑(F (WithLp.toLp 2 x))) ⇑θ)
+      (Pi.single p 1) i = (fderiv ℝ F θ (EuclideanSpace.single p 1)) i := by
+    rw [(hasFDerivAt_transport P n F θ hF).fderiv]
+    rfl
+  rw [hval] at hentry
+  rw [fderiv_coord_apply P n F θ i _ hF]
+  exact hentry
+
 /-- The Fréchet derivative acts by the Jacobian matrix: characteristic
 interface lemma for `jac`. -/
 theorem fderiv_eq_jac_mulVec (P n : ℕ)
@@ -106,18 +137,16 @@ theorem fderiv_eq_jac_mulVec (P n : ℕ)
     (θ : EuclideanSpace ℝ (Fin P)) (v : EuclideanSpace ℝ (Fin P))
     (hF : ContDiff ℝ 1 F) :
     fderiv ℝ F θ v = WithLp.toLp 2 ((jac P n F θ) *ᵥ ⇑v) := by
-  apply PiLp.ext
-  intro i
-  have hsum : fderiv ℝ (fun θ' => F θ' i) θ v
-      = ((jac P n F θ) *ᵥ ⇑v) i := by
-    rw [Matrix.mulVec_apply_eq_sum]
-    conv_lhs => rw [single_expand P v, map_sum]
-    simp only [ContinuousLinearMap.map_smul, smul_eq_mul]
-    refine Finset.sum_congr rfl fun p _ => ?_
-    exact mul_comm _ _
-  have htol : ((jac P n F θ) *ᵥ ⇑v) i
-      = (WithLp.toLp 2 ((jac P n F θ) *ᵥ ⇑v)) i := rfl
-  exact (fderiv_coord_apply P n F θ i v hF).symm.trans (hsum.trans htol)
+  have hdiff : DifferentiableAt ℝ (fun x : Fin P → ℝ => ⇑(F (WithLp.toLp 2 x))) ⇑θ :=
+    (hasFDerivAt_transport P n F θ hF).differentiableAt
+  have hmul : (jac P n F θ) *ᵥ ⇑v = ⇑(fderiv ℝ F θ v) := by
+    have h := MetaMathlibExt.jacobianMatrix_mulVec_eq_fderiv
+      (fun x : Fin P → ℝ => ⇑(F (WithLp.toLp 2 x))) ⇑θ hdiff ⇑v
+    rw [(hasFDerivAt_transport P n F θ hF).fderiv] at h
+    exact h
+  calc fderiv ℝ F θ v = WithLp.toLp 2 ⇑(fderiv ℝ F θ v) :=
+        (WithLp.toLp_ofLp 2 _).symm
+    _ = WithLp.toLp 2 ((jac P n F θ) *ᵥ ⇑v) := by rw [hmul]
 
 /-- Derivative of the scaled square. -/
 private theorem hasDerivAt_half_sq (c : ℝ) :
@@ -192,8 +221,9 @@ theorem gradient_sqLoss (P n : ℕ)
     rw [hderiv, sum_apply, Matrix.mulVec_apply_eq_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     have hci : ((PiLp.proj 2 (fun _ : Fin n => ℝ) i).comp (fderiv ℝ F θ))
-        (EuclideanSpace.single p 1) = (jac P n F θ) i p :=
-      (fderiv_coord_apply P n F θ i _ hF).symm
+        (EuclideanSpace.single p 1) = (jac P n F θ) i p := by
+      rw [jac_apply_eq_fderiv_coord P n F θ hF i p]
+      exact (fderiv_coord_apply P n F θ i _ hF).symm
     simp only [smul_apply, smul_eq_mul, Matrix.transpose_apply,
       PiLp.sub_apply, hci]
     exact mul_comm _ _
@@ -362,15 +392,14 @@ theorem ntk_linear (P n : ℕ) (X : Matrix (Fin n) (Fin P) ℝ)
     (θ : EuclideanSpace ℝ (Fin P)) :
     ntk P n F θ = X * Xᵀ := by
   have hJ : jac P n F θ = X := by
-    ext i p
-    change fderiv ℝ (fun θ' => F θ' i) θ (EuclideanSpace.single p 1)
-      = X i p
-    have hfun : (fun θ' => F θ' i)
-        = ⇑(∑ j, X i j • PiLp.proj 2 (𝕜 := ℝ) (fun _ : Fin P => ℝ) j) := by
-      funext θ'
-      simp [hF, Matrix.mulVec_apply_eq_sum]
-    rw [hfun, ContinuousLinearMap.fderiv]
-    simp [Finset.sum_ite_eq']
+    have hfun : (fun x : Fin P → ℝ => ⇑(F (WithLp.toLp 2 x)))
+        = fun x => X *ᵥ x := by
+      funext x
+      simp only [hF, coe_toLp]
+    change MetaMathlibExt.jacobianMatrix
+      (fun x : Fin P → ℝ => ⇑(F (WithLp.toLp 2 x))) ⇑θ = X
+    rw [hfun]
+    exact MetaMathlibExt.jacobianMatrix_fun_mulVec X ⇑θ
   change jac P n F θ * (jac P n F θ)ᵀ = X * Xᵀ
   rw [hJ]
 
