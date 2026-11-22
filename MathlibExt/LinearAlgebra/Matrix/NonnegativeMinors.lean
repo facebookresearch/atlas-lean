@@ -8,8 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
+public import Mathlib.LinearAlgebra.Matrix.Determinant.TotallyNonneg
 
 namespace MetaMathlibExt
 
@@ -33,6 +34,16 @@ public def Matrix.HasNonnegativeMinors {ι κ : Type*} [LinearOrder ι] [LinearO
     (M : Matrix ι κ ℝ) : Prop :=
   ∀ (k : ℕ) (r : Fin k → ι) (c : Fin k → κ),
     StrictMono r → StrictMono c → 0 ≤ (M.submatrix r c).det
+
+/-- **Bridge to Mathlib's total nonnegativity.** For a square real matrix indexed by a linearly
+ordered type, `Matrix.HasNonnegativeMinors` is Mathlib's `Matrix.IsTotallyNonneg`: both say that
+every minor with strictly increasing row and column maps has nonnegative determinant (Fomin and
+Zelevinsky, *Total positivity: tests and parametrizations*, Math. Intelligencer 22 (2000),
+arXiv:math/9912128v1, Introduction: a matrix is totally nonnegative if all its minors are
+nonnegative). -/
+public theorem Matrix.hasNonnegativeMinors_iff_isTotallyNonneg {ι : Type*} [LinearOrder ι]
+    (M : Matrix ι ι ℝ) : Matrix.HasNonnegativeMinors M ↔ M.IsTotallyNonneg :=
+  ⟨fun h _ _ _ hr hc => h _ _ _ hr hc, fun h _ _ _ hr hc => h hr hc⟩
 
 end
 

@@ -26,6 +26,8 @@ Complements to Mathlib's `poissonMeasure`:
 * `iIndepFun.hasLaw_sum_poissonMeasure`: a finite sum of independent Poisson counts is Poisson
   with the summed mean (iterating Mathlib's two-term `IndepFun.hasLaw_add_poissonMeasure`);
 * `poissonMeasureKernel`, `piPoissonKernel`: `r ↦ Po(r)` and `r ↦ ∏ᵢ Po(rᵢ)` as Markov kernels.
+* `poissonMeasure_injective`, `pi_poissonMeasure_injective`, `piPoissonKernel_injective`: a
+  Poisson law, and a finite product of Poisson laws, determine their rates.
 -/
 
 @[expose] public section
@@ -205,5 +207,33 @@ theorem piPoissonKernel_map_sum {ι : Type*} [Fintype ι] :
   ext1 r
   rw [Kernel.map_apply _ (by fun_prop), Kernel.comap_apply, piPoissonKernel_apply,
     poissonMeasureKernel_apply, map_sum_pi_poissonMeasure]
+
+/-! ### Poisson laws determine their rates -/
+
+/-- The Poisson law determines its rate: `Po(r) = Po(s)` only when `r = s`. -/
+theorem poissonMeasure_injective : Function.Injective poissonMeasure := by
+  intro r s h
+  have h0 := congrArg (fun μ => μ.real {(0 : ℕ)}) h
+  rw [poissonMeasure_real_singleton, poissonMeasure_real_singleton] at h0
+  simpa using h0
+
+/-- A finite product of Poisson laws determines its vector of rates:
+`∏ᵢ Po(rᵢ) = ∏ᵢ Po(sᵢ)` only when `r = s`. -/
+theorem pi_poissonMeasure_injective {ι : Type*} [Fintype ι] :
+    Function.Injective (fun r : ι → ℝ≥0 => Measure.pi fun i => poissonMeasure (r i)) := by
+  intro r s h
+  funext i
+  have hmap := congrArg (Measure.map (Function.eval i)) h
+  rw [(measurePreserving_eval (fun j => poissonMeasure (r j)) i).map_eq,
+    (measurePreserving_eval (fun j => poissonMeasure (s j)) i).map_eq] at hmap
+  exact poissonMeasure_injective hmap
+
+/-- The finite Poisson kernel determines its vector of rates: equality of the output
+measures of `piPoissonKernel ι` at two rate vectors forces the vectors to be equal. -/
+theorem piPoissonKernel_injective {ι : Type*} [Fintype ι] :
+    Function.Injective (fun r : ι → ℝ≥0 => piPoissonKernel ι r) := by
+  intro r s h
+  apply pi_poissonMeasure_injective
+  simpa only [piPoissonKernel_apply] using h
 
 end ProbabilityTheory

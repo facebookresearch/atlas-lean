@@ -396,17 +396,11 @@ private lemma legSeq_one : legSeq 1 = 1 := by
   simp only [legSeq, hI1, s1, g1]
   exact leg_scalar
 
-private lemma tri_zero_legendre : trinomialCoefficient 0 0 = 1 := by
-  simp [trinomialCoefficient]
+private lemma base0 : triSeq 0 = legSeq 0 := by
+  simp [triSeq, trinomialCoefficient_zero_zero, legSeq_zero]
 
-private lemma tri_one : trinomialCoefficient 1 1 = 1 := by
-  unfold trinomialCoefficient
-  simp [pow_one, Polynomial.coeff_add, Polynomial.coeff_one, Polynomial.coeff_X,
-    Polynomial.coeff_X_pow]
-
-private lemma base0 : triSeq 0 = legSeq 0 := by simp [triSeq, tri_zero_legendre, legSeq_zero]
-
-private lemma base1 : triSeq 1 = legSeq 1 := by simp [triSeq, tri_one, legSeq_one]
+private lemma base1 : triSeq 1 = legSeq 1 := by
+  simp [triSeq, trinomialCoefficient_one_one, legSeq_one]
 
 /-- The Legendre sequence satisfies the central trinomial recurrence. -/
 private lemma f_rec (n : ℕ) :

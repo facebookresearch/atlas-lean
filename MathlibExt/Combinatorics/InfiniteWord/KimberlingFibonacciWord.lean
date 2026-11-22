@@ -12,7 +12,7 @@ public import Mathlib.Order.Monotone.Basic
 public import Mathlib.Logic.Function.Iterate
 public import Mathlib.Data.List.Basic
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 import MathlibExt.Combinatorics.InfiniteWord.FibonacciWord

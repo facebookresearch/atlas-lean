@@ -91,4 +91,41 @@ example : TendstoInDistribution (fun n ω ↦ r n • (X 0 n ω ^ 2 - 0 ^ 2)) at
     (fun n ↦ ((X_measurable 0 n).pow_const 2).aemeasurable)).congr
     (fun _ ↦ ae_of_all _ fun _ ↦ rfl) (ae_of_all _ fun _ ↦ rfl)
 
+/-- A nonconstant centre approaching `θ`, more slowly than the fluctuation scale `1 / r n`. -/
+noncomputable def centre (θ : ℝ) (n : ℕ) : ℝ := θ + (Real.sqrt (r n))⁻¹
+
+theorem centre_tendsto (θ : ℝ) : Tendsto (centre θ) atTop (𝓝 θ) := by
+  have h := (tendsto_const_nhds (x := θ)).add
+    (tendsto_inv_atTop_zero.comp (Real.tendsto_sqrt_atTop.comp r_tendsto))
+  change Tendsto (fun n => θ + (Real.sqrt (r n))⁻¹) atTop (𝓝 θ)
+  simpa only [Function.comp_apply, add_zero] using h
+
+/-- The Gaussian fluctuations are centred at the moving, rather than the limiting, centre. -/
+theorem moving_scaled_tendstoInDistribution (c : ℕ → ℝ) :
+    TendstoInDistribution (fun n ω ↦ r n • (X (c n) n ω - c n)) atTop id
+      (fun _ ↦ gaussianReal 0 1) (gaussianReal 0 1) :=
+  (tendstoInDistribution_const (l := atTop) aemeasurable_id).congr
+    (fun n ↦ ae_of_all _ fun ω ↦ by
+      have : r n ≠ 0 := by unfold r; positivity
+      simp [X, this])
+    (ae_of_all _ fun _ ↦ rfl)
+
+/-- Direct-import regression: squaring with a genuinely moving centre has limit `2 θ Z`. -/
+theorem moving_square (θ : ℝ) :
+    TendstoInDistribution
+      (fun n ω ↦ r n • (X (centre θ n) n ω ^ 2 - centre θ n ^ 2)) atTop
+      (fun ω : ℝ ↦ 2 * θ * ω) (fun _ ↦ gaussianReal 0 1) (gaussianReal 0 1) := by
+  have h := TendstoInDistribution.delta_method_of_hasStrictFDerivAt
+    (moving_scaled_tendstoInDistribution (centre θ)) r_tendsto (centre_tendsto θ)
+      (hasStrictDerivAt_pow 2 θ).hasStrictFDerivAt
+      (fun n ↦ (X_measurable (centre θ n) n).aemeasurable)
+      (fun n ↦ ((X_measurable (centre θ n) n).pow_const 2).aemeasurable)
+  simpa [mul_comm] using h
+
+/-- The moving-centre theorem retains the zero-derivative first-order limit. -/
+example : TendstoInDistribution
+    (fun n ω ↦ r n • (X (centre 0 n) n ω ^ 2 - centre 0 n ^ 2)) atTop
+    (fun _ : ℝ ↦ 0) (fun _ ↦ gaussianReal 0 1) (gaussianReal 0 1) := by
+  simpa using moving_square 0
+
 end MathlibExtTest.Probability.Statistics.DeltaMethod

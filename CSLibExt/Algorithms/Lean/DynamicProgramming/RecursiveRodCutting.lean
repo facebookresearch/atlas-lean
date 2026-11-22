@@ -101,14 +101,6 @@ public def recursiveCutRod {α : Type u} [AddCommMonoid α] [LinearOrder α]
     {n : Nat} (prices : Vector α n) : TimeM Nat α :=
   recursiveCutRodAux prices n le_rfl
 
-private lemma compositionRevenue_cast {α : Type u} [AddCommMonoid α]
-    {n k l : Nat} (prices : Vector α n) (parts : Composition k) (hkl : k = l)
-    (hl : l ≤ n) :
-    compositionRevenue prices (parts.cast hkl) hl =
-      compositionRevenue prices parts (by omega) := by
-  subst l
-  rfl
-
 private lemma compositionRevenue_le_best {α : Type u} [AddCommMonoid α]
     [LinearOrder α] [IsOrderedAddMonoid α] {n : Nat} (prices : Vector α n)
     (j : Nat) (hjn : j ≤ n) (hpos : 0 < j) (best : α)

@@ -123,7 +123,7 @@ theorem jes_delete_closing_edge_isTree {G : SimpleGraph V} (hconn : G.Connected)
 theorem jes_nullity_one_boundedRegionCount_one {G : SimpleGraph V} (hnull : nullity G = 1) :
     jes_boundedRegionCount G = 1 := hnull
 
-omit [DecidableEq V] in
+omit [DecidableEq V] [Finite V] in
 theorem jes_path_edge_ncard {G : SimpleGraph V} {u v : V} (p : G.Walk u v) (hp : p.IsPath) :
     p.edgeSet.ncard = p.length := by
   classical
@@ -170,7 +170,7 @@ theorem jes_path_coe_faceCount_one {G : SimpleGraph V} {u v : V} (p : G.Walk u v
   classical
   unfold faceCount; rw [jes_path_coe_nullity_zero p hp]
 
-omit [DecidableEq V] in
+omit [DecidableEq V] [Finite V] in
 theorem jes_cycle_coe_connected {G : SimpleGraph V} {w : V} (c : G.Walk w w) :
     c.toSubgraph.coe.Connected :=
   Subgraph.connected_iff'.mp c.toSubgraph_connected
@@ -190,6 +190,7 @@ theorem jes_cycle_delete_edge_isTree {G : SimpleGraph V} {w : V} (c : G.Walk w w
       (jcs_cycle_nullity_eq_one c hc) he hr,
     deleteEdges_sup_edge_eq c.toSubgraph.coe a b he⟩
 
+omit [Finite V] in
 theorem jes_cycle_boundedRegionCount_one {G : SimpleGraph V} {w : V} (c : G.Walk w w)
     (hc : c.IsCycle) :
     jes_boundedRegionCount c.toSubgraph.coe = 1 :=

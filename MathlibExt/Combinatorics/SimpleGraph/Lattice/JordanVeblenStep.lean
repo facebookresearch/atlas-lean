@@ -175,7 +175,7 @@ theorem jvp_faceCount_deleteCycle {V : Type*} [Finite V]
     faceCount_sup_edge_of_reachable Kq hvzne hvznadj hvz
   rw [hKeq2, hclose, hKq, hqface]
 
-theorem jvp_isCycles_deleteCycle_isCycles {V : Type*} [Finite V]
+theorem jvp_isCycles_deleteCycle_isCycles {V : Type*}
     {K : SimpleGraph V} [LocallyFinite K] (hcyc : K.IsCycles)
     {v : V} (p : K.Walk v v) (hp : p.IsCycle) :
     (K.deleteEdges p.toSubgraph.edgeSet).IsCycles := by
@@ -238,7 +238,7 @@ theorem jvp_isCycles_veblenStep {V : Type*} [Finite V]
     jvp_isCycles_deleteCycle_isCycles hcyc p hpc,
     jvp_ncard_deleteCycle_lt p hpc, jvp_faceCount_deleteCycle K hcyc p hpc⟩
 
-theorem jvp_isCycles_even {V : Type*} [Finite V] {K : SimpleGraph V} (hcyc : K.IsCycles)
+theorem jvp_isCycles_even {V : Type*} {K : SimpleGraph V} (hcyc : K.IsCycles)
     (v : V) : Even (Nat.card (K.neighborSet v)) := by
   rw [Nat.card_coe_set_eq]
   by_cases hn : (K.neighborSet v).Nonempty

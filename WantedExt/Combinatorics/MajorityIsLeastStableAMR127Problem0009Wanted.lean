@@ -18,6 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Analysis.Fourier.BooleanCube
+public import MathlibExt.Analysis.Fourier.BooleanCubeNoiseStability
 
 @[expose] public section
 
@@ -57,6 +58,14 @@ noncomputable def majority (n : ℕ) (x : BoolCube n) : ℝ :=
 `E[f(x) f(y)]` for uniform `x` and a `ρ`-correlated copy `y` of `x`. -/
 noncomputable def noiseStability {n : ℕ} (ρ : ℝ) (f : BoolCube n → ℝ) : ℝ :=
   ∑ S : Finset (Fin n), ρ ^ S.card * boolFourierCoeff n f S ^ 2
+
+/-- **The two noise-stability definitions agree.** For every `f : BoolCube n → ℝ` and real `ρ`,
+the Fourier-sum definition `noiseStability ρ f` equals MathlibExt's
+`BooleanCube.boolNoiseStab ρ f = 𝔼[f · T_ρ f]` (R. O'Donnell, *Analysis of Boolean Functions*,
+2014, Theorem 2.49). -/
+theorem noiseStability_eq_boolNoiseStab {n : ℕ} (ρ : ℝ) (f : BoolCube n → ℝ) :
+    noiseStability ρ f = boolNoiseStab ρ f :=
+  (boolNoiseStab_eq_sum ρ f).symm
 
 /-- The Majority Is Least Stable conjecture in `n` variables: every linear threshold function
 `f : {-1, 1}ⁿ → {-1, 1}` satisfies `Stab_ρ[f] ≥ Stab_ρ[Maj_n]` for all `ρ ∈ [0, 1]`. -/

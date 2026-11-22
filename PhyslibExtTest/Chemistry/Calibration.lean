@@ -1,0 +1,307 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+module
+
+public import PhyslibExt.Chemistry.Calibration
+
+/-!
+
+# Tests for analytical calibration
+
+-/
+
+@[expose] public section
+
+open Chemistry.Calibration MathlibExt.Probability.FiniteProbability
+  MathlibExt.Probability.Statistics.LinearModel Matrix
+
+namespace PhyslibExtTest.Chemistry.Calibration
+
+/-!
+
+## A. Four-standard calibration
+
+-/
+
+/-- Standard concentrations of the four-standard example. -/
+noncomputable def stdX : Fin 4 → ℝ :=
+  ![0, 1, 2, 3]
+
+/-- Measured responses of the four-standard example. -/
+noncomputable def stdY : Fin 4 → ℝ :=
+  ![1, 3, 4, 6]
+
+example : olsSlope stdX stdY = 8 / 5 := by
+  simp only [olsSlope, sxy, sampleMean_eq_sum_div, Fin.sum_univ_four]
+  norm_num [stdX, stdY]
+
+example : olsIntercept stdX stdY = 11 / 10 := by
+  simp only [olsIntercept, olsSlope, sxy, sampleMean_eq_sum_div, Fin.sum_univ_four]
+  norm_num [stdX, stdY]
+
+example : 0 < sxy stdX stdX := by
+  simp only [sxy, sampleMean_eq_sum_div, Fin.sum_univ_four]
+  norm_num [stdX]
+
+example (a b : ℝ) : rssLine stdX stdY (olsIntercept stdX stdY)
+    (olsSlope stdX stdY) ≤ rssLine stdX stdY a b := by
+  have hsxx : 0 < sxy stdX stdX := by
+    simp only [sxy, sampleMean_eq_sum_div, Fin.sum_univ_four]
+    norm_num [stdX]
+  exact ((ols_unique_minimizer_iff stdX stdY).mpr hsxx a b).1
+
+example (a b : ℝ)
+    (hle : rssLine stdX stdY a b ≤ rssLine stdX stdY (olsIntercept stdX stdY)
+      (olsSlope stdX stdY)) :
+    a = olsIntercept stdX stdY ∧ b = olsSlope stdX stdY := by
+  have hsxx : 0 < sxy stdX stdX := by
+    simp only [sxy, sampleMean_eq_sum_div, Fin.sum_univ_four]
+    norm_num [stdX]
+  exact ((ols_unique_minimizer_iff stdX stdY).mpr hsxx a b).2 hle
+
+example : ∑ i, (stdY i - (11 / 10 + (8 / 5) * stdX i)) = 0 := by
+  simp only [Fin.sum_univ_four]
+  norm_num [stdX, stdY]
+
+example : ∑ i, stdX i * (stdY i - (11 / 10 + (8 / 5) * stdX i)) = 0 := by
+  simp only [Fin.sum_univ_four]
+  norm_num [stdX, stdY]
+
+example : ∑ i, (stdY i - (olsIntercept stdX stdY + olsSlope stdX stdY * stdX i)) = 0 :=
+  sum_resid_ols stdX stdY
+
+example : ∑ i, stdX i * (stdY i - (olsIntercept stdX stdY + olsSlope stdX stdY * stdX i)) = 0 :=
+  sum_mul_resid_ols stdX stdY
+
+/-!
+
+## B. Gauss-Markov example
+
+-/
+
+/-- Regressor of the Gauss-Markov example design. -/
+noncomputable def gmX : Fin 3 → ℝ :=
+  ![0, 1, 2]
+
+/-- Design matrix of the Gauss-Markov example: rows `(1, x i)`. -/
+noncomputable def gmDesign : Matrix (Fin 3) (Fin 2) ℝ :=
+  designMatrix gmX
+
+/-- True coefficients of the Gauss-Markov example. -/
+noncomputable def gmBeta : Fin 2 → ℝ :=
+  ![5, 2]
+
+/-- Error distribution weight: uniform on four outcomes. -/
+noncomputable def gmP : Fin 4 → ℝ :=
+  fun _ => 1 / 4
+
+/-- Errors of the Gauss-Markov example: Hadamard-pattern outcomes with unit covariance. -/
+noncomputable def gmErr : Fin 4 → Fin 3 → ℝ :=
+  ![![1, 1, 1], ![1, -1, -1], ![-1, 1, -1], ![-1, -1, 1]]
+
+/-- Responses of the Gauss-Markov example. -/
+noncomputable def gmY : Fin 4 → Fin 3 → ℝ :=
+  fun ω => gmDesign *ᵥ gmBeta + gmErr ω
+
+/-- A nontrivial alternative linear estimator matrix. -/
+noncomputable def gmA : Matrix (Fin 2) (Fin 3) ℝ :=
+  !![11 / 6, -5 / 3, 5 / 6; -1 / 2, 0, 1 / 2]
+
+/-- First error basis vector, selecting the `(0, 0)` entry of the OLS matrix. -/
+noncomputable def gmE0 : Fin 3 → ℝ :=
+  ![1, 0, 0]
+
+lemma gm_sxx : 0 < sxy gmX gmX := by
+  simp only [sxy, sampleMean_eq_sum_div, Fin.sum_univ_three]
+  norm_num [gmX]
+
+lemma gm_hp0 : ∀ ω, 0 ≤ gmP ω := fun _ => by
+  norm_num [gmP]
+
+lemma gm_hp1 : ∑ ω, gmP ω = 1 := by
+  simp only [gmP, Fin.sum_univ_four]
+  norm_num
+
+lemma gm_hmean : ∀ i, expectation gmP (fun ω => gmErr ω i) = 0 := by
+  intro i
+  fin_cases i <;> simp only [expectation, Fin.sum_univ_four] <;> norm_num [gmP, gmErr]
+
+lemma gm_hcov : covMatrix gmP gmErr = (1 : ℝ) ^ 2 • (1 : Matrix (Fin 3) (Fin 3) ℝ) := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [covMatrix_apply, covariance, expectation, Fin.sum_univ_four, gmP, gmErr] <;>
+    norm_num
+
+lemma gm_hmodel : ∀ ω, gmY ω = gmDesign *ᵥ gmBeta + gmErr ω :=
+  fun _ => rfl
+
+lemma gm_hX : IsUnit (gmDesignᵀ * gmDesign) := by
+  show IsUnit ((designMatrix gmX)ᵀ * designMatrix gmX)
+  exact (isUnit_gram_designMatrix_iff gmX).mpr gm_sxx
+
+lemma gm_hA : gmA * gmDesign = 1 := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [gmA, gmDesign, designMatrix, Matrix.mul_apply, Fin.sum_univ_three] <;>
+    norm_num [gmX]
+
+lemma gm_B00 : olsMatrix gmDesign 0 0 = 5 / 6 := by
+  have hB00 : olsEstimator gmDesign gmE0 0 = olsMatrix gmDesign 0 0 := by
+    simp [olsEstimator, Matrix.mulVec, dotProduct, Fin.sum_univ_three, gmE0]
+  have hest : olsEstimator gmDesign gmE0 =
+      ![olsIntercept gmX gmE0, olsSlope gmX gmE0] := by
+    show olsEstimator (designMatrix gmX) gmE0 = _
+    exact olsEstimator_designMatrix gm_sxx gmE0
+  have h0 : olsEstimator gmDesign gmE0 0 = olsIntercept gmX gmE0 := by
+    rw [hest, Matrix.cons_val_zero]
+  rw [hB00] at h0
+  rw [h0]
+  simp only [olsIntercept, olsSlope, sxy, sampleMean_eq_sum_div, Fin.sum_univ_three]
+  norm_num [gmX, gmE0]
+
+lemma gm_A_ne_ols : gmA ≠ olsMatrix gmDesign := by
+  intro hcon
+  have h00 : gmA 0 0 = olsMatrix gmDesign 0 0 := by rw [hcon]
+  rw [gm_B00] at h00
+  norm_num [gmA] at h00
+
+example (j : Fin 2) :
+    expectation gmP (fun ω => olsEstimator gmDesign (gmY ω) j) = gmBeta j :=
+  expectation_olsEstimator_calibration gmDesign gm_hX gmP gmErr gmY gmBeta gm_hp0 gm_hp1
+    gm_hmean gm_hmodel j
+
+example (j : Fin 2) : expectation gmP (fun ω => (gmA *ᵥ gmY ω) j) = gmBeta j :=
+  expectation_linearUnbiased_calibration gmDesign gmP gmErr gmY gmBeta gm_hp0 gm_hp1
+    gm_hmean gm_hmodel gmA gm_hA j
+
+example : (covMatrix gmP (fun ω => gmA *ᵥ gmY ω) -
+    covMatrix gmP (fun ω => olsEstimator gmDesign (gmY ω))).PosSemidef :=
+  calibration_covariance_minimality gmDesign gm_hX gmP gmErr 1 gm_hp1 gm_hcov gmY gmBeta
+    gm_hmodel gmA gm_hA
+
+example : (∀ j, expectation gmP (fun ω => olsEstimator gmDesign (gmY ω) j) = gmBeta j) ∧
+    (∀ j, expectation gmP (fun ω => (gmA *ᵥ gmY ω) j) = gmBeta j) ∧
+    (covMatrix gmP (fun ω => gmA *ᵥ gmY ω) -
+      covMatrix gmP (fun ω => olsEstimator gmDesign (gmY ω))).PosSemidef :=
+  calibration_blue gmDesign gm_hX gmP gmErr 1 gm_hp0 gm_hp1 gm_hmean gm_hcov gmY gmBeta
+    gm_hmodel gmA gm_hA
+
+/-!
+
+## C. Inverse prediction
+
+-/
+
+example : inversePrediction 1 2 7 = 3 := by
+  norm_num [inversePrediction]
+
+example : 2 * inversePrediction 1 2 7 + 1 = 7 :=
+  inversePrediction_mul 1 2 7 (by norm_num)
+
+example : inversePredictionGradient 1 2 7 = ![1 / 2, -1 / 2, -3 / 2] := by
+  ext i
+  fin_cases i <;> simp [inversePredictionGradient]; norm_num
+
+/-- The three-input map at `(y₀, a, b) = (7, 1, 2)` is the inverse prediction `3`. -/
+example : inversePredictionMap ![7, 1, 2] = 3 := by
+  norm_num [inversePredictionMap, inversePrediction]
+
+/-- The slope entry of the gradient is the slope derivative at `b = 2`. -/
+example : HasDerivAt (fun t => inversePrediction 1 t 7) (-3 / 2) 2 := by
+  have h := (hasDerivAt_inversePredictionGradient 1 7 (b := 2) (by norm_num)).2.2
+  rwa [inversePredictionGradient_two, show -((7 : ℝ) - 1) / 2 ^ 2 = -3 / 2 by norm_num] at h
+
+/-- The same coefficient as a partial derivative of the three-input map, from its Fréchet
+derivative. -/
+example : fderiv ℝ inversePredictionMap ![7, 1, 2] (Pi.single 2 1) = -3 / 2 := by
+  rw [fderiv_inversePredictionMap_single 1 7 (b := 2) (by norm_num),
+    inversePredictionGradient_two]
+  norm_num
+
+/-- First-order uncertainty of `x₀ = 3` at `(y₀, a, b) = (7, 1, 2)` for uncorrelated inputs with
+standard uncertainties `1 / 5`, `1 / 10` and `1 / 20`: the linearized variance is
+`(1 / 25 + 1 / 100) / 4 + 36 / 16 * 1 / 400 = 29 / 1600`. -/
+example {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : MeasureTheory.Measure Ω}
+    [MeasureTheory.IsProbabilityMeasure μ] (X : Fin 3 → Ω → ℝ)
+    (hX : ∀ i, MeasureTheory.MemLp (X i) 2 μ)
+    (hu : ∀ i, ProbabilityTheory.variance (X i) μ = ![1 / 5, 1 / 10, 1 / 20] i ^ 2)
+    (hcov : ∀ i j, i ≠ j → ProbabilityTheory.covariance (X i) (X j) μ = 0) :
+    ProbabilityTheory.variance (fun ω => inversePredictionMap ![7, 1, 2] +
+      fderiv ℝ inversePredictionMap ![7, 1, 2] (fun i => X i ω - ![7, 1, 2] i)) μ =
+      29 / 1600 := by
+  rw [inversePrediction_linearizedVariance_firstOrder_uncorrelated 1 7 (b := 2) (by norm_num) X
+    hX _ hu hcov]
+  norm_num
+
+/-- Zero-slope boundary: with `y₀ ≠ a`, inverse prediction is not differentiable in the slope
+at `b = 0`, so there is no first-order gradient to propagate; the gradient and formula lemmas
+require `b ≠ 0`. -/
+example : ¬ DifferentiableAt ℝ (fun t => inversePrediction 0 t 1) 0 := by
+  intro h
+  have hinv : (fun t => inversePrediction 0 t 1) = fun t : ℝ => t⁻¹ := by
+    funext t
+    simp [inversePrediction]
+  rw [hinv] at h
+  exact differentiableAt_inv_iff.mp h rfl
+
+/-- Zero-slope boundary for the three-input map: at `(y₀, a, b) = (1, 0, 0)` it has no Fréchet
+derivative, so `hasFDerivAt_inversePredictionMap` and the first-order uncertainty lemmas need
+`b ≠ 0`. -/
+example : ¬ DifferentiableAt ℝ inversePredictionMap ![1, 0, 0] := by
+  intro h
+  have hline : DifferentiableAt ℝ (fun t : ℝ => ![1, 0, 0] + t • (![0, 0, 1] : Fin 3 → ℝ)) 0 :=
+    (differentiableAt_const _).add (differentiableAt_id.smul_const _)
+  have h' : DifferentiableAt ℝ inversePredictionMap
+      ((fun t : ℝ => ![1, 0, 0] + t • (![0, 0, 1] : Fin 3 → ℝ)) 0) := by
+    simpa using h
+  have hcomp := h'.comp (0 : ℝ) hline
+  have hinv : (inversePredictionMap ∘ fun t : ℝ => ![1, 0, 0] + t • (![0, 0, 1] : Fin 3 → ℝ)) =
+      fun t : ℝ => t⁻¹ := by
+    funext t
+    simp [inversePredictionMap, inversePrediction]
+  rw [hinv] at hcomp
+  exact differentiableAt_inv_iff.mp hcomp rfl
+
+/-- What the guard rules out: at `b = 0`, totalized division turns the gradient vector into
+`0`, which would propagate a meaningless zero uncertainty. -/
+example : inversePredictionGradient 0 0 1 = 0 := by
+  ext i
+  fin_cases i <;> simp [inversePredictionGradient]
+
+/-!
+
+## D. Standard addition and internal standard
+
+-/
+
+example : standardAdditionUnknown 10 2 = 5 :=
+  standardAdditionUnknown_eq 5 10 2 0 (fun s => 2 * (5 + s)) (fun s => rfl)
+    (fun s => by ring) (by norm_num)
+
+example : (5 : ℝ) = (11 - 1) / 2 :=
+  standardAddition_unknown_eq 5 1 11 2 0 (fun s => 1 + 2 * (5 + s)) (fun s => rfl)
+    (fun s => by ring) (by norm_num)
+
+example : internalStandardRatio 100 50 = 2 := by
+  norm_num [internalStandardRatio]
+
+example : internalStandardRatio (1.2 * 100) (1.2 * 50) = internalStandardRatio 100 50 :=
+  internalStandardRatio_commonDrift 100 50 1.2 (by norm_num) (by norm_num)
+
+example : internalStandardRatio (1.2 * 100) (1.2 * 50) = 2 := by
+  norm_num [internalStandardRatio]
+
+example : internalStandardRatio (1.2 * 100) (0.8 * 50) =
+    (1.2 / 0.8) * internalStandardRatio 100 50 :=
+  internalStandardRatio_independentDrift 100 50 1.2 0.8 (by norm_num) (by norm_num)
+
+example : internalStandardRatio (1.2 * 100) (0.8 * 50) ≠ internalStandardRatio 100 50 :=
+  internalStandardRatio_independentDrift_ne 100 50 1.2 0.8 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num)
+
+end PhyslibExtTest.Chemistry.Calibration
