@@ -16,8 +16,7 @@ import Mathlib.Tactic.LinearCombination
 /-!
 # Additive uniqueness of generalized nonagonal numbers
 
-The ATLAS article *Nonagonal additive uniqueness: the values up to 11* attributes this base
-case to Poo-Sung Park. Two decompositions each of 90 and 94 determine the values at 6 and 9.
+Two decompositions each of 90 and 94 determine the values at 6 and 9.
 -/
 
 namespace MetaMathlibExt
@@ -25,7 +24,11 @@ namespace MetaMathlibExt
 open ArithmeticFunction
 
 /-- A multiplicative arithmetic function additive on pairs of positive generalized nonagonal
-numbers fixes every integer from 1 through 11. -/
+numbers fixes every integer from 1 through 11.
+
+The ATLAS article *Nonagonal additive uniqueness: the values up to 11* attributes this result to
+Poo-Sung Park, *On the Additive Uniqueness of Generalized Nonagonal Numbers for Multiplicative
+Functions*, INTEGERS 25 (2025), Article A99, Lemma 1. -/
 public theorem multiplicative_nonagonal_additive_eq_self_of_le_eleven
     (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
     (hadd : ∀ a b : ℕ, 0 < a → 0 < b →
