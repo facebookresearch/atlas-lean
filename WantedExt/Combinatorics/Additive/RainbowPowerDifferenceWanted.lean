@@ -311,20 +311,6 @@ public theorem_wanted exists_rainbow_powDiff_of_coprime_pairs (k : ℕ) (hk : 2 
     ∃ x y z : ℕ, 0 < x ∧ 0 < y ∧ 0 < z ∧ x = y + z ^ k ∧
       c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z
 
-/-- In an exact rainbow-free 3-coloring of `ℤ/pℤ` for `x - y = z ^ k`, for every `a ≠ 0` the
-color `c a` is `aᵏ`-dominant: every bichromatic `aᵏ`-string `i aᵏ, (i + 1) aᵏ, …,
-(i + ℓ - 1) aᵏ` contains it.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 9
-(`integers-2024-A105-lem-9`). -/
-public theorem_wanted color_dominant_powStrings_of_rainbowFree_zmod (p k : ℕ) [Fact p.Prime]
-    (c : ZMod p → Fin 3) (hc : Function.Surjective c)
-    (hrf : ∀ x y z : ZMod p, x - y = z ^ k → ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z))
-    (a : ZMod p) (ha : a ≠ 0) (i : ZMod p) (ℓ : ℕ)
-    (hbi : ((Finset.range ℓ).image fun t : ℕ => c ((i + t) * a ^ k)).card = 2) :
-    c a ∈ (Finset.range ℓ).image fun t : ℕ => c ((i + t) * a ^ k)
-
 /-- Let `f : ℤ/nℤ → ℤ/nℤ` with functional digraph `a → f a`, and let `c` be an exact rainbow-free
 coloring of `ℤ/nℤ` for `x - y = f(z)`. If the (weak) component of `v`, the set of `a` with
 `f^[m] a = f^[m'] v` for some `m, m'`, avoids the color `c 0`, then it is monochromatic. The
