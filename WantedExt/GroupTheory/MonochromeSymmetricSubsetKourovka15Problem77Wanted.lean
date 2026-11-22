@@ -34,19 +34,26 @@ one closed under `a ↦ 2g - a`. The number `n` of colours is arbitrary (the cas
 and `α` ranges over all cardinals below `|G|`, finite or infinite.
 -/
 
-/-- Kourovka 15.77 (I. V. Protasov), written additively: for every infinite abelian group `G`,
-cardinal `α < |G|` and colouring `χ : G → Fin n`, some monochrome set `A ⊆ G` of cardinality `α` is
-symmetric with respect to some `g ∈ G`, i.e. `2g - a ∈ A` for every `a ∈ A`. -/
+/-- **Monochrome symmetric subsets (Kourovka 15.77).** The statement, written additively, that for
+every infinite abelian group $G$, every cardinal $\alpha < |G|$, every natural number $n$ and every
+colouring $\chi \colon G \to \{0, \dots, n - 1\}$, there are a set $A \subseteq G$ of cardinality
+$\alpha$ on which $\chi$ is constant and an element $g \in G$ such that $2g - a \in A$ for every
+$a \in A$; that is, $A$ is a monochrome set symmetric with respect to $g$. -/
 def monochromeSymmetricSubsetExists : Prop :=
   ∀ (G : Type) [AddCommGroup G], Infinite G → ∀ α : Cardinal, α < Cardinal.mk G →
     ∀ (n : ℕ) (χ : G → Fin n), ∃ A : Set G, Cardinal.mk A = α ∧ (∃ c, ∀ a ∈ A, χ a = c) ∧
       ∃ g : G, ∀ a ∈ A, g + g - a ∈ A
 
-/--
-Resolved true: Jayadevan proved that if `G` is an infinite abelian group and `α < |G|`, every finite
-colouring of `G` has a monochromatic set `S` of cardinality exactly `α` with `2g - S = S` for some
-`g ∈ G`; the Kourovka Notebook (21st issue) marks 15.77 solved, "Yes, it is true" (AI solution
-confirmed by I. V. Protasov). Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in
+/-- **Monochromatic symmetric subsets in finite colourings (Jayadevan).** Let $G$ be an infinite
+abelian group, written additively, let $\alpha$ be a cardinal with $\alpha < |G|$, and let $n$ be
+a natural number. For every colouring $\chi \colon G \to \{0, \dots, n - 1\}$ there are a set
+$A \subseteq G$ of cardinality $\alpha$ on which $\chi$ is constant and an element $g \in G$ such
+that $2g - a \in A$ for every $a \in A$.
+
+This answers Kourovka Problem 15.77 (I. V. Protasov) affirmatively; the Kourovka Notebook (21st
+issue) marks it solved, "Yes, it is true" (AI solution confirmed by I. V. Protasov).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in
 Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 15.77 (I. V.
 Protasov); resolution: A. Jayadevan, Monochromatic symmetric subsets in finite colourings of
 infinite abelian groups, preprint, Zenodo record 22909420 (2026), AI-generated solution confirmed by
