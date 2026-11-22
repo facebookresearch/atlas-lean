@@ -29,6 +29,10 @@ non-unique stick forces and the static-equilibrium criterion; and the negative c
 public shapes of Section D, separated and closed contact at friction coefficient `1`, the
 non-convex admissible set, the frictionless bridge to Section B, and invalid controls
 (negative friction coefficient, tension excluded by the cone at `μ = 0`, a non-unit normal).
+Coulomb sliding and sticking: the public shapes of Section E, nonzero slip `(3, 4)` with
+power `-25`, sticking without division by zero, the `μ = 0` slice, invalid-sign and
+rejection controls, the tangent-line reduction to Section C, and the open/stick/slip frame
+fixture in `ℝ³` with power `-50`.
 
 ## i. Overview
 
@@ -44,6 +48,7 @@ No new definitions or results are introduced here.
 - B. Scalar unilateral contact
 - C. Coulomb friction
 - D. Unilateral contact with Coulomb friction
+- E. Coulomb sliding and sticking at a unilateral interface
 
 ## iv. References
 
@@ -374,3 +379,175 @@ example : ¬ IsAdmissibleContact (-1) 1 0 (0 : ℝ) ∧
     ((-(2 : ℝ)) = (0 : ℝ) - (1 : ℝ) • (2 : ℝ) ∧ ⟪(0 : ℝ), (2 : ℝ)⟫_ℝ = 0) ∧
       (1 : ℝ) ≠ -⟪(-(2 : ℝ)), (2 : ℝ)⟫_ℝ := by
   norm_num [IsAdmissibleContact, RCLike.inner_apply]
+
+/-! ## E. Coulomb sliding and sticking at a unilateral interface -/
+
+/-- The public statement shapes of Section E. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {μ N : ℝ} {v t : E}
+    (hμ : 0 ≤ μ) (hN : 0 ≤ N) (h : IsCoulombTraction μ N v t) :
+    (⟪t, v⟫_ℝ = -(μ * N * ‖v‖) ∧ ⟪t, v⟫_ℝ ≤ 0) ∧ IsAdmissibleContact μ N 0 t :=
+  ⟨h.inner_eq_and_nonpos hμ hN, h.isAdmissibleContact hμ hN⟩
+
+/-- The public statement shapes of the sign control and the tangent-line bridge. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {μ N : ℝ} {v t : E}
+    (hμN : μ * N < 0) (h : IsCoulombTraction μ N v t) :
+    0 < ⟪t, v⟫_ℝ ∧ ∀ {μ' N' v' F : ℝ}, IsCoulombTraction μ' N' v' F ↔ IsCoulombFriction μ' N' v' F :=
+  ⟨h.inner_pos_of_mul_neg hμN, isCoulombTraction_iff_isCoulombFriction⟩
+
+/-- Nonzero slip in the plane, `μ = 1/2`, `N = 10`, `v = (3, 4)`: the traction is `(-3, -4)`,
+at the slip threshold `‖t‖ = μ N = 5`, with power `-25 = -μ N ‖v‖ < 0`. -/
+example : IsCoulombTraction (1 / 2) 10 (!₂[3, 4] : EuclideanSpace ℝ (Fin 2)) !₂[-3, -4] ∧
+    ⟪(!₂[-3, -4] : EuclideanSpace ℝ (Fin 2)), !₂[3, 4]⟫_ℝ = -25 ∧
+    ‖(!₂[-3, -4] : EuclideanSpace ℝ (Fin 2))‖ = 1 / 2 * 10 := by
+  have h34 : ‖(!₂[3, 4] : EuclideanSpace ℝ (Fin 2))‖ = 5 := by
+    rw [EuclideanSpace.norm_eq, Fin.sum_univ_two]
+    simp
+    rw [show (3:ℝ) ^ 2 + 4 ^ 2 = 5 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+  have hv : (!₂[3, 4] : EuclideanSpace ℝ (Fin 2)) ≠ 0 := by
+    intro h0
+    have := congrArg norm h0
+    rw [h34, norm_zero] at this
+    norm_num at this
+  have hlaw : IsCoulombTraction (1 / 2) 10 (!₂[3, 4] : EuclideanSpace ℝ (Fin 2)) !₂[-3, -4] := by
+    refine ⟨fun _ => ?_, fun h => absurd h hv⟩
+    rw [h34]
+    ext i
+    fin_cases i <;> simp <;> norm_num
+  refine ⟨hlaw, ?_, ?_⟩
+  · rw [(hlaw.inner_eq_and_nonpos (by norm_num) (by norm_num)).1, h34]
+    norm_num
+  · rw [EuclideanSpace.norm_eq, Fin.sum_univ_two]
+    simp
+    rw [show (3:ℝ) ^ 2 + 4 ^ 2 = 5 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+    norm_num
+
+/-- Sticking does not divide by zero: at `v = 0` the stick rule is the Coulomb bound itself;
+the totalized slip formula would give only `t = 0`, while the stick traction `(1, 0)` is
+admissible at `μ = 1/2`, `N = 10` and does no work. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {μ N : ℝ} {t : E} :
+    (IsCoulombTraction μ N (0 : E) t ↔ ‖t‖ ≤ μ * N) ∧
+      -(μ * N) • (‖(0 : E)‖⁻¹ • (0 : E)) = 0 ∧
+      IsCoulombTraction (1 / 2) 10 (0 : EuclideanSpace ℝ (Fin 2)) !₂[1, 0] ∧
+      ⟪(!₂[1, 0] : EuclideanSpace ℝ (Fin 2)), 0⟫_ℝ = 0 := by
+  have h10 : ‖(!₂[1, 0] : EuclideanSpace ℝ (Fin 2))‖ = 1 := by
+    rw [EuclideanSpace.norm_eq, Fin.sum_univ_two]
+    simp
+  refine ⟨⟨fun h => h.2 rfl, fun h => ⟨fun h0 => absurd rfl h0, fun _ => h⟩⟩, by simp,
+    ⟨fun h => absurd rfl h, fun _ => by rw [h10]; norm_num⟩, inner_zero_right _⟩
+
+/-- `μ = 0`: the only Coulomb traction is `0`, for every `N` and `v`, so the power is zero. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] (N : ℝ) (v t : E) :
+    IsCoulombTraction 0 N v t ↔ t = 0 := by
+  constructor
+  · intro h
+    by_cases hv : v = 0
+    · have := h.2 hv
+      rw [zero_mul] at this
+      exact norm_le_zero_iff.mp this
+    · rw [h.1 hv]
+      simp
+  · rintro rfl
+    exact ⟨fun _ => by simp, fun _ => by simp⟩
+
+/-- Invalid controls on a tangent line, `v = 1`: `μ = -1/2 < 0 < N = 10` and
+`N = -10 < 0 < μ = 1/2` give Coulomb tractions with positive power; `μ = -1`, `N = 1` and
+`μ = 1`, `N = -1` give Coulomb tractions that are not admissible. -/
+example : 0 < ⟪(5 : ℝ), 1⟫_ℝ ∧ IsCoulombTraction (-1 / 2) 10 (1 : ℝ) 5 ∧
+    IsCoulombTraction (1 / 2) (-10) (1 : ℝ) 5 ∧
+    (IsCoulombTraction (-1) 1 (1 : ℝ) 1 ∧ ¬ IsAdmissibleContact (-1) 1 0 (1 : ℝ)) ∧
+    (IsCoulombTraction 1 (-1) (1 : ℝ) 1 ∧ ¬ IsAdmissibleContact 1 (-1) 0 (1 : ℝ)) := by
+  refine ⟨by simp, ⟨fun _ => by norm_num, fun h => absurd h one_ne_zero⟩,
+    ⟨fun _ => by norm_num, fun h => absurd h one_ne_zero⟩,
+    ⟨⟨fun _ => by norm_num, fun h => absurd h one_ne_zero⟩, ?_⟩,
+    ⟨⟨fun _ => by norm_num, fun h => absurd h one_ne_zero⟩, ?_⟩⟩
+  · norm_num [IsAdmissibleContact]
+  · norm_num [IsAdmissibleContact]
+
+/-- Section C on a tangent line: the scalar fixture `μ = 1/2`, `N = 10`, `v = 2`, `F = -5` is a
+Coulomb traction, and Section C's power identity follows from the vector one. -/
+example {μ N v F : ℝ} (hμ : 0 ≤ μ) (hN : 0 ≤ N) (h : IsCoulombFriction μ N v F) :
+    IsCoulombTraction (1 / 2) 10 (2 : ℝ) (-5) ∧ F * v = -(μ * N * |v|) := by
+  refine ⟨isCoulombTraction_iff_isCoulombFriction.mpr
+    ((isCoulombFriction_of_ne_zero two_ne_zero).mpr (by rw [Real.sign_of_pos two_pos]; norm_num)),
+    ?_⟩
+  have h1 := ((isCoulombTraction_iff_isCoulombFriction.mpr h).inner_eq_and_nonpos hμ hN).1
+  have hi : ⟪F, v⟫_ℝ = F * v := by simp [mul_comm]
+  rw [hi, Real.norm_eq_abs] at h1
+  exact h1
+
+/-- Open, stick and slip at `μ = 1/2` over the Section D frame in `ℝ³` with `n = e₃`: an open
+gap carries no force; `τ = (3, 4, -10)` has `N = 10` and tangent part `t = (3, 4, 0)`, the
+Coulomb traction for the slip `v = (-6, -8, 0)`, with power `-50`. -/
+example : (∀ {N g : ℝ} {t : EuclideanSpace ℝ (Fin 3)},
+      IsAdmissibleContact (1 / 2) N g t → 0 < g → N = 0 ∧ t = 0) ∧
+    (!₂[3, 4, -10] : EuclideanSpace ℝ (Fin 3)) = !₂[3, 4, 0] - (10 : ℝ) • !₂[0, 0, 1] ∧
+    IsCoulombTraction (1 / 2) 10 (!₂[-6, -8, 0] : EuclideanSpace ℝ (Fin 3)) !₂[3, 4, 0] ∧
+    ⟪(!₂[3, 4, 0] : EuclideanSpace ℝ (Fin 3)), !₂[-6, -8, 0]⟫_ℝ = -50 := by
+  have hn : ‖(!₂[0, 0, 1] : EuclideanSpace ℝ (Fin 3))‖ = 1 := by
+    rw [EuclideanSpace.norm_eq, Fin.sum_univ_three]
+    simp
+  have hv : ‖(!₂[-6, -8, 0] : EuclideanSpace ℝ (Fin 3))‖ = 10 := by
+    rw [EuclideanSpace.norm_eq, Fin.sum_univ_three]
+    simp
+    rw [show (6:ℝ) ^ 2 + 8 ^ 2 = 10 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+  have hlaw : IsCoulombTraction (1 / 2) 10 (!₂[-6, -8, 0] : EuclideanSpace ℝ (Fin 3))
+      !₂[3, 4, 0] := by
+    refine ⟨fun _ => ?_, fun h => ?_⟩
+    · rw [hv]
+      ext i
+      fin_cases i <;> simp <;> norm_num
+    · have := congrArg norm h
+      rw [hv, norm_zero] at this
+      norm_num at this
+  refine ⟨fun h hg => h.eq_zero_of_gap_pos hg, ?_, hlaw, ?_⟩
+  · exact ((normal_tangent_decomposition_iff (τ := (!₂[3, 4, -10] : EuclideanSpace ℝ (Fin 3)))
+      (t := !₂[3, 4, 0]) (N := 10) hn).mpr ⟨by simp [PiLp.inner_apply, Fin.sum_univ_three],
+      by ext i; fin_cases i <;> simp [PiLp.inner_apply, Fin.sum_univ_three]⟩).1
+  · rw [(hlaw.inner_eq_and_nonpos (by norm_num) (by norm_num)).1, hv]
+    norm_num
+/-- Boundary and rejection controls: for `μ * N < 0` no stick traction exists; the stick
+traction `(6, 8)` violates the cone at `μ = 1/2`, `N = 10`; at slip `v = (3, 4)` the
+tractions `(1, 0)` and `(3, 4)` are rejected; and at `μ * N = 0` the power is `0`, not
+positive, so the sign control is strict. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] {μ N : ℝ} {t : E} :
+    (μ * N < 0 → ¬ IsCoulombTraction μ N (0 : E) t) ∧
+      ¬ IsCoulombTraction (1 / 2) 10 (0 : EuclideanSpace ℝ (Fin 2)) !₂[6, 8] ∧
+      ¬ IsCoulombTraction (1 / 2) 10 (!₂[3, 4] : EuclideanSpace ℝ (Fin 2)) !₂[1, 0] ∧
+      ¬ IsCoulombTraction (1 / 2) 10 (!₂[3, 4] : EuclideanSpace ℝ (Fin 2)) !₂[3, 4] ∧
+      ⟪(0 : ℝ), 1⟫_ℝ = 0 ∧ IsCoulombTraction 0 1 (1 : ℝ) 0 := by
+  have h34 : ‖(!₂[3, 4] : EuclideanSpace ℝ (Fin 2))‖ = 5 := by
+    rw [EuclideanSpace.norm_eq, Fin.sum_univ_two]
+    simp
+    rw [show (3:ℝ) ^ 2 + 4 ^ 2 = 5 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+  have hv : (!₂[3, 4] : EuclideanSpace ℝ (Fin 2)) ≠ 0 := by
+    intro h0
+    have := congrArg norm h0
+    rw [h34, norm_zero] at this
+    norm_num at this
+  refine ⟨fun hμN h => absurd (h.2 rfl) (not_le.mpr (lt_of_lt_of_le hμN (norm_nonneg t))),
+    ?_, ?_, ?_, by simp, ⟨fun _ => by norm_num, fun h => absurd h one_ne_zero⟩⟩
+  · intro h
+    have h68 : ‖(!₂[6, 8] : EuclideanSpace ℝ (Fin 2))‖ = 10 := by
+      rw [EuclideanSpace.norm_eq, Fin.sum_univ_two]
+      simp
+      rw [show (6:ℝ) ^ 2 + 8 ^ 2 = 10 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+    have := h.2 rfl
+    rw [h68] at this
+    norm_num at this
+  · intro h
+    have h1 := h.1 hv
+    rw [h34] at h1
+    have := congrArg (fun x : EuclideanSpace ℝ (Fin 2) => x 0) h1
+    simp at this
+    norm_num at this
+  · intro h
+    have h1 := h.1 hv
+    rw [h34] at h1
+    have := congrArg (fun x : EuclideanSpace ℝ (Fin 2) => x 0) h1
+    simp at this
+    norm_num at this
+
+#print axioms Elasticity.ContactAndLubrication.IsCoulombTraction.inner_eq_and_nonpos
+#print axioms Elasticity.ContactAndLubrication.IsCoulombTraction.inner_pos_of_mul_neg
+#print axioms Elasticity.ContactAndLubrication.IsCoulombTraction.isAdmissibleContact
+#print axioms Elasticity.ContactAndLubrication.isCoulombTraction_iff_isCoulombFriction

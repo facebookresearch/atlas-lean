@@ -37,7 +37,8 @@ unilateral contact as an instance of Stampacchia's variational inequality, with 
 reaction as its complementarity multiplier. Section C states the set-valued Coulomb friction
 law, its dissipation and the static-equilibrium criterion. Section D adds the Coulomb friction
 cone and the admission conditions for a unilateral interface with friction, in
-compression-positive form.
+compression-positive form. Section E adds the vector Coulomb sliding and sticking law at
+that interface and its frictional power.
 
 ## i. Overview
 
@@ -141,7 +142,18 @@ in Section D.
 
 Section D states no sliding rule, slip direction, frictional work, or existence or uniqueness
 of contact solutions: it is the static admission interface only, distinct from the scalar
-set-valued friction graph of Section C.
+set-valued friction graph of Section C. The sliding rule is Section E.
+
+Section E treats Coulomb sliding and sticking at the interface of Section D.
+`IsCoulombTraction μ N v t` says that at a nonzero slip velocity `v` the tangent traction is
+`t = -(μ * N) • (‖v‖⁻¹ • v)`, opposite to `v` with norm `μ * N` when `0 < μ * N`, and at
+`v = 0` any traction with `‖t‖ ≤ μ * N` may act; the stick branch involves no division. On
+the physical domain `0 ≤ μ`, `0 ≤ N` the frictional power is `⟪t, v⟫ = -(μ * N * ‖v‖) ≤ 0`;
+for `μ * N < 0` the stick branch is empty and the law supplies positive power. Slip and
+stick tractions are admissible closed contact states, and on a tangent line `E = ℝ` the
+vector law is exactly the scalar friction graph of Section C. Here `v` is the vector slip
+velocity, not the scalar sliding velocity of Section C, and the scalar force `F` of
+Section C corresponds to the tangent traction `t`.
 
 ## ii. Key results
 
@@ -189,6 +201,11 @@ set-valued friction graph of Section C.
 - `Elasticity.ContactAndLubrication.IsAdmissibleContact.eq_zero_of_gap_pos`,
   `isAdmissibleContact_zero_tangent_iff`: an open gap carries no force, and the frictionless
   slice `t = 0` is exactly the scalar complementarity of Section B.
+- `Elasticity.ContactAndLubrication.IsCoulombTraction`,
+  `IsCoulombTraction.inner_eq_and_nonpos`, `IsCoulombTraction.inner_pos_of_mul_neg`,
+  `IsCoulombTraction.isAdmissibleContact`, `isCoulombTraction_iff_isCoulombFriction`: the
+  vector Coulomb law of Section E, its frictional power and sign, the invalid-sign control,
+  admission at closed contact, and the reduction to Section C on a tangent line.
 
 ## iii. Table of contents
 
@@ -208,6 +225,7 @@ set-valued friction graph of Section C.
   - C.3. Static equilibrium and non-uniqueness at rest
   - C.4. Negative coefficient
 - D. Unilateral contact with Coulomb friction
+- E. Coulomb sliding and sticking at a unilateral interface
 
 ## iv. References
 
@@ -1292,6 +1310,105 @@ lemma isAdmissibleContact_zero_tangent_iff {μ N g : ℝ} (hμ : 0 ≤ μ) :
     exact ⟨hN, hg, hNg⟩
   · rintro ⟨hN, hg, hNg⟩
     exact ⟨hN, hg, hNg, mul_nonneg hμ hN⟩
+
+/-! ## E. Coulomb sliding and sticking at a unilateral interface -/
+
+/-- The vector Coulomb friction law at a unilateral interface, with friction coefficient `μ`
+and compression-positive normal force `N`: at a nonzero tangential slip velocity `v` the
+tangent traction is `t = -(μ * N) • (‖v‖⁻¹ • v)`, of norm `|μ * N|` and opposite to `v` when
+`0 < μ * N`; at `v = 0` (stick) it may be any `t` with `‖t‖ ≤ μ * N`. The stick branch
+involves no division. Physically meaningful for `0 ≤ μ` and `0 ≤ N`. -/
+def IsCoulombTraction {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    (μ N : ℝ) (v t : E) : Prop :=
+  (v ≠ 0 → t = -(μ * N) • (‖v‖⁻¹ • v)) ∧ (v = 0 → ‖t‖ ≤ μ * N)
+
+
+/-- Main result, frictional power: on the physical domain `0 ≤ μ`, `0 ≤ N` a Coulomb traction
+delivers the power `⟪t, v⟫ = -(μ * N * ‖v‖) ≤ 0`. A sliding contact (`v ≠ 0`) dissipates
+`μ * N * ‖v‖`; a sticking contact (`v = 0`) does no work, for every stick traction allowed
+by the separate stick rule and without dividing by `‖v‖`. -/
+lemma IsCoulombTraction.inner_eq_and_nonpos {μ N : ℝ} {v t : E} (hμ : 0 ≤ μ) (hN : 0 ≤ N)
+    (h : IsCoulombTraction μ N v t) :
+    ⟪t, v⟫_ℝ = -(μ * N * ‖v‖) ∧ ⟪t, v⟫_ℝ ≤ 0 := by
+  by_cases hv : v = 0
+  · subst hv
+    rw [inner_zero_right, norm_zero, mul_zero, neg_zero]
+    exact ⟨rfl, le_refl 0⟩
+  · rw [h.1 hv, real_inner_smul_left, real_inner_smul_left, real_inner_self_eq_norm_sq]
+    have hnorm : ‖v‖ ≠ 0 := norm_ne_zero_iff.mpr hv
+    have hpow : ‖v‖⁻¹ * ‖v‖ ^ 2 = ‖v‖ := by
+      rw [pow_two, ← mul_assoc, inv_mul_cancel₀ hnorm, one_mul]
+    rw [hpow]
+    have hNN : 0 ≤ μ * N * ‖v‖ := mul_nonneg (mul_nonneg hμ hN) (norm_nonneg _)
+    have heq : -(μ * N) * ‖v‖ = -(μ * N * ‖v‖) := by ring
+    rw [heq]
+    exact ⟨rfl, neg_nonpos.mpr hNN⟩
+
+/-- Control, invalid sign: if `μ * N < 0`, the stick rule admits no traction
+(`‖t‖ ≤ μ * N < 0` is impossible), so every Coulomb traction is a sliding one and the friction
+law supplies positive power. The sign in `IsCoulombTraction.inner_eq_and_nonpos` therefore
+needs `0 ≤ μ * N`; both `μ < 0 < N` and `N < 0 < μ` reverse it. -/
+lemma IsCoulombTraction.inner_pos_of_mul_neg {μ N : ℝ} {v t : E} (hμN : μ * N < 0)
+    (h : IsCoulombTraction μ N v t) :
+    0 < ⟪t, v⟫_ℝ := by
+  by_cases hv : v = 0
+  · exfalso
+    have hle := h.2 hv
+    have hnn : 0 ≤ ‖t‖ := norm_nonneg _
+    linarith
+  · rw [h.1 hv, real_inner_smul_left, real_inner_smul_left, real_inner_self_eq_norm_sq]
+    have hnorm : ‖v‖ ≠ 0 := norm_ne_zero_iff.mpr hv
+    have hpow : ‖v‖⁻¹ * ‖v‖ ^ 2 = ‖v‖ := by
+      rw [pow_two, ← mul_assoc, inv_mul_cancel₀ hnorm, one_mul]
+    rw [hpow]
+    have hpos : 0 < ‖v‖ := norm_pos_iff.mpr hv
+    exact mul_pos (neg_pos.mpr hμN) hpos
+
+/-- Slip and stick tractions are admissible contact states: for `0 ≤ μ` and `0 ≤ N` a Coulomb
+traction, sliding or sticking, is an admissible closed contact state (`g = 0`). A sliding
+traction has norm `μ * N`, the slip threshold; a sticking traction satisfies the Coulomb
+bound by the stick rule. -/
+lemma IsCoulombTraction.isAdmissibleContact {μ N : ℝ} {v t : E} (hμ : 0 ≤ μ) (hN : 0 ≤ N)
+    (h : IsCoulombTraction μ N v t) :
+    IsAdmissibleContact μ N 0 t := by
+  refine ⟨hN, le_refl 0, mul_zero N, ?_⟩
+  by_cases hv : v = 0
+  · exact h.2 hv
+  · have hnorm : ‖v‖ ≠ 0 := norm_ne_zero_iff.mpr hv
+    have hmul : 0 ≤ μ * N := mul_nonneg hμ hN
+    have hslide : ‖t‖ = μ * N := by
+      rw [h.1 hv, norm_smul, norm_smul, Real.norm_eq_abs, Real.norm_eq_abs, abs_neg,
+        abs_of_nonneg hmul, abs_of_nonneg (inv_nonneg.mpr (norm_nonneg _)),
+        inv_mul_cancel₀ hnorm, mul_one]
+    rw [hslide]
+
+/-- On a tangent line, `E = ℝ`, the vector law is exactly the scalar Coulomb friction graph:
+for `v ≠ 0`, `‖v‖⁻¹ • v = Real.sign v`, and `‖F‖ ≤ μ * N` holds iff
+`F ∈ [-(μ * N), μ * N]`. -/
+lemma isCoulombTraction_iff_isCoulombFriction {μ N v F : ℝ} :
+    IsCoulombTraction μ N v F ↔ IsCoulombFriction μ N v F := by
+  have hsign : ∀ {v : ℝ}, v ≠ 0 → |v|⁻¹ * v = Real.sign v := by
+    intro v hv
+    rcases lt_or_gt_of_ne hv with hneg | hpos
+    · rw [Real.sign_of_neg hneg, abs_of_neg hneg, inv_neg, neg_mul,
+        inv_mul_cancel₀ (ne_of_lt hneg)]
+    · rw [Real.sign_of_pos hpos, abs_of_pos hpos, inv_mul_cancel₀ (ne_of_gt hpos)]
+  unfold IsCoulombTraction IsCoulombFriction
+  constructor
+  · rintro ⟨hslip, hstick⟩
+    refine ⟨fun hv => ?_, fun hv0 => ?_⟩
+    · rw [hslip hv, smul_eq_mul, smul_eq_mul, Real.norm_eq_abs, hsign hv]
+    · have hle := hstick hv0
+      rw [Real.norm_eq_abs] at hle
+      rw [Set.mem_Icc]
+      exact abs_le.mp hle
+  · rintro ⟨hslip, hstick⟩
+    refine ⟨fun hv => ?_, fun hv0 => ?_⟩
+    · rw [hslip hv, smul_eq_mul, smul_eq_mul, Real.norm_eq_abs, hsign hv]
+    · have hmem := hstick hv0
+      rw [Set.mem_Icc] at hmem
+      rw [Real.norm_eq_abs]
+      exact abs_le.mpr hmem
 
 
 end Elasticity.ContactAndLubrication
