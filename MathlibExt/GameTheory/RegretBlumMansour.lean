@@ -109,15 +109,15 @@ theorem exists_isStationaryPlay (q : Fin T → K → K → ℝ)
       constructor
       · intro i j
         simp only [Matrix.of_apply]
-        obtain ⟨hpos, -⟩ := hq t i
+        obtain ⟨hpos, -⟩ := (isSimplex_iff _).mp (hq t i)
         exact hpos j
       · intro i
         simp only [Matrix.of_apply]
-        obtain ⟨-, hsum⟩ := hq t i
+        obtain ⟨-, hsum⟩ := (isSimplex_iff _).mp (hq t i)
         exact hsum
     obtain ⟨π, hnonneg, hsum, hvec⟩ :=
       MathlibExt.Probability.FiniteMarkovChainConvergence.exists_stationary hP
-    exact ⟨π, ⟨hnonneg, hsum⟩, hvec⟩
+    exact ⟨π, (isSimplex_iff π).mpr ⟨hnonneg, hsum⟩, hvec⟩
   choose p hp using hstat
   refine ⟨p, ⟨?_, ?_⟩⟩
   · intro t

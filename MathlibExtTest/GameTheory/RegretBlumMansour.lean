@@ -35,6 +35,7 @@ def l0 : Fin 1 → Fin 2 → ℝ :=
 theorem t1_stationary : IsStationaryPlay qId pU := by
   refine ⟨?_, ?_⟩
   · intro t
+    rw [isSimplex_iff]
     refine ⟨?_, ?_⟩
     · intro a
       show (0 : ℝ) ≤ 1 / 2
@@ -130,6 +131,7 @@ theorem t4_exists_stationary_swap :
       ∀ t, p t 0 = 1 / 2 ∧ p t 1 = 1 / 2 := by
   have hq : ∀ t j, IsSimplex (qSwap t j) := by
     intro t j
+    rw [isSimplex_iff]
     refine ⟨?_, ?_⟩
     · intro a
       fin_cases j <;> fin_cases a <;> simp [qSwap]
@@ -138,7 +140,7 @@ theorem t4_exists_stationary_swap :
   refine ⟨p, hp, ?_⟩
   intro t
   have hsum : p t 0 + p t 1 = 1 := by
-    have h := (hp.1 t).2
+    have h := ((isSimplex_iff _).mp (hp.1 t)).2
     rwa [Fin.sum_univ_two] at h
   have h0 : p t 0 = p t 1 := by
     have h := hp.2 t 0
