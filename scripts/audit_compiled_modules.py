@@ -9,7 +9,7 @@ import subprocess
 import tempfile
 
 ROOTS = ('CSLibExt', 'CSLibExtTest', 'MathlibExt', 'MathlibExtTest',
-         'PhyslibExt', 'PhyslibExtTest', 'WantedExt')
+         'PhyslibExt', 'PhyslibExtTest', 'Domains', 'DomainsTest', 'WantedExt')
 BATCH_SIZE = 1024
 COLLISION = re.compile(r"^.*:\d+:\d+: error: import [^\n]* failed, environment already contains[^\n]*$")
 

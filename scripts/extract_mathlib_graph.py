@@ -45,7 +45,7 @@ import extract_v2_lean_dependencies as v2  # noqa: E402  (the shared collapse se
 ROOT = Path(__file__).resolve().parent.parent
 DUMP_SCRIPT = ROOT / "scripts" / "dump_mathlib_dependencies.lean"
 MATHLIB_PACKAGE = Path(".lake") / "packages" / "mathlib"
-V2_KEEP = "Mathlib,MathlibExt,CSLibExt,PhyslibExt,WantedExt"
+V2_KEEP = "Mathlib,MathlibExt,CSLibExt,PhyslibExt,Domains,WantedExt"
 TAXONOMY = ROOT / "scripts" / "taxonomy.json"
 
 # Modules with no mathematics for the graph: tactics, metaprogramming, linters and test infrastructure, and
