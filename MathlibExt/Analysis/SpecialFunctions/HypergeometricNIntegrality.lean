@@ -207,24 +207,26 @@ noncomputable def lambda (α β : Multiset ℚ) (p : ℕ) : ℤ :=
 /-- The finite set of exceptional primes in the least-scaling
 formula: the primes dividing `d_{α,β}`, together with the primes
 `p ≤ r - s + 1` (written without integer subtraction as
-`p + s ≤ r + 1`). -/
+`p + s ≤ r + 1`).  The divisor branch uses `Nat.primeFactors`
+rather than enumerating up to `d_{α,β}`, which can be enormous. -/
 noncomputable def exceptionalPrimes (α β : Multiset ℚ) : Finset ℕ :=
-  (Finset.Icc 2 (max (paramDenLcm α β) (α.card + 1))).filter
-    (fun p => p.Prime ∧ (p ∣ paramDenLcm α β ∨ p + β.card ≤ α.card + 1))
+  (paramDenLcm α β).primeFactors ∪
+    (Finset.Icc 2 (α.card + 1)).filter
+      (fun p => p.Prime ∧ p + β.card ≤ α.card + 1)
 
 theorem mem_exceptionalPrimes {α β : Multiset ℚ} {p : ℕ} :
     p ∈ exceptionalPrimes α β ↔
       p.Prime ∧ (p ∣ paramDenLcm α β ∨ p + β.card ≤ α.card + 1) := by
+  have hd : 0 < paramDenLcm α β := paramDenLcm_pos α β
   unfold exceptionalPrimes
-  rw [Finset.mem_filter, Finset.mem_Icc]
+  rw [Finset.mem_union, Nat.mem_primeFactors, Finset.mem_filter, Finset.mem_Icc]
   constructor
-  · rintro ⟨-, h⟩
-    exact h
-  · intro ⟨hp, h⟩
-    refine ⟨⟨hp.two_le, ?_⟩, hp, h⟩
-    rcases h with hd | hle
-    · exact le_max_of_le_left (Nat.le_of_dvd (paramDenLcm_pos α β) hd)
-    · exact le_max_of_le_right (by omega)
+  · rintro (⟨hp, hdvd, -⟩ | ⟨-, hp, h⟩)
+    · exact ⟨hp, Or.inl hdvd⟩
+    · exact ⟨hp, Or.inr h⟩
+  · rintro ⟨hp, hdvd | hle⟩
+    · exact Or.inl ⟨hp, hdvd, by omega⟩
+    · exact Or.inr ⟨⟨hp.two_le, by omega⟩, hp, hle⟩
 
 /-- The explicit term in the Delaygue–Rivoal–Roques least-scaling
 formula (Theorem 4):
