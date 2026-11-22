@@ -803,12 +803,13 @@ private theorem aux_unique : ∀ n, aux_H n = aux_G n := by
   rw [eG] at hGn
   linarith
 
-/-- Garabedian's Bernoulli-number identity in Stirling form for every `n : ℕ`:
-`2 * (1 - 2 ^ n) * B n` equals `n` times the signed sum of
-`(-1) ^ (n - k) * (k - 1)! * S(n, k) / 2 ^ (k - 1)` over `1 ≤ k ≤ n`,
-with `B = bernoulli` and `S = Nat.stirlingSecond`. The cited source states the case
-`n ≥ 1`; at `n = 0` both sides are `0`. `garabedian_genocchi_formula` is the
-source-shaped form. -/
+/-- **Garabedian's formula for the Bernoulli numbers, including $n = 0$.** For every natural
+number $n$,
+
+$$2(1 - 2^n) B_n = n \sum_{k=1}^{n} \frac{(-1)^{n-k} (k-1)!\, S(n, k)}{2^{k-1}},$$
+
+where $B_n$ is the $n$-th Bernoulli number, with $B_1 = -\frac{1}{2}$, and $S(n, k)$ is the
+Stirling number of the second kind. At $n = 0$ both sides are $0$. -/
 theorem garabedian_genocchi_formula_general (n : ℕ) :
     2 * (1 - (2 : ℚ) ^ n) * bernoulli n =
       n * ∑ k ∈ Finset.Icc 1 n,
@@ -819,10 +820,16 @@ theorem garabedian_genocchi_formula_general (n : ℕ) :
   exact h.symm
 
 set_option linter.unusedVariables false in
-/-- Garabedian's Bernoulli-number identity in Stirling form: for `n ≥ 1`,
-`2 * (1 - 2 ^ n) * B n` equals `n` times the signed sum of
-`(-1) ^ (n - k) * (k - 1)! * S(n, k) / 2 ^ (k - 1)` over `1 ≤ k ≤ n`,
-with `B = bernoulli` and `S = Nat.stirlingSecond`.
+/-- **Garabedian's formula for the Bernoulli numbers.** For every natural number $n \ge 1$,
+
+$$2(1 - 2^n) B_n = n \sum_{k=1}^{n} \frac{(-1)^{n-k} (k-1)!\, S(n, k)}{2^{k-1}},$$
+
+where $B_n$ is the $n$-th Bernoulli number, with $B_1 = -\frac{1}{2}$, and $S(n, k)$ is the
+Stirling number of the second kind.
+
+The identity also holds for $n = 0$, where both sides are $0$.
+
+Proves `Wanted` entry `garabedian_genocchi_formula`.
 
 Source: Schehrazade Zerroukhat and Laala Khaldi, "A Note on Explicit Formulas
 for Bernoulli and Genocchi Numbers," Journal of Integer Sequences 28 (2025),
@@ -832,14 +839,6 @@ which displays `2(1-2^n)B_n = G_n = n ∑ ...` and notes Garabedian's formula
 is equivalent to it; this module formalizes the outer (Bernoulli-to-sum)
 equality. Original: H. L. Garabedian, "A new formula for the Bernoulli
 numbers," Bull. Amer. Math. Soc. 46 (1940), 531–533.
-
-Since `k ∈ Finset.Icc 1 n`, the natural subtractions `n - k` and `k - 1`
-are genuine differences.
-
-It follows from `garabedian_genocchi_formula_general`; the hypothesis `hn` is unused and
-keeps the source's shape.
-
-Proves `Wanted` entry `garabedian_genocchi_formula`.
 -/
 @[nolint unusedArguments]
 theorem garabedian_genocchi_formula (n : ℕ) (hn : 1 ≤ n) :
