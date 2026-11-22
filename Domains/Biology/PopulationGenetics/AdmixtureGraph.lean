@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Domains.Biology.PopulationGenetics.FStatistics
+import Mathlib.Algebra.BigOperators.Pi
+import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 
 /-!
 # Admixture graphs
@@ -41,6 +43,9 @@ edges, the allele frequency of `X` is `root + ∑ e, weight X e * incr e`.
   `AdmixtureGraph.weight_admixture` and `AdmixtureGraph.weight_tree` specialize it.
 * `AdmixtureGraph.weight_eq_sum_paths`: the path-sum form of the weights.
 * `AdmixtureGraph.weight_eq_zero_or_one`: on a tree (no admixture node) weights are `0` or `1`.
+* `AdmixtureGraph.routeProb`: the routing kernel for several lineages at one node, choosing
+  parents independently with the proportions; its rows sum to `1`
+  (`AdmixtureGraph.sum_routeProb`).
 * `AdmixtureGraph.driftModel`: the drift model induced by a graph and edge increments;
   `AdmixtureGraph.hasBinaryLoadings_of_isTree`: a tree-shaped graph induces binary loadings,
   so `AdmixtureGraph.f3_nonneg_of_isTree`: on a tree `f3 ≥ 0` (the three-population test).
@@ -469,6 +474,45 @@ theorem weight_eq_zero_or_one (hG : G.IsTree) (X : V) (e : G.Edge) :
   have hp : G.prop e.1.1 e.1.2 = 1 := by
     simpa [hY, he] using G.sum_prop e.1.1 hc
   simpa [weight, hp] using G.visit_eq_zero_or_one hG X e.1.1
+
+section RouteProb
+
+variable {V : Type*} (G : AdmixtureGraph V)
+
+/-- The **routing kernel** for several lineages at one node: `k` lineages entering `X`
+(backward in time) move to parents independently, lineage `i` to `a i`, with probability
+`∏ i, prop X (a i)`. -/
+def routeProb (X : V) {k : ℕ} (a : Fin k → V) : ℝ := ∏ i, G.prop X (a i)
+
+/-- Routing probabilities are nonnegative. -/
+theorem routeProb_nonneg (X : V) {k : ℕ} (a : Fin k → V) : 0 ≤ G.routeProb X a :=
+  Finset.prod_nonneg fun i _ => G.prop_nonneg X (a i)
+
+/-- A routing that sends some lineage to a non-parent has probability `0`. -/
+theorem routeProb_eq_zero {X : V} {k : ℕ} {a : Fin k → V} {i : Fin k}
+    (hi : a i ∉ G.parents X) : G.routeProb X a = 0 :=
+  Finset.prod_eq_zero (Finset.mem_univ i) (G.prop_eq_zero X (a i) hi)
+
+/-- **The routing kernel is normalized** over the assignments of the `k` lineages to the parents
+of a non-root node. -/
+theorem sum_routeProb_parents {X : V} (hX : X ≠ G.root) (k : ℕ) :
+    ∑ a ∈ Fintype.piFinset (fun _ : Fin k => G.parents X), G.routeProb X a = 1 := by
+  rw [show (∑ a ∈ Fintype.piFinset (fun _ : Fin k => G.parents X), G.routeProb X a) =
+      ∏ _i : Fin k, ∑ Y ∈ G.parents X, G.prop X Y from (Finset.prod_univ_sum _ _).symm]
+  simp [G.sum_prop X hX]
+
+/-- **The routing kernel rows sum to `1`** over all maps from the lineages to the nodes. -/
+theorem sum_routeProb [Fintype V] {X : V} (hX : X ≠ G.root) (k : ℕ) :
+    ∑ a : Fin k → V, G.routeProb X a = 1 := by
+  have hrow : ∑ Y, G.prop X Y = 1 := by
+    rw [← Finset.sum_subset (Finset.subset_univ (G.parents X))
+      fun Y _ hY => G.prop_eq_zero X Y hY]
+    exact G.sum_prop X hX
+  rw [show (∑ a : Fin k → V, G.routeProb X a) = ∏ _i : Fin k, ∑ Y, G.prop X Y from
+    (Fintype.prod_sum _).symm]
+  simp [hrow]
+
+end RouteProb
 
 /-! ### The induced drift model -/
 
