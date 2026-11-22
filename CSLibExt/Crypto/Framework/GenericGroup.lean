@@ -8,17 +8,15 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import CSLibExt.Crypto.Framework.Oracle
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Logic.Equiv.Basic
 public import Mathlib.Tactic.Abel
 
 /-!
-# Generic group model over `OracleComp`
+# Generic group model with deeply embedded programs
 
-A functional-coherence model of a generic group of order `q`, evaluated through
-`Cslib.Crypto.Framework.OracleComp`: programs are oracle computations whose queries are
-group multiplications and inversions of opaque labels, answered by a fixed encoding oracle.
+A functional-coherence model of a generic group of order `q`: programs are deeply
+embedded syntax trees over label indices, evaluated against a fixed-encoding oracle.
 
 ## Scope
 
@@ -35,20 +33,38 @@ group multiplications and inversions of opaque labels, answered by a fixed encod
 
 ## Programs
 
-`Prog L α` alone enforces nothing: it is just an `OracleComp` over group-operation queries
-`Query L`, so a caller-specialized value such as `.pure 0 : Prog (Label q) (Label q)` is a
-perfectly good `Prog`. The genericity interface is `GenericProg`: a program polymorphic in
-the label type `L` that uses only oracle queries (and the given `DecidableEq L`) to obtain
-and combine labels. Because such a program is polymorphic in `L`, it cannot inspect or
-synthesize label representations: there is no literal label to write down and no native
-arithmetic on labels to perform; every label it handles comes from its inputs or from
-oracle answers. The `.pure 0` shape is not a `GenericProg` — it pins down the concrete
-`Label q` — and is rejected by `runProg`'s signature, which accepts only `GenericProg`.
+`GProg n` is explicit program syntax over `n` labels addressed by `Fin n` indices: `ret`
+returns an indexed label, `mul`/`inv` issue one oracle query over indexed labels and run a
+continuation with the answer bound at a fresh index, and `eqTest` branches on indexed
+equality. A program never holds a value of the label type: every label it handles comes
+from its inputs or from oracle answers, referenced by index only.
+
+Environments are extended snoc-style: the inputs come first, and each oracle answer is
+appended at index `Fin.last`, with earlier indices preserved by `Fin.castSucc` (see
+`snocEnv`). Evaluation (`eval`) is structural recursion over the syntax, so every program
+is finite syntax and evaluation always terminates; queries are answered through the oracle
+function and `DecidableEq` supplied by the evaluator.
+
+`runProg` accepts only `GProg` syntax and evaluates it against the deterministic oracle
+`oracleOf enc` for the fixed encoding.
+
+## Why deep embedding
+
+A rank-2 interface — programs polymorphic in the label type `L` — cannot enforce
+genericity in Lean: Lean has no internal parametricity, so a putatively generic program
+may inspect the label type it is instantiated with. For example, such a program can
+typecase on `L = ZMod 7` and, at that instance only, synthesize the literal label `0` out
+of thin air — a label that need not be the identity and that no oracle query produced —
+while still typechecking as "generic". The polymorphism rules out nothing.
+
+Deep embedding rules out synthesis by construction: `GProg` has no constructor carrying a
+label value, only `Fin` indices into the environment, so there is no syntax for a literal
+label. Relabeling invariance is then a theorem (`eval_natural`): evaluation commutes with
+any renaming of labels that the oracle respects.
 
 The concrete representation exists only in the evaluator: the encoding permutation `enc`,
 the `ZMod q` arithmetic, and the `enc`/`enc.symm` conversions appear only in `oracleOf`,
-`idLabel`, `gmul`, `ginv`, and `runProg`, which instantiates `L := Label q` to evaluate a
-generic program against the deterministic oracle `oracleOf enc` for the fixed encoding.
+`idLabel`, `gmul`, `ginv`, and `runProg`, which instantiates evaluation at `Label q`.
 -/
 
 @[expose] public section
@@ -58,17 +74,150 @@ namespace Cslib.Crypto.Framework.GenericGroup
 /-- Queries over an abstract label type: multiply two labels, or invert one label. -/
 abbrev Query (L : Type) : Type := (L × L) ⊕ L
 
-/-- A generic program over abstract labels: an oracle computation over group-operation
-queries, polymorphic in the label type `L`. -/
-abbrev Prog (L : Type) (α : Type) : Type := OracleComp (Query L) L α
+/-- Deeply embedded generic programs over `n` labels addressed by `Fin` indices.
 
-/-- A caller-facing generic program with inputs in `iota L` and outputs in `omega L`,
-polymorphic in the label type `L`. The caller cannot pick `L` — the evaluator
-instantiates it — so there are no literal labels to write down and no native arithmetic
-on labels to perform; labels can only be passed along, combined through oracle queries,
-and compared for equality via the given `DecidableEq L`. -/
-def GenericProg (iota omega : Type → Type) : Type 1 :=
-  ∀ (L : Type) [DecidableEq L], iota L → Prog L (omega L)
+`ret i` returns the `i`-th label; `mul i j k` and `inv i k` issue one oracle query over
+the indexed labels and run the continuation `k` with the answer bound at a fresh index;
+`eqTest i j kt kf` runs `kt` or `kf` depending on whether the indexed labels agree.
+
+A program mentions labels only through indices: no constructor holds a label value, so a
+program can neither inspect nor synthesize label representations. Indices address the
+labels received so far — the inputs first, then the oracle answers in order — with
+environments extended snoc-style (see `snocEnv`): the continuation of `mul`/`inv` sees
+the answer at index `Fin.last _`, and earlier labels through `Fin.castSucc`. -/
+inductive GProg : Nat → Type where
+  | ret {n} (i : Fin n) : GProg n
+  | mul {n} (i j : Fin n) (k : GProg (n + 1)) : GProg n
+  | inv {n} (i : Fin n) (k : GProg (n + 1)) : GProg n
+  | eqTest {n} (i j : Fin n) (kt kf : GProg n) : GProg n
+
+/-- Snoc-style environment extension: append answer `x` after the `n` existing labels, so
+the answer is found at index `Fin.last n` while earlier indices are preserved by
+`Fin.castSucc`. -/
+def snocEnv {L : Type} {n : Nat} (env : Fin n → L) (x : L) : Fin (n + 1) → L :=
+  fun i => if h : (i : Nat) < n then env ⟨i, h⟩ else x
+
+theorem snocEnv_pos {L : Type} {n : Nat} (env : Fin n → L) (x : L) (t : Fin (n + 1))
+    (h : (t : Nat) < n) : snocEnv env x t = env ⟨(t : Nat), h⟩ := dite_eq_left h
+
+theorem snocEnv_neg {L : Type} {n : Nat} (env : Fin n → L) (x : L) (t : Fin (n + 1))
+    (h : ¬ (t : Nat) < n) : snocEnv env x t = x := dite_eq_right h
+
+@[simp] theorem snocEnv_last {L : Type} {n : Nat} (env : Fin n → L) (x : L) :
+    snocEnv env x (Fin.last n) = x := by
+  have h : ¬ ((Fin.last n : Fin (n + 1)) : Nat) < n := by
+    rw [Fin.val_last]
+    exact lt_irrefl n
+  exact snocEnv_neg env x _ h
+
+@[simp] theorem snocEnv_castSucc {L : Type} {n : Nat} (env : Fin n → L) (x : L)
+    (i : Fin n) : snocEnv env x i.castSucc = env i := by
+  have h : ((i.castSucc : Fin (n + 1)) : Nat) < n := by
+    rw [Fin.val_castSucc]
+    exact i.isLt
+  rw [snocEnv_pos env x _ h]
+  congr 1
+
+/-- Evaluate a program against an oracle: `mul`/`inv` extend the environment with the
+oracle answer, `eqTest` branches on indexed equality via the evaluator's `DecidableEq`.
+Structural recursion over the syntax, so evaluation always terminates. -/
+def eval {L : Type} [DecidableEq L] (O : Query L → L) {n : Nat} (env : Fin n → L) :
+    GProg n → L
+  | .ret i => env i
+  | .mul i j k => eval O (snocEnv env (O (.inl (env i, env j)))) k
+  | .inv i k => eval O (snocEnv env (O (.inr (env i)))) k
+  | .eqTest i j kt kf => if env i = env j then eval O env kt else eval O env kf
+
+@[simp] theorem eval_ret {L : Type} [DecidableEq L] (O : Query L → L) {n : Nat}
+    (env : Fin n → L) (i : Fin n) : eval O env (.ret i) = env i := rfl
+
+@[simp] theorem eval_mul {L : Type} [DecidableEq L] (O : Query L → L) {n : Nat}
+    (env : Fin n → L) (i j : Fin n) (k : GProg (n + 1)) :
+    eval O env (.mul i j k) = eval O (snocEnv env (O (.inl (env i, env j)))) k := rfl
+
+@[simp] theorem eval_inv {L : Type} [DecidableEq L] (O : Query L → L) {n : Nat}
+    (env : Fin n → L) (i : Fin n) (k : GProg (n + 1)) :
+    eval O env (.inv i k) = eval O (snocEnv env (O (.inr (env i)))) k := rfl
+
+@[simp] theorem eval_eqTest {L : Type} [DecidableEq L] (O : Query L → L) {n : Nat}
+    (env : Fin n → L) (i j : Fin n) (kt kf : GProg n) :
+    eval O env (.eqTest i j kt kf)
+      = (if env i = env j then eval O env kt else eval O env kf) := rfl
+
+/-- Worst-case static query bound: `mul`/`inv` issue one query plus the continuation's,
+`eqTest` takes the worse branch, `ret` issues none. Every program is finite syntax, `eval`
+terminates by structural recursion, and the queries issued on any path are at most
+`numQueries` (see `length_queriesOf_le`). -/
+def numQueries {n : Nat} : GProg n → Nat
+  | .ret _ => 0
+  | .mul _ _ k => 1 + numQueries k
+  | .inv _ k => 1 + numQueries k
+  | .eqTest _ _ kt kf => max (numQueries kt) (numQueries kf)
+
+@[simp] theorem numQueries_ret {n : Nat} (i : Fin n) :
+    numQueries (.ret i) = 0 := rfl
+
+@[simp] theorem numQueries_mul {n : Nat} (i j : Fin n) (k : GProg (n + 1)) :
+    numQueries (.mul i j k) = 1 + numQueries k := rfl
+
+@[simp] theorem numQueries_inv {n : Nat} (i : Fin n) (k : GProg (n + 1)) :
+    numQueries (.inv i k) = 1 + numQueries k := rfl
+
+@[simp] theorem numQueries_eqTest {n : Nat} (i j : Fin n) (kt kf : GProg n) :
+    numQueries (.eqTest i j kt kf) = max (numQueries kt) (numQueries kf) := rfl
+
+/-- The queries issued along the path `eval` takes: the same recursion as `eval`,
+collecting each query instead of answering it. -/
+def queriesOf {L : Type} [DecidableEq L] (O : Query L → L) {n : Nat} (env : Fin n → L) :
+    GProg n → List (Query L)
+  | .ret _ => []
+  | .mul i j k => .inl (env i, env j) :: queriesOf O (snocEnv env (O (.inl (env i, env j)))) k
+  | .inv i k => .inr (env i) :: queriesOf O (snocEnv env (O (.inr (env i)))) k
+  | .eqTest i j kt kf => if env i = env j then queriesOf O env kt else queriesOf O env kf
+
+@[simp] theorem queriesOf_ret {L : Type} [DecidableEq L] (O : Query L → L) {n : Nat}
+    (env : Fin n → L) (i : Fin n) : queriesOf O env (.ret i) = [] := rfl
+
+@[simp] theorem queriesOf_mul {L : Type} [DecidableEq L] (O : Query L → L) {n : Nat}
+    (env : Fin n → L) (i j : Fin n) (k : GProg (n + 1)) :
+    queriesOf O env (.mul i j k)
+      = .inl (env i, env j) :: queriesOf O (snocEnv env (O (.inl (env i, env j)))) k := rfl
+
+@[simp] theorem queriesOf_inv {L : Type} [DecidableEq L] (O : Query L → L) {n : Nat}
+    (env : Fin n → L) (i : Fin n) (k : GProg (n + 1)) :
+    queriesOf O env (.inv i k)
+      = .inr (env i) :: queriesOf O (snocEnv env (O (.inr (env i)))) k := rfl
+
+@[simp] theorem queriesOf_eqTest {L : Type} [DecidableEq L] (O : Query L → L) {n : Nat}
+    (env : Fin n → L) (i j : Fin n) (kt kf : GProg n) :
+    queriesOf O env (.eqTest i j kt kf)
+      = (if env i = env j then queriesOf O env kt else queriesOf O env kf) := rfl
+
+/-- The path `eval` takes issues at most `numQueries` queries, against every oracle. -/
+theorem length_queriesOf_le {L : Type} [DecidableEq L] (O : Query L → L) {n : Nat}
+    (env : Fin n → L) (p : GProg n) :
+    (queriesOf O env p).length ≤ numQueries p := by
+  induction p with
+  | ret i => simp [queriesOf_ret, numQueries_ret]
+  | mul i j k ih =>
+    simp only [queriesOf_mul, numQueries_mul, List.length_cons]
+    have h := ih (snocEnv env (O (.inl (env i, env j))))
+    omega
+  | inv i k ih =>
+    simp only [queriesOf_inv, numQueries_inv, List.length_cons]
+    have h := ih (snocEnv env (O (.inr (env i))))
+    omega
+  | eqTest i j kt kf iht ihf =>
+    simp only [queriesOf_eqTest, numQueries_eqTest]
+    by_cases h : env i = env j
+    · have e : (if env i = env j then queriesOf O env kt else queriesOf O env kf)
+          = queriesOf O env kt := by simp [h]
+      rw [e]
+      exact (iht env).trans (Nat.le_max_left _ _)
+    · have e : (if env i = env j then queriesOf O env kt else queriesOf O env kf)
+          = queriesOf O env kf := by simp [h]
+      rw [e]
+      exact (ihf env).trans (Nat.le_max_right _ _)
 
 /-- Labels are exponents modulo `q`: the label of `a` stands for `g ^ a`. -/
 abbrev Label (q : ℕ) [Fact (1 < q)] : Type := ZMod q
@@ -78,6 +227,10 @@ add (or negate) the exponents, and re-encode. -/
 def oracleOf {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) : Query (Label q) → Label q
   | .inl (a, b) => enc (enc.symm a + enc.symm b)
   | .inr a => enc (-enc.symm a)
+
+theorem oracleOf_inl {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q))
+    (a b : Label q) :
+    oracleOf enc (.inl (a, b)) = enc (enc.symm a + enc.symm b) := rfl
 
 /-- The identity label under a fixed encoding: the encoding of exponent `0`. Note this
 is `enc 0`, not the literal label `0`; the two agree only if `enc` fixes `0`. -/
@@ -129,83 +282,160 @@ theorem ginv_gmul {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) (a : Labe
     gmul enc (ginv enc a) a = idLabel enc := by
   simp only [gmul_eq, ginv_eq, idLabel_eq, Equiv.symm_apply_apply, neg_add_cancel]
 
-/-- Evaluate a generic program against the fixed-encoding oracle, instantiating the
-abstract label type at `Label q`. Only `GenericProg` values are accepted: a
-caller-specialized `Prog (Label q)` is rejected by the signature. -/
+/-- Evaluate a deeply embedded program against the fixed-encoding oracle. Only `GProg`
+syntax is accepted: there is no way to supply a literal label. -/
 def runProg {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q))
-    {iota omega : Type → Type} (P : GenericProg iota omega) (i : iota (Label q)) :
-    omega (Label q) :=
-  OracleComp.run (oracleOf enc) (P _ i)
+    {n : Nat} (inputs : Fin n → Label q) (p : GProg n) : Label q :=
+  eval (oracleOf enc) inputs p
 
 theorem runProg_eq {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q))
-    {iota omega : Type → Type} (P : GenericProg iota omega) (i : iota (Label q)) :
-    runProg enc P i = OracleComp.run (oracleOf enc) (P _ i) := rfl
+    {n : Nat} (inputs : Fin n → Label q) (p : GProg n) :
+    runProg enc inputs p = eval (oracleOf enc) inputs p := rfl
 
-/-- Recursion behind `powProg`: starting from an accumulator and a base label, issue one
-multiplication query per step for `n` steps. -/
-def powProgAux {L : Type} : ℕ → L → L → Prog L L
-  | 0, acc, _ => .pure acc
-  | n + 1, acc, base =>
-    OracleComp.query (.inl (acc, base)) fun lbl => powProgAux n lbl base
+/-- Inputs for `powProg`: the accumulator at index `0`, the base at index `1`. -/
+def powInputs {q : ℕ} [Fact (1 < q)] (acc base : Label q) : Fin 2 → Label q :=
+  fun i => if i = 0 then acc else base
 
-/-- Honest exponentiation as a generic program: from `(n, acc, base)`, issue one
-multiplication query per step for `n` steps. The program is polymorphic in the label type
-and built only from oracle queries, `pure`, and `bind` over the given input labels. -/
-def powProg : GenericProg (fun L => ℕ × L × L) id :=
-  fun _ _ p => powProgAux p.1 p.2.1 p.2.2
+@[simp] theorem powInputs_zero {q : ℕ} [Fact (1 < q)] (acc base : Label q) :
+    powInputs acc base 0 = acc := by simp [powInputs]
 
-@[simp] theorem run_powProg_zero {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q))
-    (acc base : Label q) : runProg enc powProg (0, acc, base) = acc := rfl
+@[simp] theorem powInputs_one {q : ℕ} [Fact (1 < q)] (acc base : Label q) :
+    powInputs acc base 1 = base := by
+  simp [powInputs, show (1 : Fin 2) ≠ 0 from by decide]
 
-@[simp] theorem run_powProg_succ {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) (n : ℕ)
-    (acc base : Label q) :
-    runProg enc powProg (n + 1, acc, base) =
-      runProg enc powProg (n, gmul enc acc base, base) := rfl
+/-- Recursion behind `powProg`: starting from accumulator index `acc` and base index
+`base`, issue one multiplication query per step for `m` steps, rebinding the accumulator
+to each answer. -/
+def powProgAux (m : Nat) {n : Nat} (acc base : Fin n) : GProg n :=
+  match m with
+  | 0 => .ret acc
+  | m + 1 => .mul acc base (powProgAux m (Fin.last n) base.castSucc)
 
-@[simp] theorem queries_powProg_zero {L : Type} [DecidableEq L] (O : Query L → L)
-    (acc base : L) :
-    OracleComp.queries O (powProg L (0, acc, base)) = [] := rfl
+@[simp] theorem powProgAux_zero {n : Nat} (acc base : Fin n) :
+    powProgAux 0 acc base = .ret acc := rfl
 
-@[simp] theorem queries_powProg_succ {L : Type} [DecidableEq L] (O : Query L → L) (n : ℕ)
-    (acc base : L) :
-    OracleComp.queries O (powProg L (n + 1, acc, base)) =
-      .inl (acc, base) :: OracleComp.queries O
-        (powProg L (n, O (.inl (acc, base)), base)) := rfl
+@[simp] theorem powProgAux_succ (m : Nat) {n : Nat} (acc base : Fin n) :
+    powProgAux (m + 1) acc base
+      = .mul acc base (powProgAux m (Fin.last n) base.castSucc) := rfl
 
-/-- Correctness of `powProg` from any accumulator: the run encodes `n • x + a`, where `x`
-is the base exponent and `a` the accumulator exponent. -/
-theorem run_powProg_core {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) (n : ℕ)
-    (acc base : Label q) :
-    runProg enc powProg (n, acc, base) = enc (n • enc.symm base + enc.symm acc) := by
-  induction n generalizing acc with
-  | zero => simp only [run_powProg_zero, zero_nsmul, zero_add, Equiv.apply_symm_apply]
-  | succ n ih =>
-    simp only [run_powProg_succ, ih, gmul_eq, Equiv.symm_apply_apply]
+/-- Honest exponentiation as a deeply embedded program: from accumulator and base inputs,
+issue one multiplication query per step for `m` steps. The program is pure `GProg`
+syntax over indices `0` and `1`. -/
+def powProg (m : Nat) : GProg 2 := powProgAux m 0 1
+
+theorem powProg_eq (m : Nat) : powProg m = powProgAux m 0 1 := rfl
+
+/-- Correctness of `powProgAux` from any accumulator: evaluation encodes `m • x + a`,
+where `x` is the base exponent and `a` the accumulator exponent. -/
+theorem eval_powProgAux {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) (m : ℕ)
+    {n : ℕ} (env : Fin n → Label q) (acc base : Fin n) :
+    eval (oracleOf enc) env (powProgAux m acc base)
+      = enc (m • enc.symm (env base) + enc.symm (env acc)) := by
+  induction m generalizing n env acc base with
+  | zero =>
+    simp only [powProgAux_zero, eval_ret, zero_nsmul, zero_add, Equiv.apply_symm_apply]
+  | succ m ih =>
+    simp only [powProgAux_succ, eval_mul, ih, snocEnv_last, snocEnv_castSucc,
+      oracleOf_inl, Equiv.symm_apply_apply]
     congr 1
     rw [add_nsmul, one_nsmul]
     abel
 
 /-- Honest exponentiation is correct: from the supplied identity label and base label, the
-run is the encoding of `n • x`. The literal label `0` is never assumed to be the identity. -/
-theorem run_powProg {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) (n : ℕ) (x : ZMod q) :
-    runProg enc powProg (n, idLabel enc, enc x) = enc (n • x) := by
-  simp only [run_powProg_core, idLabel_eq, Equiv.symm_apply_apply, add_zero]
+run is the encoding of `m • x`. The literal label `0` is never assumed to be the
+identity. -/
+theorem run_powProg {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) (m : ℕ)
+    (x : ZMod q) :
+    runProg enc (powInputs (idLabel enc) (enc x)) (powProg m) = enc (m • x) := by
+  rw [runProg_eq, powProg_eq, eval_powProgAux, powInputs_zero, powInputs_one]
+  simp only [idLabel_eq, Equiv.symm_apply_apply, add_zero]
 
-/-- The exponentiation program issues exactly `n` queries, against every oracle and at
-every label type. -/
-theorem queries_powProg_length {L : Type} [DecidableEq L] (O : Query L → L) (n : ℕ)
-    (acc base : L) :
-    (OracleComp.queries O (powProg L (n, acc, base))).length = n := by
-  induction n generalizing acc with
-  | zero => rfl
-  | succ n ih => simp only [queries_powProg_succ, List.length_cons, ih]
+/-- The exponentiation recursion issues exactly `m` queries. -/
+theorem numQueries_powProgAux (m : ℕ) {n : ℕ} (acc base : Fin n) :
+    numQueries (powProgAux m acc base) = m := by
+  induction m generalizing n acc base with
+  | zero => simp only [powProgAux_zero, numQueries_ret]
+  | succ m ih =>
+    simp only [powProgAux_succ, numQueries_mul, ih]
+    omega
 
-/-- The exponentiation program is structurally `n`-bounded at every label type, hence
-bounded against every oracle by `OracleComp.length_queries_le`. -/
-theorem isQueryBounded_powProg {L : Type} [DecidableEq L] (n : ℕ) (acc base : L) :
-    FreeM.IsQueryBounded n (powProg L (n, acc, base)) := by
-  induction n generalizing acc with
-  | zero => exact FreeM.isQueryBounded_pure _ _
-  | succ n ih => exact FreeM.isQueryBounded_liftBind fun b => ih b
+/-- The exponentiation program issues exactly `m` queries. -/
+theorem numQueries_powProg (m : ℕ) : numQueries (powProg m) = m :=
+  numQueries_powProgAux m 0 1
+
+/-- The exponentiation recursion issues exactly `m` queries along its path, against every
+oracle. -/
+theorem length_queriesOf_powProgAux {L : Type} [DecidableEq L] (O : Query L → L)
+    (m : ℕ) {n : ℕ} (env : Fin n → L) (acc base : Fin n) :
+    (queriesOf O env (powProgAux m acc base)).length = m := by
+  induction m generalizing n env acc base with
+  | zero => simp [powProgAux_zero, queriesOf_ret]
+  | succ m ih =>
+    simp only [powProgAux_succ, queriesOf_mul, List.length_cons, ih]
+
+/-- The exponentiation program issues exactly `m` queries along its path, against every
+oracle. -/
+theorem length_queriesOf_powProg {L : Type} [DecidableEq L] (O : Query L → L) (m : ℕ)
+    (env : Fin 2 → L) :
+    (queriesOf O env (powProg m)).length = m :=
+  length_queriesOf_powProgAux O m env 0 1
+
+/-- Environment extension respects relabeling: if `env2 = phi ∘ env1` and the new
+answers agree up to `phi`, so do the extended environments. -/
+theorem snocEnv_congr_phi {L L' : Type} (phi : L ≃ L') {n : Nat}
+    (env1 : Fin n → L) (env2 : Fin n → L') (henv : ∀ i, env2 i = phi (env1 i))
+    (x1 : L) (x2 : L') (hx : x2 = phi x1) (t : Fin (n + 1)) :
+    snocEnv env2 x2 t = phi (snocEnv env1 x1 t) := by
+  by_cases h : (t : Nat) < n
+  · rw [snocEnv_pos _ _ _ h, snocEnv_pos _ _ _ h, henv]
+  · rw [snocEnv_neg _ _ _ h, snocEnv_neg _ _ _ h, hx]
+
+/-- Naturality (relabeling invariance): evaluation commutes with any label renaming `phi`
+that the oracles respect. If the environments agree up to `phi`, so do the results. -/
+theorem eval_natural {L L' : Type} [DecidableEq L] [DecidableEq L']
+    (O1 : Query L → L) (O2 : Query L' → L') (phi : L ≃ L')
+    (hmul : ∀ a b, O2 (.inl (phi a, phi b)) = phi (O1 (.inl (a, b))))
+    (hinv : ∀ a, O2 (.inr (phi a)) = phi (O1 (.inr a)))
+    {n : Nat} (p : GProg n) (env1 : Fin n → L) (env2 : Fin n → L')
+    (henv : ∀ i, env2 i = phi (env1 i)) :
+    eval O2 env2 p = phi (eval O1 env1 p) := by
+  induction p with
+  | ret i =>
+    simp only [eval_ret]
+    exact henv i
+  | mul i j k ih =>
+    simp only [eval_mul]
+    refine ih _ _ ?_
+    intro t
+    refine snocEnv_congr_phi _ _ _ henv _ _ ?_ t
+    rw [henv i, henv j, hmul]
+  | inv i k ih =>
+    simp only [eval_inv]
+    refine ih _ _ ?_
+    intro t
+    refine snocEnv_congr_phi _ _ _ henv _ _ ?_ t
+    rw [henv i, hinv]
+  | eqTest i j kt kf iht ihf =>
+    simp only [eval_eqTest]
+    by_cases h : env1 i = env1 j
+    · have h2 : env2 i = env2 j := by rw [henv i, henv j, h]
+      have e1 : (if env2 i = env2 j then eval O2 env2 kt else eval O2 env2 kf)
+          = eval O2 env2 kt := by simp [h2]
+      have e2 : (if env1 i = env1 j then eval O1 env1 kt else eval O1 env1 kf)
+          = eval O1 env1 kt := by simp [h]
+      rw [e1, e2]
+      exact iht env1 env2 henv
+    · have h2 : env2 i ≠ env2 j := by
+        intro hc
+        apply h
+        apply phi.injective
+        rw [← henv i, ← henv j]
+        exact hc
+      have e1 : (if env2 i = env2 j then eval O2 env2 kt else eval O2 env2 kf)
+          = eval O2 env2 kf := by simp [h2]
+      have e2 : (if env1 i = env1 j then eval O1 env1 kt else eval O1 env1 kf)
+          = eval O1 env1 kf := by simp [h]
+      rw [e1, e2]
+      exact ihf env1 env2 henv
 
 end Cslib.Crypto.Framework.GenericGroup
