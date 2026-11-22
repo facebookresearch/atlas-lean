@@ -7,36 +7,38 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# Riesz's rising sun lemma
+Portions of this file are adapted from:
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+`LeanEval/Analysis/RisingSun.lean` (leanprover/lean-eval, https://github.com/leanprover/lean-eval),
+problem `rising_sun_lemma`, at commit 38361be884302c7edce1908c4aef8296eb2cb27e (manifest
+`manifests/problems/rising_sun_lemma.toml`, rev 1, submitter Kim Morrison, status archived):
+the definitions `risingSunSet`, `HasRisingSunDecomposition` and `HasRisingSunProperty` and the
+statement of `rising_sun_lemma`, with the docstrings and comments they had in the former wanted
+module `WantedExt/Analysis/RisingSunWanted.lean`.
+Copyright 2026 Lean FRO, LLC.
+Authors: Kim Morrison
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use these portions
+except in compliance with the License. You may obtain a copy of the License at
 
     https://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unless required by applicable law or agreed to in writing, software distributed under the License
+is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+or implied. See the License for the specific language governing permissions and limitations under
+the License. lean-eval ships no `NOTICE` file.
 
-Attribution and modification notice (Apache License 2.0, Section 4):
-taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.RisingSun` — rising_sun_lemma
-(manifest `manifests/problems/rising_sun_lemma.toml`, rev 1, submitter Kim Morrison, status
-archived) —
-distributed under the Apache License, Version 2.0. lean-eval ships no
-`NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
-into a Batteries `theorem_wanted` (data/instance holes into
-`def_wanted`), replaced `EvalTools.Markers` with
-`Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Analysis.RisingSunWanted` namespace. Mathematical
-statements are unchanged. Later change (ATLAS, 2026): the `theorem_wanted` was proved and the
-module moved from `WantedExt/Analysis/RisingSunWanted.lean` to this MathlibExt module, keeping the
-declaration names, statements and docstrings; the imports of `Batteries.Util.ProofWanted` and of
-all of Mathlib were replaced by a narrower Mathlib import, the module documentation was rewritten
-and the proof was added. Source: F. Riesz (1932). Knill, §163.
+Modification notice (Apache License 2.0, Section 4). Changes made: converted each
+`@[eval_problem]` theorem into a Batteries `theorem_wanted` (data/instance holes into
+`def_wanted`), replaced `EvalTools.Markers` with `Batteries.Util.ProofWanted`, inlined any
+`LeanEval` helper modules, and placed the declarations in the `MathlibExt.Analysis.RisingSunWanted`
+namespace. Mathematical statements are unchanged. Later change (ATLAS, 2026): the
+`theorem_wanted` was proved and the declarations moved from
+`WantedExt/Analysis/RisingSunWanted.lean` to this `MathlibExt` module with unchanged names,
+statements and docstrings, and the imports of `Batteries.Util.ProofWanted` and of all of Mathlib
+were replaced by a narrower Mathlib import.
+
+The rest of this file is new ATLAS work, not adapted from lean-eval: the proof of
+`rising_sun_lemma`, the private lemmas it uses, the module documentation and the linter options.
 -/
 module
 
@@ -52,10 +54,7 @@ point.
 
 `rising_sun_lemma` (F. Riesz, 1932): if `f` is continuous on `[a, b]`, this set is open, it is
 empty exactly when `f` is antitone on `[a, b]`, and otherwise it is the union of a sequence of
-pairwise disjoint open intervals `(c n, d n)` with `f (c n) ≤ f (d n)` for every `n`. The
-definitions `risingSunSet`, `HasRisingSunDecomposition` and `HasRisingSunProperty` and the
-statement keep their names from the former wanted module, so the namespace still reads
-`RisingSunWanted`.
+pairwise disjoint open intervals `(c n, d n)` with `f (c n) ≤ f (d n)` for every `n`.
 
 ## Proof outline
 
@@ -71,8 +70,16 @@ statement keep their names from the former wanted module, so the namespace still
   `(c, d)`, where every point is lower than a later one, so `s ≥ d` and `f x ≤ f s ≤ f d`.
   Letting `x` tend to `c` gives `f c ≤ f d`.
 
-The hypothesis `a < b` of `rising_sun_lemma` is not used: when `b ≤ a`, the rising sun set is
-empty and `[a, b]` has at most one point, so the property holds trivially.
+## Implementation notes
+
+The definitions `risingSunSet`, `HasRisingSunDecomposition` and `HasRisingSunProperty` and the
+statement keep the full names they had in the former wanted module, so the namespace still reads
+`RisingSunWanted` and repeats `Analysis`; the `dupNamespace` linter is turned off for these four
+declarations only.
+
+The hypothesis `a < b` of `rising_sun_lemma` is part of that statement but is not used: when
+`b ≤ a`, the rising sun set is empty and `[a, b]` has at most one point, so the property holds
+trivially. The `unusedVariables` linter is turned off for this theorem only.
 
 ## References
 
@@ -88,10 +95,12 @@ namespace Analysis.RisingSun
 
 open Set
 
+set_option linter.dupNamespace false in
 /-- Points of `(a,b)` lower than some later point. -/
 def risingSunSet (a b : ℝ) (f : ℝ → ℝ) : Set ℝ :=
   {x | x ∈ Ioo a b ∧ ∃ t ∈ Icc x b, x < t ∧ f x < f t}
 
+set_option linter.dupNamespace false in
 /-- A countable disjoint open-interval decomposition with the endpoint
 inequality `f(c_n) ≤ f(d_n)`. -/
 def HasRisingSunDecomposition (E : Set ℝ) (f : ℝ → ℝ) : Prop :=
@@ -100,6 +109,7 @@ def HasRisingSunDecomposition (E : Set ℝ) (f : ℝ → ℝ) : Prop :=
     (Set.PairwiseDisjoint (Set.univ : Set ℕ) fun n => Ioo (c n) (d n)) ∧
     ∀ n : ℕ, f (c n) ≤ f (d n)
 
+set_option linter.dupNamespace false in
 /-- The rising-sun property on `[a,b]`. -/
 def HasRisingSunProperty (a b : ℝ) (f : ℝ → ℝ) : Prop :=
   IsOpen (risingSunSet a b f) ∧
@@ -249,6 +259,8 @@ private lemma le_of_Ioo_subset_risingSunSet {a b c d : ℝ} {f : ℝ → ℝ}
 
 /- **Riesz's rising sun lemma.** Every continuous real function on a compact
 interval has the rising-sun property. -/
+set_option linter.dupNamespace false in
+set_option linter.unusedVariables false in
 /-- Source: F. Riesz (1932). Knill, §163. Via leanprover/lean-eval@38361be, problem
 `rising_sun_lemma`. -/
 theorem rising_sun_lemma {a b : ℝ} (hab : a < b) {f : ℝ → ℝ}
