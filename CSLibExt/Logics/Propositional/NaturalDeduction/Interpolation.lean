@@ -62,14 +62,18 @@ variable {Atom : Type u} [DecidableEq Atom]
 
 namespace Proposition
 
-/-- The atoms occurring in a proposition. -/
+/-- **Atoms of a proposition.** The atoms of a proposition $A$ form the finite set of atoms
+occurring in $A$: an atom $x$ has the single atom $x$, and the atoms of $B \wedge C$,
+$B \vee C$ and $B \to C$ are the atoms of $B$ together with the atoms of $C$. -/
 def atoms : Proposition Atom → Finset Atom
   | atom x => {x}
   | and A B => A.atoms ∪ B.atoms
   | or A B => A.atoms ∪ B.atoms
   | imp A B => A.atoms ∪ B.atoms
 
-/-- The truth value of `A` depends only on the valuation of its atoms. -/
+/-- **The truth value depends only on the atoms.** If two Boolean valuations $v$ and $w$ agree on
+every atom of a proposition $A$, then $A$ has the same truth-table value under $v$ as under
+$w$. -/
 theorem evalBool_congr {A : Proposition Atom} {v w : Atom → Bool}
     (h : ∀ x ∈ A.atoms, v x = w x) : A.evalBool v = A.evalBool w := by
   induction A with
@@ -80,8 +84,10 @@ theorem evalBool_congr {A : Proposition Atom} {v w : Atom → Bool}
 
 variable [Bot Atom]
 
-/-- Substitute the constant `⊤` (written `⊥ → ⊥`) if `b`, or `⊥` otherwise, for the atom
-`p`. -/
+/-- **Substituting a truth value for an atom.** For an atom $p$, a Boolean $b$ and a proposition
+$A$, the proposition $A[p := b]$ is obtained from $A$ by replacing every occurrence of the atom
+$p$ by the constant $\top$, written $\bot \to \bot$, if $b$ is true, and by $\bot$ if $b$ is
+false. -/
 def fixAtom (p : Atom) (b : Bool) : Proposition Atom → Proposition Atom
   | atom x => if x = p then (if b then (⊥ → ⊥ : Proposition Atom) else ⊥) else atom x
   | and A B => and (fixAtom p b A) (fixAtom p b B)
@@ -125,7 +131,10 @@ theorem atoms_fixAtom_subset (p : Atom) (b : Bool) (A : Proposition Atom) :
       simp only [Finset.mem_insert, Finset.mem_erase, Finset.mem_union] at this ⊢
       tauto
 
-/-- Boolean quantification over the atom `p`: `∃p. A` is `A[p := ⊤] ∨ A[p := ⊥]`. -/
+/-- **Boolean quantification over an atom.** For an atom $p$ and a proposition $A$, the Boolean
+quantification $\exists p.\, A$ is the disjunction $A[p := \top] \vee A[p := \bot]$, where
+$A[p := \top]$ and $A[p := \bot]$ replace the atom $p$ in $A$ by the constant
+$\top = (\bot \to \bot)$ and by $\bot$ respectively. -/
 def elimAtom (p : Atom) (A : Proposition Atom) : Proposition Atom :=
   or (A.fixAtom p true) (A.fixAtom p false)
 
@@ -142,12 +151,19 @@ theorem evalBool_elimAtom (p : Atom) (A : Proposition Atom) {v : Atom → Bool}
     · exact Or.inr h
     · exact Or.inl h
 
-/-- Eliminate a list of atoms one after another. -/
+/-- **Boolean quantification over a list of atoms.** For a list of atoms $p_1, \dots, p_n$ and a
+proposition $A$, the iterated Boolean quantification $\exists p_1 \cdots p_n.\, A$ is
+$\exists p_1.\, \exists p_2.\, \cdots \exists p_n.\, A$: $A$ is quantified over $p_n$ first and over
+$p_1$ last, and for the empty list the result is $A$ itself. -/
 def elimAtoms : List Atom → Proposition Atom → Proposition Atom
   | [], A => A
   | p :: ps, A => (elimAtoms ps A).elimAtom p
 
-/-- `elimAtoms ps A` holds iff `A` holds after changing the valuation on `ps` only. -/
+/-- **Truth of a Boolean quantification over a list of atoms.** Let $p_1, \dots, p_n$ be a list
+of atoms that does not contain $\bot$, let $A$ be a proposition and let $v$ be a Boolean
+valuation with $v(\bot)$ false. Then the iterated Boolean quantification
+$\exists p_1 \cdots p_n.\, A$ is true under $v$ if and only if $A$ is true under some valuation
+$w$ that agrees with $v$ on every atom not in the list. -/
 theorem evalBool_elimAtoms {ps : List Atom} (hps : ⊥ ∉ ps) (A : Proposition Atom)
     {v : Atom → Bool} (hv : v ⊥ = false) :
     (elimAtoms ps A).evalBool v = true ↔
@@ -201,9 +217,11 @@ end Proposition
 
 variable [Bot Atom]
 
-/-- **Craig interpolation** (semantic form): if every valuation with `⊥` false that makes
-`A` true makes `B` true, there is `I` whose atoms are common to `A` and `B` (or `⊥`) with
-`A ⊨ I` and `I ⊨ B`. -/
+/-- **Craig interpolation, semantic form.** Let $A$ and $B$ be propositions such that every
+Boolean valuation $v$ with $v(\bot)$ false that makes $A$ true also makes $B$ true. Then there is
+a proposition $I$ whose atoms all lie among the atoms common to $A$ and $B$ together with $\bot$,
+such that every valuation $v$ with $v(\bot)$ false that makes $A$ true makes $I$ true, and every
+valuation $v$ with $v(\bot)$ false that makes $I$ true makes $B$ true. -/
 theorem exists_interpolant {A B : Proposition Atom}
     (h : ∀ v : Atom → Bool, v ⊥ = false → A.evalBool v = true → B.evalBool v = true) :
     ∃ I : Proposition Atom, I.atoms ⊆ insert ⊥ (A.atoms ∩ B.atoms) ∧
@@ -224,9 +242,11 @@ theorem exists_interpolant {A B : Proposition Atom}
     rw [← h w hwbot hA]
     exact evalBool_congr fun x hx ↦ (hw x fun hxp ↦ ((hmem x).mp hxp).2.1 hx).symm
 
-/-- **Craig interpolation** for classical natural deduction: if `CPL` derives `A → B`, there
-is `I` over the atoms common to `A` and `B` (and `⊥`) with `CPL` deriving `A → I` and
-`I → B`. -/
+/-- **Craig interpolation for classical natural deduction.** Let $A$ and $B$ be propositions such
+that $A \to B$ is derivable without assumptions in classical propositional logic $\mathrm{CPL}$
+(natural deduction with the axioms $\neg\neg C \to C$). Then there is a proposition $I$ whose
+atoms all lie among the atoms common to $A$ and $B$ together with $\bot$, such that $A \to I$
+and $I \to B$ are both derivable without assumptions in $\mathrm{CPL}$. -/
 theorem exists_interpolant_cpl {A B : Proposition Atom}
     (h : DerivableIn (CPL Atom) (A → B : Proposition Atom)) :
     ∃ I : Proposition Atom, I.atoms ⊆ insert ⊥ (A.atoms ∩ B.atoms) ∧
