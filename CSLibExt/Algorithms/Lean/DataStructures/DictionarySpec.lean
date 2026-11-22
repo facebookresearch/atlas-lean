@@ -23,11 +23,11 @@ The approximate-membership record is relational: it has no abstraction
 function to an exact set and no converse membership law, so a positive
 answer never has to mean the element was inserted. False-positive rates
 are not part of these records. The existing provider results are recorded
-here with their direction: `BloomFilterFalsePositive.falsePositiveProb_eq`
-gives the exact rate under uniform independent hashing, and
-`BloomFilterFalsePositive.classical_le_falsePositiveProb` gives Bloom's
-classical formula as a lower bound. Neither is an upper bound; an explicit
-parameterized upper bound remains a separate obligation.
+here with their direction: the BloomFilterFalsePositive module in namespace
+Cslib.Algorithms.Lean.BloomFilter proves the exact rate under uniform
+independent hashing in falsePositiveProb_eq, and Bloom's classical formula
+as a lower bound in classical_le_falsePositiveProb. Neither is an upper
+bound; an explicit parameterized upper bound remains a separate obligation.
 -/
 
 set_option autoImplicit false
@@ -139,23 +139,58 @@ public def bstSpec (α : Type u) [LinearOrder α] :
     intro x s _hs
     simp only [List.mem_toFinset, BinarySearchTree.mem_inorder]
 
+/-- Folding insertions over a list preserves a positive answer. -/
+private theorem foldl_preserves_mayContain {α : Type u} {m : Nat} (x : α)
+    (l : List α) (b : BloomFilter α m)
+    (present : b.mayContain x = true) :
+    (l.foldl BloomFilter.insert b).mayContain x = true := by
+  induction l generalizing b with
+  | nil => exact present
+  | cons y l ih =>
+    rw [List.foldl_cons]
+    exact ih _ (BloomFilter.mayContain_insert_mono b x y present)
+
+/-- An element of the folded list is reported present after the fold. -/
+private theorem foldl_mayContain_of_mem {α : Type u} {m : Nat} (x : α)
+    (l : List α) (b : BloomFilter α m) (hmem : x ∈ l) :
+    (l.foldl BloomFilter.insert b).mayContain x = true := by
+  induction l generalizing b with
+  | nil => exact absurd hmem List.not_mem_nil
+  | cons y l ih =>
+    rw [List.foldl_cons]
+    rcases List.mem_cons.mp hmem with rfl | hmem
+    · exact foldl_preserves_mayContain x l _
+        (BloomFilter.mayContain_insert_self b x)
+    · exact ih _ hmem
+
 /-- Bloom filters with a fixed list of hash functions instantiate
-approximate membership: a filter represents a finite set when every
-element of the set is reported present. -/
+approximate membership: a filter represents the finite set built by its
+insertion history from the empty filter. -/
 public def bloomSpec {α : Type u} [DecidableEq α] {m : Nat} (hashes : List (α → Fin m)) :
     ApproxMembershipSpec α (BloomFilter α m) where
   empty := BloomFilter.empty hashes
   insert := fun x filter => filter.insert x
   mayContain := fun x filter => filter.mayContain x = true
-  Represents := fun filter s => ∀ x ∈ s, filter.mayContain x = true
-  represents_empty := by intro x hx; exact absurd hx (Finset.notMem_empty x)
+  Represents := fun filter s =>
+    ∃ l : List α, l.toFinset = s ∧
+      l.foldl BloomFilter.insert (BloomFilter.empty hashes) = filter
+  represents_empty := by exact ⟨[], rfl, rfl⟩
   represents_insert := by
-    intro x f s hf y hy
-    rw [Finset.mem_insert] at hy
-    rcases hy with rfl | hy
-    · exact BloomFilter.mayContain_insert_self _ _
-    · exact BloomFilter.mayContain_insert_mono _ _ _ (hf y hy)
-  no_false_negative := by intro x f s hf hx; exact hf x hx
+    intro x f s hf
+    obtain ⟨l, hl, hfold⟩ := hf
+    refine ⟨l ++ [x], ?_, ?_⟩
+    · ext y
+      simp only [List.mem_toFinset, List.mem_append, List.mem_cons,
+        List.not_mem_nil, or_false, Finset.mem_insert]
+      rw [← List.mem_toFinset, hl]
+      exact or_comm
+    · rw [List.foldl_append, hfold, List.foldl_cons, List.foldl_nil]
+  no_false_negative := by
+    intro x f s hf hx
+    obtain ⟨l, hl, hfold⟩ := hf
+    have hmem : x ∈ l := List.mem_toFinset.mp (hl ▸ hx)
+    subst hfold
+    exact foldl_mayContain_of_mem x l _ hmem
 
 end DictionarySpec
 end Cslib.Algorithms.Lean

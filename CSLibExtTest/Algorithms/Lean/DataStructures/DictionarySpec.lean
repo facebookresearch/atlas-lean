@@ -68,6 +68,41 @@ example :
       ∧ (2 : Nat) ∉ ({1} : Finset Nat) := by
   exact ⟨rfl, by decide⟩
 
+example :
+    (bloomSpec ([fun _ : Nat => (0 : Fin 1)])).Represents
+      ((bloomSpec ([fun _ : Nat => (0 : Fin 1)])).insert 1
+        (bloomSpec ([fun _ : Nat => (0 : Fin 1)])).empty) {1} := by
+  exact (bloomSpec ([fun _ : Nat => (0 : Fin 1)])).represents_insert 1
+    (bloomSpec ([fun _ : Nat => (0 : Fin 1)])).represents_empty
+
+/-- Regression: the same state reports `2` present, yet it represents only
+the inserted history, so it does not represent the empty set. -/
+example :
+    ¬ (bloomSpec ([fun _ : Nat => (0 : Fin 1)])).Represents
+      ((bloomSpec ([fun _ : Nat => (0 : Fin 1)])).insert 1
+        (bloomSpec ([fun _ : Nat => (0 : Fin 1)])).empty) ∅ := by
+  rintro ⟨l, hl, hfold⟩
+  have hnil : l = [] := by
+    cases l with
+    | nil => rfl
+    | cons a l' =>
+      have hmem : a ∈ (a :: l').toFinset :=
+        List.mem_toFinset.mpr (List.mem_cons.mpr (Or.inl rfl))
+      rw [hl] at hmem
+      exact absurd hmem (Finset.notMem_empty a)
+  subst hnil
+  rw [List.foldl_nil] at hfold
+  have hfold' : BloomFilter.empty [fun _ : Nat => (0 : Fin 1)]
+      = (BloomFilter.empty [fun _ : Nat => (0 : Fin 1)]).insert 1 := hfold
+  have hfalse : (BloomFilter.empty [fun _ : Nat => (0 : Fin 1)]).mayContain 1
+      = false :=
+    BloomFilter.mayContain_empty (by simp) 1
+  rw [hfold'] at hfalse
+  have htrue := BloomFilter.mayContain_insert_self
+    (BloomFilter.empty [fun _ : Nat => (0 : Fin 1)]) 1
+  rw [hfalse] at htrue
+  exact absurd htrue (by decide)
+
 end Cslib.Algorithms.Lean.DictionarySpecTest
 
 end
