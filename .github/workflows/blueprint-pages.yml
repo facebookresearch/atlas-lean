@@ -208,6 +208,13 @@ jobs:
       - name: Build the current v2 libraries
         run: lake build MathlibExt CSLibExt PhyslibExt Domains WantedExt
 
+      # The pages that credit a Mathlib declaration name it in their annotation;
+      # the dump below records their uses, so the build can add their edges.
+      - name: List the Mathlib declarations the wiki credits
+        run: >-
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          python scripts/sync_wiki.py mathlib-names build/mathlib-names.txt
+
       # No failed modules or import collisions are silently dropped. Restoring
       # a cache does not waive a successful Lake build of this exact checkout.
       - name: Dump declaration dependencies
@@ -215,7 +222,7 @@ jobs:
           set -euo pipefail
           scripts/list_v2_modules.sh v2-modules.txt
           lake env lean --run scripts/dump_v2_dependencies.lean v2-modules.txt \
-            > v2-dependencies.jsonl
+            build/mathlib-names.txt > v2-dependencies.jsonl
           test -s v2-dependencies.jsonl
           gzip -9 v2-dependencies.jsonl
 
@@ -224,11 +231,13 @@ jobs:
           uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
           python scripts/extract_v2_lean_dependencies.py
           v2-dependencies.jsonl.gz build/lean-dependencies.json
+          --registry build/mathlib-registry.json --names build/mathlib-names.txt
 
       - name: Add the Lean-owned facts to the articles
         run: >-
           uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
           python scripts/sync_wiki.py lean-facts build/lean-dependencies.json
+          --registry build/mathlib-registry.json
 
       - name: Validate the theorem DAG and its declarations
         run: >-
@@ -236,9 +245,9 @@ jobs:
           autoform check blueprint --lean-root .
 
       # The card data the site shows (docs/cards.md#reading): this checkout's
-      # own rollup, from the extraction above, as the `check the cards` job
-      # makes it (that job alone also checks the moves against the base
-      # commit). It fails closed: an error leaves no card data,
+      # own rollup, from the extraction and the Mathlib registry above, as the
+      # `check the cards` job makes it (that job alone also checks the moves
+      # against the base commit). It fails closed: an error leaves no card data,
       # the site then renders exactly as without cards, and that job reports
       # the error. This step can neither fail this job nor hold it past its
       # timeout.
@@ -255,6 +264,7 @@ jobs:
           --with markdown==3.10.3
           python scripts/cards.py rollup build/cards.json
           --dependencies build/lean-dependencies.json
+          --registry build/mathlib-registry.json
 
       - name: Render the blueprint
         run: >-
@@ -359,6 +369,8 @@ jobs:
           name: blueprint-dependencies
           path: |
             build/lean-dependencies.json
+            build/mathlib-names.txt
+            build/mathlib-registry.json
             v2-dependencies.jsonl.gz
             v2-modules.txt
           if-no-files-found: warn
@@ -715,6 +727,7 @@ jobs:
         run: >-
           uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
           python scripts/sync_wiki.py lean-facts build/lean-dependencies.json
+          --registry build/mathlib-registry.json
 
       - name: Check the cards and derive their edges
         run: |
@@ -731,7 +744,8 @@ jobs:
             --with pymdown-extensions==11.0.1 \
             --with markdown==3.10.3 \
             python scripts/cards.py rollup build/cards.json \
-            --dependencies build/lean-dependencies.json "${base[@]}"
+            --dependencies build/lean-dependencies.json "${base[@]}" \
+            --registry build/mathlib-registry.json
 
       - name: Keep the card data
         if: always()
