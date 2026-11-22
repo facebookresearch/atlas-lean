@@ -31,22 +31,44 @@ namespace Polynomial
 
 /-- The **shifted Jacobi polynomial** `R_n^{(a,b)}` on `[0, 1]`, orthogonal for the weight
 `x^(a-1) (1-x)^(b-1)` when `a, b > 0`:
-`R_n^{(a,b)}(x) = ∑_{k=0}^n (-1)^k C(n,k) (n+a+b-1)_k / (a)_k · x^k = ₂F₁(-n, n+a+b-1; a; x)`,
-with rising factorials `(c)_k = (ascPochhammer ℝ k).eval c`. It is normalized by
-`R_n(0) = 1`; in terms of the classical Jacobi polynomial,
-`R_n^{(a,b)}(x) = n! / (a)_n · P_n^{(a-1,b-1)}(1 - 2x)`. -/
+`R_n^{(a,b)}(x) = ∑_{k=0}^n (-1)^k C(n,k) (n+a+b-1)_k / (a)_k · x^k`, with rising
+factorials `(c)_k = (ascPochhammer ℝ k).eval c`. It is normalized by `R_n(0) = 1`.
+When `(a)_k ≠ 0` for all `k ≤ n` (in particular when `0 < a`), this is the
+hypergeometric polynomial `₂F₁(-n, n+a+b-1; a; x)`, and in terms of the classical
+Jacobi polynomial `R_n^{(a,b)}(x) = n! / (a)_n · P_n^{(a-1,b-1)}(1 - 2x)`. At
+singular `a` those classical identities are undefined; the formula is then read with
+Lean's totalized division, so terms with `(a)_k = 0` contribute `0` (for example
+`shiftedJacobi 0 b 1 = 1`). -/
 noncomputable def shiftedJacobi (a b : ℝ) (n : ℕ) : ℝ[X] :=
   ∑ k ∈ Finset.range (n + 1),
     C ((-1) ^ k * (n.choose k : ℝ) * (ascPochhammer ℝ k).eval ((n : ℝ) + a + b - 1) /
       (ascPochhammer ℝ k).eval a) * X ^ k
 
+/-- Consecutive Gegenbauer polynomials `(C_n^{(ν)}, C_{n+1}^{(ν)})`, computed in one pass:
+each step applies the three-term recurrence once, so reducing a concrete
+`gegenbauer ν n` takes linearly many polynomial operations, not exponentially many. -/
+noncomputable def gegenbauerPair (ν : ℝ) : ℕ → ℝ[X] × ℝ[X]
+  | 0 => (1, C (2 * ν) * X)
+  | n + 1 =>
+      let p := gegenbauerPair ν n
+      (p.2, C ((n + 2 : ℝ)⁻¹) * (C (2 * (n + 1 + ν)) * X * p.2 - C (n + 2 * ν) * p.1))
+
 /-- The **Gegenbauer (ultraspherical) polynomials** `C_n^{(ν)}`, by the three-term recurrence
-`C_0 = 1`, `C_1 = 2νX`, `(n + 2) C_{n+2} = 2 (n + 1 + ν) X C_{n+1} - (n + 2ν) C_n`. -/
-noncomputable def gegenbauer (ν : ℝ) : ℕ → ℝ[X]
-  | 0 => 1
-  | 1 => C (2 * ν) * X
-  | n + 2 => C ((n + 2 : ℝ)⁻¹) *
-      (C (2 * (n + 1 + ν)) * X * gegenbauer ν (n + 1) - C (n + 2 * ν) * gegenbauer ν n)
+`C_0 = 1`, `C_1 = 2νX`, `(n + 2) C_{n+2} = 2 (n + 1 + ν) X C_{n+1} - (n + 2ν) C_n`
+(see `gegenbauer_two_add`), computed through `gegenbauerPair`. -/
+noncomputable def gegenbauer (ν : ℝ) (n : ℕ) : ℝ[X] := (gegenbauerPair ν n).1
+
+@[simp]
+theorem gegenbauer_zero (ν : ℝ) : gegenbauer ν 0 = 1 := rfl
+
+@[simp]
+theorem gegenbauer_one (ν : ℝ) : gegenbauer ν 1 = C (2 * ν) * X := rfl
+
+/-- The three-term recurrence for `gegenbauer`, as an equation theorem. -/
+theorem gegenbauer_two_add (ν : ℝ) (n : ℕ) :
+    gegenbauer ν (n + 2) = C ((n + 2 : ℝ)⁻¹) *
+      (C (2 * (n + 1 + ν)) * X * gegenbauer ν (n + 1) - C (n + 2 * ν) * gegenbauer ν n) :=
+  rfl
 
 private lemma coeff_shiftedJacobi (a b : ℝ) (n j : ℕ) :
     (shiftedJacobi a b n).coeff j =
@@ -591,14 +613,14 @@ theorem gegenbauer_three_halves_comp (n : ℕ) :
     (gegenbauer (3 / 2) n).comp (1 - C 2 * X) =
       C (((n + 2).choose 2 : ℕ) : ℝ) * shiftedJacobi 2 2 n := by
   induction n using Nat.twoStepInduction with
-  | zero => simp [gegenbauer, shiftedJacobi_zero]
+  | zero => simp [shiftedJacobi_zero]
   | one =>
     rw [shiftedJacobi_one]
-    simp only [gegenbauer, mul_comp, C_comp, X_comp]
+    simp only [gegenbauer_one, mul_comp, C_comp, X_comp]
     rw [show Nat.choose (1 + 2) 2 = 3 from rfl]
     norm_num
   | more m ih1 ih2 =>
-    simp only [gegenbauer, mul_comp, sub_comp, C_comp, X_comp, ih1, ih2]
+    simp only [gegenbauer_two_add, mul_comp, sub_comp, C_comp, X_comp, ih1, ih2]
     have hm : (m : ℝ) + 2 ≠ 0 := by positivity
     refine comp_step (k := ((m : ℝ) + 3) / 2) (shiftedJacobi_two_two_rec m) ?_ ?_ ?_
     · rw [Nat.cast_choose_two]; push_cast; field_simp; ring

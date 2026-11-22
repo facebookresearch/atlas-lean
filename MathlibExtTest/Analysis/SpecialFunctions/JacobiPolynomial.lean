@@ -89,9 +89,15 @@ example (a b : ℝ) (n : ℕ) : (shiftedJacobi a b n).eval 0 = 1 := by
 `C_2^{(ν)}(x) = 2ν(ν + 1)x² - ν`. -/
 example (ν x : ℝ) : (gegenbauer ν 0).eval x = 1 ∧ (gegenbauer ν 1).eval x = 2 * ν * x ∧
     (gegenbauer ν 2).eval x = 2 * ν * (ν + 1) * x ^ 2 - ν := by
-  refine ⟨by simp [gegenbauer], by simp [gegenbauer], ?_⟩
-  simp [gegenbauer]
+  refine ⟨by simp, by simp [gegenbauer_one], ?_⟩
+  rw [show (2 : ℕ) = 0 + 2 from rfl, gegenbauer_two_add]
+  simp
   ring
+
+/-- At the singular parameter `a = 0` the totalized formula gives `R_1 = 1` (the
+`k = 1` term has denominator `(0)_1 = 0`). -/
+example (b : ℝ) : shiftedJacobi 0 b 1 = 1 := by
+  simp [shiftedJacobi, Finset.sum_range_succ]
 
 /-- `R_2^{(1,1)} = 1 - 6x + 6x²`, the shifted Legendre polynomial `P_2(1 - 2x)`. -/
 example : shiftedJacobi 1 1 2 = 1 - 6 * X + 6 * X ^ 2 := by
