@@ -23,8 +23,8 @@ sets from `LatentProjection`, and proves the factorization together with the pre
 Q-factor from the observed law along a topological order (in division-free
 form for every `v`, and as a product of conditional ratios when `P(v) > 0`).
 The factorization and prefix identities need no semi-Markovian hypothesis;
-they subsume the source's semi-Markovian statements (whose hypothesis is
-`BayesNet.NoObservedAncestorOfLatent`).
+they subsume TP02's statements under its p. 568 hypothesis, recorded here
+as `BayesNet.NoObservedAncestorOfLatent`.
 
 ## References
 
@@ -76,11 +76,14 @@ open Finset MetaMathlibExt.FiniteWeight
 variable {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α] {n : ℕ}
   (b : BayesNet α n) (L : Finset (Fin n))
 
-/-- No latent node is a descendant of an observed node. TP02 (AAAI-02,
-p. 568) calls this ancestral condition "semi-Markovian"; TR (R-290-L, p. 6)
-uses the same word for the stronger requirement that each unobserved
-variable be a root node with exactly two observed children. The descriptive
-name here avoids conflating the two source conventions. -/
+/-- No latent node is a descendant of an observed node. This is TP02's
+hypothesis verbatim (AAAI-02, p. 568, right column): "Assuming that no U
+variable is a descendant of any V variable (called a semi-Markovian
+model)". The companion technical report TR (R-290-L, p. 6) uses
+"semi-Markovian" for a different, stronger normal form: "each unobserved
+variable is a root node with exactly two observed children". The
+descriptive name here keeps the two source conventions apart; no theorem
+below takes this predicate as a hypothesis. -/
 def NoObservedAncestorOfLatent : Prop := ∀ u ∈ L, ∀ w ∉ L, ¬ b.IsDescendant w u
 
 /-- The Q-factor as a truncated product (TP02 (26), TR (55)), summed over the latent
