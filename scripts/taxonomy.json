@@ -11469,6 +11469,7 @@
   "MathlibExt/NumberTheory/TelescopicSequence": {"to": "NumberTheory/numerical-semigroups", "title": "Telescopic numerical semigroups"},
   "MathlibExt/NumberTheory/TetranacciSequence": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Tetranacci and pentanacci numbers"},
   "MathlibExt/NumberTheory/ThabitIbnQurra": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Amicable numbers"},
+  "MathlibExt/NumberTheory/ThreePowAddThirtyfivePow": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares as sums or differences of powers"},
   "MathlibExt/NumberTheory/ThueLemma": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Thue's lemma"},
   "MathlibExt/NumberTheory/ThueSiegelRoth": {"to": "NumberTheory/diophantine-approximation/roth-linear-forms", "title": "Thue–Siegel–Roth theorem"},
   "MathlibExt/NumberTheory/TribonacciInt": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Tribonacci numbers"},
