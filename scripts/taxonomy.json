@@ -10946,6 +10946,7 @@
   "MathlibExt/NumberTheory/ArithmeticFunction/JordanTotient": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Jordan's totient function"},
   "MathlibExt/NumberTheory/ArithmeticFunction/LiouvilleDivisorIdentity": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Liouville's divisor-function identity"},
   "MathlibExt/NumberTheory/ArithmeticFunction/MorgadoRegularResidues": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Regular integers modulo n"},
+  "MathlibExt/NumberTheory/ArithmeticFunction/NonagonalAdditiveUniqueness": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/ArithmeticFunction/PrimeDistribution": {"to": "NumberTheory/distribution-of-primes/primes-in-progressions", "title": "Discrepancy of sequences in residue classes"},
   "MathlibExt/NumberTheory/ArithmeticFunction/PrimitiveNondeficientBound": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Primitive non-deficient numbers"},
   "MathlibExt/NumberTheory/ArithmeticFunction/RelativelyPrimeSubsetCounts": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Relatively prime subsets"},
