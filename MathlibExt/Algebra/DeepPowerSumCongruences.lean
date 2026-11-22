@@ -58,7 +58,7 @@ public theorem pow_mem_prime_pow_padicValNat_factorial_iff {p : ℕ} [Fact p.Pri
   · -- The case `n = p`, as `v_p(p!) = 1`.
     obtain ⟨c, hc, hac⟩ := h p hp.one_lt.le a ha
     have hv : padicValNat p p.factorial = 1 := by
-      simpa using padicValNat_factorial_mul (p := p) 1
+      simpa [Nat.padicValNat_def] using multiplicity_factorial_mul (p := p) 1
     exact ⟨c, hc, by rwa [hv, pow_one] at hac⟩
   · -- Strong induction on `n = p * q + r` with `r < p`, for all `a ∈ I` at once.
     induction n using Nat.strong_induction_on with
@@ -66,13 +66,14 @@ public theorem pow_mem_prime_pow_padicValNat_factorial_iff {p : ℕ} [Fact p.Pri
       intro a ha
       obtain ⟨q, r, hr, rfl⟩ : ∃ q r, r < p ∧ n = p * q + r :=
         ⟨n / p, n % p, Nat.mod_lt _ hp.pos, (Nat.div_add_mod n p).symm⟩
-      rw [padicValNat_factorial_mul_add q hr]
+      rw [Nat.padicValNat_def, multiplicity_factorial_mul_add q hr]
       rcases Nat.eq_zero_or_pos q with rfl | hq
       · exact ⟨a ^ r, I.pow_mem_of_mem ha r (by omega), by simp⟩
       · obtain ⟨c, hc, hac⟩ := h a ha
         obtain ⟨d, hd, hcd⟩ := ih q (by nlinarith [hp.two_le]) hq c hc
+        rw [Nat.padicValNat_def] at hcd
         refine ⟨d * a ^ r, I.mul_mem_right _ hd, ?_⟩
-        rw [padicValNat_factorial_mul, pow_add, pow_mul, hac, mul_pow, hcd]
+        rw [multiplicity_factorial_mul, pow_add, pow_mul, hac, mul_pow, hcd]
         ring
 
 end MetaMathlibExt

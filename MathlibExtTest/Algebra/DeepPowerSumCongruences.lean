@@ -44,7 +44,7 @@ example : (∀ n : ℕ, 1 ≤ n → ∀ a ∈ Ideal.span {((2 : ℕ) : ℤ)}, �
   refine ⟨(pow_mem_prime_pow_padicValNat_factorial_iff _).2 pow_prime_mem_span_prime, ?_⟩
   rintro ⟨c, hc, h⟩
   obtain ⟨x, rfl⟩ := Ideal.mem_span_singleton'.1 hc
-  simp at h
+  simp [Nat.padicValNat_def] at h
   omega
 
 -- Test section: the criterion fails. The unit ideal of `ℤ` does not have `1 ^ 3 ∈ 3 ℤ`, so by the
