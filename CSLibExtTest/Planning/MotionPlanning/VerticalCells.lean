@@ -419,7 +419,7 @@ example : (!₂[(1 / 2 : ℝ), 0] : plane) ∉ Fsq := by
 
 /-- The wall endpoints are outside `F`. -/
 example : (!₂[(1 : ℝ), 0] : plane) ∉ Fsq ∧ (!₂[(1 : ℝ), 2] : plane) ∉ Fsq :=
-  sqDecomp.wall_endpoints_not_mem isOpen_Fsq (0 : Fin 1)
+  sqDecomp.wall_endpoints_not_mem (0 : Fin 1)
 
 #print axioms TrapDecomp.lowerSide_disjoint
 #print axioms TrapDecomp.closure_carrier_inter_subset

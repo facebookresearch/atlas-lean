@@ -1099,7 +1099,7 @@ theorem TrapDecomp.closure_carrier_inter_subset {F : Set plane} (D : TrapDecomp 
 /-- A wall's lower endpoint is outside `F`.
 LaValle, Planning Algorithms, Sec. 6.2.2. -/
 theorem TrapDecomp.wall_lower_endpoint_not_mem {F : Set plane} (D : TrapDecomp F)
-    (_hF : IsOpen F) (j : Fin D.k) :
+    (j : Fin D.k) :
     (!₂[(D.wall j).x, (D.wall j).y₁] : plane) ∉ F := by
   intro heF
   obtain ⟨c, hc, -⟩ := D.existsUnique_cell _ heF
@@ -1199,7 +1199,7 @@ theorem TrapDecomp.wall_lower_endpoint_not_mem {F : Set plane} (D : TrapDecomp F
 /-- A wall's upper endpoint is outside `F`.
 LaValle, Planning Algorithms, Sec. 6.2.2. -/
 theorem TrapDecomp.wall_upper_endpoint_not_mem {F : Set plane} (D : TrapDecomp F)
-    (_hF : IsOpen F) (j : Fin D.k) :
+    (j : Fin D.k) :
     (!₂[(D.wall j).x, (D.wall j).y₂] : plane) ∉ F := by
   intro heF
   obtain ⟨c, hc, -⟩ := D.existsUnique_cell _ heF
@@ -1297,11 +1297,11 @@ theorem TrapDecomp.wall_upper_endpoint_not_mem {F : Set plane} (D : TrapDecomp F
       have hd := D.carrier_disjoint (Sum.inr j) (Sum.inr j') hne
       exact (Set.disjoint_left.mp hd hr_mem_j) hr_mem_j'
 
-theorem TrapDecomp.wall_endpoints_not_mem {F : Set plane} (D : TrapDecomp F) (hF : IsOpen F)
+theorem TrapDecomp.wall_endpoints_not_mem {F : Set plane} (D : TrapDecomp F)
     (j : Fin D.k) :
     (!₂[(D.wall j).x, (D.wall j).y₁] : plane) ∉ F ∧
     (!₂[(D.wall j).x, (D.wall j).y₂] : plane) ∉ F :=
-  ⟨D.wall_lower_endpoint_not_mem hF j, D.wall_upper_endpoint_not_mem hF j⟩
+  ⟨D.wall_lower_endpoint_not_mem j, D.wall_upper_endpoint_not_mem j⟩
 
 open scoped Topology
 
@@ -1811,13 +1811,13 @@ theorem TrapDecomp.wall_neighborhood {F : Set plane} (D : TrapDecomp F)
             rcases eq_or_lt_of_le hle' with heq | hlt'
             · have hp_eq : p = !₂[(D.wall j').x, (D.wall j').y₁] := by
                 rw [mkPoint_eq_self p, px, hxx, ← heq]
-              have hne := D.wall_lower_endpoint_not_mem hF j'
+              have hne := D.wall_lower_endpoint_not_mem j'
               rw [← hp_eq] at hne
               exact hne hpF
             · rcases eq_or_lt_of_le hle2 with heq2 | hlt2'
               · have hp_eq : p = !₂[(D.wall j').x, (D.wall j').y₂] := by
                   rw [mkPoint_eq_self p, px, hxx, heq2]
-                have hne := D.wall_upper_endpoint_not_mem hF j'
+                have hne := D.wall_upper_endpoint_not_mem j'
                 rw [← hp_eq] at hne
                 exact hne hpF
               · have hmem' : p ∈ (D.wall j').carrier := ⟨by rw [px, hxx], hlt', hlt2'⟩
