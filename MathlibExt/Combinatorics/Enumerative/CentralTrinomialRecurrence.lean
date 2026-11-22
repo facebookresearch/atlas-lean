@@ -172,15 +172,6 @@ private lemma coeff_transfer (n k : ℕ) :
   simp only [Polynomial.coeff_map] at hcoeff
   simpa using hcoeff.symm
 
-/-- The trinomial coefficient `T(0, 0)` is `1`. -/
-lemma trinomialCoefficient_zero_zero : trinomialCoefficient 0 0 = 1 := by
-  simp [trinomialCoefficient]
-
-/-- The trinomial coefficient `T(1, 1)` is `1`. -/
-lemma trinomialCoefficient_one_one : trinomialCoefficient 1 1 = 1 := by
-  unfold trinomialCoefficient
-  simp [pow_one, Polynomial.coeff_add, Polynomial.coeff_one, Polynomial.coeff_X, Polynomial.coeff_X_pow]
-
 private lemma tri_two_two : trinomialCoefficient 2 2 = 3 := by
   unfold trinomialCoefficient
   have h : ((1 + Polynomial.X + Polynomial.X ^ 2 : Polynomial ℕ) ^ 2)

@@ -119,11 +119,6 @@ private theorem eval₂_toPolynomial {s : Nat} {R : Type*} [CommRing R]
     w.toPolynomial.eval₂ φ r = evalBits r w.toBoolListLE := by
   simpa [toPolynomial] using eval₂_ofBoolList φ r w.toBoolListLE
 
-/-- The zero bit vector gives the zero polynomial. -/
-theorem toPolynomial_zero (s : Nat) : (0#s).toPolynomial = 0 := by
-  ext i
-  simp [coeff_toPolynomial]
-
 private theorem eval₂_mulModAux {s : Nat} {R : Type*} [CommRing R]
     (φ : ZMod 2 →+* R) (r : R) (g x : BitVec s)
     (hr : r ^ s = g.toPolynomial.eval₂ φ r) (bits : List Bool) :
@@ -155,12 +150,6 @@ theorem eval₂_mulMod {s t : Nat} {R : Type*} [CommRing R]
     _ = x.toPolynomial.eval₂ φ r * evalBits r y.toBoolListLE :=
       eval₂_mulModAux φ r g x hr y.toBoolListLE
     _ = _ := by rw [← eval₂_toPolynomial φ r y]
-
-/-- For positive width, the bit vector `1` gives the polynomial `1`. -/
-theorem toPolynomial_one {s : Nat} (hs : 0 < s) : (1#s).toPolynomial = 1 := by
-  ext i
-  rw [coeff_toPolynomial, BitVec.getLsbD_one, Polynomial.coeff_one]
-  simp [hs]
 
 private theorem powMod_succ {s t : Nat} (g : BitVec s) (u : BitVec t) (e : Nat) :
     g.powMod u (e + 1) = g.mulMod (g.powMod u e) u := by
