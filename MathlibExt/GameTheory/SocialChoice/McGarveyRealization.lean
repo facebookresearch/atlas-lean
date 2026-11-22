@@ -72,43 +72,43 @@ private theorem injective_keyF {Alt : Type*} [Fintype Alt] [DecidableEq Alt] (x 
   intro a b h
   simp only [keyF] at h
   by_cases hax : a = x
-  · rw [if_pos hax] at h
+  · rw [ite_eq_left hax] at h
     by_cases hbx : b = x
-    · rw [if_pos hbx] at h
+    · rw [ite_eq_left hbx] at h
       exact hax.trans hbx.symm
-    · rw [if_neg hbx] at h
+    · rw [ite_eq_right hbx] at h
       by_cases hby : b = y
-      · rw [if_pos hby] at h
+      · rw [ite_eq_left hby] at h
         have hF : False := by omega
         exact hF.elim
-      · rw [if_neg hby] at h
+      · rw [ite_eq_right hby] at h
         have hF : False := by omega
         exact hF.elim
-  · rw [if_neg hax] at h
+  · rw [ite_eq_right hax] at h
     by_cases hay : a = y
-    · rw [if_pos hay] at h
+    · rw [ite_eq_left hay] at h
       by_cases hbx : b = x
-      · rw [if_pos hbx] at h
+      · rw [ite_eq_left hbx] at h
         have hF : False := by omega
         exact hF.elim
-      · rw [if_neg hbx] at h
+      · rw [ite_eq_right hbx] at h
         by_cases hby : b = y
-        · rw [if_pos hby] at h
+        · rw [ite_eq_left hby] at h
           exact hay.trans hby.symm
-        · rw [if_neg hby] at h
+        · rw [ite_eq_right hby] at h
           have hF : False := by omega
           exact hF.elim
-    · rw [if_neg hay] at h
+    · rw [ite_eq_right hay] at h
       by_cases hbx : b = x
-      · rw [if_pos hbx] at h
+      · rw [ite_eq_left hbx] at h
         have hF : False := by omega
         exact hF.elim
-      · rw [if_neg hbx] at h
+      · rw [ite_eq_right hbx] at h
         by_cases hby : b = y
-        · rw [if_pos hby] at h
+        · rw [ite_eq_left hby] at h
           have hF : False := by omega
           exact hF.elim
-        · rw [if_neg hby] at h
+        · rw [ite_eq_right hby] at h
           have hr : mcgRank a = mcgRank b := by omega
           exact mcgRank_inj hr
 
@@ -119,43 +119,43 @@ private theorem injective_keyT {Alt : Type*} [Fintype Alt] [DecidableEq Alt] (x 
   have hrb : mcgRank b < Fintype.card Alt := mcgRank_lt_card b
   simp only [keyT] at h
   by_cases hax : a = x
-  · rw [if_pos hax] at h
+  · rw [ite_eq_left hax] at h
     by_cases hbx : b = x
-    · rw [if_pos hbx] at h
+    · rw [ite_eq_left hbx] at h
       exact hax.trans hbx.symm
-    · rw [if_neg hbx] at h
+    · rw [ite_eq_right hbx] at h
       by_cases hby : b = y
-      · rw [if_pos hby] at h
+      · rw [ite_eq_left hby] at h
         have hF : False := by omega
         exact hF.elim
-      · rw [if_neg hby] at h
+      · rw [ite_eq_right hby] at h
         have hF : False := by omega
         exact hF.elim
-  · rw [if_neg hax] at h
+  · rw [ite_eq_right hax] at h
     by_cases hay : a = y
-    · rw [if_pos hay] at h
+    · rw [ite_eq_left hay] at h
       by_cases hbx : b = x
-      · rw [if_pos hbx] at h
+      · rw [ite_eq_left hbx] at h
         have hF : False := by omega
         exact hF.elim
-      · rw [if_neg hbx] at h
+      · rw [ite_eq_right hbx] at h
         by_cases hby : b = y
-        · rw [if_pos hby] at h
+        · rw [ite_eq_left hby] at h
           exact hay.trans hby.symm
-        · rw [if_neg hby] at h
+        · rw [ite_eq_right hby] at h
           have hF : False := by omega
           exact hF.elim
-    · rw [if_neg hay] at h
+    · rw [ite_eq_right hay] at h
       by_cases hbx : b = x
-      · rw [if_pos hbx] at h
+      · rw [ite_eq_left hbx] at h
         have hF : False := by omega
         exact hF.elim
-      · rw [if_neg hbx] at h
+      · rw [ite_eq_right hbx] at h
         by_cases hby : b = y
-        · rw [if_pos hby] at h
+        · rw [ite_eq_left hby] at h
           have hF : False := by omega
           exact hF.elim
-        · rw [if_neg hby] at h
+        · rw [ite_eq_right hby] at h
           have hr : mcgRank a = mcgRank b := by omega
           exact mcgRank_inj hr
 
@@ -163,7 +163,7 @@ private theorem injective_keyT {Alt : Type*} [Fintype Alt] [DecidableEq Alt] (x 
 private def ballotOf {Alt : Type*} (k : Alt → ℕ) (hinj : Function.Injective k) :
     _root_.MathlibExt.Order.StrictTotalOrder Alt :=
   { lt := fun a b => k a < k b
-    irrefl := fun a => lt_irrefl _
+    irrefl := fun _ => lt_irrefl _
     trans := fun h1 h2 => lt_trans h1 h2
     total := fun hne => lt_or_gt_of_ne (fun h => hne (hinj h)) }
 
@@ -205,14 +205,14 @@ private theorem inner_two {Alt : Type*} [Fintype Alt] [DecidableEq Alt]
   simp only [Fintype.sum_bool]
   rw [P_lt_false, P_lt_true, hx, hy]
   have hba : b ≠ a := fun h => hne h.symm
-  have k1 : keyF a b a = 0 := by unfold keyF; rw [if_pos rfl]
-  have k2 : keyF a b b = 1 := by unfold keyF; rw [if_neg hba, if_pos rfl]
-  have k3 : keyT a b a = Fintype.card Alt := by unfold keyT; rw [if_pos rfl]
+  have k1 : keyF a b a = 0 := by unfold keyF; rw [ite_eq_left rfl]
+  have k2 : keyF a b b = 1 := by unfold keyF; rw [ite_eq_right hba, ite_eq_left rfl]
+  have k3 : keyT a b a = Fintype.card Alt := by unfold keyT; rw [ite_eq_left rfl]
   have k4 : keyT a b b = Fintype.card Alt + 1 := by
-    unfold keyT; rw [if_neg hba, if_pos rfl]
+    unfold keyT; rw [ite_eq_right hba, ite_eq_left rfl]
   have cF : keyF a b a < keyF a b b := by omega
   have cT : keyT a b a < keyT a b b := by omega
-  rw [if_pos cF, if_pos cT]
+  rw [ite_eq_left cF, ite_eq_left cT]
   norm_num
 
 /-- The gadget for `(b, a)` contributes `-2` to the `(a, b)` margin. -/
@@ -223,14 +223,14 @@ private theorem inner_neg_two {Alt : Type*} [Fintype Alt] [DecidableEq Alt]
     (∑ flag : Bool, (if (mcgProfile beats (e, flag)).lt a b then (1:ℤ) else -1)) = -2 := by
   simp only [Fintype.sum_bool]
   rw [P_lt_false, P_lt_true, hx, hy]
-  have k1 : keyF b a a = 1 := by unfold keyF; rw [if_neg hne, if_pos rfl]
-  have k2 : keyF b a b = 0 := by unfold keyF; rw [if_pos rfl]
+  have k1 : keyF b a a = 1 := by unfold keyF; rw [ite_eq_right hne, ite_eq_left rfl]
+  have k2 : keyF b a b = 0 := by unfold keyF; rw [ite_eq_left rfl]
   have k3 : keyT b a a = Fintype.card Alt + 1 := by
-    unfold keyT; rw [if_neg hne, if_pos rfl]
-  have k4 : keyT b a b = Fintype.card Alt := by unfold keyT; rw [if_pos rfl]
+    unfold keyT; rw [ite_eq_right hne, ite_eq_left rfl]
+  have k4 : keyT b a b = Fintype.card Alt := by unfold keyT; rw [ite_eq_left rfl]
   have cF : ¬ keyF b a a < keyF b a b := by omega
   have cT : ¬ keyT b a a < keyT b a b := by omega
-  rw [if_neg cF, if_neg cT]
+  rw [ite_eq_right cF, ite_eq_right cT]
   norm_num
 
 /-- Every other gadget contributes `0` to the `(a, b)` margin: its two ballots cancel. -/
@@ -253,15 +253,15 @@ private theorem inner_zero {Alt : Type*} [Fintype Alt] [DecidableEq Alt]
       · by_cases hby : b = y
         · exact (h1 (Prod.ext hax.symm hby.symm)).elim
         · have hrb : mcgRank b < Fintype.card Alt := mcgRank_lt_card b
-          have kaF : keyF x y a = 0 := by unfold keyF; rw [if_pos hax]
+          have kaF : keyF x y a = 0 := by unfold keyF; rw [ite_eq_left hax]
           have kbF : keyF x y b = mcgRank b + 2 := by
-            unfold keyF; rw [if_neg hbx, if_neg hby]
-          have kaT : keyT x y a = Fintype.card Alt := by unfold keyT; rw [if_pos hax]
+            unfold keyF; rw [ite_eq_right hbx, ite_eq_right hby]
+          have kaT : keyT x y a = Fintype.card Alt := by unfold keyT; rw [ite_eq_left hax]
           have kbT : keyT x y b = Fintype.card Alt - 1 - mcgRank b := by
-            unfold keyT; rw [if_neg hbx, if_neg hby]
+            unfold keyT; rw [ite_eq_right hbx, ite_eq_right hby]
           have cF : keyF x y a < keyF x y b := by omega
           have cT : ¬ keyT x y a < keyT x y b := by omega
-          rw [if_pos cF, if_neg cT]
+          rw [ite_eq_left cF, ite_eq_right cT]
           norm_num
   · by_cases hay : a = y
     · by_cases hbx : b = x
@@ -269,63 +269,63 @@ private theorem inner_zero {Alt : Type*} [Fintype Alt] [DecidableEq Alt]
       · by_cases hby : b = y
         · exact (hne (hay.trans hby.symm)).elim
         · have hrb : mcgRank b < Fintype.card Alt := mcgRank_lt_card b
-          have kaF : keyF x y a = 1 := by unfold keyF; rw [if_neg hax, if_pos hay]
+          have kaF : keyF x y a = 1 := by unfold keyF; rw [ite_eq_right hax, ite_eq_left hay]
           have kbF : keyF x y b = mcgRank b + 2 := by
-            unfold keyF; rw [if_neg hbx, if_neg hby]
+            unfold keyF; rw [ite_eq_right hbx, ite_eq_right hby]
           have kaT : keyT x y a = Fintype.card Alt + 1 := by
-            unfold keyT; rw [if_neg hax, if_pos hay]
+            unfold keyT; rw [ite_eq_right hax, ite_eq_left hay]
           have kbT : keyT x y b = Fintype.card Alt - 1 - mcgRank b := by
-            unfold keyT; rw [if_neg hbx, if_neg hby]
+            unfold keyT; rw [ite_eq_right hbx, ite_eq_right hby]
           have cF : keyF x y a < keyF x y b := by omega
           have cT : ¬ keyT x y a < keyT x y b := by omega
-          rw [if_pos cF, if_neg cT]
+          rw [ite_eq_left cF, ite_eq_right cT]
           norm_num
     · by_cases hbx : b = x
       · by_cases hby : b = y
         · exact (hxy (hbx.symm.trans hby)).elim
         · have hra : mcgRank a < Fintype.card Alt := mcgRank_lt_card a
           have kaF : keyF x y a = mcgRank a + 2 := by
-            unfold keyF; rw [if_neg hax, if_neg hay]
-          have kbF : keyF x y b = 0 := by unfold keyF; rw [if_pos hbx]
+            unfold keyF; rw [ite_eq_right hax, ite_eq_right hay]
+          have kbF : keyF x y b = 0 := by unfold keyF; rw [ite_eq_left hbx]
           have kaT : keyT x y a = Fintype.card Alt - 1 - mcgRank a := by
-            unfold keyT; rw [if_neg hax, if_neg hay]
-          have kbT : keyT x y b = Fintype.card Alt := by unfold keyT; rw [if_pos hbx]
+            unfold keyT; rw [ite_eq_right hax, ite_eq_right hay]
+          have kbT : keyT x y b = Fintype.card Alt := by unfold keyT; rw [ite_eq_left hbx]
           have cF : ¬ keyF x y a < keyF x y b := by omega
           have cT : keyT x y a < keyT x y b := by omega
-          rw [if_neg cF, if_pos cT]
+          rw [ite_eq_right cF, ite_eq_left cT]
           norm_num
       · by_cases hby : b = y
         · have hra : mcgRank a < Fintype.card Alt := mcgRank_lt_card a
           have kaF : keyF x y a = mcgRank a + 2 := by
-            unfold keyF; rw [if_neg hax, if_neg hay]
-          have kbF : keyF x y b = 1 := by unfold keyF; rw [if_neg hbx, if_pos hby]
+            unfold keyF; rw [ite_eq_right hax, ite_eq_right hay]
+          have kbF : keyF x y b = 1 := by unfold keyF; rw [ite_eq_right hbx, ite_eq_left hby]
           have kaT : keyT x y a = Fintype.card Alt - 1 - mcgRank a := by
-            unfold keyT; rw [if_neg hax, if_neg hay]
+            unfold keyT; rw [ite_eq_right hax, ite_eq_right hay]
           have kbT : keyT x y b = Fintype.card Alt + 1 := by
-            unfold keyT; rw [if_neg hbx, if_pos hby]
+            unfold keyT; rw [ite_eq_right hbx, ite_eq_left hby]
           have cF : ¬ keyF x y a < keyF x y b := by omega
           have cT : keyT x y a < keyT x y b := by omega
-          rw [if_neg cF, if_pos cT]
+          rw [ite_eq_right cF, ite_eq_left cT]
           norm_num
         · have hra : mcgRank a < Fintype.card Alt := mcgRank_lt_card a
           have hrb : mcgRank b < Fintype.card Alt := mcgRank_lt_card b
           have hrne : mcgRank a ≠ mcgRank b := fun h => hne (mcgRank_inj h)
           have kaF : keyF x y a = mcgRank a + 2 := by
-            unfold keyF; rw [if_neg hax, if_neg hay]
+            unfold keyF; rw [ite_eq_right hax, ite_eq_right hay]
           have kbF : keyF x y b = mcgRank b + 2 := by
-            unfold keyF; rw [if_neg hbx, if_neg hby]
+            unfold keyF; rw [ite_eq_right hbx, ite_eq_right hby]
           have kaT : keyT x y a = Fintype.card Alt - 1 - mcgRank a := by
-            unfold keyT; rw [if_neg hax, if_neg hay]
+            unfold keyT; rw [ite_eq_right hax, ite_eq_right hay]
           have kbT : keyT x y b = Fintype.card Alt - 1 - mcgRank b := by
-            unfold keyT; rw [if_neg hbx, if_neg hby]
+            unfold keyT; rw [ite_eq_right hbx, ite_eq_right hby]
           rcases lt_or_gt_of_ne hrne with hlt | hgt
           · have cF : keyF x y a < keyF x y b := by omega
             have cT : ¬ keyT x y a < keyT x y b := by omega
-            rw [if_pos cF, if_neg cT]
+            rw [ite_eq_left cF, ite_eq_right cT]
             norm_num
           · have cF : ¬ keyF x y a < keyF x y b := by omega
             have cT : keyT x y a < keyT x y b := by omega
-            rw [if_neg cF, if_pos cT]
+            rw [ite_eq_right cF, ite_eq_left cT]
             norm_num
 
 /-- The net preference is the sum of per-voter signs. -/
@@ -340,14 +340,14 @@ private theorem sum_sign_eq_netPreference {Alt Voter : Type*} [Fintype Alt] [Fin
       ((Finset.univ.filter (fun i => (P i).lt a b)).card : ℤ) := by
     trans ∑ i ∈ Finset.univ.filter (fun i => (P i).lt a b), (1 : ℤ)
     · refine Finset.sum_congr rfl (fun i hi => ?_)
-      exact if_pos (Finset.mem_filter.mp hi).2
+      exact ite_eq_left (Finset.mem_filter.mp hi).2
     · simp
   have h2 : (∑ i ∈ Finset.univ.filter (fun i => ¬ (P i).lt a b),
         (if (P i).lt a b then (1:ℤ) else -1)) =
       -((Finset.univ.filter (fun i => ¬ (P i).lt a b)).card : ℤ) := by
     trans ∑ i ∈ Finset.univ.filter (fun i => ¬ (P i).lt a b), (-1 : ℤ)
     · refine Finset.sum_congr rfl (fun i hi => ?_)
-      exact if_neg (Finset.mem_filter.mp hi).2
+      exact ite_eq_right (Finset.mem_filter.mp hi).2
     · simp
   have hsame : Finset.univ.filter (fun i => ¬ (P i).lt a b) =
       Finset.univ.filter (fun i => (P i).lt b a) := by
@@ -388,7 +388,7 @@ theorem exists_profile_netPreference_eq_of_beats {Alt : Type*}
   rw [← hsign]
   simp only [Fintype.sum_prod_type]
   by_cases hab : beats a b
-  · rw [if_pos hab]
+  · rw [ite_eq_left hab]
     have hzero : ∀ e' ∈ (Finset.univ : Finset {p : Alt × Alt // beats p.1 p.2}),
         e' ≠ (⟨(a, b), hab⟩ : {p : Alt × Alt // beats p.1 p.2}) →
         (∑ flag : Bool,
@@ -418,9 +418,9 @@ theorem exists_profile_netPreference_eq_of_beats {Alt : Type*}
       Finset.sum_eq_single (⟨(a, b), hab⟩ : {p : Alt × Alt // beats p.1 p.2}) hzero hmem
     rw [hsing]
     exact inner_two beats hne (⟨(a, b), hab⟩ : {p : Alt × Alt // beats p.1 p.2}) rfl rfl
-  · rw [if_neg hab]
+  · rw [ite_eq_right hab]
     by_cases hba : beats b a
-    · rw [if_pos hba]
+    · rw [ite_eq_left hba]
       have hzero : ∀ e' ∈ (Finset.univ : Finset {p : Alt × Alt // beats p.1 p.2}),
           e' ≠ (⟨(b, a), hba⟩ : {p : Alt × Alt // beats p.1 p.2}) →
           (∑ flag : Bool,
@@ -451,7 +451,7 @@ theorem exists_profile_netPreference_eq_of_beats {Alt : Type*}
       rw [hsing]
       exact inner_neg_two beats hne (⟨(b, a), hba⟩ :
         {p : Alt × Alt // beats p.1 p.2}) rfl rfl
-    · rw [if_neg hba]
+    · rw [ite_eq_right hba]
       have hzero : ∀ e' ∈ (Finset.univ : Finset {p : Alt × Alt // beats p.1 p.2}),
           (∑ flag : Bool,
             (if (mcgProfile beats (e', flag)).lt a b then (1:ℤ) else -1)) = 0 := by
@@ -476,7 +476,7 @@ theorem exists_profile_netPreference_eq_of_beats {Alt : Type*}
       exact Finset.sum_eq_zero hzero
 
 /-- The McGarvey voter type has two voters per directed edge. -/
-theorem card_edgeVoters {Alt : Type*} [Fintype Alt] [DecidableEq Alt]
+theorem card_edgeVoters {Alt : Type*} [Fintype Alt]
     (beats : Alt → Alt → Prop) [DecidableRel beats] :
     Fintype.card ({p : Alt × Alt // beats p.1 p.2} × Bool) =
       2 * (Finset.univ.filter (fun p : Alt × Alt => beats p.1 p.2)).card := by
