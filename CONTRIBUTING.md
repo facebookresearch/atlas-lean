@@ -279,11 +279,11 @@ No other check is required. The bump guard's `guard` checks Lean and Mathlib pin
 changes on PRs and merge groups; on PRs it runs through `pull_request_target`,
 which GitHub blocks by default in public repositories from 2 December 2026
 unless an Actions event policy allows it, so it is not required. Codex does not
-run on merge groups, but when its formal review of a PR requests changes it
-cancels that PR's CI runs that are still queued or running; if that leaves
-`build` cancelled, CI must pass before the PR can be queued. A completed build
-is unaffected. `public-references` is configured to run on PRs and merge groups,
-but stays advisory until the workflow governance described under
+run on merge groups, but a formal Codex change request can cancel the PR's CI
+run while it is still queued or running; if `build` is cancelled, CI must pass
+before the PR can be queued. A completed build is unaffected.
+`public-references` is configured to run on PRs and merge groups, but stays
+advisory until the workflow governance described under
 [Public references](#public-references) is in place. Blueprint Pages, Check
 workflows and Binary64 conformance are path-filtered on PRs, and Blueprint Pages
 also builds `main` once a day.
