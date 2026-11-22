@@ -4291,6 +4291,22 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual((status, report["missing"]), (1, ["Ext.fresh"]))
 
 
+    def test_a_link_in_a_library_the_generator_never_reads_leaves_a_change_alone(self) -> None:
+        self.write("MathlibExt/Algebra/guide.md", "A guide.\n")
+        (self.root / "MathlibExt/Algebra/guide-alias.md").symlink_to("guide.md")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["errors"]), (0, True, []))
+
+    def test_a_changed_graph_file_whose_name_is_not_utf8_gives_a_report(self) -> None:
+        name = os.path.join(os.fsencode(self.root), b"blueprint", b"roadmap", b"Algebra", b"caf\xe9.md")
+        with open(name, "w") as handle:
+            handle.write("# Bytes\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "other"))
+        # The report is UTF-8 JSON, the name's bytes escaped, and reads back as the file system names it.
+        self.assertIn(os.fsdecode(b"blueprint/roadmap/Algebra/caf\xe9.md"), " ".join(report["differences"]))
+
+
 
 class BuildPath(Vault):
     """What the build's own steps refuse before they write, beside what credit_problems refuses everywhere."""

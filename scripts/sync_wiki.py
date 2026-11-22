@@ -3321,15 +3321,17 @@ def links_in_wiki(changed: list[str] = ()) -> list[str]:
               wiki.ROOT / "scripts" / "card-moves.jsonl", SITE, wiki.ROOT / "theme", wiki.ROOT / "hooks", *libraries,
               *(wiki.ROOT / path for path in changed if read_by_sync(path)))
     found = [path for path in inputs if path.is_symlink() or path.exists() and os.path.realpath(path) != str(path)]
-    pending = [folder for folder in (wiki.VAULT, wiki.ROOT / "theme", wiki.ROOT / "hooks", *libraries)
-               if folder.is_dir() and folder not in found]
+    pending = [(folder, folder in libraries) for folder in (wiki.VAULT, wiki.ROOT / "theme", wiki.ROOT / "hooks",
+                                                            *libraries) if folder.is_dir() and folder not in found]
     while pending:
-        with os.scandir(pending.pop()) as entries:
+        folder, library = pending.pop()
+        with os.scandir(folder) as entries:
             for entry in entries:
-                if entry.is_symlink():
+                # In a library, a link the generator would read: a Lean file, or a folder of them.
+                if entry.is_symlink() and (not library or entry.name.endswith(".lean") or entry.is_dir()):
                     found.append(Path(entry.path))
                 elif entry.is_dir(follow_symlinks=False):
-                    pending.append(entry.path)
+                    pending.append((entry.path, library))
     return sorted({os.path.relpath(path, wiki.ROOT) for path in found})
 
 
@@ -3441,6 +3443,10 @@ def run_scoped(argv: list[str]) -> int:
                              "changes are only what the run writes")
     parser.add_argument("--report", type=Path, metavar="FILE", help="also write the findings to FILE, as JSON")
     options = parser.parse_args(argv)
+    # A path whose bytes are not UTF-8 is printed escaped.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(errors="backslashreplace")
     try:
         base = git("rev-parse", "--verify", "--end-of-options", f"{options.base}^{{commit}}").decode().strip()
         paths = changed_paths(base)
@@ -3474,7 +3480,7 @@ def run_scoped(argv: list[str]) -> int:
                 "in_step": False, "wiki_changes": "other" if graph else "none", "written": [],
                 "differences": [f"{path}: the sync writes no link or other kind of file" for path in linked
                                 if path.replace(os.sep, "/") in graph]},
-                indent=1, ensure_ascii=False, sort_keys=True) + "\n")
+                indent=1, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8", errors="backslashreplace")
         return 1
     targets, unindexed, generated, index = [], [], {}, None
     try:
@@ -3558,7 +3564,9 @@ def run_scoped(argv: list[str]) -> int:
             status = 1 if plan.problems else 0
     if options.report:
         options.report.parent.mkdir(parents=True, exist_ok=True)
-        options.report.write_text(json.dumps(report, indent=1, ensure_ascii=False, sort_keys=True) + "\n")
+        # A path whose bytes are not UTF-8 is written escaped, as JSON reads it back.
+        options.report.write_text(json.dumps(report, indent=1, ensure_ascii=False, sort_keys=True) + "\n",
+                                  encoding="utf-8", errors="backslashreplace")
     return status
 
 
