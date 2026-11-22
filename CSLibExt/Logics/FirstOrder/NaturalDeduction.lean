@@ -61,8 +61,29 @@ open FirstOrder FirstOrder.Language
 
 variable {L : Language.{u, v}} {α : Type w} [DecidableEq α]
 
-/-- **Natural deduction.** `Derivable Γ φ`: the conclusion `φ` follows from the open hypotheses
-`Γ`. -/
+/-- **Natural deduction.** Fix a first-order language $L$ and a type $\alpha$ of variables;
+formulas and terms below are those of $L$ with free variables in $\alpha$. For a formula
+$\varphi$ with one additional bound variable and a term $t$, write $\varphi[t]$ for $\varphi$
+with $t$ substituted for that bound variable and $\forall \varphi$ for its universal
+quantification. Write $\neg \psi$ for $\psi \to \bot$, and $\psi, \Gamma$ for the list $\Gamma$
+with $\psi$ added in front. Derivability $\Gamma \vdash \varphi$ of a formula $\varphi$ (the
+conclusion) from a finite list $\Gamma$ of formulas (the open hypotheses) is the least relation
+closed under the following rules.
+
+* Assumption: $\Gamma \vdash \varphi$ whenever $\varphi$ is a member of $\Gamma$.
+* Implication introduction: from $\varphi, \Gamma \vdash \psi$ infer
+  $\Gamma \vdash \varphi \to \psi$.
+* Implication elimination: from $\Gamma \vdash \varphi \to \psi$ and $\Gamma \vdash \varphi$
+  infer $\Gamma \vdash \psi$.
+* Reductio ad absurdum: from $\neg \varphi, \Gamma \vdash \bot$ infer $\Gamma \vdash \varphi$.
+* Universal introduction: if a variable $x$ occurs free in no member of $\Gamma$ and does not
+  occur free in $\varphi$, then from $\Gamma \vdash \varphi[x]$ infer
+  $\Gamma \vdash \forall \varphi$.
+* Universal elimination: from $\Gamma \vdash \forall \varphi$ infer $\Gamma \vdash \varphi[t]$,
+  for every term $t$.
+* Reflexivity: $\Gamma \vdash t = t$ for every term $t$.
+* Substitution: from $\Gamma \vdash s = t$ and $\Gamma \vdash \varphi[s]$ infer
+  $\Gamma \vdash \varphi[t]$. -/
 inductive Derivable : List (L.Formula α) → L.Formula α → Prop
   /-- Use a hypothesis. -/
   | ax {Γ : List (L.Formula α)} {φ : L.Formula α} : φ ∈ Γ → Derivable Γ φ
@@ -92,8 +113,11 @@ namespace Derivable
 
 /-! ### Soundness -/
 
-/-- **Soundness.** If `Γ ⊢ φ`, then `φ` holds under every assignment satisfying `Γ`, in every
-structure. -/
+/-- **Soundness of first-order natural deduction.** Let $\Gamma$ be a finite list of formulas of
+a first-order language $L$ with free variables in $\alpha$, and let $\varphi$ be such a formula.
+If $\Gamma \vdash \varphi$ in natural deduction, then for every $L$-structure $M$ and every
+assignment $v \colon \alpha \to M$ under which all members of $\Gamma$ hold, $\varphi$ holds
+under $v$. -/
 theorem sound {Γ : List (L.Formula α)} {φ : L.Formula α} (h : Derivable Γ φ) {M : Type*}
     [L.Structure M] (v : α → M) (hΓ : ∀ ψ ∈ Γ, ψ.Realize v) : φ.Realize v := by
   induction h generalizing v with
@@ -133,9 +157,14 @@ theorem sound {Γ : List (L.Formula α)} {φ : L.Formula α} (h : Derivable Γ �
 
 /-! ### Renaming and weakening -/
 
-/-- Derivations survive an injective renaming of free variables (stated with `FOL.rename`,
-which is Mathlib's `Formula.relabel` on formulas by `formula_relabel_eq_rename`; see
-`Derivable.relabel`). -/
+/-- **Injective renaming preserves derivability.** Let $f \colon \alpha \to \beta$ be an
+injective map between types of variables. For a formula $\psi$ of a first-order language $L$
+with free variables in $\alpha$, write $f(\psi)$ for the renaming of the free variables of
+$\psi$ by $f$, and for a finite list $\Gamma$ of such formulas write $f(\Gamma)$ for the list
+obtained by renaming each member of $\Gamma$. If $\Gamma$ is such a list, $\varphi$ is such a
+formula and $\Gamma \vdash \varphi$ in natural deduction, then $f(\Gamma) \vdash f(\varphi)$.
+
+On formulas this renaming coincides with Mathlib's relabeling of free variables. -/
 theorem rename {β : Type w'} [DecidableEq β] {f : α → β} (hf : Function.Injective f)
     {Γ : List (L.Formula α)} {φ : L.Formula α} (h : Derivable Γ φ) :
     Derivable (Γ.map (FOL.rename f)) (FOL.rename f φ) := by
@@ -165,8 +194,13 @@ theorem rename {β : Type w'} [DecidableEq β] {f : α → β} (hf : Function.In
     rw [rename_instantiate] at ih₂ ⊢
     exact subst ih₁ ih₂
 
-/-- Derivations survive an injective relabeling of free variables (Mathlib's
-`Formula.relabel`). -/
+/-- **Injective relabeling preserves derivability.** Let $f \colon \alpha \to \beta$ be an
+injective map between types of variables. For a formula $\psi$ of a first-order language $L$
+with free variables in $\alpha$, write $f(\psi)$ for Mathlib's relabeling of $\psi$ by $f$,
+which replaces each free variable $x$ by $f(x)$, and for a finite list $\Gamma$ of such formulas
+write $f(\Gamma)$ for the list obtained by applying this to each member of $\Gamma$. If $\Gamma$
+is such a list, $\varphi$ is such a formula and $\Gamma \vdash \varphi$ in natural deduction,
+then $f(\Gamma) \vdash f(\varphi)$. -/
 theorem relabel {β : Type w'} [DecidableEq β] {f : α → β} (hf : Function.Injective f)
     {Γ : List (L.Formula α)} {φ : L.Formula α} (h : Derivable Γ φ) :
     Derivable (Γ.map (Formula.relabel f)) (φ.relabel f) := by
@@ -187,7 +221,10 @@ private theorem freeVarFinset_subset_ctxFreeVars {Γ : List (L.Formula α)} {ψ 
     · exact Finset.subset_union_left
     · exact (ih hψ).trans Finset.subset_union_right
 
-/-- **Weakening.** -/
+/-- **Weakening.** Let $\alpha$ be an infinite type of variables, let $\Gamma$ and $\Delta$ be
+finite lists of formulas of a first-order language $L$ with free variables in $\alpha$ such that
+every member of $\Gamma$ is a member of $\Delta$, and let $\varphi$ be such a formula. If
+$\Gamma \vdash \varphi$ in natural deduction, then $\Delta \vdash \varphi$. -/
 theorem mono [Infinite α] {Γ : List (L.Formula α)} {φ : L.Formula α} (h : Derivable Γ φ) :
     ∀ {Δ : List (L.Formula α)}, Γ ⊆ Δ → Derivable Δ φ := by
   induction h with
@@ -224,12 +261,20 @@ theorem mono [Infinite α] {Γ : List (L.Formula α)} {φ : L.Formula α} (h : D
 
 /-! ### Derived rules -/
 
-/-- Cut: a derived formula may be used as a hypothesis. -/
+/-- **Cut.** Let $\Gamma$ be a finite list of formulas of a first-order language $L$ with free
+variables in $\alpha$, let $\varphi$ and $\psi$ be such formulas, and write $\varphi, \Gamma$ for
+the list $\Gamma$ with $\varphi$ added in front. If $\Gamma \vdash \varphi$ and
+$\varphi, \Gamma \vdash \psi$ in natural deduction, then $\Gamma \vdash \psi$. -/
 theorem cut {Γ : List (L.Formula α)} {φ ψ : L.Formula α} (h₁ : Derivable Γ φ)
     (h₂ : Derivable (φ :: Γ) ψ) : Derivable Γ ψ :=
   impE (impI h₂) h₁
 
-/-- `∃`-introduction (`∃' φ` is `¬∀' ¬φ` in Mathlib). -/
+/-- **Existential introduction.** Let $\Gamma$ be a finite list of formulas of a first-order
+language $L$ with free variables in $\alpha$, let $\varphi$ be such a formula with one
+additional bound variable, let $t$ be a term, and write $\varphi[t]$ for $\varphi$ with $t$
+substituted for that bound variable. If $\Gamma \vdash \varphi[t]$ in natural deduction, then
+$\Gamma \vdash \exists \varphi$, where $\exists \varphi$ abbreviates $\neg \forall \neg \varphi$
+as in Mathlib. -/
 theorem exI {Γ : List (L.Formula α)} {φ : L.BoundedFormula α 1} (t : L.Term α)
     (h : Derivable Γ (instantiate t φ)) : Derivable Γ φ.ex := by
   -- with `φ t` as a hypothesis, `∀' ¬φ` refutes itself; then cut against `h`
@@ -239,14 +284,18 @@ theorem exI {Γ : List (L.Formula α)} {φ : L.BoundedFormula α 1} (t : L.Term 
   rw [instantiate_not] at h'
   exact h'
 
-/-- Symmetry of equality. -/
+/-- **Symmetry of equality in natural deduction.** Let $\Gamma$ be a list of first-order formulas
+and let $s$ and $t$ be terms. If the equation $s = t$ is derivable from the hypotheses $\Gamma$,
+then the equation $t = s$ is derivable from $\Gamma$. -/
 theorem symm {Γ : List (L.Formula α)} {s t : L.Term α} (h : Derivable Γ (s.equal t)) :
     Derivable Γ (t.equal s) := by
   have := subst (φ := .equal (Term.var (Sum.inr 0)) (s.relabel Sum.inl)) h
     (by rw [instantiate_equal_left]; exact refl s)
   rwa [instantiate_equal_left] at this
 
-/-- Transitivity of equality. -/
+/-- **Transitivity of equality in natural deduction.** Let $\Gamma$ be a list of first-order
+formulas and let $r$, $s$ and $t$ be terms. If the equations $r = s$ and $s = t$ are both
+derivable from the hypotheses $\Gamma$, then the equation $r = t$ is derivable from $\Gamma$. -/
 theorem trans {Γ : List (L.Formula α)} {r s t : L.Term α} (h₁ : Derivable Γ (r.equal s))
     (h₂ : Derivable Γ (s.equal t)) : Derivable Γ (r.equal t) := by
   have := subst (φ := .equal (r.relabel Sum.inl) (Term.var (Sum.inr 0))) h₂
@@ -257,13 +306,17 @@ end Derivable
 
 /-! ### Theories -/
 
-/-- `T` proves `φ`: some finite list of members of `T` derives `φ`. -/
+/-- **Provability from a set of formulas.** A set $T$ of formulas of a first-order language $L$
+with free variables in $\alpha$ proves such a formula $\varphi$ when there is a finite list
+$\Gamma$ of members of $T$ with $\Gamma \vdash \varphi$ in natural deduction. -/
 def Provable (T : Set (L.Formula α)) (φ : L.Formula α) : Prop :=
   ∃ Γ : List (L.Formula α), (∀ ψ ∈ Γ, ψ ∈ T) ∧ Derivable Γ φ
 
-/-- **Soundness for theories.** A formula provable from the sentences of a Mathlib theory `T`
-(embedded as formulas over `α` by `Formula.relabel Empty.elim`) holds in every model of `T`
-under every assignment. -/
+/-- **Soundness for theories.** Let $T$ be a theory, that is, a set of sentences of a
+first-order language $L$, and regard each sentence of $T$ as a formula with free variables in
+$\alpha$. If a formula $\varphi$ with free variables in $\alpha$ is provable from these
+formulas, then $\varphi$ holds in every model of $T$ under every assignment of elements of the
+model to the variables in $\alpha$. -/
 theorem Provable.models {T : L.Theory} {φ : L.Formula α}
     (h : Provable (Formula.relabel Empty.elim '' T) φ) : T.ModelsBoundedFormula φ := by
   obtain ⟨Γ, hΓ, hd⟩ := h
