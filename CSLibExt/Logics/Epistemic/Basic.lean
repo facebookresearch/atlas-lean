@@ -67,6 +67,11 @@ def not {Atom : Type*} {Agent : Type*} (φ : Formula Atom Agent) : Formula Atom 
 def or {Atom : Type*} {Agent : Type*} (φ ψ : Formula Atom Agent) : Formula Atom Agent :=
   .imp (.not φ) ψ
 
+/-- Conjunction, encoded with implication and falsity:
+`φ ∧ ψ` is `¬(φ → ¬ψ)`. -/
+def and {Atom : Type*} {Agent : Type*} (φ ψ : Formula Atom Agent) : Formula Atom Agent :=
+  .imp (.imp φ (.imp ψ .bot)) .bot
+
 end Formula
 
 /-- One accessibility step by a member of the group `G`. -/
@@ -130,6 +135,17 @@ theorem sat_or :
   · rintro (hφ | hψ) hnot
     · exact (hnot hφ).elim
     · exact hψ
+
+/-- The encoded conjunction is conjunction at the level of satisfaction. -/
+theorem sat_and :
+    Sat M (.and φ ψ) w ↔ Sat M φ w ∧ Sat M ψ w := by
+  constructor
+  · intro h
+    refine ⟨?_, ?_⟩
+    · exact Classical.byContradiction (fun ha => h (fun a _ => absurd a ha))
+    · exact Classical.byContradiction (fun hb => h (fun _ b => absurd b hb))
+  · intro h f
+    exact f h.1 h.2
 
 /-- K axiom: knowledge distributes over implication. -/
 theorem valid_know_dist :

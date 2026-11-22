@@ -215,6 +215,204 @@ theorem incidenceMatrix_mulVec_edgeVolume {V E P : Type*} [Fintype V] [Decidable
     ring
   rw [hfac, h2 p]
 
+/-! ### Walk construction and decomposition
+
+Building walks by prepending or appending arcs and lists, and reading a cons or append walk
+back into its pieces. -/
+
+/-- The empty arc list is a walk from an event to itself. -/
+theorem walk_nil {V E : Type*} {tail head : E → V} {o : V} :
+    IsArcWalk tail head o o [] := by
+  refine ⟨fun _ => rfl, fun e he => by simp at he, List.isChain_nil, fun e he => by simp at he⟩
+
+/-- A single arc from the origin to the destination is a walk between them. -/
+theorem walk_singleton {V E : Type*} {tail head : E → V} {o d : V} {a : E}
+    (ht : tail a = o) (hd : head a = d) : IsArcWalk tail head o d [a] := by
+  refine ⟨fun h => by simp at h, fun e he => ?_, List.isChain_singleton a, fun e he => ?_⟩
+  · simp at he
+    subst he
+    exact ht
+  · simp at he
+    subst he
+    exact hd
+
+/-- Prepending an arc leaving the origin to a walk out of its head gives a walk from the
+origin, when the arc meets the first arc of the walk. -/
+theorem walk_cons {V E : Type*} {tail head : E → V} {o d : V} {a : E} {l : List E}
+    (ht : tail a = o) (htl : IsArcWalk tail head (head a) d l)
+    (hchain : ∀ b ∈ l.head?, head a = tail b) : IsArcWalk tail head o d (a :: l) := by
+  obtain ⟨hnil, -, hch, hlast⟩ := htl
+  refine ⟨fun h => by simp at h, fun e he => ?_, List.isChain_cons.2 ⟨hchain, hch⟩,
+    fun e he => ?_⟩
+  · simp at he
+    subst he
+    exact ht
+  · cases l with
+    | nil =>
+      simp at he
+      subst he
+      exact hnil rfl
+    | cons b l' =>
+      rw [List.getLast?_cons_cons] at he
+      exact hlast e he
+
+/-- Appending an arc entering the destination to a walk ending at its tail gives a walk
+into the destination. -/
+theorem walk_snoc {V E : Type*} {tail head : E → V} {o d : V} {l : List E} {a : E}
+    (hp : IsArcWalk tail head o (tail a) l) (hd : head a = d) :
+    IsArcWalk tail head o d (l ++ [a]) := by
+  obtain ⟨hnil, hhead, hch, hlast⟩ := hp
+  refine ⟨fun h => by simp at h, fun e he => ?_, ?_, fun e he => ?_⟩
+  · cases l with
+    | nil =>
+      simp at he
+      subst he
+      exact (hnil rfl).symm
+    | cons b l' =>
+      simp at he
+      subst he
+      exact hhead b (by simp)
+  · exact hch.append (List.isChain_singleton a) (fun x hx y hy => by
+      simp at hy
+      subst hy
+      exact hlast x hx)
+  · rw [List.getLast?_concat] at he
+    simp at he
+    subst he
+    exact hd
+
+/-- Dropping the first arc of a walk leaves a walk from that arc's head. -/
+theorem walk_tail {V E : Type*} {tail head : E → V} {o d : V} {a : E} {l : List E}
+    (h : IsArcWalk tail head o d (a :: l)) : IsArcWalk tail head (head a) d l := by
+  obtain ⟨-, -, hch, hlast⟩ := h
+  have hpair : ∀ b ∈ l.head?, head a = tail b := (List.isChain_cons.1 hch).1
+  have hch' : l.IsChain (fun a b => head a = tail b) := (List.isChain_cons.1 hch).2
+  refine ⟨?_, fun b hb => (hpair b hb).symm, hch', ?_⟩
+  · intro hl
+    subst hl
+    exact hlast a (by simp)
+  · cases l with
+    | nil => intro e he; simp at he
+    | cons b l' =>
+      rw [List.getLast?_cons_cons] at hlast
+      exact hlast
+
+/-- A cons walk starts with an arc leaving the origin, and its tail is a walk from that
+arc's head. -/
+theorem walk_cons_pair {V E : Type*} {tail head : E → V} {o d : V} {a : E} {rest : List E}
+    (hl : IsArcWalk tail head o d (a :: rest)) :
+    tail a = o ∧ IsArcWalk tail head (head a) d rest := by
+  obtain ⟨h1, h2, h3, h4⟩ := hl
+  have htail : tail a = o := h2 a (by simp [List.head?_cons])
+  refine ⟨htail, ?_, ?_, ?_, ?_⟩
+  · intro hnil
+    subst hnil
+    exact h4 a (by simp [List.getLast?_singleton])
+  · intro e he
+    cases rest with
+    | nil => simp at he
+    | cons b rest' =>
+        rw [List.head?_cons, Option.mem_some] at he
+        cases he
+        exact (List.isChain_cons_cons.mp h3).1.symm
+  · cases rest with
+    | nil => exact List.isChain_nil
+    | cons b rest' => exact (List.isChain_cons_cons.mp h3).2
+  · intro e he
+    cases rest with
+    | nil => simp at he
+    | cons b rest' =>
+        have hgl := List.getLast?_cons_of_ne_nil (x := a) (xs := b :: rest') (by simp)
+        rw [hgl] at h4
+        exact h4 e he
+
+/-- Prepending an arc leaving the origin to a walk out of its head gives a walk from the origin. -/
+theorem walk_cons_mk {V E : Type*} {tail head : E → V} {o m : V} {a : E}
+    {rest : List E} (htail : tail a = o) (hr : IsArcWalk tail head (head a) m rest) :
+    IsArcWalk tail head o m (a :: rest) := by
+  obtain ⟨r1, r2, r3, r4⟩ := hr
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro hnil
+    cases hnil
+  · intro e he
+    rw [List.head?_cons, Option.mem_some] at he
+    rw [← he]
+    exact htail
+  · cases rest with
+    | nil => exact List.isChain_singleton a
+    | cons b rest' =>
+        have hb : tail b = head a := r2 b (by simp [List.head?_cons])
+        have hr3 : (b :: rest').IsChain (fun x y => head x = tail y) := r3
+        exact List.isChain_cons_cons.mpr ⟨hb.symm, hr3⟩
+  · intro e he
+    cases rest with
+    | nil =>
+        rw [List.getLast?_singleton, Option.mem_some] at he
+        cases he
+        exact r1 rfl
+    | cons b rest' =>
+        have hgl := List.getLast?_cons_of_ne_nil (x := a) (xs := b :: rest') (by simp)
+        rw [hgl] at he
+        exact r4 e he
+
+/-- An append walk splits at some middle event into walks on the two parts. -/
+theorem walk_append {V E : Type*} {tail head : E → V} {o d : V} {l1 l2 : List E}
+    (hl : IsArcWalk tail head o d (l1 ++ l2)) :
+    ∃ m, IsArcWalk tail head o m l1 ∧ IsArcWalk tail head m d l2 := by
+  induction l1 generalizing o with
+  | nil =>
+      rw [List.nil_append] at hl
+      refine ⟨o, ⟨?_, ?_, ?_, ?_⟩, hl⟩
+      · intro _
+        rfl
+      · intro e he
+        simp at he
+      · exact List.isChain_nil
+      · intro e he
+        simp at he
+  | cons a rest ih =>
+      rw [List.cons_append] at hl
+      obtain ⟨htail, hrest⟩ := walk_cons_pair hl
+      obtain ⟨m, h1, h2⟩ := ih hrest
+      exact ⟨m, walk_cons_mk htail h1, h2⟩
+
+/-- Two walks meeting at a middle event concatenate to a walk on the appended list. -/
+theorem walk_append_mk {V E : Type*} {tail head : E → V} {o m d : V} {l1 l2 : List E}
+    (h1 : IsArcWalk tail head o m l1) (h2 : IsArcWalk tail head m d l2) :
+    IsArcWalk tail head o d (l1 ++ l2) := by
+  obtain ⟨h1e, h1h, h1c, h1t⟩ := h1
+  obtain ⟨h2e, h2h, h2c, h2t⟩ := h2
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro hnil
+    rw [List.append_eq_nil_iff] at hnil
+    obtain ⟨rfl, rfl⟩ := hnil
+    exact (h1e rfl).trans (h2e rfl)
+  · intro e he
+    cases l1 with
+    | nil =>
+        rw [List.nil_append] at he
+        exact (h2h e he).trans (h1e rfl).symm
+    | cons a rest =>
+        rw [List.cons_append, List.head?_cons, Option.mem_some] at he
+        rw [← he]
+        exact h1h a (by simp [List.head?_cons])
+  · exact List.IsChain.append h1c h2c (fun x hx y hy => (h1t x hx).trans (h2h y hy).symm)
+  · intro e he
+    cases l2 with
+    | nil =>
+        rw [List.append_nil] at he
+        exact (h1t e he).trans (h2e rfl)
+    | cons b rest' =>
+        rw [List.getLast?_append] at he
+        cases hX : (b :: rest').getLast? with
+        | none =>
+            rw [List.getLast?_eq_none_iff] at hX
+            cases hX
+        | some x =>
+            rw [hX] at he
+            have he' : e ∈ (b :: rest').getLast? := by rw [hX]; exact he
+            exact h2t e he'
+
 /-- Total travel time on supplied routes, path side equals edge side: with link travel times
 `t` fixed at the induced volumes `x = edgeVolume edges f`, the flow-weighted sum of route
 travel times `∑ p, f p * ((edges p).map fun e => t e (x e)).sum` equals `∑ e, x e * t e (x e)`.
