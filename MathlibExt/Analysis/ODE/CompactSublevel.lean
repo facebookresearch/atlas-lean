@@ -46,11 +46,12 @@ import MathlibExt.Analysis.ODE.FiniteIntervalSublevel
 /-!
 # Compact Lyapunov sublevels give forward global existence
 
-Strict inward orbital derivative on a compact sublevel boundary prevents exit.
+Strict decrease on the level set `V = c` of a compact sublevel prevents exit.
 Atlas's maximal-solution theorem then rules out a finite forward endpoint: the
 space-time graph could not leave the product of a bounded time interval with
 that compact sublevel. The field need only be locally Lipschitz, not globally
-Lipschitz, and the derivative may be positive in the interior of the sublevel.
+Lipschitz. No sign condition is required where `V < c`; the strict condition
+does apply to every point where `V = c`, even an interior point of the sublevel.
 
 A second version allows a nonpositive orbital derivative everywhere, including
 conserved energies and degenerate levels. This supplements the conditional
@@ -67,8 +68,9 @@ namespace MathlibExt.Analysis.ODE
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
-/-- A strict orbital derivative at the level prevents exit on a finite interval.
-The derivative condition is imposed only on the boundary, not in its interior. -/
+/-- Strict decrease on the level set `V = c` prevents exit on a finite interval.
+No sign condition is required where `V < c`. The level set may contain interior
+points of the sublevel, so this hypothesis is stronger than boundary decrease. -/
 theorem mapsTo_sublevel_of_boundary_deriv_neg
     {F : E → E} {V : E → ℝ} {c a b : ℝ} {x : ℝ → E}
     (hV : Differentiable ℝ V)
@@ -122,8 +124,9 @@ private theorem exists_forward_solution_of_compact_trapping [CompleteSpace E]
   exact ⟨x, hx₀, fun t ht => htrap t (hglobal ht) ht,
     fun t ht => (hx t (hglobal ht)).2⟩
 
-/-- A compact Lyapunov sublevel with strictly inward orbital derivative on its
-boundary contains a forward global solution through each of its points.
+/-- A compact Lyapunov sublevel with strict decrease on the level set `V = c`
+contains a forward global solution through each of its points. No sign condition
+is required where `V < c`.
 The decrease condition is needed only when `V y = c`. -/
 theorem exists_forward_solution_of_compact_sublevel [CompleteSpace E]
     {F : E → E} {V : E → ℝ} {c : ℝ}
@@ -141,7 +144,7 @@ theorem exists_forward_solution_of_compact_sublevel [CompleteSpace E]
 
 /-- If the orbital derivative is nonpositive everywhere and the initial
 sublevel is compact, a forward global solution exists in that sublevel.
-Unlike strict boundary trapping, this includes conserved energies. -/
+Unlike strict level-set trapping, this includes conserved energies. -/
 theorem exists_forward_solution_of_compact_sublevel_nonpos [CompleteSpace E]
     {F : E → E} {V : E → ℝ} {c : ℝ}
     (hF : LocallyLipschitz F) (hV : Differentiable ℝ V)
