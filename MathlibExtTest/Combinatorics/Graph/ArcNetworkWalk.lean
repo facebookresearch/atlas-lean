@@ -9,9 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Combinatorics.Graph.ArcNetworkWalk
-import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Data.Fin.VecNotation
-import Mathlib.Tactic.FinCases
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Fintype.Basic
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 
 @[expose] public section
@@ -150,4 +153,111 @@ example :
   rw [incidenceMatrix_mulVec_edgeVolume hwalk]
   fin_cases v <;> simp [Fin.sum_univ_two, Fin.ext_iff] <;> norm_num
 
+/-! ### Travel-time pairing at fixed link costs -/
+
+/-- Link travel times with distinct slopes per arc: `t e x = (e + 1) x + 1`. -/
+noncomputable def tt (e : Fin 4) (x : ℝ) : ℝ := (((e : ℕ) : ℝ) + 1) * x + 1
+
+/-- Two routes sharing arc `2`; the parallel arcs `0` and `1` stay distinct. -/
+abbrev sharedRoutes : Fin 2 → List (Fin 4) := ![[0, 2], [1, 2]]
+/-- Route `0` traverses arcs `0` and `2` twice. -/
+abbrev doubleRoutes : Fin 2 → List (Fin 4) := ![[0, 2, 3, 0, 2], [0, 2]]
+/-- `sharedRoutes` plus the route `[0, 2, 3, 0, 2]`, which will carry zero flow. -/
+abbrev zeroFlowRoutes : Fin 3 → List (Fin 4) := ![[0, 2], [1, 2], [0, 2, 3, 0, 2]]
+
+example {P E : Type*} [Fintype P] [Fintype E] [DecidableEq E] (edges : P → List E)
+    (f : P → ℝ) (c : E → ℝ) :
+    ∑ p, f p * ((edges p).map c).sum = ∑ e, edgeVolume edges f e * c e :=
+  sum_mul_sum_map_eq_sum_edgeVolume_mul edges f fun e _ => c e
+
+/-! ### Two routes share an arc, with distinct costs -/
+
+private theorem sharedArcVolume : edgeVolume sharedRoutes ![1, 2] = ![1, 2, 3, 0] := by
+  funext e
+  fin_cases e <;> simp [edgeVolume, Fin.sum_univ_two] <;> norm_num
+
+example : (fun e => tt e (edgeVolume sharedRoutes ![1, 2] e)) = ![2, 5, 10, 1] := by
+  rw [sharedArcVolume]
+  funext e
+  fin_cases e <;> simp [tt] <;> norm_num
+
+example : ∑ p, (![1, 2] : Fin 2 → ℝ) p *
+    ((sharedRoutes p).map fun e => tt e (edgeVolume sharedRoutes ![1, 2] e)).sum = 42 := by
+  rw [sharedArcVolume]
+  simp [tt, Fin.sum_univ_two]
+  norm_num
+
+example : ∑ e, edgeVolume sharedRoutes ![1, 2] e * tt e (edgeVolume sharedRoutes ![1, 2] e) = 42 := by
+  rw [sharedArcVolume]
+  simp [tt, Fin.sum_univ_four]
+  norm_num
+
+/-! ### Zero path flow -/
+
+example {P E : Type*} [Fintype P] [Fintype E] [DecidableEq E] (edges : P → List E)
+    (t : E → ℝ → ℝ) :
+    ∑ p, (0 : P → ℝ) p * ((edges p).map fun e => t e (edgeVolume edges 0 e)).sum = 0 ∧
+      ∑ e, edgeVolume edges (0 : P → ℝ) e * t e (edgeVolume edges 0 e) = 0 := by
+  simp [edgeVolume]
+
+/-- A zero-flow route leaves the volumes unchanged (arc `3`, used only by it, has volume 0). -/
+private theorem zeroFlowVolume : edgeVolume zeroFlowRoutes ![1, 2, 0] = ![1, 2, 3, 0] := by
+  funext e
+  fin_cases e <;> simp [edgeVolume, Fin.sum_univ_three] <;> norm_num
+
+/-- The zero-flow route has route time 25, yet both sides stay 42. -/
+example : ((zeroFlowRoutes 2).map fun e => tt e (edgeVolume zeroFlowRoutes ![1, 2, 0] e)).sum = 25 ∧
+    ∑ p, (![1, 2, 0] : Fin 3 → ℝ) p *
+      ((zeroFlowRoutes p).map fun e => tt e (edgeVolume zeroFlowRoutes ![1, 2, 0] e)).sum = 42 ∧
+    ∑ e, edgeVolume zeroFlowRoutes ![1, 2, 0] e * tt e (edgeVolume zeroFlowRoutes ![1, 2, 0] e) = 42 := by
+  rw [zeroFlowVolume]
+  refine ⟨?_, ?_, ?_⟩
+  · simp [tt]
+    norm_num
+  · simp [tt, Fin.sum_univ_three]
+    norm_num
+  · simp [tt, Fin.sum_univ_four]
+    norm_num
+
+/-! ### A route traversing an arc twice (multiplicity counted) -/
+
+example : ([0, 2, 3, 0, 2] : List (Fin 4)).count 0 = 2 := by decide
+
+private theorem doubleTraversalVolume : edgeVolume doubleRoutes ![3, 1] = ![7, 0, 7, 3] := by
+  funext e
+  fin_cases e <;> simp [edgeVolume, Fin.sum_univ_two] <;> norm_num
+
+example : ∑ p, (![3, 1] : Fin 2 → ℝ) p *
+    ((doubleRoutes p).map fun e => tt e (edgeVolume doubleRoutes ![3, 1] e)).sum = 249 := by
+  rw [doubleTraversalVolume]
+  simp [tt, Fin.sum_univ_two]
+  norm_num
+
+example : ∑ e, edgeVolume doubleRoutes ![3, 1] e * tt e (edgeVolume doubleRoutes ![3, 1] e) = 249 := by
+  rw [doubleTraversalVolume]
+  simp [tt, Fin.sum_univ_four]
+  norm_num
+
+/-- Set-based volumes (membership count), a mutant of `edgeVolume`. -/
+def setVol {P E : Type*} [Fintype P] [DecidableEq E] (edges : P → List E) (f : P → ℝ)
+    (e : E) : ℝ :=
+  ∑ p with e ∈ edges p, f p
+
+theorem doubleTraversalSetVolume : setVol doubleRoutes ![3, 1] = ![4, 0, 4, 3] := by
+  funext e
+  fin_cases e <;> simp [setVol, Finset.sum_filter, Fin.sum_univ_two] <;> norm_num
+
+/-- Control: arc-list route times with set-based volumes; the identity fails (165 ≠ 111). -/
+example : ¬ ∀ (edges : Fin 2 → List (Fin 4)) (f : Fin 2 → ℝ) (t : Fin 4 → ℝ → ℝ),
+    ∑ p, f p * ((edges p).map fun e => t e (setVol edges f e)).sum =
+      ∑ e, setVol edges f e * t e (setVol edges f e) := by
+  intro h
+  have h1 := h doubleRoutes ![3, 1] tt
+  rw [doubleTraversalSetVolume] at h1
+  simp [tt, Fin.sum_univ_two, Fin.sum_univ_four] at h1
+  norm_num at h1
+
+
 end MathlibExt.Combinatorics.Graph.ArcNetwork
+
+#print axioms MathlibExt.Combinatorics.Graph.ArcNetwork.sum_mul_sum_map_eq_sum_edgeVolume_mul

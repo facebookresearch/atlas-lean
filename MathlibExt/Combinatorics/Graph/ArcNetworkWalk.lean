@@ -33,6 +33,9 @@ traversal-count edge volumes, and node balance against the signed incidence matr
   twice loads it twice.
 - W2 proves the route boundary identity and the route-by-route node balance of edge
   volumes, in the inflow-minus-outflow sign of `incidenceMatrix`.
+- W3 proves the travel-time pairing at fixed link costs: the flow-weighted sum of route
+  travel times equals the edge-side total `∑ e, x e * t e (x e)`, with multiplicity on
+  both sides (a route traversing an arc twice pays and loads it twice).
 The reconciliation with the set-based routing model (on routes that repeat no arc,
 its edge flow equals `edgeVolume`) lives in a separate bridge module in
 `MathlibExt.GameTheory`, so this core module depends only on `ArcNetwork`.
@@ -42,7 +45,7 @@ Representation decision: the route representation of this module is the arc list
 `MathlibExt.Probability.CanonicalPaths` are the analogous construction for canonical
 paths between states; they are a different representation and are not reused here.
 
-No link costs, equilibria, capacities or algorithms are stated. The demand-side
+Link costs appear only as the fixed pairing of W3; no equilibria, capacities or algorithms are stated. The demand-side
 consequences (OD balance and unreachability) live in
 `MathlibExt.Combinatorics.Graph.ArcNetworkDemand`.
 -/
@@ -409,5 +412,42 @@ theorem walk_append_mk {V E : Type*} {tail head : E → V} {o m d : V} {l1 l2 : 
             rw [hX] at he
             have he' : e ∈ (b :: rest').getLast? := by rw [hX]; exact he
             exact h2t e he'
+
+/-- Total travel time on supplied routes, path side equals edge side: with link travel times
+`t` fixed at the induced volumes `x = edgeVolume edges f`, the flow-weighted sum of route
+travel times `∑ p, f p * ((edges p).map fun e => t e (x e)).sum` equals `∑ e, x e * t e (x e)`.
+A route that traverses an arc twice pays its cost twice and loads it twice. Units:
+vehicle-flow times time on both sides. With constant `t e _ = c e` this is the identity for
+any fixed edge costs `c`. -/
+theorem sum_mul_sum_map_eq_sum_edgeVolume_mul {P E : Type*} [Fintype P] [Fintype E]
+    [DecidableEq E] (edges : P → List E) (f : P → ℝ) (t : E → ℝ → ℝ) :
+    ∑ p, f p * ((edges p).map fun e => t e (edgeVolume edges f e)).sum =
+      ∑ e, edgeVolume edges f e * t e (edgeVolume edges f e) := by
+  have h1 : ∀ p : P, f p * ((edges p).map fun e => t e (edgeVolume edges f e)).sum
+      = ∑ e, f p * ((((edges p).count e : ℕ) : ℝ) * t e (edgeVolume edges f e)) := by
+    intro p
+    have hext : (∑ e ∈ (edges p).toFinset,
+          f p * ((((edges p).count e : ℕ) : ℝ) * t e (edgeVolume edges f e)))
+        = ∑ e, f p * ((((edges p).count e : ℕ) : ℝ) * t e (edgeVolume edges f e)) := by
+      apply Finset.sum_subset (Finset.subset_univ _)
+      intro e _ he
+      rw [List.mem_toFinset] at he
+      rw [List.count_eq_zero_of_not_mem he]
+      simp
+    rw [← hext, Finset.sum_list_map_count, Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro e _
+    rw [nsmul_eq_mul]
+  have hLHS : (∑ p, f p * ((edges p).map fun e => t e (edgeVolume edges f e)).sum)
+      = ∑ p, ∑ e, f p * ((((edges p).count e : ℕ) : ℝ) * t e (edgeVolume edges f e)) :=
+    Finset.sum_congr rfl (fun p _ => h1 p)
+  rw [hLHS, Finset.sum_comm]
+  apply Finset.sum_congr rfl
+  intro e _
+  simp only [edgeVolume]
+  rw [Finset.sum_mul]
+  apply Finset.sum_congr rfl
+  intro p _
+  exact (mul_assoc _ _ _).symm
 
 end MathlibExt.Combinatorics.Graph.ArcNetwork
