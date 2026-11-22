@@ -11,6 +11,7 @@ public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Basic.Real.Basic
 
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
@@ -36,10 +37,15 @@ the instant. Derivatives are hypotheses; no existence claim is made.
   stock balance determines the concentration derivative.
 - `ReactiveBalance.closed_constant_volume`: the closed constant-volume
   specialization `V0 * c' i = G`.
+- `ReactiveBalance.volume_balance_of_const_density`: under the
+  constant-density closure, the liquid mass balance gives the volume law
+  `V' = Qin - Qout`; without that closure the comparison identity keeps
+  the `-V * rho' / rho` term.
 
 ## iii. Table of contents
 
 - A. Stock and concentration balances
+- B. Mass versus volume balance
 
 ## iv. References
 
@@ -109,5 +115,42 @@ theorem closed_constant_volume {ι : Type*} {V0 : ℝ} {c : ℝ → ι → ℝ}
   · intro heq
     rw [← heq]
     exact h
+
+/-! ## B. Mass versus volume balance -/
+
+/-- General comparison identity: solving the mass balance for `V'` gives
+`V' = (rho_in / rho) * Qin - Qout - V * rho' / rho`, which shows why mass
+conservation alone is insufficient for a volume law when the density
+changes. -/
+theorem volume_deriv_eq {rho V : ℝ → ℝ} {rho' V' t : ℝ}
+    (hrho : HasDerivAt rho rho' t) (hV : HasDerivAt V V' t)
+    (hrho0 : rho t ≠ 0) (rho_in Qin Qout : ℝ)
+    (hmass : HasDerivAt (fun t => rho t * V t)
+      (rho_in * Qin - rho t * Qout) t) :
+    V' = rho_in / rho t * Qin - Qout - V t * rho' / rho t := by
+  have hmul := hrho.mul hV
+  have heq := hmass.unique hmul
+  field_simp
+  linarith
+
+/-- **Volume balance under the constant-density closure.** If
+`rho = rho_in = rho0 > 0` is constant, the mass balance gives
+`V' = Qin - Qout`. -/
+theorem volume_balance_of_const_density {rho V : ℝ → ℝ} {V' t rho0 : ℝ}
+    (hV : HasDerivAt V V' t) (hrho0 : 0 < rho0)
+    (hrho : rho = fun _ => rho0) (Qin Qout : ℝ)
+    (hmass : HasDerivAt (fun t => rho t * V t)
+      (rho0 * Qin - rho0 * Qout) t) :
+    V' = Qin - Qout := by
+  have hrho0ne : rho0 ≠ 0 := ne_of_gt hrho0
+  have hfun : (fun t => rho t * V t) = (fun t => rho0 * V t) := by
+    funext x
+    simp [hrho]
+  have hmass' : HasDerivAt (fun t => rho0 * V t) (rho0 * Qin - rho0 * Qout) t :=
+    hfun ▸ hmass
+  have hmul := hV.const_mul rho0
+  have heq := hmass'.unique hmul
+  have h2 : rho0 * V' = rho0 * (Qin - Qout) := by linarith
+  exact mul_left_cancel₀ hrho0ne h2
 
 end Engineering.Process.ReactiveBalance

@@ -88,4 +88,28 @@ example : HasDerivAt (fun t : ℝ => t * 2) 2 0 ∧ ¬ ((0 : ℝ) ≠ 0) := by
     exact h
   · simp
 
+-- Constant density rho = rho_in = 2 with Qin = 3 and Qout = 1: a vessel
+-- with V(t) = 2t satisfies the mass balance and V' = 2 = Qin - Qout.
+example : HasDerivAt (fun t : ℝ => (2 : ℝ) * (2 * t)) (2 * 3 - 2 * 1) 0 ∧
+    HasDerivAt (fun t : ℝ => 2 * t) (3 - 1) 0 := by
+  refine ⟨?_, ?_⟩
+  · have h := ((hasDerivAt_id (0 : ℝ)).const_mul 2).const_mul 2
+    norm_num at h ⊢
+    exact h
+  · have h := (hasDerivAt_id (0 : ℝ)).const_mul 2
+    norm_num at h ⊢
+    exact h
+
+-- Changing density breaks the naive volume law: at an instant with
+-- rho = 1, V = 1, rho' = 1 and Qin = Qout = 0, mass conservation forces
+-- V' = -1 through the comparison identity, not Qin - Qout = 0.
+example : (1 : ℝ) / 1 * 0 - 0 - 1 * 1 / 1 = -1 ∧ (-1 : ℝ) ≠ 0 - 0 := by
+  norm_num
+
+-- The recorded counterexample shape: rho = 1, V = 10, rho' = 1/10 and
+-- Qin = Qout = 1 conserve mass with V' = -1, not 0.
+example : (1 : ℝ) / 1 * 1 - 1 - 10 * (1 / 10) / 1 = -1 ∧
+    (-1 : ℝ) ≠ 1 - 1 := by
+  norm_num
+
 end Engineering.Process.ReactiveBalance.Tests
