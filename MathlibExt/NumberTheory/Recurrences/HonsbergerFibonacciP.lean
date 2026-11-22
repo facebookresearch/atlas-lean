@@ -226,6 +226,7 @@ private theorem honsberger_generic
     · exact honsberger_induction_step p m n f hzero hone hrec (by omega)
         (ih (m - 1) (by omega)) (ih (m - p - 1) (by omega))
 
+set_option linter.unusedVariables false in
 /-- Honsberger identity for Fibonacci `p`-numbers. Binds source lines 425-449
 with source-text SHA-256 `754dee8cf3e11595590ad2539aee76a3ad6d7ffcb80282b6a4488271f6392bd9`.
 From `https://cs.uwaterloo.ca/journals/JIS/VOL27/Kuhapatanakul/kuha13.tex`,
@@ -241,6 +242,7 @@ Proof: The definition follows Kuhapatanakul et al., JIS 27 (2024), lines 79-85; 
 at lines 425-449 follows from a uniform recurrence and strong induction on `m` with a telescoping
 base case.
 -/
+@[nolint unusedArguments] -- `hm`, `hm_pos`, `hn`, `hn_pos` keep the `Wanted` entry's statement
 theorem honsberger_fibonacciP
     (p m n : ℕ) (hp : 0 < p) (hm_pos : 0 < m) (hn_pos : 0 < n)
     (hm : p ≤ m + 1) (hn : p ≤ n + 2) :

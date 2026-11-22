@@ -31,61 +31,83 @@ open Asymptotics Filter Finset Complex Topology MeasureTheory
 
 noncomputable section
 
-/-- The local factor at a prime `p` with exponent `e`: `1` for `e = 0`, `a p` for `e = 1`,
-and `0` for `e ≥ 2`. -/
+/-- **Local factor.** Given $a : \mathbb{N} \to \mathbb{C}$ and natural numbers $p$ and $e$,
+the local factor of $a$ at $p$ with exponent $e$ is $1$ if $e = 0$, $a(p)$ if $e = 1$, and $0$
+if $e \ge 2$. -/
 def chapter5Entry30LocalCoeff (a : ℕ → ℂ) (p e : ℕ) : ℂ :=
   match e with
   | 0 => 1
   | 1 => a p
   | _ + 2 => 0
 
-/-- The multiplicative coefficient with local factors `chapter5Entry30LocalCoeff a`: `0` at
-`n = 0`, otherwise the product of the local factors over the prime factors of `n`. -/
+/-- **Coefficients for Entry 30.** For a function $a : \mathbb{N} \to \mathbb{C}$ and
+$n \in \mathbb{N}$, the Entry 30 coefficient $c_a(n) \in \mathbb{C}$ is $0$ when $n = 0$. When
+$n \ne 0$ it is the product, over the prime factors $p$ of $n$, of the local factor of $a$ at $p$
+with exponent the multiplicity of $p$ in $n$. The local factor at $p$ with exponent $e$ is $1$
+for $e = 0$, $a(p)$ for $e = 1$, and $0$ for $e \ge 2$. -/
 def chapter5Entry30Coeff (a : ℕ → ℂ) (n : ℕ) : ℂ :=
   if n = 0 then 0
   else ∏ p ∈ n.primeFactors, chapter5Entry30LocalCoeff a p (n.factorization p)
 
-/-- The `j`-th term of `∑ n ^ (-s)` over non-squarefree `n ≥ 1`, indexed by `n = j + 1`. -/
+/-- **Terms of the Dirichlet series over non-squarefree integers.** For $s \in \mathbb{C}$ and a
+natural number $j$, put $n = j + 1$; the $j$-th term is $0$ if $n$ is squarefree and $n^{-s}$
+otherwise. As $j$ ranges over the natural numbers, these are the terms of $\sum n^{-s}$ over
+non-squarefree $n \ge 1$. -/
 def chapter5Entry30NonSquarefreeTerm (s : ℂ) (j : ℕ) : ℂ :=
   let n := j + 1
   if Squarefree n then 0 else (n : ℂ) ^ (-s)
 
-/-- The `j`-th term of `∑ n ^ (-s)` over squarefree `n ≥ 1` with an odd number of prime
-factors, indexed by `n = j + 1`. -/
+/-- **Terms over squarefree integers with an odd number of prime factors.** For $s \in \mathbb{C}$
+and a natural number $j$, put $n = j + 1$; the $j$-th term is $n^{-s}$ if $n$ is squarefree and
+has an odd number of distinct prime factors, and $0$ otherwise. As $j$ ranges over the natural
+numbers, these are the terms of $\sum n^{-s}$ over squarefree $n \ge 1$ with an odd number of
+prime factors. -/
 def chapter5Entry30OddTerm (s : ℂ) (j : ℕ) : ℂ :=
   let n := j + 1
   if Squarefree n ∧ Odd n.primeFactors.card then (n : ℂ) ^ (-s) else 0
 
-/-- `chapter5Entry30Coeff` with local values `a p = -p ^ (-s)`. -/
+/-- **Signed multiplicative coefficient.** For $s \in \mathbb{C}$ and a natural number $n$, let
+$a(p) = -p^{-s}$ for natural numbers $p$. The signed coefficient of $n$ is $0$ if $n = 0$ and,
+for $n \ne 0$, the product over the prime factors $p$ of $n$ of the local factor of $a$ at $p$
+with exponent the multiplicity of $p$ in $n$, where the local factor of $a$ at $p$ with exponent
+$e$ is $1$ for $e = 0$, $a(p)$ for $e = 1$, and $0$ for $e \ge 2$. -/
 def chapter5Entry30SignedCoeff (s : ℂ) (n : ℕ) : ℂ :=
   chapter5Entry30Coeff (fun p => -((p : ℂ) ^ (-s))) n
 
-/-- The `j`-th term of `∑ n ^ (-s)` over squarefree `n ≥ 1`, indexed by `n = j + 1`. -/
+/-- **Terms of the Dirichlet series over squarefree integers.** For a complex number $s$ and a
+natural number $j$, let $n = j + 1$; the $j$-th squarefree term is $n^{-s}$ if $n$ is squarefree
+and $0$ otherwise, so the series of these terms over $j \ge 0$ is $\sum n^{-s}$ over the
+squarefree $n \ge 1$. -/
 def chapter5Entry30SquarefreeTerm (s : ℂ) (j : ℕ) : ℂ :=
   let n := j + 1
   if Squarefree n then (n : ℂ) ^ (-s) else 0
 
-/-- The local factor at exponent `0` is `1`. -/
+/-- **Local factor at exponent zero.** For every $a : \mathbb{N} \to \mathbb{C}$ and every natural
+number $p$, the local factor of $a$ at $p$ with exponent $0$ is $1$. -/
 @[simp]
 lemma chapter5Entry30LocalCoeff_zero (a : ℕ → ℂ) (p : ℕ) :
     chapter5Entry30LocalCoeff a p 0 = 1 :=
   rfl
 
-/-- The local factor at exponent `1` is `a p`. -/
+/-- **Local factor at exponent one.** For every $a : \mathbb{N} \to \mathbb{C}$ and every natural
+number $p$, the local factor of $a$ at $p$ with exponent $1$ is $a(p)$. -/
 @[simp]
 lemma chapter5Entry30LocalCoeff_one (a : ℕ → ℂ) (p : ℕ) :
     chapter5Entry30LocalCoeff a p 1 = a p :=
   rfl
 
-/-- The local factor vanishes at exponents `e ≥ 2`. -/
+/-- **Entry 30 local factors vanish at exponents at least two.** For every function
+$a : \mathbb{N} \to \mathbb{C}$, every $p \in \mathbb{N}$ and every $e \ge 2$, the Entry 30 local
+factor of $a$ at $p$ with exponent $e$ is $0$. -/
 lemma chapter5Entry30LocalCoeff_of_two_le (a : ℕ → ℂ) (p e : ℕ) (he : 2 ≤ e) :
     chapter5Entry30LocalCoeff a p e = 0 := by
   have heq : e = (e - 2) + 2 := by omega
   rw [heq]
   rfl
 
-/-- At a squarefree `n ≠ 0`, the coefficient is the product of `a p` over the prime factors
-of `n`. -/
+/-- **Entry 30 coefficients at squarefree integers.** For every function
+$a : \mathbb{N} \to \mathbb{C}$ and every squarefree $n \in \mathbb{N}$ with $n \ne 0$, the Entry 30
+coefficient $c_a(n)$ is the product of $a(p)$ over the prime factors $p$ of $n$. -/
 lemma chapter5Entry30Coeff_of_squarefree (a : ℕ → ℂ) (n : ℕ) (hn : n ≠ 0) (hsq : Squarefree n) :
     chapter5Entry30Coeff a n = ∏ p ∈ n.primeFactors, a p := by
   unfold chapter5Entry30Coeff
@@ -123,8 +145,9 @@ lemma chapter5Entry30Coeff_of_not_squarefree (a : ℕ → ℂ) (n : ℕ) (hn : n
     exact hmem
   exact Finset.prod_eq_zero hmem hzero
 
-/-- For `n ≠ 0`, the coefficient is the product of `a p` over the prime factors of `n` when `n`
-is squarefree, and `0` otherwise. -/
+/-- **Closed form of the Entry 30 coefficients.** For every function $a : \mathbb{N} \to \mathbb{C}$
+and every $n \in \mathbb{N}$ with $n \ne 0$, the Entry 30 coefficient $c_a(n)$ equals the product of
+$a(p)$ over the prime factors $p$ of $n$ when $n$ is squarefree, and $c_a(n) = 0$ otherwise. -/
 lemma chapter5Entry30Coeff_of_ne_zero (a : ℕ → ℂ) (n : ℕ) (hn : n ≠ 0) :
     chapter5Entry30Coeff a n =
       if Squarefree n then ∏ p ∈ n.primeFactors, a p else 0 := by
@@ -186,8 +209,10 @@ private lemma e30_summable_shift_two {c : ℝ} (hc : 1 < c) :
   have h2 := (summable_nat_add_iff (G := ℝ) 2).mpr h
   simpa using h2
 
-/-- The coefficients from `n = 2` on are summable when `‖a p‖ ≤ p ^ (-c)` at every prime, for
-some `c > 1`. -/
+/-- **Summability of the Entry 30 coefficients.** Let $a : \mathbb{N} \to \mathbb{C}$ and let
+$c > 1$ be real with $|a(p)| \le p^{-c}$ for every prime $p$. Then the Entry 30 coefficients
+$f_a(n)$ of $a$ (equal to $0$ at $n = 0$; for $n \ge 1$, the product of $a(p)$ over the primes
+$p \mid n$ if $n$ is squarefree, and $0$ otherwise) form a summable family over $n \ge 2$. -/
 lemma summable_chapter5Entry30Coeff_add_two (a : ℕ → ℂ) (c : ℝ) (hc : 1 < c)
     (ha : ∀ p : ℕ, p.Prime → ‖a p‖ ≤ Real.rpow (p : ℝ) (-c)) :
     Summable (fun j : ℕ => chapter5Entry30Coeff a (j + 2)) := by
@@ -222,7 +247,9 @@ lemma chapter5Entry30Coeff_prime (a : ℕ → ℂ) (p : ℕ) (hp : p.Prime) :
   rw [hpf]
   simp
 
-/-- The coefficient vanishes at prime powers `p ^ e` with `e ≥ 2`. -/
+/-- **Entry 30 coefficients vanish at higher prime powers.** For every function
+$a : \mathbb{N} \to \mathbb{C}$, every prime $p$ and every $e \ge 2$, the Entry 30 coefficient
+satisfies $c_a(p^e) = 0$. -/
 lemma chapter5Entry30Coeff_prime_pow_of_two_le (a : ℕ → ℂ) (p e : ℕ) (hp : p.Prime) (he : 2 ≤ e) :
     chapter5Entry30Coeff a (p ^ e) = 0 := by
   have hne : (p ^ e) ≠ 0 := pow_ne_zero e hp.ne_zero
@@ -235,7 +262,9 @@ lemma chapter5Entry30Coeff_prime_pow_of_two_le (a : ℕ → ℂ) (p e : ℕ) (hp
     omega
   exact chapter5Entry30Coeff_of_not_squarefree a _ hne hnsq
 
-/-- The coefficient is multiplicative on coprime arguments. -/
+/-- **Entry 30 coefficients are multiplicative.** For every function $a : \mathbb{N} \to \mathbb{C}$
+and all coprime $m, n \in \mathbb{N}$, the Entry 30 coefficients $c_a$ satisfy
+$c_a(mn) = c_a(m)\,c_a(n)$. -/
 lemma chapter5Entry30Coeff_mul_of_coprime (a : ℕ → ℂ) (m n : ℕ) (hcop : Nat.Coprime m n) :
     chapter5Entry30Coeff a (m * n) = chapter5Entry30Coeff a m * chapter5Entry30Coeff a n := by
   by_cases hm : m = 0
@@ -338,8 +367,11 @@ private lemma e30_tsum_prime_pow (a : ℕ → ℂ) (c : ℝ) (hc : 1 < c)
   rw [hsum_eq] at hHasSum
   exact HasSum.unique hsumm.hasSum hHasSum
 
-/-- Euler product: when `‖a p‖ ≤ p ^ (-c)` at every prime, for some `c > 1`, the product of
-`1 + a p` over the primes is `1 + ∑' j, chapter5Entry30Coeff a (j + 2)`. -/
+/-- **Euler product for the Entry 30 coefficients.** Let $a : \mathbb{N} \to \mathbb{C}$ and let
+$c > 1$ be real with $|a(p)| \le p^{-c}$ for every prime $p$. Write $f_a(n)$ for the Entry 30
+coefficient of $a$ at $n$ (it is $0$ at $n = 0$; for $n \ge 1$ it is the product of $a(p)$ over
+the primes $p \mid n$ if $n$ is squarefree, and $0$ otherwise). Then the product of $1 + a(p)$
+over all primes $p$ converges unconditionally to $1 + \sum_{n \ge 2} f_a(n)$. -/
 lemma hasProd_one_add_chapter5Entry30Coeff (a : ℕ → ℂ) (c : ℝ) (hc : 1 < c)
     (ha : ∀ p : ℕ, p.Prime → ‖a p‖ ≤ Real.rpow (p : ℝ) (-c)) :
     HasProd (fun p : Nat.Primes => 1 + a p)
@@ -630,7 +662,9 @@ private lemma e30_Splus_eq (s : ℂ) (hs : 1 < s.re) :
     HasProd.unique hMul2 hZ
   exact (eq_div_iff hz2ne).mpr hEq
 
-/-- Unfolding lemma for `chapter5Entry30SquarefreeTerm`. -/
+/-- **Squarefree term, explicit form.** For $s \in \mathbb{C}$ and a natural number $j$, the $j$-th
+term of the Dirichlet series over squarefree integers equals $(j + 1)^{-s}$ if $j + 1$ is
+squarefree and $0$ otherwise. -/
 lemma chapter5Entry30SquarefreeTerm_def (s : ℂ) (j : ℕ) :
     chapter5Entry30SquarefreeTerm s j
       = (if Squarefree (j + 1) then (((j + 1 : ℕ)) : ℂ) ^ (-s) else 0) := by
@@ -649,7 +683,8 @@ private lemma e30_sq_term_Fplus (s : ℂ) (j : ℕ) :
   unfold e30Fplus
   simp
 
-/-- The squarefree terms are summable for `1 < s.re`. -/
+/-- **Summability of the squarefree terms.** For every complex number $s$ with
+$\operatorname{Re} s > 1$, the series of $n^{-s}$ over the squarefree $n \ge 1$ is summable. -/
 lemma summable_chapter5Entry30SquarefreeTerm (s : ℂ) (hs : 1 < s.re) :
     Summable (chapter5Entry30SquarefreeTerm s) := by
   have hbound : Summable (fun j : ℕ => Real.rpow ((j + 1 : ℕ) : ℝ) (-s.re)) :=
@@ -659,7 +694,9 @@ lemma summable_chapter5Entry30SquarefreeTerm (s : ℂ) (hs : 1 < s.re) :
   rw [e30_sq_term_Fplus s j]
   exact e30Fplus_norm_le s hs (j + 1) (by omega)
 
-/-- `∑ n ^ (-s)` over squarefree `n ≥ 1` is `ζ(s) / ζ(2s)` for `1 < s.re`. -/
+/-- **Sum of $n^{-s}$ over squarefree $n$.** For every complex number $s$ with
+$\operatorname{Re} s > 1$, the sum of $n^{-s}$ over the squarefree $n \ge 1$ equals
+$\zeta(s)/\zeta(2s)$. -/
 lemma tsum_chapter5Entry30SquarefreeTerm (s : ℂ) (hs : 1 < s.re) :
     (∑' j : ℕ, chapter5Entry30SquarefreeTerm s j)
       = riemannZeta s / riemannZeta (2 * s) := by
@@ -749,7 +786,10 @@ private lemma e30_mu_card (n : ℕ) (hn : n ≠ 0) (hsq : Squarefree n) :
   push_cast
   rw [Finset.prod_const]
 
-/-- Unfolding lemma for `chapter5Entry30OddTerm`. -/
+/-- **Odd-count squarefree term, explicit form.** For $s \in \mathbb{C}$ and a natural number $j$,
+the $j$-th term of the Dirichlet series over squarefree integers with an odd number of prime
+factors equals $(j + 1)^{-s}$ if $j + 1$ is squarefree and has an odd number of distinct prime
+factors, and $0$ otherwise. -/
 lemma chapter5Entry30OddTerm_def (s : ℂ) (j : ℕ) :
     chapter5Entry30OddTerm s j
       = (if Squarefree (j + 1) ∧ Odd (j + 1).primeFactors.card
@@ -792,7 +832,9 @@ private lemma e30_summable_Fmu_shift (s : ℂ) (hs : 1 < s.re) :
     Summable (fun j : ℕ => e30Fmu s (j + 1)) :=
   (summable_nat_add_iff (G := ℂ) 1).mpr (e30_summable_Fmu s hs)
 
-/-- The odd squarefree terms are summable for `1 < s.re`. -/
+/-- **Summability of the odd squarefree terms.** For every complex number $s$ with
+$\operatorname{Re} s > 1$, the series of $n^{-s}$ over the squarefree $n \ge 1$ with an odd number
+of distinct prime factors is summable. -/
 lemma summable_chapter5Entry30OddTerm (s : ℂ) (hs : 1 < s.re) :
     Summable (chapter5Entry30OddTerm s) := by
   have hRHS : Summable (fun j : ℕ =>
@@ -827,8 +869,9 @@ private lemma e30_odd_tsum (s : ℂ) (hs : 1 < s.re) :
     rw [div_eq_mul_inv]
   rw [hcongr1, hcongr2, hmul_tsum, htsub, div_eq_mul_inv]
 
-/-- `∑ n ^ (-s)` over squarefree `n ≥ 1` with an odd number of prime factors is
-`(ζ(s) ^ 2 - ζ(2s)) / (2 ζ(s) ζ(2s))` for `1 < s.re`. -/
+/-- **Sum of $n^{-s}$ over squarefree $n$ with an odd number of prime factors.** For every complex
+number $s$ with $\operatorname{Re} s > 1$, the sum of $n^{-s}$ over the squarefree $n \ge 1$ with
+an odd number of distinct prime factors equals $(\zeta(s)^2 - \zeta(2s))/(2\zeta(s)\zeta(2s))$. -/
 lemma tsum_chapter5Entry30OddTerm (s : ℂ) (hs : 1 < s.re) :
     (∑' j : ℕ, chapter5Entry30OddTerm s j)
       = (riemannZeta s ^ 2 - riemannZeta (2 * s)) /
@@ -883,7 +926,9 @@ private lemma e30_cpow_shift_tsum (s : ℂ) (hs : 1 < s.re) :
   rw [hz, hcongr] at *
   exact hshift.symm
 
-/-- Unfolding lemma for `chapter5Entry30NonSquarefreeTerm`. -/
+/-- **Non-squarefree term, explicit form.** For $s \in \mathbb{C}$ and a natural number $j$, the
+$j$-th term of the Dirichlet series over non-squarefree integers equals $0$ if $j + 1$ is
+squarefree and $(j + 1)^{-s}$ otherwise. -/
 lemma chapter5Entry30NonSquarefreeTerm_def (s : ℂ) (j : ℕ) :
     chapter5Entry30NonSquarefreeTerm s j
       = (if Squarefree (j + 1) then 0 else ((((j + 1 : ℕ))) : ℂ) ^ (-s)) := by
@@ -900,7 +945,8 @@ private lemma e30_nsq_term_eq (s : ℂ) (j : ℕ) :
   · simp only [hsq, ite_false]
     ring
 
-/-- The non-squarefree terms are summable for `1 < s.re`. -/
+/-- **Summability of the non-squarefree terms.** For every complex number $s$ with
+$\operatorname{Re} s > 1$, the series of $n^{-s}$ over the non-squarefree $n \ge 1$ is summable. -/
 lemma summable_chapter5Entry30NonSquarefreeTerm (s : ℂ) (hs : 1 < s.re) :
     Summable (chapter5Entry30NonSquarefreeTerm s) := by
   have hcpow_shift : Summable (fun j : ℕ => ((((j + 1 : ℕ))) : ℂ) ^ (-s)) := by
@@ -924,7 +970,9 @@ private lemma e30_nsq_tsum (s : ℂ) (hs : 1 < s.re) :
   rw [hcongr]
   exact Summable.tsum_sub hcpow_shift (summable_chapter5Entry30SquarefreeTerm s hs)
 
-/-- `∑ n ^ (-s)` over non-squarefree `n ≥ 1` is `ζ(s) (ζ(2s) - 1) / ζ(2s)` for `1 < s.re`. -/
+/-- **Sum of $n^{-s}$ over non-squarefree $n$.** For every complex number $s$ with
+$\operatorname{Re} s > 1$, the sum of $n^{-s}$ over the non-squarefree $n \ge 1$ equals
+$\zeta(s)(\zeta(2s) - 1)/\zeta(2s)$. -/
 lemma tsum_chapter5Entry30NonSquarefreeTerm (s : ℂ) (hs : 1 < s.re) :
     (∑' j : ℕ, chapter5Entry30NonSquarefreeTerm s j)
       = riemannZeta s * (riemannZeta (2 * s) - 1) / riemannZeta (2 * s) := by
@@ -946,8 +994,10 @@ private lemma e30_cpow_nat_prod (s : Finset ℕ) (f : ℕ → ℕ) (z : ℂ) :
     rw [hmul]
     rw [ih]
 
-/-- For `n ≠ 0`, the signed coefficient is `-n ^ (-s)` or `n ^ (-s)` when `n` is squarefree
-with an odd or even number of prime factors, and `0` when `n` is not squarefree. -/
+/-- **Explicit form of the signed coefficient.** For $s \in \mathbb{C}$ and a natural number
+$n \ne 0$, the signed coefficient of $n$ equals $-n^{-s}$ if $n$ is squarefree with an odd number
+of distinct prime factors, $n^{-s}$ if $n$ is squarefree with an even number of distinct prime
+factors, and $0$ if $n$ is not squarefree. -/
 lemma chapter5Entry30SignedCoeff_of_ne_zero (s : ℂ) (n : ℕ) (hn : n ≠ 0) :
     chapter5Entry30SignedCoeff s n =
       if Squarefree n then
@@ -1006,7 +1056,22 @@ private lemma e30_part2 (s : ℂ) (hs : 1 < s.re) :
   · exact summable_chapter5Entry30NonSquarefreeTerm s hs
   · exact tsum_chapter5Entry30NonSquarefreeTerm s hs
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 5,
+/-- **Ramanujan's squarefree Dirichlet series (Entry 30).** (i) Let $a : \mathbb{N} \to \mathbb{C}$
+and let $c > 1$ be real with $|a(p)| \le p^{-c}$ for every prime $p$, and write $f_a(n)$ for the
+Entry 30 coefficient of $a$ at $n$. Then the family $(f_a(n))_{n \ge 2}$ is summable; for every
+$n \ge 1$, $f_a(n)$ is the product of $a(p)$ over the primes $p \mid n$ if $n$ is squarefree and
+$0$ otherwise; and the product of $1 + a(p)$ over all primes $p$ converges unconditionally to
+$1 + \sum_{n \ge 2} f_a(n)$. (ii) Let $s$ be a complex number with $\operatorname{Re} s > 1$.
+Then for every $n \ge 1$ the Entry 30 coefficient at $n$ of $p \mapsto -p^{-s}$ is $-n^{-s}$ if
+$n$ is squarefree with an odd number of distinct prime factors, $n^{-s}$ if $n$ is squarefree
+with an even number of distinct prime factors, and $0$ if $n$ is not squarefree; $\zeta(s) \ne 0$
+and $\zeta(2s) \ne 0$; the series of $n^{-s}$ over the squarefree $n \ge 1$ is summable with sum
+$\zeta(s)/\zeta(2s)$; the series of $n^{-s}$ over the squarefree $n \ge 1$ with an odd number of
+distinct prime factors is summable with sum $(\zeta(s)^2 - \zeta(2s))/(2\zeta(s)\zeta(2s))$; and
+the series of $n^{-s}$ over the non-squarefree $n \ge 1$ is summable with sum
+$\zeta(s)(\zeta(2s) - 1)/\zeta(2s)$.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 5,
 Entry 30, pp. 131–132.
 Proves `Wanted` entry `ramanujan_part1_ch5_entry30_secondordereulerian`.
 -/

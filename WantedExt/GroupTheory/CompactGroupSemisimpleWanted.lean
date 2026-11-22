@@ -23,14 +23,20 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.RepresentationTheory.CompactGroupSemisimple` — compact_group_semisimple (manifest `manifests/problems/compact_group_semisimple.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module
+`LeanEval.RepresentationTheory.CompactGroupSemisimple` — compact_group_semisimple (manifest
+`manifests/problems/compact_group_semisimple.toml`, rev 1, submitter Kim Morrison, status archived)
+—
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.GroupTheory.CompactGroupSemisimpleWanted` namespace. Mathematical
-statements are unchanged. Source: H. Weyl, *Theorie der Darstellung kontinuierlicher halb-einfacher Gruppen durch lineare Transformationen* (1925–26); Peter–Weyl (1927). Knill, *Some fundamental theorems in mathematics*, §21.
+and placed the declarations in the `MathlibExt.GroupTheory.CompactGroupSemisimpleWanted` namespace.
+Mathematical
+statements are unchanged. Source: H. Weyl, *Theorie der Darstellung kontinuierlicher halb-einfacher
+Gruppen durch lineare Transformationen* (1925–26); Peter–Weyl (1927). Knill, *Some fundamental
+theorems in mathematics*, §21.
 -/
 module
 
@@ -66,7 +72,9 @@ topological group on a finite-dimensional real vector space is semisimple:
 every subrepresentation has a `G`-invariant complement, so the representation
 decomposes as a direct sum of irreducible finite-dimensional
 subrepresentations. -/
-/-- Source: H. Weyl, *Theorie der Darstellung kontinuierlicher halb-einfacher Gruppen durch lineare Transformationen* (1925–26); Peter–Weyl (1927). Knill, *Some fundamental theorems in mathematics*, §21. Via leanprover/lean-eval@38361be, problem `compact_group_semisimple`. -/
+/-- Source: H. Weyl, *Theorie der Darstellung kontinuierlicher halb-einfacher Gruppen durch lineare
+Transformationen* (1925–26); Peter–Weyl (1927). Knill, *Some fundamental theorems in
+mathematics*, §21. Via leanprover/lean-eval@38361be, problem `compact_group_semisimple`. -/
 public theorem_wanted compact_group_semisimple
     {G V : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
     [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimensional ℝ V]

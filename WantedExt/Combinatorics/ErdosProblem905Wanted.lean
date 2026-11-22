@@ -15,7 +15,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Clique
 public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Fin.Basic
 public import MathlibExt.Combinatorics.SimpleGraph.Clique
 public import Batteries.Util.ProofWanted

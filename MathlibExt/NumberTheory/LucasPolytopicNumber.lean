@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.GroupWithZero.Finset
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 
 /-!
 # Lucas-polytopic numbers
@@ -36,7 +36,9 @@ def lucasBracketAux (s t : ℝ) : ℕ → ℝ
 condition is what makes all factorial quotients below genuine field quotients,
 rather than Lean's totalized `0 / 0`. -/
 structure LucasParameters where
+  /-- The coefficient of `{n + 1}ₛₜ` in the Lucas bracket recurrence. -/
   s : ℝ
+  /-- The coefficient of `{n}ₛₜ` in the Lucas bracket recurrence. -/
   t : ℝ
   s_ne_zero : s ≠ 0
   t_ne_zero : t ≠ 0

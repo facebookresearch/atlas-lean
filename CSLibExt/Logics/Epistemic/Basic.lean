@@ -53,13 +53,18 @@ structure Model (World : Type u) (Atom : Type v) (Agent : Type w) where
 
 /-- **Epistemic formulas.** Given a type of atoms and a type of agents, the formulas of epistemic
 logic are built inductively: every atom $p$ is a formula, falsity $\bot$ is a formula, if $\varphi$
-and $\psi$ are formulas then so is the implication $\varphi \to \psi$, and if $\varphi$ is a
-formula and $i$ is an agent then $K_i \varphi$ (read "agent $i$ knows $\varphi$") is a formula. -/
+and $\psi$ are formulas then so is the implication $\varphi \to \psi$, if $\varphi$ is a formula
+and $i$ is an agent then $K_i \varphi$ (read "agent $i$ knows $\varphi$") is a formula, if
+$\varphi$ is a formula and $G$ is a set of agents then $C_G \varphi$ (common knowledge of
+$\varphi$ in the group $G$) is a formula, and if $\varphi$ and $\psi$ are formulas then so is the
+public announcement $[!\varphi]\psi$ (read "after $\varphi$ is announced, $\psi$"). -/
 inductive Formula (Atom : Type v) (Agent : Type w) where
   | atom (a : Atom) : Formula Atom Agent
   | bot : Formula Atom Agent
   | imp (φ ψ : Formula Atom Agent) : Formula Atom Agent
   | know (i : Agent) (φ : Formula Atom Agent) : Formula Atom Agent
+  | common (G : Set Agent) (φ : Formula Atom Agent) : Formula Atom Agent
+  | announce (φ ψ : Formula Atom Agent) : Formula Atom Agent
 
 namespace Formula
 
@@ -72,20 +77,54 @@ formulas $\varphi$ and $\psi$ is the implication $\neg\varphi \to \psi$. -/
 def or {Atom : Type*} {Agent : Type*} (φ ψ : Formula Atom Agent) : Formula Atom Agent :=
   .imp (.not φ) ψ
 
+/-- Conjunction, encoded with implication and falsity:
+`φ ∧ ψ` is `¬(φ → ¬ψ)`. -/
+def and {Atom : Type*} {Agent : Type*} (φ ψ : Formula Atom Agent) : Formula Atom Agent :=
+  .imp (.imp φ (.imp ψ .bot)) .bot
+
 end Formula
+
+/-- One accessibility step by a member of the group `G`. -/
+def groupRel {World Atom Agent : Type*} (M : Model World Atom Agent)
+    (G : Set Agent) (w v : World) : Prop :=
+  ∃ i ∈ G, M.rel i w v
+
+/-- Satisfaction relativized to a world predicate `P`: satisfaction in
+the submodel of `P`-worlds. Knowledge steps and common-knowledge paths
+stay inside the predicate, and an announcement strengthens it. This is
+meaningful at worlds satisfying `P`; callers guard the start world. -/
+def SatAt {World Atom Agent : Type*} (M : Model World Atom Agent)
+    (P : World → Prop) : Formula Atom Agent → World → Prop
+  | .atom a, w => M.valuation w a
+  | .bot, _ => False
+  | .imp φ ψ, w => SatAt M P φ w → SatAt M P ψ w
+  | .know i φ, w => ∀ v, P v → M.rel i w v → SatAt M P φ v
+  | .common G φ, w =>
+      ∀ v, Relation.ReflTransGen
+        (fun a b => ∃ i ∈ G, P b ∧ M.rel i a b) w v → SatAt M P φ v
+  | .announce φ ψ, w =>
+      ∀ _h : SatAt M P φ w,
+        SatAt M (fun v => P v ∧ SatAt M P φ v) ψ w
 
 /-- **Satisfaction in an epistemic model.** Satisfaction of an epistemic formula at a world $w$
 of a model $M$ is defined by recursion on the formula, writing $R_i$ for the accessibility
-relation of agent $i$ in $M$ and $K_i \varphi$ for the formula "agent $i$ knows $\varphi$": an
-atom $a$ holds at $w$ when the valuation of $M$ makes $a$ true at $w$; $\bot$ holds at no world;
-$\varphi \to \psi$ holds at $w$ when $\psi$ holds at $w$ whenever $\varphi$ does; and
-$K_i \varphi$ holds at $w$ when $\varphi$ holds at every world $v$ with $w \mathrel{R_i} v$. -/
+relation of agent $i$ in $M$: an atom $a$ holds at $w$ when the valuation of $M$ makes $a$ true at
+$w$; $\bot$ holds at no world; $\varphi \to \psi$ holds at $w$ when $\psi$ holds at $w$ whenever
+$\varphi$ does; $K_i \varphi$ holds at $w$ when $\varphi$ holds at every world $v$ with
+$w \mathrel{R_i} v$; $C_G \varphi$ holds at $w$ when $\varphi$ holds at every world reachable from
+$w$ by a finite chain of steps $u \mathrel{R_i} u'$ with $i \in G$, zero steps included; and
+$[!\varphi]\psi$ holds at $w$ when, if $\varphi$ holds at $w$, then $\psi$ holds at $w$ in the
+submodel of $M$ consisting of the worlds where $\varphi$ holds. -/
 def Sat {World Atom Agent : Type*} (M : Model World Atom Agent) :
     Formula Atom Agent → World → Prop
   | .atom a, w => M.valuation w a
   | .bot, _ => False
   | .imp φ ψ, w => Sat M φ w → Sat M ψ w
   | .know i φ, w => ∀ v, M.rel i w v → Sat M φ v
+  | .common G φ, w =>
+      ∀ v, Relation.ReflTransGen (groupRel M G) w v → Sat M φ v
+  | .announce φ ψ, w =>
+      ∀ _h : Sat M φ w, SatAt M (fun v => Sat M φ v) ψ w
 
 /-- **Validity in an epistemic model.** A formula $\varphi$ is valid in an epistemic model $M$
 when $\varphi$ is satisfied at every world of $M$. -/
@@ -116,6 +155,17 @@ theorem sat_or :
   · rintro (hφ | hψ) hnot
     · exact (hnot hφ).elim
     · exact hψ
+
+/-- The encoded conjunction is conjunction at the level of satisfaction. -/
+theorem sat_and :
+    Sat M (.and φ ψ) w ↔ Sat M φ w ∧ Sat M ψ w := by
+  constructor
+  · intro h
+    refine ⟨?_, ?_⟩
+    · exact Classical.byContradiction (fun ha => h (fun a _ => absurd a ha))
+    · exact Classical.byContradiction (fun hb => h (fun _ b => absurd b hb))
+  · intro h f
+    exact f h.1 h.2
 
 /-- **Distribution axiom K.** Write $K_i \varphi$ for "agent $i$ knows $\varphi$". For every
 epistemic model $M$, every agent $i$ and all formulas $\varphi$ and $\psi$, the formula

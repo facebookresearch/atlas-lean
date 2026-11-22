@@ -147,7 +147,8 @@ private theorem scanCuts_time {α : Type u} [Add α] [LinearOrder α] {n : Nat}
   | zero => simp [scanCuts]
   | succ count ih => simp [scanCuts, ih (by omega)]
 
-private theorem compositionRevenue_cast {α : Type u} [AddCommMonoid α]
+/-- Casting a composition along `k = l` does not change its revenue. -/
+public theorem compositionRevenue_cast {α : Type u} [AddCommMonoid α]
     {n k l : Nat} (prices : Vector α n) (parts : Composition k) (hkl : k = l)
     (hl : l ≤ n) :
     compositionRevenue prices (parts.cast hkl) hl =

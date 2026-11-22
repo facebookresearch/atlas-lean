@@ -224,6 +224,7 @@ theorem pathWeight_le_viterbi :
       exact Finset.le_sup' (fun s' => viterbi c x t s' * c.trans x t s' (z (Fin.last (t + 1))))
         (Finset.mem_univ _)
 
+omit [IsOrderedRing R] in
 /-- **The Viterbi variables of a chain CRF are attained.** Let $c$ be a chain CRF with a finite
 nonempty set of states $S$ and weights in a linearly ordered commutative semiring, and let $x$
 be an observation sequence. For every $t \in \mathbb{N}$ and every state $s \in S$ there is a
@@ -429,6 +430,7 @@ def viterbiTab : ℕ → Vector R n
   | 0 => Vector.ofFn fun s => c.unary x 0 s
   | t + 1 => viterbiStep x c (viterbiTab t) t
 
+omit [IsOrderedRing R] in
 theorem viterbiTab_get : ∀ (t : ℕ) (s : Fin n), (viterbiTab x c t)[s] = viterbi c x t s
   | 0, s => by simp [viterbiTab, viterbi]
   | t + 1, s => by simp [viterbiTab, viterbiStep, viterbi, viterbiTab_get t]

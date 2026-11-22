@@ -157,7 +157,11 @@ noncomputable def newCov (θ : ValidParams d K) (k : Fin K) : Matrix (Fin d) (Fi
 $x_1, \dots, x_N \in \mathbb{R}^d$ and valid parameters $\theta$ with responsibilities $r_{nk}$,
 let $N_k = \sum_n r_{nk}$. The M-step parameters have weights $\pi'_k = N_k / N$, means
 $\mu'_k = N_k^{-1} \sum_n r_{nk} x_n$ and covariances
-$\Sigma'_k = N_k^{-1} \sum_n r_{nk} (x_n - \mu'_k)(x_n - \mu'_k)^{\top}$. -/
+$\Sigma'_k = N_k^{-1} \sum_n r_{nk} (x_n - \mu'_k)(x_n - \mu'_k)^{\top}$.
+
+The result is a parameter record whose validity is proved separately under hypotheses on the
+data. For an empty sample ($N = 0$) every weight is $0$ ($0 / 0$), so the weights do not form a
+distribution. -/
 noncomputable def mStep (θ : ValidParams d K) : Params d K where
   weight k := mass xs θ k / N
   mean := newMean xs θ

@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.MachineLearning.Bayesian.Density
 public import Mathlib.Probability.Distributions.Gaussian.Real
+public import MathlibExt.Probability.Statistics.Tweedie
 
 /-!
 # Normal–Normal conjugacy with known variance
@@ -201,19 +202,24 @@ theorem gaussianLikelihood_comp_gaussianReal (m₀ : ℝ) {v₀ v : ℝ≥0} (h�
 /-! ### The posterior -/
 
 /-- **Candidate posterior kernel of the normal–normal model.** Let $m_0 \in \mathbb{R}$ and
-$v_0, v \ge 0$, let $s = \frac{v_0 v}{v_0 + v}$ be the posterior variance and, for
-$x \in \mathbb{R}$, let $\mu(x) = \frac{v m_0 + v_0 x}{v_0 + v}$ be the posterior mean (with
-$0 / 0 = 0$). The kernel from $\mathbb{R}$ to $\mathbb{R}$ sends $x$ to the measure with density
+$v_0, v > 0$, let $s = \frac{v_0 v}{v_0 + v}$ be the posterior variance and, for
+$x \in \mathbb{R}$, let $\mu(x) = \frac{v m_0 + v_0 x}{v_0 + v}$ be the posterior mean. The kernel
+from $\mathbb{R}$ to $\mathbb{R}$ sends $x$ to the measure with density
 $\theta \mapsto \frac{1}{\sqrt{2 \pi s}} e^{-(\theta - \mu(x))^2 / (2 s)}$ with respect to Lebesgue
-measure. For $v_0, v > 0$ this is the normal law $N(\mu(x), s)$. If $v_0 = 0$ or $v = 0$, then
-$s = 0$, the density is taken to be $0$, and the kernel is the zero measure at every $x$. -/
-noncomputable def normalPosteriorKernel (m₀ : ℝ) (v₀ v : ℝ≥0) : Kernel ℝ ℝ :=
+measure, that is, the normal law $N(\mu(x), s)$.
+
+Zero variances are excluded: for $v_0 = 0$ or $v = 0$ the posterior variance would be $0$, the
+Gaussian density would vanish identically and every $x$ would get the zero measure. -/
+noncomputable def normalPosteriorKernel (m₀ : ℝ) (v₀ v : ℝ≥0) [NeZero v₀] [NeZero v] :
+    Kernel ℝ ℝ :=
   (Kernel.const ℝ volume).withDensity fun x θ ↦
     gaussianPDF (normalPostMean m₀ v₀ v x) (normalPostVar v₀ v) θ
 
-theorem normalPosteriorKernel_apply (m₀ : ℝ) {v₀ v : ℝ≥0} (h₀ : v₀ ≠ 0) (h : v ≠ 0) (x : ℝ) :
+theorem normalPosteriorKernel_apply (m₀ : ℝ) {v₀ v : ℝ≥0} [NeZero v₀] [NeZero v] (x : ℝ) :
     normalPosteriorKernel m₀ v₀ v x =
       gaussianReal (normalPostMean m₀ v₀ v x) (normalPostVar v₀ v) := by
+  have h₀ : v₀ ≠ 0 := NeZero.ne v₀
+  have h : v ≠ 0 := NeZero.ne v
   rw [normalPosteriorKernel,
     Kernel.withDensity_apply _ (measurable_normalPostMean_gaussianPDF m₀ v₀ v), Kernel.const_apply,
     gaussianReal_of_var_ne_zero _ (normalPostVar_ne_zero h₀ h)]
@@ -221,7 +227,7 @@ theorem normalPosteriorKernel_apply (m₀ : ℝ) {v₀ v : ℝ≥0} (h₀ : v₀
 instance (m₀ : ℝ) (v₀ v : ℝ≥0) [NeZero v₀] [NeZero v] :
     IsMarkovKernel (normalPosteriorKernel m₀ v₀ v) :=
   ⟨fun x ↦ by
-    rw [normalPosteriorKernel_apply m₀ (NeZero.ne v₀) (NeZero.ne v)]; infer_instance⟩
+    rw [normalPosteriorKernel_apply m₀]; infer_instance⟩
 
 /-- **Disintegration of the Normal–Normal joint law.** Let $m_0 \in \mathbb{R}$ and $v_0, v > 0$,
 and write $N(\mu, s)$ for the Gaussian law with mean $\mu$ and variance $s$. Let $\pi = N(m_0, v_0)$
@@ -277,5 +283,14 @@ theorem gaussianLikelihood_comp_posterior (m₀ : ℝ) {v₀ v : ℝ≥0} [NeZer
   filter_upwards [posterior_gaussianLikelihood_gaussianReal m₀ (v₀ := v₀) (v := v)] with x hx
   rw [hx, gaussianLikelihood_comp_gaussianReal _
     (normalPostVar_ne_zero (NeZero.ne v₀) (NeZero.ne v)) (NeZero.ne v)]
+
+/-- **The Bayes-ratio posterior mean of the normal–normal model is the conjugate posterior mean.**
+For the prior `N(0, A)` and noise variance `v > 0`, the posterior mean of the Gaussian location
+model computed as a ratio of integrals against the prior (`gaussianPosteriorMean`, the quantity in
+Tweedie's formula) equals the conjugate posterior mean `normalPostMean 0 A v x = A x / (A + v)`. -/
+theorem gaussianPosteriorMean_gaussianReal_eq_normalPostMean (A : ℝ≥0) {v : ℝ≥0} [NeZero v]
+    (x : ℝ) : gaussianPosteriorMean (gaussianReal 0 A) v x = normalPostMean 0 A v x := by
+  rw [gaussianPosteriorMean_gaussianReal A x, normalPostMean]
+  ring
 
 end Cslib.MachineLearning.Bayesian

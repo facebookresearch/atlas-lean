@@ -66,15 +66,8 @@ $$\pi(z_0) \prod_{t=0}^{T-1} a(z_t, z_{t+1}) \prod_{t=0}^{T} b(z_t, x_t).$$
 theorem pathProb_eq_prod [CommSemiring R] (h : HMM S O R) (x : ℕ → O) :
     ∀ (T : ℕ) (z : Fin (T + 1) → S), pathProb h x T z =
       h.init (z 0) * (∏ t : Fin T, h.trans (z t.castSucc) (z t.succ)) *
-        ∏ t : Fin (T + 1), h.emit (z t) (x t)
-  | 0, z => by simp [pathProb]
-  | T + 1, z => by
-      rw [Fin.prod_univ_castSucc (f := fun t : Fin (T + 1) => h.trans (z t.castSucc) (z t.succ)),
-        Fin.prod_univ_castSucc (f := fun t : Fin (T + 2) => h.emit (z t) (x t)), pathProb,
-        pathProb_eq_prod h x T]
-      simp only [Fin.init, Fin.succ_castSucc, Fin.val_castSucc, Fin.castSucc_zero, Fin.succ_last,
-        Fin.val_last]
-      ring
+        ∏ t : Fin (T + 1), h.emit (z t) (x t) :=
+  HiddenMarkov.pathProb_eq_prod h x
 
 /-! ## The EM model of an HMM -/
 

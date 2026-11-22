@@ -31,8 +31,7 @@ Main results:
   the dual for `ν`.
 * `mu_induction`, `nu_coinduction`: **Park induction / coinduction** for the fixed points.
 * `sat_mu_eq_lfp`, `sat_nu_eq_gfp`: the fixed points agree with Mathlib's `OrderHom.lfp` /
-  `OrderHom.gfp` (the same fixed-point operators used for the independent `EF` / `EG`
-  characterizations in `CSLibExt/Logics/CTL/Basic.lean`).
+  `OrderHom.gfp` (used by `CSLibExt/Logics/CTL/Basic.lean` for `EF` / `EG`).
 * `sat_neg`: **duality** `⟦¬φ⟧ = (⟦φ⟧)ᶜ` under the complemented environment.
 * `EF_iff_reachable`, `AG_iff_forall_reachable`: `EF p` holds exactly at the states that can
   reach a `p`-state, and `AG p` holds exactly at the states whose reachable states all satisfy
