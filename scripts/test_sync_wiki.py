@@ -3101,6 +3101,17 @@ class ScopedRows(Vault):
             sync.insert_rows(path, [self.about(f"Algebra/q{number}.md") for number in range(3)])
         self.assertEqual(len(calls), 23)
 
+    def test_a_problem_of_too_many_is_counted_once_for_each_too_many(self) -> None:
+        # So that taking a row or a page away is no new problem, and adding one is (see excess).
+        three = sync.shared_owner("Ext.a", {"A/a.md": False, "A/b.md": True, "A/c.md": False})
+        self.assertEqual(sync.excess(three), ["the declaration Ext.a of this project has a page too many; a declaration "
+                                              "has one page"] * 2)
+        self.assertEqual(len(sync.excess(sync.shared_owner("Ext.a", {"A/a.md": False, "A/b.md": False}))), 1)
+        self.assertEqual(sync.excess("A/a.md and A/c.md both credit the Mathlib declaration M.x; a declaration has one "
+                                     "page"), ["the Mathlib declaration M.x has a page too many; a declaration has one page"])
+        self.assertEqual(len(sync.excess("A/a.md has 3 rows, which Autoform reads together; a page has one row")), 2)
+        self.assertEqual(sync.excess("something else"), ["something else"])
+
     def test_a_file_without_a_last_line_end_keeps_its_bytes(self) -> None:
         sync.LINKS.mkdir(parents=True)
         path = sync.LINKS / "Algebra.jsonl"
@@ -3989,8 +4000,26 @@ class ScopedRun(unittest.TestCase):
         links.write_text(links.read_text() + json.dumps({"subject": row["subject"], "id": "af_" + "b" * 24}) + "\n")
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((status, report["in_step"]), (1, False))
-        self.assertEqual(report["errors"], ["Algebra/groups/group-basics/planned.md has 2 rows, which Autoform reads "
-                                            "together; a page has one row; fix it"])
+        self.assertEqual(report["errors"], ["Algebra/groups/group-basics/planned.md has a row too many, which Autoform "
+                                            "reads together with its others; a page has one row; fix it"])
+
+    def test_taking_a_row_from_a_page_with_too_many_is_no_new_problem(self) -> None:
+        # A page with three rows on the base: taking one away leaves fewer too many, which is no problem of the
+        # changes; adding a fourth is one.
+        self.write("blueprint/roadmap/Algebra/groups/group-basics/planned.md", "# Planned\n\nPlanned.\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        subject = [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/planned.md"}]
+        rows = [json.dumps({"subject": subject, "id": f"af_{letter * 24}"}) for letter in "abcd"]
+        links.write_text(links.read_text() + "".join(row + "\n" for row in rows[:3]))
+        self.base = self.commit("a page with three rows")
+        links.write_text(links.read_text().replace(rows[2] + "\n", ""))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (0, []))
+        links.write_text(links.read_text() + rows[2] + "\n" + rows[3] + "\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (1, [
+            "Algebra/groups/group-basics/planned.md has a row too many, which Autoform reads together with its others; "
+            "a page has one row; fix it"]))
 
 
 

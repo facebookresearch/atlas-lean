@@ -2999,9 +2999,31 @@ def link_view(index) -> dict:
             own_words[stable(words)] += 1
             identity = row["id"] if isinstance(row.get("id"), str) else page_key(row)
             broken[f"the row {identity} is one Autoform cannot read: {stable(words)}"] += 1
-    others = Counter(stable(problem) for problem in credit_problems(files) + owner_problems(files, index)) - own_words
+    others = Counter(token for problem in credit_problems(files) + owner_problems(files, index)
+                     for token in excess(stable(problem))) - own_words
     return {"stale": dict(stale), "held_problems": Counter(held_markers(readable_rows(files), index)[3]),
             "unreadable": broken + others}
+
+
+# The problems credit_problems and owner_problems give a page with several rows, and a declaration with several pages.
+ROWS_OF_A_PAGE = re.compile(r"(.+) has (\d+) rows, which Autoform reads together; a page has one row")
+PAGES_CREDITING = re.compile(r".+? and .+ both credit (.+); a declaration has one page")
+PAGES_STANDING_FOR = re.compile(
+    r"(.+) (?:both|all) stand for the declaration (\S+) of this project; a declaration has one page")
+
+
+def excess(problem: str) -> list[str]:
+    """*problem*, as a scoped run counts it: once for each row a page has too many, or page a declaration has too many,
+    so that taking one away is not a new problem, and adding one is."""
+    if match := ROWS_OF_A_PAGE.fullmatch(problem):
+        return [f"{match[1]} has a row too many, which Autoform reads together with its others; a page has one row"] * (
+            int(match[2]) - 1)
+    if match := PAGES_CREDITING.fullmatch(problem):
+        return [f"{match[1]} has a page too many; a declaration has one page"]
+    if match := PAGES_STANDING_FOR.fullmatch(problem):
+        return [f"the declaration {match[2]} of this project has a page too many; a declaration has one page"] * (
+            match[1].count(", ") + 1)
+    return [problem]
 
 
 def written_page(row: dict) -> Path | None:
