@@ -13,17 +13,17 @@ name: Bump build cache
 #
 # A maintainer dispatches this workflow from main with the bump's pull request
 # number and the head commit they reviewed. Before it checks out that commit,
-# the run checks that it is the pull request's current head and that the Bump
-# guard workflow's latest run on it passed. It then checks that the head keeps
-# main's guard
-# code and changes the contents of the pin files, so that its cache key
-# differs from main's. It builds and checks the head with the same commands as
-# ci.yml's `build` job (the memory-heavy modules, then scripts/check.sh build)
-# and saves .lake/build under ci.yml's key for the new pins. The bump's pull
-# request runs, its merge group, the merge groups queued behind it and main's
-# first build after it merges find it through ci.yml's restore-keys prefix. It
-# does not run ci.yml's regression suites or lesson checks: it warms the cache,
-# it does not stand in for CI.
+# the run checks that it is the pull request's current head and that the
+# latest completed pull_request run of the Bump guard workflow on it passed.
+# It then checks that the head keeps main's guard code and changes the
+# contents of the pin files, so that its cache key differs from main's. It
+# builds and checks the head with the same commands as ci.yml's `build` job
+# (the memory-heavy modules, then scripts/check.sh build) and saves .lake/build
+# under ci.yml's key for the new pins. The bump's pull request runs, its merge
+# group, the merge groups queued behind it and main's first build after it
+# merges find it through ci.yml's restore-keys prefix. It does not run ci.yml's
+# regression suites or lesson checks: it warms the cache, it does not stand in
+# for CI.
 #
 # Trust: the run executes the bump's code, and later builds on the new pins
 # restore what it saves, so dispatch it only for a head you reviewed. Only
