@@ -170,32 +170,38 @@ private theorem vanish_stirling_sum : ∀ (N t s : ℕ), t < N →
           rw [hNT]
           ring
 
-/-- Unsigned r-Stirling number of the first kind, after A. Z. Broder,
-"The r-Stirling numbers", Stanford Computer Science Report STAN-CS-82-949
+/-- **Unsigned r-Stirling numbers of the first kind.** For natural numbers $n$, $m$ and $r$, the
+unsigned $r$-Stirling number of the first kind $[n, m]_r$ is the coefficient of $x^m$ in the
+polynomial with natural-number coefficients
+$$x^r \prod_{r \le k < n} (x + k).$$
+For $n \ge r$ this is Broder's characterization
+$\sum_m [n, m]_r \, x^m = x^r (x+r)(x+r+1) \cdots (x+n-1)$. For $n < r$ the product is empty, so
+the polynomial is $x^r$.
+
+Source: A. Z. Broder, "The r-Stirling numbers", Stanford Computer Science Report STAN-CS-82-949
 (December 1982), PDF page 12 / printed page 9, Equation (24);
 journal version: Discrete Mathematics 49 (1984), 241-259,
-DOI 10.1016/0012-365X(84)90161-4.
-
-Equation (24) characterizes `[n,m]_r` by
-`∑ k, [n,k]_r z^k = z^r (z+r)(z+r+1)...(z+n-1)` for `n ≥ r > 0`.
-The definition below is the coefficient of `X^m` in
-`X^r * ∏ k in Finset.Ico r n, (X + C k)` over `Polynomial ℕ`,
-which directly implements Equation (24), including zero outside the
-triangular support. -/
+DOI 10.1016/0012-365X(84)90161-4. -/
 noncomputable def rStirlingFirst (n m r : ℕ) : ℕ :=
   Polynomial.coeff
     ((Polynomial.X : Polynomial ℕ) ^ r *
       Finset.prod (Finset.Ico r n)
         (fun k => (Polynomial.X : Polynomial ℕ) + Polynomial.C k)) m
 
-/-- At `n = r` the product is empty, so `[r, m]_r` is `1` at `m = r` and `0` otherwise. -/
+/-- **Initial row of the r-Stirling numbers of the first kind.** For all natural numbers $m$ and
+$r$, the unsigned $r$-Stirling number of the first kind $[r, m]_r$ equals $1$ if $m = r$ and $0$
+otherwise: when the first index equals $r$, the product in the definition is empty, so the
+polynomial is $x^r$. -/
 theorem rStirlingFirst_self (m r : ℕ) :
     rStirlingFirst r m r = if m = r then 1 else 0 := by
   unfold rStirlingFirst
   rw [Finset.Ico_self, Finset.prod_empty, mul_one]
   exact Polynomial.coeff_X_pow r m
 
-/-- For `r ≥ 1` the polynomial is divisible by `X`, so its constant coefficient vanishes. -/
+/-- **Vanishing of the r-Stirling numbers of the first kind with second index zero.** For all
+natural numbers $N$ and $r$ with $r \ge 1$, the unsigned $r$-Stirling number of the first kind
+$[N, 0]_r$ is $0$: the defining polynomial is divisible by $x$, so its constant coefficient
+vanishes. -/
 theorem rStirlingFirst_zero_of_pos (N r : ℕ) (hr : 1 ≤ r) :
     rStirlingFirst N 0 r = 0 := by
   obtain ⟨r', rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : r ≠ 0)
@@ -203,7 +209,10 @@ theorem rStirlingFirst_zero_of_pos (N r : ℕ) (hr : 1 ≤ r) :
   rw [Polynomial.coeff_zero_eq_eval_zero]
   simp
 
-/-- Recurrence `[n + 1, m]_r = [n, m - 1]_r + n [n, m]_r` for `1 ≤ r ≤ n`. -/
+/-- **Recurrence for the r-Stirling numbers of the first kind.** For natural numbers $n$, $m$ and
+$r$ with $1 \le r \le n$, the unsigned $r$-Stirling numbers of the first kind $[n, m]_r$ satisfy
+$[n+1, m]_r = [n, m-1]_r + n \, [n, m]_r$, where for $m = 0$ the term $[n, m-1]_r$ is read as
+$[n, 0]_r$. -/
 theorem rStirlingFirst_succ (n m r : ℕ) (hr : 1 ≤ r) (hrn : r ≤ n) :
     rStirlingFirst (n + 1) m r =
       rStirlingFirst n (m - 1) r + n * rStirlingFirst n m r := by
@@ -250,25 +259,22 @@ theorem rStirlingFirst_succ (n m r : ℕ) (hr : 1 ≤ r) (hrn : r ≤ n) :
     rw [Nat.add_sub_cancel, Polynomial.coeff_mul_X]
     ring
 
-/-- Broder's expansion formula for r-Stirling numbers of the first kind.
+/-- **Broder's alternating expansion of the r-Stirling numbers of the first kind.** Let $n$, $m$
+and $r$ be natural numbers with $1 \le r \le n$. Write $[n, m]_r$ for the unsigned $r$-Stirling
+number of the first kind, $[a, b]$ for the unsigned Stirling number of the first kind and
+$\lbrace a, b \rbrace$ for the Stirling number of the second kind. Then, in the integers,
+$$(-1)^r [n, m]_r = \sum_{k=r}^{n+r-m} [n, m+k-r] \, \lbrace k-1, r-1 \rbrace \, (-1)^k.$$
+
+Broder's Equation (43) sums over all $k$; every term outside the range above vanishes, since
+$\lbrace k-1, r-1 \rbrace$ vanishes for $k < r$ and $[n, m+k-r]$ vanishes for $k > n + r - m$.
+
+Proves `Wanted` entry `rStirlingFirst_eq_alternating_sum`.
 
 Source: A. Z. Broder, "The r-Stirling numbers",
 Stanford Computer Science Report STAN-CS-82-949 (December 1982),
 PDF page 16 / printed page 13, Equation (43);
 journal version: Discrete Mathematics 49 (1984), 241-259,
-DOI 10.1016/0012-365X(84)90161-4.
-
-Equation (43): `(-1)^r [n,m]_r = ∑ k, [n,m-r+k] {k-1,r-1} (-1)^k`,
-for `n ≥ r ≥ 1`, where square brackets are unsigned first-kind Stirling
-numbers and braces are second-kind Stirling numbers.
-
-Finite support and index encoding: the second-kind factor vanishes below
-`k = r`, and the first-kind factor vanishes above `k = n + r - m`, so the
-sum is over `Finset.Icc r (n + r - m)`; for `k ≥ r` the source index
-`m - r + k` is represented without truncation as `m + (k - r)`.
-Natural coefficients are cast to `Int` so the alternating signs are exact.
-
-Proves `Wanted` entry `rStirlingFirst_eq_alternating_sum`. -/
+DOI 10.1016/0012-365X(84)90161-4. -/
 theorem rStirlingFirst_eq_alternating_sum (n m r : ℕ) (hr : 0 < r)
     (hrn : r ≤ n) :
     (-1 : Int) ^ r * (rStirlingFirst n m r : Int) =

@@ -8,7 +8,7 @@ on:
   # broker, and its workflow file would be the fork's, not the trusted
   # base version. pull_request_target runs the base workflow with base
   # secrets, and the fork head is only ever read as data (see Resolve
-  # target / Checkout). This is the same pattern bump-guard.yml uses.
+  # target / Checkout).
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
   issue_comment:
