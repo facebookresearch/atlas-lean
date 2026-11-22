@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Privacy.DifferentialPrivacy
+public import CSLibExt.Crypto.Privacy.Exponential
 public import Cslib.Probability.PMF
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Analysis.SpecificLimits.Basic
@@ -28,11 +29,16 @@ Randomized response on a single bit, the exponential mechanism on a finite
 type, and the two-sided geometric mechanism on integers, proved against
 `CSLibExt.Privacy.DifferentialPrivacy.IsDP` directly.
 
+The exponential mechanism reuses `Cslib.Crypto.Privacy`: the `PMF` is built
+from `expMechProb`, agrees with `expMechanism` as a measure, and derives
+privacy and utility from `expMechanism_differentiallyPrivate` and
+`expMechanism_utility`.
+
 Informal sources: Dwork and Roth, *The Algorithmic Foundations of
-Differential Privacy* (2014), §3.2 for randomized response and Theorem 3.10
-for the exponential mechanism (privacy and utility), and the standard
-two-sided geometric (discrete Laplace) distribution of Ghosh, Roughgarden,
-and Sundararajan (2009).
+Differential Privacy* (2014), §3.2 for randomized response, Theorem 3.10
+for exponential-mechanism privacy and Theorem 3.11 / Corollary 3.12 for its
+utility, and the standard two-sided geometric (discrete Laplace)
+distribution of Ghosh, Roughgarden, and Sundararajan (2009).
 -/
 
 @[expose] public section
@@ -40,6 +46,7 @@ and Sundararajan (2009).
 namespace CSLibExt.Privacy.DiscreteMechanisms
 
 open CSLibExt.Privacy.DifferentialPrivacy
+open Cslib.Crypto.Privacy
 open scoped ENNReal
 
 /-! ## M1: randomized response -/
@@ -140,29 +147,6 @@ noncomputable def expZReal {R : Type*} [Fintype R] (u : R → ℝ) (ε Δ : ℝ)
 
 theorem expScore_pos (ε Δ u : ℝ) : 0 < expScore ε Δ u := Real.exp_pos _
 
-theorem expWeight_pos (ε Δ u : ℝ) : 0 < expWeight ε Δ u :=
-  ENNReal.ofReal_pos.mpr (expScore_pos ε Δ u)
-
-theorem expWeight_ne_top (ε Δ u : ℝ) : expWeight ε Δ u ≠ ⊤ :=
-  ENNReal.ofReal_ne_top
-
-theorem expZ_pos {R : Type*} [Fintype R] [Nonempty R] (u : R → ℝ) (ε Δ : ℝ) :
-    0 < expZ u ε Δ := by
-  obtain ⟨r0⟩ := ‹Nonempty R›
-  have h1 : expWeight ε Δ (u r0) ≤ expZ u ε Δ :=
-    Finset.single_le_sum (fun r _ => le_of_lt (expWeight_pos ε Δ (u r)))
-      (Finset.mem_univ r0)
-  exact lt_of_lt_of_le (expWeight_pos ε Δ (u r0)) h1
-
-theorem expZ_ne_zero {R : Type*} [Fintype R] [Nonempty R] (u : R → ℝ) (ε Δ : ℝ) :
-    expZ u ε Δ ≠ 0 :=
-  ne_of_gt (expZ_pos u ε Δ)
-
-theorem expZ_ne_top {R : Type*} [Fintype R] (u : R → ℝ) (ε Δ : ℝ) :
-    expZ u ε Δ ≠ ⊤ := by
-  show (∑ r, expWeight ε Δ (u r)) ≠ ⊤
-  exact ENNReal.sum_ne_top.mpr fun r _ => expWeight_ne_top ε Δ (u r)
-
 /-- The partition function is the image of the real one. -/
 theorem expZ_eq_ofReal {R : Type*} [Fintype R] (u : R → ℝ) (ε Δ : ℝ) :
     expZ u ε Δ = ENNReal.ofReal (expZReal u ε Δ) := by
@@ -177,105 +161,61 @@ theorem expZReal_pos {R : Type*} [Fintype R] [Nonempty R] (u : R → ℝ)
   exact Finset.sum_pos (fun r _ => expScore_pos ε Δ (u r))
     Finset.univ_nonempty
 
-/-- Normalized exponential-mechanism mass: weight over partition sum. -/
-noncomputable def expMass {R : Type*} [Fintype R] (u : R → ℝ) (ε Δ : ℝ)
-    (r : R) : ℝ≥0∞ :=
-  expWeight ε Δ (u r) / expZ u ε Δ
-
-theorem expMass_sum_one {R : Type*} [Fintype R] [Nonempty R] (u : R → ℝ)
-    (ε Δ : ℝ) : ∑ r, expMass u ε Δ r = 1 := by
-  simp_rw [expMass, div_eq_mul_inv, ← Finset.sum_mul]
-  exact ENNReal.mul_inv_cancel (expZ_ne_zero u ε Δ) (expZ_ne_top u ε Δ)
-
-/-- The exponential mechanism. -/
+/-- The exponential mechanism as a `PMF`, with masses from `expMechProb`
+(Dwork and Roth, 2014, Definition 3.4). -/
 noncomputable def expMech {R D : Type*} [Fintype R] [Nonempty R]
     (u : D → R → ℝ) (ε Δ : ℝ) (d : D) : PMF R :=
-  PMF.ofFintype (expMass (u d) ε Δ) (expMass_sum_one (u d) ε Δ)
+  PMF.ofFintype (fun r => ENNReal.ofReal (expMechProb ε Δ u d r)) (by
+    rw [← ENNReal.ofReal_sum_of_nonneg
+      (fun r _ => expMechProb_nonneg ε Δ u d r), sum_expMechProb,
+      ENNReal.ofReal_one])
 
 theorem expMech_apply {R D : Type*} [Fintype R] [Nonempty R] (u : D → R → ℝ)
     (ε Δ : ℝ) (d : D) (r : R) :
-    expMech u ε Δ d r = expWeight ε Δ (u d r) / expZ (u d) ε Δ := rfl
+    expMech u ε Δ d r = expWeight ε Δ (u d r) / expZ (u d) ε Δ := by
+  have hZd : 0 < expZReal (u d) ε Δ := expZReal_pos (u d) ε Δ
+  show ENNReal.ofReal (expMechProb ε Δ u d r) = _
+  rw [show expMechProb ε Δ u d r
+      = expScore ε Δ (u d r) / expZReal (u d) ε Δ from rfl,
+    ENNReal.ofReal_div_of_pos hZd, ← expZ_eq_ofReal, expWeight]
 
-/-- One-sided score ratio from a one-sided utility bound. -/
-theorem expScore_le_mul (ε Δ : ℝ) (hε : 0 ≤ ε) (hΔ : 0 < Δ) (a b : ℝ)
-    (h : a - b ≤ Δ) :
-    expScore ε Δ a ≤ Real.exp (ε / 2) * expScore ε Δ b := by
-  have h2Δ : (0 : ℝ) < 2 * Δ := by linarith
-  have hle : ε * (a - b) / (2 * Δ) ≤ ε / 2 := by
-    rw [div_le_iff₀ h2Δ]
-    calc ε * (a - b) ≤ ε * Δ := mul_le_mul_of_nonneg_left h hε
-      _ = ε / 2 * (2 * Δ) := by ring
-  have hdiff : ε * a / (2 * Δ) - ε * b / (2 * Δ)
-      = ε * (a - b) / (2 * Δ) := by
-    rw [← sub_div]
-    congr 1
-    ring
-  have h3 : ε * a / (2 * Δ) ≤ ε / 2 + ε * b / (2 * Δ) := by
-    linarith [hdiff, hle]
-  unfold expScore
-  calc Real.exp (ε * a / (2 * Δ))
-      ≤ Real.exp (ε / 2 + ε * b / (2 * Δ)) := Real.exp_le_exp.mpr h3
-    _ = Real.exp (ε / 2) * Real.exp (ε * b / (2 * Δ)) := Real.exp_add _ _
+/-- The `PMF` mechanism agrees with `expMechanism` as a measure. -/
+theorem expMech_toMeasure {R D : Type*} [Fintype R] [Nonempty R]
+    [MeasurableSpace R] [MeasurableSingletonClass R]
+    (u : D → R → ℝ) (ε Δ : ℝ) (d : D) :
+    (expMech u ε Δ d).toMeasure = expMechanism ε Δ u d := by
+  rw [MeasureTheory.Measure.ext_iff_singleton]
+  intro r
+  rw [(expMech u ε Δ d).toMeasure_apply_singleton r (measurableSet_singleton r),
+    expMechanism_apply]
+  have hsum : (∑ s, ({r} : Set R).indicator (expMechProb ε Δ u d) s)
+      = expMechProb ε Δ u d r := by
+    have h0 : ∀ s ∈ Finset.univ, s ≠ r →
+        ({r} : Set R).indicator (expMechProb ε Δ u d) s = 0 := by
+      intro s _ hsr
+      have hmem : s ∉ ({r} : Set R) := by simpa using hsr
+      exact Set.indicator_of_notMem hmem _
+    rw [Finset.sum_eq_single r h0 (by simp)]
+    exact Set.indicator_of_mem (Set.mem_singleton r) _
+  show ENNReal.ofReal (expMechProb ε Δ u d r) = _
+  rw [hsum]
 
-/-- One-sided partition-function ratio from sensitivity. -/
-theorem expZReal_le_mul {R : Type*} [Fintype R] [Nonempty R] {D : Type*}
-    (u : D → R → ℝ) (ε Δ : ℝ) (hε : 0 ≤ ε) (hΔ : 0 < Δ) (d d' : D)
-    (hsens : ∀ r, u d' r - u d r ≤ Δ) :
-    expZReal (u d') ε Δ ≤ Real.exp (ε / 2) * expZReal (u d) ε Δ := by
-  unfold expZReal
-  rw [Finset.mul_sum]
-  apply Finset.sum_le_sum
-  intro r _
-  exact expScore_le_mul ε Δ hε hΔ (u d' r) (u d r) (hsens r)
-
-/-- The exponential mechanism is `ε`-DP under sensitivity `Δ`. -/
-theorem isDP_expMech {R D : Type*} [Fintype R] [Nonempty R] (u : D → R → ℝ)
-    (ε Δ : ℝ) (hε : 0 ≤ ε) (hΔ : 0 < Δ) (adj : D → D → Prop)
+/-- The exponential mechanism is `ε`-DP under sensitivity `Δ`
+(Dwork and Roth, 2014, Theorem 3.10). -/
+theorem isDP_expMech {R D : Type*} [Fintype R] [Nonempty R]
+    [MeasurableSpace R] [MeasurableSingletonClass R]
+    (u : D → R → ℝ) (ε Δ : ℝ) (hε : 0 ≤ ε) (hΔ : 0 < Δ) (adj : D → D → Prop)
     (hsens : ∀ d d', adj d d' → ∀ r, |u d r - u d' r| ≤ Δ) :
     IsDP (expMech u ε Δ) adj ε := by
+  have hDP : DifferentiallyPrivate adj (expMechanism ε Δ u) ε 0 :=
+    expMechanism_differentiallyPrivate hε hΔ (fun x y hxy => hsens x y hxy)
   refine ⟨hε, fun d d' hadj r => ?_⟩
-  have hs1 : ∀ s, u d s - u d' s ≤ Δ :=
-    fun s => le_of_abs_le (hsens d d' hadj s)
-  have hs2 : ∀ s, u d' s - u d s ≤ Δ := fun s => by
-    have h := neg_le_of_abs_le (hsens d d' hadj s)
-    linarith [h]
-  have hw : expScore ε Δ (u d r)
-      ≤ Real.exp (ε / 2) * expScore ε Δ (u d' r) :=
-    expScore_le_mul ε Δ hε hΔ _ _ (hs1 r)
-  have hZ : expZReal (u d') ε Δ
-      ≤ Real.exp (ε / 2) * expZReal (u d) ε Δ :=
-    expZReal_le_mul u ε Δ hε hΔ d d' hs2
-  have hZd : 0 < expZReal (u d) ε Δ := expZReal_pos (u d) ε Δ
-  have hZd' : 0 < expZReal (u d') ε Δ := expZReal_pos (u d') ε Δ
-  have hw' : 0 < expScore ε Δ (u d' r) := expScore_pos ε Δ (u d' r)
-  have hE : 0 < Real.exp (ε / 2) := Real.exp_pos _
-  have hmul : expScore ε Δ (u d r) * expZReal (u d') ε Δ ≤
-      (Real.exp ε * expScore ε Δ (u d' r)) * expZReal (u d) ε Δ := by
-    have hEE : Real.exp (ε / 2) * Real.exp (ε / 2) = Real.exp ε := by
-      rw [← Real.exp_add, add_halves]
-    calc expScore ε Δ (u d r) * expZReal (u d') ε Δ
-        ≤ (Real.exp (ε / 2) * expScore ε Δ (u d' r)) *
-            (Real.exp (ε / 2) * expZReal (u d) ε Δ) :=
-          mul_le_mul hw hZ (le_of_lt hZd')
-            (mul_nonneg (le_of_lt hE) (le_of_lt hw'))
-      _ = (Real.exp ε * expScore ε Δ (u d' r)) * expZReal (u d) ε Δ := by
-          have hrw : (Real.exp (ε / 2) * expScore ε Δ (u d' r)) *
-              (Real.exp (ε / 2) * expZReal (u d) ε Δ)
-              = (Real.exp (ε / 2) * Real.exp (ε / 2)) *
-                (expScore ε Δ (u d' r) * expZReal (u d) ε Δ) := by ring
-          rw [hrw, hEE]
-          ring
-  have hreal : expScore ε Δ (u d r) / expZReal (u d) ε Δ ≤
-      Real.exp ε * (expScore ε Δ (u d' r) / expZReal (u d') ε Δ) := by
-    rw [← mul_div_assoc, div_le_iff₀ hZd, div_mul_eq_mul_div,
-      le_div_iff₀ hZd']
-    exact hmul
-  show expMech u ε Δ d r
-      ≤ ENNReal.ofReal (Real.exp ε) * expMech u ε Δ d' r
-  simp only [expMech_apply, expWeight, expZ_eq_ofReal]
-  rw [← ENNReal.ofReal_div_of_pos hZd, ← ENNReal.ofReal_div_of_pos hZd',
-    ← ENNReal.ofReal_mul (Real.exp_pos ε).le]
-  exact ENNReal.ofReal_le_ofReal hreal
+  have h := hDP hadj {r} (measurableSet_singleton r)
+  rw [add_zero] at h
+  simp only [← expMech_toMeasure] at h
+  rwa [(expMech u ε Δ d).toMeasure_apply_singleton r (measurableSet_singleton r),
+    (expMech u ε Δ d').toMeasure_apply_singleton r
+      (measurableSet_singleton r)] at h
 
 /-- With zero budget the exponential mechanism is uniform. -/
 theorem expMech_eps_zero {R : Type*} [Fintype R] [Nonempty R] {D : Type*}
@@ -303,10 +243,12 @@ theorem isDP_expMech_const_utility {R D : Type*} [Fintype R] [Nonempty R]
     (hconst : ∀ d d' r, u d r = u d' r) :
     IsDP (expMech u ε Δ) adj 0 := by
   refine ⟨le_rfl, fun d d' _ r => ?_⟩
-  have hud : u d = u d' := funext fun s => hconst d d' s
+  have hs : ∀ s, u d s = u d' s := fun s => hconst d d' s
   have hMech : expMech u ε Δ d = expMech u ε Δ d' := by
     unfold expMech
-    simp only [hud]
+    congr 1
+    funext r
+    simp only [expMechProb, expMechWeight, hs]
   show expMech u ε Δ d r
       ≤ ENNReal.ofReal (Real.exp 0) * expMech u ε Δ d' r
   simp [hMech, Real.exp_zero]
@@ -494,126 +436,33 @@ noncomputable def expOPT {R : Type*} [Fintype R] [Nonempty R] (u : R → ℝ) : 
   Finset.univ.sup' Finset.univ_nonempty u
 
 /-- Exponential-mechanism utility bound: outputs scoring much worse than
-optimal have exponentially small probability. -/
+optimal have exponentially small probability
+(Dwork and Roth, 2014, Corollary 3.12). -/
 theorem expMech_utility {R : Type*} [Fintype R] [Nonempty R] {D : Type*}
+    [MeasurableSpace R] [MeasurableSingletonClass R]
     (u : D → R → ℝ) (ε Δ : ℝ) (hε : 0 < ε) (hΔ : 0 < Δ) (d : D) (t : ℝ) :
     (expMech u ε Δ d).toOuterMeasure
         {r | u d r ≤ expOPT (u d)
           - (2 * Δ / ε) * (Real.log (Fintype.card R) + t)}
       ≤ ENNReal.ofReal (Real.exp (-t)) := by
-  classical
-  set N : ℝ := (Fintype.card R : ℝ) with hNdef
-  set L : ℝ := Real.log N + t with hLdef
-  set S : Set R :=
-    {r | u d r ≤ expOPT (u d) - (2 * Δ / ε) * L} with hSdef
-  have hcard_pos : 0 < Fintype.card R :=
-    Fintype.card_pos_iff.mpr ‹Nonempty R›
-  have hNpos : 0 < N := by
-    rw [hNdef]
-    exact Nat.cast_pos.mpr hcard_pos
-  have hZd : 0 < expZReal (u d) ε Δ := expZReal_pos (u d) ε Δ
-  obtain ⟨rstar, -, hstar⟩ :=
-    Finset.exists_mem_eq_sup' Finset.univ_nonempty (u d)
-  have hOPT : expOPT (u d) = u d rstar := hstar
-  have hwOPT_le : expScore ε Δ (expOPT (u d)) ≤ expZReal (u d) ε Δ := by
-    rw [hOPT]
-    unfold expZReal
-    exact Finset.single_le_sum
-      (fun r _ => le_of_lt (expScore_pos ε Δ (u d r)))
-      (Finset.mem_univ rstar)
-  have hscore_of : ∀ r : R, u d r ≤ expOPT (u d) - (2 * Δ / ε) * L →
-      expScore ε Δ (u d r)
-        ≤ expScore ε Δ (expOPT (u d)) * Real.exp (-L) := by
-    intro r hr
-    have hexp_id : ε * (expOPT (u d) - (2 * Δ / ε) * L) / (2 * Δ)
-        = ε * expOPT (u d) / (2 * Δ) - L := by
-      have hε0 : ε ≠ 0 := ne_of_gt hε
-      have hΔ0 : (2 : ℝ) * Δ ≠ 0 :=
-        mul_ne_zero (by norm_num) (ne_of_gt hΔ)
-      field_simp
-    have h1 : ε * u d r ≤ ε * (expOPT (u d) - (2 * Δ / ε) * L) :=
-      mul_le_mul_of_nonneg_left hr (le_of_lt hε)
-    have h2Δ : (0 : ℝ) < 2 * Δ := by linarith
-    have h2 : ε * u d r / (2 * Δ)
-        ≤ ε * (expOPT (u d) - (2 * Δ / ε) * L) / (2 * Δ) := by
-      rw [div_le_iff₀ h2Δ, div_mul_cancel₀ _ (ne_of_gt h2Δ)]
-      exact h1
-    have hmono : ε * u d r / (2 * Δ)
-        ≤ ε * expOPT (u d) / (2 * Δ) - L := by
-      rw [hexp_id] at h2
-      exact h2
-    have h3 : ε * u d r / (2 * Δ)
-        ≤ ε * expOPT (u d) / (2 * Δ) + -L := by
-      linarith [hmono]
-    unfold expScore
-    calc Real.exp (ε * u d r / (2 * Δ))
-        ≤ Real.exp (ε * expOPT (u d) / (2 * Δ) + -L) :=
-          Real.exp_le_exp.mpr h3
-      _ = Real.exp (ε * expOPT (u d) / (2 * Δ)) * Real.exp (-L) :=
-          Real.exp_add _ _
-  have hE : N * Real.exp (-L) = Real.exp (-t) := by
-    have hN0 : N ≠ 0 := ne_of_gt hNpos
-    have hexplog : Real.exp (Real.log N) = N := Real.exp_log hNpos
-    rw [hLdef, show -(Real.log N + t) = -Real.log N + -t by ring,
-      Real.exp_add, Real.exp_neg, hexplog, ← mul_assoc,
-      mul_inv_cancel₀ hN0, one_mul]
-  have hF0 : ∀ b ∉ Finset.univ.filter (· ∈ S),
-      S.indicator ⇑(expMech u ε Δ d) b = 0 := by
-    intro b hb
-    refine Set.indicator_of_notMem ?_ _
-    intro hmem
-    exact hb (Finset.mem_filter.mpr ⟨Finset.mem_univ b, hmem⟩)
-  have hmeas : (expMech u ε Δ d).toOuterMeasure S
-      = ∑ r ∈ Finset.univ.filter (· ∈ S), expMech u ε Δ d r := by
-    rw [PMF.toOuterMeasure_apply, tsum_eq_sum (s := _) hF0]
-    apply Finset.sum_congr rfl
-    intro r hr
-    exact Set.indicator_of_mem (Finset.mem_filter.mp hr).2 _
-  have hsum : ∑ r ∈ Finset.univ.filter (· ∈ S), expMech u ε Δ d r
-      = ENNReal.ofReal
-        ((∑ r ∈ Finset.univ.filter (· ∈ S), expScore ε Δ (u d r))
-          / expZReal (u d) ε Δ) := by
-    simp_rw [expMech_apply, expWeight, expZ_eq_ofReal,
-      ← ENNReal.ofReal_div_of_pos hZd]
-    rw [← ENNReal.ofReal_sum_of_nonneg (fun r _ =>
-      div_nonneg (le_of_lt (expScore_pos ε Δ (u d r))) (le_of_lt hZd)),
-      Finset.sum_div]
-  have hcard : ((Finset.univ.filter (· ∈ S)).card : ℝ) ≤ N := by
-    rw [hNdef]
-    exact Nat.cast_le.mpr (le_trans
-      (Finset.card_le_card (Finset.filter_subset _ _))
-      (le_of_eq Finset.card_univ))
-  have hsum_le : (∑ r ∈ Finset.univ.filter (· ∈ S), expScore ε Δ (u d r))
-      ≤ ((Finset.univ.filter (· ∈ S)).card : ℝ)
-        * (expScore ε Δ (expOPT (u d)) * Real.exp (-L)) := by
-    calc (∑ r ∈ Finset.univ.filter (· ∈ S), expScore ε Δ (u d r))
-        ≤ ∑ r ∈ Finset.univ.filter (· ∈ S),
-            (expScore ε Δ (expOPT (u d)) * Real.exp (-L)) := by
-          apply Finset.sum_le_sum
-          intro r hr
-          have hrS : u d r ≤ expOPT (u d) - (2 * Δ / ε) * L :=
-            (Finset.mem_filter.mp hr).2
-          exact hscore_of r hrS
-      _ = ((Finset.univ.filter (· ∈ S)).card : ℝ)
-          * (expScore ε Δ (expOPT (u d)) * Real.exp (-L)) := by
-          rw [Finset.sum_const, nsmul_eq_mul]
-  have hfinal : (∑ r ∈ Finset.univ.filter (· ∈ S), expScore ε Δ (u d r))
-      ≤ Real.exp (-t) * expZReal (u d) ε Δ := by
-    calc (∑ r ∈ Finset.univ.filter (· ∈ S), expScore ε Δ (u d r))
-        ≤ ((Finset.univ.filter (· ∈ S)).card : ℝ)
-          * (expScore ε Δ (expOPT (u d)) * Real.exp (-L)) := hsum_le
-      _ ≤ N * (expScore ε Δ (expOPT (u d)) * Real.exp (-L)) :=
-          mul_le_mul_of_nonneg_right hcard
-            (mul_nonneg (le_of_lt (expScore_pos ε Δ (expOPT (u d))))
-              (Real.exp_pos _).le)
-      _ = expScore ε Δ (expOPT (u d)) * (N * Real.exp (-L)) := by ring
-      _ = expScore ε Δ (expOPT (u d)) * Real.exp (-t) := by rw [hE]
-      _ ≤ expZReal (u d) ε Δ * Real.exp (-t) :=
-          mul_le_mul_of_nonneg_right hwOPT_le (Real.exp_pos _).le
-      _ = Real.exp (-t) * expZReal (u d) ε Δ := mul_comm _ _
-  rw [hmeas, hsum]
-  apply ENNReal.ofReal_le_ofReal
-  rw [div_le_iff₀ hZd]
-  exact hfinal
+  have hOPT : expOPT (u d) = optUtility u d := rfl
+  rw [← (expMech u ε Δ d).toMeasure_apply_eq_toOuterMeasure _, expMech_toMeasure,
+    hOPT]
+  exact expMechanism_utility_card hε hΔ u d t
+
+/-- Sharp utility bound with the optimal-output fraction
+(Dwork and Roth, 2014, Theorem 3.11). -/
+theorem expMech_utility_opt {R : Type*} [Fintype R] [Nonempty R] {D : Type*}
+    [MeasurableSpace R] [MeasurableSingletonClass R]
+    (u : D → R → ℝ) (ε Δ : ℝ) (hε : 0 < ε) (hΔ : 0 < Δ) (d : D) (t : ℝ) :
+    (expMech u ε Δ d).toOuterMeasure
+        {r | u d r ≤ expOPT (u d) - 2 * Δ / ε *
+          (Real.log (Fintype.card R / Nat.card {r : R // u d r = expOPT (u d)})
+            + t)}
+      ≤ ENNReal.ofReal (Real.exp (-t)) := by
+  have hOPT : expOPT (u d) = optUtility u d := rfl
+  rw [← (expMech u ε Δ d).toMeasure_apply_eq_toOuterMeasure _, expMech_toMeasure,
+    hOPT]
+  exact expMechanism_utility hε hΔ u d t
 
 end CSLibExt.Privacy.DiscreteMechanisms
