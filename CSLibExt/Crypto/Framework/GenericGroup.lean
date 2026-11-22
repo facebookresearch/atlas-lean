@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.Crypto.Framework.Oracle
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Logic.Equiv.Basic
 public import Mathlib.Tactic.Abel
@@ -16,7 +17,8 @@ public import Mathlib.Tactic.Abel
 # Generic group model with deeply embedded programs
 
 A functional-coherence model of a generic group of order `q`: programs are deeply
-embedded syntax trees over label indices, evaluated against a fixed-encoding oracle.
+embedded syntax trees over label indices, compiled to the canonical `OracleComp`
+execution framework and run against a fixed-encoding oracle.
 
 ## Scope
 
@@ -45,8 +47,17 @@ appended at index `Fin.last`, with earlier indices preserved by `Fin.castSucc` (
 is finite syntax and evaluation always terminates; queries are answered through the oracle
 function and `DecidableEq` supplied by the evaluator.
 
-`runProg` accepts only `GProg` syntax and evaluates it against the deterministic oracle
-`oracleOf enc` for the fixed encoding.
+`GProg` is the representation-independent source language; execution goes through the
+canonical `OracleComp` framework. The evaluator-side compiler `GProg.compile` translates
+source syntax into `OracleComp (Query L) L L`: `ret` becomes `pure`, `mul`/`inv` issue an
+oracle query whose answer extends the environment snoc-style, and `eqTest` becomes pure
+branching. Compilation happens at the evaluator, so programs still hold no label values.
+`OracleComp.run` and `OracleComp.queries` give execution and its transcript, in agreement
+with the reference semantics (`compile_run`, `compile_queries`), and `numQueries` is a
+canonical structural query bound (`isQueryBounded_compile`).
+
+`runProg` accepts only `GProg` syntax: it compiles the program and runs it through
+`OracleComp.run` against the deterministic oracle `oracleOf enc` for the fixed encoding.
 
 ## Why deep embedding
 
@@ -219,6 +230,131 @@ theorem length_queriesOf_le {L : Type} [DecidableEq L] (O : Query L → L) {n : 
       rw [e]
       exact (ihf env).trans (Nat.le_max_right _ _)
 
+/-- Compiler from `GProg` source syntax into the canonical `OracleComp` execution
+framework: `ret` is `pure` of the indexed label, `mul`/`inv` issue one oracle query
+over the indexed labels and compile the continuation against the snoc-extended
+environment, and `eqTest` is pure branching on indexed equality. The compiler runs at
+the evaluator, over evaluator-supplied environments, so compiled programs hold no
+label values beyond their inputs. -/
+def GProg.compile {L : Type} [DecidableEq L] {n : Nat} (env : Fin n → L) :
+    GProg n → OracleComp (Query L) L L
+  | .ret i => .pure (env i)
+  | .mul i j k => OracleComp.query (.inl (env i, env j)) fun ans =>
+      compile (snocEnv env ans) k
+  | .inv i k => OracleComp.query (.inr (env i)) fun ans =>
+      compile (snocEnv env ans) k
+  | .eqTest i j kt kf => if env i = env j then compile env kt else compile env kf
+
+@[simp] theorem compile_ret {L : Type} [DecidableEq L] {n : Nat} (env : Fin n → L)
+    (i : Fin n) : GProg.compile env (.ret i) = .pure (env i) := rfl
+
+@[simp] theorem compile_mul {L : Type} [DecidableEq L] {n : Nat} (env : Fin n → L)
+    (i j : Fin n) (k : GProg (n + 1)) :
+    GProg.compile env (.mul i j k) = OracleComp.query (.inl (env i, env j)) fun ans =>
+      GProg.compile (snocEnv env ans) k := rfl
+
+@[simp] theorem compile_inv {L : Type} [DecidableEq L] {n : Nat} (env : Fin n → L)
+    (i : Fin n) (k : GProg (n + 1)) :
+    GProg.compile env (.inv i k) = OracleComp.query (.inr (env i)) fun ans =>
+      GProg.compile (snocEnv env ans) k := rfl
+
+@[simp] theorem compile_eqTest {L : Type} [DecidableEq L] {n : Nat} (env : Fin n → L)
+    (i j : Fin n) (kt kf : GProg n) :
+    GProg.compile env (.eqTest i j kt kf)
+      = (if env i = env j then GProg.compile env kt else GProg.compile env kf) := rfl
+
+/-- Running a compiled program through the canonical `OracleComp.run` agrees with the
+reference evaluator. -/
+theorem compile_run {L : Type} [DecidableEq L] (O : Query L → L) {n : Nat}
+    (env : Fin n → L) (p : GProg n) :
+    OracleComp.run O (GProg.compile env p) = eval O env p := by
+  induction p with
+  | ret i => rfl
+  | mul i j k ih => exact ih _
+  | inv i k ih => exact ih _
+  | eqTest i j kt kf iht ihf =>
+    simp only [compile_eqTest, eval_eqTest]
+    by_cases h : env i = env j
+    · have e : (if env i = env j then GProg.compile env kt else GProg.compile env kf)
+          = GProg.compile env kt := by simp [h]
+      rw [e]
+      have e' : (if env i = env j then eval O env kt else eval O env kf)
+          = eval O env kt := by simp [h]
+      rw [e']
+      exact iht _
+    · have e : (if env i = env j then GProg.compile env kt else GProg.compile env kf)
+          = GProg.compile env kf := by simp [h]
+      rw [e]
+      have e' : (if env i = env j then eval O env kt else eval O env kf)
+          = eval O env kf := by simp [h]
+      rw [e']
+      exact ihf _
+
+/-- The static `numQueries` bound is a canonical structural query bound on the compiled
+program, hence bounds every run by `OracleComp.length_queries_le`. -/
+theorem isQueryBounded_compile {L : Type} [DecidableEq L] {n : Nat} (env : Fin n → L)
+    (p : GProg n) :
+    FreeM.IsQueryBounded (numQueries p) (GProg.compile env p) := by
+  induction p with
+  | ret i =>
+    simp only [compile_ret, numQueries_ret]
+    exact FreeM.isQueryBounded_pure _ _
+  | mul i j k ih =>
+    simp only [compile_mul, numQueries_mul]
+    rw [add_comm (1 : ℕ)]
+    exact FreeM.isQueryBounded_liftBind fun b => ih _
+  | inv i k ih =>
+    simp only [compile_inv, numQueries_inv]
+    rw [add_comm (1 : ℕ)]
+    exact FreeM.isQueryBounded_liftBind fun b => ih _
+  | eqTest i j kt kf iht ihf =>
+    simp only [compile_eqTest, numQueries_eqTest]
+    by_cases h : env i = env j
+    · have e : (if env i = env j then GProg.compile env kt else GProg.compile env kf)
+          = GProg.compile env kt := by simp [h]
+      rw [e]
+      exact FreeM.IsQueryBounded.mono (Nat.le_max_left _ _) (iht _)
+    · have e : (if env i = env j then GProg.compile env kt else GProg.compile env kf)
+          = GProg.compile env kf := by simp [h]
+      rw [e]
+      exact FreeM.IsQueryBounded.mono (Nat.le_max_right _ _) (ihf _)
+
+/-- Canonical transcript of one framework query followed by a continuation. -/
+theorem queries_query {L : Type} (O : Query L → L) (x : Query L)
+    (k : L → OracleComp (Query L) L L) :
+    OracleComp.queries O (OracleComp.query x k) = x :: OracleComp.queries O (k (O x)) :=
+  rfl
+
+/-- The canonical query transcript of a compiled program is the reference trace. -/
+theorem compile_queries {L : Type} [DecidableEq L] (O : Query L → L) {n : Nat}
+    (env : Fin n → L) (p : GProg n) :
+    OracleComp.queries O (GProg.compile env p) = queriesOf O env p := by
+  induction p with
+  | ret i => rfl
+  | mul i j k ih =>
+    simp only [compile_mul, queriesOf_mul, queries_query]
+    rw [ih _]
+  | inv i k ih =>
+    simp only [compile_inv, queriesOf_inv, queries_query]
+    rw [ih _]
+  | eqTest i j kt kf iht ihf =>
+    simp only [compile_eqTest, queriesOf_eqTest]
+    by_cases h : env i = env j
+    · have e : (if env i = env j then GProg.compile env kt else GProg.compile env kf)
+          = GProg.compile env kt := by simp [h]
+      rw [e]
+      have e' : (if env i = env j then queriesOf O env kt else queriesOf O env kf)
+          = queriesOf O env kt := by simp [h]
+      rw [e']
+      exact iht _
+    · have e : (if env i = env j then GProg.compile env kt else GProg.compile env kf)
+          = GProg.compile env kf := by simp [h]
+      rw [e]
+      have e' : (if env i = env j then queriesOf O env kt else queriesOf O env kf)
+          = queriesOf O env kf := by simp [h]
+      rw [e']
+      exact ihf _
+
 /-- Labels are exponents modulo `q`: the label of `a` stands for `g ^ a`. -/
 abbrev Label (q : ℕ) [Fact (1 < q)] : Type := ZMod q
 
@@ -282,15 +418,24 @@ theorem ginv_gmul {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) (a : Labe
     gmul enc (ginv enc a) a = idLabel enc := by
   simp only [gmul_eq, ginv_eq, idLabel_eq, Equiv.symm_apply_apply, neg_add_cancel]
 
-/-- Evaluate a deeply embedded program against the fixed-encoding oracle. Only `GProg`
-syntax is accepted: there is no way to supply a literal label. -/
+/-- Evaluate a deeply embedded program against the fixed-encoding oracle, through the
+canonical execution: compile the `GProg` source program and run it with
+`OracleComp.run`. Only `GProg` syntax is accepted: there is no way to supply a literal
+label. -/
 def runProg {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q))
     {n : Nat} (inputs : Fin n → Label q) (p : GProg n) : Label q :=
-  eval (oracleOf enc) inputs p
+  OracleComp.run (oracleOf enc) (GProg.compile inputs p)
 
 theorem runProg_eq {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q))
     {n : Nat} (inputs : Fin n → Label q) (p : GProg n) :
-    runProg enc inputs p = eval (oracleOf enc) inputs p := rfl
+    runProg enc inputs p
+      = OracleComp.run (oracleOf enc) (GProg.compile inputs p) := rfl
+
+/-- The canonical run agrees with the reference evaluator. -/
+theorem runProg_eq_eval {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q))
+    {n : Nat} (inputs : Fin n → Label q) (p : GProg n) :
+    runProg enc inputs p = eval (oracleOf enc) inputs p :=
+  compile_run _ _ _
 
 /-- Inputs for `powProg`: the accumulator at index `0`, the base at index `1`. -/
 def powInputs {q : ℕ} [Fact (1 < q)] (acc base : Label q) : Fin 2 → Label q :=
@@ -347,7 +492,7 @@ identity. -/
 theorem run_powProg {q : ℕ} [Fact (1 < q)] (enc : Equiv.Perm (ZMod q)) (m : ℕ)
     (x : ZMod q) :
     runProg enc (powInputs (idLabel enc) (enc x)) (powProg m) = enc (m • x) := by
-  rw [runProg_eq, powProg_eq, eval_powProgAux, powInputs_zero, powInputs_one]
+  rw [runProg_eq_eval, powProg_eq, eval_powProgAux, powInputs_zero, powInputs_one]
   simp only [idLabel_eq, Equiv.symm_apply_apply, add_zero]
 
 /-- The exponentiation recursion issues exactly `m` queries. -/
@@ -417,25 +562,21 @@ theorem eval_natural {L L' : Type} [DecidableEq L] [DecidableEq L']
     rw [henv i, hinv]
   | eqTest i j kt kf iht ihf =>
     simp only [eval_eqTest]
+    have hiff : env2 i = env2 j ↔ env1 i = env1 j := by
+      rw [henv i, henv j]
+      exact ⟨fun h => phi.injective h, congrArg phi⟩
     by_cases h : env1 i = env1 j
-    · have h2 : env2 i = env2 j := by rw [henv i, henv j, h]
-      have e1 : (if env2 i = env2 j then eval O2 env2 kt else eval O2 env2 kf)
-          = eval O2 env2 kt := by simp [h2]
-      have e2 : (if env1 i = env1 j then eval O1 env1 kt else eval O1 env1 kf)
+    · have e2 : (if env2 i = env2 j then eval O2 env2 kt else eval O2 env2 kf)
+          = eval O2 env2 kt := by simp [hiff.mpr h]
+      have e1 : (if env1 i = env1 j then eval O1 env1 kt else eval O1 env1 kf)
           = eval O1 env1 kt := by simp [h]
-      rw [e1, e2]
-      exact iht env1 env2 henv
-    · have h2 : env2 i ≠ env2 j := by
-        intro hc
-        apply h
-        apply phi.injective
-        rw [← henv i, ← henv j]
-        exact hc
-      have e1 : (if env2 i = env2 j then eval O2 env2 kt else eval O2 env2 kf)
-          = eval O2 env2 kf := by simp [h2]
-      have e2 : (if env1 i = env1 j then eval O1 env1 kt else eval O1 env1 kf)
+      rw [e2, e1]
+      exact iht _ _ henv
+    · have e2 : (if env2 i = env2 j then eval O2 env2 kt else eval O2 env2 kf)
+          = eval O2 env2 kf := by simp [show env2 i ≠ env2 j from fun hh => h (hiff.mp hh)]
+      have e1 : (if env1 i = env1 j then eval O1 env1 kt else eval O1 env1 kf)
           = eval O1 env1 kf := by simp [h]
-      rw [e1, e2]
-      exact ihf env1 env2 henv
+      rw [e2, e1]
+      exact ihf _ _ henv
 
 end Cslib.Crypto.Framework.GenericGroup
