@@ -34,27 +34,27 @@ theorem enc7_zero_ne : enc7 0 ≠ 0 := by decide
 theorem idLabel_enc7_ne_zero : idLabel enc7 ≠ 0 := by decide
 
 theorem powProg_7_0 :
-    runProg enc7 (powProg 0 (idLabel enc7) (enc7 2)) = enc7 (0 • (2 : ZMod 7)) := by
+    enc7 (0 • (2 : ZMod 7)) = runProg enc7 powProg (0, idLabel enc7, enc7 2) := by
   decide
 
 theorem powProg_7_1 :
-    runProg enc7 (powProg 1 (idLabel enc7) (enc7 2)) = enc7 (1 • (2 : ZMod 7)) := by
+    enc7 (1 • (2 : ZMod 7)) = runProg enc7 powProg (1, idLabel enc7, enc7 2) := by
   decide
 
 theorem powProg_7_5 :
-    runProg enc7 (powProg 5 (idLabel enc7) (enc7 2)) = enc7 (5 • (2 : ZMod 7)) := by
+    enc7 (5 • (2 : ZMod 7)) = runProg enc7 powProg (5, idLabel enc7, enc7 2) := by
   decide
 
 theorem queries_7_0 :
-    (OracleComp.queries (oracleOf enc7) (powProg 0 (idLabel enc7) (enc7 2))).length = 0 := by
+    (OracleComp.queries (oracleOf enc7) (powProg _ (0, idLabel enc7, enc7 2))).length = 0 := by
   decide
 
 theorem queries_7_1 :
-    (OracleComp.queries (oracleOf enc7) (powProg 1 (idLabel enc7) (enc7 2))).length = 1 := by
+    (OracleComp.queries (oracleOf enc7) (powProg _ (1, idLabel enc7, enc7 2))).length = 1 := by
   decide
 
 theorem queries_7_5 :
-    (OracleComp.queries (oracleOf enc7) (powProg 5 (idLabel enc7) (enc7 2))).length = 5 := by
+    (OracleComp.queries (oracleOf enc7) (powProg _ (5, idLabel enc7, enc7 2))).length = 5 := by
   decide
 
 theorem gmul_spot : gmul enc7 (enc7 2) (enc7 5) = enc7 (2 + 5 : ZMod 7) := by decide
