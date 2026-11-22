@@ -121,18 +121,6 @@ public theorem_wanted iteratedDeriv_arcsin_div_one_sub_doubleFactorial (n : ℕ)
       n.factorial * ∑ j ∈ Finset.range ((n - 2) / 2 + 1),
         ((2 * j).doubleFactorial : ℝ) / ((2 * j + 1).doubleFactorial * (2 * j + 2)))
 
-/-- Lemma 5: for `N` even and positive,
-`∑_{ℓ=1}^{N/2} sin(2π q ℓ / N)` is `0` for `q` even and `cot(q π / N)` for `q`
-odd. The paper's positivity of `q` is dropped (`q = 0` holds trivially).
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 5
-(`jis-2025-25.2.3-lem-5`). -/
-public theorem_wanted sum_sin_two_pi_mul_div_of_even {N : ℕ} (hN : 0 < N) (hNe : Even N)
-    (q : ℕ) :
-    ∑ l ∈ Finset.Icc 1 (N / 2), sin (q * l * 2 * π / N) =
-      if Even q then 0 else cot (q * π / N)
-
 /-- Lemma 6: for `N` odd,
 `∑_{ℓ=1}^{(N-1)/2} sin(2π q ℓ / N)` is `-(1/2) tan(q π / (2N))` for `q` even and
 `(1/2) cot(q π / (2N))` for `q` odd. The paper's positivity of `q` is dropped
