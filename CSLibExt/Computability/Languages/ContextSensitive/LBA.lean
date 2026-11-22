@@ -385,6 +385,7 @@ noncomputable def lbaGrammar (M : LinearBoundedAutomaton Q Γ) : CSGrammar Γ (L
   rules := allRules M
   initial := .start
 
+omit _instDecidableEqQ _instDecidableEqG _instFintypeQ in
 /-- The first generation rule is a rule of the grammar. -/
 theorem mem_genRules_start (a : Γ) :
     ([startSym (Γ := Γ) (Q := Q)],
@@ -392,6 +393,7 @@ theorem mem_genRules_start (a : Γ) :
       M.genRules := by
   simp [genRules]
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- **The grammar of an LBA is context-sensitive**: every production has a
 nonterminal on its left side and does not shrink. -/
 theorem lbaGrammar_contextSensitive : IsContextSensitive M.lbaGrammar := by
@@ -525,6 +527,7 @@ def tailEncodeMid (_M : LinearBoundedAutomaton Q Γ) (w : List Γ) :
 
 /-! ### Lemmas about the encoding -/
 
+omit _instDecidableEqQ _instDecidableEqG _instFintypeQ _instFintypeG in
 /-- The encoding has as many cells as the input word, when the tape has the
 same length. -/
 theorem length_encodeCellsAux {w : List Γ} {tape : List (Option Γ)} {h : Option ℕ} {q : Q}
@@ -545,6 +548,7 @@ theorem length_encodeCellsAux {w : List Γ} {tape : List (Option Γ)} {h : Optio
         | zero => simp only [encodeCellsAux, List.length_cons, ih hl']
         | succ n => simp only [encodeCellsAux, List.length_cons, ih hl']
 
+omit _instDecidableEqQ _instDecidableEqG _instFintypeQ _instFintypeG in
 /-- The `i`-th cell of the encoding: original `w[i]`, current `tape[i]`,
 head state exactly at the head position, boundary tag of position
 `start + i` in a word of length `total`. -/
@@ -597,6 +601,7 @@ theorem getElem_encodeCellsAux {w : List Γ} {tape : List (Option Γ)} {h : Opti
             rw [hIH]
             simp only [Option.some.injEq, Nat.succ.injEq, List.getElem?_cons_succ]
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- One grammar step replacing a block: if `u` splits as `p ++ lhs ++ q`
 and `(lhs, rhs)` is a rule, then `u` derives `p ++ rhs ++ q`. -/
 theorem derives_replace_list {u p q lhs rhs : List (Symbol Γ (LBANT Γ Q))}
@@ -606,6 +611,7 @@ theorem derives_replace_list {u p q lhs rhs : List (Symbol Γ (LBANT Γ Q))}
   exact Cslib.Decidability.Rewriting.Derives.single
     (Cslib.Decidability.Rewriting.Step.mk p q (by simpa [lbaGrammar] using hrule))
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- One grammar step replacing a single cell by a single cell. -/
 theorem derives_single_cell {u p q : List (Symbol Γ (LBANT Γ Q))}
     {x y : Symbol Γ (LBANT Γ Q)} (hu : u = p ++ [x] ++ q)
@@ -613,6 +619,7 @@ theorem derives_single_cell {u p q : List (Symbol Γ (LBANT Γ Q))}
     Derives M.lbaGrammar u (p ++ [y] ++ q) :=
   derives_replace_list hu hrule
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- One grammar step replacing two consecutive cells. -/
 theorem derives_two_cells {u p q : List (Symbol Γ (LBANT Γ Q))}
     {x₁ x₂ y₁ y₂ : Symbol Γ (LBANT Γ Q)} (hu : u = p ++ [x₁, x₂] ++ q)
@@ -620,6 +627,7 @@ theorem derives_two_cells {u p q : List (Symbol Γ (LBANT Γ Q))}
     Derives M.lbaGrammar u (p ++ [y₁, y₂] ++ q) :=
   derives_replace_list hu hrule
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- A singleton-to-singleton production is a derivation step. -/
 theorem derives_singleton_cell {x y : Symbol Γ (LBANT Γ Q)}
     (hrule : ([x], [y]) ∈ M.lbaGrammar.rules) :
@@ -627,24 +635,28 @@ theorem derives_singleton_cell {x y : Symbol Γ (LBANT Γ Q)}
   derives_replace_list (u := [x]) (p := []) (q := []) (lhs := [x]) (rhs := [y])
     (hu := by rfl) hrule
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- A derivation may be appended on the left. -/
 theorem derives_append_left {u v : List (Symbol Γ (LBANT Γ Q))}
     (p : List (Symbol Γ (LBANT Γ Q))) (h : Derives M.lbaGrammar u v) :
     Derives M.lbaGrammar (p ++ u) (p ++ v) :=
   Cslib.Decidability.Rewriting.Derives.append_left h p
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- A derivation may be appended on the right. -/
 theorem derives_append_right {u v : List (Symbol Γ (LBANT Γ Q))}
     (p : List (Symbol Γ (LBANT Γ Q))) (h : Derives M.lbaGrammar u v) :
     Derives M.lbaGrammar (u ++ p) (v ++ p) :=
   Cslib.Decidability.Rewriting.Derives.append_right h p
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- Derivations compose under append. -/
 theorem derives_append {a b c d : List (Symbol Γ (LBANT Γ Q))}
     (h₁ : Derives M.lbaGrammar a b) (h₂ : Derives M.lbaGrammar c d) :
     Derives M.lbaGrammar (a ++ c) (b ++ d) :=
   Cslib.Decidability.Rewriting.Derives.append h₁ h₂
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- Derivations are transitive. -/
 theorem derives_trans {a b c : List (Symbol Γ (LBANT Γ Q))}
     (h₁ : Derives M.lbaGrammar a b) (h₂ : Derives M.lbaGrammar b c) :
@@ -653,6 +665,7 @@ theorem derives_trans {a b c : List (Symbol Γ (LBANT Γ Q))}
 
 /-! ### Rule membership -/
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- The first generation rule is a rule of the grammar. -/
 theorem mem_rule_gen_start (a : Γ) :
     ([startSym (Γ := Γ) (Q := Q)],
@@ -660,6 +673,7 @@ theorem mem_rule_gen_start (a : Γ) :
       M.lbaGrammar.rules := by
   simp [lbaGrammar, allRules, genRules]
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- The one-cell generation rule is a rule of the grammar. -/
 theorem mem_rule_gen_single (a : Γ) :
     ([startSym (Γ := Γ) (Q := Q)],
@@ -667,6 +681,7 @@ theorem mem_rule_gen_single (a : Γ) :
       M.lbaGrammar.rules := by
   simp [lbaGrammar, allRules, genRules]
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- The generator step rule is a rule of the grammar. -/
 theorem mem_rule_gen_step (a : Γ) :
     ([genSym (Γ := Γ) (Q := Q)],
@@ -674,12 +689,14 @@ theorem mem_rule_gen_step (a : Γ) :
       M.lbaGrammar.rules := by
   simp [lbaGrammar, allRules, genRules]
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- The final generation rule is a rule of the grammar. -/
 theorem mem_rule_gen_last (a : Γ) :
     ([genSym (Γ := Γ) (Q := Q)], [cellSym a (some a) none false .right]) ∈
       M.lbaGrammar.rules := by
   simp [lbaGrammar, allRules, genRules]
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- The activation rule is a rule of the grammar. -/
 theorem mem_rule_activate (a : Γ) (cur : Option Γ) (st : Option Q)
     (bnd : LBABoundary) :
@@ -687,6 +704,7 @@ theorem mem_rule_activate (a : Γ) (cur : Option Γ) (st : Option Q)
       M.lbaGrammar.rules := by
   simp [lbaGrammar, allRules, activateRules]
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- A stay transition gives a simulation rule. -/
 theorem mem_rule_sim_stay {q q' : Q} {read write : Option Γ} {orig : Γ}
     {bnd : LBABoundary}
@@ -703,6 +721,7 @@ theorem mem_rule_sim_stay {q q' : Q} {read write : Option Γ} {orig : Γ}
   apply List.mem_flatMap.mpr
   exact ⟨⟨q', write, LBAMove.stay⟩, Finset.mem_toList.mpr h, by simp⟩
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- A right transition gives a simulation rule. -/
 theorem mem_rule_sim_right {q q' : Q} {read write : Option Γ} {orig orig₂ : Γ}
     {cur₂ : Option Γ} {bnd bnd₂ : LBABoundary}
@@ -720,6 +739,7 @@ theorem mem_rule_sim_right {q q' : Q} {read write : Option Γ} {orig orig₂ : �
   apply List.mem_flatMap.mpr
   exact ⟨⟨q', write, LBAMove.right⟩, Finset.mem_toList.mpr h, by simp⟩
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- A left transition gives a simulation rule. -/
 theorem mem_rule_sim_left {q q' : Q} {read write : Option Γ} {orig orig₂ : Γ}
     {cur₂ : Option Γ} {bnd bnd₂ : LBABoundary}
@@ -737,11 +757,13 @@ theorem mem_rule_sim_left {q q' : Q} {read write : Option Γ} {orig orig₂ : Γ
   apply List.mem_flatMap.mpr
   exact ⟨⟨q', write, LBAMove.left⟩, Finset.mem_toList.mpr h, by simp⟩
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- The accepting conversion rule is a rule of the grammar. -/
 theorem mem_rule_conv_acc (a : Γ) (cur : Option Γ) (bnd : LBABoundary) :
     ([cellSym a cur (some M.qAcc) true bnd], [termSym a]) ∈ M.lbaGrammar.rules := by
   simp [lbaGrammar, allRules, convRules]
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- The non-head conversion rule is a rule of the grammar. -/
 theorem mem_rule_conv_none (a : Γ) (cur : Option Γ) (bnd : LBABoundary) :
     ([cellSym a cur none true bnd], [termSym a]) ∈ M.lbaGrammar.rules := by
@@ -749,6 +771,7 @@ theorem mem_rule_conv_none (a : Γ) (cur : Option Γ) (bnd : LBABoundary) :
 
 /-! ### Generation and activation -/
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- The generator derives the middle tail cells followed by itself. -/
 theorem derives_gen_tail : ∀ w : List Γ,
     Derives M.lbaGrammar [genSym (Γ := Γ) (Q := Q)]
@@ -766,6 +789,7 @@ theorem derives_gen_tail : ∀ w : List Γ,
     exact derives_trans hstep
       (derives_append_left [cellSym a (some a) none false .middle] ih)
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- The generator derives the tail cells, ending the generation. -/
 theorem derives_gen_tail_last : ∀ w : List Γ, w ≠ [] →
     Derives M.lbaGrammar [genSym (Γ := Γ) (Q := Q)] (tailEncode M w) := by
@@ -788,6 +812,7 @@ theorem derives_gen_tail_last : ∀ w : List Γ, w ≠ [] →
       exact derives_trans hstep
         (derives_append_left [cellSym a (some a) none false .middle] ih')
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- The start symbol derives the generated sentential form of a word. -/
 theorem derives_start_genEncode : ∀ w : List Γ, w ≠ [] →
     Derives M.lbaGrammar [startSym (Γ := Γ) (Q := Q)] (genEncode M w) := by
@@ -810,6 +835,7 @@ theorem derives_start_genEncode : ∀ w : List Γ, w ≠ [] →
       exact derives_trans hstep
         (derives_append_left [cellSym a (some a) (some M.q₀) false .left] htail)
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- The tail cells, sitting at offset `start ≥ 1` in a word of total length
 `start + w.length`, derive their activated encoding. The offset stays
 `≥ 1` in the induction step, so the first tail cell is never tagged
@@ -855,6 +881,7 @@ theorem derives_tail_activate : ∀ (w : List Γ) (start : ℕ), 1 ≤ start →
         derives_singleton_cell (mem_rule_activate a (some a) none .middle)
       exact derives_append hstep (ih (start + 1) (by omega))
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- The generated form derives the encoding of the initial configuration. -/
 theorem derives_gen_activate : ∀ w : List Γ,
     Derives M.lbaGrammar (genEncode M w) (encodeCfg M w (M.initCfg w)) := by
@@ -907,6 +934,7 @@ theorem take_append_two {α : Type*} {l : List α} {i : ℕ} (hi : i + 1 < l.len
   rw [h2] at h1
   exact h1.trans (by simp only [List.append_assoc, List.cons_append, List.nil_append])
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- A single-cell replacement that is a production is a derivation step. -/
 theorem derives_set_single {u : List (Symbol Γ (LBANT Γ Q))} {i : ℕ}
     {y : Symbol Γ (LBANT Γ Q)} (hi : i < u.length)
@@ -944,6 +972,7 @@ theorem take_set {α : Type*} {l : List α} {i : ℕ} {y : α} (hi : i < l.lengt
       change x :: List.take (j + 1) (l.set j y) = (x :: List.take j l) ++ [y]
       rw [ih (i := j) (by simp only [List.length_cons] at hi; omega), List.cons_append]
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- A two-cell replacement that is a production is a derivation step. -/
 theorem derives_set_two {u : List (Symbol Γ (LBANT Γ Q))} {i : ℕ}
     {y₁ y₂ : Symbol Γ (LBANT Γ Q)} (hi : i + 1 < u.length)
@@ -967,6 +996,7 @@ theorem derives_set_two {u : List (Symbol Γ (LBANT Γ Q))} {i : ℕ}
   exact derives_replace_list (p := List.take i u) (q := List.drop (i + 2) u)
     (lhs := [u[i]'(by omega), u[i + 1]'hi]) (rhs := [y₁, y₂]) (hu := hdec) hrule
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- A two-cell replacement at positions `i` and `j = i + 1`. -/
 theorem derives_set_two' {u : List (Symbol Γ (LBANT Γ Q))} {i j : ℕ}
     {y₁ y₂ : Symbol Γ (LBANT Γ Q)} (hi : i + 1 < u.length) (hj : j = i + 1)
@@ -977,12 +1007,14 @@ theorem derives_set_two' {u : List (Symbol Γ (LBANT Γ Q))} {i j : ℕ}
 
 /-! ### Encoding lemmas -/
 
+omit _instDecidableEqQ _instDecidableEqG _instFintypeQ _instFintypeG in
 /-- The encoding of a configuration has as many cells as the input word. -/
 theorem length_encodeCfg {w : List Γ} {cfg : LBAConfig Q Γ}
     (hl : cfg.tape.length = w.length) : (encodeCfg M w cfg).length = w.length := by
   simp only [encodeCfg, List.length_map,
     length_encodeCellsAux (by rw [hl] : w.length = cfg.tape.length)]
 
+omit _instDecidableEqQ _instDecidableEqG _instFintypeQ _instFintypeG in
 /-- The `i`-th cell of the encoding. -/
 theorem getElem_encodeCfg {w : List Γ} {cfg : LBAConfig Q Γ} {i : ℕ}
     (hl : cfg.tape.length = w.length) (hhead : cfg.head < w.length)
@@ -1009,12 +1041,14 @@ theorem getElem_encodeCfg {w : List Γ} {cfg : LBAConfig Q Γ} {i : ℕ}
     have hne2 : i ≠ cfg.head := hihead
     simp only [cellTupleSym, if_neg hne1, if_neg hne2, Nat.zero_add]
 
+omit _instDecidableEqQ _instDecidableEqG _instFintypeQ _instFintypeG in
 /-- One step preserves the tape length. -/
 theorem step_tape_length {c c' : LBAConfig Q Γ} (h : M.Step c c') :
     c'.tape.length = c.tape.length := by
   obtain ⟨q', b', mv, -, rfl, -⟩ := h
   simp [List.length_set]
 
+omit _instDecidableEqQ _instDecidableEqG _instFintypeQ _instFintypeG in
 /-- One step keeps the head on the tape, when the source head is on the tape. -/
 theorem step_head_lt {c c' : LBAConfig Q Γ} (h : M.Step c c')
     (hhead : c.head < c.tape.length) : c'.head < c'.tape.length := by
@@ -1022,6 +1056,7 @@ theorem step_head_lt {c c' : LBAConfig Q Γ} (h : M.Step c c')
   rw [List.length_set]
   cases mv <;> simp only [LBAMove.moveHead, LBAMove.legal] at hlegal ⊢ <;> omega
 
+omit _instDecidableEqQ _instDecidableEqG _instFintypeQ _instFintypeG in
 /-- Reachable configurations have the input tape length and the head on the
 tape, for a nonempty input word. -/
 theorem reachable_tape_length {w : List Γ} {c : LBAConfig Q Γ} (hw : w ≠ [])
@@ -1041,6 +1076,7 @@ theorem reachable_tape_length {w : List Γ} {c : LBAConfig Q Γ} (hw : w ≠ [])
     refine ⟨(step_tape_length hstep).trans hl, ?_⟩
     exact step_head_lt hstep hhead
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- One machine step is one grammar derivation step on encodings. -/
 theorem derives_encodeCfg_step {w : List Γ} {c c' : LBAConfig Q Γ}
     (_hw : w ≠ []) (hstep : M.Step c c')
@@ -1252,6 +1288,7 @@ theorem derives_encodeCfg_step {w : List Γ} {c c' : LBAConfig Q Γ}
 
 /-! ### Conversion and completeness -/
 
+omit _instDecidableEqQ _instDecidableEqG _instFintypeQ _instFintypeG in
 /-- Every cell of an encoding has head state `none` or the given state. -/
 theorem encodeCellsAux_state {w : List Γ} {tape : List (Option Γ)} {h : Option ℕ} {q : Q}
     {start total : ℕ}
@@ -1283,6 +1320,7 @@ theorem encodeCellsAux_state {w : List Γ} {tape : List (Option Γ)} {h : Option
           · exact Or.inl rfl
           · exact ih hmem
 
+omit _instDecidableEqQ _instDecidableEqG _instFintypeQ _instFintypeG in
 /-- Every cell of an encoding is active. -/
 theorem encodeCellsAux_active {w : List Γ} {tape : List (Option Γ)} {h : Option ℕ} {q : Q}
     {start total : ℕ}
@@ -1314,6 +1352,7 @@ theorem encodeCellsAux_active {w : List Γ} {tape : List (Option Γ)} {h : Optio
           · rfl
           · exact ih hmem
 
+omit _instDecidableEqQ _instDecidableEqG _instFintypeQ _instFintypeG in
 /-- The original symbols of an encoding are the input word. -/
 theorem map_orig_encodeCellsAux {w : List Γ} {tape : List (Option Γ)} {h : Option ℕ} {q : Q}
     {start total : ℕ} (hl : w.length = tape.length) :
@@ -1346,6 +1385,7 @@ theorem map_orig_encodeCellsAux {w : List Γ} {tape : List (Option Γ)} {h : Opt
                 encodeCellsAux w tape (some n) q (start + 1) total from rfl,
             List.map_cons, List.map_cons, ih (tape := tape) hl' (h := some n)]
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- A list of cells, each non-head or accepting, converts to its original
 terminals. -/
 theorem derives_convert_cells :
@@ -1378,6 +1418,7 @@ theorem derives_convert_cells :
       · exact derives_singleton_cell (mem_rule_conv_acc a cur bnd)
     exact derives_append hstep (ih htail)
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- Derivations along a run, keeping the tape length and head on the tape. -/
 theorem derives_encodeCfg_reflTransGen {w : List Γ} {c : LBAConfig Q Γ} (hw : w ≠ [])
     (h : Relation.ReflTransGen M.Step (M.initCfg w) c) :
@@ -1396,6 +1437,7 @@ theorem derives_encodeCfg_reflTransGen {w : List Γ} {c : LBAConfig Q Γ} (hw : 
     · exact step_head_lt hstep hhead
     · exact derives_trans hder (derives_encodeCfg_step hw hstep hl hhead)
 
+omit _instDecidableEqQ _instDecidableEqG in
 /-- **If the LBA accepts a nonempty word, the grammar derives it.** This is
 one inclusion of the LBA-to-grammar direction. -/
 theorem lba_accepts_implies_grammar_derives {w : List Γ} (hw : w ≠ [])

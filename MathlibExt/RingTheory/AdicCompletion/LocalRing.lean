@@ -61,25 +61,11 @@ open IsLocalRing
 
 /-- The adic completion of a Noetherian local ring at its maximal ideal is
 faithfully flat. -/
+@[deprecated "Use `Module.FaithfullyFlat.of_flat_of_isLocalHom`." (since := "2026-11-12")]
 theorem IsLocalRing.faithfullyFlat_adicCompletion_maximalIdeal
     (R : Type*) [CommRing R] [IsNoetherianRing R] [IsLocalRing R] :
-    Module.FaithfullyFlat R (AdicCompletion (maximalIdeal R) R) := by
-  rw [Module.FaithfullyFlat.iff_flat_and_proper_ideal]
-  refine ⟨inferInstance, fun I hI htop => ?_⟩
-  have hle : (I • ⊤ : Submodule R (AdicCompletion (maximalIdeal R) R)) ≤
-      (maximalIdeal R) ^ 1 • ⊤ := by
-    rw [pow_one]; exact Submodule.smul_mono_left (IsLocalRing.le_maximalIdeal hI)
-  rw [htop, top_le_iff, AdicCompletion.pow_smul_top_eq_ker_eval (IsNoetherian.noetherian _)] at hle
-  have hsurj := AdicCompletion.eval_surjective (maximalIdeal R) R 1
-  have hne : ((maximalIdeal R) ^ 1 • ⊤ : Submodule R R) ≠ ⊤ := by
-    rw [pow_one, smul_eq_mul, Ideal.mul_top]; exact (maximalIdeal.isMaximal R).ne_top
-  have : Nontrivial (R ⧸ ((maximalIdeal R) ^ 1 • ⊤ : Submodule R R)) :=
-    Submodule.Quotient.nontrivial_iff.mpr hne
-  obtain ⟨q, hq⟩ := exists_ne (0 : R ⧸ ((maximalIdeal R) ^ 1 • ⊤ : Submodule R R))
-  obtain ⟨x, rfl⟩ := hsurj q
-  have hx : x ∈ LinearMap.ker (AdicCompletion.eval (maximalIdeal R) R 1) :=
-    hle ▸ Submodule.mem_top
-  exact hq (LinearMap.mem_ker.mp hx)
+    Module.FaithfullyFlat R (AdicCompletion (maximalIdeal R) R) :=
+  Module.FaithfullyFlat.of_flat_of_isLocalHom
 
 /-- Ideals contract back to themselves along the adic completion map of a
 Noetherian local ring. -/
@@ -88,7 +74,7 @@ theorem IsLocalRing.comap_map_adicCompletion_eq
     (I.map (algebraMap R (AdicCompletion (IsLocalRing.maximalIdeal R) R))).comap
       (algebraMap R (AdicCompletion (IsLocalRing.maximalIdeal R) R)) = I := by
   have : Module.FaithfullyFlat R (AdicCompletion (IsLocalRing.maximalIdeal R) R) :=
-    IsLocalRing.faithfullyFlat_adicCompletion_maximalIdeal R
+    Module.FaithfullyFlat.of_flat_of_isLocalHom
   exact Ideal.comap_map_eq_self_of_faithfullyFlat I
 
 namespace AdicCompletion
@@ -212,18 +198,16 @@ variable {k : Type*} [CommRing k] [Algebra k A] {B : Type*} [CommRing B] [IsLoca
   [Algebra k B]
 variable (Φ : AdicCompletion (maximalIdeal A) A ≃ₐ[k] B)
 
+@[deprecated IsLocalRing.maximalIdeal_comap +typeChanged (since := "2026-11-12")]
 theorem comap_maximalIdeal_algEquiv :
     (maximalIdeal B).comap (Φ : AdicCompletion (maximalIdeal A) A →+* B)
-      = maximalIdeal (AdicCompletion (maximalIdeal A) A) := by
-  ext x
-  change Φ x ∈ maximalIdeal B ↔ x ∈ maximalIdeal _
-  rw [mem_maximalIdeal, mem_maximalIdeal, mem_nonunits_iff, mem_nonunits_iff]
-  exact not_congr (isUnit_map_iff Φ.toAlgHom x)
+      = maximalIdeal (AdicCompletion (maximalIdeal A) A) :=
+  IsLocalRing.maximalIdeal_comap _
 
 theorem map_maximalIdeal_algEquiv :
     (maximalIdeal (AdicCompletion (maximalIdeal A) A)).map
         (Φ : AdicCompletion (maximalIdeal A) A →+* B) = maximalIdeal B := by
-  rw [← comap_maximalIdeal_algEquiv Φ]
+  rw [← IsLocalRing.maximalIdeal_comap (Φ : AdicCompletion (maximalIdeal A) A →+* B)]
   exact Ideal.map_comap_of_surjective _ Φ.surjective _
 
 theorem maximalIdeal_eq_map_algEquiv :

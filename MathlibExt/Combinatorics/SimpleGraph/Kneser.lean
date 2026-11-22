@@ -11,8 +11,6 @@ Author: Stefan Trandafir
 -/
 module
 
-public import Mathlib.Combinatorics.SimpleGraph.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import MathlibExt.Combinatorics.SimpleGraph.GeneralizedJohnson
 
 @[expose] public section

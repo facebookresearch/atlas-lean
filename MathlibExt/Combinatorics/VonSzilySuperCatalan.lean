@@ -13,7 +13,7 @@ public import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.Algebra.CharP.Defs
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Field.Lemmas
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Data.Nat.Cast.Field
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination

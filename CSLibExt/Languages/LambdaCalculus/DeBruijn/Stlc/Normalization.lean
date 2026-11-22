@@ -64,8 +64,16 @@ end Steps
 
 /-- **Normalizing closed terms.** A closed term $t$ of the simply typed lambda calculus normalizes
 when it reduces, in zero or more call-by-value steps, to a term in normal form, that is, a term
-with no further call-by-value reduction step. -/
+with no further call-by-value reduction step.
+
+This is upstream `Relation.Normalizable Step` (see `normalizes_iff_normalizable`). -/
 def Normalizes (t : Tm [] A) : Prop := ∃ n, Steps t n ∧ Step.NormalForm n
+
+/-- `Normalizes` is the upstream normalizability predicate `Relation.Normalizable` for
+`Step`. -/
+theorem normalizes_iff_normalizable {t : Tm [] A} :
+    Normalizes t ↔ Relation.Normalizable Step t :=
+  exists_congr fun _ => and_congr Iff.rfl Step.normalForm_iff_normal
 
 namespace Normalizes
 

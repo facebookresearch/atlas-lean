@@ -11,7 +11,7 @@ module
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Tactic.Linarith.Frontend
