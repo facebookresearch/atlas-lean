@@ -110,6 +110,109 @@ theorem diagonal_one_zero_isStarProjection :
     funext i
     fin_cases i <;> simp
 
+/-- The first standard basis vector is normalized. -/
+theorem single_zero_one_norm :
+    ‖EuclideanSpace.single (0 : Fin 2) (1 : ℂ)‖ = 1 := by
+  have h := EuclideanSpace.orthonormal_single (𝕜 := ℂ) (ι := Fin 2)
+  exact h.norm_eq_one 0
+
+/-- Applying `norm_inner_conj_sub_le` to the phase-gate and identity fixtures
+gives the scalar phase-distance bound. -/
+theorem phase_inner_conj_le (φ : ℝ) :
+    ‖⟪EuclideanSpace.single (0 : Fin 2) (1 : ℂ),
+        Matrix.toEuclideanCLM (n := Fin 2) (𝕜 := ℂ)
+          ((star (Matrix.diagonal ![1, Complex.exp (φ * Complex.I)] :
+              Matrix (Fin 2) (Fin 2) ℂ)) *
+            (Matrix.diagonal ![1, 0] : Matrix (Fin 2) (Fin 2) ℂ) *
+            (Matrix.diagonal ![1, Complex.exp (φ * Complex.I)] :
+              Matrix (Fin 2) (Fin 2) ℂ))
+          (EuclideanSpace.single (0 : Fin 2) (1 : ℂ))⟫_ℂ -
+      ⟪EuclideanSpace.single (0 : Fin 2) (1 : ℂ),
+        Matrix.toEuclideanCLM (n := Fin 2) (𝕜 := ℂ)
+          ((star (1 : Matrix (Fin 2) (Fin 2) ℂ)) *
+            (Matrix.diagonal ![1, 0] : Matrix (Fin 2) (Fin 2) ℂ) * 1)
+          (EuclideanSpace.single (0 : Fin 2) (1 : ℂ))⟫_ℂ‖ ≤
+      2 * ‖Complex.exp (φ * Complex.I) - 1‖ := by
+  have h :=
+    norm_inner_conj_sub_le
+      (U := (Matrix.diagonal ![1, Complex.exp (φ * Complex.I)] :
+        Matrix (Fin 2) (Fin 2) ℂ)) (V := 1)
+      (P := (Matrix.diagonal ![1, 0] : Matrix (Fin 2) (Fin 2) ℂ))
+      (phase_diagonal_mem_unitaryGroup φ) (one_mem _)
+      diagonal_one_zero_isStarProjection
+      (EuclideanSpace.single (0 : Fin 2) (1 : ℂ)) single_zero_one_norm
+  rw [phase_diagonal_sub_one_norm] at h
+  exact h
+
+/-- Applying `norm_inner_circuit_conj_sub_le` to single-gate phase and identity
+circuits gives the scalar phase-distance bound. -/
+theorem phase_circuit_inner_conj_le (φ : ℝ) :
+    ‖⟪EuclideanSpace.single (0 : Fin 2) (1 : ℂ),
+        Matrix.toEuclideanCLM (n := Fin 2) (𝕜 := ℂ)
+          (star (List.ofFn fun _ : Fin 1 =>
+              (Matrix.diagonal ![1, Complex.exp (φ * Complex.I)] :
+                Matrix (Fin 2) (Fin 2) ℂ)).prod *
+            (Matrix.diagonal ![1, 0] : Matrix (Fin 2) (Fin 2) ℂ) *
+            (List.ofFn fun _ : Fin 1 =>
+              (Matrix.diagonal ![1, Complex.exp (φ * Complex.I)] :
+                Matrix (Fin 2) (Fin 2) ℂ)).prod)
+          (EuclideanSpace.single (0 : Fin 2) (1 : ℂ))⟫_ℂ -
+      ⟪EuclideanSpace.single (0 : Fin 2) (1 : ℂ),
+        Matrix.toEuclideanCLM (n := Fin 2) (𝕜 := ℂ)
+          (star (List.ofFn fun _ : Fin 1 =>
+              (1 : Matrix (Fin 2) (Fin 2) ℂ)).prod *
+            (Matrix.diagonal ![1, 0] : Matrix (Fin 2) (Fin 2) ℂ) *
+            (List.ofFn fun _ : Fin 1 => (1 : Matrix (Fin 2) (Fin 2) ℂ)).prod)
+          (EuclideanSpace.single (0 : Fin 2) (1 : ℂ))⟫_ℂ‖ ≤
+      2 * ‖Complex.exp (φ * Complex.I) - 1‖ := by
+  have hU : ∀ i : Fin 1, (fun _ : Fin 1 =>
+      (Matrix.diagonal ![1, Complex.exp (φ * Complex.I)] :
+        Matrix (Fin 2) (Fin 2) ℂ)) i ∈ Matrix.unitaryGroup (Fin 2) ℂ :=
+    fun _ => phase_diagonal_mem_unitaryGroup φ
+  have hV : ∀ i : Fin 1, (fun _ : Fin 1 =>
+      (1 : Matrix (Fin 2) (Fin 2) ℂ)) i ∈ Matrix.unitaryGroup (Fin 2) ℂ :=
+    fun _ => one_mem _
+  have hε : ∀ i : Fin 1, ‖(fun _ : Fin 1 =>
+      (Matrix.diagonal ![1, Complex.exp (φ * Complex.I)] :
+        Matrix (Fin 2) (Fin 2) ℂ)) i -
+        (fun _ : Fin 1 => (1 : Matrix (Fin 2) (Fin 2) ℂ)) i‖ ≤
+      (fun _ : Fin 1 => ‖Complex.exp (φ * Complex.I) - 1‖) i := by
+    intro i
+    show ‖(Matrix.diagonal ![1, Complex.exp (φ * Complex.I)] :
+      Matrix (Fin 2) (Fin 2) ℂ) - 1‖ ≤ ‖Complex.exp (φ * Complex.I) - 1‖
+    rw [phase_diagonal_sub_one_norm]
+  have h := norm_inner_circuit_conj_sub_le
+    (fun _ : Fin 1 => (Matrix.diagonal ![1, Complex.exp (φ * Complex.I)] :
+      Matrix (Fin 2) (Fin 2) ℂ))
+    (fun _ : Fin 1 => (1 : Matrix (Fin 2) (Fin 2) ℂ))
+    hU hV (fun _ : Fin 1 => ‖Complex.exp (φ * Complex.I) - 1‖) hε
+    diagonal_one_zero_isStarProjection (EuclideanSpace.single (0 : Fin 2) (1 : ℂ))
+    single_zero_one_norm
+  rw [Fin.sum_univ_one] at h
+  exact h
+
+/-- At phase zero the scalar bound computes to zero. -/
+example :
+    ‖⟪EuclideanSpace.single (0 : Fin 2) (1 : ℂ),
+        Matrix.toEuclideanCLM (n := Fin 2) (𝕜 := ℂ)
+          ((star (Matrix.diagonal ![1, Complex.exp ((0 : ℝ) * Complex.I)] :
+              Matrix (Fin 2) (Fin 2) ℂ)) *
+            (Matrix.diagonal ![1, 0] : Matrix (Fin 2) (Fin 2) ℂ) *
+            (Matrix.diagonal ![1, Complex.exp ((0 : ℝ) * Complex.I)] :
+              Matrix (Fin 2) (Fin 2) ℂ))
+          (EuclideanSpace.single (0 : Fin 2) (1 : ℂ))⟫_ℂ -
+      ⟪EuclideanSpace.single (0 : Fin 2) (1 : ℂ),
+        Matrix.toEuclideanCLM (n := Fin 2) (𝕜 := ℂ)
+          ((star (1 : Matrix (Fin 2) (Fin 2) ℂ)) *
+            (Matrix.diagonal ![1, 0] : Matrix (Fin 2) (Fin 2) ℂ) * 1)
+          (EuclideanSpace.single (0 : Fin 2) (1 : ℂ))⟫_ℂ‖ ≤ 0 := by
+  have h := phase_inner_conj_le 0
+  have h0 : (2 : ℝ) * ‖Complex.exp ((0 : ℝ) * Complex.I) - 1‖ = 0 := by
+    rw [Complex.ofReal_zero, zero_mul, Complex.exp_zero, sub_self, norm_zero,
+      mul_zero]
+  rw [h0] at h
+  exact h
+
 /-- Empty circuits have zero mutual error. -/
 example {n : Type*} [Fintype n] [DecidableEq n]
     (U V : Fin 0 → Matrix n n ℂ) :
