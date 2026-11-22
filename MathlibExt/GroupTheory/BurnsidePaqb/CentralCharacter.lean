@@ -30,8 +30,11 @@ namespace BurnsidePaqb
 variable {G : Type*} [Group G] [Fintype G]
 
 omit [Fintype G] in
-/-- A central group-algebra element acts on an irreducible representation by a
-scalar (Schur's lemma via `asAlgebraHom`). -/
+/-- **Schur's lemma for central elements of the group algebra.** Let $\rho$ be an irreducible
+representation of a group $G$ on a finite-dimensional complex vector space $V$, extended linearly
+to the group algebra $\mathbb{C}[G]$. If $z \in \mathbb{C}[G]$ commutes with every element of
+$\mathbb{C}[G]$, then $z$ acts on $V$ as a scalar: there is $c \in \mathbb{C}$ with
+$\rho(z) v = c\, v$ for all $v \in V$. -/
 theorem exists_scalar_of_central {V : Type*} [AddCommGroup V] [Module ℂ V]
     [FiniteDimensional ℂ V] (ρ : Representation ℂ G V)
     [Representation.IsIrreducible ρ]
@@ -68,7 +71,11 @@ variable {V : Type*} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
 variable (ρ : Representation ℂ G V) [Representation.IsIrreducible ρ]
 
 open Classical in
-/-- Central character scalar: the scalar by which the class sum of `l` acts. -/
+/-- **Central scalar of a conjugacy class.** Let $\rho$ be an irreducible representation of a
+finite group $G$ on a finite-dimensional complex vector space $V$. For a conjugacy class $C$ of
+$G$, the class sum $\sum_{x \in C} x$ is central in the group algebra $\mathbb{C}[G]$, so it acts
+on $V$ as multiplication by a complex number. The central scalar $\omega_\rho(C)$ is that number:
+$\rho\bigl(\sum_{x \in C} x\bigr) v = \omega_\rho(C)\, v$ for all $v \in V$. -/
 noncomputable def centralScalar (l : ConjClasses G) : ℂ :=
   Classical.choose
     (exists_scalar_of_central ρ (classSum (ConjClasses.carrier l).toFinset)
@@ -83,7 +90,15 @@ theorem centralScalar_spec (l : ConjClasses G) (v : V) :
       (classSum_carrier_central l)) v
 
 open Classical in
-/-- Central scalars multiply with the structure constants. -/
+/-- **Central scalars multiply via the class structure constants.** Let $\rho$ be an irreducible
+representation of a finite group $G$ on a finite-dimensional complex vector space $V$, and let
+$\omega_\rho(C)$ be the scalar by which the class sum of a conjugacy class $C$ acts on $V$. Fix
+a representative $g_C$ of each conjugacy class $C$. For conjugacy classes $C_1$ and $C_2$,
+
+$$\omega_\rho(C_1)\,\omega_\rho(C_2) = \sum_{C} a_{C_1 C_2}^{C}\, \omega_\rho(C),$$
+
+where $C$ runs over all conjugacy classes of $G$ and $a_{C_1 C_2}^{C}$ is the number of pairs
+$(x, y) \in C_1 \times C_2$ with $x y = g_C$. -/
 theorem centralScalar_mul (l1 l2 : ConjClasses G) :
     centralScalar ρ l1 * centralScalar ρ l2
       = ∑ l, (structConst (conjClass (classRep l1)) (conjClass (classRep l2))
@@ -116,7 +131,10 @@ theorem centralScalar_mul (l1 l2 : ConjClasses G) :
   · exact absurd h hv
 
 open Classical in
-/-- Trace equation: the central scalar times the degree is the character sum. -/
+/-- **Trace formula for central scalars.** Let $\rho$ be an irreducible representation of a
+finite group $G$ on a finite-dimensional complex vector space $V$ with character $\chi$, and let
+$\omega_\rho(C)$ be the scalar by which the class sum of a conjugacy class $C$ acts on $V$. Then
+$\omega_\rho(C) \cdot \dim V = \sum_{x \in C} \chi(x)$. -/
 theorem centralScalar_trace (l : ConjClasses G) :
     centralScalar ρ l * Module.finrank ℂ V
       = ∑ x ∈ (ConjClasses.carrier l).toFinset, ρ.character x := by
@@ -144,7 +162,11 @@ theorem centralScalar_trace (l : ConjClasses G) :
   rw [← htrace, hsum]
 
 open Classical in
-/-- The finite set of scalars spanning the integrality subalgebra. -/
+/-- **Generators of the central-scalar ring.** Let $\rho$ be an irreducible representation of a
+finite group $G$ on a finite-dimensional complex vector space $V$, and let $\omega_\rho(C)$ be
+the scalar by which the class sum of a conjugacy class $C$ acts on $V$. The set $S_\rho$ is the
+finite set of complex numbers consisting of $1$ and the values $\omega_\rho(C)$ for all
+conjugacy classes $C$ of $G$. -/
 noncomputable def scalarGens : Finset ℂ :=
   insert 1 (Finset.univ.image (centralScalar ρ))
 
@@ -159,7 +181,11 @@ theorem scalar_mem_scalarSpan (l : ConjClasses G) :
     (Finset.mem_image_of_mem _ (Finset.mem_univ l))))
 
 open Classical in
-/-- Generator-generator products stay in the span. -/
+/-- **Products of central-scalar generators stay in their span.** Let $\rho$ be an irreducible
+representation of a finite group $G$ on a finite-dimensional complex vector space $V$, and let
+$S_\rho$ be the finite set of complex numbers consisting of $1$ and the scalars by which the
+class sums of the conjugacy classes of $G$ act on $V$. If $a, b \in S_\rho$, then $ab$ lies in
+the $\mathbb{Z}$-linear span of $S_\rho$. -/
 theorem scalarGens_mul (a b : ℂ) (ha : a ∈ scalarGens ρ) (hb : b ∈ scalarGens ρ) :
     a * b ∈ Submodule.span ℤ (↑(scalarGens ρ) : Set ℂ) := by
   classical
@@ -180,7 +206,11 @@ theorem scalarGens_mul (a b : ℂ) (ha : a ∈ scalarGens ρ) (hb : b ∈ scalar
     exact Submodule.smul_mem _ _ (scalar_mem_scalarSpan ρ l)
 
 open Classical in
-/-- The ℤ-span of the central scalars, as a subalgebra. -/
+/-- **Ring generated by the central scalars.** Let $\rho$ be an irreducible representation of a
+finite group $G$ on a finite-dimensional complex vector space $V$, and let $S_\rho$ be the finite
+set of complex numbers consisting of $1$ and the scalars by which the class sums of the
+conjugacy classes of $G$ act on $V$. The $\mathbb{Z}$-linear span of $S_\rho$ is closed under
+multiplication, and this is that span as a $\mathbb{Z}$-subalgebra of $\mathbb{C}$. -/
 noncomputable def scalarSubalg : Subalgebra ℤ ℂ where
   carrier := ↑(Submodule.span ℤ (↑(scalarGens ρ) : Set ℂ))
   mul_mem' := by
@@ -234,14 +264,22 @@ theorem scalarSubalg_fg : (scalarSubalg ρ).toSubmodule.FG := by
   exact ⟨scalarGens ρ, rfl⟩
 
 open Classical in
-/-- Central scalars are algebraic integers. -/
+/-- **Central scalars are algebraic integers.** Let $\rho$ be an irreducible representation of a
+finite group $G$ on a finite-dimensional complex vector space $V$. For every conjugacy class $C$
+of $G$, the complex number $\omega_\rho(C)$ by which the class sum $\sum_{x \in C} x$ acts on $V$
+is an algebraic integer, that is, integral over $\mathbb{Z}$. -/
 theorem centralScalar_isIntegral (l : ConjClasses G) :
     IsIntegral ℤ (centralScalar ρ l) :=
   IsIntegral.of_mem_of_fg (scalarSubalg ρ) (scalarSubalg_fg ρ) _
     (scalar_mem_scalarSpan ρ l)
 
 open Classical in
-/-- Bielefeld Prop 1: `|C|χ(g)/χ(1)` is an algebraic integer. -/
+/-- **Class size times character ratio is an algebraic integer.** Let $\rho$ be an irreducible
+representation of a finite group $G$ on a finite-dimensional complex vector space $V$, with
+character $\chi$. For every $g \in G$, if $C$ is the conjugacy class of $g$, then
+$|C|\,\chi(g)/\chi(1)$ is an algebraic integer.
+
+Source: Bielefeld Prop 1. -/
 theorem classSum_centralScalar_isIntegral (g : G) :
     IsIntegral ℤ ((conjClass g).card * ρ.character g / ρ.character 1) := by
   classical
