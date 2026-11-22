@@ -45,14 +45,14 @@ relation. For the second, multiply `α (1 + δ) (2 + ξ) = 1 + γ` by `2α + 1 +
 The theorem keeps the full name and the statement it had as a wanted theorem in
 `WantedExt.Dynamics.MoebiusSingularDualWanted`, so it lives in the namespace `MetaMathlibExt`.
 The proof uses `β < 1` only through `2 - β ≠ 0` and `γ > -1` only through `1 + γ ≠ 0`. The
-hypotheses `α > 0` and `δ ≥ 0` belong to the source's setting but are not needed, hence the
-binder names `_hα` and `_hδ`.
+hypotheses `hα` and `hδ` are unused in the proof and retain their names for named arguments.
 -/
 
 @[expose] public section
 
 namespace MetaMathlibExt
 
+set_option linter.unusedVariables false in
 /-- **Central equations for natural duals of Moebius maps.** Let $\alpha, \beta, \gamma, \delta$
 and $\xi$ be real numbers with $\alpha > 0$, $\beta < 1$, $\gamma > -1$ and $\delta \ge 0$. Define
 the dual branches
@@ -73,8 +73,8 @@ $\alpha^2\gamma + \alpha^2\gamma\delta + 2\alpha + \beta + \beta\gamma + 2\alpha
 
 Source: Fritz Schweiger, *A Remark on Singular Duals of Moebius Maps*, INTEGERS 24 (2024),
 Article A17, Lemma 3 (`integers-2024-A17-lem-3`). -/
-theorem moebius_dual_central_equations (α β γ δ ξ : ℝ) (_hα : 0 < α) (hβ : β < 1)
-    (hγ : -1 < γ) (_hδ : 0 ≤ δ) :
+theorem moebius_dual_central_equations (α β γ δ ξ : ℝ) (hα : 0 < α) (hβ : β < 1)
+    (hγ : -1 < γ) (hδ : 0 ≤ δ) :
     let dualαγ : ℝ → ℝ := fun y => (γ - 2 * α - α * y) / (2 * α + 1 + α * y)
     let dualαδ : ℝ → ℝ := fun y => (2 * α * δ - 1 + α * δ * y) / (2 * α + 1 + α * y)
     let dualβγ : ℝ → ℝ := fun y =>

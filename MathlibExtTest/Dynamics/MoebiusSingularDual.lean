@@ -44,7 +44,8 @@ example (α β γ δ ξ : ℝ) (hα : 0 < α) (hβ : β < 1) (hγ : -1 < γ) (h�
       (2 * δ - 2 * β * δ - 1 + (δ - β * δ - 1) * ξ) / (3 - 2 * β + (2 - β) * ξ)) :
     (2 * α * δ - 1 + α * δ * ξ) / (2 * α + 1 + α * ξ) ≠
       (γ - 2 * α - α * ξ) / (2 * α + 1 + α * ξ) := fun hαeq =>
-  hne (moebius_dual_central_equations α β γ δ ξ hα hβ hγ hδ hβden hαden hβeq hαeq).1
+  hne (moebius_dual_central_equations α β γ δ ξ (hα := hα) hβ hγ (hδ := hδ)
+    hβden hαden hβeq hαeq).1
 
 -- Test section: the hypothesis `-1 < γ` cannot be dropped. At `γ = -1` the point `ξ = -2`
 -- satisfies both endpoint equations, with denominators `-1` and `1`, whatever `α`, `β`, `δ` are;
