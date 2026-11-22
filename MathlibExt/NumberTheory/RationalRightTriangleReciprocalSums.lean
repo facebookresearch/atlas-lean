@@ -24,16 +24,6 @@ are the sides of a `3, 4, 5` triangle scaled by `1/(6k)`.
 
 namespace MathlibExt.NumberTheory.PrimitivePythagoreanFormsWanted
 
--- The tuple pattern generates a matcher whose private name is part of the statement.
--- Generate it under the original wanted declaration's name when elaborating the set.
-open Lean Elab Term in
-local elab "withWantedMatcher " t:term : term <= expectedType => do
-  let some name ← getDeclName? | throwError "expected a declaration"
-  let origin := `WantedExt.NumberTheory.PrimitivePythagoreanFormsWanted
-  withDeclName (mkPrivateNameCore origin name) (elabTerm t expectedType)
-
--- Export the matcher along with the public theorem that uses it.
-set_option backward.privateInPublic true in
 /-- **Infinitely many rational right triangles with sides sums of unit fractions.** There are
 infinitely many triples $(X, Y, Z)$ of positive rational numbers with $X^2 + Y^2 = Z^2$ such
 that each of $X$, $Y$ and $Z$ has the form $1/u + 1/v$ for some positive integers $u$ and $v$.
@@ -42,13 +32,13 @@ Source: Yangcheng Li and Yong Zhang, "Primitive Pythagorean Triangles
 with Sides of Certain Forms", Theorem 3. -/
 public theorem rational_right_triangles_reciprocal_sums_infinite :
     Set.Infinite
-      (withWantedMatcher {(X, Y, Z) : ℚ × ℚ × ℚ |
+      {(X, Y, Z) : ℚ × ℚ × ℚ |
         0 < X ∧ 0 < Y ∧ 0 < Z ∧ X ^ 2 + Y ^ 2 = Z ^ 2 ∧
           ∃ x y p q r s : ℕ,
             0 < x ∧ 0 < y ∧ 0 < p ∧ 0 < q ∧ 0 < r ∧ 0 < s ∧
               X = 1 / (x : ℚ) + 1 / (y : ℚ) ∧
                 Y = 1 / (p : ℚ) + 1 / (q : ℚ) ∧
-                  Z = 1 / (r : ℚ) + 1 / (s : ℚ)}) := by
+                  Z = 1 / (r : ℚ) + 1 / (s : ℚ)} := by
   let triangle (n : ℕ) : ℚ × ℚ × ℚ :=
     let k := (n : ℚ) + 1
     (1 / (2 * k), 2 / (3 * k), 5 / (6 * k))
