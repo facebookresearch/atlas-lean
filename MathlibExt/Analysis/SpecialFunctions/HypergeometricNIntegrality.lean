@@ -25,7 +25,8 @@ defines that coefficient, Christol's ordering and counting functions,
 `N`-integrality (integrality after a positive rational rescaling), and
 the explicit scaling term in the Delaygue–Rivoal–Roques formula for
 the least rescaling.  Christol's criterion and the scaling formula
-themselves are deferred to a `WantedExt` follow-up.
+themselves are recorded as wanted results; see
+`WantedExt.Analysis.SpecialFunctions.ChristolHypergeometricIntegralityWanted`.
 
 Conventions follow E. Delaygue, T. Rivoal and J. Roques, *On Dwork's
 `p`-adic formal congruences theorem and hypergeometric mirror maps*,

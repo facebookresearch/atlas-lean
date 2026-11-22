@@ -22,7 +22,7 @@ open MetaMathlibExt.HypergeometricNIntegrality
 
 Wanted statements for E. Delaygue, T. Rivoal and J. Roques, *On
 Dwork's `p`-adic formal congruences theorem and hypergeometric
-mirror maps*, Mem. Amer. Math. Soc. **246** (2016), no. 1163,
+mirror maps*, Mem. Amer. Math. Soc. **246** (2017), no. 1163,
 Theorems 3 and 4 (§2.1).  Theorem 3 is Christol's criterion
 (G. Christol, *Fonctions hypergéométriques bornées*, Groupe de
 Travail d'Analyse Ultramétrique **14** (1986–1987), exp. 8, 1–16),
@@ -61,7 +61,7 @@ and every real `x`.
 
 Source: E. Delaygue, T. Rivoal, J. Roques, *On Dwork's `p`-adic
 formal congruences theorem and hypergeometric mirror maps*, Mem.
-Amer. Math. Soc. **246** (2016), no. 1163, Theorem 3; G. Christol,
+Amer. Math. Soc. **246** (2017), no. 1163, Theorem 3; G. Christol,
 *Fonctions hypergéométriques bornées*, Groupe de Travail d'Analyse
 Ultramétrique **14** (1986–1987), exp. 8, 1–16. -/
 public theorem_wanted christol_criterion (α β : Multiset ℚ)
@@ -81,7 +81,7 @@ the case `K = 1`.
 
 Source: E. Delaygue, T. Rivoal, J. Roques, *On Dwork's `p`-adic
 formal congruences theorem and hypergeometric mirror maps*, Mem.
-Amer. Math. Soc. **246** (2016), no. 1163, Theorem 4. -/
+Amer. Math. Soc. **246** (2017), no. 1163, Theorem 4. -/
 public theorem_wanted least_scaling_nat_mul_baseConstant (α β : Multiset ℚ)
     (hα : AdmissibleParams α) (hβ : AdmissibleParams β) (hN : NIntegral α β) :
     ∃ K : ℕ, 0 < K ∧ GoodScaling α β ((K : ℚ) * baseConstant α β) ∧
@@ -97,7 +97,7 @@ coefficients.
 
 Source: E. Delaygue, T. Rivoal, J. Roques, *On Dwork's `p`-adic
 formal congruences theorem and hypergeometric mirror maps*, Mem.
-Amer. Math. Soc. **246** (2016), no. 1163, Theorem 4. -/
+Amer. Math. Soc. **246** (2017), no. 1163, Theorem 4. -/
 public theorem_wanted least_scaling_eq_baseConstant (α β : Multiset ℚ)
     (hα : AdmissibleParams α) (hβ : AdmissibleParams β) (hN : NIntegral α β)
     (hcard : α.card = β.card)
