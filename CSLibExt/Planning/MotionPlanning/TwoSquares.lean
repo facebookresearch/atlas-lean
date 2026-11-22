@@ -348,16 +348,4 @@ theorem bottom_length : polyLen [s, cBotL, cBotR, t] = 3 + Real.sqrt 5 := by
   simp only [polyLen] at ⊢
   linarith
 
--- Numeric sanity checks.
-example : dist s cTopL = Real.sqrt 5 / 2 := dist_s_topL
-example : dist cTopL cTopR = 3 := dist_top_mid
-
-#print axioms top_feasible
-#print axioms top_length
-#print axioms bottom_feasible
-#print axioms bottom_length
-#print axioms endpoints_corners_mem
-#print axioms top_middle_visible
-#print axioms bottom_middle_visible
-
 end Cslib.Planning.MotionPlanning.VisibilityInstance
