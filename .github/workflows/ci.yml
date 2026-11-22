@@ -51,7 +51,6 @@ jobs:
             --source-revision HEAD
 
   build:
-    needs: preflight
     runs-on: ubuntu-24.04
     timeout-minutes: 360
     steps:
@@ -97,14 +96,45 @@ jobs:
       - name: Fetch Mathlib cache
         run: lake exe cache get
 
+      # A pull request or merge group first restores the build of the commit it
+      # is tested against: the first parent of the commit it checks out. Other
+      # runs first look for their own commit. All fall back to main's newest.
+      - name: Find the base build
+        id: base
+        run: |
+          set -euo pipefail
+          sha="$GITHUB_SHA"
+          if [[ "$GITHUB_EVENT_NAME" == pull_request || "$GITHUB_EVENT_NAME" == merge_group ]]; then
+            sha="$(git cat-file -p HEAD | awk '/^parent /{print $2; exit}')"
+          fi
+          echo "sha=${sha:-$GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+
       - name: Restore local build
         id: local-build-cache
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .lake/build
-          key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+          key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ steps.base.outputs.sha }}
           restore-keys: |
             lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+      # A pull request audits only the modules its build rewrites; pushes and
+      # merge groups audit everything. The restored build passed the full audit
+      # of its own commit, so the scope needs that commit's audit policy.
+      - name: Record the restored build for a scoped audit
+        if: github.event_name == 'pull_request' && steps.local-build-cache.outputs.cache-matched-key != ''
+        continue-on-error: true
+        env:
+          RESTORED_KEY: ${{ steps.local-build-cache.outputs.cache-matched-key }}
+        run: |
+          set -euo pipefail
+          git fetch --quiet --no-tags --depth=1 origin "${RESTORED_KEY##*-}"
+          if git diff --quiet FETCH_HEAD HEAD -- scripts/check_axioms.lean scripts/audit_compiled_modules.py; then
+            python3 scripts/audit_compiled_modules.py --record "$RUNNER_TEMP/restored-build.json"
+            echo "ATLAS_AUDIT_RESTORED=$RUNNER_TEMP/restored-build.json" >> "$GITHUB_ENV"
+          else
+            echo "The audit policy changed since the restored build; the audit checks every module."
+          fi
 
       - name: Test the declaration collision check
         run: python3 -m unittest discover -s scripts -p test_declaration_collisions_native.py -v
@@ -148,3 +178,24 @@ jobs:
         with:
           path: .lake/build
           key: lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-${{ github.sha }}
+
+      # Merge-group caches are scoped to the queue's ref, where pull requests
+      # cannot read them. build-cache.yml saves this fully checked build for
+      # main once the queue fast-forwards main to this commit.
+      - name: Pack the merge group's build
+        id: pack
+        if: success() && github.event_name == 'merge_group'
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          tar -C .lake -cf - build | zstd -T0 -q -o "$RUNNER_TEMP/lake-build.tar.zst"
+
+      - name: Upload the merge group's build
+        if: success() && steps.pack.outcome == 'success'
+        continue-on-error: true
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: lake-build-${{ github.sha }}
+          path: ${{ runner.temp }}/lake-build.tar.zst
+          retention-days: 1
+          compression-level: 0

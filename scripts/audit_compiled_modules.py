@@ -1,17 +1,27 @@
 #!/usr/bin/env python3
-"""Audit every project module in bounded, initialized Lean environments."""
+"""Audit every project module in bounded, initialized Lean environments.
+
+With ATLAS_AUDIT_RESTORED=FILE, written by `--record FILE` right after CI
+restores a build that passed this audit under the same policy, only modules
+whose .olean is missing, new or rewritten since are audited. Lake rebuilds a
+module whenever its source or what it needs from its imports changes, and
+anything else such a module reaches changed in a rebuilt module.
+"""
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
+import sys
 import tempfile
 
 ROOTS = ('CSLibExt', 'CSLibExtTest', 'MathlibExt', 'MathlibExtTest',
          'PhyslibExt', 'PhyslibExtTest', 'Domains', 'DomainsTest', 'WantedExt')
 BATCH_SIZE = 1024
 COLLISION = re.compile(r"^.*:\d+:\d+: error: import [^\n]* failed, environment already contains[^\n]*$")
+OLEANS = Path('.lake/build/lib/lean')
 
 
 def only_import_collision(output: str) -> bool:
@@ -40,6 +50,27 @@ def inventory(root: Path) -> list[str]:
     if not modules:
         raise AuditFailure('the audited source inventory is empty')
     return modules
+
+
+def compiled(root: Path) -> dict[str, list[int]]:
+    """Each compiled module's .olean, identified by its inode, size and timestamps."""
+    result = {}
+    for path in (root / OLEANS).rglob('*.olean'):
+        status = path.stat()
+        result[path.relative_to(root / OLEANS).as_posix()] = [
+            status.st_ino, status.st_size, status.st_mtime_ns, status.st_ctime_ns]
+    return result
+
+
+def rebuilt(root: Path, modules: list[str], restored: dict[str, list[int]]) -> list[str]:
+    """The modules whose .olean is missing, new or rewritten since `restored`."""
+    current = compiled(root)
+    rewritten = []
+    for module in modules:
+        olean = module.replace('.', '/') + '.olean'
+        if olean not in current or current[olean] != restored.get(olean):
+            rewritten.append(module)
+    return rewritten
 
 
 def audit(root: Path, modules: list[str], checker: str, *, batch_size: int = BATCH_SIZE) -> dict:
@@ -94,9 +125,18 @@ def audit(root: Path, modules: list[str], checker: str, *, batch_size: int = BAT
 
 def main() -> int:
     root = Path(__file__).resolve().parent.parent
+    if sys.argv[1:2] == ['--record'] and len(sys.argv) == 3:
+        Path(sys.argv[2]).write_text(json.dumps(compiled(root)), encoding='utf-8')
+        return 0
     try:
-        result = audit(root, inventory(root), (root / 'scripts/check_axioms.lean').read_text())
-    except (AuditFailure, OSError, subprocess.SubprocessError) as error:
+        modules = inventory(root)
+        restored = os.environ.get('ATLAS_AUDIT_RESTORED')
+        if restored:
+            modules = rebuilt(root, modules, json.loads(Path(restored).read_text(encoding='utf-8')))
+            print(f'compiled audit: {len(modules)} modules rebuilt since the restored build', flush=True)
+        checker = (root / 'scripts/check_axioms.lean').read_text()
+        result = audit(root, modules, checker) if modules else {'modules': 0}
+    except (AuditFailure, OSError, ValueError, subprocess.SubprocessError) as error:
         print(f'FAIL [environment]: {error}', flush=True)
         return 1
     summary = {key: value for key, value in result.items() if key != 'checkedModules'}

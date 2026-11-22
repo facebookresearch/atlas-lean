@@ -357,6 +357,29 @@ if grep -q '^import v1\.' "$FAKE_LEAN_INPUT"; then
   fail "axiom input included archived v1 source"
 fi
 
+# A pull request audits only the modules whose .olean is missing, new or
+# rewritten since CI recorded the restored build.
+OLEANS="$TMP_ROOT/repo/.lake/build/lib/lean"
+for library in CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest Domains DomainsTest; do
+  mkdir -p "$OLEANS/$library" && : >"$OLEANS/$library/Sentinel.olean"
+done
+python3 "$TMP_ROOT/repo/scripts/audit_compiled_modules.py" --record "$TMP_ROOT/restored.json"
+printf 'x' >"$OLEANS/MathlibExt/Sentinel.olean"
+if ! env PATH="$FAKE_BIN:$PATH" ATLAS_AUDIT_RESTORED="$TMP_ROOT/restored.json" \
+  "$TMP_ROOT/repo/scripts/check_axioms.sh" >"$TMP_ROOT/output.log" 2>&1; then
+  cat "$TMP_ROOT/output.log" >&2
+  fail "scoped compiled audit failed"
+fi
+[[ "$(grep -x 'import [A-Za-z]*\.Sentinel' "$FAKE_LEAN_INPUT")" == $'import MathlibExt.Sentinel\nimport WantedExt.Sentinel' ]] ||
+  fail "scoped compiled audit checked the wrong modules"
+mkdir -p "$OLEANS/WantedExt" && : >"$OLEANS/WantedExt/Sentinel.olean"
+python3 "$TMP_ROOT/repo/scripts/audit_compiled_modules.py" --record "$TMP_ROOT/restored.json"
+: >"$FAKE_LAKE_LOG"
+if ! env PATH="$FAKE_BIN:$PATH" ATLAS_AUDIT_RESTORED="$TMP_ROOT/restored.json" \
+  "$TMP_ROOT/repo/scripts/check_axioms.sh" >"$TMP_ROOT/output.log" 2>&1 || [[ -s "$FAKE_LAKE_LOG" ]]; then
+  fail "scoped compiled audit of an unchanged build ran Lean or failed"
+fi
+
 # Declaration collisions: every tracked v2 module, and nothing else, is imported
 # into one environment; a module without its .olean, or a failing `git ls-files`,
 # fails before Lean runs; and the module list is the one the wiki's dependency dump
