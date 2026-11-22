@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import MathlibExt.Combinatorics.Enumerative.HsuShiueGeneralizedStirlingNumber
+public import MathlibExt.Combinatorics.Enumerative.RationallyWeightedBinomialSums
 public import MathlibExt.NumberTheory.LucasSequence
 import MathlibExt.Combinatorics.Enumerative.StirlingSecondExplicit
 
