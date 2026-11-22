@@ -11086,6 +11086,7 @@
   "MathlibExt/NumberTheory/GaussianIntPrimeClassification": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Gaussian primes"},
   "MathlibExt/NumberTheory/GaussianIntSplitPrimes": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Gaussian primes"},
   "MathlibExt/NumberTheory/GelfondSchneider": {"to": "NumberTheory/diophantine-approximation/transcendence-irrationality", "title": "Gelfond–Schneider theorem"},
+  "MathlibExt/NumberTheory/GenLeonardo": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Leonardo numbers"},
   "MathlibExt/NumberTheory/GeneralArithmeticalEulerianPolynomial": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "General arithmetical Eulerian polynomials"},
   "MathlibExt/NumberTheory/GeneralizedCatalanPrimeDivisibility": {"to": "NumberTheory/special-numbers/catalan-numbers", "title": "Fuss–Catalan numbers"},
   "MathlibExt/NumberTheory/GeneralizedFermatNumber": {"to": "NumberTheory/primes-primality/special-primes", "title": "Generalized Fermat numbers"},

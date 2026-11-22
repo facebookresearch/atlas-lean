@@ -13,24 +13,12 @@ public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Ring
+public import MathlibExt.NumberTheory.GenLeonardo
 public import WantedExt.NumberTheory.LeonardoPWanted
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Generalized Leonardo numbers.** For an integer $k$, the generalized Leonardo numbers
-$L_{k,0}, L_{k,1}, L_{k,2}, \ldots$ are the integers defined by $L_{k,0} = L_{k,1} = 1$ and
-$L_{k,n+2} = L_{k,n+1} + L_{k,n} + k$ for all $n \ge 0$.
-
-The paper takes $k$ positive; here $k$ may be any integer.
-
-Source: Kuhapatanakul, *Note on the Generalized Leonardo Numbers*, Fibonacci
-Quarterly 62.3 (2024), introduction. -/
-public def genLeonardo (k : ℤ) : ℕ → ℤ
-  | 0 => 1
-  | 1 => 1
-  | n + 2 => genLeonardo k (n + 1) + genLeonardo k n + k
 
 /-- **Generalized Leonardo number of index two.** For every integer $k$, the generalized
 Leonardo number $L_{k,2}$ equals $2 + k$.
@@ -113,26 +101,6 @@ public theorem_wanted genLeonardo_sq_sub_sq (k : ℤ) (n : ℕ) (hn : 1 ≤ n) :
     genLeonardoCompanion k n ^ 2 - genLeonardo k n ^ 2
       = 4 * genLeonardo k (n - 1) * genLeonardo k (n + 1)
         + 2 * k * genLeonardo k n + k ^ 2
-
-/-- **Shift identity for generalized Leonardo numbers.** Let $k$ be an integer and let $L_{k,n}$
-denote the generalized Leonardo numbers. For all natural numbers $m$, $n$, $t$ with
-$1 \le t \le n$ and $n + 1 \le m + t$,
-$$L_{k,m} L_{k,n} - L_{k,m+t} L_{k,n-t}
-= (-1)^{n-t+1} (L_{k,m+t-n-1} + k)(L_{k,t-1} + k) -
-k\,(L_{k,m} + L_{k,n} - L_{k,m+t} - L_{k,n-t}).$$
-
-The paper also allows $t = 0$, reading $L_{k,-1}$ by extending the sequence to negative indices.
-
-Source: Kuhapatanakul, *Note on the Generalized Leonardo Numbers*, Fibonacci
-Quarterly (2024), Theorem 2.5 (`fq-2024-kuhapatanakul05292024-thm-2.5`). -/
-public theorem_wanted genLeonardo_shift (k : ℤ) (m n t : ℕ)
-    (ht : 1 ≤ t) (htn : t ≤ n) (hmt : n + 1 ≤ m + t) :
-    genLeonardo k m * genLeonardo k n
-        - genLeonardo k (m + t) * genLeonardo k (n - t)
-      = (-1 : ℤ) ^ (n - t + 1)
-          * (genLeonardo k (m + t - n - 1) + k) * (genLeonardo k (t - 1) + k)
-        - k * (genLeonardo k m + genLeonardo k n
-          - genLeonardo k (m + t) - genLeonardo k (n - t))
 
 /-- **Sum-and-difference square identities for generalized Leonardo numbers.** For every
 integer $k$ and all natural numbers $m$, $n$ with $1 \le n < m$, the generalized Leonardo
