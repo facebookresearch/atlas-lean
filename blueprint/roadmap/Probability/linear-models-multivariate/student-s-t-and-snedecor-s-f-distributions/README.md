@@ -6,7 +6,7 @@
 - [Snedecor's $F$ law](map-div-chi-square-eq-snedecor-f.md)
 - [Gaussian linear form](pi-gaussian-real-map-dot-product.md)
 - [The least-squares matrix annihilates the residual maker](ols-matrix-mul-transpose-residual-matrix.md)
-- [Independence of the fitted and residual parts of a Gaussian vector](indep-fun-ols-matrix-mul-vec-residual-ma.md)
+- [Independence of the least-squares coefficients and residuals of a Gaussian vector](indep-fun-ols-matrix-mul-vec-residual-ma.md)
 - [Independence of the least-squares estimate and the residuals](indep-fun-ols-estimator-residual.md)
 - [Independence of the least-squares estimate and the scaled residual sum of squares](indep-fun-ols-estimator-rss-div-sq.md)
 - [Variance factor of a contrast](contrast-variance.md)
