@@ -21,14 +21,14 @@ example [FiniteDimensional K V] [IsDomain A] (B : BilinForm K V)
     (hB : B.Nondegenerate) (M : Submodule A V) [Submodule.IsFullLattice K M]
     [Module.IsReflexive A M] :
     B.flip.dualSubmodule (B.dualSubmodule M) = M :=
-  B.dualSubmodule_flip_dualSubmodule_of_isLattice hB M
+  B.dualSubmodule_flip_dualSubmodule_of_isFullLattice hB M
 
 /-- The Dedekind corollary needs no `Module.IsReflexive` hypothesis. -/
 example [FiniteDimensional K V] [IsDedekindDomain A] (B : BilinForm K V)
     (hB : B.Nondegenerate) (hBsymm : B.IsSymm) (M : Submodule A V)
     [Submodule.IsFullLattice K M] :
     B.dualSubmodule (B.dualSubmodule M) = M :=
-  B.dualSubmodule_dualSubmodule_of_isLattice hB hBsymm M
+  B.dualSubmodule_dualSubmodule_of_isFullLattice hB hBsymm M
 
 /-- Concrete rank-one example: the multiplication form on `ℚ` with lattice `ℤ ∙ 1`. -/
 example : LinearMap.BilinForm.dualSubmodule (LinearMap.mul ℚ ℚ)
@@ -54,5 +54,5 @@ example : LinearMap.BilinForm.dualSubmodule (LinearMap.mul ℚ ℚ)
       simpa [LinearMap.mul_apply'] using h
     · have h := hy 1
       simpa [LinearMap.mul_apply'] using h
-  exact LinearMap.BilinForm.dualSubmodule_dualSubmodule_of_isLattice
+  exact LinearMap.BilinForm.dualSubmodule_dualSubmodule_of_isFullLattice
     (LinearMap.mul ℚ ℚ) hB hBsymm _

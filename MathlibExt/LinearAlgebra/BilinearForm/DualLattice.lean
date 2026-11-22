@@ -141,8 +141,8 @@ theorem LinearMap.BilinForm.dualSubmodule_span_eq_top
   rw [hx]
   exact Submodule.smul_mem _ _ hspanmem
 
-/-- The dual submodule of a lattice is a lattice. -/
-theorem LinearMap.BilinForm.dualSubmodule_isLattice [IsDomain A] [IsNoetherianRing A]
+/-- The dual submodule of a full lattice is a full lattice. -/
+theorem LinearMap.BilinForm.dualSubmodule_isFullLattice [IsDomain A] [IsNoetherianRing A]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
     [Submodule.IsFullLattice K M] : Submodule.IsFullLattice K (B.dualSubmodule M) where
   toIsLattice :=
@@ -150,14 +150,14 @@ theorem LinearMap.BilinForm.dualSubmodule_isLattice [IsDomain A] [IsNoetherianRi
     IsLattice.of_fg K (B.dualSubmodule_fg hB M IsFullLattice.span_eq_top)
   span_eq_top := B.dualSubmodule_span_eq_top M (IsLattice.fg K M)
 
-/-- Combined endpoint: the dual submodule is a lattice and dual map is bijective. -/
-theorem LinearMap.BilinForm.dualSubmodule_isLattice_and_dualSubmoduleToDual_bijective
+/-- Combined endpoint: the dual submodule is a full lattice and dual map is bijective. -/
+theorem LinearMap.BilinForm.dualSubmodule_isFullLattice_and_dualSubmoduleToDual_bijective
     [IsDomain A] [FiniteDimensional K V] [IsNoetherianRing A]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
     [Submodule.IsFullLattice K M] :
     Submodule.IsFullLattice K (B.dualSubmodule M) ∧
       Function.Bijective (B.dualSubmoduleToDual M) :=
-  ⟨B.dualSubmodule_isLattice hB M,
+  ⟨B.dualSubmodule_isFullLattice hB M,
     B.dualSubmoduleToDual_bijective hB M IsFullLattice.span_eq_top⟩
 
 /-- The canonical equivalence induced by the bilinear pairing. -/

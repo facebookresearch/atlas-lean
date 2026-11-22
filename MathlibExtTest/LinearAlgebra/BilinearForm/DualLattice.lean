@@ -53,7 +53,7 @@ example [IsDomain A] [IsNoetherianRing A]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
     (hM : Submodule.IsFullLattice K M) : Module.Finite A (B.dualSubmodule M) := by
   let := hM
-  let := B.dualSubmodule_isLattice hB M
+  let := B.dualSubmodule_isFullLattice hB M
   exact IsLattice.finite K _
 
 example [IsDomain A] [FiniteDimensional K V] [IsNoetherianRing A]
@@ -63,7 +63,7 @@ example [IsDomain A] [FiniteDimensional K V] [IsNoetherianRing A]
       Function.Bijective (B.dualSubmoduleToDual M) := by
   let := hM
   obtain ⟨hLat, hBij⟩ :=
-    B.dualSubmodule_isLattice_and_dualSubmoduleToDual_bijective hB M
+    B.dualSubmodule_isFullLattice_and_dualSubmoduleToDual_bijective hB M
   exact ⟨hLat, hBij⟩
 
 noncomputable example [IsDomain A] [FiniteDimensional K V]

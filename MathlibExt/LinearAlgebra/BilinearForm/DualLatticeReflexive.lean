@@ -24,11 +24,11 @@ variable {A K V : Type*} [CommRing A] [Field K] [Algebra A K]
   [IsFractionRing A K] [AddCommGroup V] [Module A V] [Module K V]
   [IsScalarTower A K V]
 
-/-- Double dual of a reflexive lattice, with the duals taken against `B` and `B.flip`.
+/-- Double dual of a reflexive full lattice, with the duals taken against `B` and `B.flip`.
 
 This is the lattice analogue of `BilinForm.dualSubmodule_flip_dualSubmodule_of_basis`:
 no basis is needed when the lattice `M` is reflexive as an `A`-module. -/
-theorem LinearMap.BilinForm.dualSubmodule_flip_dualSubmodule_of_isLattice
+theorem LinearMap.BilinForm.dualSubmodule_flip_dualSubmodule_of_isFullLattice
     [FiniteDimensional K V] [IsDomain A]
     (B : BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
     [Submodule.IsFullLattice K M] [Module.IsReflexive A M] :
@@ -79,12 +79,12 @@ theorem LinearMap.BilinForm.dualSubmodule_flip_dualSubmodule_of_isLattice
     exact m.2
   · exact (BilinForm.le_flip_dualSubmodule (B := B)).mpr le_rfl
 
-/-- Double dual of a lattice over a Dedekind domain against a symmetric form.
+/-- Double dual of a full lattice over a Dedekind domain against a symmetric form.
 
 This is ATLAS `NumberTheoryI` Proposition 5.16: reflexivity of the lattice is obtained
 from the Dedekind hypotheses (finite plus torsion-free gives flat, hence projective),
 so no explicit `Module.IsReflexive` assumption is needed. -/
-theorem LinearMap.BilinForm.dualSubmodule_dualSubmodule_of_isLattice
+theorem LinearMap.BilinForm.dualSubmodule_dualSubmodule_of_isFullLattice
     [FiniteDimensional K V] [IsDedekindDomain A]
     (B : BilinForm K V) (hB : B.Nondegenerate) (hBsymm : B.IsSymm)
     (M : Submodule A V) [Submodule.IsFullLattice K M] :
@@ -97,5 +97,5 @@ theorem LinearMap.BilinForm.dualSubmodule_dualSubmodule_of_isLattice
   have : Module.Projective A M :=
     Module.Flat.projective_of_finitePresentation
   have hflip : B.flip = B := BilinForm.isSymm_iff_flip.mp hBsymm
-  have h := B.dualSubmodule_flip_dualSubmodule_of_isLattice hB M
+  have h := B.dualSubmodule_flip_dualSubmodule_of_isFullLattice hB M
   rwa [hflip] at h
