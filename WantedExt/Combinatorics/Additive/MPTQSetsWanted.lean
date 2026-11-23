@@ -78,17 +78,6 @@ public theorem_wanted not_isMPTQSet_insert_of_le {A : Finset ℝ} {x : ℝ} {n m
     (hm : (A / A).card + m ≤ (insert x A / insert x A).card) (hnm : n ≤ m) :
     ¬ IsMPTQSet (insert x A)
 
-/-- **At most one square is the product of the other two.** Let $a$, $b$, $c$ be pairwise
-distinct positive real numbers. Then at most one of the equations $a^2 = bc$, $b^2 = ac$ and
-$c^2 = ab$ holds; that is, no two of them hold simultaneously.
-
-Source: Anupriya Shetty and B. R. Shankar, *On The Minimum Cardinality of MPTQ Sets*,
-INTEGERS 24 (2024), Article A96, Lemma 3 (`integers-2024-A96-lem-3`). -/
-public theorem_wanted at_most_one_sq_eq_mul_of_distinct {a b c : ℝ} (ha : 0 < a) (hb : 0 < b)
-    (hc : 0 < c) (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
-    ¬ (a ^ 2 = b * c ∧ b ^ 2 = a * c) ∧ ¬ (a ^ 2 = b * c ∧ c ^ 2 = a * b) ∧
-      ¬ (b ^ 2 = a * c ∧ c ^ 2 = a * b)
-
 /-- **Five-element sets with one negative element are not MPTQ sets.** If $A$ is a set of five
 real numbers exactly one of which is negative, then $A$ is not an MPTQ set.
 
