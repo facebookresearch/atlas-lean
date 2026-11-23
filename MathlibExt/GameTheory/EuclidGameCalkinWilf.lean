@@ -245,6 +245,91 @@ public theorem euclidPPosition_tops_of_arch (m n : ℕ) (hm : 0 < m) (hn : 0 < n
       simp only [Finset.mem_image, Finset.mem_range]
       exact ⟨0, legal n (m + n) hn (by omega), by simp⟩
 
+namespace euclidPPosition_aunt_xor_cousin
+
+private theorem swap (a b : ℕ) : euclidPPosition a b = euclidPPosition b a := by
+  suffices h : ∀ f a b, euclidPPositionAux f a b = euclidPPositionAux f b a by
+    simpa only [euclidPPosition, Nat.add_comm b a] using h (a + b) a b
+  intro f
+  induction f with
+  | zero => intros; rfl
+  | succ f ih =>
+    intro a b
+    simp only [euclidPPositionAux]
+    split_ifs <;> first | rfl | omega | (congr 1; funext k; rw [ih])
+
+-- Subtracting the first copy of b leaves a; each further copy gives another option.
+private theorem add_iff (a b : ℕ) (ha : 0 < a) (hb : 0 < b) :
+    euclidPPosition (a + b) b = true ↔
+      ∀ k : ℕ, k * b < a → ¬euclidPPosition (a - k * b) b = true := by
+  rw [euclidPPosition_eq_true_iff, SpragueGrundy.isP_iff euclidGame (a + b, b)]
+  change (∀ q ∈ euclidMoves (a + b, b), ¬SpragueGrundy.IsP euclidGame q) ↔ _
+  rw [euclidMoves, ite_eq_right (by dsimp; omega), ite_eq_right (by dsimp; omega)]
+  simp only [Finset.mem_image, Finset.mem_range, forall_exists_index, and_imp,
+    forall_apply_eq_imp_iff₂, euclidPPosition_eq_true_iff]
+  refine forall_congr' fun k => ?_
+  have bound : k < (a + b - 1) / b ↔ k * b < a := by
+    change k + 1 ≤ (a + b - 1) / b ↔ _
+    rw [Nat.le_div_iff_mul_le hb, Nat.add_one_mul]
+    omega
+  simp only [bound, Nat.add_one_mul, Nat.add_sub_add_right]
+
+-- When a ≤ b, the only option of (a + b, b) is (a, b).
+private theorem forced (a b : ℕ) (ha : 0 < a) (hab : a ≤ b) :
+    euclidPPosition a b = true ↔ ¬euclidPPosition (a + b) b = true := by
+  suffices h : euclidPPosition (a + b) b = true ↔ ¬euclidPPosition a b = true by
+    simp only [h, not_not]
+  rw [add_iff a b ha (by omega)]
+  constructor
+  · intro h
+    simpa using h 0 (by simpa)
+  · intro h k hk
+    cases k with
+    | zero => simpa using h
+    | succ k => rw [Nat.succ_mul] at hk; omega
+
+-- After two additions, the position can move to the intermediate position or any of its options.
+private theorem twice (a b : ℕ) (ha : 0 < a) (hb : 0 < b) :
+    ¬euclidPPosition (a + b + b) b = true := by
+  rw [add_iff (a + b) b (by omega) hb]
+  intro h
+  have hparent : ¬euclidPPosition (a + b) b = true := by
+    simpa using h 0 (by simp; omega)
+  apply hparent
+  apply (add_iff a b ha hb).2
+  intro k hk
+  simpa only [Nat.succ_mul, Nat.add_sub_add_right] using
+    h (k + 1) (by rw [Nat.succ_mul]; omega)
+
+end euclidPPosition_aunt_xor_cousin
+
+open euclidPPosition_aunt_xor_cousin in
+/-- **Aunt or cousin of a P-position.** Call a pair $(a, b)$ of natural numbers a P-position when
+the Euclid P-position test returns true at $(a, b)$, and let its son be $s(a, b) = (a, a + b)$ and
+its daughter $d(a, b) = (a + b, b)$, as in the Calkin–Wilf tree. Let $x, y$ be positive integers,
+let $r = (x, y)$, let $q$ be one of the two children $s(r)$ and $d(r)$ of $r$, and let $q'$ be the
+other one. If the daughter $d(q)$ is a P-position, then exactly one of its aunt $q'$ and its male
+cousin $s(q')$ is a P-position. If the son $s(q)$ is a P-position, then exactly one of its uncle
+$q'$ and its female cousin $d(q')$ is a P-position.
+
+Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
+of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Proposition 4.3. -/
+public theorem euclidPPosition_aunt_xor_cousin (x y : ℕ) (hx : 0 < x) (hy : 0 < y) :
+    let s : ℕ × ℕ → ℕ × ℕ := fun p => (p.1, p.1 + p.2)
+    let d : ℕ × ℕ → ℕ × ℕ := fun p => (p.1 + p.2, p.2)
+    let P : ℕ × ℕ → Prop := fun p => euclidPPosition p.1 p.2 = true
+    let r := (x, y)
+    (P (d (s r)) → (P (d r) ↔ ¬P (s (d r)))) ∧ (P (d (d r)) → (P (s r) ↔ ¬P (s (s r)))) ∧
+      (P (s (d r)) → (P (s r) ↔ ¬P (d (s r)))) ∧ (P (s (s r)) → (P (d r) ↔ ¬P (d (d r)))) := by
+  dsimp only
+  have left := forced x (x + y) hx (by omega)
+  have right := forced y (x + y) hy (by omega)
+  rw [swap y (x + y), Nat.add_comm y (x + y), swap (x + y + y) (x + y)] at right
+  refine ⟨fun _ => right, fun h => (twice x y hx hy h).elim, fun _ => left, ?_⟩
+  intro h
+  rw [swap, Nat.add_comm x (x + y), Nat.add_comm x y] at h
+  exact (twice y x hy hx h).elim
+
 end
 
 end MetaMathlibExt
