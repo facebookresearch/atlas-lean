@@ -4573,6 +4573,19 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual(self.run_sync()[0], 0)
         self.assertEqual(self.tree(), before)
 
+    def test_rows_lean_facts_wrote_are_found_whatever_ends_their_lines(self) -> None:
+        # A links file whose lines end with bare carriage returns: a row carrying `status` stops the run all the same.
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        rows = links.read_text().splitlines()
+        row = json.loads(rows[-1])
+        row["status"] = "stated"
+        links.write_bytes("\r".join(rows[:-1] + [json.dumps(row)]).encode() + b"\r")
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertTrue([error for error in report["errors"] if "carries `kind` or `status`" in error], report["errors"])
+
+
 
 INDEX_DIFFERS = sync.INDEX_DIFFERS
 
