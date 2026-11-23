@@ -573,8 +573,6 @@ private lemma z3p_clausen_three_pi :
   rw [tsum_congr hz]
   exact z3p_tsum_alternating_inv_cube
 
-private lemma z3p_fact_two : Nat.factorial 2 = 2 := by decide
-
 private lemma z3p_neg_one_pow_three : (-1 : ℝ) ^ (3 : ℕ) = -1 := by norm_num
 
 private lemma z3p_entry13_one :
@@ -627,7 +625,7 @@ private lemma z3p_entry13_two :
     show ((2 - 2 : ℕ)) = 0 from rfl]
   simp only [pow_zero, pow_one, one_mul, mul_one, div_one, mul_zero,
     Nat.cast_one, Nat.cast_ofNat, Nat.factorial_one, Nat.factorial_zero,
-    z3p_fact_two, z3p_neg_one_pow_three, z3p_clausen_one_pi,
+    Nat.factorial_two, z3p_neg_one_pow_three, z3p_clausen_one_pi,
     z3p_clausen_two_pi, z3p_clausen_three_pi]
   ring
 
@@ -1353,7 +1351,15 @@ private lemma z3p_tendsto_third :
 -/
 
 /--
-Three finite-product sequences converge to exponential expressions involving the Apéry constant.
+**Kachi–Tzermias infinite products for $\zeta(3)$.** Let $\zeta$ be the Riemann zeta function
+and, for $n \ge 1$, put $a_n = \left(1 - \frac{1}{n+1}\right)^{(-1)^n n(n+1)/2}$. Then, as
+$m \to \infty$,
+$$\prod_{n=1}^{2m+1} e^{-1/4} a_n \to \exp\left(\frac{7\zeta(3)}{4\pi^2} + \frac{1}{4}\right),
+\qquad \prod_{n=1}^{2m} e^{1/4} a_n \to \exp\left(\frac{7\zeta(3)}{4\pi^2} - \frac{1}{4}\right),$$
+and
+$$\left(\prod_{n=1}^{m} \frac{(2n)^{(2n)^2}}{(2n-1)^{(2n-1)^2}}\right)^4
+\left(\frac{(2m+2)^{4m+5}}{(2m+1)^{12m+9}}\right)^m \to \exp\left(\frac{7\zeta(3)}{\pi^2}\right).$$
+
 Source: Yasuyuki Kachi and Pavlos Tzermias, "Infinite Products Involving zeta(3) and
 Catalan's Constant," Journal of Integer Sequences 15 (2012), Article 12.9.4,
 Proposition `zeta3`, equations `zeta3i`–`zeta3iii`, lines 124–144,

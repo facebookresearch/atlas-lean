@@ -31,8 +31,12 @@ namespace AbsoluteValue
 
 variable {K : Type*} [Field K]
 
-/-- An absolute value on a field is nonarchimedean if and only if every
-natural-number cast has absolute value at most `1`. This is Lemma 1.4. -/
+/-- **Nonarchimedean criterion for absolute values.** Let $K$ be a field and $v$ a real-valued
+absolute value on $K$. Then $v$ is nonarchimedean, that is, $v(x + y) \le \max(v(x), v(y))$ for
+all $x, y \in K$, if and only if $v(n) \le 1$ for every natural number $n$, viewed as the element
+$n \cdot 1$ of $K$.
+
+Source: ATLAS NumberTheoryI, Section 1.2, Lemma 1.4. -/
 public theorem isNonarchimedean_iff_natCast_le_one (v : AbsoluteValue K ℝ) :
     IsNonarchimedean v ↔ ∀ n : ℕ, v (n : K) ≤ 1 := by
   let _ : NormedField K := v.toNormedField
@@ -40,15 +44,24 @@ public theorem isNonarchimedean_iff_natCast_le_one (v : AbsoluteValue K ℝ) :
   exact IsUltrametricDist.isUltrametricDist_iff_isNonarchimedean_norm.symm.trans
     isUltrametricDist_iff_forall_norm_natCast_le_one
 
-/-- If every natural-number cast has absolute value at most `1`, then the
-absolute value is nonarchimedean. This is the backward direction of
-Lemma 1.4. -/
+/-- **Absolute values bounded by one on the natural numbers are nonarchimedean.**
+Let $K$ be a field and $v$ a real-valued absolute value on $K$. If $v(n) \le 1$ for every natural
+number $n$, viewed as the element $n \cdot 1$ of $K$, then $v$ is nonarchimedean:
+$v(x + y) \le \max(v(x), v(y))$ for all $x, y \in K$.
+
+Source: ATLAS NumberTheoryI, Section 1.2, backward direction of Lemma 1.4. -/
 public theorem isNonarchimedean_of_natCast_le_one (v : AbsoluteValue K ℝ)
     (hv : ∀ n : ℕ, v (n : K) ≤ 1) : IsNonarchimedean v :=
   (v.isNonarchimedean_iff_natCast_le_one).mpr hv
 
-/-- Lemma 1.4 in the book's form, with the bound required only for positive
-`n` (the `n = 0` case is `v 0 = 0 ≤ 1` anyway). -/
+/-- **Nonarchimedean criterion using positive integers.** Let $K$ be a field and $v$ a real-valued
+absolute value on $K$. Then $v$ is nonarchimedean, that is, $v(x + y) \le \max(v(x), v(y))$ for
+all $x, y \in K$, if and only if $v(n) \le 1$ for every positive integer $n$, viewed as the
+element $n \cdot 1$ of $K$.
+
+The case $n = 0$ may be omitted because $v(0) = 0 \le 1$.
+
+Source: ATLAS NumberTheoryI, Section 1.2, Lemma 1.4 (in the book's form). -/
 public theorem isNonarchimedean_iff_natCast_le_one_of_pos
     (v : AbsoluteValue K ℝ) :
     IsNonarchimedean v ↔ ∀ n : ℕ, 0 < n → v (n : K) ≤ 1 := by

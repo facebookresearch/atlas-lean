@@ -29,8 +29,9 @@ integer `NumberField.discr`.
 
 namespace Ideal
 
-/-- The absolute norm of the discriminant ideal of `𝓞 K / ℤ` is the absolute
-discriminant of `K`. -/
+/-- **Absolute norm of the discriminant ideal of a number field.** Let $K$ be a number
+field with ring of integers $\mathcal{O}_K$ and discriminant $d_K$. The absolute norm of the
+discriminant ideal of $\mathcal{O}_K$ over $\mathbb{Z}$ equals $|d_K|$. -/
 theorem absNorm_discriminantIdeal (K : Type*) [Field K] [NumberField K] :
     Ideal.absNorm (discriminantIdeal ℤ (NumberField.RingOfIntegers K)) =
       (NumberField.discr K).natAbs := by
