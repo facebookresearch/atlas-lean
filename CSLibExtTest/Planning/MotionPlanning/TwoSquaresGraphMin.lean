@@ -25,35 +25,35 @@ example : polyLen [.s, .D, .P, .t] = 3 + Real.sqrt 5 := by
   simp only [polyLen, dist_sD, dist_DP, dist_Pt]
   ring
 
-theorem backtrack_walk : IsWalk [.s, .A, .s, .D, .P, .t] :=
-  ⟨rfl, rfl, ⟨by decide, adj_s_A⟩, ⟨by decide, VisAdj.symm adj_s_A⟩,
-    ⟨by decide, adj_s_D⟩, ⟨by decide, adj_D_P⟩, ⟨by decide, adj_P_t⟩, trivial⟩
+private def vg {a b : Vtx} (h : VisAdj (coord a) (coord b)) (hne : a ≠ b) :
+    visGraph.Adj a b := ⟨hne, h⟩
+
+def backtrack_walk : visGraph.Walk .s .t :=
+  .cons (vg adj_s_A (by decide))
+    (.cons (vg (VisAdj.symm adj_s_A) (by decide))
+      (.cons (vg adj_s_D (by decide))
+        (.cons (vg adj_D_P (by decide))
+          (.cons (vg adj_P_t (by decide)) .nil))))
+
+example : walkWeight backtrack_walk = polyLen [.s, .A, .s, .D, .P, .t] := rfl
 
 example : 3 + Real.sqrt 5 ≤ polyLen [.s, .A, .s, .D, .P, .t] :=
-  min_eq.2 ⟨_, backtrack_walk, rfl⟩
+  min_eq_walk.2 ⟨backtrack_walk, rfl⟩
 
-example : ¬ IsWalk [.s, .C, .t] := fun h => not_adj_s_C h.2.2.1.2
+example : ¬ visGraph.Adj .s .C := fun h => not_adj_s_C h.2
 
 example : ¬ visGraph.Adj .s .s := visGraph.loopless.irrefl _
 
-example : ¬ IsWalk [.s, .s, .D, .P, .t] :=
-  fun h => visGraph.loopless.irrefl _ h.2.2.1
-
 example : ∃ p : visGraph.Walk .s .t, walkWeight p = 3 + Real.sqrt 5 := by
-  have hwalk : IsWalk [.s, .D, .P, .t] :=
-    ⟨rfl, rfl, ⟨by decide, adj_s_D⟩, ⟨by decide, adj_D_P⟩, ⟨by decide, adj_P_t⟩,
-      trivial⟩
-  obtain ⟨p, hp⟩ := exists_walk_of_isWalk hwalk
-  refine ⟨p, ?_⟩
-  show polyLen p.support = _
-  rw [hp]
+  refine ⟨.cons (vg adj_s_D (by decide))
+    (.cons (vg adj_D_P (by decide))
+      (.cons (vg adj_P_t (by decide)) .nil)), ?_⟩
+  show polyLen [.s, .D, .P, .t] = _
   simp only [polyLen, dist_sD, dist_DP, dist_Pt]
   ring
 
-#print axioms min_eq
 #print axioms adj_s_D
 #print axioms adj_D_P
 #print axioms min_eq_walk
 
 end Cslib.Planning.MotionPlanning.TwoSquaresGraph
-

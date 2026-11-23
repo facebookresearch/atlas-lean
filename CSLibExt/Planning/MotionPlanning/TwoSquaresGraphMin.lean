@@ -130,7 +130,7 @@ noncomputable def polyLen : List Vtx → ℝ
   | a :: b :: rest => dist (coord a) (coord b) + polyLen (b :: rest)
 
 /-- Consecutive-vertex adjacency along a list. -/
-def ChainAdj : List Vtx → Prop
+private def ChainAdj : List Vtx → Prop
   | [] => True
   | [_] => True
   | a :: b :: rest => visGraph.Adj a b ∧ ChainAdj (b :: rest)
@@ -154,13 +154,13 @@ private noncomputable def bonusTotal : List Vtx → ℝ
   | a :: b :: rest => extra a b + bonusTotal (b :: rest)
 
 /-- Last element of a vertex list, if any. -/
-def last? : List Vtx → Option Vtx
+private def last? : List Vtx → Option Vtx
   | [] => none
   | [x] => some x
   | _ :: b :: rest => last? (b :: rest)
 
 /-- Walks from `s` to `t` with adjacent consecutive vertices. -/
-def IsWalk (l : List Vtx) : Prop :=
+private def IsWalk (l : List Vtx) : Prop :=
   l.head? = some .s ∧ last? l = some .t ∧ ChainAdj l
 
 -- Coordinate computation infrastructure (via the coordinate projections).
@@ -1102,7 +1102,7 @@ private lemma upper_weight : polyLen [.s, .D, .P, .t] = 3 + Real.sqrt 5 := by
 
 -- Minimum exists and equals `3 + √5`.
 
-theorem min_eq :
+private theorem min_eq :
     IsLeast {w | ∃ l, IsWalk l ∧ polyLen l = w} (3 + Real.sqrt 5) := by
   refine ⟨?_, ?_⟩
   · exact ⟨[.s, .D, .P, .t], upper_valid, upper_weight⟩
@@ -1115,7 +1115,7 @@ theorem min_eq :
 /-- Length of a graph walk, measured by its vertex list. -/
 noncomputable def walkWeight {a b : Vtx} (p : visGraph.Walk a b) : ℝ := polyLen p.support
 
-theorem last?_eq (l : List Vtx) : last? l = l.getLast? := by
+private theorem last?_eq (l : List Vtx) : last? l = l.getLast? := by
   induction l with
   | nil => rfl
   | cons x xs ih =>
@@ -1129,13 +1129,13 @@ theorem head?_support {a b : Vtx} (p : visGraph.Walk a b) :
   | nil => rfl
   | cons h q => rfl
 
-theorem last?_cons_of_ne_nil (x : Vtx) (l : List Vtx) (h : l ≠ []) :
+private theorem last?_cons_of_ne_nil (x : Vtx) (l : List Vtx) (h : l ≠ []) :
     last? (x :: l) = last? l := by
   cases l with
   | nil => exact absurd rfl h
   | cons y ys => rfl
 
-theorem last?_support {a b : Vtx} (p : visGraph.Walk a b) :
+private theorem last?_support {a b : Vtx} (p : visGraph.Walk a b) :
     last? p.support = some b := by
   induction p with
   | nil => rfl
@@ -1145,7 +1145,7 @@ theorem last?_support {a b : Vtx} (p : visGraph.Walk a b) :
       rw [SimpleGraph.Walk.support_cons]
       exact h2.trans ih
 
-theorem chainAdj_cons_support {v w : Vtx} (p : visGraph.Walk v w) :
+private theorem chainAdj_cons_support {v w : Vtx} (p : visGraph.Walk v w) :
     ∀ {u : Vtx}, visGraph.Adj u v → ChainAdj (u :: p.support) := by
   induction p with
   | nil =>
@@ -1156,16 +1156,16 @@ theorem chainAdj_cons_support {v w : Vtx} (p : visGraph.Walk v w) :
       rw [SimpleGraph.Walk.support_cons]
       exact ⟨hadj, ih h'⟩
 
-theorem chainAdj_support {a b : Vtx} (p : visGraph.Walk a b) :
+private theorem chainAdj_support {a b : Vtx} (p : visGraph.Walk a b) :
     ChainAdj p.support := by
   cases p with
   | nil => trivial
   | @cons u v w h p' => exact chainAdj_cons_support p' h
 
-theorem isWalk_support (p : visGraph.Walk .s .t) : IsWalk p.support :=
+private theorem isWalk_support (p : visGraph.Walk .s .t) : IsWalk p.support :=
   ⟨head?_support p, last?_support p, chainAdj_support p⟩
 
-theorem exists_walk_of_chain {a : Vtx} {l : List Vtx} (hhead : l.head? = some a)
+private theorem exists_walk_of_chain {a : Vtx} {l : List Vtx} (hhead : l.head? = some a)
     (hadj : ChainAdj l) {b : Vtx} (hlast : last? l = some b) :
     ∃ p : visGraph.Walk a b, p.support = l := by
   induction l generalizing a b with
@@ -1186,7 +1186,7 @@ theorem exists_walk_of_chain {a : Vtx} {l : List Vtx} (hhead : l.head? = some a)
           obtain ⟨p', hp'⟩ := ih hhead' hadj' hlast
           exact ⟨.cons hxy p', by simp [SimpleGraph.Walk.support_cons, hp']⟩
 
-theorem exists_walk_of_isWalk {l : List Vtx} (h : IsWalk l) : ∃ p : visGraph.Walk .s .t, p.support = l := by
+private theorem exists_walk_of_isWalk {l : List Vtx} (h : IsWalk l) : ∃ p : visGraph.Walk .s .t, p.support = l := by
   obtain ⟨hhead, hlast, hadj⟩ := h
   exact exists_walk_of_chain hhead hadj hlast
 
