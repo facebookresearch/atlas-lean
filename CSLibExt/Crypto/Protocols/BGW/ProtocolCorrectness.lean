@@ -502,7 +502,6 @@ theorem protocol_correct {F : Type*} [Field F] {Party : Type*} [Fintype Party]
     (lam : Party → F)
     (hlam : ∀ p : Polynomial F, p.natDegree ≤ 2 * params.threshold →
       (∑ i ∈ Finset.univ, lam i * p.eval (params.point i)) = p.eval 0)
-    (h2t : 2 * params.threshold < Fintype.card Party)
     {inputCount outputCount : Nat}
     (circ : Circuit arithSignature inputCount outputCount)
     (x : Fin inputCount → F)
@@ -531,6 +530,7 @@ theorem protocol_correct {F : Type*} [Field F] {Party : Type*} [Fintype Party]
     simp [Fintype.card_coe]
   have hle : params.threshold + 1 ≤ Fintype.card ↥(Finset.univ : Finset Party) := by
     rw [hcard]
+    have hlt := params.threshold_lt_card
     omega
   have hdeg : ((Wire.elim (inputPolys params x tapeIn)
         (gatePolys params lam circ.program (inputPolys params x tapeIn) tapeMul))
@@ -565,6 +565,6 @@ theorem protocol_correct_exists {F : Type*} [Field F] {Party : Type*} [Fintype P
         (circ.eval arithInterp x) j := by
   obtain ⟨lam, hlam⟩ := recombination_vector_spec params h2t
   exact ⟨lam, fun circ x tapeIn tapeMul j =>
-    protocol_correct params lam hlam h2t circ x tapeIn tapeMul j⟩
+    protocol_correct params lam hlam circ x tapeIn tapeMul j⟩
 
 end CSLibExt.Crypto.Protocols.BGW
