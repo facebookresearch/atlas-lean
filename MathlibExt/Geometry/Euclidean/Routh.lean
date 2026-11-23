@@ -24,19 +24,20 @@ private lemma Esymm_ofLp (w : Fin 2 → ℝ) (j : Fin 2) :
 private lemma E_apply_ofLp (z : EuclideanSpace ℝ (Fin 2)) (j : Fin 2) :
     (EuclideanSpace.equiv (Fin 2) ℝ) z j = z.ofLp j := by simp
 
-/-- **Routh's theorem** (canonical name "Routh's theorem", statement `routh-s1`).
+/-- **Routh's theorem.** Let $A, B, C$ be points of the Euclidean plane $\mathbb{R}^2$ whose
+triangle (the convex hull of $\{A, B, C\}$) has nonzero area, and let $x, y, z$ be positive
+reals with $xyz \ne 1$. Let $D = \frac{x}{x+1} B + \frac{1}{x+1} C$,
+$E = \frac{1}{y+1} A + \frac{y}{y+1} C$ and $F = \frac{z}{z+1} A + \frac{1}{z+1} B$, the
+points of the sides $BC$, $CA$, $AB$ with $DC/DB = x$, $EA/EC = y$ and $FB/FA = z$. If $P$
+lies on the segments $BE$ and $CF$, $Q$ lies on the segments $CF$ and $AD$, and $R$ lies on
+the segments $AD$ and $BE$, then the area of the triangle $PQR$ (the convex hull of
+$\{P, Q, R\}$) is
+$$\frac{(xyz - 1)^2}{(xy + y + 1)(yz + z + 1)(zx + x + 1)}$$
+times the area of $ABC$. Areas are Lebesgue measures.
 
-Triangle `ABC` with cevians from each vertex dividing the opposite side in
-ratios `x`, `y`, `z`: `D` on `BC` with `DC / DB = x`, `E` on `CA` with
-`EA / EC = y`, `F` on `AB` with `FB / FA = z`. The cevians `AD`, `BE`, `CF`
-meet pairwise in the inner triangle `PQR`. Its area is
-`(x * y * z - 1) ^ 2 / ((x * y + y + 1) * (y * z + z + 1) * (z * x + x + 1))`
-times the area of `ABC` (areas via `MeasureTheory.volume` of `convexHull`s).
-Nondegeneracy: `ABC` has nonzero area, the ratios are positive, and
-`x * y * z ≠ 1`.
-
-Stable source: https://en.wikipedia.org/wiki/Routh%27s_theorem
 Proves `Wanted` entry `routh`.
+
+Source: https://en.wikipedia.org/wiki/Routh%27s_theorem
 -/
 theorem routh :
     ∀ (A B C D E F P Q R : EuclideanSpace ℝ (Fin 2)) (x y z : ℝ),

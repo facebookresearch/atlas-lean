@@ -49,9 +49,12 @@ open Cslib.Complexity.Karp (edgeBits decodeEs)
 
 /-! ### The machine -/
 
-/-- Stacks: input `X`, output `O`, the edge bits `E` (reversed between passes), junk `J`, the
-counters `S`, `T`, `N` (for `s`, `t`, `n`; `N` counts the passes left) and `U`, `V` (for an
-arc), the marks `M` (vertex `0` on top) and the parked marks `P`. -/
+/-- **Stacks of the PATH marking machine.** The PATH marking machine, run on an instance with
+source $s$, target $t$ and $n$ vertices, has eleven stacks: the input stack $X$, the output stack
+$O$, the stack $E$ of the edge bits (reversed between passes), the junk stack $J$, the counters
+$S$, $T$ and $N$ for $s$, $t$ and $n$ ($N$ counts the passes left), the counters $U$ and $V$ for
+the endpoints $u$ and $v$ of an arc, the mark stack $M$ (with the mark of vertex $0$ on top) and
+the stack $P$ of parked marks. -/
 inductive K | X | O | E | J | S | T | N | U | V | M | P
   deriving DecidableEq
 
@@ -60,15 +63,24 @@ instance K.instFintypeEnumFix : Fintype K where
   elems := ⟨↑[K.X, .O, .E, .J, .S, .T, .N, .U, .V, .M, .P], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- Stack alphabets: the output stack holds `Bool`s, every other stack `Sym`s. -/
+/-- **Stack alphabets of the PATH marking machine.** The output stack $O$ of the PATH marking
+machine holds Booleans, and every other stack holds symbols of the SAT verifier's symbol
+alphabet. -/
 @[reducible] def Γ : K → Type
   | .O => Bool
   | _ => Sym
 
-/-- Labels: read `s`, `t`, `n`; validate the edge list (at a pair, inside `u`, inside `v`); walk
-to `s` and set its mark, restore; the pass loop, reload the edges, the edge loop; read `u` and
-`v`; walk to `u`, restore holding its mark `b`; walk to `v` and set its mark, restore; drain `V`;
-walk to `t` and answer; answer `false`; halt. -/
+/-- **Labels of the PATH marking machine.** For an instance with source $s$, target $t$, $n$
+vertices and arcs $(u, v)$, the labels of the PATH marking machine are $\mathsf{rdS}$,
+$\mathsf{rdT}$ and $\mathsf{rdN}$ (read $s$, $t$ and $n$); $\mathsf{val0}$, $\mathsf{valU}$ and
+$\mathsf{valV}$ (validate the edge list: at a pair, inside $u$, inside $v$); $\mathsf{goS}$ and
+$\mathsf{backS}$ (walk to $s$ and set its mark, then restore); $\mathsf{pass}$ (the pass loop),
+$\mathsf{ld}$ (reload the edges) and $\mathsf{edge}$ (the edge loop); $\mathsf{rdU}$ and
+$\mathsf{rdV}$ (read $u$ and $v$); $\mathsf{go1}$ and, for each bit $b$, $\mathsf{back1}(b)$
+(walk to $u$, then restore holding its mark $b$); $\mathsf{go2}$ and $\mathsf{back2}$ (walk to
+$v$ and set its mark, then restore); $\mathsf{drV}$ (drain the counter stack $V$);
+$\mathsf{goT}$ (walk to $t$ and answer); $\mathsf{bad}$ (answer false); and $\mathsf{done}$
+(halt). -/
 inductive Lab | rdS | rdT | rdN | val0 | valU | valV | goS | backS | pass | ld | edge | rdU | rdV
   | go1 | back1 (b : Bool) | go2 | back2 | drV | goT | bad | done
   deriving DecidableEq
@@ -82,21 +94,31 @@ instance Lab.instFintypeEnumFix : Fintype Lab where
     | back1 b => cases b <;> decide
     | _ => decide
 
-/-- Statements of the machine. -/
+/-- **Statements of the PATH marking machine.** The statements of the multi-stack Turing machine
+(TM2) model whose stacks carry the stack alphabets $\Gamma$ of the marking machine, whose labels
+are the labels of the marking machine, and whose internal state is a boolean. -/
 abbrev Stmt := TM2.Stmt Γ Lab Bool
 
-/-- The unit symbol of the counters. -/
+/-- **The counter unit of the PATH marking machine.** The unit symbol of the counters of the PATH
+marking machine is the clause-end symbol $\mathrm{cl}$ of the SAT verifier's symbol alphabet. -/
 abbrev one : Sym := .cl
 
-/-- Read a unary number off `X`: each bit is pushed on `d` (through `g`), each `true` also
-pushes `ps`; the `false` terminator moves on to `next`; an exhausted `X` answers `false`. -/
+/-- **The unary read instruction.** Given a stack $d$, an encoding $g$ of bits as symbols of $d$,
+a list $ps$ of stack–symbol pairs and labels $\ell$ and $\ell'$, the instruction of the marking
+machine that jumps to `bad` if $X$ is empty, and otherwise pops the top of $X$ as a bit $b$ (a
+symbol that is not a bit counts as false) and pushes $g(b)$ on $d$; then, if $b$ is true, it
+pushes $a$ on $q$ for each pair $(q, a)$ of $ps$, in order, and jumps to $\ell$, and if $b$ is
+false it jumps to $\ell'$. Run at its own label $\ell$, it reads a unary number off $X$. -/
 def readS (d : K) (g : Bool → Γ d) (ps : List (Σ k, Γ k)) (self next : Lab) : Stmt :=
   .peek .X (fun _ o => o.isNone) <| .branch id (.goto fun _ => .bad) <|
     .pop .X (fun _ o => bitOf Sym.bit? o) <| .push d g <| .branch id
       (pushAll ps (.goto fun _ => self)) (.goto fun _ => next)
 
-/-- A step of a walk along the marks, counted by `c`: take a unit off `c` and park the top mark
-(if any) on `P`; with `c` exhausted, run `fin`. -/
+/-- **Walk step of the PATH marking machine.** Given a counter stack $c$, a label $\ell$ and a
+final statement $f$, the walk step pops the top of $c$. If $c$ was nonempty, it goes to $\ell$
+after moving the top mark of the marks stack $M$, if there is one, onto the parked stack $P$:
+the mark is popped, read as a bit (a symbol that is not a bit reads as false), and pushed on
+$P$ as that bit. If $c$ was empty, it runs $f$. -/
 def walkS (c : K) (self : Lab) (fin : Stmt) : Stmt :=
   .pop c (fun _ o => o.isSome) <| .branch id
     (.peek .M (fun _ o => o.isNone) <| .branch id (.goto fun _ => self) <|
@@ -104,12 +126,34 @@ def walkS (c : K) (self : Lab) (fin : Stmt) : Stmt :=
         .goto fun _ => self)
     fin
 
-/-- Set the mark on top of `M` (if any), then go to `next`. -/
+/-- **Mark-setting step.** For a label $\ell$, the statement of the marking machine that pops the
+top cell of the mark stack $M$ and, if there was one, pushes the set mark (the bit true) onto $M$
+in its place; in either case it then goes to $\ell$. -/
 def setS (next : Lab) : Stmt :=
   .pop .M (fun _ o => o.isSome) <| .branch id
     (.push .M (fun _ => .bit true) <| .goto fun _ => next) (.goto fun _ => next)
 
-/-- The marking machine. -/
+/-- **The marking machine for PATH.** The multi-stack machine program whose input lies on the
+stack $X$ and whose answer is pushed on the Boolean stack $O$. To read a unary number off $X$ onto
+a stack $d$, it pops a bit off $X$ and pushes it on $d$, repeating while the bit is true and
+moving on after the first false bit; an empty $X$ jumps to `bad`. To walk along a counter $c$, it
+pops units off $c$ one at a time, each time moving the top mark of $M$ (if there is one) onto $P$,
+until $c$ is empty. To restore, it moves the bits on top of $P$ back onto $M$ one at a time.
+
+At `rdS`, `rdT` and `rdN` it reads $s$, $t$ and $n$ in turn off $X$ onto $J$, pushing a counter
+unit on $S$, $T$ or $N$ respectively for each true bit, and at `rdN` also a cleared mark on $M$;
+then it goes to `val0`. At `val0` it goes to `goS` if $X$ is empty, and otherwise reads two unary
+numbers off $X$ onto $E$ (at `valU` and `valV`) and returns to `val0`. At `goS` it walks along $S$
+and then sets the top mark of $M$ (if any); at `backS` it restores and goes to `pass`. At `pass`
+it pops a unit off $N$ and goes to `ld`, or to `goT` if $N$ is empty. At `ld` it moves the bits on
+top of $E$ onto $X$, then goes to `edge`. At `edge` it goes to `pass` if $X$ is empty, and
+otherwise reads $u$ and $v$ off $X$ onto $E$ (at `rdU` and `rdV`), pushing a counter unit on $U$,
+respectively $V$, for each true bit, and then goes to `go1`. At `go1` it walks along $U$ and reads
+the top mark $b$ of $M$ (false if there is none); at `back1 b` it restores and goes to `go2` if $b$
+is true and to `drV` otherwise. At `go2` it walks along $V$ and sets the top mark of $M$ (if any);
+at `back2` it restores and goes to `edge`. At `drV` it empties $V$ and goes to `edge`. At `goT` it
+walks along $T$, pushes the top mark of $M$ (false if there is none) on $O$ and goes to `done`. At
+`bad` it pushes false on $O$ and goes to `done`. At `done` it halts. -/
 def prog : Lab → Stmt
   | .rdS => readS .J Sym.bit [⟨.S, one⟩] .rdS .rdT
   | .rdT => readS .J Sym.bit [⟨.T, one⟩] .rdT .rdN
@@ -136,31 +180,47 @@ def prog : Lab → Stmt
   | .bad => .push .O (fun _ => false) <| .goto fun _ => .done
   | .done => .halt
 
-/-- The start label. -/
+/-- **Start label of the PATH marking machine.** The marking machine for PATH starts at the label
+that reads the source vertex $s$, in unary, off the input. -/
 def start : Lab := .rdS
 
 /-! ### The algorithm, as the machine runs it -/
 
-/-- The marks after setting the one on top (if any). -/
+/-- **Setting the first mark.** For a list of booleans, the list obtained by setting its first
+entry: the empty list is left unchanged, and a list $b :: r$ with first entry $b$ and remaining
+entries $r$ becomes $\mathrm{true} :: r$. -/
 def setHead : List Bool → List Bool
   | [] => []
   | _ :: r => true :: r
 
-/-- Setting the mark of vertex `j`: keep `j` marks, set the next one (if any). -/
+/-- **Setting an entry by splitting the list.** For every list $m$ of booleans and every natural
+number $j$, the first $j$ entries of $m$ followed by the remaining entries with their first entry
+set to true (the empty list stays empty) equal $m$ with entry $j$ set to true (which is $m$
+itself when $j \ge |m|$). -/
 theorem take_append_setHead : ∀ (m : List Bool) (j : ℕ),
     m.take j ++ setHead (m.drop j) = m.set j true
   | [], _ => by simp [setHead]
   | _ :: _, 0 => rfl
   | a :: m, j + 1 => by simp [take_append_setHead m j]
 
-/-- The mark on top of the marks past `j` is the mark of vertex `j` (`false` past the end). -/
+/-- **Reading the mark of vertex $j$.** Let $m$ be a list of Boolean marks and $j$ a natural
+number. Drop the first $j$ marks of $m$ and write the rest as bit symbols; reading the top symbol
+as a bit, with false when there is no top symbol, gives the entry of $m$ at position $j$ (counting
+from $0$), or false when $j$ is at least the length of $m$. -/
 theorem bitOf_drop (m : List Bool) (j : ℕ) :
     bitOf Sym.bit? ((m.drop j).map Sym.bit).head? = m.getD j false := by
   rw [List.getD_eq_getElem?_getD, ← List.head?_drop]
   cases m.drop j <;> rfl
 
-/-- On `n` marks, an arc with an end past the last vertex is ignored by the read-then-set
-order of the machine as well. -/
+/-- **Out-of-range arcs need no guard.** Let $m$ be a list of $n$ Boolean marks and let $u$, $v$
+be natural numbers; write $m_u$ for the entry of $m$ at position $u$ (counting from $0$), taken to
+be false when $u \ge n$. If $u < n$, $v < n$ and $m_u$ is true, set position $v$ of $m$ to true,
+and otherwise keep $m$; the result is the same as setting position $v$ of $m$ to true when $m_u$ is
+true and keeping $m$ otherwise.
+
+Setting a position $v \ge n$ leaves the list unchanged, so the machine, which reads the mark of $u$
+and then sets the mark of $v$, ignores an arc with an end past the last vertex, as the marking
+algorithm does. -/
 theorem arc_eq {n u v : ℕ} {m : List Bool} (h : m.length = n) :
     (if u < n ∧ v < n ∧ m.getD u false = true then m.set v true else m) =
       if m.getD u false = true then m.set v true else m := by
@@ -175,19 +235,26 @@ theorem arc_eq {n u v : ℕ} {m : List Bool} (h : m.length = n) :
         List.set_eq_of_length_le (show m.length ≤ v by omega)]
   · rw [ite_eq_right fun h' => hu h'.2.2, ite_eq_right hu]
 
-/-- The initial marks: `n` cleared marks, then the mark of `s` set. -/
+/-- **Initial marks by setting one entry.** For all natural numbers $n$ and $s$, setting entry $s$
+of the list of $n$ copies of false to true (which changes nothing when $s \ge n$) gives the
+initial marks of $n$ vertices from $s$: the list of length $n$ whose entry $i$ is true exactly
+when $i = s$. -/
 theorem set_replicate (n s : ℕ) : (List.replicate n false).set s true = initMarks n s := by
   refine List.ext_getElem (by simp [initMarks]) fun i h₁ h₂ => ?_
   simp only [List.getElem_set, List.getElem_replicate, initMarks, List.getElem_map,
     List.getElem_range]
   by_cases h : s = i <;> simp [h, Ne.symm]
 
-/-- A cleared mark, or none. -/
+/-- **A cleared mark or nothing reads as cleared.** For every decidable proposition $p$, the
+optional mark that is a cleared mark (false) when $p$ holds and absent otherwise, read with
+default false, is false. -/
 theorem getD_ite (p : Prop) [Decidable p] :
     (if p then some false else none).getD false = false := by
   split <;> rfl
 
-/-- No mark is ever set when none is. -/
+/-- **A pass sets no mark when none is set.** For all natural numbers $n$ and $k$ and every list
+$es$ of arcs of natural numbers, one pass of the marking algorithm with $n$ vertices over $es$
+(Mark Pass) maps the list of $k$ cleared marks to itself. -/
 theorem markPass_replicate (n k : ℕ) : ∀ es : List (ℕ × ℕ),
     markPass n es (List.replicate k false) = List.replicate k false
   | [] => rfl
@@ -195,8 +262,14 @@ theorem markPass_replicate (n k : ℕ) : ∀ es : List (ℕ × ℕ),
       simp only [markPass, List.getD_eq_getElem?_getD, List.getElem?_replicate, getD_ite]
       simpa using markPass_replicate n k es
 
-/-- `pathCheck` on a parsed instance is the mark of `t`: `t ≥ n` has no mark, and `s ≥ n` leaves
-every mark cleared. -/
+/-- **The marking algorithm reads the mark of the target.** If a bit string $x$ parses as a PATH
+instance with source $s$, target $t$, $n$ vertices and edge list $es$, then the marking algorithm
+on $x$ returns the mark of $t$ in the reach marks of $s$ (the marks after $n$ marking passes over
+$es$, starting from the marks on $0, \dots, n - 1$ with only $s$ marked, and none if $s \ge n$),
+where a vertex $t \ge n$ counts as unmarked.
+
+So the checks $s < n$ and $t < n$ of the marking algorithm are implied: a vertex $t \ge n$ has no
+mark, and for $s \ge n$ every mark stays cleared. -/
 theorem pathCheck_eq {x : List Bool} {s t n : ℕ} {es : List (ℕ × ℕ)}
     (h : decodeP x = some (s, t, n, es)) : pathCheck x = (reachMarks n s es).getD t false := by
   rw [pathCheck, h]
@@ -214,23 +287,37 @@ theorem pathCheck_eq {x : List Bool} {s t n : ℕ} {es : List (ℕ × ℕ)}
 
 /-! ### Frames -/
 
-/-- `S'` agrees with `S` off the stacks `A`. -/
+/-- **Agreement off a set of stacks.** For a list $A$ of stacks of the marking machine and two
+contents $S$, $S'$ of its stacks, $S'$ agrees with $S$ off $A$ when every stack not in $A$ holds
+the same list in $S'$ as in $S$. -/
 def Fr (A : List K) (S S' : ∀ k, List (Γ k)) : Prop := ∀ q, q ∉ A → S' q = S q
 
-/-- Nothing changes. -/
+/-- **Frames are reflexive.** For every list $A$ of stacks of the marking machine and every
+assignment $S$ of contents to its stacks, $S$ agrees with itself off $A$. -/
 theorem Fr.refl (A : List K) (S : ∀ k, List (Γ k)) : Fr A S S := fun _ _ => rfl
 
-/-- Frames compose, within a common list of stacks. -/
+/-- **Frames compose.** Let $A$, $B$, $C$ be lists of stacks such that every stack in $A$ or in
+$B$ is in $C$. If stacks $S_2$ agree with $S_1$ on every stack outside $A$, and $S_3$ agree with
+$S_2$ on every stack outside $B$, then $S_3$ agree with $S_1$ on every stack outside $C$. -/
 theorem Fr.trans {A B C : List K} {S₁ S₂ S₃ : ∀ k, List (Γ k)} (h₁ : Fr A S₁ S₂)
     (h₂ : Fr B S₂ S₃) (hA : ∀ q ∈ A, q ∈ C) (hB : ∀ q ∈ B, q ∈ C) : Fr C S₁ S₃ := fun q hq => by
   rw [h₂ q fun h => hq (hB q h), h₁ q fun h => hq (hA q h)]
 
-/-- Updating a stack in the frame. -/
+/-- **Updating a framed stack preserves the frame.** Let $A$ be a list of stacks of the PATH
+marking machine, and let $S$ and $S'$ be stack contents such that $S'$ agrees with $S$ on every
+stack outside $A$. Then for every stack $k \in A$ and every list $l$ over the alphabet of $k$,
+the contents obtained from $S'$ by replacing stack $k$ with $l$ still agree with $S$ on every
+stack outside $A$. -/
 theorem Fr.upd {A : List K} {S S' : ∀ k, List (Γ k)} (h : Fr A S S') {k : K} (hk : k ∈ A)
     (l : List (Γ k)) : Fr A S (update S' k l) := fun q hq => by
   rw [update_of_ne (show q ≠ k from fun e => hq (e ▸ hk)), h q hq]
 
-/-- The frame of a read: the input, the copy stack and the counters it pushes on. -/
+/-- **The frame of a read.** Let $d$ be a stack of the marking machine, $ps$ a list of pairs of a
+stack and a symbol, $i$ a natural number, and $S$, $S'$ two contents of the stacks. Suppose every
+stack $q$ other than the input $X$ and $d$ holds in $S'$ the list it holds in $S$ with $i$ further
+copies of the symbol of the first entry for $q$ in $ps$ pushed on top (and unchanged if $ps$ has
+no entry for $q$). Then $S'$ agrees with $S$ on every stack other than $X$, $d$ and the stacks
+that have an entry in $ps$. -/
 theorem fr_addU {d : K} {ps : List (Σ k, Γ k)} {i : ℕ} {S S' : ∀ k, List (Γ k)}
     (h : ∀ q, q ≠ .X → q ≠ d → S' q = addU ps i S q) : Fr (.X :: d :: ps.keys) S S' :=
   fun q hq => by
@@ -239,7 +326,15 @@ theorem fr_addU {d : K} {ps : List (Σ k, Γ k)} {i : ℕ} {S S' : ∀ k, List (
 
 /-! ### Runs of the components -/
 
-/-- Reading a unary number `k`: `k + 1` steps, its bits on `d`, `k` pushes of `ps`. -/
+/-- **Reading a unary number.** Let $d$ be a stack other than $X$, let $g$ encode bits as symbols
+of $d$, and let $ps$ be a list of stack–symbol pairs whose stacks are distinct and differ from $X$
+and $d$. Suppose the instruction of the marking machine at a label $\ell$ is the unary read off
+$X$ onto $d$ through $g$ that pushes $ps$ for each true bit, repeats at $\ell$ and continues at
+$\ell'$. If $X$ holds, as bit symbols, $k$ true bits, then a false bit, then a bit list $r$, then
+in exactly $k + 1$ steps the machine goes from $\ell$, with any flag, to $\ell'$; afterwards $X$
+holds $r$, $d$ has received $k$ copies of $g(\mathrm{true})$ and then $g(\mathrm{false})$ on top,
+each stack $q$ with a pair $(q, a)$ in $ps$ has received $k$ copies of $a$ on top, and every
+other stack is unchanged. -/
 theorem readS_some {d : K} {g : Bool → Γ d} {ps : List (Σ k, Γ k)} {self next : Lab}
     (hp : prog self = readS d g ps self next) (hdX : d ≠ .X) (hps : ps.NodupKeys)
     (hX : K.X ∉ ps.keys) (hd : d ∉ ps.keys) :
@@ -271,7 +366,13 @@ theorem readS_some {d : K} {g : Bool → Γ d} {ps : List (Σ k, Γ k)} {self ne
       · rw [h3 q q1 q2, hSt₁, addU_addU]
         simp only [addU, update_of_ne q1, update_of_ne q2]
 
-/-- A cut-off unary number: `false` is answered, `O` untouched. -/
+/-- **Reading a cut-off unary number.** Let $d$ be a stack other than $X$ and $O$, let $g$ encode
+bits as symbols of $d$, and let $ps$ be a list of stack–symbol pairs whose stacks are distinct and
+differ from $X$ and $O$. Suppose the instruction of the marking machine at a label $\ell$ is the
+unary read off $X$ onto $d$ through $g$ that pushes $ps$ for each true bit, repeats at $\ell$ and
+continues at $\ell'$. If a bit list $l$ has no unary length prefix (every bit of $l$ is true) and
+$X$ holds $l$ as bit symbols, then from $\ell$, with any flag, the machine reaches the label `bad`
+within $|l| + 1$ steps, leaving the output stack $O$ unchanged. -/
 theorem readS_none {d : K} {g : Bool → Γ d} {ps : List (Σ k, Γ k)} {self next : Lab}
     (hp : prog self = readS d g ps self next) (hdX : d ≠ .X) (hps : ps.NodupKeys)
     (hX : K.X ∉ ps.keys) (hdO : d ≠ .O) (hO : K.O ∉ ps.keys) :
@@ -294,7 +395,12 @@ theorem readS_none {d : K} {g : Bool → Γ d} {ps : List (Σ k, Γ k)} {self ne
       refine ⟨v', S', ⟨n' + 1, by simp; omega, Run.head hstep h'⟩, ?_⟩
       rw [hO', hSt₁, addU_of_not_mem hO, update_of_ne hdO.symm, update_of_ne (by decide)]
 
-/-- Putting the parked marks back. -/
+/-- **Restoring the parked marks.** Suppose the instruction of the marking machine at a label
+$\ell$ moves the bits on top of $P$ onto $M$ one at a time, repeating at $\ell$ and continuing at
+$\ell'$ once $P$ is empty or its top is not a bit. If $P$ holds the reverse of a bit list $p$ and
+$M$ holds a bit list $q$, both as bit symbols, then in exactly $|p| + 1$ steps the machine goes
+from $\ell$, with any flag, to $\ell'$, leaving $P$ empty, $M$ holding $p$ followed by $q$, and
+every other stack unchanged. -/
 theorem restore_run {self next : Lab} (hp : prog self = moveB .P .M Sym.bit? Sym.bit self next)
     (pre post : List Bool) (v : Bool) (St : ∀ k, List (Γ k))
     (hP : St .P = pre.reverse.map Sym.bit) (hM : St .M = post.map Sym.bit) :
@@ -307,13 +413,27 @@ theorem restore_run {self next : Lab} (hp : prog self = moveB .P .M Sym.bit? Sym
   simp only [List.mem_cons, List.not_mem_nil, or_false, not_or] at hq
   exact hF q hq.1 hq.2
 
-/-- A walk step with the counter exhausted runs `fin`. -/
+/-- **A walk step with an exhausted counter.** Let $c$ be a stack, $\mathit{self}$ a label,
+$\mathit{fin}$ a statement and $S$ stacks in which $c$ is empty. For every internal state $v$,
+executing from $v$ and $S$ the walk step counted by $c$ that loops at $\mathit{self}$ and
+finishes with $\mathit{fin}$ gives the same result as executing $\mathit{fin}$ from internal
+state false and the same stacks $S$. -/
 theorem stepAux_walkS_nil {c : K} {self : Lab} {fin : Stmt} {S : ∀ k, List (Γ k)}
     (hc : S c = []) (v : Bool) : TM2.stepAux (walkS c self fin) v S = TM2.stepAux fin false S := by
   have : update S c [] = S := by rw [← hc, update_eq_self]
   simp [walkS, TM2.stepAux, hc, this]
 
-/-- Walking `j` units: the marks past `j` stay on `M`, the first `j` are parked on `P`. -/
+/-- **Walking along the marks of the PATH marking machine.** Let $c$ be a stack other than the
+marks stack $M$ and the parked stack $P$, let $u$ be a symbol of the alphabet of $c$, and let
+$\ell$ be a label at which the program is the walk step counted by $c$ that returns to $\ell$
+(with some final statement). Let $j$ be a natural number, $p$ and $q$ lists of bits, $v$ a
+Boolean, and $S$ stack contents in which $c$ holds exactly $j$ copies of $u$, $M$ holds $q$ as
+bit symbols, and $P$ holds the reverse of $p$ as bit symbols. Then there are a Boolean $v'$ and
+stack contents $S'$ such that the machine goes in exactly $j$ steps from label $\ell$ with state
+$v$ and stacks $S$ to label $\ell$ with state $v'$ and stacks $S'$, where $c$ is empty in $S'$,
+$M$ holds $q$ with its first $j$ entries dropped, $P$ holds the reverse of the concatenation of
+$p$ with the first $j$ entries of $q$, all as bit symbols, and $S'$ agrees with $S$ on every
+stack other than $c$, $M$ and $P$. -/
 theorem walk_run {c : K} {self : Lab} {fin : Stmt} (hp : prog self = walkS c self fin)
     (hcM : c ≠ .M) (hcP : c ≠ .P) (u : Γ c) : ∀ (j : ℕ) (pre post : List Bool) (v : Bool)
     (St : ∀ k, List (Γ k)), St c = cnt u j → St .M = post.map Sym.bit →
@@ -347,13 +467,27 @@ theorem walk_run {c : K} {self : Lab} {fin : Stmt} (hp : prog self = walkS c sel
         Fr.trans ((((Fr.refl _ _).upd (by simp) _).upd (by simp) _).upd (by simp) _) h4
           (fun _ h => h) fun _ h => h⟩
 
-/-- Setting the mark on top of `l`. -/
+/-- **Effect of the mark-setting step.** Let $\ell$ be a label, $v$ an internal state and $S$
+stacks whose mark stack $M$ holds the bits of a list $l$ of booleans. Executing the mark-setting
+step to $\ell$ from internal state $v$ and stacks $S$ ends at label $\ell$ with some internal
+state and the stacks $S$ with $M$ replaced by the bits of $l$ with its first entry set to true
+(the empty list stays empty); every other stack is unchanged. -/
 theorem stepAux_setS (next : Lab) (l : List Bool) (v : Bool) (S : ∀ k, List (Γ k))
     (hM : S .M = l.map Sym.bit) : ∃ v', TM2.stepAux (setS next) v S =
       ⟨some next, v', update S .M ((setHead l).map Sym.bit)⟩ := by
   cases l <;> simp [setS, TM2.stepAux, hM, setHead]
 
-/-- Walk to vertex `j`, set its mark (if it exists), put the marks back. -/
+/-- **Walking to a vertex and setting its mark.** Let $c$ be a stack other than the mark stack $M$
+and the parking stack $P$, and let $\mathit{self}$, $\mathit{back}$, $\mathit{next}$ be labels
+such that the marking machine at $\mathit{self}$ is the walk step counted by $c$ that loops at
+$\mathit{self}$ and finishes with the mark-setting step to $\mathit{back}$, and at
+$\mathit{back}$ it moves the bit block of $P$ onto $M$, looping at $\mathit{back}$ and then
+going to $\mathit{next}$. Let $S$ be stacks in which $c$ holds the counter value $j$ (for some
+unit symbol), $M$ holds the bits of a list $m$ of booleans, and $P$ is empty. Then from label
+$\mathit{self}$ with stacks $S$ and any internal state, the machine reaches label
+$\mathit{next}$ in at most $2j + 2$ steps, with some internal state and stacks $S'$ such that
+$c$ and $P$ are empty, $M$ holds the bits of $m$ with entry $j$ set to true (unchanged when
+$j \ge |m|$), and $S'$ agrees with $S$ on every stack other than $c$, $M$ and $P$. -/
 theorem setW_run {c : K} {self back next : Lab} (hp : prog self = walkS c self (setS back))
     (hb : prog back = moveB .P .M Sym.bit? Sym.bit back next) (hcM : c ≠ .M) (hcP : c ≠ .P)
     (u : Γ c) (j : ℕ) (m : List Bool) (v : Bool) (St : ∀ k, List (Γ k)) (hc : St c = cnt u j)
@@ -375,7 +509,12 @@ theorem setW_run {c : K} {self back next : Lab} (hp : prog self = walkS c self (
     omega
   · rw [hF₃ c (by simp [hcM, hcP]), update_of_ne hcM, hc₁]
 
-/-- Walk to vertex `u`, read its mark (`false` past the last vertex), put the marks back. -/
+/-- **Reading the mark of a vertex.** Let $u \in \mathbb{N}$ and let $m$ be a list of marks.
+Start the marking machine at the label `go1`, with any flag, from stacks on which $U$ holds $u$
+counter units, $M$ holds $m$ as bit symbols and $P$ is empty. Then within $2u + 2$ steps it
+reaches `go2` if the mark of vertex $u$ in $m$ is set and `drV` otherwise (a vertex past the end
+of $m$ counts as unmarked), with $U$ and $P$ empty, $M$ holding $m$ again, and every other
+stack unchanged. -/
 theorem readW_run (u : ℕ) (m : List Bool) (v : Bool) (St : ∀ k, List (Γ k))
     (hU : St .U = cnt one u) (hM : St .M = m.map Sym.bit) (hP : St .P = []) :
     ∃ v' S', RunLe prog (2 * u + 2) ⟨some .go1, v, St⟩
@@ -393,8 +532,15 @@ theorem readW_run (u : ℕ) (m : List Bool) (v : Bool) (St : ∀ k, List (Γ k))
   have := List.length_take_le u m
   omega
 
-/-- Validating the edge list `w` while moving it onto `E`: `goS` if it parses, `false` answered
-otherwise. -/
+/-- **Validation phase of the PATH marking machine.** Let $w$ be a list of bits, $v$ a Boolean
+and $S$ stack contents whose input stack $X$ holds $w$ as bit symbols. Then there are a Boolean
+$v'$ and stack contents $S'$ such that, in at most $2|w| + 1$ steps, the machine goes from the
+validation label (at a pair) with state $v$ and stacks $S$ to state $v'$ and stacks $S'$ at the
+label that walks to the source vertex if $w$ decodes as an edge list, and at the label that
+answers false otherwise. The output stack $O$ of $S'$ equals that of $S$. Moreover, if $w$
+decodes as an edge list, then $X$ is empty in $S'$, the edge stack $E$ of $S'$ is the reverse
+of $w$ as bit symbols followed by the old contents of $E$, and $S'$ agrees with $S$ on every
+stack other than $X$ and $E$. -/
 theorem val_run : ∀ (w : List Bool) (v : Bool) (St : ∀ k, List (Γ k)),
     St .X = w.map Sym.bit →
     ∃ v' S', RunLe prog (2 * w.length + 1) ⟨some .val0, v, St⟩
@@ -457,8 +603,17 @@ theorem val_run : ∀ (w : List Bool) (v : Bool) (St : ∀ k, List (Γ k)),
           rw [hE₃, hE₂, hE₁, hx₁, hx₂]
           simp [cnt]
 
-/-- The edge loop of a pass: from `edge` with the edges `es` on `X`, it scans them in order,
-moving their bits onto `E` and updating the marks as `markPass` does. -/
+/-- **The edge loop of a pass.** Let $n$ be a natural number, $es$ a list of arcs $(u, w)$ of
+natural numbers and $m$ a list of $n$ Boolean marks. Encode an arc $(u, w)$ by $u$ ones, a zero,
+$w$ ones and a zero, and $es$ by the concatenation of the codes of its arcs; let $\ell$ be the
+length of this code. Suppose the marking machine is at the edge-loop label, in any internal state,
+with stacks $S$ such that the input stack $X$ holds the code of $es$ and the mark stack $M$ holds
+$m$ (vertex $0$ on top), as bit symbols, and the parked-mark stack $P$ and the arc counters $U$
+and $V$ are empty. Then within $4\ell + 1$ steps it reaches the pass-loop label with stacks $S'$
+in which $X$ is empty, the edge stack $E$ holds the code of $es$ in reverse order on top of its
+contents in $S$, $M$ holds the marks that one pass of the marking algorithm with $n$ vertices over
+$es$ (Mark Pass) produces from $m$, and $P$, $U$, $V$ are empty; every stack other than $X$, $E$,
+$M$, $U$, $V$ and $P$ holds the same list in $S'$ as in $S$. -/
 theorem edges_run (n : ℕ) : ∀ (es : List (ℕ × ℕ)) (m : List Bool) (v : Bool)
     (St : ∀ k, List (Γ k)), m.length = n → St .X = (edgeBits es).map Sym.bit →
     St .M = m.map Sym.bit → St .P = [] → St .U = [] → St .V = [] →
@@ -518,7 +673,13 @@ theorem edges_run (n : ℕ) : ∀ (es : List (ℕ × ℕ)) (m : List Bool) (v : 
         simp [cnt]
       · rw [hM₅, markPass, arc_eq hm]
 
-/-- The pass loop: `k` passes over the edges `es` (kept reversed on `E`), then `goT`. -/
+/-- **The pass loop of the marking machine.** Let $n, k \in \mathbb{N}$, let $es$ be a list of
+pairs of natural numbers with edge bits $b$, and let $m$ be a list of $n$ marks. Start the marking
+machine at the label `pass`, with any flag, from stacks on which $N$ holds $k$ counter units, $X$,
+$P$, $U$ and $V$ are empty, $E$ holds the reverse of $b$ and $M$ holds $m$, both as bit symbols.
+Then within $k(5|b| + 3) + 1$ steps the machine reaches the label `goT`, with $M$ holding
+$p^k(m)$ as bit symbols, where $p$ is one marking pass over $es$ on $n$ vertices, with $P$ empty,
+and with every stack other than $N$, $X$, $E$, $M$, $U$, $V$ and $P$ unchanged. -/
 theorem passes_run (n : ℕ) (es : List (ℕ × ℕ)) : ∀ (k : ℕ) (m : List Bool) (v : Bool)
     (St : ∀ k, List (Γ k)), m.length = n → St .N = cnt one k → St .X = [] →
     St .E = (edgeBits es).reverse.map Sym.bit → St .M = m.map Sym.bit → St .P = [] →
@@ -554,8 +715,10 @@ theorem passes_run (n : ℕ) (es : List (ℕ × ℕ)) : ∀ (k : ℕ) (m : List 
       simp only [List.length_reverse, Nat.succ_mul]
       omega
 
-/-- **The marking machine.** From `start` with `x` on `X` (as `Sym.bit`s) and the other stacks
-empty, `prog` reaches `done` with `[pathCheck x]` on `O` within `8 (|x| + 1)⁴` steps. -/
+/-- **Running time and output of the marking machine.** For every bit string $x$, the marking
+machine started at its start label, with any flag, with $x$ on the input stack $X$ as bit symbols
+and every other stack empty, reaches the label `done` within $8(|x| + 1)^4$ steps, with the
+output stack $O$ holding exactly one entry: the answer of the marking algorithm on $x$. -/
 theorem run (x : List Bool) (v : Bool) (St : ∀ k, List (Γ k))
     (hX : St .X = x.map Sym.bit) (h0 : ∀ k, k ≠ .X → St k = []) :
     ∃ v' S', RunLe prog (8 * (x.length + 1) ^ 4) ⟨some start, v, St⟩ ⟨some .done, v', S'⟩ ∧

@@ -54,8 +54,10 @@ namespace Cslib.Algorithms.Concurrency.Deadlock
 
 variable {P Res : Type*}
 
-/-- A resource-allocation snapshot: the holder of each single-instance resource,
-if any, and the outstanding requests of each process. -/
+/-- **Resource-allocation snapshot.** A resource-allocation snapshot, for a type $P$ of
+processes and a type $R$ of resources, records for each resource the process holding it, if
+any (so each resource has at most one holder), and for each process $p$ and resource $r$
+whether $p$ has an outstanding request for $r$. A process never requests a resource it holds. -/
 structure AllocState (P Res : Type*) where
   /-- The process holding each resource, if any. -/
   holder : Res → Option P
@@ -68,28 +70,39 @@ namespace AllocState
 
 variable (s : AllocState P Res)
 
-/-- `p` waits for `q`: `p` requests a resource held by `q`. -/
+/-- **Wait-for relation.** In a resource-allocation snapshot $s$, a process $p$ waits for a
+process $q$ when there is a resource $r$ that $p$ requests in $s$ and that $q$ holds in $s$. -/
 def WaitsFor (p q : P) : Prop := ∃ r, s.requests p r ∧ s.holder r = some q
 
-/-- A deadlocked set of processes: nonempty, and each member waits for a
-resource held by a member. -/
+/-- **Deadlocked set of processes.** In a resource-allocation snapshot $s$, a set $D$ of
+processes is deadlocked when $D$ is nonempty and every process $p \in D$ waits in $s$ for some
+process $q \in D$, that is, $p$ requests in $s$ a resource that $q$ holds in $s$. -/
 def Deadlocked (D : Set P) : Prop := D.Nonempty ∧ ∀ p ∈ D, ∃ q ∈ D, s.WaitsFor p q
 
-/-- Circular wait: some process waits for itself through a chain of
-wait-for edges. -/
+/-- **Circular wait.** A resource-allocation snapshot $s$ has circular wait when some process $p$
+waits for itself through a chain of one or more wait-for edges in $s$, that is, there are
+processes $p = p_0, p_1, \dots, p_k = p$ with $k \ge 1$ such that $p_{i-1}$ waits for $p_i$ in
+$s$ for each $1 \le i \le k$. -/
 def CircularWait : Prop := ∃ p, Relation.TransGen s.WaitsFor p p
 
 variable {s}
 
-/-- No process waits for itself directly. -/
+/-- **No process waits for itself directly.** In a resource-allocation snapshot, no process $p$
+waits for itself, that is, there is no resource that $p$ both requests and holds. -/
 theorem not_waitsFor_self (p : P) : ¬ s.WaitsFor p p := fun ⟨r, hreq, hheld⟩ =>
   s.requests_not_held p r hreq hheld
 
-/-- A request for a free resource creates no wait-for edge. -/
+/-- **A process whose requests are all free waits for no one.** In a resource-allocation
+snapshot, if no resource requested by a process $p$ has a holder, then $p$ waits for no
+process $q$. -/
 theorem not_waitsFor_of_free {p q : P} (hfree : ∀ r, s.requests p r → s.holder r = none) :
     ¬ s.WaitsFor p q := fun ⟨r, hreq, hheld⟩ => by simp [hfree r hreq] at hheld
 
-/-- Circular wait gives a deadlocked set: the processes on a cycle through `p`. -/
+/-- **Circular wait yields a deadlocked set.** If a resource-allocation snapshot has
+circular wait, that is, some process $p$ waits for itself through a chain of one or more
+wait-for edges, then some set of processes is deadlocked.
+
+One such set consists of the processes on a wait-for cycle through $p$. -/
 theorem exists_deadlocked_of_circularWait (h : s.CircularWait) : ∃ D, s.Deadlocked D := by
   obtain ⟨p, hp⟩ := h
   refine ⟨{q | Relation.TransGen s.WaitsFor p q ∧ Relation.TransGen s.WaitsFor q p},
@@ -101,8 +114,12 @@ theorem exists_deadlocked_of_circularWait (h : s.CircularWait) : ∃ D, s.Deadlo
   · exact hp
   · exact Relation.TransGen.head' hm hmp
 
-/-- With finitely many processes, a deadlocked set contains a wait-for cycle:
-following wait-for edges inside the set must revisit a process. -/
+/-- **A deadlocked set forces circular wait.** In a resource-allocation snapshot with
+finitely many processes, if some set of processes is deadlocked, then the snapshot has circular
+wait: some process waits for itself through a chain of one or more wait-for edges.
+
+The proof follows wait-for edges inside the deadlocked set; by finiteness it must revisit a
+process. -/
 theorem circularWait_of_deadlocked [Finite P] {D : Set P} (h : s.Deadlocked D) :
     s.CircularWait := by
   obtain ⟨⟨p₀, hp₀⟩, hsucc⟩ := h
@@ -126,14 +143,19 @@ theorem circularWait_of_deadlocked [Finite P] {D : Set P} (h : s.Deadlocked D) :
     have := hchain j (i - j - 1)
     rwa [show j + (i - j - 1) + 1 = i by omega, heq] at this
 
-/-- **Deadlock is circular wait** (finitely many processes). -/
+/-- **Deadlock is circular wait.** In a resource-allocation snapshot with finitely many
+processes, some set of processes is deadlocked if and only if the snapshot has circular wait,
+that is, some process waits for itself through a chain of one or more wait-for edges. -/
 theorem deadlock_iff_circularWait [Finite P] : (∃ D, s.Deadlocked D) ↔ s.CircularWait :=
   ⟨fun ⟨_, hD⟩ => circularWait_of_deadlocked hD, exists_deadlocked_of_circularWait⟩
 
 /-! ## Resource ordering -/
 
-/-- Havender's discipline: a process requests only resources ranked above every
-resource it holds. -/
+/-- **Havender's resource ordering.** Let $s$ be a resource-allocation snapshot and let
+$\mathrm{rank}$ assign a natural number to each resource. The snapshot $s$ is ordered by
+$\mathrm{rank}$ when, for every process $p$, every resource $r$ that $p$ requests in $s$ and
+every resource $r'$ that $p$ holds in $s$, we have $\mathrm{rank}(r') < \mathrm{rank}(r)$:
+each process requests only resources ranked strictly above every resource it holds. -/
 def Ordered (rank : Res → ℕ) : Prop :=
   ∀ p r r', s.requests p r → s.holder r' = some p → rank r' < rank r
 
@@ -152,7 +174,11 @@ private theorem chain_of_transGen {p q : P} (h : Relation.TransGen s.WaitsFor p 
       obtain ⟨r, hreq', hheld'⟩ := hmq
       exact ⟨r₁, r, hreq, hheld', hchain.tail ⟨_, hheld, hreq'⟩⟩
 
-/-- **Resource ordering prevents circular wait.** -/
+/-- **Resource ordering prevents circular wait.** Let $\mathrm{rank}$ assign a natural number
+to each resource. If a resource-allocation snapshot is ordered by $\mathrm{rank}$ (Havender's
+discipline), that is, $\mathrm{rank}(r') < \mathrm{rank}(r)$ whenever some process requests
+$r$ and holds $r'$, then the snapshot has no circular wait: no process waits for itself
+through a chain of one or more wait-for edges. -/
 theorem not_circularWait_of_ordered {rank : Res → ℕ} (hord : s.Ordered rank) :
     ¬ s.CircularWait := by
   rintro ⟨p, hp⟩
@@ -167,7 +193,10 @@ theorem not_circularWait_of_ordered {rank : Res → ℕ} (hord : s.Ordered rank)
         exact ih.trans (hord m _ _ hreq' hheld').le
   exact absurd ((hmono _ _ hchain).trans_lt (hord p r₁ r₂ hreq hheld)) (lt_irrefl _)
 
-/-- **Resource ordering prevents deadlock** (finitely many processes). -/
+/-- **Resource ordering prevents deadlock.** Let $\mathrm{rank}$ assign a natural number to
+each resource. If a resource-allocation snapshot with finitely many processes is ordered by
+$\mathrm{rank}$ (Havender's discipline), that is, $\mathrm{rank}(r') < \mathrm{rank}(r)$
+whenever some process requests $r$ and holds $r'$, then no set of processes is deadlocked. -/
 theorem not_deadlocked_of_ordered [Finite P] {rank : Res → ℕ} (hord : s.Ordered rank)
     (D : Set P) : ¬ s.Deadlocked D :=
   fun hD => not_circularWait_of_ordered hord (circularWait_of_deadlocked hD)

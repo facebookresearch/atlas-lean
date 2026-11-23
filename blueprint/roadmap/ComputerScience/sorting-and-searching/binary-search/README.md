@@ -1,0 +1,17 @@
+# Binary search
+
+- [Array binary search membership test agrees with binary search](bin-search-contains-eq-is-some.md)
+- [Result of bounded binary search on a sorted array](bin-search-eq-some-iff.md)
+- [Bounded binary search on a sorted array fails exactly when the key is absent](bin-search-eq-none-iff.md)
+- [Bounded binary search membership test on a sorted array is correct](bin-search-contains-eq-true-iff.md)
+- [Binary search on a sorted array finds exactly its members](bin-search-eq-some-iff-mem.md)
+- [Binary search on a sorted array fails exactly on non-members](bin-search-eq-none-iff-not-mem.md)
+- [Binary search membership test on a sorted array is correct](bin-search-contains-eq-true-iff-mem.md)
+- [Lower-bound search](lower-bound.md)
+- [Correctness of lower-bound search](lower-bound-spec.md)
+- [Comparison bound for lower-bound search](lower-bound-time-le.md)
+- [Binary search for the first occurrence](binary-search-first.md)
+- [Binary search returns the first occurrence of the key](binary-search-first-eq-some-iff.md)
+- [Binary search reports absence exactly when the key is absent](binary-search-first-eq-none-iff.md)
+- [Exact comparison count of binary search for the first occurrence](binary-search-first-time.md)
+- [Comparison bound for binary search for the first occurrence](binary-search-first-time-le.md)

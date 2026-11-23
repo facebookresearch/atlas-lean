@@ -11,8 +11,6 @@ Author: Steven Warner, Nam Trang
 -/
 module
 
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.SetTheory.Cardinal.Aleph
 public import Mathlib.SetTheory.Ordinal.Rank
 
 @[expose] public section
