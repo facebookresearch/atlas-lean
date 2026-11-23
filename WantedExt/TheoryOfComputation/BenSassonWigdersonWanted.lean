@@ -33,7 +33,7 @@ Refutations, sizes and widths are those of `CSLibExt.Logics.Propositional.CNF.Re
 
 namespace MathlibExt.TheoryOfComputation.BenSassonWigdersonWanted
 
-open Cslib.Logic.PL Cslib.Logic.PL.CNF
+open Cslib.Logic.LegacyPL Cslib.Logic.LegacyPL.CNF
 
 /-- **Ben-Sasson–Wigderson for tree-like resolution.** If a CNF formula `φ` has a tree-like
 refutation with `S` lines, then it has a resolution refutation of width at most
