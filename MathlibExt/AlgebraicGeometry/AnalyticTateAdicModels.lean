@@ -57,6 +57,13 @@ def SectionsContinuous {X Y : ValuedSpace} (f : X.space ⟶ Y.space) : Prop :=
     @Continuous _ _ (Y.sectionTopology U) (X.sectionTopology ((Opens.map f.base).obj U))
       (f.c.app (op U)).hom
 
+/-- The pullback of sections along a morphism of locally ringed spaces identifies the topological
+section rings of every open inside the image of the morphism. -/
+def SectionsHomeomorphic {X Y : ValuedSpace} (f : X.space ⟶ Y.space) : Prop :=
+  ∀ U : Opens Y.space, (U : Set Y.space) ⊆ Set.range f.base →
+    @IsHomeomorph _ _ (Y.sectionTopology U) (X.sectionTopology ((Opens.map f.base).obj U))
+      (f.c.app (op U)).hom
+
 /-- A morphism preserves the actual stalk valuation comparisons and pulls back sections
 continuously: morphisms of analytic adic spaces are locally induced by continuous maps of
 affinoid rings (Wedhorn, *Adic Spaces*, Prop. 8.19), not by arbitrary ring maps. -/
@@ -81,9 +88,9 @@ instance : Category ValuedSpace where
     exact (g.property.1 (f.val.base x) a b).trans
       (f.property.1 x ((g.val.stalkMap (f.val.base x)) a)
         ((g.val.stalkMap (f.val.base x)) b)), fun U ↦ by
-    letI := Z.sectionTopology U
-    letI := Y.sectionTopology ((Opens.map g.val.base).obj U)
-    letI := X.sectionTopology ((Opens.map f.val.base).obj ((Opens.map g.val.base).obj U))
+    let := Z.sectionTopology U
+    let := Y.sectionTopology ((Opens.map g.val.base).obj U)
+    let := X.sectionTopology ((Opens.map f.val.base).obj ((Opens.map g.val.base).obj U))
     exact (f.property.2 ((Opens.map g.val.base).obj U)).comp (g.property.2 U)⟩
   id_comp f := Subtype.ext (Category.id_comp f.val)
   comp_id f := Subtype.ext (Category.comp_id f.val)
@@ -187,6 +194,10 @@ structure AffinoidModel (P : TatePair p) where
   rationalSections_symm_continuous : ∀ (D : RationalTateModel p P) (U : Opens valued.space)
     (h : (U : Set valued.space) = point ⁻¹' (D.domain : Set P.Space)),
     @Continuous _ _ (valued.sectionTopology U) _ (rationalSections D U h).symm
+  sectionTopology_eq : ∀ U : Opens valued.space, valued.sectionTopology U =
+    ⨅ (D : RationalTateModel p P) (V : Opens valued.space) (h : V ≤ U)
+      (_ : (V : Set valued.space) = point ⁻¹' (D.domain : Set P.Space)),
+      (valued.sectionTopology V).induced (valued.space.presheaf.map (homOfLE h).op).hom
   rational_constants : ∀ (D : RationalTateModel p P) (U : Opens valued.space)
     (h : (U : Set valued.space) = point ⁻¹' (D.domain : Set P.Space)) (a : P.ring),
     rationalSections D U h (D.map.hom a) =
@@ -200,12 +211,41 @@ structure AffinoidModel (P : TatePair p) where
     ∃ D : RationalTateModel p P, point x ∈ D.domain ∧
       point ⁻¹' (D.domain : Set P.Space) ⊆ (U : Set valued.space)
 
-/-- Global analytic adic objects are locally these actual valued rational models. -/
+/-- The section topologies of an affinoid model make its restriction maps continuous. -/
+theorem AffinoidModel.continuous_restrict {P : TatePair p} (M : AffinoidModel p P)
+    {U V : Opens M.valued.space} (h : V ≤ U) :
+    @Continuous _ _ (M.valued.sectionTopology U) (M.valued.sectionTopology V)
+      (M.valued.space.presheaf.map (homOfLE h).op).hom := by
+  rw [M.sectionTopology_eq V]
+  refine continuous_iInf_rng.2 fun D ↦ continuous_iInf_rng.2 fun W ↦
+    continuous_iInf_rng.2 fun hW ↦ continuous_iInf_rng.2 fun hD ↦ ?_
+  apply continuous_induced_rng.2
+  have hc : (M.valued.space.presheaf.map (homOfLE hW).op).hom ∘
+      (M.valued.space.presheaf.map (homOfLE h).op).hom =
+        (M.valued.space.presheaf.map (homOfLE (hW.trans h)).op).hom := by
+    funext x
+    change (M.valued.space.presheaf.map (homOfLE h).op ≫
+      M.valued.space.presheaf.map (homOfLE hW).op).hom x = _
+    rw [← Functor.map_comp]
+    rfl
+  rw [hc, M.sectionTopology_eq U]
+  exact continuous_iInf_dom (i := D) (continuous_iInf_dom (i := W)
+    (continuous_iInf_dom (i := hW.trans h) (continuous_iInf_dom (i := hD) continuous_induced_dom)))
+
+/-- Global analytic adic objects are locally these actual valued rational models, as topologically
+ringed valued spaces: each chart identifies the topological section rings of opens inside its
+image, and the topology on the sections over any open is the initial topology for the restrictions
+to the opens inside chart images. -/
 def HasAnalyticAtlas (X : ValuedSpace) : Prop :=
   ∃ (I : Type 1) (P : I → TatePair p) (M : ∀ i, AffinoidModel p (P i))
     (f : ∀ i, (M i).valued ⟶ X),
     (∀ i, IsOpenEmbedding (f i).val.base) ∧
     (∀ i x, IsIso ((f i).val.stalkMap x)) ∧
+    (∀ i, SectionsHomeomorphic (f i).val) ∧
+    (∀ U : Opens X.space, X.sectionTopology U =
+      ⨅ (V : Opens X.space) (h : V ≤ U)
+        (_ : ∃ i, (V : Set X.space) ⊆ Set.range (f i).val.base),
+        (X.sectionTopology V).induced (X.space.presheaf.map (homOfLE h).op).hom) ∧
     (∀ x : X.space, ∃ i, x ∈ Set.range (f i).val.base)
 
 /-- The actual category of analytic Tate-adic models over the p-adic base. -/

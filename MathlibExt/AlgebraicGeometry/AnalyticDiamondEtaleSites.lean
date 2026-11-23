@@ -38,13 +38,15 @@ open AnalyticTateAdicModels AnalyticAdicDiamondification
 
 variable (p : ℕ) [Fact p.Prime]
 
-/-- An actual affinoid open chart, including its local-ring isomorphisms. -/
+/-- An actual affinoid open chart, including its local-ring isomorphisms and the identification of
+the topological section rings of opens inside its image. -/
 structure Chart (X : AnalyticAdicSpace p) where
   pair : TatePair p
   model : AffinoidModel p pair
   map : model.valued ⟶ X.obj
   open_embedding : IsOpenEmbedding map.val.base
   stalk_iso : ∀ x, IsIso (map.val.stalkMap x)
+  sections : SectionsHomeomorphic map.val
 
 /-- An actual affinoid morphism fixes every point and every original coordinate. -/
 structure AffinoidMap {X Y : AnalyticAdicSpace p}
@@ -157,12 +159,6 @@ def IsAnalyticFiniteEtale {X Y : AnalyticAdicSpace p} (f : X ⟶ Y) : Prop :=
     U.map ≫ f.hom = g.valued ≫ V.map ∧ IsFiniteEtale p g ∧
       Set.range U.map.val.base = f.hom.val.base ⁻¹' Set.range V.map.val.base
 
-/-- A finite étale map of affine perfectoid pairs: finite étale rings, and the plus ring of the
-source is the integral closure of the image of the plus ring of the target. -/
-def IsFiniteEtalePerfectoid {P Q : Affine p} (g : P ⟶ Q) : Prop :=
-  PerfectoidLocalModels.IsFiniteEtale g ∧
-    ∀ s : P.ring, s ∈ P.plus ↔ (g.hom.comp Q.plus.subtype).IsIntegralElem s
-
 /-- Finite-etale diamond maps: every affine pullback is empty (initial) or an actual finite-étale
 affine, with fixed projection. Empty pullbacks occur for the empty map, and for the inclusion of an
 open and closed component tested on the complementary component. -/
@@ -170,7 +166,7 @@ def IsRepresentableFiniteEtale {F G : VSheaf p} (f : F ⟶ G) : Prop :=
   ∀ (Q : Affine p) (a : affineSheaf p Q ⟶ G),
     Nonempty (IsInitial (pullback f a)) ∨
       ∃ P : Affine p, ∃ e : affineSheaf p P ≅ pullback f a, ∃ g : P ⟶ Q,
-        e.hom ≫ pullback.snd f a = affineMap p g ∧ IsFiniteEtalePerfectoid p g
+        e.hom ≫ pullback.snd f a = affineMap p g ∧ PerfectoidLocalModels.IsFiniteEtale g
 
 /-- Actual finite-etale objects over the original analytic space. -/
 abbrev AnalyticFiniteEtaleSite (Y : AnalyticAdicSpace p) :=

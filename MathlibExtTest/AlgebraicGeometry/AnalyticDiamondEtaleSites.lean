@@ -15,12 +15,13 @@ import MathlibExt.AlgebraicGeometry.PerfectoidSliceSites
 
 The identity of a Tate pair is finite étale because its plus ring is integrally closed, while a map
 whose target plus ring contains an element that is not integral over the source plus ring is not
-finite étale, whatever its ring map. Maps of analytic adic spaces pull sections back continuously.
+finite étale, whatever its ring map. Maps of analytic adic spaces pull sections back continuously,
+charts identify the topological section rings, and affinoid restriction maps are continuous.
 An affine pullback that is empty is allowed by representable finite étaleness. The kernel-pair map
 of a v-relation has the source and target maps as its two legs.
 -/
 
-open CategoryTheory CategoryTheory.Limits
+open CategoryTheory CategoryTheory.Limits Opposite
 open MathlibExt.AlgebraicGeometry.AnalyticTateAdicModels
 open MathlibExt.AlgebraicGeometry.AnalyticDiamondEtaleSites
 open MathlibExt.AlgebraicGeometry.AffinePerfectoidVSite
@@ -57,6 +58,18 @@ example {V W : TatePair p} (g : TateRingMap p V W) (s : W.ring) (hs : s ∈ W.pl
 /-- Morphisms of analytic adic spaces pull back sections continuously. -/
 example {X Y : AnalyticAdicSpace p} (f : X ⟶ Y) : SectionsContinuous f.hom.val :=
   f.hom.property.2
+
+/-- Charts of analytic adic spaces identify the topological section rings of opens inside their
+image. -/
+example {X : AnalyticAdicSpace p} (C : Chart p X) : SectionsHomeomorphic C.map.val :=
+  C.sections
+
+/-- The restriction maps of an affinoid model are continuous for its section topologies. -/
+example {P : TatePair p} (M : AffinoidModel p P) {U V : TopologicalSpace.Opens M.valued.space}
+    (h : V ≤ U) :
+    @Continuous _ _ (M.valued.sectionTopology U) (M.valued.sectionTopology V)
+      (M.valued.space.presheaf.map (homOfLE h).op).hom :=
+  M.continuous_restrict p h
 
 /-- An empty affine pullback is allowed by representable finite étaleness. -/
 example {F G : VSheaf p} (f : F ⟶ G)
