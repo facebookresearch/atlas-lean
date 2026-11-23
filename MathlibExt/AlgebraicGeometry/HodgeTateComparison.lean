@@ -37,9 +37,18 @@ algebraic differential-form sheaves. Tate twists use Mathlib's constructed
 cyclotomic character, characterized by its actual roots-of-unity action.
 
 Galois acts on C_p by completing its actual norm-preserving action on
-the algebraic closure. It acts on étale cohomology by the fixed scheme
-operator from `GeometricAdicGaloisOperators`. These actions are complete
-code; the geometric comparison is a separate construction.
+the algebraic closure; this is a group action (`completionGaloisHom`). It
+acts on étale cohomology by inverse image along the scheme automorphism
+`id_X × Spec σ` of `GeometricAdicGaloisOperators`, and on the Hodge side
+by the completed action twisted by `χ^(-i)` in Hodge degree `i`. The Hodge
+operators form a semilinear group action (`completedHodgeGalois_one`,
+`completedHodgeGalois_mul`, `completedHodgeGalois_smul`). The completed
+étale operators are semilinear (`completedEtaleGalois_smul`) and inherit
+the action laws from those of the étale operators
+(`completedEtaleGalois_one`, `completedEtaleGalois_mul`); the identity and
+composition laws of the étale inverse images themselves are requested in
+`WantedExt.AlgebraicGeometry.HodgeTateComparison`. The geometric
+comparison is a separate construction.
 -/
 
 @[expose] public noncomputable section
@@ -92,6 +101,40 @@ theorem completionGalois_coe (σ : Galois p) (x : PadicAlgCl p) :
   UniformSpace.Completion.mapRingHom_coe
     (f := σ.toRingEquiv.toRingHom) (closure_isometry p σ).continuous x
 
+/-- The completed action is continuous. -/
+theorem continuous_completionGalois (σ : Galois p) :
+    Continuous (completionGalois p σ) :=
+  UniformSpace.Completion.continuous_map
+
+/-- The completed action of the identity is the identity. -/
+theorem completionGalois_one_apply (x : PadicComplex p) :
+    completionGalois p 1 x = x := by
+  induction x using UniformSpace.Completion.induction_on with
+  | hp => exact isClosed_eq (continuous_completionGalois p 1) continuous_id
+  | ih a => exact completionGalois_coe p 1 a
+
+/-- The completed action is multiplicative. -/
+theorem completionGalois_mul_apply (σ τ : Galois p) (x : PadicComplex p) :
+    completionGalois p (σ * τ) x = completionGalois p σ (completionGalois p τ x) := by
+  induction x using UniformSpace.Completion.induction_on with
+  | hp =>
+    exact isClosed_eq (continuous_completionGalois p (σ * τ))
+      ((continuous_completionGalois p σ).comp (continuous_completionGalois p τ))
+  | ih a =>
+    change completionGalois p (σ * τ) (algebraMap (PadicAlgCl p) (PadicComplex p) a) =
+      completionGalois p σ (completionGalois p τ (algebraMap (PadicAlgCl p) (PadicComplex p) a))
+    rw [completionGalois_coe, completionGalois_coe, completionGalois_coe, AlgEquiv.mul_apply]
+
+/-- The completed Galois action on `C_p`, as a group homomorphism. -/
+def completionGaloisHom : Galois p →* (PadicComplex p ≃ₐ[ℚ_[p]] PadicComplex p) where
+  toFun := completionGalois p
+  map_one' := AlgEquiv.ext (completionGalois_one_apply p)
+  map_mul' σ τ := AlgEquiv.ext (completionGalois_mul_apply p σ τ)
+
+@[simp]
+theorem completionGaloisHom_apply (σ : Galois p) :
+    completionGaloisHom p σ = completionGalois p σ := rfl
+
 /-- The coefficient is the actual p-adic cyclotomic character. -/
 def cyclotomicScalar (σ : Galois p) : ℚ_[p] :=
   algebraMap ℤ_[p] ℚ_[p]
@@ -102,9 +145,27 @@ theorem cyclotomicScalar_ne_zero (σ : Galois p) :
   ((cyclotomicCharacter (PadicAlgCl p) p σ.toRingEquiv).isUnit.map
     (algebraMap ℤ_[p] ℚ_[p])).ne_zero
 
+@[simp]
+theorem cyclotomicScalar_one : cyclotomicScalar p 1 = 1 := by
+  have h : (1 : Galois p).toRingEquiv = 1 := rfl
+  simp [cyclotomicScalar, h]
+
+theorem cyclotomicScalar_mul (σ τ : Galois p) :
+    cyclotomicScalar p (σ * τ) = cyclotomicScalar p σ * cyclotomicScalar p τ := by
+  have h : (σ * τ).toRingEquiv = σ.toRingEquiv * τ.toRingEquiv := rfl
+  simp [cyclotomicScalar, h]
+
 /-- The coefficient of the negative Tate twist C_p(-i). -/
 def tateScalar (σ : Galois p) (i : ℕ) : ℚ_[p] :=
   cyclotomicScalar p σ ^ (-(i : ℤ))
+
+@[simp]
+theorem tateScalar_one (i : ℕ) : tateScalar p 1 i = 1 := by
+  simp [tateScalar]
+
+theorem tateScalar_mul (σ τ : Galois p) (i : ℕ) :
+    tateScalar p (σ * τ) i = tateScalar p σ i * tateScalar p τ i := by
+  rw [tateScalar, tateScalar, tateScalar, cyclotomicScalar_mul, mul_zpow]
 
 variable (X : Over (Spec (CommRingCat.of.{0} ℚ_[p])))
 
@@ -137,6 +198,35 @@ def completedEtaleGalois (σ : Galois p) (n : ℕ) :
     CompletedEtale p X n →ₗ[ℚ_[p]] CompletedEtale p X n :=
   TensorProduct.map (completionGalois p σ).toLinearMap (etaleGalois p X σ n)
 
+/-- The completed étale operators are semilinear over the completed action on `C_p`. -/
+theorem completedEtaleGalois_smul (σ : Galois p) (n : ℕ) (c : PadicComplex p)
+    (a : CompletedEtale p X n) :
+    completedEtaleGalois p X σ n (c • a) =
+      completionGalois p σ c • completedEtaleGalois p X σ n a := by
+  induction a using TensorProduct.inductionOn with
+  | tmul x m =>
+    rw [TensorProduct.smul_tmul', completedEtaleGalois, TensorProduct.map_tmul,
+      TensorProduct.map_tmul, TensorProduct.smul_tmul']
+    simp
+  | add a b ha hb => rw [smul_add, map_add, ha, hb, map_add, smul_add]
+
+/-- The completed étale operators inherit the identity law of the étale operators. -/
+theorem completedEtaleGalois_one (n : ℕ) (h : etaleGalois p X 1 n = LinearMap.id) :
+    completedEtaleGalois p X 1 n = LinearMap.id := by
+  rw [completedEtaleGalois, h]
+  have hc : (completionGalois p 1).toLinearMap = LinearMap.id :=
+    LinearMap.ext (completionGalois_one_apply p)
+  rw [hc, TensorProduct.map_id]
+
+/-- The completed étale operators inherit the composition law of the étale operators. -/
+theorem completedEtaleGalois_mul (σ τ : Galois p) (n : ℕ)
+    (h : etaleGalois p X (σ * τ) n = etaleGalois p X σ n ∘ₗ etaleGalois p X τ n) :
+    completedEtaleGalois p X (σ * τ) n =
+      completedEtaleGalois p X σ n ∘ₗ completedEtaleGalois p X τ n := by
+  rw [completedEtaleGalois, completedEtaleGalois, completedEtaleGalois, ← TensorProduct.map_comp, h]
+  congr 1
+  exact LinearMap.ext (completionGalois_mul_apply p σ τ)
+
 /-- Galois acts on Hodge degree i by its actual C_p action and χ^(-i). -/
 def completedHodgeGalois (σ : Galois p) (n : ℕ) :
     CompletedHodge p X n →ₗ[ℚ_[p]] CompletedHodge p X n :=
@@ -146,8 +236,62 @@ def completedHodgeGalois (σ : Galois p) (n : ℕ) :
       (LinearMap.id : Hodge p X n i →ₗ[ℚ_[p]] Hodge p X n i)).comp
         (LinearMap.proj i)
 
+/-- The Hodge-side operator of the identity is the identity. -/
+theorem completedHodgeGalois_one (n : ℕ) :
+    completedHodgeGalois p X 1 n = LinearMap.id := by
+  apply LinearMap.ext
+  intro a
+  funext i
+  have hc : tateScalar p 1 i • (completionGalois p 1).toLinearMap = LinearMap.id := by
+    ext c
+    simp [completionGalois_one_apply]
+  simp only [completedHodgeGalois, LinearMap.pi_apply, LinearMap.comp_apply, LinearMap.proj_apply,
+    LinearMap.id_apply, hc, TensorProduct.map_id]
+
+/-- The Hodge-side operators compose as a left action. -/
+theorem completedHodgeGalois_mul (σ τ : Galois p) (n : ℕ) :
+    completedHodgeGalois p X (σ * τ) n =
+      completedHodgeGalois p X σ n ∘ₗ completedHodgeGalois p X τ n := by
+  apply LinearMap.ext
+  intro a
+  funext i
+  have hc : tateScalar p (σ * τ) i • (completionGalois p (σ * τ)).toLinearMap =
+      (tateScalar p σ i • (completionGalois p σ).toLinearMap) ∘ₗ
+        (tateScalar p τ i • (completionGalois p τ).toLinearMap) := by
+    ext c
+    change tateScalar p (σ * τ) i • completionGalois p (σ * τ) c =
+      tateScalar p σ i • completionGalois p σ (tateScalar p τ i • completionGalois p τ c)
+    rw [completionGalois_mul_apply, tateScalar_mul,
+      Algebra.smul_def (tateScalar p τ i) (completionGalois p τ c), map_mul,
+      AlgEquiv.commutes, ← Algebra.smul_def, smul_smul]
+  have hmap : TensorProduct.map (tateScalar p (σ * τ) i • (completionGalois p (σ * τ)).toLinearMap)
+      (LinearMap.id : Hodge p X n i →ₗ[ℚ_[p]] Hodge p X n i) =
+      TensorProduct.map (tateScalar p σ i • (completionGalois p σ).toLinearMap) LinearMap.id ∘ₗ
+        TensorProduct.map (tateScalar p τ i • (completionGalois p τ).toLinearMap) LinearMap.id := by
+    rw [← TensorProduct.map_comp, ← hc, LinearMap.id_comp]
+  simp only [completedHodgeGalois, LinearMap.pi_apply, LinearMap.comp_apply, LinearMap.proj_apply]
+  rw [hmap, LinearMap.comp_apply]
+
+/-- The Hodge-side operators are semilinear over the completed action on `C_p`. -/
+theorem completedHodgeGalois_smul (σ : Galois p) (n : ℕ) (c : PadicComplex p)
+    (a : CompletedHodge p X n) :
+    completedHodgeGalois p X σ n (c • a) =
+      completionGalois p σ c • completedHodgeGalois p X σ n a := by
+  funext i
+  simp only [completedHodgeGalois, LinearMap.pi_apply, LinearMap.comp_apply,
+    LinearMap.proj_apply, Pi.smul_apply]
+  induction a i using TensorProduct.inductionOn with
+  | tmul x m =>
+    rw [TensorProduct.smul_tmul', TensorProduct.map_tmul, TensorProduct.map_tmul,
+      TensorProduct.smul_tmul']
+    simp
+  | add a b ha hb => rw [smul_add, map_add, ha, hb, map_add, smul_add]
+
 /-- A geometric comparison on the actual carriers, with all Galois
-operators fixed before the comparison is supplied. -/
+operators fixed before the comparison is supplied. The Hodge-side
+operators form a semilinear group action, and the completed étale
+operators are semilinear; equivariance is stated against these fixed
+operators. -/
 structure Comparison (n : ℕ) where
   equivalence : CompletedEtale p X n ≃ₗ[PadicComplex p] CompletedHodge p X n
   equivariant : ∀ (σ : Galois p) (a : CompletedEtale p X n),
