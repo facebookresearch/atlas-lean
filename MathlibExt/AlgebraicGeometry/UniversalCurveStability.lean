@@ -26,7 +26,9 @@ public import Mathlib.Data.Fintype.Fin
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Logic.Relation
+public import MathlibExt.Combinatorics.EndpointMapMultigraph
 
 @[expose] public noncomputable section
 
@@ -41,7 +43,8 @@ and contraction equations. No values outside the prescribed genus/marking
 graph domain are present.
 
 Source: Kass--Pagani, The stability space of compactified universal
-Jacobians, Definitions 3.1--3.2 and Corollary 3.6.
+Jacobians, Sections 2.1--2.2 (graphs, isomorphisms, contractions),
+Definitions 3.1--3.2 and Corollary 3.6.
 -/
 
 namespace MathlibExt.AlgebraicGeometry.UniversalCurveStability
@@ -49,9 +52,19 @@ namespace MathlibExt.AlgebraicGeometry.UniversalCurveStability
 open Finset
 open scoped BigOperators
 
-/-- Valence counts actual branches, including two branches of each loop. -/
+/-- Valence counts actual branches, including two branches of each loop. It is the computable
+form of `EndpointMapMultigraph.degreeWithin` on all edges (`valence_eq_degreeWithin`). -/
 def valence {v e : ℕ} (endpoint : Fin e → Fin 2 → Fin v) (w : Fin v) : ℕ :=
   (Finset.univ.filter fun h : Fin e × Fin 2 ↦ endpoint h.1 h.2 = w).card
+
+/-- Valence is the endpoint-incidence degree of the multigraph with endpoint maps
+`endpoint · 0` and `endpoint · 1`. -/
+theorem valence_eq_degreeWithin {v e : ℕ} (endpoint : Fin e → Fin 2 → Fin v) (w : Fin v) :
+    valence endpoint w =
+      EndpointMapMultigraph.degreeWithin (endpoint · 0) (endpoint · 1) Finset.univ w := by
+  classical
+  simp only [valence, EndpointMapMultigraph.degreeWithin, Finset.card_filter,
+    Fintype.sum_prod_type, Fin.sum_univ_two, Finset.sum_add_distrib]
 
 /-- Number of actual labeled markings on a vertex. -/
 def markingCount {v n : ℕ} (mark : Fin n → Fin v) (w : Fin v) : ℕ :=
@@ -66,8 +79,7 @@ structure StableGraph (g n : ℕ) where
   genus : Fin vertices → ℕ
   marking : Fin n → Fin vertices
   connected : ∀ v w, Relation.ReflTransGen
-    (fun v w ↦ ∃ e, (endpoint e 0 = v ∧ endpoint e 1 = w) ∨
-      (endpoint e 0 = w ∧ endpoint e 1 = v)) v w
+    (EndpointMapMultigraph.AdjacentUsing (endpoint · 0) (endpoint · 1) Finset.univ) v w
   totalGenus : g + vertices = (∑ v, genus v) + edges + 1
   stable : ∀ v, 0 < 2 * (genus v : ℤ) - 2 +
     valence endpoint v + markingCount marking v
@@ -81,7 +93,9 @@ structure GraphIso {g n : ℕ} (G H : StableGraph g n) where
   genus : ∀ v, H.genus (vertex v) = G.genus v
   marking : ∀ i, H.marking i = vertex (G.marking i)
 
-/-- A genuine contraction of selected edges, with connected fibers and genus update. -/
+/-- A genuine contraction of selected edges, with connected fibers and genus update.
+Kass--Pagani contract one edge at a time; contracting a set of edges is a composite of such
+contractions followed by an isomorphism, and contracting no edge is an isomorphism. -/
 structure GraphContraction {g n : ℕ} (G H : StableGraph g n) where
   selected : Finset (Fin G.edges)
   vertex : Fin G.vertices → Fin H.vertices
@@ -91,16 +105,15 @@ structure GraphContraction {g n : ℕ} (G H : StableGraph g n) where
   surviving : ∀ e h, H.endpoint (edge e) (branch e h) = vertex (G.endpoint e.val h)
   contracted : ∀ e ∈ selected, vertex (G.endpoint e 0) = vertex (G.endpoint e 1)
   fiberConnected : ∀ v w, vertex v = vertex w → Relation.ReflTransGen
-    (fun v w ↦ ∃ e ∈ selected,
-      (G.endpoint e 0 = v ∧ G.endpoint e 1 = w) ∨
-      (G.endpoint e 0 = w ∧ G.endpoint e 1 = v)) v w
+    (EndpointMapMultigraph.AdjacentUsing (G.endpoint · 0) (G.endpoint · 1) selected) v w
   marking : ∀ i, H.marking i = vertex (G.marking i)
   genus : ∀ w,
     H.genus w + (Finset.univ.filter fun v ↦ vertex v = w).card =
       (∑ v, if vertex v = w then G.genus v else 0) +
         (selected.filter fun e ↦ vertex (G.endpoint e 0) = w).card + 1
 
-/-- Universal stability, on the exact stable-graph domain. -/
+/-- Universal stability, on the exact stable-graph domain, with rational weights. Kass--Pagani
+allow real weights; all defining conditions are linear equations with integer coefficients. -/
 structure UniversalStability (g n : ℕ) (d : ℚ) where
   weight : ∀ G : StableGraph g n, Fin G.vertices → ℚ
   total : ∀ G, (∑ v, weight G v) = d
