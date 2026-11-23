@@ -15,4 +15,3 @@ Jacobi and Ramanujan theta functions, q-Pochhammer symbols and Euler products, R
 - [Rogers–Ramanujan–Slater functions of order eighteen](rogers-ramanujan-slater-functions-of-order-eight/README.md)
 - [Jacobi's identity for the cube of Euler's product](jacobi-cube-euler-product-has-sum.md)
 - [Modular transformation of the Jacobi theta function](theta-modular-transformation.md)
-- [Theta transformation of a Gaussian sum with a linear term](gaussian-sum-with-linear-term-transformation.md)

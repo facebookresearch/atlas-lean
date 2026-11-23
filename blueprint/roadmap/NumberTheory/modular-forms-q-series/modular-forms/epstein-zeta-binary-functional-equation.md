@@ -25,7 +25,7 @@ Proposition 7, for $|Q| = 1$) gives the continuation and the functional equation
 Siegel proves Proposition 7 by induction on the number of variables from the one-variable formula
 $\sum_{n \in \mathbb{Z}} e^{-\pi \xi (n + v)^2} = \xi^{-1/2} \sum_{n \in \mathbb{Z}} e^{-\pi n^2 / \xi + 2\pi i n v}$, valid for complex
 $v$ and $\operatorname{Re} \xi > 0$ with the branch of $\sqrt{\xi}$ that is positive for $\xi > 0$ (his formula (52)), which is the
-[theta transformation of a Gaussian sum with a linear term](../theta-q-series-partitions/gaussian-sum-with-linear-term-transformation.md) for $a = \xi$ and
+[theta transformation of a Gaussian sum with a linear term](../../../Analysis/harmonic-analysis/fourier-series/gaussian-sum-with-linear-term-transformation.md) for $a = \xi$ and
 $b = -\xi v$, multiplied by $e^{-\pi \xi v^2}$. For the binary form, completing the square gives
 $Q_z(m_1, m_2) = y^{-1} \bigl( (m_1 + m_2 x)^2 + m_2^2 y^2 \bigr)$, so the first step applies the formula in $m_1$ for
 fixed $m_2$, with the shift $v = m_2 x = m_2 \operatorname{Re} z$, and the second applies it in $m_2$. Finally
@@ -39,7 +39,7 @@ This node has no prerequisites.
 
 ## Proof depends on
 
-- [Theta transformation of a Gaussian sum with a linear term](../theta-q-series-partitions/gaussian-sum-with-linear-term-transformation.md), for the one-variable steps of Proposition 7, with the shift $m_2 \operatorname{Re} z$
+- [Theta transformation of a Gaussian sum with a linear term](../../../Analysis/harmonic-analysis/fourier-series/gaussian-sum-with-linear-term-transformation.md), for the one-variable steps of Proposition 7, with the shift $m_2 \operatorname{Re} z$
 - [The complex gamma function has no zeros away from its poles](../../../Analysis/special-functions/gamma-function/gamma-function-no-zeros.md), for passing from $\Lambda(z, s)$ to $Z(z, s)$ without further poles
 
 ## Sources
