@@ -25,7 +25,7 @@ Reference: Dan Gusfield, Algorithms on Strings, Trees and Sequences: Computer
 Science and Computational Biology, Cambridge University Press, 1997, Ch. 1.
 -/
 
-namespace StringOverlap
+namespace Cslib.Bioinformatics.Assembly.StringOverlap
 
 /-- `OverlapMatch a b k`: `k` is a valid overlap length for `a`, `b`. -/
 def OverlapMatch {α : Type*} [DecidableEq α] (a b : List α) (k : Nat) : Prop :=
@@ -317,4 +317,4 @@ theorem overlap_lt_of_substring_free {α : Type*} [DecidableEq α]
         ((overlap_eq_right_length_iff_suffix b a).mp hcon))
     omega
 
-end StringOverlap
+end Cslib.Bioinformatics.Assembly.StringOverlap

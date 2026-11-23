@@ -18,9 +18,8 @@ Concrete evaluations on `Nat` and `Char` lists, plus instances of the general
 lemmas at concrete values and axiom probes for every test.
 -/
 
-namespace StringOverlapTests
+namespace Cslib.Bioinformatics.Assembly.StringOverlap
 
-open StringOverlap
 
 /-- No common suffix/prefix: overlap is `0`. -/
 theorem test_overlap_zero : overlap [1, 2] [3, 4] = 0 := by decide
@@ -210,4 +209,4 @@ theorem test_merge_not_associative :
 #print axioms length_mergeAll_fold
 #print axioms merge_not_associative
 
-end StringOverlapTests
+end Cslib.Bioinformatics.Assembly.StringOverlap
