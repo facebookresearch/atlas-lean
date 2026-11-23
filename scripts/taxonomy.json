@@ -11125,6 +11125,7 @@
   "MathlibExt/NumberTheory/GeneralizedTribonacci": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Tribonacci numbers"},
   "MathlibExt/NumberTheory/GenocchiBernoulli": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Genocchi numbers"},
   "MathlibExt/NumberTheory/GenocchiNumber": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Genocchi numbers"},
+  "MathlibExt/NumberTheory/GeometricSumsTwoSquares": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Geometric sums as sums of two squares"},
   "MathlibExt/NumberTheory/GesselWord": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "Gessel words"},
   "MathlibExt/NumberTheory/GibonacciCassini": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Gibonacci numbers"},
   "MathlibExt/NumberTheory/GibonacciNumber": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Gibonacci numbers"},
