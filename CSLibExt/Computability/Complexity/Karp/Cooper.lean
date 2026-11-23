@@ -3196,300 +3196,6 @@ theorem outProb_cooperUnsat : (cooperNet cooperUnsat).outProb = 0 := by
           · exact hAndFF _ _
           · exact hAndTF _ _
 
-/-- **The reduction on bit strings**: `satDec x = bnPosDec (reduceBN x)` for every `x`, the shape
-`Cslib.Complexity.PolyManyOneRed` asks of a reduction map. -/
-theorem undelimit_delimit_append (bs rest : List Bool) :
-    MetaMathlibExt.BitstringEncoding.undelimit
-      (MetaMathlibExt.BitstringEncoding.delimit bs ++ rest) = some (bs, rest) := by
-  induction bs generalizing rest with
-  | nil =>
-      simp [MetaMathlibExt.BitstringEncoding.delimit,
-        MetaMathlibExt.BitstringEncoding.undelimit]
-  | cons hd tl ih =>
-      simp [MetaMathlibExt.BitstringEncoding.delimit,
-        MetaMathlibExt.BitstringEncoding.undelimit, ih]
-
-theorem eq_delimit_append_of_undelimit_eq_some :
-    ∀ (input bs rest : List Bool),
-      MetaMathlibExt.BitstringEncoding.undelimit input = some (bs, rest) →
-      input = MetaMathlibExt.BitstringEncoding.delimit bs ++ rest := by
-  have key : ∀ (n : ℕ) (input bs rest : List Bool),
-      input.length ≤ n →
-      MetaMathlibExt.BitstringEncoding.undelimit input = some (bs, rest) →
-      input = MetaMathlibExt.BitstringEncoding.delimit bs ++ rest := by
-    intro n
-    induction n with
-    | zero =>
-        intro input bs rest hlen h
-        cases input with
-        | nil => simp [MetaMathlibExt.BitstringEncoding.undelimit] at h
-        | cons hd tl => simp at hlen
-    | succ n ih =>
-        intro input bs rest hlen h
-        cases input with
-        | nil => simp [MetaMathlibExt.BitstringEncoding.undelimit] at h
-        | cons b tl =>
-            cases b with
-            | false =>
-                simp [MetaMathlibExt.BitstringEncoding.undelimit] at h
-                obtain ⟨rfl, rfl⟩ := h
-                simp [MetaMathlibExt.BitstringEncoding.delimit]
-            | true =>
-                cases tl with
-                | nil => simp [MetaMathlibExt.BitstringEncoding.undelimit] at h
-                | cons b2 tl2 =>
-                    simp only [MetaMathlibExt.BitstringEncoding.undelimit] at h
-                    cases hu : MetaMathlibExt.BitstringEncoding.undelimit tl2 with
-                    | none => simp [hu] at h
-                    | some p =>
-                        simp [hu] at h
-                        obtain ⟨rfl, rfl⟩ := h
-                        have hlen2 : tl2.length ≤ n := by
-                          simp at hlen ⊢
-                          omega
-                        have ih' := ih tl2 _ _ hlen2 hu
-                        simp [MetaMathlibExt.BitstringEncoding.delimit, ih']
-  intro input bs rest h
-  exact key _ _ _ _ le_rfl h
-
-theorem readUnaryLength_replicate_append (k : ℕ) (rest : List Bool) :
-    readUnaryLength (List.replicate k true ++ false :: rest) = some (k, rest) := by
-  induction k generalizing rest with
-  | zero => simp [readUnaryLength]
-  | succ k ih =>
-      have h : List.replicate (k + 1) true ++ false :: rest =
-          true :: (List.replicate k true ++ false :: rest) := by
-        simp [List.replicate_succ]
-      rw [h]
-      simp [readUnaryLength, ih]
-
-theorem eq_replicate_of_readUnaryLength_eq_some :
-    ∀ (input : List Bool) (n : ℕ) (rest : List Bool),
-      readUnaryLength input = some (n, rest) →
-      input = List.replicate n true ++ false :: rest := by
-  intro input
-  induction input with
-  | nil =>
-      intro n rest h
-      simp [readUnaryLength] at h
-  | cons b tl ih =>
-      intro n rest h
-      cases b with
-      | false =>
-          simp [readUnaryLength] at h
-          obtain ⟨rfl, rfl⟩ := h
-          simp
-      | true =>
-          simp only [readUnaryLength] at h
-          cases hu : readUnaryLength tl with
-          | none => simp [hu] at h
-          | some p =>
-              simp [hu] at h
-              obtain ⟨rfl, rfl⟩ := h
-              have ih' := ih _ _ hu
-              simp [ih', List.replicate_succ]
-
-theorem decodeNatPrefix_encodeNatPrefix_append (n : ℕ) (rest : List Bool) :
-    decodeNatPrefix (encodeNatPrefix n ++ rest) = some (n, rest) := by
-  unfold encodeNatPrefix decodeNatPrefix
-  rw [undelimit_delimit_append]
-  simp [Computability.decode_encodeNat]
-
-theorem eq_encodeNatPrefix_append_of_decodeNatPrefix_eq_some :
-    ∀ (input : List Bool) (n : ℕ) (rest : List Bool),
-      decodeNatPrefix input = some (n, rest) →
-      input = encodeNatPrefix n ++ rest := by
-  intro input n rest h
-  unfold decodeNatPrefix at h
-  cases hu : MetaMathlibExt.BitstringEncoding.undelimit input with
-  | none => simp [hu] at h
-  | some p =>
-      obtain ⟨bits, mid⟩ := p
-      simp [hu] at h
-      by_cases hif : Computability.encodeNat (Computability.decodeNat bits) = bits
-      · simp [hif] at h
-        obtain ⟨rfl, rfl⟩ := h
-        have g1 := eq_delimit_append_of_undelimit_eq_some input _ _ hu
-        unfold encodeNatPrefix
-        rw [g1, hif]
-      · simp [hif] at h
-
-theorem decodeLit_encodeLit_append (l : ℕ × Bool) (rest : List Bool) :
-    decodeLit (encodeLit l ++ rest) = some (l, rest) := by
-  have h : encodeLit l ++ rest = encodeNatPrefix l.1 ++ ([l.2] ++ rest) := by
-    simp [encodeLit, List.append_assoc]
-  simp only [decodeLit, h, decodeNatPrefix_encodeNatPrefix_append]
-  simp
-
-theorem eq_encodeLit_append_of_decodeLit_eq_some :
-    ∀ (input : List Bool) (l : ℕ × Bool) (rest : List Bool),
-      decodeLit input = some (l, rest) → input = encodeLit l ++ rest := by
-  intro input l rest h
-  unfold decodeLit at h
-  cases hu : decodeNatPrefix input with
-  | none => simp [hu] at h
-  | some p =>
-      obtain ⟨n, mid⟩ := p
-      simp [hu] at h
-      cases mid with
-      | nil => simp at h
-      | cons pol tail =>
-          simp only [Option.some.injEq, Prod.mk.injEq] at h
-          obtain ⟨rfl, rfl⟩ := h
-          have g2 := eq_encodeNatPrefix_append_of_decodeNatPrefix_eq_some input _ _ hu
-          simp [encodeLit, g2, List.append_assoc]
-
-theorem decodeLits_encodeLit_flatMap (C : CNFClause) (rest : List Bool) :
-    decodeLits C.length (C.flatMap encodeLit ++ rest) = some (C, rest) := by
-  induction C generalizing rest with
-  | nil => simp [decodeLits]
-  | cons hd tl ih =>
-      have harg : (hd :: tl).flatMap encodeLit ++ rest =
-          encodeLit hd ++ (tl.flatMap encodeLit ++ rest) := by
-        simp [List.append_assoc]
-      simp only [List.length_cons, harg]
-      simp [decodeLits, decodeLit_encodeLit_append, ih]
-
-theorem eq_len_and_flatMap_of_decodeLits_eq_some (n : ℕ) :
-    ∀ (input : List Bool) (C : CNFClause) (rest : List Bool),
-      decodeLits n input = some (C, rest) →
-      C.length = n ∧ input = C.flatMap encodeLit ++ rest := by
-  induction n with
-  | zero =>
-      intro input C rest h
-      simp only [decodeLits, Option.some.injEq, Prod.mk.injEq] at h
-      obtain ⟨rfl, rfl⟩ := h
-      exact ⟨rfl, by simp⟩
-  | succ n ih =>
-      intro input C rest h
-      simp only [decodeLits] at h
-      cases hu : decodeLit input with
-      | none => simp [hu] at h
-      | some p =>
-          obtain ⟨lit, mid⟩ := p
-          simp [hu] at h
-          cases hv : decodeLits n mid with
-          | none => simp [hv] at h
-          | some q =>
-              obtain ⟨lits, tail⟩ := q
-              simp [hv] at h
-              obtain ⟨rfl, rfl⟩ := h
-              have g3 := eq_encodeLit_append_of_decodeLit_eq_some input _ _ hu
-              have ihr := ih mid _ _ hv
-              constructor
-              · simp [ihr.1]
-              · simp [g3, ihr.2, List.flatMap_cons, List.append_assoc]
-
-theorem decodeClause_encodeClause_append (C : CNFClause) (rest : List Bool) :
-    decodeClause (encodeClause C ++ rest) = some (C, rest) := by
-  have harg : encodeClause C ++ rest =
-      List.replicate C.length true ++ false :: (C.flatMap encodeLit ++ rest) := by
-    simp [encodeClause, List.append_assoc]
-  rw [harg]
-  simp [decodeClause, readUnaryLength_replicate_append, decodeLits_encodeLit_flatMap]
-
-theorem eq_encodeClause_append_of_decodeClause_eq_some :
-    ∀ (input : List Bool) (C : CNFClause) (rest : List Bool),
-      decodeClause input = some (C, rest) → input = encodeClause C ++ rest := by
-  intro input C rest h
-  simp only [decodeClause] at h
-  cases hu : readUnaryLength input with
-  | none => simp [hu] at h
-  | some p =>
-      obtain ⟨n, mid⟩ := p
-      simp [hu] at h
-      have g4 := eq_len_and_flatMap_of_decodeLits_eq_some n mid C rest h
-      have g0 := eq_replicate_of_readUnaryLength_eq_some input n mid hu
-      rw [g0, ← g4.1, g4.2]
-      simp [encodeClause, List.append_assoc]
-
-theorem decodeClauses_encodeClause_flatMap (φ : CNF) (rest : List Bool) :
-    decodeClauses φ.length (φ.flatMap encodeClause ++ rest) = some (φ, rest) := by
-  induction φ generalizing rest with
-  | nil => simp [decodeClauses]
-  | cons hd tl ih =>
-      have harg : (hd :: tl).flatMap encodeClause ++ rest =
-          encodeClause hd ++ (tl.flatMap encodeClause ++ rest) := by
-        simp [List.append_assoc]
-      simp only [List.length_cons, harg]
-      simp [decodeClauses, decodeClause_encodeClause_append, ih]
-
-theorem eq_len_and_flatMap_of_decodeClauses_eq_some (n : ℕ) :
-    ∀ (input : List Bool) (φ : CNF) (rest : List Bool),
-      decodeClauses n input = some (φ, rest) →
-      φ.length = n ∧ input = φ.flatMap encodeClause ++ rest := by
-  induction n with
-  | zero =>
-      intro input φ rest h
-      simp only [decodeClauses, Option.some.injEq, Prod.mk.injEq] at h
-      obtain ⟨rfl, rfl⟩ := h
-      exact ⟨rfl, by simp⟩
-  | succ n ih =>
-      intro input φ rest h
-      simp only [decodeClauses] at h
-      cases hu : decodeClause input with
-      | none => simp [hu] at h
-      | some p =>
-          obtain ⟨cl, mid⟩ := p
-          simp [hu] at h
-          cases hv : decodeClauses n mid with
-          | none => simp [hv] at h
-          | some q =>
-              obtain ⟨cls, tail⟩ := q
-              simp [hv] at h
-              obtain ⟨rfl, rfl⟩ := h
-              have g5 := eq_encodeClause_append_of_decodeClause_eq_some input _ _ hu
-              have ihr := ih mid _ _ hv
-              constructor
-              · simp [ihr.1]
-              · simp [g5, ihr.2, List.flatMap_cons, List.append_assoc]
-
-theorem decodeCNFAux_encodeCNF_append (φ : CNF) (rest : List Bool) :
-    decodeCNFAux (encodeCNF φ ++ rest) = some (φ, rest) := by
-  have harg : encodeCNF φ ++ rest =
-      List.replicate φ.length true ++ false :: (φ.flatMap encodeClause ++ rest) := by
-    simp [encodeCNF, List.append_assoc]
-  rw [harg]
-  simp [decodeCNFAux, readUnaryLength_replicate_append, decodeClauses_encodeClause_flatMap]
-
-theorem decodeCNF_encodeCNF (φ : CNF) : decodeCNF (encodeCNF φ) = some φ := by
-  have harg : encodeCNF φ = encodeCNF φ ++ [] := (List.append_nil _).symm
-  rw [harg]
-  simp only [decodeCNF, decodeCNFAux_encodeCNF_append]
-  simp
-
-theorem eq_encodeCNF_append_of_decodeCNFAux_eq_some :
-    ∀ (input : List Bool) (φ : CNF) (rest : List Bool),
-      decodeCNFAux input = some (φ, rest) → input = encodeCNF φ ++ rest := by
-  intro input φ rest h
-  simp only [decodeCNFAux] at h
-  cases hu : readUnaryLength input with
-  | none => simp [hu] at h
-  | some p =>
-      obtain ⟨n, mid⟩ := p
-      simp [hu] at h
-      have g6 := eq_len_and_flatMap_of_decodeClauses_eq_some n mid φ rest h
-      have g0 := eq_replicate_of_readUnaryLength_eq_some input n mid hu
-      rw [g0, ← g6.1, g6.2]
-      simp [encodeCNF, List.append_assoc]
-
-theorem eq_encodeCNF_of_decodeCNF_eq_some :
-    ∀ (x : List Bool) (φ : CNF), decodeCNF x = some φ → encodeCNF φ = x := by
-  intro x φ h
-  unfold decodeCNF at h
-  cases hu : decodeCNFAux x with
-  | none => simp [hu] at h
-  | some p =>
-      obtain ⟨ψ, mid⟩ := p
-      simp [hu] at h
-      cases mid with
-      | nil =>
-          simp at h
-          subst h
-          have g7 := eq_encodeCNF_append_of_decodeCNFAux_eq_some x _ _ hu
-          simpa using g7.symm
-      | cons hd tl => simp at h
-
 theorem noBN_wellFormed : noBN.WellFormed := by
   show RatNet.WellFormed [constNode false]
   unfold RatNet.WellFormed
@@ -3518,6 +3224,8 @@ theorem outProb_noBN : noBN.outProb = 0 := by
   refine Finset.prod_eq_zero (i := (⟨0, h0len⟩ : Fin [constNode false].length)) (Finset.mem_univ _) ?_
   simp only [hget0, hpv0, hprob, hx, ite_true]
 
+/-- **Decision preservation on bit strings**: the bit-string map agrees with the SAT decider,
+`satDec x = bnPosDec (reduceBN x)` for every `x`. No running-time bound is proved here. -/
 theorem satDec_eq_bnPosDec_reduceBN (x : List Bool) : satDec x = bnPosDec (reduceBN x) := by
   classical
   simp only [satDec, bnPosDec, reduceBN]
@@ -3536,7 +3244,7 @@ theorem satDec_eq_bnPosDec_reduceBN (x : List Bool) : satDec x = bnPosDec (reduc
         intro hmem
         simp only [SATLang, IsSATEncoded, Set.mem_ofPred_eq] at hmem
         obtain ⟨ψ, henc, -⟩ := hmem
-        have hde := decodeCNF_encodeCNF ψ
+        have hde := Cslib.CookLevin.decodeCNF_encodeCNF ψ
         rw [henc, hdec] at hde
         simp at hde
       rw [ite_eq_right hnotmem, hbn]
@@ -3547,14 +3255,14 @@ theorem satDec_eq_bnPosDec_reduceBN (x : List Bool) : satDec x = bnPosDec (reduc
         · intro hmem
           simp only [SATLang, IsSATEncoded, Set.mem_ofPred_eq] at hmem
           obtain ⟨ψ, henc, hsat⟩ := hmem
-          have hde := decodeCNF_encodeCNF ψ
+          have hde := Cslib.CookLevin.decodeCNF_encodeCNF ψ
           rw [henc, hdec] at hde
           simp at hde
           subst hde
           exact hsat
         · intro hsat
           simp only [SATLang, IsSATEncoded, Set.mem_ofPred_eq]
-          exact ⟨φ, eq_encodeCNF_of_decodeCNF_eq_some x φ hdec, hsat⟩
+          exact ⟨φ, ((Cslib.CookLevin.decodeCNF_eq_some_iff x φ).mp hdec).symm, hsat⟩
       have hdecr : decodeRatNet (encodeRatNet (cooperNet φ)) = some (cooperNet φ) :=
         decodeRatNet_encodeRatNet _
       by_cases hsat : CNFSat φ
@@ -3574,8 +3282,6 @@ theorem satDec_eq_bnPosDec_reduceBN (x : List Bool) : satDec x = bnPosDec (reduc
         rw [hdecr]
         show false = decide ((cooperNet φ).WellFormed ∧ 0 < (cooperNet φ).outProb)
         exact (decide_eq_false hneg).symm
-
-/-! ### Boundary probes (empty formula, empty clause); not card acceptance items -/
 
 /-- The empty formula gives a constant-true output. -/
 theorem outProb_cooperNet_nil : (cooperNet []).outProb = 1 := by
