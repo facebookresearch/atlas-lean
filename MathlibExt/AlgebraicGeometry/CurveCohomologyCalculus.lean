@@ -7,16 +7,22 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The comparison constructions follow AxiomMath/Stacks, revision
-c496df0d9beea9deaeabcea8492605f9a0a2313b:
-StacksFrontier/AlgebraicGeometry/Variety/EulerChar/Cohomology.lean,
-StacksFrontier/AlgebraicGeometry/AffineMorphismEuler/Basic.lean, and
-StacksFrontier/CategoryTheory/Abelian/RightDerivedPostcompose.lean.
-The public sources have no individual copyright/author notices and are
-licensed under Apache 2.0. Modification notice: use the exact existing
-ATLAS sectionsFunctor/rightDerived carrier; expose the actual mapped
-resolution unit and the canonical comparison maps under their genuine
-acyclicity conditions, rather than assuming an Euler or degree conclusion.
+Portions of this file are adapted from:
+
+`StacksFrontier/AlgebraicGeometry/Variety/EulerChar/Cohomology.lean`
+(AxiomMath/Stacks, https://github.com/AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b):
+`StacksFrontier/AlgebraicGeometry/AffineMorphismEuler/Basic.lean`
+(AxiomMath/Stacks, https://github.com/AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b):
+`StacksFrontier/CategoryTheory/Abelian/RightDerivedPostcompose.lean`
+(AxiomMath/Stacks, https://github.com/AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The source files carry no per-file copyright notice or author list.
+Modified: the comparisons use the ATLAS `sectionsFunctor`/`rightDerived` carrier and
+expose the mapped resolution unit and the comparison maps under their acyclicity
+conditions, instead of assuming an Euler or degree conclusion.
 -/
 module
 
