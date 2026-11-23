@@ -80,7 +80,9 @@ theorem col3Dec_encodeE_eq_true {n : ℕ} {es : List (ℕ × ℕ)} :
     edgeGraph n es.reverse = edgeGraph n es := by
   simp [edgeGraph]
 
-/-- The complete graph on four vertices is not 3-colorable. -/
+/-- **The complete graph on four vertices is not 3-colorable.** The graph on the vertices
+$0, 1, 2, 3$ with an edge between every two distinct vertices has no proper coloring with
+$3$ colors. -/
 theorem not_colorable_noCol :
     ¬(edgeGraph 4 [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]).Colorable 3 := by
   rintro ⟨C⟩
@@ -96,7 +98,8 @@ theorem col3Dec_noCol : col3Dec noCol = false := by
 
 /-! ### Colorings as functions on `ℕ` -/
 
-/-- `c` gives the two endpoints of every edge in `es` different colors. -/
+/-- **Proper 3-colorings of an edge list.** A map $c : \mathbb{N} \to \{0, 1, 2\}$ properly colors
+a list $E$ of pairs of natural numbers when $c(a) \ne c(b)$ for every pair $(a, b)$ in $E$. -/
 def ColProper (c : ℕ → Fin 3) (es : List (ℕ × ℕ)) : Prop :=
   ∀ e ∈ es, c e.1 ≠ c e.2
 
@@ -104,8 +107,10 @@ theorem ColProper.mono {c : ℕ → Fin 3} {es es' : List (ℕ × ℕ)} (h : Col
     (hs : es ⊆ es') : ColProper c es :=
   fun e he => h e (hs he)
 
-/-- On a loopless edge list with endpoints below `n`, 3-colorability of the graph is the
-existence of a proper coloring of the edges by a function on `ℕ`. -/
+/-- **3-colorability through colorings of the natural numbers.** Let $n$ be a natural number and
+$E$ a list of pairs $(a, b)$ of natural numbers with $a < n$, $b < n$ and $a \ne b$. The graph on
+$\{0, \dots, n - 1\}$ with edge list $E$ is 3-colorable if and only if some map
+$c : \mathbb{N} \to \{0, 1, 2\}$ satisfies $c(a) \ne c(b)$ for every pair $(a, b)$ in $E$. -/
 theorem colorable_iff_exists_colProper {n : ℕ} {es : List (ℕ × ℕ)}
     (hb : ∀ e ∈ es, e.1 < n ∧ e.2 < n ∧ e.1 ≠ e.2) :
     (edgeGraph n es).Colorable 3 ↔ ∃ c, ColProper c es := by
@@ -124,15 +129,29 @@ theorem colorable_iff_exists_colProper {n : ℕ} {es : List (ℕ × ℕ)}
 
 /-! ### Three colors -/
 
-/-- An OR gadget whose inputs are colored `T` (`0`) or `F` (`1`) has a coloring whose output is
-the or of the inputs. -/
+/-- **Coloring an OR gadget.** Read the colors $0, 1, 2$ as $T$, $F$ and $B$. For all
+colors $c_a, c_o \in \{0, 1, 2\}$ with $c_a \ne 2$ and $c_o \ne 2$, there are colors
+$c_u, c_v, c_w \in \{0, 1, 2\}$ with $c_a \ne c_u$, $c_o \ne c_v$, $c_u \ne c_v$,
+$c_u \ne c_w$, $c_v \ne c_w$ and $c_w \ne 2$, such that $c_w = 0$ if and only if
+$c_a = 0$ or $c_o = 0$.
+
+These are the conditions for a proper coloring of an OR gadget with inputs $a, o$, fresh
+vertices $u, v, w$ and edges $au$, $ov$, $uv$, $uw$, $vw$, $wB$, where $B$ has color $2$:
+if both inputs are colored $T$ or $F$, the gadget can be colored so that its output $w$ is
+$T$ or $F$, and $T$ exactly when some input is $T$. -/
 theorem or_gadget_colors : ∀ ca co : Fin 3, ca ≠ 2 → co ≠ 2 → ∃ cu cv cw : Fin 3,
     ca ≠ cu ∧ co ≠ cv ∧ cu ≠ cv ∧ cu ≠ cw ∧ cv ≠ cw ∧ cw ≠ 2 ∧
       (cw = 0 ↔ ca = 0 ∨ co = 0) := by
   decide
 
-/-- An OR gadget whose inputs are colored `T` or `F` and whose output is `T` has an input
-colored `T`. -/
+/-- **Soundness of the OR gadget.** Read the colors $0, 1, 2$ as $T$, $F$ and $B$. If
+colors $c_a, c_o, c_u, c_v, c_w \in \{0, 1, 2\}$ satisfy $c_a \ne 2$, $c_o \ne 2$,
+$c_a \ne c_u$, $c_o \ne c_v$, $c_u \ne c_v$, $c_u \ne c_w$, $c_v \ne c_w$ and $c_w = 0$,
+then $c_a = 0$ or $c_o = 0$.
+
+That is, in a proper coloring of an OR gadget with inputs $a, o$, fresh vertices $u, v, w$
+and edges $au$, $ov$, $uv$, $uw$, $vw$, if both inputs are colored $T$ or $F$ and the
+output $w$ is $T$, then some input is $T$. -/
 theorem or_gadget_sound : ∀ ca co cu cv cw : Fin 3, ca ≠ 2 → co ≠ 2 → ca ≠ cu → co ≠ cv →
     cu ≠ cv → cu ≠ cw → cv ≠ cw → cw = 0 → ca = 0 ∨ co = 0 := by
   decide
@@ -164,6 +183,9 @@ private theorem ft_ne_of_ne : ∀ x b b' : Bool, b' ≠ b →
 
 /-! ### Unfolding the construction -/
 
+/-- **Adding a literal occurrence takes two new vertices.** For a literal $l$ and a state $s$ of
+the SAT-to-3-COLOR construction whose next free vertex is $n$, the state obtained by adding the
+occurrence $l$ to $s$ has next free vertex $n + 2$. -/
 @[simp] theorem colOcc_next (l : ℕ × Bool) (s : ColSt) : (colOcc l s).1.next = s.next + 2 :=
   rfl
 
@@ -205,7 +227,9 @@ theorem colLits_cons (l : ℕ × Bool) (ls : List (ℕ × Bool)) (o : ℕ) (s : 
 
 /-! ### Growth -/
 
-/-- `s'` extends `s`: `next` does not decrease, and edges and occurrences accumulate. -/
+/-- **Growth of construction states.** A construction state $s'$ extends a construction state $s$
+when the next free vertex of $s'$ is at least that of $s$, every edge emitted in $s$ is emitted in
+$s'$, and every occurrence recorded in $s$ is recorded in $s'$. -/
 structure ColGrows (s s' : ColSt) : Prop where
   /-- `next` does not decrease. -/
   next : s.next ≤ s'.next
@@ -221,7 +245,11 @@ theorem ColGrows.trans {s₁ s₂ s₃ : ColSt} (h₁ : ColGrows s₁ s₂) (h�
     ColGrows s₁ s₃ :=
   ⟨h₁.next.trans h₂.next, List.Subset.trans h₁.em h₂.em, List.Subset.trans h₁.prev h₂.prev⟩
 
-/-- Allocating vertices and appending edges grows a state. -/
+/-- **Extending a state makes it grow.** Let $s$ be a construction state with next free vertex
+$m$, let $n \ge m$, and let $E$ be a list of pairs of natural numbers. Then the state with next
+free vertex $n$, the same recorded occurrences as $s$, and emitted edges those of $s$ followed by
+$E$ extends $s$: its next free vertex is at least that of $s$, and its emitted edges and recorded
+occurrences include those of $s$. -/
 theorem colGrows_extend (s : ColSt) {n : ℕ} (es : List (ℕ × ℕ)) (hn : s.next ≤ n) :
     ColGrows s ⟨n, s.prev, s.em ++ es⟩ :=
   ⟨hn, List.subset_append_left _ _, List.Subset.refl _⟩
@@ -252,9 +280,16 @@ theorem colGrows_foldl :
 
 /-! ### Well-formedness -/
 
-/-- Well-formedness of a construction state: vertices below `next`, no loops, the palette
-triangle, the triangle `L, M, B` of every occurrence, and the consistency edges between every
-occurrence and each earlier one. -/
+/-- **Well-formed construction states.** A construction state $s$ with next free vertex $n$ is
+well formed when $3 \le n$; every emitted edge $(a, b)$ has $a < n$, $b < n$ and $a \ne b$; the
+literal vertex and the negation vertex of every recorded occurrence are smaller than $n$; the
+pairs $(0, 1)$, $(0, 2)$ and $(1, 2)$ are emitted edges (the palette triangle); for every
+recorded occurrence with literal vertex $L$ and negation vertex $M$, the pairs $(L, M)$, $(L, 2)$
+and $(M, 2)$ are emitted edges; and whenever an occurrence with variable $x$, polarity $b$,
+literal vertex $L$ and negation vertex $M$ comes before an occurrence with the same variable $x$,
+polarity $b'$, literal vertex $L'$ and negation vertex $M'$ in the list of recorded occurrences
+(which lists the latest first), the pairs $(L', M)$ and $(M', L)$ are emitted edges if $b' = b$,
+and the pairs $(L', L)$ and $(M', M)$ are emitted edges if $b' \ne b$. -/
 structure ColGood (s : ColSt) : Prop where
   /-- The palette is allocated. -/
   three_le : 3 ≤ s.next
@@ -277,8 +312,11 @@ theorem colGood_init : ColGood ⟨3, [], [(0, 1), (0, 2), (1, 2)]⟩ where
   tri := by simp
   cons := List.Pairwise.nil
 
-/-- Allocating vertices and appending edges between distinct allocated vertices keeps a state
-good. -/
+/-- **Extending a well-formed state keeps it well formed.** Let $s$ be a well-formed
+construction state with next free vertex $m$, let $n \ge m$, and let $E$ be a list of pairs
+$(a, b)$ of natural numbers with $a < n$, $b < n$ and $a \ne b$. Then the state with next free
+vertex $n$, the same recorded occurrences as $s$, and emitted edges those of $s$ followed by $E$
+is well formed. -/
 theorem ColGood.extend {s : ColSt} (h : ColGood s) {n : ℕ} (es : List (ℕ × ℕ))
     (hn : s.next ≤ n) (hes : ∀ e ∈ es, e.1 < n ∧ e.2 < n ∧ e.1 ≠ e.2) :
     ColGood ⟨n, s.prev, s.em ++ es⟩ := by
@@ -368,15 +406,22 @@ theorem colGood_foldl :
 theorem colGood_colSt (φ : CNF) : ColGood (colSt φ) :=
   colGood_foldl _ _ colGood_init
 
-/-- The edges of the construction join vertices below `next`. -/
+/-- **The construction's edges lie below its vertex count.** For every CNF formula $\varphi$,
+both endpoints of every edge emitted by the construction for $\varphi$ are smaller than the
+number of vertices the construction allocates (its next free vertex). -/
 theorem colSt_em_lt (φ : CNF) :
     ∀ e ∈ (colSt φ).em, e.1 < (colSt φ).next ∧ e.2 < (colSt φ).next :=
   fun e he => ⟨((colGood_colSt φ).em_lt e he).1, ((colGood_colSt φ).em_lt e he).2.1⟩
 
 /-! ### Satisfiable formulas give 3-colorable graphs -/
 
-/-- `c` properly colors the edges of `s`, colors the palette `T, F, B` as `0, 1, 2`, and colors
-each occurrence by the assignment `v`: `L` is `T` iff its literal is true, `M` the other. -/
+/-- **Colorings that follow an assignment.** Let $s$ be a construction state, let
+$v : \mathbb{N} \to \mathrm{Bool}$ be an assignment, and let $c : \mathbb{N} \to \{0, 1, 2\}$ be a
+coloring. Then $c$ colors $s$ according to $v$ when $c(0) = 0$, $c(1) = 1$ and $c(2) = 2$ (the
+palette vertices $T$, $F$, $B$), $c(a) \ne c(b)$ for every edge $(a, b)$ emitted in $s$, and for
+every occurrence recorded in $s$ with variable $x$, polarity $b$, literal vertex $L$ and negation
+vertex $M$: if $v(x) = b$ then $c(L) = 0$ and $c(M) = 1$, and otherwise $c(L) = 1$ and
+$c(M) = 0$. -/
 structure ColColored (v : ℕ → Bool) (c : ℕ → Fin 3) (s : ColSt) : Prop where
   /-- `T` is `0`. -/
   zero : c 0 = 0
@@ -559,6 +604,13 @@ theorem colorable_of_cnfSat {φ : CNF} (h : CNFSat φ) :
 
 /-! ### 3-colorable graphs give satisfiable formulas -/
 
+/-- **Output of the OR gadget under a proper 3-coloring.** Let $c : \mathbb{N} \to \{0, 1, 2\}$
+with $c(2) = 2$, let $a$ and $o$ be natural numbers, let $s$ be a state of the SAT-to-3-COLOR
+construction and let $E$ be a list of pairs of natural numbers such that $c(u) \ne c(v)$ for
+every pair $(u, v)$ in $E$. Apply the OR gadget to $a$, $o$ and $s$, giving a new state and an
+output vertex $w$, and suppose every edge in the emitted-edge list of the new state belongs to
+$E$. If $c(a) \ne 2$ and $c(o) \ne 2$, then $c(w) \ne 2$, and if $c(w) = 0$ then $c(a) = 0$ or
+$c(o) = 0$. -/
 theorem sound_colOr {c : ℕ → Fin 3} {a o : ℕ} {s : ColSt} {E : List (ℕ × ℕ)} (h2 : c 2 = 2)
     (hp : ColProper c E) (hsub : (colOr a o s).1.em ⊆ E) (ha : c a ≠ 2) (ho : c o ≠ 2) :
     c (colOr a o s).2 ≠ 2 ∧ (c (colOr a o s).2 = 0 → c a = 0 ∨ c o = 0) := by
@@ -697,13 +749,20 @@ theorem cnfSat_of_colorable {φ : CNF}
     rw [hcons q' (List.mem_of_find?_eq_some hf) q hq hx]
     simp [val, hq0]
 
-/-- SAT ≤ 3-COLOR on formulas: `φ` is satisfiable iff its graph is 3-colorable. -/
+/-- **Correctness of the reduction from SAT to 3-coloring.** A CNF formula $\varphi$ is satisfiable
+if and only if the graph built from $\varphi$ by the Garey–Johnson–Stockmeyer construction is
+3-colorable. Here, writing $n$ for the number of vertices the construction allocates, the graph
+has vertex set $\{0, \dots, n - 1\}$, and two distinct vertices are adjacent when the
+construction emits an edge between them in either order. -/
 theorem cnfSat_iff_colorable (φ : CNF) :
     CNFSat φ ↔ (edgeGraph (colSt φ).next (colSt φ).em).Colorable 3 :=
   ⟨colorable_of_cnfSat, cnfSat_of_colorable⟩
 
 /-! ### The reduction on bit strings -/
 
+/-- **Correctness of the SAT to 3-COLOR map on bit strings.** For every bit string $x$, SAT
+accepts $x$ if and only if 3-COLOR accepts the image of $x$ under the SAT to 3-COLOR reduction
+map on bit strings. -/
 theorem satDec_eq_col3Dec_reduceCol (x : List Bool) : satDec x = col3Dec (reduceCol x) := by
   unfold reduceCol
   split

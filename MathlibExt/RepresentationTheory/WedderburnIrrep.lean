@@ -48,9 +48,12 @@ namespace CharacterTheory
 
 universe u
 
-/-- The algebra map `k[G] → Module.End k (Fin (d i) → k)` underlying the
-`i`-th Wedderburn block: the Wedderburn equivalence, evaluation at `i`,
-and the matrix-to-linear-map equivalence. -/
+/-- **Algebra map of a Wedderburn block.** Let $k$ be an algebraically closed field, $G$ a finite
+group whose order is nonzero in $k$, and $e \colon k[G] \to \prod_{j < n} M_{d_j}(k)$ an
+isomorphism of $k$-algebras from the group algebra onto a product of full matrix algebras. For
+$i < n$, this is the $k$-algebra homomorphism $k[G] \to \operatorname{End}_k(k^{d_i})$ that sends
+$a \in k[G]$ to the linear map $v \mapsto e(a)_i \, v$, where $e(a)_i$ is the $i$-th component of
+$e(a)$. -/
 noncomputable def wedderburnAlgHom (k : Type u) [Field k] [IsAlgClosed k]
     (G : Type u) [Group G] [Fintype G] [NeZero (Nat.card G : k)]
     {n : ℕ} {d : Fin n → ℕ}
@@ -60,9 +63,12 @@ noncomputable def wedderburnAlgHom (k : Type u) [Field k] [IsAlgClosed k]
   (Matrix.toLinAlgEquiv' (R := k) (n := Fin (d i))).toAlgHom.comp
     ((Pi.evalAlgHom k _ i).comp e.toAlgHom)
 
-/-- The representation of `G` obtained from the `i`-th block of a
-Wedderburn–Artin decomposition of the group algebra: project onto the
-`i`-th matrix algebra and let the matrix act on `Fin (d i) → k`. -/
+/-- **Representation of a Wedderburn block.** Let $k$ be an algebraically closed field, $G$ a
+finite group whose order is nonzero in $k$, and $e \colon k[G] \to \prod_{j < n} M_{d_j}(k)$ an
+isomorphism of $k$-algebras from the group algebra $k[G]$ onto a product of full matrix algebras
+$M_{d_j}(k)$ of $d_j \times d_j$ matrices over $k$. For $i < n$, this is the representation of $G$
+on $k^{d_i}$ in which $g \in G$ acts by $v \mapsto e(g)_i \, v$, where $g$ is viewed as an element
+of $k[G]$ and $e(g)_i$ is the $i$-th component of $e(g)$. -/
 noncomputable def wedderburnIrrep (k : Type u) [Field k] [IsAlgClosed k]
     (G : Type u) [Group G] [Fintype G] [NeZero (Nat.card G : k)]
     {n : ℕ} {d : Fin n → ℕ}
@@ -71,9 +77,13 @@ noncomputable def wedderburnIrrep (k : Type u) [Field k] [IsAlgClosed k]
     Representation k G (Fin (d i) → k) :=
   (wedderburnAlgHom k G e i).toRingHom.toMonoidHom.comp (MonoidAlgebra.of k G)
 
-/-- **Wedderburn blocks are irreducible.** The representation obtained
-from the `i`-th block of a Wedderburn–Artin decomposition of `k[G]` is
-irreducible, provided the block is nonzero. -/
+/-- **Wedderburn blocks are irreducible.** Let $k$ be an algebraically closed field, $G$ a finite
+group whose order is nonzero in $k$, and $e \colon k[G] \to \prod_{j < n} M_{d_j}(k)$ an
+isomorphism of $k$-algebras from the group algebra $k[G]$ onto a product of full matrix algebras
+$M_{d_j}(k)$ of $d_j \times d_j$ matrices over $k$. For every $i < n$ with $d_i \ne 0$, the
+representation of $G$ on $k^{d_i}$ in which $g \in G$ acts by $v \mapsto e(g)_i \, v$, where $g$
+is viewed as an element of $k[G]$ and $e(g)_i$ is the $i$-th component of $e(g)$, is
+irreducible. -/
 theorem wedderburnIrrep_isIrreducible (k : Type u) [Field k] [IsAlgClosed k]
     (G : Type u) [Group G] [Fintype G] [NeZero (Nat.card G : k)]
     {n : ℕ} {d : Fin n → ℕ}

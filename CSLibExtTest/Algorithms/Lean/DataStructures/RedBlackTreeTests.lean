@@ -335,6 +335,68 @@ example (left right : RedBlackTree.Tree Nat) (key : Nat) :
     colorBB (.regular (.node .red left key right)) = .red :=
   colorBB_regular_red
 
+/-! ### Height bound -/
+
+/-- A tree of fifteen keys built by insertion, hence valid. -/
+public def fifteen : RedBlackTree.Tree Nat := RedBlackTree.fromList (List.range 15)
+
+example : (RedBlackTree.erase fifteen).numNodes = 15 := by decide
+
+/-- The bound `2 * log2 (15 + 1) = 8` holds for the concrete tree, whose
+height is computed by the kernel. -/
+example : (RedBlackTree.erase fifteen).height ≤ 8 := by decide
+
+example : (RedBlackTree.erase fifteen).height ≤
+    2 * Nat.log2 ((RedBlackTree.erase fifteen).numNodes + 1) :=
+  RedBlackTree.height_le_of_valid RedBlackTree.valid_fromList
+
+/-- The general form: every tree built by insertion has logarithmic height. -/
+example (xs : List Nat) :
+    (RedBlackTree.erase (RedBlackTree.fromList xs)).height ≤
+      2 * Nat.log2 ((RedBlackTree.erase (RedBlackTree.fromList xs)).numNodes + 1) :=
+  RedBlackTree.height_le_of_valid RedBlackTree.valid_fromList
+
+/-- Double-black deletion keeps the height logarithmic in the remaining size. -/
+example (xs : List Nat) (x : Nat) :
+    (RedBlackTree.erase (deleteBal x (RedBlackTree.fromList xs))).height ≤
+      2 * Nat.log2
+        ((RedBlackTree.erase (deleteBal x (RedBlackTree.fromList xs))).numNodes + 1) :=
+  RedBlackTree.height_le_of_valid (valid_deleteBal RedBlackTree.valid_fromList)
+
+/-- The black-height form: a red root with two black leaves has black height
+one and height one, the extra level allowed for a red root. -/
+example : (RedBlackTree.erase (.node .red .empty 1 .empty : RedBlackTree.Tree Nat)).height + 2 ≤
+    2 * RedBlackTree.blackHeight (.node .red .empty 1 .empty : RedBlackTree.Tree Nat) + 1 :=
+  RedBlackTree.height_le_blackHeight _ ⟨trivial, trivial, rfl, rfl⟩ ⟨trivial, trivial, rfl⟩
+
+/-! ### A red spine needs the red invariant (Codex counterexample idea) -/
+
+/-- A right-leaning spine of red nodes: balanced, since every root-to-leaf path
+has black-height one (the empty leaf counts one; there are no internal black
+nodes), but with red-red edges throughout. This raw tree is
+exhibited only as an invariant counterexample, not as reachable by public
+insertion or deletion. -/
+private def redSpine : RedBlackTree.Tree Nat :=
+  .node .red .empty 1 (.node .red .empty 2 (.node .red .empty 3
+    (.node .red .empty 4 (.node .red .empty 5 .empty))))
+
+/-- The red spine is balanced. -/
+example : Balanced redSpine := by simp [redSpine, Balanced, blackHeight]
+
+/-- The red spine has black-height one: the leaf contributes the only count. -/
+example : RedBlackTree.blackHeight redSpine = 1 := by decide
+
+/-- The red spine violates the red invariant. -/
+example : ¬ RedOk redSpine := by simp [redSpine, RedOk, colorOf]
+
+/-- The red spine breaks the height bound, so the bound needs `RedOk`: a
+balanced-only tree of 5 nodes reaches height 5, above `2 * log2 6`. -/
+example : ¬ (erase redSpine).height ≤
+    2 * Nat.log2 ((erase redSpine).numNodes + 1) := by decide
+
+#print axioms RedBlackTree.height_le_of_valid
+#print axioms RedBlackTree.height_le_blackHeight
+#print axioms RedBlackTree.two_pow_blackHeight_le
 #print axioms valid_delete
 #print axioms valid_deleteBal
 #print axioms inorder_deleteBal

@@ -1,0 +1,3 @@
+# Sinclair's Theorem 3′: $\Phi \ge 1/(2\rho(f))$
+
+Let $\pi$ be a probability vector and $f$ a [multicommodity flow](multicommodity-flow.md) that puts at most $\rho\,\pi(u)P(u,v)$ on every oriented edge. Then every set $A$ with $\pi(A) \le 1/2$ satisfies $\pi(A) \le 2\rho\, Q(A,A^c)$, where $Q(A,A^c) = \sum_{u \in A,\ v \notin A}\pi(u)P(u,v)$; minimising over $0 < \pi(A) \le 1/2$ gives $\Phi \ge 1/(2\rho(f))$, Theorem 3′ of A. Sinclair, *Improved bounds for mixing rates of Markov chains and multicommodity flow*, Combinatorics, Probability and Computing 1 (1992), 351–370. It follows from [inequality (13) for flows](mul-sum-compl-le.md) and $\pi(A^c) \ge 1/2$.
