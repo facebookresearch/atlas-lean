@@ -25,8 +25,9 @@ increasing or decreasing.
 
 variable {α : Type*} [Preorder α] {f : ℕ → α}
 
-/-- A sequence `f : ℕ → α` is monotone (increasing) if and only if each term
-is bounded above by its immediate successor: `f n ≤ f (n + 1)` for all `n`.
+/-- **Successor criterion for monotone sequences.** Let $\alpha$ be a preordered set. A sequence
+$f : \mathbb{N} \to \alpha$ is monotone (that is, $f(m) \le f(n)$ whenever $m \le n$)
+if and only if $f(n) \le f(n+1)$ for every $n \in \mathbb{N}$.
 
 Source: `v1/Atlas/RealAnalysis/targets.yaml`, Definition (Monotone),
 "Convergent Sequences of the Real Numbers section", part (1): a sequence is
@@ -37,8 +38,9 @@ monotone increasing if `xₙ ≤ xₙ₊₁` for all `n`. The v1 formalization
 theorem monotone_nat_iff_le_succ : Monotone f ↔ ∀ n, f n ≤ f (n + 1) :=
   ⟨fun hf n => hf (Nat.le_succ n), monotone_nat_of_le_succ⟩
 
-/-- A sequence `f : ℕ → α` is antitone (decreasing) if and only if each term
-is bounded below by its immediate successor: `f (n + 1) ≤ f n` for all `n`.
+/-- **Successor criterion for antitone sequences.** Let $\alpha$ be a preordered set. A sequence
+$f : \mathbb{N} \to \alpha$ is antitone (that is, $f(n) \le f(m)$ whenever $m \le n$)
+if and only if $f(n+1) \le f(n)$ for every $n \in \mathbb{N}$.
 
 Source: `v1/Atlas/RealAnalysis/targets.yaml`, Definition (Monotone),
 "Convergent Sequences of the Real Numbers section", part (2): a sequence is
@@ -47,9 +49,10 @@ the v1 formalization in `v1/Atlas/RealAnalysis/code/Sequences/Monotone.lean`. -/
 theorem antitone_nat_iff_succ_le : Antitone f ↔ ∀ n, f (n + 1) ≤ f n :=
   ⟨fun hf n => hf (Nat.le_succ n), antitone_nat_of_succ_le⟩
 
-/-- A sequence `f : ℕ → α` is monotone in the book sense, i.e. monotone
-increasing or monotone decreasing, if and only if either every successor
-step goes up or every successor step goes down.
+/-- **Successor criterion for monotone or antitone sequences.** Let $\alpha$ be a preordered set
+and let $f : \mathbb{N} \to \alpha$ be a sequence. Then $f$ is monotone ($f(m) \le f(n)$ whenever
+$m \le n$) or antitone ($f(n) \le f(m)$ whenever $m \le n$) if and only if either
+$f(n) \le f(n+1)$ for every $n \in \mathbb{N}$, or $f(n+1) \le f(n)$ for every $n \in \mathbb{N}$.
 
 Source: `v1/Atlas/RealAnalysis/targets.yaml`, Definition (Monotone),
 "Convergent Sequences of the Real Numbers section", part (3): if a sequence

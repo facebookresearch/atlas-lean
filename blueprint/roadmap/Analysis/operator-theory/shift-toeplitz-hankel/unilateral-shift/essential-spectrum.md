@@ -1,0 +1,3 @@
+# Essential spectrum of a bounded operator
+
+Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let $E$ be a normed space over $\mathbb{K}$ and let $T$ be a bounded operator on $E$. The **essential spectrum** of $T$ is the set of scalars $\mu \in \mathbb{K}$ for which $T - \mu I$ is not a Fredholm operator. Here a bounded operator $S$ on $E$ is Fredholm if its kernel is finite-dimensional, its range is closed and of finite codimension, and $S$ is strict: the induced map $E / \ker S \to \operatorname{range} S$ is an isomorphism of normed spaces. (A finite-dimensional kernel is automatically topologically complemented, and strictness is automatic for Banach spaces by the open mapping theorem, but $E$ need not be complete here.)

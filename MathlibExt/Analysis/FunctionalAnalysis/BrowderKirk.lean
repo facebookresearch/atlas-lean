@@ -28,22 +28,6 @@ open Set
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.BrowderKirkWanted
 
-private theorem exists_one_div_succ_lt {η : ℝ} (hη : 0 < η) :
-    ∃ N : ℕ, 1 / ((N : ℝ) + 1) < η := by
-  have h := (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ)).eventually
-    (Iio_mem_nhds hη)
-  rw [Filter.eventually_atTop] at h
-  obtain ⟨N, hN⟩ := h
-  exact ⟨N, by have h2 := hN N le_rfl; simpa using h2⟩
-
-private theorem one_div_succ_le_of_le {N k : ℕ} (h : N ≤ k) :
-    1 / ((k : ℝ) + 1) ≤ 1 / ((N : ℝ) + 1) := by
-  apply one_div_le_one_div_of_le
-  · have hN : (0:ℝ) ≤ (N : ℝ) := by positivity
-    linarith
-  · have hNk : (N:ℝ) ≤ (k:ℝ) := Nat.cast_le.mpr h
-    linarith
-
 /-- Asymptotic radius of a sequence at a point: `limsup_n ‖u n - x‖`. -/
 private noncomputable def asympRadius {E : Type*} [NormedAddCommGroup E] (u : ℕ → E) (x : E) : ℝ :=
   Filter.limsup (fun n => ‖u n - x‖) Filter.atTop
@@ -385,7 +369,7 @@ private theorem asymptoticCenter_fixedPoint
     rw [Metric.cauchySeq_iff]
     intro ε hε
     by_cases hr0 : r = 0
-    · obtain ⟨N, hN⟩ := exists_one_div_succ_lt (show (0:ℝ) < ε / 2 by linarith)
+    · obtain ⟨N, hN⟩ := exists_nat_one_div_lt (show (0:ℝ) < ε / 2 by linarith)
       refine ⟨N, fun m hm n hn => ?_⟩
       have hmk : dist (y m) (y n) ≤ asympRadius u (y m) + asympRadius u (y n) := by
         apply le_of_forall_pos_lt_add
@@ -409,8 +393,8 @@ private theorem asymptoticCenter_fixedPoint
         have h := hyphi n
         rw [hr0] at h
         linarith
-      have c1 : (1:ℝ) / ((m:ℝ) + 1) ≤ 1 / ((N:ℝ) + 1) := one_div_succ_le_of_le hm
-      have c2 : (1:ℝ) / ((n:ℝ) + 1) ≤ 1 / ((N:ℝ) + 1) := one_div_succ_le_of_le hn
+      have c1 : (1:ℝ) / ((m:ℝ) + 1) ≤ 1 / ((N:ℝ) + 1) := Nat.one_div_le_one_div hm
+      have c2 : (1:ℝ) / ((n:ℝ) + 1) ≤ 1 / ((N:ℝ) + 1) := Nat.one_div_le_one_div hn
       calc dist (y m) (y n) ≤ asympRadius u (y m) + asympRadius u (y n) := hmk
         _ < 1 / ((m:ℝ) + 1) + 1 / ((n:ℝ) + 1) := add_lt_add b1 b2
         _ ≤ 1 / ((N:ℝ) + 1) + 1 / ((N:ℝ) + 1) := add_le_add c1 c2
@@ -425,7 +409,7 @@ private theorem asymptoticCenter_fixedPoint
       obtain ⟨δ0, hδ0, hUC0⟩ := uc_midpoint_le (E := E) (R0 := r + 1) hε
       obtain ⟨ηstar, R, hηpos, hη1, hRpos, hRR0, hReq, hCR⟩ :=
         exists_radius_contract hrpos hR0 hδ0 (le_refl _)
-      obtain ⟨N, hN⟩ := exists_one_div_succ_lt (show (0:ℝ) < ηstar / 2 by linarith)
+      obtain ⟨N, hN⟩ := exists_nat_one_div_lt (show (0:ℝ) < ηstar / 2 by linarith)
       refine ⟨N, fun m hm n hn => ?_⟩
       by_contra hcon
       push Not at hcon
@@ -434,12 +418,12 @@ private theorem asymptoticCenter_fixedPoint
         rwa [e] at hcon
       have am : asympRadius u (y m) < r + ηstar / 2 := by
         have h1 := hyphi m
-        have h2 : (1:ℝ) / ((m:ℝ) + 1) ≤ 1 / ((N:ℝ) + 1) := one_div_succ_le_of_le hm
+        have h2 : (1:ℝ) / ((m:ℝ) + 1) ≤ 1 / ((N:ℝ) + 1) := Nat.one_div_le_one_div hm
         have h3 : (1:ℝ) / ((N:ℝ) + 1) ≤ ηstar / 2 := le_of_lt hN
         linarith
       have an : asympRadius u (y n) < r + ηstar / 2 := by
         have h1 := hyphi n
-        have h2 : (1:ℝ) / ((n:ℝ) + 1) ≤ 1 / ((N:ℝ) + 1) := one_div_succ_le_of_le hn
+        have h2 : (1:ℝ) / ((n:ℝ) + 1) ≤ 1 / ((N:ℝ) + 1) := Nat.one_div_le_one_div hn
         have h3 : (1:ℝ) / ((N:ℝ) + 1) ≤ ηstar / 2 := le_of_lt hN
         linarith
       have hτ2 : (0:ℝ) < ηstar / 2 := by linarith
@@ -471,7 +455,7 @@ private theorem asymptoticCenter_fixedPoint
     intro σ hσ
     have hσ2 : (0:ℝ) < σ / 2 := by linarith
     have hσ4 : (0:ℝ) < σ / 4 := by linarith
-    obtain ⟨N1, hN1⟩ := exists_one_div_succ_lt hσ4
+    obtain ⟨N1, hN1⟩ := exists_nat_one_div_lt hσ4
     have hev : ∀ᶠ k in Filter.atTop, dist (y k) z < σ / 4 :=
       (Metric.tendsto_nhds.mp hz) (σ / 4) hσ4
     rw [Filter.eventually_atTop] at hev
@@ -480,7 +464,7 @@ private theorem asymptoticCenter_fixedPoint
     have hk1 : N1 ≤ k := le_max_left _ _
     have hk2 : N2 ≤ k := le_max_right _ _
     have hα : (1:ℝ) / (((k:ℝ)) + 1) < σ / 4 :=
-      lt_of_le_of_lt (one_div_succ_le_of_le hk1) hN1
+      lt_of_le_of_lt (Nat.one_div_le_one_div hk1) hN1
     have hφyk : asympRadius u (y k) < r + σ / 4 := by
       have h1 := hyphi k
       have h2 : (1:ℝ) / (((k:ℝ)) + 1) ≤ σ / 4 := le_of_lt hα
@@ -635,14 +619,17 @@ private theorem asymptoticCenter_fixedPoint
       linarith
 
 /--
-In a complete uniformly convex real normed space, every nonexpansive self-map `f : E → E` with
-`MapsTo f K K` and `LipschitzOnWith 1 f K` of a nonempty closed bounded convex set `K` has a fixed
-point in `K`, i.e. `∃ y ∈ K, f y = y`. Source: F. Browder, Proc. Nat. Acad. Sci. USA 1965, D.
+**Browder–Göhde–Kirk fixed point theorem.** Let $E$ be a uniformly convex real Banach space and
+let $K \subseteq E$ be a nonempty, closed, bounded, convex set. If a map $f : E \to E$ sends $K$
+into $K$ and is nonexpansive on $K$, that is, $\|f(x) - f(y)\| \le \|x - y\|$ for all
+$x, y \in K$, then $f$ has a fixed point in $K$: there is $y \in K$ with $f(y) = y$.
+
+Proves `Wanted` entry `browderGoehdeKirk_fixedPoint`.
+
+Source: F. Browder, Proc. Nat. Acad. Sci. USA 1965, D.
 Göhde, Math. Ann. 1965, and W. Kirk, Amer. Math. Monthly 1965-66, fixed-point theorem for
 nonexpansive mappings in uniformly convex Banach spaces; textbook Goebel and Kirk, 1990; Lean
 states complete uniformly convex real case with `Bornology.IsBounded` convex set.
-
-Proves `Wanted` entry `browderGoehdeKirk_fixedPoint`.
 -/
 theorem browderGoehdeKirk_fixedPoint
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [UniformConvexSpace E] [CompleteSpace E]

@@ -23,15 +23,18 @@ namespace HilbertSymbol
 
 variable (F : Type*) [Field F]
 
-/-- The equation `a * x ^ 2 + b * y ^ 2 = 1` is solvable over `F`. -/
+/-- **Solvability of $ax^2 + by^2 = 1$.** For a field $F$ and nonzero elements $a, b \in F$, the
+equation $ax^2 + by^2 = 1$ is solvable over $F$ if there exist $x, y \in F$ with
+$ax^2 + by^2 = 1$. -/
 def IsSolvable (a b : Fˣ) : Prop :=
   ∃ x y : F, (a : F) * x ^ 2 + (b : F) * y ^ 2 = 1
 
 end HilbertSymbol
 
 open Classical in
-/-- The Hilbert symbol over a field, valued in `{1, -1}` according to whether the associated
-binary quadratic equation is solvable. -/
+/-- **Hilbert symbol of a field.** For a field $F$ and nonzero elements $a, b \in F$, the Hilbert
+symbol $(a, b)_F$ is the integer $1$ if there exist $x, y \in F$ with $ax^2 + by^2 = 1$, and $-1$
+otherwise. -/
 noncomputable def hilbertSymbol (F : Type*) [Field F] (a b : Fˣ) : ℤ :=
   if HilbertSymbol.IsSolvable F a b then 1 else -1
 
@@ -48,7 +51,8 @@ theorem eq_neg_one_iff {a b : Fˣ} :
     hilbertSymbol F a b = -1 ↔ ¬HilbertSymbol.IsSolvable F a b := by
   simp [hilbertSymbol]
 
-/-- The Hilbert symbol takes only the values one and negative one. -/
+/-- **The Hilbert symbol of a field is $\pm 1$.** For every field $F$ and all nonzero
+$a, b \in F$, the Hilbert symbol $(a, b)_F$ of $a$ and $b$ over $F$ equals $1$ or $-1$. -/
 theorem eq_one_or_neg_one (a b : Fˣ) :
     hilbertSymbol F a b = 1 ∨ hilbertSymbol F a b = -1 := by
   unfold hilbertSymbol
@@ -56,8 +60,9 @@ theorem eq_one_or_neg_one (a b : Fˣ) :
 
 end hilbertSymbol
 
-/-- The `p`-adic Hilbert symbol, defined by solvability of
-`a * x ^ 2 + b * y ^ 2 = 1` over `ℚ_[p]`. -/
+/-- **The $p$-adic Hilbert symbol.** For a prime $p$ and nonzero $a, b \in \mathbb{Q}_p$, the
+$p$-adic Hilbert symbol $(a, b)_p$ is the integer $1$ if there exist $x, y \in \mathbb{Q}_p$ with
+$ax^2 + by^2 = 1$, and $-1$ otherwise. -/
 noncomputable def padicHilbertSymbol (p : ℕ) [Fact (Nat.Prime p)]
     (a b : ℚ_[p]ˣ) : ℤ :=
   hilbertSymbol ℚ_[p] a b
@@ -66,21 +71,25 @@ namespace padicHilbertSymbol
 
 variable {p : ℕ} [Fact (Nat.Prime p)]
 
-/-- The `p`-adic Hilbert symbol is one exactly when its defining equation is solvable. -/
+/-- **When the $p$-adic Hilbert symbol is $1$.** For a prime $p$ and nonzero
+$a, b \in \mathbb{Q}_p$, the $p$-adic Hilbert symbol $(a, b)_p$ equals $1$ if and only if there
+exist $x, y \in \mathbb{Q}_p$ with $ax^2 + by^2 = 1$. -/
 @[simp]
 theorem eq_one_iff {a b : ℚ_[p]ˣ} :
     padicHilbertSymbol p a b = 1 ↔
       ∃ x y : ℚ_[p], (a : ℚ_[p]) * x ^ 2 + (b : ℚ_[p]) * y ^ 2 = 1 :=
   hilbertSymbol.eq_one_iff
 
-/-- The `p`-adic Hilbert symbol is negative one exactly when its defining equation is not
-solvable. -/
+/-- **When the $p$-adic Hilbert symbol is $-1$.** For a prime $p$ and nonzero
+$a, b \in \mathbb{Q}_p$, the $p$-adic Hilbert symbol $(a, b)_p$ equals $-1$ if and only if there
+are no $x, y \in \mathbb{Q}_p$ with $ax^2 + by^2 = 1$. -/
 theorem eq_neg_one_iff {a b : ℚ_[p]ˣ} :
     padicHilbertSymbol p a b = -1 ↔
       ¬∃ x y : ℚ_[p], (a : ℚ_[p]) * x ^ 2 + (b : ℚ_[p]) * y ^ 2 = 1 :=
   hilbertSymbol.eq_neg_one_iff
 
-/-- The `p`-adic Hilbert symbol takes only the values one and negative one. -/
+/-- **The $p$-adic Hilbert symbol is $\pm 1$.** For a prime $p$ and all nonzero
+$a, b \in \mathbb{Q}_p$, the $p$-adic Hilbert symbol $(a, b)_p$ equals $1$ or $-1$. -/
 theorem eq_one_or_neg_one (a b : ℚ_[p]ˣ) :
     padicHilbertSymbol p a b = 1 ∨ padicHilbertSymbol p a b = -1 :=
   hilbertSymbol.eq_one_or_neg_one a b

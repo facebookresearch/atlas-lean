@@ -25,9 +25,11 @@ open Pointwise
 @[expose] public section
 
 /--
-`knightMoves a b` is the finite set of the eight signed coordinate swaps
-`(±b, ±a)` and `(±a, ±b)` defining the paper's `(a,b)`-knight.  The parameters
-are integers so the literal set records the paper's moves without coercions.
+**Knight moves.** For integers $a$ and $b$, the $(a,b)$-knight's move set is
+$$N_{a,b} = \{(\pm a, \pm b), (\pm b, \pm a)\} \subset \mathbb{Z}^2,$$
+the finite set of the points $(a, b)$, $(-a, b)$, $(a, -b)$, $(-a, -b)$, $(b, a)$, $(-b, a)$,
+$(b, -a)$ and $(-b, -a)$.
+
 Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
 62(3) (2024), definition of `N_{a,b}`.
 -/
@@ -35,8 +37,10 @@ public def knightMoves (a b : ℤ) : Finset (ℤ × ℤ) :=
   {(b, a), (a, b), (-a, b), (-b, a), (-b, -a), (-a, -b), (a, -b), (b, -a)}
 
 /--
-`kingMoves` is the finite set of the eight unit horizontal, vertical, and
-diagonal moves defining the paper's king `K`.
+**King moves.** The king's move set $K \subset \mathbb{Z}^2$ consists of the eight unit
+horizontal, vertical and diagonal steps:
+$$K = \{(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)\}.$$
+
 Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
 62(3) (2024), definition of `K`.
 -/
@@ -44,11 +48,14 @@ public def kingMoves : Finset (ℤ × ℤ) :=
   {(1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0), (-1, -1), (0, -1), (1, -1)}
 
 /--
-`pieceDistance A p` is zero at the origin and otherwise the infimum of the
-positive fold counts `h` for which `p ∈ h • A`; pointwise natural scalar
-multiplication of a finset is the paper's `h`-fold sumset.  As specified, an
-empty set of admissible counts has infimum zero, so nonprimitive move sets may
-assign zero away from the origin.
+**Piece distance on the integer lattice.** Let $A \subseteq \mathbb{Z}^2$ be a finite set of
+moves and, for $h \ge 1$, let $hA = \{a_1 + \dots + a_h : a_1, \dots, a_h \in A\}$ be its
+$h$-fold sumset. The piece distance of a point $p \in \mathbb{Z}^2$ for $A$ is the natural
+number that is $0$ if $p = (0,0)$ and otherwise the infimum of the set of integers $h \ge 1$
+with $p \in hA$, where the infimum of the empty set is taken to be $0$.
+
+Points other than the origin that are not a sum of moves from $A$ therefore have distance $0$.
+
 Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
 62(3) (2024), definition of `A(x,y)`.
 -/
@@ -56,9 +63,10 @@ public noncomputable def pieceDistance (A : Finset (ℤ × ℤ)) (p : ℤ × ℤ
   if p = 0 then 0 else sInf {h : ℕ | 1 ≤ h ∧ p ∈ h • A}
 
 /--
-`maxNormBall h` is `B_h`: the Cartesian product of the two integer intervals from
-`-h` through `h`, equivalently the lattice points whose max norm is at most
-`h`.
+**Max-norm ball.** For a natural number $h$, the max-norm ball $B_h \subset \mathbb{Z}^2$ is the
+product of two copies of the integer interval $\{-h, \dots, h\}$, that is, the set of lattice
+points $(x, y)$ with $\max(|x|, |y|) \le h$.
+
 Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
 62(3) (2024), definition of `B_h`.
 -/
@@ -66,11 +74,11 @@ public def maxNormBall (h : ℕ) : Finset (ℤ × ℤ) :=
   Finset.Icc (-(h : ℤ)) h ×ˢ Finset.Icc (-(h : ℤ)) h
 
 /--
-If a nonzero point first belongs to the positive fold sumset at `n`, its
-`pieceDistance` is `n`: `hn` and `hmem` exhibit that fold, while `hmin` says
-every admissible positive fold has count at least `n`.  This is an elementary
-characterization of the paper's minimum definition, introduced only to prove
-the requested characteristic values.
+**Piece distance from a minimal fold.** Let $A \subset \mathbb{Z}^2$ be a finite set, let
+$p \in \mathbb{Z}^2$ be nonzero and let $n \ge 1$ be a natural number. If $p$ lies in the
+$n$-fold sumset $nA = \{a_1 + \dots + a_n : a_1, \dots, a_n \in A\}$, and every natural number
+$h \ge 1$ with $p \in hA$ satisfies $n \le h$, then the piece distance of $p$ for $A$ is $n$.
+
 Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
 62(3) (2024), definition of `A(x,y)`.
 -/
@@ -213,10 +221,9 @@ private theorem king_mem_nsmul_norm (p : ℤ × ℤ) :
     rw [mul_comm, Int.sign_mul_natAbs]
 
 /--
-For every lattice point `p`, the king distance is its max norm.  Since
-`pieceDistance` is natural-valued, the formal max norm is written with
-`Int.natAbs`; this is exactly `max |p.1| |p.2|` with the integer absolute
-values converted to naturals.
+**King distance is the max norm.** For every lattice point $p = (x, y) \in \mathbb{Z}^2$, the
+piece distance of $p$ for the king's move set $K$ is $\max(|x|, |y|)$.
+
 Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
 62(3) (2024), definitions of `A(x,y)` and `K`.
 -/
@@ -238,8 +245,10 @@ public theorem pieceDistance_kingMoves (p : ℤ × ℤ) :
       exact king_norm_le_of_mem p h hmem
 
 /--
-The usual knight reaches `(1,2)` in one move: formally, its distance for the
-move set `knightMoves 1 2` is `1`.
+**The knight reaches $(1,2)$ in one move.** Let $N \subseteq \mathbb{Z}^2$ be the move set of the
+usual knight, consisting of the eight vectors $(\pm 1, \pm 2)$ and $(\pm 2, \pm 1)$. The piece
+distance of the point $(1,2)$ for $N$ is $1$.
+
 Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
 62(3) (2024), definition of the usual knight following the definition of `N_{a,b}`.
 -/
@@ -253,8 +262,10 @@ public theorem pieceDistance_knightMoves_one_two :
     omega
 
 /--
-The usual knight reaches `(1,0)` in exactly three moves: formally, its
-distance for `knightMoves 1 2` is `3`.
+**The knight needs three moves to reach $(1,0)$.** Let $N \subseteq \mathbb{Z}^2$ be the move set
+of the usual knight, consisting of the eight vectors $(\pm 1, \pm 2)$ and $(\pm 2, \pm 1)$. The
+piece distance of the point $(1,0)$ for $N$ is $3$.
+
 Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
 62(3) (2024), characteristic value for the usual knight.
 -/
@@ -283,8 +294,9 @@ public theorem pieceDistance_knightMoves_one_zero :
         simp_all
 
 /--
-The usual knight reaches `(1,1)` in exactly two moves: formally, its distance
-for `knightMoves 1 2` is `2`.
+**The usual knight reaches (1, 1) in two moves.** For the usual knight's move set
+$N_{1,2} = \{(\pm 1, \pm 2), (\pm 2, \pm 1)\}$, the piece distance of the point $(1, 1)$ is $2$.
+
 Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
 62(3) (2024), characteristic value for the usual knight.
 -/
@@ -304,8 +316,12 @@ public theorem pieceDistance_knightMoves_one_one :
     norm_num [Finset.mem_nsmul, knightMoves, List.sum_ofFn] at hmem
 
 /--
-The usual knight has distance zero at the origin, exactly matching the
-distinguished zero clause in `pieceDistance`.
+**The knight's distance to the origin is zero.** Let $N \subseteq \mathbb{Z}^2$ be the move set of
+the usual knight, consisting of the eight vectors $(\pm 1, \pm 2)$ and $(\pm 2, \pm 1)$. The
+piece distance of the origin $(0,0)$ for $N$ is $0$.
+
+This holds by the definition of piece distance, which sets the distance at the origin to $0$.
+
 Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
 62(3) (2024), definition of `A(0,0)`.
 -/
@@ -314,8 +330,9 @@ public theorem pieceDistance_knightMoves_zero_zero :
   simp [pieceDistance]
 
 /--
-The maxNormBall `B_h` has `(2h+1)^2` lattice points: each formal integer interval in
-the Cartesian product `maxNormBall h` has `2h+1` elements.
+**Number of points in the max-norm ball.** For every natural number $h$, the max-norm ball
+$B_h = \{(x, y) \in \mathbb{Z}^2 : \max(|x|, |y|) \le h\}$ has exactly $(2h+1)^2$ points.
+
 Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
 62(3) (2024), definition of `B_h`.
 -/
@@ -326,12 +343,12 @@ public theorem card_maxNormBall (h : ℕ) : (maxNormBall h).card = (2 * h + 1) ^
   simp [maxNormBall, Finset.card_product, hcard, pow_two]
 
 /--
-Uniformly over natural parameters `1 ≤ a < b` that are coprime and have odd
-sum, every integer point `p` with `max |p.1| |p.2| ≤ a+b` has knight distance
-at most `M b` for one absolute real constant `M`.  The integer absolute values
-and the bound's natural parameters are connected by the displayed cast; no
-primitivity hypothesis is added beyond the paper's coprimality and parity
-conditions.
+**Uniform bound for knight distance on a box.** There is an absolute constant $M \in \mathbb{R}$
+such that for all natural numbers $a$ and $b$ with $1 \le a < b$, $\gcd(a, b) = 1$ and $a + b$
+odd, every lattice point $(x, y) \in \mathbb{Z}^2$ with $\max(|x|, |y|) \le a + b$ has piece
+distance at most $Mb$ for the $(a,b)$-knight's move set
+$N_{a,b} = \{(\pm a, \pm b), (\pm b, \pm a)\}$.
+
 Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
 62(3) (2024), Lemma 2.1.
 -/
@@ -343,13 +360,14 @@ public theorem_wanted knight_distance_uniform_on_box :
         (pieceDistance (knightMoves (a : ℤ) (b : ℤ)) p : ℝ) ≤ M * b
 
 /--
-For natural `1 ≤ a < b` that are coprime with odd sum and integers
-`0 ≤ y ≤ x`, one absolute real constant `M` bounds both regional errors: when
-`b*y ≤ a*x`, the distance differs from `x/b` by at most `M b`, and when
-`a*x < b*y`, it differs from `(x+y)/(a+b)` by at most `M b`.  Integer
-cross-multiplication encodes the paper's slope split, while the main terms and
-absolute errors use real coercions and division; this makes each written
-`O(b)` a two-sided uniform bound.
+**Knight distance asymptotics.** There is an absolute constant $M \in \mathbb{R}$ with the
+following property. Let $a$ and $b$ be natural numbers with $1 \le a < b$, $\gcd(a, b) = 1$ and
+$a + b$ odd, let $N_{a,b} = \{(\pm a, \pm b), (\pm b, \pm a)\}$ be the $(a,b)$-knight's move set,
+and for $p \in \mathbb{Z}^2$ let $d_{a,b}(p)$ be the piece distance of $p$ for $N_{a,b}$. Then
+for all integers $x$ and $y$ with $0 \le y \le x$: if $by \le ax$, then
+$|d_{a,b}(x, y) - x/b| \le Mb$; and if $ax < by$, then
+$|d_{a,b}(x, y) - (x + y)/(a + b)| \le Mb$.
+
 Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
 62(3) (2024), Theorem 1.1.
 -/
@@ -365,12 +383,15 @@ public theorem_wanted knight_distance_asymptotics :
               ((x : ℝ) + (y : ℝ)) / ((a : ℝ) + (b : ℝ))| ≤ M * b))
 
 /--
-For natural `1 ≤ a < b` that are coprime with odd sum, the displayed sequence
-defining the velocity of `N_{a,b}` tends to
-`2(a+b)b²/(a²+3b²)`.  The average is the sum of `pieceDistance` over `maxNormBall h`
-divided by its cardinality, all arithmetic in the limit expression and value
-is explicitly real; the formal statement expands `v` because the task asks
-for the limit itself rather than introducing a separate partial definition.
+**Velocity formula for the (a, b)-knight.** Let $a$ and $b$ be natural numbers with
+$1 \le a < b$, $\gcd(a, b) = 1$ and $a + b$ odd, let
+$N_{a,b} = \{(\pm a, \pm b), (\pm b, \pm a)\}$ be the $(a,b)$-knight's move set, and for
+$p \in \mathbb{Z}^2$ let $d_{a,b}(p)$ be the piece distance of $p$ for $N_{a,b}$. For a natural
+number $h$, let $B_h = \{(x, y) \in \mathbb{Z}^2 : \max(|x|, |y|) \le h\}$ be the max-norm
+ball and let $\bar{d}(h) = |B_h|^{-1} \sum_{p \in B_h} d_{a,b}(p)$ be the average of $d_{a,b}$
+over $B_h$. Then
+$$\lim_{h \to \infty} \frac{2h}{3} \, \bar{d}(h)^{-1} = \frac{2(a+b)b^2}{a^2 + 3b^2}.$$
+
 Source: Christian Táfula, *Knights Are 24/13 Times Faster than the King*, The Fibonacci Quarterly
 62(3) (2024), Theorem 1.3.
 -/

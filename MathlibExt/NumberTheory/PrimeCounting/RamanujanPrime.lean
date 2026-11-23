@@ -26,20 +26,26 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- A prime `R` satisfies the Ramanujan counting condition for `n`, i.e.
-`π(R) - π(R / 2) = n`, where `π` is the prime-counting function.
+/-- **Primes satisfying the Ramanujan counting condition.** Let $\pi$ be the prime-counting
+function. For natural numbers $R$ and $n$, $R$ satisfies the Ramanujan counting condition for
+$n$ when $R$ is prime and $\pi(R) - \pi(R/2) = n$.
 
-For natural `R`, `π(R / 2)` (primes `p ≤ R / 2` over the reals) agrees with
-`Nat.primeCounting (R / 2)` under `Nat` division.
-Concept `jis_sem_2ce4a4483a6ae69670d63026`;
-statement `jis_b3eb662622ec0b548e5acec4`. -/
+Here $\pi(x)$ counts the primes $p \le x$, so $\pi(R/2) = \pi(\lfloor R/2 \rfloor)$.
+
+Source: concept `jis_sem_2ce4a4483a6ae69670d63026`; statement `jis_b3eb662622ec0b548e5acec4`.
+-/
 public def IsRamanujanPrime (R n : ℕ) : Prop :=
   Nat.Prime R ∧ (Nat.primeCounting R - Nat.primeCounting (R / 2) = n)
 
-/-- For `n ≥ 1`, `R` is the `n`-th Ramanujan prime: the largest prime with
-`π(R) - π(R / 2) = n`.
-Concept `jis_sem_2ce4a4483a6ae69670d63026`;
-statement `jis_b3eb662622ec0b548e5acec4`. -/
+/-- **The $n$-th Ramanujan prime.** Let $\pi$ be the prime-counting function. For natural numbers
+$R$ and $n$, $R$ is the $n$-th Ramanujan prime when $n \ge 1$, $R$ is a prime with
+$\pi(R) - \pi(R/2) = n$, and every prime $p$ with $\pi(p) - \pi(p/2) = n$ satisfies $p \le R$.
+That is, $R$ is the largest prime satisfying the Ramanujan counting condition for $n$.
+
+Here $\pi(x)$ counts the primes $p \le x$, so $\pi(R/2) = \pi(\lfloor R/2 \rfloor)$.
+
+Source: concept `jis_sem_2ce4a4483a6ae69670d63026`; statement `jis_b3eb662622ec0b548e5acec4`.
+-/
 public def IsNthRamanujanPrime (R n : ℕ) : Prop :=
   1 ≤ n ∧ IsRamanujanPrime R n ∧ ∀ p : ℕ, IsRamanujanPrime p n → p ≤ R
 

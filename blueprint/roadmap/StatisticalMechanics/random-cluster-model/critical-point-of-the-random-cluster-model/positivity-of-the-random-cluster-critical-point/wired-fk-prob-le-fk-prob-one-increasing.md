@@ -1,0 +1,7 @@
+# Wired law at most the $q = 1$ law on increasing events, $q \ge 1$
+
+Let $G = (V, E)$ be a finite simple graph and $\partial \subseteq V$, let $0 < p < 1$ and $q \ge 1$, and let $A$ be an increasing set of assignments of open/closed states to the unordered pairs of vertices (coordinatewise order, closed $<$ open). Then
+
+$$\sum_{\omega \in A} \phi^w_{G,\partial,p,q}(\omega) \le \sum_{\omega \in A} \phi_{G,p,1}(\omega),$$
+
+where $\phi^w_{G,\partial,p,q}$ is the [wired random-cluster probability](../../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-fk-prob.md) $\phi^w_{G,\partial,p,q}(\omega) = p^{o(\omega)}(1 - p)^{c(\omega)} q^{k^w(\omega)} / Z^w_{G,\partial}(p, q)$ on assignments $\omega$ of open/closed states to all unordered pairs of vertices; $o(\omega)$ and $c(\omega)$ count the open and closed edges of $G$, $k^w(\omega)$ is the number of connected components of the graph whose edges are the open edges of $G$ and all pairs of distinct vertices of $\partial$, and $Z^w_{G,\partial}(p, q)$ is the sum of the numerators over all $\omega$, and $\phi_{G,p,1}$ is the [random-cluster probability](../../random-cluster-measures-on-finite-graphs/fk-prob.md) at $q = 1$, which gives $\omega$ the mass $p^{o(\omega)}(1 - p)^{c(\omega)}/2^{u}$, where $o(\omega)$ and $c(\omega)$ count the open and closed edges of $G$ and $u$ is the number of unordered pairs of vertices (loops included) that are not edges of $G$ (so the states of edges are independent Bernoulli($p$) and the other pairs are independent fair bits).
