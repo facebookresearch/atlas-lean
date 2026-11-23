@@ -65,6 +65,11 @@ those libraries cannot reach Mathlib.
 Bridge edges apply the same rules to ATLAS's articles (the Lean names that
 `blueprint/links` annotations link, as Autoform reads them) over the v2 and
 Mathlib constants together, and keep the edges whose target is a Mathlib node.
+A declaration a row lists as a duplicate of its page's counts as that page's
+article, as in the v2 extraction: a use of it is a direct use of the article.
+The bridge refuses a duplicate, or warns about one, as the extraction does;
+with `--articles`, which comes with no Lean sources to tell a deleted
+declaration from an incomplete dump, it refuses a duplicate its dump lacks.
 Uses of CSLib, Physlib and other libraries are not followed. With `--check-v2`,
 as the workflow runs it, the same computation must give exactly the articles
 and ATLAS-to-ATLAS edges of `build/lean-dependencies.json`: an article only one

@@ -82,7 +82,10 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
 - **One page per result.** Search the vault and pinned Mathlib before adding a
   page, and link an existing one instead of restating it. Pages for documented
   declarations come from `sync_wiki.py declarations`, then may be edited; a
-  hand-written second page splits the node in two.
+  hand-written second page splits the node in two. When Lean states the same
+  result more than once, the page credits one declaration and its row lists the
+  others under `duplicates`, which get no page and whose uses count as uses of
+  the page ([Maintaining articles](#maintaining-articles)).
 - **Prose is timeless.** Don't describe the library's state ("the Lean proof",
   "not formalized yet"): it goes stale as the Lean changes, and the site shows
   status already.
@@ -480,6 +483,28 @@ credits a declaration, of this project or of Mathlib, and a held declaration
 that another row credits. Relink the page once every listed issue
 is fixed and the declaration states what the page does: restore its `object`
 and remove `held`.
+
+When Lean states a page's result in several declarations, the page credits one
+of them, and its row lists the others under `org.atlas-wiki`, as `"duplicates":
+["<Lean name>", ...]`. A duplicate is no credit: the row still credits one
+declaration. `declarations` gives a duplicate no page and lists it as a
+duplicate. The extraction counts a use of a duplicate as a use of the page's
+declaration, so a page that uses the duplicate depends on the page, and the
+declaration's own use of it gives no edge. The row's own `object` credits a
+declaration of this project; an unlinked, planned, held or Mathlib-credited row
+lists none. Each name is given once. It is not the row's own declaration, and
+no other row links it, holds it back or lists it. `declarations` reports any
+other list as an error and then writes nothing; a pull request's run stops only
+on a list its changes break, as for a held marker. The extraction also writes
+nothing when a page stands for a duplicate, when two private declarations share
+the name of a duplicate or of the page's declaration, or when its dump lacks
+either of them while the Lean sources still declare it, whatever became of the
+other. A Lean change that deletes or renames a duplicate, or the page's
+declaration, fails no build: the extraction warns, naming both, and a use of the
+duplicate then counts for no page. `declarations` and `lean-facts` list such a
+stale entry for an editor. A pull request's run stops on one its changes add or
+change, such as a duplicate listed on a row whose declaration the Lean no longer
+has. Drop the entry, or relink the page, keeping the row's article id.
 
 `scripts/wiki-sync.json` is the
 reviewed docstring-digest baseline. Removed declarations' articles are kept

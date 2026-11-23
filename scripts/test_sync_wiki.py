@@ -1637,6 +1637,141 @@ class Declarations(Vault):
         self.assertEqual(report["added"], [])
         self.assertFalse((wiki.ROADMAP / "Algebra" / "new.md").exists())
 
+    def test_a_duplicate_gets_no_page_and_is_listed(self) -> None:
+        # Lean states Ext.canonical's result again as Ext.twin, which the page's row lists: the run writes no page for
+        # the twin, lists it, and leaves the row as it is; a new declaration still gets its page.
+        self.page("Algebra/README.md", "# Algebra\n\n- [Canonical](canonical.md)\n")
+        canonical = self.page("Algebra/canonical.md", "# Canonical\n\nThe statement.\n")
+        row = self.about("Algebra/canonical.md", id="af_000000000000000000000001",
+                         object=[{"location": {"declaration": "Ext.canonical"}}],
+                         extensions={"org.atlas-wiki": {"from": "docstring", "duplicates": ["Ext.twin"]}})
+        self.annotate([self.about("Algebra/README.md"), row])
+        targets = [declaration("Ext.canonical", "canonical", "Canonical", "The statement."),
+                   declaration("Ext.twin", "twin", "Twin", "The statement, again."),
+                   declaration("Ext.new", "new", "New result", "A new statement.")]
+        report = sync.apply_declarations(targets, SimpleNamespace(declarations={
+            "Ext.canonical": None, "Ext.twin": None, "Ext.new": None}))
+        self.assertEqual((report["added"], report["duplicates"], report["duplicate_problems"]),
+                         (["Ext.new -> Algebra/new.md"], ["Ext.twin (Algebra/canonical.md)"], []))
+        self.assertFalse((wiki.ROADMAP / "Algebra" / "twin.md").exists())
+        self.assertEqual(canonical.read_text(), "# Canonical\n\nThe statement.\n")
+        self.assertEqual(sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][1], row)
+        with redirect_stdout(io.StringIO()) as printed:
+            sync.print_report(report)
+        self.assertIn("Declarations a page's row lists as stating its result again, which get no page of their own: 1\n"
+                      "  Ext.twin (Algebra/canonical.md)\n", printed.getvalue())
+
+    def test_a_duplicates_list_the_run_cannot_use_stops_it(self) -> None:
+        names = "abcdefghijklmnopqrs"
+        self.page("Algebra/README.md", "# Algebra\n\n" + "".join(f"- [{n.upper()}]({n}.md)\n" for n in names))
+        for name in names:
+            self.page(f"Algebra/{name}.md", f"# {name.upper()}\n")
+        own = lambda **fields: {"org.atlas-wiki": fields}
+        link = lambda name: [{"location": {"declaration": name}}]
+        uses = lambda name: {"location": {"declaration": name}, "role": "uses"}
+        mathlib = {"type": "lean", "uri": sync.MATHLIB, "location": {"declaration": "M.real", "module": "Mathlib.A"}}
+        self.annotate([
+            self.about("Algebra/a.md", object=link("Ext.a"), extensions=own(duplicates="Ext.x")),
+            self.about("Algebra/b.md", object=link("Ext.b"), extensions=own(duplicates=["Ext.y", "Ext.y"])),
+            self.about("Algebra/c.md", object=link("Ext.c"), extensions=own(duplicates=["Ext.z", ""])),
+            self.about("Algebra/d.md", extensions=own(duplicates=["Ext.w"])),
+            self.about("Algebra/e.md", extensions=own(held={"declaration": "Ext.e", "reason": "false"},
+                                                       duplicates=["Ext.v"])),
+            self.about("Algebra/f.md", object=[mathlib],
+                       extensions={**own(duplicates=["Ext.u"]), "org.autoform": {"mathlib": True}}),
+            self.about("Algebra/g.md", object=link("Ext.g"), extensions=own(duplicates=["Ext.g"])),
+            self.about("Algebra/h.md", object=link("Ext.h"), extensions=own(duplicates=["Ext.renamed"])),
+            self.about("Algebra/i.md", object=link("Ext.i"), extensions=own(duplicates=["Ext.j"])),
+            self.about("Algebra/j.md", object=link("Ext.j")),
+            self.about("Algebra/k.md", object=link("Ext.k"), extensions=own(duplicates=["Ext.e"])),
+            self.about("Algebra/l.md", object=link("Ext.l"), extensions=own(duplicates=["Ext.t"])),
+            self.about("Algebra/m.md", object=link("Ext.m"), extensions=own(duplicates=["Ext.t"])),
+            # Another row's reference counts as a credit does: a planned page that uses Ext.s, a page that credits
+            # Ext.p and uses Ext.r, and a page an earlier sync wrote with a module and a name the index resolves.
+            self.about("Algebra/n.md", object=[uses("Ext.s")]),
+            self.about("Algebra/o.md", object=link("Ext.o"), extensions=own(duplicates=["Ext.s"])),
+            self.about("Algebra/p.md", object=[{**link("Ext.p")[0], "role": "states"}, uses("Ext.r")]),
+            self.about("Algebra/q.md", object=link("Ext.q"), extensions=own(duplicates=["Ext.r"])),
+            self.about("Algebra/r.md", extensions=own(module="Ext.Legacy", name="legacy")),
+            self.about("Algebra/s.md", object=link("Ext.s2"), extensions=own(duplicates=["Ext.legacy"])),
+        ])
+        declared = [*"abceghijklmopqrstuvwxyz", "s2", "new"]
+        index = SimpleNamespace(declarations={**{f"Ext.{n}": None for n in declared},
+                                              "Ext.legacy": SimpleNamespace(path=Path("Ext/Legacy.lean"))})
+        report = sync.apply_declarations([declaration("Ext.new", "new", "New", "A new statement.")], index)
+        self.assertEqual(report["duplicate_problems"], [
+            "Algebra/a.md: its duplicates list is not a list of declaration names, each given once",
+            "Algebra/b.md: its duplicates list is not a list of declaration names, each given once",
+            "Algebra/c.md: its duplicates list is not a list of declaration names, each given once",
+            "Algebra/d.md: it lists duplicates but credits no declaration of this project by a Lean link of its own",
+            "Algebra/e.md: it lists duplicates but credits no declaration of this project by a Lean link of its own",
+            "Algebra/f.md: it lists duplicates but credits the Mathlib declaration M.real; a Mathlib-credited page "
+            "lists none",
+            "Algebra/g.md: it lists its own declaration Ext.g as a duplicate",
+            "Algebra/i.md: it lists Ext.j as a duplicate, which Algebra/j.md links",
+            "Algebra/k.md: it lists Ext.e as a duplicate, which Algebra/e.md holds back",
+            "Algebra/m.md: it lists Ext.t as a duplicate, as Algebra/l.md does",
+            "Algebra/o.md: it lists Ext.s as a duplicate, which Algebra/n.md links",
+            "Algebra/q.md: it lists Ext.r as a duplicate, which Algebra/p.md links",
+            "Algebra/s.md: it lists Ext.legacy as a duplicate, which Algebra/r.md links",
+        ])
+        self.assertEqual(report["held_problems"], [])
+        # A name the Lean index does not resolve is the Lean's change, listed for an editor.
+        self.assertEqual(report["stale_duplicates"], [
+            "Ext.renamed (Algebra/h.md): the Lean index does not resolve it; drop the entry from `duplicates`, keeping "
+            "the row's article id and its credit"])
+        # A list the run cannot use stops it before it writes anything.
+        self.assertEqual(report["added"], [])
+        self.assertFalse((wiki.ROADMAP / "Algebra" / "new.md").exists())
+
+    def test_a_duplicates_entry_the_lean_left_stale_is_listed_and_stops_nothing(self) -> None:
+        # The Lean deleted Ext.gone, which Lagrange's row lists, and Ext.old, whose row lists Ext.kept: Lean changes,
+        # which fail no run. The run writes the new declaration's page and lists both entries for an editor.
+        self.page("Algebra/README.md", "# Algebra\n\n- [Lagrange](lagrange.md)\n- [Old](old.md)\n")
+        self.page("Algebra/lagrange.md", "# Lagrange\n")
+        self.page("Algebra/old.md", "# Old\n")
+        listed = lambda *names: {"org.atlas-wiki": {"duplicates": list(names)}}
+        self.annotate([self.about("Algebra/README.md"),
+                       self.about("Algebra/lagrange.md", object=[{"location": {"declaration": "Ext.lagrange"}}],
+                                  extensions=listed("Ext.gone")),
+                       self.about("Algebra/old.md", object=[{"location": {"declaration": "Ext.old"}}],
+                                  extensions=listed("Ext.kept"))])
+        index = SimpleNamespace(declarations={"Ext.lagrange": None, "Ext.kept": None, "Ext.new": None})
+        report = sync.apply_declarations([declaration("Ext.lagrange", "lagrange", "Lagrange", "Lagrange."),
+                                          declaration("Ext.kept", "kept", "Kept", "Kept."),
+                                          declaration("Ext.new", "new", "New", "A new statement.")], index)
+        self.assertEqual((report["duplicate_problems"], report["added"]), ([], ["Ext.new -> Algebra/new.md"]))
+        self.assertEqual(report["gone"], ["Ext.old (Algebra/old.md)"])
+        self.assertEqual(report["stale_duplicates"], [
+            "Ext.gone (Algebra/lagrange.md): the Lean index does not resolve it; drop the entry from `duplicates`, "
+            "keeping the row's article id and its credit",
+            "Ext.kept (Algebra/old.md): the Lean index does not resolve the page's declaration Ext.old, so a use of "
+            "Ext.kept counts for no page; relink the page or drop the entry"])
+        with redirect_stdout(io.StringIO()) as printed:
+            sync.print_report(report)
+        self.assertIn("Duplicates entries the Lean left stale, to drop or relink: 2\n", printed.getvalue())
+
+    def test_a_duplicates_list_needs_the_row_s_own_lean_link(self) -> None:
+        # The links folder's defaults link Ext.t, so a row with no `object` credits it as Autoform reads it; the
+        # folder page's row masks them. Such a row lists no duplicates: its own `object` names no declaration. The
+        # shorthand end the defaults complete is the row's own.
+        self.page("Algebra/README.md", "# Algebra\n\n- [T](t.md)\n")
+        self.page("Algebra/t.md", "# T\n")
+        self.links_folder()
+        (sync.LINKS / "_defaults.json").write_text(json.dumps(
+            {"object": {**sync.DEFAULTS["object"], "location": {"declaration": "Ext.t"}}}) + "\n")
+        listed = {"org.atlas-wiki": {"duplicates": ["Ext.twin"]}}
+        index = SimpleNamespace(declarations={"Ext.t": None, "Ext.twin": None})
+        problem = ("Algebra/t.md: it lists duplicates but credits no declaration of this project by a Lean link of "
+                   "its own")
+        for fields, problems in (({}, [problem]), ({"object": [{"location": {"declaration": "Ext.t"}}]}, [])):
+            with self.subTest(fields=fields):
+                self.annotate([self.about("Algebra/README.md", object=[]),
+                               self.about("Algebra/t.md", **fields, extensions=listed)])
+                self.assertEqual(sync.page_owner(sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][1])[:2],
+                                 ("atlas", "Ext.t"))
+                self.assertEqual(sync.apply_declarations([], index)["duplicate_problems"], problems)
+
     def test_a_new_page_never_takes_the_name_of_its_folder_page(self) -> None:
         self.page("Algebra/groups/README.md", "# Groups\n")
         self.page("Algebra/groups/old.md", "# Old\n")
@@ -2228,7 +2363,8 @@ class Declarations(Vault):
 
     def test_a_page_listed_nowhere_fails_the_run(self) -> None:
         report = {kind: [] for kind in ("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended",
-                                         "held", "held_problems", "unassigned")}
+                                         "held", "held_problems", "duplicates", "duplicate_problems",
+                                         "stale_duplicates", "unassigned")}
         report["unlisted"] = ["Algebra/groups/sylow.md"]
         lean = SimpleNamespace(index_project=lambda *args, **kwargs: SimpleNamespace(declarations={}))
         with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean), "autoform_cli.lean": lean}), \
@@ -2253,6 +2389,22 @@ class Declarations(Vault):
         self.assertEqual(refreshed, [])
         self.assertEqual(output.getvalue(), "Held markers to fix: 1; the run wrote nothing\n")
         self.assertIn("error: Algebra/a.md: its held marker names no declaration; fix the marker", errors.getvalue())
+
+    def test_a_duplicates_list_to_fix_stops_the_run_before_the_catalog(self) -> None:
+        report = {kind: [] for kind in ("added", "folders", "gone", "changed", "unindexed", "parts", "replaced", "appended",
+                                         "unlisted", "held", "held_problems", "duplicates")}
+        report["duplicate_problems"] = ["Algebra/a.md: it lists its own declaration Ext.a as a duplicate"]
+        refreshed = []
+        lean = SimpleNamespace(index_project=lambda *args, **kwargs: SimpleNamespace(declarations={}))
+        with patch.dict("sys.modules", {"autoform_cli": SimpleNamespace(lean=lean), "autoform_cli.lean": lean}), \
+                patch.object(wiki, "generate", lambda *args: {}), patch.object(sync, "apply_declarations", lambda *args: report), \
+                patch.object(sync, "refresh_catalog", refreshed.append), \
+                patch("sys.stdout", new_callable=io.StringIO) as output, patch("sys.stderr", new_callable=io.StringIO) as errors:
+            self.assertEqual(sync.run_declarations(), 1)
+        self.assertEqual(refreshed, [])
+        self.assertEqual(output.getvalue(), "Duplicates lists to fix: 1; the run wrote nothing\n")
+        self.assertIn("error: Algebra/a.md: it lists its own declaration Ext.a as a duplicate; fix the list and run "
+                      "again", errors.getvalue())
 
     def test_a_row_whose_credit_is_refused_neither_places_nor_keeps_a_page(self) -> None:
         # A flagged row that also names Ext.a is reported and left alone, as lean-facts and mathlib-names refuse it: it
@@ -3331,6 +3483,267 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual(status, 1)
         self.assertIn("error: Algebra/groups/group-basics/backlog.md: it holds Ext.backlog back, which the Lean index does "
                       "not resolve: fix the held marker", err)
+
+    def list_duplicates(self, value: object = None, line: int = 4) -> None:
+        """Have the row on *line* of Algebra.jsonl (the Lagrange page's by default) list *value* under `duplicates`, or
+        list nothing; the other rows keep their bytes."""
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        lines = links.read_text().splitlines()
+        row = json.loads(lines[line - 1])
+        extensions = row.setdefault("extensions", {})
+        if value is None:
+            extensions.pop("org.atlas-wiki", None)
+        else:
+            extensions["org.atlas-wiki"] = {"duplicates": value}
+        if not extensions:
+            del row["extensions"]
+        lines[line - 1] = json.dumps(row)
+        links.write_text("".join(f"{text}\n" for text in lines))
+
+    def commit_base(self, message: str) -> None:
+        self.git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qam", message)
+        self.base = self.git("rev-parse", "HEAD")
+
+    def test_a_declaration_a_page_lists_as_a_duplicate_gets_no_page(self) -> None:
+        # The pull request adds Ext.lagrange_again, which states Lagrange's theorem again: unlisted, it needs a page;
+        # listed under the Lagrange page's duplicates, it needs none, and only its baseline entry is written.
+        self.groups(more="/-- Lagrange's theorem, stated again. -/\ntheorem lagrange_again : True := trivial\n\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["missing"], report["duplicates"]), (1, ["Ext.lagrange_again"], []))
+        self.list_duplicates(["Ext.lagrange_again"])
+        before = self.tree()
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 0, err)
+        self.assertEqual((report["missing"], report["duplicates"], report["written"]),
+                         ([], ["Ext.lagrange_again"], ["scripts/wiki-sync.json"]))
+        self.assertIn("Of them, those a page's row lists as duplicates, so with no page: 1\n  Ext.lagrange_again\n",
+                      out)
+        self.assertEqual([path for path, text in self.tree().items() if before.get(path) != text],
+                         ["scripts/wiki-sync.json"])
+        # In step; the list on a row the base has is an editor's change, not the sync's.
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "other"), out + err)
+
+    def test_a_duplicate_the_lean_drops_stops_the_run_until_its_entry_goes(self) -> None:
+        self.list_duplicates(["Ext.backlog"])
+        self.commit_base("listed")
+        self.write("MathlibExt/Algebra/Groups.lean", self.GROUPS.format(lagrange=self.LAGRANGE, more="").replace(
+            "/-- A result that has no page yet. -/\ntheorem backlog : True := trivial\n\n", ""))
+        before = self.tree()
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 1)
+        self.assertIn("error: blueprint/links/Algebra.jsonl:4 (Algebra/groups/group-basics/lagrange.md) lists "
+                      "Ext.backlog as a duplicate, which the Lean no longer has: drop the entry from `duplicates`, "
+                      "keeping the row's article id and its credit", err)
+        self.assertIn("The run wrote nothing", err)
+        self.assertEqual(self.tree(), before)
+        # Its entry gone, the row keeps its id and its credit, and the run drops the declaration's baseline entry.
+        self.list_duplicates(None)
+        status, out, err, report = self.run_sync()
+        self.assertEqual((status, report["written"]), (0, ["scripts/wiki-sync.json"]), err)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (0, True), out + err)
+
+    def test_a_duplicates_list_the_changes_leave_unusable_stops_the_run(self) -> None:
+        # The pull request lists Ext.backlog on a folder page's row, which credits nothing.
+        self.list_duplicates(["Ext.backlog"], line=3)
+        before = self.tree()
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 1)
+        self.assertIn("error: Algebra/groups/group-basics/README.md: it lists duplicates but credits no declaration of "
+                      "this project by a Lean link of its own: fix the duplicates list", err)
+        self.assertEqual(self.tree(), before)
+
+    def test_a_duplicates_list_the_base_had_unusable_stops_no_run(self) -> None:
+        # The base lists Ext.backlog twice. A pull request that leaves the list as it is, as one that leaves a held
+        # marker unusable, is judged on its own changes: the run writes the page and the docstring digests they need,
+        # and the check finds its wiki changes the sync's.
+        self.list_duplicates(["Ext.backlog", "Ext.backlog"])
+        self.commit_base("listed twice")
+        self.groups(lagrange="The order of a subgroup divides the order of a finite group.",
+                    more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        status, out, err, report = self.run_sync()
+        self.assertEqual((status, report["errors"]), (0, []), err)
+        self.assertIn("blueprint/roadmap/Algebra/groups/group-basics/fresh.md", report["written"])
+        self.assertIn("scripts/wiki-sync.json", report["written"])
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"], report["wiki_changes"]), (0, True, "sync"), out + err)
+
+    def add_page(self, name: str, **fields) -> None:
+        """Add the page *name*.md beside Lagrange's, listed on its folder page, with a row of *fields*."""
+        folder = "blueprint/roadmap/Algebra/groups/group-basics"
+        self.write(f"{folder}/{name}.md", f"# {name.title()}\n\nA statement.\n")
+        readme = self.root / folder / "README.md"
+        readme.write_text(readme.read_text() + f"- [{name.title()}]({name}.md)\n")
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        row = {"subject": [{"type": "generic", "uri": f"../roadmap/Algebra/groups/group-basics/{name}.md"}],
+               "id": "af_" + hashlib.sha256(name.encode()).hexdigest()[:24], **fields}
+        links.write_text(links.read_text() + json.dumps(row) + "\n")
+
+    def test_a_duplicate_another_row_links_stops_the_run(self) -> None:
+        # The base's Other page uses Ext.backlog, by a reference: listing it as Lagrange's duplicate is the changes'.
+        self.add_page("other", object=[{"location": {"declaration": "Ext.lagrange"}, "role": "uses"},
+                                       {"location": {"declaration": "Ext.backlog"}, "role": "uses"}])
+        self.base = self.commit("a reference to Ext.backlog")
+        self.list_duplicates(["Ext.backlog"])
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertIn("error: Algebra/groups/group-basics/lagrange.md: it lists Ext.backlog as a duplicate, which "
+                      "Algebra/groups/group-basics/other.md links: fix the duplicates list", err)
+
+    def test_a_name_the_lean_lacks_is_the_changes_once_they_list_it_as_a_duplicate(self) -> None:
+        # The base's Lagrange row uses Ext.gone, which the Lean lacks: that stale reference is the base's. Moving the
+        # name from the reference into the row's duplicates makes a stale entry of the changes' own.
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        lagrange, gone = ('"object": [{"location": {"declaration": "Ext.lagrange"}}]',
+                          ', {"location": {"declaration": "Ext.gone"}, "role": "uses"}')
+        links.write_text(links.read_text().replace(lagrange, lagrange[:-1] + gone + "]"))
+        self.commit_base("a stale reference")
+        links.write_text(links.read_text().replace(gone, ""))
+        self.list_duplicates(["Ext.gone"])
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertIn("error: blueprint/links/Algebra.jsonl:4 (Algebra/groups/group-basics/lagrange.md) lists Ext.gone "
+                      "as a duplicate, which the Lean no longer has: drop the entry from `duplicates`", err)
+        # A stale entry the base already had stays the base's: an unrelated change is written.
+        self.commit_base("a stale entry")
+        self.groups(lagrange="The order of a subgroup divides the order of a finite group.")
+        status, out, err, report = self.run_sync()
+        self.assertEqual((status, report["errors"], report["written"]), (0, [], ["scripts/wiki-sync.json"]), err)
+
+    def test_rows_that_list_one_duplicate_are_judged_by_their_pairs(self) -> None:
+        # On the base, the Lagrange, Other and Third rows all list Ext.backlog: one problem for each pair of them.
+        for name in ("other", "third"):
+            self.add_page(name, object=[{"location": {"declaration": f"Ext.{name}"}}],
+                          extensions={"org.atlas-wiki": {"duplicates": ["Ext.backlog"]}})
+        self.groups(more="theorem other : True := trivial\n\ntheorem third : True := trivial\n\n")
+        self.list_duplicates(["Ext.backlog"])
+        self.base = self.commit("three rows list Ext.backlog")
+        # Taking the first claim away, then putting the rows in another order, makes no new pair.
+        self.list_duplicates(None)
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        for edit in (lambda text: text, lambda text: "".join(f"{line}\n" for line in reversed(text.splitlines()))):
+            links.write_text(edit(links.read_text()))
+            status, out, err, report = self.run_sync("--check")
+            self.assertEqual((status, report["errors"]), (0, []), out + err)
+        # A new row that lists it makes two.
+        self.groups(more="theorem other : True := trivial\n\ntheorem third : True := trivial\n\n"
+                         "theorem zeta : True := trivial\n\n")
+        self.add_page("zeta", object=[{"location": {"declaration": "Ext.zeta"}}],
+                      extensions={"org.atlas-wiki": {"duplicates": ["Ext.backlog"]}})
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (1, [
+            f"Algebra/groups/group-basics/zeta.md: it lists Ext.backlog as a duplicate, as "
+            f"Algebra/groups/group-basics/{other}.md does: fix the duplicates list" for other in ("other", "third")]))
+
+    def test_a_duplicate_listed_on_a_row_whose_declaration_is_gone_is_the_changes(self) -> None:
+        # On the base, Lagrange's row credits Ext.gone, which the Lean lacks: that stale link is the base's. The pull
+        # request adds Ext.fresh and lists it on that row, an association that counts for no page: the run writes
+        # nothing, and the check is red. Once the base has the association, a pull request that leaves it is judged
+        # on its own changes.
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text().replace('{"declaration": "Ext.lagrange"}', '{"declaration": "Ext.gone"}'))
+        self.commit_base("a stale credit")
+        self.groups(more="/-- Lagrange's theorem, stated again. -/\ntheorem fresh : True := trivial\n\n")
+        self.list_duplicates(["Ext.fresh"])
+        message = ("error: blueprint/links/Algebra.jsonl:4 (Algebra/groups/group-basics/lagrange.md) lists Ext.fresh "
+                   "as a duplicate of Ext.gone, which the Lean no longer has: relink the row to the declaration's "
+                   "successor, keeping its article id, or drop the entry from `duplicates`")
+        before = self.tree()
+        status, out, err, report = self.run_sync()
+        self.assertEqual(status, 1)
+        self.assertIn(message, err)
+        self.assertEqual(self.tree(), before)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertIn(message, err)
+        self.commit_base("the association on the base")
+        self.groups(lagrange="The order of a subgroup divides the order of a finite group.",
+                    more="/-- Lagrange's theorem, stated again. -/\ntheorem fresh : True := trivial\n\n")
+        status, out, err, report = self.run_sync()
+        self.assertEqual((status, report["errors"], report["written"]), (0, [], ["scripts/wiki-sync.json"]), err)
+
+    def test_restoring_one_end_of_a_stale_association_is_no_new_problem(self) -> None:
+        # On the base, Lagrange's row credits Ext.review_c and lists Ext.review_t, and the Lean declares neither: both
+        # ends of the association are stale, the base's. A pull request that brings back one of them, the row as it
+        # was, leaves the other as stale as it was, and both runs pass; one that brings back neither, and changes the
+        # row's credit, makes an association of its own, which stops them.
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text().replace('{"declaration": "Ext.lagrange"}',
+                                                   '{"declaration": "Ext.review_c"}'))
+        self.list_duplicates(["Ext.review_t"])
+        self.commit_base("both ends stale")
+        row = links.read_bytes()
+        for restored in ("review_t", "review_c"):
+            with self.subTest(restored=restored):
+                self.groups(more=f"theorem {restored} : True := trivial\n\n")
+                for flags in (("--check",), ()):
+                    status, out, err, report = self.run_sync(*flags)
+                    self.assertEqual((status, report["errors"]), (0, []), out + err)
+                self.assertEqual(links.read_bytes(), row)
+                self.git("checkout", "-q", "--", ".")
+        # Each end of the retargeted association is the changes', the duplicate's as the declaration's.
+        links.write_text(links.read_text().replace('"Ext.review_c"', '"Ext.review_d"'))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual(status, 1)
+        self.assertIn("lists Ext.review_t as a duplicate, which the Lean no longer has", err)
+        self.assertIn("lists Ext.review_t as a duplicate of Ext.review_d, which the Lean no longer has", err)
+
+    def test_a_page_listing_a_duplicate_moves_without_a_new_conflict(self) -> None:
+        # On the base, Lagrange's and Other's rows both list Ext.backlog. Moving Other's page, its row keeping its id,
+        # its credit and its list, makes no new conflict: the two rows still are the two that list it.
+        self.groups(more="theorem other : True := trivial\n\n")
+        self.list_duplicates(["Ext.backlog"])
+        self.add_page("other", object=[{"location": {"declaration": "Ext.other"}}],
+                      extensions={"org.atlas-wiki": {"duplicates": ["Ext.backlog"]}})
+        self.base = self.commit("two rows list Ext.backlog")
+        folder = self.root / "blueprint/roadmap/Algebra/groups/group-basics"
+        (folder / "other.md").rename(folder / "moved.md")
+        (folder / "README.md").write_text((folder / "README.md").read_text().replace("(other.md)", "(moved.md)"))
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        links.write_text(links.read_text().replace("group-basics/other.md", "group-basics/moved.md"))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (0, []), out + err)
+
+    def test_a_second_row_of_a_page_that_lists_a_duplicate_is_a_new_conflict(self) -> None:
+        # On the base, Lagrange's page has a second row, crediting Ext.second, and only the first lists Ext.backlog. The
+        # second row listing it too is a new conflict of the two rows, on one page.
+        self.groups(more="theorem second : True := trivial\n\n")
+        self.list_duplicates(["Ext.backlog"])
+        links = self.root / "blueprint/links/Algebra.jsonl"
+        second = {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/groups/group-basics/lagrange.md"}],
+                  "id": "af_" + "e" * 24, "object": [{"location": {"declaration": "Ext.second"}}]}
+        links.write_text(links.read_text() + json.dumps(second) + "\n")
+        self.base = self.commit("a second row for Lagrange's page")
+        second["extensions"] = {"org.atlas-wiki": {"duplicates": ["Ext.backlog"]}}
+        lines = links.read_text().splitlines()
+        links.write_text("".join(f"{line}\n" for line in lines[:-1]) + json.dumps(second) + "\n")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["errors"]), (1, [
+            "Algebra/groups/group-basics/lagrange.md: it lists Ext.backlog as a duplicate, as "
+            "Algebra/groups/group-basics/lagrange.md does: fix the duplicates list"]), out + err)
+
+    def test_the_page_listing_an_own_duplicate_must_be_a_listed_page(self) -> None:
+        # The pull request adds Ext.fresh, a restatement of Lagrange's theorem, and lists it on Lagrange's row, whose
+        # page then stands for it: the page must stay a page, listed on its folder page.
+        self.groups(more="/-- Lagrange's theorem, stated again. -/\ntheorem fresh : True := trivial\n\n")
+        self.list_duplicates(["Ext.fresh"])
+        page = self.root / "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md"
+        text = page.read_text()
+        page.unlink()
+        for flags in ((), ("--check",)):
+            status, out, err, report = self.run_sync(*flags)
+            self.assertEqual((status, report.get("in_step", False)), (1, False))
+            self.assertIn("error: blueprint/roadmap/Algebra/groups/group-basics/lagrange.md, which the row listing "
+                          "Ext.fresh as a duplicate names, is not a page: restore it there, keeping the row and its "
+                          "article id, or drop the entry from the row's `duplicates`", err)
+        page.write_text(text)
+        readme = page.parent / "README.md"
+        readme.write_text(readme.read_text().replace("- [Lagrange](lagrange.md)\n", ""))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["in_step"]), (1, False))
+        self.assertIn("error: Algebra/groups/group-basics/lagrange.md, the page listing Ext.fresh as a duplicate, is "
+                      "listed on no folder page: list it on Algebra/groups/group-basics/README.md", err)
 
     def test_a_write_with_nothing_changed_writes_nothing(self) -> None:
         status, out, err, report = self.run_sync()
@@ -4639,6 +5052,114 @@ class BuildPath(Vault):
                     with patch.object(extract, "BLUEPRINT", wiki.VAULT), self.assertRaises(ValueError) as raised:
                         extract.article_manifest()
                     self.assertIn(message, str(raised.exception))
+
+    def test_the_extraction_refuses_a_duplicates_list_it_cannot_use(self) -> None:
+        # The extraction reads the lists beside the articles and refuses, before writing, one that would count a use
+        # for no article or for two (the problems sync_wiki.duplicate_markers finds without the Lean index).
+        self.page("Algebra/README.md", "# Algebra\n\n- [P](p.md)\n- [Q](q.md)\n")
+        self.page("Algebra/p.md", "# P\n\nA statement.\n")
+        self.page("Algebra/q.md", "# Q\n\nThe source's statement.\n")
+        listed = {"org.atlas-wiki": {"duplicates": ["Local.p_again"]}}
+        p = self.about("Algebra/p.md", object=[{"location": {"declaration": "Local.p"}}], extensions=listed)
+        self.annotate([self.about("Algebra/README.md"), p, self.about("Algebra/q.md")])
+        with patch.object(extract, "BLUEPRINT", wiki.VAULT):
+            self.assertEqual(extract.article_aliases(), {"Local.p_again": "Local.p"})
+            self.annotate([self.about("Algebra/README.md"), p, self.about("Algebra/q.md", extensions=listed)])
+            with self.assertRaises(ValueError) as raised:
+                extract.article_aliases()
+        self.assertIn("Algebra/q.md: it lists duplicates but credits no declaration of this project by a Lean link of "
+                      "its own", str(raised.exception))
+        self.assertIn("Algebra/q.md: it lists Local.p_again as a duplicate, as Algebra/p.md does",
+                      str(raised.exception))
+
+    def test_lean_facts_names_a_duplicates_entry_the_lean_left_stale(self) -> None:
+        # The Lean deleted Ext.gone, which Lagrange's row lists: lean-facts writes the page's facts and warns.
+        (wiki.ROOT / "Ext").mkdir()
+        (wiki.ROOT / "Ext" / "Groups.lean").write_text("namespace Ext\n\ntheorem lagrange : True := trivial\n\n"
+                                                       "end Ext\n")
+        self.page("Algebra/README.md", "# Algebra\n\n- [Lagrange](lagrange.md)\n")
+        self.page("Algebra/lagrange.md", "# Lagrange\n\nA statement.\n")
+        self.annotate([self.about("Algebra/README.md"),
+                       self.about("Algebra/lagrange.md", object=[{"location": {"declaration": "Ext.lagrange"}}],
+                                  extensions={"org.atlas-wiki": {"duplicates": ["Ext.gone"]}})])
+        dependency_file = self.tmp / "lean-dependencies.json"
+        dependency_file.write_text(json.dumps({"missing_articles": {}, "articles": {
+            "Ext.lagrange": {"module": "Ext.Groups", "statement": [], "proof": []}}}))
+        with patch("sys.stdout", new_callable=io.StringIO), patch("sys.stderr", new_callable=io.StringIO) as err:
+            self.assertEqual(sync.run_lean_facts(dependency_file), 0)
+        self.assertIn("warning: the duplicates entry Ext.gone (Algebra/lagrange.md): the Lean index does not resolve "
+                      "it; drop the entry from `duplicates`", err.getvalue())
+
+    def test_the_extraction_counts_a_duplicate_only_as_a_compiled_article(self) -> None:
+        # Lagrange's row lists Ext.backlog as a duplicate. The extraction writes nothing when the dump lacks a row for
+        # one of them that the Lean sources declare, as a use of Ext.backlog would then follow its own body, and when a
+        # page an earlier sync wrote with a module and a name stands for Ext.backlog. One the Lean no longer declares
+        # fails no build: the extraction warns, and a page that uses only Ext.backlog depends on no page through it
+        # while Ext.lagrange is gone. With both rows, it depends on Lagrange's.
+        (wiki.ROOT / "Ext").mkdir()
+        self.page("Algebra/README.md", "# Algebra\n\n" + "".join(f"- [{n}]({n}.md)\n" for n in ("lagrange", "uses",
+                                                                                                "other", "old")))
+        for name in ("lagrange", "uses", "other", "old"):
+            self.page(f"Algebra/{name}.md", f"# {name}\n\nA statement.\n")
+        rows = [self.about("Algebra/README.md"),
+                self.about("Algebra/lagrange.md", object=[{"location": {"declaration": "Ext.lagrange"}}],
+                           extensions={"org.atlas-wiki": {"duplicates": ["Ext.backlog"]}}),
+                self.about("Algebra/uses.md", object=[{"location": {"declaration": "Ext.uses"}}]),
+                self.about("Algebra/other.md", object=[{"location": {"declaration": "Ext.other"}}])]
+        plain = rows + [self.about("Algebra/old.md")]
+        legacy = rows + [self.about("Algebra/old.md",
+                                    extensions={"org.atlas-wiki": {"module": "Ext.Groups", "name": "backlog"}})]
+        compiled = lambda name, kind, type_uses, value_uses: {"name": name, "module": "Ext.Groups", "kind": kind,
+                                                               "private": False, "doc": True, "type": type_uses,
+                                                               "value": value_uses}
+        uses = [compiled("Ext.uses", "theorem", ["Ext.backlog"], []), compiled("Ext.backlog", "def", [], ["Ext.other"]),
+                compiled("Ext.other", "def", [], [])]
+        lagrange = compiled("Ext.lagrange", "theorem", [], ["Ext.backlog"])
+        unused = [compiled("Ext.uses", "theorem", [], []), compiled("Ext.other", "def", [], []), lagrange]
+        message = "the wiki lists Ext.backlog as a duplicate of Ext.lagrange, but "
+        cases = {
+            "the article the Lean declares, which the dump lacks": (
+                plain, ("backlog", "lagrange"), uses,
+                f"error: {message}the compiled dependency dump has no row for Ext.lagrange, and the Lean sources "
+                "declare it"),
+            "the duplicate the Lean declares, which the dump lacks": (
+                plain, ("backlog", "lagrange"), unused,
+                f"error: {message}the compiled dependency dump has no row for Ext.backlog, and the Lean sources "
+                "declare it"),
+            "a page standing for the duplicate": (legacy, ("backlog", "lagrange"), [*uses, lagrange],
+                                                  f"error: {message}a page stands for Ext.backlog"),
+            "the article the Lean no longer declares": (
+                plain, ("backlog",), uses, "warning: the Lean no longer declares Ext.lagrange, whose page lists "
+                                           "Ext.backlog as a duplicate"),
+            "the duplicate the Lean no longer declares": (
+                plain, ("lagrange",), unused, "warning: the Lean no longer declares Ext.backlog, which the wiki lists "
+                                              "as a duplicate of Ext.lagrange"),
+            "both compiled": (plain, ("backlog", "lagrange"), [*uses, lagrange], None),
+        }
+        for case, (annotations, theorems, dumped, message) in cases.items():
+            with self.subTest(case=case), patch.object(extract, "BLUEPRINT", wiki.VAULT):
+                (wiki.ROOT / "Ext" / "Groups.lean").write_text(
+                    "namespace Ext\n\n" + "".join(f"theorem {name} : True := trivial\n\n" for name in theorems)
+                    + "end Ext\n")
+                self.annotate(annotations)
+                dump, output = self.tmp / "dump.jsonl", self.tmp / "lean-dependencies.json"
+                output.unlink(missing_ok=True)
+                dump.write_text("".join(json.dumps(r) + "\n" for r in dumped))
+                with patch("sys.argv", ["extract", str(dump), str(output)]), \
+                        redirect_stderr(io.StringIO()) as errors, redirect_stdout(io.StringIO()):
+                    code = extract.main()
+                if message and message.startswith("error"):
+                    self.assertEqual((code, output.exists()), (1, False))
+                    self.assertIn(message, errors.getvalue())
+                    continue
+                self.assertEqual(code, 0, errors.getvalue())
+                self.assertIn(message or "", errors.getvalue())
+                articles = json.loads(output.read_text())["articles"]
+                expected = {"both compiled": ["Ext.lagrange"], "the article the Lean no longer declares": [],
+                            "the duplicate the Lean no longer declares": []}[case]
+                self.assertEqual(articles["Ext.uses"]["statement"], expected)
+                if "Ext.lagrange" in articles:
+                    self.assertEqual(articles["Ext.lagrange"]["proof"], [])
 
     def test_a_folder_page_credits_nothing(self) -> None:
         # A folder page's row that credits a Mathlib declaration (Autoform would show the folder in Mathlib, with no
