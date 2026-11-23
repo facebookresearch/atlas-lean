@@ -38,6 +38,15 @@ open ManifoldDifferentialForms KahlerClassGeometry CoordinateFormIntegrals
 open HyperkahlerComplexStructures SmoothDeRhamBettiBridge
 open scoped Manifold ContDiff
 
+/-- The chart integral of top forms against a finite smooth partition of unity
+on a complex manifold is well defined, linear, and vanishes on exact forms. The
+holomorphic charts give the orientation that Stokes' theorem needs. -/
+public theorem_wanted integrationTheory (n : ℕ) (M : Type) [TopologicalSpace M]
+    [ChartedSpace (Coordinates n) M] [IsManifold 𝓘(ℝ, Coordinates n) ∞ M]
+    [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] [ExteriorTheory ℝ (Coordinates n) M]
+    (C : RealCoordinateMap n) (A : IntegrationAtlas n M) :
+    IntegrationTheory n M C A
+
 /-- The exterior derivative of smooth global forms on a smooth manifold over
 `ℝ` or `ℂ` is smooth, linear and squares to zero. -/
 public instance_wanted exteriorTheory (k : Type) [RCLike k] (E : Type)
@@ -57,14 +66,5 @@ public instance_wanted wedgeTheory (n : ℕ) (M : Type) [TopologicalSpace M]
     [ChartedSpace (Coordinates n) M] [IsManifold 𝓘(ℝ, Coordinates n) ∞ M]
     [ExteriorTheory ℝ (Coordinates n) M] :
     WedgeTheory n M
-
-/-- The chart integral of top forms against a finite smooth partition of unity
-on a complex manifold is well defined, linear, and vanishes on exact forms. The
-holomorphic charts give the orientation that Stokes' theorem needs. -/
-public theorem_wanted integrationTheory (n : ℕ) (M : Type) [TopologicalSpace M]
-    [ChartedSpace (Coordinates n) M] [IsManifold 𝓘(ℝ, Coordinates n) ∞ M]
-    [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] [ExteriorTheory ℝ (Coordinates n) M]
-    (C : RealCoordinateMap n) (A : IntegrationAtlas n M) :
-    IntegrationTheory n M C A
 
 end WantedExt.AlgebraicGeometry.ManifoldDifferentialFormsWanted

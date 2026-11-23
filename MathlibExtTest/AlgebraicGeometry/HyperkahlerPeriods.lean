@@ -92,7 +92,7 @@ example (L : Type) [AddCommGroup L] [Module ℤ L] [Module.Finite ℤ L] :
   have hmem : l.rep ∈ l.submodule := by
     rw [Projectivization.submodule_eq]
     exact Submodule.mem_span_singleton_self _
-  have h := (hpos l.rep hmem l.rep_nonzero).2
+  have h := (hpos l.rep hmem l.rep_ne_zero).2
   simp at h
 
 end MathlibExtTest.AlgebraicGeometry.HyperkahlerPeriods.Small
