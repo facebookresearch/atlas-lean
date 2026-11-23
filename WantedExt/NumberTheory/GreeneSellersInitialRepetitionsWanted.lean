@@ -273,17 +273,6 @@ public theorem_wanted andrews_rogersRamanujan_first_dissection (q : ℂ) (hq : �
     ∑' l : ℤ, (q ^ (60 * l ^ 2 + 4 * l) - q ^ (60 * l ^ 2 + 44 * l + 8) +
       q ^ (60 * l ^ 2 + 16 * l + 1) - q ^ (60 * l ^ 2 + 64 * l + 17))
 
-/-- **$c_8(N)$ is even when $15N + 1$ is not a square.** Let $c_8$ be the initial-repetitions
-partition function of Nyirenda and Mugwangwavari. For every integer $N \ge 0$ such that $15N + 1$
-is not a perfect square, $c_8(N)$ is even.
-
-Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
-Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
-Theorem 11 (`integers-2025-A32-thm-11`). -/
-public theorem_wanted initialRepetitionsC8_even_of_not_isSquare (N : ℕ)
-    (hN : ¬ IsSquare (15 * N + 1)) :
-    Even (initialRepetitionsC8 N)
-
 /-- **Andrews' identity for the second Rogers–Ramanujan series.** Let $q$ be a complex number
 with $|q| < 1$, write $(q;q)_j = \prod_{i=1}^{j} (1 - q^i)$ for $j \ge 0$, and let
 $(q^2;q^2)_\infty = \prod_{n=0}^{\infty} (1 - q^{2n+2})$ be the infinite q-Pochhammer symbol. Then

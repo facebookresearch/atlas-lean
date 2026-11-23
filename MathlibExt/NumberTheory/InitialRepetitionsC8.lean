@@ -12,10 +12,10 @@ public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.ZMod.Basic
 import Mathlib.Algebra.CharP.Algebra
 import Mathlib.Combinatorics.Enumerative.Pentagonal.PowerSeries
+import Mathlib.Data.Int.Interval
 import Mathlib.Tactic.LinearCombination
+import MathlibExt.Combinatorics.Enumerative.Partition.RogersRamanujan
 import MathlibExt.NumberTheory.DivisorCountParity
--- The generating-series truncation is proved inside the partition proof of Rogers–Ramanujan.
-import all MathlibExt.Combinatorics.Enumerative.Partition.RogersRamanujan
 
 /-!
 # Parity of partitions with initial repetitions
@@ -345,7 +345,7 @@ private theorem c8_factored (N : ℕ) : (initialRepetitionsC8 N : ZMod 2) =
 
 /-! ## Euler and Rogers–Ramanujan coefficients -/
 
-open MathlibExt.Combinatorics.Enumerative.Partition.RogersRamanujanWanted in
+open MathlibExt MathlibExt.Combinatorics.Enumerative.Partition.RogersRamanujanWanted in
 /-- Clear the finite denominators in the truncated first Rogers–Ramanujan identity. -/
 private theorem rogersRamanujan_trunc
     (n : ℕ) :
@@ -353,19 +353,18 @@ private theorem rogersRamanujan_trunc
       (∑ j ∈ range (n + 1), X ^ (j ^ 2) * ∏ i ∈ range (n - j), (1 - X ^ ((j + i) + 1))) -
       ∑ r ∈ range (n + 1), if r = 0 then 1 else
         (-1) ^ r * (X ^ (5 * r.choose 2 + 2 * r) + X ^ (5 * r.choose 2 + 3 * r)) := by
-  change _ ∣ _ - rrT n
   convert rrTrunc_RR n using 2
   rw [mul_sum]
   apply sum_congr rfl
   intro j hj
   have hjn := Nat.le_of_lt_succ (mem_range.mp hj)
-  have he := rrP_mul_tail j (n - j)
-  rw [Nat.add_sub_of_le hjn] at he
-  rw [← he]
-  calc
-    _ = X ^ (j ^ 2) * (∏ t ∈ range (n - j), (1 - X ^ (j + t + 1))) * (rrP j * rrIp j) := by
-      rw [rrP_mul_ip, mul_one]
-    _ = _ := by ring
+  have hsplit : qPochFin (X : PowerSeries ℚ) n =
+      qPochFin X j * ∏ i ∈ range (n - j), (1 - X ^ (j + i + 1)) := by
+    simp only [qPochFin, ← prod_range_add, Nat.add_sub_of_le hjn]
+  have hunit : qPochFin (X : PowerSeries ℚ) j * (qPochFin X j)⁻¹ = 1 :=
+    PowerSeries.mul_inv_cancel _ (by simp [qPochFin, map_prod])
+  rw [hsplit]
+  linear_combination -(X ^ (j ^ 2) * ∏ i ∈ range (n - j), (1 - X ^ (j + i + 1))) * hunit
 
 private def tailSum {R : Type*} [CommRing R] (q : R) (n : ℕ) :=
   ∑ j ∈ range (n + 1), q ^ (j ^ 2) * ∏ i ∈ range (n - j), (1 - q ^ (j + i + 1))
@@ -733,6 +732,21 @@ private theorem thetaPairs_card (N : ℕ) : (thetaPairs N).card = (degreePairs N
 end initialRepetitionsC8_prime_mul_add_even
 
 open initialRepetitionsC8_prime_mul_add_even in
+/-- **$c_8(N)$ is even when $15N + 1$ is not a square.** Let $c_8$ be the initial-repetitions
+partition function of Nyirenda and Mugwangwavari. For every integer $N \ge 0$ such that $15N + 1$
+is not a perfect square, $c_8(N)$ is even.
+
+Source: John Greene and James A. Sellers, *Extending Recent Parity Results of Nyirenda and
+Mugwangwavari for Partitions with Initial Repetitions*, INTEGERS 25 (2025), Article A32,
+Theorem 11 (`integers-2025-A32-thm-11`). -/
+public theorem initialRepetitionsC8_even_of_not_isSquare (N : ℕ)
+    (hN : ¬ IsSquare (15 * N + 1)) :
+    Even (initialRepetitionsC8 N) := by
+  obtain ⟨k, hk⟩ := even_thetaPairs hN
+  have h := c8_degreePairs N
+  rw [← thetaPairs_card, hk, Nat.cast_add, CharTwo.add_self_eq_zero] at h
+  exact ZMod.natCast_eq_zero_iff_even.mp h
+
 -- The modular reduction also works without the bounds on the prime and residue.
 set_option linter.unusedVariables false in
 /-- **Parity of $c_8$ on residue classes modulo a prime.** Let $c_8$ be the initial-repetitions
@@ -750,15 +764,10 @@ public theorem initialRepetitionsC8_prime_mul_add_even (p r n : ℕ) (hp : p.Pri
     (hp7 : 7 ≤ p) (hr : r ∈ Finset.Icc 1 (p - 1))
     (h15 : ¬ IsSquare ((15 * r + 1 : ℕ) : ZMod p)) :
     Even (initialRepetitionsC8 (p * n + r)) := by
-  let N := p * n + r
-  have hn : ¬ IsSquare (15 * N + 1) := by
-    rintro ⟨x, hx⟩
-    apply h15
-    refine ⟨(x : ZMod p), ?_⟩
-    simpa [N] using congrArg (fun a : ℕ => (a : ZMod p)) hx
-  obtain ⟨k, hk⟩ := even_thetaPairs hn
-  have h := c8_degreePairs N
-  rw [← thetaPairs_card, hk, Nat.cast_add, CharTwo.add_self_eq_zero] at h
-  exact ZMod.natCast_eq_zero_iff_even.mp h
+  apply initialRepetitionsC8_even_of_not_isSquare
+  rintro ⟨x, hx⟩
+  apply h15
+  refine ⟨(x : ZMod p), ?_⟩
+  simpa using congrArg (fun a : ℕ => (a : ZMod p)) hx
 
 end MetaMathlibExt
