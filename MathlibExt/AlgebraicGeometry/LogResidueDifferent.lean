@@ -7,8 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import MathlibExt.AlgebraicGeometry.RestrictedAdjointSections
 public import MathlibExt.AlgebraicGeometry.DivisorialModuleSheaves
+public import MathlibExt.AlgebraicGeometry.GenericSectionMaps
+public import MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
 public import Mathlib.AlgebraicGeometry.Normalization
 public import Mathlib.RingTheory.Conductor
 
@@ -44,7 +45,6 @@ namespace MathlibExt.AlgebraicGeometry.LogResidueDifferent
 open _root_.CategoryTheory _root_.CategoryTheory.Limits _root_.Opposite
 open _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.LogPairs
-open MathlibExt.AlgebraicGeometry.RestrictedAdjointSections
 open MathlibExt.AlgebraicGeometry.RationalFunctionModules
 open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 open MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
@@ -79,10 +79,13 @@ def pullOpenSection {X S : Over (Spec (.of k))} (i : S ⟶ X)
   exact (GenericSectionMaps.openSectionsIso S ((Scheme.Modules.pullback i.left).obj M) U).hom
     (GenericSectionMaps.homSection SU (pullbackSection a q ≫ comparison))
 
-/-- A genuine generic hypersurface residue chart, with both rational top-form bases fixed. -/
-structure ResidueChart (P : LogPair k (n + 1)) (m : ℕ) (A : AdjointPower P m)
+/-- A genuine generic hypersurface residue chart, with both rational top-form bases fixed, for a
+Cartier log-adjoint power `A = m (K_X + Δ)` (`adjointPower`). -/
+structure ResidueChart (P : LogPair k (n + 1)) (m : ℕ) (A : CartierLine P.variety)
     (S : NormalVariety k n) (C : CanonicalData S) (i : S.X ⟶ P.variety.X)
-    (R : CartierRationalization A.cartier) where
+    (R : CartierRationalization A) where
+  adjointPower : realCast A.divisor =
+    (m : ℝ) • (realCast (canonicalDivisor P.canonical) + P.boundary)
   ambientOpen : P.variety.X.left.Opens
   divisorOpen : S.X.left.Opens
   [ambientNonempty : Nonempty ambientOpen]
@@ -107,30 +110,30 @@ structure ResidueChart (P : LogPair k (n + 1)) (m : ℕ) (A : AdjointPower P m)
       (fun j => KaehlerDifferential.D k (FunctionField S)
         (S.X.left.germToFunctionField divisorOpen
           (i.left.appLE ambientOpen divisorOpen inside (parameters j.succ))))
-  sourceGenerator : Γ(A.cartier.line.val,ambientOpen)
+  sourceGenerator : Γ(A.line.val,ambientOpen)
   sourceGeneratorNormalized :
     rationalFunctionsEquiv ambientOpen (R.map.app ambientOpen sourceGenerator) =
       1 / ((sourceBasis.repr P.canonical.form () : FunctionField P.variety) *
         P.variety.X.left.germToFunctionField ambientOpen (parameters 0))^m
   pulledGenerates : ∀ x (hx : x ∈ divisorOpen),
     letI := moduleStalkModule S.X.left
-      ((Scheme.Modules.pullback i.left).obj A.cartier.line.val) x
+      ((Scheme.Modules.pullback i.left).obj A.line.val) x
     Submodule.span (LocalRing S x)
       {TopCat.Presheaf.germ
-        ((Scheme.Modules.pullback i.left).obj A.cartier.line.val).presheaf divisorOpen x hx
-          (pullOpenSection i A.cartier.line.val ambientOpen divisorOpen inside sourceGenerator)} = ⊤
+        ((Scheme.Modules.pullback i.left).obj A.line.val).presheaf divisorOpen x hx
+          (pullOpenSection i A.line.val ambientOpen divisorOpen inside sourceGenerator)} = ⊤
 
 /-- Global residue comparison fixed by the actual chart generator and all Cartier generators. -/
-structure ResidueComparison {P : LogPair k (n + 1)} {m : ℕ} {A : AdjointPower P m}
+structure ResidueComparison {P : LogPair k (n + 1)} {m : ℕ} {A : CartierLine P.variety}
     {S : NormalVariety k n} {C : CanonicalData S} {i : S.X ⟶ P.variety.X}
-    {R : CartierRationalization A.cartier} (F : ResidueChart P m A S C i R) where
+    {R : CartierRationalization A} (F : ResidueChart P m A S C i R) where
   cartier : CartierLine S
-  moduleComparison : cartier.line.val ≅ (Scheme.Modules.pullback i.left).obj A.cartier.line.val
-  residue : (Scheme.Modules.pullback i.left).obj A.cartier.line.val ⟶ rationalFunctions S.X.left
+  moduleComparison : cartier.line.val ≅ (Scheme.Modules.pullback i.left).obj A.line.val
+  residue : (Scheme.Modules.pullback i.left).obj A.line.val ⟶ rationalFunctions S.X.left
   chartNormalized :
     letI := F.divisorNonempty
     rationalFunctionsEquiv F.divisorOpen
-      (residue.app F.divisorOpen (pullOpenSection i A.cartier.line.val
+      (residue.app F.divisorOpen (pullOpenSection i A.line.val
         F.ambientOpen F.divisorOpen F.inside F.sourceGenerator)) =
       1 / (F.targetBasis.repr C.form () : FunctionField S)^m
   generatorsNormalized : ∀ j,
@@ -141,9 +144,9 @@ structure ResidueComparison {P : LogPair k (n + 1)} {m : ℕ} {A : AdjointPower 
       (cartier.functions j : FunctionField S)⁻¹
 
 /-- The actual adjunction different, coefficientwise derived from the fixed residue comparison. -/
-def different {P : LogPair k (n + 1)} {m : ℕ} {A : AdjointPower P m}
+def different {P : LogPair k (n + 1)} {m : ℕ} {A : CartierLine P.variety}
     {S : NormalVariety k n} {C : CanonicalData S} {i : S.X ⟶ P.variety.X}
-    {R : CartierRationalization A.cartier} {F : ResidueChart P m A S C i R}
+    {R : CartierRationalization A} {F : ResidueChart P m A S C i R}
     (D : ResidueComparison F) : RealWeil S :=
   (1/(m : ℝ)) • realCast D.cartier.divisor - realCast (canonicalDivisor C)
 

@@ -145,11 +145,11 @@ structure ConductorResidueBranch {k : Type} [Field k] {d : ℕ}
   actualAmbient : Set.range ambient ∈ irreducibleComponents N
   degree : ℕ
   positive : 0 < degree
-  power : RestrictedAdjointSections.AdjointPower pair degree
+  power : LogPairs.CartierLine pair.variety
   canonical : LogPairs.CanonicalData variety
   inclusion : variety.X ⟶ pair.variety.X
   [finite : IsFinite inclusion.left]
-  source : LogResidueDifferent.CartierRationalization power.cartier
+  source : LogResidueDifferent.CartierRationalization power
   chart : LogResidueDifferent.ResidueChart pair degree power variety canonical inclusion source
   comparison : LogResidueDifferent.ResidueComparison chart
   normalized : inclusion.left ≫ ambient =

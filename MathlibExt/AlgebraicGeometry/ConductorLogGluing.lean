@@ -89,6 +89,6 @@ structure LogAdjointBranch {k : Type} [Field k] {d : ℕ}
     0 < idealOrder S.pair.variety (C.ideal.comap (S.ambient ≫ ν)) p →
       idealOrder S.pair.variety (I.comap (S.ambient ≫ ν)) p = 0
   comparison : (Scheme.Modules.pullback (S.ambient ≫ ν)).obj (logPower P I (d+1) m) ≅
-    S.power.cartier.line.val
+    S.power.line.val
 
 end MathlibExt.AlgebraicGeometry.ConductorLogGluing

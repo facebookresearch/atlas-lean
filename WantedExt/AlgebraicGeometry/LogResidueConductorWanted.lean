@@ -25,15 +25,14 @@ namespace MathlibExt.AlgebraicGeometry.LogResidueDifferent
 
 open _root_.CategoryTheory _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.LogPairs
-open MathlibExt.AlgebraicGeometry.RestrictedAdjointSections
 
 def_wanted normalizedResidueComparison
     {k : Type} [Field k] [CharZero k] {n : ℕ}
-    (P : LogPair k (n+1)) (m : ℕ) (hm : 0 < m) (A : AdjointPower P m)
+    (P : LogPair k (n+1)) (m : ℕ) (hm : 0 < m) (A : CartierLine P.variety)
     (S : NormalVariety k n) (C : CanonicalData S) (i : S.X ⟶ P.variety.X)
     [IsFinite i.left] (p : PrimePoint P.variety)
     (himage : i.left (genericPoint S.X.left) = p.val) (hboundary : P.boundary p = 1)
-    (R : CartierRationalization A.cartier) (F : ResidueChart P m A S C i R) :
+    (R : CartierRationalization A) (F : ResidueChart P m A S C i R) :
     ResidueComparison F
 
 end MathlibExt.AlgebraicGeometry.LogResidueDifferent
