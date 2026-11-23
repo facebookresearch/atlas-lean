@@ -188,9 +188,9 @@ theorem maxSubarrayDCCost_le {n : ℕ} (hn : 1 ≤ n) :
       simp
     · have ha := ih (n / 2) (by omega) (by omega)
       have hb := ih (n - n / 2) (by omega) (by omega)
-      have hca : Nat.clog 2 (n / 2) ≤ Nat.clog 2 n - 1 := clog2_floor_half_le n (by omega)
+      have hca : Nat.clog 2 (n / 2) ≤ Nat.clog 2 n - 1 := clog2_floor_half_le n
       have hcb : Nat.clog 2 (n - n / 2) ≤ Nat.clog 2 n - 1 := by
-        have := clog2_half_le n (by omega)
+        have := clog2_half_le n
         rwa [show n - n / 2 = (n + 1) / 2 by omega]
       have hc1 : 1 ≤ Nat.clog 2 n := Nat.succ_le_of_lt (Nat.clog_pos (by decide) (by omega))
       set c := Nat.clog 2 n

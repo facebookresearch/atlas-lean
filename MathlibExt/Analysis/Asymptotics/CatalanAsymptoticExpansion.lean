@@ -85,7 +85,7 @@ private lemma catalanExp_bernoulli_eval_add (n : ℕ) (x y : ℚ) :
     · rw [Polynomial.finsetSum_coeff, Finset.sum_eq_single k]
       · simp
       · intro b hb hbk
-        rw [Polynomial.coeff_monomial, ite_eq_right hbk]
+        rw [Polynomial.coeff_monomial_apply, ite_eq_right hbk]
       · simp [hk]
     · have hkn : n < k := by omega
       rw [Nat.choose_eq_zero_of_lt hkn, Nat.cast_zero, zero_smul,
@@ -95,7 +95,7 @@ private lemma catalanExp_bernoulli_eval_add (n : ℕ) (x y : ℚ) :
       intro b hb
       have hbn : b ≤ n := by simpa using (Finset.mem_range.mp hb)
       have hbk : b ≠ k := by omega
-      rw [Polynomial.coeff_monomial, ite_eq_right hbk]
+      rw [Polynomial.coeff_monomial_apply, ite_eq_right hbk]
   calc
     (Polynomial.bernoulli n).eval (x + y) =
         (Polynomial.taylor x (Polynomial.bernoulli n)).eval y := by
@@ -289,7 +289,7 @@ private lemma catalanExp_even_E_eq (E : ℕ → ℤ)
         (n.choose (2 * j) : ℤ) * E (n - 2 * j)) = 0) (m : ℕ) :
     (E (2 * m) : ℚ) = catalanExpEulerEvenQ m := by
   induction m using Nat.strong_induction_on with
-  | h m ih =>
+  | ind m ih =>
       by_cases hm : m = 0
       · subst m
         rw [mul_zero, hE.1, Int.cast_one, catalanExpEulerEvenQ_zero]

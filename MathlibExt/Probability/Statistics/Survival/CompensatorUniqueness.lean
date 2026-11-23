@@ -201,7 +201,8 @@ private theorem eq_zero_of_ineq (hXm : Measurable X) {d : ℝ → ℝ}
       intro s hst
       have h1 := hineq s t B hst fun w hw => hB w (hw.2.le.trans ht)
       have h2 : P.real {ω | s < X ω ∧ X ω < t} ≤ c / 2 :=
-        (measureReal_mono (fun ω (h : s < X ω ∧ X ω < t) =>
+        (measureReal_mono (s₁ := {ω | s < X ω ∧ X ω < t}) (s₂ := {ω | X ω < -(n : ℝ)})
+          (fun ω (h : s < X ω ∧ X ω < t) =>
           (show X ω < -(n : ℝ) from h.2.trans_le (ht.trans (min_le_right _ _))))).trans hn.le
       have h3 : P.real {ω | s < X ω} ≤ P.real (univ : Set Ω) := measureReal_mono (subset_univ _)
       have h4 := mul_le_mul_of_nonneg_left (hc t htu) (abs_nonneg (d t))
@@ -255,7 +256,9 @@ private theorem eq_zero_of_ineq (hXm : Measurable X) {d : ℝ → ℝ}
       have h1 := hineq ts t B ht.1 fun w hw => hB w ⟨hw.1, hw.2.le.trans ht.2⟩
       rw [hat, abs_zero, zero_mul, zero_add] at h1
       have h2 : P.real {ω | ts < X ω ∧ X ω < t} ≤ c / 2 :=
-        (measureReal_mono (fun ω (h : ts < X ω ∧ X ω < t) =>
+        (measureReal_mono (s₁ := {ω | ts < X ω ∧ X ω < t})
+          (s₂ := {ω | ts < X ω ∧ X ω < ts + 1 / ((k : ℝ) + 1)})
+          (fun ω (h : ts < X ω ∧ X ω < t) =>
           (show ts < X ω ∧ X ω < ts + 1 / ((k : ℝ) + 1) from
             ⟨h.1, h.2.trans_le (ht.2.trans (min_le_right _ _))⟩))).trans hk.le
       have h4 := mul_le_mul_of_nonneg_left (hc t htu) (abs_nonneg (d t))
