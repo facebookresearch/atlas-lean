@@ -7,8 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Proved in `MathlibExt.NumberTheory.CubeSubCube`, which this module imports: Lemma 5
-(`MetaMathlibExt.cube_sub_cube_eq_two_or_one_iff`).
+Lemma 4 (`MetaMathlibExt.gcd_sub_one_sq_add_add_one`) is proved in
+`MathlibExt.NumberTheory.CubeFactorGCD`. Lemma 5 (`MetaMathlibExt.cube_sub_cube_eq_two_or_one_iff`)
+is proved in `MathlibExt.NumberTheory.CubeSubCube`.
 -/
 
 module
@@ -16,6 +17,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Int.GCD
 public import Mathlib.Data.Nat.Prime.Defs
+public import MathlibExt.NumberTheory.CubeFactorGCD
 public import MathlibExt.NumberTheory.CubeSubCube
 
 namespace MetaMathlibExt
@@ -79,16 +81,6 @@ with Prime-Square Factors*, INTEGERS 25 (2025), Article A103, Lemma 3
 public theorem_wanted sq_add_add_one_eq_cube_iff (u : ℤ) :
     ((∃ v : ℤ, u ^ 2 + u + 1 = v ^ 3) ↔ u = -19 ∨ u = -1 ∨ u = 0 ∨ u = 18) ∧
       ((∃ v : ℤ, u ^ 2 - u + 1 = v ^ 3) ↔ u = -18 ∨ u = 0 ∨ u = 1 ∨ u = 19)
-
-/-- **The gcd of $x \mp 1$ and $x^2 \pm x + 1$.** For every integer $x$,
-$\gcd(x - 1, x^2 + x + 1) = \gcd(x - 1, 3)$ and $\gcd(x + 1, x^2 - x + 1) = \gcd(x + 1, 3)$.
-
-Source: Jialai She, *Nonexistence of Consecutive Powerful Triplets Around Cubes
-with Prime-Square Factors*, INTEGERS 25 (2025), Article A103, Lemma 4
-(`integers-2025-A103-lem-4`). -/
-public theorem_wanted gcd_sub_one_sq_add_add_one (x : ℤ) :
-    Int.gcd (x - 1) (x ^ 2 + x + 1) = Int.gcd (x - 1) 3 ∧
-      Int.gcd (x + 1) (x ^ 2 - x + 1) = Int.gcd (x + 1) 3
 
 /-- **Integer solutions of $u^3 - 2v^3 = 1$.** For all integers $u$ and $v$, $u^3 - 2v^3 = 1$ if
 and only if $(u, v) = (1, 0)$ or $(u, v) = (-1, -1)$.
