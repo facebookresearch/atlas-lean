@@ -45,9 +45,10 @@ private def half : ℚ ≃ₗ[ℚ] ℚ where
 example : half.symm.dualMap (LinearMap.id : ℚ →ₗ[ℚ] ℚ) 1 = 2 := by
   norm_num [LinearEquiv.dualMap_apply, half]
 
-example {k : Type} [Field k] (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
-    (genus_zero_euler : euler C.hom (structureModule C.left) = 1) :
+example {k : Type} [Field k] (C : Over (Spec (.of k))) [IsProperCurve C.hom]
+    [TorsionFreeRestrictions C.left]
+    (genus_zero_euler : ∀ hO, euler C.hom (structureModule C.left) hO = 1) :
     ¬ IsStable C (0 : Polarization C.left) (structureModule C.left) := by
-  intro h
-  have he := h.2.2.2.1
-  simp [totalWeight, genus_zero_euler] at he
+  rintro ⟨hO, h⟩
+  have he := h.2.2.1
+  simp [totalWeight, genus_zero_euler hO] at he

@@ -41,13 +41,13 @@ open FourierMukai PositiveCurveDeterminants CurveCohomologyDeterminantModels
 open SchemeDeterminantPresentations AffineDerivedCoefficientModules NativeLineDuals
 open RelativeLambdaReindexing
 
-attribute [local instance] HasDerivedCategory.standard
+attribute [local instance] HasDerivedCategory.standard FineCompactifiedJacobian.proper
 
-variable {k : Type} [Field k]
+variable {k : Type} [Field k] [IsAlgClosed k]
   [HasDerivedPullbacks.{0}] [HasDerivedScalarExtensions.{0}] [HasDerivedPushforwards.{0}]
   [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)]
   (S : AffineSources) (A : DeterminantSystem S)
-  (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
+  (C : Over (Spec (.of k))) [IsProperCurve C.hom] [TorsionFreeRestrictions C.left]
   (q : Polarization C.left) (s : SmoothMarking C)
   (M : FineCompactifiedJacobian C q s) (J : PicardZeroModel C s.p)
 

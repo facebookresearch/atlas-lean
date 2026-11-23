@@ -42,9 +42,9 @@ open SchemeDeterminantPresentations AffineDerivedCoefficientModules NativeLineDu
 
 attribute [local instance] HasDerivedCategory.standard
 
-variable {k : Type} [Field k]
+variable {k : Type} [Field k] [IsAlgClosed k]
 
-structure LineLocus (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
+structure LineLocus (C : Over (Spec (.of k))) [IsProperCurve C.hom] [TorsionFreeRestrictions C.left]
     (q : Polarization C.left) (s : SmoothMarking C) (M : FineCompactifiedJacobian C q s) where
   openSet : M.J.left.Opens
   allTests : ∀ (T : Over (Spec (.of k))) (f : T ⟶ M.J),
@@ -55,7 +55,7 @@ variable
   [HasDerivedPullbacks.{0}] [HasDerivedScalarExtensions.{0}] [HasDerivedPushforwards.{0}]
   [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)]
   (S : AffineSources) (A : DeterminantSystem S)
-  (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
+  (C : Over (Spec (.of k))) [IsProperCurve C.hom] [TorsionFreeRestrictions C.left]
   (q q' : Polarization C.left) (s : SmoothMarking C)
   (M : FineCompactifiedJacobian C q s) (N : FineCompactifiedJacobian C q' s)
   (L : LineLocus C q s M) (L' : LineLocus C q' s N)
@@ -137,9 +137,12 @@ def forwardKernel : FourierMukai.D (pullback M.J.hom N.J.hom) :=
   singleModule ((Scheme.Modules.pullback P.forward.inv).obj
     (mixedKernelModule S A C q q' s M N L L' D))
 
+/-- The reverse kernel: the transposed dual, shifted by `dim J̄ = h¹(C, 𝒪_C)` (the arithmetic
+genus of `C`, the dimension field of the compactified Jacobian). -/
 def reverseKernel : FourierMukai.D (pullback N.J.hom M.J.hom) :=
   (singleModule ((Scheme.Modules.pullback P.reverse.inv).obj
-    (transposedDual S A C q q' s M N L L' D)))⟦(genus C.hom : ℤ)⟧
+    (transposedDual S A C q q' s M N L L' D)))⟦(Module.finrank k
+      (cohomology C.hom (structureModule C.left) 1) : ℤ)⟧
 
 def bounded (X : Scheme.{0}) (K : FourierMukai.D X) : Prop :=
   ∃ a b : ℤ, ∀ i : ℤ, i < a ∨ b < i → IsZero ((DerivedCategory.homologyFunctor X.Modules i).obj K)
@@ -148,7 +151,8 @@ def boundedQuasicoherent (X : Scheme.{0}) : ObjectProperty (FourierMukai.D X) :=
   fun K => quasicoherent X K ∧ bounded X K
 
 def boundedCoherent (X : Scheme.{0}) : ObjectProperty (FourierMukai.D X) :=
-  fun K => (∀ i : ℤ, IsCoherent ((DerivedCategory.homologyFunctor X.Modules i).obj K)) ∧ bounded X K
+  fun K => (∀ i : ℤ,
+    IsFiniteTypeQuasicoherent ((DerivedCategory.homologyFunctor X.Modules i).obj K)) ∧ bounded X K
 
 abbrev BoundedQCoh (X : Scheme.{0}) := (boundedQuasicoherent X).FullSubcategory
 abbrev BoundedCoh (X : Scheme.{0}) := (boundedCoherent X).FullSubcategory

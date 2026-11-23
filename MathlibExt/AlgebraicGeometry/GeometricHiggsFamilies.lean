@@ -164,26 +164,26 @@ def FieldInvariant {X : Scheme.{u}} {L : X.Modules} {r : ℕ}
 
 /-- Curve slope stability uses the actual saturated invariant subobjects. -/
 def IsStableCurve {k : Type u} [Field k]
-    (C : Over (Spec (.of k))) {L : C.left.Modules} {r : ℕ}
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom] {L : C.left.Modules} {r : ℕ}
     (E : TwistedBundle C.left L r) : Prop :=
   0 < r ∧ ∀ s : ℕ, 0 < s → s < r → ∀ (F : C.left.Modules) (i : F ⟶ E.module),
-    Mono i → IsVectorBundle F s → IsVectorBundle (cokernel i) (r-s) →
+    Mono i → ∀ hF : IsVectorBundle F s, IsVectorBundle (cokernel i) (r-s) →
     FieldInvariant E F i →
-      (bundleDegree C.hom F s : ℚ) / s < (bundleDegree C.hom E.module r : ℚ) / r
+      (bundleDegree C.hom F s hF : ℚ) / s < (bundleDegree C.hom E.module r E.bundle : ℚ) / r
 
 /-- Semistability tests the same actual saturated invariant subobjects. -/
 def IsSemistableCurve {k : Type u} [Field k]
-    (C : Over (Spec (.of k))) {L : C.left.Modules} {r : ℕ}
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom] {L : C.left.Modules} {r : ℕ}
     (E : TwistedBundle C.left L r) : Prop :=
   0 < r ∧ ∀ s : ℕ, 0 < s → s < r → ∀ (F : C.left.Modules) (i : F ⟶ E.module),
-    Mono i → IsVectorBundle F s → IsVectorBundle (cokernel i) (r-s) →
+    Mono i → ∀ hF : IsVectorBundle F s, IsVectorBundle (cokernel i) (r-s) →
     FieldInvariant E F i →
-      (bundleDegree C.hom F s : ℚ) / s ≤ (bundleDegree C.hom E.module r : ℚ) / r
+      (bundleDegree C.hom F s hF : ℚ) / s ≤ (bundleDegree C.hom E.module r E.bundle : ℚ) / r
 
 /-- Polystability is a genuine finite direct sum of stable same-slope fields;
 it does not assume existence of a harmonic metric. -/
 def IsPolystableCurve {k : Type u} [Field k]
-    (C : Over (Spec (.of k))) {L : C.left.Modules} {r : ℕ}
+    (C : Over (Spec (.of k))) [IsProperCurve C.hom] {L : C.left.Modules} {r : ℕ}
     (E : TwistedBundle C.left L r) : Prop :=
   let : HasFiniteBiproducts C.left.Modules := HasFiniteBiproducts.of_hasFiniteProducts
   ∃ (n : ℕ) (rank : Fin n → ℕ)
@@ -191,8 +191,8 @@ def IsPolystableCurve {k : Type u} [Field k]
     (∑ i, rank i) = r ∧
     ∃ b : (biproduct fun i => (F i).module) ≅ E.module,
       (∀ i, IsStableCurve C (F i)) ∧
-      (∀ i, (bundleDegree C.hom (F i).module (rank i) : ℚ) / rank i =
-        (bundleDegree C.hom E.module r : ℚ) / r) ∧
+      (∀ i, (bundleDegree C.hom (F i).module (rank i) (F i).bundle : ℚ) / rank i =
+        (bundleDegree C.hom E.module r E.bundle : ℚ) / r) ∧
       ∀ i, biproduct.ι (fun j => (F j).module) i ≫ b.hom ≫ E.field =
         (F i).field ≫ tensorMap
           (biproduct.ι (fun j => (F j).module) i ≫ b.hom) (𝟙 L)

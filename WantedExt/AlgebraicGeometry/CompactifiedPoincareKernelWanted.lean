@@ -52,9 +52,7 @@ variable [MathlibExt.AlgebraicGeometry.FourierMukai.HasDerivedPullbacks.{u}]
 Arinkin's geometric properties (Theorem A) that is an autoduality kernel (Theorem C). -/
 public def_wanted compactifiedPoincareKernel
     (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
-    (C : Over (Spec (.of k))) [IsProper C.hom] [IsIntegral C.left]
-    [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
-    (hdim : topologicalKrullDim C.left = 1)
+    (C : Over (Spec (.of k))) [IsIntegral C.left] [IsProperCurve C.hom]
     (planar : ∀ x : C.left, IsClosed ({x} : Set C.left) →
       Module.finrank (IsLocalRing.ResidueField (C.left.presheaf.stalk x))
         (IsLocalRing.CotangentSpace (C.left.presheaf.stalk x)) ≤ 2)

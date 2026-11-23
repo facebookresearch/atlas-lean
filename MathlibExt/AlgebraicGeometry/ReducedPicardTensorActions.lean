@@ -40,7 +40,7 @@ open _root_.CategoryTheory.MonObj _root_.AlgebraicGeometry
 open CoherentCurveLinearSeries AlgebraicLineBundleFamilies PointedPicardFamilies
 open NumericalCompactifiedJacobians RelativeLambdaReindexing
 
-variable {k : Type} [Field k]
+variable {k : Type} [Field k] [IsAlgClosed k]
 
 /-- Local planar singularities are genuine local embeddings in smooth surfaces. -/
 structure PlanarNeighborhood (C : Over (Spec (.of k))) (c : C.left) where
@@ -55,7 +55,7 @@ structure PlanarNeighborhood (C : Over (Spec (.of k))) (c : C.left) where
 def IsLocallyPlanar (C : Over (Spec (.of k))) : Prop :=
   ∀ c : C.left, Nonempty (PlanarNeighborhood C c)
 
-variable (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
+variable (C : Over (Spec (.of k))) [IsProperCurve C.hom] [TorsionFreeRestrictions C.left]
   (q : Polarization C.left) (s : SmoothMarking C)
   (M : FineCompactifiedJacobian C q s) (J : PicardZeroModel C s.p)
 
@@ -71,19 +71,19 @@ def universalTensorFamily : (prod C (actionBase C q s M J)).left.Modules :=
 
 /-- Preservation and finite-presentation data for this exact tensor family. -/
 structure TensorAdmissibility : Prop where
-  finiteType : LocallyOfFiniteType (actionBase C q s M J).hom
-  quasiCompact : QuasiCompact (actionBase C q s M J).hom
+  [finiteType : LocallyOfFiniteType (actionBase C q s M J).hom]
+  [quasiCompact : QuasiCompact (actionBase C q s M J).hom]
   stable : IsStableFamily C (actionBase C q s M J) q (universalTensorFamily C q s M J)
   normalized : IsNormalized C (actionBase C q s M J) s.p (universalTensorFamily C q s M J)
 
 def tensorAction (A : TensorAdmissibility C q s M J) : actionBase C q s M J ⟶ M.J :=
-  (M.universal (actionBase C q s M J) A.finiteType A.quasiCompact
+  (@M.universal (actionBase C q s M J) A.finiteType A.quasiCompact
     (universalTensorFamily C q s M J) A.stable A.normalized).choose
 
 def universalTensorIso (A : TensorAdmissibility C q s M J) :
     familyPullback C M.J (actionBase C q s M J) M.F (tensorAction C q s M J A) ≅
       universalTensorFamily C q s M J :=
-  Classical.choice (M.universal (actionBase C q s M J) A.finiteType A.quasiCompact
+  Classical.choice (@M.universal (actionBase C q s M J) A.finiteType A.quasiCompact
     (universalTensorFamily C q s M J) A.stable A.normalized).choose_spec.1
 
 def familyCompositionIso (Y T U : Over (Spec (.of k))) (F : (prod C Y).left.Modules)

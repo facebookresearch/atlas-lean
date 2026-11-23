@@ -21,7 +21,9 @@ such conclusion is encoded in their standing input data.
 
 Sources read: MRV arXiv:1207.7233v5, Section 5/Theorem C; MRV
 arXiv:1308.0564v2, Equation (4.1), Remark 4.2, Theorem 4.6/Theorem A.
-The latter equivalence retains char(k)=0 or char(k)>p_a(C). Canonical
+The latter equivalence retains char(k)=0 or char(k)>p_a(C), where the
+arithmetic genus p_a(C) is h¹(C, 𝒪_C) (H⁰(C, 𝒪_C) = k for a reduced connected
+proper curve over an algebraically closed field). Canonical
 universal-sheaf independence is degree-zero scope; chosen kernels outside
 that scope keep their supplied universal families. Scalar bases for
 D(O_C) and an O_C compactification point are not requested.
@@ -48,8 +50,7 @@ def_wanted curveDeterminantSystem
 def_wanted generalizedJacobianTensorAction
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
-    [IsProper C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (dimension : topologicalKrullDim C.left = 1)
+    [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
     (projective : ProjectiveLineSystems.IsProjectiveVariety C)
     (q : Polarization C.left) (general : IsNondegenerate C q) (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) (J : PicardZeroModel C s.p) : PicardTensorAction C q s M J
@@ -59,8 +60,7 @@ def_wanted reducedPoincareCohomology
     [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)]
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
-    [IsProper C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (dimension : topologicalKrullDim C.left = 1)
+    [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
     (projective : ProjectiveLineSystems.IsProjectiveVariety C)
     (q : Polarization C.left) (general : IsNondegenerate C q) (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) (J : PicardZeroModel C s.p) :
@@ -71,8 +71,7 @@ def_wanted reducedPoincareFamily
     [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)]
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
-    [IsProper C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (dimension : topologicalKrullDim C.left = 1)
+    [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
     (projective : ProjectiveLineSystems.IsProjectiveVariety C)
     (q : Polarization C.left) (general : IsNondegenerate C q) (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) (J : PicardZeroModel C s.p)
@@ -85,8 +84,7 @@ theorem_wanted reducedBetaGroupCompatibility
     [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)]
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
-    [IsProper C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (dimension : topologicalKrullDim C.left = 1)
+    [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
     (projective : ProjectiveLineSystems.IsProjectiveVariety C)
     (q : Polarization C.left) (general : IsNondegenerate C q) (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) (J : PicardZeroModel C s.p)
@@ -100,8 +98,7 @@ theorem_wanted reducedCurveAutoduality
     [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)]
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
-    [IsProper C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (dimension : topologicalKrullDim C.left = 1)
+    [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
     (projective : ProjectiveLineSystems.IsProjectiveVariety C)
     (q : Polarization C.left) (general : IsNondegenerate C q) (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) (J : PicardZeroModel C s.p)
@@ -113,8 +110,7 @@ theorem_wanted reducedCurveAutoduality
 def_wanted compactifiedLineLocus
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
-    [IsProper C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (dimension : topologicalKrullDim C.left = 1)
+    [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
     (projective : ProjectiveLineSystems.IsProjectiveVariety C)
     (q : Polarization C.left) (general : IsNondegenerate C q) (s : SmoothMarking C)
     (M : FineCompactifiedJacobian C q s) : LineLocus C q s M
@@ -124,8 +120,7 @@ def_wanted mixedOpenPoincareCohomology
     [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)]
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
-    [IsProper C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (dimension : topologicalKrullDim C.left = 1)
+    [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
     (projective : ProjectiveLineSystems.IsProjectiveVariety C)
     (q q' : Polarization C.left) (general : IsNondegenerate C q)
     (general' : IsNondegenerate C q') (s : SmoothMarking C)
@@ -138,8 +133,7 @@ def_wanted mixedProductCoordinates
     [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)]
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
-    [IsProper C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (dimension : topologicalKrullDim C.left = 1)
+    [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
     (projective : ProjectiveLineSystems.IsProjectiveVariety C)
     (q q' : Polarization C.left) (general : IsNondegenerate C q)
     (general' : IsNondegenerate C q') (s : SmoothMarking C)
@@ -151,8 +145,7 @@ theorem_wanted mixedPoincareCohenMacaulay
     [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)]
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
-    [IsProper C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (dimension : topologicalKrullDim C.left = 1)
+    [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
     (projective : ProjectiveLineSystems.IsProjectiveVariety C)
     (q q' : Polarization C.left) (general : IsNondegenerate C q)
     (general' : IsNondegenerate C q') (s : SmoothMarking C)
@@ -171,8 +164,7 @@ def_wanted canonicalMixedPoincareEquivalence
     [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)]
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
-    [IsProper C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (dimension : topologicalKrullDim C.left = 1)
+    [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
     (projective : ProjectiveLineSystems.IsProjectiveVariety C)
     (q q' : Polarization C.left) (general : IsNondegenerate C q)
     (general' : IsNondegenerate C q') (s : SmoothMarking C)
@@ -182,9 +174,12 @@ def_wanted canonicalMixedPoincareEquivalence
     (D : OpenCohomologyData C q q' s M N L L')
     (P : ProductCoordinates C q q' s M N)
     [HasDerivedTensors.{0}] (planar : IsLocallyPlanar C)
-    (characteristic : CharZero k ∨ ∃ p : ℕ, CharP k p ∧ genus C.hom < p)
-    (degree_zero : totalWeight q = 1 - (genus C.hom : ℚ))
-    (degree_zero' : totalWeight q' = 1 - (genus C.hom : ℚ)) :
+    (characteristic : CharZero k ∨ ∃ p : ℕ, CharP k p ∧
+      Module.finrank k (cohomology C.hom (structureModule C.left) 1) < p)
+    (degree_zero : totalWeight q =
+      1 - (Module.finrank k (cohomology C.hom (structureModule C.left) 1) : ℚ))
+    (degree_zero' : totalWeight q' =
+      1 - (Module.finrank k (cohomology C.hom (structureModule C.left) 1) : ℚ)) :
     MixedFourierMukaiEquivalence S A C q q' s M N L L' D P
 
 /-- Outside degree zero, the supplied universal sheaves remain part of the chosen kernel. -/
@@ -193,8 +188,7 @@ def_wanted chosenMixedPoincareEquivalence
     [∀ R : CommRingCat.{0}, PreservesFiniteLimits (tilde.functor R)]
     (k : Type) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [TorsionFreeRestrictions C.left]
-    [IsProper C.hom] [IsReduced C.left] [ConnectedSpace C.left]
-    (dimension : topologicalKrullDim C.left = 1)
+    [IsProperCurve C.hom] [IsReduced C.left] [ConnectedSpace C.left]
     (projective : ProjectiveLineSystems.IsProjectiveVariety C)
     (q q' : Polarization C.left) (general : IsNondegenerate C q)
     (general' : IsNondegenerate C q') (s : SmoothMarking C)
@@ -204,7 +198,8 @@ def_wanted chosenMixedPoincareEquivalence
     (D : OpenCohomologyData C q q' s M N L L')
     (P : ProductCoordinates C q q' s M N)
     [HasDerivedTensors.{0}] (planar : IsLocallyPlanar C)
-    (characteristic : CharZero k ∨ ∃ p : ℕ, CharP k p ∧ genus C.hom < p) :
+    (characteristic : CharZero k ∨ ∃ p : ℕ, CharP k p ∧
+      Module.finrank k (cohomology C.hom (structureModule C.left) 1) < p) :
     MixedFourierMukaiEquivalence S A C q q' s M N L L' D P
 
 end WantedExt.AlgebraicGeometry.ReducedPoincareModelsWanted
