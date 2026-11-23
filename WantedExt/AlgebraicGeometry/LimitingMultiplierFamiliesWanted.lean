@@ -37,7 +37,7 @@ theorem_wanted limitingMultiplierDirected (k : Type) [Field k] [CharZero k] (n :
     ∃ m : PNat, (F.image a).ideal ≤ (F.image m).ideal ∧ (F.image b).ideal ≤ (F.image m).ideal
 
 theorem_wanted limitingMultiplierMaximal (k : Type) [Field k] [CharZero k] (n : ℕ)
-    (V : NormalVariety k n) (C : CanonicalData V) [IsNoetherian V.X.left]
+    (V : NormalVariety k n) (C : CanonicalData V)
     [∀ p : PrimePoint V, IsDiscreteValuationRing (LocalRing V p.val)]
     (I : V.X.left.IdealSheafData) (c : ℝ) (_nonnegative : 0 ≤ c)
     (F : LimitingFamily V C I c) : ∃ m : PNat, limitingIdeal F = (F.image m).ideal
