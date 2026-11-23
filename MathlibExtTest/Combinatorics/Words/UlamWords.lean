@@ -31,6 +31,23 @@ example (k : ℕ) : IsUlamWord (List.replicate 3 true ++ List.replicate (4 * k +
 
 end MetaMathlibExt.isUlamWord_three_ones_zeros_iff
 
+namespace MetaMathlibExt.isUlamWord_map_not_and_ulamResidueCount_eq
+
+-- The complement of the Ulam word 0001 is the Ulam word 1110, of binary value 14.
+example : IsUlamWord [true, true, true, false] ∧
+    Nat.ofDigits 2 ([true, true, true, false].reverse.map Bool.toNat) = 14 := by
+  obtain ⟨hw, hsum⟩ := isUlamWord_map_not_and_ulamResidueCount_eq.1 _
+    isUlamWord_length_four_examples.1
+  refine ⟨hw, ?_⟩
+  change Nat.ofDigits 2 ([true, true, true, false].reverse.map Bool.toNat) + 1 = 15 at hsum
+  omega
+
+-- Modulus zero pairs exact integer values, including classes outside the binary range.
+example (a : ZMod 0) : ulamResidueCount 0 4 a = ulamResidueCount 0 4 (15 - a) :=
+  isUlamWord_map_not_and_ulamResidueCount_eq.2 0 4 a
+
+end MetaMathlibExt.isUlamWord_map_not_and_ulamResidueCount_eq
+
 namespace MetaMathlibExt.ulamResidueCount_mod_two_three
 
 -- At the minimum length both parities occur, and the third residue modulo 3 is absent.

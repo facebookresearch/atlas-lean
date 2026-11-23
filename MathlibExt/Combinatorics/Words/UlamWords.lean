@@ -147,7 +147,7 @@ public theorem ulamResidueCount_three_two :
     ulamResidueCount 3 2 0 = 0 ∧ ulamResidueCount 3 2 1 = 1 ∧ ulamResidueCount 3 2 2 = 1 := by
   decide
 
-namespace ulamResidueCount_mod_two_three
+namespace isUlamWord_map_not_and_ulamResidueCount_eq
 
 -- Complementation commutes with taking each factor of a cut and reflects their inequality.
 private theorem aux_map_not (f : ℕ) (w : List Bool) :
@@ -190,7 +190,36 @@ private theorem card_complement (N n : ℕ) (a : ZMod N) :
     ← List.map_reverse (f := not)]
   rw [eq_sub_iff_add_eq.mpr (eq_sub_iff_add_eq.mpr hsum), sub_right_inj]
 
-end ulamResidueCount_mod_two_three
+end isUlamWord_map_not_and_ulamResidueCount_eq
+
+open isUlamWord_map_not_and_ulamResidueCount_eq in
+/-- **Complement symmetry of Ulam words.** For a word $w$ over $\{0, 1\}$, let $\bar w$ be its
+complement (every letter swapped) and let $\pi(w)$ be the integer whose binary expansion is $w$,
+most significant letter first. If $w$ is an Ulam word of length $n$, then $\bar w$ is an Ulam
+word and $\pi(\bar w) + \pi(w) = 2^n - 1$. Moreover, for all natural numbers $N$ and $n$ and every
+$a \in \mathbb{Z}/N\mathbb{Z}$, the number of Ulam words $w$ of length $n$ with
+$\pi(w) \equiv a \pmod N$ equals the number of Ulam words $w$ of length $n$ with
+$\pi(w) \equiv 2^n - 1 - a \pmod N$.
+
+For $n \ge 1$, writing $\rho_{a,N}(n)$ for the proportion of Ulam words $w$ of length $n$ with
+$\pi(w) \equiv a \pmod N$ among all Ulam words of length $n$, the second statement says
+$\rho_{a,N}(n) = \rho_{2^n-1-a,N}(n)$.
+
+Source: Adutwum, Clark, Emerson, A. Sheydvasser, A. Sheydvasser, and Tougouma,
+*Distributions of Ulam Words up to Length 30*, INTEGERS 25 (2025), Article A102, Theorem 11. -/
+public theorem isUlamWord_map_not_and_ulamResidueCount_eq :
+    (∀ w : List Bool, IsUlamWord w →
+      IsUlamWord (w.map not) ∧
+        Nat.ofDigits 2 ((w.map not).reverse.map Bool.toNat) +
+            Nat.ofDigits 2 (w.reverse.map Bool.toNat) = 2 ^ w.length - 1) ∧
+      ∀ (N n : ℕ) (a : ZMod N),
+        ulamResidueCount N n a = ulamResidueCount N n (2 ^ n - 1 - a) := by
+  refine ⟨?_, card_complement⟩
+  intro w hw
+  constructor
+  · simpa only [IsUlamWord, List.length_map, aux_map_not] using hw
+  · simpa only [List.map_reverse (f := not), List.length_reverse] using
+      Nat.eq_sub_of_add_eq (ofDigits_not_add w.reverse)
 
 /-- **Residue symmetries of Ulam words modulo 2 and 3.** For natural numbers $N$ and $n$ and a
 residue $a \in \mathbb{Z}/N\mathbb{Z}$, let $c_{a,N}(n)$ be the number of Ulam words of length
@@ -209,9 +238,9 @@ public theorem ulamResidueCount_mod_two_three (n : ℕ) (hn : 1 ≤ n) :
   constructor
   · simpa only [show (2 : ZMod 2) = 0 by decide, zero_pow (by omega : n ≠ 0),
       sub_zero, show (0 : ZMod 2) - 1 = 1 by decide] using
-      ulamResidueCount_mod_two_three.card_complement 2 n 0
+      isUlamWord_map_not_and_ulamResidueCount_eq.2 2 n 0
   · intro a
-    rw [ulamResidueCount_mod_two_three.card_complement 3 n a,
+    rw [isUlamWord_map_not_and_ulamResidueCount_eq.2 3 n a,
       show (2 : ZMod 3) = -1 by decide, neg_one_pow_eq_ite]
     split <;> simp [show (-1 : ZMod 3) - 1 = 1 by decide]
 
