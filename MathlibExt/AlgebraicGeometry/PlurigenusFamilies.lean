@@ -91,13 +91,19 @@ abbrev fiberCanonical {k : Type u} [Field k]
     {Ω : Type u} [Field Ω] (x : Spec (.of Ω) ⟶ B.left) : (fiberScheme f x).Modules :=
   (Scheme.Modules.pullback (pullback.fst f.left x)).obj K
 
-/-- A smooth projective general-type family (H-projective: embedded in `ℙᴺ_B` over the
-base), with a line bundle that restricts to the canonical line of every geometric fiber
-(characterized there by Serre duality). It contains no constancy conclusion. -/
-structure SmoothGeneralTypeFamily {k : Type u} [Field k] (n : ℕ) where
+/-- A smooth projective family of `n`-dimensional varieties of general type over a smooth,
+geometrically irreducible, quasi-compact curve `B` over `k` (the setting of Siu's
+invariance of plurigenera, stated over a disc; families over other bases are not covered).
+It is H-projective (embedded in `ℙᴺ_B` over the base) and carries a line bundle that
+restricts to the canonical line of every geometric fiber (characterized there by Serre
+duality). It contains no constancy conclusion. -/
+structure SmoothGeneralTypeFamilyOverCurve {k : Type u} [Field k] (n : ℕ) where
+  /-- The base curve. -/
   B : Over (Spec (.of k))
+  /-- The base is a smooth curve over `k`. -/
   [smoothBase : SmoothOfRelativeDimension 1 B.hom]
-  [connectedBase : GeometricallyIrreducible B.hom]
+  /-- The base curve is geometrically irreducible. -/
+  [irreducibleBase : GeometricallyIrreducible B.hom]
   [finiteTypeBase : QuasiCompact B.hom]
   X : Over (Spec (.of k))
   f : X ⟶ B
@@ -116,12 +122,12 @@ structure SmoothGeneralTypeFamily {k : Type u} [Field k] (n : ℕ) where
     HasGeneralTypeGrowth (fiberStructure f x) (fiberCanonical f canonical x)
       (fiberDuality Ω x).line n
 
-attribute [instance] SmoothGeneralTypeFamily.proper
+attribute [instance] SmoothGeneralTypeFamilyOverCurve.proper
 
 /-- The actual plurigenus `h⁰(K^{⊗ m})` of the fiber at a field-valued point
 `Spec Ω ⟶ B`, computed by coherent global sections over `Ω`. -/
 def plurigenus {k : Type u} [Field k] {n : ℕ}
-    (P : SmoothGeneralTypeFamily (k := k) n)
+    (P : SmoothGeneralTypeFamilyOverCurve (k := k) n)
     {Ω : Type u} [Field Ω] (x : Spec (.of Ω) ⟶ P.B.left) (m : ℕ) : ℕ :=
   Module.finrank Ω
     (cohomology (fiberStructure P.f x)
