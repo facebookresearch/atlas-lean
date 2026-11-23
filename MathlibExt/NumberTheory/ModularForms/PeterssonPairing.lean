@@ -103,7 +103,7 @@ private theorem verticalStrip_subset_iUnion_band (A : ℝ) {a : ℝ} (ha : 0 < a
     rw [not_le] at hlt
     exact le_of_lt hlt
 
-private def cbox (relo rehi imlo imhi : ℝ) : Set ℂ :=
+private noncomputable def cbox (relo rehi imlo imhi : ℝ) : Set ℂ :=
   Complex.measurableEquivRealProd ⁻¹' (Set.Icc relo rehi ×ˢ Set.Icc imlo imhi)
 
 private lemma mem_cbox {relo rehi imlo imhi : ℝ} {w : ℂ} :

@@ -35,7 +35,7 @@ both stacks; (3) clause check: walk the token stack, looking literals up, giving
 
 namespace Cslib.Complexity.SatVerifier
 
-open Cslib.CookLevin Cslib.Logic.PL Computability
+open Cslib.CookLevin Cslib.Logic.LegacyPL Computability
 
 /-- **Stack alphabet of the SAT verifier.** The symbols of the token and table stacks are a name
 bit $b$ for each boolean $b$, a polarity marker for each polarity $p$, a clause end marker, a

@@ -19,7 +19,7 @@ public import CSLibExt.Logics.Propositional.CNF.Semantics
 M. X. Goemans and D. P. Williamson, "New 3/4-approximation algorithms for the maximum
 satisfiability problem", *SIAM J. Discrete Math.* 7(4) (1994), 656–666.
 
-Clauses are the repository's CNF clauses `Cslib.Logic.PL.CNFClause` (lists of literals
+Clauses are the repository's CNF clauses `Cslib.Logic.LegacyPL.CNFClause` (lists of literals
 `(variable, polarity)`). As in the paper, where a clause is given by disjoint sets `P_j`, `N_j`
 of variables, every clause must use distinct variables: `(C.map Prod.fst).Nodup`, no variable
 occurring twice in either polarity. `clauseSatProb` and `expectedWeight` take this hypothesis as
@@ -56,7 +56,7 @@ constraint.
 
 namespace CSLibExt.Algorithms.Approximation.MaxSat
 
-open Cslib.Logic.PL Finset
+open Cslib.Logic.LegacyPL Finset
 
 /-- **Probability that a literal is true.** If variable `i` is true with probability `p i`,
 the literal `(i, true)` is true with probability `p i` and `(i, false)` with probability

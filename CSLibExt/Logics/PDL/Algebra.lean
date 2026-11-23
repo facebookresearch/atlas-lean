@@ -15,7 +15,7 @@ public import CSLibExt.Foundations.RelationAlgebra.Tests
 # Relational interpretation of PDL programs
 
 `Program.toRelation` changes the representation of the existing `ProgRel`
-into CSLib's `SquareRelations`; it is not another program semantics.
+into CSLib's relation algebra of `SetRel`; it is not another program semantics.
 The interpretation uses the canonical composition, union and diagonal-test
 API. PDL iteration remains `ReflTransGen`, not relation converse.
 
@@ -32,13 +32,13 @@ variable {World Atom Label : Type*}
 
 /-- Interpret a PDL program in CSLib's canonical relation algebra. -/
 def Program.toRelation (M : Model World Atom Label)
-    (a : Program Atom Label) : SquareRelations World :=
+    (a : Program Atom Label) : SetRel World World :=
   {(s, t) | ProgRel M a s t}
 
 /-- The representation conversion preserves exactly the executions. -/
 @[simp] theorem Program.mem_toRelation (M : Model World Atom Label)
     (a : Program Atom Label) (s t : World) :
-    a.toRelation M (s, t) ↔ ProgRel M a s t := Iff.rfl
+    (s, t) ∈ a.toRelation M ↔ ProgRel M a s t := Iff.rfl
 
 /-- The interpretation of sequencing uses canonical composition. -/
 @[simp] theorem Program.toRelation_seq (M : Model World Atom Label)
@@ -60,7 +60,7 @@ closure as in `ProgRel`, including its identity boundary. -/
 @[simp] theorem Program.toRelation_star (M : Model World Atom Label)
     (a : Program Atom Label) :
     a.star.toRelation M = {(s, t) |
-      Relation.ReflTransGen (fun x y => a.toRelation M (x, y)) s t} :=
+      Relation.ReflTransGen (fun x y => (x, y) ∈ a.toRelation M) s t} :=
   rfl
 
 end Cslib.PDL
