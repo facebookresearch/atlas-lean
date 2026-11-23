@@ -13,31 +13,49 @@ AxiomMath/Stacks at c496df0d9beea9deaeabcea8492605f9a0a2313b,
 licensed under Apache 2.0. That source has no individual author or
 copyright notice. Modification notice: use Mathlib's right-derived
 global-section functor directly, define degree by the actual Euler
-characteristic difference, and state rank one by local trivializations.
+characteristic difference, state rank one by local trivializations, and
+define genus, degree and linear series only on proper curves.
 -/
 
 module
 
 public import Mathlib.Algebra.Category.ModuleCat.Abelian
 public import Mathlib.AlgebraicGeometry.Modules.Sheaf
+public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import Mathlib.CategoryTheory.Abelian.RightDerived
 public import
   Mathlib.CategoryTheory.Abelian.GrothendieckCategory.EnoughInjectives
+public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import Mathlib.LinearAlgebra.FiniteDimensional.Basic
+public import Mathlib.Topology.KrullDimension
+public import MathlibExt.AlgebraicGeometry.SchemeModulesEvaluation
 
 @[expose] public noncomputable section
 
 /-!
 # Coherent cohomology and linear series on curves
 
-The spaces in this interface are the actual right-derived global-section
-modules. Their scalar action is restricted along the structure morphism.
-On a proper curve, the degree of an invertible sheaf is
-`χ(L) - χ(𝒪)`. A linear series selects an `(r + 1)`-dimensional subspace
-of `H⁰(L)`, retaining the finite-dimensionality of `H⁰(L)` and `H¹(L)`.
+The cohomology spaces are the right-derived functors of global sections on
+sheaves of modules, with scalars restricted along the structure morphism
+`X ⟶ Spec k`. They are defined for every scheme over `k`.
 
-Reference: Arbarello--Cornalba--Griffiths--Harris, *Geometry of Algebraic
-Curves I*, Chapters II and V; Stacks Project, Tag 0CCN.
+The curve invariants are defined only on a proper curve over `k`
+(`IsProperCurve`): a proper scheme of dimension one over `k`. The class also
+records two theorems about such schemes that Mathlib does not yet prove: the
+cohomology of an invertible sheaf is finite-dimensional, and all cohomology
+vanishes above degree one. So `Module.finrank` is the actual dimension of every
+cohomology space used below, and `h⁰ - h¹` is the actual Euler characteristic.
+
+* `genus f` is `dim H¹(X, 𝒪_X)` for a proper curve with `H⁰(X, 𝒪_X) = k`
+  (Stacks, Tag 0BY7).
+* `degree f L hL` is `χ(L) - χ(𝒪_X)` for an invertible sheaf `L`
+  (Stacks, Tag 0AYR).
+* `LinearSeries f d r` is a linear series `g^r_d`: an invertible sheaf of
+  degree `d` with an `(r + 1)`-dimensional space of global sections.
+
+References: Arbarello--Cornalba--Griffiths--Harris, *Geometry of Algebraic
+Curves I*, Chapters II and V; Stacks Project, Sections 33.44 (Tag 0AYQ) and 53.8
+(Tag 0BY6).
 -/
 
 namespace MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
@@ -56,61 +74,127 @@ def IsLineBundle {X : Scheme.{u}} (L : X.Modules) : Prop :=
   ∀ x : X, ∃ U : X.Opens, x ∈ U ∧
     Nonempty ((Scheme.Modules.pullback U.ι).obj L ≅ structureModule U)
 
+/-- The structure sheaf is invertible: it is trivial on the whole scheme. -/
+theorem isLineBundle_structureModule (X : Scheme.{u}) :
+    IsLineBundle (structureModule X) := fun _ ↦
+  ⟨⊤, trivial,
+    ⟨((Scheme.Modules.restrictFunctorIsoPullback (⊤ : X.Opens).ι).app _).symm ≪≫
+      Scheme.Modules.restrictUnitIso (⊤ : X.Opens).ι⟩⟩
+
 /-- The scalar homomorphism on global regular functions is induced by `f`. -/
 def globalScalarMap {k : Type u} [Field k] {X : Scheme.{u}}
     (f : X ⟶ Spec (.of k)) : k →+* Γ(X, ⊤) :=
   ((Scheme.ΓSpecIso (.of k)).inv ≫ f.appTop).hom
 
-/-- Actual global sections, with scalars restricted along the structure map. -/
-def sectionsFunctor {k : Type u} [Field k] {X : Scheme.{u}}
+/-- Actual global sections, with scalars restricted along the structure map.
+This is reducible, so that the additivity instance
+`Scheme.Modules.evaluation_top_comp_restrictScalars_additive` applies to it. -/
+abbrev sectionsFunctor {k : Type u} [Field k] {X : Scheme.{u}}
     (f : X ⟶ Spec (.of k)) : X.Modules ⥤ ModuleCat.{u} k :=
   SheafOfModules.evaluation X.ringCatSheaf (op (⊤ : X.Opens)) ⋙
     ModuleCat.restrictScalars (globalScalarMap f)
-
-/-- Global-section evaluation and restriction of scalars preserve addition. -/
-instance sectionsFunctor_additive {k : Type u} [Field k] {X : Scheme.{u}}
-    (f : X ⟶ Spec (.of k)) : (sectionsFunctor f).Additive where
-  map_add := by
-    intro M N a b
-    rfl
 
 /-- Coherent cohomology is the right-derived global-section functor. -/
 abbrev cohomology {k : Type u} [Field k] {X : Scheme.{u}}
     (f : X ⟶ Spec (.of k)) (L : X.Modules) (n : ℕ) : ModuleCat.{u} k :=
   ((sectionsFunctor f).rightDerived n).obj L
 
-/-- Arithmetic genus, computed from the actual first cohomology of `𝒪`. -/
+/-- `f : X ⟶ Spec k` exhibits `X` as a proper curve over `k`: `f` is proper and
+the underlying space of `X` has Krull dimension one.
+
+The fields `finiteDimensional_cohomology` and `isZero_cohomology` are theorems
+about every proper scheme of dimension one over `k`, recorded here because
+Mathlib does not yet prove them: the cohomology of a coherent sheaf on a proper
+scheme over a field is finite-dimensional (Stacks, Tag 02O5), and the
+cohomology of every sheaf on a noetherian space of dimension at most one
+vanishes above degree one (Grothendieck vanishing, Stacks, Tag 02UZ; the
+cohomology of `𝒪_X`-modules is that of their underlying abelian sheaves,
+Hartshorne, *Algebraic Geometry*, III.2.6). -/
+class IsProperCurve {k : Type u} [Field k] {X : Scheme.{u}}
+    (f : X ⟶ Spec (.of k)) : Prop extends IsProper f where
+  /-- The underlying space has Krull dimension one. -/
+  topologicalKrullDim_eq_one : topologicalKrullDim X = 1
+  /-- The cohomology of an invertible sheaf is finite-dimensional. -/
+  finiteDimensional_cohomology (L : X.Modules) (hL : IsLineBundle L) (n : ℕ) :
+    FiniteDimensional k (cohomology f L n)
+  /-- Cohomology vanishes above degree one. -/
+  isZero_cohomology (F : X.Modules) {n : ℕ} (hn : 1 < n) : IsZero (cohomology f F n)
+
+/-- The cohomology of the structure sheaf of a proper curve is finite-dimensional. -/
+instance IsProperCurve.finiteDimensional_cohomology_structureModule {k : Type u} [Field k]
+    {X : Scheme.{u}} (f : X ⟶ Spec (.of k)) [IsProperCurve f] (n : ℕ) :
+    FiniteDimensional k (cohomology f (structureModule X) n) :=
+  IsProperCurve.finiteDimensional_cohomology _ (isLineBundle_structureModule X) n
+
+/-- The global regular functions on `X` are exactly the constants in `k`:
+`globalScalarMap f` is bijective, that is, `H⁰(X, 𝒪_X) = k`. -/
+class HasConstantGlobalSections {k : Type u} [Field k] {X : Scheme.{u}}
+    (f : X ⟶ Spec (.of k)) : Prop where
+  /-- The map from the constants to the global regular functions is bijective. -/
+  bijective : Function.Bijective (globalScalarMap f)
+
+/-- An integral scheme that is universally closed over an algebraically closed
+field has only constant global regular functions. -/
+instance HasConstantGlobalSections.of_isIntegral {k : Type u} [Field k] [IsAlgClosed k]
+    {X : Scheme.{u}} (f : X ⟶ Spec (.of k)) [IsIntegral X] [UniversallyClosed f] :
+    HasConstantGlobalSections f where
+  bijective := IsAlgClosed.ringHom_bijective_of_isIntegral _ <| by
+    apply RingHom.isIntegral_respectsIso.2
+      (e := (Scheme.ΓSpecIso (.of k)).symm.commRingCatIsoToRingEquiv)
+    exact isIntegral_appTop_of_universallyClosed f
+
+/-- With only constant global functions, `H⁰(X, 𝒪_X)` is one-dimensional. -/
+theorem finrank_cohomology_zero_structureModule {k : Type u} [Field k] {X : Scheme.{u}}
+    (f : X ⟶ Spec (.of k)) [HasConstantGlobalSections f] :
+    Module.finrank k (cohomology f (structureModule X) 0) = 1 := by
+  let g : k →ₗ[k] (sectionsFunctor f).obj (structureModule X) :=
+    { toFun := fun c ↦ globalScalarMap f c
+      map_add' := (globalScalarMap f).map_add
+      map_smul' := (globalScalarMap f).map_mul }
+  rw [((sectionsFunctor f).rightDerivedZeroIsoSelf.app _).toLinearEquiv.finrank_eq,
+    ← (LinearEquiv.ofBijective g HasConstantGlobalSections.bijective).finrank_eq,
+    Module.finrank_self]
+
+/-- The genus `dim_k H¹(X, 𝒪_X)` of a proper curve with `H⁰(X, 𝒪_X) = k`
+(Stacks, Tag 0BY7). -/
 def genus {k : Type u} [Field k] {X : Scheme.{u}}
-    (f : X ⟶ Spec (.of k)) : ℕ :=
+    (f : X ⟶ Spec (.of k)) [IsProperCurve f] [HasConstantGlobalSections f] : ℕ :=
   Module.finrank k (cohomology f (structureModule X) 1)
 
-/-- Degree on a proper curve, as `χ(L) - χ(𝒪)`. -/
+/-- The degree `χ(L) - χ(𝒪_X)` of an invertible sheaf `L` on a proper curve
+(Stacks, Tag 0AYR). Higher cohomology vanishes, so `χ = h⁰ - h¹`. -/
 def degree {k : Type u} [Field k] {X : Scheme.{u}}
-    (f : X ⟶ Spec (.of k)) (L : X.Modules) : ℤ :=
+    (f : X ⟶ Spec (.of k)) [IsProperCurve f] (L : X.Modules) (_hL : IsLineBundle L) : ℤ :=
   (Module.finrank k (cohomology f L 0) : ℤ) -
     Module.finrank k (cohomology f L 1) -
     Module.finrank k (cohomology f (structureModule X) 0) +
     Module.finrank k (cohomology f (structureModule X) 1)
 
-/-- A linear series on a fixed actual curve and invertible module. -/
+/-- The structure sheaf has degree zero. -/
+@[simp]
+theorem degree_structureModule {k : Type u} [Field k] {X : Scheme.{u}}
+    (f : X ⟶ Spec (.of k)) [IsProperCurve f] (h : IsLineBundle (structureModule X)) :
+    degree f (structureModule X) h = 0 := by
+  simp [degree]
+
+/-- A linear series `g^r_d` on a proper curve: an invertible sheaf `L` of
+degree `d` with an `(r + 1)`-dimensional space `V` of global sections. -/
 structure LinearSeries {k : Type u} [Field k] {X : Scheme.{u}}
-    (f : X ⟶ Spec (.of k)) (d : ℤ) (r : ℕ) where
-  /-- The actual sheaf underlying the linear series. -/
+    (f : X ⟶ Spec (.of k)) [IsProperCurve f] (d : ℤ) (r : ℕ) where
+  /-- The invertible sheaf. -/
   L : X.Modules
-  /-- Its local rank-one trivializations. -/
+  /-- `L` is invertible. -/
   isLineBundle : IsLineBundle L
-  /-- Its degree-zero cohomology is finite-dimensional. -/
-  finiteH0 : FiniteDimensional k (cohomology f L 0)
-  /-- Its degree-one cohomology is finite-dimensional. -/
-  finiteH1 : FiniteDimensional k (cohomology f L 1)
-  /-- The Euler-characteristic degree has the prescribed value. -/
-  degree_eq : degree f L = d
-  /-- The selected space of sections. -/
+  /-- `L` has degree `d`. -/
+  degree_eq : degree f L isLineBundle = d
+  /-- The selected space of global sections. -/
   V : Submodule k (cohomology f L 0)
   /-- The selected space has projective dimension `r`. -/
   finrank_eq : Module.finrank k V = r + 1
 
-/-- The Brill--Noether expected dimension, with integer subtraction. -/
+/-- `brillNoetherNumber g d r` is the Brill--Noether number
+`ρ = g - (r + 1)(g - d + r)` of linear series `g^r_d` on a curve of genus `g`,
+computed with integer subtraction. -/
 def brillNoetherNumber (g d r : ℕ) : ℤ :=
   (g : ℤ) - ((r : ℤ) + 1) * ((g : ℤ) - d + r)
 

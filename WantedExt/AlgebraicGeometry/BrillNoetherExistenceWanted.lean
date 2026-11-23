@@ -9,8 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.AlgebraicGeometry.Geometrically.Irreducible
-public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 public import MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 
@@ -19,10 +17,15 @@ public import MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 /-!
 # Brill--Noether nonemptiness
 
-For every smooth proper geometrically irreducible curve over an
-algebraically closed characteristic-zero field, nonnegative Brill--Noether
-number guarantees a linear series. No generic-curve predicate is used.
-The imported completed interface uses actual module-sheaf cohomology.
+For every smooth proper integral curve over an algebraically closed
+characteristic-zero field, nonnegative Brill--Noether number guarantees a
+linear series. No generic-curve predicate is used. The imported completed
+interface uses actual module-sheaf cohomology.
+
+The curve is a proper curve in the sense of `IsProperCurve`; for a smooth proper
+curve, the finiteness and vanishing fields of that class are theorems. Its genus
+is defined because an integral proper scheme over an algebraically closed field
+has only constant global functions (`HasConstantGlobalSections.of_isIntegral`).
 
 Sources: G. Kempf, *Schubert methods with an application to algebraic
 curves* (1971); S. Kleiman and D. Laksov, *On the existence of special
@@ -37,12 +40,13 @@ open _root_.MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 
 universe u
 
-/-- Kempf--Kleiman--Laksov existence: every such curve carries a
-`g^r_d` when the expected Brill--Noether dimension is nonnegative. -/
+/-- Kempf--Kleiman--Laksov existence: every smooth proper integral curve over an
+algebraically closed field of characteristic zero carries a `g^r_d` when the
+Brill--Noether number `ρ(g, r, d)` is nonnegative. -/
 public theorem_wanted brillNoether_nonempty
     (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
-    (C : Over (Spec (.of k))) [IsProper C.hom]
-    [SmoothOfRelativeDimension 1 C.hom] [GeometricallyIrreducible C.hom]
+    (C : Over (Spec (.of k))) [IsIntegral C.left] [IsProperCurve C.hom]
+    [SmoothOfRelativeDimension 1 C.hom]
     (d r : ℕ) (hρ : 0 ≤ brillNoetherNumber (genus C.hom) d r) :
     Nonempty (LinearSeries C.hom (d : ℤ) r)
 
