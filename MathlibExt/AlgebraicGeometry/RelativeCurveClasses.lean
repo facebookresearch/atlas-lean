@@ -18,9 +18,11 @@ public import Mathlib.AlgebraicGeometry.Morphisms.FiniteType
 This is the scalar-general version of the completed geometric-cycle
 presentation: actual dimension-graded cycles modulo differences of the
 scheme-theoretic fibres of integral flat affine-line families. It gives a
-curve-class carrier for targets locally of finite type over the field, on
-every geometric field base change. This hypothesis preserves cycle dimensions
-under transcendental scalar extension. The cycle
+curve-class carrier for Noetherian targets locally of finite type over the field,
+on every geometric field base change. Local finite type preserves cycle dimensions
+under transcendental scalar extension; Noetherianity makes the finite `ℚ`-span of
+the family differences the whole rational equivalence (on a non-quasi-compact
+target, locally finite sums of relations would be needed). The cycle
 base-change map is the fixed native fibre-cycle sum; a descent proof for
 that map is a dependency, not a chosen class-valued operator.
 
@@ -57,7 +59,8 @@ def parameterSection (X : SchemeOver k) (a : k) :
         CommRingCat.ofHom (Polynomial.evalRingHom a) = 𝟙 (CommRingCat.of k) := by
       ext z
       simp
-    simp [affineLine, affinePoint, ← Spec.map_comp, h])
+    simp only [Category.id_comp, Category.assoc, affinePoint, affineLine, Over.mk_hom]
+    rw [← Spec.map_comp, h, Spec.map_id, Category.comp_id])
 
 structure FlatFamily (X : SchemeOver k) [LocallyOfFiniteType X.hom] (r : ℕ) where
   Y : Scheme.{0}
@@ -81,12 +84,16 @@ def fibreCycle (a : k) : CycleGroup X.left r :=
 def difference : CycleGroup X.left r := F.fibreCycle 0 - F.fibreCycle 1
 end FlatFamily
 
-def relations (X : SchemeOver k) [LocallyOfFiniteType X.hom]
+/-- Rational equivalence: the `ℚ`-span of the fibre differences of flat families. The span takes
+finite combinations, which is rational equivalence because `X` is Noetherian (so its cycles are
+finite); on a non-quasi-compact scheme locally finite sums of relations would be needed. -/
+def relations (X : SchemeOver k) [LocallyOfFiniteType X.hom] [IsNoetherian X.left]
     (r : ℕ) : Submodule ℚ (CycleGroup X.left r) :=
   Submodule.span ℚ (Set.range (FlatFamily.difference (X := X) (r := r)))
-abbrev ChowGroup (X : SchemeOver k) [LocallyOfFiniteType X.hom]
+abbrev ChowGroup (X : SchemeOver k) [LocallyOfFiniteType X.hom] [IsNoetherian X.left]
     (r : ℕ) := CycleGroup X.left r ⧸ relations X r
-abbrev CurveClass (X : SchemeOver k) [LocallyOfFiniteType X.hom] := ChowGroup X 1
+abbrev CurveClass (X : SchemeOver k) [LocallyOfFiniteType X.hom] [IsNoetherian X.left] :=
+  ChowGroup X 1
 
 /-- An actual geometric scalar extension of the target. -/
 def fieldBaseChange (X : SchemeOver k) (Ω : Type) [Field Ω] [Algebra k Ω] : SchemeOver Ω :=
@@ -102,7 +109,7 @@ def fieldProjection (X : SchemeOver k) (Ω : Type) [Field Ω] [Algebra k Ω] :
   pullback.fst X.hom (Spec.map (CommRingCat.ofHom (algebraMap k Ω)))
 
 /-- The class is the quotient of the actual length-weighted pushed cycle. -/
-def pushedCurveClass {X : SchemeOver k} [LocallyOfFiniteType X.hom]
+def pushedCurveClass {X : SchemeOver k} [LocallyOfFiniteType X.hom] [IsNoetherian X.left]
     (C : Scheme.{0}) [IsNoetherian C]
     (f : C ⟶ X.left) [IsProper f] : CurveClass X :=
   (relations X 1).mkQ (dimensionPart X.left 1
