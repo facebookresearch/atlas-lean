@@ -11,6 +11,10 @@ module
 public import CSLibExt.Planning.MotionPlanning.PolygonalWorkspace
 public meta import CSLibExt.Planning.MotionPlanning.PolygonalWorkspace
 public import Mathlib.Tactic.NormNum.RealSqrt
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.Normed.Lp.PiLp
+public import Mathlib.Analysis.Convex.Basic
+public import Mathlib.LinearAlgebra.AffineSpace.AffineMap
 
 /-!
 # Polygonal workspace tests
@@ -447,6 +451,229 @@ theorem not_nodup_pinchedVerts : ¬ List.Nodup pinchedVerts := by
 theorem not_simple_pinchedVerts : ¬ PolySimple pinchedVerts := by
   rintro ⟨-, hnodup, -, -⟩
   exact not_nodup_pinchedVerts hnodup
+/-- Bow-tie vertex points: `(0,0)`, `(2,2)`, `(0,2)`, `(2,0)`. -/
+def bowA : plane := !₂[0, 0]
+def bowB : plane := !₂[2, 2]
+def bowC : plane := !₂[0, 2]
+def bowD : plane := !₂[2, 0]
+/-- The bow-tie vertex list `[(0,0),(2,2),(0,2),(2,0)]`. -/
+def bowVerts : List plane := [bowA, bowB, bowC, bowD]
+
+theorem bowA_x : bowA 0 = 0 := by simp [bowA]
+theorem bowA_y : bowA 1 = 0 := by simp [bowA]
+theorem bowB_x : bowB 0 = 2 := by simp [bowB]
+theorem bowB_y : bowB 1 = 2 := by simp [bowB]
+theorem bowC_x : bowC 0 = 0 := by simp [bowC]
+theorem bowC_y : bowC 1 = 2 := by simp [bowC]
+theorem bowD_x : bowD 0 = 2 := by simp [bowD]
+theorem bowD_y : bowD 1 = 0 := by simp [bowD]
+
+theorem bowA_ne_bowB : bowA ≠ bowB := by
+  intro h
+  have h0 := congrArg (fun q : plane => q 0) h
+  rw [bowA_x, bowB_x] at h0
+  norm_num at h0
+
+theorem bowA_ne_bowC : bowA ≠ bowC := by
+  intro h
+  have h1 := congrArg (fun q : plane => q 1) h
+  rw [bowA_y, bowC_y] at h1
+  norm_num at h1
+
+theorem bowA_ne_bowD : bowA ≠ bowD := by
+  intro h
+  have h0 := congrArg (fun q : plane => q 0) h
+  rw [bowA_x, bowD_x] at h0
+  norm_num at h0
+
+theorem bowB_ne_bowC : bowB ≠ bowC := by
+  intro h
+  have h0 := congrArg (fun q : plane => q 0) h
+  rw [bowB_x, bowC_x] at h0
+  norm_num at h0
+
+theorem bowB_ne_bowD : bowB ≠ bowD := by
+  intro h
+  have h1 := congrArg (fun q : plane => q 1) h
+  rw [bowB_y, bowD_y] at h1
+  norm_num at h1
+
+theorem bowC_ne_bowD : bowC ≠ bowD := by
+  intro h
+  have h0 := congrArg (fun q : plane => q 0) h
+  rw [bowC_x, bowD_x] at h0
+  norm_num at h0
+
+theorem nodup_bowVerts : List.Nodup bowVerts := by
+  have hvs : bowVerts = [bowA, bowB, bowC, bowD] := rfl
+  rw [hvs, List.nodup_cons, List.nodup_cons, List.nodup_cons, List.nodup_cons]
+  refine ⟨?_, ?_, ?_, ?_, List.nodup_nil⟩
+  · simp [bowA_ne_bowB, bowA_ne_bowC, bowA_ne_bowD]
+  · simp [bowB_ne_bowC, bowB_ne_bowD]
+  · simp [bowC_ne_bowD]
+  · simp
+
+theorem cyclicEdges_bowVerts :
+    cyclicEdges bowVerts = [(bowA, bowB), (bowB, bowC), (bowC, bowD), (bowD, bowA)] := rfl
+
+theorem noZero_bowVerts : ∀ e ∈ cyclicEdges bowVerts, e.1 ≠ e.2 := by
+  intro e he
+  rw [cyclicEdges_bowVerts] at he
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at he
+  rcases he with rfl | rfl | rfl | rfl
+  · show bowA ≠ bowB
+    exact bowA_ne_bowB
+  · show bowB ≠ bowC
+    exact bowB_ne_bowC
+  · show bowC ≠ bowD
+    exact bowC_ne_bowD
+  · show bowD ≠ bowA
+    exact Ne.symm bowA_ne_bowD
+
+/-- The crossing point `(1,1)` of the two bow-tie diagonals. -/
+def bowMid : plane := !₂[1, 1]
+
+theorem bowMid_mem_AB : bowMid ∈ segment ℝ bowA bowB := by
+  refine ⟨1 / 2, 1 / 2, by norm_num, by norm_num, by norm_num, ?_⟩
+  ext i
+  fin_cases i <;> simp [bowA, bowB, bowMid]
+
+theorem bowMid_mem_CD : bowMid ∈ segment ℝ bowC bowD := by
+  refine ⟨1 / 2, 1 / 2, by norm_num, by norm_num, by norm_num, ?_⟩
+  ext i
+  fin_cases i <;> simp [bowC, bowD, bowMid]
+
+theorem len_bowVerts : (cyclicEdges bowVerts).length = 4 := rfl
+
+/-- The bow-tie violates occurrence disjointness at the non-adjacent pair `(0,2)`. -/
+theorem not_simple_bowVerts : ¬ PolySimple bowVerts := by
+  rintro ⟨-, -, -, hadj⟩
+  have h0 := hadj 0 2 (by decide) (by decide) (by decide)
+  have hnadj : ¬ edgeAdjacent 0 2 (cyclicEdges bowVerts).length := by
+    rw [len_bowVerts]
+    unfold edgeAdjacent
+    decide
+  have hdisj : Disjoint (segment ℝ bowA bowB) (segment ℝ bowC bowD) := h0.2 hnadj
+  exact (Set.disjoint_left.mp hdisj bowMid_mem_AB) bowMid_mem_CD
+
+/-- Adjacent-overlap vertex points: `(0,0)`, `(2,0)`, `(1,0)`, `(1,1)`. -/
+def ovA : plane := !₂[0, 0]
+def ovB : plane := !₂[2, 0]
+def ovC : plane := !₂[1, 0]
+def ovD : plane := !₂[1, 1]
+/-- The adjacent-overlap vertex list `[(0,0),(2,0),(1,0),(1,1)]`. -/
+def ovVerts : List plane := [ovA, ovB, ovC, ovD]
+
+theorem ovA_x : ovA 0 = 0 := by simp [ovA]
+theorem ovB_x : ovB 0 = 2 := by simp [ovB]
+theorem ovC_x : ovC 0 = 1 := by simp [ovC]
+theorem ovC_y : ovC 1 = 0 := by simp [ovC]
+theorem ovD_x : ovD 0 = 1 := by simp [ovD]
+theorem ovD_y : ovD 1 = 1 := by simp [ovD]
+
+theorem ovA_ne_ovB : ovA ≠ ovB := by
+  intro h
+  have h0 := congrArg (fun q : plane => q 0) h
+  rw [ovA_x, ovB_x] at h0
+  norm_num at h0
+
+theorem ovA_ne_ovC : ovA ≠ ovC := by
+  intro h
+  have h0 := congrArg (fun q : plane => q 0) h
+  rw [ovA_x, ovC_x] at h0
+  norm_num at h0
+
+theorem ovA_ne_ovD : ovA ≠ ovD := by
+  intro h
+  have h0 := congrArg (fun q : plane => q 0) h
+  rw [ovA_x, ovD_x] at h0
+  norm_num at h0
+
+theorem ovB_ne_ovC : ovB ≠ ovC := by
+  intro h
+  have h0 := congrArg (fun q : plane => q 0) h
+  rw [ovB_x, ovC_x] at h0
+  norm_num at h0
+
+theorem ovB_ne_ovD : ovB ≠ ovD := by
+  intro h
+  have h0 := congrArg (fun q : plane => q 0) h
+  rw [ovB_x, ovD_x] at h0
+  norm_num at h0
+
+theorem ovC_ne_ovD : ovC ≠ ovD := by
+  intro h
+  have h1 := congrArg (fun q : plane => q 1) h
+  rw [ovC_y, ovD_y] at h1
+  norm_num at h1
+
+theorem nodup_ovVerts : List.Nodup ovVerts := by
+  have hvs : ovVerts = [ovA, ovB, ovC, ovD] := rfl
+  rw [hvs, List.nodup_cons, List.nodup_cons, List.nodup_cons, List.nodup_cons]
+  refine ⟨?_, ?_, ?_, ?_, List.nodup_nil⟩
+  · simp [ovA_ne_ovB, ovA_ne_ovC, ovA_ne_ovD]
+  · simp [ovB_ne_ovC, ovB_ne_ovD]
+  · simp [ovC_ne_ovD]
+  · simp
+
+theorem cyclicEdges_ovVerts :
+    cyclicEdges ovVerts = [(ovA, ovB), (ovB, ovC), (ovC, ovD), (ovD, ovA)] := rfl
+
+theorem noZero_ovVerts : ∀ e ∈ cyclicEdges ovVerts, e.1 ≠ e.2 := by
+  intro e he
+  rw [cyclicEdges_ovVerts] at he
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at he
+  rcases he with rfl | rfl | rfl | rfl
+  · show ovA ≠ ovB
+    exact ovA_ne_ovB
+  · show ovB ≠ ovC
+    exact ovB_ne_ovC
+  · show ovC ≠ ovD
+    exact ovC_ne_ovD
+  · show ovD ≠ ovA
+    exact Ne.symm ovA_ne_ovD
+
+/-- The point `(3/2,0)`, interior to both overlapping adjacent segments. -/
+noncomputable def ovMid : plane := !₂[3 / 2, 0]
+
+theorem ovMid_x : ovMid 0 = 3 / 2 := by simp [ovMid]
+
+theorem ovMid_mem_AB : ovMid ∈ segment ℝ ovA ovB := by
+  refine ⟨1 / 4, 3 / 4, by norm_num, by norm_num, by norm_num, ?_⟩
+  ext i
+  fin_cases i <;> simp [ovA, ovB, ovMid]; norm_num
+
+theorem ovMid_mem_BC : ovMid ∈ segment ℝ ovB ovC := by
+  refine ⟨1 / 2, 1 / 2, by norm_num, by norm_num, by norm_num, ?_⟩
+  ext i
+  fin_cases i <;> simp [ovB, ovC, ovMid]; norm_num
+
+theorem len_ovVerts : (cyclicEdges ovVerts).length = 4 := rfl
+
+/-- The overlap violates the adjacent-singleton condition at occurrences `(0,1)`. -/
+theorem not_simple_ovVerts : ¬ PolySimple ovVerts := by
+  rintro ⟨-, -, -, hadj⟩
+  have h0 := hadj 0 1 (by decide) (by decide) (by decide)
+  have hadj01 : edgeAdjacent 0 1 (cyclicEdges ovVerts).length := by
+    rw [len_ovVerts]
+    unfold edgeAdjacent
+    decide
+  have hsing : ∃ p ∈ ((({ovA, ovB} : Set plane) ∩ ({ovB, ovC} : Set plane))),
+      (segment ℝ ovA ovB ∩ segment ℝ ovB ovC : Set plane) = {p} := h0.1 hadj01
+  obtain ⟨p, -, hinter⟩ := hsing
+  have hB : ovB ∈ ({p} : Set plane) := by
+    rw [← hinter]
+    exact Set.mem_inter (right_mem_segment ℝ ovA ovB) (left_mem_segment ℝ ovB ovC)
+  have hM : ovMid ∈ ({p} : Set plane) := by
+    rw [← hinter]
+    exact Set.mem_inter ovMid_mem_AB ovMid_mem_BC
+  have hBeq : ovB = p := Set.mem_singleton_iff.mp hB
+  have hMeq : ovMid = p := Set.mem_singleton_iff.mp hM
+  have hcontra : ovB = ovMid := hBeq.trans hMeq.symm
+  have h0c := congrArg (fun q : plane => q 0) hcontra
+  rw [ovB_x, ovMid_x] at h0c
+  norm_num at h0c
+
 /-- A duplicated-vertex list `[A,B,C,A,B,C]`. -/
 def dupVerts : List plane := [triA, triB, triC, triA, triB, triC]
 /-- The duplicated-vertex list is not nodup. -/
