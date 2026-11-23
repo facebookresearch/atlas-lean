@@ -18,22 +18,13 @@ open scoped BigOperators
 
 namespace Cslib.MachineLearning.IndividualFairness
 
+open MathlibExt.Probability.FiniteTransport
+
 @[expose] public section
 
 /-- The discrete two-point task metric on `Fin 2`: distance `0` on the
 diagonal and `1` off the diagonal. -/
 def d2 : Fin 2 → Fin 2 → ℝ := fun x y => if x = y then 0 else 1
-
-/-- Total variation distance takes the value `1` on opposite point masses
-and `0` on identical uniform distributions over `Fin 2`. -/
-theorem t1_tvDist_values :
-    MathlibExt.Probability.MarkovMixing.tvDist (fun i : Fin 2 => if i = 0 then (1 : ℝ) else (0 : ℝ))
-      (fun i : Fin 2 => if i = 0 then (0 : ℝ) else (1 : ℝ)) = 1
-    ∧ MathlibExt.Probability.MarkovMixing.tvDist (fun _ : Fin 2 => (1 / 2 : ℝ))
-        (fun _ : Fin 2 => (1 / 2 : ℝ)) = 0 := by
-  constructor
-  · norm_num [MathlibExt.Probability.MarkovMixing.tvDist, Fin.sum_univ_two]
-  · norm_num [MathlibExt.Probability.MarkovMixing.tvDist, Fin.sum_univ_two]
 
 /-- The constant fair-coin classifier on `Fin 2` is individually fair for
 the discrete metric. -/
@@ -46,29 +37,23 @@ theorem t2_const_fair :
   · refine ⟨fun _ => by norm_num, ?_⟩
     norm_num [Fin.sum_univ_two]
 
-/-- The point-mass coupling between opposite corners of `Fin 2` is a
-coupling of the corner distributions, with transport cost `1`. -/
-theorem t3_coupling_cost :
-    IsCoupling (fun i : Fin 2 => if i = 0 then (1 : ℝ) else (0 : ℝ))
-      (fun i : Fin 2 => if i = 0 then (0 : ℝ) else (1 : ℝ))
-      (fun x y : Fin 2 => if x = 0 ∧ y = 1 then (1 : ℝ) else (0 : ℝ))
-    ∧ transportCost d2
-        (fun x y : Fin 2 => if x = 0 ∧ y = 1 then (1 : ℝ) else (0 : ℝ))
-        = 1 := by
-  constructor
-  · refine ⟨?_, ?_, ?_⟩
-    · intro x y
-      show 0 ≤ (if x = 0 ∧ y = 1 then (1 : ℝ) else (0 : ℝ))
-      by_cases h : x = 0 ∧ y = 1 <;> simp [h]
-    · rw [Fin.forall_fin_two]
-      constructor
-      · norm_num [Fin.sum_univ_two]
-      · norm_num [Fin.sum_univ_two]
-    · rw [Fin.forall_fin_two]
-      constructor
-      · norm_num [Fin.sum_univ_two]
-      · norm_num [Fin.sum_univ_two]
-  · norm_num [transportCost, d2, Fin.sum_univ_two]
+/-- The `0` point mass on `Fin 2`, as a probability-distribution subtype
+element. -/
+def delta0D : {p : Fin 2 → ℝ // IsDist p} :=
+  ⟨fun i => if i = 0 then (1 : ℝ) else 0, by
+    refine ⟨?_, ?_⟩
+    · intro i
+      by_cases h : i = 0 <;> simp [h]
+    · norm_num [Fin.sum_univ_two]⟩
+
+/-- The `1` point mass on `Fin 2`, as a probability-distribution subtype
+element. -/
+def delta1D : {p : Fin 2 → ℝ // IsDist p} :=
+  ⟨fun i => if i = 0 then (0 : ℝ) else 1, by
+    refine ⟨?_, ?_⟩
+    · intro i
+      by_cases h : i = 0 <;> simp [h]
+    · norm_num [Fin.sum_univ_two]⟩
 
 /-- T4: the induced distribution of the constant fair-coin classifier is
 the fair coin, and is a probability distribution. -/
@@ -98,19 +83,8 @@ theorem t5_classifier_earthmover :
         (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0))
       (inducedDist (fun _ _ : Fin 2 => (1 / 2 : ℝ))
         (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1))
-    ≤ earthmover d2 (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0)
-        (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) := by
-  have hS : IsDist (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0) := by
-    refine ⟨?_, ?_⟩
-    · intro i
-      by_cases h : i = 0 <;> simp [h]
-    · norm_num [Fin.sum_univ_two]
-  have hT : IsDist (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) := by
-    refine ⟨?_, ?_⟩
-    · intro i
-      by_cases h : i = 0 <;> simp [h]
-    · norm_num [Fin.sum_univ_two]
-  exact tvDist_inducedDist_le_earthmover t2_const_fair hS hT
+    ≤ earthmover d2 delta0D delta1D := by
+  exact tvDist_inducedDist_le_earthmover t2_const_fair delta0D.2 delta1D.2
 
 /-- The deterministic identity classifier on `Fin 2`: individual `x`
 receives outcome `x` with probability `1`. -/
@@ -129,8 +103,7 @@ theorem t6_identity_values :
           (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0))
         (inducedDist idClassifier
           (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1)) = 1
-    ∧ earthmover d2 (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0)
-        (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) = 1 := by
+    ∧ earthmover d2 delta0D delta1D = 1 := by
   have hrows : ∀ x : Fin 2, IsDist (idClassifier x) := by
     intro x
     fin_cases x <;>
@@ -153,9 +126,7 @@ theorem t6_identity_values :
         MathlibExt.Probability.MarkovMixing.tvDist, Fin.sum_univ_two]
   · rw [hind0, hind1]
     norm_num [MathlibExt.Probability.MarkovMixing.tvDist, Fin.sum_univ_two]
-  · have hcost : ∀ π : {π // IsCoupling
-        (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0)
-        (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) π},
+  · have hcost : ∀ π : {π // IsCoupling delta0D.1 delta1D.1 π},
         transportCost d2 π.1 = 1 := by
       intro π
       obtain ⟨hnn, hrow, hcol⟩ := π.2
@@ -163,7 +134,7 @@ theorem t6_identity_values :
       have r1 := hrow 1
       have c0 := hcol 0
       have c1 := hcol 1
-      simp only [Fin.sum_univ_two] at r0 r1 c0 c1
+      simp only [delta0D, delta1D, Fin.sum_univ_two] at r0 r1 c0 c1
       norm_num at r0 r1 c0 c1
       have n00 := hnn 0 0
       have n01 := hnn 0 1
@@ -176,13 +147,9 @@ theorem t6_identity_values :
       unfold transportCost
       norm_num [Fin.sum_univ_two, d2, h00, h01, h10, h11]
     unfold earthmover
-    have : Nonempty {π // IsCoupling
-        (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0)
-        (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) π} :=
-      ⟨⟨_, t3_coupling_cost.1⟩⟩
-    have hfun : (fun π : {π // IsCoupling
-        (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0)
-        (fun i : Fin 2 => if i = 0 then (0 : ℝ) else 1) π} =>
+    have : Nonempty {π // IsCoupling delta0D.1 delta1D.1 π} :=
+      nonempty_couplingSubtype delta0D delta1D
+    have hfun : (fun π : {π // IsCoupling delta0D.1 delta1D.1 π} =>
         transportCost d2 π.1) = fun _ => (1 : ℝ) :=
       funext hcost
     rw [hfun]
