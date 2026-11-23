@@ -14,10 +14,12 @@ public import MathlibExt.AlgebraicGeometry.BlowupBettiModels
 # Betti splitting for a smooth-center blowup
 
 The displayed map is pullback from the original variety plus the actual
-exceptional Gysin contributions. The hyperplane class is minus the
-exceptional self-intersection class, computed from the same purity data.
-The result is an additive Betti splitting; no independently normalized
-ring or cycle realization is assumed.
+exceptional Gysin contributions. The exceptional class is minus the
+exceptional self-intersection class, computed from the same purity data; for
+complex orientations it is the hyperplane class of the exceptional divisor,
+and other purity choices rescale the summands by units, which does not affect
+bijectivity. The result is an additive Betti splitting; no independently
+normalized ring or cycle realization is assumed.
 
 The global blowup construction, full universal property and exceptional
 normal-cone description in Axiom's Stacks project are completed support.

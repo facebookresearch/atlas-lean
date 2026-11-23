@@ -20,7 +20,8 @@ Cartier on the blowing-up scheme, and the factorization condition is the
 actual blowup universal property. The exceptional scheme is the fiber
 product with that center.
 
-The exceptional degree-two class is minus pullback of its own Gysin unit.
+The exceptional degree-two class is minus pullback of its own Gysin unit; it
+is the hyperplane class of the exceptional divisor for complex orientations.
 All exceptional contributions use that class, actual Yoneda products and
 the normalized derived pullback/proper maps. There is no chosen blowup
 cohomology operator or supplied projective-bundle class.
@@ -48,11 +49,12 @@ open scoped BigOperators
 
 attribute [local instance] HasDerivedCategory.standard
 
-/-- A blowup of `X` along the closed subscheme `i : Z ⟶ X`, characterized by the
-universal property: the inverse image of the ideal of `Z` is effective Cartier,
-and every morphism over `ℂ` with that property factors uniquely. The source is
-integral and the map is proper and birational. -/
-structure BlowupModel {X Z : ComplexScheme} (i : Z ⟶ X) where
+/-- A blowup of `X` along the closed subscheme `i : Z ⟶ X` (a closed
+immersion), characterized by the universal property: the inverse image of the
+ideal of `Z` is effective Cartier, and every morphism over `ℂ` with that
+property factors uniquely. The source is integral and the map is proper and
+birational. -/
+structure BlowupModel {X Z : ComplexScheme} (i : Z ⟶ X) [IsClosedImmersion i.left] where
   /-- The blowing-up scheme. -/
   source : ComplexScheme
   /-- It is integral. -/
@@ -72,7 +74,7 @@ structure BlowupModel {X Z : ComplexScheme} (i : Z ⟶ X) where
 
 namespace BlowupModel
 
-variable {X Z : ComplexScheme} {i : Z ⟶ X} (B : BlowupModel i)
+variable {X Z : ComplexScheme} {i : Z ⟶ X} [IsClosedImmersion i.left] (B : BlowupModel i)
 
 /-- The exceptional scheme: the fibre product of the blowup with the center. -/
 abbrev exceptional : ComplexScheme :=
@@ -88,7 +90,7 @@ def exceptionalProjection : B.exceptional ⟶ Z :=
     dsimp [exceptional]
     rw [← i.w, ← Category.assoc, ← pullback.condition, Category.assoc, B.map.w])
 
-instance [IsClosedImmersion i.left] : IsClosedImmersion B.exceptionalMap.left :=
+instance : IsClosedImmersion B.exceptionalMap.left :=
   inferInstanceAs (IsClosedImmersion (pullback.fst B.map.left i.left))
 
 @[reassoc] theorem exceptional_square :
@@ -97,12 +99,6 @@ instance [IsClosedImmersion i.left] : IsClosedImmersion B.exceptionalMap.left :=
   exact pullback.condition
 
 end BlowupModel
-
-/-- Reindex only by the displayed equality of actual integer degrees. -/
-def cohomologyCast {Z : TopCat} {m n : ℤ} (h : m = n) :
-    Cohomology Z m →ₗ[ℚ] Cohomology Z n := by
-  subst n
-  exact LinearMap.id
 
 /-- The powers `hʲ ∈ H^{2j}(Z)` of a degree-two class, by repeated cup
 product with the unit class in degree zero. -/
@@ -135,8 +131,10 @@ def exceptionalPush (F : PureFamily D) (n : ℤ) :
       (D B.exceptional) (D B.source) (d + c - 1) (d + c)
       (F.iso _ (d + c - 1)) (F.iso _ (d + c)) n
 
-/-- The class `h ∈ H²(E)`: minus the restriction to `E` of the Gysin image of
-`1`, that is `c₁(O_E(1)) = -c₁(N_{E/B})`. -/
+/-- The purity-dependent exceptional class `h ∈ H²(E)`: minus the restriction
+to `E` of the Gysin image of `1`. For complex orientations it is
+`c₁(O_E(1)) = -c₁(N_{E/B})`; other purity choices rescale it by a locally
+constant unit. -/
 def exceptionalClass (F : PureFamily D) : Cohomology (space B.exceptional) 2 :=
   -(cohomologyPullback (spaceMap B.exceptionalMap) 2
     (exceptionalPush D P i B d c hc F 0 (unitClass (space B.exceptional))))
@@ -159,8 +157,9 @@ abbrev BlowupSummands (n : ℤ) :=
   Cohomology (space X) n ×
     ((j : Fin (c - 1)) → Cohomology (space Z) (n - 2 * (j.val + 1)))
 
-/-- The blowup comparison map `(α, β) ↦ π^* α + ∑ⱼ i_{E!}(hʲ ∪ p^* βⱼ)`
-(Voisin, Theorem 7.31). -/
+/-- The blowup comparison map `(α, β) ↦ π^* α + ∑ⱼ i_{E!}(hʲ ∪ p^* βⱼ)`. For
+complex orientations this is the map of Voisin, Theorem 7.31; other purity
+choices change the exceptional summands by invertible rescalings. -/
 def blowupComparison (F : PureFamily D) (n : ℤ) :
     BlowupSummands (X := X) (Z := Z) c n →ₗ[ℚ] Cohomology (space B.source) n where
   toFun a := cohomologyPullback (spaceMap B.map) n a.1 +

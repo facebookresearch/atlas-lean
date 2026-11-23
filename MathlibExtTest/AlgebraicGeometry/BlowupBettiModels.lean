@@ -21,6 +21,7 @@ open MathlibExt.AlgebraicGeometry.ComplexAnalytification
 open MathlibExt.AlgebraicGeometry.PerverseSheaves
 open MathlibExt.AlgebraicGeometry.BettiRealization
 open MathlibExt.AlgebraicGeometry.ProperBettiFunctoriality
+open MathlibExt.AlgebraicGeometry.BettiFunctoriality
 open MathlibExt.AlgebraicGeometry.BettiGysin
 open MathlibExt.AlgebraicGeometry.CartierIdealModels
 open MathlibExt.AlgebraicGeometry.BlowupBettiModels
@@ -63,8 +64,8 @@ example (Z : TopCat.{0}) :
   rfl
 
 /-- Poincaré duality from a purity isomorphism is a linear equivalence. -/
-example (Z : TopCat.{0}) (D : MathlibExt.AlgebraicGeometry.CompactSupportBetti.DualizingComplex Z)
-    (d : ℕ)
+example (Z : TopCat.{0})
+    (D : MathlibExt.AlgebraicGeometry.CompactSupportBetti.DualizingComplex Z) (d : ℕ)
     (e : D.obj ≅ (rationalUnit Z)⟦(2 * d : ℤ)⟧) (n : ℤ) (x : Cohomology Z n) :
     purityCohomologyEquiv Z D d e n ((purityCohomologyEquiv Z D d e n).symm x) = x :=
   (purityCohomologyEquiv Z D d e n).apply_symm_apply x
@@ -81,14 +82,32 @@ example (Z : TopCat.{0}) (h : Cohomology Z 2) (j : ℕ) :
 /-- The degree cast along `rfl` is the identity. -/
 example (Z : TopCat.{0}) (m : ℤ) (x : Cohomology Z m) : cohomologyCast rfl x = x := rfl
 
-/-- In codimension two the comparison has exactly one exceptional summand. -/
-example {X Z : ComplexScheme} (n : ℤ) :
-    BlowupSummands (X := X) (Z := Z) 2 n =
-      (Cohomology (space X) n × ((j : Fin 1) → Cohomology (space Z) (n - 2 * (j.val + 1)))) :=
-  rfl
+section Comparison
+
+variable
+  (D : ∀ (X : ComplexScheme) [IsComplexVariety X],
+    MathlibExt.AlgebraicGeometry.CompactSupportBetti.DualizingComplex (space X))
+  (P : ∀ {X Y : ComplexScheme} [IsComplexVariety X] [IsComplexVariety Y]
+    (f : X ⟶ Y) [IsProper f.left], ProperPullback (spaceMap f))
+  {X Z : ComplexScheme} (i : Z ⟶ X) [IsClosedImmersion i.left] (B : BlowupModel i) (d : ℕ)
+  [IsComplexVariety X] [IsComplexVariety Z] [IsComplexVariety B.source]
+  [IsComplexVariety B.exceptional]
+  [SmoothOfRelativeDimension (d + 2) X.hom] [SmoothOfRelativeDimension d Z.hom]
+  [SmoothOfRelativeDimension (d + 2) B.source.hom]
+  [SmoothOfRelativeDimension (d + 2 - 1) B.exceptional.hom]
+
+/-- In codimension two the comparison is the pullback plus the single
+exceptional summand from `Hⁿ⁻²(Z)`. -/
+example (F : PureFamily D) (n : ℤ) (a : BlowupSummands (X := X) (Z := Z) 2 n) :
+    blowupComparison D P i B d 2 (by decide) F n a =
+      cohomologyPullback (spaceMap B.map) n a.1 +
+        exceptionalContribution D P i B d 2 (by decide) F n 0 (a.2 0) := by
+  simp [blowupComparison]
+
+end Comparison
 
 /-- The exceptional square of a blowup commutes. -/
-example {X Z : ComplexScheme} {i : Z ⟶ X} (B : BlowupModel i) :
+example {X Z : ComplexScheme} {i : Z ⟶ X} [IsClosedImmersion i.left] (B : BlowupModel i) :
     B.exceptionalMap ≫ B.map = B.exceptionalProjection ≫ i :=
   B.exceptional_square
 
