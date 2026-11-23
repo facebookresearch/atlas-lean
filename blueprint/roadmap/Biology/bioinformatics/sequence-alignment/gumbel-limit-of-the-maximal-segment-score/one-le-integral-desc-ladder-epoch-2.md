@@ -1,3 +1,5 @@
-# One le integral desc Ladder Epoch
+# The mean descending ladder epoch of Cramér scores is at least one
 
-The mean descending ladder epoch is at least `1`.
+For scores `X 0, X 1, …` on `(Ω, P)` satisfying the [Cramér conditions](cramer-scores.md), the
+[first descending ladder epoch](desc-ladder-epoch.md) `τ₋` of the score path satisfies
+`E τ₋ ≥ 1`.

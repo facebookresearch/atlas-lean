@@ -1,4 +1,5 @@
-# Characterization of the rate root
+# Every positive rate score root is the rate root
 
-Any positive root of the rate score equation at the
-shape `a > 0` is `b̂(a)`.
+For `a > 0`, positive size factors `s₁, …, sₙ` (`n ≥ 1`) and counts `k₁, …, kₙ`, if `b > 0` solves
+the [rate score](../likelihood-equations-and-efficiency-of-the-gamma/rate-score.md) equation
+`∑ᵢ (a / b - (a + kᵢ) / (b + sᵢ)) = 0`, then `b` is the [rate root](rate-root.md): `b̂(a) = b`.

@@ -1,3 +1,4 @@
-# Cell count
+# The diagonal lengths of a grid add up to its number of cells
 
-The diagonal lengths of an `m × n` grid add up to `m n`.
+For all natural numbers `m` and `n`, the [diagonal lengths](diag-len.md) of the `m × n` grid over
+its [offsets](offsets.md) `-m < d < n` add up to `m n`.

@@ -1,22 +1,28 @@
-# Gumbel limit for the maximal ungapped two-sequence alignment score, conditional on asymptotic independence of diagonals
+# Gumbel limit for two sequences when cross-diagonal dependence vanishes
 
-**Gumbel limit for the maximal ungapped two-sequence alignment score, conditional on
-asymptotic independence of diagonals** (Karlin and Altschul 1990; Dembo, Karlin and
-Zeitouni 1994), given the one-sequence tail `OneSequenceTail`. No lattice hypothesis is imposed;
-the intended regime is the classical nonlattice one with `K > 0`.
+Let `p` and `q` be
+[probability vectors](../../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/expectation-maximization-algorithm/is-dist.md)
+on a finite alphabet and `s` a real score on pairs of letters, and consider independent words of
+lengths `m_N` and `n_N` of independent letters with laws `p` and `q`
+([two-sequence model](two-expect.md)). Let `θ > 0` with `∑_{a, b} p_a q_b e^{θ s(a, b)} = 1`
+([pair law](pair-law.md), [pair score](pair-score.md)), and suppose the pair score under the pair
+law satisfies the [one-sequence tail](one-sequence-tail.md) with constants `θ` and `K`. Let
+`m_N, n_N → ∞` with `log n_N / m_N → 0` and `log m_N / n_N → 0`, let `x` be real and
+`t_N = log(m_N n_N) / θ + x`, and suppose that the
+[cross-diagonal dependence coefficients](cross-dep.md) at `t_N` vanish in the limit:
+`Δ_k(N) → 0` for every `k`. Then `P(M_{m_N, n_N} ≤ t_N) → exp(-K e^{-θ x})`, where `M_{m,n}` is
+the [maximal ungapped alignment score](max-align-score.md) of the two words (Karlin and Altschul
+1990; Dembo, Karlin and Zeitouni 1994).
 
-Two independent iid sequences of lengths `m_N, n_N → ∞`, with `log n_N / m_N → 0` and
-`log m_N / n_N → 0`, letter laws `p, q`, are scored by `s`. Let `θ > 0` be the Karlin–Altschul root
-`E e^{θ s(A, B)} = 1` (unique in the usual regime, `existsUnique_karlinAltschul_root`) and `K` the
-one-sequence constant of the pair-score walk (`OneSequenceTail`). If the cross-diagonal dependence
-coefficients vanish, `Δ_k(N) = crossDep … k → 0` for every `k`, then
-`P(M_{m,n} ≤ log (m n) / θ + x) → exp (-K e^{-θ x})`.
-
-The dependence is isolated in `Δ_k` at every finite size: the Bonferroni inequalities of every
-order sandwich `P(M ≤ t)` between partial sums of `S_k = e_k(p) + Δ_k`
-(`twoProb_maxAlignScore_le_le`, `le_twoProb_maxAlignScore_le`), and the marginals give
-`∑_d p_d → K e^{-θ x}` (`tendsto_sum_exceedProb`) and `max_d p_d → 0`, hence
-`e_k(p) → (K e^{-θ x})^k / k!` (`tendsto_elemSymm`). The limit takes `Δ_k → 0` as a hypothesis (it
-is the Poisson-approximation step of Dembo–Karlin–Zeitouni, not proved here; it can fail when
-their entropy condition fails); given the marginal limit it is equivalent to Poisson convergence
-of the factorial moments `S_k`.
+No lattice condition is imposed; the intended regime is that of nonlattice scores with `K > 0`.
+For a common letter law `p = q` with every letter of positive probability, negative mean score and
+some positive score, the root `θ > 0` exists and is [unique](exists-unique-karlin-altschul-root.md).
+The dependence between diagonals enters only through `Δ_k`: the
+[Bonferroni upper](two-prob-max-align-score-le-le.md) and
+[lower](le-two-prob-max-align-score-le.md) bounds sandwich `P(M_{m,n} ≤ t)` between partial sums
+of the factorial moments `S_k = e_k(p_·) + Δ_k`, and the marginals give
+[`∑_d p_d → K e^{-θ x}`](tendsto-sum-exceed-prob.md) and `max_d p_d → 0`, hence
+[`e_k(p_·) → (K e^{-θ x})^k / k!`](tendsto-elem-symm.md). The hypothesis `Δ_k → 0` is the
+Poisson-approximation step of Dembo, Karlin and Zeitouni, assumed here; given the marginal limit it
+is equivalent to `S_k → (K e^{-θ x})^k / k!`. Only large `N` matter, so the values of `log` and
+of division at `m_N n_N = 0` play no role.

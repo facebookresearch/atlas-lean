@@ -1,13 +1,20 @@
-# Pearson's `X² → χ²₁` limit theorem for Hardy–Weinberg equilibrium with estimated allele frequency
+# At a polymorphic locus the fitted statistic tends in law to χ²₁
 
-**Pearson's `X² → χ²₁` limit theorem for Hardy–Weinberg equilibrium with estimated allele
-frequency.** Let the genotypes `X 0, X 1, …` (number of copies of the counted allele) be i.i.d. in
-Hardy–Weinberg proportions `P(X 0 = i) = hweProb p i` at a polymorphic allele frequency
-`0 < p < 1`. Then Pearson's statistic of the genotype counts of the first `N` individuals against
-the Hardy–Weinberg proportions at the sample allele frequency `p̂`,
-`hweStat N (cellCount X N) = ∑ᵢ (nᵢ - N hweProb p̂ i)² / (N hweProb p̂ i)`, converges in
-distribution to `χ²₁` as `N → ∞`.
+Let $P$ be a probability measure on $\Omega$ and let the genotype classes
+$X_0, X_1, \dots : \Omega \to \{0, 1, 2\}$ of successive individuals be mutually independent and
+identically distributed under $P$, with $P(X_0 = i) = \pi_i(p)$ for every class $i$, where
+$\pi(p) = ((1 - p)^2, 2p(1 - p), p^2)$ are the [Hardy–Weinberg proportions](hwe-prob.md) at an
+allele frequency $0 < p < 1$. Write $n_i(N) = \#\{m < N : X_m = i\}$ for the genotype counts of the
+first $N$ individuals. Let $Z$ be a real random variable on a probability space with the chi-square
+law with one degree of freedom. Then the [fitted Hardy–Weinberg statistic](hwe-stat.md) of the first
+$N$ individuals,
 
-The proof writes `hweStat = N F̂²` (`hweStat_eq_mul_inbreedingHat_sq`), linearizes `√N F̂` around
-the centered summand `1{X = 2} - p X + p²` (variance `p² (1 - p)²`), and applies the central limit
-theorem, the strong law, and Slutsky's theorem.
+$$
+X^2\bigl(N, n(N)\bigr) = \sum_{i = 0}^{2}
+\frac{\bigl(n_i(N) - N \pi_i(\hat p)\bigr)^2}{N \pi_i(\hat p)},
+$$
+
+with $\hat p$ the [sample allele frequency](allele-freq-hat.md) of $n(N)$, converges in distribution
+to $Z$ as $N \to \infty$ (three classes with two free probabilities, one fitted parameter). The
+condition $0 < p < 1$ is needed: at a
+[monomorphic locus](not-tendsto-in-distribution-hwe-stat-of.md) the statistic has no such limit.

@@ -1,7 +1,11 @@
-# Same per-cell variance, different precision
+# Equal per-cell variance, equal precision iff equal donor variance
 
-Two random-intercept models on possibly
-different spaces whose cells have the same variance give the same variance of the cell-level mean
-only if their donor variances agree, as soon as there are two cells per donor. Within the
-random-intercept family the per-cell variance therefore cannot calibrate cell-level inference
-without a model of the donor split.
+Let $\delta$ be a finite nonempty set of $D$ donors and $\kappa$ a finite set of $m \ge 2$ cell
+slots. Let $Y$ be a [random-intercept model](is-random-intercept.md) with variances
+$(\sigma_b^2, \sigma_e^2)$ under a finite measure $\mu$ on $\Omega$, and $Y'$ one with variances
+$(\sigma_b'^2, \sigma_e'^2)$ under a finite measure $\mu'$ on $\Omega'$, with the same per-cell
+variance $\sigma_b^2 + \sigma_e^2 = \sigma_b'^2 + \sigma_e'^2$. Then their
+[cell-level means](cell-mean.md) have the same variance,
+$\mathrm{Var}_\mu \bar Y = \mathrm{Var}_{\mu'} \bar Y'$, if and only if $\sigma_b^2 = \sigma_b'^2$.
+Within the random-intercept family the per-cell variance does not determine the variance of the
+cell-level mean; its split into donor and residual variance does.

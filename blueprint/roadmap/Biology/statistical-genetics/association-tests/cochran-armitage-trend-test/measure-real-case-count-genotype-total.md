@@ -1,12 +1,21 @@
 # Conditional null law of the fixed-margin case–control table
 
-In the product-binomial
-design, `R` cases (subjects `0, …, R - 1`) and `S` controls (subjects `R, …, R + S - 1`) are
-sampled independently, the cases with genotype law `πcase` and the controls with genotype law
-`πctrl`. Under the null `πcase = πctrl`, conditional on the genotype margin `n` (the class totals
-over all `R + S` subjects), the case counts `r` follow the multivariate hypergeometric law
-`∏ᵢ C(nᵢ, rᵢ) / C(R + S, R)`, which does not depend on the common genotype law.
+Let `ι` be a finite set of genotype classes, every singleton of which is measurable, `P` a
+probability measure, `R, S ∈ ℕ`, and `G_0, …, G_{R+S−1}` random genotype classes that are
+independent under `P`: the `R` cases `G_k`, `k < R`, with law `π_case`, and the `S` controls `G_k`,
+`R ≤ k < R + S`, with law `π_ctrl`. Suppose the null hypothesis `π_case = π_ctrl`. Then for all
+count vectors `r, n : ι → ℕ`,
 
-The conditional probability is stated without division:
-`P(case counts = r, margin = n) = H(r ∣ n) · P(margin = n)`, so it also holds for margins of
-probability zero.
+`P(case counts = r and genotype margin = n) = H(R; n, r) · P(genotype margin = n)`,
+
+where the [case counts](case-count-2.md) are those of the subjects `k < R`, the
+[genotype margin](genotype-total.md) counts all `R + S` subjects, and `H` is the
+[multivariate hypergeometric mass](mv-hypergeometric-real.md), with `∑ᵢ nᵢ = R + S` on the event.
+For a margin `n` of positive probability, the case counts given the margin have the law
+`H(R; n, ·)`, which does not depend on the common genotype law; the identity, stated without
+division, also holds for margins of probability zero.
+
+## Sources
+
+- N. Mantel, *Chi-square tests with one degree of freedom; extensions of the Mantel–Haenszel
+  procedure*, J. Amer. Statist. Assoc. 58 (1963), 690–700.

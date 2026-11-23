@@ -1,12 +1,13 @@
-# Renewal input, nonlattice case
+# Renewal input for nonlattice scores
 
-Cramér conditions on nonlattice i.i.d. scores, together
-with the two inputs that renewal theory supplies and that are taken here as hypotheses: the
-ladder decomposition of the maximal segment score (`ladder`) and the nonlattice renewal tail
-`P(Y > t) ~ C e^{-θ t}` of the excursion heights (`tendsto_tail`). The fields `cramer` and
-`nonlattice` record the setting in which renewal theory provides `ladder` and `tendsto_tail`;
-the limit theorem uses only the latter two.
-
-No instance of this structure (or of `LatticeRenewalInput`) is constructed here: that would
-require deriving the ladder input from the scores. Non-vacuity is shown only for `LadderInput`,
-in the test file.
+For a measure `P` on `Ω` and real random scores `X 0, X 1, …`, a nonlattice renewal input consists
+of a real `θ`, the [Cramér conditions](cramer-scores.md) for the scores with root `θ`, the
+nonlattice condition (for no `h > 0` does `X 0` lie almost surely on `hℤ`), a
+[ladder input](ladder-input.md) for their [maximal segment scores](max-segment-score-rv.md) `Mₙ`,
+with excursion-height distribution function `F`, and a real `C` with `(1 - F(t)) e^{θ t} → C` as
+`t → ∞`, the renewal tail `P(Y > t) ~ C e^{-θ t}` of the excursion heights. The ladder input and the
+tail are the two inputs that renewal theory supplies; the structure takes them as hypotheses. The
+[Gumbel limit](tendsto-gumbel.md) uses the ladder input, the tail and `θ > 0` from the Cramér
+conditions, and the calibration results built on the structure also use the measurability of the
+scores; the nonlattice condition records the setting in which renewal theory provides the tail and
+is not used.

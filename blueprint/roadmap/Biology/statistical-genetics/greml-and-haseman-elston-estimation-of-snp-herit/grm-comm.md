@@ -1,3 +1,4 @@
-# Grm comm
+# Symmetry of the genetic relationship matrix
 
-The GRM is symmetric.
+For every real $N \times M$ matrix $X$ and all individuals $i, j$, the
+[genetic relationship matrix](grm.md) $A$ of $X$ is symmetric: $A_{ij} = A_{ji}$.

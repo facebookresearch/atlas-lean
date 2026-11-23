@@ -1,13 +1,21 @@
 # Strong consistency of empirical Bayes with pooled counts
 
-Units `i = 0, 1, …` (e.g.
-genes or donors) each carry a rate drawn from `Gamma(a, b)` and are observed on the same cells
-`ι` with size factors `sⱼ > 0`; `Nᵢ` is unit `i`'s pooled count. Suppose the `Nᵢ` are pairwise
-independent and identically distributed, and `N₀` has the law of the pooled count:
-`P(N₀ = K) = ∑_{∑ⱼ kⱼ = K} pooledMarginalLik a b s k`. Then almost surely the moment estimates
-computed from the pooled counts of the first `n` units at the total exposure `S = ∑ⱼ sⱼ`
-converge to `(a, b)`, and for every pooled count `K` the empirical-Bayes posterior mean
-converges to the oracle pooled posterior mean `(a + K) / (b + S)`. The moment hypotheses of
-`HierarchicalCount.ae_tendsto_mom` are derived from the law via `sum_pooledMarginalLik`.
-The Gamma-then-Poisson hierarchy is not constructed as a measure here: only the law of `N₀`
-(and the pairwise independence and identical distribution of the `Nᵢ`) is assumed.
+Let `ι` be a nonempty finite set of cells with size factors `sⱼ > 0` and total exposure `S = ∑ⱼ sⱼ`,
+`a > 0`, `b > 0`, `μ` a probability measure, and `N₀, N₁, …` random variables with values in `ℕ`,
+the pooled counts of units `i = 0, 1, …` (e.g. genes or donors), that are pairwise independent and
+identically distributed, with `N₀` measurable and `P(N₀ = K) = ∑ m(k)` for every `K ∈ ℕ`, the sum
+running over the count vectors `k` with `∑ⱼ kⱼ = K` and `m` the
+[joint marginal likelihood](pooled-marginal-lik.md). Then almost surely, for the
+[sample mean](sample-mean.md) `M̂ₙ` and the [sample variance](sample-var.md) `V̂ₙ` of
+`N₀, …, N_{n−1}`, the [shape estimate](mom-shape.md) `â(M̂ₙ, V̂ₙ)` tends to `a`, the
+[rate estimate](mom-rate.md) `b̂(S, M̂ₙ, V̂ₙ)` tends to `b`, and for every pooled count `K` the
+[empirical-Bayes posterior mean](eb-posterior-mean.md) at exposure `S` tends to the oracle pooled
+posterior mean `(a + K) / (b + S)`.
+
+The Gamma-then-Poisson hierarchy is not constructed as a measure: only the law of `N₀` and the
+pairwise independence and identical distribution of the `Nᵢ` are assumed.
+
+## Sources
+
+- C. N. Morris, *Parametric empirical Bayes inference: theory and applications*, J. Amer. Statist.
+  Assoc. 78 (1983), 47–55.

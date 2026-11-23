@@ -1,4 +1,5 @@
-# Mom Shape
+# Method-of-moments shape estimate
 
-Method-of-moments shape estimate `â = M² / (V - M)` from a count mean `M` and variance `V`.
-It inverts the negative binomial variance law `V = M + M² / a`.
+For real numbers `M` and `V`, the shape estimate is `â = M² / (V − M)`, with the convention
+`x / 0 = 0` when `V = M`. For overdispersed moments `0 < M < V` it inverts the negative binomial
+variance law `V = M + M² / a`.

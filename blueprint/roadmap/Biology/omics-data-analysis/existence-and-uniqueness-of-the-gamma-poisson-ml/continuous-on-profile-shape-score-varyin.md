@@ -1,4 +1,5 @@
-# Continuity of the profile shape score
+# Continuity of the profile shape score along the rate root
 
-**Continuity of the profile shape score** on `a > 0` (positive size factors, some positive
-count).
+For positive size factors `s₁, …, sₙ` (`n ≥ 1`) and counts `k₁, …, kₙ` at least one of which is
+positive, the [profile shape score along the rate root](profile-shape-score-varying.md)
+`a ↦ ∂ℓ/∂a (a, b̂(a))` is continuous on `(0, ∞)`.

@@ -1,6 +1,9 @@
-# Sparse-count statistic
+# With one rare homozygote the statistic equals the sample size
 
-With two `A` alleles carried by a single `AA` homozygote among
-`m + 1` individuals (`m ≥ 1`), Pearson's statistic is `X² = m + 1`: it grows linearly in the
-sample size, so its `χ²₁` p-value decays like `e^{-(m+1)/2}` (`chiSqOneTail_toReal_le`), while for
-`m = 9` the configuration has Levene probability `1/19` (`leveneProb_sparse_zero`).
+For a natural number $m \ge 1$, the table with $m$ individuals of class $0$, no heterozygote and one
+homozygote carrying both copies of $A$ has [fitted Hardy–Weinberg statistic](hwe-stat.md)
+
+$$X^2\bigl(m + 1, (m, 0, 1)\bigr) = m + 1,$$
+
+growing linearly with the sample size $m + 1$. For $m = 0$ the table $(0, 0, 1)$ is monomorphic and
+the statistic is $0$.

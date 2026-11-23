@@ -1,3 +1,12 @@
-# Score E
+# REML score for the residual variance in spectral form
 
-The REML score for `σ²_e`: `(1/2) ∑_i (w_i² - λ_i) / λ_i²`.
+For a finite index set $r$, real vectors $d, w \in \mathbb{R}^r$ and
+$\theta = (\sigma_g^2, \sigma_e^2) \in \mathbb{R}^2$, with the
+[contrast variances](contrast-var.md) $\lambda_i(\theta) = \sigma_g^2 d_i + \sigma_e^2$,
+
+$$U_e(\theta) = \frac12 \sum_{i \in r} \frac{w_i^2 - \lambda_i(\theta)}{\lambda_i(\theta)^2},$$
+
+with the convention $x / 0 = 0$: an index with $\lambda_i(\theta) = 0$ contributes $0$. Its reading
+as the REML score needs every $\lambda_i(\theta) > 0$: there it is the partial derivative in
+$\sigma_e^2$ of the [spectral REML criterion](spectral-log-lik.md)
+([derivative](has-deriv-at-spectral-log-lik-snd.md)).

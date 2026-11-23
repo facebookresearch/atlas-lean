@@ -1,3 +1,5 @@
-# The first descending ladder epoch has finite mean
+# The first descending ladder epoch of Cramér scores has finite mean
 
-**The first descending ladder epoch has finite mean** under the Cramér conditions.
+For scores `X 0, X 1, …` on `(Ω, P)` satisfying the [Cramér conditions](cramer-scores.md), the
+[first descending ladder epoch](desc-ladder-epoch.md) `τ₋` of the score path is integrable under
+`P`.

@@ -1,5 +1,8 @@
-# Extreme-value upper bound
+# Extreme-value upper bound from a ladder input
 
-If `liminf n (1 - F tₙ) ≥ c` along `L` (`hlo`), then
-`limsup P(Mₙ ≤ tₙ) ≤ exp (-c / A)` along `L`. The limsup bound `hhi` (some finite `chi`) is
-also required: it gives `1 - F tₙ → 0`.
+Let `P` be a probability measure, a [ladder input](ladder-input.md) under `P` for statistics `M n`,
+with excursion-height distribution function `F` and mean excursion length `A > 0`, a filter `L` on
+the natural numbers finer than the cofinite one, thresholds `t n` and reals `c_lo` and `c_hi`.
+Suppose that for every `δ > 0`, eventually along `L`, `c_lo - δ ≤ n (1 - F(t n)) ≤ c_hi + δ`. Then
+for every `ε > 0`, eventually along `L`, `P(M n ≤ t n) ≤ exp(-c_lo / A) + ε`. The upper bound `c_hi`
+is used only to get `1 - F(t n) → 0`.

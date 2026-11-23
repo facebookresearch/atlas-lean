@@ -1,4 +1,5 @@
-# Ols H2 Hat affine
+# Exact recovery of h² from statistics affine in the LD scores
 
-If the statistics are exactly affine in the LD scores with slope `N h² / M`, then
-`ĥ² = h²` whatever the intercept, provided `N, M ≠ 0` and the LD scores are not all equal.
+For natural numbers $N \neq 0$ and $M \neq 0$, real numbers $\ell_1, \dots, \ell_M$ that are not all
+equal and real numbers $h^2$ and $b_0$, the [unweighted estimator](ols-h2-hat.md) applied to the
+statistics $\chi_j = b_0 + N h^2 \ell_j / M$ returns $h^2$, whatever the intercept $b_0$.

@@ -1,3 +1,4 @@
-# F nonneg
+# The excursion-height distribution function is nonnegative
 
-`F ≥ 0`.
+For every [ladder input](ladder-input.md), the distribution function `F` of the excursion heights
+satisfies `F(t) ≥ 0` for every real `t`.

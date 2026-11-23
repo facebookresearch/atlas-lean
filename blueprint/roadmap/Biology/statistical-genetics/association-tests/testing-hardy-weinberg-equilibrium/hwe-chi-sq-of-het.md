@@ -1,8 +1,18 @@
-# Hwe Chi Sq Of Het
+# Hardy–Weinberg statistic as a function of the heterozygote count
 
-Pearson's statistic as a function of the heterozygote count `h`, given `N` and `nA`: the
-fitted statistic `PearsonLimit.hweStat` of the genotype table
-`(n_BB, n_AB, n_AA) = ((2N - nA - h) / 2, h, (nA - h) / 2)`, whose cell `i` counts the
-individuals carrying `i` copies of `A`. For impossible counts (`h > nA` or `nA - h` odd) the
-natural-number floor division and truncated subtraction give a meaningless value; those counts
-have null probability `0`.
+For natural numbers $N$, $n_A$ and $h$, the statistic is the
+[fitted Hardy–Weinberg statistic](hwe-stat.md) $X^2(N, n)$ of the genotype table
+$n = (n_{BB}, n_{AB}, n_{AA})$ with
+
+$$
+n_{BB} = \Bigl\lfloor \frac{2N \mathbin{\dot{-}} n_A \mathbin{\dot{-}} h}{2} \Bigr\rfloor, \qquad
+n_{AB} = h, \qquad n_{AA} = \Bigl\lfloor \frac{n_A \mathbin{\dot{-}} h}{2} \Bigr\rfloor,
+$$
+
+whose class $i$ counts the individuals carrying $i$ copies of $A$; here $\lfloor \cdot \rfloor$ is
+the floor of natural-number division and $a \mathbin{\dot{-}} b = \max(a - b, 0)$ is truncated
+subtraction. On a realizable count ($h \le n_A$, $h + n_A \le 2N$, $n_A - h$ even) the table is the
+exact genotype table. On the other counts it is not: for example for $h > n_A$ the $AA$ entry is
+$0$. Those counts have
+[Levene probability](../../../../Probability/hypothesis-testing/exact-test-for-hardy-weinberg-equilibrium/levene-prob.md)
+$0$.

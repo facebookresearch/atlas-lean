@@ -1,6 +1,12 @@
-# Block Design
+# Block design of a genotype matrix
 
-A **block design** with `N` individuals and `M` markers: a standardized genotype matrix, an
-LD block for every marker and a cohort for every individual, with at most `K` markers per
-block and at most `G` individuals per cohort, such that `X i j ≠ 0` only when individual `i`
-is in the cohort of the block of marker `j`.
+For natural numbers $N$, $M$, $K$ and $G$, a block design with $N$ individuals and $M$ markers
+consists of a [standardized](is-standardized.md) real $N \times M$ genotype matrix $X$, an LD block
+$b(j) \in \mathbb{N}$ for every marker $j$ and a cohort $g(i) \in \mathbb{N}$ for every individual
+$i$ such that
+
+- every block has at most $K$ markers and every cohort at most $G$ individuals;
+- $X_{ij} \neq 0$ only if $g(i) = b(j)$: individual $i$ is in the cohort of the block of marker $j$.
+
+Within a block the LD is arbitrary; markers of different blocks are
+[uncorrelated](ld-corr-eq-zero.md).

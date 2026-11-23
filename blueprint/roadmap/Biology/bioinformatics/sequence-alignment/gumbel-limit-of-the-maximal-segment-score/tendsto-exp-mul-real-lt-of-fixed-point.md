@@ -1,10 +1,10 @@
 # Excursion-height tail from the all-time-maximum tail
 
-Let `Y` be the height of the first
-ladder excursion (the maximum of the walk before its first descending ladder epoch), `D ≤ 0` the
-walk at that epoch, and `M'` the all-time maximum of the walk after it. The strong Markov property
-at the descending ladder epoch says that `M'` is independent of `(Y, D)` (`hind`) and that
-`max Y (D + M')`, the all-time maximum, has the law of `M'` (`hfix`). If the tail of `M'` satisfies
-`e^{θ u} P(M' > u) → C` along the points `s i` (`hZ`, and its shifted form `hz`) and is bounded
-by `B` (`hB`), then
-`e^{θ s} P(Y > s) → C (1 - E e^{θ D})` along the same points (Iglehart 1972).
+Let `P` be a probability measure, `θ > 0`, and `Y`, `D`, `M'` measurable real random variables with
+`D ≤ 0` almost surely, `M'` independent of `(Y, D)`, and `P(max(Y, D + M') > t) = P(M' > t)` for
+every real `t`. Let `s i` be points tending to `∞` along a countably generated filter `L`, and `B`
+and `C` reals such that `e^{θ u} P(M' > u) ≤ B` for every `u ≥ 0`, `e^{θ s i} P(M' > s i) → C` along
+`L`, and, for almost every `ω`, `e^{θ (s i - D(ω))} P(M' > s i - D(ω)) → C` along `L`. Then
+`e^{θ s i} P(Y > s i) → C (1 - E e^{θ D})` along `L` (Iglehart 1972). In the intended reading `Y` is
+the first excursion height, `D` the walk at the first descending ladder epoch and `M'` the all-time
+maximum after it, as in a [descending-ladder fixed point](ladder-fixed-point.md).

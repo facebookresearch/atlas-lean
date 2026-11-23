@@ -1,3 +1,4 @@
-# Score
+# Additive genotype score
 
-The additive genotype score: the number `0, 1, 2` of copies of the counted allele.
+For a genotype class `g ∈ {0, 1, 2}`, the additive score is the real number `g`, the number of
+copies of the counted allele.

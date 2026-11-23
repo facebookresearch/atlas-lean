@@ -1,10 +1,10 @@
-# Ladder renewal data, nonlattice case
+# Ladder renewal data for nonlattice scores
 
-**Ladder renewal data, nonlattice case**, for an excursion height `Y` and Cramér root `θ`: the
-descending-ladder fixed point together with the ascending-ladder renewal structure of `M'`
-(again from the strong Markov property), taken as hypotheses. `G` is the defective law of
-the first strict ascending ladder height (a finite measure on `[0, ∞)`); cutting `M'` at the
-first ascending ladder epoch gives `P(M' > t) = ∫ P(M' > t - y) dG(y)` for `t ≥ 0`; the Cramér
-root satisfies the ladder identity `∫ e^{θ y} dG(y) = 1` (Wald's identity for the martingale
-`e^{θ S_n}` at the ascending ladder epoch); and the tilted ladder mean `∫ y e^{θ y} dG(y)` is
-finite.
+For a measure `P` on `Ω`, a real random variable `Y` and a real `θ`, nonlattice ladder renewal data
+consist of a [descending-ladder fixed point](ladder-fixed-point.md) `(D, M')` for `Y` and a finite
+measure `G` on `ℝ` (the defective law of the first strict ascending ladder height) with: `G`-almost
+every `y` nonnegative; the ladder Cramér identity `∫ e^{θ y} dG(y) = 1`; `y e^{θ y}` integrable for
+`G` (a finite tilted ladder mean); and the defective renewal equation
+`P(M' > t) = ∫ P(M' > t - y) dG(y)` for every `t ≥ 0`. In the intended reading these come from
+cutting `M'` at its first ascending ladder epoch (strong Markov property) and from Wald's identity
+for `e^{θ S_n}`; the structure takes them as hypotheses.

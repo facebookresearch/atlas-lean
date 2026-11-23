@@ -1,3 +1,5 @@
-# Of Real chi Sq One Tail Real
+# The real and extended-real χ²₁ tails agree
 
-Converting the real tail back to `ℝ≥0∞` recovers `chiSqOneTail`.
+For every real `c`, the [real-valued `χ²₁` tail](chi-sq-one-tail-real.md) `G(c)`, read back as an
+extended nonnegative real number, is the [`χ²₁` tail](chi-sq-one-tail.md) `P(χ²₁ > c) ∈ [0, ∞]`
+itself. Nothing is lost in passing to real numbers, because the tail is finite.

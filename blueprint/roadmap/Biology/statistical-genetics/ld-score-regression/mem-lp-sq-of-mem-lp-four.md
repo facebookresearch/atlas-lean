@@ -1,3 +1,3 @@
-# Mem Lp sq of mem Lp four
+# The square of a function in L⁴ is in L²
 
-The square of a random variable with finite fourth moment has finite second moment.
+For a measure $\mu$ and a real function $f \in L^4(\mu)$, the square $f^2$ is in $L^2(\mu)$.

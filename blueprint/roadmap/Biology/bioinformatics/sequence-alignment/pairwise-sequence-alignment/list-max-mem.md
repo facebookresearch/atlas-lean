@@ -1,3 +1,3 @@
-# List Max mem
+# The floored maximum of an integer list is zero or an entry
 
-The list maximum is `0` or an element of the list.
+For every list $\ell = (\ell_1, \dots, \ell_k)$ of integers, its [maximum with floor zero](list-max.md) $\max(0, \ell_1, \dots, \ell_k)$ is $0$ or one of the entries $\ell_i$.

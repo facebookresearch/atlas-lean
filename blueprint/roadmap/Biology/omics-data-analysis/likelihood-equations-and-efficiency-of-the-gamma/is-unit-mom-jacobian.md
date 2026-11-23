@@ -1,3 +1,4 @@
-# Is Unit mom Jacobian
+# The moment Jacobian is invertible for positive parameters
 
-The Jacobian of the moment equations is invertible for `a, b, σ > 0`.
+For $a, b, \sigma > 0$ the [moment Jacobian](mom-jacobian.md) $J(a, b, \sigma)$ is invertible: its
+determinant is $-\sigma^3 a / b \ne 0$.

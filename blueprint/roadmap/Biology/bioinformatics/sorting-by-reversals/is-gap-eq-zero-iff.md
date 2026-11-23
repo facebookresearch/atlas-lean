@@ -1,3 +1,4 @@
-# Is Gap eq zero iff
+# The gap indicator vanishes exactly when the integers are one apart
 
-Gap indicator vanishes exactly on adjacent values.
+For all integers $a$ and $b$, the [gap indicator](is-gap.md) satisfies $\gamma(a, b) = 0$ if
+and only if $|b - a| = 1$.

@@ -1,4 +1,12 @@
-# Mom Est Deriv
+# Derivative matrix of the moment estimating function
 
-The derivative of `momEstFun σ · k` at `θ = (a, b)`:
-`[[-σ, k], [-σ b - σ² - 2 σ² a, 2 b k² - σ a]]`.
+A hyperparameter is a vector $\theta = (a, b) \in \mathbb{R}^2$ (prior shape $a$, prior rate $b$).
+For a real size factor $\sigma$ and a count $k \in \mathbb{N}$, put
+
+$$
+D_\sigma(\theta, k) = \begin{pmatrix} -\sigma & k \\
+-\sigma b - \sigma^2 - 2 \sigma^2 a & 2 b k^2 - \sigma a \end{pmatrix},
+$$
+
+acting on $\mathbb{R}^2$: the [derivative](has-fderiv-at-mom-est-fun.md) in $\theta$ of the
+[moment estimating function](mom-est-fun.md) $g_\sigma(\theta, k)$.

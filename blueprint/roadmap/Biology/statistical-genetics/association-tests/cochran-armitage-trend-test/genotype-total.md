@@ -1,4 +1,4 @@
-# Genotype Total
+# Genotype margin of a fixed-margin design
 
-The genotype margin: the number of subjects `k < N` (cases and controls together) with
-genotype class `i`.
+For `N ∈ ℕ` and genotype classes `g_k ∈ ι` of the subjects `k`, the genotype margin of a class
+`i ∈ ι` is the number of subjects `k < N`, cases and controls together, with `g_k = i`.

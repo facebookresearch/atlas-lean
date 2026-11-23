@@ -1,3 +1,4 @@
-# Shrinkage Weight mem Ioo
+# The shrinkage weight lies strictly between 0 and 1
 
-The shrinkage weight lies strictly between `0` and `1` for `b, s > 0`.
+For `b > 0` and `s > 0`, the [shrinkage weight](shrinkage-weight.md) satisfies
+`0 < s / (b + s) < 1`.

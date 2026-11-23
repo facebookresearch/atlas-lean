@@ -1,3 +1,5 @@
-# Ladder Epoch
+# The k-th descending ladder epoch
 
-The `k`-th descending ladder epoch `T_k = τ₋⁽⁰⁾ + ⋯ + τ₋⁽ᵏ⁻¹⁾` (`T₀ = 0`).
+For a path of real scores and a natural number `k`, the `k`-th descending ladder epoch is
+`T_k = τ₋⁽⁰⁾ + ⋯ + τ₋⁽ᵏ⁻¹⁾`, the sum of the first `k`
+[excursion lengths](excursion-length.md); `T₀ = 0`.

@@ -1,5 +1,7 @@
-# Existence of the rate MLE at a fixed shape
+# With a positive count a rate root exists at every shape
 
-If at least one count is positive, then for
-every shape `a > 0` the rate score equation has a positive solution (unique by
-`rateScore_eq_zero_unique`).
+Let $\iota$ be a finite nonempty set of $n \ge 1$ observations, with counts $k_i \in \mathbb{N}$ and
+size factors $s_i$. If some count $k_i$ is positive, then for every shape $a > 0$ and positive size
+factors $s_i > 0$ the [rate score](rate-score.md) equation has a positive solution: $S_b(a, b) = 0$
+for some $b > 0$. It is [unique](rate-score-eq-zero-unique.md) and is the
+[global maximizer](log-marginal-lik-lt-of-rate-score-eq-zer.md) of $b \mapsto \ell(a, b)$.

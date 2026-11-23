@@ -1,6 +1,11 @@
 # Method of moments solves the rate score equation
 
-At a common size factor `σ > 0`, if
-the sample is overdispersed (`0 < M < V`, with `M` the sample mean), the moment estimates
-`(momShape M V, momRate σ M V)` solve the rate score equation of the marginal likelihood exactly.
-They do not solve the shape score equation in general (see the tests).
+Let $\iota$ be a finite nonempty set of $n \ge 1$ observations, with counts $k_i \in \mathbb{N}$ and
+size factors $s_i$. Let the size factors equal a common value, $s_i = \sigma$ for every $i$, with
+$\sigma > 0$, let the [sample mean](count-mean.md) $M$ be positive, and let $V > M$ be real, for
+example the [biased sample variance](count-var.md) of an overdispersed sample. Then the
+[moment shape](../gamma-poisson-counts-and-empirical-bayes-shrinka/mom-shape.md)
+$\hat a_{\mathrm{mom}} = M^2 / (V - M)$ and the
+[moment rate](../gamma-poisson-counts-and-empirical-bayes-shrinka/mom-rate.md)
+$\hat b_{\mathrm{mom}} = \sigma M / (V - M)$ solve the [rate score](rate-score.md) equation:
+$S_b(\hat a_{\mathrm{mom}}, \hat b_{\mathrm{mom}}) = 0$.

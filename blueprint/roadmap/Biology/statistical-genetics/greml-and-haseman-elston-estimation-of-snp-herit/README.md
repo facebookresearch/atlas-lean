@@ -1,53 +1,76 @@
 # GREML and Haseman–Elston estimation of SNP heritability
 
-- [Grm](grm.md)
-- [Grm comm](grm-comm.md)
-- [Grm eq ld Corr transpose](grm-eq-ld-corr-transpose.md)
-- [Pairs](pairs.md)
-- [Ne of mem pairs](ne-of-mem-pairs.md)
-- [He Estimate](he-estimate.md)
-- [He RSS](he-rss.md)
-- [He RSS eq](he-rss-eq.md)
-- [He RSS he Estimate le](he-rss-he-estimate-le.md)
-- [He RSS eq he RSS he Estimate iff](he-rss-eq-he-rss-he-estimate-iff.md)
-- [Mem Lp pheno](mem-lp-pheno.md)
-- [The Haseman–Elston identity](integral-pheno-mul-pheno.md)
-- [Haseman–Elston regression identity](integral-pheno-mul-pheno-of-ne.md)
-- [Unbiasedness of Haseman–Elston regression](integral-he-estimate.md)
-- [He Estimate sub](he-estimate-sub.md)
-- [He Dev](he-dev.md)
-- [Mean-squared error of Haseman–Elston regression](integral-he-estimate-sub-sq-le.md)
+## The genetic relationship matrix
+
+- [Genetic relationship matrix](grm.md)
+- [Symmetry of the genetic relationship matrix](grm-comm.md)
+- [The GRM is the normalized cross product of the transposed matrix](grm-eq-ld-corr-transpose.md)
+- [The genetic relationship matrix is positive semidefinite](pos-semidef-grm.md)
+
+## Haseman–Elston regression as least squares
+
+- [Pairs of individuals with $i < j$](pairs.md)
+- [Each pair $i < j$ consists of two distinct individuals](ne-of-mem-pairs.md)
+- [Haseman–Elston estimator](he-estimate.md)
+- [Residual sum of squares of Haseman–Elston regression](he-rss.md)
+- [Pythagoras for the Haseman–Elston residual sum of squares](he-rss-eq.md)
+- [The Haseman–Elston estimator minimizes the residual sum of squares](he-rss-he-estimate-le.md)
+- [Unique Haseman–Elston slope when some $A_{ij}$ with $i<j$ is nonzero](he-rss-eq-he-rss-he-estimate-iff.md)
+
+## Phenotype moments and the Haseman–Elston identity
+
+- [The phenotype of the LD-score model is square integrable](mem-lp-pheno.md)
+- [Raw second moments of phenotypes in the LD-score model](integral-pheno-mul-pheno.md)
+- [Haseman–Elston identity for distinct individuals](integral-pheno-mul-pheno-of-ne.md)
+- [Haseman–Elston estimate integrates to $h^2$ if the GRM is not diagonal](integral-he-estimate.md)
+
+## Error bounds and consistency
+
+- [Haseman–Elston error formula when some $A_{ij}$ with $i<j$ is nonzero](he-estimate-sub.md)
+- [Deviation of a phenotype cross-product from $h^2 A_{ij}$](he-dev.md)
+- [Integrated squared-error bound for Haseman–Elston regression](integral-he-estimate-sub-sq-le.md)
 - [Chebyshev bound for Haseman–Elston regression](measure-abs-he-estimate-sub-ge-le.md)
 - [Consistency of Haseman–Elston regression](tendsto-measure-abs-he-estimate-sub-ge.md)
-- [Greml Cov](greml-cov.md)
-- [Contrast Var](contrast-var.md)
-- [Spectral Log Lik](spectral-log-lik.md)
-- [Is Spectral Contrast](is-spectral-contrast.md)
-- [Is Error Contrast](is-error-contrast.md)
-- [Contrast greml Cov](contrast-greml-cov.md)
-- [GREML REML log-likelihood in spectral form](reml-log-lik-greml-cov.md)
-- [Every orthonormal error contrast rotates into a diagonalizing one](exists-is-spectral-contrast.md)
-- [The rotation does not change the criterion](reml-log-lik-eq-spectral-log-lik-of-orth.md)
-- [Pos Semidef grm](pos-semidef-grm.md)
-- [Score G](score-g.md)
-- [Score E](score-e.md)
-- [Has Deriv At spectral Log Lik fst](has-deriv-at-spectral-log-lik-fst.md)
-- [Has Deriv At spectral Log Lik snd](has-deriv-at-spectral-log-lik-snd.md)
-- [Is Open pos Contrast Var](is-open-pos-contrast-var.md)
-- [Score eq zero of is Local Max](score-eq-zero-of-is-local-max.md)
-- [REML score equations for GREML](score-eq-zero-of-is-local-max-reml-log-l.md)
-- [Reml Proj](reml-proj.md)
-- [The scores in GCTA's matrix form](score-eq-reml-proj.md)
-- [GCTA's REML equations](reml-equations-of-is-local-max.md)
-- [Second moments of the rotated contrasts](integral-sq-contrast.md)
-- [The REML score for `σ²_g` is unbiased](integral-score-g.md)
-- [The REML score for `σ²_e` is unbiased](integral-score-e.md)
-- [Class Set](class-set.md)
-- [Group Count](group-count.md)
-- [Group SS](group-ss.md)
-- [Group Mean](group-mean.md)
-- [Two Level REML](two-level-reml.md)
-- [Contrast Var two Level REML](contrast-var-two-level-reml.md)
-- [The closed-form estimate maximizes the spectral REML criterion](is-max-on-spectral-log-lik-two-level-rem.md)
-- [Closed-form GREML REML estimator for two-level spectra](is-max-on-reml-log-lik-two-level-reml.md)
-- [The closed-form REML estimator is unbiased](integral-two-level-reml.md)
+
+## REML criterion and its spectral form
+
+- [GREML covariance matrix $\sigma_g^2 K + \sigma_e^2 I$](greml-cov.md)
+- [Contrast variances $\sigma_g^2 d_i + \sigma_e^2$](contrast-var.md)
+- [Spectral REML criterion for GREML variance components](spectral-log-lik.md)
+- [Orthonormal error contrast diagonalizing the relationship matrix](is-spectral-contrast.md)
+- [A diagonalizing orthonormal contrast is an error contrast](is-error-contrast.md)
+- [Diagonalizing contrasts make the GREML contrast covariance diagonal](contrast-greml-cov.md)
+- [REML log-likelihood in spectral form at positive contrast variances](reml-log-lik-greml-cov.md)
+- [Orthonormal error contrasts rotate to diagonalize a symmetric matrix](exists-is-spectral-contrast.md)
+- [REML log-likelihood via an orthogonal rotation, at positive variances](reml-log-lik-eq-spectral-log-lik-of-orth.md)
+
+## REML score equations
+
+- [REML score for the genetic variance in spectral form](score-g.md)
+- [REML score for the residual variance in spectral form](score-e.md)
+- [Spectral criterion's derivative in $\sigma_g^2$ at positive variances](has-deriv-at-spectral-log-lik-fst.md)
+- [Spectral criterion's derivative in $\sigma_e^2$ at positive variances](has-deriv-at-spectral-log-lik-snd.md)
+- [Positive contrast variances form an open set](is-open-pos-contrast-var.md)
+- [Spectral score equations at a local maximizer with positive variances](score-eq-zero-of-is-local-max.md)
+- [REML score equations at a local maximizer with positive variances](score-eq-zero-of-is-local-max-reml-log-l.md)
+- [REML projection matrix $P = B^\top (B V B^\top)^{-1} B$](reml-proj.md)
+- [REML scores in GCTA's matrix form at positive contrast variances](score-eq-reml-proj.md)
+- [GCTA's REML equations at a local maximizer with positive variances](reml-equations-of-is-local-max.md)
+
+## Mean-zero REML scores under the GREML model
+
+- [Second moments of the rotated contrasts under the GREML model](integral-sq-contrast.md)
+- [The REML score for $\sigma_g^2$ has mean zero at the true parameter](integral-score-g.md)
+- [The REML score for $\sigma_e^2$ has mean zero at the true parameter](integral-score-e.md)
+
+## Closed-form estimate for two-level spectra
+
+- [Indices of the contrasts with a given eigenvalue](class-set.md)
+- [Number of contrasts with a given eigenvalue](group-count.md)
+- [Sum of squared rotated contrasts with a given eigenvalue](group-ss.md)
+- [Mean squared rotated contrast with a given eigenvalue](group-mean.md)
+- [Closed-form REML estimate for a two-level spectrum](two-level-reml.md)
+- [Contrast variances at the closed-form estimate equal the class means](contrast-var-two-level-reml.md)
+- [Closed form maximizes the spectral criterion for positive class means](is-max-on-spectral-log-lik-two-level-rem.md)
+- [Closed form is the unique REML maximizer for positive class means](is-max-on-reml-log-lik-two-level-reml.md)
+- [The closed-form REML estimator is unbiased when both eigenvalues occur](integral-two-level-reml.md)

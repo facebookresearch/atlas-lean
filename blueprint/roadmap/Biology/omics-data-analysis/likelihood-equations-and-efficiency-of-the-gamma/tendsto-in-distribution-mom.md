@@ -1,15 +1,21 @@
 # Asymptotic normality of the method-of-moments estimator
 
-Let `X₀, X₁, …` be i.i.d. counts
-with law `μX` on `ℕ`, with finite fourth moment and with the negative binomial mean
-`m = σ a / b` and second moment `m + m² / a + m²` at the true hyperparameter `(a, b)`,
-`a, b, σ > 0`. Then the moment estimates `θhat n = momEstimator σ X n` satisfy
-`√n (θhat n - (a, b)) → -J⁻¹ Y` in distribution, with `J = momJacobian a b σ` and
-`Y ~ N(0, E[g gᵀ])`, `g = momEstFun σ (a, b) K`, given through its projections. Unlike
-`tendstoInDistribution_countMLE`, no root or consistency hypothesis is needed: the moment estimate
-solves the moment equations once the sample is overdispersed (`sum_momEstFun_mom_eq_zero`), which
-happens with probability tending to one, and it is strongly consistent by the strong law.
+Let $P$ be a probability measure on $\Omega$ and let the counts
+$X_0, X_1, \dots : \Omega \to \mathbb{N}$ be mutually independent under $P$, each with law $\mu_X$
+on $\mathbb{N}$, the law of a count $K$; write $E$ for expectations under $\mu_X$. Let
+$\sigma, a, b > 0$, let $E K^4 < \infty$, and let $K$ have the negative binomial mean and second
+moment at $(a, b)$: $E K = m$ and $E K^2 = m + m^2 / a + m^2$, with $m = \sigma a / b$. Let $Y$ be a
+random vector in $\mathbb{R}^2$, almost everywhere measurable on a probability space, with
+$\langle Y, t \rangle \sim N\bigl(0, E \langle g_\sigma((a, b), K), t \rangle^2\bigr)$ for every
+$t \in \mathbb{R}^2$, where $g_\sigma$ is the [moment estimating function](mom-est-fun.md). Then the
+[moment estimates](mom-estimator.md) $\hat\theta^{\mathrm{mom}}_n$ satisfy
 
-## Sources
+$$
+\sqrt n\, \bigl(\hat\theta^{\mathrm{mom}}_n - (a, b)\bigr) \to -J^{-1} Y
+\quad \text{in distribution,}
+$$
 
-- the delta method for moment estimators (van der Vaart 1998, §4.1 and Theorem 5.41); instantiated from `VectorInference.tendstoInDistribution_sqrt_smul_sub_of_estimatingEquation`.
+with $J = J(a, b, \sigma)$ the invertible [moment Jacobian](mom-jacobian.md). No root or consistency
+hypothesis is needed: the moment estimate [solves](sum-mom-est-fun-mom-eq-zero.md) the moment
+equations once the sample is overdispersed, which happens with probability tending to one, and it is
+strongly consistent by the strong law of large numbers (van der Vaart 1998, §4.1 and Theorem 5.41).

@@ -1,3 +1,4 @@
-# The correction is `h`-periodic
+# The lattice correction is periodic with period h
 
-**The correction is `h`-periodic.**
+For real numbers `θ`, `h ≠ 0` and `t`, the [periodic correction](lattice-corr.md)
+`φ(t) = e^{-θ (t⁺ - t)}` satisfies `φ(t + h) = φ(t)`.

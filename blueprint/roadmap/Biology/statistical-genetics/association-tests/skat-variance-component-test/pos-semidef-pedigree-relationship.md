@@ -1,3 +1,5 @@
-# Pos Semidef pedigree Relationship
+# A pedigree's additive relationship matrix is positive semidefinite
 
-The pedigree relationship matrix is positive semidefinite (it may be singular).
+For every [pedigree](../../../quantitative-genetics/pedigree-kinship-and-inbreeding/pedigree.md) on
+`N` individuals, the [additive relationship matrix](pedigree-relationship.md) `2 φ`, twice the
+tabular kinship, is positive semidefinite.

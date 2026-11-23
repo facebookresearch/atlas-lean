@@ -1,4 +1,6 @@
-# Proj P of det eq zero
+# A singular covariance makes the null projection zero
 
-With a singular covariance `V`, Mathlib's inverse is `V⁻¹ = 0`, so the null projection, and
-with it `Q`, collapses to `0`: the GLS formula defining the test is not available.
+If `det V = 0`, then for every real `n × q` covariate matrix `X` the [null projection](proj-p.md) is
+`P = 0`, since with the convention that the inverse of a singular matrix is `0`, `V⁻¹ = 0`. Hence
+the [SKAT statistic](skat-q.md) `Q = (P y)ᵀ K (P y)` is `0` for every `y`: the GLS formula that
+defines the test has no inverse to use.

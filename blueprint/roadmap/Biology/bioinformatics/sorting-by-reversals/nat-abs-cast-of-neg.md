@@ -1,3 +1,4 @@
-# Nat Abs cast of neg
+# The absolute value of a negative integer is its negation
 
-Cast of `natAbs` negates a negative integer.
+For every integer $x < 0$, the absolute value $|x|$, a natural number, equals $-x$ when read as
+an integer.

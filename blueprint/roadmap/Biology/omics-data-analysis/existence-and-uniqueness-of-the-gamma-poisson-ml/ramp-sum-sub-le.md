@@ -1,3 +1,4 @@
-# Ramp Sum sub le
+# A ramp sum grows with slope at most its count
 
-The ramp sum grows at slope at most `k`.
+For every natural number `k` and reals `x ≤ y`, the [ramp sum](ramp-sum.md) satisfies
+`R_k(y) - R_k(x) ≤ k (y - x)`.

@@ -1,3 +1,3 @@
-# Sub sq div two le log one add
+# A quadratic lower bound for the logarithm of 1 + x
 
-For `0 ≤ x`, `x - x ^ 2 / 2 ≤ log (1 + x)`.
+For every real $x \ge 0$, $x - x^2 / 2 \le \log(1 + x)$.

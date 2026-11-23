@@ -1,3 +1,3 @@
-# Nat Abs eq one iff
+# An integer has absolute value one exactly when it is 1 or −1
 
-Absolute value one means plus or minus one.
+For every integer $x$, $|x| = 1$ if and only if $x = 1$ or $x = -1$.

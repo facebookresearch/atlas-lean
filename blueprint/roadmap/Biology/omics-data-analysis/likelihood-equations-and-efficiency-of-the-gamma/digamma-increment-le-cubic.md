@@ -1,5 +1,8 @@
-# Digamma Increment le cubic
+# Cubic upper bound on the digamma increment
 
-Cubic upper bound on the digamma increment: for `a > 0`,
-`∑_{j<k} 1 / (a + j) ≤ k / a - (k (k - 1) / 2) / a² + k³ / a³`, from the termwise bound
-`1 / (a + j) ≤ 1 / a - j / a² + j² / a³`.
+For $a > 0$ and every $k \in \mathbb{N}$, the [digamma increment](digamma-increment.md)
+$\psi_k(a) = \sum_{j < k} 1/(a + j)$ satisfies
+
+$$\psi_k(a) \le \frac{k}{a} - \frac{k (k - 1) / 2}{a^2} + \frac{k^3}{a^3},$$
+
+from the termwise bound $1/(a + j) \le 1/a - j/a^2 + j^2/a^3$.

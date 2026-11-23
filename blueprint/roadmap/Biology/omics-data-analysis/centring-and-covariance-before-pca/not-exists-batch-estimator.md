@@ -1,8 +1,20 @@
-# Batch effect nonidentifiable
+# With $p \ge 1$, $S$ does not determine a confounded batch effect
 
-In a confounded design (with at least one feature) no
-function of the centered sample covariance recovers the batch effect `β`: "all batch"
-`(β, δ) = (a, 0)` and "all biology" `(β, δ) = (0, a)` give the same `S`. Compare
-`MathlibExt.Biology.Omics.Pseudobulk.not_identifiable_of_confounded`: the scalar cell-level
-hierarchical model (donor-level covariates), for the condition effect `τ` and the full data
-law.
+Let $p \ge 1$, fix $E \in \mathbb{R}^{n \times p}$, $\mu \in \mathbb{R}^p$ and $b \in \mathbb{R}^n$,
+and write $X(\beta, \delta) = E + \mathbf 1 \mu^\top + b \beta^\top + b \delta^\top$ for the
+confounded [additive design](batch-model.md), with batch effect $\beta$ and biological signal
+$\delta$ attached to the same covariate $b$. Let $S(Y)$ be the
+[sample covariance matrix](../../../Probability/linear-models-multivariate/principal-component-analysis/sample-cov.md)
+of a data matrix $Y$. There is no map $f$ from real $p \times p$ matrices to $\mathbb{R}^p$ with
+
+$$f\bigl(S(X(\beta, \delta))\bigr) = \beta \quad \text{for all } \beta, \delta \in \mathbb{R}^p.$$
+
+Indeed, for every $a \in \mathbb{R}^p$, "all batch", $(\beta, \delta) = (a, 0)$, and "all biology",
+$(\beta, \delta) = (0, a)$, give the same $S$, so $f$ would return both $a$ and $0$; some $a \ne 0$
+exists since $p \ge 1$. This holds for every $n$, every residual matrix $E$, every baseline $\mu$
+and every covariate $b$.
+
+Compare the
+[non-identifiability of the condition effect](../pseudobulk-aggregation-of-single-cell-data/not-identifiable-of-confounded.md)
+under perfect confounding in the cell-level pseudobulk model, a statement about the probability law
+of the data rather than about the sample covariance matrix.

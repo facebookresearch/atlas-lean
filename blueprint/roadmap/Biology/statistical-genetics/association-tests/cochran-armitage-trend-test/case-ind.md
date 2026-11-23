@@ -1,3 +1,4 @@
-# Case Ind
+# Case indicator
 
-The case indicator: `1` for a case, `0` for a control.
+For a case status `y` (true for a case, false for a control), the case indicator is `1` if `y` is
+true and `0` otherwise.

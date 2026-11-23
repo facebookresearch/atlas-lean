@@ -1,6 +1,9 @@
-# `Var(ĥ²) → 0` as `M → ∞` with bounded LD
+# Vanishing estimator variance under an LD-block model as M grows
 
-Along a family of designs with `M → ∞`,
-`N ≥ κ M` (`κ > 0`), LD-score spread `S_ℓℓ ≥ c M` (`c > 0`), and statistics satisfying the
-LD-block model with block size at most `K` and variance at most `V` uniformly, the variance
-of the estimator `b̂ · M / N` tends to `0`.
+Let $\mu$ be a finite measure and, along a filter on an index set, let $N_n$ and $M_n$ be natural
+numbers, $\ell_n \in \mathbb{R}^{M_n}$ real vectors (for instance LD scores) and
+$\chi_{n,1}, \dots, \chi_{n,M_n}$ statistics satisfying an [LD-block model](ldblock-model.md) with
+block size $K$ and variance bound $V$, the same for every $n$. Suppose that $M_n \to \infty$ and
+that $N_n \geq \kappa M_n$ and $S_{\ell_n \ell_n} \geq c M_n$ for all $n$, for some $\kappa > 0$ and
+$c > 0$. Then the variance of the estimator $\hat h^2_n = \hat b_n M_n / N_n$, with $\hat b_n$ the
+least-squares slope of $(\chi_{n,j})_j$ on $\ell_n$, tends to $0$.

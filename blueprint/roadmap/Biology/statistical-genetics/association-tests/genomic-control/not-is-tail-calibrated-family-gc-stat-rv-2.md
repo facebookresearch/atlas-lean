@@ -1,5 +1,11 @@
-# Calibration of `S / λ̂` does not follow from true-`λ` calibration
+# Two independent null genes: the λ̂ family is not tail-calibrated
 
-In T38's model with two
-independent null genes, the estimated-`λ̂` family is not a tail-calibrated family against
-`χ²₁` on any null set containing gene `0`.
+Let `P` be a probability measure and let the two scores `Z_0, Z_1` of the [common-inflation
+model](common-inflation-model.md), each with law `𝒩(0, λ)` under `P` for one `λ > 0`, be measurable
+and independent. Then the [corrected statistics](gc-stat-rv.md) `T_0, T_1`, with the [real-valued
+`χ²₁` tail](chi-sq-one-tail-real.md) as reference tail, are not a [tail-calibrated
+family](../multiple-testing-in-gene-based-association-scans/is-tail-calibrated-family.md) for any
+set `H0` of true nulls containing gene `0`: the condition `P(T_0 ≥ s) ≤ P(χ²₁ > s)` [fails at
+`s = 1`](chi-sq-one-tail-lt-measure-one-le-gc-sta.md). So calibration of the estimated-factor
+statistics does not follow from the calibration of dividing by the true `λ`, which [holds in this
+model](measure-reject-eq.md).

@@ -1,6 +1,7 @@
-# Cramér conditions
+# Cramér conditions on an i.i.d. score sequence
 
-**Cramér conditions** for an i.i.d. score sequence `X 0, X 1, …` with root `θ`: the scores are
-independent and identically distributed, integrable with negative mean (`E X < 0`), and
-`θ > 0` solves the Cramér equation `E e^{θ X} = 1` (in particular `e^{θ X}` is integrable, since
-`mgf` is `0` otherwise).
+For a measure `P` on `Ω`, real random scores `X 0, X 1, …` and a real `θ`, the Cramér conditions
+hold when: each `X i` is measurable; the scores are independent under `P` (which forces `P` to be a
+probability measure) and each has the law of `X 0`; `X 0` is integrable with negative mean,
+`E X 0 < 0`; `θ > 0`; and `E e^{θ X 0} = 1`. The last condition also makes `e^{θ X 0}`
+integrable, since the moment generating function is `0` by convention otherwise.

@@ -1,5 +1,16 @@
-# Pop Profile Shape Score
+# Population profile shape score
 
-The population profile shape score of a count random variable `K`:
-`E[∑_{j<K} 1 / (a + j)] - (log (a + E K) - log a)`. It is the almost sure limit of
-`n⁻¹ · profileShapeScore a (K₁, …, Kₙ)` for i.i.d. copies `Kᵢ` of `K`.
+Let $\mu$ be a measure on $\Omega$ and $K : \Omega \to \mathbb{N}$ a count. For a real $a$, the
+population profile shape score is
+
+$$
+\Sigma_\mu(a) = \int \psi_{K}(a)\, d\mu
+- \Bigl(\log\Bigl(a + \int K\, d\mu\Bigr) - \log a\Bigr),
+$$
+
+with the [digamma increment](digamma-increment.md) $\psi_k(a) = \sum_{j < k} 1/(a + j)$, the real
+logarithm and Bochner integrals, which are $0$ for non-integrable integrands. For a probability
+measure $\mu$, an integrable $K$ and $a > 0$ the integrals are expected values, and $\Sigma_\mu(a)$
+is the almost-sure limit of $n^{-1} S_p(a)$, with $S_p$ the
+[profile shape score](profile-shape-score.md) of pairwise independent copies $K_1, \dots, K_n$ of
+$K$.

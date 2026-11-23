@@ -1,15 +1,19 @@
-# One-sequence tail input
+# One-sequence tail hypothesis for the maximal segment score
 
-**One-sequence tail input** for the maximal segment score `M_L` of `L` iid scores with law
-`(q, f)`: `P(M_L > t) = (K + o(1)) L e^{-θ t}` as `L → ∞` and `L e^{-θ t} → 0`, uniformly over
-thresholds `t ≤ η L` for some `η > 0`. This is the Iglehart (1972) / Karlin–Dembo (1992) tail in
-the form the two-sequence problem needs; it is a hypothesis here, not derived.
+For real weights `q` and real scores `f` on a finite alphabet and real constants `θ` and `K`, the
+one-sequence tail holds when for every `ε > 0` there are a natural number `L₀` and reals `δ > 0`
+and `η > 0` such that `|P(M_L > t) - K L e^{-θ t}| ≤ ε L e^{-θ t}` for every `L ≥ L₀` and every
+real `t` with `L e^{-θ t} ≤ δ` and `t ≤ η L`. Here `P(M_L > t)` is the
+[score probability](../maximal-segment-score-of-a-random-sequence/score-prob.md) that the
+[maximal segment score](../maximal-segment-score-of-a-random-sequence/max-seg-score.md) of the
+scores of `L` letters exceeds `t`; when `q` is a probability vector it is a probability for `L`
+independent letters of law `q`. Informally `P(M_L > t) = (K + o(1)) L e^{-θ t}` as `L → ∞` and
+`L e^{-θ t} → 0`, uniformly over thresholds `t ≤ η L`, where `δ` and `η` may depend on the
+accuracy `ε`. It is the uniform form of the Iglehart (1972) and Karlin–Dembo (1992) tail that the
+two-sequence problem needs, and an assumption on `(q, f)`, not derived from them.
 
-The cap `t ≤ η L` is necessary: scores are bounded, so `P(M_L > t) = 0` once `t` exceeds `L` times
-the largest score, and without the cap the relative-error bound would force `K = 0`. The classical
-asymptotic holds only below the slope of the walk under the tilted law, which a small `η`
-respects. The definition carries no nonlattice hypothesis. It is meant for the nondegenerate
-classical regime `K > 0` of nonlattice scores: for nondegenerate scores on a lattice `hℤ` the
-classical ratio `P(M_L > t) / (L e^{-θ t})` oscillates with the fractional part of `t / h`
-(compare `LatticeRenewalInput` in `GumbelTail`). It also holds in degenerate cases: the
-lattice-valued zero score satisfies it with `K = 0` (`oneSequenceTail_s0` in the test file).
+The cap `t ≤ η L` matters: the scores are bounded, so `P(M_L > t) = 0` once `t ≥ L c` with
+`c = max(0, max_b f(b))`, and without the cap the bound with `θ > 0` would force `K = 0`. The
+definition has no nonlattice condition and is meant for nonlattice scores with `K > 0`: when every
+score lies on a lattice `hℤ` with `h > 0` and `θ > 0`, it [forces `K = 0`](eq-zero-of-lattice.md).
+It does hold with `K = 0`, for instance for the zero score and any `θ > 0`.

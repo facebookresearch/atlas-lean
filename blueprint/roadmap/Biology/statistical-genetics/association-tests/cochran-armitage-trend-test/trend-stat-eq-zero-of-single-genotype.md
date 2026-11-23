@@ -1,5 +1,8 @@
-# Singular design
+# Trend statistic of a table with a single genotype class
 
-If every individual has the same genotype class `g`, the score has zero
-sample variance, the variance factor `N ∑ i² n_i - (∑ i n_i)²` of the denominator vanishes, and
-the trend statistic is `0`.
+For real vectors `r` and `s` indexed by the genotype classes `0, 1, 2` and a class `g` with
+`rᵢ = sᵢ = 0` for every `i ≠ g`, the
+[trend statistic](../../genomic-prediction-from-summary-statistics/trend-stat.md) of the table is
+`0`: with `nᵢ = rᵢ + sᵢ` and `N = ∑ᵢ nᵢ`, the variance factor `N ∑ᵢ i² nᵢ − (∑ᵢ i nᵢ)²` of its
+denominator vanishes, and `x / 0 = 0`. The genotype score then has zero sample variance and the
+classical statistic is undefined.

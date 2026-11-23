@@ -1,5 +1,7 @@
 # Transform of one ramp
 
-For `0 ≤ h ≤ T` and `a > 0`,
-`R(T) / (a + T)² + 2 ∫₀ᵀ R(u) / (a + u)³ du = 1 / (a + h) - 1 / (a + T)` for `R(u) = max (u - h) 0`:
-two integrations by parts of `∫ 1 / (a + u) d δ_h` on `[0, T]`.
+For reals `a > 0` and `0 ≤ h ≤ T`,
+`max (T - h) 0 / (a + T)² + 2 ∫₀ᵀ max (u - h) 0 / (a + u)³ du = 1 / (a + h) - 1 / (a + T)`. Two
+integrations by parts of `∫ 1 / (a + u) dδ_h(u) = 1 / (a + h)` over `[0, T]` give this identity: it
+is the contribution of one unit mass at `h` to the transform of
+[Levin and Reeds's integrated discrepancy](smoothed-discrepancy.md).

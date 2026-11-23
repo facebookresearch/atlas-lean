@@ -1,7 +1,9 @@
-# Max Align Score
+# Maximal ungapped alignment score of two words
 
-The **maximal ungapped alignment score** of `u` and `v`: the largest `alignScore` over all
-start positions `i ≤ |u|`, `j ≤ |v|` and length bounds `ℓ ≤ |u|` (the empty alignment scores
-`0`). Every alignment of a window of `u` with a window of `v` of the same length occurs, and every
-triple scores such an alignment (`alignScore_eq_min`), so this is the best ungapped alignment
-score.
+For a real score `s` on pairs of letters and words `u` and `v`, the maximal ungapped alignment
+score `M(u, v)` is the largest [ungapped alignment score](align-score.md) with start positions
+`i ≤ |u|` and `j ≤ |v|` and length bound `ℓ ≤ |u|`. Each such triple scores the alignment of two
+windows of the same length `min(ℓ, |u| - i, |v| - j)`, and every pair of windows of `u` and `v` of
+the same length arises this way, so `M(u, v)` is the best score of an ungapped alignment of a
+window of `u` with a window of `v`, the empty alignment scoring `0`. In particular `M(u, v) ≥ 0`,
+and `M(u, v) = 0` when `u` or `v` is empty.

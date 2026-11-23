@@ -1,5 +1,5 @@
 # Defining equations of the moment estimator
 
-If the counts are overdispersed
-(`0 < M < V`) and `s > 0`, the estimates `(â, b̂)` reproduce the observed moments under the
-hierarchy: marginal mean `s â / b̂ = M` and marginal variance `M + M² / â = V`.
+For `s > 0` and overdispersed moments `0 < M < V`, the [shape estimate](mom-shape.md)
+`â = M² / (V − M)` and the [rate estimate](mom-rate.md) `b̂ = s M / (V − M)` satisfy `s â / b̂ = M`
+and `M + M² / â = V`: they reproduce the marginal mean and variance of the hierarchy.

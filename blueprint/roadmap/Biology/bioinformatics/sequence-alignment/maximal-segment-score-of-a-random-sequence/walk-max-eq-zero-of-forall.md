@@ -1,3 +1,4 @@
-# Walk Max eq zero of forall
+# Without a ladder epoch the walk maximum is zero
 
-Without a ladder epoch the walk never goes above `0`.
+For a list of real scores whose partial sums are all at most `0`, `S_j ≤ 0` for every
+`0 ≤ j ≤ n`, the [walk maximum](walk-max.md) is `0`.

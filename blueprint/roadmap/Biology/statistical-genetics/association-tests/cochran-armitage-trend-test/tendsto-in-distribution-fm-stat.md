@@ -1,16 +1,21 @@
-# The Cochran–Armitage test under the fixed-margin case–control design is asymptotically `χ²₁`
+# Fixed-margin Cochran–Armitage test is asymptotically χ²₁
 
-**The Cochran–Armitage test under the fixed-margin case–control design is asymptotically
-`χ²₁`.**
+Let `P` be a probability measure and, for each `N ∈ ℕ`, `R_N ≤ N` a number of cases and `G_{N,k}`,
+`k ∈ ℕ`, measurable random genotype classes in `{0, 1, 2}` such that `G_{N,0}, …, G_{N,N−1}` are
+independent under `P`. The cases `k < R_N` have genotype law `π_case` and the controls `R_N ≤ k < N`
+have genotype law `π_ctrl` (product-binomial sampling: the numbers of cases and controls are fixed,
+not random; designs of different sizes need not share subjects). Suppose the null hypothesis
+`π_case = π_ctrl`, that the genotype score has positive variance under `π_case`, and that `R_N → ∞`
+and `N − R_N → ∞`. Then the [fixed-margin statistic](fm-stat.md) `T(R_N, N, G_{N,·})` converges in
+distribution under `P`, as `N → ∞`, to the
+[χ² law with one degree of freedom](../../../../Probability/distributions/continuous/chi-square-distribution/chi-square-measure.md).
 
-For each sample size `N` the design has `R N ≤ N` cases (subjects `k < R N`) and `N - R N`
-controls (subjects `R N ≤ k < N`), with genotype classes `G N k ∈ {0, 1, 2}` independent within
-the design; cases have genotype law `πcase` and controls `πctrl` (product-binomial sampling: the
-numbers of cases and controls are fixed, not random). Under the null `πcase = πctrl`, if the
-genotype score has positive variance and both the number of cases and the number of controls
-tend to infinity, then the trend statistic `fmStat (R N) N` converges in distribution to `χ²₁`.
+No condition on the case fraction `R_N / N` is needed: it may oscillate or tend to `0` or `1`.
+Measurability is assumed for every `G_{N,k}`, also for the entries `k ≥ N` that the statistic does
+not read.
 
-No condition on the case fraction `R N / N` is needed: it may oscillate or tend to `0` or `1`.
+## Sources
 
-Measurability `Measurable (G N k)` is assumed for every `k`, including the entries `k ≥ N` that
-the statistic never reads; a caller can set those entries to a constant.
+- P. Armitage, *Tests for linear trends in proportions and frequencies*, Biometrics 11 (1955),
+  375–386.
+- P. Billingsley, *Probability and Measure*, 3rd ed., Wiley (1995), Theorem 27.2.

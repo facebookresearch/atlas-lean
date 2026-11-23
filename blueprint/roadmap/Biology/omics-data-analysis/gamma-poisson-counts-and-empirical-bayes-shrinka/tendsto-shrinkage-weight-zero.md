@@ -1,4 +1,5 @@
-# No-shrinkage limit, weight
+# No-shrinkage limit of the weight
 
-As the prior rate `b → 0⁺` (prior variance `a / b² → ∞` at
-fixed prior mean), the shrinkage weight tends to `1`.
+For `s > 0`, the [shrinkage weight](shrinkage-weight.md) `s / (b + s)` tends to `1` as `b → 0⁺`. At
+a fixed prior mean `m = a / b`, `b → 0⁺` means that the prior variance `a / b² = m / b` tends to
+`∞`.

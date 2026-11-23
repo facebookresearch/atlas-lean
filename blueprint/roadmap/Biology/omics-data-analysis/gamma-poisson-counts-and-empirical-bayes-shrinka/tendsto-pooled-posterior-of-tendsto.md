@@ -1,7 +1,8 @@
 # Posterior consistency, deterministic core
 
-Along any filter, if the pooled exposure
-`S → ∞` and the pooled rate `K / S → r₀`, then for a prior `Gamma(a, b)` with `a, b > 0` the
-pooled posterior `Gamma(a + K, b + S)` has mean `(a + K) / (b + S) → r₀`, variance
-`(a + K) / (b + S)² → 0`, and assigns vanishing mass to the complement of every neighbourhood
-`(r₀ - ε, r₀ + ε)` of `r₀`: the posterior concentrates at `r₀`.
+Let `a > 0` and `b > 0`, and let real numbers `S` and natural numbers `K` be indexed along a filter,
+with `S → ∞` and `K / S → r₀`. Then `(a + K) / (b + S) → r₀`, `(a + K) / (b + S)² → 0`, and the mass
+that `Gamma(a + K, b + S)` assigns to `{x : |x − r₀| ≥ ε}` tends to `0` for every `ε > 0`.
+Eventually `b + S > 0`; then `Gamma(a + K, b + S)` is a probability law, the pooled posterior when
+`K` and `S` are a pooled count and exposure, with mean `(a + K) / (b + S)` and variance
+`(a + K) / (b + S)²`, and it concentrates at `r₀`.

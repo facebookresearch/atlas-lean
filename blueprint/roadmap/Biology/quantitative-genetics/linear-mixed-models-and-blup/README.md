@@ -8,14 +8,14 @@ See [Henderson's mixed-model equations](../../../Probability/linear-models-multi
 
 - [BLUP as a conditional law](cond-distrib-mixed-model.md)
 - [BLUP is the conditional expectation](cond-exp-mixed-model.md)
-- [Map mixed Model response](map-mixed-model-response.md)
-- [Pos Semidef phen Cov of pos Semidef](pos-semidef-phen-cov-of-pos-semidef.md)
-- [Integral mixed Model response](integral-mixed-model-response.md)
-- [Covariance mixed Model response](covariance-mixed-model-response.md)
-- [Cond Distrib mixed Model response](cond-distrib-mixed-model-response.md)
-- [Integral cond Distrib mixed Model response](integral-cond-distrib-mixed-model-respon.md)
-- [Covariance cond Distrib mixed Model response](covariance-cond-distrib-mixed-model-resp.md)
-- [Variance contrast mixed Model response](variance-contrast-mixed-model-response.md)
+- [Marginal law of the mixed-model response](map-mixed-model-response.md)
+- [The phenotypic covariance is positive semidefinite](pos-semidef-phen-cov-of-pos-semidef.md)
+- [Marginal mean of the mixed-model response](integral-mixed-model-response.md)
+- [Marginal covariance of the mixed-model response](covariance-mixed-model-response.md)
+- [Conditional law of the response given the random effects](cond-distrib-mixed-model-response.md)
+- [Conditional mean of the response given the random effects](integral-cond-distrib-mixed-model-respon.md)
+- [Conditional covariance of the response given the random effects](covariance-cond-distrib-mixed-model-resp.md)
+- [Variance of a linear combination of the response](variance-contrast-mixed-model-response.md)
 
 ## LDpred-inf
 

@@ -1,61 +1,61 @@
 # Pseudobulk aggregation of single-cell data
 
-## The random-intercept covariance
+## The random-intercept model and its summary quantities
 
-- [Ri Cov](ri-cov.md)
-- [Is Random Intercept](is-random-intercept.md)
-- [Cell Mean](cell-mean.md)
-- [Pseudobulk](pseudobulk.md)
-- [Pseudobulk Mean](pseudobulk-mean.md)
-- [True Var](true-var.md)
-- [Naive Var](naive-var.md)
-- [Icc](icc.md)
+- [Random-intercept covariance kernel](ri-cov.md)
+- [Random-intercept model of cell values](is-random-intercept.md)
+- [Cell-level grand mean](cell-mean.md)
+- [Pseudobulk value of a donor](pseudobulk.md)
+- [Mean of the pseudobulk values](pseudobulk-mean.md)
+- [True variance of the cell-level mean](true-var.md)
+- [Naive independent-cell variance of the mean](naive-var.md)
+- [Intraclass correlation](icc.md)
 
-## Cells
+## Covariance of cells within and across donors
 
-- [Variance cell](variance-cell.md)
-- [Covariance same Donor](covariance-same-donor.md)
-- [Covariance other Donor](covariance-other-donor.md)
-- [Cells of one donor are not independent replicates](not-indep-fun-same-donor.md)
-- [Sum ri Cov right](sum-ri-cov-right.md)
+- [Per-cell variance in the random-intercept model](variance-cell.md)
+- [Two cells of one donor have covariance the donor variance](covariance-same-donor.md)
+- [Cells of different donors are uncorrelated](covariance-other-donor.md)
+- [With nonzero donor variance cells of one donor are dependent](not-indep-fun-same-donor.md)
+- [Row sums of the random-intercept kernel](sum-ri-cov-right.md)
 - [Variance of the cell-level mean](variance-cell-mean.md)
 
 ## Naive versus true variance
 
-- [True Var sub naive Var](true-var-sub-naive-var.md)
-- [Pseudoreplication understates the variance](naive-var-lt-true-var.md)
-- [Naive Var eq true Var iff](naive-var-eq-true-var-iff.md)
-- [Design effect](true-var-eq-design-effect-mul-naive-var.md)
+- [Shortfall of the naive variance](true-var-sub-naive-var.md)
+- [Pseudoreplication understates the variance at positive donor variance](naive-var-lt-true-var.md)
+- [Naive variance is exact iff no donor variance or one cell per donor](naive-var-eq-true-var-iff.md)
+- [Design effect relates the true and naive variances](true-var-eq-design-effect-mul-naive-var.md)
 
 ## The per-cell variances do not determine the variance of the mean
 
 - [The independence model reproduces the naive formula](variance-cell-mean-eq-naive-var.md)
-- [Same per-cell variance, different precision](variance-cell-mean-eq-iff.md)
+- [Equal per-cell variance, equal precision iff equal donor variance](variance-cell-mean-eq-iff.md)
 
-## Pseudobulk
+## Pseudobulk values as donor-level replicates
 
 - [Pseudobulk values are uncorrelated replicates](covariance-pseudobulk.md)
-- [Pseudobulk Mean eq cell Mean](pseudobulk-mean-eq-cell-mean.md)
+- [The mean of the pseudobulk values is the cell-level mean](pseudobulk-mean-eq-cell-mean.md)
 - [The replicate formula is exact for pseudobulk](variance-pseudobulk-mean.md)
 
-## The decomposition `Y = a + b + e` and an explicit realization
+## Donor-effect decomposition and an explicit Gaussian realization
 
-- [Donor random effect plus residual](is-random-intercept-of-decomp.md)
-- [Noise Space](noise-space.md)
-- [Std Gaussian Pi](std-gaussian-pi.md)
-- [Explicit random-intercept model](ri-model.md)
-- [Is Random Intercept ri Model](is-random-intercept-ri-model.md)
+- [A donor effect plus residual decomposition is a random-intercept model](is-random-intercept-of-decomp.md)
+- [Sample space of the Gaussian realization](noise-space.md)
+- [Independent standard Gaussian coordinates](std-gaussian-pi.md)
+- [Explicit Gaussian random-intercept model](ri-model.md)
+- [The Gaussian model is a random-intercept model](is-random-intercept-ri-model.md)
 - [Pseudoreplication counterexample](pseudoreplication-counterexample.md)
 
 ## Batch perfectly confounded with condition
 
-- [Mean Fn](mean-fn.md)
-- [Obs](obs.md)
-- [Data Law](data-law.md)
-- [Aemeasurable obs](aemeasurable-obs.md)
-- [Obs shift of confounded](obs-shift-of-confounded.md)
-- [Perfect confounding, full law](data-law-shift-of-confounded.md)
-- [The condition effect is not identifiable](not-identifiable-of-confounded.md)
-- [No unbiased estimator](no-unbiased-estimator-of-confounded.md)
+- [Donor-level mean with condition and batch effects](mean-fn.md)
+- [Observed cell values](obs.md)
+- [Law of the cell-level data](data-law.md)
+- [The observation vector is almost everywhere measurable](aemeasurable-obs.md)
+- [Perfect confounding trades batch effect for condition effect](obs-shift-of-confounded.md)
+- [Under perfect confounding shifted parameters give the same data law](data-law-shift-of-confounded.md)
+- [Under perfect confounding the condition effect is not identifiable](not-identifiable-of-confounded.md)
+- [Under perfect confounding no estimator is unbiased for the effect](no-unbiased-estimator-of-confounded.md)
 - [What the contrast estimates under confounding](contrast-of-confounded.md)
-- [Identification away from the boundary](contrast-of-same-batch.md)
+- [A same-batch donor pair identifies the condition effect](contrast-of-same-batch.md)

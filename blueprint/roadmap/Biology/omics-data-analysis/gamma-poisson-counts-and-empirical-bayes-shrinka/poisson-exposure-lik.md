@@ -1,4 +1,5 @@
-# Poisson Exposure Lik
+# Poisson likelihood of a count with exposure
 
-The Poisson likelihood of a count `k` at rate `r` and size factor (exposure) `s`:
-`P(k ∣ r) = e^{-s r} (s r)ᵏ / k!`, the mass of `k` under `Po(s r)`.
+For real numbers `s` and `r` and a count `k ∈ ℕ`, `P(k ∣ r) = e^(−s r) (s r)^k / k!`, with
+`0^0 = 1`. For `s r ≥ 0` it is the mass of `k` under the Poisson law `Po(s r)`: the probability of
+the count `k` of one gene in one cell with size factor (exposure) `s` at expression rate `r`.

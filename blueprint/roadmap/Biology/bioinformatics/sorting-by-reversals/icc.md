@@ -1,5 +1,7 @@
-# Icc
+# Increasing list of the natural numbers from m to n
 
-Inclusive interval list `[m, m + 1, …, n]` (`[]` when `n < m`).
-The identity target `(List.Icc 1 n).map Int.ofNat` is the sorted unsigned
-permutation; see Shamir-Peer Lecture 11 §11.2 for the unsigned setting.
+For natural numbers $m$ and $n$, the interval list from $m$ to $n$ is $(m, m + 1, \dots, n)$, a
+list of natural numbers of length $n + 1 - m$, where the difference is truncated at $0$: the
+list is empty when $n < m$. Read as integers, the list $(1, 2, \dots, n)$ is the identity
+permutation, the target of sorting by reversals; it is empty for $n = 0$ (Shamir and Peer,
+Lecture 11, §11.2).

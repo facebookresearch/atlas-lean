@@ -1,78 +1,116 @@
 # Genomic control
 
-- [Chi Sq One Tail](chi-sq-one-tail.md)
-- [Chi Sq One Tail eq gaussian Real](chi-sq-one-tail-eq-gaussian-real.md)
-- [Chi Sq One Tail lt of lt](chi-sq-one-tail-lt-of-lt.md)
-- [Chi Sq One Tail antitone](chi-sq-one-tail-antitone.md)
-- [Chi Sq One Tail ne top](chi-sq-one-tail-ne-top.md)
-- [Chi Sq One Tail lt one](chi-sq-one-tail-lt-one.md)
-- [Chernoff bound for `χ²₁`](chi-sq-one-tail-to-real-le.md)
-- [Chi Sq One Tail to Real ten le](chi-sq-one-tail-to-real-ten-le.md)
-- [Gc PValue](gc-pvalue.md)
-- [Gc PValue antitone](gc-pvalue-antitone.md)
-- [Gc PValue lt one](gc-pvalue-lt-one.md)
-- [Measure reject eq chi Sq One Tail](measure-reject-eq-chi-sq-one-tail.md)
-- [Common Inflation Model](common-inflation-model.md)
-- [Lam pos](lam-pos.md)
-- [Measure reject eq](measure-reject-eq.md)
-- [Type I eq](type-i-eq.md)
-- [Chi Sq One Tail lt measure reject uncorrected](chi-sq-one-tail-lt-measure-reject-uncorr.md)
-- [Has Law sq div](has-law-sq-div.md)
-- [Genomic-control p-values are valid in the model](is-valid-pvalue-gc-pvalue.md)
-- [Chi Sq One Tail lt measure reject of lt](chi-sq-one-tail-lt-measure-reject-of-lt.md)
-- [Measure reject lt chi Sq One Tail of gt](measure-reject-lt-chi-sq-one-tail-of-gt.md)
-- [Lambda GC](lambda-gc.md)
-- [Integral chi Sq Strat sub lambda GC](integral-chi-sq-strat-sub-lambda-gc.md)
-- [Integral chi Sq Strat div lambda GC of null](integral-chi-sq-strat-div-lambda-gc-of-n.md)
-- [Lambda GC pos](lambda-gc-pos.md)
-- [Failure with polygenic signal](integral-chi-sq-strat-div-lambda-gc-eq-o.md)
-- [Integral chi Sq Strat div lambda GC lt one of lt](integral-chi-sq-strat-div-lambda-gc-lt-o.md)
-- [One lt integral chi Sq Strat div lambda GC of lt](one-lt-integral-chi-sq-strat-div-lambda.md)
-- [Failure with heterogeneous stratification](not-exists-lambda-calibrates-of-strat-ne.md)
-- [Lambda Hat](lambda-hat.md)
-- [Gc Stat](gc-stat.md)
-- [Lambda Hat nonneg](lambda-hat-nonneg.md)
-- [Gc Stat nonneg](gc-stat-nonneg.md)
-- [Gc Stat eq](gc-stat-eq.md)
-- [Self-coupling bound](gc-stat-le-card.md)
-- [Constant sum](sum-gc-stat.md)
-- [Cross-coupling](gc-stat-update-lt.md)
-- [Chi Sq One Tail ne top](chi-sq-one-tail-ne-top-2.md)
-- [Antitone chi Sq One Tail](antitone-chi-sq-one-tail.md)
-- [Chi Sq One Tail pos](chi-sq-one-tail-pos.md)
-- [Chi Sq One Tail Real](chi-sq-one-tail-real.md)
-- [Antitone chi Sq One Tail Real](antitone-chi-sq-one-tail-real.md)
-- [Chi Sq One Tail Real lt of lt](chi-sq-one-tail-real-lt-of-lt.md)
-- [Of Real chi Sq One Tail Real](of-real-chi-sq-one-tail-real.md)
-- [Gc Stat RV](gc-stat-rv.md)
-- [Measurable gc Stat RV](measurable-gc-stat-rv.md)
-- [Measure lt gc Stat RV eq zero](measure-lt-gc-stat-rv-eq-zero.md)
-- [Measure lt gc Stat RV lt chi Sq One Tail](measure-lt-gc-stat-rv-lt-chi-sq-one-tail.md)
-- [True-`λ` calibration does not transfer to `λ̂`](calibrated-true-and-not-calibrated-estim.md)
-- [Not forall measure lt gc Stat RV eq](not-forall-measure-lt-gc-stat-rv-eq.md)
-- [Calibration of `S / λ̂` is an assumption on `S / λ̂` itself](is-tail-calibrated-family-gc-stat-rv-iff.md)
-- [Bonferroni needs no dependence assumption](measure-exists-le-gc-stat-rv-le.md)
-- [Lintegral chi Sq One Tail](lintegral-chi-sq-one-tail.md)
-- [Lintegral gc Stat RV lt one](lintegral-gc-stat-rv-lt-one.md)
-- [Sum lintegral gc Stat RV](sum-lintegral-gc-stat-rv.md)
-- [The calibration assumption is impossible under the global null, for every `m`](not-is-tail-calibrated-family-gc-stat-rv.md)
-- [Upper sandwich](measure-lt-div-le-chi-sq-one-tail-add.md)
-- [Lower sandwich](chi-sq-one-tail-le-measure-lt-div-add.md)
-- [Under-estimated `λ̂` is anti-conservative](chi-sq-one-tail-lt-measure-lt-div-of-le.md)
-- [Over-estimated `λ̂` is conservative](measure-lt-div-lt-chi-sq-one-tail-of-mul.md)
-- [Mem Lp gc Stat RV](mem-lp-gc-stat-rv.md)
-- [Sum sum covariance gc Stat RV](sum-sum-covariance-gc-stat-rv.md)
-- [Negative coupling](exists-covariance-gc-stat-rv-neg.md)
-- [Size of the coupling with equal second moments](covariance-gc-stat-rv-eq-of-forall-eq.md)
-- [Gc Stat two add](gc-stat-two-add.md)
-- [PRDS fails for the coupled two-gene family](not-is-prdson-tail-pvalue-gc-stat-rv-two.md)
-- [Chi Sq One Tail one lt half](chi-sq-one-tail-one-lt-half.md)
-- [One le gc Stat two iff](one-le-gc-stat-two-iff.md)
-- [Ae sum sq ne zero](ae-sum-sq-ne-zero.md)
-- [The calibration assumption fails at `s = 1`](half-le-measure-one-le-gc-stat-rv-two.md)
-- [Half le measure gc Stat RV two lt one](half-le-measure-gc-stat-rv-two-lt-one.md)
-- [Anti-conservative in T38's model](chi-sq-one-tail-lt-measure-one-le-gc-sta.md)
-- [Calibration of `S / λ̂` does not follow from true-`λ` calibration](not-is-tail-calibrated-family-gc-stat-rv-2.md)
-- [PRDS fails in T38's model](not-is-prdson-tail-pvalue-gc-stat-rv-two-2.md)
-- [Variance gc Stat RV two pos](variance-gc-stat-rv-two-pos.md)
-- [Negative covariance in T38's model](covariance-gc-stat-rv-two-neg.md)
+## The χ²₁ tail
+
+- [Tail of the chi-square law with one degree of freedom](chi-sq-one-tail.md)
+- [The χ²₁ tail as a standard normal probability](chi-sq-one-tail-eq-gaussian-real.md)
+- [The χ²₁ tail is strictly decreasing on nonnegative thresholds](chi-sq-one-tail-lt-of-lt.md)
+- [The χ²₁ tail is nonincreasing](chi-sq-one-tail-antitone.md)
+- [The χ²₁ tail is finite](chi-sq-one-tail-ne-top.md)
+- [The χ²₁ tail is below one at positive thresholds](chi-sq-one-tail-lt-one.md)
+- [Chernoff bound for the χ²₁ tail](chi-sq-one-tail-to-real-le.md)
+- [The χ²₁ tail at 10 is at most 0.05](chi-sq-one-tail-to-real-ten-le.md)
+
+## Genomic-control p-values
+
+- [Genomic-control p-value](gc-pvalue.md)
+- [With λ > 0 the genomic-control p-value is nonincreasing](gc-pvalue-antitone.md)
+- [With λ > 0 a positive statistic has p-value below one](gc-pvalue-lt-one.md)
+
+## Rejection probability of a rescaled Gaussian score
+
+- [Tail of a centred Gaussian square divided by a positive constant](measure-reject-eq-chi-sq-one-tail.md)
+
+## Calibration in the common-inflation model
+
+- [Common-inflation model of Gaussian null scores](common-inflation-model.md)
+- [The common inflation factor is positive](lam-pos.md)
+- [Genomic control is exactly calibrated in the common-inflation model](measure-reject-eq.md)
+- [Genomic control has type I error exactly α at a χ²₁ critical value](type-i-eq.md)
+- [With λ > 1 the uncorrected test is anti-conservative](chi-sq-one-tail-lt-measure-reject-uncorr.md)
+- [The corrected statistic has law χ²₁ in the common-inflation model](has-law-sq-div.md)
+- [Genomic-control p-values are valid in the common-inflation model](is-valid-pvalue-gc-pvalue.md)
+
+## Marker-specific inflation
+
+- [Dividing by a positive λ below the null variance is anti-conservative](chi-sq-one-tail-lt-measure-reject-of-lt.md)
+- [Dividing by λ above the null variance is conservative](measure-reject-lt-chi-sq-one-tail-of-gt.md)
+
+## Moment calibration in the LD-score model
+
+- [Population genomic-control factor of the LD-score model](lambda-gc.md)
+- [Deviation from the genomic-control factor under common stratification](integral-chi-sq-strat-sub-lambda-gc.md)
+- [Common stratification, h² = 0: every marker is calibrated in mean](integral-chi-sq-strat-div-lambda-gc-of-n.md)
+- [The population genomic-control factor is positive](lambda-gc-pos.md)
+- [Common stratification, h² ≠ 0: calibration exactly at mean LD score](integral-chi-sq-strat-div-lambda-gc-eq-o.md)
+- [Common stratification, h² ≠ 0: over-correction below mean LD score](integral-chi-sq-strat-div-lambda-gc-lt-o.md)
+- [Common stratification, h² ≠ 0: under-correction above mean LD score](one-lt-integral-chi-sq-strat-div-lambda.md)
+- [Unequal stratification, h² = 0: no single λ calibrates both markers](not-exists-lambda-calibrates-of-strat-ne.md)
+
+## Estimating the inflation factor from the scan
+
+- [Mean-based estimate of the genomic-control factor](lambda-hat.md)
+- [Genomic-control statistic with the estimated factor λ̂](gc-stat.md)
+- [The mean-based estimate λ̂ is nonnegative](lambda-hat-nonneg.md)
+- [The estimated-factor statistic is nonnegative](gc-stat-nonneg.md)
+- [Closed form of the estimated-factor statistic](gc-stat-eq.md)
+- [The estimated-factor statistic never exceeds the number of genes](gc-stat-le-card.md)
+- [With some score nonzero, the λ̂-corrected statistics sum to m](sum-gc-stat.md)
+- [Raising another gene's statistic lowers Tⱼ when zⱼ ≠ 0](gc-stat-update-lt.md)
+
+## Further properties of the χ²₁ tail and its real-valued form
+
+- [The χ²₁ tail probability is finite at every threshold](chi-sq-one-tail-ne-top-2.md)
+- [The χ²₁ tail is nonincreasing on the whole real line](antitone-chi-sq-one-tail.md)
+- [The χ²₁ tail is positive at every nonnegative threshold](chi-sq-one-tail-pos.md)
+- [The χ²₁ tail as a real-valued function](chi-sq-one-tail-real.md)
+- [The real-valued χ²₁ tail is nonincreasing](antitone-chi-sq-one-tail-real.md)
+- [The real-valued χ²₁ tail is strictly decreasing for c ≥ 0](chi-sq-one-tail-real-lt-of-lt.md)
+- [The real and extended-real χ²₁ tails agree](of-real-chi-sq-one-tail-real.md)
+
+## Exact calibration with λ̂ is impossible
+
+- [Estimated-factor statistics of random scores](gc-stat-rv.md)
+- [Measurable scores give measurable λ̂-corrected statistics](measurable-gc-stat-rv.md)
+- [The λ̂-corrected test never rejects at a threshold c ≥ m](measure-lt-gc-stat-rv-eq-zero.md)
+- [Strictly conservative against χ²₁ at every threshold c ≥ m](measure-lt-gc-stat-rv-lt-chi-sq-one-tail.md)
+- [Calibrated with the true λ, strictly conservative with λ̂ at c ≥ m](calibrated-true-and-not-calibrated-estim.md)
+- [The λ̂-corrected statistic is never exactly χ²₁-calibrated](not-forall-measure-lt-gc-stat-rv-eq.md)
+
+## Tail calibration of the λ̂ family
+
+- [The λ̂ family is tail-calibrated iff its null tails lie below χ²₁](is-tail-calibrated-family-gc-stat-rv-iff.md)
+- [Bonferroni bound for the λ̂ tests under arbitrary dependence](measure-exists-le-gc-stat-rv-le.md)
+- [The χ²₁ tail integrates to 1 over the positive half-line](lintegral-chi-sq-one-tail.md)
+- [A tail-calibrated λ̂-corrected statistic has integral below 1](lintegral-gc-stat-rv-lt-one.md)
+- [For an a.s. nonzero score vector the λ̂-corrected means sum to m](sum-lintegral-gc-stat-rv.md)
+- [Global null: tail calibration fails when scores are a.s. not all zero](not-is-tail-calibrated-family-gc-stat-rv.md)
+
+## Calibration with a general random estimate of λ
+
+- [Upper tail bound for Z²/L when L ≥ κλ on a set E](measure-lt-div-le-chi-sq-one-tail-add.md)
+- [Lower tail bound for Z²/L when 0 < L ≤ κλ on a set E](chi-sq-one-tail-le-measure-lt-div-add.md)
+- [An estimate always below κλ with κ < 1 is strictly anti-conservative](chi-sq-one-tail-lt-measure-lt-div-of-le.md)
+- [An estimate always above κλ with κ > 1 is strictly conservative](measure-lt-div-lt-chi-sq-one-tail-of-mul.md)
+
+## Negative coupling and failure of PRDS
+
+- [The λ̂-corrected statistics are square integrable](mem-lp-gc-stat-rv.md)
+- [For an a.s. nonzero score vector the covariances sum to zero](sum-sum-covariance-gc-stat-rv.md)
+- [A nondegenerate λ̂-corrected statistic forces a negative covariance](exists-covariance-gc-stat-rv-neg.md)
+- [Equal pairwise covariances of λ̂-corrected statistics are −v/(m − 1)](covariance-gc-stat-rv-eq-of-forall-eq.md)
+- [With two genes and a nonzero score vector, T₀ + T₁ = 2](gc-stat-two-add.md)
+- [Two-gene λ̂ p-values are not PRDS when T₀ falls on both sides of 1](not-is-prdson-tail-pvalue-gc-stat-rv-two.md)
+
+## Two independent Gaussian null genes
+
+- [The χ²₁ tail at 1 is below one half](chi-sq-one-tail-one-lt-half.md)
+- [With two genes and a nonzero score vector, T₀ ≥ 1 iff z₁² ≤ z₀²](one-le-gc-stat-two-iff.md)
+- [Two-gene common-inflation model: the scores are a.s. not both zero](ae-sum-sq-ne-zero.md)
+- [Two independent 𝒩(0, λ) null scores give P(T₀ ≥ 1) ≥ 1/2](half-le-measure-one-le-gc-stat-rv-two.md)
+- [Two independent 𝒩(0, λ) null scores give P(T₀ < 1) ≥ 1/2](half-le-measure-gc-stat-rv-two-lt-one.md)
+- [Two independent null genes: the λ̂ test is anti-conservative at 1](chi-sq-one-tail-lt-measure-one-le-gc-sta.md)
+- [Two independent null genes: the λ̂ family is not tail-calibrated](not-is-tail-calibrated-family-gc-stat-rv-2.md)
+- [Two independent null genes: the λ̂ p-values are not PRDS](not-is-prdson-tail-pvalue-gc-stat-rv-two-2.md)
+- [Two independent null genes: T₀ has positive variance](variance-gc-stat-rv-two-pos.md)
+- [Two independent null genes: T₀ and T₁ have negative covariance](covariance-gc-stat-rv-two-neg.md)

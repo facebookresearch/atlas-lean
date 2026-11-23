@@ -1,3 +1,4 @@
-# Nonneg
+# The variance bound of an LD-block model is nonnegative
 
-`0 ≤ V` under the LD-block model, as soon as there is a marker.
+For statistics $\chi_1, \dots, \chi_M$ with $M \geq 1$ satisfying an
+[LD-block model](ldblock-model.md) with variance bound $V$, $V \geq 0$.

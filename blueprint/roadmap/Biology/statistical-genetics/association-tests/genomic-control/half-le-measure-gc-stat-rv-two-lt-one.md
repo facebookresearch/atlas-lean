@@ -1,3 +1,11 @@
-# Half le measure gc Stat RV two lt one
+# Two independent 𝒩(0, λ) null scores give P(T₀ < 1) ≥ 1/2
 
-With two independent `𝒩(0, λ)` null scores, `P(S₀ / λ̂ < 1) ≥ 1/2`.
+Let `P` be a probability measure and let the two scores `Z_0, Z_1` of the [common-inflation
+model](common-inflation-model.md), each with law `𝒩(0, λ)` under `P` for one `λ > 0`, be measurable
+and independent. Then the [corrected statistic](gc-stat-rv.md) of gene `0` satisfies
+
+`P(T_0 < 1) ≥ 1/2`.
+
+By exchangeability of the two independent scores, `P(Z_0² ≤ Z_1²) ≥ 1/2`; ties `Z_0² = Z_1²` have
+probability `0`, and almost surely `T_0 < 1` exactly when `Z_0² < Z_1²` ([two-gene
+criterion](one-le-gc-stat-two-iff.md)).

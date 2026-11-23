@@ -1,4 +1,7 @@
-# Mean Fn
+# Donor-level mean with condition and batch effects
 
-Donor-level mean `μ₀ + τ · cond d + β · batch d`: intercept `μ₀`, condition effect `τ`, batch
-effect `β`.
+Let every donor $d$ have a real condition covariate $\mathrm{cond}(d)$ and a real batch covariate
+$\mathrm{batch}(d)$. For an intercept $\mu_0$, a condition effect $\tau$ and a batch effect $\beta$,
+all real, the donor-level mean is
+
+$$m(d) = \mu_0 + \tau\, \mathrm{cond}(d) + \beta\, \mathrm{batch}(d).$$

@@ -1,6 +1,10 @@
-# `Var(ĥ²) → 0` under bounded covariance row sums
+# Vanishing estimator variance under bounded covariance row sums
 
-Along a family of designs indexed by a
-filter `l`, with square-integrable statistics whose absolute covariance row sums are at most
-`R` uniformly, LD-score spread `S_ℓℓ ≥ c M` with `c > 0`, and `M / N² → 0`, the variance of the
-estimator `b̂ · M / N` tends to `0`.
+Let $\mu$ be a finite measure and, along a filter on an index set, let $N_n$ and $M_n$ be natural
+numbers, $\ell_n \in \mathbb{R}^{M_n}$ real vectors (for instance LD scores) and
+$\chi_{n,1}, \dots, \chi_{n,M_n}$ square-integrable statistics. Suppose that for some real $R$ all
+absolute covariance row sums satisfy $\sum_k |\operatorname{Cov}(\chi_{n,j}, \chi_{n,k})| \leq R$,
+that for some $c > 0$ the spread satisfies $S_{\ell_n \ell_n} \geq c M_n$ for all $n$, and that
+$M_n / N_n^2 \to 0$. Then the variance of the estimator $\hat h^2_n = \hat b_n M_n / N_n$, with
+$\hat b_n$ the least-squares slope of $(\chi_{n,j})_j$ on $\ell_n$, tends to $0$; variance and
+covariances are taken with respect to $\mu$.

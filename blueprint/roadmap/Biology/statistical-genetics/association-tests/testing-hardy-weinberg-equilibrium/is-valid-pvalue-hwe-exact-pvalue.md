@@ -1,11 +1,12 @@
-# The exact HWE test is valid in finite samples
+# The exact Hardy–Weinberg test is valid in finite samples
 
-Under the uniform-placement null model
-the Wigginton–Cutler–Abecasis p-value of the observed heterozygote count is a valid p-value, for
-every `N` and every feasible `nA ≤ 2 * N`. Feasibility is essential: for `nA > 2 * N` the
-arrangement set is empty, `uniformArrangements N nA` is the zero measure, and validity
-would hold only vacuously, not under an HWE probability law.
-
-## Sources
-
-- Wigginton, Cutler and Abecasis (2005).
+For all natural numbers $N$ and $n_A \le 2N$, under the
+[uniform placement model](uniform-arrangements.md) $U_{N, n_A}$, the uniform law on the sets of
+$n_A$ of the $2N$ gamete slots (a probability measure), the
+[exact Hardy–Weinberg p-value](hwe-exact-pvalue.md) of the observed
+[number of heterozygotes](../../../../Probability/hypothesis-testing/exact-test-for-hardy-weinberg-equilibrium/het-count.md)
+is a
+[valid p-value](../../../../Probability/hypothesis-testing/valid-p-values-and-false-discovery-proportion/is-valid-pvalue.md):
+the sets of slots with p-value at most $t$ have probability at most $t$, for every $t \in [0, 1]$.
+Without the condition $n_A \le 2N$ the model is the zero measure and the statement holds only
+vacuously (Wigginton, Cutler and Abecasis 2005).

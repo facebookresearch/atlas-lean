@@ -1,3 +1,4 @@
-# Chi Sq One Tail ne top
+# The χ²₁ tail probability is finite at every threshold
 
-The `χ²₁` tail is finite.
+For every real `c`, the [`χ²₁` tail](chi-sq-one-tail.md) `P(χ²₁ > c)`, a value in `[0, ∞]`, is
+finite.

@@ -1,4 +1,5 @@
-# Renewal law of large numbers, pathwise
+# Renewal law of large numbers for the ladder count, pathwise
 
-If the ladder epochs satisfy `T_k / k → A > 0`
-then the ladder count satisfies `Nₙ / n → 1 / A`, from `T_{Nₙ} ≤ n < T_{Nₙ + 1}`.
+For a [ladder-good](is-ladder-good.md) path of real scores and a real `A > 0`, if the
+[ladder epochs](ladder-epoch.md) satisfy `T_k / k → A`, then the [ladder count](ladder-count.md)
+satisfies `Nₙ / n → 1 / A`; this follows from `T_{Nₙ} ≤ n < T_{Nₙ + 1}`.

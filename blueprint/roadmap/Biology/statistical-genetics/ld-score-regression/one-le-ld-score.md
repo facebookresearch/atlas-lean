@@ -1,3 +1,4 @@
-# One le ld Score
+# The LD score of a standardized marker is at least one
 
-For a standardized matrix, the LD score of each marker is at least `1`.
+For a [standardized](is-standardized.md) real $N \times M$ matrix $X$ with $N \neq 0$, every marker
+$j$ has [LD score](ld-score.md) $\ell_j \geq 1$.

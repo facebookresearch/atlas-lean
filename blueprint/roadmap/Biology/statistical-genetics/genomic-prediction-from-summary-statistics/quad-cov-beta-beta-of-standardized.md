@@ -1,3 +1,8 @@
-# Quad Cov beta beta of standardized
+# Genetic-value term equals the heritability for standardized genotypes
 
-For a standardized genotype matrix and `N, M ≠ 0`, `C(β, β) = h²`.
+Let `(h², β, ε)` be an [LD-score model](../ld-score-regression/model.md) on a measure `μ` with
+`N ≠ 0` individuals and `M ≠ 0` markers, and let `X` be a
+[standardized](../ld-score-regression/is-standardized.md) real `N × M` genotype matrix with
+[in-sample LD matrix](ld-matrix.md) `R`. With target LD matrix `S = R`, the
+[training integral of the target cross moment](quad-cov.md) of the effects with themselves is
+`C_R(β, β) = h²`.

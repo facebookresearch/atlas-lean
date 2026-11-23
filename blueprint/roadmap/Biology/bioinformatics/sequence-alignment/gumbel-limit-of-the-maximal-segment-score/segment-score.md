@@ -1,4 +1,4 @@
-# Segment Score
+# Score of a segment of a score sequence
 
-The score `x i + ⋯ + x (j - 1)` of the segment `[i, j)` of a score sequence `x`; it is `0`
-when `j ≤ i` (the empty segment).
+For a sequence of real scores `x 0, x 1, …` and natural numbers `i` and `j`, the score of the
+segment `[i, j)` is `x i + ⋯ + x (j - 1)`; it is `0` when `j ≤ i` (the empty segment).

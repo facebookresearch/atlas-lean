@@ -1,4 +1,5 @@
-# `Mₙ` is the maximum of the reflected walk
+# The maximal segment score is the maximum of the reflected walk
 
-Every `W_k`, `k ≤ n`, is at most `Mₙ`, and some
-`W_k` equals it.
+For every list of real scores, the value of the [Lindley reflected walk](lindley.md) after any
+prefix is at most the [maximal segment score](max-seg-score.md) of the list, and some prefix gives a
+value equal to it: `Mₙ = max_{k ≤ n} W_k`.

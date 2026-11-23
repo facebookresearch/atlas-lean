@@ -1,10 +1,14 @@
-# Genomic control is not a universal repair
+# No positive inflation factor makes the sparse p-value valid
 
-In the sparse HWE null model (`N = 10`,
-`n_A = 2`) the chi-square statistic takes only the two values `10` and `10/81`, and for every
-inflation factor `lam > 0` the genomic-control p-value is still not valid: at the level
-`t = gcPValue lam (10/81)`, its own larger value (about `0.72` at `lam = 1`, tending to `1` as
-`lam` grows), it rejects with probability one. This failure comes from the discreteness of the
-null law, not from genomic control specifically. At the usual level `0.05` the failure is proved
-only for `lam ∈ (0, 1]` (`gcPValue_sparse_rejection_ge`); that range includes values below the
-clipping floor, so see that theorem for the correct interpretation.
+In the sparse null model, with $N = 10$ individuals carrying $n_A = 2$ copies of $A$ under the
+[uniform placement model](uniform-arrangements.md) $U_{10, 2}$ (the heterozygote count is then $0$
+with probability $1/19$ and $2$ with probability $18/19$), the
+[heterozygote-count statistic](hwe-chi-sq-of-het.md) takes only the values $10$ (no heterozygote)
+and $10/81$ (two heterozygotes). For every inflation factor $\lambda > 0$, the
+[genomic-control p-value](../genomic-control/gc-pvalue.md) $P(\chi^2_1 > X^2 / \lambda)$ of the
+observed count is not a
+[valid p-value](../../../../Probability/hypothesis-testing/valid-p-values-and-false-discovery-proportion/is-valid-pvalue.md):
+at the level $t$ equal to its larger value, the p-value at $10/81$ (about $0.72$ at $\lambda = 1$),
+the test rejects with probability one, although $t < 1$. The failure comes from the discreteness of
+the null law. At the level $0.05$ a failure is proved only for
+[$0 < \lambda \le 1$](gc-pvalue-sparse-rejection-ge.md).

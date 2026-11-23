@@ -1,3 +1,8 @@
-# Burden Kernel
+# Burden kernel: the outer product of the collapsed genotype
 
-The burden kernel `K_B = G a aᵀ Gᵀ = C Cᵀ`, `C = G a`.
+For a real `n × m` genotype matrix `G` and variant weights `a ∈ ℝᵐ`, the burden kernel is the
+`n × n` matrix
+
+`K_B = C Cᵀ = G a aᵀ Gᵀ`, with entries `(K_B)ᵢₖ = Cᵢ Cₖ`,
+
+where `C = G a` is the collapsed genotype, `Cᵢ = ∑ⱼ Gᵢⱼ aⱼ`.

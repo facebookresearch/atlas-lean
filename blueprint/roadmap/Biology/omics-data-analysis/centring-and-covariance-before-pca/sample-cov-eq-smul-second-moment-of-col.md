@@ -1,4 +1,13 @@
-# Sample Cov eq smul second Moment of col Mean eq zero
+# Mean-zero data: sample covariance is $n/(n-1)$ times the second moment
 
-For data with zero column means, `S = n / (n - 1) • n⁻¹ Xᵀ X`: centered and uncentered
-matrices then differ only by the factor `n / (n - 1)`.
+Let $X$ be a real $n \times p$ data matrix whose rows are $n \ge 2$ samples, with every column mean
+zero ($\bar x = 0$,
+[sample means](../../../Probability/linear-models-multivariate/principal-component-analysis/col-mean.md)).
+Then the
+[sample covariance matrix](../../../Probability/linear-models-multivariate/principal-component-analysis/sample-cov.md)
+is
+
+$$S = \frac{n}{n-1} \cdot \frac1n X^\top X = \frac{1}{n-1} X^\top X.$$
+
+It differs from the [uncentred second-moment matrix](second-moment.md) $\frac1n X^\top X$ only by
+the factor $\frac{n}{n-1}$.

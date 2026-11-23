@@ -1,5 +1,13 @@
-# Anti-conservative in T38's model
+# Two independent null genes: the λ̂ test is anti-conservative at 1
 
-With two independent `𝒩(0, λ)` null scores the
-estimated-`λ̂` test rejects at threshold `1` with probability at least `1/2`, more than the
-nominal `P(χ²₁ > 1) ≈ 0.317`, although dividing by the true `λ` is exactly calibrated.
+Let `P` be a probability measure and let the two scores `Z_0, Z_1` of the [common-inflation
+model](common-inflation-model.md), each with law `𝒩(0, λ)` under `P` for one `λ > 0`, be measurable
+and independent. The estimated-factor test of gene `0` at threshold `1` rejects more often than the
+nominal level:
+
+`P(χ²₁ > 1) < P(T_0 ≥ 1)`,
+
+where `T_0` is the [corrected statistic](gc-stat-rv.md) and `P(χ²₁ > 1)` the [`χ²₁`
+tail](chi-sq-one-tail.md). Indeed [`P(T_0 ≥ 1) ≥ 1/2`](half-le-measure-one-le-gc-stat-rv-two.md)
+while [`P(χ²₁ > 1) < 1/2`](chi-sq-one-tail-one-lt-half.md) (its value is `≈ 0.317`), although
+[dividing by the true `λ` is exactly calibrated](measure-reject-eq.md).

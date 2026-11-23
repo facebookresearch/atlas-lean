@@ -1,12 +1,14 @@
 # McNemar's test with a random number of discordant pairs
 
-Let `X ω` and `Y ω` count the
-discordant pairs of the two types. If, given each number `X + Y = N` of discordant pairs of
-positive probability, `X ~ Bin(N, 1/2)`, then the McNemar p-value at the observed number of
-discordant pairs, `ω ↦ P(Bin(X ω + Y ω, 1/2) ≥ X ω)`, is valid under `μ`.
+Let $\mu$ be a probability measure and $X$, $Y$ measurable natural-valued random variables counting
+the discordant pairs of the two types. Suppose that for every $N$ with $\mu(X + Y = N) > 0$, the
+count $X$ has the law $\mathrm{Bin}(N, 1/2)$ under $\mu$ conditioned on the event $\{X + Y = N\}$.
+Then the [McNemar p-value](mcnemar-pvalue.md) at the observed number of discordant pairs,
+$P(\omega) = \Pr[\mathrm{Bin}(X(\omega) + Y(\omega), 1/2) \ge X(\omega)]$, is
+[valid](../../../Probability/hypothesis-testing/valid-p-values-and-false-discovery-proportion/is-valid-pvalue.md)
+under $\mu$: $\mu(P \le t) \le t$ for every $t \in [0, 1]$.
 
-The conditional law is a hypothesis. The Poissonized model does not need it:
-`isValidPValue_mcnemarPValue_total` gets validity there from
-`GLM.CountData.isValidPValue_countExactPValue`. In the model with a fixed number of pairs and
-multinomial cell counts the conditional law is **not** derived here, and that model is reachable
-only through this hypothesis.
+The conditional binomial law is a hypothesis. Under the
+[equal-rate Poisson null](is-valid-pvalue-mcnemar-pvalue-total.md) the p-value is valid without it.
+In the model with a fixed number of pairs and multinomial cell counts, the conditional law has to be
+supplied as this hypothesis.

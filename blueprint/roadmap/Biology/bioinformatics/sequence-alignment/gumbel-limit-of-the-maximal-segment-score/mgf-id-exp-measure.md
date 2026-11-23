@@ -1,4 +1,4 @@
-# Mgf id exp Measure
+# Moment generating function of the exponential distribution
 
-The moment generating function of the exponential distribution with rate `r`:
-`E e^{s Y} = r / (r - s)` for `s < r`.
+For a rate `r > 0` and a real `s < r`, a random variable `Y` with the exponential distribution of
+rate `r` has `E e^{s Y} = r / (r - s)`.

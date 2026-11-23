@@ -1,4 +1,5 @@
-# Is Dir Gap
+# Indicator that the second integer is not the first plus one
 
-Directed-gap indicator: `0` when `b - a = 1`, else `1`.
-Cf. the signed directed breakpoints of Shamir-Peer Lecture 11 signed setting.
+For integers $a$ and $b$, the directed gap indicator is $\vec\gamma(a, b) = 0$ if $b - a = 1$
+and $\vec\gamma(a, b) = 1$ otherwise. It is the contribution of an adjacent pair $(a, b)$ to the
+[directed gap count](dir-gap-count.md) (Shamir and Peer, Lecture 11, signed setting).

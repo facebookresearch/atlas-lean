@@ -1,6 +1,8 @@
 # Pseudoreplication counterexample
 
-In every balanced design with at least two cells per
-donor and every donor variance `σ_b² > 0`, the explicit Gaussian random-intercept model has
-cell-mean variance `σ_b² / D + σ_e² / (D m)`, strictly above the naive independent-cell value
-`(σ_b² + σ_e²) / (D m)`.
+Let $\delta$ be a finite nonempty set of $D$ donors and $\kappa$ a finite set of $m \ge 2$ cell
+slots, and let $\sigma_b^2 > 0$ and $\sigma_e^2 \ge 0$. Under the
+[independent standard Gaussian coordinates](std-gaussian-pi.md), the [explicit model](ri-model.md)
+is a [random-intercept model](is-random-intercept.md) with variances $\sigma_b^2$ and $\sigma_e^2$,
+its [cell-level mean](cell-mean.md) has variance $\sigma_b^2 / D + \sigma_e^2 / (D m)$, and this is
+strictly larger than the naive independent-cell value $(\sigma_b^2 + \sigma_e^2) / (D m)$.

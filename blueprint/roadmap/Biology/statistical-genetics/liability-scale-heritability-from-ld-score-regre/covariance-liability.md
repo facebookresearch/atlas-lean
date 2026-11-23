@@ -1,3 +1,6 @@
-# Covariance liability
+# Covariance of genetic value and liability for independent noise
 
-In the model `L = G + E` with `G` and `E` independent, `Cov(G, L) = Var G`.
+Let `μ` be a probability measure on `Ω` and let `G` and `E` be square-integrable real functions on
+`Ω` that are independent under `μ`. Then in the liability model `L = G + E`,
+
+`Cov(G, L) = Var G`.

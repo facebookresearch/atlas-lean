@@ -1,3 +1,4 @@
-# Eigenvalues skat Mixture Matrix zero genotype
+# With no carriers at any variant every mixture weight is zero
 
-With `G = 0` every mixture weight is `0`.
+If the genotype matrix is zero, `G = 0`, then for all `X`, `V`, `w` and every real `n × n` matrix
+`V'`, every eigenvalue of the [mixture matrix](skat-mixture-matrix.md) is `0`.

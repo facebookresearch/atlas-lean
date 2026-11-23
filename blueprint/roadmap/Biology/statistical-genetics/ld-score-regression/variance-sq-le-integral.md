@@ -1,3 +1,4 @@
-# Variance sq le integral
+# The variance of a multiple of a square is at most its second moment
 
-For `f ∈ L⁴` and a probability measure, `Var(a f²) ≤ 𝔼[(a f²)²]`.
+For a probability measure $\mu$, a real function $f \in L^4(\mu)$ and $a \in \mathbb{R}$,
+$\operatorname{Var}(a f^2) \leq \mathbb{E}[(a f^2)^2]$.

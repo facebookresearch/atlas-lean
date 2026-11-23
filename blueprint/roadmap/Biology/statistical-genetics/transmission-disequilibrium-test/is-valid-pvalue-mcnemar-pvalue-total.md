@@ -1,10 +1,14 @@
 # McNemar's test under the equal-rate Poisson null
 
-Let the discordant counts `X ~ Po(r)`
-and `Y ~ Po(r)` be independent with a common rate `r ≥ 0` (the Poissonized null of marginal
-homogeneity). Then the McNemar p-value at the observed number of discordant pairs,
-`ω ↦ P(Bin(X ω + Y ω, 1/2) ≥ X ω)`, is valid under `μ`, whatever `r`. The same statement is the
-TDT when `X` and `Y` are the transmitted and untransmitted counts *modeled* as independent
-Poisson counts with equal rates; that is a statistical model of the counts, not a consequence of
-Mendelian segregation. This is the merged `GLM.CountData.isValidPValue_countExactPValue` with
-library sizes `s₁ = s₂ = 1`, restated for `mcnemarPValue`.
+Let $X$ and $Y$ be measurable natural-valued random variables that are independent under a measure
+$\mu$, each with the Poisson law of the same rate $r \ge 0$ (the Poisson null of marginal
+homogeneity); in particular $\mu$ is a probability measure. Then the
+[McNemar p-value](mcnemar-pvalue.md) at the observed number of discordant pairs,
+$P(\omega) = \Pr[\mathrm{Bin}(X(\omega) + Y(\omega), 1/2) \ge X(\omega)]$, is
+[valid](../../../Probability/hypothesis-testing/valid-p-values-and-false-discovery-proportion/is-valid-pvalue.md)
+under $\mu$, for every rate $r \ge 0$, including $r = 0$: $\mu(P \le t) \le t$ for every
+$t \in [0, 1]$.
+
+With $X$ and $Y$ the transmitted and untransmitted counts, modeled as independent Poisson counts
+with equal rates, this is the TDT at the observed total. That is a statistical model of the counts,
+not a consequence of Mendelian segregation.

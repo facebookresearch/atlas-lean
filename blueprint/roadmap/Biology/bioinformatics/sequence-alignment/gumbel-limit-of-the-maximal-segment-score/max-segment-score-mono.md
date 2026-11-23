@@ -1,3 +1,4 @@
-# Max Segment Score mono
+# The maximal segment score is nondecreasing in the length
 
-`Mₙ` is nondecreasing in `n`.
+For every sequence of real scores, the [maximal segment score](max-segment-score.md) `Mₙ` of the
+first `n` scores is nondecreasing in `n`: `M_m ≤ Mₙ` whenever `m ≤ n`.

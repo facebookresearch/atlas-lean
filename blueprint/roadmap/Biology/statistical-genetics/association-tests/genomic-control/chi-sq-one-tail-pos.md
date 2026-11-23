@@ -1,3 +1,3 @@
-# Chi Sq One Tail pos
+# The χ²₁ tail is positive at every nonnegative threshold
 
-The `χ²₁` tail is positive at every nonnegative threshold.
+For every real `c ≥ 0`, the [`χ²₁` tail](chi-sq-one-tail.md) is positive: `P(χ²₁ > c) > 0`.

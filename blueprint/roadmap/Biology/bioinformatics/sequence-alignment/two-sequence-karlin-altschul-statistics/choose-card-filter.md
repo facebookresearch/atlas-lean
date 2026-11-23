@@ -1,3 +1,5 @@
-# Choose card filter
+# Binomial coefficient of a count as a count of subsets
 
-`C(#{i ∈ D | E i}, k)` counts the `k`-subsets of `D` on which every `E i` holds.
+For a finite set `D`, a property `E` of its elements and a natural number `k`, the binomial
+coefficient `C(#{i ∈ D : E(i)}, k)` is the number of `k`-element subsets `T ⊆ D` such that `E(i)`
+holds for every `i ∈ T`.

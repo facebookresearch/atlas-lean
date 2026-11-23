@@ -1,10 +1,15 @@
-# The `k`-th cross-diagonal dependence coefficient
+# Cross-diagonal dependence coefficient of order k
 
-**The `k`-th cross-diagonal dependence coefficient** `Δ_k = S_k - e_k(p)`: the excess of the
-`k`-th factorial moment of the number of exceeding diagonals over its value `e_k(p)` for
-independent diagonals with the same marginals. `crossDep_eq_sum`: it is the sum over `k`-sets
-`T` of diagonals of `P(⋂_{d ∈ T} {M_d > t}) - ∏_{d ∈ T} P(M_d > t)`. It vanishes for `k ≤ 1`
-(`crossDep_zero`, `crossDep_one`), and the terms of letter-disjoint pairs vanish
-(`twoProb_diag_and_diag_of_disjoint`); the diagonals are not independent in general, so for
-`k ≥ 2` nothing forces it to vanish (it does vanish for the degenerate zero score, `crossDep_s0`
-in the test file).
+For real weights `p` and `q` on a finite alphabet, a real score `s` on pairs of letters, natural
+numbers `m` and `n`, a real `t` and a natural number `k`, the cross-diagonal dependence
+coefficient is `Δ_k = S_k - e_k(p_·)`, where `S_k` is the
+[exceedance moment](exceed-moment.md) of order `k` and `e_k(p_·)` the
+[elementary symmetric sum](elem-symm.md) of the [exceedance probabilities](exceed-prob.md) `p_d`
+over the [offsets](offsets.md) `-m < d < n`. When `p` and `q` are probability vectors, `e_k(p_·)`
+is the value `S_k` would have for independent diagonals with the same exceedance probabilities, so
+`Δ_k` measures the dependence between diagonals. It is the
+[sum over the sets of `k` offsets](cross-dep-eq-sum.md) `T` of
+`P(every diagonal in T exceeds t) - ∏_{d ∈ T} p_d`. Always `Δ_1 = 0`; when `p` and `q` are
+probability vectors also `Δ_0 = 0`, and the term of a pair of diagonals that
+[read disjoint sets of letters](two-prob-diag-and-diag-of-disjoint.md) is `0`. Diagonals that
+share letters need not be independent, so for `k ≥ 2` the coefficient need not vanish.

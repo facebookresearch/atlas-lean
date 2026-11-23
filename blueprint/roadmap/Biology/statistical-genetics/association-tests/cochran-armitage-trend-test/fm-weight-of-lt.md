@@ -1,3 +1,3 @@
-# Fm Weight of lt
+# Contrast weight of a case
 
-The weight of a case.
+For `R, N, k ∈ ℕ` with `k < R`, the [contrast weight](fm-weight.md) is `w_k = N − R`.

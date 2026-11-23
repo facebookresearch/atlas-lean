@@ -1,6 +1,11 @@
-# Per-variant allelic nulls supply the validity field
+# Allelic p-values meet the genome-wide assumptions under their nulls
 
-For `m` variants with allele counts
-`X i`, `Y i` from `n₁ i`, `n₂ i` alleles, if each true-null variant satisfies the allelic null
-(with its own frequency `f i`) and the p-values satisfy the dependence hypothesis of `r`, the
-allelic p-values meet `GenomeWideAssumptions`. The dependence hypothesis is an input.
+Let `μ` be a probability measure on `Ω`, `H0` a subset of `{0, …, m - 1}` and `r` a
+[dependence regime](dependence-regime.md), and for each of `m` variants `i` let
+`X i, Y i : Ω → ℕ` be measurable allele counts among `n₁ i` case and `n₂ i` control alleles.
+Suppose that every `i ∈ H0` satisfies the allelic null with its own frequency: `0 < f i < 1`, and
+`X i` and `Y i` are independent under `μ` with laws `Bin(n₁ i, f i)` and `Bin(n₂ i, f i)`. Suppose
+also that the [allelic p-values](allelic-pvalue.md) `p i` of the variants satisfy the
+[hypothesis of the regime](holds.md) `r`. Then `p` satisfies the
+[genome-wide assumptions](genome-wide-assumptions.md) for `μ`, `H0` and `r`. The dependence
+hypothesis is an input, not a consequence of the nulls.

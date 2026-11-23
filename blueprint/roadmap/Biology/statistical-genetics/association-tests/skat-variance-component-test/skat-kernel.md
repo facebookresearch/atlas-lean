@@ -1,4 +1,8 @@
-# Skat Kernel
+# Weighted linear SKAT kernel
 
-The weighted linear SKAT kernel `K = G W Gᵀ`, `W = diag w`, for the genotype matrix `G`
-(individuals × variants, minor-allele counts) and variant weights `w`.
+For a real `n × m` genotype matrix `G` (individuals × variants, entries the minor-allele counts) and
+real variant weights `w₁, …, wₘ`, the weighted linear SKAT kernel is the `n × n` matrix
+
+`K = G W Gᵀ`, `W = diag(w)`,
+
+so `Kᵢₗ = ∑ⱼ wⱼ Gᵢⱼ Gₗⱼ`. The weights are arbitrary real numbers; the SKAT weights are nonnegative.

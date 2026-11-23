@@ -1,5 +1,5 @@
-# Integral id pooled Posterior
+# Mean of the pooled posterior
 
-The pooled posterior `Gamma(a + K, b + S)` has mean
-`posteriorMean a b S K = (a + K) / (b + S)`, the one-cell posterior mean at the pooled count and
-exposure.
+For `a > 0`, `b > 0`, a finite set of cells with size factors `sⱼ ≥ 0`, counts `kⱼ ∈ ℕ`, `K = ∑ⱼ kⱼ`
+and `S = ∑ⱼ sⱼ`, the law `Gamma(a + K, b + S)` has mean `(a + K) / (b + S)`, the one-cell
+[posterior mean](posterior-mean.md) at the pooled count and exposure.

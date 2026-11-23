@@ -1,11 +1,11 @@
 # Ordered p-values are super-uniform, combinatorial form
 
-For a nonnegative mass function
-`f`, the `f`-mass of the outcomes whose ordered p-value is at most `t` is at most `t`.
+Let $f : \mathbb{N} \to \mathbb{R}$ be nonnegative, $g : \mathbb{N} \to \mathbb{R}$ any key,
+$M \in \mathbb{N}$ and $t \ge 0$. Then the $f$-mass of the outcomes $h < M$ whose
+[ordered p-value](ordered-pvalue.md) is at most $t$ is at most $t$:
 
-If `h₀` is the least extreme outcome (largest `g`) among those with p-value `≤ t`, every such
-outcome is at least as extreme as `h₀`, so their mass is at most the p-value of `h₀`.
+$$\sum_{h < M,\ \mathrm{pv}_{f, g, M}(h) \le t} f(h) \le t.$$
 
-## Sources
-
-- Lehmann–Romano (2005), Lemma 3.3.1.
+If $h_0$ is the least extreme of these outcomes (largest $g$), all of them are at least as extreme
+as $h_0$, so their mass is at most $\mathrm{pv}_{f, g, M}(h_0) \le t$ (Lehmann and Romano 2005,
+Lemma 3.3.1).

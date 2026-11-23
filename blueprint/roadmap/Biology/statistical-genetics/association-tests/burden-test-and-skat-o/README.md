@@ -1,57 +1,62 @@
 # Burden test and SKAT-O
 
-## Kernel
+Rare-variant association tests in the linear mixed model with a known null covariance `V`: kernel
+score statistics `(P y)ᵀ K (P y)` and their chi-square mixture laws for Gaussian phenotypes with
+mean in the span of the covariates, the burden test, the SKAT-O family running from SKAT at `ρ = 0`
+to the burden test at `ρ = 1`, and its p-values with Davies' inversion formula.
 
-- [Kernel Q](kernel-q.md)
-- [Kernel Mixture Matrix](kernel-mixture-matrix.md)
-- [Skat Q eq kernel Q](skat-q-eq-kernel-q.md)
-- [Skat Mixture Matrix eq kernel Mixture Matrix](skat-mixture-matrix-eq-kernel-mixture-ma.md)
-- [Is Hermitian kernel Mixture Matrix](is-hermitian-kernel-mixture-matrix.md)
-- [Eigenvalues kernel Mixture Matrix nonneg](eigenvalues-kernel-mixture-matrix-nonneg.md)
-- [Kernel Q add covariates](kernel-q-add-covariates.md)
-- [Continuous kernel Q](continuous-kernel-q.md)
-- [The law of a kernel score statistic is a weighted chi-square mixture](map-kernel-q-multivariate-gaussian.md)
+## Kernel score statistics
 
-## Burden
+- [Variance-component score statistic of a general kernel](kernel-q.md)
+- [Mixture-weight matrix of a kernel score statistic](kernel-mixture-matrix.md)
+- [SKAT is the kernel score statistic of the SKAT kernel](skat-q-eq-kernel-q.md)
+- [The SKAT mixture matrix is the mixture matrix of the SKAT kernel](skat-mixture-matrix-eq-kernel-mixture-ma.md)
+- [The mixture matrix of a symmetric kernel is symmetric](is-hermitian-kernel-mixture-matrix.md)
+- [A positive semidefinite kernel gives nonnegative mixture weights](eigenvalues-kernel-mixture-matrix-nonneg.md)
+- [For invertible Xᵀ V⁻¹ X, covariates drop out of the kernel statistic](kernel-q-add-covariates.md)
+- [The kernel score statistic is continuous in the phenotype](continuous-kernel-q.md)
+- [Kernel statistics of Gaussian phenotypes with mean X α are χ² mixtures](map-kernel-q-multivariate-gaussian.md)
 
-- [Burden Score](burden-score.md)
-- [Burden Q](burden-q.md)
-- [Burden Kernel](burden-kernel.md)
-- [Burden Var](burden-var.md)
+## The burden test
+
+- [Burden score: the weighted sum of the single-variant scores](burden-score.md)
+- [Burden test statistic: the squared burden score](burden-q.md)
+- [Burden kernel: the outer product of the collapsed genotype](burden-kernel.md)
+- [Quadratic form of the null projection at the collapsed genotype](burden-var.md)
 - [The burden score is the score of the collapsed genotype](burden-score-eq.md)
-- [Burden Q eq kernel Q](burden-q-eq-kernel-q.md)
-- [Pos Semidef burden Kernel](pos-semidef-burden-kernel.md)
-- [Burden Score add covariates](burden-score-add-covariates.md)
-- [Burden Var nonneg](burden-var-nonneg.md)
-- [The law of the burden score](map-burden-score-multivariate-gaussian.md)
-- [Null law of the burden score](map-burden-score-null.md)
-- [Gaussian Real map sq](gaussian-real-map-sq.md)
-- [Null law of the burden statistic](map-burden-q-null.md)
-- [Null mean of the burden statistic](integral-burden-q-null.md)
-- [Zero minor-allele count](burden-score-update-of-col.md)
-- [No carriers in the region](map-burden-score-null-of-collapse-eq-zer.md)
-- [Burden versus SKAT](burden-q-le-card-mul-skat-q.md)
+- [The burden statistic is the kernel statistic of the burden kernel](burden-q-eq-kernel-q.md)
+- [The burden kernel is positive semidefinite](pos-semidef-burden-kernel.md)
+- [For invertible Xᵀ V⁻¹ X the burden score ignores covariate effects](burden-score-add-covariates.md)
+- [For positive definite V the null burden variance is nonnegative](burden-var-nonneg.md)
+- [Burden score of a Gaussian phenotype with mean X α is centred Gaussian](map-burden-score-multivariate-gaussian.md)
+- [The burden score is centred Gaussian under the null model](map-burden-score-null.md)
+- [The square of a centred Gaussian of variance v has law v χ²₁](gaussian-real-map-sq.md)
+- [The burden statistic is a scaled chi-square under the null model](map-burden-q-null.md)
+- [The burden statistic has null mean Cᵀ P C](integral-burden-q-null.md)
+- [The burden score ignores the weight of a variant with no carriers](burden-score-update-of-col.md)
+- [If G a = 0 the null law of the burden score is the point mass at 0](map-burden-score-null-of-collapse-eq-zer.md)
+- [The burden statistic is at most m times SKAT with squared weights](burden-q-le-card-mul-skat-q.md)
 
-## SKATO
+## SKAT-O
 
-- [Skat OCorr](skat-ocorr.md)
-- [Skat OKernel](skat-okernel.md)
-- [Skat OQ](skat-oq.md)
-- [Skat OQ zero](skat-oq-zero.md)
-- [Skat OQ one](skat-oq-one.md)
-- [The SKAT-O kernel is the convex combination of the SKAT and burden kernels](skat-okernel-eq.md)
-- [Kernel Q add smul](kernel-q-add-smul.md)
-- [SKAT-O is a kernel score statistic](skat-oq-eq-kernel-q.md)
-- [Is Hermitian skat OKernel](is-hermitian-skat-okernel.md)
-- [Pos Semidef skat OKernel](pos-semidef-skat-okernel.md)
-- [The law of the SKAT-O statistic](map-skat-oq-multivariate-gaussian.md)
-- [Eigenvalues skat O nonneg](eigenvalues-skat-o-nonneg.md)
+- [The SKAT-O matrix with unit diagonal and off-diagonal entries ρ](skat-ocorr.md)
+- [The SKAT-O kernel of a genotype matrix, variant weights and ρ](skat-okernel.md)
+- [SKAT-O statistic, an affine combination of SKAT and burden statistics](skat-oq.md)
+- [At ρ = 0 the SKAT-O statistic is SKAT with squared weights](skat-oq-zero.md)
+- [At ρ = 1 the SKAT-O statistic is the burden statistic](skat-oq-one.md)
+- [The SKAT-O kernel as an affine combination of SKAT and burden kernels](skat-okernel-eq.md)
+- [The kernel statistic is linear in the kernel](kernel-q-add-smul.md)
+- [The SKAT-O statistic is the kernel statistic of the SKAT-O kernel](skat-oq-eq-kernel-q.md)
+- [The SKAT-O kernel is symmetric for every ρ](is-hermitian-skat-okernel.md)
+- [For 0 ≤ ρ ≤ 1 the SKAT-O kernel is positive semidefinite](pos-semidef-skat-okernel.md)
+- [SKAT-O statistics of Gaussian phenotypes with mean X α are χ² mixtures](map-skat-oq-multivariate-gaussian.md)
+- [For 0 ≤ ρ ≤ 1 the SKAT-O mixture weights are nonnegative](eigenvalues-skat-o-nonneg.md)
 
-## Application
+## SKAT-O p-values and Davies' formula
 
-- [Davies' formula for a kernel score test](tendsto-davies-kernel-q.md)
-- [Skat OPValue](skat-opvalue.md)
-- [Skat OMin P](skat-omin-p.md)
-- [Each SKAT-O p-value is valid under the null](is-valid-pvalue-skat-opvalue.md)
-- [Davies' formula computes the SKAT-O p-value](tendsto-davies-skat-opvalue.md)
-- [Bonferroni validity of SKAT-O](measure-skat-omin-p-le.md)
+- [Davies' integral for a kernel statistic converges to its mid-p tail](tendsto-davies-kernel-q.md)
+- [SKAT-O p-value at a fixed ρ from the null chi-square mixture](skat-opvalue.md)
+- [SKAT-O minimum p-value over a finite grid of ρ](skat-omin-p.md)
+- [Each SKAT-O p-value is valid under the null for invertible Xᵀ V⁻¹ X](is-valid-pvalue-skat-opvalue.md)
+- [Davies' integral gives the SKAT-O p-value when some weight is nonzero](tendsto-davies-skat-opvalue.md)
+- [Bonferroni bound for the SKAT-O minimum p-value under the null](measure-skat-omin-p-le.md)

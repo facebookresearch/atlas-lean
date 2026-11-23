@@ -1,6 +1,9 @@
-# Negative coupling
+# A nondegenerate λ̂-corrected statistic forces a negative covariance
 
-If some corrected statistic is nondegenerate (`Var(T_j) > 0`), then
-some pair of distinct genes has strictly negative covariance, so pairwise nonnegative covariance
-is impossible for the mean-`λ̂` family. That positive dependence (PRDS, association) would give
-pairwise nonnegative covariance of these statistics is standard but not formalized here.
+Let `P` be a probability measure on a measurable space `Ω` and let the random scores
+`Z_0, …, Z_{m-1}` be measurable and almost surely not all zero. If some [corrected
+statistic](gc-stat-rv.md) is nondegenerate, `Var(T_j) > 0`, then some pair of distinct genes `i ≠ k`
+has strictly negative covariance, `Cov(T_i, T_k) < 0`, because the covariances [sum to
+zero](sum-sum-covariance-gc-stat-rv.md). Pairwise nonnegative covariance is therefore impossible for
+the mean-`λ̂` family; in particular the statistics `T_0, …, T_{m-1}` are not associated, since
+association would make every covariance nonnegative.

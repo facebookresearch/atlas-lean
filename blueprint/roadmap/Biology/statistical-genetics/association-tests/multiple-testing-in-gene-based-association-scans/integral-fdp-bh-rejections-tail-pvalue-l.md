@@ -1,11 +1,16 @@
 # FDR control for tail-calibrated rare-variant tests
 
-If the family `(T, G)` is
-tail-calibrated with true nulls `H0` (`IsTailCalibratedFamily`: measurable statistics, antitone
-reference tails, and for every null gene a reference tail dominating the true null tail) and its
-p-values are PRDS on `H0`, then the Benjamini–Hochberg procedure at level `q ∈ [0, 1]` has false
-discovery rate at most `q |H0| / m`.
+Let `μ` be a probability measure on `Ω` and `(T, G)` a
+[tail-calibrated family](is-tail-calibrated-family.md) of `m` tests with true nulls `H0`, whose
+[p-values](tail-pvalue.md) `p = (G i ∘ T i)_i` are positively regression dependent on `H0`: for
+every `i ∈ H0` and every measurable set `D ⊆ ℝ^m` closed under increasing coordinates,
+`x ↦ μ(p ∈ D | p_i = x)` has a nondecreasing version. Then for every level `0 ≤ q ≤ 1` the
+[Benjamini–Hochberg rejection set](../../../../Probability/hypothesis-testing/benjamini-hochberg-procedure/bh-rejections.md)
+`R_q(p)` has false discovery rate at most `q |H0| / m`:
+`∫ FDP(H0, R_q(p(ω))) dμ(ω) ≤ q |H0| / m`, where `FDP(H0, R) = |R ∩ H0| / max(|R|, 1)` is the
+[false discovery proportion](../../../../Probability/hypothesis-testing/valid-p-values-and-false-discovery-proportion/false-discovery-proportion.md),
+`0` when nothing is rejected. For `m = 0` the bound is `0` by the convention `x / 0 = 0`.
 
 ## Sources
 
-- Benjamini & Yekutieli (2001), Theorem 1.2, applied through `integral_falseDiscoveryProportion_bhRejections_le_of_isPRDSOn`.
+- Benjamini & Yekutieli (2001), Theorem 1.2.

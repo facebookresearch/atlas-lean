@@ -1,5 +1,6 @@
-# Cluster Design
+# All-ones design of a single cluster
 
-All-ones cluster design for one cluster of `m` observations: every row
-loads on the single shared effect. With `σc2 • 1` and `σw2 • 1` it fixes
-the marginal law of the cluster response.
+For a natural number `m`, the cluster design is the `m × 1` matrix all of whose entries are `1`:
+each of the `m` observations loads on the single shared effect. Together with a random-effect
+variance `σ_c²` and a residual covariance `σ_w² I_m`, it gives the
+[covariance of the one-cluster model](phen-cov-cluster-apply.md).

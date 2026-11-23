@@ -1,4 +1,5 @@
-# Truncation
+# The length bound can be cut to the pairs that exist
 
-`alignScore` only scores the `min ℓ (min (|u| - i) (|v| - j))` pairs that
-exist: with length bound `ℓ` it is the score of the alignment of that length.
+For a real score `s` on pairs of letters, words `u` and `v` and natural numbers `i`, `j` and `ℓ`,
+the [ungapped alignment score](align-score.md) with length bound `ℓ` equals the one with length
+bound `min(ℓ, |u| - i, |v| - j)` (truncated subtraction): only the pairs that exist are scored.

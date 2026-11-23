@@ -35,7 +35,7 @@
 
 ## Gene dropping: basic facts
 
-- [Card coins](card-coins.md)
+- [There are $4^n$ gene-dropping outcomes](card-coins.md)
 - [A founder gene copy is its own origin](origin-of-parents-eq-none.md)
 - [Origin of a gene copy of a non-founder](origin-of-parents-eq-some.md)
 - [Ancestors precede their descendants](lt.md)
