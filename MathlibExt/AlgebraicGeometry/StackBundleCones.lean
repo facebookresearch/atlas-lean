@@ -290,9 +290,10 @@ structure VectorBundleStack (X : Stack S) where
   commutes : StackVectorBundles.TwoIso (Pseudofunctor.StrongTrans.vcomp map projection)
     (Pseudofunctor.StrongTrans.vcomp quotient.projection base.map)
   cartesian : ∀ T : Over S,
-    (isoFibreLift (StackCycleGeometry.component projection T)
-      (StackCycleGeometry.component base.map T) (StackCycleGeometry.component map T)
-      (StackCycleGeometry.component quotient.projection T) (commutes.app T)).IsEquivalence
+    ((CategoryTheory.Limits.CategoricalPullback.CatCommSqOver.toFunctorToCategoricalPullback
+      (StackCycleGeometry.component projection T) (StackCycleGeometry.component base.map T) _).obj
+      ⟨StackCycleGeometry.component map T, StackCycleGeometry.component quotient.projection T,
+        commutes.app T⟩).IsEquivalence
   rank_eq : virtualRank = (degreeOne.rank : ℤ) - degreeZero.rank
   linear : LinearBundleModel projection virtualRank
   linearChart : LinearBundleChart linear quotient base.map map commutes
@@ -304,9 +305,10 @@ structure BundleStackPullback {T X : Stack S} (p : StackHom T X) (E : VectorBund
   commutes : StackVectorBundles.TwoIso (Pseudofunctor.StrongTrans.vcomp map E.projection)
     (Pseudofunctor.StrongTrans.vcomp bundle.projection p)
   cartesian : ∀ U : Over S,
-    (isoFibreLift (StackCycleGeometry.component E.projection U)
-      (StackCycleGeometry.component p U) (StackCycleGeometry.component map U)
-      (StackCycleGeometry.component bundle.projection U) (commutes.app U)).IsEquivalence
+    ((CategoryTheory.Limits.CategoricalPullback.CatCommSqOver.toFunctorToCategoricalPullback
+      (StackCycleGeometry.component E.projection U) (StackCycleGeometry.component p U) _).obj
+      ⟨StackCycleGeometry.component map U, StackCycleGeometry.component bundle.projection U,
+        commutes.app U⟩).IsEquivalence
 
 def zeroElementFunctor {X : Stack S} (E : VectorBundle X) :
     AffinePoint X ⥤ (sectionPresheaf E.module.val).Elementsᵒᵖ where
@@ -1150,9 +1152,10 @@ structure ConeBaseChangeData {F G F' G' : Stack S} (f' : StackHom F' G') (f : St
   commutes : StackVectorBundles.TwoIso (Pseudofunctor.StrongTrans.vcomp p f)
     (Pseudofunctor.StrongTrans.vcomp f' q)
   cartesian : ∀ T : Over S,
-    (isoFibreLift (StackCycleGeometry.component f T) (StackCycleGeometry.component q T)
-      (StackCycleGeometry.component p T) (StackCycleGeometry.component f' T)
-      (commutes.app T)).IsEquivalence
+    ((CategoryTheory.Limits.CategoricalPullback.CatCommSqOver.toFunctorToCategoricalPullback
+      (StackCycleGeometry.component f T) (StackCycleGeometry.component q T) _).obj
+      ⟨StackCycleGeometry.component p T, StackCycleGeometry.component f' T,
+        commutes.app T⟩).IsEquivalence
   squareTotal : totalMap p ⋙ totalMap f ≅ totalMap f' ⋙ totalMap q
   squareTotal_base : ∀ x : Total F', (squareTotal.hom.app x).base = 𝟙 x.base
   squareTotal_fibre : ∀ x : Total F',

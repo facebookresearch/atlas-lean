@@ -7,13 +7,15 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Ported from AxiomMath/Stacks, revision
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/Cotangent/ResolutionComplex.lean.
-The source has no individual copyright or author notice and is licensed
-under Apache 2.0. Modification notice: retain only the complete augmented-simplicial cotangent
-construction and normalize negative indexing directly by Mathlib embedding; omit dependencies
-used solely for the standard-resolution comparison.
+Portions of this file are adapted from:
+
+`StacksFrontier/Cotangent/ResolutionComplex.lean` (AxiomMath/Stacks, revision
+`c496df0d9beea9deaeabcea8492605f9a0a2313b`); the source file carries no individual copyright or
+author notice.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: only the augmented-simplicial cotangent construction is kept; negative indexing
+uses Mathlib's complex embedding `ComplexShape.embeddingUpIntLE`; the dependencies used solely
+for the standard-resolution comparison are omitted.
 -/
 module
 
@@ -28,8 +30,10 @@ public import MathlibExt.RingTheory.CotangentScalarExtension
 
 For an augmented simplicial commutative `A`-algebra `ε : P• ⟶ B`, the degreewise base-changed
 modules of differentials `B ⊗[Pₙ] Ω[Pₙ⁄A]` form a simplicial `B`-module, and its reindexed
-alternating face map complex is the complex `Ω[P•⁄A] ⊗[P•] B` of `B`-modules. For the standard
-resolution this is the cotangent complex of `StacksFrontier.Cotangent.Complex`.
+alternating face map complex is the complex `Ω[P•⁄A] ⊗[P•] B` of `B`-modules, with simplicial
+degree `n` in cohomological degree `-n`. For the standard resolution of `B` over `A` this is the
+cotangent complex `L_{B/A}` of Stacks Tag 08PN, and by Stacks Remark 08QI every resolution gives
+a complex isomorphic to it in `D(B)`; neither identification is formalized here.
 
 ## Main definitions
 
@@ -44,11 +48,10 @@ resolution this is the cotangent complex of `StacksFrontier.Cotangent.Complex`.
 
 ## Main results
 
-The actual scalar-extension maps are normalized on pure differentials.
-The simplicial object and negative-indexed alternating-face complex are
-completed constructions for the supplied actual augmentation. Standard
-resolution and independence are covered in the public source; they are
-not re-requested here.
+* `CommAlgCat.resolutionCotangentPush_D` and `CommAlgCat.resolutionCotangentMap_D`: the induced
+  maps send `1 ⊗ d p` to `1 ⊗ d (g p)`.
+* `CommAlgCat.resolutionCotangentTerm_hom_ext`: a map out of a term is determined by its values
+  on the pure differentials `1 ⊗ d p`.
 
 ## References
 
@@ -112,8 +115,9 @@ structure ResolutionCotangentSimplicialModuleData where
       (resolutionCotangentTermDifferential A B P ε i p) =
     resolutionCotangentTermDifferential A B P ε j (P.map f p)
 
-/-- The `Pᵢ`-linear map `Ω[Pᵢ⁄A] → B ⊗[Pⱼ] Ω[Pⱼ⁄A]`, `ω ↦ 1 ⊗ ω`, attached to a morphism
-`g : Pᵢ ⟶ Pⱼ` lying over `B`; it is adjoint to `resolutionCotangentPush`. -/
+/-- The `Pᵢ`-linear map `Ω[Pᵢ⁄A] → B ⊗[Pⱼ] Ω[Pⱼ⁄A]`, `ω ↦ 1 ⊗ Ω(g)(ω)` (so `d p ↦ 1 ⊗ d (g p)`),
+attached to a morphism `g : Pᵢ ⟶ Pⱼ` lying over `B`; it is adjoint to
+`resolutionCotangentPush`. -/
 noncomputable def resolutionCotangentPushAdjoint {i j : SimplexCategoryᵒᵖ}
     (g : P.obj i ⟶ P.obj j)
     (hg : (resolutionAugmentationHom A B P ε j).comp g.hom.toRingHom =
@@ -222,6 +226,17 @@ noncomputable def resolutionCotangentSimplicialModule :
     map_differential := by
       intro i j f p
       simp }
+
+theorem resolutionCotangentSimplicialModule_object_obj (n : SimplexCategoryᵒᵖ) :
+    (resolutionCotangentSimplicialModule A B P ε).object.obj n =
+      resolutionCotangentTerm A B P ε n :=
+  rfl
+
+@[simp]
+theorem resolutionCotangentSimplicialModule_object_map {i j : SimplexCategoryᵒᵖ} (f : i ⟶ j) :
+    (resolutionCotangentSimplicialModule A B P ε).object.map f =
+      resolutionCotangentMap A B P ε f :=
+  rfl
 
 /-- The complex `Ω[P•⁄A] ⊗[P•] B` of an augmented simplicial algebra, with simplicial degree `n`
 in cohomological degree `-n`. -/
