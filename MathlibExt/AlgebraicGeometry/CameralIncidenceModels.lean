@@ -136,16 +136,11 @@ def affineModuleSections {X : Over (Spec (.of k))} (M : X.left.Modules)
     ((SheafOfModules.evaluation (Spec (.of A)).ringCatSheaf (.op ⊤)).obj
       ((Scheme.Modules.pullback f.left).obj M))
 
-/-- The global section `m` of the constant module, pulled back to the affine test `f`: the
-section of `M^~` over `Spec k` given by `m`, mapped by the units of pullback along `X.hom`
-and then along `f`. -/
+/-- The global section `m` of the constant module, pulled back to the affine test `f`
+(`constantModuleSection`). -/
 def constantSection {X : Over (Spec (.of k))} (M : ModuleCat.{0} k) (m : M)
     (A : CommAlgCat.{0} k) (f : affine A ⟶ X) : affineModuleSections (scalarModule X M) A f :=
-  let s : ((tilde.functor (.of k)).obj M).val.obj (.op ⊤) := (tilde.isoTop (R := .of k) M).hom m
-  (((Scheme.Modules.pullbackPushforwardAdjunction f.left).unit.app
-      (scalarModule X M)).val.app (.op ⊤)).hom
-    ((((Scheme.Modules.pullbackPushforwardAdjunction X.hom).unit.app
-      ((tilde.functor (.of k)).obj M)).val.app (.op ⊤)).hom s)
+  constantModuleSection M m f.left
 
 /-- Pulling back a constant module gives the constant module. -/
 def scalarPullbackIso {Y Y' : Over (Spec (.of k))} (f : Y' ⟶ Y) (M : ModuleCat.{0} k) :

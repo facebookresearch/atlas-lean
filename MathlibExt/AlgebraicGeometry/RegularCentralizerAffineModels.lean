@@ -96,6 +96,19 @@ structure BaseChange {A B : CommAlgCat.{0} k} (f : A ⟶ B) (P : CentralizerPlan
 def lieModule (X : Over (Spec (.of k))) : X.left.Modules :=
   (Scheme.Modules.pullback X.hom).obj ((tilde.functor (.of k)).obj (ModuleCat.of k V))
 
+/-- The global section `m` of the constant module `M`, pulled back along `X.hom` and then along
+`f`: the units of the pullback-pushforward adjunctions applied to the section of `M^~` over
+`Spec k` given by `m`. -/
+def constantModuleSection {X : Over (Spec (.of k))} (M : ModuleCat.{0} k) (m : M)
+    {Y : Scheme.{0}} (f : Y ⟶ X.left) :
+    Γ((Scheme.Modules.pullback f).obj
+      ((Scheme.Modules.pullback X.hom).obj ((tilde.functor (.of k)).obj M)), ⊤) :=
+  let s : ((tilde.functor (.of k)).obj M).val.obj (.op ⊤) := (tilde.isoTop (R := .of k) M).hom m
+  (((Scheme.Modules.pullbackPushforwardAdjunction f).unit.app
+      ((Scheme.Modules.pullback X.hom).obj ((tilde.functor (.of k)).obj M))).val.app (.op ⊤)).hom
+    ((((Scheme.Modules.pullbackPushforwardAdjunction X.hom).unit.app
+      ((tilde.functor (.of k)).obj M)).val.app (.op ⊤)).hom s)
+
 structure ParameterScheme where
   scheme : Over (Spec (.of k))
   universal : scheme.left.Modules
@@ -125,6 +138,12 @@ structure ParameterScheme where
     letI : Module A Γ((Scheme.Modules.pullback f.left).obj (lieModule V scheme), ⊤) :=
       Module.compHom _ (Scheme.ΓSpecIso (.of A)).inv.hom
     Γ((Scheme.Modules.pullback f.left).obj (lieModule V scheme), ⊤) ≃ₗ[A] LieAt V A
+  /-- The Lie algebra coordinates send the pullback of each constant section `v` to `1 ⊗ v`;
+  as these sections generate, this fixes `lieSections`, and `inclusion_sections` then fixes
+  `sectionModule`. -/
+  lieSections_constant : ∀ (A : CommAlgCat.{0} k) (f : Over.mk (Spec.algebraMap k A) ⟶ scheme)
+      (v : V),
+    lieSections A f (constantModuleSection (.of k V) v f.left) = (1 : A) ⊗ₜ[k] v
   inclusion_sections : ∀ (A : CommAlgCat.{0} k) (f : Over.mk (Spec.algebraMap k A) ⟶ scheme)
     (s : Γ((Scheme.Modules.pullback f.left).obj universal, ⊤)),
     lieSections A f ((((Scheme.Modules.pullback f.left).map inclusion).val.app (.op ⊤)).hom s) =
