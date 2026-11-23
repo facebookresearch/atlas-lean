@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
 public import Mathlib.Analysis.Real.Sqrt
+public import MathlibExt.NumberTheory.SymmetricPowerSums
 
 /-!
 # A trace metric on the `p`-th cyclotomic field
@@ -307,21 +308,6 @@ public theorem_wanted cyclotomicBox_diam (hp : p.Prime) (hp2 : p ≠ 2) (N : ℕ
     cyclotomicTraceDist p (cyclotomicLatticePoint K fun i : Fin (p - 1) => (N : ℤ) * (-1) ^ i.val)
         (cyclotomicLatticePoint K fun i : Fin (p - 1) => -((N : ℤ) * (-1) ^ i.val)) =
       2 * N * p * √(p - 1 : ℝ)
-
-/-- **Power sums over a symmetric interval.** For natural numbers $N$ and $r$, let
-$S_r(N) = \sum_{a=-N}^{N} a^r$, the sum over the integers $a$ with $-N \le a \le N$. Then
-$S_r(N) = 0$ for every odd $r$, and
-$$S_2(N) = \frac{N(N+1)(2N+1)}{3}, \qquad S_4(N) = \frac{N(N+1)(2N+1)(3N^2+3N-1)}{15}.$$
-
-The paper takes $N \ge 1$; here $N = 0$ is allowed.
-
-Source: Saettone, Zaharescu and Zhang, *On a Special Metric in Cyclotomic Fields*,
-INTEGERS 25 (2025), Article A10, Lemma 3 (`integers-2025-A10-lem-3`). -/
-public theorem_wanted symmetric_power_sums (N : ℕ) :
-    (∀ r : ℕ, Odd r → ∑ a ∈ Finset.Icc (-(N : ℤ)) N, a ^ r = 0) ∧
-    ∑ a ∈ Finset.Icc (-(N : ℤ)) N, (a : ℚ) ^ 2 = N * (N + 1) * (2 * N + 1) / 3 ∧
-    ∑ a ∈ Finset.Icc (-(N : ℤ)) N, (a : ℚ) ^ 4 =
-      N * (N + 1) * (2 * N + 1) * (3 * N ^ 2 + 3 * N - 1) / 15
 
 /-- **Second moment of the trace distance on the cyclotomic box.** Let $p$ be a prime, let $N$ be
 a natural number, and let $K$ be a field generated over $\mathbb{Q}$ by a primitive $p$-th root of
