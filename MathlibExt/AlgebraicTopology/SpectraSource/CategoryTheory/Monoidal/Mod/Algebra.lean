@@ -13,7 +13,7 @@ License: https://github.com/TauCetiProject/TauCeti/blob/62bbc0596dc3539d488232e4
 -/
 
 public import MathlibExt.AlgebraicTopology.SpectraSource.CategoryTheory.Monoidal.Mod.Symmetric
-public import MathlibExt.AlgebraicTopology.SpectraSource.CategoryTheory.Monoidal.Mon
+public import MathlibExt.CategoryTheory.Monoidal.Mon
 
 /-!
 # Commutative monoids under a commutative monoid as monoids of modules

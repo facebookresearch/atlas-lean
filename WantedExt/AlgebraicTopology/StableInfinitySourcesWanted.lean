@@ -49,20 +49,20 @@ open scoped Simplicial
 universe u
 
 /-- The native arrow-core fibre is the actual Kan mapping space. -/
-proof_wanted native_mapping_space_kan (C : SSet.{u}) [SSet.Quasicategory C]
+theorem_wanted native_mapping_space_kan (C : SSet.{u}) [SSet.Quasicategory C]
     (x y : C _⦋0⦌) : SSet.KanComplex (mappingSpace C x y)
 
 /-- Full native functor objects into a quasicategory remain quasicategories. -/
-proof_wanted native_functor_category_quasi (X Y : SSet.{u}) [SSet.Quasicategory Y] :
+theorem_wanted native_functor_category_quasi (X Y : SSet.{u}) [SSet.Quasicategory Y] :
   SSet.Quasicategory (mapping X Y)
 
 /-- The full actual coherent cone fibres are quasicategories. -/
-proof_wanted native_coherent_left_cones (I : Type) [Category.{0} I]
+theorem_wanted native_coherent_left_cones (I : Type) [Category.{0} I]
     (C : SSet.{u}) [SSet.Quasicategory C] (d : indexNerve I ⟶ C) :
   SSet.Quasicategory (leftCones C d)
 
 /-- The full actual coherent cocone fibres are quasicategories. -/
-proof_wanted native_coherent_right_cones (I : Type) [Category.{0} I]
+theorem_wanted native_coherent_right_cones (I : Type) [Category.{0} I]
     (C : SSet.{u}) [SSet.Quasicategory C] (d : indexNerve I ⟶ C) :
   SSet.Quasicategory (rightCones C d)
 
@@ -74,7 +74,7 @@ def_wanted native_enhanced_perfect_input (k : Type u) [CommRing k]
     (A : DGCat k) (P : SmallPerfectModel A) : EnhancedPerfectInput P
 
 /-- Native enriched perfect functors give the actual exact coherent-nerve maps. -/
-proof_wanted native_enhanced_perfect_functor_exact (k : Type u) [CommRing k]
+theorem_wanted native_enhanced_perfect_functor_exact (k : Type u) [CommRing k]
     (A B : DGCat k) (P : SmallPerfectModel A) (Q : SmallPerfectModel B)
     (C : EnhancedPerfectInput P) (D : EnhancedPerfectInput Q)
     (F : EnrichedFunctor (Cochains k) P.category Q.category) : IsExactPerfectMap C D F
@@ -89,7 +89,7 @@ def_wanted native_multi_gap_stable_input (C : StableInfinityCategory.{u})
   {D : StableInfinityCategory.{u} // D.toSSet = multiGapCategory C q n}
 
 /-- Source Lemma7.3 is a conclusion on the actual native spine map. -/
-proof_wanted native_gap_spine_equivalence (C : StableInfinityCategory.{u}) (n : ℕ) :
+theorem_wanted native_gap_spine_equivalence (C : StableInfinityCategory.{u}) (n : ℕ) :
   CategoricalWeakEquivalence (gapSpineRestriction C n)
 
 end WantedExt.AlgebraicTopology.StableInfinitySourcesWanted

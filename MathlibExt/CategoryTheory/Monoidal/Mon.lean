@@ -3,19 +3,19 @@ Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: The Tau Ceti contributors
 -/
-module
 
 /-
-Completed Apache source port from TauCeti, commit 62bbc0596dc3539d488232e4e924a338548ea0a9.
-Original copyright and authors are retained; module/namespace paths are adapted for Atlas.
-Source: https://github.com/TauCetiProject/TauCeti/blob/62bbc0596dc3539d488232e4e924a338548ea0a9/TauCeti/CategoryTheory/Monoidal/Mon.lean
-License: https://github.com/TauCetiProject/TauCeti/blob/62bbc0596dc3539d488232e4e924a338548ea0a9/LICENSE
+Source port of TauCeti/CategoryTheory/Monoidal/Mon.lean.
+TauCeti revision 62bbc0596dc3539d488232e4e924a338548ea0a9.
+Modifications: change only project namespaces and import paths.
+The original Apache 2.0 copyright and authors above are retained.
 -/
+module
 
 public import Mathlib.CategoryTheory.Monoidal.CommMon_
 public import Mathlib.CategoryTheory.Monoidal.Grp
 public import Mathlib.CategoryTheory.Monoidal.Mon
-public import MathlibExt.AlgebraicTopology.SpectraSource.CategoryTheory.Monoidal.Functor
+public import MathlibExt.CategoryTheory.DGSourceMore.MonoidalFunctor
 
 /-!
 # Monoid objects
@@ -29,14 +29,11 @@ commutativity.
   the morphism of monoid objects.
 * `CategoryTheory.Mon.mono_of_mono_left`: the corresponding reflection for monoid objects in a
   slice category.
-* `MathlibExt.SpectraSource.isCommMonObj_of_grp_iso`: commutativity of a group object is
-  preserved by isomorphism.
-* `MathlibExt.SpectraSource.isCommMonObj_of_mono`: a monoid subobject of a commutative monoid
-  object is commutative.
-* `MathlibExt.SpectraSource.monObj_eq_of_mono`: a monomorphism admits at most one compatible
-  monoid structure.
-* `MathlibExt.SpectraSource.commMon_eqToHom_hom_hom`: the underlying morphism of an `eqToHom`
-  between commutative
+* `MathlibExt.isCommMonObj_of_grp_iso`: commutativity of a group object is preserved by isomorphism.
+* `MathlibExt.isCommMonObj_of_mono`: a monoid subobject of a commutative monoid object is
+  commutative.
+* `MathlibExt.monObj_eq_of_mono`: a monomorphism admits at most one compatible monoid structure.
+* `MathlibExt.commMon_eqToHom_hom_hom`: the underlying morphism of an `eqToHom` between commutative
   monoid objects is an `eqToHom`.
 * `CategoryTheory.MonObj.isMonHom_one`: the unit of a monoid object is a monoid homomorphism
   from the trivial monoid on the tensor unit.
@@ -76,7 +73,7 @@ instance (priority := 900) mono_of_mono_left {C : Type u} [Category.{v} C] {X : 
 
 end CategoryTheory.Mon
 
-namespace MathlibExt.SpectraSource
+namespace MathlibExt
 
 universe u v
 
@@ -120,7 +117,7 @@ theorem commMon_eqToHom_hom_hom
   subst h
   rw [eqToHom_refl, eqToHom_refl, CommMon.id_hom]
 
-end MathlibExt.SpectraSource
+end MathlibExt
 
 namespace CategoryTheory.MonObj
 

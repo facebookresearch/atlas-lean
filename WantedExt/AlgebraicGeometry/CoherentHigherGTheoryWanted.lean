@@ -42,10 +42,19 @@ open CategoryTheory CategoryTheory.Limits TopologicalSpace
 open _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.CoherentGTheory
 
+/-- Restriction of `𝒪_X`-modules to an open subscheme is additive and exact, and it
+sends coherent sheaves to coherent sheaves. -/
+public instance_wanted restrictionCoherent (X : Scheme.{0}) (U : X.Opens) :
+    RestrictionCoherent X U
+
+/-- The same exactness and coherence preservation for restriction along an open immersion. -/
+public instance_wanted openRestrictionCoherent {X U : Scheme.{0}} (i : U ⟶ X)
+    [IsOpenImmersion i] : OpenRestrictionCoherent i
+
 /-- The actual supported coherent space is the homotopy fibre of restriction,
 with its projection equal up to homotopy to the actual inclusion. -/
 public theorem_wanted localization (X : Scheme.{0}) [IsNoetherian X]
-    (U : X.Opens) [RestrictionCoherent X U] :
+    (U : X.Opens) :
     ∃ e : ContinuousMap.HomotopyEquiv (supportedSpace X U)
         (homotopyFiber (restriction X U) (gBase U)),
       Nonempty ((fiberProjection (restriction X U) (gBase U)).comp e.toFun |>.Homotopy
@@ -59,9 +68,7 @@ public theorem_wanted zariski_descent (X U V W : Scheme.{0})
     [IsOpenImmersion i] [IsOpenImmersion j]
     [IsOpenImmersion p] [IsOpenImmersion q]
     (square : IsPullback p q i j)
-    (cover : Set.range i.base ∪ Set.range j.base = Set.univ)
-    [OpenRestrictionCoherent i] [OpenRestrictionCoherent j]
-    [OpenRestrictionCoherent p] [OpenRestrictionCoherent q] :
+    (cover : Set.range i.base ∪ Set.range j.base = Set.univ) :
     ∃ e : ContinuousMap.HomotopyEquiv (gSpace X)
         (homotopyPullback (openRestriction p) (openRestriction q)),
       Nonempty ((pullbackFirst (openRestriction p) (openRestriction q)).comp e.toFun |>.Homotopy
