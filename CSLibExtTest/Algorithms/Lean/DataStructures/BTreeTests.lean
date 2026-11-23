@@ -227,6 +227,14 @@ example : orderedInsert 2 [1, 2, 3] = [1, 2, 3] :=
 /-- Without sortedness the scan does not detect a later duplicate. -/
 example : orderedInsert 2 [3, 2] = [2, 3, 2] := by decide
 
+/-! ### A height-0 leaf still stores keys (Codex leaf idea) -/
+
+example : treeHeight (.leaf [3, 6] : BTree Nat) = 0 := by decide
+
+example : flatten (.leaf [3, 6] : BTree Nat) = [3, 6] := flatten_leaf
+
+example : delete 2 3 (.leaf [3, 6] : BTree Nat) = .leaf [6] := by rfl
+
 #check Cslib.Algorithms.Lean.orderedInsert_eq_of_mem
 
 end Cslib.Algorithms.Lean.BTreeTests

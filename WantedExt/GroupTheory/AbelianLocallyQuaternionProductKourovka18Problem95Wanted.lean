@@ -38,22 +38,26 @@ does not cover finite generalized quaternion `B`). `G = AB` means `AB = G` as se
 
 open scoped Pointwise
 
-/-- `B` is locally quaternion: the union of a strictly increasing chain of finite generalized
-quaternion groups `Q_{2^{k+2}}` (`QuaternionGroup (2 ^ k)`, `k ≥ 1`, of order `2^{k+2} ≥ 8`); in
-particular `B` is infinite. -/
+/-- **Locally quaternion subgroup.** A subgroup $B$ of a group $G$ is locally quaternion if there
+is a strictly increasing sequence $C_0 < C_1 < C_2 < \cdots$ of subgroups of $G$, each isomorphic
+to a generalized quaternion group $Q_{2^{k+2}}$ of order $2^{k+2}$ for some $k \ge 1$, whose
+supremum (for a chain, the union) is $B$. In particular $B$ is infinite. -/
 def IsLocallyQuaternion {G : Type} [Group G] (B : Subgroup G) : Prop :=
   ∃ Q : ℕ → Subgroup G, StrictMono Q ∧
     (∀ i, ∃ k : ℕ, 1 ≤ k ∧ Nonempty (Q i ≃* QuaternionGroup (2 ^ k))) ∧ B = ⨆ i, Q i
 
-/-- Kourovka 18.95 (A. I. Sozutov): a group `G = AB` that is the product of an abelian subgroup `A`
-and a locally quaternion subgroup `B` is soluble. -/
+/-- **Kourovka Problem 18.95 (Sozutov).** The proposition that every group $G$ with subgroups $A$
+and $B$ such that $A$ is abelian, $B$ is locally quaternion, and $G = AB$ (every element of $G$ is a
+product $ab$ with $a \in A$ and $b \in B$) is soluble. -/
 def abelianLocallyQuaternionProductSoluble : Prop :=
   ∀ (G : Type) [Group G] (A B : Subgroup G), (∀ x ∈ A, ∀ y ∈ A, x * y = y * x) →
     IsLocallyQuaternion B → (A : Set G) * (B : Set G) = Set.univ → Group.IsSolvable G
 
 /--
-Resolved true: the Kourovka Archive answers 18.95 "Yes, it is" (B. Amberg and Ya. Sysak, 2017,
-Corollary 1.2: a product of an abelian subgroup and a locally quaternion subgroup is soluble).
+**Products of abelian and locally quaternion groups are soluble.** Let $G$ be a group with
+subgroups $A$ and $B$ such that $A$ is abelian, $B$ is locally quaternion, and $G = AB$, that is,
+every element of $G$ is a product $ab$ with $a \in A$ and $b \in B$. Then $G$ is soluble.
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 18.95 (A. I.
 Sozutov); resolution: B. Amberg and Ya. Sysak, On products of groups with abelian subgroups of small

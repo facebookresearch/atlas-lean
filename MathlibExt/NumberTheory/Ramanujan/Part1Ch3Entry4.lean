@@ -225,17 +225,12 @@ private lemma tail_exp_series' (w : ℂ) :
   rw [heq, tsum_mul_left]
   exact h
 
-private lemma coe_add_one_ne_zero (j : ℕ) : ((j : ℂ) + 1) ≠ 0 := by
-  have h : ((j : ℂ) + 1) = ((j + 1 : ℕ) : ℂ) := by push_cast; ring
-  rw [h]
-  exact Nat.cast_ne_zero.mpr (Nat.succ_ne_zero j)
-
 /-- Exact value of each fiber sum (for a ≠ 0). -/
 private lemma fiber_value (a x : ℂ) (ha : a ≠ 0) (j : ℕ) :
     (∑' n, T a x j n) = Complex.exp (-x) *
       (x ^ (j + 1) * (Complex.exp (a * ((j : ℂ) + 1)) - 1) /
         ((Nat.factorial (j + 1) : ℕ) : ℂ)) := by
-  have hw : a * ((j : ℂ) + 1) ≠ 0 := mul_ne_zero ha (coe_add_one_ne_zero j)
+  have hw : a * ((j : ℂ) + 1) ≠ 0 := mul_ne_zero ha (Nat.cast_add_one_ne_zero j)
   have heq : (fun n => T a x j n)
       = (fun n => (a * (Complex.exp (-x) * (x ^ (j + 1) / (Nat.factorial j : ℂ))))
         * ((a * ((j : ℂ) + 1)) ^ n / ((Nat.factorial (n + 1) : ℕ) : ℂ))) := by
@@ -472,7 +467,14 @@ private theorem main_entry4 (a x : ℂ) :
     rw [← hval]
     exact hsumU.hasSum
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 4, formula (4.1), printed
+/-- **Exponential generating function of Ramanujan's Bell-type series (Entry 4).** Let $F$ be
+Ramanujan's generalized Bell function. For all complex numbers $a$ and $x$, let
+$f(x, n) = F(0, 1, x; n) = e^{-x} \sum_{j=0}^{\infty} \frac{(j+1)^n x^{j+1}}{j!}$ for natural
+numbers $n$, and set $f(x, -1) = 1$. Then the series
+$\sum_{n=0}^{\infty} \frac{a^n}{n!} f(x, n-1)$ converges absolutely and its sum is
+$e^{x(e^a - 1)}$.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 4, formula (4.1), printed
     pp. 47--48 / PDF pp. 57--58.
 Proves `Wanted` entry `ramanujan_part1_ch3_entry4`. The source's
 `f(x, n) = e^{-x} ∑_{j ≥ 0} (j + 1)ⁿ xʲ⁺¹ / j!` is `generalizedBellGenerating 0 1 x n`.

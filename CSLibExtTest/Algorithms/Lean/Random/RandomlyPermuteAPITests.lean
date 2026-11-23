@@ -88,6 +88,55 @@ example : randomlyPermuteDistribution (⟨#["a", "a", "b"], rfl⟩ : Vector Stri
           Cslib.Algorithms.Lean.TimeM (Nat × Nat) (Vector String 3))) :=
   randomlyPermuteDistribution_eq_map_uniform _
 
+-- Fisher–Yates' list law is `uniformPermutation`
+example {α : Type u} {n : Nat} (xs : Vector α n) :
+    (randomlyPermuteDistribution xs).map (fun r => r.ret.toList) =
+      uniformPermutation xs.toList :=
+  randomlyPermuteDistribution_map_toList xs
+
+-- so an expected cost over `uniformPermutation` is the expected cost after Fisher–Yates
+example {α β : Type} {n : Nat} (algo : List α → Cslib.Algorithms.Lean.TimeM Nat β)
+    (xs : Vector α n) :
+    expectedTime algo (uniformPermutation xs.toList) =
+      (randomlyPermuteDistribution xs).expectENN
+        (fun r => ((algo r.ret.toList).time : ENNReal)) := by
+  rw [expectedTime, ← randomlyPermuteDistribution_map_toList, PMF.expectENN_map]
+  rfl
+
+example : (randomlyPermuteDistribution (⟨#["a", "a", "b"], rfl⟩ : Vector String 3)).map
+      (fun r => r.ret.toList) = uniformPermutation ["a", "a", "b"] :=
+  randomlyPermuteDistribution_map_toList _
+
+-- Boundary: the bridge needs neither a nonempty element type nor a positive length.
+example :
+    (randomlyPermuteDistribution (⟨#[], rfl⟩ : Vector Empty 0)).map
+        (fun out => out.ret.toList) = uniformPermutation ([] : List Empty) :=
+  randomlyPermuteDistribution_map_toList _
+
+-- Boundary: the singleton case goes through the same map/toList path.
+example {α : Type u} (a : α) :
+    (randomlyPermuteDistribution (⟨#[a], rfl⟩ : Vector α 1)).map
+        (fun out => out.ret.toList) = uniformPermutation [a] :=
+  randomlyPermuteDistribution_map_toList _
+
+-- Multiplicity on another type: repeated entries need no distinctness hypothesis.
+example :
+    (randomlyPermuteDistribution (⟨#[true, false, true], rfl⟩ : Vector Bool 3)).map
+        (fun out => out.ret.toList) = uniformPermutation [true, false, true] :=
+  randomlyPermuteDistribution_map_toList _
+
+-- Closed end-to-end expected cost after execution. This exercises the expectENN transfer,
+-- not uniformity: the length cost is constant, hence identical on every permutation.
+example : expectedTime
+    (fun xs : List Bool => (⟨(), xs.length⟩ : Cslib.Algorithms.Lean.TimeM Nat Unit))
+    ((randomlyPermuteDistribution (⟨#[true, false, true], rfl⟩ : Vector Bool 3)).map
+      (fun out => out.ret.toList)) = (3 : ENNReal) := by
+  rw [randomlyPermuteDistribution_map_toList]
+  exact expectedTime_uniformPermutation_eq_of_time_eq _ _ 3 (fun _ => List.length_ofFn)
+
+#print axioms Cslib.Algorithms.Lean.TimeM.randomlyPermuteDistribution_map_toList
+
 #check @randomlyPermute
 #check @randomlyPermuteDistribution
 #check @randomlyPermuteDistribution_apply
+#check @randomlyPermuteDistribution_map_toList

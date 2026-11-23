@@ -28,36 +28,6 @@ namespace MathlibExt.NumberTheory.Ramanujan.Part1Ch3
 namespace Entry17
 
 open Filter Metric
-private theorem iteratedDeriv_eventuallyEq_aux {f g : ℝ → ℝ} {x : ℝ} {n : ℕ}
-    (h : f =ᶠ[nhds x] g) : iteratedDeriv n f x = iteratedDeriv n g x := by
-  have key : ∀ m : ℕ, (deriv^[m] f =ᶠ[nhds x] deriv^[m] g) := by
-    intro m
-    induction m with
-    | zero => simpa using h
-    | succ k ih =>
-      rw [Filter.eventuallyEq_iff_exists_mem] at ih ⊢
-      obtain ⟨U, hUmem, hUeq⟩ := ih
-      obtain ⟨V, hVU, hVopen, hxV⟩ := _root_.mem_nhds_iff.mp hUmem
-      refine ⟨V, hVopen.mem_nhds hxV, ?_⟩
-      intro y hy
-      have h1 : deriv^[k] f =ᶠ[nhds y] deriv^[k] g := by
-        apply Filter.eventually_of_mem (hVopen.mem_nhds hy)
-        intro z hz
-        exact hUeq (hVU hz)
-      have e1 : deriv^[k+1] f y = deriv (deriv^[k] f) y := by
-        have h1 : deriv^[k+1] f y = deriv^[1+k] f y := by rw [add_comm 1 k]
-        rw [h1, Function.iterate_add_apply, Function.iterate_one]
-      have e2 : deriv^[k+1] g y = deriv (deriv^[k] g) y := by
-        have h1 : deriv^[k+1] g y = deriv^[1+k] g y := by rw [add_comm 1 k]
-        rw [h1, Function.iterate_add_apply, Function.iterate_one]
-      rw [e1, e2]
-      exact h1.deriv_eq
-  have hmn := key n
-  have e1 : iteratedDeriv n f x = deriv^[n] f x := by rw [iteratedDeriv_eq_iterate]
-  have e2 : iteratedDeriv n g x = deriv^[n] g x := by rw [iteratedDeriv_eq_iterate]
-  rw [e1, e2]
-  exact hmn.self_of_nhds
-
 private theorem iteratedDeriv_deriv_eq_aux {f : ℝ → ℝ} {x : ℝ} {m : ℕ} (_hm : 1 ≤ m) :
     iteratedDeriv (m - 1) (deriv f) x = iteratedDeriv m f x := by
   have e1 : iteratedDeriv (m - 1) (deriv f) x = deriv^[m - 1] (deriv f) x := by
@@ -192,7 +162,7 @@ private theorem expand_test
     rw [this]
     exact hh
   have hH0 : iteratedDeriv n H 0 = 0 := by
-    have h1 := iteratedDeriv_eventuallyEq_aux (n := n) (x := (0:ℝ)) hevH'
+    have h1 := hevH'.iteratedDeriv_eq n
     have h2 : iteratedDeriv n (0 : ℝ → ℝ) 0 = 0 := by
       have : (0 : ℝ → ℝ) = fun _ => (0:ℝ) := rfl
       rw [this]
@@ -616,7 +586,14 @@ private theorem recurrence_generic {a R C A : ℝ} {x : ℝ → ℝ}
       linear_combination h0 - hcomb
     exact final_from_E (a := a) (A := A) (n := n) (X := X) hA_ne hE
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, corrected Entry 17, formulas
+/-- **Taylor coefficients of the solution of $x^x = a^a e^h$ (Chapter 3, Entry 17).** For every
+real number $a > 1/e$ there exist a real number $R > 0$ and a function
+$x : \mathbb{R} \to \mathbb{R}$, analytic at $0$, with $x(0) = a$, such that $x(h) > 0$ and
+$x(h)^{x(h)} = a^a e^h$ for all real $h$ with $|h| < R$, and such that the numbers
+$A_k = (-a)^{k-1} x^{(k)}(0)$ for $k \ge 1$ satisfy, for every integer $r \ge 2$,
+$$A_r = \frac{(r - 2)\, A_{r-1} + \sum_{k=1}^{r-1} \binom{r-1}{k} A_k A_{r-k}}{1 + \log a}.$$
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, corrected Entry 17, formulas
     (17.1)--(17.7), printed pp. 81--83 / PDF pp. 91--93.
 Proves `Wanted` entry `ramanujan_part1_ch3_entry17`.
 -/
