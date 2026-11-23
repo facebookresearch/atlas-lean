@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Convex.Hull
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.Combinatorics.WeightedProjectiveSimplexIDP
 public import MathlibExt.Geometry.LatticePointEnumerator
 
 /-!
@@ -343,22 +344,6 @@ A60, Corollary 1. -/
 public def SatisfiesIDPNecessary {n : ℕ} (q : Fin n → ℕ) : Prop :=
   ∀ j, 1 + ∑ i, q i % q j = q j
 
-/-- **Support form of the IDP necessary condition.** Let $r = (r_1, \dots, r_d)$ and
-$x = (x_1, \dots, x_d)$ be tuples of natural numbers. The pair $(r, x)$ satisfies the support
-form of the necessary condition when, for every index $j$,
-$1 + \sum_{i=1}^{d} x_i (r_i \bmod r_j) = r_j$, where $r_i \bmod r_j$ is the remainder of $r_i$
-on division by $r_j$, with the convention $r_i \bmod 0 = r_i$.
-
-When every $x_i$ is positive, let $q$ be the weight vector in which each $r_i$ is repeated
-$x_i$ times. Then this condition is equivalent to $1 + \sum_i (q_i \bmod q_j) = q_j$ for every
-index $j$ of $q$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Corollary 1. -/
-public def SatisfiesSupportIDPNecessary {d : ℕ} (r x : Fin d → ℕ) : Prop :=
-  ∀ j, 1 + ∑ i, x i * (r i % r j) = r j
-
 /-! ## Theorems 1--9 -/
 
 /-- **Reflexivity criterion for weighted projective simplices.** Let $q = (q_1, \dots, q_n)$ be
@@ -677,21 +662,6 @@ public theorem_wanted two_supported_idp_reflexive_iff_necessary (r x : Fin 2 →
     (IsReflexive (weightedSimplexList (expandSupport r x)) ∧
       HasIDP (weightedSimplexList (expandSupport r x))) ↔
       SatisfiesSupportIDPNecessary r x
-
-/-- **Classification of two-supported vectors satisfying the necessary condition.** Let
-$r = (r_1, r_2)$ and $x = (x_1, x_2)$ be pairs of positive integers with $r_1 < r_2$. Then
-$1 + \sum_{i=1}^{2} x_i (r_i \bmod r_j) = r_j$ holds for $j = 1, 2$ (the support form of the IDP
-necessary condition) if and only if either $r = (1, 1 + x_1)$ or
-$r = (1 + x_2, 1 + (1 + x_2)x_1)$.
-
-Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
-Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
-A60, Theorem 8. -/
-public theorem_wanted two_supported_classification (r x : Fin 2 → ℕ)
-    (hrpos : ∀ i, 1 ≤ r i) (hxpos : ∀ i, 1 ≤ x i) (hrinc : StrictMono r) :
-    SatisfiesSupportIDPNecessary r x ↔
-      (r 0 = 1 ∧ r 1 = 1 + x 0) ∨
-      (r 0 = 1 + x 1 ∧ r 1 = 1 + (1 + x 1) * x 0)
 
 /-- **Support triples of the three-supported classification.** For a case index $c \in \mathbb{N}$,
 natural numbers $k, s$ and a triple $x = (x_1, x_2, x_3)$ of natural numbers, the support triple
