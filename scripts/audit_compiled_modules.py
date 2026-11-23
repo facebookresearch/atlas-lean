@@ -78,8 +78,10 @@ def cgroup_directories() -> tuple[Path, Path] | None:
     try:
         with open('/proc/self/cgroup', encoding='utf-8') as membership:
             lines = membership.read().splitlines()
-    except OSError:
-        return None
+    except OSError as error:
+        if not os.path.isdir('/proc/self'):
+            return None  # no procfs (macOS, say): no cgroup to read
+        raise LookupError('/proc/self/cgroup cannot be read') from error
     fields = [line.split(':', 2) for line in lines]
     if any(len(field) == 3 and 'memory' in field[1].split(',') for field in fields):
         raise LookupError('a cgroup v1 memory controller applies')
@@ -107,7 +109,9 @@ def cgroup_directories() -> tuple[Path, Path] | None:
 def cgroup_headroom() -> int | None:
     """Memory this process's cgroup v2 and its visible ancestors still allow, if any limits it.
 
-    None when no cgroup limit applies; 0 when one may apply but cannot be read.
+    None when no cgroup limit applies; 0 when one may apply but cannot be read
+    (an unreadable or malformed memory interface file, a missing cgroup directory).
+    A level without memory.max has no memory controller and sets no limit.
     """
     try:
         found = cgroup_directories()
@@ -116,15 +120,22 @@ def cgroup_headroom() -> int | None:
     if found is None:
         return None
     group, mount = found
+    if not group.is_dir():
+        return 0
     headroom = None
     while True:
         try:
             limit = (group / 'memory.max').read_text(encoding='ascii').strip()
-            if limit != 'max':
+        except FileNotFoundError:
+            limit = 'max'  # no memory controller at this level
+        except OSError:
+            return 0
+        if limit != 'max':
+            try:
                 left = int(limit) - cgroup_usage(group)
-                headroom = left if headroom is None else min(headroom, left)
-        except (OSError, ValueError):
-            pass
+            except (OSError, ValueError):
+                return 0
+            headroom = left if headroom is None else min(headroom, left)
         if group == mount or group.parent == group:
             return headroom
         group = group.parent
@@ -157,6 +168,9 @@ def worker_count(groups: int) -> int:
         cores = len(os.sched_getaffinity(0)) if hasattr(os, 'sched_getaffinity') else os.cpu_count()
         workers = min(workers, cores or 1)
     return max(1, min(workers, groups))
+
+
+UNSAMPLED = object()  # Admission.start has not read the available memory yet
 
 
 class SkippedGroup(AuditFailure):
@@ -192,22 +206,33 @@ class Admission:
         """Wait until a batch of group `index` may start (`first`: the group's first batch).
 
         Groups start in group order, and waiting batches start lowest group first.
+        Memory is sampled without the lock, so that recording a failure or a
+        finished batch never waits for it; each decision re-checks them.
         """
         with self.condition:
             self.waiting.add(index)
-            try:
-                while True:
+        try:
+            memory: object = UNSAMPLED
+            while True:
+                with self.condition:
                     if self.blocked(index):
                         raise SkippedGroup('an audit group was skipped without an earlier failure')
-                    if index == min(self.waiting) and (not first or index == self.next_group):
-                        memory = available_memory()
-                        if not self.running or memory is None or memory >= (self.running + 1) * BATCH_MEMORY:
-                            self.running += 1
-                            if first:
-                                self.next_group += 1
-                            return
-                    self.condition.wait(timeout=5)
-            finally:
+                    if index != min(self.waiting) or (first and index != self.next_group):
+                        memory = UNSAMPLED
+                        self.condition.wait(timeout=5)
+                        continue
+                    if not self.running or (memory is not UNSAMPLED and (
+                            memory is None or memory >= (self.running + 1) * BATCH_MEMORY)):
+                        self.running += 1
+                        if first:
+                            self.next_group += 1
+                        return
+                    if memory is not UNSAMPLED:
+                        # Too little memory: wait for a batch to finish or fail, then sample again.
+                        self.condition.wait(timeout=5)
+                memory = available_memory()
+        finally:
+            with self.condition:
                 self.waiting.discard(index)
                 self.condition.notify_all()
 

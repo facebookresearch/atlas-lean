@@ -171,6 +171,32 @@ class ParallelAuditTests(unittest.TestCase):
             run_audit(modules, fake, memory=audit.BATCH_MEMORY, batch_size=8, workers=4)
         self.assertEqual(fake.calls, 1)
 
+    def test_a_slow_memory_probe_does_not_delay_recording_a_failure(self):
+        # Group 1 samples memory while group 0 runs; group 0 fails during that sample.
+        probing, recorded = threading.Event(), threading.Event()
+        modules = names(16, 2, bad=[(0, 'L.Bad')])
+        fake = FakeLean(hold={'L.Bad': probing})
+        real_fail = audit.Admission.fail
+
+        def fail(self, index, real_fail=real_fail):
+            real_fail(self, index)
+            recorded.set()
+
+        def slow_probe():
+            probing.set()
+            # With the probe under the lock, fail() would wait here and group 1 would start.
+            recorded.wait(10)
+            return PLENTY
+
+        out = io.StringIO()
+        with mock.patch.object(audit.subprocess, 'run', fake), \
+                mock.patch.object(audit, 'available_memory', slow_probe), \
+                mock.patch.object(audit.Admission, 'fail', fail), contextlib.redirect_stdout(out):
+            with self.assertRaisesRegex(audit.AuditFailure, 'L.Bad'):
+                audit.audit(Path('.'), modules, '-- checker\n', batch_size=8, workers=2)
+        self.assertTrue(recorded.is_set())
+        self.assertEqual(fake.order, ['warm-up', 'L.Bad'])
+
     def test_memory_for_one_batch_runs_one_batch_at_a_time(self):
         for memory in (audit.BATCH_MEMORY, 2 * audit.BATCH_MEMORY - 1):
             fake = FakeLean(delay=0.05)
@@ -316,8 +342,50 @@ class CgroupTests(unittest.TestCase):
             for files in cases:
                 with self.proc(files):
                     self.assertEqual(audit.cgroup_headroom(), 0)
+
+    def test_unreadable_or_malformed_memory_files_count_as_no_headroom(self):
+        files = lambda folder: {'/proc/self/cgroup': '0::/job\n',
+                                '/proc/self/mountinfo': self.mountinfo('/', folder)}
+        with tempfile.TemporaryDirectory() as folder:
+            self.tree(folder, {'': (64, 4, 0), 'job': (8, 2, 0)})
+            Path(folder, 'job', 'memory.max').write_text('eight\n')
+            with self.proc(files(folder)):
+                self.assertEqual(audit.cgroup_headroom(), 0)
+        with tempfile.TemporaryDirectory() as folder:
+            self.tree(folder, {'': (64, 4, 0), 'job': (8, 2, 0)})
+            Path(folder, 'job', 'memory.current').unlink()
+            with self.proc(files(folder)):
+                self.assertEqual(audit.cgroup_headroom(), 0)
+        with tempfile.TemporaryDirectory() as folder:
+            self.tree(folder, {'': (64, 4, 0), 'job': (8, 2, 0)})
+            real_read = Path.read_text
+
+            def read_text(path, *args, **kwargs):
+                if path.name == 'memory.max' and path.parent.name == 'job':
+                    raise PermissionError(path)
+                return real_read(path, *args, **kwargs)
+
+            with self.proc(files(folder)), mock.patch.object(Path, 'read_text', read_text):
+                self.assertEqual(audit.cgroup_headroom(), 0)
+        with tempfile.TemporaryDirectory() as folder:
+            # The cgroup directory itself is missing.
+            with self.proc(files(folder)):
+                self.assertEqual(audit.cgroup_headroom(), 0)
+
+    def test_a_level_without_memory_files_sets_no_limit(self):
+        with tempfile.TemporaryDirectory() as folder:
+            self.tree(folder, {'job': (8, 2, 0)})
+            for name in ('memory.max', 'memory.current', 'memory.stat'):
+                Path(folder, name).unlink(missing_ok=True)
+            files = {'/proc/self/cgroup': '0::/job\n', '/proc/self/mountinfo': self.mountinfo('/', folder)}
+            with self.proc(files):
+                self.assertEqual(audit.cgroup_headroom(), 6 * 2**30)
+
+    def test_proc_self_cgroup_unreadable(self):
         with self.proc({}):
-            self.assertIsNone(audit.cgroup_headroom())
+            self.assertEqual(audit.cgroup_headroom(), 0)  # procfs exists but the file cannot be read
+        with self.proc({}), mock.patch.object(audit.os.path, 'isdir', return_value=False):
+            self.assertIsNone(audit.cgroup_headroom())  # no procfs at all
 
     def test_available_memory_takes_the_tighter_limit(self):
         meminfo = {'/proc/meminfo': 'MemTotal: 16000000 kB\nMemAvailable: 14000000 kB\n'}
@@ -326,7 +394,7 @@ class CgroupTests(unittest.TestCase):
         with self.proc(meminfo), mock.patch.object(audit, 'cgroup_headroom', return_value=None):
             self.assertEqual(audit.available_memory(), 14000000 * 1024)
         with self.proc({}):
-            self.assertIsNone(audit.available_memory())
+            self.assertIsNone(audit.available_memory())  # no /proc/meminfo
 
 
 if __name__ == '__main__':
