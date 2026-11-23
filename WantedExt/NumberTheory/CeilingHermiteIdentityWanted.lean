@@ -9,21 +9,17 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.Order.Floor.BigOperators
-public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Algebra.Order.Round
-public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Data.Fintype.Powerset
-public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.NumberTheory.FloorCeilingSums
 
 /-!
 # Inclusion-exclusion-like sums with floor, ceiling and nearest-integer functions (statements)
 
 Mathlib proves Hermite's identity for the floor function as `Int.sum_floor_add_div`
-(`∑_{0 ≤ i < n} ⌊x + i/n⌋ = ⌊n x⌋`). This file states the ceiling analogue with the shifted
-range `1 ≤ k ≤ n` used by Onphaeng, Khemaratchatakumthorn and Pongsriiam, and the paper's sharp
-bounds for the sums `g^(F)`, `f^(F)` and the partial sums `S^(F)`, `T^(F)` of Jacobsthal and
-Tverberg type, where `F` is one of `⌊·⌋` (`j = 1`), `⌈·⌉` (`j = 2`),
+(`∑_{0 ≤ i < n} ⌊x + i/n⌋ = ⌊n x⌋`). The ceiling analogue uses the shifted range `1 ≤ k ≤ n`.
+This file states the sharp bounds of Onphaeng, Khemaratchatakumthorn and Pongsriiam for the sums
+`g^(F)`, `f^(F)` and the partial sums `S^(F)`, `T^(F)` of Jacobsthal and Tverberg type,
+where `F` is one of `⌊·⌋` (`j = 1`), `⌈·⌉` (`j = 2`),
 `r⁺(x) = ⌊x + 1/2⌋` (`j = 3`, Mathlib's `round`, see `round_eq`) and
 `r⁻(x) = ⌈x - 1/2⌉` (`j = 4`).
 
@@ -38,94 +34,6 @@ quotient `m / 2`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Ceiling analogue of Hermite's identity.** For every real number $x$ and every natural
-number $n$, $\sum_{k=1}^{n} \lceil x + k/n \rceil = \lceil n x \rceil + n$.
-
-The paper assumes $n \ge 1$; for $n = 0$ both sides are $0$.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Lemma 6. -/
-public theorem_wanted sum_ceil_add_div_eq_ceil_mul_add (x : ℝ) (n : ℕ) :
-    ∑ k ∈ Finset.Icc 1 n, ⌈x + (k : ℝ) / n⌉ = ⌈(n : ℝ) * x⌉ + n
-
-/-- **Inclusion-exclusion-like sum.** For a function $F : \mathbb{R} \to \mathbb{Z}$ and real
-numbers $x_1, \dots, x_n$, the inclusion-exclusion-like sum is the integer
-$g^{(F)}(x_1, \dots, x_n) = \sum_T (-1)^{|T| - 1} F\left(\sum_{i \in T} x_i\right)$, where $T$
-ranges over the nonempty subsets of $\{1, \dots, n\}$.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Definitions 2 and 3. -/
-public def inclExclLikeSum {n : ℕ} (F : ℝ → ℤ) (x : Fin n → ℝ) : ℤ :=
-  ∑ T : Finset (Fin n) with T.Nonempty, (-1) ^ (T.card - 1) * F (∑ i ∈ T, x i)
-
-/-- **The inclusion-exclusion-like sum in one variable.** For every function
-$F : \mathbb{R} \to \mathbb{Z}$ and every real $x$, the inclusion-exclusion-like sum of $F$ in the
-single variable $x$ is $g^{(F)}(x) = F(x)$.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Definitions 2 and 3. -/
-public theorem inclExclLikeSum_one (F : ℝ → ℤ) (x : ℝ) : inclExclLikeSum F ![x] = F x := by
-  have h : (Finset.univ : Finset (Finset (Fin 1))) = {∅, {0}} := by decide
-  rw [inclExclLikeSum, h, Finset.sum_filter, Finset.sum_insert (by decide), Finset.sum_singleton]
-  simp
-
-/-- **The inclusion-exclusion-like sum in two variables.** For every function
-$F : \mathbb{R} \to \mathbb{Z}$ and all real numbers $x$ and $y$,
-$g^{(F)}(x, y) = F(x) + F(y) - F(x + y)$.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Definitions 2 and 3. -/
-public theorem inclExclLikeSum_two (F : ℝ → ℤ) (x y : ℝ) :
-    inclExclLikeSum F ![x, y] = F x + F y - F (x + y) := by
-  have h : (Finset.univ : Finset (Finset (Fin 2))) = {∅, {0}, {1}, {0, 1}} := by decide
-  rw [inclExclLikeSum, h, Finset.sum_filter, Finset.sum_insert (by decide),
-    Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton]
-  simp
-  ring
-
-/-- **Tverberg's sum.** Let $F : \mathbb{R} \to \mathbb{Z}$, let $a = (a_1, \dots, a_\ell)$ be a
-tuple of integers, let $m$ be a natural number and let $k$ be an integer. Tverberg's sum is
-$f^{(F)}(a, m, k) = \sum_{T \subseteq \{1, \dots, \ell\}} (-1)^{\ell - |T|}
-F((k + \sum_{i \in T} a_i) / m)$, where the division is in $\mathbb{R}$ (with $x / 0 = 0$).
-
-The paper takes $F = \lfloor \cdot \rfloor$ in Definition 1, and $F = \lceil \cdot \rceil$,
-$x \mapsto \lfloor x + 1/2 \rfloor$ or $x \mapsto \lceil x - 1/2 \rceil$ in Section 1 and
-Definition 3.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Definitions 1 and 3. -/
-public noncomputable def tverbergSum {ℓ : ℕ} (F : ℝ → ℤ) (a : Fin ℓ → ℤ) (m : ℕ) (k : ℤ) : ℤ :=
-  ∑ T : Finset (Fin ℓ), (-1) ^ (ℓ - T.card) * F (((k + ∑ i ∈ T, a i : ℤ) : ℝ) / m)
-
-/-- **Tverberg's sum of the empty tuple.** For every function $F : \mathbb{R} \to \mathbb{Z}$,
-every natural number $m$ and every integer $k$, Tverberg's sum of the empty tuple of integers is
-$f^{(F)}(\emptyset, m, k) = F(k / m)$, where $k / m$ is division in $\mathbb{R}$ (with $x / 0 = 0$).
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Definitions 1 and 3. -/
-public theorem tverbergSum_zero (F : ℝ → ℤ) (a : Fin 0 → ℤ) (m : ℕ) (k : ℤ) :
-    tverbergSum F a m k = F (k / m) := by
-  simp [tverbergSum, Finset.univ_unique, Finset.eq_empty_of_isEmpty]
-
-/-- **Tverberg's sum of a single integer.** For every function $F : \mathbb{R} \to \mathbb{Z}$,
-all integers $a$ and $k$ and every natural number $m$, Tverberg's sum of $F$ for the one-element
-family $(a)$, modulus $m$ and shift $k$ equals $F((k + a)/m) - F(k/m)$, with $x/0 = 0$.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Definitions 1 and 3. -/
-public theorem tverbergSum_one (F : ℝ → ℤ) (a : ℤ) (m : ℕ) (k : ℤ) :
-    tverbergSum F ![a] m k = F ((k + a : ℤ) / m) - F (k / m) := by
-  have h : (Finset.univ : Finset (Finset (Fin 1))) = {∅, {0}} := by decide
-  simp [tverbergSum, h]
-  ring
 
 /-- **Relations and periodicity of the inclusion-exclusion-like sums.** Let $n \ge 2$ and write
 $g_1$, $g_2$, $g_3$, $g_4$ for the inclusion-exclusion-like sums $g^{(F)}$ with $F$ the floor

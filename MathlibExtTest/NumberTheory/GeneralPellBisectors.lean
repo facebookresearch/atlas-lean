@@ -18,4 +18,16 @@ example (x y : ℤ) : |x ^ 2 - 5 * y ^ 2| ≠ 2 :=
 
 #print axioms abs_sq_sub_mul_sq_ne_of_two_mod_four
 
+-- The difference is negative and the first coordinate is negative.
+example : Even (-2 : ℤ) ∧ Even (2 : ℤ) :=
+  even_of_abs_sq_sub_mul_sq_zero_mod_eight 5 16 rfl rfl (-2) 2 (by decide)
+
+-- A negative coefficient in the same residue class gives a positive difference.
+example : Even (2 : ℤ) ∧ Even (-2 : ℤ) :=
+  even_of_abs_sq_sub_mul_sq_zero_mod_eight (-3) 16 rfl rfl 2 (-2) (by decide)
+
+-- The boundary value z = 0 requires no positivity hypothesis.
+example (x y : ℤ) (h : x ^ 2 = 5 * y ^ 2) : Even x ∧ Even y :=
+  even_of_abs_sq_sub_mul_sq_zero_mod_eight 5 0 rfl rfl x y (by rw [h, sub_self, abs_zero])
+
 end MetaMathlibExt
