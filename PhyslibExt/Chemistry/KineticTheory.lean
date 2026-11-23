@@ -103,6 +103,9 @@ open scoped BigOperators
 /-- Maxwell-Boltzmann speed density (CH08.1, model input), for the gas constant `R`, absolute
 temperature `T`, molar mass `M` and speed `v`:
 `4 * π * (M / (2 * π * R * T)) ^ (3 / 2) * v ^ 2 * exp (-(M * v ^ 2) / (2 * R * T))`.
+It is defined for all real `R`, `T` and `M`: it is `0` for `R T = 0`, by the convention
+`x / 0 = 0`, and for `M / (R T) < 0`, since `x ^ (3 / 2) = 0` for `x < 0`. The intended domain is
+`R, T, M > 0`.
 Mathlib, Physlib and ATLAS `main` provide no Maxwell-Boltzmann speed density to reuse. -/
 noncomputable def mbSpeed (R T M v : ℝ) : ℝ :=
   4 * π * (M / (2 * π * R * T)) ^ (3 / 2 : ℝ) * v ^ 2 * Real.exp (-(M * v ^ 2) / (2 * R * T))
@@ -169,11 +172,15 @@ noncomputable def meanSpeed (R T M : ℝ) : ℝ :=
   ∫ v in Set.Ioi (0 : ℝ), v * mbSpeed R T M v
 
 /-- Root-mean-square speed `v_rms = √(∫ v in Ioi 0, v ^ 2 * mbSpeed R T M v)` (CH08.2), defined
-from the integral; its closed form is `rmsSpeed_eq`. It is new because `mbSpeed` is. -/
+from the integral; its closed form is `rmsSpeed_eq`. It is defined for all real `R`, `T` and `M`:
+for `R T = 0` or `M / (R T) < 0` the density is `0` by its conventions, so `v_rms = 0`. It is new
+because `mbSpeed` is. -/
 noncomputable def rmsSpeed (R T M : ℝ) : ℝ :=
   Real.sqrt (∫ v in Set.Ioi (0 : ℝ), v ^ 2 * mbSpeed R T M v)
 
-/-- Most probable speed `v_mp = √(2 * R * T / M)` (CH08.2), new because `mbSpeed` is. That it
+/-- Most probable speed `v_mp = √(2 * R * T / M)` (CH08.2), new because `mbSpeed` is. It is
+defined for all real `R`, `T` and `M`: it is `0` for `M = 0`, by the convention `x / 0 = 0`, and
+for `R T / M < 0`, since `√x = 0` for `x < 0`. The intended domain is `R, T, M > 0`. That it
 is the unique maximizer of `mbSpeed` on `[0, ∞)` is the lemma `isMaxOn_mbSpeed_iff`, not part of
 the definition. -/
 noncomputable def mostProbableSpeed (R T M : ℝ) : ℝ :=
@@ -309,7 +316,10 @@ lemma meanSpeed_lt_rmsSpeed {R T M : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M)
 area per unit time: particle `i ∈ s` delivers momentum `Δp i` to the wall once every `τ i`, so
 the wall receives momentum at the rate `∑ i ∈ s, Δp i / τ i`, spread over its area `A`. A
 particle with `Δp i = 0` contributes `0` regardless of its `τ i`, so the definition never
-needs an (unphysical) infinite flight time to be represented as `τ i = 0`. Neither
+needs an (unphysical) infinite flight time to be represented as `τ i = 0`. It is defined for all
+real `τ i` and `A`: by the convention `x / 0 = 0`, a particle with `τ i = 0` contributes `0`, and
+the pressure is `0` for `A = 0`. The intended domain is `A > 0`, with `τ i > 0` for every particle
+with `Δp i ≠ 0`. Neither
 Mathlib nor ATLAS `main` defines a kinetic (momentum-flux) pressure; Physlib's
 `NVEHamiltonian.pressure` (used by `IdealGas.ideal_gas_law`) is the thermodynamic pressure
 `-∂A/∂V`, a different quantity. -/

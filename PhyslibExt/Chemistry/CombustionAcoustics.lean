@@ -192,7 +192,8 @@ namespace Chemistry.CombustionAcoustics
 /-- Zeroth-order Arrhenius heat-release rate with Newton cooling:
 `rate(T) = G * exp(-B / T) - H * (T - Ta)`, for heat-generation scale
 `G`, cooling coefficient `H`, activation ratio `B = E / R`, and
-ambient `Ta`. Read for `T > 0`. -/
+ambient `Ta`. Read for `T > 0`. It is defined for every real `T`: for
+`T = 0` the convention `x / 0 = 0` makes it `G + H * Ta`. -/
 noncomputable def arrheniusRate (G H B Ta T : ℝ) : ℝ :=
   G * Real.exp (-B / T) - H * (T - Ta)
 
@@ -513,7 +514,10 @@ lemma arrhenius_solution_trapped {G H B Ta C : ℝ} (hG : 0 < G)
 /-- Acoustic modal energy for one standing mode with pressure amplitude
 `A` and velocity amplitude `B` in a duct of length `L`, ratio of
 specific heats `γ`, mean pressure `pbar`, and density `ρ`:
-`E = L * (A^2 / (γ * pbar) + ρ * B^2) / 4`. -/
+`E = L * (A^2 / (γ * pbar) + ρ * B^2) / 4`. It is defined for all real
+arguments: for `γ * pbar = 0` the convention `x / 0 = 0` drops the
+pressure term, leaving `L * ρ * B^2 / 4`. The intended domain is
+`γ, pbar > 0`. -/
 noncomputable def acousticModeEnergy (γ pbar ρ L A B : ℝ) : ℝ :=
   L * (A ^ 2 / (γ * pbar) + ρ * B ^ 2) / 4
 
@@ -687,7 +691,9 @@ theorem acousticModeEnergy_eq_of_conserved
 /-! ## C. Semenov critical ratio and folds -/
 
 /-- Semenov critical ratio `q(T) = (T - Ta) * exp(B / T)`: for
-`H, T > 0`, equilibrium of the Arrhenius rate is `G / H = q(T)`. -/
+`H, T > 0`, equilibrium of the Arrhenius rate is `G / H = q(T)`. It is
+defined for every real `T`: for `T = 0` the convention `x / 0 = 0` makes
+it `-Ta`. The intended domain is `T > 0`. -/
 noncomputable def critRatio (Ta B T : ℝ) : ℝ :=
   (T - Ta) * Real.exp (B / T)
 
@@ -1520,40 +1526,50 @@ state `(ρ2, u2, p2, T2)` of a calorically perfect gas with gas constant `R`, he
 `γ` (the same on both sides) and heat release `q` per unit mass: the ideal-gas law `p = ρ R T` at
 both states, conservation of the mass flux `ρ u` and the momentum flux `p + ρ u ^ 2`, and the
 reactive total-enthalpy jump `cp T1 + u1 ^ 2 / 2 + q = cp T2 + u2 ^ 2 / 2` with
-`cp = γ R / (γ - 1)`. Read for `γ > 1`; velocities are in the wave frame. -/
+`cp = γ R / (γ - 1)`. Read for `γ > 1`; velocities are in the wave frame. It is defined for every
+real `γ`: for `γ = 1` the convention `x / 0 = 0` makes `cp = 0`, so the energy condition reads
+`u1 ^ 2 / 2 + q = u2 ^ 2 / 2`. -/
 def IsReactiveJump (γ R q ρ1 u1 p1 T1 ρ2 u2 p2 T2 : ℝ) : Prop :=
   p1 = ρ1 * R * T1 ∧ p2 = ρ2 * R * T2 ∧ ρ1 * u1 = ρ2 * u2 ∧
     p1 + ρ1 * u1 ^ 2 = p2 + ρ2 * u2 ^ 2 ∧
     γ * R / (γ - 1) * T1 + u1 ^ 2 / 2 + q = γ * R / (γ - 1) * T2 + u2 ^ 2 / 2
 
 /-- The heat-release parameter `Q = (γ ^ 2 - 1) q / a1 ^ 2` of the heat release `q` per unit mass
-against the upstream sound speed `a1`. Read for `a1 ^ 2 = γ R T1 > 0`. -/
+against the upstream sound speed `a1`. Read for `a1 ^ 2 = γ R T1 > 0`. It is defined for every
+real `a1`: for `a1 = 0` the convention `x / 0 = 0` makes it `0`. -/
 noncomputable def cjHeatParameter (γ q a1 : ℝ) : ℝ :=
   (γ ^ 2 - 1) * q / a1 ^ 2
 
 /-- The detonation root `1 + Q + √(Q (Q + 2))` of `m ^ 2 - 2 (1 + Q) m + 1 = 0`, the larger of
-its two roots. Read for `Q ≥ 0`. -/
+its two roots. Read for `Q ≥ 0`. It is defined for every real `Q`: for `-2 < Q < 0` it is `1 + Q`,
+since `√x = 0` for `x < 0`. -/
 noncomputable def cjDetonationMachSq (Q : ℝ) : ℝ :=
   1 + Q + Real.sqrt (Q * (Q + 2))
 
 /-- The other root `1 + Q - √(Q (Q + 2))` of `m ^ 2 - 2 (1 + Q) m + 1 = 0`, the
 Chapman-Jouguet deflagration point. For `Q > 0` it is below the detonation root. Read for
-`Q ≥ 0`. -/
+`Q ≥ 0`. It is defined for every real `Q`: for `-2 < Q < 0` it is `1 + Q`, since `√x = 0` for
+`x < 0`. -/
 noncomputable def cjDeflagrationMachSq (Q : ℝ) : ℝ :=
   1 + Q - Real.sqrt (Q * (Q + 2))
 
 /-- The density ratio `ρ2 / ρ1 = (γ + 1) m / (1 + γ m)` of a reactive jump to a sonic downstream
-state, at the squared upstream Mach number `m = M1 ^ 2 > 0`. -/
+state, at the squared upstream Mach number `m = M1 ^ 2 > 0`. It is defined for all real `γ` and
+`m`: where `1 + γ m = 0` the convention `x / 0 = 0` makes it `0`. The intended domain is `γ > 1`
+and `m > 0`. -/
 noncomputable def cjDensityRatio (γ m : ℝ) : ℝ :=
   (γ + 1) * m / (1 + γ * m)
 
 /-- The pressure ratio `p2 / p1 = (1 + γ m) / (γ + 1)` of a reactive jump to a sonic downstream
-state, at `m = M1 ^ 2`. -/
+state, at `m = M1 ^ 2`. It is defined for every real `γ`: for `γ = -1` the convention `x / 0 = 0`
+makes it `0`. The intended domain is `γ > 1`. -/
 noncomputable def cjPressureRatio (γ m : ℝ) : ℝ :=
   (1 + γ * m) / (γ + 1)
 
 /-- The temperature ratio `T2 / T1` of a reactive jump to a sonic downstream state: the pressure
-ratio over the density ratio, `(1 + γ m) ^ 2 / ((γ + 1) ^ 2 m)` for `m > 0`. -/
+ratio over the density ratio, `(1 + γ m) ^ 2 / ((γ + 1) ^ 2 m)` for `m > 0`. It is defined for all
+real `γ` and `m`: for `m = 0` or `γ = -1` the convention `x / 0 = 0` makes it `0`. The intended
+domain is `γ > 1` and `m > 0`. -/
 noncomputable def cjTemperatureRatio (γ m : ℝ) : ℝ :=
   cjPressureRatio γ m / cjDensityRatio γ m
 

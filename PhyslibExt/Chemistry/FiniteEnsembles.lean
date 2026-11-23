@@ -465,7 +465,9 @@ constant, so it takes no `kB` argument. -/
 noncomputable def helmholtzFreeEnergy {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ) : ℝ :=
   -(Real.log (partitionFunction E β)) / β
 
-/-- The entropy `S = kB * (log Z + β * U)`. -/
+/-- The entropy `S = kB * (log Z + β * U)`. It is defined for every finite state space: for an
+empty one, `Z = 0` and the convention `log 0 = 0` make it `0`. The intended domain is a nonempty
+state space, where `Z > 0`. -/
 noncomputable def entropy {ι : Type*} [Fintype ι] (kB : ℝ) (E : ι → ℝ) (β : ℝ) : ℝ :=
   kB * (Real.log (partitionFunction E β) + β * meanEnergy E β)
 

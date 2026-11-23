@@ -197,9 +197,11 @@ lemma tHalfWidth_nonneg (s : ℝ) (n : ℕ) (tcrit : ℝ) (ht : 0 ≤ tcrit)
   unfold tHalfWidth
   exact div_nonneg (mul_nonneg ht hs) (Real.sqrt_nonneg _)
 
-/-- The t-interval `x̄ ± tcrit * s / √n` as a set; it carries no coverage claim. Its exact
-coverage under i.i.d. normal sampling of `n ≥ 2` observations, with the sample mean, the sample
-standard deviation and the Student-t quantile, is `tInterval_coverage`. -/
+/-- The t-interval `x̄ ± tcrit * s / √n` as a set; it carries no coverage claim. For `n = 0` the
+convention `x / 0 = 0` makes the half-width `0`, so the interval is the single point `x̄`; the
+intended domain is `n ≥ 1`. Its exact coverage under i.i.d. normal sampling of `n ≥ 2`
+observations, with the sample mean, the sample standard deviation and the Student-t quantile, is
+`tInterval_coverage`. -/
 def tInterval (xbar s : ℝ) (n : ℕ) (tcrit : ℝ) : Set ℝ :=
   Set.Icc (xbar - tHalfWidth s n tcrit) (xbar + tHalfWidth s n tcrit)
 

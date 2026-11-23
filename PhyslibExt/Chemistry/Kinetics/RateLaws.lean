@@ -103,7 +103,7 @@ into a zero rate and a constant concentration instead of an undefined model. -/
 abbrev ReactorVolume : Type := {V : ℝ // 0 < V}
 
 /-- Extent rate `v = (1 / V) dξ/dt` in a reactor of volume `V > 0`: the single rate convention
-used here. -/
+used here. Where `ξ` is not differentiable, `dξ/dt` is taken to be `0`, so `v = 0` there. -/
 noncomputable def extentRate (V : ReactorVolume) (ξ : ℝ → ℝ) (t : ℝ) : ℝ :=
   (1 / (V : ℝ)) * deriv ξ t
 
@@ -432,7 +432,9 @@ lemma secondOrderGen_unique (A0 c : ℝ) (g : ℝ → ℝ) (hc : 0 < c) (hA0 : 0
     field_simp
   exact h2.trans h3
 
-/-- `2A → P` integrated law with `ν = -2`: `[A]₀ / (1 + 2k[A]₀t)`. -/
+/-- `2A → P` integrated law with `ν = -2`: `[A]₀ / (1 + 2k[A]₀t)`. It is defined for all real
+`[A]₀`, `k` and `t`: where `1 + 2k[A]₀t = 0` the convention `x / 0 = 0` makes it `0`. The intended
+domain is `k > 0`, `[A]₀ > 0` and `t ≥ 0`, where the denominator is positive. -/
 noncomputable def secondOrderAASol (A0 k : ℝ) (t : ℝ) : ℝ := A0 / (1 + 2 * k * A0 * t)
 
 /-- The `2A → P` solution starts at `[A]₀`. -/
@@ -775,7 +777,9 @@ theorem secondOrderABSol_unique (A0 B0 k : ℝ) (gA gB : ℝ → ℝ)
     exact hsol.trans hbridge
   exact key t ht
 
-/-- `A + B` integrated law with equal initial amounts. -/
+/-- `A + B` integrated law with equal initial amounts: `[A]₀ / (1 + k[A]₀t)`. It is defined for
+all real `[A]₀`, `k` and `t`: where `1 + k[A]₀t = 0` the convention `x / 0 = 0` makes it `0`. The
+intended domain is `k > 0`, `[A]₀ > 0` and `t ≥ 0`, where the denominator is positive. -/
 noncomputable def secondOrderABEqualSol (A0 k : ℝ) (t : ℝ) : ℝ := A0 / (1 + k * A0 * t)
 
 /-- The equal-initial-amounts solution starts at `[A]₀`. -/
@@ -923,7 +927,8 @@ theorem halfLife_indep_iff_first_order (m : RateModel) (k : ℝ) (hk : 0 < k) :
 `k`, `t` and `[A]₀` (`zeroOrderSol_rateGroup`, `firstOrderSol_rateGroup`,
 `secondOrderAASol_rateGroup`). This is a normalization identity in real arithmetic: no dimensions
 or units are formalized here. At order `0` it divides by `[A]₀`, so it is meaningful for
-`[A]₀ > 0` (as `k_of_rateGroup` assumes). -/
+`[A]₀ > 0` (as `k_of_rateGroup` assumes); at order `0` and `[A]₀ = 0` the convention `0⁻¹ = 0`
+makes it `0`. -/
 noncomputable def rateGroup (n : ℕ) (k t A0 : ℝ) : ℝ := k * t * A0 ^ ((n:ℤ) - 1)
 
 /-- The order-0 rate group is `kt / [A]₀`. -/
@@ -990,7 +995,8 @@ lemma hasDerivAt_pfoSol (A0 B0 k t : ℝ) :
     HasDerivAt (pfoSol A0 B0 k) (-(pfoRateConst B0 k) * pfoSol A0 B0 k t) t :=
   hasDerivAt_firstOrderSol A0 (k * B0) t
 
-/-- Excess ratio `r = [A]₀ / [B]₀`, meaningful for `[B]₀ > 0`, which the bounds below assume. -/
+/-- Excess ratio `r = [A]₀ / [B]₀`, meaningful for `[B]₀ > 0`, which the bounds below assume.
+It is defined for every real `[B]₀`: for `[B]₀ = 0` the convention `x / 0 = 0` makes it `0`. -/
 noncomputable def pfoRatio (A0 B0 : ℝ) : ℝ := A0 / B0
 
 /-- Pseudo-first-order error bound, explicit in `r = [A]₀ / [B]₀ < 1`: for `0 < [A]₀ < [B]₀`,

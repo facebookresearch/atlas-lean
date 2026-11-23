@@ -411,7 +411,9 @@ slope of the response-versus-added-concentration line, the unknown concentration
 `intercept / slope`. The parametrization is fixed once here: `intercept` and `slope` are the
 fitted line's coefficients, and the sign convention is that the line `y = a + b * t` meets
 `y = 0` at `t = -a / b`, so the unknown is `-t* = a / b` (positive for same-sign `a, b`).
-No Mathlib or ATLAS definition covers standard addition. -/
+It is defined for every slope: for `b = 0` the convention `x / 0 = 0` makes it `0`, while the
+line meets `y = 0` only when `b ≠ 0`. No Mathlib or ATLAS definition covers standard
+addition. -/
 noncomputable def standardAdditionUnknown (intercept slope : ℝ) : ℝ :=
   intercept / slope
 
@@ -443,8 +445,10 @@ lemma standardAdditionUnknown_eq (x_u a b : ℝ) (t : ℝ) (y : ℝ → ℝ)
   rw [h2]
   field_simp
 
-/-- Internal-standard ratio (CH24.5b): the analyte response over the standard response. No
-Mathlib or ATLAS definition covers internal-standard ratios. -/
+/-- Internal-standard ratio (CH24.5b): the analyte response over the standard response. It is
+defined for every real `y_standard`: for `y_standard = 0` the convention `x / 0 = 0` makes it
+`0`, and the intended domain is `y_standard ≠ 0`. No Mathlib or ATLAS definition covers
+internal-standard ratios. -/
 noncomputable def internalStandardRatio (y_analyte y_standard : ℝ) : ℝ :=
   y_analyte / y_standard
 

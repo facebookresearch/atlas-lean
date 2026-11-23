@@ -290,8 +290,11 @@ numbers `A j`: the nucleon number of a lightest isotope. -/
 def isotopeMin {ι : Type*} (iso : Finset ι) (hiso : iso.Nonempty) (A : ι → ℕ) : ℕ :=
   (iso.image A).min' (hiso.image A)
 
-/-- The physical nominal mass shift of an isotope `j ∈ iso`, for a nonempty isotope set `iso`: its
-nucleon number `A j` minus the least nucleon number `isotopeMin iso hiso A` over the set. -/
+/-- The nominal mass shift `A j - isotopeMin iso hiso A` of an index `j` relative to a nonempty
+isotope set `iso`: the nucleon number `A j` minus the least nucleon number `isotopeMin iso hiso A`
+over the set. It is defined for every index `j`, as a subtraction of natural numbers truncated at
+`0`, so it is `0` when `A j < isotopeMin iso hiso A`. Its physical use is on isotopes `j ∈ iso`,
+where `isotopeMin iso hiso A ≤ A j` and the subtraction is exact. -/
 def isotopeShift {ι : Type*} (iso : Finset ι) (hiso : iso.Nonempty) (A : ι → ℕ) (j : ι) : ℕ :=
   A j - isotopeMin iso hiso A
 

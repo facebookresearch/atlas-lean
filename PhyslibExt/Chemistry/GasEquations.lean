@@ -121,7 +121,9 @@ lemma idealGas_pressure_alone_eq_partialPressure {ι : Type*} [Fintype ι] (n : 
 
 /-- The van der Waals pressure `p = R T / (V_m - b) - a / V_m ^ 2` as a function of the molar
 volume `Vm`. The model is used on `Vm > b` with fitted parameters `a, b > 0` and with
-`R, T > 0`; outside `Vm > b` no van der Waals result of this module applies. -/
+`R, T > 0`; outside `Vm > b` no van der Waals result of this module applies. It is defined for
+every real `Vm`: by the convention `x / 0 = 0`, the term `R T / (V_m - b)` is `0` at `Vm = b` and
+the term `a / V_m ^ 2` is `0` at `Vm = 0`. -/
 noncomputable def vdWPressure (a b R T Vm : ℝ) : ℝ := R * T / (Vm - b) - a / Vm ^ 2
 
 /-- Van der Waals model: the derivative of the pressure in the molar volume at any
@@ -215,15 +217,18 @@ lemma vdW_critical_point_of_deriv (a b R T Vm : ℝ) (ha : 0 < a) (hb : 0 < b) (
 /-! ## D. The reduced van der Waals equation -/
 
 /-- The van der Waals reduced pressure `P_r = p / p_c` with the critical pressure
-`p_c = a / (27 b ^ 2)`. -/
+`p_c = a / (27 b ^ 2)`. It is defined for all real `a`, `b` and `p`: for `a = 0` or `b = 0` the
+convention `x / 0 = 0` makes it `0`. The intended domain is `a, b > 0`. -/
 noncomputable def vdWReducedPressure (a b p : ℝ) : ℝ := p / (a / (27 * b ^ 2))
 
 /-- The van der Waals reduced molar volume `V_r = V_m / V_{m,c}` with the critical molar volume
-`V_{m,c} = 3 b`. -/
+`V_{m,c} = 3 b`. It is defined for every real `b`: for `b = 0` the convention `x / 0 = 0` makes it
+`0`. The intended domain is `b > 0`. -/
 noncomputable def vdWReducedVolume (b Vm : ℝ) : ℝ := Vm / (3 * b)
 
 /-- The van der Waals reduced temperature `T_r = T / T_c` with the critical temperature
-`T_c = 8 a / (27 R b)`. -/
+`T_c = 8 a / (27 R b)`. It is defined for all real `a`, `b`, `R` and `T`: for `a = 0`, `b = 0` or
+`R = 0` the convention `x / 0 = 0` makes it `0`. The intended domain is `a, b, R > 0`. -/
 noncomputable def vdWReducedTemperature (a b R T : ℝ) : ℝ := T / (8 * a / (27 * R * b))
 
 /-- Van der Waals model: for `0 < a`, `0 < b` and `b < Vm`, the reduced equation
@@ -245,7 +250,9 @@ theorem reduced_vdW_equation (a b R T Vm p Pr Vr Tr : ℝ) (ha : 0 < a) (hb : 0 
 
 /-! ## E. Virial coefficients and the Boyle temperature -/
 
-/-- The second virial coefficient `B(T) = b - a / (R T)` of the van der Waals gas. -/
+/-- The second virial coefficient `B(T) = b - a / (R T)` of the van der Waals gas. It is defined
+for all real `R` and `T`: for `R T = 0` the convention `x / 0 = 0` makes it `b`. The intended
+domain is `R, T > 0`. -/
 noncomputable def vdWSecondVirialCoeff (a b R T : ℝ) : ℝ := b - a / (R * T)
 
 /-- Van der Waals model, exact virial identity for `0 < b`, `0 < R`, `0 < T` and `b < Vm`:

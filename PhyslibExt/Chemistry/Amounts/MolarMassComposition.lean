@@ -120,8 +120,9 @@ namespace Chemistry.Amounts
 -/
 
 /-- The amount of substance `n = N / N_A` of a sample of `N` specified entities, where `N_A` is
-the Avogadro constant. `N_A` is a parameter: no numerical value is fixed, and the results below
-assume only `0 < N_A`. -/
+the Avogadro constant. `N_A` is a parameter: no numerical value is fixed. It is defined for every
+real `N_A`: for `N_A = 0` the convention `x / 0 = 0` makes it `0`. The intended domain is
+`N_A > 0`, which the results below assume. -/
 noncomputable def amountOfSubstance (N : ℕ) (N_A : ℝ) : ℝ :=
   N / N_A
 
@@ -542,7 +543,9 @@ noncomputable def massFraction {ι : Type*} [Fintype ι] (M n : ι → ℝ) (i :
   n i * M i / ∑ j, n j * M j
 
 /-- The mole fractions `x i = (w i / M i) / ∑ j, w j / M j` of a mixture with mass fractions `w`
-and molar masses `M`. -/
+and molar masses `M`. It is defined for all real `w` and `M`: the convention `x / 0 = 0` sets
+`w j / M j = 0` when `M j = 0` and every fraction to `0` when `∑ j, w j / M j = 0`; the intended
+domain is positive molar masses and nonnegative mass fractions, not all `0`. -/
 noncomputable def moleFractionOfMassFraction {ι : Type*} [Fintype ι] (M w : ι → ℝ) (i : ι) :
     ℝ :=
   moleFraction (fun j => w j / M j) i

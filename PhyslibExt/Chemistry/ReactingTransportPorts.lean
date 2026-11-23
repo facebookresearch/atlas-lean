@@ -97,7 +97,9 @@ noncomputable def arrheniusRateConstant (A B T : ℝ) : ℝ :=
   A * Real.exp (-B / T)
 
 /-- The proof-device rate `A * exp(-B / max (Tfloor / 2) T)`: the Arrhenius rate at the
-temperature raised to at least `Tfloor / 2`. -/
+temperature raised to at least `Tfloor / 2`. It is defined for all real arguments: when
+`max (Tfloor / 2) T = 0` the convention `x / 0 = 0` makes it `A`. The intended domain is
+`Tfloor > 0`, where the floored temperature is positive. -/
 noncomputable def flooredRateConstant (A B Tfloor T : ℝ) : ℝ :=
   arrheniusRateConstant A B (max (Tfloor / 2) T)
 
@@ -117,11 +119,15 @@ def cstrField (a b h cin Tin Tc : ℝ) (κ : ℝ → ℝ) (x : ℝ × ℝ) : ℝ
 noncomputable def concentrationCeiling (c0 cin : ℝ) : ℝ :=
   max c0 cin
 
-/-- Temperature floor `Tmin = min T0 ((a Tin + h Tc) / (a + h))`. -/
+/-- Temperature floor `Tmin = min T0 ((a Tin + h Tc) / (a + h))`. It is defined for all real
+arguments: for `a + h = 0` the convention `x / 0 = 0` makes it `min T0 0`. The intended domain is
+`a > 0` and `h ≥ 0`, where `a + h > 0`. -/
 noncomputable def temperatureFloor (a h Tin Tc T0 : ℝ) : ℝ :=
   min T0 ((a * Tin + h * Tc) / (a + h))
 
-/-- Temperature ceiling `Tmax = max T0 ((a Tin + h Tc + b A cmax) / (a + h))`. -/
+/-- Temperature ceiling `Tmax = max T0 ((a Tin + h Tc + b A cmax) / (a + h))`. It is defined for
+all real arguments: for `a + h = 0` the convention `x / 0 = 0` makes it `max T0 0`. The intended
+domain is `a > 0` and `h ≥ 0`, where `a + h > 0`. -/
 noncomputable def temperatureCeiling (a b h A Tin Tc T0 cmax : ℝ) : ℝ :=
   max T0 ((a * Tin + h * Tc + b * A * cmax) / (a + h))
 

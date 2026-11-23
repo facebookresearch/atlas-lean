@@ -199,7 +199,9 @@ namespace Chemistry.Quantum.OneDimensionalModels
 noncomputable def boxFunction (n : ℕ) (L : ℝ) (x : ℝ) : ℝ :=
   Real.sqrt (2 / L) * Real.sin (↑n * Real.pi * x / L)
 
-/-- Box energy `n^2 h^2 / (8 m L^2)` with `h = 2πħ`. -/
+/-- Box energy `n^2 h^2 / (8 m L^2)` with `h = 2πħ`. It is defined for every real `m` and `L`:
+for `m = 0` or `L = 0` the convention `x / 0 = 0` makes it `0`. The intended domain is `m > 0`
+and `L > 0`. -/
 noncomputable def boxEnergy (n : ℕ) (L m ħ : ℝ) : ℝ :=
   (↑n ^ 2 * (2 * Real.pi * ħ) ^ 2) / (8 * m * L ^ 2)
 
@@ -1411,12 +1413,14 @@ def SchwartzCarrier : Set (ℝ → ℂ) :=
   {f | ∃ s : SchwartzMap ℝ ℂ, ⇑s = f}
 
 /-- Annihilation function in `ħ = m = ω = 1` units:
-`a f = (x ↦ (x * f x + deriv f x) / √2)`. -/
+`a f = (x ↦ (x * f x + deriv f x) / √2)`, where `deriv f x` is `0` at every `x` where `f` is not
+differentiable. -/
 noncomputable def annFun (f : ℝ → ℂ) : ℝ → ℂ :=
   fun x => (↑x * f x + deriv f x) / ↑(Real.sqrt 2)
 
 /-- Creation function in `ħ = m = ω = 1` units:
-`a† f = (x ↦ (x * f x - deriv f x) / √2)`. -/
+`a† f = (x ↦ (x * f x - deriv f x) / √2)`, where `deriv f x` is `0` at every `x` where `f` is not
+differentiable. -/
 noncomputable def creFun (f : ℝ → ℂ) : ℝ → ℂ :=
   fun x => (↑x * f x - deriv f x) / ↑(Real.sqrt 2)
 
@@ -1938,12 +1942,16 @@ measurement. -/
 noncomputable def polyeneLength (k : ℕ) (a : ℝ) : ℝ := (2 * ↑k + 1) * a
 
 /-- MODEL: HOMO-LUMO gap `ΔE = E(k+1) - E(k)` from `boxEnergy`
-(HOMO `n = k`, LUMO `n = k + 1` for `N = 2k` π-electrons). -/
+(HOMO `n = k`, LUMO `n = k + 1` for `N = 2k` π-electrons). It is defined for every real `m` and
+`L`: for `m = 0` or `L = 0` the convention `x / 0 = 0` makes both box energies, hence the gap,
+`0`. The intended domain is `m > 0` and `L > 0`. -/
 noncomputable def polyeneGap (k : ℕ) (L m ħ : ℝ) : ℝ :=
   boxEnergy (k + 1) L m ħ - boxEnergy k L m ħ
 
 /-- MODEL: absorption wavelength `h * c / ΔE` with `h = 2πħ`
-(`planckH`) and symbolic `c > 0`. -/
+(`planckH`) and a symbolic constant `c`. It is defined for every real `L`, `m`, `ħ` and `c`: when
+`ΔE = 0`, as for `ħ = 0`, `m = 0` or `L = 0`, the convention `x / 0 = 0` makes it `0`. The
+intended domain is `L, m, ħ, c > 0`, where `ΔE > 0`. -/
 noncomputable def polyeneWavelength (k : ℕ) (L m ħ c : ℝ) : ℝ :=
   planckH ħ * c / polyeneGap k L m ħ
 

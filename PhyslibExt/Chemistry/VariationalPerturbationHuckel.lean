@@ -135,20 +135,20 @@ noncomputable def huckelMatrix {n : ℕ} (α β : ℝ) (G : SimpleGraph (Fin n))
 noncomputable def pertE1 {n : ℕ} [NeZero n] (H1 : Matrix (Fin n) (Fin n) ℝ) : ℝ :=
   H1 0 0
 
-/-- First-order eigenvector correction (zero 0-component). -/
+/-- First-order eigenvector correction (zero 0-component), for `n ≥ 1` levels. -/
 noncomputable def pertV1 {n : ℕ} [NeZero n] (d : Fin n → ℝ)
     (H1 : Matrix (Fin n) (Fin n) ℝ) : Fin n → ℝ :=
   fun j => if j = 0 then 0 else H1 j 0 / (d 0 - d j)
 
-/-- Second-order energy correction. -/
+/-- Second-order energy correction of level `0`, for `n ≥ 1` levels. -/
 noncomputable def pertE2 {n : ℕ} [NeZero n] (d : Fin n → ℝ)
     (H1 H2 : Matrix (Fin n) (Fin n) ℝ) : ℝ :=
   H2 0 0 + ∑ j ∈ Finset.univ.erase 0, (H1 j 0) ^ 2 / (d 0 - d j)
 
-/-- Second-order eigenvector coefficient (zero `0`-component), the Rayleigh–Schrödinger formula
-in intermediate normalization. In `secondOrder_projected_residual` it enters only the `t ^ 3`
-remainder of the `e₀`-component; the tests check the full second-order residual on a `3 × 3`
-example. -/
+/-- Second-order eigenvector coefficient (zero `0`-component) for `n ≥ 1` levels, the
+Rayleigh–Schrödinger formula in intermediate normalization. In `secondOrder_projected_residual`
+it enters only the `t ^ 3` remainder of the `e₀`-component; the tests check the full second-order
+residual on a `3 × 3` example. -/
 noncomputable def pertV2 {n : ℕ} [NeZero n] (d : Fin n → ℝ)
     (H1 H2 : Matrix (Fin n) (Fin n) ℝ) : Fin n → ℝ :=
   fun j => if j = 0 then 0 else
@@ -348,9 +348,9 @@ theorem generalizedEigenvalue_eq_ratio {n : ℕ}
 
 /-! ## C. Perturbation residuals -/
 
-/-- First-order perturbation: for a nondegenerate level, `d 0 ≠ d j` for `j ≠ 0`, with
-`v(t) = e₀ + t • pertV1` and `E(t) = d 0 + t * pertE1`, the residual of `(diagonal d + t • H1)`
-is `t ^ 2 • (H1 *ᵥ pertV1 - pertE1 • pertV1)`, so `O(t ^ 2)`. -/
+/-- First-order perturbation: for `n ≥ 1` levels and a nondegenerate level, `d 0 ≠ d j` for
+`j ≠ 0`, with `v(t) = e₀ + t • pertV1` and `E(t) = d 0 + t * pertE1`, the residual of
+`(diagonal d + t • H1)` is `t ^ 2 • (H1 *ᵥ pertV1 - pertE1 • pertV1)`, so `O(t ^ 2)`. -/
 theorem firstOrder_residual {n : ℕ} [NeZero n] (d : Fin n → ℝ)
     (H1 : Matrix (Fin n) (Fin n) ℝ)
     (hd : ∀ j : Fin n, j ≠ 0 → d 0 - d j ≠ 0) (t : ℝ) :
@@ -374,8 +374,8 @@ theorem firstOrder_residual {n : ℕ} [NeZero n] (d : Fin n → ℝ)
     field_simp [hd j hj]
     ring
 
-/-- Second-order perturbation: for symmetric `H1` and a nondegenerate level, `d 0 ≠ d j` for
-`j ≠ 0`, the `e₀`-projected residual of the full family
+/-- Second-order perturbation: for `n ≥ 1` levels, symmetric `H1` and a nondegenerate level,
+`d 0 ≠ d j` for `j ≠ 0`, the `e₀`-projected residual of the full family
 `diagonal d + t • H1 + t ^ 2 • H2` at `v = e₀ + t • v1 + t ^ 2 • v2`,
 `E = d 0 + t * E1 + t ^ 2 * E2` is `O(t ^ 3)` with the explicit remainder. -/
 theorem secondOrder_projected_residual {n : ℕ} [NeZero n] (d : Fin n → ℝ)
