@@ -18,13 +18,16 @@ public import MathlibExt.AlgebraicGeometry.CompactifiedPoincareKernels
 # Compactified Poincaré sheaf, its properties and autoduality
 
 For an integral proper curve with planar singularities over an algebraically closed field of
-characteristic zero, with a fine compactified Jacobian `J̄`, these requests ask for the
-normalized Poincaré sheaf on `J̄ × J̄` (characterized by its line-bundle locus, its open
-Picard-zero family, its symmetry and its extension from the big open), and, for every such
-sheaf, Arinkin's geometric properties (`PoincareKernelModel.Properties`: density of the
-line-bundle locus, identification with `Pic⁰(J̄)`, maximal Cohen--Macaulay, flat over both
-factors) and Fourier--Mukai autoduality (`PoincareKernelModel.IsAutodual`). Canonical derived
-operators are explicit inputs fixed by their cochain universal properties.
+characteristic zero, with a fine compactified Jacobian `J̄`, this request asks for Arinkin's
+normalized Poincaré sheaf on `J̄ × J̄`: a Poincaré-kernel candidate (`PoincareKernelCandidate`:
+a sheaf with its line-bundle locus, open Picard-zero family, symmetry and extension from the big
+open) that has Arinkin's geometric properties (`PoincareKernelCandidate.Properties`: density of the
+line-bundle locus, identification with `Pic⁰(J̄)`, maximal Cohen--Macaulay, flat over both factors,
+Theorem A) and is a Fourier--Mukai autoduality kernel (`PoincareKernelCandidate.IsAutodual`,
+Theorem C). The candidate data alone do not single out Arinkin's sheaf (a constant classifying map
+with the trivial sheaf satisfies them), so the request is the existence of a candidate with both
+properties; it is not vacuous, since the trivial candidate fails `Properties.betaIso`. Canonical
+derived operators are explicit inputs fixed by their cochain universal properties.
 
 Source: D. Arinkin, *Autoduality of compactified Jacobians for curves with
 plane singularities*, Theorems A--C. https://arxiv.org/abs/1001.3868
@@ -45,10 +48,12 @@ variable [MathlibExt.AlgebraicGeometry.FourierMukai.HasDerivedPullbacks.{u}]
   [MathlibExt.AlgebraicGeometry.FourierMukai.HasDerivedPushforwards.{u}]
   [MathlibExt.AlgebraicGeometry.FourierMukai.HasDerivedTensors.{u}]
 
-/-- Arinkin's normalized compactified Poincaré sheaf on `J̄ × J̄`. -/
+/-- Arinkin's normalized compactified Poincaré sheaf on `J̄ × J̄`: a Poincaré-kernel candidate with
+Arinkin's geometric properties (Theorem A) that is an autoduality kernel (Theorem C). -/
 public def_wanted compactifiedPoincareKernel
     (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (C : Over (Spec (.of k))) [IsProper C.hom] [IsIntegral C.left]
+    [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
     (hdim : topologicalKrullDim C.left = 1)
     (planar : ∀ x : C.left, IsClosed ({x} : Set C.left) →
       Module.finrank (IsLocalRing.ResidueField (C.left.presheaf.stalk x))
@@ -56,34 +61,6 @@ public def_wanted compactifiedPoincareKernel
     [TorsionFreeRestrictions C.left]
     (q : Polarization C.left) (hq : totalWeight q = ((1 - (genus C.hom : ℤ) : ℤ) : ℚ))
     (s : SmoothMarking C) (M : FineCompactifiedJacobian C q s) :
-    PoincareKernelModel C q s M
-
-/-- Every normalized Poincaré sheaf has Arinkin's geometric properties (Theorem A). -/
-public theorem_wanted compactifiedPoincareKernel_properties
-    (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
-    (C : Over (Spec (.of k))) [IsProper C.hom] [IsIntegral C.left]
-    (hdim : topologicalKrullDim C.left = 1)
-    (planar : ∀ x : C.left, IsClosed ({x} : Set C.left) →
-      Module.finrank (IsLocalRing.ResidueField (C.left.presheaf.stalk x))
-        (IsLocalRing.CotangentSpace (C.left.presheaf.stalk x)) ≤ 2)
-    [TorsionFreeRestrictions C.left]
-    (q : Polarization C.left) (hq : totalWeight q = ((1 - (genus C.hom : ℤ) : ℤ) : ℚ))
-    (s : SmoothMarking C) (M : FineCompactifiedJacobian C q s)
-    (K : PoincareKernelModel C q s M) :
-    K.Properties
-
-/-- Every normalized Poincaré sheaf is a Fourier--Mukai autoduality kernel (Theorem C). -/
-public theorem_wanted compactifiedPoincareKernel_isAutodual
-    (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
-    (C : Over (Spec (.of k))) [IsProper C.hom] [IsIntegral C.left]
-    (hdim : topologicalKrullDim C.left = 1)
-    (planar : ∀ x : C.left, IsClosed ({x} : Set C.left) →
-      Module.finrank (IsLocalRing.ResidueField (C.left.presheaf.stalk x))
-        (IsLocalRing.CotangentSpace (C.left.presheaf.stalk x)) ≤ 2)
-    [TorsionFreeRestrictions C.left]
-    (q : Polarization C.left) (hq : totalWeight q = ((1 - (genus C.hom : ℤ) : ℤ) : ℚ))
-    (s : SmoothMarking C) (M : FineCompactifiedJacobian C q s)
-    (K : PoincareKernelModel C q s M) :
-    K.IsAutodual
+    {K : PoincareKernelCandidate C q s M // K.Properties ∧ K.IsAutodual}
 
 end WantedExt.AlgebraicGeometry.CompactifiedPoincareKernel
