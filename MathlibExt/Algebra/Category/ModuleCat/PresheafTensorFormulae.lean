@@ -7,14 +7,15 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Adapted completed public AxiomMath/Stacks code, revision
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/Algebra/Category/ModuleCat/Presheaf/Tensor.lean.
-https://github.com/AxiomMath/Stacks
-Apache License 2.0; the source has no individual author notice.
-Modification notice: preserve actual native tensor/internal-Hom operations;
-replace source-local imports by MathlibExt and the native ring-sheaf
-forgetful functor. No new axioms or Wanted payloads are added.
+Portions of this file are adapted from AxiomMath/Stacks (https://github.com/AxiomMath/Stacks),
+revision c496df0d9beea9deaeabcea8492605f9a0a2313b, licensed under the Apache License,
+Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0). The source files carry no
+individual copyright or author notice.
+
+* `StacksFrontier/Algebra/Category/ModuleCat/Presheaf/Tensor.lean`
+
+Modifications: source-local imports replaced by MathlibExt and Mathlib, using the native
+ring-sheaf forgetful functor; the tensor and internal-Hom operations are unchanged.
 -/
 module
 

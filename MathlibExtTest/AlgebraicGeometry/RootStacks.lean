@@ -82,4 +82,10 @@ def rootDeligneMumfordGoal {X : Scheme.{u}} {L : X.Modules}
     {s : MathlibExt.AlgebraicGeometry.LineBundleTaskContracts.Section L} {n : ℕ}
     (R : RootStack L s n) : Prop := (relativeRoot R).IsDeligneMumfordStack
 
+/-- The root-stack interface excludes the degenerate exponent zero. -/
+example {X : Scheme.{u}} {L : X.Modules}
+    {s : MathlibExt.AlgebraicGeometry.LineBundleTaskContracts.Section L}
+    (R : RootStack L s 0) : False :=
+  (lt_irrefl 0) R.positive
+
 end MathlibExtTest.AlgebraicGeometry.RootStacks

@@ -98,7 +98,9 @@ theorem chartScale_coordinate {A : Type u} [CommRing A] (s : A) (n : ℕ)
       algebraMap A (ChartAlgebra A s n) (ζ : A) * chartCoordinate A s n :=
   AdjoinRoot.liftAlgHom_root _ _ _ _
 
-/-- The actual groupoid objects of the root of a line bundle with section. -/
+/-- The actual groupoid objects of the root of a line bundle with section.
+For `n = 0` the groupoid is degenerate (the zeroth power is the structure
+sheaf); the root-stack interfaces below require a positive exponent. -/
 structure RootObject {X : Scheme.{u}} (L : X.Modules) (s : Section L) (n : ℕ) where
   /-- The root is an actual module sheaf. -/
   module : X.Modules
@@ -206,6 +208,8 @@ abbrev OverPseudofunctor (X : Scheme.{u}) :=
 /-- Root-stack fibre and reindexing data, before the unit/composition
 normalization of the transported forgetful functors is imposed. -/
 structure RootStackData {X : Scheme.{u}} (L : X.Modules) (s : Section L) (n : ℕ) where
+  /-- The exponent is positive, as for Cadman's root stacks. -/
+  positive : 0 < n
   /-- The actual pseudofunctor. -/
   pseudofunctor : OverPseudofunctor X
   /-- Fibre identifications retain actual objects and arrows. -/
