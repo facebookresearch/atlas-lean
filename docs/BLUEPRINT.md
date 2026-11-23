@@ -324,9 +324,9 @@ semantics above, bridge edges from the articles to the Mathlib nodes they use,
 and each node's topic from the `Mathlib/...` keys of `scripts/taxonomy.json`.
 [`mathlib-layer.md`](mathlib-layer.md) gives the node rules and the files. Like
 the dependency dump, it is a build output: the workflow's `build the Mathlib
-layer` job builds it once `build the wiki` has succeeded, from the v2
-extraction and the dump of the v2 declarations with their Mathlib uses that
-`build the wiki` makes last, after the site steps, and keeps as the
+layer` job builds it beside `build the wiki`. It restores the same builds,
+builds what they lack and makes the v2 extraction as `build the wiki` does,
+then dumps the v2 declarations with their Mathlib uses, which it keeps as the
 `v2-mathlib-dump` artifact. It uploads the layer as the `mathlib-graph`
 artifact. The edges of the site's own Mathlib-credited pages come from the wiki
 job's registry ([Mathlib-credited pages](#mathlib-credited-pages)), not from
@@ -334,7 +334,7 @@ this layer. A failure fails that job's check only; it never holds back the site
 or its deployment, which do not read the layer. The dump of the Mathlib
 declarations and the graph `graph` builds from it depend only on the pins and
 the scripts that make them: runs other than PRs keep them in a
-`mathlib-graph-*` cache, and a run that restores it runs no Lean. `stats`
+`mathlib-graph-*` cache, and a run that restores it skips them. `stats`
 therefore takes the layer's ATLAS commit from the v2 dump. After the build and
 the v2 extraction above:
 
@@ -597,7 +597,8 @@ and strict site checks run in one read-only job from one checkout. The job
 restores the builds CI saves from `main`, under CI's keys: the `lake-build-*`
 build of the commit a PR is tested against, else `main`'s newest, and the
 `lake-deps-*` package builds. It saves no cache of its own. The Mathlib
-layer is built afterwards in a second read-only job, `build the Mathlib layer`,
+layer is built beside it, from the same builds, in a second read-only job,
+`build the Mathlib layer`,
 the Mathlib pages in a third, `build the Mathlib pages`, and the card scripts are
 tested and the cards checked in a fourth, `check the cards`, from the wiki job's
 dependency artifact ([cards.md](cards.md#checks-and-ci)); deployment waits for
