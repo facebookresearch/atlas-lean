@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Real.Irrational
+public import MathlibExt.NumberTheory.ChoosePowMulModEq
 public import MathlibExt.NumberTheory.GcdPowAddNegOnePow
 
 /-!
@@ -75,16 +76,6 @@ Theorem*, Journal of Integer Sequences 28 (2025), Article 25.2.2, Corollary 14
 (`jis-2025-25.2.2-cor-14`). -/
 public theorem_wanted prime_dvd_choose_pow_mul_pow_mul {p a b r s : ℕ} (hp : p.Prime)
     (hrs : s < r) (hpa : ¬p ∣ a) (hpb : ¬p ∣ b) : p ∣ (p ^ r * a).choose (p ^ s * b)
-
-/-- **Binomial coefficients $\binom{p^r a}{p^r b}$ modulo $p$.** Let $p$ be a prime, let $r \ge 1$,
-and let $a, b$ be natural numbers not divisible by $p$. Then
-$\binom{p^r a}{p^r b} \equiv \binom{a}{b} \pmod{p}$.
-
-Source: John Ferdinands and Timothy Ferdinands, *Greatest Common Divisors and Lucas's
-Theorem*, Journal of Integer Sequences 28 (2025), Article 25.2.2, Corollary 15
-(`jis-2025-25.2.2-cor-15`). -/
-public theorem_wanted choose_pow_mul_modEq {p a b r : ℕ} (hp : p.Prime) (hr : 1 ≤ r)
-    (hpa : ¬p ∣ a) (hpb : ¬p ∣ b) : (p ^ r * a).choose (p ^ r * b) ≡ a.choose b [MOD p]
 
 /-- **Gcd of the coefficients of $(u + \sqrt{v})^n$.** Let $u, v$ be coprime positive integers
 with $\sqrt{v}$ irrational, let $a_n, b_n$ (for natural $n$) be integers with

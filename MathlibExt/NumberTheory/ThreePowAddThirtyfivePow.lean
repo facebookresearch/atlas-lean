@@ -9,16 +9,23 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.Group.Nat.Defs
+public import Mathlib.Data.Nat.Prime.Defs
 import Mathlib.Data.Nat.Prime.Basic
 import Mathlib.Data.ZMod.Defs
 import Mathlib.Tactic.Linarith
 
 /-!
-# Solutions of `3^x + 35^y = z^2`
+# Solutions of `3^x + 35^y = z^2` and of `1 + (5p)^y = z^2`
 
 The ATLAS wiki attributes this classification to Suton Tadee's “On the Diophantine Equation
 $n^x + (5p)^y = z^2$”. When both exponents are positive, we rule out solutions modulo $60$.
 When one exponent vanishes, we factor $z^2 - 1$.
+
+The same factorization gives the case $x = 0$ of that equation for a prime $p \ne 2$
+(`one_add_pow_eq_sq`). When $p \ne 5$, write $5p = aq$ with $q = \max(5, p)$ prime and
+$a = \min(5, p)$, so that $a + 2 \le q$. Then $q^y$ divides one of $z - 1$ and $z + 1$, so
+$q^y \le a^y + 2$, which forces $y \le 1$; and $y = 0$ fails because $2$ is not a square.
+When $p = 5$, the number $1 + (5^y)^2$ lies strictly between two consecutive squares.
 -/
 
 namespace MathlibExt.NumberTheory.PowAddPowEqSqWanted
@@ -102,5 +109,32 @@ public theorem three_pow_add_thirtyfive_pow (x y z : ℕ) :
       exact Or.inl ⟨rfl, rfl, Nat.pow_left_injective (by decide : 2 ≠ 0) h.symm⟩
     | x + 1, y + 1 => exact (no_pos_exponents x y z h).elim
   · rintro (⟨rfl, rfl, rfl⟩ | ⟨rfl, rfl, rfl⟩) <;> decide
+
+/-- **The case $x = 0$ of $n^x + (5p)^y = z^2$.** Let $p$ be a prime with $p \ne 2$. For natural
+numbers $y$ and $z$, $1 + (5p)^y = z^2$ holds if and only if $y = 1$ and $z^2 = 5p + 1$.
+
+Source: Suton Tadee, "On the Diophantine Equation
+`n^x + (5p)^y = z^2`", Corollary 1. -/
+public theorem one_add_pow_eq_sq (p y z : ℕ) (hp : p.Prime)
+    (hp2 : p ≠ 2) :
+    1 + (5 * p) ^ y = z ^ 2 ↔ y = 1 ∧ z ^ 2 = 5 * p + 1 := by
+  refine ⟨fun h => ?_, fun ⟨hy, hz⟩ => by rw [hy, pow_one, hz, add_comm]⟩
+  rw [add_comm] at h
+  suffices hy : y = 1 by
+    subst hy
+    exact ⟨rfl, by rw [← h, pow_one]⟩
+  rcases Nat.lt_or_ge p 7 with hp7 | hp7
+  · obtain rfl | rfl | rfl | rfl | rfl : p = 2 ∨ p = 3 ∨ p = 4 ∨ p = 5 ∨ p = 6 := by
+      have := hp.two_le
+      omega
+    · exact absurd rfl hp2
+    · exact exp_eq_one (a := 3) (p := 5) (by decide) (by decide) le_rfl (by simpa using h)
+    · exact absurd hp (by decide)
+    · -- `1 + (5 ^ y) ^ 2` lies strictly between `(5 ^ y) ^ 2` and `(5 ^ y + 1) ^ 2`.
+      rw [mul_pow, ← sq] at h
+      have hw : 0 < 5 ^ y := pow_pos (by decide) y
+      exact absurd ⟨z, h.symm⟩ (Nat.not_exists_sq' (lt_add_one _) (by nlinarith))
+    · exact absurd hp (by decide)
+  · exact exp_eq_one (by decide) hp (by omega) h
 
 end MathlibExt.NumberTheory.PowAddPowEqSqWanted
