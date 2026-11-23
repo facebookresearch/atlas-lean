@@ -100,8 +100,9 @@ comments):
 
 A card's **headline** is the first that applies to its main statement: `stale` (the committed row names
 a declaration that `lean-facts` dropped because the Lean no longer has it), `held`, `not ready`,
-`page only` (a planned page: with no declaration kind it is no task, as the graph rules' planned pages
-and tasks say, so it is never shown as ready), then Autoform's state of the credited page: in Mathlib, fully proved, proved
+`page only` (a planned page with no declaration kind: it is no task, as the graph rules' planned pages
+and tasks say, so it is never shown as ready), then Autoform's state of the page, credited or with the kind
+`lean-facts` gives a planned page that counts as a statement not yet in Lean: in Mathlib, fully proved, proved
 (not fully), defined, conditionally proved, ready to prove, stated with its proof blocked, ready to
 state, blocked. Its **supporting progress** counts its other statements, each once, by the same
 precedence; the main statement is never among them. Readiness and tasks stay Autoform's.

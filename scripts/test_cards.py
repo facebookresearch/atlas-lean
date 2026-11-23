@@ -1119,6 +1119,21 @@ class Progress(Vault):
         self.assertEqual((card["main"]["state"], card["main"]["headline"]), ("can_state", "page_only"))
         self.assertEqual((card["supporting"]["total"], card["supporting"]["fully_proved"]), (1, 1))
 
+    def test_a_planned_statement_with_a_kind_reads_as_its_state(self) -> None:
+        # A planned page that counts as a statement not yet in Lean has the kind lean-facts gave it (docs/BLUEPRINT.md,
+        # Writing pages): a task once ready, it reads as Autoform's state, not as page only.
+        g = "Algebra/groups"
+        self.leaf(f"{g}/a/helper.md", 11)
+        self.leaf(f"{g}/a/a-main.md", 10, facts=None, statement=(f"{g}/a/helper.md",), row={"kind": "theorem"})
+        self.leaf(f"{g}/a/planned.md", 12, facts=None, row={"kind": "def"})
+        self.leaf(f"{g}/a/untyped.md", 13, facts=None)
+        self.card(f"{g}/a", 1, 10, ["a-main", "helper", "planned", "untyped"])
+        card = self.rollup()["cards"][0]
+        self.assertEqual((card["main"]["state"], card["main"]["headline"]), ("can_state", "can_state"))
+        supporting = card["supporting"]
+        self.assertEqual((supporting["total"], supporting["fully_proved"], supporting["can_state"],
+                          supporting["page_only"]), (3, 1, 1, 1))
+
     def test_markers_come_before_states(self) -> None:
         g = "Algebra/groups"
         self.leaf(f"{g}/a/a-main.md", 10, facts=None, row={"extensions": {

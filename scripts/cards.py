@@ -1661,7 +1661,7 @@ def rollup(dependencies: dict, annotations: dict[Path, dict] | None = None, grap
     def bucket(path: str) -> str:
         about = leaf(path)
         for marker, holds in (("stale", about.stale), ("held", about.held), ("not_ready", about.not_ready),
-                              ("page_only", about.credit == "none")):
+                              ("page_only", about.credit == "none" and about.kind is None)):
             if holds:
                 return marker
         return about.state if about.state in STATES else "planned"

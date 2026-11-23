@@ -341,6 +341,18 @@ class CardDataTests(unittest.TestCase):
         changed["cards"][0]["main"]["headline"] = "fully_proved"
         self.assertRejected(changed)
 
+    def test_a_planned_main_with_a_kind_is_shown_by_its_state(self) -> None:
+        # A planned page with the kind lean-facts gives one that counts as a statement not yet in Lean shows
+        # Autoform's state, as its task does; with no kind it is page only.
+        typed = card(1, f"{T}/x", ["x-main", "x-lemma"], main=f"{T}/x/x-main", headline="can_state")
+        data = rollup([typed])
+        data["cards"][0]["main"]["credit"] = "none"
+        data["pages"][f"{T}/x/x-main"].update(credit="none", kind="def")
+        block = self.library.build(data).blocks[f"roadmap/{T}/x/index.html"]
+        self.assertIn('<span class="atlas-card-state atlas-card-can_state">ready to state</span>', block)
+        data["pages"][f"{T}/x/x-main"]["kind"] = None
+        self.assertRejected(data)
+
     def test_a_route_outside_the_site_is_rejected(self) -> None:
         for route in ("../../outside.html", "/roadmap/A/index.html", "https://example.com/a.html",
                       "../roadmap/A/index"):

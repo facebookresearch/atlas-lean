@@ -80,16 +80,23 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   if a declaration for it already exists; once linked it drops its own
   dependency sections.
 - **Count what is not yet in Lean.** A planned page that states a result is a
-  statement not yet in Lean: with a `kind` it counts as ready to state or
-  planned, so its topic does not read fully proved while it remains, and once
-  ready it is a task. `lean-facts` gives a held page the kind of the
-  declaration it holds back, as a linked page would get it (a `theorem_wanted`
-  is a theorem), and any other planned page the kind its annotation records,
-  as `"extensions": {"org.atlas-wiki": {"kind": "theorem"}}` (or `lemma`,
-  `def`, `abbrev`, `instance`, `structure`, `class`, `inductive` or `opaque`).
-  An exposition records none, as Autoform's format gives it no declaration,
-  and nothing counts it; a page whose declaration the Lean no longer has is
-  relinked rather than given a kind.
+  statement not yet in Lean, and Autoform counts it as one once it has a
+  `kind`, which `lean-facts` gives it at build time: a held page takes that of
+  the declaration it holds back, as a linked page would get it (a
+  `theorem_wanted` is a theorem), and any other page that builds with no Lean
+  link the kind its annotation records, as
+  `"extensions": {"org.atlas-wiki": {"kind": "theorem"}}` (or `lemma`, `def`,
+  `abbrev`, `instance`, `structure`, `class`, `inductive` or `opaque`). A page
+  whose row still names a declaration of this project in a Lean link, as a
+  reference, gets none, as Autoform would take that declaration for the
+  page's own. Its readiness is Autoform's, from the prerequisites it lists:
+  ready to state, planned, or not ready when marked `not_ready`; its topic does
+  not read fully proved while it remains, and once ready it is a task. So such
+  a page lists under `## Depends on` every page its statement uses, planned
+  ones included. An exposition records no kind, as Autoform's format gives it
+  no declaration, and nothing counts it. A page whose result the Lean states
+  under a declaration it does not link is relinked to it rather than given a
+  kind.
 - **One page per result.** Search the vault and pinned Mathlib before adding a
   page, and link an existing one instead of restating it. Pages for documented
   declarations come from `sync_wiki.py declarations`, then may be edited; a
@@ -438,12 +445,12 @@ problems, `reason` names the one in its statement. `declarations` gives a held
 declaration no page and lists it as held; `lean-facts` gives the held page the
 declaration's kind, so it counts as a statement not yet in Lean
 ([Writing pages](#writing-pages)), private by design or not, unless its marker
-names no declaration the Lean index resolves or an earlier page holds the
-declaration back, whatever kind the row records. In `declarations`, a marker
-that names no declaration, sits on a linked row, names a declaration the Lean
-index does not resolve, or holds back a declaration that another row links or
-holds is reported as an error, and the run then writes nothing. The build's own
-steps (the extraction,
+is one `declarations` reports below, such as one naming a declaration the Lean
+index does not resolve or that an earlier row holds back, whatever kind the row
+records. In `declarations`, a marker that names no declaration, sits on a
+linked row, names a declaration the Lean index does not resolve, or holds back
+a declaration that another row links or holds is reported as an error, and the
+run then writes nothing. The build's own steps (the extraction,
 `lean-facts` and the cards) likewise refuse, before writing, a held row that
 credits a declaration, of this project or of Mathlib, and a held declaration
 that another row credits. Relink the page once every listed issue
@@ -497,7 +504,8 @@ Mathlib link on a row without it is a reference, which leaves the page's own
 declaration its credit. The build reads every row as Autoform does, over the
 links folder's defaults: a link with no `uri` is a Lean link to this project,
 and a link with a `uri` but no `type` is no Lean link at all. The defaults never
-set `kind` or `status`, which the build derives for each page from the Lean. A
+set `kind` or `status`, which the build derives for each page from the Lean (or,
+for a page with no Lean link, as [Writing pages](#writing-pages) says). A
 page's own declaration is its Lean link to this project with role `states`, or
 its only such link when none has a role, never the first by position. A link of
 another type (PDF, HTML, LaTeX, generic) is a reference, whatever its role; so
@@ -550,7 +558,8 @@ are dependencies among the wiki's pages: a page with none has no prerequisite
 among them. A credited name the build does not find in a Mathlib module, or
 that is a declaration of the project, unlinks the page with a warning, as a
 removed ATLAS declaration does: its Lean link, kind, status and `mathlib` flag
-go, so the page no longer shows as in Mathlib, and its other links stay. A row
+go, so the page no longer shows as in Mathlib, and its other links stay; it then
+takes only a kind its row records ([Writing pages](#writing-pages)). A row
 that names no module is looked for only in the modules the build imports. A
 Mathlib bump that moves a credited declaration to another module stops
 `lean-facts`, which names the new module, until the row names it: the bump

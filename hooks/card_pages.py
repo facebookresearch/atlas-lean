@@ -242,7 +242,7 @@ def bucket(row: dict) -> str:
     """A statement's status as docs/cards.md gives it, from its row of the rollup's `pages` table: the first marker
     that applies, then Autoform's state."""
     for marker, holds in (("stale", row["stale"]), ("held", row["held"]), ("not_ready", row["not_ready"]),
-                          ("page_only", row["credit"] == "none")):
+                          ("page_only", row["credit"] == "none" and row.get("kind") is None)):
         if holds:
             return marker
     return row["state"] if row["state"] in STATES else "planned"
@@ -281,7 +281,7 @@ def check_data(data: object, pages: Pages) -> dict[str, dict]:
         found = table.get(node_id)
         need(isinstance(found, dict) and found.get("credit") in CREDITS
              and all(isinstance(found.get(key), bool) for key in ("held", "not_ready", "stale"))
-             and (found.get("state") is None or isinstance(found.get("state"), str)),
+             and all(found.get(key) is None or isinstance(found.get(key), str) for key in ("state", "kind")),
              f"{node_id} has no well-formed row in the `pages` table")
         return found
 

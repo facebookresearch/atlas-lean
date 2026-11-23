@@ -1152,37 +1152,38 @@ def legacy_lean_name(own: dict | None, index) -> str | None:
 
 
 def usable_holds(files: dict[Path, list[dict]], index) -> set[int]:
-    """The page rows whose held marker gives their page its declaration's kind, read as declarations reads markers
-    (see apply_declarations): a marker held_problem passes, on a row that credits no declaration, whose declaration no
-    page credits and no earlier page holds back. Folder rows, which lean-facts never reads, hold nothing, and nor does
-    a row whose credit page_owner refuses (lean-facts refuses it first)."""
+    """The rows whose held marker gives their page its declaration's kind: those `declarations` accepts, read as it
+    reads them (apply_declarations), over every row, folder rows included: a marker held_problem passes, a Mathlib
+    credit counting as a link, whose declaration no row credits and no earlier row holds back. A row whose credit
+    page_owner refuses holds nothing (lean-facts refuses it first), and nor does one whose extensions are no object."""
     keyed = []
     for rows in files.values():
         for annotation in rows:
-            page = subject_path(annotation)
-            if page is None or page.name == "README.md":
+            if not isinstance(annotation.get("extensions", {}), dict):
                 continue
             try:
-                keyed.append((annotation_key(annotation, index), annotation))
+                owner, credited, _module = page_owner(annotation)
+                keyed.append((annotation_key(annotation, index), credited if owner == "mathlib" else None, annotation))
             except CreditError:
                 continue
-    linked = {key for key, _ in keyed if key}
-    usable: set[int] = set()
-    holders: set[str] = set()
-    for key, annotation in keyed:
-        if (name := held_name(annotation)) and not held_problem(annotation, key, index):
-            if name not in linked and name not in holders:
-                usable.add(id(annotation))
-            holders.add(name)
-    return usable
+    pages = {key for key, _, _ in keyed if key}
+    holders: dict[str, list[dict]] = defaultdict(list)
+    for key, mathlib, annotation in keyed:
+        if (name := held_name(annotation)) and not held_problem(annotation, key or mathlib, index):
+            holders[name].append(annotation)
+    return {id(rows[0]) for name, rows in holders.items() if name not in pages}
 
 
 def unlinked_kind(annotation: dict, index, usable: set[int]) -> str | None:
     """The kind of a page that builds with no Lean link. It is a statement not yet in Lean, which Autoform counts,
-    as ready to state or planned, only with a kind. A held page takes that of the declaration it holds back, as a
-    linked page would get it, when its marker is usable (see usable_holds), and none otherwise, whatever it records,
-    so that no declaration counts twice; any other page the one of KINDS its annotation records under OWN as "kind";
-    else None, as no kind is guessed."""
+    as ready to state, planned or not ready, only with a kind. A held page takes that of the declaration it holds
+    back, as a linked page would get it, when its marker is usable (see usable_holds), and none otherwise, whatever it
+    records, so that no declaration counts twice; any other page the one of KINDS its annotation records under OWN as
+    "kind"; else None, as no kind is guessed. A page whose row still names a declaration of this project in a Lean
+    link, as a reference, gets none either: Autoform lists every declaration of this project a row names as its
+    page's Lean target, so its task would name that declaration."""
+    if lean_ends(annotation).own:
+        return None
     extensions = annotation.get("extensions")
     own = extensions.get(OWN) if isinstance(extensions, dict) else None
     if isinstance(own, dict) and "held" in own:
