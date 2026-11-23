@@ -1,0 +1,32 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+module
+
+import MathlibExt.NumberTheory.TwoSetsSumsetSquares
+import Mathlib.Tactic.NormNum
+
+/-! # Tests for integer quadruples with square pairwise sums -/
+
+open MathlibExt.NumberTheory.TwoSetsSumsetSquaresWanted
+
+-- Four distinct entries in each family, including a negative summand.
+example : PairwiseSumsSquares
+    ![8850625, 21538881, 10400625, 68807025]
+    ![0, 29440719, 50439375, (-7967025 : ℤ)] := by
+  have h := pairwiseSumsSquares_quadruple_family51 1 (-2) 2 3
+  norm_num at h
+  exact h
+
+-- When the two v parameters coincide, three entries in each family vanish.
+example : PairwiseSumsSquares ![0, 576, 0, 0] ![0, (1024 : ℤ), 0, 0] :=
+  pairwiseSumsSquares_quadruple_family51 1 2 1 1
+
+-- A negative diagonal gives the same squared sum in every row and column.
+example : IsSemiMagicRoots (fun i j ↦ if i = j then -2 else 0) := by
+  refine ⟨4, ?_⟩
+  decide
