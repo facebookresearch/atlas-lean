@@ -4333,7 +4333,27 @@ class ScopedRun(unittest.TestCase):
         page.unlink()
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((report["wiki_changes"], report["differences"]), (
-            "other", ["blueprint/roadmap/Algebra/hand.md: the changes add it, and the sync does not"]))
+            "other", ["blueprint/roadmap/Algebra/hand.md: the index adds it, and the sync does not"]))
+
+    def test_what_the_index_changes_is_compared_whatever_the_working_tree_has(self) -> None:
+        # A hand edit staged and then undone in the working tree, and a page the index deletes that the working tree
+        # keeps: a commit takes the index's, so neither is the sync's.
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        page = self.root / "blueprint/roadmap/Algebra/groups/group-basics/fresh.md"
+        generated = page.read_bytes()
+        page.write_text(page.read_text() + "\nMore prose.\n")
+        self.git("add", "--", str(page))
+        page.write_bytes(generated)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((report["wiki_changes"], report["differences"]), ("other", [
+            "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: the index writes it otherwise than the sync"]))
+        self.git("reset", "-q", "--", str(page))
+        self.assertEqual(self.run_sync("--check")[3]["wiki_changes"], "sync")
+        self.git("rm", "-q", "--cached", "--", "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((report["wiki_changes"], report["differences"]), ("other", [
+            "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md: the index deletes it"]))
 
 
 

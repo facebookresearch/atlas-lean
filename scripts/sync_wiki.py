@@ -3438,19 +3438,32 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
             expected = (mine.read_bytes(), modes.get(path) != "100755") if mine.is_file() else None
             actual = None if linked or not theirs.is_file() else (theirs.read_bytes(), not theirs.stat().st_mode & 0o111)
             mode, name = staged.get(path, ("100644", None))
-            if (not os.path.lexists(theirs) and path in restaged and name is not None
-                    and mode in ("100644", "100755")):
-                actual = (git("cat-file", "blob", name), mode != "100755")
             # Anything but a file, in the working tree or the index: a folder, a submodule, a link.
             other = (os.path.lexists(theirs) and not theirs.is_file()) or mode not in ("100644", "100755")
             if linked or other or modes.get(path, "100644") not in ("100644", "100755"):
                 differences.append(f"{path}: the sync writes no link or other kind of file")
-            elif expected != actual:
-                differences.append(f"{path}: " + (
-                    "the changes add it, and the sync does not" if expected is None else
-                    ("the sync writes it, and the changes do not" if mine in written else "the changes delete it")
-                    if actual is None else "the changes write it otherwise than the sync"))
+                continue
+            if expected != actual:
+                differences.append(f"{path}: " + compared("the changes", expected, actual, mine in written))
+            # What the index changes from the base is compared too, whatever the working tree has: a commit takes it.
+            if path in restaged:
+                held = None if name is None else (git("cat-file", "blob", name), mode != "100755")
+                if held != expected and held != actual:
+                    differences.append(f"{path}: " + compared("the index", expected, held, mine in written))
     return ("other", differences) if differences else ("sync", [])
+
+
+def compared(side: str, expected: tuple | None, actual: tuple | None, written: bool) -> str:
+    """How *side*'s file, *actual*, differs from the sync's, *expected*: each a file's bytes and whether it is not
+    executable, or None for no file; *written* when the sync writes it. *side* is "the changes" or "the index"."""
+    plural = side == "the changes"
+    verb = (lambda word: word) if plural else (lambda word: word + "s")
+    if expected is None:
+        return f"{side} {verb('add')} it, and the sync does not"
+    if actual is None:
+        return (f"the sync writes it, and {side} {'do' if plural else 'does'} not" if written
+                else f"{side} {verb('delete')} it")
+    return f"{side} {verb('write')} it otherwise than the sync"
 
 
 def run_scoped(argv: list[str]) -> int:
