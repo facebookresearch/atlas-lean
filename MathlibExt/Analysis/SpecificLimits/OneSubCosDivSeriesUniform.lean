@@ -1,5 +1,16 @@
 /-
-# sum of 1 - cos(x/n) converges uniformly on compact intervals
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Portions of this file are adapted from:
+
+`benchmark/level1/ma_proofbench_l1_05.lean` (openbmb/ma-proofbench, commit 31bab4c).
+The theorem statement is adapted from MA-ProofBench by L. Pu et al., under the MIT License.
 
 Copyright (c) 2026 OpenBMB
 
@@ -20,24 +31,19 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-Attribution and modification notice: the statement below is taken from openbmb/ma-proofbench at
-commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level1/ma_proofbench_l1_05.lean`
-(MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
-Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
-`theorem ma_proofbench_l1_05 … := by sorry` into the Batteries `theorem_wanted`
-`tendstoUniformlyOn_sum_one_sub_cos_div`; moved the informal problem statement docstring onto it
-and placed the declarations in namespace
-`MathlibExt.Analysis.SpecificLimits.OneSubCosDivSeriesUniformWanted`; replaced `import Mathlib`
-by `public import Mathlib` under the module system.
 -/
+
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib
+public import Mathlib.Analysis.Normed.Group.FunctionSeries
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
+import Mathlib.Analysis.PSeries
 
-@[expose] public section
+/-!
+# Uniform convergence of the series of cosine differences
+
+On a bounded interval the quadratic cosine bound gives a summable majorant for the series.
+-/
 
 namespace MathlibExt.Analysis.SpecificLimits.OneSubCosDivSeriesUniformWanted
 
@@ -50,10 +56,26 @@ Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Sequences, seri
 Convergence and divergence of infinite limiting processes),
 `benchmark/level1/ma_proofbench_l1_05.lean` at openbmb/ma-proofbench@31bab4c.
 -/
-public theorem_wanted tendstoUniformlyOn_sum_one_sub_cos_div
+public theorem tendstoUniformlyOn_sum_one_sub_cos_div
     (f : ℕ → ℝ → ℝ) (hf : ∀ n x, f n x = 1 - Real.cos (x / (n + 1))) :
     ∀ a b : ℝ, a < b → ∃ g : ℝ → ℝ,
         TendstoUniformlyOn
-          (fun N x => ∑ n ∈ Finset.range N, f n x) g Filter.atTop (Set.Icc a b)
+          (fun N x => ∑ n ∈ Finset.range N, f n x) g Filter.atTop (Set.Icc a b) := by
+  intro a b _
+  let R := max |a| |b|
+  have hsum : Summable (fun n : ℕ => (R ^ 2 / 2) / ((n : ℝ) + 1) ^ 2) := by
+    apply Summable.of_norm
+    simpa only [Nat.cast_one] using summable_pow_div_add (R ^ 2 / 2) 2 1 Nat.one_lt_two
+  refine ⟨fun x => ∑' n, f n x, tendstoUniformlyOn_tsum_nat hsum ?_⟩
+  intro n x hx
+  have hxR : |x| ≤ R := abs_le_max_abs_abs hx.1 hx.2
+  have hsq : x ^ 2 ≤ R ^ 2 := by
+    simpa only [sq_abs] using pow_le_pow_left₀ (abs_nonneg x) hxR 2
+  rw [hf, Real.norm_eq_abs, abs_of_nonneg (sub_nonneg.mpr (Real.cos_le_one _))]
+  calc
+    1 - Real.cos (x / (n + 1)) ≤ (x / (n + 1)) ^ 2 / 2 := by
+      linarith only [Real.one_sub_sq_div_two_le_cos (x := x / (n + 1))]
+    _ = (x ^ 2 / 2) / ((n : ℝ) + 1) ^ 2 := by rw [div_pow, div_right_comm]
+    _ ≤ (R ^ 2 / 2) / ((n : ℝ) + 1) ^ 2 := by gcongr
 
 end MathlibExt.Analysis.SpecificLimits.OneSubCosDivSeriesUniformWanted

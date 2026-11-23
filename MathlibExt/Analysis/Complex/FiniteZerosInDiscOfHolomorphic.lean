@@ -1,5 +1,18 @@
 /-
-# A holomorphic function not identically zero has finitely many zeros in a disc
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Portions of this file are adapted from:
+
+`benchmark/level1/ma_proofbench_l1_26.lean` (openbmb/ma-proofbench, commit
+31bab4c78fd1b0c464e767d62e9202163d1e9029): the statement of the finite zeros theorem.
+Authors: L. Pu et al. (MA-ProofBench)
+MIT License
 
 Copyright (c) 2026 OpenBMB
 
@@ -20,24 +33,21 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-Attribution and modification notice: the statement below is taken from openbmb/ma-proofbench at
-commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level1/ma_proofbench_l1_26.lean`
-(MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
-Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
-`theorem ma_proofbench_l1_26 … := by sorry` into the Batteries `theorem_wanted`
-`finite_zeros_in_ball_of_not_identically_zero`; moved the informal problem statement docstring
-onto it and placed the declarations in namespace
-`MathlibExt.Analysis.Complex.FiniteZerosInDiscOfHolomorphicWanted`; replaced `import Mathlib` by
-`public import Mathlib` under the module system.
 -/
+
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib
+public import Mathlib.Analysis.CStarAlgebra.Classes
+public import Mathlib.Analysis.Complex.CauchyIntegral
+import Mathlib.Analysis.Analytic.Order
+import Mathlib.Analysis.Normed.Module.Connected
 
-@[expose] public section
+/-!
+# Finitely many zeros in a disc
+
+The isolated zeros principle applies on the closed disc, including its boundary.
+Compactness then gives finiteness on the closed disc and hence on the open disc.
+-/
 
 namespace MathlibExt.Analysis.Complex.FiniteZerosInDiscOfHolomorphicWanted
 
@@ -51,10 +61,19 @@ Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Functions of a 
 variable; General properties of functions of one complex variable),
 `benchmark/level1/ma_proofbench_l1_26.lean` at openbmb/ma-proofbench@31bab4c.
 -/
-public theorem_wanted finite_zeros_in_ball_of_not_identically_zero
+public theorem finite_zeros_in_ball_of_not_identically_zero
     (f : ℂ → ℂ) (P : ℂ) (r : ℝ) (hr : 0 < r)
     (hhol : ∃ U : Set ℂ, IsOpen U ∧ Metric.closedBall P r ⊆ U ∧ DifferentiableOn ℂ f U)
     (hnot : ¬ ∀ z ∈ Metric.ball P r, f z = 0) :
-    (Set.Finite {z : ℂ | z ∈ Metric.ball P r ∧ f z = 0})
+    (Set.Finite {z : ℂ | z ∈ Metric.ball P r ∧ f z = 0}) := by
+  obtain ⟨U, hU, hsub, hf⟩ := hhol
+  have ha : AnalyticOnNhd ℂ f (Metric.closedBall P r) := (hf.analyticOnNhd hU).mono hsub
+  push Not at hnot
+  obtain ⟨w, hw, hfw⟩ := hnot
+  have hne := ha.preimage_zero_mem_codiscreteWithin hfw (Metric.ball_subset_closedBall hw)
+    (Metric.isConnected_closedBall hr.le)
+  apply ((isCompact_closedBall P r).finite_sdiff_of_mem_codiscreteWithin hne).subset
+  rintro z ⟨hz, hfz⟩
+  exact ⟨Metric.ball_subset_closedBall hz, fun h => h hfz⟩
 
 end MathlibExt.Analysis.Complex.FiniteZerosInDiscOfHolomorphicWanted

@@ -8,9 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Complex.Basic
+import Mathlib.Analysis.Complex.RemovableSingularity
+import Mathlib.Analysis.Meromorphic.Order
+import MathlibExt.Analysis.Complex.CasoratiWeierstrass
 
 @[expose] public section
 
@@ -33,12 +35,28 @@ entry "isolated singularities"; L. V. Ahlfors, Complex Analysis, 3rd ed.,
 Ch. 4, §3.1 and §3.2 (removable singularities; zeros, poles and the Casorati-Weierstrass
 theorem).
 -/
-theorem_wanted isolatedSingularity_trichotomy
+theorem isolatedSingularity_trichotomy
     {c : ℂ} {r : ℝ} {f : ℂ → ℂ} (hr : 0 < r)
     (hf : DifferentiableOn ℂ f (Metric.ball c r \ {c})) :
     (∃ g : ℂ → ℂ, DifferentiableOn ℂ g (Metric.ball c r) ∧
       Set.EqOn f g (Metric.ball c r \ {c})) ∨
     Filter.Tendsto (fun z => ‖f z‖) (𝓝[≠] c) Filter.atTop ∨
-    ∀ r' : ℝ, 0 < r' → Dense (f '' (Metric.ball c r' \ {c}))
+    ∀ r' : ℝ, 0 < r' → Dense (f '' (Metric.ball c r' \ {c})) := by
+  classical
+  by_cases hmer : MeromorphicAt f c
+  · rcases lt_or_ge (meromorphicOrderAt f c) 0 with hpole | hrem
+    · exact Or.inr (Or.inl (tendsto_norm_atTop_iff_cobounded.mpr
+        (tendsto_cobounded_of_meromorphicOrderAt_neg hpole)))
+    · obtain ⟨a, ha⟩ := tendsto_nhds_of_meromorphicOrderAt_nonneg hmer hrem
+      have heq : Set.EqOn (Function.update f c a) f (ball c r \ {c}) :=
+        fun _ hz => Function.update_of_ne hz.2 _ _
+      refine Or.inl ⟨Function.update f c a, ?_, heq.symm⟩
+      exact (Complex.differentiableOn_compl_singleton_and_continuousAt_iff
+        (ball_mem_nhds c hr)).mp ⟨hf.congr (fun z hz => heq hz), continuousAt_update_same.mpr ha⟩
+  · refine Or.inr (Or.inr ?_)
+    intro r' hr'
+    have hd := CasoratiWeierstrass.casoratiWeierstrass (lt_min hr hr')
+      (hf.mono (sdiff_subset_sdiff_left (ball_subset_ball (min_le_left r r')))) hmer
+    exact hd.mono (image_mono (sdiff_subset_sdiff_left (ball_subset_ball (min_le_right r r'))))
 
 end MathlibExt.Analysis.Complex.IsolatedSingularityWanted
