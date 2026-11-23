@@ -9,9 +9,10 @@ LICENSE file in the root directory of this source tree.
 Portions of this file are adapted from:
 
 `StacksFrontier/AlgebraicGeometry/EtaleCohomology/GroupCohomology/Continuous.lean`,
-`StacksFrontier/AlgebraicGeometry/EtaleCohomology/GaloisCohomology/MultiplicativeGroupGaloisModule.lean`
-(AxiomMath/Stacks, revision `c496df0d9beea9deaeabcea8492605f9a0a2313b`); the source files carry no individual
-copyright or author notice.
+`StacksFrontier/AlgebraicGeometry/EtaleCohomology/GaloisCohomology/
+MultiplicativeGroupGaloisModule.lean`
+(AxiomMath/Stacks, revision `c496df0d9beea9deaeabcea8492605f9a0a2313b`); the source files carry
+no individual copyright or author notice.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 
 `TauCeti/NumberTheory/ClassFieldTheory/Brauer/Basic.lean` and

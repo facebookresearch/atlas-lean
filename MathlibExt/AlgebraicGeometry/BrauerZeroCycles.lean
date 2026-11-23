@@ -94,13 +94,17 @@ section Norm
 
 variable {l : Type} [Field l] (Y : FieldScheme l) (i : k →+* l)
 
-/-- An actual base-change square of field schemes. -/
+/-- An actual base-change square of field schemes along a finite field extension `i`, so that
+`map` is finite, hence proper. -/
 structure CartesianFieldExtension where
+  /-- The base-change map `Y = X ×_k l → X`. -/
   map : Y.scheme.left ⟶ X.scheme.left
   cartesian : IsPullback map Y.scheme.hom X.scheme.hom (Spec.map (CommRingCat.ofHom i))
+  /-- The field extension is finite. -/
+  finite : i.Finite
 
-/-- The normalized integral Chow norm is native proper pushforward on cycles.
-Its constructor is completed scheme source integration, with this map fixed. -/
+/-- The normalized integral Chow norm is proper pushforward of cycles along the finite
+base-change map. Its constructor is completed scheme source integration, with this map fixed. -/
 abbrev NormalizedNorm (E : CartesianFieldExtension X Y i) :=
   {N : ChowGroup Y 0 →+ ChowGroup X 0 //
     ∀ c : CycleGroup Y.scheme.left 0,

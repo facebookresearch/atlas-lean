@@ -55,5 +55,8 @@ structure GlobalUniversalStableFamily {k : Type u} [Field k]
           ∃! f : T ⟶ M,
             IsBaseTwist C T (familyPullback C M T universalBundle f) E
 
+attribute [instance] GlobalUniversalStableFamily.finiteType
+  GlobalUniversalStableFamily.quasiCompact GlobalUniversalStableFamily.separated
+
 end MathlibExt.AlgebraicGeometry.UniversalBundleObstruction
 

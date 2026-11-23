@@ -135,6 +135,30 @@ example : completedEvaluation ℤ reduceSix ⟨6, by decide⟩ reduceSix_killed
   rw [completedEvaluation_unit]
   decide
 
+/-- The identity is a compatible coefficient pair for a field over itself, so the structure is
+not vacuous. -/
+def identityPair (K : Type) [Field K] :
+    FieldCoefficientPair (K := K) K (ContinuousMonoidHom.id _) where
+  embedding := RingHom.id _
+  base _ := rfl
+  equivariant _ _ := rfl
+
+-- Its unit map is the identity.
+example (K : Type) [Field K] (u : SepUnits K) :
+    unitsMap K (ContinuousMonoidHom.id _) (identityPair K) u = u := rfl
+
+-- Restriction along a coefficient pair is computed on actual cocycles.
+example (K : Type) [Field K] (c : TwoCocycles K) :
+    AlgebraicGeometry.BrauerInteroperability.restriction K (ContinuousMonoidHom.id _)
+        (identityPair K) (cocycleClass K c) =
+      cocycleClass K (restrictCocycle K (ContinuousMonoidHom.id _) (identityPair K) c) :=
+  restriction_cocycleClass K _ _ c
+
+-- Evaluation at a field point is pullback followed by the field comparison.
+example (K : Type) [Field K] (B : FieldGmComparison K) {X : AlgebraicGeometry.Scheme.{0}}
+    (p : AlgebraicGeometry.Spec (.of K) ⟶ X) (a : GmH2 X) :
+    evaluate K B p a = B.val (pointPullback K p a) := evaluate_apply K B p a
+
 #print axioms AlgebraicGeometry.BrauerCoefficients.unitsRepContinuousSMul
 #print axioms AlgebraicGeometry.BrauerInteroperability.restriction_cocycleClass
 #print axioms AlgebraicGeometry.BrauerEvaluation.pullback_comp

@@ -8,9 +8,9 @@ LICENSE file in the root directory of this source tree.
 /-
 Portions of this file are adapted from:
 
-`StacksFrontier/Algebra/Homology/DerivedCategory/RightDerivedFunctorInjective/Exactness.lean` (lines 373–392)
-(AxiomMath/Stacks, revision `c496df0d9beea9deaeabcea8492605f9a0a2313b`); the source files carry no individual
-copyright or author notice.
+`StacksFrontier/Algebra/Homology/DerivedCategory/RightDerivedFunctorInjective/Exactness.lean`,
+lines 373–392 (AxiomMath/Stacks, revision `c496df0d9beea9deaeabcea8492605f9a0a2313b`); the source
+file carries no individual copyright or author notice.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 
 Modifications: the source composition is specialised to the discrete continuous integer-module
@@ -41,7 +41,7 @@ open scoped DiscreteGModules
 attribute [local instance] HasDerivedCategory.standard
 
 /-- Axiom's exact higher derived invariants functor on its actual module category. -/
-def axiomDerivedCohomology (G : Type) [Group G] [TopologicalSpace G]
+abbrev axiomDerivedCohomology (G : Type) [Group G] [TopologicalSpace G]
     [EnoughInjectives (ContinuousGModule.{0, 0} G)] (n : ℕ) :
     ContinuousGModule.{0, 0} G ⥤ AddCommGrpCat.{0} :=
   DerivedCategory.Plus.singleFunctor (ContinuousGModule.{0, 0} G) 0 ⋙

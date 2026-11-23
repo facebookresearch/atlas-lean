@@ -9,8 +9,8 @@ LICENSE file in the root directory of this source tree.
 Portions of this file are adapted from:
 
 `StacksFrontier/AlgebraicGeometry/EtaleCohomology/MultiplicativeSheaf.lean`
-(AxiomMath/Stacks, revision `c496df0d9beea9deaeabcea8492605f9a0a2313b`); the source files carry no individual
-copyright or author notice.
+(AxiomMath/Stacks, revision `c496df0d9beea9deaeabcea8492605f9a0a2313b`); the source file carries
+no individual copyright or author notice.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 
 Modifications: the associated sheaf on Mathlib's big étale site and its native cohomology
