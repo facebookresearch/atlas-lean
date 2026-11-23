@@ -58,11 +58,14 @@ structure SerreDualizingLine {k : Type u} [Field k] {X : Scheme.{u}}
     duality r F hF (a ≫ b) =
       (duality s G hG b).comp (((sectionsFunctor f).rightDerived n).map a).hom
 
-/-- Dimension-n bigness of the actual canonical line of a proper scheme: `h⁰(K^{⊗ m})`
-grows at least like `c m^n`. Coherent cohomology of a proper scheme is
-finite-dimensional, so `Module.finrank` is the actual dimension. -/
+/-- Growth of order `m^n` of the sections of the tensor powers of a line bundle `K` on a
+proper scheme: `h⁰(K^{⊗ m}) ≥ c m^n` for some `c > 0` and all large `m`. For the
+canonical line of a smooth projective `n`-dimensional variety this is general type
+(bigness of the canonical line). Sections of a line bundle on a proper scheme form a
+finite-dimensional space, so `Module.finrank` is the actual dimension. -/
 def HasGeneralTypeGrowth {k : Type u} [Field k] {X : Scheme.{u}}
-    (f : X ⟶ Spec (.of k)) [IsProper f] (K : X.Modules) (n : ℕ) : Prop :=
+    (f : X ⟶ Spec (.of k)) [IsProper f] (K : X.Modules) (_hK : IsLineBundle K) (n : ℕ) :
+    Prop :=
   ∃ c : ℚ, 0 < c ∧ ∃ N : ℕ, ∀ m ≥ N,
     c * (m : ℚ) ^ n ≤
       (Module.finrank k (cohomology f (power K m) 0) : ℚ)
@@ -95,8 +98,9 @@ abbrev fiberCanonical {k : Type u} [Field k]
     {Ω : Type u} [Field Ω] (x : Spec (.of Ω) ⟶ B.left) : (fiberScheme f x).Modules :=
   (Scheme.Modules.pullback (pullback.fst f.left x)).obj K
 
-/-- A smooth projective general-type family, with its canonical line
-characterized on every geometric fiber. It contains no constancy conclusion. -/
+/-- A smooth projective general-type family, with a line bundle that restricts to the
+canonical line of every geometric fiber (characterized there by Serre duality). It
+contains no constancy conclusion. -/
 structure SmoothGeneralTypeFamily {k : Type u} [Field k] (n : ℕ) where
   B : Over (Spec (.of k))
   [smoothBase : SmoothOfRelativeDimension 1 B.hom]
@@ -107,6 +111,8 @@ structure SmoothGeneralTypeFamily {k : Type u} [Field k] (n : ℕ) where
   [proper : IsProper f.left]
   [smoothFibers : SmoothOfRelativeDimension n f.left]
   projective : IsProjectiveOver f
+  /-- A line bundle on the total space whose restriction to every geometric fiber is
+  that fiber's canonical line (determined only up to twists pulled back from the base). -/
   canonical : X.left.Modules
   canonicalLine : IsLineBundle canonical
   fiberIrreducible : ∀ (Ω : Type u) [Field Ω] [IsAlgClosed Ω] (x : Spec (.of Ω) ⟶ B.left),
@@ -114,7 +120,8 @@ structure SmoothGeneralTypeFamily {k : Type u} [Field k] (n : ℕ) where
   fiberDuality : ∀ (Ω : Type u) [Field Ω] [IsAlgClosed Ω] (x : Spec (.of Ω) ⟶ B.left),
     SerreDualizingLine (fiberStructure f x) (fiberCanonical f canonical x) n
   generalType : ∀ (Ω : Type u) [Field Ω] [IsAlgClosed Ω] (x : Spec (.of Ω) ⟶ B.left),
-    HasGeneralTypeGrowth (fiberStructure f x) (fiberCanonical f canonical x) n
+    HasGeneralTypeGrowth (fiberStructure f x) (fiberCanonical f canonical x)
+      (fiberDuality Ω x).line n
 
 attribute [instance] SmoothGeneralTypeFamily.proper
 

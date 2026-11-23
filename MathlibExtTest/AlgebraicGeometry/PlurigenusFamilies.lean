@@ -26,7 +26,8 @@ variable {k : Type u} [Field k] {n : ℕ}
 example (P : SmoothGeneralTypeFamily (k := k) n) (Ω : Type u) [Field Ω] [IsAlgClosed Ω]
     (x : Spec (.of Ω) ⟶ P.B.left) :
     GeometricallyIrreducible (fiberStructure P.f x) ∧
-      HasGeneralTypeGrowth (fiberStructure P.f x) (fiberCanonical P.f P.canonical x) n :=
+      HasGeneralTypeGrowth (fiberStructure P.f x) (fiberCanonical P.f P.canonical x)
+        (P.fiberDuality Ω x).line n :=
   ⟨P.fiberIrreducible Ω x, P.generalType Ω x⟩
 
 -- The fiber of a proper family is proper, as `HasGeneralTypeGrowth` requires.
@@ -44,6 +45,7 @@ example (P : SmoothGeneralTypeFamily (k := k) n) (Ω : Type u) [Field Ω]
 
 -- General-type growth is a lower bound `c m^n` with a positive constant, for all large `m`.
 example {X : Scheme.{u}} (f : X ⟶ Spec (.of k)) [IsProper f] (K : X.Modules)
+    (hK : IsLineBundle K)
     (h : ∀ m : ℕ, ((m : ℚ) ^ n) ≤ Module.finrank k (cohomology f (power K m) 0)) :
-    HasGeneralTypeGrowth f K n :=
+    HasGeneralTypeGrowth f K hK n :=
   ⟨1, one_pos, 0, fun m _ ↦ by simpa using h m⟩

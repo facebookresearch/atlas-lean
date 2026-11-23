@@ -20,6 +20,10 @@ universe u
 -- The identity is birational: it agrees with the identity partial isomorphism.
 example (X : Scheme.{u}) : IsBirationalMorphism (𝟙 X) := isBirationalMorphism_id X
 
+-- Birationality of a morphism is Mathlib's birationality over the target.
+example {X Y : Scheme.{u}} (f : Y ⟶ X) :
+    IsBirationalMorphism f ↔ Scheme.BirationalOver f (𝟙 X) := Iff.rfl
+
 -- A resolution's morphism is birational and an isomorphism over every smooth open.
 example {k : Type u} [Field k] (X : Over (Spec (.of k))) (R : ResolutionModel X) :
     IsBirationalMorphism R.morphism.left := R.birational
