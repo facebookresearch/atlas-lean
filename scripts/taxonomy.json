@@ -11663,6 +11663,7 @@
   "MathlibExt/NumberTheory/PrimePairPowAddPowEqSq": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares of the form $p^x + (2p - 1)^y$ for prime pairs"},
   "MathlibExt/NumberTheory/PrimePairPowSubTwoPowOddMulPowEqSq": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares as sums or differences of powers"},
   "MathlibExt/NumberTheory/PrimePairTwoPowEvenMulPowSubPowEqSq": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares as sums or differences of powers"},
+  "MathlibExt/NumberTheory/PrimePairTwoPowOddMulPowSubPowEqSq": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares as sums or differences of powers"},
   "MathlibExt/NumberTheory/PrimePowAddOneEqSq": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares as sums or differences of powers"},
   "MathlibExt/NumberTheory/PrimePowerFactorizationSum": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Integers equal to power sums of their prime factors"},
   "MathlibExt/NumberTheory/PrimePowerLifting": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Lifting the exponent lemma"},
