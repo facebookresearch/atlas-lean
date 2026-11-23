@@ -25,4 +25,3 @@ example (v : RealSpace 1) : v ∈ starDirections halfLine (0 : RealSpace 1) ↔ 
 
 example (v : RealSpace 1) : v ∈ starDirections halfLine (1 : RealSpace 1) := by
   simp [starDirections, halfLine, character]
-

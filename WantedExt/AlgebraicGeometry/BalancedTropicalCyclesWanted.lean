@@ -33,11 +33,11 @@ open MathlibExt.AlgebraicGeometry.TropicalCycleIntersections
 
 def_wanted normal_data (n : ℕ) (C : Complex n) : NormalData C
 
-theorem_wanted subdivision_balanced (n : ℕ) (A : Cycle n)
+theorem_wanted subdivision_balanced (n : ℕ) (A : WeightedComplex n)
     (N : NormalData A.complex) (_balanced : Balanced A N) (S : Subdivision A)
     (M : NormalData (subdivide S).complex) : Balanced (subdivide S) M
 
-theorem_wanted refinement_multiplicity (n : ℕ) (A B : Cycle n)
+theorem_wanted refinement_multiplicity (n : ℕ) (A B : WeightedComplex n)
     (N : NormalData A.complex) (M : NormalData B.complex)
     (_balanced_A : Balanced A N) (_balanced_B : Balanced B M)
     (S : Subdivision A) (T : Subdivision B) (w v : RealSpace n)
@@ -45,28 +45,28 @@ theorem_wanted refinement_multiplicity (n : ℕ) (A B : Cycle n)
     (_generic_refined : GenericDisplacement (subdivide S) (subdivide T) w v) :
     stableMultiplicity (subdivide S) (subdivide T) w v = stableMultiplicity A B w v
 
-theorem_wanted displacement_independent (n : ℕ) (A B : Cycle n)
+theorem_wanted displacement_independent (n : ℕ) (A B : WeightedComplex n)
     (N : NormalData A.complex) (M : NormalData B.complex)
     (_balanced_A : Balanced A N) (_balanced_B : Balanced B M)
     (w u v : RealSpace n) (_generic_u : GenericDisplacement A B w u)
     (_generic_v : GenericDisplacement A B w v) :
     stableMultiplicity A B w u = stableMultiplicity A B w v
 
-def_wanted stable_product (n : ℕ) (A B : Cycle n)
+def_wanted stable_product (n : ℕ) (A B : WeightedComplex n)
     (N : NormalData A.complex) (M : NormalData B.complex)
     (_balanced_A : Balanced A N) (_balanced_B : Balanced B M)
     (_dimension_A : A.dimension ≤ n) (_dimension_B : B.dimension ≤ n)
     (_proper_degree : n ≤ A.dimension + B.dimension) :
     {P : StableProduct A B // ∃ N : NormalData P.cycle.complex, Balanced P.cycle N}
 
-def_wanted commutative_product_refinement (n : ℕ) (A B : Cycle n)
+def_wanted commutative_product_refinement (n : ℕ) (A B : WeightedComplex n)
     (N : NormalData A.complex) (M : NormalData B.complex)
     (_balanced_A : Balanced A N) (_balanced_B : Balanced B M)
     (_dimension_A : A.dimension ≤ n) (_dimension_B : B.dimension ≤ n)
     (_proper_degree : n ≤ A.dimension + B.dimension)
     (P : StableProduct A B) (Q : StableProduct B A) : CommonSubdivision P.cycle Q.cycle
 
-def_wanted associative_product_refinement (n : ℕ) (A B C : Cycle n)
+def_wanted associative_product_refinement (n : ℕ) (A B C : WeightedComplex n)
     (N : NormalData A.complex) (M : NormalData B.complex) (L : NormalData C.complex)
     (_balanced_A : Balanced A N) (_balanced_B : Balanced B M) (_balanced_C : Balanced C L)
     (_dimension_A : A.dimension ≤ n) (_dimension_B : B.dimension ≤ n)

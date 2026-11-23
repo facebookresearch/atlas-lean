@@ -37,33 +37,33 @@ open scoped BigOperators
 
 variable {n : ℕ}
 
-structure SimplePoint (Y : Cycle n) (w : RealSpace n) where
+structure SimplePoint (Y : WeightedComplex n) (w : RealSpace n) where
   facet : Fin Y.complex.count
   interior : w ∈ intrinsicInterior ℝ (Y.complex.cell facet).carrier
   dimension : (Y.complex.cell facet).dimension = Y.dimension
   multiplicity_one : Y.weight facet = 1
 
-def ProperIn (Y A B : Cycle n) (w : RealSpace n) : Prop :=
+def ProperIn (Y A B : WeightedComplex n) (w : RealSpace n) : Prop :=
   w ∈ A.support ∩ B.support ∧ Y.dimension ≤ A.dimension + B.dimension ∧
     ∀ i j, w ∈ (A.complex.cell i).carrier → w ∈ (B.complex.cell j).carrier →
       TropicalCycleIntersections.intersectionDimension n (A.complex.cell i)
         (B.complex.cell j) ≤ A.dimension + B.dimension - Y.dimension
 
-structure IntersectionFacet (Y A B : Cycle n) (tau : Polyhedron n) where
+structure IntersectionFacet (Y A B : WeightedComplex n) (tau : Polyhedron n) where
   nonempty : tau.carrier.Nonempty
   dimension : tau.dimension = A.dimension + B.dimension - Y.dimension
   support : tau.carrier ⊆ A.support ∩ B.support
   cell_intersection : ∃ i j,
     tau.carrier = (A.complex.cell i).carrier ∩ (B.complex.cell j).carrier
 
-variable {Y A B : Cycle n} {w : RealSpace n} (S : SimplePoint Y w)
+variable {Y A B : WeightedComplex n} {w : RealSpace n} (S : SimplePoint Y w)
 
 def ambientDirection : Submodule ℝ (RealSpace n) :=
   (affineSpan ℝ (Y.complex.cell S.facet).carrier).direction
 
 def ambientLattice : AddSubgroup (Lattice n) := (Y.complex.cell S.facet).lattice
 
-def RelativeGeneric (A B : Cycle n) (v : RealSpace n) : Prop :=
+def RelativeGeneric (A B : WeightedComplex n) (v : RealSpace n) : Prop :=
   v ∈ ambientDirection S ∧
     ∀ i j, w ∈ (A.complex.cell i).carrier → w ∈ (B.complex.cell j).carrier →
       (affineSpan ℝ (A.complex.cell i).carrier).direction ⊔
@@ -75,7 +75,7 @@ def relativeIndex (P Q : Polyhedron n) : ℤ :=
   (((P.lattice.comap (ambientLattice S).subtype ⊔
     Q.lattice.comap (ambientLattice S).subtype).index) : ℤ)
 
-def relativeMultiplicity (A B : Cycle n) (v : RealSpace n) : ℤ := by
+def relativeMultiplicity (A B : WeightedComplex n) (v : RealSpace n) : ℤ := by
   classical
   exact ∑ i, ∑ j,
     if w ∈ (A.complex.cell i).carrier ∧ w ∈ (B.complex.cell j).carrier ∧

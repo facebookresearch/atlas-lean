@@ -99,13 +99,13 @@ def weightGroup (d : ℕ) : AddSubgroup (Fin C.count → ℤ) where
     refine ⟨fun i h ↦ by simp [ha i h], fun i h ↦ by simp [he i h], fun j hn h ↦ ?_⟩
     rw [balanceAt_neg, hb j hn h, neg_zero]
 
-def toCycle (d : ℕ) (w : weightGroup C N d) : Cycle n :=
+def toWeightedComplex (d : ℕ) (w : weightGroup C N d) : WeightedComplex n :=
   ⟨C, d, w.val, w.property.1, w.property.2.1⟩
 
-def Balanced (A : Cycle n) (N : NormalData A.complex) : Prop :=
+def Balanced (A : WeightedComplex n) (N : NormalData A.complex) : Prop :=
   A.weight ∈ weightGroup A.complex N A.dimension
 
-structure Subdivision (A : Cycle n) where
+structure Subdivision (A : WeightedComplex n) where
   complex : Complex n
   index : Fin complex.count → Fin A.complex.count
   contained : ∀ i, (complex.cell i).carrier ⊆ (A.complex.cell (index i)).carrier
@@ -116,9 +116,9 @@ structure Subdivision (A : Cycle n) where
   empty_parent : ∀ i, (complex.cell i).carrier = ∅ →
     (A.complex.cell (index i)).carrier = ∅
 
-variable {C N} {A B : Cycle n}
+variable {C N} {A B : WeightedComplex n}
 
-def subdivide (S : Subdivision A) : Cycle n := by
+def subdivide (S : Subdivision A) : WeightedComplex n := by
   classical
   exact
     { complex := S.complex
@@ -141,11 +141,11 @@ def subdivisionRefinement (S : Subdivision A) : Refinement (subdivide S) A where
       A.weight (S.index i) else 0) = A.weight (S.index i)
     exact ite_eq_left h
 
-abbrev WeightedFacet (A : Cycle n) := {i : Fin A.complex.count // A.weight i ≠ 0}
+abbrev WeightedFacet (A : WeightedComplex n) := {i : Fin A.complex.count // A.weight i ≠ 0}
 
 /-- Refinement of the actual nonzero weighted facets. Extra zero cells carry
 no support and impose no covering obligation. -/
-structure WeightedRefinement (A B : Cycle n) where
+structure WeightedRefinement (A B : WeightedComplex n) where
   dimension : A.dimension = B.dimension
   index : WeightedFacet A → WeightedFacet B
   contained : ∀ i, (A.complex.cell i.val).carrier ⊆ (B.complex.cell (index i).val).carrier
@@ -153,14 +153,14 @@ structure WeightedRefinement (A B : Cycle n) where
     ⋃ i : {i : WeightedFacet A // index i = j}, (A.complex.cell i.val.val).carrier
   weights : ∀ i, A.weight i.val = B.weight (index i).val
 
-structure CommonSubdivision (A B : Cycle n) where
-  cycle : Cycle n
+structure CommonSubdivision (A B : WeightedComplex n) where
+  cycle : WeightedComplex n
   left : WeightedRefinement cycle A
   right : WeightedRefinement cycle B
 
-def WeightedEquivalent (A B : Cycle n) : Prop := Nonempty (CommonSubdivision A B)
+def WeightedEquivalent (A B : WeightedComplex n) : Prop := Nonempty (CommonSubdivision A B)
 
-def zeroWeightedRefinement (A B : Cycle n) (hA : ∀ i, A.weight i = 0)
+def zeroWeightedRefinement (A B : WeightedComplex n) (hA : ∀ i, A.weight i = 0)
     (hB : ∀ i, B.weight i = 0) (hd : A.dimension = B.dimension) : WeightedRefinement A B where
   dimension := hd
   index i := False.elim (i.property (hA i.val))
@@ -170,18 +170,20 @@ def zeroWeightedRefinement (A B : Cycle n) (hA : ∀ i, A.weight i = 0)
 
 /-- Equal-degree zero cycles admit a common weighted subdivision even when
 their presentations carry different extra zero cells. -/
-def zeroCommonSubdivision (A B : Cycle n) (hA : ∀ i, A.weight i = 0)
+def zeroCommonSubdivision (A B : WeightedComplex n) (hA : ∀ i, A.weight i = 0)
     (hB : ∀ i, B.weight i = 0) (hd : A.dimension = B.dimension) : CommonSubdivision A B :=
   ⟨A, zeroWeightedRefinement A A hA hA rfl, zeroWeightedRefinement A B hA hB hd⟩
 
-def stableSupport (A B : Cycle n) : Set (RealSpace n) :=
+def stableSupport (A B : WeightedComplex n) : Set (RealSpace n) :=
   closure {w | ∃ v, GenericDisplacement A B w v ∧ stableMultiplicity A B w v ≠ 0}
 
 /-- The candidate product is normalized by the computed local displacement
-sum on every relative facet interior. Balancing is a separate target. -/
-structure StableProduct (A B : Cycle n) where
-  cycle : Cycle n
-  dimension : cycle.dimension = A.dimension + B.dimension - n
+sum on every relative facet interior. Balancing is a separate target. Its
+dimension is `dim A + dim B - n`, stated without natural subtraction, so a
+product only exists in the proper range `n ≤ dim A + dim B`. -/
+structure StableProduct (A B : WeightedComplex n) where
+  cycle : WeightedComplex n
+  dimension : cycle.dimension + n = A.dimension + B.dimension
   support : cycle.support = stableSupport A B
   multiplicity : ∀ i, (cycle.complex.cell i).dimension = cycle.dimension →
     ∀ w ∈ intrinsicInterior ℝ (cycle.complex.cell i).carrier,
