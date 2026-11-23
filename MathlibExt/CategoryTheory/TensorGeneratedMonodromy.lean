@@ -27,6 +27,7 @@ public import Mathlib.AlgebraicGeometry.Scheme
 public import Mathlib.Algebra.MvPolynomial.Basic
 public import Mathlib.LinearAlgebra.TensorProduct.Basis
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
+public import Mathlib.RingTheory.Nullstellensatz
 
 @[expose] public noncomputable section
 
@@ -95,11 +96,18 @@ abbrev GeneratedCategory := (generatedProperty k Γ r ρ).FullSubcategory
 def generator : GeneratedCategory k Γ r ρ :=
   ⟨generatorRepresentation k Γ r ρ, Generated.generator⟩
 
-instance fdForgetMonoidal : (forget₂ (FDRep k Γ) (FGModuleCat k)).Monoidal :=
+/-- The forgetful functor `FDRep k Γ ⥤ FGModuleCat k` is monoidal, for independent universes of
+`k` and `Γ`. Mathlib's instance in `Mathlib.RepresentationTheory.Tannaka` covers equal universes,
+so this one is only a local instance, used to build `fibreMonoidal`. -/
+abbrev fdForgetMonoidal : (forget₂ (FDRep k Γ) (FGModuleCat k)).Monoidal :=
   inferInstanceAs ((Action.forget (FGModuleCat k) Γ).Monoidal)
 
-instance fgForgetMonoidal : (forget₂ (FGModuleCat k) (ModuleCat k)).Monoidal :=
+/-- The forgetful functor `FGModuleCat k ⥤ ModuleCat k` is monoidal; a local instance used to
+build `fibreMonoidal`. -/
+abbrev fgForgetMonoidal : (forget₂ (FGModuleCat k) (ModuleCat k)).Monoidal :=
   inferInstanceAs ((ModuleCat.isFG k).ι.Monoidal)
+
+attribute [local instance] fdForgetMonoidal fgForgetMonoidal
 
 /-- The actual forgetful functor to coefficient modules. -/
 abbrev fibre : GeneratedCategory k Γ r ρ ⥤ ModuleCat.{u} k :=
@@ -185,13 +193,11 @@ def universalMatrix : Matrix (Fin r) (Fin r) (MvPolynomial (GLVariables r) k) :=
 def determinantInverseRelation : MvPolynomial (GLVariables r) k :=
   (universalMatrix k r).det * MvPolynomial.X (Sum.inr ()) - 1
 
-/-- The actual ideal of polynomial functions vanishing on the displayed image. -/
-def vanishingIdeal : Ideal (MvPolynomial (GLVariables r) k) :=
-  ⨅ γ : Γ, RingHom.ker (MvPolynomial.eval (glCoordinates r (ρ γ)))
-
-/-- Retain the determinant-inverse relation explicitly in the affine model. -/
+/-- Retain the determinant-inverse relation explicitly in the affine model. The second summand is
+Mathlib's vanishing ideal of the coordinates of the displayed image points. -/
 def definingIdeal : Ideal (MvPolynomial (GLVariables r) k) :=
-  Ideal.span {determinantInverseRelation k r} + vanishingIdeal k Γ r ρ
+  Ideal.span {determinantInverseRelation k r} +
+    MvPolynomial.vanishingIdeal k (Set.range fun γ : Γ ↦ glCoordinates r (ρ γ))
 
 /-- The genuine affine coordinate ring of the closure inside GL_r. -/
 abbrev MonodromyCoordinateRing := MvPolynomial (GLVariables r) k ⧸ definingIdeal k Γ r ρ
@@ -204,6 +210,52 @@ def IsMonodromyPoint (S : Type u) [CommRing S] [Algebra k S]
     (g : Matrix.GeneralLinearGroup (Fin r) S) : Prop :=
   ∀ p ∈ definingIdeal k Γ r ρ,
     MvPolynomial.eval₂ (algebraMap k S) (glCoordinates r g) p = 0
+
+/-- Every invertible matrix, with its determinant-inverse coordinate, satisfies the
+determinant-inverse relation. -/
+theorem eval₂_determinantInverseRelation {S : Type u} [CommRing S] [Algebra k S]
+    (g : Matrix.GeneralLinearGroup (Fin r) S) :
+    MvPolynomial.eval₂ (algebraMap k S) (glCoordinates r g) (determinantInverseRelation k r) =
+      0 := by
+  have hdet : MvPolynomial.eval₂ (algebraMap k S) (glCoordinates r g)
+      (universalMatrix k r).det = g.val.det := by
+    rw [← MvPolynomial.coe_eval₂Hom, RingHom.map_det]
+    congr 1
+    ext i j
+    simp [universalMatrix, glCoordinates]
+  have hmul : g.val.det * (g⁻¹).val.det = 1 := by
+    rw [← Matrix.det_mul, ← Units.val_mul, mul_inv_cancel, Units.val_one, Matrix.det_one]
+  rw [determinantInverseRelation, MvPolynomial.eval₂_sub, MvPolynomial.eval₂_mul, hdet,
+    MvPolynomial.eval₂_X, MvPolynomial.eval₂_one]
+  simp only [glCoordinates, Sum.elim_inr]
+  rw [hmul, sub_self]
+
+/-- The displayed image points lie on the affine model: the image of `ρ γ` in `GL_r(S)` is a
+point of it over every coefficient algebra `S`. -/
+theorem isMonodromyPoint_image (S : Type u) [CommRing S] [Algebra k S] (γ : Γ) :
+    IsMonodromyPoint k Γ r ρ S (Matrix.GeneralLinearGroup.map (algebraMap k S) (ρ γ)) := by
+  have hcoord : glCoordinates r (Matrix.GeneralLinearGroup.map (algebraMap k S) (ρ γ)) =
+      algebraMap k S ∘ glCoordinates r (ρ γ) := by
+    funext v
+    rcases v with ⟨i, j⟩ | ⟨⟩
+    · simp [glCoordinates, Matrix.GeneralLinearGroup.map_apply]
+    · simp only [glCoordinates, Sum.elim_inr, Function.comp_apply,
+        ← Matrix.GeneralLinearGroup.map_inv]
+      rw [RingHom.map_det]
+      rfl
+  have hle : definingIdeal k Γ r ρ ≤ RingHom.ker (MvPolynomial.eval (glCoordinates r (ρ γ))) := by
+    rw [definingIdeal, Submodule.add_eq_sup, sup_le_iff]
+    refine ⟨Ideal.span_le.mpr ?_, fun p hp ↦ ?_⟩
+    · rintro _ rfl
+      exact eval₂_determinantInverseRelation k r (S := k) (ρ γ)
+    · simpa [RingHom.mem_ker, MvPolynomial.coe_aeval_eq_eval] using hp _ ⟨γ, rfl⟩
+  intro p hp
+  have hmap := MvPolynomial.eval₂_comp_left (algebraMap k S) (RingHom.id k)
+    (glCoordinates r (ρ γ)) p
+  rw [RingHom.comp_id] at hmap
+  have h0 : MvPolynomial.eval₂ (RingHom.id k) (glCoordinates r (ρ γ)) p = 0 :=
+    RingHom.mem_ker.mp (hle hp)
+  rw [hcoord, ← hmap, h0, map_zero]
 
 end TensorGeneratedMonodromy
 
