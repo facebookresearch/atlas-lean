@@ -20,6 +20,9 @@ For `ControlTheory.StateSpaceCoeffs` and an input sequence `u : ℕ → U`,
 has the closed form
 `x k = A^k x0 + ∑ j < k, A^(k - 1 - j) (B (u j))`.
 `StateSpaceCoeffs.dtOutput` is the output `y k = C (x k) + D (u k)`.
+The Markov parameters `markov 0 = D`, `markov (k+1) = C ∘ A^k ∘ B`
+give the zero-state output as their causal convolution with the input,
+and the unit-sample response is exactly the Markov sequence.
 -/
 
 @[expose] public section
@@ -128,6 +131,101 @@ theorem dtOutput_closedForm {𝕜 X U Y : Type*} [NontriviallyNormedField 𝕜]
       = S.C ((S.A ^ k) x0 + ∑ j ∈ Finset.range k, (S.A ^ (k - 1 - j)) (S.B (u j)))
         + S.D (u k) := by
   rw [dtOutput_apply, dtTraj_closedForm]
+
+/-- Markov parameters of the coefficients: `markov 0 = D` and
+`markov (k+1) = C ∘ A^k ∘ B` as continuous linear maps. -/
+def markov {𝕜 X U Y : Type*} [NontriviallyNormedField 𝕜]
+    [NormedAddCommGroup X] [NormedSpace 𝕜 X]
+    [NormedAddCommGroup U] [NormedSpace 𝕜 U]
+    [NormedAddCommGroup Y] [NormedSpace 𝕜 Y]
+    (S : StateSpaceCoeffs 𝕜 X U Y) : ℕ → (U →L[𝕜] Y)
+  | 0 => S.D
+  | k + 1 => S.C.comp ((S.A ^ k).comp S.B)
+
+theorem markov_zero {𝕜 X U Y : Type*} [NontriviallyNormedField 𝕜]
+    [NormedAddCommGroup X] [NormedSpace 𝕜 X]
+    [NormedAddCommGroup U] [NormedSpace 𝕜 U]
+    [NormedAddCommGroup Y] [NormedSpace 𝕜 Y]
+    (S : StateSpaceCoeffs 𝕜 X U Y) : S.markov 0 = S.D := by
+  rfl
+
+theorem markov_succ {𝕜 X U Y : Type*} [NontriviallyNormedField 𝕜]
+    [NormedAddCommGroup X] [NormedSpace 𝕜 X]
+    [NormedAddCommGroup U] [NormedSpace 𝕜 U]
+    [NormedAddCommGroup Y] [NormedSpace 𝕜 Y]
+    (S : StateSpaceCoeffs 𝕜 X U Y) (k : ℕ) :
+    S.markov (k + 1) = S.C.comp ((S.A ^ k).comp S.B) := by
+  rfl
+
+private theorem markov_succ_apply {𝕜 X U Y : Type*} [NontriviallyNormedField 𝕜]
+    [NormedAddCommGroup X] [NormedSpace 𝕜 X]
+    [NormedAddCommGroup U] [NormedSpace 𝕜 U]
+    [NormedAddCommGroup Y] [NormedSpace 𝕜 Y]
+    (S : StateSpaceCoeffs 𝕜 X U Y) (k : ℕ) (v : U) :
+    S.markov (k + 1) v = S.C ((S.A ^ k) (S.B v)) := by
+  rw [markov_succ]
+  rfl
+
+/-- Zero-state output is the causal convolution of the input with the
+Markov parameters: `y n = ∑ k ≤ n, markov k (u (n-k))`. -/
+theorem zeroState_output_eq_sum_markov {𝕜 X U Y : Type*} [NontriviallyNormedField 𝕜]
+    [NormedAddCommGroup X] [NormedSpace 𝕜 X]
+    [NormedAddCommGroup U] [NormedSpace 𝕜 U]
+    [NormedAddCommGroup Y] [NormedSpace 𝕜 Y]
+    (S : StateSpaceCoeffs 𝕜 X U Y) (u : ℕ → U) (n : ℕ) :
+    S.dtOutput u 0 n = ∑ k ∈ Finset.range (n + 1), S.markov k (u (n - k)) := by
+  show S.C (dtTraj S u 0 n) + S.D (u n)
+    = ∑ k ∈ Finset.range (n + 1), S.markov k (u (n - k))
+  rw [dtTraj_closedForm, map_zero, zero_add, map_sum, Finset.sum_range_succ']
+  have h0 : n - 0 = n := by omega
+  rw [h0, markov_zero]
+  congr 1
+  have hRefl := Finset.sum_range_reflect
+    (fun k => S.C ((S.A ^ k) (S.B (u (n - 1 - k))))) n
+  have hRHS : (∑ k ∈ Finset.range n, S.markov (k + 1) (u (n - (k + 1))))
+      = ∑ k ∈ Finset.range n, S.C ((S.A ^ k) (S.B (u (n - 1 - k)))) := by
+    apply Finset.sum_congr rfl
+    intro k hk
+    rw [markov_succ_apply]
+    have hk1 : n - (k + 1) = n - 1 - k := by omega
+    rw [hk1]
+  rw [hRHS]
+  have hLHS : (∑ j ∈ Finset.range n, S.C ((S.A ^ (n - 1 - j)) (S.B (u j))))
+      = ∑ j ∈ Finset.range n,
+        (fun k => S.C ((S.A ^ k) (S.B (u (n - 1 - k))))) (n - 1 - j) := by
+    apply Finset.sum_congr rfl
+    intro j hj
+    have hjlt : j < n := Finset.mem_range.mp hj
+    have hjj : n - 1 - (n - 1 - j) = j := by omega
+    show S.C ((S.A ^ (n - 1 - j)) (S.B (u j)))
+      = S.C ((S.A ^ (n - 1 - j)) (S.B (u (n - 1 - (n - 1 - j)))))
+    rw [hjj]
+  rw [hLHS]
+  exact hRefl
+
+/-- The response to a unit sample input `v` at time `0` (and `0`
+afterwards) is exactly the Markov sequence applied to `v`. -/
+theorem dtOutput_unitSample {𝕜 X U Y : Type*} [NontriviallyNormedField 𝕜]
+    [NormedAddCommGroup X] [NormedSpace 𝕜 X]
+    [NormedAddCommGroup U] [NormedSpace 𝕜 U]
+    [NormedAddCommGroup Y] [NormedSpace 𝕜 Y]
+    (S : StateSpaceCoeffs 𝕜 X U Y) (v : U) (n : ℕ) :
+    S.dtOutput (fun k => if k = 0 then v else 0) 0 n = S.markov n v := by
+  rw [zeroState_output_eq_sum_markov]
+  have hfn : S.markov n ((fun k => if k = 0 then v else 0) (n - n)) = S.markov n v := by
+    have hnn : n - n = 0 := by omega
+    show S.markov n (if n - n = 0 then v else 0) = S.markov n v
+    rw [ite_eq_left hnn]
+  rw [← hfn]
+  refine Finset.sum_eq_single n ?_ ?_
+  · intro k hk hkn
+    have hklt : k < n + 1 := Finset.mem_range.mp hk
+    have hnk : n - k ≠ 0 := by omega
+    show S.markov k (if n - k = 0 then v else 0) = 0
+    rw [ite_eq_right hnk, map_zero]
+  · intro hcon
+    have hmem : n ∈ Finset.range (n + 1) := Finset.mem_range.mpr (Nat.lt_succ_self n)
+    exact absurd hmem hcon
 
 end StateSpaceCoeffs
 

@@ -40,9 +40,10 @@ namespace MetaMathlibExt
 
 -- Combinatorics 2: Retract
 
-/-- A *retraction* is a homomorphism f from a graph X to a subgraph Y of itself such that the
-restriction f|_Y of f to V(Y) is the identity map. If there is a retraction from X to a subgraph Y,
-then we say that Y is a *retract* of X.
+/-- **Retract.** Let $Y$ be a subgraph of a graph $X$. A *retraction* from $X$ to $Y$ is a
+homomorphism $f$ from $X$ to $Y$, regarded as a graph in its own right, whose restriction to the
+vertex set of $Y$ is the identity map. We say that $Y$ is a *retract* of $X$ if there is a
+retraction from $X$ to $Y$.
 -/
 def _root_.SimpleGraph.Subgraph.IsRetract {V : Type*} {G : SimpleGraph V}
     (H : G.Subgraph) : Prop :=
@@ -53,9 +54,10 @@ def _root_.SimpleGraph.Subgraph.IsRetract {V : Type*} {G : SimpleGraph V}
 def _root_.SimpleGraph.IsCore {V : Type*} [Fintype V] (X : SimpleGraph V) : Prop :=
   ∀ f : X →g X, Function.Bijective f
 
-/-- A finite graph X is a *core* if every homomorphism from X to itself is a bijection. A subgraph Y
-of a finite graph X is a *core of X* if Y, as a graph in its own right, is a core and there is a
-homomorphism from X to Y.
+/-- **Core of a graph.** A finite graph $X$ is a *core* if every homomorphism from $X$ to itself
+is a bijection. For finite graphs $X$ and $Y$, $Y$ is a *core of* $X$ if $Y$ is a core, there is a
+homomorphism from $X$ to $Y$, and there is an injective homomorphism from $Y$ to $X$; that is, $Y$
+is isomorphic to a subgraph of $X$.
 -/
 def _root_.SimpleGraph.HasCore {V W : Type*} [Fintype V] [Fintype W]
     (X : SimpleGraph V) (Y : SimpleGraph W) : Prop :=
@@ -63,8 +65,11 @@ def _root_.SimpleGraph.HasCore {V W : Type*} [Fintype V] [Fintype W]
 
 -- Combinatorics 23: Local injection
 
-/-- We call a homomorphism between finite graphs a *local injection* if the minimum distance between
-two vertices in the same fibre is at least three.
+/-- **Local injection.** A homomorphism $f$ from a finite graph $X$ to a finite graph $Y$ is a
+*local injection* if any two distinct vertices of $X$ with the same image under $f$ are at
+distance at least $3$ in $X$.
+
+Vertices in different components of $X$ count as being at infinite distance.
 -/
 def _root_.SimpleGraph.IsLocalInjection {V W : Type*} [Fintype V] [Fintype W] (G : SimpleGraph V) (H : SimpleGraph W)
     (f : G →g H) : Prop :=
@@ -72,10 +77,9 @@ def _root_.SimpleGraph.IsLocalInjection {V W : Type*} [Fintype V] [Fintype W] (G
 
 -- Combinatorics 24: Local isomorphism
 
-/-- A homomorphism f from X to Y is a *local isomorphism* if for each vertex y of Y, the induced
-mapping from the set of neighbours of a vertex in f⁻¹(y) to the neighbours of y is bijective. We
-call f a covering map if it is a surjective local isomorphism, in which case we say that X *covers*
-Y.
+/-- **Local isomorphism.** A homomorphism $f$ from a finite graph $X$ to a finite graph $Y$ is a
+*local isomorphism* if for every vertex $x$ of $X$, $f$ maps the set of neighbours of $x$
+bijectively onto the set of neighbours of $f(x)$.
 -/
 def _root_.SimpleGraph.IsLocalIsomorphism {V W : Type*} [Fintype V] [Fintype W] (G : SimpleGraph V) (H : SimpleGraph W)
     (f : G →g H) : Prop :=
@@ -83,8 +87,8 @@ def _root_.SimpleGraph.IsLocalIsomorphism {V W : Type*} [Fintype V] [Fintype W] 
 
 -- Combinatorics 429: Covers (graph)
 
-/-- We say that a finite graph X covers a finite graph Y if there is a surjective local isomorphism
-from X to Y.
+/-- **Graph cover.** A finite graph $X$ *covers* a finite graph $Y$ if there is a surjective local
+isomorphism from $X$ to $Y$.
 -/
 def _root_.SimpleGraph.Covers {V W : Type*} [Fintype V] [Fintype W] (G : SimpleGraph V) (H : SimpleGraph W) : Prop :=
   ∃ f : G →g H, G.IsLocalIsomorphism H f ∧ Function.Surjective f

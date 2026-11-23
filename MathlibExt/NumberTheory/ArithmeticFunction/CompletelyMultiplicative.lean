@@ -27,19 +27,26 @@ namespace ArithmeticFunction
 
 variable {R : Type*}
 
-/-- `f` is completely multiplicative if `f (m * n) = f m * f n` for all `m, n : ℕ`. -/
+/-- **Completely multiplicative arithmetic function.** Let $R$ be a type with a multiplication and
+a zero. An arithmetic function $f$ with values in $R$ (so $f(0) = 0$) is completely multiplicative
+if $f(mn) = f(m) f(n)$ for all $m, n \in \mathbb{N} = \{0, 1, 2, \dots\}$.
+
+The normalization $f(1) = 1$ is not part of the definition. -/
 def IsCompletelyMultiplicative [Mul R] [Zero R] (f : ArithmeticFunction R) : Prop :=
   ∀ m n : ℕ, f (m * n) = f m * f n
 
-/-- Projection for `IsCompletelyMultiplicative`. -/
+/-- **Completely multiplicative functions preserve products.** Let $R$ be a type with a
+multiplication and a zero, and let $f$ be a completely multiplicative arithmetic function with
+values in $R$. Then $f(mn) = f(m) f(n)$ for all $m, n \in \mathbb{N}$. -/
 @[simp]
 theorem IsCompletelyMultiplicative.map_mul [Mul R] [Zero R] {f : ArithmeticFunction R}
     (hf : f.IsCompletelyMultiplicative) (m n : ℕ) : f (m * n) = f m * f n :=
   hf m n
 
-/-- Over a `MonoidWithZero` codomain, a completely multiplicative `f` with
-`f 1 = 1` is `IsMultiplicative`. The normalization hypothesis is taken
-explicitly. -/
+/-- **Normalized completely multiplicative functions are multiplicative.** Let $R$ be a monoid
+with zero and let $f$ be a completely multiplicative arithmetic function with values in $R$ such
+that $f(1) = 1$. Then $f$ is multiplicative: $f(1) = 1$ and $f(mn) = f(m) f(n)$ for all coprime
+natural numbers $m$ and $n$. -/
 theorem IsCompletelyMultiplicative.isMultiplicative [MonoidWithZero R]
     {f : ArithmeticFunction R} (hf : f.IsCompletelyMultiplicative) (h1 : f 1 = 1) :
     f.IsMultiplicative :=

@@ -16,9 +16,9 @@ The first term is the contraction of gradient descent on the $m$-strongly convex
 
 ## Background
 
-- [Wasserstein distance](../../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein.md): the metric $W_2$ in which the bound is stated.
+- [Wasserstein distance](../../../../MeasureTheory/optimal-transport/wasserstein-distances/wasserstein-distance/wasserstein.md): the metric $W_2$ in which the bound is stated.
 - [Linear convergence of gradient descent for strongly convex functions](../../../../Analysis/convex-analysis-and-variations/gradient-descent/gradient-descent-strongly-convex-linear.md): the noiseless analogue; Dalalyan recovers $\|\theta_K - \theta^\star\| \le (1 - m/M)^K\|\theta_0 - \theta^\star\|$ from this bound in the zero-temperature limit (Section 3 of the source).
-- [Convergence of the JKO scheme to the Fokker–Planck equation](../../../../MeasureTheory/optimal-transport/wasserstein-gradient-flows-and-the-jko-scheme/tendsto-jko-fokker-planck.md): the law of the Langevin diffusion is the Wasserstein gradient flow of the free energy, of which this algorithm is a discretization.
+- [Convergence of the JKO scheme to the Fokker–Planck equation](../../../../MeasureTheory/optimal-transport/wasserstein-gradient-flows-and-the-jko-scheme/jko-scheme/tendsto-jko-fokker-planck.md): the law of the Langevin diffusion is the Wasserstein gradient flow of the free energy, of which this algorithm is a discretization.
 - [Talagrand's transport inequality](../../../../Probability/concentration-inequalities/transport-cost-inequalities/satisfies-talagrand.md): strongly log-concave targets satisfy $W_2^2 \le (2/m)\,\mathrm{KL}$, which converts the relative-entropy bounds of Cheng and Bartlett into $W_2$ bounds.
 
 ## Sources

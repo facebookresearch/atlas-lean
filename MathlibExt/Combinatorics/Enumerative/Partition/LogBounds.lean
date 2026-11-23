@@ -33,11 +33,6 @@ namespace Nat.Partition
 private theorem logb_exp (x : ℝ) : Real.logb 2 (Real.exp x) = x / Real.log 2 := by
   rw [Real.logb, Real.log_exp]
 
-private theorem leading_mul (x : ℝ) :
-    (Real.pi * Real.sqrt ((2 : ℝ) / 3) / Real.log 2) * x =
-      Real.pi * Real.sqrt ((2 : ℝ) / 3) * x / Real.log 2 := by
-  ring
-
 /-- There are constants `B` and `C` such that the base-two logarithm of the number of integer
 partitions of `n` differs from its leading square-root term by at most a logarithmic lower-order
 term below and a constant above. -/
@@ -61,14 +56,14 @@ theorem exists_logb_card_bounds :
     rw [Real.logb_div (by positivity) (by positivity),
       Real.logb_mul hH.ne' (Real.exp_pos _).ne', logb_exp, Real.logb_pow] at hlog
     have hC : -Real.logb 2 H ≤ max 0 (-Real.logb 2 H) := le_max_right _ _
-    rw [leading_mul]
+    rw [div_mul_eq_mul_div]
     linarith
   · have hp : (0 : ℝ) < Fintype.card (Partition n) := by
       exact_mod_cast Fintype.card_pos (α := Partition n)
     have hlog := Real.logb_le_logb_of_le one_lt_two hp (card_le_exp n)
     rw [logb_exp] at hlog
     have hC : (0 : ℝ) ≤ max 0 (-Real.logb 2 H) := le_max_left _ _
-    rw [leading_mul]
+    rw [div_mul_eq_mul_div]
     linarith
 
 end Nat.Partition

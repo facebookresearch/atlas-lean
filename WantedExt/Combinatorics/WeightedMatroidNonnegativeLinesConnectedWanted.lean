@@ -25,29 +25,38 @@ public import Batteries.Util.ProofWanted
 
 namespace MathlibExt.Combinatorics.WeightedMatroidNonnegativeLinesConnectedWanted
 
-/-- `M` is simple: every set of at most two elements is independent (no loops, no parallel
-pairs). -/
+/-- **Simple matroid.** A matroid $M$ on elements of $\{0, \dots, n-1\}$ is simple when the set
+$\{e, f\}$ is independent in $M$ for all $e, f \in \{0, \dots, n-1\}$, so that every set of at most
+two of these elements is independent (no loops, no parallel pairs). -/
 def IsSimpleMatroid {n : ℕ} (M : Matroid (Fin n)) : Prop := ∀ e f, M.Indep {e, f}
 
-/-- `L` is a line of the matroid: a flat of rank `2`. -/
+/-- **Line of a matroid.** A set $L$ of points is a line of a matroid $M$ on elements of
+$\{0, \dots, n-1\}$ when $L$ is a flat of $M$ of rank $2$. -/
 def IsLine {n : ℕ} (M : Matroid (Fin n)) (L : Set (Fin n)) : Prop := M.IsFlat L ∧ M.eRk L = 2
 
 open Classical in
-/-- The weight of a set of points. -/
+/-- **Weight of a set of points.** Given real weights $a_0, \dots, a_{n-1}$ on the points
+$0, \dots, n-1$, the weight of a set $S$ of points is $\sum_{i \in S} a_i$. -/
 noncomputable def weight {n : ℕ} (a : Fin n → ℝ) (S : Set (Fin n)) : ℝ :=
   ∑ i ∈ Finset.univ.filter (· ∈ S), a i
 
 open Classical in
-/-- The graph on the points of non-negative weight in which two points are adjacent when some line
-of non-negative weight contains both. -/
+/-- **Graph of non-negative lines.** Let $M$ be a matroid on elements of $\{0, \dots, n-1\}$ and
+let $a_0, \dots, a_{n-1}$ be real weights, the weight of a set of points being the sum of the
+weights of its points. The graph of non-negative lines has as vertices the points $i$ with
+$a_i \ge 0$, and two distinct vertices are adjacent when some line of $M$ (a flat of rank $2$)
+contains both and has non-negative weight. -/
 def nonnegGraph {n : ℕ} (M : Matroid (Fin n)) (a : Fin n → ℝ) :
     SimpleGraph {i : Fin n // 0 ≤ a i} :=
   SimpleGraph.fromRel fun i j =>
     ∃ L, IsLine M L ∧ 0 ≤ weight a L ∧ (i : Fin n) ∈ L ∧ (j : Fin n) ∈ L
 
-/-- The rank-`3` question: in a simple rank-`3` matroid on `n` points with real weights of
-non-negative total, the points of non-negative weight are connected through the lines of
-non-negative weight. -/
+/-- **Connectivity question for weighted rank-3 matroids.** This is the statement that for every
+$n$, every simple matroid $M$ of rank $3$ on the ground set $\{0, \dots, n-1\}$ (every set of at
+most two points is independent) and all real weights $a_0, \dots, a_{n-1}$ with
+$a_0 + \dots + a_{n-1} \ge 0$, the graph on the points $i$ with $a_i \ge 0$, in which two distinct
+points are adjacent when some line of $M$ (a flat of rank $2$) contains both and has non-negative
+weight, the weight of a set being the sum of the weights of its points, is connected. -/
 def conjecture : Prop :=
   ∀ (n : ℕ) (M : Matroid (Fin n)) (a : Fin n → ℝ), IsSimpleMatroid M → M.eRank = 3 →
     M.E = Set.univ →
@@ -56,12 +65,22 @@ def conjecture : Prop :=
 -- Carried source audit `OWR-2090-021` (see the Moved/ record).
 
 /--
-Resolved true: Resolved (true) for the formalized rank-3 question: for a generic weight and t ≤
-min{0, total weight}, the proper flats of weight greater than t form an (r − 3)-connected poset
-(Adiprasito–Björner, arXiv:1401.7301, Theorem 2.1, settling the Mikhalkin–Ziegler conjecture);
-for r = 3, a small generic perturbation with t slightly below 0 gives the connectivity of the
-non-negative points through non-negative lines. Shellability in the omitted rank-r part is open
-(their Open Problem 3.2). Source: K. A. Adiprasito, A. Björner, Filtered geometric lattices and
+**Non-negative points of a weighted rank-3 matroid are connected by non-negative lines.** Let $n$
+be a natural number, let $M$ be a simple matroid of rank $3$ on the ground set $\{0, \dots, n-1\}$
+(every set of at most two points is independent) and let $a_0, \dots, a_{n-1}$ be real weights
+with $a_0 + \dots + a_{n-1} \ge 0$. Then the graph on the points $i$ with $a_i \ge 0$, in which two
+distinct points are adjacent when some line of $M$ (a flat of rank $2$) contains both and has
+non-negative weight, the weight of a set being the sum of the weights of its points, is
+connected.
+
+Resolved true: for a matroid of rank $r$, a generic weight and a threshold $t \le \min\{0, w\}$,
+where $w$ is the total weight, the proper flats of weight greater than $t$ form an
+$(r - 3)$-connected poset (Adiprasito–Björner, Theorem 2.1, settling the Mikhalkin–Ziegler
+conjecture); for $r = 3$, a small generic perturbation with $t$ slightly below $0$ gives the
+connectivity of the non-negative points through non-negative lines. Shellability in the omitted
+rank-$r$ part is open (their Open Problem 3.2).
+
+Source: K. A. Adiprasito, A. Björner, Filtered geometric lattices and
 Lefschetz section theorems over the tropical semiring, arXiv:1401.7301,
 https://arxiv.org/abs/1401.7301. Moved from
 `OpenConjectures/Combinatorics/WeightedMatroidNonnegativeLinesConnected`.
