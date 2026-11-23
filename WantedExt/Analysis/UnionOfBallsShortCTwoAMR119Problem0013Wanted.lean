@@ -46,7 +46,7 @@ open scoped Manifold ContDiff
 
 /-- The unit ball `{z : ‖z‖ < 1}` of `ℂ² = EuclideanSpace ℂ (Fin 2)` (Euclidean norm), as an open
 subset, with its induced complex manifold structure. -/
-def unitBall : TopologicalSpace.Opens (EuclideanSpace ℂ (Fin 2)) :=
+noncomputable def unitBall : TopologicalSpace.Opens (EuclideanSpace ℂ (Fin 2)) :=
   ⟨Metric.ball 0 1, Metric.isOpen_ball⟩
 
 /-- The product `Δ × ℂ` of the unit disc and the plane, realized as the open subset

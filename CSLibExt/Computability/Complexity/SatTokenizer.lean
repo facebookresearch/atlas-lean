@@ -30,7 +30,7 @@ when its block closes.
 
 namespace Cslib.Complexity.SatVerifier.Tokenizer
 
-open Turing MetaMathlibExt TM2Program Function Cslib.CookLevin Cslib.Logic.PL Computability
+open Turing MetaMathlibExt TM2Program Function Cslib.CookLevin Cslib.Logic.LegacyPL Computability
 open MetaMathlibExt.BitstringEncoding
 
 /-- **Stacks of the SAT tokenizer.** The SAT tokenizer has six stacks: $X$ for the formula bits,
