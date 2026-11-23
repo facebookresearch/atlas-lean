@@ -9973,6 +9973,7 @@
   "MathlibExt/Combinatorics/Additive/VosperTheorem": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Vosper's theorem"},
   "MathlibExt/Combinatorics/Additive/WeightedDavenport": {"to": "Combinatorics/additive-combinatorics/zero-sum-subset-sums", "title": "Weighted Davenport constant"},
   "MathlibExt/Combinatorics/AlternatingBinomialPartialSum": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Alternating sums of binomial partial sums"},
+  "MathlibExt/Combinatorics/ArithmeticalStructureCoconutTree": {"to": "GraphTheory/algebraic-graph-theory", "title": "Arithmetical structures on graphs"},
   "MathlibExt/Combinatorics/AssociatedStirlingEulerian": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Associated Stirling–Eulerian numbers"},
   "MathlibExt/Combinatorics/AssociatedStirlingSecond": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "Associated Stirling numbers of the second kind"},
   "MathlibExt/Combinatorics/Baranyai": {"to": "Combinatorics/extremal-set-theory/hypergraph-colouring-matching", "title": "Baranyai's theorem"},
