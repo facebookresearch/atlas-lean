@@ -8,10 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Normed.Module.Basic
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Topology.MetricSpace.Pseudo.Defs
+
+/-! # A counterexample to Scottish Book Problem 144 -/
 
 @[expose] public section
 
@@ -46,6 +47,19 @@ Source: S. Mazur and S. Ulam, Problem 144 of the Scottish Book,
 typescript p. 63 (printed), PDF p. 66; see the commentary in
 R. D. Mauldin (ed.), The Scottish Book, 2nd ed. (Birkhäuser, 2015).
 -/
-theorem_wanted mazurUlam144_refuted : ¬ ScottishBookProblem144Claim
+theorem mazurUlam144_refuted : ¬ ScottishBookProblem144Claim := by
+  intro h
+  have : TopologicalSpace.SeparableSpace (ULift ℝ) :=
+    Topology.IsEmbedding.uliftDown.separableSpace
+  obtain ⟨f, _, _, hpos⟩ := h (ULift ℝ)
+  -- The real unit sphere has just two points, so its lifted copy is discrete.
+  have hfin : (Metric.sphere (0 : ℝ) 1).Finite := by
+    simp [Real.sphere_eq_pair _ zero_le_one]
+  have : Finite (Metric.sphere (0 : ULift ℝ) 1) :=
+    (hfin.preimage ULift.down_injective.injOn).to_subtype
+  let p : Metric.sphere (0 : ULift ℝ) 1 := ⟨ULift.up 1, by
+    change dist (1 : ℝ) 0 = 1
+    simp⟩
+  simpa using hpos {p} (isOpen_discrete _) (Set.singleton_nonempty p)
 
 end MathlibExt.Analysis.ScottishBook144Wanted
