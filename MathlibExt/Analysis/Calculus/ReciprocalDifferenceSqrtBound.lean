@@ -1,5 +1,17 @@
 /-
-# Bound on 1/(1+x) - 1/(1+ax) by (sqrt a - 1)/(sqrt a + 1)
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Portions of this file are adapted from:
+
+`benchmark/level1/ma_proofbench_l1_01.lean` (openbmb/ma-proofbench, commit
+31bab4c78fd1b0c464e767d62e9202163d1e9029), by L. Pu et al. The main theorem's statement and
+informal description are adapted from that problem, distributed under the MIT License.
 
 Copyright (c) 2026 OpenBMB
 
@@ -20,24 +32,20 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-Attribution and modification notice: the statement below is taken from openbmb/ma-proofbench at
-commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level1/ma_proofbench_l1_01.lean`
-(MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
-Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
-`theorem ma_proofbench_l1_01 … := by sorry` into the Batteries `theorem_wanted`
-`one_div_one_add_sub_one_div_one_add_mul_le`; moved the informal problem statement docstring
-onto it and placed the declarations in namespace
-`MathlibExt.Analysis.Calculus.ReciprocalDifferenceSqrtBoundWanted`; replaced `import Mathlib` by
-`public import Mathlib` under the module system.
 -/
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib
+public import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.LinearCombination
 
-@[expose] public section
+/-!
+# A bound on a difference of reciprocals
+
+For real `a > 1` and `x ≥ 1`, the difference `1 / (1 + x) - 1 / (1 + a * x)` is at most
+`(√a - 1) / (√a + 1)`. Clearing denominators reduces the bound to the nonnegativity of
+`(√a - 1) * (√a * x - 1) ^ 2`.
+-/
 
 namespace MathlibExt.Analysis.Calculus.ReciprocalDifferenceSqrtBoundWanted
 
@@ -50,8 +58,15 @@ $$
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Real functions; Inequalities in
 real analysis), `benchmark/level1/ma_proofbench_l1_01.lean` at openbmb/ma-proofbench@31bab4c.
 -/
-public theorem_wanted one_div_one_add_sub_one_div_one_add_mul_le
+public theorem one_div_one_add_sub_one_div_one_add_mul_le
     {a x : ℝ} (ha : 1 < a) (hx : 1 ≤ x) :
-    (1 / (1 + x) - 1 / (1 + a * x)) ≤ (Real.sqrt a - 1) / (Real.sqrt a + 1)
+    (1 / (1 + x) - 1 / (1 + a * x)) ≤ (Real.sqrt a - 1) / (Real.sqrt a + 1) := by
+  set s := Real.sqrt a
+  have hs : 1 ≤ s := Real.one_le_sqrt.mpr ha.le
+  have hs_sq : s ^ 2 = a := Real.sq_sqrt (zero_le_one.trans ha.le)
+  have hx_pos : 0 < x := zero_lt_one.trans_le hx
+  rw [← hs_sq]
+  field_simp
+  linear_combination mul_nonneg (sub_nonneg.mpr hs) (sq_nonneg (s * x - 1))
 
 end MathlibExt.Analysis.Calculus.ReciprocalDifferenceSqrtBoundWanted
