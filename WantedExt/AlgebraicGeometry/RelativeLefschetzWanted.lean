@@ -13,15 +13,18 @@ public import MathlibExt.AlgebraicGeometry.RelativeLefschetz
 /-!
 # Geometric relative hard Lefschetz
 
-The relatively very-ample direction is fixed by an actual closed embedding
-over `Y` into `Y × P^n`. A nonzero class of the actual `H²(P^n,Q)` for `n≥1`
-is a nonzero scalar multiple of the hyperplane generator. Its pulled-back
-power is mapped through actual derived direct image and actual perverse
-cohomology. Arbitrary classes of `H²(X,Q)` are not treated as ample.
+The relatively very ample direction is fixed by an actual closed embedding
+over `Y` into `Y ×_ℂ ℙⁿ`. A nonzero class of the actual `H²(ℙⁿ, ℚ)` for
+`n ≥ 1` is a nonzero scalar multiple of the hyperplane class. Its pulled-back
+power is mapped through the actual derived direct image and actual perverse
+cohomology. Arbitrary classes of `H²(X, ℚ)` are not treated as ample.
 
-The completed comparisons/operators are in the proved core; this file asks
-only the scoped isomorphism theorem, beyond the decomposition requests of
-PR1970. Source: BBD (1982), Theorem 6.2.10; de Cataldo–Migliorini,
+The request also asserts that the direct image `Rf_* ℚ_X[d]` is bounded
+constructible, so that its perverse cohomology is defined; it does not assume
+it.
+
+Sources: A. Beilinson, J. Bernstein and P. Deligne, *Faisceaux pervers*,
+Astérisque 100 (1982), Theorem 6.2.10; M. A. de Cataldo and L. Migliorini,
 https://arxiv.org/abs/0712.0349, Theorem 1.6.3.
 -/
 
@@ -32,19 +35,22 @@ namespace WantedExt.AlgebraicGeometry.RelativeLefschetzWanted
 open CategoryTheory CategoryTheory.Limits
 open _root_.AlgebraicGeometry MathlibExt.AlgebraicGeometry
 open ComplexAnalytification PerverseSheaves RelativeLefschetz
+open DeCataldoMiglioriniDecompositionWanted (projectiveSpace)
 
 attribute [local instance] HasDerivedCategory.standard
 
-/-- Relative hard Lefschetz for the geometrically relatively very-ample
+/-- Relative hard Lefschetz for the geometrically relatively very ample
 direction, including every nonzero scalar normalization of the projective
-hyperplane generator. -/
+hyperplane class: `Rf_* ℚ_X[d]` is bounded constructible, and the `k`-th power
+of the class induces an isomorphism from its `-k`-th to its `k`-th perverse
+cohomology. -/
 public theorem_wanted relative_hard_lefschetz (X Y : ComplexScheme)
     [IsComplexVariety X] [IsComplexVariety Y] [PerverseSheafTheory Y]
     (d n k : ℕ) [SmoothOfRelativeDimension d X.hom] (hn : 1 ≤ n)
     (f : X ⟶ Y) [IsProper f.left] (E : RelativeProjectiveEmbedding f n)
     (η : unitComplex (projectiveSpace n) ⟶ (unitComplex (projectiveSpace n))⟦(2 : ℤ)⟧)
-    (hη : η ≠ 0) (C : HyperplaneComparisons E d k)
-    (hK : boundedConstructible Y (imageComplex f d)) :
-    IsIso (perversePowerMap Y ⟨imageComplex f d, hK⟩ k (hyperplaneImageMap E d k η C))
+    (hη : η ≠ 0) (C : HyperplaneComparisons E d k) :
+    ∃ hK : boundedConstructible Y (ConstructibleComplexes.normalizedDirectImage ℚ X Y f d),
+      IsIso (perversePowerMap Y ⟨_, hK⟩ k (hyperplaneImageMap E d k η C))
 
 end WantedExt.AlgebraicGeometry.RelativeLefschetzWanted
