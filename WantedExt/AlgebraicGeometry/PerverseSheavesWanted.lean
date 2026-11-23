@@ -16,22 +16,28 @@ public import MathlibExt.AlgebraicGeometry.PerverseSheaves
 /-!
 # Wanted providers for rational perverse sheaves
 
-The completed rational-sheaf, bounded-constructibility, support, costalk,
-heart and perverse-cohomology definitions are in
-`MathlibExt/AlgebraicGeometry/PerverseSheaves.lean`. This file records the
-remaining construction of the characterized middle perverse theory and
-its abelian heart for every complex variety.
+The rational-sheaf, bounded-constructibility, support, costalk, heart and
+perverse-cohomology definitions are in
+`MathlibExt/AlgebraicGeometry/PerverseSheaves.lean`, where the middle perverse
+t-structure is characterized by its support and cosupport conditions
+(`PerverseSheafTheory`, unique when it exists). Request its existence on every
+complex variety, and that its heart, the category of rational perverse sheaves,
+is abelian. `instance_wanted` declarations are local to this file, so other
+modules keep explicit `[PerverseSheafTheory X]` binders.
 
 ## References
 
-* M. A. A. de Cataldo and L. Migliorini, *The Hodge theory of algebraic maps*,
+* A. Beilinson, J. Bernstein and P. Deligne, *Faisceaux pervers*,
+  Astérisque 100 (1982), Théorème 1.3.6 and §2.2.
+* M. A. de Cataldo and L. Migliorini, *The Hodge theory of algebraic maps*,
   Ann. Sci. École Norm. Sup. (4) 38 (2005), §§3.3, 3.6.
   https://arxiv.org/abs/math/0306030
 -/
 
-namespace MathlibExt.AlgebraicGeometry.PerverseSheaves
+namespace WantedExt.AlgebraicGeometry.PerverseSheavesWanted
 
 open CategoryTheory
+open MathlibExt.AlgebraicGeometry.PerverseSheaves
 
 noncomputable section
 
@@ -50,4 +56,4 @@ public instance_wanted perverseSheafAbelianWanted (X : ComplexScheme)
 
 end
 
-end MathlibExt.AlgebraicGeometry.PerverseSheaves
+end WantedExt.AlgebraicGeometry.PerverseSheavesWanted

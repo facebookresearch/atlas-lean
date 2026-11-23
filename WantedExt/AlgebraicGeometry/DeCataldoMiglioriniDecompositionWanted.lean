@@ -23,32 +23,32 @@ smooth of pure dimension `n`, request a finite splitting
 `Rf_* ℚ_X[n] ≅ ⨁ᵢ ᵖHⁱ(Rf_* ℚ_X[n])[-i]`
 
 and semisimplicity of every perverse cohomology object. These are parts (b)
-and (c) of Theorem 2.1.1 in de Cataldo–Migliorini's Hodge theoretic treatment.
-The splitting is an existence statement.
+and (c) of Theorem 2.1.1 in de Cataldo–Migliorini's Hodge-theoretic treatment,
+stated there for maps of projective varieties with nonsingular source (§2.1;
+the proper case follows by the reductions of §2.3). The splitting is an
+existence statement. The bounded constructibility of the direct image is
+requested here as well.
 
-The independent construction request for perverse sheaves is in
-`PerverseSheavesWanted.lean`. This file uses the public characterized
-interface `[PerverseSheafTheory Y]` supplied by
-`MathlibExt/AlgebraicGeometry/PerverseSheaves.lean`. The projectivity and
-normalized direct-image definitions, with their source attribution, are in
-`MathlibExt/AlgebraicGeometry/ProjectiveDirectImage.lean`.
-
-The normalized direct image uses Mathlib's derived pushforward on the
-analytic topological spaces of complex points. In particular, `ℚ_X[n]`
-places the rational constant sheaf in cohomological degree `-n`.
+The perverse t-structure is the characterized interface `[PerverseSheafTheory Y]`
+of `MathlibExt/AlgebraicGeometry/PerverseSheaves.lean`, whose existence is
+requested in `PerverseSheavesWanted.lean`. Projectivity and the normalized
+direct image `Rf_* ℚ_X[n]` (the rational constant sheaf in cohomological degree
+`-n`) are defined in `MathlibExt/AlgebraicGeometry/ProjectiveDirectImage.lean`.
 
 ## Reference
 
-M. A. A. de Cataldo and L. Migliorini, *The Hodge theory of algebraic maps*,
+M. A. de Cataldo and L. Migliorini, *The Hodge theory of algebraic maps*,
 Ann. Sci. École Norm. Sup. (4) 38 (2005), no. 5, 693–750,
-Theorem 2.1.1(b,c). https://arxiv.org/abs/math/0306030
+§2.1 and Theorem 2.1.1(b,c). https://arxiv.org/abs/math/0306030
 -/
 
-namespace MathlibExt.AlgebraicGeometry.DeCataldoMiglioriniDecompositionWanted
+namespace WantedExt.AlgebraicGeometry.DeCataldoMiglioriniDecompositionWanted
 
 open CategoryTheory CategoryTheory.Limits
-open _root_.AlgebraicGeometry
+open _root_.AlgebraicGeometry MathlibExt.AlgebraicGeometry
 open ComplexAnalytification PerverseSheaves
+open MathlibExt.AlgebraicGeometry.DeCataldoMiglioriniDecompositionWanted
+  (IsProjectiveOverC normalizedDirectImage)
 
 noncomputable section
 
@@ -98,4 +98,4 @@ public theorem_wanted deCataldoMigliorini_semisimplicity
 
 end
 
-end MathlibExt.AlgebraicGeometry.DeCataldoMiglioriniDecompositionWanted
+end WantedExt.AlgebraicGeometry.DeCataldoMiglioriniDecompositionWanted
