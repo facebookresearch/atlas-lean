@@ -3426,9 +3426,11 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
         if left := unfinished(report):
             return "other", [f"the sync fails on the base's wiki: {row}" for row in left]
         differences = []
-        # The changes are the working tree's, and the index's where the working tree has nothing: a file staged and
-        # then removed, or a submodule, which may have no folder at all.
+        # The changes are the working tree's, and the index's where the working tree has nothing and the index
+        # differs from the base: a file staged and then removed, or a submodule, which may have no folder at all.
         staged = index_entries()
+        restaged = {os.fsdecode(path) for path in git("diff", "--cached", "--name-only", "--no-renames", "-z", base,
+                                                         "--").split(b"\0") if path}
         for path in sorted(set(paths) | {path.relative_to(scratch).as_posix() for path in written}):
             mine, theirs = scratch / path, wiki.ROOT / path
             linked = theirs.is_symlink() or os.path.realpath(theirs) != str(theirs)
@@ -3436,7 +3438,8 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
             expected = (mine.read_bytes(), modes.get(path) != "100755") if mine.is_file() else None
             actual = None if linked or not theirs.is_file() else (theirs.read_bytes(), not theirs.stat().st_mode & 0o111)
             mode, name = staged.get(path, ("100644", None))
-            if not os.path.lexists(theirs) and name is not None and mode in ("100644", "100755"):
+            if (not os.path.lexists(theirs) and path in restaged and name is not None
+                    and mode in ("100644", "100755")):
                 actual = (git("cat-file", "blob", name), mode != "100755")
             # Anything but a file, in the working tree or the index: a folder, a submodule, a link.
             other = (os.path.lexists(theirs) and not theirs.is_file()) or mode not in ("100644", "100755")
