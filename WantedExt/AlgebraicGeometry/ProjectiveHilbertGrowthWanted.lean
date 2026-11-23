@@ -16,7 +16,9 @@ public import MathlibExt.RingTheory.ProjectiveHilbertGrowth
 These projective embedding and Hilbert-scheme inputs control the growth of
 actual standard-graded quotient pieces. The generator bound is explicit;
 the persistence assertion does not apply to an arbitrary homogeneous ideal
-without that bound.
+without that bound. Macaulay expansions exist for every positive degree
+(`MathlibExt.RingTheory.ProjectiveHilbertGrowth.MacaulayExpansion.nonempty`), so
+the hypotheses on `E` can always be met.
 
 References:
 * F. S. Macaulay, *Some properties of enumeration in the theory of modular
@@ -36,24 +38,20 @@ Those polynomial constructions are not requested again here.
 
 namespace WantedExt.AlgebraicGeometry.ProjectiveHilbertGrowthWanted
 
-open MathlibExt.RingTheory.ProjectiveHilbertGrowth
+open MvPolynomial MathlibExt.RingTheory.ProjectiveHilbertGrowth
+
+attribute [local instance] MvPolynomial.gradedAlgebra
 
 variable {k : Type*} [Field k] {n : ℕ}
 
-/-- Every natural number has its degree-positive binomial expansion. -/
-theorem_wanted exists_macaulayExpansion (d h : ℕ) (hd : 0 < d) :
-    Nonempty (MacaulayExpansion d h)
-
 /-- Macaulay's upper bound on the next homogeneous quotient dimension. -/
-theorem_wanted macaulay_growth (I : Ideal (MvPolynomial (Fin n) k))
-    (hI : IsHomogeneous I) (d : ℕ) (hd : 0 < d)
-    (E : MacaulayExpansion d (hilbertFunction I d)) :
+theorem_wanted macaulay_growth (I : HomogeneousIdeal (homogeneousSubmodule (Fin n) k))
+    (d : ℕ) (hd : 0 < d) (E : MacaulayExpansion d (hilbertFunction I d)) :
     hilbertFunction I (d + 1) ≤ E.successor
 
 /-- Equality persists after the explicit generator degree bound. -/
-theorem_wanted gotzmann_persistence (I : Ideal (MvPolynomial (Fin n) k))
-    (hI : IsHomogeneous I) (d : ℕ) (hd : 0 < d)
-    (hgen : GeneratedThrough I d)
+theorem_wanted gotzmann_persistence (I : HomogeneousIdeal (homogeneousSubmodule (Fin n) k))
+    (d : ℕ) (hd : 0 < d) (hgen : GeneratedThrough I d)
     (E : MacaulayExpansion d (hilbertFunction I d))
     (heq : hilbertFunction I (d + 1) = E.successor) :
     ∀ t ≥ d, ∀ F : MacaulayExpansion t (hilbertFunction I t),
