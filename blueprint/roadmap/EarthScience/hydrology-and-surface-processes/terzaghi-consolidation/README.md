@@ -6,6 +6,14 @@ produces.
 
 ## Depth average and settlement
 
+- [Consolidation Mode](consolidation-mode.md)
+- [Consolidation Mode eq](consolidation-mode-eq.md)
+- [Consolidation Mode pde](consolidation-mode-pde.md)
+- [Consolidation Mode zero left](consolidation-mode-zero-left.md)
+- [Consolidation Mode zero right](consolidation-mode-zero-right.md)
+- [Consolidation Mode time zero](consolidation-mode-time-zero.md)
+- [Consolidation Mode midpoint time zero](consolidation-mode-midpoint-time-zero.md)
+- [Consolidation Mode abs le amplitude](consolidation-mode-abs-le-amplitude.md)
 - [Depth average of the consolidation mode](consolidation-mode-average.md)
 - [Settlement of the consolidation mode](consolidation-mode-settlement.md)
 - [Integral of the first sine mode over a layer](integral-sin-pi-mul-div.md)

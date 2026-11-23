@@ -52,3 +52,9 @@ $H^1_0(U)$ for Poisson's equation; and interior $H^2$ regularity.
 - [Bayesian inverse problems](../../../Probability/bayesian-statistics/bayesian-inverse-problems/README.md):
   the well-posedness theory there is stated for an abstract forward map; solution operators of
   elliptic equations are a standard example of such maps.
+
+- [Weak H10](weak-h10.md)
+
+- [Weak diffusion exists unique](weak-diffusion-exists-unique.md)
+
+- [Weak diffusion ibp](weak-diffusion-ibp.md)

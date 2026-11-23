@@ -1,0 +1,18 @@
+# Reservoir storage capacity by the sequent-peak method
+
+- [Storage eq capacity sub required Storage At](storage-eq-capacity-sub-required-storage.md)
+- [Storage feasible iff](storage-feasible-iff.md)
+- [Deficit List](deficit-list.md)
+- [Required Storage At](required-storage-at.md)
+- [Terminal Storage Deficit](terminal-storage-deficit.md)
+- [Suffix Deficit Sum](suffix-deficit-sum.md)
+- [Worst Required Storage](worst-required-storage.md)
+- [Required Storage At zero](required-storage-at-zero.md)
+- [Terminal Storage Deficit eq at length](terminal-storage-deficit-eq-at-length.md)
+- [Suffix Deficit Sum self](suffix-deficit-sum-self.md)
+- [Required Storage At succ](required-storage-at-succ.md)
+- [Required Storage At eq walk Max reverse](required-storage-at-eq-walk-max-reverse.md)
+- [Suffix Deficit Sum le required Storage At](suffix-deficit-sum-le-required-storage-a.md)
+- [Exists suffix Deficit Sum eq required Storage At](exists-suffix-deficit-sum-eq-required-st.md)
+- [Required Storage At nonneg](required-storage-at-nonneg.md)
+- [Required Storage At le worst and exists eq](required-storage-at-le-worst-and-exists.md)
