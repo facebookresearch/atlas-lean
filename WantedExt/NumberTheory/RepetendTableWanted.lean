@@ -21,7 +21,7 @@ public import MathlibExt.NumberTheory.RepetendTable
 public import MathlibExt.NumberTheory.RepetendTable.BaseShift
 public import MathlibExt.NumberTheory.RepetendTable.TwoRowColumns
 public import MathlibExt.NumberTheory.RepetendTable.InversePairs
-public import MathlibExt.NumberTheory.RepetendTable.InversePowerTail
+public import MathlibExt.Analysis.Series.InversePowerTail
 
 /-!
 # Repetend tables
@@ -43,7 +43,7 @@ INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 `MathlibExt.NumberTheory.RepetendTable.InversePairs`.
 
 `MetaMathlibExt.tsum_inv_pow_succ_lt` is proved in
-`MathlibExt.NumberTheory.RepetendTable.InversePowerTail`.
+`MathlibExt.Analysis.Series.InversePowerTail`.
 -/
 
 namespace MetaMathlibExt

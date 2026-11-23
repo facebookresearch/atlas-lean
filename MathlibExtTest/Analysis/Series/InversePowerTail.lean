@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.NumberTheory.RepetendTable.InversePowerTail
+import MathlibExt.Analysis.Series.InversePowerTail
 
 /-! # Tests for the inverse power tail bound -/
 
