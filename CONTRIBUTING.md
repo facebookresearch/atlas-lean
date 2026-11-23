@@ -69,9 +69,9 @@ piece of work before you start it, so that others can steer around it:
   `Tasks: af_…`. When the work takes on an issue, such as a source-review
   issue, a page problem or a target, also comment on the issue that you are
   working on it, with a link to the draft. The draft claims its tasks until it
-  is closed: mark it ready for review when it is done or, if you stop, close it
-  and say so on the issue. If a draft that names a task you want has had no
-  push for a week, ask on it whether its author goes on.
+  is closed: mark it ready for review when it is done, or close it if you stop
+  and then say so on any issue you commented on. If a draft that names a task
+  you want has had no push for a week, ask on it whether its author goes on.
 - **Or open an issue** whose title starts with `[Claim]` and that names the
   area, the modules or the task ids you are taking, for work that spans several
   pull requests. It is a claim while it is open and has been updated in the
