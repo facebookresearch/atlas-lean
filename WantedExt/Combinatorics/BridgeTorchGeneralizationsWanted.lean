@@ -30,6 +30,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import MathlibExt.Combinatorics.BridgeTorchTwo
 public import MathlibExt.Combinatorics.BridgeTorchWeights
 
 set_option autoImplicit false
@@ -41,66 +42,6 @@ namespace BridgeTorchGeneralizations
 @[expose] public section
 
 open Finset
-
-/-- **Valid crossing sequences from a state of the bridge and torch problem.** Let $c$ be a
-natural number and let $P$ and $L$ be finite sets of natural numbers, the people and the left
-bank. Whether a finite sequence $A_1, \dots, A_k$ of finite sets of natural numbers (the
-crossings) is valid from the left bank $L$ with the torch on a given side is defined by recursion
-on $k$. The empty sequence is valid exactly when $L = \emptyset$ and the torch is on the right.
-With the torch on the left, the sequence is valid when $A_1$ is a nonempty subset of $L$ with at
-most $c$ elements and $A_2, \dots, A_k$ is valid from the left bank $L \setminus A_1$ with the
-torch on the right. With the torch on the right, it is valid when $A_1$ is a nonempty subset of
-$P \setminus L$ with at most $c$ elements and $A_2, \dots, A_k$ is valid from the left bank
-$L \cup A_1$ with the torch on the left.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-proof of Theorem 1 (states and moves) and Section 3 (capacity `c`). -/
-def bridgeScheduleFrom (c : ℕ) (P : Finset ℕ) : Finset ℕ → Bool → List (Finset ℕ) → Bool
-  | L, torchLeft, [] => decide (L = ∅) && !torchLeft
-  | L, true, A :: σ =>
-      decide (A.Nonempty ∧ A.card ≤ c ∧ A ⊆ L) && bridgeScheduleFrom c P (L \ A) false σ
-  | L, false, A :: σ =>
-      decide (A.Nonempty ∧ A.card ≤ c ∧ A ⊆ P \ L) && bridgeScheduleFrom c P (L ∪ A) true σ
-
-/-- **Bridge schedules.** Let $c$ and $n$ be natural numbers. A finite sequence $\sigma$ of finite
-sets of natural numbers (the crossings) is a schedule for the people $1, \dots, n$ on a bridge of
-capacity $c$ with one torch when the following holds. Start with all of $1, \dots, n$ and the
-torch on the left bank. The crossings at even positions (counting from $0$) are forward moves:
-each is a nonempty set of at most $c$ people then on the left bank, who cross with the torch to
-the right bank. The crossings at odd positions are returns: each is a nonempty set of at most $c$
-people then on the right bank, who cross with the torch back to the left bank. After the last
-crossing the left bank is empty and the torch is on the right bank.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-proof of Theorem 1 and Section 3. -/
-def IsBridgeSchedule (c n : ℕ) (σ : List (Finset ℕ)) : Prop :=
-  bridgeScheduleFrom c (Finset.Icc 1 n) (Finset.Icc 1 n) true σ = true
-
-/-- **Total time of a schedule.** For a finite sequence $\sigma = (A_1, \dots, A_k)$ of finite sets
-of natural numbers (the crossings), the total time of $\sigma$ is $\sum_{i=1}^{k} \max A_i$, where
-$\max \emptyset = 0$. Since person $p$ has crossing time $p$, each crossing costs the largest
-crossing time among the people in it.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-proof of Theorem 1. -/
-def scheduleCost (σ : List (Finset ℕ)) : ℕ :=
-  (σ.map fun A => A.sup id).sum
-
-/-- **Optimal crossing time of the bridge and torch problem.** For a bridge of capacity $c$ and
-$n$ people $1, \dots, n$, where person $i$ has crossing time $i$, the optimal crossing time is
-the least total time of a complete schedule with one torch; the total time of a schedule is the
-sum, over its crossings, of the largest crossing time among the people in that crossing. It is
-written $T(n)$ for $c = 2$ and $T_3(n)$ for $c = 3$. If no complete schedule exists (for
-example when $n = 0$), the value is $0$.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Theorem 1 and Theorem 12. -/
-noncomputable def bridgeTime (c n : ℕ) : ℕ :=
-  sInf {t | ∃ σ, IsBridgeSchedule c n σ ∧ scheduleCost σ = t}
 
 /-- **Forward crossings.** The forward crossings of a list of crossings are its entries at the
 even positions $0, 2, 4, \dots$ (counting from $0$), in their original order. For a schedule
@@ -138,18 +79,6 @@ and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
 Lemma 9. -/
 def rightBank (n : ℕ) (τ : List (Finset ℕ)) : Finset ℕ :=
   (Finset.Icc 1 n).filter fun p => Odd (τ.countP fun A => decide (p ∈ A))
-
-/-- **Every schedule bounds the optimal time.** For all natural numbers $c$ and $n$ and every
-complete schedule $\sigma$ for the people $1, \dots, n$ on a bridge of capacity $c$ with one
-torch, the optimal crossing time of these $n$ people on this bridge is at most the total time
-of $\sigma$.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Theorem 1 (definition of `T(n)`). -/
-theorem bridgeTime_le_scheduleCost {c n : ℕ} {σ : List (Finset ℕ)}
-    (hσ : IsBridgeSchedule c n σ) : bridgeTime c n ≤ scheduleCost σ :=
-  Nat.sInf_le ⟨σ, hσ, rfl⟩
 
 /-- **A four-person schedule of total time 11.** For the people $1, 2, 3, 4$ on a bridge of
 capacity $2$, the crossings $\{1,2\}$ forward, $\{1\}$ back, $\{1,3\}$ forward, $\{1\}$ back,
@@ -232,16 +161,6 @@ public theorem_wanted closedForm_U_integral_and_near_V (n : ℕ) (hn : 7 ≤ n) 
       ((n : ℝ) ^ 2 / 6 + 2 * n - 181 / 36 + (-1 : ℝ) ^ n / 4 -
           2 / 9 * Real.cos (2 * n * Real.pi / 3)) - ((n : ℝ) ^ 2 / 6 + 2 * n - 11 / 2) < 1
 
-
-/-- **Closed form for capacity two.** Let $T(n)$ be the optimal crossing time of $n$ people with
-crossing times $1, \dots, n$ on a bridge of capacity $2$ with one torch. For every $n \ge 2$,
-$$T(n) = \frac{n^2}{4} + 3n - 5 + \frac{(-1)^n - 1}{8}.$$
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Theorem 1 (`jis-2026-26.5.6-thm-1`). -/
-public theorem_wanted bridgeTime_two_closed_form (n : ℕ) (hn : 2 ≤ n) :
-    (bridgeTime 2 n : ℝ) = (n : ℝ) ^ 2 / 4 + 3 * n - 5 + ((-1 : ℝ) ^ n - 1) / 8
 
 /-- **Fewest crossings of the fastest person in an optimal schedule.** For bridge capacity $2$
 and $n \ge 1$ people $1, \dots, n$ (person $i$ has crossing time $i$), the least number $a(n)$

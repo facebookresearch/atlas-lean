@@ -388,23 +388,6 @@ public theorem_wanted component_monochromatic_of_rainbowFree (n t : ℕ) (f : ZM
     (hb : ∃ m m' : ℕ, f^[m] b = f^[m'] v) :
     c a = c b
 
-/-- **Cycle vertices of the $k$-th power map modulo $p$.** Let $p$ be an odd prime, $k$ a natural
-number, and $t$ the largest divisor of $p - 1$ that is coprime to $k$. A nonzero
-$a \in \mathbb{Z}/p\mathbb{Z}$ lies on a cycle of the map $x \mapsto x^k$, that is,
-$a^{k^m} = a$ for some $m \ge 1$, if and only if the multiplicative order of $a$ divides $t$.
-
-Only this characterization is stated; the source's further claims (there are $t + 1$ cycle
-vertices, and two components exactly when $t = 1$) are not.
-
-Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Theorem 6 (after
-Lucheta, Miller and Reiter)
-(`integers-2024-A105-thm-6`). -/
-public theorem_wanted isCycleVertex_powMap_iff_orderOf_dvd (p k : ℕ) [Fact p.Prime]
-    (hp : p ≠ 2) (t : ℕ) (ht : t ∣ p - 1) (htk : Nat.Coprime t k)
-    (htmax : ∀ s : ℕ, s ∣ p - 1 → Nat.Coprime s k → s ≤ t) (a : ZMod p) (ha : a ≠ 0) :
-    (∃ m : ℕ, 1 ≤ m ∧ a ^ (k ^ m) = a) ↔ orderOf a ∣ t
-
 end
 
 end MetaMathlibExt
