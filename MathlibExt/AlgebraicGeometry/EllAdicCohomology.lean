@@ -7,28 +7,27 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The continuous coefficient sheaf and its pushforward are adapted from:
+Portions of this file are adapted from:
 
-`Mathlib/AlgebraicGeometry/Sites/ElladicCohomology.lean` (Mathlib):
+`Mathlib/AlgebraicGeometry/Sites/ElladicCohomology.lean` (Mathlib, revision
+56a005855ea17e0b0958f73ec801ae140b0a1679), for the continuous coefficient sheaf and its
+pushforward:
 Copyright (c) 2026 Christian Merten. All rights reserved.
-Authors: Jiedong Jiang, Christian Merten.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Jiedong Jiang, Christian Merten
 
-`Mathlib/AlgebraicGeometry/Sites/ConstantSheaf.lean` (Mathlib):
+`Mathlib/AlgebraicGeometry/Sites/ConstantSheaf.lean` (Mathlib, revision
+56a005855ea17e0b0958f73ec801ae140b0a1679):
 Copyright (c) 2026 Christian Merten. All rights reserved.
-Authors: Christian Merten.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Christian Merten
 
-These files are from leanprover-community/mathlib4 at commit
-56a005855ea17e0b0958f73ec801ae140b0a1679 and are licensed under the Apache
-License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-
-The rational scalar-extension pattern is adapted from `Weil/Definitions.lean`
-in `AxiomMath/Weil` at commit 27cdb2049be62ee2911429b47f54774078450e32,
-distributed under the Apache License, Version 2.0. That file contains no
-individual copyright or author notice.
-
-Modification notice: generalized continuous coefficient maps, specified
-integral scalar multiplication by the actual coefficient-induced cohomology
-map, and used Mathlib's pro-étale cohomology carrier for rationalization.
+`Weil/Definitions.lean` (AxiomMath/Weil, revision 27cdb2049be62ee2911429b47f54774078450e32), for
+the rational scalar extension:
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: general continuous coefficient maps, the `ℤ_ℓ`-module structure on cohomology
+induced by multiplication on the coefficient sheaf, and rationalization of Mathlib's pro-étale
+cohomology.
 -/
 
 module
@@ -162,7 +161,7 @@ def globalScalar (a : ℤ_[ℓ]) :
     globalCoefficientSheaf.{u} ℤ_[ℓ] ⟶ globalCoefficientSheaf.{u} ℤ_[ℓ] :=
   globalCoefficientMap (scalarCoefficient ℓ a)
 
-/-- Scalar multiplication on the actual Mathlib integral coefficient sheaf. -/
+/-- Multiplication by `a` on Mathlib's coefficient sheaf `Scheme.ellAdicSheaf`. -/
 def sheafScalar (X : Scheme.{u}) (a : ℤ_[ℓ]) :
     X.ellAdicSheaf ℓ ⟶ X.ellAdicSheaf ℓ :=
   (coefficientPushforward X).map (globalScalar ℓ a)
@@ -180,8 +179,8 @@ def cohomologyScalar (X : Scheme.{u}) (n : ℕ) (a : ℤ_[ℓ]) :
     X.EllAdicCohomology ℓ n →+ X.EllAdicCohomology ℓ n :=
   Sheaf.H.map (liftedScalar ℓ X a) n
 
-/-- A module structure whose scalar action is fixed by the coefficient sheaf.
-The equality specifies every scalar operation on the actual integral group. -/
+/-- A `ℤ_ℓ`-module structure on `H^n(X, ℤ_ℓ)` whose scalar multiplication is induced by
+multiplication on the coefficient sheaf. An instance is `canonicalEllAdicModule`. -/
 class CanonicalEllAdicModule (X : Scheme.{u}) (n : ℕ) where
   /-- The module on the existing integral cohomology type. -/
   moduleStructure : Module ℤ_[ℓ] (X.EllAdicCohomology ℓ n)
@@ -195,7 +194,7 @@ instance ellAdicModule (X : Scheme.{u}) (n : ℕ)
     [h : CanonicalEllAdicModule ℓ X n] :
     Module ℤ_[ℓ] (X.EllAdicCohomology ℓ n) := h.moduleStructure
 
-/-- Rational cohomology is the actual scalar extension of the integral group. -/
+/-- Rational `ℓ`-adic cohomology: `ℚ_ℓ ⊗_{ℤ_ℓ} H^n(X, ℤ_ℓ)`. -/
 abbrev RationalCohomology (X : Scheme.{u}) (n : ℕ)
     [CanonicalEllAdicModule ℓ X n] : Type (u + 1) :=
   ℚ_[ℓ] ⊗[ℤ_[ℓ]] X.EllAdicCohomology ℓ n

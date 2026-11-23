@@ -19,18 +19,18 @@ public import Mathlib.CategoryTheory.Limits.Shapes.Kernels
 set_option backward.isDefEq.respectTransparency false
 
 /-!
-# Continuous adic compact-support realization by the closed-boundary kernel
+# Compactly supported cohomology through a compactification
 
-The compact-support coefficient object is the actual kernel of
-F -> i_* i^* F for a closed boundary i. The unit and both functors are
-the actual small pro-étale ones. Taking the kernel in the functor category
-supplies functorial coefficient maps and all their identity/composition
-laws. For a quasi-compact open complement this is j_! j^* F, by the
-completed open-closed exactness theorem of Stacks 09AH.
+For a scheme `X` over a field `k` with a compactification `c`: an open immersion `j` of `X` into a
+proper `k`-scheme `Y` whose complement is the image of a closed immersion `i : Z → Y`, the
+compact-support coefficient sheaf of a sheaf `F` on `Y` is the kernel of the unit
+`F → i_* i^* F` on the small pro-étale site. This is `j_! j^* F` when `0 → j_! j^* F → F →
+i_* i^* F → 0` is exact (Stacks 09AH for the étale site). Its cohomology is the compactly
+supported cohomology of `X` with coefficients in `F`. Taking kernels in the functor category makes
+the construction functorial in the coefficients.
 
-The finite reductions and inverse-limit map are prescribed coefficient
-maps on this kernel. Their compatibility is proved below. The native
-continuous compact-support/finite-level realization is a separate goal.
+For continuous coefficients `ℤ_ℓ` and `ℤ/ℓ^(r+1)`, the reductions induce maps of compactly
+supported cohomology, compatible with the transitions; this gives a map to the inverse limit.
 
 References: Stacks Project, Tags 09AH, 03UT and 09BT; Bhatt--Scholze,
 The pro-étale topology for schemes, §6.8.
@@ -46,7 +46,7 @@ open MathlibExt.AlgebraicGeometry.EllAdicReductionComparison
 
 universe u
 
-/-- The actual abelian sheaf category on the small pro-étale site. -/
+/-- Abelian sheaves on the small pro-étale site of `X`. -/
 abbrev AdicAbelianSheaf (X : Scheme.{u}) := Sheaf (ProEt.topology X) Ab.{u + 1}
 
 abbrev abelianPushforward {Y X : Scheme.{u}} (f : Y ⟶ X) :
@@ -63,49 +63,50 @@ def abelianAdjunction {Y X : Scheme.{u}} (f : Y ⟶ X) :
     abelianPullback f ⊣ abelianPushforward f :=
   Functor.sheafPullbackConstruction.sheafAdjunctionContinuous _ _ _ _
 
-/-- The actual kernel functor of the actual closed-immersion unit. -/
+/-- The kernel of the unit `F → i_* i^* F` of the inverse and direct image adjunction along `i`. -/
 def boundaryKernelFunctor {Z X : Scheme.{u}} (i : Z ⟶ X) :
     AdicAbelianSheaf X ⥤ AdicAbelianSheaf X :=
   kernel (abelianAdjunction i).unit
 
-/-- A proper compactification and its genuine closed boundary. -/
+/-- A compactification of `X` over `k`: an open immersion of `X` into a proper `k`-scheme whose
+complement is the image of a closed immersion. -/
 structure ClosedCompactification {k : Type u} [Field k] (X : Over (Spec (.of k))) where
-  /-- The actual proper ambient scheme over k. -/
+  /-- The proper `k`-scheme containing `X`. -/
   ambient : Over (Spec (.of k))
-  /-- The actual open map from X to the proper ambient scheme. -/
+  /-- The open immersion of `X`. -/
   openMap : X ⟶ ambient
-  /-- The actual boundary scheme. -/
+  /-- The boundary. -/
   boundary : Scheme.{u}
-  /-- The actual closed boundary immersion. -/
+  /-- The closed immersion of the boundary. -/
   closedMap : boundary ⟶ ambient.left
   proper : IsProper ambient.hom
   openImmersion : IsOpenImmersion openMap.left
   closedImmersion : IsClosedImmersion closedMap
-  /-- The displayed open is precisely the complement of the boundary. -/
+  /-- `X` is the complement of the boundary. -/
   complement : Set.range openMap.left.base = (Set.range closedMap.base)ᶜ
 
 attribute [instance] ClosedCompactification.proper ClosedCompactification.openImmersion
   ClosedCompactification.closedImmersion
 
-/-- Actual lifted continuous coefficients, using the native adic carrier. -/
+/-- The sheaf `C(-, A)` on the compactification, lifted to the universe of the site. -/
 abbrev actualCoefficient {k : Type u} [Field k] {X : Over (Spec (.of k))}
     (c : ClosedCompactification X) (A : Type) [TopologicalSpace A] [AddCommGroup A]
     [IsTopologicalAddGroup A] : AdicAbelianSheaf c.ambient.left :=
   (coefficientLift c.ambient.left).obj (coefficientSheaf c.ambient.left A)
 
-/-- The actual compact-support coefficient sheaf. -/
+/-- The compact-support coefficient sheaf `j_! j^* C(-, A)`. -/
 abbrev compactSupportCoefficient {k : Type u} [Field k] {X : Over (Spec (.of k))}
     (c : ClosedCompactification X) (A : Type) [TopologicalSpace A] [AddCommGroup A]
     [IsTopologicalAddGroup A] : AdicAbelianSheaf c.ambient.left :=
   (boundaryKernelFunctor c.closedMap).obj (actualCoefficient c A)
 
-/-- Actual compact-support sheaf cohomology of the displayed kernel. -/
+/-- Compactly supported cohomology of `X` with coefficients `A`. -/
 abbrev compactSupportCohomology {k : Type u} [Field k] {X : Over (Spec (.of k))}
     (c : ClosedCompactification X) (A : Type) [TopologicalSpace A] [AddCommGroup A]
     [IsTopologicalAddGroup A] (n : ℕ) :=
   (compactSupportCoefficient c A).H n
 
-/-- The actual coefficient map, followed by the functorial boundary kernel. -/
+/-- The map of compact-support coefficient sheaves induced by a coefficient map. -/
 def compactCoefficientMap {k : Type u} [Field k] {X : Over (Spec (.of k))}
     (c : ClosedCompactification X) {A B : Type} [TopologicalSpace A] [TopologicalSpace B]
     [AddCommGroup A] [AddCommGroup B] [IsTopologicalAddGroup A] [IsTopologicalAddGroup B]
@@ -121,24 +122,24 @@ local instance finiteDiscrete (m : ℕ) : DiscreteTopology (ZMod m) := ⟨rfl⟩
 variable {k : Type u} [Field k] {X : Over (Spec (.of k))}
   (c : ClosedCompactification X) (n : ℕ)
 
-/-- The actual integral compact-support cohomology carrier. -/
+/-- Compactly supported cohomology with coefficients `ℤ_ℓ`. -/
 abbrev integralCompactSupport := compactSupportCohomology c ℤ_[ell] n
 
-/-- Actual finite-level compact-support cohomology on the same site. -/
+/-- Compactly supported cohomology with coefficients `ℤ/ℓ^(r+1)`. -/
 abbrev finiteCompactSupport (r : ℕ) :=
   compactSupportCohomology c (ZMod (ell ^ (r + 1))) n
 
-/-- The transition is induced by the prescribed coefficient quotient. -/
+/-- The transition induced by the quotient `ℤ/ℓ^(r+2) → ℤ/ℓ^(r+1)`. -/
 def compactTransition (r : ℕ) : finiteCompactSupport ell c n (r + 1) →+
     finiteCompactSupport ell c n r :=
   Sheaf.H.map (compactCoefficientMap c (ReductionMaps.step (ell := ell) r)) n
 
-/-- Reduction of an integral compact-support class is a genuine sheaf map. -/
+/-- Reduction modulo `ℓ^(r+1)` of compactly supported cohomology. -/
 def compactReduction (r : ℕ) : integralCompactSupport ell c n →+
     finiteCompactSupport ell c n r :=
   Sheaf.H.map (compactCoefficientMap c (ReductionMaps.red (ell := ell) r)) n
 
-/-- The finite-level coefficient comparison is compatible on the actual kernels. -/
+/-- The reductions are compatible with the transitions. -/
 theorem compactReductionsCommute (r : ℕ) (x : integralCompactSupport ell c n) :
     compactTransition ell c n r (compactReduction ell c n (r + 1) x) =
       compactReduction ell c n r x := by
@@ -177,14 +178,14 @@ theorem compactReductionsCommute (r : ℕ) (x : integralCompactSupport ell c n) 
   exact (Sheaf.H.map_comp_apply _ _ x).symm.trans
     (congrArg (fun f ↦ Sheaf.H.map f n x) hk)
 
-/-- The actual inverse limit is the subgroup of compatible finite-level classes. -/
+/-- The inverse limit of finite-level compactly supported cohomology, as compatible families. -/
 def compactFiniteLimit : AddSubgroup (∀ r : ℕ, finiteCompactSupport ell c n r) where
   carrier := {a | ∀ r, compactTransition ell c n r (a (r + 1)) = a r}
   zero_mem' r := map_zero _
   add_mem' ha hb r := by simp [ha r, hb r]
   neg_mem' ha r := by simp [ha r]
 
-/-- Every coordinate of this comparison is fixed by the actual reduction map. -/
+/-- The map from integral compactly supported cohomology to the inverse limit. -/
 def compactSupportLimitComparison : integralCompactSupport ell c n →+
     compactFiniteLimit ell c n where
   toFun x := ⟨fun r ↦ compactReduction ell c n r x,
