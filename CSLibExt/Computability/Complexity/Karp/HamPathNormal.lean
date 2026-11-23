@@ -46,7 +46,7 @@ Proof (Sipser, Theorem 7.46):
 
 namespace Cslib.Complexity.Karp
 
-open Cslib.CookLevin Cslib.Logic.PL
+open Cslib.CookLevin Cslib.Logic.LegacyPL
 
 /-! ### Vertex arithmetic -/
 

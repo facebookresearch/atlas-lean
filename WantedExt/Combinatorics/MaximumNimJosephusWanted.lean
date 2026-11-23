@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.JosephusFunction
+public import MathlibExt.Combinatorics.MaximumNimJosephus
 public import MathlibExt.GameTheory.SpragueGrundy
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Tactic
@@ -468,15 +469,9 @@ public theorem_wanted maximumNimGrundy_eq_sub_rule_succ (f : ℕ → ℕ) (hf0 :
     (x : ℕ) (hx : 1 ≤ x) (hfx : f x = f (x - 1)) :
     maximumNimGrundy f x = maximumNimGrundy f (x - f x - 1)
 
-/-- **Floor identity for non-multiples in Maximum Nim.** Let $k \ge 2$ and $x$ be natural numbers
-such that $x$ is not a multiple of $k$. Then
-$x - \lfloor x/k \rfloor - 1 = \lfloor (k-1)x/k \rfloor$.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Lemma 2 (`integers-2024-G5-lem-2`). -/
-public theorem_wanted maximumNim_sub_div_sub_one_eq (k x : ℕ) (hk : 2 ≤ k)
-    (hxk : ¬k ∣ x) :
-    x - x / k - 1 = (k - 1) * x / k
+-- Lemma 2 (`integers-2024-G5-lem-2`), the floor identity for non-multiples of `k`, is proved as
+-- `maximumNim_sub_div_sub_one_eq` in `MathlibExt.Combinatorics.MaximumNimJosephus`, which this
+-- module imports.
 
 /-- **Maximum Nim Grundy numbers at multiples of the divisor.** Let $k \ge 2$ and let $G$ be
 the Grundy number of Maximum Nim with rule function $f(y) = \lfloor y/k \rfloor$. Every positive

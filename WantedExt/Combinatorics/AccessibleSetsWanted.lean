@@ -189,16 +189,6 @@ public theorem_wanted accessible_integral_quotients (A : Set ℕ) (d r : ℕ)
     (hd : 0 < d) (hA : IsRAccessible (r * d) A) :
     IsRAccessible r {n : ℕ | 0 < n ∧ ∃ a ∈ A, a = n * d}
 
-/-- **Multiples of $d$ in an accessible set.** Let $d \ge 1$ and $r$ be natural numbers and let $A$
-be a set of natural numbers. If $A$ is $rd$-accessible, then the set $\{a \in A : d \mid a\}$ of
-members of $A$ divisible by $d$ is $r$-accessible.
-
-Source: Oscar Quester, *On Some Properties of Accessible Sets*, INTEGERS 25 (2025), Article A64,
-        Theorem 11(ii). -/
-public theorem_wanted accessible_divisible_subset (A : Set ℕ) (d r : ℕ)
-    (hd : 0 < d) (hA : IsRAccessible (r * d) A) :
-    IsRAccessible r {a : ℕ | a ∈ A ∧ a % d = 0}
-
 /-- **Colorings avoiding long diffsequences under fractional-part bounds.** Let $r \ge 1$, let
 $d_0 < d_1 < \cdots$ be a strictly increasing sequence of natural numbers with $d_0 > 0$, and let
 $D = \{d_n : n \ge 0\}$. Suppose there are real numbers $\alpha$ and $\varepsilon > 0$ such that
