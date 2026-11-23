@@ -18,8 +18,9 @@ uniqueness of the infinite-volume edge marginal off a countable set of `p`.
 ## i. Overview
 
 Suppose volumes `V n → ∞` and surface terms `S n = o(V n)` satisfy, for every `ε > 0`,
-`ε ≤ q ^ (S n) λ ^ ((b - a - 2ε) V n) / ε` with `0 < λ < 1`. Taking logarithms and dividing
-by `V n` forces `b - a - 2ε ≤ 0`, so `b ≤ a` (`secant_b_le_a_of_finiteVolumeData`).
+`ε ≤ q ^ (S n) λ ^ ((b - a - 2ε) V n) / ε` for all sufficiently large `n`, with `0 < λ < 1`.
+Taking logarithms and dividing by `V n` forces `b - a - 2ε ≤ 0`, so `b ≤ a`
+(`secant_b_le_a_of_finiteVolumeData`).
 `FKSecantData d N eb` packages such data for the box edge `eb` with `q = 2`,
 `λ = tiltFactor p p'`, `b` the wired edge density at `p'` and `a` the free edge density at
 `p`. Under that hypothesis `hsecant_discharged` gives `θ^w(p') ≤ θ^f(p)`, and
@@ -69,22 +70,22 @@ open ConfigSpace StatMech.Lattice
 
 -/
 
-/-- If `ε ≤ q ^ (S n) λ ^ (m V n) / ε` for all `n`, with `q ≥ 1`, `0 < λ < 1`, `V n → ∞` and
-`S n / V n → 0`, then `m ≤ 0`. -/
+/-- If `ε ≤ q ^ (S n) λ ^ (m V n) / ε` for all sufficiently large `n`, with `q ≥ 1`,
+`0 < λ < 1`, `ε > 0`, `V n > 0`, `V n → ∞` and `S n / V n → 0`, then `m ≤ 0`. -/
 lemma secant_exponent_le_zero {q lam m ε : ℝ}
     (hq : 1 ≤ q) (hlampos : 0 < lam) (hlam1 : lam < 1) (hε : 0 < ε)
     {S V : ℕ → ℝ} (hVpos : ∀ n, 0 < V n)
     (hSV : Tendsto (fun n => S n / V n) atTop (𝓝 0))
     (hVinf : Tendsto V atTop atTop)
-    (hineq : ∀ n, ε ≤ q ^ (S n) * lam ^ (m * V n) / ε) :
+    (hineq : ∀ᶠ n in atTop, ε ≤ q ^ (S n) * lam ^ (m * V n) / ε) :
     m ≤ 0 := by
   have hqpos : 0 < q := lt_of_lt_of_le one_pos hq
   have hloglam : Real.log lam < 0 := Real.log_neg hlampos hlam1
-  have hlogineq : ∀ n, 2 * Real.log ε ≤ (S n) * Real.log q + m * V n * Real.log lam := by
-    intro n
-    have h := hineq n
+  have hlogineq : ∀ᶠ n in atTop,
+      2 * Real.log ε ≤ (S n) * Real.log q + m * V n * Real.log lam := by
+    refine hineq.mono fun n hn => ?_
     have h2 : ε ^ 2 ≤ q ^ (S n) * lam ^ (m * V n) := by
-      rw [le_div_iff₀ hε] at h; nlinarith [h]
+      rw [le_div_iff₀ hε] at hn; nlinarith [hn]
     have hlog := Real.log_le_log (by positivity) h2
     rw [Real.log_mul (ne_of_gt (Real.rpow_pos_of_pos hqpos _))
         (ne_of_gt (Real.rpow_pos_of_pos hlampos _)),
@@ -93,13 +94,14 @@ lemma secant_exponent_le_zero {q lam m ε : ℝ}
     nlinarith [hlog]
   by_contra hpos
   rw [not_le] at hpos
-  have hdiv : ∀ n, 2 * Real.log ε / V n ≤ (S n / V n) * Real.log q + m * Real.log lam := by
-    intro n
+  have hdiv : ∀ᶠ n in atTop,
+      2 * Real.log ε / V n ≤ (S n / V n) * Real.log q + m * Real.log lam := by
+    refine hlogineq.mono fun n hn => ?_
     have hVn : V n ≠ 0 := ne_of_gt (hVpos n)
     rw [div_le_iff₀ (hVpos n)]
     have hexp : ((S n / V n) * Real.log q + m * Real.log lam) * V n
         = (S n) * Real.log q + m * V n * Real.log lam := by field_simp
-    rw [hexp]; exact hlogineq n
+    rwa [hexp]
   have hLHS : Tendsto (fun n => 2 * Real.log ε / V n) atTop (𝓝 0) := by
     have : Tendsto (fun n => (2 * Real.log ε) * (V n)⁻¹) atTop (𝓝 ((2 * Real.log ε) * 0)) :=
       Tendsto.const_mul _ hVinf.inv_tendsto_atTop
@@ -109,17 +111,19 @@ lemma secant_exponent_le_zero {q lam m ε : ℝ}
     Tendsto.add (hSV.mul_const _) tendsto_const_nhds
   rw [zero_mul, zero_add] at hRHS
   have hlimle : (0 : ℝ) ≤ m * Real.log lam :=
-    le_of_tendsto_of_tendsto hLHS hRHS (Filter.Eventually.of_forall hdiv)
+    le_of_tendsto_of_tendsto hLHS hRHS hdiv
   nlinarith [mul_pos hpos (neg_pos.mpr hloglam)]
 
 /-- If for every `ε > 0` the bound `ε ≤ q ^ (S n) λ ^ ((b - a - 2ε) V n) / ε` holds for all
-`n`, with `V n → ∞` and `S n = o(V n)`, then `b ≤ a`. -/
+sufficiently large `n`, with `q ≥ 1`, `0 < λ < 1`, `V n > 0`, `V n → ∞` and `S n = o(V n)`,
+then `b ≤ a`. -/
 lemma secant_b_le_a_of_finiteVolumeData {q lam a b : ℝ}
     (hq : 1 ≤ q) (hlampos : 0 < lam) (hlam1 : lam < 1)
     {S V : ℕ → ℝ} (hVpos : ∀ n, 0 < V n)
     (hSV : Tendsto (fun n => S n / V n) atTop (𝓝 0))
     (hVinf : Tendsto V atTop atTop)
-    (hfv : ∀ ε > 0, ∀ n, ε ≤ q ^ (S n) * lam ^ ((b - a - 2 * ε) * V n) / ε) :
+    (hfv : ∀ ε > 0, ∀ᶠ n in atTop,
+      ε ≤ q ^ (S n) * lam ^ ((b - a - 2 * ε) * V n) / ε) :
     b ≤ a := by
   refine le_of_forall_pos_le_add (fun ε hε => ?_)
   have hm : b - a - 2 * (ε / 2) ≤ 0 :=
@@ -133,15 +137,16 @@ lemma secant_b_le_a_of_finiteVolumeData {q lam a b : ℝ}
 
 -/
 
-/-- Finite-volume tilt data for the box edge `eb` at `q = 2`: volumes `V n → ∞` and surface
-terms `S n = o(V n)` such that, for all `p' < p` in `(0, 1)` and `ε > 0`,
-`ε ≤ 2 ^ (S n) λ ^ ((θ^w(p') - θ^f(p) - 2ε) V n) / ε` with `λ = tiltFactor p p'`, where `θ^w` and
-`θ^f` are the wired and free infinite-volume densities of the edge. -/
+/-- Finite-volume tilt data for the box edge `eb` at `q = 2`: positive volumes `V n → ∞` and
+surface terms `S n = o(V n)` such that, for each `p' < p` in `(0, 1)` and `ε > 0`,
+`ε ≤ 2 ^ (S n) λ ^ ((θ^w(p') - θ^f(p) - 2ε) V n) / ε` for all sufficiently large `n`,
+with `λ = tiltFactor p p'`, where `θ^w` and `θ^f` are the wired and free infinite-volume
+densities of the edge. -/
 def FKSecantData (d N : ℕ) (eb : Sym2 (boxVerts d N)) : Prop :=
   ∃ S V : ℕ → ℝ, (∀ n, 0 < V n)
     ∧ Tendsto (fun n => S n / V n) atTop (𝓝 0)
     ∧ Tendsto V atTop atTop
-    ∧ ∀ p ∈ Ioo (0 : ℝ) 1, ∀ p' ∈ Ioo (0 : ℝ) 1, p' < p → ∀ ε > 0, ∀ n,
+    ∧ ∀ p ∈ Ioo (0 : ℝ) 1, ∀ p' ∈ Ioo (0 : ℝ) 1, p' < p → ∀ ε > 0, ∀ᶠ n in atTop,
         ε ≤ (2 : ℝ) ^ (S n)
           * (tiltFactor p p')
               ^ ((wiredEdgeDensity d 2 (edgeIncl d N eb) p'
@@ -156,15 +161,10 @@ lemma hsecant_discharged (d N : ℕ) (eb : Sym2 (boxVerts d N))
         ≤ freeEdgeDensity d 2 (edgeIncl d N eb) p := by
   obtain ⟨S, V, hVpos, hSV, hVinf, hineq⟩ := hdata
   intro p hp p' hp' hlt
-  obtain ⟨hp0, hp1⟩ := hp
-  obtain ⟨hp'0, hp'1⟩ := hp'
-  have hlampos : 0 < tiltFactor p p' :=
-    tiltFactor_pos hp0 hp1 hp'0 hp'1
-  have hlam1 : tiltFactor p p' < 1 :=
-    tiltFactor_lt_one hp0 hp1 hlt
+  have hlampos : 0 < tiltFactor p p' := tiltFactor_pos hp.1 hp.2 hp'.1 hp'.2
+  have hlam1 : tiltFactor p p' < 1 := tiltFactor_lt_one hp.1 hp.2 hlt
   exact secant_b_le_a_of_finiteVolumeData (q := (2 : ℝ)) (by norm_num) hlampos hlam1
-    hVpos hSV hVinf
-    (fun ε hε n => hineq p ⟨hp0, hp1⟩ p' ⟨hp'0, hp'1⟩ hlt ε hε n)
+    hVpos hSV hVinf (hineq p hp p' hp' hlt)
 
 /-- Under `FKSecantData`, at `q = 2` there is a countable set `S` of parameters off which every
 measure `φ` whose box-edge marginal lies between the free and wired ones has the same marginal

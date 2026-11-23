@@ -4,4 +4,4 @@ Let $q \ge 1$, $0 < \lambda < 1$, $\varepsilon > 0$ and $m \in \mathbb{R}$, and 
 
 $$\varepsilon \le \frac{q^{S_n}\, \lambda^{m V_n}}{\varepsilon}$$
 
-for every $n$, then $m \le 0$.
+for all sufficiently large $n$, then $m \le 0$.
