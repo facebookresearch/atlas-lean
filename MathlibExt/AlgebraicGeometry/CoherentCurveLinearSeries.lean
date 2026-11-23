@@ -7,14 +7,15 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The coherent-cohomology and linear-series interface follows
-`StacksFrontier/AlgebraicGeometry/Curves/LinearSeries.lean` in
-AxiomMath/Stacks at c496df0d9beea9deaeabcea8492605f9a0a2313b,
-licensed under Apache 2.0. That source has no individual author or
-copyright notice. Modification notice: use Mathlib's right-derived
-global-section functor directly, define degree by the actual Euler
-characteristic difference, state rank one by local trivializations, and
-define genus, degree and linear series only on proper curves.
+Portions of this file are adapted from:
+
+`StacksFrontier/AlgebraicGeometry/Curves/LinearSeries.lean` (AxiomMath/Stacks at
+commit c496df0d9beea9deaeabcea8492605f9a0a2313b, https://github.com/AxiomMath/Stacks):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modification notice: use Mathlib's right-derived global-section functor
+directly, define degree by the actual Euler characteristic difference, state
+rank one by local trivializations, and define genus, degree and linear series
+only on proper curves.
 -/
 
 module
