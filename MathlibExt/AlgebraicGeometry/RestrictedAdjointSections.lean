@@ -9,6 +9,8 @@ module
 
 public import MathlibExt.AlgebraicGeometry.GenericSectionMaps
 public import MathlibExt.AlgebraicGeometry.NormalizedModuleTensorMaps
+public import MathlibExt.AlgebraicGeometry.BirationalSectionCoordinates
+public import Mathlib.Data.Int.ConditionallyCompleteOrder
 
 /-!
 # Restricted adjoint sections and actual moving coefficients
