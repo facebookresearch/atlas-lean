@@ -12,7 +12,7 @@ public import Mathlib.Analysis.CStarAlgebra.Matrix
 public import Mathlib.LinearAlgebra.Matrix.Kronecker
 public import Mathlib.LinearAlgebra.UnitaryGroup
 public import Mathlib.Algebra.Star.StarProjection
-public import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.FinCases
 
 /-!
 # Block encodings and their products
