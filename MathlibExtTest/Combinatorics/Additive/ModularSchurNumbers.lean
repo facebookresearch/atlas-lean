@@ -49,3 +49,10 @@ example : modularSchurNumber 4 2 7 = 1 :=
 -- Arity equal to the modulus allows 1 and 2 to receive distinct colors.
 example : 2 ≤ modularSchurNumber 4 2 4 :=
   (modularSchurNumber_two_mul 2 4 2 (by decide) (by decide) (by decide) (by decide)).2 (by decide)
+
+-- At the color threshold, the modulus can have two distinct prime factors.
+example : modularSchurNumber 6 5 8 = 5 := by
+  apply modularSchurNumber_eq_sub_one 6 5 8 (by decide) (by decide) _ (by decide)
+  intro d hd hd1 h
+  have hcommon : d ∣ Nat.gcd 6 (8 - 1) := Nat.dvd_gcd hd h.symm.dvd'
+  exact hd1 (Nat.dvd_one.mp hcommon)

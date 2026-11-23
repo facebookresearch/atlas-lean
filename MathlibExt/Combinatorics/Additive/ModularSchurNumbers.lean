@@ -224,6 +224,37 @@ theorem modularSchurNumber_two_mul (k l n : ℕ) (hk : 2 ≤ k) (hn : 2 ≤ n)
       · simpa using hl1
       · exact fun hmod => h (htwo.mp hmod)
 
+private theorem modularSchurNumber_eq_sub_one.of_coprime {m k l : ℕ} (hm : 2 ≤ m)
+    (hk : m - 1 ≤ k) (hcop : m.Coprime (l - 1)) : modularSchurNumber m k l = m - 1 := by
+  apply IsGreatest.csSup_eq
+  constructor
+  · apply partition_of_not_modEq (by omega) hk
+    intro a ha ha' hmod
+    have hdvd : m ∣ (l - 1) * a := by
+      simpa only [Nat.sub_mul, one_mul] using hmod.symm.dvd'
+    have := Nat.le_of_dvd ha (hcop.dvd_of_dvd_mul_left hdvd)
+    omega
+  · intro n hn
+    have := lt_of_modEq hn (by omega : 0 < m) (by simp [Nat.ModEq])
+    omega
+
+/-- **Modular Schur numbers attaining $m - 1$.** Let $l \ge 2$ and $m \ge 2$ be natural numbers
+such that $l \not\equiv 1 \pmod{d}$ for every divisor $d \ne 1$ of $m$, and let $k \ge m - 1$.
+Then the generalized Schur number $S_m(k, l)$, the largest $n$ such that $\{1, \dots, n\}$
+admits a partition into $k$ classes that are $l$-sum-free modulo $m$, equals $m - 1$.
+
+Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
+Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Corollary 5
+(`integers-2025-A62-cor-5`). -/
+theorem modularSchurNumber_eq_sub_one (m k l : ℕ) (hl : 2 ≤ l) (hm : 2 ≤ m)
+    (hd : ∀ d : ℕ, d ∣ m → d ≠ 1 → ¬ l ≡ 1 [MOD d]) (hk : m - 1 ≤ k) :
+    modularSchurNumber m k l = m - 1 := by
+  apply modularSchurNumber_eq_sub_one.of_coprime hm hk
+  rw [Nat.coprime_iff_gcd_eq_one]
+  by_contra h
+  apply hd _ (Nat.gcd_dvd_left m (l - 1)) h
+  exact ((Nat.modEq_iff_dvd' (by omega : 1 ≤ l)).mpr (Nat.gcd_dvd_right m (l - 1))).symm
+
 /-- **Modular Schur numbers modulo a prime power for many classes.** Let $p$ be a prime, let $i$
 and $l$ be positive integers with $l \not\equiv 1 \pmod p$, and let $k$ be a natural number with
 $k \ge p^i - 1$. Then the generalized Schur number modulo $p^i$ satisfies
@@ -239,19 +270,7 @@ theorem modularSchurNumber_prime_pow_eq (p i k l : ℕ) (hp : p.Prime) (hi : 0 <
   have hcop : (p ^ i).Coprime (l - 1) := by
     apply Nat.Coprime.pow_left
     exact hp.coprime_iff_not_dvd.mpr fun h => hlp ((Nat.modEq_iff_dvd' hl).mpr h).symm
-  apply IsGreatest.csSup_eq
-  constructor
-  · apply partition_of_not_modEq (by omega) hk
-    intro a ha ha' hmod
-    have hdvd : p ^ i ∣ (l - 1) * a := by
-      simpa only [Nat.sub_mul, one_mul] using hmod.symm.dvd'
-    have := Nat.le_of_dvd ha (hcop.dvd_of_dvd_mul_left hdvd)
-    omega
-  · -- Any longer range puts the modulus itself in one of the classes.
-    rintro n ⟨c, hc⟩
-    by_contra! hn
-    refine not_isSumFreeMod_of_dvd_mem (p ^ i) l ?_ (dvd_refl _) (hc (c (p ^ i)))
-    exact ⟨p ^ i, by omega, by omega, rfl, rfl⟩
+  exact modularSchurNumber_eq_sub_one.of_coprime hm hk hcop
 
 end
 
