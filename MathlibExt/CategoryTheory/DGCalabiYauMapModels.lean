@@ -20,8 +20,8 @@ which swaps the two enveloping factors. A projective replacement retains
 the full enveloping action before derived Hom is formed.
 
 The trace comparison is fixed on every cyclic Hom tensor generator by
-evaluation on the unit-inserted bar diagonal, followed by actual DG
-composition. The class map has degree -n in the actual bimodule Hom
+evaluation on the bar diagonal path obtained by appending the identity of the
+distinguished object, followed by actual DG composition. The class map has degree -n in the actual bimodule Hom
 complex, and its point maps land in the actual shifted diagonal. Left CY
 nondegeneracy is a separate predicate on these fixed maps.
 
@@ -81,14 +81,26 @@ structure InverseDualModel {C : DGCat k} {D : EnvelopingModuleModel (diagonal C)
       (inverseDualAction P x x' y y' p a).v r s h (((valueIso x y).hom.f r) v)
   replacement : ModuleReplacement module
 
-/-- Every trace object cycle is the actual path with its distinguished identity inserted. -/
+/-- The two-sided bar path of a trace object cycle: the cyclic word followed by the identity of
+the distinguished object. The first Hom factor of the cyclic word (the Hochschild coefficient) is
+the left outer factor of the path, the remaining factors are its bar entries, and the appended
+identity is its right outer factor. With this placement deleting the `i`-th intermediate vertex of
+the inserted path gives the inserted path of the `i`-th cyclic face for every `i`; the last one is
+the closing face, whose root is the last tail object. -/
 def tracePathVertices {C : DGCat k} {n : ℕ} (s : CyclicObjects C n) : PathVertices C n :=
-  ⟨s.root :: List.ofFn s.tail, by simp⟩
+  ⟨List.ofFn s.tail ++ [s.root], by simp⟩
 
-/-- Native unit insertion maps the cyclic word into the corresponding diagonal bar path. -/
+/-- Native unit insertion maps the cyclic word into the corresponding diagonal bar path by
+appending the identity of the distinguished object as the last factor. -/
 def traceBarInsertion (C : DGCat k) (n : ℕ) (s : CyclicObjects C n) :
     cycleTensor C s ⟶ diagonalBarTerm C n s.root (op s.root) :=
-  (λ_ (cycleTensor C s)).inv ≫ (eId (Cochains k) s.root ⊗ₘ 𝟙 (cycleTensor C s)) ≫
+  (ρ_ (cycleTensor C s)).inv ≫
+    (𝟙 (cycleTensor C s) ⊗ₘ (eId (Cochains k) s.root ≫ (ρ_ (dgHomComplex k s.root s.root)).inv)) ≫
+    (MathlibExt.CategoryTheory.MonoidalTensorWordModels.appendIso
+      (pathFactors C s.root (List.ofFn s.tail) s.root) [dgHomComplex k s.root s.root]).inv ≫
+    eqToHom (by
+      simp only [pathTensor, tracePathVertices]
+      rw [pathFactors_append_last]) ≫
     Sigma.ι (fun v : PathVertices C n => pathTensor C s.root v.val s.root) (tracePathVertices s)
 
 /-- The inserted cyclic generator is evaluated in the actual projective diagonal value. -/

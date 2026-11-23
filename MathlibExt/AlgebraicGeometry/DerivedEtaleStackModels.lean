@@ -86,18 +86,26 @@ def affineInfinitesimalComparison {A B T : SAlg k}
     ((affineMapping k Q B).map E.projection) ((affineMap Q f).app E.algebra)
     ((affineMap Q f).naturality E.projection)
 
-/-- A derived étale covering generator is fixed by the algebra and pi-zero maps. -/
+/-- Derived étaleness of a map of simplicial algebras: its `π₀` scheme map is étale and the
+derived square-zero comparison of the replaced affine mapping prestacks is a weak equivalence. Both
+conditions are homotopy invariant; no cofibration condition is imposed here. -/
 def IsDerivedEtale {A B : SAlg k} (Q : AlgebraReplacementFunctor k) (f : A ⟶ B) : Prop :=
-  IsAlgebraCofibration f ∧ Etale (piZeroSchemeMap f) ∧
+  Etale (piZeroSchemeMap f) ∧
     ∀ (T : CofibrantAlgebra k) (E : SquareZeroExtension T.obj)
       (P : KanPathModel ((affineMapping k Q A).obj T.obj)),
       WeakEquivalence (affineInfinitesimalComparison Q f E P)
+
+/-- A covering generator of the étale site: a derived étale map that is moreover an algebra
+cofibration, so that strict pushouts along it model derived base change. This point-set choice of
+representatives is separate from the invariant predicate `IsDerivedEtale`. -/
+def IsEtaleCoverGenerator {A B : SAlg k} (Q : AlgebraReplacementFunctor k) (f : A ⟶ B) : Prop :=
+  IsAlgebraCofibration f ∧ IsDerivedEtale Q f
 
 /-- Joint surjectivity uses the actual pi-zero scheme images. -/
 def IsEtaleCover (Q : AlgebraReplacementFunctor k) (A : CofibrantAlgebra k)
     (R : Presieve (op A)) : Prop :=
   (∀ (B : CofibrantAlgebra k) (f : op B ⟶ op A), R f →
-    IsDerivedEtale Q f.unop.hom) ∧
+    IsEtaleCoverGenerator Q f.unop.hom) ∧
   ∀ x : piZeroScheme A.obj, ∃ (B : CofibrantAlgebra k) (f : op B ⟶ op A),
     R f ∧ ∃ y : piZeroScheme B.obj, piZeroSchemeMap f.unop.hom y = x
 

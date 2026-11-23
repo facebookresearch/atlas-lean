@@ -192,8 +192,11 @@ def gradedCyclicHomology {A : DGAlgebra k} {M : HochschildMixedModel A}
     ((hodgeHomologyStep H j n) ⧸
       ((hodgeHomologyStep H (j - 1) n).comap (hodgeHomologyStep H j n).subtype))
 
-/-- Properness over a field is actual bounded finite-dimensional cohomology. -/
-def IsProperAlgebra (A : DGAlgebra k) : Prop :=
+/-- Properness of a DG algebra over a field: bounded, finite-dimensional total cohomology. Over a
+field this is perfection over the base. Over a general base finite cohomology does not imply
+perfection (`ℚ[ε]/(ε²) → ℚ` has infinite projective dimension), so the predicate is only stated over
+fields. -/
+def IsProperAlgebra {k : Type u} [Field k] (A : DGAlgebra k) : Prop :=
   (∃ a b : ℤ, ∀ i : ℤ, i < a ∨ b < i →
     IsZero ((HomologicalComplex.homologyFunctor (ModuleCat.{u} k) (.up ℤ) i).obj A.X)) ∧
   ∀ i : ℤ, _root_.Module.Finite k

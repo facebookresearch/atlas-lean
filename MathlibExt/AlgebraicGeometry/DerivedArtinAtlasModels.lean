@@ -25,8 +25,8 @@ is the next geometric-atlas step. Derived Artin means some finite level.
 Local finite presentation and future cotangent/closed-form constructions
 are separate predicates and construction dependencies.
 
-References: Toën--Vezzosi, HAG II, Part 2; Toën--Vaquié,
-arXiv:math/0503269v5, Definitions 2.1 and 2.2; PTVV,
+References: Toën--Vezzosi, HAG II, §2.2; Toën--Vaquié,
+arXiv:math/0503269v5, §2.3 (geometric D⁻-stacks), pp. 27--28; PTVV,
 arXiv:1111.3209v4, conventions and §1.
 -/
 

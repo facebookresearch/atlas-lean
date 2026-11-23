@@ -60,7 +60,12 @@ structure CYCategoryData (S : NegativeTraceSystem k) (C : DGCat k) where
   evaluation : TraceEvaluationModel bar inverse (S.mixed C)
   projection : NegativeProjectionModel (S.negative C)
 
-/-- The relative comparison is the actual bar counit and left-duality mate of the DG functor. -/
+/-- The relative comparison is the actual bar counit and left-duality mate of the DG functor,
+together with a chosen naturality homotopy for the trace square. Only the boundary of
+`naturality` is constrained: different choices with the same boundary differ by a closed degree
+`-1` map, and they can change the class-induced maps of `RelativeCYMapModel` even in cohomology.
+Brav--Dyckerhoff (4.9) fix this square from the trace construction; here it is part of the
+context, and every relative Calabi--Yau statement below is relative to this choice. -/
 structure RelativeCYContext {A B : DGCat k} (S : NegativeTraceSystem k) (f : A ⟶ B)
     (DA : CYCategoryData S A) (DB : CYCategoryData S B) where
   enveloping : EnvelopingMap f
@@ -177,7 +182,9 @@ structure RelativeCYMapModel {A B : DGCat k} {S : NegativeTraceSystem k} {f : A 
               (dgComp k ((phiMiddle F.induction F.dualBaseChange).f (1 - n) boundary)
                 (moduleCycle F.counit.map) (by omega)) : Cochain _ _ (1 - n)).v r (r + 1 - n) (by omega))
 
-/-- The source relative CY condition tests all three actual vertical module maps. -/
+/-- The relative CY condition tests all three actual vertical module maps, over a field. The maps
+are built from the naturality homotopy chosen in the context `F`, so the condition is relative to
+that chosen square rather than to the class alone. -/
 def IsRelativeCalabiYau {A B : DGCat k} {S : NegativeTraceSystem k} {f : A ⟶ B}
     {DA : CYCategoryData S A} {DB : CYCategoryData S B} {F : RelativeCYContext S f DA DB}
     {n : ℤ} {a : RelativeNegativeClass S f n} {C : RelativeConeContext F n}

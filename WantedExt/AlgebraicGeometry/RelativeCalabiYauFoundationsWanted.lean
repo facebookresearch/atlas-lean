@@ -91,7 +91,8 @@ def_wanted dg_inverse_dualizing_module (k : Type u) [Field k] (C : DGCat k)
     (D : EnvelopingModuleModel (diagonal C)) (F : FreeDiagonalSystem C) (P : BarDiagonalModel D F) :
   InverseDualModel P
 
-/-- Assemble the class-to-bimodule trace map from the actual unit-inserted bar evaluation. -/
+/-- Assemble the class-to-bimodule trace map from the bar evaluation of each cyclic word with the
+identity of its distinguished object appended. -/
 def_wanted dg_trace_evaluation (k : Type u) [Field k] (C : DGCat k)
     (D : EnvelopingModuleModel (diagonal C)) (F : FreeDiagonalSystem C)
     (P : BarDiagonalModel D F) (I : InverseDualModel P) (T : TraceMixedModel C) :
