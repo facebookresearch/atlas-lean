@@ -38,8 +38,9 @@ universal property. These are characterized input constructions already
 available in the cited source, not arbitrary carriers or extra Betti laws.
 
 Both structures are stated over a smooth base of pure dimension `dx`, which is
-recorded as a hypothesis on the base; the smoothness of the total spaces, and
-their properness over a proper base, are derived instances.
+recorded as a hypothesis on the base. The smoothness of both total spaces is a
+derived instance, and so is the properness of a projective bundle over a proper
+base; the total space of a line bundle is not proper (its zero section is).
 -/
 
 set_option backward.isDefEq.respectTransparency false

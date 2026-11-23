@@ -30,8 +30,8 @@ namespace MathlibExtTest.AlgebraicGeometry.BettiCharacteristicClasses
 example (X : Scheme.{0}) : IsLine (SheafOfModules.unit X.ringCatSheaf) :=
   fun _ => ⟨⊤, trivial, ⟨pullbackUnit _ _ _⟩⟩
 
-/-- Total spaces are smooth of the expected dimensions, and proper over a
-proper base. -/
+/-- The total spaces are smooth of the expected dimensions, and a projective
+bundle over a proper base is proper. -/
 example {X : ComplexScheme} {dx r : ℕ} {E : X.left.Modules} (B : ProjectiveBundle X dx r E) :
     SmoothOfRelativeDimension (dx + r) B.total.hom :=
   inferInstance
@@ -64,6 +64,18 @@ example (i : ℕ) (hi : r + 1 < i) : chern D P dx r E B V T i = 0 := by
 
 example : segre D P dx r E B V T 0 = unitClass (space X) := by
   simp [segre, projectiveSegre]
+
+/-- The first Segre coefficients fix the sign conventions: the recurrence gives
+`s₁ = c₁` for `1/c(-t)`, and `1/c(t)` has first coefficient `-c₁`. -/
+example : projectiveSegre D P dx r E B V T 1 = chern D P dx r E B V T 1 := by
+  have hu : unitClass (space X) = ShiftedHom.mk₀ (0 : ℤ) rfl (𝟙 _) := by
+    simp [unitClass, ShiftedHom.mk₀, shiftFunctorZero']
+  rw [projectiveSegre]
+  simp [projectiveSegre, hu, MathlibExt.AlgebraicGeometry.BettiRealization.cup,
+    ShiftedHom.comp_mk₀_id]
+
+example : segre D P dx r E B V T 1 = -projectiveSegre D P dx r E B V T 1 := by
+  simp [segre]
 
 end Classes
 

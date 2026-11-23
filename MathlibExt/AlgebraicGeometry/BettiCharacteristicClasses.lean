@@ -29,6 +29,8 @@ public import MathlibExt.AlgebraicGeometry.BettiCycleRealization
 /-!
 # Concrete Betti characteristic-class constructors
 
+All constructors are relative to the chosen purity family; for complex
+orientations they are the classical classes, and other families rescale them.
 The hyperplane class is the Euler class of the actual tautological line:
 zero-section Gysin followed by pullback. The projective-bundle map is the
 literal sum of h^i times the fixed pullbacks. Given bijectivity of this map,
@@ -37,9 +39,12 @@ h^(r+1), with c₀=1 and cᵢ=0 above the rank.
 
 `projectiveSegre` is the coefficient recurrence for 1/c(-t), hence Segre of
 the dual bundle in the quotient convention; `segre` gives 1/c(t) by the
-corresponding sign. The requested theory includes the exact pushforward,
-pullback, Whitney and projection formulas on these constructed classes.
-There is no arbitrary class-valued assignment or law-bearing Chow ring.
+corresponding sign. Its identification with the pushforwards of powers of the
+hyperplane class is the law `segre_pushforward` of the requested theory, not a
+consequence of the projective bundle formula alone. The requested theory
+includes the exact pushforward, pullback, Whitney and projection formulas on
+these constructed classes. There is no arbitrary class-valued assignment or
+law-bearing Chow ring.
 
 References: Fulton, *Intersection Theory*, Chapters 3, 6 and §19.1; the
 already completed generic algebraic formula sources credited above.
@@ -64,9 +69,9 @@ variable (F : PureFamily D) {X : ComplexScheme} [IsComplexVariety X]
   (B : ProjectiveBundle X dx r E)
   (V : LineTotalSpace B.total (dx + r) B.tautological)
 
-/-- The hyperplane class `h = c₁(𝒪(1)) ∈ H²(ℙ(E))`: the Euler class of the
-tautological line, zero-section Gysin image of `1` pulled back by the zero
-section, relative to the purity family `F`. -/
+/-- The hyperplane class `h ∈ H²(ℙ(E))` relative to the purity family `F`: the
+Euler class of the tautological line, zero-section Gysin image of `1` pulled
+back by the zero section. For complex orientations it is `c₁(𝒪(1))`. -/
 def hyperplane : BettiRealization.Cohomology (space B.total) 2 :=
   BettiCycleRealization.cohomologyCast (by omega)
     (cohomologyPullback (spaceMap V.zero) _
@@ -116,7 +121,9 @@ def positiveChern (i : Fin (r + 1)) :
       (powerClass (space B.total) (hyperplane D P T.family dx r E B V) (r + 1)))
         ⟨r - (i : ℕ), by omega⟩)
 
-/-- The Chern classes `cᵢ(E)`, with `c₀ = 1` and `cᵢ = 0` above the rank. -/
+/-- The Chern classes `cᵢ(E)` relative to the theory `T`, with `c₀ = 1` and
+`cᵢ = 0` above the rank. For complex orientations they are the classical Chern
+classes. -/
 def chern (i : ℕ) : BettiRealization.Cohomology (space X) (2 * i) :=
   if h0 : i = 0 then by subst i; exact unitClass (space X)
   else if hr : i ≤ r + 1 then
@@ -125,7 +132,8 @@ def chern (i : ℕ) : BettiRealization.Cohomology (space X) (2 * i) :=
   else 0
 
 /-- The coefficients of `1/c(-t)`, by the recurrence
-`s_{n+1} = ∑_{k ≤ n+1} (-1)^{k+1} cₖ s_{n+1-k}`; these are the pushforwards
+`s_{n+1} = ∑_{k ≤ n+1} (-1)^{k+1} cₖ s_{n+1-k}`. Under the law
+`CharacteristicClassTheory.segre_pushforward` they are the pushforwards
 `π_*(h^{r+n})`. -/
 def projectiveSegre : (n : ℕ) → BettiRealization.Cohomology (space X) (2 * n)
   | 0 => unitClass (space X)
@@ -158,7 +166,10 @@ def whitneyCoefficient (s : ℕ) (G : X.left.Modules)
       (chern D P dx s G BG VG T (k - (i : ℕ))))
 
 /-- A projective-bundle theory whose Chern and Segre classes satisfy the
-standard pushforward, pullback, Whitney and projection formulas. -/
+standard pushforward, pullback, Whitney and projection formulas. Complex
+orientations give such a theory. The laws are homogeneous under rescaling the
+purity of every smooth `d`-dimensional variety by `λ^d`, so they do not by
+themselves force the classical normalization. -/
 structure CharacteristicClassTheory extends ProjectiveBundleTheory D P where
   /-- `π_*(h^r ∪ π^* a) = a`. -/
   projection_top : ∀ (X : ComplexScheme) [IsComplexVariety X] (dx r : ℕ)
