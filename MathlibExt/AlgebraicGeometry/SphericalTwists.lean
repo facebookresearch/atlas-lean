@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import MathlibExt.AlgebraicGeometry.BoundedCoherent
 public import MathlibExt.AlgebraicGeometry.FourierMukai
 public import MathlibExt.AlgebraicGeometry.SchemeModuleLinear
 public import MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
@@ -37,39 +38,18 @@ namespace MathlibExt.AlgebraicGeometry.SphericalTwists
 
 open CategoryTheory CategoryTheory.Limits
 open _root_.AlgebraicGeometry
-open FourierMukai CoherentCurveLinearSeries SchemeModuleLinear
+open BoundedCoherent FourierMukai CoherentCurveLinearSeries SchemeModuleLinear
 
 attribute [local instance] HasDerivedCategory.standard
 
 universe u
 
-/-- Coherence (Stacks, Tag 01BV) of a module sheaf: it is quasi-coherent and its
-sections on every affine open `U` form a coherent `Γ(X, U)`-module, finitely
-generated with every finitely generated submodule finitely presented (Stacks,
-Tag 05CU). On a locally noetherian scheme this is quasi-coherence with finitely
-generated sections (Stacks, Tag 01XZ); in general finite generation alone is
-weaker. -/
-def coherentModule {X : Scheme.{u}} (F : X.Modules) : Prop :=
-  SheafOfModules.IsQuasicoherent (R := X.ringCatSheaf) F ∧
-    ∀ U : X.Opens, IsAffineOpen U → Module.Finite Γ(X, U) Γ(F, U) ∧
-      ∀ N : Submodule Γ(X, U) Γ(F, U), N.FG → Module.FinitePresentation Γ(X, U) N
-
-/-- The actual bounded coherent derived-object property used by the geometric twist. -/
-def boundedCoherent (X : Scheme.{u}) : ObjectProperty (D X) := fun M ↦
-  (∀ n : ℤ, coherentModule ((DerivedCategory.homologyFunctor X.Modules n).obj M)) ∧
-    {n : ℤ | ¬ IsZero ((DerivedCategory.homologyFunctor X.Modules n).obj M)}.Finite
-
-/-- The actual diagonal and its canonical evaluation module map. -/
-abbrev diagonal {k : Type u} [Field k] {X : Scheme.{u}}
-    (f : X ⟶ Spec (.of k)) : X ⟶ pullback f f :=
-  pullback.lift (𝟙 X) (𝟙 X) rfl
-
 /-- The structure-sheaf spherical twist has a literal degree-zero mapping-cone kernel. -/
 def kernel {k : Type u} [Field k] (X : Over (Spec (.of k))) : D (pullback X.hom X.hom) :=
   let P := pullback X.hom X.hom
   let e : structureModule P ⟶
-      (Scheme.Modules.pushforward (diagonal X.hom)).obj (structureModule X.left) :=
-    SheafOfModules.unitToPushforwardObjUnit (diagonal X.hom).toRingCatSheafHom
+      (Scheme.Modules.pushforward (pullback.diagonal X.hom)).obj (structureModule X.left) :=
+    SheafOfModules.unitToPushforwardObjUnit (pullback.diagonal X.hom).toRingCatSheafHom
   DerivedCategory.Q.obj (CochainComplex.mappingCone
     ((CochainComplex.singleFunctor P.Modules 0).map e))
 
@@ -91,8 +71,11 @@ def traceComposition {M : D X.left} (d i : ℤ)
   b ≫ a⟦d - i⟧' ≫
     (shiftFunctorAdd' (D X.left) i (d - i) d (by omega)).inv.app (structureObject k X)
 
-/-- The standard d-spherical condition, tied to actual Hom and composition maps. -/
+/-- The standard `d`-spherical condition for `d > 0` (Seidel--Thomas, Definition 2.9),
+tied to actual Hom and composition maps. -/
 structure SphericalStructure (d : ℤ) where
+  /-- Sphericality is defined in positive degree; degree zero is a different notion. -/
+  positive : 0 < d
   degreeZero : k ≃ₗ[k] (structureObject k X ⟶ structureObject k X)
   degreeZero_normalization : ∀ c : k, degreeZero c = c • 𝟙 (structureObject k X)
   trace : (structureObject k X ⟶ (structureObject k X)⟦d⟧) →ₗ[k] k

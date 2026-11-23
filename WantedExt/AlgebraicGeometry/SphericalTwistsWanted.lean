@@ -25,6 +25,7 @@ preservation theorem specialized to this literal perfect cone kernel.
 namespace WantedExt.AlgebraicGeometry.SphericalTwistsWanted
 
 open CategoryTheory _root_.AlgebraicGeometry
+open MathlibExt.AlgebraicGeometry.BoundedCoherent
 open MathlibExt.AlgebraicGeometry.FourierMukai
 open MathlibExt.AlgebraicGeometry.SphericalTwists
 
@@ -35,7 +36,7 @@ public theorem_wanted spherical_twist_isEquivalence
     [HasDerivedPullbacks.{u}] [HasDerivedPushforwards.{u}] [HasDerivedTensors.{u}]
     (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsProper X.hom] [Smooth X.hom]
-    (d : ℤ) (hd : 0 < d) (S : SphericalStructure k X d)
+    (d : ℤ) (S : SphericalStructure k X d)
     (h : ∀ M : (boundedCoherent X.left).FullSubcategory,
       boundedCoherent X.left ((twist X).obj M.obj)) :
     (twistOn X h).IsEquivalence
