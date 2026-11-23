@@ -37,10 +37,11 @@ The fixed candidate for the pole partial-Frobenius has bundles
 the pole becomes `Frob_X ∘ pole` and the zero is unchanged.
 
 This file completes that candidate and its categorical maps. The graph
-cokernel and injectivity of the pulled-back pole modification are covered
-by Axiom's `Shtuka/BaseChange.lean` (same revision), via graph-line flatness
-and actual affine base change. Their precise input is recorded below and
-transported through the canonical pushout cokernel map. The remaining
+cokernel and injectivity of the pulled-back pole modification are covered,
+for a separated curve, by Axiom's `Shtuka/BaseChange.lean` (same revision),
+via closed graphs, graph-line flatness and actual affine base change. Their
+precise input is recorded below and transported through the canonical
+pushout cokernel map. The remaining
 request is the rank/local-freeness of the fixed pushout on disjoint legs.
 
 References: Drinfeld, *Cohomology of compactified manifolds of modules of
@@ -248,8 +249,8 @@ instance rotationCokernelJComparison_isIso (A : Shtuka p X S r) :
       ((Scheme.Modules.pullback (twist p X S)).map A.j)).flip
 
 /-- Exact known source prerequisites on the actual Frobenius pullback.
-`Shtuka/BaseChange.lean` proves these from graph-line flatness for any
-base change; here they are requested as
+`Shtuka/BaseChange.lean` proves these for a separated curve (closed graphs)
+from graph-line flatness under any base change; here they are requested as
 `WantedExt.AlgebraicGeometry.ShtukaPartialFrobenius.pullbackConditions`. The algebraic Tor step is
 ported complete in `FlatCokernelBaseChange`. -/
 structure PullbackConditions (A : Shtuka p X S r) : Prop where

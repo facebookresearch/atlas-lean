@@ -45,12 +45,13 @@ open MathlibExt.AlgebraicGeometry.ShtukaPartialFrobenius
 open MathlibExt.AlgebraicGeometry.CurveVectorBundles
 
 /-- The Frobenius pullback of the pole modification stays injective, and its cokernel is the line
-bundle on the graph of the shifted pole: the cokernel of the original pole modification is a line
-bundle on a graph, hence flat over the base, so base change along the partial Frobenius preserves
-the injection and the graph-line cokernel (the base-change step of the source shtuka API). -/
+bundle on the graph of the shifted pole: for a separated curve the graph is closed, so the cokernel
+of the original pole modification is a line bundle on a closed graph, hence flat over the base, and
+base change along the partial Frobenius preserves the injection and the graph-line cokernel (the
+base-change step of the source shtuka API, which assumes separatedness). -/
 public theorem_wanted pullbackConditions
-    (p : ℕ) [Fact p.Prime] (X S : PrimeFieldScheme p) (r : ℕ) (A : Shtuka p X S r) :
-    A.PullbackConditions
+    (p : ℕ) [Fact p.Prime] (X S : PrimeFieldScheme p) [IsSeparated X.hom] (r : ℕ)
+    (A : Shtuka p X S r) : A.PullbackConditions
 
 /-- The normalized pole rotation is a shtuka on the disjoint-leg open. -/
 public theorem_wanted partialFrobeniusModification
