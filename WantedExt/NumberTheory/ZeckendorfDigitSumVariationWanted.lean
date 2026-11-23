@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Probability.MixingCoefficients
 public import Mathlib.Data.Nat.Fib.Zeckendorf
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
@@ -457,31 +458,6 @@ public theorem_wanted zeckOdometer_invariant_measure_renewal (μ : Measure (ℕ 
       ProbabilityTheory.cond μ {x | x (k + 1) = true ∧ ∀ i, 2 ≤ i → i ≤ k → x i = y i}
           {x | ∀ i, 2 ≤ i → i ≤ ℓ₀ → x (i + (k + 1)) = z i} =
         μ {x | ∀ i, 2 ≤ i → i ≤ ℓ₀ → x i = z i})
-
-/-- **Bradley's inequality between the $\alpha$- and $\varphi$-mixing coefficients.** Let
-$(X_j)_{j \ge 1}$ be random variables on a probability space $(\Omega, \mathbb{P})$ with values in
-a measurable space, and let $k \ge 1$. Suppose a real number $c$ bounds every term defining the
-$\varphi$-mixing coefficient $\varphi(k)$: for every $p \ge 1$, every event
-$A \in \sigma(X_j : 1 \le j \le p)$ with $\mathbb{P}(A) > 0$ and every event
-$B \in \sigma(X_j : j \ge k + p)$, $|\mathbb{P}(B \mid A) - \mathbb{P}(B)| \le c$. Then $c/2$
-bounds every term defining the $\alpha$-mixing coefficient $\alpha(k)$: for every $p \ge 1$,
-every event $A \in \sigma(X_j : 1 \le j \le p)$ and every event $B \in \sigma(X_j : j \ge k + p)$,
-$|\mathbb{P}(A \cap B) - \mathbb{P}(A)\mathbb{P}(B)| \le c/2$.
-
-Source: Yohan Hosten, *On the Variation of the Sum of Digits in the Zeckendorf Representation:
-An Algorithm to Compute the Distribution and Mixing Properties*, Journal of Integer Sequences 27
-(2024), Article 24.3.2, Proposition 18 (Bradley) (`jis-2024-24.3.2-prop-18`). -/
-public theorem_wanted alpha_mixing_le_half_phi_mixing {Ω β : Type*} [MeasurableSpace Ω]
-    [mβ : MeasurableSpace β] (μ : Measure Ω) [IsProbabilityMeasure μ] (X : ℕ → Ω → β)
-    (hX : ∀ j, Measurable (X j)) {k : ℕ} (hk : 1 ≤ k) (c : ℝ)
-    (hc : ∀ p, 1 ≤ p → ∀ A B : Set Ω,
-      MeasurableSet[⨆ j ∈ Finset.Icc 1 p, mβ.comap (X j)] A →
-      MeasurableSet[⨆ (j : ℕ) (_ : k + p ≤ j), mβ.comap (X j)] B → μ A ≠ 0 →
-      |(ProbabilityTheory.cond μ A B).toReal - (μ B).toReal| ≤ c)
-    {p : ℕ} (hp : 1 ≤ p) {A B : Set Ω}
-    (hA : MeasurableSet[⨆ j ∈ Finset.Icc 1 p, mβ.comap (X j)] A)
-    (hB : MeasurableSet[⨆ (j : ℕ) (_ : k + p ≤ j), mβ.comap (X j)] B) :
-    |(μ (A ∩ B)).toReal - (μ A).toReal * (μ B).toReal| ≤ c / 2
 
 /-- **Mixing of the Zeckendorf digits under the invariant measure.** Let
 $\mathbb{X} \subseteq \{0,1\}^{\mathbb{N}}$ be the set of Zeckendorf-adic integers (sequences
