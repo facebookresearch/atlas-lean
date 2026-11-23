@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Algebra.Order.Ring.Int
+public import MathlibExt.NumberTheory.PrimePairPowAddPowEqSq
 
 /-!
 # The equations `(-1)^α pˣ + (-1)^β (2ᵏ(2p - 1))ʸ = z²` for prime pairs `(p, 2p - 1)`
