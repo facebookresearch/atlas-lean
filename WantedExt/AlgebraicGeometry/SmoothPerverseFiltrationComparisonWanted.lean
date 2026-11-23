@@ -21,7 +21,9 @@ public import MathlibExt.AlgebraicGeometry.ProjectiveDirectImage
 For a smooth proper map of relative dimension `d` to a smooth base of
 dimension `m`, the perverse truncation at `k-d` of
 `Rf_* ℚ_X[m+d]` compares with the ordinary truncation at `k-(m+d)`.
-The inclusion into the actual direct image fixes the comparison.
+The inclusion into the actual direct image fixes the comparison. The bounded
+constructibility of the direct image, which a smooth proper map guarantees, is
+part of the requested data.
 
 The shift is essential: on the smooth base a local system shifted by `m`
 is perverse. No multiplicativity theorem for a singular map is assumed.
@@ -43,23 +45,23 @@ open _root_.MathlibExt.AlgebraicGeometry.DeCataldoMiglioriniDecompositionWanted
 
 attribute [local instance] HasDerivedCategory.standard
 
-/-- The canonical comparison of filtration truncations in the smooth proper
-case, with commutation against their actual inclusion maps. -/
+/-- For a smooth proper map, the normalized direct image is bounded
+constructible, and its perverse truncation at `k - d` is canonically its
+ordinary truncation at `k - (m + d)`, compatibly with their inclusion maps. -/
 public def_wanted smoothPerverseTruncationComparison
     (X Y : ComplexScheme) [IsComplexVariety X] [IsComplexVariety Y]
     [PerverseSheafTheory Y] (f : X ⟶ Y) (d m : ℕ)
     [IsProper f.left] [SmoothOfRelativeDimension d f.left]
-    [SmoothOfRelativeDimension m Y.hom]
-    (hK : boundedConstructible Y (normalizedDirectImage X Y f (m + d)))
-    (k : ℤ) :
+    [SmoothOfRelativeDimension m Y.hom] (k : ℤ) :
     let K := normalizedDirectImage X Y f (m + d)
-    let KC : (boundedConstructible Y).FullSubcategory := ⟨K, hK⟩
-    let t := perverseTStructure Y
-    let u := DerivedCategory.TStructure.t (C := RationalSheaf
-      (MathlibExt.AlgebraicGeometry.ComplexAnalytification.space Y))
-    {e : (boundedConstructible Y).ι.obj ((t.truncLE (k - d)).obj KC) ≅
-        (u.truncLE (k - (m + d : ℕ))).obj K //
-      e.hom ≫ (u.truncLEι (k - (m + d : ℕ))).app K =
-        (boundedConstructible Y).ι.map ((t.truncLEι (k - d)).app KC)}
+    Σ' hK : boundedConstructible Y K,
+      let KC : (boundedConstructible Y).FullSubcategory := ⟨K, hK⟩
+      let t := perverseTStructure Y
+      let u := DerivedCategory.TStructure.t (C := RationalSheaf
+        (MathlibExt.AlgebraicGeometry.ComplexAnalytification.space Y))
+      {e : (boundedConstructible Y).ι.obj ((t.truncLE (k - d)).obj KC) ≅
+          (u.truncLE (k - (m + d : ℕ))).obj K //
+        e.hom ≫ (u.truncLEι (k - (m + d : ℕ))).app K =
+          (boundedConstructible Y).ι.map ((t.truncLEι (k - d)).app KC)}
 
 end WantedExt.AlgebraicGeometry.SmoothPerverseFiltrationComparisonWanted
