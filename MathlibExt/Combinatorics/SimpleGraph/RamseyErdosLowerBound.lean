@@ -280,6 +280,7 @@ exists by `exists_classicalRamsey`. -/
 theorem lt_graphRamsey_of_choose_mul_lt (k : ℕ)
     (h : (n.choose k : ℝ) * 2 ^ (1 - (k.choose 2 : ℤ)) < 1) : n < graphRamsey k k := by
   rw [graphRamsey_eq_sInf]
-  exact lt_of_classicalRamsey_of_choose_mul_lt k h (Nat.sInf_mem (exists_classicalRamsey k k))
+  exact lt_of_classicalRamsey_of_choose_mul_lt k h
+    (Nat.sInf_mem (s := {N : ℕ | classicalRamsey k k N}) (exists_classicalRamsey k k))
 
 end MathlibExt.Combinatorics.RamseyErdosLowerBound

@@ -13,7 +13,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
-public import MathlibExt.NumberTheory.NegRFibonacciPolynomial
+public import MathlibExt.NumberTheory.NegRFibonacciGeneratingFunction
 public import MathlibExt.NumberTheory.RFibonacciPolynomial
 
 namespace MetaMathlibExt
@@ -866,22 +866,6 @@ public theorem_wanted negRLucas_eq_sum' {K : Type*} [Field K] [CharZero K] {r n 
           (n : K) / (k + 1) * (((n - 1 - r - k) / r).choose k : K) *
             (↑y⁻¹ : K) ^ ((n - 1 - k) / r) * (-x) ^ (k + 1)
         + if r ∣ n then (r : K) * (↑y⁻¹ : K) ^ (n / r) else 0
-
-/-- **Generating function of the (-r)-Fibonacci polynomials.** Let $A$ be a commutative ring,
-$r \ge 2$, $x \in A$ and $y$ a unit of $A$, and write $U_n = U^{(-r)}_n(x, y)$. In the ring
-$A[[z]]$ of formal power series,
-$$\left(1 - y^{-1} z^r + x y^{-1} z^{r+1}\right) \sum_{n \ge 0} U_{n+1} z^n = 1.$$
-
-The paper states the identity for complex $z$; convergence is not part of this statement.
-
-Source: Abbad and Belbachir, *The r-Fibonacci Polynomial and Its Companion
-Sequences Linked with Some Classical Sequences*, INTEGERS 25 (2025),
-Article A38, Theorem 8 (`integers-2025-A38-thm-8`). -/
-public theorem_wanted negRFibonacci_generatingFunction {A : Type*} [CommRing A] {r : ℕ}
-    (hr : 2 ≤ r) (x : A) (y : Aˣ) :
-    (1 - PowerSeries.C (↑y⁻¹ : A) * PowerSeries.X ^ r
-        + PowerSeries.C (x * ↑y⁻¹) * PowerSeries.X ^ (r + 1)) *
-      PowerSeries.mk (fun n => negRFibonacci r x y (n + 1)) = 1
 
 /-- **Generating function of the companion sequence $V^{(-r)}$.** Let $A$ be a commutative
 ring, $r \ge 2$ a natural number, $x \in A$ and $y$ a unit of $A$, and let $V^{(-r)}_n(x, y)$
