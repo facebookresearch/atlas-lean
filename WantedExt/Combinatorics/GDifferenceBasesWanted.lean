@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.FieldTheory.Finite.GaloisField
 public import MathlibExt.Combinatorics.Additive.BoseChowlaSubgroup
 public import MathlibExt.Combinatorics.Additive.GDifferenceBases
+public import MathlibExt.Combinatorics.Additive.ZModDifferenceBasis
 
 namespace MetaMathlibExt
 
@@ -120,18 +121,6 @@ public theorem_wanted subRepCount_prod_ge {G₁ G₂ : Type*} [AddCommGroup G₁
     [DecidableEq G₁] [DecidableEq G₂] (g₁ g₂ : ℕ) (A₁ : Finset G₁) (A₂ : Finset G₂)
     (h₁ : ∀ x, g₁ ≤ subRepCount A₁ x) (h₂ : ∀ x, g₂ ≤ subRepCount A₂ x) :
     ∀ x : G₁ × G₂, g₁ * g₂ ≤ subRepCount (A₁ ×ˢ A₂) x
-
-/-- **Difference bases of the integers modulo a prime.** For every prime $p$, the least size
-$\eta_1(\mathbb{Z}/p\mathbb{Z})$ of a set $A \subseteq \mathbb{Z}/p\mathbb{Z}$ such that every
-residue modulo $p$ is a difference $a - a'$ of two elements of $A$ satisfies
-$\eta_1(\mathbb{Z}/p\mathbb{Z}) \le 2 \lceil \sqrt{p} \rceil$.
-
-The bound comes from reducing the Rédei–Rényi set modulo $p$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, equation (5) after Lemma 5 (`integers-2025-A77-lem-5`). -/
-public theorem_wanted groupDiffBasisNumber_zmod_le (p : ℕ) [Fact p.Prime] :
-    groupDiffBasisNumber 1 (ZMod p) ≤ 2 * ⌈Real.sqrt p⌉₊
 
 /-- **Difference bases of the square of a finite field.** For an abelian group $G$ let
 $\eta_1(G)$ be the least size of a set $A \subseteq G$ such that every element of $G$ is a

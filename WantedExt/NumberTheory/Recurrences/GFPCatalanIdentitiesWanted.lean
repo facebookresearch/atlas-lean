@@ -39,6 +39,7 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Data.Nat.Choose.AlternatingShiftedSum
 public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
 public import MathlibExt.NumberTheory.Recurrences.FloorPowBinomialSum
+public import MathlibExt.NumberTheory.Recurrences.GFPLucasCatalan
 
 namespace MetaMathlibExt
 
@@ -134,23 +135,6 @@ public theorem_wanted gfp_fib_catalan (d g : ℤ[X]) (n : ℕ) :
     2 ^ (n - 1) * generalizedFibonacciPolynomial 0 1 d g n =
       ∑ i ∈ range ((n - 1) / 2 + 1),
         (n.choose (2 * i + 1) : ℤ[X]) * d ^ (n - 2 * i - 1) * (4 * g + d ^ 2) ^ i
-
-/-- **Catalan identity for Lucas-type generalized Fibonacci polynomials.** Let $\alpha$ and $p_0$
-be integers with $\alpha p_0 = 2$, let $p_1$ and $g$ be polynomials with integer coefficients, and
-put $d = \alpha p_1$. Let $L_n$ be the generalized Fibonacci polynomials defined by $L_0 = p_0$,
-$L_1 = p_1$ and $L_{n+2} = d L_{n+1} + g L_n$. Then for every natural number $n$,
-$$2^n \alpha L_n = 2 \sum_{i=0}^{\lfloor n/2 \rfloor} \binom{n}{2i} d^{n-2i} (4g + d^2)^i.$$
-
-Dividing both sides by $2$ gives the source's form, with $\alpha 2^{n-1} L_n$ on the left; the
-factor $2$ is cleared so that $n = 0$ is included.
-
-Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
-*Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
-Article florez11012023, Theorem 3.3 (2) (`fq-2024-florez11012023-thm-3.3`). -/
-public theorem_wanted gfp_lucas_catalan {α p₀ : ℤ} (hα : α * p₀ = 2) {p₁ d : ℤ[X]}
-    (hd : d = C α * p₁) (g : ℤ[X]) (n : ℕ) :
-    2 ^ n * C α * generalizedFibonacciPolynomial (C p₀) p₁ d g n =
-      2 * ∑ i ∈ range (n / 2 + 1), (n.choose (2 * i) : ℤ[X]) * d ^ (n - 2 * i) * (4 * g + d ^ 2) ^ i
 
 /-- **Alternating sum of binomial row sums.** For all natural numbers $\ell$ and $n$,
 $$\sum_{i=0}^{n} (-1)^i \binom{\ell}{i} \sum_{j=0}^{n-i} \binom{n-i}{j}

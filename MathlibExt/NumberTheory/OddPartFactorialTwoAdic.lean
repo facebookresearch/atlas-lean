@@ -22,7 +22,7 @@ import Mathlib.Tactic.Ring
 # The odd part of dyadic factorials
 
 This file collects the definitions for Davis's study of the odd part of `(2^e)!` and proves
-the congruence of consecutive normalized odd double factorials.
+congruences for odd double factorials and their normalized quotients.
 -/
 
 @[expose] public section
@@ -459,5 +459,32 @@ public theorem oddDoubleFactorial_normalized_congr (e : ℕ) (he : 3 ≤ e) :
     | base => decide
     | succ e he ih => exact (normalized_step (by omega) ih).1
   exact ⟨h, normalized_step (by omega) h⟩
+
+/--
+**Product of the odd numbers below $2^e$.** For every natural number $e \ge 3$, the product of the
+odd integers $i$ with $1 \le i < 2^e$ is congruent to $2^e + 1$ modulo $2^{e+1}$.
+
+Source: Donald M. Davis, *Some 2-adic Integers Related to the Odd Part of 2^e!*, Journal of Integer
+Sequences 29 (2026), Article 26.3.1, Lemma 6.
+-/
+public theorem oddSet_product_congr (e : ℕ) (he : 3 ≤ e) :
+    (2 : ℤ) ^ (e + 1) ∣
+      ((∏ i ∈ oddBelowTwoPow e, i : ℕ) : ℤ) - ((2 ^ e + 1 : ℕ) : ℤ) := by
+  have hparity : 1 ≡ ((oddDoubleFactorial e : ℤ) - 1) / 2 ^ e [ZMOD 2] := by
+    induction e, he using Nat.le_induction with
+    | base => decide
+    | succ e he ih =>
+      have hstep := Int.modEq_of_dvd (oddDoubleFactorial_normalized_congr e he).2.2
+      exact ih.trans (hstep.symm.of_dvd (dvd_pow_self 2 (by omega)))
+  have hprod : ∏ i ∈ oddBelowTwoPow e, i = oddDoubleFactorial e := by
+    have hpos : 0 < (2 : ℕ) ^ e := by positivity
+    simp only [oddBelowTwoPow, oddDoubleFactorial, oddRangeProduct,
+      Finset.Icc_sub_one_right_eq_Ico_of_not_isMin hpos.not_isMin]
+  rw [hprod]
+  push_cast
+  apply Int.modEq_iff_dvd.mp
+  have hexact := Int.mul_ediv_cancel' (oddDoubleFactorial_normalized_congr e he).1
+  simpa only [pow_succ, mul_one, hexact, sub_add_cancel] using
+    (hparity.mul_left' (c := 2 ^ e)).add_right 1
 
 end MetaMathlibExt
