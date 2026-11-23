@@ -454,7 +454,7 @@ theorem nbJointFisherInfo_eq_fromBlocks [DecidableEq ι] (θ : ℝ) (X : Matrix 
       fromBlocks (Xᵀ * diagonal (fun i => nbFisherWeight θ ((X *ᵥ β) i + o i)) * X) 0 0
         (of fun _ _ => ∑ i, nbShapeFisherInfo θ ((X *ᵥ β) i + o i)) := by
   ext (j | _) (l | _)
-  · rw [fromBlocks_apply₁₁, mul_apply]
+  · rw [fromBlocks_apply₁₁, Matrix.mul_apply]
     simp only [nbJointFisherInfo, nbFisherInfoRow, Matrix.sum_apply, fromBlocks_apply₁₁,
       Matrix.smul_apply, vecMulVec_apply, smul_eq_mul, mul_diagonal, transpose_apply]
     exact sum_congr rfl fun _ _ => by ring
@@ -477,7 +477,7 @@ theorem inv_nbJointFisherInfo [DecidableEq ι] [DecidableEq κ] (θ : ℝ) (X : 
   simp only [Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add, ← fromBlocks_one]
   congr 1
   ext
-  simp [mul_apply, hD]
+  simp [Matrix.mul_apply, hD]
 
 /-- **The `β`-block of the inverse joint Fisher information** is the inverse fixed-shape Fisher
 information (`inv_nbJointFisherInfo`). -/
@@ -627,7 +627,7 @@ theorem tendstoInMeasure_nbFisherInfo_plugIn [DecidableEq ι] {Ω : Type*} [Meas
     (f := fun w : ι → ℝ => (Xᵀ * diagonal w * X) j l) ?_
   have hw : (fun w : ι → ℝ => (Xᵀ * diagonal w * X) j l) = fun w => ∑ i, X i j * w i * X i l := by
     funext w
-    rw [mul_apply]
+    rw [Matrix.mul_apply]
     simp only [mul_diagonal, transpose_apply]
   rw [hw]
   exact (by fun_prop : Continuous fun w : ι → ℝ => ∑ i, X i j * w i * X i l).continuousAt
