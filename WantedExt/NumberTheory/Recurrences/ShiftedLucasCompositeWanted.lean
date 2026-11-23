@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.Recurrences.ShiftedLucasComposite
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Set.Finite.Basic
@@ -90,15 +91,6 @@ public theorem_wanted lucasU_power_params_finite_primes {x y : ℝ} (hxy : x ≠
     (hPdef : (P : ℝ) = x ^ r + y ^ r) (hQdef : (Q : ℝ) = x ^ r * y ^ r) (hP : 1 ≤ P)
     (hD : 0 < P ^ 2 - 4 * Q) :
     {n : ℕ | (lucasU ⟨P, Q, hQ⟩ n).natAbs.Prime}.Finite
-
-/-- **Fibonacci numbers shifted by $14475$ are never prime.** Let $F_n$ be the $n$-th
-Fibonacci number, with $F_0 = 0$, $F_1 = 1$ and $F_{n+2} = F_{n+1} + F_n$. For every
-natural number $n$, the number $F_n + 14475$ is not prime.
-
-Source: Dan Ismailescu, Daniel Hyunwoo Jeon, Aaron Kim, Joonbeom Kwon and Austin Lee,
-*Shifting Lucas Sequences Away from Primes*, INTEGERS 25 (2025), Article A42, Theorem 5
-(`integers-2025-A42-thm-5`). -/
-public theorem_wanted fib_add_14475_not_prime (n : ℕ) : ¬ (Nat.fib n + 14475).Prime
 
 end
 
