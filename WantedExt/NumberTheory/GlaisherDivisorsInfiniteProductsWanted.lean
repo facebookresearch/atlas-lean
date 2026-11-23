@@ -15,6 +15,7 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.RingTheory.PowerSeries.Expand
 public import MathlibExt.Combinatorics.Enumerative.Partition.Overpartition
+public import MathlibExt.RingTheory.PowerSeries.SeriesDivisorInverseConvolution
 
 /-!
 # Glaisher's divisors and infinite products: wishlist
@@ -273,7 +274,8 @@ Products*, Journal of Integer Sequences 27 (2024), Article 24.1.6, Lemma 17
 public theorem_wanted power_coeff_convolution_zpow {K : Type*} [Field K] [CharZero K]
     (A : (PowerSeries K)ˣ) (u v : ℤ) (hu : u ≠ 0) (hv : v ≠ 0) (n : ℕ) :
     ∑ k ∈ Finset.range (n + 1),
-      ((n : K) - ((u : K) / v + 1) * k) * coeff (n - k) ((A ^ u : (PowerSeries K)ˣ) : PowerSeries K) *
+      ((n : K) - ((u : K) / v + 1) * k) *
+        coeff (n - k) ((A ^ u : (PowerSeries K)ˣ) : PowerSeries K) *
         coeff k ((A ^ v : (PowerSeries K)ˣ) : PowerSeries K) = 0
 
 /-- **Six divisor-function identities from the power recursion lemma.** Let $n \ge 1$ be a
@@ -345,26 +347,6 @@ Products*, Journal of Integer Sequences 27 (2024), Article 24.1.6, Theorem 23
 public theorem_wanted sigma_triangular_shift_sum_mod_five (n : ℕ) (hn : 0 < n) :
     ∑ j ∈ Finset.range (n + 1), σ₁ (2 * n + 1 - j * (j + 1)) ≡
       (if ∃ k : ℕ, 5 * k * (k + 1) / 2 = n then 1 else 0) [ZMOD 5]
-
-/-- **Convolution identities for the series-divisor of an invertible series.** Let $R$ be a
-commutative ring and let $A$, $B$ be formal power series over $R$ with coefficients $a(k)$,
-$b(k)$ and $AB = 1$. Let $s : \mathbb{N} \to R$ satisfy $s(0) = 0$ and
-$k\,a(k) = \sum_{i=1}^{k} s(i)\,a(k-i)$ for every $k \ge 0$ (that is, $s$ is a series-divisor
-of $A$). Then for every $n \ge 0$,
-$$s(n) = \sum_{i=0}^{n} (n-i)\,a(n-i)\,b(i)$$
-and
-$$\sum_{i=1}^{n} s(n-i)\,s(i) = -\sum_{i=1}^{n} i\,(n-i)\,a(n-i)\,b(i).$$
-
-Source: Hartosh Singh Bal and Gaurav Bhatnagar, *Glaisher's Divisors and Infinite
-Products*, Journal of Integer Sequences 27 (2024), Article 24.1.6, Lemma 25
-(`jis-2024-24.1.6-lem-25`). -/
-public theorem_wanted series_divisor_inverse_convolution {R : Type*} [CommRing R]
-    (A B : PowerSeries R) (hAB : A * B = 1) (s : ℕ → R) (hs0 : s 0 = 0)
-    (hA : ∀ n : ℕ, (n : R) * coeff n A = ∑ i ∈ Finset.Icc 1 n, s i * coeff (n - i) A)
-    (n : ℕ) :
-    s n = ∑ i ∈ Finset.range (n + 1), ((n - i : ℕ) : R) * coeff (n - i) A * coeff i B ∧
-    ∑ i ∈ Finset.Icc 1 n, s (n - i) * s i =
-      -∑ i ∈ Finset.Icc 1 n, ((i * (n - i) : ℕ) : R) * coeff (n - i) A * coeff i B
 
 /-- **Overpartition formulas for a divisor sum with odd cofactors.** Let $n$ be a natural number.
 Write $\sigma(m)$ for the sum of the positive divisors of $m$, $\sigma(m/2)$ for $\sigma$
