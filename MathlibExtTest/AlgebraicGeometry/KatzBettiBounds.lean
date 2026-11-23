@@ -41,8 +41,8 @@ example : (affineVariety F).left = Spec (.of (affineCoordinateRing F)) := rfl
 plane. -/
 example : katzBound 2 2 2 = 6 * 4 * 7 ^ 3 := rfl
 
-/-- With empty boundary, the compact-support kernel leaves the coefficients unchanged; in
-particular it is not the zero functor. -/
+/-- With empty boundary, the compact-support kernel leaves the coefficients unchanged, so it
+retains the interior. -/
 example {Y Z : Scheme.{u}} [IsEmpty Z] (i : Z ⟶ Y) (R : Type) [CommRing R]
     (F : CoefficientSheaf Y R) : Nonempty ((moduleBoundaryKernel R i).obj F ≅ F) := by
   let : HasLimits (ModuleCat.{u + 1} R) := ModuleCat.hasLimitsOfSize.{u + 1, u + 1, u + 1, 0}
