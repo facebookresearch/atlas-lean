@@ -379,30 +379,6 @@ public theorem_wanted exists_constantTerm_pow_dvd_iff_tilde {r p a ℓ : ℕ} (h
     ((∃ n₀, (p : ℤ) ∣ (P ^ n₀).coeff 0) ↔ ∃ n₁, (p : ℤ) ∣ (Pt ^ n₁).coeff 0) ∧
       ∀ n₀, (p : ℤ) ∣ (P ^ n₀).coeff 0 → (p : ℤ) ∣ (Pt ^ n₀).coeff 0
 
-/-- **Rowland–Zeilberger congruence modulo $p^a$.** Let $p$ be a prime, let $a$ be a natural
-number, and let $\tilde P$ be a Laurent polynomial in $r$ variables with integer coefficients
-such that $\tilde P^p \equiv \tilde P(x^p) \pmod{p^a}$ coefficientwise, where $\tilde P(x^p)$
-is obtained from $\tilde P$ by replacing each monomial $x^e$ with $x^{pe}$. Write
-$\operatorname{ct}[F]$ for the constant term of a Laurent polynomial $F$ and $\Lambda_p$ for
-Kohen's operator, which keeps the terms whose exponents are all divisible by $p$ and replaces
-$x^{pj}$ by $x^j$. Then for every Laurent polynomial $Q$ in $r$ variables with integer
-coefficients and all natural numbers $n$ and $k$,
-$\operatorname{ct}[\tilde P^{pn+k} Q] \equiv
-\operatorname{ct}[\tilde P^n \Lambda_p(\tilde P^k Q)] \pmod{p^a}$.
-
-The statement holds for every natural number $k$; the paper states it for $k \in \mathbb{F}_p$.
-
-Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
-Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
-Lemma 24 (`jis-2026-26.4.2-lem-24`). -/
-public theorem_wanted constantTerm_tilde_pow_mul_modEq_laurentCartier {r p a : ℕ}
-    (hp : p.Prime) (Pt : AddMonoidAlgebra ℤ (Fin r → ℤ))
-    (hPt : ∀ j, (Pt ^ p).coeff j ≡
-      (AddMonoidAlgebra.mapDomain (fun j => p • j) Pt).coeff j [ZMOD (p : ℤ) ^ a])
-    (Q : AddMonoidAlgebra ℤ (Fin r → ℤ)) (n k : ℕ) :
-    (Pt ^ (p * n + k) * Q).coeff 0 ≡ (Pt ^ n * laurentCartier p (Pt ^ k * Q)).coeff 0
-      [ZMOD (p : ℤ) ^ a]
-
 /-- **Degree bound for the Rowland–Zeilberger states mod $p^a$.** Let $p$ be a prime, let $a$
 be a natural number, and let $\tilde P$ and $Q_0$ be Laurent polynomials in $r$ variables with
 coefficients in $\mathbb{Z}/p^a\mathbb{Z}$. Write $\deg F$ for the largest absolute value of an
