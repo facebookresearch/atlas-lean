@@ -41,6 +41,7 @@ public import Mathlib.Data.Set.Finite.Basic
 public import MathlibExt.NumberTheory.Digits.ReverseDivisibility
 public import MathlibExt.NumberTheory.Digits.ReverseDivisor
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorFourDigits
+public import MathlibExt.NumberTheory.Digits.ReverseDivisorQuotientFour
 
 set_option autoImplicit false
 
@@ -111,16 +112,6 @@ theorem_wanted basic_reverseDivisors (k : ℕ) (hk : 2 ≤ k) :
       (Nat.digits 10 (22 * (10 ^ k - 1))).length = k + 2 ∧
       Nat.reverseDigits 10 (22 * (10 ^ k - 1)) =
         4 * (22 * (10 ^ k - 1))
-
-/-- **Reverse divisors with quotient $4$ lack property $P^*$.** If $n > 0$ is a natural number
-whose decimal reversal equals $4n$, then $n$ does not have the property $P^*$.
-
-Source: Mohamed Ayad and Rachid Bouchenna, "Which
-Integer Divides the Reverse of Any of Its Multiples?",
-Lemma 1. -/
-theorem_wanted not_hasPropertyPStar_of_quotient_four (n : ℕ)
-    (hn : 0 < n) (h : Nat.reverseDigits 10 n = 4 * n) :
-    ¬ HasPropertyPStar n
 
 /-- **For $k \ge 2$, the number $11 \cdot (10^k - 1)$ lacks property $P^*$.** For every natural
 number $k \ge 2$, the number $11 \cdot (10^k - 1)$ does not have the property $P^*$.

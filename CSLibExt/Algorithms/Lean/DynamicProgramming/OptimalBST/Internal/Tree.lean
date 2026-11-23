@@ -378,7 +378,7 @@ private theorem interval_attains_and_minimal [AddCommMonoid R] [LinearOrder R]
         e[a][b] ≤ intervalTreeCost p q ⟨a, by omega⟩ competitor := by
   generalize hWidth : b - a = width
   induction width using Nat.strong_induction_on generalizing a b with
-  | h width ih =>
+  | ind width ih =>
       by_cases hab : a = b
       · subst b
         refine ⟨.nil, (intervalTree_nil_iff le_rfl hb).mpr rfl, ?_, ?_⟩

@@ -15,7 +15,7 @@ public meta import CSLibExt.Computability.Complexity.Karp.ThreeSatComplete
 
 namespace Cslib.Complexity.Karp.TokThenTests
 
-open Turing Cslib.CookLevin Cslib.Logic.PL MetaMathlibExt.ComplexityTheory
+open Turing Cslib.CookLevin Cslib.Logic.LegacyPL MetaMathlibExt.ComplexityTheory
 
 /-- Step a `TM2` program, with fuel, until the next step would halt; return the last
 configuration with a label and the number of steps taken. -/

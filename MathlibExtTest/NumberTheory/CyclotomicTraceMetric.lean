@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.NumberTheory.CyclotomicTraceMetric
+import Mathlib.NumberTheory.Cyclotomic.Gal
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
@@ -46,3 +47,11 @@ example [IsCyclotomicExtension {3} ℚ K] :
 example {p : ℕ} [NeZero p] [IsCyclotomicExtension {p} ℚ K] :
     cyclotomicDistMoment p K 0 2 = 0 := by
   simp [cyclotomicDistMoment, cyclotomicBox_zero]
+
+-- At conductor three the nonidentity automorphism exchanges the two primitive roots.
+example [IsCyclotomicExtension {3} ℚ K] :
+    cyclotomicTraceDist 3 (zeta 3 ℚ K ^ 2) 1 = cyclotomicTraceDist 3 (zeta 3 ℚ K) 1 := by
+  have h := (zeta_spec 3 ℚ K).pow_of_coprime 2 (by decide)
+  have hirr := Polynomial.cyclotomic.irreducible_rat (by decide : 0 < 3)
+  simpa only [fromZetaAut_spec, map_one] using
+    cyclotomicTraceDist_algEquiv Nat.prime_three (fromZetaAut h hirr) (zeta 3 ℚ K) 1

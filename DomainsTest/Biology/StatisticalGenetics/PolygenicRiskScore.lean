@@ -190,7 +190,7 @@ example : calibSlope (μU 22) (ldMatrix X8) D8.beta (D8.betaHat X8) = 40 / 101 :
 `calibSlope_blup` applies to this design. -/
 example : IsUnit (scoreCov 8 2 D8.h2 X8).det := by
   rw [isUnit_iff_ne_zero, det_fin_two]
-  simp [scoreCov, ldCorr, X8, D8, sgnModel, Fin.sum_univ_succ, mul_apply]
+  simp [scoreCov, ldCorr, X8, D8, sgnModel, Fin.sum_univ_succ, Matrix.mul_apply]
   norm_num
 
 /-! ### No LD: independent SNPs
@@ -282,7 +282,7 @@ example : calibSlope (μU 12) (ldMatrix X4) D4.beta (blupScore D4 X4) = 1 := by
 example : calibSlope (μU 12) (ldMatrix X4) D4.beta (blupScore D4 X4) = 1 := by
   refine calibSlope_blup D4 X4 _ ?_ ?_
   · rw [isUnit_iff_ne_zero, det_fin_two]
-    simp [scoreCov, ldCorr, X4, D4, sgnModel, Fin.sum_univ_succ, mul_apply]
+    simp [scoreCov, ldCorr, X4, D4, sgnModel, Fin.sum_univ_succ, Matrix.mul_apply]
     norm_num
   · rw [blupScore_D4]
     simp [quadCov, integral_μU, ldCorr, Model.betaHat, Model.pheno, D4, sgnModel, X4, sgnN,
@@ -310,7 +310,7 @@ example : ldScoreSum X2 = 4 ∧ ldCube X2 = 8 := by
 /-- `V = (h² / M) R² + ((1 - h²) / N) R` is singular for every `h²`. -/
 theorem det_scoreCov_X2 (h2 : ℝ) : (scoreCov 2 2 h2 X2).det = 0 := by
   rw [det_fin_two]
-  simp [scoreCov, ldCorr, X2, Fin.sum_univ_two, mul_apply]
+  simp [scoreCov, ldCorr, X2, Fin.sum_univ_two, Matrix.mul_apply]
 
 /-- So the invertibility hypothesis of `calibSlope_blup` fails. -/
 example (h2 : ℝ) : ¬ IsUnit (scoreCov 2 2 h2 X2).det := by

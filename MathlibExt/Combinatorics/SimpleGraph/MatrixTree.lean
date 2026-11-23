@@ -201,7 +201,7 @@ private theorem det_reducedLaplacian_eq_sum_parentMatrix {V : Type*} [Fintype V]
   -- rows of `Matrix.of` of row-sums are the row-sums
   have hexpand := MultilinearMap.map_sum_finset
     (↑(Matrix.detRowAlternating (n := { v : V // v ≠ root }) (R := ℤ)) :
-      MultilinearMap ℤ (fun _ : { v : V // v ≠ root } => { v : V // v ≠ root } → ℤ) ℤ)
+      (Π _ : { v : V // v ≠ root }, { v : V // v ≠ root } → ℤ) →ₘₗ[ℤ] ℤ)
     (fun (v : { v : V // v ≠ root }) (u : V) =>
       (fun (w : { v : V // v ≠ root }) =>
         ((if w = v then (1 : ℤ) else 0) - (if (w : V) = u then 1 else 0))))
