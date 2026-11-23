@@ -97,6 +97,13 @@ theorem isCompatible_bot (c : CartierTrace R p e) : IsCompatible c ⊥ := by
 theorem isCompatible_top (c : CartierTrace R p e) : IsCompatible c ⊤ :=
   fun _ _ ↦ Submodule.mem_top
 
+/-- An intersection of compatible ideals is compatible. -/
+theorem isCompatible_sInf (c : CartierTrace R p e) {S : Set (Ideal R)}
+    (h : ∀ I ∈ S, IsCompatible c I) : IsCompatible c (sInf S) := by
+  intro a ha
+  rw [Submodule.mem_sInf] at ha ⊢
+  exact fun I hI ↦ h I hI a (ha I hI)
+
 /-- The intersection of the images of a family of maps of the given degrees. -/
 def indexedStableTraceImage {ι : Type} (degree : ι → ℕ)
     (c : ∀ i, CartierTrace R p (degree i)) : Ideal R :=
@@ -108,5 +115,13 @@ supplied at inadmissible exponents. -/
 def indexedCompatibleIdealInfimum {ι : Type} (degree : ι → ℕ)
     (c : ∀ i, CartierTrace R p (degree i)) : Ideal R :=
   sInf {I : Ideal R | I ≠ ⊥ ∧ ∀ i, IsCompatible (c i) I}
+
+/-- The infimum is compatible with every map of the family; when it is nonzero it is therefore
+the least nonzero compatible ideal. -/
+theorem isLeast_indexedCompatibleIdealInfimum {ι : Type} (degree : ι → ℕ)
+    (c : ∀ i, CartierTrace R p (degree i)) (h : indexedCompatibleIdealInfimum degree c ≠ ⊥) :
+    IsLeast {I : Ideal R | I ≠ ⊥ ∧ ∀ i, IsCompatible (c i) I}
+      (indexedCompatibleIdealInfimum degree c) :=
+  ⟨⟨h, fun i ↦ isCompatible_sInf (c i) fun _ hI ↦ hI.2 i⟩, fun _ hI ↦ sInf_le hI⟩
 
 end MathlibExt.AlgebraicGeometry.AffineCartierTraceIdeals

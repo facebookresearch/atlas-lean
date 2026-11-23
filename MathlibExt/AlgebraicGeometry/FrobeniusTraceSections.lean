@@ -16,8 +16,15 @@ public import MathlibExt.AlgebraicGeometry.NormalizedModuleTensorMaps
 The coefficient map is the literal inverse of the canonical projection-formula
 mate, followed by the actual boundary trace tensored with identity and the
 actual sheafified unit map. S0 is the intersection of those actual section
-images over *all* admissible positive exponents. An arbitrary or empty index
-set is not supplied in place of the geometric admissibility condition.
+images over *all* admissible positive exponents, for any coefficient module `L`.
+An arbitrary or empty index set is not supplied in place of the geometric
+admissibility condition. Hacon--Xu's identification of S0 with a stabilized image
+of global sections uses a proper variety and a line bundle `L` (finite-dimensional
+sections); that identification is not asserted here.
+
+On affine trace frames, the infimum of the nonzero ideals compatible with every
+trace is compatible with every trace, so when it is nonzero it is the least nonzero
+compatible ideal (`localTestInfimum_isLeast`); its nonvanishing is a separate request.
 
 Generic tensor/pullback/projection-formula proofs are completed source
 integration. The required maps have fixed native formulas. Iteration,
@@ -164,13 +171,28 @@ def localTestInfimum (S : TraceSystem V C D p hp (structureModule V.X.left))
     (fun a => affineTrace V C D p hp a.val (S.identification a)
       (boundaryData V C D p a) (A a))
 
+/-- When it is nonzero, the infimum of the nonzero compatible ideals on an affine trace frame
+is the least nonzero ideal compatible with every trace. -/
+theorem localTestInfimum_isLeast (S : TraceSystem V C D p hp (structureModule V.X.left))
+    (U : V.X.left.Opens) (A : LocalFrames V C D p hp S U)
+    (h : localTestInfimum V C D p hp S U A ≠ ⊥) :
+    IsLeast {J : Ideal Γ(V.X.left,U) | J ≠ ⊥ ∧ ∀ a : AdmissibleExponent V C D p,
+        letI := S.adjoints a
+        AffineCartierTraceIdeals.IsCompatible
+          (affineTrace V C D p hp a.val (S.identification a) (boundaryData V C D p a) (A a)) J}
+      (localTestInfimum V C D p hp S U A) :=
+  AffineCartierTraceIdeals.isLeast_indexedCompatibleIdealInfimum _ _ h
+
 /-- Actual affine trivializing cover, making the local comparison nonvacuous at every point. -/
 structure TraceTrivializingCover (S : TraceSystem V C D p hp (structureModule V.X.left)) where
   openSet : V.X.left → V.X.left.affineOpens
   contains : ∀ x, x ∈ (openSet x).val
   frames : ∀ x, LocalFrames V C D p hp S (openSet x).val
 
-/-- The big-test ideal sheaf is characterized on every actual local Cartier trace frame. -/
+/-- An ideal sheaf agreeing on every affine trace frame with the infimum of the nonzero
+compatible ideals. With that infimum nonzero (the request `localTestInfimum_ne_bot`), it is the
+least nonzero compatible ideal on each frame (`localTestInfimum_isLeast`), i.e. the big test
+ideal. -/
 structure TestIdealComparison (S : TraceSystem V C D p hp (structureModule V.X.left))
     (A : TraceTrivializingCover V C D p hp S) where
   ideal : V.X.left.IdealSheafData
