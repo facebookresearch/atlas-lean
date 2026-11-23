@@ -29,3 +29,10 @@
 - [Haldane's 2s approximation holds in the joint regime](tendsto-kimura-fixation-div-two-mul.md)
 - [Haldane's 2s approximation holds only in the joint regime](tendsto-zero-and-tendsto-at-top-of-tends.md)
 - [At fixed s > 0 the new-mutant limit is 1 − exp(−2s) < 2s](tendsto-kimura-fixation-nat-cast-mul-one.md)
+
+## Allele-label symmetry of the Wright–Fisher martingale problem
+
+- [Generator neg one sub](generator-neg-one-sub.md)
+- [Allele relabeling with selection](one-sub.md)
+- [Absorption Time one sub](absorption-time-one-sub.md)
+- [Kimura's loss probability, process form](measure-real-loss.md)

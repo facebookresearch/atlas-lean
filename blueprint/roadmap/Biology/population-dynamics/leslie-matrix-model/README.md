@@ -27,3 +27,10 @@
 
 - [Irreducibility criterion](is-irreducible-leslie-matrix.md)
 - [Perron root of a Leslie matrix](exists-perron-root-sum-eq-one.md)
+
+## Stable-age convergence for primitive Leslie matrices
+
+- [Leslie projection](leslie-projection.md)
+- [Tendsto leslie Matrix pow mul Vec div pow](tendsto-leslie-matrix-pow-mul-vec-div-po.md)
+- [Tendsto leslie age distribution](tendsto-leslie-age-distribution.md)
+- [Exists stable age distribution](exists-stable-age-distribution.md)

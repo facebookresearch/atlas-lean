@@ -54,3 +54,19 @@
 - [Basic reproduction number of the SIS model from the derivatives](r0-deriv-eq.md)
 - [Linearized SIS threshold, stable side](is-hurwitz-iff.md)
 - [Linearized SIS threshold, unstable side](exists-re-pos-iff.md)
+
+## Global stability of the SIS endemic equilibrium via a Lyapunov function
+
+- [Lyapunov](lyapunov.md)
+- [`V ≥ 0`](lyapunov-nonneg.md)
+- [`V` vanishes only at the endemic equilibrium](lyapunov-eq-zero-iff.md)
+- [The Lyapunov derivative is nonpositive](lyapunov-deriv-nonpos.md)
+- [The Lyapunov derivative vanishes only at the equilibrium](lyapunov-deriv-eq-zero-iff.md)
+- [Forward invariance of the open segment](pos-of-pos.md)
+- [Derivative of the Lyapunov function along solutions](has-deriv-at-lyapunov.md)
+- [`V` is nonincreasing along solutions](lyapunov-le-initial.md)
+- [Uniform persistence](persistence.md)
+- [Exponential decay of the Lyapunov function](exists-lyapunov-le-exp.md)
+- [Global attractivity via the Lyapunov function](tendsto-endemic-of-lyapunov.md)
+- [Lyapunov stability of the endemic equilibrium](endemic-lyapunov-stable.md)
+- [Global asymptotic stability of the SIS endemic equilibrium](endemic-globally-asymptotically-stable.md)
