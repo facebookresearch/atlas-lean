@@ -28,3 +28,17 @@ example (n : ℕ) : gcdTermSeq 1 2 (n + 1) < (n : ℚ) + 2 := by
 
 example (d n : ℕ) : gcdTermSeq 0 d n = 0 ∧ gcdTermSeq d 0 n = 0 := by
   simp [gcdTermSeq]
+
+example (n : ℕ) : (gcdTermSeq 4 6 n).den = 1 := by
+  obtain ⟨m, hm⟩ := (gcdTermSeq_natural_and_eq_gcd_add_one 4 6 (by decide) (by decide)).1 n
+  simp [hm]
+
+example : gcdTermSeq 4 6 24 = 3 := by
+  have h := (gcdTermSeq_natural_and_eq_gcd_add_one 4 6 (by decide) (by decide)).2
+  norm_num at h
+  exact h
+
+example : gcdTermSeq 1 1 1 = 2 := by
+  have h := (gcdTermSeq_natural_and_eq_gcd_add_one 1 1 le_rfl le_rfl).2
+  norm_num at h
+  exact h
