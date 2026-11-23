@@ -65,14 +65,15 @@ def integralMultiplication (ell : ℕ) : integerCoefficients ⟶ integerCoeffici
 def integralReduction (ell : ℕ) : integerCoefficients ⟶ ModCoefficients ell :=
   liftCoefficientMap (Int.castAddHom (ZMod ell))
 
-/-- The mod-ell injection is the native additive lift of n mapping to ell*n modulo ell^2. -/
+/-- The map `ZMod ell → ZMod (ell^2)`, `n ↦ ell * n`: injective for `0 < ell`, zero for
+`ell = 0`. -/
 def modInjectionAdd (ell : ℕ) : ZMod ell →+ ZMod (ell * ell) :=
   ZMod.lift ell ⟨(ell : ℤ) • Int.castAddHom (ZMod (ell * ell)), by
     change (ell : ℤ) • ((ell : ℤ) : ZMod (ell * ell)) = 0
     simp only [zsmul_eq_mul, Int.cast_natCast]
     rw [← Nat.cast_mul, ZMod.natCast_self]⟩
 
-/-- The same native injection in the existing lifted integer modules. -/
+/-- The same map `n ↦ ell * n` on the lifted coefficient modules. -/
 def modInjection (ell : ℕ) : ModCoefficients ell ⟶ ModCoefficients (ell * ell) :=
   liftCoefficientMap (modInjectionAdd ell)
 

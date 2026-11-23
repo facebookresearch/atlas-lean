@@ -88,7 +88,8 @@ def reducedCircleEdge (U : (SmoothScheme k)ᵒᵖ)
     (((reducedComplexFunctor F).obj (simplicialCircle (k := k))).X (-1)).obj.obj U := by
   let C := (reducedSimplicialFunctor F).obj (simplicialCircle (k := k))
   let NC := (AlgebraicTopology.normalizedMooreComplex (NisModules (k := k))).obj C
-  exact (((NC.extendXIso negativeEmbedding (show -((1 : ℕ) : ℤ) = -1 from by rfl)).inv.hom.app U)
+  exact (((NC.extendXIso negativeEmbedding
+      (show (0 : ℤ) - ((1 : ℕ) : ℤ) = -1 by simp)).inv.hom.app U)
     ((((mooreProjection C).f 1).hom.app U)
       (reducedGenerator F (simplicialCircle (k := k)) (op ⦋1⦌) U t (circleEdge U))))
 
@@ -100,7 +101,7 @@ def rawCircleTarget :
     ((rawWeightZero (S₀ := S₀) T)⟦(1 : ℤ)⟧).X (-1) ⟶ (torusChains (S := S₀) T 0).X 0 :=
   (CochainComplex.shiftFunctorObjXIso (rawWeightZero (S₀ := S₀) T) (1 : ℤ) (-1) 0 (by omega)).hom ≫
     ((torusChains (S := S₀) T 0).extendXIso negativeEmbedding
-      (show -((0 : ℕ) : ℤ) = 0 from by rfl)).hom
+      (show (0 : ℤ) - ((0 : ℕ) : ℤ) = 0 by simp)).hom
 
 /-- A source cochain has its sign fixed by the original ordered circle edge and point cycle. -/
 structure CircleCycleOrientation where

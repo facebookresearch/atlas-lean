@@ -83,28 +83,10 @@ structure SingularModel (F : AdditiveTransferPresheaves D G) where
         (NatTrans.op (C.tensor.map (show (⟨A.simplex.obj m.unop⟩ : CorrespondenceObject D G) ⟶
           ⟨A.simplex.obj n.unop⟩ from graphCycle G (A.simplex.map a.unop)))) F.obj
 
-def negativeEmbedding : ComplexShape.Embedding (ComplexShape.down ℕ) (ComplexShape.up ℤ) where
-  f n := -(n : ℤ)
-  injective_f := by
-    intro n m h
-    change -(n : ℤ) = -(m : ℤ) at h
-    omega
-  rel := by
-    intro n m h
-    change m + 1 = n at h
-    change -(n : ℤ) + 1 = -(m : ℤ)
-    omega
-
-instance : negativeEmbedding.IsRelIff where
-  rel' n m h := by
-    change -(n : ℤ) + 1 = -(m : ℤ) at h
-    change m + 1 = n
-    omega
-
-instance : negativeEmbedding.IsTruncLE where
-  mem_prev {target} {source} h := by
-    change target + 1 = -(source : ℤ) at h
-    exact ⟨source + 1, by dsimp [negativeEmbedding]; omega⟩
+/-- Chain complexes indexed by `ℕ` placed in nonpositive cohomological degrees, `n ↦ -n`
+(Mathlib's `ComplexShape.embeddingUpIntLE 0`, with its `IsRelIff` and `IsTruncLE` instances). -/
+abbrev negativeEmbedding : ComplexShape.Embedding (ComplexShape.down ℕ) (ComplexShape.up ℤ) :=
+  ComplexShape.embeddingUpIntLE 0
 
 variable [HasSheafify (nisnevichTopology (k := k)) (ModuleCat.{1} ℤ)]
   (S : TransferSheafificationModel D G)

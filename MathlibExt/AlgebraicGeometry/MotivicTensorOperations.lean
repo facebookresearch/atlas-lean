@@ -73,11 +73,11 @@ def IsSummandNormalized
       (-(a : ℤ)) (-(b : ℤ)) (-((a + b : ℕ) : ℤ)) (by dsimp; omega) ≫
       (iso F H).hom.f (-((a + b : ℕ) : ℤ)) ≫
       ((HomologicalComplex.mapBifunctor F H N.functor
-        (ComplexShape.down ℕ)).extendXIso negativeEmbedding rfl).hom =
-    ((N.functor.map (F.extendXIso negativeEmbedding rfl).hom).app
+        (ComplexShape.down ℕ)).extendXIso negativeEmbedding (zero_sub _)).hom =
+    ((N.functor.map (F.extendXIso negativeEmbedding (zero_sub _)).hom).app
       ((H.extend negativeEmbedding).X (-(b : ℤ))) ≫
       (N.functor.obj (F.X a)).map
-        (H.extendXIso negativeEmbedding rfl).hom) ≫
+        (H.extendXIso negativeEmbedding (zero_sub _)).hom) ≫
       HomologicalComplex.ιMapBifunctor F H N.functor
         (ComplexShape.down ℕ) a b (a + b) rfl
 
