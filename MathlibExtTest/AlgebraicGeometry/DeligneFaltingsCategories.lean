@@ -10,8 +10,11 @@ module
 import MathlibExt.AlgebraicGeometry.DeligneFaltingsCategories
 
 noncomputable section
+
 open CategoryTheory AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.DeligneFaltingsCategories
+
+namespace MathlibExtTest.AlgebraicGeometry.DeligneFaltingsCategories
 
 /-- Nonintegral weight categories retain distinct monoid arrows even when
 all weights collapse in groupification. -/
@@ -48,3 +51,5 @@ example : zeroWeightArrow ≫ zeroWeightArrow = zeroWeightArrow := by
 example (X : Scheme) :
     (DivisorObject.unitObject X).sectionMap =
       𝟙 (MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries.structureModule X) := rfl
+
+end MathlibExtTest.AlgebraicGeometry.DeligneFaltingsCategories
