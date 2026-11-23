@@ -81,15 +81,14 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   dependency sections.
 - **Count what is not yet in Lean.** A planned page that states a result is a
   statement not yet in Lean, and Autoform counts it as one once it has a
-  `kind`, which `lean-facts` gives it at build time: a page that builds with no
-  Lean link takes the kind its annotation records, as
+  `kind`, which `lean-facts` gives it at build time: a held page takes that of
+  the declaration it holds back, as a linked page would get it (a
+  `theorem_wanted` is a theorem), except that a page stating a result held back
+  as a definition (a `def` of a proposition, say) records `theorem` or `lemma`,
+  which it takes instead; any other page that builds with no Lean link takes
+  the kind its annotation records, as
   `"extensions": {"org.atlas-wiki": {"kind": "theorem"}}` (or `lemma`, `def`,
-  `abbrev`, `instance`, `structure`, `class`, `inductive` or `opaque`), and a
-  held page that records none that of the declaration it holds back, as a
-  linked page would get it (a `theorem_wanted` is a theorem). As the held
-  declaration does not state the page, a held page records its kind when the
-  two differ, such as a page stating a result held back as a `def` of a
-  proposition. A page
+  `abbrev`, `instance`, `structure`, `class`, `inductive` or `opaque`). A page
   whose row still names a declaration of this project in a Lean link, as a
   reference, gets none, as Autoform would take that declaration for the
   page's own. Its readiness is Autoform's, from the prerequisites it lists:
@@ -451,8 +450,9 @@ issues, that tracks the Lean fix; a declaration private by design has none, and
 its marker goes once the declaration is public. When a declaration has several
 problems, `reason` names the one in its statement. `declarations` gives a held
 declaration no page and lists it as held; `lean-facts` gives the held page the
-kind its row records, or else the declaration's, so it counts as a statement not
-yet in Lean ([Writing pages](#writing-pages)), private by design or not, unless
+declaration's kind, or the theorem kind a page stating a result held back as a
+definition records, so it counts as a statement not yet in Lean
+([Writing pages](#writing-pages)), private by design or not, unless
 its marker is one `declarations` reports below, such as one naming a declaration
 the Lean index does not resolve or that an earlier row holds back, whatever kind
 the row records. In `declarations`, a marker that names no declaration, sits on a

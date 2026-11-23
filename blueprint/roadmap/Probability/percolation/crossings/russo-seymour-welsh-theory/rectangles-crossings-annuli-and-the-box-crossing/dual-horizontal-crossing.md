@@ -9,7 +9,6 @@ For $a, b, c, d \in \mathbb{Z}$, the configuration $\omega$ has a dual left–ri
 - [Open left–right crossing of a general rectangle](horizontal-crossing.md)
 - [Configuration space of a statistical-mechanics model](../../../../random-fields/spin-and-bond-configuration-spaces/config-space.md)
 - [Site of the hypercubic lattice](../../../../../GraphTheory/graph-families-and-operations/hypercubic-lattice-graphs/site.md)
-- [Rotated dual configuration](../../../../../GraphTheory/planar-graphs-and-minors/self-duality-of-the-square-lattice/dual-config.md)
 
 ## Sources
 

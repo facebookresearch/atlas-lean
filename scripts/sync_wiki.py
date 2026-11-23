@@ -1176,13 +1176,13 @@ def usable_holds(files: dict[Path, list[dict]], index) -> set[int]:
 
 def unlinked_kind(annotation: dict, index, usable: set[int]) -> str | None:
     """The kind of a page that builds with no Lean link. It is a statement not yet in Lean, which Autoform counts,
-    as ready to state, planned or not ready, only with a kind. A page takes the one of KINDS its annotation records
-    under OWN as "kind", else, when it holds a declaration back, that declaration's, as a linked page would get it
-    (the held declaration does not state the page, so a page that states a result held as a `def : Prop` records
-    `theorem`); else None, as no kind is guessed. A held page whose marker is not usable (see usable_holds) gets
-    none, whatever it records, so that no declaration counts twice. A page whose row still names a declaration of
-    this project in a Lean link, as a reference, gets none either: Autoform lists every declaration of this project a
-    row names as its page's Lean target, so its task would name that declaration."""
+    as ready to state, planned or not ready, only with a kind. A held page takes that of the declaration it holds
+    back, as a linked page would get it, when its marker is usable (see usable_holds), and none otherwise, whatever it
+    records, so that no declaration counts twice; but a page that states a result held back as a definition (a `def`
+    of a proposition, say) records `theorem` or `lemma`, which it takes instead. Any other page takes the one of KINDS
+    its annotation records under OWN as "kind"; else None, as no kind is guessed. A page whose row still names a
+    declaration of this project in a Lean link, as a reference, gets none either: Autoform lists every declaration of
+    this project a row names as its page's Lean target, so its task would name that declaration."""
     if lean_ends(annotation).own:
         return None
     extensions = annotation.get("extensions")
@@ -1193,7 +1193,8 @@ def unlinked_kind(annotation: dict, index, usable: set[int]) -> str | None:
         if id(annotation) not in usable:
             return None
         keyword = index.declarations[held_name(annotation)].keyword
-        return recorded or wiki.WANTED.get(keyword, keyword)
+        keyword = wiki.WANTED.get(keyword, keyword)
+        return recorded if recorded in ("theorem", "lemma") and keyword in wiki.DEFINITION_DECLARATIONS else keyword
     return recorded
 
 

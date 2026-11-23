@@ -1273,13 +1273,14 @@ class LeanFacts(Vault):
                                          extensions={"org.autoform": {"not_ready": True}}))
 
     def test_a_held_page_takes_the_kind_of_the_declaration_it_holds_back(self) -> None:
-        # A held page is a statement not yet in Lean (docs/BLUEPRINT.md, Writing pages): it takes the kind it records,
-        # else the kind its declaration would give a linked page, and no status. It keeps the prerequisites it records
-        # and is no other page's Lean target.
+        # A held page is a statement not yet in Lean (docs/BLUEPRINT.md, Writing pages): it takes the kind its
+        # declaration would give a linked page, and no status. It keeps the prerequisites it records and is no other
+        # page's Lean target.
         (self.tmp / "Ext").mkdir()
         (self.tmp / "Ext" / "Held.lean").write_text(
             "theorem false_claim : 1 = 2 := sorry\ndef bad : Nat := 1\ntheorem_wanted vacuous : True\n"
-            "private theorem helper : True := trivial\ndef claim_prop : Prop := 1 = 2\n")
+            "private theorem helper : True := trivial\ndef claim_prop : Prop := 1 = 2\n"
+            "theorem typed : True := trivial\n")
         (self.tmp / "Ext" / "Groups.lean").write_text("theorem user : True := trivial\n")
         body = "# Claim\n\nThe source's statement.\n\n## Depends on\n\n- [Bad](bad.md)\n"
         claim = self.page("Algebra/claim.md", body)
@@ -1290,10 +1291,14 @@ class LeanFacts(Vault):
         def held(name: str, reason: str, issue: int | None = 1) -> dict:
             return {sync.OWN: {"held": {"declaration": name, "reason": reason, **({"issue": issue} if issue else {})}}}
 
-        # A held page that records its kind takes it: a page stating a result held back as a `def` of a proposition.
+        # A page stating a result held back as a `def` of a proposition records `theorem`, which it takes; a recorded
+        # kind changes no other held page's (a held theorem recorded as `def` stays a theorem).
         result = held("Ext.claim_prop", "false")
         result[sync.OWN]["kind"] = "theorem"
         self.page("Algebra/result.md", "# Result\n\nA result.\n")
+        typed = held("Ext.typed", "false")
+        typed[sync.OWN]["kind"] = "def"
+        self.page("Algebra/typed.md", "# Typed\n\nA result.\n")
         self.annotate([
             self.about("Algebra/claim.md", extensions=held("Ext.false_claim", "false")),
             self.about("Algebra/bad.md", status="formalized", extensions=held("Ext.bad", "mis-specified")),
@@ -1301,6 +1306,7 @@ class LeanFacts(Vault):
             self.about("Algebra/helper.md", extensions=held("Ext.helper", "private by design", None)),
             self.about("Algebra/missing.md", extensions=held("Ext.missing", "false")),
             self.about("Algebra/result.md", extensions=result),
+            self.about("Algebra/typed.md", extensions=typed),
             self.about("Algebra/user.md", object=[{"location": {"declaration": "Ext.user"}}]),
         ])
         held_source, source = Path("Ext/Held.lean"), Path("Ext/Groups.lean")
@@ -1310,6 +1316,7 @@ class LeanFacts(Vault):
             "Ext.vacuous": SimpleNamespace(keyword="theorem_wanted", path=held_source),
             "Ext.helper": SimpleNamespace(keyword="theorem", path=held_source),
             "Ext.claim_prop": SimpleNamespace(keyword="def", path=held_source),
+            "Ext.typed": SimpleNamespace(keyword="theorem", path=held_source),
             "Ext.user": SimpleNamespace(keyword="theorem", path=source)})
         dependencies = {"Ext.user": {"module": "Ext.Groups", "statement": [], "proof": ["Ext.helper"]}}
         for _ in range(2):
@@ -1321,7 +1328,7 @@ class LeanFacts(Vault):
                 "claim.md": ("theorem", None, False), "bad.md": ("def", None, False),
                 "vacuous.md": ("theorem", None, False), "helper.md": ("theorem", None, False),
                 "missing.md": (None, None, False), "result.md": ("theorem", None, False),
-                "user.md": ("theorem", "formalized", True)})
+                "typed.md": ("theorem", None, False), "user.md": ("theorem", "formalized", True)})
             self.assertEqual(claim.read_text(), body)
             self.assertEqual(user.read_text(),
                              "# User\n\nUses the helper.\n\n## Depends on\n\nThis node has no prerequisites.\n")

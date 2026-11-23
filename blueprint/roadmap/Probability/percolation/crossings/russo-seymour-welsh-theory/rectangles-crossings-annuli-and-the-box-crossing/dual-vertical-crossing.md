@@ -7,7 +7,6 @@ With the dual lattice $(\mathbb{Z}^2)^\ast = (\tfrac12, \tfrac12) + \mathbb{Z}^2
 - [Open bottom–top crossing of a general rectangle](vertical-crossing.md)
 - [Configuration space of a statistical-mechanics model](../../../../random-fields/spin-and-bond-configuration-spaces/config-space.md)
 - [Site of the hypercubic lattice](../../../../../GraphTheory/graph-families-and-operations/hypercubic-lattice-graphs/site.md)
-- [Rotated dual configuration](../../../../../GraphTheory/planar-graphs-and-minors/self-duality-of-the-square-lattice/dual-config.md)
 
 ## Sources
 

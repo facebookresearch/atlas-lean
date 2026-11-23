@@ -10,5 +10,4 @@ For $d, N \in \mathbb{N}$, the free off-centre sandwich holds when for every edg
 - [Vertices of the box $\{-n, \dots, n\}^d$](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/box-verts.md)
 - [Inclusion of box edges into $\mathbb{Z}^d$](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/edge-incl.md)
 - [Free infinite-volume edge density](../per-box-agreement-of-free-and-wired-random-clust/free-edge-density.md)
-- [Wired infinite-volume edge density](../per-box-agreement-of-free-and-wired-random-clust/wired-edge-density.md)
 - [Probability of an ambient FK configuration](../random-cluster-measures-on-finite-graphs/fk-prob.md)
