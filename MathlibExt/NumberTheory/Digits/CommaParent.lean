@@ -11,6 +11,13 @@ module
 public import Mathlib.Algebra.Group.Nat.Defs
 public import MathlibExt.NumberTheory.CommaSequence
 
+/-!
+# Parents in the comma-child graph
+
+`MetaMathlibExt.exists_commaParent_of_sq_le` shows that in every base `b ≥ 2`,
+each natural number `n ≥ b ^ 2` is a comma-child of a positive integer.
+-/
+
 namespace MetaMathlibExt
 
 /-- **Every number at least the square of the base is a comma-child.** Let $b \ge 2$ and

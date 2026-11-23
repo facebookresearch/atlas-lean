@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Order.Floor.Div
 public import Mathlib.Order.Lattice.Nat
-public import MathlibExt.Combinatorics.Additive.WeightedDavenport
+public import MathlibExt.Combinatorics.Additive.WeightedDavenportProd
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 
 namespace MetaMathlibExt
@@ -111,25 +111,6 @@ Constants*, INTEGERS 26 (2026), Article A89, Corollary 1, second part (`integers
 public theorem_wanted weightedDavenport_zmod_Icc_of_dvd (m n : ℕ) (hm : 2 ≤ m) (hn : 2 ≤ n)
     (hdvd : m ∣ n) :
     weightedDavenport (Finset.Icc 1 (n ⌈/⌉ (m - 1) - 1)) (ZMod n) = ((m : ℕ) : ℕ∞)
-
-/-- **Long weighted zero-sum free sequences in groups of rank two.** Let $m, n \ge 2$ be natural
-numbers with $m \mid n$, let $k \ge 1$ and put $\alpha = \lceil n/(m-1) \rceil - 1$. Then there is
-a sequence $s$ over $\mathbb{Z}/n\mathbb{Z} \oplus \mathbb{Z}/kn\mathbb{Z}$ of length
-$m + \lceil kn/\alpha \rceil - 2$ that is $\{1, \dots, \alpha\}$-weighted zero-sum free: for every
-non-empty set $I$ of positions and all weights $a_i \in \{1, \dots, \alpha\}$, the weighted sum
-$\sum_{i \in I} a_i s_i$ is non-zero.
-
-In particular the $\{1, \dots, \alpha\}$-weighted Davenport constant of
-$\mathbb{Z}/n\mathbb{Z} \oplus \mathbb{Z}/kn\mathbb{Z}$ is at least
-$m + \lceil kn/\alpha \rceil - 1$.
-
-Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
-Constants*, INTEGERS 26 (2026), Article A89, Lemma 2 (`integers-2026-A89-lem-2`). -/
-public theorem_wanted exists_weightedZeroSumFree_zmod_prod (m n k : ℕ) (hm : 2 ≤ m)
-    (hn : 2 ≤ n) (hdvd : m ∣ n) (hk : 1 ≤ k) :
-    ∃ s : List (ZMod n × ZMod (k * n)),
-      s.length = m + (k * n) ⌈/⌉ (n ⌈/⌉ (m - 1) - 1) - 2 ∧
-        IsWeightedZeroSumFree (Finset.Icc 1 (n ⌈/⌉ (m - 1) - 1)) s
 
 /-- **Weight sets with prescribed weighted Davenport constant on
 $\mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/kn\mathbb{Z}$, divisible case.** Let $n \ge 2$ and

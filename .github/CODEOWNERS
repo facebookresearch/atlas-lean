@@ -30,5 +30,6 @@
 /docs/BLUEPRINT.md                                @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
 /docs/mathgraph-import.md                         @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
 /.github/workflows/blueprint-pages.yml            @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
+/.github/workflows/graph-sync.yml                 @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
 /.github/autoform-ref                             @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
 /.github/CODEOWNERS                               @akiezun @zibo-yang @VivienCabannes @Deicyde @neelsomani @toskua
