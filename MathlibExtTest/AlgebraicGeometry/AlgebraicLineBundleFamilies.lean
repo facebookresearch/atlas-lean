@@ -45,8 +45,16 @@ example (C : Over (Spec (.of k))) [IsProperCurve C.hom] [HasConstantGlobalSectio
     SmoothOfRelativeDimension (genus C.hom) J.J.hom :=
   J.smoothDimension
 
+-- The model is also available for proper schemes of higher dimension (such as a
+-- compactified Jacobian), with relative dimension `dim H¹(X, 𝒪_X)`.
+example (X : Over (Spec (.of k))) [IsProper X.hom] [HasConstantGlobalSections X.hom]
+    (p : 𝟙_ (Over (Spec (.of k))) ⟶ X) (J : PicardZeroModel X p) :
+    SmoothOfRelativeDimension (Module.finrank k (cohomology X.hom (structureModule X.left) 1))
+      J.J.hom :=
+  J.smoothDimension
+
 attribute [local instance] PicardZeroModel.group in
-example (C : Over (Spec (.of k))) [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
+example (C : Over (Spec (.of k))) [IsProper C.hom] [HasConstantGlobalSections C.hom]
     (p : 𝟙_ (Over (Spec (.of k))) ⟶ C) (J : PicardZeroModel C p) :
     Nonempty ((Scheme.Modules.pullback (pointSection C J.J η[J.J]).left).obj J.P ≅
       structureModule C.left) :=
