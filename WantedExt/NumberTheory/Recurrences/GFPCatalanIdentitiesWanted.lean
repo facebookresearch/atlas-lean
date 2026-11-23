@@ -36,6 +36,7 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.RingTheory.Binomial
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.Data.Nat.Choose.AlternatingShiftedSum
 public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
 
 namespace MetaMathlibExt
@@ -149,22 +150,6 @@ public theorem_wanted gfp_lucas_catalan {α p₀ : ℤ} (hα : α * p₀ = 2) {p
     (hd : d = C α * p₁) (g : ℤ[X]) (n : ℕ) :
     2 ^ n * C α * generalizedFibonacciPolynomial (C p₀) p₁ d g n =
       2 * ∑ i ∈ range (n / 2 + 1), (n.choose (2 * i) : ℤ[X]) * d ^ (n - 2 * i) * (4 * g + d ^ 2) ^ i
-
-/-- **Alternating sum of shifted binomial coefficients.** Let $\ell$, $n$, $j$ and $s$ be natural
-numbers with $1 \le \ell \le n$, $j \ge 1$ and $\ell j + s \le n$. Then
-$$\sum_{i=0}^{\ell} (-1)^i \binom{\ell}{i} \binom{n-i}{\ell j+s} = \binom{n-\ell}{\ell(j-1)+s}.$$
-
-The paper states this for $\lfloor (1-s)/\ell \rfloor \le j \le \lfloor (n-s)/\ell \rfloor$; only
-$j \ge 1$ is stated here, since for $j \le 0$ the right side can have a negative lower index. For
-$j \ge 1$ the bound $j \le \lfloor (n-s)/\ell \rfloor$ is the condition $\ell j + s \le n$.
-
-Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
-*Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
-Article florez11012023, Lemma 4.1 (`fq-2024-florez11012023-lem-4.1`). -/
-public theorem_wanted alternating_sum_choose_mul_choose_sub {ℓ n j s : ℕ} (hℓ : 1 ≤ ℓ)
-    (hℓn : ℓ ≤ n) (hj : 1 ≤ j) (hjn : ℓ * j + s ≤ n) :
-    ∑ i ∈ range (ℓ + 1), (ℓ.choose i : ℤ) * (-1) ^ i * ((n - i).choose (ℓ * j + s) : ℤ) =
-      ((n - ℓ).choose (ℓ * (j - 1) + s) : ℤ)
 
 /-- **Recurrence for the floor-exponent binomial sums.** Let $R$ be a commutative ring, $t \in R$
 and $\ell \ge 1$ an integer, and for $m \ge 0$ let

@@ -324,9 +324,9 @@ semantics above, bridge edges from the articles to the Mathlib nodes they use,
 and each node's topic from the `Mathlib/...` keys of `scripts/taxonomy.json`.
 [`mathlib-layer.md`](mathlib-layer.md) gives the node rules and the files. Like
 the dependency dump, it is a build output: the workflow's `build the Mathlib
-layer` job builds it once `build the wiki` has succeeded, from the v2
-extraction and the dump of the v2 declarations with their Mathlib uses that
-`build the wiki` makes last, after the site steps, and keeps as the
+layer` job builds it beside `build the wiki`. It restores the same builds,
+builds what they lack and makes the v2 extraction as `build the wiki` does,
+then dumps the v2 declarations with their Mathlib uses, which it keeps as the
 `v2-mathlib-dump` artifact. It uploads the layer as the `mathlib-graph`
 artifact. The edges of the site's own Mathlib-credited pages come from the wiki
 job's registry ([Mathlib-credited pages](#mathlib-credited-pages)), not from
@@ -334,7 +334,7 @@ this layer. A failure fails that job's check only; it never holds back the site
 or its deployment, which do not read the layer. The dump of the Mathlib
 declarations and the graph `graph` builds from it depend only on the pins and
 the scripts that make them: runs other than PRs keep them in a
-`mathlib-graph-*` cache, and a run that restores it runs no Lean. `stats`
+`mathlib-graph-*` cache, and a run that restores it skips them. `stats`
 therefore takes the layer's ATLAS commit from the v2 dump. After the build and
 the v2 extraction above:
 
@@ -459,8 +459,10 @@ model-driven audit, or required personal token.
 
 ### Mathlib-credited pages
 
-A page may state a Mathlib declaration instead of an ATLAS one, when a card
-needs a result or concept that only Mathlib proves. Its annotation, in its
+A page may state a Mathlib declaration instead of an ATLAS one when the wiki
+needs a result or concept that only Mathlib proves: for a card, as a
+prerequisite a planned page lists, or as an entry of a reviewed mathgraph
+manifest ([mathgraph-import.md](mathgraph-import.md)). Its annotation, in its
 subject's links file like every other ([Placing pages](#placing-pages)), names
 Mathlib's repository in its Lean link and says so in Autoform's extension:
 
@@ -540,22 +542,25 @@ updates the row in the same change.
 
 ### Pages imported from mathgraph
 
-`scripts/import_mathgraph.py` adds planned pages adapted from mathgraph, Jack
-McCarthy's graph of textbook results, from a manifest reviewed row by row
-([mathgraph-import.md](mathgraph-import.md)). The annotation of such a page
-records its origin under `org.atlas-wiki` as `"seed": {"source": "mathgraph",
-"node": "<node id>", "revision": "<commit>"}`. A prerequisite not yet linked by
-the import is listed there as well, in `"pending": [{"key": "<mathgraph key>",
-"kind": "statement" | "proof", "reason": "<reason>"}]`; a pending entry does
-not imply that no page states it. The page is then a
-[node still to expand](#nodes-still-to-expand): it carries `not_ready`, and its
-`## Expansion` section names the prerequisites a good expansion links. The
-importer never edits such a page again. An editor who links a prerequisite
-under `## Depends on` or `## Proof depends on` removes its entry in the same
-change, and `## Expansion` and `not_ready` with the last one; no tool makes or
-checks that edit. After the import a page is edited like any other;
-`scripts/mathgraph-map.jsonl` keeps the digests of mathgraph's text, so that a
-later release can tell what a later mathgraph revision changed.
+`scripts/import_mathgraph.py` adds pages adapted from mathgraph, Jack McCarthy's
+graph of textbook results, from a manifest reviewed row by row
+([mathgraph-import.md](mathgraph-import.md)): planned pages, and pages credited
+to a Mathlib declaration ([Mathlib-credited pages](#mathlib-credited-pages)).
+The annotation of such a page records its origin under `org.atlas-wiki` as
+`"seed": {"source": "mathgraph", "node": "<node id>", "revision": "<commit>"}`.
+A planned page also lists there each prerequisite not yet linked by the import,
+in `"pending": [{"key": "<mathgraph key>", "kind": "statement" | "proof",
+"reason": "<reason>"}]`; a pending entry does not imply that no page states it.
+Such a planned page is then a [node still to expand](#nodes-still-to-expand): it
+carries `not_ready`, and its `## Expansion` section names the prerequisites a
+good expansion links. A Mathlib-credited page has no pending entries, no
+`not_ready` and no `## Expansion`. The importer never edits a page it imported
+again. An editor who links a prerequisite under `## Depends on` or
+`## Proof depends on` removes its entry in the same change, and `## Expansion`
+and `not_ready` with the last one; no tool makes or checks that edit. After the
+import a page is edited like any other; `scripts/mathgraph-map.jsonl` keeps the
+digests of mathgraph's text, so that a later release can tell what a later
+mathgraph revision changed.
 
 ## Page chrome
 
@@ -597,7 +602,8 @@ and strict site checks run in one read-only job from one checkout. The job
 restores the builds CI saves from `main`, under CI's keys: the `lake-build-*`
 build of the commit a PR is tested against, else `main`'s newest, and the
 `lake-deps-*` package builds. It saves no cache of its own. The Mathlib
-layer is built afterwards in a second read-only job, `build the Mathlib layer`,
+layer is built beside it, from the same builds, in a second read-only job,
+`build the Mathlib layer`,
 the Mathlib pages in a third, `build the Mathlib pages`, and the card scripts are
 tested and the cards checked in a fourth, `check the cards`, from the wiki job's
 dependency artifact ([cards.md](cards.md#checks-and-ci)); deployment waits for
