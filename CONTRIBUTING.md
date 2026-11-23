@@ -66,9 +66,12 @@ piece of work before you start it, so that others can steer around it:
 - **Open a draft pull request** when you start, as
   [Picking a task](#picking-a-task) says. Its title names the topic, and its
   description names each ready task it takes by article id, on a line
-  `Tasks: af_…`. It claims them until it is closed: mark it ready for review
-  when it is done, or close it if you stop. If a draft that names a task you
-  want has had no push for a week, ask on it whether its author goes on.
+  `Tasks: af_…`. When the work takes on an issue, such as a source-review
+  issue, a page problem or a target, also comment on the issue that you are
+  working on it, with a link to the draft. The draft claims its tasks until it
+  is closed: mark it ready for review when it is done, or close it if you stop
+  and then say so on any issue you commented on. If a draft that names a task
+  you want has had no push for a week, ask on it whether its author goes on.
 - **Or open an issue** whose title starts with `[Claim]` and that names the
   area, the modules or the task ids you are taking, for work that spans several
   pull requests. It is a claim while it is open and has been updated in the
@@ -76,8 +79,13 @@ piece of work before you start it, so that others can steer around it:
   from each pull request that continues it.
 
 Look for an open pull request and an active `[Claim]` issue that cover the work
-before you start; `next_task.py` skips the tasks that open pull requests name,
-but does not read issues. When two claims cover the same task, the one that has
+before you start, and read the comments on the work's issue if it has one;
+`next_task.py` skips the tasks that open pull requests name, but does not read
+issues. A pull request that only cites a tracking issue, as the proofs of ready
+statements cite
+[#6002](https://github.com/facebookresearch/atlas-lean/issues/6002), does not
+take it on and leaves no comment there: the issue's page lists the pull
+requests that cite it. When two claims cover the same task, the one that has
 been active longer without a break keeps it; a pull request that continues an
 active `[Claim]` issue counts from the issue. A claim only saves duplicated
 work: it reserves nothing else, and anyone may still review, fix or improve
