@@ -47,4 +47,3 @@ public theorem_wanted deformationInvarianceOfPlurigenera
     plurigenus P x m = plurigenus P y m
 
 end WantedExt.AlgebraicGeometry.PlurigenusFamilies
-

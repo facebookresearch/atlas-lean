@@ -36,7 +36,8 @@ namespace MathlibExt.AlgebraicGeometry.RelativeCanonicalBaseChangeModels
 open CategoryTheory CategoryTheory.Limits _root_.AlgebraicGeometry
 open FourierMukai RelativeReflexiveCanonicalPowers ModuleDerivedSquares
 open QuasicoherentDualityReferences
-open AlgebraicLineBundleFamilies LineBundleTaskContracts NormalizedModuleTensorMaps ModuleInternalHom
+open AlgebraicLineBundleFamilies LineBundleTaskContracts NormalizedModuleTensorMaps
+open ModuleInternalHom
 
 attribute [local instance] HasDerivedCategory.standard
 variable [HasDerivedPullbacks.{0}] [HasDerivedPushforwards.{0}]

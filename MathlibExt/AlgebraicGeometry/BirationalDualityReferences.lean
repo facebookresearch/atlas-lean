@@ -54,7 +54,9 @@ def reflexivePower {X : Scheme.{0}} (M : X.Modules) (m : ℕ) : X.Modules :=
 variable [HasDerivedPushforwards.{0}] {X Y : Scheme.{0}} (f : X ⟶ Y)
   [(derivedPushforward f).IsLeftAdjoint]
 
-/-- The fixed relative duality object f! O_Y. -/
+/-- The fixed relative duality object `f^× O_Y`, the right adjoint of the fixed
+`Rf_*` applied to `O_Y`. It is `f^! O_Y` when `f` is proper; for a nonproper
+`f` it is not identified with `f^!` (see `QuasicoherentDualityReferences`). -/
 def relativeDuality : D X := (derivedPushforward f).rightAdjoint.obj (derivedUnit Y)
 
 /-- The actual trace/counit of the prescribed Rf_* adjunction. -/
@@ -71,4 +73,3 @@ def relativeCanonicalPower (n m : ℕ) : X.Modules :=
   reflexivePower (relativeCanonicalModule f n) m
 
 end MathlibExt.AlgebraicGeometry.BirationalDualityReferences
-

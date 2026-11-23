@@ -47,4 +47,3 @@ example {X : Scheme.{0}} (U : X.Opens) {A M N : X.Modules}
   simp only [← Category.assoc, IsIso.hom_inv_id, Category.id_comp]
 
 end MathlibExtTest.AlgebraicGeometry.RelativeCanonicalPowers
-

@@ -219,4 +219,3 @@ def reflexivePowerAcrossOpen {X' X : Scheme.{0}} (p : X' ⟶ X)
     unique := φ.property.2 }
 
 end MathlibExt.AlgebraicGeometry.RelativeReflexiveCanonicalPowers
-
