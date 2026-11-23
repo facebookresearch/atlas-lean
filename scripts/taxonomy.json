@@ -9949,6 +9949,7 @@
   "MathlibExt/Combinatorics/Enumerative/CatalanLarcombeFrenchNumber": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Catalan–Larcombe–French numbers"},
   "MathlibExt/Combinatorics/Enumerative/CatalanParity": {"to": "Combinatorics/catalan-numbers-lattice-paths/catalan-numbers", "title": "Arithmetic properties of Catalan numbers"},
   "MathlibExt/Combinatorics/Enumerative/CatalanPerfectPower": {"to": "Combinatorics/catalan-numbers-lattice-paths/catalan-numbers", "title": "Arithmetic properties of Catalan numbers"},
+  "MathlibExt/Combinatorics/Enumerative/CentralBinomialBernstein": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Knuth's old sum"},
   "MathlibExt/Combinatorics/Enumerative/CentralBinomialHarmonicGeneratingFunction": {"to": "Combinatorics/binomial-coefficients/central-binomial-harmonic-sums", "title": "Central binomial and Catalan–harmonic generating functions"},
   "MathlibExt/Combinatorics/Enumerative/CentralTrinomialLegendre": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Central trinomial coefficients"},
   "MathlibExt/Combinatorics/Enumerative/CentralTrinomialRecurrence": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Central trinomial coefficients"},
