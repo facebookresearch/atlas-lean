@@ -34,44 +34,13 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
+public import MathlibExt.Combinatorics.Additive.MaxMinMul
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Pointwise Filter Topology
-
-/-- **Max-min product.** The max-min product of sequences $g, h \colon \mathbb{N} \to \mathbb{N}$
-is the sequence $g \otimes h$ with $(g \otimes h)_k = \max_{i + j = k} \min(g_i, h_j)$ for every
-$k \in \mathbb{N}$, the maximum running over pairs of natural numbers $(i, j)$. This is the product
-of the max-min semiring $(\mathbb{N}, \max, \min)$ on coefficient sequences.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 1
-(the max-min semiring and its polynomials). -/
-public def maxMinMul (g h : ℕ → ℕ) : ℕ → ℕ :=
-  fun k => (Finset.antidiagonal k).sup fun p => min (g p.1) (h p.2)
-
-/-- **Constant coefficient of a max-min product.** For all sequences
-$g, h \colon \mathbb{N} \to \mathbb{N}$, the max-min product satisfies
-$(g \otimes h)_0 = \min(g_0, h_0)$.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 1
-(the max-min semiring and its polynomials). -/
-public theorem maxMinMul_zero (g h : ℕ → ℕ) : maxMinMul g h 0 = min (g 0) (h 0) := by
-  simp [maxMinMul]
-
-/-- **Linear coefficient of a max-min product.** For all sequences
-$g, h \colon \mathbb{N} \to \mathbb{N}$, the max-min product satisfies
-$(g \otimes h)_1 = \max(\min(g_0, h_1), \min(g_1, h_0))$.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Section 1
-(the max-min semiring and its polynomials). -/
-public theorem maxMinMul_one (g h : ℕ → ℕ) :
-    maxMinMul g h 1 = max (min (g 0) (h 1)) (min (g 1) (h 0)) := by
-  simp [maxMinMul, Finset.Nat.antidiagonal_succ]
 
 /-- **Monomials over the max-min semiring.** A coefficient sequence
 $g : \mathbb{N} \to \mathbb{N}$ over the max-min semiring is a monomial when exactly one of its
@@ -272,21 +241,6 @@ public theorem_wanted lunar_prime_count_isEquivalent {b : ℕ} (hb : 2 ≤ b) :
       (fun n : ℕ =>
         ({a : Fin n → Fin b | digitSeq a (n - 1) ≠ 0 ∧ IsLunarPrime b (digitSeq a)}.ncard : ℝ))
       (fun n : ℕ => ((b : ℝ) - 1) ^ 2 * (b : ℝ) ^ n / (b : ℝ) ^ 2)
-
-/-- **Monotone digit maps are lunar homomorphisms.** Let $d : \mathbb{N} \to \mathbb{N}$ be
-nondecreasing, and for a coefficient sequence $f : \mathbb{N} \to \mathbb{N}$ write $d(f)$ for the
-sequence $k \mapsto d(f_k)$. Write $f \oplus g$ for the pointwise maximum and $f \otimes g$ for the
-max-min product of coefficient sequences $f$ and $g$. Then for all $f$ and $g$,
-$d(f) \oplus d(g) = d(f \oplus g)$ and $d(f) \otimes d(g) = d(f \otimes g)$.
-
-This is Theorem 15 (Applegate, LeBrun and Sloane, prime promotion), stated for every nondecreasing
-map on $\mathbb{N}$; a base-$b$ digit map, a nondecreasing map on the digits, extends to such a map.
-
-Source: Baily, Dell, Fleischmann, Jackson, Pesikoff, Miller and Reifenberg, *Indecomposability
-Over the Max-Min Semiring*, Journal of Integer Sequences 28 (2025), Article 25.2.7, Theorem 15
-(`jis-2025-25.2.7-thm-15`). -/
-public theorem_wanted digitMap_lunar_hom {d : ℕ → ℕ} (hd : Monotone d) (f g : ℕ → ℕ) :
-    (d ∘ f) ⊔ (d ∘ g) = d ∘ (f ⊔ g) ∧ maxMinMul (d ∘ f) (d ∘ g) = d ∘ maxMinMul f g
 
 /-- **Counting Boolean factor pairs with a small sumset.** Let $n$ and $k$ be natural numbers with
 $0 < k \le n$, and let $d > 0$ be a real number. Then the number of pairs $(A, B)$ of finite sets
