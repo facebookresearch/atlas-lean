@@ -53,6 +53,10 @@ def check_manifest() -> None:
             "https://github.com/leanprover/cslib",
             "leanprover",
         ),
+        "Physlib": (
+            "https://github.com/leanprover-community/physlib",
+            "",
+        ),
         "plausible": (
             "https://github.com/leanprover-community/plausible",
             "leanprover-community",
@@ -142,12 +146,19 @@ def check_manifest() -> None:
         fail("manifest CSLib revision does not match lakefile.toml")
     if cslib.get("inherited") is not False:
         fail("CSLib must be a direct root dependency")
+    physlib = packages[names.index("Physlib")]
+    if physlib.get("inputRev") != "v4.35.0" or physlib.get("rev") != (
+        "af04d60bcd7618af849ff511e0a19d77f709937e"
+    ):
+        fail("manifest Physlib revision does not match lakefile.toml")
+    if physlib.get("inherited") is not False:
+        fail("Physlib must be a direct root dependency")
     if any(
         package.get("inherited") is not True
         for package in packages
-        if package["name"] not in {"mathlib", "cslib"}
+        if package["name"] not in {"mathlib", "cslib", "Physlib"}
     ):
-        fail("only Mathlib and CSLib may be direct root dependencies")
+        fail("only Mathlib, CSLib, and Physlib may be direct root dependencies")
 
 
 def main() -> None:
@@ -174,8 +185,14 @@ def main() -> None:
     if extra_top_level:
         fail(f"unapproved root target or setting: {', '.join(extra_top_level)}")
 
-    if config.get("defaultTargets") != ["MathlibExt", "CSLibExt", "WantedExt"]:
-        fail("root default targets must be MathlibExt, CSLibExt, and WantedExt")
+    if config.get("defaultTargets") != [
+        "MathlibExt",
+        "CSLibExt",
+        "PhyslibExt",
+        "Domains",
+        "WantedExt",
+    ]:
+        fail("root default targets must be MathlibExt, CSLibExt, PhyslibExt, Domains, and WantedExt")
     if config.get("testDriver") != "MathlibExtTest":
         fail("root test driver must be MathlibExtTest")
 
@@ -190,6 +207,11 @@ def main() -> None:
             "scope": "leanprover",
             "rev": "v4.35.0",
         },
+        {
+            "name": "Physlib",
+            "git": "https://github.com/leanprover-community/physlib",
+            "rev": "v4.35.0",
+        },
     ]
     if config.get("require") != expected_requirements:
         fail("the root package may depend only on pinned public releases")
@@ -199,6 +221,10 @@ def main() -> None:
         "CSLibExtTest": ["CSLibExtTest.+"],
         "MathlibExt": ["MathlibExt.+"],
         "MathlibExtTest": ["MathlibExtTest.+"],
+        "PhyslibExt": ["PhyslibExt.+"],
+        "PhyslibExtTest": ["PhyslibExtTest.+"],
+        "Domains": ["Domains.+"],
+        "DomainsTest": ["DomainsTest.+"],
         "WantedExt": ["WantedExt.+"],
     }
     libraries = config.get("lean_lib")
@@ -213,7 +239,7 @@ def main() -> None:
     if len(names) != len(set(names)) or set(names) != set(expected_globs):
         fail(
             "root Lean libraries must be CSLibExt, CSLibExtTest, "
-            "MathlibExt, MathlibExtTest, and WantedExt"
+            "MathlibExt, MathlibExtTest, PhyslibExt, PhyslibExtTest, Domains, DomainsTest, and WantedExt"
         )
 
     allowed_library_keys = {"name", "globs", "leanOptions"}
