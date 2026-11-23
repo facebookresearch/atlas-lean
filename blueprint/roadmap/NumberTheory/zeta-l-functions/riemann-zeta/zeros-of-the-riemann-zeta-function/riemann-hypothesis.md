@@ -24,6 +24,10 @@ $$
 
 at $s = \rho$ then gives $\zeta(1 - \rho) = 0$, a zero of real part greater than $1/2$.
 
+## Depends on
+
+- [Statement of the Riemann hypothesis](../riemann-hypothesis-statement.md)
+
 ## Proof depends on
 
 - [Generalized Riemann hypothesis for Dirichlet L-functions, half-plane form](../../dirichlet-l-functions/grh-dirichlet-half-plane.md)

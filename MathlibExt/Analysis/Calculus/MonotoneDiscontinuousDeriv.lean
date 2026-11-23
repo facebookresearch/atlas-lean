@@ -370,13 +370,12 @@ namespace MathlibExt.Analysis.Calculus.MonotoneDiscontinuousDerivWanted
 
 open MathlibExt.Analysis.Calculus.MonotoneDiscontinuousDeriv
 
-/-- Construct a monotonic function `f` on `ℝ` so that `f'(x)` exists
-(finitely) for every `x : ℝ`, but `f'` is not a continuous function.
+/-- **A monotone differentiable function with discontinuous derivative.** There is a
+nondecreasing function $f : \mathbb{R} \to \mathbb{R}$ that is differentiable at every point and
+whose derivative $f'$ is not continuous.
 
-Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I
-(Real functions; Functions of one variable),
-`benchmark/level1/ma_proofbench_l1_92.lean` at
-openbmb/ma-proofbench@31bab4c.
+Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Real functions; Functions of
+one variable), `benchmark/level1/ma_proofbench_l1.lean` at openbmb/ma-proofbench@31bab4c.
 -/
 theorem exists_monotone_differentiable_not_continuous_deriv :
     ∃ f : ℝ → ℝ,

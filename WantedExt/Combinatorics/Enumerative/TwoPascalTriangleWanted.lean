@@ -14,6 +14,9 @@ public import Mathlib.RingTheory.PowerSeries.Binomial
 public import Mathlib.RingTheory.PowerSeries.Derivative
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
+public import MathlibExt.Combinatorics.Enumerative.RiordanArraySum
+public import MathlibExt.Combinatorics.Enumerative.TrinomialConvolution
+public import MathlibExt.Combinatorics.Enumerative.TrinomialUpperHalf
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
 public import MathlibExt.NumberTheory.TrinomialCoefficient
@@ -36,18 +39,6 @@ open PowerSeries
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Fundamental theorem of Riordan arrays.** Write $[t^m]F$ for the coefficient of $t^m$ in a
-power series $F$. Let $R$ be a commutative ring and let $d$, $h$, $f$ be power series over
-$R$ with $h(0) = 0$. Then for every $n \in \mathbb{N}$,
-
-$$\sum_{k=0}^{n} \left([t^n]\,d(t)\,h(t)^k\right) [t^k]\,f = [t^n]\,d(t)\,f(h(t)).$$
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 1 (`jis-2025-25.3.5-thm-1`). -/
-public theorem_wanted riordan_array_sum_eq_coeff_subst {R : Type*} [CommRing R]
-    (d h f : PowerSeries R) (hh : constantCoeff h = 0) (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1), coeff n (d * h ^ k) * coeff k f = coeff n (d * f.subst h)
 
 /-- **Trinomial coefficients as coefficients of a rational series.** Write $\binom{n}{k}_2$ for
 the trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$, and $[t^m]\,F$ for the
@@ -204,20 +195,6 @@ public theorem_wanted sum_trinomialCoefficient_two_mul_sub (n : ℕ) :
     ∑ k ∈ Finset.range (n + 1),
         (trinomialCoefficient (2 * n - 2 * k) n : ℤ) * n.choose k * (-1) ^ k = 2 ^ n
 
-/-- **Vandermonde convolution for trinomial coefficients.** Write $\binom{n}{k}_2$ for the
-trinomial coefficient, the coefficient of $t^k$ in $(1 + t + t^2)^n$, and put $\binom{n}{k}_2 = 0$
-for negative integers $k$. Then for all natural numbers $n$, $m$ and every integer $l$,
-
-$$\sum_{k=0}^{2m} \binom{n}{l + k}_2 \binom{m}{k}_2 = \binom{n + m}{2m + l}_2.$$
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Theorem 20 (`jis-2025-25.3.5-thm-20`). -/
-public theorem_wanted sum_trinomialCoefficient_convolution (n m : ℕ) (l : ℤ) :
-    ∑ k ∈ Finset.range (2 * m + 1),
-        (if 0 ≤ l + k then trinomialCoefficient n (l + k).toNat else 0) *
-          trinomialCoefficient m k =
-      if 0 ≤ 2 * m + l then trinomialCoefficient (n + m) (2 * m + l).toNat else 0
-
 /-- **Alternating sum of squared trinomial coefficients.** Write $\binom{n}{k}_2$ for the
 trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For every natural number $n$,
 $\sum_{k=0}^{2n} (-1)^k \binom{n}{k}_2^2 = \binom{n}{n}_2$.
@@ -291,21 +268,6 @@ public theorem_wanted sum_trinomialCoefficient_diagonal_alternating (n : ℕ) (h
     let S := ∑ k ∈ Finset.range (2 * n / 3 + 1),
       (trinomialCoefficient (n - k) k : ℚ) * n / (n - k : ℕ) * (-1) ^ k
     (n % 4 = 1 ∨ n % 4 = 3 → S = 1) ∧ (n % 4 = 2 → S = -1) ∧ (n % 4 = 0 → S = 3)
-
-/-- **Generating sum of the upper half of a trinomial row.** Write $\binom{n}{k}_2$ for the
-trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$. For every natural number $n$
-and every complex number $w$,
-$$\sum_{k=0}^{n} \binom{n}{n-k}_2 w^{n+k} = \frac{(1+w+w^2)^n}{2} + \frac{\binom{n}{n}_2 w^n}{2} +
-\frac{w^2-1}{2} \sum_{k=0}^{n-1} \binom{k}{k}_2 (1+w+w^2)^{n-1-k} w^k.$$
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Corollary 40 (`jis-2025-25.3.5-cor-40`). -/
-public theorem_wanted sum_trinomialCoefficient_upper_half (n : ℕ) (w : ℂ) :
-    ∑ k ∈ Finset.range (n + 1), (trinomialCoefficient n (n - k) : ℂ) * w ^ (n + k) =
-      (1 + w + w ^ 2) ^ n / 2 + (trinomialCoefficient n n : ℂ) * w ^ n / 2 +
-        (w ^ 2 - 1) / 2 * ∑ k ∈ Finset.range n,
-          (trinomialCoefficient k k : ℂ) * (1 + w + w ^ 2) ^ (n - 1 - k) * w ^ k
-
 
 /-- **Trinomial coefficients along lines from a square-root series.** Write
 $\binom{n}{k}_2$ for the trinomial coefficient, the coefficient of $x^k$ in $(1+x+x^2)^n$, and

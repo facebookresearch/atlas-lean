@@ -27,9 +27,10 @@ coefficients" are stated as the existence of such a polynomial
 `MvPolynomial (Fin 2) ℤ`, and rational identities are cleared
 of denominators, as in the paper's proofs.
 
-Of the paper's thirteen numbered statements, twelve are
+Of the paper's thirteen numbered statements, ten are
 formalized below (including the super FiboCatalan half of
-Corollary 5). One further statement is already covered in
+Corollary 5). The Fibonacci and Lucas polynomial product identities are imported from
+`MathlibExt.NumberTheory.SuperFibocatalan`. One further statement is already covered in
 MathlibExt and is not restated: Corollary 9, via
 `MetaMathlibExt.generalizedFibonacciCatalan_isPosInt` (with
 `generalizedFibonacciCatalan_r1`), which also proves the
@@ -53,6 +54,7 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Rat.Floor
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.GeneralizedFibocatalanNumber
+public import MathlibExt.NumberTheory.SuperFibocatalan
 
 set_option autoImplicit false
 
@@ -95,17 +97,6 @@ theorem_wanted superFibonacciCatalan_isPosInt (m n : ℕ) :
         (fibonacciFactorial m * fibonacciFactorial n *
           fibonacciFactorial (m + n))
 
-/-- **Fibonacci identity $F_{2n} F_{n+2} - F_{2n+2} F_n = (-1)^n F_n$.** For every natural
-number $n$, the Fibonacci numbers ($F_0 = 0$, $F_1 = 1$, $F_{k+2} = F_{k+1} + F_k$) satisfy
-$F_{2n} F_{n+2} - F_{2n+2} F_n = (-1)^n F_n$.
-
-Source: Kendra Killpatrick, "Super FiboCatalan Numbers and
-Their Lucas Analogues", Lemma 6. -/
-theorem_wanted fib_mul_sub_mul (n : ℕ) :
-    (Nat.fib (2 * n) : ℤ) * (Nat.fib (n + 2) : ℤ) -
-        (Nat.fib (2 * n + 2) : ℤ) * (Nat.fib n : ℤ) =
-      (-1) ^ n * (Nat.fib n : ℤ)
-
 /-- **An identity between consecutive FiboCatalan numbers.** Let $F_k$ be the Fibonacci
 numbers, $F_k! = F_1 F_2 \cdots F_k$ the Fibonacci factorial and
 $C_{k,F} = F_{2k}!/(F_k! \, F_{k+1}!)$ the FiboCatalan number. For every natural number $n$,
@@ -143,15 +134,6 @@ theorem_wanted fib_mul_factorialQuotient_eq_and_isInt
         (Nat.fib (2 * n + 1) : ℚ) *
           (fibonacciFactorial (2 * n) /
             (fibonacciFactorial (n + 2) * fibonacciFactorial n))
-
-/-- **Lucas polynomials in $s$ and $t$.** The Lucas polynomials $\{n\}$, for natural numbers
-$n$, are the polynomials in two variables $s$ and $t$ with integer coefficients defined by
-$\{0\} = 0$, $\{1\} = 1$ and $\{n + 2\} = s\{n + 1\} + t\{n\}$ for every $n \ge 0$. -/
-noncomputable def lucasPoly : ℕ → MvPolynomial (Fin 2) ℤ
-  | 0 => 0
-  | 1 => 1
-  | n + 2 => MvPolynomial.X 0 * lucasPoly (n + 1) +
-      MvPolynomial.X 1 * lucasPoly n
 
 /-- **Lucas factorial.** For a natural number $n$, the Lucas factorial $\{n\}!$ is the product
 $\{n\}! = \{1\}\{2\} \cdots \{n\}$ of the Lucas polynomials $\{i\}$ in $s$ and $t$ for
@@ -203,17 +185,6 @@ theorem_wanted exists_nonneg_poly_generalizedLucasCatalan
       p * (lucasFactorial r * lucasFactorial n *
           lucasFactorial (n + r + 1)) =
         lucasFactorial (2 * r + 1) * lucasFactorial (2 * n)
-
-/-- **Cross-product identity for Lucas polynomials.** For every natural number $n$, the Lucas
-polynomials $\{k\}$ in $s$ and $t$ satisfy
-$\{2n\}\{n + 2\} - \{2n + 2\}\{n\} = (-1)^n \{2\} t^n \{n\}$.
-
-Source: Kendra Killpatrick, "Super FiboCatalan Numbers and
-Their Lucas Analogues", Lemma 10. -/
-theorem_wanted lucasPoly_mul_sub_mul (n : ℕ) :
-    lucasPoly (2 * n) * lucasPoly (n + 2) -
-        lucasPoly (2 * n + 2) * lucasPoly n =
-      (-1) ^ n * lucasPoly 2 * MvPolynomial.X 1 ^ n * lucasPoly n
 
 /-- **Lucas analogue of the FiboCatalan identity, cleared of denominators.** Let $\{k\}$ be
 the Lucas polynomials in $s$ and $t$ ($\{0\} = 0$, $\{1\} = 1$, $\{k+2\} = s\{k+1\} + t\{k\}$)

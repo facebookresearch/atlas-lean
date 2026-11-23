@@ -28,7 +28,7 @@ convention `∏_{j=0}^{m-1} (x - j(j+1)) = Σ_r Ps_m^{(r)} x^r`,
 which is the convention satisfying Proposition 12 (checked
 numerically; the opposite sign fails).  The polynomial
 identities below are stated for all `n : ℕ` where they hold at
-`n = 0` as well; Lemmas 4 and 7 keep the paper's `n ≥ 1`.
+`n = 0` as well; Lemma 4 keeps the paper's `n ≥ 1`.
 -/
 module
 
@@ -40,6 +40,7 @@ public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.Basic.Real.Basic
 public import MathlibExt.Combinatorics.Enumerative.LegendreStirlingFirstKind
+public import MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330
 
 set_option autoImplicit false
 
@@ -158,17 +159,6 @@ theorem_wanted powerSum_odd_eq_sum (k : ℕ) (hk : 1 ≤ k) (n : ℕ) :
         (arrayR k m : ℚ) * (1 / (m : ℚ)) *
           (Nat.choose (n + m) (2 * m) : ℚ)
 
-/-- **Sum of $2i \binom{2i+k-1}{2k-1}$.** For all natural numbers $k \ge 1$ and $n \ge 1$,
-$$\sum_{i=1}^{n} 2i \binom{2i + k - 1}{2k - 1} = k \binom{2n + k + 1}{2k + 1}.$$
-
-Source: José L. Cereceda, "Sums of Powers of Integers and the
-Sequence A304330", Lemma 4. -/
-theorem_wanted sum_two_mul_choose_eq (k n : ℕ) (hk : 1 ≤ k)
-    (hn : 1 ≤ n) :
-    (∑ i ∈ Finset.Icc 1 n,
-      (2 * i) * Nat.choose (2 * i + k - 1) (2 * k - 1)) =
-      k * Nat.choose (2 * n + k + 1) (2 * k + 1)
-
 /-- **Inversion formula for the arrays $u(k, m)$ and $U(k, m)$ (Butzer et al.).** For natural
 numbers $k$ and $m$, let $u(k, m)$ be the first-kind Jacobi–Stirling number $J(k, m; 0)$, the
 coefficient of $x^m$ in $\prod_{i=0}^{k-1} (x - i^2)$, and let
@@ -207,18 +197,6 @@ theorem_wanted arrayR_eq_closedForm (k m : ℕ) (hm1 : 1 ≤ m)
             ∏ r : Fin k,
               (1 / ((4 : ℚ) ^ (r.val + 1) *
                 (Nat.factorial (2 * (r.val + 1)) : ℚ))) ^ ((b r).val)
-
-/-- **Sum of $i \binom{i+k-1}{2k-1}$.** For all natural numbers $k \ge 1$ and $n \ge 1$,
-$$\sum_{i=1}^{n} i \binom{i + k - 1}{2k - 1} = \frac{k(2n + 1)}{2k + 1} \binom{n + k}{2k}.$$
-
-Source: José L. Cereceda, "Sums of Powers of Integers and the
-Sequence A304330", Lemma 7. -/
-theorem_wanted sum_mul_choose_eq (k n : ℕ) (hk : 1 ≤ k)
-    (hn : 1 ≤ n) :
-    (∑ i ∈ Finset.Icc 1 n,
-      (i : ℚ) * (Nat.choose (i + k - 1) (2 * k - 1) : ℚ)) =
-      ((k : ℚ) * (2 * (n : ℚ) + 1) / (2 * (k : ℚ) + 1)) *
-        (Nat.choose (n + k) (2 * k) : ℚ)
 
 /-- **Odd power sums in terms of $\binom{n+m}{2m-1}$.** For natural numbers $k \ge 1$ and $n$,
 write $S_{2k-1}(n) = 1^{2k-1} + 2^{2k-1} + \dots + n^{2k-1}$, let

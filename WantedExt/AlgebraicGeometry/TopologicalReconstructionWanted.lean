@@ -33,7 +33,8 @@ into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
 and placed the declarations in the `MathlibExt.AlgebraicGeometry.TopologicalReconstructionWanted`
-namespace. Mathematical
+namespace. `projToSpec` and `IsProjectiveHom` delegate to the same definitions in
+`MathlibExt/AlgebraicGeometry/ProjectiveSpace.lean`. Mathematical
 statements are unchanged. Source: János Kollár, Max Lieblich, Martin Olsson, and Will Sawin. The
 Zariski topology, linear systems, and algebraic varieties.
 -/
@@ -49,6 +50,7 @@ public import Mathlib.RingTheory.GradedAlgebra.Basic
 public import Mathlib.Topology.Category.Profinite.Nobeling.Basic
 public import Mathlib.AlgebraicGeometry.ProjectiveSpectrum.Basic
 public import Mathlib.RingTheory.MvPolynomial.Homogeneous
+public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 open AlgebraicGeometry
 
 @[expose] public section
@@ -98,19 +100,17 @@ $R \to \mathcal{A}_0$.
 
 For a polynomial ring over $R$ graded by total degree, this is the structure morphism of
 projective space over $R$. -/
-noncomputable def projToSpec {R A : Type u} [CommRing R] [CommRing A] [Algebra R A]
+noncomputable abbrev projToSpec {R A : Type u} [CommRing R] [CommRing A] [Algebra R A]
     (𝒜 : ℕ → Submodule R A) [GradedAlgebra 𝒜] : Proj 𝒜 ⟶ Spec (.of R) :=
-  Proj.toSpecZero 𝒜 ≫ Spec.map (CommRingCat.ofHom (algebraMap ..))
+  _root_.MathlibExt.AlgebraicGeometry.ProjectiveSpace.projToSpec 𝒜
 
 /-- **Projective morphism to an affine scheme.** Let $R$ be a commutative ring and $X$ a scheme.
 A morphism $f : X \to \operatorname{Spec} R$ is projective if there are $n \in \mathbb{N}$ and a
 closed immersion $i$ of $X$ into $\operatorname{Proj} R[x_1, \dots, x_n]$, the polynomial ring
 graded by total degree, such that $f$ is $i$ followed by the structure morphism
 $\operatorname{Proj} R[x_1, \dots, x_n] \to \operatorname{Spec} R$. -/
-def IsProjectiveHom {X : Scheme} {R : Type*} [CommRing R] (f : X ⟶ Spec (.of R)) : Prop :=
-  let := @MvPolynomial.gradedAlgebra
-  ∃ (n : ℕ) (i : X ⟶ Proj (MvPolynomial.homogeneousSubmodule (Fin n) R)),
-    IsClosedImmersion i ∧ f = i ≫ projToSpec _
+abbrev IsProjectiveHom {X : Scheme} {R : Type*} [CommRing R] (f : X ⟶ Spec (.of R)) : Prop :=
+  _root_.MathlibExt.AlgebraicGeometry.ProjectiveSpace.IsProjectiveHom f
 
 /-- **Normal scheme.** A scheme $X$ is normal if for every point $x \in X$ the local ring
 $\mathcal{O}_{X,x}$ is an integrally closed domain. -/

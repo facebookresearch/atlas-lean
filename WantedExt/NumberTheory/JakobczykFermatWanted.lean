@@ -14,7 +14,10 @@ public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.Fermat
 public import Mathlib.Order.Bounds.Defs
+public import MathlibExt.NumberTheory.GeneralizedFermatGCD
+public import MathlibExt.NumberTheory.GeneralizedFermatWieferich
 public import MathlibExt.NumberTheory.WieferichPrime
+public import MathlibExt.NumberTheory.WieferichOrder
 
 /-!
 # Notes on Jakóbczyk's hypothesis on Fermat numbers
@@ -103,24 +106,6 @@ public theorem_wanted sq_dvd_fermatNumber_iff_wieferich_orderOf {n p : ℕ} (hp 
   · rintro ⟨⟨-, hw⟩, ho⟩
     exact (❰sq_dvd_fermatNumber_iff❱ hp (hdvd.mpr ho)).mpr hw
 
-/-- **Greatest common divisors of generalized Fermat numbers.** For natural numbers $a$, $b$ and
-$k$ write $F_k(a, b) = a^{b^k} + 1$, and let $a, b \ge 2$ and $m$, $n$ be natural numbers. If
-$n < m$ and $a$ and $b$ are both even, then $\gcd(F_m(a, b), F_n(a, b)) = 1$. If $n < m$, $a$ is
-odd and $b$ is even, then $\gcd(F_m(a, b), F_n(a, b)) = 2$. If $n \le m$ and $b$ is odd, then
-$\gcd(F_m(a, b), F_n(a, b)) = F_n(a, b)$.
-
-The source assumes $a, b > 2$ and $0 \le n \le m$; its proof uses only $a, b \ge 2$ and treats
-$m > n$ ("Since $m > n$"), and the first two cases fail for $m = n$: for $a = b = 4$ and
-$m = n = 0$ the gcd is $\gcd(5, 5) = 5$, and for $a = 3$, $b = 4$ and $m = n = 0$ it is
-$\gcd(4, 4) = 4$.
-
-Source: Klaška, *Several Notes on Jakóbczyk's Hypothesis on Fermat Numbers*,
-INTEGERS 26 (2026), Article A77, Proposition 1 (`integers-2026-A77-prop-1`). -/
-public theorem_wanted gcd_pow_pow_add_one {a b m n : ℕ} (ha : 2 ≤ a) (hb : 2 ≤ b) :
-    (n < m → Even a → Even b → Nat.gcd (a ^ b ^ m + 1) (a ^ b ^ n + 1) = 1) ∧
-      (n < m → Odd a → Even b → Nat.gcd (a ^ b ^ m + 1) (a ^ b ^ n + 1) = 2) ∧
-      (n ≤ m → Odd b → Nat.gcd (a ^ b ^ m + 1) (a ^ b ^ n + 1) = a ^ b ^ n + 1)
-
 /-- **Monotonicity of the number of prime factors of generalized Fermat numbers.** For natural
 numbers $a$, $b$ and $n$ write $F_n(a, b) = a^{b^n} + 1$, and let $\Omega(N)$ be the number of
 prime factors of $N$ counted with multiplicity. If $a, b \ge 2$ and $b$ is odd, then
@@ -160,20 +145,6 @@ public theorem_wanted sq_dvd_pow_pow_add_one_wieferich {a b n p : ℕ} (ha : 2 �
         a ^ (p - 1) ≡ 1 [MOD p ^ 2] ∧ orderOf (a : ZMod p) ∣ 2 * b ^ n) ∧
       (a ^ (p - 1) ≡ 1 [MOD p ^ 2] → orderOf (a : ZMod p) = 2 * b ^ n →
         p ^ 2 ∣ a ^ b ^ n + 1)
-
-/-- **Squared prime factors of $a^{2^n} + 1$.** Let $p$ be an odd prime, let $a$ be a natural
-number not divisible by $p$, and let $n$ be a natural number. Then $p^2$ divides $a^{2^n} + 1$ if
-and only if $a^{p-1} \equiv 1 \pmod{p^2}$ (that is, $p$ is a Wieferich prime to base $a$) and the
-multiplicative order of $a$ modulo $p$ is $2^{n+1}$.
-
-The congruence $a^{p-1} \equiv 1 \pmod{p^2}$ is the source's equation (8) defining $p \in W(a)$.
-The source assumes $a \ge 2$; for $a = 1$ both sides are false.
-
-Source: Klaška, *Several Notes on Jakóbczyk's Hypothesis on Fermat Numbers*,
-INTEGERS 26 (2026), Article A77, Theorem 5 (`integers-2026-A77-thm-5`). -/
-public theorem_wanted sq_dvd_pow_two_pow_add_one_iff_wieferich {a n p : ℕ} (hp : p.Prime)
-    (hp2 : p ≠ 2) (hpa : ¬ p ∣ a) :
-    p ^ 2 ∣ a ^ 2 ^ n + 1 ↔ a ^ (p - 1) ≡ 1 [MOD p ^ 2] ∧ orderOf (a : ZMod p) = 2 ^ (n + 1)
 
 /-- **Divisibility of later generalized Fermat numbers.** For natural numbers $a$, $b$ and $m$
 write $F_m(a, b) = a^{b^m} + 1$. Let $a, b, D \ge 2$ and $n$ be natural numbers such that $D$

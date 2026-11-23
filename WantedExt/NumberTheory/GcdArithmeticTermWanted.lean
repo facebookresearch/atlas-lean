@@ -9,54 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.RingTheory.PowerSeries.Inverse
+public import MathlibExt.NumberTheory.GcdArithmeticTerm
 
 namespace MetaMathlibExt
 
-open PowerSeries
-
 @[expose] public section
-
-/-- **The gcd-term sequence.** For natural numbers $a$, $b$ and $n$, $s_{a,b}(n)$ is the rational
-number that is the coefficient of $z^n$ in the inverse of the formal power series
-$(z^a - 1)(z^b - 1)$ over $\mathbb{Q}$. For $a, b \ge 1$ this series has constant coefficient $1$,
-so $s_{a,b}$ is the coefficient sequence of $f_{a,b}(z) = 1 / ((z^a - 1)(z^b - 1))$. If $a = 0$
-or $b = 0$ the series is $0$, whose inverse is taken to be $0$, so $s_{a,b}(n) = 0$.
-
-Source: Mihai Prunescu and Joseph M. Shunia, *Arithmetic-Term Representations for the Greatest
-Common Divisor*, INTEGERS 26 (2026), Article A96, Section 2 (definition of `s_{a,b}`). -/
-public noncomputable def gcdTermSeq (a b n : ℕ) : ℚ :=
-  coeff n (((X : ℚ⟦X⟧) ^ a - 1) * ((X : ℚ⟦X⟧) ^ b - 1))⁻¹
-
-/-- **Initial value of the gcd-term sequence.** For natural numbers $a, b \ge 1$, the gcd-term
-sequence satisfies $s_{a,b}(0) = 1$.
-
-Source: Prunescu and Shunia, *Arithmetic-Term Representations for the Greatest Common Divisor*,
-INTEGERS 26 (2026), Article A96, Section 2. -/
-public theorem gcdTermSeq_zero (a b : ℕ) (ha : 1 ≤ a) (hb : 1 ≤ b) : gcdTermSeq a b 0 = 1 := by
-  have ha' : a ≠ 0 := by omega
-  have hb' : b ≠ 0 := by omega
-  simp [gcdTermSeq, ha', hb']
-
-/-- **Generating function of the gcd-term sequence.** For natural numbers $a, b \ge 1$, in the
-ring $\mathbb{Q}[[z]]$ of formal power series, the gcd-term sequence $s_{a,b}$ satisfies
-$$
-(z^a - 1)(z^b - 1) \sum_{n \ge 0} s_{a,b}(n) z^n = 1.
-$$
-
-Source: Prunescu and Shunia, *Arithmetic-Term Representations for the Greatest Common Divisor*,
-INTEGERS 26 (2026), Article A96, Section 2. -/
-public theorem mul_mk_gcdTermSeq (a b : ℕ) (ha : 1 ≤ a) (hb : 1 ≤ b) :
-    ((X : ℚ⟦X⟧) ^ a - 1) * ((X : ℚ⟦X⟧) ^ b - 1) * PowerSeries.mk (gcdTermSeq a b) = 1 := by
-  have ha' : a ≠ 0 := by omega
-  have hb' : b ≠ 0 := by omega
-  have hmk : PowerSeries.mk (gcdTermSeq a b) =
-      (((X : ℚ⟦X⟧) ^ a - 1) * ((X : ℚ⟦X⟧) ^ b - 1))⁻¹ := by
-    ext n
-    simp [gcdTermSeq]
-  rw [hmk]
-  apply PowerSeries.mul_inv_cancel
-  simp [ha', hb']
 
 /-- **The gcd-term sequence is integral and recovers the gcd.** Let $a, b \ge 1$ be natural
 numbers and let $s_{a,b}$ be the gcd-term sequence. Every value $s_{a,b}(n)$ is a natural number,
@@ -67,17 +24,6 @@ Common Divisor*, INTEGERS 26 (2026), Article A96, Lemma 4. -/
 public theorem_wanted gcdTermSeq_natural_and_eq_gcd_add_one (a b : ℕ) (ha : 1 ≤ a)
     (hb : 1 ≤ b) :
     (∀ n, ∃ m : ℕ, gcdTermSeq a b n = m) ∧ gcdTermSeq a b (a * b) = Nat.gcd a b + 1
-
-/-- **The gcd-term sequence is bounded by $n + 1$.** Let $a, b \ge 1$ be natural numbers, at least
-one of them greater than $1$, and let $s_{a,b}$ be the gcd-term sequence. For every natural
-number $n$, $s_{a,b}(n) \le s_{1,1}(n) = n + 1$, and $s_{a,b}(n) = s_{1,1}(n)$ only if $n = 0$.
-
-Source: Mihai Prunescu and Joseph M. Shunia, *Arithmetic-Term Representations for the Greatest
-Common Divisor*, INTEGERS 26 (2026), Article A96, Lemma 5. -/
-public theorem_wanted gcdTermSeq_le_gcdTermSeq_one_one (a b : ℕ) (ha : 1 ≤ a) (hb : 1 ≤ b)
-    (hab : 1 < a ∨ 1 < b) (n : ℕ) :
-    gcdTermSeq a b n ≤ gcdTermSeq 1 1 n ∧ gcdTermSeq 1 1 n = n + 1 ∧
-      (gcdTermSeq a b n = gcdTermSeq 1 1 n → n = 0)
 
 /-- **Arithmetic term for the gcd in base $5$.** For all natural numbers $a, b \ge 1$,
 $$

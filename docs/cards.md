@@ -100,11 +100,47 @@ comments):
 
 A card's **headline** is the first that applies to its main statement: `stale` (the committed row names
 a declaration that `lean-facts` dropped because the Lean no longer has it), `held`, `not ready`,
-`page only` (a planned page: with no declaration kind it is no task, as the graph rules' planned pages
-and tasks say, so it is never shown as ready), then Autoform's state of the credited page: in Mathlib, fully proved, proved
+`page only` (a planned page with no declaration kind: it is no task, as the graph rules' planned pages
+and tasks say, so it is never shown as ready), then Autoform's state of the page, credited or with the kind
+`lean-facts` gives a planned page that counts as a statement not yet in Lean: in Mathlib, fully proved, proved
 (not fully), defined, conditionally proved, ready to prove, stated with its proof blocked, ready to
 state, blocked. Its **supporting progress** counts its other statements, each once, by the same
 precedence; the main statement is never among them. Readiness and tasks stay Autoform's.
+
+## Counterparts
+
+A planned statement page, a live page Autoform reads whose annotation links no Lean declaration (no Lean
+link naming one, of any repository, and no module and name an earlier sync wrote), may record its
+counterparts: the Mathlib or ATLAS declarations that state its result or a form close to it, as when a
+card's planned main states an imported result that no declaration states exactly. They go under
+`extensions["org.atlas-wiki"]["counterpart"]` of the page's own row, never anywhere in the links folder's
+defaults (`_defaults.json`, a card record there included), which would give them to every row; they are a
+list of one or more records:
+
+```json
+"counterpart": [{"mathlib": "<Mathlib name>", "relation": "weaker",
+                 "needs": [{"mathlib": "<Mathlib name>"}, {"atlas": "<ATLAS name>"}]}]
+```
+
+- exactly one of `mathlib` and `atlas`: the declaration's full Lean name, as Lean stores it, without the
+  `_root_.` prefix that only Lean source writes;
+- `relation`: how the declaration compares with the page's statement: `same` (it states it), `stronger`
+  (it implies it), `weaker` (the statement implies it) or `variant` (a related form, neither);
+- `needs` (optional): the other declarations that, with it, give the page's statement, as when the
+  statement combines several results; each is `{"mathlib": name}` or `{"atlas": name}`, since a
+  combination may take declarations of both.
+
+A record has no other key, a list names no declaration twice, and a record's own declaration is not among
+its needs; names are compared as Lean reads them, so `Matrix.«det»` is `Matrix.det`, while `«a.b».c` is
+not `a.b.c`. Each record is verified clause by clause against its declaration, at the pinned Mathlib or in
+the project's Lean, before it is written. A counterpart is data only: it gives the page no credit, makes
+no edge, and never changes readiness, status or the derived data. `needs` lists no prerequisites: the
+page's own `## Depends on` and `## Proof depends on` follow the proof it states, as for any planned page.
+`scripts/cards.py check` verifies the form (the keys, the relation, and that each name has the form of a
+Lean name, not that the declaration exists or says what the record claims, which is for review) and the
+place: a counterpart on a row whose page is missing or that Autoform does not read, on a page whose
+annotation links a Lean declaration, as checked out or as committed, on a folder page, in a card record or
+in the links folder's defaults is an error.
 
 ## Derived data
 
@@ -156,9 +192,10 @@ strict check below passed. Identical inputs give identical bytes.
 
 `python scripts/cards.py check` fails on any malformed card record or id, a credited card, a nested card
 or one that is a subject or field, a card with no page or more than 24, a main statement that is not a
-page of the folder, has no id or heads another card, a credited main statement whose declaration kind
-does not fit the card (a definition for a concept card, a theorem for a result card; a page-only main
-statement is classified by its editors), a bad `supports` entry (one that names no statement page Autoform reads)
+page of the folder, has no id or heads another card, a main statement whose declaration kind does not
+fit the card (a definition for a concept card, a theorem for a result card), whether it is credited or
+has the kind `lean-facts` gives a planned page that counts as a statement not yet in Lean (a page-only
+main statement with no kind is classified by its editors), a bad `supports` entry (one that names no statement page Autoform reads)
 or seed entry, an earlier sync's declaration credit (`module`, `name`) on a card's annotation, a link to
 another card's page outside `## Background` (or to a statement of another card other than its main
 statement), an empty opening or `## Idea`,
@@ -168,8 +205,9 @@ statement's box on a folder page, `#leaf` or `../other/README.md#leaf` (Autoform
 declares something), is no way to link it there; other heading anchors are left alone), a forbidden section, an `## In Mathlib` link that is not a source line at the pinned
 Mathlib titled with something of the form of a Lean name, a dependency on a card's folder page or one Autoform reads on it, a card record on a
 statement page, a held marker that credit would override (a held row that credits a declaration, or a held
-declaration another row credits), and a bad move ledger. With `--dependencies build/lean-dependencies.json` (the strict
-check), the dependencies of the checkout must equal the extraction's as sets of typed, oriented edges,
+declaration another row credits), a malformed or misplaced counterpart ([Counterparts](#counterparts)), and
+a bad move ledger. With `--dependencies build/lean-dependencies.json` (the strict check), the dependencies
+of the checkout must equal the extraction's as sets of typed, oriented edges,
 both ways: a dependency only one side has, a flipped kind, a target listed under both kinds, an
 extracted declaration that credits no statement page, or a page whose declaration lean-facts found but the
 extraction has no row for is an error, and the move ledger must exist. With
@@ -190,11 +228,13 @@ request it passes the base commit's ledger and annotations and Git's renames sin
 workflow does not run in merge groups). It keeps `build/cards.json` as the `cards` artifact. The wiki job
 runs the site hook's tests (`scripts/test_card_pages.py`) with its other tests and leaves
 `scripts/test_cards.py` and the strict check of the content and its history to the card job; it runs
-`rollup` once, for the card data its site shows, in a step that fails closed and cannot fail the job
-([Reading](#reading)). The site's deployment needs only the wiki job.
+`moves` once, for the moved addresses its site keeps, and `rollup` once, for the card data its site shows, each in
+a step of its own that fails closed and cannot fail the job ([Reading](#reading)). The site's deployment needs
+only the wiki job.
 
 ```sh
 python scripts/sync_wiki.py lean-facts build/lean-dependencies.json --registry build/mathlib-registry.json
+python scripts/cards.py moves build/card-moves.json
 python scripts/cards.py rollup build/cards.json --dependencies build/lean-dependencies.json \
   --registry build/mathlib-registry.json \
   [--base-ledger <the base commit's scripts/card-moves.jsonl> --base-links <its blueprint/links/> \
@@ -223,8 +263,25 @@ and a folder at a live folder page with that id (a card's or not), or at the car
 records at that path; a card is retired once, its id is no card's or statement page's any more, and what replaces it is a
 live card; nothing goes round. An address has one owner: it moves once, as a page or as a folder, or is
 the last address of one retired card, and no live page or folder of another article takes it (the card
-that replaces a retired one may live at its address); a page `b.md` and a folder `b/` would share one
-address, so no change leaves both.
+that replaces a retired one may live at its address, and a declassified folder keeps its own); a page or folder
+page with no `id` is another article; a page `b.md` and a folder `b/` would share one address, so no change
+leaves both.
+
+`python scripts/cards.py moves OUTPUT.json` checks the ledger alone, as above, against the annotations and the
+roadmap as checked out, with no card or dependency check and no base: it certifies the present snapshot only,
+and that the ledger only grows and what changed since the base stay the strict check's. A missing ledger is an
+error, and so is a checkout with no commit to name; an empty ledger has no row. An id the ledger names must be
+the id of one article. Reading each input file once, it removes its output first and, only when the ledger is
+valid, writes its receipt, schema
+`atlas-card-moves/v1`, through a temporary file: `commit`, the commit checked; `ledger_sha256`, the sha256 of the
+ledger's bytes; `annotations_sha256`, a digest of the bytes of `blueprint/links/` it read, sha256 over each
+`*.jsonl` file and `_defaults.json`, in sorted order of name, as its name, a NUL, its length in bytes (`-` for a
+defaults file that is no regular file), a NUL and its bytes; `cards`, each card by id with its folder, listing
+only a card whose id is an article id no other article has and whose folder is an address as the ledger writes
+one (a path below `roadmap/` without `.md`, `.` or `..` parts), which the hook requires too, and `cards_complete`,
+whether that lists every card. A card a retirement's replacements end at must be listed, or there is no receipt.
+The digests bind the receipt to the inputs it checked, so that a receipt of other inputs is not taken for this
+one; they do not vouch for its contents, which come from the job that makes it.
 
 Given the base commit's annotations and the files Git finds renamed since (`--base-links`, `--renames`),
 the check also reconciles every change since the base with one map of who owns what:
@@ -254,18 +311,30 @@ passes, whole, through a temporary file; an output inside `blueprint/` or the `-
 is one of its inputs, a symbolic link or no regular file is refused before anything is touched. A card error
 cannot fail the job, which the step delays by at most
 its ten-minute timeout: it leaves
-no card data, the site renders exactly as without cards, and `check the cards` reports the error. The hook
-itself is site code: its tests (`scripts/test_card_pages.py`) run with the wiki job's other tests, so a
-regression in it fails that job, as a change to any other part of the site does.
+no card data, the site shows no card but keeps every moved address, and `check the cards` reports the error.
+In a step of its own beside it, independent of the strict check, the job runs `scripts/cards.py moves
+build/card-moves.json` after removing any earlier receipt ([Move ledger](#move-ledger)). The hook itself is site
+code: its tests (`scripts/test_card_pages.py`) run with the wiki job's other tests, so a regression in it fails
+that job, as a change to any other part of the site does.
 
-`hooks/card_pages.py` reads `build/cards.json` only when it is an `atlas-cards/v1` rollup of the commit
-being built that names only pages the site publishes and whose parts agree where they restate one another:
+`hooks/card_pages.py` keeps the moved addresses only with the ledger check's receipt: an `atlas-card-moves/v1`
+receipt of the commit being built whose digests are those of the ledger it reads, which must exist, and of
+`blueprint/links/` as it is now, which shows the receipt refers to the current inputs, and only when every address
+resolves to a page the site publishes, a retired card's folder that is gone leading to the folder the receipt gives
+its last replacement.
+They need no card data. The hook shows card data only when `build/cards.json` is an `atlas-cards/v1` rollup of the
+commit being built that names only pages the site publishes and whose parts agree where they restate one another:
 each status with its statement's row in the `pages` table, each count with what it counts, and the clusters
-with the strongly connected parts of `uses`. It also needs the move ledger to lead every address it retired
-to one of those pages. Otherwise, or when there is no card and no moved address to show, as on a commit with
-no card yet, it changes nothing, and every page is byte for byte the page of a build without card data. These
-checks catch a rollup that contradicts itself or the site; they cannot tell a consistent rollup from the true
-one, which is the strict check's work.
+with the strongly connected parts of `uses`; only with the moved addresses; and only when its cards are, folder
+for folder, the receipt's, and the receipt lists them all. These checks catch a rollup that contradicts itself,
+the site or the ledger check; they cannot tell a consistent rollup from the true one, which is the strict check's
+work. So a card error never costs a moved address, and card data never changes where one leads.
+
+When the hook shows neither, or has nothing to show, as on a commit with no card and no moved address, every page
+is byte for byte the page of a build without it. None of this fails the build, and none of it is silent: the build
+log says what is not shown and why, at INFO since `mkdocs build --strict` fails on a warning, and under GitHub
+Actions so do a workflow annotation (a warning for card data, an error for moved addresses) and a line of the job
+summary.
 
 A card's folder page shows, before its first section, a block with:
 
@@ -290,8 +359,8 @@ replaying the ledger backwards from the pages the site publishes: each row's old
 its new one, so every address a statement or a folder ever had is followed through every row after it, in
 order. A folder row moves the folder alone, as the move ledger says, so no address is inferred from what a
 folder holds, and a page added to a folder after it moved gets no old address. A retired card's folder that is
-gone leads to the live card its replacements end at, and a folder that is gone with no row of its own to where
-its nearest enclosing folder leads. The same resolution gives every route below.
+gone leads to the live card its replacements end at, at the folder its card record names, and a folder that is
+gone with no row of its own to where its nearest enclosing folder leads. The same resolution gives every route below.
 
 Render publishes a statement with a declaration kind in a box on its folder's page, at
 `<folder>/index.html#<file name>`, a statement without one as a page of its own, `<path>.html`, and a folder at

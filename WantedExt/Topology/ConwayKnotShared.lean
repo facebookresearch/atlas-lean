@@ -400,7 +400,7 @@ the subset of $\mathbb{R}^3$ traced by the closed polyline through these vertice
 half-open interval $[0, n)$ under the parametrization that sends $k + \alpha$, for an integer
 $0 \le k < n$ and a real $0 \le \alpha < 1$, to $(1 - \alpha) v_k + \alpha v_{k+1}$, with indices
 taken modulo $n$. -/
-def PLKnot.image (K : PLKnot) : Set R3 :=
+noncomputable def PLKnot.image (K : PLKnot) : Set R3 :=
   plCurve K.vertices '' Set.Ico (0 : ℝ) (K.vertices.length : ℝ)
 
 /-- **Simple PL knot.** A PL knot $K$ with vertices $v_0, \dots, v_{n-1}$ is simple if its closed

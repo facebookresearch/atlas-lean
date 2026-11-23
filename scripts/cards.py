@@ -5,6 +5,7 @@
            [--base-ledger FILE --base-links DIR --renames FILE]     validate the cards and the move ledger
     python scripts/cards.py rollup OUTPUT.json --dependencies FILE [--registry FILE]
            [--base-ledger FILE --base-links DIR --renames FILE]     check, then write the derived card data
+    python scripts/cards.py moves OUTPUT.json                        check the move ledger alone, then write its receipt
 
 A card is one idea a reader navigates by: a concept card (a definition that a textbook would give its own
 paragraph) or a result card (a theorem worth naming or citing). It is a folder below blueprint/roadmap/ whose
@@ -39,12 +40,29 @@ with a Python that has Autoform and the site's Markdown extensions installed (se
 
 The wiki job runs rollup the same way before render, for the card data the site shows (hooks/card_pages.py):
 rollup removes its output first and writes it, whole, only once the check passed, so an error leaves no card data.
+
+moves checks scripts/card-moves.jsonl on its own, with check_moves and no base: against the annotations and the
+roadmap as checked out, with no card or dependency check, so the site's redirects do not wait for the cards. Without
+a base it certifies the present snapshot only; that the ledger only grows, and the moves since the base commit, stay
+the strict check's. A missing ledger is an error, an empty one has no row. It reads each input file once, removes
+its output first, and on success writes, whole, the receipt hooks/card_pages.py keeps the moved addresses with: the
+commit, the sha256 of the ledger's bytes and a digest of the links folder's (links_digest), which bind the receipt to
+the very inputs checked, and the cards, by id, with their folders (`cards_complete` says whether that lists them all:
+a card is listed only with an article id no other article has and a folder the site can serve; a card a retirement
+needs must be listed). It refuses outside a Git checkout.
+
+A planned statement page may record its counterparts under `extensions["org.atlas-wiki"]["counterpart"]`
+(docs/cards.md#counterparts): check verifies their form and their place, a live statement page Autoform reads whose
+own row links no Lean declaration; they are data only, and nothing else here reads them.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
+import os
 import re
+import stat
 import subprocess
 import sys
 from collections import Counter, defaultdict
@@ -64,6 +82,10 @@ else:
 OWN = "org.atlas-wiki"
 AUTOFORM = "org.autoform"
 SCHEMA = "atlas-cards/v1"
+# The receipt of the moves command, which hooks/card_pages.py reads; and the links folder's defaults file (Autoform's
+# annotations._DEFAULTS), which the receipt's digest of the annotations covers.
+MOVES_SCHEMA = "atlas-card-moves/v1"
+LINKS_DEFAULTS = "_defaults.json"
 ARTICLE_ID = re.compile(r"af_[0-9a-f]{24}")
 COMMIT = re.compile(r"[0-9a-f]{40}")
 KINDS = ("concept", "result")
@@ -93,6 +115,12 @@ MATHLIB_SOURCE = re.compile(r"/leanprover-community/mathlib4/blob/([0-9a-f]{40})
 LEAN_PART = r"(?:[^\W\d][\w'!?\u2080-\u209c\u1d62-\u1d6a]*|«[^»]+»)"
 LEAN_NAME = re.compile(rf"{LEAN_PART}(?:\.{LEAN_PART})*")
 MOVES = "card-moves.jsonl"
+# A planned page's counterparts (docs/cards.md#counterparts): each record names one declaration, of Mathlib or of
+# the project, says how it compares with the page's statement, and may list the other declarations a combination
+# takes.
+LIBRARIES = ("mathlib", "atlas")
+RELATIONS = ("same", "stronger", "weaker", "variant")
+COUNTERPART_KEYS = {*LIBRARIES, "relation", "needs"}
 # A statement's headline and its progress bucket: the first marker that applies, then Autoform's state key of a
 # credited statement (`stated`: stated, its proof blocked; `planned`: blocked, not ready to state). A page-only
 # statement is never shown as ready: with no declaration kind it is no task (the graph rules' planned pages and
@@ -411,6 +439,175 @@ def misplaced_records(annotations: dict[Path, dict]) -> list[str]:
     return errors
 
 
+def lean_linked(annotation: dict | None) -> bool:
+    """Whether a row links a Lean declaration, as Autoform reads it over the folder defaults: a Lean end naming a
+    declaration, of this project, of Mathlib or of another one, or the module and name an earlier sync wrote, which
+    lean-facts reads as a link. A statement page whose row links none is planned."""
+    if not isinstance(annotation, dict):
+        return False
+    read = sync.effective(annotation) or annotation
+    objects = read.get("object", [])
+    return sync.legacy_pair(annotation) is not None or any(
+        isinstance(end, dict) and end.get("type") == "lean" and isinstance(end.get("location"), dict)
+        and end["location"].get("declaration") is not None for end in (objects if isinstance(objects, list) else []))
+
+
+def name_components(name: str) -> tuple[str, ...]:
+    """A Lean name's components as Lean reads them, each without the «» that may quote it: `Matrix.«det»` and
+    `Matrix.det` are one name, while `«a.b».c`, two components, is not `a.b.c`, three. *name* has the form
+    LEAN_NAME gives."""
+    return tuple(part[1:-1] if part.startswith("«") else part for part in re.findall(LEAN_PART, name))
+
+
+def spelled(first: str, second: str) -> str:
+    """How a problem shows a second spelling of a name it has shown as *first*: nothing when they are the same."""
+    return "" if first == second else f" (once as {second})"
+
+
+def named(entry: dict, what: str) -> tuple[tuple[str, str] | None, list[str]]:
+    """The library and name of the one declaration *entry* names (exactly one of `mathlib` and `atlas`, a Lean
+    name), and what is wrong with it."""
+    libraries = [library for library in LIBRARIES if library in entry]
+    if len(libraries) != 1:
+        given = "no declaration" if not libraries else "two declarations"
+        return None, [f"{what} names {given}; give exactly one of `mathlib` and `atlas`"]
+    library = libraries[0]
+    name = entry[library]
+    if not (isinstance(name, str) and LEAN_NAME.fullmatch(name)):
+        return None, [f"{what}: `{library}` is {name!r}, not a Lean name"]
+    if name_components(name)[0] == "_root_":
+        return None, [f"{what}: `{library}` is {name!r}; write the full name without `_root_.`, a prefix only Lean "
+                      "source writes, never part of a declaration's name"]
+    return (library, name), []
+
+
+def counterpart_shape(value: object) -> list[str]:
+    """What is wrong with the form of a `counterpart` list: a non-empty list of records, each naming exactly one
+    declaration (`mathlib` or `atlas`, a Lean name), with its `relation` and an optional non-empty `needs` list of
+    such declarations, each `{"mathlib": name}` or `{"atlas": name}`, and no other key; no declaration twice in a
+    list, and a record's own declaration not among its needs, a declaration being its library and its name as Lean
+    reads it (name_components), whatever the spelling."""
+    if not isinstance(value, list) or not value:
+        return ["`counterpart` must be a non-empty list of records"]
+    problems: list[str] = []
+    recorded: dict[tuple[str, tuple[str, ...]], str] = {}
+    for number, record in enumerate(value, 1):
+        what = f"`counterpart` record {number}"
+        if not isinstance(record, dict):
+            problems.append(f"{what} is not an object")
+            continue
+        problems += [f"{what} has the unknown key `{key}`" for key in sorted(set(record) - COUNTERPART_KEYS)]
+        target, found = named(record, what)
+        problems += found
+        if "relation" not in record:
+            problems.append(f"{what} has no `relation`; give one of {', '.join(RELATIONS)}")
+        elif record["relation"] not in RELATIONS:
+            problems.append(f"{what}: `relation` is {record['relation']!r}; expected one of {', '.join(RELATIONS)}")
+        own = None if target is None else (target[0], name_components(target[1]))
+        if own is not None:
+            if own in recorded:
+                first = recorded[own]
+                problems.append(f"`counterpart` names {target[0]} {first} twice{spelled(first, target[1])}")
+            else:
+                recorded[own] = target[1]
+        if "needs" not in record:
+            continue
+        needs = record["needs"]
+        if not isinstance(needs, list) or not needs:
+            problems.append(f'{what}: `needs` must be a non-empty list of declarations, each {{"mathlib": name}} or '
+                            '{"atlas": name}; leave it out when the declaration needs no other')
+            continue
+        listed: dict[tuple[str, tuple[str, ...]], str] = {}
+        for index, entry in enumerate(needs, 1):
+            where = f"{what}, `needs` entry {index}"
+            if not isinstance(entry, dict):
+                problems.append(f"{where} is not an object naming one declaration")
+                continue
+            problems += [f"{where} has the unknown key `{key}`" for key in sorted(set(entry) - set(LIBRARIES))]
+            other, found = named(entry, where)
+            problems += found
+            if other is None:
+                continue
+            key = (other[0], name_components(other[1]))
+            if key in listed:
+                problems.append(f"{what}: `needs` names {other[0]} {listed[key]} twice{spelled(listed[key], other[1])}")
+                continue
+            if key == own:
+                shown = "" if other[1] == target[1] else f" (as {other[1]})"
+                problems.append(f"{what}: `needs` names the record's own declaration, {target[0]} {target[1]}{shown}")
+            listed[key] = other[1]
+    return problems
+
+
+def counterpart_keys(value: object, path: str) -> list[str]:
+    """Where a `counterpart` key sits in *value*, at any depth, in an object or a list, each as a path from *path*."""
+    found = []
+    if isinstance(value, dict):
+        for key, inner in value.items():
+            here = f"{path}[{json.dumps(key, ensure_ascii=False)}]"
+            found += [here] if key == "counterpart" else counterpart_keys(inner, here)
+    elif isinstance(value, list):
+        for index, inner in enumerate(value):
+            found += counterpart_keys(inner, f"{path}[{index}]")
+    return found
+
+
+def counterpart_pages(annotations: dict[Path, dict]) -> list[Path]:
+    """The rows' pages that record a counterpart."""
+    return sorted(page for page, annotation in annotations.items()
+                  if isinstance(own := (annotation.get("extensions") or {}).get(OWN), dict) and "counterpart" in own)
+
+
+def counterpart_problems(annotations: dict[Path, dict], committed: dict[Path, dict]) -> list[str]:
+    """What is wrong with the counterparts the rows record (docs/cards.md#counterparts): a counterpart belongs to a
+    planned statement page, one whose row links no Lean declaration (lean_linked), as checked out and as committed,
+    since lean-facts may drop a committed link; it has the form counterpart_shape gives; and the links folder's
+    defaults give none, anywhere under their `org.atlas-wiki` extension, a card record included, as they would give
+    it to every row, a credited or a folder page's included (counterpart_keys). Only the form
+    is checked: that a record is true is for review. A card record that holds one is check_record's, and a row whose
+    page Autoform does not read, check's, which has Autoform's graph (live_counterparts)."""
+    errors = []
+    template = sync.links_template()
+    inherited = template.get("extensions") if isinstance(template, dict) else None
+    folder = sync.LINKS.relative_to(wiki.ROOT).as_posix() if sync.LINKS.is_relative_to(wiki.ROOT) else sync.LINKS
+    for path in counterpart_keys(inherited.get(OWN) if isinstance(inherited, dict) else None, f'extensions["{OWN}"]'):
+        errors.append(f"{folder}/_defaults.json sets `counterpart` at `{path}`, which would give every row that "
+                      "counterpart; a counterpart belongs on a planned statement page's own row: remove it from the "
+                      "defaults")
+    for page, annotation in sorted(annotations.items()):
+        extensions = annotation.get("extensions")
+        own = extensions.get(OWN) if isinstance(extensions, dict) else None
+        if not isinstance(own, dict) or "counterpart" not in own:
+            continue  # an `org.atlas-wiki` extension that is no object is misplaced_records'
+        where = node_id(page)
+        if page.name == "README.md":
+            errors.append(f"{where}: a counterpart belongs on a planned statement page, not on a folder page")
+            continue
+        if lean_linked(annotation) or lean_linked(committed.get(page)):
+            errors.append(f"{where}: a counterpart belongs on a planned page, whose annotation links no Lean "
+                          "declaration; this one links one")
+        errors += [f"{where}: {problem}" for problem in counterpart_shape(own["counterpart"])]
+    return errors
+
+
+def live_counterparts(annotations: dict[Path, dict], graph) -> list[str]:
+    """A counterpart on a row whose page is no live statement page Autoform reads, under its node id: its file is
+    missing (an orphan row), or Autoform's loader passes it over (a hidden page, say)."""
+    errors = []
+    read = statement_nodes(graph)
+    for page in counterpart_pages(annotations):
+        if page.name == "README.md":
+            continue  # counterpart_problems reports it
+        if not page.is_file():
+            errors.append(f"{node_id(page)}: a counterpart belongs on a statement page Autoform reads; its page is "
+                          "missing")
+        elif read.get(node_id(page)) != page.resolve():
+            shown = page.resolve().relative_to(wiki.ROADMAP.resolve()).as_posix()
+            errors.append(f"{node_id(page)}: a counterpart belongs on a statement page Autoform reads; Autoform does "
+                          f"not read {shown} as one")
+    return errors
+
+
 def card_folders(annotations: dict[Path, dict]) -> dict[Path, Card]:
     """Every card, by its folder: a folder page whose annotation carries a card record."""
     cards = {}
@@ -461,7 +658,10 @@ def check_record(card: Card, by_id: dict[str, Path], annotations: dict[Path, dic
     record = card.record
     if not isinstance(record, dict):
         return ["the card record is not an object"], None
-    errors += [f"unknown card key `{key}`" for key in sorted(set(record) - RECORD_KEYS)]
+    errors += [f"unknown card key `{key}`" for key in sorted(set(record) - RECORD_KEYS - {"counterpart"})]
+    if "counterpart" in record:
+        errors.append("a card records no counterpart; a counterpart belongs on a planned statement page's "
+                      "annotation (docs/cards.md#counterparts)")
     errors += [f"the card record has no `{key}`" for key in REQUIRED if key not in record]
     for key, allowed in (("kind", KINDS), ("importance", IMPORTANCE), ("level", LEVELS)):
         if key in record and record[key] not in allowed:
@@ -535,7 +735,7 @@ def check(annotations: dict[Path, dict] | None = None, graph=None, committed: di
     main_pages = {folder: by_id.get(card.record.get("main_article_id")) for folder, card in cards.items()
                   if isinstance(card.record, dict) and isinstance(card.record.get("main_article_id"), str)}
     # No credit overrides a held marker (sync_wiki.held_conflicts, as the extraction and lean-facts refuse it).
-    errors: list[str] = misplaced_records(annotations)
+    errors: list[str] = misplaced_records(annotations) + counterpart_problems(annotations, committed)
     errors += sync.held_conflicts({Path("links"): list(annotations.values())})
     warnings: list[str] = []
     mains: dict[Path, str] = {}
@@ -586,7 +786,9 @@ def check(annotations: dict[Path, dict] | None = None, graph=None, committed: di
                     what = "states a proposition" if found["proposition"] else "does not state a proposition"
                     errors.append(f"{where}: a {record['kind']} card's main statement {node_id(main_page)} is "
                                   f"Mathlib's {declaration(own)}, which {what}")
-            elif authored == "atlas" and kind is not None:
+            elif kind is not None:
+                # A credited main's kind, or the one lean-facts gives a main with no Lean link that counts as a
+                # statement not yet in Lean (held, or recording its kind), fits the card.
                 allowed = CONCEPT_KINDS if record["kind"] == "concept" else RESULT_KINDS
                 if kind not in allowed:
                     errors.append(f"{where}: a {record['kind']} card's main statement {node_id(main_page)} is a `{kind}`")
@@ -714,11 +916,13 @@ def check(annotations: dict[Path, dict] | None = None, graph=None, committed: di
                               "pinned Mathlib, titled with the declaration's Lean name")
             elif pin is not None and source != pin:
                 errors.append(f"{card.node}: `## In Mathlib` links Mathlib {source}, not the pinned {pin}")
-    if graph is None and (cards or dependencies is not None):
+    if graph is None and (cards or dependencies is not None or counterpart_pages(annotations)):
         try:
             graph = load_graph()
         except Exception as error:  # Autoform refuses the wiki, e.g. two articles on one address.
             return errors + [f"Autoform cannot load the wiki: {error}"], warnings
+    if graph is not None:
+        errors += live_counterparts(annotations, graph)
     if graph is not None and cards:
         nodes = {card.node for card in cards.values()}
         # A `supports` entry names a statement page Autoform reads: that very file, under its node id.
@@ -798,7 +1002,7 @@ def read_links(folder: Path) -> dict[Path, dict]:
 
 def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: str | None = None,
                 required: bool = False, base_annotations: dict[Path, dict] | None = None,
-                renames: list[tuple[str, str]] | None = None) -> list[str]:
+                renames: list[tuple[str, str]] | None = None, text: str | None = None) -> list[str]:
     """The errors of scripts/card-moves.jsonl. The ledger only grows: given ``base``, the ledger the base commit
     published, its rows must stay, unchanged and first. Each chain is followed to its final live destination: a
     moved page or folder is no longer at its old path; every hop keeps the article id it started with, so an old
@@ -807,22 +1011,24 @@ def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: st
     page's, and what replaces it is one; nothing goes round. An address has one owner: it moves once, as a page or
     as a folder, and no live page or folder of another article takes it. ``required`` (the strict check): the file
     must exist. ``base_annotations``, the base commit's rows, and ``renames``, the roadmap files Git finds renamed
-    since (old and new path below roadmap/): see `history`."""
+    since (old and new path below roadmap/): see `history`. ``text``: the ledger as its caller read it (the moves
+    command reads it once, to check and hash the same bytes), instead of the file."""
     path = moves_file()
     published = [line for line in (base or "").splitlines() if line.strip()]
-    if not path.is_file():
-        if required or published:
-            return [f"{MOVES}: missing; it records every address a card change retired"]
-        return []
+    if text is None:
+        if not path.is_file():
+            if required or published:
+                return [f"{MOVES}: missing; it records every address a card change retired"]
+            return []
+        text = path.read_text()
     errors = []
-    text = path.read_text()
     if base is not None:
         published = [line for line in base.splitlines() if line.strip()]
         if [line for line in text.splitlines() if line.strip()][:len(published)] != published:
             errors.append(f"{MOVES}: a row the base commit published was removed or changed; the ledger only grows")
     chains: dict[str, dict[str, tuple[str, str]]] = {"page": {}, "folder": {}}
     retired: dict[str, tuple[str, str]] = {}
-    card_ids = {card.id for card in cards.values()}
+    card_ids = {card.id for card in cards.values() if isinstance(card.id, str)}
     by_id = {annotation["id"]: page for page, annotation in annotations.items() if isinstance(annotation.get("id"), str)}
     fresh: list[tuple[int, dict]] = []
     seen_rows = 0
@@ -924,8 +1130,13 @@ def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: st
         if folder in chains["page"] or folder in chains["folder"]:
             errors.append(f"{MOVES}: {folder} is the last address of the retired card {card_id} and moved too; an "
                           "address has one owner")
+        # An address a page or folder page holds is taken, with an id or without: only the card itself, a folder
+        # keeping its id once declassified, or its final replacement may hold it.
         occupant = ids_at.get(folder)
-        if occupant is not None and occupant not in (card_id, finals[card_id]):
+        if occupant is None and ((wiki.ROADMAP / folder / "README.md").is_file()
+                                 or (wiki.ROADMAP / f"{folder}.md").is_file()):
+            errors.append(f"{MOVES}: the retired card {card_id}'s address {folder} is held by an article with no id")
+        elif occupant is not None and occupant not in (card_id, finals[card_id]):
             errors.append(f"{MOVES}: the retired card {card_id}'s address {folder} is held by another article")
     if base_annotations is not None:
         published_rows = [json.loads(line) for line in published]
@@ -1110,7 +1321,7 @@ def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict],
     for old in base:
         here = head_at.get((old.kind, old.address))
         if old.id and here is not None and here.id != old.id and claimed.get(id(here)) is not old:
-            if not (old.id in retired and finals.get(old.id) == here.id):
+            if not (old.id in retired and here.id is not None and finals.get(old.id) == here.id):
                 errors.append(f"{MOVES}: {old.address} was {old.id} and now holds {here.id}; only a retired card's "
                               "replacement takes its address")
     # Every card of the base that is no card any more is retired.
@@ -1477,7 +1688,7 @@ def rollup(dependencies: dict, annotations: dict[Path, dict] | None = None, grap
     def bucket(path: str) -> str:
         about = leaf(path)
         for marker, holds in (("stale", about.stale), ("held", about.held), ("not_ready", about.not_ready),
-                              ("page_only", about.credit == "none")):
+                              ("page_only", about.credit == "none" and about.kind is None)):
             if holds:
                 return marker
         return about.state if about.state in STATES else "planned"
@@ -1632,6 +1843,144 @@ def rollup(dependencies: dict, annotations: dict[Path, dict] | None = None, grap
     }
 
 
+def links_snapshot() -> dict[str, bytes | None]:
+    """The files of the links folder that the annotations are read from, each read once, by name: every `*.jsonl`
+    file, and the defaults file when there is one, None when it is no regular file, which Autoform cannot use
+    (scripts/sync_wiki.py, links_template). An OSError when a file cannot be read."""
+    folder = links_dir()
+    files: dict[str, bytes | None] = {path.name: path.read_bytes() for path in sorted(folder.glob("*.jsonl"))}
+    defaults = folder / LINKS_DEFAULTS
+    try:
+        found = os.lstat(defaults)
+    except FileNotFoundError:
+        return files
+    except OSError:
+        files[LINKS_DEFAULTS] = None
+        return files
+    files[LINKS_DEFAULTS] = defaults.read_bytes() if stat.S_ISREG(found.st_mode) else None
+    return files
+
+
+def links_digest(files: dict[str, bytes | None]) -> str:
+    """The digest of a links folder as read (links_snapshot), which the moves receipt records and hooks/card_pages.py
+    recomputes from the files: sha256 over each file, in sorted order of name, as its name, a NUL, its length in bytes
+    (`-` for a defaults file that is no regular file), a NUL and its bytes."""
+    digest = hashlib.sha256()
+    for name in sorted(files):
+        data = files[name]
+        digest.update(os.fsencode(name) + b"\0" + (b"-" if data is None else str(len(data)).encode()) + b"\0"
+                      + (data or b""))
+    return digest.hexdigest()
+
+
+def snapshot_annotations(files: dict[str, bytes | None]) -> dict[Path, dict]:
+    """read_annotations, from the bytes of a links folder as read (links_snapshot): each row by the page it is about,
+    merged over the template its defaults file gives (scripts/sync_wiki.py, template_of and merged). A ValueError
+    names a file that is no UTF-8 JSON lines."""
+    if LINKS_DEFAULTS not in files:
+        template: dict | None = {}
+    else:
+        template = None if files[LINKS_DEFAULTS] is None else sync.template_of(files[LINKS_DEFAULTS])
+    rows = {}
+    for name, data in sorted(files.items()):
+        if name == LINKS_DEFAULTS:
+            continue
+        try:
+            annotations = parse_rows(data.decode("utf-8"))
+        except ValueError as error:
+            raise ValueError(f"{links_dir().name}/{name}: {error}") from error
+        for annotation in annotations:
+            if (page := sync.subject_of(sync.merged(annotation, template))[0]) is not None:
+                rows[page] = annotation
+    return rows
+
+
+def ledger_ids(text: str) -> set[str]:
+    """The article ids the ledger's rows name: each page or folder row's `article_id`, and each retirement's `card`
+    and `replaced_by`; a line that is no JSON object names none (check_moves reports it)."""
+    found: set[str] = set()
+    for line in text.splitlines():
+        try:
+            row = json.loads(line) if line.strip() else None
+        except ValueError:
+            continue
+        if isinstance(row, dict):
+            found.update(row[key] for key in ("article_id", "card", "replaced_by") if isinstance(row.get(key), str))
+    return found
+
+
+def final_cards(text: str) -> dict[str, str]:
+    """Each card a retirement row of the ledger ``text`` retires, with the card its replacements end at, as
+    check_moves follows them (which has found that they do, at a live card)."""
+    retired = {}
+    for line in text.splitlines():
+        row = json.loads(line) if line.strip() else None
+        if isinstance(row, dict) and set(row) == {"card", "folder", "replaced_by"}:
+            retired[row["card"]] = row["replaced_by"]
+    finals = {}
+    for card in retired:
+        seen, at = {card}, retired[card]
+        while at in retired and at not in seen:
+            seen.add(at)
+            at = retired[at]
+        finals[card] = at
+    return finals
+
+
+def moves(output: Path) -> int:
+    """The moves command: check the move ledger, from one read of it and of the links folder, and on success write
+    the receipt to ``output`` (see the module's docstring). An id the ledger names that two articles have is an error
+    of its own, which check_moves, reading the last of them, would not see; a malformed or repeated id the ledger does
+    not name only leaves its card out of the receipt's `cards`."""
+    try:
+        ledger = moves_file().read_bytes()
+    except FileNotFoundError:
+        print(f"error: {MOVES}: missing; the moves check certifies a ledger that exists", file=sys.stderr)
+        return 1
+    try:
+        text = ledger.decode("utf-8")
+        files = links_snapshot()
+        annotations = snapshot_annotations(files)
+    except (OSError, ValueError) as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 1
+    # A row whose extensions are no object holds no card record: card_folders cannot read it.
+    cards = card_folders({page: row for page, row in annotations.items()
+                          if isinstance(row.get("extensions", {}), dict)})
+    holders: dict[str, list[str]] = defaultdict(list)
+    for page, row in annotations.items():
+        if isinstance(row.get("id"), str):
+            holders[row["id"]].append(Path(os.path.relpath(page, wiki.ROADMAP)).as_posix())
+    errors = [f"{MOVES}: {article}, which the ledger names, is the id of {len(holders[article])} articles, "
+              f"{', '.join(sorted(holders[article]))}; an id names one article"
+              for article in sorted(ledger_ids(text)) if len(holders[article]) > 1]
+    errors += check_moves(annotations, cards, text=text)
+    # The cards the receipt can list: a well-formed id no other article has, and a folder the site can serve, by the
+    # predicate hooks/card_pages.py checks the receipt with (valid_address, the same there).
+    listed = {card.id: card.node for card in cards.values()
+              if isinstance(card.id, str) and ARTICLE_ID.fullmatch(card.id) and len(holders[card.id]) == 1
+              and valid_address(card.node)}
+    if not errors:
+        # The live card each retirement ends at is one the hook needs: it must be listed, or no address leads there.
+        nodes = {card.id: card.node for card in cards.values() if isinstance(card.id, str)}
+        errors += [f"{MOVES}: the retired card {card} is replaced by {final}, whose folder {nodes.get(final)} is no "
+                   "address the site serves"
+                   for card, final in sorted(final_cards(text).items()) if final not in listed]
+    commit = source_commit()
+    if commit is None:
+        errors.append(f"{wiki.ROOT} is no Git checkout: the receipt names the commit it checks")
+    for error in errors:
+        print(f"error: {error}", file=sys.stderr)
+    if errors:
+        return 1
+    receipt = {"schema": MOVES_SCHEMA, "commit": commit, "ledger_sha256": hashlib.sha256(ledger).hexdigest(),
+               "annotations_sha256": links_digest(files), "cards": listed, "cards_complete": len(listed) == len(cards)}
+    extract.write_whole({output: json.dumps(receipt, ensure_ascii=False, indent=1, sort_keys=True) + "\n"})
+    rows = sum(1 for line in text.splitlines() if line.strip())
+    print(f"{rows} ledger rows checked; {len(listed)} of {len(cards)} cards listed -> {output}")
+    return 0
+
+
 def option(argv: list[str], name: str) -> tuple[list[str], str | None]:
     """``argv`` without ``name VALUE``, and VALUE (None when absent); a name without a value is a usage error."""
     if name not in argv:
@@ -1643,6 +1992,22 @@ def option(argv: list[str], name: str) -> tuple[list[str], str | None]:
 
 
 def run(argv: list[str]) -> int:
+    if argv[:1] == ["moves"]:
+        if len(argv) != 2 or argv[1].startswith("-"):
+            print(__doc__, file=sys.stderr)
+            return 2
+        output = Path(argv[1])
+        # Refused as rollup refuses its output, before anything is touched; then an earlier receipt never outlives a
+        # failure of this check.
+        files = {"OUTPUT": output, "the move ledger": moves_file(),
+                 **{f"the links file {path.name}": path for path in sorted(links_dir().glob("*.jsonl"))}}
+        if os.path.lexists(links_dir() / LINKS_DEFAULTS):
+            files[f"the links file {LINKS_DEFAULTS}"] = links_dir() / LINKS_DEFAULTS
+        if problem := extract.file_problem(files, ("OUTPUT",), {"blueprint/": wiki.VAULT}):
+            print(f"error: {problem}", file=sys.stderr)
+            return 2
+        output.unlink(missing_ok=True)
+        return moves(output)
     argv, dependency_file = option(argv, "--dependencies")
     argv, base_file = option(argv, "--base-ledger")
     argv, base_links = option(argv, "--base-links")

@@ -62,7 +62,11 @@ open Filter Topology
 
 /- Asymptotic decay rate for `y' = -y³, y(0) = 1`: the solution satisfies
 `y t · √t → 1/√2` as `t → ∞`. -/
-/-- Source: Standard ODE textbook exercise. Via leanprover/lean-eval@38361be, problem
+/-- **Decay rate of solutions of $y' = -y^3$.** Let $y : \mathbb{R} \to \mathbb{R}$ be
+differentiable at every $t > 0$ with $y'(t) = -y(t)^3$, continuous at $0$ within $[0, \infty)$,
+and such that $y(0) = 1$. Then $y(t) \sqrt{t} \to 1/\sqrt{2}$ as $t \to \infty$.
+
+Source: Standard ODE textbook exercise. Via leanprover/lean-eval@38361be, problem
 `cubic_decay_asymptotic`. -/
 public theorem_wanted cubic_decay_asymptotic
     (y : ℝ → ℝ) (hy_diff : ∀ t : ℝ, 0 < t → HasDerivAt y (-(y t) ^ 3) t)

@@ -13,7 +13,7 @@ import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.Ring
 
 /-!
-# Tests for Axler's truncated series bound
+# Tests for Axler's prime-counting bounds
 -/
 
 namespace MetaMathlibExt
@@ -47,5 +47,32 @@ example (x₀ : ℝ) (hx₀ : 0 < x₀)
   convert h using 1
   norm_num [b, Finset.sum_range_succ]
   ring
+
+-- Start below the first prime and end at the jump at 2.
+example (η : ℝ) (hη : 0 < η)
+    (hθ : ∀ y : ℝ, 3 / 2 ≤ y → |Chebyshev.theta y - y| < η * y / Real.log y) :
+    let J (e : ℝ) := 2 / Real.log 2 + e * 2 / Real.log 2 ^ 2 +
+      ∫ t in (3 / 2 : ℝ)..2, (1 / Real.log t ^ 2 + e / Real.log t ^ 3)
+    J (-η) ≤ 1 ∧ 1 ≤ J η := by
+  have h := primeCounting_mem_Icc_auxJ 1 (by decide) η (3 / 2) hη (by norm_num)
+    (by simpa using hθ) 2 (by norm_num)
+  have hfirst : Nat.primeCounting 2 = 1 := by decide
+  have hfloor : ⌊(3 / 2 : ℝ)⌋₊ = 1 := (Nat.floor_eq_iff' one_ne_zero).2 (by norm_num)
+  simpa [hfloor, hfirst, Chebyshev.theta_eq_zero_of_lt_two (by norm_num : (3 / 2 : ℝ) < 2)] using h
+
+-- The last branch of the error factor is antitone on `[e⁶⁷³, ∞)`.
+example : AntitoneOn (fun y : ℝ ↦ Real.log y ^ 6 *
+    (121.0961 * (Real.log y / 5.5666305) ^ (3 / 2 : ℝ) *
+      Real.exp (-2 * Real.sqrt (Real.log y / 5.5666305)))) (Set.Ici (Real.exp 673)) :=
+  fun x₁ hx₁ x _ hx ↦ axlerThetaErrorFactor_tail_antitone x₁ x hx₁ hx
+
+-- Start at the endpoint `e⁶⁷³`; at powers of `e` the factor is a function of the exponent.
+example :
+    (700 : ℝ) ^ 6 * (121.0961 * (700 / 5.5666305) ^ (3 / 2 : ℝ) *
+        Real.exp (-2 * Real.sqrt (700 / 5.5666305))) ≤
+      673 ^ 6 * (121.0961 * (673 / 5.5666305) ^ (3 / 2 : ℝ) *
+        Real.exp (-2 * Real.sqrt (673 / 5.5666305))) := by
+  simpa using axlerThetaErrorFactor_tail_antitone (Real.exp 673) (Real.exp 700) le_rfl
+    (Real.exp_le_exp.mpr (by norm_num))
 
 end MetaMathlibExt
