@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.LurothConvergent
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
 
@@ -35,35 +36,6 @@ open scoped ENNReal
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **First Lüroth digit.** For a real number $x$, the first Lüroth digit of $x$ is the natural
-number $d_1(x) = \lfloor 1/x \rfloor + 1$, where $\lfloor \cdot \rfloor$ is the floor truncated
-at $0$ and $1/0 = 0$. For $x \in (0, 1]$ this is the usual digit and is at least $2$; for
-$x \le 0$ and for $x > 1$ it equals $1$.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 2. -/
-noncomputable def lurothDigit (x : ℝ) : ℕ :=
-  ⌊1 / x⌋₊ + 1
-
-/-- **Lüroth map.** For a real number $x$ with first Lüroth digit $d = d_1(x)$, the Lüroth
-map is $L(x) = d(d - 1)x - (d - 1)$.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 2. -/
-noncomputable def lurothMap (x : ℝ) : ℝ :=
-  (lurothDigit x : ℝ) * ((lurothDigit x : ℝ) - 1) * x - ((lurothDigit x : ℝ) - 1)
-
-/-- **Lüroth digits.** For a real number $x$ and $n \ge 1$, the $n$-th Lüroth digit of $x$ is
-$d_n(x) = d_1(L^{n-1}(x))$, where $d_1$ is the first Lüroth digit, $L$ is the Lüroth map and
-$L^{n-1}$ is its $(n-1)$-fold iterate ($L^0$ is the identity).
-
-The digit sequence is indexed from $0$: its term of index $k$ is $d_1(L^k(x)) = d_{k+1}(x)$.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 2. -/
-noncomputable def lurothDigitSeq (x : ℝ) (k : ℕ) : ℕ :=
-  lurothDigit (lurothMap^[k] x)
 
 /-- **First Lüroth digit of 1.** The first Lüroth digit of $1$ is $d_1(1) = 2$.
 

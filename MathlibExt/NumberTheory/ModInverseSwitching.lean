@@ -8,8 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Ring.Parity
 public import Mathlib.Data.Int.ModEq
+import Mathlib.Algebra.Order.Ring.Abs
 import Mathlib.RingTheory.Coprime.Lemmas
+import Mathlib.Tactic.Linarith
 
 /-!
 # Modular inverse switching
@@ -94,5 +97,66 @@ theorem exists_eq_mul_add_iff_switching
       _ = x * t * (m : ℤ) := mul_right_comm _ _ _
       _ ≡ (m : ℤ) [ZMOD (n : ℤ)] := by simpa using hxt.mul_right (m : ℤ)
     simpa only [Int.modEq_iff_add_fac, add_comm t, mul_comm (n : ℤ)] using htm
+
+-- Propagate the half-open bounds backwards from the final inverse, which is one.
+private theorem switching_bounds {r : ℕ → ℕ} {s : ℕ → ℤ} {N : ℕ}
+    (hseq : IsEuclidSwitchSeq r s N) {i : ℕ} (hi : i ≤ N) :
+    -(r i : ℤ) < 2 * s (i + 1) ∧ 2 * s (i + 1) ≤ (r i : ℤ) := by
+  obtain ⟨_, hpos, hdesc, hlast, _, hs, hbez⟩ := hseq
+  induction hi using Nat.decreasingInduction with
+  | self =>
+    have h := hdesc N le_rfl
+    rw [hlast] at h
+    rw [hs]
+    omega
+  | of_succ i hi ih =>
+    obtain ⟨hlo, hhi⟩ := ih
+    have h := hbez (i + 1) (by omega) hi
+    rw [Nat.add_sub_cancel] at h
+    have hpos' : 0 < (r (i + 1) : ℤ) := by exact_mod_cast hpos (i + 1) (by omega)
+    have hr := hdesc i hi.le
+    have hr' : 2 ≤ (r i : ℤ) := by omega
+    have hgap : 1 - (r (i + 1) : ℤ) ≤ 2 * s (i + 1 + 1) := by omega
+    constructor
+    · apply lt_of_mul_lt_mul_right _ hpos'.le
+      nlinarith only [h, mul_le_mul_of_nonneg_right hhi (Int.natCast_nonneg (r i))]
+    · apply le_of_mul_le_mul_right _ hpos'
+      nlinarith only [h, hr', mul_le_mul_of_nonneg_right hgap (Int.natCast_nonneg (r i))]
+
+/-- **First inverses not both extremal, even–odd case.** Let $(r_i)$, $(s_i)$ and $N$ be
+Euclidean switching data with $r_0$ even and $r_1$ odd. Then $2|s_1| < r_0$ or
+$2|s_2| < r_1 - 1$; that is, $|s_1| < r_0/2$ or $|s_2| < (r_1 - 1)/2$.
+
+Source: Spiros Konstantogiannis, "The Euclidean Algorithm as a
+Sequence of Modular Inverse Switching Formulas", Lemma 8. -/
+theorem abs_lt_of_even_odd
+    (r : ℕ → ℕ) (s : ℕ → ℤ) (N : ℕ) (hseq : IsEuclidSwitchSeq r s N)
+    (h0 : Even (r 0)) (h1 : Odd (r 1)) :
+    2 * |s 1| < (r 0 : ℤ) ∨ 2 * |s 2| < (r 1 : ℤ) - 1 := by
+  obtain ⟨a, ha⟩ := h0
+  obtain ⟨b, hb⟩ := h1
+  have hm : (r 0 : ℤ) = 2 * a := by omega
+  have hn : (r 1 : ℤ) = 2 * b + 1 := by omega
+  obtain ⟨hlo, hhi⟩ : -(r 1 : ℤ) < 2 * s 2 ∧ 2 * s 2 ≤ (r 1 : ℤ) :=
+    switching_bounds hseq (i := 1) hseq.1
+  have hs : |s 2| ≤ (b : ℤ) := abs_le.mpr (by constructor <;> omega)
+  obtain ⟨hN, hpos, hdesc, _, _, _, hswitch⟩ := hseq
+  have hr : r 1 < r 0 := hdesc 0 (Nat.zero_le _)
+  have hr' : r 2 < r 1 := hdesc 1 hN
+  have hp := hpos 2 (by omega)
+  have ha' : 1 < (a : ℤ) := by omega
+  have hbez : s 2 * (r 0 : ℤ) + s 1 * (r 1 : ℤ) = 1 := hswitch 1 le_rfl hN
+  left
+  by_contra! h
+  have hlarge : (a : ℤ) ≤ |s 1| := by omega
+  -- The two product bounds differ by a, but the switching identity allows a gap of only one.
+  have hle : (a : ℤ) * (r 1 : ℤ) ≤ 1 + (b : ℤ) * (r 0 : ℤ) := calc
+    _ ≤ |s 1| * (r 1 : ℤ) := mul_le_mul_of_nonneg_right hlarge (Int.natCast_nonneg _)
+    _ = |1 - s 2 * (r 0 : ℤ)| := by rw [← eq_sub_of_add_eq' hbez, abs_mul, Int.abs_natCast]
+    _ ≤ 1 + |s 2| * (r 0 : ℤ) := by
+      simpa [abs_mul, Int.abs_natCast] using abs_sub (1 : ℤ) (s 2 * (r 0 : ℤ))
+    _ ≤ _ := add_le_add_right (mul_le_mul_of_nonneg_right hs (Int.natCast_nonneg _)) 1
+  rw [hm, hn] at hle
+  linarith only [ha', hle]
 
 end MathlibExt.NumberTheory.ModInverseSwitchingWanted
