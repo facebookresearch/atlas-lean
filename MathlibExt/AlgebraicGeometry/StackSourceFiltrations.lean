@@ -108,10 +108,11 @@ def liftingComparison
     {A B X Z : Pseudofunctor (LocallyDiscrete (Over S)ᵒᵖ) Cat.{u,u+1}}
     (i : A ⟶ B) (f : X ⟶ Z) :
     (B ⟶ X) ⥤ IsoFibre (postcompose (A := A) f) (restrict (C := Z) i) :=
-  isoFibreLift (postcompose (A := A) f) (restrict (C := Z) i)
-    (restrict (C := X) i) (postcompose (A := B) f)
-    (NatIso.ofComponents (fun q => Pseudofunctor.StrongTrans.associator i q f)
-      (fun a => by exact associator_naturality_middle i a f))
+  (CategoryTheory.Limits.CategoricalPullback.CatCommSqOver.toFunctorToCategoricalPullback
+      (postcompose (A := A) f) (restrict (C := Z) i) _).obj
+      ⟨restrict (C := X) i, postcompose (A := B) f,
+        NatIso.ofComponents (fun q => Pseudofunctor.StrongTrans.associator i q f)
+      (fun a => by exact associator_naturality_middle i a f)⟩
 
 /-- Unique lifting for all actual diagrams is an equivalence of these
 groupoids, retaining the compatible 2-isomorphisms. -/

@@ -95,22 +95,22 @@ def lineClass [IsAffine G.left] [IsAffine W.left]
 
 variable {G W}
 
-/-- One actual descended line for each equivariant line, with its native degree. -/
+/-- One actual descended line for each equivariant line, on a proper curve `C`, so that each
+line has its native degree. -/
 structure InducedDegrees {k : Type u} [Field k]
     {C : Over (Spec (.of k))} (G W : Over (Spec (.of k))) [GrpObj G] [ModObj G W]
     (P : GroupTorsorGeometry.QuotientObject G W C) where
   line : ∀ L : LinearizedLineBundle G W,
     QuotientLineDescentModels.DescendedLine G W P L
-  finite_h0 : ∀ L, Module.Finite k (cohomology C.hom (line L).module 0)
-  finite_h1 : ∀ L, Module.Finite k (cohomology C.hom (line L).module 1)
-  unit_h0 : Module.Finite k (cohomology C.hom (structureModule C.left) 0)
-  unit_h1 : Module.Finite k (cohomology C.hom (structureModule C.left) 1)
+  properCurve : IsProperCurve C.hom
 
 /-- The native integer degree of the actual induced line. -/
 def inducedDegree {k : Type u} [Field k]
     {C : Over (Spec (.of k))} {G W : Over (Spec (.of k))} [GrpObj G] [ModObj G W]
     {P : GroupTorsorGeometry.QuotientObject G W C} (D : InducedDegrees G W P)
-    (L : LinearizedLineBundle G W) : ℤ := degree C.hom (D.line L).module
+    (L : LinearizedLineBundle G W) : ℤ :=
+  letI := D.properCurve
+  degree C.hom (D.line L).module (D.line L).line
 
 /-- β is a genuine Picard-group functional, fixed on every actual line generator. -/
 structure DegreeFunctional {k : Type u} [Field k]
