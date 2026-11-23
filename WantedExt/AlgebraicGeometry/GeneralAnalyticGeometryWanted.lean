@@ -35,6 +35,7 @@ namespace WantedExt.AlgebraicGeometry.GeneralAnalyticGeometryWanted
 
 open CategoryTheory _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.GeneralAnalyticGeometry
+open MathlibExt.AlgebraicGeometry.AnalyticRealization (ComplexScheme)
 open MathlibExt.AlgebraicGeometry.PolynomialAnalyticSpaces
 
 def_wanted affine_analytic_map (n : ℕ)

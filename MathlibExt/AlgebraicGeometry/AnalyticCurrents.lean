@@ -11,14 +11,23 @@ public import MathlibExt.AlgebraicGeometry.AnalyticCyclePairings
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 /-!
-# Actual real currents and Kähler-current domination
+# Real currents on compact complex manifolds and Kähler-current domination
 
-Currents are linear functionals on actual smooth test forms, bounded by a
-finite family of actual chart derivative seminorms. Their differential has
-the distributional sign (-1)^(p+1). Form currents use the displayed wedge
-and coordinate integral. Positivity is tested on real (n-1,n-1) forms and
-is domination of that literal form current, rather than a free positivity
-label or a numeric oracle. Reference: Demailly--Paun, math/0105176v2, 0.4.
+On a compact complex manifold every smooth form is a test form. A current is a
+linear functional on smooth forms bounded by a finite family of chart
+derivative seminorms on compact subsets of chart domains. Its differential has
+the distributional sign `(-1)^(p+1)`. Form currents use the displayed wedge and
+coordinate integral. Positivity is tested on real `(n-1,n-1)` forms and is
+domination of that literal form current, rather than a free positivity label
+or a numeric oracle.
+
+`CurrentDifferentialTheory` (the differential of a current is again bounded) is
+a hypothesis class; its instance is requested in
+`WantedExt/AlgebraicGeometry/AnalyticCurrentsWanted.lean`.
+
+Reference: J.-P. Demailly and M. Păun, *Numerical characterization of the
+Kähler cone of a compact Kähler manifold*, Ann. of Math. 159 (2004),
+arXiv:math/0105176v2, Theorem 0.4.
 -/
 
 @[expose] public noncomputable section
@@ -28,34 +37,42 @@ namespace MathlibExt.AlgebraicGeometry.AnalyticCurrents
 open KahlerClassGeometry ManifoldDifferentialForms CoordinateFormIntegrals AnalyticCyclePairings
 open scoped Manifold ContDiff BigOperators
 
-variable (n : ℕ) (M : Type) [TopologicalSpace M] [ChartedSpace (Coordinates n) M]
+variable (n : ℕ) (M : Type) [TopologicalSpace M] [CompactSpace M]
+  [ChartedSpace (Coordinates n) M]
   [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
   [ExteriorTheory ℝ (Coordinates n) M]
 
+/-- The `C^m` seminorm of a form on a compact subset of the chart at `a`: the
+supremum of the norms of its chart derivatives of order at most `m`. -/
 def derivativeSeminorm (p : ℕ) (a : M) (K : Set (Coordinates n)) (m : ℕ)
     (alpha : Forms n M p) : ℝ :=
   sSup {r : ℝ | ∃ (j : ℕ), j ≤ m ∧ ∃ z ∈ K,
     r = ‖iteratedFDeriv ℝ j (chartForm ℝ (Coordinates n) M alpha.val a) z‖}
 
-/-- The finite-seminorm bound is the concrete distribution continuity condition. -/
+/-- The finite-seminorm bound is the concrete distribution continuity
+condition; on a compact manifold every smooth form is a test form. -/
 def IsDistribution (p : ℕ) (T : Forms n M p →ₗ[ℝ] ℝ) : Prop :=
   ∃ (r : ℕ) (a : Fin r → M) (K : Fin r → Set (Coordinates n))
     (m : ℕ) (C : ℝ), 0 ≤ C ∧
     (∀ i, IsCompact (K i) ∧ K i ⊆ chartDomain ℝ (Coordinates n) M ⊤ (a i)) ∧
     ∀ alpha, |T alpha| ≤ C * ∑ i, derivativeSeminorm n M p (a i) (K i) m alpha
 
+/-- A current of degree `p` on a compact complex manifold of complex dimension
+`n`: a bounded linear functional on smooth forms of complementary degree. -/
 structure Current (p : ℕ) where
   functional : Forms n M (n * 2 - p) →ₗ[ℝ] ℝ
   bounded : IsDistribution n M (n * 2 - p) functional
   degree_le : p ≤ n * 2
 
+/-- The distributional differential `dT(β) = (-1)^(p+1) T(dβ)`. -/
 def differentialFunctional {p : ℕ} (T : Current n M p) (h : p + 1 ≤ n * 2) :
     Forms n M (n * 2 - (p + 1)) →ₗ[ℝ] ℝ :=
   ((-1 : ℝ) ^ (p + 1)) • T.functional.comp
     ((castFormLinear n M (by omega)).comp
       (d ℝ (Coordinates n) M (n * 2 - (p + 1))))
 
-/-- Ordinary continuity of the fixed distributional differential. -/
+/-- The differential of a current is again bounded. A hypothesis class; its
+instance is requested in `AnalyticCurrentsWanted`. -/
 class CurrentDifferentialTheory : Prop where
   bounded : ∀ p (T : Current n M p) (h : p + 1 ≤ n * 2),
     IsDistribution n M (n * 2 - (p + 1)) (differentialFunctional n M T h)
@@ -76,7 +93,8 @@ def rotation (p : ℕ) (theta : ℝ) (alpha : Forms n M p) :
     RoughForm ℝ (Coordinates n) M ⊤ p :=
   fun x ↦ alpha.val x |>.compContinuousLinearMap
     ((Real.cos theta) • ContinuousLinearMap.id ℝ (Coordinates n) +
-      (Real.sin theta) • (Complex.I • ContinuousLinearMap.id ℂ (Coordinates n)).restrictScalars ℝ)
+      (Real.sin theta) •
+        (Complex.I • ContinuousLinearMap.id ℂ (Coordinates n)).restrictScalars ℝ)
 
 def IsBalancedType (p : ℕ) (alpha : Forms n M p) : Prop :=
   ∀ theta : ℝ, rotation n M p theta alpha = alpha.val

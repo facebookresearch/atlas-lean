@@ -17,16 +17,29 @@ Demailly--Paun, math/0105176v2, Theorem 0.4. Nefness uses closure of the
 actual Kähler cone in real de Rham cohomology. Volume, representation,
 closedness, type and domination use the actual forms, distributional
 differential and coordinate integrals. No bigness/current oracle is input.
+The boundedness of the distributional differential, a hypothesis class in
+`MathlibExt`, is requested here too.
 -/
 
 @[expose] public noncomputable section
 
-namespace MathlibExt.AlgebraicGeometry.AnalyticCurrents
+namespace WantedExt.AlgebraicGeometry.AnalyticCurrentsWanted
 
-open KahlerClassGeometry ManifoldDifferentialForms CoordinateFormIntegrals
+open MathlibExt.AlgebraicGeometry
+open KahlerClassGeometry ManifoldDifferentialForms CoordinateFormIntegrals AnalyticCurrents
 open scoped Manifold ContDiff
 
-theorem_wanted nef_positiveVolume_kahlerCurrent
+/-- The distributional differential of a current is again a current: the
+exterior derivative is continuous for the chart seminorms. -/
+public instance_wanted currentDifferentialTheory (n : ℕ) (M : Type) [TopologicalSpace M]
+    [CompactSpace M] [ChartedSpace (Coordinates n) M]
+    [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
+    [ExteriorTheory ℝ (Coordinates n) M] :
+    CurrentDifferentialTheory n M
+
+/-- Demailly--Paun, Theorem 0.4: on a compact Kähler manifold, a nef real
+`(1,1)` class of positive volume contains a Kähler current. -/
+public theorem_wanted nef_positiveVolume_kahlerCurrent
     (n : ℕ) (hn : 0 < n) (M : Type) [TopologicalSpace M] [T2Space M]
     [CompactSpace M] [ConnectedSpace M] [SecondCountableTopology M]
     [ChartedSpace (Coordinates n) M]
@@ -44,5 +57,5 @@ theorem_wanted nef_positiveVolume_kahlerCurrent
       Represents n M R A hn T alpha ∧
       ∃ epsilon : ℝ, 0 < epsilon ∧ Dominates n M R A hn T eta.form.val epsilon
 
-end MathlibExt.AlgebraicGeometry.AnalyticCurrents
+end WantedExt.AlgebraicGeometry.AnalyticCurrentsWanted
 

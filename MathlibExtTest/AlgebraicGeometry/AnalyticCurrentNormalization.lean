@@ -27,7 +27,8 @@ example : standardRealFrame 1 (1 : Fin 2) = EuclideanSpace.single 0 Complex.I :=
   subst i
   rfl
 
-example (n : ℕ) (M : Type) [TopologicalSpace M] [ChartedSpace (Coordinates n) M]
+example (n : ℕ) (M : Type) [TopologicalSpace M] [CompactSpace M]
+    [ChartedSpace (Coordinates n) M]
     [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [ExteriorTheory ℝ (Coordinates n) M]
     [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] (T : Current n M 1) (h : 2 ≤ n * 2)
     (beta : Forms n M (n * 2 - 2)) :
@@ -36,7 +37,8 @@ example (n : ℕ) (M : Type) [TopologicalSpace M] [ChartedSpace (Coordinates n) 
         (d ℝ (Coordinates n) M (n * 2 - 2) beta)) := by
   simp [differentialFunctional]
 
-example (n : ℕ) (M : Type) [TopologicalSpace M] [ChartedSpace (Coordinates n) M]
+example (n : ℕ) (M : Type) [TopologicalSpace M] [CompactSpace M]
+    [ChartedSpace (Coordinates n) M]
     [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [ExteriorTheory ℝ (Coordinates n) M]
     [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] (T : Current n M 0) (h : 1 ≤ n * 2)
     (beta : Forms n M (n * 2 - 1)) :

@@ -41,7 +41,7 @@ open MathlibExt.AlgebraicGeometry
 open ComplexAnalytification
 open PolynomialAnalyticSpaces
 
-abbrev ComplexScheme := Over (Spec (.of ℂ))
+open MathlibExt.AlgebraicGeometry.AnalyticRealization (ComplexScheme)
 
 def sheafRingedSpace (X : ComplexScheme)
     (O : TopCat.Sheaf CommRingCat (space X)) : RingedSpace where
