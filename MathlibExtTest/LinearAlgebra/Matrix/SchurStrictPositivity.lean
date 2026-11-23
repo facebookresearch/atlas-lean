@@ -31,7 +31,7 @@ example : schurComplement (!![2] : Matrix (Fin 1) (Fin 1) ℝ) !![1] !![1]
   ext i j
   fin_cases i <;> fin_cases j <;>
     norm_num [schurComplement, Matrix.inv_def, Matrix.adjugate_fin_one,
-      Matrix.mul_apply, dotProduct, Matrix.vecMul, Fin.sum_univ_one]
+      Matrix.mul_apply, dotProduct, Matrix.vecMul, Fin.sum_univ_one, -Matrix.transpose_of]
 
 /-- A concrete positive-definite block matrix with decoupled blocks:
 `G = [[2, 0], [0, 3]]` in block form. -/

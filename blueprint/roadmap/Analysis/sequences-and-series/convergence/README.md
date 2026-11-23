@@ -13,5 +13,6 @@ Convergence tests (root test, rearrangement theorem, Stolz–Cesàro), normal an
 - [Power series agreeing at $1/2, 1/3, 1/4, \dots$ have equal coefficients](coeff-eq-of-tsum-eq-on-inv-nat-add-two.md)
 - [Stolz–Cesàro theorem](stolz-cesaro.md)
 - [Summability of a rising-product series](summable-neg-pow-mul-pow-div-prod-add-mu.md)
+- [Tail bound for sums of inverse powers](tsum-inv-pow-succ-lt.md)
 - [Uniform convergence of $\sum (1 - \cos(x/n))$ on compact intervals](tendsto-uniformly-on-sum-one-sub-cos-div.md)
 - [Śleszyński–Pringsheim convergence criterion](cont-fract-tendsto-of-pringsheim.md)

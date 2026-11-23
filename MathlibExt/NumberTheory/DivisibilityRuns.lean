@@ -16,7 +16,8 @@ public import MathlibExt.NumberTheory.GibonacciNumber
 /-!
 # Divisibility runs between recurrence sequences
 
-The Gibonacci recurrence preserves the gcd of adjacent terms and of terms two apart.
+The Gibonacci recurrence preserves the gcd of adjacent terms and of terms two apart, and run
+backwards it recovers $P_{n-1}$ and $P_{n-3}$ from $P_n$ and $P_{n-2}$.
 During a divisibility run, every Gibonacci term in the initial segment is nonzero and divides
 the corresponding generalized Tribonacci term.
 -/
@@ -47,6 +48,27 @@ theorem int_gcd_gibonacciNumber_sub_two (x y : ℤ) (n : ℕ) (hn : 2 ≤ n) :
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le' hn
   rw [Nat.add_sub_cancel, gibonacciNumber, Int.gcd_add_self_left]
   exact adjacent k
+
+/-- **Backward recurrence for Gibonacci numbers.** Let $x, y$ be integers and let
+$(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and $P_1 = y$. For every $n \ge 3$,
+$P_{n-1} = P_n - P_{n-2}$ and $P_{n-3} = P_n - 2 P_{n-2}$.
+
+The paper indexes the sequence from $1$ and states these identities for $n \ge 4$.
+
+Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
+Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Lemma 3
+(`integers-2026-A122-lem-3`). -/
+theorem gibonacciNumber_backward (x y : ℤ) (n : ℕ) (hn : 3 ≤ n) :
+    gibonacciNumber x y (n - 1) = gibonacciNumber x y n - gibonacciNumber x y (n - 2) ∧
+    gibonacciNumber x y (n - 3) = gibonacciNumber x y n - 2 * gibonacciNumber x y (n - 2) := by
+  obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le' hn
+  rw [show k + 3 - 1 = k + 2 by omega, show k + 3 - 2 = k + 1 by omega, Nat.add_sub_cancel]
+  -- Two steps of the forward recurrence give `P (k + 3) = 2 P (k + 1) + P k`.
+  have h₃ : gibonacciNumber x y (k + 3) =
+      gibonacciNumber x y (k + 2) + gibonacciNumber x y (k + 1) := rfl
+  have h₂ : gibonacciNumber x y (k + 2) =
+      gibonacciNumber x y (k + 1) + gibonacciNumber x y k := rfl
+  omega
 
 /-- **Divisibility runs.** For integers $x, y, a, b, c$ and a natural number $L$, let
 $(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and $P_1 = y$, and let $(Q_n)_{n \ge 0}$
