@@ -29,7 +29,10 @@ namespace Cslib.Complexity.Karp
 
 open Cslib.CookLevin Cslib.Logic.PL MetaMathlibExt.ComplexityTheory
 
-/-- `HamVerify` as a host component. -/
+/-- **The HAMPATH verifier as a host component.** The component machine whose program and labels
+are those of the HAMPATH verifier machine, whose stacks are the twelve stacks of that machine (the
+input $X$, the witness $W$, the counters $S, T, N, C, A, B$, the save stacks $E, Z$ and the scratch
+stacks $R, Q$), each over the symbol alphabet of the SAT verifier. -/
 abbrev hamVerifyComp : Host.Comp where
   K := HamVerify.K
   Γ := fun _ => SatVerifier.Sym
@@ -60,7 +63,12 @@ theorem hamPathDec_mem_NP : hamPathDec ∈ NP :=
 instance EmitHam.instFintypeΓ (k : EmitHam.K) : Fintype (EmitHam.Γ k) := by
   cases k <;> infer_instance
 
-/-- The HAMPATH emitter as an `Emitter`. -/
+/-- **The HAMPATH emitter.** The emitter whose stacks, alphabets, labels, program and start label
+are those of the HAMPATH emitter machine, which exits at the machine's label $\mathsf{done}$,
+reads the tokens of a CNF formula from stack $T$ and writes its output bits on stack $O$ (both
+symbol maps being the identity), and has step bound $B(n) = 2000 (n + 1)^5$ for $n$ tokens. Its
+output for a CNF formula $\varphi$ is Sipser's HAMPATH instance of $\varphi$, and for an
+undecodable input the fixed HAMPATH no-instance (two vertices, no arcs, source and target $0$). -/
 abbrev emitHam : Emitter where
   K := EmitHam.K
   Γ := EmitHam.Γ
@@ -87,7 +95,10 @@ theorem out_emitHam (x : List Bool) : TokThen.out emitHam x = reduceHam x := by
   unfold TokThen.out reduceHam
   cases decodeCNF x <;> rfl
 
-/-- **SAT ≤ HAMPATH is polynomial-time**. -/
+/-- **SAT ≤ HAMPATH is polynomial-time.** The map on bit strings that sends a bit string decoding
+to a CNF formula $\varphi$ to Sipser's HAMPATH instance for $\varphi$, and every other bit string
+to the fixed no-instance with two vertices, no arcs and $s = t = 0$, is computable in polynomial
+time. -/
 theorem isPolyTime_reduceHam : IsPolyTime reduceHam := by
   have h := TokThen.isPolyTime_out emitHam
     [.T, .O, .F, .V, .W, .Q, .G, .X, .Y, .C, .M, .P, .N, .R, .L, .J, .D, .Z]
@@ -99,12 +110,18 @@ theorem isPolyTime_reduceHam : IsPolyTime reduceHam := by
 theorem satDec_polyManyOneRed_hamPathDec : PolyManyOneRed satDec hamPathDec :=
   ⟨reduceHam, isPolyTime_reduceHam, satDec_eq_hamPathDec_reduceHam⟩
 
-/-- **HAMPATH is NP-hard**. -/
+/-- **HAMPATH is NP-hard.** Every decision problem $L$ in NP has a polynomial-time many-one
+reduction to HAMPATH: a polynomial-time computable map $f$ on bit strings such that, for every
+bit string $x$, $L$ accepts $x$ exactly when HAMPATH accepts $f(x)$. -/
 theorem hamPathDec_npHard : ∀ L : DecisionProblem, L ∈ NP → PolyManyOneRed L hamPathDec :=
   npHard_of_polyManyOneRed Cslib.Complexity.CookLevin.Hardness.satDec_npHard
     satDec_polyManyOneRed_hamPathDec
 
-/-- **HAMPATH is NP-complete** (Sipser, Theorem 7.46). -/
+/-- **HAMPATH is NP-complete.** HAMPATH lies in NP, and every decision problem $L$ in NP has a
+polynomial-time many-one reduction to HAMPATH: a polynomial-time computable map $f$ on bit
+strings such that, for every bit string $x$, $L$ accepts $x$ exactly when HAMPATH accepts $f(x)$.
+
+Source: Sipser, Theorem 7.46. -/
 theorem hamPathDec_npComplete :
     hamPathDec ∈ NP ∧ ∀ L : DecisionProblem, L ∈ NP → PolyManyOneRed L hamPathDec :=
   ⟨hamPathDec_mem_NP, hamPathDec_npHard⟩

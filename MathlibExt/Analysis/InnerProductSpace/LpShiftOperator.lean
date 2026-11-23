@@ -62,12 +62,16 @@ open scoped _root_.lp _root_.InnerProduct _root_.InnerProductSpace ENNReal
 
 variable {𝕜 : Type*} [RCLike 𝕜]
 
-/-- The forward-shift function on sequences: insert `0` at `0` and shift up by one. -/
+/-- **Forward shift of a sequence.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$. The
+forward shift of a sequence $x : \mathbb{N} \to \mathbb{K}$ is the sequence $S x$ with
+$(S x)_0 = 0$ and $(S x)_{n+1} = x_n$ for every $n \in \mathbb{N}$. -/
 def shiftFun (x : ℕ → 𝕜) : ℕ → 𝕜
   | 0 => 0
   | n + 1 => x n
 
-/-- The backward-shift function on sequences: drop coordinate `0` and shift down by one. -/
+/-- **Backward shift of a sequence.** For any type $K$, the backward shift of a sequence
+$x \colon \mathbb{N} \to K$ is the sequence $n \mapsto x_{n+1}$: it drops the coordinate $x_0$
+and shifts every other coordinate down by one. -/
 def backwardFun (x : ℕ → 𝕜) (i : ℕ) : 𝕜 := x (i + 1)
 
 @[simp] theorem shiftFun_zero (x : ℕ → 𝕜) : shiftFun x 0 = 0 := rfl
@@ -78,8 +82,10 @@ omit [RCLike 𝕜] in
 @[simp] theorem backwardFun_apply (x : ℕ → 𝕜) (i : ℕ) : backwardFun x i = x (i + 1) :=
   rfl
 
-/-- The shifted sequence of an `ℓ²` sequence is in `ℓ²`: its squared
-norms are the squared norms of the original sequence, shifted by one. -/
+/-- **The forward shift of a square-summable sequence is square-summable.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$. For every square-summable sequence $x = (x_0, x_1, x_2, \dots)$ in
+$\mathbb{K}$, the forward-shifted sequence $(0, x_0, x_1, \dots)$ is also square-summable, that is,
+it belongs to $\ell^2(\mathbb{N}, \mathbb{K})$. -/
 theorem memℓp_shiftFun {x : ℓ²(ℕ, 𝕜)} : Memℓp (shiftFun (x : ℕ → 𝕜)) 2 := by
   apply memℓp_gen
   have h := (lp.memℓp x).summable (by simp : (0 : ℝ) < (2 : ℝ≥0∞).toReal)
@@ -87,8 +93,12 @@ theorem memℓp_shiftFun {x : ℓ²(ℕ, 𝕜)} : Memℓp (shiftFun (x : ℕ →
     simpa only [shiftFun_succ] using h
   exact (summable_nat_add_iff 1).mp h'
 
-/-- The backward-shifted sequence of an `ℓ²` sequence is in `ℓ²`: its
-squared norms are a tail of the squared norms of the original sequence. -/
+/-- **The backward shift of an $\ell^2$ sequence is in $\ell^2$.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$. For every $x \in \ell^2(\mathbb{N}, \mathbb{K})$, the backward
+shift $n \mapsto x_{n+1}$ of the sequence $x$ is square-summable, that is, it lies in
+$\ell^2(\mathbb{N}, \mathbb{K})$.
+
+Its squared absolute values are a tail of the squared absolute values of $x$. -/
 theorem memℓp_backwardFun {x : ℓ²(ℕ, 𝕜)} : Memℓp (backwardFun (x : ℕ → 𝕜)) 2 := by
   apply memℓp_gen
   have h := (lp.memℓp x).summable (by simp : (0 : ℝ) < (2 : ℝ≥0∞).toReal)
@@ -96,7 +106,11 @@ theorem memℓp_backwardFun {x : ℓ²(ℕ, 𝕜)} : Memℓp (backwardFun (x : �
     simpa only [backwardFun_apply] using (summable_nat_add_iff 1).mpr h
   exact h'
 
-/-- The forward shift as a linear map. -/
+/-- **Forward shift as a linear map.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$. The
+forward shift is the $\mathbb{K}$-linear map
+$\ell^2(\mathbb{N}, \mathbb{K}) \to \ell^2(\mathbb{N}, \mathbb{K})$ sending $x$ to the forward
+shift of the sequence $x$, that is, to $(0, x_0, x_1, \dots)$, which is again
+square-summable. -/
 noncomputable def shiftLinMap : ℓ²(ℕ, 𝕜) →ₗ[𝕜] ℓ²(ℕ, 𝕜) where
   toFun x := ⟨shiftFun (x : ℕ → 𝕜), memℓp_shiftFun⟩
   map_add' x y := by
@@ -116,7 +130,9 @@ noncomputable def shiftLinMap : ℓ²(ℕ, 𝕜) →ₗ[𝕜] ℓ²(ℕ, 𝕜) w
         simp only [lp.coeFn_smul, shiftFun_succ, Pi.smul_apply, smul_eq_mul,
           RingHom.id_apply]
 
-/-- The backward shift as a linear map. -/
+/-- **Backward shift as a linear map.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$. The
+backward-shift linear map is the $\mathbb{K}$-linear map $B$ from $\ell^2(\mathbb{N}, \mathbb{K})$
+to itself given by $(Bx)_n = x_{n+1}$ for all $x$ and all $n \in \mathbb{N}$. -/
 noncomputable def backwardLinMap : ℓ²(ℕ, 𝕜) →ₗ[𝕜] ℓ²(ℕ, 𝕜) where
   toFun x := ⟨backwardFun (x : ℕ → 𝕜), memℓp_backwardFun⟩
   map_add' x y := by
@@ -129,18 +145,26 @@ noncomputable def backwardLinMap : ℓ²(ℕ, 𝕜) →ₗ[𝕜] ℓ²(ℕ, 𝕜
     simp only [lp.coeFn_smul, backwardFun_apply, Pi.smul_apply, smul_eq_mul,
       RingHom.id_apply]
 
-/-- Pointwise action of the forward-shift linear map. -/
+/-- **Coordinates of the forward-shift linear map.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$. For every $x \in \ell^2(\mathbb{N}, \mathbb{K})$ and every $i \in \mathbb{N}$,
+the $i$-th coordinate of the forward-shift linear map applied to $x$ equals the $i$-th term
+of the forward shift of the sequence $x$, namely $0$ for $i = 0$ and $x_{i-1}$ for
+$i \ge 1$. -/
 theorem shiftLinMap_apply (x : ℓ²(ℕ, 𝕜)) (i : ℕ) :
     shiftLinMap x i = shiftFun (x : ℕ → 𝕜) i :=
   rfl
 
-/-- Pointwise action of the backward-shift linear map. -/
+/-- **Coordinates of the backward-shift linear map.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$. For every $x \in \ell^2(\mathbb{N}, \mathbb{K})$ and every $i \in \mathbb{N}$, the
+$i$-th coordinate of the image of $x$ under the backward-shift linear map $B$ is the $i$-th term
+of the backward shift of the sequence $x$, that is, $(Bx)_i = x_{i+1}$. -/
 theorem backwardLinMap_apply (x : ℓ²(ℕ, 𝕜)) (i : ℕ) :
     backwardLinMap x i = backwardFun (x : ℕ → 𝕜) i :=
   rfl
 
-/-- The squared norms of a shifted sequence sum to the squared norms of
-the original sequence. -/
+/-- **Square sum of the forward shift.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$.
+For every $x \in \ell^2(\mathbb{N}, \mathbb{K})$, the forward shift $S x = (0, x_0, x_1, \dots)$
+of $x$ satisfies $\sum_{i=0}^{\infty} |(S x)_i|^2 = \sum_{i=0}^{\infty} |x_i|^2$. -/
 theorem tsum_shiftFun_norm (x : ℓ²(ℕ, 𝕜)) :
     ∑' i, ‖shiftFun (x : ℕ → 𝕜) i‖ ^ (2 : ℝ≥0∞).toReal =
       ∑' i, ‖(x : ℕ → 𝕜) i‖ ^ (2 : ℝ≥0∞).toReal := by
@@ -150,8 +174,10 @@ theorem tsum_shiftFun_norm (x : ℓ²(ℕ, 𝕜)) :
   simp only [shiftFun_zero, shiftFun_succ, norm_zero,
     Real.zero_rpow (by simp : (2 : ℝ≥0∞).toReal ≠ 0), zero_add]
 
-/-- The squared norms of a backward-shifted sequence sum to at most the
-squared norms of the original sequence: they are a tail sum. -/
+/-- **Square sum of the backward shift.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$.
+For every $x \in \ell^2(\mathbb{N}, \mathbb{K})$, the backward shift $(x_1, x_2, \dots)$ of
+$x$ satisfies $\sum_{i=0}^{\infty} |x_{i+1}|^2 \le \sum_{i=0}^{\infty} |x_i|^2$: the left
+side is a tail of the right side. -/
 theorem tsum_backwardFun_norm_le (x : ℓ²(ℕ, 𝕜)) :
     ∑' i, ‖backwardFun (x : ℕ → 𝕜) i‖ ^ (2 : ℝ≥0∞).toReal ≤
       ∑' i, ‖(x : ℕ → 𝕜) i‖ ^ (2 : ℝ≥0∞).toReal := by
@@ -161,7 +187,11 @@ theorem tsum_backwardFun_norm_le (x : ℓ²(ℕ, 𝕜)) :
   simp only [backwardFun_apply]
   exact le_add_of_nonneg_left (Real.rpow_nonneg (norm_nonneg _) _)
 
-/-- The forward shift preserves norms. -/
+/-- **The forward shift linear map preserves norms.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, and let $S$ be the forward shift on the space $\ell^2(\mathbb{N}, \mathbb{K})$ of
+square-summable sequences in $\mathbb{K}$, viewed as a linear map and given by
+$S(x_0, x_1, \dots) = (0, x_0, x_1, \dots)$. Then $\|Sx\| = \|x\|$ for every
+$x \in \ell^2(\mathbb{N}, \mathbb{K})$. -/
 theorem norm_shiftLinMap_apply (x : ℓ²(ℕ, 𝕜)) : ‖shiftLinMap x‖ = ‖x‖ := by
   have hpow : ‖shiftLinMap x‖ ^ (2 : ℝ≥0∞).toReal = ‖x‖ ^ (2 : ℝ≥0∞).toReal := by
     rw [lp.norm_rpow_eq_tsum (by simp : (0 : ℝ) < (2 : ℝ≥0∞).toReal) (shiftLinMap x),
@@ -171,7 +201,10 @@ theorem norm_shiftLinMap_apply (x : ℓ²(ℕ, 𝕜)) : ‖shiftLinMap x‖ = �
   rw [hexp, Real.rpow_two, Real.rpow_two] at hpow
   exact (sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)).mp hpow
 
-/-- The backward shift does not increase norms. -/
+/-- **The backward shift linear map does not increase norms.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, and let $B$ be the backward shift on the space $\ell^2(\mathbb{N}, \mathbb{K})$ of
+square-summable sequences in $\mathbb{K}$, viewed as a linear map and given by
+$(Bx)_n = x_{n+1}$. Then $\|Bx\| \le \|x\|$ for every $x \in \ell^2(\mathbb{N}, \mathbb{K})$. -/
 theorem norm_backwardLinMap_apply_le (x : ℓ²(ℕ, 𝕜)) : ‖backwardLinMap x‖ ≤ ‖x‖ := by
   have hpow : ‖backwardLinMap x‖ ^ (2 : ℝ≥0∞).toReal ≤ ‖x‖ ^ (2 : ℝ≥0∞).toReal := by
     rw [lp.norm_rpow_eq_tsum (by simp : (0 : ℝ) < (2 : ℝ≥0∞).toReal) (backwardLinMap x),
@@ -181,39 +214,60 @@ theorem norm_backwardLinMap_apply_le (x : ℓ²(ℕ, 𝕜)) : ‖backwardLinMap 
   rw [hexp, Real.rpow_two, Real.rpow_two] at hpow
   exact le_of_sq_le_sq hpow (norm_nonneg _)
 
-/-- The unilateral shift as a bounded operator on `ℓ²(ℕ, 𝕜)`. -/
+/-- **The unilateral shift operator.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$. The
+unilateral shift is the bounded linear operator $S$ on the Hilbert space
+$\ell^2(\mathbb{N}, \mathbb{K})$ of square-summable sequences in $\mathbb{K}$ given by
+$S(x_0, x_1, x_2, \dots) = (0, x_0, x_1, \dots)$. It is bounded because $\|Sx\| = \|x\|$ for every
+$x$. -/
 noncomputable def shiftCLM : ℓ²(ℕ, 𝕜) →L[𝕜] ℓ²(ℕ, 𝕜) :=
   shiftLinMap.mkContinuous 1 (fun x => by
     rw [one_mul]
     exact le_of_eq (norm_shiftLinMap_apply x))
 
-/-- The backward shift as a bounded operator on `ℓ²(ℕ, 𝕜)`. -/
+/-- **Backward shift.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$. The backward shift is the
+bounded linear operator $B$ on $\ell^2(\mathbb{N}, \mathbb{K})$ given by $(Bx)_n = x_{n+1}$ for
+all $x \in \ell^2(\mathbb{N}, \mathbb{K})$ and $n \in \mathbb{N}$. -/
 noncomputable def backwardCLM : ℓ²(ℕ, 𝕜) →L[𝕜] ℓ²(ℕ, 𝕜) :=
   backwardLinMap.mkContinuous 1 (fun x => by
     rw [one_mul]
     exact norm_backwardLinMap_apply_le x)
 
-/-- Pointwise action of the unilateral shift. -/
+/-- **Coordinates of the unilateral shift.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, and
+let $S$ be the unilateral shift on the Hilbert space $\ell^2(\mathbb{N}, \mathbb{K})$ of
+square-summable sequences in $\mathbb{K}$. For every $x \in \ell^2(\mathbb{N}, \mathbb{K})$ and
+every $i \in \mathbb{N}$, the coordinate $(Sx)_i$ is the $i$-th term of the forward shift of $x$:
+$(Sx)_0 = 0$ and $(Sx)_{n+1} = x_n$ for every $n \in \mathbb{N}$. -/
 theorem shiftCLM_apply (x : ℓ²(ℕ, 𝕜)) (i : ℕ) :
     shiftCLM x i = shiftFun (x : ℕ → 𝕜) i :=
   rfl
 
-/-- Pointwise action of the backward shift. -/
+/-- **Coordinates of the backward shift.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$. For
+every $x \in \ell^2(\mathbb{N}, \mathbb{K})$ and every $i \in \mathbb{N}$, the $i$-th coordinate
+of the backward shift $Bx$ is the $i$-th term of the backward shift of the sequence $x$,
+that is, $(Bx)_i = x_{i+1}$. -/
 theorem backwardCLM_apply (x : ℓ²(ℕ, 𝕜)) (i : ℕ) :
     backwardCLM x i = backwardFun (x : ℕ → 𝕜) i :=
   rfl
 
-/-- The unilateral shift is an isometry: `‖S x‖ = ‖x‖`. -/
+/-- **The unilateral shift preserves norms.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, and
+let $S$ be the unilateral shift on the Hilbert space $\ell^2(\mathbb{N}, \mathbb{K})$ of
+square-summable sequences in $\mathbb{K}$, given by $S(x_0, x_1, \dots) = (0, x_0, x_1, \dots)$.
+Then $\|Sx\| = \|x\|$ for every $x \in \ell^2(\mathbb{N}, \mathbb{K})$. -/
 theorem norm_shiftCLM_apply (x : ℓ²(ℕ, 𝕜)) : ‖shiftCLM x‖ = ‖x‖ :=
   norm_shiftLinMap_apply x
 
-/-- The unilateral shift is an isometry of `ℓ²(ℕ, 𝕜)`. -/
+/-- **The unilateral shift preserves distances.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$. The unilateral shift $S$ on $\ell^2(\mathbb{N}, \mathbb{K})$ is an isometry:
+$\|Sx - Sy\| = \|x - y\|$ for all $x, y \in \ell^2(\mathbb{N}, \mathbb{K})$. -/
 theorem isometry_shiftCLM : Isometry (shiftCLM (𝕜 := 𝕜)) := by
   rw [isometry_iff_dist_eq]
   intro x y
   rw [dist_eq_norm, dist_eq_norm, ← map_sub, norm_shiftCLM_apply]
 
-/-- The operator norm of the unilateral shift is `1`. -/
+/-- **The unilateral shift has operator norm one.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, and let $S$ be the unilateral shift on the Hilbert space
+$\ell^2(\mathbb{N}, \mathbb{K})$ of square-summable sequences in $\mathbb{K}$, given by
+$S(x_0, x_1, \dots) = (0, x_0, x_1, \dots)$. Then the operator norm of $S$ is $\|S\| = 1$. -/
 theorem norm_shiftCLM : ‖shiftCLM (𝕜 := 𝕜)‖ = 1 := by
   apply le_antisymm
   · exact LinearMap.mkContinuous_norm_le _ (by norm_num : (0 : ℝ) ≤ 1)
@@ -226,12 +280,17 @@ theorem norm_shiftCLM : ‖shiftCLM (𝕜 := 𝕜)‖ = 1 := by
       mul_one] at hle
     exact hle
 
-/-- The operator norm of the backward shift is at most `1`. -/
+/-- **The backward shift has operator norm at most one.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, and let $B$ be the backward shift on the Hilbert space
+$\ell^2(\mathbb{N}, \mathbb{K})$ of square-summable sequences in $\mathbb{K}$, given by
+$(Bx)_n = x_{n+1}$. Then the operator norm of $B$ satisfies $\|B\| \le 1$. -/
 theorem norm_backwardCLM_le : ‖backwardCLM (𝕜 := 𝕜)‖ ≤ 1 := by
   exact LinearMap.mkContinuous_norm_le _ (by norm_num : (0 : ℝ) ≤ 1)
     (fun x => by rw [one_mul]; exact norm_backwardLinMap_apply_le x)
 
-/-- The adjoint of the unilateral shift is the backward shift. -/
+/-- **Adjoint of the unilateral shift.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$. The
+adjoint of the unilateral shift $S$ on $\ell^2(\mathbb{N}, \mathbb{K})$ is the backward shift
+$B$: $S^* = B$. -/
 theorem adjoint_shiftCLM : (shiftCLM (𝕜 := 𝕜))† = backwardCLM := by
   symm
   rw [ContinuousLinearMap.eq_adjoint_iff]
@@ -242,20 +301,27 @@ theorem adjoint_shiftCLM : (shiftCLM (𝕜 := 𝕜))† = backwardCLM := by
   rw [hs.tsum_eq_zero_add]
   simp [shiftCLM_apply, backwardCLM_apply]
 
-/-- The backward shift is a left inverse of the unilateral shift. -/
+/-- **Left inverse of the unilateral shift.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$.
+The backward shift $B$ is a left inverse of the unilateral shift $S$ on
+$\ell^2(\mathbb{N}, \mathbb{K})$: $BS = I$, where $I$ is the identity operator. -/
 theorem backward_comp_shift : backwardCLM ∘L shiftCLM = (1 : ℓ²(ℕ, 𝕜) →L[𝕜] ℓ²(ℕ, 𝕜)) := by
   ext x i
   simp only [ContinuousLinearMap.comp_apply, backwardCLM_apply, shiftCLM_apply,
     backwardFun_apply, shiftFun_succ, one_apply_eq_self]
 
-/-- The unilateral shift is injective. -/
+/-- **The unilateral shift is injective.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$. The
+unilateral shift on $\ell^2(\mathbb{N}, \mathbb{K})$ is injective. -/
 theorem injective_shiftCLM : Function.Injective (shiftCLM (𝕜 := 𝕜)) := by
   apply Function.LeftInverse.injective (g := backwardCLM)
   intro x
   simpa using DFunLike.congr_fun backward_comp_shift x
 
-/-- Pointwise action of `S ∘ B`: it keeps every coordinate except `0`,
-which it sends to `0`. -/
+/-- **Coordinates of the unilateral shift after the backward shift.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, and on the Hilbert space $\ell^2(\mathbb{N}, \mathbb{K})$ of
+square-summable sequences in $\mathbb{K}$ let $S$ be the unilateral shift,
+$S(x_0, x_1, \dots) = (0, x_0, x_1, \dots)$, and $B$ the backward shift, $(Bx)_n = x_{n+1}$.
+Then for every $x \in \ell^2(\mathbb{N}, \mathbb{K})$ and every $i \in \mathbb{N}$, the coordinate
+$(SBx)_i$ is $0$ if $i = 0$ and is $x_i$ if $i \ne 0$. -/
 theorem shift_comp_backward_apply (x : ℓ²(ℕ, 𝕜)) (i : ℕ) :
     (shiftCLM ∘L backwardCLM) x i = if i = 0 then 0 else x i := by
   cases i with
@@ -267,8 +333,13 @@ theorem shift_comp_backward_apply (x : ℓ²(ℕ, 𝕜)) (i : ℕ) :
       simp only [ContinuousLinearMap.comp_apply, shiftCLM_apply, shiftFun_succ,
         backwardCLM_apply, backwardFun_apply]
 
-/-- `S ∘ B = 1 - rankOne e₀ e₀`, where `e₀` is the first standard basis
-vector: `S ∘ B` is the orthogonal projection onto `{e₀}ᗮ`. -/
+/-- **The unilateral shift composed with the backward shift.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $S$ be the unilateral (forward) shift and $B$ the
+backward shift on $\ell^2(\mathbb{N}, \mathbb{K})$, and let $e_0$ be the first standard
+basis vector. Then $S \circ B = 1 - P$, where $P$ is the rank-one operator
+$P x = \langle e_0, x \rangle e_0 = x_0 e_0$.
+
+Thus $S \circ B$ is the orthogonal projection onto $\{e_0\}^\perp$. -/
 theorem shift_comp_backward :
     shiftCLM ∘L backwardCLM =
       (1 : ℓ²(ℕ, 𝕜) →L[𝕜] ℓ²(ℕ, 𝕜)) -
@@ -292,8 +363,13 @@ theorem shift_comp_backward :
         Pi.smul_apply, lp.coeFn_single, Pi.single_eq_of_ne (Nat.succ_ne_zero n),
         smul_eq_mul, mul_zero, sub_zero]
 
-/-- The unilateral shift is not surjective: `e₀` is not in its range,
-since every vector in the range has `0` in coordinate `0`. -/
+/-- **The unilateral shift is not surjective.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$,
+and let $S$ be the unilateral shift on the Hilbert space $\ell^2(\mathbb{N}, \mathbb{K})$ of
+square-summable sequences in $\mathbb{K}$, given by $S(x_0, x_1, \dots) = (0, x_0, x_1, \dots)$.
+Then $S$ is not surjective.
+
+The first standard basis vector $e_0 = (1, 0, 0, \dots)$ is not in the range of $S$, since every
+vector in the range has $0$ in coordinate $0$. -/
 theorem not_surjective_shiftCLM : ¬ Function.Surjective (shiftCLM (𝕜 := 𝕜)) := by
   intro h
   obtain ⟨x, hx⟩ := h (lp.single 2 0 (1 : 𝕜))

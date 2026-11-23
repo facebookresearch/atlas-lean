@@ -1,0 +1,17 @@
+# Sets with more products than quotients
+
+- [MPTQ set](is-mptqset.md)
+- [A singleton is not an MPTQ set](not-is-mptqset-singleton.md)
+- [Sets containing zero are not MPTQ sets](not-is-mptqset-of-zero-mem.md)
+- [Hegarty: no seven-element MSTD set of integers](not-is-mstdset-int-of-card-eq-seven.md)
+- [Hegarty's classification of MSTD sets of size eight](is-mstdset-int-of-card-eq-eight-iff.md)
+- [Chu's bound for MPTQ sets of positive reals](eight-le-card-of-is-mptqset-of-pos.md)
+- [Chu's bound for MPTQ sets with a negative element](five-le-card-of-is-mptqset-of-neg.md)
+- [Adjoining an element that adds no more products than quotients](not-is-mptqset-insert-of-le.md)
+- [One equal pairing of products excludes the other two](mul-ne-of-mul-eq-of-distinct.md)
+- [At most one square is the product of the other two](at-most-one-sq-eq-mul-of-distinct.md)
+- [Five-element sets with one negative element are not MPTQ sets](not-is-mptqset-of-card-five-one-neg.md)
+- [Five-element sets with two negative elements are not MPTQ sets](not-is-mptqset-of-card-five-two-neg.md)
+- [Adjoining negatives preserves the MPTQ property](is-mptqset-union-neg-iff.md)
+- [No MPTQ set has five elements](not-is-mptqset-of-card-eq-five.md)
+- [Adjoining multiples by a coprime prime preserves the MPTQ property](is-mptqset-union-prime-mul-iff.md)
