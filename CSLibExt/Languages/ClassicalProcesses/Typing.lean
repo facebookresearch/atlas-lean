@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Cslib.Foundations.Logic.InferenceSystem
+public import Cslib.Foundations.Logic.InferenceSystem.Defs
 public import Cslib.Logics.LinearLogic.CLL.Basic
 public import CSLibExt.Languages.PiCalculus.Basic
 public import Mathlib.Data.Finmap
