@@ -27,4 +27,12 @@ example (n : ℕ) :
 
 -- Projective space itself is projective, through the identity closed immersion.
 example (n : ℕ) : IsProjective (projectiveSpace k n) :=
-  ⟨n, 𝟙 _, show IsClosedImmersion (𝟙 _) from inferInstance⟩
+  ⟨n + 1, 𝟙 _, show IsClosedImmersion (𝟙 _) from inferInstance, (Category.id_comp _).symm⟩
+
+-- Projectivity of a scheme over `k` is projectivity of its structure morphism.
+example (X : Over (Spec (.of k))) : IsProjective X ↔ IsProjectiveHom X.hom := Iff.rfl
+
+-- A closed subscheme of projective space is projective.
+example (X : Over (Spec (.of k))) (n : ℕ) (i : X ⟶ projectiveSpace k n)
+    (hi : IsClosedImmersion i.left) : IsProjective X :=
+  ⟨n + 1, i.left, hi, (Over.w i).symm⟩
