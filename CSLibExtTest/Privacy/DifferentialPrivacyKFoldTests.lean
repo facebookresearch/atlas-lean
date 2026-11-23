@@ -226,6 +226,25 @@ theorem test_two_step_pure {X Output : Type*}
     simp
   simpa [hexp, herr] using h
 
+/-- Two-step bound with `ε = 0` and symbolic `δ`: error is exactly `2 * δ`. -/
+theorem test_two_step_nonzero_delta {X Output : Type*}
+    {M : (Fin 1 → X) → PMF Output} {δ : ℝ}
+    (hM : IsApproxDP M ReplaceOne 0 δ)
+    (_hδ : 0 ≤ δ)
+    {d d'' : Fin 1 → X} (d' : Fin 1 → X) (s : Set Output) :
+    (M d).toOuterMeasure s ≤
+      1 * (M d'').toOuterMeasure s + ENNReal.ofReal (2 * δ) := by
+  have hchain := test_chain_two d d' d''
+  have h := isApproxDP_groupPrivacy (ε := 0) (δ := δ) hM hchain s
+  have hexp : Real.exp (((2 : ℕ) : ℝ) * 0) = 1 := by
+    simp
+  have herr : δ * Finset.sum (Finset.range 2)
+      (fun j => Real.exp ((j : ℝ) * 0)) = 2 * δ := by
+    rw [test_err_two, Real.exp_zero]
+    ring
+  rw [hexp, herr, ENNReal.ofReal_one] at h
+  exact h
+
 #print axioms isApproxDP_kfold
 #print axioms isDP_kfold
 #print axioms isDP_groupPrivacy
