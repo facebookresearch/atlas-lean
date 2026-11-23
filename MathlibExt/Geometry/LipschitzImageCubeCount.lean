@@ -65,23 +65,31 @@ open scoped NNReal
 
 namespace LipschitzImageCubeCount
 
-/-- The set of integer unit-cube indices meeting the dilate `t • f (unitCube d)`.
-A vector `v : Fin n → ℤ` is included when some cube point `y` has `t * f y` in
-the half-open cube `[vᵢ, vᵢ + 1)` in every coordinate. -/
+/-- **Integer cube set.** Let $f$ be a map from the unit cube $[0, 1]^d$ to $\mathbb{R}^n$ and let
+$t$ be a real number. The integer cube set of $f$ at scale $t$ is the set of integer vectors
+$v \in \mathbb{Z}^n$ for which some point $y$ of the unit cube satisfies
+$v_i \le t f(y)_i < v_i + 1$ for every coordinate $i$, that is, the set of integer vectors whose
+half-open unit cube $\prod_i [v_i, v_i + 1)$ meets the dilate $t \cdot f([0, 1]^d)$. -/
 def integerCubeSet {n d : ℕ} (f : ↥(unitCube d) → (Fin n → ℝ)) (t : ℝ) :
     Set (Fin n → ℤ) :=
   {v | ∃ y : ↥(unitCube d),
     ∀ i, (v i : ℝ) ≤ t * (f y) i ∧ t * (f y) i < (v i : ℝ) + 1}
 
-/-- Unfolding lemma for `integerCubeSet`. -/
+/-- **Membership in the integer cube set.** Let $f$ be a map from the unit cube $[0, 1]^d$ to
+$\mathbb{R}^n$, let $t$ be a real number and let $v \in \mathbb{Z}^n$. Then $v$ belongs to the
+integer cube set of $f$ at scale $t$ if and only if some point $y$ of the unit cube satisfies
+$v_i \le t f(y)_i < v_i + 1$ for every coordinate $i$. -/
 theorem mem_integerCubeSet_iff {n d : ℕ} {f : ↥(unitCube d) → (Fin n → ℝ)}
     {t : ℝ} {v : Fin n → ℤ} :
     v ∈ integerCubeSet f t ↔ ∃ y : ↥(unitCube d),
       ∀ i, (v i : ℝ) ≤ t * (f y) i ∧ t * (f y) i < (v i : ℝ) + 1 :=
   Iff.rfl
 
-/-- Floor-difference estimate (source lines 85–95): if `|a - b| ≤ D` then
-`‖⌊a⌋ - ⌊b⌋‖ ≤ ⌈D⌉` in `ℤ`. -/
+/-- **Floor differences are bounded by a ceiling.** For real numbers $a$, $b$ and $D$ with
+$|a - b| \le D$, the integers $\lfloor a \rfloor$ and $\lfloor b \rfloor$ satisfy
+$|\lfloor a \rfloor - \lfloor b \rfloor| \le \lceil D \rceil$.
+
+Source: v1 AnalyticClassNumber.lean, lines 85–95. -/
 theorem abs_floor_sub_le_ceil {a b D : ℝ} (hab : |a - b| ≤ D) :
     |⌊a⌋ - ⌊b⌋| ≤ ⌈D⌉ := by
   rw [abs_le]
@@ -104,9 +112,13 @@ theorem abs_floor_sub_le_ceil {a b D : ℝ} (hab : |a - b| ≤ D) :
       linarith [Int.lt_floor_add_one b, Int.le_ceil D]
     omega
 
-/-- Scaled-coordinate estimate (source lines 97–112): Lipschitz control with
-`0 < t ≤ T` and `dist y y' ≤ 1 / T` gives `|t * f y i - t * f y' i| ≤ K`.
-Stated for the unit-cube subtype domain so it applies directly below. -/
+/-- **Dilated Lipschitz maps vary by at most $K$ on cells of size $1/T$.** Let $K \ge 0$, let $f$
+be a $K$-Lipschitz map from the unit cube $[0, 1]^d$ to $\mathbb{R}^n$, both carrying the sup
+distance, and let $t$ and $T$ be real numbers with $0 < t \le T$. If $y$ and $y'$ are points of
+the unit cube at distance at most $1/T$, then $|t f(y)_i - t f(y')_i| \le K$ for every coordinate
+$i$.
+
+Source: v1 AnalyticClassNumber.lean, lines 97–112. -/
 theorem scaled_coord_abs_le {n d : ℕ} {f : ↥(unitCube d) → (Fin n → ℝ)}
     {K : ℝ≥0} (hf : LipschitzWith K f) {y y' : ↥(unitCube d)}
     {t T : ℝ} (ht_pos : 0 < t) (hT_pos : 0 < T) (ht_le : t ≤ T)
@@ -130,11 +142,18 @@ theorem scaled_coord_abs_le {n d : ℕ} {f : ↥(unitCube d) → (Fin n → ℝ)
           (div_le_one_of_le₀ ht_le (le_of_lt hT_pos)) K.coe_nonneg
     _ = (K : ℝ) := by ring
 
-/-- Explicit finite-grid cardinality estimate (source lines 114–222).
-Put `T = ⌈t⌉₊` and partition the cube into `T ^ d` cells with lower-corner
-representatives; Lipschitz control bounds every floor-coordinate offset from
-the representative by `L = ⌈K * √d⌉₊`, and each met integer cube is encoded
-injectively by its cell and an offset in `Fin (2 * L + 3) ^ n`. -/
+/-- **Counting integer cubes met by a dilated Lipschitz image.** Let $d$ and $n$ be natural
+numbers, let $K \ge 0$, and let $f$ be a $K$-Lipschitz map from the unit cube $[0, 1]^d$ to
+$\mathbb{R}^n$, both carrying the sup distance. For every real $t \ge 1$, the cardinality of the
+integer cube set of $f$ at scale $t$, taken as a natural number, is at most
+$\lceil t \rceil^d \, (2 \lceil K \sqrt{d} \rceil + 3)^n$.
+
+The proof puts $T = \lceil t \rceil$, partitions the cube into $T^d$ cells with lower-corner
+representatives, bounds every floor-coordinate offset from the representative by
+$L = \lceil K \sqrt{d} \rceil$, and encodes each met integer cube injectively by its cell and an
+offset in $\{0, \dots, 2L + 2\}^n$.
+
+Source: v1 AnalyticClassNumber.lean, lines 114–222. -/
 theorem card_integerCubeSet_le {n d : ℕ} (f : ↥(unitCube d) → (Fin n → ℝ))
     (K : ℝ≥0) (hf : LipschitzWith K f) (t : ℝ) (ht : 1 ≤ t) :
     Nat.card (integerCubeSet f t) ≤
@@ -273,9 +292,14 @@ theorem card_integerCubeSet_le {n d : ℕ} (f : ↥(unitCube d) → (Fin n → �
           Finset.prod_const]
         simp
 
-/-- Finiteness of the integer-cube set for `t ≥ 1` and a `K`-Lipschitz map.
-The image is bounded (by `‖f 0‖ + K * √d` at the cube origin), so every met
-cube index lies in an explicit finite box. -/
+/-- **Dilated Lipschitz images meet finitely many integer cubes.** Let $d$ and $n$ be natural
+numbers, let $K \ge 0$, and let $f$ be a $K$-Lipschitz map from the unit cube $[0, 1]^d$ to
+$\mathbb{R}^n$, both carrying the sup distance. For every real $t \ge 1$, the integer cube set of
+$f$ at scale $t$ is finite.
+
+The image of $f$ is bounded, since each coordinate of $f(y)$ differs from the corresponding
+coordinate of $f(0)$ by at most $K \sqrt{d}$, so every met cube index lies in an explicit
+finite box. -/
 theorem finite_integerCubeSet {n d : ℕ} (f : ↥(unitCube d) → (Fin n → ℝ))
     (K : ℝ≥0) (hf : LipschitzWith K f) (t : ℝ) (ht : 1 ≤ t) :
     (integerCubeSet f t).Finite := by
@@ -335,9 +359,16 @@ theorem finite_integerCubeSet {n d : ℕ} (f : ↥(unitCube d) → (Fin n → �
       _ ≤ ⌈t * R⌉ := Int.ceil_le_ceil h
       _ ≤ B := by omega
 
-/-- Real `O(t ^ d)` consequence (source lines 283–311): with
-`M = 2 * ⌈K * √d⌉₊ + 3`, the constant `C = 2 ^ d * M ^ n` depends on `f`
-(through `K`), `n`, and `d`, but not on `t`. Uses `⌈t⌉₊ ≤ 2 * t` for `t ≥ 1`. -/
+/-- **Dilated Lipschitz images meet $O(t^d)$ integer cubes.** Let $d$ and $n$ be natural numbers,
+let $K \ge 0$, and let $f$ be a $K$-Lipschitz map from the unit cube $[0, 1]^d$ to $\mathbb{R}^n$,
+both carrying the sup distance. Then there is a real number $C > 0$ such that for every real
+$t \ge 1$, the cardinality of the integer cube set of $f$ at scale $t$, taken as a natural number,
+is at most $C t^d$.
+
+The proof takes $C = 2^d M^n$ with $M = 2 \lceil K \sqrt{d} \rceil + 3$, which depends on $f$ only
+through $K$, and on $n$ and $d$, but not on $t$; it uses $\lceil t \rceil \le 2t$ for $t \ge 1$.
+
+Source: v1 AnalyticClassNumber.lean, lines 283–311. -/
 theorem exists_cubeCount_le_const_mul_pow {n d : ℕ}
     (f : ↥(unitCube d) → (Fin n → ℝ)) (K : ℝ≥0) (hf : LipschitzWith K f) :
     ∃ C : ℝ, 0 < C ∧ ∀ t : ℝ, 1 ≤ t →

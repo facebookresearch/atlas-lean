@@ -20,6 +20,27 @@ public import Mathlib.SetTheory.Cardinal.Regular
 
 open Cardinal Ordinal Set Order
 
+/-! ### Informal statement of `continuumHypothesis_iff_continuum_eq_aleph_one`
+
+1. The continuum hypothesis holds if and only if the continuum equals ℵ₁.
+  2. The continuum hypothesis holds if and only if the continuum is at most ℵ₁.
+  3. The continuum hypothesis holds if and only if the reals have cardinality ℵ₁, i.e. |ℝ| =
+     ℵ₁.
+  4. The continuum hypothesis holds if and only if there is no cardinal strictly between ℵ₀ and the
+     continuum.
+  5. The continuum hypothesis holds if and only if ℶ₁ = ℵ₁.
+  6. Under the continuum hypothesis, x^{ℵ₀} = ℵ₁ for every cardinal x with 2 ≤ x ≤ 𝔠.
+  7. Under the continuum hypothesis, the power set of the natural numbers has cardinality ℵ₁, i.e.
+     |𝒫(ℕ)| = ℵ₁.
+  8. The continuum hypothesis is universe-independent: it holds in one universe if and only if it
+     holds in another.
+  9. Under the continuum hypothesis, the continuum is regular: it equals its own cofinality.
+  10. Under the continuum hypothesis, 2^{ℵ₀} < 2^{ℵ₁}.
+  11. Under the continuum hypothesis, ℵ₁^{ℵ₀} = ℵ₁.
+  12. The continuum hypothesis holds if and only if every set of reals is countable or has
+      cardinality continuum.
+-/
+
 namespace MetaMathlibExt
 
 -- Logic 3: Continuum Hypothesis (CH)

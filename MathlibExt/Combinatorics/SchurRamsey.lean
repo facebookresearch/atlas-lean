@@ -27,15 +27,17 @@ private theorem schur_pair_sub {N : ℕ} {a b : Fin N} (hab : a < b)
     Finset.min'_insert a {b} (Finset.singleton_nonempty b), Finset.max'_singleton,
     Finset.min'_singleton, max_eq_right hab.le, min_eq_left hab.le]
 
-/-- Schur's theorem (Ramsey form): for every `r ≥ 1` there is a bound `S` such that any
-`r`-coloring of `Finset.Icc 1 S` contains a monochromatic solution to `x + y = z` with
-positive integers `x y z` (not necessarily distinct). The witness is only a forcing bound,
-obtained from `MathlibExt.Combinatorics.Ramsey.ramsey_two_uniform` by coloring each pair with
-the color of its difference; it is not the Schur number `S(r)`, the largest `S` that admits a
-coloring with no such solution.
-Source: https://en.wikipedia.org/wiki/Schur%27s_theorem (statement schur-ramsey-s1).
+/-- **Schur's theorem.** For every integer $r \ge 1$ there is a natural number $S$ such that for
+every coloring of the natural numbers with $r$ colors there are $x, y, z \in \{1, \dots, S\}$,
+not necessarily distinct, with the same color and $x + y = z$.
+
+The bound comes from Ramsey's theorem for pairs, by coloring each pair with the color of its
+difference; it is not the Schur number $S(r)$, the largest $S$ for which some $r$-coloring of
+$\{1, \dots, S\}$ has no such solution.
 
 Proves `Wanted` entry `schur_ramsey`.
+
+Source: https://en.wikipedia.org/wiki/Schur%27s_theorem (statement schur-ramsey-s1).
 -/
 theorem schur_ramsey : ∀ r : ℕ, 1 ≤ r →
     ∃ S : ℕ, ∀ c : ℕ → Fin r, ∃ x y z : ℕ,

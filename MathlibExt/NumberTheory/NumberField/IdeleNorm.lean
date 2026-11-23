@@ -65,7 +65,15 @@ private theorem finite_mulSupport_norm (a : FiniteIdeleGroup (𝓞 K) K) :
   have heq : ‖(a v : v.adicCompletion K)‖ = 1 := le_antisymm h1 hge
   exact hv heq
 
-/-- The adelic norm of an idele: archimedean factor times finite finprod factor. -/
+/-- **Adelic norm.** Let $K$ be a number field with ring of integers $\mathcal{O}_K$. For each
+infinite place $w$ of $K$ let $K_w$ be the completion of $K$ at $w$, with the absolute value
+$\|\cdot\|_w$ extending $w$, and let $m_w$ be $1$ if $w$ is real and $2$ if $w$ is complex. For
+each height-one prime $v$ of $\mathcal{O}_K$ let $K_v$ be the $v$-adic completion of $K$, with
+the normalized absolute value $\|\cdot\|_v$. The adelic norm is the monoid homomorphism from the
+topological idele group of $K$ over the Dedekind domain $\mathcal{O}_K$ to the real numbers under
+multiplication that sends an idele $a$, with components $a_w \in K_w^\times$ and
+$a_v \in K_v^\times$, to $\bigl(\prod_w \|a_w\|_w^{m_w}\bigr) \cdot \prod_v \|a_v\|_v$, where the
+product over $v$ is the product of its finitely many factors different from $1$. -/
 public noncomputable def adelicNorm : TopologicalIdeleGroup (𝓞 K) K →* ℝ :=
   show (InfiniteIdeleGroup K × FiniteIdeleGroup (𝓞 K) K) →* ℝ from
   { toFun a :=
@@ -141,24 +149,36 @@ public noncomputable def adelicNorm : TopologicalIdeleGroup (𝓞 K) K →* ℝ 
       rw [hinf, hfin]
       ring }
 
-/-- Evaluation of the adelic norm of an idele. -/
+/-- **Formula for the adelic norm.** Let $K$ be a number field. For every idele $a$ of $K$ (with
+$R = \mathcal{O}_K$), the adelic norm of $a$ equals
+$\bigl(\prod_w \|a_w\|_w^{m_w}\bigr) \cdot \prod_v \|a_v\|_v$, where $w$ runs over the infinite
+places of $K$, $\|\cdot\|_w$ is the absolute value on the completion $K_w$ extending $w$, $m_w$ is
+$1$ for a real place and $2$ for a complex place, $v$ runs over the height-one primes of
+$\mathcal{O}_K$, $\|\cdot\|_v$ is the normalized absolute value on the completion $K_v$, and the
+product over $v$ is the product of its finitely many factors different from $1$. -/
 public theorem adelicNorm_apply (a : TopologicalIdeleGroup (𝓞 K) K) :
     adelicNorm K a =
       (∏ w : InfinitePlace K, ‖(a.1 w : w.Completion)‖ ^ w.mult) *
         ∏ᶠ v : IsDedekindDomain.HeightOneSpectrum (𝓞 K),
           ‖(a.2 v : v.adicCompletion K)‖ := rfl
 
-/-- Norm-one ideles: kernel of the adelic norm. -/
+/-- **Norm-one ideles.** Let $K$ be a number field. The norm-one ideles of $K$ form the kernel of
+the adelic norm, the subgroup of the topological idele group of $K$ (with $R = \mathcal{O}_K$)
+consisting of the ideles whose adelic norm is $1$. -/
 public def normOneIdeles : Subgroup (TopologicalIdeleGroup (𝓞 K) K) :=
   (adelicNorm K).ker
 
-/-- Membership in the norm-one ideles. -/
+/-- **Membership in the norm-one ideles.** Let $K$ be a number field. An idele $a$ of $K$ (with
+$R = \mathcal{O}_K$) lies in the subgroup of norm-one ideles if and only if its adelic norm
+is $1$. -/
 @[simp]
 public theorem mem_normOneIdeles {a : TopologicalIdeleGroup (𝓞 K) K} :
     a ∈ normOneIdeles K ↔ adelicNorm K a = 1 :=
   MonoidHom.mem_ker
 
-/-- The adelic norm of a principal idele is one (product formula). -/
+/-- **Product formula for principal ideles.** Let $K$ be a number field. For every
+$x \in K^\times$, the principal idele of $x$ (its image under the diagonal embedding of $K^\times$
+into the topological idele group, with $R = \mathcal{O}_K$) has adelic norm $1$. -/
 @[simp]
 public theorem adelicNorm_principalEmbedding (x : Kˣ) :
     adelicNorm K (principalEmbedding (𝓞 K) K x) = 1 := by
@@ -199,7 +219,9 @@ public theorem adelicNorm_principalEmbedding (x : Kˣ) :
   rw [hinf, hfin]
   exact NumberField.prod_abs_eq_one (Units.ne_zero x)
 
-/-- Every principal idele has adelic norm one. -/
+/-- **Principal ideles have norm one.** Let $K$ be a number field. The subgroup of principal
+ideles of $K$ (with $R = \mathcal{O}_K$) is contained in the subgroup of norm-one ideles; that
+is, every principal idele has adelic norm $1$. -/
 public theorem principalIdeles_le_normOneIdeles :
     principalIdeles (𝓞 K) K ≤ normOneIdeles K := by
   intro a ha

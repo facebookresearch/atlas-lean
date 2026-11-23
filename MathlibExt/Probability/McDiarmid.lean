@@ -21,16 +21,6 @@ namespace MathlibExt.Probability.McDiarmid
 # McDiarmid bounded-differences
 -/
 
-/-- Product weights are nonnegative. -/
-private lemma prod_weight_nonneg
-    {α : Type*}
-    {n : ℕ}
-    (p : α → ℝ)
-    (hp_nonneg : ∀ a, 0 ≤ p a)
-    (x : Fin n → α) :
-    0 ≤ ∏ i : Fin n, p (x i) :=
-  Finset.prod_nonneg fun _ _ => hp_nonneg _
-
 /-- Product weights sum to one. -/
 private lemma prod_weight_sum
     {α : Type*} [Fintype α]
@@ -348,8 +338,17 @@ private lemma mgf_bound
           rw [hS]
           ring
 
-/-- Finite iid McDiarmid inequality without a `DecidableEq α` instance, for sensitivities with
-`0 < ∑ i, c i ^ 2`. `mcdiarmid_one_sided_finite_iid` is the source-shaped form. -/
+/-- **McDiarmid's inequality when the sensitivities are not all zero.** Let $n \in \mathbb{N}$,
+let $\alpha$ be a finite nonempty set with weights $p : \alpha \to \mathbb{R}$ such that
+$p(a) \ge 0$ for all $a$ and $\sum_{a \in \alpha} p(a) = 1$, and give each $x \in \alpha^n$ the
+product weight $P(x) = \prod_{i<n} p(x_i)$. Let $f : \alpha^n \to \mathbb{R}$ and let
+$c_0, \dots, c_{n-1} \ge 0$ be such that $|f(x) - f(y)| \le c_i$ whenever $x, y \in \alpha^n$
+agree in every coordinate other than $i$, and suppose $\sum_{i<n} c_i^2 > 0$. Write
+$\mu = \sum_{x \in \alpha^n} P(x) f(x)$ for the mean of $f$. Then for every real $t > 0$,
+$$
+\sum_{x \in \alpha^n,\ f(x) - \mu \ge t} P(x) \le \exp\Big(-\frac{2t^2}{\sum_{i<n} c_i^2}\Big).
+$$
+-/
 theorem mcdiarmid_one_sided_finite_iid_general
     {α : Type*} [Fintype α] [Nonempty α]
     {n : ℕ}
@@ -384,8 +383,18 @@ theorem mcdiarmid_one_sided_finite_iid_general
         field_simp
         ring
 
-/-- When `∑ i, c i ^ 2 = 0`, every coordinate change leaves `f` unchanged, so the upper tail
-`t ≤ f x - mu` has probability `0` for every `t > 0`. -/
+/-- **The upper tail vanishes when every sensitivity is zero.** Let $n \in \mathbb{N}$, let
+$\alpha$ be a finite nonempty set with weights $p : \alpha \to \mathbb{R}$ such that
+$p(a) \ge 0$ for all $a$ and $\sum_{a \in \alpha} p(a) = 1$, and give each $x \in \alpha^n$ the
+product weight $P(x) = \prod_{i<n} p(x_i)$. Let $f : \alpha^n \to \mathbb{R}$ and let
+$c_0, \dots, c_{n-1} \ge 0$ be such that $|f(x) - f(y)| \le c_i$ whenever $x, y \in \alpha^n$
+agree in every coordinate other than $i$, and suppose $\sum_{i<n} c_i^2 = 0$. Write
+$\mu = \sum_{x \in \alpha^n} P(x) f(x)$ for the mean of $f$. Then for every real $t > 0$,
+$$
+\sum_{x \in \alpha^n,\ f(x) - \mu \ge t} P(x) = 0.
+$$
+
+Indeed, changing one coordinate never changes $f$, so the upper tail is empty. -/
 theorem mcdiarmid_one_sided_finite_iid_of_sum_sq_eq_zero
     {α : Type*} [Fintype α] [Nonempty α]
     {n : ℕ}
@@ -414,11 +423,22 @@ theorem mcdiarmid_one_sided_finite_iid_of_sum_sq_eq_zero
     simpa only [neg_mul, Function.comp_def, id] using
       Real.tendsto_exp_neg_atTop_nhds_zero.comp (Filter.tendsto_id.atTop_mul_const ht)
   exact le_antisymm (ge_of_tendsto htend ((Filter.eventually_ge_atTop 0).mono hle))
-    (Finset.sum_nonneg fun x _ => prod_weight_nonneg p hp_nonneg x)
+    (Finset.sum_nonneg fun _ _ => Finset.prod_nonneg fun _ _ => hp_nonneg _)
 
 set_option linter.unusedDecidableInType false in
 /--
-Finite iid McDiarmid inequality gives exponential tail bound above the mean.
+**McDiarmid's bounded-differences inequality, finite i.i.d. case.** Let $n \in \mathbb{N}$, let
+$\alpha$ be a finite nonempty set with weights $p : \alpha \to \mathbb{R}$ such that
+$p(a) \ge 0$ for all $a$ and $\sum_{a \in \alpha} p(a) = 1$, and give each $x \in \alpha^n$ the
+product weight $P(x) = \prod_{i<n} p(x_i)$. Let $f : \alpha^n \to \mathbb{R}$ and let
+$c_0, \dots, c_{n-1} \ge 0$ be such that $|f(x) - f(y)| \le c_i$ whenever $x, y \in \alpha^n$
+agree in every coordinate other than $i$. Write $\mu = \sum_{x \in \alpha^n} P(x) f(x)$ for the
+mean of $f$. Then for every real $t > 0$,
+$$
+\sum_{x \in \alpha^n,\ f(x) - \mu \ge t} P(x) \le \exp\Big(-\frac{2t^2}{\sum_{i<n} c_i^2}\Big),
+$$
+where a quotient by $0$ is read as $0$, so the bound is $1$ when every $c_i$ is $0$.
+
 Source: C. McDiarmid, Surveys in Combinatorics 1989, 148-188, DOI 10.1017/CBO9781107359949.008.
 When every `c i` is `0` (including `n = 0`), the right-hand side is `Real.exp 0 = 1` by Lean's
 convention `x / 0 = 0`; `mcdiarmid_one_sided_finite_iid_of_sum_sq_eq_zero` gives the sharp value
