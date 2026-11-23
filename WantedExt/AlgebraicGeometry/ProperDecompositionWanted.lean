@@ -95,14 +95,14 @@ public theorem_wanted semismall_support_relevance (X Y : ComplexScheme)
     [IsComplexVariety X] [IsComplexVariety Y] [PerverseSheafTheory Y]
     (d : ℕ) [SmoothOfRelativeDimension d X.hom] (f : X ⟶ Y) [IsProper f.left]
     (P : PerverseSheaf Y) [Simple P]
-    (a : (ProperDecomposition.perverseAmbient Y).obj P ⟶
+    (a : (perverseAmbient Y).obj P ⟶
       ProperDecomposition.normalizedDirectImage X Y f d) [IsSplitMono a]
     (S : ComplexScheme) [IsComplexVariety S] (s n : ℕ)
     [SmoothOfRelativeDimension s S.hom] (i : S ⟶ Y) [IsImmersion i.left]
     (p : space S)
     (hstalk : ¬ IsZero
       (((DerivedCategory.homologyFunctor _ (-(s : ℤ))).obj
-        ((ProperDecomposition.perverseAmbient Y).obj P)).presheaf.stalk ((spaceMap i) p)))
+        ((perverseAmbient Y).obj P)).presheaf.stalk ((spaceMap i) p)))
     (hfiber : topologicalKrullDim (pointFiber f ((spaceMap i) p)) =
       ((n : ℕ∞) : WithBot ℕ∞))
     (hsemismall : 2 * n + s ≤ d) : 2 * n + s = d

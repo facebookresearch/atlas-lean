@@ -64,9 +64,4 @@ example (d r : ℕ) :
 /-- The fiber over a complex point is the pullback along that point. -/
 example (p : space Y) : pointFiber f p = pullback f.left p.hom := rfl
 
-/-- The perverse ambient functor forgets to the derived category. -/
-example [IsComplexVariety Y] [PerverseSheafTheory Y] (P : PerverseSheaf Y) :
-    (perverseAmbient Y).obj P = P.obj.obj :=
-  rfl
-
 end MathlibExtTest.AlgebraicGeometry.ProperDecomposition

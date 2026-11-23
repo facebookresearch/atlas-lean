@@ -68,9 +68,4 @@ def DefectLE {X Y : ComplexScheme} (f : X ⟶ Y) (d r : ℕ) : Prop :=
 def pointFiber {X Y : ComplexScheme} (f : X ⟶ Y) (p : space Y) : Scheme.{0} :=
   pullback f.left p.hom
 
-/-- The underlying derived object of a perverse object. -/
-def perverseAmbient (Y : ComplexScheme) [IsComplexVariety Y] [PerverseSheafTheory Y] :
-    PerverseSheaf Y ⥤ RationalDerived (space Y) :=
-  (perverseTStructure Y).heart.ι ⋙ (boundedConstructible Y).ι
-
 end MathlibExt.AlgebraicGeometry.ProperDecomposition

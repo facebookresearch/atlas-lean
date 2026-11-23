@@ -332,6 +332,23 @@ abbrev PerverseSheaf (X : ComplexScheme) [IsComplexVariety X]
     [PerverseSheafTheory X] :=
   (perverseTStructure X).heart.FullSubcategory
 
+/-- The inclusion of perverse sheaves into the derived category of rational
+sheaves: the inclusion of the heart, followed by that of the bounded
+constructible complexes. -/
+def perverseAmbient (X : ComplexScheme) [IsComplexVariety X] [PerverseSheafTheory X] :
+    PerverseSheaf X ⥤ RationalDerived (space X) :=
+  (perverseTStructure X).heart.ι ⋙ (boundedConstructible X).ι
+
+instance perverseAmbient_faithful (X : ComplexScheme) [IsComplexVariety X]
+    [PerverseSheafTheory X] : (perverseAmbient X).Faithful := by
+  dsimp only [perverseAmbient]
+  infer_instance
+
+instance perverseAmbient_full (X : ComplexScheme) [IsComplexVariety X]
+    [PerverseSheafTheory X] : (perverseAmbient X).Full := by
+  dsimp only [perverseAmbient]
+  infer_instance
+
 /-- Heart-valued perverse cohomology, computed from the degree-zero slice
 of the shifted complex. -/
 def perverseCohomology (X : ComplexScheme) [IsComplexVariety X]
