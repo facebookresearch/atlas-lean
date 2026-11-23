@@ -387,6 +387,8 @@ class GitTest(unittest.TestCase):
 
     def tool(self, *args):
         env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
+        # These disposable repositories model a local bump, not the outer CI pull request.
+        env.pop("GITHUB_ACTIONS", None)
         return subprocess.run([sys.executable, str(TOOL), *args], cwd=self.repo, capture_output=True,
                               text=True, env=env)
 
