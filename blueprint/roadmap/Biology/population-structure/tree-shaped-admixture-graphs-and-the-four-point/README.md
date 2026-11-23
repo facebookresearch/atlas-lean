@@ -8,11 +8,6 @@
 - [Three nonzero f4 of a quartet show that f2 is not a tree metric](not-is-tree-metric-of-f4-ne-zero.md)
 - [Equal quartet pair sums make all three f4 vanish](f4-eq-zero-of-pair-sums-eq.md)
 
-## Cuts of an admixture graph
-
-- [Cut lemma for lineage visit probabilities](sum-visit-eq-one-of-is-antichain-of-sepa.md)
-- [Visit probabilities across a cut of an admixture graph sum to one](sum-visit-cut-eq-one.md)
-
 ## Lineages on a tree-shaped admixture graph
 
 - [In a tree-shaped admixture graph every non-root node has one parent](exists-parents-eq-singleton-of-is-tree.md)

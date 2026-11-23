@@ -9855,7 +9855,7 @@
   "Domains/Biology/PopulationGenetics/Admixture/FourPoint": {"to": "Biology/population-structure", "title": "Tree-shaped admixture graphs and the four-point condition"},
   "Domains/Biology/PopulationGenetics/Admixture/GaussianProjection": {"to": "Biology/population-structure", "title": "Chi-square law of Gaussian projection residuals"},
   "Domains/Biology/PopulationGenetics/Admixture/GaussianSurrogate": {"to": "Biology/population-structure", "title": "Gaussian surrogate of the drift model"},
-  "Domains/Biology/PopulationGenetics/Admixture/GeneralGraph": {"to": "Biology/population-structure", "title": "Tree-shaped admixture graphs and the four-point condition"},
+  "Domains/Biology/PopulationGenetics/Admixture/GeneralGraph": {"to": "Biology/population-structure", "title": "Cuts in admixture graphs"},
   "Domains/Biology/PopulationGenetics/Admixture/Geometry": {"to": "Biology/population-structure", "title": "Inner-product geometry and realizability of f-statistics"},
   "Domains/Biology/PopulationGenetics/Admixture/JacobianRankIdentifiability": {"to": "Biology/population-structure", "title": "Local non-identifiability of the three-population admixture graph"},
   "Domains/Biology/PopulationGenetics/Admixture/LinearIdentifiability": {"to": "Biology/population-structure", "title": "Identifiability of admixture-graph edge lengths"},
