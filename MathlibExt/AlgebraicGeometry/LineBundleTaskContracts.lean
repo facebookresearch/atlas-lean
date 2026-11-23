@@ -37,6 +37,11 @@ open _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 open MathlibExt.AlgebraicGeometry.AlgebraicLineBundleFamilies
 
+/- The tensor powers are the shared `SchemeModulesTensor.power`
+(`L^{⊗ 0} = 𝒪_X`, `L^{⊗ (n + 1)} = L^{⊗ n} ⊗ L`), re-exported for users of this
+namespace. -/
+export _root_.MathlibExt.AlgebraicGeometry.SchemeModulesTensor (power)
+
 universe u
 
 /-- The actual presheaf category with its sectionwise tensor. -/
@@ -83,11 +88,6 @@ theorem tensorMap_eq {X : Scheme.{u}} {L L' M M' : X.Modules}
   erw [(forgetModules X).map_comp f f', (forgetModules X).map_comp g g',
     ← tensorHom_comp_tensorHom (C := ModulePresheaves X)]
   exact (sheafifyModules X).map_comp _ _
-
-/-- Actual nonnegative tensor powers, with exponent zero the structure sheaf. -/
-def power {X : Scheme.{u}} (L : X.Modules) : ℕ → X.Modules
-  | 0 => structureModule X
-  | n + 1 => moduleTensor X (power L n) L
 
 /-- The actual functorial map on the tensor power. -/
 def powerMap {X : Scheme.{u}} {L M : X.Modules} (f : L ⟶ M) :
