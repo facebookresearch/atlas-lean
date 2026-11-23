@@ -22,6 +22,6 @@
 
 ## Related topics
 
-- Miller–Rabin primality test:
+- [Miller–Rabin primality test](../../../../ComputerScience/algebraic-and-numerical-algorithms/miller-rabin-primality-test/README.md):
   the test whose non-witnesses are the strong pseudoprime bases, with Rabin's bound of at most
   $(n - 1)/4$ such bases.

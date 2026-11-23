@@ -72,7 +72,7 @@ private lemma intDegree_add_le_of_le {x y : RatFunc F} {m : ℤ}
   · simp [hxy, hm]
   by_cases hy0 : y = 0
   · simpa [hy0] using hx
-  exact (RatFunc.intDegree_add_le hy0 hxy).trans (max_le hx hy)
+  exact (RatFunc.intDegree_add_le hxy).trans (max_le hx hy)
 
 private lemma intDegree_mul_le_of_le {x y : RatFunc F} {m n : ℤ}
     (hmn : 0 ≤ m + n) (hx : x.intDegree ≤ m) (hy : y.intDegree ≤ n) :
@@ -96,12 +96,11 @@ private lemma intDegree_add_eq_left_of_lt {x y : RatFunc F}
     rw [RatFunc.intDegree_neg] at hdegrees
     omega
   apply le_antisymm
-  · exact (RatFunc.intDegree_add_le hy0 hsum0).trans
+  · exact (RatFunc.intDegree_add_le hsum0).trans
       (max_le le_rfl hdegree.le)
-  · have hneg : -y ≠ 0 := neg_ne_zero.mpr hy0
-    have hrecover : (x + y) + -y = x := by ring
+  · have hrecover : (x + y) + -y = x := by ring
     have hrecover0 : (x + y) + -y ≠ 0 := by rw [hrecover]; exact hx0
-    have hbound := RatFunc.intDegree_add_le hneg hrecover0
+    have hbound := RatFunc.intDegree_add_le hrecover0
     rw [hrecover, RatFunc.intDegree_neg] at hbound
     by_contra hnot
     have hlt : (x + y).intDegree < x.intDegree := lt_of_not_ge hnot
@@ -167,8 +166,15 @@ private lemma degreeDataAtFour_of_pointCount_bounds (N : ℕ) (hpos : 1 ≤ N) (
     norm_num [quadraticDegree] at hn hn1
     nlinarith [sq_nonneg (2 * n + a)]
 
-/-- Over the two-element field, the elementary cardinality bound already supplies Manin degree
-data for every Weierstrass equation. -/
+/-- **Manin degree data over the field with two elements.** Let $F$ be a field with exactly
+two elements, let $W$ be any Weierstrass curve over $F$, and let $N$ be the number of
+nonsingular points of $W$ over $F$, including the point at infinity. Then there is Manin degree
+data for $(2, N)$: a function $d : \mathbb{Z} \to \mathbb{N}$ with $d(0) = 2$, $d(-1) = N$,
+$d(n - 1) + d(n + 1) = 2 d(n) + 2$ for every integer $n$, and no integer $n$ with
+$d(n) = d(n + 1) = 0$.
+
+The proof needs only the elementary bounds $1 \le N \le 2 \cdot 2 + 1$; the point at infinity
+gives the lower bound. -/
 theorem manin_degree_data_of_card_eq_two [Finite F] (hF : Nat.card F = 2)
     (W : WeierstrassCurve F) :
     Nonempty (MathlibExt.AlgebraicGeometry.EllipticCurve.ManinDegreeData
@@ -177,8 +183,15 @@ theorem manin_degree_data_of_card_eq_two [Finite F] (hF : Nat.card F = 2)
   simpa only [hF] using degreeDataAtTwo_of_pointCount_bounds
     (Nat.card W.toAffine.Point) Nat.card_pos (by omega)
 
-/-- Over the four-element field, the elementary two-points-per-fiber bound supplies Manin degree
-data for every Weierstrass equation. -/
+/-- **Manin degree data over the field with four elements.** Let $F$ be a field with exactly
+four elements, let $W$ be any Weierstrass curve over $F$, and let $N$ be the number of
+nonsingular points of $W$ over $F$, including the point at infinity. Then there is Manin degree
+data for $(4, N)$: a function $d : \mathbb{Z} \to \mathbb{N}$ with $d(0) = 4$, $d(-1) = N$,
+$d(n - 1) + d(n + 1) = 2 d(n) + 2$ for every integer $n$, and no integer $n$ with
+$d(n) = d(n + 1) = 0$.
+
+The proof needs only the elementary bounds $1 \le N \le 2 \cdot 4 + 1$; the point at infinity
+gives the lower bound. -/
 theorem manin_degree_data_of_card_eq_four [Finite F] (hF : Nat.card F = 4)
     (W : WeierstrassCurve F) :
     Nonempty (MathlibExt.AlgebraicGeometry.EllipticCurve.ManinDegreeData
@@ -521,7 +534,7 @@ private lemma eval_charTwoFrobeniusPolynomial [Finite F] (x : F) :
 private lemma charTwoFrobeniusPolynomial_ne_zero [Finite F] :
     (charTwoFrobeniusPolynomial : F[X]) ≠ 0 := by
   let fintypeF : Fintype F := Fintype.ofFinite F
-  have hdegree := FiniteField.X_pow_card_sub_X_natDegree_eq F
+  have hdegree := Polynomial.natDegree_X_pow_sub_X (R := F)
     (@Fintype.one_lt_card F fintypeF _)
   intro hzero
   unfold charTwoFrobeniusPolynomial at hzero
@@ -538,7 +551,7 @@ private lemma charTwoFrobeniusPolynomial_splits [Finite F] :
   unfold charTwoFrobeniusPolynomial
   rw [@Nat.card_eq_fintype_card F fintypeF,
     FiniteField.roots_X_pow_card_sub_X,
-    FiniteField.X_pow_card_sub_X_natDegree_eq F Fintype.one_lt_card]
+    Polynomial.natDegree_X_pow_sub_X Fintype.one_lt_card]
   simp
 
 private lemma exists_mem_charTwoFiber_of_value_eq_zero [Finite F] [CharP F 2]
@@ -3812,7 +3825,15 @@ private lemma supersingular_degree_computation [Finite F] [CharP F 2]
     recurrence := superD_recurrence W
     noAdjacentZeros := superNoAdjacentZeros W }⟩
 
-/-- Manin's degree computation in either characteristic-two normal form. -/
+/-- **Manin degree data for the characteristic-two normal forms.** Let $F$ be a finite field of
+characteristic $2$ with $q$ elements, let $W$ be a Weierstrass curve over $F$ with nonzero
+discriminant that is in one of the two characteristic-two normal forms
+$y^2 + xy = x^3 + a_2 x^2 + a_6$ (that is, $a_1 = 1$ and $a_3 = a_4 = 0$) or
+$y^2 + a_3 y = x^3 + a_4 x + a_6$ (that is, $a_1 = a_2 = 0$), and let $N$ be the number of
+points of $W$ over $F$, including the point at infinity. Then there is Manin degree data for
+$(q, N)$: a function $d : \mathbb{Z} \to \mathbb{N}$ with $d(0) = q$, $d(-1) = N$,
+$d(n - 1) + d(n + 1) = 2 d(n) + 2$ for every integer $n$, and no integer $n$ with
+$d(n) = d(n + 1) = 0$. -/
 theorem manin_degree_data_of_isCharTwoNF [Finite F] [CharP F 2]
     (W : WeierstrassCurve F) [W.IsElliptic] [W.IsCharTwoNF] :
     Nonempty (MathlibExt.AlgebraicGeometry.EllipticCurve.ManinDegreeData
@@ -3825,14 +3846,23 @@ theorem manin_degree_data_of_isCharTwoNF [Finite F] [CharP F 2]
       | of_j_ne_zero => exact ordinary_degree_computation W
       | of_j_eq_zero => exact supersingular_degree_computation W
 
-/-- Hasse's bound for a characteristic-two elliptic curve in either Manin normal form. -/
+/-- **Hasse bound for the characteristic-two normal forms.** Let $F$ be a finite field of
+characteristic $2$ with $q$ elements and let $W$ be a Weierstrass curve over $F$ with nonzero
+discriminant that is in one of the two characteristic-two normal forms
+$y^2 + xy = x^3 + a_2 x^2 + a_6$ (that is, $a_1 = 1$ and $a_3 = a_4 = 0$) or
+$y^2 + a_3 y = x^3 + a_4 x + a_6$ (that is, $a_1 = a_2 = 0$). If $N$ is the number of points of
+$W$ over $F$, including the point at infinity, then $(q + 1 - N)^2 \le 4q$. -/
 theorem hasse_bound_of_isCharTwoNF [Finite F] [CharP F 2]
     (W : WeierstrassCurve F) [W.IsElliptic] [W.IsCharTwoNF] :
     (((Nat.card F : ℤ) + 1 - (Nat.card W.toAffine.Point : ℤ)) ^ 2 ≤
       4 * (Nat.card F : ℤ)) :=
   (Classical.choice (manin_degree_data_of_isCharTwoNF W)).hasse_bound
 
-/-- Hasse's bound for the ordinary characteristic-two Manin normal form. -/
+/-- **Hasse bound for the ordinary characteristic-two normal form.** Let $F$ be a finite field of
+characteristic $2$ with $q$ elements and let $W$ be a Weierstrass curve
+$y^2 + xy = x^3 + a_2 x^2 + a_6$ over $F$ (that is, $a_1 = 1$ and $a_3 = a_4 = 0$) with nonzero
+discriminant. If $N$ is the number of points of $W$ over $F$, including the point at infinity,
+then $(q + 1 - N)^2 \le 4q$. -/
 theorem hasse_bound_of_isCharTwoJNeZeroNF [Finite F] [CharP F 2]
     (W : WeierstrassCurve F) [W.IsElliptic] [W.IsCharTwoJNeZeroNF] :
     (((Nat.card F : ℤ) + 1 - (Nat.card W.toAffine.Point : ℤ)) ^ 2 ≤
@@ -3840,7 +3870,11 @@ theorem hasse_bound_of_isCharTwoJNeZeroNF [Finite F] [CharP F 2]
   let _ : W.IsCharTwoNF := .of_j_ne_zero
   exact hasse_bound_of_isCharTwoNF W
 
-/-- Hasse's bound for the supersingular characteristic-two Manin normal form. -/
+/-- **Hasse bound for the supersingular characteristic-two normal form.** Let $F$ be a finite
+field of characteristic $2$ with $q$ elements and let $W$ be a Weierstrass curve
+$y^2 + a_3 y = x^3 + a_4 x + a_6$ over $F$ (that is, $a_1 = a_2 = 0$) with nonzero discriminant.
+If $N$ is the number of points of $W$ over $F$, including the point at infinity, then
+$(q + 1 - N)^2 \le 4q$. -/
 theorem hasse_bound_of_isCharTwoJEqZeroNF [Finite F] [CharP F 2]
     (W : WeierstrassCurve F) [W.IsElliptic] [W.IsCharTwoJEqZeroNF] :
     (((Nat.card F : ℤ) + 1 - (Nat.card W.toAffine.Point : ℤ)) ^ 2 ≤

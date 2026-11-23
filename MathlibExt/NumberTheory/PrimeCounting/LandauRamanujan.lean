@@ -1393,11 +1393,11 @@ private lemma lr_sq_mul_mem {k m : ℕ} (hk0 : k ≠ 0) (hm0 : m ≠ 0)
     intro hdvd
     have hmem : q ∈ m.primeFactors := Nat.mem_primeFactors.mpr ⟨hqP, hdvd, hm0⟩
     exact (lrH_eq_one.mp hm).2 q hmem hq3
-  have h1 : padicValNat q m = 0 := padicValNat.eq_zero_of_not_dvd hqm
-  have h2 : padicValNat q (k ^ 2 * m) = 2 * padicValNat q k := by
-    rw [padicValNat.mul (pow_ne_zero 2 hk0) hm0, padicValNat.pow, h1, add_zero]
-  rw [h2]
-  exact ⟨padicValNat q k, by ring⟩
+  have h1 : multiplicity q m = 0 := multiplicity_eq_zero_of_not_dvd hqm
+  have h2 : multiplicity q (k ^ 2 * m) = 2 * multiplicity q k := by
+    rw [Nat.multiplicity_mul (pow_ne_zero 2 hk0) hm0, Nat.multiplicity_pow, h1, add_zero]
+  rw [Nat.padicValNat_def, h2]
+  exact ⟨multiplicity q k, by ring⟩
 
 /-- Uniqueness of the `k ^ 2 * m` decomposition. -/
 private lemma lr_sq_mul_inj {k m k' m' : ℕ} (hk0 : k ≠ 0) (hm0 : m ≠ 0)
@@ -1409,33 +1409,33 @@ private lemma lr_sq_mul_inj {k m k' m' : ℕ} (hk0 : k ≠ 0) (hm0 : m ≠ 0)
     intro p
     by_cases hpP : p.Prime
     · have : Fact p.Prime := ⟨hpP⟩
-      have hval : padicValNat p (k ^ 2 * m) = padicValNat p (k' ^ 2 * m') := by
+      have hval : multiplicity p (k ^ 2 * m) = multiplicity p (k' ^ 2 * m') := by
         rw [h]
-      rw [padicValNat.mul (pow_ne_zero 2 hk0) hm0, padicValNat.pow,
-        padicValNat.mul (pow_ne_zero 2 hk0') hm0', padicValNat.pow] at hval
+      rw [Nat.multiplicity_mul (pow_ne_zero 2 hk0) hm0, Nat.multiplicity_pow,
+        Nat.multiplicity_mul (pow_ne_zero 2 hk0') hm0', Nat.multiplicity_pow] at hval
       by_cases hp3 : p % 4 = 3
-      · have hvm : padicValNat p m = 0 := by
-          apply padicValNat.eq_zero_of_not_dvd
+      · have hvm : multiplicity p m = 0 := by
+          apply multiplicity_eq_zero_of_not_dvd
           intro hdvd
           have hmem : p ∈ m.primeFactors :=
             Nat.mem_primeFactors.mpr ⟨hpP, hdvd, hm0⟩
           exact (lrH_eq_one.mp hm).2 p hmem hp3
-        have hvm' : padicValNat p m' = 0 := by
-          apply padicValNat.eq_zero_of_not_dvd
+        have hvm' : multiplicity p m' = 0 := by
+          apply multiplicity_eq_zero_of_not_dvd
           intro hdvd
           have hmem : p ∈ m'.primeFactors :=
             Nat.mem_primeFactors.mpr ⟨hpP, hdvd, hm0'⟩
           exact (lrH_eq_one.mp hm').2 p hmem hp3
-        have hkk2 : padicValNat p k = padicValNat p k' := by omega
+        have hkk2 : multiplicity p k = multiplicity p k' := by omega
         rw [Nat.factorization_def _ hpP, Nat.factorization_def _ hpP, hkk2]
-      · have hvk : padicValNat p k = 0 := by
-          apply padicValNat.eq_zero_of_not_dvd
+      · have hvk : multiplicity p k = 0 := by
+          apply multiplicity_eq_zero_of_not_dvd
           intro hdvd
           have hmem : p ∈ k.primeFactors :=
             Nat.mem_primeFactors.mpr ⟨hpP, hdvd, hk0⟩
           exact hp3 ((lrG_eq_one.mp hk).2 p hmem)
-        have hvk' : padicValNat p k' = 0 := by
-          apply padicValNat.eq_zero_of_not_dvd
+        have hvk' : multiplicity p k' = 0 := by
+          apply multiplicity_eq_zero_of_not_dvd
           intro hdvd
           have hmem : p ∈ k'.primeFactors :=
             Nat.mem_primeFactors.mpr ⟨hpP, hdvd, hk0'⟩
@@ -1463,7 +1463,7 @@ private lemma lr_exists_sq_mul {n : ℕ} (hn1 : 1 ≤ n)
     intro p hp
     have hpf : p ∈ n.primeFactors := Finset.mem_of_mem_filter p hp
     have hpp := (hmemS p hp).1
-    rw [Nat.factorization_def n hpp]
+    rw [Nat.factorization_def n hpp, ← Nat.padicValNat_def]
     exact hchar p hpf (hmemS p hp).2
   have hksq : k ^ 2 = ∏ p ∈ S, p ^ (n.factorization p) := by
     rw [hkdef, pow_two, ← Finset.prod_mul_distrib]
@@ -3323,30 +3323,29 @@ private lemma lr_sqrt_log_div_tendsto :
 
 @[expose] public section
 
-/-- Landau–Ramanujan theorem: the count of distinct naturals `m ≤ x` of the form
-    `m = a ^ 2 + b ^ 2` is asymptotically equivalent to
-    `c₀ * x / Real.sqrt (Real.log x)` for some constant `c₀ > 0`.
+/-- **Landau–Ramanujan theorem.** For real $x$, let $B(x)$ be the number of natural numbers
+$m \le x$, including $m = 0$, that can be written as $m = a^2 + b^2$ with natural numbers $a$
+and $b$. Then there is a constant $c_0 > 0$ such that $B(x)$ is asymptotically equivalent to
+$c_0 x / \sqrt{\log x}$ as $x \to \infty$.
 
-    Scope note: this statement asserts only the existence of an unspecified
-    positive constant `c₀`; it does not identify `c₀` with the
-    Landau–Ramanujan constant (the Euler product over the primes
-    `p ≡ 3 (mod 4)` in the cited result). That identification is an
-    intentional omission relative to the source.
+This only asserts the existence of some positive constant $c_0$; it does not identify $c_0$
+with the Landau–Ramanujan constant (the Euler product over the primes $p \equiv 3 \pmod 4$ in
+the cited result). That identification is an intentional omission relative to the source.
 
-    Controlling source: Labib Haddad and Charles Helou,
-    "Representation of Integers by Near Quadratic Sequences,"
-    Journal of Integer Sequences 15 (2012),
-    `https://cs.uwaterloo.ca/journals/JIS/VOL15/Helou/helou3.tex`,
-    lines 483–486. Complete-source SHA-256
-    `5441e9d5677d97ca6a836146d5725a10a21bb1e60efa374e366cd803626cd1b1`;
-    exact cited span (CRLF-preserving) SHA-256
-    `ce727da79eee9763f20dcbafc1b04c02d719c74c58648eddb71f0e34524e91bf`.
-    Proof-method source (distinct from the statement source above): the proof
-    adapts Wirsing's mean-value method as presented in Gérald Tenenbaum,
-    *Introduction to Analytic and Probabilistic Number Theory*, Chapter III.4.
-    Concept ID: jis_dep_8a097e6d8b6de10033dfb175;
-    grounded candidate: jis_grounded_b8d7333e5ca6cb47b348367c;
-    corrected mentions/papers/proof-uses: 2/1/1.
+Source: Labib Haddad and Charles Helou,
+"Representation of Integers by Near Quadratic Sequences,"
+Journal of Integer Sequences 15 (2012),
+`https://cs.uwaterloo.ca/journals/JIS/VOL15/Helou/helou3.tex`,
+lines 483–486. Complete-source SHA-256
+`5441e9d5677d97ca6a836146d5725a10a21bb1e60efa374e366cd803626cd1b1`;
+exact cited span (CRLF-preserving) SHA-256
+`ce727da79eee9763f20dcbafc1b04c02d719c74c58648eddb71f0e34524e91bf`.
+Proof-method source (distinct from the statement source above): the proof
+adapts Wirsing's mean-value method as presented in Gérald Tenenbaum,
+*Introduction to Analytic and Probabilistic Number Theory*, Chapter III.4.
+Concept ID: jis_dep_8a097e6d8b6de10033dfb175;
+grounded candidate: jis_grounded_b8d7333e5ca6cb47b348367c;
+corrected mentions/papers/proof-uses: 2/1/1.
 
 Proves `Wanted` entry `landau_ramanujan_asymptotic`. -/
 public theorem landau_ramanujan_asymptotic :

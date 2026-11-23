@@ -739,23 +739,6 @@ private lemma ntCls_map {α β : Type*} {r : α → α → Prop} {r' : β → β
   · rintro ⟨w, hw, rfl⟩
     exact ntEqvGen_map hiff hw
 
-/-- Forward map on image subtypes. -/
-private def ntImgFwd {α β : Type*} (f : β → α) (s : Set β) (a : ↥s) : ↥(f '' s) :=
-  ⟨f a.1, a.1, a.2, rfl⟩
-
-/-- Images under an injection preserve `Nat.card`. -/
-private lemma ntCard_image {α β : Type*} {f : β → α} (hf : Function.Injective f)
-    (s : Set β) : Nat.card ↥(f '' s) = Nat.card ↥s := by
-  have hinj : Function.Injective (ntImgFwd f s) := by
-    intro a1 a2 h
-    have hval : f a1.1 = f a2.1 := congrArg Subtype.val h
-    exact Subtype.ext (hf hval)
-  have hsurj : Function.Surjective (ntImgFwd f s) := by
-    intro b
-    obtain ⟨a, haS, hab⟩ := b.2
-    exact ⟨⟨a, haS⟩, Subtype.ext hab⟩
-  exact (Nat.card_eq_of_bijective (ntImgFwd f s) ⟨hinj, hsurj⟩).symm
-
 /-- Image membership as an explicit existential. -/
 private lemma ntMem_image {α β : Type*} {f : β → α} {S' : Set β} {x : α}
     (h : x ∈ f '' S') : ∃ b ∈ S', f b = x := h
@@ -775,7 +758,7 @@ private noncomputable def ntMapFwd {α β : Type*} {r : α → α → Prop}
       (ntCls_map hf hiff hclosed
         (Classical.indefiniteDescription _ C'.2).1).symm),
     by
-      rw [ntCard_image hf]
+      rw [Nat.card_image_of_injective hf]
       exact (Classical.indefiniteDescription _ C'.2).2.2.2⟩
 
 /-- Backward class map for transport. -/
@@ -806,7 +789,7 @@ private noncomputable def ntMapBwd {α β : Type*} {r : α → α → Prop}
               (Classical.indefiniteDescription _
                 (ntMem_image
                   (Classical.indefiniteDescription _ C.2).2.1)).1)))
-      rw [← ntCard_image hf, ← himg]
+      rw [← Nat.card_image_of_injective hf, ← himg]
       exact hcardC⟩
 
 /-- Transport of the class count along an injective closed-range map. -/
@@ -8848,7 +8831,7 @@ private lemma ntDistance_reaches_aux {n m : ℕ} {reps : List (List ℕ)}
       label (ntCode σ) = k.val → distance (ntCode σ) = d →
         Relation.EqvGen (ntMove n) σ (rep k) := by
   induction d using Nat.strong_induction_on with
-  | h d ih =>
+  | ind d ih =>
       intro σ k hlabel hdist
       have hparts := ntClassOk_parts n m reps label distance
         (ntClassOk_code hcert σ)
@@ -9560,7 +9543,7 @@ private lemma ntDist7_reaches_aux (d : ℕ) :
       Relation.EqvGen (ntMove 7) σ (ntEven 7) ∨
         Relation.EqvGen (ntMove 7) σ (ntOdd 5) := by
   induction d using Nat.strong_induction_on with
-  | h d ih =>
+  | ind d ih =>
       intro σ hdist hd
       have hok := (List.all_eq_true.mp ntCertificate7) (ntCode σ)
         (ntCode_mem_permutations' σ)
@@ -10808,18 +10791,27 @@ end MetaMathlibExt
 
 namespace MetaMathlibExt
 
-/-- For n ≥ 7, the number of nontrivial equivalence classes of S_n under the {1234,
-3412}-equivalence is (n^3 + 6n^2 - 55n + 54)/6, conjectured by Ma and given by sequence A330395.
+/-- **Nontrivial classes under {1234, 3412}-pattern replacement.** Let $n \ge 7$ and let $S_n$ be
+the group of permutations of $\{0, 1, \dots, n - 1\}$. A move takes $\sigma \in S_n$ with positions
+$i_1 < i_2 < i_3 < i_4$ such that $\sigma(i_1) < \sigma(i_2) < \sigma(i_3) < \sigma(i_4)$ to the
+permutation $\tau$ with $\tau(i_1) = \sigma(i_3)$, $\tau(i_2) = \sigma(i_4)$,
+$\tau(i_3) = \sigma(i_1)$, $\tau(i_4) = \sigma(i_2)$ and $\tau(j) = \sigma(j)$ for every other
+position $j$; that is, it replaces an occurrence of the pattern $1234$ by one of $3412$. Call two
+permutations equivalent when one is reached from the other by a finite sequence of moves and
+reverse moves. Then the number of equivalence classes with more than one element is
+$(n^3 + 6n^2 - 55n + 54)/6$.
+
+This formula was conjectured by Ma; its values form sequence A330395 in the OEIS. The proof
+decomposes the exceptional set into swap classes and a generic part. Kernel-checked finite
+certificates handle the $S_5$ and $S_6$ classes, reachability in $S_7$ and the deletion boundary
+in $S_8$. Point insertion then gives a recurrence, whose solution is the displayed polynomial.
+
+Proves `Wanted` entry `card_nontrivial_1234_3412_classes`.
+
 Source: Quinn Perian, Bella Xu, and Alexander Lu Zhang, "Counting the Nontrivial Equivalence Classes
 of Sn Under {1234,3412}-Pattern-Replacement", Journal of Integer Sequences 23 (2020), Article
 20.10.2, Theorem `thm:nontrivial`, lines 172-175,
 <https://cs.uwaterloo.ca/journals/JIS/VOL23/Zhang/zhang6.tex>.
-
-Proof: Decompose the exceptional set into swap classes and a generic part. Kernel-checked
-finite certificates handle the `S₅`/`S₆` classes, `S₇` reachability, and the `S₈` deletion
-boundary. Point insertion then gives the recurrence, whose solution is the displayed polynomial.
-
-Proves `Wanted` entry `card_nontrivial_1234_3412_classes`.
 -/
 public theorem card_nontrivial_1234_3412_classes :
     ∀ (n : ℕ), 7 ≤ n →

@@ -6,4 +6,5 @@ Number fields and rings of integers: quadratic and cyclotomic fields, discrimina
 - [Cyclotomic fields](cyclotomic-fields/README.md)
 - [Discriminants, ramification and ideals](discriminants-ramification/README.md)
 - [Adeles, ideles and class field theory](adeles-class-field-theory/README.md)
+- [Number fields and embeddings](number-fields-embeddings/README.md)
 - [Shanks cubic polynomial](shanks-cubic-polynomial.md)

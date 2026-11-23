@@ -17,6 +17,7 @@ class BlueprintTaxonomyTests(unittest.TestCase):
         taxonomy = wiki.load_taxonomy()
         cases = {
             "MathlibExt": ("Economics", "Quantum"),
+            "Domains": ("Biology", "Chemistry", "Economics", "MaterialsScience", "OperationsResearch", "Transport", "Urban"),
             "CSLibExt": ("Privacy", "Tactic"),
             "PhyslibExt": (
                 "Chemistry", "ClassicalMechanics", "EarthScience",
@@ -28,6 +29,45 @@ class BlueprintTaxonomyTests(unittest.TestCase):
                 with self.subTest(library=library, root=root):
                     subject = wiki.LIBRARIES[library].get(root, root)
                     self.assertIn(subject, taxonomy["subjects"])
+
+    def test_extracted_declarations_are_published_in_their_source_field(self):
+        # A stable Lean name may retain its original namespace after the source module moves.
+        # Index the actual modules: other declarations in those namespaces still belong to Biology.
+        cases = {
+            "MathlibExt/Probability/Causality/PotentialOutcomes": "Probability/nonparametric-survival",
+            "MathlibExt/Probability/ChineseRestaurant": "Probability/bayesian-statistics",
+            "MathlibExt/Combinatorics/SimpleGraph/TreeMetric": "GraphTheory/graph-families-and-operations",
+            "Domains/Biology/StatisticalGenetics/MendelianRandomization": "Biology/statistical-genetics",
+        }
+        placements = wiki.load_taxonomy()["placements"]
+        annotations = sync_wiki.read_annotations()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for module, field in cases.items():
+                with self.subTest(module=module):
+                    self.assertEqual(placements[module]["to"], field)
+                path = Path(module + ".lean")
+                (root / path).parent.mkdir(parents=True, exist_ok=True)
+                (root / path).write_bytes((wiki.ROOT / path).read_bytes())
+            index = wiki.index_project(root)
+
+        covered = set()
+        seen = set()
+        for shard, rows in annotations.items():
+            for row in rows:
+                name = sync_wiki.lean_name(row)
+                if name not in index.declarations:
+                    continue
+                module = index.declarations[name].path.with_suffix("").as_posix()
+                page = sync_wiki.subject_path(row)
+                with self.subTest(name=name):
+                    self.assertNotIn(name, seen)
+                    self.assertTrue(page.is_file(), page)
+                    self.assertTrue(page.is_relative_to(wiki.ROADMAP / cases[module]), page)
+                    self.assertEqual(shard, sync_wiki.links_file(page))
+                covered.add(module)
+                seen.add(name)
+        self.assertEqual(covered, set(cases))
 
     def test_library_fallbacks_name_subjects(self):
         taxonomy = wiki.load_taxonomy()

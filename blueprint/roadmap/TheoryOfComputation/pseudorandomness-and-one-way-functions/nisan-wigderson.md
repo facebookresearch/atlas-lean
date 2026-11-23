@@ -29,7 +29,7 @@ $s - m a 2^a$ up to error $\varepsilon$ (Vadhan, Construction 7.23 and Theorem 7
   hardness to average-case hardness with a derandomized version of the XOR lemma before applying
   the Nisan-Wigderson generator.
 
-- Undirected ST-connectivity is in L (Reingold):
+- [Undirected ST-connectivity is in L (Reingold)](../polynomial-time-problems/undirected-s-t-connectivity/ustcon-in-l.md):
   the other derandomization landmark of the same circle of ideas, unconditional but for space,
   obtained from expander graphs rather than from hardness.
 

@@ -117,7 +117,7 @@ private lemma twoGroupDesign_gram (m n : ℕ) :
     (twoGroupDesign m n)ᵀ * twoGroupDesign m n = !![(m : ℝ), 0; 0, (n : ℝ)] := by
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [twoGroupDesign, Matrix.mul_apply, Fintype.sum_sum_type]
+    simp [twoGroupDesign, Matrix.mul_apply, Fintype.sum_sum_type, -Matrix.transpose_of]
 
 private lemma twoGroupDesign_isUnit_gram {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0) :
     IsUnit ((twoGroupDesign m n)ᵀ * twoGroupDesign m n) := by
@@ -139,7 +139,7 @@ private lemma olsEstimator_twoGroupDesign {m n : ℕ} (hm : m ≠ 0) (hn : n ≠
   ext j
   fin_cases j <;>
     simp [twoGroupDesign, mulVec, dotProduct, Matrix.mul_apply, Fintype.sum_sum_type,
-      Fin.sum_univ_two, Finset.mul_sum, div_eq_inv_mul]
+      Fin.sum_univ_two, Finset.mul_sum, div_eq_inv_mul, -Matrix.transpose_of]
 
 private lemma contrastVariance_twoGroupDesign {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0) :
     contrastVariance (twoGroupDesign m n) ![1, -1] = 1 / m + 1 / n := by
@@ -170,28 +170,6 @@ private lemma tStatistic_twoGroupDesign {m n : ℕ} (hm : m ≠ 0) (hn : n ≠ 0
   rw [hnum, hrss]
   rfl
 
-/-- Standardizing an i.i.d. `N(μ, v)` sample coordinatewise gives an i.i.d. standard normal
-sample (same argument as the private helper of `LinearModel.Inference`). -/
-private lemma hasLaw_pi_gaussianReal_standardize' {n : ℕ} (μ : ℝ) {v : NNReal} (hv : v ≠ 0) :
-    HasLaw (fun x : Fin n → ℝ => (√(v : ℝ))⁻¹ • (x - fun _ => μ))
-      (Measure.pi fun _ : Fin n => gaussianReal 0 1)
-      (Measure.pi fun _ : Fin n => gaussianReal μ v) := by
-  have hv0 : (0 : ℝ) < v := NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hv)
-  have hcoord : (gaussianReal μ v).map (fun y => (√(v : ℝ))⁻¹ * (y - μ)) =
-      gaussianReal 0 1 := by
-    rw [show (fun y => (√(v : ℝ))⁻¹ * (y - μ)) = (fun y => (√(v : ℝ))⁻¹ * y) ∘ (fun y => y - μ)
-        from rfl, ← Measure.map_map (by fun_prop) (by fun_prop), gaussianReal_map_sub_const,
-      gaussianReal_map_const_mul, sub_self, mul_zero]
-    congr 1
-    ext
-    simp [inv_pow, Real.sq_sqrt hv0.le, hv0.ne']
-  refine ⟨by fun_prop, ?_⟩
-  change (Measure.pi fun _ : Fin n => gaussianReal μ v).map
-    (fun x i => (√(v : ℝ))⁻¹ * (x i - μ)) = _
-  rw [Measure.pi_map_pi (f := fun _ y => (√(v : ℝ))⁻¹ * (y - μ))
-    (hμ := fun _ => by rw [hcoord]; infer_instance) (fun _ => by fun_prop)]
-  simp only [hcoord]
-
 /-- The standardized noise of the two-group model is i.i.d. standard normal: for independent
 samples `X ~ N(μ₁, v)^m`, `Y ~ N(μ₂, v)^n`, `v^{-1/2} (Sum.elim X Y - D (μ₁, μ₂))` has law
 `N(0, 1)^{m+n}`. -/
@@ -204,9 +182,9 @@ private lemma hasLaw_twoGroup_noise {m n : ℕ} (μ₁ μ₂ : ℝ) {v : NNReal}
       (Measure.pi fun _ : Fin m ⊕ Fin n => gaussianReal 0 1) P := by
   have := hX.isProbabilityMeasure
   have hpair := (indepFun_iff_hasLaw_prodMk_prod hX hY).1 hXY
-  have hstd := ((hasLaw_pi_gaussianReal_standardize' (n := m) μ₁ hv).measurePreserving
+  have hstd := ((hasLaw_pi_gaussianReal_standardize (n := m) μ₁ hv).measurePreserving
       (by fun_prop)).prod
-    ((hasLaw_pi_gaussianReal_standardize' (n := n) μ₂ hv).measurePreserving (by fun_prop))
+    ((hasLaw_pi_gaussianReal_standardize (n := n) μ₂ hv).measurePreserving (by fun_prop))
   have hsum := measurePreserving_sumPiEquivProdPi_symm
     (fun _ : Fin m ⊕ Fin n => gaussianReal 0 1)
   have h := (hsum.comp hstd).comp_hasLaw hpair
@@ -458,7 +436,7 @@ private lemma hasLaw_sumSq_div_var {m : ℕ} (hm : 2 ≤ m) (μ : ℝ) {v : NNRe
   have hσ : 0 < √(v : ℝ) := Real.sqrt_pos.mpr hv0
   have h := hasLaw_rss_div_sq (interceptDesign_isUnit_gram (n := m) (by omega))
     (by rw [Fintype.card_fin, Fintype.card_fin]; omega) (fun _ => μ) (√(v : ℝ)) hσ
-    ((hasLaw_pi_gaussianReal_standardize' μ hv).fun_comp hX)
+    ((hasLaw_pi_gaussianReal_standardize μ hv).fun_comp hX)
   rw [Fintype.card_fin, Fintype.card_fin] at h
   refine h.congr (ae_of_all _ fun ω => ?_)
   simp only

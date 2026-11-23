@@ -6,7 +6,6 @@
 - [One-step rotation stays in the rotation orbit](comp-fin-rotate-mem-tuple-rotation-orbit.md)
 - [Identity-product necklaces over a product of cyclic groups](identity-product-necklace-count-pi-cycli.md)
 - [Totient-weighted divisor sum identity](sum-div-mul-eq-sum-totient-mul.md)
-- [Divisibility of a product through the gcd](int-dvd-mul-iff-div-gcd-dvd.md)
 - [Counting solutions of $x^b = 1$ in a cyclic group](card-pow-eq-one-zmod.md)
 - [Counting identity-product tuples with a given period](card-identity-product-period.md)
 - [Splitting periodic identity-product tuples by smallest period](card-identity-product-period-eq-sum-smal.md)

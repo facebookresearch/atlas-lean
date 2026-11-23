@@ -123,7 +123,8 @@ private theorem two_mul_gaussianReal_inter_Ioi {A : Set ℝ} (hA : MeasurableSet
     ext x
     simp [hsym]
   have hIci : gaussianReal 0 1 (A ∩ Set.Ici 0) = gaussianReal 0 1 (A ∩ Set.Ioi 0) :=
-    measure_congr (EventuallyEqSet.inter (ae_eq_refl A) (Ioi_ae_eq_Ici' (measure_singleton 0)).symm)
+    measure_congr (EventuallyEqSet.inter (EventuallyEqSet.refl _ A)
+      (Ioi_ae_eq_Ici' (measure_singleton 0)).symm)
   rw [← measure_inter_add_sdiff A measurableSet_Iio, Set.sdiff_eq, Set.compl_Iio, hIio, hIci,
     two_mul]
 
@@ -260,9 +261,10 @@ private theorem aemeasurable_logLikelihood_sub {p : ℝ → 𝓧 → ℝ} {θ₀
     ((Real.measurable_log.comp hp0).comp_aemeasurable (hX i))
 
 open Set in
-/-- Second-order Taylor bound at the fixed point `θ₀` with a third-derivative bound `m` on a
-ball: `|f θ₀ - f θ - (θ₀ - θ) f'(θ) - (θ₀ - θ)² / 2 · f''(θ₀)| ≤ m |θ - θ₀|³`. -/
-private theorem abs_taylor_two_le {f f₁ f₂ f₃ : ℝ → ℝ} {θ₀ δ θ m : ℝ}
+/-- If `f`, `f₁`, `f₂` have derivatives `f₁`, `f₂`, `f₃` on `ball θ₀ δ` and `|f₃| ≤ m` there, then
+for `θ` in the ball, `|f θ₀ - f θ - (θ₀ - θ) * f₁ θ - (θ₀ - θ) ^ 2 / 2 * f₂ θ₀| ≤ m * |θ - θ₀| ^ 3`.
+-/
+theorem abs_taylor_two_le {f f₁ f₂ f₃ : ℝ → ℝ} {θ₀ δ θ m : ℝ}
     (hf : ∀ t ∈ Metric.ball θ₀ δ, HasDerivAt f (f₁ t) t)
     (hf₁ : ∀ t ∈ Metric.ball θ₀ δ, HasDerivAt f₁ (f₂ t) t)
     (hf₂ : ∀ t ∈ Metric.ball θ₀ δ, HasDerivAt f₂ (f₃ t) t)

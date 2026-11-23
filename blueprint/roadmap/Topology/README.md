@@ -28,12 +28,16 @@ Topology also reaches data. Topological data analysis builds
 [simplicial complexes from point clouds](algebraic-topology/simplicial-complexes-from-point-clouds/README.md) at every
 scale, summarizes their homology by [persistence modules and barcodes](algebraic-topology/persistence-modules-and-barcodes/README.md),
 and draws data sets with [Mapper](algebraic-topology/mapper/README.md); its zero-dimensional part is
-single-linkage hierarchical clustering.
+[single-linkage hierarchical clustering](../ComputerScience/machine-learning/unsupervised-learning/single-linkage-hierarchical-clustering/README.md).
 
+- [Topological spaces and continuous maps](topological-spaces/README.md)
 - [General topology](general-topology/README.md)
 - [Descriptive set theory](descriptive-set-theory/README.md)
 - [Continuum theory and infinite-dimensional topology](continua-infinite-dimensional/README.md)
 - [Topological groups](topological-groups/README.md)
+- [Topological modules and vector spaces](topological-modules/README.md)
 - [Algebraic topology](algebraic-topology/README.md)
 - [Manifolds and geometric topology](manifolds-geometric-topology/README.md)
 - [Knot theory](knot-theory/README.md)
+- [Compactness and compactifications](compactness/README.md)
+- [Simplicial homotopy theory](simplicial-homotopy-theory/README.md)
