@@ -44,7 +44,7 @@ These rules apply to any PR that changes the graph: `blueprint/roadmap/`,
 `scripts/taxonomy.json`, `scripts/wiki-sync.json`, `scripts/card-moves.jsonl` or
 `scripts/mathgraph-map.jsonl`. They add only what ATLAS
 needs to AutoformBot's
-[blueprint format](https://github.com/facebookresearch/autoform-bot/blob/6126f7fce521c0040796d0b67d952d36ee051f3f/autoform_cli/reference/blueprint-format.md),
+[blueprint format](https://github.com/facebookresearch/autoform-bot/blob/b1fe52ba726bb675d9c974203fce427fe4927ff9/autoform_cli/reference/blueprint-format.md),
 at the commit in `.github/autoform-ref`; where ATLAS needs something the
 format lacks, open an AutoformBot issue rather than diverge.
 
@@ -73,12 +73,40 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   against that source as a linked page is reviewed against its declaration.
 - **Leave no gaps.** A planned page writes its own `## Depends on` and
   `## Proof depends on`: nothing else records its prerequisites, and they
-  count toward its readiness. A planned page is never a task. It links a
+  count toward its readiness. It links a
   declaration only once that declaration states what the page does and its
   Lean records the page's prerequisites (see
   [Expanding a node](#expanding-a-node)). Until then it stays unlinked, even
   if a declaration for it already exists; once linked it drops its own
   dependency sections.
+- **Count what is not yet in Lean.** A planned page that states a result is a
+  statement not yet in Lean, and Autoform counts it as one once it has a
+  `kind`, which `lean-facts` gives it at build time: a held page takes that of
+  the declaration it holds back, as a linked page would get it (a
+  `theorem_wanted` is a theorem), except that a page stating a result held back
+  as a definition (a `def` of a proposition, say) records `theorem` or `lemma`,
+  which it takes instead; any other page that builds with no Lean link takes
+  the kind its annotation records, as
+  `"extensions": {"org.atlas-wiki": {"kind": "theorem"}}` (or `lemma`, `def`,
+  `abbrev`, `instance`, `structure`, `class`, `inductive` or `opaque`). A held
+  definition may so become a theorem, never a held theorem a definition:
+  `lean-facts` refuses any other kind a held page records, and any value that
+  is not a kind, such as a misspelt one. A page
+  whose row still names a declaration of this project in a Lean link, as a
+  reference, gets none, as Autoform would take that declaration for the
+  page's own. Its readiness is Autoform's, from the prerequisites it lists:
+  ready to state, planned, or not ready when marked `not_ready`; its topic does
+  not read fully proved while it remains, and once ready it is a task. So such
+  a page lists under `## Depends on` every page its statement uses, planned
+  ones included. A page whose main statement defines an object, and which
+  also proves results about it, records a definition kind and counts once; it
+  links a declaration only once that declaration states the whole page (Leave
+  no gaps), and its results count each only on pages of their own. A page
+  whose main statement is a result records `theorem` or `lemma`, even if it
+  first defines notation. An exposition records no kind, as
+  Autoform's format gives it no declaration, and nothing counts it. A page
+  whose result the Lean states under a declaration it does not link is
+  relinked to it rather than given a kind.
 - **One page per result.** Search the vault and pinned Mathlib before adding a
   page, and link an existing one instead of restating it. Pages for documented
   declarations come from `sync_wiki.py declarations`, then may be edited; a
@@ -102,7 +130,8 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   status, so a folder still to expand does not look finished.
 - **An expansion replaces the node** with pages beside it that together cover
   its mathematics at a sensible granularity, deletes the node's page and
-  annotation (its `id` is never reused), and repoints every link to it. A new
+  annotation (its `id` is never reused) and records its retirement in the move
+  ledger, and repoints every link to it. A new
   page that is still high-level is a new marked node. Follow
   [Expanding a node](#expanding-a-node), which says when a new page may
   become a wanted statement.
@@ -147,7 +176,9 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   edge is derived from the statements, with witnesses, which keeps the card
   map honest about what uses what.
 - **A move that retires an address goes into `scripts/card-moves.jsonl`,**
-  and a page gets an `id` before it moves. `scripts/cards.py check` must pass.
+  and a page gets an `id` before it moves; so does the retirement of a card or
+  of a statement page, with what replaces it. `scripts/cards.py check` must
+  pass.
 - **A planned page may record its counterparts,** the Mathlib or ATLAS
   declarations that state its result or a close form, with how each compares
   ([cards.md](cards.md#counterparts)). Each is verified clause by clause against
@@ -223,10 +254,14 @@ record it in `scripts/card-moves.jsonl` instead ([Cards](#cards)).
 
 1. Add the new pages beside the node and list them on the folder page. Move
    the node's prose and sources to the folder page or the new pages.
-2. Delete the node's page and annotation. Repoint every link to it, under
-   `## Depends on`, `## Proof depends on` or `## Informally uses`, to the new
-   pages that link actually needs. `autoform check` fails on a link left under
-   the first two but only warns under `## Informally uses`.
+2. Delete the node's page and annotation, and append the retirement row to
+   `scripts/card-moves.jsonl`, `{"statement": "<its id>", "page": "<its
+   path>", "replaced_by": "<the id of the new page or folder page a reader
+   should go to>"}` ([cards.md](cards.md#move-ledger)), so that its address
+   keeps leading somewhere and its id is never reused. Repoint every link to
+   it, under `## Depends on`, `## Proof depends on` or `## Informally uses`, to
+   the new pages that link actually needs. `autoform check` fails on a link
+   left under the first two but only warns under `## Informally uses`.
 3. Give each new page the node's prerequisites it still needs; order among new
    planned pages goes in their own `## Depends on`.
 4. Make a low-level page a `theorem_wanted` or `def_wanted` statement, with a
@@ -480,10 +515,16 @@ design>", "issue": <number>}`, where `issue` is the issue, or a list of
 issues, that tracks the Lean fix; a declaration private by design has none, and
 its marker goes once the declaration is public. When a declaration has several
 problems, `reason` names the one in its statement. `declarations` gives a held
-declaration no page and lists it as held. A marker that names no declaration,
-sits on a linked row, names a declaration the Lean index does not resolve, or
-holds back a declaration that another row links or holds is reported as an
-error, and the run then writes nothing. The build's own steps (the extraction,
+declaration no page and lists it as held; `lean-facts` gives the held page the
+declaration's kind, or the theorem kind a page stating a result held back as a
+definition records, so it counts as a statement not yet in Lean
+([Writing pages](#writing-pages)), private by design or not, unless
+its marker is one `declarations` reports below, such as one naming a declaration
+the Lean index does not resolve or that an earlier row holds back, whatever kind
+the row records. In `declarations`, a marker that names no declaration, sits on a
+linked row, names a declaration the Lean index does not resolve, or holds back
+a declaration that another row links or holds is reported as an error, and the
+run then writes nothing. The build's own steps (the extraction,
 `lean-facts` and the cards) likewise refuse, before writing, a held row that
 credits a declaration, of this project or of Mathlib, and a held declaration
 that another row credits. Relink the page once every listed issue
@@ -537,7 +578,8 @@ Mathlib link on a row without it is a reference, which leaves the page's own
 declaration its credit. The build reads every row as Autoform does, over the
 links folder's defaults: a link with no `uri` is a Lean link to this project,
 and a link with a `uri` but no `type` is no Lean link at all. The defaults never
-set `kind` or `status`, which the build derives for each page from the Lean. A
+set `kind` or `status`, which the build derives for each page from the Lean (or,
+for a page with no Lean link, as [Writing pages](#writing-pages) says). A
 page's own declaration is its Lean link to this project with role `states`, or
 its only such link when none has a role, never the first by position. A link of
 another type (PDF, HTML, LaTeX, generic) is a reference, whatever its role; so
@@ -590,7 +632,8 @@ are dependencies among the wiki's pages: a page with none has no prerequisite
 among them. A credited name the build does not find in a Mathlib module, or
 that is a declaration of the project, unlinks the page with a warning, as a
 removed ATLAS declaration does: its Lean link, kind, status and `mathlib` flag
-go, so the page no longer shows as in Mathlib, and its other links stay. A row
+go, so the page no longer shows as in Mathlib, and its other links stay; it then
+takes only a kind its row records ([Writing pages](#writing-pages)). A row
 that names no module is looked for only in the modules the build imports. A
 Mathlib bump that moves a credited declaration to another module stops
 `lean-facts`, which names the new module, until the row names it: the bump
