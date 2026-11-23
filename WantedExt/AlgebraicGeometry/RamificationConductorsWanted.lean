@@ -26,7 +26,10 @@ The only supplied bound is the actual equation G_N=1. Its existence and
 generic lower/upper/Hasse--Arf theory are existing public toolbox; the
 completed sum-independence laws do not ask for them again.
 The request is arbitrary finite-dimensional Q_ell representation
-integrality, beyond the verified one-dimensional abelian formula.
+integrality, beyond the verified one-dimensional abelian formula. It needs no
+condition relating ell to the residue characteristic: the Artin conductor of a
+representation over any field of characteristic zero is the inner product of
+its character with the Artin character, hence a natural number.
 -/
 
 namespace WantedExt.AlgebraicGeometry.RamificationConductors
@@ -44,8 +47,7 @@ public theorem_wanted finiteImage_artin_swan_integral
     (L : Type v) [Field L] [ValuativeRel L] [TopologicalSpace L]
     [IsNonarchimedeanLocalField L] [Algebra K L] [ValuativeExtension K L]
     [Module.Finite K L] [IsGalois K L]
-    (p ell : ℕ) [Fact p.Prime] [Fact ell.Prime]
-    [CharP (IsLocalRing.ResidueField (integerRing L)) p] (ellNeResidueCharacteristic : ell ≠ p)
+    (ell : ℕ) [Fact ell.Prime]
     (V : Type w) [AddCommGroup V] [Module ℚ_[ell] V] [Module.Finite ℚ_[ell] V]
     (ρ : Representation ℚ_[ell] (DecompositionGroup K L) V)
     (N : ℕ) (finiteRamification : lowerGroup K L N = ⊥) :
