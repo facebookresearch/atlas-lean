@@ -185,19 +185,6 @@ Article G3, Lemma 7 (`integers-2025-G3-lem-7`). -/
 public theorem_wanted hasNSProperty_div_two_pow {m : ℕ} (hm : 0 < m) :
     HasNSProperty fun x ↦ x / 2 ^ m
 
-/-- **Dyadic splitting of two numbers with different quotients.** Let $z, z', i$ be natural
-numbers with $\lfloor z / 2^i \rfloor < \lfloor z' / 2^i \rfloor$. Then there are natural numbers
-$c$, $s$ and $t$ with $s \ge i$, $t < 2^s$, $z = c \cdot 2^{s+1} + t$ and
-$c \cdot 2^{s+1} + 2^s \le z'$.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 8 (b) (`integers-2025-G3-lem-8`). -/
-public theorem_wanted exists_split_of_div_two_pow_lt {z z' i : ℕ}
-    (h : z / 2 ^ i < z' / 2 ^ i) :
-    ∃ c s t : ℕ, i ≤ s ∧ t < 2 ^ s ∧ z = c * 2 ^ (s + 1) + t ∧
-      c * 2 ^ (s + 1) + 2 ^ s ≤ z'
-
 /-- **Indicator functions with the NS property.** Let $f : \mathbb{N} \to \mathbb{N}$ be monotone,
 with $f(x) \le 1$ for all $x$ and $f(x) = 1$ for some $x$. Then $f$ has the NS property if and
 only if there is an even $m \in \mathbb{N}$ such that $f$ is the indicator function of
