@@ -38,9 +38,10 @@ that proof without a published account get pages once one exists.
 
 Green's description is the page
 [Green's parametrization of the cuspidal characters of $\mathrm{GL}_n(\mathbb{F}_q)$](../../../GroupTheory/characters-of-finite-groups/green-cuspidal-characters-of-gl-n.md),
-in its prime-field case, and the global Artin map is that of
-[global Artin reciprocity](../../algebraic-number-theory/adeles-class-field-theory/global-artin-reciprocity.md).
-The other inputs belong to eight nodes that are themselves still to be broken down:
+in its prime-field case, and the partial correspondence uses the reciprocal map of the global Artin map of
+[the global reciprocity law](../../algebraic-number-theory/adeles-class-field-theory/reciprocity-law/global-reciprocity-law.md), with the properties of
+[the global Artin map on the Galois group of the maximal abelian extension](../../algebraic-number-theory/adeles-class-field-theory/reciprocity-law/artin-map-on-the-maximal-abelian-extension.md).
+The other inputs are the following pages; those that are nodes are themselves still to be broken down:
 [the theta correspondence for unitary dual pairs](../../../RepresentationTheory/automorphic-representations/theta-correspondence-for-unitary-dual-pairs.md),
 [automorphic representations of GLₙ and unitary groups](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n-and-unitary-groups.md),
 [representations of U(p, q)](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-u-p-q.md),
@@ -60,7 +61,8 @@ and [abelian schemes and their moduli](../../../AlgebraicGeometry/abelian-variet
 - [Automorphic representations of GLₙ and unitary groups](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n-and-unitary-groups.md)
 - [Representations of U(p, q)](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-u-p-q.md)
 - [Smooth representations of p-adic GLₙ and the local Langlands correspondence](../../../RepresentationTheory/reductive-groups-over-local-fields/smooth-representations-of-p-adic-gl-n-and-local-langlands.md), for a partial local Langlands correspondence constructed from cuspidal parameters
-- [Global Artin reciprocity](../../algebraic-number-theory/adeles-class-field-theory/global-artin-reciprocity.md), for the global Artin map used to construct the compatible local Artin map in the partial correspondence
+- [Global reciprocity law](../../algebraic-number-theory/adeles-class-field-theory/reciprocity-law/global-reciprocity-law.md), for the global Artin map, whose reciprocal is used to construct the compatible local Artin map in the partial correspondence
+- [The global Artin map on the Galois group of the maximal abelian extension](../../algebraic-number-theory/adeles-class-field-theory/reciprocity-law/artin-map-on-the-maximal-abelian-extension.md), for the surjectivity, openness, kernel and local properties of that reciprocal map, which the partial correspondence uses
 - [Galois cohomology and p-adic Hodge theory](../../algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md)
 - [Vanishing theorems and resolution of singularities in characteristic zero](../../../AlgebraicGeometry/birational-geometry/vanishing-theorems-and-resolution-in-characteristic-zero.md)
 - [Arithmetic intersection theory, heights and arithmetic volumes](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-intersection-theory-heights-and-volumes.md)
