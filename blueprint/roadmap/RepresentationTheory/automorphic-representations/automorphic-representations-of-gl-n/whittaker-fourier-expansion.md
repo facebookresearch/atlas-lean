@@ -29,14 +29,18 @@ $\Lambda_v(\pi_v(u)\xi) = \psi_v(u)\Lambda_v(\xi)$ for $u \in N_n(k_v)$.
    $\xi_v^\circ$ defining the restricted tensor product (at such places a spherical vector has non-zero Whittaker value;
    at a place where $\psi_v$ is ramified it may have value $0$). Then there is a constant $c \ne 0$ with
    $W_\varphi(e) = c \prod_v \Lambda_v(\xi_v)$ for every $\varphi \in \pi$ corresponding to a pure tensor $\otimes_v \xi_v$; absorbing $c$ into
-   $\Lambda_v$ for one $v \in S$, $W_\varphi(g) = \prod_v W_{\xi_v}(g_v)$ with $W_{\xi_v}(g_v) = \Lambda_v(\pi_v(g_v)\xi_v)$. Here $\pi_v$ at an
-   archimedean place is the smooth representation (the Casselman–Wallach globalization of the
-   Harish-Chandra module), on which $N_n(k_v)$ acts, and the formula for $K$-finite $\varphi$ is its restriction.
+   $\Lambda_v$ for one $v \in S$, $W_\varphi(g) = \prod_v W_{\xi_v}(g_v)$ with $W_{\xi_v}(g_v) = \Lambda_v(\pi_v(g_v)\xi_v)$. This is a statement on the
+   smooth realization of $\pi$: the smooth vectors $V^\infty$ of its closure in $L^2_0(\omega)$, which by item 4 of the tensor
+   product theorem is the completed tensor product of the smooth Fréchet representations $\pi_v$ at the
+   archimedean places (the Casselman–Wallach globalizations, on which $N_n(k_v)$ acts) with the restricted tensor
+   product at the finite places. The global functional $\varphi \mapsto W_\varphi(e)$ is continuous on $V^\infty$ (the integral of a
+   continuous function over the compact set $N_n(k) \backslash N_n(\mathbb{A})$), so it is determined by its values on pure tensors, and
+   the formula for $K$-finite $\varphi$ is its restriction.
 
 ## Depends on
 
 - [Automorphic forms, cusp forms and automorphic representations](../automorphic-forms-on-reductive-groups/automorphic-forms-and-automorphic-representations.md), for cusp forms and cuspidal automorphic representations
-- [Tensor product theorem for automorphic representations](../automorphic-forms-on-reductive-groups/tensor-product-theorem.md), for the decomposition $\pi \simeq \bigotimes'_v \pi_v$
+- [Tensor product theorem for automorphic representations](../automorphic-forms-on-reductive-groups/tensor-product-theorem.md), for the decomposition $\pi \simeq \bigotimes'_v \pi_v$ and, for item 3, the decomposition of the smooth realization (its item 4)
 
 ## Proof depends on
 

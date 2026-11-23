@@ -10,7 +10,8 @@ ring $\mathbb{A}$ of a number field $K$ on which the
   finite place the measure giving $\mathcal{O}_v$ volume $\mathrm{N}(\mathfrak{d}_v)^{-1/2}$ for the local different
   $\mathfrak{d}_v$), the local Schwartz–Bruhat functions and the Fourier inversion formula on them.
 - **Global duality.** The discreteness of $K$ in $\mathbb{A}$ and the compactness of $\mathbb{A}/K$, with a fundamental domain
-  $D = \prod_{v \mid \infty} D_\infty \times \prod_{v < \infty} \mathcal{O}_v$ (additive strong approximation); the standard character
+  $D = D_\infty \times \prod_{v < \infty} \mathcal{O}_v$, where $D_\infty$ is a single fundamental domain for the diagonally embedded lattice
+  $\mathcal{O}_K$ in $K_\infty = \prod_{v \mid \infty} K_v$ (additive strong approximation); the standard character
   $\psi = \prod_v \psi_v$ of $\mathbb{A}$, the isomorphism $a \mapsto \psi(a \cdot)$ of $\mathbb{A}$ onto its Pontryagin dual (self-duality of the
   restricted product), the triviality of $\psi$ on $K$, and the identification of the annihilator of $K$ with $K$
   itself, so that $K$ is the dual of the compact group $\mathbb{A}/K$ and every non-trivial character of $\mathbb{A}/K$ is

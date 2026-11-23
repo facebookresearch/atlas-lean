@@ -34,6 +34,14 @@ time gives infinitely many independent vectors fixed by $K_f$.
    first extended to $G(\mathbb{A})$ through a character of $A_G(\mathbb{R})^0$. (The finiteness of the $K$-multiplicities is
    part of the hypothesis; for the subrepresentations of the cuspidal spectrum it is supplied by the
    discreteness of the cuspidal spectrum and Harish-Chandra's finiteness theorem.)
+4. **Smooth automorphic representations** (Harish-Chandra; Wallach). A smooth automorphic representation
+   $(\pi, V)$ of $G(\mathbb{A})$, a closed irreducible subquotient of the space of smooth automorphic functions of uniform
+   moderate growth (for instance the smooth vectors of an irreducible subrepresentation of $L^2_0(\omega)$ for $\mathrm{GL}_n$),
+   decomposes as $\pi \simeq \pi_\infty \otimes \pi_f$, where $\pi_\infty = \widehat{\bigotimes}_{v \mid \infty} \pi_v$ is the completed (topological) tensor
+   product of irreducible smooth Fréchet representations of moderate growth and $\pi_f = \bigotimes'_{v < \infty} \pi_v$ is the
+   restricted tensor product of irreducible admissible smooth representations. The $\mathcal{H}$-module of $K$-finite
+   vectors of $V$ is $\bigotimes'_v (\pi_v)_{K_v}$, with $\pi_v$ at an infinite place the Casselman–Wallach completion of its
+   Harish-Chandra module.
 
 ## Depends on
 
@@ -44,7 +52,8 @@ time gives infinitely many independent vectors fixed by $K_f$.
 
 ## Proof depends on
 
-- [Borel–Casselman theorem on Iwahori-fixed vectors](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/borel-casselman-theorem.md), for the embedding of an irreducible representation with non-zero $K_v$-fixed vectors into an unramified principal series, whose $K_v$-fixed vectors form a line by the Iwasawa decomposition, so that the $K_v$-fixed vectors of $\pi_v$ form a line for almost all $v$
+- [Borel–Casselman theorem on Iwahori-fixed vectors](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/borel-casselman-theorem.md), for the embedding of an irreducible representation with non-zero $K_v$-fixed vectors into an unramified principal series
+- [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the decomposition $G(k_v) = P_0(k_v) K_v$ for a good maximal compact subgroup $K_v$, by which the $K_v$-fixed vectors of an unramified principal series form a line (a fixed vector is determined by its value at $1$), so that, with the embedding above, the $K_v$-fixed vectors of $\pi_v$ form a line for almost all $v$
 - [Harish-Chandra's finiteness theorem for automorphic forms](harish-chandra-finiteness-theorem.md), for the admissibility of automorphic representations, which reduces item 2 to item 1, and of the irreducible subrepresentations of $L^2_0(\omega)$ in item 3
 - [Admissible representations of real reductive groups](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/admissible-representations-of-real-reductive-groups.md), for the $K$-finite vectors of an admissible representation, which pass from a unitary representation to an admissible $\mathcal{H}$-module and back by completion in item 3
 - [Discreteness of the cuspidal spectrum](discreteness-of-the-cuspidal-spectrum.md), for the irreducible subrepresentations of $L^2_{\mathrm{cusp}}$ and their finite $K$-multiplicities in item 3
@@ -62,7 +71,10 @@ time gives infinitely many independent vectors fixed by $K_f$.
   Sympos. Pure Math. 33, Part 1, 1979, 179–183, as reference [2]), Corollary 3.2.1 and the note after it
   (the remark after Definition 3.2 that local admissibility gives global admissibility needs the
   one-dimensionality of almost all spherical spaces, as above),
-  Theorem 3.5 (Harish-Chandra) and Theorem 3.6 (Gelfand and Piatetski-Shapiro).
+  Theorem 3.3 (Harish-Chandra; Wallach: admissibility of smooth automorphic representations), Definition 3.3
+  and Theorem 3.4 (the decomposition theorem for smooth automorphic representations, with the topological
+  tensor product at the archimedean places and the Casselman–Wallach completions; item 4), Theorem 3.5
+  (Harish-Chandra) and Theorem 3.6 (Gelfand and Piatetski-Shapiro).
 - R. P. Langlands, "On the notion of an automorphic representation", Proc. Sympos. Pure Math. 33,
   Part 1, 1979, 203–207,
   <https://sunsite.ubc.ca/DigitalMathArchive/Langlands/pdf/notion-ps.pdf>: the paragraph before Lemma 1

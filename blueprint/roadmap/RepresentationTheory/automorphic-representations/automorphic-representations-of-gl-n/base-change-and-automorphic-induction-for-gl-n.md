@@ -19,10 +19,24 @@ $\mathbb{A}_F^\times / F^\times$ attached to $E/F$ by class field theory.
   $\pi_1 \boxplus \pi_1^\sigma \boxplus \dots \boxplus \pi_1^{\sigma^{\ell-1}}$ consists of a cuspidal $\pi'$ with $\pi' \simeq \pi' \otimes \eta$, the
   automorphic induction of $\pi_1$; this is an $\ell$-to-$1$ map, whose fibres are the Galois orbits
   $\{\pi_1, \pi_1^\sigma, \dots\}$.
-- **Solvable extensions.** Iterating these maps along a tower of cyclic extensions of prime degree gives
-  the existence of base change and automorphic induction along a solvable extension; this does not give a
-  description of the image and fibres in one step for a general cyclic or solvable extension (the argument
-  of Arthur and Clozel works only for cyclic extensions of prime degree).
+- **Extension to isobaric sums.** Both maps are extended to the class of representations induced from unitary
+  cuspidal data (isobaric sums), on which they are characterized by the Satake parameters at the unramified
+  places (Clozel's formulas (1.4)–(1.6)). Base change is already defined on that class and takes values in it,
+  being additive: $\mathrm{BC}(\tau_1 \boxplus \tau_2) = \mathrm{BC}(\tau_1) \boxplus \mathrm{BC}(\tau_2)$. Automorphic induction is extended as follows: for a
+  cuspidal $\pi_1$ of $\mathrm{GL}_{n/\ell}(\mathbb{A}_E)$ with $\pi_1^\sigma \not\simeq \pi_1$ it is the cuspidal representation above; for a cuspidal $\pi_1$
+  with $\pi_1^\sigma \simeq \pi_1$, which by the first item is the base change of a cuspidal $\tau$ of $\mathrm{GL}_{n/\ell}(\mathbb{A}_F)$ determined
+  up to twists by powers of $\eta$, it is the isobaric sum $\tau \boxplus \tau\eta \boxplus \dots \boxplus \tau\eta^{\ell - 1}$, which is not cuspidal and does not
+  depend on the choice of $\tau$; and it is extended additively to isobaric sums. At an unramified place its Satake
+  parameter is that of the representation of the Weil group induced from the parameter of $\pi_1$ (at an inert
+  place, the $\ell$-th roots of the eigenvalues).
+- **Solvable extensions.** Since each step produces an isobaric sum of unitary cuspidal representations, which
+  is again an admissible input of the extended maps, the extended maps can be composed along a tower
+  $F = F_0 \subset F_1 \subset \dots \subset F_k = E$ of cyclic extensions of prime degree, also when an intermediate result is not
+  cuspidal. This gives the existence of base change and automorphic induction on the whole class for a
+  solvable extension (Clozel's Theorem 1.2), with uniqueness from the characterization by Satake parameters
+  and strong multiplicity one for isobaric sums. It does not give a description of the image and fibres in
+  one step for a general cyclic or solvable extension (the argument of Arthur and Clozel works only for cyclic
+  extensions of prime degree).
 - **Method.** The comparison of the invariant trace formula of $\mathrm{GL}_n$ over $F$ with the twisted trace
   formula of $\mathrm{R}_{E/F}\mathrm{GL}_n$ for the automorphism $\sigma$, the local transfer, and Rankin–Selberg
   $L$-functions in the last step. The classification of the discrete spectrum of $\mathrm{GL}_n$ by Mœglin and
@@ -54,6 +68,8 @@ has been consulted.
   paragraph after it.
 - L. Clozel, "Base change for GL(n)", Proceedings of the International Congress of Mathematicians
   (Berkeley, 1986), Vol. 1, American Mathematical Society, 1987, 791–797,
-  <https://www.mathunion.org/fileadmin/ICM/Proceedings/ICM1986.1/ICM1986.1.ocr.pdf>: the setup of §1.4,
-  Theorem 1.2 in §1.5, p. 793 (base change and automorphic induction along solvable extensions), and §2
-  (the cyclic case, to which the proofs reduce).
+  <https://www.mathunion.org/fileadmin/ICM/Proceedings/ICM1986.1/ICM1986.1.ocr.pdf>: the setup of §1.4 with
+  (1.4)–(1.6) (the Satake parameters of base change and automorphic induction for a cyclic extension of prime
+  degree, which "completely specify" the maps on the class of representations induced from cuspidal ones),
+  Theorem 1.2 in §1.5, p. 793 ((i) base change and (ii) automorphic induction exist on that whole class for a
+  solvable extension), and §2 (the cyclic case, to which the proofs reduce).

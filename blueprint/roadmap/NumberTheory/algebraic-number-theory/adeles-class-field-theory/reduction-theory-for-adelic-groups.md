@@ -28,7 +28,9 @@ the normalized ones of the [adelic norm](adeles-and-ideles/adelic-norm.md), with
   point would have height $1$): $\lVert xy \rVert \le m^{[k:\mathbb{Q}]} \lVert x \rVert \lVert y \rVert$ (with the normalized absolute values;
   the constant cannot be dropped for this maximum of entries: for $g = \begin{pmatrix} 1 & 1 \\ 1 & 0 \end{pmatrix} \in \mathrm{GL}_2(\mathbb{Q})$,
   $\lVert g \rVert = 1$ and $\lVert g^2 \rVert = 2$), $\lVert x^{-1} \rVert = \lVert x \rVert$, $\#\{\gamma \in G(k) : \lVert \gamma \rVert \le t\} \le C_0 t^{N_0}$, and, on
-  a Siegel set $\mathfrak{S}$, $\lVert \delta x \rVert \ge c \lVert x \rVert$ for $\delta \in G(k)$ and $x \in \mathfrak{S}$ (Arthur, §13, p. 72, for his height).
+  a Siegel set $\mathfrak{S}$, $\lVert \delta x \rVert \ge c \lVert x \rVert^{\varepsilon}$ for some $c, \varepsilon > 0$, all $\delta \in G(k)$ and $x \in \mathfrak{S}$ (Arthur, §13, p. 72, proves the
+  linear bound $H(\delta x) \ge c H(x)$ for his height $H$; the height used here is comparable to Arthur's up to powers,
+  which gives the polynomial bound).
 - **The maps $H_P$.** For every standard parabolic subgroup $P = M_P N_P$, with $\mathfrak{a}_P = \mathrm{Hom}(X(M_P)_k, \mathbb{R})$, the map
   $H_P \colon G(\mathbb{A}) \to \mathfrak{a}_P$ defined by $e^{\langle H_P(nmk), \chi \rangle} = \lvert \chi(m) \rvert$ for rational characters $\chi$ of $M_P$, through the
   Iwasawa decomposition $G(\mathbb{A}) = N_P(\mathbb{A}) M_P(\mathbb{A}) K$.
@@ -67,7 +69,8 @@ sources below.
   Shimura Varieties*, Clay Math. Proc. 4, American Mathematical Society, 2005, 1–263,
   <https://www.claymath.org/library/proceedings/cmip04c.pdf>: §2 ($G(\mathbb{A})^1$, $H_G$), §3 (the
   compactness criterion of Borel–Harish-Chandra and Mostow–Tamagawa), §8 (Siegel sets and Theorem 8.1,
-  "Borel, Harish-Chandra"), §2, pp. 15–16 (the maps $H_P$ and $\mathfrak{a}_P$), §13 ((13.2)–(13.4), "See [Bor2]", for his
+  "Borel, Harish-Chandra"), §2, pp. 15–16, §3, p. 22 and §4, p. 24 (the maps $H_P$ and $\mathfrak{a}_P$ for the standard
+  parabolic subgroups), §13 ((13.2)–(13.4), "See [Bor2]", for his
   height built from the Hilbert–Schmidt norm, and p. 72, the lower bound for heights of rational translates on a
   Siegel set).
 - A. Borel, "Automorphic forms on reductive groups", lecture notes (Park City),

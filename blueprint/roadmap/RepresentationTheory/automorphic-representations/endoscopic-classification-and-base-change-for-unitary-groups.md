@@ -35,7 +35,7 @@ and $U_{E/F}(N)$ the quasi-split unitary group in $N$ variables.
   asserts the existence of: positive integers $N_1, \dots, N_c$ with sum $n$; discrete automorphic representations
   $\Pi_i$ of $\mathrm{GL}_{N_i}(\mathbb{A}_E)$, each the block $\mu_i \lvert \det \rvert^{(d_i - 1)/2} \boxplus \dots \boxplus \mu_i \lvert \det \rvert^{(1 - d_i)/2}$ attached to a unitary,
   conjugate self-dual cuspidal $\mu_i$ and a length $d_i$ (possibly $d_i > 1$: the block is conjugate self-dual,
-  its shifted terms are not); local components $\Pi_{i,w}$ at the finite places $w$ of $E$ and infinitesimal
+  its shifted terms are not, except the middle term $\mu_i$ when $d_i$ is odd); local components $\Pi_{i,w}$ at the finite places $w$ of $E$ and infinitesimal
   characters at the archimedean places; and, at every finite place $w$, an irreducible representation $P_w$ of
   $\mathrm{GL}_n(E_w)$ that is a subquotient of the representation induced from the $\Pi_{i,w}$, such that: $P_w$ is spherical
   where $\pi$ is unramified; at a place where $E/F$ is inert and unramified and $\pi_w$ has Satake parameter $\alpha$, $P_w$
@@ -89,4 +89,7 @@ Press, 2011, with locators.
   finite places, the split comparison, the conditional inert Satake relation and the archimedean identity of
   infinitesimal characters, for the standard definite group of a CM field unramified at finite places over its
   maximal real subfield, as `GlobalTheory.Published.BaseChangeIsobaricTransfer` and
-  `GlobalTheory.Published.BaseChangeDefiniteUnitaryGroup` (through `BaseChangeIsobaricN` and `DefiniteN`).
+  `GlobalTheory.Published.BaseChangeDefiniteUnitaryGroup` (through `BaseChangeIsobaricN`, which quantifies an
+  irreducible local subquotient $P_w$ of the induced product, and `DefiniteN`, which places its predicates on the
+  induced product `locProd` itself, the two being bridged through irreducibility; the blocks are given by `CsdAsc`,
+  a normalized conjugate self-dual cuspidal core with a length and an embedding relation `AscEmb`).

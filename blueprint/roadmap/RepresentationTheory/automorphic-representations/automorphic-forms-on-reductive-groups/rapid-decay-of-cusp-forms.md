@@ -26,8 +26,9 @@ on $\mathfrak{S}^1$.
    subgroup, $z \mapsto \lvert z \rvert^{1/2}$ is a cusp form.)
 
 4. **Uniform bound for convolutions** (Gelfand–Piatetski-Shapiro). For $f \in C^\infty_c(G(\mathbb{A})^1)$ there is a constant
-   $c_f$ such that $\sup_x \lvert (\varphi * f)(x) \rvert \le c_f \lVert \varphi \rVert_2$ for every cuspidal function $\varphi \in L^2(G(k) \backslash G(\mathbb{A})^1)$; in
-   fact $\varphi \mapsto \varphi * f$ is continuous from the cuspidal $L^2$ space to the space of rapidly decreasing functions.
+   $c_f$ such that $\sup_x \lvert (R(f)\varphi)(x) \rvert \le c_f \lVert \varphi \rVert_2$ for every cuspidal function $\varphi \in L^2(G(k) \backslash G(\mathbb{A})^1)$, where
+   $R(f)\varphi(x) = \int f(y) \varphi(xy)\, dy$; in fact $\varphi \mapsto R(f)\varphi$ is continuous from the cuspidal $L^2$ space to the space of rapidly
+   decreasing functions, with the seminorms $\sup_x \lVert x \rVert^N \lvert (D R(f)\varphi)(x) \rvert$ for left invariant differential operators $D$.
 
 ## Depends on
 
@@ -37,7 +38,7 @@ on $\mathfrak{S}^1$.
 ## Proof depends on
 
 - [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the covering of $G(k) \backslash G(\mathbb{A})^1$ by a Siegel set, on which the estimates are made, and the properties of the height
-- [Harish-Chandra modules](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/harish-chandra-modules.md), for the analyticity of $K$-finite, $\mathcal{Z}$-finite functions (matrix coefficients of Harish-Chandra modules), behind Harish-Chandra's convolution theorem $\varphi = \varphi \star \alpha$ used for item 1
+- [Constant terms and Harish-Chandra's convolution identity for automorphic forms](constant-terms-and-convolution-identity.md), for Harish-Chandra's convolution identity $\varphi = \varphi \star \alpha$ for $K$-finite, $\mathcal{Z}$-finite functions (Borel, §4.2), from which uniform moderate growth (item 1) follows since $D(\varphi \star \alpha) = \varphi \star D\alpha$ (Borel, §4.3), and for the reduction along the split centre
 
 ## Sources
 
