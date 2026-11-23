@@ -11061,6 +11061,7 @@
   "MathlibExt/NumberTheory/Digits/YoungReverseMultipleCarryPath": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/Digits/YoungReverseMultiples": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/DilcherFiniteMultipleHarmonic": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Multiple harmonic sums"},
+  "MathlibExt/NumberTheory/Diophantine/Linear": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Triangular recurrence arrays at negative indices"},
   "MathlibExt/NumberTheory/Diophantine/PowerSquare": {"to": "NumberTheory/diophantine-equations/exponential-diophantine", "title": "Squares as sums or differences of powers"},
   "MathlibExt/NumberTheory/DiophantineApproximation/BakerDavenportAbsolute": {"to": "NumberTheory/diophantine-approximation/roth-linear-forms", "title": "Baker–Davenport reduction"},
   "MathlibExt/NumberTheory/DiophantineApproximation/BakerDavenportNearestIntegerCore": {"to": "NumberTheory/diophantine-approximation/roth-linear-forms", "title": "Baker–Davenport reduction"},
