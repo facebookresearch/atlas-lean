@@ -20,13 +20,13 @@ universe u
 
 variable {k : Type u} [Field k]
 
--- The projection from relative projective space `ℙᴺ ×ₖ B` to `B` is projective, through the
+-- The projection from relative projective space `ℙᴺ ×ₖ B` to `B` is H-projective, through the
 -- identity closed immersion.
 example (N : ℕ) (B : Over (Spec (.of k))) :
-    IsProjectiveOver (prod.snd : prod (ProjectiveSpace.projectiveSpace k N) B ⟶ B) :=
+    IsHProjectiveOver (prod.snd : prod (ProjectiveSpace.projectiveSpace k N) B ⟶ B) :=
   ⟨N, 𝟙 _, show IsClosedImmersion (𝟙 _) from inferInstance, Category.id_comp _⟩
 
--- A projective morphism factors through a closed immersion into `ℙᴺ ×ₖ B`.
-example {X B : Over (Spec (.of k))} (f : X ⟶ B) (h : IsProjectiveOver f) :
+-- An H-projective morphism factors through a closed immersion into `ℙᴺ ×ₖ B`.
+example {X B : Over (Spec (.of k))} (f : X ⟶ B) (h : IsHProjectiveOver f) :
     ∃ N : ℕ, ∃ i : X ⟶ prod (ProjectiveSpace.projectiveSpace k N) B,
       IsClosedImmersion i.left ∧ i ≫ prod.snd = f := h
