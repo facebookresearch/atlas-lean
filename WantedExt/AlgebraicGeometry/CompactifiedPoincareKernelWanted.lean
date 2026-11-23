@@ -25,9 +25,10 @@ a sheaf with its line-bundle locus, open Picard-zero family, symmetry and extens
 open) that has Arinkin's geometric properties (`PoincareKernelCandidate.Properties`: density of the
 line-bundle locus, identification with `Pic⁰(J̄)` (Theorem B), maximal Cohen--Macaulay, flat over
 both factors (Theorem A)) and is a Fourier--Mukai autoduality kernel
-(`PoincareKernelCandidate.IsAutodual`, Theorem C). Neither the candidate data nor these properties single out Arinkin's sheaf (a
-constant classifying map with the trivial sheaf is a candidate; and the data do not record
-Arinkin's determinant formula on the line-bundle locus, so for a smooth elliptic curve the
+(`PoincareKernelCandidate.IsAutodual`, Theorem C). Neither the candidate data nor these
+properties single out Arinkin's sheaf (a constant classifying map with the trivial sheaf is a
+candidate; and the data do not record Arinkin's determinant formula on the line-bundle locus, so
+for a smooth elliptic curve the
 normalized Poincaré bundle and its pullback by inversion both qualify), so the request is the
 existence of a candidate with both properties, a consequence of Arinkin's Theorems A and C; it is
 not vacuous, since the trivial candidate fails `Properties.betaIso`. Canonical
