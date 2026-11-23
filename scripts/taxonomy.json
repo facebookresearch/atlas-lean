@@ -9987,6 +9987,7 @@
   "MathlibExt/Combinatorics/BellPermutationsSecondKind": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Bell permutations and weak excedances"},
   "MathlibExt/Combinatorics/BellWeakExcedance": {"to": "Combinatorics/stirling-bell-eulerian/eulerian-numbers", "title": "Bell permutations and weak excedances"},
   "MathlibExt/Combinatorics/BinomialPartialSum": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Bounds on partial sums of binomial coefficients"},
+  "MathlibExt/Combinatorics/BridgeTorchTwo": {"to": "Combinatorics/elementary-enumeration", "title": "Bridge and torch problem"},
   "MathlibExt/Combinatorics/BridgeTorchWeights": {"to": "Combinatorics/elementary-enumeration", "title": "Bridge and torch problem"},
   "MathlibExt/Combinatorics/CatalanTransformPair": {"to": "Combinatorics/riordan-arrays-transforms/sequence-transforms", "title": "Catalan transform"},
   "MathlibExt/Combinatorics/Coding/CycleCode": {"to": "GraphTheory/graph-invariants-and-labelings", "title": "Shannon capacity of a graph"},
