@@ -48,8 +48,10 @@ G_N=1, beyond which every summand vanishes. For a finite extension of
 nonarchimedean local fields such a bound exists (the lower filtration
 terminates); that existence is a separate wanted statement, not proved here.
 The completed independence theorems show that the conductors do not depend on
-the bound; the raw partial sums over i < N for an arbitrary N are named
-separately. The remaining integrality theorem concerns arbitrary
+the bound. The generic weighted codimension sums over i < N, for any N and any
+valued field, are named separately (`weightedCodimensionSum`,
+`positiveWeightedCodimensionSum`); the named conductors require a finite Galois
+extension of nonarchimedean local fields. The remaining integrality theorem concerns arbitrary
 finite-dimensional rational adic representations, beyond the covered
 one-dimensional abelian Artin-conductor formula.
 
@@ -180,26 +182,29 @@ theorem conductorSummand_eq_zero_of_bound (N : ℕ) (hN : lowerGroup K L N = ⊥
   rw [lowerGroup_eq_bot_of_bound K L N hN i hi, invariantCodimension_bot]
   simp
 
-/-- For a positive cutoff, the partial Artin sum is the partial Swan sum plus the codimension
+/-- For a positive cutoff, the weighted sum is the positive weighted sum plus the codimension
 of the inertia invariants. -/
 theorem weightedCodimensionSum_eq_positive_add (N : ℕ) (hN : 0 < N) :
     weightedCodimensionSum K L ell V ρ N = positiveWeightedCodimensionSum K L ell V ρ N +
       invariantCodimension K L ell V ρ (lowerGroup K L 0) := by
   obtain ⟨M, rfl⟩ : ∃ M, N = M + 1 := ⟨N - 1, by omega⟩
-  simp [weightedCodimensionSum, positiveWeightedCodimensionSum, Finset.sum_range_succ', conductorSummand_zero]
+  simp [weightedCodimensionSum, positiveWeightedCodimensionSum, Finset.sum_range_succ',
+    conductorSummand_zero]
 
-/-- Once actual ramification vanishes, extending the partial Artin sum changes nothing. -/
+/-- Once actual ramification vanishes, extending the weighted sum changes nothing. -/
 theorem weightedCodimensionSum_eq_of_le_bound (N M : ℕ) (hN : lowerGroup K L N = ⊥)
-    (hNM : N ≤ M) : weightedCodimensionSum K L ell V ρ N = weightedCodimensionSum K L ell V ρ M := by
+    (hNM : N ≤ M) :
+    weightedCodimensionSum K L ell V ρ N = weightedCodimensionSum K L ell V ρ M := by
   unfold weightedCodimensionSum
   apply Finset.sum_subset (Finset.range_mono hNM)
   intro i _ hi
   exact conductorSummand_eq_zero_of_bound K L ell V ρ N hN i
     (by simpa using hi)
 
-/-- Once actual ramification vanishes, extending the partial Swan sum changes nothing. -/
+/-- Once actual ramification vanishes, extending the positive weighted sum changes nothing. -/
 theorem positiveWeightedCodimensionSum_eq_of_le_bound (N M : ℕ) (hN : lowerGroup K L N = ⊥)
-    (hNM : N ≤ M) : positiveWeightedCodimensionSum K L ell V ρ N = positiveWeightedCodimensionSum K L ell V ρ M := by
+    (hNM : N ≤ M) : positiveWeightedCodimensionSum K L ell V ρ N =
+      positiveWeightedCodimensionSum K L ell V ρ M := by
   unfold positiveWeightedCodimensionSum
   apply Finset.sum_subset (Finset.range_mono hNM)
   intro i _ hi
