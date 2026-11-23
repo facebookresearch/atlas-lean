@@ -25,7 +25,7 @@ matrices `V_{αγ}, V_{αδ}, V_{βγ}, V_{βδ}` printed in the source, for par
 below are written out from the printed product matrices (which use `V_δ = (2 δ-1; 1 δ)`, while
 `V_δ` itself is printed as `(2 δ-1; 1 -δ)`).
 
-Lemma 3, the central equations (`moebius_dual_central_equations`), is proved in
+The central equations and the singularity theorem are proved in
 `MathlibExt.Dynamics.MoebiusSingularDual`.
 -/
 
@@ -63,38 +63,6 @@ public theorem_wanted moebius_dual_endpoint_ne_neg_one (α β δ : ℝ) (hα : 0
     let dualβδ : ℝ → ℝ := fun y =>
       (2 * δ - 2 * β * δ - 1 + (δ - β * δ - 1) * y) / (3 - 2 * β + (2 - β) * y)
     dualβδ (-1) ≠ dualαδ (-1)
-
-/-- **Singularity of natural duals of Moebius maps (algebraic form).** Let
-$\alpha, \beta, \gamma, \delta$ be real numbers with $\alpha > 0$, $\beta < 1$, $\gamma > -1$ and
-$\delta \ge 0$. Define the dual branches
-$V^\#_{\alpha\gamma}(y) = (\gamma - 2\alpha - \alpha y)/(2\alpha + 1 + \alpha y)$,
-$V^\#_{\alpha\delta}(y) = (2\alpha\delta - 1 + \alpha\delta y)/(2\alpha + 1 + \alpha y)$,
-$V^\#_{\beta\gamma}(y) = (2\beta + \gamma - 2 + (\beta + \gamma - 1) y)/
-(3 - 2\beta + (2 - \beta) y)$ and
-$V^\#_{\beta\delta}(y) = (2\delta - 2\beta\delta - 1 + (\delta - \beta\delta - 1) y)/
-(3 - 2\beta + (2 - \beta) y)$, and put $\eta = (-2 + 2\beta + \gamma)/(2 - \beta)$ and
-$\xi = V^\#_{\alpha\gamma}(\eta)$. If $2\alpha + 1 + \alpha\eta \ne 0$,
-$3 - 2\beta + (2 - \beta)\xi \ne 0$, $2\alpha + 1 + \alpha\xi \ne 0$,
-$V^\#_{\beta\gamma}(\xi) = V^\#_{\beta\delta}(\xi)$ and
-$V^\#_{\alpha\delta}(\xi) = V^\#_{\alpha\gamma}(\xi)$, then $\xi = \eta$.
-
-Here $\eta$ is a fixed point of $V^\#_{\beta\gamma}$, and $\xi = \eta$ says that the natural dual
-$[\eta, \xi]$ reduces to a single point.
-
-Source: Fritz Schweiger, *A Remark on Singular Duals of Moebius Maps*, INTEGERS 24 (2024),
-Article A17, Theorem 1 (`integers-2024-A17-thm-1`). -/
-public theorem_wanted moebius_naturalDual_singular (α β γ δ : ℝ) (hα : 0 < α) (hβ : β < 1)
-    (hγ : -1 < γ) (hδ : 0 ≤ δ) :
-    let dualαγ : ℝ → ℝ := fun y => (γ - 2 * α - α * y) / (2 * α + 1 + α * y)
-    let dualαδ : ℝ → ℝ := fun y => (2 * α * δ - 1 + α * δ * y) / (2 * α + 1 + α * y)
-    let dualβγ : ℝ → ℝ := fun y =>
-      (2 * β + γ - 2 + (β + γ - 1) * y) / (3 - 2 * β + (2 - β) * y)
-    let dualβδ : ℝ → ℝ := fun y =>
-      (2 * δ - 2 * β * δ - 1 + (δ - β * δ - 1) * y) / (3 - 2 * β + (2 - β) * y)
-    let η : ℝ := (-2 + 2 * β + γ) / (2 - β)
-    let ξ : ℝ := dualαγ η
-    2 * α + 1 + α * η ≠ 0 → 3 - 2 * β + (2 - β) * ξ ≠ 0 → 2 * α + 1 + α * ξ ≠ 0 →
-      dualβγ ξ = dualβδ ξ → dualαδ ξ = dualαγ ξ → ξ = η
 
 end
 

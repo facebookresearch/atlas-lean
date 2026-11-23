@@ -23,6 +23,9 @@ fences at positions `k`, `k + 1` interlock into a bifence; it is a free bifence 
 own, covering two whole cells) exactly when `k` is even.
 
 The statements with `a = b = 1` use `Nat.fib`; `ξ(n) = n % 2`.
+
+Proved in `MathlibExt.Combinatorics.Enumerative.FibonacciSquaredAddition`, which this module
+imports: `fib_add_sq_eq` and `two_mul_sum_fib_sq`.
 -/
 module
 
@@ -314,17 +317,6 @@ public theorem_wanted fib_succ_sq_eq_sum_choose_mul_choose (n : ℕ) :
     Nat.fib (n + 1) ^ 2 =
       ∑ i ∈ range (2 * n / 3 + 1), ∑ j ∈ range (i + 1),
         i.choose j * (2 * n - 3 * i).choose j * 2 ^ j
-
-/-- **Sum of squared Fibonacci numbers from three consecutive squares.** Let $F_j$ denote the
-$j$-th Fibonacci number, with $F_0 = 0$ and $F_1 = 1$. For every integer $n \ge 3$,
-$$2 \sum_{j=1}^{n-2} F_j^2 = F_n^2 - F_{n-1}^2 - F_{n-2}^2.$$
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Corollary 3.5 (`fq-2024-belaggoun01132024-cor-3.5`). -/
-public theorem_wanted two_mul_sum_fib_sq {n : ℕ} (hn : 3 ≤ n) :
-    2 * ∑ j ∈ Icc 1 (n - 2), (Nat.fib j : ℤ) ^ 2 =
-      (Nat.fib n : ℤ) ^ 2 - (Nat.fib (n - 1) : ℤ) ^ 2 - (Nat.fib (n - 2) : ℤ) ^ 2
 
 /-- **Squared Fibonacci numbers as weighted sums of squares.** Let $F_k$ denote the Fibonacci
 numbers ($F_0 = 0$, $F_1 = 1$) and let $\xi(m) = m \bmod 2$. For every natural number $n \ge 1$,
