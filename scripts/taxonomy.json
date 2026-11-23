@@ -10721,6 +10721,7 @@
   "MathlibExt/GameTheory/CorrelatedEquilibrium": {"to": "GameTheory/noncooperative-games", "title": "Correlated equilibria"},
   "MathlibExt/GameTheory/EuclidGameCalkinWilf": {"to": "GameTheory/combinatorial-games", "title": "Game of Euclid"},
   "MathlibExt/GameTheory/ImpartialAcyclicGame": {"to": "GameTheory/combinatorial-games", "title": "Sprague–Grundy theorem"},
+  "MathlibExt/GameTheory/ImpartialPebblingGame": {"to": "GameTheory/combinatorial-games", "title": "Impartial pebbling games"},
   "MathlibExt/GameTheory/InteractiveEpistemology/AgreementTheorem": {"to": "GameTheory/noncooperative-games", "title": "Common knowledge and the agreement theorem"},
   "MathlibExt/GameTheory/InteractiveEpistemology/BayesRationality": {"to": "GameTheory/noncooperative-games", "title": "Correlated equilibria"},
   "MathlibExt/GameTheory/InteractiveEpistemology/CommonKnowledge": {"to": "GameTheory/noncooperative-games", "title": "Common knowledge and the agreement theorem"},
