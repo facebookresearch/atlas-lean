@@ -14,6 +14,7 @@ public import Mathlib.LinearAlgebra.Matrix.Hadamard
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.Combinatorics.Enumerative.PascalStirlingGeneralization
 
 /-!
 # A generalization of the Pascal and Stirling matrices
@@ -25,6 +26,11 @@ For a sequence `α = (α_j)_{j ≥ 1}` (here `α : ℕ → R` with `α 0` unused
 `S_α(n)`, `𝖲_α(n)` and `𝖴_α(n)` are given by recurrences on their entries; the entry functions
 below use 0-based indices, so entry `(i, j)` here is the paper's `(i + 1, j + 1)`. Statements were
 checked with exact rational arithmetic before stating.
+
+The factorial matrix of a power series (`powerSeriesFactorialMatrix`), the lemma on its diagonal
+entries (`powerSeriesFactorialMatrix_apply_self`) and the proved multiplicativity
+`powerSeriesFactorialMatrix_mul` are in
+`MathlibExt.Combinatorics.Enumerative.PascalStirlingGeneralization`, which this module imports.
 -/
 
 open scoped Matrix
@@ -347,56 +353,6 @@ public theorem_wanted exp_pascalDiagonalMatrix (k : ℕ) (hk : 1 ≤ k) (n : ℕ
       (Matrix.of fun a b : Fin n =>
           if (b : ℕ) ≤ a then (pascalExpFirstColumn k ((a : ℕ) - b + 1) : ℝ) else 0) ⊙
         ∑ i ∈ Finset.range n, pascalDiagonalMatrix (k * i) n
-
-/-- **Factorial matrix of a power series.** Let $K$ be a field, let $f$ be a formal power series
-over $K$ in the variable $t$, and let $n$ be a natural number. The factorial matrix $M_n(f)$ is
-the $n \times n$ matrix over $K$ whose entry in row $a$ and column $b$ (counted from $0$) is
-$(a! \cdot 1_K) / (b! \cdot 1_K)$ times the coefficient of $t^{a-b}$ in $f$ when $b \le a$, and
-$0$ when $b > a$. Here the quotient is taken in $K$ and is read as $0$ when $b! \cdot 1_K = 0$,
-which can happen only in positive characteristic. When $K$ has characteristic zero, the factor is
-the integer $a!/b!$ and $M_n(f)$ is the leading $n \times n$ section of the infinite lower
-triangular matrix $M(f)$ of Moghaddamfar, Salehy and Salehy.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Section 3. -/
-noncomputable def powerSeriesFactorialMatrix {K : Type*} [Field K] (f : PowerSeries K) (n : ℕ) :
-    Matrix (Fin n) (Fin n) K :=
-  Matrix.of fun a b =>
-    if (b : ℕ) ≤ a then
-      ((a : ℕ).factorial : K) / ((b : ℕ).factorial : K) * PowerSeries.coeff ((a : ℕ) - b) f
-    else 0
-
-/-- **Diagonal of the factorial matrix of a power series.** Let $K$ be a field of characteristic
-zero, let $f$ be a formal power series over $K$ and let $n \ge 0$. Every diagonal entry of the
-leading $n \times n$ section of $M(f)$, the lower triangular matrix whose $(a, b)$ entry, with rows
-and columns indexed from $0$, is $\frac{a!}{b!} [t^{a-b}] f$ for $b \le a$ and $0$ for $b > a$,
-equals the constant coefficient $[t^0] f$ of $f$.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Section 3. -/
-theorem powerSeriesFactorialMatrix_apply_self {K : Type*} [Field K] [CharZero K]
-    (f : PowerSeries K) (n : ℕ) (a : Fin n) :
-    powerSeriesFactorialMatrix f n a a = PowerSeries.coeff 0 f := by
-  have h : ((a : ℕ).factorial : K) ≠ 0 := Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero _)
-  simp [powerSeriesFactorialMatrix, h]
-
-/-- **Multiplicativity of the factorial matrix of a power series.** Let $K$ be a field of
-characteristic zero, let $f$ and $g$ be formal power series over $K$ in the variable $t$, and let
-$n$ be a natural number. For a power series $h$ over $K$, write $M_n(h)$ for the $n \times n$
-factorial matrix of $h$, whose entry in row $a$ and column $b$ (counted from $0$) is
-$\frac{a!}{b!}$ times the coefficient of $t^{a-b}$ in $h$ when $b \le a$, and $0$ otherwise. Then
-$M_n(f) M_n(g) = M_n(fg)$.
-
-Since these matrices are lower triangular and $M_n(h)$ is the leading $n \times n$ section of the
-infinite matrix $M(h)$, this is equivalent to $M(f) M(g) = M(fg)$.
-
-Source: A. R. Moghaddamfar, Navid Salehy and Nima Salehy, *A Generalization of the Pascal and
-Stirling Matrices*, Journal of Integer Sequences 29 (2026), Article 26.5.4, Lemma 5
-(`jis-2026-26.5.4-lem-5`). -/
-public theorem_wanted powerSeriesFactorialMatrix_mul {K : Type*} [Field K] [CharZero K]
-    (f g : PowerSeries K) (n : ℕ) :
-    powerSeriesFactorialMatrix f n * powerSeriesFactorialMatrix g n =
-      powerSeriesFactorialMatrix (f * g) n
 
 /-- **Banded Hessenberg–Toeplitz determinants and linear recurrences.** Let $R$ be a commutative
 ring, let $k \ge 1$, and let $(c_j)_{j \ge 1}$ and $(\beta_m)_{m \ge 1}$ be sequences in $R$ such

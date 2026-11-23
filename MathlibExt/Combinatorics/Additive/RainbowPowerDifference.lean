@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Data.ZMod.Basic
 import Mathlib.Algebra.Order.Interval.Finset.Basic
+import Mathlib.Data.Nat.Totient
 import Mathlib.Tactic.Ring
 
 /-!
@@ -26,6 +27,16 @@ Eric Green, Kihyun Kim and JT Rapp, *Rainbow Free Colorings and Rainbow Numbers 
 arXiv:2305.15133v1 (2023), which treats `x - y = z ^ k`. The proof does not use the hypotheses
 that `c` is surjective, that `a ≠ 0` and that `p` is prime, which the statement keeps.
 
+The digraph `G^k_p` has vertex set `ZMod p` and edges `a → a ^ k`, so `m` steps lead from `a` to
+`a ^ k ^ m`. Let `t` be the largest divisor of `p - 1` coprime to `k`. A nonzero `a` lies on a cycle
+of `G^k_p` exactly when its multiplicative order `n` divides `t`; this is Theorem 4.11 of the arXiv
+version cited above, quoted there from earlier work without proof. In the unit group, `a ^ j = a`
+holds exactly when `j ≡ 1 [MOD n]`, and `n ∣ p - 1` by Lagrange's theorem. A cycle `a ^ k ^ m = a`
+with `m ≥ 1` makes `k` coprime to `n`, so `lcm n t` is a divisor of `p - 1` coprime to `k`, and the
+maximality of `t` gives `lcm n t = t`, that is `n ∣ t`. Conversely, if `n ∣ t`, then `k` is a unit
+modulo `n`, and its order `m ≥ 1` in `(ZMod n)ˣ` satisfies `k ^ m ≡ 1 [MOD n]`. The proof does not
+use the hypothesis that `p` is odd, which the statement keeps.
+
 ## Main results
 
 * `MetaMathlibExt.color_dominant_powStrings_of_rainbowFree_zmod`: in an exact rainbow-free
@@ -35,6 +46,16 @@ that `c` is surjective, that `a ≠ 0` and that `p` is prime, which the statemen
   positive integers contains the color of one.
 * `MetaMathlibExt.exists_coprime_same_colors_of_coprime_dist` gives coprime representatives
   preserving both colors and the distance when the distance is coprime to the modulus.
+* `MetaMathlibExt.isCycleVertex_powMap_iff_orderOf_dvd`: a nonzero `a : ZMod p` satisfies
+  `a ^ k ^ m = a` for some `m ≥ 1` if and only if `orderOf a` divides the largest divisor of
+  `p - 1` coprime to `k`.
+
+## Implementation notes
+
+This module does not import the field structure on `ZMod p` (`Mathlib.Algebra.Field.ZMod`). With
+it in scope, `orderOf a`, `a ^ j` and `a ≠ 0` for `a : ZMod p` would elaborate through that
+instance rather than `ZMod.commRing`, so the cycle-vertex proof works in the unit group
+`(ZMod p)ˣ` and takes `Fintype.card (ZMod p)ˣ = p - 1` from `Mathlib.Data.Nat.Totient`.
 -/
 
 public section
@@ -156,5 +177,77 @@ theorem exists_coprime_same_colors_of_coprime_dist
     simp
   · exact congrArg c ((ZMod.natCast_eq_natCast_iff ..).2 hx₁)
   · exact congrArg c ((ZMod.natCast_eq_natCast_iff ..).2 hx₂)
+
+namespace isCycleVertex_powMap_iff_orderOf_dvd
+
+/-- Every nonzero element of `ZMod p` is a unit when `p` is prime. -/
+private theorem isUnit_of_ne_zero {p : ℕ} [hp : Fact p.Prime] {a : ZMod p} (ha : a ≠ 0) :
+    IsUnit a := by
+  have : NeZero p := ⟨hp.out.ne_zero⟩
+  rw [← ZMod.natCast_zmod_val a, ZMod.isUnit_iff_coprime]
+  refine Nat.Coprime.symm ((Nat.Prime.coprime_iff_not_dvd hp.out).2 fun hdvd => ha ?_)
+  rw [← ZMod.val_eq_zero]
+  exact Nat.eq_zero_of_dvd_of_lt hdvd (ZMod.val_lt a)
+
+/-- The order of a unit of `ZMod p` divides `p - 1`. -/
+private theorem orderOf_dvd_sub_one {p : ℕ} [hp : Fact p.Prime] (u : (ZMod p)ˣ) :
+    orderOf u ∣ p - 1 := by
+  have : NeZero p := ⟨hp.out.ne_zero⟩
+  rw [← Nat.totient_prime hp.out, ← ZMod.card_units_eq_totient]
+  exact orderOf_dvd_card
+
+/-- If `k` is coprime to a positive integer `n`, then `k ^ m ≡ 1 [MOD n]` for some `m ≥ 1`. -/
+private theorem exists_pow_modEq_one {n k : ℕ} (hn : 0 < n) (hkn : Nat.Coprime k n) :
+    ∃ m : ℕ, 1 ≤ m ∧ k ^ m ≡ 1 [MOD n] := by
+  have : NeZero n := ⟨hn.ne'⟩
+  refine ⟨orderOf (ZMod.unitOfCoprime k hkn), orderOf_pos _, ?_⟩
+  rw [← ZMod.natCast_eq_natCast_iff, Nat.cast_pow, Nat.cast_one, ← ZMod.coe_unitOfCoprime k hkn,
+    ← Units.val_pow_eq_pow_val, pow_orderOf_eq_one, Units.val_one]
+
+end isCycleVertex_powMap_iff_orderOf_dvd
+
+-- The statement keeps the hypothesis `hp` (the prime is odd) of the source, which the proof does
+-- not use.
+set_option linter.unusedVariables false in
+open isCycleVertex_powMap_iff_orderOf_dvd in
+/-- **Cycle vertices of the $k$-th power map modulo $p$.** Let $p$ be an odd prime, $k$ a natural
+number, and $t$ the largest divisor of $p - 1$ that is coprime to $k$. A nonzero
+$a \in \mathbb{Z}/p\mathbb{Z}$ lies on a cycle of the map $x \mapsto x^k$, that is,
+$a^{k^m} = a$ for some $m \ge 1$, if and only if the multiplicative order of $a$ divides $t$.
+
+Only this characterization is stated; the source's further claims (there are $t + 1$ cycle
+vertices, and two components exactly when $t = 1$) are not.
+
+Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
+Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Theorem 6 (after
+Lucheta, Miller and Reiter)
+(`integers-2024-A105-thm-6`). -/
+theorem isCycleVertex_powMap_iff_orderOf_dvd (p k : ℕ) [Fact p.Prime]
+    (hp : p ≠ 2) (t : ℕ) (ht : t ∣ p - 1) (htk : Nat.Coprime t k)
+    (htmax : ∀ s : ℕ, s ∣ p - 1 → Nat.Coprime s k → s ≤ t) (a : ZMod p) (ha : a ≠ 0) :
+    (∃ m : ℕ, 1 ≤ m ∧ a ^ (k ^ m) = a) ↔ orderOf a ∣ t := by
+  obtain ⟨u, rfl⟩ := isUnit_of_ne_zero ha
+  have hn : 0 < orderOf u := orderOf_pos u
+  -- `u ^ j = u` exactly when `j ≡ 1` modulo the order of `u`.
+  have hpow (j : ℕ) : (u : ZMod p) ^ j = u ↔ j ≡ 1 [MOD orderOf u] := by
+    rw [← Units.val_pow_eq_pow_val, Units.val_inj, ← pow_eq_pow_iff_modEq, pow_one]
+  simp only [hpow, orderOf_units]
+  constructor
+  · rintro ⟨m, hm, hmod⟩
+    -- A cycle makes `k` coprime to the order of `u`.
+    have hnk : Nat.Coprime (orderOf u) k := by
+      have h1 : Nat.Coprime (k ^ m) (orderOf u) := by
+        rw [Nat.Coprime, hmod.gcd_eq, Nat.gcd_one_left]
+      exact ((Nat.coprime_pow_left_iff hm k _).1 h1).symm
+    have ht0 : 0 < t :=
+      Nat.pos_of_dvd_of_pos ht (by have := (Fact.out : p.Prime).two_le; omega)
+    -- `lcm (orderOf u) t` divides `p - 1` and is coprime to `k`, so it is at most `t`.
+    have hl : Nat.lcm (orderOf u) t = t := by
+      refine le_antisymm (htmax _ (Nat.lcm_dvd (orderOf_dvd_sub_one u) ht) ?_)
+        (Nat.le_of_dvd (Nat.lcm_pos hn ht0) (Nat.dvd_lcm_right _ _))
+      exact Nat.Coprime.coprime_dvd_left (Nat.lcm_dvd_mul _ _) (Nat.Coprime.mul_left hnk htk)
+    exact hl ▸ Nat.dvd_lcm_left _ _
+  · intro hdvd
+    exact exists_pow_modEq_one hn (Nat.Coprime.coprime_dvd_left hdvd htk).symm
 
 end MetaMathlibExt

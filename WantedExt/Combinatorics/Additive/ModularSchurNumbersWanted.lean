@@ -163,19 +163,6 @@ public theorem_wanted linear_congruence_solutions (a b : ℤ) (m : ℕ) (hm : 0 
         (a * x ≡ b [ZMOD m] ↔
           ∃ u : ℕ, u < Int.gcd a m ∧ x ≡ x₀ + u * ((m : ℤ) / Int.gcd a m) [ZMOD m])
 
-/-- **When a singleton set is sum-free.** Let $a$, $l$ and $m$ be natural numbers with
-$l \ge 1$, $m \ge 1$ and $m \nmid a$, and let $d = \gcd(a, m)$. If $d = 1$, then $\{a\}$ is not
-$l$-sum-free modulo $m$ if and only if $l \equiv 1 \pmod{m}$. If $d > 1$, then $\{a\}$ is not
-$l$-sum-free modulo $m$ if and only if $l \equiv 1 \pmod{m/d}$.
-
-Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
-Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Theorem 4
-(`integers-2025-A62-thm-4`). -/
-public theorem_wanted not_isSumFreeMod_singleton_iff (a l m : ℕ) (hl : 0 < l) (hm : 0 < m)
-    (ha : ¬ m ∣ a) :
-    (Nat.gcd a m = 1 → (¬ IsSumFreeMod m l {(a : ℤ)} ↔ l ≡ 1 [MOD m])) ∧
-      (1 < Nat.gcd a m → (¬ IsSumFreeMod m l {(a : ℤ)} ↔ l ≡ 1 [MOD m / Nat.gcd a m]))
-
 /-- **When the one-class modular Schur number equals one.** Let $l$ and $m$ be natural numbers with
 $l \ge 2$, $m \ge 2$ and $l \not\equiv 1 \pmod m$. Then the generalized Schur number $S_m(1, l)$
 modulo $m$ equals $1$ if and only if $l = 2$ or $2l \ge m + 1$.
