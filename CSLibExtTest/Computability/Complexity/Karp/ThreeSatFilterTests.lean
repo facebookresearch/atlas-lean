@@ -15,7 +15,7 @@ public meta import CSLibExt.Computability.Complexity.Karp.ThreeSatFilter
 
 namespace Cslib.Complexity.Karp.Filter3.Tests
 
-open Turing Cslib.Logic.PL Cslib.Complexity.SatVerifier
+open Turing Cslib.Logic.LegacyPL Cslib.Complexity.SatVerifier
 
 /-- Step until halting or out of fuel. -/
 private def runF (cap : Bool) : ℕ → TM2.Cfg (fun _ : K => Sym) Lab Bool →

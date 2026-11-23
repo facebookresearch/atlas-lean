@@ -1507,7 +1507,7 @@ private lemma lilUpperBad_measurable
           ∑ j ∈ Finset.range (i + 1), lilCentered μ X (lilUpperDelta q) j ω} by
     ext ω
     simp]
-  apply MeasurableSet.biUnion (Finset.countable_toSet _)
+  apply MeasurableSet.biUnion (Finset.countable_toSet (Finset.range (lilGrid q (r + 1) k)))
   intro i hi
   exact measurableSet_le measurable_const <|
     Finset.measurable_fun_sum _ fun j _ ↦ lilCentered_measurable X hMeas _ j
@@ -2367,7 +2367,7 @@ private def lilLowerBlockLen (q k l : ℕ) : ℕ :=
   else
     lilLowerEll q k
 
-private def lilLowerEvent
+private noncomputable def lilLowerEvent
     {Ω : Type*} (X : ℕ → Ω → ℝ) (q k : ℕ) : Set Ω :=
   ⋂ l : Fin (lilLowerR q k),
     lilSmallBlock X (lilLowerN q k + l * lilLowerEll q k)

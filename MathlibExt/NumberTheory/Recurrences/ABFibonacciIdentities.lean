@@ -10,13 +10,17 @@ module
 
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Order.Interval.Finset.Nat
+import Mathlib.Algebra.BigOperators.Intervals
+import Mathlib.Tactic.Ring
 import MathlibExt.NumberTheory.Recurrences.HoradamGeneralizedCatalanIdentity
 
 /-!
-# Weighted sums of even-indexed (a, b)-Fibonacci numbers
+# Weighted sums of (a, b)-Fibonacci numbers
 
 The generalized Catalan identity gives the recurrence for the product of consecutive
-(a, b)-Fibonacci numbers, which yields the weighted sum by induction.
+(a, b)-Fibonacci numbers, which yields the weighted even-index sum by induction.
+For the sum weighted by powers of `c`, adjoining the last term gives a first-order recurrence.
 -/
 
 @[expose] public section
@@ -169,5 +173,35 @@ theorem sum_neg_b_pow_fibAB_even_prod (a b : ℂ) (n : ℕ) :
         rw [ih, two_mul]
         simpa [Nat.one_add, mul_assoc, mul_comm, mul_left_comm] using
           (sub_eq_iff_eq_add.mp h).symm
+
+-- The stated identity assumes c ≠ 0, although the induction also works at zero.
+set_option linter.unusedVariables false in
+/-- **Sums of (a, b)-Fibonacci numbers weighted by powers of c.** Let $a, b, c$ be complex
+numbers with $c \ne 0$ and $c^2 - ac - b \ne 0$, and let $(F_n)$ be the $(a, b)$-Fibonacci
+numbers. Then for every integer $n \ge 1$,
+$$\sum_{i=1}^{n} c^{n-i} F_i = \frac{c^{n+1} - c F_{n+1} - b F_n}{c^2 - ac - b}.$$
+
+Source: Emil Daniel Schwab, "Fibonacci Numbers
+via Dirichlet Convolution and Lucas Numbers via
+Unitary Convolution", Theorem 12. -/
+theorem sum_c_pow_fibAB (a b c : ℂ) (hc : c ≠ 0)
+    (hc2 : c ^ 2 - a * c - b ≠ 0) (n : ℕ) (hn : 1 ≤ n) :
+    ∑ i ∈ Finset.Icc 1 n, c ^ (n - i) * fibAB a b i =
+      (c ^ (n + 1) - c * fibAB a b (n + 1) - b * fibAB a b n) /
+        (c ^ 2 - a * c - b) := by
+  apply (eq_div_iff hc2).2
+  induction n, hn using Nat.le_induction with
+  | base => simp [fibAB, mul_comm]
+  | succ n hn ih =>
+    have hsum : ∑ i ∈ Finset.Icc 1 (n + 1), c ^ (n + 1 - i) * fibAB a b i =
+        c * (∑ i ∈ Finset.Icc 1 n, c ^ (n - i) * fibAB a b i) + fibAB a b (n + 1) := by
+      rw [Finset.sum_Icc_succ_top (hn.trans (Nat.le_succ n)), Nat.sub_self, pow_zero, one_mul,
+        Finset.mul_sum]
+      congr 1
+      apply Finset.sum_congr rfl
+      intro i hi
+      rw [Nat.succ_sub (Finset.mem_Icc.mp hi).2, pow_succ', mul_assoc]
+    rw [hsum, add_mul, mul_assoc, ih, fibAB_add_two, pow_succ c (n + 1)]
+    ring
 
 end MathlibExt.NumberTheory.Recurrences.ABFibonacciIdentitiesWanted
