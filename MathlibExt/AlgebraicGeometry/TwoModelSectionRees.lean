@@ -13,6 +13,7 @@ public import MathlibExt.AlgebraicGeometry.NormalizedSectionAlgebras
 public import Mathlib.Algebra.Polynomial.Laurent
 public import Mathlib.RingTheory.Adjoin.Basic
 public import MathlibExt.AlgebraicGeometry.PolarizedTestConfigurations
+public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 public import MathlibExt.AlgebraicGeometry.RelativeMoriContracts
 public import Mathlib.RingTheory.Ideal.Quotient.Basic
 
@@ -185,7 +186,7 @@ def scheme : Scheme.{0} := by
 def projection : G.scheme ⟶ Spec (.of (Polynomial (IsLocalRing.ResidueField R))) := by
   letI := A.parameterAlgebra C u
   letI := G.graded
-  exact MathlibExt.AlgebraicGeometry.SurfaceHilbertSchemes.gradedProjToSpec G.pieces
+  exact MathlibExt.AlgebraicGeometry.ProjectiveSpace.projToSpec G.pieces
 
 def asOver : Over (Spec (.of (IsLocalRing.ResidueField R))) :=
   Over.mk (G.projection ≫ (PolarizedTestConfigurations.AffineLine (IsLocalRing.ResidueField R)).hom)

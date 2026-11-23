@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.NonarchimedeanIntersectionFunctionals
+public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 public import Batteries.Util.ProofWanted
 
 /-!
@@ -37,7 +38,7 @@ theorem_wanted commonModelMixedIntersection
     (k : Type) [Field k] [CharZero k] [IsAlgClosed k] (n : ℕ)
     (P : LogPair k n) (L : P.variety.X.left.Modules)
     (_projective : ∃ N : ℕ, ∃ i : P.variety.X ⟶
-      MathlibExt.AlgebraicGeometry.SurfaceHilbertSchemes.projectiveSpace k N,
+      MathlibExt.AlgebraicGeometry.ProjectiveSpace.projectiveSpace k N,
       IsClosedImmersion i.left)
     (M N : VerticalModel P L) (_refinement : ModelRefinement M N) :
     mixedTrivial M = mixedTrivial N
@@ -46,7 +47,7 @@ theorem_wanted commonModelEnergyAndJ
     (k : Type) [Field k] [CharZero k] [IsAlgClosed k] (n : ℕ)
     (P : LogPair k n) (L : P.variety.X.left.Modules)
     (_projective : ∃ N : ℕ, ∃ i : P.variety.X ⟶
-      MathlibExt.AlgebraicGeometry.SurfaceHilbertSchemes.projectiveSpace k N,
+      MathlibExt.AlgebraicGeometry.ProjectiveSpace.projectiveSpace k N,
       IsClosedImmersion i.left)
     (M N : VerticalModel P L) (_refinement : ModelRefinement M N) :
     energy M = energy N ∧ jFunctional M = jFunctional N
@@ -55,7 +56,7 @@ theorem_wanted commonModelEntropy
     (k : Type) [Field k] [CharZero k] [IsAlgClosed k] (n : ℕ)
     (P : LogPair k n) (L : P.variety.X.left.Modules)
     (_projective : ∃ N : ℕ, ∃ i : P.variety.X ⟶
-      MathlibExt.AlgebraicGeometry.SurfaceHilbertSchemes.projectiveSpace k N,
+      MathlibExt.AlgebraicGeometry.ProjectiveSpace.projectiveSpace k N,
       IsClosedImmersion i.left)
     (M N : VerticalModel P L) (_refinement : ModelRefinement M N)
     (V : ∀ p (hp : p ∈ M.central), ComponentValuation M p hp)

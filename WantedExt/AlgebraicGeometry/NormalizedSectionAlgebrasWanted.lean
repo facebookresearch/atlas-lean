@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.NormalizedSectionAlgebras
+public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 public import Batteries.Util.ProofWanted
 
 /-!
@@ -32,7 +33,7 @@ open MathlibExt.AlgebraicGeometry.CenteredValuationSections
 theorem_wanted basis_expected_limit
     {k : Type} [Field k] [CharZero k] [IsAlgClosed k] {n : ℕ}
     (V : NormalVariety k n) [IsProper V.X.hom]
-    (hprojective : ∃ N : ℕ, ∃ i : V.X ⟶ SurfaceHilbertSchemes.projectiveSpace k N,
+    (hprojective : ∃ N : ℕ, ∃ i : V.X ⟶ ProjectiveSpace.projectiveSpace k N,
       IsClosedImmersion i.left)
     (v : CenteredValuation V) (S : SectionSeries V v)
     (A : SectionMultiplication S) (hpositive : 0 < volume S) (hfinite : volume S < ⊤)

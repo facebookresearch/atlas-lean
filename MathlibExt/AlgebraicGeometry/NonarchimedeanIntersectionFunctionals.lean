@@ -36,11 +36,19 @@ variable {k : Type} [Field k] {n : ℕ} {P : LogPair k n}
 def trivialModelLine (M : VerticalModel P L) : M.model.X.left.Modules :=
   (Scheme.Modules.pullback (baseProjection M).left).obj L
 
+/-- The trivial polarization on the model is a line bundle. -/
+theorem trivialModelLine_isLineBundle (M : VerticalModel P L) :
+    CoherentCurveLinearSeries.IsLineBundle (trivialModelLine M) :=
+  M.polarization.pullback _
+
 /-- The native mixed intersection with the n trivial factors. -/
 def mixedTrivial (M : VerticalModel P L) : ℝ :=
-  DivisorDynamics.mixedIntersection M.model.X (n + 1)
-    (fun i => if i.val = 0 then modelPolarization M else trivialModelLine M) /
-      ((M.exponent : ℝ) * baseVolume P L)
+  haveI := M.properOverField
+  haveI := M.baseProper
+  DivisorDynamics.mixedIntersection M.model.X (n + 1) M.model.dimension.le
+    (fun i => if i.val = 0 then modelPolarizationLine M
+      else ⟨trivialModelLine M, trivialModelLine_isLineBundle M⟩) /
+      ((M.exponent : ℝ) * baseVolume P (baseLine M))
 
 /-- The source's actual J functional, with no assigned numerical operator. -/
 def jFunctional (M : VerticalModel P L) : ℝ := mixedTrivial M - energy M

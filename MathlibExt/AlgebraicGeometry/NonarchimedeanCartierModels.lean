@@ -11,6 +11,8 @@ public import MathlibExt.AlgebraicGeometry.PolarizedTestConfigurations
 public import MathlibExt.AlgebraicGeometry.DivisorialModuleSheaves
 public import MathlibExt.AlgebraicGeometry.MonomialModelRetractions
 public import MathlibExt.AlgebraicGeometry.DivisorDynamics
+public import MathlibExt.AlgebraicGeometry.LineBundleTensor
+public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 
 /-!
 # Concrete vertical Cartier models and nonarchimedean model formulas
@@ -51,6 +53,7 @@ open MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
 open MathlibExt.AlgebraicGeometry.AlgebraicLineBundleFamilies
 open MathlibExt.AlgebraicGeometry.CenteredValuationSections
 open MathlibExt.AlgebraicGeometry.MonomialModelRetractions
+open MathlibExt.AlgebraicGeometry.ProjectiveLineSystems
 open scoped BigOperators
 
 variable {k : Type} [Field k] {n : ℕ}
@@ -58,7 +61,7 @@ variable {k : Type} [Field k] {n : ℕ}
 /-- A fixed actual projective line and an actual affine-coordinate open chart. -/
 structure ProjectiveParameter where
   line : Over (Spec (.of k))
-  comparison : line ≅ SurfaceHilbertSchemes.projectiveSpace k 1
+  comparison : line ≅ ProjectiveSpace.projectiveSpace k 1
   affineChart : AffineLine k ⟶ line
   [openChart : IsOpenImmersion affineChart.left]
 
@@ -70,17 +73,20 @@ structure PrimeCartierMultiple (W : NormalVariety k (n + 1)) (p : PrimePoint W) 
   line : IsLineBundle
     (DivisorialModuleSheaves.sheaf W (Finsupp.single p (index : ℤ)))
 
-/-- The volume `(Lⁿ)` of the base polarization, as Snapper's Euler-characteristic difference. -/
-def baseVolume (P : LogPair k n) (L : P.variety.X.left.Modules) : ℝ :=
-  DivisorDynamics.mixedIntersection P.variety.X n (fun _ => L)
+/-- The volume `(Lⁿ)` of a line bundle on the proper base, as Snapper's Euler-characteristic
+difference. -/
+def baseVolume (P : LogPair k n) [IsProper P.variety.X.hom] (L : LineBundle P.variety.X.left) :
+    ℝ :=
+  DivisorDynamics.mixedIntersection P.variety.X n P.variety.dimension.le (fun _ => L)
 
 /-- A proper birational model of `X × ℙ¹` with a vertical Cartier divisor, for the polarized
-variety `(X, L)`: `L` is a line bundle of positive volume, so that the model polarization
-`modelPolarization` (pulled-back `L^r` twisted by `𝒪(D)`) is a line bundle and the normalized
-intersection functionals are defined. -/
+proper variety `(X, L)`: `L` is a line bundle of positive volume, so that the model polarization
+`modelPolarization` (pulled-back `L^r` twisted by `𝒪(D)`) is a line bundle
+(`modelPolarization_isLineBundle`) and the normalized intersection functionals are defined. -/
 structure VerticalModel (P : LogPair k n) (L : P.variety.X.left.Modules) where
+  [baseProper : IsProper P.variety.X.hom]
   polarization : IsLineBundle L
-  volume_pos : 0 < baseVolume P L
+  volume_pos : 0 < baseVolume P ⟨L, polarization⟩
   parameter : ProjectiveParameter (k := k)
   model : NormalVariety k (n+1)
   [properOverField : IsProper model.X.hom]
@@ -131,6 +137,24 @@ def modelPolarization {P : LogPair k n} {L : P.variety.X.left.Modules}
     ((Scheme.Modules.pullback (baseProjection M).left).obj (power L M.exponent))
     (DivisorialModuleSheaves.sheaf M.model M.divisor)
 
+/-- The model polarization is a line bundle: the tensor product of the pulled-back line bundle
+`L^r` and the Cartier sheaf `𝒪(D)`. -/
+theorem modelPolarization_isLineBundle {P : LogPair k n} {L : P.variety.X.left.Modules}
+    (M : VerticalModel P L) : IsLineBundle (modelPolarization M) := by
+  letI := M.dvr
+  exact ((M.polarization.power M.exponent).pullback (baseProjection M).left).moduleTensor
+    M.cartier
+
+/-- The model polarization as a line bundle. -/
+def modelPolarizationLine {P : LogPair k n} {L : P.variety.X.left.Modules}
+    (M : VerticalModel P L) : LineBundle M.model.X.left :=
+  ⟨modelPolarization M, modelPolarization_isLineBundle M⟩
+
+/-- The base polarization as a line bundle. -/
+def baseLine {P : LogPair k n} {L : P.variety.X.left.Modules} (M : VerticalModel P L) :
+    LineBundle P.variety.X.left :=
+  ⟨L, M.polarization⟩
+
 /-- Actual normalized model function value at a central divisorial valuation. -/
 def modelValue {P : LogPair k n} {L : P.variety.X.left.Modules}
     (M : VerticalModel P L) (p : PrimePoint M.model) : ℝ :=
@@ -141,23 +165,28 @@ def modelValue {P : LogPair k n} {L : P.variety.X.left.Modules}
 def componentIntersection {P : LogPair k n} {L : P.variety.X.left.Modules}
     (M : VerticalModel P L) (p : PrimePoint M.model) (hp : p ∈ M.central) : ℝ := by
   letI := M.dvr
+  haveI := M.properOverField
   let C := M.primeCartier p hp
-  exact (DivisorDynamics.mixedIntersection M.model.X (n+1)
+  exact (DivisorDynamics.mixedIntersection M.model.X (n+1) M.model.dimension.le
     (fun i => if i.val = 0 then
-      DivisorialModuleSheaves.sheaf M.model (Finsupp.single p (C.index : ℤ))
-      else modelPolarization M) : ℝ) / C.index
+      ⟨DivisorialModuleSheaves.sheaf M.model (Finsupp.single p (C.index : ℤ)), C.line⟩
+      else modelPolarizationLine M) : ℝ) / C.index
 
 /-- The actual central Monge--Ampère mass, not a supplied numerical weight. -/
 def componentMass {P : LogPair k n} {L : P.variety.X.left.Modules}
     (M : VerticalModel P L) (p : PrimePoint M.model) (hp : p ∈ M.central) : ℝ :=
   (M.model.X.left.ord (M.rationalParameter : FunctionField M.model) p.val : ℝ) *
-    componentIntersection M p hp / ((M.exponent : ℝ)^n * baseVolume P L)
+    componentIntersection M p hp /
+      ((M.exponent : ℝ)^n * (haveI := M.baseProper; baseVolume P (baseLine M)))
 
 /-- Actual intersection energy of the compactified model polarization. -/
 def energy {P : LogPair k n} {L : P.variety.X.left.Modules}
     (M : VerticalModel P L) : ℝ :=
-  (DivisorDynamics.mixedIntersection M.model.X (n+1) (fun _ => modelPolarization M) : ℝ) /
-    ((n+1 : ℕ) * (M.exponent : ℝ)^(n+1) * baseVolume P L)
+  haveI := M.properOverField
+  haveI := M.baseProper
+  (DivisorDynamics.mixedIntersection M.model.X (n+1) M.model.dimension.le
+      (fun _ => modelPolarizationLine M) : ℝ) /
+    ((n+1 : ℕ) * (M.exponent : ℝ)^(n+1) * baseVolume P (baseLine M))
 
 /-- Actual geometric divisorial valuation induced by the component and its field map. -/
 structure ComponentValuation {P : LogPair k n} {L : P.variety.X.left.Modules}

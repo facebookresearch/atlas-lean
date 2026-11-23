@@ -80,9 +80,11 @@ structure CentralLinearization (T : TestConfiguration k X L) where
 
 /-- Proper ample polarization inputs on the actual generic and central fibres. -/
 structure AmpleData (T : TestConfiguration k X L) where
+  [baseNoetherian : IsNoetherian X.left]
   baseLine : ProjectiveLineSystems.LineBundle X.left
   baseNormalized : baseLine.val = L
   baseAmple : ProjectiveLineSystems.IsAmpleLine baseLine
+  [fibreNoetherian : IsNoetherian (central T).left]
   fibreLine : ProjectiveLineSystems.LineBundle (central T).left
   fibreNormalized : fibreLine.val = centralLine T
   fibreAmple : ProjectiveLineSystems.IsAmpleLine fibreLine
