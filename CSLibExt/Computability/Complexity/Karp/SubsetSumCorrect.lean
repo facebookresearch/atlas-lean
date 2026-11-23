@@ -73,7 +73,8 @@ theorem subsetSumDec_encodeSS_eq_true {as : List ℕ} {t : ℕ} :
     exact hl
   · exact fun hl => ⟨as, t, rfl, hl⟩
 
-/-- `noSS` (no numbers, target `1`) is a no-instance. -/
+/-- **The fixed no-instance of SUBSET-SUM.** The encoded SUBSET-SUM instance with no numbers and
+target $1$ is a no-instance: the SUBSET-SUM decision problem returns false on it. -/
 theorem subsetSumDec_noSS : subsetSumDec noSS = false := by
   rw [Bool.eq_false_iff, ne_eq, noSS, subsetSumDec_encodeSS_eq_true]
   rintro ⟨l, hl, hsum⟩
@@ -82,8 +83,10 @@ theorem subsetSumDec_noSS : subsetSumDec noSS = false := by
 
 /-! ### Base 4 without carries -/
 
-/-- Base 4 without carries: a top part times `4 ^ m` plus `m` digits below `4` determine the top
-part and the digits. -/
+/-- **Base-4 expansions with digits below $4$ are unique.** Let $m, A, B \in \mathbb{N}$ and let
+$d, e : \mathbb{N} \to \mathbb{N}$ satisfy $d(q) < 4$ and $e(q) < 4$ for every $q < m$. Then
+$A \cdot 4^m + \sum_{q < m} d(q) \, 4^q = B \cdot 4^m + \sum_{q < m} e(q) \, 4^q$ holds if and only
+if $A = B$ and $d(q) = e(q)$ for every $q < m$. -/
 theorem add_sum_digits_eq_iff {m A B : ℕ} {d e : ℕ → ℕ} (hd : ∀ q < m, d q < 4)
     (he : ∀ q < m, e q < 4) :
     A * 4 ^ m + ∑ q ∈ Finset.range m, d q * 4 ^ q =
@@ -117,7 +120,12 @@ theorem add_sum_digits_eq_iff {m A B : ℕ} {d e : ℕ → ℕ} (hd : ∀ q < m,
 
 /-! ### Sublists as sets of numbers -/
 
-/-- Choosing a sublist of `ssNums` is choosing a set of vertices and a set of pairs. -/
+/-- **Sublists of the reduction's numbers as vertex and pair sets.** Let $n, t \in \mathbb{N}$, let
+$b$ be a list of booleans, and let $m$ be the length of the list of vertex pairs $(i, j)$,
+$i < j < n$. Write $x_v$ for the vertex number of $v$ and $y_q$ for the pair number of $q$ defined
+from $n$ and $b$. Some sublist (a subsequence, not necessarily contiguous) of the reduction's
+numbers for $n$ and $b$ sums to $t$ if and only if there are finite sets $S$ of vertices $v < n$
+and $F$ of pair indices $q < m$ with $\sum_{v \in S} x_v + \sum_{q \in F} y_q = t$. -/
 theorem exists_sublist_ssNums_iff {n t : ℕ} {bits : List Bool} :
     (∃ l : List ℕ, l.Sublist (ssNums n bits) ∧ l.sum = t) ↔
       ∃ S ⊆ Finset.range n, ∃ F ⊆ Finset.range (pairs n).length,
@@ -146,7 +154,10 @@ theorem exists_sublist_ssNums_iff {n t : ℕ} {bits : List Bool} :
 
 /-! ### The numbers in base 4 -/
 
-/-- A vertex number in base 4: top digit `1`, and digit `q` is `1` exactly on the edges at `v`. -/
+/-- **A vertex number in base 4.** Let $n, v \in \mathbb{N}$, let $b$ be a list of booleans, and let
+$m$ be the length of the list of vertex pairs $(i, j)$, $i < j < n$. The vertex number of $v$
+defined from $n$ and $b$ equals $4^m + \sum_{q < m} t_q 4^q$, where $t_q = 1$ if entry $q$ of $b$
+(counting from $0$) is true and $v$ is an endpoint of the $q$-th pair, and $t_q = 0$ otherwise. -/
 theorem vtxNum_eq (n : ℕ) (bits : List Bool) (v : ℕ) :
     vtxNum n bits v = 4 ^ (pairs n).length +
       ∑ q ∈ Finset.range (pairs n).length, (if touches n bits v q then 1 else 0) * 4 ^ q := by
@@ -154,7 +165,10 @@ theorem vtxNum_eq (n : ℕ) (bits : List Bool) (v : ℕ) :
     List.toFinset_range, Finset.sum_filter]
   simp [pairDigit]
 
-/-- The target in base 4: `k` on top, and digit `q` is `2` exactly on the edges. -/
+/-- **The target in base 4.** Let $k, n \in \mathbb{N}$, let $b$ be a list of booleans, and let $m$
+be the length of the list of vertex pairs $(i, j)$, $i < j < n$. The reduction's target for $k$,
+$n$ and $b$ equals $k \cdot 4^m + \sum_{q < m} c_q 4^q$, where $c_q = 2$ if entry $q$ of $b$
+(counting from $0$) is true and $c_q = 0$ otherwise, in particular when $b$ has no entry $q$. -/
 theorem ssTarget_eq (k n : ℕ) (bits : List Bool) :
     ssTarget k n bits = k * 4 ^ (pairs n).length +
       ∑ q ∈ Finset.range (pairs n).length, (if bits.getD q false then 2 else 0) * 4 ^ q := by
@@ -162,8 +176,15 @@ theorem ssTarget_eq (k n : ℕ) (bits : List Bool) :
     List.toFinset_range, Finset.sum_filter]
   simp [pairDigit]
 
-/-- A sum of vertex and pair numbers in base 4: the number of vertices on top, and digit `q`
-counts the chosen vertices on edge `q`, plus `1` if the number of edge `q` is chosen. -/
+/-- **A subset sum of the reduction's numbers in base 4.** Let $n \in \mathbb{N}$, let $b$ be a
+list of booleans, let $m$ be the length of the list of vertex pairs $(i, j)$, $i < j < n$, and let
+$S$ and $F$ be finite sets of natural numbers with every element of $F$ below $m$. Write $x_v$ for
+the vertex number of $v$ and $y_q$ for the pair number of $q$ defined from $n$ and $b$. For $q < m$
+let $t_{v,q} = 1$ if entry $q$ of $b$ (counting from $0$) is true and $v$ is an endpoint of the
+$q$-th pair, and $t_{v,q} = 0$ otherwise; let $f_q = 1$ if $q \in F$ and entry $q$ of $b$ is true,
+and $f_q = 0$ otherwise. An absent entry counts as false. Then
+$\sum_{v \in S} x_v + \sum_{q \in F} y_q = |S| \cdot 4^m +
+\sum_{q < m} \left(\sum_{v \in S} t_{v,q} + f_q\right) 4^q$. -/
 theorem sum_vtxNum_add_sum_edgeNum {n : ℕ} {bits : List Bool} {S F : Finset ℕ}
     (hF : F ⊆ Finset.range (pairs n).length) :
     ∑ v ∈ S, vtxNum n bits v + ∑ q ∈ F, edgeNum bits q =
@@ -182,7 +203,12 @@ theorem sum_vtxNum_add_sum_edgeNum {n : ℕ} {bits : List Bool} {S F : Finset �
     Finset.sum_mul, hE]
   rw [Finset.sum_comm, add_assoc]
 
-/-- The chosen vertices on pair `q` are its chosen endpoints if `q` is an edge, else none. -/
+/-- **Vertices of a set touching a vertex pair.** Let $n$ be a natural number, let
+$p_0, \dots, p_{m-1}$ be the vertex pairs in encoding order for $n$, let $b$ be a list of pair
+bits, let $q < m$ with $p_q = (i, j)$, and let $S$ be a finite set of natural numbers. Write $[P]$
+for $1$ if $P$ holds and $0$ otherwise. Then the number of $v \in S$ for which the test whether
+pair $q$ touches $v$ under $b$ is true equals $[i \in S] + [j \in S]$ if the bit $b_q$ is set, and
+$0$ otherwise (an index past the end of $b$ counts as an unset bit). -/
 theorem sum_touches_eq {n : ℕ} {bits : List Bool} {q : ℕ} (hq : q < (pairs n).length)
     (S : Finset ℕ) :
     (∑ v ∈ S, if touches n bits v q then 1 else 0) =
@@ -206,8 +232,13 @@ theorem sum_touches_eq {n : ℕ} {bits : List Bool} {q : ℕ} (hq : q < (pairs n
 
 /-! ### Vertex covers on valid instances -/
 
-/-- On a valid instance, `s` is a vertex cover iff every edge has an endpoint in `S`, the vertex
-numbers of `s`. -/
+/-- **Vertex covers in terms of the pair bits.** Let $n \in \mathbb{N}$, let $b$ be a list of
+booleans with one entry for each pair in the list of vertex pairs $(i, j)$, $i < j < n$, and let
+$G$ be the graph on the vertices $0, \dots, n - 1$ encoded by the pair bits $b$. Let $s$ be a
+finite set of vertices of $G$ and $S$ a finite set of natural numbers such that each vertex $i$
+lies in $s$ exactly when $i \in S$. Then $s$ is a vertex cover of $G$ if and only if, for every
+index $q$ (counting from $0$) of the pair list whose entry in $b$ is true, the $q$-th pair
+$(i_q, j_q)$ satisfies $i_q \in S$ or $j_q \in S$. -/
 theorem isVertexCover_toGraph_iff {n : ℕ} {bits : List Bool}
     (h : bits.length = (pairs n).length) {s : Finset (Fin n)} {S : Finset ℕ}
     (hsS : ∀ i : Fin n, i ∈ s ↔ i.val ∈ S) :
@@ -242,8 +273,12 @@ theorem isVertexCover_toGraph_iff {n : ℕ} {bits : List Bool}
 
 /-! ### Correctness -/
 
-/-- On a valid instance, `G` has a vertex cover of `k` vertices iff some sublist of the numbers
-sums to the target. -/
+/-- **Vertex covers of size $k$ match subset sums hitting the target.** Let $k, n \in \mathbb{N}$
+and let $b$ be a list of booleans with one entry for each pair in the list of vertex pairs
+$(i, j)$, $i < j < n$. Let $G$ be the graph on the vertices $0, \dots, n - 1$ encoded by the pair
+bits $b$. Then $G$ has a vertex cover with exactly $k$ vertices if and only if some sublist (a
+subsequence, not necessarily contiguous) of the reduction's numbers for $n$ and $b$ sums to the
+reduction's target for $k$, $n$ and $b$. -/
 theorem exists_cover_iff_exists_sublist {k n : ℕ} {bits : List Bool}
     (h : bits.length = (pairs n).length) :
     (∃ s : Finset (Fin n), s.card = k ∧ (toGraph n bits).IsVertexCover (s : Set (Fin n))) ↔
