@@ -396,9 +396,9 @@ theorem F_eq_F_floor_mul [IsProbabilityMeasure P] (I : LadderInput P M) {h : ℝ
   congr 1
   refine measure_congr ?_
   filter_upwards [hlat 0] with ω ⟨k, hk⟩
-  change (I.Y 0 ω ≤ t) = (I.Y 0 ω ≤ ⌊t / h⌋ * h)
+  change (I.Y 0 ω ≤ t) ↔ (I.Y 0 ω ≤ ⌊t / h⌋ * h)
   rw [hk]
-  refine propext ⟨fun hkt => ?_, fun hkt => hkt.trans ?_⟩
+  refine ⟨fun hkt => ?_, fun hkt => hkt.trans ?_⟩
   · have h1 : (k : ℝ) ≤ t / h := (le_div_iff₀ hh).2 hkt
     have h2 : k ≤ ⌊t / h⌋ := Int.le_floor.2 h1
     exact mul_le_mul_of_nonneg_right (by exact_mod_cast h2) hh.le

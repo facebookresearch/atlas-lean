@@ -263,7 +263,7 @@ private def indexOfHOneWord (w : FreeMonoid Bool) : Index :=
 
 private theorem zWord_indexOfHOneWord (w : FreeMonoid Bool)
     (h : w ∈ wordSubmonoidHOne) : zWord (indexOfHOneWord w) = w := by
-  apply FreeMonoid.toList.injective
+  apply FreeMonoid.ext
   have h1 : FreeMonoid.toList (zWord (indexOfHOneWord w)) =
       encodeNatBlocks ((indexOfHOneWord w).entries) := by
     have h2 := toList_zWordPNat (indexOfHOneWord w).pnatEntries
