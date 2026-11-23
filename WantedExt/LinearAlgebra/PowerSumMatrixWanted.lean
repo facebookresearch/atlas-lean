@@ -75,16 +75,6 @@ theorem_wanted trace_pow_two (M : Matrix (Fin 2) (Fin 2) ℝ)
                 (Nat.factorial (2 * m + 1 - 2 * r) : ℝ))) *
             M.det ^ r * Matrix.trace M ^ (2 * m + 1 - 2 * r)
 
-/-- **Integral of $x^r (1 - x)^r$ over $[0, 1]$.** For every natural number $r$ (including
-$r = 0$),
-$$\int_0^1 x^r (1 - x)^r \, dx = \frac{1}{(2r + 1) \binom{2r}{r}}.$$
-
-Source: Peiran Ding, Yanjun Zhu and Lei Wang, "A New
-Formula for the Sum of Integer Powers Based on
-Elementary Matrix Theory", Lemma 3. -/
-theorem_wanted integral_pow_one_sub_pow (r : ℕ) :
-    (∫ x in (0 : ℝ)..1, x ^ r * (1 - x) ^ r) =
-      1 / ((2 * r + 1 : ℝ) * (Nat.choose (2 * r) r : ℝ))
 
 
 /-- **Lemma 1**: for a positive integer `k` and an even
