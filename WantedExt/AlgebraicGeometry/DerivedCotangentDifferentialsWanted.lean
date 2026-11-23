@@ -21,6 +21,12 @@ the actual X(E) → Y(E) based map, with a normalized homotopy in the
 relative mapping space over every coefficient test. The stable
 pullback factory chooses compatible enhancements together.
 
+The differential is the transpose relative to a chosen along
+representation, hence determined only up to the automorphisms of the
+pulled-back cotangent; the canonical representation (restriction of the
+target's universal derivation along f), with the chain rule and
+d(id) = id, is not requested here.
+
 References: HAG II math/0404373v7 §1.4.1; PTVV1111.3209v4 §2.2.
 -/
 

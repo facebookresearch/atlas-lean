@@ -140,7 +140,11 @@ theorem homFamilyPrecomposition_over {K : KernelSystem N X} {F : KernelSectionFu
     homFamilyPrecomposition KG P ≫ homFamilyProjection KG V = homFamilyProjection KG W := by
   simp only [homFamilyPrecomposition, homFamilyProjection, pullback.lift_snd]
 
-/-- The pulled source cotangent represents the actual along-deformation fibration. -/
+/-- The pulled source cotangent represents the actual along-deformation fibration. Any fibrewise
+equivalence over the tests is allowed, so a representation is determined only up to the action of
+the automorphisms of the representing object (e.g. precomposition with `-1`). The canonical
+representation, the restriction of the target cotangent's universal derivation along `f`, is not
+constructed here. -/
 structure AlongCotangentRepresentation (C : CotangentContext R G) (f : X ⟶ Y)
     (A : AlongLiftProjection M R C.kernels f C.projection)
     (B : AlongPath M R C.kernels Y)
@@ -152,7 +156,11 @@ structure AlongCotangentRepresentation (C : CotangentContext R G) (f : X ⟶ Y)
     WeakEquivalence (fibreMap (homFamilyProjection C.dgKernels L) DF.projection map over
       (ComposableArrows.mk₀ t))
 
-/-- The actual cotangent differential is the full Yoneda transpose of the native f-map. -/
+/-- The actual cotangent differential is the full Yoneda transpose of the native f-map, relative to
+the chosen along representation `C`. It therefore depends on `C`: changing `C` by an automorphism
+`φ` of `f^* L_Y` replaces `df` by `df ∘ φ⁻¹` (for `f = id`, `df = -id` is possible). Requests about
+the differential only use properties invariant under this change (existence, and equivalence or
+nondegeneracy conditions); the chain rule and `d(id) = id` need the canonical representation. -/
 structure CotangentDifferential (CX : CotangentContext R G) {GY : QCohEnhancement M U Y}
     (CY : CotangentContext R GY) (f : X ⟶ Y) (PB : PullbackDGModel f GY G)
     {A : AlongLiftProjection M R CX.kernels f CX.projection}

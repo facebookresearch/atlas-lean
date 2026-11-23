@@ -89,7 +89,9 @@ variable {N : ShuffleAlgebraFunctor k} {S : AffineScalarSystem N}
     {R : RawModuleRealization M} {X Y : Prestack k}
     {GX : QCohEnhancement M U X} {GY : QCohEnhancement M U Y}
 
-/-- A source differential retains both native representing comparisons and every full coefficient map. -/
+/-- A source differential retains both native representing comparisons and every full coefficient map.
+Its differential is relative to the chosen along representation, so it is determined only up to the
+automorphisms of `f^* L_Y` (see `CotangentDifferential`). -/
 structure CotangentAlongSource (CY : CotangentContext R GY) (f : X ⟶ Y)
     (PB : PullbackDGModel f GY GX) where
   context : CotangentContext R GX
