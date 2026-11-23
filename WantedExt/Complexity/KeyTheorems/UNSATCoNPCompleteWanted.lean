@@ -50,10 +50,10 @@ assignment that agrees with $a$ below $n$ and sends every variable $v \ge n$ to 
 satisfy $\varphi$. -/
 noncomputable def unsatDec : MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := ℕ × Cslib.Logic.PL.CNF) x with
+      (α := ℕ × Cslib.Logic.LegacyPL.CNF) x with
   | some i => decide ((∀ clause ∈ i.2, ∀ l ∈ clause, l.1 < i.1) ∧
       ∀ assign : Fin i.1 → Bool,
-        ¬ Cslib.Logic.PL.CNF.Satisfies
+        ¬ Cslib.Logic.LegacyPL.CNF.Satisfies
           (fun v => if h : v < i.1 then assign ⟨v, h⟩ else false) i.2)
   | none => false
 

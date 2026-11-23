@@ -85,6 +85,6 @@ public theorem UniformContinuous.tendsto_cocompact_zero_of_integrable
   have hdisj : Disjoint (ball x r) (ball (0 : ℝ) N) :=
     ball_disjoint_ball (by simpa only [dist_zero_right] using hx)
   exact hN.not_ge (hmass.trans (setIntegral_mono_set hint.norm.integrableOn
-    (ae_of_all _ fun y ↦ norm_nonneg (f y)) hdisj.subset_compl_right.eventuallyLE))
+    (ae_of_all _ fun y ↦ norm_nonneg (f y)) (ae_of_all _ fun _ hy ↦ hdisj.subset_compl_right hy)))
 
 end MathlibExt.Analysis.Calculus.UniformlyContinuousIntegrableTendstoZeroWanted

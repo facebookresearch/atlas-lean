@@ -31,7 +31,7 @@ are deprecated compatibility aliases.
 
 namespace Cslib.Complexity.Karp
 
-open Cslib.CookLevin Cslib.Logic.PL MetaMathlibExt.ComplexityTheory
+open Cslib.CookLevin Cslib.Logic.LegacyPL MetaMathlibExt.ComplexityTheory
 
 /-- Polynomial-time many-one reductions compose. -/
 @[deprecated (since := "2026-10-30")]
