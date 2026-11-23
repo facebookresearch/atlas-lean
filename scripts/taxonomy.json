@@ -9150,6 +9150,7 @@
   "MathlibExt/Algebra/Polynomial/Interlacing": {"to": "Algebra/zeros-of-polynomials", "title": "Interlacing families of polynomials"},
   "MathlibExt/Algebra/Polynomial/L1Norm": {"to": "Algebra/zeros-of-polynomials", "title": "L1 norm and root bounds for polynomials"},
   "MathlibExt/Algebra/Polynomial/LinearCoeffList": {"to": "Algebra/polynomials", "title": "Coefficients of products with linear factors"},
+  "MathlibExt/Algebra/Polynomial/LocallyIntegerPolynomial": {"to": "RingTheory/ideals-and-constructions", "title": "Locally integer polynomial functions"},
   "MathlibExt/Algebra/Polynomial/MestreSquareDecomposition": {"to": "Algebra/polynomials", "title": "Mestre's square decomposition"},
   "MathlibExt/Algebra/Polynomial/MomentGeneratingJFraction": {"to": "Algebra/orthogonal-polynomials", "title": "Moment generating functions as J-fractions"},
   "MathlibExt/Algebra/Polynomial/PrimeValueConditions": {"to": "NumberTheory/distribution-of-primes/prime-patterns", "title": "Prime values of polynomials"},

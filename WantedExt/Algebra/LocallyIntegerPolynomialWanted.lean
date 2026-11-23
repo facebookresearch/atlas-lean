@@ -12,9 +12,9 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Polynomial.Lifts
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Set.Card
-public import Mathlib.LinearAlgebra.Lagrange
 public import Mathlib.RingTheory.Ideal.Span
 public import MathlibExt.Algebra.Polynomial.FactorialEvalBound
+public import MathlibExt.Algebra.Polynomial.LocallyIntegerPolynomial
 public import MathlibExt.Data.Nat.ProgressionIntersection
 
 /-!
@@ -40,112 +40,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **The ring $\mathrm{LIP}(U)$ of locally integer polynomial functions.** For
-$U \subseteq \mathbb{Z}$, $\mathrm{LIP}(U)$ is the subring of the ring of all functions
-$U \to \mathbb{Z}$ (with pointwise operations) consisting of the functions $f$ such that for
-every finite subset $X \subseteq U$ there is a polynomial $p \in \mathbb{Z}[x]$ with $p(x) = f(x)$
-for all $x \in X$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Definitions 1 and 2. -/
-public def lipSubring (U : Set ℤ) : Subring (U → ℤ) where
-  carrier := {f | ∀ X : Finset U, ∃ p : ℤ[X], ∀ x ∈ X, p.eval (x : ℤ) = f x}
-  mul_mem' := by
-    intro f g hf hg X
-    obtain ⟨p, hp⟩ := hf X
-    obtain ⟨q, hq⟩ := hg X
-    exact ⟨p * q, fun x hx => by simp [hp x hx, hq x hx]⟩
-  one_mem' := fun _ => ⟨1, by simp⟩
-  add_mem' := by
-    intro f g hf hg X
-    obtain ⟨p, hp⟩ := hf X
-    obtain ⟨q, hq⟩ := hg X
-    exact ⟨p + q, fun x hx => by simp [hp x hx, hq x hx]⟩
-  zero_mem' := fun _ => ⟨0, by simp⟩
-  neg_mem' := by
-    intro f hf X
-    obtain ⟨p, hp⟩ := hf X
-    exact ⟨-p, fun x hx => by simp [hp x hx]⟩
-
-/-- **Membership in $\mathrm{LIP}(U)$.** For $U \subseteq \mathbb{Z}$ and $f : U \to \mathbb{Z}$,
-$f$ lies in $\mathrm{LIP}(U)$ if and only if for every finite subset $X \subseteq U$ there is a
-polynomial $p \in \mathbb{Z}[x]$ with $p(x) = f(x)$ for all $x \in X$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Definition 1. -/
-public theorem mem_lipSubring_iff {U : Set ℤ} {f : U → ℤ} :
-    f ∈ lipSubring U ↔ ∀ X : Finset U, ∃ p : ℤ[X], ∀ x ∈ X, p.eval (x : ℤ) = f x :=
-  Iff.rfl
-
-/-- **The triangular-number function is not LIP on the integers.** The function
-$x \mapsto x(x+1)/2$ on $\mathbb{Z}$ (an integer, since $x(x+1)$ is even) does not belong to
-$\mathrm{LIP}(\mathbb{Z})$: no integer polynomial $p$ takes the values $0, 0, 1$ at $-1, 0, 1$,
-since $1 - (-1)$ must divide $p(1) - p(-1)$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Section 1 and Example 2. -/
-public theorem triangular_not_mem_lipSubring_univ :
-    (fun x : (Set.univ : Set ℤ) => (x : ℤ) * ((x : ℤ) + 1) / 2) ∉ lipSubring Set.univ := by
-  intro h
-  obtain ⟨p, hp⟩ := h {⟨-1, trivial⟩, ⟨1, trivial⟩}
-  have h1 := hp ⟨1, trivial⟩ (by simp)
-  have h2 := hp ⟨-1, trivial⟩ (by simp)
-  have hd := Polynomial.sub_dvd_eval_sub (1 : ℤ) (-1) p
-  simp only at h1 h2
-  rw [h1, h2] at hd
-  norm_num at hd
-
-/-- **The evaluation map from $\mathbb{Z}[x]$ to $\mathrm{LIP}(U)$.** For $U \subseteq \mathbb{Z}$,
-the evaluation map is the ring homomorphism from $\mathbb{Z}[x]$ to the ring $\mathrm{LIP}(U)$ of
-locally integer polynomial functions on $U$ that sends each integer polynomial $p$ to the function
-$U \to \mathbb{Z}$, $u \mapsto p(u)$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Lemma 1. -/
-public noncomputable def polynomialToLIP (U : Set ℤ) : ℤ[X] →+* lipSubring U :=
-  (RingHom.pi fun u : U => Polynomial.evalRingHom (u : ℤ)).codRestrict (lipSubring U)
-    fun p _ => ⟨p, fun _ _ => rfl⟩
-
-/-- **Values of the evaluation map into LIP(U).** For $U \subseteq \mathbb{Z}$, an integer
-polynomial $p \in \mathbb{Z}[x]$ and $u \in U$, the image of $p$ under the evaluation map
-$\mathbb{Z}[x] \to \mathrm{LIP}(U)$ takes the value $p(u)$ at $u$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Lemma 1. -/
-@[simp] public theorem polynomialToLIP_apply (U : Set ℤ) (p : ℤ[X]) (u : U) :
-    (polynomialToLIP U p : U → ℤ) u = p.eval (u : ℤ) :=
-  rfl
-
-/-- **Interpolation polynomial.** Let $X \subseteq \mathbb{Z}$ be finite and
-$f : \mathbb{Z} \to \mathbb{Z}$. The interpolation polynomial $f_X \in \mathbb{Q}[x]$ of $f$ on $X$
-is the Lagrange interpolation polynomial: the unique polynomial with rational coefficients of
-degree less than $|X|$ such that $f_X(x) = f(x)$ for every $x \in X$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Section 1 and Definition 3. -/
-public noncomputable def interpolationPoly (X : Finset ℤ) (f : ℤ → ℤ) : ℚ[X] :=
-  Lagrange.interpolate X (fun z : ℤ => (z : ℚ)) fun z => (f z : ℚ)
-
-/-- **The interpolation polynomial agrees with the function on its nodes.** Let
-$X \subseteq \mathbb{Z}$ be finite and $f : \mathbb{Z} \to \mathbb{Z}$. The interpolation polynomial
-$f_X \in \mathbb{Q}[x]$ of $f$ on $X$ satisfies $f_X(x) = f(x)$ for every $x \in X$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Section 1. -/
-public theorem eval_interpolationPoly {X : Finset ℤ} (f : ℤ → ℤ) {x : ℤ} (hx : x ∈ X) :
-    (interpolationPoly X f).eval (x : ℚ) = f x :=
-  Lagrange.eval_interpolate_at_node _ (fun _ _ _ _ h => Int.cast_injective h) hx
-
-/-- **Degree bound for the interpolation polynomial.** Let $X \subseteq \mathbb{Z}$ be finite and
-$f : \mathbb{Z} \to \mathbb{Z}$. The interpolation polynomial $f_X \in \mathbb{Q}[x]$ of $f$ on $X$
-has degree less than $|X|$, where the zero polynomial has degree $-\infty$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Section 1. -/
-public theorem degree_interpolationPoly_lt (X : Finset ℤ) (f : ℤ → ℤ) :
-    (interpolationPoly X f).degree < X.card :=
-  Lagrange.degree_interpolate_lt _ fun _ _ _ _ h => Int.cast_injective h
-
 /-- **Integer polynomials embed in LIP(U).** For every infinite set $U \subseteq \mathbb{Z}$, the
 evaluation map $\mathbb{Z}[x] \to \mathrm{LIP}(U)$, sending $p$ to the function $u \mapsto p(u)$,
 is injective: distinct integer polynomials give distinct functions on $U$.
@@ -168,16 +62,6 @@ Article A41, Lemma 2 (`integers-2025-A41-lem-2`). -/
 public theorem_wanted mem_lifts_of_degree_lt_of_eval_eq (X : Finset ℤ) (q : ℚ[X])
     (hq : q.degree < X.card) (p : ℤ[X]) (h : ∀ x ∈ X, q.eval (x : ℚ) = ((p.eval x : ℤ) : ℚ)) :
     q ∈ Polynomial.lifts (Int.castRingHom ℚ)
-
-/-- **A locally integer polynomial function with infinitely many zeros is zero.** Let
-$U \subseteq \mathbb{Z}$ and let $f : U \to \mathbb{Z}$ lie in the ring $\mathrm{LIP}(U)$ of
-locally integer polynomial functions on $U$. If $f(x) = 0$ for infinitely many $x \in U$, then
-$f(x) = 0$ for every $x \in U$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Lemma 3 (`integers-2025-A41-lem-3`). -/
-public theorem_wanted lip_eq_zero_of_infinite_zeros {U : Set ℤ} {f : U → ℤ}
-    (hf : f ∈ lipSubring U) (h : {x : U | f x = 0}.Infinite) : f = 0
 
 /-- **Locally integer polynomial functions agreeing on an infinite subset are equal.** Let
 $U \subseteq V \subseteq \mathbb{Z}$ with $U$ infinite, and let $f, g : V \to \mathbb{Z}$ lie in
