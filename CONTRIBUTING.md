@@ -53,10 +53,19 @@ it takes, and adds `new` when it adds declarations that get pages under
 [Maintaining articles](docs/BLUEPRINT.md#maintaining-articles). It is
 `Graph: none` only when the pull request changes nothing the graph shows.
 
-- **A new declaration gets its page in the same pull request.** Commit what
-  `scripts/sync_wiki.py declarations` writes for the pull request's own
-  declarations. When the sync cannot find a new module's subject, or puts it in
-  the wrong place, also place the module in `scripts/taxonomy.json`.
+- **A new declaration gets its page in the same pull request.** Run the sync
+  scoped to the pull request ([Maintaining
+  articles](docs/BLUEPRINT.md#maintaining-articles)), from a clone whose
+  `origin` is this repository, and commit what it writes:
+
+  ```sh
+  python scripts/sync_wiki.py declarations --base "$(git merge-base origin/main HEAD)"
+  ```
+
+  It writes only what the pull request's own declarations need, and the
+  `graph sync` check reports a pull request that is not in step, with the
+  command to run. When the sync cannot find a new module's subject, or puts it
+  in the wrong place, also place the module in `scripts/taxonomy.json`.
 - **A renamed or removed declaration keeps its pages.** In the same pull
   request, update each annotation that names it, as its Lean link or as a
   `held` marker, and keep the article id. When a declaration goes with no
@@ -242,9 +251,10 @@ is advisory CI, not a standalone merge barrier.
 A graph PR changes the ATLAS wiki; its content follows the
 [graph rules](docs/BLUEPRINT.md#graph-rules). When a pull request's only wiki
 changes are what `scripts/sync_wiki.py declarations` writes for its own
-declarations, it needs no issue and, unless GitHub requires one, no code
-owner's approval; Codex still reviews it. Any other wiki change, a new place
-in `scripts/taxonomy.json` included, makes it a graph PR in full.
+declarations, as the `graph sync` check reports, it needs no issue and, unless
+GitHub requires one, no code owner's approval; Codex still reviews it. Any
+other wiki change, a new place in `scripts/taxonomy.json` included, makes it a
+graph PR in full.
 
 - **Keep it under 3,000 changed files and name its issue** (`Closes #…` or
   `Part of #…`). GitHub shows at most 3,000 files in one diff.
