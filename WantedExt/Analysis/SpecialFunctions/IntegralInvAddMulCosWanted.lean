@@ -41,13 +41,10 @@ public import Mathlib
 
 namespace MathlibExt.Analysis.SpecialFunctions.IntegralInvAddMulCosWanted
 
-/-- Prove that
+/-- **Integral of $1/(a + b\cos\theta)$ over a period.** Let $a$ and $b$ be real numbers with
+$a > |b|$. Then
 
-\[
-\int_0^{2\pi} \frac{d\theta}{a+b\cos\theta}
-= \frac{2\pi}{\sqrt{a^2-b^2}}
-\]
-if $a>|b|$ and $a,b\in\mathbb{R}$.
+$$\int_0^{2\pi} \frac{d\theta}{a + b\cos\theta} = \frac{2\pi}{\sqrt{a^2 - b^2}}.$$
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Functions of a complex
 variable; General properties of functions of one complex variable),
