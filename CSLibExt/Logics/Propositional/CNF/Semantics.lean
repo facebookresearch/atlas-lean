@@ -17,14 +17,14 @@ public import CSLibExt.Logics.Propositional.CNF.Basic
 # Semantics of conjunctive normal form
 
 This file gives names to the literal, clause, and formula semantics implicit in
-`Cslib.Logic.PL.CNFSat`.  The definitions deliberately use the existing CNF
+`Cslib.Logic.LegacyPL.CNFSat`.  The definitions deliberately use the existing CNF
 representation, so verified decision procedures can operate directly on the
 formulas used by the Cook--Levin development.
 -/
 
 @[expose] public section
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 namespace CNFLiteral
 
@@ -116,4 +116,4 @@ theorem cnfSat_iff_exists_satisfies {formula : CNF} :
     obtain ⟨⟨x, polarity⟩, hliteral, hsatisfied⟩ := hformula clause hclause
     exact ⟨x, polarity, hliteral, hsatisfied⟩
 
-end Cslib.Logic.PL
+end Cslib.Logic.LegacyPL
