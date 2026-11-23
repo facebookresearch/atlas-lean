@@ -5,3 +5,8 @@ Let $d \ge 1$ and $N \in \mathbb{N}$, and suppose the [free rotation residue](oc
 ## Depends on
 
 - [Free off-centre sandwich hypothesis](../translation-invariance-and-ergodicity-of-the-q-2/bdp-free-off-centre-sandwich.md)
+- [Free infinite-volume edge density](free-edge-density.md)
+- [Free rotation residue for a box pair](ocs-free-rotation-residue.md)
+- [Logistic function $e^t/(1+e^t)$](../convexity-of-the-free-energy-and-edge-densities/fsc-logistic.md)
+- [Vertices of the box $\{-n, \dots, n\}^d$](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/box-verts.md)
+- [Probability of an ambient FK configuration](../random-cluster-measures-on-finite-graphs/fk-prob.md)

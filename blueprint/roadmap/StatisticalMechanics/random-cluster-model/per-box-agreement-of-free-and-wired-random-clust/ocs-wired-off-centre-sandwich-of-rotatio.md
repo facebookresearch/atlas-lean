@@ -5,3 +5,8 @@ Let $d \ge 1$ and $N \in \mathbb{N}$, and suppose the [wired rotation residue](o
 ## Depends on
 
 - [Wired off-centre sandwich hypothesis](../translation-invariance-and-ergodicity-of-the-q-2/bdp-wired-off-centre-sandwich.md)
+- [Wired rotation residue for a box pair](ocs-wired-rotation-residue.md)
+- [Wired infinite-volume edge density](wired-edge-density.md)
+- [Logistic function $e^t/(1+e^t)$](../convexity-of-the-free-energy-and-edge-densities/fsc-logistic.md)
+- [Vertices of the box $\{-n, \dots, n\}^d$](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/box-verts.md)
+- [Wired random-cluster probability of a configuration](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-fk-prob.md)

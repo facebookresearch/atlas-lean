@@ -12,3 +12,4 @@ over the configurations $x$ that agree with $y$ on $U$.
 ## Depends on
 
 - [Overwriting an assignment on a set of nodes](fill.md)
+- [Marginal of a weight](../../../../Probability/random-fields/conditional-independence-on-finite-configuration/marginal.md)

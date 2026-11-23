@@ -11,3 +11,5 @@ where $\theta^1_e$ and $\theta^0_e$ are the [wired](../per-box-agreement-of-free
 - [Finite-volume tilt data for a box edge at $q = 2$](fksecant-data.md)
 - [Wired infinite-volume edge density](../per-box-agreement-of-free-and-wired-random-clust/wired-edge-density.md)
 - [Free infinite-volume edge density](../per-box-agreement-of-free-and-wired-random-clust/free-edge-density.md)
+- [Vertices of the box $\{-n, \dots, n\}^d$](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/box-verts.md)
+- [Inclusion of box edges into $\mathbb{Z}^d$](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/edge-incl.md)

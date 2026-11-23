@@ -1176,23 +1176,25 @@ def usable_holds(files: dict[Path, list[dict]], index) -> set[int]:
 
 def unlinked_kind(annotation: dict, index, usable: set[int]) -> str | None:
     """The kind of a page that builds with no Lean link. It is a statement not yet in Lean, which Autoform counts,
-    as ready to state, planned or not ready, only with a kind. A held page takes that of the declaration it holds
-    back, as a linked page would get it, when its marker is usable (see usable_holds), and none otherwise, whatever it
-    records, so that no declaration counts twice; any other page the one of KINDS its annotation records under OWN as
-    "kind"; else None, as no kind is guessed. A page whose row still names a declaration of this project in a Lean
-    link, as a reference, gets none either: Autoform lists every declaration of this project a row names as its
-    page's Lean target, so its task would name that declaration."""
+    as ready to state, planned or not ready, only with a kind. A page takes the one of KINDS its annotation records
+    under OWN as "kind", else, when it holds a declaration back, that declaration's, as a linked page would get it
+    (the held declaration does not state the page, so a page that states a result held as a `def : Prop` records
+    `theorem`); else None, as no kind is guessed. A held page whose marker is not usable (see usable_holds) gets
+    none, whatever it records, so that no declaration counts twice. A page whose row still names a declaration of
+    this project in a Lean link, as a reference, gets none either: Autoform lists every declaration of this project a
+    row names as its page's Lean target, so its task would name that declaration."""
     if lean_ends(annotation).own:
         return None
     extensions = annotation.get("extensions")
     own = extensions.get(OWN) if isinstance(extensions, dict) else None
+    recorded = own.get("kind") if isinstance(own, dict) else None
+    recorded = recorded if isinstance(recorded, str) and recorded in KINDS else None
     if isinstance(own, dict) and "held" in own:
         if id(annotation) not in usable:
             return None
         keyword = index.declarations[held_name(annotation)].keyword
-        return wiki.WANTED.get(keyword, keyword)
-    kind = own.get("kind") if isinstance(own, dict) else None
-    return kind if isinstance(kind, str) and kind in KINDS else None
+        return recorded or wiki.WANTED.get(keyword, keyword)
+    return recorded
 
 
 def apply_lean_facts(index, dependencies: dict, registry: dict | None = None) -> tuple[dict[str, int], list[str]]:
