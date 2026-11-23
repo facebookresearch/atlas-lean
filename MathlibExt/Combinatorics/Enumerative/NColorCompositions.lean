@@ -183,7 +183,7 @@ private noncomputable def coloredTailsEquiv (n : ℕ) :
 
 private instance finiteColorCompThree (n : ℕ) : Finite (ColorCompAllowed 3 n) := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     cases n with
     | zero => exact Nat.finite_of_card_ne_zero (ccoAllowed_three_zero.trans_ne Nat.one_ne_zero)
     | succ n =>

@@ -144,15 +144,6 @@ public theorem_wanted HasNSProperty.image_xor_eq {g : ℕ → ℕ} (hg : HasNSPr
     {x z : ℕ} (hx : x ≤ g z) :
     {c | ∃ w < z, c = x ^^^ w} = {c | ∃ w' < z, c = min (g w') x ^^^ w'}
 
-/-- **Halving functions have the NS property.** For every natural number $m \ge 1$, the function
-$x \mapsto \lfloor x / 2^m \rfloor$ on $\mathbb{N}$ has the NS property.
-
-Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
-Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
-Article G3, Lemma 7 (`integers-2025-G3-lem-7`). -/
-public theorem_wanted hasNSProperty_div_two_pow {m : ℕ} (hm : 0 < m) :
-    HasNSProperty fun x ↦ x / 2 ^ m
-
 /-- **Grundy number of a chocolate bar.** Let $f_1, \dots, f_s : \mathbb{N} \to \mathbb{N}$. For
 coordinates $x = (x_1, \dots, x_s) \in \mathbb{N}^s$ and a width $z \in \mathbb{N}$, the position
 $(x, z)$ stands for the chocolate bar $\mathrm{CB}(f_1, \dots, f_s, x_1, \dots, x_s, z)$, whose

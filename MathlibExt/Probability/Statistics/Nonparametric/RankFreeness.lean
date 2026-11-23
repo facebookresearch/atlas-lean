@@ -240,14 +240,15 @@ private theorem measurable_orderStatistic {n : ℕ} :
         · intro hle
           exact h.1 hle
         · intro hlt heq
-          exact h.2 p.1 p.2 hlt heq
+          exact lt_of_le_of_ne (h.2 hlt.le heq) (σ.injective.ne hlt.ne)
       · intro h
         have hmon : Monotone (x ∘ ⇑σ) := by
           intro a b hab
           exact (h (a, b)).1 hab
-        have hstab : ∀ i j : Fin n, i < j → x (σ i) = x (σ j) → σ i < σ j :=
-          fun i j hlt heq => (h (i, j)).2 hlt heq
-        exact ((Tuple.eq_sort_iff (f := x) (σ := σ)).mpr ⟨hmon, hstab⟩).symm
+        refine ((Tuple.eq_sort_iff (f := x) (σ := σ)).mpr ⟨hmon, fun i j hle heq => ?_⟩).symm
+        rcases hle.lt_or_eq with hlt | rfl
+        · exact ((h (i, j)).2 hlt heq).le
+        · exact le_rfl
     rw [hEq]
     exact MeasurableSet.iInter hC
   intro T hT
