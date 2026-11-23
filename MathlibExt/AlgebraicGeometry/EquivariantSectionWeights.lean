@@ -117,4 +117,3 @@ def weightMeasure {A : Linearization (Torus k) X M} {T : TensorSections X M}
         MeasureTheory.Measure.dirac ((w : ℝ) / m)
 
 end MathlibExt.AlgebraicGeometry.EquivariantSectionWeights
-

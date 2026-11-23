@@ -1,20 +1,7 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
 Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
-Released under Apache 2.0; Authors: The Tau Ceti contributors.
-Adapted from TauCetiProject/TauCeti, revision
-62bbc0596dc3539d488232e4e924a338548ea0a9,
-TauCeti/AlgebraicGeometry/WeilDivisor/Scheme/Sheaf.lean.
-Modification: reuse Atlas's actual prime-point integer divisors and native
-DVR stalks; port the completed section/submodule/sheaf construction and its
-coefficientwise inclusion, omitting the unrelated Weil-divisor API closure.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
 -/
 module
 
@@ -23,12 +10,17 @@ public import MathlibExt.AlgebraicGeometry.LogPairs
 public import Mathlib.Algebra.Category.ModuleCat.Sheaf.Submodule
 
 /-!
-# Completed actual divisorial module sheaves
+# The sheaf `𝒪_X(D)` of a Weil divisor
 
-O(D) is the actual subsheaf of the generic-point direct image K_X cut out
-by the codimension-one order inequalities. This is the completed Tau
-construction, not a newly requested arbitrary divisorial-module provider.
-Codimension-one DVR facts remain explicit native/source-integration inputs.
+For an integral Weil divisor `D` on a normal variety `X` whose codimension-one local rings are
+discrete valuation rings, `𝒪_X(D)` is the subsheaf of the sheaf `𝒦_X` of rational functions with
+`Γ(U, 𝒪_X(D)) = {f ∈ K(X) | f = 0 or ord_p f ≥ -D(p) for every prime divisor p ∈ U}`.
+
+`sections`, `mem_sections`, `sections_map`, `submodule`, `sheaf` and `inclusion` are ported from
+`TauCeti/AlgebraicGeometry/WeilDivisor/Scheme/Sheaf.lean` in TauCetiProject/TauCeti at revision
+62bbc0596dc3539d488232e4e924a338548ea0a9 (Apache 2.0), with Weil divisors replaced by
+`LogPairs.IntegerWeil` on the prime points of a `LogPairs.NormalVariety`. The inclusion `ofLE`
+for coefficientwise comparable divisors is new.
 -/
 
 set_option backward.isDefEq.respectTransparency false
@@ -133,5 +125,10 @@ def ofLE {D E : IntegerWeil V} (h : ∀ p, D p ≤ E p) : sheaf V D ⟶ sheaf V 
         ext s
         rfl }
 
-end MathlibExt.AlgebraicGeometry.DivisorialModuleSheaves
+/-- `ofLE` is compatible with the inclusions into the rational-function module. -/
+@[reassoc (attr := simp)]
+theorem ofLE_inclusion {D E : IntegerWeil V} (h : ∀ p, D p ≤ E p) :
+    ofLE V h ≫ inclusion V E = inclusion V D :=
+  rfl
 
+end MathlibExt.AlgebraicGeometry.DivisorialModuleSheaves

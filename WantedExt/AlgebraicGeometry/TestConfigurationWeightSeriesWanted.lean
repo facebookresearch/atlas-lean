@@ -36,4 +36,3 @@ def_wanted sectionWeightLimit
       ∃ r : ℝ, 0 ≤ r ∧ measure (Set.Icc (-r) r)ᶜ = 0}
 
 end MathlibExt.AlgebraicGeometry.TestConfigurationWeightSeries
-

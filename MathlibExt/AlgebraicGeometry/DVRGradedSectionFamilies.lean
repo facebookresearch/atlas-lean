@@ -218,4 +218,3 @@ structure SemistableSpecialFibres (D : TwoModels (R := R) (K := K)) {n : ℕ}
   secondSemistable : second.IsValuativelySemistable
 
 end MathlibExt.AlgebraicGeometry.DVRGradedSectionFamilies
-

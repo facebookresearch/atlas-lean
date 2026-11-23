@@ -129,4 +129,3 @@ structure DivisorialRealization {P : LogPair k n} (v : CenteredValuation P.varie
     order v a = scale * (LogPairs.valuationOnBase model prime a : ℝ)
 
 end MathlibExt.AlgebraicGeometry.MonomialModelRetractions
-

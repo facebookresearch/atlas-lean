@@ -61,4 +61,3 @@ def maximalBasisOrder (S : SectionSeries V v) (m : ℕ) : EReal :=
     t = (basisExpectedOrder S m N b : EReal)}
 
 end MathlibExt.AlgebraicGeometry.NormalizedSectionAlgebras
-

@@ -48,7 +48,10 @@ open MathlibExt.AlgebraicGeometry.FourierMukai
 def idealModule (X : Scheme.{0}) (I : X.IdealSheafData) : X.Modules :=
   kernel (RationalResolution.structureUnit I.subschemeι)
 
-/-- Actual coefficient of a nonzero ideal on a normal component, using affine local sections. -/
+/-- The order of an ideal along a prime divisor of a normal variety: the least order of a
+nonzero local section on an affine open containing the prime. For an ideal vanishing near the
+prime the set is empty and the value is `0` by the `sInf` convention, so this is only meaningful
+for ideals that are nonzero at the prime. -/
 def idealOrder {k : Type} [Field k] {d : ℕ} (V : NormalVariety k d)
     (I : V.X.left.IdealSheafData) (p : PrimePoint V) : ℤ :=
   sInf {a | ∃ (U : V.X.left.Opens) (hU : IsAffineOpen U) (hp : p.val ∈ U),
@@ -89,4 +92,3 @@ structure LogAdjointBranch {k : Type} [Field k] {d : ℕ}
     S.power.cartier.line.val
 
 end MathlibExt.AlgebraicGeometry.ConductorLogGluing
-

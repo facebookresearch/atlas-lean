@@ -120,4 +120,3 @@ def basisExpectedOrder {V : NormalVariety k n} {v : CenteredValuation V}
     ((m : ℝ) * N)
 
 end MathlibExt.AlgebraicGeometry.CenteredValuationSections
-

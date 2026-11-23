@@ -140,4 +140,3 @@ def HasWeakLimit {T : NormalizedTestConfiguration k X L} (S : WeightSeries T)
       (nhds (∫ x, f x ∂measure))
 
 end MathlibExt.AlgebraicGeometry.TestConfigurationWeightSeries
-

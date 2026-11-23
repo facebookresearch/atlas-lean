@@ -60,4 +60,3 @@ def_wanted projectiveTwoModelReesRealization
     G.Realization
 
 end MathlibExt.AlgebraicGeometry.TwoModelSectionRees
-

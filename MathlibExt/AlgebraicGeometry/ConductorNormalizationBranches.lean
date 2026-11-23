@@ -188,4 +188,3 @@ def PreservesDifferent {k : Type} [Field k] {d : ℕ}
   ∀ p, branchDifferent S p = branchDifferent T (P.primes p)
 
 end MathlibExt.AlgebraicGeometry.ConductorNormalizationBranches
-

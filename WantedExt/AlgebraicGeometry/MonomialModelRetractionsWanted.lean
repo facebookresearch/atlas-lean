@@ -42,4 +42,3 @@ theorem_wanted divisorial_discrepancy
       ((R.scale * LogPairs.logDiscrepancy R.model R.prime : ℝ) : EReal)
 
 end MathlibExt.AlgebraicGeometry.MonomialModelRetractions
-

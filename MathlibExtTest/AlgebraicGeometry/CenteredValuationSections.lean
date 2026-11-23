@@ -57,4 +57,3 @@ example (t : ℝ) (ht : 0 < t)
   exact (not_lt_of_ge hs) hlt
 
 end MathlibExtTest.AlgebraicGeometry.CenteredValuationSections
-

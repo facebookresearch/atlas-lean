@@ -15,7 +15,8 @@ public import Batteries.Util.ProofWanted
 
 All mixed intersections, energy, entropy and J use the native scheme
 projections, actual Cartier polarizations and fixed divisorial valuation
-normalizations. The requests prove descent through the actual proper
+normalizations. Every model carries that the base polarization is a line
+bundle of positive volume. The requests prove descent through the actual proper
 birational common-model pullback; their conclusions are not input fields.
 
 Reference: Boucksom--Hisamoto--Jonsson, arXiv:1504.06568v3, Proposition 7.24.
@@ -37,7 +38,7 @@ theorem_wanted commonModelMixedIntersection
     (P : LogPair k n) (L : P.variety.X.left.Modules)
     (_projective : ∃ N : ℕ, ∃ i : P.variety.X ⟶
       MathlibExt.AlgebraicGeometry.SurfaceHilbertSchemes.projectiveSpace k N,
-      IsClosedImmersion i.left) (_volume : 0 < baseVolume P L)
+      IsClosedImmersion i.left)
     (M N : VerticalModel P L) (_refinement : ModelRefinement M N) :
     mixedTrivial M = mixedTrivial N
 
@@ -46,7 +47,7 @@ theorem_wanted commonModelEnergyAndJ
     (P : LogPair k n) (L : P.variety.X.left.Modules)
     (_projective : ∃ N : ℕ, ∃ i : P.variety.X ⟶
       MathlibExt.AlgebraicGeometry.SurfaceHilbertSchemes.projectiveSpace k N,
-      IsClosedImmersion i.left) (_volume : 0 < baseVolume P L)
+      IsClosedImmersion i.left)
     (M N : VerticalModel P L) (_refinement : ModelRefinement M N) :
     energy M = energy N ∧ jFunctional M = jFunctional N
 
@@ -55,7 +56,7 @@ theorem_wanted commonModelEntropy
     (P : LogPair k n) (L : P.variety.X.left.Modules)
     (_projective : ∃ N : ℕ, ∃ i : P.variety.X ⟶
       MathlibExt.AlgebraicGeometry.SurfaceHilbertSchemes.projectiveSpace k N,
-      IsClosedImmersion i.left) (_volume : 0 < baseVolume P L)
+      IsClosedImmersion i.left)
     (M N : VerticalModel P L) (_refinement : ModelRefinement M N)
     (V : ∀ p (hp : p ∈ M.central), ComponentValuation M p hp)
     (W : ∀ p (hp : p ∈ N.central), ComponentValuation N p hp) :

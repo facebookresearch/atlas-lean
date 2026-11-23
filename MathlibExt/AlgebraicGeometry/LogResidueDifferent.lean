@@ -158,4 +158,3 @@ structure ConductorSheaf {X N : Scheme.{0}} (ν : N ⟶ X) where
   normalized : ∀ U : X.affineOpens, ideal.ideal U = ringConductor (ν.app U.val).hom
 
 end MathlibExt.AlgebraicGeometry.LogResidueDifferent
-

@@ -18,7 +18,10 @@ public import MathlibExt.AlgebraicGeometry.DivisorDynamics
 A model is an actual proper birational scheme over X×P¹. Its parameter
 is the pullback of the actual affine coordinate, its divisor is an actual
 vertical Cartier divisor, and its polarization is computed as the pulled
-base polarization tensored with the completed O(D) sheaf. Model values,
+base polarization tensored with the completed O(D) sheaf. The base
+polarization L is a line bundle of positive volume, and both facts are part
+of every model, so the model polarization is a line bundle and the Euler
+differences below are intersection numbers of line bundles. Model values,
 Monge--Ampère weights, energy and entropy are computed from actual orders,
 Euler-intersection differences and actual valuation discrepancies.
 
@@ -67,8 +70,17 @@ structure PrimeCartierMultiple (W : NormalVariety k (n + 1)) (p : PrimePoint W) 
   line : IsLineBundle
     (DivisorialModuleSheaves.sheaf W (Finsupp.single p (index : ℤ)))
 
-/-- Proper birational vertical-Cartier model; all metric data are actual schemes and divisors. -/
+/-- The volume `(Lⁿ)` of the base polarization, as Snapper's Euler-characteristic difference. -/
+def baseVolume (P : LogPair k n) (L : P.variety.X.left.Modules) : ℝ :=
+  DivisorDynamics.mixedIntersection P.variety.X n (fun _ => L)
+
+/-- A proper birational model of `X × ℙ¹` with a vertical Cartier divisor, for the polarized
+variety `(X, L)`: `L` is a line bundle of positive volume, so that the model polarization
+`modelPolarization` (pulled-back `L^r` twisted by `𝒪(D)`) is a line bundle and the normalized
+intersection functionals are defined. -/
 structure VerticalModel (P : LogPair k n) (L : P.variety.X.left.Modules) where
+  polarization : IsLineBundle L
+  volume_pos : 0 < baseVolume P L
   parameter : ProjectiveParameter (k := k)
   model : NormalVariety k (n+1)
   [properOverField : IsProper model.X.hom]
@@ -119,10 +131,6 @@ def modelPolarization {P : LogPair k n} {L : P.variety.X.left.Modules}
     ((Scheme.Modules.pullback (baseProjection M).left).obj (power L M.exponent))
     (DivisorialModuleSheaves.sheaf M.model M.divisor)
 
-/-- The base volume is the actual Euler-intersection difference of the base line. -/
-def baseVolume (P : LogPair k n) (L : P.variety.X.left.Modules) : ℝ :=
-  DivisorDynamics.mixedIntersection P.variety.X n (fun _ => L)
-
 /-- Actual normalized model function value at a central divisorial valuation. -/
 def modelValue {P : LogPair k n} {L : P.variety.X.left.Modules}
     (M : VerticalModel P L) (p : PrimePoint M.model) : ℝ :=
@@ -168,4 +176,3 @@ def entropy {P : LogPair k n} {L : P.variety.X.left.Modules}
     (componentMass M p.val p.property : EReal) * extendedDiscrepancy (V p.val p.property).valuation
 
 end MathlibExt.AlgebraicGeometry.NonarchimedeanCartierModels
-

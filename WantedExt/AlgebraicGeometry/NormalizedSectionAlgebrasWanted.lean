@@ -43,4 +43,3 @@ theorem_wanted basis_expected_limit
       (nhds (expectedVanishing S).toEReal)
 
 end MathlibExt.AlgebraicGeometry.NormalizedSectionAlgebras
-

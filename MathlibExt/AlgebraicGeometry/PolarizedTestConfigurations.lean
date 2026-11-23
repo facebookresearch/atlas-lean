@@ -186,4 +186,3 @@ structure NormalizedTestConfiguration (X : Over (Base k)) (L : X.left.Modules)
     canonicalGenericLineMap k toTestConfiguration actionNormalized
 
 end MathlibExt.AlgebraicGeometry.PolarizedTestConfigurations
-

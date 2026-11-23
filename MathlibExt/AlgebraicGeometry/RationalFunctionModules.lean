@@ -1,20 +1,7 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
 Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
-Released under Apache 2.0 license; Authors: The Tau Ceti contributors.
-Adapted from TauCetiProject/TauCeti, revision
-62bbc0596dc3539d488232e4e924a338548ea0a9,
-TauCeti/AlgebraicGeometry/Modules/RationalFunctions.lean.
-Modification: port only the completed generic-point direct image and its
-section/ring/module/restriction comparisons; move namespace, omit unrelated
-API and reuse native Mathlib imports. No unfinished construction is included.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
 -/
 module
 
@@ -23,7 +10,18 @@ public import Mathlib.AlgebraicGeometry.Modules.Sheaf
 public import Mathlib.AlgebraicGeometry.Stalk
 public import Mathlib.Algebra.Category.ModuleCat.Sheaf.PullbackFree
 
-/-! # Completed rational-function module and fixed section comparisons -/
+/-!
+# The sheaf of rational functions on an irreducible scheme
+
+The sheaf `𝒦_X` of rational functions is the pushforward of the structure sheaf of
+`Spec K(X)` along the canonical morphism `Spec K(X) ⟶ X`. Its sections over a nonempty open
+subset are identified with the function field `K(X)`, compatibly with restriction.
+
+This file is a port of part of `TauCeti/AlgebraicGeometry/Modules/RationalFunctions.lean` from
+TauCetiProject/TauCeti at revision 62bbc0596dc3539d488232e4e924a338548ea0a9 (Apache 2.0):
+every declaration here is copied from it with its proof; the namespace is changed, the rest of
+the source API is omitted, and `functionFieldSectionsIso` is public.
+-/
 
 @[expose] public noncomputable section
 
@@ -88,7 +86,7 @@ def toRationalFunctionsRing (X : Scheme.{u}) [IrreducibleSpace X] :
 
 /-- The sheaf `𝒦_X` of rational functions on an integral scheme `X`: the constant sheaf with
 value the function field, realized as the pushforward of the structure sheaf of `Spec K(X)`
-along `TauCeti.AlgebraicGeometry.Scheme.fromSpecFunctionField`. -/
+along `fromSpecFunctionField`. -/
 def rationalFunctions (X : Scheme.{u}) [IrreducibleSpace X] : X.Modules :=
   (Scheme.Modules.pushforward (fromSpecFunctionField X)).obj (SheafOfModules.unit _)
 
@@ -226,4 +224,3 @@ theorem rationalFunctionsEquiv_map {U V : X.Opens} [Nonempty U] [Nonempty V] (i 
 
 
 end MathlibExt.AlgebraicGeometry.RationalFunctionModules
-
