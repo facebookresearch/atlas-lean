@@ -47,9 +47,10 @@ a base it certifies the present snapshot only; that the ledger only grows, and t
 the strict check's. A missing ledger is an error, an empty one has no row. It reads each input file once, removes
 its output first, and on success writes, whole, the receipt hooks/card_pages.py keeps the moved addresses with: the
 commit, the sha256 of the ledger's bytes and a digest of the links folder's (links_digest), which bind the receipt to
-the very inputs checked, and the cards, by id, with their folders (`cards_complete` says whether that lists them all:
-a card is listed only with an article id no other article has and a folder the site can serve; a card a retirement
-needs must be listed). It refuses outside a Git checkout.
+the very inputs checked; the cards, by id, with their folders (`cards_complete` says whether that lists them all: a
+card is listed only with an article id no other article has and a folder the site can serve); and the replacements,
+the live article each retirement, of a card or of a statement, ends at, by id, with its kind and node, each at an
+address the site can serve. It refuses outside a Git checkout.
 
 A planned statement page may record its counterparts under `extensions["org.atlas-wiki"]["counterpart"]`
 (docs/cards.md#counterparts): check verifies their form and their place, a live statement page Autoform reads whose
@@ -84,7 +85,7 @@ AUTOFORM = "org.autoform"
 SCHEMA = "atlas-cards/v1"
 # The receipt of the moves command, which hooks/card_pages.py reads; and the links folder's defaults file (Autoform's
 # annotations._DEFAULTS), which the receipt's digest of the annotations covers.
-MOVES_SCHEMA = "atlas-card-moves/v1"
+MOVES_SCHEMA = "atlas-card-moves/v2"
 LINKS_DEFAULTS = "_defaults.json"
 ARTICLE_ID = re.compile(r"af_[0-9a-f]{24}")
 COMMIT = re.compile(r"[0-9a-f]{40}")
@@ -1008,8 +1009,12 @@ def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: st
     moved page or folder is no longer at its old path; every hop keeps the article id it started with, so an old
     address always leads to its own article; a page ends at a live statement page and a folder at a live folder
     page with that id, or at a card a retirement row then replaces; a retired card is no card any more, its id no
-    page's, and what replaces it is one; nothing goes round. An address has one owner: it moves once, as a page or
-    as a folder, and no live page or folder of another article takes it. ``required`` (the strict check): the file
+    page's, and what replaces it is one; a page ends at the address a statement's retirement row records for it, its
+    id no page's or folder's any more, and its replacements end at a live statement page or folder page, through
+    any retirement on the way; nothing goes round. An address has one owner: it moves once, as a page or as a folder,
+    or is the last address of retired cards or of retired statements, each replaced in place by the next, and no
+    live page or folder of another article takes it (a page or folder page with no id is another article's), but for
+    the final replacement. ``required`` (the strict check): the file
     must exist. ``base_annotations``, the base commit's rows, and ``renames``, the roadmap files Git finds renamed
     since (old and new path below roadmap/): see `history`. ``text``: the ledger as its caller read it (the moves
     command reads it once, to check and hash the same bytes), instead of the file."""
@@ -1028,6 +1033,11 @@ def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: st
             errors.append(f"{MOVES}: a row the base commit published was removed or changed; the ledger only grows")
     chains: dict[str, dict[str, tuple[str, str]]] = {"page": {}, "folder": {}}
     retired: dict[str, tuple[str, str]] = {}
+    # A retired statement page, by id: what replaces it, and its last address.
+    statements: dict[str, tuple[str, str]] = {}
+    # The retirements at each address, of cards and of statements apart, in the ledger's order: line, id, replacement.
+    claims: dict[str, dict[str, list[tuple[int, str, str]]]] = {"card": defaultdict(list),
+                                                                 "statement": defaultdict(list)}
     card_ids = {card.id for card in cards.values() if isinstance(card.id, str)}
     by_id = {annotation["id"]: page for page, annotation in annotations.items() if isinstance(annotation.get("id"), str)}
     fresh: list[tuple[int, dict]] = []
@@ -1065,9 +1075,29 @@ def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: st
                 if row["card"] in retired:
                     errors.append(f"{MOVES}:{number}: the card {row['card']} is already retired")
                 retired.setdefault(row["card"], (row["replaced_by"], row["folder"]))
+                claims["card"][row["folder"]].append((number, row["card"], row["replaced_by"]))
+            elif set(row) == {"statement", "page", "replaced_by"}:
+                if not (ARTICLE_ID.fullmatch(row["statement"]) and ARTICLE_ID.fullmatch(row["replaced_by"])):
+                    errors.append(f"{MOVES}:{number}: `statement` and `replaced_by` are article ids")
+                if not valid_address(row["page"]):
+                    errors.append(f"{MOVES}:{number}: an address is a path below roadmap/ without `.md`")
+                if row["statement"] in statements:
+                    errors.append(f"{MOVES}:{number}: the statement {row['statement']} is already retired")
+                statements.setdefault(row["statement"], (row["replaced_by"], row["page"]))
+                claims["statement"][row["page"]].append((number, row["statement"], row["replaced_by"]))
             else:
-                errors.append(f"{MOVES}:{number}: expected {{page, to, article_id}}, {{folder, to, article_id}} or "
-                              "{card, folder, replaced_by}")
+                errors.append(f"{MOVES}:{number}: expected {{page, to, article_id}}, {{folder, to, article_id}}, "
+                              "{card, folder, replaced_by} or {statement, page, replaced_by}")
+
+    # An address has one owner: the retirements at one address are one history, each replaced in place by the next,
+    # in the ledger's order; two that are not would be two articles claiming it, and no order may choose between them.
+    for kind, at_address in claims.items():
+        for address, found in sorted(at_address.items()):
+            for (_, one, successor), (number, two, _) in zip(found, found[1:]):
+                if successor != two:
+                    errors.append(f"{MOVES}:{number}: {address} is the last address of the retired {kind} {one}, "
+                                  f"replaced by {successor}, and of {two}; an address has one owner, so each "
+                                  "retirement there is replaced in place by the next")
 
     def replacement(card_id: str) -> str | None:
         """The live card a retired card's replacements end at, or None (an error said why)."""
@@ -1080,6 +1110,23 @@ def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: st
             at = retired[at][0]
         if at not in card_ids:
             errors.append(f"{MOVES}: the retired card {card_id} is replaced by {at}, which is no card")
+            return None
+        return at
+
+    def successor(statement: str) -> str | None:
+        """The live statement page or folder page a retired statement's replacements end at, through every statement
+        or card retired on the way, or None (an error said why)."""
+        seen, at = {statement}, statements[statement][0]
+        while at in statements or at in retired:
+            if at in seen:
+                errors.append(f"{MOVES}: the replacements of {statement} go round")
+                return None
+            seen.add(at)
+            at = (statements if at in statements else retired)[at][0]
+        page = by_id.get(at)
+        if page is None or not page.is_file():
+            errors.append(f"{MOVES}: the retired statement {statement} is replaced by {at}, which is no live page or "
+                          "folder")
             return None
         return at
 
@@ -1108,8 +1155,14 @@ def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: st
             else:
                 page = by_id.get(article_id)
                 live = None if page is None or not page.is_file() else node_id(page)
-                if kind == "page" and (live is None or page.name == "README.md" or live != at):
-                    errors.append(f"{MOVES}: {old} ends at {at}, but {article_id} is {live or 'no statement page'}")
+                if kind == "page":
+                    if article_id in statements and page is None:
+                        if statements[article_id][1] != at:
+                            errors.append(f"{MOVES}: the page {old} ends at {at}, but its statement {article_id} was "
+                                          f"retired at {statements[article_id][1]}")
+                    elif live is None or page.name == "README.md" or live != at:
+                        errors.append(f"{MOVES}: {old} ends at {at}, but {article_id} is "
+                                      f"{live or 'no statement page'}")
                 if kind == "folder":
                     if article_id in retired and page is None:
                         if retired[article_id][1] != at:
@@ -1138,10 +1191,31 @@ def check_moves(annotations: dict[Path, dict], cards: dict[Path, Card], base: st
             errors.append(f"{MOVES}: the retired card {card_id}'s address {folder} is held by an article with no id")
         elif occupant is not None and occupant not in (card_id, finals[card_id]):
             errors.append(f"{MOVES}: the retired card {card_id}'s address {folder} is held by another article")
+    successors: dict[str, str | None] = {}
+    folders = {folder for _, folder in retired.values()}
+    for statement, (_, address) in sorted(statements.items()):
+        page = by_id.get(statement)
+        if page is not None:
+            errors.append(f"{MOVES}: the retired statement {statement} is still the id of {node_id(page)}")
+        if statement in retired:
+            errors.append(f"{MOVES}: {statement} is retired both as a card and as a statement")
+        successors[statement] = successor(statement)
+        if address in chains["page"] or address in chains["folder"] or address in folders:
+            errors.append(f"{MOVES}: {address} is the last address of the retired statement {statement} and moved or "
+                          "was a retired card's too; an address has one owner")
+        # As for a card: the address is taken by any page or folder page, with an id or without, but the final
+        # replacement, which may live there.
+        occupant = ids_at.get(address)
+        if occupant is None and ((wiki.ROADMAP / f"{address}.md").is_file()
+                                 or (wiki.ROADMAP / address / "README.md").is_file()):
+            errors.append(f"{MOVES}: the retired statement {statement}'s address {address} is held by an article with "
+                          "no id")
+        elif occupant is not None and occupant != successors[statement]:
+            errors.append(f"{MOVES}: the retired statement {statement}'s address {address} is held by another article")
     if base_annotations is not None:
         published_rows = [json.loads(line) for line in published]
         errors += reconcile(base_annotations, annotations, cards, fresh, published_rows, retired, finals,
-                            renames or [])
+                            renames or [], statements, successors)
     return errors
 
 
@@ -1172,7 +1246,9 @@ def articles(annotations: dict[Path, dict], live: bool) -> list[Article]:
 
 def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict], cards: dict[Path, Card],
               fresh: list[tuple[int, dict]], published_rows: list[dict], retired: dict[str, tuple[str, str]],
-              finals: dict[str, str | None], renames: list[tuple[str, str]]) -> list[str]:
+              finals: dict[str, str | None], renames: list[tuple[str, str]],
+              statements: dict[str, tuple[str, str]] | None = None,
+              successors: dict[str, str | None] | None = None) -> list[str]:
     """Every change of address or identity since the base commit, against the rows added since, with one map of
     who owns what. An article of the base is found in the checkout by its `id`; one without an `id` by its
     address (an `id` minted in place), else by its declaration when exactly one page credits it on each side,
@@ -1180,10 +1256,13 @@ def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict],
     articles never become one, and one never becomes two. The rows added since are replayed in order over the
     base's addresses: each moves what its old address holds at that point, with that article's `id` (or, for an
     article that had none, an `id` no other article of the base or the ledger ever had), and a folder row moves the
-    folder alone, so each page and folder inside it that moves needs its own row; a retirement names the card's
-    address at that point. Afterwards every article stands where the rows leave it and keeps its `id`; an
-    address that changed hands is a retired card's, held by its final replacement; and every card of the base
-    that is no card any more has its retirement."""
+    folder alone, so each page and folder inside it that moves needs its own row; a retirement names the card's or
+    the statement's address at that point (``statements``, by id: what replaces each and its last address;
+    ``successors``, the live article each one's replacements end at). Afterwards every article stands where the rows
+    leave it and keeps its `id`, or is a statement page the rows retire; an address that changed hands is a retired
+    card's or statement's, held by its final replacement; and every card of the base that is no card any more has
+    its retirement."""
+    statements, successors = statements or {}, successors or {}
     errors: list[str] = []
     base, head = articles(base_annotations, live=False), articles(annotations, live=True)
     head_by_id = {article.id: article for article in head if article.id}
@@ -1232,9 +1311,12 @@ def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict],
                 claim(old, new, f"its declaration {old.name}")
     renamed = dict(renames)
     for old in base:
-        # Git's rename speaks only for an article nothing else found: never against a known id or declaration.
+        # Git's rename speaks only for an article nothing else found: never against a known id or declaration, nor for
+        # a statement a row retires, whose prose its successors may have taken.
         if id(old) in match or (old.id and old.id in head_by_id) or (old.name in base_names
                                                                      and old.name in head_names):
+            continue
+        if old.kind == "page" and old.id in statements:
             continue
         target = renamed.get(f"{old.address}.md" if old.kind == "page" else f"{old.address}/README.md")
         if target is not None:
@@ -1247,7 +1329,7 @@ def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict],
     where = {id(old): (old.kind, old.address) for old in base}
     owner = {(old.kind, old.address): old for old in base}
     assigned: dict[int, str] = {}
-    used = {old.id for old in base if old.id} | set(retired) | {
+    used = {old.id for old in base if old.id} | set(retired) | set(statements) | {
         row["article_id"] for row in published_rows if isinstance(row, dict) and "article_id" in row}
     retiring: set[int] = set()
     by_base_id = {old.id: old for old in base if old.id}
@@ -1286,12 +1368,28 @@ def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict],
                 errors.append(f"{MOVES}:{number}: the card {row['card']} is at {where[id(card)][1]}, not "
                               f"{row['folder']}")
             retiring.add(id(card))
+            # Retired, the card leaves its address free: its replacement may move in by a later row, never before.
+            if owner.get(("folder", row["folder"])) is card:
+                del owner[("folder", row["folder"])]
+        elif set(row) == {"statement", "page", "replaced_by"}:
+            statement = by_base_id.get(row["statement"])
+            if statement is None or statement.kind != "page":
+                errors.append(f"{MOVES}:{number}: {row['statement']} was no statement page at the base commit")
+                continue
+            if where[id(statement)] != ("page", row["page"]):
+                errors.append(f"{MOVES}:{number}: the statement {row['statement']} is at {where[id(statement)][1]}, "
+                              f"not {row['page']}")
+            retiring.add(id(statement))
+            # As for a card: its address is free once it is retired, for its replacement to move in by a later row.
+            if owner.get(("page", row["page"])) is statement:
+                del owner[("page", row["page"])]
 
-    # Every article of the base stands where the rows leave it.
+    # Every article of the base stands where the rows leave it, or is gone with its retirement.
     for old in base:
         new = match.get(id(old))
         moved_to = where[id(old)]
         expected = old.id or assigned.get(id(old))
+        gone = (old.card and old.id in retired) or (old.kind == "page" and old.id in statements)
         if new is not None:
             if moved_to != (new.kind, new.address):
                 if moved_to == (old.kind, old.address):
@@ -1302,11 +1400,11 @@ def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict],
                 errors.append(f"{MOVES}: {new.address} was {expected} and is now {new.id}; an article keeps its id")
             elif expected is None and new.id is not None and new.id in used:
                 errors.append(f"{MOVES}: {new.address} took {new.id}, which another article had")
-        elif moved_to == (old.kind, old.address) and not (old.card and old.id in retired):
+        elif moved_to == (old.kind, old.address) and not gone:
             # Gone, and no row moves it: its old address would lead nowhere, and could be taken by another.
             errors.append(f"{MOVES}: {old.address} ({old.id or 'no id'}) is gone, and no row moves it; an article "
                           "keeps its address or moves with its row")
-        elif moved_to != (old.kind, old.address) and not (old.card and old.id in retired):
+        elif moved_to != (old.kind, old.address) and not gone:
             landed = head_at.get(moved_to)
             if landed is None:
                 errors.append(f"{MOVES}: the rows move {old.address} to {moved_to[1]}, where nothing is")
@@ -1317,13 +1415,14 @@ def reconcile(base_annotations: dict[Path, dict], annotations: dict[Path, dict],
                 claimed[id(landed)] = old
                 if expected is not None and landed.id != expected:
                     errors.append(f"{MOVES}: {landed.address} should be {expected}, and is {landed.id}")
-    # An address held by another article than at the base: only a retired card's final replacement.
+    # An address held by another article than at the base: only a retired card's or statement's final replacement.
     for old in base:
         here = head_at.get((old.kind, old.address))
         if old.id and here is not None and here.id != old.id and claimed.get(id(here)) is not old:
-            if not (old.id in retired and here.id is not None and finals.get(old.id) == here.id):
+            if not (here.id is not None and (finals.get(old.id) if old.id in retired
+                                             else successors.get(old.id)) == here.id):
                 errors.append(f"{MOVES}: {old.address} was {old.id} and now holds {here.id}; only a retired card's "
-                              "replacement takes its address")
+                              "or statement's final replacement takes its address")
     # Every card of the base that is no card any more is retired.
     live_cards = {card.id for card in cards.values()}
     for old in base:
@@ -1896,8 +1995,8 @@ def snapshot_annotations(files: dict[str, bytes | None]) -> dict[Path, dict]:
 
 
 def ledger_ids(text: str) -> set[str]:
-    """The article ids the ledger's rows name: each page or folder row's `article_id`, and each retirement's `card`
-    and `replaced_by`; a line that is no JSON object names none (check_moves reports it)."""
+    """The article ids the ledger's rows name: each page or folder row's `article_id`, and each retirement's `card` or
+    `statement` and `replaced_by`; a line that is no JSON object names none (check_moves reports it)."""
     found: set[str] = set()
     for line in text.splitlines():
         try:
@@ -1905,25 +2004,30 @@ def ledger_ids(text: str) -> set[str]:
         except ValueError:
             continue
         if isinstance(row, dict):
-            found.update(row[key] for key in ("article_id", "card", "replaced_by") if isinstance(row.get(key), str))
+            found.update(row[key] for key in ("article_id", "card", "statement", "replaced_by")
+                         if isinstance(row.get(key), str))
     return found
 
 
-def final_cards(text: str) -> dict[str, str]:
-    """Each card a retirement row of the ledger ``text`` retires, with the card its replacements end at, as
-    check_moves follows them (which has found that they do, at a live card)."""
-    retired = {}
+def final_replacements(text: str) -> dict[tuple[str, str], str]:
+    """Each card or statement a retirement row of the ledger ``text`` retires, by kind and id, with the article its
+    replacements end at, as check_moves follows them (which has found that they do: at a live card for a card,
+    through card retirements; at a live statement page or folder page for a statement, through any retirement)."""
+    retired: dict[str, dict[str, str]] = {"card": {}, "statement": {}}
     for line in text.splitlines():
         row = json.loads(line) if line.strip() else None
-        if isinstance(row, dict) and set(row) == {"card", "folder", "replaced_by"}:
-            retired[row["card"]] = row["replaced_by"]
+        for kind, address in (("card", "folder"), ("statement", "page")):
+            if isinstance(row, dict) and set(row) == {kind, address, "replaced_by"}:
+                retired[kind][row[kind]] = row["replaced_by"]
     finals = {}
-    for card in retired:
-        seen, at = {card}, retired[card]
-        while at in retired and at not in seen:
-            seen.add(at)
-            at = retired[at]
-        finals[card] = at
+    for kind, replaced in retired.items():
+        through = retired["card"] if kind == "card" else {**retired["card"], **retired["statement"]}
+        for article, at in replaced.items():
+            seen = {article}
+            while at in through and at not in seen:
+                seen.add(at)
+                at = through[at]
+            finals[(kind, article)] = at
     return finals
 
 
@@ -1960,12 +2064,18 @@ def moves(output: Path) -> int:
     listed = {card.id: card.node for card in cards.values()
               if isinstance(card.id, str) and ARTICLE_ID.fullmatch(card.id) and len(holders[card.id]) == 1
               and valid_address(card.node)}
+    # The live article each retirement ends at, by id, with its kind and node: the hook leads the retired address
+    # there, so its address must be one the site can serve, or there is no receipt.
+    replacements: dict[str, dict[str, str]] = {}
     if not errors:
-        # The live card each retirement ends at is one the hook needs: it must be listed, or no address leads there.
-        nodes = {card.id: card.node for card in cards.values() if isinstance(card.id, str)}
-        errors += [f"{MOVES}: the retired card {card} is replaced by {final}, whose folder {nodes.get(final)} is no "
-                   "address the site serves"
-                   for card, final in sorted(final_cards(text).items()) if final not in listed]
+        pages = {row["id"]: page for page, row in annotations.items() if isinstance(row.get("id"), str)}
+        for (kind, article), final in sorted(final_replacements(text).items()):
+            page = pages[final]
+            node, what = node_id(page), "folder" if page.name == "README.md" else "page"
+            if not valid_address(node):
+                errors.append(f"{MOVES}: the retired {kind} {article} is replaced by {final}, whose {what} {node} is "
+                              "no address the site serves")
+            replacements[final] = {"kind": what, "node": node}
     commit = source_commit()
     if commit is None:
         errors.append(f"{wiki.ROOT} is no Git checkout: the receipt names the commit it checks")
@@ -1974,7 +2084,8 @@ def moves(output: Path) -> int:
     if errors:
         return 1
     receipt = {"schema": MOVES_SCHEMA, "commit": commit, "ledger_sha256": hashlib.sha256(ledger).hexdigest(),
-               "annotations_sha256": links_digest(files), "cards": listed, "cards_complete": len(listed) == len(cards)}
+               "annotations_sha256": links_digest(files), "cards": listed, "cards_complete": len(listed) == len(cards),
+               "replacements": replacements}
     extract.write_whole({output: json.dumps(receipt, ensure_ascii=False, indent=1, sort_keys=True) + "\n"})
     rows = sum(1 for line in text.splitlines() if line.strip())
     print(f"{rows} ledger rows checked; {len(listed)} of {len(cards)} cards listed -> {output}")
