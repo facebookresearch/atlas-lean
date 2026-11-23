@@ -40,8 +40,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- If `(f_i)_{i ≥ 1}` is periodic with period `L`, then for every `N ≥ 0`,
-`∑_{i=1}^N f_i = N f̄ + ∑_{k=1}^{N mod L} (f_k - f̄)`, where `f̄ = (1/L) ∑_{k=1}^L f_k`.
+/-- **Sum of a periodic sequence.** Let $K$ be a field of characteristic zero, let
+$f : \mathbb{N} \to K$ and let $L \ge 1$ be a natural number such that $f(i + L) = f(i)$ for
+all $i \ge 1$. Let $\bar f = \frac{1}{L} \sum_{k=1}^{L} f(k)$. Then for every natural number $N$,
+$$\sum_{i=1}^{N} f(i) = N \bar f + \sum_{k=1}^{N \bmod L} \left(f(k) - \bar f\right).$$
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -52,10 +54,12 @@ public theorem_wanted sum_Icc_of_periodic {K : Type*} [Field K] [CharZero K] (f 
       N * ((∑ k ∈ Icc 1 L, f k) / L) +
         ∑ k ∈ Icc 1 (N % L), (f k - (∑ k ∈ Icc 1 L, f k) / L)
 
-/-- If `(f_i)_{i ≥ 1}` is periodic for `i ≥ D` with period `L`, then for `N ≥ D - 1`,
-`∑_{i=1}^N f_i = ∑_{i=1}^{D-1} f_i + (N - D + 1) f̄ + ∑_{k=1}^{(N-D+1) mod L} (f_{k+D-1} - f̄)`,
-where `f̄ = (1/L) ∑_{k=D}^{D+L-1} f_k` is the average over one period. The delay satisfies
-`D ≥ 1` since the sequence is indexed from `1`.
+/-- **Sum of an eventually periodic sequence.** Let $K$ be a field of characteristic zero, let
+$f : \mathbb{N} \to K$, and let $L \ge 1$ and $D \ge 1$ be natural numbers such that
+$f(i + L) = f(i)$ for all $i \ge D$. Let $\bar f = \frac{1}{L} \sum_{k=D}^{D+L-1} f(k)$ be the
+average over one period. Then for every natural number $N \ge D - 1$,
+$$\sum_{i=1}^{N} f(i) = \sum_{i=1}^{D-1} f(i) + (N - D + 1) \bar f +
+\sum_{k=1}^{(N-D+1) \bmod L} \left(f(k + D - 1) - \bar f\right).$$
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -68,67 +72,99 @@ public theorem_wanted sum_Icc_of_eventually_periodic {K : Type*} [Field K] [Char
         ∑ k ∈ Icc 1 ((N + 1 - D) % L), (f (k + D - 1) - (∑ k ∈ Ico D (D + L), f k) / L)
 
 
-/-- The `k`-th base-`p` digit `[p^k](x) ∈ {0, …, p - 1}` of a rational `x`, defined by
-`[p^k](x) ≡ ⌊x / p^k⌋ (mod p)`.
+/-- **Base-$p$ digits of a rational number.** For a natural number $p$, a rational number $x$ and
+an integer $k$, the $k$-th base-$p$ digit of $x$ is $[p^k](x) = \lfloor x / p^k \rfloor \bmod p$;
+for $p \ge 1$ this is the residue of $\lfloor x / p^k \rfloor$ modulo $p$ in $\{0, \dots, p - 1\}$.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
 Section 2.2 (definition of `[p^k](x)`). -/
 def basePDigit (p : ℕ) (x : ℚ) (k : ℤ) : ℤ := ⌊x / (p : ℚ) ^ k⌋ % p
 
-/-- Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
+/-- **Base-5 digits of 2/3.** Writing $[5^j](x)$ for the $j$-th base-$5$ digit of a rational
+number $x$, we have $[5^{-1}](2/3) = 3$, $[5^{-2}](2/3) = 1$ and $[5^0](2/3) = 0$.
+
+Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Section 2.2 (base-`5` example
 `2/3 = .3131…`). -/
 theorem basePDigit_five_two_thirds :
     basePDigit 5 (2 / 3) (-1) = 3 ∧ basePDigit 5 (2 / 3) (-2) = 1 ∧ basePDigit 5 (2 / 3) 0 = 0 := by
   refine ⟨?_, ?_, ?_⟩ <;> norm_num [basePDigit, zpow_neg]
 
-/-- The prime-to-`p` part `x_D` of the denominator of a rational `x`, so that
-`x = p^{v_p(x)} x_N / x_D` with `x_N, x_D` coprime to `p` (Notation 2).
+/-- **Prime-to-$p$ part of the denominator.** For a natural number $p$ and a rational number
+$x$ whose denominator in lowest terms is $b \ge 1$, $x_D$ is the natural number $b / p^k$, where
+$p^k$ is the largest power of $p$ dividing $b$ (with $k = 0$ when $p = 1$).
+
+For a prime $p$ and $x > 0$ this gives $x = p^{v_p(x)} x_N / x_D$ with $x_N$ and $x_D$ coprime to
+$p$, where $x_N$ is the prime-to-$p$ part of the numerator (Notation 2).
 
 Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Notation 2 (`x_D`). -/
 def primeToPDen (p : ℕ) (x : ℚ) : ℕ := x.den / p ^ padicValNat p x.den
 
-/-- The prime-to-`p` part `x_N` of the numerator of a rational `x` (Notation 2).
+/-- **Prime-to-$p$ part of the numerator.** For a natural number $p$ and a rational number $x$
+whose numerator in lowest terms is $a$, $x_N$ is the natural number $|a| / p^k$, where $p^k$ is
+the largest power of $p$ dividing $|a|$, with $k = 0$ when $p = 1$ or $a = 0$. In particular
+$x_N = 0$ when $x = 0$.
 
 Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Notation 2 (`x_N`). -/
 def primeToPNum (p : ℕ) (x : ℚ) : ℕ := x.num.natAbs / p ^ padicValNat p x.num.natAbs
 
-/-- Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
+/-- **The prime-to-$p$ parts of $1$.** For every natural number $p$, the prime-to-$p$ part $x_D$
+of the denominator and the prime-to-$p$ part $x_N$ of the numerator of $x = 1$ are both $1$.
+
+Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Notation 2 (`x_N`, `x_D` of `1`). -/
 theorem primeToPDen_one_primeToPNum_one (p : ℕ) : primeToPDen p 1 = 1 ∧ primeToPNum p 1 = 1 := by
   simp [primeToPDen, primeToPNum]
 
-/-- The period `L_x` of the repeating part of the base-`p` expansion of `x`, taken as the order
-of `p` in `(ℤ/x_Dℤ)^×`; Lemma 2 (`basePDigit_eventually_periodic_iff`) identifies it with the
-minimal period of the digit sequence.
+/-- **Period of the base-$p$ expansion.** For a natural number $p$ and a rational number $x$, let
+$x_D$ be the denominator of $x$ in lowest terms divided by the largest power of $p$ dividing it.
+The period $L_x$ of the base-$p$ expansion of $x$ is the multiplicative order of $p$ modulo $x_D$:
+the least $n \ge 1$ with $p^n \equiv 1 \pmod{x_D}$, or $0$ if there is no such $n$. For prime $p$
+this is the order of $p$ in $(\mathbb{Z}/x_D\mathbb{Z})^\times$.
+
+For prime $p$ and $x > 0$, Lemma 2 of the source identifies $L_x$ with the minimal period of the
+base-$p$ digits of $x$.
 
 Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Definition of `L_x` and Lemma 2. -/
 noncomputable def basePPeriod (p : ℕ) (x : ℚ) : ℕ := orderOf (p : ZMod (primeToPDen p x))
 
-/-- Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
+/-- **The base-$p$ expansion of $1$ has period $1$.** For every natural number $p$, the period
+$L_1$ of the base-$p$ expansion of $1$ equals $1$.
+
+Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Lemma 2 (`L_x = 1` when `x_D = 1`). -/
 theorem basePPeriod_one (p : ℕ) : basePPeriod p 1 = 1 := by
   rw [basePPeriod, (primeToPDen_one_primeToPNum_one p).1]
   exact orderOf_eq_one_iff.mpr (Subsingleton.elim _ _)
 
-/-- The delay `D_x = -v_p(x)` of the base-`p` expansion of `x`; Lemma 2
-(`basePDigit_eventually_periodic_iff`) identifies it with the minimal delay.
+/-- **Delay of the base-$p$ expansion.** For a natural number $p$ and a rational number $x$, the
+delay of the base-$p$ expansion of $x$ is $D_x = -v_p(x)$, where $v_p$ is the $p$-adic valuation
+(with $v_p(0) = 0$).
+
+For prime $p$ and $x > 0$, Lemma 2 of the source identifies $D_x$ with the minimal delay of the
+base-$p$ digits of $x$.
 
 Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Definition of `D_x` and Lemma 2. -/
 noncomputable def basePDelay (p : ℕ) (x : ℚ) : ℤ := -padicValRat p x
 
-/-- Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
+/-- **The delay of $1/p$ is $1$.** For every prime $p$, the delay of the base-$p$ expansion of
+$1/p$ is $D_{1/p} = -v_p(1/p) = 1$, where $v_p$ is the $p$-adic valuation.
+
+Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Lemma 2 (`D_{1/p} = 1`). -/
 theorem basePDelay_inv_self (p : ℕ) [Fact p.Prime] : basePDelay p (p : ℚ)⁻¹ = 1 := by
   simp [basePDelay, padicValRat.inv]
 
-/-- The average value `x̄` of the repeating digits of the base-`p` expansion of `x`, i.e.
-`(1/L_x) ∑_{k=D_x+1}^{D_x+L_x} [p^{-k}](x)`.
+/-- **Average repeating digit.** For a natural number $p$ and a rational number $x$, let $D_x$ be
+the delay and $L_x$ the period of the base-$p$ expansion of $x$, and let $[p^k](x)$ be its
+$k$-th base-$p$ digit. The average repeating digit of $x$ is
+$$\bar{x} = \frac{1}{L_x} \sum_{k=D_x+1}^{D_x+L_x} [p^{-k}](x),$$
+with $\bar{x} = 0$ when $L_x = 0$.
 
 Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Definition of `x̄`. -/
@@ -136,34 +172,45 @@ noncomputable def basePDigitAverage (p : ℕ) (x : ℚ) : ℚ :=
   (∑ k ∈ Icc (basePDelay p x + 1) (basePDelay p x + basePPeriod p x), (basePDigit p x (-k) : ℚ)) /
     basePPeriod p x
 
-/-- `τ = (p + 1)/d`.
+/-- **The ratio $\tau = (p + 1)/d$.** For natural numbers $p$ and $d$, $\tau$ is the rational
+number $(p + 1)/d$, which is $0$ when $d = 0$.
 
 Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Notation 1 (i). -/
 def towerTau (p d : ℕ) : ℚ := ((p : ℚ) + 1) / d
 
-/-- `γ = ((p - 1) r + (p + 1))/d`.
+/-- **The constant $\gamma$.** For natural numbers $p$, $d$ and $r$,
+$\gamma = ((p - 1) r + (p + 1))/d$, a rational number (taken to be $0$ when $d = 0$).
 
 Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Notation 1 (ii). -/
 def towerGamma (p d r : ℕ) : ℚ := (((p : ℚ) - 1) * r + (p + 1)) / d
 
-/-- Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
+/-- **Values of $\tau$ and $\gamma$ for $p = 5$, $d = 4$, $r = 2$.** With $\tau = (p + 1)/d$ and
+$\gamma = ((p - 1)r + (p + 1))/d$, taking $p = 5$, $d = 4$ and $r = 2$ gives $\tau = 3/2$ and
+$\gamma = 7/2$.
+
+Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Notation 1 (`p = 5`, `d = 4`,
 `r = 2`). -/
 theorem towerTau_towerGamma_five_four : towerTau 5 4 = 3 / 2 ∧ towerGamma 5 4 2 = 7 / 2 := by
   constructor <;> norm_num [towerTau, towerGamma]
 
-/-- The lexicographic order on integer sequences used in Definition 1: `a > b` when they agree
-below some index `m` and `a m > b m`.
+/-- **Lexicographic order on integer sequences.** For sequences
+$a, b \colon \mathbb{N} \to \mathbb{Z}$, $a$ is lexicographically larger than $b$ when there is
+an index $m$ with $a_j = b_j$ for all $j < m$ and $a_m > b_m$. This is the order used in
+Definition 1.
 
 Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Equation (1). -/
 def SeqLexGt (a b : ℕ → ℤ) : Prop := ∃ m, (∀ j < m, a j = b j) ∧ b m < a m
 
-/-- The indicator `δ(i)`: `0` if the integer-part digits `([p^n](τ i))_{n ≥ 0}` are
-lexicographically larger than the fractional digits `([p^{-1-n}](τ i))_{n ≥ 0}`, and `1`
-otherwise, with `τ = (p + 1)/d`.
+/-- **The rounding indicator $\delta$.** Let $p$, $d$ and $i$ be natural numbers and let
+$\tau = (p + 1)/d$. For a rational $x$ and an integer $k$, write $[p^k](x)$ for the residue of
+$\lfloor x / p^k \rfloor$ modulo $p$, the $k$-th base-$p$ digit of $x$. Then $\delta(i) = 0$ if
+the integer-part digits $([p^n](\tau i))_{n \ge 0}$ are lexicographically larger than the
+fractional digits $([p^{-1-n}](\tau i))_{n \ge 0}$, that is, the two sequences agree at every
+index below some $m$ and the first is larger at $m$; otherwise $\delta(i) = 1$.
 
 Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Definition of `δ`. -/
@@ -172,7 +219,10 @@ noncomputable def higherANumberDelta (p d i : ℕ) : ℕ :=
   if SeqLexGt (fun n => basePDigit p (towerTau p d * i) n)
       (fun n => basePDigit p (towerTau p d * i) (-1 - n)) then 0 else 1
 
-/-- Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
+/-- **Two values of $\delta$ for $p = 5$ and $d = 4$.** For $p = 5$ and $d = 4$, so that
+$\tau = (p + 1)/d = 3/2$, the rounding indicator satisfies $\delta(1) = 1$ and $\delta(2) = 0$.
+
+Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Table 1 (`δ(1) = 1`, `δ(2) = 0` for
 `p = 5`, `d = 4`). -/
 theorem higherANumberDelta_five_four :
@@ -191,21 +241,28 @@ theorem higherANumberDelta_five_four :
     · rfl
     · exact absurd ⟨0, by simp, by norm_num [basePDigit, towerTau, zpow_neg]⟩ h
 
-/-- The denominator `τ_D` of `τ = (p + 1)/d` in lowest terms.
+/-- **The denominator $\tau_D$.** For natural numbers $p$ and $d$, $\tau_D$ is the denominator in
+lowest terms of the rational number $\tau = (p + 1)/d$ (when $d = 0$, $\tau$ is taken to be $0$,
+so $\tau_D = 1$).
 
 Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
 Notation 2 (`τ_D`). -/
 def tauDen (p d : ℕ) : ℕ := (towerTau p d).den
 
-/-- Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
+/-- **$\tau_D = 1$ when $d = 1$.** For every natural number $p$, the denominator $\tau_D$ of
+$\tau = (p + 1)/d$ in lowest terms equals $1$ when $d = 1$.
+
+Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
 Notation 2 (`τ_D = 1` when `d = 1`). -/
 theorem tauDen_one (p : ℕ) : tauDen p 1 = 1 := by
   simp only [tauDen, towerTau, Nat.cast_one, div_one]
   exact_mod_cast Rat.den_natCast (p + 1)
 
-/-- The variant `δ₀(i)`: `0` if `p ∣ i`, and `δ(i)` otherwise.
+/-- **The variant $\delta_0$ of the rounding indicator.** For natural numbers $p$, $d$ and $i$, with
+$\delta$ the rounding indicator for $p$ and $d$, the value $\delta_0(i)$ is $0$ if $p \mid i$, and
+$\delta(i)$ otherwise.
 
 Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -213,14 +270,22 @@ Definition of `δ₀`. -/
 noncomputable def higherANumberDeltaZero (p d i : ℕ) : ℕ :=
   if p ∣ i then 0 else higherANumberDelta p d i
 
-/-- Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
+/-- **The indicator $\delta_0$ vanishes at $0$.** For all natural numbers $p$ and $d$, the variant
+$\delta_0$ of the rounding indicator for $p$ and $d$ satisfies $\delta_0(0) = 0$.
+
+Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
 Definition of `δ₀` (`δ₀(0) = 0`). -/
 theorem higherANumberDeltaZero_zero (p d : ℕ) : higherANumberDeltaZero p d 0 = 0 := by
   simp [higherANumberDeltaZero]
 
-/-- The lattice boundary `μ(i)`: `⌊τ i⌋` if the integer-part digits of `τ i` are
-lexicographically larger than its fractional digits, and `⌈τ i⌉` otherwise.
+/-- **The lattice boundary $\mu$.** Let $p$, $d$ and $i$ be natural numbers and let
+$\tau = (p + 1)/d$, taken to be $0$ when $d = 0$. For a rational $x$ and an integer $k$, write
+$[p^k](x)$ for the residue of $\lfloor x/p^k \rfloor$ modulo $p$, the $k$-th base-$p$ digit
+of $x$. Then $\mu(i)$ is $\lfloor \tau i \rfloor$ if the integer-part digit sequence
+$([p^n](\tau i))_{n \ge 0}$ is lexicographically larger than the fractional digit sequence
+$([p^{-1-n}](\tau i))_{n \ge 0}$, that is, the two sequences agree at every index below some
+$m$ and the first is larger at $m$; otherwise $\mu(i) = \lceil \tau i \rceil$.
 
 Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -231,18 +296,34 @@ noncomputable def towerMu (p d i : ℕ) : ℤ :=
       (fun n => basePDigit p (towerTau p d * i) (-1 - n)) then ⌊towerTau p d * i⌋
   else ⌈towerTau p d * i⌉
 
-/-- Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
+/-- **$\mu(2) = 3$ for $p = 5$ and $d = 4$.** For $p = 5$ and $d = 4$ the lattice boundary
+$\mu(2)$ equals $3$; here $\tau = (p + 1)/d = 3/2$, so $\tau \cdot 2 = 3$ is an integer and
+its floor and ceiling agree.
+
+Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
 Definition 1 (`μ(2) = 3` for `p = 5`, `d = 4`, where `τ · 2 = 3`). -/
 theorem towerMu_five_four_two : towerMu 5 4 2 = 3 := by
   unfold towerMu
   split_ifs <;> norm_num [towerTau]
 
-/-- The lattice-point expression `r (p - 1) t_n (t_n + 1)/(2d) + #Δ_n` of Theorem 1, where
-`t_n = ⌊γ^-1 p^n⌋` and `Δ_n = {(i, j) ∈ ℤ_{>0}² : i > t_n, μ(i) ≤ j ≤ p^n - 1}`. Theorem 1
-(Booher, Cais, Kramer-Miller, Upton) identifies it with the higher `a`-number `a^r(X_n)` of a
-`ℤ_p`-tower with minimal break ratios and ramification invariant `d ∣ p - 1`. First coordinates
-are taken in `[1, p^n]`, which loses nothing since `μ(i) ≥ ⌊τ i⌋ ≥ i` for `τ > 1`.
+/-- **The lattice-point count of Theorem 1.** For natural numbers $p$, $d$, $r$ and $n$, put
+$\tau = (p + 1)/d$, $\gamma = ((p - 1) r + (p + 1))/d$ and $t_n = \lfloor \gamma^{-1} p^n \rfloor$
+(a floor in $\mathbb{N}$, so $0$ for negative arguments), with the convention that division by
+$0$ gives $0$; thus $\tau = \gamma = 0$ when $d = 0$, and $t_n = 0$ when $\gamma = 0$. For a
+rational $x$ and an integer $k$ let $[p^k](x) = \lfloor x / p^k \rfloor \bmod p$, the base-$p$
+digit of $x$ at $p^k$ when $p \ge 2$ (reduction mod $0$ is the identity). Let $\mu(i)$ be the
+lattice boundary of Definition 1: $\mu(i) = \lfloor \tau i \rfloor$ if the sequence
+$([p^k](\tau i))_{k \ge 0}$ is lexicographically larger than the sequence
+$([p^{-1-k}](\tau i))_{k \ge 0}$, and $\mu(i) = \lceil \tau i \rceil$ otherwise. Let $\Delta_n$
+be the set of pairs of integers $(i, j)$ with $t_n < i \le p^n$, $1 \le j \le p^n - 1$ and
+$\mu(i) \le j$. The lattice-point count is the rational number
+$r (p - 1) t_n (t_n + 1)/(2d) + |\Delta_n|$ (which is $|\Delta_n|$ when $d = 0$).
+
+Theorem 1 (Booher, Cais, Kramer-Miller, Upton) identifies it with the higher $a$-number
+$a^r(X_n)$ of a $\mathbb{Z}_p$-tower with minimal break ratios and ramification invariant
+$d \mid p - 1$. Bounding $i$ by $p^n$ loses nothing when $\tau \ge 1$, since then
+$\mu(i) \ge \lfloor \tau i \rfloor \ge i$.
 
 Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -253,7 +334,15 @@ noncomputable def higherANumberLatticeCount (p d r n : ℕ) : ℚ :=
     (((Icc 1 (p ^ n) ×ˢ Icc 1 (p ^ n - 1)).filter fun ij : ℕ × ℕ =>
         ⌊(p : ℚ) ^ n / towerGamma p d r⌋₊ < ij.1 ∧ towerMu p d ij.1 ≤ ij.2).card : ℚ)
 
-/-- Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
+/-- **The lattice-point count at $p = 3$, $d = 2$, $r = 1$, $n = 0$.** Let
+$\gamma = ((p - 1) r + (p + 1))/d$ and $t_n = \lfloor \gamma^{-1} p^n \rfloor$, and let $\Delta_n$
+be the set of pairs of integers $(i, j)$ with $t_n < i \le p^n$, $1 \le j \le p^n - 1$ and
+$\mu(i) \le j$, where $\mu$ is the lattice boundary of Definition 1. For $p = 3$, $d = 2$,
+$r = 1$ and $n = 0$ the lattice-point count $r (p - 1) t_n (t_n + 1)/(2d) + |\Delta_n|$ of
+Theorem 1 equals $0$: here $\gamma = 3$ and $t_0 = 0$, and $\Delta_0$ is empty because
+$1 \le j \le p^0 - 1 = 0$ is impossible.
+
+Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
 Definition 2 (`n = 0`, `p = 3`, `d = 2`, `r = 1`: no lattice points). -/
 theorem higherANumberLatticeCount_three_two_one_zero : higherANumberLatticeCount 3 2 1 0 = 0 := by
@@ -263,9 +352,16 @@ theorem higherANumberLatticeCount_three_two_one_zero : higherANumberLatticeCount
   rw [h0, h1]
   simp
 
-/-- The periodic correction `A_{x^{-1}}(n)` of Proposition 4:
-`½ (-(1 - 1/x_D) + x (1 - {x^{-1} p^n})) {x^{-1} p^n} +
-∑_{k=1}^{⌊x^{-1} p^n⌋ mod x_D} ({x k} - ½ (1 - 1/x_D))`.
+/-- **The correction term $A_{x^{-1}}$ for sums of floors.** For a natural number $p$, a rational
+$x$ and a natural number $n$, let $x_D$ be the prime-to-$p$ part of the denominator of $x$, write
+$\lbrace t \rbrace = t - \lfloor t \rfloor$ for the fractional part of $t$, and put
+$y = x^{-1} p^n$ (with $y = 0$ when $x = 0$). Define
+$$A_{x^{-1}}(n) = \frac12 \left(-\left(1 - \frac1{x_D}\right) + x (1 - \lbrace y \rbrace)\right)
+\lbrace y \rbrace + \sum_{k=1}^{\lfloor y \rfloor \bmod x_D}
+\left(\lbrace x k \rbrace - \frac12 \left(1 - \frac1{x_D}\right)\right),$$
+where $\lfloor y \rfloor$ is read as $0$ when $y < 0$.
+
+This is the periodic correction term of Proposition 4.
 
 Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -276,7 +372,10 @@ noncomputable def floorSumCorrection (p : ℕ) (x : ℚ) (n : ℕ) : ℚ :=
     ∑ k ∈ Icc 1 (⌊(p : ℚ) ^ n / x⌋₊ % primeToPDen p x),
       (Int.fract (x * k) - 1 / 2 * (1 - 1 / (primeToPDen p x : ℚ)))
 
-/-- Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
+/-- **The correction $A_{x^{-1}}$ vanishes at $x = 1$.** For all natural numbers $p$ and $n$, the
+periodic correction $A_{x^{-1}}(n)$ of Proposition 4 satisfies $A_1(n) = 0$.
+
+Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
 Proposition 4 (`A_1 = 0`). -/
 theorem floorSumCorrection_one (p n : ℕ) : floorSumCorrection p 1 n = 0 := by
@@ -287,8 +386,17 @@ theorem floorSumCorrection_one (p n : ℕ) : floorSumCorrection p 1 n = 0 := by
   have hm : ⌊(p : ℚ) ^ n⌋₊ % 1 = 0 := Nat.mod_one _
   simp [hf, hm]
 
-/-- The correction `F_y(e) = ∑_{k=1}^{⌊y p^e⌋ mod τ_D p} (δ₀(k) - ½ (1 - 1/p)(1 - 1/τ_D))` of
-Lemma 9, written with `y = x^{-1}` as in the paper's `F_{x^{-1}}`.
+/-- **The correction term $F_y$ for sums of $\delta_0$.** For natural numbers $p$, $d$ and $e$
+and a rational number $y$, let $\delta_0$ be the variant of the rounding indicator for $p$ and
+$d$, let $\tau_D$ be the denominator in lowest terms of $\tau = (p + 1)/d$ (with $\tau = 0$ when
+$d = 0$), and let $m = \lfloor y p^e \rfloor \bmod \tau_D p$, where $\lfloor y p^e \rfloor$ is
+read as $0$ when $y p^e < 0$. Define
+$$F_y(e) = \sum_{k=1}^{m} \left(\delta_0(k) - \frac12 \left(1 - \frac1p\right)
+\left(1 - \frac1{\tau_D}\right)\right),$$
+with the conventions that $1/0 = 0$ and that reduction modulo $0$ is the identity (both matter
+only when $p = 0$).
+
+In Lemma 9 this is used with $y = x^{-1}$, written $F_{x^{-1}}$.
 
 Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -297,15 +405,21 @@ noncomputable def deltaZeroSumCorrection (p d : ℕ) (y : ℚ) (e : ℕ) : ℚ :
   ∑ k ∈ Icc 1 (⌊y * (p : ℚ) ^ e⌋₊ % (tauDen p d * p)),
     ((higherANumberDeltaZero p d k : ℚ) - 1 / 2 * (1 - 1 / (p : ℚ)) * (1 - 1 / (tauDen p d : ℚ)))
 
-/-- Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
+/-- **The correction $F_y$ vanishes at $y = 0$.** For all natural numbers $p$, $d$ and $e$, the
+correction $F_y(e)$ of Lemma 9, taken at $y = 0$, is $0$.
+
+Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
 Lemma 9 (`F_0 = 0`). -/
 theorem deltaZeroSumCorrection_zero (p d e : ℕ) : deltaZeroSumCorrection p d 0 e = 0 := by
   simp [deltaZeroSumCorrection]
 
-/-- For every positive integer `m`, the base-`p` expansion of `m/d` is periodic with period `1`
-right after the radix point: `[p^{-(k+1)}](m/d) = [p^{-k}](m/d)` for all `k ≥ 1`. The paper's
-odd prime `p` is relaxed to any prime (for `p = 2` only `d = 1` occurs).
+/-- **Digits of $m/d$ after the radix point are constant.** Let $p$ be a prime, $d$ a divisor of
+$p - 1$, and write $[p^j](x)$ for the $j$-th base-$p$ digit of a rational number $x$. For every
+positive integer $m$ and every integer $k \ge 1$, $[p^{-(k+1)}](m/d) = [p^{-k}](m/d)$; that is,
+the base-$p$ expansion of $m/d$ is periodic with period $1$ right after the radix point.
+
+The source assumes $p$ odd; for $p = 2$ only $d = 1$ occurs.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -314,10 +428,14 @@ public theorem_wanted basePDigit_div_periodic_one (p d : ℕ) [Fact p.Prime] (hd
     (m : ℕ) (hm : 0 < m) (k : ℤ) (hk : 1 ≤ k) :
     basePDigit p ((m : ℚ) / d) (-(k + 1)) = basePDigit p ((m : ℚ) / d) (-k)
 
-/-- For a positive rational `x`, the digit sequence `k ↦ [p^{-k}](x)` is periodic with period
-`L > 0` for all `k ≥ D + 1` exactly when the order `L_x` of `p` in `(ℤ/x_Dℤ)^×` divides `L` and
-`D ≥ -v_p(x)`; that is, `L_x` is the minimal period and `-v_p(x)` the minimal delay. Indices
-`k` and `D` range over `ℤ` (for `v_p(x) > 0` the delay is negative).
+/-- **Minimal period and delay of base-$p$ digits.** Let $p$ be a prime and $x > 0$ a rational
+number, write $[p^j](x)$ for the $j$-th base-$p$ digit of $x$, and let $L_x$ be the period and
+$D_x = -v_p(x)$ the delay of the base-$p$ expansion of $x$. For every integer $D$ and every
+natural number $L > 0$, the identity $[p^{-(k+L)}](x) = [p^{-k}](x)$ holds for all integers
+$k \ge D + 1$ if and only if $L_x$ divides $L$ and $D_x \le D$. Thus $L_x$ is the minimal period
+and $D_x$ the minimal delay of the digit sequence $k \mapsto [p^{-k}](x)$.
+
+For $v_p(x) > 0$ the delay $D_x$ is negative.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -327,8 +445,13 @@ public theorem_wanted basePDigit_eventually_periodic_iff (p : ℕ) [Fact p.Prime
     (∀ k : ℤ, D + 1 ≤ k → basePDigit p x (-(k + L)) = basePDigit p x (-k)) ↔
       basePPeriod p x ∣ L ∧ basePDelay p x ≤ D
 
-/-- For `τ = (p + 1)/d` with `d ∣ p - 1`, `[p^{-1}](τ i) = [p^0](τ i)` if and only if `p ∣ i`.
-The paper's positivity of `i` is dropped (the claim holds at `i = 0`) and `p` is any prime.
+/-- **Digits of $\tau i$ next to the radix point.** Let $p$ be a prime, $d$ a divisor of $p - 1$
+and $\tau = (p + 1)/d$, and write $[p^j](x)$ for the $j$-th base-$p$ digit of a rational number
+$x$. For every natural number $i$, $[p^{-1}](\tau i) = [p^0](\tau i)$ if and only if $p$ divides
+$i$.
+
+The source's positivity assumption on $i$ is dropped (the claim holds at $i = 0$), and $p$ is any
+prime.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -337,7 +460,11 @@ public theorem_wanted basePDigit_towerTau_neg_one_eq_zero_iff (p d : ℕ) [Fact 
     (hd : d ∣ p - 1) (i : ℕ) :
     basePDigit p (towerTau p d * i) (-1) = basePDigit p (towerTau p d * i) 0 ↔ p ∣ i
 
-/-- If `p ∤ i`, then `[p^{-1}](τ i) > [p^0](τ i)` if and only if `δ(i) = 1`.
+/-- **A digit criterion for $\delta(i) = 1$.** Let $p$ be a prime, $d$ a divisor of $p - 1$ and
+$\tau = (p + 1)/d$. For a rational $t$ and an integer $k$ write $[p^k](t)$ for the $k$-th base-$p$
+digit of $t$, the residue of $\lfloor t / p^k \rfloor$ modulo $p$ in
+$\lbrace 0, \dots, p - 1 \rbrace$, and let $\delta$ be the rounding indicator. If $i$ is a natural
+number not divisible by $p$, then $[p^0](\tau i) < [p^{-1}](\tau i)$ if and only if $\delta(i) = 1$.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -347,9 +474,13 @@ public theorem_wanted higherANumberDelta_eq_one_iff (p d : ℕ) [Fact p.Prime] (
     basePDigit p (towerTau p d * i) 0 < basePDigit p (towerTau p d * i) (-1) ↔
       higherANumberDelta p d i = 1
 
-/-- For `0 ≤ i < τ_D p` with `p ∤ i`: (i) if `τ_D ∤ i` then `δ(i) + δ(τ_D p - i) = 1`; (ii) if
-`τ_D ∣ i` then `δ(i) = δ(τ_D p - i) = 0`. For `0 ≤ j < d` with `p ∤ j`: (iii) if `τ_D ∤ j` then
-`δ(j) + δ(d - j) = 1`; (iv) if `τ_D ∣ j` then `δ(j) = 0`.
+/-- **Reflection symmetry of the rounding indicator.** Let $p$ be a prime, let $d$ be a natural
+number dividing $p - 1$, let $\tau_D$ be the denominator of $(p + 1)/d$ in lowest terms, and let
+$\delta$ be the rounding indicator for $p$ and $d$. For every natural number $i < \tau_D p$ with
+$p \nmid i$: (i) if $\tau_D \nmid i$, then $\delta(i) + \delta(\tau_D p - i) = 1$; (ii) if
+$\tau_D \mid i$, then $\delta(i) = \delta(\tau_D p - i) = 0$. For every natural number $j < d$
+with $p \nmid j$: (iii) if $\tau_D \nmid j$, then $\delta(j) + \delta(d - j) = 1$; (iv) if
+$\tau_D \mid j$, then $\delta(j) = 0$.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -363,10 +494,17 @@ public theorem_wanted higherANumberDelta_reflection (p d : ℕ) [Fact p.Prime] (
         higherANumberDelta p d j + higherANumberDelta p d (d - j) = 1) ∧
       (∀ j < d, ¬ p ∣ j → tauDen p d ∣ j → higherANumberDelta p d j = 0)
 
-/-- (i) `δ(p^n i) = δ(i)`; (ii) `δ₀(i) = δ₀(i + τ_D p)`; (iii) if `τ_D ∤ i` and `p ∤ i` then
-`δ₀(i) + δ₀(τ_D p - i) = 1`; (iv) if `τ_D ∣ i` or `p ∣ i` then `δ₀(i) = δ₀(τ_D p - i) = 0`.
-Parts (iii) and (iv) assume `i ≤ τ_D p`, so that `τ_D p - i` is the natural number the paper
-means; the paper's positivity of `i` and `n` is dropped (the claims hold at `0`).
+/-- **Periodicity and reflection of $\delta$ and $\delta_0$.** Let $p$ be a prime and $d$ a divisor
+of $p - 1$, let $\tau_D$ be the denominator of $\tau = (p + 1)/d$ in lowest terms, let $\delta$ be
+the rounding indicator, and let $\delta_0(i)$ be $0$ if $p \mid i$ and $\delta(i)$ otherwise. Then
+for all natural numbers $i$ and $n$: (i) $\delta(p^n i) = \delta(i)$;
+(ii) $\delta_0(i) = \delta_0(i + \tau_D p)$; (iii) if $i \le \tau_D p$, $\tau_D \nmid i$ and
+$p \nmid i$, then $\delta_0(i) + \delta_0(\tau_D p - i) = 1$; (iv) if $i \le \tau_D p$ and
+at least one of $\tau_D \mid i$ and $p \mid i$ holds, then $\delta_0(i) = 0$ and
+$\delta_0(\tau_D p - i) = 0$.
+
+The bound $i \le \tau_D p$ in (iii) and (iv) makes $\tau_D p - i$ the natural number the
+paper means; the paper's positivity of $i$ and $n$ is dropped (the claims hold at $0$).
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -379,7 +517,11 @@ public theorem_wanted higherANumberDelta_periodicity (p d : ℕ) [Fact p.Prime] 
       (∀ i ≤ tauDen p d * p, (tauDen p d ∣ i ∨ p ∣ i) →
         higherANumberDeltaZero p d i = 0 ∧ higherANumberDeltaZero p d (tauDen p d * p - i) = 0)
 
-/-- The average of `δ₀` over its period `τ_D p` is `½ (1 - 1/p)(1 - 1/τ_D)`.
+/-- **Average of the indicator $\delta_0$.** Let $p$ be a prime, let $d$ be a natural number
+dividing $p - 1$, let $\tau_D$ be the denominator of $(p + 1)/d$ in lowest terms, and let
+$\delta_0$ be the variant of the rounding indicator for $p$ and $d$. Then
+$$\frac{1}{\tau_D p} \sum_{i=1}^{\tau_D p} \delta_0(i) =
+\frac{1}{2} \left(1 - \frac{1}{p}\right) \left(1 - \frac{1}{\tau_D}\right).$$
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -388,9 +530,15 @@ public theorem_wanted higherANumberDeltaZero_average (p d : ℕ) [Fact p.Prime] 
     (∑ i ∈ Icc 1 (tauDen p d * p), (higherANumberDeltaZero p d i : ℚ)) / (tauDen p d * p) =
       1 / 2 * (1 - 1 / (p : ℚ)) * (1 - 1 / (tauDen p d : ℚ))
 
-/-- For positive rational `x`, `{x p^n}` is periodic in `n ≥ D_x` with period `L_x`, and its
-average over one period is `x̄/(p - 1)`. Here `n ∈ ℤ` (the delay `D_x = -v_p(x)` can be negative),
-`L_x`, `D_x` are as identified by Lemma 2, and the average is taken over `n ∈ [D_x, D_x + L_x)`.
+/-- **Periodicity and average of the fractional parts of $x p^n$.** Let $p$ be a prime and $x$ a
+positive rational. Write $\lbrace t \rbrace$ for the fractional part of $t$, $D_x = -v_p(x)$ for
+the delay and $L_x$ for the period of the base-$p$ expansion of $x$ (the order of $p$ modulo the
+prime-to-$p$ part of the denominator of $x$), and $\bar x$ for the average of its repeating
+base-$p$ digits. Then $\lbrace x p^{n + L_x} \rbrace = \lbrace x p^n \rbrace$ for every integer
+$n \ge D_x$, and
+$$\frac{1}{L_x} \sum_{n = D_x}^{D_x + L_x - 1} \lbrace x p^n \rbrace = \frac{\bar x}{p - 1}.$$
+
+Here $n$ ranges over the integers, since $D_x$ can be negative.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -401,8 +549,12 @@ public theorem_wanted fract_mul_pow_periodic (p : ℕ) [Fact p.Prime] {x : ℚ} 
       (∑ n ∈ Ico (basePDelay p x) (basePDelay p x + basePPeriod p x), Int.fract (x * (p : ℚ) ^ n)) /
           basePPeriod p x = basePDigitAverage p x / ((p : ℚ) - 1)
 
-/-- For positive rational `x`: (i) `⌊x p^n⌋ ≡ ⌊x p^{n+L_x}⌋ (mod x_N)` for `n ≥ D_x`, and
-(ii) `⌊x p^n⌋ ≡ ⌊x p^{n+L_x}⌋ (mod p)` for `n ≥ D_x + 1`, with `n ∈ ℤ`.
+/-- **Periodicity of $\lfloor x p^n \rfloor$ modulo $x_N$ and modulo $p$.** Let $p$ be a prime and
+$x$ a positive rational. Write $x_N$ for the prime-to-$p$ part of the numerator of $x$,
+$D_x = -v_p(x)$ for the delay of its base-$p$ expansion, and $L_x$ for its period, the order of
+$p$ modulo the prime-to-$p$ part of the denominator of $x$. Then for every integer $n$:
+(i) if $n \ge D_x$, then $\lfloor x p^n \rfloor \equiv \lfloor x p^{n + L_x} \rfloor \pmod{x_N}$;
+(ii) if $n \ge D_x + 1$, then $\lfloor x p^n \rfloor \equiv \lfloor x p^{n + L_x} \rfloor \pmod p$.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -413,9 +565,16 @@ public theorem_wanted floor_mul_pow_modEq (p : ℕ) [Fact p.Prime] {x : ℚ} (hx
       (∀ n : ℤ, basePDelay p x + 1 ≤ n →
         ⌊x * (p : ℚ) ^ n⌋ ≡ ⌊x * (p : ℚ) ^ (n + basePPeriod p x)⌋ [ZMOD p])
 
-/-- For rational `x ≥ 1`,
-`∑_{i=1}^{⌊x^{-1} p^n⌋} δ(i) = ∑_{e=0}^n ∑_{1 ≤ i ≤ ⌊x^{-1} p^e⌋, p ∤ i} δ(i) =
-∑_{e=0}^n ∑_{i=1}^{⌊x^{-1} p^e⌋} δ₀(i)`.
+/-- **Splitting the sum of $\delta$ by powers of $p$.** Let $p$ be a prime, $d$ a natural number
+dividing $p - 1$, $x \ge 1$ a rational number and $n$ a natural number. With $\tau = (p + 1)/d$,
+let $\delta(i)$ be $0$ if the sequence of base-$p$ digits of $\tau i$ at $p^0, p^1, p^2, \ldots$
+is lexicographically larger than its sequence of digits at $p^{-1}, p^{-2}, \ldots$, and $1$
+otherwise, and let $\delta_0(i)$ be $0$ if $p \mid i$ and $\delta(i)$ otherwise. Then
+$$
+\sum_{i=1}^{\lfloor x^{-1} p^n \rfloor} \delta(i) =
+\sum_{e=0}^{n} \sum_{1 \le i \le \lfloor x^{-1} p^e \rfloor, p \nmid i} \delta(i) =
+\sum_{e=0}^{n} \sum_{i=1}^{\lfloor x^{-1} p^e \rfloor} \delta_0(i).
+$$
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -429,10 +588,14 @@ public theorem_wanted sum_higherANumberDelta_by_exponent (p d : ℕ) [Fact p.Pri
           higherANumberDelta p d i =
         ∑ e ∈ range (n + 1), ∑ i ∈ Icc 1 ⌊(p : ℚ) ^ e / x⌋₊, higherANumberDeltaZero p d i
 
-/-- For positive rational `x` with `v_p(x) ≥ 0`,
-`∑_{i=1}^{⌊x^{-1} p^n⌋} (p^n - ⌊x i⌋) = ½ x^{-1} p^{2n} + ½ (x^{-1} (1 - 1/x_D) - 1) p^n +
-A_{x^{-1}}(n)`, and `A_{x^{-1}}(n)` is periodic for `n ≥ D_{x^{-1}}` with period
-`L_{x^{-1}}`.
+/-- **Sum of $p^n - \lfloor x i \rfloor$.** Let $p$ be a prime and $x$ a positive rational with
+$v_p(x) \ge 0$. Let $x_D$ be the prime-to-$p$ part of the denominator of $x$, let $D_{x^{-1}}$
+and $L_{x^{-1}}$ be the delay and the period of the base-$p$ expansion of $x^{-1}$, and let
+$A_{x^{-1}}(n)$ be the periodic correction of Proposition 4. Then for every natural number $n$,
+$$\sum_{i=1}^{\lfloor p^n/x \rfloor} \left(p^n - \lfloor x i \rfloor\right) =
+\frac{1}{2} x^{-1} p^{2n} +
+\frac{1}{2} \left(x^{-1} \left(1 - \frac{1}{x_D}\right) - 1\right) p^n + A_{x^{-1}}(n),$$
+and $A_{x^{-1}}(n + L_{x^{-1}}) = A_{x^{-1}}(n)$ for every natural number $n \ge D_{x^{-1}}$.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -446,10 +609,16 @@ public theorem_wanted sum_pow_sub_floor (p : ℕ) [Fact p.Prime] {x : ℚ} (hx :
       ∀ n : ℕ, basePDelay p x⁻¹ ≤ n →
         floorSumCorrection p x (n + basePPeriod p x⁻¹) = floorSumCorrection p x n
 
-/-- With `τ = (p + 1)/d` and `γ = ((p - 1) r + (p + 1))/d`,
-`∑_{i=1}^{⌊τ^{-1} p^n⌋} (p^n - ⌊τ i⌋) - ∑_{i=1}^{⌊γ^{-1} p^n⌋} (p^n - ⌊γ i⌋) =
-½ (τ^{-1} - γ^{-1}) p^{2n} + ½ (τ^{-1} - γ^{-1})(1 - 1/τ_D) p^n +
-(A_{τ^{-1}}(n) - A_{γ^{-1}}(n))`. Any prime `p` and any `r ≥ 0` are admitted.
+/-- **Difference of the floor sums for $\tau$ and $\gamma$.** Let $p$ be a prime, $d$ a natural
+number dividing $p - 1$, and $r$ and $n$ natural numbers. Put $\tau = (p + 1)/d$ and
+$\gamma = ((p - 1) r + (p + 1))/d$, let $\tau_D$ be the denominator of $\tau$ in lowest terms,
+and for a rational $x$ let $A_{x^{-1}}(n)$ be the periodic correction of Proposition 4. Then
+$$
+\sum_{i=1}^{\lfloor \tau^{-1} p^n \rfloor} (p^n - \lfloor \tau i \rfloor) -
+\sum_{i=1}^{\lfloor \gamma^{-1} p^n \rfloor} (p^n - \lfloor \gamma i \rfloor) =
+\tfrac12 (\tau^{-1} - \gamma^{-1}) p^{2n} +
+\tfrac12 (\tau^{-1} - \gamma^{-1})(1 - 1/\tau_D) p^n + (A_{\tau^{-1}}(n) - A_{\gamma^{-1}}(n)).
+$$
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -462,13 +631,17 @@ public theorem_wanted sum_floor_difference (p d : ℕ) [Fact p.Prime] (hd : d �
           (p : ℚ) ^ n +
         (floorSumCorrection p (towerTau p d) n - floorSumCorrection p (towerGamma p d r) n)
 
-/-- The higher `a`-number, in the lattice-point form of Theorem 1 (`higherANumberLatticeCount`),
-equals `∑_{i=1}^{t_n} (γ - τ) i + ∑_{i=t_n+1}^{⌊τ^{-1} p^n⌋} (p^n - ⌊τ i⌋) -
-∑_{i=t_n+1}^{⌊τ^{-1} p^n⌋} δ(i)` and also
-`(∑_{i=1}^{⌊τ^{-1} p^n⌋} (p^n - ⌊τ i⌋) - ∑_{i=1}^{⌊γ^{-1} p^n⌋} (p^n - ⌊γ i⌋)) -
-(∑_{i=1}^{⌊τ^{-1} p^n⌋} δ(i) - ∑_{i=1}^{⌊γ^{-1} p^n⌋} δ(i))`, where
-`t_n = ⌊γ^{-1} p^n⌋`. The paper states this for `a^r(X_n)`; here `a^r(X_n)` is replaced by the
-Theorem 1 expression, and all `n ≥ 0`, `r ≥ 0` and primes `p` are admitted.
+/-- **Higher $a$-numbers as sums of floors and of $\delta$.** Let $p$ be a prime, let $d$ be a
+natural number dividing $p - 1$, let $r$ and $n$ be natural numbers, let $\tau = (p + 1)/d$ and
+$\gamma = ((p - 1) r + (p + 1))/d$, let $\delta$ be the rounding indicator for $p$ and $d$, and let
+$A_r(n)$ be the lattice-point count for the $r$-th higher $a$-number at level $n$. Put
+$t_n = \lfloor \gamma^{-1} p^n \rfloor$ and $s_n = \lfloor \tau^{-1} p^n \rfloor$. Then
+$$A_r(n) = \sum_{i=1}^{t_n} (\gamma - \tau) i +
+\sum_{i=t_n+1}^{s_n} (p^n - \lfloor \tau i \rfloor) - \sum_{i=t_n+1}^{s_n} \delta(i)$$
+and
+$$A_r(n) = \left(\sum_{i=1}^{s_n} (p^n - \lfloor \tau i \rfloor) -
+\sum_{i=1}^{t_n} (p^n - \lfloor \gamma i \rfloor)\right) -
+\left(\sum_{i=1}^{s_n} \delta(i) - \sum_{i=1}^{t_n} \delta(i)\right).$$
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -488,10 +661,17 @@ public theorem_wanted higherANumberLatticeCount_eq_sums (p d : ℕ) [Fact p.Prim
           (∑ i ∈ Icc 1 ⌊(p : ℚ) ^ n / towerTau p d⌋₊, (higherANumberDelta p d i : ℚ) -
             ∑ i ∈ Icc 1 ⌊(p : ℚ) ^ n / towerGamma p d r⌋₊, (higherANumberDelta p d i : ℚ))
 
-/-- For rational `x ≥ 1`,
-`∑_{i=1}^{⌊x^{-1} p^n⌋} δ(i) = ½ (1 - 1/τ_D)(p^n - 1/p) x^{-1} -
-½ (1 - 1/p)(1 - 1/τ_D) ∑_{e=0}^n {x^{-1} p^e} + ∑_{e=0}^n F_{x^{-1}}(e)`. The paper's
-positivity of `n` is dropped (the identity holds at `n = 0`).
+/-- **Sum of $\delta$ up to $\lfloor p^n/x \rfloor$.** Let $p$ be a prime and $d$ a divisor of
+$p - 1$; let $\delta$ be the rounding indicator, $\tau_D$ the denominator of $\tau = (p + 1)/d$
+in lowest terms, and $F_y(e)$ the $\delta_0$ correction sum of Lemma 9. For every rational
+$x \ge 1$ and every natural number $n$,
+$$\sum_{i=1}^{\lfloor p^n/x \rfloor} \delta(i) =
+\frac{1}{2} \left(1 - \frac{1}{\tau_D}\right) \left(p^n - \frac{1}{p}\right) x^{-1} -
+\frac{1}{2} \left(1 - \frac{1}{p}\right) \left(1 - \frac{1}{\tau_D}\right)
+\sum_{e=0}^{n} \left(x^{-1} p^e - \lfloor x^{-1} p^e \rfloor\right) +
+\sum_{e=0}^{n} F_{x^{-1}}(e).$$
+
+The paper's positivity of $n$ is dropped (the identity holds at $n = 0$).
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -504,13 +684,21 @@ public theorem_wanted sum_higherANumberDelta_eq (p d : ℕ) [Fact p.Prime] (hd :
           ∑ e ∈ range (n + 1), Int.fract (x⁻¹ * (p : ℚ) ^ e) +
         ∑ e ∈ range (n + 1), deltaZeroSumCorrection p d x⁻¹ e
 
-/-- Suppose `x_D = τ_D`. Then `F_{x^{-1}}(e)` is periodic for `e ≥ D_{x^{-1}} + 1` with period
-`L_{x^{-1}}`, and for `n ≥ D_{x^{-1}}`,
-`∑_{i=1}^{⌊x^{-1} p^n⌋} δ(i) = ½ x^{-1} (1 - 1/τ_D) p^n +
-(F̄_{x^{-1}} - x̄^{-1}/(2p) (1 - 1/τ_D)) n + B_{x^{-1}}(n)` for a function `B_{x^{-1}}` periodic
-for `n ≥ D_{x^{-1}}` with period `L_{x^{-1}}`. `F̄` is the average of `F` over `L_{x^{-1}}`
-consecutive indices from `max(D_{x^{-1}} + 1, 0)`; the paper's explicit `B` (Equation (6)) is
-replaced by an existential.
+/-- **Eventual periodicity of the $\delta$ sums.** Let $p$ be a prime and $d$ a divisor of
+$p - 1$; let $\delta$ be the rounding indicator, $\tau_D$ the denominator of $\tau = (p + 1)/d$
+in lowest terms, and $F_y(e)$ the $\delta_0$ correction sum of Lemma 9. Let $x$ be a positive
+rational such that the prime-to-$p$ part $x_D$ of the denominator of $x$ equals $\tau_D$, and
+write $D = D_{x^{-1}}$, $L = L_{x^{-1}}$ and $\overline{x^{-1}}$ for the delay, the period and
+the average repeating digit of the base-$p$ expansion of $x^{-1}$. Then
+$F_{x^{-1}}(e + L) = F_{x^{-1}}(e)$ for every natural number $e \ge D + 1$. Moreover, with
+$s = \max(D + 1, 0)$ and $\bar F = \frac{1}{L} \sum_{e=s}^{s+L-1} F_{x^{-1}}(e)$, there is a
+function $B : \mathbb{N} \to \mathbb{Q}$ with $B(n + L) = B(n)$ for every natural number
+$n \ge D$ such that for every natural number $n \ge D$,
+$$\sum_{i=1}^{\lfloor p^n/x \rfloor} \delta(i) =
+\frac{1}{2} x^{-1} \left(1 - \frac{1}{\tau_D}\right) p^n +
+\left(\bar F - \frac{\overline{x^{-1}}}{2p} \left(1 - \frac{1}{\tau_D}\right)\right) n + B(n).$$
+
+The paper's explicit $B$ (Equation (6)) is replaced by an existential.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -530,9 +718,18 @@ public theorem_wanted sum_higherANumberDelta_periodic (p d : ℕ) [Fact p.Prime]
                 basePDigitAverage p x⁻¹ / (2 * p) * (1 - 1 / (tauDen p d : ℚ))) * n +
               B n
 
-/-- The coefficient of `n` in Proposition 5 vanishes for `x = τ`:
-`F̄_{τ^{-1}} - τ̄^{-1}/(2p) (1 - 1/τ_D) = 0`, with `F̄_{τ^{-1}}` the average of
-`F_{τ^{-1}}(e)` over `1 ≤ e ≤ L_{τ^{-1}}` (the delay `D_{τ^{-1}}` is `0`).
+/-- **The linear coefficient of Proposition 5 vanishes at $\tau$.** Let $p$ be a prime and $d$ a
+divisor of $p - 1$, let $\tau = (p + 1)/d$, and let $\tau_D$ be the denominator of $\tau$ in
+lowest terms. Let $L$ be the order of $p$ modulo the prime-to-$p$ part of the denominator of
+$\tau^{-1}$ (the period of the base-$p$ expansion of $\tau^{-1}$), and let $\overline{\tau^{-1}}$
+be the average of the repeating base-$p$ digits of $\tau^{-1}$. For $e \ge 0$ let
+$F_{\tau^{-1}}(e) = \sum_{k=1}^{\lfloor \tau^{-1} p^e \rfloor \bmod \tau_D p}
+(\delta_0(k) - \frac12 (1 - 1/p)(1 - 1/\tau_D))$, where $\delta_0(k)$ is $0$ if $p \mid k$ and
+$\delta(k)$ otherwise, $\delta$ being the rounding indicator. Then
+$$\frac1L \sum_{e=1}^{L} F_{\tau^{-1}}(e) - \frac{\overline{\tau^{-1}}}{2p} (1 - 1/\tau_D) = 0.$$
+
+This says that the linear coefficient in Proposition 5 vanishes at $\tau$; the delay of
+$\tau^{-1}$ is $0$, so the average of $F_{\tau^{-1}}$ is taken over $1 \le e \le L$.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -543,11 +740,22 @@ public theorem_wanted deltaZeroSumCorrection_average_towerTau (p d : ℕ) [Fact 
           deltaZeroSumCorrection p d (towerTau p d)⁻¹ e) / basePPeriod p (towerTau p d)⁻¹ -
         basePDigitAverage p (towerTau p d)⁻¹ / (2 * p) * (1 - 1 / (tauDen p d : ℚ)) = 0
 
-/-- `∑_{i=⌊γ^{-1} p^n⌋+1}^{⌊τ^{-1} p^n⌋} δ(i) = ½ (τ^{-1} - γ^{-1})(1 - 1/τ_D) p^n +
-(γ̄^{-1}/(2p) (1 - 1/τ_D) - F̄_{γ^{-1}}) n + C(n)` with `C = B_{τ^{-1}} - B_{γ^{-1}}`
-periodic for `n ≥ D_{γ^{-1}}` with period `lcm(L_{τ^{-1}}, L_{γ^{-1}})`; the paper's explicit
-`B` functions are replaced by this existential, and `F̄_{γ^{-1}}` is averaged as in
-Proposition 5.
+/-- **Sum of $\delta$ between the $\gamma$- and $\tau$-cutoffs.** Let $p$ be a prime, let $d$
+be a divisor of $p - 1$ and let $r \ge 1$ be an integer. Write $\tau = (p + 1)/d$,
+$\gamma = ((p - 1) r + (p + 1))/d$ and $\tau_D$ for the denominator of $\tau$ in lowest terms;
+let $\delta$ be the rounding indicator, and for a rational $y$ let $L_y$ be the period, $D_y$
+the delay and $\bar y$ the average repeating digit of the base-$p$ expansion of $y$, and let
+$F_y(e)$ be the $\delta_0$ correction sum of Lemma 9. Put $D = D_{\gamma^{-1}}$,
+$L = L_{\gamma^{-1}}$, $s = \max(D + 1, 0)$ and
+$\bar F = \frac{1}{L} \sum_{e=s}^{s+L-1} F_{\gamma^{-1}}(e)$. Then there is a function
+$C : \mathbb{N} \to \mathbb{Q}$ such that $C(n + \operatorname{lcm}(L_{\tau^{-1}}, L)) = C(n)$
+for every natural number $n \ge D$, and for every natural number $n \ge D$,
+$$\sum_{\lfloor p^n/\gamma \rfloor < i \le \lfloor p^n/\tau \rfloor} \delta(i) =
+\frac{1}{2} (\tau^{-1} - \gamma^{-1}) \left(1 - \frac{1}{\tau_D}\right) p^n +
+\left(\frac{\overline{\gamma^{-1}}}{2p} \left(1 - \frac{1}{\tau_D}\right) - \bar F\right) n +
+C(n).$$
+
+The paper's explicit $B$ functions are replaced by the existential $C$.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -571,12 +779,21 @@ public theorem_wanted sum_higherANumberDelta_difference (p d : ℕ) [Fact p.Prim
                 basePPeriod p (towerGamma p d r)⁻¹) * n +
             C n
 
-/-- Main theorem: for `d ∣ p - 1` and `r ≥ 1` there are a positive integer `N_r`, a rational
-`λ_r` and a function `ν_r` such that for `n ≥ N_r`,
-`a^r(X_n) = r/(r + (p+1)/(p-1)) · d/(2(p+1)) · p^{2n} + λ_r n + ν_r(n)`, and the minimal period
-of `ν_r` divides `lcm(2, ord_{D_r} p)`, where `D_r` is the prime-to-`p` part of the denominator
-of `d/(r(p-1) + (p+1))`. Stated as `ν_r(n + lcm(2, ord_{D_r} p)) = ν_r(n)` for `n ≥ N_r`, with
-`a^r(X_n)` replaced by the Theorem 1 lattice expression (`higherANumberLatticeCount`).
+/-- **Asymptotic formula for higher $a$-numbers.** Let $p$ be a prime, let $d$ be a natural number
+dividing $p - 1$, let $r \ge 1$, and for each natural number $n$ let $A_r(n)$ be the lattice-point
+count for the $r$-th higher $a$-number at level $n$. Let $D_r$ be the prime-to-$p$ part of the
+denominator of $d/((p - 1) r + (p + 1))$, and let
+$M_r = \operatorname{lcm}(2, \operatorname{ord}_{D_r} p)$, where $\operatorname{ord}_{D_r} p$ is
+the multiplicative order of $p$ modulo $D_r$. Then there are a positive integer $N_r$, a rational
+number $\lambda_r$ and a function $\nu_r$ from the natural numbers to the rationals such that
+$\nu_r(n + M_r) = \nu_r(n)$ for every $n \ge N_r$, and
+$$A_r(n) = \frac{r}{r + (p + 1)/(p - 1)} \cdot \frac{d}{2(p + 1)} \cdot p^{2n} + \lambda_r n +
+\nu_r(n)$$
+for every $n \ge N_r$.
+
+By Theorem 1 of the source, $A_r(n)$ is the higher $a$-number $a^r(X_n)$ of the $n$-th layer of
+a $\mathbb{Z}_p$-tower with minimal break ratios and ramification invariant $d$; the source
+states the periodicity as: the minimal period of $\nu_r$ divides $M_r$.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -590,13 +807,25 @@ public theorem_wanted higherANumberLatticeCount_asymptotic (p d : ℕ) [Fact p.P
         r / (r + ((p : ℚ) + 1) / ((p : ℚ) - 1)) * (d / (2 * ((p : ℚ) + 1))) * (p : ℚ) ^ (2 * n) +
           lam * n + ν n
 
-/-- **Theorem 4.** For `d ∣ p - 1` and `r ≥ 1` there is `ν_r : ℕ → ℚ` with
-`a^r(X_n) = ½ (τ^{-1} - γ^{-1}) p^{2n} + λ_r n + ν_r(n)`, where
-`λ_r = F̄_{γ^{-1}} - γ̄^{-1}/(2p) (1 - 1/τ_D)`, and `ν_r` is periodic for `n ≥ D_{γ^{-1}}` with
-minimal period `lcm(L_{γ^{-1}}, 2)` or `½ lcm(L_{γ^{-1}}, 2)`. Stated with `a^r(X_n)` replaced by
-the Theorem 1 lattice expression (`higherANumberLatticeCount`); `F̄_{γ^{-1}}` is averaged as in
-Proposition 5; the minimal-period claim is stated as: `lcm(L_{γ^{-1}}, 2)` is a period from
-`D_{γ^{-1}}` on, and every period `L'` from `D_{γ^{-1}}` on has `lcm(L_{γ^{-1}}, 2) ∣ 2 L'`.
+/-- **Explicit linear term and period for higher $a$-numbers.** Let $p$ be a prime, let $d$ be a
+natural number dividing $p - 1$, let $r \ge 1$, let $\tau = (p + 1)/d$ and
+$\gamma = ((p - 1) r + (p + 1))/d$, let $\tau_D$ be the denominator of $\tau$ in lowest terms, let
+$\delta_0$ be the variant of the rounding indicator for $p$ and $d$, and for each natural number
+$n$ let $A_r(n)$ be the lattice-point count for the $r$-th higher $a$-number at level $n$. Put
+$x = \gamma^{-1}$. Let $L$ be the period of the base-$p$ expansion of $x$ (the order of $p$
+modulo the prime-to-$p$ part of the denominator of $x$), let $D = -v_p(x)$ be its delay, let
+$\bar{x}$ be the average of its repeating digits, put $e_0 = \max(D + 1, 0)$, and for a natural
+number $e$ let
+$$F(e) = \sum_{k=1}^{\lfloor x p^e \rfloor \bmod \tau_D p}
+\left(\delta_0(k) - \tfrac{1}{2} (1 - 1/p)(1 - 1/\tau_D)\right).$$
+With
+$$\lambda_r = \frac{1}{L} \sum_{e=e_0}^{e_0 + L - 1} F(e) -
+\frac{\bar{x}}{2p} \left(1 - \frac{1}{\tau_D}\right),$$
+there is a function $\nu_r$ from the natural numbers to the rationals such that
+$A_r(n) = \frac{1}{2} (\tau^{-1} - \gamma^{-1}) p^{2n} + \lambda_r n + \nu_r(n)$ for every natural
+number $n$, $\nu_r(n + \operatorname{lcm}(L, 2)) = \nu_r(n)$ for every natural number $n \ge D$,
+and $\operatorname{lcm}(L, 2) \mid 2L'$ for every $L' > 0$ such that $\nu_r(n + L') = \nu_r(n)$
+for all natural numbers $n \ge D$.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -618,12 +847,17 @@ public theorem_wanted higherANumberLatticeCount_eq_explicit_linear_add_periodic 
       ∀ L' : ℕ, 0 < L' → (∀ n : ℕ, basePDelay p (towerGamma p d r)⁻¹ ≤ n → ν (n + L') = ν n) →
         Nat.lcm (basePPeriod p (towerGamma p d r)⁻¹) 2 ∣ 2 * L'
 
-/-- When `d = 1` or `d = 2`: (i) `λ_r = 0`, and (ii) the minimal period of `a^r(X_n)` is
-`L_{γ^{-1}}` if that is odd, and `L_{γ^{-1}}` or `L_{γ^{-1}}/2` if it is even. Stated with
-`a^r(X_n)` replaced by the Theorem 1 lattice expression: the remainder
-`ν(n) = a^r(X_n) - ½ (τ^{-1} - γ^{-1}) p^{2n}` (no linear term, which is (i)) is periodic for
-`n ≥ D_{γ^{-1}}` with period `L_{γ^{-1}}`, and every eventual period `L'` of it satisfies
-`L_{γ^{-1}} ∣ 2 L'` (together, (ii)).
+/-- **Period of higher $a$-numbers for $d = 1$ or $d = 2$.** Let $p$ be a prime, let $d$ be $1$
+or $2$ with $d \mid p - 1$, let $r \ge 1$, let $\tau = (p + 1)/d$ and
+$\gamma = ((p - 1) r + (p + 1))/d$, and for each natural number $n$ let $A_r(n)$ be the
+lattice-point count for the $r$-th higher $a$-number at level $n$ and
+$R(n) = A_r(n) - \frac{1}{2} (\tau^{-1} - \gamma^{-1}) p^{2n}$. Let $L$ be the period and $D$ the
+delay of the base-$p$ expansion of $\gamma^{-1}$. Then $R(n + L) = R(n)$ for every natural number
+$n \ge D$, and $L \mid 2L'$ for all natural numbers $L' > 0$ and $N$ such that
+$R(n + L') = R(n)$ for every $n \ge N$.
+
+In particular $R$ has no linear term in $n$, and its minimal eventual period is $L$ when $L$ is
+odd and $L$ or $L/2$ when $L$ is even.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -643,10 +877,17 @@ public theorem_wanted higherANumberLatticeCount_period_small_d (p d : ℕ) [Fact
               1 / 2 * ((towerTau p d)⁻¹ - (towerGamma p d r)⁻¹) * (p : ℚ) ^ (2 * n)) →
         basePPeriod p (towerGamma p d r)⁻¹ ∣ 2 * L'
 
-/-- When `r = p + 1`: `λ_r = 0`, the minimal period is `1`, and
-`ν_r(n) = ½ (p - 1)(τ^{-1} - 1)` for `n ≥ 1`; that is,
-`a^r(X_n) = ½ (τ^{-1} - γ^{-1}) p^{2n} + ½ (p - 1)(τ^{-1} - 1)` for `n ≥ 1`, with `a^r(X_n)`
-replaced by the Theorem 1 lattice expression.
+/-- **The lattice-point count for $r = p + 1$.** Let $p$ be a prime and $d$ a natural number
+dividing $p - 1$. Put $\tau = (p + 1)/d$ and $\gamma = ((p - 1)(p + 1) + (p + 1))/d$, the value
+at $r = p + 1$ of $\gamma = ((p - 1) r + (p + 1))/d$, and write $a^{p+1}(X_n)$ for the
+lattice-point expression of Theorem 1 with $r = p + 1$. Then for every $n \ge 1$,
+$$
+a^{p+1}(X_n) = \tfrac12 (\tau^{-1} - \gamma^{-1}) p^{2n} + \tfrac12 (p - 1)(\tau^{-1} - 1).
+$$
+
+In the paper's terms: for $r = p + 1$ the linear coefficient $\lambda_r$ vanishes, and the
+periodic part $\nu_r(n) = \tfrac12 (p - 1)(\tau^{-1} - 1)$ is constant (minimal period $1$) for
+$n \ge 1$.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -657,9 +898,14 @@ public theorem_wanted higherANumberLatticeCount_r_eq_succ (p d : ℕ) [Fact p.Pr
       1 / 2 * ((towerTau p d)⁻¹ - (towerGamma p d (p + 1))⁻¹) * (p : ℚ) ^ (2 * n) +
         1 / 2 * ((p : ℚ) - 1) * ((towerTau p d)⁻¹ - 1)
 
-/-- `λ_r · L` is an integer: whenever `a^r(X_n) = ½ (τ^{-1} - γ^{-1}) p^{2n} + λ n + ν(n)` for
-`n ≥ N` with `ν` periodic of period `L > 0` there, `λ L ∈ ℤ`. Stated for every period `L` (the
-minimal one included), with `a^r(X_n)` replaced by the Theorem 1 lattice expression.
+/-- **The linear coefficient times a period is an integer.** Let $p$ be a prime, let $d$ be a
+natural number dividing $p - 1$, let $r \ge 1$, let $\tau = (p + 1)/d$ and
+$\gamma = ((p - 1) r + (p + 1))/d$, and for each natural number $n$ let $A_r(n)$ be the
+lattice-point count for the $r$-th higher $a$-number at level $n$. Let $\lambda$ be a rational
+number, $\nu$ a function from the natural numbers to the rationals, and $N$ and $L > 0$ natural
+numbers such that, for every $n \ge N$, $\nu(n + L) = \nu(n)$ and
+$A_r(n) = \frac{1}{2} (\tau^{-1} - \gamma^{-1}) p^{2n} + \lambda n + \nu(n)$. Then $\lambda L$ is
+an integer.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,
@@ -671,10 +917,17 @@ public theorem_wanted higherANumberLatticeCount_linear_coeff_mul_period (p d : �
       1 / 2 * ((towerTau p d)⁻¹ - (towerGamma p d r)⁻¹) * (p : ℚ) ^ (2 * n) + lam * n + ν n) :
     ∃ z : ℤ, lam * L = z
 
-/-- For `r₁ = (r₀ + 1) p + 1`, the linear coefficients agree (`λ₁ = λ₀`) and the delays satisfy
-`D_{γ₁^{-1}} = D_{γ₀^{-1}} + 1`. The first part is stated as: every `λ` for which
-`a^{r₀}(X_n) - ½ (τ^{-1} - γ₀^{-1}) p^{2n} - λ n` is eventually periodic also works for `r₁`,
-with `a^r(X_n)` replaced by the Theorem 1 lattice expression.
+/-- **Passing from $r_0$ to $(r_0 + 1)p + 1$.** Let $p$ be a prime, $d$ a natural number
+dividing $p - 1$ and $r_0$ a natural number, and put $r_1 = (r_0 + 1)p + 1$. Write
+$\tau = (p + 1)/d$, $\gamma_k = ((p - 1) r_k + (p + 1))/d$ for $k = 0, 1$, and $a^r(X_n)$ for
+the lattice-point expression of Theorem 1. For a rational $\lambda$ and $k = 0, 1$ let
+$f_k(n) = a^{r_k}(X_n) - \tfrac12 (\tau^{-1} - \gamma_k^{-1}) p^{2n} - \lambda n$. Then for every
+rational $\lambda$: if there are $N$ and $L > 0$ with $f_0(n + L) = f_0(n)$ for all $n \ge N$,
+then there are $N'$ and $L' > 0$ with $f_1(n + L') = f_1(n)$ for all $n \ge N'$. Moreover
+$D_{\gamma_1^{-1}} = D_{\gamma_0^{-1}} + 1$, where $D_x = -v_p(x)$ is the delay of the base-$p$
+expansion of a rational $x$.
+
+The first part is the paper's statement that the linear coefficients agree, $\lambda_1 = \lambda_0$.
 
 Source: Jeremy Booher, Jack Hsieh, Rakesh Rivera, Vincent Tran, James Upton, and Carol Wu,
 *Higher a-Numbers in `ℤ_p`-Towers via Counting Lattice Points*, INTEGERS 26 (2026), Article A78,

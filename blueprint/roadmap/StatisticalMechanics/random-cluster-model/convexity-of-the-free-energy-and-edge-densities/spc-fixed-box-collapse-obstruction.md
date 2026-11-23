@@ -1,0 +1,3 @@
+# A limit shared with growing boxes is one fixed-box graph's value
+
+Let $d, N \in \mathbb{N}$, let $(G_n)_{n \in \mathbb{N}}$ be simple graphs on the vertex set of the box $\Lambda_N = \{-N, \dots, N\}^d$, and let $g : \mathbb{R} \to \mathbb{R}$. Suppose that for every $t \in \mathbb{R}$ both $F_{G_n,2}(t) \to g(t)$ and $F_{\mathbb{L}_n,2}(t) \to g(t)$ as $n \to \infty$, where $F_{G,2}$ is the [ambient tilted log-normalizer](ivp2-ambient-tilt-log-z.md) at $q = 2$ and $\mathbb{L}_n$ is the nearest-neighbour graph on $\Lambda_n$. Then for every $t$ there is a simple graph $H$ on the vertex set of $\Lambda_N$ with $g(t) = F_{H,2}(t)$, and $F_{\mathbb{L}_n,2}(t) \to g(t)$.
