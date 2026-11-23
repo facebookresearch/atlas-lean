@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Combinatorics.Additive.ConsecutiveZeroSum
 public import Mathlib.Data.Rat.Floor
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.Coset.Defs
@@ -143,16 +144,6 @@ public theorem_wanted consecutive_prod_ge {R M N : Type*} [Ring R] [AddCommGroup
     (hM : IsLeast (consecutiveSet R M A) cM) (hN : IsLeast (consecutiveSet R N A) cN)
     (h : IsLeast (consecutiveSet R (M × N) A) c) :
     cM * cN ≤ c
-
-/-- **Consecutive zero-sum constant of a finite abelian group.** Let $G$ be a finite abelian
-group and let $C(G)$ be the least positive integer $k$ such that every sequence
-$x_1, \dots, x_k$ in $G$ has a block of consecutive terms $x_s, \dots, x_t$ with $s \le t$ and
-$x_s + \dots + x_t = 0$. Then $C(G) = |G|$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *On Unit-Weighted Zero-Sum Constants
-of `ℤ_n`*, INTEGERS 24 (2024), Article A38, Theorem 3.1 (`integers-2024-A38-thm-3-1`). -/
-public theorem_wanted consecutive_constant_eq_card (G : Type*) [AddCommGroup G] [Fintype G] :
-    IsLeast (consecutiveSet ℤ G ({1} : Set ℤ)) (Fintype.card G)
 
 /-- **A block of consecutive coordinates orthogonal to $a$ vectors of $\mathbb{Z}_2^m$.** Let
 $\mathbb{Z}_2 = \mathbb{Z}/2\mathbb{Z}$, let $2^a \le m$ and let
