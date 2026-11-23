@@ -738,15 +738,17 @@ def Element.commonValences : Element → Finset ℕ
   | .Br => {1}
   | .I => {1}
 
-/-- At a common valence `v`, the sum of the nucleon number and `v` is odd exactly for nitrogen:
-for every other element the nucleon number and the valence have the same parity. -/
+/-- For each of the nine elements of the model (C, H, N, O, S, F, Cl, Br, I), at a common valence
+`v`, the sum of the model nucleon number and `v` is odd exactly for nitrogen: for the eight other
+elements the nucleon number and the valence have the same parity. -/
 lemma Element.massNumber_add_mod_two {e : Element} {v : ℕ} (hv : v ∈ e.commonValences) :
     (e.massNumber + v) % 2 = if e = .N then 1 else 0 := by
   cases e <;> simp [Element.commonValences, Element.massNumber] at hv ⊢ <;> omega
 
 open Finset in
-/-- The nitrogen rule from the valence-balance hypothesis. Suppose every atom `i ∈ s` has a common
-valence `v i` of its element (M2), and the valences have an even sum (M3). Then the nominal mass
+/-- The nitrogen rule from the valence-balance hypothesis, for atoms of the nine model elements
+at their model nucleon numbers. Suppose every atom `i ∈ s` has a common valence `v i` of its
+element (M2), and the valences have an even sum (M3). Then the nominal mass
 is odd exactly when the number of nitrogen atoms is odd. -/
 theorem nitrogenRule_of_even_sum_valence {ι : Type*} (s : Finset ι) (el : ι → Element)
     (v : ι → ℕ) (hv : ∀ i ∈ s, v i ∈ (el i).commonValences) (hbal : Even (∑ i ∈ s, v i)) :
@@ -760,8 +762,8 @@ theorem nitrogenRule_of_even_sum_valence {ι : Type*} (s : Finset ι) (el : ι �
   rw [Nat.odd_iff, Nat.odd_iff]
   omega
 
-/-- A bond graph of a molecule: atoms labeled by elements, and bonds, each joining two distinct
-atoms with a bond order. The valence of an atom is the total order of its bonds
+/-- A bond graph of a molecule: atoms labeled by the nine model elements, and bonds, each joining
+two distinct atoms with a bond order. The valence of an atom is the total order of its bonds
 (`BondGraph.valence`). -/
 structure BondGraph (ι β : Type*) where
   /-- The atoms. -/
@@ -797,12 +799,13 @@ lemma BondGraph.sum_valence {ι β : Type*} [DecidableEq ι] (G : BondGraph ι �
     two_mul]
 
 open Finset in
-/-- The nitrogen rule for a bond graph at common valences: a common-valence bond-graph
-result, not a neutrality claim. If every atom is bonded at a common valence of its element,
-the nominal mass is odd exactly when the number of nitrogen atoms is odd. The valence
-balance (M3) is not assumed: it follows from `BondGraph.sum_valence`. A bond graph records
-only elements and bond orders, so this says nothing about charge or unpaired electrons: a
-charged or radical species with the same bond graph is not excluded. -/
+/-- The nitrogen rule for a bond graph whose atoms carry the nine model elements at their model
+nucleon numbers and common valences: a common-valence bond-graph result, not a neutrality claim. If
+every atom is bonded at a common valence of its element, the nominal mass is odd exactly when the
+number of nitrogen atoms is odd. The valence balance (M3) is not assumed: it follows from
+`BondGraph.sum_valence`. A bond graph records only elements and bond orders, so this says nothing
+about charge or unpaired electrons: a charged or radical species with the same bond graph is not
+excluded. -/
 theorem BondGraph.nitrogenRule {ι β : Type*} [DecidableEq ι] (G : BondGraph ι β)
     (hv : ∀ i ∈ G.atoms, G.valence i ∈ (G.element i).commonValences) :
     Odd (nominalMass G.atoms fun i => (G.element i).massNumber) ↔

@@ -624,8 +624,8 @@ lemma independentFormationCount_basisChange {κ ι : Type*} [Fintype ι] [Fintyp
   unfold independentFormationCount
   rw [hker]
 
-/-- The balance combination built in the new basis, with weights transported by `P⁻¹`, equals
-the one built in the old basis. -/
+/-- For an invertible matrix `P`, the balance combination built in the new component basis
+`P * B`, with weights transported by `P⁻¹`, equals the one built in the old basis. -/
 lemma balanceCombination_basisChange {κ ι : Type*} [Fintype κ] [DecidableEq κ]
     (z : ι → ℤ) (B : Matrix κ ι ℚ) (a₀ : ℚ) (w : κ → ℚ) (P : Matrix κ κ ℚ)
     (hP : IsUnit P.det) :

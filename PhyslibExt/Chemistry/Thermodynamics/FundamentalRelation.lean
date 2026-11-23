@@ -228,7 +228,8 @@ structure FundamentalRelation (k : ℕ) where
   `U` follows (`FundamentalRelation.strictMonoOn_energy`). -/
   h_pos : ∀ x ∈ thermoDomain k, 0 < dSdU S x
 
-/-- `S` is Fréchet differentiable at every state of the open domain. -/
+/-- For a fundamental relation, `S` is Fréchet differentiable at every state of the open domain
+`U > 0`, `V > 0`, `Nᵢ > 0`. -/
 lemma FundamentalRelation.differentiableAt {k : ℕ} (F : FundamentalRelation k)
     {x : ThermoState k} (hx : x ∈ thermoDomain k) : DifferentiableAt ℝ F.S x :=
   F.h_diff.differentiableAt ((isOpen_thermoDomain k).mem_nhds hx)
@@ -307,13 +308,14 @@ lemma hasDerivAt_comp_curve {k : ℕ} {S : ThermoState k → ℝ} {γU γV : ℝ
   rw [← hval]
   exact hS.hasFDerivAt.comp_hasDerivAt t0 hγ
 
-/-- Temperature is positive on the domain. -/
+/-- For a fundamental relation, the temperature `T = 1 / (∂S/∂U)` is positive at every state of
+the domain `U > 0`, `V > 0`, `Nᵢ > 0`. -/
 lemma temp_pos {k : ℕ} (F : FundamentalRelation k) (x : ThermoState k)
     (hx : x ∈ thermoDomain k) : 0 < temp F.S x :=
   one_div_pos.mpr (F.h_pos x hx)
 
-/-- Entropy is strictly increasing in `U` on `U > 0` at fixed positive `V` and `N`: a
-consequence of `∂S/∂U > 0` and differentiability. -/
+/-- For a fundamental relation `S`, `S` is strictly increasing in `U` on `U > 0` at fixed `V > 0`
+and `Nᵢ > 0`: a consequence of `∂S/∂U > 0` and differentiability. -/
 lemma FundamentalRelation.strictMonoOn_energy {k : ℕ} (F : FundamentalRelation k)
     {V : ℝ} {N : Fin k → ℝ} (hV : 0 < V) (hN : ∀ i, 0 < N i) :
     StrictMonoOn (fun u => F.S (u, V, N)) (Set.Ioi 0) := by

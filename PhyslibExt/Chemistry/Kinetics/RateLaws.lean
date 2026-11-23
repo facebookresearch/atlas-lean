@@ -517,7 +517,10 @@ lemma secondOrderAASol_halfLife_unique (A0 k t : ℝ) (hk : 0 < k)
 
 /-- `A + B` integrated law for `[A]`, unequal initial amounts: valid for `[A]₀ ≠ [B]₀`, which the
 solution lemmas below assume (`B0 - A0 ≠ 0`). At `[A]₀ = [B]₀` numerator and denominator vanish
-and Lean's division returns `0`; that case is `secondOrderABEqualSol`. -/
+and Lean's division returns `0`; that case is `secondOrderABEqualSol`. The denominator also
+vanishes for some `[A]₀ ≠ [B]₀` at a negative time (for instance `[A]₀ = 1`, `[B]₀ = 2`, `k = 1`,
+`t = -log 2`), where the value is again `0`; for positive amounts, `k > 0` and `t ≥ 0` it does not
+vanish. -/
 noncomputable def secondOrderABSolA (A0 B0 k : ℝ) (t : ℝ) : ℝ :=
   A0 * (B0 - A0) * Real.exp (-k * (B0 - A0) * t)
     / (B0 - A0 * Real.exp (-k * (B0 - A0) * t))

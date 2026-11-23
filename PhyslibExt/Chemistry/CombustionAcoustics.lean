@@ -1198,7 +1198,8 @@ lemma one_add_log_le_fkField {δ : ℝ} (hδ : 0 < δ) (θ : ℝ) :
   change 1 + Real.log δ ≤ δ * Real.exp θ - θ
   linarith
 
-/-- The bound is positive exactly in the supercritical range `δ > exp (-1)`. -/
+/-- For `δ > 0`, the lower bound `1 + log δ` of the field is positive exactly in the supercritical
+range `δ > exp (-1)`. -/
 lemma one_add_log_pos_iff {δ : ℝ} (hδ : 0 < δ) :
     0 < 1 + Real.log δ ↔ Real.exp (-1) < δ := by
   rw [← Real.lt_log_iff_exp_lt hδ]
@@ -1939,7 +1940,9 @@ lemma isReactiveJump_cj {γ R q ρ1 u1 p1 T1 a1 M1 : ℝ} (hγ : 1 < γ) (hR : 0
       ring
     linarith
 
-/-- **Vanishing heat release.** As `q → 0⁺` the detonation root tends to the sonic value `1`. -/
+/-- **Vanishing heat release.** For any `γ` and `a1`, as `q → 0⁺` the detonation root tends to the
+sonic value `1`. For `a1 = 0` the heat parameter is `0` for every `q` by the convention `x / 0 = 0`,
+and the root is `1` throughout. -/
 lemma tendsto_cjDetonationMachSq (γ a1 : ℝ) :
     Tendsto (fun q => cjDetonationMachSq (cjHeatParameter γ q a1)) (𝓝[>] 0) (𝓝 1) := by
   have hc : Continuous (fun q => cjDetonationMachSq (cjHeatParameter γ q a1)) := by

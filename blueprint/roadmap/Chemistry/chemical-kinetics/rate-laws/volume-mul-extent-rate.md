@@ -1,3 +1,3 @@
 # Volume times rate of reaction gives dξ/dt
 
-The extent rate determines the extent velocity: `V v = dξ/dt` (this uses `V ≠ 0`).
+In a reactor of volume `V > 0`, the extent rate determines the extent velocity: `V v = dξ/dt`.

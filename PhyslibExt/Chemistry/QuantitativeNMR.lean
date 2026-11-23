@@ -332,8 +332,8 @@ lemma card_univ_choices_eq_maxMult {ι : Type*} [Fintype ι]
 
 open Classical in
 /-- Resolved-line bound: if group `i` has exactly `n i * s i + 1` lines, the number of distinct
-combined positions is at most the maximum multiplicity. Coincident shifts/degeneracies reduce
-the resolved count; the product is the _maximum_ resolved multiplicity. -/
+combined positions is at most the maximum multiplicity. This is an upper bound only: coincident
+positions reduce the resolved count, and `card_combined_eq_iff` says when it is attained. -/
 lemma card_combined_le {ι : Type*} [Fintype ι] (lines : ι → Finset ℝ)
     (n s : ι → ℕ) (hcard : ∀ i, (lines i).card = n i * s i + 1) :
     (combinedLines lines).card ≤ maxMultiplicity n s := by

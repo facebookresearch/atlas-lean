@@ -315,7 +315,9 @@ lemma measurementFunction_firstOrder_remainder_le {ι : Type*} [Fintype ι]
 -/
 
 /-- The power-law measurement function `y = ∏ i, x i ^ p i` with integer exponents `p i`. It
-covers products (`p i = 1`), quotients (`p i = -1` on the denominators) and powers. -/
+covers products (`p i = 1`), quotients (`p i = -1` on the denominators) and powers. For
+`x i = 0` and `p i < 0` the factor is `0` by the convention `0⁻¹ = 0`, so a zero denominator
+makes `y = 0`; the intended domain is `x i ≠ 0` wherever `p i < 0`. -/
 noncomputable def powerLaw {ι : Type*} [Fintype ι] (p : ι → ℤ) (x : ι → ℝ) : ℝ :=
   ∏ i, x i ^ p i
 
@@ -475,9 +477,9 @@ lemma roundSigFig_eq_of_zpow_le_of_lt {k : ℕ+} {x : ℝ} {m : ℤ} (h1 : (10 :
 
 /-- **Rounding to significant figures is well defined.** `roundSigFig k` is a total function
 `ℝ → ℝ`, with ties broken by `round`. For `x ≠ 0` and a positive count `k : ℕ+` the textbook
-description determines it: there is exactly one decimal exponent `m`, the place `10 ^ m` of the
-leading significant digit, with `10 ^ m ≤ |x| < 10 ^ (m + 1)`, and `roundSigFig k x` rounds `x`
-at the place `10 ^ (m + 1 - k)` for that `m`. -/
+description determines it: there is exactly one integer `m` such that both
+`10 ^ m ≤ |x| < 10 ^ (m + 1)` and `roundSigFig k x` rounds `x` at the place `10 ^ (m + 1 - k)`.
+This `m` is the decimal exponent, the place `10 ^ m` of the leading significant digit. -/
 lemma roundSigFig_wellDefined (k : ℕ+) {x : ℝ} (hx : x ≠ 0) :
     ∃! m : ℤ, (10 : ℝ) ^ m ≤ |x| ∧ |x| < 10 ^ (m + 1) ∧
       roundSigFig k x = round (x * 10 ^ ((k : ℤ) - 1 - m)) / 10 ^ ((k : ℤ) - 1 - m) := by

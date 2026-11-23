@@ -151,7 +151,8 @@ def heatCoeffT (Cv : ℝ) : ℝ → ℝ → ℝ := fun _ _ => Cv
 
 /-- Line integral of the 1-form `P dV + Q dT` around the axis-aligned rectangle
 with volume range `[V₁, V₂]` and temperature range `[T₁, T₂]`, traversed
-counterclockwise from `(V₁, T₁)`. -/
+counterclockwise from `(V₁, T₁)`. Each of the four legs is an interval integral; a leg whose
+integrand is not integrable contributes `0` by convention. -/
 noncomputable def rectLoopIntegral (P Q : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T₂ : ℝ) : ℝ :=
   (∫ V in V₁..V₂, P V T₁ ∂MeasureTheory.volume) +
     (∫ T in T₁..T₂, Q V₂ T ∂MeasureTheory.volume) +
@@ -159,13 +160,15 @@ noncomputable def rectLoopIntegral (P Q : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T
     (∫ T in T₂..T₁, Q V₁ T ∂MeasureTheory.volume)
 
 /-- Line integral of `P dV + Q dT` from `(V₁, T₁)` to `(V₂, T₂)` along the
-"right then up" path: first at constant `T₁`, then at constant `V₂`. -/
+"right then up" path: first at constant `T₁`, then at constant `V₂`. Each leg is an interval
+integral; a leg whose integrand is not integrable contributes `0` by convention. -/
 noncomputable def pathRightUp (P Q : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T₂ : ℝ) : ℝ :=
   (∫ V in V₁..V₂, P V T₁ ∂MeasureTheory.volume) +
     (∫ T in T₁..T₂, Q V₂ T ∂MeasureTheory.volume)
 
 /-- Line integral of `P dV + Q dT` from `(V₁, T₁)` to `(V₂, T₂)` along the
-"up then right" path: first at constant `V₁`, then at constant `T₂`. -/
+"up then right" path: first at constant `V₁`, then at constant `T₂`. Each leg is an interval
+integral; a leg whose integrand is not integrable contributes `0` by convention. -/
 noncomputable def pathUpRight (P Q : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T₂ : ℝ) : ℝ :=
   (∫ T in T₁..T₂, Q V₁ T ∂MeasureTheory.volume) +
     (∫ V in V₁..V₂, P V T₂ ∂MeasureTheory.volume)
