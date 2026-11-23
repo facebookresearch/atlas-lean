@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.RationalResolution
+public import Mathlib.AlgebraicGeometry.Morphisms.Separated
 
 /-!
 # Rational singularities and Grauert–Riemenschneider vanishing
@@ -17,6 +18,11 @@ These requests use actual resolutions, their normalized structure maps,
 canonical lines characterized by natural Serre duality, and actual higher
 direct-image sheaves. Generic depth and surface-resolution facts already
 in the public sources are not requested separately.
+
+Independence of the resolution and Cohen–Macaulayness are stated for every
+normal variety (integral, separated and of finite type). Grauert–Riemenschneider
+vanishing is stated for proper varieties: there the resolution is proper over `k`,
+so natural Serre duality pins its canonical line.
 
 References: Grauert–Riemenschneider, *Verschwindungssätze für analytische
 Kohomologiegruppen auf komplexen Räumen*, Invent. Math. 11 (1970), 263–292;
@@ -39,22 +45,21 @@ universe u
 
 /-- Rationality is independent of the chosen resolution. -/
 theorem_wanted resolution_independence (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
-    (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom]
-   (hX : IsNormalIntegral X.left)
+    (X : Over (Spec (.of k))) [IsIntegral X.left] [IsSeparated X.hom]
+    [LocallyOfFiniteType X.hom] [QuasiCompact X.hom] (hX : IsNormalIntegral X.left)
     (R T : ResolutionModel X) (hR : IsRationalResolution R) :
     IsRationalResolution T
 
 /-- Rational singularities are Cohen–Macaulay. -/
 theorem_wanted rational_isCohenMacaulay (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
-    (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom]
-   (hX : IsNormalIntegral X.left)
+    (X : Over (Spec (.of k))) [IsIntegral X.left] [IsSeparated X.hom]
+    [LocallyOfFiniteType X.hom] [QuasiCompact X.hom] (hX : IsNormalIntegral X.left)
     (R : ResolutionModel X) (hR : IsRationalResolution R) :
     IsCohenMacaulayStalkwise X.left
 
-/-- Canonical higher direct images of a resolution vanish. -/
+/-- Canonical higher direct images of a resolution vanish; `X` need not be normal. -/
 theorem_wanted grauertRiemenschneider (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom]
-   (hX : IsNormalIntegral X.left)
     (R : ResolutionModel X) (n : ℕ)
     [SmoothOfRelativeDimension n R.source.hom]
     (K : R.source.left.Modules)

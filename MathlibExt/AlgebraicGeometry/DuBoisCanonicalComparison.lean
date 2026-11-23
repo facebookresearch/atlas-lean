@@ -9,13 +9,12 @@ module
 
 public import MathlibExt.AlgebraicGeometry.EmbeddedDuBoisZero
 public import MathlibExt.AlgebraicGeometry.DltBoundaryFlipModels
-public import MathlibExt.AlgebraicGeometry.MapFamilyDeformationComplexes
+public import MathlibExt.AlgebraicGeometry.DerivedInternalHom
 public import MathlibExt.AlgebraicGeometry.FiniteDualityModuleTrace
 public import MathlibExt.AlgebraicGeometry.QuasicoherentDualityReferences
 public import MathlibExt.AlgebraicGeometry.DivisorialModuleSheaves
 public import MathlibExt.AlgebraicGeometry.NaturalPullbackMultiplierModules
 public import MathlibExt.AlgebraicGeometry.DualizingFrobeniusInterfaces
-public import Mathlib.RingTheory.Depth.Basic
 
 /-!
 # Actual Du Bois canonical comparison and log-resolution pushforward
@@ -26,11 +25,13 @@ is the completed O_Y(K_Y+G), and its pushforward map is fixed on every
 rational top-form section by the genuine generic field isomorphism.
 
 The embedded Du Bois object/unit is transported through an actual
-scheme isomorphism. Its dual-unit arrow is the native adjunction
-transpose of tensor precomposition. Comparison is requested only in
-degree -dim X, not as an unjustified isomorphism of entire complexes.
+scheme isomorphism. Its dual-unit arrow is precomposition with that unit
+on the derived internal Hom (`DerivedInternalHom.precomp`). Comparison is
+requested only in degree -dim X, not as an unjustified isomorphism of
+entire complexes.
 
-Cohen--Macaulayness uses actual Mathlib local Ext-depth and Krull dimension.
+Cohen--Macaulayness is `RationalResolution.IsCohenMacaulayStalkwise`
+(local Ext-depth equals Krull dimension at every point).
 The proper dualizing object is the fixed right adjoint on QCoh-derived,
 with no all-module/nonproper dualizing shortcut.
 Reference: Kovács--Schwede--Smith, arXiv0801.1541v3, §2.B and Theorem 1.1.
@@ -56,19 +57,13 @@ open MathlibExt.AlgebraicGeometry.BirationalDualityReferences
 open MathlibExt.AlgebraicGeometry.FiniteDualityModuleTrace
 open MathlibExt.AlgebraicGeometry.QuasicoherentDualityReferences
 open MathlibExt.AlgebraicGeometry.RationalFunctionModules
-open MathlibExt.AlgebraicGeometry.MapFamilyDeformationComplexes
+open MathlibExt.AlgebraicGeometry.DerivedInternalHom
 open MathlibExt.AlgebraicGeometry.NaturalPullbackMultiplierModules
 open MathlibExt.AlgebraicGeometry.DualizingFrobeniusInterfaces
 attribute [local instance] HasDerivedCategory.standard
 open scoped BigOperators
 
 variable {k : Type} [Field k] {n : ℕ}
-
-/-- Genuine local CM condition in the native Ext-depth model. -/
-def IsCohenMacaulay (V : NormalVariety k n) : Prop :=
-  ∀ x : V.X.left,
-    (IsLocalRing.depth (ModuleCat.of (LocalRing V x) (LocalRing V x)) : WithBot ℕ∞) =
-      ringKrullDim (LocalRing V x)
 
 /-- The reduced exceptional divisor contains exactly the actual exceptional prime points. -/
 structure ReducedExceptional {V : NormalVariety k n} {KX : CanonicalData V}
@@ -132,15 +127,6 @@ def embeddedUnit (V : NormalVariety k n) {S : Over (Spec (.of k))}
     sheafPushforwardUnit e.inv.left (structureModule I.subscheme) ≫
       (derivedPushforward e.inv.left).map (duBoisUnit F)
 
-/-- Dual precomposition is computed as the native right-adjunction transpose. -/
-def dualUnit {X : Scheme.{0}} (K N : D X) (a : derivedUnit X ⟶ K)
-    [((derivedTensor X).obj K).IsLeftAdjoint]
-    [((derivedTensor X).obj (derivedUnit X)).IsLeftAdjoint] :
-    internalHom X K N ⟶ internalHom X (derivedUnit X) N :=
-  ((Adjunction.ofIsLeftAdjoint ((derivedTensor X).obj (derivedUnit X))).homEquiv _ _)
-    (((derivedTensor X).map a).app (internalHom X K N) ≫
-      (Adjunction.ofIsLeftAdjoint ((derivedTensor X).obj K)).counit.app N)
-
 /-- Actual dualizing complex restricted from the fixed proper normal compactification. -/
 def canonicalDualizing (V : NormalVariety k n)
     [∀ p : PrimePoint V, IsDiscreteValuationRing (LocalRing V p.val)]
@@ -167,7 +153,7 @@ structure CanonicalComparison (V : NormalVariety k n) (KX : CanonicalData V)
       (internalHom V.X.left (derivedUnit V.X.left) (canonicalDualizing V D))
   unit_normalized : C.map ≫ target.hom =
     source.hom ≫ (DerivedCategory.homologyFunctor V.X.left.Modules (-(n : ℤ))).map
-      (dualUnit (embeddedObject V F e) (canonicalDualizing V D) (embeddedUnit V F e))
+      (precomp (embeddedUnit V F e) (canonicalDualizing V D))
 
 end MathlibExt.AlgebraicGeometry.DuBoisCanonicalComparison
 

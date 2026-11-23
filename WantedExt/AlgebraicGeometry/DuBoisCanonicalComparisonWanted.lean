@@ -38,7 +38,8 @@ attribute [local instance] HasDerivedCategory.standard
 def_wanted duBoisCanonicalComparison
     {k : Type} [Field k] [CharZero k] [IsAlgClosed k] {n : ℕ}
     [HasDerivedPushforwards.{0}] [HasDerivedPullbacks.{0}] [HasDerivedTensors.{0}]
-    (V : NormalVariety k n) (KX : CanonicalData V) (cm : IsCohenMacaulay V)
+    (V : NormalVariety k n) (KX : CanonicalData V)
+    (cm : RationalResolution.IsCohenMacaulayStalkwise V.X.left)
     (M : CanonicalModel V KX) [Smooth M.variety.X.hom]
     (G : ReducedExceptional M)
     (snc : NormalCrossingsModels.IsStrictNormalCrossings M.variety.X
@@ -59,7 +60,8 @@ def_wanted duBoisCanonicalComparison
 theorem_wanted duBoisCanonicalIsomorphismCriterion
     {k : Type} [Field k] [CharZero k] [IsAlgClosed k] {n : ℕ}
     [HasDerivedPushforwards.{0}] [HasDerivedPullbacks.{0}] [HasDerivedTensors.{0}]
-    (V : NormalVariety k n) (KX : CanonicalData V) (cm : IsCohenMacaulay V)
+    (V : NormalVariety k n) (KX : CanonicalData V)
+    (cm : RationalResolution.IsCohenMacaulayStalkwise V.X.left)
     (M : CanonicalModel V KX) [Smooth M.variety.X.hom]
     (G : ReducedExceptional M)
     (snc : NormalCrossingsModels.IsStrictNormalCrossings M.variety.X
