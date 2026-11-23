@@ -68,4 +68,22 @@ example : (gaussianLikelihood 1 ∘ₘ gaussianReal 0 1) ⊗ₘ normalPosteriorK
     (gaussianReal 0 1 ⊗ₘ gaussianLikelihood 1).map Prod.swap :=
   compProd_normalPosteriorKernel 0
 
+/-- The Bayes-ratio posterior mean of Tweedie's formula agrees with the conjugate posterior mean:
+prior `N(0, 1)`, unit noise, observation `2`, posterior mean `1`. -/
+example : ProbabilityTheory.gaussianPosteriorMean (gaussianReal 0 1) 1 2 = 1 := by
+  rw [gaussianPosteriorMean_gaussianReal_eq_normalPostMean 1 (v := 1), normalPostMean]
+  norm_num
+
+/-! The candidate posterior needs positive variances: with a zero prior variance, for which the
+posterior density vanishes identically, it does not elaborate. -/
+
+/--
+error: failed to synthesize instance of type class
+  NeZero 0
+
+Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+-/
+#guard_msgs in
+noncomputable example : ProbabilityTheory.Kernel ℝ ℝ := normalPosteriorKernel 0 0 1
+
 end CSLibExtTest.MachineLearning.Bayesian.NormalNormal

@@ -65,11 +65,10 @@ private lemma pow_mul_descFactorial_le_pow_mul_descFactorial {M N r : ℕ}
     _ = M ^ r * ∏ i ∈ Finset.range r, (N - i) := by
           simp
 
-/-- Scaled monotonicity for binomial coefficients:
-`N^r * (M choose r) ≤ M^r * (N choose r)` for `r ≤ M ≤ N`.
+/-- **Scaled monotonicity of binomial coefficients.** For natural numbers $r$, $M$ and $N$ with
+$r \le M \le N$, we have $N^r \binom{M}{r} \le M^r \binom{N}{r}$.
 
-Equivalently, `(Nat.choose N r : ℚ) / N^r` is monotone decreasing in this range.
-This form stays in `ℕ`, avoiding division. -/
+In other words, $\binom{N}{r} / N^r$ is nondecreasing in $N$ for $N \ge \max(r, 1)$. -/
 theorem pow_mul_choose_le_pow_mul_choose {M N r : ℕ}
     (hrM : r ≤ M) (hMN : M ≤ N) :
     N ^ r * Nat.choose M r ≤ M ^ r * Nat.choose N r := by
@@ -115,8 +114,11 @@ private lemma exists_large_prime_dvd_choose_of_prod_erdos_div_three_layers_lt_lo
     (fun hsmall => choose_le_prod_erdos_div_three_layers_of_no_large hN hrN h2rN hN6 hsmall)
     hbound
 
-/-- Natural-number version of
-`exists_large_prime_dvd_choose_of_prod_erdos_div_three_layers_lt_lower_bound`. -/
+/-- **Erdős layer criterion, factorial form.** Let $N$ and $r$ be natural numbers with $0 < N$,
+$r \le N$, $2r \le N$ and $6 \le N$. For a natural number $x$ write $x\#$ for the primorial of
+$x$, the product of all primes $p \le x$, and let $L = \lfloor \log_2 N \rfloor$. If
+$r! \cdot \lfloor N/3 \rfloor\# \cdot \prod_{m=2}^{L} \lfloor N^{1/m} \rfloor\# < (N + 1 - r)^r$,
+then the binomial coefficient $\binom{N}{r}$ has a prime factor $p > r$. -/
 theorem exists_large_prime_dvd_choose_of_factorial_mul_prod_erdos_div_three_layers_lt_lower_pow
     {N r : ℕ} (hN : 0 < N) (hrN : r ≤ N) (h2rN : 2 * r ≤ N) (hN6 : 6 ≤ N)
     (hbound :
@@ -129,8 +131,11 @@ theorem exists_large_prime_dvd_choose_of_factorial_mul_prod_erdos_div_three_laye
   rw [lt_div_iff₀' (by exact_mod_cast Nat.factorial_pos r)]
   norm_cast
 
-/-- The central-binomial lower bound turns the `N / 3` Erdős layer estimate into a
-large-prime criterion. -/
+/-- **Erdős layer criterion, power-of-four form.** Let $N$ and $r$ be natural numbers with
+$4 \le r$, $2r \le N$ and $6 \le N$. For a natural number $x$ write $x\#$ for the primorial of
+$x$, the product of all primes $p \le x$, and let $L = \lfloor \log_2 N \rfloor$. If
+$r \cdot \lfloor N/3 \rfloor\# \cdot \prod_{m=2}^{L} \lfloor N^{1/m} \rfloor\# < 4^r$, then the
+binomial coefficient $\binom{N}{r}$ has a prime factor $p > r$. -/
 theorem exists_large_prime_dvd_choose_of_mul_prod_erdos_div_three_layers_lt_four_pow
     {N r : ℕ} (hr : 4 ≤ r) (h2rN : 2 * r ≤ N) (hN6 : 6 ≤ N)
     (hbound :

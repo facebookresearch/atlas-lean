@@ -28,6 +28,8 @@ open Entry1Euleriangf (chapter5DerivativeExpansion)
 
 noncomputable section
 
+/-- The coefficient `bernoulli n / n!`, with Mathlib's `bernoulli` (the convention
+with `bernoulli 1 = -1 / 2`). -/
 def chapter5Entry1MinusCoeff (n : ℕ) : ℝ :=
   (bernoulli n : ℝ) / (n.factorial : ℝ)
 
@@ -171,7 +173,8 @@ private lemma pow_add_sub_pow (x h : ℝ) (N : ℕ) :
     rw [Nat.choose_self]
     simp
   rw [htop] at hadd
-  have : (x + h) ^ N = (∑ m ∈ Finset.range N, x ^ m * h ^ (N - m) * (Nat.choose N m : ℝ)) + x ^ N := hadd
+  have : (x + h) ^ N = (∑ m ∈ Finset.range N, x ^ m * h ^ (N - m) * (Nat.choose N m : ℝ)) +
+      x ^ N := hadd
   rw [this]
   rw [add_sub_cancel_right]
   apply Finset.sum_congr rfl
@@ -185,7 +188,8 @@ private lemma numE_diff_eq (a : ℕ → ℝ) (m : ℕ) (x h : ℝ) :
     numE a m (x + h) h - numE a m x h
       = ∑ n ∈ Finset.range (m + 1),
           a n * h ^ n * (Nat.descFactorial m n : ℝ)
-            * (∑ j ∈ Finset.range (m - n), (Nat.choose (m - n) j : ℝ) * x ^ j * h ^ (m - n - j)) := by
+            * (∑ j ∈ Finset.range (m - n),
+                (Nat.choose (m - n) j : ℝ) * x ^ j * h ^ (m - n - j)) := by
   unfold numE
   rw [← Finset.sum_sub_distrib]
   apply Finset.sum_congr rfl
@@ -227,13 +231,13 @@ private lemma numE_diff_closed (a : ℕ → ℝ) (m : ℕ) (x h : ℝ) :
       apply Finset.sum_subset hsub
       intro j _ hj2
       have hneg : ¬ j < m - n := fun hlt => hj2 (Finset.mem_range.mpr hlt)
-      simp only [hF, if_neg hneg]
+      simp only [hF, ite_eq_right hneg]
     rw [h1]
     rw [Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro j hj
     have hjlt : j < m - n := Finset.mem_range.mp hj
-    simp only [hF, if_pos hjlt]
+    simp only [hF, ite_eq_left hjlt]
   rw [Finset.sum_congr rfl hF_eq]
   rw [Finset.sum_comm]
   have hdrop : ∑ j ∈ Finset.range (m + 1), ∑ n ∈ Finset.range (m + 1), F n j
@@ -246,7 +250,7 @@ private lemma numE_diff_closed (a : ℕ → ℝ) (m : ℕ) (x h : ℝ) :
         apply Finset.sum_eq_zero
         intro n _
         simp only [hF]
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
       rw [hm0, add_zero]
   rw [hdrop]
   apply Finset.sum_congr rfl
@@ -268,18 +272,19 @@ private lemma numE_diff_closed (a : ℕ → ℝ) (m : ℕ) (x h : ℝ) :
       have hneg : ¬ j < m - n := by
         have : ¬ n < m - j := fun hlt => hn2 (Finset.mem_range.mpr hlt)
         omega
-      simp only [hF, if_neg hneg]
+      simp only [hF, ite_eq_right hneg]
     rw [h1]
     apply Finset.sum_congr rfl
     intro n hn
     have hnlt : n < m - j := Finset.mem_range.mp hn
     have hpos : j < m - n := by omega
-    simp only [hF, if_pos hpos]
+    simp only [hF, ite_eq_left hpos]
   rw [hinner]
   have hfact : ∀ n ∈ Finset.range (m - j),
       a n * h ^ n * (Nat.descFactorial m n : ℝ)
         * ((Nat.choose (m - n) j : ℝ) * x ^ j * h ^ (m - n - j))
-      = x ^ j * (h ^ (m - j) * (Nat.choose m j : ℝ) * (a n * (Nat.descFactorial (m - j) n : ℝ))) := by
+      = x ^ j *
+          (h ^ (m - j) * (Nat.choose m j : ℝ) * (a n * (Nat.descFactorial (m - j) n : ℝ))) := by
     intro n hn
     have hnlt : n < m - j := Finset.mem_range.mp hn
     have hle : n + j ≤ m := by omega
@@ -289,7 +294,8 @@ private lemma numE_diff_closed (a : ℕ → ℝ) (m : ℕ) (x h : ℝ) :
       rw [← pow_add, hexp]
     have hrr : a n * h ^ n * (Nat.descFactorial m n : ℝ)
         * ((Nat.choose (m - n) j : ℝ) * x ^ j * h ^ (m - n - j))
-        = x ^ j * (h ^ n * h ^ (m - n - j)) * ((Nat.descFactorial m n : ℝ) * (Nat.choose (m - n) j : ℝ)) * a n := by
+        = x ^ j * (h ^ n * h ^ (m - n - j)) *
+            ((Nat.descFactorial m n : ℝ) * (Nat.choose (m - n) j : ℝ)) * a n := by
       ring
     rw [hrr, hpow, hdc]
     ring
@@ -327,10 +333,10 @@ private lemma numE_bernoulli_diff (m : ℕ) (x h : ℝ) :
           ring
         have hmem : m ∈ Finset.range (m + 1) := Finset.mem_range.mpr (Nat.lt_succ_self m)
         rw [hinner m hmem, hmj, hch]
-        simp only [if_true]
+        simp only [ite_true]
         ring
       · have hne : m + 1 - j ≠ 1 := by omega
-        rw [hinner j hj, if_neg hne, if_neg hjj]
+        rw [hinner j hj, ite_eq_right hne, ite_eq_right hjj]
         ring
     rw [Finset.sum_congr rfl hterm]
     have hmem : m ∈ Finset.range (m + 1) := Finset.mem_range.mpr (Nat.lt_succ_self m)
@@ -560,7 +566,7 @@ private lemma T_eq_of_hyp (a : ℕ → ℝ)
         intro i _
         rw [pow_succ]
         simp
-      rw [hzero, zero_add, pow_zero, one_mul, if_neg (Nat.succ_ne_zero k)]
+      rw [hzero, zero_add, pow_zero, one_mul, ite_eq_right (Nat.succ_ne_zero k)]
   have hcol := hcollapse (fun j => (1 : ℝ) ^ (m - j) * (Nat.choose m j : ℝ)
     * (∑ n ∈ Finset.range (m - j), a n * (Nat.descFactorial (m - j) n : ℝ)))
   rw [hcol] at heval
@@ -568,7 +574,7 @@ private lemma T_eq_of_hyp (a : ℕ → ℝ)
   | zero => simp
   | succ k =>
     have hm0 : k + 1 ≠ 0 := Nat.succ_ne_zero k
-    rw [if_neg hm0] at heval
+    rw [ite_eq_right hm0] at heval
     have hG0 : (1 : ℝ) ^ (k + 1 - 0) * (Nat.choose (k + 1) 0 : ℝ)
         * (∑ n ∈ Finset.range (k + 1 - 0), a n * (Nat.descFactorial (k + 1 - 0) n : ℝ))
         = ∑ n ∈ Finset.range (k + 1), a n * (Nat.descFactorial (k + 1) n : ℝ) := by
@@ -615,7 +621,17 @@ private lemma coeff_eq_of_T_eq (a : ℕ → ℝ)
   funext n
   exact key (n + 1) n (Nat.lt_succ_self n)
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 5.
+/-- **Ramanujan's operator identity for the Bernoulli numbers.** For a sequence
+$a = (a_n)_{n \ge 0}$ of real numbers, a real number $h$ and a real polynomial $\varphi$ of
+degree $d$ (with $d = 0$ for $\varphi = 0$), let
+$S_a(h, \varphi) = \sum_{n=0}^{d} a_n h^n \varphi^{(n)}$. Let $b_n = B_n / n!$, where $B_n$ are
+the Bernoulli numbers with $B_1 = -\tfrac12$. Then for every real polynomial $\varphi$ and every
+real $h$, $S_b(h, \varphi)(x + h) - S_b(h, \varphi)(x) = h \varphi'(x)$ as polynomials in $x$.
+Moreover $b$ is the only such sequence: if a real sequence $a$ satisfies
+$S_a(h, \varphi)(x + h) - S_a(h, \varphi)(x) = h \varphi'(x)$ for every real polynomial $\varphi$
+and every real $h$, then $a_n = b_n$ for every $n$.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 5.
 Proves `Wanted` entry `ramanujan_part1_ch5_entry1`. The source's shift `p(x) ↦ p(x + h)` is
 `Polynomial.taylor h`, and the operator `∑ aₙ hⁿ Dⁿ` is
 `Entry1Euleriangf.chapter5DerivativeExpansion`.

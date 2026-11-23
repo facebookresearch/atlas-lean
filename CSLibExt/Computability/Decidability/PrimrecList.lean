@@ -36,7 +36,8 @@ primitive recursiveness.
 
 namespace Cslib.Decidability
 
-/-- Whether `j` occurs in `G`. -/
+/-- **Boolean membership test for lists of natural numbers.** For a list $G$ of natural numbers
+and a natural number $j$, the Boolean value that is true exactly when $j$ is an entry of $G$. -/
 def memB (G : List ℕ) (j : ℕ) : Bool :=
   G.foldr (fun a b => decide (a = j) || b) false
 
@@ -47,7 +48,9 @@ theorem memB_iff {G : List ℕ} {j : ℕ} : memB G j = true ↔ j ∈ G := by
       simp only [memB, List.foldr_cons, Bool.or_eq_true, decide_eq_true_eq, List.mem_cons] at ih ⊢
       rw [ih, eq_comm]
 
-/-- The list without duplicates. -/
+/-- **Duplicate removal for lists of natural numbers.** For a list $l$ of natural numbers, the list
+obtained from $l$ by deleting every entry that occurs again later in $l$: each element of $l$ is
+kept once, at its last occurrence, and the kept entries stay in their order in $l$. -/
 def dedupB (l : List ℕ) : List ℕ :=
   l.foldr (fun x acc => cond (memB acc x) acc (x :: acc)) []
 
@@ -66,8 +69,12 @@ theorem mem_dedupB {l : List ℕ} {x : ℕ} : x ∈ dedupB l ↔ x ∈ l := by
           · exact h
           · exact hx
 
-/-- A monotone round on lists of numbers whose results stay inside a fixed list `B` is closed
-after `B.length` rounds from `[]`. -/
+/-- **Bounded monotone rounds on lists close off.** Let $f$ map lists of natural numbers to lists
+of natural numbers and be monotone for list inclusion: $f(G) \subseteq f(G')$ whenever
+$G \subseteq G'$, where $G \subseteq G'$ means that every entry of $G$ is an entry of $G'$. If $B$
+is a list with $f(G) \subseteq B$ for every list $G$, and $n$ is the length of $B$, then
+$f(f^n([\,])) \subseteq f^n([\,])$, where $f^n$ is the $n$-fold iterate of $f$ and $[\,]$ is the
+empty list. -/
 theorem iterate_closed {f : List ℕ → List ℕ} (hmono : ∀ G G', G ⊆ G' → f G ⊆ f G')
     (B : List ℕ) (hB : ∀ G, f G ⊆ B) : f (f^[B.length] []) ⊆ f^[B.length] [] := by
   classical
@@ -170,7 +177,10 @@ theorem primrec_list_filter {β γ : Type*} [Primcodable β] [Primcodable γ] {p
         · simp only [Bool.cond_true, ↓reduceIte]
           exact congrArg _ ih
 
-/-- A predicate decided by a primitive recursive Boolean function is computable. -/
+/-- **Predicates with a primitive recursive decision procedure are computable.** Let $\beta$ be a
+primcodable type, $p$ a predicate on $\beta$, and $f : \beta \to \mathrm{Bool}$ a primitive
+recursive function such that $f(b) = \mathrm{true}$ exactly when $p(b)$ holds, for every
+$b \in \beta$. Then $p$ is a computable predicate. -/
 theorem computablePred_of_primrec_bool {β : Type*} [Primcodable β] {p : β → Prop}
     {f : β → Bool} (hf : Primrec f) (h : ∀ b, f b = true ↔ p b) : ComputablePred p := by
   let _ : DecidablePred p := fun b => decidable_of_iff _ (h b)

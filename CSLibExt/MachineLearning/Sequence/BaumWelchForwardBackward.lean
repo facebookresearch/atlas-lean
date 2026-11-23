@@ -48,8 +48,13 @@ namespace Cslib.MachineLearning.Sequence.HiddenMarkov
 
 variable {S O R : Type*} [Fintype S] [DecidableEq S] [Semiring R] (h : HMM S O R) (x : ℕ → O)
 
-/-- Path sums with fixed states at times `t`, `t + 1` and `t + 1 + k`: the forward variable, one
-transition and emission, and a bridge. -/
+/-- **Pairwise path sums with a fixed endpoint.** Let $h$ be a hidden Markov model with finite
+state set $S$, transition weights $a$ and emission weights $b$ in a semiring, and let $x$ be an
+observation sequence. For all $k, t \in \mathbb{N}$ and states $s, s', u$, the sum of the path
+weights of the state paths $z_0, \dots, z_{t + 1 + k}$ with $z_t = s$, $z_{t + 1} = s'$ and
+$z_{t + 1 + k} = u$ equals $\alpha_t(s)\, a(s, s')\, b(s', x(t + 1))\, B_{k, t + 1}(s', u)$, where
+$\alpha_t(s)$ is the forward variable and $B_{k, t + 1}(s', u)$ is the bridge weight of the paths
+from the state $s'$ at time $t + 1$ to the state $u$ at time $t + 1 + k$. -/
 theorem sum_pathProb_ite_pair : ∀ (k t : ℕ) (s s' u : S),
     ∑ z : Fin (t + 1 + k + 1) → S,
       (if z ⟨t, by omega⟩ = s ∧ z ⟨t + 1, by omega⟩ = s' ∧ z (Fin.last (t + 1 + k)) = u then
@@ -114,14 +119,22 @@ theorem sum_pathProb_ite_pair : ∀ (k t : ℕ) (s s' u : S),
             z (Fin.last (t + 1 + k)) = u') := fun u' hu => hz ⟨hu.1, hu.2.1⟩
         simp only [hz, hu, ↓reduceIte, zero_mul, Finset.sum_const_zero]
 
-/-- The joint weight of the observations `x 0, …, x (t + 1 + k)` and the transition `s → s'` from
-time `t` to time `t + 1`. -/
+/-- **Pairwise state marginal of a hidden Markov model.** For a hidden Markov model with finite
+state set $S$, an observation sequence $x$, times $t, k \in \mathbb{N}$ and states $s, s'$, the
+pairwise marginal is the joint weight of the observations $x(0), \dots, x(t + 1 + k)$ and the
+transition $s \to s'$ from time $t$ to time $t + 1$: the sum of the path weights of all state
+paths $z_0, \dots, z_{t + 1 + k}$ with $z_t = s$ and $z_{t + 1} = s'$. -/
 def pairMarg (t k : ℕ) (s s' : S) : R :=
   ∑ z : Fin (t + 1 + k + 1) → S,
     if z ⟨t, by omega⟩ = s ∧ z ⟨t + 1, by omega⟩ = s' then pathProb h x (t + 1 + k) z else 0
 
-/-- **Pairwise forward-backward**: the joint weight of the observations and the transition
-`s → s'` at time `t` is `forward t s * trans s s' * emit s' (x (t + 1)) * backward k (t + 1) s'`. -/
+/-- **Pairwise forward-backward.** Let $h$ be a hidden Markov model with finite state set $S$,
+transition weights $a$ and emission weights $b$ in a semiring, and let $x$ be an observation
+sequence. For all $t, k \in \mathbb{N}$ and states $s, s'$, the joint weight of the observations
+$x(0), \dots, x(t + 1 + k)$ and the transition $s \to s'$ from time $t$ to time $t + 1$ equals
+$\alpha_t(s)\, a(s, s')\, b(s', x(t + 1))\, \beta_{k, t + 1}(s')$, where $\alpha_t(s)$ is the
+forward variable and $\beta_{k, t + 1}(s')$ is the backward variable, the weight of the
+observations $x(t + 2), \dots, x(t + 1 + k)$ given the state $s'$ at time $t + 1$. -/
 theorem pairMarg_eq (t k : ℕ) (s s' : S) :
     pairMarg h x t k s s' =
       forward h x t s * h.trans s s' * h.emit s' (x (t + 1)) * backward h x k (t + 1) s' := by
@@ -172,7 +185,14 @@ theorem sum_post_mul_ite (h : ValidHMM S O) (n : Fin N) (C : (Fin (T + 1) → S)
   · simp only [mul_zero, zero_div]
 
 omit [DecidableEq O] in
-/-- **The expected starts from forward-backward**: `initCount s = ∑ n, α₀(s) β₀(s) / L_n`. -/
+/-- **The expected starts from forward-backward.** Let $h$ be a valid hidden Markov model with
+finite state set $S$ and finite observation set $O$, let $T \in \mathbb{N}$, and let
+$x_0, \dots, x_{N-1}$ be observation sequences. For a sequence $x_n$ write $\alpha^n_0(s)$ for its
+forward variable at time $0$ and state $s$, $\beta^n_{T,0}(s)$ for its backward variable from
+time $0$ with $T$ remaining steps (the weight of the observations $x_n(1), \dots, x_n(T)$ given the
+state $s$ at time $0$), and $L_n$ for the likelihood of $x_n(0), \dots, x_n(T)$. Then for every
+state $s$, the expected number of sequences whose state path of length $T + 1$ starts in $s$,
+under the posterior of $h$, is $\sum_{n < N} \alpha^n_0(s)\, \beta^n_{T,0}(s) / L_n$. -/
 theorem initCount_eq (h : ValidHMM S O) (s : S) :
     initCount T xs h s =
       ∑ n, forward h.1 (xs n) 0 s * backward h.1 (xs n) T 0 s / likelihood h.1 (xs n) T := by
@@ -183,8 +203,15 @@ theorem initCount_eq (h : ValidHMM S O) (s : S) :
   rw [← sum_ite_eq_stateMarg h.1 (xs n) 0 T (Nat.zero_add T) s (Nat.succ_pos T)]
   rfl
 
-/-- **The expected emissions from forward-backward**:
-`emitCount s o = ∑ n, ∑_{t ≤ T, xₙ(t) = o} αₜ(s) β_{T-t}(s) / L_n`. -/
+/-- **The expected emissions from forward-backward.** Let $h$ be a valid hidden Markov model with
+finite state set $S$ and finite observation set $O$, let $T \in \mathbb{N}$, and let
+$x_0, \dots, x_{N-1}$ be observation sequences. For a sequence $x_n$ write $\alpha^n_t(s)$ for its
+forward variable at time $t$ and state $s$, $\beta^n_{k,t}(s)$ for its backward variable (the
+weight of the observations $x_n(t + 1), \dots, x_n(t + k)$ given the state $s$ at time $t$), and
+$L_n$ for the likelihood of $x_n(0), \dots, x_n(T)$. Then for every state $s$ and observation $o$,
+the expected number of emissions of $o$ from $s$ along state paths of length $T + 1$, summed over
+the sequences under the posterior of $h$, is
+$\sum_{n < N} \sum_{t \le T,\ x_n(t) = o} \alpha^n_t(s)\, \beta^n_{T - t, t}(s) / L_n$. -/
 theorem emitCount_eq (h : ValidHMM S O) (s : S) (o : O) :
     emitCount T xs h s o = ∑ n, ∑ t : Fin (T + 1), if xs n t = o then
       forward h.1 (xs n) t s * backward h.1 (xs n) (T - t) t s / likelihood h.1 (xs n) T
@@ -200,8 +227,19 @@ theorem emitCount_eq (h : ValidHMM S O) (s : S) (o : O) :
   · simp [ho]
 
 omit [DecidableEq O] in
-/-- **The expected transitions from forward-backward** (Rabiner's `ξ`):
-`transCount s s' = ∑ n, ∑_{t < T} αₜ(s) a(s, s') b(s', xₙ(t + 1)) β_{T-t-1}(s') / L_n`. -/
+/-- **The expected transitions from forward-backward.** Let $h$ be a valid hidden Markov model
+with finite state set $S$, finite observation set $O$, transition weights $a$ and emission
+weights $b$, let $T \in \mathbb{N}$, and let $x_0, \dots, x_{N-1}$ be observation sequences. For a
+sequence $x_n$ write $\alpha^n_t(s)$ for its forward variable at time $t$ and state $s$,
+$\beta^n_{k,t}(s)$ for its backward variable (the weight of the observations
+$x_n(t + 1), \dots, x_n(t + k)$ given the state $s$ at time $t$), and $L_n$ for the likelihood of
+$x_n(0), \dots, x_n(T)$. Then for all states $s, s'$, the expected number of transitions
+$s \to s'$ along state paths of length $T + 1$, summed over the sequences under the posterior of
+$h$, is
+$\sum_{n < N} \sum_{t < T} \alpha^n_t(s)\, a(s, s')\, b(s', x_n(t + 1))\,
+\beta^n_{T - t - 1, t + 1}(s') / L_n$.
+
+Each summand is Rabiner's $\xi_t(s, s')$ for the sequence $x_n$. -/
 theorem transCount_eq (h : ValidHMM S O) (s s' : S) :
     transCount T xs h s s' = ∑ n, ∑ t : Fin T,
       forward h.1 (xs n) t s * h.1.trans s s' * h.1.emit s' (xs n (t + 1)) *
