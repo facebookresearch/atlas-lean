@@ -42818,7 +42818,7 @@
 "MathlibExt.NumberTheory.FiniteSumsFibLucasWanted.fibBeta": "eb09539d00a0ff25",
 "MathlibExt.NumberTheory.FiniteSumsFibLucasWanted.genLucasCoeff": "4eff3ac9a530c7fc",
 "MathlibExt.NumberTheory.FiniteSumsFibLucasWanted.genocchiNumber_div_eq_sum": "6902d48dba6aa5f4",
-"MathlibExt.NumberTheory.FiniteSumsFibLucasWanted.iterate_forwardDiff_pow_eq_sum": "4c393d36bca44691",
+"MathlibExt.NumberTheory.FiniteSumsFibLucasWanted.iterate_forwardDiff_pow_eq_sum": "59ad08c81d7947b9",
 "MathlibExt.NumberTheory.FiniteSumsFibLucasWanted.sqrt5": "07fa35545d614313",
 "MathlibExt.NumberTheory.FiniteSumsFibLucasWanted.sum_bernoulli_fib_neg_fibBeta": "c37f6b76c3daf0d1",
 "MathlibExt.NumberTheory.FiniteSumsFibLucasWanted.sum_bernoulli_fib_two_eq_one": "6e00a546df146dba",
