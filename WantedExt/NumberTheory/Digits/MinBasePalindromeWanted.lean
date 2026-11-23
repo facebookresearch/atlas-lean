@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Data.List.Palindrome
 public import Mathlib.Data.Nat.Digits.Lemmas
 public import Mathlib.Data.Nat.Prime.Defs
+public import MathlibExt.NumberTheory.Digits.MinBasePalindrome
 
 /-!
 # Minimum-base palindromic representations of powers of 2
