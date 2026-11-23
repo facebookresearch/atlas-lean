@@ -14,7 +14,7 @@ equal as spaces of cusp forms.
 
 ## Proof depends on
 
-- [Rankin–Selberg L-functions for GLₙ × GLₘ](rankin-selberg-l-functions-for-gl-n.md), for the following: the central characters of $\pi_1$ and $\pi_2$ agree outside $S$, hence everywhere, so the same twist by a real power of $\lvert \det \rvert$ makes both unitary; then $L(s, \pi_1 \times \tilde\pi_2)$ has a pole at $s = 1$ exactly when $\pi_1 \simeq \pi_2$ (the actual simple pole of the completed $L$-function), the local factors at the places of $S$ have neither zeros nor poles in $\operatorname{Re} s \ge 1$, and $L^S(s, \pi_1 \times \tilde\pi_2) = L^S(s, \pi_1 \times \tilde\pi_1)$ has a pole at $s = 1$
+- [Rankin–Selberg L-functions for GLₙ × GLₘ](rankin-selberg-l-functions-for-gl-n.md), for the following (the first two steps are not Rankin–Selberg results: the ratio of the central characters is a character of $\prod_{v \in S} k_v^\times$ trivial on the diagonally embedded $k^\times$, hence trivial by weak approximation, Cogdell, Lecture 4, §4, step (iii), p. 35; and the same twist by a real power of $\lvert \det \rvert$ then makes both representations unitary, Cogdell, p. 26): then $L(s, \pi_1 \times \tilde\pi_2)$ has a pole at $s = 1$ exactly when $\pi_1 \simeq \pi_2$ (the actual simple pole of the completed $L$-function), the local factors at the places of $S$ have neither zeros nor poles in $\operatorname{Re} s \ge 1$, and $L^S(s, \pi_1 \times \tilde\pi_2) = L^S(s, \pi_1 \times \tilde\pi_1)$ has a pole at $s = 1$
 - [Multiplicity one for GLₙ](multiplicity-one-for-gl-n.md), which turns $\pi_1 \simeq \pi_2$ into the equality of the spaces of cusp forms
 
 ## Sources

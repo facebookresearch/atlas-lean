@@ -27,8 +27,13 @@ time gives infinitely many independent vectors fixed by $K_f$.
    $\widehat{\bigotimes}'_v \pi_v$ of irreducible unitary representations of the $G(k_v)$: at the finite places
    the smooth vectors of $\pi_v$ form an irreducible admissible representation, and for almost all $v$ the
    space of $K_v$-fixed vectors of $\pi_v$ is a line, containing the distinguished vector of the tensor
-   product. For a general $G$, a representation of $G(\mathbb{A})^1$ is first extended to $G(\mathbb{A})$ through a
-   character of $A_G(\mathbb{R})^0$.
+   product. The same then holds for any other open compact subgroup $K' = \prod_v K'_v$ of $G(\mathbb{A}_f)$ of product
+   form, for instance the stabilizer of a lattice in a faithful representation: $K'_v = K_v$ for almost all $v$,
+   since two lattices in a $k$-vector space agree at almost all places, so for each such $K'$ the $K'_v$-fixed
+   space is the distinguished line for almost all $v$. For a general $G$, a representation of $G(\mathbb{A})^1$ is
+   first extended to $G(\mathbb{A})$ through a character of $A_G(\mathbb{R})^0$. (The finiteness of the $K$-multiplicities is
+   part of the hypothesis; for the subrepresentations of the cuspidal spectrum it is supplied by the
+   discreteness of the cuspidal spectrum and Harish-Chandra's finiteness theorem.)
 
 ## Depends on
 

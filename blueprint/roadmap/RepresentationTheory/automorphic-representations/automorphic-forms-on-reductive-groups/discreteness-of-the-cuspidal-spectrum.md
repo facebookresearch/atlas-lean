@@ -16,8 +16,11 @@ $R(f)\varphi(x) = \int f(y) \varphi(xy)\, dy$ to it.
    finite multiplicity.
 3. **$\mathrm{GL}_n$.** For a unitary character $\omega$ of the idele class group,
    $L^2_0(\omega) = \widehat{\bigoplus}_\pi m(\pi) V_\pi$ with $m(\pi) < \infty$, and the space of cusp forms with
-   central character $\omega$ is $\mathcal{A}_0(\omega) = \bigoplus_\pi m(\pi) (V_\pi)_K$, the direct sum of the
-   $K$-finite vectors; the unitary cuspidal automorphic representations are the $(V_\pi)_K$.
+   central character $\omega$ is $\mathcal{A}_0(\omega) = \bigoplus_\pi m(\pi) (V_\pi)_K$, the algebraic direct sum, over the irreducible
+   summands, of their $K$-finite vectors; the unitary cuspidal automorphic representations are the $(V_\pi)_K$.
+   The $K$-finite vectors of the whole Hilbert sum form a larger space: an infinite square-summable sum of
+   spherical cusp forms with distinct Casimir eigenvalues is $K$-fixed but not finite under the centre of the
+   enveloping algebra.
 
 ## Depends on
 
@@ -27,8 +30,8 @@ $R(f)\varphi(x) = \int f(y) \varphi(xy)\, dy$ to it.
 ## Proof depends on
 
 - [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the covering of $G(k) \backslash G(\mathbb{A})^1$ by a Siegel set, on which the kernel of $R_{\mathrm{cusp}}(f)$ is estimated
-- [Rapid decay of cusp forms](rapid-decay-of-cusp-forms.md), for the quantitative uniform bound $\sup_x \lvert (\varphi * f)(x) \rvert \le c_f \lVert \varphi \rVert_2$ for cuspidal $\varphi$ (Arthur's proof of Theorem 12.1, through the rapid decay of cuspidal functions on Siegel sets), the estimate that gives the Hilbert–Schmidt property, and for the inclusion $\mathcal{A}_0(\omega) \subset L^2_0(\omega)$ used in item 3
-- [Dixmier–Malliavin theorem](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/dixmier-malliavin-theorem.md), in its form for functions, writing $f \in C^\infty_c(G(\mathbb{A})^1)$ as a finite sum $\sum_i g_i * h_i$ of convolutions of functions in the same space, which turns the Hilbert–Schmidt property of the $R_{\mathrm{cusp}}(g_i)$, $R_{\mathrm{cusp}}(h_i)$ into the trace-class property of $R_{\mathrm{cusp}}(f)$
+- [Rapid decay of cusp forms](rapid-decay-of-cusp-forms.md), for its item 4, the quantitative uniform bound $\sup_x \lvert (\varphi * f)(x) \rvert \le c_f \lVert \varphi \rVert_2$ for cuspidal $\varphi \in L^2$ (Borel, §9.3, (67)–(68)), the estimate that gives the Hilbert–Schmidt property, and for the inclusion $\mathcal{A}_0(\omega) \subset L^2_0(\omega)$ used in item 3
+- [Dixmier–Malliavin theorem](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/dixmier-malliavin-theorem.md), in its form for functions, writing $f \in C^\infty_c(G(\mathbb{A})^1)$ as a finite sum $\sum_i g_i * h_i$ of convolutions of functions in the same space (after reduction to functions bi-invariant under an open compact subgroup $K_0$ of $G(\mathbb{A}_f)$, so that the theorem is applied on the Lie group $G_\infty$), which turns the Hilbert–Schmidt property of the $R_{\mathrm{cusp}}(g_i)$, $R_{\mathrm{cusp}}(h_i)$ into the trace-class property of $R_{\mathrm{cusp}}(f)$
 - [Harish-Chandra's finiteness theorem for automorphic forms](harish-chandra-finiteness-theorem.md), for the finite multiplicities and the identification of the $K$-finite vectors of $L^2_0(\omega)$ with $\mathcal{A}_0(\omega)$, where the $K$-finite vectors of each irreducible summand are $\mathcal{Z}$-finite because the summand is admissible, so that they are automorphic forms
 
 ## Sources

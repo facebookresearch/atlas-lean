@@ -21,8 +21,11 @@ does not treat.
   functional equations and the archimedean $L$-factors defined through the Langlands parameters.
 - **Local factors at the removed places.** For unitary generic $\pi_v$, $\pi'_v$, the local factor
   $L(s, \pi_v \times \pi'_v)$ is $P_v(q_v^{-s})^{-1}$ for a polynomial with $P_v(0) = 1$ at a finite place and a product of
-  $\Gamma$-factors at an infinite place, hence never zero, and it has no pole in $\operatorname{Re} s \ge 1$, being a finite
-  sum of local integrals that converge there.
+  $\Gamma$-factors at an infinite place, hence never zero, and it has no pole in $\operatorname{Re} s \ge 1$: at a finite place,
+  and at an infinite place when $m = n$ or $m = n - 1$, it is a finite sum of local integrals that converge there
+  (Cogdell, Theorem 8.5); for lower ranks at an infinite place one uses instead that for each $s_1$ some
+  normalized local integral is non-zero at $s_1$ (Cogdell, Corollary 8.3.2), a uniform finite sum of ordinary
+  integrals not being known.
 - **Global $L$-functions.** For cuspidal $\pi$, $\pi'$ the completed $L$-function is the product over all places,
   archimedean ones included, $L(s, \pi \times \pi') = \prod_v L(s, \pi_v \times \pi'_v)$, and
   $\varepsilon(s, \pi \times \pi') = \prod_v \varepsilon(s, \pi_v \times \pi'_v, \psi_v)$, independent of $\psi$. For unitary cuspidal
@@ -35,10 +38,15 @@ does not treat.
   $\tilde\pi \simeq \pi' \otimes \lvert \det \rvert^{i\sigma}$, and entire if there is no such $\sigma$; it is bounded in vertical strips
   away from its poles and satisfies the same functional equation. In particular $L(s, \pi \times \tilde\pi)$ has a
   simple pole at $s = 1$, and so does $L^S(s, \pi \times \tilde\pi)$.
+- **Non-vanishing on the line $\operatorname{Re} s = 1$** (Shahidi). For unitary cuspidal $\pi$, $\pi'$ and a finite set $S$ of places
+  containing the archimedean places and those where $\pi$ or $\pi'$ ramifies, the partial
+  $L$-function $L^S(s, \pi \times \pi')$ does not vanish on $\operatorname{Re} s = 1$, except that it has a pole at the points
+  $1 + i\sigma$ with $\tilde\pi \simeq \pi' \otimes \lvert \det \rvert^{i\sigma}$.
 
 A good expansion has pages for the global integrals in the cases $m < n$ and $m = n$ (with the mirabolic
 Eisenstein series), for their unfolding to Euler products, for the unramified computation, for the
-archimedean local theory, and for the global theorems on $L(s, \pi \times \pi')$, each with a precise
+archimedean local theory, for the global theorems on $L(s, \pi \times \pi')$, and for Shahidi's non-vanishing on
+$\operatorname{Re} s = 1$, each with a precise
 statement and the sources below with locators, and with the original papers (Jacquet, Piatetski-Shapiro
 and Shalika, Amer. J. Math. 105 (1983); Jacquet and Shalika, Amer. J. Math. 103 (1981); Jacquet, "Archimedean
 Rankin–Selberg integrals", 2009) consulted for hypotheses.
@@ -60,10 +68,14 @@ Rankin–Selberg integrals", 2009) consulted for hypotheses.
   5.1–5.5: the global integrals for $m < n$ and $m = n$, the mirabolic Eisenstein series), Lecture 6
   (Propositions 6.1–6.7: the non-archimedean local theory, including convergence for $\operatorname{Re} s \ge 1$ in
   Proposition 6.2 (i)), Lecture 7 (Theorem 7.1, Corollaries 7.1.1 and 7.1.2: the unramified computation),
-  Lecture 8 (Propositions 8.1–8.3, Theorems 8.1–8.4: the archimedean theory), Lecture 9 (Definition 9.1, the
+  Lecture 8 (Propositions 8.1–8.3, Theorems 8.1–8.4: the archimedean theory; Theorem 8.5, p. 66, finite sums
+  of integrals for $m = n$ or $m = n - 1$, and Corollary 8.3.2, non-zero normalized integrals), Lecture 9 (Definition 9.1, the
   completed $L$-function over all places; Theorems 9.1 and 9.2, the global $L$-functions, with the simple
   poles of Theorem 9.2 (i); §5, boundedness in vertical strips, with Gelbart and Shahidi, J. Amer. Math. Soc.
   14 (2001); §7, the local factors at the places of $S$: never zero, and without poles in $\operatorname{Re} s \ge 1$).
 - H. Jacquet and J. A. Shalika, "On Euler products and the classification of automorphic representations
   I", Amer. J. Math. 103 (1981), 499–558, <https://doi.org/10.2307/2374103>: Theorem (5.3) (absolute
   convergence and non-vanishing of the partial Euler product for unitary cuspidal $\pi$, $\pi'$ in $\operatorname{Re} s > 1$).
+- H. Jacquet and J. A. Shalika, "On Euler products and the classification of automorphic forms II", Amer. J.
+  Math. 103 (1981), 777–815: §3.7, p. 804 (non-vanishing on $\operatorname{Re} s = 1$ away from the poles, attributed to
+  F. Shahidi, "On certain L-functions", Amer. J. Math. 103 (1981), 297–356).

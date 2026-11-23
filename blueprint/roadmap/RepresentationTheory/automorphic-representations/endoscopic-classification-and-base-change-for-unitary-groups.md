@@ -11,8 +11,10 @@ and $U_{E/F}(N)$ the quasi-split unitary group in $N$ variables.
   $\psi = \mu_1 \boxtimes \nu_1 \boxplus \dots \boxplus \mu_r \boxtimes \nu_r$ of distinct pairs, with $\mu_i$ a conjugate self-dual unitary
   [cuspidal automorphic representation](automorphic-forms-on-reductive-groups/automorphic-forms-and-automorphic-representations.md)
   of $\mathrm{GL}_{m_i}(\mathbb{A}_E)$, $\nu_i$ the irreducible representation of $\mathrm{SL}_2(\mathbb{C})$ of dimension $d_i$,
-  $\sum_i m_i d_i = N$, and every block of the same sign $\kappa_i(-1)^{N_i - 1} = \kappa(-1)^{N-1}$ (Mok's
-  Definition 2.4.7, with $N_i = m_i d_i$). Each $\psi$ has a global packet and a sign character $\varepsilon_\psi$.
+  $\sum_i m_i d_i = N$, and every block of the same sign $\kappa_i(-1)^{N_i - 1} = \kappa(-1)^{N-1}$, where $\kappa_i$ is defined from the
+  block (Mok's Remark 2.4.6 and Definition 2.4.7, with $N_i = m_i d_i$). The block $\mu_i \boxtimes \nu_i$ corresponds to the
+  discrete automorphic representation $\mu_i \lvert \det \rvert^{(d_i - 1)/2} \boxplus \dots \boxplus \mu_i \lvert \det \rvert^{(1 - d_i)/2}$ of $\mathrm{GL}_{N_i}(\mathbb{A}_E)$
+  (Mœglin–Waldspurger; KMSW, (1.3.2)). Each $\psi$ has a global packet and a sign character $\varepsilon_\psi$.
 - **Classification** (Mok). For the quasi-split group, the discrete spectrum
   $L^2_{\mathrm{disc}}(U_{E/F}(N)(F) \backslash U_{E/F}(N)(\mathbb{A}_F))$, which contains residual as well as cuspidal
   representations, decomposes as the direct sum over square-integrable parameters $\psi$ of the
@@ -27,16 +29,29 @@ and $U_{E/F}(N)$ the quasi-split unitary group in $N$ variables.
 - **Inner forms** (Kaletha–Mínguez–Shin–White). The decomposition of the discrete spectrum for inner
   twists of $U_{E/F}(N)$: their paper proves it unconditionally for generic parameters and pure inner twists,
   and in general under two hypotheses whose resolution it announces for sequels.
-- **Base change of definite unitary groups with all local components** (pending). For a CM extension
-  $E/F$ unramified at every finite place over $F$ and the unitary group of a definite Hermitian space, the
-  base change of a discrete automorphic representation, as an isobaric sum of conjugate self-dual cuspidal
-  representations, with: the identification of the local components at every place (at the split places
-  through $\mathrm{U}(V)(F_v) \cong \mathrm{GL}_N(F_v)$, at the unramified inert places through the unramified base change
-  of Satake parameters) and the identity between the archimedean weights and the infinitesimal
-  characters of the base change. This is stronger than weak base change, which only matches almost all
-  places; it needs the local classification at every place and should be sourced with locators, for
-  instance from Labesse's work on base change for definite unitary groups or from the local–global
-  compatibility in the endoscopic classification, before it is relied upon.
+- **Base change package for the standard definite unitary group** (pending). Let $E$ be a CM field
+  unramified at every finite place over its maximal totally real subfield $F$, $n \ge 1$, and $\mathrm{U}_n$ the unitary
+  group of the identity Hermitian matrix. For every automorphic representation $\pi$ of $\mathrm{U}_n(\mathbb{A}_F)$ the package
+  asserts the existence of: positive integers $N_1, \dots, N_c$ with sum $n$; discrete automorphic representations
+  $\Pi_i$ of $\mathrm{GL}_{N_i}(\mathbb{A}_E)$, each the block $\mu_i \lvert \det \rvert^{(d_i - 1)/2} \boxplus \dots \boxplus \mu_i \lvert \det \rvert^{(1 - d_i)/2}$ attached to a unitary,
+  conjugate self-dual cuspidal $\mu_i$ and a length $d_i$ (possibly $d_i > 1$: the block is conjugate self-dual,
+  its shifted terms are not); local components $\Pi_{i,w}$ at the finite places $w$ of $E$ and infinitesimal
+  characters at the archimedean places; and, at every finite place $w$, an irreducible representation $P_w$ of
+  $\mathrm{GL}_n(E_w)$ that is a subquotient of the representation induced from the $\Pi_{i,w}$, such that: $P_w$ is spherical
+  where $\pi$ is unramified; at a place where $E/F$ is inert and unramified and $\pi_w$ has Satake parameter $\alpha$, $P_w$
+  has the Satake parameter given by unramified base change of $\alpha$ (a conditional relation: it says nothing
+  when $\pi_w$ is not spherical, which the unramifiedness of the extension does not exclude); at the split places,
+  $\pi_w$ and $P_w$ correspond through $\mathrm{U}_n(F_v) \cong \mathrm{GL}_n(E_w)$; and at each archimedean place the multiset union of the
+  infinitesimal characters of the $\Pi_i$ is the infinitesimal character determined by the weight of $\pi$. The
+  blocks cannot in general be cuspidal: for the trivial representation of the definite $\mathrm{U}(2)$ over
+  $\mathbb{Q}(\zeta_{12}) / \mathbb{Q}(\sqrt 3)$, which is unramified at every finite place, the components at the split places are
+  trivial representations of $\mathrm{GL}_2$, neither generic nor the isobaric sum of two conjugate self-dual
+  characters. The package does not identify the local $L$-parameters of the components of $\pi$ at ramified
+  inert places, and its archimedean condition is an identity of infinitesimal characters, not of
+  representations. It is stronger than weak base change, which only matches almost all places, and should
+  be sourced with locators before it is relied upon, for instance from Labesse's work on base change for
+  definite unitary groups or from the local–global compatibility in the endoscopic classification; any
+  stronger statement identifying all local components needs its own source.
 
 A good expansion has pages for the global parameters and their localizations, the local and global
 packets and the sign character, the classification for quasi-split unitary groups, the weak base change,
@@ -63,12 +78,15 @@ Press, 2011, with locators.
   representations on $U_{E/F}(N)$ (with respect to the L-embedding $\xi$)"), and §10, Proposition 10.0.1 and
   Corollary 10.0.2 (the same for the unitary groups of Hermitian spaces).
 - T. Kaletha, A. Mínguez, S. W. Shin and P.-J. White, "Endoscopic classification of representations: inner
-  forms of unitary groups", arXiv:1409.3731: Theorem* 1.7.1 (the decomposition for inner twists of
+  forms of unitary groups", arXiv:1409.3731: §1.3.2, (1.3.1)–(1.3.3), pp. 64–65 (isobaric sums and the discrete
+  spectrum of $\mathrm{GL}(N)$, after Mœglin and Waldspurger, as the blocks $\mu \lvert \det \rvert^{(d-1)/2} \boxplus \dots \boxplus \mu \lvert \det \rvert^{(1-d)/2}$),
+  Theorem* 1.7.1 (the decomposition for inner twists of
   $U_{E/F}(N)$) and the paragraph after it (proved in Chapter 5 under two hypotheses, whose resolution is
   announced for the sequels [KMSa], [KMSb]; unconditional for generic parameters and pure inner twists).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>)
-  states the base change of the pending item, for CM extensions unramified at every finite place over
-  their maximal real subfield, $N \ge 1$ and the standard definite group, with its local compatibilities at
-  every place and its archimedean weight identity, as `GlobalTheory.Published.BaseChangeIsobaricTransfer` and
-  `GlobalTheory.Published.BaseChangeDefiniteUnitaryGroup`.
+  states the package of the pending item, with discrete conjugate self-dual blocks, local subquotients at the
+  finite places, the split comparison, the conditional inert Satake relation and the archimedean identity of
+  infinitesimal characters, for the standard definite group of a CM field unramified at finite places over its
+  maximal real subfield, as `GlobalTheory.Published.BaseChangeIsobaricTransfer` and
+  `GlobalTheory.Published.BaseChangeDefiniteUnitaryGroup` (through `BaseChangeIsobaricN` and `DefiniteN`).

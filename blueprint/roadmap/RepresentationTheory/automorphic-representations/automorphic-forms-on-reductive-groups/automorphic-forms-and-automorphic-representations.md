@@ -29,7 +29,8 @@ smooth if it is $C^\infty$ in the variable of $G_\infty$ and locally constant in
   $(n_1, n_2)$, $n_1 + n_2 = n$. The cusp forms form a subspace $\mathcal{A}_0(G)$.
 - **Hecke algebra.** The global Hecke algebra is $\mathcal{H} = \bigotimes'_v \mathcal{H}_v$, where for a finite
   place $\mathcal{H}_v = C^\infty_c(G(k_v))$ under convolution, for an infinite place $\mathcal{H}_v$ is the
-  convolution algebra of bi-$K_v$-finite distributions on $G(k_v)$ supported in $K_v$: it has no unit, it
+  convolution algebra of bi-$K_v$-finite distributions on $G(k_v)$ supported in $K_v$: it has no unit when $K_v$ is
+  infinite (when $K_v$ is finite, as for $\mathrm{GL}_1(\mathbb{R})$ with $K_v = \{\pm 1\}$, the Dirac measure at $1$ is a unit), it
   contains the algebra $\mathcal{A}(K_v)$ of measures $f(k)\,dk$ with $f$ a $K_v$-finite function on $K_v$, and it is
   $\mathcal{U}(\mathfrak{g}_v) \otimes_{\mathcal{U}(\mathfrak{k}_v)} \mathcal{A}(K_v)$, spanned by the convolutions $D * \xi$ of elements
   $D \in \mathcal{U}(\mathfrak{g}_v)$ with such measures $\xi$ (a single element of $\mathcal{U}(\mathfrak{g}_v)$, like the Dirac

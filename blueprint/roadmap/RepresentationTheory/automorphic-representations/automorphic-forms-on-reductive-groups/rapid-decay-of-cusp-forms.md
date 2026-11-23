@@ -25,6 +25,10 @@ on $\mathfrak{S}^1$.
    $L^2_0(\omega)$. (The exponent $\sigma$ need not be an integer: on $\mathrm{GL}_1$, which has no proper parabolic
    subgroup, $z \mapsto \lvert z \rvert^{1/2}$ is a cusp form.)
 
+4. **Uniform bound for convolutions** (Gelfand–Piatetski-Shapiro). For $f \in C^\infty_c(G(\mathbb{A})^1)$ there is a constant
+   $c_f$ such that $\sup_x \lvert (\varphi * f)(x) \rvert \le c_f \lVert \varphi \rVert_2$ for every cuspidal function $\varphi \in L^2(G(k) \backslash G(\mathbb{A})^1)$; in
+   fact $\varphi \mapsto \varphi * f$ is continuous from the cuspidal $L^2$ space to the space of rapidly decreasing functions.
+
 ## Depends on
 
 - [Automorphic forms, cusp forms and automorphic representations](automorphic-forms-and-automorphic-representations.md), for automorphic forms, cusp forms, constant terms, the height and $L^2_0(\omega)$
@@ -46,7 +50,10 @@ on $\mathfrak{S}^1$.
 - A. Borel, "Automorphic forms on reductive groups", lecture notes (Park City),
   <http://homepages.math.uic.edu/~rtakloo/papers/borel/borel3.pdf>: §4.1–4.3 (analyticity, the theorem on
   $f \star \alpha = f$ and its Corollary: an automorphic form is of uniform moderate growth), §7.7–7.9 (the
-  basic estimate and Theorem 7.9, "Any cusp form is fast decreasing").
+  basic estimate and Theorem 7.9, "Any cusp form is fast decreasing"), §9.3, (67) (continuity of the
+  composition from the cuspidal $L^2$ space to rapidly decreasing functions) and (68) (the uniform bound of
+  item 4), stated for $\Gamma \backslash G$ with $\Gamma$ arithmetic, the adelic form following by the finiteness of class
+  numbers.
 - J. W. Cogdell, "Lectures on L-functions, converse theorems, and functoriality for GL_n", in
   *Lectures on Automorphic L-functions*, Fields Institute Monographs 20, American Mathematical Society,
   2004; author's version <https://people.math.osu.edu/cogdell.1/fields-www.pdf>: Lecture 2, §3 ("By a

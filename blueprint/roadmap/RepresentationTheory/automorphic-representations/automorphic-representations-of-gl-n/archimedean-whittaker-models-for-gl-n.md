@@ -11,8 +11,9 @@ $\psi(n) = \psi(n_{12} + \dots + n_{n-1,n})$.
   $\Lambda(\pi(n)\xi) = \psi(n)\Lambda(\xi)$ has dimension at most $1$, so $\pi$ has at most one Whittaker
   model $\mathcal{W}(\pi, \psi)$; $\pi$ is generic when the dimension is $1$. The dimension can be $0$: the trivial
   representation of $\mathrm{GL}_n(F)$, $n \ge 2$, has no non-zero functional of this kind, algebraic or continuous.
-  For generic $\pi$ the algebraic functionals on the underlying Harish-Chandra module form a larger space,
-  and exactly one line of them extends continuously to $\pi$.
+  For generic $\pi$ exactly one line of the algebraic functionals on the underlying Harish-Chandra module
+  extends continuously to $\pi$; the space of algebraic functionals can be larger (for the principal series of
+  $\mathrm{GL}_n$, $n \ge 2$, it has dimension $n!$), but need not be (for $n = 1$ both spaces are lines).
 - **Contragredient.** If $\pi$ has a Whittaker model, so does $\tilde\pi$, with
   $\mathcal{W}(\tilde\pi, \psi^{-1}) = \{g \mapsto W(w_n\, {}^t g^{-1}) : W \in \mathcal{W}(\pi, \psi)\}$.
 - **Kirillov model** (Jacquet–Shalika). The restriction of Whittaker functions to the mirabolic subgroup
@@ -33,7 +34,6 @@ for the exact hypotheses.
   *Lectures on Automorphic L-functions*, Fields Institute Monographs 20, American Mathematical Society,
   2004; author's version <https://people.math.osu.edu/cogdell.1/fields-www.pdf>: Lecture 4, §2,
   Theorem 4.1 ("due to Gelfand and Kazhdan ($v < \infty$) and Shalika ($v \mid \infty$)", at most one Whittaker
-  model), Remarks (i)–(iii) (Bessel distributions; the space of algebraic functionals, of dimension $n!$ in
-  the generic principal-series situation described there, of which only one line extends continuously; the
-  contragredient), Definition 4.1, and Theorem 4.4 ("Bernstein and Zelevinsky if $v < \infty$ and Jacquet
+  model), Remarks (i)–(iii) (Bessel distributions; the algebraic functionals, of which only one line extends
+  continuously; the contragredient), Definition 4.1, and Theorem 4.4 ("Bernstein and Zelevinsky if $v < \infty$ and Jacquet
   and Shalika if $v \mid \infty$").

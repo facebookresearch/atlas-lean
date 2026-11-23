@@ -3,7 +3,8 @@
 Let $k$ be a number field. By Langlands's theorem on
 [constituents of induced representations](../automorphic-forms-on-reductive-groups/automorphic-representations-as-constituents-of-induced-representations.md),
 every automorphic representation $\pi$ of $\mathrm{GL}_n(\mathbb{A})$ is a constituent of a representation
-$\mathrm{Ind}_{Q(\mathbb{A})}^{\mathrm{GL}_n(\mathbb{A})}(\tau_1 \otimes \dots \otimes \tau_r)$ induced from cuspidal
+$\mathrm{Ind}_{Q(\mathbb{A})}^{\mathrm{GL}_n(\mathbb{A})}(\tau_1 \otimes \dots \otimes \tau_r)$, normalized induction (with the square root of the modulus
+character), from cuspidal
 automorphic representations $\tau_i$ of $\mathrm{GL}_{n_i}(\mathbb{A})$, $n_1 + \dots + n_r = n$, along the
 standard parabolic subgroup $Q$ of type $(n_1, \dots, n_r)$.
 
@@ -15,13 +16,13 @@ standard parabolic subgroup $Q$ of type $(n_1, \dots, n_r)$.
    the cuspidal support. This does not separate the different constituents of one induced representation.
 2. **Isobaric sums** (Langlands; Jacquet–Shalika). For cuspidal automorphic representations $\tau_i$ of
    $\mathrm{GL}_{n_i}(\mathbb{A})$, not necessarily unitary, there is an automorphic representation
-   $\pi = \tau_1 \boxplus \dots \boxplus \tau_r$ of $\mathrm{GL}_n(\mathbb{A})$ whose local component at every place $v$ is the Langlands
-   quotient of the normalized parabolic induction from $\tau_{1,v} \otimes \dots \otimes \tau_{r,v}$ (taken in the order
-   given by the real parts of the central exponents); it is constructed from residues and values of
-   Eisenstein series, it depends only on the multiset $\{\tau_1, \dots, \tau_r\}$, and by item 1 an isobaric sum is
-   determined by its local components at almost all places. The isobaric sums of unitary cuspidal
-   representations contain the unitary cuspidal ones and, by the classification of Mœglin and Waldspurger,
-   the discrete spectrum.
+   $\pi = \tau_1 \boxplus \dots \boxplus \tau_r$ of $\mathrm{GL}_n(\mathbb{A})$, a constituent of $\mathrm{Ind}(\tau_1 \otimes \dots \otimes \tau_r)$, whose local
+   component at every place $v$ has as $L$-parameter the direct sum of the $L$-parameters of the $\tau_{i,v}$:
+   $\pi_v$ is the Langlands quotient of the standard module obtained by writing each $\tau_{i,v}$ through its own
+   standard data and ordering all the resulting essentially tempered pieces by decreasing real exponent. It
+   depends only on the multiset $\{\tau_1, \dots, \tau_r\}$, and by item 1 an isobaric sum is determined by its local
+   components at almost all places. For example, the trivial representation of $\mathrm{GL}_2(\mathbb{A})$ is the isobaric
+   sum $\lvert \cdot \rvert^{1/2} \boxplus \lvert \cdot \rvert^{-1/2}$ of two characters that are not unitary.
 3. **Satake parameters.** In particular, let $(\pi_i)_{i \in I}$ and $(\pi'_j)_{j \in J}$ be finite families of
    cuspidal automorphic representations of groups $\mathrm{GL}_{m_i}(\mathbb{A})$ and $\mathrm{GL}_{m'_j}(\mathbb{A})$.
    If for almost all finite places $v$ all $\pi_{i,v}$ and $\pi'_{j,v}$ are unramified and the multisets of
@@ -38,10 +39,11 @@ standard parabolic subgroup $Q$ of type $(n_1, \dots, n_r)$.
 
 ## Proof depends on
 
-- [Rankin–Selberg L-functions for GLₙ × GLₘ](rankin-selberg-l-functions-for-gl-n.md), for the absolute convergence and non-vanishing of the partial Rankin–Selberg $L$-functions of unitary cuspidal representations in $\operatorname{Re} s > 1$ and the location and order of their poles at $s = 1$ after twisting by $\lvert \det \rvert^{it}$; Jacquet and Shalika order the real twists of the cuspidal data and compare orders of poles of products of such $L$-functions to recover the multiset of cuspidal data (item 1)
-- [Automorphic representations as constituents of induced representations](../automorphic-forms-on-reductive-groups/automorphic-representations-as-constituents-of-induced-representations.md), for the local components of a constituent of $\mathrm{Ind}(\tau_1 \otimes \dots \otimes \tau_r)$, unramified with Satake parameters $\sum_i A(\tau_{i,v})$ at almost all places, which reduces item 3 to item 1
-- [Eisenstein series and their meromorphic continuation](../automorphic-forms-on-reductive-groups/eisenstein-series.md), for the construction of the isobaric sum through Eisenstein series (item 2)
-- [Langlands classification for GLₙ](../../reductive-groups-over-local-fields/representations-of-p-adic-gl-n/langlands-classification-for-gl-n.md), for the Langlands quotients of the local induced representations at the finite places (item 2)
+- [Rankin–Selberg L-functions for GLₙ × GLₘ](rankin-selberg-l-functions-for-gl-n.md), for item 1, following Jacquet and Shalika (II, Theorems (4.1)–(4.4)): writing each cuspidal datum as $\sigma_j \lvert \det \rvert^{t_j}$ with $\sigma_j$ unitary and $t_j$ real, one shifts the smallest real exponent to $0$ and pairs with a unitary datum of that exponent; the data with larger exponents contribute partial $L$-functions in the open half-plane $\operatorname{Re} s > 1$, where they converge absolutely and do not vanish, and on the minimal layer the comparison at $s = 1$ uses the actual simple pole of $L^S(s, \sigma \times \tilde\sigma)$ together with the non-vanishing of the cross terms $L^S(s, \sigma \times \tilde\sigma')$, $\sigma' \not\simeq \sigma \lvert \det \rvert^{it}$, on the line $\operatorname{Re} s = 1$ (Shahidi), which rules out cancellations there; the multiplicities are then recovered from the power sums $\mathrm{tr}(A_v^\ell)$, $\ell \ge 1$, at all good places
+- [Automorphic representations as constituents of induced representations](../automorphic-forms-on-reductive-groups/automorphic-representations-as-constituents-of-induced-representations.md), for the local components of a constituent of $\mathrm{Ind}(\tau_1 \otimes \dots \otimes \tau_r)$, unramified with Satake parameters $\sum_i A(\tau_{i,v})$ at almost all places, which reduces item 3 to item 1 (Jacquet and Shalika prove both from their Theorem (4.2)); and, for item 2, the realization of the constituents of $\mathrm{Ind}(\tau_1 \otimes \dots \otimes \tau_r)$ in spaces of automorphic forms through Taylor coefficients of pole-cleared Eisenstein series
+- [Eisenstein series and their meromorphic continuation](../automorphic-forms-on-reductive-groups/eisenstein-series.md), for the Eisenstein series of item 2
+- [Langlands classification for GLₙ](../../reductive-groups-over-local-fields/representations-of-p-adic-gl-n/langlands-classification-for-gl-n.md), for the Langlands quotients of the local standard modules at the finite places (item 2)
+- [Characters, principal series and the Langlands classification for real reductive groups](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/principal-series-of-real-reductive-groups.md), for the Langlands quotients at the infinite places (item 2)
 
 ## Sources
 
@@ -51,14 +53,18 @@ standard parabolic subgroup $Q$ of type $(n_1, \dots, n_r)$.
   theorem, "a consequence of the theory of Eisenstein series", and Theorem 9.4, Generalized Strong
   Multiplicity One, "the cuspidal support of $\pi$ is well defined", with the isobaric representations), and
   its reference [3], H. Jacquet and J. A. Shalika, "On Euler products and the classification of automorphic
-  forms II", Amer. J. Math. 103 (1981), 777–815: §4, (4.4) and (4.5) (the essentially unique cuspidal
+  forms II", Amer. J. Math. 103 (1981), 777–815: §3.7, p. 804 (non-vanishing on $\operatorname{Re} s = 1$ away from the poles,
+  attributed to Shahidi), Theorems (4.1)–(4.4), pp. 804–809 (the comparison with the shifted minimal real
+  exponent and the recovery of multiplicities), §4, (4.4) and (4.5) (the essentially unique cuspidal
   support, and, through the theory of Eisenstein series, the automorphic representation attached to a
   formal sum of cuspidal representations).
+- H. Jacquet and J. A. Shalika, "On Euler products and the classification of automorphic representations
+  I", Amer. J. Math. 103 (1981), 499–558: §0.3, p. 503 (normalized induction).
 - T. Kaletha, A. Mínguez, S. W. Shin and P.-J. White, "Endoscopic classification of representations: inner
   forms of unitary groups", arXiv:1409.3731: §1.3.2, (1.3.1)–(1.3.3) (isobaric sums, defined by the
-  Langlands quotient of the normalized induction at every place; the discrete spectrum of $\mathrm{GL}(N)$
-  after Mœglin and Waldspurger; determination by almost all places through the Jacquet–Shalika theorem).
+  Langlands quotient of the normalized induction at every place, with $L$-parameter the direct sum of those of
+  the summands; determination by almost all places through the Jacquet–Shalika theorem).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>)
-  states item 2 over totally complex fields as `GlobalTheory.Published.JacquetShalikaRigidity`, a component of
-  `GlobalTheory.Published.JacquetShalika`.
+  states item 3 over totally complex fields, for finite families of positive ranks and cofinitely many finite
+  places, as `GlobalTheory.Published.JacquetShalikaRigidity`, a component of `GlobalTheory.Published.JacquetShalika`.

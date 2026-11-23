@@ -18,23 +18,32 @@ the normalized ones of the [adelic norm](adeles-and-ideles/adelic-norm.md), with
   Chandra, Mostow–Tamagawa).
 - **Finiteness of class numbers** (Borel). For every open compact subgroup $L$ of $G(\mathbb{A}_f)$ the
   double coset space $G(k) \backslash G(\mathbb{A}_f) / L$ is finite, so that $G(k) \backslash G(\mathbb{A}) / L$ is a
-  finite union of arithmetic quotients $\Gamma_i \backslash G_\infty$; and there are finitely many
-  $G(k)$-conjugacy classes of parabolic subgroups over $k$.
+  finite union of arithmetic quotients $\Gamma_i \backslash G_\infty$; there are finitely many $G(k)$-conjugacy classes of
+  parabolic subgroups over $k$, and, for each arithmetic subgroup $\Gamma$ of $G(k)$, finitely many $\Gamma$-conjugacy
+  classes of parabolic subgroups over $k$ (a finer statement: for $\Gamma(2) \subset \mathrm{SL}_2(\mathbb{Z})$ one $G(k)$-class of Borel
+  subgroups splits into several $\Gamma$-classes, the cusps).
 - **Heights.** For the two-sided height $\lVert x \rVert = \prod_v \max_{i,j}(\lvert r(x)_{ij} \rvert_v, \lvert (r(x)^{-1})_{ij} \rvert_v)$
   defined by a faithful representation $r \colon G \to \mathrm{GL}_m$ over $k$, whose balls are compact (a height
   using only the entries of $r(x)$ need not have this property: on $\mathrm{GL}_1$ over $\mathbb{Q}$ every rational
-  point would have height $1$):
-  $\lVert xy \rVert \le \lVert x \rVert \lVert y \rVert$, $\lVert x^{-1} \rVert \le C_0 \lVert x \rVert^{N_0}$ and
-  $\#\{\gamma \in G(k) : \lVert \gamma \rVert \le t\} \le C_0 t^{N_0}$, and the comparison of heights on a
-  Siegel set with heights of their $G(k)$-translates.
-- **Integration on Siegel sets.** The Haar measure of a Siegel set in $G(\mathbb{A})^1$ is finite, and an
-  integral over it is bounded by an integral over the cone of $a$, for the multiplicative Haar measure of
-  $A_0(\mathbb{R})^0$, against the inverse of the modulus character $\delta_{P_0}$ (the Jacobian of the Iwasawa
-  decomposition). For the unitary group $\mathrm{U}(V)$ of a Hermitian space over a CM extension $E/F$, with
+  point would have height $1$): $\lVert xy \rVert \le m^{[k:\mathbb{Q}]} \lVert x \rVert \lVert y \rVert$ (with the normalized absolute values;
+  the constant cannot be dropped for this maximum of entries: for $g = \begin{pmatrix} 1 & 1 \\ 1 & 0 \end{pmatrix} \in \mathrm{GL}_2(\mathbb{Q})$,
+  $\lVert g \rVert = 1$ and $\lVert g^2 \rVert = 2$), $\lVert x^{-1} \rVert = \lVert x \rVert$, $\#\{\gamma \in G(k) : \lVert \gamma \rVert \le t\} \le C_0 t^{N_0}$, and, on
+  a Siegel set $\mathfrak{S}$, $\lVert \delta x \rVert \ge c \lVert x \rVert$ for $\delta \in G(k)$ and $x \in \mathfrak{S}$ (Arthur, §13, p. 72, for his height).
+- **The maps $H_P$.** For every standard parabolic subgroup $P = M_P N_P$, with $\mathfrak{a}_P = \mathrm{Hom}(X(M_P)_k, \mathbb{R})$, the map
+  $H_P \colon G(\mathbb{A}) \to \mathfrak{a}_P$ defined by $e^{\langle H_P(nmk), \chi \rangle} = \lvert \chi(m) \rvert$ for rational characters $\chi$ of $M_P$, through the
+  Iwasawa decomposition $G(\mathbb{A}) = N_P(\mathbb{A}) M_P(\mathbb{A}) K$.
+- **Integration on Siegel sets.** The Haar measure of a Siegel set in $G(\mathbb{A})^1$ is finite. For a non-negative
+  measurable function $\varphi$ on $\mathfrak{S}^1 = \mathfrak{S} \cap G(\mathbb{A})^1$ with $\varphi(pak) \le h(a)$ for $p \in \omega$, $k \in K$ and a measurable $h$,
+  $\int_{\mathfrak{S}^1} \varphi \le C \int h(a)\, \delta_{P_0}(a)^{-1}\, da$, the integral being over the norm-one slice of the cone of $a$ (the
+  elements of $A_0(\mathbb{R})^0 \cap G(\mathbb{A})^1$ with $\beta(H_{P_0}(a) - T_1) > 0$ for $\beta \in \Delta_0$), for its multiplicative Haar measure,
+  with $\delta_{P_0}$ the modulus character (the Jacobian of the Iwasawa decomposition) and $C$ depending on the measures
+  and on $\omega$. The restriction to the norm-one slice matters: for $G = \mathbb{G}_m$ there are no roots, the
+  unrestricted cone is $\mathbb{R}_{>0}$ with infinite multiplicative volume, while its norm-one slice is a point. For the unitary group $\mathrm{U}(V)$ of a Hermitian space over a CM extension $E/F$, with
   $V = V_0 \oplus \mathbb{H}^r$ and Witt index $r$, these statements take an explicit form in a Witt basis: covering
-  of the quotient by a Siegel set of finite volume, the cone majorant by $\delta_{P_0}^{-1}$, the compactness of the
-  conjugates of the unipotent part, and the control of the height of the quotient (the infimum of the heights
-  of rational translates) on the Siegel set; this is the form used for the theta integrals of unitary
+  of the quotient by a Siegel set of finite volume, the cone majorant by $\delta_{P_0}^{-1}$ (in additive coordinates, the
+  factor $\prod_i t_i^{-1}$), the containment of the conjugates of the unipotent part in a fixed compact set, and the
+  polynomial comparison of the height with the height of the quotient (the infimum of the heights of rational
+  translates) on the Siegel set; this is the form used for the theta integrals of unitary
   groups and for the decay of their cusp forms.
 
 A good expansion has pages for the definition of Siegel sets, the covering theorem, the finiteness
@@ -58,7 +67,9 @@ sources below.
   Shimura Varieties*, Clay Math. Proc. 4, American Mathematical Society, 2005, 1–263,
   <https://www.claymath.org/library/proceedings/cmip04c.pdf>: §2 ($G(\mathbb{A})^1$, $H_G$), §3 (the
   compactness criterion of Borel–Harish-Chandra and Mostow–Tamagawa), §8 (Siegel sets and Theorem 8.1,
-  "Borel, Harish-Chandra"), §13 ((13.2)–(13.4), "See [Bor2]").
+  "Borel, Harish-Chandra"), §2, pp. 15–16 (the maps $H_P$ and $\mathfrak{a}_P$), §13 ((13.2)–(13.4), "See [Bor2]", for his
+  height built from the Hilbert–Schmidt norm, and p. 72, the lower bound for heights of rational translates on a
+  Siegel set).
 - A. Borel, "Automorphic forms on reductive groups", lecture notes (Park City),
   <http://homepages.math.uic.edu/~rtakloo/papers/borel/borel3.pdf>: §6 (arithmetic subgroups and the finite
   invariant measure of $\Gamma \backslash {}^\circ G$ in 6.1, Siegel sets 6.2, the theorem of 6.3 with the

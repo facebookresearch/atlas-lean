@@ -24,13 +24,13 @@ $K_\infty = \prod_{v \mid \infty} K_v$; the identity is stated for them, as in P
 
 ## Proof depends on
 
-- [Additive duality of adeles and the volume of A/K](additive-duality-of-adeles.md), for $\psi|_K = 1$ and the identification of the annihilator of $K$ with $K$, the volume $1$ of $\mathbb{A}/K$ and Fourier inversion on $\mathbb{A}/K$, applied to the periodization $\sum_{\kappa \in K} f(x + \kappa)$, whose convergence uses the lattice $\mathcal{O}_K \subset K_\infty$ (Poonen's Lemma 5.6)
+- [Additive duality of adeles and the volume of A/K](additive-duality-of-adeles.md), for $\psi|_K = 1$ and the identification of the annihilator of $K$ with $K$, the volume $1$ of $\mathbb{A}/K$, the summability of $f$ over the translates of fractional ideals, uniformly on compact sets (Poonen's Lemma 5.6), which makes the periodization $\sum_{\kappa \in K} f(x + \kappa)$ continuous, and the Fourier inversion criterion on the compact group $\mathbb{A}/K$, applied to the periodization, whose Fourier coefficients are the values $\hat f(\kappa)$ (Poonen §5.5)
 
 ## Sources
 
 - B. Poonen, *Tate's thesis*, lecture notes for MIT 18.786 (Spring 2015), PDF of 2025-10-11,
-  <https://math.mit.edu/~poonen/786/notes.pdf>: §4.4 (local Schwartz–Bruhat functions and the standard
-  characters, after Definition 4.5), §5.2 (the standard global character), §5.3 (the Tamagawa measure),
+  <https://math.mit.edu/~poonen/786/notes.pdf>: §4.3, the paragraph after Definition 4.5 (the standard
+  characters), §4.4 (local Schwartz–Bruhat functions), §5.2 (the standard global character), §5.3 (the Tamagawa measure),
   §5.4 (Schwartz–Bruhat functions on $\mathbb{A}$ and the adelic Fourier transform), Lemma 5.6
   (convergence), Proposition 5.3 ($\psi$ is trivial on $K$) and Theorem 5.7 (Poisson summation formula
   for $K \subset \mathbb{A}$).
