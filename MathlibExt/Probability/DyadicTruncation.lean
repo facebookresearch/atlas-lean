@@ -23,14 +23,15 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 Dyadic truncation of a finite probability vector with the leftover mass routed to a reject outcome: total-variation and acceptance error bounds and the precision choice.
 
-This is the finite-distribution arithmetic for the dyadic approximation of
-label masses in the Pauli-test analysis of T. Morimae, D. Nagaj and
-N. Schuch, "Quantum proofs can be verified using only single-qubit
-measurements", Physical Review A 93 (2016), 022326 (arXiv:1510.06789),
-Section IV: a label with probability `π l` is sampled with `t` fair coins
-by rounding `π l` down to a multiple of `2⁻ᵗ`, and the leftover mass is
-routed to a reject outcome. The bounds below are for an arbitrary finite
-probability vector; no Pauli or circuit statement is included.
+In Section IV of T. Morimae, D. Nagaj and N. Schuch, "Quantum proofs can be
+verified using only single-qubit measurements", Physical Review A 93 (2016),
+022326 (arXiv:1510.06789), the verifier samples a Pauli term exactly from a
+probability distribution `π`. The dyadic truncation here is a finite-precision
+version of that step, not a construction from the paper: a label with
+probability `π l` is sampled with `t` fair coins by rounding `π l` down to a
+multiple of `2⁻ᵗ`, and the leftover mass is routed to a reject outcome. The
+bounds below are for an arbitrary finite probability vector; no Pauli or
+circuit statement is included.
 -/
 
 @[expose] public section
