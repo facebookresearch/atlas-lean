@@ -27,7 +27,6 @@ Reference: Bridgeland, arXiv:1002.4374v3, Lemma 4.1,
 -/
 
 set_option backward.isDefEq.respectTransparency false
-set_option maxHeartbeats 1000000
 @[expose] public noncomputable section
 
 namespace WantedExt.AlgebraicGeometry.HallWallCrossingSources

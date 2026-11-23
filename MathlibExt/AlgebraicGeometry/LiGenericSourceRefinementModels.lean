@@ -230,8 +230,8 @@ def LogNormalized {v : Fin C.family.components} {w : Fin E.family.components}
           old pr pure ht x (permutation i))
   | _, _, _ => True
 
--- Kernel checking retains the complete coefficient action on every full base Cech tuple.
 set_option maxHeartbeats 1000000 in
+-- Kernel checking retains the complete coefficient action on every full base Čech tuple.
 /-- All tuple values retain their ordinary derivative and actual tensor coefficients. -/
 structure CechMap where
   map : (C.source.data I).logCochains ⟶

@@ -34,7 +34,6 @@ and the existing coefficient-normalized AffineNormalConeMaps module.
 -/
 
 set_option backward.isDefEq.respectTransparency false
-set_option maxHeartbeats 2000000
 @[expose] public noncomputable section
 
 namespace MathlibExt.AlgebraicGeometry.OrdinaryNormalConeModels

@@ -20,7 +20,6 @@ an actual sequence isomorphism.
 -/
 
 set_option backward.isDefEq.respectTransparency false
-set_option maxHeartbeats 1000000
 @[expose] noncomputable section
 
 namespace MathlibExtTest.AlgebraicGeometry.HallGeometricFoundations

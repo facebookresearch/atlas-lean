@@ -30,7 +30,6 @@ The derivative uses the completed RelativeDifferentialForms.d0.
 -/
 
 set_option backward.isDefEq.respectTransparency false
-set_option maxHeartbeats 1000000
 @[expose] public noncomputable section
 
 namespace MathlibExt.AlgebraicGeometry.CriticalMilnorFibreModels

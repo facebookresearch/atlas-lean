@@ -34,7 +34,6 @@ construction proofs are requested separately.
 -/
 
 set_option backward.isDefEq.respectTransparency false
-set_option maxHeartbeats 2000000
 set_option maxRecDepth 10000
 @[expose] public noncomputable section
 

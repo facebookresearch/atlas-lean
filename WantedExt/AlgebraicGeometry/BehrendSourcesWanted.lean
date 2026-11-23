@@ -30,7 +30,6 @@ Apache 2.0. Actual native formulas are defined in the imported modules.
 -/
 
 set_option backward.isDefEq.respectTransparency false
-set_option maxHeartbeats 1000000
 @[expose] public noncomputable section
 
 namespace WantedExt.AlgebraicGeometry.BehrendSources

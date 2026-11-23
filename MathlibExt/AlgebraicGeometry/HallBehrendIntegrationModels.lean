@@ -30,7 +30,6 @@ equation (25), §5.2 and corrected coefficient ring (50).
 -/
 
 set_option backward.isDefEq.respectTransparency false
-set_option maxHeartbeats 1000000
 @[expose] public noncomputable section
 
 namespace MathlibExt.AlgebraicGeometry.HallBehrendIntegrationModels

@@ -30,7 +30,6 @@ equations (24)–(25), Definition 5.2, Theorem 5.1 and §7.3–7.4.
 -/
 
 set_option backward.isDefEq.respectTransparency false
-set_option maxHeartbeats 1000000
 @[expose] public noncomputable section
 
 namespace WantedExt.AlgebraicGeometry.HallIntegrationSources

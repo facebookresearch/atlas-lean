@@ -31,7 +31,6 @@ native scheme image uses Mathlib IdealSheaf/Subscheme.lean.
 -/
 
 set_option backward.isDefEq.respectTransparency false
-set_option maxHeartbeats 1000000
 @[expose] public noncomputable section
 
 namespace MathlibExt.AlgebraicGeometry.NashBlowupModels

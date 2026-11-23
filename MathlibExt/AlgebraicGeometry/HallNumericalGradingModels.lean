@@ -30,7 +30,6 @@ and the actual trivialization of the algebraic top-form sheaf.
 -/
 
 set_option backward.isDefEq.respectTransparency false
-set_option maxHeartbeats 1000000
 @[expose] public noncomputable section
 
 namespace MathlibExt.AlgebraicGeometry.HallNumericalGradingModels

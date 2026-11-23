@@ -29,7 +29,6 @@ Reference: Bridgeland, arXiv:1002.4374v3, §2.2, §4.3,
 -/
 
 set_option backward.isDefEq.respectTransparency false
-set_option maxHeartbeats 1000000
 @[expose] public noncomputable section
 
 namespace MathlibExt.AlgebraicGeometry.HallTorsionAndSlopeModels

@@ -71,8 +71,8 @@ def infinitesimalBase : Spec (moduleSquareRing (coefficient C)) ⟶
 def infinitesimalProjection := infinitesimalBase C ≫
   (TorusInfinitesimalPoints.projection (k := k) C.ring).left
 
--- The indexed native curve and torus action records contain the complete source diagram.
 set_option maxHeartbeats 1000000 in
+-- The indexed curve and torus action records contain the complete source diagram.
 structure Gauge where
   rank : ℕ
   torus : TorusTheory k rank
