@@ -20,7 +20,9 @@ is restricted to simplicial fans and complex-valued points.
 
 @[expose] public noncomputable section
 
-namespace MathlibExt.AlgebraicGeometry.CoxQuotientGeometry
+namespace WantedExt.AlgebraicGeometry.CoxQuotientGeometryWanted
+
+open MathlibExt.AlgebraicGeometry MathlibExt.AlgebraicGeometry.CoxQuotientGeometry
 
 open CategoryTheory FiniteToricCoordinates CoxGradedSheaves CoxNormalizedSheafification
 
@@ -45,5 +47,5 @@ theorem_wanted cox_simplicial_orbit_fibres {n : ℕ} {F : FiniteFan n} (R : Rays
     p ≫ P.map = q ≫ P.map ↔ ∃ g : Gauge R (CommAlgCat.of ℂ ℂ),
       G.act (CommAlgCat.of ℂ ℂ) g p = q
 
-end MathlibExt.AlgebraicGeometry.CoxQuotientGeometry
+end WantedExt.AlgebraicGeometry.CoxQuotientGeometryWanted
 

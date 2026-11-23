@@ -21,7 +21,9 @@ is quasicoherent modules, with the source's simplicial hypothesis.
 
 @[expose] public noncomputable section
 
-namespace MathlibExt.AlgebraicGeometry.CoxNormalizedSheafification
+namespace WantedExt.AlgebraicGeometry.CoxNormalizedSheafificationWanted
+
+open MathlibExt.AlgebraicGeometry MathlibExt.AlgebraicGeometry.CoxNormalizedSheafification
 
 open CategoryTheory FiniteToricCoordinates CoxGradedSheaves
 
@@ -36,4 +38,4 @@ theorem_wanted cox_quasicoherent_essentialSurjectivity {n : ℕ} {F : FiniteFan 
     (S : Sheafification R C T) (N : T.scheme.left.Modules) (hN : N.IsQuasicoherent) :
     ∃ M : GradedModule R, Nonempty (S.functor.obj M ≅ N)
 
-end MathlibExt.AlgebraicGeometry.CoxNormalizedSheafification
+end WantedExt.AlgebraicGeometry.CoxNormalizedSheafificationWanted

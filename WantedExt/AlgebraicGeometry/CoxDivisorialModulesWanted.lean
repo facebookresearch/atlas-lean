@@ -22,7 +22,9 @@ is imposed on an arbitrary invariant Weil divisor.
 
 @[expose] public noncomputable section
 
-namespace MathlibExt.AlgebraicGeometry.CoxDivisorialModules
+namespace WantedExt.AlgebraicGeometry.CoxDivisorialModulesWanted
+
+open MathlibExt.AlgebraicGeometry MathlibExt.AlgebraicGeometry.CoxDivisorialModules
 
 open CategoryTheory _root_.AlgebraicGeometry FiniteToricCoordinates CoxGradedSheaves
   CoxNormalizedSheafification
@@ -50,4 +52,4 @@ theorem_wanted cox_sheafification_exact {n : ℕ} {F : FiniteFan n} (R : Rays F)
     ∃ hzero : S.functor.map f ≫ S.functor.map g = 0,
       (ShortComplex.mk (S.functor.map f) (S.functor.map g) hzero).Exact
 
-end MathlibExt.AlgebraicGeometry.CoxDivisorialModules
+end WantedExt.AlgebraicGeometry.CoxDivisorialModulesWanted

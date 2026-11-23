@@ -21,7 +21,9 @@ and simplicial orbit fibres remain the distinct existing Wanted statements.
 
 @[expose] public noncomputable section
 
-namespace MathlibExt.AlgebraicGeometry.CoxGaugeSchemes
+namespace WantedExt.AlgebraicGeometry.CoxGaugeSchemesWanted
+
+open MathlibExt.AlgebraicGeometry MathlibExt.AlgebraicGeometry.CoxGaugeSchemes
 
 open CategoryTheory CategoryTheory.Limits FiniteToricCoordinates CoxGradedSheaves
   CoxQuotientGeometry
@@ -36,4 +38,4 @@ def_wanted cox_open_action_points {n : ℕ} {F : FiniteFan n} (R : Rays F)
         pullback.lift ((affinePoints R S).symm g).left p.left
           (by rw [((affinePoints R S).symm g).w, p.w]) ≫ G.map}
 
-end MathlibExt.AlgebraicGeometry.CoxGaugeSchemes
+end WantedExt.AlgebraicGeometry.CoxGaugeSchemesWanted
