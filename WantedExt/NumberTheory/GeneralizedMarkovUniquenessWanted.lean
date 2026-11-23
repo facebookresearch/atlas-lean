@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import MathlibExt.LinearAlgebra.Matrix.SpecialLinearGroupTrace
+public import MathlibExt.NumberTheory.GeneralizedMarkovDiscriminant
 public import MathlibExt.NumberTheory.GeneralizedMarkovEquation
 
 namespace MetaMathlibExt
@@ -243,16 +244,6 @@ Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numb
 Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 4.14. -/
 public theorem_wanted mod_four_eq_two_of_four_dvd_genMarkovNumber {k b : ℕ}
     (hb : IsGenMarkovNumber k b) (h4 : 4 ∣ b) : k % 4 = 2
-
-/-- **Large odd primes do not divide $k^2 - 4$.** Let $p$ be an odd prime and $k$ a natural
-number. If either $k \ge 4$ is even and $p > k/2 + 1$, or $k$ is odd and $p > k + 2$, then $p$
-does not divide $k^2 - 4$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 4.15. -/
-public theorem_wanted not_dvd_sq_sub_four_of_large_prime {k p : ℕ} (hp : p.Prime)
-    (hp2 : p ≠ 2) (h : (4 ≤ k ∧ Even k ∧ k / 2 + 1 < p) ∨ (Odd k ∧ k + 2 < p)) :
-    ¬ (p : ℤ) ∣ (k : ℤ) ^ 2 - 4
 
 /-- **Discriminant condition for prime-power generalized Markov numbers.** Let $p$ be an odd
 prime and $m \ge 2$, and suppose that some $k$-generalized Markov number $b$ equals $p^m$ or
