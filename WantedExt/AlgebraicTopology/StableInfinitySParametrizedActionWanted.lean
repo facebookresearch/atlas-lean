@@ -30,7 +30,7 @@ open StableInfinityCategoryModels BGTVerdierQuotients
 universe u
 
 /-- The fixed constant-zero map is exact on all the actual finite diagrams. -/
-def_wanted native_zero_exact_functor (C D : StableInfinityCategory.{u}) :
+theorem_wanted native_zero_exact_functor (C D : StableInfinityCategory.{u}) :
   ZeroExactFunctorSource C D
 
 /-- The full parameter action is the native enriched composition on every simplex. -/
