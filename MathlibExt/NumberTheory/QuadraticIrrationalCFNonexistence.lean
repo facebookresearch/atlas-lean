@@ -16,8 +16,9 @@ import Mathlib.Tactic.Ring
 /-!
 # Convergent denominators of symmetric continued fractions
 
-For an even period length, symmetry determines the parity of the shifted continuant
-from the middle coefficient and the continuant on its left.
+A symmetric sequence admits a splitting formula for its shifted continuant at each interior
+index. At even period length, symmetry also determines its parity from the middle coefficient
+and the continuant on its left.
 -/
 
 namespace MetaMathlibExt
@@ -97,6 +98,63 @@ theorem HasPeriodicCF.floor_eq {x : ℝ} {a₀ : ℕ} {a : ℕ → ℕ} {l c : �
   rw [GenContFract.of_h_eq_floor] at h0
   exact_mod_cast h0
 
+namespace shifted_convergentDen_symm_split
+
+-- Extend the paper's indexing to the initial value r₀ = 0.
+private def den (a : ℕ → ℕ) : ℕ → ℕ
+  | 0 => 0
+  | n + 1 => convergentDen (fun j => a (j + 1)) n
+
+private theorem den_add_two (a : ℕ → ℕ) (n : ℕ) :
+    den a (n + 2) = a (n + 2) * den a (n + 1) + den a n := by
+  cases n with
+  | zero => simp [den, convergentDen]
+  | succ n => rfl
+
+-- Moving the split one position to the right preserves the sum of products.
+private theorem split {l : ℕ} (a : ℕ → ℕ) (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i))
+    (i j : ℕ) (hij : i + j + 3 = l) :
+    den a (l - 2) = den a (i + 1) * den a (j + 1) + den a i * den a j := by
+  induction i generalizing j with
+  | zero =>
+    rw [show l - 2 = j + 1 by omega]
+    simp [den, convergentDen]
+  | succ i ih =>
+    have hmirror : a (i + 2) = a (j + 2) := by
+      simpa only [show l - (i + 2) = j + 2 by omega] using
+        hsymm (i + 2) (by omega) (by omega)
+    rw [ih (j + 1) (by omega), den_add_two a j, den_add_two a i, hmirror]
+    ring
+
+end shifted_convergentDen_symm_split
+
+open shifted_convergentDen_symm_split
+
+/-- **Splitting the shifted continuant of a symmetric sequence.** Let $l$ be a natural number
+and let $a_1, \dots, a_{l-1}$ be natural numbers with $a_i = a_{l-i}$ for $1 \le i \le l - 1$.
+For $j \ge 1$ let $r_j = K(a_2, \dots, a_j)$ be the continuant, given by $r_1 = 1$,
+$r_2 = a_2$ and $r_{j+2} = a_{j+2} r_{j+1} + r_j$. Then for every $i$ with $2 \le i \le l - 3$,
+$$r_{l-2} = r_i \, r_{l-1-i} + r_{i-1} \, r_{l-2-i}.$$
+
+The cases $i \in \{0, 1, l - 2\}$ of the paper, which need $r_0 = 0$ and $r_{-1} = 1$, are
+omitted.
+
+Source: Jun Ho Lee, *Nonexistence of the Continued Fraction of a Quadratic Irrational
+Number with a Given Sequence*, INTEGERS 26 (2026), Article A69, Proposition 3 (ii)
+(`integers-2026-A69-prop-3`). -/
+theorem shifted_convergentDen_symm_split (l : ℕ) (a : ℕ → ℕ)
+    (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) (i : ℕ) (hi : 2 ≤ i) (hil : i + 3 ≤ l) :
+    convergentDen (fun n => a (n + 1)) (l - 3) =
+      convergentDen (fun n => a (n + 1)) (i - 1) *
+          convergentDen (fun n => a (n + 1)) (l - 2 - i) +
+        convergentDen (fun n => a (n + 1)) (i - 2) *
+          convergentDen (fun n => a (n + 1)) (l - 3 - i) := by
+  change den a (l - 3 + 1) = den a (i - 1 + 1) * den a (l - 2 - i + 1) +
+    den a (i - 2 + 1) * den a (l - 3 - i + 1)
+  rw [show l - 3 + 1 = l - 2 by omega, show i - 1 = i - 2 + 1 by omega,
+    show l - 2 - i = l - 3 - i + 1 by omega]
+  exact split a hsymm _ _ (by omega)
+
 /-- **Parity of the shifted continuant of a symmetric sequence, even length.** Let $l \ge 4$ be
 even and let $a_1, \dots, a_{l-1}$ be natural numbers with $a_i = a_{l-i}$ for
 $1 \le i \le l - 1$. For $j \ge 1$ let $r_j = K(a_2, \dots, a_j)$ be the continuant, given by
@@ -112,38 +170,18 @@ theorem shifted_convergentDen_parity_of_even (l : ℕ) (hl : Even l) (hl4 : 4 �
     (a : ℕ → ℕ) (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) :
     convergentDen (fun n => a (n + 1)) (l - 3) ≡
       a (l / 2) * convergentDen (fun n => a (n + 1)) (l / 2 - 2) [MOD 2] := by
-  let r : ℕ → ℕ
-    | 0 => 0
-    | n + 1 => convergentDen (fun j => a (j + 1)) n
-  have step (n : ℕ) : r (n + 2) = a (n + 2) * r (n + 1) + r n := by
-    cases n with
-    | zero => simp [r, convergentDen]
-    | succ n => rfl
-  -- Moving the split one position to the right preserves this sum of products.
-  have split (i j : ℕ) (hij : i + j + 3 = l) :
-      r (l - 2) = r (i + 1) * r (j + 1) + r i * r j := by
-    induction i generalizing j with
-    | zero =>
-      rw [show l - 2 = j + 1 by omega]
-      simp [r, convergentDen]
-    | succ i ih =>
-      have hmirror : a (i + 2) = a (j + 2) := by
-        simpa only [show l - (i + 2) = j + 2 by omega] using
-          hsymm (i + 2) (by omega) (by omega)
-      rw [ih (j + 1) (by omega), step j, step i, hmirror]
-      ring
   obtain ⟨m, hm⟩ := hl
   let k := l / 2 - 2
   have hk : k + 2 = l / 2 := by dsimp [k]; omega
-  have hsplit := split k (k + 1) (by dsimp [k]; omega)
-  have hsquare : r (k + 1) * r (k + 1) ≡ r (k + 1) [MOD 2] := by
+  have hsplit := split a hsymm k (k + 1) (by dsimp [k]; omega)
+  have hsquare : den a (k + 1) * den a (k + 1) ≡ den a (k + 1) [MOD 2] := by
     rw [Nat.ModEq, Nat.mul_mod]
-    rcases Nat.mod_two_eq_zero_or_one (r (k + 1)) with h | h <;> simp [h]
-  change r (l - 3 + 1) ≡ a (l / 2) * r (k + 1) [MOD 2]
-  rw [show l - 3 + 1 = l - 2 by omega, hsplit, step k, hk]
+    rcases Nat.mod_two_eq_zero_or_one (den a (k + 1)) with h | h <;> simp [h]
+  change den a (l - 3 + 1) ≡ a (l / 2) * den a (k + 1) [MOD 2]
+  rw [show l - 3 + 1 = l - 2 by omega, hsplit, den_add_two a k, hk]
   calc
-    _ = 2 * (r k * r (k + 1)) + a (l / 2) * (r (k + 1) * r (k + 1)) := by ring
-    _ ≡ a (l / 2) * (r (k + 1) * r (k + 1)) [MOD 2] := Nat.ModEq.modulus_mul_add
+    _ = 2 * (den a k * den a (k + 1)) + a (l / 2) * (den a (k + 1) * den a (k + 1)) := by ring
+    _ ≡ a (l / 2) * (den a (k + 1) * den a (k + 1)) [MOD 2] := Nat.ModEq.modulus_mul_add
     _ ≡ _ [MOD 2] := hsquare.mul_left _
 
 end
