@@ -816,19 +816,21 @@ private theorem vosper_mp_of_card_eq_pred {p : ℕ} [Fact (Nat.Prime p)]
   rw [hcompl]
   exact Finset.eq_of_subset_of_card_le hBsub (le_of_eq hEq.symm)
 
-/-- Vosper equality characterization: for prime `p` and nonempty
-`A B : Finset (ZMod p)` with `A + B ≠ Finset.univ`,
-`(A + B).card = A.card + B.card - 1` iff (i) `min A.card B.card = 1`, or
-(ii) `(A + B).card = p - 1` with the complement of `A + B` equal to `{c}`
-for some `c : ZMod p` and `B` the complement of the image `c - A`, or
-(iii) `AreFiniteArithmeticProgressionsWithCommonDifference A B`.
+/-- **Vosper's theorem.** Let $p$ be a prime and let $A$ and $B$ be nonempty subsets of
+$\mathbb{Z}/p\mathbb{Z}$ whose sumset $A + B = \{a + b : a \in A, b \in B\}$ is not all of
+$\mathbb{Z}/p\mathbb{Z}$. Then $|A + B| = |A| + |B| - 1$ if and only if one of the following
+holds: (i) $\min(|A|, |B|) = 1$; (ii) $|A + B| = p - 1$ and there is an element
+$c \in \mathbb{Z}/p\mathbb{Z}$ such that the complement of $A + B$ is $\{c\}$ and $B$ is the
+complement of $c - A = \{c - a : a \in A\}$; or (iii) $A$ and $B$ are arithmetic progressions
+with the same common difference, that is, there are $d, a_0, b_0 \in \mathbb{Z}/p\mathbb{Z}$
+with $A = \{a_0 + n d : 0 \le n < |A|\}$ and $B = \{b_0 + n d : 0 \le n < |B|\}$.
+
+Proves `Wanted` entry `vosper_eq_iff`.
 
 Source: Fabián Arias, Jerson Borja, and Samuel Anaya, *Counting Integers
 Representable as Sums of k-th Powers Modulo n*, Journal of Integer Sequences
 26 (2023), Article 23.8.1, Theorem [Vosper] `theo_Vosper`, lines 256–267,
 <https://cs.uwaterloo.ca/journals/JIS/VOL26/Borja/borja4.tex>.
-
-Proves `Wanted` entry `vosper_eq_iff`.
 -/
 theorem vosper_eq_iff {p : ℕ} [Fact (Nat.Prime p)]
     (A B : Finset (ZMod p)) (hA : A.Nonempty) (hB : B.Nonempty)

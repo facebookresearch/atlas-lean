@@ -31,21 +31,13 @@ open LieAlgebra
 
 attribute [local instance 100] LieRing.ofAssociativeRing
 
-private theorem levi_sum_repr
-    {K V ι : Type*} [Semiring K] [AddCommMonoid V] [Module K V]
-    [Fintype ι] (b : Module.Basis ι K V) (x : V) :
-    ∑ i, b.repr x i • b i = x := by
-  apply b.repr.injective
-  ext j
-  simp
-
 private theorem levi_repr_eq_dual
     {K V ι : Type*} [Field K] [AddCommGroup V] [Module K V]
     [Finite ι] [DecidableEq ι] {B : LinearMap.BilinForm K V}
     (hB : B.Nondegenerate) (b : Module.Basis ι K V) (x : V) (i : ι) :
     b.repr x i = B (B.dualBasis hB b i) x := by
   let _ := Fintype.ofFinite ι
-  conv_rhs => rw [← levi_sum_repr b x]
+  conv_rhs => rw [← b.sum_repr x]
   rw [map_sum]
   simp_rw [map_smul]
   simp_rw [LinearMap.BilinForm.apply_dualBasis_left hB b]
@@ -195,7 +187,7 @@ private theorem levi_casimir_commute
     _ = 0 := by
       have hxb (i) : ρ ⁅x, b i⁆ =
           ∑ j, b.repr ⁅x, b i⁆ j • ρ (b j) := by
-        conv_lhs => rw [← levi_sum_repr b ⁅x, b i⁆]
+        conv_lhs => rw [← b.sum_repr ⁅x, b i⁆]
         rw [map_sum]
         simp_rw [map_smul]
       have hxd (i) : ρ ⁅x, d i⁆ =
@@ -1698,17 +1690,21 @@ private theorem levi_decomposition_aux
         rw [← hsx, hsZero, map_zero]
 
 /--
-Every finite-dimensional Lie algebra `L` over a field `K` of characteristic zero decomposes as
-`K`-vector spaces into its solvable radical `LieAlgebra.radical K L` plus a semisimple Levi factor
-`S : LieSubalgebra K L` with sum `⊤` and intersection `⊥`. Source: E. E. Levi, Atti Accad. Sci.
-Torino 1905 and A. I. Malcev, Izv. Akad. Nauk SSSR 1945; Bourbaki, Lie I; Lean states K-module
-direct sum form over char-zero fields.
+**Levi decomposition.** Let $L$ be a finite-dimensional Lie algebra over a field $K$ of
+characteristic zero, and let $\operatorname{rad}(L)$ be its radical, the largest solvable ideal
+of $L$. Then there is a semisimple Lie subalgebra $S$ of $L$ (a Levi factor) such that
+$L = \operatorname{rad}(L) \oplus S$ as $K$-vector spaces, that is,
+$\operatorname{rad}(L) + S = L$ and $\operatorname{rad}(L) \cap S = 0$.
 
 Proves `Wanted` entry `levi_decomposition`.
 
 Proof: Weyl's complete reducibility theorem is proved with the trace-form Casimir operator. The
 Levi factor is then constructed for an abelian radical and the general case follows by induction
 through the derived ideal of the radical.
+
+Source: E. E. Levi, Atti Accad. Sci.
+Torino 1905 and A. I. Malcev, Izv. Akad. Nauk SSSR 1945; Bourbaki, Lie I; Lean states K-module
+direct sum form over char-zero fields.
 -/
 public theorem levi_decomposition
     {K L : Type*} [Field K] [CharZero K] [LieRing L] [LieAlgebra K L]

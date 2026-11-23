@@ -81,15 +81,21 @@ private lemma casorati_eq {R : Type*} [CommRing R] (c₁ c₂ : R) (W Y : ℕ �
     rw [e1, e2, e3, hWs, hYs]
     linear_combination (-c₂) * ih
 
-/-- Generalized Catalan identity for Horadam sequences: Aram Tangboonduangjit and
-Thotsaporn Thanatipanonda, "Determinants Containing Powers of Generalized Fibonacci
-Numbers," Journal of Integer Sequences 19 (2016), Article 16.7.1, Proposition
-"Generalized Catalan Identity," lines 111–126 of
+/-- **Generalized Catalan identity for Horadam sequences.** Let $R$ be a commutative ring, let
+$c_1, c_2 \in R$, and let $W, Y, U : \mathbb{N} \to R$ be sequences that each satisfy
+$x_{n+2} = c_1 x_{n+1} + c_2 x_n$ for every $n \in \mathbb{N}$, with $U_0 = 0$ and $U_1 = 1$.
+Then for all $s, i, j \in \mathbb{N}$,
+$$W_{s+i}\,Y_{s+j} - W_s\,Y_{s+i+j} = (-c_2)^s\,(W_1 Y_j - W_0 Y_{j+1})\,U_i.$$
+
+The source states the identity over the integers, with integer coefficients, all integer
+indices and $c_2 \ne 0$. This version restricts the indices to natural numbers and allows
+coefficients in any commutative ring, so no invertibility of $c_2$ is needed; the bi-infinite
+version is not claimed.
+
+Source: Aram Tangboonduangjit and Thotsaporn Thanatipanonda, "Determinants Containing Powers of
+Generalized Fibonacci Numbers," Journal of Integer Sequences 19 (2016), Article 16.7.1,
+Proposition "Generalized Catalan Identity," lines 111–126 of
 `https://cs.uwaterloo.ca/journals/JIS/VOL19/Tangboonduangjit/aram5.tex`.
-The source states the identity over the integers with integer coefficients, all
-integer indices, and `c₂ ≠ 0`; this theorem is the sound natural-indexed
-specialization with indices in `ℕ` and coefficients in a commutative ring, so no
-invertibility of `c₂` is needed. It does not claim the full bi-infinite theorem.
 Proves `Wanted` entry `horadam_generalized_catalan_identity`.
 -/
 theorem horadam_generalized_catalan_identity

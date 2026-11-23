@@ -214,8 +214,9 @@ universe u v
 -- `DirectSum.coeLinearMap` definitional unfolding is slow at default transparency,
 -- and Mathlib uses the same option for the corresponding `IsInternal` lemmas.
 set_option backward.isDefEq.respectTransparency false in
-/-- **Maschke's theorem.** Every finite-dimensional complex representation of a
-finite group is equivalent to a direct sum of irreducible representations. -/
+/-- **Maschke's theorem.** Every finite-dimensional complex representation $\sigma$ of a finite
+group is equivalent to the direct sum of a finite family of irreducible subrepresentations of
+$\sigma$. -/
 theorem maschke_decomposition {G : Type v} [Group G] [Fintype G]
     {W : Type u} [AddCommGroup W] [Module ℂ W] [FiniteDimensional ℂ W]
     (σ : Representation ℂ G W) :
