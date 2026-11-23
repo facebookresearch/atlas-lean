@@ -27,8 +27,10 @@ native pullback lift of its two legs. Its invertibility is a separate
 construction/proof request, not part of the definition of a relation.
 
 Sources: Scholze, arXiv:1709.07343v4, Definitions 8.1, 12.1 and 14.1;
-Proposition 11.3(ii). The sites here are explicitly universe-bounded
-models of those sites, rather than a claim of size independence.
+Proposition 11.3(ii). The sites here are universe-bounded, rather than a claim of size
+independence. The slice site over a small v-sheaf is the big site of all small v-sheaves over it,
+not Scholze's site of perfectoid spaces over it; the comparison of their sheaf categories is not
+formalized here.
 -/
 
 @[expose] public noncomputable section
@@ -66,7 +68,11 @@ def vTopology : GrothendieckTopology (SmallVSheaf p) :=
     (U : I → SmallVSheaf p) (a : ∀ i, U i ⟶ F),
     JointlySurjective p U a → Sieve.ofArrows U a ∈ J F}
 
-/-- The slice v-site of all small v-sheaves over the specified object. -/
+/-- The big slice v-site of all small v-sheaves over the specified object. It is not Scholze's
+site `F_v` of perfectoid spaces over `F` (Def. 14.1), which corresponds to the perfectoid test
+objects (`AffineTest` below); the two sites have equivalent sheaf categories by the comparison
+lemma, which is not formalized here, so statements about `F_v` must not be read off this site
+directly. -/
 abbrev VSite (F : SmallVSheaf p) := Over F
 
 /-- Its topology is the native slice of the actual v-topology. -/

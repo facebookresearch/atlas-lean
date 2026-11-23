@@ -23,8 +23,9 @@ The topology is restricted from the actual geometric base topology.
 Thus stabilizers and comparison isomorphisms remain in the site.
 
 Two applications are the full universe-bounded small v-sheaf base and
-the actual affine p-adic untilt base. The former models the full small
-v-stack site, and the latter gives the affine basis used for geometric
+the actual affine p-adic untilt base. The former gives groupoid v-stacks on small v-sheaves,
+without Scholze's smallness condition (a surjection from a perfectoid space with small kernel
+pair, Def. 12.4), and the latter gives the affine basis used for geometric
 coefficient limits. No stack is replaced by its sheaf of isomorphism
 classes.
 
@@ -86,8 +87,10 @@ def inverseImage (A : Type*) [Category A]
 
 variable (p : ℕ) [Fact p.Prime]
 
-/-- Groupoid-valued small v-stack models on the full declared small v-sheaf site. -/
-abbrev SmallVStack := GroupoidStack.{2, 1, 1} (SmallVSheaf p) (vTopology p)
+/-- Groupoid-valued v-stacks on the site of small v-sheaves. No smallness condition is imposed:
+Scholze's small v-stacks (Def. 12.4) are the v-stacks admitting a surjection from a perfectoid space
+whose kernel pair is a small v-sheaf, and that condition is not encoded here. -/
+abbrev VStack := GroupoidStack.{2, 1, 1} (SmallVSheaf p) (vTopology p)
 
 /-- The affine-basis groupoid stack model retaining actual p-adic untilts. -/
 abbrev PerfdVStack := GroupoidStack.{1, 0, 1} (AffineUntilting p) (originalVTopology p)
