@@ -1,0 +1,18 @@
+# Gaussian surrogate of the drift model
+
+- [Drift Cov](drift-cov.md)
+- [Drift Cov apply](drift-cov-apply.md)
+- [Pos Semidef drift Cov](pos-semidef-drift-cov.md)
+- [Gaussian Surrogate](gaussian-surrogate.md)
+- [Coord Freq](coord-freq.md)
+- [F4 gaussian Surrogate](f4-gaussian-surrogate.md)
+- [F4 gaussian Surrogate eq](f4-gaussian-surrogate-eq.md)
+- [F2 gaussian Surrogate eq](f2-gaussian-surrogate-eq.md)
+- [F3 gaussian Surrogate eq](f3-gaussian-surrogate-eq.md)
+- [Gaussian Surrogate coord neg pos](gaussian-surrogate-coord-neg-pos.md)
+- [Gaussian Surrogate coord not mem Icc pos](gaussian-surrogate-coord-not-mem-icc-pos.md)
+- [Gaussian Surrogate coord ae eq](gaussian-surrogate-coord-ae-eq.md)
+- [Gaussian Drift Model](gaussian-drift-model.md)
+- [Gaussian Drift Model freq](gaussian-drift-model-freq.md)
+- [Gaussian Drift Model freq not mem Icc](gaussian-drift-model-freq-not-mem-icc.md)
+- [Gaussian Drift Model freq not mem Icc pos](gaussian-drift-model-freq-not-mem-icc-po.md)

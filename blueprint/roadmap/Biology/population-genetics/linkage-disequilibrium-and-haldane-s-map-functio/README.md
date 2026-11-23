@@ -2,6 +2,7 @@
 
 ## Two-locus random mating
 
+- [Sum four](sum-four.md)
 - [Allele frequency at the first locus](allele-freq-fst.md)
 - [Allele frequency at the second locus](allele-freq-snd.md)
 - [Linkage disequilibrium of a two-locus gamete law](linkage-diseq.md)
@@ -32,8 +33,12 @@
 - [Allele frequency at the second of two multi-allelic loci](allele-freq-snd-2.md)
 - [Pairwise linkage disequilibria of two multi-allelic loci](linkage-diseq-2.md)
 - [Random mating with recombination for two multi-allelic loci](recombine-2.md)
+- [Recombine bool](recombine-bool.md)
+- [Linkage Diseq bool](linkage-diseq-bool.md)
 - [Recombination preserves first-locus allele frequencies at multi-allelic loci](allele-freq-fst-recombine-2.md)
 - [Recombination preserves second-locus allele frequencies at multi-allelic loci](allele-freq-snd-recombine-2.md)
 - [One generation of recombination multiplies each multi-allelic disequilibrium by $1 - r$](linkage-diseq-recombine-2.md)
+- [Sum linkage Diseq fst](sum-linkage-diseq-fst.md)
+- [Sum linkage Diseq snd](sum-linkage-diseq-snd.md)
 - [Multi-allelic linkage disequilibria after $t$ generations](linkage-diseq-iterate-2.md)
 - [Multi-allelic linkage disequilibria tend to zero](tendsto-linkage-diseq-iterate-2.md)

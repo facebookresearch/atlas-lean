@@ -15,6 +15,7 @@
 - [Every lineage reaches the root](visit-root.md)
 - [First-step equation for root-ward paths](paths-eq.md)
 - [Admixture proportions are at most one](prop-le-one.md)
+- [Visit eq zero of trans Gen](visit-eq-zero-of-trans-gen.md)
 - [A lineage from a parent never passes through its child](visit-eq-zero-of-mem-parents.md)
 - [Nonnegativity of lineage weights](weight-nonneg.md)
 - [Lineage weights are at most one](weight-le-one.md)
@@ -28,8 +29,15 @@
 
 ## The induced drift model
 
+- [Prop eq one sub of parents eq pair](prop-eq-one-sub-of-parents-eq-pair.md)
 - [Drift model of an admixture graph](drift-model.md)
 - [A tree-shaped admixture graph has binary loadings](has-binary-loadings-of-is-tree.md)
 - [Three-population test is nonnegative on a tree](f3-nonneg-of-is-tree.md)
 - [Three-population statistic at an admixture node](f3-admixture.md)
 - [Three-population statistic at an admixture node without edge drift](f3-admixture-of-len-eq-zero.md)
+- [Root Second Moment eq sum inter of is Tree](root-second-moment-eq-sum-inter-of-is-tr.md)
+- [F3 admixture one sub](f3-admixture-one-sub.md)
+- [F3 admixture of prop eq one](f3-admixture-of-prop-eq-one.md)
+- [F3 admixture of prop eq zero](f3-admixture-of-prop-eq-zero.md)
+- [F3 of parents eq singleton](f3-of-parents-eq-singleton.md)
+- [F3 admixture of parents eq singleton](f3-admixture-of-parents-eq-singleton.md)

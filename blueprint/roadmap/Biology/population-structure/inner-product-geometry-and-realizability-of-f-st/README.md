@@ -1,0 +1,18 @@
+# Inner-product geometry and realizability of f-statistics
+
+- [Is Cond Neg Semidef](is-cond-neg-semidef.md)
+- [Is F2 Realizable](is-f2-realizable.md)
+- [Unit F2 Points](unit-f2-points.md)
+- [Is F2 Realizable Unit](is-f2-realizable-unit.md)
+- [Two F2](two-f2.md)
+- [Square F2](square-f2.md)
+- [Non Cnd F2](non-cnd-f2.md)
+- [Exists admix three](exists-admix-three.md)
+- [Exists drift Model admix three](exists-drift-model-admix-three.md)
+- [Inner sub sub neg iff mem ball](inner-sub-sub-neg-iff-mem-ball.md)
+- [F4 eq inner](f4-eq-inner.md)
+- [F3 eq inner](f3-eq-inner.md)
+- [F2 eq norm sq](f2-eq-norm-sq.md)
+- [Sq f4 le f2 mul f2](sq-f4-le-f2-mul-f2.md)
+- [Sq f4 eq f2 mul f2 iff](sq-f4-eq-f2-mul-f2-iff.md)
+- [F3 neg iff mem ball](f3-neg-iff-mem-ball.md)

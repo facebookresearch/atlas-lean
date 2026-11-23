@@ -34,14 +34,21 @@
 - [Scale function is positive at one](scale-function-one-pos.md)
 - [Dirichlet ratio equals one at $p = 1$](fixation-prob-one.md)
 - [Dirichlet ratio lies between 0 and 1](fixation-prob-mem-icc.md)
+- [Cont Diff On scale Density](cont-diff-on-scale-density.md)
+- [Cont Diff On scale Function](cont-diff-on-scale-function.md)
+- [Cont Diff On fixation Prob](cont-diff-on-fixation-prob.md)
+- [Continuous On fixation Prob](continuous-on-fixation-prob.md)
 - [Dirichlet ratio vanishes at $p = 0$](fixation-prob-zero.md)
 - [The scale-function ratio solves the backward equation](diffusion-generator-fixation-prob.md)
 - [Solutions of the homogeneous backward equation](eq-of-diffusion-generator-eq-zero.md)
 - [Uniqueness of the scale-function ratio](eq-fixation-prob-of-diffusion-generator.md)
+- [Existence](fixation-prob-solves.md)
+- [Uniqueness](eq-fixation-prob-of-cont-diff-on.md)
 - [Uniqueness for the Dirichlet problem](eq-of-diffusion-generator-eq.md)
 - [Green's representation for a regular diffusion](diffusion-generator-integral-green-funct.md)
 - [Dirichlet condition of the Green's function at zero](integral-green-function-zero-left.md)
 - [Dirichlet condition of the Green's function at one](integral-green-function-one-left.md)
+- [Eq integral green Function of diffusion Generator eq neg](eq-integral-green-function-of-diffusion.md)
 
 ## Genic selection and dominance
 

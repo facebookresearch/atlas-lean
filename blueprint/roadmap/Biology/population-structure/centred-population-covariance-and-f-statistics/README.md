@@ -4,6 +4,8 @@
 
 - [Mean frequency across populations](pop-mean.md)
 - [Centred leaf covariance](centred-cov.md)
+- [Centred Cov comm](centred-cov-comm.md)
+- [Sum centred Cov eq zero](sum-centred-cov-eq-zero.md)
 - [f2 from the centred leaf covariance](f2-eq-centred-cov.md)
 - [Centred leaf covariance as the double centring of f2](centred-cov-eq-double-center-f2.md)
 - [f-statistics determine exactly the centred leaf covariance](f2-eq-iff-centred-cov-eq.md)
@@ -19,3 +21,5 @@
 - [Star tree and admixture model have equal f2](f2-star-eq-f2-admix.md)
 - [Star tree and admixture model have equal f4](f4-star-eq-f4-admix.md)
 - [Nonnegativity of the matching star-tree edge lengths](star-len-nonneg.md)
+- [F3 star eq f3 admix](f3-star-eq-f3-admix.md)
+- [Exists star freq eq of admix zero](exists-star-freq-eq-of-admix-zero.md)

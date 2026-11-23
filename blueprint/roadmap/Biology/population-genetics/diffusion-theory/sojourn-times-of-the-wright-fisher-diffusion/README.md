@@ -1,6 +1,16 @@
 # Sojourn times of the Wright–Fisher diffusion
 
+- [Selection Mean Absorption Time](selection-mean-absorption-time.md)
+- [Backward equation](generator-selection-mean-absorption-time.md)
+- [Boundary value at `0`:](selection-mean-absorption-time-left.md)
+- [Boundary value at `1`:](selection-mean-absorption-time-right.md)
+- [Continuity on `(0, 1)`](continuous-on-selection-mean-absorption.md)
+- [Relabeling symmetry of the Green kernel:](selection-green-neg-one-sub.md)
+- [Relabeling symmetry:](selection-mean-absorption-time-neg-one-s.md)
+- [No selection:](selection-mean-absorption-time-zero.md)
+- [Weak-selection limit:](tendsto-selection-mean-absorption-time-z.md)
 - [Neutral Wright–Fisher Green's function](neutral-green.md)
+- [Neutral Green eq green Kernel](neutral-green-eq-green-kernel.md)
 - [Green's representation for the neutral Wright–Fisher diffusion](generator-integral-neutral-green.md)
 - [Sojourn integral vanishes for an absent allele](integral-neutral-green-left.md)
 - [Sojourn integral vanishes for a fixed allele](integral-neutral-green-right.md)
