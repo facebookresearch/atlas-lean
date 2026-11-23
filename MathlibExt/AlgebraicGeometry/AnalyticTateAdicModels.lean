@@ -43,30 +43,48 @@ open _root_.AlgebraicGeometry
 open MathlibExt.RingTheory.CompleteHuberPairModels
 open AffineAdicSpectra AffineUntiltingGeometry
 
-/-- A native locally ringed space with actual valuations on its stalk rings. -/
+/-- A native locally ringed space with actual valuations on its stalk rings and topologies on its
+rings of sections. -/
 structure ValuedSpace where
   space : LocallyRingedSpace.{0}
   valuation : ∀ x : space, ValuativeRel (space.presheaf.stalk x)
+  sectionTopology : ∀ U : Opens space, TopologicalSpace (space.presheaf.obj (op U))
 
-/-- A morphism preserves the actual stalk valuation comparisons. -/
+/-- The pullback of sections over `U` along a morphism of locally ringed spaces is continuous for
+the section topologies. -/
+def SectionsContinuous {X Y : ValuedSpace} (f : X.space ⟶ Y.space) : Prop :=
+  ∀ U : Opens Y.space,
+    @Continuous _ _ (Y.sectionTopology U) (X.sectionTopology ((Opens.map f.base).obj U))
+      (f.c.app (op U)).hom
+
+/-- A morphism preserves the actual stalk valuation comparisons and pulls back sections
+continuously: morphisms of analytic adic spaces are locally induced by continuous maps of
+affinoid rings (Wedhorn, *Adic Spaces*, Prop. 8.19), not by arbitrary ring maps. -/
 def ValuedHom (X Y : ValuedSpace) :=
-  {f : X.space ⟶ Y.space // ∀ (x : X.space)
+  {f : X.space ⟶ Y.space // (∀ (x : X.space)
     (a b : Y.space.presheaf.stalk (f.base x)),
     (Y.valuation (f.base x)).vle a b ↔
-      (X.valuation x).vle ((f.stalkMap x) a) ((f.stalkMap x) b)}
+      (X.valuation x).vle ((f.stalkMap x) a) ((f.stalkMap x) b)) ∧
+    SectionsContinuous f}
 
 instance : Category ValuedSpace where
   Hom := ValuedHom
   id X := ⟨𝟙 X.space, by
     intro x a b
     rw [LocallyRingedSpace.stalkMap_id]
-    rfl⟩
-  comp f g := ⟨f.val ≫ g.val, by
+    rfl, fun U ↦ by
+    change @Continuous _ _ (X.sectionTopology U) (X.sectionTopology U) id
+    exact @continuous_id _ (X.sectionTopology U)⟩
+  comp {X Y Z} f g := ⟨f.val ≫ g.val, by
     intro x a b
     rw [LocallyRingedSpace.stalkMap_comp]
-    exact (g.property (f.val.base x) a b).trans
-      (f.property x ((g.val.stalkMap (f.val.base x)) a)
-        ((g.val.stalkMap (f.val.base x)) b))⟩
+    exact (g.property.1 (f.val.base x) a b).trans
+      (f.property.1 x ((g.val.stalkMap (f.val.base x)) a)
+        ((g.val.stalkMap (f.val.base x)) b)), fun U ↦ by
+    letI := Z.sectionTopology U
+    letI := Y.sectionTopology ((Opens.map g.val.base).obj U)
+    letI := X.sectionTopology ((Opens.map f.val.base).obj ((Opens.map g.val.base).obj U))
+    exact (f.property.2 ((Opens.map g.val.base).obj U)).comp (g.property.2 U)⟩
   id_comp f := Subtype.ext (Category.id_comp f.val)
   comp_id f := Subtype.ext (Category.comp_id f.val)
   assoc f g h := Subtype.ext (Category.assoc f.val g.val h.val)
@@ -147,11 +165,14 @@ structure RationalTateModel (P : TatePair p) where
   point : pair.Space ≃ₜ domain
   point_normalized : ∀ x, (point x).val = map.spa p x
 
-/-- An affinoid has its actual point, rational section rings and stalk valuations. -/
+/-- An affinoid has its actual point, rational section rings and stalk valuations. Its rational
+section rings are the rational localizations as topological rings. -/
 structure AffinoidModel (P : TatePair p) where
   valued : ValuedSpace
   point : valued.space ≃ₜ P.Space
   globalRing : P.ring ≃+* valued.space.presheaf.obj (op ⊤)
+  globalRing_continuous : @Continuous _ _ _ (valued.sectionTopology ⊤) globalRing
+  globalRing_symm_continuous : @Continuous _ _ (valued.sectionTopology ⊤) _ globalRing.symm
   valuation_normalized : ∀ (x : valued.space) (a b : P.ring),
     (valued.valuation x).vle
       (valued.space.presheaf.germ ⊤ x (by trivial) (globalRing a))
@@ -160,6 +181,12 @@ structure AffinoidModel (P : TatePair p) where
   rationalSections : ∀ (D : RationalTateModel p P) (U : Opens valued.space),
     (U : Set valued.space) = point ⁻¹' (D.domain : Set P.Space) →
       D.pair.ring ≃+* valued.space.presheaf.obj (op U)
+  rationalSections_continuous : ∀ (D : RationalTateModel p P) (U : Opens valued.space)
+    (h : (U : Set valued.space) = point ⁻¹' (D.domain : Set P.Space)),
+    @Continuous _ _ _ (valued.sectionTopology U) (rationalSections D U h)
+  rationalSections_symm_continuous : ∀ (D : RationalTateModel p P) (U : Opens valued.space)
+    (h : (U : Set valued.space) = point ⁻¹' (D.domain : Set P.Space)),
+    @Continuous _ _ (valued.sectionTopology U) _ (rationalSections D U h).symm
   rational_constants : ∀ (D : RationalTateModel p P) (U : Opens valued.space)
     (h : (U : Set valued.space) = point ⁻¹' (D.domain : Set P.Space)) (a : P.ring),
     rationalSections D U h (D.map.hom a) =

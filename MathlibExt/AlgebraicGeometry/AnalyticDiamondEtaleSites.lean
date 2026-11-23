@@ -56,20 +56,38 @@ structure AffinoidMap {X Y : AnalyticAdicSpace p}
     (valued.val.c.app (op ⊤)) (V.model.globalRing a) =
       U.model.globalRing (ring.hom a)
 
-/-- Local finite etaleness is the native property of the actual original rings. -/
+/-- A finite étale map of Tate pairs (Scholze, *Étale cohomology of diamonds*, Def. 6.2(i)): the
+ring map is finite étale and the target plus ring is the integral closure of the image of the source
+plus ring. -/
+def IsFiniteEtalePair {V W : TatePair p} (g : TateRingMap p V W) : Prop :=
+  letI := g.hom.toAlgebra
+  Module.Finite V.ring W.ring ∧ Algebra.Etale V.ring W.ring ∧
+    ∀ s : W.ring, s ∈ W.plus ↔ (g.hom.comp V.plus.subtype).IsIntegralElem s
+
+/-- Local finite etaleness of an affinoid map is finite étaleness of its map of Tate pairs. -/
 def IsFiniteEtale {X Y : AnalyticAdicSpace p}
     {U : Chart p X} {V : Chart p Y} (f : AffinoidMap p U V) : Prop :=
-  letI := f.ring.hom.toAlgebra
-  Module.Finite V.pair.ring U.pair.ring ∧ Algebra.Etale V.pair.ring U.pair.ring
+  IsFiniteEtalePair p f.ring
 
-/-- An actual finite-etale chart of the given analytic morphism at its given point. -/
+/-- An affinoid map is étale on charts if its map of Tate pairs is a rational localization of a
+finite étale map, up to an isomorphism of Tate pairs (Scholze, Def. 6.2(ii): locally an open
+embedding followed by a finite étale map). -/
+def IsChartEtale {X Y : AnalyticAdicSpace p}
+    {U : Chart p X} {V : Chart p Y} (f : AffinoidMap p U V) : Prop :=
+  ∃ (W : TatePair p) (g : TateRingMap p V.pair W) (D : RationalTateModel p W)
+    (e : D.pair.ring ≃+* U.pair.ring),
+    IsFiniteEtalePair p g ∧ Continuous e ∧ Continuous e.symm ∧
+      (∀ a, a ∈ D.pair.plus ↔ e a ∈ U.pair.plus) ∧
+      f.ring.hom = e.toRingHom.comp (D.map.hom.comp g.hom)
+
+/-- An actual etale chart of the given analytic morphism at its given point. -/
 structure EtaleChart {X Y : AnalyticAdicSpace p} (f : X ⟶ Y) (x : X.obj.space) where
   source : Chart p X
   target : Chart p Y
   point : x ∈ Set.range source.map.val.base
   map : AffinoidMap p source target
   square : source.map ≫ f.hom = map.valued ≫ target.map
-  finite_etale : IsFiniteEtale p map
+  etale : IsChartEtale p map
 
 /-- Analytic etaleness is defined on the actual Tate-ring charts before diamondification. -/
 def IsAnalyticEtale {X Y : AnalyticAdicSpace p} (f : X ⟶ Y) : Prop :=
@@ -139,12 +157,20 @@ def IsAnalyticFiniteEtale {X Y : AnalyticAdicSpace p} (f : X ⟶ Y) : Prop :=
     U.map ≫ f.hom = g.valued ≫ V.map ∧ IsFiniteEtale p g ∧
       Set.range U.map.val.base = f.hom.val.base ⁻¹' Set.range V.map.val.base
 
-/-- Finite-etale diamond maps have actual finite-etale affine pullbacks, with fixed projection. -/
+/-- A finite étale map of affine perfectoid pairs: finite étale rings, and the plus ring of the
+source is the integral closure of the image of the plus ring of the target. -/
+def IsFiniteEtalePerfectoid {P Q : Affine p} (g : P ⟶ Q) : Prop :=
+  PerfectoidLocalModels.IsFiniteEtale g ∧
+    ∀ s : P.ring, s ∈ P.plus ↔ (g.hom.comp Q.plus.subtype).IsIntegralElem s
+
+/-- Finite-etale diamond maps: every affine pullback is empty (initial) or an actual finite-étale
+affine, with fixed projection. Empty pullbacks occur for the empty map, and for the inclusion of an
+open and closed component tested on the complementary component. -/
 def IsRepresentableFiniteEtale {F G : VSheaf p} (f : F ⟶ G) : Prop :=
   ∀ (Q : Affine p) (a : affineSheaf p Q ⟶ G),
-    ∃ P : Affine p, ∃ e : affineSheaf p P ≅ pullback f a, ∃ g : P ⟶ Q,
-      e.hom ≫ pullback.snd f a = affineMap p g ∧
-        PerfectoidLocalModels.IsFiniteEtale g
+    Nonempty (IsInitial (pullback f a)) ∨
+      ∃ P : Affine p, ∃ e : affineSheaf p P ≅ pullback f a, ∃ g : P ⟶ Q,
+        e.hom ≫ pullback.snd f a = affineMap p g ∧ IsFiniteEtalePerfectoid p g
 
 /-- Actual finite-etale objects over the original analytic space. -/
 abbrev AnalyticFiniteEtaleSite (Y : AnalyticAdicSpace p) :=

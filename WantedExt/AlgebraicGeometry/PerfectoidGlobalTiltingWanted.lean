@@ -43,12 +43,12 @@ public def_wanted rationalTiltComparison (p : ℕ) [Fact p.Prime]
 
 /-- The actual relative affine tilting functor is an equivalence over the fixed field. -/
 public def_wanted relativeTiltingEquivalence (p : ℕ) [Fact p.Prime]
-    (K : AffineUntilting p) [Field K.pair.ring] :
+    (K : AffineUntilting p) (_hK : IsField K.pair.ring) :
     {e : RelativeAffine p K ≌ Over K.tilt.pair // e.functor = relativeTilting p K}
 
 /-- Continuity uses the original compact-open cover rule before tilting. -/
 public theorem_wanted relativeTiltingContinuous (p : ℕ) [Fact p.Prime]
-    (K : AffineUntilting p) [Field K.pair.ring] :
+    (K : AffineUntilting p) (_hK : IsField K.pair.ring) :
     (relativeTilting p K).IsContinuous (relativeVTopology p K)
       ((topology p).over K.tilt.pair)
 
@@ -61,7 +61,7 @@ public theorem_wanted tiltingPreservesProEtale (p : ℕ) [Fact p.Prime] :
 
 /-- The native global tilting unit is invertible on every actual source sheaf. -/
 public theorem_wanted globalTiltingUnitIsIso (p : ℕ) [Fact p.Prime]
-    (K : AffineUntilting p) [Field K.pair.ring]
+    (K : AffineUntilting p) (_hK : IsField K.pair.ring)
     [(relativeTilting p K).IsContinuous (relativeVTopology p K)
       ((topology p).over K.tilt.pair)]
     [(untiltSheaves p K).IsRightAdjoint]
@@ -69,7 +69,7 @@ public theorem_wanted globalTiltingUnitIsIso (p : ℕ) [Fact p.Prime]
 
 /-- The native global tilting counit is invertible on every actual tilted sheaf. -/
 public theorem_wanted globalTiltingCounitIsIso (p : ℕ) [Fact p.Prime]
-    (K : AffineUntilting p) [Field K.pair.ring]
+    (K : AffineUntilting p) (_hK : IsField K.pair.ring)
     [(relativeTilting p K).IsContinuous (relativeVTopology p K)
       ((topology p).over K.tilt.pair)]
     [(untiltSheaves p K).IsRightAdjoint]

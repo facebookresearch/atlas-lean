@@ -38,20 +38,31 @@ open AffineUntiltingGeometry PerfectoidRationalTilting
 
 variable (p : ℕ) [Fact p.Prime]
 
-/-- Actual finite etaleness of the original coefficient map. -/
+/-- Actual finite etaleness of the original map of pairs (Scholze, *Étale cohomology of diamonds*,
+Def. 6.2(i)): the coefficient map is finite étale, and the plus ring of the source is the integral
+closure of the image of the plus ring of the target. Changing only the plus ring is not finite
+étale. -/
 def IsFiniteEtale {P Q : AffineUntilting p} (f : P ⟶ Q) : Prop :=
   letI := f.original.hom.toAlgebra
-  Module.Finite Q.pair.ring P.pair.ring ∧ Algebra.Etale Q.pair.ring P.pair.ring
+  Module.Finite Q.pair.ring P.pair.ring ∧ Algebra.Etale Q.pair.ring P.pair.ring ∧
+    ∀ s : P.pair.ring,
+      s ∈ P.pair.plus ↔ (f.original.hom.comp Q.pair.plus.subtype).IsIntegralElem s
 
-/-- Actual rational charts giving finite etaleness at a specified original point. -/
+/-- Actual rational charts exhibiting etaleness at a specified original point (Scholze, Def.
+6.2(ii): locally an open embedding followed by a finite étale map): a rational neighbourhood of the
+point is identified with a rational open of a finite étale cover of a rational neighbourhood of
+its image. -/
 structure EtaleChart {P Q : AffineUntilting p} (f : P ⟶ Q)
     (x : P.pair.toHuberPair.Space) where
   source : OriginalRationalModel p P
   point : x ∈ Set.range source.map.original.spa
   target : OriginalRationalModel p Q
-  map : source.affine ⟶ target.affine
-  square : source.map ≫ f = map ≫ target.map
-  finite_etale : IsFiniteEtale p map
+  cover : AffineUntilting p
+  coverMap : cover ⟶ target.affine
+  finite_etale : IsFiniteEtale p coverMap
+  opening : OriginalRationalModel p cover
+  identification : source.affine ≅ opening.affine
+  square : source.map ≫ f = identification.hom ≫ opening.map ≫ coverMap ≫ target.map
 
 /-- Original etaleness is a local property of the actual original rings. -/
 def IsEtale {P Q : AffineUntilting p} (f : P ⟶ Q) : Prop :=
