@@ -28,7 +28,7 @@ example : lowerGroup K L (-1) = ⊤ :=
 example : lowerGroup K L 2 ≤ lowerGroup K L 1 :=
   lowerGroup_antitone K L (by norm_num)
 
-/-! ### Codimensions, partial sums and conductors -/
+/-! ### Codimensions and weighted codimension sums -/
 
 variable [FiniteDimensional K L] (ell : ℕ) [Fact ell.Prime] (V : Type*) [AddCommGroup V]
   [Module ℚ_[ell] V] [Module.Finite ℚ_[ell] V]
@@ -43,7 +43,7 @@ example (W : Type) [AddCommGroup W] [Module ℚ_[ell] W]
   fail_if_success have := invariantCodimension K L ell W σ H
   trivial
 
--- The trivial representation has no ramification codimension, so both conductors vanish.
+-- The trivial representation has no ramification codimension.
 example (H : Subgroup (DecompositionGroup K L)) :
     invariantCodimension K L ell V
       (Representation.trivial ℚ_[ell] (DecompositionGroup K L) V) H = 0 := by
@@ -53,6 +53,28 @@ example (H : Subgroup (DecompositionGroup K L)) :
     simp [Representation.mem_invariants]
   rw [invariantCodimension, this, finrank_top, Nat.sub_self]
 
+-- The weighted sum includes the inertia term `i = 0` with weight `#G₀/#G₀ = 1`, while the
+-- positive sum omits it.
+example : weightedCodimensionSum K L ell V ρ 1 =
+    invariantCodimension K L ell V ρ (lowerGroup K L 0) := by
+  simp [weightedCodimensionSum, conductorSummand_zero]
+
+example : positiveWeightedCodimensionSum K L ell V ρ 1 = 0 := by
+  simp [positiveWeightedCodimensionSum]
+
+-- The sum up to `N` stops before index `N`.
+example (N : ℕ) : weightedCodimensionSum K L ell V ρ (N + 1) =
+    weightedCodimensionSum K L ell V ρ N + conductorSummand K L ell V ρ N := by
+  simp [weightedCodimensionSum, Finset.sum_range_succ]
+
+/-! ### Conductors of finite Galois extensions of local fields -/
+
+section LocalField
+
+variable [TopologicalSpace K] [ValuativeRel K] [IsNonarchimedeanLocalField K]
+  [TopologicalSpace L] [IsNonarchimedeanLocalField L] [ValuativeExtension K L] [IsGalois K L]
+
+-- The trivial representation has conductor zero.
 example (N : {N : ℕ // lowerGroup K L N = ⊥}) :
     artinConductor K L ell V
       (Representation.trivial ℚ_[ell] (DecompositionGroup K L) V) N = 0 := by
@@ -63,21 +85,7 @@ example (N : {N : ℕ // lowerGroup K L N = ⊥}) :
       ext v
       simp [Representation.mem_invariants]
     rw [invariantCodimension, this, finrank_top, Nat.sub_self]
-  simp [artinConductor, partialArtinSum, conductorSummand, hc]
-
--- The partial Artin sum includes the inertia term `i = 0` with weight `#G₀/#G₀ = 1`, while the
--- partial Swan sum omits it.
-example : partialArtinSum K L ell V ρ 1 =
-    invariantCodimension K L ell V ρ (lowerGroup K L 0) := by
-  simp [partialArtinSum, conductorSummand_zero]
-
-example : partialSwanSum K L ell V ρ 1 = 0 := by
-  simp [partialSwanSum]
-
--- The partial sum up to `N` stops before index `N`.
-example (N : ℕ) : partialArtinSum K L ell V ρ (N + 1) =
-    partialArtinSum K L ell V ρ N + conductorSummand K L ell V ρ N := by
-  simp [partialArtinSum, Finset.sum_range_succ]
+  simp [artinConductor, weightedCodimensionSum, conductorSummand, hc]
 
 -- Artin = Swan + the codimension of the inertia invariants, for every certified bound.
 example (N : {N : ℕ // lowerGroup K L N = ⊥}) :
@@ -87,15 +95,17 @@ example (N : {N : ℕ // lowerGroup K L N = ⊥}) :
 
 -- Unramified case: when `G₀ = 1`, the bound `0` is certified and both conductors vanish.
 example (hG : lowerGroup K L 0 = ⊥) : artinConductor K L ell V ρ ⟨0, hG⟩ = 0 := by
-  simp [artinConductor, partialArtinSum]
+  simp [artinConductor, weightedCodimensionSum]
 
 example (hG : lowerGroup K L 0 = ⊥) : swanConductor K L ell V ρ ⟨0, hG⟩ = 0 := by
-  simp [swanConductor, partialSwanSum]
+  simp [swanConductor, positiveWeightedCodimensionSum]
 
 -- Bound independence: any two certified bounds give the same conductors.
 example (N : ℕ) (hN : lowerGroup K L N = ⊥) :
     swanConductor K L ell V ρ ⟨N, hN⟩ = swanConductor K L ell V ρ ⟨N + 5,
       lowerGroup_eq_bot_of_bound K L N hN (N + 5) (by omega)⟩ :=
   swanConductor_eq K L ell V ρ _ _
+
+end LocalField
 
 end MathlibExtTest.NumberTheory.FiniteRamificationConductors

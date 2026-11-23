@@ -72,7 +72,10 @@ abbrev integerRing := (valuation L).valuationSubring
 /-- The actual decomposition group of that valuation ring. -/
 abbrev DecompositionGroup := (integerRing L).decompositionSubgroup K
 
-/-- Actual lower numbering: the ring-of-integers congruence modulo m^(i+1). -/
+/-- Actual lower numbering: the ring-of-integers congruence modulo m^(i+1). For a finite Galois
+extension of nonarchimedean local fields these are Serre's lower ramification groups `G_i`
+(Corps Locaux, Chapter IV, §1); in general they are the inertia subgroups of the powers of the
+maximal ideal. -/
 def lowerGroup (i : ℤ) : Subgroup (DecompositionGroup K L) :=
   (IsLocalRing.maximalIdeal (integerRing L) ^ (i + 1).toNat).inertia
     (DecompositionGroup K L)
@@ -134,25 +137,33 @@ def conductorSummand [FiniteDimensional K L] (i : ℕ) : ℚ :=
   (Nat.card (lowerGroup K L i) : ℚ) / (Nat.card (lowerGroup K L 0) : ℚ) *
     invariantCodimension K L ell V ρ (lowerGroup K L i)
 
-/-- The partial Artin sum over the indices `i < N`, including the inertia contribution at
-`i = 0`. When `G_N = 1` it equals the Artin conductor (`artinConductor`). -/
-def partialArtinSum [FiniteDimensional K L] (N : ℕ) : ℚ :=
+/-- The weighted codimension sum `∑_{i < N} (#G_i/#G_0) codim V^{G_i}`, including the inertia
+contribution at `i = 0`. For a finite Galois extension of local fields with `G_N = 1` it is the
+Artin conductor (`artinConductor`). -/
+def weightedCodimensionSum [FiniteDimensional K L] (N : ℕ) : ℚ :=
   ∑ i ∈ Finset.range N, conductorSummand K L ell V ρ i
 
-/-- The partial Swan sum over the indices `0 < i < N`, omitting the inertia term `i = 0`. When
-`G_N = 1` it equals the Swan conductor (`swanConductor`). -/
-def partialSwanSum [FiniteDimensional K L] (N : ℕ) : ℚ :=
+/-- The weighted codimension sum over the indices `0 < i < N`, omitting the inertia term `i = 0`.
+For a finite Galois extension of local fields with `G_N = 1` it is the Swan conductor
+(`swanConductor`). -/
+def positiveWeightedCodimensionSum [FiniteDimensional K L] (N : ℕ) : ℚ :=
   ∑ i ∈ Finset.range N, if i = 0 then 0 else conductorSummand K L ell V ρ i
 
-/-- The Artin conductor, computed from a certified ramification bound `N` with `G_N = 1`; it does
-not depend on the bound (`artinConductor_eq`). -/
-def artinConductor [FiniteDimensional K L] (N : {N : ℕ // lowerGroup K L N = ⊥}) : ℚ :=
-  partialArtinSum K L ell V ρ N
+/-- The Artin conductor of a representation of the Galois group of a finite Galois extension of
+nonarchimedean local fields, computed from a certified ramification bound `N` with `G_N = 1`; it
+does not depend on the bound (`artinConductor_eq`). -/
+def artinConductor [TopologicalSpace K] [ValuativeRel K] [IsNonarchimedeanLocalField K]
+    [TopologicalSpace L] [IsNonarchimedeanLocalField L] [ValuativeExtension K L]
+    [FiniteDimensional K L] [IsGalois K L] (N : {N : ℕ // lowerGroup K L N = ⊥}) : ℚ :=
+  weightedCodimensionSum K L ell V ρ N
 
-/-- The Swan conductor, computed from a certified ramification bound `N` with `G_N = 1`; it does
-not depend on the bound (`swanConductor_eq`). -/
-def swanConductor [FiniteDimensional K L] (N : {N : ℕ // lowerGroup K L N = ⊥}) : ℚ :=
-  partialSwanSum K L ell V ρ N
+/-- The Swan conductor of a representation of the Galois group of a finite Galois extension of
+nonarchimedean local fields, computed from a certified ramification bound `N` with `G_N = 1`; it
+does not depend on the bound (`swanConductor_eq`). -/
+def swanConductor [TopologicalSpace K] [ValuativeRel K] [IsNonarchimedeanLocalField K]
+    [TopologicalSpace L] [IsNonarchimedeanLocalField L] [ValuativeExtension K L]
+    [FiniteDimensional K L] [IsGalois K L] (N : {N : ℕ // lowerGroup K L N = ⊥}) : ℚ :=
+  positiveWeightedCodimensionSum K L ell V ρ N
 
 variable [FiniteDimensional K L]
 
@@ -171,44 +182,49 @@ theorem conductorSummand_eq_zero_of_bound (N : ℕ) (hN : lowerGroup K L N = ⊥
 
 /-- For a positive cutoff, the partial Artin sum is the partial Swan sum plus the codimension
 of the inertia invariants. -/
-theorem partialArtinSum_eq_partialSwanSum_add (N : ℕ) (hN : 0 < N) :
-    partialArtinSum K L ell V ρ N = partialSwanSum K L ell V ρ N +
+theorem weightedCodimensionSum_eq_positive_add (N : ℕ) (hN : 0 < N) :
+    weightedCodimensionSum K L ell V ρ N = positiveWeightedCodimensionSum K L ell V ρ N +
       invariantCodimension K L ell V ρ (lowerGroup K L 0) := by
   obtain ⟨M, rfl⟩ : ∃ M, N = M + 1 := ⟨N - 1, by omega⟩
-  simp [partialArtinSum, partialSwanSum, Finset.sum_range_succ', conductorSummand_zero]
+  simp [weightedCodimensionSum, positiveWeightedCodimensionSum, Finset.sum_range_succ', conductorSummand_zero]
 
 /-- Once actual ramification vanishes, extending the partial Artin sum changes nothing. -/
-theorem partialArtinSum_eq_of_le_bound (N M : ℕ) (hN : lowerGroup K L N = ⊥)
-    (hNM : N ≤ M) : partialArtinSum K L ell V ρ N = partialArtinSum K L ell V ρ M := by
-  unfold partialArtinSum
+theorem weightedCodimensionSum_eq_of_le_bound (N M : ℕ) (hN : lowerGroup K L N = ⊥)
+    (hNM : N ≤ M) : weightedCodimensionSum K L ell V ρ N = weightedCodimensionSum K L ell V ρ M := by
+  unfold weightedCodimensionSum
   apply Finset.sum_subset (Finset.range_mono hNM)
   intro i _ hi
   exact conductorSummand_eq_zero_of_bound K L ell V ρ N hN i
     (by simpa using hi)
 
 /-- Once actual ramification vanishes, extending the partial Swan sum changes nothing. -/
-theorem partialSwanSum_eq_of_le_bound (N M : ℕ) (hN : lowerGroup K L N = ⊥)
-    (hNM : N ≤ M) : partialSwanSum K L ell V ρ N = partialSwanSum K L ell V ρ M := by
-  unfold partialSwanSum
+theorem positiveWeightedCodimensionSum_eq_of_le_bound (N M : ℕ) (hN : lowerGroup K L N = ⊥)
+    (hNM : N ≤ M) : positiveWeightedCodimensionSum K L ell V ρ N = positiveWeightedCodimensionSum K L ell V ρ M := by
+  unfold positiveWeightedCodimensionSum
   apply Finset.sum_subset (Finset.range_mono hNM)
   intro i _ hi
   simp [conductorSummand_eq_zero_of_bound K L ell V ρ N hN i (by simpa using hi)]
+
+section LocalField
+
+variable [TopologicalSpace K] [ValuativeRel K] [IsNonarchimedeanLocalField K]
+  [TopologicalSpace L] [IsNonarchimedeanLocalField L] [ValuativeExtension K L] [IsGalois K L]
 
 /-- The Artin conductor is independent of the certified ramification bound. -/
 theorem artinConductor_eq (N M : {N : ℕ // lowerGroup K L N = ⊥}) :
     artinConductor K L ell V ρ N = artinConductor K L ell V ρ M := by
   unfold artinConductor
   rcases le_total N.1 M.1 with h | h
-  · exact partialArtinSum_eq_of_le_bound K L ell V ρ N M N.2 h
-  · exact (partialArtinSum_eq_of_le_bound K L ell V ρ M N M.2 h).symm
+  · exact weightedCodimensionSum_eq_of_le_bound K L ell V ρ N M N.2 h
+  · exact (weightedCodimensionSum_eq_of_le_bound K L ell V ρ M N M.2 h).symm
 
 /-- The Swan conductor is independent of the certified ramification bound. -/
 theorem swanConductor_eq (N M : {N : ℕ // lowerGroup K L N = ⊥}) :
     swanConductor K L ell V ρ N = swanConductor K L ell V ρ M := by
   unfold swanConductor
   rcases le_total N.1 M.1 with h | h
-  · exact partialSwanSum_eq_of_le_bound K L ell V ρ N M N.2 h
-  · exact (partialSwanSum_eq_of_le_bound K L ell V ρ M N M.2 h).symm
+  · exact positiveWeightedCodimensionSum_eq_of_le_bound K L ell V ρ N M N.2 h
+  · exact (positiveWeightedCodimensionSum_eq_of_le_bound K L ell V ρ M N M.2 h).symm
 
 /-- The Artin conductor is the Swan conductor plus the codimension of the inertia
 invariants. -/
@@ -217,9 +233,12 @@ theorem artinConductor_eq_swanConductor_add (N : {N : ℕ // lowerGroup K L N = 
       invariantCodimension K L ell V ρ (lowerGroup K L 0) := by
   rcases Nat.eq_zero_or_pos N.1 with h | h
   · have h0 : lowerGroup K L 0 = ⊥ := by simpa [h] using N.2
-    simp [artinConductor, swanConductor, partialArtinSum, partialSwanSum, h, h0,
+    simp [artinConductor, swanConductor, weightedCodimensionSum,
+      positiveWeightedCodimensionSum, h, h0,
       invariantCodimension_bot]
-  · exact partialArtinSum_eq_partialSwanSum_add K L ell V ρ N h
+  · exact weightedCodimensionSum_eq_positive_add K L ell V ρ N h
+
+end LocalField
 
 end Conductors
 
