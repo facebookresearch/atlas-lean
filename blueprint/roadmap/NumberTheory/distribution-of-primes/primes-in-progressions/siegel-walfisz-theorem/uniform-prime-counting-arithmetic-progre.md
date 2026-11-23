@@ -11,6 +11,14 @@ $$\left|\pi(x; q, b) - \frac{\mathrm{Li}(x)}{\varphi(q)}\right| \le C x e^{-c \s
 The constants may depend on $B$, but not on $x$, $q$, or $b$. The logarithmic integral is taken
 from $2$, as in the source, rather than as the principal value from $0$.
 
+## Informally uses
+
+- [Siegel–Walfisz theorem for Chebyshev's function in residue classes](siegel-walfisz.md), by partial summation
+
 ## Sources
 
 - A. Guo, *Exceptional sets for compositions involving Euler's function, the divisor-sum function and Dedekind's function*, arXiv:2608.19972v1, Lemma `siegel`, `main.tex` lines 289–295.
+- Proof: J. Teräväinen, "The Siegel-Walfisz theorem", *Joni's Math Notes*, 30 January 2015,
+  <https://jonismathnotes.blogspot.com/2015/01/the-siegel-walfisz-theorem.html>, Theorem 7 and its
+  proof, which reduces the statement for $\pi(x; q, a)$ to the one for $\psi(x; q, a)$ by partial
+  summation.

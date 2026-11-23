@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.FieldTheory.Finite.GaloisField
 public import MathlibExt.Combinatorics.Additive.BoseChowlaSubgroup
-public import MathlibExt.Combinatorics.Additive.GDifferenceBases
+public import MathlibExt.Combinatorics.Additive.GDifferenceBasisScaling
 public import MathlibExt.Combinatorics.Additive.ZModDifferenceBasis
 
 namespace MetaMathlibExt
@@ -92,21 +92,6 @@ public theorem_wanted singer_product_diffBasis (g q v : ℕ) (a : Fin (q + 1) �
     ∀ s ∈ Finset.Icc (1 : ℤ) ((q ^ 2 + q + 1) * v),
       g ≤ subRepCount
         ((Finset.univ ×ˢ B).image fun ib : Fin (q + 1) × ℤ => a ib.1 + (q ^ 2 + q + 1) * ib.2) s
-
-/-- **Scaling bound for the $g$-difference basis number.** For natural numbers $g$ and $m$, let
-$\eta_g(m)$ be the least size of a finite set $A \subseteq \mathbb{Z}$ such that every
-$x \in \{1, \dots, m\}$ is the difference $a - a'$ of at least $g$ ordered pairs
-$(a, a') \in A \times A$. If $q$ is a prime and $n$ and $v$ are natural numbers with
-$n \le q^2 v$, then $\eta_g(n) \le (q + 1)\,\eta_g(v)$.
-
-For $v \ge 1$ the hypothesis $n \le q^2 v$ says $\sqrt{n/v} \le q$. Corrected reading: the paper
-prints the factor $q$, obtained from the misprinted Lemma 4; its proof gives $q + 1$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Corollary 3 (`integers-2025-A77-cor-3`). -/
-public theorem_wanted diffBasisNumber_le_succ_mul (g q n v : ℕ) (hq : q.Prime)
-    (hn : n ≤ q ^ 2 * v) :
-    diffBasisNumber g n ≤ (q + 1) * diffBasisNumber g v
 
 /-- **Products of difference bases.** Let $G_1, G_2$ be abelian groups, $g_1, g_2 \in \mathbb{N}$,
 and $A_1 \subseteq G_1$, $A_2 \subseteq G_2$ finite sets. If every element of $G_1$ equals $a - a'$
