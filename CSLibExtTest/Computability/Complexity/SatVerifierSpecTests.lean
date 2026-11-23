@@ -14,7 +14,7 @@ public meta import CSLibExt.Computability.Complexity.SatVerifierSpec
 /-! Tests for the SAT verifier's stack formats and component specs. -/
 namespace Cslib.Complexity.SatVerifier.Tests
 
-open Cslib.CookLevin Cslib.Logic.PL Computability
+open Cslib.CookLevin Cslib.Logic.LegacyPL Computability
 
 /-- `(x₁ ∨ ¬x₂) ∧ ¬x₁`: variable `1` occurs twice. -/
 private def φ : CNF := [[(1, true), (2, false)], [(1, false)]]

@@ -282,8 +282,8 @@ private theorem real_lt_of_neg [IsProbabilityMeasure P] (F : LadderFixedPoint P 
   rw [← probReal_univ (μ := P)]
   refine measureReal_congr ?_
   filter_upwards [F.M'_nonneg] with ω hω
-  change (u < F.M' ω) = True
-  simp only [eq_iff_iff, iff_true]; linarith
+  change u < F.M' ω ↔ True
+  simp only [iff_true]; linarith
 
 end LadderFixedPoint
 

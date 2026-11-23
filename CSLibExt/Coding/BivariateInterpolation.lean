@@ -375,7 +375,7 @@ theorem exists_bivariate_interpolant_mvPolynomial (F : Type*) [Field F]
               = (((monomial n) ((monomial m) r : F[X])).coeff (e 1)).coeff
                 (e 0) := by
             rw [hC, hP]
-          rw [hRHS, Polynomial.coeff_monomial]
+          rw [hRHS, Polynomial.coeff_monomial_apply]
           have hd0 : (Finsupp.single (0 : Fin 2) m
               + Finsupp.single (1 : Fin 2) n) 0 = m := by
             simp
@@ -383,7 +383,7 @@ theorem exists_bivariate_interpolant_mvPolynomial (F : Type*) [Field F]
               + Finsupp.single (1 : Fin 2) n) 1 = n := by
             simp
           by_cases hn : n = e 1
-          · rw [ite_eq_left hn, Polynomial.coeff_monomial]
+          · rw [ite_eq_left hn, Polynomial.coeff_monomial_apply]
             by_cases hm : m = e 0
             · have heq : Finsupp.single (0 : Fin 2) m
                   + Finsupp.single (1 : Fin 2) n = e := by

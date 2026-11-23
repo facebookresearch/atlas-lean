@@ -335,7 +335,7 @@ private lemma ksEval_one_sub_pderiv_mixedDetPolynomial
     rw [RingHom.map_det]
     congr 1
     ext a b
-    simp [B, ksMixedDetBaseMatrix]
+    simp [B, ksMixedDetBaseMatrix, Polynomial.eval_finsetSum]
     ring
   have hvalue :
       MvPolynomial.eval (Function.update z (Sum.inr i) 0) (mixedDetPolynomial A) =
