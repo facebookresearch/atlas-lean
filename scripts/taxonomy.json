@@ -11756,6 +11756,7 @@
   "MathlibExt/NumberTheory/SylvesterCoinTheorem": {"to": "NumberTheory/numerical-semigroups", "title": "Sylvester's coin theorem"},
   "MathlibExt/NumberTheory/SylvesterSchur": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Sylvester–Schur theorem"},
   "MathlibExt/NumberTheory/SymmetricPowerSums": {"to": "NumberTheory/algebraic-number-theory/cyclotomic-fields", "title": "Trace metric on cyclotomic fields"},
+  "MathlibExt/NumberTheory/TakagiDyadicIdentities": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Takagi function"},
   "MathlibExt/NumberTheory/TaxicabSeed": {"to": "NumberTheory/diophantine-equations/higher-degree-equations", "title": "Taxicab numbers"},
   "MathlibExt/NumberTheory/TelescopicSequence": {"to": "NumberTheory/numerical-semigroups", "title": "Telescopic numerical semigroups"},
   "MathlibExt/NumberTheory/TetranacciSequence": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Tetranacci and pentanacci numbers"},
