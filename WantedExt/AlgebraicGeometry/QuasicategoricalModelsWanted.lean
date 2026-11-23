@@ -30,7 +30,7 @@ open MathlibExt.AlgebraicTopology.QuasicategoricalModels
 universe u v w
 
 /-- The actual equivalence-edge core of a quasicategory is a Kan complex. -/
-proof_wanted quasicategory_core_kan (X : SSet) [SSet.Quasicategory X] :
+theorem_wanted quasicategory_core_kan (X : SSet) [SSet.Quasicategory X] :
   SSet.KanComplex (core X)
 
 /-- Choose the categorical injective replacement of an actual diagram. -/
@@ -38,6 +38,6 @@ def_wanted categorical_fibrant_diagram_replacement (J : Type v) [Category.{w} J]
     (D : J ⥤ SSet.{max u v w}) : CategoricalDiagramReplacement.{u, v, w} D
 
 /-- The native limit of the categorical replacement is a quasicategory. -/
-proof_wanted categorical_homotopy_limit_quasicategory (J : Type v) [Category.{w} J]
+theorem_wanted categorical_homotopy_limit_quasicategory (J : Type v) [Category.{w} J]
     (D : J ⥤ SSet.{max u v w}) (R : CategoricalDiagramReplacement.{u, v, w} D) :
   SSet.Quasicategory (homotopyLimit.{u, v, w} R)

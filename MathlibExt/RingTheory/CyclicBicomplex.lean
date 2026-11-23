@@ -1,27 +1,22 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
 -/
-
+/-
+Modifications copyright (c) 2026 Meta Platforms, Inc. and affiliates.
+-/
 /-
 Ported from TauCetiProject/TauCeti at
 62bbc0596dc3539d488232e4e924a338548ea0a9:
 TauCeti/RingTheory/CyclicCohomology/Bicomplex.lean
 Public source: https://github.com/TauCetiProject/TauCeti
 The original contributors' copyright, author and Apache License 2.0
-notice is retained below. Modification notice: use the explicitly
+notice is retained above. Modification notice: use the explicitly
 listed MathlibExt ports for this complete SBI dependency closure;
 retain the mathematical declarations and original names. Identity-scalar
 multilinear maps and endomorphism-application lemmas use the pinned
 Mathlib API; the finite-coordinate port keeps only its four needed lemmas.
--/
-/-
-Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: The Tau Ceti contributors
 -/
 module
 

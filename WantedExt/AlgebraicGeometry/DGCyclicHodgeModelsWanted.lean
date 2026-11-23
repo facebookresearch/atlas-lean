@@ -46,7 +46,7 @@ def_wanted dg_cyclic_associated_graded_comparison (k : Type u) [CommRing k]
   AssociatedGradedComparison H j
 
 /-- Source Hodge-to-de Rham degeneration, retaining A^i=0 for i<0. -/
-proof_wanted smooth_proper_nonnegative_dg_hodge_degeneration
+theorem_wanted smooth_proper_nonnegative_dg_hodge_degeneration
     (k : Type u) [Field k] [CharZero k] (A : DGAlgebra k)
     (hdegree : IsNonnegativelyGraded A) (hproper : IsProperAlgebra A)
     (D : EnvelopingModuleModel (diagonal (algebraCategory A)))
