@@ -2,8 +2,8 @@
 
 Let $k$ be a number field, $G$ a connected reductive group over $k$ and
 $G(\mathbb{A})^1 = \{x \in G(\mathbb{A}) : H_G(x) = 0\}$. A function $\varphi$ in
-$L^2(G(k) \backslash G(\mathbb{A})^1)$ is cuspidal if $\int_{N_P(\mathbb{A})} \varphi(nx)\, dn = 0$ for every proper
-parabolic subgroup $P = M_P N_P$ of $G$ over $k$ and almost every $x$. The cuspidal functions form a closed
+$L^2(G(k) \backslash G(\mathbb{A})^1)$ is cuspidal if $\int_{N_P(k) \backslash N_P(\mathbb{A})} \varphi(nx)\, dn = 0$, over the
+compact quotient, for every proper parabolic subgroup $P = M_P N_P$ of $G$ over $k$ and almost every $x$. The cuspidal functions form a closed
 subspace $L^2_{\mathrm{cusp}}$, invariant under right translation by $G(\mathbb{A})^1$; for
 $f \in C^\infty_c(G(\mathbb{A})^1)$ let $R_{\mathrm{cusp}}(f)$ be the restriction of
 $R(f)\varphi(x) = \int f(y) \varphi(xy)\, dy$ to it.
@@ -27,16 +27,17 @@ $R(f)\varphi(x) = \int f(y) \varphi(xy)\, dy$ to it.
 ## Proof depends on
 
 - [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the covering of $G(k) \backslash G(\mathbb{A})^1$ by a Siegel set, on which the kernel of $R_{\mathrm{cusp}}(f)$ is estimated
-- [Rapid decay of cusp forms](rapid-decay-of-cusp-forms.md), for the uniform bound $\lvert (\varphi * f)(x) \rvert \le c \lVert \varphi \rVert_2$ on cuspidal functions, the estimate that gives the Hilbert–Schmidt property, and for the inclusion $\mathcal{A}_0(\omega) \subset L^2_0(\omega)$ used in item 3
-- [Dixmier–Malliavin theorem](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/dixmier-malliavin-theorem.md), for writing $f$ as a finite sum of convolutions, which turns the Hilbert–Schmidt property into the trace-class property
-- [Harish-Chandra's finiteness theorem for automorphic forms](harish-chandra-finiteness-theorem.md), for the finite multiplicities and the identification of the $K$-finite vectors of $L^2_0(\omega)$ with $\mathcal{A}_0(\omega)$
+- [Rapid decay of cusp forms](rapid-decay-of-cusp-forms.md), for the quantitative uniform bound $\sup_x \lvert (\varphi * f)(x) \rvert \le c_f \lVert \varphi \rVert_2$ for cuspidal $\varphi$ (Arthur's proof of Theorem 12.1, through the rapid decay of cuspidal functions on Siegel sets), the estimate that gives the Hilbert–Schmidt property, and for the inclusion $\mathcal{A}_0(\omega) \subset L^2_0(\omega)$ used in item 3
+- [Dixmier–Malliavin theorem](../../reductive-groups-over-local-fields/representations-of-real-reductive-groups/dixmier-malliavin-theorem.md), in its form for functions, writing $f \in C^\infty_c(G(\mathbb{A})^1)$ as a finite sum $\sum_i g_i * h_i$ of convolutions of functions in the same space, which turns the Hilbert–Schmidt property of the $R_{\mathrm{cusp}}(g_i)$, $R_{\mathrm{cusp}}(h_i)$ into the trace-class property of $R_{\mathrm{cusp}}(f)$
+- [Harish-Chandra's finiteness theorem for automorphic forms](harish-chandra-finiteness-theorem.md), for the finite multiplicities and the identification of the $K$-finite vectors of $L^2_0(\omega)$ with $\mathcal{A}_0(\omega)$, where the $K$-finite vectors of each irreducible summand are $\mathcal{Z}$-finite because the summand is admissible, so that they are automorphic forms
 
 ## Sources
 
 - J. Arthur, "An introduction to the trace formula", in *Harmonic Analysis, the Trace Formula, and
   Shimura Varieties*, Clay Math. Proc. 4, American Mathematical Society, 2005, 1–263,
-  <https://www.claymath.org/library/proceedings/cmip04c.pdf>: §12, (12.1) and Theorem 12.1 (Gelfand,
-  Piatetski-Shapiro) with its proof (Hilbert–Schmidt class of $R_{\mathrm{cusp}}(f)$ from (12.1) and
+  <https://www.claymath.org/library/proceedings/cmip04c.pdf>: §12, (12.1) (where the integral over $N_P(\mathbb{A})$ is
+  to be read over $N_P(\mathbb{Q}) \backslash N_P(\mathbb{A})$, as in §13, (13.1)) and Theorem 12.1 (Gelfand, Piatetski-Shapiro)
+  with its proof (Hilbert–Schmidt class of $R_{\mathrm{cusp}}(f)$ from (12.1) and
   Theorem 8.1, then the spectral theorem).
 - A. Borel, "Automorphic forms on reductive groups", lecture notes (Park City),
   <http://homepages.math.uic.edu/~rtakloo/papers/borel/borel3.pdf>: §9.3, (67)–(68), the Theorem

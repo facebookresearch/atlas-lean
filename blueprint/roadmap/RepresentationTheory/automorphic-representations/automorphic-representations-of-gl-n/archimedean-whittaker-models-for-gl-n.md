@@ -8,9 +8,11 @@ $\psi(n) = \psi(n_{12} + \dots + n_{n-1,n})$.
 
 - **Uniqueness** (Shalika). For an irreducible admissible smooth Fréchet representation $\pi$ of
   $\mathrm{GL}_n(F)$ of moderate growth, the space of continuous functionals $\Lambda$ with
-  $\Lambda(\pi(n)\xi) = \psi(n)\Lambda(\xi)$ is at most one-dimensional, so $\pi$ has at most one Whittaker
-  model $\mathcal{W}(\pi, \psi)$; on the underlying Harish-Chandra module the space of algebraic Whittaker
-  functionals is larger, and only one of them extends continuously.
+  $\Lambda(\pi(n)\xi) = \psi(n)\Lambda(\xi)$ has dimension at most $1$, so $\pi$ has at most one Whittaker
+  model $\mathcal{W}(\pi, \psi)$; $\pi$ is generic when the dimension is $1$. The dimension can be $0$: the trivial
+  representation of $\mathrm{GL}_n(F)$, $n \ge 2$, has no non-zero functional of this kind, algebraic or continuous.
+  For generic $\pi$ the algebraic functionals on the underlying Harish-Chandra module form a larger space,
+  and exactly one line of them extends continuously to $\pi$.
 - **Contragredient.** If $\pi$ has a Whittaker model, so does $\tilde\pi$, with
   $\mathcal{W}(\tilde\pi, \psi^{-1}) = \{g \mapsto W(w_n\, {}^t g^{-1}) : W \in \mathcal{W}(\pi, \psi)\}$.
 - **Kirillov model** (Jacquet–Shalika). The restriction of Whittaker functions to the mirabolic subgroup
@@ -30,7 +32,8 @@ for the exact hypotheses.
 - J. W. Cogdell, "Lectures on L-functions, converse theorems, and functoriality for GL_n", in
   *Lectures on Automorphic L-functions*, Fields Institute Monographs 20, American Mathematical Society,
   2004; author's version <https://people.math.osu.edu/cogdell.1/fields-www.pdf>: Lecture 4, §2,
-  Theorem 4.1 ("due to Gelfand and Kazhdan ($v < \infty$) and Shalika ($v \mid \infty$)"), Remarks (i)–(iii)
-  (Bessel distributions, the $n!$ algebraic functionals of which only one extends continuously, the
+  Theorem 4.1 ("due to Gelfand and Kazhdan ($v < \infty$) and Shalika ($v \mid \infty$)", at most one Whittaker
+  model), Remarks (i)–(iii) (Bessel distributions; the space of algebraic functionals, of dimension $n!$ in
+  the generic principal-series situation described there, of which only one line extends continuously; the
   contragredient), Definition 4.1, and Theorem 4.4 ("Bernstein and Zelevinsky if $v < \infty$ and Jacquet
   and Shalika if $v \mid \infty$").

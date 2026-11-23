@@ -18,10 +18,12 @@ on $\mathfrak{S}^1$.
    uniformly of moderate growth and cuspidal (all its constant terms along proper parabolic subgroups over
    $k$ vanish) is rapidly decreasing. In particular cusp forms are rapidly decreasing on
    $G(\mathbb{A})^1$, bounded there, and square integrable on $G(k) \backslash G(\mathbb{A})^1$.
-3. **$\mathrm{GL}_n$.** If $\varphi$ is a cusp form on $\mathrm{GL}_n(\mathbb{A})$ with central character, there is
-   an integer $r$ such that $\lvert \varphi(zg) \rvert \le C_N \lvert z \rvert^{r} \lVert g \rVert^{-N}$ for all $N$,
-   for $z$ in the centre and $g$ in a fundamental domain intersected with $\mathrm{SL}_n(\mathbb{A})$; if the
-   central character $\omega$ is unitary, then $\mathcal{A}_0(\omega)$ is contained in $L^2_0(\omega)$.
+3. **$\mathrm{GL}_n$.** Let $\varphi$ be a cusp form on $\mathrm{GL}_n(\mathbb{A})$ with central character $\omega$, and write
+   $\lvert \omega(z) \rvert = \lvert z \rvert^{\sigma}$ with $\sigma$ real. Then $\varphi \cdot \lvert \det \rvert^{-\sigma/n}$ is a cusp form
+   with unitary central character; a cusp form with unitary central character is bounded and rapidly
+   decreasing on Siegel sets of $\mathrm{GL}_n(\mathbb{A})^1$, and if $\omega$ is unitary then $\mathcal{A}_0(\omega)$ is contained in
+   $L^2_0(\omega)$. (The exponent $\sigma$ need not be an integer: on $\mathrm{GL}_1$, which has no proper parabolic
+   subgroup, $z \mapsto \lvert z \rvert^{1/2}$ is a cusp form.)
 
 ## Depends on
 
@@ -49,7 +51,10 @@ on $\mathfrak{S}^1$.
   *Lectures on Automorphic L-functions*, Fields Institute Monographs 20, American Mathematical Society,
   2004; author's version <https://people.math.osu.edu/cogdell.1/fields-www.pdf>: Lecture 2, §3 ("By a
   theorem of Harish-Chandra we know that $K_\infty$-finiteness implies uniform moderate growth"), §5,
-  Theorem 2.2 (Gelfand and Piatetski-Shapiro) and the paragraph after it ($\mathcal{A}_0(\omega) \subset \mathcal{A}^\infty_0(\omega) \subset L^2_0(\omega)$).
+  Theorem 2.2 (Gelfand and Piatetski-Shapiro) and the paragraph after it ($\mathcal{A}_0(\omega) \subset \mathcal{A}^\infty_0(\omega) \subset L^2_0(\omega)$
+  for unitary $\omega$; the integer exponent in the printed statement of Theorem 2.2 cannot hold for every
+  non-unitary central character, and is replaced here by the reduction to the unitary case); Lecture 3,
+  §4, the last paragraph (every cuspidal representation is an unramified twist of a unitary one).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>)
   states forms of this result for unitary groups of CM extensions as

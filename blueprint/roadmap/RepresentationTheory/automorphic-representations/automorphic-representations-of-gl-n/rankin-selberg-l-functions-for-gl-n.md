@@ -19,11 +19,22 @@ does not treat.
 - **Archimedean theory.** Convergence of the local integrals for $\operatorname{Re} s \gg 0$ and, for unitary
   generic representations, for $\operatorname{Re} s \ge 1$ at every place; meromorphic continuation, local
   functional equations and the archimedean $L$-factors defined through the Langlands parameters.
-- **Global $L$-functions.** For unitary cuspidal $\pi$, $\pi'$: if $m < n$, $L(s, \pi \times \pi')$ is entire,
-  bounded in vertical strips and satisfies $L(s, \pi \times \pi') = \varepsilon(s, \pi \times \pi') L(1 - s, \tilde\pi \times \tilde\pi')$;
-  if $m = n$ it is meromorphic with at most simple poles at $s = i\sigma$ and $s = 1 + i\sigma$ where
-  $\tilde\pi \simeq \pi' \otimes \lvert \det \rvert^{i\sigma}$, entire otherwise, bounded in vertical strips away from
-  the poles, with the same functional equation.
+- **Local factors at the removed places.** For unitary generic $\pi_v$, $\pi'_v$, the local factor
+  $L(s, \pi_v \times \pi'_v)$ is $P_v(q_v^{-s})^{-1}$ for a polynomial with $P_v(0) = 1$ at a finite place and a product of
+  $\Gamma$-factors at an infinite place, hence never zero, and it has no pole in $\operatorname{Re} s \ge 1$, being a finite
+  sum of local integrals that converge there.
+- **Global $L$-functions.** For cuspidal $\pi$, $\pi'$ the completed $L$-function is the product over all places,
+  archimedean ones included, $L(s, \pi \times \pi') = \prod_v L(s, \pi_v \times \pi'_v)$, and
+  $\varepsilon(s, \pi \times \pi') = \prod_v \varepsilon(s, \pi_v \times \pi'_v, \psi_v)$, independent of $\psi$. For unitary cuspidal
+  $\pi$, $\pi'$, the partial product $L^S(s, \pi \times \pi')$ over the places outside a finite set $S$ converges
+  absolutely for $\operatorname{Re} s > 1$, and does not vanish there (on $\operatorname{Re} s = 1$ it need not converge: for $n = m = 1$
+  and trivial characters it is a partial Dedekind zeta function, with a pole at $s = 1$). If $m < n$,
+  $L(s, \pi \times \pi')$ is entire, bounded in vertical strips and satisfies
+  $L(s, \pi \times \pi') = \varepsilon(s, \pi \times \pi') L(1 - s, \tilde\pi \times \tilde\pi')$. If $m = n$, it is meromorphic, with
+  simple poles exactly at the points $s = i\sigma$ and $s = 1 + i\sigma$, $\sigma \in \mathbb{R}$, such that
+  $\tilde\pi \simeq \pi' \otimes \lvert \det \rvert^{i\sigma}$, and entire if there is no such $\sigma$; it is bounded in vertical strips
+  away from its poles and satisfies the same functional equation. In particular $L(s, \pi \times \tilde\pi)$ has a
+  simple pole at $s = 1$, and so does $L^S(s, \pi \times \tilde\pi)$.
 
 A good expansion has pages for the global integrals in the cases $m < n$ and $m = n$ (with the mirabolic
 Eisenstein series), for their unfolding to Euler products, for the unramified computation, for the
@@ -39,6 +50,7 @@ Rankin–Selberg integrals", 2009) consulted for hypotheses.
 - [Whittaker models for GLₙ over archimedean fields](archimedean-whittaker-models-for-gl-n.md), for Whittaker models at the infinite places
 - [Eisenstein series and their meromorphic continuation](../automorphic-forms-on-reductive-groups/eisenstein-series.md), for the Eisenstein series used when $m = n$
 - [Rapid decay of cusp forms](../automorphic-forms-on-reductive-groups/rapid-decay-of-cusp-forms.md), for the convergence of the global integrals
+- [Poisson summation formula for adeles](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adelic-poisson-summation.md), for the functional equation of the mirabolic Eisenstein series $E(g, \Phi, s)$ used when $m = n$ (Cogdell, Proposition 5.4)
 
 ## Sources
 
@@ -48,6 +60,10 @@ Rankin–Selberg integrals", 2009) consulted for hypotheses.
   5.1–5.5: the global integrals for $m < n$ and $m = n$, the mirabolic Eisenstein series), Lecture 6
   (Propositions 6.1–6.7: the non-archimedean local theory, including convergence for $\operatorname{Re} s \ge 1$ in
   Proposition 6.2 (i)), Lecture 7 (Theorem 7.1, Corollaries 7.1.1 and 7.1.2: the unramified computation),
-  Lecture 8 (Propositions 8.1–8.3, Theorems 8.1–8.4: the archimedean theory), Lecture 9 (Theorems 9.1 and
-  9.2, the global $L$-functions; §5, boundedness in vertical strips, with Gelbart and Shahidi, J. Amer.
-  Math. Soc. 14 (2001)).
+  Lecture 8 (Propositions 8.1–8.3, Theorems 8.1–8.4: the archimedean theory), Lecture 9 (Definition 9.1, the
+  completed $L$-function over all places; Theorems 9.1 and 9.2, the global $L$-functions, with the simple
+  poles of Theorem 9.2 (i); §5, boundedness in vertical strips, with Gelbart and Shahidi, J. Amer. Math. Soc.
+  14 (2001); §7, the local factors at the places of $S$: never zero, and without poles in $\operatorname{Re} s \ge 1$).
+- H. Jacquet and J. A. Shalika, "On Euler products and the classification of automorphic representations
+  I", Amer. J. Math. 103 (1981), 499–558, <https://doi.org/10.2307/2374103>: Theorem (5.3) (absolute
+  convergence and non-vanishing of the partial Euler product for unitary cuspidal $\pi$, $\pi'$ in $\operatorname{Re} s > 1$).

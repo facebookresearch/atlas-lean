@@ -6,11 +6,14 @@ reductive group $G$ over a number field $k$, as it is used for the analysis of
 the characterization of
 [automorphic representations as constituents of induced representations](automorphic-representations-as-constituents-of-induced-representations.md).
 For a standard parabolic subgroup $P = M_P N_P$ over $k$, let $\mathcal{H}_P$ be the Hilbert space of
-functions $\varphi$ on $N_P(\mathbb{A}) M_P(k) A_P(\mathbb{R})^0 \backslash G(\mathbb{A})$ whose restrictions to
-$M_P(\mathbb{A})^1$ lie in the discrete spectrum, $\mathcal{H}_P^0$ its dense subspace of $K$-finite vectors in
-finite sums of irreducible subspaces, and $\rho_P$, $H_P$ and $\mathfrak{a}_{P,\mathbb{C}}^*$ as usual.
+functions $\varphi$ on $N_P(\mathbb{A}) M_P(k) A_P(\mathbb{R})^0 \backslash G(\mathbb{A})$ such that, for each $x \in G(\mathbb{A})$,
+$m \mapsto \varphi(mx)$ on $M_P(k) \backslash M_P(\mathbb{A})^1$ lies in the discrete spectrum, with
+$\lVert \varphi \rVert^2 = \int_K \int_{M_P(k) \backslash M_P(\mathbb{A})^1} \lvert \varphi(mk) \rvert^2\, dm\, dk < \infty$; let $\mathcal{H}_P^0$ be its
+dense subspace of $K$-finite vectors lying in finite sums of irreducible subspaces (smooth functions, to
+which the formulas below apply pointwise), $\mathcal{H}_{P,\mathrm{cusp}}^0$ the cuspidal ones, and $\rho_P$, $H_P$,
+$\mathfrak{a}_P$ and $\mathfrak{a}_{P,\mathbb{C}}^*$ as usual.
 
-- **Definition and convergence** (Godement, Langlands). The Eisenstein series
+- **Definition and convergence** (Godement, Langlands). For $\varphi \in \mathcal{H}_P^0$, the Eisenstein series
   $E(x, \varphi, \lambda) = \sum_{\delta \in P(k) \backslash G(k)} \varphi(\delta x)\, e^{(\lambda + \rho_P)(H_P(\delta x))}$ and the
   intertwining operators $M(s, \lambda)$, $s \in W(\mathfrak{a}_P, \mathfrak{a}_{P'})$, converge absolutely
   for $\operatorname{Re} \lambda \in \rho_P + (\mathfrak{a}_P^*)^+$, to analytic functions of $\lambda$.
@@ -18,10 +21,13 @@ finite sums of irreducible subspaces, and $\rho_P$, $H_P$ and $\mathfrak{a}_{P,\
   $M(s, \lambda)\varphi$ continue meromorphically to $\mathfrak{a}_{P,\mathbb{C}}^*$, with
   $E(x, M(s, \lambda)\varphi, s\lambda) = E(x, \varphi, \lambda)$ and $M(ts, \lambda) = M(t, s\lambda) M(s, \lambda)$;
   they are analytic on $i\mathfrak{a}_P^*$, where $M(s, \lambda)$ is unitary.
-- **Constant terms and automorphy.** The constant term of $E(x, \varphi, \lambda)$ along a standard
-  parabolic subgroup is given by the intertwining operators (for cuspidal $\varphi$, the sum over
-  $s \in W(\mathfrak{a}_P, \mathfrak{a}_{P'})$ of the terms $M(s, \lambda)\varphi$); away from its poles, the
-  Eisenstein series of a $K$-finite cuspidal datum is an automorphic form.
+- **Constant terms and automorphy.** For $\varphi \in \mathcal{H}_{P,\mathrm{cusp}}^0$ and a standard parabolic subgroup
+  $Q$, the constant term $\int_{N_Q(k) \backslash N_Q(\mathbb{A})} E(nx, \varphi, \lambda)\, dn$ is
+  $\sum_{s \in W(\mathfrak{a}_P, \mathfrak{a}_Q)} (M(s, \lambda)\varphi)(x)\, e^{(s\lambda + \rho_Q)(H_Q(x))}$ if $Q$ is associated to $P$
+  and in general
+  $\sum_{s \in W(P; Q)} E^Q(x, M(s, \lambda)\varphi, s\lambda)$, a sum of Eisenstein series of the Levi factor of $Q$
+  (for $Q = G$ it is the Eisenstein series itself). Away from its poles, the Eisenstein series of a
+  $K$-finite cuspidal datum is an automorphic form.
 - **Spectral decomposition** (Langlands). The orthogonal decomposition
   $L^2(G(k) \backslash G(\mathbb{A})) = \bigoplus_{\mathcal{P}} L^2_{\mathcal{P}}$ over associated classes of parabolic
   subgroups, through wave packets of Eisenstein series, and the residual spectrum as iterated residues.
@@ -44,9 +50,11 @@ Math. 544, Springer, 1976) and Mœglin–Waldspurger's *Spectral decomposition a
 
 - J. Arthur, "An introduction to the trace formula", in *Harmonic Analysis, the Trace Formula, and
   Shimura Varieties*, Clay Math. Proc. 4, American Mathematical Society, 2005, 1–263,
-  <https://www.claymath.org/library/proceedings/cmip04c.pdf>: §7, (7.1)–(7.2), Lemma 7.1 (Langlands;
-  absolute convergence), Theorem 7.2 (Langlands; meromorphic continuation, (7.3)–(7.4), unitarity on
-  $i\mathfrak{a}_P^*$, the decomposition (7.5)), and §12, (12.2) and Lemmas 12.2–12.4 (Langlands).
+  <https://www.claymath.org/library/proceedings/cmip04c.pdf>: §7 (the space $\mathcal{H}_P$ and its subspace
+  $\mathcal{H}_P^0$), (7.1)–(7.2), Lemma 7.1 (Langlands; absolute convergence for $\varphi \in \mathcal{H}_P^0$), Theorem 7.2
+  (Langlands; meromorphic continuation, (7.3)–(7.4), unitarity on $i\mathfrak{a}_P^*$, the decomposition (7.5)), §12,
+  (12.2) and Lemmas 12.2–12.4 (Langlands), and §15, the formula before (15.3) for associated $Q$ and (15.3)
+  for arbitrary $Q$ (constant terms of cuspidal Eisenstein series).
 - A. Borel, "Automorphic forms on reductive groups", lecture notes (Park City),
   <http://homepages.math.uic.edu/~rtakloo/papers/borel/borel3.pdf>: §8.6 (the residual and continuous
   spectra, "analyzed by means of the analytic continuation of Eisenstein series").

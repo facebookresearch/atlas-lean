@@ -7,7 +7,10 @@ $\psi$-Whittaker function is
 
 $$W_\varphi(g) = \int_{N_n(k) \backslash N_n(\mathbb{A})} \varphi(ug)\, \psi^{-1}(u)\, du,$$
 
-which satisfies $W_\varphi(ug) = \psi(u) W_\varphi(g)$ for $u \in N_n(\mathbb{A})$. A representation $\pi_v$ of
+with $du$ the Haar measure giving the compact quotient $N_n(k) \backslash N_n(\mathbb{A})$ volume $1$ (the
+normalization for which the Fourier expansion below has coefficients $1$),
+
+and $W_\varphi$ satisfies $W_\varphi(ug) = \psi(u) W_\varphi(g)$ for $u \in N_n(\mathbb{A})$. A representation $\pi_v$ of
 $\mathrm{GL}_n(k_v)$ is generic if it has a non-zero continuous functional $\Lambda_v$ with
 $\Lambda_v(\pi_v(u)\xi) = \psi_v(u)\Lambda_v(\xi)$ for $u \in N_n(k_v)$.
 
@@ -20,10 +23,13 @@ $\Lambda_v(\pi_v(u)\xi) = \psi_v(u)\Lambda_v(\xi)$ for $u \in N_n(k_v)$.
    [tensor product theorem](../automorphic-forms-on-reductive-groups/tensor-product-theorem.md). The space of
    Whittaker functionals on $\pi$ is one-dimensional, spanned by $\varphi \mapsto W_\varphi(e)$, and $\pi$ and
    each local component $\pi_v$ are generic.
-3. **Factorization.** If $\varphi \in \pi$ corresponds to a pure tensor $\otimes_v \xi_v$, then
-   $W_\varphi(g) = \prod_v W_{\xi_v}(g_v)$, where $W_{\xi_v}(g_v) = \Lambda_v(\pi_v(g_v)\xi_v)$ for Whittaker functionals
-   $\Lambda_v$ normalized by $\Lambda_v(\xi_v^\circ) = 1$ at the unramified vectors defining the restricted
-   tensor product.
+3. **Factorization.** Fix local Whittaker functionals $\Lambda_v$ (with respect to $\psi_v$) such that, at the
+   finite places $v$ outside a finite set $S$ containing the places where $\pi_v$ or $\psi_v$ ramifies,
+   $\Lambda_v(\xi_v^\circ) = 1$ for the spherical vectors $\xi_v^\circ$ defining the restricted tensor product (at such
+   places a spherical vector has non-zero Whittaker value; at a place where $\psi_v$ is ramified it may have
+   value $0$). Then there is a constant $c$ with $W_\varphi(e) = c \prod_v \Lambda_v(\xi_v)$ for every $\varphi \in \pi$
+   corresponding to a pure tensor $\otimes_v \xi_v$, and $c \ne 0$; absorbing $c$ into one $\Lambda_v$ with $v \in S$,
+   $W_\varphi(g) = \prod_v W_{\xi_v}(g_v)$ with $W_{\xi_v}(g_v) = \Lambda_v(\pi_v(g_v)\xi_v)$.
 
 ## Depends on
 
@@ -44,4 +50,9 @@ $\Lambda_v(\pi_v(u)\xi) = \psi_v(u)\Lambda_v(\xi)$ for $u \in N_n(k_v)$.
   Piatetski-Shapiro and Shalika", with the induction on the last column), §2 (Whittaker models, $\varphi$
   recovered from $W_\varphi$, Whittaker functionals, Definition 4.1, the compatible local functionals with
   $\Lambda_v(\xi_v^\circ) = 1$), Corollary 4.1.1 (global uniqueness), Corollary 4.1.2 (genericity of $\pi$ and of
-  each $\pi_v$) and Corollary 4.1.3 (factorization of Whittaker functions).
+  each $\pi_v$) and Corollary 4.1.3 (factorization of Whittaker functions); the normalization at the
+  unramified places is that of the unramified Whittaker function, Lecture 7, §2, which assumes $\psi_v$
+  unramified.
+- B. Poonen, *Tate's thesis*, lecture notes for MIT 18.786 (Spring 2015), PDF of 2025-10-11,
+  <https://math.mit.edu/~poonen/786/notes.pdf>: §5.4 (Fourier analysis on the compact group $\mathbb{A}/k$, which
+  gives the expansion on each abelian quotient in the induction).

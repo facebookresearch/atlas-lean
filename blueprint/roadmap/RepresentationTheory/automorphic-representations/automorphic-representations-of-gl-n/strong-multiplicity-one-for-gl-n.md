@@ -14,7 +14,7 @@ equal as spaces of cusp forms.
 
 ## Proof depends on
 
-- [Rankin–Selberg L-functions for GLₙ × GLₘ](rankin-selberg-l-functions-for-gl-n.md), for the pole of $L(s, \pi_1 \times \tilde\pi_2)$ at $s = 1$ exactly when $\pi_1 \simeq \pi_2$ (after reducing to unitary $\pi_i$ by a twist), and for the local factors at the places of $S$, which have neither zeros nor poles in $\operatorname{Re} s \ge 1$ since the local integrals converge there
+- [Rankin–Selberg L-functions for GLₙ × GLₘ](rankin-selberg-l-functions-for-gl-n.md), for the following: the central characters of $\pi_1$ and $\pi_2$ agree outside $S$, hence everywhere, so the same twist by a real power of $\lvert \det \rvert$ makes both unitary; then $L(s, \pi_1 \times \tilde\pi_2)$ has a pole at $s = 1$ exactly when $\pi_1 \simeq \pi_2$ (the actual simple pole of the completed $L$-function), the local factors at the places of $S$ have neither zeros nor poles in $\operatorname{Re} s \ge 1$, and $L^S(s, \pi_1 \times \tilde\pi_2) = L^S(s, \pi_1 \times \tilde\pi_1)$ has a pole at $s = 1$
 - [Multiplicity one for GLₙ](multiplicity-one-for-gl-n.md), which turns $\pi_1 \simeq \pi_2$ into the equality of the spaces of cusp forms
 
 ## Sources
@@ -23,5 +23,6 @@ equal as spaces of cusp forms.
   *Lectures on Automorphic L-functions*, Fields Institute Monographs 20, American Mathematical Society,
   2004; author's version <https://people.math.osu.edu/cogdell.1/fields-www.pdf>: Lecture 4, §4,
   Theorem 4.3 (Strong Multiplicity One, "originally due to Piatetski-Shapiro", with his proof through the
-  Kirillov model); Lecture 9, §7, Theorem 9.3 and the proof of Jacquet and Shalika through
-  $L(s, \pi_1 \times \tilde\pi_2)$.
+  Kirillov model, which needed $S$ to consist of finite places; the theorem itself holds for any finite
+  $S$); Lecture 9, §7, Theorem 9.3 and the proof of Jacquet and Shalika through $L(s, \pi_1 \times \tilde\pi_2)$
+  ("Without loss of generality we may assume $\pi_1$ and $\pi_2$ are unitary").

@@ -5,8 +5,11 @@ Let $k$, $G$, $K = \prod_v K_v$ and $\mathcal{H} = \bigotimes'_v \mathcal{H}_v$ 
 hyperspecial for almost all finite $v$. If $(\pi_v, V_v)$ is an admissible $\mathcal{H}_v$-module for every
 place $v$ and $V_v$ contains a non-zero $K_v$-fixed vector $u_v^\circ$ for almost all finite $v$, the restricted
 tensor product $\bigotimes'_v V_v = \varinjlim_S \bigl(\bigotimes_{v \in S} V_v\bigr) \otimes \bigl(\bigotimes_{v \notin S} u_v^\circ\bigr)$
-is an $\mathcal{H}$-module $\pi = \bigotimes'_v \pi_v$, admissible if every $\pi_v$ is admissible and irreducible
-if every $\pi_v$ is irreducible.
+is an $\mathcal{H}$-module $\pi = \bigotimes'_v \pi_v$. It is admissible if every $\pi_v$ is admissible and
+$\dim V_v^{K_v} = 1$ for almost all $v$ (which holds when the $\pi_v$ are irreducible), and irreducible if every
+$\pi_v$ is irreducible. Without the condition on $\dim V_v^{K_v}$ admissibility fails: with $V_v$ the sum of two
+copies of the trivial representation at every finite place, changing the reference vector at one place at a
+time gives infinitely many independent vectors fixed by $K_f$.
 
 1. **Flath's decomposition theorem.** Every irreducible admissible $\mathcal{H}$-module $\pi$ is isomorphic
    to $\bigotimes'_v \pi_v$ for irreducible admissible $\mathcal{H}_v$-modules $\pi_v$, almost all of which have a
@@ -19,9 +22,13 @@ if every $\pi_v$ is irreducible.
    not factor automorphic forms into functions on the groups $G(k_v)$.
 3. **Unitary representations** (Gelfand–Piatetski-Shapiro). Every irreducible unitary representation of
    $G(\mathbb{A})$ on a Hilbert space whose $K$-types have finite multiplicities, in particular every
-   irreducible subrepresentation of $L^2_{\mathrm{cusp}}$ or of $L^2_0(\omega)$, is a restricted Hilbert tensor
-   product $\widehat{\bigotimes}'_v \pi_v$ of irreducible unitary representations of the $G(k_v)$, almost all
-   unramified.
+   irreducible subrepresentation of $L^2_0(\omega)$ for $\mathrm{GL}_n$, and of $L^2_{\mathrm{cusp}}$ when $G(\mathbb{A}) = G(\mathbb{A})^1$
+   (as for unitary groups, whose centre is anisotropic), is a restricted Hilbert tensor product
+   $\widehat{\bigotimes}'_v \pi_v$ of irreducible unitary representations of the $G(k_v)$: at the finite places
+   the smooth vectors of $\pi_v$ form an irreducible admissible representation, and for almost all $v$ the
+   space of $K_v$-fixed vectors of $\pi_v$ is a line, containing the distinguished vector of the tensor
+   product. For a general $G$, a representation of $G(\mathbb{A})^1$ is first extended to $G(\mathbb{A})$ through a
+   character of $A_G(\mathbb{R})^0$.
 
 ## Depends on
 
@@ -47,7 +54,9 @@ if every $\pi_v$ is irreducible.
   $\mathcal{H} = \otimes'_v \mathcal{H}_v$), the paragraph after Definition 3.2 (restricted tensor products of
   admissible representations), Theorem 3.2 (Decomposition Theorem, "a purely algebraic fact about
   $\mathcal{H}$-modules", with D. Flath, "Decomposition of representations into tensor products", Proc.
-  Sympos. Pure Math. 33, Part 1, 1979, 179–183, as reference [2]), Corollary 3.2.1 and the note after it,
+  Sympos. Pure Math. 33, Part 1, 1979, 179–183, as reference [2]), Corollary 3.2.1 and the note after it
+  (the remark after Definition 3.2 that local admissibility gives global admissibility needs the
+  one-dimensionality of almost all spherical spaces, as above),
   Theorem 3.5 (Harish-Chandra) and Theorem 3.6 (Gelfand and Piatetski-Shapiro).
 - R. P. Langlands, "On the notion of an automorphic representation", Proc. Sympos. Pure Math. 33,
   Part 1, 1979, 203–207,

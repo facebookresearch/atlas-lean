@@ -15,6 +15,17 @@ uniformly on compact subsets of $\mathbb{A}$, and
 
 $$\sum_{\kappa \in K} f(\kappa) = \sum_{\kappa \in K} \hat f(\kappa).$$
 
+For several infinite places these finite sums of products do not exhaust the Schwartz functions of
+$K_\infty = \prod_{v \mid \infty} K_v$; the identity is stated for them, as in Poonen's notes.
+
+## Depends on
+
+- [Additive duality of adeles and the volume of A/K](additive-duality-of-adeles.md), for the standard characters, the self-dual measures and the local Schwartz–Bruhat functions with their Fourier transforms
+
+## Proof depends on
+
+- [Additive duality of adeles and the volume of A/K](additive-duality-of-adeles.md), for $\psi|_K = 1$ and the identification of the annihilator of $K$ with $K$, the volume $1$ of $\mathbb{A}/K$ and Fourier inversion on $\mathbb{A}/K$, applied to the periodization $\sum_{\kappa \in K} f(x + \kappa)$, whose convergence uses the lattice $\mathcal{O}_K \subset K_\infty$ (Poonen's Lemma 5.6)
+
 ## Sources
 
 - B. Poonen, *Tate's thesis*, lecture notes for MIT 18.786 (Spring 2015), PDF of 2025-10-11,

@@ -7,18 +7,22 @@ archimedean place $v$, let $\sigma_v$ be the $n$-dimensional representation of t
 attached to $\pi_v$ by the archimedean local Langlands correspondence.
 
 - **Algebraic and regular representations.** An automorphic representation $\pi$ is algebraic if at
-  every archimedean place the restriction to $\mathbb{C}^\times$ of $\sigma_v \otimes \lvert \cdot \rvert^{(n-1)/2}$
-  is a direct sum of characters $z \mapsto z^{p_j} \bar z^{q_j}$ with $p_j, q_j \in \mathbb{Z}$; it is regular if
-  moreover the restriction of $\sigma_v$ to $\mathbb{C}^\times$ is multiplicity free at every archimedean $v$.
-  Equivalently, in terms of infinitesimal characters, the eigenvalues of the infinitesimal character at
-  each embedding $\tau \colon F \to \mathbb{C}$ lie in $\mathbb{Z} + \tfrac{n-1}{2}$.
-- **Purity lemma** (Clozel). For a cuspidal algebraic $\pi$ there is an integer $w$ such that
-  $p_j + q_j = w$ for all $j$ at every archimedean place; over a CM or totally complex field this says that
-  the infinitesimal characters at $\tau$ and $\bar\tau$ are related by $z \mapsto w - z$.
+  every archimedean place the restriction to $\mathbb{C}^\times$ of $\sigma_v \otimes \lvert \cdot \rvert^{(n-1)/2}$ is a direct
+  sum of characters $z \mapsto z^{p_j} \bar z^{q_j}$ with $p_j, q_j \in \mathbb{Z}$; it is regular if moreover the
+  restriction of $\sigma_v$ to $\mathbb{C}^\times$ is multiplicity free at every archimedean $v$. In terms of the
+  infinitesimal character, algebraicity says that its eigenvalues at each embedding $\tau \colon F \to \mathbb{C}$ lie
+  in $\mathbb{Z} + \tfrac{n-1}{2}$.
+- **Purity lemma** (Clozel). For a cuspidal algebraic $\pi$, regular or not, there is an integer $w$ such
+  that $p_j + q_j = w$ for all $j$ at every archimedean place, for the exponents $p_j$, $q_j$ of the twisted
+  parameter $\sigma_v \otimes \lvert \cdot \rvert^{(n-1)/2}$. For the untwisted parameter $\sigma_v$, whose restriction to $\mathbb{C}^\times$ is a
+  sum of characters $z \mapsto z^{a_j} \bar z^{b_j}$ with $a_j = p_j - \tfrac{n-1}{2}$ and $b_j = q_j - \tfrac{n-1}{2}$, this reads
+  $a_j + b_j = w - (n-1)$. Over a totally complex field, for the infinitesimal characters at an embedding
+  $\tau$ and at its conjugate $\bar\tau$, the corresponding statement is a symmetry $z \mapsto w' - z$ for an integer
+  $w'$ determined by $w$ and $n$ through this shift.
 - **Cohomological representations** (Clozel). A cuspidal regular algebraic representation is
-  cohomological: its archimedean component has non-zero $(\mathfrak{g}, K)$-cohomology with coefficients in
-  an algebraic representation, so it contributes to the cohomology of the locally symmetric spaces of
-  $\mathrm{GL}_n$.
+  cohomological: its archimedean component has non-zero $(\mathfrak{g}, K)$-cohomology with coefficients in an
+  algebraic representation, so that it contributes to the cohomology of the locally symmetric spaces of
+  $\mathrm{GL}_n$. This is a separate statement from the purity lemma.
 
 A good expansion has pages for the definitions of algebraic, regular algebraic and cohomological
 representations, for the purity lemma, and for the equivalence of regular algebraicity and

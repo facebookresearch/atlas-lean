@@ -22,12 +22,15 @@ Let $F$ be a non-archimedean local field with uniformizer $\varpi$ and residue f
 - [Rankin–Selberg L-functions for GLₙ × GLₘ](rankin-selberg-l-functions-for-gl-n.md), for the unramified computation $\Psi(s, W^\circ, \bar W^\circ, \Phi^\circ) = \det(1 - q^{-s} A_\pi \otimes \bar A_\pi)^{-1}$ applied to $\pi$ and its complex conjugate, and for the absolute convergence of this local integral for $\operatorname{Re} s \ge 1$ when $\pi$ is unitary and generic; the factor $1 - \lvert \mu_i(\varpi) \rvert^2 q^{-s}$ of the determinant then cannot vanish for $\operatorname{Re} s \ge 1$, and the same argument for $\tilde\pi$ gives the lower bound
 - [Fourier expansion and global Whittaker models of cusp forms on GLₙ](whittaker-fourier-expansion.md), for the genericity of the local components of a cuspidal representation, used in item 2
 - [Tensor product theorem for automorphic representations](../automorphic-forms-on-reductive-groups/tensor-product-theorem.md), for the unitarity of the local components of a unitary cuspidal representation, used in item 2
+- [Whittaker models and the Gelfand–Kazhdan theorems for GLₙ](../../reductive-groups-over-local-fields/representations-of-p-adic-gl-n/whittaker-models-for-gl-n.md), for the description of generic irreducible representations by unlinked segments, from which a generic unramified representation is the full, irreducible, unramified principal series $\mathrm{Ind}(\mu_1 \otimes \dots \otimes \mu_n)$, the form in which items 1 and 2 are stated (Cogdell, Lecture 7)
 
 ## Sources
 
 - J. W. Cogdell, "Lectures on L-functions, converse theorems, and functoriality for GL_n", in
   *Lectures on Automorphic L-functions*, Fields Institute Monographs 20, American Mathematical Society,
-  2004; author's version <https://people.math.osu.edu/cogdell.1/fields-www.pdf>: Lecture 7, Theorem 7.1,
+  2004; author's version <https://people.math.osu.edu/cogdell.1/fields-www.pdf>: Lecture 7, §1, p. 54 (an
+  irreducible generic unramified representation is a full induced representation from unramified
+  characters), Theorem 7.1,
   Corollary 7.1.2 ("the Jacquet-Shalika bounds on the Satake parameters", $q^{-1/2} < \lvert \mu_i(\varpi) \rvert < q^{1/2}$)
   and its proof; Lecture 4, Corollary 4.1.2; Lecture 3, Theorem 3.6.
 - P. Sarnak, "Notes on the generalized Ramanujan conjectures", in *Harmonic Analysis, the Trace Formula,

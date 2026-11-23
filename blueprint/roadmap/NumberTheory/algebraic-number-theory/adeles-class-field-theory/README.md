@@ -10,6 +10,7 @@ Places, adeles and ideles, ray class groups, Artin map, Hilbert class fields, Ne
 - [Artin map](artin-map/README.md)
 - [Congruence subgroups for a modulus](congruence-subgroups-for-a-modulus/README.md)
 - [Ray class characters](ray-class-characters/README.md)
+- [Additive duality of adeles and the volume of A/K](additive-duality-of-adeles.md)
 - [Poisson summation formula for adeles](adelic-poisson-summation.md)
 - [Siegel sets and reduction theory for adelic groups](reduction-theory-for-adelic-groups.md)
 - [Neukirch–Uchida theorem](neukirch-uchida.md)

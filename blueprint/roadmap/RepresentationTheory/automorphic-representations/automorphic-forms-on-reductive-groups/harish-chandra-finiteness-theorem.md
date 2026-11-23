@@ -20,7 +20,7 @@ $K_\infty$-translates span a representation of $K_\infty$ whose irreducible cons
 
 ## Proof depends on
 
-- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the finiteness of $G(k) \backslash G(\mathbb{A}_f) / L$, which reduces item 1 to finitely many arithmetic quotients $\Gamma_i \backslash G_\infty$, for the finitely many classes of maximal parabolic subgroups and for the finite volume, used in the induction on the rank
+- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the finiteness of class numbers, that is of $G(k) \backslash G(\mathbb{A}_f) / L$, which reduces item 1 to finitely many arithmetic quotients $\Gamma_i \backslash G_\infty$ with $\Gamma_i$ arithmetic (finiteness of $G(k)$-orbits alone would not give this), for the finitely many $\Gamma_i$-conjugacy classes of maximal parabolic subgroups and for the finite volume after dividing by $A_G(\mathbb{R})^0$ (the reduction to a group without split central torus), used in the induction on the rank, where the constant terms along each maximal parabolic subgroup are automorphic forms on its Levi factor (Borel, 6.6, 7.4 (c) and 8.4)
 - [Rapid decay of cusp forms](rapid-decay-of-cusp-forms.md), for the boundedness of cusp forms, so that the cusp forms of a given type form a closed subspace of $L^2$ consisting of bounded functions, which is finite-dimensional by Godement's lemma
 
 ## Sources
