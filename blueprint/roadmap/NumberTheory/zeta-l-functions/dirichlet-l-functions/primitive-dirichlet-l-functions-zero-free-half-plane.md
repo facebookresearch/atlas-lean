@@ -45,7 +45,7 @@ The other inputs belong to eight nodes that are themselves still to be broken do
 [automorphic representations of GLₙ and unitary groups](../../../RepresentationTheory/automorphic-representations/automorphic-representations-of-gl-n-and-unitary-groups.md),
 [representations of U(p, q)](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-u-p-q.md),
 [smooth representations of p-adic GLₙ and the local Langlands correspondence](../../../RepresentationTheory/reductive-groups-over-local-fields/smooth-representations-of-p-adic-gl-n-and-local-langlands.md),
-[Galois cohomology and p-adic Hodge theory](../../galois-representations/galois-cohomology-and-p-adic-hodge-theory.md),
+[Galois cohomology and p-adic Hodge theory](../../algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md),
 [vanishing theorems and resolution of singularities in characteristic zero](../../../AlgebraicGeometry/birational-geometry/vanishing-theorems-and-resolution-in-characteristic-zero.md),
 [arithmetic intersection theory, heights and arithmetic volumes](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-intersection-theory-heights-and-volumes.md)
 and [abelian schemes and their moduli](../../../AlgebraicGeometry/abelian-varieties/abelian-schemes-and-their-moduli.md).
@@ -61,7 +61,7 @@ and [abelian schemes and their moduli](../../../AlgebraicGeometry/abelian-variet
 - [Representations of U(p, q)](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-u-p-q.md)
 - [Smooth representations of p-adic GLₙ and the local Langlands correspondence](../../../RepresentationTheory/reductive-groups-over-local-fields/smooth-representations-of-p-adic-gl-n-and-local-langlands.md), for a partial local Langlands correspondence constructed from cuspidal parameters
 - [Global Artin reciprocity](../../algebraic-number-theory/adeles-class-field-theory/global-artin-reciprocity.md), for the global Artin map used to construct the compatible local Artin map in the partial correspondence
-- [Galois cohomology and p-adic Hodge theory](../../galois-representations/galois-cohomology-and-p-adic-hodge-theory.md)
+- [Galois cohomology and p-adic Hodge theory](../../algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md)
 - [Vanishing theorems and resolution of singularities in characteristic zero](../../../AlgebraicGeometry/birational-geometry/vanishing-theorems-and-resolution-in-characteristic-zero.md)
 - [Arithmetic intersection theory, heights and arithmetic volumes](../../../AlgebraicGeometry/arakelov-geometry/arithmetic-intersection-theory-heights-and-volumes.md)
 - [Abelian schemes and their moduli](../../../AlgebraicGeometry/abelian-varieties/abelian-schemes-and-their-moduli.md)
