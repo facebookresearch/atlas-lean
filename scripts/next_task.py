@@ -7,8 +7,9 @@ The site publishes tasks.json: the articles Autoform finds ready to state or to 
 What the tools own), as `autoform work list --json` lists them on the last main build, with the commit they come
 from. This script downloads it, or reads a local copy, and lists through the GitHub API the repository's open pull
 requests, whatever their base, and those merged into main since that commit, whose work tasks.json may not show yet:
-GitHub's times are to the second, so one merged in the commit's second counts too. It finds those in main's history
-since that commit, so however many pull requests were closed or touched meanwhile, it reads only what main merged.
+GitHub's times are to the second, so one merged in the commit's second counts too. It finds those with GitHub's
+search, by the time they were merged, and among the closed pull requests updated last, which the search may not show
+yet; so it reads what main merged, however many other pull requests were closed or touched meanwhile.
 Such a pull request takes a task when its title, body or branch name holds, as a whole word:
 
 - the task's article id (af_...), or one of its Lean declarations in full; or
@@ -30,10 +31,10 @@ Of the free tasks it prints the next N: the statements still to write first, as 
 waiting are waiting for, then the proofs, each in tasks.json's order, which is by article path. --json prints them
 for agents, with Autoform's fields.
 
-Reading the open pull requests needs no token, within the GitHub API's limit of 60 requests an hour from one address,
-but reading those merged since tasks.json's commit does, as it goes through GitHub's GraphQL API: set GH_TOKEN (or
-GITHUB_TOKEN). Every request to the API sends that token, and a redirect away from it drops the token. Only the
-Python standard library is used.
+Reading the open pull requests needs no token, within the GitHub API's limit of 60 requests an hour from one
+address, but reading those merged since tasks.json's commit does, as their branches come from GitHub's GraphQL API:
+set GH_TOKEN (or GITHUB_TOKEN). Every request to the API sends that token, and a redirect away from it drops the
+token. Only the Python standard library is used.
 """
 
 from __future__ import annotations
@@ -61,14 +62,13 @@ MAIN = "main"
 # The `autoform work list --json` format tasks.json has; another one may mean other fields.
 SCHEMA = "autoform-work/v2"
 PER_PAGE = 100
-# Open pull requests are read a page at a time, at most this many pages, and main's commits since tasks.json's
-# commit too, at most this many pages; the pull requests those commits merged are read this many at a time.
+# Open pull requests are read a page at a time, at most this many pages. GitHub's search lists at most this many
+# pages of results, so a span of merge times with more is searched in two halves; the pull requests it finds are read
+# this many at a time through GitHub's GraphQL API.
 OPEN_PAGES = 30
-COMMIT_PAGES = 100
+SEARCH_PAGES = 10
 BATCH = 100
 GRAPHQL = f"{API}/graphql"
-# How a commit on main names the pull request it merged, in its subject: a merge commit's, or a squash's end.
-MERGED = re.compile(r"\AMerge pull request #(\d+) from |\(#(\d+)\)\Z")
 # A component of a declaration shared by at most this many tasks' declarations is specific enough to say which
 # task a short name means (see taken).
 RARE = 5
@@ -184,21 +184,23 @@ def moment(text: str) -> datetime:
     return datetime.fromisoformat(text.replace("Z", "+00:00"))
 
 
+def listed(url: str, token: str | None, media: str = "application/vnd.github+json") -> list[dict]:
+    """The rows *url* lists, a JSON array."""
+    try:
+        rows = json.loads(request(url, token, media=media))
+    except ValueError:
+        rows = None
+    if not isinstance(rows, list) or not all(isinstance(row, dict) for row in rows):
+        raise Failure(f"{url} did not list what it should")
+    return rows
+
+
 def pull_requests(repository: str, since: str | None, token: str | None) -> list[dict]:
     """The repository's open pull requests, whatever their base, and, when *since* is a time, those merged into MAIN
     after it."""
-    def listed(url: str, media: str = "application/vnd.github+json") -> list[dict]:
-        try:
-            rows = json.loads(request(url, token, media=media))
-        except ValueError:
-            rows = None
-        if not isinstance(rows, list):
-            raise Failure(f"{url} did not list what it should")
-        return rows
-
     found: list[dict] = []
     for number in range(1, OPEN_PAGES + 1):
-        rows = listed(f"{API}/repos/{repository}/pulls?state=open&per_page={PER_PAGE}&page={number}", RENDERED)
+        rows = listed(f"{API}/repos/{repository}/pulls?state=open&per_page={PER_PAGE}&page={number}", token, RENDERED)
         found += rows
         if len(rows) < PER_PAGE:
             break
@@ -207,36 +209,70 @@ def pull_requests(repository: str, since: str | None, token: str | None) -> list
                       "reads")
     if since:
         cutoff = moment(since)
-        # The pull requests that main's commits since the cutoff merged, as their subjects name them; a second
-        # earlier, so that a commit in the cutoff's second is read too.
-        after = (cutoff.astimezone(timezone.utc) - timedelta(seconds=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        merged: set[int] = set()
-        for number in range(1, COMMIT_PAGES + 1):
-            rows = listed(f"{API}/repos/{repository}/commits?sha={MAIN}&since={after}&per_page={PER_PAGE}"
-                          f"&page={number}")
-            for row in rows:
-                subject = (((row.get("commit") or {}) if isinstance(row, dict) else {}).get("message") or "")
-                if match := MERGED.search(str(subject).partition("\n")[0]):
-                    merged.add(int(match.group(1) or match.group(2)))
-            if len(rows) < PER_PAGE:
-                break
-        else:
-            raise Failure(f"main has more than {COMMIT_PAGES * PER_PAGE} commits since {since}, when tasks.json was "
-                          "computed, more than this script reads; use a newer tasks.json")
-        if merged and not token:
-            raise Failure("reading the pull requests merged into main since tasks.json was computed needs a token, as "
-                          "it goes through GitHub's GraphQL API: set GH_TOKEN to a GitHub token")
-        numbers = sorted(merged)
-        for start in range(0, len(numbers), BATCH):
+
+        def merged(row: dict) -> bool:
             # The commit's second counts, as the commit and GitHub's merge times are both to the second.
-            found += [row for row in merged_pulls(repository, numbers[start:start + BATCH], token)
-                      if row["merged_at"] and moment(row["merged_at"]) >= cutoff and row["base"]["ref"] == MAIN]
+            return (bool(row.get("merged_at")) and moment(row["merged_at"]) >= cutoff
+                    and (row.get("base") or {}).get("ref") == MAIN)
+
+        # The closed pull requests updated last, which hold any merged since the search last indexed them, then the
+        # rest of those merged since the cutoff, which the search finds by their merge times, up to now.
+        recent = [row for row in listed(f"{API}/repos/{repository}/pulls?state=closed&sort=updated&direction=desc"
+                                        f"&per_page={PER_PAGE}", token, RENDERED) if merged(row)]
+        now = datetime.now(timezone.utc).replace(microsecond=0)
+        numbers = sorted(merged_numbers(repository, cutoff.astimezone(timezone.utc).replace(microsecond=0), now, token)
+                         - {row["number"] for row in recent})
+        if numbers and not token:
+            raise Failure("reading the pull requests merged into main since tasks.json was computed needs a token, as "
+                          "their branches come from GitHub's GraphQL API: set GH_TOKEN to a GitHub token")
+        found += recent
+        for start in range(0, len(numbers), BATCH):
+            found += [row for row in merged_pulls(repository, numbers[start:start + BATCH], token) if merged(row)]
     return found
+
+
+def merged_numbers(repository: str, start: datetime, end: datetime, token: str | None) -> set[int]:
+    """The numbers of the pull requests merged into MAIN from *start* to *end*, both to the second and included, as
+    GitHub's search finds them by their merge times. A span with more than the search lists is searched in two
+    halves, and a search that timed out, or listed fewer than it counted, stops the script."""
+    stamp = "%Y-%m-%dT%H:%M:%SZ"
+    query = f"repo:{repository} is:pr is:merged base:{MAIN} merged:{start.strftime(stamp)}..{end.strftime(stamp)}"
+    numbers: set[int] = set()
+    total = 0
+    for page in range(1, SEARCH_PAGES + 1):
+        url = f"{API}/search/issues?" + urllib.parse.urlencode(
+            {"q": query, "sort": "created", "order": "asc", "per_page": PER_PAGE, "page": page})
+        try:
+            answer = json.loads(request(url, token))
+        except ValueError:
+            answer = None
+        items = answer.get("items") if isinstance(answer, dict) else None
+        if (not isinstance(items, list) or not isinstance(answer.get("total_count"), int)
+                or not all(isinstance(item, dict) and isinstance(item.get("number"), int) for item in items)):
+            raise Failure(f"GitHub's search did not list the pull requests merged into main: {url}")
+        if answer.get("incomplete_results"):
+            raise Failure("GitHub's search timed out before it listed every pull request merged into main since "
+                          "tasks.json was computed; run this script again")
+        total = answer["total_count"]
+        if total > SEARCH_PAGES * PER_PAGE:
+            if end <= start:
+                raise Failure(f"more than {SEARCH_PAGES * PER_PAGE} pull requests were merged into main at "
+                              f"{start.strftime(stamp)}, more than this script reads")
+            middle = start + (end - start) // 2
+            return (merged_numbers(repository, start, middle, token)
+                    | merged_numbers(repository, middle + timedelta(seconds=1), end, token))
+        numbers |= {item["number"] for item in items}
+        if len(items) < PER_PAGE:
+            break
+    if len(numbers) < total:
+        raise Failure("GitHub's search listed fewer pull requests merged into main than it counted, as some were "
+                      "merged while it listed them; run this script again")
+    return numbers
 
 
 def merged_pulls(repository: str, numbers: list[int], token: str | None) -> list[dict]:
     """The pull requests *numbers*, through GitHub's GraphQL API, with the fields that the API's list of pull
-    requests gives (RENDERED); a number that is no pull request gives none."""
+    requests gives (RENDERED). An error, or a number it gives no pull request for, stops the script."""
     owner, _, name = repository.partition("/")
     fields = "number title body bodyHTML headRefName baseRefName mergedAt"
     query = ("query($owner: String!, $name: String!) { repository(owner: $owner, name: $name) { "
@@ -247,16 +283,17 @@ def merged_pulls(repository: str, numbers: list[int], token: str | None) -> list
     except ValueError:
         answer = None
     found = (answer.get("data") or {}).get("repository") if isinstance(answer, dict) else None
-    if not isinstance(found, dict):
-        errors = answer.get("errors") if isinstance(answer, dict) else None
+    errors = answer.get("errors") if isinstance(answer, dict) else None
+    if errors or not isinstance(found, dict):
         raise Failure(f"GitHub's GraphQL API did not give the pull requests merged into main: {shown(errors)}")
     rows = []
     for number in numbers:
         pull = found.get(f"p{number}")
-        if isinstance(pull, dict):
-            rows.append({"number": number, "title": pull.get("title"), "body": pull.get("body"),
-                         "body_html": pull.get("bodyHTML"), "head": {"ref": pull.get("headRefName")},
-                         "base": {"ref": pull.get("baseRefName")}, "merged_at": pull.get("mergedAt")})
+        if not isinstance(pull, dict) or pull.get("number") != number:
+            raise Failure(f"GitHub's GraphQL API gave no pull request #{number}, which its search found merged")
+        rows.append({"number": number, "title": pull.get("title"), "body": pull.get("body"),
+                     "body_html": pull.get("bodyHTML"), "head": {"ref": pull.get("headRefName")},
+                     "base": {"ref": pull.get("baseRefName")}, "merged_at": pull.get("mergedAt")})
     return rows
 
 
