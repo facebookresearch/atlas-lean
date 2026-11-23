@@ -87,7 +87,7 @@ places.
 
 ## Proof depends on
 
-- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md), for the resolution of the generic fibre in the existence of a generic resolution of singularities
+- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md), for the resolution of the generic fibre in the existence of a generic resolution of singularities
 
 ## Sources
 

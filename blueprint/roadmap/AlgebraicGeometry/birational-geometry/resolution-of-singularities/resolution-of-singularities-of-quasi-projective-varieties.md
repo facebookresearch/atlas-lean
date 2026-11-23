@@ -7,7 +7,7 @@ projective morphism $\Pi \colon R(X) \to X$ such that
 2. $\Pi$ is an isomorphism over the smooth locus $X^{\mathrm{ns}} = X \setminus \operatorname{Sing}
    X$;
 3. $\Pi^{-1}(\operatorname{Sing} X)$, with its reduced structure, is a divisor with
-   [simple normal crossings](simple-normal-crossing-divisor.md).
+   [simple normal crossings](../simple-normal-crossing-divisor.md).
 
 This is Hironaka's theorem, in the form that Kollár calls a strong resolution (Theorem 27). Item 3
 is a statement about sets: Kollár separates the stronger scheme-theoretic condition (§3, p. 4). For
@@ -45,7 +45,7 @@ and Aside 46).
 
 ## Depends on
 
-- [Simple normal crossing divisor](simple-normal-crossing-divisor.md)
+- [Simple normal crossing divisor](../simple-normal-crossing-divisor.md)
 
 ## Proof depends on
 

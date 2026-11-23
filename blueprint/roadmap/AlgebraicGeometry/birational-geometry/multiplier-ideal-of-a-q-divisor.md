@@ -15,7 +15,7 @@ an ideal sheaf on $X$ that does not depend on the choice of the log resolution (
 Proposition 1.6).
 
 Log resolutions exist: the blow-up sequence $\Pi$ given by
-[principalization](principalization-of-ideal-sheaves.md) of the ideal sheaf of the support of $D$,
+[principalization](resolution-of-singularities/principalization-of-ideal-sheaves.md) of the ideal sheaf of the support of $D$,
 with $E = \emptyset$, is one. Indeed, the pull-back of this ideal sheaf is the ideal sheaf of an
 effective divisor with snc support whose support is that of $\Pi^* D$; in Kollár's construction this
 support is the total exceptional set $\mathrm{Ex}_{\mathrm{tot}}(\Pi)$, which contains
@@ -57,14 +57,14 @@ defines it ((6.23)–(6.24′)).
 
 - [Simple normal crossing divisor](simple-normal-crossing-divisor.md), for $\mathbb{Q}$-divisors, their
   round-down and snc support
-- [Principalization of ideal sheaves in characteristic zero](principalization-of-ideal-sheaves.md), for
+- [Principalization of ideal sheaves in characteristic zero](resolution-of-singularities/principalization-of-ideal-sheaves.md), for
   the existence of log resolutions
 
 ## Proof depends on
 
-- [Functorial resolution of schemes of finite type in characteristic zero](functorial-resolution-of-schemes-of-finite-type.md),
+- [Functorial resolution of schemes of finite type in characteristic zero](resolution-of-singularities/functorial-resolution-of-schemes-of-finite-type.md),
   to resolve the closure of the graph in the common refinement of two log resolutions
-- [Principalization of ideal sheaves in characteristic zero](principalization-of-ideal-sheaves.md), to
+- [Principalization of ideal sheaves in characteristic zero](resolution-of-singularities/principalization-of-ideal-sheaves.md), to
   make the common refinement a log resolution
 - [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md),
   for the projection formula in Lemma 1.9

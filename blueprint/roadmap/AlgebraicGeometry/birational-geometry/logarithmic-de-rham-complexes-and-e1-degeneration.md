@@ -71,9 +71,9 @@ theorems.
 
 - [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md),
   for Serre vanishing, Serre duality and GAGA
-- [Resolution of singularities of quasi-projective varieties](resolution-of-singularities-of-quasi-projective-varieties.md),
+- [Resolution of singularities of quasi-projective varieties](resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md),
   for the desingularizations of cyclic covers in the proof of Claim 5.13
-- [Principalization of ideal sheaves in characteristic zero](principalization-of-ideal-sheaves.md), to
+- [Principalization of ideal sheaves in characteristic zero](resolution-of-singularities/principalization-of-ideal-sheaves.md), to
   make the pull-back of the branch divisor a normal crossing divisor on such a desingularization, in the
   same proof
 

@@ -116,7 +116,7 @@ $\mu$, because two generic resolutions are dominated by a third and the projecti
 ## Proof depends on
 
 - [Chow groups with supports and their products](chow-groups-with-supports.md), for the integral lift of the intersection pairing (Gillet–Soulé, proof of Theorem 4.3.2, pp. 148–151)
-- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md), for the generic resolutions through which the intersection numbers are defined when $X_\mathbb{Q}$ is singular and for a common refinement of two of them
+- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md), for the generic resolutions through which the intersection numbers are defined when $X_\mathbb{Q}$ is singular and for a common refinement of two of them
 
 ## Sources
 

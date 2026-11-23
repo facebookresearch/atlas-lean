@@ -58,7 +58,7 @@ $\psi$ (§§4–5, Proposition 4.5 (c), Observation 5.1).
 - [L² estimates for the ∂̄ operator](l2-estimates-for-the-dbar-operator.md), for the twisted $L^2$
   estimates on complete Kähler manifolds and the complete Kähler metrics on complements of analytic
   subsets
-- [Principalization relative to a simple normal crossing divisor](principalization-relative-to-a-simple-normal-crossing-divisor.md),
+- [Principalization relative to a simple normal crossing divisor](resolution-of-singularities/principalization-relative-to-a-simple-normal-crossing-divisor.md),
   in its analytic form, for the coherent analytic ideal defining the singularities of $\psi$
 
 ## Sources

@@ -58,7 +58,7 @@ boundary, pp. 64–66).
 
 ## Depends on
 
-- [Simple normal crossing divisor](simple-normal-crossing-divisor.md), for blow-up sequences, blow-up
+- [Simple normal crossing divisor](../simple-normal-crossing-divisor.md), for blow-up sequences, blow-up
   sequence functors and divisors with snc support
 
 ## Proof depends on

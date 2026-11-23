@@ -86,7 +86,7 @@ dependencies below follow this second route, which needs no compactification of 
 - [Arithmetic Chow groups](arithmetic-chow-group.md)
 - [Chow groups with supports and their products](chow-groups-with-supports.md), for the Chow groups with supports $CH^p_T(X)$, $CH^p_{\mathrm{fin}}(X)$ and their products, which define the cycle part $[Y] \cdot [Z]$
 - [Green forms of logarithmic type and the star product](green-forms-of-logarithmic-type.md), for the representatives $\eta_Y$ and the star product
-- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md), for the resolutions $\widetilde Z_j \to Z_j$ through which $g_Y \wedge \delta_Z$ is defined
+- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md), for the resolutions $\widetilde Z_j \to Z_j$ through which $g_Y \wedge \delta_Z$ is defined
 
 ## Proof depends on
 

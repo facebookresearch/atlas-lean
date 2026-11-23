@@ -1,7 +1,7 @@
 # Principalization relative to a simple normal crossing divisor
 
 Let $M$ be a smooth variety over a field of characteristic zero, $E = H_1 + \dots + H_s$ a
-[simple normal crossing divisor](simple-normal-crossing-divisor.md) on $M$ with smooth members
+[simple normal crossing divisor](../simple-normal-crossing-divisor.md) on $M$ with smooth members
 $H_i$, taken in this order, and $I \subset \mathcal{O}_M$ a coherent ideal sheaf that is nonzero on
 every irreducible component of $M$. A blow-up $\sigma \colon M' \to M$ with smooth centre $C$ is
 *admissible* for $(I, E)$ if $C \subset V(I)$ and $C$ has simple normal crossings with $E$; the
@@ -50,7 +50,7 @@ conclusion $\operatorname{max\text{-}ord} I_r < 1$ says $I_r = \mathcal{O}$.
 
 ## Depends on
 
-- [Simple normal crossing divisor](simple-normal-crossing-divisor.md), for snc divisors, centres having
+- [Simple normal crossing divisor](../simple-normal-crossing-divisor.md), for snc divisors, centres having
   simple normal crossings with a divisor and divisors with snc support
 
 ## Proof depends on

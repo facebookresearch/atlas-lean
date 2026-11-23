@@ -58,8 +58,8 @@ expansion has pages for: the restriction from integral polynomials to sections o
 on $X$, which is surjective for large $\tau$ by Serre vanishing for the ideal of $X$, and,
 separately, the comparison of `secM`, `chartLat` and `chartLatNm` with these sections, including the
 contribution of the normalization, at the scale $o(\tau^{D+1})$ needed here; the comparison of the
-norms defining smallness with sup norms of sections, by [Gromov's inequality](gromov-inequality.md)
-and the estimates for [normed lattices](small-elements-of-normed-lattices.md); and the deduction of
+norms defining smallness with sup norms of sections, by [Gromov's inequality](../gromov-inequality.md)
+and the estimates for [normed lattices](../small-elements-of-normed-lattices.md); and the deduction of
 1–3 from the
 [nef Hilbert–Samuel formula](arithmetic-hilbert-samuel-formula-for-nef-hermitian-line-bundles.md)
 and of 4 from [Moriwaki's generalized Hodge index theorem](generalized-hodge-index-theorem.md). Over
@@ -68,16 +68,16 @@ distinguished.
 
 ## Depends on
 
-- [Arithmetic varieties and hermitian vector bundles](arithmetic-variety.md)
-- [Positivity of hermitian line bundles](positivity-of-hermitian-line-bundles.md)
-- [Arithmetic degree and arithmetic intersection numbers](arithmetic-intersection-numbers.md)
+- [Arithmetic varieties and hermitian vector bundles](../arithmetic-variety.md)
+- [Positivity of hermitian line bundles](../positivity-of-hermitian-line-bundles.md)
+- [Arithmetic degree and arithmetic intersection numbers](../arithmetic-intersection-numbers.md)
 
 ## Proof depends on
 
 - [Arithmetic Hilbert–Samuel formula for nef hermitian line bundles](arithmetic-hilbert-samuel-formula-for-nef-hermitian-line-bundles.md)
 - [Moriwaki's generalized Hodge index theorem](generalized-hodge-index-theorem.md)
-- [Gromov's inequality](gromov-inequality.md)
-- [Small elements of normed lattices](small-elements-of-normed-lattices.md)
+- [Gromov's inequality](../gromov-inequality.md)
+- [Small elements of normed lattices](../small-elements-of-normed-lattices.md)
 
 ## Sources
 

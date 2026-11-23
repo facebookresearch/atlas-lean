@@ -39,7 +39,7 @@ follows by bounding each $\bar A_i$ between $-\bar B$ and $\bar B$ for one ample
 
 - [Moriwaki's estimate for small sections along an ample divisor](moriwaki-fundamental-estimate.md), for Theorem 3.4, Proposition 3.5 and Lemma 3.6
 - [Arithmetic volume](arithmetic-volume.md), for birational invariance (Theorem 4.2), monotonicity and homogeneity (Lemmas 5.1 and 5.2)
-- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md), for the generic resolution of singularities that reduces the theorem to a generically smooth $X$
+- [Resolution of singularities of quasi-projective varieties](../../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md), for the generic resolution of singularities that reduces the theorem to a generically smooth $X$
 
 ## Sources
 

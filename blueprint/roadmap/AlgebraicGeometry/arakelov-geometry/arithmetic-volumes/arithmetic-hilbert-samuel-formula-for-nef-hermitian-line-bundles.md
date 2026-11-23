@@ -22,15 +22,15 @@ $\limsup$.
 
 ## Depends on
 
-- [Positivity of hermitian line bundles](positivity-of-hermitian-line-bundles.md), for nef and big hermitian line bundles
-- [Arithmetic degree and arithmetic intersection numbers](arithmetic-intersection-numbers.md), for $(\bar L^{d+1})$
+- [Positivity of hermitian line bundles](../positivity-of-hermitian-line-bundles.md), for nef and big hermitian line bundles
+- [Arithmetic degree and arithmetic intersection numbers](../arithmetic-intersection-numbers.md), for $(\bar L^{d+1})$
 - [Arithmetic volume](arithmetic-volume.md), for $\widehat{\mathrm{vol}}$
 
 ## Proof depends on
 
 - [Continuity of the arithmetic volume](continuity-of-the-arithmetic-volume.md)
 - [Arithmetic volume](arithmetic-volume.md), for the ample case of Lemma 3.1, Theorem 4.3, the effectivity of some $k \bar L - \bar A$ for big $\bar L$, Lemma 4.4 and homogeneity
-- [Arithmetic Hilbert–Samuel theorem](arithmetic-hilbert-samuel-theorem.md), through the ample case of Lemma 3.1 applied to $\bar L + \varepsilon \bar A$ and to $p \bar L - (k \bar L - \bar A)$
+- [Arithmetic Hilbert–Samuel theorem](../arithmetic-hilbert-samuel-theorem.md), through the ample case of Lemma 3.1 applied to $\bar L + \varepsilon \bar A$ and to $p \bar L - (k \bar L - \bar A)$
 
 ## Sources
 

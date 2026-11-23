@@ -56,9 +56,9 @@ them.
 
 - [Logarithmic de Rham complexes and E₁-degeneration](logarithmic-de-rham-complexes-and-e1-degeneration.md),
   for Theorem 5.1 a) and Claim 5.13 of Esnault–Viehweg
-- [Principalization of ideal sheaves in characteristic zero](principalization-of-ideal-sheaves.md), for
+- [Principalization of ideal sheaves in characteristic zero](resolution-of-singularities/principalization-of-ideal-sheaves.md), for
   the blow-ups that make the divisors of the proof normal crossing divisors
-- [Resolution of singularities of quasi-projective varieties](resolution-of-singularities-of-quasi-projective-varieties.md),
+- [Resolution of singularities of quasi-projective varieties](resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md),
   for the desingularizations of the cyclic covers in the proof of Claim 5.13
 - [Standard results of coherent cohomology on projective varieties](standard-results-of-coherent-cohomology.md),
   for Serre vanishing and duality, flat base change, Bertini's theorem for the general member $H$,

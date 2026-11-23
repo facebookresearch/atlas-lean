@@ -5,7 +5,7 @@ $k$, by which Kollár constructs a functorial resolution from principalization, 
 a page of its own.
 
 1. (Descent, Kollár's Proposition 37.) Let $B$ be a
-   [blow-up sequence functor](simple-normal-crossing-divisor.md) defined on affine schemes of finite
+   [blow-up sequence functor](../simple-normal-crossing-divisor.md) defined on affine schemes of finite
    type over $k$, connected or not, that commutes with smooth surjections. Then $B$ has a unique
    extension to a blow-up sequence functor defined on all schemes of finite type over $k$ and
    commuting with smooth surjections.
@@ -41,7 +41,7 @@ smooth surjections and the compatibility of blowing up with flat base change.
 
 ## Depends on
 
-- [Simple normal crossing divisor](simple-normal-crossing-divisor.md), for blow-up sequences and blow-up
+- [Simple normal crossing divisor](../simple-normal-crossing-divisor.md), for blow-up sequences and blow-up
   sequence functors
 
 ## Sources

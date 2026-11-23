@@ -4,7 +4,7 @@ This node is still to be broken down: the statement is precise, but three inputs
 not yet pages.
 
 Let $p$ be a prime, $R$ a ring in which $p$ is nilpotent, $I \subset R$ a nilpotent ideal and $R_0 =
-R/I$. Let $\mathrm{AV}_R$ be the category of [abelian schemes](abelian-scheme.md) over $R$, and
+R/I$. Let $\mathrm{AV}_R$ be the category of [abelian schemes](../abelian-scheme.md) over $R$, and
 $\mathrm{AVBT}_{R_0, R}$ the category of triples $(A_0, X, \varepsilon)$ of an abelian scheme $A_0$
 over $R_0$, a [$p$-divisible group](p-divisible-group.md) $X$ over $R$ and an isomorphism of
 $p$-divisible groups $\varepsilon \colon X \times_R R_0 \to A_0[p^\infty]$; a morphism $(A_0, X,
@@ -50,14 +50,14 @@ existence of quotients of AF-schemes).
 
 ## Depends on
 
-- [Abelian scheme](abelian-scheme.md)
+- [Abelian scheme](../abelian-scheme.md)
 - [p-divisible group](p-divisible-group.md)
 
 ## Proof depends on
 
-- [Isogenies of abelian schemes](isogenies-of-abelian-schemes.md), for multiplication by an integer
+- [Isogenies of abelian schemes](../isogenies-of-abelian-schemes.md), for multiplication by an integer
   as a finite flat epimorphism and the finite flat kernels $A[p^n]$
-- [Homomorphisms of abelian schemes and commutativity](homomorphisms-of-abelian-schemes.md), for the
+- [Homomorphisms of abelian schemes and commutativity](../homomorphisms-of-abelian-schemes.md), for the
   morphisms of abelian schemes that preserve the zero section
 
 ## Sources

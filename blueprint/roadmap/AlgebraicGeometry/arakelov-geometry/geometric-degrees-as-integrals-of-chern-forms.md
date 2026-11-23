@@ -35,7 +35,7 @@ class of $V$.
 
 ## Proof depends on
 
-- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md),
+- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md),
   for the resolution $\tilde Z \to Z$
 - [Currents of integration and the support theorems](../birational-geometry/currents-of-integration.md),
   for Lelong's theorem on $[Z]$

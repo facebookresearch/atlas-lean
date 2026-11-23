@@ -28,7 +28,7 @@ algebraizable, which is why item (3) needs the invertible sheaf. Through the dic
 formal schemes and adic systems (Scholies (5.1.7) and (5.4.2)), items (1)–(3) say the same of
 compatible systems of coherent sheaves, of morphisms and of proper schemes $X_n$ over the
 $A/I^{n+1}$ with compatible line bundles ample on $X_0$. Item (3) is the algebraization step of
-[Mumford's construction](mumford-construction-of-degenerating-abelian-varieties.md), and Chai and
+[Mumford's construction](../moduli-and-compactifications/mumford-construction-of-degenerating-abelian-varieties.md), and Chai and
 Oort use it to algebraize the universal formal deformation of a polarized abelian variety; without a
 polarization a proper formal abelian scheme need not be algebraizable, and to algebraize a formal
 abelian scheme one also algebraizes its group law, by item (2), and checks separately that the

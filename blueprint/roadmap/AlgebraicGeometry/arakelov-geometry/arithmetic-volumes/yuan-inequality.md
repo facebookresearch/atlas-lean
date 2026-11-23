@@ -42,19 +42,19 @@ Hilbert–Samuel formula and the existence of bases of small sections for ample 
 
 ## Depends on
 
-- [Positivity of hermitian line bundles](positivity-of-hermitian-line-bundles.md), for ample (Zhang's and Moriwaki's sense), nef and strongly big
+- [Positivity of hermitian line bundles](../positivity-of-hermitian-line-bundles.md), for ample (Zhang's and Moriwaki's sense), nef and strongly big
 - [Arithmetic volume](arithmetic-volume.md), for $\widehat{\mathrm{vol}}$ on $\widehat{\mathrm{Pic}}(X) \otimes \mathbb{Q}$
-- [Arithmetic degree and arithmetic intersection numbers](arithmetic-intersection-numbers.md), for $(\bar L^{d+1})$ and $(\bar L^d \cdot \bar M)$
-- [Arithmetic varieties and hermitian vector bundles](arithmetic-variety.md), for $\chi_{\sup}$
+- [Arithmetic degree and arithmetic intersection numbers](../arithmetic-intersection-numbers.md), for $(\bar L^{d+1})$ and $(\bar L^d \cdot \bar M)$
+- [Arithmetic varieties and hermitian vector bundles](../arithmetic-variety.md), for $\chi_{\sup}$
 
 ## Proof depends on
 
-- [Arithmetic Hilbert–Samuel theorem](arithmetic-hilbert-samuel-theorem.md), in Yuan's proof (Proposition 2.8 through Corollary 2.7, and the last step of Section 2.5.1)
+- [Arithmetic Hilbert–Samuel theorem](../arithmetic-hilbert-samuel-theorem.md), in Yuan's proof (Proposition 2.8 through Corollary 2.7, and the last step of Section 2.5.1)
 - [Estimates for small sections along an effective divisor](estimates-for-small-sections-along-a-divisor.md), for the Bertini step of Section 2.3.3 and the estimates of Theorem 2.10, Propositions 2.13–2.14 and Lemmas 2.15–2.16
-- [Small elements of normed lattices](small-elements-of-normed-lattices.md), for the lower bound of the number of small sections by $\chi_{\sup}$ (Moriwaki's Proposition 2.1 (1)) in Moriwaki's extension
-- [Zhang's arithmetic ampleness theorem](arithmetic-ampleness-theorem.md), for the bases of small sections in Yuan's Corollary 2.7
+- [Small elements of normed lattices](../small-elements-of-normed-lattices.md), for the lower bound of the number of small sections by $\chi_{\sup}$ (Moriwaki's Proposition 2.1 (1)) in Moriwaki's extension
+- [Zhang's arithmetic ampleness theorem](../arithmetic-ampleness-theorem.md), for the bases of small sections in Yuan's Corollary 2.7
 - [Arithmetic volume](arithmetic-volume.md), for the homogeneity used in Moriwaki's extension
-- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md), for the generic resolution in Yuan's reduction (Section 2.3.3)
+- [Resolution of singularities of quasi-projective varieties](../../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md), for the generic resolution in Yuan's reduction (Section 2.3.3)
 
 ## Sources
 

@@ -12,23 +12,23 @@ connected base the height is a constant $h \ge 0$; Chai and Oort fix $h > 0$, bu
 $A = S$ of relative dimension $0$ gives $h = 0$, and over a disconnected base the height can differ
 from one component to another.
 
-For an [abelian scheme](abelian-scheme.md) $A \to S$ of relative dimension $g$, a locally constant
+For an [abelian scheme](../abelian-scheme.md) $A \to S$ of relative dimension $g$, a locally constant
 function, the kernels $A[p^i]$ of multiplication by $p^i$, which are finite locally free of rank
-$p^{2gi}$ by the theorem on [isogenies of abelian schemes](isogenies-of-abelian-schemes.md), form a
+$p^{2gi}$ by the theorem on [isogenies of abelian schemes](../isogenies-of-abelian-schemes.md), form a
 $p$-divisible group $A[p^\infty]$ of height $2g$, and a homomorphism of abelian schemes induces a
 homomorphism of their $p$-divisible groups.
 
 The **Serre dual** of $X = (G_i)$ is the $p$-divisible group $X^t = (G_i^D)$ of the Cartier duals,
 with the inclusions $G_s^D \hookrightarrow G_{s+1}^D$ dual to the surjections
-$G_{s+1} \to G_s$. For an abelian scheme with [dual abelian scheme](dual-abelian-scheme.md) $A^t$, the
+$G_{s+1} \to G_s$. For an abelian scheme with [dual abelian scheme](../dual-abelian-scheme.md) $A^t$, the
 duality of the kernels of isogenies gives $(A[p^\infty])^t = A^t[p^\infty]$.
 
 ## Depends on
 
-- [Abelian scheme](abelian-scheme.md), for the $p$-divisible group of an abelian scheme
-- [Isogenies of abelian schemes](isogenies-of-abelian-schemes.md), for the finite flat kernels
+- [Abelian scheme](../abelian-scheme.md), for the $p$-divisible group of an abelian scheme
+- [Isogenies of abelian schemes](../isogenies-of-abelian-schemes.md), for the finite flat kernels
   $A[p^i]$ and their ranks
-- [Dual abelian scheme](dual-abelian-scheme.md), for $A^t$ and the duality of kernels of isogenies
+- [Dual abelian scheme](../dual-abelian-scheme.md), for $A^t$ and the duality of kernels of isogenies
 
 ## Sources
 

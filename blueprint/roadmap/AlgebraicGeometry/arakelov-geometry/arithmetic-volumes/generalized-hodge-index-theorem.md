@@ -42,22 +42,22 @@ arithmetic intersection numbers.
 
 ## Depends on
 
-- [Arithmetic varieties and hermitian vector bundles](arithmetic-variety.md), for projective arithmetic varieties and generic resolutions of singularities
-- [Positivity of hermitian line bundles](positivity-of-hermitian-line-bundles.md), for semipositivity and bigness
+- [Arithmetic varieties and hermitian vector bundles](../arithmetic-variety.md), for projective arithmetic varieties and generic resolutions of singularities
+- [Positivity of hermitian line bundles](../positivity-of-hermitian-line-bundles.md), for semipositivity and bigness
 - [Arithmetic volume](arithmetic-volume.md)
-- [Arithmetic degree and arithmetic intersection numbers](arithmetic-intersection-numbers.md), for $(\bar L^{d+1})$
-- [Nef and big line bundles](../birational-geometry/nef-and-big-line-bundles.md), for nef line bundles on $X_\mathbb{Q}$ and on the geometric fibres
+- [Arithmetic degree and arithmetic intersection numbers](../arithmetic-intersection-numbers.md), for $(\bar L^{d+1})$
+- [Nef and big line bundles](../../birational-geometry/nef-and-big-line-bundles.md), for nef line bundles on $X_\mathbb{Q}$ and on the geometric fibres
 
 ## Proof depends on
 
-- [Arithmetic Riemann–Roch theorem](arithmetic-riemann-roch-theorem.md), in its form (14)–(15) for hermitian coherent sheaves over $\operatorname{Spec} \mathbb{Z}$, in the generically smooth case (Claim 6.2.1)
-- [Small elements of normed lattices](small-elements-of-normed-lattices.md), for Moriwaki's Proposition 2.1 (1) and (3) (Claim 6.2.1)
-- [Gromov's inequality](gromov-inequality.md), for the comparison of $L^2$ and sup norms (Claim 6.2.1)
-- [Analytic torsion and Quillen metrics](analytic-torsion-and-quillen-metrics.md), for the asymptotics of analytic torsion of Bismut and Vasserot (Claim 6.2.1)
+- [Arithmetic Riemann–Roch theorem](../arithmetic-riemann-roch-theorem.md), in its form (14)–(15) for hermitian coherent sheaves over $\operatorname{Spec} \mathbb{Z}$, in the generically smooth case (Claim 6.2.1)
+- [Small elements of normed lattices](../small-elements-of-normed-lattices.md), for Moriwaki's Proposition 2.1 (1) and (3) (Claim 6.2.1)
+- [Gromov's inequality](../gromov-inequality.md), for the comparison of $L^2$ and sup norms (Claim 6.2.1)
+- [Analytic torsion and Quillen metrics](../analytic-torsion-and-quillen-metrics.md), for the asymptotics of analytic torsion of Bismut and Vasserot (Claim 6.2.1)
 - [Continuity of the arithmetic volume](continuity-of-the-arithmetic-volume.md)
 - [Arithmetic volume](arithmetic-volume.md), for homogeneity (Proposition 4.7) and birational invariance (Theorem 4.2)
-- [Arithmetic degree and arithmetic intersection numbers](arithmetic-intersection-numbers.md), for the projection formula
-- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md), for the generic resolution of singularities
+- [Arithmetic degree and arithmetic intersection numbers](../arithmetic-intersection-numbers.md), for the projection formula
+- [Resolution of singularities of quasi-projective varieties](../../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md), for the generic resolution of singularities
 
 ## Sources
 

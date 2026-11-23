@@ -38,17 +38,17 @@ Serre vanishing.
 
 ## Depends on
 
-- [Arithmetic varieties and hermitian vector bundles](arithmetic-variety.md), for projective and
+- [Arithmetic varieties and hermitian vector bundles](../arithmetic-variety.md), for projective and
   generically smooth arithmetic varieties and the sup norm
 
 ## Proof depends on
 
-- [Small elements of normed lattices](small-elements-of-normed-lattices.md), for Moriwaki's
+- [Small elements of normed lattices](../small-elements-of-normed-lattices.md), for Moriwaki's
   Proposition 2.1
-- [Gromov's inequality](gromov-inequality.md)
-- [Arithmetic Hilbert–Samuel theorem](arithmetic-hilbert-samuel-theorem.md), through Moriwaki's
+- [Gromov's inequality](../gromov-inequality.md)
+- [Arithmetic Hilbert–Samuel theorem](../arithmetic-hilbert-samuel-theorem.md), through Moriwaki's
   Lemma 3.1
-- [Zhang's arithmetic ampleness theorem](arithmetic-ampleness-theorem.md), through Moriwaki's Lemma 3.1
+- [Zhang's arithmetic ampleness theorem](../arithmetic-ampleness-theorem.md), through Moriwaki's Lemma 3.1
 - [Estimates for small sections along an effective divisor](estimates-for-small-sections-along-a-divisor.md),
   for the distortion and restriction estimates of Moriwaki's §1
 

@@ -1,11 +1,11 @@
 # Moduli of principally polarized abelian varieties and their compactifications
 
 This node is still to be broken down. It covers the moduli of polarized
-[abelian schemes](abelian-scheme.md) with level structure and, in the principally polarized case,
+[abelian schemes](../abelian-scheme.md) with level structure and, in the principally polarized case,
 the toroidal and minimal compactifications of the moduli spaces that Faltings and Chai construct from
 the degenerations of polarized abelian varieties into semi-abelian schemes.
 
-For $g \ge 1$, principally [polarized](polarization.md) abelian schemes of relative dimension $g$ form
+For $g \ge 1$, principally [polarized](../polarization.md) abelian schemes of relative dimension $g$ form
 an algebraic stack $\mathcal{A}_g$ over $\mathbb{Z}$, with a coarse moduli space; the stack is not
 represented by a scheme carrying a universal family: already for $g = 1$, an elliptic curve and a
 nontrivial quadratic twist have the same $j$-invariant, and every principally polarized abelian
@@ -49,8 +49,8 @@ unitary Shimura varieties](toroidal-compactifications-of-unitary-shimura-varieti
 
 ## Depends on
 
-- [Abelian scheme](abelian-scheme.md)
-- [Polarization](polarization.md)
+- [Abelian scheme](../abelian-scheme.md)
+- [Polarization](../polarization.md)
 
 ## Sources
 

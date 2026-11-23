@@ -49,14 +49,14 @@ A good expansion has pages for:
 
 - [Poincaré–Lelong formula](../birational-geometry/poincare-lelong-formula.md), for currents of
   integration and the Green form $-\log \lVert s \rVert^2$ of a divisor
-- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md),
+- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md),
   for the resolutions $\psi_j$ in the definition of the star product
 
 ## Proof depends on
 
-- [Principalization of ideal sheaves in characteristic zero](../birational-geometry/principalization-of-ideal-sheaves.md),
+- [Principalization of ideal sheaves in characteristic zero](../birational-geometry/resolution-of-singularities/principalization-of-ideal-sheaves.md),
   for the embedded modification in the proof of item 1
-- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md),
+- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md),
   for the smooth projective compactification in the proof of item 1
 
 ## Sources

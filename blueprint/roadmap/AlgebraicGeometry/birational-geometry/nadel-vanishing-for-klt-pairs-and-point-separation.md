@@ -57,9 +57,9 @@ bundle on a compact complex manifold, with other constants (Theorems 0.1 and 0.3
 ## Proof depends on
 
 - [Kawamata–Viehweg vanishing theorem](kawamata-viehweg-vanishing-theorem.md)
-- [Functorial resolution of schemes of finite type in characteristic zero](functorial-resolution-of-schemes-of-finite-type.md),
+- [Functorial resolution of schemes of finite type in characteristic zero](resolution-of-singularities/functorial-resolution-of-schemes-of-finite-type.md),
   for log resolutions of pairs, after resolving $X$
-- [Principalization of ideal sheaves in characteristic zero](principalization-of-ideal-sheaves.md), for
+- [Principalization of ideal sheaves in characteristic zero](resolution-of-singularities/principalization-of-ideal-sheaves.md), for
   making the inverse image of the boundary and the exceptional locus a divisor with simple normal
   crossings
 

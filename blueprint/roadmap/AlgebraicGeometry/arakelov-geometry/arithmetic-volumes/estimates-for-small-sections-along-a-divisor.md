@@ -20,7 +20,7 @@ A good expansion has pages for:
   H^m)$ with $\varphi(x_i) \ne 0$ for all $i$, $\operatorname{div}(\varphi_\infty) \notin Z_m$ and
   $\lVert \varphi \rVert_{\sup} < 1$ (Moriwaki, "Arithmetic Bogomolov–Gieseker's inequality",
   Theorem 5.3, pp. 17–18, whose proof uses Zhang's bases of small sections of
-  [arithmetically ample](arithmetic-ampleness-theorem.md) bundles, Zhang's Corollary 4.8); and its
+  [arithmetically ample](../arithmetic-ampleness-theorem.md) bundles, Zhang's Corollary 4.8); and its
   use in Yuan §2.3.3, pp. 18–20, where the Bertini step avoids the generic points of the bad
   vertical components after passing to a multiple, Lipman's resolution serves in arithmetic
   dimension two, and Lemma 2.9 perturbs to positive curvature;
@@ -34,7 +34,7 @@ A good expansion has pages for:
   with Lemmas 2.15–2.16, pp. 25–29, which use the classical Hilbert–Samuel formula on the vertical
   components and the arithmetic one on the horizontal components; and the passage between sup and
   $L^2$ norms (Corollary 2.7 (2) and Proposition 2.13, through
-  [Gromov's inequality](gromov-inequality.md)), in this order, the inequalities being obtained for
+  [Gromov's inequality](../gromov-inequality.md)), in this order, the inequalities being obtained for
   $\chi_{L^2}$ and transferred to $\chi_{\sup}$;
 - Moriwaki's analytic estimates in §1 of "Continuity of volumes on arithmetic varieties", used in
   his fundamental estimate: the distortion estimate Theorem 1.2.1 (after Bouche and Tian) and its
@@ -43,16 +43,16 @@ A good expansion has pages for:
 
 ## Depends on
 
-- [Positivity of hermitian line bundles](positivity-of-hermitian-line-bundles.md)
+- [Positivity of hermitian line bundles](../positivity-of-hermitian-line-bundles.md)
 
 ## Proof depends on
 
-- [Gromov's inequality](gromov-inequality.md), for Yuan's Proposition 2.13
-- [Arithmetic Hilbert–Samuel theorem](arithmetic-hilbert-samuel-theorem.md), on the horizontal
+- [Gromov's inequality](../gromov-inequality.md), for Yuan's Proposition 2.13
+- [Arithmetic Hilbert–Samuel theorem](../arithmetic-hilbert-samuel-theorem.md), on the horizontal
   components, in Yuan's Lemmas 2.15–2.16
-- [Arithmetic ampleness theorem](arithmetic-ampleness-theorem.md), for Zhang's Corollary 4.8, the bases
+- [Arithmetic ampleness theorem](../arithmetic-ampleness-theorem.md), for Zhang's Corollary 4.8, the bases
   of small sections in the proof of Moriwaki's Theorem 5.3
-- [Extension of small sections and bases of small sections](extension-of-small-sections.md), for the
+- [Extension of small sections and bases of small sections](../extension-of-small-sections.md), for the
   steps of Zhang's proof of these bases
 
 ## Sources

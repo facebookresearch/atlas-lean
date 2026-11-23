@@ -38,7 +38,7 @@ Mumford builds a relatively complete model $\tilde P$ of $\tilde G$ with respect
 multiple $n\phi$ of the polarization (Theorem 2.5), divides it by $Y$ over each $A/I^n$ to obtain
 projective schemes $P_n$, with the descent of $\mathcal{O}(1)$ (Theorem 3.10), algebraizes the
 resulting formal scheme, and the closed subscheme of its boundary, with
-[Grothendieck's existence theorem](grothendieck-existence-theorem.md) to a scheme $P$ projective
+[Grothendieck's existence theorem](../deformations-and-p-divisible-groups/grothendieck-existence-theorem.md) to a scheme $P$ projective
 over $S$ and a closed subscheme of it, and takes for $G$ the open complement, whose completion is
 that of $\tilde G$. He then shows that $G$ is smooth over $S$ (Corollary 4.2), extends morphisms
 (Theorem 4.6, which starts from an $S$-homomorphism of the split tori $\tilde G_1 \to \tilde G_2$
@@ -56,11 +56,11 @@ theorem.
 
 ## Depends on
 
-- [Abelian scheme](abelian-scheme.md), for abelian varieties
+- [Abelian scheme](../abelian-scheme.md), for abelian varieties
 
 ## Proof depends on
 
-- [Grothendieck's existence theorem](grothendieck-existence-theorem.md), for the algebraization of a
+- [Grothendieck's existence theorem](../deformations-and-p-divisible-groups/grothendieck-existence-theorem.md), for the algebraization of a
   proper formal scheme with an ample invertible sheaf (item 3) and of the closed subscheme of its
   boundary (item 1)
 

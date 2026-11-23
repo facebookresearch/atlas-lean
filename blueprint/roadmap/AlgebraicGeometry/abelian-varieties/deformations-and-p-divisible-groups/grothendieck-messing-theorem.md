@@ -22,7 +22,7 @@ extensions $(R, I, (\gamma_i))$ of $R_0$ in which $p$ is nilpotent.
    where $\operatorname{Lie}(X/R)$ is the tangent space of $X$, a projective $R$-module of rank the
    dimension of $X$, and $\operatorname{Lie}(X^t/R)^\vee$ is the $R$-dual of the tangent space of the
    Serre dual $X^t$.
-3. If $A$ is an [abelian scheme](abelian-scheme.md) over $R$ with an isomorphism
+3. If $A$ is an [abelian scheme](../abelian-scheme.md) over $R$ with an isomorphism
    $A[p^\infty] \times_R R_0 \cong X_0$, there is a natural isomorphism
    $\mathbb{D}(X_0)_R \cong H_1^{\mathrm{dR}}(A/R)$ with the first de Rham homology of $A$, which
    identifies the sequence of (2) for $A[p^\infty]$ with the Hodge filtration
@@ -59,7 +59,7 @@ Rham homology for abelian schemes, and the bijection and lifting criterion of (4
 ## Depends on
 
 - [p-divisible group](p-divisible-group.md)
-- [Abelian scheme](abelian-scheme.md), for item (3)
+- [Abelian scheme](../abelian-scheme.md), for item (3)
 
 ## Sources
 

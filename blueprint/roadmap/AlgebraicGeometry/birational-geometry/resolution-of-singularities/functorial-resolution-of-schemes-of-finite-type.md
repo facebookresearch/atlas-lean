@@ -1,6 +1,6 @@
 # Functorial resolution of schemes of finite type in characteristic zero
 
-There is a [blow-up sequence functor](simple-normal-crossing-divisor.md) $BR$ that assigns to every
+There is a [blow-up sequence functor](../simple-normal-crossing-divisor.md) $BR$ that assigns to every
 scheme $X$ of finite type over a field of characteristic zero a blow-up sequence
 
 $$BR(X) = \bigl(\Pi \colon X_r \to X_{r-1} \to \dots \to X_1 \to X_0 = X\bigr)$$
@@ -10,7 +10,7 @@ with specified centres $Z_i \subset X_i$, such that
 1. $X_r$ is smooth;
 2. $\Pi$ is an isomorphism over the smooth locus $X^{\mathrm{ns}}$ of $X$;
 3. $\Pi^{-1}(\operatorname{Sing} X)$, with its reduced structure, is a divisor with
-   [simple normal crossings](simple-normal-crossing-divisor.md);
+   [simple normal crossings](../simple-normal-crossing-divisor.md);
 4. $BR$ commutes with smooth morphisms and with change of fields: for every smooth surjective
    morphism $h \colon Y \to X$, $BR(Y)$ is the pull-back $h^* BR(X)$; for every smooth morphism $h$,
    $BR(Y)$ is obtained from $h^* BR(X)$ by deleting the blow-ups with empty centre and renumbering;
@@ -48,7 +48,7 @@ $\coprod_i U_i$ descends to $X$, which is why $BR$ has to be defined on disconne
 
 ## Depends on
 
-- [Simple normal crossing divisor](simple-normal-crossing-divisor.md), for snc divisors, blow-up
+- [Simple normal crossing divisor](../simple-normal-crossing-divisor.md), for snc divisors, blow-up
   sequences and blow-up sequence functors
 
 ## Proof depends on

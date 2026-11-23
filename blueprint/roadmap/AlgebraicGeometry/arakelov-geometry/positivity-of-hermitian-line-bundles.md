@@ -49,7 +49,7 @@ $\widehat{\mathrm{Pic}}(X) \otimes \mathbb{Q}$, a hermitian $\mathbb{Q}$-line bu
 or big if some positive multiple of it is represented by an ample, nef or big hermitian line bundle.
 If $\bar L$ is nef and $\bar A$ is ample, then $\bar L + \varepsilon \bar A$ is ample for every
 rational $\varepsilon > 0$. That Moriwaki's bigness is equivalent to Yuan's is a theorem (Moriwaki,
-Theorem 4.5 and Remark 4.6), stated with the [arithmetic volume](arithmetic-volume.md).
+Theorem 4.5 and Remark 4.6), stated with the [arithmetic volume](arithmetic-volumes/arithmetic-volume.md).
 
 ## Depends on
 

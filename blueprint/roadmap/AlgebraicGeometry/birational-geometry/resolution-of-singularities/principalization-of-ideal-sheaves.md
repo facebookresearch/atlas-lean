@@ -1,15 +1,15 @@
 # Principalization of ideal sheaves in characteristic zero
 
-There is a [blow-up sequence functor](simple-normal-crossing-divisor.md) $BP$, defined on all
+There is a [blow-up sequence functor](../simple-normal-crossing-divisor.md) $BP$, defined on all
 triples $(X, I, E)$ in which $X$ is a smooth scheme of finite type over a field of characteristic
 zero, $I \subset \mathcal{O}_X$ is an ideal sheaf that is not zero on any irreducible component of
-$X$, and $E$ is a [simple normal crossing divisor](simple-normal-crossing-divisor.md) on $X$, such
+$X$, and $E$ is a [simple normal crossing divisor](../simple-normal-crossing-divisor.md) on $X$, such
 that the blow-up sequence $BP(X, I, E) = (\Pi \colon X_r \to \dots \to X_0 = X)$ satisfies:
 
 1. all centres of the blow-ups are smooth and have simple normal crossings with $E$;
 2. the inverse image ideal sheaf $\Pi^* I = \Pi^{-1} I \cdot \mathcal{O}_{X_r}$ is locally monomial:
    $\Pi^* I = \mathcal{O}_{X_r}(-F)$ for an effective divisor $F$ with
-   [simple normal crossing support](simple-normal-crossing-divisor.md), whose multiplicities may
+   [simple normal crossing support](../simple-normal-crossing-divisor.md), whose multiplicities may
    exceed $1$;
 3. when $E = \emptyset$, $\Pi$ is an isomorphism over $X \setminus \operatorname{cosupp} I$, where
    $\operatorname{cosupp} I = \operatorname{Supp}(\mathcal{O}_X / I)$;
@@ -64,7 +64,7 @@ components of $E$ disjoint.
 
 ## Depends on
 
-- [Simple normal crossing divisor](simple-normal-crossing-divisor.md), for snc divisors, divisors with snc
+- [Simple normal crossing divisor](../simple-normal-crossing-divisor.md), for snc divisors, divisors with snc
   support, centres having simple normal crossings with $E$, total transforms and blow-up sequence
   functors
 

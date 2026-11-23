@@ -66,7 +66,7 @@ In particular, if $(\bar L^{d+1}) > 0$, then $H^0(X, L^{\otimes N})$ contains no
 sup norm less than $1$ for all large $N$; for smooth generic fibre and positive curvature, Abbes and
 Bouche's Corollaire states the existence of nonzero sections of sup norm at most $1$ and deduces it
 from Minkowski's first theorem. For nef $\bar L$ the lower bound is an equality, see the
-[Hilbert–Samuel formula for nef hermitian line bundles](arithmetic-hilbert-samuel-formula-for-nef-hermitian-line-bundles.md).
+[Hilbert–Samuel formula for nef hermitian line bundles](arithmetic-volumes/arithmetic-hilbert-samuel-formula-for-nef-hermitian-line-bundles.md).
 
 ## Depends on
 
@@ -80,7 +80,7 @@ from Minkowski's first theorem. For nef $\bar L$ the lower bound is an equality,
 - [Analytic torsion and Quillen metrics](analytic-torsion-and-quillen-metrics.md), for the theorems of Bismut and Vasserot in the proof of Gillet and Soulé's Theorem 8
 - [Gromov's inequality](gromov-inequality.md), in Zhang's proof (1.5)
 - [Small elements of normed lattices](small-elements-of-normed-lattices.md), for Minkowski's theorems, in Zhang's proof (1.7) and in the paragraph on small sections
-- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md), for the generic resolution by which Zhang removes the smoothness hypothesis (Zhang, (1.8); Abbes–Bouche, Remarques 4.3 (2))
+- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md), for the generic resolution by which Zhang removes the smoothness hypothesis (Zhang, (1.8); Abbes–Bouche, Remarques 4.3 (2))
 
 ## Sources
 

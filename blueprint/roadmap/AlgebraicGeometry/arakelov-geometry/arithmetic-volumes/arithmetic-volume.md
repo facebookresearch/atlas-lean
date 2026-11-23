@@ -44,9 +44,9 @@ It has the following properties.
    \lVert s \rVert_{\sup} \le 1 \}$ over all $m$ equal those over the multiples $m = pn$ of $p$.
 
 Moriwaki writes $d$ for the absolute dimension of $X$, here $d + 1$. The estimate for ample
-$\bar L$ in 1 combines the [arithmetic Hilbert–Samuel theorem](arithmetic-hilbert-samuel-theorem.md),
-the estimates for [normed lattices](small-elements-of-normed-lattices.md) and
-[Zhang's ampleness theorem](arithmetic-ampleness-theorem.md), which provides generating sections of
+$\bar L$ in 1 combines the [arithmetic Hilbert–Samuel theorem](../arithmetic-hilbert-samuel-theorem.md),
+the estimates for [normed lattices](../small-elements-of-normed-lattices.md) and
+[Zhang's ampleness theorem](../arithmetic-ampleness-theorem.md), which provides generating sections of
 sup norm less than $1$ (Moriwaki, Lemma 3.1). The proof of 3 reduces to a finite $\pi$ and a
 generically smooth $X'$ and again uses these theorems; 4 is deduced from 3, a generic resolution and
 [Moriwaki's estimate for small sections along an ample divisor](moriwaki-fundamental-estimate.md)
@@ -56,17 +56,17 @@ arithmetic height functions.
 
 ## Depends on
 
-- [Arithmetic varieties and hermitian vector bundles](arithmetic-variety.md)
-- [Positivity of hermitian line bundles](positivity-of-hermitian-line-bundles.md), for ample and big hermitian line bundles and hermitian $\mathbb{Q}$-line bundles
-- [Arithmetic degree and arithmetic intersection numbers](arithmetic-intersection-numbers.md), for $(\bar L^{d+1})$
+- [Arithmetic varieties and hermitian vector bundles](../arithmetic-variety.md)
+- [Positivity of hermitian line bundles](../positivity-of-hermitian-line-bundles.md), for ample and big hermitian line bundles and hermitian $\mathbb{Q}$-line bundles
+- [Arithmetic degree and arithmetic intersection numbers](../arithmetic-intersection-numbers.md), for $(\bar L^{d+1})$
 
 ## Proof depends on
 
-- [Small elements of normed lattices](small-elements-of-normed-lattices.md), for Moriwaki's Proposition 2.1, in Lemma 3.1 and in the proofs of 3 and 4
+- [Small elements of normed lattices](../small-elements-of-normed-lattices.md), for Moriwaki's Proposition 2.1, in Lemma 3.1 and in the proofs of 3 and 4
 - [Moriwaki's estimate for small sections along an ample divisor](moriwaki-fundamental-estimate.md), for 4 (Theorem 4.3)
-- [Arithmetic Hilbert–Samuel theorem](arithmetic-hilbert-samuel-theorem.md), for the ample case of 1 (Moriwaki, Lemma 3.1 (1)) and the proof of 3 (Claim 4.2.1)
-- [Zhang's arithmetic ampleness theorem](arithmetic-ampleness-theorem.md), for generating sections of sup norm less than $1$ in Lemma 3.1 (1) and in the proof of 3 (Claim 4.2.1)
-- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md), for the generic resolutions used in the proofs of 3 and 4 (Theorems 4.2 and 4.3)
+- [Arithmetic Hilbert–Samuel theorem](../arithmetic-hilbert-samuel-theorem.md), for the ample case of 1 (Moriwaki, Lemma 3.1 (1)) and the proof of 3 (Claim 4.2.1)
+- [Zhang's arithmetic ampleness theorem](../arithmetic-ampleness-theorem.md), for generating sections of sup norm less than $1$ in Lemma 3.1 (1) and in the proof of 3 (Claim 4.2.1)
+- [Resolution of singularities of quasi-projective varieties](../../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md), for the generic resolutions used in the proofs of 3 and 4 (Theorems 4.2 and 4.3)
 
 ## Sources
 

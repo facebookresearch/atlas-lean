@@ -1,7 +1,7 @@
 # De Rham cohomology of abelian schemes
 
 This node is still to be broken down. It covers the first de Rham cohomology $H^1 =
-H^1_{\mathrm{dR}}(A/R)$ of an [abelian scheme](abelian-scheme.md) $A$ of relative dimension $g$ over
+H^1_{\mathrm{dR}}(A/R)$ of an [abelian scheme](../abelian-scheme.md) $A$ of relative dimension $g$ over
 a ring $R$, its dual, the first de Rham homology $H_1 = \operatorname{Hom}_R(H^1, R)$, and their
 Hodge filtrations, in the form used by the deformation theory of abelian schemes and by the Hodge
 bundle on moduli spaces. Write $\omega = \omega_{A/R} = e^* \Omega^1_{A/R}$ and $A^t$ for the dual
@@ -45,8 +45,8 @@ perfectness.
 
 ## Depends on
 
-- [Abelian scheme](abelian-scheme.md)
-- [Dual abelian scheme](dual-abelian-scheme.md), for $\operatorname{Lie}(A^t/R)$ and $\varphi_L$
+- [Abelian scheme](../abelian-scheme.md)
+- [Dual abelian scheme](../dual-abelian-scheme.md), for $\operatorname{Lie}(A^t/R)$ and $\varphi_L$
 
 ## Sources
 

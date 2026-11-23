@@ -71,7 +71,7 @@ theorem*, §2.1, Definition 2, and §2.3.1, Theorem 3).
 
 - [Arithmetic varieties and hermitian vector bundles](arithmetic-variety.md)
 - [Poincaré–Lelong formula](../birational-geometry/poincare-lelong-formula.md), for $dd^c \, i_*[\log |f|^2] = \delta_{\operatorname{div}(f)}$, which makes $\widehat{\operatorname{div}}(f)$ an arithmetic cycle (Gillet–Soulé 3.3.3), and for the Green current $-\log \lVert s \rVert^2$ of $\operatorname{div}(s)$ (Gillet–Soulé 1.3.1)
-- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities-of-quasi-projective-varieties.md), for the resolution $\widetilde W_\infty \to W_\infty$ through which $i_* \log |f|^2$ is defined (Gillet–Soulé 3.3.3)
+- [Resolution of singularities of quasi-projective varieties](../birational-geometry/resolution-of-singularities/resolution-of-singularities-of-quasi-projective-varieties.md), for the resolution $\widetilde W_\infty \to W_\infty$ through which $i_* \log |f|^2$ is defined (Gillet–Soulé 3.3.3)
 - [Green forms of logarithmic type and the star product](green-forms-of-logarithmic-type.md), for the existence of Green currents (Gillet–Soulé, Theorem 1.3.5)
 
 ## Sources
