@@ -326,9 +326,13 @@ def main(argv: list[str] | None = None) -> int:
         for path in unexplained:
             print(f"  {path}", file=sys.stderr)
         return 1
-    write_manifest(manifest_path, manifest)
     if a.report:
-        a.report.write_text(text + "\n", encoding="utf-8")
+        try:
+            a.report.write_text(text + "\n", encoding="utf-8")
+        except OSError as error:
+            print(f"sync: cannot write report {a.report}: {error}; ledger not written", file=sys.stderr)
+            return 1
+    write_manifest(manifest_path, manifest)
     print(f"wrote ledger at {manifest_path} ({len(manifest['rows'])} rows)")
     return 0
 

@@ -977,6 +977,21 @@ class SyncTest(unittest.TestCase):
     def rows(self) -> dict[str, dict]:
         return {row["path"]: row for row in json.loads((self.atlas / c.MANIFEST).read_text())["rows"]}
 
+    def test_sync_report_failure_leaves_ledger_unchanged(self) -> None:
+        self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
+        path = self.atlas / c.MANIFEST
+        self.assertEqual(quiet(c.main, ["--root", str(self.atlas), "--split-by-domain"])[0], 0)
+        ledger, _ = c.load(path)
+        original = c.manifest_documents(path, ledger)
+        write(self.atlas, "lean-toolchain", "leanprover/lean4:v4.36.0\n")
+        code, _, error = self.sync("--report", str(self.atlas), "--rationales", str(self.rationales))
+        self.assertEqual(code, 1)
+        self.assertIn("ledger not written", error)
+        self.assertEqual({target: target.read_text(encoding="utf-8") for target in original}, original)
+        self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
+        updated, _ = c.load(path)
+        self.assertEqual(updated["lean_toolchain"], "leanprover/lean4:v4.36.0")
+
     def test_sync_report_cannot_overwrite_ledger(self) -> None:
         self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
         path = self.atlas / c.MANIFEST
