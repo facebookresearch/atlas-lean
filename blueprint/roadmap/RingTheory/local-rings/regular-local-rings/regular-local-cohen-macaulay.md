@@ -8,11 +8,12 @@ Let $d = \dim R$ and let $x_1, \dots, x_d$ be a regular system of parameters. Ea
 
 ## Expansion
 
-A good expansion of this node links each prerequisite of its statement and proof: the bound of depth by dimension; Depth of a finitely generated module M over a Noetherian local ring; Noetherian rings; quotients of a regular local ring by an element of $\mathfrak m \setminus \mathfrak m^2$; Regular sequence on a module M over a commutative ring R; Cohen-Macaulay local ring; Regular local ring.
+A good expansion of this node links each prerequisite of its statement and proof: the bound of depth by dimension; Depth of a finitely generated module M over a Noetherian local ring; Noetherian rings; quotients of a regular local ring by an element of $\mathfrak m \setminus \mathfrak m^2$; Cohen-Macaulay local ring; Regular local ring.
 
 ## Proof depends on
 
 - [Regular local rings are domains](regular-local-rings-are-domains/is-domain.md)
+- [Regular sequence on a module](../regular-sequence.md)
 
 ## Sources
 

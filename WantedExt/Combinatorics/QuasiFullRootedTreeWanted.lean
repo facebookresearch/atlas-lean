@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Order.PosetMatrix
+public import MathlibExt.Order.PosetMatrix.Connected
 public import Mathlib.Data.Matrix.Block
 public import Mathlib.SetTheory.Cardinal.Finite
 
@@ -94,30 +94,6 @@ public theorem_wanted directSum_ordinalSum_represents {P Q : Type*} [PartialOrde
       ∃ e : Fin (m + k) ≃ P ⊕ₗ Q, ∀ i j, e i ≤ e j ↔
         reindex finSumFinEquiv finSumFinEquiv
           (fromBlocks A (Matrix.of fun _ _ => true) (Matrix.of fun _ _ => false) B) i j = true)
-
-/-- **Block properties decide connectedness of the represented poset.** Let $M$ be a poset matrix
-of order $n$, a Boolean matrix with rows and columns indexed by $0, \dots, n - 1$, that
-represents a partial order $P$: there is a bijection $e$ from $\{0, \dots, n - 1\}$ to $P$ such
-that $e(i) \le e(j)$ if and only if $M_{ij}$ is true. Let $1 \le r < n$. If $M_{ij}$ is true for
-all $i < r \le j$ (the block of $1$s property of length $r$), then $P$ is connected: every subset
-$S$ of $P$ such that $x \in S \iff y \in S$ whenever $x \le y$ is empty or all of $P$. If
-$M_{ij}$ is false for all $i < r \le j$ (the block of $0$s property of length $r$), then $P$ is
-disconnected: some nonempty subset $S$ of $P$ with nonempty complement satisfies
-$x \in S \iff y \in S$ whenever $x \le y$.
-
-Since a relabeling of $M$ represents the same poset, this also covers matrices that satisfy a
-block property after relabeling.
-
-Source: Salah Uddin Mohammad, Md. Shah Noor, and Md. Rashed Talukder, *Recognition and
-Enumeration of the Quasi-Full Rooted Trees*, Journal of Integer Sequences 28 (2025),
-Article 25.6.3, Theorem 5 (`jis-2025-25.6.3-thm-5`). -/
-public theorem_wanted connected_or_disconnected_of_block_property {P : Type*} [PartialOrder P]
-    (n : ℕ) (M : Matrix (Fin n) (Fin n) Bool) (hM : IsPosetMatrix n M) (e : Fin n ≃ P)
-    (he : ∀ i j, e i ≤ e j ↔ M i j = true) (r : ℕ) (hr₁ : 1 ≤ r) (hr₂ : r < n) :
-    ((∀ i j : Fin n, (i : ℕ) < r → r ≤ (j : ℕ) → M i j = true) →
-      ∀ S : Set P, (∀ x y : P, x ≤ y → (x ∈ S ↔ y ∈ S)) → S = ∅ ∨ S = Set.univ) ∧
-    ((∀ i j : Fin n, (i : ℕ) < r → r ≤ (j : ℕ) → M i j = false) →
-      ∃ S : Set P, S.Nonempty ∧ Sᶜ.Nonempty ∧ ∀ x y : P, x ≤ y → (x ∈ S ↔ y ∈ S))
 
 /-- **Arity of quasi-full rooted trees.** Let $P$ be a finite partial order with $n \ge 3$
 elements that is a rooted tree: $P$ has a least element and, for every $x \in P$, the elements

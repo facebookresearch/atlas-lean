@@ -17,6 +17,7 @@ public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.Recurrences.GelinCesaroAlternatingSum
+public import MathlibExt.NumberTheory.Recurrences.GibonacciDOcagneIdentity
 public import MathlibExt.NumberTheory.Recurrences.GibonacciFibonacciFactorIdentity
 
 /-!
@@ -337,25 +338,6 @@ public theorem_wanted five_gibonacci_mul_sub_two_gibonacci
       (-1 : ℝ) ^ (k - r + 1) * 2 * (G (r + 1) + G (r - 1)) * (H (s + 1) + H (s - 1)) +
         (-1 : ℝ) ^ (k - r) * 2 *
           (G 0 * (H (r + s) + H (r + s - 2)) + G 1 * (H (r + s + 1) + H (r + s - 1)))
-
-/-- **d'Ocagne-type identity for two gibonacci sequences.** Let $G$ and $H$ be gibonacci
-sequences, that is, functions $X : \mathbb{Z} \to \mathbb{R}$ with $X_{j+2} = X_{j+1} + X_j$
-for every integer $j$. Then for all integers $r$, $s$, $k$,
-
-$$
-H_{r+s} G_{k+1} - H_{r+s+1} G_k =
-(-1)^{r-1} (H_{s+1} + H_{s-1}) G_{k-r} + (-1)^r (G_0 H_{k+s-r-1} + G_1 H_{k+s-r}).
-$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 23
-(`jis-2024-24.6.2-prop-23`). -/
-public theorem_wanted gibonacci_dOcagne_type_identity
-    (G H : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
-    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (r s k : ℤ) :
-    H (r + s) * G (k + 1) - H (r + s + 1) * G k =
-      (-1 : ℝ) ^ (r - 1) * (H (s + 1) + H (s - 1)) * G (k - r) +
-        (-1 : ℝ) ^ r * (G 0 * H (k + s - r - 1) + G 1 * H (k + s - r))
 
 /-- **Shifted product identity for two gibonacci sequences.** Let
 $G, H : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$ and $j \mapsto H_j$, satisfy
