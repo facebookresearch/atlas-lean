@@ -8,16 +8,18 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.EllAdicCohomology
+public import Mathlib.Topology.Instances.ZMod
 
 @[expose] public noncomputable section
 
 /-!
 # Normalized reduction maps for integral pro-étale cohomology
 
-The coefficient maps below are continuous additive maps pinned pointwise to
-the actual reduction homomorphisms. The inverse limit is the subgroup of
-compatible finite-level cohomology classes. Neither injectivity nor
-surjectivity of the resulting cohomology map is assumed here.
+The reductions `ℤ_ℓ → ℤ/ℓ^(r+1)` and the quotient maps `ℤ/ℓ^(r+2) → ℤ/ℓ^(r+1)` are continuous
+(for the discrete topology on `ℤ/ℓ^(r+1)`), so they induce maps of coefficient sheaves and of
+cohomology. The induced reductions on cohomology are compatible with the transitions, giving a
+map from `H^i(X, ℤ_ℓ)` to the inverse limit of the `H^i(X, ℤ/ℓ^(r+1))`, the subgroup of
+compatible families. Neither injectivity nor surjectivity of this map is claimed here.
 
 Reference: Bhatt–Scholze, *The pro-étale topology for schemes*, §6.8;
 Stacks 03UT and 09BT. The completed constant-sheaf construction in
@@ -34,11 +36,8 @@ universe u
 
 variable (ell : ℕ) [Fact ell.Prime]
 
-local instance finiteTopology (m : ℕ) : TopologicalSpace (ZMod m) := ⊥
-local instance finiteDiscrete (m : ℕ) : DiscreteTopology (ZMod m) := ⟨rfl⟩
-
-/-- The continuous realizations of the canonical coefficient reductions.
-These are characterized input maps, not arbitrary coefficient operators. -/
+/-- The reduction maps `ℤ_ℓ → ℤ/ℓ^(r+1)` and `ℤ/ℓ^(r+2) → ℤ/ℓ^(r+1)` as continuous additive maps,
+determined by `red_eq` and `step_eq`. The instance is `canonicalReductionMaps`. -/
 class ReductionMaps where
   /-- Reduction from integral coefficients. -/
   red : ∀ r : ℕ, ℤ_[ell] →ₜ+ ZMod (ell ^ (r + 1))
@@ -53,23 +52,53 @@ class ReductionMaps where
     ZMod.castHom (pow_dvd_pow ell (by omega : r + 1 ≤ r + 2))
       (ZMod (ell ^ (r + 1))) x
 
+/-- Reduction `ℤ_ℓ → ℤ/ℓⁿ` is continuous for the discrete topology on `ℤ/ℓⁿ`: its kernel is the
+open ball `ℓⁿ ℤ_ℓ`. -/
+theorem continuous_toZModPow (n : ℕ) : Continuous (PadicInt.toZModPow (p := ell) n) := by
+  have hker : IsOpen ((PadicInt.toZModPow (p := ell) n) ⁻¹' {0}) := by
+    have h : (PadicInt.toZModPow (p := ell) n) ⁻¹' {0} =
+        Metric.closedBall 0 ((ell : ℝ) ^ (-(n : ℤ))) := by
+      ext x
+      rw [Set.mem_preimage, Set.mem_singleton_iff, Metric.mem_closedBall, dist_zero_right,
+        ← RingHom.mem_ker, PadicInt.ker_toZModPow, ← PadicInt.norm_le_pow_iff_mem_span_pow]
+    rw [h]
+    exact IsUltrametricDist.isOpen_closedBall _
+      (zpow_ne_zero _ (Nat.cast_ne_zero.2 (Fact.out : ell.Prime).ne_zero))
+  refine continuous_of_continuousAt_zero (PadicInt.toZModPow (p := ell) n).toAddMonoidHom ?_
+  rw [ContinuousAt, map_zero, nhds_discrete (ZMod (ell ^ n)), Filter.tendsto_pure]
+  exact hker.mem_nhds (by simp)
+
+/-- The canonical reduction maps: `PadicInt.toZModPow` and the quotient maps
+`ℤ/ℓ^(r+2) → ℤ/ℓ^(r+1)`. -/
+instance canonicalReductionMaps : ReductionMaps ell where
+  red r :=
+    { toAddMonoidHom := (PadicInt.toZModPow (r + 1)).toAddMonoidHom
+      continuous_toFun := continuous_toZModPow ell (r + 1) }
+  step r :=
+    { toAddMonoidHom := (ZMod.castHom (pow_dvd_pow ell (by omega : r + 1 ≤ r + 2))
+        (ZMod (ell ^ (r + 1)))).toAddMonoidHom
+      continuous_toFun := continuous_of_discreteTopology }
+  red_eq _ _ := rfl
+  comp r x := PadicInt.cast_toZModPow (r + 1) (r + 2) (by omega) x
+  step_eq _ _ := rfl
+
 variable [ReductionMaps ell] (X : Scheme.{u}) (i : ℕ)
 
-/-- The existing integral carrier, expressed by its defining coefficient sheaf.
-This avoids opaque presentation differences in additive instance synthesis. -/
+/-- Integral cohomology `H^i(X, ℤ_ℓ)`, written through its coefficient sheaf. -/
 abbrev integralCohomology :=
   ((coefficientLift X).obj (coefficientSheaf X ℤ_[ell])).H i
 
-/-- The displayed carrier is definitionally Mathlib's integral cohomology. -/
+omit [ReductionMaps ell] in
+/-- `integralCohomology` is Mathlib's `Scheme.EllAdicCohomology`. -/
 theorem integralCohomology_eq : integralCohomology ell X i =
     X.EllAdicCohomology ell i := rfl
 
-/-- The actual finite-coefficient cohomology group on the same pro-étale site. -/
+/-- Cohomology with coefficients `ℤ/ℓ^(r+1)` on the pro-étale site. -/
 abbrev finiteCohomology (r : ℕ) :=
   ((coefficientLift X).obj
     (coefficientSheaf X (ZMod (ell ^ (r + 1))))).H i
 
-/-- The transition induced by the actual coefficient quotient. -/
+/-- The transition map induced by the quotient `ℤ/ℓ^(r+2) → ℤ/ℓ^(r+1)`. -/
 def transition (r : ℕ) : finiteCohomology ell X i (r + 1) →+
     finiteCohomology ell X i r :=
   Sheaf.H.map ((coefficientLift X).map
@@ -88,13 +117,12 @@ def finiteLimit : AddSubgroup (∀ r : ℕ, finiteCohomology ell X i r) where
   add_mem' ha hb r := by simp [ha r, hb r]
   neg_mem' ha r := by simp [ha r]
 
-/-- Reduction compatibility is a precise equation between coefficient-induced
-cohomology maps; it is sufficient to form the comparison cone. -/
+/-- The reductions on cohomology are compatible with the transitions. -/
 def ReductionsCommute : Prop :=
   ∀ r x, transition ell X i r (reduction ell X i (r + 1) x) =
     reduction ell X i r x
 
-/-- The canonical comparison, with all coordinates fixed by coefficient maps. -/
+/-- The map from integral cohomology to the inverse limit of finite-level cohomology. -/
 def comparison (h : ReductionsCommute ell X i) :
     integralCohomology ell X i →+ finiteLimit ell X i where
   toFun x := ⟨fun r => reduction ell X i r x, fun r => h r x⟩
@@ -103,7 +131,7 @@ def comparison (h : ReductionsCommute ell X i) :
 
 
 set_option backward.isDefEq.respectTransparency false in
-/-- The coefficient quotient law induces compatibility on cohomology. -/
+/-- Reductions are compatible with transitions, since they are on coefficients. -/
 theorem reductions_commute : ReductionsCommute ell X i := by
   intro r x
   have hg : globalCoefficientMap (ReductionMaps.red (ell := ell) (r + 1)) ≫
