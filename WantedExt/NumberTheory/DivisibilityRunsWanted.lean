@@ -17,19 +17,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Backward recurrence for Gibonacci numbers.** Let $x, y$ be integers and let
-$(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and $P_1 = y$. For every $n \ge 3$,
-$P_{n-1} = P_n - P_{n-2}$ and $P_{n-3} = P_n - 2 P_{n-2}$.
-
-The paper indexes the sequence from $1$ and states these identities for $n \ge 4$.
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Lemma 3
-(`integers-2026-A122-lem-3`). -/
-public theorem_wanted gibonacciNumber_backward (x y : ℤ) (n : ℕ) (hn : 3 ≤ n) :
-    gibonacciNumber x y (n - 1) = gibonacciNumber x y n - gibonacciNumber x y (n - 2) ∧
-    gibonacciNumber x y (n - 3) = gibonacciNumber x y n - 2 * gibonacciNumber x y (n - 2)
-
 /-- **Gibonacci numbers in terms of Fibonacci numbers.** Let $x, y$ be integers, let
 $(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and $P_1 = y$, and let $(F_n)_{n \ge 0}$
 be the Fibonacci sequence with $F_0 = 0$ and $F_1 = 1$. For every $n \ge 1$,
