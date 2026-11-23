@@ -49,12 +49,11 @@ namespace EarthScience
 
 /-! ## A. Rectangular discharge and uniqueness -/
 
-/-- Rectangular-channel Manning discharge at depth `h`, width
-`b`, and positive combined prefactor `C` (roughness and slope):
-`C * (b * h) * ((b * h) / (b + 2 * h)) ^ (2 / 3)`, using area
-`b * h` and hydraulic radius `(b * h) / (b + 2 * h)`. With the
-conventions `x / 0 = 0` and `0 ^ y = 0` for `y ≠ 0`, it is `0` when
-`b + 2 * h = 0`; a negative base `x` gives `|x| ^ y * cos (π y)`. -/
+/-- Rectangular-channel Manning discharge at depth `h`, width `b`, and combined prefactor `C`
+(roughness and slope), for all real inputs: `C * (b * h) * ((b * h) / (b + 2 * h)) ^ (2 / 3)`, using
+area `b * h` and hydraulic radius `(b * h) / (b + 2 * h)`. With the conventions `x / 0 = 0` and
+`0 ^ y = 0` for `y ≠ 0`, it is `0` when `b + 2 * h = 0`; a negative base `x` gives
+`|x| ^ y * cos (π y)`. The intended domain is `C > 0`, `b > 0` and `h > 0`. -/
 noncomputable def rectangularDischarge (C b h : ℝ) : ℝ :=
   C * (b * h) * ((b * h) / (b + 2 * h)) ^ ((2 : ℝ) / 3)
 

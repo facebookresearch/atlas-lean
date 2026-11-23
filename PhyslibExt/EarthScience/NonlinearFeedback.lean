@@ -179,8 +179,8 @@ theorem linear_witness {k Tstar T : ℝ} (hk : 0 < k) (hne : T ≠ Tstar) :
   rw [heq]
   exact neg_lt_zero.mpr hpos
 
-/-- Unstable branch witness: for `F(T) = k*(T - Tstar)` with `k > 0`,
-the product is positive for `T ≠ Tstar` (repelling, not attracting). -/
+/-- Unstable branch witness: for `F(T) = k*(T - Tstar)` with `k > 0`, the product is positive for
+`T ≠ Tstar`: for `C * T' = F(T)` with `C > 0`, `Tstar` is repelling, not attracting. -/
 theorem unstable_witness {k Tstar T : ℝ} (hk : 0 < k) (hne : T ≠ Tstar) :
     0 < (T - Tstar) * (k * (T - Tstar)) := by
   have hd : T - Tstar ≠ 0 := sub_ne_zero.mpr hne

@@ -68,9 +68,9 @@ namespace EarthScience
 
 open MeasureTheory intervalIntegral
 
-/-- Optical depth of an absorption-only layer: `τ(a, b) = ∫ x in a..b, κ x`,
-with `κ` the absorption coefficient. It is `0` when `κ` is not integrable on
-the interval (the integral of a non-integrable function is `0`). -/
+/-- Optical depth of an absorption-only layer: `τ(a, b) = ∫ x in a..b, κ x`, with `κ` the absorption
+coefficient; for `b < a` it is minus the integral of `κ` over `[b, a]`. It is `0` when `κ` is not
+integrable on the interval (the integral of a non-integrable function is `0`). -/
 noncomputable def opticalDepth (κ : ℝ → ℝ) (a b : ℝ) : ℝ :=
   ∫ x in a..b, κ x
 

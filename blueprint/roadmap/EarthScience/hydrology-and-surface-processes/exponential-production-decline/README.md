@@ -3,7 +3,7 @@
 Exponential decline of the production rate of a well, $q(t) = q_i e^{-D t}$, the cumulative
 production it implies and, for $D > 0$, its asymptote $q_i / D$, with the constant-rate law for zero
 decline; then hyperbolic decline, $q(t) = q_i (1 + b D_i t)^{-1/b}$, its cumulative production and,
-for $0 < b < 1$, the bound $q_i / ((1 - b) D_i)$ on it.
+for $q_i > 0$, $D_i > 0$, $0 < b < 1$ and $t \ge 0$, the bound $q_i / ((1 - b) D_i)$ on it.
 
 - [Production rate under exponential decline](exp-rate.md)
 - [Cumulative production under exponential decline](exp-cumulative.md)

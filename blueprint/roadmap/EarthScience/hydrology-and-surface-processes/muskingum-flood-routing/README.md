@@ -8,4 +8,4 @@
 - [Muskingum coefficients are nonnegative exactly in a time-step window](muskingum-nonneg-iff.md)
 - [Muskingum storage of a river reach](muskingum-storage.md)
 - [Muskingum routing is equivalent to the trapezoidal storage balance](muskingum-storage-balance-iff.md)
-- [The routed Muskingum outflow stays within the range of its inputs](muskingum-outflow-mem-icc.md)
+- [Nonnegative coefficients keep the Muskingum outflow within its inputs](muskingum-outflow-mem-icc.md)

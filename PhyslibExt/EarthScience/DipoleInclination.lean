@@ -69,11 +69,10 @@ values are also stated separately.
 
 namespace EarthScience
 
-/-- Signed dipole component ratio: `B_r / B_θ = 2 * tan λ` where
-`λ = π / 2 - θ` is the magnetic latitude, `B_r = 2 * C * cos θ / r ^ 3`,
-`B_θ = C * sin θ / r ^ 3`, at `r > 0`, for either sign of `C ≠ 0`. Only the axis
-`sin θ = 0` is excluded; at the equator both sides are `0`. This is
-`tan I` only when `B_θ < 0`; see `dipole_tan_inclination`. -/
+/-- Signed dipole component ratio: `B_r / B_θ = 2 * tan λ` where `λ = π / 2 - θ` is the magnetic
+latitude, `B_r = 2 * C * cos θ / r ^ 3`, `B_θ = C * sin θ / r ^ 3`, at `r > 0`, for either sign of
+`C ≠ 0`. Only the axis `sin θ = 0` is excluded; at the equator both sides are `0`. When `B_θ < 0`
+this is `tan I` (see `dipole_tan_inclination`); off the equator it is `tan I` only then. -/
 theorem dipole_component_ratio {C r θ : ℝ} (hr : 0 < r) (hC : C ≠ 0)
     (hsin : Real.sin θ ≠ 0) :
     (2 * C * Real.cos θ / r ^ 3) / (C * Real.sin θ / r ^ 3)

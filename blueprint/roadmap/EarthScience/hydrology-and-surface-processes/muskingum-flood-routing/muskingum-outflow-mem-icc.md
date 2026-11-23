@@ -1,4 +1,4 @@
-# The routed Muskingum outflow stays within the range of its inputs
+# Nonnegative coefficients keep the Muskingum outflow within its inputs
 
 Let `K > 0`, `0 ≤ X ≤ 1 / 2` and `dt > 0` satisfy `2 * K * X ≤ dt ≤ 2 * K * (1 - X)`, the window
 where the routing coefficients are [nonnegative](muskingum-nonneg-iff.md). If the current inflow

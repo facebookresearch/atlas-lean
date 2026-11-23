@@ -177,10 +177,9 @@ theorem infiniteSlopeSafetyRatio_admission {tauR gamma z beta : ℝ}
   unfold infiniteSlopeSafetyRatio
   exact one_le_div₀ hpos
 
-/-- The admission for the Mohr–Coulomb resisting stress: on a genuine
-slope (`0 < gamma`, `0 < z`, `0 < beta < π / 2`), the safety ratio is
-at least one exactly when the resisting stress is at least the
-driving stress. -/
+/-- The admission for the Mohr–Coulomb resisting stress: on a genuine slope (`0 < gamma`, `0 < z`,
+`0 < beta < π / 2`), the safety ratio is at least one exactly when the resisting stress is at least
+the driving stress. Here `tan phi = 0` where `cos phi = 0`, by the convention `x / 0 = 0`. -/
 theorem infiniteSlope_mohrCoulomb_admission {c phi gamma z beta u : ℝ}
     (hgamma : 0 < gamma) (hz : 0 < z) (hbeta0 : 0 < beta)
     (hbeta : beta < Real.pi / 2) :
@@ -203,10 +202,9 @@ theorem effectiveNormalStress_eq {m : ℕ} (σc : Matrix (Fin m) (Fin m) ℝ)
 
 /-! ## C. Pore-pressure monotonicity -/
 
-/-- Two safety ratios differ by the change in effective normal
-stress times `tan phi` over the driving stress:
-`F u₁ - F u₂ = (u₂ - u₁) * tan phi / τd`. An algebraic identity
-of the totalized definitions for all real inputs, not a
+/-- Two safety ratios differ by the change in effective normal stress times `tan phi` over the
+driving stress: `F u₁ - F u₂ = (u₂ - u₁) * tan phi / τd`. An algebraic identity for all real inputs,
+including `τd = 0` or `cos phi = 0`, with the convention `x / 0 = 0` on both sides; not a
 monotonicity claim. -/
 lemma infiniteSlopeSafetyRatio_porePressure_sub
     (c phi gamma z beta u₁ u₂ : ℝ) :
@@ -297,10 +295,9 @@ theorem infiniteSlopeSafetyRatio_strictAntiOn_porePressure
     exact hlt
   exact sub_neg.mp hlt'
 
-/-- Without friction the pore pressure drops out: at
-`phi = 0` the ratio is `c / τd` on the whole contact domain,
-for all data, by `tan 0 = 0` (`c / τd` is the genuine ratio
-only on a genuine slope, where `τd > 0`). -/
+/-- Without friction the pore pressure drops out: at `phi = 0` the ratio is `c / τd` on the whole
+contact domain, for all data, by `tan 0 = 0` (`c / τd` is the genuine ratio only on a genuine slope,
+where `τd > 0`). Where `τd = 0` both sides are `0`, by the convention `x / 0 = 0`. -/
 lemma infiniteSlopeSafetyRatio_eqOn_porePressure_of_phi_eq_zero
     {c gamma z beta : ℝ} :
     Set.EqOn

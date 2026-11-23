@@ -204,10 +204,10 @@ lemma tendsto_boussinesq_antiderivative_atTop (P z : ℝ) :
 
 /-! ## B. Integrability and the radial resultant -/
 
-/-- The radial force density `2 π r σ_z(r, z)` is Lebesgue integrable
-over `r ∈ (0, ∞)`, so the resultant below is a genuine (not totalized)
-integral. Stated for every real `z`; the physical domain is
-`z > 0`. -/
+/-- The radial force density `2 π r σ_z(r, z)` is Lebesgue integrable over `r ∈ (0, ∞)`, so the
+resultant below is a genuine (not totalized) integral. Stated for every real `z`; the physical
+domain is `z > 0`. So the radial force resultant is the integral of an integrable function, not the
+value `0` that the convention gives to the integral of a non-integrable one. -/
 lemma integrableOn_boussinesq_resultant (P z : ℝ) :
     IntegrableOn (fun r : ℝ => 2 * π * r * boussinesqVerticalStress P r z)
       (Ioi 0) := by
