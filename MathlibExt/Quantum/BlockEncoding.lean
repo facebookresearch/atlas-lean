@@ -38,10 +38,11 @@ variable {ι κ μ : Type*} [Fintype ι] [DecidableEq ι] [Fintype κ] [Decidabl
 def ancillaBlock (o : κ) (U : Matrix (κ × ι) (κ × ι) ℂ) : Matrix ι ι ℂ :=
   Matrix.of fun i j => U (o, i) (o, j)
 
-/-- Definition 43 for an ancilla register `κ` with reference basis vector `o`. -/
+/-- Definition 43 for an ancilla register `κ` with reference basis vector `o`: the
+normalization `α` and error `ε` are nonnegative reals. -/
 def IsBlockEncoding (A : Matrix ι ι ℂ) (α ε : ℝ) (o : κ)
     (U : Matrix (κ × ι) (κ × ι) ℂ) : Prop :=
-  U ∈ Matrix.unitaryGroup (κ × ι) ℂ ∧ ‖A - (α : ℂ) • ancillaBlock o U‖ ≤ ε
+  U ∈ Matrix.unitaryGroup (κ × ι) ℂ ∧ ‖A - (α : ℂ) • ancillaBlock o U‖ ≤ ε ∧ 0 ≤ α ∧ 0 ≤ ε
 
 /-- Qubit form of Definition 43: `A` on `s` qubits, `U` on `a + s` qubits with the ancilla
 register first and reference vector `|0^a⟩`. -/
@@ -154,9 +155,9 @@ private theorem norm_smul_ancillaBlock (o : κ) (U : Matrix (κ × ι) (κ × ι
 
 /-- The note after Definition 43: `‖A‖ ≤ α + ε`. -/
 theorem IsBlockEncoding.norm_le {A : Matrix ι ι ℂ} {α ε : ℝ} {o : κ}
-    {U : Matrix (κ × ι) (κ × ι) ℂ} (h : IsBlockEncoding A α ε o U) (hα : 0 ≤ α) :
+    {U : Matrix (κ × ι) (κ × ι) ℂ} (h : IsBlockEncoding A α ε o U) :
     ‖A‖ ≤ α + ε := by
-  obtain ⟨hU, herr⟩ := h
+  obtain ⟨hU, herr, hα, _⟩ := h
   have hαB := norm_smul_ancillaBlock o U α hU hα
   calc ‖A‖ = ‖(A - (α : ℂ) • ancillaBlock o U) + (α : ℂ) • ancillaBlock o U‖ := by
         rw [sub_add_cancel]
@@ -195,7 +196,7 @@ theorem ancillaBlock_trivialEncoding (U : Matrix ι ι ℂ) :
 /-- Definition 44: a unitary is a `(1, 0, 0)`-block-encoding of itself. -/
 theorem isBlockEncoding_self {U : Matrix ι ι ℂ} (hU : U ∈ Matrix.unitaryGroup ι ℂ) :
     IsBlockEncoding U 1 0 (0 : Fin 1) (trivialEncoding U) := by
-  refine ⟨trivialEncoding_mem_unitaryGroup U hU, ?_⟩
+  refine ⟨trivialEncoding_mem_unitaryGroup U hU, ?_, zero_le_one, le_refl 0⟩
   rw [ancillaBlock_trivialEncoding]
   simp
 
@@ -308,12 +309,12 @@ theorem projEncoding_mem_unitaryGroup {P : Matrix ι ι ℂ} (hP : IsStarProject
 
 /-- Scaled projections: `α • P` has the `(α, 1, 0)` encoding `projEncoding P`. -/
 theorem isBlockEncoding_smul_projection {P : Matrix ι ι ℂ} (hP : IsStarProjection P)
-    (α : ℝ) : IsBlockEncoding ((α : ℂ) • P) α 0 (0 : Fin 2) (projEncoding P) := by
+    (α : ℝ) (hα : 0 ≤ α) : IsBlockEncoding ((α : ℂ) • P) α 0 (0 : Fin 2) (projEncoding P) := by
   have hblock : ancillaBlock (0 : Fin 2) (projEncoding P) = P := by
     ext i j
     show (if (0 : Fin 2) = 0 then P i j else (1 - P) i j) = P i j
     rw [if_pos rfl]
-  refine ⟨projEncoding_mem_unitaryGroup hP, ?_⟩
+  refine ⟨projEncoding_mem_unitaryGroup hP, ?_, hα, le_refl 0⟩
   rw [hblock]
   simp
 
@@ -407,9 +408,8 @@ theorem IsBlockEncoding.mul {A B : Matrix ι ι ℂ} {α β δ ε : ℝ} {oκ : 
     (hU : IsBlockEncoding A α δ oκ U) (hV : IsBlockEncoding B β ε oμ V)
     (hα : 0 ≤ α) (hβ : 0 ≤ β) :
     IsBlockEncoding (A * B) (α * β) (α * ε + β * δ + δ * ε) (oμ, oκ) (ancillaMul U V) := by
-  obtain ⟨hUmem, hUerr⟩ := hU
-  obtain ⟨hVmem, hVerr⟩ := hV
-  have hδ : 0 ≤ δ := le_trans (by positivity) hUerr
+  obtain ⟨hUmem, hUerr, hα0, hδ⟩ := hU
+  obtain ⟨hVmem, hVerr, hβ0, hε0⟩ := hV
   have hαB := norm_smul_ancillaBlock oκ U α hUmem hα
   have hβB := norm_smul_ancillaBlock oμ V β hVmem hβ
   have hBnorm : ‖B‖ ≤ β + ε := by
@@ -431,7 +431,8 @@ theorem IsBlockEncoding.mul {A B : Matrix ι ι ℂ} {α β δ ε : ℝ} {oκ : 
     rw [hsmul]
     simp only [sub_mul, mul_sub]
     abel
-  refine ⟨ancillaMul_mem_unitaryGroup hUmem hVmem, ?_⟩
+  refine ⟨ancillaMul_mem_unitaryGroup hUmem hVmem, ?_, mul_nonneg hα0 hβ0,
+    add_nonneg (add_nonneg (mul_nonneg hα0 hε0) (mul_nonneg hβ0 hδ)) (mul_nonneg hδ hε0)⟩
   rw [ancillaBlock_ancillaMul, hdecomp]
   have h1 : ‖(A - (α : ℂ) • ancillaBlock oκ U) * B‖ ≤ δ * ‖B‖ :=
     le_trans (by apply norm_mul_le) (mul_le_mul hUerr le_rfl (by positivity) hδ)
@@ -453,9 +454,8 @@ theorem IsBlockEncoding.mul_of_norm_le {A B : Matrix ι ι ℂ} {α β δ ε : �
     (hU : IsBlockEncoding A α δ oκ U) (hV : IsBlockEncoding B β ε oμ V)
     (hα : 0 ≤ α) (hB : ‖B‖ ≤ β) :
     IsBlockEncoding (A * B) (α * β) (α * ε + β * δ) (oμ, oκ) (ancillaMul U V) := by
-  obtain ⟨hUmem, hUerr⟩ := hU
-  obtain ⟨hVmem, hVerr⟩ := hV
-  have hδ : 0 ≤ δ := le_trans (by positivity) hUerr
+  obtain ⟨hUmem, hUerr, hα0, hδ⟩ := hU
+  obtain ⟨hVmem, hVerr, hβ0, hε0⟩ := hV
   have hαB := norm_smul_ancillaBlock oκ U α hUmem hα
   have hsmul : ((α * β : ℝ) : ℂ) • (ancillaBlock oκ U * ancillaBlock oμ V) =
       ((α : ℂ) • ancillaBlock oκ U) * ((β : ℂ) • ancillaBlock oμ V) := by
@@ -467,7 +467,8 @@ theorem IsBlockEncoding.mul_of_norm_le {A B : Matrix ι ι ℂ} {α β δ ε : �
     rw [hsmul]
     simp only [sub_mul, mul_sub]
     abel
-  refine ⟨ancillaMul_mem_unitaryGroup hUmem hVmem, ?_⟩
+  refine ⟨ancillaMul_mem_unitaryGroup hUmem hVmem, ?_, mul_nonneg hα0 hβ0,
+    add_nonneg (mul_nonneg hα0 hε0) (mul_nonneg hβ0 hδ)⟩
   rw [ancillaBlock_ancillaMul, hdecomp]
   have h1 : ‖(A - (α : ℂ) • ancillaBlock oκ U) * B‖ ≤ δ * β :=
     le_trans (by apply norm_mul_le) (mul_le_mul hUerr hB (by positivity) hδ)
@@ -513,7 +514,7 @@ theorem IsQubitBlockEncoding.mul {s a b : ℕ} {A B : Matrix (Fin (2 ^ s)) (Fin 
   have hU' : IsBlockEncoding A α δ (0 : Fin (2 ^ a)) U := hU
   have hV' : IsBlockEncoding B β ε (0 : Fin (2 ^ b)) V := hV
   have hMul := IsBlockEncoding.mul hU' hV' hα hβ
-  obtain ⟨hWmem, hWerr⟩ := hMul
+  obtain ⟨hWmem, hWerr, hαβ, hε⟩ := hMul
   have hsymm : (qubitAncillaEquiv a b).symm 0 = (0, 0) := by
     refine Equiv.injective (qubitAncillaEquiv a b) ?_
     rw [Equiv.apply_symm_apply, qubitAncillaEquiv_zero]
@@ -538,7 +539,7 @@ theorem IsQubitBlockEncoding.mul {s a b : ℕ} {A B : Matrix (Fin (2 ^ s)) (Fin 
       rfl
     rw [hEi, hEj]
   show IsBlockEncoding (A * B) (α * β) (α * ε + β * δ + δ * ε) (0 : Fin (2 ^ (a + b))) _
-  refine ⟨?_, ?_⟩
+  refine ⟨?_, ?_, hαβ, hε⟩
   · show (ancillaMul U V).submatrix
         ⇑(((qubitAncillaEquiv a b).prodCongr (Equiv.refl (Fin (2 ^ s)))).symm)
         ⇑(((qubitAncillaEquiv a b).prodCongr (Equiv.refl (Fin (2 ^ s)))).symm) ∈ unitary _

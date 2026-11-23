@@ -97,7 +97,7 @@ example : IsBlockEncoding ((3 / 5 : ℂ) • (1 : Matrix (Fin 2) (Fin 2) ℂ)) 1
   have hR : (!![(3 / 5 : ℂ), -4 / 5; 4 / 5, 3 / 5] ⊗ₖ (1 : Matrix (Fin 2) (Fin 2) ℂ)) ∈
       Matrix.unitaryGroup (Fin 2 × Fin 2) ℂ :=
     Matrix.kronecker_mem_unitary rot1_mem h1
-  refine ⟨hR, ?_⟩
+  refine ⟨hR, ?_, zero_le_one, le_rfl⟩
   have h0 : (3 / 5 : ℂ) • (1 : Matrix (Fin 2) (Fin 2) ℂ) - ((1 : ℝ) : ℂ) • ancillaBlock (0 : Fin 2)
       (!![(3 / 5 : ℂ), -4 / 5; 4 / 5, 3 / 5] ⊗ₖ (1 : Matrix (Fin 2) (Fin 2) ℂ)) = 0 := by
     ext i j
@@ -117,8 +117,8 @@ private theorem t6a : IsBlockEncoding ((3 / 2 : ℂ) • (1 : Matrix (Fin 1) (Fi
     (0 : Fin 1) (trivialEncoding 1) := by
   have h1mem : (1 : Matrix (Fin 1) (Fin 1) ℂ) ∈ Matrix.unitaryGroup (Fin 1) ℂ :=
     Matrix.mem_unitaryGroup_iff.mpr (by simp)
-  obtain ⟨hmem, -⟩ := isBlockEncoding_self h1mem
-  refine ⟨hmem, ?_⟩
+  obtain ⟨hmem, -, -, -⟩ := isBlockEncoding_self h1mem
+  refine ⟨hmem, ?_, zero_le_one, by norm_num⟩
   rw [ancillaBlock_trivialEncoding, Complex.ofReal_one]
   have h32 : (3 / 2 : ℂ) - 1 = 1 / 2 := by ring
   have hsub : (3 / 2 : ℂ) • (1 : Matrix (Fin 1) (Fin 1) ℂ) - (1 : ℂ) • 1 = (1 / 2 : ℂ) • 1 := by
@@ -140,7 +140,7 @@ example :
         (ancillaMul (trivialEncoding (1 : Matrix (Fin 1) (Fin 1) ℂ)) (trivialEncoding 1)) := by
   refine ⟨t6a, ?_⟩
   intro h
-  obtain ⟨-, hnorm⟩ := h
+  obtain ⟨-, hnorm, -, -⟩ := h
   have h3232 : (3 / 2 : ℂ) * (3 / 2) = 9 / 4 := by ring
   have hAB : ((3 / 2 : ℂ) • (1 : Matrix (Fin 1) (Fin 1) ℂ)) * ((3 / 2 : ℂ) • 1) =
       (9 / 4 : ℂ) • 1 := by
@@ -175,4 +175,36 @@ example :
         (1 * (1 / 2) + 1 * (1 / 2) + 1 / 2 * (1 / 2)) ((0 : Fin 1), (0 : Fin 1))
         (ancillaMul (trivialEncoding (1 : Matrix (Fin 1) (Fin 1) ℂ)) (trivialEncoding 1)) := by
   exact IsBlockEncoding.mul t6a t6a zero_le_one zero_le_one
+
+private def diagProj : Matrix (Fin 2) (Fin 2) ℂ := Matrix.diagonal ![1, 0]
+
+private theorem diagProj_star : IsStarProjection diagProj := by
+  show IsStarProjection (Matrix.diagonal ![1, 0])
+  constructor
+  · ext i j
+    fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_two]
+  · ext i j
+    fin_cases i <;> fin_cases j <;> simp
+
+private theorem smul_projection_diag_example :
+    IsStarProjection diagProj ∧
+      projEncoding diagProj ∈ Matrix.unitaryGroup (Fin 2 × Fin 2) ℂ ∧
+      IsBlockEncoding ((2 : ℂ) • diagProj) 2 0 (0 : Fin 2) (projEncoding diagProj) := by
+  exact ⟨diagProj_star, projEncoding_mem_unitaryGroup diagProj_star,
+    isBlockEncoding_smul_projection diagProj_star 2 (by norm_num)⟩
+
+private theorem qubit_product_diag_example :
+    IsQubitBlockEncoding (s := 1) (a := 1 + 1)
+      (((2 : ℂ) • diagProj) * ((3 : ℂ) • diagProj)) (2 * 3) (2 * 0 + 3 * 0 + 0 * 0)
+      (Matrix.reindex ((qubitAncillaEquiv 1 1).prodCongr (Equiv.refl _))
+        ((qubitAncillaEquiv 1 1).prodCongr (Equiv.refl _))
+        (ancillaMul (projEncoding diagProj) (projEncoding diagProj))) := by
+  have hU : IsQubitBlockEncoding (s := 1) (a := 1) ((2 : ℂ) • diagProj) 2 0
+      (projEncoding diagProj) :=
+    isBlockEncoding_smul_projection diagProj_star 2 (by norm_num)
+  have hV : IsQubitBlockEncoding (s := 1) (a := 1) ((3 : ℂ) • diagProj) 3 0
+      (projEncoding diagProj) :=
+    isBlockEncoding_smul_projection diagProj_star 3 (by norm_num)
+  exact IsQubitBlockEncoding.mul hU hV (by norm_num) (by norm_num)
+
 end MathlibExtTest.Quantum.BlockEncoding
