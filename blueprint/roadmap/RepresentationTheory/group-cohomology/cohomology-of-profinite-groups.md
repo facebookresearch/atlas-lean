@@ -32,16 +32,21 @@ A good expansion has pages for:
    finitely generated $\mathbb{Z}_\ell$-modules and $\mathbb{Q}_\ell$-vector spaces (NSW (2.7.8)–(2.7.12); Bellaïche,
    Proposition 2.1);
 6. cohomological and strict cohomological $p$-dimension and their behaviour under closed and open subgroups (NSW
-   III §3, (3.3.1)–(3.3.8)), Serre's criterion (NSW (3.4.5)) and, for Galois groups of fields of characteristic
+   III §3, (3.3.1)–(3.3.8)) and, for Galois groups of fields of characteristic
    different from $p$, the criterion for $\operatorname{cd}_p \le n$ in terms of $H^{n+1}$ and $H^n$ of the
    multiplicative group of the algebraic extensions (NSW (6.5.11)), with Hilbert's Theorem 90 for absolute
    Galois groups;
-7. dualizing modules, the trace map and the abstract duality theorems for profinite groups of finite strict
-   cohomological dimension (NSW III §4, (3.4.1), (3.4.3) with Remark 1, (3.4.6)), and duality relative to a class
-   formation, through the Tate–Nakayama theorem (Milne, *Arithmetic Duality Theorems*, Theorem I.0.2, Theorem I.1.3,
+7. dualizing modules, trace maps and the abstract duality theorems (NSW III §4): for finite strict cohomological
+   dimension, the dualizing module and the duality theorem ((3.4.1)–(3.4.3), with Remark 1 after (3.4.3) on replacing
+   the trace by any isomorphism); for $\operatorname{cd}_P G = n < \infty$, the dualizing module $D_P$ of the
+   $P$-torsion modules, which is also that of every open subgroup ((3.4.4) and the remark after (3.4.1)), Serre's
+   criterion relating $\operatorname{scd}_p G$ to $D_P$ ((3.4.5)), and the duality theorem for finite modules when
+   $D_i(\mathbb{Z}/p\mathbb{Z}) = 0$ for $p \in P$ and $i < n$ ((3.4.6)); and duality relative to a class formation,
+   through the Tate–Nakayama theorem (Milne, *Arithmetic Duality Theorems*, Theorem I.0.2, Theorem I.1.3,
    Theorem I.1.8);
 8. Tate cohomology $\hat H^n$ of profinite groups and its vanishing properties for groups whose order is divisible
-   by $\ell^\infty$ (NSW I §9, (1.9.13), (1.9.15)).
+   by $\ell^\infty$ (NSW I §9, (1.9.13), (1.9.15)); and the composition series with factors $\mathbb{Z}/p\mathbb{Z}$ of a
+   module killed by $p$ over a finite $p$-group (NSW (1.6.13)).
 
 ## Proof depends on
 

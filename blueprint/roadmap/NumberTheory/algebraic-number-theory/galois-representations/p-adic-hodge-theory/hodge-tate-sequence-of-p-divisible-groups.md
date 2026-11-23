@@ -10,12 +10,12 @@ $\alpha_G \colon T \otimes_{\mathbb{Z}_p} \mathcal{O}_C \to (\operatorname{Lie} 
 
 1. after inverting $p$, the sequence
    $$0 \to \operatorname{Lie} G \otimes_{\mathcal{O}_C} C(1) \xrightarrow{\ \alpha_{G^\vee}^\vee(1)\ } T \otimes_{\mathbb{Z}_p} C \xrightarrow{\ \alpha_G\ } (\operatorname{Lie} G^\vee \otimes_{\mathcal{O}_C} C)^\vee \to 0$$
-   is exact, where $(1)$ is the Tate twist by $\mathbb{Z}_p(1) = T_p \mu_{p^\infty}$;
+   is exact, where $(1)$ is the twist by the Tate module $T_p(\mu) = \varprojlim_n \mu_{p^n}(C)$ of $\mathbb{G}_m$;
 2. integrally, $0 \to (\operatorname{Lie} G)(1) \to T \otimes_{\mathbb{Z}_p} \mathcal{O}_C \to (\operatorname{Lie} G^\vee)^\vee \to 0$
    is a complex whose cohomology groups are killed by $p^{1/(p-1) + \varepsilon}$ for every $\varepsilon > 0$; in
    particular the cokernel of $\alpha_G$ is;
 3. **kernel and annihilator.** Let $B \colon (T \otimes_{\mathbb{Z}_p} \mathcal{O}_C) \times (T_p G^\vee \otimes_{\mathbb{Z}_p} \mathcal{O}_C) \to \mathcal{O}_C(1)$
-   be the $\mathcal{O}_C$-bilinear extension of the Weil pairing $T \times T_p G^\vee \to \mathbb{Z}_p(1)$ of Cartier duality. Then for
+   be the $\mathcal{O}_C$-bilinear extension of the Weil pairing $T \times T_p G^\vee \to T_p(\mu)$ of Cartier duality. Then for
    $x \in T \otimes \mathcal{O}_C$,
    $$\alpha_G(x) = 0 \iff B(x, y) = 0 \text{ for every } y \in T_p G^\vee \otimes \mathcal{O}_C \text{ with } \alpha_{G^\vee}(y) = 0.$$
    This identity holds integrally, with no torsion bound, while the cokernel of $\alpha_G$ is controlled only by

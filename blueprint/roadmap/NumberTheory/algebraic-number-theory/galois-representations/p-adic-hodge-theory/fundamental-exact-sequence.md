@@ -31,8 +31,8 @@ is exact: every $y \in B_{\mathrm{cris}}$ is $\varphi(x) - x$ for some $x \in B_
 
 - J.-M. Fontaine and Y. Ouyang, *Theory of p-adic Galois Representations*, book draft (PDF of 2022-05-26),
   archived at <http://web.archive.org/web/20261014003209/http://staff.ustc.edu.cn/~yiouyang/galoisrep.pdf>:
-  §7.3, Theorem 7.26 (3) (for $r \in \mathbb{Z}$, $0 \to \mathbb{Q}_p(r) \to \operatorname{Fil}^r B_{\mathrm{cris}} \xrightarrow{p^{-r}\varphi - 1} B_{\mathrm{cris}} \to 0$ is
-  exact; the case $r = 0$), Definition 7.27 ($B_e$), Theorem 7.28 (1) ($\operatorname{Fil}^0 B_e = \mathbb{Q}_p$) and (4) (the
+  §7.2.3, Theorem 7.26 (3) (for $r \in \mathbb{Z}$, $0 \to \mathbb{Q}_p(r) \to \operatorname{Fil}^r B_{\mathrm{cris}} \xrightarrow{p^{-r}\varphi - 1} B_{\mathrm{cris}} \to 0$ is
+  exact; the case $r = 0$); §7.3, Definition 7.27 ($B_e$), Theorem 7.28 (1) ($\operatorname{Fil}^0 B_e = \mathbb{Q}_p$) and (4) (the
   exact sequence (7.27)) with its proof, and Remark 7.29 (the fundamental exact sequence, also in the form (7.28));
   the remark after Theorem 8.4 ($\varphi$ is injective on $B_{\mathrm{st}} \supseteq B_{\mathrm{cris}}$).
 - S. Bloch and K. Kato, "L-functions and Tamagawa numbers of motives", in *The Grothendieck Festschrift*, vol. I,

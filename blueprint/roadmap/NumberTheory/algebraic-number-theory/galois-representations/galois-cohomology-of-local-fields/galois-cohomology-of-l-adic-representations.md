@@ -8,10 +8,13 @@ carrying their $\ell$-adic topologies.
 1. **Passage from finite coefficients.** $H^i(G_K, T)$ is a finitely generated $\mathbb{Z}_\ell$-module,
    $H^i(G_K, T) = \varprojlim_n H^i(G_K, T/\ell^n T)$, and $H^i(G_K, V) \cong H^i(G_K, T) \otimes_{\mathbb{Z}_\ell} \mathbb{Q}_\ell$.
 2. **Cohomological dimension.** $H^i(G_K, V) = 0$ for $i > 2$.
-3. **Duality.** For the rational Tate module $V_\ell(\mu) = (\varprojlim_m \mu_{\ell^m}) \otimes_{\mathbb{Z}_\ell} \mathbb{Q}_\ell$
-   of $\mathbb{G}_m$ there is a canonical isomorphism $H^2(G_K, V_\ell(\mu)) \cong \mathbb{Q}_\ell$, the limit of the
-   isomorphisms $H^2(G_K, \mu_{\ell^m}) \cong \mathbb{Z}/\ell^m\mathbb{Z}$ given by the invariant map; for the
-   scalar-character model $\mathbb{Q}_\ell(1)$ it depends on a choice of compatible primitive $\ell^m$-th roots of unity.
+3. **Duality.** For the Tate module $T_\ell(\mu) = \varprojlim_m \mu_{\ell^m}$ of $\mathbb{G}_m$, item 1 and the
+   isomorphisms $H^2(G_K, \mu_{\ell^m}) \cong \mathbb{Z}/\ell^m\mathbb{Z}$ given by the invariant map, compatible with the
+   transition maps, give a canonical isomorphism
+   $H^2(G_K, T_\ell(\mu)) = \varprojlim_m H^2(G_K, \mu_{\ell^m}) \cong \varprojlim_m \mathbb{Z}/\ell^m\mathbb{Z} = \mathbb{Z}_\ell$, and
+   tensoring with $\mathbb{Q}_\ell$ gives $H^2(G_K, V_\ell(\mu)) \cong \mathbb{Q}_\ell$ for the rational Tate module
+   $V_\ell(\mu) = T_\ell(\mu) \otimes_{\mathbb{Z}_\ell} \mathbb{Q}_\ell$. For the scalar-character model $\mathbb{Q}_\ell(1)$ the
+   isomorphism depends on a choice of compatible primitive $\ell^m$-th roots of unity.
    For $i = 0, 1, 2$ the cup product $H^i(G_K, V) \times H^{2-i}(G_K, V^*(1)) \to H^2(G_K, \mathbb{Q}_\ell(1)) \cong \mathbb{Q}_\ell$
    is a perfect pairing of finite-dimensional $\mathbb{Q}_\ell$-vector spaces.
 4. **Euler characteristic.** $\dim H^0(G_K, V) - \dim H^1(G_K, V) + \dim H^2(G_K, V)$ is $0$ if $\ell \ne p$
@@ -27,7 +30,7 @@ carrying their $\ell$-adic topologies.
 - [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for Tate's comparison of continuous cohomology with the inverse limit over finite levels when the cohomology of the open subgroups with $\mathbb{Z}/\ell$-coefficients is finite
 - [Cohomological dimension and finiteness for p-adic fields](cohomological-dimension-of-p-adic-fields.md), for the finiteness of $H^i(U, \mathbb{Z}/\ell\mathbb{Z})$ for open subgroups $U$ and for $\operatorname{cd}_\ell(G_K) = 2$
 - [Local Tate duality](local-tate-duality.md), applied to $T/\ell^n T$
-- [Galois cohomology of roots of unity over a p-adic field](cohomology-of-roots-of-unity-over-p-adic-fields.md), for the isomorphisms $H^2(G_K, \mu_{\ell^m}) \cong \mathbb{Z}/\ell^m\mathbb{Z}$ whose limit is $H^2(G_K, V_\ell(\mu)) \cong \mathbb{Q}_\ell$
+- [Galois cohomology of roots of unity over a p-adic field](cohomology-of-roots-of-unity-over-p-adic-fields.md), for the isomorphisms $H^2(G_K, \mu_{\ell^m}) \cong \mathbb{Z}/\ell^m\mathbb{Z}$, whose inverse limit is $H^2(G_K, T_\ell(\mu)) \cong \mathbb{Z}_\ell$
 - [Local Euler characteristic formula](local-euler-characteristic-formula.md), applied to $T/\ell^n T$
 
 ## Sources

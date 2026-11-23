@@ -7,7 +7,7 @@ unipotently on $V$; equivalently, $V$ is **potentially semistable**: there is a 
 $\bar K$ such that $I_{K'}$ acts unipotently on $V$, that is, the semisimplification of $V|_{G_{K'}}$ is
 unramified.
 
-More precisely, choose a topological generator $t$ of $\mathbb{Z}_\ell(1) \cong I_K/P_{K,\ell}$. After a finite
+More precisely, choose a topological generator $t$ of $I_K/P_{K,\ell} \cong T_\ell(\mu(\bar k))$. After a finite
 extension of $K$ the action of $G_K$ factors through $G_{K,\ell}$, and some power $t^N$, $N \ge 1$, acts
 unipotently.
 
@@ -17,7 +17,7 @@ unipotently.
 
 ## Proof depends on
 
-- [Inertia and tame inertia of a p-adic field](inertia-and-tame-inertia-of-a-p-adic-field.md), for $I_K/P_{K,\ell} \cong \mathbb{Z}_\ell(1)$ and the relation $g t g^{-1} = t^{\chi_\ell(g)}$, which makes the eigenvalues of $\rho(t)$ roots of unity
+- [Inertia and tame inertia of a p-adic field](inertia-and-tame-inertia-of-a-p-adic-field.md), for $I_K/P_{K,\ell} \cong T_\ell(\mu(\bar k))$ and the relation $g t g^{-1} = t^{\chi_\ell(g)}$, which makes the eigenvalues of $\rho(t)$ roots of unity
 - [Cyclotomic character and Tate twists](../cyclotomic-character-and-tate-twists.md), for the $\ell$-adic cyclotomic character, whose image is open in $\mathbb{Z}_\ell^\times$ because $K(\mu_\ell)$ contains only finitely many $\ell$-power roots of unity
 
 ## Sources

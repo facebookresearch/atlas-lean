@@ -6,9 +6,12 @@ $\varpi \in R$ be an element with $\varpi^{(0)} = -p$, so that $\xi = [\varpi] +
 $$u = \log\frac{[\varpi]}{-p} = \sum_{n \ge 1} (-1)^{n-1} \frac{1}{n} \Bigl(\frac{[\varpi]}{-p} - 1\Bigr)^n
 = -\sum_{n \ge 1} \frac{\xi^n}{n p^n} \in B_{\mathrm{dR}}^+,$$
 
-a convergent series since $[\varpi]/(-p) - 1 = -\xi/p$ lies in $\ker \theta$. (This is the value at $\varpi$ of the
-logarithm $\log[\cdot]$ on $(\operatorname{Frac} R)^\times$, normalized by $\log[\varpi] = u$; on Teichmüller lifts of
-units of $R$ the logarithm is given by the usual series, but $\varpi$ has positive valuation.) The ring of
+a convergent series since $[\varpi]/(-p) - 1 = -\xi/p$ lies in $\ker \theta$. This $u$ is the value at $\varpi$ of
+Fontaine's logarithm $\log[\cdot] \colon (\operatorname{Frac} R)^\times \to B_{\mathrm{dR}}^+$. That logarithm is given by the
+series $\sum_{n \ge 1} (-1)^{n-1} ([x] - 1)^n / n$, which converges in $A_{\mathrm{cris}}$, only for $x \in R$ with
+$v(x - 1) \ge 1$; it is extended to $1 + \mathfrak{m}_R$ by $\log[x] = p^{-m} \log[x^{p^m}]$ for $m$ large, to
+$R^\times = \bar k^\times \times (1 + \mathfrak{m}_R)$ by ignoring the factor in $\bar k^\times$, and to
+$(\operatorname{Frac} R)^\times$ through $\varpi$, by $\log[\varpi] = u$. The ring of
 **semistable periods** is $B_{\mathrm{st}} = B_{\mathrm{cris}}[u] \subset B_{\mathrm{dR}}$; $u$ is transcendental over
 $B_{\mathrm{cris}}$, so $B_{\mathrm{st}}$ is a polynomial ring over $B_{\mathrm{cris}}$. It is stable under $G_K$, the
 Frobenius extends by $\varphi(u) = pu$, and the **monodromy operator** $N$ is the $B_{\mathrm{cris}}$-derivation
@@ -39,9 +42,10 @@ semistable representations are de Rham, since $B_{\mathrm{dR}}$-admissibility ov
 
 - J.-M. Fontaine and Y. Ouyang, *Theory of p-adic Galois Representations*, book draft (PDF of 2022-05-26),
   archived at <http://web.archive.org/web/20261014003209/http://staff.ustc.edu.cn/~yiouyang/galoisrep.pdf>:
-  §7.2, Definition 7.11, Proposition 7.14 ($u$ transcendental); §8.1, Definition 8.1 ($B_{\mathrm{st}} = B_{\mathrm{cris}}[u]$,
-  $u = \log[\varpi]$), with §7.2, (7.14) and (7.15) (the logarithm on $(\operatorname{Frac} R)^\times$ and
-  $u = \log([\varpi]/(-p)) = -\sum_n \xi^n/(np^n)$ for $\varpi^{(0)} = -p$), Theorems 8.3 and 8.4, (8.1), Definition 8.5 ($N$), Proposition 8.6, Proposition 8.7,
+  §7.1.4 (the logarithm: (7.11), the series (7.12) on $U_R^1 = \{x : v(x - 1) \ge 1\}$, its extensions (7.13) to
+  $U_R^+ = 1 + \mathfrak{m}_R$ and (7.14) to $R^\times = \bar k^\times \times U_R^+$, and step (4) with (7.15),
+  $u = \log[\varpi] = \log([\varpi]/(-p)) = -\sum_n \xi^n/(np^n)$ for $\varpi^{(0)} = -p$) and Proposition 7.14 ($u$ is
+  transcendental); §8.1, Definition 8.1 ($B_{\mathrm{st}} = B_{\mathrm{cris}}[u]$, $u = \log[\varpi]$), Theorems 8.3 and 8.4, (8.1), Definition 8.5 ($N$), Proposition 8.6, Proposition 8.7,
   Definition 8.9, Proposition 8.10; §8.3, Definition 8.46, Remark 8.47, Proposition 8.48 and Definition 8.49
   (potentially semistable representations, which are de Rham).
 - Provenance: L. Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror

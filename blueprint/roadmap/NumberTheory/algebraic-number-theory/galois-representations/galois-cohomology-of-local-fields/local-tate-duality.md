@@ -25,8 +25,8 @@ $H^2(k, \mu_{\ell^r}) \cong \mathbb{Z}/\ell^r\mathbb{Z} \subset \mathbb{Q}/\math
 ## Proof depends on
 
 - [Dualizing module of a p-adic field](dualizing-module-of-a-p-adic-field.md), for the identification of the dualizing module of $G_k$ with $\mu$, under which the duality takes values in $H^2(k, \mu) \cong \mathbb{Q}/\mathbb{Z}$
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the abstract duality theorem (3.4.6) of a profinite group of strict cohomological dimension $2$ for torsion modules, with its dualizing module and trace map
-- [Cohomological dimension and finiteness for p-adic fields](cohomological-dimension-of-p-adic-fields.md), for $\operatorname{scd}(G_k) = 2$
+- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the duality theorem (3.4.6): for a profinite group $G$ with $\operatorname{cd}_P G = n < \infty$ such that $D_i(\mathbb{Z}/p\mathbb{Z}) = 0$ for $p \in P$ and $i < n$, cup product and the trace give $H^i(G, \operatorname{Hom}(A, D_P)) \cong H^{n-i}(G, A)^*$ for every finite $P$-torsion module $A$; with Remark 1 after (3.4.3), which allows any isomorphism $H^n(G, D_P) \cong \mathbb{Q}_P/\mathbb{Z}_P$ in place of the trace
+- [Cohomological dimension and finiteness for p-adic fields](cohomological-dimension-of-p-adic-fields.md), for $\operatorname{cd}_\ell(G_k) = 2$ for every prime $\ell$
 - [Local class field theory: the local Artin map](../../../p-adic-numbers/local-class-field-theory.md), for the surjections $K^\times/K^{\times \ell} \to G_K^{\mathrm{ab}}/\ell$ over the finite extensions $K/k$, which give $D_1(\mathbb{Z}/\ell\mathbb{Z}) = \varinjlim_K H^1(K, \mathbb{Z}/\ell\mathbb{Z})^* = 0$; and $D_0(\mathbb{Z}/\ell\mathbb{Z}) = 0$ because every finite extension has finite extensions of degree divisible by $\ell$
 
 ## Sources
@@ -36,8 +36,9 @@ $H^2(k, \mu_{\ell^r}) \cong \mathbb{Z}/\ell^r\mathbb{Z} \subset \mathbb{Q}/\math
   duality: "Let $k$ be a $p$-adic local field. Let $A$ be a finite $G_k$-module and set
   $A' = \operatorname{Hom}(A, \mu)$ … induces for $0 \le i \le 2$ an isomorphism of finite abelian groups
   $H^i(k, A') \to H^{2-i}(k, A)^*$") and its proof, a special case of the duality theorem (3.4.6) once the
-  dualizing module is identified with $\mu$ by (7.2.4), using (7.2.3) and (7.2.5), pp. 380–381; (7.2.9) and (7.2.10)
-  for modules finitely generated as abelian groups.
+  dualizing module is identified with $\mu$ by (7.2.4), after checking $D_0(\mathbb{Z}/p\mathbb{Z}) = 0$ and, by the local
+  reciprocity law (7.2.3), $D_1(\mathbb{Z}/p\mathbb{Z}) = 0$, pp. 380–381; (7.2.9) and (7.2.10) for modules finitely
+  generated as abelian groups.
 - J. S. Milne, *Arithmetic Duality Theorems*, 2nd ed., 2006, <https://www.jmilne.org/math/Books/ADTnot.pdf>:
   Chapter I, Corollary 2.3 (the statement).
 - H. Darmon, F. Diamond, R. Taylor, "Fermat's Last Theorem", in *Current Developments in Mathematics*,

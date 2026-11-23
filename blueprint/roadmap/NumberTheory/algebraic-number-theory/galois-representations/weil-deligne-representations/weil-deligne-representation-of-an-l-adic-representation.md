@@ -25,7 +25,7 @@ $\iota\mathrm{WD}(V, \rho)$.
 ## Proof depends on
 
 - [Grothendieck's ℓ-adic monodromy theorem](grothendieck-l-adic-monodromy-theorem.md), for the existence of $N$: an open subgroup of $I_K$ acts unipotently
-- [Inertia and tame inertia of a p-adic field](inertia-and-tame-inertia-of-a-p-adic-field.md), for the factorization of $t$ through $I_K/P_{K,\ell} \cong \mathbb{Z}_\ell(1)$ and the conjugation relation that gives $r(\sigma) N r(\sigma)^{-1} = \lvert \sigma \rvert N$
+- [Inertia and tame inertia of a p-adic field](inertia-and-tame-inertia-of-a-p-adic-field.md), for the factorization of $t$ through $I_K/P_{K,\ell} \cong T_\ell(\mu(\bar k))$ and the conjugation relation that gives $r(\sigma) N r(\sigma)^{-1} = \lvert \sigma \rvert N$
 
 ## Sources
 

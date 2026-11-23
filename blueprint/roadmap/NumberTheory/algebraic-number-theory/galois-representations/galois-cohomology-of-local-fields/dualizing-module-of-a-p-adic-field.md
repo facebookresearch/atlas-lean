@@ -14,21 +14,20 @@ $\operatorname{Hom}_{G_K}(\mu_n, D_0) \cong H^2(K, \mu_n)^*$ is identified with 
 map, and the element corresponding to $1$ is an isomorphism of $\mu_n$ onto the $n$-torsion of $D_0$; these
 isomorphisms fit together into $\mu \cong D_0$.
 
-Under this identification, the cup-product pairings
-$H^i(k, \operatorname{Hom}(A, \mu)) \times H^{2-i}(k, A) \to H^2(k, \mu)$ followed by the canonical isomorphism
-$H^2(k, \mu) \cong \mathbb{Q}/\mathbb{Z}$ give the duality isomorphisms of the abstract duality theorem for $G_k$:
-that theorem holds with its trace map $H^2(k, D_0) \to \mathbb{Q}/\mathbb{Z}$ replaced by any isomorphism.
+This identification is what turns the abstract duality theorem for finite modules into local Tate duality,
+for finite $G_k$-modules $A$ and degrees $0 \le i \le 2$; no duality statement for infinite torsion modules is made
+here.
 
 ## Depends on
 
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for dualizing modules, their trace maps and cup products
-- [Galois cohomology of roots of unity over a p-adic field](cohomology-of-roots-of-unity-over-p-adic-fields.md), for $H^2(K, \mu_n) \cong \mathbb{Z}/n\mathbb{Z}$ and $H^2(k, \mu) \cong \mathbb{Q}/\mathbb{Z}$
+- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for dualizing modules
+- [Galois cohomology of roots of unity over a p-adic field](cohomology-of-roots-of-unity-over-p-adic-fields.md), for the isomorphisms $H^2(K, \mu_n) \cong \mathbb{Z}/n\mathbb{Z}$ given by the invariant map
 
 ## Proof depends on
 
-- [Galois cohomology of roots of unity over a p-adic field](cohomology-of-roots-of-unity-over-p-adic-fields.md), for $H^2(V, \mu_n) \cong \mathbb{Z}/n\mathbb{Z}$ for every open subgroup $V$ of $G_k$
-- [Cohomological dimension and finiteness for p-adic fields](cohomological-dimension-of-p-adic-fields.md), for $\operatorname{scd}(G_k) = 2$, which makes $D_0$ a dualizing module
-- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for the theorem that a profinite group of finite strict cohomological dimension has a dualizing module, and for Remark 1 after the duality theorem (any isomorphism may replace the trace map)
+- [Cohomological dimension and finiteness for p-adic fields](cohomological-dimension-of-p-adic-fields.md), for $\operatorname{cd}_\ell(G_k) = 2$ for every prime $\ell$, so that the discrete torsion modules have a dualizing module $D_0$, which is also the dualizing module of every open subgroup
+- [Cohomology of profinite groups](../../../../RepresentationTheory/group-cohomology/cohomology-of-profinite-groups.md), for that dualizing module of a profinite group of finite cohomological dimension (NSW (3.4.4), and the remark after (3.4.1) on open subgroups)
+- [Galois cohomology of roots of unity over a p-adic field](cohomology-of-roots-of-unity-over-p-adic-fields.md), for $H^2(V, \mu_n) \cong \mathbb{Z}/n\mathbb{Z}$ for every open subgroup $V$ of $G_k$, which identifies $\operatorname{Hom}_V(\mu_n, D_0)$ with $\mathbb{Z}/n\mathbb{Z}$
 
 ## Sources
 
@@ -36,6 +35,6 @@ that theorem holds with its trace map $H^2(k, D_0) \to \mathbb{Q}/\mathbb{Z}$ re
   version 2.3 (May 2020), <https://www.mathi.uni-heidelberg.de/~schmidt/NSW2e/>: the definition of $D_0$ before
   (7.2.4) ("$D_0 = \varinjlim_{K, n} H^2(K, \mathbb{Z}/n\mathbb{Z})^*$ … characterized by a functorial isomorphism
   $H^2(K, A)^* \cong \operatorname{Hom}_{G_K}(A, D_0)$"), p. 379; (7.2.4) Theorem ("The $G_k$-module $D_0$ is canonically
-  isomorphic to the $G_k$-module $\mu$ of all roots of unity in $\bar k$") and its proof, p. 380; Chapter III, §4,
-  (3.4.1) Theorem (dualizing module), the trace map, (3.4.3) Duality Theorem with Remark 1, and (3.4.6),
-  pp. 182–185.
+  isomorphic to the $G_k$-module $\mu$ of all roots of unity in $\bar k$") and its proof through (7.1.8), p. 380;
+  Chapter III, §4, the remark after (3.4.1) (the dualizing module of an open subgroup) and (3.4.4) Theorem (the
+  dualizing module $D_P$ when $\operatorname{cd}_P G = n < \infty$), pp. 182 and 185.

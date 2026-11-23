@@ -9,11 +9,15 @@ A good expansion has pages for:
 1. Tate's normalized traces on the cyclotomic $\mathbb{Z}_p$-extension and Sen's theory of $C$-representations
    (Fontaine–Ouyang, §1.4, Definition 1.100, Propositions 1.102–1.104; Chapter 4, Theorems 4.33, 4.40 and
    Proposition 4.43);
-2. the ring $R$ and its properties, the map $\theta$, the element $t$, the ring $A_{\mathrm{cris}}$ and the
-   logarithm on $1 + \mathfrak{m}_R$ (Chapter 5, Definition 5.4, Theorem 5.5; §6.2, Propositions 6.11, 6.19, 6.22;
-   §7.1, Definitions 7.1, 7.3, Propositions 7.4–7.8; §7.2, Definition 7.11, Lemma 7.12, Proposition 7.14);
+2. the ring $R$ and its properties, the map $\theta$, the element $t$ and the ring $A_{\mathrm{cris}}$ (Chapter 5,
+   Definition 5.4, Theorem 5.5; §6.2, Propositions 6.11, 6.19, 6.22; §7.1.1–7.1.3, Definitions 7.1, 7.3, Propositions
+   7.4–7.8), and Fontaine's logarithm (§7.1.4): the series (7.12) on $U_R^1 = \{x \in R : v(x - 1) \ge 1\}$, which does
+   not apply to all units of $R$, its extension (7.13) to $U_R^+ = 1 + \mathfrak{m}_R$ by division by powers of $p$, its
+   extension (7.14) to $R^\times = \bar k^\times \times U_R^+$ by ignoring the factor in $\bar k^\times$, its extension to
+   $(\operatorname{Frac} R)^\times$ through $u = \log[\varpi]$ (7.15), Definition 7.11, Lemma 7.12 and Proposition 7.14
+   ($u$ is transcendental);
 3. the exact sequences $0 \to \mathbb{Q}_p(r) \to \operatorname{Fil}^r B_{\mathrm{cris}} \xrightarrow{p^{-r}\varphi - 1} B_{\mathrm{cris}} \to 0$
-   for $r \in \mathbb{Z}$, and their analogues for $B_{\mathrm{cris}}^+$ with $r \ge 0$ (§7.3, Theorem 7.26 (2)–(3));
+   for $r \in \mathbb{Z}$, and their analogues for $B_{\mathrm{cris}}^+$ with $r \ge 0$ (§7.2.3, Theorem 7.26 (2)–(3));
 4. the Frobenius eigenspaces $P^+_{h,d} = (B_{\mathrm{cris}}^+)^{\varphi^h = p^d}$, which are $\mathbb{Q}_p$-vector spaces and
    not rings in general ($t \in P^+_{1,1}$, while $t^2 \in P^+_{1,2}$), with $B_e = B_{\mathrm{cris}}^{\varphi = 1}$
    (Definition 7.27, Theorem 7.28 (1)–(3)), Colmez's fundamental lemma and Lubin–Tate elements (§7.4, Theorem 7.41,
