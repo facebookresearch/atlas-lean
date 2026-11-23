@@ -1,0 +1,3 @@
+# Almost-invariant events are trivial under an ergodic measure
+
+Let $G$ be a countable group acting on a set $E$, and let $G$ act on the configuration space $\{0, 1\}^E$ (with the product $\sigma$-algebra) by the shifts $(\tau_g\omega)(e) = \omega(g^{-1}e)$. Let $\mu$ be a probability measure on $\{0, 1\}^E$ that is ergodic: every shift $\tau_g$ preserves $\mu$, and every measurable event $B$ with $\tau_g^{-1}(B) = B$ for all $g \in G$ has $\mu(B) = 0$ or $\mu(B) = 1$. If $A$ is a measurable event such that, for every $g \in G$, $\tau_g^{-1}(A)$ and $A$ differ by a $\mu$-null set, then $\mu(A) = 0$ or $\mu(A) = 1$.

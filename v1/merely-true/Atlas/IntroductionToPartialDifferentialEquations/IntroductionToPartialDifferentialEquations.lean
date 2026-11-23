@@ -1,0 +1,52 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM1.LinearPDEs
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM1.NormsDivergence
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM1.PDEClassification
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM11.Wave1D
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM12.MinkowskiVectors
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM12.NullFrameDecomposition
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM12.Wave3D
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM14.WaveEnergy
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM16.FourierInversion
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM16.FourierTransform
+
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM17.FlowSymmetry
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM17.Lagrangian
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM17.Schrodinger
+
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM18.FieldTransformation
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM18.LagrangianMechanics
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM18.NoetherEnergy
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM18.NoetherEnergyVerification
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM18.VariationalNoether
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM19.BurgersCharacteristic
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM19.BurgersSingularity
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM19.SchrodingerFundamental
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM19.TransportBurgers
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM2.Duhamel
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM2.HeatEquationSetup
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM2.HeatInvariance
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM2.ThermalEnergy
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM24.Burger
+
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM3.HeatUniqueness
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM4.WeakMaximumPrinciple
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM5.Convolution
+
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM5.HeatFundamental
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM6.HeatSymmetryEnergy
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM6.MeanValueStrongMax
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM7.LaplacePoisson
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM7.LaplaceProperties
+
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM8.GreenFunctions
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM8.RepresentationFormulas
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM9.PoissonHarnackLiouville
+import Atlas.IntroductionToPartialDifferentialEquations.code.CM9.WaveDalembert

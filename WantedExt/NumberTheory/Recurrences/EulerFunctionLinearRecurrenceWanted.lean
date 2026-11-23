@@ -28,8 +28,10 @@ namespace MetaMathlibExt
 
 open Filter
 
-/-- Minimal order of `φ(n)` and maximal order of `σ(n)`: for `n ≥ 3`,
-`φ(n)/n ≫ 1/log log n` and `σ(n)/n ≪ log log n`.
+/-- **Lower bound for Euler's function and upper bound for the sum of divisors.** Let $\varphi$
+be Euler's totient function and $\sigma(n)$ the sum of the positive divisors of $n$. There is a
+constant $C > 0$ such that $\varphi(n)/n \ge C/\log\log n$ for every integer $n \ge 3$, and there
+is a constant $C'$ such that $\sigma(n)/n \le C' \log\log n$ for every integer $n \ge 3$.
 
 Source: Florian Luca and Makoko Campbell Manape, *On the Euler Function of Linearly Recurrence
 Sequences*, Fibonacci Quarterly 62 (2024), Article 62-4/luca09162024rev2,
@@ -41,8 +43,10 @@ public theorem_wanted totient_div_gg_and_sigma_div_ll_log_log :
       ∃ C : ℝ, ∀ n : ℕ, 3 ≤ n →
         (ArithmeticFunction.sigma 1 n : ℝ) / n ≤ C * Real.log (Real.log n)
 
-/-- Brun sieve bound: uniformly for `x ≥ y ≥ 2`, the number `Φ(x, y)` of positive `n ≤ x` whose
-least prime factor `p(n)` exceeds `y` (with `p(1) = 1`, as `Nat.minFac 1 = 1`) is `≪ x / log y`.
+/-- **Sieve bound for integers without small prime factors.** Write $p(n)$ for the least prime
+factor of an integer $n \ge 2$, and set $p(1) = 1$. There is a constant $C$ such that for all real
+$x$ and $y$ with $2 \le y \le x$, the number of integers $1 \le n \le x$ with $p(n) > y$ is at
+most $C x / \log y$.
 
 Source: Florian Luca and Makoko Campbell Manape, *On the Euler Function of Linearly Recurrence
 Sequences*, Fibonacci Quarterly 62 (2024), Article 62-4/luca09162024rev2,
@@ -53,8 +57,10 @@ public theorem_wanted card_minFac_gt_le_div_log :
       ((Finset.Icc 1 ⌊x⌋₊).filter (fun n => y < (Nat.minFac n : ℝ))).card ≤
         C * x / Real.log y
 
-/-- For `x ≥ 10`, the number of positive `n ≤ x` with `Ω(n) ≥ 10 log log x` is
-`O(x / (log x)²)`.
+/-- **Integers with many prime factors are rare.** Let $\Omega(n)$ be the number of prime factors
+of $n$ counted with multiplicity. There is a constant $C$ such that for every real $x \ge 10$, the
+number of integers $1 \le n \le x$ with $\Omega(n) \ge 10 \log\log x$ is at most
+$C x / (\log x)^2$.
 
 Source: Florian Luca and Makoko Campbell Manape, *On the Euler Function of Linearly Recurrence
 Sequences*, Fibonacci Quarterly 62 (2024), Article 62-4/luca09162024rev2,
@@ -65,8 +71,10 @@ public theorem_wanted card_cardFactors_ge_ten_log_log_le :
           10 * Real.log (Real.log x) ≤ (ArithmeticFunction.cardFactors n : ℝ))).card ≤
         C * x / Real.log x ^ 2
 
-/-- For `x ≥ 10`, the number of positive `n ≤ x` with `τ(σ(n)) > exp(√(log x))` is
-`O(x / (log x)²)`.
+/-- **Integers whose sum of divisors has many divisors.** Let $\sigma(n)$ be the sum of the
+positive divisors of $n$ and $\tau(m)$ the number of positive divisors of $m$. There is a constant
+$C$ such that for every real $x \ge 10$, the number of integers $1 \le n \le x$ with
+$\tau(\sigma(n)) > \exp(\sqrt{\log x})$ is at most $C x / (\log x)^2$.
 
 Source: Florian Luca and Makoko Campbell Manape, *On the Euler Function of Linearly Recurrence
 Sequences*, Fibonacci Quarterly 62 (2024), Article 62-4/luca09162024rev2,
@@ -78,8 +86,14 @@ public theorem_wanted card_divisors_sigma_gt_exp_sqrt_log_le :
             ((Nat.divisors (ArithmeticFunction.sigma 1 n)).card : ℝ))).card ≤
         C * x / Real.log x ^ 2
 
-/-- Schmidt's zero bound: a nondegenerate complex linearly recurrent sequence `(U_n)_{n ≥ 1}` of
-(minimal) order `k ≥ 2` has finitely many zeros, at most `exp(exp(exp(3k log k)))`.
+/-- **Schmidt's bound on the zeros of a linear recurrence.** Let $(U_n)_{n \ge 1}$ be a sequence
+of complex numbers satisfying $U_{m+k} = c_0 U_m + c_1 U_{m+1} + \dots + c_{k-1} U_{m+k-1}$ for
+all $m \ge 1$, with complex coefficients $c_i$, where the order $k$ of this recurrence is minimal
+among all linear recurrences with complex coefficients satisfied by $(U_n)_{n \ge 1}$, and
+$k \ge 2$. Suppose the recurrence is nondegenerate: no root of its characteristic polynomial
+$X^k - c_{k-1} X^{k-1} - \dots - c_0$ is $0$, and no quotient of two distinct roots is a root of
+unity. Then $U_n = 0$ for only finitely many $n \ge 1$, and there are at most
+$\exp(\exp(\exp(3k \log k)))$ such $n$.
 
 Source: Florian Luca and Makoko Campbell Manape, *On the Euler Function of Linearly Recurrence
 Sequences*, Fibonacci Quarterly 62 (2024), Article 62-4/luca09162024rev2,
@@ -94,10 +108,16 @@ public theorem_wanted zero_set_card_le_exp_exp_exp (E : LinearRecurrence ℂ) (U
       ({n : ℕ | 1 ≤ n ∧ U n = 0}.ncard : ℝ) ≤
         Real.exp (Real.exp (Real.exp (3 * E.order * Real.log E.order)))
 
-/-- Small values of a nondegenerate integer linearly recurrent sequence with `s ≥ 2` distinct
-characteristic roots: if `α₁` is a root of maximal modulus, there are `c ∈ (0, 1/3)` and `x₀` such
-that for `x ≥ x₀` the number of positive `n ≤ x` with `|U_n| ≤ |α₁|^{n(1 - δ)}`, `δ = x^{-c}`,
-is `O_U(√x)`.
+/-- **Few small values of a nondegenerate integer linear recurrence.** Let $(U_n)_{n \ge 1}$ be a
+sequence of integers satisfying $U_{m+k} = c_0 U_m + c_1 U_{m+1} + \dots + c_{k-1} U_{m+k-1}$ for
+all $m \ge 1$, with integer coefficients $c_i$, where the order $k$ of this recurrence is minimal
+among all linear recurrences with integer coefficients satisfied by $(U_n)_{n \ge 1}$. Suppose the
+recurrence is nondegenerate: no complex root of its characteristic polynomial
+$X^k - c_{k-1} X^{k-1} - \dots - c_0$ is $0$, and no quotient of two distinct complex roots is a
+root of unity. Suppose also that the characteristic polynomial has at least two distinct complex
+roots, and let $\alpha_1$ be a complex root of maximal modulus. Then there are a real $c$ with
+$0 < c < 1/3$ and real constants $x_0$ and $C$ such that for every real $x \ge x_0$, the number of
+integers $1 \le n \le x$ with $|U_n| \le |\alpha_1|^{n(1 - x^{-c})}$ is at most $C \sqrt{x}$.
 
 Source: Florian Luca and Makoko Campbell Manape, *On the Euler Function of Linearly Recurrence
 Sequences*, Fibonacci Quarterly 62 (2024), Article 62-4/luca09162024rev2,
@@ -116,9 +136,19 @@ public theorem_wanted card_abs_le_dominant_root_pow_le_sqrt (E : LinearRecurrenc
       ((Finset.Icc 1 ⌊x⌋₊).filter (fun n =>
           (|U n| : ℝ) ≤ ‖α₁‖ ^ ((n : ℝ) * (1 - x ^ (-c))))).card ≤ C * Real.sqrt x
 
-/-- Main theorem: if `(U_n)_{n ≥ 1}` is a nondegenerate integer linearly recurrent sequence and
-`|U_n|` is not eventually a polynomial in `n`, then `φ(|U_n|) ≥ |U_{φ(n)}|` fails for
-`O_U(x / log x)` positive integers `n ≤ x`, and so does `σ(|U_n|) ≤ |U_{σ(n)}|`.
+/-- **Euler's function and the sum of divisors along a linear recurrence.** Let
+$(U_n)_{n \ge 1}$ be a sequence of integers satisfying
+$U_{m+k} = c_0 U_m + c_1 U_{m+1} + \dots + c_{k-1} U_{m+k-1}$ for all $m \ge 1$, with integer
+coefficients $c_i$, where the order $k$ of this recurrence is minimal among all linear recurrences
+with integer coefficients satisfied by $(U_n)_{n \ge 1}$. Suppose the recurrence is nondegenerate:
+no complex root of its characteristic polynomial $X^k - c_{k-1} X^{k-1} - \dots - c_0$ is $0$, and
+no quotient of two distinct complex roots is a root of unity. Suppose also that there is no
+polynomial $P$ with rational coefficients such that $|U_n| = P(n)$ for all sufficiently large $n$.
+Let $\varphi$ be Euler's totient function and $\sigma(m)$ the sum of the positive divisors of $m$,
+with $\varphi(0) = \sigma(0) = 0$. Then there are real constants $x_0$ and $C$ such that for every
+real $x \ge x_0$, the number of integers $1 \le n \le x$ with $\varphi(|U_n|) < |U_{\varphi(n)}|$
+is at most $C x / \log x$, and the number of integers $1 \le n \le x$ with
+$|U_{\sigma(n)}| < \sigma(|U_n|)$ is at most $C x / \log x$.
 
 Source: Florian Luca and Makoko Campbell Manape, *On the Euler Function of Linearly Recurrence
 Sequences*, Fibonacci Quarterly 62 (2024), Article 62-4/luca09162024rev2,

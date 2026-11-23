@@ -69,8 +69,10 @@ variable {Pos : Type*} (G : ParityGame Pos)
 
 /-! ## The attractor as a least fixed point -/
 
-/-- The controllable predecessor of `X` for `p`: the positions of `p` with a move into `X`, and
-the positions of the opponent all of whose moves lead into `X`. -/
+/-- **Controllable predecessor.** Let $G$ be a parity game, $p$ a player and $X$ a set of
+positions. The controllable predecessor $\mathrm{cpre}_p(X)$ of $X$ for $p$ is the set of
+positions $v$ such that either $v$ is owned by $p$ and some move from $v$ leads into $X$, or $v$
+is not owned by $p$ and every move from $v$ leads into $X$. -/
 def cpre (p : Player) (X : Set Pos) : Set Pos :=
   { v | (G.owner v = p ∧ ∃ w, G.Move v w ∧ w ∈ X) ∨ (G.owner v ≠ p ∧ ∀ w, G.Move v w → w ∈ X) }
 
@@ -80,17 +82,28 @@ theorem cpre_mono (p : Player) : Monotone (G.cpre p) := by
   · exact Or.inl ⟨ho, w, hw, hXY hX⟩
   · exact Or.inr ⟨ho, fun w hw => hXY (hall w hw)⟩
 
-/-- The attractor operator `X ↦ T ∪ cpre p X`. -/
+/-- **Attractor operator.** Let $G$ be a parity game, $p$ a player and $T$ a set of positions. The
+attractor operator of $T$ for $p$ is the monotone map on sets of positions sending $X$ to
+$T \cup \mathrm{cpre}_p(X)$, where $\mathrm{cpre}_p$ is the controllable predecessor for $p$. -/
 def attractorStep (p : Player) (T : Set Pos) : Set Pos →o Set Pos where
   toFun X := T ∪ G.cpre p X
   monotone' _ _ h := Set.union_subset_union_right T (G.cpre_mono p h)
 
-/-- The attractor of `T` for `p`: the least fixed point of `X ↦ T ∪ cpre p X`. -/
+/-- **Attractor.** Let $G$ be a parity game, $p$ a player and $T$ a set of positions. The
+attractor of $T$ for $p$ is the least fixed point of the attractor operator
+$X \mapsto T \cup \mathrm{cpre}_p(X)$ on sets of positions, where $\mathrm{cpre}_p$ is the
+controllable predecessor for $p$. -/
 def attractor (p : Player) (T : Set Pos) : Set Pos :=
   OrderHom.lfp (G.attractorStep p T)
 
-/-- The `n`-th approximation of the attractor: the positions from which `p` can force a visit to
-`T` within fewer than `n` moves. -/
+/-- **Attractor stages.** Let $G$ be a parity game, $p$ a player, $T$ a set of positions and $n$ a
+natural number. The $n$-th attractor stage $S_n$ of $T$ for $p$ is the set obtained by applying the
+attractor operator $X \mapsto T \cup \mathrm{cpre}_p(X)$ $n$ times to $\emptyset$, where
+$\mathrm{cpre}_p$ is the controllable predecessor for $p$; thus $S_0 = \emptyset$ and
+$S_{n+1} = T \cup \mathrm{cpre}_p(S_n)$.
+
+The $n$-th stage consists of the positions from which $p$ can force a visit to $T$ within fewer
+than $n$ moves. -/
 def attractorStage (p : Player) (T : Set Pos) (n : ℕ) : Set Pos :=
   (G.attractorStep p T)^[n] ∅
 
@@ -105,11 +118,17 @@ theorem attractorStage_succ (n : ℕ) :
 theorem attractorStage_mono : Monotone (G.attractorStage p T) :=
   (G.attractorStep p T).monotone.monotone_iterate_of_le_map (Set.empty_subset _)
 
-/-- The attractor is a fixed point of the attractor operator. -/
+/-- **The attractor is a fixed point.** Let $G$ be a parity game, $p$ a player and $T$ a set of
+positions, and let $A$ be the attractor of $T$ for $p$. Then $T \cup \mathrm{cpre}_p(A) = A$, where
+$\mathrm{cpre}_p(A)$ is the controllable predecessor of $A$ for $p$; that is, $A$ is a fixed point
+of the attractor operator $X \mapsto T \cup \mathrm{cpre}_p(X)$. -/
 theorem union_cpre_attractor : T ∪ G.cpre p (G.attractor p T) = G.attractor p T :=
   OrderHom.map_lfp (G.attractorStep p T)
 
-/-- The attractor is contained in every set closed under the attractor operator. -/
+/-- **The attractor lies in every closed set.** Let $G$ be a parity game, $p$ a player and $T$ a
+set of positions. If a set $X$ of positions satisfies $T \cup \mathrm{cpre}_p(X) \subseteq X$,
+where $\mathrm{cpre}_p$ is the controllable predecessor for $p$, then the attractor of $T$ for $p$
+is contained in $X$. -/
 theorem attractor_subset_of {X : Set Pos} (h : T ∪ G.cpre p X ⊆ X) : G.attractor p T ⊆ X :=
   OrderHom.lfp_le _ h
 
@@ -154,8 +173,11 @@ private theorem attractorStage_eq_of_stable {m : ℕ}
   | zero => rfl
   | succ k ih => rw [← Nat.add_assoc, attractorStage_succ, ih, ← attractorStage_succ, h]
 
-/-- On a finite arena the attractor is reached after `Nat.card Pos` iterations of the attractor
-operator from `∅`: it is a finite least fixed point. -/
+/-- **The attractor stabilizes after as many stages as there are positions.** Let $G$ be a parity
+game with finitely many positions, $N$ of them, let $p$ be a player and $T$ a set of positions.
+Then the attractor of $T$ for $p$ equals the $N$-th attractor stage of $T$ for $p$, that is, the
+result of applying the attractor operator $X \mapsto T \cup \mathrm{cpre}_p(X)$ $N$ times to
+$\emptyset$, where $\mathrm{cpre}_p$ is the controllable predecessor for $p$. -/
 theorem attractor_eq_attractorStage_card [Finite Pos] :
     G.attractor p T = G.attractorStage p T (Nat.card Pos) := by
   refine (G.attractor_subset_of p T ?_).antisymm (G.attractorStage_subset_attractor p T _)
@@ -172,8 +194,11 @@ theorem attractor_eq_attractorStage_card [Finite Pos] :
 /-! ## Attractor strategies -/
 
 open Classical in
-/-- The attractor strategy of `p` for `T`: at each position, a move into the lowest attractor stage
-reachable in one move (an arbitrary move if there is none). -/
+/-- **Attractor strategy.** Let $G$ be a parity game, $p$ a player and $T$ a set of positions. The
+attractor strategy of $p$ for $T$ is the positional strategy of $p$ that at a position $v$ moves
+to a successor of $v$ lying in the $n$-th attractor stage of $T$ for $p$, for the least $n$ for
+which $v$ has such a successor, and to an arbitrary successor of $v$ if no successor of $v$ lies
+in any attractor stage. -/
 noncomputable def attractorStrategy : G.PositionalStrategy p where
   next v :=
     if h : ∃ n w, G.Move v w ∧ w ∈ G.attractorStage p T n then (Nat.find_spec h).choose
@@ -185,8 +210,11 @@ noncomputable def attractorStrategy : G.PositionalStrategy p where
 
 variable {G p T}
 
-/-- From a position of `p` in `cpre p` of the `n`-th stage, the attractor strategy moves into
-the `n`-th stage. -/
+/-- **The attractor strategy moves into the stage from its controllable predecessor.** Let $G$ be
+a parity game, $p$ a player, $T$ a set of positions, $n$ a natural number and $S_n$ the $n$-th
+attractor stage of $T$ for $p$. If a position $v$ owned by $p$ lies in the controllable
+predecessor $\mathrm{cpre}_p(S_n)$ of $S_n$ for $p$, then the successor that the attractor
+strategy of $p$ for $T$ chooses at $v$ lies in $S_n$. -/
 theorem attractorStrategy_next_mem {n : ℕ} {v : Pos}
     (hv : v ∈ G.cpre p (G.attractorStage p T n)) (hown : G.owner v = p) :
     (G.attractorStrategy p T).next v ∈ G.attractorStage p T n := by
@@ -200,8 +228,10 @@ theorem attractorStrategy_next_mem {n : ℕ} {v : Pos}
   rw [hnext]
   exact G.attractorStage_mono p T (Nat.find_min' h ⟨w, hw, hwX⟩) (Nat.find_spec h).choose_spec.2
 
-/-- From the `n`-th attractor stage, every play conforming to the attractor strategy visits `T`
-within fewer than `n` moves. -/
+/-- **The attractor strategy reaches the target from an attractor stage.** Let $G$ be a parity
+game, $p$ a player, $T$ a set of positions and $n$ a natural number. If $\pi$ is a play of $G$
+that conforms to the attractor strategy of $p$ for $T$ and whose initial position $\pi_0$ lies in
+the $n$-th attractor stage of $T$ for $p$, then $\pi_i \in T$ for some $i < n$. -/
 theorem attractorStrategy_reaches (n : ℕ) {π : ωSequence Pos} (hπ : G.IsPlay π)
     (hconf : Conforms (G.attractorStrategy p T) π) (h0 : π 0 ∈ G.attractorStage p T n) :
     ∃ i < n, π i ∈ T := by
@@ -222,21 +252,27 @@ theorem attractorStrategy_reaches (n : ℕ) {π : ωSequence Pos} (hπ : G.IsPla
       exact ⟨1 + i, by omega, by simpa [get_drop] using hiT⟩
 
 variable (G) in
-/-- The strategy `σ` of `p` forces a visit to `T` from `v`: every play from `v` conforming to `σ`
-visits `T`. -/
+/-- **Forcing a visit to a set.** Let $G$ be a parity game, $p$ a player, $\sigma$ a positional
+strategy of $p$, $T$ a set of positions and $v$ a position. The strategy $\sigma$ forces a visit
+to $T$ from $v$ when every play $\pi$ of $G$ with $\pi_0 = v$ that conforms to $\sigma$ visits
+$T$, that is, $\pi_i \in T$ for some $i \in \mathbb{N}$. -/
 def ForcesReach {p : Player} (σ : G.PositionalStrategy p) (T : Set Pos) (v : Pos) : Prop :=
   ∀ π, G.IsPlay π → π 0 = v → Conforms σ π → ∃ i, π i ∈ T
 
-/-- On a finite arena, from every position of the attractor the attractor strategy reaches `T`
-within fewer than `Nat.card Pos` moves. -/
+/-- **The attractor strategy reaches the target from the attractor.** Let $G$ be a parity game
+with finitely many positions, $N$ of them, let $p$ be a player and $T$ a set of positions. If
+$\pi$ is a play of $G$ that conforms to the attractor strategy of $p$ for $T$ and whose initial
+position $\pi_0$ lies in the attractor of $T$ for $p$, then $\pi_i \in T$ for some $i < N$. -/
 theorem attractorStrategy_reaches_of_mem_attractor [Finite Pos] {π : ωSequence Pos}
     (hπ : G.IsPlay π) (hconf : Conforms (G.attractorStrategy p T) π)
     (h0 : π 0 ∈ G.attractor p T) : ∃ i < Nat.card Pos, π i ∈ T := by
   rw [attractor_eq_attractorStage_card] at h0
   exact attractorStrategy_reaches _ hπ hconf h0
 
-/-- On a finite arena the attractor strategy forces a visit to `T` from every position of the
-attractor. -/
+/-- **The attractor strategy forces a visit.** Let $G$ be a parity game with finitely many
+positions, $p$ a player and $T$ a set of positions. From every position $v$ of the attractor of
+$T$ for $p$, the attractor strategy of $p$ for $T$ forces a visit to $T$: every play from $v$
+conforming to it visits $T$. -/
 theorem forcesReach_attractorStrategy [Finite Pos] {v : Pos} (hv : v ∈ G.attractor p T) :
     G.ForcesReach (G.attractorStrategy p T) T v := fun _ hπ h0 hconf =>
   let ⟨i, _, hi⟩ := attractorStrategy_reaches_of_mem_attractor hπ hconf (h0 ▸ hv)
@@ -245,13 +281,16 @@ theorem forcesReach_attractorStrategy [Finite Pos] {v : Pos} (hv : v ∈ G.attra
 /-! ## Traps -/
 
 variable (G p) in
-/-- `U` is a trap for `p`: `p` cannot force the play out of `U`. Every move of `p` from `U` stays
-in `U`, and at every position of the opponent in `U` some move stays in `U`. -/
+/-- **Trap for a player.** Let $G$ be a parity game and $p$ a player. A set $U$ of positions is a
+trap for $p$ when, for every position $v \in U$, every move from $v$ leads into $U$ if $v$
+belongs to $p$, and some move from $v$ leads into $U$ if $v$ does not belong to $p$. Thus $p$
+cannot force the play out of $U$. -/
 def IsTrap (U : Set Pos) : Prop :=
   ∀ v ∈ U, (G.owner v = p → ∀ w, G.Move v w → w ∈ U) ∧ (G.owner v ≠ p → ∃ w, G.Move v w ∧ w ∈ U)
 
 variable (G p T) in
-/-- The complement of the attractor of `T` for `p` is a trap for `p`. -/
+/-- **The complement of an attractor is a trap.** Let $G$ be a parity game, $p$ a player and $T$
+a set of positions. The complement of the attractor of $T$ for $p$ is a trap for $p$. -/
 theorem isTrap_compl_attractor : G.IsTrap p (G.attractor p T)ᶜ := by
   intro v hv
   have hv' : v ∉ G.cpre p (G.attractor p T) := fun h => hv (G.cpre_attractor_subset p T h)
@@ -259,8 +298,12 @@ theorem isTrap_compl_attractor : G.IsTrap p (G.attractor p T)ᶜ := by
   by_contra hcon
   exact hv' (Or.inr ⟨hown, fun w hw => by_contra fun hw' => hcon ⟨w, hw, hw'⟩⟩)
 
-/-- A `p`-trap disjoint from `T` is disjoint from the attractor of `T`: the complement of the
-attractor is the largest `p`-trap disjoint from `T`. -/
+/-- **Traps disjoint from a set avoid its attractor.** Let $G$ be a parity game, $p$ a player and
+$T$ a set of positions. If a set $U$ of positions is a trap for $p$ and is disjoint from $T$, then
+$U$ is disjoint from the attractor of $T$ for $p$.
+
+Since the complement of the attractor is itself a trap for $p$ disjoint from $T$, it is the
+largest such trap. -/
 theorem IsTrap.disjoint_attractor {U : Set Pos} (hU : G.IsTrap p U) (hT : Disjoint U T) :
     Disjoint U (G.attractor p T) := by
   rw [← Set.subset_compl_iff_disjoint_left]
@@ -274,8 +317,10 @@ theorem IsTrap.disjoint_attractor {U : Set Pos} (hU : G.IsTrap p U) (hT : Disjoi
 
 variable (G p) in
 open Classical in
-/-- The opponent's strategy for staying in `U`: a move into `U` when there is one (an arbitrary
-move otherwise). -/
+/-- **Trap strategy.** Let $G$ be a parity game, $p$ a player and $U$ a set of positions. The trap
+strategy for $U$ is the positional strategy of the opponent of $p$ that, at each position $v$,
+moves to some position $w \in U$ with a move from $v$ to $w$ if there is one, and to an arbitrary
+position reachable from $v$ in one move otherwise. -/
 noncomputable def trapStrategy (U : Set Pos) : G.PositionalStrategy p.opponent where
   next v := if h : ∃ w, G.Move v w ∧ w ∈ U then h.choose else (G.serial v).choose
   legal v _ := by
@@ -290,8 +335,9 @@ theorem trapStrategy_next_mem {U : Set Pos} {v : Pos} (h : ∃ w, G.Move v w ∧
   rw [hnext]
   exact h.choose_spec.2
 
-/-- Every play starting in a `p`-trap and conforming to the opponent's trap strategy stays in the
-trap forever. -/
+/-- **The trap strategy stays in the trap.** Let $G$ be a parity game, $p$ a player and $U$ a trap
+for $p$. If $\pi$ is a play with $\pi_0 \in U$ that conforms to the trap strategy of the opponent
+of $p$ for $U$, then $\pi_i \in U$ for every $i \in \mathbb{N}$. -/
 theorem IsTrap.trapStrategy_stays {U : Set Pos} (hU : G.IsTrap p U) {π : ωSequence Pos}
     (hπ : G.IsPlay π) (hconf : Conforms (G.trapStrategy p U) π) (h0 : π 0 ∈ U) (i : ℕ) :
     π i ∈ U := by
@@ -303,23 +349,28 @@ theorem IsTrap.trapStrategy_stays {U : Set Pos} (hU : G.IsTrap p U) {π : ωSequ
     · rw [hconf i ((Player.eq_or_eq_opponent p _).resolve_left hown)]
       exact trapStrategy_next_mem ((hU _ ih).2 hown)
 
-/-- From outside the attractor of `T`, the opponent's trap strategy on the complement of the
-attractor keeps every conforming play out of `T`. -/
+/-- **The trap strategy avoids the target.** Let $G$ be a parity game, $p$ a player, $T$ a set of
+positions and $A$ the attractor of $T$ for $p$. If $\pi$ is a play starting at a position outside
+$A$ that conforms to the trap strategy of the opponent of $p$ for the complement of $A$, then
+$\pi_i \notin T$ for every $i \in \mathbb{N}$. -/
 theorem trapStrategy_avoids {v : Pos} (hv : v ∉ G.attractor p T) {π : ωSequence Pos}
     (hπ : G.IsPlay π) (h0 : π 0 = v) (hconf : Conforms (G.trapStrategy p (G.attractor p T)ᶜ) π)
     (i : ℕ) : π i ∉ T := fun hT =>
   (isTrap_compl_attractor G p T).trapStrategy_stays hπ hconf (h0 ▸ hv) i
     (G.subset_attractor p T hT)
 
-/-- From outside the attractor of `T`, no positional strategy of `p` forces a visit to `T`. -/
+/-- **No strategy forces a visit from outside the attractor.** Let $G$ be a parity game, $p$ a
+player and $T$ a set of positions. If a position $v$ is not in the attractor of $T$ for $p$, then
+no positional strategy of $p$ forces a visit to $T$ from $v$. -/
 theorem not_forcesReach_of_notMem_attractor {v : Pos} (hv : v ∉ G.attractor p T)
     (σ : G.PositionalStrategy p) : ¬ G.ForcesReach σ T v := fun h => by
   let τ := G.trapStrategy p (G.attractor p T)ᶜ
   obtain ⟨i, hi⟩ := h _ (outcome_isPlay σ τ v) rfl (outcome_conforms σ τ v)
   exact trapStrategy_avoids hv (outcome_isPlay σ τ v) rfl (outcome_conforms_opponent σ τ v) i hi
 
-/-- On a finite arena, the attractor of `T` for `p` is exactly the set of positions from which `p`
-has a positional strategy forcing a visit to `T`. -/
+/-- **Characterization of the attractor.** Let $G$ be a parity game with finitely many positions,
+$p$ a player and $T$ a set of positions. A position $v$ lies in the attractor of $T$ for $p$ if
+and only if some positional strategy of $p$ forces a visit to $T$ from $v$. -/
 theorem mem_attractor_iff [Finite Pos] {v : Pos} :
     v ∈ G.attractor p T ↔ ∃ σ : G.PositionalStrategy p, G.ForcesReach σ T v :=
   ⟨fun hv => ⟨_, forcesReach_attractorStrategy hv⟩, fun ⟨σ, hσ⟩ => by
@@ -327,7 +378,9 @@ theorem mem_attractor_iff [Finite Pos] {v : Pos} :
     exact not_forcesReach_of_notMem_attractor hv σ hσ⟩
 
 variable (G p) in
-/-- The winning region of `p` is a trap for the opponent. -/
+/-- **Winning regions are traps for the opponent.** In a parity game $G$, the winning region of a
+player $p$, the set of positions from which $p$ has a winning positional strategy, is a trap for
+the opponent of $p$. -/
 theorem isTrap_winningRegion : G.IsTrap p.opponent (G.WinningRegion p) := by
   intro v hv
   refine ⟨fun hown _ hmove => move_mem_winningRegion hv hown hmove, fun hown => ?_⟩

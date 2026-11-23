@@ -49,21 +49,30 @@ variable {Γ : List (Ty Base)}
 
 namespace Steps
 
-/-- Multi-step evaluation is closed under the function position of an application. -/
+/-- **Multi-step evaluation is a congruence in function position.** Let $f$ and $f'$ be terms
+of type $A \Rightarrow B$ and let $a$ be a term of type $A$, all in the same context. If $f$
+evaluates to $f'$ in zero or more call-by-value steps, then the application $f\,a$ evaluates
+to $f'\,a$ in zero or more steps. -/
 theorem appFun {f f' : Tm Γ (A ⇒ B)} (a : Tm Γ A) (h : Steps f f') :
     Steps (.app f a) (.app f' a) := by
   induction h with
   | refl => exact .refl
   | tail h hstep ih => exact ih.tail (.appFun hstep)
 
-/-- Once the function is a value, multi-step evaluation is closed under the argument position. -/
+/-- **Evaluating the argument of a value function is a multi-step congruence.** Let $f$ be a term
+of type $A \Rightarrow B$ and let $a$, $a'$ be terms of type $A$, all in the same context. If $f$
+is a value and $a$ evaluates to $a'$ in zero or more call-by-value steps, then the application
+$f\,a$ evaluates to $f\,a'$ in zero or more steps. -/
 theorem appArg {a a' : Tm Γ A} {f : Tm Γ (A ⇒ B)} (hv : Value f) (h : Steps a a') :
     Steps (.app f a) (.app f a') := by
   induction h with
   | refl => exact .refl
   | tail h hstep ih => exact ih.tail (.appArg hv hstep)
 
-/-- Two evaluations from the same term agree until one of them stops.
+/-- **Evaluation to a value passes through every reduct.** Let $t$, $t'$ and $v$ be terms of the
+same type in the same context, with $v$ a value. If $t$ evaluates to $v$ and $t$ evaluates to
+$t'$, each in finitely many call-by-value steps, then $t'$ evaluates to $v$ in finitely many
+steps.
 
 The value endpoint makes the first evaluation maximal, so every other finite
 evaluation is one of its prefixes. -/
@@ -84,30 +93,38 @@ theorem suffix_of_value {t t' v : Tm Γ A} (htv : Steps t v) (hv : Value v)
 
 end Steps
 
-/-- A closed term terminates when call-by-value evaluation reaches a value. -/
+/-- **Termination of closed terms.** A closed term $t$ terminates when it evaluates, in
+finitely many call-by-value steps, to a value. -/
 def Terminates (t : Tm [] A) : Prop := ∃ v, Steps t v ∧ Value v
 
 namespace Terminates
 
-/-- Values terminate without taking a step. -/
+/-- **Values terminate.** Every closed term of the simply typed lambda calculus that is a value
+terminates.
+
+No evaluation step is needed: the value itself is the value reached. -/
 theorem of_value {v : Tm [] A} (hv : Value v) : Terminates v := ⟨v, .refl, hv⟩
 
-/-- Termination is preserved by adding an evaluation prefix. -/
+/-- **Termination is closed under backward evaluation.** Let $t$ and $t'$ be closed terms of
+the same type. If $t$ evaluates to $t'$ in zero or more call-by-value steps and $t'$
+terminates, then $t$ terminates. -/
 theorem anti {t t' : Tm [] A} (h : Steps t t') (ht' : Terminates t') : Terminates t := by
   rcases ht' with ⟨v, ht'v, hv⟩
   exact ⟨v, h.trans ht'v, hv⟩
 
-/-- Termination is preserved by taking evaluation steps. -/
+/-- **Termination is closed under forward evaluation.** Let $t$ and $t'$ be closed terms of
+the same type. If $t$ terminates and $t$ evaluates to $t'$ in zero or more call-by-value
+steps, then $t'$ terminates. -/
 theorem forward {t t' : Tm [] A} (ht : Terminates t) (h : Steps t t') : Terminates t' := by
   rcases ht with ⟨v, htv, hv⟩
   exact ⟨v, Steps.suffix_of_value htv hv h, hv⟩
 
 end Terminates
 
-/-- Tait reducibility for closed terms.
-
-At a base type, reducibility is termination.  At a function type, a reducible
-term terminates and maps every reducible argument to a reducible application.
+/-- **Tait reducibility for closed terms.** Reducibility of a closed term $t$ is defined by
+recursion on its simple type. At a base type, $t$ is reducible when it terminates. At a function
+type $A \Rightarrow B$, $t$ is reducible when it terminates and, for every reducible closed term
+$a$ of type $A$, the application $t\,a$ is reducible.
 -/
 def Reducible : {A : Ty Base} → Tm [] A → Prop
   | .base _, t => Terminates t
@@ -116,12 +133,15 @@ def Reducible : {A : Ty Base} → Tm [] A → Prop
 
 namespace Reducible
 
-/-- Every reducible term terminates. -/
+/-- **Reducible terms terminate.** Every reducible closed term of the simply typed lambda
+calculus terminates. -/
 theorem terminates : {A : Ty Base} → {t : Tm [] A} → Reducible t → Terminates t
   | .base _, _, ht => ht
   | .arr _ _B, _, hf => hf.1
 
-/-- Reducibility is preserved by taking evaluation steps. -/
+/-- **Reducibility is closed under forward evaluation.** Let $t$ and $t'$ be closed terms of
+the same type. If $t$ is reducible and $t$ evaluates to $t'$ in zero or more call-by-value
+steps, then $t'$ is reducible. -/
 theorem forward : {A : Ty Base} → {t t' : Tm [] A} →
     Steps t t' → Reducible t → Reducible t'
   | .base _, _, _, h, ht => Terminates.forward ht h
@@ -131,7 +151,9 @@ theorem forward : {A : Ty Base} → {t t' : Tm [] A} →
       exact forward (A := B) (Steps.appFun a h) (hf.2 a ha)
 termination_by A => sizeOf A
 
-/-- Reducibility is preserved by adding an evaluation prefix. -/
+/-- **Reducibility is closed under backward evaluation.** Let $t$ and $t'$ be closed terms of
+the same type. If $t$ evaluates to $t'$ in zero or more call-by-value steps and $t'$ is
+reducible, then $t$ is reducible. -/
 theorem anti : {A : Ty Base} → {t t' : Tm [] A} →
     Steps t t' → Reducible t' → Reducible t
   | .base _, _, _, h, ht' => Terminates.anti h ht'
@@ -141,23 +163,32 @@ theorem anti : {A : Ty Base} → {t t' : Tm [] A} →
       exact anti (A := B) (Steps.appFun a h) (hf'.2 a ha)
 termination_by A => sizeOf A
 
-/-- Reducibility is invariant under multi-step evaluation. -/
+/-- **Reducibility is invariant under evaluation.** Let $t$ and $t'$ be closed terms of the
+same type. If $t$ evaluates to $t'$ in zero or more call-by-value steps, then $t$ is reducible
+if and only if $t'$ is reducible. -/
 theorem iff_of_steps {t t' : Tm [] A} (h : Steps t t') : Reducible t ↔ Reducible t' :=
   ⟨forward h, anti h⟩
 
 end Reducible
 
-/-- A closing substitution is reducible when every one of its images is reducible. -/
+/-- **Reducible substitutions.** A substitution $\sigma$ that replaces each variable of a
+context $\Gamma$ by a closed term of the same type is reducible when $\sigma(x)$ is reducible
+for every variable $x$ of $\Gamma$. -/
 def ReducibleSub (σ : Sub Γ []) : Prop := ∀ {A} (x : Var Γ A), Reducible (σ x)
 
 namespace ReducibleSub
 
-/-- The empty context has a unique reducible substitution. -/
+/-- **Substitutions on the empty context are reducible.** Every substitution from the empty
+context to closed terms is reducible, since the empty context has no variables. -/
 theorem empty (σ : Sub ([] : List (Ty Base)) []) : ReducibleSub σ := by
   intro A x
   nomatch x
 
-/-- Extend a reducible substitution by a reducible image for the newest variable. -/
+/-- **Extending a reducible substitution by a reducible term keeps it reducible.** Let $\sigma$
+be a substitution that sends each variable of a context $\Gamma$ to a closed term of the same
+type, and let $a$ be a closed term of type $A$. If $\sigma$ and $a$ are reducible, then so is
+the substitution on the context $A, \Gamma$ that sends the newest variable to $a$ and each
+older variable $x$ to $\sigma(x)$. -/
 theorem cons {σ : Sub Γ []} (hσ : ReducibleSub σ) {a : Tm [] A} (ha : Reducible a) :
     ReducibleSub (Sub.cons a σ) := by
   intro B x
@@ -167,10 +198,12 @@ theorem cons {σ : Sub Γ []} (hσ : ReducibleSub σ) {a : Tm [] A} (ha : Reduci
 
 end ReducibleSub
 
-/-- The fundamental theorem of the logical relation.
+/-- **Fundamental theorem of the reducibility relation.** Let $t$ be a term of type $A$ in a
+context $\Gamma$, and let $\sigma$ be a reducible substitution sending each variable of $\Gamma$
+to a closed term of the same type. Then the closed term obtained by applying $\sigma$ to $t$ is
+reducible.
 
-Substituting reducible closed terms for all free variables produces a reducible
-closed term.  The lambda case is the key: evaluate an arbitrary reducible
+The lambda case is the key: evaluate an arbitrary reducible
 argument to a value, cross the beta step, and invoke the induction hypothesis
 under the extended substitution. -/
 theorem fundamental (t : Tm Γ A) (σ : Sub Γ []) (hσ : ReducibleSub σ) :
@@ -194,12 +227,14 @@ theorem fundamental (t : Tm Γ A) (σ : Sub Γ []) (hσ : ReducibleSub σ) :
       rw [← Tm.subst_cons]
       exact ih (Sub.cons v σ) (hσ.cons hvReducible)
 
-/-- Every closed well-typed term is reducible. -/
+/-- **Closed terms are reducible.** Every closed well-typed term of the simply typed lambda
+calculus is reducible. -/
 theorem reducible_closed (t : Tm [] A) : Reducible t := by
   rw [← Tm.subst_id t]
   exact fundamental t Sub.id (ReducibleSub.empty Sub.id)
 
-/-- Every closed well-typed term evaluates to a value. -/
+/-- **Termination of the call-by-value simply typed lambda calculus.** Every closed well-typed
+term evaluates, in finitely many call-by-value steps, to a value. -/
 theorem terminates_closed (t : Tm [] A) : Terminates t := (reducible_closed t).terminates
 
 end Cslib.Languages.LambdaCalculus.Stlc
