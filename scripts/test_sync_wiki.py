@@ -1848,9 +1848,10 @@ class Declarations(Vault):
         self.assertIn("Duplicates entries the Lean left stale, to drop or relink: 2\n", printed.getvalue())
 
     def test_a_duplicates_list_needs_the_row_s_own_lean_link(self) -> None:
-        # The links folder's defaults link Ext.t, so a row with no `object` credits it as Autoform reads it; the
-        # folder page's row masks them. Such a row lists no duplicates: its own `object` names no declaration. The
-        # shorthand end the defaults complete is the row's own.
+        # The links folder's defaults link Ext.t, so a row with no `object`, or with an end the defaults fill in whole
+        # (`{}`, or one giving only a role), credits it as Autoform reads it; the folder page's row masks them. Such a
+        # row lists no duplicates: its own `object` names no declaration. The shorthand end that names the declaration
+        # and takes the defaults' type and uri is the row's own.
         self.page("Algebra/README.md", "# Algebra\n\n- [T](t.md)\n")
         self.page("Algebra/t.md", "# T\n")
         self.links_folder()
@@ -1860,7 +1861,9 @@ class Declarations(Vault):
         index = SimpleNamespace(declarations={"Ext.t": None, "Ext.twin": None})
         problem = ("Algebra/t.md: it lists duplicates but credits no declaration of this project by a Lean link of "
                    "its own")
-        for fields, problems in (({}, [problem]), ({"object": [{"location": {"declaration": "Ext.t"}}]}, [])):
+        for fields, problems in (({}, [problem]), ({"object": [{}]}, [problem]),
+                                 ({"object": [{"role": "states"}]}, [problem]),
+                                 ({"object": [{"location": {"declaration": "Ext.t"}}]}, [])):
             with self.subTest(fields=fields):
                 self.annotate([self.about("Algebra/README.md", object=[]),
                                self.about("Algebra/t.md", **fields, extensions=listed)])
@@ -5167,6 +5170,58 @@ class BuildPath(Vault):
                       "its own", str(raised.exception))
         self.assertIn("Algebra/q.md: it lists Local.p_again as a duplicate, as Algebra/p.md does",
                       str(raised.exception))
+
+    def test_a_list_on_a_row_whose_declaration_only_the_defaults_give_stops_every_reader(self) -> None:
+        # The links folder's defaults name Local.p, so the row `object: [{}]` credits it as Autoform reads it, by no
+        # link of its own. Its duplicates list is refused before anything is written by each reader of the lists: the
+        # v2 extraction, the Mathlib layer's bridge, which reads them as the extraction does, and a registry's check
+        # (sync_wiki.registry_problems), which lean-facts and the cards run. With a link of its own, the list is read.
+        from scripts import extract_mathlib_graph as graph
+        from scripts.test_extract_mathlib_graph import row as dump_row, write_dump
+
+        self.page("Algebra/README.md", "# Algebra\n\n- [P](p.md)\n")
+        self.page("Algebra/p.md", "# P\n\nA statement.\n")
+        self.links_folder()
+        (sync.LINKS / "_defaults.json").write_text(json.dumps(
+            {"object": {**sync.DEFAULTS["object"], "location": {"declaration": "Local.p"}}}) + "\n")
+        listed = {"org.atlas-wiki": {"duplicates": ["Local.p_again"]}}
+        problem = ("Algebra/p.md: it lists duplicates but credits no declaration of this project by a Lean link of "
+                   "its own")
+        registry = {"left_out": {}, "bridges": {}, "mathlib": {}, "missing": [], "project": [], "mutual": [],
+                    "inputs": {"names_sha256": hashlib.sha256(b"").hexdigest(), "dump_sha256": "d" * 64,
+                               "mathlib_rev": None, "requested": 0,
+                               "aliases_sha256": extract.aliases_digest({"Local.p_again": "Local.p"}),
+                               "format": sync.REGISTRY_FORMAT}}
+        dump, output, out = self.tmp / "dump.jsonl", self.tmp / "lean-dependencies.json", self.tmp / "bridge"
+        dump.write_text(json.dumps({"name": "Local.p", "module": "Local", "kind": "theorem", "private": False,
+                                    "doc": True, "type": [], "value": []}) + "\n")
+        bridge = ["bridge", str(write_dump(self.tmp, [dump_row("Local.p", module="Local")], "v2.jsonl.gz")), str(out),
+                  "--mathlib-dump", str(write_dump(self.tmp, [dump_row("X")], "mathlib.jsonl.gz"))]
+        for ends, refused in (([{}], True), ([{"location": {"declaration": "Local.p"}}], False)):
+            with self.subTest(ends=ends), patch.object(extract, "BLUEPRINT", wiki.VAULT), \
+                    patch.object(graph.v2, "article_manifest", extract.article_manifest), \
+                    patch.object(graph.v2, "article_aliases", extract.article_aliases):
+                self.annotate([self.about("Algebra/README.md", object=[]),
+                               self.about("Algebra/p.md", object=ends, extensions=listed)])
+                self.assertEqual(sync.page_owner(sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][1])[:2],
+                                 ("atlas", "Local.p"))
+                self.assertEqual(sync.registry_problems(registry, sync.read_annotations()),
+                                 [problem] if refused else [])
+                if not refused:
+                    self.assertEqual(extract.article_aliases(), {"Local.p_again": "Local.p"})
+                    continue
+                with self.assertRaises(ValueError) as raised:
+                    extract.article_aliases()
+                self.assertIn(problem, str(raised.exception))
+                with patch("sys.argv", ["extract", str(dump), str(output)]), \
+                        redirect_stderr(io.StringIO()) as errors, redirect_stdout(io.StringIO()):
+                    self.assertEqual(extract.main(), 1)
+                self.assertIn(problem, errors.getvalue())
+                with redirect_stderr(io.StringIO()), redirect_stdout(io.StringIO()), \
+                        self.assertRaises(SystemExit) as raised:
+                    graph.main(bridge)
+                self.assertIn(problem, str(raised.exception.code))
+                self.assertEqual((output.exists(), out.exists()), (False, False))
 
     def test_lean_facts_names_a_duplicates_entry_the_lean_left_stale(self) -> None:
         # The Lean deleted Ext.gone, which Lagrange's row lists: lean-facts writes the page's facts and warns.

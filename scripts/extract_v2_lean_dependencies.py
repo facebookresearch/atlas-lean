@@ -436,9 +436,10 @@ def article_aliases() -> dict[str, str]:
     article. The rows are read as the registry's consumers read them (`sync_wiki.listed_duplicates`), and a list
     `sync_wiki.duplicate_markers` refuses without the Lean index raises ValueError, as no use may be counted for an
     article it does not state. The rows are read without the index: a row an earlier sync wrote with only a module
-    and a name has no `object`, so a list on it is refused, and the declaration it stands for, which only the index
-    gives, is among article_manifest's names, which resolve_aliases checks the aliases against; whether the Lean has
-    each name is for the dump, and the Lean sources, to say."""
+    and a name has no `object`, so a list on it is refused, as one on a row whose declaration only the links folder's
+    defaults give, and the declaration such a row stands for, which only the index gives, is among article_manifest's
+    names, which resolve_aliases checks the aliases against; whether the Lean has each name is for the dump, and the
+    Lean sources, to say."""
 
     if __package__:
         from . import sync_wiki

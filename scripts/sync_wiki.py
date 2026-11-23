@@ -529,6 +529,23 @@ def owner_of(annotation: dict, read: dict | None) -> tuple[str, str | None, str 
     return ("atlas", name, None) if name is not None else ("none", None, None)
 
 
+def own_lean_credit(annotation: dict) -> str | None:
+    """The declaration of this project a row credits (page_owner) when the row's own `object`, as written, names it:
+    an end that credits it gives `location.declaration` itself, a Lean link of the row's own. The links folder's
+    defaults may fill in an end's type and uri, which is how a row names this project, but a declaration they fill
+    in, into an end such as `{}`, is no link of the row's own. None otherwise."""
+    owner, credited, _module = page_owner(annotation)
+    written = annotation.get("object")
+    if owner != "atlas" or not isinstance(written, list):
+        return None
+    for name, _role, place in lean_ends(annotation).own:
+        end = written[place] if place < len(written) else None
+        location = end.get("location") if isinstance(end, dict) else None
+        if name == credited and isinstance(location, dict) and location.get("declaration") == credited:
+            return credited
+    return None
+
+
 def mathlib_credit(annotation: dict) -> tuple[str, str | None] | None:
     """The Mathlib declaration a row credits, with the module the row names: the row sets Autoform's `mathlib`
     flag, which is what makes Autoform show the page as in Mathlib, and its one Lean end with a declaration names
@@ -2492,7 +2509,7 @@ def duplicate_markers(keyed: list) -> tuple[dict[str, Path], list[tuple[tuple, s
         if owner == "mathlib":
             problems.append((("mathlib", row), f"{where}: it lists duplicates but credits the Mathlib declaration "
                                                f"{credited}; a Mathlib-credited page lists none"))
-        elif owner != "atlas" or not a.get("object"):
+        elif own_lean_credit(a) is None:
             problems.append((("unlinked", row), f"{where}: it lists duplicates but credits no declaration of this "
                                                 "project by a Lean link of its own"))
         for name in names:
@@ -2518,13 +2535,19 @@ def listed_duplicates(files: dict[Path, list[dict]]) -> tuple[dict[str, str], li
     credits, read without the Lean index; else none, and the problems of the lists (duplicate_markers). The extraction
     counts them so (extract_v2_lean_dependencies.article_aliases), and a registry records their digest
     (registry_problems): a row an earlier sync wrote with only a module and a name has no `object`, so a list on it is
-    refused, and each list's article is its row's key."""
+    refused, as one on a row whose declaration only the links folder's defaults give, and each list's article is the
+    declaration its row's own Lean link credits (own_lean_credit)."""
     keyed = [(annotation_key(row), row) for rows in files.values() for row in rows]
     problems = [text for _key, text in duplicate_markers(keyed)[1]]
     if problems:
         return {}, problems
-    assert all(key for key, row in keyed if duplicate_names(row))
-    return {name: key for key, row in keyed for name in duplicate_names(row)}, []
+    aliases: dict[str, str] = {}
+    for _key, row in keyed:
+        if names := duplicate_names(row):
+            article = own_lean_credit(row)
+            assert article, "duplicate_markers refuses a list on a row with no Lean link of its own"
+            aliases.update(dict.fromkeys(names, article))
+    return aliases, []
 
 
 def stale_duplicates(keyed: list, index) -> list[str]:

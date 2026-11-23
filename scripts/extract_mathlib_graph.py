@@ -526,11 +526,15 @@ def command_bridge(args: argparse.Namespace) -> int:
     del full
     if args.aliases is not None and args.articles is None:
         raise SystemExit("--aliases goes with --articles: without them, both are read from blueprint/")
-    manifest = v2.article_manifest() if args.articles is None else set(
-        line.strip() for line in Path(args.articles).read_text(encoding="utf-8").splitlines() if line.strip())
-    # The duplicates the annotations list, or those --aliases gives beside --articles (none without it, so that such a
-    # run needs no Autoform), collapsed onto their articles as the v2 extraction collapses them.
-    listed = v2.article_aliases() if args.articles is None else read_aliases(args.aliases)
+    # The annotations' problems stop the bridge before it writes, as they stop the v2 extraction.
+    try:
+        manifest = v2.article_manifest() if args.articles is None else set(
+            line.strip() for line in Path(args.articles).read_text(encoding="utf-8").splitlines() if line.strip())
+        # The duplicates the annotations list, or those --aliases gives beside --articles (none without it, so that
+        # such a run needs no Autoform), collapsed onto their articles as the v2 extraction collapses them.
+        listed = v2.article_aliases() if args.articles is None else read_aliases(args.aliases)
+    except ValueError as error:
+        raise SystemExit(str(error)) from None
     project_rows = v2.read_dump(Path(args.v2_dump))[0]
     collisions = v2.private_collisions(project_rows, listed.keys() | set(listed.values()))
     atlas_rows = v2.publish_private_targets(project_rows, manifest | listed.keys())
