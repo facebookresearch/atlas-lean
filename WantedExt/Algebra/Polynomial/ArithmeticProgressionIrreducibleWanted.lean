@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Algebra.Polynomial.ArithmeticProgressionAuxiliaryRoot
 public import Mathlib.Algebra.Polynomial.AlgebraMap
 public import Mathlib.Algebra.Polynomial.Monic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
@@ -123,21 +124,6 @@ public theorem_wanted arithProgPoly_root_pow_eq (m a d : ℕ) (hd : 0 < d) (z : 
     (hz : aeval z (∑ i ∈ Finset.range (m + 1), C ((a : ℤ) + i * d) * X ^ (m - i)) = 0 ∨ z = 1) :
     z ^ (m + 1) =
       (((a : ℂ) + (m + 1) * d) * z - ((a : ℂ) + m * d)) / ((a : ℂ) * z - ((a : ℂ) - d))
-
-/-- **The auxiliary equation has a unique positive root, which exceeds $1$.** Let $m \ge 2$ and
-let $a$, $d$ be integers with $0 < d \le a$. Then the equation
-$a x^{m+2} + (a - d) x^{m+1} - (a + (m + 1)d) x - (a + md) = 0$ has exactly one positive real
-solution, and every positive real solution $x$ satisfies $x > 1$.
-
-Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
-Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Proposition 1
-(`integers-2026-A92-prop-1`). -/
-public theorem_wanted arithProgPoly_eq3_existsUnique_pos {m a d : ℕ} (hm : 2 ≤ m) (hd : 0 < d)
-    (hda : d ≤ a) :
-    (∃! x : ℝ, 0 < x ∧ (a : ℝ) * x ^ (m + 2) + ((a : ℝ) - d) * x ^ (m + 1) -
-      ((a : ℝ) + (m + 1) * d) * x - ((a : ℝ) + m * d) = 0) ∧
-    ∀ x : ℝ, 0 < x → (a : ℝ) * x ^ (m + 2) + ((a : ℝ) - d) * x ^ (m + 1) -
-      ((a : ℝ) + (m + 1) * d) * x - ((a : ℝ) + m * d) = 0 → 1 < x
 
 /-- **Bound on the zeros of the arithmetic-progression polynomial.** Let $m \ge 2$, let $a$, $d$
 be integers with $0 < d \le a$, and let $\lambda > 0$ be a real number with
