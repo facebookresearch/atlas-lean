@@ -100,8 +100,9 @@ comments):
 
 A card's **headline** is the first that applies to its main statement: `stale` (the committed row names
 a declaration that `lean-facts` dropped because the Lean no longer has it), `held`, `not ready`,
-`page only` (a planned page: with no declaration kind it is no task, as the graph rules' planned pages
-and tasks say, so it is never shown as ready), then Autoform's state of the credited page: in Mathlib, fully proved, proved
+`page only` (a planned page with no declaration kind: it is no task, as the graph rules' planned pages
+and tasks say, so it is never shown as ready), then Autoform's state of the page, credited or with the kind
+`lean-facts` gives a planned page that counts as a statement not yet in Lean: in Mathlib, fully proved, proved
 (not fully), defined, conditionally proved, ready to prove, stated with its proof blocked, ready to
 state, blocked. Its **supporting progress** counts its other statements, each once, by the same
 precedence; the main statement is never among them. Readiness and tasks stay Autoform's.
@@ -162,7 +163,8 @@ strict check below passed. Identical inputs give identical bytes.
   follows uses through declarations of the project and of Mathlib that no page credits, by the rule the
   extraction applies to the project's own constants, but a bridge comes only from what a statement or a
   proof names itself: one that reaches a Mathlib-credited page only through other declarations gives no
-  bridge. The check also requires that the registry was made from the committed rows' credited names, that
+  bridge. The check also requires that the registry was made from the committed rows' credited names and
+  `duplicates` lists, that
   its edges join declarations pages credit to ones it found, none both kept and left out, and that it finds
   exactly the declarations the build's pages credit to Mathlib,
   one page each, each page keeping the declaration its committed row credits; a Mathlib main heads a result
@@ -191,9 +193,10 @@ strict check below passed. Identical inputs give identical bytes.
 
 `python scripts/cards.py check` fails on any malformed card record or id, a credited card, a nested card
 or one that is a subject or field, a card with no page or more than 24, a main statement that is not a
-page of the folder, has no id or heads another card, a credited main statement whose declaration kind
-does not fit the card (a definition for a concept card, a theorem for a result card; a page-only main
-statement is classified by its editors), a bad `supports` entry (one that names no statement page Autoform reads)
+page of the folder, has no id or heads another card, a main statement whose declaration kind does not
+fit the card (a definition for a concept card, a theorem for a result card), whether it is credited or
+has the kind `lean-facts` gives a planned page that counts as a statement not yet in Lean (a page-only
+main statement with no kind is classified by its editors), a bad `supports` entry (one that names no statement page Autoform reads)
 or seed entry, an earlier sync's declaration credit (`module`, `name`) on a card's annotation, a link to
 another card's page outside `## Background` (or to a statement of another card other than its main
 statement), an empty opening or `## Idea`,
@@ -226,11 +229,13 @@ request it passes the base commit's ledger and annotations and Git's renames sin
 workflow does not run in merge groups). It keeps `build/cards.json` as the `cards` artifact. The wiki job
 runs the site hook's tests (`scripts/test_card_pages.py`) with its other tests and leaves
 `scripts/test_cards.py` and the strict check of the content and its history to the card job; it runs
-`rollup` once, for the card data its site shows, in a step that fails closed and cannot fail the job
-([Reading](#reading)). The site's deployment needs only the wiki job.
+`moves` once, for the moved addresses its site keeps, and `rollup` once, for the card data its site shows, each in
+a step of its own that fails closed and cannot fail the job ([Reading](#reading)). The site's deployment needs
+only the wiki job.
 
 ```sh
 python scripts/sync_wiki.py lean-facts build/lean-dependencies.json --registry build/mathlib-registry.json
+python scripts/cards.py moves build/card-moves.json
 python scripts/cards.py rollup build/cards.json --dependencies build/lean-dependencies.json \
   --registry build/mathlib-registry.json \
   [--base-ledger <the base commit's scripts/card-moves.jsonl> --base-links <its blueprint/links/> \
@@ -244,7 +249,11 @@ that retires an address (paths are Autoform ids: below `roadmap/`, without `.md`
 
 - a moved statement page: `{"page": "<old path>", "to": "<new path>", "article_id": "af_..."}`;
 - a moved or renamed folder that keeps its id: `{"folder": "<old path>", "to": "<new path>", "article_id": "af_..."}`;
-- a retired card: `{"card": "af_...", "folder": "<its last path>", "replaced_by": "af_..."}`.
+- a retired card: `{"card": "af_...", "folder": "<its last path>", "replaced_by": "af_..."}`;
+- a retired statement page, such as a node an expansion replaces and deletes:
+  `{"statement": "af_...", "page": "<its last path>", "replaced_by": "af_..."}`, where `replaced_by` is the id of
+  the live statement page or folder page a reader of the old page should go to, named by id so that its later
+  moves are followed.
 
 A folder row moves the folder alone, its folder page and its address: each page and folder inside it that
 moves has its own row, so the history never depends on what the folder holds later. Renaming a folder `a` to
@@ -257,10 +266,31 @@ serve these rows as redirects before a card change that moves a page is publishe
 live statement page
 and a folder at a live folder page with that id (a card's or not), or at the card a retirement row
 records at that path; a card is retired once, its id is no card's or statement page's any more, and what replaces it is a
-live card; nothing goes round. An address has one owner: it moves once, as a page or as a folder, or is
-the last address of one retired card, and no live page or folder of another article takes it (the card
-that replaces a retired one may live at its address); a page `b.md` and a folder `b/` would share one
-address, so no change leaves both.
+live card; a statement is retired once, at the address its page rows leave it at, its page gone and its id no live
+page's or folder's any more, and what replaces it is a live statement page or folder page, reached through any
+statement or card retired on the way; nothing goes round. An address has one owner: it moves once, as a page or
+as a folder, or is the last address of retired cards or of retired statements, each replaced in place by the next
+in the ledger's order (two retirements there that are not are two owners, whatever their order), and no live page
+or folder of another article takes it (the final replacement may live at its address, and a
+declassified folder keeps its own); a page or folder page with no `id` is another article; a page `b.md` and a
+folder `b/` would share one address, so no change leaves both.
+
+`python scripts/cards.py moves OUTPUT.json` checks the ledger alone, as above, against the annotations and the
+roadmap as checked out, with no card or dependency check and no base: it certifies the present snapshot only,
+and that the ledger only grows and what changed since the base stay the strict check's. A missing ledger is an
+error, and so is a checkout with no commit to name; an empty ledger has no row. An id the ledger names must be
+the id of one article. Reading each input file once, it removes its output first and, only when the ledger is
+valid, writes its receipt, schema
+`atlas-card-moves/v2`, through a temporary file: `commit`, the commit checked; `ledger_sha256`, the sha256 of the
+ledger's bytes; `annotations_sha256`, a digest of the bytes of `blueprint/links/` it read, sha256 over each
+`*.jsonl` file and `_defaults.json`, in sorted order of name, as its name, a NUL, its length in bytes (`-` for a
+defaults file that is no regular file), a NUL and its bytes; `cards`, each card by id with its folder, listing
+only a card whose id is an article id no other article has and whose folder is an address as the ledger writes
+one (a path below `roadmap/` without `.md`, `.` or `..` parts), which the hook requires too, and `cards_complete`,
+whether that lists every card; and `replacements`, the live article each retirement's replacements end at, by
+id, with its kind (`page` or `folder`) and node, each at such an address, or there is no receipt.
+The digests bind the receipt to the inputs it checked, so that a receipt of other inputs is not taken for this
+one; they do not vouch for its contents, which come from the job that makes it.
 
 Given the base commit's annotations and the files Git finds renamed since (`--base-links`, `--renames`),
 the check also reconciles every change since the base with one map of who owns what:
@@ -271,12 +301,14 @@ the check also reconciles every change since the base with one map of who owns w
   one;
 - the rows added since are replayed in order: each moves what its old address holds at that point, with
   that article's `id`, or, for an article that had none, an `id` no article of the base or of the ledger
-  ever had, and a folder row moves the folder alone; a retirement names the card's address at that point;
+  ever had, and a folder row moves the folder alone; a retirement names the card's or the statement's address at
+  that point, and a statement it retires was a statement page of the base; once retired, the address is free, so
+  that the replacement may move in by a later row, never by an earlier one;
 - afterwards every article stands where the rows leave it and keeps its `id`: an article of the base that
-  is gone, with no row moving it, is an error, since its old address would lead nowhere (a page that moved
-  with its folder but has no row of its own included); an address that
-  changed hands is a retired card's, held by its final replacement; a new article takes an `id` no article
-  ever had;
+  is gone, with no row moving or retiring it, is an error, since its old address would lead nowhere (a page that
+  moved with its folder but has no row of its own included); a statement a row retires is matched by Git's rename
+  to nothing, since its replacements may take its prose; an address that changed hands is a retired card's or
+  statement's, held by its final replacement; a new article takes an `id` no article ever had;
 - every card of the base that is no card any more, gone or declassified, has its retirement (a
   declassified folder may keep its `id` as a plain folder).
 
@@ -290,18 +322,30 @@ passes, whole, through a temporary file; an output inside `blueprint/` or the `-
 is one of its inputs, a symbolic link or no regular file is refused before anything is touched. A card error
 cannot fail the job, which the step delays by at most
 its ten-minute timeout: it leaves
-no card data, the site renders exactly as without cards, and `check the cards` reports the error. The hook
-itself is site code: its tests (`scripts/test_card_pages.py`) run with the wiki job's other tests, so a
-regression in it fails that job, as a change to any other part of the site does.
+no card data, the site shows no card but keeps every moved address, and `check the cards` reports the error.
+In a step of its own beside it, independent of the strict check, the job runs `scripts/cards.py moves
+build/card-moves.json` after removing any earlier receipt ([Move ledger](#move-ledger)). The hook itself is site
+code: its tests (`scripts/test_card_pages.py`) run with the wiki job's other tests, so a regression in it fails
+that job, as a change to any other part of the site does.
 
-`hooks/card_pages.py` reads `build/cards.json` only when it is an `atlas-cards/v1` rollup of the commit
-being built that names only pages the site publishes and whose parts agree where they restate one another:
+`hooks/card_pages.py` keeps the moved addresses only with the ledger check's receipt: an `atlas-card-moves/v2`
+receipt of the commit being built whose digests are those of the ledger it reads, which must exist, and of
+`blueprint/links/` as it is now, which shows the receipt refers to the current inputs, and only when every address
+resolves to a page the site publishes, a retired card's folder or statement's page that is gone leading to the
+folder or page the receipt gives its last replacement.
+They need no card data. The hook shows card data only when `build/cards.json` is an `atlas-cards/v1` rollup of the
+commit being built that names only pages the site publishes and whose parts agree where they restate one another:
 each status with its statement's row in the `pages` table, each count with what it counts, and the clusters
-with the strongly connected parts of `uses`. It also needs the move ledger to lead every address it retired
-to one of those pages. Otherwise, or when there is no card and no moved address to show, as on a commit with
-no card yet, it changes nothing, and every page is byte for byte the page of a build without card data. These
-checks catch a rollup that contradicts itself or the site; they cannot tell a consistent rollup from the true
-one, which is the strict check's work.
+with the strongly connected parts of `uses`; only with the moved addresses; and only when its cards are, folder
+for folder, the receipt's, and the receipt lists them all. These checks catch a rollup that contradicts itself,
+the site or the ledger check; they cannot tell a consistent rollup from the true one, which is the strict check's
+work. So a card error never costs a moved address, and card data never changes where one leads.
+
+When the hook shows neither, or has nothing to show, as on a commit with no card and no moved address, every page
+is byte for byte the page of a build without it. None of this fails the build, and none of it is silent: the build
+log says what is not shown and why, at INFO since `mkdocs build --strict` fails on a warning, and under GitHub
+Actions so do a workflow annotation (a warning for card data, an error for moved addresses) and a line of the job
+summary.
 
 A card's folder page shows, before its first section, a block with:
 
@@ -326,8 +370,9 @@ replaying the ledger backwards from the pages the site publishes: each row's old
 its new one, so every address a statement or a folder ever had is followed through every row after it, in
 order. A folder row moves the folder alone, as the move ledger says, so no address is inferred from what a
 folder holds, and a page added to a folder after it moved gets no old address. A retired card's folder that is
-gone leads to the live card its replacements end at, and a folder that is gone with no row of its own to where
-its nearest enclosing folder leads. The same resolution gives every route below.
+gone leads to the live card its replacements end at, a retired statement's page that is gone to the live statement
+page or folder page its replacements end at, each where the receipt places it, and a folder that is gone with no
+row of its own to where its nearest enclosing folder leads. The same resolution gives every route below.
 
 Render publishes a statement with a declaration kind in a box on its folder's page, at
 `<folder>/index.html#<file name>`, a statement without one as a page of its own, `<path>.html`, and a folder at
@@ -339,7 +384,10 @@ From the ledger, the hook writes:
   holding a plain link to where the statement went and shown only when the address names it, and a script
   that follows that link; an old anchor that an element of the page has now, such as a section heading, stays
   that element's, and the build log reports it;
-- at the old address `<path>.html` of each statement that moved, a notice;
+- at the old address `<path>.html` of each statement that moved or was retired, a notice;
+- of a retired statement that a statement replaces at its own address, only the route that statement does not have:
+  the notice if it is boxed, the old anchor if it has a page of its own; no route redirects to itself, and an
+  explorer link to the address needs no rewrite;
 - at the page of a folder that is gone, a notice with a plain link to where the folder went (by its own rows,
   to the card that replaced it, or else to its nearest folder that exists) and an element for each old anchor
   of its statements, linking to where each went, and at its old explorer page
