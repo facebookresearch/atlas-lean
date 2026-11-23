@@ -25,6 +25,12 @@ proof calculus needs:
   `t` and shifts the others down.  `∀' φ` with `φ : L.BoundedFormula α 1` is a
   quantified formula, and `instantiate t φ : L.Formula α` is its instance at `t`.
 * `rename f φ` renames free variables along `f : α → β`.
+* `substBoundTerm s t`, `substBoundFormula s φ` substitute a one-variable term `s`
+  for the outermost bound variable (index `0`), keeping the bound-variable count:
+  the bound variables of `s` still refer to the outermost bound variable, and every
+  other bound variable is unchanged. This is the substitution an induction schema
+  needs: in `∀x (φ(x) → φ(S x))` the term `S x` still mentions the bound variable
+  `x`. It differs from `instantiate`, which eliminates the outermost bound variable.
 
 ## Main results
 
@@ -37,6 +43,8 @@ proof calculus needs:
 - `rename_instantiate`, `rename_rename`, `rename_congr`, `freeVarFinset_rename` : renaming
   commutes with instantiation, composes, is the identity when it fixes the free
   variables, and maps the free variables.
+- `realize_substBoundTerm`, `realize_substBoundFormula` : the substituted term /
+  formula holds with the outermost bound variable replaced by the value of `s`.
 -/
 
 @[expose] public section
@@ -53,15 +61,25 @@ variable {L : Language.{u, v}} {α : Type w} {β : Type w'}
 
 /-! ### Instantiating the outermost bound variable -/
 
-/-- Substitute `t` for the outermost bound variable (index `0`) of a term, shifting the other
-bound variables down by one. -/
+/-- **Instantiating the outermost bound variable of a term.** Let $L$ be a first-order language,
+$t$ an $L$-term with free variables in $\alpha$, and $s$ an $L$-term with free variables in
+$\alpha$ and $m + 1$ bound variables $0, \dots, m$. The instantiation of $t$ in $s$ is the term
+with free variables in $\alpha$ and $m$ bound variables obtained from $s$ by substituting $t$ for
+the bound variable $0$, replacing each other bound variable $i + 1$ by $i$, and leaving the free
+variables unchanged. -/
 def instantiateTerm (t : L.Term α) {m : ℕ} (s : L.Term (α ⊕ Fin (m + 1))) :
     L.Term (α ⊕ Fin m) :=
   s.subst (Sum.elim (fun a ↦ Term.var (Sum.inl a))
     (Fin.cases (t.relabel Sum.inl) fun i ↦ Term.var (Sum.inr i)))
 
-/-- Substitute `t` for the outermost bound variable (index `0`) of a formula, shifting the
-other bound variables down by one. -/
+/-- **Instantiating the outermost bound variable of a formula.** Let $L$ be a first-order
+language, $t$ an $L$-term with free variables in $\alpha$, and $\varphi$ a bounded $L$-formula with
+free variables in $\alpha$ and $m + 1$ bound variables $0, \dots, m$. The instantiation of $t$ in
+$\varphi$ is the bounded formula with free variables in $\alpha$ and $m$ bound variables obtained
+from $\varphi$ by instantiating $t$ in every term of its atomic subformulas: in each term, $t$ is
+substituted for the bound variable $0$ and each other bound variable $i + 1$ is replaced by $i$.
+Falsum, implication and universal quantification are kept, the quantifier being passed through
+unchanged since bound variables are de Bruijn levels. -/
 def instantiate (t : L.Term α) : ∀ {m : ℕ}, L.BoundedFormula α (m + 1) → L.BoundedFormula α m
   | _, .falsum => .falsum
   | _, .equal t₁ t₂ => .equal (instantiateTerm t t₁) (instantiateTerm t t₂)
@@ -72,11 +90,17 @@ def instantiate (t : L.Term α) : ∀ {m : ℕ}, L.BoundedFormula α (m + 1) →
 @[simp] theorem instantiateTerm_var_inl (t : L.Term α) {m : ℕ} (a : α) :
     instantiateTerm (m := m) t (Term.var (Sum.inl a)) = Term.var (Sum.inl a) := rfl
 
-/-- The outermost bound variable becomes `t`. -/
+/-- **Instantiation at the outermost bound variable.** Let $L$ be a first-order language, $t$ an
+$L$-term with free variables in $\alpha$, and $m$ a natural number. Instantiating $t$ in the term
+consisting of the bound variable $0$ (a term with free variables in $\alpha$ and $m + 1$ bound
+variables) gives $t$, regarded as a term with free variables in $\alpha$ and $m$ bound variables. -/
 @[simp] theorem instantiateTerm_var_zero (t : L.Term α) {m : ℕ} :
     instantiateTerm (m := m) t (Term.var (Sum.inr 0)) = t.relabel Sum.inl := rfl
 
-/-- The other bound variables shift down by one. -/
+/-- **Instantiation shifts the remaining bound variables down.** Let $L$ be a first-order language,
+$t$ an $L$-term with free variables in $\alpha$, and $i < m$. Instantiating $t$ in the term
+consisting of the bound variable $i + 1$ (a term with free variables in $\alpha$ and $m + 1$ bound
+variables) gives the term consisting of the bound variable $i$ (with $m$ bound variables). -/
 @[simp] theorem instantiateTerm_var_succ (t : L.Term α) {m : ℕ} (i : Fin m) :
     instantiateTerm t (Term.var (Sum.inr i.succ)) = Term.var (Sum.inr i) := rfl
 
@@ -101,8 +125,14 @@ def instantiate (t : L.Term α) : ∀ {m : ℕ}, L.BoundedFormula α (m + 1) →
     instantiate t (φ.imp ψ) = (instantiate t φ).imp (instantiate t ψ) := by
   rw [instantiate]
 
-/-- Under a quantifier the outermost bound variable is still index `0` (de Bruijn levels), so
-instantiation passes through unchanged. -/
+/-- **Instantiation commutes with the universal quantifier.** Let $L$ be a first-order language,
+$t$ an $L$-term with free variables in $\alpha$, and $\varphi$ a bounded $L$-formula with free
+variables in $\alpha$ and $m + 2$ bound variables. Instantiating $t$ in the universal formula
+$\forall \varphi$ (which has $m + 1$ bound variables) gives the universal quantification of the
+instantiation of $t$ in $\varphi$.
+
+Under a quantifier the outermost bound variable is still index $0$ (bound variables are de Bruijn
+levels), so instantiation passes through the quantifier unchanged. -/
 @[simp] theorem instantiate_all (t : L.Term α) {m : ℕ} (φ : L.BoundedFormula α (m + 1 + 1)) :
     instantiate t φ.all = (instantiate t φ).all := by
   rw [instantiate]
@@ -167,21 +197,33 @@ theorem realize_instantiate (t : L.Term α) :
     simp only [instantiate, BoundedFormula.realize_all, realize_instantiate t φ,
       Fin.cons_snoc_eq_snoc_cons]
 
-/-- The one-variable case: `instantiate t φ` holds at `v` iff `φ` holds with its bound variable
-set to the value of `t`. -/
+/-- **Truth of an instance.** Let $L$ be a first-order language, $M$ an $L$-structure,
+$v : \alpha \to M$ an assignment of the free variables, $t$ an $L$-term with free variables in
+$\alpha$, and $\varphi$ a bounded $L$-formula with free variables in $\alpha$ and one bound
+variable. Then the instantiation of $t$ in $\varphi$, a formula with free variables in $\alpha$,
+holds in $M$ under $v$ if and only if $\varphi$ holds in $M$ under $v$ with its bound variable set
+to the value of $t$ under $v$. -/
 theorem realize_instantiate_formula (t : L.Term α) (φ : L.BoundedFormula α 1) (v : α → M) :
     Formula.Realize (instantiate t φ) v ↔ φ.Realize v fun _ ↦ t.realize v := by
   rw [Formula.Realize, realize_instantiate]
   exact iff_of_eq (congrArg _ (funext fun i ↦ by rw [Fin.fin_one_eq_zero i]; rfl))
 
-/-- `∀' φ` holds at `v` iff every value of the bound variable satisfies `φ`. -/
+/-- **Truth of a universal formula.** Let $L$ be a first-order language, $M$ an $L$-structure,
+$v : \alpha \to M$ an assignment of the free variables, and $\varphi$ a bounded $L$-formula with
+free variables in $\alpha$ and one bound variable. Then the formula $\forall \varphi$ holds in $M$
+under $v$ if and only if, for every $a \in M$, $\varphi$ holds in $M$ under $v$ with its bound
+variable set to $a$. -/
 theorem realize_all_formula (φ : L.BoundedFormula α 1) (v : α → M) :
     Formula.Realize φ.all v ↔ ∀ a : M, φ.Realize v fun _ ↦ a := by
   rw [Formula.Realize, BoundedFormula.realize_all]
   exact forall_congr' fun a ↦ iff_of_eq (congrArg _ (funext fun i ↦ by
     rw [Fin.fin_one_eq_zero i]; rfl))
 
-/-- A formula's truth depends only on the values of its free variables. -/
+/-- **Truth depends only on the free variables.** Let $L$ be a first-order language, $M$ an
+$L$-structure, and $\varphi$ a bounded $L$-formula with free variables in $\alpha$ and $n$ bound
+variables. If two assignments $v, v' : \alpha \to M$ agree on every free variable of $\varphi$,
+then for every choice of values in $M$ for the $n$ bound variables, $\varphi$ holds in $M$ under
+$v$ and these values if and only if it holds under $v'$ and these values. -/
 theorem realize_congr [DecidableEq α] {n : ℕ} {φ : L.BoundedFormula α n} {v v' : α → M}
     (h : ∀ a ∈ φ.freeVarFinset, v a = v' a) (xs : Fin n → M) :
     φ.Realize v xs ↔ φ.Realize v' xs :=
@@ -190,13 +232,128 @@ theorem realize_congr [DecidableEq α] {n : ℕ} {φ : L.BoundedFormula α n} {v
 
 end Realize
 
+/-! ### Substituting a one-variable term for the outermost bound variable -/
+
+/-- Substitute the one-variable term `s` for the outermost bound variable (index `0`) of a
+term, keeping the bound-variable count: the bound variables of `s` still refer to the
+outermost bound variable, and every other bound variable is unchanged. -/
+def substBoundTerm {L : FirstOrder.Language} {α : Type*} (s : L.Term (α ⊕ Fin 1)) :
+    ∀ {m : ℕ}, L.Term (α ⊕ Fin (m + 1)) → L.Term (α ⊕ Fin (m + 1)) :=
+  fun t => t.subst (Sum.elim (fun a => Term.var (Sum.inl a))
+    (Fin.cases (s.relabel (Sum.map id (Fin.castLE (by omega))))
+      (fun i => Term.var (Sum.inr i.succ))))
+
+@[simp] theorem substBoundTerm_var_inl {L : FirstOrder.Language} {α : Type*}
+    (s : L.Term (α ⊕ Fin 1)) {m : ℕ} (a : α) :
+    substBoundTerm s (Term.var (Sum.inl a) : L.Term (α ⊕ Fin (m + 1))) =
+      Term.var (Sum.inl a) := rfl
+
+@[simp] theorem substBoundTerm_var_zero {L : FirstOrder.Language} {α : Type*}
+    (s : L.Term (α ⊕ Fin 1)) {m : ℕ} :
+    substBoundTerm s (Term.var (Sum.inr (0 : Fin (m + 1))) :
+        L.Term (α ⊕ Fin (m + 1))) =
+      s.relabel (Sum.map id (Fin.castLE (by omega : 1 ≤ m + 1))) := rfl
+
+@[simp] theorem substBoundTerm_var_succ {L : FirstOrder.Language} {α : Type*}
+    (s : L.Term (α ⊕ Fin 1)) {m : ℕ} (i : Fin m) :
+    substBoundTerm s (Term.var (Sum.inr i.succ) : L.Term (α ⊕ Fin (m + 1))) =
+      Term.var (Sum.inr i.succ) := rfl
+
+/-- Substitute the one-variable term `s` for the outermost bound variable (index `0`) of a
+formula, keeping the bound-variable count. -/
+def substBoundFormula {L : FirstOrder.Language} {α : Type*} (s : L.Term (α ⊕ Fin 1)) :
+    ∀ {m : ℕ}, L.BoundedFormula α (m + 1) → L.BoundedFormula α (m + 1)
+  | _, .falsum => .falsum
+  | _, .equal t₁ t₂ => .equal (substBoundTerm s t₁) (substBoundTerm s t₂)
+  | _, .rel R ts => .rel R fun i => substBoundTerm s (ts i)
+  | _, .imp φ ψ => .imp (substBoundFormula s φ) (substBoundFormula s ψ)
+  | _, .all φ => .all (substBoundFormula s φ)
+termination_by _ φ => sizeOf φ
+
+/-- The value of the substituted term is the value of the original term with the outermost
+bound variable replaced by the value of `s`. -/
+theorem realize_substBoundTerm {L : FirstOrder.Language} {α : Type*} {M : Type*}
+    [L.Structure M]
+    (s : L.Term (α ⊕ Fin 1)) {m : ℕ} (t : L.Term (α ⊕ Fin (m + 1)))
+    (v : α → M) (xs : Fin (m + 1) → M) :
+    (substBoundTerm s t).realize (Sum.elim v xs) =
+      t.realize (Sum.elim v (Function.update xs 0
+        (s.realize (Sum.elim v fun _ => xs 0)))) := by
+  induction t with
+  | var x =>
+    rcases x with a | i
+    · rfl
+    · refine Fin.cases ?_ (fun j => ?_) i
+      · have hcomp : (Sum.elim v xs) ∘ (Sum.map id (Fin.castLE (by omega : 1 ≤ m + 1)) :
+            α ⊕ Fin 1 → α ⊕ Fin (m + 1)) = Sum.elim v fun _ => xs 0 := by
+          funext y
+          rcases y with a | j
+          · rfl
+          · have hj : j = 0 := Fin.fin_one_eq_zero j
+            subst hj
+            rfl
+        simp only [substBoundTerm_var_zero, Term.realize_relabel, hcomp, Term.realize_var,
+          Sum.elim_inr, Function.update_self]
+      · simp only [substBoundTerm_var_succ, Term.realize_var, Sum.elim_inr,
+          Function.update_of_ne (Fin.succ_ne_zero j)]
+  | func f ts ih =>
+    rw [show substBoundTerm s (Term.func f ts) =
+      Term.func f (fun i => substBoundTerm s (ts i)) from rfl]
+    simp only [Term.realize, ih]
+
+/-- The substituted formula holds iff the original holds with the outermost bound variable
+replaced by the value of `s`. -/
+theorem realize_substBoundFormula {L : FirstOrder.Language} {α : Type*} {M : Type*}
+    [L.Structure M]
+    (s : L.Term (α ⊕ Fin 1)) :
+    ∀ {m : ℕ} (φ : L.BoundedFormula α (m + 1)) (v : α → M) (xs : Fin (m + 1) → M),
+      (substBoundFormula s φ).Realize v xs ↔
+        φ.Realize v (Function.update xs 0 (s.realize (Sum.elim v fun _ => xs 0)))
+  | _, .falsum, _, _ => by simp only [substBoundFormula, BoundedFormula.Realize]
+  | _, .equal t₁ t₂, v, xs => by
+    simp only [substBoundFormula, BoundedFormula.Realize, realize_substBoundTerm]
+  | _, .rel R ts, v, xs => by
+    simp only [substBoundFormula, BoundedFormula.Realize, realize_substBoundTerm]
+  | _, .imp φ ψ, v, xs => by
+    simp only [substBoundFormula, BoundedFormula.realize_imp,
+      realize_substBoundFormula s φ, realize_substBoundFormula s ψ]
+  | m, .all φ, v, xs => by
+    have hsnoc : ∀ a : M, Function.update (@Fin.snoc (m + 1) (fun _ => M) xs a) 0
+        (s.realize (Sum.elim v fun _ => @Fin.snoc (m + 1) (fun _ => M) xs a 0)) =
+        @Fin.snoc (m + 1) (fun _ => M) (Function.update xs 0
+          (s.realize (Sum.elim v fun _ => xs 0))) a := by
+      intro a
+      have : NeZero (m + 1) := ⟨by omega⟩
+      have hzero : @Fin.snoc (m + 1) (fun _ => M) xs a 0 = xs 0 := by
+        simp only [Fin.snoc_apply_zero]
+      rw [hzero, Fin.snoc_update]
+      congr 1
+    simp only [substBoundFormula, BoundedFormula.realize_all]
+    constructor
+    · intro h a
+      have h' := h a
+      rw [realize_substBoundFormula s φ] at h'
+      rw [hsnoc a] at h'
+      exact h'
+    · intro h a
+      rw [realize_substBoundFormula s φ, hsnoc a]
+      exact h a
+
 /-! ### Renaming free variables -/
 
-/-- Rename the free variables of a term with bound variables. -/
+/-- **Renaming free variables of a term.** Given a map $f : \alpha \to \beta$ and
+$n \in \mathbb{N}$, a term of a first-order language over the variables
+$\alpha \sqcup \mathrm{Fin}\,n$ (free variables from $\alpha$, bound variables from
+$\mathrm{Fin}\,n$) becomes a term over $\beta \sqcup \mathrm{Fin}\,n$ by replacing each free
+variable $a$ with $f(a)$ and leaving the bound variables unchanged. -/
 def renameTerm (f : α → β) {n : ℕ} (t : L.Term (α ⊕ Fin n)) : L.Term (β ⊕ Fin n) :=
   t.relabel (Sum.map f id)
 
-/-- Rename the free variables of a formula. -/
+/-- **Renaming free variables of a formula.** Given a map $f : \alpha \to \beta$, a bounded formula
+$\varphi$ of a first-order language $L$ with free variables in $\alpha$ and $n$ bound variables
+becomes a bounded formula of $L$ with free variables in $\beta$ and the same $n$ bound variables,
+by replacing each free variable $a$ with $f(a)$ in every term of $\varphi$ and leaving the bound
+variables, the relation symbols and the logical connectives and quantifiers unchanged. -/
 def rename (f : α → β) {n : ℕ} (φ : L.BoundedFormula α n) : L.BoundedFormula β n :=
   φ.mapTermRel (fun _ ↦ renameTerm f) (fun _ ↦ id) fun _ ↦ id
 
@@ -223,7 +380,12 @@ def rename (f : α → β) {n : ℕ} (φ : L.BoundedFormula α n) : L.BoundedFor
 @[simp] theorem rename_bot (f : α → β) {n : ℕ} :
     rename f (⊥ : L.BoundedFormula α n) = ⊥ := rfl
 
-/-- Renaming free variables corresponds to precomposing the assignment. -/
+/-- **Truth of a renamed formula.** Let $M$ be a structure for a first-order language $L$, let
+$f : \alpha \to \beta$, and let $\varphi$ be a bounded formula of $L$ with free variables in
+$\alpha$ and $n$ bound variables. For every assignment $v : \beta \to M$ of the free variables
+and every assignment $x : \mathrm{Fin}\,n \to M$ of the bound variables, the renaming of
+$\varphi$ along $f$ holds in $M$ at $v$ and $x$ if and only if $\varphi$ holds in $M$ at
+$v \circ f$ and $x$. -/
 theorem realize_rename {M : Type*} [L.Structure M] (f : α → β) {n : ℕ}
     (φ : L.BoundedFormula α n) (v : β → M) (xs : Fin n → M) :
     (rename f φ).Realize v xs ↔ φ.Realize (v ∘ f) xs :=
@@ -236,8 +398,12 @@ theorem rename_termEqual (f : α → β) (s t : L.Term α) :
   simp only [Term.equal, Term.bdEqual, rename_equal, renameTerm, Term.relabel_relabel]
   rfl
 
-/-- Mathlib's `BoundedFormula.relabel` along `Sum.inl ∘ f` is `rename f` up to the cast from
-level `k` to `0 + k`. -/
+/-- **Relabeling along $f$ agrees with renaming.** Let $f : \alpha \to \beta$ and let $\varphi$
+be a bounded formula of a first-order language with free variables in $\alpha$ and $k$ bound
+variables. Mathlib's relabeling of $\varphi$ along the map $\alpha \to \beta \sqcup \mathrm{Fin}\,0$
+sending $a$ to the free variable $f(a)$ replaces each free variable $a$ by $f(a)$ and produces a
+formula with $0 + k$ bound variables. This formula equals the renaming of $\varphi$ along $f$,
+regarded as a formula with $0 + k$ bound variables through the inclusion $k \le 0 + k$. -/
 theorem relabel_inl_comp_eq_castLE_rename (f : α → β) {k : ℕ} (φ : L.BoundedFormula α k) :
     φ.relabel (Sum.inl ∘ f : α → β ⊕ Fin 0) = (rename f φ).castLE (Nat.zero_add k).ge := by
   have hterm : ∀ {k : ℕ} (h : k ≤ 0 + k),
@@ -264,7 +430,10 @@ theorem relabel_inl_comp_eq_castLE_rename (f : α → β) {k : ℕ} (φ : L.Boun
   | all φ ih =>
     rw [BoundedFormula.relabel_all, ih, rename_all, BoundedFormula.castLE]
 
-/-- On formulas, Mathlib's `Formula.relabel` is `rename`. -/
+/-- **Relabelling a formula is renaming.** Let $L$ be a first-order language and
+$f : \alpha \to \beta$ a map. For every $L$-formula $\varphi$ with free variables in $\alpha$ (a
+bounded formula with no bound variables), Mathlib's relabelling of $\varphi$ along $f$ equals the
+renaming of the free variables of $\varphi$ along $f$. -/
 theorem formula_relabel_eq_rename (f : α → β) (φ : L.Formula α) : φ.relabel f = rename f φ := by
   rw [Formula.relabel, relabel_inl_comp_eq_castLE_rename, BoundedFormula.castLE_rfl]
 
@@ -336,7 +505,9 @@ theorem renameTerm_congr {f : α → α} {n : ℕ} {t : L.Term (α ⊕ Fin n)}
     simp only [Term.varFinsetLeft, Finset.mem_biUnion, Finset.mem_univ, true_and]
     exact ⟨i, ha⟩
 
-/-- A renaming that fixes every free variable leaves the formula unchanged. -/
+/-- **Renaming that fixes the free variables.** If a map $f : \alpha \to \alpha$ fixes every free
+variable of a bounded formula $\varphi$, then renaming the free variables of $\varphi$ along $f$
+leaves $\varphi$ unchanged. -/
 theorem rename_congr {f : α → α} {n : ℕ} {φ : L.BoundedFormula α n}
     (h : ∀ a ∈ φ.freeVarFinset, f a = a) : rename f φ = φ := by
   induction φ with
@@ -369,7 +540,10 @@ theorem varFinsetLeft_renameTerm (f : α → β) {n : ℕ} (t : L.Term (α ⊕ F
     rw [Finset.biUnion_image]
     exact Finset.biUnion_congr rfl fun i _ ↦ ih i
 
-/-- Renaming maps the free variables. -/
+/-- **Free variables of a renamed formula.** Let $L$ be a first-order language and
+$f : \alpha \to \beta$ a map. For every bounded $L$-formula $\varphi$ with free variables in
+$\alpha$ and $n$ bound variables, the set of free variables of the renaming of $\varphi$ along $f$
+is the image under $f$ of the set of free variables of $\varphi$. -/
 theorem freeVarFinset_rename (f : α → β) {n : ℕ} (φ : L.BoundedFormula α n) :
     (rename f φ).freeVarFinset = φ.freeVarFinset.image f := by
   induction φ with

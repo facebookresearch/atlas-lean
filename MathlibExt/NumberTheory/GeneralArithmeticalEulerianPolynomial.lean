@@ -24,14 +24,22 @@ namespace MetaMathlibExt
 
 open scoped BigOperators
 
-/-- The general arithmetical Eulerian number
-`A_{n,k}(a,d) = ∑_{i=0}^k (-1)^i * C(n+1,i) * ((k+1-i)d-a)^n`. -/
+/-- **General arithmetical Eulerian number.** Let $R$ be a ring, let $n$ and $k$ be natural
+numbers, and let $a, d \in R$. The general arithmetical Eulerian number $A_{n,k}(a,d) \in R$ is
+
+$$A_{n,k}(a,d) = \sum_{i=0}^{k} (-1)^i \binom{n+1}{i} \bigl((k+1-i)\,d - a\bigr)^n.$$
+-/
 def generalArithmeticalEulerianNumber (R : Type*) [Ring R] (n k : ℕ) (a d : R) : R :=
   ∑ i ∈ Finset.range (k + 1),
     (-1 : R) ^ i * (Nat.choose (n + 1) i : R) * ((k + 1 - i : ℕ) * d - a) ^ n
 
-/-- The general arithmetical Eulerian polynomial
-`P_n(t;a,d) = ∑_{k=0}^n A_{n,k}(a,d)t^k`. -/
+/-- **General arithmetical Eulerian polynomial.** Let $R$ be a ring, let $n$ be a natural number,
+and let $a, d \in R$. For each natural number $k$, write $A_{n,k}(a,d) \in R$ for the general
+arithmetical Eulerian number. The general arithmetical Eulerian polynomial is the polynomial
+in the indeterminate $t$
+
+$$P_n(t;a,d) = \sum_{k=0}^{n} A_{n,k}(a,d)\, t^k \in R[t].$$
+-/
 noncomputable def generalArithmeticalEulerianPolynomial
     (R : Type*) [Ring R] (n : ℕ) (a d : R) : Polynomial R :=
   ∑ k ∈ Finset.range (n + 1),
