@@ -18,8 +18,9 @@ public import Mathlib.Algebra.Homology.DerivedCategory.FullyFaithful
 
 `L[d]` is `L` placed in cohomological degree `-d`, so its cohomology in degree
 `-d` is `L`. Restriction is the derived exact inverse image. Every
-intermediate extension is faithful, and the intersection complex restricts to
-`L[d]` through the two given comparisons.
+intermediate extension is faithful, and the intersection complex of a local
+system on a smooth open restricts to `L[d]` through the two given comparisons;
+constant sheaves of finite-dimensional spaces qualify.
 -/
 
 noncomputable section
@@ -55,17 +56,29 @@ example (P : PerverseSheaf X) :
     IsBoundarySupported j P ↔ IsZero ((derivedRestriction j).obj ((perverseAmbient X).obj P)) :=
   Iff.rfl
 
-/-- The intersection complex restricts to `L[d]` through the restriction
-isomorphism of the intermediate extension and the realization of `L[d]`. -/
-example (J : IntermediateExtensionData j) (L : RationalSheaf (space U)) (d : ℕ)
-    (R : LocalSystemPerverseRealization U L d) :
-    (intersectionComplex_restriction j J L d R).hom =
+/-- The intersection complex of a local system on a smooth open restricts to
+`L[d]` through the restriction isomorphism of the intermediate extension and the
+realization of `L[d]`. -/
+example [IsOpenImmersion j.left] (J : IntermediateExtensionData j)
+    (L : RationalSheaf (space U)) (d : ℕ) [SmoothOfRelativeDimension d U.hom]
+    (hL : IsFiniteRankLocalSystem (space U) L) (R : LocalSystemPerverseRealization U L d) :
+    (intersectionComplex_restriction j J L d hL R).hom =
       (J.restriction.app R.object).hom ≫ R.comparison.hom :=
   rfl
 
-example (J : IntermediateExtensionData j) (L : RationalSheaf (space U)) (d : ℕ)
-    (R : LocalSystemPerverseRealization U L d) :
-    intersectionComplex j J L d R = J.functor.obj R.object :=
+example [IsOpenImmersion j.left] (J : IntermediateExtensionData j)
+    (L : RationalSheaf (space U)) (d : ℕ) [SmoothOfRelativeDimension d U.hom]
+    (hL : IsFiniteRankLocalSystem (space U) L) (R : LocalSystemPerverseRealization U L d) :
+    intersectionComplex j J L d hL R = J.functor.obj R.object :=
   rfl
+
+/-- The constant sheaf of a finite-dimensional space is a local system, so it
+has an intersection complex. -/
+example [IsOpenImmersion j.left] (J : IntermediateExtensionData j) (d : ℕ)
+    [SmoothOfRelativeDimension d U.hom]
+    (R : LocalSystemPerverseRealization U (rationalConstantSheaf (space U)) d) :
+    PerverseSheaf X :=
+  intersectionComplex j J _ d
+    (ConstructibleComplexes.isFiniteRankLocalSystem_constantSheaf ℚ _ (ModuleCat.of ℚ ℚ)) R
 
 end MathlibExtTest.AlgebraicGeometry.IntersectionComplexes

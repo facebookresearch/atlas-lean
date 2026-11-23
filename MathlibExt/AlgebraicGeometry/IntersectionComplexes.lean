@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.AlgebraicGeometry.Morphisms.OpenImmersion
+public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 public import MathlibExt.AlgebraicGeometry.ConstructibleComplexes
 
 /-!
@@ -18,8 +19,11 @@ The perverse t-structure is the support/cosupport-characterized
 sheaves, derived (`ConstructibleComplexes.derivedPullback`). Intermediate
 extension is specified by a natural restriction isomorphism and the absence of
 subobjects and quotients supported on the boundary, which characterize it
-(BBD, §1.4). The normalized local system `L[d]` is `L` placed in cohomological
-degree `-d`.
+(BBD, §1.4). For a sheaf `L`, `L[d]` is `L` placed in cohomological degree
+`-d`. The intersection complex `j_{!*}(L[d])` is formed only for a finite-rank
+local system `L` on a smooth open `U` of pure dimension `d`: the intermediate
+extension of an arbitrary perverse `L[d]` need not be one (de Cataldo–Migliorini,
+§2.7).
 
 All constructions here are complete. The existence, fullness and uniqueness of
 intermediate extension and the perversity of `L[d]` are requested in
@@ -97,7 +101,7 @@ instance intermediateExtension_faithful {U X : ComplexScheme}
     J.functor.Faithful :=
   J.restriction.faithful_of_comp
 
-/-- A finite-rank rational local system placed in degree `-d`, namely `L[d]`. -/
+/-- A rational sheaf `L` placed in cohomological degree `-d`, namely `L[d]`. -/
 def normalizedLocalSystem (U : ComplexScheme) (L : RationalSheaf (space U)) (d : ℕ) :
     RationalDerived (space U) :=
   (DerivedCategory.singleFunctor _ (-(d : ℤ))).obj L
@@ -110,12 +114,14 @@ structure LocalSystemPerverseRealization (U : ComplexScheme) [IsComplexVariety U
   /-- Its underlying complex is exactly `L[d]`. -/
   comparison : (perverseAmbient U).obj object ≅ normalizedLocalSystem U L d
 
-/-- Construct `IC` from intermediate extension and the normalized local system.
-For a dense smooth open `U`, this is the perverse-normalized intersection complex. -/
+/-- The intersection complex `j_{!*}(L[d])` of a finite-rank local system `L` on a
+smooth open `U` of pure dimension `d`. For dense `U` this is `IC_X(L)`; in general
+it is the intersection complex of the closure of `U`, extended by zero. -/
 def intersectionComplex {U X : ComplexScheme} [IsComplexVariety U] [IsComplexVariety X]
     [PerverseSheafTheory U] [PerverseSheafTheory X]
-    (j : U ⟶ X) (J : IntermediateExtensionData j)
-    (L : RationalSheaf (space U)) (d : ℕ) (R : LocalSystemPerverseRealization U L d) :
+    (j : U ⟶ X) [IsOpenImmersion j.left] (J : IntermediateExtensionData j)
+    (L : RationalSheaf (space U)) (d : ℕ) [SmoothOfRelativeDimension d U.hom]
+    (_hL : IsFiniteRankLocalSystem (space U) L) (R : LocalSystemPerverseRealization U L d) :
     PerverseSheaf X := J.functor.obj R.object
 
 /-- The constructed intersection complex restricts to `L[d]` by its actual
@@ -123,9 +129,10 @@ comparison maps. -/
 def intersectionComplex_restriction {U X : ComplexScheme}
     [IsComplexVariety U] [IsComplexVariety X]
     [PerverseSheafTheory U] [PerverseSheafTheory X]
-    (j : U ⟶ X) (J : IntermediateExtensionData j)
-    (L : RationalSheaf (space U)) (d : ℕ) (R : LocalSystemPerverseRealization U L d) :
-    (perverseRestriction j).obj (intersectionComplex j J L d R) ≅
+    (j : U ⟶ X) [IsOpenImmersion j.left] (J : IntermediateExtensionData j)
+    (L : RationalSheaf (space U)) (d : ℕ) [SmoothOfRelativeDimension d U.hom]
+    (hL : IsFiniteRankLocalSystem (space U) L) (R : LocalSystemPerverseRealization U L d) :
+    (perverseRestriction j).obj (intersectionComplex j J L d hL R) ≅
       normalizedLocalSystem U L d :=
   J.restriction.app R.object ≪≫ R.comparison
 
