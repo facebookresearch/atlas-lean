@@ -58,10 +58,10 @@ example {A B : CommRingCat.{u}} (g : A ⟶ B) (hg : Function.Surjective g.hom)
     (restrictScalarsTensorIso g hg M N).inv.hom (m ⊗ₜ[B] n) =
       TensorProduct.tmul A (M := (ModuleCat.restrictScalars g.hom).obj M)
         (N := (ModuleCat.restrictScalars g.hom).obj N) m n :=
-  rfl
+  restrictScalarsTensorIso_inv_tmul g hg M N m n
 
 example {A B : CommRingCat.{u}} (g : A ⟶ B) (hg : Function.Surjective g.hom)
     (M N : ModuleCat.{u} B) (x : TensorProduct B M N) :
     (restrictScalarsTensorIso g hg M N).hom.hom ((restrictScalarsTensorIso g hg M N).inv.hom x) =
       x :=
-  restrictScalarsTensorHom_invAux_apply g hg M N x
+  congrArg (fun f ↦ ModuleCat.Hom.hom f x) (restrictScalarsTensorIso g hg M N).inv_hom_id

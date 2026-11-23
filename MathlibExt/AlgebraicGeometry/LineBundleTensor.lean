@@ -5,6 +5,28 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
+
+/-
+Portions of this file are adapted from Mathlib (leanprover-community/mathlib4, revision
+fc4f59e577feb1a4956671bc04ac18aaaf8cd842):
+
+`Mathlib/Algebra/Category/ModuleCat/Sheaf/PushforwardContinuous.lean`:
+Copyright (c) 2024 Joël Riou. All rights reserved.
+Released under Apache 2.0 license (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Joël Riou
+
+`Mathlib/AlgebraicGeometry/Modules/Sheaf.lean`:
+Copyright (c) 2024 Joël Riou. All rights reserved.
+Released under Apache 2.0 license (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Joël Riou, Andrew Yang
+
+Adapted portions: `pushforwardNatTrans`, `pushforwardCongr` and `pushforwardPushforwardAdj`
+transpose `SheafOfModules.pushforwardNatTrans`, `SheafOfModules.pushforwardCongr` and
+`SheafOfModules.pushforwardPushforwardAdj` (with their naturality and triangle proofs) from
+sheaves to presheaves of modules; `presheafRestrictAdjunction` follows
+`AlgebraicGeometry.Scheme.Modules.restrictAdjunction`, including its two compatibility proofs.
+-/
+
 module
 
 public import MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
@@ -118,88 +140,35 @@ as an `A`-module through `g` (`ModuleCat.restrictScalars g.hom`). -/
 
 variable {A B : CommRingCat.{u}} (g : A ⟶ B)
 
-open ModuleCat.MonoidalCategory in
-/-- The `A`-linear map `M_A ⊗[A] N_A ⟶ (M ⊗[B] N)_A`, `m ⊗ n ↦ m ⊗ n`. -/
-def restrictScalarsTensorHom (M N : ModuleCat.{u} B) :
-    (ModuleCat.restrictScalars g.hom).obj M ⊗ (ModuleCat.restrictScalars g.hom).obj N ⟶
+/-- Restriction of scalars along a surjective (for instance bijective) map of commutative
+rings commutes with tensor products: `M_A ⊗[A] N_A ≅ (M ⊗[B] N)_A`, `m ⊗ n ↦ m ⊗ n`. This is
+Mathlib's `TensorProduct.equivOfCompatibleSMul` for the compatible actions of
+`TensorProduct.CompatibleSMul.of_algebraMap_surjective`. -/
+def restrictScalarsTensorIso (hg : Function.Surjective g.hom) (M N : ModuleCat.{u} B) :
+    (ModuleCat.restrictScalars g.hom).obj M ⊗ (ModuleCat.restrictScalars g.hom).obj N ≅
       (ModuleCat.restrictScalars g.hom).obj (M ⊗ N) :=
-  tensorLift (fun (m : M) (n : N) ↦ (m ⊗ₜ[B] n : TensorProduct B M N))
-    (fun m m' n ↦ TensorProduct.add_tmul (M := M) (N := N) m m' n)
-    (fun a m n ↦ (TensorProduct.smul_tmul' (R := B) (M := M) (N := N) (g.hom a) m n).symm)
-    (fun m n n' ↦ TensorProduct.tmul_add (M := M) (N := N) m n n')
-    (fun a m n ↦ TensorProduct.tmul_smul (R := B) (M := M) (N := N) (g.hom a) m n)
+  letI : Algebra A B := g.hom.toAlgebra
+  letI : Module A M := Module.compHom M g.hom
+  letI : Module A N := Module.compHom N g.hom
+  haveI : IsScalarTower A B M := ⟨fun a b m ↦ mul_smul (g.hom a) b m⟩
+  haveI : IsScalarTower A B N := ⟨fun a b m ↦ mul_smul (g.hom a) b m⟩
+  letI : TensorProduct.CompatibleSMul A B M N :=
+    TensorProduct.CompatibleSMul.of_algebraMap_surjective M N hg
+  (((TensorProduct.equivOfCompatibleSMul A B B M N).symm).restrictScalars A).toModuleIso
 
-theorem restrictScalarsTensorHom_tmul (M N : ModuleCat.{u} B)
-    (m : (ModuleCat.restrictScalars g.hom).obj M) (n : (ModuleCat.restrictScalars g.hom).obj N) :
-    (restrictScalarsTensorHom g M N).hom (m ⊗ₜ[A] n) =
+theorem restrictScalarsTensorIso_hom_tmul (hg : Function.Surjective g.hom)
+    (M N : ModuleCat.{u} B) (m : (ModuleCat.restrictScalars g.hom).obj M)
+    (n : (ModuleCat.restrictScalars g.hom).obj N) :
+    (restrictScalarsTensorIso g hg M N).hom.hom (m ⊗ₜ[A] n) =
       TensorProduct.tmul B (M := M) (N := N) m n :=
   rfl
 
-/-- The additive map `M ⊗[B] N → M_A ⊗[A] N_A`, `m ⊗ n ↦ m ⊗ n`, for surjective `g`. -/
-def restrictScalarsTensorInvAux (hg : Function.Surjective g.hom) (M N : ModuleCat.{u} B) :
-    TensorProduct B M N →+
-      TensorProduct A ((ModuleCat.restrictScalars g.hom).obj M)
-        ((ModuleCat.restrictScalars g.hom).obj N) :=
-  TensorProduct.liftAddHom
-    (LinearMap.toAddMonoidHom'.comp (TensorProduct.mk A ((ModuleCat.restrictScalars g.hom).obj M)
-      ((ModuleCat.restrictScalars g.hom).obj N)).toAddMonoidHom :
-        (ModuleCat.restrictScalars g.hom).obj M →+ (ModuleCat.restrictScalars g.hom).obj N →+
-          TensorProduct A ((ModuleCat.restrictScalars g.hom).obj M)
-            ((ModuleCat.restrictScalars g.hom).obj N))
-    (fun b m n ↦ by
-      obtain ⟨a, rfl⟩ := hg b
-      exact TensorProduct.smul_tmul (R := A) (M := (ModuleCat.restrictScalars g.hom).obj M)
-        (N := (ModuleCat.restrictScalars g.hom).obj N) a m n)
-
-theorem restrictScalarsTensorInvAux_tmul (hg : Function.Surjective g.hom) (M N : ModuleCat.{u} B)
-    (m : M) (n : N) :
-    restrictScalarsTensorInvAux g hg M N (m ⊗ₜ[B] n) =
+theorem restrictScalarsTensorIso_inv_tmul (hg : Function.Surjective g.hom)
+    (M N : ModuleCat.{u} B) (m : M) (n : N) :
+    (restrictScalarsTensorIso g hg M N).inv.hom (m ⊗ₜ[B] n : TensorProduct B M N) =
       TensorProduct.tmul A (M := (ModuleCat.restrictScalars g.hom).obj M)
         (N := (ModuleCat.restrictScalars g.hom).obj N) m n :=
   rfl
-
-theorem restrictScalarsTensorInvAux_smul (hg : Function.Surjective g.hom)
-    (M N : ModuleCat.{u} B) (a : A) (x : TensorProduct B M N) :
-    restrictScalarsTensorInvAux g hg M N (g.hom a • x) =
-      a • restrictScalarsTensorInvAux g hg M N x := by
-  induction x using TensorProduct.inductionOn with
-  | tmul m n =>
-    rw [TensorProduct.smul_tmul', restrictScalarsTensorInvAux_tmul,
-      restrictScalarsTensorInvAux_tmul]
-    exact (TensorProduct.smul_tmul' (R := A) (M := (ModuleCat.restrictScalars g.hom).obj M)
-      (N := (ModuleCat.restrictScalars g.hom).obj N) a m n).symm
-  | add x y hx hy => rw [smul_add, map_add, hx, hy, map_add, smul_add]
-
-/-- For surjective `g`, the `A`-linear map `(M ⊗[B] N)_A ⟶ M_A ⊗[A] N_A`, `m ⊗ n ↦ m ⊗ n`. -/
-def restrictScalarsTensorInv (hg : Function.Surjective g.hom) (M N : ModuleCat.{u} B) :
-    (ModuleCat.restrictScalars g.hom).obj (M ⊗ N) ⟶
-      (ModuleCat.restrictScalars g.hom).obj M ⊗ (ModuleCat.restrictScalars g.hom).obj N :=
-  ModuleCat.ofHom (X := (ModuleCat.restrictScalars g.hom).obj (M ⊗ N))
-    (Y := ((ModuleCat.restrictScalars g.hom).obj M ⊗ (ModuleCat.restrictScalars g.hom).obj N :
-      ModuleCat.{u} A))
-    { toFun := restrictScalarsTensorInvAux g hg M N
-      map_add' := map_add _
-      map_smul' := restrictScalarsTensorInvAux_smul g hg M N }
-
-theorem restrictScalarsTensorHom_invAux_apply (hg : Function.Surjective g.hom)
-    (M N : ModuleCat.{u} B) (x : TensorProduct B M N) :
-    (restrictScalarsTensorHom g M N).hom (restrictScalarsTensorInvAux g hg M N x) = x := by
-  induction x using TensorProduct.inductionOn with
-  | tmul m n => rfl
-  | add x y hx hy => rw [map_add, map_add, hx, hy]; rfl
-
-/-- Restriction of scalars along a surjective (for instance bijective) map of commutative
-rings commutes with tensor products: `M_A ⊗[A] N_A ≅ (M ⊗[B] N)_A`. -/
-def restrictScalarsTensorIso (hg : Function.Surjective g.hom) (M N : ModuleCat.{u} B) :
-    (ModuleCat.restrictScalars g.hom).obj M ⊗ (ModuleCat.restrictScalars g.hom).obj N ≅
-      (ModuleCat.restrictScalars g.hom).obj (M ⊗ N) where
-  hom := restrictScalarsTensorHom g M N
-  inv := restrictScalarsTensorInv g hg M N
-  hom_inv_id := ModuleCat.MonoidalCategory.tensor_ext fun m n ↦
-    restrictScalarsTensorInvAux_tmul g hg M N m n
-  inv_hom_id := by
-    ext x
-    exact restrictScalarsTensorHom_invAux_apply g hg M N x
 
 end RestrictScalarsTensor
 
