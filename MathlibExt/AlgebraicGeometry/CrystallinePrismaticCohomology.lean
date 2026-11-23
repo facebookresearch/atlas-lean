@@ -7,12 +7,13 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The module-sheafification proof below is adapted from AxiomMath/Stacks,
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/AlgebraicGeometry/Spaces/ProetaleComparison.lean,
-AlgebraicGeometry.hasSheafify_moduleCat (Apache 2.0).
-Modification: expose the equal-universe small-site specialization needed
-by Mathlib's actual Grothendieck-category equivalence.
+Portions of this file are adapted from:
+
+`StacksFrontier/AlgebraicGeometry/Spaces/ProetaleComparison.lean` (AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b), `AlgebraicGeometry.hasSheafify_moduleCat`:
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: expose the equal-universe small-site specialization needed by Mathlib's
+Grothendieck-category equivalence.
 -/
 module
 

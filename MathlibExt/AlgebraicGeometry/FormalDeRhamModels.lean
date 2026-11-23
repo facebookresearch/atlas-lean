@@ -7,11 +7,13 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The Milnor difference map adapts AxiomMath/Stacks, revision
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/Homology/DerivedComplete.lean, milnorMap (Apache 2.0).
-Modification: form the actual cochain Milnor fiber of the normalized
-nilpotent de Rham hypermodels, rather than a free derived-limit object.
+Portions of this file are adapted from:
+
+`StacksFrontier/Homology/DerivedComplete.lean` (AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b), `milnorMap`:
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: form the cochain Milnor fiber of the normalized nilpotent de Rham hypermodels,
+rather than a free derived-limit object.
 -/
 module
 

@@ -5,6 +5,15 @@ All rights reserved.
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
+
+/-
+Portions of this file are adapted from:
+
+`StacksFrontier/AlgebraicGeometry/Spaces/ProetaleComparison.lean` (AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b), the module-sheafification argument:
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: specialized to the quasisyntomic basis site.
+-/
 module
 
 public import MathlibExt.AlgebraicGeometry.QuasiSyntomicPrismSites

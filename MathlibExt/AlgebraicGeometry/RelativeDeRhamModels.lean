@@ -7,13 +7,15 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The sectionwise differential criterion follows AxiomMath/Stacks at
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/Algebra/Category/ModuleCat/Sheaf/DeRhamSectionwise.lean
-and StacksFrontier/Topology/Sheaves/Modules/DeRhamExistence.lean
-(Apache 2.0). Modification: retain the actual affine-base scalar map,
-use ordinary base-ring linearity rather than prime-field Frobenius
-linearity, and derive the fixed module-sheaf sections source.
+Portions of this file are adapted from:
+
+`StacksFrontier/Algebra/Category/ModuleCat/Sheaf/DeRhamSectionwise.lean` (AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b):
+`StacksFrontier/Topology/Sheaves/Modules/DeRhamExistence.lean` (AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b), the sectionwise differential criterion:
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: retain the affine-base scalar map, use ordinary base-ring linearity rather than
+prime-field Frobenius linearity, and derive the fixed module-sheaf sections source.
 -/
 module
 
