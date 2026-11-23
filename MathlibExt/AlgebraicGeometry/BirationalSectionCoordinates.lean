@@ -85,4 +85,3 @@ structure Evaluation (V : NormalVariety k n) (x : V.X.left) (M : V.X.left.Module
   injective : Function.Injective map
 
 end MathlibExt.AlgebraicGeometry.BirationalSectionCoordinates
-

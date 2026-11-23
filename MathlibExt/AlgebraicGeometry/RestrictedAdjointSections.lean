@@ -62,17 +62,22 @@ def restrictedSpace {P : LogPair k n} {m : ℕ} {A : AdjointPower P m}
   LinearMap.range R.linear.map
 
 /-- Pullback of the same adjoint sections to an actual birational model,
-with its evaluation characterized at every actual prime point. -/
+with its evaluation characterized at every actual prime point. The pulled
+complete linear series is nonempty, so that its fixed and moving parts are
+defined; an empty series has no fixed divisor. -/
 structure ModelSections {P : LogPair k n} {m : ℕ} (A : AdjointPower P m)
     (M : BirationalModel P) where
   linear : GenericSectionMaps.PullbackLinear M.map A.cartier.line.val
     ((Scheme.Modules.pullback M.map.left).obj A.cartier.line.val)
     (𝟙 ((Scheme.Modules.pullback M.map.left).obj A.cartier.line.val))
+  nonempty : ∃ s, linear.map s ≠ 0
   evaluations : ∀ p : PrimePoint M.variety,
     Evaluation M.variety p.val ((Scheme.Modules.pullback M.map.left).obj A.cartier.line.val)
 
-/-- Actual fixed coefficient of a pulled complete linear series.
-Its geometric use requires nonzero image; no empty-series fixed divisor is asserted. -/
+/-- Actual fixed coefficient of a pulled complete linear series: the least order
+at `p` of a nonzero pulled section. The set is nonempty (`ModelSections.nonempty`)
+and bounded below by zero (pulled sections are regular at `p`), so this infimum
+is attained. -/
 def fixedCoefficient {P : LogPair k n} {m : ℕ} {A : AdjointPower P m}
     {M : BirationalModel P} (S : ModelSections A M) (p : PrimePoint M.variety) : ℤ :=
   sInf {a | ∃ s : GenericSectionMaps.Sections P.variety.X A.cartier.line.val,
@@ -83,7 +88,6 @@ def fixedCoefficient {P : LogPair k n} {m : ℕ} {A : AdjointPower P m}
 def modelSectionSpace {P : LogPair k n} {m : ℕ} {A : AdjointPower P m}
     {M : BirationalModel P} (S : ModelSections A M) :=
   LinearMap.range S.linear.map
-
 
 /-- Actual mobile-divisor coefficient, retaining the source Cartier divisor choice. -/
 def movingCoefficient {P : LogPair k n} {m : ℕ} {A : AdjointPower P m}
@@ -165,7 +169,6 @@ structure PowerRestriction {X Y : _root_.CategoryTheory.Over (Spec (.of k))}
     (LineBundleTaskContracts.power ((Scheme.Modules.pullback f.left).obj L) m)
       ((P.comparison m).hom.app L)
 
-
 /-- Source-complete multiplicative comparison for the fixed actual restriction and products.
 This is an integration proof on native operations, not a requested generic cup/product law. -/
 structure RestrictionAlgebra {X Y : _root_.CategoryTheory.Over (Spec (.of k))}
@@ -179,4 +182,3 @@ structure RestrictionAlgebra {X Y : _root_.CategoryTheory.Over (Spec (.of k))}
       sectionProduct B a b ((R.linear a).map s) ((R.linear b).map t)
 
 end MathlibExt.AlgebraicGeometry.RestrictedAdjointSections
-

@@ -178,4 +178,3 @@ def modelSpecializationFiltration {X₁ : Over (Spec (.of R))} {M₁ : X₁.left
   specializationFiltration B h S u (secondLattice C) a
 
 end MathlibExt.AlgebraicGeometry.DVRSectionLattices
-

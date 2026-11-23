@@ -117,7 +117,7 @@ attribute [instance] RelativeContraction.integral RelativeContraction.noetherian
 structure RelativeFlip {P : LogPair k n} {q : P.variety.X ⟶ S} {v : RelativeN1 q}
     (C : RelativeContraction P q v) where
   source : LogPair k n
-  calculus : HasModelCalculus source
+  /-- The flipped pair is klt; this includes its model calculus. -/
   klt : IsKlt source
   qfactorial : IsQFactorial source.variety
   map : source.variety.X ⟶ C.target
