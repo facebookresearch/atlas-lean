@@ -783,23 +783,4 @@ theorem_wanted sum_fibStep_window (m n : ℕ) (hm : 2 ≤ m) :
     ∑ k ∈ Finset.range (2 * m + 2), fibStep m (n + k) =
       4 * fibStep m (n + 2 * m)
 
-/-- **Convolution of the Fibonacci $6$-step numbers with the Fibonacci numbers.** Write
-$s_n = F^{(6)}_n$ for the Fibonacci $6$-step numbers and $F_n = F^{(2)}_n$ for the Fibonacci
-numbers. For every natural number $n \ge 3$,
-$$5 \sum_{j=0}^{n} s_j F_{n-j} =
-s_{n+3} + s_{n+1} - s_n + 3 s_{n-1} + s_{n-3} - F_{n+3} - F_{n+1}.$$
-
-The source prints this identity divided by $5$.
-
-Source: Robert Frontczak and Karol Gryszka, "General
-Convolution Sums Involving Fibonacci `m`-Step Numbers",
-Theorem 41. -/
-theorem_wanted five_mul_sum_fibStep6_mul_fib (n : ℕ)
-    (hn : 3 ≤ n) :
-    5 * ∑ j ∈ Finset.range (n + 1),
-        fibStep 6 j * fibStep 2 (n - j) =
-      fibStep 6 (n + 3) + fibStep 6 (n + 1) - fibStep 6 n +
-        3 * fibStep 6 (n - 1) + fibStep 6 (n - 3) -
-        fibStep 2 (n + 3) - fibStep 2 (n + 1)
-
 end MathlibExt.Combinatorics.Enumerative.FibStepConvolutionWanted

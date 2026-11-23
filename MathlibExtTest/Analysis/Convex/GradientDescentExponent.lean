@@ -121,17 +121,18 @@ example : (1 : EReal) ≤ gradientDescentExponent := one_le_gradientDescentExpon
 example : silverGradientDescentSchedule 0 = Real.sqrt 2 := by
   have hs := Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)
   have hne : (1 : ℝ) + Real.sqrt 2 ≠ 0 := by positivity
-  norm_num [silverGradientDescentSchedule, gradientDescentSilverRatio, padicValNat_one_right]
+  norm_num [silverGradientDescentSchedule, gradientDescentSilverRatio, Nat.padicValNat_def]
   field_simp [hne]
   nlinarith
 
 example : silverGradientDescentSchedule 1 = 2 := by
-  have h : padicValNat 2 2 = 1 := padicValNat.self (by decide)
-  norm_num [silverGradientDescentSchedule]
+  have h : padicValNat 2 2 = 1 := Nat.padicValNat_def.trans (Nat.multiplicity_self (by decide))
+  norm_num [silverGradientDescentSchedule, h]
 
 example : silverGradientDescentSchedule 2 = silverGradientDescentSchedule 0 := by
-  have h : padicValNat 2 3 = 0 := padicValNat.eq_zero_of_not_dvd (by norm_num)
-  simp [silverGradientDescentSchedule, h, padicValNat_one_right]
+  have h : padicValNat 2 3 = 0 :=
+    Nat.padicValNat_def.trans (multiplicity_eq_zero_of_not_dvd (by norm_num))
+  simp [silverGradientDescentSchedule, h, Nat.padicValNat_def.trans multiplicity_one_right]
 
 /-- Bounded actual-quadratic diagnostics adapted from the independent C35
 review's SilverPowerPlateauAttempt4, by Codex `/root/finish_c39_current`.
@@ -141,18 +142,19 @@ theorem silverQuadraticTrajectory_two :
       (gradientDescentSilverRatio⁻¹ : ℝ) • initialPoint := by
   simp only [gradientDescentTrajectory_succ, gradientDescentTrajectory_zero,
     quadratic_gradient, silverGradientDescentSchedule]
-  have h2 : padicValNat 2 2 = 1 := padicValNat.self (by decide)
-  norm_num [padicValNat_one_right, h2]
+  have h2 : padicValNat 2 2 = 1 := Nat.padicValNat_def.trans (Nat.multiplicity_self (by decide))
+  norm_num [Nat.padicValNat_def.trans multiplicity_one_right, h2]
   module
 
 theorem silverQuadraticTrajectory_four :
     gradientDescentTrajectory quadratic silverGradientDescentSchedule initialPoint 4 =
       (gradientDescentSilverRatio⁻¹ : ℝ) • initialPoint := by
   let : Fact (Nat.Prime 2) := ⟨by decide⟩
-  have h3 : padicValNat 2 3 = 0 := padicValNat.eq_zero_of_not_dvd (by norm_num)
+  have h3 : padicValNat 2 3 = 0 :=
+    Nat.padicValNat_def.trans (multiplicity_eq_zero_of_not_dvd (by norm_num))
   have h4 : padicValNat 2 4 = 2 := by
-    simpa only [show (2 : ℕ) ^ 2 = 4 by decide] using
-      (padicValNat.prime_pow (p := 2) 2)
+    simpa only [Nat.padicValNat_def, show (2 : ℕ) ^ 2 = 4 by decide] using
+      (Nat.multiplicity_prime_pow (p := 2) 2)
   have hrho : gradientDescentSilverRatio ≠ 0 := by
     unfold gradientDescentSilverRatio
     positivity
@@ -171,16 +173,19 @@ theorem silverQuadraticTrajectory_eight :
     gradientDescentTrajectory quadratic silverGradientDescentSchedule initialPoint 8 =
       (gradientDescentSilverRatio⁻¹ : ℝ) • initialPoint := by
   let : Fact (Nat.Prime 2) := ⟨by decide⟩
-  have h5 : padicValNat 2 5 = 0 := padicValNat.eq_zero_of_not_dvd (by norm_num)
-  have h7 : padicValNat 2 7 = 0 := padicValNat.eq_zero_of_not_dvd (by norm_num)
+  have h5 : padicValNat 2 5 = 0 :=
+    Nat.padicValNat_def.trans (multiplicity_eq_zero_of_not_dvd (by norm_num))
+  have h7 : padicValNat 2 7 = 0 :=
+    Nat.padicValNat_def.trans (multiplicity_eq_zero_of_not_dvd (by norm_num))
   have h6 : padicValNat 2 6 = 1 := by
-    have h3 : padicValNat 2 3 = 0 := padicValNat.eq_zero_of_not_dvd (by norm_num)
-    have h2 : padicValNat 2 2 = 1 := padicValNat.self (by decide)
-    have h := padicValNat.mul (p := 2) (a := 2) (b := 3) (by decide) (by decide)
-    simpa [h3, h2] using h
+    have h3 : padicValNat 2 3 = 0 :=
+      Nat.padicValNat_def.trans (multiplicity_eq_zero_of_not_dvd (by norm_num))
+    have h2 : padicValNat 2 2 = 1 := Nat.padicValNat_def.trans (Nat.multiplicity_self (by decide))
+    have h := Nat.multiplicity_mul (p := 2) (a := 2) (b := 3) (by decide) (by decide)
+    simpa [← Nat.padicValNat_def, h3, h2] using h
   have h8 : padicValNat 2 8 = 3 := by
-    simpa only [show (2 : ℕ) ^ 3 = 8 by decide] using
-      (padicValNat.prime_pow (p := 2) 3)
+    simpa only [Nat.padicValNat_def, show (2 : ℕ) ^ 3 = 8 by decide] using
+      (Nat.multiplicity_prime_pow (p := 2) 3)
   have hrho : gradientDescentSilverRatio ≠ 0 := by
     unfold gradientDescentSilverRatio
     positivity
