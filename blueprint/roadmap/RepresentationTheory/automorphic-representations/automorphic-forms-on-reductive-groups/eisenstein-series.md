@@ -37,7 +37,14 @@ $\mathfrak{a}_P$ and $\mathfrak{a}_{P,\mathbb{C}}^*$ as usual.
 A good expansion has pages for the definition and absolute convergence of Eisenstein series and
 intertwining operators, for the constant term formula, for the meromorphic continuation and functional
 equations, for the automorphy of Eisenstein series, for the spectral decomposition, and for the vanishing
-lemma, citing Langlands's *On the functional equations satisfied by Eisenstein series* (Lecture Notes in
+lemma. The spectral decomposition should follow Langlands's route through wave packets: for a
+Paley–Wiener function $\Psi(\lambda)$ with values in a finite-dimensional space of cuspidal data $\mathcal{H}^0_{P,\mathrm{cusp},\sigma}$, the
+pseudo-Eisenstein series $E\psi$ of $\psi(x) = \int_{\Lambda + i\mathfrak{a}_P^*} e^{(\lambda + \rho_P)(H_P(x))} \Psi(\lambda, x)\, d\lambda$ is square integrable (Arthur's Lemma 12.2),
+the inner product formula (12.3) for two such series holds with $\Lambda$ in the cone of absolute convergence of the
+intertwining operators (Lemma 12.3), and $L^2(G(k) \backslash G(\mathbb{A}))$ is the orthogonal sum of the closed subspaces generated
+by the wave packets of the classes of cuspidal data (Lemma 12.4); the continuation and the decomposition of
+each summand then come from moving the contour in (12.3) to $i\mathfrak{a}_P^*$ and analysing the residues. These pages
+should cite Langlands's *On the functional equations satisfied by Eisenstein series* (Lecture Notes in
 Math. 544, Springer, 1976) and Mœglin–Waldspurger's *Spectral decomposition and Eisenstein series*
 (Cambridge, 1995) with locators, besides the sources below.
 
@@ -53,7 +60,9 @@ Math. 544, Springer, 1976) and Mœglin–Waldspurger's *Spectral decomposition a
   <https://www.claymath.org/library/proceedings/cmip04c.pdf>: §7 (the space $\mathcal{H}_P$ and its subspace
   $\mathcal{H}_P^0$), (7.1)–(7.2), Lemma 7.1 (Langlands; absolute convergence for $\varphi \in \mathcal{H}_P^0$), Theorem 7.2
   (Langlands; meromorphic continuation, (7.3)–(7.4), unitarity on $i\mathfrak{a}_P^*$, the decomposition (7.5)), §12,
-  (12.2) and Lemmas 12.2–12.4 (Langlands), and §15, the formula before (15.3) for associated $Q$ and (15.3)
+  (12.2) and Lemmas 12.2–12.4 (Langlands: the wave packets, their square integrability, the inner product
+  formula (12.3) and the orthogonal decomposition (12.4)) with the discussion after them, p. 66 (their use for
+  Theorem 7.2), and §15, the formula before (15.3) for associated $Q$ and (15.3)
   for arbitrary $Q$ (constant terms of cuspidal Eisenstein series).
 - A. Borel, "Automorphic forms on reductive groups", lecture notes (Park City),
   <http://homepages.math.uic.edu/~rtakloo/papers/borel/borel3.pdf>: §8.6 (the residual and continuous

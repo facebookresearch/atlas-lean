@@ -27,8 +27,11 @@ on $\mathfrak{S}^1$.
 
 4. **Uniform bound for convolutions** (Gelfand–Piatetski-Shapiro). For $f \in C^\infty_c(G(\mathbb{A})^1)$ there is a constant
    $c_f$ such that $\sup_x \lvert (R(f)\varphi)(x) \rvert \le c_f \lVert \varphi \rVert_2$ for every cuspidal function $\varphi \in L^2(G(k) \backslash G(\mathbb{A})^1)$, where
-   $R(f)\varphi(x) = \int f(y) \varphi(xy)\, dy$; in fact $\varphi \mapsto R(f)\varphi$ is continuous from the cuspidal $L^2$ space to the space of rapidly
-   decreasing functions, with the seminorms $\sup_x \lVert x \rVert^N \lvert (D R(f)\varphi)(x) \rvert$ for left invariant differential operators $D$.
+   $R(f)\varphi(x) = \int f(y) \varphi(xy)\, dy$; in fact, for every Siegel set $\mathfrak{S}$, $\varphi \mapsto R(f)\varphi$ is continuous from the cuspidal $L^2$
+   space to the space of functions rapidly decreasing on $\mathfrak{S}^1$, with the seminorms
+   $\sup_{x \in \mathfrak{S}^1} \lVert x \rVert^N \lvert (D R(f)\varphi)(x) \rvert$ for left invariant differential operators $D$ (the weighted supremum is taken over
+   the Siegel set, as in the definition above, not over all of $G(\mathbb{A})^1$: the height $\lVert \cdot \rVert$ is not invariant under $G(k)$,
+   and for $G = \mathbb{G}_m$ over $\mathbb{Q}$ and $\varphi = 1$ the supremum over all points would be infinite for every $N > 0$).
 
 ## Depends on
 
@@ -51,7 +54,8 @@ on $\mathfrak{S}^1$.
 - A. Borel, "Automorphic forms on reductive groups", lecture notes (Park City),
   <http://homepages.math.uic.edu/~rtakloo/papers/borel/borel3.pdf>: §4.1–4.3 (analyticity, the theorem on
   $f \star \alpha = f$ and its Corollary: an automorphic form is of uniform moderate growth), §7.7–7.9 (the
-  basic estimate and Theorem 7.9, "Any cusp form is fast decreasing"), §9.3, (67) (continuity of the
+  basic estimate and Theorem 7.9, "Any cusp form is fast decreasing", with the seminorms of §6.4 taken on Siegel
+  sets), §9.3, (67) (continuity of the
   composition from the cuspidal $L^2$ space to rapidly decreasing functions) and (68) (the uniform bound of
   item 4), stated for $\Gamma \backslash G$ with $\Gamma$ arithmetic, the adelic form following by the finiteness of class
   numbers.

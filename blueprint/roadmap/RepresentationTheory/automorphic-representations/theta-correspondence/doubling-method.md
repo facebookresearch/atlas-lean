@@ -57,8 +57,10 @@ through the trace), Tamagawa measures, and local pairings and measures whose pro
   the value at $s_{m,n} = \tfrac{m-n}{2}$ of the product (not a residue). If moreover the local theta lift of
   $\pi_v$ is non-zero at every place, then $L(s + \tfrac12, \pi \times \chi_V)$ is holomorphic at $s_{m,n}$ and the
   value is $[E : F]\, L(s_{m,n} + \tfrac12, \pi \times \chi_V)\, Z^*(s_{m,n}, \dots)$; the proof of this refinement also uses
-  Yamana's theorem relating a pole to a lift to the complementary space, the tower property and the local
-  conservation relation.
+  Yamana's theorem that a pole gives a non-zero lift of $\pi$ to a Hermitian space of the complementary dimension
+  $2n - m$ with the same splitting character, the tower property and the local conservation relation. That space
+  lies in a different Witt tower from $V$: the complementary space in the tower of $V$ would need Witt index
+  $n - (m - r) < 0$ (for $n = 1$, $m = 2$, $r = 0$, the tower of an anisotropic plane does not contain the zero space).
 
 A good expansion has pages, in this order, for the global zeta integral and its continuation, the basic
 identity (open orbit and vanishing of the other orbits) and the Euler product, the local zeta integrals
@@ -66,8 +68,9 @@ with their rationality and good sections, the local $L$- and $\varepsilon$-facto
 theorem, the unramified computation with its normalizations and orientation (inert and split places), the
 factorization $Z = L Z^*$ for factorizable sections (extended to finite sums of them by linearity), the
 $L$-function form of the Rallis inner product formula with all its hypotheses, and the inputs of its
-refinement: Yamana's theorem relating a pole of $L(s + \tfrac12, \pi \times \chi_V)$ to a non-zero lift to the complementary
-space, the tower property and the local conservation relation, each citing the sources below with locators; the closed sources (Piatetski-Shapiro–Rallis,
+refinement: Yamana's theorem relating a pole of $L(s + \tfrac12, \pi \times \chi_V)$ to a non-zero lift to a space of the
+complementary dimension $2n - m$ with the same splitting character (in another Witt tower), the tower property
+and the local conservation relation, each citing the sources below with locators; the closed sources (Piatetski-Shapiro–Rallis,
 Lapid–Rallis, Yamana's Inventiones paper) should be consulted for the exact statements.
 
 ## Depends on

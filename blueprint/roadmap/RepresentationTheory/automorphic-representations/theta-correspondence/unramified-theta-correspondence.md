@@ -21,8 +21,12 @@ maximal compact subgroups $K$ and $K'$ fixing the vacuum vector $\varphi_0$ of t
   representation of the larger group lifts only if its Satake parameter lies in the image of the map described
   there. The converse does not follow from Proposition A.5 alone; in the odd-$q$ range of the next item it is
   supplied at equal ranks by Liu's Corollary A.6 (1) (every spherical representation has a non-zero lift, equal
-  to itself) and, for the padded parameters, by his Theorem 6.2 (2) (the small lift is non-zero and is the
-  spherical constituent with the padded parameter).
+  to itself) and, for the padded parameters, by his Theorem 6.2 (2): a spherical representation of the larger
+  group whose Satake parameter is padded (lies in the image of the map of the next item) has a non-zero lift to
+  the smaller group, the spherical constituent with the parameter obtained by removing the padding (for
+  $\mathrm{U}(4) \to \mathrm{U}(2)$ at $q = 3$, the input with parameter $(z, 3)$ goes to the representation with parameter $z$; in the
+  upward direction the coordinate is appended). Here the "small" theta lift $\theta$ is the irreducible quotient of the
+  big lift $\Theta$, not a lift to the smaller group.
 - **Satake parameters** (Rallis; Liu for unitary pairs). For hyperbolic Hermitian and skew-Hermitian
   spaces of dimensions $2r$ and $2s$ over the unramified quadratic field extension, odd $q$, an additive
   character of conductor $\mathcal{O}_F$ and trivial splitting characters, the annihilator of the Weil
@@ -58,7 +62,8 @@ sources below, with the Satake isomorphism for hyperspecial subgroups as a prere
   arXiv:2105.14223 (version 1): §2, Definition 3.1, Lemma 3.2, Assumption 3.3
   and Proposition 3.4 ("When q is odd, Assumption 3.3 holds"), the one-sided generation of fixed vectors for
   even hyperbolic spaces over the unramified quadratic extension; Notations 4.1 and 5.5 and Theorem 6.2 (2)
-  (under Assumption 3.3, the non-zero small lift of the spherical constituent with padded parameter).
+  (under Assumption 3.3, the irreducible quotient $\theta$ of the lift of the spherical constituent with padded
+  parameter is non-zero and is the spherical constituent with the unpadded parameter on the other side).
 - Y. Liu, "Arithmetic theta lifting and L-derivatives for unitary groups, I", Algebra Number Theory 5
   (2011), no. 7, from p. 849, Appendix, pp. 912–918: the setting (hyperbolic spaces of dimensions $2r$ and $2s$,
   odd residue order, unramified quadratic field, the additive character, trivial splitting characters), the

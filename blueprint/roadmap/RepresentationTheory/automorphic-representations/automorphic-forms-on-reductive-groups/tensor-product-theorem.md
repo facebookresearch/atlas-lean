@@ -34,9 +34,12 @@ time gives infinitely many independent vectors fixed by $K_f$.
    first extended to $G(\mathbb{A})$ through a character of $A_G(\mathbb{R})^0$. (The finiteness of the $K$-multiplicities is
    part of the hypothesis; for the subrepresentations of the cuspidal spectrum it is supplied by the
    discreteness of the cuspidal spectrum and Harish-Chandra's finiteness theorem.)
-4. **Smooth automorphic representations** (Harish-Chandra; Wallach). A smooth automorphic representation
-   $(\pi, V)$ of $G(\mathbb{A})$, a closed irreducible subquotient of the space of smooth automorphic functions of uniform
-   moderate growth (for instance the smooth vectors of an irreducible subrepresentation of $L^2_0(\omega)$ for $\mathrm{GL}_n$),
+4. **Smooth automorphic representations** (Harish-Chandra; Wallach). Let $\mathcal{A}^\infty$ be the space of smooth automorphic
+   forms: smooth functions on $G(k) \backslash G(\mathbb{A})$, each fixed by some open compact subgroup of $G(\mathbb{A}_f)$, annihilated by an
+   ideal of finite codimension of $\mathcal{Z}$ and of uniform moderate growth, with the limit Fréchet topology of the uniform
+   moderate growth seminorms. A smooth automorphic representation $(\pi, V)$ of $G(\mathbb{A})$, a closed irreducible
+   subquotient of $\mathcal{A}^\infty$ (for instance the closure in $\mathcal{A}^\infty$ of a cuspidal automorphic representation of $\mathrm{GL}_n$, with any
+   central character),
    decomposes as $\pi \simeq \pi_\infty \otimes \pi_f$, where $\pi_\infty = \widehat{\bigotimes}_{v \mid \infty} \pi_v$ is the completed (topological) tensor
    product of irreducible smooth Fréchet representations of moderate growth and $\pi_f = \bigotimes'_{v < \infty} \pi_v$ is the
    restricted tensor product of irreducible admissible smooth representations. The $\mathcal{H}$-module of $K$-finite
@@ -71,6 +74,7 @@ time gives infinitely many independent vectors fixed by $K_f$.
   Sympos. Pure Math. 33, Part 1, 1979, 179–183, as reference [2]), Corollary 3.2.1 and the note after it
   (the remark after Definition 3.2 that local admissibility gives global admissibility needs the
   one-dimensionality of almost all spherical spaces, as above),
+  Lecture 2, Definition 2.3 (smooth automorphic forms, the limit Fréchet topology, density of $\mathcal{A}$ in $\mathcal{A}^\infty$), Lecture 3,
   Theorem 3.3 (Harish-Chandra; Wallach: admissibility of smooth automorphic representations), Definition 3.3
   and Theorem 3.4 (the decomposition theorem for smooth automorphic representations, with the topological
   tensor product at the archimedean places and the Casselman–Wallach completions; item 4), Theorem 3.5

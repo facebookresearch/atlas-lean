@@ -29,8 +29,9 @@ local field $F$ of characteristic different from $2$ and a symplectic space $W$ 
 - **Product formula for Weil indices.** For a non-degenerate quadratic form $q$ over a number field $F$ and a
   single non-trivial character $\psi = \prod_v \psi_v$ of $\mathbb{A}_F/F$, the local Weil indices $\gamma_{\psi_v}(q_v)$ are almost all $1$ and
   their product is $1$ (Weil, §§29–30, Proposition 5). The local characters cannot be chosen independently: for
-  $q = x^2$ over $\mathbb{Q}$, replacing only the real component of $\psi$ by its inverse changes the real index from
-  $e^{\pi i/4}$ to $e^{-\pi i/4}$ (Weil, §26), which multiplies the product by $e^{-\pi i/2} \ne 1$. From the product formula
+  $q = x^2$ over $\mathbb{Q}$, replacing only the real component of $\psi$ by its inverse changes the real index between
+  $e^{\pi i/4}$ and $e^{-\pi i/4}$ (Weil, §26), which multiplies the product by $e^{\mp \pi i/2} \ne 1$ ($-i$ if the real component
+  was $t \mapsto e^{2\pi i t}$, $+i$ if it was its inverse). From the product formula
   Hilbert reciprocity follows by taking the norm form of a quaternion algebra (Weil calls reciprocity formally
   weaker); through it the rational points of $\mathrm{Sp}(W)$ lift to the twofold cover of the adelic group (Weil, §45).
 

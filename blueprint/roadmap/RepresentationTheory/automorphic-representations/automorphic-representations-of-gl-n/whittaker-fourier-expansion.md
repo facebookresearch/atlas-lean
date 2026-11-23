@@ -30,12 +30,17 @@ $\Lambda_v(\pi_v(u)\xi) = \psi_v(u)\Lambda_v(\xi)$ for $u \in N_n(k_v)$.
    at a place where $\psi_v$ is ramified it may have value $0$). Then there is a constant $c \ne 0$ with
    $W_\varphi(e) = c \prod_v \Lambda_v(\xi_v)$ for every $\varphi \in \pi$ corresponding to a pure tensor $\otimes_v \xi_v$; absorbing $c$ into
    $\Lambda_v$ for one $v \in S$, $W_\varphi(g) = \prod_v W_{\xi_v}(g_v)$ with $W_{\xi_v}(g_v) = \Lambda_v(\pi_v(g_v)\xi_v)$. This is a statement on the
-   smooth realization of $\pi$: the smooth vectors $V^\infty$ of its closure in $L^2_0(\omega)$, which by item 4 of the tensor
-   product theorem is the completed tensor product of the smooth Fréchet representations $\pi_v$ at the
-   archimedean places (the Casselman–Wallach globalizations, on which $N_n(k_v)$ acts) with the restricted tensor
-   product at the finite places. The global functional $\varphi \mapsto W_\varphi(e)$ is continuous on $V^\infty$ (the integral of a
-   continuous function over the compact set $N_n(k) \backslash N_n(\mathbb{A})$), so it is determined by its values on pure tensors, and
-   the formula for $K$-finite $\varphi$ is its restriction.
+   smooth realization $V^\infty$ of $\pi$: the closure of $\pi$ in the space $\mathcal{A}^\infty_0$ of smooth cusp forms (smooth functions on
+   $\mathrm{GL}_n(k) \backslash \mathrm{GL}_n(\mathbb{A})$, each fixed by some open compact subgroup of $\mathrm{GL}_n(\mathbb{A}_f)$, annihilated by an ideal of finite
+   codimension of $\mathcal{Z}$ and of uniform moderate growth, with the limit Fréchet topology of the uniform moderate growth
+   seminorms), a smooth automorphic representation; this needs no unitarity of the central character (for
+   unitary $\omega$ it is the space of smooth vectors of the closure of $\pi$ in $L^2_0(\omega)$). By item 4 of the tensor product
+   theorem, $V^\infty$ is the completed tensor product of the smooth Fréchet representations $\pi_v$ at the archimedean places
+   (the Casselman–Wallach globalizations, on which $N_n(k_v)$ acts) with the restricted tensor product at the finite
+   places. The global functional $\varphi \mapsto W_\varphi(e)$ is continuous on $V^\infty$: on the subspace of a given level and moderate-growth
+   stage it is bounded by the supremum of $\lvert \varphi \rvert$ over a compact set of representatives of $N_n(k) \backslash N_n(\mathbb{A})$, a continuous
+   seminorm there; so it is determined by its values on pure tensors, and the formula for $K$-finite $\varphi$ is its
+   restriction.
 
 ## Depends on
 

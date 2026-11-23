@@ -31,8 +31,10 @@ multiplication, degree-preserving and differentiation operators.
   adjoint actions of the groups have the same image in the algebra of operators on the Fock model, so that a
   representation of one member on which this invariant centre acts by scalars (quasisimple in Howe's sense)
   corresponds to one of the same kind of the other, with central characters determined by each other (Howe,
-  Remarks, §5 (a), p. 568; Transcending, pp. 536 and 547). For a disconnected member the full centre does not
-  transfer: for $\mathrm{O}(2)$ on $\mathbb{C}[z_1, z_2]$ the generator $z_1 \partial_2 - z_2 \partial_1$ of $\mathcal{Z}(U(\mathfrak{so}_{2, \mathbb{C}}))$ acts
+  Remarks, §5 (a), p. 568; Transcending, pp. 536 and 547). For a disconnected member the full centre need not
+  transfer (for $\mathrm{O}(3) = \mathrm{SO}(3) \times \{\pm I\}$ it does, since $-I$ is central and acts trivially on the enveloping algebra, so the
+  invariant centre is the whole centre): for $\mathrm{O}(2)$ on
+  $\mathbb{C}[z_1, z_2]$ the generator $z_1 \partial_2 - z_2 \partial_1$ of $\mathcal{Z}(U(\mathfrak{so}_{2, \mathbb{C}}))$ acts
   non-trivially and is sent to its negative by a reflection, whereas every operator coming from the commuting
   symplectic partner commutes with the reflection. Together with Harish-Chandra's theorem that a finitely
   generated $(\mathfrak{g}, K)$-module annihilated by an ideal of finite codimension of the centre is admissible (the
