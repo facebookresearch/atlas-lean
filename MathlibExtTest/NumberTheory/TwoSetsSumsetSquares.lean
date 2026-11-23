@@ -8,9 +8,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.NumberTheory.TwoSetsSumsetSquares
+import Mathlib.Algebra.Field.Rat
 import Mathlib.Tactic.NormNum
 
-/-! # Tests for integer families with square pairwise sums -/
+/-! # Tests for families with square pairwise sums -/
 
 open MathlibExt.NumberTheory.TwoSetsSumsetSquaresWanted
 
@@ -35,6 +36,19 @@ example : PairwiseSumsSquares
 -- When the two v parameters coincide, three entries in each family vanish.
 example : PairwiseSumsSquares ![0, 576, 0, 0] ![0, (1024 : ℤ), 0, 0] :=
   pairwiseSumsSquares_quadruple_family51 1 2 1 1
+
+-- Scale the paper's (2, 1, 3) example by taking q = 1/8 and r = 3/8.
+example : PairwiseSumsSquares
+    ![189225, 27225 / 4, 225, 16641 / 4] ![0, 3496, 189000, (104625 / 64 : ℚ)] := by
+  have h := pairwiseSumsSquares_quadruple_family58 2 (1 / 8) (3 / 8)
+  norm_num at h
+  exact h
+
+-- At m = 0 only the last entry of each quadruple survives, and their sum is 17².
+example : PairwiseSumsSquares ![0, 0, 0, 225] ![0, 0, 0, (64 : ℚ)] := by
+  have h := pairwiseSumsSquares_quadruple_family58 0 1 2
+  norm_num at h
+  exact h
 
 -- A negative diagonal gives the same squared sum in every row and column.
 example : IsSemiMagicRoots (fun i j ↦ if i = j then -2 else 0) := by
