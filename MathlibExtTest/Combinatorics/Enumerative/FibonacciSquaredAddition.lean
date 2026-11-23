@@ -42,4 +42,35 @@ example {n : ℕ} (hn : 2 ≤ n) :
       Nat.fib n ^ 2 + Nat.fib (n - 1) ^ 2 + 2 * ∑ j ∈ Icc 1 (n - 1), Nat.fib j ^ 2 := by
   simpa [add_comm 1 n] using fib_add_sq_eq le_rfl hn
 
+/-! ### `two_mul_sum_fib_sq` -/
+
+-- The smallest admissible index `n = 3`: `2 F_1² = F_3² - F_2² - F_1²`, that is, `2 = 4 - 1 - 1`.
+example : 2 * ∑ j ∈ Icc 1 (3 - 2), (Nat.fib j : ℤ) ^ 2 =
+    (Nat.fib 3 : ℤ) ^ 2 - (Nat.fib (3 - 1) : ℤ) ^ 2 - (Nat.fib (3 - 2) : ℤ) ^ 2 :=
+  two_mul_sum_fib_sq le_rfl
+
+-- Both sides evaluated at `n = 7`: `2 (1 + 1 + 4 + 9 + 25) = 80 = 169 - 64 - 25`.
+example : 2 * ∑ j ∈ Icc 1 (7 - 2), (Nat.fib j : ℤ) ^ 2 = 80 := by decide
+
+example : (Nat.fib 7 : ℤ) ^ 2 - (Nat.fib (7 - 1) : ℤ) ^ 2 - (Nat.fib (7 - 2) : ℤ) ^ 2 = 80 := by
+  decide
+
+-- An independent check of the identity by evaluation, for `3 ≤ n ≤ 12`.
+example : ∀ n ∈ Icc 3 12,
+    2 * ∑ j ∈ Icc 1 (n - 2), (Nat.fib j : ℤ) ^ 2 =
+      (Nat.fib n : ℤ) ^ 2 - (Nat.fib (n - 1) : ℤ) ^ 2 - (Nat.fib (n - 2) : ℤ) ^ 2 := by
+  decide
+
+-- The hypothesis `3 ≤ n` cannot be dropped: at `n = 1`, truncated subtraction makes the
+-- right-hand side `F_1² - F_0² - F_0² = 1`, while the left-hand side is the empty sum `0`.
+example : 2 * ∑ j ∈ Icc 1 (1 - 2), (Nat.fib j : ℤ) ^ 2 ≠
+    (Nat.fib 1 : ℤ) ^ 2 - (Nat.fib (1 - 1) : ℤ) ^ 2 - (Nat.fib (1 - 2) : ℤ) ^ 2 := by
+  decide
+
+-- For `n = 0` and `n = 2`, the only other indices below `3`, both sides are `0`.
+example : ∀ n ∈ ({0, 2} : Finset ℕ),
+    2 * ∑ j ∈ Icc 1 (n - 2), (Nat.fib j : ℤ) ^ 2 = 0 ∧
+      (Nat.fib n : ℤ) ^ 2 - (Nat.fib (n - 1) : ℤ) ^ 2 - (Nat.fib (n - 2) : ℤ) ^ 2 = 0 := by
+  decide
+
 end MathlibExtTest.FibonacciSquaredAddition
