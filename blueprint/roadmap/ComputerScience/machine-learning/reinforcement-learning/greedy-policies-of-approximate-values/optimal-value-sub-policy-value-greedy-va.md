@@ -1,6 +1,6 @@
 # Greedy policies of value iteration are near-optimal
 
-Let $M$ be a Markov decision process with a finite set of states $S$, a finite nonempty set of actions $A$, real rewards $r(s,a)$ and stochastic transition probabilities $P(s,a,s')$, let $0 \le \gamma < 1$, and let $V^*$ be the optimal value. Let $T$ be the Bellman optimality operator, $V$ any function on $S$, and $\pi_n$ a greedy policy for the $n$-th value iterate $T^n V$. Then for every state $s$
+Let $M$ be a Markov decision process with a finite set of states $S$, a finite nonempty set of actions $A$, real rewards $r(s,a)$ and stochastic transition probabilities $P(s,a,s')$, let $0 \le \gamma < 1$, and let $V^*$ be the optimal value. Let $T$ be the Bellman optimality operator, $V$ any function on $S$, and $\pi_n = \operatorname{greedy}(T^n V)$ the policy returned by the [fixed greedy selector](../../../heuristic-search-and-planning/value-iteration/greedy.md) for the $n$-th value iterate. Then for every state $s$
 
 $$V^*(s) - V^{\pi_n}(s) \le \frac{2\gamma}{1-\gamma} \cdot \frac{\gamma^n\, \|V - TV\|_\infty}{1-\gamma}.$$
 

@@ -19,6 +19,7 @@ The greedy condition permits every maximizing action, including all ties.
 
 ## Depends on
 
+- [Markov decision process](../../../heuristic-search-and-planning/value-iteration/mdp.md)
 - [Stochastic Markov decision process](../../../heuristic-search-and-planning/value-iteration/stochastic.md)
 - [Bellman optimality operator](../../../heuristic-search-and-planning/value-iteration/bellman.md)
 - [Bellman operator of a policy](../../../heuristic-search-and-planning/value-iteration/policy-bellman.md)
