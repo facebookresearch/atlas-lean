@@ -68,14 +68,17 @@ def exceptionalLocus {Y X : Scheme.{u}} (f : Y ⟶ X) : Set Y :=
   {y | ¬∃ U : Y.Opens, y ∈ U ∧ ∃ V : X.Opens, ∃ e : U.toScheme ≅ V.toScheme,
     U.ι ≫ f = e.hom ≫ V.ι}
 
-/-- A small birational morphism from an `n`-dimensional source: the source has
-dimension `n` and the exceptional locus is nonempty of dimension at most `n - 2`
-(codimension at least two), stated without natural-number subtraction (so no small
-morphism has a source of dimension below two). -/
+/-- A small birational morphism from an integral `n`-dimensional source: the source
+is integral of dimension `n` and the exceptional locus is nonempty of dimension at
+most `n - 2`, stated without natural-number subtraction (so no small morphism has a
+source of dimension below two). For an integral source of finite type over a field
+(the varieties of the flip interfaces) this says the exceptional locus has
+codimension at least two; integrality excludes, e.g., the disjoint union of a point
+blow-up of a surface with a threefold. -/
 def IsSmall {Y X : Scheme.{u}} (f : Y ⟶ X) (n : ℕ) : Prop :=
   IsBirationalMorphism f ∧ (exceptionalLocus f).Nonempty ∧
     topologicalKrullDim (exceptionalLocus f) + 2 ≤ (n : WithBot ℕ∞) ∧
-    topologicalKrullDim Y = (n : WithBot ℕ∞)
+    topologicalKrullDim Y = (n : WithBot ℕ∞) ∧ IsIntegral Y
 
 /-- Canonical module of a proper `n`-dimensional scheme over `k`, fixed by natural
 top-degree Serre duality: it represents `F ↦ Hⁿ(X, F)^∨` on vector bundles. Properness
