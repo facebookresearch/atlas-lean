@@ -242,38 +242,6 @@ def quotientCoefficient {X : Stack S} {E F : VectorBundle X} {d : BundleMap E F}
   (Groupoid.invEquivalence _).functor ⋙
     (eqToHom (Q.object_eq (op a)).symm).toFunctor.op ⋙ (Grothendieck.ι Q.functor (op a)).op
 
-structure LinearBundleChart {X U B : Stack S} {π : StackHom B X} {n : ℤ}
-    (M : LinearBundleModel π n) {E F : VectorBundle U} {d : BundleMap E F}
-    (Q : QuotientStackModel d) (p : StackHom U X) (q : StackHom Q.total B)
-    (square : StackVectorBundles.TwoIso (Pseudofunctor.StrongTrans.vcomp q π)
-      (Pseudofunctor.StrongTrans.vcomp Q.projection p)) where
-  linear : ∀ a : AffinePoint U,
-    SemilinearQuotientMap (R := (rings U).obj (op a))
-      (A := (rings X).obj (op ((affineMap p).obj a))) (d.linear.app (op a)).hom
-      (M.diagram.modules ((affineMap p).obj a)).differential.hom
-      (RingHom.id ((rings X).obj (op ((affineMap p).obj a))))
-  normalized : ∀ a : AffinePoint U,
-    quotientCoefficient Q.diagram a ⋙ Q.comparison.inverse ⋙ affineMap q ≅
-      (linear a).functor ⋙ M.diagram.inclusion ((affineMap p).obj a) ⋙ M.comparison.inverse
-  sourceBase : ∀ a : AffinePoint U,
-    quotientCoefficient Q.diagram a ⋙ Q.comparison.inverse ⋙ affineMap q ⋙ affineMap π ≅
-      (Functor.const _).obj ((affineMap p).obj a)
-  sourceBase_normalized : ∀ (a : AffinePoint U) r,
-    let s := (quotientCoefficient Q.diagram a).obj r
-    let b := Q.comparison.inverse.obj s
-    ((sourceBase a).hom.app r).hom =
-      pointIsoArrow ((square.app b.obj.base).app b.obj.fiber) ≫
-        (totalMap p).map ((Q.inverseBase.app s).hom.hom)
-  targetBase : ∀ a : AffinePoint U,
-    M.diagram.inclusion ((affineMap p).obj a) ⋙ M.comparison.inverse ⋙ affineMap π ≅
-      (Functor.const _).obj ((affineMap p).obj a)
-  targetBase_normalized : ∀ (a : AffinePoint U) r,
-    HEq ((targetBase a).hom.app r)
-      (M.inverseBase.hom.app ((M.diagram.inclusion ((affineMap p).obj a)).obj r))
-  based : ∀ (a : AffinePoint U) r,
-    (affineMap π).map ((normalized a).hom.app r) ≫ (targetBase a).hom.app ((linear a).functor.obj r) =
-      (sourceBase a).hom.app r
-
 /-- The morphism of affine points induced, at one affine point, by an invertible modification:
 over the identity of the base, with fibre part the component of the modification. -/
 def twoIsoPointHom {X Y : Stack S} {p q : StackHom X Y} (e : StackVectorBundles.TwoIso p q)
@@ -411,10 +379,10 @@ structure VectorBundleStack (X : Stack S) where
         commutes.app T⟩).IsEquivalence
   rank_eq : virtualRank = (degreeOne.rank : ℤ) - degreeZero.rank
   linear : LinearBundleModel projection virtualRank
-  linearChart : LinearBundleChart linear quotient base.map map commutes
-  /-- Descent for the atlas chart: over the atlas, the linear model is coherently (over all affine
-  points of the atlas, including restriction arrows) the strict diagram of the atlas presentation,
-  so the fibrewise chart cannot hide a shear through stabilizers. -/
+  /-- The linear structure over the atlas: there, the linear model is coherently (over all affine
+  points of the atlas, including restriction arrows) the strict diagram of the atlas complex.
+  The displayed square `map`/`commutes`/`cartesian` only identifies the total spaces; no linearity
+  of `map` is asserted. -/
   chartDescent : ∃ (G : LinearBundleDiagram base.stack virtualRank)
       (_ : PresentsComplex G differential) (Φ : LinearDiagramMap G linear.diagram base.map),
     ∀ a : AffinePoint base.stack, (Φ.linear a).functor.IsEquivalence

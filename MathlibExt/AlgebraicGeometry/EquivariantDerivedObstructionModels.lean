@@ -111,8 +111,8 @@ structure SourceActionData (E : EquivariantObstructionTerms X)
     map.f (-1) = E.negative.comparison.hom ≫
       (Scheme.Modules.pullback (projectionMap X)).map (sourceNegativeInclusion E.obstruction.model)
 
-/-- The source derived action is computed from its normalized cochain and the actual native counits.
-  -/
+/-- The source derived action is computed from its normalized cochain and the actual native
+counits. -/
 def SourceActionData.linearization {E : EquivariantObstructionTerms X}
     {C : CotangentActionData X E.obstruction.cotangent} (S : SourceActionData E C) :=
   (sourceComparison (actionMap X) C.actionPullback E.obstruction.model S.actionAcyclic).hom ≫
