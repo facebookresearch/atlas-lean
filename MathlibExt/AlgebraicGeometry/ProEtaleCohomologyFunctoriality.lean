@@ -184,12 +184,6 @@ instance sheafGrothendieck (X : Scheme.{u}) :
   exact Sheaf.isGrothendieckAbelian_of_essentiallySmall.{u + 1, u + 1, u, u + 2, u + 1}
     (ProEt.topology X) (ModuleCat.{u + 1} R)
 
-instance moduleSheafExt (X : Scheme.{u}) : HasExt.{u + 1} (CoefficientSheaf X R) :=
-  inferInstance
-
-instance moduleSheafLinear (X : Scheme.{u}) : Linear R (CoefficientSheaf X R) :=
-  inferInstance
-
 /-- Direct image: restriction along base change. -/
 abbrev pushforward {Y X : Scheme.{u}} (f : Y ⟶ X) :
     CoefficientSheaf Y R ⥤ CoefficientSheaf X R :=
@@ -262,10 +256,6 @@ def constantPullbackIso {Y X : Scheme.{u}} (f : Y ⟶ X) :
 /-- Cohomology of a sheaf of modules: `Ext` from the constant sheaf `R`, an `R`-module. -/
 abbrev Cohomology (X : Scheme.{u}) (F : CoefficientSheaf X R) (n : ℕ) :=
   Abelian.Ext.{u + 1} (constantUnit R X) F n
-
-instance cohomologyModule (X : Scheme.{u}) (F : CoefficientSheaf X R) (n : ℕ) :
-    Module R (Cohomology R X F n) :=
-  inferInstanceAs (Module R (Abelian.Ext.{u + 1} (constantUnit R X) F n))
 
 /-- The map on cohomology induced by inverse image along `f` and a map of sheaves
 `c : f⁻¹ F ⟶ G`. -/

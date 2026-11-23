@@ -35,10 +35,14 @@ set_option backward.isDefEq.respectTransparency false
 For a scheme `X` over a field `k` and an extension `K/k`, an automorphism `σ` of `K` over `k` acts
 on the base change `X_K` by `id_X × Spec σ` (`galoisSchemeOperator`), and on its rational `ℓ`-adic
 cohomology (the cohomology of the pro-étale sheaf `C(-, ℚ_ℓ)`) by inverse image
-(`galoisCohomologyOperator`). Since `Spec` reverses composition, inverse image gives a left action.
-For `k` finite with `q` elements, the geometric Frobenius of `X` induces `π_X × id` on `X_K`
-(`geometricFrobeniusSchemeOperator`) and its action on cohomology. With the arithmetic Frobenius
-`σ(x) = x ^ q`, the inverse of `σ` is the geometric Frobenius element of the Galois group.
+(`galoisCohomologyOperator`), an additive endomorphism. The identity and composition laws are
+proved for the scheme automorphisms (`galoisSchemeOperator_one`, `galoisSchemeOperator_mul`): since
+`Spec` reverses composition, the operators on cohomology form a left action once inverse image is
+known to be functorial on cohomology, which is not proved here. For `k` finite with `q` elements,
+the geometric Frobenius of `X` induces `π_X × id` on `X_K` (`geometricFrobeniusSchemeOperator`) and
+an additive endomorphism of cohomology. When `K` is a separable closure of `k`, the arithmetic
+Frobenius `x ↦ x ^ q` is an automorphism of `K` over `k`, and its inverse is the geometric Frobenius
+element of the Galois group.
 -/
 
 namespace MathlibExt.AlgebraicGeometry.GeometricAdicGaloisOperators
@@ -128,12 +132,6 @@ variable (ell : ℕ) [Fact ell.Prime]
 
 /-- The topological coefficient module `ℚ_ℓ`, lifted to the universe of the site. -/
 abbrev RationalCoefficients := ULift.{u + 1} ℚ_[ell]
-
-instance rationalCoefficientContinuousSMul :
-    ContinuousConstSMul ℚ_[ell] (RationalCoefficients.{u} ell) where
-  continuous_const_smul r :=
-    continuous_uliftUp.comp ((continuous_const_smul (T := ℚ_[ell]) r).comp
-      continuous_uliftDown)
 
 /-- Rational `ℓ`-adic cohomology: the cohomology of the pro-étale sheaf `C(-, ℚ_ℓ)`. -/
 abbrev AdicCohomology (Y : Scheme.{u}) (n : ℕ) :=

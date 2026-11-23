@@ -47,8 +47,20 @@ example (F : CoefficientSheaf X R) (n : ℕ) : Module R (Cohomology R X F n) := 
 
 example {F : CoefficientSheaf X R} {G : CoefficientSheaf Y R} (c : (pullback R f).obj F ⟶ G)
     (n : ℕ) (a b : Cohomology R X F n) :
-    cohomologyPullback R f c n (a + b) = cohomologyPullback R f c n a + cohomologyPullback R f c n b :=
+    cohomologyPullback R f c n (a + b) =
+      cohomologyPullback R f c n a + cohomologyPullback R f c n b :=
   map_add _ a b
+
+open CategoryTheory.Abelian in
+/-- In degree zero, the cohomology map sends the class of `a : R ⟶ F` to the class of the
+composite `R ≅ f⁻¹ R ⟶ f⁻¹ F ⟶ G`; in particular it is not the zero map. -/
+example {F : CoefficientSheaf X R} {G : CoefficientSheaf Y R} (c : (pullback R f).obj F ⟶ G)
+    (a : constantUnit R X ⟶ F) :
+    cohomologyPullback R f c 0 (Ext.mk₀ a) =
+      Ext.mk₀ ((constantPullbackIso R f).inv ≫ (pullback R f).map a ≫ c) := by
+  change (Ext.mk₀ (constantPullbackIso R f).inv).comp
+    (((Ext.mk₀ a).mapExactFunctor (pullback R f)).comp (Ext.mk₀ c) rfl) rfl = _
+  rw [Ext.mapExactFunctor_mk₀, Ext.mk₀_comp_mk₀, Ext.mk₀_comp_mk₀]
 
 section ContinuousCoefficients
 
