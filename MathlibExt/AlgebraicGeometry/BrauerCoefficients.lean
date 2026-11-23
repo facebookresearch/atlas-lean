@@ -34,9 +34,10 @@ public import Mathlib.Topology.Instances.AddCircle.Defs
 # Separable-closure units and native continuous Brauer classes
 
 The coefficient object is the additive group of actual separable-closure
-units, with the discrete topology (a scoped instance, active where this namespace is opened). The group acting is Mathlib's absolute Galois
-group, and its action is restriction to that same separable closure. This is
-the coefficient/action dictionary of Tau's `unitsRep`, without importing Tau.
+units, with the discrete topology (a scoped instance, active where this
+namespace is opened). The group acting is Mathlib's absolute Galois group, and
+its action is restriction to that same separable closure. This is the
+coefficient/action dictionary of Tau's `unitsRep`, without importing Tau.
 
 Classes and cocycles below are Mathlib's continuous cohomology and its actual
 homogeneous cocycles. Inhomogeneous coordinates are fixed at `(1,g,g*h)`.

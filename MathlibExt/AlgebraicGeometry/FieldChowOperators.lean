@@ -51,21 +51,21 @@ open MathlibExt.AlgebraicGeometry.RelativeCurveClasses
 
 variable {k : Type} [Field k]
 
-def gradedChow (X : SchemeOver k) [LocallyOfFiniteType X.hom] (d : ℤ) : ModuleCat.{0} ℚ :=
+def gradedChow (X : SchemeOver k) [LocallyOfFiniteType X.hom] [IsNoetherian X.left] (d : ℤ) : ModuleCat.{0} ℚ :=
   if 0 ≤ d then ModuleCat.of ℚ (RelativeCurveClasses.ChowGroup X d.toNat)
   else ModuleCat.of ℚ (Fin 0 → ℚ)
 
-def positiveChowIso (X : SchemeOver k) [LocallyOfFiniteType X.hom] (d : ℤ) (hd : 0 ≤ d) :
+def positiveChowIso (X : SchemeOver k) [LocallyOfFiniteType X.hom] [IsNoetherian X.left] (d : ℤ) (hd : 0 ≤ d) :
     gradedChow X d ≅ ModuleCat.of ℚ (RelativeCurveClasses.ChowGroup X d.toNat) := by
   unfold gradedChow
   rw [ite_eq_left hd]
 
-def chowCast (X : SchemeOver k) [LocallyOfFiniteType X.hom] {d e : ℕ} (h : d = e) :
+def chowCast (X : SchemeOver k) [LocallyOfFiniteType X.hom] [IsNoetherian X.left] {d e : ℕ} (h : d = e) :
     RelativeCurveClasses.ChowGroup X d →ₗ[ℚ] RelativeCurveClasses.ChowGroup X e := by
   cases h
   exact LinearMap.id
 
-def gradedChowCast (X : SchemeOver k) [LocallyOfFiniteType X.hom] {d e : ℤ} (h : d = e) :
+def gradedChowCast (X : SchemeOver k) [LocallyOfFiniteType X.hom] [IsNoetherian X.left] {d e : ℤ} (h : d = e) :
     gradedChow X d →ₗ[ℚ] gradedChow X e := by
   cases h
   exact LinearMap.id
@@ -136,7 +136,7 @@ end ClosedPush
 
 section ComplexComparison
 
-variable (X : GeometricChow.ComplexScheme) [LocallyOfFiniteType X.hom] (d : ℕ)
+variable (X : GeometricChow.ComplexScheme) [LocallyOfFiniteType X.hom] [IsNoetherian X.left] (d : ℕ)
 
 /-- The same actual family over ℂ, in the frozen complex presentation. -/
 def toComplexFamily (F : RelativeCurveClasses.FlatFamily X d) : GeometricChow.FlatFamily X d where

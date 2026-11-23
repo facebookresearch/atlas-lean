@@ -10,6 +10,7 @@ module
 
 import MathlibExt.AlgebraicGeometry.StackBundleCones
 import MathlibExt.AlgebraicGeometry.AffineNormalConeMaps
+import MathlibExt.AlgebraicGeometry.StackVirtualPullbacks
 
 noncomputable section
 
@@ -96,5 +97,93 @@ example (F : NormalMap P P (RingHom.id _) (RingHom.id _) rfl) :
     (compose P P P F (identity P)).map = F.map := rfl
 
 end NormalMaps
+
+section ConicalValues
+
+variable {A B : Type} [CommRing A] [CommRing B] [Algebra A B]
+  {P : Algebra.Extension.{0} A B}
+
+/-- Scaling by `2` doubles every degree-one coordinate: a point with value `1` is sent to a point
+with value `2`, never to the quadratic value `4`. -/
+example [Algebra B ℚ] (a b : IntrinsicConePoint P ℚ) (h : IsScaledConePoint P (2 : ℚ) a b)
+    (x : P.ker) (hx : a.map (MathlibExt.AlgebraicGeometry.AffineConeAtlas.normalDegreeOne P x) = 1) :
+    b.map (MathlibExt.AlgebraicGeometry.AffineConeAtlas.normalDegreeOne P x) = 2 := by
+  rw [h x, hx, mul_one]
+
+example : (2 : ℚ) ≠ 4 := by norm_num
+
+/-- A zero cone point takes no nonzero value on degree-one coordinates (so a nonzero constant
+translation of the zero point is not a zero point). -/
+example {D : Type} [CommRing D] [Algebra B D] (a : IntrinsicConePoint P D) (h : IsZeroConePoint P a)
+    (x : P.ker) (c : D) (hc : c ≠ 0) :
+    a.map (MathlibExt.AlgebraicGeometry.AffineConeAtlas.normalDegreeOne P x) ≠ c := by
+  rw [h x]; exact hc.symm
+
+end ConicalValues
+
+section ConeArrows
+
+variable {A B : Type} [CommRing A] [CommRing B] [Algebra A B]
+  (P : Algebra.Extension.{0} A B) (D : IntrinsicConeDiagram P)
+
+/-- A scaled arrow fixes its source coefficient: the target scalar `s` is sent to the source
+scalar `r` by the arrow's coefficient map (in this direction), and the arrow tangents scale by
+`r` in the source coefficient algebra. -/
+example {R T : CommAlgCat.{0} B} (r : R) (s : T) {a a' : IntrinsicConePoint P R}
+    {b b' : IntrinsicConePoint P T} (h : coneObject P D R a ⟶ coneObject P D T b)
+    (h' : coneObject P D R a' ⟶ coneObject P D T b') (H : IsScaledConeArrow P D r s h h') :
+    h.unop.base.hom s = r ∧ ∀ x, (show R from coneArrowTangent P D h' x) =
+      r * (show R from coneArrowTangent P D h x) :=
+  ⟨H.2.1, H.2.2⟩
+
+/-- Both arrows of a scaled pair have the same coefficient map. -/
+example {R T : CommAlgCat.{0} B} (r : R) (s : T) {a a' : IntrinsicConePoint P R}
+    {b b' : IntrinsicConePoint P T} (h : coneObject P D R a ⟶ coneObject P D T b)
+    (h' : coneObject P D R a' ⟶ coneObject P D T b') (H : IsScaledConeArrow P D r s h h') :
+    h'.unop.base = h.unop.base := H.1
+
+end ConeArrows
+
+section VirtualPullbacks
+
+open StackChowGroups StackVirtualPullbacks StackCycleGeometry StackCycleRelations
+
+variable {S : Scheme.{0}} {scope : Stack S → Prop}
+
+/-- The relative virtual pullback shifts the signed degree by the virtual rank, also in negative
+degree, and is additive. -/
+example {D : CycleConstructionData S scope} {K : KreschPresentation D} {F G : Stack S}
+    {hF : scope F} {hG : scope G} {f : StackHom F G} {E : VectorBundleStack F}
+    {star : ConditionStar f E} (R : RelativeVirtualPullbackData D K hF hG f E star)
+    (T : TestFamily (scope := scope) f) (a b : RationalChowGroup D K T.target T.targetScope (-1)) :
+    relativeVirtualPullback R T (-1) (a + b) =
+      relativeVirtualPullback R T (-1) a + relativeVirtualPullback R T (-1) b :=
+  map_add _ _ _
+
+/-- The cone base change of a relative virtual pullback uses the test family's own square cell. -/
+example {D : CycleConstructionData S scope} {K : KreschPresentation D} {F G : Stack S}
+    {hF : scope F} {hG : scope G} {f : StackHom F G} {E : VectorBundleStack F}
+    {star : ConditionStar f E} (R : RelativeVirtualPullbackData D K hF hG f E star)
+    (T : TestFamily (scope := scope) f) : (R.baseChange T).commutes = T.square.commutes :=
+  R.baseChange_commutes T
+
+/-- A pasting of test families is a morphism of fibre diagrams: its cells paste to the cell of
+the target family's square. -/
+example {F G : Stack S} {f : StackHom F G} {P Q : TestFamily (scope := scope) f}
+    (p : TestPasting P Q) (T : Over S) (x : Q.square.apex.Fibre T) :
+    (Q.square.commutes.app T).hom.app x =
+      (component f T).map ((p.overF.app T).inv.app x) ≫
+        (P.square.commutes.app T).hom.app ((component p.source T).obj x) ≫
+        (component P.map T).map ((p.commutes.app T).hom.app x) ≫
+        (p.overG.app T).hom.app ((component Q.square.snd T).obj x) :=
+  p.pasting T x
+
+/-- The total-space map of a bundle-stack pullback is linear: on each affine point it induces an
+equivalence of the quotient groupoids of the two-term presentations. -/
+example {T X : Stack S} {p : StackHom T X} {E : VectorBundleStack X} (P : BundleStackPullback p E)
+    (a : StackAffineModules.AffinePoint T) : ((P.linearMap.linear a).functor).IsEquivalence :=
+  P.linearMap.equivalence a
+
+end VirtualPullbacks
 
 end StackBundleConesTest

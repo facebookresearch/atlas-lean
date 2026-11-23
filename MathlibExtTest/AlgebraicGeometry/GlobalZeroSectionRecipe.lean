@@ -76,7 +76,7 @@ example {X : MathlibExt.AlgebraicGeometry.RelativeCurveClasses.SchemeOver (ZMod 
 
 /-- Negative Chow degree stays zero in positive characteristic. -/
 example (X : MathlibExt.AlgebraicGeometry.RelativeCurveClasses.SchemeOver (ZMod 2))
-    [AlgebraicGeometry.LocallyOfFiniteType X.hom] :
+    [AlgebraicGeometry.LocallyOfFiniteType X.hom] [AlgebraicGeometry.IsNoetherian X.left] :
     Subsingleton (MathlibExt.AlgebraicGeometry.FieldChowOperators.gradedChow X (-1)) := by
   dsimp [MathlibExt.AlgebraicGeometry.FieldChowOperators.gradedChow]
   infer_instance
@@ -84,7 +84,7 @@ example (X : MathlibExt.AlgebraicGeometry.RelativeCurveClasses.SchemeOver (ZMod 
 /-- Complex specialization identifies the actual quotient representatives,
 without freely choosing an unrelated Chow comparison. -/
 example (X : ComplexScheme) [AlgebraicGeometry.LocallyOfFiniteType X.hom]
-    (d : ℕ) (c : CycleGroup X.left d) :
+    [AlgebraicGeometry.IsNoetherian X.left] (d : ℕ) (c : CycleGroup X.left d) :
     MathlibExt.AlgebraicGeometry.FieldChowOperators.complexChowEquiv X d
       ((MathlibExt.AlgebraicGeometry.RelativeCurveClasses.relations X d).mkQ c) =
       (rationalEquivalences X d).mkQ c :=

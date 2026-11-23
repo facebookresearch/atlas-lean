@@ -61,13 +61,14 @@ public theorem_wanted virtual_pullback_bivariant (k : Type) [Field k]
     (f : StackHom F G) (E : VectorBundleStack F) (star : ConditionStar f E)
     (strata : QuotientStratification F)
     (R : RelativeVirtualPullbackData D K hF hG f E star) :
-    BivariantLaws D K f E.virtualRank (relativeVirtualPullback R)
+    BivariantLaws D K f E.virtualRank (IsGlobalQuotient E) (relativeVirtualPullback R)
 
 public def_wanted refined_gysin_square (k : Type) [Field k]
     (D : CycleConstructionData (Spec (.of k)) (FiniteTypeArtin k)) (K : KreschPresentation D)
     (F G : Stack (Spec (.of k))) (hF : FiniteTypeArtin k F) (hG : FiniteTypeArtin k G)
     (f : StackHom F G) (P Q : TestFamily (scope := FiniteTypeArtin k) f)
-    (p : TestPasting P Q) (c : ℕ) (normal : RegularNormalModel p.base c) : GysinSquareData D K p c
+    (p : TestPasting P Q) (c : ℕ) (normal : RegularNormalModel p.base c) :
+    {N : GysinSquareData D K p c // N.normal = normal}
 
 public theorem_wanted virtual_pullback_independent (k : Type) [Field k]
     (D : CycleConstructionData (Spec (.of k)) (FiniteTypeArtin k)) (K : KreschPresentation D)
@@ -108,7 +109,7 @@ private def check_virtual_pullback_bivariant (k : Type) [Field k]
     (F G : Stack (Spec (.of k))) (hF : FiniteTypeArtin k F) (hG : FiniteTypeArtin k G)
     (f : StackHom F G) (E : VectorBundleStack F) (star : ConditionStar f E)
     (strata : QuotientStratification F) (R : RelativeVirtualPullbackData D K hF hG f E star) :
-    ProofWanted (BivariantLaws D K f E.virtualRank (relativeVirtualPullback R)) :=
+    ProofWanted (BivariantLaws D K f E.virtualRank (IsGlobalQuotient E) (relativeVirtualPullback R)) :=
   virtual_pullback_bivariant k D K F G hF hG f E star strata R
 
 private def check_refined_gysin_square (k : Type) [Field k]
@@ -116,7 +117,8 @@ private def check_refined_gysin_square (k : Type) [Field k]
     (F G : Stack (Spec (.of k))) (hF : FiniteTypeArtin k F) (hG : FiniteTypeArtin k G)
     (f : StackHom F G) (P Q : TestFamily (scope := FiniteTypeArtin k) f)
     (p : TestPasting P Q) (c : ℕ) (normal : RegularNormalModel p.base c) :
-    DefWanted (GysinSquareData D K p c) := refined_gysin_square k D K F G hF hG f P Q p c normal
+    DefWanted {N : GysinSquareData D K p c // N.normal = normal} :=
+  refined_gysin_square k D K F G hF hG f P Q p c normal
 
 private def check_virtual_pullback_independent (k : Type) [Field k]
     (D : CycleConstructionData (Spec (.of k)) (FiniteTypeArtin k)) (K : KreschPresentation D)

@@ -35,7 +35,7 @@ all object values, coefficient/base-arrow translations and actual
 refinement-cell images. No local embedding isomorphism replaces that map.
 
 References: Kresch arXiv:math/9810166v1, Theorem 2.1.12(vi),(x),
-Proposition 5.3.2; Behrend--Fantechi arXiv:alg-geom/9601010v2,
+Proposition 5.3.2; Behrend--Fantechi arXiv:alg-geom/9601010,
 Sections 1--3; Manolache arXiv:0805.2065v2, Definitions 2.7--2.10,
 Condition 3.3 and Construction 3.6. Rees and conormal definitions reuse
 the completed native scheme modules. No obstruction-theory or virtual
@@ -274,6 +274,46 @@ structure LinearBundleChart {X U B : Stack S} {π : StackHom B X} {n : ℤ}
     (affineMap π).map ((normalized a).hom.app r) ≫ (targetBase a).hom.app ((linear a).functor.obj r) =
       (sourceBase a).hom.app r
 
+/-- The morphism of affine points induced, at one affine point, by an invertible modification:
+over the identity of the base, with fibre part the component of the modification. -/
+def twoIsoPointHom {X Y : Stack S} {p q : StackHom X Y} (e : StackVectorBundles.TwoIso p q)
+    (a : AffinePoint X) : (affineMap p).obj a ⟶ (affineMap q).obj a :=
+  ObjectProperty.homMk
+    (⟨𝟙 a.obj.base, (e.app a.obj.base).hom.app a.obj.fiber ≫
+      (Y.toPseudofunctor.mapId ⟨op a.obj.base⟩).inv.toNatTrans.app _⟩ :
+      Pseudofunctor.CoGrothendieck.Hom ((totalMap p).obj a.obj) ((totalMap q).obj a.obj))
+
+/-- A linear isomorphism of bundle stacks over `p`: on each affine point of `T` a linear map of the
+two-term presentation to that of `N` at the image point (over the identity of the common
+coordinate ring) inducing an equivalence of quotient groupoids, and inducing the total-space map
+`q` over the base 2-cell `square`. A map that only
+gives a Cartesian square of total spaces (for example a translation) is not linear. -/
+structure LinearBundleIso {T X B C : Stack S} {π : StackHom B T} {ρ : StackHom C X} {n m : ℤ}
+    (M : LinearBundleModel π n) (N : LinearBundleModel ρ m) (p : StackHom T X) (q : StackHom B C)
+    (square : StackVectorBundles.TwoIso (Pseudofunctor.StrongTrans.vcomp q ρ)
+      (Pseudofunctor.StrongTrans.vcomp π p)) where
+  linear : ∀ a : AffinePoint T,
+    SemilinearQuotientMap (R := (rings T).obj (op a))
+      (A := (rings X).obj (op ((affineMap p).obj a)))
+      (M.diagram.modules a).differential.hom
+      (N.diagram.modules ((affineMap p).obj a)).differential.hom
+      (RingHom.id ((rings X).obj (op ((affineMap p).obj a))))
+  /-- On each affine point the induced map of quotient groupoids is an equivalence (a
+  quasi-isomorphism of the two-term presentations). -/
+  equivalence : ∀ a : AffinePoint T, (linear a).functor.IsEquivalence
+  normalized : ∀ a : AffinePoint T,
+    M.diagram.inclusion a ⋙ M.comparison.inverse ⋙ affineMap q ≅
+      (linear a).functor ⋙ N.diagram.inclusion ((affineMap p).obj a) ⋙ N.comparison.inverse
+  /-- `normalized` lies over `square`: projected to affine points of `X`, it is the cell of
+  `square` followed by the base comparisons of the two linear models. -/
+  based : ∀ (a : AffinePoint T) (r : (M.diagram.modules a).Point),
+    (affineMap ρ).map ((normalized a).hom.app r) ≫
+        N.inverseBase.hom.app
+          ((N.diagram.inclusion ((affineMap p).obj a)).obj ((linear a).functor.obj r)) =
+      twoIsoPointHom square (M.comparison.inverse.obj ((M.diagram.inclusion a).obj r)) ≫
+        (affineMap p).map (M.inverseBase.hom.app ((M.diagram.inclusion a).obj r)) ≫
+        eqToHom (by rw [M.diagram.inclusion_objects, N.diagram.inclusion_objects]; rfl)
+
 /-- A local quotient presentation on a genuine scheme atlas of X. -/
 structure VectorBundleStack (X : Stack S) where
   total : Stack S
@@ -298,6 +338,8 @@ structure VectorBundleStack (X : Stack S) where
   linear : LinearBundleModel projection virtualRank
   linearChart : LinearBundleChart linear quotient base.map map commutes
 
+/-- The base change of a bundle stack: a 2-Cartesian total-space square whose map is linear for
+the two linear models (it cannot, for example, move the origin of a line). -/
 structure BundleStackPullback {T X : Stack S} (p : StackHom T X) (E : VectorBundleStack X) where
   bundle : VectorBundleStack T
   rank_eq : bundle.virtualRank = E.virtualRank
@@ -309,6 +351,7 @@ structure BundleStackPullback {T X : Stack S} (p : StackHom T X) (E : VectorBund
       (StackCycleGeometry.component E.projection U) (StackCycleGeometry.component p U) _).obj
       ⟨StackCycleGeometry.component map U, StackCycleGeometry.component bundle.projection U,
         commutes.app U⟩).IsEquivalence
+  linearMap : LinearBundleIso bundle.linear E.linear p map commutes
 
 def zeroElementFunctor {X : Stack S} (E : VectorBundle X) :
     AffinePoint X ⥤ (sectionPresheaf E.module.val).Elementsᵒᵖ where

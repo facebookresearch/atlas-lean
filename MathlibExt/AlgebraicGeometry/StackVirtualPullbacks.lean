@@ -165,6 +165,10 @@ structure RelativeVirtualPullbackData (D : CycleConstructionData S scope)
   coneScope : ∀ T : TestFamily (scope := scope) f, scope (cone T).total
   baseChange : ∀ T : TestFamily (scope := scope) f,
     ConeBaseChangeData T.square.snd f T.square.fst T.map (cone T) star.cone
+  /-- The cone base change uses the test family's own square cell, not an independent one with
+  the same four legs. -/
+  baseChange_commutes : ∀ T : TestFamily (scope := scope) f,
+    (baseChange T).commutes = T.square.commutes
   embedding : ∀ T : TestFamily (scope := scope) f, ConeEmbedding (cone T) (pullback T).bundle
   normalizedEmbedding : ∀ T : TestFamily (scope := scope) f, StackVectorBundles.TwoIso
     (Pseudofunctor.StrongTrans.vcomp (embedding T).map (pullback T).map)
@@ -197,6 +201,15 @@ structure TestPasting {F G : Stack S} {f : StackHom F G}
       (StackCycleGeometry.component P.square.snd T) (StackCycleGeometry.component base T) _).obj
       ⟨StackCycleGeometry.component source T, StackCycleGeometry.component Q.square.snd T,
         commutes.app T⟩).IsEquivalence
+  /-- The 2-cells paste: over `G`, the composite of `overF`, the cell of `P`'s square, `commutes`
+  and `overG` is the cell of `Q`'s square, so the pasting is a morphism of the two fibre diagrams
+  (an automorphism of the apex that only preserves the four legs does not qualify). -/
+  pasting : ∀ (T : Over S) (x : Q.square.apex.Fibre T),
+    (Q.square.commutes.app T).hom.app x =
+      (StackCycleGeometry.component f T).map ((overF.app T).inv.app x) ≫
+        (P.square.commutes.app T).hom.app ((StackCycleGeometry.component source T).obj x) ≫
+        (StackCycleGeometry.component P.map T).map ((commutes.app T).hom.app x) ≫
+        (overG.app T).hom.app ((StackCycleGeometry.component Q.square.snd T).obj x)
 
 /-- The target has genuine rank-c normal bundle; its pullback fixes the
 refined Gysin map on the source square, even when the base change is not regular. -/
@@ -244,8 +257,23 @@ def GysinSquareData.sourceMap {D : CycleConstructionData S scope} {K : KreschPre
   (rationalMap (chowRegrade D K Q.square.apex Q.sourceScope
     (by rw [N.sourceBundle.rank_eq, N.rank_eq]))).comp (virtualPullback N.sourceRecipe d)
 
+/-- `E` is a global quotient of two vector bundles on `F` (Manolache, arXiv:0805.2065v2,
+Theorem 4.1, hypothesis (3)): a linear chart of `E` from a quotient presentation on `F` itself whose
+total-space map is an equivalence on every fibre. -/
+def IsGlobalQuotient {F : Stack S} (E : VectorBundleStack F) : Prop :=
+  ∃ (E₀ E₁ : VectorBundle F) (d : BundleMap E₀ E₁) (Q : QuotientStackModel d)
+    (q : StackHom Q.total E.total)
+    (sq : StackVectorBundles.TwoIso (Pseudofunctor.StrongTrans.vcomp q E.projection)
+      (Pseudofunctor.StrongTrans.vcomp Q.projection
+        (Pseudofunctor.StrongTrans.id F.toPseudofunctor))),
+    Nonempty (LinearBundleChart E.linear Q (Pseudofunctor.StrongTrans.id F.toPseudofunctor) q sq) ∧
+      ∀ T : Over S, (StackCycleGeometry.component q T).IsEquivalence
+
+/-- The bivariant laws of a virtual pullback. The proper Deligne--Mumford pushforward law is only
+asked under `properDMScope` (for virtual pullbacks: `E` is a global quotient, Manolache,
+Theorem 4.1(i)); projective pushforward needs no such hypothesis (Remark 4.2). -/
 structure BivariantLaws (D : CycleConstructionData S scope) (K : KreschPresentation D)
-    {F G : Stack S} (f : StackHom F G) (n : ℤ)
+    {F G : Stack S} (f : StackHom F G) (n : ℤ) (properDMScope : Prop)
     (cap : ∀ T : TestFamily (scope := scope) f, ∀ d : ℤ,
       RationalChowGroup D K T.target T.targetScope d →ₗ[ℚ]
         RationalChowGroup D K T.square.apex T.sourceScope (d - n)) : Prop where
@@ -254,7 +282,7 @@ structure BivariantLaws (D : CycleConstructionData S scope) (K : KreschPresentat
     (source : ProjectiveChowPushData D K Q.sourceScope P.sourceScope p.source)
     (d : ℤ) (a : RationalChowGroup D K Q.target Q.targetScope d),
     cap P d (rationalMap (target.map d) a) = rationalMap (source.map (d - n)) (cap Q d a)
-  properDM : ∀ (P Q : TestFamily (scope := scope) f) (p : TestPasting P Q)
+  properDM : properDMScope → ∀ (P Q : TestFamily (scope := scope) f) (p : TestPasting P Q)
     (targetModel : DMProperModel D K Q.targetScope P.targetScope p.base)
     (sourceModel : DMProperModel D K Q.sourceScope P.sourceScope p.source)
     (target : RationalPushData D K Q.targetScope P.targetScope p.base targetModel)
