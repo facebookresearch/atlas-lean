@@ -119,6 +119,9 @@ def native_test_inputs(root: Path = ROOT, tests: tuple[str, ...] = NATIVE_TESTS)
         elif path.endswith(".sh"):
             for name in re.findall(r"scripts/[\w.-]+", text):
                 found |= repository_files(name, root)
+            # Python run from the script, as a heredoc or with -c.
+            for module in re.findall(r"^\s*(?:import|from)\s+(\w+)", text, re.M):
+                found |= repository_files(module + ".py", root)
         elif path.endswith(".lean") and path.split("/")[0] in LIBRARIES:
             # The scoped audit's own reading of imports: any `import X`, comments
             # and line breaks included.
@@ -181,7 +184,8 @@ class BuildAuditScope(unittest.TestCase):
                 (root / name).parent.mkdir(parents=True, exist_ok=True)
                 (root / name).write_text("")
             (root / "scripts/helper.py").write_text('DATA = "data.json"\n')
-            (root / "scripts/run.sh").write_text("scripts/list.sh\n")
+            (root / "scripts/run.sh").write_text("scripts/list.sh\npython3 - <<'PY'\nimport embedded\nPY\n")
+            (root / "scripts/embedded.py").write_text("")
             (root / "MathlibExt/A.lean").write_text("module\npublic import\n  MathlibExt.B -- why\n")
             (root / "scripts/fixtures").mkdir()
             (root / "scripts/fixtures/sample.txt").write_text("")
@@ -191,7 +195,7 @@ class BuildAuditScope(unittest.TestCase):
                 "RUN = ['scripts/run.sh']\nPAIR = ['MathlibExt.A']\n")
             self.assertEqual(native_test_inputs(root, ("scripts/test_x_native.py",)), {
                 "scripts/test_x_native.py", "scripts/helper.py", "scripts/data.json", "CONTRIBUTING.md",
-                "scripts/fixtures/sample.txt", "scripts/run.sh", "scripts/list.sh",
+                "scripts/fixtures/sample.txt", "scripts/run.sh", "scripts/list.sh", "scripts/embedded.py",
                 "MathlibExt/A.lean", "MathlibExt/B.lean"})
 
     def test_disk_cleanup_runs_unless_60_gib_are_known_to_be_free(self):

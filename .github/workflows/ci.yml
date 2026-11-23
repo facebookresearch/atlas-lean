@@ -203,11 +203,7 @@ jobs:
             'scripts/test_declaration_collisions_native.py', 'scripts/check_declaration_collisions.sh',
             'scripts/check_declaration_collisions.lean', 'scripts/list_v2_modules.sh',
             'scripts/test_compiled_audit_native.py', 'scripts/audit_compiled_modules.py',
-            'scripts/check_axioms.lean',
-            'MathlibExt/AlgebraicGeometry/ProjHomExtBasicOpen.lean',
-            'MathlibExt/AlgebraicGeometry/SeparatedOpenCover.lean',
-            'MathlibExtTest/AlgebraicGeometry/ProjHomExtBasicOpen.lean',
-            'MathlibExtTest/AlgebraicGeometry/SeparatedOpenCover.lean') }}
+            'scripts/check_axioms.lean') }}
 
       - name: Test the declaration collision check
         if: steps.audit-tools.outputs.cache-hit != 'true'
@@ -239,11 +235,7 @@ jobs:
             'scripts/test_declaration_collisions_native.py', 'scripts/check_declaration_collisions.sh',
             'scripts/check_declaration_collisions.lean', 'scripts/list_v2_modules.sh',
             'scripts/test_compiled_audit_native.py', 'scripts/audit_compiled_modules.py',
-            'scripts/check_axioms.lean',
-            'MathlibExt/AlgebraicGeometry/ProjHomExtBasicOpen.lean',
-            'MathlibExt/AlgebraicGeometry/SeparatedOpenCover.lean',
-            'MathlibExtTest/AlgebraicGeometry/ProjHomExtBasicOpen.lean',
-            'MathlibExtTest/AlgebraicGeometry/SeparatedOpenCover.lean') }}
+            'scripts/check_axioms.lean') }}
 
       - name: Build memory-heavy modules one at a time
         run: |
