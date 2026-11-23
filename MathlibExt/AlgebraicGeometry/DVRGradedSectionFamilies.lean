@@ -201,14 +201,17 @@ structure LogFanoFibre (X : Over (Spec (.of R))) (L : X.left.Modules)
     CenteredValuationSections.SectionSeries pair.variety v
   sectionLine : ∀ v, (sectionSeries v).line = dual adjoint.cartier.line.val
 
-/-- The valuative semistability condition uses the actual volume integral and discrepancy, at
-every valuation whose discrepancy is computed by charts. No stability score or nonarchimedean
-functional is supplied. -/
+/-- The valuative semistability condition uses the actual volume integral and discrepancy. Every
+valuation must have discrepancy charts (`HasDiscrepancyCharts`), so that the discrepancy is an
+actual chart supremum and no inequality holds vacuously; the condition then compares it with the
+expected vanishing order at every valuation. No stability score or nonarchimedean functional is
+supplied. -/
 def LogFanoFibre.IsValuativelySemistable
     {X : Over (Spec (.of R))} {L : X.left.Modules} {I : X.left.IdealSheafData}
     {n e : ℕ} (F : LogFanoFibre X L I n e) : Prop :=
+  (∀ v : CenteredValuationSections.CenteredValuation F.pair.variety,
+    MonomialModelRetractions.HasDiscrepancyCharts (P := F.pair) v) ∧
   ∀ v : CenteredValuationSections.CenteredValuation F.pair.variety,
-    MonomialModelRetractions.HasDiscrepancyCharts (P := F.pair) v →
     ((CenteredValuationSections.expectedVanishing (F.sectionSeries v)) : EReal) / (e : EReal) ≤
       MonomialModelRetractions.extendedDiscrepancy (P := F.pair) v
 
