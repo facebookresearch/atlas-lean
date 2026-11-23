@@ -12,7 +12,7 @@ public import Mathlib.Analysis.InnerProductSpace.Basic
 public import Mathlib.Analysis.Normed.Group.Basic
 public import Mathlib.Analysis.Calculus.Gradient.Basic
 public import Mathlib.Topology.MetricSpace.Lipschitz
-public import MathlibExt.Analysis.Convex.GradientDescent
+import MathlibExt.Analysis.Convex.GradientDescent
 
 @[expose] public section
 
