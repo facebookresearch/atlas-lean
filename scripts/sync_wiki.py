@@ -3426,10 +3426,11 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
         if left := unfinished(report):
             return "other", [f"the sync fails on the base's wiki: {row}" for row in left]
         differences = []
-        # The changes are the working tree's, and the index's where the working tree has nothing and the index
-        # differs from the base: a file staged and then removed, or a submodule, which may have no folder at all.
+        # The changes are the working tree's. Where the index changes a file from HEAD, staged by hand, a commit may
+        # take the index's instead, so the two must agree; and anything but a file in the index, a submodule with no
+        # folder among them, is not the sync's either.
         staged = index_entries()
-        restaged = {os.fsdecode(path) for path in git("diff", "--cached", "--name-only", "--no-renames", "-z", base,
+        restaged = {os.fsdecode(path) for path in git("diff", "--cached", "--name-only", "--no-renames", "-z", "HEAD",
                                                          "--").split(b"\0") if path}
         for path in sorted(set(paths) | {path.relative_to(scratch).as_posix() for path in written}):
             mine, theirs = scratch / path, wiki.ROOT / path
@@ -3444,26 +3445,24 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
                 differences.append(f"{path}: the sync writes no link or other kind of file")
                 continue
             if expected != actual:
-                differences.append(f"{path}: " + compared("the changes", expected, actual, mine in written))
-            # What the index changes from the base is compared too, whatever the working tree has: a commit takes it.
+                differences.append(f"{path}: " + compared(expected, actual, mine in written))
             if path in restaged:
                 held = None if name is None else (git("cat-file", "blob", name), mode != "100755")
-                if held != expected and held != actual:
-                    differences.append(f"{path}: " + compared("the index", expected, held, mine in written))
+                if held != actual:
+                    differences.append(f"{path}: the index holds it otherwise than the working tree, and a commit "
+                                       "may take either: stage the working tree's, or restore the index's, and check "
+                                       "again")
     return ("other", differences) if differences else ("sync", [])
 
 
-def compared(side: str, expected: tuple | None, actual: tuple | None, written: bool) -> str:
-    """How *side*'s file, *actual*, differs from the sync's, *expected*: each a file's bytes and whether it is not
-    executable, or None for no file; *written* when the sync writes it. *side* is "the changes" or "the index"."""
-    plural = side == "the changes"
-    verb = (lambda word: word) if plural else (lambda word: word + "s")
+def compared(expected: tuple | None, actual: tuple | None, written: bool) -> str:
+    """How the changes' file, *actual*, differs from the sync's, *expected*: each a file's bytes and whether it is not
+    executable, or None for no file; *written* when the sync writes it."""
     if expected is None:
-        return f"{side} {verb('add')} it, and the sync does not"
+        return "the changes add it, and the sync does not"
     if actual is None:
-        return (f"the sync writes it, and {side} {'do' if plural else 'does'} not" if written
-                else f"{side} {verb('delete')} it")
-    return f"{side} {verb('write')} it otherwise than the sync"
+        return "the sync writes it, and the changes do not" if written else "the changes delete it"
+    return "the changes write it otherwise than the sync"
 
 
 def run_scoped(argv: list[str]) -> int:

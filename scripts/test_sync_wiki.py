@@ -4333,7 +4333,7 @@ class ScopedRun(unittest.TestCase):
         page.unlink()
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((report["wiki_changes"], report["differences"]), (
-            "other", ["blueprint/roadmap/Algebra/hand.md: the index adds it, and the sync does not"]))
+            "other", ["blueprint/roadmap/Algebra/hand.md: " + INDEX_DIFFERS]))
 
     def test_what_the_index_changes_is_compared_whatever_the_working_tree_has(self) -> None:
         # A hand edit staged and then undone in the working tree, and a page the index deletes that the working tree
@@ -4347,14 +4347,30 @@ class ScopedRun(unittest.TestCase):
         page.write_bytes(generated)
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((report["wiki_changes"], report["differences"]), ("other", [
-            "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: the index writes it otherwise than the sync"]))
+            "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: " + INDEX_DIFFERS]))
         self.git("reset", "-q", "--", str(page))
         self.assertEqual(self.run_sync("--check")[3]["wiki_changes"], "sync")
         self.git("rm", "-q", "--cached", "--", "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md")
         status, out, err, report = self.run_sync("--check")
         self.assertEqual((report["wiki_changes"], report["differences"]), ("other", [
-            "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md: the index deletes it"]))
+            "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md: " + INDEX_DIFFERS]))
+        self.git("reset", "-q", "--", "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md")
+        # The sync's output committed, the deletion of its page staged while the file stays: a commit takes the
+        # deletion. And the sync's output staged with fresh ids of its own, another run's in the working tree: the
+        # two differ, though each is the sync's.
+        self.base = self.git("rev-parse", "HEAD")
+        self.commit("the sync's output")
+        self.git("rm", "-q", "--cached", "--", str(page))
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((report["wiki_changes"], report["differences"]), ("other", [
+            "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: " + INDEX_DIFFERS]))
+        self.git("reset", "-q", "--", str(page))
+        self.assertEqual(self.run_sync("--check")[3]["wiki_changes"], "sync")
 
+
+
+INDEX_DIFFERS = ("the index holds it otherwise than the working tree, and a commit may take either: stage the "
+                 "working tree's, or restore the index's, and check again")
 
 
 class BuildPath(Vault):

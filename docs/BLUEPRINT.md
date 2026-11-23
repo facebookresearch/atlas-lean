@@ -419,7 +419,10 @@ request is in step, exiting 1 when it is not, with the command that brings it
 in step, and whether the pull request's wiki changes are exactly what that
 command writes on the base's wiki, file contents and executable bits: a fresh
 article id on a new row counts as the same, and every row the base has must
-keep its bytes. `--report FILE` also writes the findings as JSON. The `graph
+keep its bytes. It reads the working tree; where the index holds a file
+otherwise than the working tree, staged by hand, it asks for the two to agree
+first, since a commit may take either. `--report FILE` also writes the findings
+as JSON. The `graph
 sync` check runs it on every pull request and merge group, and only reports for
 now ([GitHub Actions and publication](#github-actions-and-publication)).
 
