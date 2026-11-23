@@ -27,8 +27,11 @@ native pullback lift of its two legs. Its invertibility is a separate
 construction/proof request, not part of the definition of a relation.
 
 Sources: Scholze, arXiv:1709.07343v4, Definitions 8.1, 12.1 and 14.1;
-Proposition 11.3(ii). The sites here are explicitly universe-bounded
-models of those sites, rather than a claim of size independence.
+Proposition 11.3(ii). The sites here are universe-bounded models, rather than a claim of size
+independence: the slice site over a small v-sheaf models `F_v` of Definition 14.1(iii), whose
+objects are all maps from small v-sheaves. The affinoid perfectoid test category `AffineTest` is a
+separate category; the comparison of its sheaf category with that of the slice site is not
+formalized here.
 -/
 
 @[expose] public noncomputable section
@@ -66,7 +69,11 @@ def vTopology : GrothendieckTopology (SmallVSheaf p) :=
     (U : I → SmallVSheaf p) (a : ∀ i, U i ⟶ F),
     JointlySurjective p U a → Sieve.ofArrows U a ∈ J F}
 
-/-- The slice v-site of all small v-sheaves over the specified object. -/
+/-- The v-site `F_v` of Scholze, *Étale cohomology of diamonds*, Def. 14.1(iii), in a
+universe-bounded model: its objects are all maps `F' → F` from small v-sheaves `F'`, and its covers
+are the jointly surjective families. It is distinct from the category `AffineTest` below of
+affinoid perfectoid test objects over a v-sheaf; the comparison of the sheaf categories of the two
+is not formalized here. -/
 abbrev VSite (F : SmallVSheaf p) := Over F
 
 /-- Its topology is the native slice of the actual v-topology. -/
