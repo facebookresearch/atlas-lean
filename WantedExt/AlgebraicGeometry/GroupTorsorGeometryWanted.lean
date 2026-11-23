@@ -27,7 +27,9 @@ Maulik, arXiv:1106.3724v2, Section 2.4.
 
 @[expose] public noncomputable section
 
-namespace MathlibExt.AlgebraicGeometry.GroupTorsorGeometry
+namespace WantedExt.AlgebraicGeometry.GroupTorsorGeometryWanted
+
+open MathlibExt.AlgebraicGeometry MathlibExt.AlgebraicGeometry.GroupTorsorGeometry
 
 open CategoryTheory CategoryTheory.Limits CategoryTheory.MonoidalCategory
 open CategoryTheory.MonObj _root_.AlgebraicGeometry
@@ -48,4 +50,4 @@ def_wanted nativeAssociatedReindex
     (R : Reindex G P.torsor f) (B : AssociatedBundle G W P)
     (B' : AssociatedBundle G W (reindexObject G W P f R)) : AssociatedReindex G W P f R B B'
 
-end MathlibExt.AlgebraicGeometry.GroupTorsorGeometry
+end WantedExt.AlgebraicGeometry.GroupTorsorGeometryWanted

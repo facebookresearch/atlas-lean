@@ -34,7 +34,9 @@ the native torsor, line-descent and marked-curve contracts.
 
 @[expose] public noncomputable section
 
-namespace MathlibExt.AlgebraicGeometry.QuasimapNativeSources
+namespace WantedExt.AlgebraicGeometry.QuasimapNativeSourcesWanted
+
+open MathlibExt.AlgebraicGeometry
 
 open CategoryTheory CategoryTheory.Limits CategoryTheory.MonoidalCategory
 open _root_.AlgebraicGeometry _root_.AlgebraicGeometry.GeneralStackGeometry
@@ -109,4 +111,4 @@ def_wanted nativeConstantDefectFamilyRegularization
     (Q : StableGITTarget G W L) :
     Σ R : CommonCurveRegularization F B U Q, CommonNormalization F B U K R
 
-end MathlibExt.AlgebraicGeometry.QuasimapNativeSources
+end WantedExt.AlgebraicGeometry.QuasimapNativeSourcesWanted

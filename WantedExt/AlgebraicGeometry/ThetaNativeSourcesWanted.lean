@@ -30,16 +30,14 @@ AxiomMath/Stacks source at c496df0d9beea9deaeabcea8492605f9a0a2313b.
 
 @[expose] public noncomputable section
 
-namespace MathlibExt.AlgebraicGeometry.ThetaNativeSources
+namespace WantedExt.AlgebraicGeometry.ThetaNativeSourcesWanted
+
+open MathlibExt.AlgebraicGeometry
 
 open CategoryTheory CategoryTheory.Limits CategoryTheory.MonoidalCategory
 open _root_.AlgebraicGeometry _root_.AlgebraicGeometry.GeneralStackGeometry
 open GroupTorsorGeometry ThetaQuotientSources ThetaTraitCharts
 open ThetaQuotientOpenSources StackSourceFiltrations
-
-def_wanted nativeContractingAction (R : Type) [CommRing R] : ContractingAction R
-
-def_wanted nativeOppositeWeightAction (R : Type) [CommRing R] (π : R) : OppositeWeightAction R π
 
 def_wanted nativeAffineQuotientSource
     {R : Type} [CommRing R] (G W : Over (Spec (.of R))) [GrpObj G] [ModObj G W]
@@ -73,4 +71,4 @@ theorem_wanted nativeRelativeStackRestriction
     {S V : Scheme} (X : RelativeStack S) (b : V ⟶ S) :
     (ThetaSchemeParameters.restriction X b).IsStack (Scheme.fppfTopology.over V)
 
-end MathlibExt.AlgebraicGeometry.ThetaNativeSources
+end WantedExt.AlgebraicGeometry.ThetaNativeSourcesWanted

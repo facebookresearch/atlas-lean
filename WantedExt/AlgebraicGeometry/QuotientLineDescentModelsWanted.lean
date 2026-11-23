@@ -21,7 +21,9 @@ Ciocan-Fontanine--Kim--Maulik, arXiv:1106.3724v2, Section 2.4.
 
 @[expose] public noncomputable section
 
-namespace MathlibExt.AlgebraicGeometry.QuotientLineDescentModels
+namespace WantedExt.AlgebraicGeometry.QuotientLineDescentModelsWanted
+
+open MathlibExt.AlgebraicGeometry MathlibExt.AlgebraicGeometry.QuotientLineDescentModels
 
 open CategoryTheory CategoryTheory.MonObj _root_.AlgebraicGeometry
 open GroupTorsorGeometry LinearizedLineBundles
@@ -31,4 +33,4 @@ def_wanted nativeAssociatedLine
     {T : Over S} (P : QuotientObject G W T) (E : LinearizedLineBundle G W) :
     DescendedLine G W P E
 
-end MathlibExt.AlgebraicGeometry.QuotientLineDescentModels
+end WantedExt.AlgebraicGeometry.QuotientLineDescentModelsWanted
