@@ -41,8 +41,10 @@ public import Mathlib
 
 namespace MathlibExt.Analysis.Calculus.XSqSinInvSqNonintegrableDerivWanted
 
-/-- Consider the function $F(x)=x^2\sin(1/x^2)$, $x\ne 0$, with $F(0)=0$. Show that $F'(x)$ exists
-for every $x$, but $F'$ is not integrable on $[-1,1]$.
+/-- **The derivative of $x^2 \sin(1/x^2)$ exists everywhere but is not integrable.** Let
+$F : \mathbb{R} \to \mathbb{R}$ be given by $F(x) = x^2 \sin(1/x^2)$ for $x \ne 0$ and $F(0) = 0$.
+Then $F$ is differentiable at every real $x$, but its derivative $F'$ is not Lebesgue integrable
+on $[-1,1]$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Real functions; Functions of
 one variable), `benchmark/level1/ma_proofbench_l1_99.lean` at openbmb/ma-proofbench@31bab4c.

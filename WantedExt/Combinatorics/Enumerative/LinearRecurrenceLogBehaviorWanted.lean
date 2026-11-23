@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.Combinatorics.Enumerative.LinearRecurrenceLogBehavior
 
 /-!
 # Log-behavior of sequences related to A005773
@@ -25,28 +26,14 @@ recurrence (1); OEIS A005773, `1, 1, 2, 5, 13, 35, …`). Forward differences ar
 `Δ³A n = A (n + 3) - 3 A (n + 2) + 3 A (n + 1) - A n`. A sequence `(z n)_{n ≥ m}` is
 log-convex (log-concave) if `z n ^ 2 ≤ z (n - 1) z (n + 1)` (`≥`) for every `n ≥ m + 1`, and
 log-balanced (Došlić) if it is log-convex and `(z n / n!)_{n ≥ m}` is log-concave.
+
+Proved in `MathlibExt.Combinatorics.Enumerative.LinearRecurrenceLogBehavior`: Lemma 1
+(`MetaMathlibExt.a005773Recurrence_ratio_bounds`).
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Ratio bounds for the A005773 recurrence.**
-Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and
-$(n+1) A_{n+1} = 2(n+1) A_n + 3(n-1) A_{n-1}$ for every $n \ge 1$. Write
-$x_n = A_{n+1}/A_n$ and $\varphi_n = 3(2n+1)/(2(n+1))$. Then for every $n \ge 0$ we have
-$x_n \le \varphi_n$ and
-$$\frac{x_{n+1}}{x_n} \ge \frac{2(3n^2+6n+2)}{(n+2)(2n+1)\,\varphi_n}.$$
-
-Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to a Linear Recurrence
-Sequence*, INTEGERS 25 (2025), Article A100, Lemma 1. -/
-public theorem_wanted a005773Recurrence_ratio_bounds (A : ℕ → ℝ) (h0 : A 0 = 1) (h1 : A 1 = 1)
-    (hrec : ∀ n : ℕ, 1 ≤ n →
-      ((n : ℝ) + 1) * A (n + 1) = 2 * ((n : ℝ) + 1) * A n + 3 * ((n : ℝ) - 1) * A (n - 1))
-    (n : ℕ) :
-    A (n + 1) / A n ≤ 3 * (2 * n + 1) / (2 * (n + 1)) ∧
-      2 * (3 * (n : ℝ) ^ 2 + 6 * n + 2) / ((n + 2) * (2 * n + 1) * (3 * (2 * n + 1) / (2 * (n + 1))))
-        ≤ (A (n + 2) / A (n + 1)) / (A (n + 1) / A n)
 
 /-- **The first and second differences of A005773 are log-balanced.**
 Let $(A_n)_{n \ge 0}$ be a sequence of real numbers with $A_0 = A_1 = 1$ and

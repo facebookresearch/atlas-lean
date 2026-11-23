@@ -28,6 +28,11 @@ example : (List.range 8).map (genLeonardo (-1)) = [1, 1, 1, 1, 1, 1, 1, 1] := by
 
 example : (List.range 6).map (genLeonardo (-3)) = [1, 1, -1, -3, -7, -13] := by decide
 
+-- A negative parameter gives a zero term followed by a negative term.
+example : genLeonardo (-2) 2 = 0 ∧ genLeonardo (-2) 3 = -1 := by decide
+
+example : genLeonardoCompanion (-2) 0 = 3 ∧ genLeonardoCompanion (-2) 2 = 0 := by decide
+
 -- Test section: the shift identity.
 /-- The identity of `genLeonardo_shift`, without its hypotheses. -/
 private abbrev ShiftIdentity (k : ℤ) (m n t : ℕ) : Prop :=

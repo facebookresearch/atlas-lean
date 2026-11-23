@@ -13,6 +13,8 @@ import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
 import Mathlib.Data.Nat.Choose.Cast
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
+public import MathlibExt.Combinatorics.Enumerative.AlternatingCentralBinomialSum
+public import MathlibExt.Combinatorics.Enumerative.CentralBinomialBernstein
 
 /-!
 # Knuth's old sum, generalizations and related sums
@@ -858,19 +860,6 @@ public theorem_wanted knuth_poly_gammaBinom_mul_pow (n : ℕ) (v : ℝ) (hv : -1
         (n.choose (2 * k) : ℂ) / 2 ^ (2 * k) * ((2 * k).choose k : ℂ) *
           (gammaBinom ((2 * k + v) / 2) k)⁻¹ * (1 - x) ^ (2 * k)
 
-/-- **Central binomial polynomial identity, Bernstein form.** For every natural number $n$ and
-every complex $x$,
-$$\sum_{k=0}^{n} \binom{n}{k} 2^{-k} \binom{2k}{k} (1-x)^k x^{n-k} =
-\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} 2^{-2k} \binom{2k}{k} (1-x)^{2k}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Corollary 6 (`integers-2026-A19-cor-6`). -/
-public theorem_wanted sum_choose_centralBinom_one_sub_pow_mul_pow (n : ℕ) (x : ℂ) :
-    ∑ k ∈ range (n + 1),
-        (n.choose k : ℂ) / 2 ^ k * ((2 * k).choose k : ℂ) * (1 - x) ^ k * x ^ (n - k) =
-      ∑ k ∈ range (n / 2 + 1),
-        (n.choose (2 * k) : ℂ) / 2 ^ (2 * k) * ((2 * k).choose k : ℂ) * (1 - x) ^ (2 * k)
-
 /-- **Polynomial identity in $x$ and $1 - x$ with weights $2^k/(k+1)$.** For every natural
 number $n$ and every complex number $x$,
 $$
@@ -1080,19 +1069,6 @@ public theorem_wanted sum_neg_one_pow_sub_choose_gammaBinom (n : ℕ) (v : ℝ) 
           (gammaBinom (k + v) (v / 2))⁻¹ =
       ∑ k ∈ range (n / 2 + 1),
         (n.choose (2 * k) : ℂ) * ((2 * k).choose k : ℂ) * (gammaBinom ((2 * k + v) / 2) k)⁻¹
-
-/-- **Alternating sum of $\binom{n}{k} \binom{2k}{k}$.** For every natural number $n$,
-$$\sum_{k=0}^{n} (-1)^{n-k} \binom{n}{k} \binom{2k}{k}
-= \sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{k} \binom{n-k}{k}$$
-as integers.
-
-Both sides are the central trinomial coefficient.
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 6 (`integers-2026-A19-prop-6`). -/
-public theorem_wanted sum_neg_one_pow_sub_choose_centralBinom (n : ℕ) :
-    ∑ k ∈ range (n + 1), (-1 : ℤ) ^ (n - k) * (n.choose k : ℤ) * ((2 * k).choose k : ℤ) =
-      ∑ k ∈ range (n / 2 + 1), (n.choose k : ℤ) * ((n - k).choose k : ℤ)
 
 /-- **Alternating sum of $\binom{n}{k} 2^{2k}/(k+1)$.** For every natural number $n$, the
 following identity holds in $\mathbb{Q}$:

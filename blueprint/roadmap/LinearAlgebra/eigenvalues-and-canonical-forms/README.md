@@ -16,3 +16,6 @@ Eigenvalues, eigenspaces and characteristic polynomials of matrices and endomorp
 - [Spectral theorem for normal matrices](spectral-theorem-for-normal-matrices/README.md)
 - [Spectral radius under a row-sum bound](row-sum-bounds-on-eigenvalues/README.md)
 - [Fixed point and shifted resolvent](fixed-points-and-the-shifted-resolvent/README.md)
+- [Characteristic polynomials and the Cayley–Hamilton theorem](characteristic-polynomials-and-the-cayley-hamilt/README.md)
+- [Eigenvalues and eigenspaces](eigenvalues-and-eigenspaces/README.md)
+- [Existence of eigenvalues](existence-of-eigenvalues/README.md)
