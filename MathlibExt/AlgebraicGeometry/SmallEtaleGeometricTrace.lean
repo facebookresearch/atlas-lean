@@ -175,4 +175,3 @@ structure TraceWithBaseChange {l : ℕ} {S : Data l} (P : StalkSources S)
       (inv (stalkBaseChange P f β p s)).hom (((P.projection f Ω p s B).map).hom a)
 
 end MathlibExt.AlgebraicGeometry.SmallEtaleGeometricTrace
-

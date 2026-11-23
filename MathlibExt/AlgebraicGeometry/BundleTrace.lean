@@ -122,9 +122,12 @@ def localEndomorphism (X : Scheme.{u}) (E : X.Modules) (U : X.Opens)
     Module.End (X.ringCatSheaf.obj.obj (op U)) (E.val.obj (op U)) :=
   (a.app (op (Over.mk (𝟙 U)))).hom
 
-/-- A trace is pinned on finite affine frames; its scalar law fixes the rank.
+/-- The trace of a rank-`r` vector bundle, pinned on finite affine frames by the
+matrix trace; its scalar law fixes the rank. Affine opens on which `E` has a
+basis cover `X` because `E` is locally free of rank `r`, so the trace is unique.
 On a non-affine open, a basis of global sections need not trivialize the sheaf. -/
 structure TraceData (X : Scheme.{u}) (E : X.Modules) (r : ℕ) where
+  vectorBundle : IsVectorBundle E r
   trace : endSheaf X E ⟶ structureModule X
   frame_trace : ∀ (U : X.Opens), IsAffineOpen U →
     ∀

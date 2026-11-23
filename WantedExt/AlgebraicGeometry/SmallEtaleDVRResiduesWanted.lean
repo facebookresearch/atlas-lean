@@ -37,4 +37,3 @@ def_wanted geometricDvrPurity
     OrientedResidues S M
 
 end MathlibExt.AlgebraicGeometry.SmallEtaleDVRResidues
-

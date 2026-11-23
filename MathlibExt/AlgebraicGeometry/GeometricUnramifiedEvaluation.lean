@@ -142,4 +142,3 @@ def LocalEvaluationData.ofPointwise {l : ℕ} {S : System l} {V : NormalVariety 
   injective x := (L x).property
 
 end MathlibExt.AlgebraicGeometry.GeometricUnramifiedEvaluation
-

@@ -7,16 +7,19 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Adapted completed coefficient definitions from AxiomMath/Stacks,
-revision c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/AlgebraicGeometry/EtaleCohomology/KummerTheory/
-MultiplicativeSheaf.lean (multiplicativePresheaf, powMap,
-rootsOfUnitySheaf) and Sequence.lean (kummerSequence), Apache 2.0.
-Those source files have no individual author/copyright notice.
-Modification: use canonical integer modules on the actual abelian groups,
-record the completed small-site sheaf/exactness proofs as explicit
-source-integration inputs, and build the actual tensor Tate coefficients
-and native Yoneda Kummer class. No generic Kummer theorem is re-requested.
+Portions of this file are adapted from:
+
+`StacksFrontier/AlgebraicGeometry/EtaleCohomology/KummerTheory/MultiplicativeSheaf.lean`
+(`multiplicativePresheaf`, `powMap`, `rootsOfUnitySheaf`) and
+`StacksFrontier/AlgebraicGeometry/EtaleCohomology/KummerTheory/Sequence.lean`
+(`kummerSequence`)
+(AxiomMath/Stacks, https://github.com/AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+The source files carry no per-file copyright notice or author list.
+Modified: canonical integer modules on the abelian groups; the small-site sheaf and
+exactness proofs are recorded as explicit inputs; tensor Tate coefficients and the
+Yoneda Kummer class are built here.
 -/
 module
 
@@ -152,4 +155,3 @@ def kummerClass (l : ℕ) (E : KummerExactness X G l)
   exact (Abelian.Ext.mk₀ A.map).comp eK (zero_add 1)
 
 end MathlibExt.AlgebraicGeometry.SmallEtaleTorsionCoefficients
-

@@ -99,4 +99,3 @@ def unramifiedCycleSum {l : ℕ} (S : System l) {k : Type} [Field k] {n : ℕ}
     (fun p => (T.transfer p).map i j (D.evaluate p.val))
 
 end MathlibExt.AlgebraicGeometry.IntegralUnramifiedCyclePairing
-

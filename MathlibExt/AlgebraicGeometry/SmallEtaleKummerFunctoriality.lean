@@ -116,4 +116,3 @@ def rootsPushforward (GX : MultiplicativeNormalization X) (GY : MultiplicativeNo
       inv (kernelComparison (powerMap Y GY l) (pushforward f))
 
 end MathlibExt.AlgebraicGeometry.SmallEtaleKummerFunctoriality
-

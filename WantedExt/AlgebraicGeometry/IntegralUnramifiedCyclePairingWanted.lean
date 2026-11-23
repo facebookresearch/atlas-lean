@@ -72,4 +72,3 @@ def_wanted unramifiedIntegralChowPairing
         unramifiedCycleSum S V P T i j a (D a) c}
 
 end MathlibExt.AlgebraicGeometry.IntegralUnramifiedCyclePairing
-

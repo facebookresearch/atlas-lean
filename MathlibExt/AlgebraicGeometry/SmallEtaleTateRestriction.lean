@@ -160,4 +160,3 @@ def restriction {T : TerminalComparison f} {S : SectionsPushforward f T}
   map_add' _ _ := by simp only [Preadditive.add_comp]
 
 end MathlibExt.AlgebraicGeometry.SmallEtaleTateRestriction
-

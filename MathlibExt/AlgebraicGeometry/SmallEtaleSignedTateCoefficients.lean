@@ -94,4 +94,3 @@ def SignedMaps.restriction {l : ℕ} {S : Data l} (D : SignedMaps S)
   SmallEtaleTateRestriction.restriction f (S.derived f) (D.coefficientMap f hX hY j) i
 
 end MathlibExt.AlgebraicGeometry.SmallEtaleSignedTateCoefficients
-

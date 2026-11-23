@@ -133,4 +133,3 @@ def kummer (G : MultiplicativeNormalization X) (l : ℕ) (E : KummerExactness X 
   extToCohomology X (kummerClass X G l E a A)
 
 end MathlibExt.AlgebraicGeometry.SmallEtaleDerivedCohomology
-

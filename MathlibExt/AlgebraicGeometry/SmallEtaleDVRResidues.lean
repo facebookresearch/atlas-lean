@@ -103,4 +103,3 @@ def HasZeroBoundary {l : ℕ} {S : Data l}
   a ≫ coneBoundary (M j) = 0
 
 end MathlibExt.AlgebraicGeometry.SmallEtaleDVRResidues
-

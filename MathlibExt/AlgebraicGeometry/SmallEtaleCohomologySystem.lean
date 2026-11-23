@@ -119,4 +119,3 @@ def coneBoundary {l : ℕ} {S : Data l} {Y X : Scheme.{0}} {f : Y ⟶ X} {j : �
   M.targetIso.inv ≫ DerivedCategory.Q.map (CochainComplex.mappingCone.inr M.map)
 
 end MathlibExt.AlgebraicGeometry.SmallEtaleCohomologySystem
-

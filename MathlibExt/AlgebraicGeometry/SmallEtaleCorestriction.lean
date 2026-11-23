@@ -83,4 +83,3 @@ def FiniteTransfer.map {l : ℕ} {S : Data l} {Y X : Scheme.{0}} {f : Y ⟶ X}
   exact corestriction S f (T.trace.map j) (T.exact j) i
 
 end MathlibExt.AlgebraicGeometry.SmallEtaleCorestriction
-
