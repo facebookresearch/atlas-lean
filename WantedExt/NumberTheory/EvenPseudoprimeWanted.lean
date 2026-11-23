@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.SmoothNumbers
 public import MathlibExt.NumberTheory.EvenPseudoprime
+public import MathlibExt.NumberTheory.EvenPseudoprimeWieferich
 
 /-!
 # The reciprocal sum of even pseudoprimes
@@ -27,6 +28,10 @@ theorem (Theorem 1) is
 not restated, nor is Lemma 6 (Dusart's bounds, the existing `dusart_pi_lower` and
 `dusart_pi_upper`). `ℓ₂(p)` is the multiplicative order of `2` modulo `p`,
 written `orderOf (2 : ZMod p)`.
+
+Proved in `MathlibExt.NumberTheory.EvenPseudoprimeWieferich`, which this module imports:
+`evenPseudoprime_wieferich_of_sq_dvd` (a prime whose square divides an even pseudoprime is a
+Wieferich prime, at least `3511`).
 -/
 
 namespace MetaMathlibExt
@@ -52,16 +57,6 @@ Source: Cheng, Kinlaw and Nguyen, *The Reciprocal Sum of Even Pseudoprimes*, Jou
 Integer Sequences 29 (2026), Article 26.1.3, Corollary 4 (`jis-2026-26.1.3-cor-4`). -/
 public theorem_wanted evenPseudoprime_mod_sixteen {N : ℕ} (hN : MathlibExt.NumberTheory.IsEvenPseudoprime N) :
     N % 16 = 2 ∨ N % 16 = 14
-
-/-- **Square prime factors of even pseudoprimes are Wieferich primes.** Let $N$ be an even
-pseudoprime and $p$ a prime with $p^2 \mid N$. Then $p$ is a Wieferich prime, that is
-$2^{p-1} \equiv 1 \pmod{p^2}$, and $p \ge 3511$.
-
-Source: Cheng, Kinlaw and Nguyen, *The Reciprocal Sum of Even Pseudoprimes*, Journal of
-Integer Sequences 29 (2026), Article 26.1.3, Lemma 5 (`jis-2026-26.1.3-lem-5`). -/
-public theorem_wanted evenPseudoprime_wieferich_of_sq_dvd {N p : ℕ} (hN : MathlibExt.NumberTheory.IsEvenPseudoprime N)
-    (hp : p.Prime) (hpN : p ^ 2 ∣ N) :
-    2 ^ (p - 1) ≡ 1 [MOD p ^ 2] ∧ 3511 ≤ p
 
 open scoped Classical in
 /-- **Reciprocal sum over a residue class in an exponential window.** Write $\ell_2(p)$ for the
