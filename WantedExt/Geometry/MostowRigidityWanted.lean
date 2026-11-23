@@ -126,7 +126,9 @@ instance [Star α] [ContinuousStar α] : IsTopologicalRing (MatrixSum p q α) :=
 variable [StarRing α] [ContinuousStar α]
 
 instance : ContinuousStar (MatrixSum p q α) where
-  continuous_star := by rw [star]; fun_prop
+  continuous_star := by
+    change Continuous fun A : MatrixSum p q α ↦ ofMatrix (pmOneMat * (ofMatrix.symm A)ᴴ * pmOneMat)
+    fun_prop
 
 theorem MatrixSum.isClosed_unitary [T1Space α] :
     IsClosed (SetLike.coe <| unitary (MatrixSum p q α)) :=
