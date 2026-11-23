@@ -10623,6 +10623,7 @@
   "MathlibExt/Dynamics/EventuallyPeriodicSequence": {"to": "Dynamics/topological-symbolic-dynamics", "title": "Eventually periodic sequences"},
   "MathlibExt/Dynamics/LaSalle": {"to": "Dynamics/smooth-dynamics", "title": "LaSalle's invariance principle"},
   "MathlibExt/Dynamics/MoebiusSingularDual": {"to": "Dynamics/low-dimensional-dynamics", "title": "Natural duals of Möbius maps"},
+  "MathlibExt/Dynamics/NExpansionGaps": {"to": "Dynamics/low-dimensional-dynamics", "title": "N-continued fraction expansions"},
   "MathlibExt/Dynamics/Periodic/LiYorke": {"to": "Dynamics/low-dimensional-dynamics", "title": "Period three implies chaos"},
   "MathlibExt/Dynamics/PolynomialNetworks/Deficiency": {"to": "Dynamics/smooth-dynamics", "title": "Polynomial networks and deficiency"},
   "MathlibExt/Dynamics/Preperiodic": {"to": "Dynamics/topological-symbolic-dynamics", "title": "Preperiodic points and grand orbits"},
