@@ -9,10 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
-public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.RingTheory.Coprime.Basic
+public import MathlibExt.Combinatorics.Additive.MPTQSets
 public import WantedExt.Combinatorics.Additive.UnionTwoAPNotMSTDWanted
 
 /-!
@@ -31,32 +30,6 @@ namespace MetaMathlibExt
 open Pointwise
 
 @[expose] public section
-
-/-- **MPTQ set.** A finite set $A$ of real numbers is an MPTQ (more products than quotients) set
-when $0 \notin A$ and $|A/A| < |A \cdot A|$, where $A \cdot A = \{ab : a, b \in A\}$ is the
-product set, $A/A = \{a/b : a, b \in A\}$ is the quotient set, and $|X|$ is the number of
-elements of $X$.
-
-Source: Anupriya Shetty and B. R. Shankar, *On The Minimum Cardinality of MPTQ Sets*,
-INTEGERS 24 (2024), Article A96, Definition 1. -/
-def IsMPTQSet (A : Finset ℝ) : Prop :=
-  (0 : ℝ) ∉ A ∧ (A / A).card < (A * A).card
-
-/-- **A singleton is not an MPTQ set.** For every real number $a$, the one-element set $\{a\}$
-is not an MPTQ set.
-
-Source: Anupriya Shetty and B. R. Shankar, *On The Minimum Cardinality of MPTQ Sets*,
-INTEGERS 24 (2024), Article A96, Definition 1. -/
-theorem not_isMPTQSet_singleton (a : ℝ) : ¬ IsMPTQSet {a} := by
-  simp [IsMPTQSet]
-
-/-- **Sets containing zero are not MPTQ sets.** If $A$ is a finite set of real numbers with
-$0 \in A$, then $A$ is not an MPTQ set.
-
-Source: Anupriya Shetty and B. R. Shankar, *On The Minimum Cardinality of MPTQ Sets*,
-INTEGERS 24 (2024), Article A96, Definition 1. -/
-theorem not_isMPTQSet_of_zero_mem {A : Finset ℝ} (h : (0 : ℝ) ∈ A) : ¬ IsMPTQSet A :=
-  fun hA => hA.1 h
 
 /-- **Hegarty: no seven-element MSTD set of integers.** No set of seven integers, viewed as a set
 of real numbers, is an MSTD set.
@@ -104,15 +77,6 @@ public theorem_wanted not_isMPTQSet_insert_of_le {A : Finset ℝ} {x : ℝ} {n m
     (hA : ¬ IsMPTQSet A) (hn : (insert x A * insert x A).card ≤ (A * A).card + n)
     (hm : (A / A).card + m ≤ (insert x A / insert x A).card) (hnm : n ≤ m) :
     ¬ IsMPTQSet (insert x A)
-
-/-- **One equal pairing of products excludes the other two.** Let $a$, $b$, $c$, $d$ be pairwise
-distinct positive real numbers with $ab = cd$. Then $ad \neq bc$ and $ac \neq bd$.
-
-Source: Anupriya Shetty and B. R. Shankar, *On The Minimum Cardinality of MPTQ Sets*,
-INTEGERS 24 (2024), Article A96, Lemma 2 (`integers-2024-A96-lem-2`). -/
-public theorem_wanted mul_ne_of_mul_eq_of_distinct {a b c d : ℝ} (ha : 0 < a) (hb : 0 < b)
-    (hc : 0 < c) (hd : 0 < d) (hab : a ≠ b) (hac : a ≠ c) (had : a ≠ d) (hbc : b ≠ c)
-    (hbd : b ≠ d) (hcd : c ≠ d) (h : a * b = c * d) : a * d ≠ b * c ∧ a * c ≠ b * d
 
 /-- **At most one square is the product of the other two.** Let $a$, $b$, $c$ be pairwise
 distinct positive real numbers. Then at most one of the equations $a^2 = bc$, $b^2 = ac$ and

@@ -14,6 +14,7 @@ public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.Fermat
 public import Mathlib.Order.Bounds.Defs
+public import MathlibExt.NumberTheory.GeneralizedFermatGCD
 public import MathlibExt.NumberTheory.WieferichPrime
 public import MathlibExt.NumberTheory.WieferichOrder
 
@@ -103,24 +104,6 @@ public theorem_wanted sq_dvd_fermatNumber_iff_wieferich_orderOf {n p : ℕ} (hp 
     exact ⟨⟨hp, (❰sq_dvd_fermatNumber_iff❱ hp hpd).mp h⟩, hdvd.mp hpd⟩
   · rintro ⟨⟨-, hw⟩, ho⟩
     exact (❰sq_dvd_fermatNumber_iff❱ hp (hdvd.mpr ho)).mpr hw
-
-/-- **Greatest common divisors of generalized Fermat numbers.** For natural numbers $a$, $b$ and
-$k$ write $F_k(a, b) = a^{b^k} + 1$, and let $a, b \ge 2$ and $m$, $n$ be natural numbers. If
-$n < m$ and $a$ and $b$ are both even, then $\gcd(F_m(a, b), F_n(a, b)) = 1$. If $n < m$, $a$ is
-odd and $b$ is even, then $\gcd(F_m(a, b), F_n(a, b)) = 2$. If $n \le m$ and $b$ is odd, then
-$\gcd(F_m(a, b), F_n(a, b)) = F_n(a, b)$.
-
-The source assumes $a, b > 2$ and $0 \le n \le m$; its proof uses only $a, b \ge 2$ and treats
-$m > n$ ("Since $m > n$"), and the first two cases fail for $m = n$: for $a = b = 4$ and
-$m = n = 0$ the gcd is $\gcd(5, 5) = 5$, and for $a = 3$, $b = 4$ and $m = n = 0$ it is
-$\gcd(4, 4) = 4$.
-
-Source: Klaška, *Several Notes on Jakóbczyk's Hypothesis on Fermat Numbers*,
-INTEGERS 26 (2026), Article A77, Proposition 1 (`integers-2026-A77-prop-1`). -/
-public theorem_wanted gcd_pow_pow_add_one {a b m n : ℕ} (ha : 2 ≤ a) (hb : 2 ≤ b) :
-    (n < m → Even a → Even b → Nat.gcd (a ^ b ^ m + 1) (a ^ b ^ n + 1) = 1) ∧
-      (n < m → Odd a → Even b → Nat.gcd (a ^ b ^ m + 1) (a ^ b ^ n + 1) = 2) ∧
-      (n ≤ m → Odd b → Nat.gcd (a ^ b ^ m + 1) (a ^ b ^ n + 1) = a ^ b ^ n + 1)
 
 /-- **Monotonicity of the number of prime factors of generalized Fermat numbers.** For natural
 numbers $a$, $b$ and $n$ write $F_n(a, b) = a^{b^n} + 1$, and let $\Omega(N)$ be the number of
