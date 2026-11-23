@@ -10142,6 +10142,7 @@
   "MathlibExt/Combinatorics/Enumerative/LindstromGesselViennot": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "Lindström–Gessel–Viennot lemma"},
   "MathlibExt/Combinatorics/Enumerative/LinearRecurrenceInhomogeneous": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Generalized hyperbolic Pascal triangle"},
   "MathlibExt/Combinatorics/Enumerative/LinearRecurrenceLogBehavior": {"to": "Combinatorics/catalan-numbers-lattice-paths/motzkin-numbers", "title": "Log-behavior of Motzkin prefix numbers"},
+  "MathlibExt/Combinatorics/Enumerative/LonelyMarriageableSingles": {"to": "Combinatorics/set-partitions", "title": "Marriageable and lonely singles partitions"},
   "MathlibExt/Combinatorics/Enumerative/LuckyCars": {"to": "Combinatorics/parking-functions", "title": "Lucky cars in parking functions"},
   "MathlibExt/Combinatorics/Enumerative/LuckyParkingFunctions": {"to": "Combinatorics/parking-functions", "title": "Lucky cars in parking functions"},
   "MathlibExt/Combinatorics/Enumerative/LunnonDimensionDecomposition": {"to": "Combinatorics/tilings-board-placements", "title": "Fixed polycubes"},
