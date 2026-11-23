@@ -11,8 +11,8 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Complex.Basic
-public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.RingTheory.Binomial
+public import MathlibExt.Combinatorics.Enumerative.SuccPowStirlingSecond
 public import MathlibExt.NumberTheory.LucasSequence
 public import WantedExt.NumberTheory.HyperLeonardoWanted
 
@@ -427,16 +427,6 @@ public theorem_wanted ringChoose_sub_eq_sum (m n k : ℕ) :
     Ring.choose ((n : ℤ) + m - k - 1) m =
       ∑ j ∈ range (k + 1), (-1) ^ j * (k.choose j : ℤ) *
         (if j ≤ m then Ring.choose ((n : ℤ) + m - j - 1) (m - j) else 0)
-
-/-- **Powers of $k + 1$ via Stirling numbers of the second kind.** For all natural numbers $k$
-and $\ell$,
-$$(k + 1)^\ell = \sum_{j=0}^{k} \binom{k}{j}\, j!\, S(\ell + 1, j + 1),$$
-where $S(i, j)$ denotes the Stirling numbers of the second kind.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Lemma 2, Equation (4.11) (`integers-2024-A70-lem-2`). -/
-public theorem_wanted succ_pow_eq_sum_stirlingSecond (k ℓ : ℕ) :
-    (k + 1) ^ ℓ = ∑ j ∈ range (k + 1), k.choose j * j.factorial * Nat.stirlingSecond (ℓ + 1) (j + 1)
 
 /-- **Power-weighted sums of Fibonacci numbers.** Let $F_k$ denote the Fibonacci numbers and let
 $p_{\ell,m}(x, y) = \sum_{i=0}^{m} (-1)^i \binom{m}{i} (ix + y)^\ell$ be the alternating binomial
