@@ -48,7 +48,7 @@ def_wanted nativeCentralMapModuli (k : Type) [Field k] [IsAlgClosed k] [CharZero
     [LocallyOfFiniteType W0.scheme.hom] [IsNoetherian W0.scheme.left]
     (W : LiExpandedDegenerationModels.OneParameter P Q W0)
     (S : LiExpandedDegenerationModels.StandardSystem W) (n g : ℕ)
-    (beta : StableMapDegreeLabels.DegreeLabel W0.scheme.left) :
+    (beta : StableMapNumericalClasses.NumericalClass W0.scheme.left) :
     LiExpandedCentralModels.ModuliModel W S n g beta
 
 def_wanted nativeFullRelativeModuli (k : Type) [Field k] [IsAlgClosed k] [CharZero k]
@@ -56,7 +56,7 @@ def_wanted nativeFullRelativeModuli (k : Type) [Field k] [IsAlgClosed k] [CharZe
     (R : ProjectiveLine P.divisor.left (normalLineModule P))
     (S : StandardRelativeExpansionModels.StandardSystem P R) {n r : ℕ}
     (G : LiGluingRelativeTypes.FullType n r)
-    (beta : Fin G.vertices → StableMapDegreeLabels.DegreeLabel P.target.left) :
+    (beta : Fin G.vertices → StableMapNumericalClasses.NumericalClass P.target.left) :
     LiGluingRelativeTypes.ModuliModel P R S G beta
 
 end WantedExt.AlgebraicGeometry.LiExpandedGeometryWanted

@@ -44,7 +44,8 @@ variable {k : Type} [Field k] {P Q : RelativePair (k := k)} {W0 : SingularTarget
   [LocallyOfFiniteType P.target.hom] [LocallyOfFiniteType Q.target.hom]
   [LocallyOfFiniteType W0.scheme.hom]
   [IsNoetherian P.target.left] [IsNoetherian Q.target.left] [IsNoetherian W0.scheme.left]
-  {n g : ℕ} {beta : StableMapDegreeLabels.DegreeLabel W0.scheme.left} {W : OneParameter P Q W0}
+  {n g : ℕ} {beta : StableMapNumericalClasses.NumericalClass W0.scheme.left}
+  {W : OneParameter P Q W0}
   (C : Catalogue P Q W0 n g beta W)
   (D : CycleConstructionData (Spec (.of k)) (FiniteTypeArtin k)) (K : KreschPresentation D)
   (Z : RubberVirtualClassModels.Point D K)
@@ -56,10 +57,10 @@ structure VirtualCatalogue where
   centralDG : LiQualifiedDGVirtualModels.Central centralSource central
   leftSource : ∀ i,
     LiRelativeSourceModels.Source P C.environment.leftLine C.environment.leftExpanded
-      (C.enumeration.representative i).left (C.enumeration.representative i).leftLabel (C.entry i).left
+      (C.enumeration.representative i).left (C.enumeration.representative i).leftClass (C.entry i).left
   rightSource : ∀ i,
     LiRelativeSourceModels.Source Q C.environment.rightLine C.environment.rightExpanded
-      (C.enumeration.representative i).right (C.enumeration.representative i).rightLabel (C.entry i).right
+      (C.enumeration.representative i).right (C.enumeration.representative i).rightClass (C.entry i).right
   left : ∀ i, LiSourceQualifiedVirtualModels.VirtualData (leftSource i).assembly.parentModel D K (C.entry i).left.finiteType Z
   right : ∀ i, LiSourceQualifiedVirtualModels.VirtualData (rightSource i).assembly.parentModel D K (C.entry i).right.finiteType Z
   leftDG : ∀ i, LiQualifiedDGVirtualModels.Relative (leftSource i) (left i)
@@ -68,7 +69,7 @@ structure VirtualCatalogue where
     LiGluingChowModels.ChowOperations D K
       (C.enumeration.representative i).left (C.enumeration.representative i).right
       P Q W0 C.environment.leftLine C.environment.rightLine C.environment.leftExpanded C.environment.rightExpanded
-      (C.enumeration.representative i).leftLabel (C.enumeration.representative i).rightLabel
+      (C.enumeration.representative i).leftClass (C.enumeration.representative i).rightClass
       (C.entry i).left (C.entry i).right (C.entry i).matching W C.environment.expanded beta
       (C.enumeration.representative i).admissible (centralAt C.environment (C.enumeration.representative i))
       (C.entry i).gluing
@@ -91,7 +92,7 @@ def summand (i : Fin C.enumeration.count) :
     (LiGluingChowModels.weightedTerm D K
       (C.enumeration.representative i).left (C.enumeration.representative i).right
       P Q W0 C.environment.leftLine C.environment.rightLine C.environment.leftExpanded C.environment.rightExpanded
-      (C.enumeration.representative i).leftLabel (C.enumeration.representative i).rightLabel
+      (C.enumeration.representative i).leftClass (C.enumeration.representative i).rightClass
       (C.entry i).left (C.entry i).right (C.entry i).matching W C.environment.expanded beta
       (C.enumeration.representative i).admissible (centralAt C.environment (C.enumeration.representative i))
       (C.entry i).gluing (V.operations i)

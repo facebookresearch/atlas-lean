@@ -104,8 +104,11 @@ def twoTermEuler (Ω : Type) [Field Ω] [Algebra ℂ Ω]
   (Module.finrank Ω (cohomology (projection X (geometricParameter Ω)) F 0) : ℤ) -
     Module.finrank Ω (cohomology (projection X (geometricParameter Ω)) F 1)
 
-/-- The two-term curve profile `L ↦ twoTermEuler (F ⊗ L) - twoTermEuler F`; the curve class of `F`
-under the hypotheses of `twoTermEuler`. -/
+/-- The two-term curve profile `L ↦ twoTermEuler (F ⊗ L) - twoTermEuler F`. For a coherent sheaf
+`F` supported in dimension at most one (the sheaves of the Hall category) this is the degree
+profile of its curve class; vanishing of the higher cohomology of `F` and `F ⊗ L` alone does not
+suffice (for the structure sheaf of a plane in `ℙ³` the values at `𝒪(1)` and `𝒪(2)` are 2 and 5,
+which is not additive). -/
 def twoTermCurveProfile (Ω : Type) [Field Ω] [Algebra ℂ Ω]
     (F : (StablePairFamilies.total X (geometricParameter Ω)).Modules) : LineBundle X.left → ℤ :=
   fun L => twoTermEuler X Ω

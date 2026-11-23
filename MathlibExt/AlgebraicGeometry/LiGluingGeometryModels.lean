@@ -29,8 +29,9 @@ central moduli stack. The degree is the computed root-group cardinal.
 
 Source: Jun Li arXiv:math/0110113v1, introduction pp3--4, Section3.1
 equations(3.1)--(3.2), pp31--32, and diagram(3.14), Theorem3.15, pp39--40.
-Components are labelled by degrees against a polarization of the central fibre and its
-restrictions to the two sides (Li, math/0009097v1, Def. 4.6), which are locally constant.
+Components are labelled by numerical classes, the degrees against all line bundles of the
+central fibre and of the two sides (Li, math/0009097v1, Def. 4.6), which are locally constant;
+the vertex classes add up to the central class.
 -/
 
 set_option autoImplicit false
@@ -60,9 +61,9 @@ variable {n n' r g : ℕ} (G : FullType n r) (H : FullType n' r)
   [LocallyOfFiniteType P.target.hom] [LocallyOfFiniteType Q.target.hom]
   [LocallyOfFiniteType W0.scheme.hom]
   [IsNoetherian P.target.left] [IsNoetherian Q.target.left] [IsNoetherian W0.scheme.left]
-  (beta : Fin G.vertices → StableMapDegreeLabels.DegreeLabel P.target.left)
-  (gamma : Fin H.vertices → StableMapDegreeLabels.DegreeLabel Q.target.left)
-  (total : StableMapDegreeLabels.DegreeLabel W0.scheme.left)
+  (beta : Fin G.vertices → StableMapNumericalClasses.NumericalClass P.target.left)
+  (gamma : Fin H.vertices → StableMapNumericalClasses.NumericalClass Q.target.left)
+  (total : StableMapNumericalClasses.NumericalClass W0.scheme.left)
 
 structure AdmissibleTriple where
   contact : ∀ i : Fin r, G.order i = H.order i
@@ -74,13 +75,15 @@ structure AdmissibleTriple where
       (a = Sum.inl (G.rootLabels i).1 ∧ b = Sum.inr (H.rootLabels i).1) ∨
       (b = Sum.inl (G.rootLabels i).1 ∧ a = Sum.inr (H.rootLabels i).1)) a b
   legs : LegOrdering n n'
-  /-- The vertex polarizations are the restrictions of the polarization of the central fibre. -/
-  leftLine : ∀ v, Nonempty ((beta v).line.val ≅
-    (Scheme.Modules.pullback W0.left.left).obj total.line.val)
-  rightLine : ∀ v, Nonempty ((gamma v).line.val ≅
-    (Scheme.Modules.pullback W0.right.left).obj total.line.val)
-  /-- The degrees of the two sides add up to the total degree. -/
-  degree : total.degree = (∑ v, (beta v).degree) + ∑ v, (gamma v).degree
+  /-- The vertex classes add up to the central class: against every line bundle on the central
+  fibre, the central degree is the sum of the vertex degrees of its restrictions to the two
+  sides. -/
+  degree : ∀ (L : ProjectiveLineSystems.LineBundle W0.scheme.left)
+    (hl : CoherentCurveLinearSeries.IsLineBundle
+      ((Scheme.Modules.pullback W0.left.left).obj L.val))
+    (hr : CoherentCurveLinearSeries.IsLineBundle
+      ((Scheme.Modules.pullback W0.right.left).obj L.val)),
+    total L = (∑ v, beta v ⟨_, hl⟩) + ∑ v, gamma v ⟨_, hr⟩
 
 variable (R : ProjectiveLine P.divisor.left (normalLineModule P))
   (R' : ProjectiveLine Q.divisor.left (normalLineModule Q))
@@ -201,8 +204,8 @@ variable (G : FullType n r) (H : FullType n' r)
   (R' : ProjectiveLine Q.divisor.left (normalLineModule Q))
   (S : StandardRelativeExpansionModels.StandardSystem P R)
   (S' : StandardRelativeExpansionModels.StandardSystem Q R')
-  (beta : Fin G.vertices → StableMapDegreeLabels.DegreeLabel P.target.left)
-  (gamma : Fin H.vertices → StableMapDegreeLabels.DegreeLabel Q.target.left)
+  (beta : Fin G.vertices → StableMapNumericalClasses.NumericalClass P.target.left)
+  (gamma : Fin H.vertices → StableMapNumericalClasses.NumericalClass Q.target.left)
   (ML : LiGluingRelativeTypes.ModuliModel P R S G beta)
   (MR : LiGluingRelativeTypes.ModuliModel Q R' S' H gamma)
 
@@ -254,7 +257,7 @@ structure MatchingModel where
 
 variable (W : LiExpandedDegenerationModels.OneParameter P Q W0)
   (WS : LiExpandedDegenerationModels.StandardSystem W)
-  (total : StableMapDegreeLabels.DegreeLabel W0.scheme.left)
+  (total : StableMapNumericalClasses.NumericalClass W0.scheme.left)
   (eta : AdmissibleTriple (g := g) G H P Q W0 beta gamma total)
   (MC : LiExpandedCentralModels.ModuliModel W WS (n + n') g total)
   (M : MatchingModel G H P Q W0 R R' S S' beta gamma ML MR)
@@ -329,9 +332,9 @@ variable {n n' r g : ℕ} (G : FullType n r) (H : FullType n' r)
   [LocallyOfFiniteType P.target.hom] [LocallyOfFiniteType Q.target.hom]
   [LocallyOfFiniteType W0.scheme.hom]
   [IsNoetherian P.target.left] [IsNoetherian Q.target.left] [IsNoetherian W0.scheme.left]
-  (beta : Fin G.vertices → StableMapDegreeLabels.DegreeLabel P.target.left)
-  (gamma : Fin H.vertices → StableMapDegreeLabels.DegreeLabel Q.target.left)
-  (total : StableMapDegreeLabels.DegreeLabel W0.scheme.left)
+  (beta : Fin G.vertices → StableMapNumericalClasses.NumericalClass P.target.left)
+  (gamma : Fin H.vertices → StableMapNumericalClasses.NumericalClass Q.target.left)
+  (total : StableMapNumericalClasses.NumericalClass W0.scheme.left)
   (eta : AdmissibleTriple (g := g) G H P Q W0 beta gamma total)
   (W : LiExpandedDegenerationModels.OneParameter P Q W0)
 

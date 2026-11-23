@@ -42,7 +42,7 @@ public def_wanted nativeFullRelativeLiSource (k : Type) [Field k] [IsAlgClosed k
     (R : ProjectiveLine P.divisor.left (normalLineModule P))
     (S : StandardRelativeExpansionModels.StandardSystem P R)
     {n r : ℕ} (G : FullType n r)
-    (beta : Fin G.vertices → StableMapDegreeLabels.DegreeLabel P.target.left)
+    (beta : Fin G.vertices → StableMapNumericalClasses.NumericalClass P.target.left)
     (M : LiGluingRelativeTypes.ModuliModel P R S G beta) :
     LiRelativeSourceModels.Source P R S G beta M
 
@@ -50,7 +50,7 @@ public def_wanted nativeCentralLiSource (k : Type) [Field k] [IsAlgClosed k] [Ch
     (P Q : RelativePair (k := k)) (W0 : SingularTarget P Q)
     [LocallyOfFiniteType W0.scheme.hom] [IsNoetherian W0.scheme.left]
     (W : OneParameter P Q W0) (S : LiExpandedDegenerationModels.StandardSystem W)
-    {n g : ℕ} (beta : StableMapDegreeLabels.DegreeLabel W0.scheme.left)
+    {n g : ℕ} (beta : StableMapNumericalClasses.NumericalClass W0.scheme.left)
     (M : LiExpandedCentralModels.ModuliModel W S n g beta) :
     LiCentralSourceModels.Source W S beta M
 
@@ -59,7 +59,8 @@ public def_wanted nativeLiCatalogue (k : Type) [Field k] [IsAlgClosed k] [CharZe
     [LocallyOfFiniteType P.target.hom] [LocallyOfFiniteType Q.target.hom]
     [LocallyOfFiniteType W0.scheme.hom]
     [IsNoetherian P.target.left] [IsNoetherian Q.target.left] [IsNoetherian W0.scheme.left]
-    (n g : ℕ) (beta : StableMapDegreeLabels.DegreeLabel W0.scheme.left) (W : OneParameter P Q W0) :
+    (n g : ℕ) (beta : StableMapNumericalClasses.NumericalClass W0.scheme.left)
+    (W : OneParameter P Q W0) :
     LiDegenerationCatalogueModels.Catalogue P Q W0 n g beta W
 
 end WantedExt.AlgebraicGeometry.LiGlobalSourceWanted

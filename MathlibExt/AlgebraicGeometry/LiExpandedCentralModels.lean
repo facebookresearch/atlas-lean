@@ -9,14 +9,14 @@ module
 
 public import MathlibExt.AlgebraicGeometry.LiExpandedDegenerationModels
 public import MathlibExt.AlgebraicGeometry.StackChowGroups
-public import MathlibExt.AlgebraicGeometry.StableMapDegreeLabels
+public import MathlibExt.AlgebraicGeometry.StableMapNumericalClasses
 
 /-!
 # Actual central stable-map families and their moduli realization
 
 The target is an etale-local standard expanded degeneration with one
 global base map. The curve, markings, predeformability and contraction
-are native scheme data. The central curve class is computed after the
+are native scheme data. The central numerical class is computed after the
 canonical pullback factorization to the specified original W0.
 
 The moduli realization retains a native fibre-groupoid equivalence and
@@ -127,15 +127,15 @@ def IsStable (F : Family W S n g T) : Prop :=
 
 variable [LocallyOfFiniteType W0.scheme.hom] [IsNoetherian W0.scheme.left]
 
-/-- The family has the degree of its label against the label's polarization (Li, Def. 4.6). -/
-def HasDegree (beta : StableMapDegreeLabels.DegreeLabel W0.scheme.left)
+/-- The family has numerical class `beta` on every geometric fibre (Li, Def. 4.6). -/
+def HasCurveClass (beta : StableMapNumericalClasses.NumericalClass W0.scheme.left)
     (F : Family W S n g T) : Prop :=
-  StableMapDegreeLabels.HasFibreDegree (contractedFamily W S n g T F).curve.π
-    (contractedFamily W S n g T F).map beta.line.val beta.degree
+  StableMapNumericalClasses.HasNumericalClass (contractedFamily W S n g T F).curve.π
+    (contractedFamily W S n g T F).map beta
 
-abbrev StableFamily (beta : StableMapDegreeLabels.DegreeLabel W0.scheme.left) :=
+abbrev StableFamily (beta : StableMapNumericalClasses.NumericalClass W0.scheme.left) :=
   (show ObjectProperty (Family W S n g T) from
-    fun F => IsStable W S n g T F ∧ HasDegree W S n g T beta F).FullSubcategory
+    fun F => IsStable W S n g T F ∧ HasCurveClass W S n g T beta F).FullSubcategory
 
 structure FamilyBaseChange {T U : Over (Spec (.of k))} (f : T ⟶ U)
     (F : Family W S n g T) (H : Family W S n g U) where
@@ -147,7 +147,7 @@ structure FamilyBaseChange {T U : Over (Spec (.of k))} (f : T ⟶ U)
   marking : ∀ i, F.curve.marking i ≫ source = f.left ≫ H.curve.marking i
   map : F.map ≫ target.left = source ≫ H.map
 
-structure ModuliModel (beta : StableMapDegreeLabels.DegreeLabel W0.scheme.left) where
+structure ModuliModel (beta : StableMapNumericalClasses.NumericalClass W0.scheme.left) where
   stack : Stack (Spec (.of k))
   family : ∀ T : Over (Spec (.of k)), stack.Fibre T ⥤ StableFamily W S n g T beta
   equivalence : ∀ T, (family T).IsEquivalence

@@ -54,7 +54,7 @@ section Relative
 variable {P : RelativePair (k := k)} {R : ProjectiveLine P.divisor.left (normalLineModule P)}
   {S : StandardRelativeExpansionModels.StandardSystem P R} {n r : ℕ} {G : FullType n r}
   [LocallyOfFiniteType P.target.hom] [IsNoetherian P.target.left]
-  {beta : Fin G.vertices → StableMapDegreeLabels.DegreeLabel P.target.left}
+  {beta : Fin G.vertices → StableMapNumericalClasses.NumericalClass P.target.left}
   {M : ModuliModel P R S G beta}
   (N : LiRelativeSourceModels.Source P R S G beta M)
   {D : CycleConstructionData (Spec (.of k)) (FiniteTypeArtin k)} {K : KreschPresentation D}
@@ -80,7 +80,7 @@ section Central
 variable {P Q : RelativePair (k := k)} {W0 : SingularTarget P Q}
   {W : OneParameter P Q W0} {S : LiExpandedDegenerationModels.StandardSystem W} {n g : ℕ}
   [LocallyOfFiniteType W0.scheme.hom] [IsNoetherian W0.scheme.left]
-  {beta : StableMapDegreeLabels.DegreeLabel W0.scheme.left}
+  {beta : StableMapNumericalClasses.NumericalClass W0.scheme.left}
   {M : LiExpandedCentralModels.ModuliModel W S n g beta}
   (N : LiCentralSourceModels.Source W S beta M)
   {D : CycleConstructionData (Spec (.of k)) (FiniteTypeArtin k)} {K : KreschPresentation D}

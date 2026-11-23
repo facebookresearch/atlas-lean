@@ -16,7 +16,7 @@ public import MathlibExt.AlgebraicGeometry.LiDegenerationVirtualCatalogueModels
 # Source-produced virtual recipes and the actual weighted degeneration identity
 
 The original projective degeneration, numerical type and actual total
-curve class are the geometric inputs. The catalogue, both relative
+numerical class are the geometric inputs. The catalogue, both relative
 sources, central original-parameter fibre source, full global POT/bundle/
 cone/virtual recipes, and actual matching/Phi Chow operations are all
 construction outputs. The final proof request uses those same outputs.
@@ -44,7 +44,8 @@ public def_wanted nativeLiVirtualCatalogue (k : Type) [Field k] [IsAlgClosed k] 
     [LocallyOfFiniteType P.target.hom] [LocallyOfFiniteType Q.target.hom]
     [LocallyOfFiniteType W0.scheme.hom]
     [IsNoetherian P.target.left] [IsNoetherian Q.target.left] [IsNoetherian W0.scheme.left]
-    (n g : ℕ) (beta : StableMapDegreeLabels.DegreeLabel W0.scheme.left) (W : OneParameter P Q W0)
+    (n g : ℕ) (beta : StableMapNumericalClasses.NumericalClass W0.scheme.left)
+    (W : OneParameter P Q W0)
     (D : CycleConstructionData (Spec (.of k)) (FiniteTypeArtin k)) (K : KreschPresentation D)
     (Z : RubberVirtualClassModels.Point D K) :
     LiDegenerationVirtualCatalogueModels.VirtualCatalogue
@@ -55,7 +56,8 @@ public theorem_wanted nativeLiDegenerationFormula (k : Type) [Field k] [IsAlgClo
     [LocallyOfFiniteType P.target.hom] [LocallyOfFiniteType Q.target.hom]
     [LocallyOfFiniteType W0.scheme.hom]
     [IsNoetherian P.target.left] [IsNoetherian Q.target.left] [IsNoetherian W0.scheme.left]
-    (n g : ℕ) (beta : StableMapDegreeLabels.DegreeLabel W0.scheme.left) (W : OneParameter P Q W0)
+    (n g : ℕ) (beta : StableMapNumericalClasses.NumericalClass W0.scheme.left)
+    (W : OneParameter P Q W0)
     (D : CycleConstructionData (Spec (.of k)) (FiniteTypeArtin k)) (K : KreschPresentation D)
     (Z : RubberVirtualClassModels.Point D K) :
     let C := ❰nativeLiCatalogue❱ k P Q W0 n g beta W

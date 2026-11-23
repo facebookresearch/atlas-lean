@@ -44,9 +44,9 @@ def_wanted nativeLiGeometry (k : Type) [Field k] [IsAlgClosed k] [CharZero k]
     [LocallyOfFiniteType W0.scheme.hom]
     [IsNoetherian P.target.left] [IsNoetherian Q.target.left] [IsNoetherian W0.scheme.left]
     {n n' r g : ℕ} (G : FullType n r) (H : FullType n' r)
-    (beta : Fin G.vertices → StableMapDegreeLabels.DegreeLabel P.target.left)
-    (gamma : Fin H.vertices → StableMapDegreeLabels.DegreeLabel Q.target.left)
-    (total : StableMapDegreeLabels.DegreeLabel W0.scheme.left)
+    (beta : Fin G.vertices → StableMapNumericalClasses.NumericalClass P.target.left)
+    (gamma : Fin H.vertices → StableMapNumericalClasses.NumericalClass Q.target.left)
+    (total : StableMapNumericalClasses.NumericalClass W0.scheme.left)
     (eta : AdmissibleTriple (g := g) G H P Q W0 beta gamma total)
     (W : LiExpandedDegenerationModels.OneParameter P Q W0) :
     GeometryOutput G H P Q W0 beta gamma total eta W
@@ -57,9 +57,9 @@ def_wanted nativeLiChowOperations (k : Type) [Field k] [IsAlgClosed k] [CharZero
     [LocallyOfFiniteType W0.scheme.hom]
     [IsNoetherian P.target.left] [IsNoetherian Q.target.left] [IsNoetherian W0.scheme.left]
     {n n' r g : ℕ} (G : FullType n r) (H : FullType n' r)
-    (beta : Fin G.vertices → StableMapDegreeLabels.DegreeLabel P.target.left)
-    (gamma : Fin H.vertices → StableMapDegreeLabels.DegreeLabel Q.target.left)
-    (total : StableMapDegreeLabels.DegreeLabel W0.scheme.left)
+    (beta : Fin G.vertices → StableMapNumericalClasses.NumericalClass P.target.left)
+    (gamma : Fin H.vertices → StableMapNumericalClasses.NumericalClass Q.target.left)
+    (total : StableMapNumericalClasses.NumericalClass W0.scheme.left)
     (eta : AdmissibleTriple (g := g) G H P Q W0 beta gamma total)
     (W : LiExpandedDegenerationModels.OneParameter P Q W0)
     (D : StackCycleRelations.CycleConstructionData (Spec (.of k)) (FiniteTypeArtin k))

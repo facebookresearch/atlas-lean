@@ -18,7 +18,7 @@ Actual expansion families, full contact ideals, etale pure node equations,
 disconnected groupoids, common target automorphisms and ordered root/leg
 types are fixed in MathlibExt. The constructor supplies the actual Cartesian
 pullbacks of relative maps. Moduli of relative maps are requested in
-`LiExpandedGeometryWanted` with degree labels: a fixed rational Chow class is
+`LiExpandedGeometryWanted` with numerical classes: a fixed rational Chow class is
 not locally constant in families, so it does not label a finite-type moduli
 stack.
 Sources: Jun Li arXiv:math/0009097v1, Section4.3;
