@@ -1,0 +1,41 @@
+name: Target
+description: Ask for results the site does not have yet.
+title: "[Target] "
+labels: ["enhancement", "math graph"]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Search the site first: a result may already be a page, from Mathlib or
+        from this repository. For a whole area, see the
+        [community roadmaps](https://github.com/facebookresearch/atlas-lean/labels/community-roadmap).
+  - type: textarea
+    id: results
+    attributes:
+      label: Results
+      description: >-
+        Each result you want, with its source: the book or paper, its edition
+        or version, and the theorem number.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: What these results lead to, or who needs them.
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: >-
+        What has to be on the site for this issue to close, for example which
+        results are planned pages, which are stated in Lean, and which are
+        proved.
+    validations:
+      required: true
+  - type: checkboxes
+    id: review
+    attributes:
+      label: Review
+      options:
+        - label: I can check the pages this issue adds.
