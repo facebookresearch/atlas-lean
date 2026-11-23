@@ -10,9 +10,19 @@ module
 import MathlibExt.NumberTheory.TwoSetsSumsetSquares
 import Mathlib.Tactic.NormNum
 
-/-! # Tests for integer quadruples with square pairwise sums -/
+/-! # Tests for integer families with square pairwise sums -/
 
 open MathlibExt.NumberTheory.TwoSetsSumsetSquaresWanted
+
+-- Choudhry's numerical example for (3.3), in the order of the parametrization.
+example : PairwiseSumsSquares ![4, 484, 169] ![192, 0, (672 : ℤ)] :=
+  pairwiseSumsSquares_triple_family33 5 3 2 1
+
+-- Both negative entries in the second triple cancel an entry of the first.
+example : PairwiseSumsSquares ![100, 36, 36] ![-36, 0, (-36 : ℤ)] := by
+  have h := pairwiseSumsSquares_triple_family33 1 (-2) 2 1
+  norm_num at h
+  exact h
 
 -- Four distinct entries in each family, including a negative summand.
 example : PairwiseSumsSquares
