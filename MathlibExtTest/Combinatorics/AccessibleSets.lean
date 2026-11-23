@@ -14,6 +14,22 @@ import MathlibExt.Combinatorics.AccessibleSets
 
 /-! # Tests for accessible sets and diffsequences -/
 
+namespace MetaMathlibExt.two_accessible_of_internal_diffsequences
+
+-- Consecutive powers of two have gaps that are themselves powers of two.
+example : IsRAccessible 2 (Set.range fun n : ℕ => 2 ^ n) := by
+  apply two_accessible_of_internal_diffsequences
+  · rintro _ ⟨n, rfl⟩
+    exact pow_pos (by decide : 0 < (2 : ℕ)) n
+  · intro k _
+    refine ⟨fun i => ⟨2 ^ (i : ℕ), pow_pos (by decide) _⟩, fun i => ⟨i, rfl⟩, ?_⟩
+    intro i hi
+    refine ⟨2 ^ i, ⟨i, rfl⟩, ?_⟩
+    change ((2 ^ (i + 1) : ℕ) : ℤ) - (2 ^ i : ℕ) = (2 ^ i : ℕ)
+    simp [pow_succ, mul_two]
+
+end MetaMathlibExt.two_accessible_of_internal_diffsequences
+
 namespace MetaMathlibExt.accessible_divisible_subset
 
 -- Enumerating an infinite color class in order witnesses accessibility of all positive gaps.
