@@ -15,16 +15,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **The gcd-term sequence is integral and recovers the gcd.** Let $a, b \ge 1$ be natural
-numbers and let $s_{a,b}$ be the gcd-term sequence. Every value $s_{a,b}(n)$ is a natural number,
-and $s_{a,b}(ab) = \gcd(a, b) + 1$.
-
-Source: Mihai Prunescu and Joseph M. Shunia, *Arithmetic-Term Representations for the Greatest
-Common Divisor*, INTEGERS 26 (2026), Article A96, Lemma 4. -/
-public theorem_wanted gcdTermSeq_natural_and_eq_gcd_add_one (a b : ℕ) (ha : 1 ≤ a)
-    (hb : 1 ≤ b) :
-    (∀ n, ∃ m : ℕ, gcdTermSeq a b n = m) ∧ gcdTermSeq a b (a * b) = Nat.gcd a b + 1
-
 /-- **Arithmetic term for the gcd in base $5$.** For all natural numbers $a, b \ge 1$,
 $$
 \gcd(a, b) + 1 = \left\lfloor \frac{5^{ab(ab+a+b)}}{(5^{a^2 b} - 1)(5^{a b^2} - 1)} \right\rfloor

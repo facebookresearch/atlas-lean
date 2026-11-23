@@ -616,6 +616,165 @@ private theorem moment_le_exp_of_renyiDiv {Ω : Type*} [Fintype Ω]
   conv_lhs => rw [← Real.exp_log hMpos]
   exact Real.exp_le_exp.mpr hlog
 
+private theorem bind_map_pair_apply {A B : Type*} [Fintype A] [Fintype B]
+    (P1 : PMF A) (P2 : A → PMF B) (y : A) (z : B) :
+    ((P1.bind (fun x => (P2 x).map (fun w => (x, w)))) (y, z))
+      = P1 y * (P2 y) z := by
+  rw [PMF.bind_apply, tsum_fintype]
+  have hmap : ∀ x : A, ((P2 x).map (fun w => (x, w))) (y, z)
+      = if x = y then (P2 x) z else 0 := by
+    intro x
+    simp only [PMF.map_apply, tsum_fintype]
+    by_cases hxy : x = y
+    · rw [hxy, Finset.sum_eq_single_of_mem z (Finset.mem_univ z)
+        (fun w _ hne => by
+          have hfalse : ¬ ((y, z) = (y, w)) :=
+            fun h => hne (congrArg Prod.snd h).symm
+          rw [ite_eq_right hfalse]),
+        ite_eq_left rfl, ite_eq_left rfl]
+    · rw [ite_eq_right hxy, Finset.sum_eq_zero (fun w _ => by
+          have hfalse : ¬ ((y, z) = (x, w)) :=
+            fun h => hxy (congrArg Prod.fst h).symm
+          rw [ite_eq_right hfalse])]
+  simp_rw [hmap]
+  rw [Finset.sum_eq_single_of_mem y (Finset.mem_univ y)
+    (fun x _ hne => by rw [ite_eq_right hne, mul_zero]),
+    ite_eq_left rfl]
+
+private theorem bind_map_pair_toReal {A B : Type*} [Fintype A] [Fintype B]
+    (P1 : PMF A) (P2 : A → PMF B) (y : A) (z : B) :
+    (((P1.bind (fun x => (P2 x).map (fun w => (x, w)))) (y, z))).toReal
+      = (P1 y).toReal * ((P2 y) z).toReal := by
+  rw [bind_map_pair_apply, ENNReal.toReal_mul]
+
+private theorem support_bind_adaptive {Database A B : Type*}
+    [Fintype A] [Fintype B]
+    {M1 : Database → PMF A} {M2 : Database → A → PMF B}
+    {d d' : Database}
+    (hs1 : Support (M1 d) (M1 d'))
+    (hs2 : ∀ y, Support (M2 d y) (M2 d' y)) :
+    Support ((M1 d).bind (fun y => (M2 d y).map (fun z => (y, z))))
+      ((M1 d').bind (fun y => (M2 d' y).map (fun z => (y, z)))) := by
+  rintro ⟨y, z⟩ hne
+  rw [bind_map_pair_apply] at hne ⊢
+  have h1 : M1 d y ≠ 0 := by
+    intro h0
+    exact hne (by rw [h0, zero_mul])
+  have h2 : M2 d y z ≠ 0 := by
+    intro h0
+    exact hne (by rw [h0, mul_zero])
+  exact mul_ne_zero (hs1 y h1) (hs2 y z h2)
+
+private theorem renyiMomentReal_bind_adaptive {Database A B : Type*}
+    [Fintype A] [Fintype B]
+    {M1 : Database → PMF A} {M2 : Database → A → PMF B}
+    {d d' : Database} {α : ℝ} :
+    renyiMomentReal ((M1 d).bind (fun y => (M2 d y).map (fun z => (y, z))))
+        ((M1 d').bind (fun y => (M2 d' y).map (fun z => (y, z)))) α
+      = ∑ y, ((M1 d y).toReal ^ α / (M1 d' y).toReal ^ (α - 1))
+        * renyiMomentReal (M2 d y) (M2 d' y) α := by
+  unfold renyiMomentReal
+  rw [Fintype.sum_prod_type]
+  simp_rw [bind_map_pair_toReal]
+  have hterm : ∀ y z,
+      (((M1 d y).toReal * ((M2 d y) z).toReal) ^ α)
+        / (((M1 d' y).toReal * ((M2 d' y) z).toReal) ^ (α - 1))
+      = (((M1 d y).toReal ^ α / (M1 d' y).toReal ^ (α - 1)))
+        * (((M2 d y) z).toReal ^ α / ((M2 d' y) z).toReal ^ (α - 1)) := by
+    intro y z
+    rw [Real.mul_rpow ENNReal.toReal_nonneg ENNReal.toReal_nonneg,
+      Real.mul_rpow ENNReal.toReal_nonneg ENNReal.toReal_nonneg,
+      mul_div_mul_comm]
+  simp_rw [hterm]
+  apply Finset.sum_congr rfl
+  intro y _
+  rw [← Finset.mul_sum]
+
+/-- Adaptive composition: the second mechanism may depend on the first-stage
+output. The hypothesis `h_eps2` is required because when `A` is empty `h2`
+is vacuous, so nonnegativity of `ε2` does not follow from it. -/
+theorem isRDP_bind_adaptive {Database A B : Type*} [Fintype A] [Fintype B]
+    {M1 : Database → PMF A} {M2 : Database → A → PMF B}
+    {adj : Database → Database → Prop} {α ε1 ε2 : ℝ}
+    (h1 : IsRDP M1 adj α ε1) (h_eps2 : 0 ≤ ε2)
+    (h2 : ∀ y, IsRDP (fun d => M2 d y) adj α ε2) :
+    IsRDP (fun d => (M1 d).bind (fun y => (M2 d y).map (fun z => (y, z))))
+      adj α (ε1 + ε2) := by
+  have hα := h1.2.1
+  refine ⟨add_nonneg h1.1 h_eps2, hα, fun d d' hadj => ?_⟩
+  obtain ⟨hs1, hdiv1⟩ := h1.2.2 d d' hadj
+  have hpair : ∀ y, Support (M2 d y) (M2 d' y)
+      ∧ renyiDiv (M2 d y) (M2 d' y) α ≤ (ε2 : EReal) :=
+    fun y => (h2 y).2.2 d d' hadj
+  have hsJ : Support ((M1 d).bind (fun y => (M2 d y).map (fun z => (y, z))))
+      ((M1 d').bind (fun y => (M2 d' y).map (fun z => (y, z)))) :=
+    support_bind_adaptive hs1 (fun y => (hpair y).1)
+  refine ⟨hsJ, ?_⟩
+  have h1R : renyiDivReal (M1 d) (M1 d') α ≤ ε1 := by
+    rw [renyiDiv_of_support hs1 hα] at hdiv1
+    exact EReal.coe_le_coe_iff.mp hdiv1
+  have h2R : ∀ y, renyiMomentReal (M2 d y) (M2 d' y) α
+      ≤ Real.exp ((α - 1) * ε2) := by
+    intro y
+    obtain ⟨hs2y, hdiv2y⟩ := hpair y
+    have hR : renyiDivReal (M2 d y) (M2 d' y) α ≤ ε2 := by
+      rw [renyiDiv_of_support hs2y hα] at hdiv2y
+      exact EReal.coe_le_coe_iff.mp hdiv2y
+    exact moment_le_exp_of_renyiDiv _ _ hα hs2y hR
+  have hM1 : renyiMomentReal (M1 d) (M1 d') α ≤ Real.exp ((α - 1) * ε1) :=
+    moment_le_exp_of_renyiDiv _ _ hα hs1 h1R
+  have hnn : ∀ y ∈ Finset.univ,
+      0 ≤ (M1 d y).toReal ^ α / (M1 d' y).toReal ^ (α - 1) := by
+    intro y _
+    exact div_nonneg (Real.rpow_nonneg ENNReal.toReal_nonneg _)
+      (Real.rpow_nonneg ENNReal.toReal_nonneg _)
+  have hsum : renyiMomentReal
+        ((M1 d).bind (fun y => (M2 d y).map (fun z => (y, z))))
+        ((M1 d').bind (fun y => (M2 d' y).map (fun z => (y, z)))) α
+      ≤ renyiMomentReal (M1 d) (M1 d') α * Real.exp ((α - 1) * ε2) := by
+    rw [renyiMomentReal_bind_adaptive]
+    calc ∑ y, ((M1 d y).toReal ^ α / (M1 d' y).toReal ^ (α - 1))
+            * renyiMomentReal (M2 d y) (M2 d' y) α
+        ≤ ∑ y, ((M1 d y).toReal ^ α / (M1 d' y).toReal ^ (α - 1))
+            * Real.exp ((α - 1) * ε2) :=
+          Finset.sum_le_sum (fun y _ =>
+            mul_le_mul_of_nonneg_left (h2R y) (hnn y (Finset.mem_univ y)))
+      _ = (∑ y, ((M1 d y).toReal ^ α / (M1 d' y).toReal ^ (α - 1)))
+          * Real.exp ((α - 1) * ε2) := by
+          rw [← Finset.sum_mul]
+  have hexp : Real.exp ((α - 1) * ε1) * Real.exp ((α - 1) * ε2)
+      = Real.exp ((α - 1) * (ε1 + ε2)) := by
+    rw [← Real.exp_add]
+    congr 1
+    ring
+  have hM : renyiMomentReal
+        ((M1 d).bind (fun y => (M2 d y).map (fun z => (y, z))))
+        ((M1 d').bind (fun y => (M2 d' y).map (fun z => (y, z)))) α
+      ≤ Real.exp ((α - 1) * (ε1 + ε2)) := by
+    calc _ ≤ renyiMomentReal (M1 d) (M1 d') α * Real.exp ((α - 1) * ε2) := hsum
+      _ ≤ Real.exp ((α - 1) * ε1) * Real.exp ((α - 1) * ε2) :=
+          mul_le_mul_of_nonneg_right hM1 (Real.exp_pos _).le
+      _ = Real.exp ((α - 1) * (ε1 + ε2)) := hexp
+  have hMpos : 0 < renyiMomentReal
+        ((M1 d).bind (fun y => (M2 d y).map (fun z => (y, z))))
+        ((M1 d').bind (fun y => (M2 d' y).map (fun z => (y, z)))) α :=
+    lt_of_lt_of_le zero_lt_one (one_le_renyiMomentReal _ _ hα hsJ)
+  rw [renyiDiv_of_support hsJ hα, EReal.coe_le_coe_iff]
+  unfold renyiDivReal
+  have hlog : Real.log (renyiMomentReal
+        ((M1 d).bind (fun y => (M2 d y).map (fun z => (y, z))))
+        ((M1 d').bind (fun y => (M2 d' y).map (fun z => (y, z)))) α)
+      ≤ (α - 1) * (ε1 + ε2) := by
+    calc Real.log _ ≤ Real.log (Real.exp ((α - 1) * (ε1 + ε2))) :=
+          Real.log_le_log hMpos hM
+      _ = (α - 1) * (ε1 + ε2) := Real.log_exp _
+  calc (1 / (α - 1)) * Real.log _
+      ≤ (1 / (α - 1)) * ((α - 1) * (ε1 + ε2)) :=
+        mul_le_mul_of_nonneg_left hlog
+          (one_div_nonneg.mpr (le_of_lt (sub_pos.mpr hα)))
+    _ = ε1 + ε2 := by
+        rw [← mul_assoc, one_div_mul_cancel (sub_pos.mpr hα).ne', one_mul]
+
 theorem holder_event_bound {Ω : Type*} [Fintype Ω] (P Q : PMF Ω) {α : ℝ}
     (hα : 1 < α) (hs : Support P Q) (s : Finset Ω) :
     ∑ w ∈ s, (P w).toReal ≤ renyiMomentReal P Q α ^ (1 / α)
