@@ -18,7 +18,7 @@ The full-basis module is the actual sheafified local Ext of the original
 Cartier dual, with its fixed target-multiplication action. Finite
 projectivity, cartesian crystal maps and the native internal-Ext
 comparison are outputs of this request. They are not inferred merely
-from enlarging the older uniformly nilpotent test category.
+from enlarging the nilpotent test category (nilpotent divided-power structures).
 
 Source: BBM82; Scholze--Weinstein1211.6357v2, Section3.2 explicitly
 extends Lie(E_G) beyond the nilpotent PD structure setting.

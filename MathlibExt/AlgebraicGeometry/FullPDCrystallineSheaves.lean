@@ -23,7 +23,7 @@ public import Mathlib.Algebra.Category.Grp.EquivalenceGroupAddGroup
 The rings are literal PD thickening rings; the group values are the
 original scheme-valued points on their actual closed reductions. Covers
 preserve those reductions as cartesian open restrictions. This site is
-separate from the uniformly nilpotent crystalline basis. Restriction and
+separate from the nilpotent crystalline basis (nilpotent divided-power structures). Restriction and
 extension comparisons are separate source requests.
 
 Source: Berthelot--Breen--Messing, Theorie de Dieudonne cristalline II;
@@ -42,18 +42,15 @@ open MathlibExt.CategoryTheory.SheafInternalExtModels
 
 variable (p : ℕ) [Fact p.Prime] (A : PDBase) (S : Over A.reduction)
 
-/-- Concrete sheafification on any small model of this PD site. -/
-instance abelianSheafifySmall {C : Type 1} [SmallCategory C]
-    (J : GrothendieckTopology C) : HasSheafify J AddCommGrpCat.{1} := by
-  infer_instance
-
-/-- Ring sheafification uses the same actual site and coefficient universe. -/
-instance ringSheafifySmall {C : Type 1} [SmallCategory C]
-    (J : GrothendieckTopology C) : HasSheafify J CommRingCat.{1} := by
-  infer_instance
-
 /-- The integral abelian coefficient category on the actual PD site. -/
 abbrev CoefficientSheaves := AbelianSheaves (topology p A S)
+
+/-- Mathlib's sheafification instance on a small site, restated at universe `1` for this file
+only: synthesising it on the small model inside `Sheaf.isGrothendieckAbelian_of_essentiallySmall`
+otherwise leaves the small model's universe as a stuck metavariable. -/
+local instance abelianSheafifySmall {C : Type 1} [SmallCategory C]
+    (J : GrothendieckTopology C) : HasSheafify J AddCommGrpCat.{1} := by
+  infer_instance
 
 instance coefficientSheavesGrothendieck :
     IsGrothendieckAbelian.{1} (CoefficientSheaves p A S) :=

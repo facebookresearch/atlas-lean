@@ -18,7 +18,7 @@ covers of their ambient schemes. The normalized statement below says
 that their ring presheaf already satisfies descent, so its completed
 sheafification construction has exactly the original rings on tests.
 
-The Dieudonné finite-projective crystal, F/V, A_cris/B_cris and formal
+The Dieudonné finite-projective crystal, F/V, A_cris/B_cris⁺ and formal
 Lie/Hodge--Tate realization remain further required interfaces.
 
 References: Berthelot--Ogus, *Notes on crystalline cohomology*, Chapter III;

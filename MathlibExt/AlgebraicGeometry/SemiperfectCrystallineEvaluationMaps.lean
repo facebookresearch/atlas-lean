@@ -12,12 +12,13 @@ public import MathlibExt.AlgebraicGeometry.SemiperfectCrystallineModuleLimits
 /-!
 # Original universal A_cris coefficient and module evaluation maps
 
-Every p-nilpotent full PD test receives its coefficient map through the
-original universal-hull map and the exact p-power projection. A PD
-factorization into the finite A_cris test is requested with this fixed
-ring map. The module evaluation then is the native Ext restriction of
-the native inverse-limit projection. Its tensor comparison is a genuine
-Wanted output on every original compatible PD test.
+The tests here are the p-nilpotent full PD tests over the universal PD hull: each is a hull
+algebra whose PD-compatible structure map from the uncompleted hull is part of the test. Such a
+test receives its coefficient map through that hull map and the exact p-power projection. A PD
+factorization into the finite A_cris test is requested with this fixed ring map; this factors an
+already hull-linear test, and does not construct the hull map for a bare PD thickening of `R`.
+The module evaluation then is the native Ext restriction of the native inverse-limit projection.
+Its tensor comparison is a genuine Wanted output on every such test.
 
 Source: BBM82; Scholze--Weinstein1211.6357v2, Proposition4.1.3.
 -/
@@ -126,8 +127,8 @@ structure AcrisRealization where
     (FullPDCrystallineSheaves.groupSheaf p (hullPDBase p R A) (baseScheme p R A E) D.group)
   finite : Module.Finite (Acris p R A) (integralModule p R A E P G D)
   projective : Module.Projective (Acris p R A) (integralModule p R A E P G D)
-  rationalFinite : Module.Finite (Bcris p R A) (rationalModule p R A E P G D)
-  rationalProjective : Module.Projective (Bcris p R A) (rationalModule p R A E P G D)
+  rationalFinite : Module.Finite (BcrisPlus p R A) (rationalModule p R A E P G D)
+  rationalProjective : Module.Projective (BcrisPlus p R A) (rationalModule p R A E P G D)
   testComparison : ∀ (C : FullPDCrystallineTests.Obj p (hullPDBase p R A)
       (baseScheme p R A E)) (k : ℕ) (hk : (p : C.ring) ^ (k + 1) = 0)
       (t : TargetFactorization p R A E P C k hk),

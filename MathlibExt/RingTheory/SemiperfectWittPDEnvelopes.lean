@@ -25,7 +25,7 @@ canonical divided powers on (p) in Z_p. Neither p-torsionfreeness nor a
 finitely generated kernel is assumed.
 
 The initial-object type records the universal PD hull; its construction
-is deferred separately. Completion and B_cris use this hull literally.
+is deferred separately. Completion and B_cris⁺ use this hull literally.
 
 Source: Scholze--Weinstein, arXiv:1211.6357v2, Proposition 4.1.3,
 pp. 29--30. The integral and rational full-faithfulness scopes in

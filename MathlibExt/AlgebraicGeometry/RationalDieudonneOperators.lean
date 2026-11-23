@@ -11,7 +11,7 @@ public import MathlibExt.AlgebraicGeometry.SemiperfectDieudonneOperators
 public import Mathlib.CategoryTheory.Adjunction.Additive
 
 /-!
-# Literal B_cris Frobenius and rational covariant F/V
+# Literal B_cris⁺ Frobenius and rational covariant F/V
 
 The coefficient Frobenius is the native localization lift of the actual
 A_cris Frobenius. Tensor composition supplies the rational twist
@@ -41,7 +41,7 @@ variable (p : ℕ) [Fact p.Prime] (R : Type) [CommRing R] [CharP R p]
   (F₀ : HullFrobenius (A := A)) (φ : CompletedFrobenius F₀)
 
 /-- The original p-localization coefficient map. -/
-abbrev rationalCoefficients : Acris p R A →+* Bcris p R A := algebraMap _ _
+abbrev rationalCoefficients : Acris p R A →+* BcrisPlus p R A := algebraMap _ _
 
 /-- Native scalar extension is additive by its actual extension/restriction adjunction. -/
 instance rationalExtension_additive :
@@ -49,13 +49,13 @@ instance rationalExtension_additive :
   (ModuleCat.extendRestrictScalarsAdj.{1, 0, 0}
     (rationalCoefficients p R A)).left_adjoint_additive
 
-/-- B_cris Frobenius is the native localization of the completed coefficient Frobenius. -/
-def coefficientFrobenius : Bcris p R A →+* Bcris p R A :=
+/-- B_cris⁺ Frobenius is the native localization of the completed coefficient Frobenius. -/
+def coefficientFrobenius : BcrisPlus p R A →+* BcrisPlus p R A :=
   IsLocalization.Away.lift (p : Acris p R A)
     (g := (rationalCoefficients p R A).comp φ.hom) (by
       simpa only [RingHom.comp_apply, map_natCast] using
         (IsLocalization.Away.algebraMap_isUnit (p : Acris p R A)
-          (S := Bcris p R A)))
+          (S := BcrisPlus p R A)))
 
 /-- Rational Frobenius preserves every original A_cris coefficient. -/
 theorem coefficientFrobenius_coefficients :
@@ -63,8 +63,8 @@ theorem coefficientFrobenius_coefficients :
       (rationalCoefficients p R A).comp φ.hom :=
   IsLocalization.Away.lift_comp _ _
 
-/-- The rational twist is actual tensor extension along B_cris Frobenius. -/
-def frobeniusPullback : ModuleCat.{1} (Bcris p R A) :=
+/-- The rational twist is actual tensor extension along B_cris⁺ Frobenius. -/
+def frobeniusPullback : ModuleCat.{1} (BcrisPlus p R A) :=
   (ModuleCat.extendScalars (coefficientFrobenius p R A F₀ φ)).obj
     (rationalModule p R A E P G D)
 
@@ -74,7 +74,7 @@ def twistComparison : frobeniusPullback p R A E P G D F₀ φ ≅
       (SemiperfectDieudonneOperators.frobeniusPullback p R A E P G D F₀ φ) :=
   (ModuleCat.extendScalarsComp (rationalCoefficients p R A)
     (coefficientFrobenius p R A F₀ φ)).symm.app (integralModule p R A E P G D) ≪≫
-  eqToIso (congrArg (fun f : Acris p R A →+* Bcris p R A =>
+  eqToIso (congrArg (fun f : Acris p R A →+* BcrisPlus p R A =>
     (ModuleCat.extendScalars f).obj (integralModule p R A E P G D))
       (coefficientFrobenius_coefficients p R A F₀ φ)) ≪≫
   (ModuleCat.extendScalarsComp φ.hom (rationalCoefficients p R A)).app

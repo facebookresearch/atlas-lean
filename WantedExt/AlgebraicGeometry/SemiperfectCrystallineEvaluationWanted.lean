@@ -11,11 +11,13 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.SemiperfectCrystallineEvaluationMaps
 
 /-!
-# Universal crystalline evaluation on every original full PD test
+# Universal crystalline evaluation on every full PD test over the universal hull
 
 All rings, scalar maps, Ext modules, inverse limits and evaluation maps
 are completed definitions. PD factorization, finite projectivity and
 the actual normalized tensor/Ext comparisons are construction outputs.
+The tests are hull algebras, so the factorization request concerns an already hull-linear test;
+it does not ask for the hull map of a bare PD thickening of `R`.
 
 Source: BBM82; Scholze--Weinstein1211.6357v2, Section3.2 and Proposition4.1.3.
 -/

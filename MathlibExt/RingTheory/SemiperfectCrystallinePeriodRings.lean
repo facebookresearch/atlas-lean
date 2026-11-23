@@ -13,10 +13,12 @@ public import Mathlib.RingTheory.Localization.Away.Basic
 public import Mathlib.RingTheory.WittVector.Frobenius
 
 /-!
-# Literal A_cris and B_cris of a semiperfect ring
+# Literal A_cris and B_cris⁺ of a semiperfect ring
 
 A_cris is the native p-adic completion of the universal PD hull of
-W(R^flat) to R; B_cris is exactly A_cris[1/p]. A finite PD test obtains
+W(R^flat) to R; B_cris⁺ is exactly A_cris[1/p] (Scholze–Weinstein, the
+paragraph after Proposition 4.1.3). This is not Fontaine's B_cris, which
+also inverts a period. A finite PD test obtains
 its coefficient map through the displayed p-power quotient projection.
 Thus evaluation retains the original hull map and every nilpotent test.
 No independent period-ring carrier or evaluation homomorphism is supplied.
@@ -41,8 +43,8 @@ def completionIdeal : Ideal A.algebra.ring := Ideal.span {(p : A.algebra.ring)}
 /-- Fontaine's ring is this exact completion, without a p-torsionfree assumption. -/
 abbrev Acris := AdicCompletion (completionIdeal p R A) A.algebra.ring
 
-/-- The rational ring is exactly the localization of A_cris at p. -/
-abbrev Bcris := Localization.Away (p : Acris p R A)
+/-- The rational ring `B_cris⁺ = A_cris[1/p]`: exactly the localization of A_cris at p. -/
+abbrev BcrisPlus := Localization.Away (p : Acris p R A)
 
 /-- The original universal-hull coefficient map into its actual completion. -/
 def hullToAcris : A.algebra.ring →+* Acris p R A :=

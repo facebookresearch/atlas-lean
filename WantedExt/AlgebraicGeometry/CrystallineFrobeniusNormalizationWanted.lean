@@ -13,9 +13,11 @@ public import MathlibExt.AlgebraicGeometry.DieudonneFrobeniusProjectionModels
 /-!
 # Source-normalized native crystalline Frobenius comparison
 
-Construct original compatible PD stages, the native slice/Cartier/Ext
-comparison on every coefficient and finite point, and the isomorphism
-and F/V properties of the already-defined native limit/tensor map.
+Construct original compatible PD stages and the native slice/Cartier/Ext
+comparison on every coefficient and finite point, and prove the full crystal
+p-products. The isomorphism and F/V properties of the already-defined native
+limit/tensor map are requested once, as
+`WantedExt.AlgebraicGeometry.SemiperfectDieudonneOperators.dieudonneFrobeniusVerschiebung`.
 No independent module isomorphism or invertible ring Frobenius is supplied.
 
 Source: BBM82; Scholze--Weinstein1211.6357v2, Sections3.1 and4.1.
@@ -53,16 +55,6 @@ public def_wanted crystallineFrobeniusSourceComparison
     (C : Compatibility p R A E P F₀ φ) (G : PDivisibleGroup (Spec (.of R)) p)
     (D : CartierDualTower p R G) (Q : CartierFrobeniusVerschiebung p R G D) :
     SourceComparison p R A E P F₀ φ C G D Q
-
-/-- Prove cartesian isomorphism and F/V identities for this already-constructed native comparison. -/
-public def_wanted normalizedCrystallineFrobeniusOperators
-    (p : ℕ) [Fact p.Prime] (R : Type) [CommRing R] [CharP R p]
-    (hR : IsSemiperfect p R) (A : UniversalEnvelope p R) (E : ResidueIdentification A)
-    (P : PDStages p R A E) (F₀ : HullFrobenius (A := A)) (φ : CompletedFrobenius F₀)
-    (C : Compatibility p R A E P F₀ φ) (G : PDivisibleGroup (Spec (.of R)) p)
-    (D : CartierDualTower p R G) (Q : CartierFrobeniusVerschiebung p R G D)
-    (N : SourceComparison p R A E P F₀ φ C G D Q) :
-    OperatorsNormalization p R A E P F₀ φ C G D Q N
 
 /-- Prove the full crystal p-products for those same native group-induced sheaf maps. -/
 public theorem_wanted fullCrystallineFrobeniusProducts

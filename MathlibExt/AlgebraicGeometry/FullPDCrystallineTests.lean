@@ -17,10 +17,11 @@ public import MathlibExt.AlgebraicGeometry.GeometricPDCrystallineTests
 # The full p-nilpotent affine crystalline PD basis
 
 Objects retain the original divided-power rings, their reductions and
-all scheme/algebra maps. A divided-power ideal is not required to be
-uniformly nilpotent. This full basis therefore permits the PD ideals of
-universal A_cris/p^n thickenings. The earlier uniformly nilpotent basis
-has a literal inclusion, with the same actual coefficients and arrows.
+all scheme/algebra maps. Neither the divided-power structure nor its ideal
+is required to be nilpotent. This full basis therefore permits the PD ideals of
+universal A_cris/p^n thickenings. The nilpotent basis of
+`GeometricPDCrystallineTests` (nilpotent divided-power structures) has a literal inclusion, with
+the same actual coefficients and arrows.
 
 References: Berthelot--Breen--Messing, Theorie de Dieudonne cristalline II;
 Scholze--Weinstein1211.6357v2, Section3.2 and Proposition4.1.3.
@@ -38,7 +39,8 @@ abbrev PDBase := GeometricPDCrystallineTests.PDBase
 
 variable (p : ℕ) (A : PDBase) (S : Over A.reduction)
 
-/-- A p-nilpotent divided-power coefficient test, without a uniform ideal-power bound. -/
+/-- A p-nilpotent divided-power coefficient test, without any nilpotence condition on the
+divided-power structure or its ideal. -/
 structure Obj where
   ring : CommAlgCat.{0} A.ring
   ideal : Ideal ring
@@ -58,7 +60,7 @@ abbrev Obj.thickening (P : Obj p A S) : Scheme.{0} := Spec (.of P.ring)
 abbrev Obj.reduction (P : Obj p A S) : Scheme.{0} :=
   Spec (.of (P.ring ⧸ P.ideal))
 
-/-- The scheme-theoretic closed inclusion of the displayed nilpotent ideal. -/
+/-- The scheme-theoretic closed inclusion of the displayed divided-power ideal. -/
 def Obj.inclusion (P : Obj p A S) : P.reduction ⟶ P.thickening :=
   Spec.map (CommRingCat.ofHom (Ideal.Quotient.mk P.ideal))
 

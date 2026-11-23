@@ -40,13 +40,15 @@ open MathlibExt.CategoryTheory.ExtTargetScalarModules
 variable {C : Type 1} [Category.{0} C] (J : GrothendieckTopology C)
   (O : Sheaf J CommRingCat.{1})
 
-/-- Native concrete sheafification on the actual small model of a slice site. -/
-instance abelianSheafifySmall {B : Type 1} [SmallCategory B]
-    (K : GrothendieckTopology B) : HasSheafify K AddCommGrpCat.{1} := by
-  infer_instance
-
 /-- The original slice coefficient category at a genuine nilpotent PD test. -/
 abbrev SliceSheaves (P : C) := Sheaf ((J).over P) AddCommGrpCat.{1}
+
+/-- Mathlib's sheafification instance on a small site, restated at universe `1` for this file
+only: synthesising it on the small model inside `Sheaf.isGrothendieckAbelian_of_essentiallySmall`
+otherwise leaves the small model's universe as a stuck metavariable. -/
+local instance abelianSheafifySmall {B : Type 1} [SmallCategory B]
+    (K : GrothendieckTopology B) : HasSheafify K AddCommGrpCat.{1} := by
+  infer_instance
 
 instance sliceGrothendieck (P : C) :
     IsGrothendieckAbelian.{1} (SliceSheaves J P) :=
@@ -98,7 +100,8 @@ theorem local_smul (P : C) (n : ℕ)
 /-- Slice restriction acts through the original exact functor on actual derived Ext. -/
 def restriction {P Q : C} (f : P ⟶ Q) (n : ℕ) :
     LocalExt J O F Q n →+ LocalExt J O F P n :=
-  (slicePullback J f).mapExtAddHom (F.over Q) ((SheafLocalExtScalars.additiveRingSheaf J O).over Q) n
+  (slicePullback J f).mapExtAddHom (F.over Q)
+    ((SheafLocalExtScalars.additiveRingSheaf J O).over Q) n
 
 /-- The actual Ext restriction is semilinear for the original ring restriction. -/
 theorem restriction_smul {P Q : C} (f : P ⟶ Q) (n : ℕ)

@@ -15,7 +15,7 @@ public import MathlibExt.CategoryTheory.ConstantModuleLimits
 public import Mathlib.Algebra.Category.ModuleCat.Presheaf.Pushforward
 
 /-!
-# Literal A_cris and B_cris evaluation of the fixed geometric Ext module
+# Literal A_cris and B_cris⁺ evaluation of the fixed geometric Ext module
 
 The integral module is the native inverse limit of the actual full-basis
 Ext modules at A_cris/(p^(n+1)). The transition maps are precisely the
@@ -92,9 +92,9 @@ def integralModule : ModuleCat.{1} (Acris p R A) :=
   (ModuleCat.restrictScalars (liftCoefficients p R A)).obj
     (limit (finiteDiagram p R A E P G D))
 
-/-- Rational evaluation is exactly extension to the literal B_cris=A_cris[1/p]. -/
-def rationalModule : ModuleCat.{1} (Bcris p R A) :=
-  (ModuleCat.extendScalars (algebraMap (Acris p R A) (Bcris p R A))).obj
+/-- Rational evaluation is exactly extension to the literal B_cris⁺ = A_cris[1/p]. -/
+def rationalModule : ModuleCat.{1} (BcrisPlus p R A) :=
+  (ModuleCat.extendScalars (algebraMap (Acris p R A) (BcrisPlus p R A))).obj
     (integralModule p R A E P G D)
 
 /-- The actual finite integral value with its original A_cris coefficient map. -/
@@ -148,9 +148,9 @@ def integralMap : integralModule p R A E P G DG ⟶ integralModule p R A E P H D
   (ModuleCat.restrictScalars (liftCoefficients p R A)).map
     (lim.map (finiteDiagramMap p R A E P DG DH f d))
 
-/-- The rational group map is literal B_cris scalar extension of the integral map. -/
+/-- The rational group map is literal B_cris⁺ scalar extension of the integral map. -/
 def rationalMap : rationalModule p R A E P G DG ⟶ rationalModule p R A E P H DH :=
-  (ModuleCat.extendScalars (algebraMap (Acris p R A) (Bcris p R A))).map
+  (ModuleCat.extendScalars (algebraMap (Acris p R A) (BcrisPlus p R A))).map
     (integralMap p R A E P DG DH f d)
 
 end Maps

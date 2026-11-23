@@ -31,7 +31,7 @@ example : reductionIdeal p R = RingHom.ker (reduction p R) := rfl
 example : Acris p R A =
     AdicCompletion (Ideal.span {(p : A.algebra.ring)}) A.algebra.ring := rfl
 
-example : Bcris p R A = Localization.Away (p : Acris p R A) := rfl
+example : BcrisPlus p R A = Localization.Away (p : Acris p R A) := rfl
 
 example (B : Type) [CommRing B] (f : A.algebra.ring →+* B)
     (n : ℕ) (hn : (p : B) ^ n = 0) (x : WittRing p R) :
