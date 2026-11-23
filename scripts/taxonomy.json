@@ -10332,6 +10332,7 @@
   "MathlibExt/Combinatorics/Order/Dilworth": {"to": "Combinatorics/partially-ordered-sets", "title": "Dilworth's theorem"},
   "MathlibExt/Combinatorics/Order/ErdosSzekeres": {"to": "Combinatorics/partially-ordered-sets", "title": "Erdős–Szekeres theorem"},
   "MathlibExt/Combinatorics/Order/FinitePosets": {"to": "Combinatorics/partially-ordered-sets", "title": "Mirsky's theorem"},
+  "MathlibExt/Combinatorics/PairwiseSumTheorem": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Pairwise sum theorem"},
   "MathlibExt/Combinatorics/ParisHarrington": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Paris–Harrington theorem"},
   "MathlibExt/Combinatorics/ParityProduct": {"to": "Combinatorics/boolean-functions", "title": "Parity products modulo powers of two"},
   "MathlibExt/Combinatorics/PartialHadamard": {"to": "Combinatorics/designs-latin-squares", "title": "Partial Hadamard matrices"},
