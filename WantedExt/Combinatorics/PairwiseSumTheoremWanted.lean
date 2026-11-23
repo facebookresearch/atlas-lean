@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Hindman
 public import Mathlib.Data.PNat.Basic
-public import MathlibExt.Combinatorics.HindmanFiniteSums
+public import MathlibExt.Combinatorics.PairwiseSumTheorem
 public import MathlibExt.Combinatorics.RamseyWitnessTensorSquare
 
 /-!
@@ -29,8 +29,8 @@ on `ℕ` is `X ∈ U ⊗ V ↔ {n | {m | (n, m) ∈ X} ∈ V} ∈ U`.
 The characterization of Ramsey's witnesses on `ℕ × ℕ` as the closure of the tensor squares
 `U ⊗ U` of non-principal ultrafilters (`ramseyWitness_iff_mem_closure_tensor_squares`) is
 proved in `MathlibExt.Combinatorics.RamseyWitnessTensorSquare`, which this module imports.
-Hindman's finite sums theorem (`exists_infinite_finiteSums_monochromatic`) is proved in
-`MathlibExt.Combinatorics.HindmanFiniteSums`, which this module also imports.
+The pairwise sum theorem (`exists_infinite_pairwiseSums_monochromatic`) is proved in
+`MathlibExt.Combinatorics.PairwiseSumTheorem` using Hindman's finite sums theorem.
 -/
 
 open Filter
@@ -38,16 +38,6 @@ open Filter
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Pairwise sum theorem.** For every finite coloring of $\mathbb{N} = \{0, 1, 2, \dots\}$ there
-is an infinite set $A \subseteq \mathbb{N}$ such that $A \cup \{a + a' : a, a' \in A, a \ne a'\}$
-is monochromatic.
-
-Source: Mauro Di Nasso and Renling Jin, *From Schur's Theorem to the Pairwise Sum Theorem*,
-INTEGERS 25 (2025), Article A105, Theorem 1.2 (`integers-2025-A105-thm-1-2`). -/
-public theorem_wanted exists_infinite_pairwiseSums_monochromatic {r : ℕ} (c : ℕ → Fin r) :
-    ∃ A : Set ℕ, A.Infinite ∧ ∃ k : Fin r, (∀ a ∈ A, c a = k) ∧
-      ∀ a ∈ A, ∀ a' ∈ A, a ≠ a' → c (a + a') = k
 
 /-- **Disjoint infinite sets with monochromatic union and sumset.** For every finite coloring of
 $\mathbb{N} = \{0, 1, 2, \dots\}$ there are disjoint infinite sets $A, B \subseteq \mathbb{N}$ such

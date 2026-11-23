@@ -446,7 +446,7 @@ theorem card_le_nussinov {B : Type*} (pair : B → B → Prop) [DecidableRel pai
     hall s.length s rfl P hP
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     intro t ht Q hQ
     cases t with
     | nil =>
@@ -524,7 +524,7 @@ theorem exists_isStructure_card_eq {B : Type*} (pair : B → B → Prop) [Decida
     hall s.length s rfl
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     intro t ht
     cases t with
     | nil => exact ⟨∅, empty_structure pair m [], by simp [nussinov]⟩
