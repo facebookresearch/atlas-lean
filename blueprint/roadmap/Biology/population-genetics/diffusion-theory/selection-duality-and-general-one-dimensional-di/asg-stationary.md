@@ -1,0 +1,3 @@
+# Stationary law of the ancestral selection graph line counts
+
+For a real number $\sigma$ and a natural number $k$, let $\pi^\sigma_k = \frac{(2\sigma)^k}{k!\,(e^{2\sigma} - 1)}$ for $k \ge 1$ and $\pi^\sigma_0 = 0$ when $\sigma \ne 0$, and let $\pi^0$ be the point mass at $1$. For $\sigma > 0$ it is the stationary law of the line-counting process of the ancestral selection graph: a Poisson law with mean $2\sigma$ conditioned to be positive. For $\sigma = 0$, branching vanishes and, from any positive number of lines, coalescence reaches the absorbing state $1$; the point mass at $1$ is the limit of the formula as $\sigma \to 0$.

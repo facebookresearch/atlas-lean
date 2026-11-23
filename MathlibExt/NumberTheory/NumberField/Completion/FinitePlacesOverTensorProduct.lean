@@ -68,16 +68,19 @@ variable {K L : Type*} [Field K] [Field L] [NumberField K] [NumberField L]
 variable {v : HeightOneSpectrum (𝓞 K)} (w : v.placesOver L)
 
 /-- Lying-over instance from places-over membership. -/
-scoped instance : w.val.asIdeal.LiesOver v.asIdeal :=
+scoped instance instLiesOverRingOfIntegersAsIdealVal_mathlibExt :
+    w.val.asIdeal.LiesOver v.asIdeal :=
   w.property
 
 /-- Algebra from the base completion to the place completion. -/
-noncomputable scoped instance : Algebra (v.adicCompletion K) (w.val.adicCompletion L) :=
+noncomputable scoped instance instAlgebraAdicCompletionRingOfIntegersValLiesOverAsIdeal_mathlibExt :
+    Algebra (v.adicCompletion K) (w.val.adicCompletion L) :=
   let _ : w.val.asIdeal.LiesOver v.asIdeal := w.property
   (adicCompletionMap v w.val).toAlgebra
 
 /-- Scalar tower over the base field through the base completion. -/
-scoped instance : IsScalarTower K (v.adicCompletion K) (w.val.adicCompletion L) := by
+scoped instance instIsScalarTowerAdicCompletionRingOfIntegersValLiesOverAsIdeal_mathlibExt :
+    IsScalarTower K (v.adicCompletion K) (w.val.adicCompletion L) := by
   let _ : w.val.asIdeal.LiesOver v.asIdeal := w.property
   apply IsScalarTower.of_algebraMap_eq
   intro x
@@ -96,13 +99,26 @@ variable {K L : Type*} [Field K] [Field L] [NumberField K] [NumberField L]
   [Algebra K L]
 variable (v : HeightOneSpectrum (𝓞 K))
 
-/-- Per-place component map out of the completion tensor product. -/
+/-- **Component at a place of the completion tensor product map.** Let $L/K$ be an extension of
+number fields, let $v$ be a finite place of $K$, given as a height-one prime of the ring of
+integers $\mathcal{O}_K$, let $K_v$ be the completion of $K$ at $v$, and let $w$ be a finite place
+of $L$ lying over $v$, with completion $L_w$. Let $\iota_w : K_v \to L_w$ be the continuous ring
+homomorphism extending $K \to L$. This is the $K_v$-algebra homomorphism
+$K_v \otimes_K L \to L_w$ sending $x \otimes y$ to $\iota_w(x)\, y$, where $y \in L$ is viewed in
+$L_w$. -/
 noncomputable def completionTensorProductComponent (w : v.placesOver L) :
     v.adicCompletion K ⊗[K] L →ₐ[v.adicCompletion K] w.val.adicCompletion L :=
   Algebra.TensorProduct.lift (Algebra.algHom _ _ _) (Algebra.algHom K L _)
     (fun _ _ => mul_comm _ _)
 
-/-- Canonical product map into places lying over `v`. -/
+/-- **The completion tensor product map.** Let $L/K$ be an extension of number fields, let $v$ be a
+finite place of $K$, given as a height-one prime of the ring of integers $\mathcal{O}_K$, and let
+$K_v$ be the completion of $K$ at $v$. For each finite place $w$ of $L$ lying over $v$, let $L_w$
+be the completion of $L$ at $w$ and $\iota_w : K_v \to L_w$ the continuous ring homomorphism
+extending $K \to L$. This is the $K_v$-algebra homomorphism
+$K_v \otimes_K L \to \prod_{w \mid v} L_w$ sending $x \otimes y$ to $(\iota_w(x)\, y)_w$, where
+$y \in L$ is viewed in each $L_w$ and the product runs over the finite places of $L$ lying over
+$v$. -/
 noncomputable def completionTensorProductMap :
     v.adicCompletion K ⊗[K] L →ₐ[v.adicCompletion K]
       ((w : v.placesOver L) → w.val.adicCompletion L) :=
