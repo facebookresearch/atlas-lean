@@ -16,7 +16,9 @@ public import Mathlib.NumberTheory.Fermat
 public import Mathlib.NumberTheory.FermatPsp
 public import Mathlib.RingTheory.Polynomial.Cyclotomic.Basic
 public import MathlibExt.Data.Set.Density
+public import MathlibExt.NumberTheory.FermatNumberStrongPseudoprimeTwoPow
 public import MathlibExt.NumberTheory.StrongPseudoprime
+public import MathlibExt.NumberTheory.StrongPseudoprimeZPowNeg
 
 /-!
 # Pseudoprime bases and Fermat numbers
@@ -162,33 +164,6 @@ public theorem_wanted isStrongPseudoprime_zpow_of_dvd_primitivePart {b m c : ℕ
     ((c : ℤ) ∣ Φ m / (Int.gcd (Φ m) m : ℤ) ∨ (c : ℤ) ∣ Φ (2 * m) / (Int.gcd (Φ (2 * m)) m : ℤ)) →
       ∀ u : (ZMod c)ˣ, (u : ZMod c) = b → ∀ t : ℤ,
         IsStrongPseudoprime c ((u ^ t : (ZMod c)ˣ) : ZMod c)
-
-/-- **Strong pseudoprime bases are closed under powers and negation.** Let $n$ be a natural
-number and $b$ a unit of $\mathbb{Z}/n\mathbb{Z}$ such that $n$ is a strong pseudoprime to the
-base $b$. Then for every integer $t$, $n$ is a strong pseudoprime to the base $b^t$, and $n$ is a
-strong pseudoprime to the base $-b$.
-
-Requiring $b$ to be a unit loses nothing, since every strong pseudoprime base $b$ satisfies
-$b^{n-1} = 1$; it also gives meaning to negative exponents.
-
-Source: Samuel S. Wagstaff, Jr., *Pseudoprimes and Fermat Numbers*, INTEGERS 24 (2024),
-Article A23, Theorem 6 (`integers-2024-A23-thm-6`). -/
-public theorem_wanted isStrongPseudoprime_zpow_and_neg {n : ℕ} {b : (ZMod n)ˣ}
-    (h : IsStrongPseudoprime n (b : ZMod n)) (t : ℤ) :
-    IsStrongPseudoprime n ((b ^ t : (ZMod n)ˣ) : ZMod n) ∧
-      IsStrongPseudoprime n (-(b : ZMod n))
-
-/-- **Composite Fermat numbers are strong pseudoprimes to every power of $2$.** Let $k$ be a
-natural number such that the Fermat number $F_k = 2^{2^k} + 1$ is composite. Then for every
-integer $t$, $F_k$ is a strong pseudoprime to the base $2^t$, where the power is taken in the
-unit group of $\mathbb{Z}/F_k\mathbb{Z}$ (in which $2$ is a unit because $F_k$ is odd).
-
-Source: Samuel S. Wagstaff, Jr., *Pseudoprimes and Fermat Numbers*, INTEGERS 24 (2024),
-Article A23, Corollary 5 (`integers-2024-A23-cor-5`). -/
-public theorem_wanted fermatNumber_isStrongPseudoprime_two_zpow {k : ℕ}
-    (hk : ¬(Nat.fermatNumber k).Prime) (u : (ZMod (Nat.fermatNumber k))ˣ)
-    (hu : (u : ZMod (Nat.fermatNumber k)) = 2) (t : ℤ) :
-    IsStrongPseudoprime (Nat.fermatNumber k) ((u ^ t : (ZMod (Nat.fermatNumber k))ˣ) : ZMod _)
 
 /-- **Strong pseudoprime bases $2^{2^{k-1}+t} \pm 2^t$ of composite Fermat numbers.** Let $k$ be a
 natural number such that the Fermat number $F_k = 2^{2^k} + 1$ is composite. Then for every

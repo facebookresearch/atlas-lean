@@ -67,8 +67,10 @@ the Python standard library, and fails on:
   and may move the pin; a local run allows it with a warning. In CI the base is the push's `before` commit, the merge
   group's base, or for a pull request the merge ref's first parent, fetched if the checkout is
   shallow; if it cannot be read the check fails. Locally it is
-  the merge-base with `origin/main`, and the comparison is skipped with a warning when neither can
-  be read. `--base REV` names it explicitly. The base manifest is looked up at every path the
+  the merge-base with `origin/main`. During a local merge, the checker includes the incoming parent
+  in that calculation and checks the index for copies and renames. If the merge-base is unavailable,
+  it uses the first parent of `HEAD`. `--base REV` names the base explicitly.
+  The base manifest is looked up at every path the
 manifest has had (`MANIFEST_PATHS`); a base without one is accepted only before the cutover, that is
 when it also lacks `scripts/check_formal_math_sync.py`.
 

@@ -15,3 +15,6 @@ p-adic integers and expansions, valuations of integer sequences, Hensel lifting,
 - [Cassels' embedding theorem](exists-injective-ring-hom-closure-padic.md)
 - [p-adic integrality is equivalent to norm at most one](is-integral-padic-int-iff-norm-le-one.md)
 - [Strassmann's theorem](strassmann.md)
+- [The ring of p-adic integers](p-adic-integers.md)
+- [A p-adic integer is a unit if and only if its p-adic absolute value is 1](p-adic-integers-units-absolute-value-one.md)
+- [The p-adic valuation of a product of nonzero integers is the sum of their p-adic valuations](p-adic-order-integer-additive.md)

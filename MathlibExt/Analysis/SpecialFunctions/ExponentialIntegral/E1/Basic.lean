@@ -37,8 +37,9 @@ namespace Complex
 
 noncomputable section
 
-/-- The finite geometric expansion of the kernel in the DLMF integral
-representation, specialized through the quadratic remainder. -/
+/-- **Two-term expansion of $1/(t + z)$.** Let $z \ne 0$ be a complex number and $t$ a real
+number with $t + z \ne 0$. Then
+$\frac{1}{t + z} = \frac{1}{z} - \frac{t}{z^2} + \frac{t^2}{z^2 (t + z)}$. -/
 lemma two_term_kernel_identity (z : ℂ) (t : ℝ) (hz : z ≠ 0)
     (htz : (t : ℂ) + z ≠ 0) :
     1 / ((t : ℂ) + z) =
@@ -46,13 +47,15 @@ lemma two_term_kernel_identity (z : ℂ) (t : ℝ) (hz : z ≠ 0)
   field_simp
   ring
 
-/-- The exponential moment integrand is integrable on the positive real axis. -/
+/-- **Integrability of $e^{-t} t^n$ on $(0, \infty)$.** For every natural number $n$, the
+function $t \mapsto e^{-t} t^n$ is Lebesgue integrable on the open interval $(0, \infty)$. -/
 theorem integrableOn_exp_neg_mul_pow (n : ℕ) :
     MeasureTheory.IntegrableOn (fun t : ℝ => Real.exp (-t) * t ^ n) (Set.Ioi 0) := by
   simpa using
     (Real.GammaIntegral_convergent (s := (n : ℝ) + 1) (by positivity))
 
-/-- The `n`-th exponential moment on the positive real axis is `n!`. -/
+/-- **The moments of $e^{-t}$ are factorials.** For every natural number $n$, the integral of
+$e^{-t} t^n$ over the open interval $(0, \infty)$ equals $n!$. -/
 theorem integral_exp_neg_mul_pow_Ioi (n : ℕ) :
     ∫ t : ℝ in Set.Ioi 0, Real.exp (-t) * t ^ n = (n.factorial : ℝ) := by
   calc
@@ -61,7 +64,9 @@ theorem integral_exp_neg_mul_pow_Ioi (n : ℕ) :
         (Real.Gamma_eq_integral (s := (n : ℝ) + 1) (by positivity)).symm
     _ = (n.factorial : ℝ) := Real.Gamma_nat_eq_factorial n
 
-/-- The sine of the absolute argument is positive in the outer sector. -/
+/-- **Positivity of $\sin |\arg z|$ in the outer sector.** Let $z \ne 0$ be a complex number with
+$\pi/2 \le |\arg z| < \pi$, where $\arg z \in (-\pi, \pi]$ is the principal argument. Then
+$\sin |\arg z| > 0$. -/
 lemma outer_sector_sin_abs_arg_pos
     (z : ℂ) (_hz : z ≠ 0) (hargLower : Real.pi / 2 ≤ |z.arg|)
     (hargUpper : |z.arg| < Real.pi) :
@@ -69,7 +74,9 @@ lemma outer_sector_sin_abs_arg_pos
   exact Real.sin_pos_of_pos_of_lt_pi
     (Real.pi_div_two_pos.trans_le hargLower) hargUpper
 
-/-- The imaginary component bounds the distance from the nonnegative real ray. -/
+/-- **Lower bound for $|t + z|$ in the outer sector.** Let $z \ne 0$ be a complex number with
+$\pi/2 \le |\arg z| < \pi$, where $\arg z \in (-\pi, \pi]$ is the principal argument, and let
+$t \ge 0$ be a real number. Then $|z| \sin |\arg z| \le |t + z|$. -/
 lemma outer_sector_distance
     (z : ℂ) (t : ℝ) (_hz : z ≠ 0) (_ht : 0 ≤ t)
     (_hargLower : Real.pi / 2 ≤ |z.arg|)
@@ -83,8 +90,13 @@ lemma outer_sector_distance
     _ = |((t : ℂ) + z).im| := by simp
     _ ≤ ‖(t : ℂ) + z‖ := Complex.abs_im_le_norm _
 
-/-- Bound the explicit quadratic integral remainder by the first neglected term
-times the outer-sector cosecant factor. -/
+/-- **Outer-sector bound for the quadratic integral remainder.** Let $z \ne 0$ be a complex number
+with $\pi/2 \le |\arg z| < \pi$, where $\arg z \in (-\pi, \pi]$ is the principal argument, and
+let $T_2(z) = \frac{e^{-z}}{z} \cdot \frac{(-1)^2 \, 2!}{z^2}$ be the $n = 2$ term of the
+asymptotic expansion of $E_1$. Then
+$$\left| \frac{e^{-z}}{z^2} \int_0^\infty \frac{e^{-t} t^2}{t + z} \, dt \right| \le
+\frac{|T_2(z)|}{\sin |\arg z|},$$
+where the integral is taken over the open interval $(0, \infty)$. -/
 theorem integral_remainder_bound
     (z : ℂ) (hz : z ≠ 0) (hargLower : Real.pi / 2 ≤ |z.arg|)
     (hargUpper : |z.arg| < Real.pi) :

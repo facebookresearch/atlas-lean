@@ -11,6 +11,9 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.NumberTheory.Real.Irrational
+public import MathlibExt.Combinatorics.Additive.CoprimeDenominatorProgressions
+public import MathlibExt.Combinatorics.Additive.HalfIntegerProgressions
+public import MathlibExt.Combinatorics.Additive.IrrationalStepProgressions
 
 /-!
 # The union of two arithmetic progressions is not an MSTD set
@@ -424,18 +427,6 @@ public theorem_wanted not_isMSTDSet_intervalAP_overlap_of_one_lt_gcd (n m : ℕ)
     (hx₁ : x < (n : ℝ) - 1) (hdn : (n : ℝ) - 1 < d) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m d)
 
-/-- **No integer points for a half-integer start and an odd denominator.** Let $s_1, s_2, p_2, q_2$
-be natural numbers with $q_2$ odd, and let $x = s_1 + 1/2$ and $d = s_2 + p_2/q_2$. Then
-$x + id$ is not a nonnegative integer for any natural number $i$.
-
-Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
-with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 22
-(`integers-2026-A58-lem-22`). -/
-public theorem_wanted add_mul_not_mem_nat_of_half (x d : ℝ) (s₁ s₂ p₂ q₂ : ℕ)
-    (hq₂ : Nat.Coprime 2 q₂)
-    (hx : x = s₁ + 1 / 2) (hd : d = s₂ + (p₂ : ℝ) / q₂) (i : ℕ) :
-    x + i * d ∉ Set.range ((↑) : ℕ → ℝ)
-
 /-- **Interval plus progression with half-integer start and odd-denominator step is not MSTD.**
 Let $I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$, as finite
 sets of reals. Let $n \ge 3$, $m \ge 2$, $s_1$, $s_2$ and $p_2$ be natural numbers and $q_2$ an
@@ -489,40 +480,6 @@ with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Artic
 (`integers-2026-A58-lem-18`). -/
 public theorem_wanted add_mul_not_mem_nat_of_irrational_of_rat (x d : ℝ) (hx : Irrational x)
     (hd : d ∈ Set.range ((↑) : ℚ → ℝ)) (i j : ℕ) :
-    x + i * d ∉ Set.range ((↑) : ℕ → ℝ) ∧ 2 * x + j * d ∉ Set.range ((↑) : ℕ → ℝ)
-
-/-- **Nonnegative integer points for a rational start and an irrational difference.** Let $x$ be
-a rational number that is not a nonnegative integer, and let $d$ be an irrational real number.
-Then $x + id$ is not a nonnegative integer for any natural number $i$, and $2x + jd$ is not a
-nonnegative integer for any natural number $j \ge 1$.
-
-As printed, the paper's Lemma 18 (ii) also claims $2x + 0 \cdot d \notin \mathbb{N}$, which fails
-at $x = 1/2$ (where $2x = 1$); the paper's proof ("then $d \in \mathbb{Q}$") covers only $j \ge 1$,
-and the condition that the denominator of $x$ be at least $3$ is attached only to part (iii).
-
-Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
-with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 18
-(`integers-2026-A58-lem-18`). -/
-public theorem_wanted add_mul_not_mem_nat_of_rat_of_irrational (x d : ℝ)
-    (hx : x ∈ Set.range ((↑) : ℚ → ℝ)) (hxn : x ∉ Set.range ((↑) : ℕ → ℝ)) (hd : Irrational d)
-    (i j : ℕ) (hj : 1 ≤ j) :
-    x + i * d ∉ Set.range ((↑) : ℕ → ℝ) ∧ 2 * x + j * d ∉ Set.range ((↑) : ℕ → ℝ)
-
-/-- **No integer points for coprime denominators, the first at least 3.** Let
-$s_1, s_2, p_1, p_2, q_1, q_2$ be natural numbers with $\gcd(p_1, q_1) = 1$, $\gcd(q_1, q_2) = 1$
-and $q_1 \ge 3$, and let $x = s_1 + p_1/q_1$ and $d = s_2 + p_2/q_2$. Then for all natural numbers
-$i$ and $j$, neither $x + id$ nor $2x + jd$ is a nonnegative integer.
-
-The paper's further hypotheses ($p_1, p_2, q_2 > 0$, $\gcd(p_2, q_2) = 1$, $d \notin \mathbb{N}$)
-are not needed and are not stated ($p_1 > 0$ and $q_2 > 0$ already follow from the two coprimality
-conditions and $q_1 \ge 3$).
-
-Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
-with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 18
-(`integers-2026-A58-lem-18`). -/
-public theorem_wanted add_mul_not_mem_nat_of_coprime_den (x d : ℝ) (s₁ s₂ p₁ p₂ q₁ q₂ : ℕ)
-    (hc₁ : Nat.Coprime p₁ q₁) (hq : Nat.Coprime q₁ q₂) (hq₁ : 3 ≤ q₁)
-    (hx : x = s₁ + (p₁ : ℝ) / q₁) (hd : d = s₂ + (p₂ : ℝ) / q₂) (i j : ℕ) :
     x + i * d ∉ Set.range ((↑) : ℕ → ℝ) ∧ 2 * x + j * d ∉ Set.range ((↑) : ℕ → ℝ)
 
 end

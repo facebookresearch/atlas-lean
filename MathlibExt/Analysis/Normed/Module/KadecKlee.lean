@@ -177,9 +177,10 @@ private theorem tendsto_of_forall_tendsto_and_tendsto_norm_of_norm_eq_one
     _ < ε / 2 + ε / 2 := by linarith [hnorm_n, hax]
     _ = ε := by ring
 
-/-- **Kadec–Klee property, all-functionals form.** If `f (u n) → f x`
-for every continuous linear functional `f` and `‖u n‖ → ‖x‖`, then
-`u n → x` in norm. -/
+/-- **Kadec–Klee property, all-functionals form.** Let $E$ be a uniformly convex real normed
+space, let $(u_n)$ be a sequence in $E$ and let $x \in E$. If $f(u_n) \to f(x)$ for every
+continuous linear functional $f \colon E \to \mathbb{R}$ and $\|u_n\| \to \|x\|$, then
+$u_n \to x$ in norm. -/
 theorem tendsto_of_forall_tendsto_and_tendsto_norm {u : ℕ → E} {x : E}
     (hweak : ∀ f : StrongDual ℝ E, Tendsto (fun n => f (u n)) atTop (𝓝 (f x)))
     (hnorm : Tendsto (fun n => ‖u n‖) atTop (𝓝 ‖x‖)) :
@@ -210,7 +211,10 @@ theorem tendsto_of_forall_tendsto_and_tendsto_norm {u : ℕ → E} {x : E}
     have h := hv.const_smul r
     simpa only [smul_smul, mul_inv_cancel₀ hr.ne', one_smul] using h
 
-/-- **Kadec–Klee property, `toWeakSpace` form.** -/
+/-- **Kadec–Klee property, weak-topology form.** Let $E$ be a uniformly convex real normed
+space, let $(u_n)$ be a sequence in $E$ and let $x \in E$. If $u_n \to x$ in the weak topology
+of $E$ (the topology induced by the continuous linear functionals $E \to \mathbb{R}$) and
+$\|u_n\| \to \|x\|$, then $u_n \to x$ in norm. -/
 theorem tendsto_of_tendsto_weakSpace_and_tendsto_norm {u : ℕ → E} {x : E}
     (h : Tendsto (fun n => toWeakSpace ℝ E (u n)) atTop (𝓝 (toWeakSpace ℝ E x)))
     (hnorm : Tendsto (fun n => ‖u n‖) atTop (𝓝 ‖x‖)) :
@@ -219,9 +223,10 @@ theorem tendsto_of_tendsto_weakSpace_and_tendsto_norm {u : ℕ → E} {x : E}
     (MathlibExt.Analysis.Normed.Module.WeakConvergence.forall_tendsto_of_tendsto_weakSpace
       (𝕜 := ℝ) h) hnorm
 
-/-- **Kadec–Klee iff, all-functionals form.** Norm convergence is
-equivalent to weak convergence (in the all-functionals form) together
-with convergence of the norms. -/
+/-- **Kadec–Klee iff, all-functionals form.** Let $E$ be a uniformly convex real normed space,
+let $(u_n)$ be a sequence in $E$ and let $x \in E$. Then $u_n \to x$ in norm if and only if
+$f(u_n) \to f(x)$ for every continuous linear functional $f \colon E \to \mathbb{R}$ and
+$\|u_n\| \to \|x\|$. -/
 theorem tendsto_iff_forall_tendsto_and_tendsto_norm {u : ℕ → E} {x : E} :
     Tendsto u atTop (𝓝 x) ↔
       (∀ f : StrongDual ℝ E, Tendsto (fun n => f (u n)) atTop (𝓝 (f x))) ∧
@@ -230,7 +235,10 @@ theorem tendsto_iff_forall_tendsto_and_tendsto_norm {u : ℕ → E} {x : E} :
     (continuous_norm.tendsto x).comp h⟩, fun h => ?_⟩
   exact tendsto_of_forall_tendsto_and_tendsto_norm h.1 h.2
 
-/-- **Kadec–Klee iff, `toWeakSpace` form.** -/
+/-- **Kadec–Klee iff, weak-topology form.** Let $E$ be a uniformly convex real normed space,
+let $(u_n)$ be a sequence in $E$ and let $x \in E$. Then $u_n \to x$ in norm if and only if
+$u_n \to x$ in the weak topology of $E$ (the topology induced by the continuous linear
+functionals $E \to \mathbb{R}$) and $\|u_n\| \to \|x\|$. -/
 theorem tendsto_iff_tendsto_weakSpace_and_tendsto_norm {u : ℕ → E} {x : E} :
     Tendsto u atTop (𝓝 x) ↔
       Tendsto (fun n => toWeakSpace ℝ E (u n)) atTop

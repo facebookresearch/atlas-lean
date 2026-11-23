@@ -4,3 +4,6 @@ Category theory organizes mathematical structures through morphisms, functors, u
 
 - [Monoidal categories](monoidal-categories/README.md)
 - [Topos theory](topos-theory/README.md)
+- [Limits and colimits](limits-and-colimits/README.md)
+- [Categories, functors and natural transformations](categories-and-functors/README.md)
+- [Adjunctions and Kan extensions](adjunctions-and-kan-extensions/README.md)

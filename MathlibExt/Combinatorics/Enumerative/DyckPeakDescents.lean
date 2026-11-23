@@ -26,9 +26,11 @@ namespace MetaMathlibExt
 
 open DyckStep
 
-/-- The descent lengths of a step list, one per peak from left to right: for each
-peak `UD`, the length `j` of the maximal run of `D`s that starts at its `D`, so
-that the peak and its descent form the primitive block `U D^j`.
+/-- **Peak descents.** Let $l$ be a finite sequence of up steps $U$ and down steps $D$. A peak
+of $l$ is a position where a step $U$ is immediately followed by a step $D$. The peak descents
+of $l$ form the list that has, for each peak from left to right, the length $j$ of the maximal
+run of consecutive steps $D$ that starts at the $D$ of that peak, so that the peak and its
+descent form the primitive block $U D^j$.
 
 Source: Gil, Hoover, and Shearer, *Bijections Between Colored Compositions, Dyck
 Paths, and Polygon Partitions*, Journal of Integer Sequences 27 (2024), Article
@@ -37,8 +39,10 @@ def dyckPeakDescents (l : List DyckStep) : List ℕ :=
   ((List.range l.length).filter fun i => decide (l[i]? = some U ∧ l[i + 1]? = some D)).map
     fun i => ((l.drop (i + 1)).takeWhile (· == D)).length
 
-/-- The source's sample path `U U U (U D^3) (U D^2) U (U D) U (U D^3)` has four
-peaks with descents `3, 2, 1, 3`.
+/-- **Peak descents of a sample Dyck path.** The Dyck path $UUUUDDDUDDUUDUUDDD$, which factors
+as $U\,U\,U\,(UD^3)(UD^2)\,U\,(UD)\,U\,(UD^3)$, has four peaks $UD$, and the lengths of the
+maximal runs of $D$ steps starting at the $D$ of each peak are, from left to right,
+$3, 2, 1, 3$.
 
 Source: Gil, Hoover, and Shearer, *Bijections Between Colored Compositions, Dyck
 Paths, and Polygon Partitions*, Journal of Integer Sequences 27 (2024), Article
