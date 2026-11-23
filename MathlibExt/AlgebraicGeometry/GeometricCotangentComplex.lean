@@ -10,7 +10,7 @@ module
 public import Mathlib.Algebra.Category.CommAlgCat.Basic
 public import Mathlib.Algebra.Category.ModuleCat.Abelian
 public import Mathlib.Algebra.Homology.DerivedCategory.Basic
-public import Mathlib.AlgebraicGeometry.Scheme
+public import Mathlib.Algebra.MvPolynomial.Basic
 public import MathlibExt.RingTheory.ResolutionCotangent
 
 /-!
