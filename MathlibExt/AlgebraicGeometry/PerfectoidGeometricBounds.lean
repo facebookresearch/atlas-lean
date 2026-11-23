@@ -100,7 +100,9 @@ structure GeometricPoint (P : Affine p) (x : P.toHuberPair.Space) where
     letI := residueEmbedding.toAlgebra
     Dense {a : field.carrier | IsAlgebraic (PointResidue p P x) a}
 
-/-- A compatible system of actual geometric point fields for an actual perfectoid map. -/
+/-- A compatible system of actual geometric point fields for an actual perfectoid map: each field
+extension is compatible with the scalar maps and sends the selected geometric point of the source
+to that of the target. -/
 structure GeometricFieldSystem {P Q : Affine p} (f : P ⟶ Q) where
   source : ∀ x : P.toHuberPair.Space, GeometricPoint p P x
   target : ∀ x : P.toHuberPair.Space, GeometricPoint p Q (spaceMap p f x)
@@ -108,6 +110,8 @@ structure GeometricFieldSystem {P Q : Affine p} (f : P ⟶ Q) where
     RingMap (target x).field.pair.toHuberPair (source x).field.pair.toHuberPair
   normalized : ∀ x : P.toHuberPair.Space,
     (extension x).hom.comp (target x).map.hom = (source x).map.hom.comp f.hom
+  point_normalized : ∀ x : P.toHuberPair.Space,
+    (extension x).spa (source x).point = (target x).point
 
 variable {p}
 
