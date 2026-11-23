@@ -439,7 +439,7 @@ theorem dist_eq_sum_darts {X : Type*} [Fintype X] [DecidableEq X] {V : Type*} [F
     have h2 := mem_edges_iff hG hp t.fst t.snd
     simp only [hf, SimpleGraph.Dart.edge]
     by_cases hr : (G.deleteEdges {s(t.fst, t.snd)}).Reachable (ι x) (ι y)
-    · have h3 : s(t.fst, t.snd) ∉ p.edges := fun h => h2.mp h hr
+    · have h3 : t.edge ∉ p.edges := fun h => h2.mp h hr
       simp [h1.mpr hr, h3]
     · have h3 : ¬ (x ∈ side G ι t.fst t.snd ↔ y ∈ side G ι t.fst t.snd) := fun h => hr (h1.mp h)
       simp only [h3, h2.mpr hr, ite_false, ite_true]
