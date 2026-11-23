@@ -15,8 +15,10 @@ $2$. For a cyclic extension $L/K$ whose global Artin map is trivial on $K^\times
 (Lemma VII.8.5): for an injective character $\chi \colon G \to \mathbb{Q}/\mathbb{Z}$, cup product with the
 class $\delta\chi \in H^2(G, \mathbb{Z})$ maps $K^\times = H^0(G, L^\times)$ onto $H^2(G, L^\times)$ by the
 periodicity of the cohomology of cyclic groups, and by the local cup-product formula
-$\chi(\phi_v(a)) = \mathrm{inv}_v(a \cup \delta\chi)$ the sum of the invariants of $a \cup \delta\chi$ is
-$\chi(\phi_{L/K}(a)) = 0$. By
+$\chi(\phi_v(a)) = \mathrm{inv}_v((a \cup \delta\chi)_v)$ at every place $v$ the sum of the invariants of
+$a \cup \delta\chi$ is $\chi(\phi_{L/K}(a)) = 0$. The formula is used at all places: at a real place
+that becomes complex in $L$ it is the formula for $\mathbb{C}/\mathbb{R}$, and at a complex place, or a
+real place that stays real, both sides vanish. By
 [the cyclotomic case](principal-ideles-cyclotomic-case.md), this applies to every cyclic cyclotomic
 extension. Every class of $H^2(\mathrm{Gal}(\overline{K}/K), \overline{K}^\times)$ is inflated from a
 cyclic cyclotomic extension ([cyclic cyclotomic splitting](cyclic-cyclotomic-splitting.md)), and inflation
@@ -25,15 +27,14 @@ finite Galois extension (Lemma VII.8.6).
 
 ## Depends on
 
-- [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for the local invariant maps (its item 2); the proof also uses their behaviour under inflation
+- [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for the local invariant maps (its item 2); the proof also uses their behaviour under inflation and the cup-product formula at every place, the real ones included (its item 3)
 
 ## Proof depends on
 
 - [Cohomology of the idèle group of a Galois extension](../cohomology-of-idele-classes/cohomology-of-the-idele-group.md), in degree $2$
 - [The global Artin map of a cyclotomic extension is trivial on principal idèles](principal-ideles-cyclotomic-case.md)
-- [Classes in H² of a number field split over cyclic cyclotomic extensions](cyclic-cyclotomic-splitting.md)
+- [Classes in H² of a number field split over cyclic cyclotomic extensions](cyclic-cyclotomic-splitting.md), for the splitting of every class (its part 2)
 - [Global Artin map](global-artin-map.md), as the product of the local Artin maps
-- [Local class field theory: functoriality and explicit reciprocity](../../../p-adic-numbers/local-class-field-theory-functoriality.md), for the local cup-product formula (its item 2)
 - [Periodicity of Tate cohomology for finite cyclic groups](../../../../RepresentationTheory/group-cohomology/tate-cohomology-and-the-herbrand-quotient/nonempty-periodicity-iso.md)
 - [Restriction, corestriction, inflation and Tate's theorem in group cohomology](../../../../RepresentationTheory/group-cohomology/restriction-corestriction-inflation-and-tate-s-theorem.md), for cup products and the injectivity of inflation in degree $2$
 

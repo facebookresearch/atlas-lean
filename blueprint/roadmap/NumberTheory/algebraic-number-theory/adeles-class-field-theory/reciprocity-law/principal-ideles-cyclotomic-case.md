@@ -26,7 +26,7 @@ a subextension $L$ of $K(\zeta_m)$ follows by restriction (Lemma VII.8.4).
 
 - [Norm compatibility of the global Artin map](norm-compatibility.md), for the passage from $\mathbb{Q}$ to $K$
 - [The global Artin map at unramified places](artin-map-at-unramified-places.md), for the primes not dividing $m$
-- [Local class field theory: functoriality and explicit reciprocity](../../../p-adic-numbers/local-class-field-theory-functoriality.md), for the local Artin map of $\mathbb{Q}_\ell$ on $\mathbb{Q}_\ell(\zeta_{\ell^r})$ (its item 3)
+- [Local class field theory: functoriality and explicit reciprocity](../../../p-adic-numbers/local-class-field-theory-functoriality.md), for the local Artin map of $\mathbb{Q}_\ell$ on $\mathbb{Q}_\ell(\zeta_{\ell^r})$ (its item 2)
 
 ## Sources
 
