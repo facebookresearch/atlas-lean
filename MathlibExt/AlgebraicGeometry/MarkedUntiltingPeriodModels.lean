@@ -17,7 +17,10 @@ public import MathlibExt.LinearAlgebra.LocalizedLattices
 
 A marked untilt includes its actual tilt isomorphism and integral marking.
 The latter commutes with the native map from the plus-ring pretilt to
-the powerbounded-ring pretilt and the existing tilt presentation.
+the powerbounded-ring pretilt and the existing tilt presentation. Its
+E-action is integral and, on the Cohen--Witt scalars, agrees after theta
+with the marked residue action, so the untilt lies over the specified
+coefficient base.
 
 The period map is the actual tensor lift of the marked native Witt map
 into B_dR-plus and the original E scalar lift. It is normalized on every
@@ -73,7 +76,12 @@ def preTiltInclusion (T : AffineUntilting p) [IntegralPeriodInput p T.pair] :
 
 variable {E : MixedField p} (C : CoefficientData p E) (S : Base p C)
 
-/-- The actual marked untilt, with its source integral dictionary and E action. -/
+/-- The actual marked untilt over `E`, with its source integral dictionary and E action
+(Fargues--Scholze, Definition I.2.2 and Section VI.1: an untilt over the specified coefficient
+base). The `E`-action is integral on `𝒪_E`, and on the Cohen--Witt scalars `W(k_E)` it is the
+marked residue action after theta. Without this compatibility an `E`-action twisted by a
+nontrivial automorphism of the unramified subfield would be admitted, and no scalar lift to
+B_dR-plus could exist. -/
 structure Untilting where
   affine : AffineUntilting p
   [periodInput : IntegralPeriodInput p affine.pair]
@@ -83,6 +91,12 @@ structure Untilting where
     tiltIso.inv.hom (IntegralTiltModels.TiltModel.integralMap p affine.pair affine.tilt
       (preTiltInclusion p affine x)) = (marking.symm x : S.pair.ring)
   [fieldAction : Algebra E.field affine.pair.ring]
+  integral_action : ∀ x ∈ 𝒪[E.field], algebraMap E.field affine.pair.ring x ∈ affine.pair.plus
+  residue_compatible : ∀ w : WittVector p (Residue p E),
+    algebraMap E.field affine.pair.ring (C.cohen w : E.field) =
+      thetaPlusToRing p affine.pair (AinfToDeRham p affine.pair
+        (WittVector.map marking.toRingHom
+          (WittVector.map (algebraMap (Residue p E) S.pair.plus) w)))
 
 attribute [instance] Untilting.periodInput Untilting.fieldAction
 

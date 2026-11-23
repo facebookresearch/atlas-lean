@@ -128,11 +128,15 @@ theorem quotient_frobenius :
   exact (coequalizer.condition (frobeniusMap p S φ) (𝟙 _)).trans
     (Category.id_comp _)
 
-/-- Actual annular rational presentations, with their exact point domains. -/
+/-- Actual annular rational presentations, with their exact point domains. The denominator is
+divisible by both period generators, so every chart lies in the twice-punctured space `Y` and its
+ring does not see the deleted boundary. -/
 structure RationalPresentation where
   numerators : Finset (Ring p S)
   denominator : Ring p S
   annular : IsAnnular (Ring p S) (periodIdeal p S) numerators denominator
+  punctured : ∃ a : Ring p S,
+    denominator = (p : Ring p S) * (show Ring p S from WittVector.teichmuller p S.varpi) * a
   openSet : Opens (ySpace p S)
   domain : ∀ y : Y p S, y ∈ openSet ↔
     ¬ y.val.val.relation.vle denominator 0 ∧

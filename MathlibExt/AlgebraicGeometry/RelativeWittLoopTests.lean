@@ -291,10 +291,16 @@ def loops : PerfectAlgebra p k ⥤ GrpCat.{0} :=
 def positiveToLoop : positiveLoops p k B G ⟶ loops p k B pi G :=
   Functor.whiskerRight (NatTrans.rightOp (localizations p k B pi)) (yonedaGrpObj G)
 
-/-- The fpqc basis uses actual faithfully flat perfect residue-algebra maps. -/
+/-- The fpqc basis uses actual finite jointly faithfully flat families of perfect residue
+algebras, that is, families whose product map is faithfully flat. Finite families, including the
+empty family covering the zero algebra, make sheaves preserve finite products, as Zhu,
+arXiv:1407.8519v3, Appendix A.1.1 requires in addition to the faithfully flat equaliser
+condition. -/
 def fpqcPrecoverage : Precoverage (PerfectAlgebra p k)ᵒᵖ where
-  coverings R := {s | ∃ (S : PerfectAlgebra p k) (f : R.unop ⟶ S),
-    f.hom.hom.toRingHom.FaithfullyFlat ∧ s = Presieve.singleton f.op}
+  coverings R := {s | ∃ (J : Type) (_ : Finite J) (S : J → PerfectAlgebra p k)
+    (f : ∀ i, R.unop ⟶ S i),
+    (RingHom.pi fun i ↦ (f i).hom.hom.toRingHom).FaithfullyFlat ∧
+      s = Presieve.ofArrows (fun i ↦ Opposite.op (S i)) fun i ↦ (f i).op}
 
 /-- The native fpqc topology on all actual residue tests. -/
 def fpqcTopology : GrothendieckTopology (PerfectAlgebra p k)ᵒᵖ :=

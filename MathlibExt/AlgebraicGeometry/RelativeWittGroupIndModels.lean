@@ -23,8 +23,12 @@ these native maps. The realization target is the original fpqc `LG/L+G`.
 
 Convolution uses the original twofold twisted quotient and its native
 group-product map. All finite-stage maps and their transition squares
-are retained; properness is checked on actual representing scheme
-pullback cones, and the colimit insertions fix the original multiplication.
+are retained, and the colimit insertions fix the original multiplication.
+The finite-stage maps go between perfect spaces, which are not of finite
+type, so they are not required to be proper: each is the perfection of a
+proper map of the ordinary models, checked on actual representing scheme
+fibres (Zhu, Appendix A, Definition A.18 and Lemma A.19: perfect
+properness is properness of a deperfection).
 
 Source: Zhu, arXiv:1407.8519v3, Theorem 1.4, p. 9, and
 Section 1.4, pp. 18--20. Constructing this general reductive geometry is
@@ -107,18 +111,25 @@ abbrev GrassmannianGeometry := QuotientRealization p k
 abbrev TwistedProductGeometry := QuotientRealization p k
   (RelativeWittLoopCorrespondences.convolution p k B pi G)
 
-/-- Properness is on every actual representing scheme fibre of a space map. -/
+/-- Properness is on every actual representing scheme fibre of a space map. This is ordinary
+properness, so it is meant for maps of the ordinary (finite-type) models. -/
 def IsProperSpaceMap {A C : Space k} (f : SpaceMap k A C) : Prop :=
   ∀ (V : Scheme) (y : represented.obj V ⟶ C.sheaf),
     ∃ F : SchemeFibre k f V y, IsProper F.scheme.hom
 
-/-- Native finite-stage convolution, pinned to the original group-product map. -/
+/-- Native finite-stage convolution, pinned to the original group-product map. Each map of
+perfect stages is the perfection of a proper map of the ordinary models: it lies over that
+ordinary map along the two perfection projections. -/
 structure ConvolutionGeometry (M : GrassmannianGeometry p k B pi G) where
   geometry : TwistedProductGeometry p k B pi G
   targetStage : ℕ →o ℕ
   maps : ∀ N : ℕ, SpaceMap k (geometry.stages.stage N).perfection.space
     (M.stages.stage (targetStage N)).perfection.space
-  proper : ∀ N, IsProperSpaceMap k (maps N)
+  ordinaryMaps : ∀ N : ℕ, SpaceMap k (geometry.stages.stage N).ordinary
+    (M.stages.stage (targetStage N)).ordinary
+  ordinary_proper : ∀ N, IsProperSpaceMap k (ordinaryMaps N)
+  perfection_square : ∀ N, maps N ≫ (M.stages.stage (targetStage N)).perfection.projection =
+    (geometry.stages.stage N).perfection.projection ≫ ordinaryMaps N
   naturality : ∀ {N L : ℕ} (h : N ≤ L),
     geometry.stages.transition h ≫ maps L =
       maps N ≫ M.stages.transition (targetStage.monotone h)

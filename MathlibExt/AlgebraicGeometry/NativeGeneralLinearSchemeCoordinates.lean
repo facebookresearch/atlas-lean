@@ -46,9 +46,16 @@ abbrev CoordinateRing := Localization.Away (Matrix.det (universalMatrix B n))
 def scheme : Over (Spec (.of B)) :=
   Over.mk (Spec.algebraMap B (CoordinateRing B n))
 
-/-- Native realization on the fixed coordinate scheme and all algebra tests. -/
+/-- Native realization on the fixed coordinate scheme and all algebra tests. The matrix of a point
+is its ring map evaluated on the localised universal coordinates `X(i,j)`: a natural group
+isomorphism alone would not pin the coordinates, since composing with inversion is natural. -/
 structure PointRealization where
   [group : GrpObj (scheme B n)]
   points : groups B (scheme B n) ≅ linearGroups B n
+  coordinates : ∀ (A : CommAlgCat.{0} B) (g : (testSchemes B).obj (Opposite.op A) ⟶ scheme B n)
+    (i j : Fin n),
+    ((show GL (Fin n) A from (points.hom.app A).hom g) : Matrix (Fin n) (Fin n) A) i j =
+      (Spec.preimage g.left).hom
+        (algebraMap (MvPolynomial (Fin n × Fin n) B) (CoordinateRing B n) (MvPolynomial.X (i, j)))
 
 end MathlibExt.AlgebraicGeometry.NativeGeneralLinearSchemeCoordinates

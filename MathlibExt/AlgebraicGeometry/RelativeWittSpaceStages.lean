@@ -76,15 +76,18 @@ def relativeMap {A C : Space k} (f : SpaceMap k A C) :
 
 variable (p k)
 
-/-- Perfectness is the actual Frobenius condition on every affine chart. -/
+/-- Perfectness is the actual Frobenius condition on every affine chart: the sections have
+characteristic `p` and their Frobenius is bijective. (Over an arbitrary base the characteristic
+condition is not automatic: cubing is bijective on `𝔽₂`.) -/
 def IsPerfectScheme (T : Over (Spec (.of k))) : Prop :=
   ∀ U : T.left.Opens, IsAffineOpen U →
-    Function.Bijective (fun a : Γ(T.left, U) ↦ a ^ p)
+    (p : Γ(T.left, U)) = 0 ∧ Function.Bijective (fun a : Γ(T.left, U) ↦ a ^ p)
 
-/-- The chosen etale atlas has actual perfect affine-open section rings. -/
+/-- The chosen etale atlas has actual perfect affine-open section rings of characteristic `p`. -/
 def IsPerfectSpace (A : Space k) : Prop :=
   ∀ U : A.presentation.U.Opens, IsAffineOpen U →
-    Function.Bijective (fun a : Γ(A.presentation.U, U) ↦ a ^ p)
+    (p : Γ(A.presentation.U, U)) = 0 ∧
+      Function.Bijective (fun a : Γ(A.presentation.U, U) ↦ a ^ p)
 
 /-- An ordinary space and its universal actual perfect realization. -/
 structure Perfection (A : Space k) where

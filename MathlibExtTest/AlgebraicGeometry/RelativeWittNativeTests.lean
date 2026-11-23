@@ -43,6 +43,23 @@ private theorem includes_zero_algebra (p : ℕ) [Fact p.Prime] :
     ∃ R : PerfectAlgebra p (ZMod p), Subsingleton R.obj :=
   ⟨zeroTest p, inferInstanceAs (Subsingleton (ZMod 1))⟩
 
+section GeneralLinearCoordinates
+
+open MathlibExt.AlgebraicGeometry.NativeGeneralLinearSchemeCoordinates
+open MathlibExt.AlgebraicGeometry.AlgebraicGroupPointRepresentations
+
+/-- The coordinate condition pins the point dictionary: any two realizations give the same matrix
+for every point, so composing a dictionary with inversion is not another realization. -/
+example (B : Type) [CommRing B] (n : ℕ) (P P' : PointRealization B n) (A : CommAlgCat.{0} B)
+    (g : (testSchemes B).obj (Opposite.op A) ⟶ scheme B n) (i j : Fin n) :
+    (letI := P.group;
+      ((show GL (Fin n) A from (P.points.hom.app A).hom g) : Matrix (Fin n) (Fin n) A) i j) =
+      (letI := P'.group;
+        ((show GL (Fin n) A from (P'.points.hom.app A).hom g) : Matrix (Fin n) (Fin n) A) i j) :=
+  (P.coordinates A g i j).trans (P'.coordinates A g i j).symm
+
+end GeneralLinearCoordinates
+
 #print axioms includes_zero_algebra
 #print axioms MathlibExt.AlgebraicGeometry.RelativeWittLatticeModels.coordinateSpan
 #print axioms MathlibExt.AlgebraicGeometry.RelativeWittLatticeModels.ScalarExtension.functor

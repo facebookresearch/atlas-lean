@@ -100,7 +100,9 @@ variable (p : ℕ) [Fact p.Prime] {E : MixedField p} (C : CoefficientData p E)
 public def_wanted untiltTiltComparison :
     MathlibExt.AlgebraicGeometry.UntiltingCartierModels.TiltComparison p C R T
 
-/-- The original finite local-field scalars have their theta- and Cohen-normalized lift. -/
+/-- The original finite local-field scalars have their theta- and Cohen-normalized lift. The
+untilt lies over `E`: its integral `E`-action agrees after theta with the marked residue action on
+the Cohen--Witt scalars (`Untilting.residue_compatible`), which the lift extends. -/
 public def_wanted scalarLift : ScalarLift p C S T
 
 /-- Compare the actual relative theta-kernel completion to native B_dR-plus at every level. -/

@@ -22,8 +22,10 @@ with a universal perfection map on all perfect scheme-valued tests.
 Lattice points/naturality use the perfect output and prescribed Witt map.
 
 Generic Grassmannian representability, polynomial Proj and native Witt
-operations are source-covered prerequisites. The ordinary normalized
-base-change producer is an explicit input; no representability conclusion
+operations are source-covered prerequisites. The normalized base-change
+producer (the coordinate span of a lattice is again a lattice, with its
+bound) is requested separately as `wittLatticeBaseChange`, and the
+representation request takes it as input; no representability conclusion
 is assumed in it. General reductive groups, Satake and local-model
 comparisons remain separate family interfaces.
 -/
@@ -33,6 +35,11 @@ comparisons remain separate family interfaces.
 namespace WantedExt.AlgebraicGeometry.WittLatticeGrassmannian
 
 open MathlibExt.AlgebraicGeometry.WittLatticeFamilies
+
+/-- Scalar extension of Witt lattices along perfect algebra maps: the span of the coordinate
+images of a lattice is again a finite projective lattice, and it keeps every bound. This is the
+functoriality of the lattice description in Bhatt--Scholze, Theorem 1.1. -/
+public def_wanted wittLatticeBaseChange (p : ℕ) [Fact p.Prime] (n : ℕ) : BaseChange p n
 
 /-- The actual bounded mixed-characteristic lattice functor is projective. -/
 public def_wanted boundedPerfectProjectiveRepresentation

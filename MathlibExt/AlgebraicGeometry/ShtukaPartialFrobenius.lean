@@ -249,7 +249,8 @@ instance rotationCokernelJComparison_isIso (A : Shtuka p X S r) :
 
 /-- Exact known source prerequisites on the actual Frobenius pullback.
 `Shtuka/BaseChange.lean` proves these from graph-line flatness for any
-base change. They are not new proof requests. The algebraic Tor step is
+base change; here they are requested as
+`WantedExt.AlgebraicGeometry.ShtukaPartialFrobenius.pullbackConditions`. The algebraic Tor step is
 ported complete in `FlatCokernelBaseChange`. -/
 structure PullbackConditions (A : Shtuka p X S r) : Prop where
   mono : Mono ((Scheme.Modules.pullback (twist p X S)).map A.j)

@@ -22,9 +22,10 @@ The base family is smooth over `F_p`, so its Frobenius pullback is exact.
 
 The underlying product Frobenius, bundles, graphs, right-shtuka category,
 candidate pushout and its maps are completed code. Injectivity and the
-shifted graph-line cokernel are source-covered base-change facts, combined
-with the canonical cokernel map of the actual flipped pushout square.
-The requested result is the remaining geometric local-freeness/rank.
+shifted graph-line cokernel are source-covered base-change facts
+(`pullbackConditions`), combined with the canonical cokernel map of the
+actual flipped pushout square. The main requested result is the remaining
+geometric local-freeness/rank.
 
 References: Patrick Bieker, *Compactification of level maps of moduli
 spaces of Drinfeld shtukas*, Definition 2.2 and Remark 2.3, pp. 3–4.
@@ -42,6 +43,14 @@ namespace WantedExt.AlgebraicGeometry.ShtukaPartialFrobenius
 open CategoryTheory _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.ShtukaPartialFrobenius
 open MathlibExt.AlgebraicGeometry.CurveVectorBundles
+
+/-- The Frobenius pullback of the pole modification stays injective, and its cokernel is the line
+bundle on the graph of the shifted pole: the cokernel of the original pole modification is a line
+bundle on a graph, hence flat over the base, so base change along the partial Frobenius preserves
+the injection and the graph-line cokernel (the base-change step of the source shtuka API). -/
+public theorem_wanted pullbackConditions
+    (p : ℕ) [Fact p.Prime] (X S : PrimeFieldScheme p) (r : ℕ) (A : Shtuka p X S r) :
+    A.PullbackConditions
 
 /-- The normalized pole rotation is a shtuka on the disjoint-leg open. -/
 public theorem_wanted partialFrobeniusModification
