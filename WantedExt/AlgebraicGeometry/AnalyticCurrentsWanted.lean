@@ -29,14 +29,6 @@ open MathlibExt.AlgebraicGeometry
 open KahlerClassGeometry ManifoldDifferentialForms CoordinateFormIntegrals AnalyticCurrents
 open scoped Manifold ContDiff
 
-/-- The distributional differential of a current is again a current: the
-exterior derivative is continuous for the chart seminorms. -/
-public instance_wanted currentDifferentialTheory (n : ℕ) (M : Type) [TopologicalSpace M]
-    [CompactSpace M] [ChartedSpace (Coordinates n) M]
-    [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
-    [ExteriorTheory ℝ (Coordinates n) M] :
-    CurrentDifferentialTheory n M
-
 /-- Demailly--Paun, Theorem 0.4: on a compact Kähler manifold, a nef real
 `(1,1)` class of positive volume contains a Kähler current. -/
 public theorem_wanted nef_positiveVolume_kahlerCurrent
@@ -56,5 +48,13 @@ public theorem_wanted nef_positiveVolume_kahlerCurrent
     ∃ T : Current n M 2, IsTypeOneOneCurrent n M T ∧ IsClosedCurrent n M T ∧
       Represents n M R A hn T alpha ∧
       ∃ epsilon : ℝ, 0 < epsilon ∧ Dominates n M R A hn T eta.form.val epsilon
+
+/-- The distributional differential of a current is again a current: the
+exterior derivative is continuous for the chart seminorms. -/
+public instance_wanted currentDifferentialTheory (n : ℕ) (M : Type) [TopologicalSpace M]
+    [CompactSpace M] [ChartedSpace (Coordinates n) M]
+    [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
+    [ExteriorTheory ℝ (Coordinates n) M] :
+    CurrentDifferentialTheory n M
 
 end WantedExt.AlgebraicGeometry.AnalyticCurrentsWanted
