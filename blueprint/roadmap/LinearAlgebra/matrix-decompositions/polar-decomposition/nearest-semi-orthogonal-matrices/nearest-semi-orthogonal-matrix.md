@@ -32,6 +32,10 @@ If $r = n \le m$, this fixes $A$ on all of $\mathbb{R}^n$, and if $r = m \le n$,
 $A^{\mathsf{T}}$ on all of $\mathbb{R}^m$; either way $A = P(G)$. If $r < k$, the sign change of
 item 4 gives a different semi-orthogonal matrix with the same inner product.
 
+## Depends on
+
+- [Canonical polar factor of a rectangular matrix](../polar-decomposition-theorem/rectangular-polar-factor.md)
+
 ## Informally uses
 
 - [Real singular value decomposition](../../singular-value-decomposition/singular-value-decomposition-theorem/real-singular-value-decomposition.md):
