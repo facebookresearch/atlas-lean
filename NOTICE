@@ -1,0 +1,262 @@
+Retained source copyright, license, and attribution notices
+==========================================================
+
+The following notices are reproduced from the source files for the listed
+modules. They preserve existing notices and do not grant additional rights
+or replace the license terms stated by the credited sources.
+
+Files:
+  MathlibExt/Algebra/Category/Grp/ForgetCorepresentable.lean
+  MathlibExt/Algebra/Homology/Embedding/ExtendHomotopy.lean
+  MathlibExt/Algebra/Homology/ExactSequence.lean
+  MathlibExt/Algebra/Homology/HomotopyCofiber.lean
+  MathlibExt/AlgebraicTopology/EilenbergSteenrod.lean
+  MathlibExt/AlgebraicTopology/EilenbergSteenrod/Cone.lean
+  MathlibExt/AlgebraicTopology/EilenbergSteenrod/Contractible.lean
+  MathlibExt/AlgebraicTopology/EilenbergSteenrod/DiskPair.lean
+  MathlibExt/AlgebraicTopology/EilenbergSteenrod/GoodPair.lean
+  MathlibExt/AlgebraicTopology/EilenbergSteenrod/GoodPairPointQuotient.lean
+  MathlibExt/AlgebraicTopology/EilenbergSteenrod/GoodPairPointQuotientNeighborhood.lean
+  MathlibExt/AlgebraicTopology/EilenbergSteenrod/HomotopyInvariance.lean
+  MathlibExt/AlgebraicTopology/EilenbergSteenrod/MayerVietorisExact.lean
+  MathlibExt/AlgebraicTopology/EilenbergSteenrod/PairSequenceExact.lean
+  MathlibExt/AlgebraicTopology/EilenbergSteenrod/Reduced.lean
+  MathlibExt/AlgebraicTopology/EilenbergSteenrod/Suspension.lean
+  MathlibExt/AlgebraicTopology/EilenbergSteenrod/TripleSequence.lean
+  MathlibExt/AlgebraicTopology/EilenbergSteenrod/TripleSequenceExact.lean
+  MathlibExt/AlgebraicTopology/SimplicialObject/EilenbergZilber/ShuffleAlternating.lean
+  MathlibExt/AlgebraicTopology/SimplicialObject/EilenbergZilber/ShuffleUnit.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/NormalizedFunctor.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/NormalizedHomologyComparison.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/DiskPair.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/Excision/Excision.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/IntegerAdditivity.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/IntegerDimension.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/IntegerDimensionAxiom.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/IntegerExactness.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/IntegerHomotopy.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/IntegerPairSequence.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/IntegerTheory.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/SmallChains/TwoSetQuasiIso.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/Sphere/Homology.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/Sphere/HomologyZero.lean
+  MathlibExt/AlgebraicTopology/SingularSet/Simplex.lean
+  MathlibExt/CategoryTheory/Abelian/DiagramLemmas/Braid.lean
+  MathlibExt/CategoryTheory/ComposableArrows/Opposite.lean
+  MathlibExt/Topology/Category/TopCat/ConeSphere.lean
+  MathlibExt/Topology/Category/TopCat/MappingCone.lean
+  MathlibExt/Topology/Category/TopCat/PointQuotient.lean
+  MathlibExt/Topology/Category/TopCat/SpherePointed.lean
+  MathlibExt/Topology/Category/TopCat/Suspension.lean
+  MathlibExt/Topology/Category/TopCat/Suspension/HeightCover.lean
+  MathlibExt/Topology/Category/TopPair/Adjunctions.lean
+  MathlibExt/Topology/Category/TopPair/ClosedBall.lean
+  MathlibExt/Topology/Category/TopPair/ClosedBall/Topology.lean
+  MathlibExt/Topology/Category/TopPair/Cone.lean
+  MathlibExt/Topology/Category/TopPair/GoodPair.lean
+  MathlibExt/Topology/Category/TopPair/GoodPairPointQuotient.lean
+  MathlibExt/Topology/Category/TopPair/GoodPairPointQuotientExcision.lean
+  MathlibExt/Topology/Category/TopPair/GoodPairPointQuotientHomotopy.lean
+  MathlibExt/Topology/Category/TopPair/HomotopyEquiv.lean
+  MathlibExt/Topology/Category/TopPair/PointQuotient.lean
+  MathlibExt/Topology/Category/TopPair/Range.lean
+  MathlibExt/Topology/Category/TopPair/Triple.lean
+  MathlibExt/Topology/Homeomorph/Set.lean
+
+Copyright (c) 2026 Avocado. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Avocado
+
+Files:
+  MathlibExt/Algebra/Category/ModuleCat/FinsuppCofan.lean
+
+Author: @toskua
+Copyright (c) 2019 Kim Morrison. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+
+Files:
+  MathlibExt/Algebra/Homology/Embedding/RestrictionHomology.lean
+
+Copyright (c) 2026 Tsutomu Okano. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Author: @toskua
+
+Files:
+  MathlibExt/Algebra/Homology/HomologySequenceFunctor.lean
+  MathlibExt/Algebra/Homology/ShortComplex/ShortExactSequences.lean
+  MathlibExt/AlgebraicTopology/EilenbergSteenrod/MayerVietoris.lean
+  MathlibExt/AlgebraicTopology/EilenbergSteenrod/Sphere.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/IntegerData.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/IntegerExcision.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/IntegerGrading.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/RelativeHomology.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/SingularSubdivision/Geometry.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/Sphere/Zero.lean
+  MathlibExt/CategoryTheory/Preadditive/SignedDiagonal.lean
+
+Copyright (c) 2026 Avocado. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Author: @toskua, Avocado
+
+Files:
+  MathlibExt/Algebra/Homology/Homotopy.lean
+
+Copyright (c) 2026 Toskua. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Toskua
+
+Files:
+  MathlibExt/Algebra/Homology/QuasiIsoProjectiveSeparator.lean
+  MathlibExt/AlgebraicTopology/SimplicialObject/AlexanderWhitney.lean
+  MathlibExt/AlgebraicTopology/SimplicialObject/AlexanderWhitney/Alternating.lean
+
+Copyright (c) 2026 Tsutomu Okano. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Tsutomu Okano
+
+Files:
+  MathlibExt/Algebra/Homology/SingleQuasiIso.lean
+
+Copyright (c) 2025 Avocado. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Avocado
+
+Files:
+  MathlibExt/Algebra/Homology/TotalComplexExact.lean
+
+Author: @toskua
+Copyright (c) 2026 @junekim623, Muse. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+
+The zero-morphism argument generalizes the first-quadrant proof by
+@junekim623 and Muse from the Hartshorne development.
+
+Files:
+  MathlibExt/AlgebraicTopology/Quasicategory/TwoTruncatedCompat.lean
+
+Copyright (c) 2025 Julian Komaromy. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Julian Komaromy, Joël Riou
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplicialObject/EilenbergZilber/Shuffle.lean
+
+-- Copyright (c) 2026. All rights reserved.
+-- Released under Apache 2.0 license as described in the file LICENSE.
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplicialSet/CompStructCompat.lean
+
+Copyright (c) 2025 Joël Riou. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Joël Riou, Arnoud van der Leer
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplicialSet/FundamentalGroupoid/Basic.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/FundamentalGroupoid/Homotopy.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/KanComplex/FundamentalGroupoid.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/KanComplex/HomotopyGroup.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/KanComplex/PtSimplexEquiv.lean
+  MathlibExt/CategoryTheory/TrivialBundleWithFiberTerminal.lean
+
+Copyright (c) 2026 Joël Riou. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Joël Riou
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplicialSet/ModelCategory/FibrationSequence/Loop/OriginalBasedPathConnectingLift.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/ModelCategory/FibrationSequence/Loop/OriginalBasedPathLoopComparison.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/ModelCategory/FibrationSequence/Loop/OriginalBasedPathLoopUniversalMaps.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/ModelCategory/FibrationSequence/Loop/OriginalConnectingLiftRepresentation.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/ModelCategory/FibrationSequence/Loop/OriginalDoublePathEndpoints.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/ModelCategory/FibrationSequence/Loop/OriginalDoublePathInterchange.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/ModelCategory/FibrationSequence/Loop/OriginalLoopFiberComparison.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/ModelCategory/FibrationSequence/Loop/OriginalLoopedBasedPathLift.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/ModelCategory/FibrationSequence/Loop/OriginalPathFiberComparison.lean
+  MathlibExt/CategoryTheory/Comma/Arrow/OriginalComparisonSquares.lean
+  MathlibExt/CategoryTheory/Monoidal/Closed/InternalHomInterchange.lean
+  MathlibExt/CategoryTheory/Presentable/OriginalDiagramCardinalScale.lean
+  MathlibExt/CategoryTheory/SmallObject/GoodCellTree/CompactRootBaseChange.lean
+
+Copyright (c) 2026 Tsutomu Okano. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: @toskua, Avocado
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplicialSet/MonoidalCompat.lean
+
+Copyright (c) 2024 Joël Riou. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Joël Riou, Jack McKoen
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplicialSet/ProdStdSimplexCompat.lean
+  MathlibExt/AlgebraicTopology/SimplicialSet/ProdStdSimplexOneCompat.lean
+
+Copyright (c) 2025 Joël Riou. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Joël Riou
+
+Files:
+  MathlibExt/AlgebraicTopology/SimplicialSet/StdSimplexCompat.lean
+
+Copyright (c) 2021 Kim Morrison. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Johan Commelin, Kim Morrison, Adam Topaz, Joël Riou
+
+Files:
+  MathlibExt/AlgebraicTopology/SingularHomology/Excision/RelativeChains.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/SingularSubdivision/Operators.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/SingularSubdivision/QuasiIso.lean
+  MathlibExt/AlgebraicTopology/SingularHomology/SingularSubdivision/Realization.lean
+
+Copyright (c) 2025 Avocado. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Author: @toskua, Avocado
+
+Files:
+  MathlibExt/AlgebraicTopology/SingularHomology/Sphere/Suspension.lean
+
+Author: @toskua, Avocado
+Copyright (c) 2026 Avocado. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+
+Files:
+  MathlibExt/Analysis/Convex/StdSimplex.lean
+
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+
+Files:
+  MathlibExt/CategoryTheory/Grothendieck/FunctorFrom.lean
+
+Copyright (c) 2020 Kim Morrison. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Mathlib source authors: Kim Morrison, Sina Hazratpour.
+
+Files:
+  MathlibExt/Topology/Category/PointedTopCat.lean
+
+Copyright (c) 2026 Avocado. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: @toskua, Avocado
+
+Files:
+  MathlibExt/Topology/Category/TopCat/Suspension/Sphere.lean
+
+Author: @toskua
+Released under Apache 2.0 license as described in the file LICENSE.
+
+Copyright-only source notices (no additional license asserted)
+------------------------------------------------------------
+
+File: MathlibExt/CategoryTheory/Functor/EquivalenceTransport.lean
+
+Copyright (c) 2026 Tsutomu Okano. All rights reserved.
+Authors: Tsutomu Okano
+
+Copyright (c) 2026 Tsutomu Okano. All rights reserved.
+Authors: Tsutomu Okano
