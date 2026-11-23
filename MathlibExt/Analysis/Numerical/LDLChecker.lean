@@ -83,7 +83,5 @@ theorem checkLDL_sound {m : ℕ} {Q L : Matrix (Fin m) (Fin m) ℚ} {d : Fin m �
   have h4 : Q = L * Matrix.diagonal d * L.transpose := of_decide_eq_true hQ
   exact ldl_posSemidef L d ⟨h1, h2'⟩ h3 Q h4
 
-#print axioms ldl_posSemidef
-#print axioms checkLDL_sound
 
 end SOSCertificate.LDL
