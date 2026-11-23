@@ -13,7 +13,7 @@ import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.Ring
 
 /-!
-# Tests for Axler's truncated series bound
+# Tests for Axler's prime-counting bounds
 -/
 
 namespace MetaMathlibExt
@@ -47,5 +47,17 @@ example (x₀ : ℝ) (hx₀ : 0 < x₀)
   convert h using 1
   norm_num [b, Finset.sum_range_succ]
   ring
+
+-- Start below the first prime and end at the jump at 2.
+example (η : ℝ) (hη : 0 < η)
+    (hθ : ∀ y : ℝ, 3 / 2 ≤ y → |Chebyshev.theta y - y| < η * y / Real.log y) :
+    let J (e : ℝ) := 2 / Real.log 2 + e * 2 / Real.log 2 ^ 2 +
+      ∫ t in (3 / 2 : ℝ)..2, (1 / Real.log t ^ 2 + e / Real.log t ^ 3)
+    J (-η) ≤ 1 ∧ 1 ≤ J η := by
+  have h := primeCounting_mem_Icc_auxJ 1 (by decide) η (3 / 2) hη (by norm_num)
+    (by simpa using hθ) 2 (by norm_num)
+  have hfirst : Nat.primeCounting 2 = 1 := by decide
+  have hfloor : ⌊(3 / 2 : ℝ)⌋₊ = 1 := (Nat.floor_eq_iff' one_ne_zero).2 (by norm_num)
+  simpa [hfloor, hfirst, Chebyshev.theta_eq_zero_of_lt_two (by norm_num : (3 / 2 : ℝ) < 2)] using h
 
 end MetaMathlibExt
