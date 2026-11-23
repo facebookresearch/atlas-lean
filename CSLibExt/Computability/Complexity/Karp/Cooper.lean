@@ -284,20 +284,6 @@ def cooperUnsat : CNF :=
 
 /-! ### Target statements -/
 
-def chainHist {n : ℕ} {α : Type*} (x : Fin n → α) (k : Fin n) : Fin k.val → α :=
-  fun j => x ⟨j.val, lt_of_lt_of_le j.isLt (Nat.le_of_lt k.isLt)⟩
-
-theorem chain_joint_eq_prod {α : Type*} (c : Chain α) (n : ℕ) (x : Fin n → α) :
-    c.joint n x = ∏ k : Fin n, (c.cond k.val (chainHist x k)).weights (x k) := by
-  induction n with
-  | zero =>
-    simp [Chain.joint]
-  | succ n ih =>
-    rw [Fin.prod_univ_castSucc]
-    simp only [Chain.joint]
-    rw [ih (Fin.init x)]
-    rfl
-
 theorem RatNode.prob_nonneg (k : ℕ) (v : RatNode) (h : v.WellFormed k) (u : List Bool) :
     0 ≤ v.prob u := by
   unfold RatNode.prob RatNode.WellFormed at *
@@ -349,7 +335,7 @@ theorem bernoulliQ_weights_false (q : ℚ) (h0 : 0 ≤ q) (h1 : q ≤ 1) :
 
 theorem RatNet.paVals_eq_parentVals (r : RatNet) (hr : r.WellFormed)
     (k : Fin r.length) (x : Fin r.length → Bool) :
-    r.paVals k (fun j => chainHist x k ↑j) = r.parentVals k x := by
+    r.paVals k (fun j => (fun j => x (Fin.castLE k.2.le j)) ↑j) = r.parentVals k x := by
   have hnode : RatNode.WellFormed k.val (r.get k) := hr.2 k.val k.isLt
   obtain ⟨_, hlt, _, _, _⟩ := hnode
   unfold RatNet.paVals RatNet.parentVals
@@ -361,7 +347,7 @@ theorem RatNet.paVals_eq_parentVals (r : RatNet) (hr : r.WellFormed)
     unfold RatNet.pa
     rw [List.mem_toFinset, List.mem_filterMap]
     exact ⟨j, hj, by simp [hjlt]⟩
-  simp [hjlt, hjlen, hmem, chainHist]
+  simp [hjlt, hjlen, hmem, Fin.castLE]
 
 /-- **Decode bridge.** A well-formed rational network denotes an Atlas `BayesNet` over `ℝ` whose
 joint is the rational product of its table entries. -/
@@ -370,7 +356,7 @@ theorem RatNet.joint_toBayesNet (r : RatNet) (hr : r.WellFormed) (x : Fin r.leng
   have hnode : ∀ k : Fin r.length, RatNode.WellFormed k.val (r.get k) :=
     fun k => hr.2 k.val k.isLt
   have hjoint : r.toBayesNet.joint x = r.toBayesNet.toChain.joint r.length x := rfl
-  have hchain := chain_joint_eq_prod r.toBayesNet.toChain r.length x
+  have hchain := r.toBayesNet.toChain.joint_eq_prod r.length x
   have hrat : r.ratJoint x = ∏ k : Fin r.length,
       (if x k then (r.get k).prob (r.parentVals k x) else 1 - (r.get k).prob (r.parentVals k x)) := rfl
   have hcast : ((r.ratJoint x : ℚ) : ℝ) = ∏ k : Fin r.length,
@@ -382,16 +368,16 @@ theorem RatNet.joint_toBayesNet (r : RatNet) (hr : r.WellFormed) (x : Fin r.leng
   apply Finset.prod_congr rfl
   intro k _
   have hk : k.val < r.length := k.isLt
-  have hcond : r.toBayesNet.toChain.cond k.val (chainHist x k) =
-      r.toBayesNet.cpt ⟨k.val, hk⟩ (fun j => chainHist x k ↑j) := by
+  have hcond : r.toBayesNet.toChain.cond k.val (fun j => x (Fin.castLE k.2.le j)) =
+      r.toBayesNet.cpt ⟨k.val, hk⟩ (fun j => (fun j => x (Fin.castLE k.2.le j)) ↑j) := by
     simp [BayesNet.toChain, hk]
-  have hcpt : r.toBayesNet.cpt ⟨k.val, hk⟩ (fun j => chainHist x k ↑j) =
+  have hcpt : r.toBayesNet.cpt ⟨k.val, hk⟩ (fun j => (fun j => x (Fin.castLE k.2.le j)) ↑j) =
       bernoulliQ ((r.get ⟨k.val, hk⟩).prob
-        (r.paVals ⟨k.val, hk⟩ (fun j => chainHist x k ↑j))) := rfl
+        (r.paVals ⟨k.val, hk⟩ (fun j => (fun j => x (Fin.castLE k.2.le j)) ↑j))) := rfl
   have hget : (r.get ⟨k.val, hk⟩) = r.get k := rfl
-  have hpa : r.paVals ⟨k.val, hk⟩ (fun j => chainHist x k ↑j) =
-      r.paVals k (fun j => chainHist x k ↑j) := rfl
-  have hpaEq : r.paVals k (fun j => chainHist x k ↑j) = r.parentVals k x :=
+  have hpa : r.paVals ⟨k.val, hk⟩ (fun j => (fun j => x (Fin.castLE k.2.le j)) ↑j) =
+      r.paVals k (fun j => (fun j => x (Fin.castLE k.2.le j)) ↑j) := rfl
+  have hpaEq : r.paVals k (fun j => (fun j => x (Fin.castLE k.2.le j)) ↑j) = r.parentVals k x :=
     r.paVals_eq_parentVals hr k x
   have hq0 : 0 ≤ (r.get k).prob (r.parentVals k x) :=
     RatNode.prob_nonneg k.val (r.get k) (hnode k) (r.parentVals k x)
@@ -2360,36 +2346,18 @@ theorem cnfSat_iff_outProb_pos (φ : CNF) : CNFSat φ ↔ 0 < (cooperNet φ).out
       List.all_eq_true.mp hall C hC
     exact exists_mem_of_clauseVal_true hcl
 
-theorem delimit_length_eq (l : List Bool) :
-    (MetaMathlibExt.BitstringEncoding.delimit l).length = 2 * l.length + 1 := by
-  induction l with
-  | nil => simp [MetaMathlibExt.BitstringEncoding.delimit]
-  | cons b l ih => simp [MetaMathlibExt.BitstringEncoding.delimit, ih]; try omega
-
-theorem encodeNatPrefix_length_ge_one (n : ℕ) : 1 ≤ (encodeNatPrefix n).length := by
-  unfold encodeNatPrefix
-  rw [delimit_length_eq]
-  omega
-
-theorem encodeLit_length_ge_two (l : ℕ × Bool) : 2 ≤ (encodeLit l).length := by
-  unfold encodeLit
-  have h := encodeNatPrefix_length_ge_one l.1
-  simp [List.length_append] at h ⊢
-
 theorem encodeClause_length_eq (C : CNFClause) :
     (encodeClause C).length = C.length + 1 + (C.flatMap encodeLit).length := by
-  unfold encodeClause
-  simp only [List.length_append, List.length_replicate, List.length_cons, List.length_nil]
-  omega
+  rw [Cslib.CookLevin.encodeClause_length, List.length_flatMap]
 
 theorem flatMap_encodeLit_length_ge (C : CNFClause) :
     C.length ≤ (C.flatMap encodeLit).length := by
-  induction C with
-  | nil => simp
-  | cons l ls ih =>
-    have h2 := encodeLit_length_ge_two l
-    simp only [List.flatMap_cons, List.length_append, List.length_cons] at ih ⊢
-    try omega
+  rw [List.length_flatMap, ← List.length_map (fun l => (encodeLit l).length)]
+  apply List.length_le_sum_of_one_le
+  intro i hi
+  obtain ⟨l, _, rfl⟩ := List.mem_map.mp hi
+  rw [Cslib.CookLevin.encodeLit_length]
+  omega
 
 theorem encodeClause_ge (C : CNFClause) : 1 + 2 * C.length ≤ (encodeClause C).length := by
   have h1 := flatMap_encodeLit_length_ge C
@@ -2398,10 +2366,7 @@ theorem encodeClause_ge (C : CNFClause) : 1 + 2 * C.length ≤ (encodeClause C).
 
 theorem encodeCNF_length_eq (φ : CNF) :
     (encodeCNF φ).length = φ.length + 1 + (φ.flatMap encodeClause).length := by
-  unfold encodeCNF
-  simp [List.length_append, List.length_replicate]
-  try omega
-
+  rw [Cslib.CookLevin.encodeCNF_length, List.length_flatMap]
 theorem coopRoot_len_le_succ (x : ℕ) (s : CoopSt) :
     (coopRoot x s).1.nodes.length ≤ s.nodes.length + 1 := by
   unfold coopRoot

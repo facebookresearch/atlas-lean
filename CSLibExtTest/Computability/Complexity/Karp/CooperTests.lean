@@ -33,4 +33,45 @@ example : (cooperNet cooperEx).length = 20 := by decide
 
 example : (coopSt cooperEx).roots = [(1, 12), (2, 6), (3, 4), (4, 2)] := by decide
 
+/-- The rational-network codec round-trips a small network's encoding by
+direct computation, and the worked example's encoding by the round-trip
+theorem. -/
+example : decodeRatNet (encodeRatNet [constNode true, rootNode]) =
+    some [constNode true, rootNode] := by decide
+
+example : decodeRatNet (encodeRatNet (cooperNet cooperEx)) = some (cooperNet cooperEx) :=
+  decodeRatNet_encodeRatNet _
+
+/-- The decoder rejects empty and truncated input. -/
+example : decodeRatNet [] = none := by decide
+
+example : decodeRatNet [true] = none := by decide
+
+/-- The decoder rejects trailing bits after a complete encoding. -/
+example : decodeRatNet (encodeRatNet [constNode false] ++ [true]) = none := by decide
+
+/-- `bnPosDec` on a bit string that does not decode is `false`;
+on the encoded unsatisfiable control it is also `false`. -/
+example : bnPosDec [true] = false := by
+  classical
+  unfold bnPosDec
+  rw [show decodeRatNet [true] = none from by decide]
+
+example : bnPosDec (encodeRatNet (cooperNet cooperUnsat)) = false := by
+  classical
+  unfold bnPosDec
+  rw [decodeRatNet_encodeRatNet]
+  exact decide_eq_false (by
+    rw [outProb_cooperUnsat]; exact fun h => lt_irrefl (0 : ℝ) h.2)
+
+/-- `reduceBN` sends a decodable formula to its encoded network, and an
+undecodable string to the fixed constant-false network. -/
+example : reduceBN (Cslib.CookLevin.encodeCNF cooperEx) = encodeRatNet (cooperNet cooperEx) := by
+  unfold reduceBN
+  rw [Cslib.CookLevin.decodeCNF_encodeCNF]
+
+example : reduceBN [true] = encodeRatNet noBN := by
+  unfold reduceBN
+  rfl
+
 end Cslib.Complexity.Cooper
