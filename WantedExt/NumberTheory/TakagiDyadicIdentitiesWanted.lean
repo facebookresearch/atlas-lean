@@ -285,15 +285,6 @@ public theorem_wanted dcDNodes_eq_sum_dcLevelDNodes (n : ℕ) (hn : 0 < n) :
         ∑ i ∈ range (Nat.log 2 n),
           (((n / 2 ^ i % 2 : ℕ) : ℤ) * 2 ^ i + (-1) ^ (n / 2 ^ i % 2) * ((n % 2 ^ i : ℕ) : ℤ))
 
-/-- **Adding a larger power of two raises the Hamming weight by one.** For a natural number $m$,
-write $s_1(m)$ for the sum of the binary digits of $m$ (the number of ones in its binary
-expansion). For all natural numbers $k$ and $r$ with $r < 2^k$, $s_1(2^k + r) = s_1(r) + 1$.
-
-Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
-Sequences 27 (2024), Article 24.2.7, Lemma 13 (`jis-2024-24.2.7-lem-13`). -/
-public theorem_wanted hammingWeight_two_pow_add (k r : ℕ) (hr : r < 2 ^ k) :
-    (Nat.digits 2 (2 ^ k + r)).sum = (Nat.digits 2 r).sum + 1
-
 /-- **Hamming weight of the successor of an even number.** For a natural number $m$, write
 $s_1(m)$ for the sum of the binary digits of $m$ (the number of ones in its binary expansion).
 If $n$ is an even natural number (including $n = 0$), then $s_1(n + 1) = s_1(n) + 1$.

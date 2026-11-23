@@ -41,6 +41,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.Combinatorics.Enumerative.FibStepConvolution
 public import MathlibExt.NumberTheory.PellNumberSequence
 
 set_option autoImplicit false
@@ -49,34 +50,12 @@ set_option autoImplicit false
 
 namespace MathlibExt.Combinatorics.Enumerative.FibStepConvolutionWanted
 
-/-- **Initial segments of the Fibonacci $m$-step sequence.** For natural numbers $m$ and $n$,
-this is the list of integers $[F_0, F_1, \dots, F_n]$, built recursively: the list for $n = 0$
-is $[0]$, the list for $n = 1$ is $[0, 1]$, and for $n \ge 2$ the list for $n$ is the list for
-$n - 1$ followed by $F_n = \sum_{j=1}^{m} F_{n-j}$, where $F_i = 0$ for $i < 0$. -/
-def fibStepSeq (m : ℕ) : ℕ → List ℤ
-  | 0 => [0]
-  | 1 => [0, 1]
-  | n + 2 =>
-      let prev := fibStepSeq m (n + 1)
-      prev ++ [∑ j ∈ Finset.Icc 1 m, prev.getD (n + 2 - j) 0]
-
-/-- **Fibonacci $m$-step numbers.** For natural numbers $m$ and $n$, the integer $F^{(m)}_n$ is
-defined by $F^{(m)}_0 = 0$, $F^{(m)}_1 = 1$ and $F^{(m)}_n = \sum_{j=1}^{m} F^{(m)}_{n-j}$ for
-$n \ge 2$, where $F^{(m)}_i = 0$ for $i < 0$. -/
-def fibStep (m n : ℕ) : ℤ := (fibStepSeq m n).getD n 0
-
 /-- **Jacobsthal numbers.** The Jacobsthal numbers are the integers $J_n$ defined by $J_0 = 0$,
 $J_1 = 1$ and $J_{n+2} = J_{n+1} + 2 J_n$ for all $n \ge 0$. -/
 def jacobsthalSeq : ℕ → ℤ
   | 0 => 0
   | 1 => 1
   | n + 2 => jacobsthalSeq (n + 1) + 2 * jacobsthalSeq n
-
-/-- **Generating function of the Fibonacci $m$-step numbers.** For a natural number $m$,
-$F^{(m)}(X)$ is the formal power series $\sum_{n \ge 0} F^{(m)}_n X^n$ with rational
-coefficients, where $F^{(m)}_n$ is the $n$-th Fibonacci $m$-step number. -/
-noncomputable def fibStepGF (m : ℕ) : PowerSeries ℚ :=
-  PowerSeries.mk fun n => (fibStep m n : ℚ)
 
 /-- **Sums over compositions.** Given integer sequences $a_0, \dots, a_{r-1}$ and a natural
 number $n$, the sum over the compositions $K(r, n)$ of $n$ into $r$ nonnegative parts is the
@@ -287,22 +266,6 @@ Corollary 11. -/
 theorem_wanted trib_sub_fib_eq_sum (n : ℕ) (hn : 1 ≤ n) :
     fibStep 3 (n + 1) - fibStep 2 (n + 1) =
       ∑ j ∈ Finset.range n, fibStep 3 j * fibStep 2 (n - 1 - j)
-
-/-- **Convolution of the Fibonacci numbers with tribonacci minus tetranacci.** Write $F_n$, $T_n$
-and $Q_n$ for the Fibonacci, tribonacci and tetranacci numbers, that is, the Fibonacci $m$-step
-numbers $F^{(m)}_n$ for $m = 2, 3, 4$ ($F^{(m)}_0 = 0$, $F^{(m)}_1 = 1$, and each later term is the
-sum of the $m$ terms before it, terms at negative indices being $0$). For every natural number
-$n \ge 1$,
-$$\sum_{j=0}^{n} F_j (T_{n-j} - Q_{n-j}) = \sum_{j=0}^{n-1} (F_j - T_j) Q_{n-1-j}.$$
-
-Source: Robert Frontczak and Karol Gryszka, "General
-Convolution Sums Involving Fibonacci `m`-Step Numbers",
-Corollary 11. -/
-theorem_wanted sum_fib_mul_sub_eq (n : ℕ) (hn : 1 ≤ n) :
-    ∑ j ∈ Finset.range (n + 1), fibStep 2 j *
-        (fibStep 3 (n - j) - fibStep 4 (n - j)) =
-      ∑ j ∈ Finset.range n,
-        (fibStep 2 j - fibStep 3 j) * fibStep 4 (n - 1 - j)
 
 /-- **Convolution of the Fibonacci 3-step numbers with differences of 4- and 5-step numbers.**
 Let $T_j$, $Q_j$ and $P_j$ be the Fibonacci $3$-, $4$- and $5$-step numbers, where the Fibonacci

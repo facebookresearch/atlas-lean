@@ -22,6 +22,20 @@ example : fareyZoom 2 (3 / 2) = 1 / 2 := by
   rw [fareyZoom_eq_sum (by decide), Finset.sum_Icc_succ_top (by decide)]
   norm_num
 
+-- At the first admissible order, the lower approximation jumps from -1 to -1/2.
+example : fareyStaircase 2 (-1 / 2) - fareyStaircase 1 (-1 / 2) = 1 / 4 := by
+  rw [(fareyStaircase_sub_eq (n := 2) (by decide) _).1]
+  norm_num [fareyStaircase_one]
+
+-- At 1/3 the first two approximations vanish and the third floor is exactly one.
+example : fareyStaircase 3 (1 / 3) = 1 / 9 := by
+  have h₂ : fareyStaircase 2 (1 / 3) = 0 := by
+    rw [fareyStaircase, Finset.sum_Icc_succ_top (by decide)]
+    norm_num
+  have h := (fareyStaircase_sub_eq (n := 3) (by decide) (1 / 3)).2
+  norm_num [h₂] at h
+  linarith
+
 -- A singleton block leaves exactly its reciprocal, including at the initial index zero.
 example : Tendsto (fun n : ℕ => 1 / (n : ℝ)) atTop (nhds 0) := by
   simpa using tendsto_harmonic_block_sub_integral (a := id) (b := id) (fun _ => le_rfl) tendsto_id

@@ -10,11 +10,25 @@ module
 
 public import Mathlib.Data.Nat.Digits.Lemmas
 
-/-! # Binary digit sums below a power of two -/
+/-! # Binary digit sums -/
 
 namespace MetaMathlibExt
 
 open Finset
+
+/-- **Adding a larger power of two raises the Hamming weight by one.** For a natural number $m$,
+write $s_1(m)$ for the sum of the binary digits of $m$ (the number of ones in its binary
+expansion). For all natural numbers $k$ and $r$ with $r < 2^k$, $s_1(2^k + r) = s_1(r) + 1$.
+
+Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
+Sequences 27 (2024), Article 24.2.7, Lemma 13 (`jis-2024-24.2.7-lem-13`). -/
+public theorem hammingWeight_two_pow_add (k r : ℕ) (hr : r < 2 ^ k) :
+    (Nat.digits 2 (2 ^ k + r)).sum = (Nat.digits 2 r).sum + 1 := by
+  obtain ⟨padding, rfl⟩ := Nat.exists_eq_add_of_le ((Nat.digits_length_le_iff one_lt_two r).2 hr)
+  have hdigits := Nat.digits_append_zeroes_append_digits (n := r) (k := padding)
+    one_lt_two Nat.zero_lt_one
+  simpa [add_comm, Nat.digits_of_lt 2 1 one_ne_zero one_lt_two] using
+    (congrArg List.sum hdigits).symm
 
 /-- **Sum of binary digit sums below a power of two.** For a natural number $i$, let $s_1(i)$
 denote the sum of the binary digits of $i$. Then for every natural number $m$,
