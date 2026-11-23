@@ -15,6 +15,7 @@ public import Mathlib.CategoryTheory.Sites.ConcreteSheafification
 public import MathlibExt.AlgebraicGeometry.FullPDCrystallineTests
 public import MathlibExt.AlgebraicGeometry.PDivisiblePointFunctors
 public import MathlibExt.CategoryTheory.SheafInternalExtModels
+public import Mathlib.Algebra.Category.Grp.EquivalenceGroupAddGroup
 
 /-!
 # Actual structure and group sheaves on the enlarged p-nilpotent PD basis

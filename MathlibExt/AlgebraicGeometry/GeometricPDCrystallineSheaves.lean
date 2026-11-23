@@ -15,6 +15,7 @@ public import Mathlib.CategoryTheory.Sites.ConcreteSheafification
 public import MathlibExt.AlgebraicGeometry.GeometricPDCrystallineTests
 public import MathlibExt.AlgebraicGeometry.PDivisiblePointFunctors
 public import MathlibExt.CategoryTheory.SheafInternalExtModels
+public import Mathlib.Algebra.Category.Grp.EquivalenceGroupAddGroup
 
 /-!
 # Actual crystalline structure and p-divisible coefficient sheaves

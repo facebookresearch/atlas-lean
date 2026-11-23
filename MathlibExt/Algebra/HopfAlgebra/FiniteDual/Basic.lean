@@ -8,8 +8,8 @@ Authors: The Tau Ceti contributors
 Source port of TauCeti/Algebra/HopfAlgebra/FiniteDual/Basic.lean.
 TauCeti revision 62bbc0596dc3539d488232e4e924a338548ea0a9.
 Modifications: project namespaces/import paths. The tensor-projectivity
-import uses the pinned Mathlib.Algebra.Module.Projective file, which
-already proves Module.Projective.tensorProduct.
+instance Module.Projective.tensorProduct is imported from
+Mathlib.LinearAlgebra.TensorProduct.Projective.
 The original Apache 2.0 copyright and authors above are retained.
 -/
 module
@@ -17,6 +17,7 @@ module
 public import Mathlib.LinearAlgebra.Contraction
 public import Mathlib.RingTheory.HopfAlgebra.Basic
 import Mathlib.Algebra.Module.Projective
+import Mathlib.LinearAlgebra.TensorProduct.Projective
 import Mathlib.RingTheory.TensorProduct.Finite
 import MathlibExt.Algebra.Coalgebra.Convolution
 
