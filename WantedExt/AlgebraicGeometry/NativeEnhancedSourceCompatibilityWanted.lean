@@ -343,7 +343,7 @@ variable (IotaRC : OrdinaryIndSource ℂ (RealInterior X))
 
 def_wanted actual_closed_halfline_diagram : ClosedHalfLineDiagramSource (TopCat.of X)
 
-def_wanted actual_compact_subanalytic_open_coefficients : CompactOpenCoefficientSource n X
+theorem_wanted actual_compact_subanalytic_open_coefficients : CompactOpenCoefficientSource n X
 
 theorem_wanted actual_constructible_stable_and_probe_bounds :
   ConstructibleSingleSource n X ClosedRC StableIotaRC ColimitRC CompactRC
@@ -351,7 +351,7 @@ theorem_wanted actual_constructible_stable_and_probe_bounds :
 theorem_wanted actual_ordinary_compactified_extension_additive :
   (BorderedRealConstructibleModels.ordinaryCompactifiedExtension X).Additive
 
-def_wanted actual_ordinary_compactified_extension_exact : ExactImageSource
+theorem_wanted actual_ordinary_compactified_extension_exact : ExactImageSource
   (BorderedRealConstructibleModels.ordinaryCompactifiedExtension X)
 
 theorem_wanted actual_ordinary_compactified_extension_bounded :

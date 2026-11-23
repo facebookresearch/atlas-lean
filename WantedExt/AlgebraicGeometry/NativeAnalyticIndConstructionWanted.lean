@@ -57,13 +57,13 @@ variable [C : IndSpaceSource X]
 def_wanted actual_ordinary_beta_module_source (R : TopCat.Sheaf RingCat.{0} X)
     [BetaRingSource X R] : OrdinaryBetaModuleSource X R
 
-def_wanted actual_native_balanced_tensor_derivation (R S T : Mon (IndSheaf ℂ X)) :
+theorem_wanted actual_native_balanced_tensor_derivation (R S T : Mon (IndSheaf ℂ X)) :
   TensorDerivationSource R S T
 
 theorem_wanted actual_native_module_hom_closed (R S T : Mon (IndSheaf ℂ X))
     [TensorDerivationSource R S T] : TensorHomSource R S T
 
-def_wanted actual_native_left_tensor_derivation (R S T : Mon (IndSheaf ℂ X)) :
+theorem_wanted actual_native_left_tensor_derivation (R S T : Mon (IndSheaf ℂ X)) :
   LeftTensorDerivationSource R S T
 
 theorem_wanted actual_native_left_module_hom_closed (R S T : Mon (IndSheaf ℂ X))
