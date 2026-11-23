@@ -17,6 +17,7 @@ public import Mathlib.Data.List.OfFn
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Logic.Relation
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.NumberTheory.Recurrences.MStepFibonacciPartialSums
 
 /-!
 # Keyword substitutions on binary words and partial sums of `m`-step Fibonacci numbers
@@ -259,23 +260,6 @@ public theorem_wanted even_count_min_of_keywordActsCompletely {m n : ℕ}
       fun u => keywordListApply a l (keywordSimpleMap a i u))
     (hacts : ∃ x : Fin n → Bool, KeywordActsCompletely a (i :: (l ++ [i])) x) :
     ∀ j ∈ l, (∀ j' ∈ l, j ≤ j') → Even (l.count j)
-
-/-- **Recurrence for partial sums of $m$-step Fibonacci numbers.** Let $m \ge 1$ and let
-$F : \mathbb{N} \to \mathbb{N}$ satisfy $F(0) = 1$, $F(k) = 2^{k-1}$ for $1 \le k \le m - 1$,
-and $F(k) = F(k-1) + \cdots + F(k-m)$ for $k \ge m$ (the $m$-step Fibonacci numbers). Then a
-real sequence $(S_n)_{n \ge 0}$ satisfies $S_n = F(0) + F(1) + \cdots + F(n)$ for all $n$ if
-and only if $S_n = 2^n$ for $0 \le n \le m$ and $S_n = 2 S_{n-1} - S_{n-m-1}$ for $n \ge m + 1$.
-
-Source: Erik Bates, Blan Morrison, Mason Rogers, Arianna Serafini and Anav Sood,
-*A New Combinatorial Interpretation of Partial Sums of m-Step Fibonacci Numbers*,
-Journal of Integer Sequences 28 (2025), Article 25.6.6, Lemma 9
-(`jis-2025-25.6.6-lem-9`). -/
-public theorem_wanted sum_mStepFibonacci_iff_recurrence
-    (m : ℕ) (hm : 1 ≤ m) (F : ℕ → ℕ) (hF0 : F 0 = 1)
-    (hFinit : ∀ k, 1 ≤ k → k ≤ m - 1 → F k = 2 ^ (k - 1))
-    (hFrec : ∀ k, m ≤ k → F k = ∑ t ∈ Finset.Icc 1 m, F (k - t)) (S : ℕ → ℝ) :
-    (∀ n, S n = ∑ j ∈ Finset.range (n + 1), (F j : ℝ)) ↔
-      ((∀ n, n ≤ m → S n = 2 ^ n) ∧ ∀ n, m + 1 ≤ n → S n = 2 * S (n - 1) - S (n - m - 1))
 
 /-- **Keywords with equally many singleton classes.** Let $a$ and $b$ be binary keywords of
 length $m + 1$. The relations $\sim_a$ and $\sim_b$ have the same number of one-element
