@@ -9,8 +9,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.ArithmeticModelCurveDegrees
 public import MathlibExt.AlgebraicGeometry.AdelicCompletionOperations
-public import Mathlib.AlgebraicGeometry.ProjectiveSpectrum.Basic
-public import Mathlib.RingTheory.MvPolynomial.Homogeneous
+public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 
 /-!
 # Source-normalized strongly nef, nef and integrable adelic lines
@@ -41,15 +40,10 @@ open CoherentCurveLinearSeries PlacewiseMetrizedLineModels BoundaryMetricComplet
 open RationalAdelicModelMetrics AdelicCompletionOperations ArithmeticModelHermitianMetrics
 open HermitianModelRestrictions
 
-def gradedProjToSpec {R T : Type} [CommRing R] [CommRing T] [Algebra R T]
-    (grading : ℕ → Submodule R T) [GradedAlgebra grading] : Proj grading ⟶ Spec (.of R) :=
-  Proj.toSpecZero grading ≫ Spec.map (CommRingCat.ofHom (algebraMap ..))
-
-/-- Projectivity is an actual closed embedding into the native homogeneous Proj. -/
-def IsProjectiveOver {R : Type} [CommRing R] {Y : Scheme.{0}} (f : Y ⟶ Spec (.of R)) : Prop :=
-  letI := @MvPolynomial.gradedAlgebra
-  ∃ (n : ℕ) (i : Y ⟶ Proj (MvPolynomial.homogeneousSubmodule (Fin (n + 1)) R)),
-    IsClosedImmersion i ∧ i ≫ gradedProjToSpec _ = f
+/-- Projectivity is an actual closed embedding into the native homogeneous Proj:
+`ProjectiveSpace.IsProjectiveHom`. -/
+abbrev IsProjectiveOver {R : Type} [CommRing R] {Y : Scheme.{0}} (f : Y ⟶ Spec (.of R)) : Prop :=
+  ProjectiveSpace.IsProjectiveHom f
 
 variable {K : Type} [Field K] {A : AdelicField K} {X : Over (Spec (.of K))}
   {L : X.left.Modules}
@@ -64,15 +58,16 @@ structure ArithmeticNefModel (m : ModelMetric (A := A) (X := X) (L := L)) where
 
 variable (k : Type) [Field k] (embedding : k →+* K)
 
-/-- A geometric closed integral model curve and its actual coherent cohomology. -/
+/-- A geometric closed integral model curve and its actual coherent cohomology: a proper
+curve over `k` on which the restricted line is invertible. -/
 structure GeometricCurve (Y : Scheme.{0}) (f : Y ⟶ Spec (.of k)) (N : Y.Modules) where
   scheme : Scheme.{0}
   inclusion : scheme ⟶ Y
   [closed : IsClosedImmersion inclusion]
   [integral : IsIntegral scheme]
   [noetherian : IsNoetherian scheme]
-  [proper : IsProper (inclusion ≫ f)]
-  [finite_type : LocallyOfFiniteType (inclusion ≫ f)]
+  [curve : IsProperCurve (inclusion ≫ f)]
+  line : IsLineBundle ((Scheme.Modules.pullback inclusion).obj N)
   dimension : Order.krullDim scheme = 1
   finiteH0 : FiniteDimensional k
     (cohomology (inclusion ≫ f) ((Scheme.Modules.pullback inclusion).obj N) 0)
@@ -80,6 +75,8 @@ structure GeometricCurve (Y : Scheme.{0}) (f : Y ⟶ Spec (.of k)) (N : Y.Module
     (cohomology (inclusion ≫ f) ((Scheme.Modules.pullback inclusion).obj N) 1)
   finiteO0 : FiniteDimensional k (cohomology (inclusion ≫ f) (structureModule scheme) 0)
   finiteO1 : FiniteDimensional k (cohomology (inclusion ≫ f) (structureModule scheme) 1)
+
+attribute [instance] GeometricCurve.curve
 
 structure GeometricNefModel (m : ModelMetric (A := A) (X := X) (L := L)) where
   nonarchimedean : ∀ (v : A.places) (a b : A.completion v), ‖a + b‖ ≤ max ‖a‖ ‖b‖
@@ -91,7 +88,7 @@ structure GeometricNefModel (m : ModelMetric (A := A) (X := X) (L := L)) where
   nef : ∀ C : GeometricCurve k m.integral.model.scheme
     (m.integral.model.structureMap ≫ baseMap) m.integral.model.line,
     0 ≤ CoherentCurveLinearSeries.degree (C.inclusion ≫ m.integral.model.structureMap ≫ baseMap)
-      ((Scheme.Modules.pullback C.inclusion).obj m.integral.model.line)
+      ((Scheme.Modules.pullback C.inclusion).obj m.integral.model.line) C.line
 
 /-- The ground field and its actual scalar embedding are fixed for the entire approximation. -/
 inductive GroundBase where

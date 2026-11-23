@@ -54,18 +54,22 @@ variable {Y : Scheme.{0}} (C : ModelCurve Y) (L : Y.Modules)
 
 def curveLine : C.scheme.Modules := (Scheme.Modules.pullback C.inclusion).obj L
 
-/-- The vertical curve keeps its actual residue characteristic and finite coherent cohomology. -/
+/-- The vertical curve keeps its actual residue characteristic and finite coherent cohomology:
+a proper curve over `𝔽_p` on which the restricted line is invertible. -/
 structure Vertical (p : ℕ) [Fact p.Prime] where
   structureMap : C.scheme ⟶ Spec (.of (ZMod p))
-  [field_proper : IsProper structureMap]
-  [finite_type : LocallyOfFiniteType structureMap]
+  [curve : IsProperCurve structureMap]
+  line : IsLineBundle (curveLine C L)
   finiteH0 : FiniteDimensional (ZMod p) (cohomology structureMap (curveLine C L) 0)
   finiteH1 : FiniteDimensional (ZMod p) (cohomology structureMap (curveLine C L) 1)
   finiteO0 : FiniteDimensional (ZMod p) (cohomology structureMap (structureModule C.scheme) 0)
   finiteO1 : FiniteDimensional (ZMod p) (cohomology structureMap (structureModule C.scheme) 1)
 
+attribute [instance] Vertical.curve
+
+/-- The vertical degree `deg_{𝔽_p}(L|_C) · log p`. -/
 def verticalDegree {p : ℕ} [Fact p.Prime] (V : Vertical C L p) : ℝ :=
-  (CoherentCurveLinearSeries.degree V.structureMap (curveLine C L) : ℝ) * Real.log p
+  (CoherentCurveLinearSeries.degree V.structureMap (curveLine C L) V.line : ℝ) * Real.log p
 
 /-- Horizontal curves are finite flat over the actual integer base. -/
 structure Horizontal where
