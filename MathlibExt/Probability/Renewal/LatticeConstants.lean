@@ -107,8 +107,8 @@ theorem measure_Ici_eq_measure_Ici_ceil {μ : Measure ℝ} {h : ℝ} (hh : 0 < h
     μ (Ici t) = μ (Ici (h * ⌈t / h⌉)) := by
   refine measure_congr (hμ.mono fun x hx => ?_)
   obtain ⟨k, rfl⟩ := hx
-  change (t ≤ k * h) = (h * ⌈t / h⌉ ≤ k * h)
-  refine propext ⟨fun htk => ?_, fun htk => ?_⟩
+  change (t ≤ k * h) ↔ (h * ⌈t / h⌉ ≤ k * h)
+  refine ⟨fun htk => ?_, fun htk => ?_⟩
   · have : ⌈t / h⌉ ≤ k := Int.ceil_le.2 ((div_le_iff₀ hh).2 htk)
     have : (⌈t / h⌉ : ℝ) ≤ k := by exact_mod_cast this
     nlinarith
@@ -127,8 +127,8 @@ theorem measure_Ioi_eq_measure_Ici_add {μ : Measure ℝ} {h : ℝ} (hh : 0 < h)
     μ (Ioi (k * h)) = μ (Ici ((k + 1) * h)) := by
   refine measure_congr (hμ.mono fun x hx => ?_)
   obtain ⟨j, rfl⟩ := hx
-  change ((k : ℝ) * h < j * h) = (((k : ℝ) + 1) * h ≤ j * h)
-  refine propext ⟨fun hlt => ?_, fun hle => ?_⟩
+  change ((k : ℝ) * h < j * h) ↔ (((k : ℝ) + 1) * h ≤ j * h)
+  refine ⟨fun hlt => ?_, fun hle => ?_⟩
   · have : k < j := by exact_mod_cast lt_of_mul_lt_mul_right hlt hh.le
     have : (k : ℝ) + 1 ≤ j := by exact_mod_cast this
     nlinarith

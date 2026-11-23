@@ -47,7 +47,7 @@ example : DifferentiableAt ℝ (Function.uncurry (heatSolution step)) (1, 0) :=
 example : ContDiffOn ℝ 3 (Function.uncurry (heatSolution step))
     (Ioo (0 : ℝ) 2 ×ˢ Ioo (-3 : ℝ) 4) :=
   (heatSolution_contDiffOn_rectangle step_measurable ⟨1, step_bound⟩
-    (fun _ hx => hx.1)).of_le (by simp)
+    Set.Ioo_subset_Ioi_self).of_le (by simp)
 
 example : ContDiffOn ℝ 8 (fun p : ℝ × ℝ => heatSolution step (3 * p.1) p.2)
     (Ioi 0 ×ˢ univ) :=

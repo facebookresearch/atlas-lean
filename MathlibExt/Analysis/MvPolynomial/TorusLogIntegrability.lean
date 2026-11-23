@@ -50,7 +50,8 @@ namespace MvPolynomial
 variable {n : ℕ}
 
 /-- The box `(0, 2π]ⁿ` in angle space, the domain of the unit torus. -/
-def torusBox (n : ℕ) : Set (Fin n → ℝ) := Set.pi Set.univ fun _ : Fin n ↦ Set.Ioc 0 (2 * π)
+noncomputable def torusBox (n : ℕ) : Set (Fin n → ℝ) :=
+  Set.pi Set.univ fun _ : Fin n ↦ Set.Ioc 0 (2 * π)
 
 theorem torusBox_def (n : ℕ) :
     torusBox n = Set.pi Set.univ fun _ : Fin n ↦ Set.Ioc 0 (2 * π) := rfl

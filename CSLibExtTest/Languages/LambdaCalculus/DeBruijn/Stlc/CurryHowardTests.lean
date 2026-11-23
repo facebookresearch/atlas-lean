@@ -21,7 +21,7 @@ only variable is index `0`, at the binder's type.
 -/
 
 open scoped CslibStlc
-open Cslib.Logic Cslib.Logic.PL InferenceSystem
+open Cslib.Logic Cslib.Logic.LegacyPL InferenceSystem
 
 namespace Cslib.Languages.LambdaCalculus.Stlc
 
