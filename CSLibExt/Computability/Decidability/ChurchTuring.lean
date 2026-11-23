@@ -22,9 +22,11 @@ every intuitively computable function is computable by a Turing machine, and
 that all standard models of computation (Turing machines, URM / register
 machines, lambda calculus, counter machines, RAM machines) compute the same
 class of functions. One direction of the equivalence between URM machines and
-multi-stack Turing machines is proved here: every URM-computable total
+multi-stack Turing machines is proved: every URM-computable total
 function is computed by a `FinTM2` machine, and every URM-decidable /
 URM-recognizable predicate is decidable / recognizable by a `FinTM2` machine.
+The three declarations here are compatibility aliases of the canonical results in
+`URMBridge`; their proofs and the translation to Turing machines live there.
 The converse direction (every partial recursive function is URM-computable)
 is a compiler construction and is registered as a wanted theorem in
 `WantedExt/TheoryOfComputation/PartrecToURM.lean`; the lambda-calculus,
@@ -38,29 +40,39 @@ set_option autoImplicit false
 
 namespace Cslib.Decidability
 
-open MetaMathlibExt.TM2Recursive (tm2Computable_of_computable)
+/-- **A URM-computable total function is computed by a multi-stack Turing machine.** Let
+$f : \mathbb{N} \to \mathbb{N}$. Suppose there is a URM program that, for every $n \in \mathbb{N}$,
+started with $n$ in register $0$ and all other registers $0$, halts with $f(n)$ in register $0$.
+Then there is a multi-stack Turing machine that computes $f$ with input and output numbers
+written in binary: started on the binary word of $n$, it halts with the binary word of $f(n)$.
 
-/-- **A URM-computable total function is computed by a multi-stack Turing machine.**
-Source: Sipser, *Introduction to the Theory of Computation*, 3rd ed., §3.1 (Church–Turing thesis) and §3.3 (equivalence of models). -/
-theorem urmComputable_to_tm2 {f : ℕ → ℕ}
-    (h : Cslib.URM.Computable 1 fun inputs ↦ Part.some (f (inputs 0))) :
-    Nonempty (Turing.TM2Computable Computability.encodeNat Computability.encodeNat f) := by
-  have hpart : Partrec (fun n : ℕ ↦ Part.some (f n)) :=
-    Cslib.URM.partrec_of_computable h
-  exact tm2Computable_of_computable hpart
+This is an alias of `Cslib.URM.Computable.tm2Computable` from `URMBridge.lean`, kept under
+the Church–Turing name.
 
-/-- **A URM-decidable predicate is decidable by a multi-stack Turing machine.**
+Source: Sipser, *Introduction to the Theory of Computation*, 3rd ed., Chapter 3 (the
+Church–Turing thesis and the equivalence of models). -/
+alias urmComputable_to_tm2 := Cslib.URM.Computable.tm2Computable
+
+/-- **URM-decidability implies multi-stack decidability.**
+Every predicate $P$ on $\mathbb{N}$ that is URM-decidable is decidable by a multi-stack Turing
+machine.
+
+This is an alias of `Cslib.URM.Decidable.tm2Decidable` from `URMBridge.lean`, kept under
+the Church–Turing name.
+
 Source: Sipser, *Introduction to the Theory of Computation*, 3rd ed.,
-§3.1 (Church–Turing thesis). -/
-theorem urmDecidable_to_tm2Decidable {P : ℕ → Prop} (h : Cslib.URM.Decidable P) :
-    TM2Decidable P :=
-  h.tm2Decidable
+Chapter 3 (the Church–Turing thesis). -/
+alias urmDecidable_to_tm2Decidable := Cslib.URM.Decidable.tm2Decidable
 
-/-- **A URM-recognizable predicate is recognizable by a multi-stack Turing machine.**
+/-- **URM-recognizability implies multi-stack recognizability.**
+Every predicate $P$ on $\mathbb{N}$ that is URM-recognizable is recognizable by a multi-stack
+Turing machine.
+
+This is an alias of `Cslib.URM.Recognizable.tm2Recognizable` from `URMBridge.lean`, kept
+under the Church–Turing name.
+
 Source: Sipser, *Introduction to the Theory of Computation*, 3rd ed.,
-§3.1 (Church–Turing thesis). -/
-theorem urmRecognizable_to_tm2Recognizable {P : ℕ → Prop} (h : Cslib.URM.Recognizable P) :
-    TM2Recognizable P :=
-  h.tm2Recognizable
+Chapter 3 (the Church–Turing thesis). -/
+alias urmRecognizable_to_tm2Recognizable := Cslib.URM.Recognizable.tm2Recognizable
 
 end Cslib.Decidability

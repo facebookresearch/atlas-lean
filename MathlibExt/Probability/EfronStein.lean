@@ -150,35 +150,6 @@ private theorem sum_eweight_eq_one
       rw [Fintype.sum_mul_sum]
     rw [hsplit, hfac, hp_sum, ih, mul_one]
 
-private theorem update_cons_zero
-    (α : Type*) [Nonempty α]
-    (n : ℕ)
-    (a b : α) (y : Fin n → α) :
-    Function.update (Fin.cons (α := fun _ : Fin (n + 1) => α) a y) 0 b
-      = Fin.cons (α := fun _ : Fin (n + 1) => α) b y := by
-  funext j
-  refine Fin.cases ?_ ?_ j
-  · rw [Function.update_self, Fin.cons_zero]
-  · intro m
-    have hne : m.succ ≠ (0 : Fin (n + 1)) := by simp
-    rw [Function.update_of_ne hne]
-    simp only [Fin.cons_succ]
-
-private theorem update_cons_succ
-    (α : Type*) [Nonempty α]
-    (n : ℕ)
-    (k : Fin n) (a b : α) (y : Fin n → α) :
-    Function.update (Fin.cons (α := fun _ : Fin (n + 1) => α) a y) k.succ b
-      = Fin.cons (α := fun _ : Fin (n + 1) => α) a (Function.update y k b) := by
-  funext j
-  refine Fin.cases ?_ ?_ j
-  · have h1 : k.succ ≠ (0 : Fin (n + 1)) := by simp
-    have hne : (0 : Fin (n + 1)) ≠ k.succ := Ne.symm h1
-    rw [Function.update_of_ne hne, Fin.cons_zero, Fin.cons_zero]
-  · intro m
-    have hiff : (m.succ = k.succ) ↔ (m = k) := Fin.succ_inj
-    simp only [Function.update_apply, Fin.cons_succ, hiff]
-
 -- E-versions by defeq
 private theorem update_consEquiv_zero
     (α : Type*) [Nonempty α]
@@ -186,7 +157,7 @@ private theorem update_consEquiv_zero
     (a b : α) (y : Fin n → α) :
     Function.update (Fin.consEquiv (fun _ : Fin (n + 1) => α) (a, y)) 0 b
       = Fin.consEquiv (fun _ : Fin (n + 1) => α) (b, y) :=
-  update_cons_zero α n a b y
+  Fin.update_cons_zero (α := fun _ => α) a y b
 
 private theorem update_consEquiv_succ
     (α : Type*) [Nonempty α]
@@ -194,7 +165,7 @@ private theorem update_consEquiv_succ
     (k : Fin n) (a b : α) (y : Fin n → α) :
     Function.update (Fin.consEquiv (fun _ : Fin (n + 1) => α) (a, y)) k.succ b
       = Fin.consEquiv (fun _ : Fin (n + 1) => α) (a, Function.update y k b) :=
-  update_cons_succ α n k a b y
+  (Fin.cons_update (α := fun _ => α) a y k b).symm
 
 private theorem weight_consEquiv
     (α : Type*) [Nonempty α]
@@ -623,8 +594,16 @@ private theorem efron_stein_aux
       ring
     rw [heq]
     exact hfin
-/-- The Efron–Stein inequality for a finite iid product weight, without a `DecidableEq α`
-instance. `efron_stein_finite_iid` is the source-shaped form. -/
+/-- **Efron–Stein inequality for a finite product weight.** Let $\alpha$ be a finite nonempty set,
+let $p : \alpha \to \mathbb{R}$ satisfy $p(a) \ge 0$ for every $a \in \alpha$ and
+$\sum_{a \in \alpha} p(a) = 1$, let $n \in \mathbb{N}$ and let $f : \alpha^n \to \mathbb{R}$. For
+$x = (x_1, \dots, x_n) \in \alpha^n$ write $w(x) = \prod_{j=1}^{n} p(x_j)$, and for a coordinate
+$i \in \{1, \dots, n\}$ and $a \in \alpha$ let $x^{(i,a)}$ be $x$ with its $i$-th coordinate
+replaced by $a$. Let $\mu = \sum_{x \in \alpha^n} w(x) f(x)$. Then
+$$
+\sum_{x \in \alpha^n} w(x) \bigl(f(x) - \mu\bigr)^2 \le \frac{1}{2} \sum_{i=1}^{n}
+\sum_{x \in \alpha^n} \sum_{a \in \alpha} w(x)\, p(a) \bigl(f(x) - f(x^{(i,a)})\bigr)^2.
+$$ -/
 theorem efron_stein_finite_iid_general
     {α : Type*} [Fintype α] [Nonempty α]
     {n : ℕ}
@@ -647,7 +626,20 @@ theorem efron_stein_finite_iid_general
 
 set_option linter.unusedDecidableInType false in
 /--
-Expected sum of squared differences under independent resampling of each coordinate.
+**Efron–Stein inequality for finite i.i.d. coordinates.** Let $\alpha$ be a finite nonempty set,
+let $p : \alpha \to \mathbb{R}$ satisfy $p(a) \ge 0$ for every $a \in \alpha$ and
+$\sum_{a \in \alpha} p(a) = 1$, let $n \in \mathbb{N}$ and let $f : \alpha^n \to \mathbb{R}$. For
+$x = (x_1, \dots, x_n) \in \alpha^n$ write $w(x) = \prod_{j=1}^{n} p(x_j)$, and for a coordinate
+$i \in \{1, \dots, n\}$ and $a \in \alpha$ let $x^{(i,a)}$ be $x$ with its $i$-th coordinate
+replaced by $a$. Let $\mu = \sum_{x \in \alpha^n} w(x) f(x)$. Then
+$$
+\sum_{x \in \alpha^n} w(x) \bigl(f(x) - \mu\bigr)^2 \le \frac{1}{2} \sum_{i=1}^{n}
+\sum_{x \in \alpha^n} \sum_{a \in \alpha} w(x)\, p(a) \bigl(f(x) - f(x^{(i,a)})\bigr)^2.
+$$
+
+In words: the variance of $f$ under the product weight is at most half the expected sum of squared
+differences under independent resampling of each coordinate.
+
 Source: B. Efron and C. Stein, "The Jackknife Estimate of Variance", Annals of Statistics 9 (1981),
 DOI 10.1214/aos/1176345462.
 It follows from `efron_stein_finite_iid_general`; the instance `[DecidableEq α]` is

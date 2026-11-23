@@ -14,28 +14,37 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Count of `1`s in the length-`n` factor of `x` starting at `i`
-    (concept `jis_term_4c219044135404e2d10fb16f`, statement `jis_a07921e69f2b6f8112afb1b1`). -/
+/-- **Number of ones in a factor.** For an infinite binary word $x = x_0 x_1 x_2 \cdots$ over
+$\{0, 1\}$ and natural numbers $i$ and $n$, this is the number of indices $k < n$ with
+$x_{i+k} = 1$, that is, the number of $1$s in the factor $x_i x_{i+1} \cdots x_{i+n-1}$ of length
+$n$ starting at position $i$ (it is $0$ when $n = 0$).
+
+Source: concept `jis_term_4c219044135404e2d10fb16f`, statement `jis_a07921e69f2b6f8112afb1b1`. -/
 def factorOnes (x : ℕ → Bool) : ℕ → ℕ → ℕ
   | _, 0 => 0
   | i, n + 1 => factorOnes x i n + if x (i + n) then 1 else 0
 
-/-- A binary word is balanced when any two factors of the same length
-    have `1`-counts whose absolute difference is at most `1`
-    (concept `jis_term_4c219044135404e2d10fb16f`, statement `jis_a07921e69f2b6f8112afb1b1`). -/
+/-- **Balanced infinite words.** An infinite binary word $x = x_0 x_1 x_2 \cdots$ over $\{0, 1\}$
+is balanced when for all natural numbers $i$, $j$ and $n$, the numbers of $1$s in the factors
+$x_i x_{i+1} \cdots x_{i+n-1}$ and $x_j x_{j+1} \cdots x_{j+n-1}$ of length $n$ differ by at
+most $1$.
+
+Source: concept `jis_term_4c219044135404e2d10fb16f`, statement `jis_a07921e69f2b6f8112afb1b1`. -/
 def IsBalanced (x : ℕ → Bool) : Prop :=
   ∀ i j n : ℕ, (((factorOnes x i n : ℤ) - (factorOnes x j n : ℤ)).natAbs ≤ 1)
 
-/-- A one-sided word is aperiodic when it is not ultimately periodic:
-    no positive period `p` and preperiod `N` satisfy `x (n + p) = x n`
-    for all `n ≥ N`
-    (concept `jis_term_4c219044135404e2d10fb16f`, statement `jis_a07921e69f2b6f8112afb1b1`). -/
+/-- **Aperiodic infinite words.** An infinite binary word $x = x_0 x_1 x_2 \cdots$ over $\{0, 1\}$
+is aperiodic when it is not ultimately periodic: there are no natural numbers $p > 0$ and $N$
+such that $x_{n+p} = x_n$ for all $n \ge N$.
+
+Source: concept `jis_term_4c219044135404e2d10fb16f`, statement `jis_a07921e69f2b6f8112afb1b1`. -/
 def IsAperiodic (x : ℕ → Bool) : Prop :=
   ¬∃ p N : ℕ, 0 < p ∧ ∀ n : ℕ, N ≤ n → x (n + p) = x n
 
-/-- An infinite binary word `x : ℕ → Bool` is Sturmian exactly when it is
-    aperiodic and balanced (concept `jis_term_4c219044135404e2d10fb16f`,
-    statement `jis_a07921e69f2b6f8112afb1b1`). -/
+/-- **Sturmian words.** An infinite binary word $x = x_0 x_1 x_2 \cdots$ over $\{0, 1\}$ is
+Sturmian when it is both aperiodic and balanced.
+
+Source: concept `jis_term_4c219044135404e2d10fb16f`, statement `jis_a07921e69f2b6f8112afb1b1`. -/
 def IsSturmian (x : ℕ → Bool) : Prop :=
   IsAperiodic x ∧ IsBalanced x
 

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.MeasureTheory.Measure.Real
+public import Mathlib.MeasureTheory.Measure.Typeclasses.NullSingletonClass
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 import Mathlib.Topology.Order.MonotoneConvergence
@@ -23,17 +24,20 @@ namespace MeasureTheory
 /-!
 # Atomless measures
 
-Basic API for atomless measures: restriction to measurable sets and the
-Sierpinski theorem that every intermediate measure value is attained.
+Basic API for atomless measures: restriction to measurable sets, null singletons
+(`IsAtomless.nullSingletonClass`) and the Sierpinski theorem that every intermediate measure
+value is attained.
 -/
 
-/-- `μ` is atomless when every positive-measure measurable set contains a smaller
-positive-measure measurable subset. -/
+/-- **Atomless measure.** A measure $\mu$ on a measurable space is atomless when every
+measurable set $s$ with $\mu(s) > 0$ contains a measurable subset $t \subseteq s$ with
+$0 < \mu(t) < \mu(s)$. -/
 def IsAtomless {α : Type*} [MeasurableSpace α] (μ : Measure α) : Prop :=
   ∀ s, MeasurableSet s → 0 < μ s → ∃ t, t ⊆ s ∧ MeasurableSet t ∧ 0 < μ t ∧ μ t < μ s
 
 
-/-- Restriction of an atomless measure to a measurable set is atomless. -/
+/-- **Restriction of an atomless measure.** The restriction of an atomless measure to a
+measurable set is atomless. -/
 theorem isAtomless_restrict {α : Type*} [MeasurableSpace α] {μ : Measure α}
     {Z : Set α} (hZ : MeasurableSet Z) (hA : IsAtomless μ) :
     IsAtomless (μ.restrict Z) := by
@@ -50,6 +54,19 @@ theorem isAtomless_restrict {α : Type*} [MeasurableSpace α] {μ : Measure α}
   refine ⟨t, fun x hx => (hts hx).1, htmeas, htrestr.symm ▸ htpos, ?_⟩
   rw [htrestr, hrestr]
   exact htlt
+
+/-- **Atomless measures have null singletons.** If `μ` is atomless and singletons are measurable,
+then every singleton is `μ`-null (`NullSingletonClass`): a singleton of positive measure would
+contain a measurable subset of strictly smaller positive measure, but its only subsets are `∅`
+and itself. -/
+theorem IsAtomless.nullSingletonClass {α : Type*} [MeasurableSpace α]
+    [MeasurableSingletonClass α] {μ : Measure α} (h : IsAtomless μ) : NullSingletonClass μ := by
+  refine ⟨fun x => ?_⟩
+  by_contra hx
+  obtain ⟨t, hts, -, htpos, htlt⟩ := h {x} (measurableSet_singleton x) (pos_iff_ne_zero.2 hx)
+  rcases Set.subset_singleton_iff_eq.1 hts with rfl | rfl
+  · simp at htpos
+  · exact lt_irrefl _ htlt
 
 /-- N2 (real form): atomless finite measure admits arbitrarily small positive-measure
 subsets with a geometric bound. Consumed by Sierpinski (N3) and the bang-bang step. -/
@@ -243,8 +260,9 @@ private theorem sierpinskiSeq_measure_add {α : Type*} [MeasurableSpace α]
     (Set.disjoint_left.mpr (fun x hx => (hspec.2.1 hx).2)).symm
   rw [sierpinskiSeq_succ ht n, measure_union hdisj hspec.1]
 
-/-- In a finite atomless measure, every measurable set contains measurable subsets of
-every smaller measure. -/
+/-- **Sierpiński's theorem on atomless measures.** Let $\mu$ be a finite atomless measure. For
+every measurable set $s$ and every $t \in [0, \infty]$ with $t \le \mu(s)$, there is a measurable
+set $u \subseteq s$ with $\mu(u) = t$. -/
 theorem isAtomless_exists_subset_measure_eq {α : Type*} [MeasurableSpace α]
     {μ : Measure α} [IsFiniteMeasure μ] (hA : IsAtomless μ)
     {s : Set α} (hs : MeasurableSet s) {t : ENNReal} (ht : t ≤ μ s) :

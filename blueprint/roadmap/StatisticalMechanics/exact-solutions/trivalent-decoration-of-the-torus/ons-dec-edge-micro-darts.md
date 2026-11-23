@@ -1,0 +1,3 @@
+# Four finer-torus darts along the route of a decorated edge
+
+For $L \in \mathbb{N}$ and darts $d, e$ of $T_L = (\mathbb{Z}/L\mathbb{Z})^2$, with route directions $r_0, \dots, r_3$ (the [route directions](ons-dec-edge-route-dirs.md) of $(d, e)$), the micro darts are $(z_0, r_0), (z_1, r_1), (z_2, r_2), (z_3, r_3)$, darts of the finer torus $T_{8L} = (\mathbb{Z}/8L\mathbb{Z})^2$, where $z_0 = \iota(d)$ and $z_{k+1} = z_k + s(r_k)$; here $\iota(p, \mu) = (8\bar p_1 + o_1(\mu),\ 8\bar p_2 + o_2(\mu)) \in T_{8L}$ is the [embedded position](ons-dec-embed-vertex.md) of a dart, with $\bar p_i \in \{0, \dots, L - 1\}$ the standard representatives and $o(\mu)$ the [offset](ons-dec-embed-offset.md).
