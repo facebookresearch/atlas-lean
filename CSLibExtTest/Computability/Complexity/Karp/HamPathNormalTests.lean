@@ -15,7 +15,7 @@ public meta import CSLibExt.Computability.Complexity.Karp.HamPathNormal
 
 namespace Cslib.Complexity.Karp.HamPathNormalTests
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 -- One clause, one variable: vertices `0` (clause), `1` (top), `2, …, 5` (row), `6` (bottom).
 -- Positive literal: the row runs left to right with the detour `3 → 0 → 4`.
