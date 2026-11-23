@@ -1,0 +1,62 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+module
+
+public import Batteries.Util.ProofWanted
+public import MathlibExt.AlgebraicGeometry.AnalyticCurrents
+
+/-!
+# A nef class of positive volume contains an actual Kähler current
+
+Demailly--Paun, math/0105176v2, Theorem 0.4 (Theorem 0.5 of the published
+version, Ann. of Math. 159 (2004)). Nefness uses closure of the
+actual Kähler cone in real de Rham cohomology. Volume, representation,
+closedness, type and domination use the actual forms, distributional
+differential and coordinate integrals. No bigness/current oracle is input.
+The boundedness of the distributional differential, a hypothesis class in
+`MathlibExt`, is requested here too.
+-/
+
+@[expose] public noncomputable section
+
+namespace WantedExt.AlgebraicGeometry.AnalyticCurrentsWanted
+
+open MathlibExt.AlgebraicGeometry
+open KahlerClassGeometry ManifoldDifferentialForms CoordinateFormIntegrals AnalyticCurrents
+open scoped Manifold ContDiff
+
+/-- Demailly--Paun, Theorem 0.4 (0.5 in the published version): on a compact
+Kähler manifold, a nef class of positive volume contains a Kähler current. The
+class is given by any closed real representative `alpha`; nef classes are
+`(1,1)` classes, so no pointwise type condition on `alpha` is assumed. -/
+public theorem_wanted nef_positiveVolume_kahlerCurrent
+    (n : ℕ) (hn : 0 < n) (M : Type) [TopologicalSpace M] [T2Space M]
+    [CompactSpace M] [ConnectedSpace M] [SecondCountableTopology M]
+    [ChartedSpace (Coordinates n) M]
+    [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
+    [ExteriorTheory ℝ (Coordinates n) M] [FiniteDimensional ℝ (H2 n M)]
+    [WedgeTheory n M] [CurrentDifferentialTheory n M]
+    (R : RealCoordinateMap n) (A : IntegrationAtlas n M) [IntegrationTheory n M R A]
+    (eta : KahlerStructure n M) (alpha : ClosedTwoForms n M)
+    (hnef : letI := cohomologyTopology n M
+      classOfClosedTwoForm ℝ (Coordinates n) M alpha ∈ closure (kahlerCone n M))
+    (hvolume : 0 < integral n M R A
+      (castForm n M (by omega) (wedgePower n M alpha.val n))) :
+    ∃ T : Current n M 2, IsTypeOneOneCurrent n M T ∧ IsClosedCurrent n M T ∧
+      Represents n M R A hn T alpha ∧
+      ∃ epsilon : ℝ, 0 < epsilon ∧ Dominates n M R A hn T eta.form.val epsilon
+
+/-- The distributional differential of a current is again a current: the
+exterior derivative is continuous for the chart seminorms. -/
+public theorem_wanted currentDifferentialTheory (n : ℕ) (M : Type) [TopologicalSpace M]
+    [CompactSpace M] [ChartedSpace (Coordinates n) M]
+    [IsManifold 𝓘(ℝ, Coordinates n) ∞ M] [IsManifold 𝓘(ℂ, Coordinates n) ∞ M]
+    [ExteriorTheory ℝ (Coordinates n) M] :
+    CurrentDifferentialTheory n M
+
+end WantedExt.AlgebraicGeometry.AnalyticCurrentsWanted
