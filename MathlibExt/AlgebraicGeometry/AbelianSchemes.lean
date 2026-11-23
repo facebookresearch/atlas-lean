@@ -7,13 +7,15 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The group-object base-change constructors adapt AxiomMath/Stacks, revision
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/AlgebraicGeometry/GroupScheme/AbelianSchemeBaseChange.lean,
-released under the repository's Apache 2.0 LICENSE.
-Modifications: use the equivalent smooth-proper-geometrically-connected
-definition directly on native Mathlib scheme morphisms; bundle schemes and
-expose relative Poincaré-family contracts over arbitrary base schemes.
+Portions of this file are adapted from:
+
+`StacksFrontier/AlgebraicGeometry/GroupScheme/AbelianSchemeBaseChange.lean`
+(AxiomMath/Stacks at commit c496df0d9beea9deaeabcea8492605f9a0a2313b,
+https://github.com/AxiomMath/Stacks): the group-object base-change constructions.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modification notice: the smooth, proper, geometrically connected definition is used
+directly on Mathlib scheme morphisms; schemes are bundled; relative Poincaré-family
+interfaces over arbitrary base schemes are added.
 -/
 module
 
@@ -58,7 +60,10 @@ open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 
 universe u
 
+/-- An abelian scheme over `S`: a smooth proper commutative group scheme over `S` with
+geometrically connected fibres. -/
 structure AbelianScheme (S : Scheme.{u}) where
+  /-- The underlying scheme over `S`. -/
   model : Over S
   [group : GrpObj model]
   [commutative : IsCommMonObj model]
@@ -100,11 +105,9 @@ def fibre (s : S) : AbelianScheme (Spec (S.residueField s)) :=
 /-- The actual identity section. -/
 abbrev zero : 𝟙_ (Over S) ⟶ A.model := η[A.model]
 
-/-- Actual T-valued points, with their internal commutative group law. -/
+/-- Actual T-valued points. With `CategoryTheory.MonObj` open, they form a commutative group
+by Mathlib's `CategoryTheory.Hom.commGroup`. -/
 abbrev Points (T : Over S) := T ⟶ A.model
-
-instance pointsCommGroup (T : Over S) : CommGroup (A.Points T) :=
-  CategoryTheory.Hom.commGroup
 
 /-- Multiplication by n is the actual internal power map. -/
 def multiplication (n : ℤ) : A.model ⟶ A.model := (𝟙 A.model) ^ n
@@ -130,7 +133,9 @@ def familyPullback {S : Scheme.{u}} (A D T : Over S)
 /-- A relative dual abelian scheme with both normalized origins and a
 universal actual geometric Picard-zero line family. -/
 structure DualAbelianScheme {S : Scheme.{u}} (A : AbelianScheme S) where
+  /-- The dual abelian scheme. -/
   dual : AbelianScheme S
+  /-- The Poincaré line bundle on `A ×_S Aᵛ`. -/
   poincare : (prod A.model dual.model).left.Modules
   lineBundle : IsLineBundle poincare
   normalized : IsNormalizedAtZero A dual.model poincare
