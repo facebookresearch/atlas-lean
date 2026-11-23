@@ -293,6 +293,7 @@ python scripts/extract_v2_lean_dependencies.py \
 python scripts/sync_wiki.py lean-facts build/lean-dependencies.json \
   --registry build/mathlib-registry.json
 autoform check blueprint --lean-root .
+python scripts/cards.py moves build/card-moves.json
 python scripts/cards.py rollup build/cards.json \
   --dependencies build/lean-dependencies.json \
   --registry build/mathlib-registry.json
@@ -573,8 +574,10 @@ each folder page lists its children too. `hooks/trim_pages.py` publishes the
 renderer's notices for moved explorer URLs as bare redirects and collapses the
 theme's indentation, `hooks/title_only_search.py` keeps one title record per
 page in the search index, and `hooks/card_pages.py` shows each card on its
-folder page and keeps every address the card move ledger retired leading to its
-page ([cards.md](cards.md#reading)), with `theme/stylesheets/atlas-cards.css`.
+folder page, from card data of the commit being built, and keeps every address
+the card move ledger retired leading to its page, with the ledger check's
+receipt of that commit and with or without card data
+([cards.md](cards.md#reading)), with `theme/stylesheets/atlas-cards.css`.
 
 ## GitHub Actions and publication
 
@@ -613,10 +616,11 @@ the full site` publishes that job's full site, packed for GitHub Pages ([The
 GitHub Pages copy](#the-github-pages-copy)). Before either site is uploaded,
 `scripts/pages_size.sh` measures it as the upload packs it and refuses an
 archive over 950 MB, 5% below 10^9 bytes, since GitHub Pages publishes sites of
-up to 1 GB. The wiki job derives the card data its site shows itself, after
-`lean-facts` and before rendering, in a step that fails closed: a card error
-leaves the site exactly as it is without cards and fails `check the cards` only
-([cards.md](cards.md#reading)). The only write-capable jobs are the two Pages
+up to 1 GB. The wiki job checks the move ledger its site serves and derives the
+card data its site shows itself, after `lean-facts` and before rendering, in two
+steps that fail closed: a card error leaves the site without cards but with its
+moved addresses, and fails `check the cards` only; an invalid ledger leaves it
+without either ([cards.md](cards.md#reading)). The only write-capable jobs are the two Pages
 deployment jobs; they run no Lean or Python package code. Each first reads the
 commit of the site GitHub Pages serves, from its newest successful deployment,
 and publishes only if it is the run's commit or one of its ancestors;

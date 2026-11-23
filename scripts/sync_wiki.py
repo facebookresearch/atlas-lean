@@ -256,15 +256,24 @@ def reader():
 @functools.lru_cache(maxsize=16)
 def folder_template(path: str, signature: tuple[int, ...]) -> dict | None:
     """The template Autoform's reader merges each row of a links file over when the defaults file of its folder is
-    *path* (*signature*, the file's stat, keys the cache), made as autoform_cli.annotations._annotations makes it with
+    *path* (*signature*, the file's stat, keys the cache): template_of its bytes, or None when it cannot be read."""
+    try:
+        with open(path, "rb") as handle:
+            data = handle.read()
+    except OSError:
+        return None
+    return template_of(data)
+
+
+def template_of(data: bytes) -> dict | None:
+    """The template a defaults file holding *data* gives, made as autoform_cli.annotations._annotations makes it with
     literature-links' companion: the file's JSON object, its references rebased to the file, merged with
-    `defaults=True`; None when the file is not UTF-8 JSON holding one object."""
+    `defaults=True`; None when *data* is not UTF-8 JSON holding one object."""
     from literature_links import companion
 
     try:
-        with open(path, "rb") as handle:
-            value = companion.loads(handle.read().decode("utf-8"))
-    except (OSError, UnicodeError, companion.LoadError):
+        value = companion.loads(data.decode("utf-8"))
+    except (UnicodeError, companion.LoadError):
         return None
     if not isinstance(value, dict):
         return None
@@ -296,7 +305,12 @@ def effective(annotation: dict) -> dict | None:
     Autoform cannot use the template, as it then leaves the row unread. An end with no `uri` takes the template's
     type and uri; an end with one keeps only what it says, so it is no Lean end of this project by default. Only
     read: the files keep their rows as committed."""
-    template = links_template()
+    return merged(annotation, links_template())
+
+
+def merged(annotation: dict, template: dict | None) -> dict | None:
+    """effective, with the folder's *template* given (links_template's: {} for none, None for one Autoform cannot
+    use)."""
     if template is None or not isinstance(annotation, dict):
         return None
     if not template:
