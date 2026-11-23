@@ -12,7 +12,9 @@ public import MathlibExt.AlgebraicGeometry.BlowupBettiModels
 
 @[expose] public section
 
-/-! # Tests for Gysin maps, effective Cartier ideals and the blowup comparison -/
+/-! # Tests for effective Cartier ideals and the blowup comparison
+
+The unit class, Poincaré duality and powers are tested with `BettiGysin`. -/
 
 noncomputable section
 
@@ -56,28 +58,6 @@ example (X : Scheme.{0}) [Nonempty X] : ¬ IsEffectiveCartier (⊥ : X.IdealShea
     have := congrArg (X.presheaf.germ U.1 x hxU) h10
     simp at this
   exact h10 (hinj (show (0 : Γ(X, U.1)) * 0 = 0 * 1 by simp)).symm
-
-/-- The unit class in degree zero is the identity of the coefficient unit, up
-to the zero shift. -/
-example (Z : TopCat.{0}) :
-    unitClass Z = (shiftFunctorZero (RationalDerived Z) ℤ).inv.app (rationalUnit Z) :=
-  rfl
-
-/-- Poincaré duality from a purity isomorphism is a linear equivalence. -/
-example (Z : TopCat.{0})
-    (D : MathlibExt.AlgebraicGeometry.CompactSupportBetti.DualizingComplex Z) (d : ℕ)
-    (e : D.obj ≅ (rationalUnit Z)⟦(2 * d : ℤ)⟧) (n : ℤ) (x : Cohomology Z n) :
-    purityCohomologyEquiv Z D d e n ((purityCohomologyEquiv Z D d e n).symm x) = x :=
-  (purityCohomologyEquiv Z D d e n).apply_symm_apply x
-
-/-- Powers of a degree-two class: `h⁰` is the unit and `hʲ⁺¹` is `h ∪ hʲ`. -/
-example (Z : TopCat.{0}) (h : Cohomology Z 2) : powerClass Z h 0 = unitClass Z := rfl
-
-example (Z : TopCat.{0}) (h : Cohomology Z 2) (j : ℕ) :
-    powerClass Z h (j + 1) =
-      cohomologyCast (m := 2 + 2 * (j : ℤ)) (n := 2 * ((j + 1 : ℕ) : ℤ)) (by omega)
-        (cup Z h (powerClass Z h j)) :=
-  rfl
 
 /-- The degree cast along `rfl` is the identity. -/
 example (Z : TopCat.{0}) (m : ℤ) (x : Cohomology Z m) : cohomologyCast rfl x = x := rfl
