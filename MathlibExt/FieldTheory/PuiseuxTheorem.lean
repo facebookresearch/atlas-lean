@@ -924,7 +924,7 @@ private theorem exists_root_monic_of_natDegree_le {K : Type*} [Field K]
       (show Function.Injective (HahnSeries.C : K →+* HahnSeries Rat K) from
         HahnSeries.C_injective)
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       intro f hf hn hfn
       let d := depressed f
       have hdmonic : d.Monic := depressed_monic f hf
@@ -1604,7 +1604,7 @@ private theorem puiseux_exists_bounded_root_monic_of_natDegree_le
       (show Function.Injective (HahnSeries.C : K →+* HahnSeries Rat K) from
         HahnSeries.C_injective)
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
       intro f hf hn hfn hfbounded
       let d := puiseux.depressed f
       have hdmonic : d.Monic := puiseux.depressed_monic f hf

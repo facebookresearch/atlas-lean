@@ -76,7 +76,7 @@ fundamental theorems in mathematics*, §153. Via leanprover/lean-eval@38361be, p
 `hurewicz_h1_abelianization`. -/
 public theorem_wanted hurewicz_h1_abelianization
     (X : Type) [TopologicalSpace X] [PathConnectedSpace X] (x : X) :
-    Nonempty (Additive (Abelianization (FundamentalGroup X x)) ≃+
+    Nonempty (Additive (Group.Abelianization (FundamentalGroup X x)) ≃+
       (IntegralHomology 1 X : Type))
 
 end Topology.Hurewicz
