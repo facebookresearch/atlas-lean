@@ -17,7 +17,9 @@ integer $k$ with $1 \le k \le t - 1$, the group $\text{Ш}^1_\ell(E, -k)$ is fin
 
 $$\sum_{\ell} \sum_{k=1}^{t-1} \log \# \text{Ш}^1_\ell(E, -k) \le B,$$
 
-where $\ell$ runs over all primes.
+where $\ell$ runs over all primes. The terms are nonnegative, and the sum over $\ell$ is the supremum of
+its finite partial sums: the inequality says that the partial sum over every finite set of primes is at
+most $B$.
 
 For a primitive Dirichlet character $\psi$ of conductor $N_\psi$, an integer $m \ge 0$ and odd primes
 $q$ and $d$, let $K(\psi, m, q, d)$ be the subfield of $\mathbb{Q}(\zeta_N)$ fixed by the subgroup of
@@ -42,16 +44,17 @@ $d$ be primes such that
 - $q$ divides $d + 1$, and so does every odd prime $p \le Z^{\varepsilon/5}$.
 
 Then there is a real number $Y$ with $Z \le Y$ and $Y^2 \le X$ such that, for every real $x$ with
-$Y \le x \le Y^2$, the field $K(\psi, m(x), q, d)$ satisfies
+$Y \le x \le Y^2$, every number field isomorphic to $K(\psi, m(x), q, d)$ satisfies
 $V\bigl(\lfloor x^{401} \rfloor, \exp(x^\varepsilon/2)\bigr)$.
 
 The fields $K(\psi, m(x), q, d)$ are totally imaginary: they are abelian over $\mathbb{Q}$, and
 complex conjugation, the residue $a = -1$, does not fix them because $(\tfrac{-1}{q}) = -1$ for
 $q \equiv 3 \pmod 4$. Their archimedean places therefore have trivial decomposition groups, and
 $\text{Ш}^1_\ell$ above is the kernel of localization at all the places of $S$. The statement bounds the
-Tate–Shafarevich groups of the Tate twists $\mathbb{Q}_\ell/\mathbb{Z}_\ell(-k)$, $1 \le k < x^{401}$,
-uniformly for the scales $x$ of a window $[Y, Y^2]$ inside every range $[X^{1/J}, X^{1/2}]$ with $X$
-large. It is the input from Galois cohomology of the
+Tate–Shafarevich groups of the Tate twists $\mathbb{Q}_\ell/\mathbb{Z}_\ell(-k)$,
+$1 \le k < \lfloor x^{401} \rfloor$, of every model of the fields $K(\psi, m(x), q, d)$, uniformly for
+the scales $x$ of a window $[Y, Y^2]$ with $Y \in [X^{1/J}, \sqrt{X}]$, so that
+$[Y, Y^2] \subset [X^{1/J}, X]$, for every large $X$. It is the input from Galois cohomology of the
 [window bounds for weighted Chebyshev sums of cyclic families of characters](../../zeta-l-functions/dirichlet-l-functions/chebyshev-window-bounds-for-cyclic-character-families.md).
 
 ## Depends on
@@ -65,4 +68,4 @@ large. It is the input from Galois cohomology of the
 
 ## Sources
 
-- Proof: L. Alpöge, released 2026-11-20 as a Lean library (<https://alpo.ge/remark.pdf>); the Lean and Mathlib communities certified the statement and the proof of the Riemann hypothesis in a joint statement of 2026-11-21 endorsed by the Lean FRO and the Mathlib Initiative (<https://leanprover-community.github.io/blog/posts/riemann-hypothesis/>). Source mirror: <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>, cited below by paths in it. The statement of this page is `UpperTheory.Top.VWin` with its auxiliary definitions `VVle` ($V(t, B)$), `IsChiField` (the fields isomorphic to $K(\psi, m, q, d)$), `WinPair`, `PageN`, `VAt` and `VWinAt` (`src/Development/AutomorphicArithmetic/CharacterBoxes/ExistsPageN.lean`, lines 12–49), where the exponent $401$ is the argument of `VWinAt` in `VWin`. The groups $\text{Ш}^1_\ell(E, -k)$ are `Formalism.GaloisCohomology.Sha` for the twists `qzTw` (`src/Formalism/GaloisCohomology/Statement.lean`, lines 54–78), with local conditions at the places above $\ell$ only, and `VVle` sums $\log \ell$ times their $\mathbb{Z}_\ell$-lengths `shaLen` over every finite set of primes $\ell$. The groups $G_{E,S}$ are `ReciprocityTheory.Gal.GS` (`src/ReciprocityTheory/GaloisValuations/Global.lean`, lines 128–145) and the cohomology is `ReciprocityTheory.Gal.H1`, by continuous cocycles (`src/ReciprocityTheory/GaloisValuations/SeparatedDvrSecondCohomologyMem.lean`, lines 42–66). The statement is proved as `UpperTheory.One.vwin_of_row` (`src/Development/AutomorphicArithmetic/AutomorphicVarieties/ModularityArgument/ThresholdArguments/DenseThresholdCases/VwinOfRow.lean`, lines 4–5), which consumes the Galois representations as its hypothesis `h` and passes them, with base change `UpperTheory.BaseChangeIdentities.baseChangeN`, to the argument `UpperTheory.One.Join.automorphic_window_of_inputs` (`.../DenseThresholdCases/TopMainZj.lean`, lines 71–74), both directly and through `UpperTheory.LiteratureTheorems.OpenImageCondition.mk`. The statement is consumed by the window bounds for weighted Chebyshev sums at `src/Development/AutomorphicArithmetic/ThetaCorrespondence/ThetaPairLifts/ThirdPlaceSeries/TopPlug.lean`, line 15.
+- Proof: L. Alpöge, released 2026-11-20 as a Lean library (<https://alpo.ge/remark.pdf>); the Lean and Mathlib communities certified the statement and the proof of the Riemann hypothesis in a joint statement of 2026-11-21 endorsed by the Lean FRO and the Mathlib Initiative (<https://leanprover-community.github.io/blog/posts/riemann-hypothesis/>). Source mirror: <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>, cited below by paths in it. The statement of this page is `UpperTheory.Top.VWin` with its auxiliary definitions `VVle` ($V(t, B)$), `IsChiField` (every number field $E$ with an embedding into $\mathbb{Q}(\zeta_N)$ whose image is the fixed field above, that is, every model of $K(\psi, m, q, d)$, all of which `VAt` covers), `WinPair`, `PageN`, `VAt` and `VWinAt` (`src/Development/AutomorphicArithmetic/CharacterBoxes/ExistsPageN.lean`, lines 12–49), where the exponent $401$ is the argument of `VWinAt` in `VWin`. The groups $\text{Ш}^1_\ell(E, -k)$ are `Formalism.GaloisCohomology.Sha` for the twists `qzTw` (`src/Formalism/GaloisCohomology/Statement.lean`, lines 54–78), with local conditions at the places above $\ell$ only, and `VVle` requires the lengths `shaLen` to be finite and bounds the sum of $\log \ell$ times these $\mathbb{Z}_\ell$-lengths over every finite set of primes $\ell$ (`ExistsPageN.lean`, lines 12–17). The groups $G_{E,S}$ are `ReciprocityTheory.Gal.GS` (`src/ReciprocityTheory/GaloisValuations/Global.lean`, lines 128–145) and the cohomology is `ReciprocityTheory.Gal.H1`, by continuous cocycles (`src/ReciprocityTheory/GaloisValuations/SeparatedDvrSecondCohomologyMem.lean`, lines 42–66). The statement is proved as `UpperTheory.One.vwin_of_row` (`src/Development/AutomorphicArithmetic/AutomorphicVarieties/ModularityArgument/ThresholdArguments/DenseThresholdCases/VwinOfRow.lean`, lines 4–5), which consumes the Galois representations as its hypothesis `h` and passes them, with base change `UpperTheory.BaseChangeIdentities.baseChangeN`, to the argument `UpperTheory.One.Join.automorphic_window_of_inputs` (`.../DenseThresholdCases/TopMainZj.lean`, lines 71–74), both directly and through `UpperTheory.LiteratureTheorems.OpenImageCondition.mk`. The statement is consumed by the window bounds for weighted Chebyshev sums at `src/Development/AutomorphicArithmetic/ThetaCorrespondence/ThetaPairLifts/ThirdPlaceSeries/TopPlug.lean`, line 15.
