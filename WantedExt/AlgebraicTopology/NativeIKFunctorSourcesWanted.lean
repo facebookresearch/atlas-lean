@@ -40,7 +40,9 @@ variable {A : StableCategoryEnrichment} {N : SpectrumSimplicialEnrichment}
     (L : SpectrumCoherentLocalization N S) {k : UncountableRegularCardinal} (P : SigmaKappaSystem k)
     (B : ∀ C : StableInfinityCategory.{0}, KBoundaryStage Z K R L P C)
 
-def_wanted native_full_IK_tower_functor : NativeIKSource K R L P B
+/-- The IK tower functor, for natural boundary stages. -/
+def_wanted native_full_IK_tower_functor (hB : IsNaturalBoundary Z K R L P B) :
+    NativeIKSource K R L P B
 
 def_wanted native_IK_localizing_invariant (I : NativeIKSource K R L P B) : NativeIKLocalizing I
 

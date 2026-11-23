@@ -120,6 +120,22 @@ def KBoundaryStage.map {A : StableCategoryEnrichment} {N : SpectrumSimplicialEnr
     cofibrantK K R C ⟶ (derivedLoopFunctor R.replacements).obj
       (cofibrantK K R (sigmaCategory (P.source C))) := B.rectification.map
 
+/-- Boundary stages that are natural in the category: for every exact functor the two boundary
+composites are homotopic arrows of the stable category. Each stage only fixes its loop object,
+not the cone's loop coordinate, so independently chosen stages can differ, e.g. by the sign of
+one loop coordinate, and then no map of nonconnective towers commutes with both boundaries. -/
+def IsNaturalBoundary {A : StableCategoryEnrichment} {N : SpectrumSimplicialEnrichment}
+    {S : SpectrumInfinitySource} (Z : SpectrumZeroSource S)
+    (K : ParametrizedKSource A N) (R : EnrichedSpectrumReplacements N S)
+    (L : SpectrumCoherentLocalization N S) {k : UncountableRegularCardinal}
+    (P : SigmaKappaSystem k) (B : ∀ C : StableInfinityCategory.{0}, KBoundaryStage Z K R L P C) :
+    Prop :=
+  ∀ {C D : StableInfinityCategory.{0}} (f : ExactFunctor C D),
+    SameArrow S.category.toSSet
+      (S.edge ((B C).map ≫ (derivedLoopFunctor R.replacements).map
+        (cofibrantKMap K R (P.map f).functor)))
+      (S.edge (cofibrantKMap K R f ≫ (B D).map))
+
 /-- The n-th native term is exactly Omega^n QK of the original n-fold Verdier suspension. -/
 def towerTerm {A : StableCategoryEnrichment} {N : SpectrumSimplicialEnrichment}
     {S : SpectrumInfinitySource} (K : ParametrizedKSource A N)

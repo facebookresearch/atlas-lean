@@ -47,7 +47,8 @@ open NativeKCorepresentabilityModels BGTNativeNonconnectiveModels BGTIndKappaMod
 open StableInfinityKSpectra StableSpectraInfinitySource
 open scoped Simplicial Cardinal MonoidalClosed
 
-/-- The entire suspension enrichment extends the same native Ind/Verdier exact maps. -/
+/-- The entire suspension enrichment, a coherent enriched functor extending the native
+Ind/Verdier exact maps up to natural equivalence. -/
 structure SigmaFunctorAction (A : StableCategoryEnrichment) {k : UncountableRegularCardinal}
     (P : SigmaKappaSystem k) where
   hom : letI := A.enrichment
@@ -59,9 +60,17 @@ structure SigmaFunctorAction (A : StableCategoryEnrichment) {k : UncountableRegu
     ∀ C D E : StableInfinityCategory.{0}, eComp SSet.{0} C D E ≫ hom C E =
       (hom C D ⊗ₘ hom D E) ≫ eComp SSet.{0}
         (sigmaCategory (P.source C)) (sigmaCategory (P.source D)) (sigmaCategory (P.source E))
+  /-- On an exact functor the action agrees with the supplied Verdier map up to a natural
+  equivalence: an edge of the core of exact functors joins the two vertices. The supplied maps
+  are chosen separately for each functor, up to natural equivalence, so equality would be
+  incompatible with the strict identity and composition laws. -/
   ordinary : letI := A.enrichment
     ∀ (C D : StableInfinityCategory.{0}) (f : ExactFunctor C D),
-      exactHomPoint A f ≫ hom C D = exactHomPoint A (P.map f).functor
+      ∃ e : (sigmaCategory (P.source C) ⟶[SSet.{0}] sigmaCategory (P.source D)) _⦋1⦌,
+        (sigmaCategory (P.source C) ⟶[SSet.{0}] sigmaCategory (P.source D)).δ 1 e =
+            SSet.unitHomEquiv _ (exactHomPoint A f ≫ hom C D) ∧
+          (sigmaCategory (P.source C) ⟶[SSet.{0}] sigmaCategory (P.source D)).δ 0 e =
+            SSet.unitHomEquiv _ (exactHomPoint A (P.map f).functor)
 
 def SigmaFunctorAction.functor {A : StableCategoryEnrichment} {k : UncountableRegularCardinal}
     {P : SigmaKappaSystem k} (H : SigmaFunctorAction A P) :

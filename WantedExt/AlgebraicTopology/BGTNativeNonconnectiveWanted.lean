@@ -36,12 +36,16 @@ open MathlibExt.SpectraSource
 /-- Construct the original source Sigma objects and native exact maps on all small stable categories. -/
 def_wanted native_sigma_kappa_system (k : UncountableRegularCardinal) : SigmaKappaSystem k
 
-/-- Construct the canonical source quotient homotopy, its swindle contraction and actual native boundary. -/
-def_wanted native_k_boundary_stage {A : StableCategoryEnrichment} {N : SpectrumSimplicialEnrichment}
+/-- Construct the canonical source quotient homotopies, swindle contractions and actual native
+boundaries on all small stable categories, naturally in the category (BGT, Def. 9.6 and the
+natural sequence before Lemma 9.4). -/
+def_wanted native_k_boundary_stages {A : StableCategoryEnrichment} {N : SpectrumSimplicialEnrichment}
     {S : SpectrumInfinitySource} (Z : SpectrumZeroSource S)
     (K : ParametrizedKSource A N) (R : EnrichedSpectrumReplacements N S)
     (L : SpectrumCoherentLocalization N S) {k : UncountableRegularCardinal}
-    (P : SigmaKappaSystem k) (C : StableInfinityCategory.{0}) : KBoundaryStage Z K R L P C
+    (P : SigmaKappaSystem k) :
+    {B : ∀ C : StableInfinityCategory.{0}, KBoundaryStage Z K R L P C //
+      IsNaturalBoundary Z K R L P B}
 
 /-- Construct the actual native derived colimit on the already fixed whole sequence. -/
 def_wanted native_spectrum_sequential_colimit (S : SpectrumInfinitySource) (D : ℕ ⥤ SymmetricSpectrum) :
@@ -52,12 +56,14 @@ def_wanted native_spectrum_colimit_map {S : SpectrumInfinitySource} {D E : ℕ �
     (a : StableSequenceMap S D E) (C : SpectrumSequentialColimit S D)
     (F : SpectrumSequentialColimit S E) : SpectrumColimitMap a C F
 
-/-- The original exact functor induces the whole canonical source sequence map on every native term. -/
+/-- The original exact functor induces the whole canonical source sequence map on every native term,
+for natural boundary stages. -/
 def_wanted native_nonconnective_tower_map {A : StableCategoryEnrichment} {N : SpectrumSimplicialEnrichment}
     {S : SpectrumInfinitySource} {Z : SpectrumZeroSource S}
     (K : ParametrizedKSource A N) (R : EnrichedSpectrumReplacements N S)
     (L : SpectrumCoherentLocalization N S) {k : UncountableRegularCardinal}
     (P : SigmaKappaSystem k) (B : ∀ C : StableInfinityCategory.{0}, KBoundaryStage Z K R L P C)
+    (hB : IsNaturalBoundary Z K R L P B)
     {C D : StableInfinityCategory.{0}} (f : ExactFunctor C D) : SourceTowerMap K R L P B f
 
 /-- BGT9.34 produces the actual native cofiber square for the original two nonconnective exact maps. -/
