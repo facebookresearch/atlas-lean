@@ -80,4 +80,21 @@ theorem sum_range_choose_two_mul_sub_one_mul_eq
       Finset.sum_range_succ _ (m + 1), Nat.choose_succ_succ', Nat.cast_add]
     ring
 
+/-- **Kollár's recursion for incomplete binomial sums with top index $2n$.** Let
+$(a_k)_{k \ge 0}$ be a sequence of real numbers and let $m$ and $n$ be positive integers with
+$m \le n$. Then
+$$\sum_{k=0}^{m} \binom{2n}{k} a_k =
+\sum_{k=0}^{m-1} \binom{2n-1}{k} (a_k + a_{k+1}) + \binom{2n-1}{m} a_m.$$
+
+Source: Richard Kollár, "Incomplete Finite Binomial Sums of
+Harmonic Numbers", Corollary 2, equation `Lemma8`. -/
+theorem sum_range_choose_two_mul_mul_eq
+    (a : ℕ → ℝ) (m n : ℕ) (hm : 0 < m) (hn : 0 < n) (hmn : m ≤ n) :
+    (∑ k ∈ Finset.range (m + 1), ((2 * n).choose k : ℝ) * a k) =
+      (∑ k ∈ Finset.range m,
+        ((2 * n - 1).choose k : ℝ) * (a k + a (k + 1))) +
+        ((2 * n - 1).choose m : ℝ) * a m := by
+  exact sum_range_choose_mul_eq_sum_range_choose_add a m (2 * n) hm
+    (Nat.mul_pos (by decide) hn) (by omega)
+
 end MathlibExt.Combinatorics.Enumerative.IncompleteBinomialHarmonicSumsWanted
