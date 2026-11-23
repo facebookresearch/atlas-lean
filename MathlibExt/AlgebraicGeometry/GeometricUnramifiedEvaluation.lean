@@ -55,17 +55,25 @@ def IsUnramified {l : ℕ} (S : System l) (k K : Type) [Field k] [Field K] [Alge
 /-- The actual subgroup of field classes extending over all geometric DVRs. -/
 def unramifiedSubgroup {l : ℕ} (S : System l) (k K : Type) [Field k] [Field K] [Algebra k K]
     (i : ℤ) (j : ℕ) : AddSubgroup (S.toData.H (Spec (.of K)) i j) where
-  carrier := IsUnramified S k K i j
+  carrier := {a | IsUnramified S k K i j a}
   zero_mem' := by
-    intro A hDvr hFraction hUnit
+    change IsUnramified S k K i j 0
+    intro A _ _ _
     exact ⟨0, map_zero _⟩
   add_mem' := by
-    intro a b ha hb A hDvr hFraction hUnit
+    intro a b ha hb
+    change IsUnramified S k K i j a at ha
+    change IsUnramified S k K i j b at hb
+    change IsUnramified S k K i j (a + b)
+    intro A _ _ hUnit
     obtain ⟨a', ha'⟩ := ha A hUnit
     obtain ⟨b', hb'⟩ := hb A hUnit
-    exact ⟨a'+b', by rw [map_add, ha', hb']⟩
+    exact ⟨a' + b', by rw [map_add, ha', hb']⟩
   neg_mem' := by
-    intro a ha A hDvr hFraction hUnit
+    intro a ha
+    change IsUnramified S k K i j a at ha
+    change IsUnramified S k K i j (-a)
+    intro A _ _ hUnit
     obtain ⟨a', ha'⟩ := ha A hUnit
     exact ⟨-a', by rw [map_neg, ha']⟩
 
