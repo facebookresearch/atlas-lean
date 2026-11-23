@@ -7,17 +7,13 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The tensor injectivity proof is adapted from
-`StacksFrontier/RingTheory/Flat/RegularSequence.lean` in `AxiomMath/Stacks`
-at commit c496df0d9beea9deaeabcea8492605f9a0a2313b, declaration
-`rTensor_subtype_span_singleton_injective_of_isSMulRegular`.
+Portions of this file are adapted from:
 
-The repository is distributed under the Apache License, Version 2.0
-(https://www.apache.org/licenses/LICENSE-2.0). The source file contains
-no individual copyright or author notice.
-
-Modification notice: retained the complete tensor injectivity proof,
-placed it in an ATLAS namespace, and restricted imports to Mathlib.
+`StacksFrontier/RingTheory/Flat/RegularSequence.lean` (AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b), declaration
+`rTensor_subtype_span_singleton_injective_of_isSMulRegular`:
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: moved to an ATLAS namespace, with Mathlib imports only.
 -/
 
 module
@@ -43,7 +39,6 @@ the numerical regular-sequence criterion for a Cohen–Macaulay local ring
 ## References
 
 * The Stacks Project, Tags 00R4, 00ML, and 07DY.
-* The exact source file and revision are credited above.
 -/
 
 namespace MathlibExt.RingTheory.MiracleFlatness

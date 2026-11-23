@@ -17,7 +17,7 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Basic
 /-!
 # Linear maps for cohomology rank calculations
 
-`homRank` is the dimension of the range of an actual morphism of vector
+`homRank` is the dimension of the range of a morphism of vector
 spaces. `cohomologyBlockDifferential` constructs the block linear map
 `(a, b) ↦ (d_A a, f a - d_B b)` associated with a morphism of cochain
 complexes.
@@ -37,8 +37,7 @@ universe u v
 
 variable {K : Type u} [Field K]
 
-/-- The rank of a morphism of vector spaces, as the dimension of its actual
-linear-map range. -/
+/-- The rank of a morphism of vector spaces: the dimension of its range. -/
 noncomputable def homRank {V W : ModuleCat.{v} K} (f : V ⟶ W) : ℕ :=
   Module.finrank K (LinearMap.range f.hom)
 

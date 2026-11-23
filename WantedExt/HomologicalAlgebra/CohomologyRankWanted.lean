@@ -18,7 +18,7 @@ public import MathlibExt.HomologicalAlgebra.CohomologyRank
 /-!
 # Cohomology rank identities
 
-These three proof requests use the actual range rank and block differential
+These three proof requests use the rank and the block differential
 defined in the imported completed module. The equalities are additive in
 natural numbers, and the complexes need only be finite-dimensional in each
 degree.
@@ -61,7 +61,7 @@ public theorem_wanted homologyMap_rank_block
         homRank (A.d i (i + 1)) + homRank (B.d (i - 1) i) =
       Module.finrank K (LinearMap.range (cohomologyBlockDifferential f i))
 
-/-- Corollary 6.5 with Mathlib's actual mapping cone differential.
+/-- Corollary 6.5 with the differential of Mathlib's mapping cone.
 Its sign convention changes no ranks. -/
 public theorem_wanted homologyMap_rank_mappingCone
     (f : A ⟶ B) [∀ j : ℤ, FiniteDimensional K (A.X j)]

@@ -7,18 +7,14 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The local miracle flatness interface is adapted from
-`StacksFrontier/RingTheory/Flat/MiracleFlatness.lean` in `AxiomMath/Stacks`
-at commit c496df0d9beea9deaeabcea8492605f9a0a2313b:
-https://github.com/AxiomMath/Stacks/blob/c496df0d9beea9deaeabcea8492605f9a0a2313b/StacksFrontier/RingTheory/Flat/MiracleFlatness.lean
+Portions of this file are adapted from:
 
-That repository is distributed under the Apache License, Version 2.0
-(https://www.apache.org/licenses/LICENSE-2.0). The source file does not
-identify individual authors or contain a copyright notice.
-
-Modification notice: recorded the local criterion as `theorem_wanted` and
-expanded `Module.IsMaximalCohenMacaulay S S` to the depth equality expressed
-using Mathlib's `IsLocalRing.depth` and `ringKrullDim`.
+`StacksFrontier/RingTheory/Flat/MiracleFlatness.lean` (AxiomMath/Stacks, revision
+c496df0d9beea9deaeabcea8492605f9a0a2313b), for the statement of local miracle flatness:
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: recorded as `theorem_wanted`, with the Cohen–Macaulay condition
+`Module.IsMaximalCohenMacaulay S S` expanded to the equality of Mathlib's `IsLocalRing.depth` and
+`ringKrullDim`.
 -/
 
 module

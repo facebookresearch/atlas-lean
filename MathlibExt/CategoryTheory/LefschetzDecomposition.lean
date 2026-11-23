@@ -21,7 +21,7 @@ For a triangulated category with a t-structure, `cohomologyFunctor t j`
 first shifts by `j`, then takes the degree-zero slice. Its objects belong
 to the heart of `t`.
 
-`lefschetzPower` composes an actual degree-two morphism using Mathlib's
+`lefschetzPower` composes a degree-two morphism with itself using Mathlib's
 shift identifications. `lefschetzMorphism` applies the degree-zero slice
 to that iterate shifted by `-i`, producing `H⁻ⁱ(K) ⟶ Hⁱ(K)`.
 `HasHardLefschetz` states that these induced morphisms are isomorphisms.
@@ -49,8 +49,8 @@ section Iterates
 
 variable {C : Type u} [Category.{v} C] [HasShift C ℤ] {K : C}
 
-/-- The actual `i`th iterate of a degree-two morphism, with the canonical
-shift identifications used in every composition. -/
+/-- The `i`th power `K ⟶ K⟦2i⟧` of a degree-two morphism, composed with the canonical shift
+identifications. -/
 def lefschetzPower (η : K ⟶ K⟦(2 : ℤ)⟧) :
     (i : ℕ) → K ⟶ K⟦2 * (i : ℤ)⟧
   | 0 => ShiftedHom.mk₀ _ (by simp) (𝟙 K)
