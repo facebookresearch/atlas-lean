@@ -9967,6 +9967,7 @@
   "MathlibExt/Combinatorics/Coding/PlotkinBound": {"to": "InformationTheory/error-correcting-codes", "title": "Bounds on code size"},
   "MathlibExt/Combinatorics/Coding/SingletonBound": {"to": "InformationTheory/error-correcting-codes", "title": "Bounds on code size"},
   "MathlibExt/Combinatorics/ConsecutiveCyclicPrimeLabeling": {"to": "GraphTheory/graph-invariants-and-labelings", "title": "Prime labelings of ladder graphs"},
+  "MathlibExt/Combinatorics/CubeNim": {"to": "GameTheory/combinatorial-games", "title": "Nim on a cube"},
   "MathlibExt/Combinatorics/ContinuousTuran": {"to": "Geometry/discrete-geometry", "title": "Continuous Turán numbers of planar patterns"},
   "MathlibExt/Combinatorics/DensityHalesJewett": {"to": "Combinatorics/ramsey-theory/structural-ramsey", "title": "Density Hales–Jewett theorem"},
   "MathlibExt/Combinatorics/Digraph/DirectedCayley": {"to": "GraphTheory/algebraic-graph-theory", "title": "Cayley graphs and digraphs"},
