@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.NumberTheory.LocallyNilpotentPolynomials
+import Mathlib.Algebra.Polynomial.Degree.Operations
 import Mathlib.Tactic.NormNum
 
 open MetaMathlibExt Polynomial
@@ -33,6 +34,35 @@ example : IsWeaklyLocallyNilpotentAt (X - 1) (-1) ∅ ∧ ¬ IsNilpotentAt (X - 
         omega
     rintro ⟨n, _, hn⟩
     exact (hneg n).ne hn
+
+-- Away from `x + 1`, a polynomial of positive degree that is locally nilpotent at `1` is
+-- nilpotent there.
+example (u : ℤ[X]) (hdeg : 0 < u.natDegree) (hu : IsWeaklyLocallyNilpotentAt u 1 ∅)
+    (hne : u ≠ X + 1) : IsNilpotentAt u 1 := by
+  by_contra hnil
+  have h : u ∈ {u : ℤ[X] | 0 < u.natDegree ∧ IsWeaklyLocallyNilpotentAt u 1 ∅ ∧
+      ¬ IsNilpotentAt u 1} := ⟨hdeg, hu, hnil⟩
+  rw [locallyNilpotent_not_nilpotentAt_one_neg_one.1] at h
+  exact hne h
+
+-- The translation `x ↦ x - 2` keeps the orbit of `-1` negative, so it is not nilpotent at `-1`,
+-- and the corollary shows that it is not locally nilpotent there either (the orbit stays odd).
+example : ¬ IsWeaklyLocallyNilpotentAt (X - 2) (-1) ∅ := by
+  intro hu
+  have hneg (n : ℕ) : (fun x => (X - 2 : ℤ[X]).eval x)^[n] (-1) < 0 := by
+    induction n with
+    | zero => decide
+    | succ n ih =>
+      rw [Function.iterate_succ_apply', eval_sub, eval_X, eval_ofNat]
+      omega
+  have h : (X - 2 : ℤ[X]) ∈ {u : ℤ[X] | 0 < u.natDegree ∧
+      IsWeaklyLocallyNilpotentAt u (-1) ∅ ∧ ¬ IsNilpotentAt u (-1)} := by
+    refine ⟨?_, hu, fun ⟨n, _, hn⟩ => (hneg n).ne hn⟩
+    rw [show (X - 2 : ℤ[X]) = X - C 2 by simp, natDegree_X_sub_C]
+    decide
+  rw [locallyNilpotent_not_nilpotentAt_one_neg_one.2, Set.mem_singleton_iff] at h
+  have h0 := congrArg (eval 0) h
+  norm_num at h0
 
 -- A nonconstant multiple of the three linear factors preserves the exact first hitting time.
 example :
