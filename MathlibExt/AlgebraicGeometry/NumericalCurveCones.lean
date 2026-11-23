@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import MathlibExt.AlgebraicGeometry.LineBundlePullback
 public import MathlibExt.AlgebraicGeometry.ProjectiveLineSystems
 public import Mathlib.Topology.Algebra.Module.Basic
 public import Mathlib.Topology.Order.Real
@@ -38,17 +39,24 @@ open scoped BigOperators
 
 universe u
 
+/-- A curve on `X`: a morphism to `X` from a smooth proper integral curve over `k`. -/
 structure Curve {k : Type u} [Field k] (X : Over (Spec (.of k))) where
+  /-- The source curve. -/
   source : Over (Spec (.of k))
   [proper : IsProper source.hom]
   [smooth : SmoothOfRelativeDimension 1 source.hom]
-  [irreducible : GeometricallyIrreducible source.hom]
+  [integral : IsIntegral source.left]
+  /-- The morphism to `X`. -/
   map : source ⟶ X
 
+attribute [instance] Curve.proper Curve.smooth Curve.integral
+
+/-- The degree of every line bundle on `X` along a curve: the degree of its pullback to
+the source curve. -/
 def curveDegrees {k : Type u} [Field k] {X : Over (Spec (.of k))}
     (C : Curve X) : LineBundle X.left → ℝ :=
-  fun L ↦ (degree C.source.hom
-    ((Scheme.Modules.pullback C.map.left).obj L.val) : ℝ)
+  fun L ↦ (degree C.source.hom ((Scheme.Modules.pullback C.map.left).obj L.val)
+    (L.2.pullback C.map.left) : ℝ)
 
 def N1 {k : Type u} [Field k] (X : Over (Spec (.of k))) :
     Submodule ℝ (LineBundle X.left → ℝ) :=
