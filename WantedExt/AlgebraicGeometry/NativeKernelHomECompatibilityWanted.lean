@@ -19,9 +19,11 @@ coefficient forgetful functor, with every map fixed by factorization.
 The compared target is the original beta-pi/module-tensor-Hom target;
 Hom^E is literally alpha Rpi_* RIhom(LE,RE). This is a compatibility
 request for that ringed target, without a general scalar-tensor Hom^E
-adjunction. Applying it to the computed O^E gives the source target of
-Proposition9.5.1; only the separate actual-O reconstruction map has the
-holonomic IsIso request.
+adjunction. Applied to the computed O^E it compares the two targets of
+Proposition9.5.1 objectwise, for each M: the isomorphism is neither natural
+in M nor required to carry the constructed map to the morphism of
+Proposition9.5.1, so it does not identify (9.5.1) itself. The holonomic
+IsIso request concerns the separate ringed-mate reconstruction map.
 
 Source: DK1311.2374v2 Definition4.5.13, Proposition9.5.1, Theorem9.5.3.
 -/
@@ -145,7 +147,9 @@ variable (Factor : ModuleCoefficientQuotientSource (RY n X Real First Graph) (KY
     (IndSpaceSource.alpha (X := TopCat.of X))).Additive]
   (AlphaExact : ExactAlphaSource ℂ (TopCat.of X) (IndSpaceSource.alpha (X := TopCat.of X)))
 
-/-- The actual ringed-kernel target comparison specializes directly to the computed source O^E. -/
+/-- For the given M, an objectwise isomorphism between the ringed-kernel target and the scalar
+Hom^E target of the computed O^E. Naturality in M and compatibility with the morphism of DK
+Proposition 9.5.1 are not requested. -/
 def_wanted native_reconstruction_target_HomE_iso :
   reconstructionCoefficientsTarget n X Real First Graph Geometry N Normalize BetaExact Representatives
     Kernel CoefficientExact CoefficientBounded Boundary Projection M BoundedSolution ForgetExact ≅

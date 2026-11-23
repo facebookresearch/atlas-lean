@@ -39,9 +39,16 @@ attribute [local instance] Classical.propDecidable
 
 variable (S : Finset ℂ)
 
+/-- A complex manifold structure on the punctured line that is the standard one: the inclusion
+into `ℂ` is holomorphic for it. An injective holomorphic map of Riemann surfaces is biholomorphic onto
+its image, so this pins the complex structure; it excludes, for instance, the conjugate atlas, for
+which the inclusion is antiholomorphic. -/
 class CurveComplexSource where
   [charts : ChartedSpace (TemperedDistributionSectionModels.ComplexCoordinates 1) (puncturedLine S)]
   [manifold : IsManifold 𝓘(ℂ, TemperedDistributionSectionModels.ComplexCoordinates 1) ∞ (puncturedLine S)]
+  inclusionHolomorphic : ContMDiff (M := puncturedLine S) (M' := ℂ)
+    𝓘(ℂ, TemperedDistributionSectionModels.ComplexCoordinates 1) 𝓘(ℂ, ℂ) ∞
+    (Subtype.val : puncturedLine S → ℂ)
 
 attribute [instance_reducible, instance] CurveComplexSource.charts
 attribute [instance] CurveComplexSource.manifold
@@ -51,9 +58,9 @@ variable [CurveComplexSource S]
 
 abbrev curveCoefficients := analyticCoefficients 1 (puncturedLine S)
 
+/-- The coordinate `z` of the punctured line and its derivation `d/dz`, for the standard complex
+structure fixed by `CurveComplexSource`. -/
 structure CurveCoordinateSource where
-  inclusionHolomorphic : ContMDiff (M := puncturedLine S) (M' := ℂ) 𝓘(ℂ, TemperedDistributionSectionModels.ComplexCoordinates 1)
-    𝓘(ℂ, ℂ) ∞ (Subtype.val : puncturedLine S → ℂ)
   coordinate : CoordinateDerivation ℂ (puncturedLine S) (curveCoefficients S)
   value : ∀ (U : Opens (puncturedLine S)) (x : U), (coordinate.function U).val x = x.val.val
   derivativeValues : ∀ (U : Opens (puncturedLine S))

@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.HolomorphicCotangentModuleModels
+public import MathlibExt.AlgebraicGeometry.HolomorphicCoefficientRestriction
 public import MathlibExt.AlgebraicGeometry.NativeIndDifferentialContexts
 public import Mathlib.CategoryTheory.Limits.Shapes.Terminal
 
@@ -44,17 +45,16 @@ variable (n : ℕ) (M : Type) [TopologicalSpace M]
 
 abbrev HolomorphicRing := holomorphicStructureRing (n := n) (M := M)
 
-def holomorphicCoefficientMap : HolomorphicRing n M ⟶
+/-- The shared holomorphic coefficient map (`HolomorphicCoefficientRestriction`). -/
+abbrev holomorphicCoefficientMap : HolomorphicRing n M ⟶
     coefficientSheaf ℂ M (analyticCoefficients n M) :=
-  ObjectProperty.homMk (toSheafify (Opens.grothendieckTopology M)
-    (HolomorphicCoefficientSheaves.ringPresheaf
-      (TemperedDistributionSectionModels.ComplexCoordinates n) M))
+  HolomorphicCoefficientRestriction.holomorphicCoefficientMap n M
 
-def ordinaryHolomorphicCoefficients
+/-- The shared restriction of a D-module to the holomorphic functions. -/
+abbrev ordinaryHolomorphicCoefficients
     (N : DifferentialOperatorSheaves.DModule ℂ M (analyticCoefficients n M)) :
     SheafOfModules.{0} (HolomorphicRing n M) :=
-  (SheafOfModules.restrictScalars (holomorphicCoefficientMap n M)).obj
-    ((DifferentialOperatorScalars.underlyingO ℂ M (analyticCoefficients n M)).obj N)
+  HolomorphicCoefficientRestriction.holomorphicRestriction n M N
 
 def fullOpenInitial : IsInitial (op (⊤ : Opens M)) :=
   IsInitial.ofUniqueHom (fun U => (homOfLE (show U.unop ≤ ⊤ from le_top)).op)

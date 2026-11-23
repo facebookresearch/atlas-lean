@@ -65,11 +65,11 @@ def_wanted actual_right_graded_v_operators : GradedVOperators k M O C N V
 
 /-- The nearby right Euler operator is literally the original can followed by var. -/
 theorem_wanted actual_nearby_euler_composition (A : GradedVOperators k M O C N V) :
-    nearbyMonodromy k M O C N V A = A.eulerMap 0
+    nearbyNilpotent k M O C N V A = A.eulerMap 0
 
 /-- The actual Weyl relation identifies vanishing var-can with partial*t-1. -/
 theorem_wanted actual_vanishing_euler_composition (A : GradedVOperators k M O C N V) :
-    vanishingMonodromy k M O C N V A = A.eulerMap (-1)
+    vanishingNilpotent k M O C N V A = A.eulerMap (-1)
 
 /-- The Euler nilpotence on original V lifts gives actual local nilpotence on the native grade. -/
 theorem_wanted actual_graded_euler_local_nilpotence (A : GradedVOperators k M O C N V)

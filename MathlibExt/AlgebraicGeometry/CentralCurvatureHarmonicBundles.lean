@@ -91,12 +91,18 @@ theorem integral_degreeForm (d : ℤ) : integral 1 M P.coordinates P.atlas (degr
 
 variable {r : ℕ} (B : SmoothComplexBundle 1 M r)
 
-def IsProjectivelyFlat (d : ℤ) (A : SmoothConnection B) : Prop :=
-  ∀ i x, x ∈ B.core.baseSet i → ∀ u v,
+/-- The connection has the degree-`d` normalized central curvature: the bundle has positive rank
+`r` and on every trivializing chart the curvature is `-2πi (d/r) (ω / ∫ω)` times the identity. This
+prescribed central curvature is stronger than projective flatness (scalar curvature), which every
+rank-one connection has. -/
+def HasNormalizedCentralCurvature (d : ℤ) (A : SmoothConnection B) : Prop :=
+  0 < r ∧ ∀ i x, x ∈ B.core.baseSet i → ∀ u v,
     curvatureValue B A.value i x u v = centralCurvatureValue P d r x u v
 
+/-- A metric whose reconstructed connection has the degree-`d` normalized central curvature, on a
+bundle of positive rank. -/
 def IsCentralHarmonicMetric (d : ℤ) (h : HermitianMetric B) (H : HolomorphicHiggsField B) : Prop :=
-  ∀ i x, x ∈ B.core.baseSet i → ∀ u v,
+  0 < r ∧ ∀ i x, x ∈ B.core.baseSet i → ∀ u v,
     curvatureValue B (reconstructedConnection B h H.value) i x u v =
       centralCurvatureValue P d r x u v
 

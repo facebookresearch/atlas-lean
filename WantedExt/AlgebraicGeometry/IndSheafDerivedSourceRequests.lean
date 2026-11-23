@@ -110,7 +110,7 @@ theorem_wanted actual_derived_ind_proper_image_source (k : Type) [Field k] (X Y 
     [(indProperImage k f P D).Additive] : DerivedIndPushforwardSource k f P D
 
 /-- A genuine closed-boundary direct image preserves boundedness in the source quotient. -/
-theorem_wanted actual_closed_boundary_bounded (k : Type) [Field k] (B : BorderedSpace)
+theorem_wanted actual_closed_boundary_bounded (k : Type) [Field k] (B : BorderedSpace) [B.IsGood]
     [CompactSheafSource k (boundarySpace B)] [CompactSheafSource k B.ambient]
     (P : CompactPushforwardSource k (boundaryInclusion B))
     (D : IndPushforwardSource k (boundaryInclusion B) P)

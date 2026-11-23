@@ -55,32 +55,28 @@ def compactPushforward (P : CompactPushforwardSource k f) : CompactSheaf k X ⥤
     apply ObjectProperty.hom_ext
     exact (TopCat.Sheaf.pushforward (ModuleCat.{0} k) f).map_comp a.hom b.hom
 
-/-- Native universe lift of this same prescribed compact pushforward. -/
-def smallCompactPushforward (P : CompactPushforwardSource k f) :
-    SmallCompactSheaf k X ⥤ SmallCompactSheaf k Y :=
-  AsSmall.down ⋙ compactPushforward k f P ⋙ AsSmall.up
 
 variable (P : CompactPushforwardSource k f)
   [CompactSheafSource k X] [CompactSheafSource k Y]
 
 /-- Kan-extension existence refers only to the original compact generator functor. -/
 structure IndPushforwardSource : Prop where
-  hasKan : (Ind.yoneda (C := SmallCompactSheaf k X)).HasLeftKanExtension
-    (smallCompactPushforward k f P ⋙ Ind.yoneda)
+  hasKan : (Ind.yoneda (C := CompactSheaf k X)).HasLeftKanExtension
+    (compactPushforward k f P ⋙ Ind.yoneda)
 
 /-- The actual ind-sheaf proper direct image is the native compact-Yoneda left Kan extension. -/
 def indProperImage (D : IndPushforwardSource k f P) : IndSheaf k X ⥤ IndSheaf k Y :=
   letI := D.hasKan
-  (Ind.yoneda (C := SmallCompactSheaf k X)).leftKanExtension
-    (smallCompactPushforward k f P ⋙ Ind.yoneda)
+  (Ind.yoneda (C := CompactSheaf k X)).leftKanExtension
+    (compactPushforward k f P ⋙ Ind.yoneda)
 
 /-- The compact-generator comparison is the native Kan-extension unit. -/
 def compactPushforwardUnit (D : IndPushforwardSource k f P) :
-    smallCompactPushforward k f P ⋙ Ind.yoneda ⟶
+    compactPushforward k f P ⋙ Ind.yoneda ⟶
       Ind.yoneda ⋙ indProperImage k f P D :=
   letI := D.hasKan
-  (Ind.yoneda (C := SmallCompactSheaf k X)).leftKanExtensionUnit
-    (smallCompactPushforward k f P ⋙ Ind.yoneda)
+  (Ind.yoneda (C := CompactSheaf k X)).leftKanExtensionUnit
+    (compactPushforward k f P ⋙ Ind.yoneda)
 
 
 end MathlibExt.AlgebraicGeometry.IndSheafPushforwardModels

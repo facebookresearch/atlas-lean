@@ -21,10 +21,11 @@ The graded piece is the native sheaf cokernel of V^(>alpha) into V^alpha.
 Graded operators are characterized on all original section lifts by
 the original finite-order operators. Their construction remains a
 separate source request. Nearby-unipotent and vanishing carriers are
-grV^0 and grV^-1, with can=partial and var=t.
+grV^0 and grV^-1, with can=partial and var=t; var∘can and can∘var are the
+nilpotent logarithms of the unipotent monodromy (up to normalization).
 
-V is unrestricted on the t-invertible locus, where all its pieces may
-equal the original module. The ungraded partial action is coefficient
+Away from `t = 0` the conditions force every piece to be the whole module,
+as `t` is invertible there. The ungraded partial action is coefficient
 linear. On grV^a to grV^(a-1), its coefficient commutator lies in V^a
 and vanishes modulo V^(>a-1). The Euler commutator lies in t V^a,
 hence in V^(a+1), and vanishes modulo V^(>a). This gives the graded
@@ -55,7 +56,12 @@ def VOrderZero (U : Opens M) (P : finiteOperatorRing k M O U) : Prop :=
   ∀ (V : Inside M U) (r : ℕ) (a : O.obj (op V.val)),
     ∃ b : O.obj (op V.val), P.val.val V (C.function V.val ^ r * a) = C.function V.val ^ r * b
 
-/-- A decreasing rational filtration on the actual O-subsheaves of the right module. -/
+/-- The Kashiwara--Malgrange V-filtration of a right module along `t = 0`, indexed by `ℚ` as in
+Saito, arXiv:1307.2140v5, §2.1: a decreasing, discretely indexed, exhaustive filtration by
+`O`-subsheaves, generated locally over the V-zero operators, with `t` raising and `∂` lowering the
+index, `∂t + a` nilpotent on `grV^a`, `t : V^a ≅ V^(a+1)` for `a > -1` (2.1.3) and
+`∂ : grV^a ≅ grV^(a-1)` for `a < 0` (2.1.4). The last two conditions exclude, for instance, the
+constant filtration, which would have zero nearby cycles. -/
 structure RationalVFiltration where
   term : ℚ → ((underlyingO k M O).obj N).Submodule
   decreasing : Antitone term
@@ -83,9 +89,34 @@ structure RationalVFiltration where
       (∀ j, s j ∈ (term a).toSubmodule.obj (op U)) ∧
       ∀ (V : Opens M) (hV : V ≤ U) (t : N.val.obj (op V)),
         t ∈ (term a).toSubmodule.obj (op V) →
-        ∃ P : Fin r → finiteOperatorRing k M O V,
-          (∀ j, VOrderZero k M O C V (P j)) ∧
-          t = ∑ j, rightAct k M O N V (P j) ((N.val.map (homOfLE hV).op).hom (s j))
+        ∀ y : V, ∃ (W : Opens M) (hW : W ≤ V), y.val ∈ W ∧
+          ∃ P : Fin r → finiteOperatorRing k M O W,
+            (∀ j, VOrderZero k M O C W (P j)) ∧
+            (N.val.map (homOfLE hW).op).hom t =
+              ∑ j, rightAct k M O N W (P j) ((N.val.map (homOfLE (hW.trans hV)).op).hom (s j))
+  /-- Saito (2.1.3), right modules: `t : V^a → V^(a+1)` is injective for `a > -1`. -/
+  coordinateInjective : ∀ (a : ℚ), -1 < a → ∀ (U : Opens M) (s : N.val.obj (op U)),
+    s ∈ (term a).toSubmodule.obj (op U) → rightCoordinate k M O C N U s = 0 → s = 0
+  /-- Saito (2.1.3), right modules: `t : V^a → V^(a+1)` is locally surjective for `a > -1`. -/
+  coordinateSurjective : ∀ (a : ℚ), -1 < a → ∀ (U : Opens M) (t : N.val.obj (op U)),
+    t ∈ (term (a + 1)).toSubmodule.obj (op U) → ∀ y : U,
+      ∃ (W : Opens M) (hW : W ≤ U), y.val ∈ W ∧ ∃ s : N.val.obj (op W),
+        s ∈ (term a).toSubmodule.obj (op W) ∧
+          rightCoordinate k M O C N W s = (N.val.map (homOfLE hW).op).hom t
+  /-- Saito (2.1.4), right modules: `∂ : grV^a → grV^(a-1)` is injective for `a < 0`. -/
+  partialGradedInjective : ∀ (a : ℚ), a < 0 → ∀ (U : Opens M) (s : N.val.obj (op U)),
+    s ∈ (term a).toSubmodule.obj (op U) →
+      rightPartial k M O C N U s ∈
+        (⨆ b : {b : ℚ // a - 1 < b}, term b.val).toSubmodule.obj (op U) →
+      s ∈ (⨆ b : {b : ℚ // a < b}, term b.val).toSubmodule.obj (op U)
+  /-- Saito (2.1.4), right modules: `∂ : grV^a → grV^(a-1)` is locally surjective for `a < 0`. -/
+  partialGradedSurjective : ∀ (a : ℚ), a < 0 → ∀ (U : Opens M) (t : N.val.obj (op U)),
+    t ∈ (term (a - 1)).toSubmodule.obj (op U) → ∀ y : U,
+      ∃ (W : Opens M) (hW : W ≤ U), y.val ∈ W ∧ ∃ s : N.val.obj (op W),
+        s ∈ (term a).toSubmodule.obj (op W) ∧
+          (show N.val.obj (op W) from (N.val.map (homOfLE hW).op).hom t) -
+              rightPartial k M O C N W s ∈
+            (⨆ b : {b : ℚ // a - 1 < b}, term b.val).toSubmodule.obj (op W)
   eulerNilpotent : ∀ (a : ℚ) (x : M), ∃ U : Opens M, x ∈ U ∧ ∃ r : ℕ, 0 < r ∧
     ∀ (V : Opens M), V ≤ U → ∀ s : N.val.obj (op V),
       s ∈ (term a).toSubmodule.obj (op V) →
@@ -170,13 +201,16 @@ def var (A : GradedVOperators k M O C N V) :
     vanishingUnipotent k M O C N V ⟶ nearbyUnipotent k M O C N V := by
   simpa using A.coordinateMap (-1)
 
-/-- Nearby monodromy retains the actual can followed by var, before the Tate target twist. -/
-def nearbyMonodromy (A : GradedVOperators k M O C N V) :
+/-- The nilpotent endomorphism `var ∘ can` of the nearby cycles: the right Euler operator `∂t` on
+`grV^0`. This is the logarithm of the unipotent monodromy up to the normalizing factor `-2πi`, not
+the (invertible) monodromy itself. -/
+def nearbyNilpotent (A : GradedVOperators k M O C N V) :
     End (nearbyUnipotent k M O C N V) :=
   ⟨can k M O C N V A ≫ var k M O C N V A⟩
 
-/-- Vanishing monodromy retains the actual var followed by can. -/
-def vanishingMonodromy (A : GradedVOperators k M O C N V) :
+/-- The nilpotent endomorphism `can ∘ var` of the vanishing cycles: `∂t - 1` on `grV^-1`. It is a
+logarithm of the unipotent monodromy up to normalization, not the monodromy itself. -/
+def vanishingNilpotent (A : GradedVOperators k M O C N V) :
     End (vanishingUnipotent k M O C N V) :=
   ⟨var k M O C N V A ≫ can k M O C N V A⟩
 

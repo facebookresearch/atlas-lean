@@ -40,26 +40,26 @@ variable (k : Type) [Field k] {X Y : TopCat.{0}} (f : X ⟶ Y)
   (S : OrdinaryIndSource k X)
 
 /-- The native sheaf inverse image, on every compact source generator and map. -/
-def inverseImageGenerators : SmallCompactSheaf k Y ⥤ IndSheaf k X :=
-  AsSmall.down ⋙ compactAsOrdinary k Y ⋙
+def inverseImageGenerators : CompactSheaf k Y ⥤ IndSheaf k X :=
+  compactAsOrdinary k Y ⋙
     TopCat.Sheaf.pullback (ModuleCat.{0} k) f ⋙ ordinaryToInd k X S
 
 /-- Construction input for this exact compact-generator inverse image. -/
 structure IndInverseImageSource : Prop where
-  hasKan : (Ind.yoneda (C := SmallCompactSheaf k Y)).HasLeftKanExtension
+  hasKan : (Ind.yoneda (C := CompactSheaf k Y)).HasLeftKanExtension
     (inverseImageGenerators k f S)
 
 /-- The actual inverse image is the native left Kan extension from compact sheaves. -/
 def indInverseImage (D : IndInverseImageSource k f S) : IndSheaf k Y ⥤ IndSheaf k X :=
   letI := D.hasKan
-  (Ind.yoneda (C := SmallCompactSheaf k Y)).leftKanExtension
+  (Ind.yoneda (C := CompactSheaf k Y)).leftKanExtension
     (inverseImageGenerators k f S)
 
 /-- The native generator unit fixes all ordinary inverse-image maps. -/
 def inverseImageGeneratorUnit (D : IndInverseImageSource k f S) :
     inverseImageGenerators k f S ⟶ Ind.yoneda ⋙ indInverseImage k f S D :=
   letI := D.hasKan
-  (Ind.yoneda (C := SmallCompactSheaf k Y)).leftKanExtensionUnit
+  (Ind.yoneda (C := CompactSheaf k Y)).leftKanExtensionUnit
     (inverseImageGenerators k f S)
 
 variable [CompactSheafSource k X] [CompactSheafSource k Y]

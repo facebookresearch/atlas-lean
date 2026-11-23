@@ -10,11 +10,12 @@ module
 import MathlibExt.AlgebraicGeometry.CentralCurvatureHarmonicBundles
 
 /-!
-# Central monodromy of projectively flat bundles
+# Central monodromy and rank of centrally curved bundles
 
-The puncture monodromy `exp(2πi d/r)` of a degree-`d`, rank-`r` projectively flat bundle is
-scalar: it is trivial when the rank divides the degree, it is `-1` for degree one and rank two,
-and it is a primitive cube root of unity (not `1`) for degree one and rank three.
+The puncture monodromy `exp(2πi d/r)` of a degree-`d`, rank-`r` bundle with normalized central
+curvature is scalar: it is trivial when the rank divides the degree, it is `-1` for degree one and
+rank two, and it is a primitive cube root of unity (not `1`) for degree one and rank three. The
+normalized central curvature conditions exclude the zero bundle.
 -/
 
 namespace MathlibExtTest.AlgebraicGeometry.CentralCurvatureHarmonicBundles
@@ -54,5 +55,27 @@ example : punctureMonodromy 1 3 ≠ 1 := by
     norm_num
   have : n * 3 = 1 := by exact_mod_cast hn1
   omega
+
+section RankZero
+
+open MathlibExt.AlgebraicGeometry.KahlerClassGeometry
+open MathlibExt.AlgebraicGeometry.ManifoldDifferentialForms
+open MathlibExt.AlgebraicGeometry.SmoothHarmonicBundleGeometry
+open scoped Manifold ContDiff
+
+variable {M : Type} [TopologicalSpace M] [ChartedSpace (Coordinates 1) M]
+  [IsManifold 𝓘(ℝ, Coordinates 1) ∞ M] [IsManifold 𝓘(ℂ, Coordinates 1) ∞ M]
+  [ExteriorTheory ℝ (Coordinates 1) M] (P : CurveNormalization M)
+  (B : SmoothComplexBundle 1 M 0)
+
+/-- On the zero bundle the degree-normalized curvature condition fails for every degree. -/
+example (d : ℤ) (A : SmoothConnection B) : ¬ HasNormalizedCentralCurvature P B d A :=
+  fun h ↦ lt_irrefl 0 h.1
+
+example (d : ℤ) (h : HermitianMetric B) (H : HolomorphicHiggsField B) :
+    ¬ IsCentralHarmonicMetric P B d h H :=
+  fun h ↦ lt_irrefl 0 h.1
+
+end RankZero
 
 end MathlibExtTest.AlgebraicGeometry.CentralCurvatureHarmonicBundles

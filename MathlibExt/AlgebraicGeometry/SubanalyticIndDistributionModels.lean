@@ -47,11 +47,11 @@ local instance subanalyticIndPreadditive : Preadditive (IndSheaf ℂ (TopCat.of 
 
 /-- A genuine filtered presentation in the original compact R-constructible sheaves. -/
 structure SubanalyticIndPresentation (F : IndSheaf ℂ (TopCat.of M)) where
-  index : Type 1
+  index : Type
   [category : SmallCategory index]
   [filtered : IsFiltered index]
-  diagram : index ⥤ SmallCompactSubanalyticSheaf n M
-  cocone : Cocone (diagram ⋙ smallCompactSubanalyticInclusion n M ⋙ Ind.yoneda)
+  diagram : index ⥤ CompactSubanalyticSheaf n M
+  cocone : Cocone (diagram ⋙ compactSubanalyticToCompact n M ⋙ Ind.yoneda)
   colimit : IsColimit cocone
   comparison : cocone.pt ≅ F
 

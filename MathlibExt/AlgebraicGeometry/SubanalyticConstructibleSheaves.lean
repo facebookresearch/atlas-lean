@@ -63,8 +63,6 @@ def compactSubanalytic : ObjectProperty (OrdinarySheaf ℂ (TopCat.of M)) :=
 
 abbrev CompactSubanalyticSheaf := (compactSubanalytic n M).FullSubcategory
 
-abbrev SmallCompactSubanalyticSheaf := AsSmall.{1} (CompactSubanalyticSheaf n M)
-
 /-- The full native compact inclusion forgets only the verified constructibility proof. -/
 def compactSubanalyticToCompact :
     CompactSubanalyticSheaf n M ⥤ CompactSheaf ℂ (TopCat.of M) where
@@ -72,10 +70,5 @@ def compactSubanalyticToCompact :
   map f := ObjectProperty.homMk f.hom
   map_id F := by apply ObjectProperty.hom_ext; rfl
   map_comp f g := by apply ObjectProperty.hom_ext; rfl
-
-/-- The same inclusion on the fixed original small compact generators. -/
-def smallCompactSubanalyticInclusion :
-    SmallCompactSubanalyticSheaf n M ⥤ SmallCompactSheaf ℂ (TopCat.of M) :=
-  AsSmall.down ⋙ compactSubanalyticToCompact n M ⋙ AsSmall.up
 
 end MathlibExt.AlgebraicGeometry.SubanalyticConstructibleSheaves

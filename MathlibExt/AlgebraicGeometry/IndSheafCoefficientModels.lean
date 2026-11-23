@@ -41,17 +41,11 @@ open CompactSupportIndSheaves
 
 variable (k : Type) [Field k] (X : TopCat.{0})
 
-/-- The original compact sheaves sit in the universe lift of ordinary sheaves. -/
-def smallCompactInclusion :
-    SmallCompactSheaf k X ⥤ AsSmall.{1} (OrdinarySheaf k X) :=
-  AsSmall.down ⋙ (IsCompactSupported k X).ι ⋙ AsSmall.up
-
 /-- Restricted Yoneda uses actual maps from every original compact sheaf. -/
-def ordinaryRealization : OrdinarySheaf k X ⥤ (SmallCompactSheaf k X)ᵒᵖ ⥤ Type 1 :=
-  (AsSmall.up : OrdinarySheaf k X ⥤ AsSmall.{1} (OrdinarySheaf k X)) ⋙
-    yoneda ⋙
-    (Functor.whiskeringLeft (SmallCompactSheaf k X)ᵒᵖ
-      (AsSmall.{1} (OrdinarySheaf k X))ᵒᵖ (Type 1)).obj (smallCompactInclusion k X).op
+def ordinaryRealization : OrdinarySheaf k X ⥤ (CompactSheaf k X)ᵒᵖ ⥤ Type :=
+  yoneda ⋙
+    (Functor.whiskeringLeft (CompactSheaf k X)ᵒᵖ (OrdinarySheaf k X)ᵒᵖ Type).obj
+      (IsCompactSupported k X).ι.op
 
 /-- The sole construction input is the Ind property of that prescribed presheaf. -/
 structure OrdinaryIndSource : Prop where
@@ -59,8 +53,8 @@ structure OrdinaryIndSource : Prop where
 
 /-- The actual ordinary-sheaf embedding in the native compact-support Ind category. -/
 def ordinaryToInd (S : OrdinaryIndSource k X) : OrdinarySheaf k X ⥤ IndSheaf k X :=
-  ObjectProperty.lift (IsIndObject (C := SmallCompactSheaf k X))
-    (ordinaryRealization k X) S.isInd ⋙ (Ind.equivalence (SmallCompactSheaf k X)).inverse
+  ObjectProperty.lift (IsIndObject (C := CompactSheaf k X))
+    (ordinaryRealization k X) S.isInd ⋙ (Ind.equivalence (CompactSheaf k X)).inverse
 
 /-- All original compact-generator maps, viewed as ordinary sheaf maps. -/
 def compactAsOrdinary : CompactSheaf k X ⥤ OrdinarySheaf k X :=
@@ -94,21 +88,16 @@ def compactTensor (S : CompactTensorSource k X) :
       (X := (F.1.obj, F.2.obj)) (Y := (G.1.obj, G.2.obj)) (Z := (H.1.obj, H.2.obj))
       (fg.1.hom, fg.2.hom) (gh.1.hom, gh.2.hom)
 
-/-- Native lifts of those same compact tensor maps. -/
-def smallCompactTensor (S : CompactTensorSource k X) :
-    SmallCompactSheaf k X × SmallCompactSheaf k X ⥤ SmallCompactSheaf k X :=
-  AsSmall.down.prod AsSmall.down ⋙ compactTensor k X S ⋙ AsSmall.up
-
 /-- The exact generator bifunctor whose native Kan extension defines Ind tensor. -/
 def tensorGenerators (S : CompactTensorSource k X) :
-    SmallCompactSheaf k X × SmallCompactSheaf k X ⥤ IndSheaf k X :=
-  smallCompactTensor k X S ⋙ Ind.yoneda
+    CompactSheaf k X × CompactSheaf k X ⥤ IndSheaf k X :=
+  compactTensor k X S ⋙ Ind.yoneda
 
-/-- The two native compact-Yoneda embeddings, in their fixed source and target universes. -/
+/-- The two native compact-Yoneda embeddings. -/
 def compactYonedaPair :
-    SmallCompactSheaf k X × SmallCompactSheaf k X ⥤ IndSheaf k X × IndSheaf k X :=
-  (Ind.yoneda : SmallCompactSheaf k X ⥤ IndSheaf k X).prod
-    (Ind.yoneda : SmallCompactSheaf k X ⥤ IndSheaf k X)
+    CompactSheaf k X × CompactSheaf k X ⥤ IndSheaf k X × IndSheaf k X :=
+  (Ind.yoneda : CompactSheaf k X ⥤ IndSheaf k X).prod
+    (Ind.yoneda : CompactSheaf k X ⥤ IndSheaf k X)
 
 /-- Existence concerns only the prescribed compact-Yoneda tensor extension. -/
 structure IndTensorSource (S : CompactTensorSource k X) : Prop where

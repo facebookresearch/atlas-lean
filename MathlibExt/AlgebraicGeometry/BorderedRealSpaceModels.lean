@@ -18,7 +18,8 @@ public import Mathlib.Topology.Category.TopCat.Basic
 # Actual bordered spaces and real-parameter maps
 
 A bordered space is an actual open subspace of its specified ambient
-space. A morphism is a continuous map of the interiors whose graph
+space; `BorderedSpace.IsGood` records the good-space conditions on the
+ambient space (Hausdorff, locally compact, countable at infinity). A morphism is a continuous map of the interiors whose graph
 closure projects properly to the source ambient space. No extension to
 an ambient map is required. In particular, addition is ordinary real
 addition on the interiors of the two-point compactified line.
@@ -33,9 +34,22 @@ namespace MathlibExt.AlgebraicGeometry.BorderedRealSpaceModels
 
 open _root_.CategoryTheory TopologicalSpace Set
 
+/-- A raw bordered pair: an open subset of an ambient topological space. D'Agnolo--Kashiwara's
+bordered spaces (Definition 3.2.1) moreover take the ambient space to be good; see
+`BorderedSpace.IsGood`. -/
 structure BorderedSpace where
   ambient : TopCat.{0}
   openSet : Opens ambient
+
+/-- The ambient space is Hausdorff, locally compact and countable at infinity, as for the good
+spaces of D'Agnolo--Kashiwara. Their finite flabby dimension condition is not recorded here. -/
+class BorderedSpace.IsGood (B : BorderedSpace) : Prop where
+  [t2 : T2Space B.ambient]
+  [locallyCompact : LocallyCompactSpace B.ambient]
+  [sigmaCompact : SigmaCompactSpace B.ambient]
+
+attribute [instance] BorderedSpace.IsGood.t2 BorderedSpace.IsGood.locallyCompact
+  BorderedSpace.IsGood.sigmaCompact
 
 abbrev BorderedSpace.interior (B : BorderedSpace) := TopCat.of B.openSet
 
@@ -75,10 +89,22 @@ def realHomeomorph : ℝ ≃ₜ Ioo (⊥ : EReal) ⊤ := realOrderIso.toHomeomor
 
 instance : CompactSpace infiniteReal.ambient := inferInstanceAs (CompactSpace EReal)
 
+/-- The two-point compactified line is a compact Hausdorff ambient space. -/
+instance : infiniteReal.IsGood where
+  t2 := inferInstanceAs (T2Space EReal)
+  locallyCompact := inferInstanceAs (LocallyCompactSpace EReal)
+  sigmaCompact := inferInstanceAs (SigmaCompactSpace EReal)
+
 /-- Products retain both original ambient spaces and open inclusions. -/
 def product (B C : BorderedSpace) : BorderedSpace :=
   ⟨TopCat.of (B.ambient × C.ambient),
     ⟨{p | p.1 ∈ B.openSet ∧ p.2 ∈ C.openSet}, B.openSet.isOpen.prod C.openSet.isOpen⟩⟩
+
+/-- Products of good bordered spaces are good. -/
+instance (B C : BorderedSpace) [B.IsGood] [C.IsGood] : (product B C).IsGood where
+  t2 := inferInstanceAs (T2Space (B.ambient × C.ambient))
+  locallyCompact := inferInstanceAs (LocallyCompactSpace (B.ambient × C.ambient))
+  sigmaCompact := inferInstanceAs (SigmaCompactSpace (B.ambient × C.ambient))
 
 /-- Addition is evaluated only on the genuine finite real coordinates. -/
 def realAddition : (product infiniteReal infiniteReal).interior ⟶ infiniteReal.interior :=

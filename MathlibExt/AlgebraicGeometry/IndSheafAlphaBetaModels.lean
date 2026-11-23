@@ -34,26 +34,26 @@ open CompactSupportIndSheaves IndSheafCoefficientModels
 
 variable (k : Type) [Field k] (X : TopCat.{0})
 
-/-- The original compact generators, with the universe lift undone. -/
-def alphaGenerators : SmallCompactSheaf k X ⥤ OrdinarySheaf k X :=
-  AsSmall.down ⋙ compactAsOrdinary k X
+/-- The original compact generators, as ordinary sheaves. -/
+def alphaGenerators : CompactSheaf k X ⥤ OrdinarySheaf k X :=
+  compactAsOrdinary k X
 
 /-- Existence only for the prescribed compact-generator extension. -/
 structure AlphaSource : Prop where
-  hasKan : (Ind.yoneda (C := SmallCompactSheaf k X)).HasLeftKanExtension
+  hasKan : (Ind.yoneda (C := CompactSheaf k X)).HasLeftKanExtension
     (alphaGenerators k X)
 
 /-- Alpha computes the ordinary sheaf represented by the compact Ind diagram. -/
 def alpha (S : AlphaSource k X) : IndSheaf k X ⥤ OrdinarySheaf k X :=
   letI := S.hasKan
-  (Ind.yoneda (C := SmallCompactSheaf k X)).leftKanExtension
+  (Ind.yoneda (C := CompactSheaf k X)).leftKanExtension
     (alphaGenerators k X)
 
 /-- The actual compact-generator comparison of alpha. -/
 def alphaGeneratorUnit (S : AlphaSource k X) :
     alphaGenerators k X ⟶ Ind.yoneda ⋙ alpha k X S :=
   letI := S.hasKan
-  (Ind.yoneda (C := SmallCompactSheaf k X)).leftKanExtensionUnit
+  (Ind.yoneda (C := CompactSheaf k X)).leftKanExtensionUnit
     (alphaGenerators k X)
 
 /-- Beta existence is left-adjoint existence for this exact alpha. -/

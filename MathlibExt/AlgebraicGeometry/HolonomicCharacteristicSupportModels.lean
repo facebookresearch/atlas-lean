@@ -9,6 +9,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.AnalyticChartDifferentialOperators
 public import MathlibExt.AlgebraicGeometry.HarmonicHolomorphicModuleModels
+public import MathlibExt.AlgebraicGeometry.HolomorphicCoefficientRestriction
 public import Mathlib.Algebra.Category.ModuleCat.Sheaf.PushforwardContinuous
 public import Mathlib.Algebra.Category.ModuleCat.Stalk
 public import Mathlib.Algebra.DirectSum.Module
@@ -67,14 +68,13 @@ variable (n : ℕ) (M : Type) [TopologicalSpace M]
 abbrev RawO := holomorphicStructureRing (n := n) (M := M)
 abbrev NativeDModule := DModule ℂ M (analyticCoefficients n M)
 
-def rawCoefficientMap : RawO n M ⟶ coefficientSheaf ℂ M (analyticCoefficients n M) :=
-  ObjectProperty.homMk (toSheafify (Opens.grothendieckTopology M)
-    (HolomorphicCoefficientSheaves.ringPresheaf
-      (TemperedDistributionSectionModels.ComplexCoordinates n) M))
+/-- The shared holomorphic coefficient map (`HolomorphicCoefficientRestriction`). -/
+abbrev rawCoefficientMap : RawO n M ⟶ coefficientSheaf ℂ M (analyticCoefficients n M) :=
+  HolomorphicCoefficientRestriction.holomorphicCoefficientMap n M
 
-def underlyingRawO (N : NativeDModule n M) : SheafOfModules.{0} (RawO n M) :=
-  (SheafOfModules.restrictScalars (rawCoefficientMap n M)).obj
-    ((DifferentialOperatorScalars.underlyingO ℂ M (analyticCoefficients n M)).obj N)
+/-- The shared restriction of a D-module to the holomorphic functions. -/
+abbrev underlyingRawO (N : NativeDModule n M) : SheafOfModules.{0} (RawO n M) :=
+  HolomorphicCoefficientRestriction.holomorphicRestriction n M N
 
 variable (N : NativeDModule n M) (U : Opens M)
 
@@ -83,7 +83,9 @@ def InLocalFiltration (F : ℤ → Subobject ((underlyingRawO n M N).over U))
   ∃ t : (Subobject.underlying.obj (F p)).val.obj (op (Over.mk (homOfLE hV))),
     ((F p).arrow.val.app (op (Over.mk (homOfLE hV)))).hom t = s
 
-/-- A genuinely local good filtration on the actual native restricted module. -/
+/-- A genuinely local good filtration on the actual native restricted module. The generators
+generate each filtration piece as a sheaf: every section is, near each point, a combination of the
+restricted generators with operators of the allowed orders. -/
 structure LocalGoodFiltration where
   term : ℤ → Subobject ((underlyingRawO n M N).over U)
   monotone : Monotone term
@@ -114,14 +116,15 @@ structure LocalGoodFiltration where
       (∀ j, InLocalFiltration n M N U term (degree j) V hV (g j)) ∧
       ∀ (W : Opens M) (hW : W ≤ V) (p : ℤ) (s : N.val.obj (op W)),
         InLocalFiltration n M N U term p W (hW.trans hV) s →
-        ∃ (d : Fin r → ℕ) (P : Fin r → finiteOperatorRing ℂ M (analyticCoefficients n M) W),
-          (∀ j, P j = 0 ∨
-            (GeometricDModuleFiltrations.OrderOn
-              (TemperedDistributionSectionModels.ComplexCoordinates n) M (P j) (d j) ∧
-                (d j : ℤ) + degree j ≤ p)) ∧
-          s = ∑ j, GeometricDModuleFiltrations.act
-            (TemperedDistributionSectionModels.ComplexCoordinates n) M N (P j)
-              ((N.val.map (homOfLE hW).op).hom (g j))
+        ∀ y : W, ∃ (W' : Opens M) (hW' : W' ≤ W), y.val ∈ W' ∧
+          ∃ (d : Fin r → ℕ) (P : Fin r → finiteOperatorRing ℂ M (analyticCoefficients n M) W'),
+            (∀ j, P j = 0 ∨
+              (GeometricDModuleFiltrations.OrderOn
+                (TemperedDistributionSectionModels.ComplexCoordinates n) M (P j) (d j) ∧
+                  (d j : ℤ) + degree j ≤ p)) ∧
+            (N.val.map (homOfLE hW').op).hom s = ∑ j, GeometricDModuleFiltrations.act
+              (TemperedDistributionSectionModels.ComplexCoordinates n) M N (P j)
+                ((N.val.map (homOfLE (hW'.trans hW)).op).hom (g j))
 
 variable (G : LocalGoodFiltration n M N U)
 

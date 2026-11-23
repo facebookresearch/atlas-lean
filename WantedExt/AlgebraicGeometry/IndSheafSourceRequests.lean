@@ -33,8 +33,9 @@ open MathlibExt.AlgebraicGeometry.IndSheafPushforwardModels
 
 /-- Actual compact-support sheaves, with their inherited hom-groups, form an abelian
 category: kernels, cokernels and finite products of compactly supported sheaves are
-compactly supported. Native Ind abelianness is reused. -/
-theorem_wanted actual_compact_sheaf_source (k : Type) [Field k] (X : TopCat.{0}) :
+compactly supported. Their ind-objects (with small filtered index categories) form an
+abelian category, Kashiwara--Schapira, Categories and Sheaves, Theorem 8.6.5(i). -/
+def_wanted actual_compact_sheaf_source (k : Type) [Field k] (X : TopCat.{0}) :
   CompactSheafSource k X
 
 /-- Continuous image of actual compact support gives compact proper-image generators. -/

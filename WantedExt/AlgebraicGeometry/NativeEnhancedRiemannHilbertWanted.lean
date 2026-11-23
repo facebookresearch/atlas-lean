@@ -19,7 +19,9 @@ already constructed from the actual O^E graph Hom[2] representative,
 native module-Hom counit, the native ambient tensor-Hom mate and the
 actual beta-pi projection adjunction. Holonomicity is the actual local
 good-filtration/characteristic-support property. The comparison map is
-not supplied as an independent oracle or assumed invertible.
+not supplied as an independent oracle or assumed invertible. The request is
+that this ringed mate is an isomorphism; its compatibility with the canonical
+scalar morphism of Proposition9.5.1 is a separate question, not part of it.
 
 Source: DK1311.2374v2 Proposition9.5.1, Theorem9.5.3.
 -/
@@ -281,6 +283,8 @@ variable [LocallyCompactSpace X] [SecondCountableTopology X]
   [∀ (U : Opens X) (W : Over U),
     (((Opens.grothendieckTopology X).over U).over W).WEqualsLocallyBijective AddCommGrpCat.{0}]
 
+/-- For a bounded holonomic M, the ringed-mate reconstruction map built from the computed O^E is an
+isomorphism (the ringed form of DK Theorem 9.5.3). -/
 theorem_wanted actual_holonomic_reconstruction_isIso
     (hHolonomic : HolonomicCharacteristicSupportModels.IsBoundedHolonomic n X M) :
   IsIso (actualReconstructionMap n X IX IP NX NP PX PP Structure Operators MX MP V Ot HE Exp Plus
