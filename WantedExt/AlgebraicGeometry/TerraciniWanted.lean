@@ -34,18 +34,18 @@ References:
 
 namespace WantedExt.AlgebraicGeometry.TerraciniWanted
 
-open MathlibExt.AlgebraicGeometry.AffineTangent
+open MvPolynomial MathlibExt.AlgebraicGeometry.AffineTangent
 
 /-- Terracini for actual addition and polynomial Zariski tangent modules. -/
 theorem_wanted terracini {k : Type*} [Field k] [IsAlgClosed k] [CharZero k] {n : ℕ}
     (X Y : Set (Fin n → k))
-    (hX : X = algebraicClosure X) (hY : Y = algebraicClosure Y)
+    (hX : X = zariskiClosure X) (hY : Y = zariskiClosure Y)
     (hneX : X.Nonempty) (hneY : Y.Nonempty)
-    (hprimeX : (vanishingIdeal X).IsPrime)
-    (hprimeY : (vanishingIdeal Y).IsPrime) :
+    (hprimeX : (vanishingIdeal k X).IsPrime)
+    (hprimeY : (vanishingIdeal k Y).IsPrime) :
     ∃ F : MvPolynomial (Fin n ⊕ Fin n) k,
-      (∃ p ∈ X, ∃ q ∈ Y, MvPolynomial.eval (Sum.elim p q) F ≠ 0) ∧
-      ∀ p ∈ X, ∀ q ∈ Y, MvPolynomial.eval (Sum.elim p q) F ≠ 0 →
+      (∃ p ∈ X, ∃ q ∈ Y, eval (Sum.elim p q) F ≠ 0) ∧
+      ∀ p ∈ X, ∀ q ∈ Y, eval (Sum.elim p q) F ≠ 0 →
         tangentSet (additionImageClosure X Y) (p + q) =
           tangentSet X p ⊔ tangentSet Y q
 
