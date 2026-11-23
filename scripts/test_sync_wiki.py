@@ -4368,9 +4368,33 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual(self.run_sync("--check")[3]["wiki_changes"], "sync")
 
 
+    def test_lean_staged_otherwise_than_the_working_tree_stops_the_run(self) -> None:
+        # The index holds one declaration and the working tree another: the run reads the working tree's, which a
+        # commit may not take, so it stops until the two agree.
+        self.groups(more="/-- Only in the index. -/\ntheorem indexOnly : True := trivial\n\n")
+        self.git("add", "--", "MathlibExt/Algebra/Groups.lean")
+        self.groups(more="/-- Only in the working tree. -/\ntheorem workOnly : True := trivial\n\n")
+        for flags in ((), ("--check",)):
+            status, out, err, report = self.run_sync(*flags)
+            self.assertEqual((status, report["in_step"], report["errors"]), (1, False, [
+                "MathlibExt/Algebra/Groups.lean: " + INDEX_DIFFERS]), flags)
+        self.git("add", "--", "MathlibExt/Algebra/Groups.lean")
+        self.assertEqual(self.run_sync("--check")[3]["missing"], ["Ext.workOnly"])
 
-INDEX_DIFFERS = ("the index holds it otherwise than the working tree, and a commit may take either: stage the "
-                 "working tree's, or restore the index's, and check again")
+    def test_a_working_tree_like_the_base_has_no_wiki_changes(self) -> None:
+        # A prose edit committed on the branch, then undone in the working tree without staging: the changes, the
+        # working tree's, have none.
+        page = self.root / "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md"
+        kept = page.read_bytes()
+        page.write_text(page.read_text() + "\nMore prose.\n")
+        self.commit("a prose edit")
+        page.write_bytes(kept)
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"], report["differences"]), (0, "none", []))
+
+
+
+INDEX_DIFFERS = sync.INDEX_DIFFERS
 
 
 class BuildPath(Vault):

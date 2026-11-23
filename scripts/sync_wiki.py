@@ -2873,11 +2873,47 @@ def index_entries() -> dict[str, tuple[str, str]]:
     return entries
 
 
+def staged_paths() -> set[str]:
+    """The files the index changes from HEAD, staged by hand, by their path from the repository's root: a commit may
+    take the index's file rather than the working tree's."""
+    return {os.fsdecode(path) for path in git("diff", "--cached", "--name-only", "--no-renames", "-z", "HEAD",
+                                              "--").split(b"\0") if path}
+
+
+INDEX_DIFFERS = ("the index holds it otherwise than the working tree, and a commit may take either: stage the working "
+                 "tree's, or restore the index's, and check again")
+
+
+def disagreeing(paths: set[str]) -> dict[str, str]:
+    """Of *paths*, those the index holds otherwise than the working tree, each with what is wrong: anything but a file
+    in the index, a submodule among them, is not the sync's; any other difference, bytes, executable bit or a file
+    only one of them has, leaves a commit free to take either."""
+    entries = {}
+    if paths:
+        for record in git("ls-files", "-s", "-z", "--", *sorted(paths)).split(b"\0"):
+            if record:
+                meta, raw = record.split(b"\t", 1)
+                mode, name = meta.decode("ascii").split(" ")[:2]
+                entries[os.fsdecode(raw)] = (mode, name)
+    found = {}
+    for path in sorted(paths):
+        mode, name = entries.get(path, ("100644", None))
+        if mode not in ("100644", "100755"):
+            found[path] = "the sync writes no link or other kind of file"
+            continue
+        file = wiki.ROOT / path
+        held = None if name is None else (git("cat-file", "blob", name), mode != "100755")
+        actual = (None if file.is_symlink() or not file.is_file()
+                  else (file.read_bytes(), not file.stat().st_mode & 0o111))
+        if held != actual:
+            found[path] = INDEX_DIFFERS
+    return found
+
+
 def changed_paths(base: str) -> list[str]:
-    """The files that differ between commit *base* and the working tree or the index, untracked ones included, by
-    their path from the repository's root: what a pull request from *base* changes."""
+    """The files that differ between commit *base* and the working tree, untracked ones included, by their path from
+    the repository's root: what a pull request from *base* changes (see staged_paths for the index)."""
     found = (git("diff", "--name-only", "--no-renames", "-z", base, "--")
-             + git("diff", "--cached", "--name-only", "--no-renames", "-z", base, "--")
              + git("ls-files", "--others", "--exclude-standard", "-z"))
     # Named as the file system names them, whatever their bytes.
     return sorted({os.fsdecode(path) for path in found.split(b"\0") if path})
@@ -3426,12 +3462,10 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
         if left := unfinished(report):
             return "other", [f"the sync fails on the base's wiki: {row}" for row in left]
         differences = []
-        # The changes are the working tree's. Where the index changes a file from HEAD, staged by hand, a commit may
-        # take the index's instead, so the two must agree; and anything but a file in the index, a submodule with no
-        # folder among them, is not the sync's either.
+        # The changes are the working tree's; anything but a file in the index, a submodule with no folder among
+        # them, is not the sync's either. Where the index changes a file from HEAD, staged by hand, a commit may take
+        # the index's instead, so the two must agree (see disagreeing).
         staged = index_entries()
-        restaged = {os.fsdecode(path) for path in git("diff", "--cached", "--name-only", "--no-renames", "-z", "HEAD",
-                                                         "--").split(b"\0") if path}
         for path in sorted(set(paths) | {path.relative_to(scratch).as_posix() for path in written}):
             mine, theirs = scratch / path, wiki.ROOT / path
             linked = theirs.is_symlink() or os.path.realpath(theirs) != str(theirs)
@@ -3446,12 +3480,9 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
                 continue
             if expected != actual:
                 differences.append(f"{path}: " + compared(expected, actual, mine in written))
-            if path in restaged:
-                held = None if name is None else (git("cat-file", "blob", name), mode != "100755")
-                if held != actual:
-                    differences.append(f"{path}: the index holds it otherwise than the working tree, and a commit "
-                                       "may take either: stage the working tree's, or restore the index's, and check "
-                                       "again")
+        listed = {row.split(": ", 1)[0] for row in differences}
+        differences += [f"{path}: {what}" for path, what in disagreeing({
+            path for path in staged_paths() if graph_file(path)}).items() if path not in listed or what == INDEX_DIFFERS]
     return ("other", differences) if differences else ("sync", [])
 
 
@@ -3486,19 +3517,23 @@ def run_scoped(argv: list[str]) -> int:
     try:
         base = git("rev-parse", "--verify", "--end-of-options", f"{options.base}^{{commit}}").decode().strip()
         paths = changed_paths(base)
+        restaged = staged_paths()
+        # The Lean the run reads is the working tree's: staged otherwise, a commit may take a Lean the run did not.
+        unsettled = disagreeing({path for path in restaged if lean_source(path)})
     except GitError as error:
         print(f"error: {error}", file=sys.stderr)
         print(f"error: the base must be a commit this clone has; fetch it first, as with `git fetch {UPSTREAM} main`",
               file=sys.stderr)
         return 2
     lean = frozenset(path for path in paths if lean_source(path))
-    graph = [path for path in paths if graph_file(path)]
+    graph = sorted({path for path in paths if graph_file(path)} | {path for path in restaged if graph_file(path)})
     fix = f"python3 scripts/sync_wiki.py declarations --base {base}"
     # A link among the files the run reads, or the changes' own, stops it before it reads any of them: one could lead
-    # anywhere, to a file that has no end among others.
-    if linked := links_in_wiki(paths):
+    # anywhere, to a file that has no end among others. So does Lean staged otherwise than the working tree has it.
+    linked = links_in_wiki(paths)
+    if linked or unsettled:
         errors = [f"{path} is a link: the sync reads and writes through none; put what it links to in its place"
-                  for path in linked]
+                  for path in linked] + [f"{path}: {what}" for path, what in unsettled.items()]
         if options.check:
             print("In step: no")
         for row in errors:
