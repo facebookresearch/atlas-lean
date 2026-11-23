@@ -16,7 +16,7 @@ public import Mathlib.Data.Nat.PrimeFin
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 public import MathlibExt.NumberTheory.ArithmeticFunction.TotientSqrtLowerBound
-public import MathlibExt.NumberTheory.Cyclotomic.HomogenizedCyclotomic
+public import MathlibExt.NumberTheory.Cyclotomic.HomogenizedCyclotomicProduct
 public import MathlibExt.NumberTheory.PrimitiveDivisor
 
 /-!
@@ -77,17 +77,6 @@ theorem_wanted homogenizedCyclotomic_prime_pow_mul {p β k : ℕ} (hp : p.Prime)
       homogenizedCyclotomic (p ^ β * k) a b *
           homogenizedCyclotomic k (a ^ p ^ (β - 1)) (b ^ p ^ (β - 1)) =
         homogenizedCyclotomic k (a ^ p ^ β) (b ^ p ^ β)
-
-/-- **Factorization of $a^n - b^n$ into homogenized cyclotomic values.** For every positive
-integer $n$ and all integers $a$ and $b$,
-$$a^n - b^n = \prod_{d \mid n} \Phi_d(a, b),$$
-where the product runs over the positive divisors $d$ of $n$ and $\Phi_d(a, b)$ is the
-homogenized cyclotomic value.
-
-Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 3 (i)
-(quoted from reference [6]). -/
-theorem_wanted prod_divisors_homogenizedCyclotomic {n : ℕ} (hn : 0 < n) (a b : ℤ) :
-    ∏ d ∈ n.divisors, homogenizedCyclotomic d a b = a ^ n - b ^ n
 
 /-- **Bounds for homogenized cyclotomic values.** Let $a > b$ be positive integers and let
 $n \ge 1$. Then the homogenized cyclotomic value $\Phi_n(a, b)$ satisfies
