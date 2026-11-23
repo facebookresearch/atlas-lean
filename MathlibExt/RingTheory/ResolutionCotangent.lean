@@ -7,13 +7,15 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Ported from AxiomMath/Stacks, revision
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/Cotangent/ResolutionComplex.lean.
-The source has no individual copyright or author notice and is licensed
-under Apache 2.0. Modification notice: retain only the complete augmented-simplicial cotangent
-construction and normalize negative indexing directly by Mathlib embedding; omit dependencies
-used solely for the standard-resolution comparison.
+Portions of this file are adapted from:
+
+`StacksFrontier/Cotangent/ResolutionComplex.lean` (AxiomMath/Stacks, revision
+`c496df0d9beea9deaeabcea8492605f9a0a2313b`); the source file carries no individual copyright or
+author notice.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: only the augmented-simplicial cotangent construction is kept; negative indexing
+uses Mathlib's complex embedding `ComplexShape.embeddingUpIntLE`; the dependencies used solely
+for the standard-resolution comparison are omitted.
 -/
 module
 
@@ -113,8 +115,9 @@ structure ResolutionCotangentSimplicialModuleData where
       (resolutionCotangentTermDifferential A B P ε i p) =
     resolutionCotangentTermDifferential A B P ε j (P.map f p)
 
-/-- The `Pᵢ`-linear map `Ω[Pᵢ⁄A] → B ⊗[Pⱼ] Ω[Pⱼ⁄A]`, `ω ↦ 1 ⊗ ω`, attached to a morphism
-`g : Pᵢ ⟶ Pⱼ` lying over `B`; it is adjoint to `resolutionCotangentPush`. -/
+/-- The `Pᵢ`-linear map `Ω[Pᵢ⁄A] → B ⊗[Pⱼ] Ω[Pⱼ⁄A]`, `ω ↦ 1 ⊗ Ω(g)(ω)` (so `d p ↦ 1 ⊗ d (g p)`),
+attached to a morphism `g : Pᵢ ⟶ Pⱼ` lying over `B`; it is adjoint to
+`resolutionCotangentPush`. -/
 noncomputable def resolutionCotangentPushAdjoint {i j : SimplexCategoryᵒᵖ}
     (g : P.obj i ⟶ P.obj j)
     (hg : (resolutionAugmentationHom A B P ε j).comp g.hom.toRingHom =

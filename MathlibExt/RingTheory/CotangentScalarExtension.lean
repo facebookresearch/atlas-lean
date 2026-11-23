@@ -7,12 +7,14 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Ported from AxiomMath/Stacks, revision
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/Cotangent/ExtendScalars.lean.
-The source has no individual copyright or author notice and is licensed
-under Apache 2.0. Modification notice: retain the complete pure-tensor and differential-
-generator extensionality proofs in a standalone MathlibExt module.
+Portions of this file are adapted from:
+
+`StacksFrontier/Cotangent/ExtendScalars.lean` (AxiomMath/Stacks, revision
+`c496df0d9beea9deaeabcea8492605f9a0a2313b`); the source file carries no individual copyright or
+author notice.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: the pure-tensor formula and the differential-generator extensionality proofs are
+kept, in a standalone MathlibExt module.
 -/
 module
 
