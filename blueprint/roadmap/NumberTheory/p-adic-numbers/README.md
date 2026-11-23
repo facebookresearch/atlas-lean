@@ -15,3 +15,4 @@ p-adic integers and expansions, valuations of integer sequences, Hensel lifting,
 - [Cassels' embedding theorem](exists-injective-ring-hom-closure-padic.md)
 - [p-adic integrality is equivalent to norm at most one](is-integral-padic-int-iff-norm-le-one.md)
 - [Strassmann's theorem](strassmann.md)
+- [The ring of p-adic integers](p-adic-integers.md)

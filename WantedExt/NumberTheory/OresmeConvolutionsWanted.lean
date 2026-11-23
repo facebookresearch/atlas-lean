@@ -138,21 +138,6 @@ Article cookbacon061124, Corollary 6.3 (`fq-2024-cookbacon061124-cor-6.3`). -/
 public theorem_wanted two_pow_mul_jacobsthal_succ_modEq_nine (n : ℕ) :
     2 ^ n * lucasU ⟨1, -2, by decide⟩ (n + 1) ≡ n + 1 [ZMOD 9]
 
-/-- **Jacobsthal–Lucas–Oresme convolution.** Let $j_m$ denote the Jacobsthal–Lucas numbers and
-let $O_m = m/2^m$ denote the Oresme numbers. For every natural number $n$,
-$\sum_{k=0}^{n} j_k O_{n-k} = \frac{2}{9} j_{n+1} - \frac{2}{9 \cdot 2^n}$.
-
-The paper prints $+$ where the equality sign belongs, with no relation between the two sides;
-this is the equality reading, which matches Propositions 4.3 and 6.2 and Corollary 6.5.
-
-Source: Michael R. Bacon and Charles K. Cook, *Some Properties of Oresme Numbers and
-Convolutions with Various Second Order Sequences*, The Fibonacci Quarterly 62 (2024), no. 3,
-Article cookbacon061124, Proposition 6.4 (`fq-2024-cookbacon061124-prop-6.4`). -/
-public theorem_wanted jacobsthalLucasNumber_oresme_convolution (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1),
-        (jacobsthalLucasNumber k : ℚ) * (((n - k : ℕ) : ℚ) / 2 ^ (n - k)) =
-      2 / 9 * (jacobsthalLucasNumber (n + 1) : ℚ) - 2 / (9 * 2 ^ n)
-
 /-- **Powers of two times Jacobsthal–Lucas numbers modulo 9.** Let $j_m$ denote the
 Jacobsthal–Lucas numbers. For every natural number $n$, $2^n j_{n+1} \equiv 1 \pmod{9}$.
 

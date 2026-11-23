@@ -11,6 +11,15 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Algebra.Order.Floor.Ring
+public import MathlibExt.Dynamics.NExpansionGaps
+
+/-!
+# Intervals of N-expansions with many gaps
+
+Statements from Jaap de Jonge, *Intervals of N-Expansions with Many Gaps*, INTEGERS 26 (2026),
+Article A75. The ideal period words (Definition 7), their first values and their block counts
+(Lemma 8) are in `MathlibExt.Dynamics.NExpansionGaps`, which this module imports.
+-/
 
 namespace MetaMathlibExt
 
@@ -84,54 +93,6 @@ public theorem nExpansionMap_self_of_int {N : ℕ} {α : ℝ} {k : ℤ} (hk : (N
   rw [nExpansionMap, hd]
   push_cast
   linarith
-
-/-- **Ideal period words.** For $n \ge 1$, the ideal period word $d_n$ is a finite list of blocks
-of partial quotients, each block being $a = 2, 1, 1$ or $b = 2, 2$. Writing lists of blocks by
-juxtaposition, with commas between parts, $d_1 = [ab]$, $d_2 = [abb]$, $d_3 = [abb, ab, ab]$ and
-$d_4 = [abb, ab, ab, abb, abb]$; for $n \ge 5$, if $d_{n-1} = [j, ab, ab]$ for a list $j$ then
-$d_n = [j, ab, ab, j, abb]$, and if $d_{n-1} = [j, abb]$ then $d_n = [j, abb, j, ab, ab]$. The
-digit string of $d_n$ is the concatenation of its blocks. For $n = 0$ the list is empty, a
-placeholder.
-
-Source: Jaap de Jonge, *Intervals of N-Expansions with Many Gaps*, INTEGERS 26 (2026), Article
-A75, Definition 7. -/
-public def idealPeriodWord : ℕ → List (List ℕ)
-  | 0 => []
-  | 1 => [[2, 1, 1], [2, 2]]
-  | 2 => [[2, 1, 1], [2, 2], [2, 2]]
-  | 3 => [[2, 1, 1], [2, 2], [2, 2], [2, 1, 1], [2, 2], [2, 1, 1], [2, 2]]
-  | 4 => [[2, 1, 1], [2, 2], [2, 2], [2, 1, 1], [2, 2], [2, 1, 1], [2, 2], [2, 1, 1], [2, 2],
-      [2, 2], [2, 1, 1], [2, 2], [2, 2]]
-  | n + 5 =>
-    let w := idealPeriodWord (n + 4)
-    if w.drop (w.length - 4) = [[2, 1, 1], [2, 2], [2, 1, 1], [2, 2]] then
-      w ++ w.take (w.length - 4) ++ [[2, 1, 1], [2, 2], [2, 2]]
-    else if w.drop (w.length - 3) = [[2, 1, 1], [2, 2], [2, 2]] then
-      w ++ w.take (w.length - 3) ++ [[2, 1, 1], [2, 2], [2, 1, 1], [2, 2]]
-    else w
-
-/-- **The fifth ideal period word.** Writing $a$ for the block $2, 1, 1$ and $b$ for the block
-$2, 2$ of partial quotients, the ideal period word $d_5$ is $d_4$ followed by the blocks
-$abb\,ab\,ab\,abb\,ab\,ab$, in this order.
-
-This is the second recursion rule applied to $d_4 = [j, abb]$ with $j = [abb, ab, ab, abb]$.
-
-Source: Jaap de Jonge, *Intervals of N-Expansions with Many Gaps*, INTEGERS 26 (2026), Article
-A75, Definition 7. -/
-public theorem idealPeriodWord_five :
-    idealPeriodWord 5 = idealPeriodWord 4 ++
-      [[2, 1, 1], [2, 2], [2, 2], [2, 1, 1], [2, 2], [2, 1, 1], [2, 2], [2, 1, 1], [2, 2], [2, 2],
-        [2, 1, 1], [2, 2], [2, 1, 1], [2, 2]] := by
-  decide
-
-/-- **Lengths of the first ideal period words.** The digit strings of the ideal period words
-$d_1, d_2, d_3, d_4, d_5$ have lengths $5, 7, 17, 31, 65$ respectively.
-
-Source: Jaap de Jonge, *Intervals of N-Expansions with Many Gaps*, INTEGERS 26 (2026), Article
-A75, Definition 7. -/
-public theorem idealPeriodWord_flatten_length_small :
-    ((List.range 5).map fun n => (idealPeriodWord (n + 1)).flatten.length) = [5, 7, 17, 31, 65] := by
-  decide
 
 /-- **Orbits with the same digits alternate in order.** Let $N$ be a positive integer and let
 $0 < \alpha < \alpha'$ be real numbers. Write $T_\alpha$ for the $N$-expansion map and $d_\alpha$
@@ -211,20 +172,6 @@ Source: Jaap de Jonge, *Intervals of N-Expansions with Many Gaps*, INTEGERS 26 (
 A75, Lemma 7 (`integers-2026-A75-lem-7`). -/
 public theorem_wanted idealPeriodWord_flatten_length {n : ℕ} (hn : 1 ≤ n) :
     ((idealPeriodWord n).flatten.length : ℤ) = 2 ^ (n + 1) - (-1) ^ n
-
-/-- **Block counts of the ideal period words.** For every $n \ge 1$, the ideal period word $d_n$
-contains exactly $2^{n-1}$ blocks $2, 2$, and the number $c_n$ of its blocks $2, 1, 1$ satisfies
-$3 c_n = 2^n - (-1)^n$; that is, $c_n = (2^n + 1)/3$ for odd $n$ and $c_n = (2^n - 1)/3$ for even
-$n$.
-
-In this lemma the source names the blocks $a = 2, 2$ and $b = 2, 1, 1$, the reverse of its
-Definition 7; the counts are stated by block, so the naming does not matter.
-
-Source: Jaap de Jonge, *Intervals of N-Expansions with Many Gaps*, INTEGERS 26 (2026), Article
-A75, Lemma 8 (`integers-2026-A75-lem-8`). -/
-public theorem_wanted idealPeriodWord_count_blocks {n : ℕ} (hn : 1 ≤ n) :
-    (idealPeriodWord n).count [2, 2] = 2 ^ (n - 1) ∧
-      3 * ((idealPeriodWord n).count [2, 1, 1] : ℤ) = 2 ^ n - (-1) ^ n
 
 end
 
