@@ -8,10 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Data.Int.ModEq
 import MathlibExt.NumberTheory.OddPartFactorialTwoAdic
 
 /-!
-# Tests for normalized odd double factorials
+# Tests for dyadic odd products and normalized odd double factorials
 -/
 
 open MetaMathlibExt
@@ -29,3 +30,10 @@ example : ((oddDoubleFactorial 3 : ℤ) - 1) / 8 = 13 ∧
 example : (4 : ℤ) ∣ ((oddDoubleFactorial 3 : ℤ) - 1) / 8 -
     ((oddDoubleFactorial 4 : ℤ) - 1) / 16 :=
   (oddDoubleFactorial_normalized_congr 3 (by decide)).2.2
+
+-- The congruence fails just below the lower bound.
+example : ¬ (8 : ℤ) ∣ ((∏ i ∈ oddBelowTwoPow 2, i : ℕ) : ℤ) - 5 := by decide
+
+-- At the lower bound the product is 105, with residue 9 modulo 16.
+example : ((∏ i ∈ oddBelowTwoPow 3, i : ℕ) : ℤ) % 16 = 9 :=
+  (Int.modEq_of_dvd (oddSet_product_congr 3 (by decide))).symm
