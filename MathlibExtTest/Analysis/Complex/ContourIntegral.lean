@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Mathlib.Analysis.Calculus.AddTorsor.AffineMap
+import Mathlib.Analysis.Calculus.Deriv.AffineMap
 import Mathlib.Analysis.Calculus.Deriv.Pow
 import MathlibExt.Analysis.Complex.ContourIntegral
 
@@ -33,3 +34,18 @@ example {a : ℂ} (γ : Path a a) (hγ : ContDiffOn ℝ 1 γ.extend (Set.Icc 0 1
     isOpen_univ (Set.subset_univ _) (fun z _ => hasDerivAt_id z) hγ
     (continuousOn_const.curveIntegrable_of_contDiffOn (s := Set.univ) hγ (by simp))
   simpa using h
+
+-- The ML estimate is sharp for a constant integrand on every straight segment.
+example (a b c : ℂ) :
+    ‖curveIntegral (fun _ => c • ContinuousLinearMap.id ℂ ℂ) (.segment a b)‖ =
+      ‖c‖ * ‖b - a‖ := by
+  have hext := Path.eqOn_extend_segment a b
+  have hγ : ContDiffOn ℝ 1 (Path.segment a b).extend (Set.Icc 0 1) :=
+    (AffineMap.contDiff_lineMap _ _).contDiffOn.congr hext
+  apply le_antisymm
+  · apply norm_contourIntegral_le hγ (fun _ _ => le_rfl)
+    · intro t ht
+      rw [derivWithin_congr hext (hext ht),
+        AffineMap.hasDerivWithinAt_lineMap.derivWithin (uniqueDiffOn_Icc_zero_one t ht)]
+    · exact continuousOn_const.curveIntegrable_of_contDiffOn (s := Set.univ) hγ (by simp)
+  · simp

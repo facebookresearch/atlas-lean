@@ -39,6 +39,9 @@ Proved in `MathlibExt.NumberTheory.PowAddPowEqSqModFourOne`,
 which this module imports: the absence of
 solutions when `n ≡ p ≡ 1 (mod 4)`
 (`no_solution_mod_four_one`).
+
+The parity restriction when `n ≡ p ≡ 3 (mod 4)` is proved in
+`MathlibExt.NumberTheory.PowAddPowEqSqOppositeParity`.
 -/
 module
 
@@ -47,6 +50,7 @@ public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import MathlibExt.NumberTheory.PowAddPowEqSq
 public import MathlibExt.NumberTheory.PowAddPowEqSqModFourOne
+public import MathlibExt.NumberTheory.PowAddPowEqSqOppositeParity
 public import MathlibExt.NumberTheory.ThreePowAddThirtyfivePow
 
 set_option autoImplicit false
@@ -75,18 +79,6 @@ theorem_wanted even_of_pos_exp (n p x y z : ℕ) (hp : p.Prime)
     (hn : n % 5 = 2 ∨ n % 5 = 3) (hy : 0 < y)
     (h : n ^ x + (5 * p) ^ y = z ^ 2) :
     Even x
-
-/-- **Opposite parity of the exponents in $n^x + (5p)^y = z^2$ when $n \equiv p \equiv 3 \pmod 4$.**
-Let $p$ be a prime and $n$ a natural number with $n \equiv 3 \pmod 4$ and $p \equiv 3 \pmod 4$.
-If natural numbers $x$, $y$, $z$ satisfy $n^x + (5p)^y = z^2$, then $x$ and $y$ have opposite
-parity.
-
-Source: Suton Tadee, "On the Diophantine Equation
-`n^x + (5p)^y = z^2`", Lemma 3. -/
-theorem_wanted opposite_parity (n p x y z : ℕ) (hp : p.Prime)
-    (hn : n % 4 = 3) (hp4 : p % 4 = 3)
-    (h : n ^ x + (5 * p) ^ y = z ^ 2) :
-    x % 2 ≠ y % 2
 
 /-- **Corollary 2** (Moonchaisook et al.): the
 Diophantine equation `(5^n)^x + (4^m p + 1)^y = z^2`

@@ -7,31 +7,29 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# Erdős Problem 794
+Portions of this file are adapted from:
+
+`FormalConjectures/ErdosProblems/794.lean` (Formal Conjectures), for the conjecture statement.
+Copyright The Formal Conjectures Authors.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: The Formal Conjectures Authors
 -/
+
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib.Data.Finset.Card
-public import Mathlib.Data.Finset.Powerset
-public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Data.Nat.Choose.Basic
-public import Mathlib.Order.Fin.Basic
-public import Mathlib.Data.Real.Basic
-public import Mathlib.Order.Filter.AtTopBot.Basic
-public import Mathlib.Order.Filter.Basic
 public import MathlibExt.Combinatorics.SetFamily.UniformHypergraph
+import Mathlib.Data.Fintype.Powerset
+
+/-!
+# Refutation of Erdős Problem 794
+
+A family of ten triples on six vertices refutes the conjecture at $n = 2$.
+Each four-vertex set contains exactly two triples, and each five-vertex set exactly five.
+-/
 
 @[expose] public section
 
-open Filter
-
 namespace MathlibExt.Combinatorics.ErdosProblem794Wanted
-
-/-! Source record `FC-ErdosProblem794`, ported from FormalConjectures
-`ErdosProblems/794.lean` and checked against erdosproblems.com/794.
-The reusable finite-hypergraph predicates live in `MathlibExt`. The historical target remains
-the positive proposition even though its external status is resolved false. -/
 
 /-- **Erdős Problem 794 on dense 3-uniform hypergraphs.** The proposition asserts that for every
 natural number $n$ and every family $H$ of $3$-element subsets of $\{0, 1, \dots, 3n - 1\}$ with
@@ -44,6 +42,12 @@ def conjecture : Prop :=
   ∀ n : ℕ, ∀ H : Finset (Finset (Fin (3 * n))), SetFamily.IsUniform H 3 →
     n ^ 3 + 1 ≤ H.card →
       SetFamily.ContainsSubgraph H 4 3 ∨ SetFamily.ContainsSubgraph H 5 7
+
+/-- A six-vertex counterexample. On the cycle `1, 2, 3, 4, 5`, take each adjacent
+pair together with either vertex `0` or the cycle vertex opposite the pair. -/
+def sixVertexFamily : Finset (Finset (Fin 6)) :=
+  {{0, 1, 2}, {0, 2, 3}, {0, 3, 4}, {0, 4, 5}, {0, 5, 1},
+   {1, 2, 4}, {2, 3, 5}, {3, 4, 1}, {4, 5, 2}, {5, 1, 3}}
 
 /--
 **Refutation of Erdős Problem 794.** It is not true that for every natural number $n$ and every
@@ -59,6 +63,15 @@ Aristotle, ChatGPT, and Boris Alexeev at plby/lean-proofs commit
 https://github.com/plby/lean-proofs/blob/8822f7ddef30fadbd92e1c6ab4ed897af356af5e/src/v4.29.1/ErdosProblems/Erdos794.lean.
 Moved from `OpenConjectures/Combinatorics/ErdosProblem794`.
 -/
-public theorem_wanted conjecture_refuted : ¬ conjecture
+public theorem conjecture_refuted : ¬ conjecture := by
+  intro h
+  have hu : SetFamily.IsUniform sixVertexFamily 3 := by
+    unfold SetFamily.IsUniform
+    decide
+  have havoid : ¬ (SetFamily.ContainsSubgraph sixVertexFamily 4 3 ∨
+      SetFamily.ContainsSubgraph sixVertexFamily 5 7) := by
+    unfold SetFamily.ContainsSubgraph
+    decide
+  exact havoid (h 2 sixVertexFamily hu (by decide))
 
 end MathlibExt.Combinatorics.ErdosProblem794Wanted

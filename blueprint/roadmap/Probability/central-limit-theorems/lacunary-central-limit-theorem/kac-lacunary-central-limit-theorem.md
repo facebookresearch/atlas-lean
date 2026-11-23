@@ -14,11 +14,12 @@ $\sum_{k < n} a_k \sin(2 \pi r_k x)$ by $\bigl(\frac12 \sum_{k < n} a_k^2\bigr)^
 standard normal law in the limit; with $a_k = 1$ the normaliser is $\sqrt{n/2}$, so dividing by
 $\sqrt{n}$ instead gives the normal law with variance $1/2$.
 
-Kac's Problem 161 of the Scottish Book asks whether the same conclusion holds for sequences with
-$r_n - (r_0 + r_1 + \dots + r_{n-1}) \to +\infty$, and notes that $r_n = 2^n$ does not satisfy this
-condition. The statement of that problem for all integer sequences is held back here: the constant
+Kac's Problem 161 of the Scottish Book asks whether the same conclusion holds for sequences of
+positive integers with $r_n - (r_0 + r_1 + \dots + r_{n-1}) \to +\infty$, and notes that $r_n = 2^n$
+does not satisfy this condition. For arbitrary integer sequences the answer is no: the constant
 sequence $r_k = -1$ satisfies the condition, since $r_n - (r_0 + \dots + r_{n-1}) = n - 1$, but its
-normalized sum $-\sqrt{n} \sin(2 \pi x)$ is not asymptotically normal (issue #5966).
+normalized sum $-\sqrt{n} \sin(2 \pi x)$ is not asymptotically normal. Kac's condition differs from
+the Hadamard-gap condition of this page: $r_n = 2^n$ has Hadamard gaps with $q = 2$.
 
 ## Proof
 
