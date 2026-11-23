@@ -141,4 +141,44 @@ example : CtxEquiv (.lam (Tm.weaken omega) : Tm [] (Ty.nat ⇒ Ty.nat))
 example : CtxApprox (.var .zero : Tm [Ty.nat] .nat) (.pred (.succ (.var .zero))) :=
   (ctxEquiv_iff_ctxApprox.mp predSucc_ctxEquiv).2
 
+/-- The upstream hole-filling notation `C<[t]` is plugging. -/
+example (t : Tm [Ty.nat] .nat) :
+    ((.succ .hole : Ctx [Ty.nat] .nat [Ty.nat] .nat)<[t] : Tm [Ty.nat] .nat) = .succ t := rfl
+
+/-- Contextual equivalence is an upstream lawful congruence. -/
+example : IsEquiv (Tm [Ty.nat] .nat) CtxEquiv := inferInstance
+
+/-- The generic upstream congruence law lifts `pred (succ x) ≅ x` under `succ`. -/
+example : CtxEquiv (.succ (.pred (.succ (.var .zero))) : Tm [Ty.nat] .nat) (.succ (.var .zero)) :=
+  (LawfulCongruence.covariant (r := @CtxEquiv [Ty.nat] .nat)).elim (.succ .hole) predSucc_ctxEquiv
+
+section NativeCovariance
+
+open scoped Cslib
+
+/-- Plugging is the native hole-filling action at any contexts and types. -/
+example {Γ Δ : List Ty} {A B : Ty} :
+    Cslib.HasHContext (Tm Δ B) (Tm Γ A) := inferInstance
+
+/-- Contextual equivalence is a lawful congruence at any context and type. -/
+example {Γ : List Ty} {A : Ty} : Cslib.LawfulCongruence (@CtxEquiv Γ A) := inferInstance
+
+/-- A contextual equivalence is a congruence edge. -/
+example {Γ : List Ty} {A : Ty} {t s : Tm Γ A} (h : CtxEquiv t s) :
+    t ≡[CtxEquiv] s := h
+
+/-- Hole-filling under a binder is plugging: `(λx. [·])[x] = λx. x`. -/
+example : ((Ctx.lam .hole : Ctx [Ty.nat] Ty.nat [] (Ty.nat ⇒ Ty.nat))<[
+    (.var .zero : Tm [Ty.nat] Ty.nat)] : Tm [] (Ty.nat ⇒ Ty.nat)) =
+      .lam (.var .zero) := rfl
+
+/-- The generic congruence action uses a context that contains both
+renaming and a binder. -/
+example : CtxEquiv (ifzCtx<[omega] : Tm [] .nat)
+    (ifzCtx<[(Tm.fix (.lam (.succ (.var .zero))) : Tm [] .nat)] : Tm [] .nat) :=
+  CovariantClass.elim (M := Cslib.HasContext.Context (Tm [] .nat))
+    (μ := fun c t => (c<[t] : Tm [] .nat)) (r := @CtxEquiv [] .nat) ifzCtx omega_ctxEquiv_fixSucc
+
+end NativeCovariance
+
 end Cslib.Languages.LambdaCalculus.PCF.Tests

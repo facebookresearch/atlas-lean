@@ -88,24 +88,6 @@ private theorem pell_binom_closed (P : ℕ → ℤ) (h0 : P 0 = 0) (h1 : P 1 = 1
   · congr 1
     ring
 
-/-- Powers of `w` repeat with period 8. -/
-private theorem omega_pow_mod (w : ℂ) (hw8 : w ^ 8 = 1) (k : ℕ) : w ^ k = w ^ (k % 8) := by
-  conv_lhs => rw [← Nat.div_add_mod k 8]
-  rw [pow_add, pow_mul, hw8, one_pow, one_mul]
-
-/-- Powers of `w ^ 3` repeat with period 8. -/
-private theorem omega_pow3_mod (w : ℂ) (hw8 : w ^ 8 = 1) (k : ℕ) :
-    w ^ (3 * k) = w ^ ((3 * k) % 8) := by
-  have e : 3 * k = 8 * (3 * (k / 8)) + 3 * (k % 8) := by
-    have h := Nat.div_add_mod k 8
-    omega
-  have e2 : (3 * (k % 8)) % 8 = (3 * k) % 8 := by
-    have h := Nat.div_add_mod k 8
-    omega
-  conv_lhs => rw [e, pow_add, pow_mul, hw8, one_pow, one_mul]
-  rw [← e2]
-  exact omega_pow_mod w hw8 (3 * (k % 8))
-
 /-- Roots-of-unity filter for the Kronecker symbol `(k/8)`. -/
 private theorem kron_filter (s w : ℂ) (hs2 : s ^ 2 = 2) (hs0 : s ≠ 0)
     (hw : w = (1 + Complex.I) / s) (k : ℕ) :
@@ -171,7 +153,7 @@ private theorem kron_filter (s w : ℂ) (hs2 : s ^ 2 = 2) (hs0 : s ≠ 0)
       rw [mul_add, hsw3, hswinv3]
       linear_combination hs2
     exact mul_left_cancel₀ hs0 h
-  rw [omega_pow_mod w hw8 k, omega_pow3_mod w hw8 k]
+  rw [pow_eq_pow_mod k hw8, pow_eq_pow_mod (3 * k) hw8]
   have h8 : k % 8 = 0 ∨ k % 8 = 1 ∨ k % 8 = 2 ∨ k % 8 = 3 ∨
       k % 8 = 4 ∨ k % 8 = 5 ∨ k % 8 = 6 ∨ k % 8 = 7 := by omega
   rcases h8 with h | h | h | h | h | h | h | h
@@ -583,19 +565,21 @@ private theorem kron_sum_closed (s w : ℂ) (hs2 : s ^ 2 = 2) (hs0 : s ≠ 0)
     _ = ((2 + s) ^ n - (2 - s) ^ n) / (2 * s) := by rw [hV]
 
 /--
-The binomial transform of the Pell numbers equals the stated Kronecker-symbol
-sum: `∑_i C(n,i) P_i = ∑_k (k/8) C(2n,n+k)`.
+**Binomial transform of the Pell numbers.** Let $P \colon \mathbb{N} \to \mathbb{Z}$ satisfy
+$P_0 = 0$, $P_1 = 1$ and $P_{n+2} = 2 P_{n+1} + P_n$ for every $n$, so that $P_n$ is the
+$n$-th Pell number. Then for every natural number $n$,
+$$\sum_{i=0}^{n} \binom{n}{i} P_i = \sum_{k=0}^{n} \left(\frac{k}{8}\right) \binom{2n}{n+k},$$
+where $\left(\frac{k}{8}\right)$ is the Kronecker symbol: it is $0$ for even $k$, $1$ for
+$k \equiv \pm 1 \pmod 8$ and $-1$ for $k \equiv \pm 3 \pmod 8$.
+
+Both sides give $0, 1, 4, 14, 48, 164, \dots$ (OEIS A007070) for $n = 0, \dots, 5$.
+
+Proves `Wanted` entry `pell_binomial_transform`.
 
 Source: Greg Dresden and Yike Li, "Periodic Weighted Sums of Binomial
 Coefficients," Journal of Integer Sequences 26 (2023), Article 23.8.7,
 Corollary (equation e.12), lines 369–379,
 https://cs.uwaterloo.ca/journals/JIS/VOL26/Dresden/dresden26.tex
-
-The Kronecker symbol `(k/8)` is spelled out via `k mod 8`: even `k` gives `0`,
-`k ≡ ±1` gives `1`, `k ≡ ±3` gives `-1`. The Pell sequence is pinned by its
-initial values and recurrence; both sides give `0, 1, 4, 14, 48, 164, ...`
-(A007070) at `n = 0..5`, verified through `n = 7`.
-Proves `Wanted` entry `pell_binomial_transform`.
 -/
 theorem pell_binomial_transform
     (P : ℕ → ℤ) (h0 : P 0 = 0) (h1 : P 1 = 1)

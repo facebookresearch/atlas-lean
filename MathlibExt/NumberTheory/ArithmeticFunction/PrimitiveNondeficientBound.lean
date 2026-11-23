@@ -124,29 +124,11 @@ private lemma R_ge_two (n : ℕ) (hne : n.primeFactors.Nonempty) :
         have := hqq.two_le
         omega
 
--- Product formula for σ in ℕ
-private lemma sigma_prod_nat (n : ℕ) (hn : n ≠ 0) :
-    (∑ d ∈ Nat.divisors n, d)
-      = ∏ p ∈ n.primeFactors, (∑ k ∈ Finset.range (n.factorization p + 1), p ^ k) := by
-  have h1 : (ArithmeticFunction.sigma 1) n = ∑ d ∈ Nat.divisors n, d :=
-    ArithmeticFunction.sigma_one_apply n
-  have h2 := ArithmeticFunction.IsMultiplicative.multiplicative_factorization
-    (ArithmeticFunction.sigma (1 : ℕ) : ArithmeticFunction ℕ)
-    ArithmeticFunction.isMultiplicative_sigma hn
-  have h3 : (∑ d ∈ Nat.divisors n, d)
-      = n.factorization.prod (fun p k => (ArithmeticFunction.sigma 1) (p ^ k)) := by
-    rw [← h1]; exact h2
-  rw [h3, Nat.prod_factorization_eq_prod_primeFactors]
-  apply Finset.prod_congr rfl
-  intro p hp
-  have hpp : Nat.Prime p := (Nat.mem_primeFactors.mp hp).1
-  exact ArithmeticFunction.sigma_one_apply_prime_pow hpp
-
 -- Product formula cast to ℝ
 private lemma sigma_prod (n : ℕ) (hn : n ≠ 0) :
     ((∑ d ∈ Nat.divisors n, d : ℕ) : ℝ)
       = ∏ p ∈ n.primeFactors, (((∑ k ∈ Finset.range (n.factorization p + 1), p ^ k : ℕ)) : ℝ) := by
-  have hnat := sigma_prod_nat n hn
+  have hnat := Nat.sum_divisors hn
   calc ((∑ d ∈ Nat.divisors n, d : ℕ) : ℝ)
       = ((((∏ p ∈ n.primeFactors,
         (∑ k ∈ Finset.range (n.factorization p + 1), p ^ k) : ℕ))) : ℝ) := by
@@ -510,9 +492,13 @@ private lemma prod_ge_const (S : Finset ℕ) (f : ℕ → ℝ) (c : ℝ) (h0 : 0
     exact mul_le_mul haU hIH h1 h2
 
 /--
-A primitive non-deficient `n` (non-deficient, with all proper divisors
-deficient) has a prime factor `p` with `p ^ (v_p(n) + 1) < 2 * k * R`,
-where `k` is the number of distinct prime factors and `R` their product.
+**Prime-power bound for primitive non-deficient numbers.** Let $\sigma(m)$ denote the sum of the
+divisors of $m$. Let $n$ be a positive integer that is non-deficient, $\sigma(n) \ge 2n$, and
+primitive, meaning that every divisor $m$ of $n$ with $m < n$ is deficient, $\sigma(m) < 2m$.
+Let $k$ be the number of distinct prime factors of $n$ and $R$ their product. Then $n$ has a
+prime factor $p$ with $p^{v_p(n) + 1} < 2kR$, where $v_p(n)$ is the exponent of $p$ in $n$.
+
+Proves `Wanted` entry `primitive_nondeficient_prime_power_bound`.
 
 Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number Always
 Have a Small Component?," Journal of Integer Sequences 29 (2026),
@@ -520,12 +506,6 @@ Article 26.4.3, Theorem (label maintheoremboundwithkR),
 equation (label Generalinequalityforprimitivenondeficientnumbers),
 lines 107–109,
 https://cs.uwaterloo.ca/journals/JIS/VOL29/Zelinsky/zel14.tex
-
-Here `n.primeFactors.card` is the source's `k`, the product over
-`n.primeFactors` is the radical `R`, and `n.factorization p` is the
-exponent of `p` in `n`; non-deficiency is `σ(n) ≥ 2n` via `Nat.divisors`.
-
-Proves `Wanted` entry `primitive_nondeficient_prime_power_bound`.
 -/
 theorem primitive_nondeficient_prime_power_bound
     (n : ℕ) (hn : n ≠ 0)

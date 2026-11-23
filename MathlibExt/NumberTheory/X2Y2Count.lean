@@ -52,14 +52,28 @@ open Zsqrtd.NegTwo (zsqrtd_neg_two_isUnit_iff zsqrtd_neg_two_prime_sqrtd zsqrtd_
 
 @[expose] public section
 
-/-- `χ₋₂(1) = 1`. -/
+/-- **The character $\chi_{-2}$ takes the value $1$ at $1$.** Let $\chi_{-2}$ be the quadratic
+character modulo $8$ with values in $\mathbb{Z}$ (the character of $\mathbb{Q}(\sqrt{-2})$):
+$\chi_{-2}(n) = 1$ for $n \equiv 1, 3 \pmod 8$, $\chi_{-2}(n) = -1$ for $n \equiv 5, 7 \pmod 8$,
+and $\chi_{-2}(n) = 0$ for even $n$. Then $\chi_{-2}(1) = 1$. -/
 public theorem chiNeg2_one : ZMod.χ₈' 1 = 1 := by decide
 
-/-- The divisor sum of `χ₋₂`. -/
+/-- **Divisor sum of the character $\chi_{-2}$.** Let $\chi_{-2}$ be the quadratic character
+modulo $8$ with values in $\mathbb{Z}$ (the character of $\mathbb{Q}(\sqrt{-2})$):
+$\chi_{-2}(n) = 1$ for $n \equiv 1, 3 \pmod 8$, $\chi_{-2}(n) = -1$ for $n \equiv 5, 7 \pmod 8$,
+and $\chi_{-2}(n) = 0$ for even $n$. For a natural number $t$, the divisor sum of $\chi_{-2}$ at
+$t$ is the integer $\sum_{d \mid t} \chi_{-2}(d)$, the sum over the positive divisors $d$ of $t$.
+By convention $0$ has no divisors here, so the divisor sum at $t = 0$ is $0$. -/
 public noncomputable def divChiNeg2Sum (t : ℕ) : ℤ :=
   ∑ d ∈ Nat.divisors t, ZMod.χ₈' d
 
-/-- Divisor sums of a completely multiplicative function are multiplicative. -/
+/-- **Multiplicativity of the divisor sum of $\chi_{-2}$.** Let $\chi_{-2}$ be the quadratic
+character modulo $8$ with $\chi_{-2}(n) = 1$ for $n \equiv 1, 3 \pmod 8$, $\chi_{-2}(n) = -1$ for
+$n \equiv 5, 7 \pmod 8$ and $\chi_{-2}(n) = 0$ for even $n$. For a natural number $t$, let
+$S(t) = \sum_{d \mid t} \chi_{-2}(d)$, the sum over the positive divisors $d$ of $t$, with
+$S(0) = 0$ (the empty sum). For coprime natural numbers $m$ and $n$, $S(mn) = S(m)\,S(n)$.
+
+The proof uses that $\chi_{-2}$ is completely multiplicative. -/
 public theorem divChiNeg2Sum_mul_of_coprime {m n : ℕ} (h : Nat.Coprime m n) :
     divChiNeg2Sum (m * n) = divChiNeg2Sum m * divChiNeg2Sum n := by
   have himg : Nat.divisors (m * n) = (Nat.divisors m ×ˢ Nat.divisors n).image
@@ -75,12 +89,20 @@ public theorem divChiNeg2Sum_mul_of_coprime {m n : ℕ} (h : Nat.Coprime m n) :
   intro b _
   simpa using ZMod.χ₈'.map_mul (a : ZMod 8) (b : ZMod 8)
 
-/-- `divChiNeg2Sum 1 = 1`. -/
+/-- **The divisor sum of $\chi_{-2}$ at $1$.** Let $\chi_{-2}$ be the quadratic character modulo
+$8$ with $\chi_{-2}(n) = 1$ for $n \equiv 1, 3 \pmod 8$, $\chi_{-2}(n) = -1$ for
+$n \equiv 5, 7 \pmod 8$ and $\chi_{-2}(n) = 0$ for even $n$. For a positive integer $t$, let
+$S(t) = \sum_{d \mid t} \chi_{-2}(d)$, the sum over the positive divisors $d$ of $t$.
+Then $S(1) = 1$. -/
 public theorem divChiNeg2Sum_one : divChiNeg2Sum 1 = 1 := by
   rw [divChiNeg2Sum, Nat.divisors_one, Finset.sum_singleton]
   exact chiNeg2_one
 
-/-- On powers of 2 only the divisor 1 contributes. -/
+/-- **The divisor sum of $\chi_{-2}$ at powers of $2$.** Let $\chi_{-2}$ be the quadratic
+character modulo $8$ with $\chi_{-2}(n) = 1$ for $n \equiv 1, 3 \pmod 8$, $\chi_{-2}(n) = -1$ for
+$n \equiv 5, 7 \pmod 8$ and $\chi_{-2}(n) = 0$ for even $n$. For a positive integer $t$, let
+$S(t) = \sum_{d \mid t} \chi_{-2}(d)$, the sum over the positive divisors $d$ of $t$. For every
+natural number $e$, $S(2^e) = 1$: only the divisor $1$ contributes. -/
 public theorem divChiNeg2Sum_prime_pow_two (e : ℕ) :
     divChiNeg2Sum (2 ^ e) = 1 := by
   rw [divChiNeg2Sum, Nat.divisors_prime_pow Nat.prime_two, Finset.sum_map, Function.Embedding.coeFn_mk]
@@ -125,7 +147,13 @@ private theorem pow_seven_mod_eight (j : ℕ) :
       Nat.mul_mod, Nat.pow_mod]
     norm_num
 
-/-- On `p ^ e` with `p ≡ 1, 3 mod 8`, every divisor contributes 1. -/
+/-- **The divisor sum of $\chi_{-2}$ at powers of a prime $p \equiv 1, 3 \pmod 8$.** Let
+$\chi_{-2}$ be the quadratic character modulo $8$ with $\chi_{-2}(n) = 1$ for
+$n \equiv 1, 3 \pmod 8$, $\chi_{-2}(n) = -1$ for $n \equiv 5, 7 \pmod 8$ and $\chi_{-2}(n) = 0$
+for even $n$. For a positive integer $t$, let $S(t) = \sum_{d \mid t} \chi_{-2}(d)$, the sum over
+the positive divisors $d$ of $t$. If $p$ is a prime with $p \equiv 1 \pmod 8$ or
+$p \equiv 3 \pmod 8$, then $S(p^e) = e + 1$ for every natural number $e$: every divisor of
+$p^e$ contributes $1$. -/
 public theorem divChiNeg2Sum_prime_pow_split {p e : ℕ} (hp : p.Prime)
     (h : p % 8 = 1 ∨ p % 8 = 3) :
     divChiNeg2Sum (p ^ e) = ((e + 1 : ℕ) : ℤ) := by
@@ -154,8 +182,13 @@ private theorem sum_neg_one_pow_range (f : ℕ) :
   rw [neg_one_geom_sum]
   by_cases hf : Even f <;> simp [hf, Nat.even_add_one]
 
-/-- On `q ^ f` with `q ≡ 5, 7 mod 8`, the divisor sum is 1 for even `f`
-and 0 for odd `f`. -/
+/-- **The divisor sum of $\chi_{-2}$ at powers of a prime $q \equiv 5, 7 \pmod 8$.** Let
+$\chi_{-2}$ be the quadratic character modulo $8$ with $\chi_{-2}(n) = 1$ for
+$n \equiv 1, 3 \pmod 8$, $\chi_{-2}(n) = -1$ for $n \equiv 5, 7 \pmod 8$ and $\chi_{-2}(n) = 0$
+for even $n$. For a positive integer $t$, let $S(t) = \sum_{d \mid t} \chi_{-2}(d)$, the sum over
+the positive divisors $d$ of $t$. If $q$ is a prime with $q \equiv 5 \pmod 8$ or
+$q \equiv 7 \pmod 8$, then for every natural number $f$, $S(q^f) = 1$ if $f$ is even and
+$S(q^f) = 0$ if $f$ is odd. -/
 public theorem divChiNeg2Sum_prime_pow_inert {q f : ℕ} (hp : q.Prime)
     (h : q % 8 = 5 ∨ q % 8 = 7) :
     divChiNeg2Sum (q ^ f) = if Even f then 1 else 0 := by
@@ -232,30 +265,47 @@ public noncomputable instance x2y2ReprFintype (t : ℕ) :
   rw [Prod.mk.injEq] at hpair
   exact Subtype.ext (Zsqrtd.ext hpair.1 hpair.2)
 
-/-- The representation count: elements of `ℤ[√-2]` of norm `t`. -/
+/-- **Number of elements of $\mathbb{Z}[\sqrt{-2}]$ of a given norm.** For a natural number $t$,
+the representation count of $t$ is the number of elements $z = a + b\sqrt{-2}$ of
+$\mathbb{Z}[\sqrt{-2}]$, with $a, b$ integers, whose norm $N(z) = a^2 + 2b^2$ has absolute
+value $t$. Since the norm is never negative, this is the number of elements of norm $t$. -/
 public noncomputable def repX2Y2Count (t : ℕ) : ℕ :=
   Fintype.card {z : ℤ√(-2 : ℤ) // (Zsqrtd.norm z).natAbs = t}
 
-/-- `repX2Y2Count 1 = 2`: the units. -/
+/-- **Elements of norm one in $\mathbb{Z}[\sqrt{-2}]$.** Exactly two elements $a + b\sqrt{-2}$ of
+$\mathbb{Z}[\sqrt{-2}]$, with $a, b$ integers, have norm $a^2 + 2b^2 = 1$.
+
+These are the units $\pm 1$. -/
 public theorem repX2Y2Count_one : repX2Y2Count 1 = 2 :=
   Zsqrtd.card_repr_of_shape unitVal unitValInv unitVal_mul_unitValInv unitVal_inj
     unitVal_complete 1 (show (Zsqrtd.norm (1 : ℤ√(-2 : ℤ))).natAbs = 1 by decide)
     one_ne_zero (fun α hα => ⟨α, Zsqrtd.norm_eq_one_iff.mp hα, by simp⟩)
 
-/-- `repX2Y2Count (2 ^ e) = 2`: ramified prime powers. -/
+/-- **Elements of $\mathbb{Z}[\sqrt{-2}]$ whose norm is a power of $2$.** For every natural
+number $e$, exactly two elements $a + b\sqrt{-2}$ of $\mathbb{Z}[\sqrt{-2}]$, with $a, b$ integers,
+have norm $a^2 + 2b^2 = 2^e$.
+
+The prime $2$ is ramified in $\mathbb{Z}[\sqrt{-2}]$. -/
 public theorem repX2Y2Count_two_pow (e : ℕ) : repX2Y2Count (2 ^ e) = 2 :=
   Zsqrtd.card_norm_two_pow (by norm_num) unitVal unitValInv unitVal_mul_unitValInv
     unitVal_inj unitVal_complete zsqrtd_neg_two_prime_sqrtd (by decide)
     ((zsqrtd_neg_two_isUnit_iff (-1)).mpr (Or.inr rfl)) (by decide) e
 
-/-- Inert prime powers: 2 for even exponents, 0 for odd. -/
+/-- **Elements of $\mathbb{Z}[\sqrt{-2}]$ whose norm is a power of an inert prime.** Let $q$ be a
+prime with $q \equiv 5$ or $q \equiv 7 \pmod 8$, and let $f$ be a natural number. The number of
+elements $a + b\sqrt{-2}$ of $\mathbb{Z}[\sqrt{-2}]$, with $a, b$ integers, of norm
+$a^2 + 2b^2 = q^f$ is $2$ if $f$ is even and $0$ if $f$ is odd. -/
 public theorem repX2Y2Count_inert_pow {q f : ℕ} [Fact q.Prime]
     (h : q % 8 = 5 ∨ q % 8 = 7) :
     repX2Y2Count (q ^ f) = if Even f then 2 else 0 :=
   Zsqrtd.card_norm_inert_pow (by norm_num) unitVal unitValInv unitVal_mul_unitValInv
     unitVal_inj unitVal_complete (zsqrtd_neg_two_inert h)
 
-/-- `repX2Y2Count (p ^ e) = 2 * (e + 1)` for split `p`. -/
+/-- **Elements of $\mathbb{Z}[\sqrt{-2}]$ whose norm is a power of a split prime.** Write
+$N(a + b\sqrt{-2}) = a^2 + 2b^2$ for the norm of an element of $\mathbb{Z}[\sqrt{-2}]$, where
+$a, b$ are integers. Let $p$ be a prime with $p \equiv 1$ or $p \equiv 3 \pmod 8$, and suppose
+$\pi$ is a prime element of $\mathbb{Z}[\sqrt{-2}]$ with $N(\pi) = p$. Then for every natural
+number $e$, the number of elements of $\mathbb{Z}[\sqrt{-2}]$ of norm $p^e$ is $2(e + 1)$. -/
 public theorem repX2Y2Count_split_pow {p e : ℕ} [Fact p.Prime]
     (h : p % 8 = 1 ∨ p % 8 = 3) {π : ℤ√(-2 : ℤ)}
     (hnorm : Zsqrtd.norm π = p) (hprime : Prime π) :
@@ -292,8 +342,14 @@ private theorem repX2Y2Count_prime_pow {p e : ℕ} (hpprime : p.Prime) :
     · rw [ite_eq_right he, ite_eq_right he]
       norm_num
 
-/-- The `x ^ 2 + 2 * y ^ 2` representation count: representations of `t ≠ 0`
-number twice the divisor sum of `χ₋₂`. -/
+/-- **Elements of $\mathbb{Z}[\sqrt{-2}]$ of norm $t$ counted by a divisor sum.** For every
+positive integer $t$, the number of elements $a + b\sqrt{-2}$ of $\mathbb{Z}[\sqrt{-2}]$, with
+$a, b$ integers, of norm $a^2 + 2b^2 = t$ equals $2 \sum_{d \mid t} \chi(d)$, where $d$ runs over
+the positive divisors of $t$ and $\chi$ is the character modulo $8$ given by $\chi(d) = 1$ if
+$d \equiv 1, 3 \pmod 8$, $\chi(d) = -1$ if $d \equiv 5, 7 \pmod 8$, and $\chi(d) = 0$ if $d$ is
+even.
+
+Equivalently, this counts the integer pairs $(x, y)$ with $x^2 + 2y^2 = t$. -/
 public theorem x2y2_count {t : ℕ} (ht : t ≠ 0) :
     (repX2Y2Count t : ℤ) = 2 * divChiNeg2Sum t := by
   have h := Zsqrtd.card_norm_eq_mul_of_prime_pow (by norm_num : (-2 : ℤ) < 0) unitVal
@@ -309,7 +365,9 @@ private theorem norm_eq_of_mem {N : ℕ} {z : ℤ√(-2 : ℤ)}
   rw [hz] at h
   exact h.symm
 
-/-- An element of `ℤ[√-2]` of norm `N` satisfies `re * re + 2 * (im * im) = N`. -/
+/-- **Coordinates of an element of norm $N$ in $\mathbb{Z}[\sqrt{-2}]$.** Let $N$ be a natural
+number and let $z = a + b\sqrt{-2}$, with $a, b \in \mathbb{Z}$, be an element of
+$\mathbb{Z}[\sqrt{-2}]$ whose norm has absolute value $N$. Then $a^2 + 2b^2 = N$. -/
 public theorem re_mul_re_add_two_mul_im_mul_im {N : ℕ} {z : ℤ√(-2 : ℤ)}
     (hz : (Zsqrtd.norm z).natAbs = N) :
     z.re * z.re + 2 * (z.im * z.im) = (N : ℤ) := by
@@ -379,8 +437,10 @@ private theorem norm_signed_pair (b₁ b₂ : Bool) (a c : ℤ) :
       = a * a + 2 * (c * c)
   linear_combination e1 + 2 * e2
 
-/-- If no point of norm `N` in `ℤ[√-2]` has a zero coordinate, the number of
-representations `x^2 + 2y^2 = N` is four times the number with `x, y > 0`. -/
+/-- **Counting representations by $x^2 + 2y^2$ through positive solutions.** Let $N$ be a natural
+number such that every element $a + b\sqrt{-2}$ of $\mathbb{Z}[\sqrt{-2}]$ of norm $a^2 + 2b^2 = N$
+has $a \neq 0$ and $b \neq 0$. Then the number of elements of $\mathbb{Z}[\sqrt{-2}]$ of norm $N$ is
+four times the number of pairs $(x, y)$ of positive integers with $x^2 + 2y^2 = N$. -/
 public theorem repX2Y2Count_eq_four_mul_pos (N : ℕ)
     (hre : ∀ z : ℤ√(-2 : ℤ), (Zsqrtd.norm z).natAbs = N → z.re ≠ 0)
     (him : ∀ z : ℤ√(-2 : ℤ), (Zsqrtd.norm z).natAbs = N → z.im ≠ 0) :
@@ -503,7 +563,11 @@ public theorem repX2Y2Count_eq_four_mul_pos (N : ℕ)
     = 4 * Pos.card
   omega
 
-/-- The `χ₋₂` divisor sum is unchanged by doubling an odd argument. -/
+/-- **Doubling an odd argument leaves the divisor sum of $\chi_{-2}$ unchanged.** Let $\chi_{-2}$
+be the quadratic character modulo $8$ with $\chi_{-2}(n) = 1$ for $n \equiv 1, 3 \pmod 8$,
+$\chi_{-2}(n) = -1$ for $n \equiv 5, 7 \pmod 8$ and $\chi_{-2}(n) = 0$ for even $n$. For a
+positive integer $t$, let $S(t) = \sum_{d \mid t} \chi_{-2}(d)$, the sum over the positive
+divisors $d$ of $t$. For every odd natural number $m$, $S(2m) = S(m)$. -/
 public theorem divChiNeg2Sum_two_mul_of_odd {m : ℕ} (hodd : Odd m) :
     divChiNeg2Sum (2 * m) = divChiNeg2Sum m := by
   have h2 := divChiNeg2Sum_prime_pow_two 1
