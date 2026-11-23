@@ -38,14 +38,15 @@ open _root_.AlgebraicGeometry
 open _root_.MathlibExt.AlgebraicGeometry.PlurigenusFamilies
 
 /-- Every positive plurigenus is constant in the actual smooth projective
-general-type family: it takes the same value at any two `ℂ`-valued points of the
-base (these include points over non-closed points, through embeddings of their
-residue fields into `ℂ`). The dimension restriction selects the
+general-type family: it takes the same value at any two geometric points of the
+base, valued in algebraically closed fields (so on every geometric fibre, over
+closed and nonclosed points alike). The dimension restriction selects the
 higher-dimensional-variety packet. -/
 public theorem_wanted deformationInvarianceOfPlurigenera
     (n : ℕ) (hn : 2 ≤ n) (P : SmoothGeneralTypeFamilyOverCurve (k := ℂ) n)
     (m : ℕ) (hm : 0 < m)
-    (x y : Spec (.of ℂ) ⟶ P.B.left) :
+    (Ω Ω' : Type) [Field Ω] [IsAlgClosed Ω] [Field Ω'] [IsAlgClosed Ω']
+    (x : Spec (.of Ω) ⟶ P.B.left) (y : Spec (.of Ω') ⟶ P.B.left) :
     plurigenus P x m = plurigenus P y m
 
 end WantedExt.AlgebraicGeometry.PlurigenusFamilies
