@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.NumberTheory.PellRotatedSquare
+public import MathlibExt.NumberTheory.PellInverseClosedForm
 
 /-!
 # Integer solutions of the Pell equation in a closed rotated square region
@@ -43,25 +43,6 @@ Rotated Square Region*, INTEGERS 25 (2025), Article A112, Proposition 1.2
 public theorem_wanted pellU_pellV_natCast {D : ℤ} {a : Pell.Solution₁ D}
     (ha : Pell.IsFundamental a) (n : ℕ) :
     pellU D a.x a.y n = (a ^ n).x ∧ pellV D a.x a.y n = (a ^ n).y
-
-/-- **Closed form for inverting the sum of the Pell interpolating functions.** Let $D$ be an
-integer, let $(\alpha, \beta)$ be the fundamental solution of the Pell equation $X^2 - D Y^2 = 1$,
-put $\varepsilon = \alpha + \beta \sqrt{D}$ and $\bar\varepsilon = \alpha - \beta \sqrt{D}$, and let
-$u(t) = (\varepsilon^t + \bar\varepsilon^t) / 2$ and
-$v(t) = (\varepsilon^t - \bar\varepsilon^t) / (2 \sqrt{D})$ for real $t$. For every real $x \ge 1$,
-put $z = (D x - \sqrt{D x^2 - D + 1}) / (D - 1)$ and
-$g = \log(z + \sqrt{z^2 - 1}) / \log \varepsilon$. Then $g \ge 0$ and $u(g) + v(g) = x$.
-
-Here $\log(z + \sqrt{z^2 - 1})$ is $\cosh^{-1}(z)$ written in logarithmic form.
-
-Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
-Rotated Square Region*, INTEGERS 25 (2025), Article A112, Theorem 2.2, Equation (2.1)
-(`integers-2025-A112-thm-2-2`). -/
-public theorem_wanted pell_inverse_closed_form {D : ℤ} {a : Pell.Solution₁ D}
-    (ha : Pell.IsFundamental a) {x : ℝ} (hx : 1 ≤ x) :
-    let z : ℝ := (D * x - Real.sqrt (D * x ^ 2 - D + 1)) / (D - 1)
-    let g : ℝ := Real.log (z + Real.sqrt (z ^ 2 - 1)) / Real.log (a.x + a.y * Real.sqrt D)
-    0 ≤ g ∧ pellU D a.x a.y g + pellV D a.x a.y g = x
 
 /-- **Floor of the inverse of the sum of the Pell interpolating functions.** Let $D$ be an
 integer, let $(\alpha, \beta)$ be the fundamental solution of the Pell equation $X^2 - D Y^2 = 1$,
