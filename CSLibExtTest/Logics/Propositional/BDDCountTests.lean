@@ -25,7 +25,7 @@ set_option autoImplicit false
 
 namespace CSLibExtTest.Logics.Propositional.BDDCount
 
-open Cslib.Logic Cslib.Logic.PL Cslib.Logic.PL.BDD
+open Cslib.Logic Cslib.Logic.LegacyPL Cslib.Logic.LegacyPL.BDD
 
 private def p : Proposition Nat := .atom 0
 private def q : Proposition Nat := .atom 1

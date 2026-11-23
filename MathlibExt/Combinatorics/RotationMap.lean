@@ -157,7 +157,7 @@ adjacency matrix of `G`: the number of two-step walks from `v` to `u` is
 theorem adjMatrix_square [Fintype V] [Fintype L] [DecidableEq V] (G : RotationMap V L) :
     G.square.adjMatrix = G.adjMatrix * G.adjMatrix := by
   funext v u
-  simp only [adjMatrix, mul_apply]
+  simp only [adjMatrix, Matrix.mul_apply]
   simp_rw [← Nat.cast_mul]
   rw [← Nat.cast_sum]
   congr 1
