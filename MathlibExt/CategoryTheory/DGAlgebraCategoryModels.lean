@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import MathlibExt.Algebra.Homology.DGCyclicBarModels
+public import MathlibExt.Algebra.Homology.DGAlgebras
 
 /-!
 # Actual DG algebras and one-object DG categories
@@ -31,7 +31,7 @@ namespace MathlibExt.CategoryTheory.DGAlgebraCategoryModels
 open _root_.CategoryTheory MonoidalCategory
 open MathlibExt.DGSource
 open MathlibExt.CategoryTheory.DGModelContracts
-open MathlibExt.Algebra.Homology.DGCyclicBarModels
+open MathlibExt.Algebra.Homology
 
 universe u v
 

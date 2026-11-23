@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import MathlibExt.CategoryTheory.DGModelContracts
+public import MathlibExt.Algebra.Homology.DGAlgebras
 public import MathlibExt.CategoryTheory.MonoidalTensorWordModels
 public import Mathlib.CategoryTheory.Monoidal.Mon
 public import Mathlib.AlgebraicTopology.SimplicialObject.Basic
@@ -42,9 +42,6 @@ open MathlibExt.CategoryTheory.MonoidalTensorWordModels
 universe u
 
 variable {k : Type u} [CommRing k]
-
-/-- A genuine differential graded algebra over k. -/
-abbrev DGAlgebra (k : Type u) [CommRing k] := Mon (Cochains k)
 
 /-- Actual right-associated tensor powers, with the native tensor unit. -/
 def tensorPower (A : Cochains k) : ℕ → Cochains k
