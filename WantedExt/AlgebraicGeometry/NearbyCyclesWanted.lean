@@ -107,4 +107,3 @@ public def_wanted properCycleFunctoriality
       (specializationDeckCompatibility B R₂ E₂)
 
 end WantedExt.AlgebraicGeometry.NearbyCycles
-

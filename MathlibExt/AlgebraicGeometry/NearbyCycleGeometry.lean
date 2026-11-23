@@ -173,4 +173,3 @@ def coverMap {X Y : ComplexScheme} {s : Γ(X.left, ⊤)} {t : Γ(Y.left, ⊤)}
     coverMap G ≫ coverProjection Y t = coverProjection X s ≫ spaceMap G.g := rfl
 
 end MathlibExt.AlgebraicGeometry.NearbyCycleGeometry
-

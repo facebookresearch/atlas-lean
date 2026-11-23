@@ -372,4 +372,3 @@ structure CanonicalProperCycleComparison {X Y : ComplexScheme}
 
 
 end MathlibExt.AlgebraicGeometry.NearbyCycleProperMaps
-

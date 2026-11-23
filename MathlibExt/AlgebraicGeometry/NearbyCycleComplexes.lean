@@ -384,4 +384,3 @@ instance vanishingFunctorLifting {X : ComplexScheme} {s : Γ(X.left, ⊤)}
 
 
 end MathlibExt.AlgebraicGeometry.NearbyCycleComplexes
-

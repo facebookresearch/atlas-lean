@@ -376,4 +376,3 @@ structure DeckCompatibleCycleResolution (X : ComplexScheme) (s : Γ(X.left, ⊤)
 
 
 end MathlibExt.AlgebraicGeometry.NearbyCycleMonodromy
-
