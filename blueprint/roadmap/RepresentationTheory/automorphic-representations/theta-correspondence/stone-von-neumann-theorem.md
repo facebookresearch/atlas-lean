@@ -1,6 +1,6 @@
 # Stone–von Neumann theorem for Heisenberg groups over local fields
 
-Let $F$ be a local field of characteristic $0$, $(W, \langle\ ,\ \rangle)$ a non-degenerate symplectic
+Let $F$ be a local field of characteristic different from $2$, $(W, \langle\ ,\ \rangle)$ a non-degenerate symplectic
 vector space of dimension $2n$ over $F$, and $H(W) = W \oplus F$ its Heisenberg group, with
 multiplication
 
@@ -21,7 +21,8 @@ of $F$.
    defines a representation of $H(W)$ on $\mathcal{S}(X)$ that preserves the $L^2$ norm for a Haar
    measure on $X$ and extends to the irreducible unitary representation of item 2 on $L^2(X)$. If $F$ is
    non-archimedean, $(\rho, \mathcal{S}(X))$ is a model of $(\rho_\psi, S)$, and $\mathcal{S}(X)$ is the space
-   of vectors of $L^2(X)$ fixed by a compact open subgroup of $H(W)$.
+   of smooth vectors of $L^2(X)$: the vectors fixed by some compact open subgroup of $H(W)$, depending on
+   the vector.
 
 Since $\mathrm{Sp}(W)$ fixes the centre, the representation $h \mapsto \rho_\psi(h^g)$ again has central
 character $\psi$, so it is isomorphic to $\rho_\psi$; this is the starting point of the
@@ -33,7 +34,7 @@ character $\psi$, so it is isomorphic to $\rho_\psi$; this is the starting point
 
 ## Proof depends on
 
-- [Smooth and admissible representations of p-adic groups](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/smooth-representations-of-p-adic-groups.md), for the smooth induction from the subgroup $H(Y)$ through which Mœglin, Vignéras and Waldspurger construct and characterize the smooth model
+- [Induction and Mackey theory for Heisenberg groups](induction-and-mackey-theory-for-heisenberg-groups.md), for the smooth induction from the subgroup $H(Y)$ through which Mœglin, Vignéras and Waldspurger construct and characterize the smooth model (items 1 and 3), and for the Stone–von Neumann–Mackey theorem behind the unitary form (item 2)
 
 ## Sources
 
@@ -46,7 +47,11 @@ character $\psi$, so it is isomorphic to $\rho_\psi$; this is the starting point
   Schrödinger model formula), and the proof of Lemma 2.4 (extension to $L^2(X)$ and the smooth vectors).
 - D. Prasad, "A brief survey on the theta correspondence", in *Number Theory (Tiruchirapalli, 1996)*,
   Contemp. Math. 210, American Mathematical Society, 1998, 171–193; author's version
-  <https://www.math.iitb.ac.in/~dprasad/dp.pdf>: §1, Theorem 1 (for any local field).
+  <https://www.math.iitb.ac.in/~dprasad/dp.pdf>: §1, Theorem 1 (uniqueness, for any local field).
+- A. Prasad, "An easy proof of the Stone–von Neumann–Mackey theorem", arXiv:0912.0574 (2009): §4.1
+  (statement for the Heisenberg group of a locally compact abelian group), §§4.2–4.3 (proofs), for item 2.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>)
-  states the non-archimedean case as `GlobalTheory.Published.StoneVonNeumann`.
+  states the existence and uniqueness of a smooth irreducible representation with central character $\psi$
+  in the non-archimedean case, without the admissibility of item 1, as
+  `GlobalTheory.Published.StoneVonNeumann`.

@@ -13,7 +13,8 @@ $\pi \otimes \Theta(\pi)$ for a smooth representation $\Theta(\pi) = \Theta_{W, 
 $\mathrm{U}(V)$, unique up to isomorphism and zero if $\pi$ is not a quotient of $\omega$. Let $\theta(\pi)$
 be the maximal semisimple quotient of $\Theta(\pi)$.
 
-1. **Finite length** (Kudla). $\Theta(\pi)$ has finite length.
+1. **Finite length** (Kudla's method, stated for unitary pairs by Gan and Takeda). $\Theta(\pi)$ has finite
+   length.
 2. **Howe duality** (Waldspurger for odd residue characteristic; Gan–Takeda in general). $\theta(\pi)$ is
    either zero or irreducible, and if $\pi'$ is another irreducible representation with
    $\theta(\pi) \cong \theta(\pi') \ne 0$, then $\pi \cong \pi'$; equivalently,
@@ -21,13 +22,20 @@ be the maximal semisimple quotient of $\Theta(\pi)$.
    Thus $\pi \mapsto \theta(\pi)$ is a bijection between the irreducible representations of
    $\mathrm{U}(W)$ and of $\mathrm{U}(V)$ that occur as quotients of $\omega$, the local theta
    correspondence.
-3. **Supercuspidal representations** (Kudla). If $\pi$ is supercuspidal, then $\Theta(\pi)$ is zero or
+3. **Supercuspidal representations** (Kudla's method, stated for unitary pairs by Gan and Takeda). If $\pi$
+   is supercuspidal, then $\Theta(\pi)$ is zero or
    irreducible, and $\Theta(\pi) \cong \Theta(\pi') \ne 0$ for supercuspidal $\pi'$ implies
    $\pi \cong \pi'$.
-4. **Split case** (Mínguez). The statements of item 2 hold for the type II dual pair
-   $(\mathrm{GL}_n(F), \mathrm{GL}_m(F))$ in $\mathrm{Sp}_{2nm}(F)$ that the same construction gives when
-   $E = F \times F$, which is the local situation of a global unitary dual pair at a place of $F$ that
-   splits in $E$.
+4. **Split case** (Mínguez). For $m, n \ge 1$ and the type II dual pair $(\mathrm{GL}_n(F), \mathrm{GL}_m(F))$ in
+   $\mathrm{Sp}_{2nm}(F)$, acting on $\mathcal{S}(\mathrm{M}_{n \times m}(F))$ by the normalized matrix action, which the same
+   construction gives when $E = F \times F$ (the local situation of a global unitary dual pair at a place of
+   $F$ that splits in $E$): if $\pi$ occurs as a quotient of the Weil representation, then $\theta(\pi)$ is
+   irreducible, and $\dim \mathrm{Hom}(\omega, \pi \otimes \pi') \le 1$ for irreducible $\pi$, $\pi'$. The
+   assertion that every $\pi$ occurs needs $n \le m$ and is not claimed here.
+
+Gan and Takeda's theorem holds for non-archimedean local fields of characteristic different from $2$, and
+Mínguez's in any characteristic; this page states the characteristic-$0$ case, to which the linked
+construction of the Weil representation applies.
 
 ## Depends on
 
@@ -37,10 +45,11 @@ be the maximal semisimple quotient of $\Theta(\pi)$.
 
 ## Proof depends on
 
-- [Jacquet modules of the Weil representation and degenerate principal series](jacquet-modules-of-the-weil-representation.md), for Kudla's filtration, the doubling see-saw with the restriction of the doubled degenerate principal series, the MVW involution and Bernstein's second adjointness, the tools of Kudla's proof of items 1 and 3 and of Gan and Takeda's proof of item 2
+- [Jacquet modules of the Weil representation and degenerate principal series](jacquet-modules-of-the-weil-representation.md), for Kudla's filtration (with its twists by the splitting characters), the MVW involution, Bernstein's second adjointness, and, in the see-saw argument of Gan and Takeda for item 2, the twisted see-saw identity on the doubled space, the irreducibility of the lift $\Theta(\chi_W)$ of the character $\chi_W$, Rallis's embedding of it into $I(s_{m,n})$ and the surjection $I(-s_{m,n}) \twoheadrightarrow \Theta(\chi_W)$ when $s_{m,n} \le 0$; also for the rank filtration of the type II model used by Mínguez for item 4
 - [Parabolic induction and Jacquet functors](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/parabolic-induction-and-jacquet-functors.md), for the standard Frobenius reciprocity and the exactness of Jacquet functors
-- [The Bernstein–Zelevinsky geometric lemma](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/bernstein-zelevinsky-geometric-lemma.md), for the Jacquet modules of induced representations used by Gan and Takeda
+- [The Bernstein–Zelevinsky geometric lemma](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/bernstein-zelevinsky-geometric-lemma.md), for the Jacquet modules of induced representations used by Gan and Takeda (Lemma 5.2, proved in their appendix with Tadić's formulas)
 - [Cuspidal representations and Jacquet's embedding theorem](../../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/cuspidal-representations-and-jacquet-embedding.md), for the supercuspidal representations of general linear groups whose induced representations Gan and Takeda study in their Lemma 5.2
+- [Zelevinsky's classification of the irreducible representations of GLₙ](../../reductive-groups-over-local-fields/representations-of-p-adic-gl-n/zelevinsky-classification.md), for the irreducibility and genericity of the products $1 \times \dots \times 1$ of trivial characters used in the boundary case (Gan–Takeda §5, citing Zelevinsky's Theorem 9.7)
 
 ## Sources
 
@@ -51,7 +60,12 @@ be the maximal semisimple quotient of $\Theta(\pi)$.
   Theorem 1.2 (the conjecture holds for symplectic–orthogonal and unitary pairs, in any residue
   characteristic), remark (2) after it (the split case, A. Mínguez, Ann. Sci. Éc. Norm. Supér. 41 (2008),
   717–741), §2.4 (the standard Frobenius reciprocity and Bernstein's Frobenius reciprocity), the acknowledgement
-  of the geometric lemma, and §§2.7, 3.1, 3.2, 4–5 (the proof).
+  of the geometric lemma, and §§2.7, 3.1, 3.2 and 4–6 (the proof: §4 the see-saw argument, with (4.1)–(4.3)
+  and the surjection taken from W. T. Gan and A. Ichino, Invent. Math. 195 (2014), Proposition 8.2; §5 the
+  boundary case, with Lemma 5.2 proved in the appendix; §6 the conclusion).
+- A. Mínguez, "Correspondance de Howe explicite : paires duales de type II", Ann. Sci. Éc. Norm. Supér. (4)
+  41 (2008), 717–741: Théorème 1 (1) (p. 718), (1.4) and Corollaire 6.3 (p. 734), for item 4, with the proof
+  in §§2–6.
 - S. S. Kudla, "Notes on the local theta correspondence", lecture notes, European School in Group
   Theory, 1996, <https://www.math.toronto.edu/~skudla/castle.pdf>: §II.1 (type I and type II dual pairs)
   and §II.2 (the maximal isotypic quotient and the Howe duality principle).
@@ -60,5 +74,6 @@ be the maximal semisimple quotient of $\Theta(\pi)$.
   duality principle for unitary pairs).
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>)
-  states related results as `GlobalTheory.Published.HoweDualityUnitary` and, for the split case,
-  `GlobalTheory.Published.MinguezThetaGL`.
+  states specialized results (matrix Weil data, the isotypic-kernel characterization, finite length and
+  uniqueness of a maximal quotient) as `GlobalTheory.Published.HoweDualityUnitary` and, for the split case
+  with positive ranks, `GlobalTheory.Published.MinguezThetaGL`.

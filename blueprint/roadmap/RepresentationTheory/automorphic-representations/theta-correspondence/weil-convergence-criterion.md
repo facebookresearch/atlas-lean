@@ -15,18 +15,27 @@ only if
 
 $$r = 0 \qquad \text{or} \qquad m - r > n.$$
 
-This is Weil's convergent range; when it holds, $I(\varphi)$ is an automorphic form on
-$\mathrm{U}(W_n)(\mathbb{A})$. If $m > 2n$, every $V$ is in the range, since $r \le m/2$.
+This is Weil's convergent range. Weil proved that the condition suffices; the converse is stated by Gan,
+Qiu and Takeda, who attribute the equivalence to Weil (Weil himself asks whether his general sufficient
+criterion is also necessary). The equivalence is about all $\varphi$ at once: outside the range some
+$\varphi$ give divergent integrals, though others may converge. In the range the convergence is absolute for
+the sum of absolute values of the terms of the theta series, which allows termwise integration, and
+$I(\varphi)$ is a smooth function of moderate growth on $\mathrm{U}(W_n)(F) \backslash \mathrm{U}(W_n)(\mathbb{A})$ (a smooth
+automorphic form in the sense of Gan–Qiu–Takeda, without finiteness under a maximal compact subgroup); it is
+an automorphic form when $\varphi$ corresponds to a polynomial in the Fock model at every archimedean place.
+If $m > 2n$, every $V$ is in the range, since $r \le m/2$. If $r = 0$, the quotient
+$\mathrm{U}(V)(F) \backslash \mathrm{U}(V)(\mathbb{A})$ is compact.
 
 ## Depends on
 
 - [Splitting characters and the Weil representation of unitary dual pairs](weil-representation-of-unitary-dual-pairs.md), for $\omega$, its Schrödinger model and $\theta(\varphi)$
 - [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the finite volume of $\mathrm{U}(V)(F) \backslash \mathrm{U}(V)(\mathbb{A})$
+- [Automorphic forms, cusp forms and automorphic representations](../automorphic-forms-on-reductive-groups/automorphic-forms-and-automorphic-representations.md), for automorphic forms on $\mathrm{U}(W_n)(\mathbb{A})$
 
 ## Proof depends on
 
-- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the Siegel sets of $\mathrm{U}(V)(\mathbb{A})$ on which Weil's convergence criteria (his §§9–11) estimate the theta function
-- [Global Weil representation and theta functions](global-weil-representation-and-theta-functions.md), for the theta distribution and the moderate growth of $\theta(\varphi)$ in $g$
+- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the Siegel sets of $\mathrm{U}(V)(\mathbb{A})$, the integration estimates on them (Weil's §§9–11, with the weights of the modulus character of the stabilizer of a maximal isotropic subspace, $\lvert \det \rvert_E^{m - r}$ on its $\mathrm{GL}$ factor) and their bounded overlap: for sufficiency, Weil's estimate of the theta series on a Siegel set (his §12, Lemma 5) specialized to unitary groups (his §51, Proposition 8); for necessity, the lower bound in a cusp of the Siegel set, where the lattice terms grow like $t^{2[F:\mathbb{Q}]rn}$ against the modulus factor $t^{-2[F:\mathbb{Q}]r(m-r)}$, so that the integral diverges when $m - r \le n$ and $r > 0$
+- [Global Weil representation and theta functions](global-weil-representation-and-theta-functions.md), for the theta distribution, the majorization of the theta series by a Schwartz function and the moderate growth of $\theta(\varphi)$ in $g$
 
 ## Sources
 
@@ -40,8 +49,11 @@ $\mathrm{U}(W_n)(\mathbb{A})$. If $m > 2n$, every $V$ is in the range, since $r 
   1003–1021, <https://doi.org/10.1112/S0010437X11005379>: §1.3, the convergence of the theta integral for
   all $\Phi$ when $\phi$ is anisotropic or $m - r > \varrho$ ($\varrho = n$ in the unitary case 2).
 - A. Weil, "Sur la formule de Siegel dans la théorie des groupes classiques", Acta Math. 113 (1965),
-  1–87, <https://doi.org/10.1007/BF02391774>: §§9–11 (convergence criteria for integrals over
-  $G_k \backslash G_{\mathbb{A}}$ resting on reduction theory), the source GQT cite.
+  1–87, <https://doi.org/10.1007/BF02391774>: §§9–11 (reduction theory and an integration estimate), §12,
+  Lemma 5 and the remark after it (the estimate of the theta series, and the question whether the
+  condition is necessary), Chapter II, §27 (type I₂), and Chapter VI, §51, Proposition 8 (the unitary case:
+  convergence whenever $m - r > n$), the source GQT cite.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror
   <https://github.com/leanprover-community/riemann-hypothesis/tree/79c751e0b0a5ea3bbfc20198c852fa85f28661e6>)
-  states the convergence for $n \ge 1$ as `GlobalTheory.Published.WeilThetaConvergence`.
+  states the sufficiency, for $n \ge 1$ and all Schwartz data, as
+  `GlobalTheory.Published.WeilThetaConvergence`.
