@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Order.Interval.Finset.Nat
 import Batteries.Data.List.Lemmas
+import Mathlib.Tactic.Ring
 
 /-!
 # Chu blocks and run sums
@@ -100,6 +101,59 @@ Theorems 6-7). -/
 public theorem chuFamilyKLT_one_one_one :
     chuFamilyKLT 1 1 1 = {0, 1, 2, 4, 5, 9, 12, 13, 14, 16, 17} := by
   decide
+
+private theorem mem_setOfConsecutiveDifferences_at_prefix (a : ℤ) (ds es : List ℕ) :
+    a + (ds.sum : ℤ) ∈ setOfConsecutiveDifferences a (ds ++ es) := by
+  induction ds generalizing a with
+  | nil => cases es <;> simp [setOfConsecutiveDifferences]
+  | cons d ds ih =>
+    rw [List.cons_append, setOfConsecutiveDifferences_cons]
+    apply Finset.mem_insert_of_mem
+    simpa [List.sum_cons, Int.natCast_add, add_assoc] using ih (a + d)
+
+/-- **Block starting points of the Chu family set.** Let $k$, $l$, $t$ be positive integers and
+let $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$. Then
+$4 + (4k + 4)i + (4kl + 4l + 4)j \in A$ for all integers $i$, $j$ with $0 \le i \le l$ and
+$0 \le j \le t - 1$.
+
+Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
+Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Lemma 6 (`integers-2024-A32-lem-6`). -/
+public theorem chuFamilyKLT_mem_block_starts {k l t : ℕ} (_hk : 0 < k) (_hl : 0 < l)
+    (_ht : 0 < t) (i j : ℕ) (hi : i ≤ l) (hj : j < t) :
+    4 + (4 * k + 4) * (i : ℤ) + (4 * k * l + 4 * l + 4) * (j : ℤ) ∈ chuFamilyKLT k l t := by
+  let block := [1, 1, 2] ++ (List.replicate l (chuBlock k)).flatten
+  let before := (List.replicate j block).flatten ++ [1, 1, 2] ++
+    (List.replicate i (chuBlock k)).flatten
+  let after := (List.replicate (l - i) (chuBlock k)).flatten ++
+    (List.replicate (t - (j + 1)) block).flatten ++ [1, 1, 2, 1]
+  have hOuter : (List.replicate t block).flatten =
+      (List.replicate j block).flatten ++ block ++
+        (List.replicate (t - (j + 1)) block).flatten := by
+    conv_lhs => rw [show t = j + (1 + (t - (j + 1))) by omega]
+    simp only [List.replicate_add, List.replicate_one, List.flatten_append, List.flatten_cons,
+      List.flatten_nil, List.append_nil, List.append_assoc]
+  have hInner : (List.replicate l (chuBlock k)).flatten =
+      (List.replicate i (chuBlock k)).flatten ++ (List.replicate (l - i) (chuBlock k)).flatten := by
+    conv_lhs => rw [show l = i + (l - i) by omega]
+    rw [List.replicate_add i (l - i), List.flatten_append]
+  have hblock : block = [1, 1, 2] ++ (List.replicate i (chuBlock k)).flatten ++
+      (List.replicate (l - i) (chuBlock k)).flatten := by
+    dsimp only [block]
+    rw [hInner, List.append_assoc]
+  have hgaps : chuFamilyKLT k l t = setOfConsecutiveDifferences 0 (before ++ after) := by
+    change setOfConsecutiveDifferences 0 ((List.replicate t block).flatten ++ [1, 1, 2, 1]) = _
+    rw [hOuter]
+    -- Split only the current block, leaving the complete blocks unchanged.
+    refine (congrArg (fun current => setOfConsecutiveDifferences 0
+      ((List.replicate j block).flatten ++ current ++
+        (List.replicate (t - (j + 1)) block).flatten ++ [1, 1, 2, 1])) hblock).trans ?_
+    simp only [before, after, List.append_assoc]
+  have hsum : 0 + (before.sum : ℤ) =
+      4 + (4 * k + 4) * (i : ℤ) + (4 * k * l + 4 * l + 4) * (j : ℤ) := by
+    simp [before, block, chuBlock, List.sum_flatten]
+    ring
+  rw [hgaps, ← hsum]
+  exact mem_setOfConsecutiveDifferences_at_prefix 0 before after
 
 /-- **Two families of runs with the same sums (Proposition 1).** Let $k$, $l$, $t$ be natural
 numbers, let $M^k$ be the block $1, 4, \dots, 4, 3$ with $k$ fours, and let $B$ be the
