@@ -113,37 +113,42 @@ instance constantsToCohomologyZero_isIso {k : Type u} [Field k] {X : Scheme.{u}}
   dsimp [constantsToCohomologyZero]
   infer_instance
 
-/-- The two-term Euler characteristic used by the existing curve degree. -/
-def euler01 {k : Type u} [Field k] {X : Scheme.{u}}
+/-- The difference `dim H⁰(L) - dim H¹(L)` computed with `Module.finrank`. It is the
+two-term Euler characteristic only when `H⁰(L)` and `H¹(L)` are finite-dimensional:
+`Module.finrank` is `0` on an infinite-dimensional space (for instance, it gives `0`
+for the structure sheaf of the affine line). This is the case for line bundles on
+proper curves, the scope of the degree lemmas below; other uses must supply
+finite-dimensionality. -/
+def finrankEuler01 {k : Type u} [Field k] {X : Scheme.{u}}
     (f : X ⟶ Spec (.of k)) (L : X.Modules) : ℤ :=
   (Module.finrank k (cohomology f L 0) : ℤ) - Module.finrank k (cohomology f L 1)
 
-theorem euler01_structure {k : Type u} [Field k] {X : Scheme.{u}}
+theorem finrankEuler01_structure {k : Type u} [Field k] {X : Scheme.{u}}
     (f : X ⟶ Spec (.of k)) [IsProperCurve f] [HasConstantGlobalSections f] :
-    euler01 f (structureModule X) = 1 - (genus f : ℤ) := by
-  simp [euler01, genus, finrank_cohomology_zero_structureModule]
+    finrankEuler01 f (structureModule X) = 1 - (genus f : ℤ) := by
+  simp [finrankEuler01, genus, finrank_cohomology_zero_structureModule]
 
-theorem degree_eq_euler01_sub {k : Type u} [Field k] {X : Scheme.{u}}
+theorem degree_eq_finrankEuler01_sub {k : Type u} [Field k] {X : Scheme.{u}}
     (f : X ⟶ Spec (.of k)) [IsProperCurve f] (L : X.Modules) (hL : IsLineBundle L) :
-    degree f L hL = euler01 f L - euler01 f (structureModule X) := by
-  dsimp [degree, euler01]
+    degree f L hL = finrankEuler01 f L - finrankEuler01 f (structureModule X) := by
+  dsimp [degree, finrankEuler01]
   ring
 
-theorem bundleDegree_eq_euler01_sub {k : Type u} [Field k] {X : Scheme.{u}}
+theorem bundleDegree_eq_finrankEuler01_sub {k : Type u} [Field k] {X : Scheme.{u}}
     (f : X ⟶ Spec (.of k)) [IsProperCurve f] (E : X.Modules) (r : ℕ)
     (hE : IsVectorBundle E r) :
-    bundleDegree f E r hE = euler01 f E - (r : ℤ) * euler01 f (structureModule X) := rfl
+    bundleDegree f E r hE = finrankEuler01 f E - (r : ℤ) * finrankEuler01 f (structureModule X) := rfl
 
-theorem euler01_eq_of_iso {k : Type u} [Field k] {X : Scheme.{u}}
-    (f : X ⟶ Spec (.of k)) {L M : X.Modules} (e : L ≅ M) : euler01 f L = euler01 f M := by
-  dsimp [euler01]
+theorem finrankEuler01_eq_of_iso {k : Type u} [Field k] {X : Scheme.{u}}
+    (f : X ⟶ Spec (.of k)) {L M : X.Modules} (e : L ≅ M) : finrankEuler01 f L = finrankEuler01 f M := by
+  dsimp [finrankEuler01]
   rw [((sectionsFunctor f).rightDerived 0 |>.mapIso e).toLinearEquiv.finrank_eq,
     ((sectionsFunctor f).rightDerived 1 |>.mapIso e).toLinearEquiv.finrank_eq]
 
 theorem degree_eq_of_iso {k : Type u} [Field k] {X : Scheme.{u}}
     (f : X ⟶ Spec (.of k)) [IsProperCurve f] {L M : X.Modules} (e : L ≅ M)
     (hL : IsLineBundle L) (hM : IsLineBundle M) : degree f L hL = degree f M hM := by
-  rw [degree_eq_euler01_sub, degree_eq_euler01_sub, euler01_eq_of_iso f e]
+  rw [degree_eq_finrankEuler01_sub, degree_eq_finrankEuler01_sub, finrankEuler01_eq_of_iso f e]
 
 /-- The fixed image of a resolution's unit under an actual additive
 functor; its formula is part of the interface, not supplied as a free map. -/
@@ -222,11 +227,11 @@ def cohomologyPushforwardIso {k : Type u} [Field k] {X Z : Scheme.{u}}
     rightDerivedOnMappedResolution (Scheme.Modules.pushforward q) (sectionsFunctor f)
       (injectiveResolution M) h n
 
-theorem euler01_pushforward {k : Type u} [Field k] {X Z : Scheme.{u}}
+theorem finrankEuler01_pushforward {k : Type u} [Field k] {X Z : Scheme.{u}}
     (q : Z ⟶ X) (f : X ⟶ Spec (.of k)) (M : Z.Modules)
     (h : MappedResolutionConditions (Scheme.Modules.pushforward q) (injectiveResolution M)) :
-    euler01 f ((Scheme.Modules.pushforward q).obj M) = euler01 (q ≫ f) M := by
-  dsimp [euler01]
+    finrankEuler01 f ((Scheme.Modules.pushforward q).obj M) = finrankEuler01 (q ≫ f) M := by
+  dsimp [finrankEuler01]
   rw [← (cohomologyPushforwardIso q f M h 0).toLinearEquiv.finrank_eq,
     ← (cohomologyPushforwardIso q f M h 1).toLinearEquiv.finrank_eq]
 
@@ -250,13 +255,13 @@ theorem finrank_cohomology_coproduct {k : Type u} [Field k] {X : Scheme.{u}}
   rw [(cohomologyCoproductIso f L j).toLinearEquiv.finrank_eq]
   exact Module.finrank_pi_fintype k
 
-theorem euler01_coproduct {k : Type u} [Field k] {X : Scheme.{u}}
+theorem finrankEuler01_coproduct {k : Type u} [Field k] {X : Scheme.{u}}
     (f : X ⟶ Spec (.of k)) {n : ℕ} (L : Fin n → X.Modules)
     (h₀ : ∀ i, FiniteDimensional k (cohomology f (L i) 0))
     (h₁ : ∀ i, FiniteDimensional k (cohomology f (L i) 1)) :
-    euler01 f (∐ L) = ∑ i, euler01 f (L i) := by
-  rw [euler01, finrank_cohomology_coproduct f L 0 h₀, finrank_cohomology_coproduct f L 1 h₁]
-  simp only [Nat.cast_sum, ← Finset.sum_sub_distrib, euler01]
+    finrankEuler01 f (∐ L) = ∑ i, finrankEuler01 f (L i) := by
+  rw [finrankEuler01, finrank_cohomology_coproduct f L 0 h₀, finrank_cohomology_coproduct f L 1 h₁]
+  simp only [Nat.cast_sum, ← Finset.sum_sub_distrib, finrankEuler01]
 
 /-- Source-covered generic curve inputs, on the existing actual tensor
 and coherent-cohomology carriers. No spectral endpoint is among the fields.
@@ -268,13 +273,13 @@ structure CurveTensorEulerInputs {k : Type u} [Field k] {X : Scheme.{u}}
   finite : ∀ (L : X.Modules), IsLineBundle L → ∀ j : ℕ, j ≤ 1 →
     FiniteDimensional k (cohomology f L j)
   tensor_euler : ∀ (L M : X.Modules) (hL : IsLineBundle L), IsLineBundle M →
-    euler01 f (moduleTensor X L M) = degree f L hL + euler01 f M
+    finrankEuler01 f (moduleTensor X L M) = degree f L hL + finrankEuler01 f M
 
 theorem tensor_degree {k : Type u} [Field k] {X : Scheme.{u}}
     (f : X ⟶ Spec (.of k)) [IsProperCurve f] (T : CurveTensorEulerInputs f)
     (L M : X.Modules) (hL : IsLineBundle L) (hM : IsLineBundle M) :
     degree f (moduleTensor X L M) (T.tensor_line L M hL hM) = degree f L hL + degree f M hM := by
-  rw [degree_eq_euler01_sub, T.tensor_euler L M hL hM, degree_eq_euler01_sub f M]
+  rw [degree_eq_finrankEuler01_sub, T.tensor_euler L M hL hM, degree_eq_finrankEuler01_sub f M]
   ring
 
 theorem power_isLine {k : Type u} [Field k] {X : Scheme.{u}}
