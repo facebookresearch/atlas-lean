@@ -11681,6 +11681,7 @@
   "MathlibExt/NumberTheory/Recurrences/WeightedFibonacciBinet": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
   "MathlibExt/NumberTheory/RegularResidues": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Regular integers modulo n"},
   "MathlibExt/NumberTheory/RepetendTable": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Repetend tables"},
+  "MathlibExt/NumberTheory/RepetendTable/BaseShift": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Repetend tables"},
   "MathlibExt/NumberTheory/RepetendTable/InversePairs": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Repetend tables"},
   "MathlibExt/NumberTheory/RepetendTable/TwoRowColumns": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Repetend tables"},
   "MathlibExt/NumberTheory/RidoutPadicRoth": {"to": "NumberTheory/diophantine-approximation/roth-linear-forms", "title": "Thue–Siegel–Roth theorem"},
