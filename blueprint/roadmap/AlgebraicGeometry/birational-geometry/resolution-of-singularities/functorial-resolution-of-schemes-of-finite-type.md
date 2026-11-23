@@ -1,7 +1,10 @@
 # Functorial resolution of schemes of finite type in characteristic zero
 
-There is a [blow-up sequence functor](../simple-normal-crossing-divisor.md) $BR$ that assigns to every
-scheme $X$ of finite type over a field of characteristic zero a blow-up sequence
+This node is still to be broken down: the statement is precise, but the construction is spelled out
+only for varieties.
+
+There is a [blow-up sequence functor](../simple-normal-crossing-divisor.md) $BR$ that assigns to
+every scheme $X$ of finite type over a field of characteristic zero a blow-up sequence
 
 $$BR(X) = \bigl(\Pi \colon X_r \to X_{r-1} \to \dots \to X_1 \to X_0 = X\bigr)$$
 
@@ -29,22 +32,28 @@ into an affine space $A = \mathbb{A}^N$ of large dimension, so that $X$ has codi
 at every point, with ideal sheaf $I_X$, which is then nonzero on $A$. (An inequality of total
 dimensions does not suffice for a disconnected smooth ambient scheme: in $A = \mathbb{A}^1 \sqcup
 \mathbb{A}^3$, $X = \mathbb{A}^1$ embedded as the first component has an ideal that vanishes on a
-component, outside the domain of $BP$.) As in the proof of Corollary 22, the blow-up sequence of
-[principalization](principalization-of-ideal-sheaves.md) $BP(A, I_X, \emptyset)$ gives a blow-up
-sequence $BR(X)$: one restricts to the strict transforms of $X$ the blow-ups that come before the
-first centre containing a generic point of the strict transform of $X$, and stops there, since
-restricting that blow-up as well would give $B_X X = \emptyset$ for $X$ smooth of codimension $2$
-(30.2). For an arbitrary nonreduced or reducible $X$ Kollár's "as in (22)" (p. 25) does not spell
-out the stopping point, which an expansion makes precise. It does not depend on the embedding,
-because $BP$ is compatible with closed embeddings (in the weak form 34.4) and any two closed
-embeddings of $X$ into affine spaces become equivalent under an automorphism of a larger affine
-space (Lemma 39). The compatibility with change of fields and with smooth morphisms reduces to the
-same properties of $BP$, through Lemma 41 for smooth morphisms. Finally, a blow-up sequence functor
-defined on affine schemes over a field $k$ and commuting with smooth surjections has a unique
-extension to all schemes of finite type over $k$ commuting with smooth surjections (Proposition 37):
-for a finite affine open cover $X = \bigcup_i U_i$, the blow-up sequence of the affine scheme
-$\coprod_i U_i$ descends to $X$, which is why $BR$ has to be defined on disconnected affine schemes
-(Warning 38).
+component, outside the domain of $BP$.) For an affine **variety** $X$, as in the proof of Corollary
+22, the blow-up sequence of [principalization](principalization-of-ideal-sheaves.md) $BP(A, I_X,
+\emptyset)$ gives a blow-up sequence $BR(X)$: one restricts to the strict transforms of $X$ the
+blow-ups that come before the first centre containing the generic point of the strict transform of
+$X$, and stops there, since restricting that blow-up as well would give $B_X X = \emptyset$ for $X$
+smooth of codimension $2$ (30.2). This stopping rule is not a construction for arbitrary schemes,
+and Kollár's "as in (22)" (p. 25) does not supply one. For the fat point $X = V(y, x^2) \subset
+\mathbb{A}^2_k$, whose only point is generic, the ideal is not principal at that point, so some
+centre meets it, and the blow-ups before the first such centre are isomorphisms near $X$: stopping
+there returns $X$ itself, which is not smooth. Several irreducible components may also call for
+different stopping steps. A construction for nonreduced and reducible schemes, with its proof, is
+what remains to be broken down; for such an input the terminal scheme may be empty (blowing up the
+fat point along its nilpotent ideal gives the empty scheme), which items 1–3 allow. It does not
+depend on the embedding, because $BP$ is compatible with closed embeddings (in the weak form 34.4)
+and any two closed embeddings of $X$ into affine spaces become equivalent under an automorphism of a
+larger affine space (Lemma 39). The compatibility with change of fields and with smooth morphisms
+reduces to the same properties of $BP$, through Lemma 41 for smooth morphisms. Finally, a blow-up
+sequence functor defined on affine schemes over a field $k$ and commuting with smooth surjections
+has a unique extension to all schemes of finite type over $k$ commuting with smooth surjections
+(Proposition 37): for a finite affine open cover $X = \bigcup_i U_i$, the blow-up sequence of the
+affine scheme $\coprod_i U_i$ descends to $X$, which is why $BR$ has to be defined on disconnected
+affine schemes (Warning 38).
 
 ## Depends on
 

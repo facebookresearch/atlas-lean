@@ -20,29 +20,31 @@ A good expansion has pages for:
   local frames and residue sequences (Definition 2.1, Properties 2.2–2.3), integrable logarithmic
   connections and their residues (2.4–2.8), and the quasi-isomorphisms between logarithmic de Rham
   complexes given by residue conditions (Properties 2.9 and Lemma 2.10);
-- the sheaves $L^{(i)} = L^i(-\lfloor \frac{i}{N} D \rfloor)$ and the divisors $D^{(i)} = \sum_{N
-  \nmid i\alpha_j} D_j$ for $0 \le i < N$ (Notation 3.1), and the **normalized** cyclic cover $\pi
-  \colon Y \to X$ obtained by taking the $N$-th root of a section of $L^N$ with divisor $D = \sum_j
-  \alpha_j D_j$, the normalization of the cyclic algebra $\bigoplus_i L^{-i}$, or the disjoint union
-  of the normalizations of its components (3.5): it is the normalization whose direct image is
-  $\bigoplus_{i=0}^{N-1} L^{(i)\,-1}$ (3.7, Claim 3.10 and Corollary 3.11), the raw algebra not
-  being normal in general (for $N = 3$ and a local branch $t^2$, $k[t, u]/(u^3 - t^2)$ is not
-  normal, and the floor for $i = 2$ is $1$); with the logarithmic connections on the $L^{(i)\,-1}$
-  (Lemma 3.16); and Theorem 3.2: the residues of these connections (a), equal to $\{i\alpha_j/N\}$
-  along $D_j$, the $E_1$-degeneration of the spectral sequence of the logarithmic de Rham complex
-  $\Omega^\bullet_X(\log D^{(i)}) \otimes L^{(i)\,-1}$ (b), and its variant (c) with reduced
-  divisors $A$ and $B$ without common components with one another or with $D^{(i)}$, the total
-  divisor having normal crossings, and the twist by $-B$;
+- the sheaves $L^{(i)} = L^i(-\lfloor \frac{i}{N} D \rfloor)$ for $0 \le i < N$ (Notation 3.1 (c))
+  and the divisors $D^{(i)} = \sum_{N \nmid i\alpha_j} D_j$ (Theorem 3.2), and the **normalized**
+  cyclic cover $\pi \colon Y \to X$ obtained by taking the $N$-th root of a section of $L^N$ with
+  divisor $D = \sum_j \alpha_j D_j$, the normalization of the cyclic algebra $\bigoplus_i L^{-i}$,
+  or the disjoint union of the normalizations of its components (3.5): it is the normalization whose
+  direct image is $\bigoplus_{i=0}^{N-1} L^{(i)\,-1}$ (3.7, Claim 3.10 and Corollary 3.11), the raw
+  algebra not being normal in general (for $N = 3$ and a local branch $t^2$, $k[t, u]/(u^3 - t^2)$
+  is not normal, and the floor for $i = 2$ is $1$); with the logarithmic connections on the
+  $L^{(i)\,-1}$ (Lemma 3.16); and Theorem 3.2: the residues of these connections (a), equal to
+  $\{i\alpha_j/N\}$ along $D_j$, the $E_1$-degeneration of the spectral sequence of the logarithmic
+  de Rham complex $\Omega^\bullet_X(\log D^{(i)}) \otimes L^{(i)\,-1}$ (b), and its variant (c) with
+  reduced divisors $A$ and $B$ without common components with one another or with $D^{(i)}$, the
+  total divisor having normal crossings, and the twist by $-B$;
 - Kawamata's covering lemmas (Lemmas 3.17 and 3.19), by which Theorem 3.2 b) in characteristic zero
   follows from the degeneration of the Hodge to de Rham spectral sequence of a projective manifold
   (Remark 3.18), and the fact that cyclic covers have at most quotient singularities (Lemma 3.24);
 - the degeneration at $E_1$ of the Hodge to de Rham spectral sequence of a proper smooth variety
-  over a field of characteristic zero (Theorem 8.2), obtained from classical Hodge theory, GAGA and
-  flat base change (8.1), or algebraically from the theorem of Deligne and Illusie (Theorem 8.3: a
-  proper smooth variety over a perfect field of characteristic $p \ge \dim X$ lifting to $W_2(k)$)
-  by reduction to characteristic $p$ (Proposition 8.4); and its logarithmic form for a reduced
-  normal crossing divisor $D = A + B$ (Corollary 10.23), which completes the proof of Theorem 3.2
-  c);
+  over a field of characteristic zero (Theorem 8.2), obtained algebraically from the theorem of
+  Deligne and Illusie (Theorem 8.3: a proper smooth variety over a perfect field of characteristic
+  $p \ge \dim X$ lifting to $W_2(k)$) by reduction to characteristic $p$ (Proposition 8.4), or, for
+  **projective** varieties, from classical Hodge theory, GAGA and flat base change (8.1), which
+  alone do not cover proper nonprojective varieties; and its logarithmic form in characteristic zero
+  for a reduced normal crossing divisor $D = A + B$ (Corollary 10.23), which completes the proof of
+  Theorem 3.2 c), the characteristic $p$ argument then requiring a lifting of the **pair** $(X, D)$
+  to $W_2(k)$, not of $X$ alone (3.2, 8.11, 10.17–10.21);
 - the vanishing for restriction maps (Lemma 4.2, with Variant 4.3 and Lemma 4.4), from which Theorem
   5.1 follows through Theorem 3.2 c);
 - Claim 5.13: for $X$, $L$, $N$ and a normal crossing divisor $D$ as in Corollary 5.12, a proper
@@ -84,5 +86,5 @@ theorems.
   (page numbers of the electronic version): Lecture 2, 2.1–2.10, pp. 11–17; Notation 3.1 and Theorem
   3.2, pp. 19–20; 3.5–3.16, pp. 22–29; Lemma 3.17, Remark 3.18 and Lemma 3.19, pp. 30–32; Lemma
   3.24, pp. 34–35; Lemma 4.2, Variant 4.3 and Lemma 4.4, pp. 36–37; Theorem 5.1, pp. 42–43; Lemma
-  5.11, p. 48; Claim 5.13 and its proof, pp. 49–51; 8.1–8.4, pp. 82–84; Corollary 10.23, p. 124;
-  Theorem 1.1, p. 4.
+  5.11, p. 48; Claim 5.13 and its proof, pp. 49–51; 8.1–8.4, pp. 82–84; 8.11 and 10.17–10.21
+  (liftings of pairs); Corollary 10.23, p. 124; Theorem 1.1, p. 4.

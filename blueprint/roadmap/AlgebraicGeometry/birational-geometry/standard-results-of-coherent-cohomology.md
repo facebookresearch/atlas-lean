@@ -17,10 +17,14 @@ statements use without proof. The setting is given in each item. The targets are
    $n$: $H^i(X, E)^\vee \cong H^{n-i}(X, E^\vee \otimes \omega_X)$ for a finite locally free $E$,
    and $H^i(X, \mathcal{F})^\vee \cong \operatorname{Ext}^{n-i}(\mathcal{F}, \omega_X)$ for a
    coherent $\mathcal{F}$ (for the skyscraper $k(p)$ on a smooth curve the naive formula fails, its
-   sheaf dual being $0$). GAGA: for a complex projective scheme, the comparison maps $H^q(X,
-   \mathcal{F}) \to H^q(X^{\mathrm{an}}, \mathcal{F}^{\mathrm{an}})$ are isomorphisms in all degrees
-   $q \ge 0$, and coherent analytic sheaves are algebraic. Flat base change along a field extension
-   $k \subset k'$: $H^q(X_{k'}, \mathcal{F}_{k'}) = H^q(X, \mathcal{F}) \otimes_k k'$.
+   sheaf dual being $0$). GAGA: for a complex projective scheme and a coherent sheaf $\mathcal{F}$,
+   the comparison maps $H^q(X, \mathcal{F}) \to H^q(X^{\mathrm{an}}, \mathcal{F}^{\mathrm{an}})$ are
+   isomorphisms in all degrees $q \ge 0$, and coherent analytic sheaves are algebraic. Flat base
+   change along a field extension $k \subset k'$, for $X$ quasi-compact and quasi-separated over $k$
+   (for instance projective) and $\mathcal{F}$ quasi-coherent: $H^q(X_{k'}, \mathcal{F}_{k'}) =
+   H^q(X, \mathcal{F}) \otimes_k k'$. Without quasi-compactness it fails already in degree $0$: for
+   $X$ a disjoint union of countably many points and $k'/k$ of infinite degree, $(\prod k) \otimes_k
+   k' \to \prod k'$ is not surjective.
 3. (Riemann–Roch.) For a proper scheme over a field, a coherent sheaf $\mathcal{F} \ne 0$ with
    support of dimension $e$ and a line bundle $L$, $\chi(X, \mathcal{F} \otimes L^{\otimes \nu})$ is
    a polynomial in $\nu$ of degree at most $e$ whose coefficient of $\nu^e$ is $\sum_Z
@@ -45,7 +49,8 @@ statements use without proof. The setting is given in each item. The targets are
    $X$ alone is not enough: $\mathcal{O}(-1)$ on $\mathbb{P}^2$ has positive square).
 7. (Embedding criterion.) On a complete variety over an algebraically closed field, a complete
    linear system **without base points** that separates points and tangent vectors defines a closed
-   immersion into projective space (Milne, *Abelian Varieties*, Propositions I.6.2–6.3).
+   immersion into projective space (Milne, *Abelian Varieties*, Definition I.6.2 and Proposition
+   I.6.3).
 8. (Descent of the existence of an ample divisor.) A complete variety over a field $k$ has some
    ample divisor if its extension of scalars to an algebraic closure of $k$ has one (Milne,
    Proposition I.6.6 (d)); the given class need not descend (a real conic without real points has
@@ -97,5 +102,5 @@ Tags 0E8S, 0BDC and 0BDG).
 - The Stacks Project, <https://stacks.math.columbia.edu>: Tags 01E8, 01F2, 01F4, 02KH, 02UO, 0B5U,
   0BDC, 0BDG, 0BEM, 0BEN, 0BEP, 0E8S, 0FVV and 0FW0.
 - J. S. Milne, *Abelian Varieties*, course notes, version 2.00 (2008),
-  <https://www.jmilne.org/math/CourseNotes/AV.pdf>: Chapter I, Propositions 6.2–6.3, p. 29, and 6.6
-  (d), p. 31.
+  <https://www.jmilne.org/math/CourseNotes/AV.pdf>: Chapter I, Definition 6.2 and Proposition 6.3,
+  p. 29, and 6.6 (d), p. 31.

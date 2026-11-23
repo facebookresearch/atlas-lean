@@ -3,8 +3,8 @@
 There is a [blow-up sequence functor](../simple-normal-crossing-divisor.md) $BP$, defined on all
 triples $(X, I, E)$ in which $X$ is a smooth scheme of finite type over a field of characteristic
 zero, $I \subset \mathcal{O}_X$ is an ideal sheaf that is not zero on any irreducible component of
-$X$, and $E$ is a [simple normal crossing divisor](../simple-normal-crossing-divisor.md) on $X$, such
-that the blow-up sequence $BP(X, I, E) = (\Pi \colon X_r \to \dots \to X_0 = X)$ satisfies:
+$X$, and $E$ is a [simple normal crossing divisor](../simple-normal-crossing-divisor.md) on $X$,
+such that the blow-up sequence $BP(X, I, E) = (\Pi \colon X_r \to \dots \to X_0 = X)$ satisfies:
 
 1. all centres of the blow-ups are smooth and have simple normal crossings with $E$;
 2. the inverse image ideal sheaf $\Pi^* I = \Pi^{-1} I \cdot \mathcal{O}_{X_r}$ is locally monomial:
@@ -13,7 +13,8 @@ that the blow-up sequence $BP(X, I, E) = (\Pi \colon X_r \to \dots \to X_0 = X)$
    exceed $1$;
 3. when $E = \emptyset$, $\Pi$ is an isomorphism over $X \setminus \operatorname{cosupp} I$, where
    $\operatorname{cosupp} I = \operatorname{Supp}(\mathcal{O}_X / I)$;
-4. $BP$ commutes with smooth morphisms and with change of fields;
+4. $BP$ commutes with smooth morphisms and with change of fields (as Kollár states it; on its proof
+   see below);
 5. $BP$ commutes with closed embeddings when $E = \emptyset$: if $j \colon Y \hookrightarrow X$ is a
    closed embedding of smooth schemes and $I_Y \subset \mathcal{O}_Y$, $I_X \subset \mathcal{O}_X$
    are ideal sheaves, nonzero on every irreducible component of $Y$ and of $X$ respectively, with
@@ -36,10 +37,11 @@ blown up to separate the axes, but $I$ is the unit ideal and $F = 0$; and $\Pi$ 
 isomorphism over $X \setminus \operatorname{cosupp} I = X$. Kollár states item 3 for every triple;
 as this example shows, his construction proves it only for $E = \emptyset$, the case used for
 resolution, where $s = 0$ and the support of $F$ is the total exceptional set
-$\mathrm{Ex}_{\mathrm{tot}}(\Pi)$, an snc divisor. For an arbitrary snc boundary, a sequence that is
-an isomorphism over $X \setminus \operatorname{cosupp} I$ is given by
+$\mathrm{Ex}_{\mathrm{tot}}(\Pi)$, an snc divisor. For an arbitrary snc boundary on a smooth
+separated scheme of finite type, a sequence that is an isomorphism over $X \setminus
+\operatorname{cosupp} I$ is given by
 [principalization relative to a simple normal crossing divisor](principalization-relative-to-a-simple-normal-crossing-divisor.md),
-which does not provide the functoriality 4–5.
+whose existential statement does not supply the package 4–5.
 
 This is a qualified version of Kollár's strongest form of principalization (Theorem 35). For a
 smooth variety $X$ over a field of characteristic zero and a nonzero ideal sheaf $I$ he first states
@@ -60,7 +62,17 @@ describes as "a profound shift in emphasis from resolving singularities of varie
 Włodarczyk and occupies Sections 4–13 of the lecture: Theorem 35 is deduced in 72 from
 [order reduction for marked ideals](order-reduction-for-marked-ideals.md) (Theorem 69) and its
 compatibility with closed embeddings (Claim 71.2), after the preliminary blow-ups that make the
-components of $E$ disjoint.
+components of $E$ disjoint. Items 1–3 and 5 use the existence of the sequences of Theorem 69 and
+Claim 71.2. Item 4 uses the functoriality that Kollár states for Theorem 69, and in 72 the strict
+transforms of **all** members of $E$ form one label, possibly disconnected, so for $E \ne \emptyset$
+the deduction needs that functoriality for a disconnected label, which Kollár's printed construction
+does not by itself establish (order reduction, with the same witness): for $X = \mathbb{A}^2$, $D_i
+= V(x - i)$, the ordinary snc divisor $E = D_0 + D_2$ and $I = (x^2 (x - 1))$, the lines are already
+disjoint, there is no preliminary blow-up, and the first centre lies in $D_0$, while on $X \setminus
+D_2$ it lies in $D_1$. This does not show that 4 fails for another construction, nor for $E =
+\emptyset$. Bierstone and Milman's Theorem 1.3 asserts functoriality for smooth morphisms, for their
+own construction with the irreducible components of the members of the boundary, but not the change
+of fields and closed embeddings of 4–5.
 
 ## Depends on
 
@@ -70,8 +82,8 @@ components of $E$ disjoint.
 
 ## Proof depends on
 
-- [Order reduction for marked ideals](order-reduction-for-marked-ideals.md), for Kollár's Theorem 69 and
-  Claim 71.2
+- [Order reduction for marked ideals](order-reduction-for-marked-ideals.md), for Kollár's Theorem 69,
+  with the functoriality he states for it, and Claim 71.2
 
 ## Sources
 
@@ -83,6 +95,8 @@ components of $E$ disjoint.
   1–2. Sections 1–13 of the lecture are Sections 3.1–3.13 of the chapter "Strong resolution in
   characteristic zero" of J. Kollár, *Lectures on Resolution of Singularities*, Annals of
   Mathematics Studies 166, Princeton University Press, 2007.
+- E. Bierstone and P. D. Milman, "Functoriality in resolution of singularities", arXiv:math/0702375
+  (version 1): §1, p. 2 (scope), Theorem 1.3, p. 5, and (5.2), p. 16.
 - H. Hironaka, "Resolution of singularities of an algebraic variety over a field of characteristic
   zero. I, II", Ann. of Math. (2) 79 (1964), 109–203 and 205–326.
 - Provenance: Alpöge's Lean library (<https://alpo.ge/remark.pdf>; source mirror

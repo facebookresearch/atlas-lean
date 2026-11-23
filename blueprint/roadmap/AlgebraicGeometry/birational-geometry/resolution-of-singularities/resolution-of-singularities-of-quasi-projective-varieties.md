@@ -23,13 +23,16 @@ point; let $Z_j \subset P_j$ be the first such centre and, if it is disconnected
 connected component dominating $\bar X$; the composite of the earlier blow-ups restricts to a
 birational morphism $g \colon Z_j \to \bar X$ from this smooth variety (Corollary 22 and its proof).
 The functoriality of principalization for smooth morphisms at every step (Theorem 35), together with
-the fact that any two smooth points of $\bar X$ have isomorphic étale neighbourhoods in their
-embeddings into $P$, shows that $g$ is an isomorphism over the smooth locus of $\bar X$ (with
-Theorem 26 alone, functorial only for the end result, Kollár argues instead with the final strict
-transform of the dominating exceptional divisor, generic smoothness and the factorization through
-$Z_j$, p. 20); and $g^{-1}(\operatorname{Sing} \bar X) = Z_j \cap \mathrm{Ex}_{\mathrm{tot}}(\pi_0
-\circ \dots \circ \pi_{j-1})$ is an snc divisor on $Z_j$, because $Z_j$ has simple normal crossings
-with the total exceptional set of the earlier blow-ups. One takes $R(X) = g^{-1}(X)$.
+étale coordinates for the embedded pair at smooth closed points of $\bar X$ (after the change of
+fields to an algebraic closure, with which principalization commutes, any two smooth closed points
+of $\bar X$ have isomorphic pointed étale neighbourhoods in their embeddings into $P$; points with
+different residue fields, such as the generic point and a closed point of a curve, do not), shows
+that $g$ is an isomorphism over the smooth locus of $\bar X$ (with Theorem 26 alone, functorial only
+for the end result, Kollár argues instead with the final strict transform of the dominating
+exceptional divisor, generic smoothness and the factorization through $Z_j$, p. 20); and
+$g^{-1}(\operatorname{Sing} \bar X) = Z_j \cap \mathrm{Ex}_{\mathrm{tot}}(\pi_0 \circ \dots \circ
+\pi_{j-1})$ is an snc divisor on $Z_j$, because $Z_j$ has simple normal crossings with the total
+exceptional set of the earlier blow-ups. One takes $R(X) = g^{-1}(X)$.
 
 The resolution obtained this way need not be a composite of blow-ups of smooth centres: it is the
 composite of the blow-ups of $X$ whose centres are the intersections of the smooth centres $Z_i$

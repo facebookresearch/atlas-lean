@@ -149,7 +149,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/currents-of-integration.md"}], "id": "af_54ea391ece775ac3cca30adf", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/resolution-of-singularities/README.md"}], "id": "af_4bfbc9670dacca7b48695ce6"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/resolution-of-singularities/embedding-and-descent-for-blow-up-sequence-functors.md"}], "id": "af_8ba3b4aee03a73c765b6df87", "extensions": {"org.autoform": {"not_ready": true}}}
-{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/resolution-of-singularities/functorial-resolution-of-schemes-of-finite-type.md"}], "id": "af_fd6d23fdb6fb93a78fb65147"}
+{"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/resolution-of-singularities/functorial-resolution-of-schemes-of-finite-type.md"}], "id": "af_fd6d23fdb6fb93a78fb65147", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/integrated-poincare-lelong-formula.md"}], "id": "af_3677d9d24b158c908a2f4695"}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/intersection-numbers-of-nef-line-bundles.md"}], "id": "af_e91934ef23c94622d894bc01", "extensions": {"org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/AlgebraicGeometry/birational-geometry/kawamata-viehweg-vanishing-theorem.md"}], "id": "af_39ddea946fa4b7e3d3f3d3e7"}

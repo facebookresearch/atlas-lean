@@ -53,7 +53,10 @@ A good expansion has pages for:
   observation before (5.2), p. 34), and so does $X_c \setminus Y$ for $X$ weakly pseudoconvex
   Kähler, exhausted by the sublevel sets $X_c$, and $Y = \sigma^{-1}(0)$ an analytic subset defined
   by a section of a hermitian vector bundle (Lemma (12.9), p. 116), so that (5.1) applies on the
-  complement of the polar set of a weight;
+  complement of the polar set of a weight. For an arbitrary analytic subset $Z$, $\Omega \setminus
+  Z$ is complete Kähler whenever $\Omega$ is a relatively compact open subset of a Kähler manifold
+  carrying a complete Kähler metric, in particular for the sublevel sets $\Omega = X_c$ of a weakly
+  pseudoconvex $X$ (Demailly 1982, Théorème 1.5 and Remarque 1.6, p. 464);
 - the Serre–Siegel lemma (Demailly (6.13), p. 45, proved from the Schwarz lemma): for a holomorphic
   line bundle $L$ on a compact complex manifold with $\kappa(L) \ge 0$, $h^0(X, mL) =
   O(m^{\kappa(L)})$ for $m \ge 1$ and $\kappa(L)$ is the smallest exponent with this property, while
@@ -71,6 +74,9 @@ A good expansion has pages for:
   (5.3), pp. 32–35; Proposition (5.7), p. 37; Theorem (5.11), p. 39; §8.A, (8.1)–(8.4), pp. 62–63;
   §13.A–B, Lemma (13.1), (13.3), Proposition (13.4) and Remark (13.5), pp. 122–125; Lemma (6.13) and
   the remark after it, p. 45; Lemma (6.18) and Corollary (6.19), p. 48.
+- J.-P. Demailly, "Estimations $L^2$ pour l'opérateur $\bar\partial$ d'un fibré vectoriel holomorphe
+  semi-positif au-dessus d'une variété kählérienne complète", Ann. Sci. École Norm. Sup. (4) 15
+  (1982), 457–511: Théorème 1.5 and Remarque 1.6, p. 464.
 - T. Ohsawa and K. Takegoshi, "On the extension of $L^2$ holomorphic functions", Math. Z. 195
   (1987), 197–204, <https://gdz.sub.uni-goettingen.de/id/PPN266833020_0195>: §1, p. 198; §2,
   Proposition 1, p. 199, and Theorem 2, p. 200; §3, Proposition 3, p. 200.
