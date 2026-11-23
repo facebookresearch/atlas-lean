@@ -205,14 +205,21 @@ theorem hodgeFiltration_le_minimal (E : PeriodExtension C e H b) (p : ℤ) :
       rw [Function.iterate_succ_apply']
       exact connection_mem_minimal C e H b hi
 
-/-- Evaluation at the closed point by the actual zero Laurent coefficient,
-transported through the fixed complex period coordinates. -/
-def specialization : (Fin r → LocalMeromorphicSeries) →ₗ[ℂ] C.complexSpace :=
+/-- The constant Laurent coefficient, transported through the fixed complex
+period coordinates. On the Deligne lattice `ℂ[[t]]^r` it is evaluation at the
+closed point (`specialization`); on sections with poles it is only the
+constant coefficient (for instance it sends `t⁻¹` to `0`). -/
+def constantCoefficient : (Fin r → LocalMeromorphicSeries) →ₗ[ℂ] C.complexSpace :=
   e.symm.toLinearMap.comp
     ((WithLp.linearEquiv 2 ℂ (Fin r → ℂ)).symm.toLinearMap.comp
       ({ toFun := fun v i ↦ (v i).coeff 0
          map_add' := by intro v u; ext i; simp
          map_smul' := by intro c v; ext i; simp } :
         (Fin r → LocalMeromorphicSeries) →ₗ[ℂ] (Fin r → ℂ)))
+
+/-- Specialization of the Deligne lattice at the closed point: the constant
+coefficient of power-series sections. -/
+def specialization : (deligneLattice r).restrictScalars ℂ →ₗ[ℂ] C.complexSpace :=
+  (constantCoefficient C e).comp ((deligneLattice r).restrictScalars ℂ).subtype
 
 end MathlibExt.AlgebraicGeometry.HodgeModuleCurveExtension

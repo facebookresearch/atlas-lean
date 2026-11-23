@@ -87,6 +87,24 @@ class PerverseTheory (X : ComplexScheme) [IsComplexVariety X] where
 
 attribute [instance] PerverseTheory.isTriangulated
 
+/-- The support and cosupport conditions determine the perverse t-structure. -/
+instance PerverseTheory.instSubsingleton (X : ComplexScheme) [IsComplexVariety X] :
+    Subsingleton (PerverseTheory A X) where
+  allEq := by
+    rintro ⟨t₁, hle₁, hge₁⟩ ⟨t₂, hle₂, hge₂⟩
+    have hle : t₁.le = t₂.le :=
+      funext fun m ↦ funext fun K ↦ propext ((hle₁ K m).trans (hle₂ K m).symm)
+    have hge : t₁.ge = t₂.ge :=
+      funext fun m ↦ funext fun K ↦ propext ((hge₁ K m).trans (hge₂ K m).symm)
+    have ht : t₁ = t₂ := by
+      cases t₁
+      cases t₂
+      cases hle
+      cases hge
+      rfl
+    subst ht
+    rfl
+
 def perverseTStructure (X : ComplexScheme) [IsComplexVariety X] [PerverseTheory A X] :=
   PerverseTheory.t (A := A) (X := X)
 

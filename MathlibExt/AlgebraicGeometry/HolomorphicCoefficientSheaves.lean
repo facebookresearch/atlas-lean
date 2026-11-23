@@ -101,11 +101,16 @@ def restriction {U V : Opens M} (h : V ≤ U) :
   map_mul' _ _ := rfl
   commutes' _ := rfl
 
-def coefficientPresheaf : (Opens M)ᵒᵖ ⥤ CommAlgCat.{0} ℂ where
+/-- The presheaf of holomorphic functions on a complex manifold: functions that
+are holomorphic in every chart. The holomorphic atlas makes this the structure
+sheaf of the complex manifold. -/
+def coefficientPresheaf [IsManifold 𝓘(ℂ, E) ∞ M] : (Opens M)ᵒᵖ ⥤ CommAlgCat.{0} ℂ where
   obj U := CommAlgCat.of ℂ (holomorphicAlgebra E M U.unop)
   map f := CommAlgCat.ofHom (restriction E M f.unop.le)
   map_id U := by ext f x; rfl
   map_comp f g := by ext a x; rfl
+
+variable [IsManifold 𝓘(ℂ, E) ∞ M]
 
 def ringPresheaf : (Opens M)ᵒᵖ ⥤ RingCat.{0} :=
   coefficientPresheaf E M ⋙ forget₂ (CommAlgCat.{0} ℂ) CommRingCat.{0} ⋙

@@ -59,7 +59,9 @@ public theorem_wanted minimal_extension_no_boundary_quotient
     P = minimalModule C e H b
 
 /-- Specialization of the completed geometric Hodge lattice has exactly
-the limiting Hodge fiber, with no chosen unrelated filtration. -/
+the limiting Hodge fiber, with no chosen unrelated filtration. The Hodge
+lattice lies in the Deligne lattice, where the constant coefficient is the
+value at the closed point. -/
 public theorem_wanted deligne_lattice_hodge_specialization
     (V : ModuleCat.{0} ℚ) [FiniteDimensional ℚ V]
     (C : RationalComplexification V) (r : ℕ)
@@ -67,7 +69,7 @@ public theorem_wanted deligne_lattice_hodge_specialization
     (H : PolarizedPeriodVariation C e w) (b : ℕ) (hb : 0 < b)
     (hT : (H.rationalDeck.toLinearMap - 1) ^ b = 0)
     (E : PeriodExtension C e H b) (p : ℤ) :
-    ((hodgeLattice C e H b E p).restrictScalars ℂ).map (specialization C e) = E.F 0 (-p)
+    ((hodgeLattice C e H b E p).restrictScalars ℂ).map (constantCoefficient C e) = E.F 0 (-p)
 
 /-- The local minimal-extension de Rham complex realizes the IC boundary
 stalk: its unshifted degree-zero cohomology is exactly the horizontal

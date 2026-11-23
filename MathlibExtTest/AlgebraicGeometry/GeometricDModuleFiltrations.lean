@@ -24,13 +24,14 @@ the right order.
 noncomputable section
 
 open CategoryTheory TopologicalSpace
+open scoped Manifold ContDiff
 open MathlibExt.AlgebraicGeometry.GeometricDModuleFiltrations
 open MathlibExt.AlgebraicGeometry.DifferentialOperatorSheaves (finiteOperatorRing)
 
 namespace MathlibExtTest.AlgebraicGeometry.GeometricDModuleFiltrations
 
 variable (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E]
-  (M : Type) [TopologicalSpace M] [ChartedSpace E M]
+  (M : Type) [TopologicalSpace M] [ChartedSpace E M] [IsManifold 𝓘(ℂ, E) ∞ M]
   [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]
   [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
   [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
@@ -64,3 +65,20 @@ example (F : GoodFiltration E M) (x : M) :
   exact ⟨W, hW, hxW, n, P, hP, hs'⟩
 
 end MathlibExtTest.AlgebraicGeometry.GeometricDModuleFiltrations
+
+namespace MathlibExtTest.AlgebraicGeometry.HolomorphicCoefficientSheaves
+
+open MathlibExt.AlgebraicGeometry
+
+/-- Holomorphic functions are defined on complex manifolds; a bare charted
+space, whose transition maps need not be holomorphic, is rejected. -/
+example (M : Type) [TopologicalSpace M] [ChartedSpace ℂ M] : True := by
+  fail_if_success
+    have := HolomorphicCoefficientSheaves.coefficientPresheaf ℂ M
+  trivial
+
+example (M : Type) [TopologicalSpace M] [ChartedSpace ℂ M] [IsManifold 𝓘(ℂ, ℂ) ∞ M] :
+    (Opens M)ᵒᵖ ⥤ CommAlgCat.{0} ℂ :=
+  HolomorphicCoefficientSheaves.coefficientPresheaf ℂ M
+
+end MathlibExtTest.AlgebraicGeometry.HolomorphicCoefficientSheaves

@@ -41,7 +41,7 @@ open MathlibExt.RingTheory.GeometricDifferentialOperators
 open scoped Manifold ContDiff BigOperators
 
 variable (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E]
-  (M : Type) [TopologicalSpace M] [ChartedSpace E M]
+  (M : Type) [TopologicalSpace M] [ChartedSpace E M] [IsManifold 𝓘(ℂ, E) ∞ M]
   [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]
 
 abbrev coefficients := HolomorphicCoefficientSheaves.coefficientPresheaf E M

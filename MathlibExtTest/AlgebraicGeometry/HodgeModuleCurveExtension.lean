@@ -59,4 +59,9 @@ example (v : Fin r → LocalMeromorphicSeries) (hv : v ∈ minimalModule C e H b
     formalConnection C e H b v ∈ minimalModule C e H b :=
   connection_mem_minimal C e H b hv
 
+/-- Specialization of the Deligne lattice is the constant coefficient. -/
+example (v : (deligneLattice r).restrictScalars ℂ) :
+    specialization C e v = constantCoefficient C e v.1 :=
+  rfl
+
 end MathlibExtTest.AlgebraicGeometry.HodgeModuleCurveExtension
