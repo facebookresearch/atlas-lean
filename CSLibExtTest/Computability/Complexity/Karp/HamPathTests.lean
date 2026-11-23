@@ -15,7 +15,7 @@ public meta import CSLibExt.Computability.Complexity.Karp.HamPath
 
 namespace Cslib.Complexity.Karp.HamPathTests
 
-open Cslib.CookLevin Cslib.Logic.PL
+open Cslib.CookLevin Cslib.Logic.LegacyPL
 
 /-- Depth-first search for a Hamiltonian path ending at `t`; `vis` are the visited vertices
 before the current vertex `u`. -/

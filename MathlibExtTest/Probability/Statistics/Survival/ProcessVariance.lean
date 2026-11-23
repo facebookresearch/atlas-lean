@@ -115,7 +115,7 @@ example [IsProbabilityMeasure μ] (ℱ : Filtration ℕ m0) {t : ℝ} (ht : t �
       filter_upwards [eventually_gt_atTop 0] with n hn
       have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
       symm
-      convert measure_empty (μ := μ)
+      convert measure_empty (μ := μ) using 2
       ext ω
       simp [hn', hδ.not_gt])
   simpa [StieltjesFunction.measure_const] using h
@@ -197,7 +197,7 @@ example [IsProbabilityMeasure μ] (ℱ : Filtration ℕ m0) :
       filter_upwards [eventually_gt_atTop 0] with n hn
       have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
       symm
-      convert measure_empty (μ := μ)
+      convert measure_empty (μ := μ) using 2
       ext ω
       simp [hn', hδ.not_gt])
   rw [integral_id_one zero_le_one] at h

@@ -506,5 +506,259 @@ theorem dodgsonScore_eq_zero_iff {Alt Voter : Type*} [Fintype Alt]
     have hle : dodgsonScore P a ≤ profileDist P P := ciInf_le hbdd ⟨P, ha⟩
     have hPP : profileDist P P = 0 := by simp [profileDist, kendallTau_self]
     omega
+/-- Rank key for the ballot `0` above `1` above `2`. -/
+private def bordaRankA : Fin 3 → ℕ := fun x => x.val
+/-- Rank key for the ballot `1` above `2` above `0`. -/
+private def bordaRankB : Fin 3 → ℕ :=
+  fun x => if x = 1 then 0 else if x = 2 then 1 else 2
+/-- The ballot ranking `0` above `1` above `2`, best first. -/
+private def bordaOrderA : MathlibExt.Order.StrictTotalOrder (Fin 3) where
+  lt := fun x y => bordaRankA x < bordaRankA y
+  irrefl := fun x => lt_irrefl _
+  trans := fun {x y z} h1 h2 => lt_trans h1 h2
+  total := fun {x y} h => by
+    have hne : bordaRankA x ≠ bordaRankA y :=
+      fun heq => h (Fin.ext heq)
+    have htri := lt_or_gt_of_ne hne
+    cases htri with
+    | inl hlt => exact Or.inl hlt
+    | inr hgt => exact Or.inr hgt
+private theorem bordaOrderB_total : ∀ x y : Fin 3,
+    x ≠ y → bordaRankB x < bordaRankB y ∨
+      bordaRankB y < bordaRankB x := by
+  decide
+/-- The ballot ranking `1` above `2` above `0`, best first. -/
+private def bordaOrderB : MathlibExt.Order.StrictTotalOrder (Fin 3) where
+  lt := fun x y => bordaRankB x < bordaRankB y
+  irrefl := fun _x => lt_irrefl _
+  trans := fun {_x _y _z} h1 h2 => lt_trans h1 h2
+  total := fun {x y} h => bordaOrderB_total x y h
+/-- Five-voter, three-alternative witness profile: voters `0, 1, 2`
+rank `0` above `1` above `2`; voters `3, 4` rank `1` above `2` above
+`0`. Alternative `0` is the Condorcet winner (margins `3` to `2`), but
+the Borda scores are `6, 7, 2`. -/
+private def bordaWitness : Profile (Fin 3) (Fin 5) :=
+  fun i => if i.val < 3 then bordaOrderA else bordaOrderB
+private theorem bw_eq_orderA (i : Fin 5) (h : i.val < 3) :
+    bordaWitness i = bordaOrderA := by
+  unfold bordaWitness
+  rw [ite_eq_left h]
+private theorem bw_eq_orderB (i : Fin 5) (h : ¬ i.val < 3) :
+    bordaWitness i = bordaOrderB := by
+  unfold bordaWitness
+  rw [ite_eq_right h]
+private theorem bw_lt_01 (i : Fin 5) :
+    (bordaWitness i).lt 0 1 ↔ i.val < 3 := by
+  by_cases h : i.val < 3
+  · rw [bw_eq_orderA i h]
+    show (0 : Fin 3).val < (1 : Fin 3).val ↔ i.val < 3
+    exact iff_of_true (by decide) h
+  · rw [bw_eq_orderB i h]
+    show bordaRankB 0 < bordaRankB 1 ↔ i.val < 3
+    exact iff_of_false (by decide) h
+private theorem bw_lt_10 (i : Fin 5) :
+    (bordaWitness i).lt 1 0 ↔ ¬ i.val < 3 := by
+  by_cases h : i.val < 3
+  · rw [bw_eq_orderA i h]
+    show (1 : Fin 3).val < (0 : Fin 3).val ↔ ¬ i.val < 3
+    exact iff_of_false (by decide) (not_not_intro h)
+  · rw [bw_eq_orderB i h]
+    show bordaRankB 1 < bordaRankB 0 ↔ ¬ i.val < 3
+    exact iff_of_true (by decide) h
+private theorem bw_lt_02 (i : Fin 5) :
+    (bordaWitness i).lt 0 2 ↔ i.val < 3 := by
+  by_cases h : i.val < 3
+  · rw [bw_eq_orderA i h]
+    show (0 : Fin 3).val < (2 : Fin 3).val ↔ i.val < 3
+    exact iff_of_true (by decide) h
+  · rw [bw_eq_orderB i h]
+    show bordaRankB 0 < bordaRankB 2 ↔ i.val < 3
+    exact iff_of_false (by decide) h
+private theorem bw_lt_20 (i : Fin 5) :
+    (bordaWitness i).lt 2 0 ↔ ¬ i.val < 3 := by
+  by_cases h : i.val < 3
+  · rw [bw_eq_orderA i h]
+    show (2 : Fin 3).val < (0 : Fin 3).val ↔ ¬ i.val < 3
+    exact iff_of_false (by decide) (not_not_intro h)
+  · rw [bw_eq_orderB i h]
+    show bordaRankB 2 < bordaRankB 0 ↔ ¬ i.val < 3
+    exact iff_of_true (by decide) h
+private theorem bw_filter_lt_01 :
+    Finset.univ.filter (fun i : Fin 5 => (bordaWitness i).lt 0 1)
+      = {0, 1, 2} := by
+  have hcongr : Finset.univ.filter
+        (fun i : Fin 5 => (bordaWitness i).lt 0 1)
+      = Finset.univ.filter (fun i : Fin 5 => i.val < 3) :=
+    Finset.filter_congr (fun i _ => bw_lt_01 i)
+  rw [hcongr]
+  decide
+private theorem bw_filter_lt_10 :
+    Finset.univ.filter (fun i : Fin 5 => (bordaWitness i).lt 1 0)
+      = {3, 4} := by
+  have hcongr : Finset.univ.filter
+        (fun i : Fin 5 => (bordaWitness i).lt 1 0)
+      = Finset.univ.filter (fun i : Fin 5 => ¬ i.val < 3) :=
+    Finset.filter_congr (fun i _ => bw_lt_10 i)
+  rw [hcongr]
+  decide
+private theorem bw_filter_lt_02 :
+    Finset.univ.filter (fun i : Fin 5 => (bordaWitness i).lt 0 2)
+      = {0, 1, 2} := by
+  have hcongr : Finset.univ.filter
+        (fun i : Fin 5 => (bordaWitness i).lt 0 2)
+      = Finset.univ.filter (fun i : Fin 5 => i.val < 3) :=
+    Finset.filter_congr (fun i _ => bw_lt_02 i)
+  rw [hcongr]
+  decide
+private theorem bw_filter_lt_20 :
+    Finset.univ.filter (fun i : Fin 5 => (bordaWitness i).lt 2 0)
+      = {3, 4} := by
+  have hcongr : Finset.univ.filter
+        (fun i : Fin 5 => (bordaWitness i).lt 2 0)
+      = Finset.univ.filter (fun i : Fin 5 => ¬ i.val < 3) :=
+    Finset.filter_congr (fun i _ => bw_lt_20 i)
+  rw [hcongr]
+  decide
+private theorem bw_card_lt_01 :
+    (Finset.univ.filter (fun i : Fin 5 => (bordaWitness i).lt 0 1)).card
+      = 3 := by
+  rw [bw_filter_lt_01]
+  decide
+private theorem bw_card_lt_10 :
+    (Finset.univ.filter (fun i : Fin 5 => (bordaWitness i).lt 1 0)).card
+      = 2 := by
+  rw [bw_filter_lt_10]
+  decide
+private theorem bw_card_lt_02 :
+    (Finset.univ.filter (fun i : Fin 5 => (bordaWitness i).lt 0 2)).card
+      = 3 := by
+  rw [bw_filter_lt_02]
+  decide
+private theorem bw_card_lt_20 :
+    (Finset.univ.filter (fun i : Fin 5 => (bordaWitness i).lt 2 0)).card
+      = 2 := by
+  rw [bw_filter_lt_20]
+  decide
+private theorem bw_majority_01 :
+    CondorcetCycle.MajorityPrefers bordaWitness 0 1 := by
+  rw [majorityPrefers_iff_netPreference_pos]
+  simp only [netPreference]
+  rw [bw_card_lt_01, bw_card_lt_10]
+  decide
+private theorem bw_majority_02 :
+    CondorcetCycle.MajorityPrefers bordaWitness 0 2 := by
+  rw [majorityPrefers_iff_netPreference_pos]
+  simp only [netPreference]
+  rw [bw_card_lt_02, bw_card_lt_20]
+  decide
+private theorem bw_isCondorcetWinner :
+    IsCondorcetWinner bordaWitness 0 := by
+  intro b hb
+  have hb0 : b.val ≠ 0 :=
+    fun h => hb (Fin.ext (by show b.val = (0 : Fin 3).val; rw [h]; rfl))
+  have hv2 : b.val = 1 ∨ b.val = 2 := by
+    have h3 := b.isLt
+    omega
+  cases hv2 with
+  | inl h1 =>
+    have hb1 : b = 1 :=
+      Fin.ext (by show b.val = (1 : Fin 3).val; rw [h1]; rfl)
+    rw [hb1]
+    exact bw_majority_01
+  | inr h2 =>
+    have hb2 : b = 2 :=
+      Fin.ext (by show b.val = (2 : Fin 3).val; rw [h2]; rfl)
+    rw [hb2]
+    exact bw_majority_02
+private theorem bw_innerA0 :
+    Finset.univ.filter (fun b : Fin 3 => bordaOrderA.lt 0 b)
+      = {1, 2} := by
+  have hcongr : Finset.univ.filter (fun b : Fin 3 => bordaOrderA.lt 0 b)
+      = Finset.univ.filter (fun b : Fin 3 => (0 : Fin 3).val < b.val) :=
+    Finset.filter_congr (fun b _ => Iff.rfl)
+  rw [hcongr]
+  decide
+private theorem bw_innerB0 :
+    Finset.univ.filter (fun b : Fin 3 => bordaOrderB.lt 0 b) = ∅ := by
+  have hcongr : Finset.univ.filter (fun b : Fin 3 => bordaOrderB.lt 0 b)
+      = Finset.univ.filter
+        (fun b : Fin 3 => bordaRankB 0 < bordaRankB b) :=
+    Finset.filter_congr (fun b _ => Iff.rfl)
+  rw [hcongr]
+  decide
+private theorem bw_innerA1 :
+    Finset.univ.filter (fun b : Fin 3 => bordaOrderA.lt 1 b)
+      = {2} := by
+  have hcongr : Finset.univ.filter (fun b : Fin 3 => bordaOrderA.lt 1 b)
+      = Finset.univ.filter (fun b : Fin 3 => (1 : Fin 3).val < b.val) :=
+    Finset.filter_congr (fun b _ => Iff.rfl)
+  rw [hcongr]
+  decide
+private theorem bw_innerB1 :
+    Finset.univ.filter (fun b : Fin 3 => bordaOrderB.lt 1 b)
+      = {2, 0} := by
+  have hcongr : Finset.univ.filter (fun b : Fin 3 => bordaOrderB.lt 1 b)
+      = Finset.univ.filter
+        (fun b : Fin 3 => bordaRankB 1 < bordaRankB b) :=
+    Finset.filter_congr (fun b _ => Iff.rfl)
+  rw [hcongr]
+  decide
+private theorem bw_per0 : ∀ i ∈ Finset.univ,
+    (Finset.univ.filter (fun b : Fin 3 => (bordaWitness i).lt 0 b)).card =
+      (if i.val < 3 then 2 else 0) := by
+  intro i _
+  by_cases h : i.val < 3
+  · rw [ite_eq_left h, bw_eq_orderA i h, bw_innerA0]
+    decide
+  · rw [ite_eq_right h, bw_eq_orderB i h, bw_innerB0]
+    exact Finset.card_empty
+private theorem bw_per1 : ∀ i ∈ Finset.univ,
+    (Finset.univ.filter (fun b : Fin 3 => (bordaWitness i).lt 1 b)).card =
+      (if i.val < 3 then 1 else 2) := by
+  intro i _
+  by_cases h : i.val < 3
+  · rw [ite_eq_left h, bw_eq_orderA i h, bw_innerA1]
+    exact Finset.card_singleton 2
+  · rw [ite_eq_right h, bw_eq_orderB i h, bw_innerB1]
+    decide
+private theorem bw_score_zero :
+    bordaScore bordaWitness 0 = 6 := by
+  simp only [bordaScore]
+  rw [Finset.sum_congr rfl bw_per0]
+  decide
+private theorem bw_score_one :
+    bordaScore bordaWitness 1 = 7 := by
+  simp only [bordaScore]
+  rw [Finset.sum_congr rfl bw_per1]
+  decide
+private theorem bw_zero_not_mem_winners :
+    (0 : Fin 3) ∉ winners (fun a => (bordaScore bordaWitness a : ℤ)) := by
+  intro hmem
+  simp only [winners, Finset.mem_filter, Finset.mem_univ, true_and] at hmem
+  have hle := hmem 1
+  rw [bw_score_zero, bw_score_one] at hle
+  exact absurd hle (by decide)
+/-- **Borda is not Condorcet-consistent**: unlike Copeland, maximin,
+Kemeny and Dodgson above, Borda can fail to elect the Condorcet winner.
+In the explicit five-voter, three-alternative witness, three voters rank
+`0` above `1` above `2` and two voters rank `1` above `2` above `0`;
+alternative `0` is the Condorcet winner (pairwise margins `3` to `2`),
+but the Borda scores are `6` for `0` and `7` for `1`, so `0` is not
+a Borda winner at all. (Handbook of Computational Social Choice,
+Chapter 2: Borda fails the Condorcet criterion.) -/
+theorem exists_isCondorcetWinner_notMem_winners_bordaScore :
+    ∃ (P : Profile (Fin 3) (Fin 5)) (a : Fin 3),
+      IsCondorcetWinner P a ∧ a ∉ winners (fun x => (bordaScore P x : ℤ)) := by
+  exact ⟨bordaWitness, 0, bw_isCondorcetWinner, bw_zero_not_mem_winners⟩
+/-- The Borda winner set in the witness above is not the Condorcet
+winner alone (corollary of non-membership). -/
+theorem exists_isCondorcetWinner_winners_bordaScore_ne :
+    ∃ (P : Profile (Fin 3) (Fin 5)) (a : Fin 3),
+      IsCondorcetWinner P a ∧
+        winners (fun x => (bordaScore P x : ℤ)) ≠ {a} := by
+  obtain ⟨P, a, hCW, hnot⟩ :=
+    exists_isCondorcetWinner_notMem_winners_bordaScore
+  exact ⟨P, a, hCW,
+    fun h => hnot (by rw [h]; exact Finset.mem_singleton_self a)⟩
 end
 end MathlibExt.GameTheory.SocialChoice

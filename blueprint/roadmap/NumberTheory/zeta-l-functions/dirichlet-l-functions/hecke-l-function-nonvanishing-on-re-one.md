@@ -26,7 +26,7 @@ simple pole of $\zeta_K$ at $1$ and the holomorphy of $L(s, \chi^2)$ at $1 + 2it
 to $0$ as $\sigma \to 1^+$, a contradiction. By the continuation page, $L(s, \chi^2)$ fails to be
 holomorphic at $1 + 2it$ only if $\chi^2 = |\cdot|^{-2it}$. Then $\eta = \chi |\cdot|^{it}$ is a
 nontrivial character with $\eta^2 = 1$ and $L(1 + it, \chi) = L(1, \eta)$, and $L(1, \eta) \neq 0$
-follows from Landau's theorem: a Dirichlet series $\sum_{n \ge 1} c_n n^{-s}$ with $c_n \ge 0$ and real
+follows from [Landau's theorem](analytic-continuation-of-dirichlet-series/landau-theorem-dirichlet-series.md): a Dirichlet series $\sum_{n \ge 1} c_n n^{-s}$ with $c_n \ge 0$ and real
 abscissa of absolute convergence $\sigma_0$ does not extend to a holomorphic function on any
 neighbourhood of $\sigma_0$ (Kedlaya, Theorem 2.4). Suppose $L(1, \eta) = 0$. By the continuation page,
 $\zeta_K$ is holomorphic except for a simple pole at $1$, and $L(s, \eta)$ is entire because $\eta$ is
@@ -50,6 +50,7 @@ gives a singularity of $F$ there, contradicting that $F$ is entire. (This sketch
 ## Proof depends on
 
 - [Meromorphic continuation of Hecke L-functions](hecke-l-function-meromorphic-continuation.md)
+- [Landau's theorem on Dirichlet series with non-negative coefficients](analytic-continuation-of-dirichlet-series/landau-theorem-dirichlet-series.md)
 
 ## Sources
 
