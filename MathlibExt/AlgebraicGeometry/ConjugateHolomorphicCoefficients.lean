@@ -31,6 +31,7 @@ set_option backward.isDefEq.respectTransparency false
 namespace MathlibExt.AlgebraicGeometry.ConjugateHolomorphicCoefficients
 
 open _root_.CategoryTheory _root_.Opposite TopologicalSpace
+open scoped Manifold ContDiff
 
 /-- Conjugate only the actual complex scalar map of the original ring. -/
 def conjugateObject (A : CommAlgCat.{0} ℂ) : CommAlgCat.{0} ℂ :=
@@ -62,7 +63,7 @@ def conjugateScalars : CommAlgCat.{0} ℂ ⥤ CommAlgCat.{0} ℂ where
     rfl
 
 variable (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E]
-  (M : Type) [TopologicalSpace M] [ChartedSpace E M]
+  (M : Type) [TopologicalSpace M] [ChartedSpace E M] [IsManifold 𝓘(ℂ, E) ∞ M]
 
 def conjugateCoefficientPresheaf : (Opens M)ᵒᵖ ⥤ CommAlgCat.{0} ℂ :=
   HolomorphicCoefficientSheaves.coefficientPresheaf E M ⋙ conjugateScalars

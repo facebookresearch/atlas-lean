@@ -11,6 +11,7 @@ public import MathlibExt.AlgebraicGeometry.ProjectiveExponentialSectionModels
 public import MathlibExt.AlgebraicGeometry.PulledBetaRingModels
 public import MathlibExt.AlgebraicGeometry.NativeOrdinaryDifferentialRepresentations
 public import MathlibExt.CategoryTheory.NativeTwoOperatorModuleViews
+public import MathlibExt.AlgebraicGeometry.GeometricDModuleFiltrations
 
 /-!
 # Actual complex product structure and full independent X/P operators

@@ -206,8 +206,11 @@ end NormalizedDifferentialScalars
 
 section AnalyticRings
 
+open scoped Manifold ContDiff
+
 variable (n : ℕ) (M : Type) [TopologicalSpace M]
   [ChartedSpace (TemperedDistributionSectionModels.ComplexCoordinates n) M]
+  [IsManifold 𝓘(ℂ, TemperedDistributionSectionModels.ComplexCoordinates n) ∞ M]
   [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]
 
 abbrev analyticCoefficients := HolomorphicCoefficientSheaves.coefficientPresheaf

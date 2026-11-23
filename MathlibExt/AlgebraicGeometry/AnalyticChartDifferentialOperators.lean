@@ -39,11 +39,13 @@ open scoped Manifold ContDiff
 variable (n : ℕ) (M : Type) [TopologicalSpace M] [ChartedSpace (ComplexCoordinates n) M]
   (O : (Opens M)ᵒᵖ ⥤ CommAlgCat.{0} ℂ)
 
-def holomorphicChartValue (U : Opens M) (a : (analyticCoefficients n M).obj (op U))
+def holomorphicChartValue [IsManifold 𝓘(ℂ, ComplexCoordinates n) ∞ M] (U : Opens M)
+    (a : (analyticCoefficients n M).obj (op U))
     (x : M) : ComplexCoordinates n → ℂ :=
   HolomorphicCoefficientSheaves.chartFunction (ComplexCoordinates n) M a.val x
 
-def conjugateChartValue (U : Opens M) (a : (analyticConjugateCoefficients n M).obj (op U))
+def conjugateChartValue [IsManifold 𝓘(ℂ, ComplexCoordinates n) ∞ M] (U : Opens M)
+    (a : (analyticConjugateCoefficients n M).obj (op U))
     (x : M) : ComplexCoordinates n → ℂ :=
   fun z => star (HolomorphicCoefficientSheaves.chartFunction (ComplexCoordinates n) M a.val x z)
 

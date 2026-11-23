@@ -10,6 +10,7 @@ module
 public import MathlibExt.AlgebraicGeometry.HolomorphicCotangentModuleModels
 public import MathlibExt.AlgebraicGeometry.HolomorphicCoefficientRestriction
 public import MathlibExt.AlgebraicGeometry.NativeIndDifferentialContexts
+public import MathlibExt.AlgebraicGeometry.GeometricDModuleFiltrations
 public import Mathlib.CategoryTheory.Limits.Shapes.Terminal
 
 /-!

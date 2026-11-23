@@ -10,6 +10,7 @@ module
 public import MathlibExt.AlgebraicGeometry.NativeHolomorphicCoefficientModules
 public import MathlibExt.AlgebraicGeometry.AnalyticChartDifferentialOperators
 public import MathlibExt.CategoryTheory.NativeMonoidalBimoduleMapping
+public import MathlibExt.AlgebraicGeometry.GeometricDModuleFiltrations
 
 /-!
 # Actual top-form transfer with both full differential-ring actions

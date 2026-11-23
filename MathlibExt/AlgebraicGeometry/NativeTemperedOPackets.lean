@@ -34,9 +34,12 @@ open MathlibExt.CategoryTheory.NativeOppositeBimoduleModels
 open MathlibExt.CategoryTheory.NativeDerivedBimoduleCalculus
 open MathlibExt.CategoryTheory.NativeRingedAdjointImageModels
 
+open scoped Manifold ContDiff
+
 variable [∀ Z : TopCat.{0}, HasSheafify (Opens.grothendieckTopology Z) (ModuleCat.{0} ℂ)]
   (n : ℕ) (M : Type) [TopologicalSpace M]
   [ChartedSpace (TemperedDistributionSectionModels.ComplexCoordinates n) M]
+  [IsManifold 𝓘(ℂ, TemperedDistributionSectionModels.ComplexCoordinates n) ∞ M]
   [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]
   [CompactSheafSource ℂ (TopCat.of M)] [IndSpaceSource (TopCat.of M)]
   [DifferentialBetaSource M (analyticCoefficients n M)]

@@ -11,6 +11,7 @@ public import MathlibExt.AlgebraicGeometry.HolomorphicCoefficientSheaves
 public import MathlibExt.AlgebraicGeometry.HolomorphicCotangentModuleModels
 public import MathlibExt.AlgebraicGeometry.RightCoordinateDifferentials
 public import MathlibExt.AlgebraicGeometry.EnhancedIndQuotientModels
+public import MathlibExt.AlgebraicGeometry.GeometricDModuleFiltrations
 public import Mathlib.Topology.Compactification.OnePoint.Basic
 
 /-!

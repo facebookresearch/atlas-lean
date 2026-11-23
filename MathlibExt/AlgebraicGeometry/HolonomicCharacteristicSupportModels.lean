@@ -17,6 +17,7 @@ public import Mathlib.Algebra.MvPolynomial.Basic
 public import Mathlib.RingTheory.KrullDimension.Basic
 public import MathlibExt.AlgebraicGeometry.NativeCoefficientModuleStalks
 public import MathlibExt.CategoryTheory.NativeBoundedBimoduleModels
+public import MathlibExt.AlgebraicGeometry.GeometricDModuleFiltrations
 
 /-!
 # Actual local good filtrations and characteristic-symbol support

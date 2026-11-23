@@ -9,6 +9,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.LocalBetaDifferentialActionModels
 public import MathlibExt.AlgebraicGeometry.TemperedDifferentialActionModels
+public import MathlibExt.AlgebraicGeometry.GeometricDModuleFiltrations
 
 /-!
 # Tempered distributions in actual Ind(k_X) with full beta-D/Dbar actions
@@ -37,9 +38,12 @@ open NativeIndDifferentialContexts LocalBetaDifferentialActionModels
 open SubanalyticIndDistributionModels TemperedDifferentialActionModels
 open ManifoldDistributionModels AnalyticChartDifferentialOperators
 
+open scoped Manifold ContDiff
+
 variable [∀ Z : TopCat.{0}, HasSheafify (Opens.grothendieckTopology Z) (ModuleCat.{0} ℂ)]
   (n : ℕ) (M : Type) [TopologicalSpace M]
   [ChartedSpace (TemperedDistributionSectionModels.ComplexCoordinates n) M]
+  [IsManifold 𝓘(ℂ, TemperedDistributionSectionModels.ComplexCoordinates n) ∞ M]
   [HasSheafify (Opens.grothendieckTopology M) RingCat.{0}]
   [CompactSheafSource ℂ (TopCat.of M)]
 

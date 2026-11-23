@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.DifferentialOperatorScalars
-public import MathlibExt.AlgebraicGeometry.GeometricDModuleFiltrations
+public import MathlibExt.AlgebraicGeometry.LocalFinitePresentation
+public import Mathlib.CategoryTheory.Subobject.Lattice
 public import Mathlib.Algebra.Ring.Opposite
 public import Mathlib.Algebra.Category.ModuleCat.Stalk
 
@@ -22,8 +23,10 @@ modules are native sheaves of modules over this fixed ring, rather than
 objects equipped with an unspecified D-action.
 
 The filtration consists of actual O-subobjects with local exhaustivity,
-order-compatible right action and finite shifted local generators. Graded
-pieces are the actual cokernels. This keeps Saito's right-module convention.
+order-compatible right action and finite shifted local generators: near every
+point, every section of `F_p` is locally a combination of the generators with
+operators of order at most `p` minus their degree. Graded pieces are the
+actual cokernels. This keeps Saito's right-module convention.
 
 Source: Morihiko Saito, arXiv:1307.2140v5, sections 1.1–1.4;
 Mathlib 56a005855ea17e0b0958f73ec801ae140b0a1679 (Apache 2.0),
@@ -118,8 +121,11 @@ def InFiltration (N : RightModule k M O)
 variable [HasSheafify (Opens.grothendieckTopology M) AddCommGrpCat.{0}]
   [(Opens.grothendieckTopology M).WEqualsLocallyBijective AddCommGrpCat.{0}]
   [∀ U : Opens M, HasWeakSheafify ((Opens.grothendieckTopology M).over U) AddCommGrpCat.{0}]
-  [∀ U : Opens M, ((Opens.grothendieckTopology M).over U).WEqualsLocallyBijective AddCommGrpCat.{0}]
+  [∀ U : Opens M,
+    ((Opens.grothendieckTopology M).over U).WEqualsLocallyBijective AddCommGrpCat.{0}]
 
+/-- A good filtration of a right differential module by coherent
+`O`-submodules. -/
 structure GoodFiltration where
   object : RightModule k M O
   term : ℤ → Subobject ((underlyingO k M O).obj object)
@@ -127,7 +133,7 @@ structure GoodFiltration where
   boundedBelow : ∀ x : M, ∃ U : Opens M, x ∈ U ∧ ∃ p : ℤ,
     ∀ q < p, ∀ (V : Opens M), V ≤ U → ∀ s : object.val.obj (op V),
       InFiltration k M O object term q V s → s = 0
-  locallyPresented : ∀ p, GeometricDModuleFiltrations.LocallyFinitelyPresented M
+  locallyPresented : ∀ p, LocalFinitePresentation.LocallyFinitelyPresented M
     (coefficientSheaf k M O) (Subobject.underlying.obj (term p))
   exhaustive : ∀ (U : Opens M) (s : object.val.obj (op U)) (x : U),
     ∃ (V : Opens M) (hV : V ≤ U), x.val ∈ V ∧ ∃ p : ℤ,
@@ -140,10 +146,13 @@ structure GoodFiltration where
     ∃ (r : ℕ) (degree : Fin r → ℤ) (s : Fin r → object.val.obj (op U)),
       (∀ j, InFiltration k M O object term (degree j) U (s j)) ∧
       ∀ (V : Opens M) (hV : V ≤ U) (p : ℤ) (t : object.val.obj (op V)),
-        InFiltration k M O object term p V t →
-        ∃ (m : Fin r → ℕ) (P : Fin r → finiteOperatorRing k M O V),
-          (∀ j, P j = 0 ∨ (OrderOn k M O V (P j) (m j) ∧ degree j + m j ≤ p)) ∧
-          t = ∑ j, rightAct k M O object V (P j) ((object.val.map (homOfLE hV).op).hom (s j))
+        InFiltration k M O object term p V t → ∀ y ∈ V,
+        ∃ (W : Opens M) (hW : W ≤ V), y ∈ W ∧
+        ∃ (m : Fin r → ℕ) (P : Fin r → finiteOperatorRing k M O W),
+          (∀ j, P j = 0 ∨ (OrderOn k M O W (P j) (m j) ∧ degree j + m j ≤ p)) ∧
+          (object.val.map (homOfLE hW).op).hom t =
+            ∑ j, rightAct k M O object W (P j)
+              ((object.val.map (homOfLE (hW.trans hV)).op).hom (s j))
 
 def filtrationStep (F : GoodFiltration k M O) (p : ℤ) :
     Subobject.underlying.obj (F.term (p - 1)) ⟶ Subobject.underlying.obj (F.term p) :=
