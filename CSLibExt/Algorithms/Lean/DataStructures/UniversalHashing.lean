@@ -70,58 +70,84 @@ section General
 
 variable {α : Type u} {m : Nat}
 
-/-- The number of functions in the family `H` under which `x` and `y` collide. -/
+/-- **Collision count.** For a finite family $H$ of functions from a set $\alpha$ to
+$\{0, 1, \dots, m - 1\}$ and keys $x, y \in \alpha$, the collision count of $x$ and $y$ in $H$
+is the number of functions $h \in H$ with $h(x) = h(y)$. -/
 public def collisionCount (H : Finset (α → Fin m)) (x y : α) : Nat :=
   (H.filter fun h => h x = h y).card
 
 /--
-A finite hash family is universal if it is nonempty (so that choosing a member
-uniformly at random, the reading behind the bound, makes sense) and every two
-distinct keys collide under at most a `1 / m` fraction of its members, stated
-without division as `collisionCount H x y * m ≤ H.card`.
+**Universal hash family.** A finite family $H$ of functions from a set $\alpha$ to
+$\{0, 1, \dots, m - 1\}$ is universal if $m > 0$, $H$ is nonempty, and for all distinct keys
+$x \ne y$ in $\alpha$ the number of functions $h \in H$ with $h(x) = h(y)$, multiplied by $m$,
+is at most $|H|$; that is, $x$ and $y$ collide under at most a $1/m$ fraction of the members
+of $H$.
+
+Nonemptiness makes sense of choosing a member of $H$ uniformly at random, the reading behind
+the bound.
 -/
 public def IsUniversal (H : Finset (α → Fin m)) : Prop :=
   0 < m ∧ H.Nonempty ∧ ∀ x y : α, x ≠ y → collisionCount H x y * m ≤ H.card
 
 /--
-Indexed universality: the family `h` ranges over the nonempty finite index set `s`,
-counting each index separately even when two indices give the same function. This is
-the form in which the classical counting arguments, including the mod-prime family
-below, are carried out. Nonemptiness is part of the predicate for the same reason as
-in `IsUniversal`: there is no uniform random choice from an empty family.
+**Indexed universal hash family.** Let $s$ be a finite set of indices from a type $\iota$,
+and let $h$ assign to each index $i \in \iota$ a function $h_i$ from a set $\alpha$ to
+$\{0, 1, \dots, m - 1\}$. The family $h$ is universal on $s$ if $m > 0$, $s$ is nonempty,
+and for all distinct keys $x \ne y$ in $\alpha$ the number of indices $i \in s$ with
+$h_i(x) = h_i(y)$, multiplied by $m$, is at most $|s|$.
+
+Each index is counted separately, even when two indices give the same function; this is the
+form in which the classical counting arguments, including the one for the mod-prime family,
+are carried out. Nonemptiness is required because there is no uniform random choice from an
+empty family.
 -/
 public def IsUniversalOn {ι : Type v} (s : Finset ι) (h : ι → α → Fin m) : Prop :=
   0 < m ∧ s.Nonempty ∧
     ∀ x y : α, x ≠ y → (s.filter fun i => h i x = h i y).card * m ≤ s.card
 
-/-- The collision count never exceeds the size of the family. -/
+/-- **Collision count is at most the family size.** For every finite family $H$ of functions
+from a set $\alpha$ to $\{0, 1, \dots, m - 1\}$ and all keys $x, y \in \alpha$, the number of
+functions $h \in H$ with $h(x) = h(y)$ is at most $|H|$. -/
 public theorem collisionCount_le_card (H : Finset (α → Fin m)) (x y : α) :
     collisionCount H x y ≤ H.card :=
   Finset.card_filter_le _ _
 
-/-- A key collides with itself under every function in the family. -/
+/-- **A key collides with itself under the whole family.** For every finite family $H$ of
+functions from a set $\alpha$ to $\{0, 1, \dots, m - 1\}$ and every key $x \in \alpha$, the
+collision count of $x$ with itself in $H$ equals $|H|$: $x$ collides with itself under every
+function in $H$. -/
 @[simp]
 public theorem collisionCount_self (H : Finset (α → Fin m)) (x : α) :
     collisionCount H x x = H.card := by
   simp [collisionCount]
 
-/-- The empty family is not universal: universality includes nonemptiness, since
-its meaning is a bound on the collision probability for a uniformly chosen member. -/
+/-- **The empty hash family is not universal.** For every type of keys $\alpha$ and every natural
+number $m$, the empty family of functions $\alpha \to \{0, \dots, m - 1\}$ is not universal:
+universality includes nonemptiness, since its meaning is a bound on the collision probability for
+a uniformly chosen member. -/
 public theorem not_isUniversal_empty : ¬ IsUniversal (∅ : Finset (α → Fin m)) :=
   fun h => by
     obtain ⟨f, hf⟩ := h.2.1
     simp at hf
 
-/-- The empty indexed family is not universal, for the same reason. -/
+/-- **The empty indexed family is not universal.** For every index type $\iota$, every type of
+keys $\alpha$, every natural number $m$ and every family $(h_i)_{i \in \iota}$ of functions
+$h_i \colon \alpha \to \{0, \dots, m - 1\}$, the family is not universal over the empty index
+set: indexed universality includes nonemptiness of the index set, since there is no uniform
+random choice from an empty family. -/
 public theorem not_isUniversalOn_empty {ι : Type v} (h : ι → α → Fin m) :
     ¬ IsUniversalOn (∅ : Finset ι) h :=
   fun hh => by
     obtain ⟨i, hi⟩ := hh.2.1
     simp at hi
 
-/-- The collision bound part of universality, without nonemptiness. The empty
-family satisfies this bound vacuously; `IsUniversal` is this bound together with
-`H.Nonempty` and a positive range size `0 < m`. -/
+/-- **The empty family satisfies the collision bound.** For every natural number $m$ and all
+distinct keys $x \ne y$ in a set $\alpha$, the collision count of $x$ and $y$ in the empty
+family of functions from $\alpha$ to $\{0, 1, \dots, m - 1\}$, multiplied by $m$, is at most
+the size of the empty family, which is $0$.
+
+This is the collision bound of universality without its other conditions; universality also
+requires the family to be nonempty and $m > 0$, so the empty family is not universal. -/
 public theorem isUniversal_bound_empty :
     ∀ x y : α, x ≠ y →
       collisionCount (∅ : Finset (α → Fin m)) x y * m ≤
@@ -134,60 +160,95 @@ end General
 section ModPrime
 
 /--
-The mod-prime hash function `h_{a,b}(x) = ((a * x + b) mod p) mod m` of CLRS
-Section 11.3.3: the inner reduction modulo `p` is the arithmetic of `ZMod p`, and the
-outer reduction is `Nat` remainder of the canonical representative.
+**Mod-prime hash function.** For natural numbers $p$ and $m$ with $m > 0$ and elements $a, b$
+of $\mathbb{Z}/p\mathbb{Z}$, the mod-prime hash function
+$h_{a,b} \colon \mathbb{Z}/p\mathbb{Z} \to \{0, \dots, m - 1\}$ is
+$h_{a,b}(x) = \operatorname{val}(ax + b) \bmod m$, where $ax + b$ is computed in
+$\mathbb{Z}/p\mathbb{Z}$ and $\operatorname{val}(z)$ is the canonical natural-number
+representative of $z$ (the residue in $\{0, \dots, p - 1\}$ when $p > 0$, and $|z|$ when
+$p = 0$). This is the function $h_{a,b}(x) = ((ax + b) \bmod p) \bmod m$ of CLRS
+Section 11.3.3.
 -/
 public def modPrimeHash (p m : Nat) (hm : 0 < m) (a b x : ZMod p) : Fin m :=
   ⟨(a * x + b).val % m, Nat.mod_lt _ hm⟩
 
-/-- The index set of the mod-prime family: pairs `(a, b)` with `a ≠ 0`. -/
+/-- **Mod-prime index set.** For a natural number $p$, the index set of the mod-prime family is
+the set of pairs $(a, b)$ with $a, b \in \mathbb{Z}/p\mathbb{Z}$ and $a \neq 0$. -/
 public abbrev ModPrimeIndex (p : Nat) : Type :=
   { a : ZMod p // a ≠ 0 } × ZMod p
 
-/-- The mod-prime family as functions indexed by pairs `(a, b)` with `a ≠ 0`. -/
+/-- **Indexed mod-prime family.** For natural numbers $p$ and $m$ with $m > 0$, the indexed
+mod-prime family assigns to each index $(a, b)$, with $a, b \in \mathbb{Z}/p\mathbb{Z}$ and
+$a \neq 0$, the mod-prime hash function
+$h_{a,b} \colon \mathbb{Z}/p\mathbb{Z} \to \{0, \dots, m - 1\}$. -/
 public def modPrimeHashes (p m : Nat) (hm : 0 < m) (ab : ModPrimeIndex p) :
     ZMod p → Fin m :=
   fun x => modPrimeHash p m hm ab.1.1 ab.2 x
 
 /--
-The mod-prime family as a `Finset` of distinct functions. The universality result
-below is proved for the indexed family `modPrimeHashes`, matching the `p * (p - 1)`
-count of indices in CLRS; the image here can be smaller, since distinct index pairs
-may agree as functions after the final reduction modulo `m`.
+**Mod-prime family of distinct functions.** For $p > 0$ and $m > 0$, the mod-prime family
+is the finite set of all functions $h_{a,b}$ from $\mathbb{Z}/p\mathbb{Z}$ to
+$\{0, 1, \dots, m - 1\}$ with $a, b \in \mathbb{Z}/p\mathbb{Z}$ and $a \ne 0$, where
+$h_{a,b}$ is the mod-prime hash function with index $(a, b)$.
+
+Universality is proved for the indexed family of mod-prime hash functions, matching the
+$p(p - 1)$ count of indices in CLRS; this set of distinct functions can be smaller, since
+distinct index pairs may give the same function after the final reduction modulo $m$.
 -/
 public def modPrimeFamily (p m : Nat) [NeZero p] (hm : 0 < m) :
     Finset (ZMod p → Fin m) :=
   Finset.univ.image (modPrimeHashes p m hm)
 
-/-- The value of a mod-prime hash is the displayed double remainder. -/
+/-- **Value of the mod-prime hash.** For natural numbers $p$ and $m$ with $m > 0$ and elements
+$a, b, x$ of $\mathbb{Z}/p\mathbb{Z}$, the mod-prime hash value
+$h_{a,b}(x) \in \{0, \dots, m - 1\}$, read as a natural number, equals
+$\operatorname{val}(ax + b) \bmod m$. Here $ax + b$ is computed in $\mathbb{Z}/p\mathbb{Z}$, and
+$\operatorname{val}(z)$ is the canonical natural-number representative of $z$: the residue in
+$\{0, \dots, p - 1\}$ when $p > 0$, and $|z|$ when $p = 0$. -/
 @[simp]
 public theorem modPrimeHash_val (p m : Nat) (hm : 0 < m) (a b x : ZMod p) :
     (modPrimeHash p m hm a b x).val = (a * x + b).val % m :=
   rfl
 
-/-- Two keys collide under `h_{a,b}` exactly when the inner values agree modulo `m`. -/
+/-- **Collisions of a mod-prime hash function.** Let $p$ be a natural number, $m > 0$ and
+$a, b \in \mathbb{Z}/p\mathbb{Z}$, and write $\operatorname{val}(z)$ for the canonical
+natural-number representative of $z \in \mathbb{Z}/p\mathbb{Z}$ (for $p = 0$, where
+$\mathbb{Z}/0\mathbb{Z} = \mathbb{Z}$, its absolute value), so that the mod-prime hash
+function is $h_{a,b}(x) = \operatorname{val}(ax + b) \bmod m$. For all keys
+$x, y \in \mathbb{Z}/p\mathbb{Z}$, we have $h_{a,b}(x) = h_{a,b}(y)$ exactly when
+$\operatorname{val}(ax + b) \bmod m = \operatorname{val}(ay + b) \bmod m$. -/
 public theorem modPrimeHash_eq_iff (p m : Nat) (hm : 0 < m) (a b x y : ZMod p) :
     modPrimeHash p m hm a b x = modPrimeHash p m hm a b y ↔
       (a * x + b).val % m = (a * y + b).val % m := by
   simp [Fin.ext_iff]
 
 /--
-The pair map of the CLRS counting argument: it sends an index `(a, b)` to the pair of
-inner values `(a * x + b, a * y + b)` at two fixed keys.
+**The pair map of the mod-prime family.** Let $p$ be a natural number and fix two keys
+$x, y \in \mathbb{Z}/p\mathbb{Z}$. The pair map at $x$ and $y$ sends an index $(a, b)$ of the
+mod-prime family, that is, $a, b \in \mathbb{Z}/p\mathbb{Z}$ with $a \ne 0$, to the pair
+$(ax + b, ay + b) \in (\mathbb{Z}/p\mathbb{Z})^2$ of inner hash values at $x$ and $y$.
+
+This is the map of the CLRS counting argument for the mod-prime family.
 -/
 public def pairMap {p : Nat} (x y : ZMod p) (ab : ModPrimeIndex p) : ZMod p × ZMod p :=
   (ab.1.1 * x + ab.2, ab.1.1 * y + ab.2)
 
-/-- Extensionality form of `pairMap`. -/
+/--
+**Evaluating the pair map.** Let $p$ be a natural number, let $x, y \in \mathbb{Z}/p\mathbb{Z}$,
+and let $(a, b)$ be an index of the mod-prime family, so that $a, b \in \mathbb{Z}/p\mathbb{Z}$
+and $a \ne 0$. Then the pair map at $x$ and $y$ sends $(a, b)$ to $(ax + b, ay + b)$.
+-/
 @[simp]
 public theorem pairMap_apply {p : Nat} (x y : ZMod p) (ab : ModPrimeIndex p) :
     pairMap x y ab = (ab.1.1 * x + ab.2, ab.1.1 * y + ab.2) :=
   rfl
 
 /--
-For distinct keys `x ≠ y` in the field `ZMod p`, the two components of `pairMap`
-differ: their difference is `a * (x - y)` with both factors nonzero.
+**The two values of the pair map differ.** Let $p$ be a prime and let $x \ne y$ be keys in the
+field $\mathbb{Z}/p\mathbb{Z}$. For every index $(a, b)$ of the mod-prime family, that is,
+$a, b \in \mathbb{Z}/p\mathbb{Z}$ with $a \ne 0$, we have $ax + b \ne ay + b$.
+
+Indeed, the difference $(ax + b) - (ay + b) = a(x - y)$ is a product of two nonzero factors.
 -/
 public theorem pairMap_fst_ne_snd {p : Nat} [Fact p.Prime] {x y : ZMod p}
     (hxy : x ≠ y) (ab : ModPrimeIndex p) :
@@ -202,10 +263,12 @@ public theorem pairMap_fst_ne_snd {p : Nat} [Fact p.Prime] {x y : ZMod p}
   · exact hxy (sub_eq_zero.mp hs)
 
 /--
-The core bijection of the CLRS counting argument. For fixed distinct keys `x ≠ y` in
-the field `ZMod p`, solving the linear system `a * x + b = r`, `a * y + b = s` gives
-`a = (r - s) / (x - y)` and `b = r - a * x`; this inverts `pairMap`. Hence the indices
-`(a, b)` with `a ≠ 0` are in bijection with the ordered pairs `(r, s)` with `r ≠ s`.
+**Pair bijection of the CLRS counting argument.** Let $p$ be a prime and let $x \neq y$ be
+elements of the field $\mathbb{Z}/p\mathbb{Z}$. The pair bijection for $x, y$ is the bijection
+from the indices $(a, b)$, with $a, b \in \mathbb{Z}/p\mathbb{Z}$ and $a \neq 0$, to the ordered
+pairs $(r, s)$ of elements of $\mathbb{Z}/p\mathbb{Z}$ with $r \neq s$ that sends $(a, b)$ to
+the pair map value $(ax + b, ay + b)$. Its inverse solves the linear system $ax + b = r$,
+$ay + b = s$: it sends $(r, s)$ to $(a, b)$ with $a = (r - s)/(x - y)$ and $b = r - ax$.
 -/
 public def pairEquiv {p : Nat} [Fact p.Prime] {x y : ZMod p} (hxy : x ≠ y) :
     ModPrimeIndex p ≃ { rs : ZMod p × ZMod p // rs.1 ≠ rs.2 } where
@@ -239,14 +302,23 @@ public def pairEquiv {p : Nat} [Fact p.Prime] {x y : ZMod p} (hxy : x ≠ y) :
     · show ((r - s) / (x - y)) * y + (r - ((r - s) / (x - y)) * x) = s
       linear_combination -hkey
 
-/-- The forward direction of `pairEquiv` is `pairMap` on first components. -/
+/-- **The pair bijection is given by the pair map.** Let $p$ be a prime and let $x \neq y$ be
+elements of $\mathbb{Z}/p\mathbb{Z}$. For every index $(a, b)$ with
+$a, b \in \mathbb{Z}/p\mathbb{Z}$ and $a \neq 0$, the image of $(a, b)$ under the pair bijection
+for $x, y$, viewed as an element of $\mathbb{Z}/p\mathbb{Z} \times \mathbb{Z}/p\mathbb{Z}$, is the
+value of the pair map at $(a, b)$, namely $(ax + b, ay + b)$. -/
 @[simp]
 public theorem pairEquiv_apply_fst {p : Nat} [Fact p.Prime] {x y : ZMod p}
     (hxy : x ≠ y) (ab : ModPrimeIndex p) :
     (pairEquiv hxy ab).1 = pairMap x y ab :=
   rfl
 
-/-- In particular `pairMap` is injective for distinct keys. -/
+/--
+**The pair map is injective.** Let $p$ be a prime and let $x \ne y$ be keys in
+$\mathbb{Z}/p\mathbb{Z}$. Then the pair map at $x$ and $y$, which sends an index $(a, b)$ of the
+mod-prime family (so $a, b \in \mathbb{Z}/p\mathbb{Z}$ and $a \ne 0$) to $(ax + b, ay + b)$,
+is injective.
+-/
 public theorem pairMap_injective {p : Nat} [Fact p.Prime] {x y : ZMod p}
     (hxy : x ≠ y) : Function.Injective (pairMap x y) := by
   intro ab₁ ab₂ h
@@ -350,11 +422,17 @@ private theorem pairMap_pairEquiv_symm {p : Nat} [Fact p.Prime] {x y : ZMod p}
   exact h
 
 /--
-The key counting lemma (CLRS Theorem 11.5, counting step): for distinct keys `x ≠ y`,
-the number of indices `(a, b)`, `a ≠ 0`, for which `h_{a,b}` collides on `x` and `y`,
-multiplied by `m`, is at most `p * (p - 1)`, the total number of indices. The
-bijection `pairEquiv` identifies colliding indices with the colliding pairs counted
-in `collidingPairs_mul_le`.
+**Collision bound for the mod-prime hash functions.** Let $p$ be a prime and $m > 0$, and
+for $a, b \in \mathbb{Z}/p\mathbb{Z}$ with $a \ne 0$ let
+$h_{a,b}(x) = ((ax + b) \bmod p) \bmod m$ be the mod-prime hash function. For distinct keys
+$x \ne y$ in $\mathbb{Z}/p\mathbb{Z}$, the number of index pairs $(a, b)$ with $a \ne 0$ and
+$h_{a,b}(x) = h_{a,b}(y)$, multiplied by $m$, is at most $p(p - 1)$, the total number of
+index pairs.
+
+This is the counting step of CLRS Theorem 11.5. The bijection
+$(a, b) \mapsto (ax + b, ay + b)$ identifies the colliding index pairs with the pairs $(r, s)$
+of distinct residues modulo $p$ whose representatives in $\{0, \dots, p - 1\}$ are congruent
+modulo $m$.
 -/
 public theorem modPrime_collision_mul_le {p m : Nat} [Fact p.Prime]
     (hm : 0 < m) {x y : ZMod p} (hxy : x ≠ y) :
@@ -410,7 +488,9 @@ public theorem modPrime_collision_mul_le {p m : Nat} [Fact p.Prime]
   rw [hcard]
   exact collidingPairs_mul_le
 
-/-- The mod-prime family has `p * (p - 1)` indices. -/
+/-- **Number of mod-prime indices.** For every positive natural number $p$, the set of pairs
+$(a, b)$ of elements of $\mathbb{Z}/p\mathbb{Z}$ with $a \neq 0$ has exactly $p(p - 1)$
+elements. -/
 public theorem modPrimeIndex_card {p : Nat} [NeZero p] :
     Fintype.card (ModPrimeIndex p) = p * (p - 1) := by
   have hsub : Fintype.card { a : ZMod p // a ≠ 0 } = p - 1 := by
@@ -418,9 +498,16 @@ public theorem modPrimeIndex_card {p : Nat} [NeZero p] :
   rw [Fintype.card_prod, hsub, ZMod.card, Nat.mul_comm]
 
 /--
-Universality of the mod-prime family (CLRS Theorem 11.5): the indexed family
-`modPrimeHashes` over all `(a, b)` with `a ≠ 0` is universal. A uniformly random
-index therefore collides on any two distinct keys with probability at most `1 / m`.
+**Universality of the mod-prime family.** Let $p$ be a prime and $m$ a positive natural number.
+The indexed mod-prime family, whose member at the index $(a, b)$, with
+$a, b \in \mathbb{Z}/p\mathbb{Z}$ and $a \neq 0$, is the mod-prime hash function $h_{a,b}$, is
+universal over the set of all such indices: this set is nonempty, and for all distinct keys
+$x \neq y$ in $\mathbb{Z}/p\mathbb{Z}$, the number of indices $(a, b)$ with
+$h_{a,b}(x) = h_{a,b}(y)$, multiplied by $m$, is at most the number of indices. This is CLRS
+Theorem 11.5.
+
+A uniformly random index therefore collides on any two distinct keys with probability at most
+$1/m$.
 -/
 public theorem modPrime_isUniversalOn {p m : Nat} [Fact p.Prime]
     (hm : 0 < m) :
@@ -435,7 +522,11 @@ public theorem modPrime_isUniversalOn {p m : Nat} [Fact p.Prime]
     _ = (Finset.univ : Finset (ModPrimeIndex p)).card := by
         rw [Finset.card_univ, modPrimeIndex_card]
 
-/-- Membership in the `Finset` of distinct mod-prime functions. -/
+/-- **Members of the mod-prime family.** Let $p > 0$ and $m > 0$. A function $h$ from
+$\mathbb{Z}/p\mathbb{Z}$ to $\{0, 1, \dots, m - 1\}$ belongs to the mod-prime family of
+distinct functions exactly when $h = h_{a,b}$ for some index $(a, b)$ with
+$a, b \in \mathbb{Z}/p\mathbb{Z}$ and $a \ne 0$, where $h_{a,b}$ is the mod-prime hash
+function with index $(a, b)$. -/
 @[simp]
 public theorem mem_modPrimeFamily {p m : Nat} [NeZero p] (hm : 0 < m)
     (h : ZMod p → Fin m) :

@@ -19,8 +19,10 @@ Shared bundle for strict preferences, used by matching and social-choice develop
 
 namespace MathlibExt.Order
 
-/-- Strict total order modelling strict preference:
-irreflexive, transitive, total on distinct elements. -/
+/-- **Strict total order.** A strict total order on a type $\alpha$ consists of a binary
+relation $<$ on $\alpha$ that is irreflexive (no $a < a$), transitive ($a < b$ and $b < c$
+imply $a < c$) and total on distinct elements (if $a \ne b$, then $a < b$ or $b < a$). It
+models strict preference. -/
 structure StrictTotalOrder (α : Type*) where
   lt : α → α → Prop
   irrefl : ∀ a, ¬ lt a a
@@ -36,7 +38,8 @@ instance StrictTotalOrder.isStrictTotalOrder {α : Type*} (T : StrictTotalOrder 
   trichotomous := fun _ _ hab hba =>
     Classical.byContradiction fun h => (T.total h).elim hab hba
 
-/-- Two strict total orders with the same relation are equal. -/
+/-- **Strict total orders are determined by their relation.** Two strict total orders on a
+type $\alpha$ with the same relation are equal. -/
 @[ext]
 theorem StrictTotalOrder.ext {α : Type*} {T T' : StrictTotalOrder α} (h : T.lt = T'.lt) :
     T = T' := by

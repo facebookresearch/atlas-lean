@@ -25,9 +25,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Theorem 2: for `n ≡ 5 (mod 6)`, the equation `(xⁿ - 1)/(x - 1) = y³` has no integer
-solutions `(x, y)` with `x ≡ 2, 3, 5, 6 (mod 9)` (the paper's `x = 9z + 2, 9z + 3, 9z + 5,
-9z + 6` with `z ∈ ℤ`).
+/-- **The Nagell–Ljunggren cube equation for $n \equiv 5 \pmod 6$.** Let $n$ be a natural
+number with $n \equiv 5 \pmod 6$. Then there are no integers $x$ and $y$ with
+$x \equiv 2, 3, 5$ or $6 \pmod 9$ such that $x^n - 1 = (x - 1) y^3$. Since such an $x$ is not
+$1$, this says that $(x^n - 1)/(x - 1) = y^3$ has no such integer solution.
 
 Source: Tran Duc Son, *A Note on the Nagell–Ljunggren Equation (xⁿ - 1)/(x - 1) = y³*,
 INTEGERS 26 (2026), Article A104, Theorem 2 (`integers-2026-A104-thm-2`). -/
@@ -35,10 +36,13 @@ public theorem_wanted nagell_ljunggren_cube_no_solution_of_mod_six_eq_five (n : 
     (hn : n % 6 = 5) (x y : ℤ) (hx : x % 9 = 2 ∨ x % 9 = 3 ∨ x % 9 = 5 ∨ x % 9 = 6) :
     x ^ n - 1 ≠ (x - 1) * y ^ 3
 
-/-- Corollary 1: the equation `(xⁿ - 1)/(x - 1) = y³` has no integer solutions `(x, y, n)`
-with `x ≡ 2, 3, 5, 6 (mod 9)`. The record's Equation (1) is not displayed; `n` ranges over
-`n ≥ 3`, the classical range `n > 2` of the Nagell–Ljunggren equation (for `n = 1` every `x`
-gives the solution `y = 1`).
+/-- **The Nagell–Ljunggren cube equation for $x \equiv 2, 3, 5, 6 \pmod 9$.** Let $n \ge 3$ be a
+natural number. Then there are no integers $x$ and $y$ with $x \equiv 2, 3, 5$ or $6 \pmod 9$
+such that $x^n - 1 = (x - 1) y^3$. Since such an $x$ is not $1$, this says that
+$(x^n - 1)/(x - 1) = y^3$ has no such integer solution.
+
+The bound $n \ge 3$ is the classical range $n > 2$ of the Nagell–Ljunggren equation; for $n = 1$
+every $x$ gives the solution $y = 1$.
 
 Source: Tran Duc Son, *A Note on the Nagell–Ljunggren Equation (xⁿ - 1)/(x - 1) = y³*,
 INTEGERS 26 (2026), Article A104, Corollary 1 (`integers-2026-A104-cor-1`). -/
@@ -46,12 +50,11 @@ public theorem_wanted nagell_ljunggren_cube_no_solution (n : ℕ) (hn : 3 ≤ n)
     (hx : x % 9 = 2 ∨ x % 9 = 3 ∨ x % 9 = 5 ∨ x % 9 = 6) :
     x ^ n - 1 ≠ (x - 1) * y ^ 3
 
-/-- Theorem 1 (Ljunggren, quoted from the literature): consider `(xⁿ - 1)/(x - 1) = y^q` in
-integers `|x| > 1` (as `1 < x.natAbs`), `y > 1`, `n > 2`, `q ≥ 2` (Equation (1)). Apart from
-`(3⁵ - 1)/(3 - 1) = 11²`, `(7⁴ - 1)/(7 - 1) = 20²`, `(18³ - 1)/(18 - 1) = 7³` and
-`((-19)³ - 1)/(-19 - 1) = 7³`, it has no solution `(x, y, n, q)` if `q = 2`, or `3 ∣ n`, or
-`4 ∣ n`, or `q = 3` and `n ≢ 5 (mod 6)`. The equation is written as `xⁿ - 1 = (x - 1) y^q`
-(equivalent since `x ≠ 1`).
+/-- **Ljunggren's theorem on the Nagell–Ljunggren equation.** Let $x$ and $y$ be integers and
+$n$ and $q$ natural numbers with $|x| > 1$, $y > 1$, $n > 2$ and $q \ge 2$, and suppose that
+$x^n - 1 = (x - 1) y^q$, that is, $(x^n - 1)/(x - 1) = y^q$ (as $x \ne 1$). If $q = 2$, or
+$3 \mid n$, or $4 \mid n$, or $q = 3$ and $n \not\equiv 5 \pmod 6$, then $(x, y, n, q)$ is one
+of $(3, 11, 5, 2)$, $(7, 20, 4, 2)$, $(18, 7, 3, 3)$ and $(-19, 7, 3, 3)$.
 
 Source: Tran Duc Son, *A Note on the Nagell–Ljunggren Equation (xⁿ - 1)/(x - 1) = y³*,
 INTEGERS 26 (2026), Article A104, Theorem 1, quoting Ljunggren (`integers-2026-A104-thm-1`). -/

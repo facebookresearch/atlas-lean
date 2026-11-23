@@ -30,7 +30,11 @@ stated here.
 
 namespace IsDiscreteValuationRing
 
-/-- Ideal-theoretic multiplicity at the maximal ideal equals `addVal`. -/
+/-- **Multiplicity of the maximal ideal equals the additive valuation.** Let $R$ be a discrete
+valuation ring with maximal ideal $\mathfrak{m}$ and normalized additive valuation
+$v \colon R \to \mathbb{N} \cup \{\infty\}$. For every $x \in R$, the multiplicity of
+$\mathfrak{m}$ in the principal ideal $(x)$, that is, the supremum in $\mathbb{N} \cup \{\infty\}$
+of the $n \in \mathbb{N}$ such that $\mathfrak{m}^n$ divides $(x)$ as ideals, equals $v(x)$. -/
 theorem emultiplicity_maximalIdeal_span_eq_addVal
     {R : Type*} [CommRing R] [IsDomain R] [IsDiscreteValuationRing R] (x : R) :
     emultiplicity (IsLocalRing.maximalIdeal R) (Ideal.span {x}) = addVal R x := by
@@ -95,8 +99,12 @@ private theorem emultiplicity_map_eq_ramificationIdx_mul_general
 
 end Ideal.IsDedekindDomain
 
-/-- Scaling of `addVal` along a torsion-free local DVR extension by the
-current unprimed ramification index. -/
+/-- **Additive valuations scale by the ramification index.** Let $A$ and $B$ be discrete
+valuation rings, and let $B$ be an $A$-algebra that is torsion-free as an $A$-module and whose
+structure map $\varphi \colon A \to B$ is a local homomorphism. Let $v_A$ and $v_B$ be the
+normalized additive valuations of $A$ and $B$, with values in $\mathbb{N} \cup \{\infty\}$, and
+let $e$ be the ramification index of the maximal ideal of $B$ over $A$. Then
+$v_B(\varphi(x)) = e \cdot v_A(x)$ for every $x \in A$. -/
 theorem IsDiscreteValuationRing.addVal_algebraMap_eq_ramificationIdx_mul
     {A B : Type*} [CommRing A] [IsDomain A] [IsDiscreteValuationRing A]
     [CommRing B] [IsDomain B] [IsDiscreteValuationRing B]
@@ -138,8 +146,9 @@ theorem IsDiscreteValuationRing.addVal_algebraMap_eq_ramificationIdx_mul
     exact Ideal.IsDedekindDomain.emultiplicity_map_eq_ramificationIdx_mul_general
       hspan hp_irr hw_irr
 
-/-- A natural number is a unit in a local ring iff the residue characteristic
-does not divide it. -/
+/-- **Natural numbers that are units in a local ring.** Let $R$ be a commutative local ring and
+let $p$ be the characteristic of its residue field. For every natural number $n$, the image of
+$n$ in $R$ is a unit if and only if $p$ does not divide $n$. -/
 theorem IsLocalRing.isUnit_natCast_iff_ringChar_not_dvd
     {R : Type*} [CommRing R] [IsLocalRing R] (n : ℕ) :
     IsUnit (n : R) ↔ ¬ ringChar (IsLocalRing.ResidueField R) ∣ n := by
