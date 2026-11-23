@@ -63,6 +63,27 @@ private theorem coeff_zero_mapDomain_mul {R : Type*} [Semiring R] {r q : ℕ} (h
 
 end constantTerm_pow_mul_modEq_tilde
 
+namespace constantTerm_tilde_pow_mul_modEq_laurentCartier
+
+private theorem pow_mul_modEq_cartier {r q m : ℕ} (hq : q ≠ 0)
+    (F G R : AddMonoidAlgebra ℤ (Fin r → ℤ))
+    (hFG : ∀ j, F.coeff j ≡ (AddMonoidAlgebra.mapDomain (fun j => q • j) G).coeff j [ZMOD m])
+    (n : ℕ) :
+    (F ^ n * R).coeff 0 ≡ (G ^ n * laurentCartier q R).coeff 0 [ZMOD m] := by
+  let reduce := AddMonoidAlgebra.mapRingHom (Fin r → ℤ) (Int.castRingHom (ZMod m))
+  let dilate := AddMonoidAlgebra.mapDomainRingHom ℤ (nsmulAddMonoidHom (α := Fin r → ℤ) q)
+  have h : reduce F = reduce (dilate G) := by
+    ext j
+    exact (ZMod.intCast_eq_intCast_iff _ _ _).2 (hFG j)
+  rw [← ZMod.intCast_eq_intCast_iff,
+    ← constantTerm_pow_mul_modEq_tilde.coeff_zero_mapDomain_mul hq (G ^ n) R]
+  change (reduce (F ^ n * R)).coeff 0 = (reduce (dilate (G ^ n) * R)).coeff 0
+  simp only [map_mul, map_pow, h]
+
+end constantTerm_tilde_pow_mul_modEq_laurentCartier
+
+open constantTerm_tilde_pow_mul_modEq_laurentCartier
+
 set_option linter.unusedVariables false in
 /-- **Passing from $P$ to $\tilde P$ modulo $p^a$.** Let $p$ be a prime, let $a \ge 1$ and $\ell$
 be natural numbers, and let $P$ and $\tilde P$ be Laurent polynomials in $r$ variables with
@@ -87,20 +108,34 @@ public theorem constantTerm_pow_mul_modEq_tilde {r p a ℓ : ℕ} (hp : p.Prime)
     (Q : AddMonoidAlgebra ℤ (Fin r → ℤ)) (n k : ℕ) :
     (P ^ (p ^ (a - 1) * n + k) * Q).coeff 0 ≡
       (Pt ^ n * laurentCartier (p ^ ℓ) (P ^ k * Q)).coeff 0 [ZMOD (p : ℤ) ^ a] := by
-  let reduce := AddMonoidAlgebra.mapRingHom (Fin r → ℤ) (Int.castRingHom (ZMod (p ^ a)))
-  let dilate := AddMonoidAlgebra.mapDomainRingHom ℤ (nsmulAddMonoidHom (α := Fin r → ℤ) (p ^ ℓ))
-  have h : reduce (P ^ (p ^ (a - 1))) = reduce (dilate Pt) := by
-    ext j
-    apply (ZMod.intCast_eq_intCast_iff _ _ _).2
-    rw [Nat.cast_pow]
-    exact hPt j
-  have hct := congrArg (fun f => (f ^ n * reduce (P ^ k * Q)).coeff 0) h
-  rw [← Nat.cast_pow, ← ZMod.intCast_eq_intCast_iff, pow_add, pow_mul, mul_assoc]
-  rw [← constantTerm_pow_mul_modEq_tilde.coeff_zero_mapDomain_mul
-    (pow_ne_zero ℓ hp.ne_zero) (Pt ^ n) (P ^ k * Q)]
-  change (reduce ((P ^ (p ^ (a - 1))) ^ n * (P ^ k * Q))).coeff 0 =
-    (reduce (dilate (Pt ^ n) * (P ^ k * Q))).coeff 0
-  simpa only [map_mul, map_pow] using hct
+  rw [pow_add, pow_mul, mul_assoc, ← Nat.cast_pow]
+  exact pow_mul_modEq_cartier (pow_ne_zero ℓ hp.ne_zero) _ Pt _ (by simpa using hPt) n
+
+/-- **Rowland–Zeilberger congruence modulo $p^a$.** Let $p$ be a prime, let $a$ be a natural
+number, and let $\tilde P$ be a Laurent polynomial in $r$ variables with integer coefficients
+such that $\tilde P^p \equiv \tilde P(x^p) \pmod{p^a}$ coefficientwise, where $\tilde P(x^p)$
+is obtained from $\tilde P$ by replacing each monomial $x^e$ with $x^{pe}$. Write
+$\operatorname{ct}[F]$ for the constant term of a Laurent polynomial $F$ and $\Lambda_p$ for
+Kohen's operator, which keeps the terms whose exponents are all divisible by $p$ and replaces
+$x^{pj}$ by $x^j$. Then for every Laurent polynomial $Q$ in $r$ variables with integer
+coefficients and all natural numbers $n$ and $k$,
+$\operatorname{ct}[\tilde P^{pn+k} Q] \equiv
+\operatorname{ct}[\tilde P^n \Lambda_p(\tilde P^k Q)] \pmod{p^a}$.
+
+The statement holds for every natural number $k$; the paper states it for $k \in \mathbb{F}_p$.
+
+Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
+Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
+Lemma 24 (`jis-2026-26.4.2-lem-24`). -/
+public theorem constantTerm_tilde_pow_mul_modEq_laurentCartier {r p a : ℕ}
+    (hp : p.Prime) (Pt : AddMonoidAlgebra ℤ (Fin r → ℤ))
+    (hPt : ∀ j, (Pt ^ p).coeff j ≡
+      (AddMonoidAlgebra.mapDomain (fun j => p • j) Pt).coeff j [ZMOD (p : ℤ) ^ a])
+    (Q : AddMonoidAlgebra ℤ (Fin r → ℤ)) (n k : ℕ) :
+    (Pt ^ (p * n + k) * Q).coeff 0 ≡ (Pt ^ n * laurentCartier p (Pt ^ k * Q)).coeff 0
+      [ZMOD (p : ℤ) ^ a] := by
+  rw [pow_add, pow_mul, mul_assoc, ← Nat.cast_pow]
+  exact pow_mul_modEq_cartier hp.ne_zero _ Pt _ (by simpa using hPt) n
 
 end
 
