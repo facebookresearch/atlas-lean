@@ -43,9 +43,10 @@ open Cslib.Complexity.SatVerifier (Sym)
 
 /-! ### The machine -/
 
-/-- Stacks: the input `X` and the witness `W`; the counters `S`, `T`, `N` (for `s`, `t`, `n`),
-`C` (vertices seen), `A` (the current vertex) and `B` (the previous one); the save stacks `E`
-(for `X`) and `Z` (for `W`); the scratch stacks `R` and `Q`. -/
+/-- **Stacks of the Hamiltonian path verifier.** The verifier has twelve stacks: the input $X$
+and the witness $W$; the counters $S$, $T$, $N$ (holding $s$, $t$, $n$), $C$ (the number of
+vertices seen), $A$ (the current vertex) and $B$ (the previous one); the save stacks $E$ (for
+$X$) and $Z$ (for $W$); and the scratch stacks $R$ and $Q$. -/
 inductive K | X | W | S | T | N | C | A | B | E | Z | R | Q
   deriving DecidableEq
 
@@ -54,7 +55,10 @@ instance K.instFintypeEnumFix : Fintype K where
   elems := ⟨↑[K.X, .W, .S, .T, .N, .C, .A, .B, .E, .Z, .R, .Q], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- The four counter comparisons: `a` with `n`, `a` with `s`, `c` with `n`, `b` with `t`. -/
+/-- **Counter comparisons of the HAMPATH verifier.** The four-element type of the comparisons the
+verifier makes between its counters: the current vertex $a$ with the vertex count $n$, the
+current vertex $a$ with the start vertex $s$, the number $c$ of vertices seen with $n$, and the
+previous vertex $b$ with the end vertex $t$. -/
 inductive CI | an | as | cn | bt
   deriving DecidableEq
 
@@ -63,12 +67,14 @@ instance CI.instFintypeEnumFix : Fintype CI where
   elems := ⟨↑[CI.an, .as, .cn, .bt], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- Labels: read `s`, `t`, `n`; validate the edge list and put it back; validate the witness and
-put it back; the vertex loop, reading a vertex, and the head-or-edge dispatch; the counter
-comparisons (`cmp`, and the two restoring loops `cr`, `crb` of each outcome); the edge scan
-(comparing an edge's ends, restoring the counters, putting the edge list back); the repeat scan;
-the final nonzero-count check; counting the vertex and making it the previous one; accept;
-reject. -/
+/-- **Labels of the Hamiltonian path verifier.** The instruction labels of the verifier: reading
+$s$, $t$, $n$; validating the edge list and putting it back; validating the witness and putting
+it back; the vertex loop, reading a vertex, and the head-or-edge dispatch; for each of the four
+counter comparisons, the comparison itself and, for each of its three outcomes, the two loops
+restoring the compared counters; the edge scan (comparing an edge's ends, with a flag for the
+verdict so far, restoring the counters, putting the edge list back); the repeat scan (likewise
+flagged comparisons and restores, then putting the witness back); the final nonzero-count
+check; counting the vertex and making it the previous one; accept; and reject. -/
 inductive Lab
   | rdS | rdT | rdN | vE | vEU | vEV | vEb | vW | vWU | vWb | loop | rdA | hd
   | cmp (i : CI) | cr (i : CI) (o : Ordering) | crb (i : CI) (o : Ordering)
@@ -92,30 +98,57 @@ instance Lab.instFintypeEnumFix : Fintype Lab where
       ⟨_ | _ | _ | _, _ | _ | _⟩ | ⟨_ | _ | _ | _, _ | _ | _⟩ | _ | ⟨_ | _⟩ | ⟨_ | _⟩ |
       ⟨_ | _⟩ | ⟨_ | _⟩ | _ | _ | ⟨_ | _⟩ | ⟨_ | _⟩ | _ | _ | _ | _ | _ | _ | _) <;> decide
 
-/-- Statements of the verifier. -/
+/-- **Statements of the Hamiltonian-path verifier.** A statement of the verifier is a statement of
+a multi-stack Turing machine whose stacks are indexed by the verifier's stacks $K$, each stack
+over the alphabet $\mathrm{Sym}$, with labels $\mathrm{Lab}$ and a Boolean internal variable. -/
 abbrev Stmt := TM2.Stmt (fun _ : K => Sym) Lab Bool
 
-/-- Read a unary number off `src` onto the counter `c`: a `true` adds a unit, the `false`
-terminator moves on to `next`, an exhausted `src` rejects. -/
+/-- **The unary reader of the Hamiltonian path verifier.** For stacks $\mathsf{src}$ and $c$ and
+labels $\ell$ (its own) and $m$ (the next one), the statement that goes to label $\mathrm{no}$
+if $\mathsf{src}$ is empty; otherwise it pops the top symbol of $\mathsf{src}$ and, if that
+symbol is the bit `true`, pushes the bit `true` (one unit) onto $c$ and goes to $\ell$, while
+if it is anything else it goes to $m$. Each of the two tests also stores its outcome in the
+Boolean variable.
+
+Run in a loop at $\ell$, it reads a unary number off $\mathsf{src}$ onto the counter $c$ and
+consumes the terminator. -/
 def readU (src c : K) (self next : Lab) : Stmt :=
   .peek src (fun _ o => o.isNone) <| .branch id (.goto fun _ => .no) <|
     .pop src (fun _ o => bitOf Sym.bit? o) <| .branch id
       (.push c (fun _ => .bit true) (.goto fun _ => self)) (.goto fun _ => next)
 
-/-- Move a unary number, terminator included, from `src` to `dst`; an exhausted `src`
-rejects. -/
+/-- **The unary mover of the Hamiltonian path verifier.** For stacks $\mathsf{src}$ and
+$\mathsf{dst}$ and labels $\ell$ (its own) and $m$ (the next one), the statement that goes to
+label $\mathrm{no}$ if $\mathsf{src}$ is empty; otherwise it pops the top symbol of
+$\mathsf{src}$, reads it as the bit `true` if it is the bit `true` and as `false` otherwise,
+pushes that bit onto $\mathsf{dst}$, and goes to $\ell$ if the bit is `true` and to $m$ if it
+is `false`. Each of the two tests also stores its outcome in the Boolean variable.
+
+Run in a loop at $\ell$, it moves a unary number, terminator included, from $\mathsf{src}$ to
+$\mathsf{dst}$. -/
 def skipU (src dst : K) (self next : Lab) : Stmt :=
   .peek src (fun _ o => o.isNone) <| .branch id (.goto fun _ => .no) <|
     .pop src (fun _ o => bitOf Sym.bit? o) <| .push dst (fun b => .bit b) <| .branch id
       (.goto fun _ => self) (.goto fun _ => next)
 
-/-- Go to `e` if stack `k` is empty and to `ne` otherwise. -/
+/-- **Emptiness test.** For a stack $k$ and labels $e$ and $ne$, the verifier instruction that
+looks at the top of stack $k$ without changing any stack, then goes to $e$ if $k$ is empty and
+to $ne$ otherwise. -/
 def ifE (k : K) (e ne : Lab) : Stmt :=
   .peek k (fun _ o => o.isNone) <| .branch id (.goto fun _ => e) (.goto fun _ => ne)
 
-/-- Compare the next unary number of `src` (its bits move to `sv`) with the counter `c`, one
-unit of `c` per `true`, parked on `R`; `ok` is the verdict so far, falsified when `c` runs out
-early. At the terminator the verdict is `ok` if `c` is exhausted and `false` otherwise. -/
+/-- **Step of the HAMPATH verifier's unary comparison loop.** For stacks $\mathit{src}$,
+$\mathit{sv}$, $c$ of the HAMPATH verifier, label families $\mathit{self}$ and $\mathit{fin}$
+indexed by booleans, and a boolean verdict $\mathit{ok}$, this is the instruction that pops the top
+of $\mathit{src}$, reads it as a bit $b$ (false if $\mathit{src}$ is empty or its top is not a bit
+symbol), and pushes the bit symbol of $b$ onto $\mathit{sv}$. If $b$ is true, it pops $c$; if $c$
+was nonempty it pushes the bit symbol of true onto the scratch stack $R$ and goes to
+$\mathit{self}(\mathit{ok})$, and otherwise it goes to $\mathit{self}(\mathrm{false})$. If $b$ is
+false, it goes to $\mathit{fin}(\mathit{ok})$ when $c$ is empty and to
+$\mathit{fin}(\mathrm{false})$ otherwise.
+
+Iterated, it compares the next unary number of $\mathit{src}$ with the counter $c$, one unit of $c$
+per true, parked on $R$: $\mathit{ok}$ is the verdict so far, falsified when $c$ runs out early. -/
 def cbS (src sv c : K) (self fin : Bool → Lab) (ok : Bool) : Stmt :=
   .pop src (fun _ o => bitOf Sym.bit? o) <| .push sv (fun b => .bit b) <| .branch id
     (.pop c (fun _ o => o.isSome) <| .branch id
@@ -123,22 +156,37 @@ def cbS (src sv c : K) (self fin : Bool → Lab) (ok : Bool) : Stmt :=
     (.peek c (fun _ o => o.isNone) <| .branch id (.goto fun _ => fin ok)
       (.goto fun _ => fin false))
 
-/-- The first counter of each comparison. -/
+/-- **First counter of a HAMPATH-verifier comparison.** The function from the four counter
+comparisons of the HAMPATH verifier to its stacks that sends the comparisons of the current
+vertex with the vertex count and of the current vertex with the start vertex to the
+current-vertex counter $A$, the comparison of the number of vertices seen with the vertex count
+to the vertices-seen counter $C$, and the comparison of the previous vertex with the end vertex
+to the previous-vertex counter $B$. -/
 def ca : CI → K
   | .an => .A
   | .as => .A
   | .cn => .C
   | .bt => .B
 
-/-- The second counter of each comparison. -/
+/-- **Second counter of a HAMPATH-verifier comparison.** The function from the four counter
+comparisons of the HAMPATH verifier to its stacks that sends the comparisons of the current
+vertex with the vertex count and of the number of vertices seen with the vertex count to the
+vertex-count counter $N$, the comparison of the current vertex with the start vertex to the
+start-vertex counter $S$, and the comparison of the previous vertex with the end vertex to the
+end-vertex counter $T$. -/
 def cb : CI → K
   | .an => .N
   | .as => .S
   | .cn => .N
   | .bt => .T
 
-/-- Where each comparison goes: on `a < n`, `a = s`, `c = n`, `b = t` respectively to the
-dispatch, the repeat scan, the nonzero-count check and `yes`; otherwise to `no`. -/
+/-- **Exit labels of the counter comparisons.** The label the verifier goes to after comparing
+two counters, where $a$ is the current vertex, $b$ the previous one, $c$ the number of vertices
+seen, $n$ the number of vertices and $s$, $t$ the two ends: after comparing $a$ with $n$ it goes
+to the head-or-edge dispatch if $a < n$; after comparing $a$ with $s$ it goes to the repeat scan
+if $a = s$; after comparing $c$ with $n$ it goes to the nonzero-count check if $c = n$; after
+comparing $b$ with $t$ it goes to the accept label if $b = t$; in every other case it goes to
+the reject label. -/
 def cout : CI → Ordering → Lab
   | .an, .lt => .hd
   | .as, .eq => .nd
@@ -146,7 +194,64 @@ def cout : CI → Ordering → Lab
   | .bt, .eq => .yes
   | _, _ => .no
 
-/-- The verifier: parse and validate, then walk the vertices. -/
+/-- **The Hamiltonian path verifier machine.** The verifier is the program of the multi-stack
+machine with the stacks and labels of the Hamiltonian path verifier, every stack over the
+alphabet $\mathrm{Sym}$, and a Boolean internal variable, given below label by label. Write
+$\mathrm{bit}(x)$ for the bit symbol of a boolean $x$. Write $(a, n)$, $(a, s)$, $(c, n)$ and
+$(b, t)$ for the four counter comparisons, and $\alpha(i)$ and $\beta(i)$ for the first and the
+second counter of comparison $i$. Every unary reader, unary mover, bit-moving loop and transfer
+below has the label it sits at as its own label; the bit-moving loops read bit symbols as bits
+and every other symbol as a marker, and push $\mathrm{bit}(x)$ for a bit $x$. The transfer from a
+stack $k$ onto a list of stacks with next label $m$ pops $k$; if it popped a symbol, it pushes
+$\mathrm{bit}(\mathrm{true})$ onto each listed stack and returns to its own label, and otherwise
+it goes to $m$. An emptiness test of a stack "to $e$, else $e'$" goes to $e$ if the stack is
+empty and to $e'$ otherwise. A transfer also stores in the Boolean variable whether its pop
+found a symbol, and an emptiness test stores there whether the stack is empty.
+
+- $\mathsf{rdS}$, $\mathsf{rdT}$, $\mathsf{rdN}$: the unary reader from $X$ onto $S$, $T$, $N$
+  respectively, with next labels $\mathsf{rdT}$, $\mathsf{rdN}$, $\mathsf{vE}$ respectively.
+- $\mathsf{vE}$: the emptiness test of $X$ to $\mathsf{vEb}$, else $\mathsf{vEU}$. $\mathsf{vEU}$
+  and $\mathsf{vEV}$: the unary mover from $X$ to $E$, with next labels $\mathsf{vEV}$ and
+  $\mathsf{vE}$ respectively. $\mathsf{vEb}$: the bit-moving loop from $E$ to $X$ with next label
+  $\mathsf{vW}$.
+- $\mathsf{vW}$: the emptiness test of $W$ to $\mathsf{vWb}$, else $\mathsf{vWU}$. $\mathsf{vWU}$:
+  the unary mover from $W$ to $Z$ with next label $\mathsf{vW}$. $\mathsf{vWb}$: the bit-moving
+  loop from $Z$ to $W$ with next label $\mathsf{loop}$.
+- $\mathsf{loop}$: the emptiness test of $W$ to $\mathsf{cmp}(c, n)$, else $\mathsf{rdA}$.
+  $\mathsf{rdA}$: the unary reader from $W$ onto $A$ with next label $\mathsf{cmp}(a, n)$.
+  $\mathsf{hd}$: the emptiness test of $C$ to $\mathsf{cmp}(a, s)$, else $\mathsf{scan}$.
+- For each comparison $i$, $\mathsf{cmp}(i)$ is one round of counter comparison of $\alpha(i)$
+  and $\beta(i)$, with scratch stacks $R$ (for $\alpha(i)$) and $Q$ (for $\beta(i)$), both units
+  $\mathrm{bit}(\mathrm{true})$, own label $\mathsf{cmp}(i)$, and $\mathsf{cr}(i, <)$,
+  $\mathsf{cr}(i, =)$, $\mathsf{cr}(i, >)$ as its labels $\mathit{lt}$, $\mathit{eq}$ and
+  $\mathit{gt}$. For each ordering $o$, $\mathsf{cr}(i, o)$ is the transfer from $R$ onto
+  $\alpha(i)$ with next label $\mathsf{crb}(i, o)$, and $\mathsf{crb}(i, o)$ is the transfer from
+  $Q$ onto $\beta(i)$ whose next label is the exit label of the counter comparison $i$ with
+  outcome $o$.
+- $\mathsf{scan}$: the emptiness test of $X$ to $\mathsf{no}$, else
+  $\mathsf{ceU}(\mathrm{true})$. For each boolean $\mathit{ok}$: $\mathsf{ceU}(\mathit{ok})$ is
+  the step of the unary comparison loop with source $X$, save stack $E$, counter $B$, label
+  families $\mathsf{ceU}$ and $\mathsf{rsU}$, and verdict $\mathit{ok}$; $\mathsf{rsU}(\mathit{ok})$
+  is the transfer from $R$ onto $B$ with next label $\mathsf{ceV}(\mathit{ok})$;
+  $\mathsf{ceV}(\mathit{ok})$ is the step of the unary comparison loop with source $X$, save stack
+  $E$, counter $A$, label families $\mathsf{ceV}$ and $\mathsf{rsV}$, and verdict $\mathit{ok}$;
+  and $\mathsf{rsV}(\mathit{ok})$ is the transfer from $R$ onto $A$ with next label $\mathsf{scB}$
+  if $\mathit{ok}$ is true and $\mathsf{scan}$ otherwise. $\mathsf{scB}$: the bit-moving loop from
+  $E$ to $X$ with next label $\mathsf{nd}$.
+- $\mathsf{nd}$: the emptiness test of $W$ to $\mathsf{ndB}$, else $\mathsf{cbN}(\mathrm{true})$.
+  For each boolean $\mathit{ok}$: $\mathsf{cbN}(\mathit{ok})$ is the step of the unary comparison
+  loop with source $W$, save stack $Z$, counter $A$, label families $\mathsf{cbN}$ and
+  $\mathsf{rsN}$, and verdict $\mathit{ok}$; and $\mathsf{rsN}(\mathit{ok})$ is the transfer from
+  $R$ onto $A$ with next label $\mathsf{no}$ if $\mathit{ok}$ is true and $\mathsf{nd}$
+  otherwise. $\mathsf{ndB}$: the bit-moving loop from $Z$ to $W$ with next label $\mathsf{incC}$.
+- $\mathsf{fin}$: the emptiness test of $C$ to $\mathsf{no}$, else $\mathsf{cmp}(b, t)$.
+  $\mathsf{incC}$: the counter increment pushing $\mathrm{bit}(\mathrm{true})$ onto $C$ and going
+  to $\mathsf{dB}$. $\mathsf{dB}$: the transfer from $B$ onto no stack (it drains $B$) with next
+  label $\mathsf{mA}$. $\mathsf{mA}$: the transfer from $A$ onto $B$ with next label
+  $\mathsf{loop}$.
+- $\mathsf{yes}$ and $\mathsf{no}$: halt.
+
+The verifier parses and validates the input and the witness, then walks the vertices. -/
 def prog : Lab → TM2.Stmt (fun _ : K => Sym) Lab Bool
   | .rdS => readU .X .S .rdS .rdT
   | .rdT => readU .X .T .rdT .rdN
@@ -182,32 +287,51 @@ def prog : Lab → TM2.Stmt (fun _ : K => Sym) Lab Bool
   | .yes => .halt
   | .no => .halt
 
-/-- The start label. -/
+/-- **Start label of the Hamiltonian-path verifier.** The verifier starts at the label
+$\mathsf{rdS}$, where it reads the first unary number of the input stack $X$ (the start vertex
+$s$) onto the counter stack $S$. -/
 def start : Lab := .rdS
 
 /-! ### Generic phases -/
 
-/-- Two updates of `a` interleaved with two of `b` leave the last of each. -/
+/-- **Interleaved stack updates in the Hamiltonian-path verifier.** Let $a \ne b$ be two stacks of
+the verifier, $S$ an assignment of a list of symbols to each stack, and $p, p', t, t'$ lists of
+symbols. Setting $a$ to $p$, then $b$ to $t$, then $a$ to $p'$, then $b$ to $t'$ in $S$ gives the
+same assignment as setting $a$ to $p'$ and then $b$ to $t'$. -/
 theorem update_update_update_update {a b : K} (hab : a ≠ b) (S : ∀ _ : K, List Sym)
     (p p' t t' : List Sym) :
     update (update (update (update S a p) b t) a p') b t' = update (update S a p') b t' := by
   rw [update_comm hab.symm, update_idem, update_idem]
 
-/-- A step whose label and stacks are known. -/
+/-- **A single step of the Hamiltonian-path verifier.** Let $l, l'$ be labels, $v$ a flag value
+and $S, S'$ assignments of a list of symbols to each stack. If executing the verifier's statement
+at $l$ with flag $v$ and stacks $S$ jumps to the label $l'$ and leaves the stacks $S'$, then the
+verifier goes in exactly one step from label $l$, flag $v$ and stacks $S$ to label $l'$ and
+stacks $S'$, with some flag value. -/
 theorem step1 {l l' : Lab} {v : Bool} {S S' : ∀ _ : K, List Sym}
     (h : (TM2.stepAux (prog l) v S).l = some l') (h' : (TM2.stepAux (prog l) v S).stk = S') :
     ∃ v', Run prog 1 ⟨some l, v, S⟩ ⟨some l', v', S'⟩ :=
   ⟨_, Run.single (d := ⟨some l', (TM2.stepAux (prog l) v S).var, S'⟩) (by rw [← h, ← h'])⟩
 
-/-- `ifE` peeks at its stack. -/
+/-- **One step of the emptiness test.** If the verifier's instruction at label $l$ is the
+emptiness test of stack $k$ with targets $e$ and $ne$, then from label $l$, in any internal state
+and on any stacks, exactly one step of the verifier leads to label $e$ if stack $k$ is empty and
+to label $ne$ otherwise, in some internal state and with the stacks unchanged. -/
 theorem ifE_run {l e ne : Lab} {k : K} (hp : prog l = ifE k e ne) (v : Bool)
     (St : ∀ _ : K, List Sym) :
     ∃ v', Run prog 1 ⟨some l, v, St⟩ ⟨some (if St k = [] then e else ne), v', St⟩ :=
   step1 (by cases h : St k <;> simp [hp, ifE, TM2.stepAux, h])
     (by cases h : St k <;> simp [hp, ifE, TM2.stepAux, h])
 
-/-- `readU` on `k` in unary: `k + 1` steps to `next`, with `k` more units on the counter and
-the rest of `src` left. -/
+/-- **The unary reader of the Hamiltonian path verifier reads a terminated number.** Let
+$\mathsf{src} \ne c$ be stacks and $\ell$, $m$ labels such that the verifier's statement at
+$\ell$ is the unary reader from $\mathsf{src}$ onto $c$ with own label $\ell$ and next label
+$m$. Let $k, j$ be natural numbers and $r$ a bit list, and suppose that $\mathsf{src}$ holds
+$k$ copies of `true`, then `false`, then $r$ (as bit symbols, first bit on top) and that $c$
+holds $j$ copies of the bit `true`. Then from label $\ell$, with either value of the Boolean
+variable, the verifier reaches label $m$ in exactly $k + 1$ steps, with $\mathsf{src}$ holding
+the bits of $r$, $c$ holding $k + j$ copies of the bit `true`, and every other stack
+unchanged. -/
 theorem readU_run {src c : K} {self next : Lab} (hp : prog self = readU src c self next)
     (hc : c ≠ src) : ∀ (k j : ℕ) (r : List Bool) (v : Bool) (St : ∀ _ : K, List Sym),
       St src = (List.replicate k true ++ false :: r).map Sym.bit → St c = cnt (Sym.bit true) j →
@@ -234,7 +358,13 @@ theorem readU_run {src c : K} {self next : Lab} (hp : prog self = readU src c se
       exact ⟨v', Run.head (by simp [TM2.step, hp, readU, TM2.stepAux, hX, bitOf, Sym.bit?,
         update_of_ne hc]) hrun⟩
 
-/-- `readU` on an unterminated unary prefix rejects. -/
+/-- **The unary reader of the Hamiltonian path verifier rejects an unterminated number.** Let
+$\mathsf{src} \ne c$ be stacks and $\ell$, $m$ labels such that the verifier's statement at
+$\ell$ is the unary reader from $\mathsf{src}$ onto $c$ with own label $\ell$ and next label
+$m$. Let $l$ be a bit list from which no unary length can be read (that is, $l$ contains no
+`false`), and suppose that $\mathsf{src}$ holds the bits of $l$ (as bit symbols, first bit on
+top). Then from label $\ell$, with either value of the Boolean variable and any contents of the
+other stacks, the verifier reaches label $\mathrm{no}$ within $|l| + 1$ steps. -/
 theorem readU_none {src c : K} {self next : Lab} (hp : prog self = readU src c self next)
     (hc : c ≠ src) : ∀ (l : List Bool) (v : Bool) (St : ∀ _ : K, List Sym),
       readUnaryLength l = none → St src = l.map Sym.bit →
@@ -258,7 +388,11 @@ theorem readU_none {src c : K} {self next : Lab} (hp : prog self = readU src c s
           refine ⟨v', S', (((Run.single ?_).le le_rfl).trans h).mono (by simp; omega)⟩
           simp [hp, readU, TM2.stepAux, hX, bitOf, Sym.bit?, update_of_ne hc]
 
-/-- A unary block, reversed, after one more unit. -/
+/-- **Extending a reversed unary block.** For $a \in \mathbb{N}$, let $\beta_a$ be the list of
+symbols obtained by mapping the bit symbol over the reversal of the unary block of $a$ ($a$ copies
+of true followed by one false), that is, the bit symbol of false followed by $a$ bit symbols of
+true. Then for every list $L$ of symbols, $\beta_a$ followed by the bit symbol of true and then
+$L$ equals $\beta_{a+1}$ followed by $L$. -/
 theorem blk_succ (a : ℕ) (L : List Sym) :
     (List.replicate a true ++ [false]).reverse.map Sym.bit ++ Sym.bit true :: L =
       (List.replicate (a + 1) true ++ [false]).reverse.map Sym.bit ++ L := by
@@ -270,8 +404,15 @@ theorem blk_succ (a : ℕ) (L : List Sym) :
     | succ n ih => simp [List.replicate_succ, ih]
   simp [e, List.replicate_succ]
 
-/-- `skipU` on `k` in unary: `k + 1` steps to `next`, the number (with its terminator) moved to
-`dst`, reversed. -/
+/-- **The unary mover of the Hamiltonian path verifier moves a terminated number.** Let
+$\mathsf{src} \ne \mathsf{dst}$ be stacks and $\ell$, $m$ labels such that the verifier's
+statement at $\ell$ is the unary mover from $\mathsf{src}$ to $\mathsf{dst}$ with own label
+$\ell$ and next label $m$. Let $k$ be a natural number and $r$ a bit list, and suppose that
+$\mathsf{src}$ holds $k$ copies of `true`, then `false`, then $r$ (as bit symbols, first bit on
+top). Then from label $\ell$, with either value of the Boolean variable, the verifier reaches
+label $m$ in exactly $k + 1$ steps, with $\mathsf{src}$ holding the bits of $r$, with
+$\mathsf{dst}$ holding the bit `false` followed by $k$ copies of the bit `true` on top of its
+previous contents, and with every other stack unchanged. -/
 theorem skipU_run {src dst : K} {self next : Lab} (hp : prog self = skipU src dst self next)
     (hd : dst ≠ src) : ∀ (k : ℕ) (r : List Bool) (v : Bool) (St : ∀ _ : K, List Sym),
       St src = (List.replicate k true ++ false :: r).map Sym.bit →
@@ -295,7 +436,14 @@ theorem skipU_run {src dst : K} {self next : Lab} (hp : prog self = skipU src ds
       exact ⟨v', Run.head (by simp [TM2.step, hp, skipU, TM2.stepAux, hX, bitOf, Sym.bit?,
         update_of_ne hd]) hrun⟩
 
-/-- `skipU` on an unterminated unary prefix rejects. -/
+/-- **The unary mover of the Hamiltonian path verifier rejects an unterminated number.** Let
+$\mathsf{src} \ne \mathsf{dst}$ be stacks and $\ell$, $m$ labels such that the verifier's
+statement at $\ell$ is the unary mover from $\mathsf{src}$ to $\mathsf{dst}$ with own label
+$\ell$ and next label $m$. Let $l$ be a bit list from which no unary length can be read (that
+is, $l$ contains no `false`), and suppose that $\mathsf{src}$ holds the bits of $l$ (as bit
+symbols, first bit on top). Then from label $\ell$, with either value of the Boolean variable
+and any contents of the other stacks, the verifier reaches label $\mathrm{no}$ within
+$|l| + 1$ steps. -/
 theorem skipU_none {src dst : K} {self next : Lab} (hp : prog self = skipU src dst self next)
     (hd : dst ≠ src) : ∀ (l : List Bool) (v : Bool) (St : ∀ _ : K, List Sym),
       readUnaryLength l = none → St src = l.map Sym.bit →
@@ -319,7 +467,12 @@ theorem skipU_none {src dst : K} {self next : Lab} (hp : prog self = skipU src d
           refine ⟨v', S', (((Run.single ?_).le le_rfl).trans h).mono (by simp; omega)⟩
           simp [hp, skipU, TM2.stepAux, hX, bitOf, Sym.bit?, update_of_ne hd]
 
-/-- `moveB` on a stack of bits moves all of them, reversed. -/
+/-- **Moving a stack of bits.** Suppose the verifier's instruction at label $p$ is the bit-moving
+loop from a stack $a$ to a different stack $b$, continuing at label $p'$ when done. If stack $a$
+holds exactly the bits of a list $l$, then from label $p$ in any internal state the verifier
+takes exactly $|l| + 1$ steps to reach label $p'$, in some internal state, with stack $a$ empty,
+stack $b$ holding the bits of $l$ in reverse order followed by its old contents, and every other
+stack unchanged. -/
 theorem mv_run {self next : Lab} {a b : K} (hp : prog self = moveB a b Sym.bit? Sym.bit self next)
     (hab : a ≠ b) (l : List Bool) (v : Bool) (St : ∀ _ : K, List Sym)
     (ha : St a = l.map Sym.bit) :
@@ -337,7 +490,15 @@ theorem mv_run {self next : Lab} {a b : K} (hp : prog self = moveB a b Sym.bit? 
       · simp [update_of_ne h1, update_of_ne h2, hk' k h2 h1]
   exact e ▸ h
 
-/-- A counter comparison: all stacks are restored, and the outcome picks the next label. -/
+/-- **Run of a HAMPATH-verifier counter comparison.** Let $i$ be one of the four counter
+comparisons of the HAMPATH verifier, with first counter $\mathrm{ca}(i)$ and second counter
+$\mathrm{cb}(i)$, and let $m, n \in \mathbb{N}$. Suppose the stacks $\sigma$ hold $m$ units (bit
+symbols of true) on $\mathrm{ca}(i)$, $n$ units on $\mathrm{cb}(i)$, and nothing on the scratch
+stacks $R$ and $Q$. Then for every flag $v$ the verifier goes, in at most
+$3 \min(m, n) + 4$ steps, from label $\mathrm{cmp}(i)$ with flag $v$ and stacks $\sigma$ to the
+label $\mathrm{cout}(i, o)$ that comparison $i$ picks on the ordering
+$o = \mathrm{compare}(m, n) \in \{\mathrm{lt}, \mathrm{eq}, \mathrm{gt}\}$ of $m$ and $n$, with flag
+false and the same stacks $\sigma$. -/
 theorem cmpI_run (i : CI) (m n : ℕ) (v : Bool) (St : ∀ _ : K, List Sym)
     (ha : St (ca i) = cnt (Sym.bit true) m) (hb : St (cb i) = cnt (Sym.bit true) n)
     (hR : St .R = []) (hQ : St .Q = []) :
@@ -346,14 +507,23 @@ theorem cmpI_run (i : CI) (m n : ℕ) (v : Bool) (St : ∀ _ : K, List Sym)
     exact (cmp_run (M := prog) rfl (fun _ => rfl) (fun _ => rfl) (by decide) (by decide)
       (by decide) (by decide) (by decide) (by decide) m n v St ha hb hR hQ).le (by split <;> omega)
 
-/-- The comparison of `a` with `n`. -/
+/-- **Outcome of the HAMPATH verifier's vertex-range comparison.** For all $m, n \in \mathbb{N}$,
+the label that the comparison of the current vertex with the vertex count picks on the ordering
+$\mathrm{compare}(m, n)$ of $m$ and $n$ is the head-or-edge dispatch label $\mathrm{hd}$ if
+$m < n$, and the reject label $\mathrm{no}$ otherwise. -/
 theorem cout_an (m n : ℕ) : cout .an (compare m n) = if m < n then .hd else .no := by
   rcases lt_trichotomy m n with h | rfl | h
   · simp [cout, Nat.compare_eq_lt.2 h, h]
   · simp [cout]
   · simp [cout, Nat.compare_eq_gt.2 h, Nat.not_lt.2 h.le]
 
-/-- An equality comparison. -/
+/-- **Outcome of a HAMPATH-verifier equality comparison.** Write $\mathrm{cout}(i, o)$ for the
+label that counter comparison $i$ of the HAMPATH verifier picks on the ordering
+$o \in \{\mathrm{lt}, \mathrm{eq}, \mathrm{gt}\}$. Let $i$ be a counter comparison and $l$ a label
+such that $\mathrm{cout}(i, \mathrm{eq}) = l$ and $\mathrm{cout}(i, o)$ is the reject label
+$\mathrm{no}$ for every ordering $o \ne \mathrm{eq}$. Then for all $m, n \in \mathbb{N}$, the label
+$\mathrm{cout}(i, \mathrm{compare}(m, n))$ on the ordering of $m$ and $n$ is $l$ if $m = n$ and
+$\mathrm{no}$ otherwise. -/
 theorem cout_eq (i : CI) (l : Lab) (hl : cout i .eq = l) (hne : ∀ o, o ≠ .eq → cout i o = .no)
     (m n : ℕ) : cout i (compare m n) = if m = n then l else .no := by
   by_cases h : m = n
@@ -361,8 +531,21 @@ theorem cout_eq (i : CI) (l : Lab) (hl : cout i .eq = l) (hne : ∀ o, o ≠ .eq
   · rw [ite_eq_right h, hne]
     rwa [Ne, Nat.compare_eq_eq]
 
-/-- The next unary number of `src` against the counter `c`, then `c` restored: the verdict
-`ok && (number = c)` picks `nx`, the number's bits moved to `sv`. -/
+/-- **Run of the HAMPATH verifier's unary comparison loop.** Let $\mathit{src}$, $\mathit{sv}$, $c$
+and the scratch stack $R$ be four distinct stacks of the HAMPATH verifier, and let $\mathrm{cb}$ and
+$\mathrm{fin}$ be families of labels indexed by booleans such that for every boolean $\mathit{ok}$
+the instruction at $\mathrm{cb}(\mathit{ok})$ is the unary comparison step on $\mathit{src}$,
+$\mathit{sv}$, $c$ with loop labels $\mathrm{cb}$, exit labels $\mathrm{fin}$ and verdict
+$\mathit{ok}$. Write $1$ and $0$ for the bit symbols of true and false, $1^k$ for $k$ copies of
+$1$, and $\bar r$ for the list of bit symbols of a list of booleans $r$; stacks are listed from the
+top. Then for all $a, u, j \in \mathbb{N}$, every boolean $\mathit{ok}$, every list of booleans
+$r$, every flag $v$ and all stack contents $\sigma$ with $\sigma(\mathit{src}) = 1^a\,0\,\bar r$,
+$\sigma(c) = 1^u$ and $\sigma(R) = 1^j$, the verifier runs in exactly $a + 1$ steps from label
+$\mathrm{cb}(\mathit{ok})$ with flag $v$ and stacks $\sigma$ to label $\mathrm{fin}(b)$, where $b$
+is true exactly when $\mathit{ok}$ is true and $a = u$, with some flag and some stacks $\sigma'$
+such that $\sigma'(\mathit{src}) = \bar r$, $\sigma'(\mathit{sv}) = 0\,1^a\,\sigma(\mathit{sv})$,
+$\sigma'(c) = 1^{\max(u - a, 0)}$, $\sigma'(R) = 1^{\min(a, u) + j}$, and $\sigma'(k) = \sigma(k)$
+for every other stack $k$. -/
 theorem cb_run {src sv c : K} {cb fin : Bool → Lab}
     (hp : ∀ ok, prog (cb ok) = cbS src sv c cb fin ok) (h1 : sv ≠ src) (h2 : c ≠ src)
     (h3 : K.R ≠ src) (h4 : c ≠ sv) (h5 : K.R ≠ sv) (h6 : K.R ≠ c) :
@@ -429,7 +612,22 @@ theorem cb_run {src sv c : K} {cb fin : Bool → Lab}
           · rw [hF' k k1 k2 k3 k4, hSt₁, update_of_ne k4, update_of_ne k3, update_of_ne k2,
               update_of_ne k1]
 
-/-- `cb_run`, then the restoring loop: the counter `c` and `R` are as before. -/
+/-- **HAMPATH-verifier unary comparison with the counter restored.** Let $\mathit{src}$,
+$\mathit{sv}$, $c$ and the scratch stack $R$ be four distinct stacks of the HAMPATH verifier, and
+let $\mathrm{cb}$, $\mathrm{rs}$ and $\mathrm{nx}$ be families of labels indexed by booleans such
+that for every boolean $\mathit{ok}$ the instruction at $\mathrm{cb}(\mathit{ok})$ is the unary
+comparison step on $\mathit{src}$, $\mathit{sv}$, $c$ with loop labels $\mathrm{cb}$, exit labels
+$\mathrm{rs}$ and verdict $\mathit{ok}$, and the instruction at $\mathrm{rs}(\mathit{ok})$ is the
+transfer loop that pops $R$ until it is empty, pushing one unit (the bit symbol of true) on $c$
+per symbol popped, and then goes to $\mathrm{nx}(\mathit{ok})$. Write $1$ and $0$ for the bit
+symbols of true and false, $1^k$ for $k$ copies of $1$, and $\bar r$ for the list of bit symbols
+of a list of booleans $r$; stacks are listed from the top. Let $a, u \in \mathbb{N}$, let
+$\mathit{ok}$ be a boolean, $r$ a list of booleans, $v$ a flag, and $\sigma$ stack contents with
+$\sigma(\mathit{src}) = 1^a\,0\,\bar r$, $\sigma(c) = 1^u$ and $\sigma(R)$ empty. Then the verifier
+runs in exactly $(a + 1) + (\min(a, u) + 1)$ steps from label $\mathrm{cb}(\mathit{ok})$ with flag
+$v$ and stacks $\sigma$ to label $\mathrm{nx}(b)$, where $b$ is true exactly when $\mathit{ok}$ is
+true and $a = u$, with some flag and with the stacks of $\sigma$ except that $\mathit{src}$ now
+holds $\bar r$ and $\mathit{sv}$ holds $0\,1^a$ followed by $\sigma(\mathit{sv})$. -/
 theorem cmpN_run {src sv c : K} {cb rs nx : Bool → Lab}
     (hp : ∀ ok, prog (cb ok) = cbS src sv c cb rs ok)
     (hr : ∀ ok, prog (rs ok) = xfer .R [⟨c, Sym.bit true⟩] (rs ok) (nx ok))
@@ -468,9 +666,14 @@ theorem cmpN_run {src sv c : K} {cb rs nx : Bool → Lab}
 
 /-! ### Validation -/
 
-/-- The edge-list check: from `vE` with the rest `r` of the input on `X` and the bits `acc`
-already moved (reversed) on `E`, it reaches `vEb` iff `r` parses as an edge list, within
-`2 |r| + 1` steps, having moved all of `r` to `E`. -/
+/-- **The edge-list check of the Hamiltonian-path verifier.** Let $r$ and $acc$ be bit lists, and
+let the stacks $St$ hold $r$ on the input stack $X$ and the reverse of $acc$ on the save stack
+$E$. Started at the label $\mathsf{vE}$ with any flag value, the verifier reaches within at most
+$2|r| + 1$ steps the label $\mathsf{vEb}$ if $r$ decodes as an edge list (a sequence of pairs of
+unary numbers, each a block of ones ended by a zero) and the label $\mathsf{no}$ otherwise. When
+$r$ decodes, the final stacks are $St$ with $X$ emptied and $E$ holding the reverse of the
+concatenation of $acc$ and $r$ (that is, $r$ reversed on top of $acc$ reversed), all other
+stacks unchanged. -/
 theorem valE_run : ∀ (r acc : List Bool) (v : Bool) (St : ∀ _ : K, List Sym),
     St .X = r.map Sym.bit → St .E = acc.reverse.map Sym.bit →
     ∃ v' S', RunLe prog (2 * r.length + 1) ⟨some .vE, v, St⟩
@@ -529,9 +732,14 @@ theorem valE_run : ∀ (r acc : List Bool) (v : Bool) (St : ∀ _ : K, List Sym)
             update_update_update_update (by decide), hx₁, hx₂]
           simp
 
-/-- The witness check: from `vW` with the rest `w` of the witness on `W` and the bits `acc`
-already moved (reversed) on `Z`, it reaches `vWb` iff `w` parses as a vertex list, within
-`2 |w| + 1` steps, having moved all of `w` to `Z`. -/
+/-- **The witness check of the Hamiltonian-path verifier.** Let $w$ and $acc$ be bit lists, and
+let the stacks $St$ hold $w$ on the witness stack $W$ and the reverse of $acc$ on the save stack
+$Z$. Started at the label $\mathsf{vW}$ with any flag value, the verifier reaches within at most
+$2|w| + 1$ steps the label $\mathsf{vWb}$ if $w$ decodes as a vertex list (a sequence of unary
+numbers, each a block of ones ended by a zero) and the label $\mathsf{no}$ otherwise. When $w$
+decodes, the final stacks are $St$ with $W$ emptied and $Z$ holding the reverse of the
+concatenation of $acc$ and $w$ (that is, $w$ reversed on top of $acc$ reversed), all other
+stacks unchanged. -/
 theorem valW_run : ∀ (w acc : List Bool) (v : Bool) (St : ∀ _ : K, List Sym),
     St .W = w.map Sym.bit → St .Z = acc.reverse.map Sym.bit →
     ∃ v' S', RunLe prog (2 * w.length + 1) ⟨some .vW, v, St⟩
@@ -574,9 +782,18 @@ theorem valW_run : ∀ (w acc : List Bool) (v : Bool) (St : ∀ _ : K, List Sym)
 
 /-! ### The scans -/
 
-/-- The edge scan for the pair `(b, a)` (`b` on `B`, `a` on `A`): from `scan` with the edges
-`rest` on `X` and the bits of the edges `done` already passed (reversed) on `E`, it reaches `nd`
-iff `(b, a)` is one of `rest`, having put the edge list back on `X`. -/
+/-- **The edge scan of the Hamiltonian path verifier.** For a list $e$ of pairs of natural
+numbers write $\mathrm{bits}(e)$ for its edge-list encoding, in which each pair $(u, u')$
+contributes $u$ copies of `true`, then `false`, then $u'$ copies of `true`, then `false`. Let
+$a, b$ be natural numbers and $r$, $d$ lists of pairs of natural numbers. Suppose that the
+verifier's stacks hold, as bit symbols with the first bit on top, $\mathrm{bits}(r)$ on
+$\mathsf{X}$, $\mathrm{bits}(d)$ in reverse order on $\mathsf{E}$, $a$ copies of the bit `true`
+on $\mathsf{A}$, $b$ copies of the bit `true` on $\mathsf{B}$, and nothing on $\mathsf{R}$, the
+other stacks being arbitrary. Started at label $\mathrm{scan}$ with either value of its Boolean
+variable, the verifier reaches, within $4|\mathrm{bits}(r)| + |\mathrm{bits}(d)| + 2$ steps, the
+label $\mathrm{nd}$ if $(b, a)$ is one of the pairs of $r$ and the label $\mathrm{no}$
+otherwise. In the first case its stacks are then the initial ones except that $\mathsf{X}$
+holds the encoding $\mathrm{bits}$ of the list $d$ followed by $r$, and $\mathsf{E}$ is empty. -/
 theorem scan_run (a b : ℕ) : ∀ (rest done : List (ℕ × ℕ)) (v : Bool) (St : ∀ _ : K, List Sym),
     St .X = (Karp.edgeBits rest).map Sym.bit → St .E = (Karp.edgeBits done).reverse.map Sym.bit →
     St .A = cnt (Sym.bit true) a → St .B = cnt (Sym.bit true) b → St .R = [] →
@@ -643,9 +860,17 @@ theorem scan_run (a b : ℕ) : ∀ (rest done : List (ℕ × ℕ)) (v : Bool) (S
           funext k
           cases k <;> simp [hSt₂, hSt₁]
 
-/-- The repeat scan for `a` (on `A`): from `nd` with the vertices `q` on `W` and the bits of the
-vertices `done` already passed (reversed) on `Z`, it reaches `incC` iff `a` is not one of `q`,
-having put the vertices back on `W`. -/
+/-- **The repeat scan of the Hamiltonian path verifier.** For a list $p$ of natural numbers
+write $\mathrm{enc}(p)$ for its witness encoding: each entry in unary (that many copies of
+`true`) followed by `false`. Let $a$ be a natural number and $q$, $d$ lists of natural numbers.
+Suppose that the verifier's stacks hold, as bit symbols with the first bit on top, the bits of
+$\mathrm{enc}(q)$ on $\mathsf{W}$, the bits of $\mathrm{enc}(d)$ in reverse order on
+$\mathsf{Z}$, $a$ copies of the bit `true` on $\mathsf{A}$, and nothing on $\mathsf{R}$, the
+other stacks being arbitrary. Started at label $\mathrm{nd}$ with either value of its Boolean
+variable, the verifier reaches, within $4|\mathrm{enc}(q)| + |\mathrm{enc}(d)| + 2$ steps, the
+label $\mathrm{no}$ if $a$ is an entry of $q$ and the label $\mathrm{incC}$ otherwise. In the
+second case its stacks are then the initial ones except that $\mathsf{W}$ holds the bits of the
+encoding of $d$ followed by $q$, and $\mathsf{Z}$ is empty. -/
 theorem nd_run (a : ℕ) : ∀ (q done : List ℕ) (v : Bool) (St : ∀ _ : K, List Sym),
     St .W = (encW q).map Sym.bit → St .Z = (encW done).reverse.map Sym.bit →
     St .A = cnt (Sym.bit true) a → St .R = [] →
@@ -697,9 +922,11 @@ theorem nd_run (a : ℕ) : ∀ (q done : List ℕ) (v : Bool) (St : ∀ _ : K, L
 
 /-! ### The vertex walk -/
 
-/-- The stacks between vertex steps: the edge list on `X`, the vertices `q` still to walk on
-`W`, the counters `s`, `t`, `n`, the count `c` on `C`, the previous vertex `b` on `B`; all other
-stacks empty. -/
+/-- **Stack layout between vertex steps.** For an edge list $es$, numbers $s, t, n, c, b$ and a
+list $q$ of vertices, the stacks of the verifier between two vertex steps: $X$ holds the bits of
+the edge list $es$, $W$ holds the bits of the witness encoding of $q$, the counters $S$, $T$,
+$N$, $C$ and $B$ hold $s$, $t$, $n$, $c$ and $b$ in unary, and the stacks $A$, $E$, $Z$, $R$
+and $Q$ are empty. -/
 def lay (es : List (ℕ × ℕ)) (s t n c b : ℕ) (q : List ℕ) : K → List Sym
   | .X => (Karp.edgeBits es).map Sym.bit
   | .W => (encW q).map Sym.bit
@@ -714,12 +941,19 @@ def lay (es : List (ℕ × ℕ)) (s t n c b : ℕ) (q : List ℕ) : K → List S
   | .R => []
   | .Q => []
 
-/-- The stacks during the step on vertex `a`: `lay`, with `a` on `A`. -/
+/-- **Stack layout during a vertex step.** For an edge list $es$, numbers $s, t, n, c, b, a$ and
+a list $q$ of vertices, the stacks of the verifier during the step on vertex $a$: the layout
+between vertex steps for $es, s, t, n, c, b, q$, except that stack $A$ holds $a$ in unary. -/
 def mid (es : List (ℕ × ℕ)) (s t n c b a : ℕ) (q : List ℕ) : K → List Sym :=
   update (lay es s t n c b q) .A (cnt (Sym.bit true) a)
 
-/-- The head-or-edge check on vertex `a`: with no vertex seen (`c = 0`) compare `a` with `s`,
-otherwise scan the edge list for `(b, a)`; on success the stacks are as before. -/
+/-- **Running the head-or-edge check.** Let $es$ be an edge list, $s, t, n, c, b, a$ numbers and
+$q$ a list of vertices, and say the check passes when $a = s$ in case $c = 0$, and
+$(b, a) \in es$ in case $c \neq 0$. Started at the head-or-edge dispatch, in any internal state,
+on the stack layout during the step on vertex $a$ for $es, s, t, n, c, b, a, q$, the verifier
+reaches within $3a + 4\ell + 7$ steps, where $\ell$ is the number of bits of $es$, the repeat
+scan if the check passes and the reject label otherwise, in some internal state and with some
+stacks; if the check passes, these stacks are the ones it started on. -/
 theorem hd_run (es : List (ℕ × ℕ)) (s t n c b a : ℕ) (q : List ℕ) (v : Bool) :
     ∃ v' S', RunLe prog (3 * a + 4 * (Karp.edgeBits es).length + 7)
       ⟨some .hd, v, mid es s t n c b a q⟩
@@ -747,8 +981,15 @@ theorem hd_run (es : List (ℕ × ℕ)) (s t n c b a : ℕ) (q : List ℕ) (v : 
     funext k
     cases k <;> simp [mid, lay]
 
-/-- The rest of a vertex step: the repeat scan for `a`, then `a` is counted and becomes the
-previous vertex. -/
+/-- **The rest of a vertex step in the Hamiltonian-path verifier.** Let $es$ be an edge list,
+$s, t, n, c, b, a$ natural numbers and $q$ a list of natural numbers. Start the verifier, with
+any flag value, at the label $\mathsf{nd}$ (the repeat scan) with its stacks in the mid-step
+layout: the between-steps layout for $es$, $s$, $t$, $n$, count $c$, previous vertex $b$ and
+remaining vertices $q$, with $a$ in unary on the stack $A$. Let $w$ be the unary encoding of $q$.
+Then within at most $4|w| + a + b + 6$ steps it reaches the label $\mathsf{no}$ if $a \in q$ and
+the label $\mathsf{loop}$ if $a \notin q$. In the second case ($a$ has been counted and become
+the previous vertex) the stacks end in the between-steps layout for $es$, $s$, $t$, $n$, count
+$c + 1$, previous vertex $a$ and remaining vertices $q$. -/
 theorem tail_run (es : List (ℕ × ℕ)) (s t n c b a : ℕ) (q : List ℕ) (v : Bool) :
     ∃ v' S', RunLe prog (4 * (encW q).length + a + b + 6) ⟨some .nd, v, mid es s t n c b a q⟩
       ⟨some (if a ∈ q then .no else .loop), v', S'⟩ ∧
@@ -779,7 +1020,16 @@ theorem tail_run (es : List (ℕ × ℕ)) (s t n c b a : ℕ) (q : List ℕ) (v 
     funext k
     cases k <;> simp [hS₃, hS₂, mid, lay, addU, cnt_succ]
 
-/-- One vertex step, from reading the vertex `a` to the next round of the loop. -/
+/-- **One vertex step of the Hamiltonian-path verifier.** Let $es$ be an edge list,
+$s, t, n, c, b, a$ natural numbers and $q$ a list of natural numbers. Start the verifier, with
+any flag value, at the label $\mathsf{rdA}$ (read the next vertex) with its stacks in the
+between-steps layout for $es$, $s$, $t$, $n$, count $c$, previous vertex $b$ and remaining
+vertices $a, q$. Let $e$ be the bit encoding of $es$ and $w$ the unary encoding of $q$. Then
+within at most $8a + b + 4|e| + 4|w| + 20$ steps it reaches the label $\mathsf{loop}$ if the
+step check on $a$ passes and the label $\mathsf{no}$ otherwise. The step check passes when
+$a < n$, $a = s$ in case $c = 0$ and $(b, a) \in es$ in case $c \ne 0$, and $a \notin q$. When
+it passes, the stacks end in the between-steps layout for $es$, $s$, $t$, $n$, count $c + 1$,
+previous vertex $a$ and remaining vertices $q$. -/
 theorem step_run (es : List (ℕ × ℕ)) (s t n c b a : ℕ) (q : List ℕ) (v : Bool) :
     ∃ v' S', RunLe prog (8 * a + b + 4 * (Karp.edgeBits es).length + 4 * (encW q).length + 20)
       ⟨some .rdA, v, lay es s t n c b (a :: q)⟩
@@ -823,9 +1073,13 @@ theorem step_run (es : List (ℕ × ℕ)) (s t n c b a : ℕ) (q : List ℕ) (v 
     rw [hs]
     exact ((h₁.le le_rfl).trans h₂).mono (by omega)
 
-/-- The vertex loop: from `loop` with the vertices `q` still to walk, `c` seen and `b` the
-previous one, it reaches `yes` iff `walkOk s t n es c b q`, within `(|q| + 1) (20 L + 20)`
-steps for a bound `L` on `n`, `t`, the edge bits, the bits of `q` and `b`. -/
+/-- **Running the vertex loop.** Let $es$ be an edge list, $s, t, n$ numbers and $L$ a bound
+with $n \le L$, $t \le L$ and at most $L$ bits in the encoding of $es$. For every list $q$ of
+vertices whose witness encoding has at most $L$ bits, every count $c$, every previous vertex
+$b \le L$ and every internal state, the verifier started at the vertex loop on the stack layout
+between vertex steps for $es, s, t, n, c, b, q$ reaches within $(|q| + 1)(20L + 20)$ steps, with
+some internal state and stacks, the accept label if the walk check for $s, t, n, es, c, b, q$
+passes and the reject label otherwise. -/
 theorem loop_run (es : List (ℕ × ℕ)) (s t n L : ℕ) (hn : n ≤ L) (ht : t ≤ L)
     (he : (Karp.edgeBits es).length ≤ L) : ∀ (q : List ℕ) (c b : ℕ) (v : Bool),
     (encW q).length ≤ L → b ≤ L →
@@ -884,9 +1138,14 @@ theorem loop_run (es : List (ℕ × ℕ)) (s t n L : ℕ) (hn : n ≤ L) (ht : t
 
 /-! ### The verifier -/
 
-/-- **The verifier machine.** From `start` with `x` on `X`, `w` on `W` and the other stacks
-empty, `prog` reaches `yes` if `hamCheck x w` and `no` otherwise, within
-`100 (|x| + |w| + 1)⁴` steps (quadratically many, in fact). -/
+/-- **Correctness and running time of the Hamiltonian path verifier.** Let $x$ and $w$ be bit
+lists. Start the verifier at its start label, with either value of its Boolean variable, with
+$x$ on stack $\mathsf{X}$ and $w$ on stack $\mathsf{W}$ (as bit symbols, first bit on top) and
+all other stacks empty. Then within $100(|x| + |w| + 1)^4$ steps it reaches the label
+$\mathrm{yes}$ if the Hamiltonian path check accepts $x$ and $w$, and the label $\mathrm{no}$
+otherwise.
+
+The machine in fact takes quadratically many steps; the theorem states only the quartic bound. -/
 theorem run (x w : List Bool) (v : Bool) (St : ∀ _ : K, List Sym)
     (hX : St .X = x.map Sym.bit) (hW : St .W = w.map Sym.bit)
     (h0 : ∀ k, k ≠ .X → k ≠ .W → St k = []) :

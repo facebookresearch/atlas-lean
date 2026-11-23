@@ -33,10 +33,14 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Theorem 1: for `n > 2` positive reals `s_1 < ⋯ < s_n`, with MAX matrix
-`M_S = (max (s_i, s_j))` and MIN matrix `N_S = (min (s_i, s_j))`, the g-eigenvalues of `M_S` to
-`N_S` are `√(s_n / s_1)`, `-1` with multiplicity `n - 2`, and `-√(s_n / s_1)`. Stated as the
-factorization of `det (M_S - X N_S)`, whose leading coefficient is `det (-N_S)`.
+/-- **Generalized eigenvalues of a MAX matrix to a MIN matrix.** Let $n > 2$ and let
+$0 < s_1 < s_2 < \dots < s_n$ be real numbers. Let $M$ be the $n \times n$ matrix with entries
+$M_{ij} = \max(s_i, s_j)$, let $N$ be the $n \times n$ matrix with entries
+$N_{ij} = \min(s_i, s_j)$, and put $\rho = \sqrt{s_n / s_1}$. Then, as polynomials in $X$ with
+real coefficients,
+$$\det(M - XN) = (-1)^n \det(N) \, (X - \rho)(X + 1)^{n-2}(X + \rho).$$
+
+The roots of $\det(M - XN)$ are the generalized eigenvalues of $M$ to $N$.
 
 Source: Jorma K. Merikoski, Pentti Haukkanen, Antonio Sasaki, and Timo Tossavainen, *On
 Generalized Eigenvalues of MAX Matrices to MIN Matrices and LCM Matrices to GCD Matrices*,
@@ -50,12 +54,14 @@ public theorem_wanted det_maxMatrix_sub_X_smul_minMatrix (n : ℕ) (hn : 2 < n)
           (X + 1) ^ (n - 2) *
           (X + C (Real.sqrt (s ⟨n - 1, by omega⟩ / s ⟨0, by omega⟩))))
 
-/-- Theorem 6 (Cauchy interlacing for g-eigenvalues): let `A` be a complex Hermitian and `B` a
-positive definite `(n+1) × (n+1)` matrix (`n ≥ 1`), and `A'`, `B'` their leading principal
-`n × n` submatrices. If `λ_1 ≥ ⋯ ≥ λ_{n+1}` enumerates the g-eigenvalues of `A` to `B` and
-`λ'_1 ≥ ⋯ ≥ λ'_n` those of `A'` to `B'` (real numbers listing the roots of `det (A - X B)`,
-respectively `det (A' - X B')`, with multiplicity), then
-`λ_1 ≥ λ'_1 ≥ λ_2 ≥ ⋯ ≥ λ_n ≥ λ'_n ≥ λ_{n+1}`.
+/-- **Cauchy interlacing for generalized eigenvalues.** Let $n \ge 1$, let $A$ be a Hermitian
+and $B$ a positive definite complex $(n+1) \times (n+1)$ matrix, and let $A'$ and $B'$ be their
+leading principal $n \times n$ submatrices (rows and columns $1, \dots, n$). Let
+$\lambda_1 \ge \dots \ge \lambda_{n+1}$ be real numbers such that the roots of the polynomial
+$\det(A - XB)$, counted with multiplicity, are exactly $\lambda_1, \dots, \lambda_{n+1}$, and
+let $\lambda'_1 \ge \dots \ge \lambda'_n$ be real numbers such that the roots of
+$\det(A' - XB')$, counted with multiplicity, are exactly $\lambda'_1, \dots, \lambda'_n$. Then
+$\lambda_{k+1} \le \lambda'_k \le \lambda_k$ for every $k = 1, \dots, n$.
 
 Source: Jorma K. Merikoski, Pentti Haukkanen, Antonio Sasaki, and Timo Tossavainen, *On
 Generalized Eigenvalues of MAX Matrices to MIN Matrices and LCM Matrices to GCD Matrices*,
