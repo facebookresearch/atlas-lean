@@ -9,154 +9,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.FieldTheory.Finite.GaloisField
 public import MathlibExt.Combinatorics.Additive.BoseChowlaSubgroup
+public import MathlibExt.Combinatorics.Additive.GDifferenceBases
 
 namespace MetaMathlibExt
 
 open Filter Topology
 
 @[expose] public section
-
-/-- **Difference representation function.** For a finite subset $A$ of an abelian group $G$ and
-an element $x \in G$, the difference representation function $r_{A-A}(x)$ is the number of
-ordered pairs $(a, a') \in A \times A$ with $a - a' = x$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Section 1. -/
-public def subRepCount {G : Type*} [AddCommGroup G] [DecidableEq G] (A : Finset G) (x : G) :
-    ℕ :=
-  ((A ×ˢ A).filter fun p => p.1 - p.2 = x).card
-
-/-- **The $g$-difference basis number.** For a finite set $A \subseteq \mathbb{Z}$ and
-$x \in \mathbb{Z}$, write $r_{A-A}(x)$ for the number of ordered pairs $(a, a') \in A \times A$
-with $a - a' = x$. For natural numbers $g$ and $n$, a finite set $A \subseteq \mathbb{Z}$ is a
-$g$-difference basis for $[n] = \{1, \dots, n\}$ if $r_{A-A}(x) \ge g$ for every $x \in [n]$, and
-$\eta_g(n)$ is the least size of such a set.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Section 1. -/
-public noncomputable def diffBasisNumber (g n : ℕ) : ℕ :=
-  sInf {k | ∃ A : Finset ℤ, A.card = k ∧ ∀ x ∈ Finset.Icc (1 : ℤ) n, g ≤ subRepCount A x}
-
-/-- **Difference basis number of an abelian group.** For an abelian group $G$ and
-$g \in \mathbb{N}$, a $g$-difference basis of $G$ is a finite set $A \subseteq G$ such that every
-$x \in G$ equals $a - a'$ for at least $g$ ordered pairs $(a, a') \in A \times A$. The difference
-basis number $\eta_g(G)$ is the least size of a $g$-difference basis of $G$, and $0$ if $G$ has
-none.
-
-There is no $g$-difference basis when $G$ is infinite and $g \ge 1$, or when $G$ is finite and
-$g > |G|$, since each element is $a - a'$ for at most $|A| \le |G|$ pairs; in these cases the
-value $0$ is a convention. When $G$ is finite and $g \le |G|$, the set $A = G$ is a
-$g$-difference basis, so $\eta_g(G)$ is a true minimum. This is the paper's $\eta_g(S)$ with
-$S = G$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Sections 1 and 3. -/
-public noncomputable def groupDiffBasisNumber (g : ℕ) (G : Type*) [AddCommGroup G]
-    [DecidableEq G] : ℕ :=
-  sInf {k | ∃ A : Finset G, A.card = k ∧ ∀ x : G, g ≤ subRepCount A x}
-
-/-- **Maximal sets with bounded difference multiplicities.** For a finite set
-$A \subseteq \mathbb{Z}$ and $x \in \mathbb{Z}$, write $r_{A-A}(x)$ for the number of ordered
-pairs $(a, a') \in A \times A$ with $a - a' = x$. For natural numbers $g$ and $n$, $\alpha_g(n)$
-is the largest size of a set $A \subseteq [n] = \{1, \dots, n\}$ with $r_{A-A}(x) \le g$ for
-every nonzero integer $x$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Sections 1 and 4. -/
-public noncomputable def boundedDiffSetNumber (g n : ℕ) : ℕ :=
-  sSup {k | ∃ A : Finset ℤ, A ⊆ Finset.Icc (1 : ℤ) n ∧ A.card = k ∧
-    ∀ x : ℤ, x ≠ 0 → subRepCount A x ≤ g}
-
-/-- **Representations of zero as a difference.** For every finite subset $A$ of an abelian
-group, $r_{A-A}(0) = |A|$: the number of ordered pairs $(a, a') \in A \times A$ with
-$a - a' = 0$ equals the number of elements of $A$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Section 1. -/
-public theorem subRepCount_zero {G : Type*} [AddCommGroup G] [DecidableEq G] (A : Finset G) :
-    subRepCount A 0 = A.card := by
-  rw [← Finset.diag_card A, Finset.diag_eq_filter]
-  simp only [subRepCount, sub_eq_zero]
-
-private theorem two_le_card_of_subRepCount {G : Type*} [AddCommGroup G] [DecidableEq G]
-    {A : Finset G} {x : G} (hx : x ≠ 0) (h : 1 ≤ subRepCount A x) : 2 ≤ A.card := by
-  obtain ⟨p, hp⟩ := Finset.card_pos.mp h
-  rw [Finset.mem_filter, Finset.mem_product] at hp
-  obtain ⟨⟨h1, h2⟩, hpx⟩ := hp
-  have hne : p.1 ≠ p.2 := fun he => hx (by rw [← hpx, he, sub_self])
-  exact Finset.one_lt_card.mpr ⟨p.1, h1, p.2, h2, hne⟩
-
-/-- **The value $\eta_1(1) = 2$.** Let $\eta_1(1)$ be the least size of a finite set
-$A \subseteq \mathbb{Z}$ containing elements $a, a'$ with $a - a' = 1$. Then $\eta_1(1) = 2$: such a
-set needs two elements, and $\{0, 1\}$ is one.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Section 1. -/
-public theorem diffBasisNumber_one_one : diffBasisNumber 1 1 = 2 := by
-  have hmem : 2 ∈ {k | ∃ A : Finset ℤ, A.card = k ∧
-      ∀ x ∈ Finset.Icc (1 : ℤ) (1 : ℕ), 1 ≤ subRepCount A x} := by
-    refine ⟨{0, 1}, by decide, fun x hx => ?_⟩
-    have : x = 1 := by simp at hx; omega
-    subst this
-    decide
-  refine le_antisymm (Nat.sInf_le hmem) (le_csInf ⟨2, hmem⟩ ?_)
-  rintro k ⟨A, rfl, hA⟩
-  exact two_le_card_of_subRepCount one_ne_zero (hA 1 (by simp))
-
-/-- **Difference basis number of $\mathbb{Z}/3\mathbb{Z}$.** The least size
-$\eta_1(\mathbb{Z}/3\mathbb{Z})$ of a set $A \subseteq \mathbb{Z}/3\mathbb{Z}$ such that every
-element of $\mathbb{Z}/3\mathbb{Z}$ is a difference $a - a'$ of two elements of $A$ equals $2$:
-the set $\{0, 1\}$ has differences $0, 1, 2$, and one element is not enough.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Section 3. -/
-public theorem groupDiffBasisNumber_one_zmod_three : groupDiffBasisNumber 1 (ZMod 3) = 2 := by
-  have hmem : 2 ∈ {k | ∃ A : Finset (ZMod 3), A.card = k ∧
-      ∀ x : ZMod 3, 1 ≤ subRepCount A x} := ⟨{0, 1}, by decide, by decide⟩
-  refine le_antisymm (Nat.sInf_le hmem) (le_csInf ⟨2, hmem⟩ ?_)
-  rintro k ⟨A, rfl, hA⟩
-  exact two_le_card_of_subRepCount (by decide) (hA 1)
-
-/-- **Trivial upper bound for sets with bounded difference multiplicities.** For natural numbers
-$g$ and $n$, let $\alpha_g(n)$ be the largest size of a set $A \subseteq [n] = \{1, \dots, n\}$
-such that every nonzero integer $x$ is the difference $a - a'$ of at most $g$ ordered pairs
-$(a, a') \in A \times A$. Then $\alpha_g(n) \le n$, since these sets are subsets of $[n]$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Section 4. -/
-public theorem boundedDiffSetNumber_le (g n : ℕ) : boundedDiffSetNumber g n ≤ n := by
-  refine csSup_le ⟨0, ∅, by simp, by simp, by simp [subRepCount]⟩ ?_
-  rintro k ⟨A, hA, rfl, -⟩
-  simpa using Finset.card_le_card hA
-
-/-- **The value $\alpha_g(1) = 1$.** For natural numbers $g$ and $n$, let $\alpha_g(n)$ be the
-largest size of a set $A \subseteq \{1, \dots, n\}$ such that every nonzero integer $x$ is the
-difference $a - a'$ of at most $g$ ordered pairs $(a, a') \in A \times A$. Then for every natural
-number $g$ we have $\alpha_g(1) = 1$: the singleton $\{1\}$ has no nonzero differences.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Section 4. -/
-public theorem boundedDiffSetNumber_one (g : ℕ) : boundedDiffSetNumber g 1 = 1 := by
-  refine le_antisymm (boundedDiffSetNumber_le g 1) (le_csSup ⟨1, ?_⟩ ?_)
-  · rintro k ⟨A, hA, rfl, -⟩
-    simpa using Finset.card_le_card hA
-  · refine ⟨{1}, by simp, rfl, fun x hx => ?_⟩
-    have : subRepCount ({1} : Finset ℤ) x = 0 := by
-      simp [subRepCount, Finset.filter_singleton, Ne.symm hx]
-    omega
-
-/-- **Trivial lower bound for difference bases of an interval.** Let $g, n \in \mathbb{N}$ with
-$n > 1$, and let $\eta_g(n)$ be the least size of a finite set $A \subseteq \mathbb{Z}$ such that
-every $x \in \{1, \dots, n\}$ equals $a - a'$ for at least $g$ ordered pairs
-$(a, a') \in A \times A$. Then $\eta_g(n) / \sqrt{n} \ge \sqrt{2g}$.
-
-Source: Eric Schmutz and Michael Tait, *Cardinalities of g-Difference Sets*, INTEGERS 25
-(2025), Article A77, Lemma 1 (`integers-2025-A77-lem-1`). -/
-public theorem_wanted sqrt_two_mul_le_diffBasisNumber_div_sqrt (g n : ℕ) (hn : 1 < n) :
-    Real.sqrt (2 * g) ≤ (diffBasisNumber g n : ℝ) / Real.sqrt n
 
 /-- **Rédei–Rényi difference basis.** Let $n \ge 1$ and $k = \lceil \sqrt{n} \rceil$. The set
 of integers $B_n = \{1, \dots, k - 1\} \cup \{k, 2k, \dots, k^2, (k + 1)k\}$ has $2k$ elements,
