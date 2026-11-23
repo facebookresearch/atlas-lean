@@ -24,7 +24,9 @@ import next_task  # noqa: E402
 
 REPO = "facebookresearch/atlas-lean"
 OPEN = f"{next_task.API}/repos/{REPO}/pulls?state=open&per_page=100&page="
-CLOSED = f"{next_task.API}/repos/{REPO}/pulls?state=closed&sort=updated&direction=desc&per_page=100&page="
+# main's commits since a second before the list's commit, a page at a time.
+COMMITS = f"{next_task.API}/repos/{REPO}/commits?sha=main&since=2026-11-20T11:59:59Z&per_page=100&page="
+TOKEN = {"GH_TOKEN": "secret"}
 
 
 def item(number: int, phase: str, declaration: str) -> dict:
@@ -75,30 +77,62 @@ OPEN_PULLS = [
     # An id with one more digit is another id.
     pull(9, body=f"See {ITEMS[0]['article_id']}0."),
 ]
-CLOSED_PULLS = [
-    pull(4, body=f"Done: `{ITEMS[5]['lean_targets'][0]['declaration']}`", merged_at="2026-11-20T18:00:00Z",
-         updated_at="2026-11-20T18:00:00Z"),
-    pull(5, body="Ext.p5", merged_at="2026-11-20T11:00:00Z", updated_at="2026-11-20T11:30:00Z"),
-    pull(6, body="Ext.p5", merged_at=None, updated_at="2026-11-20T11:00:00Z"),
-]
+# Pull requests main's history names, as GitHub's GraphQL API gives them, and main's commits that name them: #4 was
+# merged after the list's commit, #5 before it (a later commit names it too), and #6 is an issue.
+MERGED_PULLS = {
+    4: pull(4, body=f"Done: `{ITEMS[5]['lean_targets'][0]['declaration']}`", merged_at="2026-11-20T18:00:00Z"),
+    5: pull(5, body="Ext.p5", merged_at="2026-11-20T11:00:00Z"),
+}
+
+
+def commit(subject: str) -> dict:
+    """A commit as the API lists main's commits."""
+    return {"sha": "0" * 40, "commit": {"message": subject + "\n\nMore of the message, such as (#99)."}}
+
+
+COMMIT_PAGES = [[commit("Merge pull request #4 from someone/topic"), commit("Fix what #5 left (#5)"),
+                 commit("Prove a lemma"), commit("Cite (#6)")]]
 
 
 class Site:
     """The site and GitHub's API, as next_task.request reads them."""
 
-    def __init__(self, tasks: dict | None = None, open_pages=(OPEN_PULLS,), closed_pages=(CLOSED_PULLS,)) -> None:
+    def __init__(self, tasks: dict | None = None, open_pages=(OPEN_PULLS,), commit_pages=COMMIT_PAGES,
+                 merged: dict | None = None) -> None:
         self.pages = {next_task.TASKS: json.dumps(tasks or TASKS).encode()}
-        for prefix, pages in ((OPEN, open_pages), (CLOSED, closed_pages)):
+        for prefix, pages in ((OPEN, open_pages), (COMMITS, commit_pages)):
             for number, rows in enumerate(pages, 1):
                 self.pages[f"{prefix}{number}"] = json.dumps(rows).encode()
+        self.merged = MERGED_PULLS if merged is None else merged
         self.read: list[tuple[str, str | None]] = []
         self.media: list[str] = []
+        self.asked: list[list[int]] = []
 
-    def __call__(self, url: str, token: str | None = None, media: str | None = None) -> bytes:
+    def __call__(self, url: str, token: str | None = None, media: str | None = None,
+                 data: bytes | None = None) -> bytes:
         self.read.append((url, token))
+        if url == next_task.GRAPHQL:
+            # The pull requests the query names, under their aliases; a number that is no pull request gives null.
+            sent = json.loads(data)
+            self.assertion(sent["variables"] == {"owner": "facebookresearch", "name": "atlas-lean"})
+            numbers = [int(number) for number in re.findall(r"p(\d+): pullRequest\(number: \1\)", sent["query"])]
+            self.asked.append(numbers)
+            found = {f"p{number}": self.graphql(self.merged[number]) if number in self.merged else None
+                     for number in numbers}
+            return json.dumps({"data": {"repository": found}}).encode()
         if url.startswith(next_task.API):
             self.media.append(media)
         return self.pages.get(url, b"[]")
+
+    @staticmethod
+    def assertion(holds: bool) -> None:
+        if not holds:
+            raise AssertionError("unexpected GraphQL variables")
+
+    @staticmethod
+    def graphql(row: dict) -> dict:
+        return {"number": row["number"], "title": row["title"], "body": row["body"], "bodyHTML": row["body_html"],
+                "headRefName": row["head"]["ref"], "baseRefName": row["base"]["ref"], "mergedAt": row["merged_at"]}
 
 
 def run(site: Site, *args: str, env: dict | None = None) -> tuple[int, str, str]:
@@ -112,7 +146,7 @@ def run(site: Site, *args: str, env: dict | None = None) -> tuple[int, str, str]
 class Picking(unittest.TestCase):
     def test_tasks_a_pull_request_names_are_skipped_and_statements_come_first(self) -> None:
         site = Site()
-        code, out, err = run(site, "--json", "-n", "10")
+        code, out, err = run(site, "--json", "-n", "10", env=TOKEN)
         self.assertEqual((code, err), (0, ""))
         result = json.loads(out)
         self.assertEqual([task["node_id"] for task in result["next"]], ["Algebra/t2", "Algebra/t1", "Algebra/t4",
@@ -125,13 +159,15 @@ class Picking(unittest.TestCase):
                                               {"node_id": "Algebra/t8", "pull_requests": [3]}])
         self.assertEqual((result["ready"], result["taken"], result["free"]), (8, 4, 4))
         self.assertEqual((result["commit"], result["autoform_ref"]), ("c" * 40, "a" * 40))
-        # One page of each kind, as each holds fewer than a full page; no token was set. They come with their bodies as
-        # GitHub renders them.
-        self.assertEqual(site.read, [(next_task.TASKS, None), (OPEN + "1", None), (CLOSED + "1", None)])
-        self.assertEqual(site.media, [next_task.RENDERED] * 2)
+        # One page of open pull requests and one of main's commits, as each holds fewer than a full page, and then the
+        # pull requests main merged: open ones come with their bodies as GitHub renders them, and so do merged ones.
+        self.assertEqual(site.read, [(next_task.TASKS, None), (OPEN + "1", "secret"), (COMMITS + "1", "secret"),
+                                     (next_task.GRAPHQL, "secret")])
+        self.assertEqual(site.media, [next_task.RENDERED, "application/vnd.github+json"])
+        self.assertEqual(site.asked, [[4, 5, 6]])
 
     def test_the_text_lists_the_next_n_with_what_takes_them(self) -> None:
-        code, out, _ = run(Site(), "-n", "2")
+        code, out, _ = run(Site(), "-n", "2", env=TOKEN)
         self.assertEqual(code, 0)
         self.assertIn(f"8 ready tasks at {'c' * 12}; pull requests take 4 of them, so 4 are free.", out)
         self.assertIn("statement: Task 2\n  article id   af_000000000000000000000002\n  node         Algebra/t2\n"
@@ -146,53 +182,80 @@ class Picking(unittest.TestCase):
         task = {**item(1, "statement", "Ext.e" + evil), "title": "T" + evil, "node_id": "Algebra/n" + evil,
                 "article_path": "blueprint/roadmap/a" + evil + ".md"}
         tasks = {**TASKS, "items": [task], "commit": "c" + evil}
-        code, out, _ = run(Site(tasks=tasks, open_pages=([],), closed_pages=([],)), "-n", "1")
+        code, out, _ = run(Site(tasks=tasks, open_pages=([],), commit_pages=([],)), "-n", "1")
         self.assertEqual(code, 0)
         for character in ("\x1b", "\x07", "\x9b", "\nforged"):
             self.assertNotIn(character, out)
         self.assertIn("T\\x1b]0;owned\\x07\\nforged: line\\x9b2J", out)
-        code, out, _ = run(Site(tasks=tasks, open_pages=([],), closed_pages=([],)), "--json")
+        code, out, _ = run(Site(tasks=tasks, open_pages=([],), commit_pages=([],)), "--json")
         self.assertTrue(out.isascii())
         self.assertEqual(json.loads(out)["next"], [task])
 
     def test_every_page_of_open_pull_requests_is_read(self) -> None:
         filler = [pull(100 + number) for number in range(100)]
         site = Site(open_pages=(filler, [pull(7, body=ITEMS[0]["article_id"].upper())]))
-        _, out, _ = run(site, "--json")
+        _, out, _ = run(site, "--json", env=TOKEN)
         self.assertIn({"node_id": "Algebra/t1", "pull_requests": [7]}, json.loads(out)["taken_by"])
         self.assertEqual([url for url, _ in site.read if url.startswith(OPEN)], [OPEN + "1", OPEN + "2"])
 
-    def test_closed_pull_requests_are_read_until_they_predate_the_commit(self) -> None:
-        recent = [pull(200 + number, updated_at="2026-11-21T09:00:00Z") for number in range(99)]
-        recent.append(pull(10, body="Ext.p1", merged_at="2026-11-20T13:00:00Z", updated_at="2026-11-20T13:00:00Z"))
-        older = [pull(11, body="Ext.s1", merged_at="2026-11-20T12:30:00Z", updated_at="2026-11-20T12:30:00Z"),
-                 *(pull(300 + number, updated_at="2026-11-19T00:00:00Z") for number in range(99))]
-        late = [pull(12, body="Ext.p5", merged_at="2026-11-20T15:00:00Z")]
-        site = Site(open_pages=([],), closed_pages=(recent, older, late))
-        _, out, _ = run(site, "--json")
+    def test_main_commits_are_read_until_the_last_page_and_merged_pull_requests_a_batch_at_a_time(self) -> None:
+        # However many pull requests were closed or touched since the list's commit, only main's commits are read.
+        first = [commit(f"Merge pull request #{200 + number} from someone/b{number}") for number in range(99)]
+        first.append(commit("Prove it (#10)"))
+        second = [commit("Merge pull request #11 from someone/other")]
+        merged = {10: pull(10, body="Ext.p1", merged_at="2026-11-20T13:00:00Z"),
+                  11: pull(11, body="Ext.s1", merged_at="2026-11-20T12:30:00Z")}
+        site = Site(open_pages=([],), commit_pages=(first, second), merged=merged)
+        _, out, _ = run(site, "--json", env=TOKEN)
         taken = {row["node_id"]: row["pull_requests"] for row in json.loads(out)["taken_by"]}
         self.assertEqual(taken, {"Algebra/t1": [10], "Algebra/t2": [11]})
-        # The second page ends before the commit, so the third is never read.
-        self.assertEqual([url for url, _ in site.read if url.startswith(CLOSED)], [CLOSED + "1", CLOSED + "2"])
+        # The second page is short, so a third is never read; 101 pull requests take two batches.
+        self.assertEqual([url for url, _ in site.read if url.startswith(COMMITS)], [COMMITS + "1", COMMITS + "2"])
+        self.assertEqual([len(numbers) for numbers in site.asked], [100, 1])
 
     def test_a_pull_request_merged_in_the_commits_second_counts(self) -> None:
         # GitHub's times are to the second, as the commit's: one merged in its second may be missing from the list.
-        same = [pull(13, body="Ext.p1", merged_at="2026-11-20T12:00:00Z", updated_at="2026-11-20T12:00:00Z"),
-                *(pull(400 + number, updated_at="2026-11-20T12:00:00Z") for number in range(99))]
-        before = [pull(14, body="Ext.s1", merged_at="2026-11-20T11:59:59Z", updated_at="2026-11-20T11:59:59Z")]
-        site = Site(open_pages=([],), closed_pages=(same, before))
-        _, out, _ = run(site, "--json")
+        merged = {13: pull(13, body="Ext.p1", merged_at="2026-11-20T12:00:00Z"),
+                  14: pull(14, body="Ext.s1", merged_at="2026-11-20T11:59:59Z")}
+        pages = ([commit("Merge pull request #13 from a/b"), commit("Merge pull request #14 from a/c")],)
+        _, out, _ = run(Site(open_pages=([],), commit_pages=pages, merged=merged), "--json", env=TOKEN)
         taken = {row["node_id"]: row["pull_requests"] for row in json.loads(out)["taken_by"]}
         self.assertEqual(taken, {"Algebra/t1": [13]})
-        # A full page that ends in the commit's second may go on in the next one, so that one is read too.
-        self.assertEqual([url for url, _ in site.read if url.startswith(CLOSED)], [CLOSED + "1", CLOSED + "2"])
+
+    def test_merged_pull_requests_need_a_token_and_too_many_commits_stop_it(self) -> None:
+        code, out, err = run(Site(), "--json")
+        self.assertEqual((code, out), (1, ""))
+        self.assertIn("needs a token, as it goes through GitHub's GraphQL API: set GH_TOKEN", err)
+        # With no pull request merged since the list's commit, none is needed.
+        site = Site(commit_pages=([commit("Prove a lemma")],))
+        self.assertEqual(run(site, "--json")[0], 0)
+        self.assertFalse([url for url, _ in site.read if url == next_task.GRAPHQL])
+        full = [commit("Prove a lemma")] * 100
+        with mock.patch.object(next_task, "COMMIT_PAGES", 2):
+            code, _, err = run(Site(commit_pages=(full, full, full)), "--json", env=TOKEN)
+        self.assertEqual(code, 1)
+        self.assertIn("main has more than 200 commits since 2026-11-20T12:00:00+00:00", err)
+
+    def test_an_answer_graphql_cannot_give_stops_it(self) -> None:
+        site = Site()
+        real = site.__call__
+
+        def broken(url, token=None, media=None, data=None):
+            if url == next_task.GRAPHQL:
+                return json.dumps({"errors": [{"message": "Bad credentials"}]}).encode()
+            return real(url, token, media, data)
+
+        code, _, err = run(broken, "--json", env=TOKEN)
+        self.assertEqual(code, 1)
+        self.assertIn("GitHub's GraphQL API did not give the pull requests merged into main", err)
+        self.assertIn("Bad credentials", err)
 
     def test_a_list_without_a_commit_date_is_checked_against_open_pull_requests_only(self) -> None:
         plain = {key: value for key, value in TASKS.items() if key not in ("commit", "commit_date", "autoform_ref")}
         site = Site(tasks=plain)
         code, out, _ = run(site)
         self.assertEqual(code, 0)
-        self.assertFalse([url for url, _ in site.read if url.startswith(CLOSED)])
+        self.assertFalse([url for url, _ in site.read if url.startswith(COMMITS) or url == next_task.GRAPHQL])
         self.assertIn("records no commit date, so pull requests merged since it was computed are not read", out)
 
     def test_a_local_file_is_read(self) -> None:
@@ -200,7 +263,7 @@ class Picking(unittest.TestCase):
             path = Path(folder) / "tasks.json"
             path.write_text(json.dumps(TASKS))
             site = Site()
-            code, out, _ = run(site, "--tasks", str(path), "--json", "-n", "1")
+            code, out, _ = run(site, "--tasks", str(path), "--json", "-n", "1", env=TOKEN)
         self.assertEqual(code, 0)
         self.assertEqual(json.loads(out)["next"], [ITEMS[1]])
         self.assertNotIn(next_task.TASKS, [url for url, _ in site.read])
@@ -273,7 +336,7 @@ class Picking(unittest.TestCase):
             pull(35, body=(body := "Uses `Other.breuillard_green_tao_approximate_subgroup`."), html=inline(body)),
         ]
         self.assertEqual(next_task.taken(items, pulls), {"Algebra/t11": [31], "Algebra/t12": [32]})
-        site = Site(tasks=tasks, open_pages=(pulls,), closed_pages=([],))
+        site = Site(tasks=tasks, open_pages=(pulls,), commit_pages=([],))
         _, out, _ = run(site, "--json", "-n", "1")
         self.assertEqual(json.loads(out)["taken"], 2)
 
@@ -375,9 +438,9 @@ class Picking(unittest.TestCase):
             self.assertEqual(next_task.taken(items, [pull(56, body=body, html=html)]), {"Algebra/t47": [56]}, body)
 
     def test_a_pull_request_merged_into_another_branch_takes_nothing(self) -> None:
-        merged = [pull(61, body="Ext.p1", merged_at="2026-11-20T13:00:00Z", updated_at="2026-11-20T13:00:00Z",
-                       base="feature")]
-        _, out, _ = run(Site(open_pages=([],), closed_pages=(merged,)), "--json")
+        merged = {61: pull(61, body="Ext.p1", merged_at="2026-11-20T13:00:00Z", base="feature")}
+        pages = ([commit("Merge pull request #61 from a/feature-work")],)
+        _, out, _ = run(Site(open_pages=([],), commit_pages=pages, merged=merged), "--json", env=TOKEN)
         self.assertEqual(json.loads(out)["taken_by"], [])
 
     def test_the_count_is_positive(self) -> None:
@@ -401,12 +464,39 @@ class Requests(unittest.TestCase):
 
     def test_the_token_goes_to_the_github_api_only(self) -> None:
         sent = self.requests({"GH_TOKEN": "secret"})
-        self.assertEqual([request.full_url for request in sent], [next_task.TASKS, OPEN + "1", CLOSED + "1"])
+        self.assertEqual([request.full_url for request in sent], [next_task.TASKS, OPEN + "1", COMMITS + "1"])
         self.assertIsNone(sent[0].get_header("Authorization"))
         for request in sent[1:]:
             self.assertEqual(request.get_header("Authorization"), "Bearer secret")
-            self.assertEqual(request.get_header("Accept"), next_task.RENDERED)
+        self.assertEqual([request.get_header("Accept") for request in sent[1:]],
+                         [next_task.RENDERED, "application/vnd.github+json"])
         self.assertEqual(self.requests({"GITHUB_TOKEN": "other"})[1].get_header("Authorization"), "Bearer other")
+
+    def test_merged_pull_requests_are_asked_of_graphql_with_the_token(self) -> None:
+        sent = []
+
+        def urlopen(request, timeout):
+            sent.append(request)
+            if request.full_url == next_task.TASKS:
+                body = TASKS
+            elif request.full_url == next_task.GRAPHQL:
+                body = {"data": {"repository": {"p4": Site.graphql(MERGED_PULLS[4])}}}
+            elif request.full_url.startswith(COMMITS):
+                body = [commit("Merge pull request #4 from someone/topic")]
+            else:
+                body = []
+            return mock.MagicMock(**{"__enter__.return_value.read.return_value": json.dumps(body).encode()})
+
+        out = io.StringIO()
+        with mock.patch.object(next_task.OPENER, "open", urlopen), \
+                mock.patch.dict(os.environ, TOKEN, clear=True), redirect_stdout(out):
+            self.assertEqual(next_task.main(["--json"]), 0)
+        self.assertIn({"node_id": "Algebra/t6", "pull_requests": [4]}, json.loads(out.getvalue())["taken_by"])
+        query = sent[-1]
+        self.assertEqual((query.full_url, query.get_method()), (next_task.GRAPHQL, "POST"))
+        self.assertEqual(query.get_header("Authorization"), "Bearer secret")
+        self.assertEqual(query.get_header("Content-type"), "application/json")
+        self.assertIn("p4: pullRequest(number: 4)", json.loads(query.data)["query"])
 
     def test_without_a_token_nothing_is_sent(self) -> None:
         self.assertTrue(all(request.get_header("Authorization") is None for request in self.requests({})))

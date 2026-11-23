@@ -19,7 +19,8 @@ commit it was computed from. You don't need to build the repository to pick
 one, and people and agents follow the same steps:
 
 1. Take a task from `tasks.json`. `python3 scripts/next_task.py` prints the
-   next ones; `--json` prints them for agents.
+   next ones, with a GitHub token in `GH_TOKEN`; `--json` prints them for
+   agents.
 2. Skip a task that an open pull request names, by its article id (`af_…`) or
    its Lean declaration, in its title, body or branch. `next_task.py` skips
    those, including those an older pull request names, in its title, branch or
