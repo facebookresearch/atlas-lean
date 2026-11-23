@@ -48,13 +48,24 @@ open scoped BigOperators
 
 attribute [local instance] HasDerivedCategory.standard
 
+/-- A blowup of `X` along the closed subscheme `i : Z ⟶ X`, characterized by the
+universal property: the inverse image of the ideal of `Z` is effective Cartier,
+and every morphism over `ℂ` with that property factors uniquely. The source is
+integral and the map is proper and birational. -/
 structure BlowupModel {X Z : ComplexScheme} (i : Z ⟶ X) where
+  /-- The blowing-up scheme. -/
   source : ComplexScheme
+  /-- It is integral. -/
   [integral : IsIntegral source.left]
+  /-- The blowing-down map. -/
   map : source ⟶ X
+  /-- It is proper. -/
   [proper : IsProper map.left]
+  /-- It is birational. -/
   birational : IsBirationalMorphism map.left
+  /-- The inverse image of the ideal of the center is effective Cartier. -/
   cartier : IsEffectiveCartier (i.left.ker.comap map.left)
+  /-- The universal property of the blowup. -/
   universal : ∀ (T : ComplexScheme) (f : T ⟶ X),
     IsEffectiveCartier (i.left.ker.comap f.left) →
       ∃! g : T ⟶ source, g ≫ map = f
@@ -63,12 +74,15 @@ namespace BlowupModel
 
 variable {X Z : ComplexScheme} {i : Z ⟶ X} (B : BlowupModel i)
 
+/-- The exceptional scheme: the fibre product of the blowup with the center. -/
 abbrev exceptional : ComplexScheme :=
   Over.mk (pullback.fst B.map.left i.left ≫ B.source.hom)
 
+/-- The inclusion of the exceptional scheme. -/
 def exceptionalMap : B.exceptional ⟶ B.source :=
   Over.homMk (pullback.fst B.map.left i.left) (by rfl)
 
+/-- The projection of the exceptional scheme to the center. -/
 def exceptionalProjection : B.exceptional ⟶ Z :=
   Over.homMk (pullback.snd B.map.left i.left) (by
     dsimp [exceptional]
@@ -90,6 +104,8 @@ def cohomologyCast {Z : TopCat} {m n : ℤ} (h : m = n) :
   subst n
   exact LinearMap.id
 
+/-- The powers `hʲ ∈ H^{2j}(Z)` of a degree-two class, by repeated cup
+product with the unit class in degree zero. -/
 def powerClass (Z : TopCat) (h : Cohomology Z 2) :
     (j : ℕ) → Cohomology Z (2 * j)
   | 0 => unitClass Z
@@ -110,6 +126,7 @@ variable {X Z : ComplexScheme} (i : Z ⟶ X) [IsClosedImmersion i.left]
   [SmoothOfRelativeDimension (d + c) B.source.hom]
   [SmoothOfRelativeDimension (d + c - 1) B.exceptional.hom]
 
+/-- The Gysin map of the exceptional inclusion, which raises degrees by two. -/
 def exceptionalPush (F : PureFamily D) (n : ℤ) :
     Cohomology (space B.exceptional) n →ₗ[ℚ]
       Cohomology (space B.source) (n + 2) :=
@@ -118,10 +135,14 @@ def exceptionalPush (F : PureFamily D) (n : ℤ) :
       (D B.exceptional) (D B.source) (d + c - 1) (d + c)
       (F.iso _ (d + c - 1)) (F.iso _ (d + c)) n
 
+/-- The class `h ∈ H²(E)`: minus the restriction to `E` of the Gysin image of
+`1`, that is `c₁(O_E(1)) = -c₁(N_{E/B})`. -/
 def exceptionalClass (F : PureFamily D) : Cohomology (space B.exceptional) 2 :=
   -(cohomologyPullback (spaceMap B.exceptionalMap) 2
     (exceptionalPush D P i B d c hc F 0 (unitClass (space B.exceptional))))
 
+/-- The `j`-th exceptional summand `Hⁿ⁻²⁽ʲ⁺¹⁾(Z) → Hⁿ(B)`,
+`β ↦ i_{E!}(hʲ ∪ p^* β)`. -/
 def exceptionalContribution (F : PureFamily D) (n : ℤ) (j : Fin (c - 1)) :
     Cohomology (space Z) (n - 2 * (j.val + 1)) →ₗ[ℚ]
       Cohomology (space B.source) n :=
@@ -133,10 +154,13 @@ def exceptionalContribution (F : PureFamily D) (n : ℤ) (j : Fin (c - 1)) :
             cohomologyPullback (spaceMap B.exceptionalProjection)
               (n - 2 * (j.val + 1))
 
+/-- The source of the blowup comparison: `Hⁿ(X) × ∏_{j < c - 1} Hⁿ⁻²⁽ʲ⁺¹⁾(Z)`. -/
 abbrev BlowupSummands (n : ℤ) :=
   Cohomology (space X) n ×
     ((j : Fin (c - 1)) → Cohomology (space Z) (n - 2 * (j.val + 1)))
 
+/-- The blowup comparison map `(α, β) ↦ π^* α + ∑ⱼ i_{E!}(hʲ ∪ p^* βⱼ)`
+(Voisin, Theorem 7.31). -/
 def blowupComparison (F : PureFamily D) (n : ℤ) :
     BlowupSummands (X := X) (Z := Z) c n →ₗ[ℚ] Cohomology (space B.source) n where
   toFun a := cohomologyPullback (spaceMap B.map) n a.1 +
