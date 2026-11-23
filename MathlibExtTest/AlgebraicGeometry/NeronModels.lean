@@ -55,4 +55,45 @@ example (a : R) :
   exact congrArg (fun f : CommRingCat.of R ⟶
     CommRingCat.of (IsLocalRing.ResidueField R) ↦ f.hom a) h
 
+section Models
+
+variable (R K : Type) [CommRing R] [Field K] [Algebra R K] [IsFractionRing R K]
+  {A B : Over (Spec (.of K))}
+
+-- Restriction to the generic fibre and unique extension are inverse.
+example (N : NeronModel R K A) (Y : Over (trait R)) [Smooth Y.hom] (e : Y ⟶ N.model) :
+    (N.homEquiv Y).symm (N.homEquiv Y e) = e :=
+  (N.homEquiv Y).symm_apply_apply e
+
+example (N : NeronModel R K A) (Y : Over (trait R)) [Smooth Y.hom]
+    (f : (genericFunctor R K).obj Y ⟶ A) :
+    (genericFunctor R K).map ((N.homEquiv Y).symm f) ≫ N.genericIso.hom = f :=
+  N.extend_generic Y f
+
+-- Extension of generic maps is functorial.
+example (M : NeronModel R K A) : NeronModel.map M M (𝟙 A) = 𝟙 M.model :=
+  NeronModel.map_id M
+
+example (M : NeronModel R K A) (N : NeronModel R K B) (f : A ⟶ B) :
+    NeronModel.map M N (f ≫ 𝟙 B) = NeronModel.map M N f ≫ NeronModel.map N N (𝟙 B) :=
+  NeronModel.map_comp M N N f (𝟙 B)
+
+-- A smooth separated model with the mapping property is a Néron model of its own generic
+-- fibre, with the identity comparison.
+example (M : Over (trait R)) [Smooth M.hom] [IsSeparated M.hom] [LocallyOfFiniteType M.hom]
+    (h : HasMappingProperty R K M) : (ofMappingProperty R K M h).model = M :=
+  rfl
+
+-- Finite-type Néron models are Néron models.
+example (N : FiniteTypeNeronModel R K A) : QuasiCompact N.model.hom := inferInstance
+
+-- The pullback of a group object is a group object, so generic fibres of group models are
+-- group schemes.
+example (G : Over (trait R)) [GrpObj G] : GrpObj ((genericFunctor R K).obj G) := inferInstance
+
+example (G : Over (trait R)) [GrpObj G] [IsCommMonObj G] :
+    IsCommMonObj ((genericFunctor R K).obj G) := inferInstance
+
+end Models
+
 end MathlibExtTest.AlgebraicGeometry.NeronModels

@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import MathlibExt.AlgebraicGeometry.SemistableModels
 public import MathlibExt.AlgebraicGeometry.AbelianSchemes
+public import MathlibExt.AlgebraicGeometry.SemistableModels
 
 /-!
 # Néron interfaces over a general trait
@@ -23,8 +23,7 @@ are completed constructions from the defining mapping property. Group
 extension, abelian-variety existence and the good-reduction mapping property
 remain independent Wanted requests on these actual objects.
 
-The extension proofs generalize the complete PadicNeronModels API to the
-prescribed R/K fraction field; the old fixed-p core remains unchanged.
+`PadicNeronModels` specializes these models to `ℤ_p ⊂ ℚ_p`.
 
 Reference: Conrad, *Néron models, Tamagawa factors, and Tate-Shafarevich
 groups*, Theorem 1.1 and Remark 1.3, pp. 2–3: existence over any Dedekind
@@ -58,11 +57,14 @@ def HasMappingProperty (M : Over (trait R)) : Prop :=
 
 /-- A general locally finite-type Néron model of a specified generic scheme. -/
 structure NeronModel (A : Over (Spec (.of K))) where
+  /-- The integral model, a scheme over the trait. -/
   model : Over (trait R)
   [smooth : Smooth model.hom]
   [separated : IsSeparated model.hom]
   [locallyFiniteType : LocallyOfFiniteType model.hom]
+  /-- The generic fibre of the model is identified with `A`. -/
   genericIso : (genericFunctor R K).obj model ≅ A
+  /-- Every generic map from a smooth test scheme has a unique extension. -/
   mappingProperty : ∀ (Y : Over (trait R)) [Smooth Y.hom]
     (f : (genericFunctor R K).obj Y ⟶ A),
     ∃! e : Y ⟶ model, (genericFunctor R K).map e ≫ genericIso.hom = f
