@@ -11,6 +11,8 @@ Homotopy groups, singular homology and other algebraic invariants of spaces, wit
 - [Persistence modules and barcodes](persistence-modules-and-barcodes/README.md)
 - [Simplicial complexes from point clouds](simplicial-complexes-from-point-clouds/README.md)
 - [Solid condensed homology of CW complexes](solid-condensed-homology-of-cw-complexes/README.md)
+- [Contractibility and local contractibility](contractibility-and-local-contractibility/README.md)
+- [Paths and path homotopies](paths-and-path-homotopies/README.md)
 - [Adams' theorem on spheres that are H-spaces](h-space-sphere-iff.md)
 - [Borsuk–Ulam theorem](borsuk-ulam.md)
 - [Ham sandwich theorem](ham-sandwich.md)
