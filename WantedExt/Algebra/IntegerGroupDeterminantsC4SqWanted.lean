@@ -13,7 +13,7 @@ import Mathlib.RingTheory.Int.Basic
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
-public import MathlibExt.Algebra.IntegerGroupDeterminantsC4SqSums
+public import MathlibExt.Algebra.IntegerGroupDeterminantsC4SqNormDifference
 public import MathlibExt.LinearAlgebra.Matrix.CirculantDetFour
 
 /-!
@@ -58,38 +58,6 @@ C_4^2*, INTEGERS 24 (2024), Article A30, Section 1 (definition of `S(G)`). -/
 public theorem one_mem_integerGroupDeterminants (G : Type*) [AddGroup G] [Fintype G]
     [DecidableEq G] : (1 : ℤ) ∈ integerGroupDeterminants G :=
   ⟨Pi.single 0 1, by simp⟩
-
-/-- **The Gaussian integers $\alpha_i$.** For
-$a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$ with differences $d_0, \dots, d_7$ (so
-$d_i = a(i, 0) - a(i, 2)$ and $d_{i+4} = a(i, 1) - a(i, 3)$ for $0 \le i \le 3$), the Gaussian
-integers $\alpha_0, \dots, \alpha_3 \in \mathbb{Z}[\sqrt{-1}]$ are
-$\alpha_i = d_i + d_{i+4} \sqrt{-1}$.
-
-Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
-C_4^2*, INTEGERS 24 (2024), Article A30, Section 2 (notation after Corollary 2). -/
-public def c4SqAlpha (a : Fin 4 × Fin 4 → ℤ) : Fin 4 → GaussianInt :=
-  ![⟨c4SqD a 0, c4SqD a 4⟩, ⟨c4SqD a 1, c4SqD a 5⟩, ⟨c4SqD a 2, c4SqD a 6⟩,
-    ⟨c4SqD a 3, c4SqD a 7⟩]
-
-/-- **The Gaussian integer $\beta$.** For $a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$
-with Gaussian integers $\alpha_0, \dots, \alpha_3$,
-$\beta = (\alpha_0 + \alpha_2)^2 - (\alpha_1 + \alpha_3)^2 \in \mathbb{Z}[\sqrt{-1}]$.
-
-Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
-C_4^2*, INTEGERS 24 (2024), Article A30, Section 2 (definition before Lemma 1). -/
-public def c4SqBeta (a : Fin 4 × Fin 4 → ℤ) : GaussianInt :=
-  (c4SqAlpha a 0 + c4SqAlpha a 2) ^ 2 - (c4SqAlpha a 1 + c4SqAlpha a 3) ^ 2
-
-/-- **The Gaussian integer $\gamma$ of a function on $C_4^2$.** For
-$a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$, let
-$\alpha_i = (a(i, 0) - a(i, 2)) + (a(i, 1) - a(i, 3))\sqrt{-1} \in \mathbb{Z}[\sqrt{-1}]$
-for $0 \le i \le 3$. Then
-$\gamma = (\alpha_0 - \alpha_2)^2 + (\alpha_1 - \alpha_3)^2 \in \mathbb{Z}[\sqrt{-1}]$.
-
-Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
-C_4^2*, INTEGERS 24 (2024), Article A30, Section 2 (definition before Lemma 1). -/
-public def c4SqGamma (a : Fin 4 × Fin 4 → ℤ) : GaussianInt :=
-  (c4SqAlpha a 0 - c4SqAlpha a 2) ^ 2 + (c4SqAlpha a 1 - c4SqAlpha a 3) ^ 2
 
 /-- **The C₄² notation at the indicator of the identity.** Let $\delta$ be the integer-valued
 function on $C_4^2 = \mathbb{Z}/4 \times \mathbb{Z}/4$ that is $1$ at $(0, 0)$ and $0$ elsewhere.
@@ -402,21 +370,6 @@ public theorem_wanted c4Sq_circulantDetFour_product_prime_factor (a : Fin 4 × F
         D = (8 * k - 3) * (8 * l - 3)) ∧
       (Q ≡ 2 [ZMOD 4] → ∃ k l : ℤ, 8 * l - 3 ∈ primesFiveModEight ∧ k ≡ l [ZMOD 2] ∧
         D = (8 * k - 3) * (8 * l - 3))
-
-/-- **The difference of the norms of β and γ modulo 16 (C₄²).** Let $a$ be an integer-valued
-function on $C_4^2 = \mathbb{Z}/4 \times \mathbb{Z}/4$, with associated integers $b_i$, $c_i$
-$(0 \le i \le 3)$ and Gaussian integers $\beta$, $\gamma$, and write $\beta\bar\beta$,
-$\gamma\bar\gamma$ for the norms of $\beta$ and $\gamma$. If
-$b_0 + b_2 \not\equiv b_1 + b_3 \pmod 2$, then
-$\beta\bar\beta - \gamma\bar\gamma \equiv 4(b_0b_2 + b_1b_3 + c_0c_2 + c_1c_3) \pmod{16}$.
-
-Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
-C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 12 (`integers-2024-A30-lem-12`). -/
-public theorem_wanted c4Sq_norm_beta_sub_norm_gamma_mod_sixteen (a : Fin 4 × Fin 4 → ℤ)
-    (h : ¬ c4SqB a 0 + c4SqB a 2 ≡ c4SqB a 1 + c4SqB a 3 [ZMOD 2]) :
-    Zsqrtd.norm (c4SqBeta a) - Zsqrtd.norm (c4SqGamma a) ≡
-      4 * (c4SqB a 0 * c4SqB a 2 + c4SqB a 1 * c4SqB a 3 +
-        c4SqC a 0 * c4SqC a 2 + c4SqC a 1 * c4SqC a 3) [ZMOD 16]
 
 /-- **Two prime factors ≡ −3 mod 8 of ββ̄γγ̄ (C₄²).** Let $a$ be an integer-valued function on
 $C_4^2 = \mathbb{Z}/4 \times \mathbb{Z}/4$, with associated integers $b_i$, $c_i$ $(0 \le i \le 3)$
