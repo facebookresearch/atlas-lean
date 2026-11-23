@@ -26,3 +26,13 @@ example : 2 * (11 + 43) = 3 + 105 ∧ 2 * (11 * 43) = 3 * (3 * 105) + 1 ∧
     ¬ IsCompatibleSemiprimePair 3 105 11 43 := by
   refine ⟨rfl, rfl, fun h => ?_⟩
   exact (by decide : 3 * 105 % 3 ≠ 2) h.mod_three.1
+
+example : 71 * 1609 % 4 = 3 ∧ 71 % 4 = 3 ∧ 1609 % 4 = 1 := by
+  obtain ⟨hprod, hres⟩ := isCompatibleSemiprimePair_71_1609.mod_four
+  exact ⟨hprod, hres.resolve_left (by decide)⟩
+
+-- Both equations hold, but 62 is composite and the first product is 1 modulo 4.
+example : 2 * (19 + 62) = 5 + 157 ∧ 2 * (19 * 62) = 3 * (5 * 157) + 1 ∧
+    ¬ IsCompatibleSemiprimePair 5 157 19 62 := by
+  refine ⟨rfl, rfl, fun h => ?_⟩
+  exact (by decide : 5 * 157 % 4 ≠ 3) h.mod_four.1

@@ -315,9 +315,12 @@ Codex change request can cancel the PR's CI run while it is still queued or
 running; if `build` is cancelled, CI must pass before the PR can be queued. A
 completed build is unaffected. `public-references` is configured to run on PRs
 and merge groups, but stays advisory until the workflow governance described
-under [Public references](#public-references) is in place. Blueprint Pages,
-Check workflows and Binary64 conformance are path-filtered on PRs, and Blueprint
-Pages also builds `main` once a day.
+under [Public references](#public-references) is in place. `graph sync` is
+configured to run on every PR and merge group, without filters, and reports
+whether the PR's wiki is in step with its Lean
+([Maintaining articles](docs/BLUEPRINT.md#maintaining-articles)).
+Blueprint Pages, Check workflows and Binary64 conformance are path-filtered on
+PRs, and Blueprint Pages also builds `main` once a day.
 
 ## Lean and Mathlib bumps
 
