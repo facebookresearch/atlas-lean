@@ -60,6 +60,14 @@ example : ∑ k ∈ Finset.Icc 1 2, (-1 : ℚ) ^ (k - 1) * (2 : ℕ).choose k / 
   rw [show Finset.Icc 1 2 = {1, 2} from by decide]
   norm_num [harmonic, Finset.sum_range_succ]
 
+-- Exponent zero recovers the unweighted sum, including the zero-index term.
+example (N : ℕ) : ∑ k ∈ Finset.range (N + 1), N.choose k * Nat.fib k = Nat.fib (2 * N) := by
+  simpa using sum_pow_mul_choose_mul_fib N 0
+
+-- At exponent five in row two, the falling factorials above order two vanish.
+example : ∑ k ∈ Finset.range (2 + 1), k ^ 5 * (2 : ℕ).choose k * Nat.fib k = 34 :=
+  (sum_pow_mul_choose_mul_fib 2 5).trans (by decide)
+
 -- The first-power sum is empty in row zero.
 example : ∑ k ∈ Finset.Icc 1 0, k * (0 : ℕ).choose k * Nat.fib k = 0 :=
   (sum_pow_mul_choose_mul_fib_small 0).1.trans (by decide)

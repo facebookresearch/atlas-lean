@@ -129,19 +129,6 @@ public theorem_wanted sum_poly_mul_fib_pow_eq_sum_stirlingSecond_derivative (A :
         (Nat.stirlingSecond r i : ℂ) * x ^ i *
           (derivative^[i] (∑ j ∈ Finset.range (N + 1), C (Nat.fib j : ℂ) * X ^ j)).eval x
 
-/-- **Power-weighted binomial sums of Fibonacci numbers.** Let $F_n$ denote the Fibonacci numbers,
-$S(r, i)$ the Stirling numbers of the second kind and $(N)_i = N(N-1) \cdots (N-i+1)$ the falling
-factorial, with $(N)_0 = 1$. For all natural numbers $N$ and $r$,
-$$\sum_{k=0}^{N} k^r \binom{N}{k} F_k = \sum_{i=0}^{r} S(r, i) \, (N)_i \, F_{2N-i},$$
-where the terms with $i > N$ vanish because $(N)_i = 0$.
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Theorem 2.5. -/
-public theorem_wanted sum_pow_mul_choose_mul_fib (N r : ℕ) :
-    ∑ k ∈ Finset.range (N + 1), k ^ r * N.choose k * Nat.fib k =
-      ∑ i ∈ Finset.range (r + 1), Nat.stirlingSecond r i * N.descFactorial i * Nat.fib (2 * N - i)
-
 /-- **Power-weighted binomial sums of Lucas numbers.** Let $L_n$ denote the Lucas numbers
 ($L_0 = 2$, $L_1 = 1$, $L_{n+2} = L_{n+1} + L_n$), $S(r, i)$ the Stirling numbers of the second
 kind and $(N)_i = N(N-1) \cdots (N-i+1)$ the falling factorial, with $(N)_0 = 1$. For all natural
