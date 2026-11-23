@@ -48,4 +48,3 @@ def_wanted bigTestIdealSheafComparison
     TestIdealComparison V C D p hp S A
 
 end MathlibExt.AlgebraicGeometry.FrobeniusTraceSections
-

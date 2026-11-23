@@ -224,4 +224,3 @@ theorem rationalFunctionsEquiv_map {U V : X.Opens} [Nonempty U] [Nonempty V] (i 
 
 
 end MathlibExt.AlgebraicGeometry.RationalFunctionModules
-

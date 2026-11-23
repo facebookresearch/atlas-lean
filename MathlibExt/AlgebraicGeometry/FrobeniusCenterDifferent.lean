@@ -140,4 +140,3 @@ def fDifferent {Q : CenterDescent C D p e hV hW F I i comm}
       realCast (multiplierDivisor C D p e hV hW F I i comm R))
 
 end MathlibExt.AlgebraicGeometry.FrobeniusCenterDifferent
-

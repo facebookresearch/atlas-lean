@@ -109,4 +109,3 @@ def indexedCompatibleIdealInfimum {ι : Type} (degree : ι → ℕ)
   sInf {I : Ideal R | I ≠ ⊥ ∧ ∀ i, IsCompatible (c i) I}
 
 end MathlibExt.AlgebraicGeometry.AffineCartierTraceIdeals
-

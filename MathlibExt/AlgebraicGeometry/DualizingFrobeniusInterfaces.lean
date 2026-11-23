@@ -112,4 +112,3 @@ def traceSectionImage (D : RealWeil V) (F : FrobeniusIdentification V C p e hp)
   LinearMap.range ((GenericSectionMaps.sections V.X).map (boundaryTrace V C p e hp D F I)).hom
 
 end MathlibExt.AlgebraicGeometry.DualizingFrobeniusInterfaces
-

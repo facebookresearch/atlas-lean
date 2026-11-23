@@ -53,4 +53,3 @@ theorem_wanted conductor_different_invariance
     PreservesDifferent R
 
 end MathlibExt.AlgebraicGeometry.ConductorLogGluing
-

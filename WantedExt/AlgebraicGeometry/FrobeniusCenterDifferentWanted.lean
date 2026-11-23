@@ -53,4 +53,3 @@ def_wanted normalizedFdifferentMultiplier
     TraceMultiplier C D p e hV hW F I i comm Q N CW FW h
 
 end MathlibExt.AlgebraicGeometry.FrobeniusCenterDifferent
-

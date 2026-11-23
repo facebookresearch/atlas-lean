@@ -63,4 +63,3 @@ example : imageIdeal zeroTrace = ⊥ := by
   simp [imageIdeal, zeroTrace, eq_comm]
 
 end MathlibExtTest.AlgebraicGeometry.DivisorialFrobenius
-

@@ -41,4 +41,3 @@ def_wanted frobeniusDivisorialIdentification
     {F : FrobeniusIdentification V C p e hp // F.embedding = E}
 
 end MathlibExt.AlgebraicGeometry.DualizingFrobeniusInterfaces
-

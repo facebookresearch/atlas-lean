@@ -45,4 +45,3 @@ def_wanted normalizedUntwistedIdentification
     {U : UntwistedIdentification P p e hp // U.frame = F ∧ U.embedding = C}
 
 end MathlibExt.AlgebraicGeometry.BoundaryFrobeniusTraces
-

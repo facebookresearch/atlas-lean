@@ -92,4 +92,3 @@ structure LogAdjointBranch {k : Type} [Field k] {d : ℕ}
     S.power.cartier.line.val
 
 end MathlibExt.AlgebraicGeometry.ConductorLogGluing
-

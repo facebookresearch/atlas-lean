@@ -56,4 +56,3 @@ def_wanted normalizedConductorInvolution
     BranchInvolution (normalizationMap G) C H
 
 end MathlibExt.AlgebraicGeometry.ConductorNormalizationBranches
-

@@ -74,4 +74,3 @@ def moduleTrace (C : FiniteDualityEmbedding f) :
         (singleHomologyIso Y (structureModule Y)).hom
 
 end MathlibExt.AlgebraicGeometry.FiniteDualityModuleTrace
-

@@ -178,4 +178,3 @@ structure TestIdealComparison (S : TraceSystem V C D p hp (structureModule V.X.l
     ideal.ideal U = localTestInfimum V C D p hp S U.val F
 
 end MathlibExt.AlgebraicGeometry.FrobeniusTraceSections
-

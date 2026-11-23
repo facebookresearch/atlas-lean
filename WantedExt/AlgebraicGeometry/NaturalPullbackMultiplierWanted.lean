@@ -36,4 +36,3 @@ def_wanted limitingMultiplierImage
     CandidateImage V C R.model I m c R.naturalSupport R.idealSupport
 
 end MathlibExt.AlgebraicGeometry.NaturalPullbackMultiplierModules
-
