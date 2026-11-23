@@ -44,7 +44,7 @@ private lemma parent_rank_isTree {n : Nat}
     intro v
     generalize hv : rank v = k
     induction k using Nat.strong_induction_on generalizing v with
-    | h k ih =>
+    | ind k ih =>
       by_cases hvr : v = root
       · subst v
         exact .refl root

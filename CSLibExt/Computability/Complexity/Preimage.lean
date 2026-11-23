@@ -25,7 +25,7 @@ The first-component machine and the output-length bound come from
 namespace MetaMathlibExt.ComplexityTheory
 
 open Cslib.Complexity Cslib.Complexity.Preimage
-open Cslib.CookLevin Cslib.Logic.PL
+open Cslib.CookLevin Cslib.Logic.LegacyPL
 
 private theorem satVerifier_sound {x w : List Bool}
     (h : (satVerifier (x, w)).ret = true) : satDec x = true := by
