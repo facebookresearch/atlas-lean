@@ -217,18 +217,6 @@ Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 5
 public theorem_wanted exists_small_base_binomialForm_two_pow (n : ℕ) (hn : 2 ≤ n) :
     ∃ y b : ℕ, y ≤ ⌈Real.sqrt (2 * n)⌉₊ + 1 ∧ 2 ≤ b ∧ b ≤ 2 ^ y - 1 ∧ HasBinomialForm b (2 ^ n)
 
-/-- **Even-length palindromic prime powers have base one less than a power of the prime.** Let
-$p$ be a prime and let $n$ and $b \ge 2$ be natural numbers. If the base-$b$ representation of
-$p^n$ is a palindrome with an even number of digits, then $b = p^x - 1$ for some natural number
-$x$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 6
-(`integers-2024-A69-thm-6`). -/
-public theorem_wanted base_eq_prime_pow_sub_one_of_palindrome (p n b : ℕ) (hp : p.Prime)
-    (hb : 2 ≤ b) (hpal : (Nat.digits b (p ^ n)).Palindrome)
-    (he : Even (Nat.digits b (p ^ n)).length) : ∃ x, b = p ^ x - 1
-
 /-- **Digits of a power of the base and of its successor.** Let $z \ge 2$ and $n$ be natural
 numbers. Then the base-$z$ digits of $z^n$ are a $1$ followed by $n$ zeros, and, if $n \ge 1$,
 the base-$z$ digits of $z^n + 1$ are a $1$, then $n - 1$ zeros, then a $1$.
