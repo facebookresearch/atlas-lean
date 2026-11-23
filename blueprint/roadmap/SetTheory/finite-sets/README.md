@@ -5,3 +5,4 @@ Finite subsets and finite types: cardinality, lattice operations, products, powe
 - [Finiteness of subsets and ranges](finiteness-of-subsets-and-ranges/README.md)
 - [Finite set](finite-set.md)
 - [The Cartesian product of two finite sets is finite](finite-product-finite.md)
+- [An injective map from a finite set to itself is surjective](injective-self-map-finite-set-surjective.md)

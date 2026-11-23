@@ -10,14 +10,17 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.Data.Nat.Choose.Basic
 import Mathlib.Algebra.Polynomial.Taylor
+import Mathlib.Tactic.Ring
 
 /-! # Mitrinović's numbers
 
 The coefficients of the product of the factors `X - (a + b * i)` satisfy the defining
 recurrence of Mitrinović's numbers. Translating the product for `a = 0` gives the binomial
-expansion in the first parameter.
+expansion in the first parameter. At `a = 0`, each coefficient is a power of `-b` times an
+unsigned Stirling number of the first kind.
 -/
 
 namespace MetaMathlibExt
@@ -51,6 +54,46 @@ Section 4, Equation (4.2). -/
 public theorem mitrinovicR_one (a b : ℂ) :
     mitrinovicR a b 1 0 = -a ∧ mitrinovicR a b 1 1 = 1 := by
   simp [mitrinovicR]
+
+/-- **Mitrinović's numbers at $a = 0$.** For every complex number $b$, Mitrinović's numbers
+$R^k_j(0, b)$ satisfy the following. First, for every $k \in \mathbb{N}$, $R^k_0(0, b) = 1$ if
+$k = 0$ and $R^k_0(0, b) = 0$ otherwise. Second, for all $j, k \in \mathbb{N}$,
+$R^{k+1}_{j+1}(0, b) = R^k_j(0, b) + (b - b(j + 1))\, R^{k+1}_j(0, b)$. Third, for all
+$j, k \in \mathbb{N}$, $R^k_j(0, b) = (-b)^{j-k} c(j, k)$, where $c(j, k)$ is the unsigned
+Stirling number of the first kind, which is $0$ for $k > j$, and the exponent $j - k$ is read as
+$0$ when $k > j$.
+
+The source prints the last factor of the recurrence as $R^k_{j-1}(a, b)$; it is
+$R^k_{j-1}(0, b)$, the case $a = 0$ of (4.2). The source's hypothesis $b \ne 0$ is dropped: at
+$b = 0$ both sides of the closed form are $\delta_{j,k}$.
+
+Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted
+Sums II*, INTEGERS 26 (2026), Article A36,
+Corollary 5 (`integers-2026-A36-cor-5`). -/
+public theorem mitrinovicR_zero_eq (b : ℂ) :
+    (∀ k : ℕ, mitrinovicR 0 b 0 k = if k = 0 then 1 else 0) ∧
+    (∀ j k : ℕ, mitrinovicR 0 b (j + 1) (k + 1) =
+      mitrinovicR 0 b j k + (b - b * (j + 1)) * mitrinovicR 0 b j (k + 1)) ∧
+    ∀ j k : ℕ, mitrinovicR 0 b j k = (-b) ^ (j - k) * Nat.stirlingFirst j k := by
+  refine ⟨fun _ => rfl, ?_, ?_⟩
+  · intro j k
+    rw [mitrinovicR]
+    ring
+  · intro j k
+    induction j generalizing k with
+    | zero => cases k <;> simp [mitrinovicR]
+    | succ j ih =>
+      cases k with
+      | zero =>
+        rw [mitrinovicR, ih]
+        cases j <;> simp
+      | succ k =>
+        rw [mitrinovicR, ih, ih, Nat.stirlingFirst_succ_succ]
+        simp only [zero_add, Nat.succ_sub_succ_eq_sub, Nat.cast_add, Nat.cast_mul]
+        by_cases h : k < j
+        · rw [show j - k = j - (k + 1) + 1 by omega, pow_succ]
+          ring
+        · simp [Nat.stirlingFirst_eq_zero_of_lt (by omega : j < k + 1)]
 
 open Polynomial
 
