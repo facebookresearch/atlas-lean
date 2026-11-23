@@ -20,7 +20,8 @@ example : (cooperNet cooperEx).outProb = 5 / 8 := outProb_cooperEx
 example : (cooperNet cooperUnsat).outProb = 0 := outProb_cooperUnsat
 
 /-- A formula is satisfiable iff its network's output probability is positive. -/
-example (φ : Cslib.Logic.PL.CNF) : Cslib.Logic.PL.CNFSat φ ↔ 0 < (cooperNet φ).outProb :=
+example (φ : Cslib.Logic.LegacyPL.CNF) :
+    Cslib.Logic.LegacyPL.CNFSat φ ↔ 0 < (cooperNet φ).outProb :=
   cnfSat_iff_outProb_pos φ
 
 /-- The reduction map is correct on every bit string. -/
