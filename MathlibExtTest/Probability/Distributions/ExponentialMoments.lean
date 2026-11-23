@@ -1,0 +1,81 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import MathlibExt.Probability.Distributions.ExponentialMoments
+
+/-!
+# Tests for moments of the exponential distribution
+
+Concrete instances: mean, second moment and variance at rate `2`, the third moment at rate `1`,
+the mean of a random variable with law `Exp 3`, the integrability statements, and competing
+clocks at rates `(1, 1)` and `(1, 3)`.
+-/
+
+@[expose] public section
+
+open MeasureTheory ProbabilityTheory
+
+namespace MathlibExtTest.Probability.Distributions.ExponentialMoments
+
+variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
+
+/-- The identity and all powers are integrable against `Exp 2`. -/
+example : Integrable id (expMeasure 2) ∧ Integrable (fun x : ℝ => x ^ 5) (expMeasure 2) :=
+  ⟨integrable_id_expMeasure (by norm_num), integrable_pow_expMeasure (by norm_num) 5⟩
+
+/-- A random variable with law `Exp 3` has variance `1/9`. -/
+example {X : Ω → ℝ} (hX : HasLaw X (expMeasure 3) μ) : Integrable X μ ∧ Var[X; μ] = 1 / 9 := by
+  refine ⟨hX.integrable_of_expMeasure (by norm_num), ?_⟩
+  rw [hX.variance_eq_of_expMeasure (by norm_num)]
+  norm_num
+
+/-- Exponential law of rate `2`: mean `1/2`, second moment `1/2`, variance `1/4`. -/
+example : ∫ x, x ∂(expMeasure 2) = 1 / 2 ∧ ∫ x, x ^ 2 ∂(expMeasure 2) = 1 / 2 ∧
+    Var[id; expMeasure 2] = 1 / 4 := by
+  refine ⟨?_, ?_, ?_⟩
+  · rw [integral_id_expMeasure (by norm_num)]
+    norm_num
+  · rw [integral_sq_expMeasure (by norm_num)]
+    norm_num
+  · rw [variance_id_expMeasure (by norm_num)]
+    norm_num
+
+/-- Third moment of `Exp 1` is `3! = 6`. -/
+example : ∫ x, x ^ 3 ∂(expMeasure 1) = 6 := by
+  rw [integral_pow_expMeasure one_pos]
+  norm_num [Nat.factorial]
+
+/-- A random variable with law `Exp 3` has mean `1/3`. -/
+example {X : Ω → ℝ} (hX : HasLaw X (expMeasure 3) μ) : μ[X] = 1 / 3 := by
+  rw [hX.integral_eq_inv_of_expMeasure (by norm_num)]
+  norm_num
+
+/-- Competing clocks of equal rate ring first with probability `1/2`. -/
+example : ((expMeasure 1).prod (expMeasure 1)).real {p : ℝ × ℝ | p.1 < p.2} = 1 / 2 := by
+  rw [prod_expMeasure_real_lt one_pos one_pos]
+  norm_num
+
+/-- Independent clocks `X ~ Exp 1` and `Y ~ Exp 3`: `X` rings first with probability `1/4`. -/
+example [IsProbabilityMeasure μ] {X Y : Ω → ℝ} (hX : HasLaw X (expMeasure 1) μ)
+    (hY : HasLaw Y (expMeasure 3) μ) (hXY : IndepFun X Y μ) :
+    μ.real {ω | X ω < Y ω} = 1 / 4 := by
+  rw [measureReal_lt_of_hasLaw_expMeasure one_pos (by norm_num) hX hY hXY]
+  norm_num
+
+/-- The characteristic function at `0` is `1`, and at `u = 2` for rate `2` it is `1 / (1 - i)`. -/
+example : charFun (expMeasure 2) 0 = 1 ∧
+    charFun (expMeasure 2) 2 = 1 / (1 - Complex.I) := by
+  rw [charFun_expMeasure two_pos, charFun_expMeasure two_pos]
+  have h : (2 : ℂ) - 2 * Complex.I = 2 * (1 - Complex.I) := by ring
+  refine ⟨by simp, ?_⟩
+  push_cast
+  rw [h, div_mul_cancel_left₀ two_ne_zero, one_div]
+
+end MathlibExtTest.Probability.Distributions.ExponentialMoments

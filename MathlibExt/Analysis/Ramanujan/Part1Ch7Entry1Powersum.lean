@@ -10,6 +10,7 @@ module
 
 public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.Analysis.Calculus.EulerMaclaurinFormula
 
 import Mathlib.Analysis.Analytic.Uniqueness
 import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
@@ -25,7 +26,6 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
-import MathlibExt.Analysis.Calculus.EulerMaclaurinFormula
 
 /-!
 # Ramanujan's asymptotic expansion for power sums
@@ -42,9 +42,11 @@ namespace Entry1Powersum
 
 open scoped Nat Real BigOperators Interval Polynomial ContDiff
 open Asymptotics Filter Finset Complex Topology MeasureTheory
+open MetaMathlibExt (bernoulliKernel bernoulliKernel_continuous bernoulliKernel_norm_le)
 
 noncomputable section
 
+/-- The principal complex power `n ^ r` of a natural number. -/
 def chapter7NatCpow (n : ℕ) (r : ℂ) : ℂ :=
   Complex.cpow (n : ℂ) r
 
@@ -58,54 +60,43 @@ private theorem ch7Entry1NatCpow_norm_of_pos {n : ℕ} (hn : 0 < n) (r : ℂ) :
     ‖chapter7NatCpow n r‖ = Real.rpow (n : ℝ) r.re := by
   exact Complex.norm_natCast_cpow_of_pos hn r
 
+/-- The finite falling product `∏ j < q, (r - j)`. -/
 def chapter7FallingGammaRatio (r : ℂ) (q : ℕ) : ℂ :=
   ∏ j ∈ range q, (r - (j : ℂ))
 
+/-- The Bernoulli correction of order `2 * (j + 1)` in the power-sum expansion at `n`. -/
 def chapter7Entry1Term (r : ℂ) (n j : ℕ) : ℂ :=
   let k := j + 1
   (((bernoulli (2 * k) : ℚ) : ℂ) / ((2 * k).factorial : ℂ)) *
     chapter7FallingGammaRatio r (2 * k - 1) *
       chapter7NatCpow n (r - (2 * k : ℕ) + 1)
 
+/-- The power-sum expansion through `N` Bernoulli corrections, including the constant `ζ(-r)`. -/
 def chapter7Entry1Approx (r : ℂ) (N n : ℕ) : ℂ :=
   riemannZeta (-r) + chapter7NatCpow n (r + 1) / (r + 1) +
     chapter7NatCpow n r / 2 + ∑ j ∈ range N, chapter7Entry1Term r n j
 
+/-- The sum of the principal complex powers `k ^ r` for `1 ≤ k ≤ n`. -/
 def chapter7PowerSum (r : ℂ) (n : ℕ) : ℂ :=
   ∑ k ∈ Icc 1 n, chapter7NatCpow k r
 
-private noncomputable def ch7Entry1Kernel (p : ℕ) (x : ℝ) : ℝ :=
-  bernoulliFun p (Int.fract x)
-
-private theorem ch7Entry1Kernel_periodic (p : ℕ) :
-    Function.Periodic (ch7Entry1Kernel p) 1 := by
-  intro x
-  simp [ch7Entry1Kernel, Int.fract_add_one]
-
-private theorem ch7Entry1Kernel_continuous {p : ℕ} (hp : p ≠ 1) :
-    Continuous (ch7Entry1Kernel p) := by
-  change Continuous (fun x : ℝ => bernoulliFun p (Int.fract x))
-  simpa [Function.comp_def] using
-    (continuous_bernoulliFun p).continuousOn.comp_fract''
-      (bernoulliFun_endpoints_eq_of_ne_one hp).symm
-
 private theorem ch7Entry1Kernel_one (N : ℕ) (hN : 0 < N) :
-    ch7Entry1Kernel (2 * N + 1) 1 = 0 := by
+    bernoulliKernel (2 * N + 1) 1 = 0 := by
   have hodd : Odd (2 * N + 1) := ⟨N, by omega⟩
   have hgt : 1 < 2 * N + 1 := by omega
-  simp [ch7Entry1Kernel, bernoulliFun_eval_zero,
+  simp [bernoulliKernel, bernoulliFun_eval_zero,
     bernoulli_eq_zero_of_odd hodd hgt]
 
 private noncomputable def ch7Entry1MellinBase (N : ℕ) (x : ℝ) : ℂ :=
-  if 1 ≤ x then (ch7Entry1Kernel (2 * N + 1) x : ℂ) else 0
+  if 1 ≤ x then (bernoulliKernel (2 * N + 1) x : ℂ) else 0
 
 private theorem ch7Entry1MellinBase_continuous (N : ℕ) (hN : 0 < N) :
     Continuous (ch7Entry1MellinBase N) := by
   have hp : 2 * N + 1 ≠ 1 := by omega
-  have hk : Continuous (fun x => (ch7Entry1Kernel (2 * N + 1) x : ℂ)) :=
-    Complex.continuous_ofReal.comp (ch7Entry1Kernel_continuous hp)
+  have hk : Continuous (fun x => (bernoulliKernel (2 * N + 1) x : ℂ)) :=
+    Complex.continuous_ofReal.comp (bernoulliKernel_continuous hp)
   change Continuous (fun x : ℝ => if 1 ≤ x then
-    (ch7Entry1Kernel (2 * N + 1) x : ℂ) else 0)
+    (bernoulliKernel (2 * N + 1) x : ℂ) else 0)
   refine hk.if_le continuous_const continuous_const continuous_id ?_
   intro x hx
   have : x = 1 := by linarith
@@ -116,16 +107,9 @@ private theorem ch7Entry1MellinBase_locallyIntegrable (N : ℕ) (hN : 0 < N) :
     LocallyIntegrableOn (ch7Entry1MellinBase N) (Set.Ioi 0) :=
   (ch7Entry1MellinBase_continuous N hN).continuousOn.locallyIntegrableOn measurableSet_Ioi
 
-private theorem ch7Entry1Kernel_norm_le (N : ℕ) (hN : 0 < N) :
-    ∃ C : ℝ, ∀ x : ℝ, ‖ch7Entry1Kernel (2 * N + 1) x‖ ≤ C := by
-  have hp : 2 * N + 1 ≠ 1 := by omega
-  obtain ⟨C, hC⟩ := ((ch7Entry1Kernel_periodic (2 * N + 1)).isBounded_of_continuous
-    one_ne_zero (ch7Entry1Kernel_continuous hp)).exists_norm_le
-  exact ⟨C, fun x => hC _ ⟨x, rfl⟩⟩
-
 private theorem ch7Entry1MellinBase_isBigO_atTop (N : ℕ) (hN : 0 < N) :
     ch7Entry1MellinBase N =O[atTop] (fun _ : ℝ => (1 : ℝ)) := by
-  obtain ⟨C, hC⟩ := ch7Entry1Kernel_norm_le N hN
+  obtain ⟨C, hC⟩ := bernoulliKernel_norm_le N hN
   refine isBigO_iff.mpr ⟨C, ?_⟩
   filter_upwards [eventually_ge_atTop (1 : ℝ)] with x hx
   simpa [ch7Entry1MellinBase, hx] using hC x
@@ -166,7 +150,7 @@ private theorem ch7Entry1MellinIntegral_eq_integral
     (N : ℕ) (hN : 0 < N) (r : ℂ) :
     ch7Entry1MellinIntegral N r =
       ∫ x : ℝ in Set.Ioi 1,
-        (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) * (ch7Entry1Kernel (2 * N + 1) x : ℂ) := by
+        (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) * (bernoulliKernel (2 * N + 1) x : ℂ) := by
   unfold ch7Entry1MellinIntegral mellin
   rw [setIntegral_eq_of_subset_of_forall_sdiff_eq_zero measurableSet_Ioi
     (Set.Ioi_subset_Ioi zero_le_one)]
@@ -183,7 +167,7 @@ private theorem ch7Entry1Tail_integrable
     (N : ℕ) (hN : 0 < N) (r : ℂ) (hu : r.re < 2 * N) :
     IntegrableOn
       (fun x : ℝ => (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) *
-        (ch7Entry1Kernel (2 * N + 1) x : ℂ)) (Set.Ioi 1) := by
+        (bernoulliKernel (2 * N + 1) x : ℂ)) (Set.Ioi 1) := by
   let s : ℂ := r - (2 * N + 1 : ℕ) + 1
   have hs : s.re < 0 := by
     dsimp [s]
@@ -201,12 +185,20 @@ private theorem ch7Entry1Tail_integrable
   rw [hsr]
   simp [ch7Entry1MellinBase, hx.le, smul_eq_mul]
 
-private theorem ch7Entry1Falling_succ (r : ℂ) (q : ℕ) :
+/-- The empty falling product is one. -/
+@[simp]
+theorem chapter7FallingGammaRatio_zero (r : ℂ) : chapter7FallingGammaRatio r 0 = 1 := by
+  simp [chapter7FallingGammaRatio]
+
+/-- Appending one factor to the finite falling product. -/
+theorem chapter7FallingGammaRatio_succ (r : ℂ) (q : ℕ) :
     chapter7FallingGammaRatio r (q + 1) =
       chapter7FallingGammaRatio r q * (r - (q : ℂ)) := by
   simp [chapter7FallingGammaRatio, Finset.prod_range_succ]
 
-private theorem ch7Entry1_iteratedDeriv_cpow
+/-- For `x ≠ 0`, the `q`-th derivative of `y ↦ (y : ℂ) ^ r` on `ℝ` at `x` is
+`chapter7FallingGammaRatio r q * (x : ℂ) ^ (r - q)`. -/
+theorem ch7Entry1_iteratedDeriv_cpow
     (r : ℂ) (q : ℕ) {x : ℝ} (hx : x ≠ 0) :
     iteratedDeriv q (fun y : ℝ => (y : ℂ) ^ r) x =
       chapter7FallingGammaRatio r q * (x : ℂ) ^ (r - (q : ℕ)) := by
@@ -220,31 +212,35 @@ private theorem ch7Entry1_iteratedDeriv_cpow
         exact ih hy
       rw [heq.deriv_eq]
       by_cases he : r - (q : ℕ) = 0
-      · simp [he, ch7Entry1Falling_succ]
+      · simp [he, chapter7FallingGammaRatio_succ]
       · have hd := (hasDerivAt_ofReal_cpow_const hx he).const_mul
             (chapter7FallingGammaRatio r q)
         rw [hd.deriv]
-        rw [ch7Entry1Falling_succ]
+        rw [chapter7FallingGammaRatio_succ]
         rw [show r - ((q + 1 : ℕ) : ℂ) = r - (q : ℂ) - 1 by
           push_cast
           ring]
         ring
 
-private theorem ch7Entry1_cpow_contDiffAt
+/-- For every `m`, the function `y ↦ (y : ℂ) ^ r` on `ℝ` is `C^m` at every `x > 0`. -/
+theorem ch7Entry1_cpow_contDiffAt
     (r : ℂ) {x : ℝ} (hx : 0 < x) {m : WithTop ℕ∞} :
     ContDiffAt ℝ m (fun y : ℝ => (y : ℂ) ^ r) x := by
   have hc : ContDiffAt ℂ m (fun z : ℂ => z ^ r) (x : ℂ) :=
     (analyticAt_id.cpow analyticAt_const (Complex.ofReal_mem_slitPlane.mpr hx)).contDiffAt
   exact (hc.restrict_scalars ℝ).comp x Complex.ofRealCLM.contDiff.contDiffAt
 
-private theorem ch7Entry1_cpow_contDiffOn
+/-- The function `x ↦ (x : ℂ) ^ r` is `C^p` on `[1, n]`. -/
+theorem ch7Entry1_cpow_contDiffOn
     (r : ℂ) (p n : ℕ) :
     ContDiffOn ℝ (p : WithTop ℕ∞) (fun x : ℝ => (x : ℂ) ^ r)
       (Set.Icc 1 (n : ℝ)) := by
   intro x hx
   exact (ch7Entry1_cpow_contDiffAt r (lt_of_lt_of_le zero_lt_one hx.1)).contDiffWithinAt
 
-private theorem ch7Entry1_iteratedDerivWithin_cpow
+/-- For `1 < n` and `x ∈ [1, n]`, the `q`-th derivative of `y ↦ (y : ℂ) ^ r` within `[1, n]` at `x`
+is `chapter7FallingGammaRatio r q * (x : ℂ) ^ (r - q)`. -/
+theorem ch7Entry1_iteratedDerivWithin_cpow
     (r : ℂ) (q n : ℕ) (hn : 1 < n) {x : ℝ} (hx : x ∈ Set.Icc 1 (n : ℝ)) :
     iteratedDerivWithin q (fun y : ℝ => (y : ℂ) ^ r) (Set.Icc 1 (n : ℝ)) x =
       chapter7FallingGammaRatio r q * (x : ℂ) ^ (r - (q : ℕ)) := by
@@ -253,48 +249,6 @@ private theorem ch7Entry1_iteratedDerivWithin_cpow
     (ch7Entry1_cpow_contDiffAt r (lt_of_lt_of_le zero_lt_one hx.1)) hx]
   exact ch7Entry1_iteratedDeriv_cpow r q (ne_of_gt (lt_of_lt_of_le zero_lt_one hx.1))
 
-private theorem ch7Entry1_bernoulli_coeff (j : ℕ) :
-    ((bernoulli j : ℚ) : ℝ) =
-      if j = 1 then (-1 / 2 : ℝ) else (bernoulli j : ℝ) := by
-  by_cases hj : j = 1
-  · subst j
-    simp [bernoulli_one]
-  · simp [hj]
-
-private theorem ch7Entry1_bernoulliFun_eq_sum (p : ℕ) (x : ℝ) :
-    bernoulliFun p x =
-      ∑ j ∈ Finset.range (p + 1), (Nat.choose p j : ℝ) *
-        (if j = 1 then (-1 / 2 : ℝ) else (bernoulli j : ℝ)) * x ^ (p - j) := by
-  rw [show bernoulliFun p x =
-    Polynomial.eval x (Polynomial.map (algebraMap ℚ ℝ) (Polynomial.bernoulli p)) by rfl]
-  rw [Polynomial.bernoulli_def, Polynomial.map_sum, Polynomial.eval_finsetSum]
-  have hterm : ∀ i ∈ Finset.range (p + 1),
-      Polynomial.eval x (Polynomial.map (algebraMap ℚ ℝ)
-        (Polynomial.monomial i (bernoulli (p - i) * ↑(p.choose i)))) =
-        ((bernoulli (p - i) : ℚ) : ℝ) * (Nat.choose p i : ℝ) * x ^ i := by
-    intro i _
-    rw [Polynomial.map_monomial, Polynomial.eval_monomial]
-    simp only [map_mul, map_natCast, eq_ratCast]
-  rw [Finset.sum_congr rfl hterm]
-  have hrefl : (∑ i ∈ Finset.range (p + 1),
-      ((bernoulli (p - i) : ℚ) : ℝ) * (Nat.choose p i : ℝ) * x ^ i) =
-      ∑ j ∈ Finset.range (p + 1),
-        ((bernoulli j : ℚ) : ℝ) * (Nat.choose p (p - j) : ℝ) * x ^ (p - j) := by
-    rw [← Finset.sum_range_reflect (fun j => ((bernoulli j : ℚ) : ℝ) *
-      (Nat.choose p (p - j) : ℝ) * x ^ (p - j)) (p + 1)]
-    apply Finset.sum_congr rfl
-    intro i hi
-    simp only [Finset.mem_range] at hi
-    have e1 : p + 1 - 1 - i = p - i := by omega
-    have e2 : p - (p - i) = i := by omega
-    rw [e1, e2]
-  rw [hrefl]
-  apply Finset.sum_congr rfl
-  intro j hj
-  simp only [Finset.mem_range] at hj
-  rw [← ch7Entry1_bernoulli_coeff j, Nat.choose_symm (by omega : j ≤ p)]
-  ring
-
 private theorem ch7Entry1Kernel_eq_of_spec
     (P : ℕ → ℝ → ℝ) (p : ℕ)
     (hper : ∀ (m : ℕ) (x : ℝ), P m (x + 1) = P m x)
@@ -302,13 +256,13 @@ private theorem ch7Entry1Kernel_eq_of_spec
       ∑ j ∈ Finset.range (p + 1), (Nat.choose p j : ℝ) *
         (if j = 1 then (-1 / 2 : ℝ) else (bernoulli j : ℝ)) * x ^ (p - j))
     (x : ℝ) :
-    P p x = ch7Entry1Kernel p x := by
+    P p x = bernoulliKernel p x := by
   have hp : Function.Periodic (P p) 1 := hper p
   have hfract : P p (Int.fract x) = P p x := by
     rw [Int.fract]
     simpa only [mul_one] using hp.sub_int_mul_eq (Int.floor x)
   rw [← hfract, hunit (Int.fract x) ⟨Int.fract_nonneg x, Int.fract_lt_one x⟩]
-  exact (ch7Entry1_bernoulliFun_eq_sum p (Int.fract x)).symm
+  exact (MetaMathlibExt.bernoulliFun_eq_sum p (Int.fract x)).symm
 
 private theorem ch7Entry1EulerMaclaurin_real
     (a b : ℤ) (p : ℕ) (f : ℝ → ℝ) (hab : a < b) (hp : 1 ≤ p)
@@ -320,13 +274,15 @@ private theorem ch7Entry1EulerMaclaurin_real
             (iteratedDerivWithin (2 * k - 1) f (Set.Icc (a : ℝ) (b : ℝ)) b -
               iteratedDerivWithin (2 * k - 1) f (Set.Icc (a : ℝ) (b : ℝ)) a)) +
         ((-1 : ℝ) ^ (p + 1) / (Nat.factorial p : ℝ) *
-          (∫ x in (a : ℝ)..(b : ℝ), ch7Entry1Kernel p x *
+          (∫ x in (a : ℝ)..(b : ℝ), bernoulliKernel p x *
             iteratedDerivWithin p f (Set.Icc (a : ℝ) (b : ℝ)) x)) := by
   obtain ⟨P, hper, hunit, hformula⟩ :=
     MetaMathlibExt.eulerMaclaurinFormula a b p f hab hp hdf
   simpa only [ch7Entry1Kernel_eq_of_spec P p hper hunit] using hformula
 
-private theorem ch7Entry1_iteratedDerivWithin_re
+/-- If `f : ℝ → ℂ` is `C^q` within a uniquely differentiable set `s` at `x ∈ s`, then the `q`-th
+iterated derivative within `s` of `fun y => (f y).re` at `x` is the real part of that of `f`. -/
+theorem ch7Entry1_iteratedDerivWithin_re
     {f : ℝ → ℂ} {s : Set ℝ} {x : ℝ} (q : ℕ)
     (hf : ContDiffWithinAt ℝ q f s x) (hs : UniqueDiffOn ℝ s) (hx : x ∈ s) :
     iteratedDerivWithin q (fun y => (f y).re) s x =
@@ -337,7 +293,10 @@ private theorem ch7Entry1_iteratedDerivWithin_re
   rw [Complex.reCLM.iteratedFDerivWithin_comp_left hf hs hx le_rfl]
   rfl
 
-private theorem ch7Entry1_iteratedDerivWithin_im
+/-- If `f : ℝ → ℂ` is `C^q` within a uniquely differentiable set `s` at `x ∈ s`, then the `q`-th
+iterated derivative within `s` of `fun y => (f y).im` at `x` is the imaginary part of that
+of `f`. -/
+theorem ch7Entry1_iteratedDerivWithin_im
     {f : ℝ → ℂ} {s : Set ℝ} {x : ℝ} (q : ℕ)
     (hf : ContDiffWithinAt ℝ q f s x) (hs : UniqueDiffOn ℝ s) (hx : x ∈ s) :
     iteratedDerivWithin q (fun y => (f y).im) s x =
@@ -358,7 +317,7 @@ private theorem ch7Entry1EulerMaclaurin_complex
             (iteratedDerivWithin (2 * k - 1) f (Set.Icc (a : ℝ) (b : ℝ)) b -
               iteratedDerivWithin (2 * k - 1) f (Set.Icc (a : ℝ) (b : ℝ)) a)) +
         ((((-1 : ℝ) ^ (p + 1) / (Nat.factorial p : ℝ) : ℝ) : ℂ) *
-          (∫ x in (a : ℝ)..(b : ℝ), (ch7Entry1Kernel p x : ℂ) *
+          (∫ x in (a : ℝ)..(b : ℝ), (bernoulliKernel p x : ℂ) *
             iteratedDerivWithin p f (Set.Icc (a : ℝ) (b : ℝ)) x)) := by
   let s : Set ℝ := Set.Icc (a : ℝ) (b : ℝ)
   have habr : (a : ℝ) < (b : ℝ) := by exact_mod_cast hab
@@ -384,39 +343,39 @@ private theorem ch7Entry1EulerMaclaurin_complex
   have hdcont : ContinuousOn (iteratedDerivWithin p f s) s :=
     hdf.continuousOn_iteratedDerivWithin le_rfl hs
   have hremint : IntervalIntegrable
-      (fun x => (ch7Entry1Kernel p x : ℂ) * iteratedDerivWithin p f s x)
+      (fun x => (bernoulliKernel p x : ℂ) * iteratedDerivWithin p f s x)
       volume (a : ℝ) (b : ℝ) :=
-    (((Complex.continuous_ofReal.comp (ch7Entry1Kernel_continuous hp1)).continuousOn.mul
+    (((Complex.continuous_ofReal.comp (bernoulliKernel_continuous hp1)).continuousOn.mul
       hdcont).mono (by simp [s, Set.uIcc_of_le habr.le])).intervalIntegrable
   have hrem_re :
-      (∫ x in (a : ℝ)..(b : ℝ), ch7Entry1Kernel p x *
+      (∫ x in (a : ℝ)..(b : ℝ), bernoulliKernel p x *
           iteratedDerivWithin p (fun y => (f y).re) s x) =
-        (∫ x in (a : ℝ)..(b : ℝ), (ch7Entry1Kernel p x : ℂ) *
+        (∫ x in (a : ℝ)..(b : ℝ), (bernoulliKernel p x : ℂ) *
           iteratedDerivWithin p f s x).re := by
     calc
       _ = ∫ x in (a : ℝ)..(b : ℝ),
-          ((ch7Entry1Kernel p x : ℂ) * iteratedDerivWithin p f s x).re := by
+          ((bernoulliKernel p x : ℂ) * iteratedDerivWithin p f s x).re := by
         apply intervalIntegral.integral_congr
         intro x hx
-        change ch7Entry1Kernel p x *
+        change bernoulliKernel p x *
             iteratedDerivWithin p (fun y => (f y).re) s x =
-          ((ch7Entry1Kernel p x : ℂ) * iteratedDerivWithin p f s x).re
+          ((bernoulliKernel p x : ℂ) * iteratedDerivWithin p f s x).re
         rw [hder_re p le_rfl x (by simpa [s, Set.uIcc_of_le habr.le] using hx)]
         simp
       _ = _ := intervalIntegral.intervalIntegral_re hremint
   have hrem_im :
-      (∫ x in (a : ℝ)..(b : ℝ), ch7Entry1Kernel p x *
+      (∫ x in (a : ℝ)..(b : ℝ), bernoulliKernel p x *
           iteratedDerivWithin p (fun y => (f y).im) s x) =
-        (∫ x in (a : ℝ)..(b : ℝ), (ch7Entry1Kernel p x : ℂ) *
+        (∫ x in (a : ℝ)..(b : ℝ), (bernoulliKernel p x : ℂ) *
           iteratedDerivWithin p f s x).im := by
     calc
       _ = ∫ x in (a : ℝ)..(b : ℝ),
-          ((ch7Entry1Kernel p x : ℂ) * iteratedDerivWithin p f s x).im := by
+          ((bernoulliKernel p x : ℂ) * iteratedDerivWithin p f s x).im := by
         apply intervalIntegral.integral_congr
         intro x hx
-        change ch7Entry1Kernel p x *
+        change bernoulliKernel p x *
             iteratedDerivWithin p (fun y => (f y).im) s x =
-          ((ch7Entry1Kernel p x : ℂ) * iteratedDerivWithin p f s x).im
+          ((bernoulliKernel p x : ℂ) * iteratedDerivWithin p f s x).im
         rw [hder_im p le_rfl x (by simpa [s, Set.uIcc_of_le habr.le] using hx)]
         simp
       _ = _ := intervalIntegral.intervalIntegral_im hremint
@@ -470,7 +429,8 @@ private theorem ch7Entry1EulerMaclaurin_complex
     rw [← hrem_im]
     simpa [s] using hI
 
-private theorem ch7Entry1_sum_int_eq_powerSum (r : ℂ) (n : ℕ) :
+/-- The sum of `k ^ r` over the integers `1 ≤ k ≤ n` is `chapter7PowerSum r n`. -/
+theorem ch7Entry1_sum_int_eq_powerSum (r : ℂ) (n : ℕ) :
     (∑ k ∈ Finset.Icc (1 : ℤ) (n : ℤ), ((k : ℝ) : ℂ) ^ r) =
       chapter7PowerSum r n := by
   unfold chapter7PowerSum chapter7NatCpow
@@ -509,25 +469,43 @@ private theorem ch7Entry1_sum_Icc_eq_range {M : Type*} [AddCommMonoid M]
   · intro j hj
     rfl
 
-private noncomputable def ch7Entry1Tail (N : ℕ) (r : ℂ) (n : ℕ) : ℂ :=
+/-- The integral tail of the odd Bernoulli kernel in the power-sum expansion. -/
+noncomputable def powerSumTail (N : ℕ) (r : ℂ) (n : ℕ) : ℂ :=
   ∫ x : ℝ in Set.Ioi (n : ℝ),
-    (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) * (ch7Entry1Kernel (2 * N + 1) x : ℂ)
+    (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) * (bernoulliKernel (2 * N + 1) x : ℂ)
 
-private noncomputable def ch7Entry1RemainderFactor (N : ℕ) (r : ℂ) : ℂ :=
+/-- Characterization of the power-sum tail as an improper integral. -/
+theorem powerSumTail_eq_integral (N : ℕ) (r : ℂ) (n : ℕ) :
+    powerSumTail N r n =
+      ∫ x : ℝ in Set.Ioi (n : ℝ),
+        (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) * (bernoulliKernel (2 * N + 1) x : ℂ) := rfl
+
+/-- The falling-product coefficient of the integral tail, normalized by `(2 * N + 1)!`. -/
+noncomputable def powerSumRemainderFactor (N : ℕ) (r : ℂ) : ℂ :=
   chapter7FallingGammaRatio r (2 * N + 1) / ((2 * N + 1).factorial : ℂ)
+
+/-- Characterization of the remainder coefficient by the finite falling product. -/
+theorem powerSumRemainderFactor_eq (N : ℕ) (r : ℂ) :
+    powerSumRemainderFactor N r =
+      chapter7FallingGammaRatio r (2 * N + 1) / ((2 * N + 1).factorial : ℂ) := rfl
+
+/-- At truncation zero the remainder coefficient is the exponent itself. -/
+@[simp]
+theorem powerSumRemainderFactor_zero (r : ℂ) : powerSumRemainderFactor 0 r = r := by
+  simp [powerSumRemainderFactor_eq, chapter7FallingGammaRatio_succ]
 
 private noncomputable def ch7Entry1Constant (N : ℕ) (r : ℂ) : ℂ :=
   1 / 2 - 1 / (r + 1) - ∑ j ∈ Finset.range N, chapter7Entry1Term r 1 j +
-    ch7Entry1RemainderFactor N r * ch7Entry1MellinIntegral N r
+    powerSumRemainderFactor N r * ch7Entry1MellinIntegral N r
 
 private theorem ch7Entry1_intervalIntegral_eq_mellin_sub_tail
     (N : ℕ) (hN : 0 < N) (r : ℂ) (hu : r.re < 2 * N) (n : ℕ) (hn : 1 < n) :
     (∫ x : ℝ in (1 : ℝ)..(n : ℝ),
         (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) *
-          (ch7Entry1Kernel (2 * N + 1) x : ℂ)) =
-      ch7Entry1MellinIntegral N r - ch7Entry1Tail N r n := by
+          (bernoulliKernel (2 * N + 1) x : ℂ)) =
+      ch7Entry1MellinIntegral N r - powerSumTail N r n := by
   let g : ℝ → ℂ := fun x => (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) *
-    (ch7Entry1Kernel (2 * N + 1) x : ℂ)
+    (bernoulliKernel (2 * N + 1) x : ℂ)
   have hIoi : IntegrableOn g (Set.Ioi 1) := ch7Entry1Tail_integrable N hN r hu
   have hIci : IntegrableOn g (Set.Ici 1) :=
     (integrableOn_Ici_iff_integrableOn_Ioi).mpr hIoi
@@ -539,7 +517,7 @@ private theorem ch7Entry1_intervalIntegral_eq_mellin_sub_tail
   calc
     (∫ x : ℝ in (1 : ℝ)..(n : ℝ), g x) =
         (∫ x : ℝ in Set.Ioi 1, g x) - ∫ x : ℝ in Set.Ioi (n : ℝ), g x := hsplit.symm
-    _ = ch7Entry1MellinIntegral N r - ch7Entry1Tail N r n := by
+    _ = ch7Entry1MellinIntegral N r - powerSumTail N r n := by
       rw [ch7Entry1MellinIntegral_eq_integral N hN r]
       rfl
 
@@ -553,8 +531,8 @@ private theorem ch7Entry1_eulerMaclaurin_raw
           (((bernoulli (2 * k) : ℚ) : ℂ) / ((2 * k).factorial : ℂ)) *
             chapter7FallingGammaRatio r (2 * k - 1) *
               (chapter7NatCpow n (r - (2 * k : ℕ) + 1) - 1)) +
-        ch7Entry1RemainderFactor N r *
-          (ch7Entry1MellinIntegral N r - ch7Entry1Tail N r n) := by
+        powerSumRemainderFactor N r *
+          (ch7Entry1MellinIntegral N r - powerSumTail N r n) := by
   let p := 2 * N + 1
   have hp : 1 ≤ p := by simp [p]
   have hp1 : p ≠ 1 := by omega
@@ -609,21 +587,21 @@ private theorem ch7Entry1_eulerMaclaurin_raw
     rw [hpow, Complex.one_cpow]
     ring
   have hrem :
-      (∫ x : ℝ in (1 : ℝ)..(n : ℝ), (ch7Entry1Kernel p x : ℂ) *
+      (∫ x : ℝ in (1 : ℝ)..(n : ℝ), (bernoulliKernel p x : ℂ) *
         iteratedDerivWithin p (fun y : ℝ => (y : ℂ) ^ r)
           (Set.Icc (1 : ℝ) (n : ℝ)) x) =
       chapter7FallingGammaRatio r p *
-        (ch7Entry1MellinIntegral N r - ch7Entry1Tail N r n) := by
+        (ch7Entry1MellinIntegral N r - powerSumTail N r n) := by
     calc
       _ = ∫ x : ℝ in (1 : ℝ)..(n : ℝ), chapter7FallingGammaRatio r p *
-          ((x : ℂ) ^ (r - (p : ℕ)) * (ch7Entry1Kernel p x : ℂ)) := by
+          ((x : ℂ) ^ (r - (p : ℕ)) * (bernoulliKernel p x : ℂ)) := by
         apply intervalIntegral.integral_congr
         intro x hx
-        change (ch7Entry1Kernel p x : ℂ) *
+        change (bernoulliKernel p x : ℂ) *
             iteratedDerivWithin p (fun y : ℝ => (y : ℂ) ^ r)
               (Set.Icc (1 : ℝ) (n : ℝ)) x =
           chapter7FallingGammaRatio r p *
-            ((x : ℂ) ^ (r - (p : ℕ)) * (ch7Entry1Kernel p x : ℂ))
+            ((x : ℂ) ^ (r - (p : ℕ)) * (bernoulliKernel p x : ℂ))
         have hx' : x ∈ Set.Icc (1 : ℝ) (n : ℝ) := by
           have hle : (1 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn.le
           rcases Set.mem_uIcc.mp hx with hx | hx
@@ -633,7 +611,7 @@ private theorem ch7Entry1_eulerMaclaurin_raw
         ring
       _ = chapter7FallingGammaRatio r p *
           (∫ x : ℝ in (1 : ℝ)..(n : ℝ),
-            (x : ℂ) ^ (r - (p : ℕ)) * (ch7Entry1Kernel p x : ℂ)) :=
+            (x : ℂ) ^ (r - (p : ℕ)) * (bernoulliKernel p x : ℂ)) :=
         intervalIntegral.integral_const_mul _ _
       _ = _ := by
         rw [show p = 2 * N + 1 by rfl,
@@ -649,12 +627,12 @@ private theorem ch7Entry1_eulerMaclaurin_raw
   have hlast :
       ((((-1 : ℝ) ^ (p + 1) / (p.factorial : ℝ) : ℝ) : ℂ) *
           (chapter7FallingGammaRatio r p *
-            (ch7Entry1MellinIntegral N r - ch7Entry1Tail N r n))) =
-        ch7Entry1RemainderFactor N r *
-          (ch7Entry1MellinIntegral N r - ch7Entry1Tail N r n) := by
+            (ch7Entry1MellinIntegral N r - powerSumTail N r n))) =
+        powerSumRemainderFactor N r *
+          (ch7Entry1MellinIntegral N r - powerSumTail N r n) := by
     rw [hsign]
     simp only [one_div]
-    unfold ch7Entry1RemainderFactor
+    unfold powerSumRemainderFactor
     rw [show p = 2 * N + 1 by rfl]
     push_cast
     ring
@@ -668,7 +646,7 @@ private theorem ch7Entry1_exact_expansion
       ch7Entry1Constant N r + chapter7NatCpow n (r + 1) / (r + 1) +
         chapter7NatCpow n r / 2 +
         ∑ j ∈ Finset.range N, chapter7Entry1Term r n j -
-          ch7Entry1RemainderFactor N r * ch7Entry1Tail N r n := by
+          powerSumRemainderFactor N r * powerSumTail N r n := by
   have hraw := ch7Entry1_eulerMaclaurin_raw r N n hr hN hu hn
   have hsum :
       (∑ k ∈ Finset.Icc 1 N,
@@ -743,8 +721,8 @@ private theorem ch7Entry1PowerSum_tendsto_zeta (r : ℂ) (hr : r.re < -1) :
   exact (ch7Entry1_sum_Icc_eq_range n (chapter7NatCpow · r)).symm
 
 private theorem ch7Entry1Tail_tendsto_zero (N : ℕ) (r : ℂ) :
-    Tendsto (ch7Entry1Tail N r) atTop (𝓝 0) := by
-  unfold ch7Entry1Tail
+    Tendsto (powerSumTail N r) atTop (𝓝 0) := by
+  unfold powerSumTail
   exact MeasureTheory.tendsto_integral_Ioi_zero tendsto_natCast_atTop_atTop
 
 private theorem ch7Entry1Term_tendsto_zero (r : ℂ) (j : ℕ) (hr : r.re < -1) :
@@ -789,21 +767,21 @@ private theorem ch7Entry1Constant_eq_zeta_of_re_lt_neg_one
   have hterms := ch7Entry1Terms_tendsto_zero r N hr
   have htail := ch7Entry1Tail_tendsto_zero N r
   have hrem : Tendsto
-      (fun n : ℕ => ch7Entry1RemainderFactor N r * ch7Entry1Tail N r n)
+      (fun n : ℕ => powerSumRemainderFactor N r * powerSumTail N r n)
       atTop (𝓝 0) := by
     simpa using tendsto_const_nhds.mul htail
   have hrhs : Tendsto (fun n : ℕ =>
       ch7Entry1Constant N r + chapter7NatCpow n (r + 1) / (r + 1) +
         chapter7NatCpow n r / 2 +
         ∑ j ∈ Finset.range N, chapter7Entry1Term r n j -
-          ch7Entry1RemainderFactor N r * ch7Entry1Tail N r n)
+          powerSumRemainderFactor N r * powerSumTail N r n)
       atTop (𝓝 (ch7Entry1Constant N r)) := by
     simpa using (((tendsto_const_nhds.add hpow1).add hpow0).add hterms).sub hrem
   have heq : ∀ᶠ n : ℕ in atTop,
       (ch7Entry1Constant N r + chapter7NatCpow n (r + 1) / (r + 1) +
         chapter7NatCpow n r / 2 +
         ∑ j ∈ Finset.range N, chapter7Entry1Term r n j -
-          ch7Entry1RemainderFactor N r * ch7Entry1Tail N r n) =
+          powerSumRemainderFactor N r * powerSumTail N r n) =
         chapter7PowerSum r n := by
     filter_upwards [eventually_gt_atTop 1] with n hn
     exact (ch7Entry1_exact_expansion r N n hrn hN hu hn).symm
@@ -839,8 +817,8 @@ private theorem ch7Entry1Constant_differentiableAt
         (fun j _ => ch7Entry1Term_one_differentiableAt j r) using 1
       funext z
       simp only [Finset.sum_apply]
-  have hfactor : DifferentiableAt ℂ (ch7Entry1RemainderFactor N) r := by
-    unfold ch7Entry1RemainderFactor
+  have hfactor : DifferentiableAt ℂ (powerSumRemainderFactor N) r := by
+    unfold powerSumRemainderFactor
     exact (ch7Entry1Falling_differentiable (2 * N + 1)).differentiableAt.div_const _
   unfold ch7Entry1Constant
   exact (((differentiableAt_const (c := (1 / 2 : ℂ))).sub hinv).sub hsum).add
@@ -976,9 +954,23 @@ private theorem ch7Entry1Constant_eq_zeta
     · exact hequ ⟨hu, him⟩
   · exact heqd ⟨hgt, hu⟩
 
+/-- The exact power-sum expansion with its constant identified as `ζ(-r)`.
+The integral tail converges when `r.re < 2 * N`; the expansion starts at `N = 1`, `n = 2`.
+-/
+theorem chapter7PowerSum_exact_expansion
+    (r : ℂ) (N n : ℕ) (hr : r ≠ -1) (hN : 0 < N) (hu : r.re < 2 * N)
+    (hn : 1 < n) :
+    chapter7PowerSum r n =
+      riemannZeta (-r) + chapter7NatCpow n (r + 1) / (r + 1) +
+        chapter7NatCpow n r / 2 +
+        ∑ j ∈ Finset.range N, chapter7Entry1Term r n j -
+          powerSumRemainderFactor N r * powerSumTail N r n := by
+  rw [ch7Entry1_exact_expansion r N n hr hN hu hn,
+    ch7Entry1Constant_eq_zeta N hN r hr hu]
+
 private theorem ch7Entry1Tail_isBigO
     (N : ℕ) (hN : 0 < N) (r : ℂ) (hu : r.re < 2 * N) :
-    IsBigO atTop (ch7Entry1Tail N r)
+    IsBigO atTop (powerSumTail N r)
       (fun n : ℕ => Real.rpow (n : ℝ) (r.re - 2 * (N : ℝ))) := by
   let a : ℝ := r.re - 2 * (N : ℝ) - 1
   have ha : a < -1 := by
@@ -988,7 +980,7 @@ private theorem ch7Entry1Tail_isBigO
     dsimp [a]
     ring
   have hden : 0 < 2 * (N : ℝ) - r.re := by linarith
-  obtain ⟨C, hC⟩ := ch7Entry1Kernel_norm_le N hN
+  obtain ⟨C, hC⟩ := bernoulliKernel_norm_le N hN
   let D : ℝ := C / (2 * (N : ℝ) - r.re)
   refine Asymptotics.isBigO_iff.mpr ⟨D, ?_⟩
   filter_upwards [eventually_ge_atTop 1] with n hn
@@ -1002,12 +994,12 @@ private theorem ch7Entry1Tail_isBigO
     ring
   have hpoint (x : ℝ) (hx : x ∈ Set.Ioi (n : ℝ)) :
       ‖(x : ℂ) ^ (r - (2 * N + 1 : ℕ)) *
-          (ch7Entry1Kernel (2 * N + 1) x : ℂ)‖ ≤ C * x ^ a := by
+          (bernoulliKernel (2 * N + 1) x : ℂ)‖ ≤ C * x ^ a := by
     have hxpos : 0 < x := hnpos.trans hx
     calc
       ‖(x : ℂ) ^ (r - (2 * N + 1 : ℕ)) *
-          (ch7Entry1Kernel (2 * N + 1) x : ℂ)‖ =
-          x ^ a * ‖ch7Entry1Kernel (2 * N + 1) x‖ := by
+          (bernoulliKernel (2 * N + 1) x : ℂ)‖ =
+          x ^ a * ‖bernoulliKernel (2 * N + 1) x‖ := by
         rw [norm_mul, Complex.norm_cpow_eq_rpow_re_of_pos hxpos, hexp,
           Complex.norm_real]
       _ ≤ x ^ a * C :=
@@ -1016,15 +1008,15 @@ private theorem ch7Entry1Tail_isBigO
   have hnorm :
       ‖∫ x : ℝ in Set.Ioi (n : ℝ),
           (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) *
-            (ch7Entry1Kernel (2 * N + 1) x : ℂ)‖ ≤
+            (bernoulliKernel (2 * N + 1) x : ℂ)‖ ≤
         ∫ x : ℝ in Set.Ioi (n : ℝ), C * x ^ a := by
     exact MeasureTheory.norm_integral_le_of_norm_le hg
       ((ae_restrict_mem measurableSet_Ioi).mono hpoint)
-  unfold ch7Entry1Tail
+  unfold powerSumTail
   calc
     ‖∫ x : ℝ in Set.Ioi (n : ℝ),
         (x : ℂ) ^ (r - (2 * N + 1 : ℕ)) *
-          (ch7Entry1Kernel (2 * N + 1) x : ℂ)‖ ≤
+          (bernoulliKernel (2 * N + 1) x : ℂ)‖ ≤
         ∫ x : ℝ in Set.Ioi (n : ℝ), C * x ^ a := hnorm
     _ = C * (∫ x : ℝ in Set.Ioi (n : ℝ), x ^ a) := by
       rw [MeasureTheory.integral_const_mul]
@@ -1038,13 +1030,21 @@ private theorem ch7Entry1Tail_isBigO
       field_simp [hb0, ne_of_gt hden]
       ring
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7, Entry 1.
-
-Proves `Wanted` entry `ramanujan_part1_ch7_entry1_powersum`.
+/-- **Ramanujan's asymptotic expansion of power sums.** Let $r \in \mathbb{C}$ with $r \ne -1$,
+and let $N$ be a positive integer with $\mathrm{Re}\, r < 2N$. For natural $n$ put
+$A_N(n) = \zeta(-r) + \frac{n^{r+1}}{r+1} + \frac{n^r}{2} + \sum_{k=1}^{N} T_k(n)$, where
+$T_k(n) = \frac{B_{2k}}{(2k)!}\, r(r-1)\cdots(r-2k+2)\, n^{r-2k+1}$ (a product of $2k - 1$
+factors), $\zeta$ is the Riemann zeta function, $B_{2k}$ are the Bernoulli numbers and complex
+powers are principal. Then $\sum_{k=1}^{n} k^r - A_N(n) = O(n^{\mathrm{Re}\, r - 2N})$ as
+$n \to \infty$.
 
 Proof: Euler--Maclaurin gives the expansion with an integrable periodic-kernel tail. The constant is
 identified with the Riemann zeta function first in its convergent half-plane, then everywhere needed
 by analytic continuation.
+
+Proves `Wanted` entry `ramanujan_part1_ch7_entry1_powersum`.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7, Entry 1.
 -/
 theorem ramanujan_part1_ch7_entry1_powersum
     (r : ℂ) (N : ℕ) (hr : r ≠ -1) (hN : 0 < N) (hu : r.re < 2 * N) :
@@ -1052,7 +1052,7 @@ theorem ramanujan_part1_ch7_entry1_powersum
       (fun n : ℕ => chapter7PowerSum r n - chapter7Entry1Approx r N n)
       (fun n : ℕ => Real.rpow (n : ℝ) (r.re - 2 * (N : ℝ))) := by
   have htail := (ch7Entry1Tail_isBigO N hN r hu).const_mul_left
-    (ch7Entry1RemainderFactor N r)
+    (powerSumRemainderFactor N r)
   have hrem := htail.neg_left
   refine hrem.congr' ?_ (Eventually.of_forall fun _ => rfl)
   filter_upwards [eventually_gt_atTop 1] with n hn

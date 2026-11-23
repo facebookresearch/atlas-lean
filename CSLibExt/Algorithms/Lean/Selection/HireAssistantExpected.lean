@@ -53,10 +53,6 @@ private theorem length_filter_eq_sum_map {β : Type*} (q : β → Bool)
         apply_ite List.length, List.length_cons]
       split_ifs <;> omega
 
-private theorem sum_ofFn_nat {n : ℕ} (f : Fin n → ℕ) :
-    (List.ofFn f).sum = ∑ i, f i := by
-  simp [List.ofFn_eq_map, Finset.sum_eq_multiset_sum]
-
 private theorem map_ofFn_eq {n : ℕ} {β γ : Type*} (g : Fin n → γ)
     (h : γ → β) :
     (List.ofFn g).map h = List.ofFn (fun i => h (g i)) := by
@@ -106,7 +102,7 @@ private theorem hires_eq_sum (xs : List α)
       (hireAssistant (List.ofFn (fun p => xs.get (σ p)))).ret.2.length := by
     rw [hireAssistant_time]
   rw [htime, hireAssistant_hires, List.length_map,
-    length_filter_eq_sum_map, zipIdx_ofFn, map_ofFn_eq, sum_ofFn_nat]
+    length_filter_eq_sum_map, zipIdx_ofFn, map_ofFn_eq, List.sum_ofFn]
   refine Finset.sum_congr rfl fun i _ => ?_
   by_cases h : isRecord xs σ i
   · rw [ite_eq_left ((all_take_iff_isRecord xs σ i).mpr h), ite_eq_left h]
@@ -217,9 +213,13 @@ private theorem card_filter_isRecord (xs : List α) (hxs : xs.Nodup)
   rw [← hAi, hsum, Finset.sum_congr rfl hcard, Finset.sum_const,
     Fin.card_Iic, smul_eq_mul]
 
-/-- The expected number of hires of `hireAssistant` under a uniformly
-random permutation of a duplicate-free input is the harmonic sum
-`∑ i, 1 / (i + 1)`, valued in `ℝ≥0∞` (CLRS Section 5.2). -/
+/-- **Expected number of hires under a random permutation.** Let $x$ be a list of $n$ pairwise
+distinct elements of a linearly ordered type, and rearrange its entries by a uniformly random
+permutation of the indices. The expected number of hires, valued in $[0, \infty]$, that the
+hire-assistant procedure (interview the entries in order, hiring each one strictly better than
+every earlier one) makes on the rearranged list equals $\sum_{i=0}^{n-1} \frac{1}{i+1}$.
+
+Source: CLRS Section 5.2. -/
 public theorem hireAssistant_expectedHires (xs : List α) (hxs : xs.Nodup) :
     (uniformPermutation xs).expectENN
         (fun ys => ((hireAssistant ys).time.2 : ℝ≥0∞)) =
@@ -268,8 +268,12 @@ public theorem hireAssistant_expectedHires (xs : List α) (hxs : xs.Nodup) :
       (ENNReal.natCast_ne_top _)]
   exact ENNReal.eq_inv_of_mul_eq_one_left h1
 
-/-- The expected number of hires as a real number is the harmonic sum
-`∑ i, 1 / (i + 1)`. -/
+/-- **Expected number of hires as a real harmonic sum.** Let $x$ be a list of $n$ pairwise
+distinct elements of a linearly ordered type, and rearrange its entries by a uniformly random
+permutation of the indices. The expected number of hires that the hire-assistant procedure
+(interview the entries in order, hiring each one strictly better than every earlier one) makes
+on the rearranged list, an element of $[0, \infty]$, converted to a real number, equals
+$\sum_{i=0}^{n-1} \frac{1}{i+1}$. -/
 public theorem hireAssistant_expectedHires_toReal (xs : List α)
     (hxs : xs.Nodup) :
     ((uniformPermutation xs).expectENN
@@ -283,8 +287,12 @@ public theorem hireAssistant_expectedHires_toReal (xs : List α)
     ENNReal.toReal_add (ENNReal.natCast_ne_top _) ENNReal.one_ne_top,
     ENNReal.toReal_natCast, ENNReal.toReal_one, one_div]
 
-/-- The expected number of hires as a real number is the harmonic number
-`H_n`. -/
+/-- **Expected number of hires is the harmonic number.** Let $x$ be a list of $n$ pairwise
+distinct elements of a linearly ordered type, and rearrange its entries by a uniformly random
+permutation of the indices. The expected number of hires that the hire-assistant procedure
+(interview the entries in order, hiring each one strictly better than every earlier one) makes
+on the rearranged list, an element of $[0, \infty]$, converted to a real number, equals the
+harmonic number $H_n = \sum_{k=1}^{n} \frac{1}{k}$. -/
 public theorem hireAssistant_expectedHires_toReal_eq_harmonic
     (xs : List α) (hxs : xs.Nodup) :
     ((uniformPermutation xs).expectENN

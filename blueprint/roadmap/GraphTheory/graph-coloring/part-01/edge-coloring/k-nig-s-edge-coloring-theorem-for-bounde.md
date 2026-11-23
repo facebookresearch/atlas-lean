@@ -1,0 +1,3 @@
+# König's edge coloring theorem for bounded-degree bipartite multigraphs
+
+Let $d$ be a natural number and consider a bipartite multigraph with finite sides $A$ and $B$ and a finite set $E$ of edges, each edge $e$ having endpoints $l(e) \in A$ and $r(e) \in B$. If every vertex of $A$ and every vertex of $B$ is an endpoint of at most $d$ edges, then the edges can be coloured with $d$ colours, $C : E \to \{0, \dots, d-1\}$, so that distinct edges with a common endpoint in $A$, or with a common endpoint in $B$, get distinct colours (König's line colouring theorem). The proof pads both sides with dummy edges to reach the regular case.

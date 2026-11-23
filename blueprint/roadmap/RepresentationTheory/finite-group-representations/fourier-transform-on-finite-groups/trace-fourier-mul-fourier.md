@@ -1,0 +1,3 @@
+# Trace of a product of Fourier transforms
+
+Let $G$ be a finite group and $\rho$ a representation of $G$ on a complex vector space, with character $\chi_\rho = \operatorname{Tr} \circ \rho$. For all $P, Q : G \to \mathbb{C}$, $\operatorname{Tr}\bigl(\hat P(\rho)\, \hat Q(\rho)\bigr) = \sum_s \sum_t P(s)\, Q(t)\, \chi_\rho(st)$, by linearity of the trace; on an infinite-dimensional space the trace is taken to be $0$, and both sides vanish. A direct computation from the definitions of the transform and of the character in Diaconis and Shahshahani 1981, Section 2; it is the first step of the proof of the [Plancherel formula](plancherel.md).
