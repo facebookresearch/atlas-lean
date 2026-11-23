@@ -43,9 +43,18 @@ attribute [local instance] HasDerivedCategory.standard
 variable (A B : Type) [CommRing A] [CommRing B] [Algebra ℂ A] [Algebra ℂ B]
   [Algebra A B] [IsScalarTower ℂ A B] (I : Ideal A)
 
+/-- The base `B/J` of the excess normal bundle. -/
 abbrev base (I : Ideal A) := B ⧸ extendedIdeal A B I
+
+/-- The total space of the excess normal bundle over `Spec (B/J)`. -/
 abbrev normalSpace := bundleSpace (base A B I) (excessNormal A B I)
 
+/-- The smoothness, dimension and rank hypotheses on the square
+`Spec (B/J) → Spec B`, `Spec (A/I) → Spec A`: the four schemes and the
+excess normal space are smooth complex varieties of the displayed pure
+dimensions (`A/I` has codimension `c' + e`, `B/J` has codimension `c'`), the
+excess normal module is finite projective of rank `e`, the base is nonempty,
+and the square is Cartesian. -/
 class SmoothExcessSquare (dx dx' c' e : ℕ) : Prop where
   [varietyY : IsComplexVariety (affine A)]
   [varietyX : IsComplexVariety (affine (A ⧸ I))]
@@ -78,6 +87,8 @@ variable
 
 variable (dx dx' c' e : ℕ) [SmoothExcessSquare A B I dx dx' c' e]
 
+/-- The Euler class of the excess normal bundle: zero-section Gysin image of `1`,
+pulled back by the zero section. -/
 def euler (F : PureFamily D) : BettiRealization.Cohomology (space (affine (base A B I))) (2 * e) :=
   BettiCycleRealization.cohomologyCast (by omega)
     (cohomologyPullback (spaceMap (zeroSection (base A B I) (excessNormal A B I))) _
@@ -86,8 +97,12 @@ def euler (F : PureFamily D) : BettiRealization.Cohomology (space (affine (base 
         (F.iso _ dx') (F.iso _ (dx' + e)) 0
           (unitClass (space (affine (base A B I))))))
 
+/-- A purity family for which the excess intersection formula
+`g^* i_! a = j_!(e(E) ∪ g'^* a)` holds on the square. -/
 structure ExcessPurities where
+  /-- The purity family. -/
   family : PureFamily D
+  /-- The excess intersection formula. -/
   excess : ∀ (n : ℤ) (a : BettiRealization.Cohomology (space (affine (A ⧸ I))) n),
     cohomologyPullback (spaceMap (affineMap A B)) _
       (cohomologyPushforward (P (quotientMorphism A I))
