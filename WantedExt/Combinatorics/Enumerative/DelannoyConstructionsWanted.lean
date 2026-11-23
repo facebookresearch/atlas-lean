@@ -25,9 +25,9 @@ Delannoy recurrence, and `R^i` is its `i`-fold horizontal sum. The lattice-path 
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Data.Nat.ModEq
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.Combinatorics.Enumerative.DelannoyConstructions
 public import MathlibExt.LinearAlgebra.Matrix.OrdinaryRiordanPascalLikeMatrix
 
 set_option autoImplicit false
@@ -50,15 +50,6 @@ of Integer Sequences 27 (2024), Article 24.1.8, Theorem 8
 public theorem_wanted delannoy_eq_sum_choose_mul_choose_two_pow (m n : ℕ) :
     ordinaryRiordanPascalLikeMatrix (m + n) m 1 =
       ∑ j ∈ range (min m n + 1), (m.choose j : ℤ) * (n.choose j : ℤ) * 2 ^ j
-
-/-- **Parity of a sum of adjacent binomial coefficients.** For all natural numbers $n$ and $k$
-with $k \ge 1$, $\binom{n}{k} + \binom{n+1}{k} \equiv \binom{n}{k-1} \pmod 2$.
-
-Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
-of Integer Sequences 27 (2024), Article 24.1.8, Lemma 15
-(`jis-2024-24.1.8-lem-15`). -/
-public theorem_wanted choose_add_choose_succ_modEq_two (n k : ℕ) (hk : 1 ≤ k) :
-    n.choose k + (n + 1).choose k ≡ n.choose (k - 1) [MOD 2]
 
 /-- **Generalized Delannoy number with upper index.** For natural numbers $k$, $m$ and $n$, the
 generalized Delannoy number $D^k(m, n)$ is the natural number
@@ -253,22 +244,6 @@ public theorem_wanted delannoyArray_horizontalSum_rows_modEq (R : ℕ → ℕ �
     (m m' n : ℕ) :
     (fun S : ℕ → ℕ → ℤ => fun a b => S a b + S a (b + 1))^[i] R m n ≡
       (fun S : ℕ → ℕ → ℤ => fun a b => S a b + S a (b + 1))^[i] R m' n [ZMOD 2]
-
-/-- **Parity of iterated horizontal sums of a Delannoy array with binomial seeds.** Let $R(m, n)$,
-for $m, n \in \mathbb{N}$, be integers with $R(m+1, n+1) = R(m, n+1) + R(m+1, n) + R(m, n)$ for
-all $m, n$. For an array $S$ let $(HS)(m, n) = S(m, n) + S(m, n+1)$, and write $R^i = H^i R$ for
-the $i$-fold horizontal sum, so $R^0 = R$. Let $k \in \mathbb{N}$ and suppose
-$R(0, n) = \binom{k+n}{k}$ for all $n$; the values $R(m, 0)$ for $m \ge 1$ are arbitrary. Then
-every entry of $R^{k+1}$ is even, and for every $j \le k$ some entry of $R^j$ is odd.
-
-Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
-of Integer Sequences 27 (2024), Article 24.1.8, Lemma 16
-(`jis-2024-24.1.8-lem-16`). -/
-public theorem_wanted delannoyArray_binomial_seeds_parity (R : ℕ → ℕ → ℤ)
-    (hR : ∀ m n, R (m + 1) (n + 1) = R m (n + 1) + R (m + 1) n + R m n) (k : ℕ)
-    (hseed : ∀ n, R 0 n = (k + n).choose k) :
-    (∀ m n, (2 : ℤ) ∣ (fun S : ℕ → ℕ → ℤ => fun a b => S a b + S a (b + 1))^[k + 1] R m n) ∧
-      ∀ j ≤ k, ∃ m n, ¬ (2 : ℤ) ∣ (fun S : ℕ → ℕ → ℤ => fun a b => S a b + S a (b + 1))^[j] R m n
 
 /-- **First horizontal sums of a Delannoy array with binomial seeds.** Let $R(m, n)$, for
 $m, n \in \mathbb{N}$, be integers with $R(m+1, n+1) = R(m, n+1) + R(m+1, n) + R(m, n)$ for all

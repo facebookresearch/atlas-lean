@@ -11,6 +11,8 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
+public import MathlibExt.NumberTheory.AlternatingSumFloorDiv
+public import MathlibExt.NumberTheory.DivisorCountBound
 
 namespace MetaMathlibExt
 
@@ -224,16 +226,6 @@ public theorem_wanted ceilQuotientOddCount_asymptotic :
         C * Real.sqrt n) ∧
     Tendsto (fun n : ℕ => (ceilQuotientOddCount n : ℝ) / n) atTop
       (𝓝 (1 - Real.log 2))
-
-/-- **Square-root bound for the number of divisors.** For every natural number $n$, the number
-of positive divisors of $n$ is at most $2\sqrt{n}$. For $n = 0$ the set of divisors is taken to
-be empty, so the bound holds trivially.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Lemma 12 (`jis-2024-24.2.5-lem-12`). -/
-public theorem_wanted card_divisors_le_two_mul_sqrt (n : ℕ) :
-    (n.divisors.card : ℝ) ≤ 2 * Real.sqrt n
 
 /-- **Counting large terms of the rounded quotient sequence.** Let $n$ be a natural number.
 Every $d$ with $1 \le d \le n$ satisfies $\lfloor n/d + 1/2 \rfloor \ge 1$, and for every

@@ -29,6 +29,11 @@ theorem, already covered by
 Proved in `MathlibExt.NumberTheory.PowAddPowEqSq`:
 Lemma 1, case `n = 2`
 (`MetaMathlibExt.two_pow_add_one_eq_sq`).
+
+Proved in `MathlibExt.NumberTheory.ThreePowAddThirtyfivePow`,
+which this module imports: the case `x = 0`
+(`one_add_pow_eq_sq`) and the case `n = 3`,
+`p = 7` (`three_pow_add_thirtyfive_pow`).
 -/
 module
 
@@ -36,6 +41,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import MathlibExt.NumberTheory.PowAddPowEqSq
+public import MathlibExt.NumberTheory.ThreePowAddThirtyfivePow
 
 set_option autoImplicit false
 
@@ -52,15 +58,6 @@ Source: Suton Tadee, "On the Diophantine Equation
 theorem_wanted pow_add_one_eq_sq (n x z : ℕ) (hn : 1 ≤ n)
     (hn2 : n ≠ 2) :
     n ^ x + 1 = z ^ 2 ↔ x = 1 ∧ z ^ 2 = n + 1
-
-/-- **The case $x = 0$ of $n^x + (5p)^y = z^2$.** Let $p$ be a prime with $p \ne 2$. For natural
-numbers $y$ and $z$, $1 + (5p)^y = z^2$ holds if and only if $y = 1$ and $z^2 = 5p + 1$.
-
-Source: Suton Tadee, "On the Diophantine Equation
-`n^x + (5p)^y = z^2`", Corollary 1. -/
-theorem_wanted one_add_pow_eq_sq (p y z : ℕ) (hp : p.Prime)
-    (hp2 : p ≠ 2) :
-    1 + (5 * p) ^ y = z ^ 2 ↔ y = 1 ∧ z ^ 2 = 5 * p + 1
 
 /-- **Evenness of $x$ in $n^x + (5p)^y = z^2$ when $n \equiv 2, 3 \pmod 5$.** Let $p$ be a prime
 and $n$ a natural number with $n \equiv 2 \pmod 5$ or $n \equiv 3 \pmod 5$. If natural numbers
@@ -147,14 +144,5 @@ theorem_wanted two_pow_add_fifteen_pow (x y z : ℕ) :
     2 ^ x + 15 ^ y = z ^ 2 ↔
       (x = 3 ∧ y = 0 ∧ z = 3) ∨ (x = 0 ∧ y = 1 ∧ z = 4) ∨
         (x = 6 ∧ y = 2 ∧ z = 17)
-
-/-- **Solutions of $3^x + 35^y = z^2$.** The natural numbers $x$, $y$, $z$ with
-$3^x + 35^y = z^2$ are exactly $(x, y, z) = (1, 0, 2)$ and $(x, y, z) = (0, 1, 6)$.
-
-Source: Suton Tadee, "On the Diophantine Equation
-`n^x + (5p)^y = z^2`", Corollary 4. -/
-theorem_wanted three_pow_add_thirtyfive_pow (x y z : ℕ) :
-    3 ^ x + 35 ^ y = z ^ 2 ↔
-      (x = 1 ∧ y = 0 ∧ z = 2) ∨ (x = 0 ∧ y = 1 ∧ z = 6)
 
 end MathlibExt.NumberTheory.PowAddPowEqSqWanted

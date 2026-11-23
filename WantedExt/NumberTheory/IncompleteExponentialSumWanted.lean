@@ -9,10 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.TwistedCompleteExponentialSum
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.Algebra.Polynomial.Degree.Defs
+public import MathlibExt.NumberTheory.IncompleteExponentialSum
 
 /-!
 # Explicit estimates for incomplete exponential sums (statements)
@@ -24,7 +26,8 @@ written out inline: `∑ x ∈ Finset.Icc 1 B, Complex.exp (2 * π * I * f(x) / 
 `Finset.sup` of `‖·‖₊` over `Finset.range p`, and `d_p(f)` as the `natDegree` of the image of
 `f` in `(ZMod p)[X]`.
 
-Lemma 3.1 (`one_div_sin_pi_lt`) is proved in `MathlibExt.NumberTheory.IncompleteExponentialSum`.
+Lemma 2.2 is proved in `MathlibExt.NumberTheory.TwistedCompleteExponentialSum` and
+Lemma 3.1 in `MathlibExt.NumberTheory.IncompleteExponentialSum`.
 -/
 
 namespace MetaMathlibExt
@@ -148,19 +151,6 @@ public theorem_wanted exists_incompleteSum_eq_completeSum_add (p : ℕ) (hp : p.
             ((((Icc 1 (p - 1)).sup fun y : ℕ =>
               ‖∑ x ∈ Icc 1 p,
                 exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ) : ℂ)
-
-/-- **Lower bound for the maximal twisted complete exponential sum.** Let $p$ be a prime, let $f$
-be a polynomial with integer coefficients, and write $e_p(t) = e^{2\pi i t / p}$ for integers $t$.
-Then
-$$\max_{0 \le y \le p - 1} \left| \sum_{x=1}^{p} e_p(f(x) + yx) \right| \ge \sqrt{p}.$$
-
-Source: Todd Cochrane, *Explicit Estimates for Incomplete Exponential Sums*, INTEGERS 25
-(2025), Article A48, Lemma 2.2 (`integers-2025-A48-lem-2-2`). -/
-public theorem_wanted sqrt_le_sup_norm_completeSum (p : ℕ) (hp : p.Prime) (f : Polynomial ℤ) :
-    Real.sqrt p ≤
-      (((range p).sup fun y : ℕ =>
-        ‖∑ x ∈ Icc 1 p,
-          exp (2 * Real.pi * I * ((f.eval (x : ℤ) + y * x : ℤ) : ℂ) / p)‖₊ : NNReal) : ℝ)
 
 /-- **Explicit completion bound for incomplete exponential sums.** Let $p$ be a prime, write
 $e_p(t) = e^{2\pi i t/p}$, let $f$ be a polynomial with integer coefficients whose reduction

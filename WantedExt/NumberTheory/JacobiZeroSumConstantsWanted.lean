@@ -14,7 +14,7 @@ public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.Index
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
-public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
+public import MathlibExt.NumberTheory.JacobiKernelLift
 
 /-!
 # Zero-sum constants related to the Jacobi symbol: wishlist
@@ -168,19 +168,6 @@ public theorem_wanted jacobi_kernel_index_two (n : ℕ) (hn : Odd n) :
       (∀ u : (ZMod n)ˣ, u ∈ H ↔ jacobiSym (((u : ZMod n).val : ℕ) : ℤ) n = 1) ∧
         H.index = 2) ∧
     (IsSquare n → ∀ u : (ZMod n)ˣ, jacobiSym (((u : ZMod n).val : ℕ) : ℤ) n = 1)
-
-/-- **Units lift to the kernel of the Jacobi symbol across a non-square coprime factor.** Let $d$
-and $n'$ be coprime natural numbers such that $d n'$ is odd and $d$ is not a perfect square, and
-put $n = d n'$. Then every unit $y$ of $\mathbb{Z}/n'\mathbb{Z}$ is the reduction modulo $n'$ of a
-unit $x$ of $\mathbb{Z}/n\mathbb{Z}$ whose least nonnegative representative $v$ has Jacobi symbol
-$\left(\frac{v}{n}\right) = 1$.
-
-Source: Santanu Mondal, Krishnendu Paul and Shameek Paul, *Zero-Sum Constants Related to
-the Jacobi Symbol*, Journal of Integer Sequences 27 (2024), Article 24.1.7, Lemma 14
-(`jis-2024-24.1.7-lem-14`). -/
-public theorem_wanted units_subset_image_jacobi_kernel (d n' : ℕ) (hn : Odd (d * n'))
-    (hd : ¬ IsSquare d) (hcop : Nat.Coprime d n') (y : ZMod n') (hy : IsUnit y) :
-    ∃ x ∈ jacobiOneSet (d * n'), ZMod.castHom (dvd_mul_left n' d) (ZMod n') x = y
 
 /-- **Lifting weighted zero sums along a coprime factor.** Let $d$ and $n'$ be coprime natural
 numbers, put $n = d n'$, and let $f : \mathbb{Z}/n\mathbb{Z} \to \mathbb{Z}/n'\mathbb{Z}$ be

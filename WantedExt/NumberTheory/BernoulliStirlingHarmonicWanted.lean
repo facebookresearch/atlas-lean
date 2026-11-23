@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Bernoulli.PolyBernoulliDuality
+public import MathlibExt.NumberTheory.Bernoulli.WeightedSum
 public import WantedExt.NumberTheory.EulerPolynomialFormulasWanted
 public import WantedExt.NumberTheory.GobelSequenceWanted
 public import Mathlib.NumberTheory.Harmonic.Defs
@@ -115,20 +116,6 @@ public theorem_wanted sum_bernoulli_harmonic_power_identity (n m : ℕ)
       ((n.choose j : ℚ) - 1) * (bernoulli j / (j : ℚ)) * (m : ℚ) ^ (n - j)) =
       (m : ℚ) ^ n * (harmonic m - harmonic n) -
         ∑ j ∈ Finset.Icc 1 m, ((m - j : ℕ) : ℚ) ^ n / (j : ℚ)
-
-/--
-**A weighted Bernoulli sum with factors $1 - 2^j$.** Let $B_j$ denote the Bernoulli numbers
-with $B_1 = -\tfrac12$. For every positive integer $n$,
-$$\sum_{j=1}^{n} \left(\binom{n}{j} + 1\right) \frac{B_j}{j} \left(1 - 2^j\right) = 1.$$
-
-Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
-Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Corollary 2,
-equation (14).
--/
-public theorem_wanted sum_bernoulli_one_sub_two_pow (n : ℕ) (hn : 0 < n) :
-    (∑ j ∈ Finset.Icc 1 n,
-      ((n.choose j : ℚ) + 1) * (bernoulli j / (j : ℚ)) *
-        (1 - (2 : ℚ) ^ j)) = 1
 
 /--
 **Sums of Bernoulli numbers via poly-Bernoulli polynomials.** Let $B_j$ denote the Bernoulli

@@ -12,8 +12,8 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
-public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
-public import Mathlib.LinearAlgebra.Matrix.Trace
+public import MathlibExt.LinearAlgebra.Matrix.SpecialLinearGroupTrace
+public import MathlibExt.NumberTheory.GeneralizedMarkovEquation
 
 namespace MetaMathlibExt
 
@@ -185,24 +185,6 @@ public theorem_wanted IsGenMarkovTriple.pairwise_coprime {k a b c : ℕ}
     (h : IsGenMarkovTriple k a b c) :
     Nat.Coprime a b ∧ Nat.Coprime b c ∧ Nat.Coprime a c
 
-/-- **The generalized Markov equation and the generalized second Markov equation.** Let
-$k \in \mathbb{N}$ and let $a, b, c$ be rational numbers. Put $x = (3 + 3k)a - k$,
-$y = (3 + 3k)b - k$ and $z = (3 + 3k)c - k$. Then
-$a^2 + b^2 + c^2 + k(bc + ca + ab) = (3 + 3k)abc$ if and only if
-$x^2 + y^2 + z^2 + (k^2 + 2k)(x + y + z) + 2k^3 + 3k^2 = xyz$. The first equation is the
-$k$-generalized Markov equation $\mathrm{GME}(k)$ and the second the $k$-generalized second
-Markov equation $\mathrm{GSME}(k)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 2.4. -/
-public theorem_wanted genMarkov_iff_genSecondMarkov (k : ℕ) (a b c : ℚ) :
-    a ^ 2 + b ^ 2 + c ^ 2 + k * (b * c + c * a + a * b) = (3 + 3 * k) * a * b * c ↔
-      let x := (3 + 3 * k) * a - k
-      let y := (3 + 3 * k) * b - k
-      let z := (3 + 3 * k) * c - k
-      x ^ 2 + y ^ 2 + z ^ 2 + ((k : ℚ) ^ 2 + 2 * k) * (x + y + z) + 2 * (k : ℚ) ^ 3 +
-          3 * (k : ℚ) ^ 2 = x * y * z
-
 /-- **Vieta jumping for the second generalized Markov equation.** Let $k$ be a natural number
 and let $a, b, c$ be integers with
 
@@ -222,26 +204,6 @@ public theorem_wanted genSecondMarkov_vieta (k : ℕ) {a b c : ℤ}
     (let a' := b * c - a - (k : ℤ) ^ 2 - 2 * k;
       b ^ 2 + a' ^ 2 + c ^ 2 + ((k : ℤ) ^ 2 + 2 * k) * (b + a' + c) + 2 * (k : ℤ) ^ 3 +
         3 * (k : ℤ) ^ 2 = b * a' * c)
-
-/-- **Trace identities in $\mathrm{SL}(2, \mathbb{Z})$.** For all $A, B \in \mathrm{SL}(2,
-\mathbb{Z})$ we have $\operatorname{tr} A = \operatorname{tr} A^{-1}$,
-$\operatorname{tr}(AB) = \operatorname{tr} A \cdot \operatorname{tr} B -
-\operatorname{tr}(AB^{-1})$, and $A^2 = (\operatorname{tr} A) A - I$, where $I$ is the
-identity matrix.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 3.6 (citing Aigner, Lemma 4.2). -/
-public theorem_wanted specialLinearGroup_two_trace_identities
-    (A B : Matrix.SpecialLinearGroup (Fin 2) ℤ) :
-    Matrix.trace (A : Matrix (Fin 2) (Fin 2) ℤ) =
-        Matrix.trace ((A⁻¹ : Matrix.SpecialLinearGroup (Fin 2) ℤ) : Matrix (Fin 2) (Fin 2) ℤ) ∧
-      Matrix.trace ((A * B : Matrix.SpecialLinearGroup (Fin 2) ℤ) :
-          Matrix (Fin 2) (Fin 2) ℤ) =
-        Matrix.trace (A : Matrix (Fin 2) (Fin 2) ℤ) * Matrix.trace (B : Matrix (Fin 2) (Fin 2) ℤ) -
-          Matrix.trace ((A * B⁻¹ : Matrix.SpecialLinearGroup (Fin 2) ℤ) :
-            Matrix (Fin 2) (Fin 2) ℤ) ∧
-      (A : Matrix (Fin 2) (Fin 2) ℤ) ^ 2 =
-        Matrix.trace (A : Matrix (Fin 2) (Fin 2) ℤ) • (A : Matrix (Fin 2) (Fin 2) ℤ) - 1
 
 /-- **At most two solutions of $x^2 + kx + 1 \equiv 0$ modulo a prime.** For every prime $p$
 and every $k \in \mathbb{N}$, at most two integers $x$ with $0 \le x < p$ satisfy

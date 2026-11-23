@@ -12,34 +12,12 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.Combinatorics.Enumerative.GeneralizedLeonardoLogBehavior
 public import WantedExt.NumberTheory.GenLeonardoWanted
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Log-concavity propagates along a linear recurrence.** Let $k \ge 2$ be an integer, let
-$c_1, \dots, c_k$ be real numbers with $c_j \ge 0$ for $2 \le j \le k$, and let
-$(z_n)_{n \ge 0}$ be a sequence of positive real numbers with
-$$z_n = c_1 z_{n-1} - \sum_{j=2}^{k} c_j z_{n-j} \quad (n \ge k).$$
-If $z_{i-1} z_{i+1} \le z_i^2$ for $1 \le i < k$, then $z_{n-1} z_{n+1} \le z_n^2$ for every
-$n \ge 1$; that is, the whole sequence is log-concave.
-
-The paper assumes that the block $z_0, \dots, z_{k+1}$ is log-concave, which adds the
-inequality for $i = k$, and that $c_1 > 0$. Both follow from the other hypotheses: the
-recurrence at $n = k + 1$ propagates the inequality for $i = k$ from those for $i < k$, and
-the recurrence at $n = k$ forces $c_1 > 0$.
-
-Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to the
-Generalized Leonardo Numbers*, INTEGERS 24 (2024), Article A82, Lemma 1
-(quoted from the paper's reference [17]) (`integers-2024-A82-lem-1`). -/
-public theorem_wanted logConcave_of_linearRecurrence_of_initial_logConcave
-    (k : ℕ) (hk : 2 ≤ k) (c : ℕ → ℝ) (hc : ∀ j, 2 ≤ j → j ≤ k → 0 ≤ c j)
-    (z : ℕ → ℝ) (hpos : ∀ n, 0 < z n)
-    (hrec : ∀ n, k ≤ n →
-      z n = c 1 * z (n - 1) - ∑ j ∈ Finset.Icc 2 k, c j * z (n - j))
-    (hinit : ∀ i, 1 ≤ i → i < k → z (i - 1) * z (i + 1) ≤ z i ^ 2) :
-    ∀ n, 1 ≤ n → z (n - 1) * z (n + 1) ≤ z n ^ 2
 
 /-- **Log-convexity propagates along a linear recurrence.** Let $k \ge 2$ be an integer, let
 $c_1, \dots, c_k$ be real numbers with $c_j \ge 0$ for $2 \le j \le k$, and let
@@ -64,34 +42,6 @@ public theorem_wanted logConvex_of_linearRecurrence_of_initial_logConvex
       z n = c 1 * z (n - 1) - ∑ j ∈ Finset.Icc 2 k, c j * z (n - j))
     (hinit : ∀ i, 1 ≤ i → i < k → z i ^ 2 ≤ z (i - 1) * z (i + 1)) :
     ∀ n, 1 ≤ n → z n ^ 2 ≤ z (n - 1) * z (n + 1)
-
-/-- **Log-balancedness of reciprocals along a three-term recurrence.** Let $c_1$ and $c_2$ be
-real numbers with $c_2 \ge 0$, and let $(z_n)_{n \ge 0}$ be a sequence of positive real numbers
-with $z_{n+1} = c_1 z_n - c_2 z_{n-2}$ for every $n \ge 2$. Write $w_n = 1/z_n$ and
-$x_n = z_{n+1}/z_n$, and let $n_0 \ge 0$ be an integer. Suppose that for $n = n_0 + 1$ and
-$n = n_0 + 2$
-$$w_n^2 \le w_{n-1} w_{n+1} \quad \text{and} \quad
-\frac{w_{n-1}}{(n-1)!} \cdot \frac{w_{n+1}}{(n+1)!} \le \left(\frac{w_n}{n!}\right)^2,$$
-and that $c_1 x_n x_{n+1} \ge 3 c_2$ for every $n \ge n_0$. Then both inequalities hold for
-every $n \ge n_0 + 1$; that is, the sequence $(1/z_n)_{n \ge n_0}$ is log-balanced (Došlić).
-
-The paper also assumes $c_1 > 0$; this follows from positivity, the recurrence and $c_2 \ge 0$.
-
-Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to the
-Generalized Leonardo Numbers*, INTEGERS 24 (2024), Article A82, Lemma 2
-(`integers-2024-A82-lem-2`). -/
-public theorem_wanted inv_logBalanced_of_recurrence_of_initial (c₁ c₂ : ℝ) (hc₂ : 0 ≤ c₂)
-    (z : ℕ → ℝ) (hpos : ∀ n, 0 < z n)
-    (hrec : ∀ n, 2 ≤ n → z (n + 1) = c₁ * z n - c₂ * z (n - 2)) (n₀ : ℕ)
-    (hinit : ∀ n, n₀ + 1 ≤ n → n ≤ n₀ + 2 →
-      (1 / z n) ^ 2 ≤ (1 / z (n - 1)) * (1 / z (n + 1)) ∧
-        (1 / z (n - 1) / (n - 1).factorial) * (1 / z (n + 1) / (n + 1).factorial) ≤
-          (1 / z n / n.factorial) ^ 2)
-    (hx : ∀ n, n₀ ≤ n → 3 * c₂ ≤ c₁ * (z (n + 1) / z n) * (z (n + 2) / z (n + 1))) :
-    ∀ n, n₀ + 1 ≤ n →
-      (1 / z n) ^ 2 ≤ (1 / z (n - 1)) * (1 / z (n + 1)) ∧
-        (1 / z (n - 1) / (n - 1).factorial) * (1 / z (n + 1) / (n + 1).factorial) ≤
-          (1 / z n / n.factorial) ^ 2
 
 /-- **Log-balancedness of the reciprocals of generalized Leonardo numbers.** Let $k \ge 1$ be an
 integer and let $L_{k,n}$ be the generalized Leonardo numbers. Then the sequence

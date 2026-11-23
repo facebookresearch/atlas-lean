@@ -18,6 +18,8 @@ public import Mathlib.RingTheory.DividedPowers.Basic
 public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
 public import Mathlib.RingTheory.PowerSeries.Exp
 public import Mathlib.RingTheory.PowerSeries.Substitution
+public import MathlibExt.Algebra.DeepPowerSumCongruences
+public import MathlibExt.Algebra.DeepPowerSumCongruences.DividedPowerIdeal
 
 /-!
 # Elementary symmetric functions and deep power-sum congruences
@@ -35,7 +37,8 @@ paper's `e_n(P)` and `polyPowerSum P n` its `p_n(P)`, defined through Newton's i
 finitely many variables (`MvPolynomial σ ℚ`, `σ` finite), which loses nothing for identities
 between them.
 
-Proposition 3, `pow_mem_prime_pow_padicValNat_factorial_iff`, is proved in
+Proposition 3, `pow_mem_prime_pow_padicValNat_factorial_iff`, and Corollary 24,
+`padicValNat_sum_le_add_padicValNat_multinomial`, are proved in
 `MathlibExt.Algebra.DeepPowerSumCongruences`.
 -/
 
@@ -44,16 +47,6 @@ open Polynomial
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Divided-power ideal.** An ideal $I$ of a commutative ring $A$ is a *divided-power ideal* when
-for every $a \in I$ and every integer $k \ge 1$ there is $c \in I$ with $a^k = k! \, c$, that is,
-$a^k \in k! \, I$. For a prime $p$, in a torsion-free $\mathbb{Z}_{(p)}$-algebra this says
-$a^k / k! \in I$.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Section 2.2. -/
-def IsDividedPowerIdeal {A : Type*} [CommRing A] (I : Ideal A) : Prop :=
-  ∀ a ∈ I, ∀ k : ℕ, 1 ≤ k → ∃ c ∈ I, a ^ k = (k.factorial : A) * c
 
 /-- **The zero ideal is a divided-power ideal.** In every commutative ring, the zero ideal is a
 divided-power ideal.
@@ -336,39 +329,6 @@ public theorem_wanted padicValNat_multinomial_eq_sum_carries {p : ℕ} [Fact p.P
     (s : Finset ι) (r : ι → ℕ) :
     padicValNat p (Nat.multinomial s r) =
       ∑ i ∈ Finset.Icc 1 (∑ j ∈ s, r j), (∑ j ∈ s, r j % p ^ i) / p ^ i
-
-/-- **A valuation bound from Kummer's theorem.** Let $p$ be a prime, let $r_1, \dots, r_k$ be
-natural numbers with sum $m$, and let $j$ be an index with $r_j \ne 0$. Then
-
-$$v_p(m) \le v_p(r_j) + v_p\binom{m}{r_1, \dots, r_k},$$
-
-that is, $v_p(r_j) \ge v_p(m) - v_p\binom{m}{r_1, \dots, r_k}$.
-
-The hypothesis $r_j \ne 0$ is needed because $v_p(0)$ is taken to be $0$: for $(r_1, r_2) = (0, p)$
-the inequality fails at $j = 1$. With the paper's convention $v_p(0) = \infty$ that case is trivial.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Corollary 24 (`integers-2024-A46-cor-24`). -/
-public theorem_wanted padicValNat_sum_le_add_padicValNat_multinomial {p : ℕ} [Fact p.Prime]
-    {ι : Type*} (s : Finset ι) (r : ι → ℕ) {j : ι} (hj : j ∈ s) (hr : r j ≠ 0) :
-    padicValNat p (∑ i ∈ s, r i) ≤ padicValNat p (r j) + padicValNat p (Nat.multinomial s r)
-
-/-- **Powers of elements congruent modulo a divided-power ideal.** Let $p$ be a prime, let $A$ be
-a commutative ring in which every natural number not divisible by $p$ is a unit (a
-$\mathbb{Z}_{(p)}$-algebra), and let $\mathfrak{a}$ be a divided-power ideal of $A$. If
-$x, y \in A$ satisfy $x - y \in \mathfrak{a}$, then for every $m \ge 0$ there is
-$c \in \mathfrak{a}$ with $x^{p^m} - y^{p^m} = p^m c$, and for every $n \ge 0$ there is
-$c \in \mathfrak{a}$ with $x^n - y^n = n c$.
-
-The ring $A$ is not assumed to be torsion-free.
-
-Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
-Congruences*, INTEGERS 24 (2024), Article A46, Lemma 25 (`integers-2024-A46-lem-25`). -/
-public theorem_wanted pow_sub_pow_mem_of_sub_mem {p : ℕ} [Fact p.Prime] {A : Type*} [CommRing A]
-    (hA : ∀ n : ℕ, ¬ p ∣ n → IsUnit (n : A)) {I : Ideal A} (hI : IsDividedPowerIdeal I)
-    {x y : A} (hxy : x - y ∈ I) :
-    (∀ m : ℕ, ∃ c ∈ I, x ^ p ^ m - y ^ p ^ m = (p : A) ^ m * c) ∧
-      ∀ n : ℕ, ∃ c ∈ I, x ^ n - y ^ n = (n : A) * c
 
 /-- **Congruence of products over a partition with multiplicities divisible by $p^v$.** Let $p$
 be a prime, $A$ a commutative ring and $\mathfrak{a}$ a divided-power ideal of $A$. Let

@@ -23,6 +23,9 @@ fences at positions `k`, `k + 1` interlock into a bifence; it is a free bifence 
 own, covering two whole cells) exactly when `k` is even.
 
 The statements with `a = b = 1` use `Nat.fib`; `ξ(n) = n % 2`.
+
+Proved in `MathlibExt.Combinatorics.Enumerative.FibonacciSquaredAddition`, which this module
+imports: `fib_add_sq_eq` and `two_mul_sum_fib_sq`.
 -/
 module
 
@@ -32,6 +35,7 @@ public import Mathlib.Algebra.Field.Basic
 public import Mathlib.Algebra.Group.Nat.Even
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Nat.Fib.Basic
+public import MathlibExt.Combinatorics.Enumerative.FibonacciSquaredAddition
 
 namespace MetaMathlibExt
 
@@ -314,17 +318,6 @@ public theorem_wanted fib_succ_sq_eq_sum_choose_mul_choose (n : ℕ) :
       ∑ i ∈ range (2 * n / 3 + 1), ∑ j ∈ range (i + 1),
         i.choose j * (2 * n - 3 * i).choose j * 2 ^ j
 
-/-- **Sum of squared Fibonacci numbers from three consecutive squares.** Let $F_j$ denote the
-$j$-th Fibonacci number, with $F_0 = 0$ and $F_1 = 1$. For every integer $n \ge 3$,
-$$2 \sum_{j=1}^{n-2} F_j^2 = F_n^2 - F_{n-1}^2 - F_{n-2}^2.$$
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Corollary 3.5 (`fq-2024-belaggoun01132024-cor-3.5`). -/
-public theorem_wanted two_mul_sum_fib_sq {n : ℕ} (hn : 3 ≤ n) :
-    2 * ∑ j ∈ Icc 1 (n - 2), (Nat.fib j : ℤ) ^ 2 =
-      (Nat.fib n : ℤ) ^ 2 - (Nat.fib (n - 1) : ℤ) ^ 2 - (Nat.fib (n - 2) : ℤ) ^ 2
-
 /-- **Squared Fibonacci numbers as weighted sums of squares.** Let $F_k$ denote the Fibonacci
 numbers ($F_0 = 0$, $F_1 = 1$) and let $\xi(m) = m \bmod 2$. For every natural number $n \ge 1$,
 $$
@@ -339,21 +332,6 @@ public theorem_wanted fib_succ_sq_sub_parity_eq_sum {n : ℕ} (hn : 1 ≤ n) :
         ∑ k ∈ Icc 1 n, ((n - k + 1 : ℕ) : ℤ) * (Nat.fib k : ℤ) ^ 2 ∧
       (Nat.fib (n + 1) : ℤ) ^ 2 - ((n + 1) % 2 : ℕ) =
         ∑ k ∈ Icc 1 n, (k : ℤ) * (Nat.fib (n - k + 1) : ℤ) ^ 2
-
-/-- **Addition formula for squared Fibonacci numbers.** Let $F_k$ denote the Fibonacci numbers
-($F_0 = 0$, $F_1 = 1$). For all natural numbers $m \ge 1$ and $n \ge 2$,
-$$
-F_{m+n}^2 = F_{m+1}^2 F_n^2 + F_m^2 F_{n-1}^2 +
-2 \left(\sum_{i=1}^{m} F_i^2\right) \left(\sum_{j=1}^{n-1} F_j^2\right).
-$$
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Corollary 3.12 (`fq-2024-belaggoun01132024-cor-3.12`). -/
-public theorem_wanted fib_add_sq_eq {m n : ℕ} (hm : 1 ≤ m) (hn : 2 ≤ n) :
-    Nat.fib (m + n) ^ 2 =
-      Nat.fib (m + 1) ^ 2 * Nat.fib n ^ 2 + Nat.fib m ^ 2 * Nat.fib (n - 1) ^ 2 +
-        2 * (∑ i ∈ Icc 1 m, Nat.fib i ^ 2) * ∑ j ∈ Icc 1 (n - 1), Nat.fib j ^ 2
 
 /-- **Recurrence for weighted tilings with no free bifence.** Let $a$ and $b$ be nonzero elements
 of a field, and let $R_n$ be the weighted number of tilings of an $n$-board by half-squares and

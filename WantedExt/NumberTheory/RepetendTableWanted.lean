@@ -19,6 +19,8 @@ public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import Mathlib.Data.Nat.Factorization.Defs
 public import Mathlib.Topology.Algebra.InfiniteSum.Real
 public import MathlibExt.NumberTheory.RepetendTable
+public import MathlibExt.NumberTheory.RepetendTable.TwoRowColumns
+public import MathlibExt.NumberTheory.RepetendTable.InversePairs
 
 /-!
 # Repetend tables
@@ -29,6 +31,12 @@ INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 
 `MetaMathlibExt.long_division_remainder_expansion` is proved in
 `MathlibExt.NumberTheory.RepetendTable`.
+
+`MetaMathlibExt.repetend_digit_diff_of_columns_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.TwoRowColumns`.
+
+`MetaMathlibExt.even_card_small_bases_orderOf` is proved in
+`MathlibExt.NumberTheory.RepetendTable.InversePairs`.
 -/
 
 namespace MetaMathlibExt
@@ -166,15 +174,6 @@ public theorem_wanted long_division_remainders_erase_one_eq_small_bases (n L b m
     (hm : m = 1 ∨ (m ∈ Finset.Icc 2 (n - 1) ∧ orderOf (m : ZMod n) = L)) :
     ((Finset.range L).image fun j => m * b ^ j % n).erase 1 =
       (Finset.Icc 2 (n - 1)).filter fun a : ℕ => orderOf (a : ZMod n) = L
-
-/-- **Small bases of order greater than two come in pairs.** For every natural number $n$ and
-every $L > 2$, the number of integers $b$ with $1 \le b < n$ and $\gcd(b, n) = 1$ whose
-multiplicative order modulo $n$ is $L$ is even.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 3 (`integers-2025-A26-lem-2`). -/
-public theorem_wanted even_card_small_bases_orderOf (n L : ℕ) (hL : 2 < L) :
-    Even ((Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = L).card
 
 /-- **Repetend digits are symmetric under inverse indices.** Let $n, b, x, j, j'$ be natural
 numbers and $L \ge 1$, and suppose $b$ has multiplicative order $L$ modulo $n$. For $y, c \ge 0$
@@ -407,22 +406,6 @@ public theorem_wanted repetend_columns_ne_of_card_eq_one_or_three (n L : ℕ) :
     let B := (Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = L
     (B.card = 1 ∨ B.card = 3) → ∀ i < L, ∀ j < L, i ≠ j →
       (B.val.map fun b => b ^ (i + 1) / n % b) ≠ B.val.map fun b => b ^ (j + 1) / n % b
-
-/-- **Matching columns of a two-row repetend table.** Let $n$ and $L$ be natural numbers and let
-$B$ be the set of integers $c$ with $1 \le c < n$, $\gcd(c, n) = 1$ and multiplicative order $L$
-modulo $n$. For $c \in B$ and $k \ge 0$ let $r_k(c) = \lfloor c^{k+1}/n \rfloor \bmod c$, and let
-$C_k$ be the multiset of the $r_k(c)$ over $c \in B$. Suppose $B$ has exactly two elements, $b$
-and $b' \ne b$, and put $D_k = r_k(b') - r_k(b)$. Then for all $i, j \ge 0$ with $C_i = C_j$,
-$D_i = D_j$ or $D_i = -D_j$, and the sum of the elements of $C_i$ equals that of $C_j$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 28 (`integers-2025-A26-lem-28`). -/
-public theorem_wanted repetend_digit_diff_of_columns_eq (n L b b' i j : ℕ) :
-    let B := (Finset.Ico 1 n).filter fun c => Nat.Coprime c n ∧ orderOf (c : ZMod n) = L
-    let C : ℕ → Multiset ℕ := fun k => B.val.map fun c => c ^ (k + 1) / n % c
-    let D : ℕ → ℤ := fun k => ((b' ^ (k + 1) / n % b' : ℕ) : ℤ) - (b ^ (k + 1) / n % b : ℕ)
-    B.card = 2 → b ∈ B → b' ∈ B → b ≠ b' → C i = C j →
-      (D i = D j ∨ D i = -D j) ∧ (C i).sum = (C j).sum
 
 /-- **Half-period symmetry of the repetend of $1/n$.** Let $n$ be a natural number whose unit
 group $(\mathbb{Z}/n\mathbb{Z})^\times$ is cyclic, let $L > 0$ be even, and let $b < n$ be a

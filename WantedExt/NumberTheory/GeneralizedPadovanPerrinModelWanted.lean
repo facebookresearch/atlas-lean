@@ -14,26 +14,13 @@ public import Mathlib.FieldTheory.Separable
 public import Mathlib.Algebra.LinearRecurrence
 public import Mathlib.Algebra.Polynomial.Roots
 public import Mathlib.Data.Matrix.Mul
+public import MathlibExt.NumberTheory.GeneralizedPadovanPerrinModel
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Polynomial
-
-/-- **Simple roots of the Padovan–Perrin characteristic polynomial.** Let $k_1, k_2, p, s$ be
-natural numbers with $k_1 > 0$, $p \ge 2$, $p < s$ and $k_1^2 < k_2$. Then the characteristic
-polynomial $P(z) = z^{s+p} - k_1 z^p - k_2$ of the $([k]; p; s)$-generalized Padovan–Perrin
-recurrence is separable over $\mathbb{C}$, that is, it has only simple roots.
-
-The hypotheses force $k_2 > 0$ and $s > 0$.
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Lemma 4 (`integers-2024-A49-lem-4`). -/
-public theorem_wanted padovanPerrin_charPoly_separable (k₁ k₂ p s : ℕ) (hk₁ : 0 < k₁)
-    (hp : 2 ≤ p) (hps : p < s) (hk : k₁ ^ 2 < k₂) :
-    (X ^ (s + p) - C (k₁ : ℂ) * X ^ p - C (k₂ : ℂ)).Separable
 
 section Model
 
@@ -496,19 +483,6 @@ public theorem_wanted padovanPerrinFundamental_eq_rho [CommRing R] (k₁ k₂ : 
         padovanPerrinFundamental k₁ k₂ p s (s + p) (n + (s + p) - j) ∧
       padovanPerrinFundamental k₁ k₂ p s (s + p) (n + (s + p) - j) =
         padovanPerrinRho k₁ k₂ p s (n + (s + p) - j + 1)
-
-/-- **Simple roots of the Padovan–Perrin polynomial for $p = 1$.** Let $k_1, k_2, s$ be positive
-integers with $\left(-\frac{k_2 (s + 1)}{k_1 s}\right)^s \neq \frac{k_1}{s + 1}$. Then the
-polynomial $P(z) = z^{s+1} - k_1 z - k_2$ is separable over $\mathbb{C}$, that is, it has only
-simple roots.
-
-Source: Elen Viviani Pereira Spreafico, Mustapha Rachidi, and Paula Maria Machado Cruz Catarino,
-*On a Model of (k;p;s)-Generalized Padovan-Perrin and Fibonacci Fundamental System*, INTEGERS 24
-(2024), Article A49, Lemma 2 (`integers-2024-A49-lem-2`). -/
-public theorem_wanted padovanPerrin_charPoly_separable_of_p_eq_one (k₁ k₂ s : ℕ) (hk₁ : 0 < k₁)
-    (hk₂ : 0 < k₂) (hs : 0 < s)
-    (h : (-(k₂ : ℚ) * (s + 1) / (k₁ * s)) ^ s ≠ k₁ / (s + 1)) :
-    (X ^ (s + 1) - C (k₁ : ℂ) * X - C (k₂ : ℂ)).Separable
 
 /-- **Root formula for the generalized Padovan–Perrin coefficients ρ.** Let $k_1, k_2$ be complex
 numbers with $k_2 \neq 0$, let $p, s \ge 1$, and let $P(z) = z^{s+p} - k_1 z^p - k_2$. If $P$ is

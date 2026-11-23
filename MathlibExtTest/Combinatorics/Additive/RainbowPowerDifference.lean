@@ -60,4 +60,37 @@ example : ¬ ∀ x y z : ZMod 7, x - y = z ^ 2 → ¬ (d₇ x ≠ d₇ y ∧ d�
   revert hmem
   decide
 
+-- Lift the coloring modulo seven to the positive integers. On [2, 7) the color changes only
+-- at the last entry, where 6 has the color of 1.
+example : c₇ 1 ∈ (Finset.Ico 2 7).image (fun n : ℕ => c₇ n) := by
+  apply color_one_dominant_of_rainbowFree_powDiff 3 2 (fun n => c₇ n) _ _ 2 5
+    (by decide) (by decide)
+  · intro j
+    obtain ⟨a, ha⟩ := c₇_surjective j
+    refine ⟨a.val + 7, by omega, ?_⟩
+    simpa only [Nat.cast_add, ZMod.natCast_self, add_zero, ZMod.natCast_zmod_val] using ha
+  · intro x y z _ _ _ h
+    apply c₇_rainbowFree
+    simp [h]
+
+-- The inputs 6 and 2 share a factor, have different colors, and occur in decreasing order.
+example : ∃ a b : ℕ, 0 < a ∧ 0 < b ∧ a.Coprime b ∧ c₇ a = 1 ∧ c₇ b = 2 ∧
+    ((a : ℤ) - b).natAbs = 4 :=
+  exists_coprime_same_colors_of_coprime_dist 7 c₇ 6 2 (by decide) (by decide) (by decide)
+
+-- At distance zero the representatives coincide, so coprimality forces both to be one.
+example (c : ZMod 1 → Fin 3) (i : ℕ) (hi : 0 < i) : c 1 = c i := by
+  obtain ⟨a, b, _, _, hcop, ha, _, hdist⟩ :=
+    exists_coprime_same_colors_of_coprime_dist 1 c i i hi hi (by simp)
+  obtain rfl : a = b := by omega
+  have ha₁ : a = 1 := by simpa [Nat.Coprime] using hcop
+  simpa only [ha₁, Nat.cast_one] using ha
+
+-- Modulus zero allows any coloring of the integers and forces the input distance to be one.
+example (c : ZMod 0 → Fin 3) (i : ℕ) (hi : 0 < i) :
+    ∃ a b : ℕ, 0 < a ∧ 0 < b ∧ a.Coprime b ∧ c a = c i ∧ c b = c (i + 1) ∧
+      ((a : ℤ) - b).natAbs = 1 := by
+  simpa using
+    exists_coprime_same_colors_of_coprime_dist 0 c i (i + 1) hi (by omega) (by simp)
+
 end MathlibExtTest.RainbowPowerDifference

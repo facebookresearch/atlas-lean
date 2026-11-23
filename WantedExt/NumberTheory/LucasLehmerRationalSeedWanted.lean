@@ -12,7 +12,8 @@ import Batteries.Util.ProofWanted
 import Mathlib.Tactic.NormNum.LegendreSymbol
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import Mathlib.NumberTheory.LucasLehmer
-public import Mathlib.NumberTheory.Pell
+public import MathlibExt.NumberTheory.OrderOfTwoMulCoprime
+public import MathlibExt.NumberTheory.PellEulerSolutions
 
 /-!
 # The Lucas–Lehmer test with the rational seed `6/5`
@@ -137,27 +138,6 @@ public theorem_wanted mersenne_dvd_lehmerV_of_diophantine {n : ℕ} (hn : Odd n)
     (hdio : 4 * q * Y ^ 2 = r * X ^ 2 - d * Z ^ 2)
     (hrd : jacobiSym (r * d) (mersenne n) = -1) (hqr : jacobiSym (q * r) (mersenne n) = -1) :
     (mersenne n : ℤ) ∣ lehmerV (r * X ^ 2) (q * Y ^ 2) (2 ^ (n - 1))
-
-/-- **Euler's family of solutions of $aT^2 - bU^2 = c$.** Let $a$, $b$, $c$ be integers
-with $ab > 1$, $ab$ not a perfect square and $c \ne 0$, and let $T_1$, $U_1$ be integers with
-$aT_1^2 - bU_1^2 = c$. Let $\varepsilon = x_1 + y_1\sqrt{ab}$ be the fundamental solution of
-$x^2 - ab\,y^2 = 1$ and, for every natural number $j$, write
-$\varepsilon^j = x_j + y_j\sqrt{ab}$. Then for every $j \ge 0$ the integers
-$T = T_1 x_j + b U_1 y_j$ and $U = a T_1 y_j + U_1 x_j$ satisfy $aT^2 - bU^2 = c$, and different
-$j$ give different pairs $(T, U)$.
-
-The hypothesis $c \ne 0$ is added to the source statement: for $c = 0$ the only integer solution
-is $(0, 0)$, since $ab$ is not a square.
-
-Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Theorem 8. -/
-public theorem_wanted pell_euler_solutions (a b c T₁ U₁ : ℤ) (hab : 1 < a * b)
-    (hsq : ¬ IsSquare (a * b)) (hc : c ≠ 0) (h₁ : a * T₁ ^ 2 - b * U₁ ^ 2 = c)
-    (ε : Pell.Solution₁ (a * b)) (hε : Pell.IsFundamental ε) :
-    (∀ j : ℕ, a * (T₁ * (ε ^ j).x + b * U₁ * (ε ^ j).y) ^ 2 -
-        b * (a * T₁ * (ε ^ j).y + U₁ * (ε ^ j).x) ^ 2 = c) ∧
-      Function.Injective fun j : ℕ =>
-        (T₁ * (ε ^ j).x + b * U₁ * (ε ^ j).y, a * T₁ * (ε ^ j).y + U₁ * (ε ^ j).x)
 
 /-! ### Squarefree parts, the order of `2`, and condition (etar) -/
 
