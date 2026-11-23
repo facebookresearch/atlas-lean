@@ -60,7 +60,7 @@ def_wanted actual_scheme_derived_pullback (X Y : Scheme.{0}) (f : Y ⟶ X) :
     DerivedPullbackSource f
 
 /-- Finite vector-bundle sources are acyclic for that native pullback. -/
-proof_wanted actual_two_term_pullback_acyclic (X Y : Scheme.{0}) (f : Y ⟶ X)
+theorem_wanted actual_two_term_pullback_acyclic (X Y : Scheme.{0}) (f : Y ⟶ X)
     (P : DerivedPullbackSource f) (E : GlobalPOTVirtualClass.TwoTermModel X) :
     SourceAcyclic f P E
 
@@ -106,7 +106,7 @@ def_wanted source_compatible_fixed_obstruction (X : SchemeData) [ModObj Gm X.sch
       (componentFixed (Z.component j)) W B
 
 /-- The fixed homology and amplitude claims concern the already computed induced phi. -/
-proof_wanted induced_fixed_pot_properties (X : SchemeData) [ModObj Gm X.scheme]
+theorem_wanted induced_fixed_pot_properties (X : SchemeData) [ModObj Gm X.scheme]
     (E : EquivariantPOT X.scheme) (_ambient : EquivariantSmoothEmbedding X.scheme)
     (S : FixedSchemeModel Gm X.scheme)
     (Z : FixedComponent Gm X.scheme S)
@@ -123,12 +123,12 @@ def_wanted actual_original_virtual_geometry (X : SchemeData) (P : DerivedPOT X.s
     OrdinaryVirtualGeometry X P
 
 /-- The native fixed-action flat-pull/character coefficient map is bijective. -/
-proof_wanted actual_fixed_chow_isomorphism (F : SchemeData)
+theorem_wanted actual_fixed_chow_isomorphism (F : SchemeData)
     (D : CycleConstructionData base (FiniteTypeArtin ℂ)) (K : KreschPresentation D)
     (P : FixedChowData F D K) : FixedChowIsomorphism F D K P
 
 /-- The finite formula inverts the Euler cap of the original actual moving dual bundles. -/
-proof_wanted finite_moving_euler_inverse (F : SchemeData)
+theorem_wanted finite_moving_euler_inverse (F : SchemeData)
     (E : List (DualMovingSummand F)) (d : ℕ)
     (_dimension : topologicalKrullDim F.scheme.left ≤ (d : ℕ)) :
     movingEuler F E * inverseMovingEuler F E d = 1 ∧
@@ -142,7 +142,7 @@ def_wanted actual_equivariant_virtual_geometry (X : SchemeData) [ModObj Gm X.sch
     EquivariantVirtualGeometry X E Q D K O
 
 /-- The source theorem uses the actual smooth equivariant ambient closed embedding in P. -/
-proof_wanted virtual_localization (X : SchemeData) [ModObj Gm X.scheme]
+theorem_wanted virtual_localization (X : SchemeData) [ModObj Gm X.scheme]
     (E : EquivariantPOT X.scheme)
     (D : CycleConstructionData base (FiniteTypeArtin ℂ)) (K : KreschPresentation D)
     (P : LocalizationData X E D K) : localizationFormula P
