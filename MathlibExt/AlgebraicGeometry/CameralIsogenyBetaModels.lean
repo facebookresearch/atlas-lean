@@ -184,6 +184,7 @@ structure IsogenyTransport where
 variable (C : IsogenyTransport F K D I B V U P)
 
 set_option maxHeartbeats 1000000 in
+-- The pulled-back line comparison along the fixed-scheme maps needs extra budget.
 def betaLineComparison (Z : Over (Spec (.of ℂ))) (i : Fin P.foundation.roots.count)
     (H : Over (Spec (.of ℂ)))
     (y : H ⟶ fixedScheme P.foundation (primeParameter F K I B P Z).cover i) :

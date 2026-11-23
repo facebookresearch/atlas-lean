@@ -88,6 +88,7 @@ structure UniversalRootFrames (U : ChevalleyCameral F) where
           (sectionData F U.cover i).sectionMap
 
 set_option maxHeartbeats 1000000 in
+-- Transporting the root torsor point through the regular inclusion needs extra budget.
 def universalRootPoint (U : ChevalleyCameral F) (A : UniversalRootFrames F U)
     (i : Fin F.roots.count) :
     TorsorPoint F (rootTorsor F K D U.cover i) (regularInclusion F U) := by

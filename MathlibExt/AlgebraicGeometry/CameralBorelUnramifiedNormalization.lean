@@ -60,6 +60,7 @@ structure SectionFrames {X : Over (Spec (.of ℂ))} (C : Cover F X) where
       pullbackSection (𝟙 (total F C).left) (sectionData F C i).sectionMap
 
 set_option maxHeartbeats 1000000 in
+-- Building the root-coroot quotient point from the section frames needs extra budget.
 /-- The original root-coroot quotient point associated with that section. -/
 def rootPoint {X : Over (Spec (.of ℂ))} {C : Cover F X} (S : SectionFrames F C)
     (i : Fin F.roots.count) : TorsorPoint F (rootTorsor F K D C i) (𝟙 (total F C)) := by
