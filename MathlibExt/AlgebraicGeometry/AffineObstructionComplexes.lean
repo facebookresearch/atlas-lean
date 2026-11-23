@@ -28,9 +28,13 @@ The actual full cotangent complex is constructed separately from polynomial
 resolution data. No presentation cone is silently identified with the full
 cotangent complex on a singular scheme. The obstruction module with
 coefficients in `M` is the cokernel of the dual differential, that is
-`Hom_{D(B)}(E, M[1])`; `obstruction` is the class attached to a morphism of
-extensions from the presentation, and `HasLift` is the lifting property it
-governs (`AffinePerfectObstructionTheoryWanted.presentation_obstruction_eq_zero_iff`).
+`Hom_{D(B)}(E, M[1])`. For a morphism of extensions from the presentation to
+an extension `Q`, `obstruction` is the pullback of the presentation obstruction
+(the class of `I/I² → Q.Cotangent`) along a comparison. A lift of `B → A` to
+`Q` (`HasLift`) forces it to vanish for every comparison; the converse is
+requested for square-zero `Q` only when the comparison is a `PresentationTheory`
+(`AffinePerfectObstructionTheoryWanted.presentation_obstruction_eq_zero_iff`):
+for instance the zero comparison always gives the zero class.
 
 Reference: Behrend--Fantechi, *The intrinsic normal cone*, §4,
 https://arxiv.org/abs/alg-geom/9601010. Generic cotangent/deformation
@@ -134,9 +138,13 @@ variable {M}
 variable {A : Type} [CommRing A] [Algebra k A] [Algebra B A] [IsScalarTower k B A]
   (Q : _root_.Algebra.Extension.{0} k A) (h : _root_.Algebra.Extension.Hom G.toExtension Q)
 
-/-- The obstruction attached to a morphism of extensions `h` from the presentation `G` to an
-extension `Q` of `A` (over `B → A`): the class of `I/I² → Q.Cotangent` pulled back along the
-comparison. For a square-zero extension it is the obstruction to lifting `B → A` to `Q`. -/
+/-- The pullback along the comparison `F` of the presentation obstruction of a morphism of
+extensions `h` from the presentation `G` to an extension `Q` of `A` (over `B → A`): the class of
+`(I/I² → Q.Cotangent) ∘ F⁻¹` modulo maps factoring through the differential of `E`. A lift of
+`B → A` to `Q` forces it to vanish. Conversely, for a square-zero `Q` its vanishing gives a lift
+when `F` is the comparison of a `PresentationTheory` (requested in
+`AffinePerfectObstructionTheoryWanted.presentation_obstruction_eq_zero_iff`), but not for an
+arbitrary comparison: the zero comparison always gives the zero class. -/
 def obstruction (F : Comparison G E) : ObstructionModule E Q.Cotangent :=
   (LinearMap.range (dualDifferential E Q.Cotangent)).mkQ
     (_root_.Algebra.Extension.Cotangent.map h ∘ₗ F.negative)
