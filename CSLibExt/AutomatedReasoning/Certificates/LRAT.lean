@@ -18,13 +18,13 @@ public import Std.Tactic.BVDecide.LRAT.Checker
 /-!
 # Atlas CNF to Std CNF/LRAT bridge
 
-Translate Atlas `Cslib.Logic.PL.CNF` to core `Std.Sat.CNF Nat`
+Translate Atlas `Cslib.Logic.LegacyPL.CNF` to core `Std.Sat.CNF Nat`
 and transfer native LRAT unsat certificates across the bridge.
 -/
 
 @[expose] public section
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 namespace CNF
 
@@ -128,12 +128,12 @@ theorem not_cnfSat_of_lrat
 
 end CNF
 
-end Cslib.Logic.PL
+end Cslib.Logic.LegacyPL
 
-#print axioms Cslib.Logic.PL.CNF.toStd
-#print axioms Cslib.Logic.PL.CNF.clause_sat_ofLiterals
-#print axioms Cslib.Logic.PL.CNF.toStd_nil
-#print axioms Cslib.Logic.PL.CNF.toStd_cons
-#print axioms Cslib.Logic.PL.CNF.toStd_append
-#print axioms Cslib.Logic.PL.CNF.toStd_eval
-#print axioms Cslib.Logic.PL.CNF.not_cnfSat_of_lrat
+#print axioms Cslib.Logic.LegacyPL.CNF.toStd
+#print axioms Cslib.Logic.LegacyPL.CNF.clause_sat_ofLiterals
+#print axioms Cslib.Logic.LegacyPL.CNF.toStd_nil
+#print axioms Cslib.Logic.LegacyPL.CNF.toStd_cons
+#print axioms Cslib.Logic.LegacyPL.CNF.toStd_append
+#print axioms Cslib.Logic.LegacyPL.CNF.toStd_eval
+#print axioms Cslib.Logic.LegacyPL.CNF.not_cnfSat_of_lrat
