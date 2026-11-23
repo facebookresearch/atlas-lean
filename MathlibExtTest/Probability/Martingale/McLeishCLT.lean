@@ -153,7 +153,7 @@ theorem tendstoInDistribution_rademacher :
     filter_upwards [hsqrt.eventually_gt_atTop (1 / ε)] with n hn
     have hpos : 0 < Real.sqrt n := (one_div_pos.2 hε).trans hn
     symm
-    convert measure_empty (μ := coins)
+    convert measure_empty (μ := coins) using 2
     ext ω
     simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_exists, not_and,
       not_lt, abs_rademacherArray]
@@ -166,7 +166,7 @@ theorem tendstoInDistribution_rademacher :
     refine tendsto_const_nhds.congr' ?_
     filter_upwards [eventually_ne_atTop 0] with n hn
     symm
-    convert measure_empty (μ := coins)
+    convert measure_empty (μ := coins) using 2
     ext ω
     simp [sum_sq_rademacherArray hn, hε.ne']
 
@@ -206,7 +206,7 @@ example : TendstoInDistribution (fun n ω => ∑ k ∈ range n, rademacherArray 
     refine tendsto_const_nhds.congr' ?_
     filter_upwards [eventually_ne_atTop 0] with n hn
     symm
-    convert measure_empty (μ := coins)
+    convert measure_empty (μ := coins) using 2
     ext ω
     simp [sum_sq_rademacherArray hn, hε.ne']
 
@@ -254,7 +254,7 @@ example (I : Finset Unit) :
     filter_upwards [hsqrt.eventually_gt_atTop (1 / ε)] with n hn
     have hpos : 0 < Real.sqrt n := (one_div_pos.2 hε).trans hn
     symm
-    convert measure_empty (μ := coins)
+    convert measure_empty (μ := coins) using 2
     ext ω
     simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_exists, not_and,
       not_lt, abs_rademacherArray]
@@ -266,7 +266,7 @@ example (I : Finset Unit) :
     refine tendsto_const_nhds.congr' ?_
     filter_upwards [eventually_ne_atTop 0] with n hn
     symm
-    convert measure_empty (μ := coins)
+    convert measure_empty (μ := coins) using 2
     ext ω
     simp [sum_sq_rademacherArray hn, hε.ne']
   · -- `∑ c_s x = (∑ c_s) x` is `N(0, (∑ c_s)²)` under `N(0, 1)`
@@ -323,7 +323,7 @@ example {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMea
     filter_upwards [hsqrt.eventually_gt_atTop (1 / ε)] with n hn
     have hpos : 0 < Real.sqrt n := (one_div_pos.2 hε).trans hn
     symm
-    convert measure_empty (μ := coins)
+    convert measure_empty (μ := coins) using 2
     ext ω
     simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_exists, not_and,
       not_lt, abs_rademacherArray]
@@ -344,7 +344,7 @@ example {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMea
     refine tendsto_const_nhds.congr' ?_
     filter_upwards [(Metric.tendsto_nhds.1 hlim) ε hε] with n hn
     symm
-    convert measure_empty (μ := coins)
+    convert measure_empty (μ := coins) using 2
     ext ω
     simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_le,
       sum_sq_rademacherArray_range]
@@ -412,7 +412,7 @@ example {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMea
     refine tendsto_const_nhds.congr' ?_
     filter_upwards [(Metric.tendsto_nhds.1 hlim) ε hε] with n hn
     symm
-    convert measure_empty (μ := coins)
+    convert measure_empty (μ := coins) using 2
     ext ω
     simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_le,
       sum_sq_rademacherArray_range]
@@ -464,7 +464,7 @@ example {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMea
     refine tendsto_const_nhds.congr' ?_
     filter_upwards [(Metric.tendsto_nhds.1 hlim) ε hε] with n hn
     symm
-    convert measure_empty (μ := coins)
+    convert measure_empty (μ := coins) using 2
     ext ω
     simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_le,
       sum_sq_rademacherArray_range]

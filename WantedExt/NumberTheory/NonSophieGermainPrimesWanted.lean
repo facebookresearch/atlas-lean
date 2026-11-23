@@ -12,7 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Data.Set.Finite.Basic
-public import MathlibExt.NumberTheory.SophieGermainPrime
+public import MathlibExt.NumberTheory.NonSophieGermainPrimes
 
 namespace MetaMathlibExt
 
@@ -25,18 +25,6 @@ Source: Takashi Agoh, *A Note on Sophie Germain Primes*, INTEGERS 25 (2025),
 Article A83, Theorem 3.1 (`integers-2025-A83-thm-3-1`). -/
 public theorem_wanted infinite_setOf_prime_not_isSophieGermainPrime :
     {q : ℕ | q.Prime ∧ ¬ q.IsSophieGermainPrime}.Infinite
-
-/-- **Primes that are not Sophie Germain primes.** For an odd prime $p$, let
-$A(p) = \{pr + (p - 1)/2 : r = 1, 2, 3, \dots\}$, and let $A$ be the union of the sets $A(p)$ over
-all odd primes $p$. A prime is not a Sophie Germain prime if and only if it lies in $A$;
-equivalently, the Sophie Germain primes are exactly the primes outside $A$.
-
-Source: Takashi Agoh, *A Note on Sophie Germain Primes*, INTEGERS 25 (2025),
-Article A83, Theorem 2.1 (`integers-2025-A83-thm-2-1`). -/
-public theorem_wanted setOf_prime_not_isSophieGermainPrime_eq_inter :
-    {q : ℕ | q.Prime ∧ ¬ q.IsSophieGermainPrime} =
-      {q : ℕ | q.Prime} ∩
-        {q : ℕ | ∃ p r : ℕ, p.Prime ∧ p ≠ 2 ∧ 1 ≤ r ∧ q = p * r + (p - 1) / 2}
 
 /-- **Wilson-type characterization of Sophie Germain primes.** Let $a \ge 2$ be a natural number.
 Then $a$ is a Sophie Germain prime other than $2$ if and only if

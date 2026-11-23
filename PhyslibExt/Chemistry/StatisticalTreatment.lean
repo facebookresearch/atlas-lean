@@ -134,7 +134,7 @@ open MeasureTheory ProbabilityTheory
 open MathlibExt.Probability.FiniteProbability (sampleMean sampleVarUnbiased sampleMean_eq_sum_div
   sampleVarUnbiased_eq_sum_div)
 
-/-- The mean of a constant sample is the constant. -/
+/-- The mean of a nonempty constant sample is the constant. -/
 lemma sampleMean_const (n : ℕ) (hn : n ≠ 0) (c : ℝ) (x : Fin n → ℝ)
     (h : ∀ i, x i = c) : sampleMean x = c := by
   have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast hn
@@ -149,7 +149,7 @@ lemma sampleVarUnbiased_nonneg (n : ℕ) (hn : 2 ≤ n) (x : Fin n → ℝ) :
   have h2 : (2 : ℝ) ≤ n := by exact_mod_cast hn
   exact div_nonneg (Finset.sum_nonneg fun i _ => sq_nonneg _) (by linarith)
 
-/-- Constant samples have zero sample variance. -/
+/-- A nonempty constant sample (`n ≥ 1`) has zero sample variance. -/
 lemma sampleVarUnbiased_const (n : ℕ) (hn : n ≠ 0) (c : ℝ) (x : Fin n → ℝ)
     (h : ∀ i, x i = c) : sampleVarUnbiased x = 0 := by
   rw [sampleVarUnbiased_eq_sum_div, sampleMean_const n hn c x h,
@@ -171,7 +171,7 @@ noncomputable def sampleStdDev {n : ℕ} (x : Fin n → ℝ) : ℝ :=
 lemma sampleStdDev_nonneg {n : ℕ} (x : Fin n → ℝ) : 0 ≤ sampleStdDev x :=
   Real.sqrt_nonneg _
 
-/-- Constant samples have zero standard deviation. -/
+/-- A nonempty constant sample (`n ≥ 1`) has zero standard deviation. -/
 lemma sampleStdDev_const (n : ℕ) (hn : n ≠ 0) (c : ℝ) (x : Fin n → ℝ)
     (h : ∀ i, x i = c) : sampleStdDev x = 0 := by
   unfold sampleStdDev
@@ -197,10 +197,12 @@ lemma tHalfWidth_nonneg (s : ℝ) (n : ℕ) (tcrit : ℝ) (ht : 0 ≤ tcrit)
   unfold tHalfWidth
   exact div_nonneg (mul_nonneg ht hs) (Real.sqrt_nonneg _)
 
-/-- The t-interval `x̄ ± tcrit * s / √n` as a set; it carries no coverage claim. Its exact
-coverage under i.i.d. normal sampling of `n ≥ 2` observations, with the sample mean, the sample
-standard deviation and the Student-t quantile, is `tInterval_coverage`. -/
-def tInterval (xbar s : ℝ) (n : ℕ) (tcrit : ℝ) : Set ℝ :=
+/-- The t-interval `x̄ ± tcrit * s / √n` as a set; it carries no coverage claim. For `n = 0` the
+convention `x / 0 = 0` makes the half-width `0`, so the interval is the single point `x̄`; the
+intended domain is `n ≥ 1`. Its exact coverage under i.i.d. normal sampling of `n ≥ 2`
+observations, with the sample mean, the sample standard deviation and the Student-t quantile, is
+`tInterval_coverage`. -/
+noncomputable def tInterval (xbar s : ℝ) (n : ℕ) (tcrit : ℝ) : Set ℝ :=
   Set.Icc (xbar - tHalfWidth s n tcrit) (xbar + tHalfWidth s n tcrit)
 
 /-- A value lies in the t-interval iff it is within one half-width of the mean (pure algebra). -/
@@ -354,7 +356,8 @@ comparison, assume i.i.d. normal sampling, which is not modelled here. -/
 noncomputable def dixonQ {n : ℕ} (x : Fin n → ℝ) (j : Fin n) : ℝ :=
   if sampleRange x = 0 then 0 else nearestGap x j / sampleRange x
 
-/-- Unfolding of `dixonQ` away from the degenerate case. -/
+/-- Unfolding of `dixonQ` away from the degenerate case: for a sample with nonzero range, Q is
+the nearest gap over the range. -/
 lemma dixonQ_of_ne {n : ℕ} (x : Fin n → ℝ) (j : Fin n) (h : sampleRange x ≠ 0) :
     dixonQ x j = nearestGap x j / sampleRange x := by
   rw [dixonQ, ite_eq_right h]
@@ -401,14 +404,15 @@ lemma not_dixonReject_of_no_spread {n : ℕ} (x : Fin n → ℝ) (j : Fin n) (h 
 
 /-- Grubbs' statistic `G = max_i |x i - x̄| / s` of a sample: the largest absolute deviation from
 the sample mean over the sample standard deviation, and `0` when `s = 0` (no spread, hence no
-rejection). The maximum is over the whole sample (`div_le_grubbsG`) and is attained by an
-observation (`exists_grubbsG_eq`). Grubbs' procedure needs at least three observations
+rejection). The maximum is over the whole sample (`div_le_grubbsG`) and, when `s ≠ 0`, is attained
+by an observation (`exists_grubbsG_eq`). Grubbs' procedure needs at least three observations
 (`grubbsReject` requires it); for two distinct observations `G = 1/√2` whatever the data.
 Tabulated critical values assume i.i.d. normal sampling, which is not modelled here. -/
 noncomputable def grubbsG {n : ℕ} (x : Fin n → ℝ) : ℝ :=
   if sampleStdDev x = 0 then 0 else (⨆ i, |x i - sampleMean x|) / sampleStdDev x
 
-/-- Unfolding of `grubbsG` away from the degenerate case. -/
+/-- Unfolding of `grubbsG` away from the degenerate case: for `s ≠ 0`,
+`G = max_i |x i - x̄| / s`. -/
 lemma grubbsG_of_ne {n : ℕ} (x : Fin n → ℝ) (h : sampleStdDev x ≠ 0) :
     grubbsG x = (⨆ i, |x i - sampleMean x|) / sampleStdDev x := by
   rw [grubbsG, ite_eq_right h]
@@ -433,7 +437,8 @@ lemma div_le_grubbsG {n : ℕ} (x : Fin n → ℝ) (h : sampleStdDev x ≠ 0) (i
     (le_ciSup (f := fun i => |x i - sampleMean x|) (Set.finite_range _).bddAbove i)
     (sampleStdDev_nonneg x)
 
-/-- Grubbs' statistic is the standardized residual of some observation. -/
+/-- For a sample with nonzero standard deviation, Grubbs' statistic is the standardized residual
+of some observation. -/
 lemma exists_grubbsG_eq {n : ℕ} (x : Fin n → ℝ) (h : sampleStdDev x ≠ 0) :
     ∃ i, grubbsG x = |x i - sampleMean x| / sampleStdDev x := by
   have : Nonempty (Fin n) := by
@@ -445,10 +450,10 @@ lemma exists_grubbsG_eq {n : ℕ} (x : Fin n → ℝ) (h : sampleStdDev x ≠ 0)
   exact ⟨i, by rw [grubbsG_of_ne x h, ← hi]⟩
 
 /-- Grubbs decision procedure: reject the most extreme observation of a sample `x` of `n ≥ 3`
-observations at the critical value `gcrit ≥ 0`. The test is not defined for fewer than three
-observations, which are never rejected (`not_grubbsReject_of_lt_three`). The critical value is an
-explicit nonnegative input (tabulated values assume normality); a negative `gcrit` never
-rejects. -/
+observations at the critical value `gcrit ≥ 0` when Grubbs' statistic exceeds `gcrit`. The test
+is not defined for fewer than three observations, which are never rejected
+(`not_grubbsReject_of_lt_three`). The critical value is an explicit nonnegative input (tabulated
+values assume normality); a negative `gcrit` never rejects. -/
 def grubbsReject {n : ℕ} (x : Fin n → ℝ) (gcrit : ℝ) : Prop :=
   3 ≤ n ∧ 0 ≤ gcrit ∧ gcrit < grubbsG x
 
@@ -503,7 +508,7 @@ Lean's division returns `0`). -/
 noncomputable def lodK3 (s m : ℝ) : ℝ :=
   3 * s / m
 
-/-- The `k = 3` detection limit unfolds to its defining formula. -/
+/-- The `k = 3` detection limit unfolds to its defining formula `3 * s / m`. -/
 lemma lodK3_eq (s m : ℝ) : lodK3 s m = 3 * s / m :=
   rfl
 
@@ -516,13 +521,13 @@ lemma lodK3_nonneg (s m : ℝ) (hs : 0 ≤ s) (hm : 0 < m) : 0 ≤ lodK3 s m := 
     norm_num
   · exact le_of_lt hm
 
-/-- Detection limit `LOD = 3.3·s/m` as a stated convention (not a theorem): `k = 3.3`
-convention, meaningful for `m > 0`. Separate from `lodK3`: state which convention is used and
-never mix them. -/
+/-- Detection limit `LOD = 3.3·s/m` as a stated convention (not a theorem): `k = 3.3` convention,
+meaningful for `m > 0`. Separate from `lodK3`: state which convention is used and never mix them. At
+`m = 0` the value is `0`, by the convention `x / 0 = 0`. -/
 noncomputable def lodK33 (s m : ℝ) : ℝ :=
   3.3 * s / m
 
-/-- The `k = 3.3` detection limit unfolds to its defining formula. -/
+/-- The `k = 3.3` detection limit unfolds to its defining formula `3.3 * s / m`. -/
 lemma lodK33_eq (s m : ℝ) : lodK33 s m = 3.3 * s / m :=
   rfl
 

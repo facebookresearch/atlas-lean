@@ -17,7 +17,11 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.GroupTheory.SpecificGroups.Cyclic
 public import Mathlib.NumberTheory.Padics.PadicVal.Defs
 public import Mathlib.Data.Nat.Factorization.Defs
-public import Mathlib.Topology.Algebra.InfiniteSum.Real
+public import MathlibExt.NumberTheory.RepetendTable
+public import MathlibExt.NumberTheory.RepetendTable.BaseShift
+public import MathlibExt.NumberTheory.RepetendTable.TwoRowColumns
+public import MathlibExt.NumberTheory.RepetendTable.InversePairs
+public import MathlibExt.Analysis.Series.InversePowerTail
 
 /-!
 # Repetend tables
@@ -25,23 +29,26 @@ public import Mathlib.Topology.Algebra.InfiniteSum.Real
 Statements from R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*,
 INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 `m * B ^ (j + 1) / n % B`; `E(L, n)` is the number of units of order `L` in `ZMod n`.
+
+`MetaMathlibExt.long_division_remainder_expansion` is proved in
+`MathlibExt.NumberTheory.RepetendTable`.
+
+`MetaMathlibExt.digit_add_mul_modulus_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.BaseShift`.
+
+`MetaMathlibExt.repetend_digit_diff_of_columns_eq` is proved in
+`MathlibExt.NumberTheory.RepetendTable.TwoRowColumns`.
+
+`MetaMathlibExt.even_card_small_bases_orderOf` is proved in
+`MathlibExt.NumberTheory.RepetendTable.InversePairs`.
+
+`MetaMathlibExt.tsum_inv_pow_succ_lt` is proved in
+`MathlibExt.Analysis.Series.InversePowerTail`.
 -/
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Raising the base by multiples of $n$ shifts repetend digits linearly.** Let $m$ and $j$ be
-natural numbers, $n \ge 1$ and $b \ge 2$. For a base $B$ write
-$d_j(B) = \lfloor m B^{j+1} / n \rfloor \bmod B$ for the $j$-th base-$B$ digit of $m/n$. Then
-there is a natural number $c < n$ such that $d_j(b + tn) = d_j(b) + tc$ for every natural number
-$t$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Corollary 3 (`integers-2025-A26-cor-3`). -/
-public theorem_wanted digit_add_mul_modulus_eq (m n b j : ℕ) (hn : 0 < n) (hb : 2 ≤ b) :
-    ∃ c < n, ∀ t : ℕ,
-      m * (b + t * n) ^ (j + 1) / n % (b + t * n) = m * b ^ (j + 1) / n % b + t * c
 
 /-- **The number of units of order $L$ is a multiple of $\varphi(L)$.** For natural numbers
 $n \ge 1$ and $L$, the number $E(L, n)$ of elements of order $L$ in the unit group
@@ -125,22 +132,6 @@ public theorem_wanted repetend_block_sum_eq (B N x d k : ℕ) (hB : 2 ≤ B) (hx
     let R := ∑ j ∈ Finset.range d, x * B ^ (j * k) % N
     S * N = R * (B ^ k - 1) ∧ (Nat.Coprime (B ^ k - 1) N → B ^ k - 1 ∣ S)
 
-
-/-- **Long division of a proper fraction.** Let $m < n$ be natural numbers and $b \ge 1$. For
-$j \ge 0$ let $c_j = m b^j \bmod n$ (the remainders of the long division of $m/n$ in base $b$) and
-$r_j = \lfloor b c_j / n \rfloor$ (its digits). Then for every $k \ge 0$
-$$\frac{m}{n} = \sum_{i<k} \frac{r_i}{b^{i+1}} + \frac{c_k}{n b^k},$$
-and $r_j n = b c_j - c_{j+1}$ for every $j \ge 0$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 5 (`integers-2025-A26-lem-5`). -/
-public theorem_wanted long_division_remainder_expansion (m n b : ℕ) (hmn : m < n) (hb : 0 < b) :
-    let c : ℕ → ℕ := fun j => m * b ^ j % n
-    let r : ℕ → ℕ := fun j => b * c j / n
-    (∀ k : ℕ, (m : ℚ) / n =
-      ∑ i ∈ Finset.range k, (r i : ℚ) / (b : ℚ) ^ (i + 1) + (c k : ℚ) / ((n : ℚ) * (b : ℚ) ^ k)) ∧
-    ∀ j : ℕ, r j * n = b * c j - c (j + 1)
-
 /-- **The last repetend digit is nonzero.** Let $n \ge 2$ and let $b \ge 2$ be prime to $n$,
 with multiplicative order $L$ modulo $n$ (the repetend length of $1/n$ in base $b$). Then the
 digit $\lfloor b^{(L-1)+1}/n \rfloor \bmod b$ of $1/n$ at position $L - 1$ is not $0$.
@@ -178,15 +169,6 @@ public theorem_wanted long_division_remainders_erase_one_eq_small_bases (n L b m
     (hm : m = 1 ∨ (m ∈ Finset.Icc 2 (n - 1) ∧ orderOf (m : ZMod n) = L)) :
     ((Finset.range L).image fun j => m * b ^ j % n).erase 1 =
       (Finset.Icc 2 (n - 1)).filter fun a : ℕ => orderOf (a : ZMod n) = L
-
-/-- **Small bases of order greater than two come in pairs.** For every natural number $n$ and
-every $L > 2$, the number of integers $b$ with $1 \le b < n$ and $\gcd(b, n) = 1$ whose
-multiplicative order modulo $n$ is $L$ is even.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 3 (`integers-2025-A26-lem-2`). -/
-public theorem_wanted even_card_small_bases_orderOf (n L : ℕ) (hL : 2 < L) :
-    Even ((Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = L).card
 
 /-- **Repetend digits are symmetric under inverse indices.** Let $n, b, x, j, j'$ be natural
 numbers and $L \ge 1$, and suppose $b$ has multiplicative order $L$ modulo $n$. For $y, c \ge 0$
@@ -420,22 +402,6 @@ public theorem_wanted repetend_columns_ne_of_card_eq_one_or_three (n L : ℕ) :
     (B.card = 1 ∨ B.card = 3) → ∀ i < L, ∀ j < L, i ≠ j →
       (B.val.map fun b => b ^ (i + 1) / n % b) ≠ B.val.map fun b => b ^ (j + 1) / n % b
 
-/-- **Matching columns of a two-row repetend table.** Let $n$ and $L$ be natural numbers and let
-$B$ be the set of integers $c$ with $1 \le c < n$, $\gcd(c, n) = 1$ and multiplicative order $L$
-modulo $n$. For $c \in B$ and $k \ge 0$ let $r_k(c) = \lfloor c^{k+1}/n \rfloor \bmod c$, and let
-$C_k$ be the multiset of the $r_k(c)$ over $c \in B$. Suppose $B$ has exactly two elements, $b$
-and $b' \ne b$, and put $D_k = r_k(b') - r_k(b)$. Then for all $i, j \ge 0$ with $C_i = C_j$,
-$D_i = D_j$ or $D_i = -D_j$, and the sum of the elements of $C_i$ equals that of $C_j$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 28 (`integers-2025-A26-lem-28`). -/
-public theorem_wanted repetend_digit_diff_of_columns_eq (n L b b' i j : ℕ) :
-    let B := (Finset.Ico 1 n).filter fun c => Nat.Coprime c n ∧ orderOf (c : ZMod n) = L
-    let C : ℕ → Multiset ℕ := fun k => B.val.map fun c => c ^ (k + 1) / n % c
-    let D : ℕ → ℤ := fun k => ((b' ^ (k + 1) / n % b' : ℕ) : ℤ) - (b ^ (k + 1) / n % b : ℕ)
-    B.card = 2 → b ∈ B → b' ∈ B → b ≠ b' → C i = C j →
-      (D i = D j ∨ D i = -D j) ∧ (C i).sum = (C j).sum
-
 /-- **Half-period symmetry of the repetend of $1/n$.** Let $n$ be a natural number whose unit
 group $(\mathbb{Z}/n\mathbb{Z})^\times$ is cyclic, let $L > 0$ be even, and let $b < n$ be a
 natural number whose multiplicative order modulo $n$ is $L$. For natural numbers $m$ write
@@ -617,14 +583,6 @@ public theorem_wanted repetend_columns_ne_of_card_le_three (n L : ℕ) :
     let B := (Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = L
     1 ≤ B.card → B.card ≤ 3 → ∀ i < L, ∀ j < L, i ≠ j →
       (B.val.map fun b => b ^ (i + 1) / n % b) ≠ B.val.map fun b => b ^ (j + 1) / n % b
-
-/-- **Tail bound for sums of inverse powers.** For natural numbers $m \ge 2$ and $s \ge 1$,
-$\sum_{n = s+1}^{\infty} n^{-m} < \dfrac{1}{(m-1)\, s^{m-1}}$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 42 (`integers-2025-A26-lem-42`). -/
-public theorem_wanted tsum_inv_pow_succ_lt (m s : ℕ) (hm : 2 ≤ m) (hs : 0 < s) :
-    ∑' k : ℕ, (((k + s + 1 : ℕ) : ℝ) ^ m)⁻¹ < (((m - 1 : ℕ) : ℝ) * (s : ℝ) ^ (m - 1))⁻¹
 
 end
 

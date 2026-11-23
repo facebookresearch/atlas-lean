@@ -24,8 +24,9 @@ public import CSLibExt.Coding.QuantumCodeDistance
 * The hypotheses of the wanted quantum Singleton bound
   (`WantedExt/QuantumInformation/QuantumSingletonWanted`) are jointly satisfiable: the whole
   space of two qubits (`P = 1`, `k = 2`) has distance at least `1`.
-* The hypotheses of the wanted stabilizer dimension formula
-  (`WantedExt/QuantumInformation/StabilizerCodeWanted`) are jointly satisfiable: the single
+* The hypotheses of the proved stabilizer dimension theorem
+  `Cslib.CodingTheory.StabilizerCode.finrank_stabilizerCode`
+  (`CSLibExt/Coding/StabilizerCode.lean`) are jointly satisfiable: the single
   generator `Z` on one qubit (`r = 1`) squares to `1`, commutes with itself and has the nonzero
   vector `(0, 1)`; its fixed space is spanned by `|0⟩`, of dimension `2 ^ (1 - 1)`.
 -/

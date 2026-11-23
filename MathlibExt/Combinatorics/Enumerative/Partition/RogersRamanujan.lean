@@ -9,16 +9,16 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
+public import Mathlib.RingTheory.PowerSeries.Inverse
+public import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
 import Mathlib.Algebra.BigOperators.Group.Finset.Powerset
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Topology.Instances.Rat
 import Mathlib.Algebra.Order.Interval.Finset.SuccPred
 import Mathlib.Combinatorics.Enumerative.Partition.Glaisher
-import Mathlib.RingTheory.PowerSeries.Inverse
 import Mathlib.RingTheory.PowerSeries.PiTopology
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
-import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
 
 @[expose] public section
 
@@ -1642,11 +1642,15 @@ private theorem rrDvd_theta_mul_sub (r n : ℕ) (hr : r ≤ n) (U V : PowerSerie
   rw [hdecomp]
   exact dvd_add t1 t2
 
-/-- Truncation of the finite RR identity. -/
-private theorem rrTrunc_RR (n : ℕ) :
-    (PowerSeries.X : PowerSeries ℚ) ^ (n + 1)
-      ∣ rrP n * (∑ k ∈ Finset.range (n + 1),
-        (PowerSeries.X : PowerSeries ℚ) ^ (k ^ 2) * rrIp k) - rrT n := by
+open Finset PowerSeries in
+/-- The first Rogers–Ramanujan series, truncated at index `n` and multiplied by the finite
+q-Pochhammer symbol, agrees with the partial theta sum through degree `n`. -/
+public theorem rrTrunc_RR (n : ℕ) :
+    (X : PowerSeries ℚ) ^ (n + 1) ∣
+      qPochFin X n * (∑ j ∈ range (n + 1), X ^ (j ^ 2) * (qPochFin X j)⁻¹) -
+      ∑ r ∈ range (n + 1), if r = 0 then 1 else
+        (-1) ^ r * (X ^ (5 * r.choose 2 + 2 * r) + X ^ (5 * r.choose 2 + 3 * r)) := by
+  change _ ∣ rrP n * (∑ j ∈ range (n + 1), X ^ (j ^ 2) * rrIp j) - rrT n
   have hFin := rrFinite_identity n
   simp only [rrT]
   have hPS : rrP n * (∑ k ∈ Finset.range (n + 1),
