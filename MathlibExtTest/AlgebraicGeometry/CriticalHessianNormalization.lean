@@ -13,11 +13,19 @@ import Mathlib.Tactic.NormNum
 /-!
 The actual universal-coordinate Hessian of z squared is two. Its normal
 quadratic form is therefore one, including in positive characteristic
-different from two: for the stabilization `g = f + z²` with the projection as
-normal-form retraction, `g - f ∘ α = z²`. This catches forgetting the source's
-half-Hessian. For an identity embedding, `g - f ∘ α = g - g` has zero Hessian,
-matching the zero normal quotient, whatever the Hessian of `g` is.
+different from two: for the stabilization `g = f + z²`, the normal direction
+`∂_z` is Hessian-orthogonal to the smaller chart, and the form on it is one half
+of the Hessian of `z²`. This catches forgetting the source's half-Hessian.
 -/
+
+/-- The pointwise normalization on a Hessian-orthogonal vector: with Hessian
+`diag(h, 2)` (smaller chart along the first axis, one normal direction), a vector `(a, b)`
+orthogonal to the first axis (`a * h = 0`) has half-Hessian `b²`, the square of its normal
+component, whatever `h` is. -/
+example {k : Type} [Field k] (h a b : k) (horth : a * h = 0) (two_ne_zero : (2 : k) ≠ 0) :
+    (2 : k)⁻¹ * (a * a * h + b * b * 2) = b * b := by
+  rw [show a * a * h = a * (a * h) by ring, horth, mul_zero, zero_add]
+  field_simp
 
 open Polynomial
 open MathlibExt.AlgebraicGeometry.AffineCriticalFunctions
@@ -48,7 +56,3 @@ example (coordinate : E.coordinate 0 = (X : k[X])) (two_ne_zero : (2 : k) ≠ 0)
   rw [quadratic_hessian E coordinate]
   simp only [eval_ofNat]
   exact inv_mul_cancel₀ two_ne_zero
-
-/-- Identity embedding: the normal-form function `g - g` has zero Hessian. -/
-example (g : k[X]) : hessian E (g - g) 0 0 = 0 := by
-  simp [hessian]
