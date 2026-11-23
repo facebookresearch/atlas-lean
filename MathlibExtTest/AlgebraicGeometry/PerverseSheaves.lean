@@ -89,6 +89,15 @@ example (X : ComplexScheme) [IsComplexVariety X] [PerverseSheafTheory X] (j : �
     (perverseCohomology X j K).obj = ((perverseTStructure X).truncGELE 0 0).obj (K⟦j⟧) :=
   rfl
 
+/-- Perverse sheaves form a full subcategory of the derived category. -/
+example (X : ComplexScheme) [IsComplexVariety X] [PerverseSheafTheory X] :
+    (perverseAmbient X).Full ∧ (perverseAmbient X).Faithful :=
+  ⟨inferInstance, inferInstance⟩
+
+example (X : ComplexScheme) [IsComplexVariety X] [PerverseSheafTheory X]
+    (P : PerverseSheaf X) : (perverseAmbient X).obj P = P.obj.obj :=
+  rfl
+
 end MathlibExtTest.AlgebraicGeometry.PerverseSheaves
 
 end
