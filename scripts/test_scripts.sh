@@ -555,6 +555,10 @@ check_copyright --all || { cat "$TMP_ROOT/output.log" >&2; fail "--all rejected 
 grep -q 'check_copyright.py --all' "$REPO_ROOT/scripts/check.sh" ||
   fail "preflight does not check every file's copyright header"
 
+for pattern in test_generate_import_inventory.py test_optimize_imports.py \
+  test_reference_imports.py 'test_import_optimizer_*.py'; do
+  python3 -m unittest discover -s "$REPO_ROOT/scripts" -p "$pattern" -v
+done
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_quality_eval.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_formal_math_sync.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_references.py -v
