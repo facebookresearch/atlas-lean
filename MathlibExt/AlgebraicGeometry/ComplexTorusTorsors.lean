@@ -43,11 +43,16 @@ open _root_.CategoryTheory.CartesianMonoidalCategory _root_.CategoryTheory.MonOb
 open _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.ComplexAnalytification
 open MathlibExt.AlgebraicGeometry.PerverseSheaves
+/-- The point `Spec ℂ`, as a scheme over `ℂ`. -/
 abbrev Point : ComplexScheme := Over.mk (𝟙 (Spec (.of ℂ)))
+
+/-- The multiplicative group `Spec ℂ[T, T⁻¹]` over `ℂ`. Its group-object
+structure is Mathlib's, induced by the Hopf algebra of Laurent polynomials. -/
 abbrev Gm : ComplexScheme :=
   (Spec (.of (LaurentPolynomial ℂ))).asOver (Spec (.of ℂ))
-instance : GrpObj Gm := inferInstance
 
+/-- The complex point of `Gm` given by a unit `g`: evaluation of Laurent
+polynomials at `g`. -/
 def pointOfUnit (g : ℂˣ) : Point ⟶ Gm :=
   Over.homMk (Spec.map (CommRingCat.ofHom (LaurentPolynomial.eval₂ (RingHom.id ℂ) g))) (by
     change Spec.map _ ≫ Spec.map _ = 𝟙 _
@@ -58,34 +63,54 @@ def pointOfUnit (g : ℂˣ) : Point ⟶ Gm :=
       exact LaurentPolynomial.eval₂_C _ _ z
     simpa only [hc, CommRingCat.ofHom_id] using Spec.map_id (.of ℂ))
 
+/-- A complex point of `X`, as a morphism from the point over `ℂ`. -/
 def pointOf {X : ComplexScheme} (x : space X) : Point ⟶ X :=
   Over.homMk x.hom x.hom_comp
 
+/-- An action of `Gm` on a scheme over `ℂ`, with its unit and associativity
+laws. -/
 structure GmAction (X : ComplexScheme) where
+  /-- The action morphism `Gm × X ⟶ X` over `ℂ`. -/
   action : Gm ⊗ X ⟶ X
+  /-- The unit of `Gm` acts trivially. -/
   unit : (η[Gm] ▷ X) ≫ action = (λ_ X).hom
+  /-- The action is associative. -/
   assoc : (μ[Gm] ▷ X) ≫ action = (α_ Gm Gm X).hom ≫ (Gm ◁ action) ≫ action
 
 variable {X Y : ComplexScheme} (A : GmAction X) (q : X ⟶ Y)
 
+/-- For an invariant map `q`, the map `(g, x) ↦ (x, g • x)` into the fibre
+product of `q` with itself. -/
 def relation (h : A.action ≫ q = snd Gm X ≫ q) :
     (Gm ⊗ X).left ⟶ pullback q.left q.left :=
   pullback.lift (snd Gm X).left A.action.left
     (by simpa using (congrArg (fun f : Gm ⊗ X ⟶ Y => f.left) h).symm)
 
+/-- `q : X ⟶ Y` is a `Gm`-torsor for the action `A`: `q` is invariant, smooth
+and surjective, and `(g, x) ↦ (x, g • x)` is an isomorphism onto `X ×_Y X`.
+The action of `ℂˣ` on complex points is part of the data, pinned down by
+`compatibility` (it is the action induced by `A`), and is continuous. -/
 class TorusTorsor where
+  /-- The action of `ℂˣ` on the complex points of `X`. -/
   [mulAction : MulAction ℂˣ (space X)]
+  /-- That action is continuous. -/
   [continuousAction : ContinuousSMul ℂˣ (space X)]
+  /-- It is the action induced by `A` on complex points. -/
   compatibility : ∀ (g : ℂˣ) (x : space X),
     (g • x).hom = (lift (pointOfUnit g) (pointOf x) ≫ A.action).left
+  /-- The quotient map is invariant. -/
   invariant : A.action ≫ q = snd Gm X ≫ q
+  /-- The action is free and transitive on the fibres of `q`. -/
   [relationIso : IsIso (relation A q invariant)]
+  /-- The quotient map is smooth. -/
   [smooth : Smooth q.left]
+  /-- The quotient map is surjective. -/
   [surjective : Surjective q.left]
 attribute [instance_reducible] TorusTorsor.mulAction
 attribute [instance] TorusTorsor.mulAction TorusTorsor.continuousAction
 attribute [instance] TorusTorsor.relationIso TorusTorsor.smooth TorusTorsor.surjective
 
+/-- The quotient map is invariant on complex points. -/
 theorem quotientInvariant [T : TorusTorsor A q] (g : ℂˣ) (x : space X) :
     spaceMap q (g • x) = spaceMap q x := by
   apply ComplexPoints.ext
@@ -106,7 +131,7 @@ def borelQuotientMap [T : TorusTorsor A q] :
 /-- Equivariant restriction is the actual inverse-image map for the
 constructed continuous Borel realization, rather than a chosen linear map. -/
 def equivariantRestriction {Z W : TopCat.{0}}
-    [MulAction ℂˣ Z] [MulAction ℂˣ W] (f : Z ⟶ W)
+    [MulAction ℂˣ Z] [ContinuousSMul ℂˣ Z] [MulAction ℂˣ W] [ContinuousSMul ℂˣ W] (f : Z ⟶ W)
     (hf : ∀ (g : ℂˣ) (x : Z), f (g • x) = g • f x) (n : ℤ) :=
   BettiFunctoriality.cohomologyPullback
     (MathlibExt.Topology.ContinuousBorel.borelMap f hf) n

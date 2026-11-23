@@ -49,9 +49,8 @@ abbrev rationalUnit (Z : TopCat.{0}) : RationalDerived Z :=
 abbrev Cohomology (Z : TopCat.{0}) (n : ℤ) : Type 1 :=
   rationalUnit Z ⟶ (rationalUnit Z)⟦n⟧
 
-/-- Its rational module is the module on actual derived morphisms. -/
-instance cohomologyModule (Z : TopCat.{0}) (n : ℤ) : Module ℚ (Cohomology Z n) :=
-  inferInstanceAs (Module ℚ (rationalUnit Z ⟶ (rationalUnit Z)⟦n⟧))
+/-! The rational vector space structure on `Cohomology Z n` is Mathlib's
+`Linear.homModule` on morphisms of the `ℚ`-linear derived category. -/
 
 /-- Cup product in the order given by Yoneda composition. -/
 def cup (Z : TopCat.{0}) {i j : ℤ}
