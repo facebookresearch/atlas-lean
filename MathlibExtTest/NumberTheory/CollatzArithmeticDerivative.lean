@@ -1,0 +1,28 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+import MathlibExt.NumberTheory.CollatzArithmeticDerivative
+
+open MetaMathlibExt
+
+example : collatzAccelerated 0 = 0 ∧ collatzAccelerated 3 = 5 ∧ collatzAccelerated 6 = 3 :=
+  ⟨rfl, rfl, rfl⟩
+
+-- The two semiprimes in the example realize opposite residue orders.
+example : (71 * 1609 % 3 = 2 ∧ 349 * 491 % 3 = 2) ∧
+    (71 % 3 = 2 ∧ 1609 % 3 = 1) ∧ (349 % 3 = 1 ∧ 491 % 3 = 2) := by
+  obtain ⟨hpq, hrs, h₁, h₂⟩ := isCompatibleSemiprimePair_71_1609.mod_three
+  exact ⟨⟨hpq, hrs⟩, h₁.resolve_left (by decide), h₂.resolve_right (by decide)⟩
+
+-- Both equations hold, but the first product is divisible by three.
+example : 2 * (11 + 43) = 3 + 105 ∧ 2 * (11 * 43) = 3 * (3 * 105) + 1 ∧
+    ¬ IsCompatibleSemiprimePair 3 105 11 43 := by
+  refine ⟨rfl, rfl, fun h => ?_⟩
+  exact (by decide : 3 * 105 % 3 ≠ 2) h.mod_three.1

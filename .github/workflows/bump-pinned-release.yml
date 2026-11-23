@@ -1,0 +1,271 @@
+name: Bump pinned Lean/Mathlib release
+
+# Pinned-release-only automation. The selector acts only when one final
+# release tag (vX.Y.Z, never -rc, nightly, master, or an LKG/FKB SHA) exists
+# in every pinned repo (Lean, Mathlib, CSLib). The bump PR is
+# never auto-merged: a human merges after CI green plus any source repairs,
+# committed on the bump branch. The bot never rewrites an existing bump
+# branch, so repair commits are safe from it. See scripts/bump/pinned_bump.py.
+#
+# Credential hygiene: `prepare` and `publish` are separate jobs on
+# separate runners. `prepare` (pin edits + `lake update` + manifest
+# verification, which executes the newly tagged Lean/Lake) runs with only
+# the read-only default token, and the App token is never minted there.
+# It hands only the whitelisted prepared files (`prepared_files`) to
+# `publish` via an artifact, and records the exact commit it prepared
+# from (`base_sha`). `publish` checks out that exact commit (never the
+# then-current default branch), verifies HEAD is that commit, verifies
+# the staged tree holds only the prepared files (filenames only),
+# overlays it, then semantically revalidates every prepared file with
+# the trusted script and the read-only token (`validate-prepared`:
+# manifest, lakefile, pin-policy, docs, migration ledgers against the
+# base tree and live tags), and only then mints the write-capable App
+# token for `finish` (commit, push via a credential helper that reads
+# the token from $APP_TOKEN, never from argv or the push URL, PR
+# creation). The filename check alone is not enough: the prepare job
+# executes the newly tagged Lake code, which can rewrite any file,
+# including a whitelisted one, to arbitrary contents. Building from the
+# prepare base SHA means a default-branch change between `prepare` and
+# `publish` cannot silently revert a prepared file: the prepared files
+# are applied to the tree they were prepared from, and merging the
+# resulting branch is a 3-way merge that keeps the default branch's
+# newer changes (or conflicts for a human to repair if they touch the
+# same lines).
+# The checkout never persists any token. Dispatch inputs and job outputs
+# travel through environment variables, never interpolated into shell
+# programs, and `prepare`/`finish` revalidate the target against the live
+# tags before doing anything with it.
+#
+# Setup (once per org): a GitHub App installed on this repo with Contents RW
+# + Pull requests RW. Its credentials live ONLY in the `bump-publish`
+# GitHub Environment (Settings > Environments), never as repo-level
+# secrets/variables: BUMP_APP_ID as an environment variable, and
+# BUMP_APP_PRIVATE_KEY as an environment secret, with the environment's
+# Deployment branches restricted to `main` (and required reviewers if
+# wanted). That restriction is the control that stops a branch-dispatched
+# run from minting the App token: GitHub executes a `workflow_dispatch`
+# run from the dispatched ref's workflow file, so an in-workflow `if`
+# cannot be trusted (the branch can delete it), and a repo-level secret
+# would be readable by any dispatched workflow. With the credential
+# only in the environment, a workflow from any other branch cannot
+# reach it at all: it either omits the environment (no credential) or
+# requests it and GitHub blocks the job because the branch is not
+# allowed to deploy to it. An early `ref == main` check in `publish`
+# is defense-in-depth only, never the control. Do NOT re-add a
+# repo-level BUMP_APP_PRIVATE_KEY: that would reopen the hole.
+# PRs opened under the App token run this repo's CI like human commits;
+# PRs opened under the default GITHUB_TOKEN would not run CI until a
+# maintainer approves them.
+
+on:
+  schedule:
+    - cron: "0 9 * * 1" # Weekly; releases land roughly monthly.
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Explicit target tag, e.g. v4.36.0 (empty = latest final release)"
+        required: false
+        default: ""
+      allow-rc:
+        description: "Allow an -rc target for a preview PR only (bump-pinned-rc/ branch, never merged as a release bump)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  select:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      target: ${{ steps.select.outputs.target }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Credential-free: this job has no App secret and cannot push.
+      # Dispatch inputs arrive via environment, never interpolated.
+      - name: Select next pinned release
+        id: select
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_TARGET: ${{ inputs.target }}
+          INPUT_ALLOW_RC: ${{ inputs.allow-rc }}
+        run: python3 scripts/bump/pinned_bump.py select
+
+  prepare:
+    needs: select
+    if: needs.select.outputs.target != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      base_sha: ${{ steps.base.outputs.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # The commit the prepared files are prepared from. `publish`
+      # checks out this exact SHA, so the overlay can never apply
+      # prepared files to a newer tree and silently revert it.
+      - name: Record prepare base SHA
+        id: base
+        run: |
+          set -euo pipefail
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Install elan v4.2.4
+        run: |
+          set -euo pipefail
+          installer_dir="${RUNNER_TEMP}/elan-installer"
+          archive="${installer_dir}/elan-x86_64-unknown-linux-gnu.tar.gz"
+          mkdir -p "$installer_dir"
+          curl --fail --silent --show-error --location \
+            --proto '=https' --tlsv1.2 \
+            https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
+            --output "$archive"
+          echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
+            | sha256sum --check --strict
+          tar xzf "$archive" -C "$installer_dir"
+          "$installer_dir/elan-init" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      # No App token exists in this job: only the read-only default token
+      # is available, and this step commits/pushes nothing. `lake update`
+      # executes the newly tagged toolchain, so it must never share a
+      # runner with a write-capable token.
+      - name: Prepare bump tree
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET: ${{ needs.select.outputs.target }}
+          INPUT_ALLOW_RC: ${{ inputs.allow-rc }}
+        run: |
+          set -euo pipefail
+          ARGS=()
+          if [ "${INPUT_ALLOW_RC}" = "true" ]; then ARGS+=(--allow-rc); fi
+          python3 scripts/bump/pinned_bump.py prepare "$TARGET" "${ARGS[@]+${ARGS[@]}}"
+          python3 scripts/bump/pinned_bump.py stage-prepared --dest prepared-tree
+
+      - name: Upload prepared tree
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: prepared-bump-tree
+          path: prepared-tree
+          retention-days: 1
+
+  publish:
+    needs: [select, prepare]
+    if: needs.select.outputs.target != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pull-requests: read
+    # The App credential lives only in this environment, whose
+    # Deployment branches are restricted to `main`. See the header:
+    # this is the control that keeps a branch-dispatched run from
+    # minting the App token. The ref check below is defense-in-depth.
+    environment: bump-publish
+    steps:
+      - name: Require the default branch (defense-in-depth only)
+        run: |
+          set -euo pipefail
+          if [ "${{ github.ref }}" != "refs/heads/main" ]; then
+            echo "::error::publish runs only from refs/heads/main (got ${{ github.ref }}); the bump-publish environment also blocks any other branch."
+            exit 1
+          fi
+
+      # Check out the exact commit `prepare` prepared from, not the
+      # then-current default branch: overlaying prepared files onto
+      # a newer checkout could silently revert them.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          ref: ${{ needs.prepare.outputs.base_sha }}
+
+      - name: Verify publish checkout is the prepare base
+        env:
+          PREPARE_BASE_SHA: ${{ needs.prepare.outputs.base_sha }}
+        run: |
+          set -euo pipefail
+          HEAD_SHA="$(git rev-parse HEAD)"
+          if [ "$HEAD_SHA" != "$PREPARE_BASE_SHA" ]; then
+            echo "::error::publish checkout HEAD $HEAD_SHA != prepare base $PREPARE_BASE_SHA; refusing to overlay prepared files onto a different tree."
+            exit 1
+          fi
+
+      - name: Download prepared tree
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: prepared-bump-tree
+          path: prepared-tree
+
+      # The artifact carries only the whitelisted prepared files (see
+      # stage-prepared); refuse to continue if it holds anything else,
+      # then overlay it onto this fresh checkout. This is a
+      # filename-only check: the next step revalidates contents.
+      - name: Verify and overlay prepared tree
+        run: |
+          set -euo pipefail
+          python3 scripts/bump/pinned_bump.py verify-staged --dir prepared-tree
+          cp -R prepared-tree/. .
+
+      # Semantic revalidation with the trusted script from this fresh
+      # checkout (never code from the artifact) and the read-only
+      # default token, BEFORE the App token is minted. A compromised
+      # prepare step could have rewritten a whitelisted file to
+      # arbitrary contents without changing its name; this fails that.
+      - name: Validate prepared tree contents before minting write credentials
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TARGET: ${{ needs.select.outputs.target }}
+          INPUT_ALLOW_RC: ${{ inputs.allow-rc }}
+        run: |
+          set -euo pipefail
+          ARGS=()
+          if [ "${INPUT_ALLOW_RC}" = "true" ]; then ARGS+=(--allow-rc); fi
+          python3 scripts/bump/pinned_bump.py validate-prepared "$TARGET" "${ARGS[@]+${ARGS[@]}}"
+
+      - name: Require bump App credentials
+        run: |
+          set -euo pipefail
+          if [ -z "${{ vars.BUMP_APP_ID }}" ] || [ -z "${{ secrets.BUMP_APP_PRIVATE_KEY }}" ]; then
+            echo "::error::Create the bump GitHub App and store BUMP_APP_ID (variable) + BUMP_APP_PRIVATE_KEY (secret) in the bump-publish environment only (see the workflow header)."
+            exit 1
+          fi
+
+      - name: Generate App token
+        id: app-token
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
+        with:
+          app-id: ${{ vars.BUMP_APP_ID }}
+          private-key: ${{ secrets.BUMP_APP_PRIVATE_KEY }}
+
+      # The App token appears only here, after lake update + verification
+      # have already run on a separate runner. Push uses a credential
+      # helper that reads the token from $APP_TOKEN, never from argv or
+      # the push URL; the checkout never persisted the token.
+      - name: Publish bump PR
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          BUMP_BOT_NAME: ${{ vars.BUMP_BOT_NAME }}
+          BUMP_BOT_NAME_EMAIL: ${{ vars.BUMP_BOT_NAME_EMAIL }}
+          TARGET: ${{ needs.select.outputs.target }}
+          INPUT_ALLOW_RC: ${{ inputs.allow-rc }}
+          PREPARE_BASE_SHA: ${{ needs.prepare.outputs.base_sha }}
+        run: |
+          set -euo pipefail
+          ARGS=()
+          if [ "${INPUT_ALLOW_RC}" = "true" ]; then ARGS+=(--allow-rc); fi
+          python3 scripts/bump/pinned_bump.py finish "$TARGET" "${ARGS[@]+${ARGS[@]}}"

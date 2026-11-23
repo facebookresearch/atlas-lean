@@ -53,11 +53,13 @@ open scoped Topology
 
 namespace Real
 
-/-- Global real-valued extension of `logarithmicIntegral`.
+/-- **Real logarithmic integral extended by zero.** This is the function $\mathbb{R} \to \mathbb{R}$
+whose value at $x$ is the logarithmic integral $\operatorname{li}(x)$ when $0 \le x$ and $x \ne 1$,
+and $0$ when $x < 0$ or $x = 1$.
 
-Agrees with `Real.logarithmicIntegral` on `0 ≤ x ∧ x ≠ 1` and is `0`
-elsewhere (junk). At `x > 0, x ≠ 1` the value is locally determined by the
-integral, so `HasDerivAt` at such `x` does not depend on the junk choice. -/
+The value $0$ off the domain of $\operatorname{li}$ is a convention. Near every $x > 0$ with
+$x \ne 1$ the function agrees with $\operatorname{li}$, so its derivative there does not depend
+on this choice. -/
 noncomputable def logarithmicIntegralReal (x : ℝ) : ℝ :=
   if h : 0 ≤ x ∧ x ≠ 1 then
     Real.logarithmicIntegral (⟨x, h⟩ : Real.LogarithmicIntegralDomain)
@@ -104,12 +106,12 @@ theorem logarithmicIntegralReal_of_one_lt {x : ℝ} (hx : 1 < x) :
   rw [h1, Real.logarithmicIntegral_of_one_lt hx']
 
 
-/-- Derivative of the real-valued logarithmic integral away from one.
+/-- **Derivative of the logarithmic integral.** For every real $x$ with $0 < x$ and $x \ne 1$,
+the real logarithmic integral extended by zero has derivative $1/\log x$ at $x$.
 
-For `0 < x`, `x ≠ 1`, `Real.logarithmicIntegralReal` has derivative
-`1 / Real.log x` at `x`. This is the local FTC for `li(x) = ∫₀ˣ dt / log t`:
-below `1` the chart agrees with `∫₀ˣ` near `x`, above `1` it agrees with a
-paired principal-value constant plus `∫₂ˣ`, whose derivative is `(log x)⁻¹`.
+Below $1$ the function agrees near $x$ with $\int_0^x dt/\log t$; above $1$ it agrees near $x$
+with the paired principal-value constant plus $\int_2^x dt/\log t$. In both cases the
+fundamental theorem of calculus gives the derivative $1/\log x$.
 -/
 theorem hasDerivAt_logarithmicIntegralReal {x : ℝ}
     (hx_pos : 0 < x) (hx_ne_one : x ≠ 1) :

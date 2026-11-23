@@ -1,0 +1,3 @@
+# Rotation map of a regular multigraph
+
+For sets $V$ (vertices) and $L$ (edge labels), a rotation map is an involution $\mathrm{rot}$ of $V \times L$, that is, $\mathrm{rot}(\mathrm{rot}(v, i)) = (v, i)$ for all $(v, i)$: $\mathrm{rot}(v, i) = (w, j)$ means that the edge with label $i$ at $v$ leads to $w$ and carries label $j$ at $w$. It describes an $\lvert L\rvert$-regular undirected multigraph, loops and parallel edges allowed: every vertex has $\lvert L\rvert$ labels, a loop given by two labels $i \ne j$ with $\mathrm{rot}(v, i) = (v, j)$ uses two of them, and a fixed point $\mathrm{rot}(v, i) = (v, i)$ is a loop using one (O. Reingold, S. Vadhan and A. Wigderson, Ann. of Math. 155 (2002), Definition 2.1).

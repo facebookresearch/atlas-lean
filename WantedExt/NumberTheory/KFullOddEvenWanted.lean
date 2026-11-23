@@ -19,13 +19,12 @@ namespace MetaMathlibExt
 
 open Filter Topology
 
-/-- Corollary 2: for `k ≥ 2`, the number `K_o(x)` of odd `k`-full numbers up to `x`
-and the number `K_e(x)` of even `k`-full numbers up to `x` satisfy
-`K_o(x) / K_e(x) → 2 - 2^{1 - 1/k}` as `x → ∞`. `k`-full is the standard notion
-(`Nat.IsKFull`: `n ≠ 0` and `p^k ∣ n` for every prime `p ∣ n`, so `1` is `k`-full);
-both counts depend only on `⌊x⌋`, so the limit is taken along natural numbers `N`.
-The paper's identification of these counts with its `O_{k,⌊x⌋}(x)` and
-`E_{k,⌊x⌋}(x)` is not stated.
+/-- **Odd-to-even ratio of $k$-full numbers.** Let $k \ge 2$. For a natural number $N$ let
+$K_o(N)$ and $K_e(N)$ be the numbers of odd and of even $k$-full numbers $n \le N$. Then
+$K_o(N)/K_e(N) \to 2 - 2^{1 - 1/k}$ as $N \to \infty$.
+
+The counts up to a real $x$ depend only on $\lfloor x \rfloor$, so this is the same as the limit
+as $x \to \infty$ through the reals.
 
 Source: Sunanta Srisopha and Teerapat Srichan, *The Odd/Even Dichotomy for the Set of
 Numbers That Are Both k-Full and l-Free*, INTEGERS 24 (2024), Article A106, Corollary 2
@@ -36,12 +35,14 @@ public theorem_wanted tendsto_card_odd_kFull_div_card_even_kFull {k : ℕ} (hk :
           {n : ℕ | n ≤ N ∧ Nat.IsKFull k n ∧ Even n}.ncard)
       atTop (𝓝 (2 - (2 : ℝ) ^ (1 - 1 / (k : ℝ))))
 
-/-- Theorem 1: for `2 ≤ k < l`, call `n` a `[k, l]`-integer if `n ≥ 1` and every prime
-`p ∣ n` satisfies `p ^ k ∣ n` and `p ^ l ∤ n` (`k`-full and `l`-free; stated as `Nat.IsKFull k n`
-and `n.IsPowerFree l`). The numbers
-`O_{k,l}(x)` and `E_{k,l}(x)` of odd and even `[k, l]`-integers up to `x` satisfy
-`O_{k,l}(x) / E_{k,l}(x) → (2 - 2^{1 - 1/k}) / (1 - 2^{1 - l/k})` as `x → ∞`. Both
-counts depend only on `⌊x⌋`, so the limit is taken along natural numbers `N`.
+/-- **Odd-to-even ratio of $k$-full, $l$-free numbers.** Let $2 \le k < l$. Call a natural number
+$n$ a $[k, l]$-integer if it is $k$-full and $l$-free, that is, $n \ge 1$ and every prime $p$
+dividing $n$ satisfies $p^k \mid n$ and $p^l \nmid n$. For a natural number $N$ let $O_{k,l}(N)$
+and $E_{k,l}(N)$ be the numbers of odd and of even $[k, l]$-integers $n \le N$. Then
+$O_{k,l}(N)/E_{k,l}(N) \to (2 - 2^{1 - 1/k})/(1 - 2^{1 - l/k})$ as $N \to \infty$.
+
+The counts up to a real $x$ depend only on $\lfloor x \rfloor$, so this is the same as the limit
+as $x \to \infty$ through the reals.
 
 Source: Sunanta Srisopha and Teerapat Srichan, *The Odd/Even Dichotomy for the Set of
 Numbers That Are Both k-Full and l-Free*, INTEGERS 24 (2024), Article A106, Theorem 1
@@ -55,10 +56,12 @@ public theorem_wanted tendsto_card_odd_kFull_lFree_div_card_even_kFull_lFree {k 
             Even n}.ncard)
       atTop (𝓝 ((2 - (2 : ℝ) ^ (1 - 1 / (k : ℝ))) / (1 - (2 : ℝ) ^ (1 - (l : ℝ) / k))))
 
-/-- Corollary 1 (the case `k = 1` of Theorem 1): for `l ≥ 2`, the numbers `O_{1,l}(x)`
-and `E_{1,l}(x)` of odd and even `l`-free positive integers up to `x` (`[1, l]`-integers:
-`Nat.IsKFull 1 n` is `n ≠ 0`, `l`-free is `n.IsPowerFree l`) satisfy
-`O_{1,l}(x) / E_{1,l}(x) → 2^l / (2^l - 2)`. The limit is taken along natural numbers `N`.
+/-- **Odd-to-even ratio of $l$-free numbers.** Let $l \ge 2$. For a natural number $N$ let $O(N)$
+and $E(N)$ be the numbers of odd and of even $l$-free positive integers $n \le N$. Then
+$O(N)/E(N) \to 2^l/(2^l - 2)$ as $N \to \infty$.
+
+This is the case $k = 1$ of the odd-to-even ratio for $k$-full, $l$-free numbers, since every
+positive integer is $1$-full.
 
 Source: Sunanta Srisopha and Teerapat Srichan, *The Odd/Even Dichotomy for the Set of
 Numbers That Are Both k-Full and l-Free*, INTEGERS 24 (2024), Article A106, Corollary 1
