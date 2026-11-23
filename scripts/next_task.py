@@ -8,9 +8,9 @@ What the tools own), as `autoform work list --json` lists them on the last main 
 from. This script downloads it, or reads a local copy, and lists through the GitHub API the repository's open pull
 requests, whatever their base, and those merged into main since that commit, whose work tasks.json may not show yet:
 GitHub's times are to the second, so one merged in the commit's second counts too. It finds those with GitHub's
-search, by the time they were merged, and among the closed pull requests updated in the last ten minutes, which the
-search may not show yet: it assumes that the search shows a merged pull request within ten minutes. So it reads what
-main merged, however many other pull requests were closed or touched meanwhile.
+search, by the time they were merged, and among the pull requests merged into main and updated in the last ten
+minutes, which the search may not show yet: it assumes that the search shows a merged pull request within ten
+minutes. So it reads what main merged, however many other pull requests were closed or touched meanwhile.
 Such a pull request takes a task when its title, body or branch name holds, as a whole word:
 
 - the task's article id (af_...), or one of its Lean declarations in full; or
@@ -33,8 +33,8 @@ waiting are waiting for, then the proofs, each in tasks.json's order, which is b
 for agents, with Autoform's fields.
 
 Reading the open pull requests needs no token, within the GitHub API's limit of 60 requests an hour from one
-address, but reading those merged since tasks.json's commit does, if there are any, as they come from GitHub's GraphQL
-API: set GH_TOKEN (or GITHUB_TOKEN). Every request to the API sends that token, and a redirect away from it drops the
+address, but reading those merged since tasks.json's commit does, as they come from GitHub's GraphQL API: set
+GH_TOKEN (or GITHUB_TOKEN). Every request to the API sends that token, and a redirect away from it drops the
 token. Only the Python standard library is used.
 """
 
@@ -65,9 +65,9 @@ SCHEMA = "autoform-work/v2"
 PER_PAGE = 100
 # Open pull requests are read a page at a time, at most this many pages. GitHub's search lists at most this many
 # pages of results, so a span of merge times with more is searched in two halves. As the search may not show the
-# latest merges yet, the closed pull requests updated in the last LAG are listed too, at most this many pages: the
-# search is assumed to show a merged pull request within LAG. The pull requests merged are read this many at a time
-# through GitHub's GraphQL API.
+# latest merges yet, the pull requests merged into main and updated in the last LAG are listed too, through GitHub's
+# GraphQL API, at most this many pages: the search is assumed to show a merged pull request within LAG. The pull
+# requests merged are read this many at a time through GitHub's GraphQL API.
 OPEN_PAGES = 30
 SEARCH_PAGES = 10
 TAIL_PAGES = 30
@@ -213,15 +213,15 @@ def pull_requests(repository: str, since: str | None, token: str | None) -> list
         raise Failure(f"{repository} has more than {OPEN_PAGES * PER_PAGE} open pull requests, more than this script "
                       "reads")
     if since:
-        cutoff = moment(since)
-        now = datetime.now(timezone.utc).replace(microsecond=0)
-        # Those merged in the last LAG, from the closed pull requests updated since, then all those merged since the
-        # cutoff that the search shows, up to now.
-        numbers = recently_merged(repository, max(cutoff, now - LAG), cutoff, token)
-        numbers |= merged_numbers(repository, cutoff.astimezone(timezone.utc).replace(microsecond=0), now, token)
-        if numbers and not token:
+        if not token:
             raise Failure("reading the pull requests merged into main since tasks.json was computed needs a token, as "
                           "they come from GitHub's GraphQL API: set GH_TOKEN to a GitHub token")
+        cutoff = moment(since)
+        now = datetime.now(timezone.utc).replace(microsecond=0)
+        # Those merged and updated in the last LAG, then all those merged since the cutoff that the search shows, up
+        # to now.
+        numbers = recently_merged(repository, max(cutoff, now - LAG), cutoff, token)
+        numbers |= merged_numbers(repository, cutoff.astimezone(timezone.utc).replace(microsecond=0), now, token)
         ordered = sorted(numbers)
         for start in range(0, len(ordered), BATCH):
             found += [row for row in merged_pulls(repository, ordered[start:start + BATCH], token)
@@ -236,38 +236,64 @@ def merged_into_main(row: dict, cutoff: datetime) -> bool:
             and (row.get("base") or {}).get("ref") == MAIN)
 
 
+def graphql(query: str, variables: dict, token: str | None) -> dict:
+    """The repository GitHub's GraphQL API gives for *query*. Any error stops the script, as a partial answer could
+    leave a task free."""
+    data = json.dumps({"query": query, "variables": variables}).encode()
+    try:
+        answer = json.loads(request(GRAPHQL, token, data=data))
+    except ValueError:
+        answer = None
+    found = (answer.get("data") or {}).get("repository") if isinstance(answer, dict) else None
+    errors = answer.get("errors") if isinstance(answer, dict) else None
+    if errors or not isinstance(found, dict):
+        raise Failure(f"GitHub's GraphQL API did not give the pull requests merged into main: {shown(errors)}")
+    return found
+
+
 def recently_merged(repository: str, window: datetime, cutoff: datetime, token: str | None) -> set[int]:
-    """The numbers of the closed pull requests updated at or after *window* that were merged into MAIN at or after
-    *cutoff*. GitHub lists closed pull requests by their last update, newest first, and one merged at or after
-    *window* was updated then too, so it is among those, whether or not the search shows it yet. One updated while
-    they are read moves to the first page, so that page is read once more at the end: a whole page of those, which may
-    hide more, or more pages than this script reads, stop it."""
-    url = f"{API}/repos/{repository}/pulls?state=closed&sort=updated&direction=desc&per_page={PER_PAGE}&page="
+    """The numbers of the pull requests merged into MAIN at or after *cutoff* and updated at or after *window*, from
+    GitHub's GraphQL API, which lists the pull requests merged into MAIN by their last update, newest first. One
+    merged at or after *window* was updated then too, so it is among them, whether or not the search shows it yet.
+
+    A merged pull request stays merged, and each page starts after a cursor that holds the last one's update and id,
+    so one that is updated while they are read moves ahead of the cursor and makes no other one skip past it. As it
+    may be missed itself, the first page is read once more at the end: a whole page of new updates, which may hide
+    more, or more pages than this script reads, stop it."""
+    owner, _, name = repository.partition("/")
+    query = ("query($owner: String!, $name: String!, $after: String) { repository(owner: $owner, name: $name) { "
+             f'pullRequests(states: [MERGED], baseRefName: "{MAIN}", orderBy: {{field: UPDATED_AT, direction: DESC}}, '
+             f"first: {PER_PAGE}, after: $after) {{ pageInfo {{ endCursor hasNextPage }} "
+             "nodes { number updatedAt mergedAt } } } }")
     numbers: set[int] = set()
-    first: set[tuple[int, str]] = set()
 
-    def read(page: int) -> list[dict]:
-        rows = listed(url + str(page), token)
+    def read(after: str | None) -> tuple[list[tuple[int, str, datetime]], bool, str | None]:
+        found = graphql(query, {"owner": owner, "name": name, "after": after}, token).get("pullRequests")
         try:
-            numbers.update(row["number"] for row in rows if merged_into_main(row, cutoff))
-            return [{**row, "updated": moment(row["updated_at"])} for row in rows]
-        except (KeyError, TypeError, ValueError):
-            raise Failure(f"{url}{page} did not list what it should") from None
+            rows = [(node["number"], node["updatedAt"], moment(node["updatedAt"]), node["mergedAt"])
+                    for node in found["nodes"]]
+            more, cursor = found["pageInfo"]["hasNextPage"] is True, found["pageInfo"]["endCursor"]
+            if not all(isinstance(number, int) for number, *_ in rows):
+                raise TypeError
+            numbers.update(number for number, _, _, merged in rows if merged and moment(merged) >= cutoff)
+        except (KeyError, TypeError, ValueError, AttributeError):
+            raise Failure("GitHub's GraphQL API did not list the pull requests merged into main") from None
+        return [(number, updated, when) for number, updated, when, _ in rows], more, cursor
 
-    for page in range(1, TAIL_PAGES + 1):
-        rows = read(page)
-        if page == 1:
-            first = {(row["number"], row["updated_at"]) for row in rows}
-        if len(rows) < PER_PAGE or rows[-1]["updated"] < window:
-            break
-    else:
-        raise Failure(f"more than {TAIL_PAGES * PER_PAGE} closed pull requests were updated since "
-                      f"{window.isoformat()}, more than this script reads; run it again in a few minutes")
-    if page > 1:
-        rows = read(1)
-        if len(rows) == PER_PAGE and not any((row["number"], row["updated_at"]) in first for row in rows):
-            raise Failure("so many closed pull requests were updated while this script read them that it may have "
-                          "missed one; run it again")
+    rows, more, cursor = read(None)
+    first = {(number, updated) for number, updated, _ in rows}
+    pages = 1
+    while more and rows and rows[-1][2] >= window:
+        if pages == TAIL_PAGES:
+            raise Failure(f"more than {TAIL_PAGES * PER_PAGE} pull requests merged into main were updated since "
+                          f"{window.isoformat()}, more than this script reads; run it again in a few minutes")
+        rows, more, cursor = read(cursor)
+        pages += 1
+    if pages > 1:
+        rows, _, _ = read(None)
+        if len(rows) == PER_PAGE and not any((number, updated) in first for number, updated, _ in rows):
+            raise Failure("so many pull requests merged into main were updated while this script read them that it "
+                          "may have missed one; run it again")
     return numbers
 
 
@@ -319,20 +345,12 @@ def merged_pulls(repository: str, numbers: list[int], token: str | None) -> list
     fields = "number title body bodyHTML headRefName baseRefName mergedAt"
     query = ("query($owner: String!, $name: String!) { repository(owner: $owner, name: $name) { "
              + " ".join(f"p{number}: pullRequest(number: {number}) {{ {fields} }}" for number in numbers) + " } }")
-    data = json.dumps({"query": query, "variables": {"owner": owner, "name": name}}).encode()
-    try:
-        answer = json.loads(request(GRAPHQL, token, data=data))
-    except ValueError:
-        answer = None
-    found = (answer.get("data") or {}).get("repository") if isinstance(answer, dict) else None
-    errors = answer.get("errors") if isinstance(answer, dict) else None
-    if errors or not isinstance(found, dict):
-        raise Failure(f"GitHub's GraphQL API did not give the pull requests merged into main: {shown(errors)}")
+    found = graphql(query, {"owner": owner, "name": name}, token)
     rows = []
     for number in numbers:
         pull = found.get(f"p{number}")
         if not isinstance(pull, dict) or pull.get("number") != number:
-            raise Failure(f"GitHub's GraphQL API gave no pull request #{number}, which its search found merged")
+            raise Failure(f"GitHub's GraphQL API gave no pull request #{number}, which it found merged")
         rows.append({"number": number, "title": pull.get("title"), "body": pull.get("body"),
                      "body_html": pull.get("bodyHTML"), "head": {"ref": pull.get("headRefName")},
                      "base": {"ref": pull.get("baseRefName")}, "merged_at": pull.get("mergedAt")})

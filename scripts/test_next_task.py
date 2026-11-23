@@ -26,8 +26,7 @@ import next_task  # noqa: E402
 
 REPO = "facebookresearch/atlas-lean"
 OPEN = f"{next_task.API}/repos/{REPO}/pulls?state=open&per_page=100&page="
-# The closed pull requests updated last, and GitHub's search of those merged into main.
-CLOSED = f"{next_task.API}/repos/{REPO}/pulls?state=closed&sort=updated&direction=desc&per_page=100&page="
+# GitHub's search of the pull requests merged into main.
 SEARCH = f"{next_task.API}/search/issues?"
 TOKEN = {"GH_TOKEN": "secret"}
 
@@ -80,13 +79,12 @@ OPEN_PULLS = [
     # An id with one more digit is another id.
     pull(9, body=f"See {ITEMS[0]['article_id']}0."),
 ]
-# Pull requests merged into main, which GitHub's search finds by their merge times: #4 after the list's commit, and #5
-# before it. #5 and #6, which was closed unmerged, are also among the closed pull requests updated last.
+# Pull requests merged into main, which GitHub's search finds by their merge times, and GraphQL lists by their last
+# update: #4 merged after the list's commit, and #5 before it.
 MERGED_PULLS = {
     4: pull(4, body=f"Done: `{ITEMS[5]['lean_targets'][0]['declaration']}`", merged_at="2026-11-20T18:00:00Z"),
     5: pull(5, body="Ext.p5", merged_at="2026-11-20T11:00:00Z"),
 }
-RECENT = [MERGED_PULLS[5], pull(6, body="Ext.p5")]
 
 
 def stamp(text: str) -> datetime:
@@ -94,33 +92,32 @@ def stamp(text: str) -> datetime:
 
 
 class Site:
-    """The site and GitHub's API, as next_task.request reads them: the open pull requests, the closed ones by their
-    last update (*closed*, a page at a time, and *reread*, the first page when it is read again), the search of those
-    merged into main (all of *merged* but the *unindexed* ones, which the search does not show yet), and GraphQL,
-    which gives each pull request of *merged* and nothing for any other number."""
+    """The site and GitHub's API, as next_task.request reads them: the open pull requests, the search of those merged
+    into main (all of *merged* but the *unindexed* ones, which the search does not show yet), and GraphQL. GraphQL
+    gives each pull request of *merged* and nothing for any other number, and lists those of *merged* merged into
+    main by their last update, newest first, a page after a cursor at a time; *moves* maps the number of a listing
+    request to a change of *merged* made right after it is answered, as when a pull request is updated meanwhile."""
 
-    def __init__(self, tasks: dict | None = None, open_pages=(OPEN_PULLS,), closed=(RECENT,), reread=None,
-                 merged: dict | None = None, unindexed=()) -> None:
+    def __init__(self, tasks: dict | None = None, open_pages=(OPEN_PULLS,), merged: dict | None = None, unindexed=(),
+                 moves: dict | None = None) -> None:
         self.pages = {next_task.TASKS: json.dumps(tasks or TASKS).encode()}
-        for prefix, pages in ((OPEN, open_pages), (CLOSED, closed)):
-            for number, rows in enumerate(pages, 1):
-                self.pages[f"{prefix}{number}"] = json.dumps(rows).encode()
-        self.reread = None if reread is None else json.dumps(reread).encode()
-        self.merged = MERGED_PULLS if merged is None else merged
+        for number, rows in enumerate(open_pages, 1):
+            self.pages[f"{OPEN}{number}"] = json.dumps(rows).encode()
+        self.merged = dict(MERGED_PULLS if merged is None else merged)
         self.unindexed = set(unindexed)
+        self.moves = moves or {}
         self.read: list[tuple[str, str | None]] = []
         self.media: list[str] = []
         self.searched: list[tuple[str, int, int]] = []
         self.asked: list[list[int]] = []
+        self.listings: list[str | None] = []
 
     def __call__(self, url: str, token: str | None = None, media: str | None = None,
                  data: bytes | None = None) -> bytes:
-        if url == CLOSED + "1" and (url, token) in self.read and self.reread is not None:
-            self.read.append((url, token))
-            return self.reread
         self.read.append((url, token))
         if url == next_task.GRAPHQL:
-            return self.graphql_answer(json.loads(data))
+            sent = json.loads(data)
+            return self.listing(sent) if "pullRequests(states: [MERGED]" in sent["query"] else self.graphql_answer(sent)
         if url.startswith(next_task.API):
             self.media.append(media)
         if url.startswith(SEARCH):
@@ -141,6 +138,26 @@ class Site:
         return {"total_count": len(found), "incomplete_results": False,
                 "items": [{"number": number} for number in found[(page - 1) * 100:page * 100]]}
 
+    def listing(self, sent: dict) -> bytes:
+        variables, query = sent["variables"], sent["query"]
+        assert (variables["owner"], variables["name"]) == ("facebookresearch", "atlas-lean")
+        assert 'baseRefName: "main"' in query and "orderBy: {field: UPDATED_AT, direction: DESC}" in query, query
+        rows = sorted((row for row in self.merged.values() if row["base"]["ref"] == "main"),
+                      key=lambda row: (row["updated_at"], row["number"]), reverse=True)
+        if variables["after"] is not None:
+            last = tuple(json.loads(variables["after"]))
+            rows = [row for row in rows if (row["updated_at"], row["number"]) < last]
+        page = rows[:100]
+        self.listings.append(variables["after"])
+        answer = {"data": {"repository": {"pullRequests": {
+            "pageInfo": {"endCursor": json.dumps([page[-1]["updated_at"], page[-1]["number"]]) if page else None,
+                         "hasNextPage": len(rows) > 100},
+            "nodes": [{"number": row["number"], "updatedAt": row["updated_at"], "mergedAt": row["merged_at"]}
+                      for row in page]}}}}
+        if move := self.moves.get(len(self.listings)):
+            move(self.merged)
+        return json.dumps(answer).encode()
+
     def graphql_answer(self, sent: dict) -> bytes:
         # The pull requests the query names, under their aliases; a number that is no pull request gives null.
         assert sent["variables"] == {"owner": "facebookresearch", "name": "atlas-lean"}
@@ -154,6 +171,10 @@ class Site:
     def graphql(row: dict) -> dict:
         return {"number": row["number"], "title": row["title"], "body": row["body"], "bodyHTML": row["body_html"],
                 "headRefName": row["head"]["ref"], "baseRefName": row["base"]["ref"], "mergedAt": row["merged_at"]}
+
+
+def updated(row: dict, when: str) -> dict:
+    return {**row, "updated_at": when}
 
 
 def run(site: Site, *args: str, env: dict | None = None) -> tuple[int, str, str]:
@@ -180,13 +201,14 @@ class Picking(unittest.TestCase):
                                               {"node_id": "Algebra/t8", "pull_requests": [3]}])
         self.assertEqual((result["ready"], result["taken"], result["free"]), (8, 4, 4))
         self.assertEqual((result["commit"], result["autoform_ref"]), ("c" * 40, "a" * 40))
-        # One page of open pull requests, the closed ones updated last, one page of the search, as each holds fewer
-        # than a full page, and the merged pull request the search found: all come with their bodies as GitHub renders
-        # them.
+        # One page of open pull requests, one of those merged into main by their last update, and one of the search,
+        # as each holds fewer than a full page, then the merged pull request found: open and merged pull requests come
+        # with their bodies as GitHub renders them.
         read = [(SEARCH if url.startswith(SEARCH) else url, token) for url, token in site.read]
-        self.assertEqual(read, [(next_task.TASKS, None), (OPEN + "1", "secret"), (CLOSED + "1", "secret"),
+        self.assertEqual(read, [(next_task.TASKS, None), (OPEN + "1", "secret"), (next_task.GRAPHQL, "secret"),
                                 (SEARCH, "secret"), (next_task.GRAPHQL, "secret")])
-        self.assertEqual(site.media, [next_task.RENDERED, "application/vnd.github+json", None])
+        self.assertEqual(site.media, [next_task.RENDERED, None])
+        self.assertEqual(site.listings, [None])
         self.assertEqual(site.asked, [[4]])
 
     def test_the_text_lists_the_next_n_with_what_takes_them(self) -> None:
@@ -205,12 +227,12 @@ class Picking(unittest.TestCase):
         task = {**item(1, "statement", "Ext.e" + evil), "title": "T" + evil, "node_id": "Algebra/n" + evil,
                 "article_path": "blueprint/roadmap/a" + evil + ".md"}
         tasks = {**TASKS, "items": [task], "commit": "c" + evil}
-        code, out, _ = run(Site(tasks=tasks, open_pages=([],), closed=([],), merged={}), "-n", "1")
+        code, out, _ = run(Site(tasks=tasks, open_pages=([],), merged={}), "-n", "1", env=TOKEN)
         self.assertEqual(code, 0)
         for character in ("\x1b", "\x07", "\x9b", "\nforged"):
             self.assertNotIn(character, out)
         self.assertIn("T\\x1b]0;owned\\x07\\nforged: line\\x9b2J", out)
-        code, out, _ = run(Site(tasks=tasks, open_pages=([],), closed=([],), merged={}), "--json")
+        code, out, _ = run(Site(tasks=tasks, open_pages=([],), merged={}), "--json", env=TOKEN)
         self.assertTrue(out.isascii())
         self.assertEqual(json.loads(out)["next"], [task])
 
@@ -225,7 +247,7 @@ class Picking(unittest.TestCase):
         # However they were merged, by the queue, a squash, a rebase or as part of another pull request, and however
         # many other pull requests were closed or touched since the list's commit, the search finds those merged.
         before = datetime.now(timezone.utc).replace(microsecond=0)
-        site = Site(open_pages=([],), closed=([],))
+        site = Site(open_pages=([],))
         _, out, _ = run(site, "--json", env=TOKEN)
         self.assertEqual(json.loads(out)["taken_by"], [{"node_id": "Algebra/t6", "pull_requests": [4]}])
         (merged, count, page), = site.searched
@@ -239,7 +261,7 @@ class Picking(unittest.TestCase):
         merged = {1000 + n: pull(1000 + n, merged_at=f"2026-11-20T{12 + n // 75:02d}:{n % 75 * 47 // 60:02d}:"
                                                      f"{n % 60:02d}Z") for n in range(450)}
         merged[10] = pull(10, body="Ext.p1", merged_at="2026-11-20T13:00:00Z")
-        site = Site(open_pages=([],), closed=([],), merged=merged)
+        site = Site(open_pages=([],), merged=merged)
         with mock.patch.object(next_task, "SEARCH_PAGES", 2):
             _, out, _ = run(site, "--json", env=TOKEN)
         self.assertEqual(json.loads(out)["taken_by"], [{"node_id": "Algebra/t1", "pull_requests": [10]}])
@@ -254,45 +276,60 @@ class Picking(unittest.TestCase):
         # GitHub's times are to the second, as the commit's: one merged in its second may be missing from the list.
         merged = {13: pull(13, body="Ext.p1", merged_at="2026-11-20T12:00:00Z"),
                   14: pull(14, body="Ext.s1", merged_at="2026-11-20T11:59:59Z")}
-        _, out, _ = run(Site(open_pages=([],), closed=([merged[14]],), merged=merged), "--json", env=TOKEN)
+        _, out, _ = run(Site(open_pages=([],), merged=merged), "--json", env=TOKEN)
         taken = {row["node_id"]: row["pull_requests"] for row in json.loads(out)["taken_by"]}
         self.assertEqual(taken, {"Algebra/t1": [13]})
 
-    def test_one_the_search_does_not_show_yet_is_read_from_the_closed_ones_updated_in_the_last_lag(self) -> None:
-        # Closed pull requests by their last update: 100 newer updates, then one merged that the search does not show
-        # yet, on the second page, then older ones. The script reads pages until one ends before the last LAG (here
-        # long enough to reach back to the list's commit), then the first page again.
-        newer = [pull(300 + n, updated_at="2026-11-21T09:00:00Z") for n in range(100)]
-        merged = {15: pull(15, body="Ext.p1", merged_at="2026-11-20T19:00:00Z", updated_at="2026-11-20T19:00:00Z")}
-        older = [merged[15], pull(16, updated_at="2026-11-20T11:00:00Z")]
-        site = Site(open_pages=([],), closed=(newer, older), merged=merged, unindexed={15})
+    def test_one_the_search_does_not_show_yet_is_read_from_those_merged_and_updated_in_the_last_lag(self) -> None:
+        # Merged pull requests by their last update: 100 merged before the list's commit and updated later, then one
+        # merged since that the search does not show yet, on the second page. The script reads pages until one ends
+        # before the last LAG (here long enough to reach back to the list's commit), then the first page again.
+        merged = {300 + n: pull(300 + n, merged_at="2026-11-19T00:00:00Z", updated_at="2026-11-21T09:00:00Z")
+                  for n in range(100)}
+        merged[15] = pull(15, body="Ext.p1", merged_at="2026-11-20T19:00:00Z", updated_at="2026-11-20T19:00:00Z")
+        merged[16] = pull(16, merged_at="2026-11-19T00:00:00Z", updated_at="2026-11-20T11:00:00Z")
+        site = Site(open_pages=([],), merged=merged, unindexed={15})
         with mock.patch.object(next_task, "LAG", timedelta(days=36500)):
             _, out, _ = run(site, "--json", env=TOKEN)
         self.assertEqual(json.loads(out)["taken_by"], [{"node_id": "Algebra/t1", "pull_requests": [15]}])
-        self.assertEqual([url for url, _ in site.read if url.startswith(CLOSED)],
-                         [CLOSED + "1", CLOSED + "2", CLOSED + "1"])
+        self.assertEqual([after is None for after in site.listings], [True, False, True])
         self.assertEqual(site.asked, [[15]])
-        # With the last LAG ten minutes, those updated on 21 November are older, so the first page is enough.
-        site = Site(open_pages=([],), closed=(newer, older), merged=merged, unindexed={15})
+        # With the last LAG ten minutes, those updated on 21 November are older, so the first page is enough, and
+        # the search is trusted to show those merged before then.
+        site = Site(open_pages=([],), merged=merged, unindexed={15})
         _, out, _ = run(site, "--json", env=TOKEN)
-        self.assertEqual([url for url, _ in site.read if url.startswith(CLOSED)], [CLOSED + "1"])
-        # No token is needed when nothing was merged.
-        self.assertEqual(run(Site(closed=([],), merged={}), "--json")[0], 0)
+        self.assertEqual(site.listings, [None])
 
-    def test_one_updated_while_the_closed_ones_are_read_is_read_too(self) -> None:
-        newer = [pull(300 + n, updated_at="2026-11-21T09:00:00Z") for n in range(100)]
-        older = [pull(400 + n, updated_at="2026-11-20T11:00:00Z") for n in range(3)]
-        # Merged and updated after the first page was read, so it moved from a later page to the first one.
-        merged = {17: pull(17, body="Ext.p1", merged_at="2026-11-21T09:30:00Z", updated_at="2026-11-21T09:31:00Z")}
-        site = Site(open_pages=([],), closed=(newer, older), reread=[merged[17], *newer[:99]], merged=merged,
-                    unindexed={17})
-        with mock.patch.object(next_task, "LAG", timedelta(days=36500)):
-            _, out, _ = run(site, "--json", env=TOKEN)
-        self.assertEqual(json.loads(out)["taken_by"], [{"node_id": "Algebra/t1", "pull_requests": [17]}])
-        # A whole first page updated meanwhile may hide more, and more pages in the last LAG than it reads stop it.
-        flood = [pull(500 + n, updated_at="2026-11-21T10:00:00Z") for n in range(100)]
-        cases = ((Site(closed=(newer, older), reread=flood), "updated while this script read them"),
-                 (Site(closed=(newer, newer, newer)), "more than 200 closed pull requests were updated since"))
+    def test_one_updated_while_the_pages_are_read_makes_none_skip_and_is_read_too(self) -> None:
+        older = {300 + n: pull(300 + n, merged_at="2026-11-19T00:00:00Z", updated_at="2026-11-21T09:00:00Z")
+                 for n in range(100)}
+        middle = {400 + n: pull(400 + n, merged_at="2026-11-19T00:00:00Z", updated_at="2026-11-21T08:00:00Z")
+                  for n in range(100)}
+        late = pull(15, body="Ext.p1", merged_at="2026-11-21T07:00:00Z", updated_at="2026-11-21T07:00:00Z")
+        old = pull(16, merged_at="2026-11-19T00:00:00Z", updated_at="2026-11-20T11:00:00Z")
+        base = {**older, **middle, 15: late, 16: old}
+        # One on page 2 is updated right after GitHub answers it: it moves ahead of the cursor, and as a merged pull
+        # request never leaves the list, #15 does not move past the start of page 3.
+        moves = {2: lambda merged: merged.update({499: updated(merged[499], "2026-11-21T10:00:00Z")})}
+        # #15 itself is updated right after GitHub answers page 1: it moves ahead of the cursor, and the first page,
+        # read again at the end, holds it.
+        moved = {1: lambda merged: merged.update({15: updated(merged[15], "2026-11-21T10:00:00Z")})}
+        for scene in (moves, moved):
+            site = Site(open_pages=([],), merged=base, unindexed={15}, moves=scene)
+            with mock.patch.object(next_task, "LAG", timedelta(days=36500)):
+                code, out, err = run(site, "--json", env=TOKEN)
+            self.assertEqual((code, err), (0, ""), scene)
+            self.assertEqual(json.loads(out)["taken_by"], [{"node_id": "Algebra/t1", "pull_requests": [15]}])
+        # A whole first page of new updates when it is read again may hide more, and more pages in the last LAG than
+        # it reads stop it.
+        flood = {600 + n: pull(600 + n, merged_at="2026-11-19T00:00:00Z", updated_at="2026-11-19T12:00:00Z")
+                 for n in range(100)}
+        flooded = {2: lambda merged: merged.update({number: updated(merged[number], "2026-11-21T10:00:00Z")
+                                                    for number in flood})}
+        recent = {700 + n: pull(700 + n, merged_at="2026-11-19T00:00:00Z", updated_at="2026-11-21T09:00:00Z")
+                  for n in range(300)}
+        cases = ((Site(merged={**older, 16: old, **flood}, moves=flooded), "updated while this script read them"),
+                 (Site(merged=recent), "more than 200 pull requests merged into main were updated since"))
         for site, message in cases:
             with mock.patch.object(next_task, "LAG", timedelta(days=36500)), \
                     mock.patch.object(next_task, "TAIL_PAGES", 2):
@@ -301,9 +338,11 @@ class Picking(unittest.TestCase):
             self.assertIn(message, err)
 
     def test_merged_pull_requests_need_a_token_and_a_search_it_cannot_trust_stops_it(self) -> None:
-        code, out, err = run(Site(), "--json")
-        self.assertEqual((code, out), (1, ""))
-        self.assertIn("needs a token, as they come from GitHub's GraphQL API: set GH_TOKEN", err)
+        # A token is needed whenever the list records its commit date, to read what was merged since.
+        for site in (Site(), Site(merged={})):
+            code, out, err = run(site, "--json")
+            self.assertEqual((code, out), (1, ""))
+            self.assertIn("needs a token, as they come from GitHub's GraphQL API: set GH_TOKEN", err)
         for answer, message in (({"total_count": 1, "incomplete_results": True, "items": [{"number": 4}]},
                                  "GitHub's search timed out"),
                                 ({"total_count": 2, "incomplete_results": False, "items": [{"number": 4}]},
@@ -315,9 +354,10 @@ class Picking(unittest.TestCase):
             self.assertEqual(code, 1, answer)
             self.assertIn(message, err)
         # The highest count of any page holds: a later page that counts fewer does not hide those missing.
-        pages = {1: {"total_count": 150, "incomplete_results": False, "items": [{"number": 4}] * 100},
+        pages = {1: {"total_count": 150, "incomplete_results": False,
+                     "items": [{"number": 600 + n} for n in range(100)]},
                  2: {"total_count": 120, "incomplete_results": False,
-                     "items": [{"number": 600 + n} for n in range(20)]}}
+                     "items": [{"number": 700 + n} for n in range(20)]}}
         site = Site()
         with mock.patch.object(site, "search", lambda url: pages[int(urllib.parse.parse_qs(url)["page"][0])]):
             code, _, err = run(site, "--json", env=TOKEN)
@@ -326,7 +366,7 @@ class Picking(unittest.TestCase):
         # Halves that together list fewer than the whole span counted stop it too.
         merged = {**{700 + n: pull(700 + n, merged_at="2026-11-20T13:00:00Z") for n in range(50)},
                   **{800 + n: pull(800 + n, merged_at="2026-11-22T13:00:00Z") for n in range(50)}}
-        site = Site(closed=([],), merged=merged)
+        site = Site(merged=merged)
         real, calls = site.search, []
 
         def overcounted(url: str) -> dict:
@@ -342,7 +382,7 @@ class Picking(unittest.TestCase):
         # More merges in one second than the search lists.
         crowd = {2000 + n: pull(2000 + n, merged_at="2026-11-20T13:00:00Z") for n in range(101)}
         with mock.patch.object(next_task, "SEARCH_PAGES", 1):
-            code, _, err = run(Site(closed=([],), merged=crowd), "--json", env=TOKEN)
+            code, _, err = run(Site(merged=crowd), "--json", env=TOKEN)
         self.assertEqual(code, 1)
         self.assertIn("more than 100 pull requests were merged into main at 2026-11-20T13:00:00Z", err)
 
@@ -360,6 +400,14 @@ class Picking(unittest.TestCase):
                 code, _, err = run(site, "--json", env=TOKEN)
             self.assertEqual(code, 1, answer)
             self.assertIn("GitHub's GraphQL API", err)
+            self.assertIn(message, err)
+        # So does a listing of those merged into main that holds an error or lacks what it should.
+        for answer, message in (({"errors": [{"type": "RATE_LIMITED"}]}, "RATE_LIMITED"),
+                                ({"data": {"repository": {"pullRequests": {"nodes": []}}}}, "did not list")):
+            site = Site()
+            with mock.patch.object(site, "listing", lambda sent, answer=answer: json.dumps(answer).encode()):
+                code, _, err = run(site, "--json", env=TOKEN)
+            self.assertEqual(code, 1, answer)
             self.assertIn(message, err)
 
     def test_a_list_without_a_commit_date_is_checked_against_open_pull_requests_only(self) -> None:
@@ -448,8 +496,8 @@ class Picking(unittest.TestCase):
             pull(35, body=(body := "Uses `Other.breuillard_green_tao_approximate_subgroup`."), html=inline(body)),
         ]
         self.assertEqual(next_task.taken(items, pulls), {"Algebra/t11": [31], "Algebra/t12": [32]})
-        site = Site(tasks=tasks, open_pages=(pulls,), closed=([],), merged={})
-        _, out, _ = run(site, "--json", "-n", "1")
+        site = Site(tasks=tasks, open_pages=(pulls,), merged={})
+        _, out, _ = run(site, "--json", "-n", "1", env=TOKEN)
         self.assertEqual(json.loads(out)["taken"], 2)
 
     def test_the_last_components_of_a_declaration_take_it_when_no_other_ends_so(self) -> None:
@@ -551,7 +599,7 @@ class Picking(unittest.TestCase):
 
     def test_a_pull_request_merged_into_another_branch_takes_nothing(self) -> None:
         merged = {61: pull(61, body="Ext.p1", merged_at="2026-11-20T13:00:00Z", base="feature")}
-        _, out, _ = run(Site(open_pages=([],), closed=([merged[61]],), merged=merged), "--json", env=TOKEN)
+        _, out, _ = run(Site(open_pages=([],), merged=merged), "--json", env=TOKEN)
         self.assertEqual(json.loads(out)["taken_by"], [])
 
     def test_the_count_is_positive(self) -> None:
@@ -560,7 +608,7 @@ class Picking(unittest.TestCase):
 
 
 class Requests(unittest.TestCase):
-    def requests(self, env: dict) -> list:
+    def requests(self, env: dict, code: int = 0) -> list:
         sent = []
 
         def urlopen(request, timeout):
@@ -569,19 +617,22 @@ class Requests(unittest.TestCase):
                 body = TASKS
             elif request.full_url.startswith(SEARCH):
                 body = {"total_count": 0, "incomplete_results": False, "items": []}
+            elif request.full_url == next_task.GRAPHQL:
+                body = {"data": {"repository": {"pullRequests": {
+                    "pageInfo": {"endCursor": None, "hasNextPage": False}, "nodes": []}}}}
             else:
                 body = []
             return mock.MagicMock(**{"__enter__.return_value.read.return_value": json.dumps(body).encode()})
 
-        with mock.patch.object(next_task.OPENER, "open", urlopen), \
-                mock.patch.dict(os.environ, env, clear=True), redirect_stdout(io.StringIO()):
-            self.assertEqual(next_task.main([]), 0)
+        with mock.patch.object(next_task.OPENER, "open", urlopen), mock.patch.dict(os.environ, env, clear=True), \
+                redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+            self.assertEqual(next_task.main([]), code)
         return sent
 
     def test_the_token_goes_to_the_github_api_only(self) -> None:
         sent = self.requests({"GH_TOKEN": "secret"})
         self.assertEqual([request.full_url.partition("?")[0] + "?" for request in sent],
-                         [next_task.TASKS + "?", OPEN.partition("?")[0] + "?", CLOSED.partition("?")[0] + "?", SEARCH])
+                         [next_task.TASKS + "?", OPEN.partition("?")[0] + "?", next_task.GRAPHQL + "?", SEARCH])
         self.assertIsNone(sent[0].get_header("Authorization"))
         for request in sent[1:]:
             self.assertEqual(request.get_header("Authorization"), "Bearer secret")
@@ -596,6 +647,9 @@ class Requests(unittest.TestCase):
             sent.append(request)
             if request.full_url == next_task.TASKS:
                 body = TASKS
+            elif request.full_url == next_task.GRAPHQL and b"pullRequests(states" in request.data:
+                body = {"data": {"repository": {"pullRequests": {
+                    "pageInfo": {"endCursor": None, "hasNextPage": False}, "nodes": []}}}}
             elif request.full_url == next_task.GRAPHQL:
                 body = {"data": {"repository": {"p4": Site.graphql(MERGED_PULLS[4])}}}
             elif request.full_url.startswith(SEARCH):
@@ -616,7 +670,10 @@ class Requests(unittest.TestCase):
         self.assertIn("p4: pullRequest(number: 4)", json.loads(query.data)["query"])
 
     def test_without_a_token_nothing_is_sent(self) -> None:
-        self.assertTrue(all(request.get_header("Authorization") is None for request in self.requests({})))
+        # Nor is anything read past the open pull requests, as those merged since the list's commit need one.
+        sent = self.requests({}, code=1)
+        self.assertTrue(all(request.get_header("Authorization") is None for request in sent))
+        self.assertEqual([request.full_url for request in sent], [next_task.TASKS, OPEN + "1"])
 
     def test_a_used_up_limit_says_how_to_go_on(self) -> None:
         headers = Message()
