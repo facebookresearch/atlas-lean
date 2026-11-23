@@ -57,8 +57,8 @@ abbrev bridge : StableGraph 2 1 where
   connected v w := by
     fin_cases v <;> fin_cases w
     · exact .refl
-    · exact .single ⟨0, .inl ⟨rfl, rfl⟩⟩
-    · exact .single ⟨0, .inr ⟨rfl, rfl⟩⟩
+    · exact .single ⟨0, Finset.mem_univ _, .inl ⟨rfl, rfl⟩⟩
+    · exact .single ⟨0, Finset.mem_univ _, .inr ⟨rfl, rfl⟩⟩
     · exact .refl
   totalGenus := by decide
   stable := by decide
@@ -78,8 +78,8 @@ abbrev banana : StableGraph 2 1 where
   connected v w := by
     fin_cases v <;> fin_cases w
     · exact .refl
-    · exact .single ⟨0, .inl ⟨rfl, rfl⟩⟩
-    · exact .single ⟨0, .inr ⟨rfl, rfl⟩⟩
+    · exact .single ⟨0, Finset.mem_univ _, .inl ⟨rfl, rfl⟩⟩
+    · exact .single ⟨0, Finset.mem_univ _, .inr ⟨rfl, rfl⟩⟩
     · exact .refl
   totalGenus := by decide
   stable := by decide
@@ -91,8 +91,8 @@ abbrev loopBridge : StableGraph 2 1 :=
     connected := fun v w ↦ by
       fin_cases v <;> fin_cases w
       · exact .refl
-      · exact .single ⟨0, .inl ⟨rfl, rfl⟩⟩
-      · exact .single ⟨0, .inr ⟨rfl, rfl⟩⟩
+      · exact .single ⟨0, Finset.mem_univ _, .inl ⟨rfl, rfl⟩⟩
+      · exact .single ⟨0, Finset.mem_univ _, .inr ⟨rfl, rfl⟩⟩
       · exact .refl
     stable := by decide }
 
@@ -107,6 +107,12 @@ example : valence loopGraph.endpoint 0 = 2 := by decide
 example : valence loopBridge.endpoint 0 = 3 := by decide
 example : valence loopBridge.endpoint 1 = 1 := by decide
 example : valence banana.endpoint 1 = 2 := by decide
+-- `valence` is the endpoint-incidence degree of the multigraph API.
+example : EndpointMapMultigraph.degreeWithin (loopGraph.endpoint · 0) (loopGraph.endpoint · 1)
+    Finset.univ 0 = 2 := by
+  rw [← valence_eq_degreeWithin]
+  decide
+
 example : markingCount banana.marking 0 = 1 := by decide
 example : markingCount banana.marking 1 = 0 := by decide
 example : markingCount bananaTwoMarks.marking 0 = 2 := by decide
