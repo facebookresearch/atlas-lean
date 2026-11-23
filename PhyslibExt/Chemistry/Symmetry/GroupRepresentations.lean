@@ -101,7 +101,9 @@ Positions and displacements of `N` nuclei live in `Fin N → Fin 3 → ℝ`.
 
 -/
 
-/-- The centre of mass `(∑ i, m i)⁻¹ • ∑ i, m i • x i` of masses `m i` at positions `x i`. -/
+/-- The centre of mass `(∑ i, m i)⁻¹ • ∑ i, m i • x i` of masses `m i` at positions `x i`. It is
+defined for all masses: for a total mass `∑ i, m i = 0` the convention `0⁻¹ = 0` makes it `0`.
+The intended domain is `∑ i, m i > 0`. -/
 def centreOfMass {N : ℕ} (m : Fin N → ℝ) (x : Fin N → Fin 3 → ℝ) : Fin 3 → ℝ :=
   (∑ i, m i)⁻¹ • ∑ i, m i • x i
 
@@ -147,7 +149,8 @@ lemma finrank_translationSubspace {N : ℕ} (hN : 0 < N) :
   have hinj : Function.Injective (translationMap N) := fun v w h => congrFun h ⟨0, hN⟩
   rw [translationSubspace, LinearMap.finrank_range_of_inj hinj, Module.finrank_fin_fun]
 
-/-- Rigid translations and rotations about the centre of mass intersect trivially. -/
+/-- For positive masses, rigid translations and rotations about the centre of mass intersect
+trivially. -/
 lemma translationSubspace_inf_rotationSubspace {N : ℕ} (m : Fin N → ℝ)
     (x : Fin N → Fin 3 → ℝ) (hm : ∀ i, 0 < m i) :
     translationSubspace N ⊓ rotationSubspace m x = ⊥ := by
@@ -232,8 +235,9 @@ lemma finrank_rotationSubspace_of_not_collinear {N : ℕ} (m : Fin N → ℝ)
     exact ⟨_, by rw [vadd_eq_add, ← eq_smul_of_cross_eq_zero hω0 hi, sub_add_cancel]⟩
   rw [rotationSubspace, LinearMap.finrank_range_of_inj hinj, Module.finrank_fin_fun]
 
-/-- For a linear configuration (collinear, with two distinct positions) the rigid rotations
-form a `2`-dimensional subspace: rotations about the molecular axis do not move the nuclei. -/
+/-- For a linear configuration (collinear, with two distinct positions) with positive masses the
+rigid rotations form a `2`-dimensional subspace: rotations about the molecular axis do not move
+the nuclei. -/
 lemma finrank_rotationSubspace_of_collinear {N : ℕ} (m : Fin N → ℝ) (x : Fin N → Fin 3 → ℝ)
     (hm : ∀ i, 0 < m i) (hx : Collinear ℝ (Set.range x)) {a b : Fin N} (hab : x a ≠ x b) :
     finrank ℝ (rotationSubspace m x) = 2 := by
@@ -285,7 +289,7 @@ lemma finrank_rotationSubspace_of_collinear {N : ℕ} (m : Fin N → ℝ) (x : F
   rw [rotationSubspace]
   omega
 
-/-- Additive form of the `3N - 6` count for a noncollinear configuration. -/
+/-- Additive form of the `3N - 6` count for a noncollinear configuration with positive masses. -/
 theorem finrank_internalModeSpace_add_six {N : ℕ} (m : Fin N → ℝ) (x : Fin N → Fin 3 → ℝ)
     (hm : ∀ i, 0 < m i) (hx : ¬ Collinear ℝ (Set.range x)) :
     finrank ℝ (InternalModeSpace m x) + 6 = 3 * N := by
@@ -301,22 +305,24 @@ theorem finrank_internalModeSpace_add_six {N : ℕ} (m : Fin N → ℝ) (x : Fin
   rw [finrank_displacement] at hq
   omega
 
-/-- **`3N - 6` rule**: a noncollinear configuration of `N` nuclei has `3 * N - 6` internal
-modes (kinematic count). Since `3 ≤ N` holds automatically the natural-number subtraction is
-exact; the additive form is `finrank_internalModeSpace_add_six`. -/
+/-- **`3N - 6` rule**: a noncollinear configuration of `N` nuclei with positive masses has
+`3 * N - 6` internal modes (kinematic count). Since `3 ≤ N` holds automatically the
+natural-number subtraction is exact; the additive form is `finrank_internalModeSpace_add_six`. -/
 theorem finrank_internalModeSpace_of_not_collinear {N : ℕ} (m : Fin N → ℝ)
     (x : Fin N → Fin 3 → ℝ) (hm : ∀ i, 0 < m i) (hx : ¬ Collinear ℝ (Set.range x)) :
     finrank ℝ (InternalModeSpace m x) = 3 * N - 6 := by
   have := finrank_internalModeSpace_add_six m x hm hx
   omega
 
-/-- The `3N - 6` rule under the hypothesis that the affine span is all of `ℝ³`. -/
+/-- The `3N - 6` rule for positive masses, under the hypothesis that the affine span is all of
+`ℝ³`. -/
 lemma finrank_internalModeSpace_of_affineSpan_eq_top {N : ℕ} (m : Fin N → ℝ)
     (x : Fin N → Fin 3 → ℝ) (hm : ∀ i, 0 < m i) (hx : affineSpan ℝ (Set.range x) = ⊤) :
     finrank ℝ (InternalModeSpace m x) = 3 * N - 6 :=
   finrank_internalModeSpace_of_not_collinear m x hm (not_collinear_of_affineSpan_eq_top hx)
 
-/-- Additive form of the `3N - 5` count for a linear configuration. -/
+/-- Additive form of the `3N - 5` count for a linear configuration (collinear, with two distinct
+positions) with positive masses. -/
 theorem finrank_internalModeSpace_add_five {N : ℕ} (m : Fin N → ℝ) (x : Fin N → Fin 3 → ℝ)
     (hm : ∀ i, 0 < m i) (hx : Collinear ℝ (Set.range x)) {a b : Fin N} (hab : x a ≠ x b) :
     finrank ℝ (InternalModeSpace m x) + 5 = 3 * N := by
@@ -333,16 +339,17 @@ theorem finrank_internalModeSpace_add_five {N : ℕ} (m : Fin N → ℝ) (x : Fi
   omega
 
 /-- **`3N - 5` rule**: a linear configuration (collinear with two distinct positions, so the
-affine span is a line and `2 ≤ N`) has `3 * N - 5` internal modes (kinematic count). The
-natural-number subtraction is exact; the additive form is `finrank_internalModeSpace_add_five`. -/
+affine span is a line and `2 ≤ N`) with positive masses has `3 * N - 5` internal modes (kinematic
+count). The natural-number subtraction is exact; the additive form is
+`finrank_internalModeSpace_add_five`. -/
 theorem finrank_internalModeSpace_of_collinear {N : ℕ} (m : Fin N → ℝ) (x : Fin N → Fin 3 → ℝ)
     (hm : ∀ i, 0 < m i) (hx : Collinear ℝ (Set.range x)) {a b : Fin N} (hab : x a ≠ x b) :
     finrank ℝ (InternalModeSpace m x) = 3 * N - 5 := by
   have := finrank_internalModeSpace_add_five m x hm hx hab
   omega
 
-/-- The `3N - 5` rule under the hypothesis that the affine span is a line, i.e. its direction
-`vectorSpan ℝ (Set.range x)` is one-dimensional. -/
+/-- The `3N - 5` rule for positive masses, under the hypothesis that the affine span is a line,
+i.e. its direction `vectorSpan ℝ (Set.range x)` is one-dimensional. -/
 lemma finrank_internalModeSpace_of_finrank_vectorSpan_eq_one {N : ℕ} (m : Fin N → ℝ)
     (x : Fin N → Fin 3 → ℝ) (hm : ∀ i, 0 < m i)
     (hx : finrank ℝ (vectorSpan ℝ (Set.range x)) = 1) :
@@ -402,7 +409,8 @@ lemma displacementRepresentation_translationMap {G : Type*} [Group G] {N : ℕ}
   funext fun i => displacementRepresentation_apply R π g _ i
 
 /-- Rigid rotations transform like an axial vector (`Rx, Ry, Rz`): `ω ↦ det (R g) • R g ω`,
-provided `R g` maps relative positions to relative positions along `π g`. -/
+provided `R g` maps each position relative to the centre of mass to the position of nucleus
+`π g i` relative to the centre of mass. -/
 lemma displacementRepresentation_rotationMap {G : Type*} [Group G] {N : ℕ}
     (R : G →* Matrix.orthogonalGroup (Fin 3) ℝ) (π : G →* Equiv.Perm (Fin N))
     (m : Fin N → ℝ) (x : Fin N → Fin 3 → ℝ)
@@ -438,8 +446,10 @@ lemma rotationSubspace_le_comap {G : Type*} [Group G] {N : ℕ}
   exact ⟨_, (displacementRepresentation_rotationMap R π m x hx g ω).symm⟩
 
 /-- The internal-mode representation: the displacement representation on the quotient by the
-rigid translations and rotations (`Representation.quotient`). Its carrier is
-`InternalModeSpace m x`, of dimension `3 * N - 6` (noncollinear) or `3 * N - 5` (linear). -/
+rigid translations and rotations (`Representation.quotient`), for a group that maps the
+configuration to itself, `R g (x i - c) = x (π g i) - c` with `c` the centre of mass. Its carrier
+is `InternalModeSpace m x`, of dimension `3 * N - 6` (noncollinear) or `3 * N - 5` (linear, with
+two distinct positions) for positive masses. -/
 def internalModeRepresentation {G : Type*} [Group G] {N : ℕ}
     (R : G →* Matrix.orthogonalGroup (Fin 3) ℝ) (π : G →* Equiv.Perm (Fin N))
     (m : Fin N → ℝ) (x : Fin N → Fin 3 → ℝ)

@@ -141,7 +141,7 @@ private theorem sum_moebius_div_filter_dvd (m l : ℕ) (hm : m ≠ 0) :
         (1 : ArithmeticFunction ℝ) k := by
       rw [coe_moebius_mul_coe_zeta]
     rw [coe_mul_zeta_apply] at hzetaK
-    simp only [one_apply] at hzetaK
+    simp only [ArithmeticFunction.one_apply] at hzetaK
     have hagree : ∀ e : ℕ, ((↑moebius : ArithmeticFunction ℝ) e) =
         ((moebius e : ℤ) : ℝ) := by
       intro e

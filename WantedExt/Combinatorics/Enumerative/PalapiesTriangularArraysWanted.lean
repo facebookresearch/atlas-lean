@@ -10,8 +10,8 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.Int.GCD
 public import Mathlib.RingTheory.PowerSeries.Inverse
+public import MathlibExt.NumberTheory.Diophantine.Linear
 
 /-!
 # Palapies, triangular arrays at negative row indices — wishlist
@@ -278,21 +278,6 @@ public theorem reflect_reflect (P : TriangularRecurrence) : P.reflect.reflect = 
   simp [reflect]
 
 end TriangularRecurrence
-
-/-- **Linear Diophantine equations.** Let $a, b, c, u, v \in \mathbb{Z}$ with $a \ne 0$ or
-$b \ne 0$, let $d = \gcd(a, b)$, and suppose $a u + b v = d$ (Bézout). If $d \mid c$, then the
-integers $x, y$ with $a x + b y + c = 0$ are exactly those of the form
-$x = -(c/d) u + m (b/d)$, $y = -(c/d) v - m (a/d)$ with $m \in \mathbb{Z}$. If $d \nmid c$, then
-$a x + b y + c = 0$ has no solution in integers $x, y$.
-
-Source: Lars Palapies, *On Extensions of Triangular Arrays to Negative Row Indices
-and Their Generating Functions*, INTEGERS 26 (2026), Article A83, Proposition 1. -/
-public theorem_wanted linear_diophantine_solutions (a b c u v : ℤ) (hab : a ≠ 0 ∨ b ≠ 0)
-    (huv : a * u + b * v = Int.gcd a b) :
-    ((Int.gcd a b : ℤ) ∣ c → ∀ x y : ℤ, a * x + b * y + c = 0 ↔
-      ∃ m : ℤ, x = -(c / Int.gcd a b) * u + m * (b / Int.gcd a b) ∧
-        y = -(c / Int.gcd a b) * v - m * (a / Int.gcd a b)) ∧
-    (¬ (Int.gcd a b : ℤ) ∣ c → ∀ x y : ℤ, a * x + b * y + c ≠ 0)
 
 /-- **Knuth-type duality.** For integers $\alpha, \beta, \gamma$, let $a$ and $b$ be the arrays with
 parameters $(\alpha, \beta, \gamma; 0, 0, 1)$ and $(\beta, \alpha, -\gamma; 0, 0, 1)$. Then their

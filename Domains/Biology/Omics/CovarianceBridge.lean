@@ -115,7 +115,7 @@ theorem transpose_center_mul_center (X : Matrix (Fin n) (Fin p) ℝ) :
     (center X)ᵀ * center X = Xᵀ * X - (n : ℝ) • vecMulVec (colMean X) (colMean X) := by
   ext j k
   rw [Matrix.sub_apply, Matrix.smul_apply, vecMulVec_apply, smul_eq_mul]
-  simp only [mul_apply, transpose_apply, center, of_apply, sub_mul, mul_sub,
+  simp only [Matrix.mul_apply, transpose_apply, center, of_apply, sub_mul, mul_sub,
     Finset.sum_sub_distrib, ← Finset.sum_mul, ← Finset.mul_sum, sum_eq_mul_colMean,
     Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
   ring
