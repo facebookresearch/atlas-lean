@@ -1,8 +1,9 @@
 # Constant terms of theta lifts for unitary groups
 
 This node is still to be broken down. It covers the computation, for unitary dual pairs, of the constant
-terms of [global theta lifts](global-theta-lifts.md) along the parabolic subgroups of the target group,
-which proves Rallis's tower property. Let $U$ be a skew-Hermitian space of dimension $n$ and
+terms of the theta lifts $\theta_{n,r}(\varphi, f)(h) = \int \theta(\varphi)(g, h)\, \overline{f(g)}\, dg$ of cusp forms $f$ along the
+parabolic subgroups of the target group, which proves Rallis's tower property for
+[global theta lifts](global-theta-lifts.md). Let $U$ be a skew-Hermitian space of dimension $n$ and
 $V_r = V_0 \oplus \mathbb{H}^r$ a Witt tower of Hermitian spaces over a quadratic extension $E/F$ of number
 fields, with the Weil representations fixed by the same $\psi$, $\chi_U$ and $\chi_V$ along the tower, and $\pi$ a
 cuspidal automorphic representation of $\mathrm{U}(U)(\mathbb{A})$.
@@ -22,7 +23,8 @@ modulus, each with a precise statement and the sources below.
 
 ## Depends on
 
-- [Global theta lifts of cusp forms](global-theta-lifts.md), for the theta lifts along a Witt tower
+- [Splitting characters and the Weil representation of unitary dual pairs](weil-representation-of-unitary-dual-pairs.md), for the Weil representations of the unitary dual pairs along a Witt tower and their theta functions
+- [Automorphic forms, cusp forms and automorphic representations](../automorphic-forms-on-reductive-groups/automorphic-forms-and-automorphic-representations.md), for cusp forms, cuspidal automorphic representations and constant terms
 
 ## Sources
 

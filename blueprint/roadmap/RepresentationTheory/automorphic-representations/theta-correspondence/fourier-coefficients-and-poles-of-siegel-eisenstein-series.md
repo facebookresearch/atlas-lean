@@ -4,8 +4,10 @@ This node is still to be broken down. It covers the analytic inputs of the proof
 Tan that bound the poles of
 [Siegel Eisenstein series on unitary groups](siegel-eisenstein-series-on-unitary-groups.md). Let
 $G_n = \mathrm{U}(W_n)$ with $W_n$ split of dimension $2n$ over a quadratic extension $E/F$ of number fields,
-$Q = MN$ the Siegel parabolic subgroup, $N \cong \mathrm{Her}_n$ the Hermitian matrices, and $\chi$ a Hecke
-character of $\mathbb{A}_E^\times / E^\times$ with $\chi|_{\mathbb{A}_F^\times} = \chi_E^\kappa$.
+$Q = MN$ the Siegel parabolic subgroup, $N \cong \mathrm{Her}_n$ the Hermitian matrices, $\chi$ a Hecke
+character of $\mathbb{A}_E^\times / E^\times$ with $\chi|_{\mathbb{A}_F^\times} = \chi_E^\kappa$, $I_n(s, \chi)$ the representation of
+$G_n(\mathbb{A})$ induced from the character $\chi(\det a) \lvert \det a \rvert_E^{s + n/2}$ of the Levi factor of $Q$, and
+$E(s, \Phi)$ the Eisenstein series of a holomorphic section $\Phi$.
 
 - **Normalized series and intertwining operators.** The normalizing factor $b^*_n(s)$, a product of
   partial Hecke $L$-functions $L^S(2s + j, \chi|_{\mathbb{A}_F^\times} \chi_E^{j+n})$ over $1 \le j \le n$, the normalized
@@ -29,7 +31,9 @@ general case should be sourced from Kudla–Rallis or from a published account c
 
 ## Depends on
 
-- [Siegel Eisenstein series on unitary groups](siegel-eisenstein-series-on-unitary-groups.md), for the degenerate principal series, standard sections and the series $E(s, \Phi)$
+- [Eisenstein series and their meromorphic continuation](../automorphic-forms-on-reductive-groups/eisenstein-series.md), for Eisenstein series induced from the Siegel parabolic subgroup, their intertwining operators and constant terms
+- [Meromorphic continuation of Hecke L-functions](../../../NumberTheory/zeta-l-functions/dirichlet-l-functions/hecke-l-function-meromorphic-continuation.md), for the Hecke $L$-functions in the normalizing factors
+- [Jacquet modules of the Weil representation and degenerate principal series](jacquet-modules-of-the-weil-representation.md), for the local degenerate principal series $I_n(s, \chi_v)$ and their constituents
 
 ## Sources
 
