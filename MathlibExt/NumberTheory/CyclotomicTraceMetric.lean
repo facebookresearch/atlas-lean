@@ -154,6 +154,46 @@ theorem cyclotomicTraceDist_comm (α β : K) :
   rw [cyclotomicTraceDist, cyclotomicTraceDist, ← neg_sub, cyclotomicTraceNorm,
     cyclotomicTraceNorm, cyclotomicTraceNormSq_neg]
 
+/-- **Galois invariance of the trace metric.** Let $p$ be a prime and let $K$ be a $p$-th
+cyclotomic extension of $\mathbb{Q}$. For every $\mathbb{Q}$-algebra automorphism $\sigma$ of $K$
+and all $\alpha, \beta \in K$, the trace distance satisfies
+$d(\sigma \alpha, \sigma \beta) = d(\alpha, \beta)$.
+
+Source: Saettone, Zaharescu and Zhang, *On a Special Metric in Cyclotomic Fields*,
+INTEGERS 25 (2025), Article A10, Proposition 1 (`integers-2025-A10-prop-1`). -/
+theorem cyclotomicTraceDist_algEquiv (hp : p.Prime)
+    (σ : K ≃ₐ[ℚ] K) (α β : K) :
+    cyclotomicTraceDist p (σ α) (σ β) = cyclotomicTraceDist p α β := by
+  let f (u : K) := Algebra.trace ℚ K ((σ α - σ β) * u) ^ 2
+  -- The powers with exponents from 1 to p - 1 enumerate all primitive p-th roots.
+  have sum_powers {ω : K} (hω : IsPrimitiveRoot ω p) :
+      (∑ j ∈ Finset.Icc 1 (p - 1), f (ω ^ j)) = ∑ u ∈ primitiveRoots p K, f u := by
+    apply Finset.sum_bij (fun j _ => ω ^ j)
+    · intro j hj
+      obtain ⟨hj₁, hj₂⟩ := Finset.mem_Icc.mp hj
+      exact (mem_primitiveRoots hp.pos).mpr
+        (hω.pow_of_coprime j (Nat.coprime_of_lt_prime (by omega) (by omega) hp).symm)
+    · intro i hi j hj hij
+      simp only [Finset.mem_Icc] at hi hj
+      exact hω.pow_inj (by omega) (by omega) hij
+    · intro u hu
+      obtain ⟨j, hj, hc, rfl⟩ :=
+        hω.isPrimitiveRoot_iff.mp (isPrimitiveRoot_of_mem_primitiveRoots hu)
+      have hj₀ : j ≠ 0 := by
+        rintro rfl
+        exact hp.ne_one (by simpa using hc)
+      exact ⟨j, Finset.mem_Icc.mpr ⟨by omega, by omega⟩, rfl⟩
+    · intro j _
+      rfl
+  apply congrArg (fun q : ℚ => √(q : ℝ))
+  have hζ := zeta_spec p ℚ K
+  calc
+    _ = ∑ j ∈ Finset.Icc 1 (p - 1), f (σ (zeta p ℚ K) ^ j) :=
+      (sum_powers hζ).trans (sum_powers (hζ.map_of_injective σ.injective)).symm
+    _ = _ := by
+      simp only [f, ← map_sub, ← map_pow, ← map_mul, Algebra.trace_eq_of_algEquiv,
+        cyclotomicTraceNormSq]
+
 /-- **The zero coefficient vector gives the zero lattice point.** Let $p \ge 1$ be a natural
 number and let $K$ be a field generated over $\mathbb{Q}$ by a primitive $p$-th root of unity, with
 fixed primitive $p$-th root of unity $\omega \in K$. For an integer vector
