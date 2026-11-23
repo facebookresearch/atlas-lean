@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.PrimeCounting
+public import MathlibExt.NumberTheory.PrimeCounting.MandlRefinements
 
 /-! # Explicit prime bounds from the refinements of Mandl's inequality
 
@@ -105,18 +106,6 @@ public theorem_wanted nthPrime_sq_log_bound (n : ℕ) (hn : 1 ≤ n) :
           Real.log (Nat.nth Nat.Prime (n - 1) : ℝ) ^ 2 <
       937.5 * (Nat.nth Nat.Prime (n - 1) : ℝ) ^ 2 * Real.log (Nat.nth Nat.Prime (n - 1) : ℝ) +
         5674.5 * (Nat.nth Nat.Prime (n - 1) : ℝ) ^ 2
-
-/-- **An auxiliary inequality in $\log n$ and $\log\log n$.** For every integer $n \ge 2$, with
-$L = \log n$,
-$$\frac{4.151332(\log L - 2)}{L} + \frac{3.151332(\log L - 1)}{L} +
-\frac{3.151332(\log L - 2)}{L^2} \le 1.$$
-
-Source: Qianxi Zhang and Xinhua Xiong, *New Refinements of Mandl's Inequality*,
-INTEGERS 25 (2025), Article A58, Proposition 3, inequality (25) (`integers-2025-A58-prop-3`). -/
-public theorem_wanted loglog_ratio_sum_le_one (n : ℕ) (hn : 2 ≤ n) :
-    4.151332 * (Real.log (Real.log n) - 2) / Real.log n +
-        3.151332 * (Real.log (Real.log n) - 1) / Real.log n +
-        3.151332 * (Real.log (Real.log n) - 2) / Real.log n ^ 2 ≤ 1
 
 /-- **Lower bounds for the $n$-th prime in terms of its logarithm.** Let $p_n$ denote the $n$-th
 prime, so that $p_1 = 2$, and put $L = \log p_n$. Then
