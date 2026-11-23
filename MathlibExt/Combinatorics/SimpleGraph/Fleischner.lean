@@ -25,15 +25,17 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Fleischner's theorem (https://en.wikipedia.org/wiki/Fleischner%27s_theorem):
-    the square of a 2-vertex-connected finite simple graph with at least three
-    vertices is Hamiltonian. Here `H` is the square of `G`: distinct vertices are
-    adjacent in `H` iff they are adjacent in `G` or share a common neighbor.
+/-- **Fleischner's theorem.** Let $G$ be a finite simple graph that is 2-vertex-connected, that is,
+$G$ has at least three vertices and stays connected after deleting at most one vertex. Let $H$ be
+the square of $G$: the graph on the same vertices in which two distinct vertices are adjacent if
+and only if they are adjacent in $G$ or have a common neighbour in $G$. Then $H$ is Hamiltonian:
+it has a cycle that passes through every vertex exactly once.
+
+Proves `Wanted` entry `fleischner`.
+
 Source: Herbert Fleischner, "The Square of Every Two-Connected Graph Is Hamiltonian," Journal of Combinatorial Theory, Series B 16 (1974), 29–34, DOI 10.1016/0095-8956(74)90091-4, https://doi.org/10.1016/0095-8956(74)90091-4.
 Proof: the strengthened vertex-rooted induction of A. Georgakopoulos, "A short proof of
 Fleischner's theorem", Discrete Math. 309 (2009), 6632–6634.
-
-Proves `Wanted` entry `fleischner`.
 -/
 theorem fleischner : ∀ {V : Type*} [Fintype V] (G H : SimpleGraph V),
     G.IsVertexConnected 2 →
