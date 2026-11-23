@@ -18,6 +18,11 @@ namespace MathlibExtTest.CommonPrimeDivisorEvalPow
 
 open MetaMathlibExt Polynomial
 
+-- At `x = 1`, every prime divides `x - 1`, so the cyclotomic value alone determines `ρ`.
+example {ρ p : ℕ} (hρ : ρ.Prime) (hp : p.Prime) (h : (ρ : ℤ) ∣ (cyclotomic p ℤ).eval 1) :
+    ρ = p :=
+  prime_eq_of_dvd_sub_one_of_dvd_cyclotomic_eval (x := 1) hρ hp (by decide) (by simp) h
+
 -- The hypotheses can hold together, here with `ρ = p = 3`, `a = 2` and `y = 4`:
 -- `3 ∣ 4 - 1` and `3 ∣ Φ_3(4 ^ 3) = 64 ^ 2 + 64 + 1 = 3 * 1387`.
 example : (3 : ℤ) ∣ 4 - 1 ∧ (3 : ℤ) ∣ (cyclotomic 3 ℤ).eval (4 ^ 3 ^ (2 - 1)) := by

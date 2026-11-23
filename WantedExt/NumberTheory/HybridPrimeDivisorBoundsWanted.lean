@@ -22,16 +22,6 @@ namespace MetaMathlibExt
 
 open Polynomial
 
-/-- **A common prime divisor of $x - 1$ and $\Phi_p(x)$ is $p$.** Let $\rho$ and $p$ be primes,
-let $x$ be a positive integer, and let $\Phi_p$ be the $p$-th cyclotomic polynomial with integer
-coefficients. If $\rho \mid x - 1$ and $\rho \mid \Phi_p(x)$, then $\rho = p$.
-
-Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
-Article A95, Lemma 1 (`integers-2026-A95-lem-1`). -/
-public theorem_wanted prime_eq_of_dvd_sub_one_of_dvd_cyclotomic_eval {ρ p : ℕ}
-    (hρ : ρ.Prime) (hp : p.Prime) {x : ℤ} (hx : 0 < x) (h₁ : (ρ : ℤ) ∣ x - 1)
-    (h₂ : (ρ : ℤ) ∣ (cyclotomic p ℤ).eval x) : ρ = p
-
 /-- **Divisibility of $x^p - 1$ by $p$.** Let $p$ be a prime, let $x$ be a positive integer, and
 let $\Phi_p$ be the $p$-th cyclotomic polynomial with integer coefficients. Then
 $p \mid x^p - 1$ if and only if $p \mid x - 1$ and $p \mid \Phi_p(x)$.
