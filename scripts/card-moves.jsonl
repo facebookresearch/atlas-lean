@@ -768,3 +768,8 @@
 {"page": "NumberTheory/linear-recurrences/recurrence-theory/dominant-roots-and-reciprocal-sums-of-recurrence/norm-le-one-of-aeval-eq-zero-of-monotone", "to": "Analysis/complex-analysis/zeros-of-polynomials/norm-le-one-of-aeval-eq-zero-of-monotone", "article_id": "af_2233b2acf42931aeddb3c3d2"}
 {"page": "Combinatorics/elementary-enumeration/necklaces-over-a-group-with-identity-product/int-dvd-mul-iff-div-gcd-dvd", "to": "NumberTheory/divisibility-factorization/int-dvd-mul-iff-div-gcd-dvd", "article_id": "af_8915ccab8015d6bfc901710a"}
 {"page": "NumberTheory/digits-numeration/digit-properties/repetend-tables/tsum-inv-pow-succ-lt", "to": "Analysis/sequences-and-series/convergence/tsum-inv-pow-succ-lt", "article_id": "af_8d95bc78ce6c48ff72e57920"}
+{"folder": "NumberTheory/divisibility-factorization", "to": "NumberTheory/primes-primality/divisibility-factorization", "article_id": "af_712a1d59818e006731b2eb69"}
+{"page": "NumberTheory/divisibility-factorization/euclid-lemma", "to": "NumberTheory/primes-primality/divisibility-factorization/euclid-lemma", "article_id": "af_36e17022332de2108b43df25"}
+{"page": "NumberTheory/divisibility-factorization/int-dvd-mul-iff-div-gcd-dvd", "to": "NumberTheory/primes-primality/divisibility-factorization/int-dvd-mul-iff-div-gcd-dvd", "article_id": "af_8915ccab8015d6bfc901710a"}
+{"folder": "NumberTheory/galois-representations", "to": "NumberTheory/algebraic-number-theory/galois-representations", "article_id": "af_dc60fef63810b81cd253665b"}
+{"page": "NumberTheory/galois-representations/galois-cohomology-and-p-adic-hodge-theory", "to": "NumberTheory/algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory", "article_id": "af_32a4c2f018ce54617d6da2a7"}

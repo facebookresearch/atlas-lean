@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.Recurrences.DegenerateSecondOrder
+public import MathlibExt.NumberTheory.Recurrences.LucasPeriodAverage
 public import MathlibExt.NumberTheory.Recurrences.NondegenerateLucasPair
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Algebra.GCDMonoid.Finset
@@ -46,24 +47,6 @@ unity) is `IsNondegenerateLucasPair params.p params.q`; `Q ≠ 0` is built into
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Period of a Lucas sequence modulo $m$.** For a Lucas sequence $U = U(P, Q)$ and a natural
-number $m$, the least period $\pi_U(m)$ of $U$ modulo $m$ is the minimal period of the pair
-$(0, 1)$ under the map $(x, y) \mapsto (y, P y - Q x)$ on pairs of residues modulo $m$, that is,
-the least $r > 0$ with $U_r \equiv 0 \pmod m$ and $U_{r+1} \equiv 1 \pmod m$, and $0$ if there
-is no such $r$.
-
-For $m > 0$, $\pi_U(m) = 0$ exactly when $U$ is not purely periodic modulo $m$, that is, when
-$\gcd(m, Q) > 1$. For $m = 0$ the residues are integers and the congruences are equalities; this
-value has no meaning in the paper (for the Fibonacci sequence it is $0$).
-
-Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
-Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Section 1, equation
-(1.11). -/
-noncomputable def lucasUPeriod (params : LucasSequenceParams) (m : ℕ) : ℕ :=
-  Function.minimalPeriod
-    (fun x : ZMod m × ZMod m => (x.2, (params.p : ZMod m) * x.2 - (params.q : ZMod m) * x.1))
-    (0, 1)
 
 /-- **Restricted period of a Lucas sequence modulo $m$.** For a Lucas sequence $U = U(P, Q)$ and
 a natural number $m$, the least restricted period $\rho_U(m)$ of $U$ modulo $m$ is the least
@@ -369,29 +352,6 @@ public theorem_wanted lucasU_sum_formula (params : LucasSequenceParams) (n : ℕ
         lucasU params (n + 1) - 1 - params.q * lucasU params n) ∧
     (params.p - params.q - 1 = 0 →
       (params.q - 1) * ∑ i ∈ Finset.Icc 1 n, lucasU params i = lucasU params (n + 1) - 1 - n)
-
-/-- **Sums of a second-order recurrence over whole periods.** Let $P, Q$ be integers with $Q \ne 0$,
-let $U = U(P, Q)$ be their Lucas sequence, write $a = P$ and $b = -Q$, and suppose
-$a + b - 1 \ne 0$. Let $n > 0$ be coprime to $b(a + b - 1)$, and let $\pi_U(n)$ be the period of
-$U$ modulo $n$: the least $r > 0$ with $U_r \equiv 0$ and $U_{r+1} \equiv 1 \pmod n$, or $0$ if
-there is none. Then $\pi_U(n) > 0$, and for every $r \ge 0$ divisible by $\pi_U(n)$ and every
-integer sequence $w$ with $w_{k+2} = a w_{k+1} + b w_k$ for all $k \ge 0$, $n$ divides
-$w_1 + \dots + w_r$.
-
-Part (ii) of the corollary is false as printed and is omitted: for $(a, b) = (-6, 7)$, so that
-$a + b - 1 = 0$, the number $n = 3$ is coprime to $7 \cdot (-8)$ and $\pi_U(3) = 2$, but
-$U_1 + U_2 = 1 - 6 = -5$.
-
-Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
-Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Corollary 2.2
-(`integers-2024-A36-cor-2-2`). -/
-public theorem_wanted secondOrder_sum_dvd_of_period_dvd (params : LucasSequenceParams)
-    (hab : params.p - params.q - 1 ≠ 0) (n : ℕ) (hn : 0 < n)
-    (hcop : IsCoprime (n : ℤ) (params.q * (params.p - params.q - 1))) :
-    0 < lucasUPeriod params n ∧
-    ∀ r, lucasUPeriod params n ∣ r → ∀ w : ℕ → ℤ,
-      (∀ k, w (k + 2) = params.p * w (k + 1) - params.q * w k) →
-      (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 r, w i
 
 /-- **Multiplying a member of $S(U)$ by one of its prime factors.** Let $P, Q$ be integers with
 $Q \ne 0$, let $U = U(P, Q)$ be their Lucas sequence, write $a = P$ and $b = -Q$, and let $S(U)$ be
