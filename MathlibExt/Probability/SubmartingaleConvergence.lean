@@ -126,11 +126,12 @@ theorem Submartingale.exists_ae_tendsto_of_posPart_bdd
       ← ofReal_integral_norm_eq_lintegral_enorm (hint n)]
     rw [ENNReal.ofReal_le_coe]
     exact le_trans (h_norm_bdd n) (Real.le_coe_toNNReal _)
-  have hconv := hsub.ae_tendsto_limitProcess h_eLpNorm
+  have h_iSup := (iSup_le h_eLpNorm).trans_lt ENNReal.coe_lt_top
+  have hconv := hsub.ae_tendsto_limitProcess h_iSup
   have hasm : ∀ n, AEStronglyMeasurable (X n) μ :=
     fun n => ((hsub.1 n).mono (ℱ.le n)).aestronglyMeasurable
   have hint_lim : Integrable (ℱ.limitProcess X μ) μ :=
-    memLp_one_iff_integrable.mp (Filtration.memLp_limitProcess_of_eLpNorm_bdd hasm h_eLpNorm)
+    memLp_one_iff_integrable.mp (Filtration.memLp_limitProcess_of_eLpNorm_bdd hasm h_iSup)
   exact ⟨ℱ.limitProcess X μ, hint_lim, hconv⟩
 
 /-- **Supermartingale almost-sure convergence theorem.** Let $(X_n)_{n \ge 0}$ be a real-valued

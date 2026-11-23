@@ -623,7 +623,7 @@ theorem karush_kuhn_tucker_mixed {E : Type*} [NormedAddCommGroup E] [NormedSpace
   have hH_strict : HasStrictFDerivAt (fun y j => h j y) H x := by
     have hcomp : ∀ j : Fin p, HasStrictFDerivAt (fun y => h j y) (fderiv ℝ (h j) x) x := by
       intro j
-      exact ContDiffAt.hasStrictFDerivAt (hh_diff j) one_ne_zero
+      exact ContDiffAt.hasStrictFDerivAt_fderiv (hh_diff j) one_ne_zero
     have hpi := hasStrictFDerivAt_pi.mpr hcomp
     simpa [hH_def] using hpi
   -- `H` is surjective: otherwise a nonzero functional vanishes on its range,

@@ -384,10 +384,9 @@ private lemma etaPair_deriv_bound (n : ℕ) (s : ℂ) (δ M : ℝ) (t : ℝ)
   have h1t : (1 : ℝ) ≤ t := by linarith
   have hnpos : (0 : ℝ) < ((n : ℝ) + 1) := by linarith
   have hle_nt : (n : ℝ) + 1 ≤ t := by linarith
-  have hc_ne : (-s) ≠ 0 := neg_ne_zero.mpr hs0
   have hderiv : deriv (fun y : ℝ => (y : ℂ) ^ (-s)) t
       = (-s) * ((t : ℂ) ^ (-s - 1)) :=
-    Complex.deriv_ofReal_cpow_const ht_ne hc_ne
+    Complex.deriv_ofReal_cpow_const (-s) ht_ne
   rw [hderiv, norm_mul, norm_neg]
   have hnorm : ‖((t : ℂ) ^ (-s - 1))‖ = t ^ ((-s - 1).re) :=
     Complex.norm_cpow_eq_rpow_re_of_pos ht_pos (-s - 1)
