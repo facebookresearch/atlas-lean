@@ -44,21 +44,25 @@ We actively welcome your pull requests.
 Many people and agents open pull requests here at once. Claim a substantial
 piece of work before you start it, so that others can steer around it:
 
-- **Open a draft pull request** when you start. Its title names the topic, and
-  its description names each ready task it takes by article id, on a line
-  `Tasks: af_…`.
+- **Open a draft pull request** when you start, as
+  [Picking a task](#picking-a-task) says. Its title names the topic, and its
+  description names each ready task it takes by article id, on a line
+  `Tasks: af_…`. It claims them until it is closed: mark it ready for review
+  when it is done, or close it if you stop. If a draft that names a task you
+  want has had no push for a week, ask on it whether its author goes on.
 - **Or open an issue** whose title starts with `[Claim]` and that names the
-  area, the modules or the task ids you are taking. Comment on it to renew it,
-  and close it to release it. Link it from the pull request that continues it.
+  area, the modules or the task ids you are taking, for work that spans several
+  pull requests. It is a claim while it is open and has been updated in the
+  last 30 days: comment on it to renew it, and close it to release it. Link it
+  from each pull request that continues it.
 
-A claim is active while it is open and, for a draft pull request, has had a
-push in the last 7 days or, for an issue, has been updated in the last 30
-days. A pull request that is ready for review stays active until it is closed.
-Look for an active claim before you start. When two active claims cover the
-same task, the one that has been active longer without a break keeps it; a
-pull request that continues an active `[Claim]` issue counts from the issue.
-A claim only saves duplicated work: it reserves nothing else, and anyone may
-still review, fix or improve merged code.
+Look for an open pull request and an active `[Claim]` issue that cover the work
+before you start; `next_task.py` skips the tasks that open pull requests name,
+but does not read issues. When two claims cover the same task, the one that has
+been active longer without a break keeps it; a pull request that continues an
+active `[Claim]` issue counts from the issue. A claim only saves duplicated
+work: it reserves nothing else, and anyone may still review, fix or improve
+merged code.
 
 To update a branch that someone else may also push to, such as another
 contributor's pull request, push a fast-forward of the tip you fetched. If you
