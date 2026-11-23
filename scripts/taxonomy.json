@@ -11104,6 +11104,7 @@
   "MathlibExt/NumberTheory/BinomialFibonacciConvolution": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Binomial sums of Fibonacci and Lucas numbers"},
   "MathlibExt/NumberTheory/BinomialHarmonicConvolution": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Binomial identities for harmonic numbers"},
   "MathlibExt/NumberTheory/BinomialHarmonicInterchangeIdentity": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Binomial identities for harmonic numbers"},
+  "MathlibExt/NumberTheory/BinomialModTwoRunLength": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Binomial coefficient sums modulo 2"},
   "MathlibExt/NumberTheory/BinomialTransformSecondOrderHarmonic": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Binomial identities for harmonic numbers"},
   "MathlibExt/NumberTheory/BinomialTransformSquaredHarmonic": {"to": "NumberTheory/special-numbers/harmonic-numbers", "title": "Binomial identities for harmonic numbers"},
   "MathlibExt/NumberTheory/BonseInequality": {"to": "NumberTheory/distribution-of-primes/prime-gaps-short-intervals", "title": "Bonse's inequality"},
