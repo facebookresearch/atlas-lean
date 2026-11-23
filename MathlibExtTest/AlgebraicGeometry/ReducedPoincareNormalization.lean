@@ -28,7 +28,8 @@ open CoherentCurveLinearSeries NumericalCompactifiedJacobians
 
 example {R : CommRingCat.{0}} (S : TransportSystem R) (P Q : LocalComplex R)
     (e : P.derivedObject ≅ Q.derivedObject) (f : Module.Dual R P.determinant) (x : P.determinant) :
-    ((positiveTransport S P Q e).hom.hom f) (S.transport P.presentation Q.presentation e x) = f x := by
+    ((positiveTransport S P Q e).hom.hom f) (S.transport P.presentation Q.presentation e x) =
+      f x := by
   change (S.transport P.presentation Q.presentation e).symm.dualMap f
     (S.transport P.presentation Q.presentation e x) = f x
   rw [LinearEquiv.dualMap_apply, LinearEquiv.symm_apply_apply]

@@ -63,7 +63,8 @@ def_wanted reducedPoincareCohomology
     (dimension : topologicalKrullDim C.left = 1)
     (projective : ProjectiveLineSystems.IsProjectiveVariety C)
     (q : Polarization C.left) (general : IsNondegenerate C q) (s : SmoothMarking C)
-    (M : FineCompactifiedJacobian C q s) (J : PicardZeroModel C s.p) : PoincareCohomologyData C q s M J
+    (M : FineCompactifiedJacobian C q s) (J : PicardZeroModel C s.p) :
+    PoincareCohomologyData C q s M J
 
 def_wanted reducedPoincareFamily
     [HasDerivedPullbacks.{0}] [HasDerivedScalarExtensions.{0}] [HasDerivedPushforwards.{0}]
@@ -142,7 +143,8 @@ def_wanted mixedProductCoordinates
     (projective : ProjectiveLineSystems.IsProjectiveVariety C)
     (q q' : Polarization C.left) (general : IsNondegenerate C q)
     (general' : IsNondegenerate C q') (s : SmoothMarking C)
-    (M : FineCompactifiedJacobian C q s) (N : FineCompactifiedJacobian C q' s) : ProductCoordinates C q q' s M N
+    (M : FineCompactifiedJacobian C q s) (N : FineCompactifiedJacobian C q' s) :
+    ProductCoordinates C q q' s M N
 
 theorem_wanted mixedPoincareCohenMacaulay
     [HasDerivedPullbacks.{0}] [HasDerivedScalarExtensions.{0}] [HasDerivedPushforwards.{0}]

@@ -7,15 +7,17 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Adapted from AxiomMath/Stacks at
-c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/Algebra/Module/Projective/Determinant/Basic/{RankStrata,Det}.lean
-and Homology/TwoTermComplex/DeterminantLine/SurjectiveQuasiIso.lean,
-under Apache License 2.0. These files list no individual author or copyright.
-Modification: use the source's proved exterior-annihilator description as
-the literal native module, with actual exterior-algebra maps. The local
-finite-projective invertibility and exact-sequence producers are conditional
-completed-source integration; no new Wanted theorem asks for those proofs.
+Portions of this file are adapted from AxiomMath/Stacks (https://github.com/AxiomMath/Stacks),
+revision c496df0d9beea9deaeabcea8492605f9a0a2313b, licensed under the Apache License,
+Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0). The source files carry no
+individual copyright or author notice.
+
+* `StacksFrontier/Algebra/Module/Projective/Determinant/Basic/RankStrata.lean`
+* `StacksFrontier/Algebra/Module/Projective/Determinant/Basic/Det.lean`
+* `StacksFrontier/Homology/TwoTermComplex/DeterminantLine/SurjectiveQuasiIso.lean`
+
+Modifications: the source's exterior-annihilator description is used as the literal native
+module, with actual exterior-algebra maps.
 -/
 module
 
@@ -79,11 +81,13 @@ def determinantEquiv {N : Type w} [AddCommGroup N] [Module R N] (e : M ≃ₗ[R]
   LinearEquiv.ofLinearMap (surjectiveMap e.toLinearMap e.surjective)
     (surjectiveMap e.symm.toLinearMap e.symm.surjective) (by
       ext x
-      change ExteriorAlgebra.map e.toLinearMap (ExteriorAlgebra.map e.symm.toLinearMap x.val) = x.val
+      change ExteriorAlgebra.map e.toLinearMap
+        (ExteriorAlgebra.map e.symm.toLinearMap x.val) = x.val
       rw [← AlgHom.comp_apply, ExteriorAlgebra.map_comp_map]
       simp) (by
       ext x
-      change ExteriorAlgebra.map e.symm.toLinearMap (ExteriorAlgebra.map e.toLinearMap x.val) = x.val
+      change ExteriorAlgebra.map e.symm.toLinearMap
+        (ExteriorAlgebra.map e.toLinearMap x.val) = x.val
       rw [← AlgHom.comp_apply, ExteriorAlgebra.map_comp_map]
       simp)
 

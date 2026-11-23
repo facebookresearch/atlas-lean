@@ -7,13 +7,17 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Adapted from AxiomMath/Stacks c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/Homology/TwoTermComplex/PresentationBaseChange.lean,
-LineBaseChange.lean and DeterminantBaseChange.lean, under Apache License 2.0.
-Those files list no individual author or copyright. Modification: use the
-literal native scalar-extension cochain source and its actual adjunction
-unit/counit, the exterior-annihilator term determinants, and the constructed
-scalar Hom map. Completed generic source proof inputs retain those exact maps.
+Portions of this file are adapted from AxiomMath/Stacks (https://github.com/AxiomMath/Stacks),
+revision c496df0d9beea9deaeabcea8492605f9a0a2313b, licensed under the Apache License,
+Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0). The source files carry no
+individual copyright or author notice.
+
+* `StacksFrontier/Homology/TwoTermComplex/PresentationBaseChange.lean`
+* `StacksFrontier/Homology/TwoTermComplex/LineBaseChange.lean`
+* `StacksFrontier/Homology/TwoTermComplex/DeterminantBaseChange.lean`
+
+Modifications: the literal native scalar-extension cochain source with its adjunction unit and
+counit, the exterior-annihilator term determinants and the constructed scalar Hom map are used.
 -/
 module
 
@@ -77,11 +81,13 @@ structure TermDeterminantData (P : LocalComplex R) (C : ScalarComplexData g P)
     (unit_extension : ∀ i : ℤ, IsScalarExtension g.hom (scalarUnit g (P.complex.X i))) where
   negative :
     letI : Module.Finite S ((ModuleCat.extendScalars g.hom).obj (P.complex.X (-1))) := C.finite (-1)
-    letI : Module.Projective S ((ModuleCat.extendScalars g.hom).obj (P.complex.X (-1))) := C.projective (-1)
+    letI : Module.Projective S ((ModuleCat.extendScalars g.hom).obj (P.complex.X (-1))) :=
+      C.projective (-1)
     BaseChangeDeterminant g.hom (scalarUnit g (P.complex.X (-1))) (unit_extension (-1))
   zero :
     letI : Module.Finite S ((ModuleCat.extendScalars g.hom).obj (P.complex.X 0)) := C.finite 0
-    letI : Module.Projective S ((ModuleCat.extendScalars g.hom).obj (P.complex.X 0)) := C.projective 0
+    letI : Module.Projective S ((ModuleCat.extendScalars g.hom).obj (P.complex.X 0)) :=
+      C.projective 0
     BaseChangeDeterminant g.hom (scalarUnit g (P.complex.X 0)) (unit_extension 0)
 
 /-- The actual negative-term exterior scalar map with all instance heads fixed. -/
@@ -91,14 +97,16 @@ def negativeMap (P : LocalComplex R) (C : ScalarComplexData g P)
     determinantModule R (P.complex.X (-1)) →ₛₗ[g.hom]
       determinantModule S ((ModuleCat.extendScalars g.hom).obj (P.complex.X (-1))) := by
   letI : Module.Finite S ((ModuleCat.extendScalars g.hom).obj (P.complex.X (-1))) := C.finite (-1)
-  letI : Module.Projective S ((ModuleCat.extendScalars g.hom).obj (P.complex.X (-1))) := C.projective (-1)
+  letI : Module.Projective S ((ModuleCat.extendScalars g.hom).obj (P.complex.X (-1))) :=
+    C.projective (-1)
   exact T.negative.map
 
 theorem negativeMap_extension (P : LocalComplex R) (C : ScalarComplexData g P)
     (U : ∀ i : ℤ, IsScalarExtension g.hom (scalarUnit g (P.complex.X i)))
     (T : TermDeterminantData g P C U) : IsScalarExtension g.hom (negativeMap g P C U T) := by
   let : Module.Finite S ((ModuleCat.extendScalars g.hom).obj (P.complex.X (-1))) := C.finite (-1)
-  let : Module.Projective S ((ModuleCat.extendScalars g.hom).obj (P.complex.X (-1))) := C.projective (-1)
+  let : Module.Projective S ((ModuleCat.extendScalars g.hom).obj (P.complex.X (-1))) :=
+    C.projective (-1)
   exact T.negative.scalarExtension
 
 /-- The actual zero-term exterior scalar map with all instance heads fixed. -/

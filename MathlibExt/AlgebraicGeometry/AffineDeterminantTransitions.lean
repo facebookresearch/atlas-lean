@@ -7,12 +7,16 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Adapted from AxiomMath/Stacks c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/AlgebraicGeometry/DeterminantTwoTermGlobal/Local.lean,
-under Apache License 2.0. That file lists no individual author or copyright.
-Modification: use native affine cochain avatars, native derived tilde/scalar
-extension/pullback, and the entire native coefficient/composition square.
-The transition is computed by the fully faithful native tilde preimage.
+Portions of this file are adapted from AxiomMath/Stacks (https://github.com/AxiomMath/Stacks),
+revision c496df0d9beea9deaeabcea8492605f9a0a2313b, licensed under the Apache License,
+Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0). The source files carry no
+individual copyright or author notice.
+
+* `StacksFrontier/AlgebraicGeometry/DeterminantTwoTermGlobal/Local.lean`
+
+Modifications: native affine cochain avatars, native derived tilde, scalar extension and
+pullback, and the whole native coefficient/composition square are used; the transition is
+computed by the fully faithful native tilde preimage.
 -/
 module
 
@@ -80,7 +84,8 @@ omit [HasDerivedScalarExtensions] in
 def affineDerivedIso {X : Scheme.{u}} {K L : FourierMukai.D X} (f : K ≅ L)
     {R : CommRingCat.{u}} (a : Spec R ⟶ X)
     (P : AffinePresentation K a) (Q : AffinePresentation L a)
-    (F : (derivedTilde R).FullyFaithful) : P.localComplex.derivedObject ≅ Q.localComplex.derivedObject :=
+    (F : (derivedTilde R).FullyFaithful) :
+    P.localComplex.derivedObject ≅ Q.localComplex.derivedObject :=
   F.preimageIso (P.comparison ≪≫ (derivedPullback a).mapIso f ≪≫ Q.comparison.symm)
 
 omit [HasDerivedScalarExtensions] in

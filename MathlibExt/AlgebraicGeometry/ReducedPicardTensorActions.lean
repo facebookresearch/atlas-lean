@@ -66,7 +66,8 @@ def tensorFamily (T : Over (Spec (.of k))) (f : T ⟶ M.J) (g : T ⟶ J.J) :
   moduleTensor (prod C T).left (familyPullback C M.J T M.F f) (familyPullback C J.J T J.P g)
 
 def universalTensorFamily : (prod C (actionBase C q s M J)).left.Modules :=
-  tensorFamily C q s M J (actionBase C q s M J) (CartesianMonoidalCategory.snd J.J M.J) (CartesianMonoidalCategory.fst J.J M.J)
+  tensorFamily C q s M J (actionBase C q s M J) (CartesianMonoidalCategory.snd J.J M.J)
+    (CartesianMonoidalCategory.fst J.J M.J)
 
 /-- Preservation and finite-presentation data for this exact tensor family. -/
 structure TensorAdmissibility : Prop where
@@ -111,7 +112,8 @@ structure PicardTensorAction where
 def pointFamilyIso (A : PicardTensorAction C q s M J) (T : Over (Spec (.of k)))
     (f : T ⟶ M.J) (g : T ⟶ J.J) :
     familyPullback C M.J T M.F
-      (CartesianMonoidalCategory.lift g f ≫ tensorAction C q s M J A.admissible) ≅ tensorFamily C q s M J T f g := by
+      (CartesianMonoidalCategory.lift g f ≫ tensorAction C q s M J A.admissible) ≅
+        tensorFamily C q s M J T f g := by
   let h : T ⟶ actionBase C q s M J := CartesianMonoidalCategory.lift g f
   exact (familyCompositionIso C M.J T (actionBase C q s M J) M.F h
       (tensorAction C q s M J A.admissible)).symm ≪≫
@@ -121,9 +123,11 @@ def pointFamilyIso (A : PicardTensorAction C q s M J) (T : Over (Spec (.of k)))
       (familyPullback C M.J (actionBase C q s M J) M.F (CartesianMonoidalCategory.snd J.J M.J))
       (familyPullback C J.J (actionBase C q s M J) J.P (CartesianMonoidalCategory.fst J.J M.J)) ≪≫
     GeometricHiggsFamilies.tensorIso
-      (familyCompositionIso C M.J T (actionBase C q s M J) M.F h (CartesianMonoidalCategory.snd J.J M.J) ≪≫
+      (familyCompositionIso C M.J T (actionBase C q s M J) M.F h
+          (CartesianMonoidalCategory.snd J.J M.J) ≪≫
         eqToIso (by simp [h]))
-      (familyCompositionIso C J.J T (actionBase C q s M J) J.P h (CartesianMonoidalCategory.fst J.J M.J) ≪≫
+      (familyCompositionIso C J.J T (actionBase C q s M J) J.P h
+          (CartesianMonoidalCategory.fst J.J M.J) ≪≫
         eqToIso (by simp [h]))
 
 end MathlibExt.AlgebraicGeometry.ReducedPicardTensorActions

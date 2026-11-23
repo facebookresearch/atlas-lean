@@ -7,17 +7,20 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Source integration from AxiomMath/Stacks at
-c496df0d9beea9deaeabcea8492605f9a0a2313b (Apache License 2.0):
-StacksFrontier/Homology/TwoTermComplex/DeterminantFunctor.lean and
-DeterminantLine/{SurjectiveQuasiIso,Composition,Homotopy}.lean;
-StacksFrontier/AlgebraicGeometry/DeterminantTwoTermGlobal/Local.lean.
-These files list no individual author or copyright notice. Adaptation:
-retain actual native cochain/derived categories, the source's finite-projective
-presentation criterion, exterior-annihilator determinant modules and its
-entire kernel, quasi-isomorphism, homotopy and surjective-span normalization.
-The source proves the determinant/transport producers. Their native carrier
-integration is conditional data here, not a new Wanted request.
+Portions of this file are adapted from AxiomMath/Stacks (https://github.com/AxiomMath/Stacks),
+revision c496df0d9beea9deaeabcea8492605f9a0a2313b, licensed under the Apache License,
+Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0). The source files carry no
+individual copyright or author notice.
+
+* `StacksFrontier/Homology/TwoTermComplex/DeterminantFunctor.lean`
+* `StacksFrontier/Homology/TwoTermComplex/DeterminantLine/SurjectiveQuasiIso.lean`
+* `StacksFrontier/Homology/TwoTermComplex/DeterminantLine/Composition.lean`
+* `StacksFrontier/Homology/TwoTermComplex/DeterminantLine/Homotopy.lean`
+* `StacksFrontier/AlgebraicGeometry/DeterminantTwoTermGlobal/Local.lean`
+
+Modifications: native cochain and derived categories, the source's finite-projective
+presentation criterion and exterior-annihilator determinant modules are used, with the whole
+kernel, quasi-isomorphism, homotopy and surjective-span normalization.
 -/
 module
 
@@ -137,7 +140,7 @@ structure TransportSystem (R : Type u) [CommRing R] where
     (hs : Function.Surjective (f.f (-1)).hom ∧ Function.Surjective (f.f 0).hom)
     (hq : QuasiIso f), SurjectiveComparison P Q f hs hq
   transport : ∀ {K L : DerivedCategory (ModuleCat.{u} R)}
-    (P : Presentation K) (Q : Presentation L) (a : K ≅ L),
+    (P : Presentation K) (Q : Presentation L) (_a : K ≅ L),
     presentationDeterminant P ≃ₗ[R] presentationDeterminant Q
   span_normalization : ∀ {K L : DerivedCategory (ModuleCat.{u} R)}
     (P : Presentation K) (Q : Presentation L) (a : K ≅ L) (s : SurjectiveSpan P Q a),
@@ -148,7 +151,7 @@ structure TransportSystem (R : Type u) [CommRing R] where
     (P : Presentation K) (Q : Presentation L) (f g : P.complex ⟶ Q.complex)
     (hsf : Function.Surjective (f.f (-1)).hom ∧ Function.Surjective (f.f 0).hom)
     (hsg : Function.Surjective (g.f (-1)).hom ∧ Function.Surjective (g.f 0).hom)
-    (hqf : QuasiIso f) (hqg : QuasiIso g) (h : Homotopy f g),
+    (hqf : QuasiIso f) (hqg : QuasiIso g) (_h : Homotopy f g),
     (surjective K L P Q f hsf hqf).comparison = (surjective K L P Q g hsg hqg).comparison
   identity : ∀ {K : DerivedCategory (ModuleCat.{u} R)} (P : Presentation K),
     transport P P (Iso.refl K) = LinearEquiv.refl R (presentationDeterminant P)

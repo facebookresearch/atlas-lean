@@ -7,13 +7,15 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The Hom/base-change normalization is the completed source construction in
-AxiomMath/Stacks c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/Homology/TwoTermComplex/LineBaseChange.lean (Apache License 2.0).
-That file lists no individual author or copyright. Adaptation: construct the
-actual semilinear Hom map by the scalar-extension universal property of its
-source-module map, and retain its exact normalization on every element.
-The finite-projective scalar-extension proof is completed-source integration.
+Portions of this file are adapted from AxiomMath/Stacks (https://github.com/AxiomMath/Stacks),
+revision c496df0d9beea9deaeabcea8492605f9a0a2313b, licensed under the Apache License,
+Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0). The source files carry no
+individual copyright or author notice.
+
+* `StacksFrontier/Homology/TwoTermComplex/LineBaseChange.lean`
+
+Modifications: the semilinear Hom map is constructed by the scalar-extension universal
+property of its source-module map, with its normalization on every element.
 -/
 module
 

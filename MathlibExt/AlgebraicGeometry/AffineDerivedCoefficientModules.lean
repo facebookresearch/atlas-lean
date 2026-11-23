@@ -104,7 +104,8 @@ def derivedScalarExtensionCounit :
 
 /-- Its defining universal property is the native left-derived property. -/
 instance derivedScalarExtension_isLeftDerivedFunctor :
-    (derivedScalarExtension g).IsLeftDerivedFunctor (derivedScalarExtensionCounit g) (ringQuasiIso R) := by
+    (derivedScalarExtension g).IsLeftDerivedFunctor (derivedScalarExtensionCounit g)
+      (ringQuasiIso R) := by
   dsimp only [derivedScalarExtension, derivedScalarExtensionCounit]
   infer_instance
 

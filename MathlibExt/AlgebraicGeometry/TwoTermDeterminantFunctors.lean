@@ -7,13 +7,16 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Adapted from AxiomMath/Stacks c496df0d9beea9deaeabcea8492605f9a0a2313b,
-StacksFrontier/Homology/TwoTermComplex/DeterminantFunctor.lean, under
-Apache License 2.0. That file lists no individual author or copyright notice.
-Modification: use the actual native finite-projective presentation category,
-the literal exterior-annihilator determinant and the source-normalized
-transport system. The ordinary functor and every presentation/derived-map
-comparison are constructed from that fixed data, with proofs below.
+Portions of this file are adapted from AxiomMath/Stacks (https://github.com/AxiomMath/Stacks),
+revision c496df0d9beea9deaeabcea8492605f9a0a2313b, licensed under the Apache License,
+Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0). The source files carry no
+individual copyright or author notice.
+
+* `StacksFrontier/Homology/TwoTermComplex/DeterminantFunctor.lean`
+
+Modifications: the native finite-projective presentation category, the literal
+exterior-annihilator determinant and the source-normalized transport system are used; the
+functor and all presentation and derived-map comparisons are constructed from that data.
 -/
 module
 

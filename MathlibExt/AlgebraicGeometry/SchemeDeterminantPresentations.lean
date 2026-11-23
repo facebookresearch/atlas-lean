@@ -7,14 +7,17 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Source integration from AxiomMath/Stacks
-c496df0d9beea9deaeabcea8492605f9a0a2313b, under Apache License 2.0:
-StacksFrontier/AlgebraicGeometry/DeterminantTwoTermGlobal/Local.lean and
-StacksFrontier/Homology/TwoTermComplex/DeterminantFunctor.lean.
-These files list no individual author or copyright notice. Adaptation:
-use actual native finite-projective cochain complexes on every affine test
-scheme, actual native derived tilde and scheme pullback, and the source's
-local presentation criterion for perfect Tor amplitude [-1,0].
+Portions of this file are adapted from AxiomMath/Stacks (https://github.com/AxiomMath/Stacks),
+revision c496df0d9beea9deaeabcea8492605f9a0a2313b, licensed under the Apache License,
+Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0). The source files carry no
+individual copyright or author notice.
+
+* `StacksFrontier/AlgebraicGeometry/DeterminantTwoTermGlobal/Local.lean`
+* `StacksFrontier/Homology/TwoTermComplex/DeterminantFunctor.lean`
+
+Modifications: native finite-projective cochain complexes on every affine test scheme, the
+native derived tilde and scheme pullback, and the source's local presentation criterion for
+perfect Tor amplitude [-1,0] are used.
 -/
 module
 
