@@ -12,7 +12,7 @@ public import Mathlib.CategoryTheory.Linear.LinearFunctor
 
 /-! # Linearity of a left adjoint to a linear functor
 
-The ordinary unit naturality proves the linearity on actual morphisms.
+The proof uses the naturality of the unit.
 This lemma introduces no chosen comparison or linearity assumption on the
 left adjoint.
 -/
@@ -28,7 +28,7 @@ variable (R : Type*) [Ring R]
   [Preadditive C] [Preadditive D] [Linear R C] [Linear R D]
   {F : C ⥤ D} {G : D ⥤ C}
 
-/-- A left adjoint to a linear functor is linear, by its actual unit. -/
+/-- A left adjoint of an `R`-linear functor is `R`-linear. -/
 theorem linear_leftAdjoint (adj : F ⊣ G) [Functor.Linear R G] :
     Functor.Linear R F where
   map_smul f r := by
