@@ -32,7 +32,7 @@ from `⊕ᵢ Xᵢ[rᵢ]` to `⊕ᵢ Xᵢ[rᵢ + n]`.  It is closed, has the diag
 `MathlibExt.DGSource.DGAdditiveClosure.fromShift` of degree `n` as its inverse, and is natural up to the
 Koszul sign, `f ≫ σ_N = (-1)^(n * p) • σ_M ≫ f⟦n⟧` for `f` of degree `p`.  These are the
 comparison morphisms of shifts of twisted objects (see
-`TauCeti/CategoryTheory/DG/Twisted/Shift.lean`).
+`MathlibExt/CategoryTheory/DGSourceMore/DGTwistedShift.lean`).
 
 A DG functor `F : C ⥤ D` induces a DG functor between the additive closures of the shift closures,
 sending `⊕ᵢ Xᵢ[rᵢ]` to `⊕ᵢ (F Xᵢ)[rᵢ]`.  It commutes with shifting every summand and preserves the

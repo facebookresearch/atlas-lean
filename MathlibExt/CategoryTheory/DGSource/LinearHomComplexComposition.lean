@@ -37,20 +37,20 @@ is Keller's `m₂ (g, f) = g ∘ f` convention.
 Mathlib's `CategoryTheory.EnrichedCategory` instead asks for
 `Hom(X, Y) ⊗ Hom(Y, Z) ⟶ Hom(X, Z)`; converting between the two orders is exactly the Koszul
 braiding of `CochainComplex (ModuleCat R) ℤ`, built in
-`MathlibExt.DGSource/Algebra/Homology/Monoidal/Braiding.lean` and imported here.  The `EnrichedCategory`
+`MathlibExt/CategoryTheory/DGSource/CochainBraiding.lean` and imported here.  The `EnrichedCategory`
 instance and its associativity and unit axioms in Mathlib's factor order are constructed in
-`MathlibExt.DGSource/Algebra/Homology/LinearHomComplex/Enrichment.lean`.
+`MathlibExt/CategoryTheory/DGSource/LinearHomComplexEnrichment.lean`.
 
 The monoidal structure used here is Mathlib's `HomologicalComplex.monoidalCategory` at
 `ComplexShape.up ℤ`; nothing is re-totalized.  The component equations for the whiskerings, the
 unitors and the associator, which Mathlib does not state, are taken from
-`MathlibExt.DGSource/Algebra/Homology/Monoidal/Summand.lean` rather than repeated here.  Its
+`MathlibExt/CategoryTheory/DGSource/CochainTensorSummands.lean` rather than repeated here.  Its
 colimit-preservation hypotheses are discharged
 by Mathlib's instances for a braided monoidal closed category, so
 `Mathlib.CategoryTheory.Monoidal.Closed.Braided`, which that file imports, is what makes the
 tensor product of cochain complexes exist at all.  Note that `ModuleCat.{v} R` is monoidal only for
 a commutative `R : Type v`, so this file, unlike
-`MathlibExt.DGSource/Algebra/Homology/LinearHomComplex/Basic.lean`, requires `CommRing R` and ties the ring to
+`MathlibExt/CategoryTheory/DGSource/LinearHomComplex.lean`, requires `CommRing R` and ties the ring to
 the morphism universe of `C`.
 
 ## Main definitions

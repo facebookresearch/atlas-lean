@@ -26,7 +26,7 @@ has the twists of `Q` and of the shift `P⟦1⟧` on the diagonal and, in the bl
 `Q`, the degree-one morphism `P⟦1⟧ ⟶ P ⟶ Q` obtained by composing `u` with the comparison
 morphism `MathlibExt.DGSource.DGTwistedObject.fromShift` (`MathlibExt.DGSource.DGTwistedObject.coneMorphism`).  It is the
 extension of `P⟦1⟧` by `Q` along this morphism (see
-`TauCeti/CategoryTheory/DG/Twisted/Extension.lean`), which supplies its Maurer–Cartan equation,
+`MathlibExt/CategoryTheory/DGSourceMore/DGTwistedExtension.lean`), which supplies its Maurer–Cartan equation,
 the closed degree-zero morphisms `Q ⟶ cone u ⟶ P⟦1⟧` with zero composite, and their graded
 splitting.  In particular, a closed morphism `f : X ⟶ Y` of `C`, viewed as a morphism of one-term
 twisted objects `X[0] ⟶ Y[0]`, has a cone whose underlying object is `Y[0] ⊕ X[1]`.

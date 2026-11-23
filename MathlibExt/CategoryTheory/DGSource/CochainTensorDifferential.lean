@@ -40,7 +40,7 @@ whose factor of degree zero it would differentiate.
 
 `Mathlib.CategoryTheory.Monoidal.Closed.Braided` is imported for the colimit-preservation
 instances that make the tensor product of cochain complexes exist at all, exactly as in
-`MathlibExt.DGSource/Algebra/Homology/Monoidal/Braiding.lean`.
+`MathlibExt/CategoryTheory/DGSource/CochainBraiding.lean`.
 -/
 
 public section
