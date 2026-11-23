@@ -18,6 +18,7 @@ public import Mathlib.Topology.Order.OrderClosed
 public import Mathlib.LinearAlgebra.AffineSpace.AffineMap
 public import Mathlib.Data.Real.Sqrt
 public import Mathlib.Tactic.NormNum.RealSqrt
+public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import CSLibExt.Planning.MotionPlanning.ConfigurationSpace
 public import CSLibExt.Planning.MotionPlanning.TwoSquares
 
@@ -48,11 +49,7 @@ Lower-bound method: a uniform potential `H` plus per-step bonuses for leaving
 Imports: narrow `Mathlib` modules plus the configuration-space and
 two-squares providers.
 
-Visibility adjacency is intentionally reflexive on `G`: since
-`segment ℝ a a = {a}`, `VisAdj a a` holds whenever `a ∈ G`, so `IsWalk`
-admits stuttering vertices.  A stutter step contributes `dist a a = 0`, so
-admitting stutters does not change the least walk length, and the attaining
-walk `[s, D, P, t]` is stutter-free.
+the visibility graph visGraph is loopless (adjacency requires distinct vertices); VisAdj remains the underlying geometric segment relation.
 -/
 
 namespace Cslib.Planning.MotionPlanning.TwoSquaresGraph
@@ -66,7 +63,6 @@ def open1 : Set plane := {p | 0 < p 0 ∧ p 0 < 1 ∧ 0 < p 1 ∧ p 1 < 1}
 def open2 : Set plane := {p | 2 < p 0 ∧ p 0 < 3 ∧ 0 < p 1 ∧ p 1 < 1}
 
 -- Vertices (`!₂[x, y]` denotes `WithLp.toLp 2 ![x, y]`; written explicitly).
-
 /-- Corner `(1, 0)`. -/
 def B : plane := WithLp.toLp 2 ![1, 0]
 
@@ -105,6 +101,12 @@ noncomputable def coord : Vtx → plane
   | .P => cTopR
   | .Q => Q
 
+/-- Loopless visibility graph on vertices: distinct endpoints with visible coordinates. -/
+def visGraph : SimpleGraph Vtx where
+  Adj a b := a ≠ b ∧ VisAdj (coord a) (coord b)
+  symm := ⟨fun _ _ h => ⟨fun he => h.1 he.symm, VisAdj.symm h.2⟩⟩
+  loopless := ⟨fun _ h => h.1 rfl⟩
+
 /-- Uniform potential used for the lower bound. -/
 private noncomputable def H (x : Vtx) : ℝ := (3 - (coord x) 0) + Real.sqrt 5 / 2
 
@@ -126,23 +128,11 @@ noncomputable def polyLen : List Vtx → ℝ
   | [_] => 0
   | a :: b :: rest => dist (coord a) (coord b) + polyLen (b :: rest)
 
-/-- A stuttering step contributes zero length. -/
-theorem polyLen_stutter (a : Vtx) (l : List Vtx) : polyLen (a :: a :: l) = polyLen (a :: l) := by
-  cases l <;> simp [polyLen, dist_self]
-
-
-
-/-- Visibility adjacency is reflexive on `G`: the degenerate segment is a singleton. -/
-theorem VisAdj.refl {a : plane} (ha : a ∈ G) : VisAdj a a := by
-  unfold VisAdj
-  rw [segment_same]
-  exact Set.singleton_subset_iff.mpr ha
-
 /-- Consecutive-vertex adjacency along a list. -/
 def ChainAdj : List Vtx → Prop
   | [] => True
   | [_] => True
-  | a :: b :: rest => VisAdj (coord a) (coord b) ∧ ChainAdj (b :: rest)
+  | a :: b :: rest => visGraph.Adj a b ∧ ChainAdj (b :: rest)
 
 /-- Accumulated out-of-`s` bonus along a list. -/
 private noncomputable def outTotal : List Vtx → ℝ
@@ -179,7 +169,6 @@ private lemma add_c0 (x y : plane) : (x + y) 0 = x 0 + y 0 := by
       = (EuclideanSpace.proj (0 : Fin 2)) x + (EuclideanSpace.proj (0 : Fin 2)) y :=
     map_add _ _ _
   simpa only [EuclideanSpace.coe_proj] using h
-
 private lemma add_c1 (x y : plane) : (x + y) 1 = x 1 + y 1 := by
   have h : (EuclideanSpace.proj (1 : Fin 2)) (x + y)
       = (EuclideanSpace.proj (1 : Fin 2)) x + (EuclideanSpace.proj (1 : Fin 2)) y :=
@@ -1080,10 +1069,10 @@ private lemma walk_lower_aux (l : List Vtx) :
       exact le_rfl
     | cons b rest =>
       cases hhead
-      have hvis : VisAdj (coord a) (coord b) ∧ ChainAdj (b :: rest) := hchain
+      have hvis : visGraph.Adj a b ∧ ChainAdj (b :: rest) := hchain
       obtain ⟨hvis, hchain'⟩ := hvis
       have ih' := ih hchain' hlast b rfl
-      have hstep := step_le a b hvis
+      have hstep := step_le a b hvis.2
       simp only [polyLen, bonusTotal]
       linarith [hstep, ih']
 
@@ -1103,7 +1092,8 @@ private lemma walk_lower (l : List Vtx) (hw : IsWalk l) :
 private lemma upper_valid : IsWalk [.s, .D, .P, .t] := by
   refine ⟨rfl, rfl, ?_⟩
   simp only [ChainAdj]
-  exact ⟨adj_s_D, adj_D_P, adj_P_t, trivial⟩
+  exact ⟨⟨by decide, adj_s_D⟩, ⟨by decide, adj_D_P⟩, ⟨by decide, adj_P_t⟩,
+    trivial⟩
 
 private lemma upper_weight : polyLen [.s, .D, .P, .t] = 3 + Real.sqrt 5 := by
   simp only [polyLen, dist_sD, dist_DP, dist_Pt]

@@ -26,28 +26,22 @@ example : polyLen [.s, .D, .P, .t] = 3 + Real.sqrt 5 := by
   ring
 
 theorem backtrack_walk : IsWalk [.s, .A, .s, .D, .P, .t] :=
-  ⟨rfl, rfl, adj_s_A, VisAdj.symm adj_s_A, adj_s_D, adj_D_P, adj_P_t, trivial⟩
+  ⟨rfl, rfl, ⟨by decide, adj_s_A⟩, ⟨by decide, VisAdj.symm adj_s_A⟩,
+    ⟨by decide, adj_s_D⟩, ⟨by decide, adj_D_P⟩, ⟨by decide, adj_P_t⟩, trivial⟩
 
 example : 3 + Real.sqrt 5 ≤ polyLen [.s, .A, .s, .D, .P, .t] :=
   min_eq.2 ⟨_, backtrack_walk, rfl⟩
 
-example : ¬ IsWalk [.s, .C, .t] := fun h => not_adj_s_C h.2.2.1
+example : ¬ IsWalk [.s, .C, .t] := fun h => not_adj_s_C h.2.2.1.2
 
-example : VisAdj (coord .s) (coord .s) := by
-  simp only [coord]
-  exact VisAdj.refl VisibilityInstance.s_mem_G
+example : ¬ visGraph.Adj .s .s := visGraph.loopless.irrefl _
 
-example : IsWalk [.s, .s, .D, .P, .t] := by
-  refine ⟨rfl, rfl, ?_, adj_s_D, adj_D_P, adj_P_t, trivial⟩
-  simp only [coord]
-  exact VisAdj.refl VisibilityInstance.s_mem_G
-
-example : polyLen [.s, .s, .D, .P, .t] = 3 + Real.sqrt 5 := by
-  simp only [polyLen, dist_self, dist_sD, dist_DP, dist_Pt]
-  ring
+example : ¬ IsWalk [.s, .s, .D, .P, .t] :=
+  fun h => visGraph.loopless.irrefl _ h.2.2.1
 
 #print axioms min_eq
 #print axioms adj_s_D
 #print axioms adj_D_P
 
 end Cslib.Planning.MotionPlanning.TwoSquaresGraph
+
