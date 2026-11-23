@@ -46,15 +46,17 @@ namespace MathlibExt.Combinatorics.SimpleGraph.GirthFiveExtremalValuesWanted
 open Finset _root_.SimpleGraph
 
 open Classical in
-/-- `ex(n; {C₃, C₄})`: the largest number of edges of a graph on `Fin n` whose
-extended girth is at least `5`, that is, with no triangle and no four-cycle
-(OEIS A006856). The extended girth `egirth` is `⊤` on acyclic graphs, so the
-empty graph always qualifies. -/
+/-- **Girth-five extremal number.** For a natural number $n$, $\mathrm{ex}(n; \{C_3, C_4\})$
+is the largest number of edges of a simple graph on $n$ vertices whose girth is at least $5$,
+that is, which contains no triangle and no four-cycle (OEIS A006856). An acyclic graph has
+infinite girth, so the empty graph always qualifies. -/
 noncomputable def girthFiveExtremalNumber (n : ℕ) : ℕ :=
   (univ.filter fun G : SimpleGraph (Fin n) => 5 ≤ G.egirth).sup (fun G => #G.edgeFinset)
 
-/-- `ex(n; {C₃, C₄})` for `1 ≤ n ≤ 20`:
-`0, 1, 2, 3, 5, 6, 8, 10, 12, 15, 16, 18, 21, 23, 26, 28, 31, 34, 38, 41`.
+/-- **Girth-five extremal numbers up to twenty vertices.** For $n = 1, 2, \dots, 20$ the
+girth-five extremal numbers $\mathrm{ex}(n; \{C_3, C_4\})$, the largest numbers of edges of a
+simple graph on $n$ vertices that contains no triangle and no four-cycle, are, in order,
+$0, 1, 2, 3, 5, 6, 8, 10, 12, 15, 16, 18, 21, 23, 26, 28, 31, 34, 38, 41$.
 
 Source: D. K. Garnick, Y. H. H. Kwong, and F. Lazebnik, *Extremal graphs without
 three-cycles or four-cycles*, J. Graph Theory 17 (1993), 633–645 (`n ≤ 24`);
@@ -64,8 +66,12 @@ public theorem_wanted girthFiveExtremalNumber_one_to_twenty :
     (List.range 20).map (fun i => girthFiveExtremalNumber (i + 1)) =
       [0, 1, 2, 3, 5, 6, 8, 10, 12, 15, 16, 18, 21, 23, 26, 28, 31, 34, 38, 41]
 
-/-- `ex(50; {C₃, C₄}) = 175`: the Hoffman–Singleton graph attains the Moore-type
-bound `(n / 2) √(n - 1)` for graphs of girth at least `5`.
+/-- **Girth-five extremal number on fifty vertices.** The girth-five extremal number
+$\mathrm{ex}(50; \{C_3, C_4\})$, the largest number of edges of a simple graph on $50$
+vertices that contains no triangle and no four-cycle, equals $175$.
+
+For graphs on $n$ vertices of girth at least $5$, the Hoffman–Singleton graph attains the
+Moore-type bound $\frac{n}{2} \sqrt{n - 1}$ on the number of edges, with $n = 50$.
 
 Source: A. J. Hoffman and R. R. Singleton, *On Moore graphs with diameters 2
 and 3*, IBM J. Res. Develop. 4 (1960), 497–504; OEIS A006856; listed in

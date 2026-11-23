@@ -665,11 +665,6 @@ private theorem lw_exists_int_poly_eval_zero_ne_zero_of_isIntegral {ι : Type*}
     rw [hmap]
     exact Finset.prod_eq_zero himem hQi
 
-/-- Helper: the coercion `K → ℂ` is injective. -/
-private theorem lw_coe_injective {K : IntermediateField ℚ ℂ} :
-    Function.Injective ((↑) : K → ℂ) :=
-  Subtype.coe_injective
-
 open Classical in
 /-- Auxiliary integer polynomial vanishing at the nonzero points of `S`
 after scaling by `d`, with nonzero constant term. -/
@@ -702,7 +697,7 @@ private theorem lw_aux_poly {K : IntermediateField ℚ ℂ}
         simp [map_mul, Polynomial.aeval_X, eq_intCast]
       rw [Polynomial.aeval_comp, hq]
     rw [hae]
-    have hxC : ((x : K) : ℂ) ≠ 0 := fun h => hx0 (lw_coe_injective h)
+    have hxC : ((x : K) : ℂ) ≠ 0 := fun h => hx0 (Subtype.coe_injective h)
     have hne : (d : ℂ) * ((⟨x, hx⟩ : ↥S).val : ℂ) ≠ 0 :=
       mul_ne_zero (Int.cast_ne_zero.mpr hd) hxC
     exact hF₀van ⟨x, hx⟩ hne
@@ -1233,7 +1228,7 @@ private theorem lw_false_of_data {K : IntermediateField ℚ ℂ}
         Finset.mem_singleton]
       constructor
       · intro hi
-        exact Subtype.ext (lw_coe_injective hi)
+        exact Subtype.ext (Subtype.coe_injective hi)
       · intro hi
         subst hi
         rfl
@@ -1260,8 +1255,10 @@ private theorem lw_false_of_data {K : IntermediateField ℚ ℂ}
   exact lw_arith_core (fun x : ↥S => w (x : K)) (fun x : ↥S => (((x : K)) : ℂ))
     d hd h1 h2 h3 h4'
 
-/-- The universe-polymorphic form of `lindemann_weierstrass`,
-without a decidable-equality assumption. -/
+/-- **Lindemann–Weierstrass theorem (universe-polymorphic form).** Let $\iota$ be a finite index
+set, let $\alpha_i$ ($i \in \iota$) be pairwise distinct complex numbers that are algebraic over
+$\mathbb{Q}$, and let $\beta_i$ ($i \in \iota$) be complex numbers that are algebraic over
+$\mathbb{Q}$ and not all zero. Then $\sum_{i \in \iota} \beta_i e^{\alpha_i} \neq 0$. -/
 public theorem lindemann_weierstrass' :
     ∀ {ι : Type*} [Fintype ι] (α : ι → ℂ),
       Function.Injective α → (∀ i, IsAlgebraic ℚ (α i)) →
@@ -1280,12 +1277,16 @@ public theorem lindemann_weierstrass' :
   · exact hsum
 
 /--
-If `α : ι → ℂ` is injective over a `Fintype ι` with `∀ i, IsAlgebraic ℚ (α i)`, then for any
-algebraic coefficients `β : ι → ℂ` not all zero, `∑ i, β i * Complex.exp (α i) ≠ 0`. Source: F.
-von Lindemann 1882 and K. Weierstrass, Zu Lindemann's Abhandlung Über die Ludolph'sche Zahl, 1885;
-textbook in Baker, Transcendental Number Theory
+**Lindemann–Weierstrass theorem.** Let $\iota$ be a finite index set, let $\alpha_i$
+($i \in \iota$) be pairwise distinct complex numbers that are algebraic over $\mathbb{Q}$, and let
+$\beta_i$ ($i \in \iota$) be complex numbers that are algebraic over $\mathbb{Q}$ and not all
+zero. Then $\sum_{i \in \iota} \beta_i e^{\alpha_i} \neq 0$.
 
 Proves `Wanted` entry `lindemann_weierstrass`.
+
+Source: F.
+von Lindemann 1882 and K. Weierstrass, Zu Lindemann's Abhandlung Über die Ludolph'sche Zahl, 1885;
+textbook in Baker, Transcendental Number Theory
 -/
 public theorem lindemann_weierstrass :
     ∀ {ι : Type} [Fintype ι] [DecidableEq ι] (α : ι → ℂ),

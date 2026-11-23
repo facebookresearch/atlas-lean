@@ -47,18 +47,25 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A 0/1 knapsack instance: items as (weight, value) pairs, capacity, target value. -/
+/-- **Knapsack instances.** A 0/1 knapsack instance is a triple $(I, C, T)$ of a list $I$ of items,
+each a pair $(w, v)$ of natural numbers giving its weight $w$ and value $v$, a natural-number
+capacity $C$, and a natural-number target value $T$. -/
 abbrev KnapsackInstance := List (ℕ × ℕ) × ℕ × ℕ
 
-/-- A selection of item occurrences satisfying the weight and value bounds. The empty
-selection is permitted. -/
+/-- **Feasible knapsack instances.** A knapsack instance $(I, C, T)$, with item list $I$, capacity
+$C$ and target value $T$, is feasible when some subsequence of $I$, possibly empty, has total
+weight at most $C$ and total value at least $T$. Repeated items in $I$ are distinct occurrences
+that can be selected separately. -/
 def KnapsackFeasible
     (i : KnapsackInstance) : Prop :=
   ∃ chosen : List (ℕ × ℕ), chosen.Sublist i.1 ∧
     (chosen.map Prod.fst).sum ≤ i.2.1 ∧ i.2.2 ≤ (chosen.map Prod.snd).sum
 
 open Classical in
-/-- KNAPSACK as a decision problem over bitstrings. -/
+/-- **The KNAPSACK decision problem.** KNAPSACK is the decision problem that accepts a bitstring
+$x$ exactly when $x$ decodes, under the canonical bitstring encoding, to a knapsack instance
+$(I, C, T)$ for which some subsequence of the item list $I$, possibly empty, has total weight at
+most $C$ and total value at least $T$. Bitstrings that do not decode are rejected. -/
 noncomputable def knapsackDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -66,7 +73,10 @@ noncomputable def knapsackDec :
   | some i => decide (KnapsackFeasible i)
   | none => false
 
-/-- **KNAPSACK is NP-complete.** Source: M. R. Garey and D. S. Johnson, *Computers and
+/-- **KNAPSACK is NP-complete.** The KNAPSACK decision problem is in NP, and every decision
+problem in NP has a polynomial-time many-one reduction to it.
+
+Source: M. R. Garey and D. S. Johnson, *Computers and
 Intractability: A Guide to the Theory of NP-Completeness* (1979), KNAPSACK (MP9). -/
 public theorem_wanted knapsack_npComplete :
     knapsackDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧

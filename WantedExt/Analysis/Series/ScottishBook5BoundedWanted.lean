@@ -19,49 +19,62 @@ public import Mathlib.Topology.Instances.Real.Lemmas
 
 namespace MathlibExt.Analysis.Series.ScottishBook5BoundedWanted
 
-/-- An index sequence has asymptotic density 1, encoded by
-`s n / n → 1` for the strictly increasing index sequence `s`. For a
-strictly increasing sequence of naturals this ratio condition is
-equivalent to the usual counting definition of density 1. -/
+/-- **Index sequences of density one.** A sequence $s \colon \mathbb{N} \to \mathbb{N}$ has
+density one when it is strictly increasing and $s(n+1)/(n+1) \to 1$ as $n \to \infty$.
+
+For a strictly increasing sequence of natural numbers this ratio condition is equivalent to the
+usual counting definition of density $1$ for its set of values. -/
 def HasDensityOne (s : ℕ → ℕ) : Prop :=
   StrictMono s ∧
   Filter.Tendsto (fun n => ((s (n + 1) : ℝ)) / ((n : ℝ) + 1)) Filter.atTop (nhds 1)
 
-/-- A sequence is asymptotically convergent to `S` if it has a
-density-1 subsequence converging to `S`. This is the typescript's
-definition, verbatim in content. -/
+/-- **Asymptotically convergent sequences.** A real sequence $(x_n)_{n \in \mathbb{N}}$ is
+asymptotically convergent to a real number $S$ when there is an index sequence $s$ of density
+one such that $x_{s(n)} \to S$ as $n \to \infty$.
+
+Source: this is the typescript's definition, verbatim in content. -/
 def AsymptoticallyConvergent (x : ℕ → ℝ) (S : ℝ) : Prop :=
   ∃ s : ℕ → ℕ, HasDensityOne s ∧ Filter.Tendsto (x ∘ s) Filter.atTop (nhds S)
 
-/-- A matrix method `(a i k)` sums `x` to `S` if every row series
-converges and the row sums tend to `S`. -/
+/-- **Summation by a matrix method.** A real matrix $(a_{ik})_{i,k \in \mathbb{N}}$ sums a real
+sequence $(x_k)_{k \in \mathbb{N}}$ to a real number $S$ when for every row $i$ the series
+$\sum_k a_{ik} x_k$ converges unconditionally (equivalently, absolutely) and the row sums
+$\sum_k a_{ik} x_k$ tend to $S$ as $i \to \infty$. -/
 def MatrixSums (a : ℕ → ℕ → ℝ) (x : ℕ → ℝ) (S : ℝ) : Prop :=
   (∀ i : ℕ, Summable (fun k => a i k * x k)) ∧
   Filter.Tendsto (fun i => ∑' k, a i k * x k) Filter.atTop (nhds S)
 
-/-- A matrix method is permanent (regular), i.e. a Toeplitz method in
-the summability sense: it sums every convergent sequence to its limit.
-"Toeplitz method" is pinned to this standard reading; the typescript
-does not define it, and the Silverman-Toeplitz conditions characterise
-exactly these methods. -/
+/-- **Permanent matrix methods.** A real matrix $(a_{ik})_{i,k \in \mathbb{N}}$ is a permanent
+(regular, or Toeplitz) method when it sums every convergent real sequence to its limit: for every
+real sequence $x$ and real number $S$ with $x_n \to S$, the matrix sums $x$ to $S$.
+
+The Silverman–Toeplitz conditions characterise exactly these methods.
+
+Source: "Toeplitz method" is pinned to this standard reading; the typescript does not define it. -/
 def IsPermanent (a : ℕ → ℕ → ℝ) : Prop :=
   ∀ x : ℕ → ℝ, ∀ S : ℝ, Filter.Tendsto x Filter.atTop (nhds S) → MatrixSums a x S
 
-/-- A sequence is bounded if its terms are uniformly bounded in
-absolute value. -/
+/-- **Bounded sequences.** A real sequence $(x_n)_{n \in \mathbb{N}}$ is bounded when there is a
+real number $B$ with $|x_n| \le B$ for all $n$. -/
 def IsBounded (x : ℕ → ℝ) : Prop :=
   ∃ B : ℝ, ∀ n : ℕ, |x n| ≤ B
 
-/-- Mazur's Problem 5 (bounded case): some permanent matrix method sums exactly the bounded asymptotically convergent sequences. -/
+/-- **The bounded case of Scottish Book Problem 5.** There is a real matrix
+$(a_{ik})_{i,k \in \mathbb{N}}$ that is a permanent matrix method such that for every bounded real
+sequence $x$ and every real number $S$, the matrix sums $x$ to $S$ if and only if $x$ is
+asymptotically convergent to $S$. -/
 def ScottishBookProblem5Claim : Prop :=
   ∃ a : ℕ → ℕ → ℝ, IsPermanent a ∧
     ∀ x : ℕ → ℝ, IsBounded x →
       ∀ S : ℝ, MatrixSums a x S ↔ AsymptoticallyConvergent x S
 
 
-/-- Mazur's Problem 5 (bounded-sequences question) is false: no permanent
-(Toeplitz) matrix method is equivalent to asymptotic convergence on
-bounded sequences. Source: the typescript itself, Ad 5 (Mazur),
+/-- **Negative answer to Scottish Book Problem 5 for bounded sequences.** There is no real matrix
+$(a_{ik})_{i,k \in \mathbb{N}}$ that is a permanent matrix method such that for every bounded real
+sequence $x$ and every real number $S$, the matrix sums $x$ to $S$ if and only if $x$ is
+asymptotically convergent to $S$.
+
+Source: the typescript itself, Ad 5 (Mazur),
 PDF p.5 / printed p.2, verified against the typescript page.
 Ad 5 (2) states verbatim: "If a method (a_{ik}) sums all the
 convergent sequences and every bounded sequence summable by the

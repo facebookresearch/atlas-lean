@@ -1,0 +1,3 @@
+# Neighbor joining recovers a tree within a radius
+
+For a graph $G$ with a map $\iota$ from a finite set $X$ of taxa to its vertices, a dissimilarity $d$ and a real $r$, neighbor joining recovers the tree within radius $r$ of $d$ if for every symmetric $D$ with $D(x, x) = 0$ and $|D(x, y) - d(x, y)| < r$ for distinct $x, y$, every [run of neighbor joining](../neighbor-joining/njrun.md) on $D$ reaching a cluster set $S$ with $|S| \le 3$ and formed clusters $C$ satisfies: for every $A \subseteq X$, $A \in C$ or $X \setminus A \in C$ if and only if $A$ is the [$a$-side](../neighbor-joining/side.md) of an edge $ab$ with neither endpoint a taxon vertex.

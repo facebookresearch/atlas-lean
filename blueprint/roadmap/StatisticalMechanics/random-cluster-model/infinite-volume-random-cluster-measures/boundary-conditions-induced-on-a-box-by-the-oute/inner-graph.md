@@ -1,0 +1,3 @@
+# Inner open graph with the induced wiring
+
+Let $d, n \in \mathbb{N}$, let $\Lambda_m = \{-m, \dots, m\}^d$ carry its nearest-neighbour edges (so $\Lambda_n \subseteq \Lambda_{n+1}$), and let $\psi$ be an assignment of open/closed states to the unordered pairs of vertices of $\Lambda_{n+1}$ (the outer configuration), and $\omega$ one for the unordered pairs of vertices of $\Lambda_n$. The inner graph is the graph on $\Lambda_n$ whose edges are the edges of $\Lambda_n$ that are open in $\omega$ together with the edges of the [induced wiring](induced-wiring.md) $W_\psi$ on $\Lambda_n$ (distinct vertices of $\Lambda_n$ joined by a path in the outer graph $O_\psi$).
