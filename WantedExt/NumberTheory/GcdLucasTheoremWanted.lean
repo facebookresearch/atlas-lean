@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Real.Irrational
+public import MathlibExt.NumberTheory.GcdPowAddNegOnePow
 
 /-!
 # Greatest common divisors of radical-expansion coefficients and Lucas's theorem
@@ -64,17 +65,6 @@ public theorem_wanted gcd_radical_expansion_coeffs_eq_one {N u v : ℕ}
       ∑ i : Fin N, (a n i : ℝ) * ((v : ℝ) ^ (1 / (N : ℝ))) ^ (i : ℕ))
     (n : ℕ) (hn : 1 ≤ n) :
     Finset.univ.gcd (a n) = 1
-
-/-- **$u^N + (-1)^{N+1} v$ is coprime to $u$ and to $v$.** Let $u, v$ be coprime positive integers
-and let $N \ge 1$. Then $\gcd(u^N + (-1)^{N+1} v, u) = 1$ and $\gcd(u^N + (-1)^{N+1} v, v) = 1$.
-
-Source: John Ferdinands and Timothy Ferdinands, *Greatest Common Divisors and Lucas's
-Theorem*, Journal of Integer Sequences 28 (2025), Article 25.2.2, Lemma 5
-(`jis-2025-25.2.2-lem-5`). -/
-public theorem_wanted gcd_pow_add_neg_one_pow_mul_eq_one {N u v : ℕ} (hN : 1 ≤ N)
-    (hu : 0 < u) (hv : 0 < v) (huv : u.Coprime v) :
-    Int.gcd ((u : ℤ) ^ N + (-1) ^ (N + 1) * v) u = 1 ∧
-      Int.gcd ((u : ℤ) ^ N + (-1) ^ (N + 1) * v) v = 1
 
 /-- **$p$ divides $\binom{p^r a}{p^s b}$ when $r > s$.** Let $p$ be a prime, let $r > s$ be
 natural numbers, and let $a, b$ be natural numbers not divisible by $p$. Then

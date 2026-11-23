@@ -14,6 +14,7 @@ public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.Algebra.Order.Field.Rat
 public import MathlibExt.NumberTheory.CoveringSystem
+public import MathlibExt.NumberTheory.CoveringSystem.TrifonovCovering
 
 /-!
 # Distinct covering systems with minimum modulus five, six and seven
@@ -26,6 +27,9 @@ A covering system is a finite set of residue classes `a mod m` covering `ℤ`; i
 when no two classes share a modulus (`Set.InjOn Prod.snd`). "The smallest modulus is `m`" means
 every modulus is `≥ m` and some modulus equals `m`; the least common multiple of the moduli is
 `classes.lcm Prod.snd`.
+
+Theorem 2, `exists_distinct_covering_min_six_max_168`, is proved in
+`MathlibExt.NumberTheory.CoveringSystem.TrifonovCovering`, which this module imports.
 -/
 
 namespace MetaMathlibExt
@@ -44,19 +48,6 @@ public theorem_wanted exists_modulus_ge_108_of_distinct_covering_min_five
     (classes : Finset (ℤ × ℕ)) (hcov : Int.IsCoveringSystem classes)
     (hdist : Set.InjOn Prod.snd (classes : Set (ℤ × ℕ))) (hmin : ∀ c ∈ classes, 5 ≤ c.2)
     (hfive : ∃ c ∈ classes, c.2 = 5) : ∃ c ∈ classes, 108 ≤ c.2
-
-/-- **A distinct covering system with moduli from 6 to 168.** There is a distinct covering
-system, that is, a finite set of congruences $x \equiv r \pmod m$ with $r \in \mathbb{Z}$,
-$m \in \mathbb{N}$ and no two with the same modulus, such that every integer satisfies at least
-one of them, whose moduli all lie between $6$ and $168$ and include both $6$ and $168$.
-
-Source: Jonah Klein, *On a Conjecture of Krukenberg and a Problem of Dalton and Trifonov*,
-INTEGERS 26 (2026), Article A38, Theorem 2 (`integers-2026-A38-thm-2`); the paper's witness is
-due to Ognian Trifonov. -/
-public theorem_wanted exists_distinct_covering_min_six_max_168 :
-    ∃ classes : Finset (ℤ × ℕ), Int.IsCoveringSystem classes ∧
-      Set.InjOn Prod.snd (classes : Set (ℤ × ℕ)) ∧ (∀ c ∈ classes, 6 ≤ c.2 ∧ c.2 ≤ 168) ∧
-      (∃ c ∈ classes, c.2 = 6) ∧ ∃ c ∈ classes, c.2 = 168
 
 /-- **Least common multiple of a covering system with minimum modulus five.** Let $C$ be a
 distinct covering system: a finite set of congruences $x \equiv r \pmod m$ with
