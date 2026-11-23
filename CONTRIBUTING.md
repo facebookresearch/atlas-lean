@@ -281,10 +281,11 @@ is advisory CI, not a standalone merge barrier.
 A graph PR changes the ATLAS wiki; its content follows the
 [graph rules](docs/BLUEPRINT.md#graph-rules). When a pull request's only wiki
 changes are what `scripts/sync_wiki.py declarations` writes for its own
-declarations, as the `graph sync` check reports, it needs no issue and, unless
-GitHub requires one, no code owner's approval; Codex still reviews it. Any
-other wiki change, a new place in `scripts/taxonomy.json` included, makes it a
-graph PR in full.
+declarations, as the `graph sync` check reports, it needs no issue for them,
+and they need no code owner's approval unless GitHub requires one; Codex still
+reviews them. Any other code-owned file the pull request changes, the sync's
+own code included, still needs a code owner's approval. Any other wiki change,
+a new place in `scripts/taxonomy.json` included, makes it a graph PR in full.
 
 - **Keep it under 3,000 changed files and name its issue** (`Closes #…` or
   `Part of #…`). GitHub shows at most 3,000 files in one diff.
