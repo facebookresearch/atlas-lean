@@ -1,10 +1,10 @@
 # Import optimizer test data
 
 `reference_actual037.tar.gz` is a recorded replay fixture for
-`scripts/test_reference_imports.py` and
-`scripts/test_import_optimizer_snapshot_inputs.py`. It holds native outputs
-saved from one earlier `lake build` of a single statement module, plus the
-metadata that ties them together. The tests read it without running Lean.
+`scripts/import_optimizer/test_reference_imports.py` and
+`scripts/import_optimizer/test_import_optimizer_snapshot_inputs.py`. It holds
+native outputs saved from one earlier `lake build` of a single statement module,
+plus the metadata that ties them together. The tests read it without running Lean.
 
 ## What it is not
 

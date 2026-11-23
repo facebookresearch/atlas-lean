@@ -117,15 +117,14 @@ sources compile; see [testdata/README.md](testdata/README.md).
 
 ## Tests
 
-The Python regressions run without Lean or downloads and are part of
-`scripts/check.sh preflight`. They execute small subprocess fixtures, so `TMPDIR`
-must permit execution:
+The Python regressions in `scripts/import_optimizer/test_*.py` run without Lean
+or downloads and are part of `scripts/check.sh preflight`. They execute small
+subprocess fixtures, so `TMPDIR` must permit execution. `PYTHONPATH` exposes the
+command-line modules in the parent `scripts/` directory:
 
 ```sh
-for pattern in test_generate_import_inventory.py test_optimize_imports.py \
-  test_reference_imports.py 'test_import_optimizer_*.py'; do
-  python3 -m unittest discover -s scripts -p "$pattern" || exit 1
-done
+PYTHONPATH=scripts python3 -m unittest discover \
+  -s scripts/import_optimizer -p 'test_*.py' -v
 ```
 
 Run the native smoke test explicitly with the current pinned toolchain:

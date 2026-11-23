@@ -14,10 +14,10 @@ from unittest.mock import patch
 
 from import_optimizer.reference_imports import bind_owner_proposal, extract_references, location_excerpt, parse_json, suggest
 
-SCRIPTS = Path(__file__).resolve().parent
-HELPER = SCRIPTS / 'import_optimizer/reference_imports.py'
-FIXTURE = SCRIPTS / 'import_optimizer/testdata/reference_actual037.tar.gz'
-# Recorded native data with relocated path metadata; see import_optimizer/testdata/README.md.
+DIRECTORY = Path(__file__).resolve().parent
+HELPER = DIRECTORY / 'reference_imports.py'
+FIXTURE = DIRECTORY / 'testdata/reference_actual037.tar.gz'
+# Recorded native data with relocated path metadata; see testdata/README.md.
 FIXTURE_SHA256 = 'c6e9e3c060fd92a9b55cf6aee2127fa80733dad1329a1588f37cc50212424d69'
 ADDITIONAL = {
     'Mathlib.Analysis.InnerProductSpace.Defs',

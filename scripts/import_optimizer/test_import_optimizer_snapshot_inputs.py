@@ -21,7 +21,7 @@ import test_import_optimizer_outputs as outputs
 import test_import_optimizer_recovery as recovery
 
 
-ARCHIVE = Path(__file__).parent / "import_optimizer/testdata/reference_actual037.tar.gz"
+ARCHIVE = Path(__file__).parent / "testdata/reference_actual037.tar.gz"
 EXTERNAL_ARTIFACTS = [{"external_artifacts_mock": True}]
 
 
