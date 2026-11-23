@@ -1,5 +1,19 @@
 /-
-# 1/z has no holomorphic antiderivative on the annulus 1 < |z| < 2
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Portions of this file are adapted from:
+
+`benchmark/level1/ma_proofbench_l1_67.lean` (openbmb/ma-proofbench, commit
+31bab4c78fd1b0c464e767d62e9202163d1e9029): the statement of
+`not_exists_hasDerivAt_inv_on_annulus`.
+Authors: L. Pu et al.
+MIT License
 
 Copyright (c) 2026 OpenBMB
 
@@ -20,24 +34,22 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-Attribution and modification notice: the statement below is taken from openbmb/ma-proofbench at
-commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level1/ma_proofbench_l1_67.lean`
-(MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
-Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
-`theorem ma_proofbench_l1_67 … := by sorry` into the Batteries `theorem_wanted`
-`not_exists_hasDerivAt_inv_on_annulus`; moved the informal problem statement docstring onto it
-and placed the declarations in namespace
-`MathlibExt.Analysis.Complex.InvNoAntiderivativeAnnulusWanted`; replaced `import Mathlib` by
-`public import Mathlib` under the module system.
 -/
+
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib
+-- Preserve the instances for the complex normed ring and continuous scalar multiplication
+-- used in the original statement.
+public import Mathlib.Topology.Algebra.Module.ModuleTopology
+public import Mathlib.Analysis.CStarAlgebra.Classes
+public import Mathlib.MeasureTheory.Integral.CircleIntegral
 
-@[expose] public section
+/-!
+# The reciprocal function has no antiderivative on an annulus
+
+The circle of radius `3 / 2` about the origin lies in the annulus. The integral of the
+reciprocal around it is `2 * π * I`, whereas the integral of a derivative would be zero.
+-/
 
 namespace MathlibExt.Analysis.Complex.InvNoAntiderivativeAnnulusWanted
 
@@ -49,8 +61,16 @@ Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Functions of a 
 variable; General properties of functions of one complex variable),
 `benchmark/level1/ma_proofbench_l1_67.lean` at openbmb/ma-proofbench@31bab4c.
 -/
-public theorem_wanted not_exists_hasDerivAt_inv_on_annulus (U : Set ℂ)
-  (hU : U = {z : ℂ | 1 < norm z ∧ norm z < 2}) :
-  ¬ ∃ F : ℂ → ℂ, ∀ z ∈ U, HasDerivAt F (1 / z) z
+public theorem not_exists_hasDerivAt_inv_on_annulus (U : Set ℂ)
+    (hU : U = {z : ℂ | 1 < norm z ∧ norm z < 2}) :
+    ¬ ∃ F : ℂ → ℂ, ∀ z ∈ U, HasDerivAt F (1 / z) z := by
+  rintro ⟨F, hF⟩
+  apply Complex.two_pi_I_ne_zero
+  rw [← circleIntegral.integral_sub_center_inv 0 (R := 3 / 2) (by norm_num)]
+  apply circleIntegral.integral_eq_zero_of_hasDerivWithinAt (f := F) (by norm_num)
+  intro z hz
+  have hzU : z ∈ U := by
+    norm_num [hU, mem_sphere_zero_iff_norm.mp hz]
+  simpa only [sub_zero, one_div] using (hF z hzU).hasDerivWithinAt
 
 end MathlibExt.Analysis.Complex.InvNoAntiderivativeAnnulusWanted

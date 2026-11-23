@@ -1,5 +1,18 @@
 /-
-# Fixed point when iterate Lipschitz constants tend to zero
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Portions of this file are adapted from:
+
+`benchmark/level1/ma_proofbench_l1_74.lean` (openbmb/ma-proofbench),
+at commit 31bab4c78fd1b0c464e767d62e9202163d1e9029: the theorem statement.
+Authors: L. Pu et al. (MA-ProofBench, arXiv:2606.13782).
+MIT License
 
 Copyright (c) 2026 OpenBMB
 
@@ -20,24 +33,18 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-Attribution and modification notice: the statement below is taken from openbmb/ma-proofbench at
-commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level1/ma_proofbench_l1_74.lean`
-(MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
-Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
-`theorem ma_proofbench_l1_74 … := by sorry` into the Batteries `theorem_wanted`
-`exists_fixedPoint_of_iterate_lipschitz_tendsto_zero`; moved the informal problem statement
-docstring onto it and placed the declarations in namespace
-`MathlibExt.Analysis.Calculus.IterateLipschitzNullFixedPointWanted`; replaced `import Mathlib`
-by `public import Mathlib` under the module system.
 -/
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib
+public import Mathlib.Data.PNat.Notation
+public import Mathlib.Topology.MetricSpace.Contracting
 
-@[expose] public section
+/-!
+# Fixed points of maps with contracting iterates
+
+A null sequence of Lipschitz bounds gives a positive iterate with bound below one.
+The fixed point of that contracting iterate is also fixed by the original map.
+-/
 
 open Filter Topology
 
@@ -53,11 +60,16 @@ Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Operator theory
 operators and their properties), `benchmark/level1/ma_proofbench_l1_74.lean` at
 openbmb/ma-proofbench@31bab4c.
 -/
-public theorem_wanted exists_fixedPoint_of_iterate_lipschitz_tendsto_zero
+public theorem exists_fixedPoint_of_iterate_lipschitz_tendsto_zero
     (X : Type*) [MetricSpace X] [CompleteSpace X] [Nonempty X] (f : X → X) (q : ℕ → ℝ)
     (hq_nonneg : ∀ n : ℕ, 0 ≤ q n)
     (hLip : ∀ n : ℕ+, ∀ x y : X, dist ((f^[n]) x) ((f^[n]) y) ≤ q n * dist x y)
     (hq_null : Tendsto q atTop (𝓝 (0 : ℝ))) :
-    ∃ x : X, f x = x
+    ∃ x : X, f x = x := by
+  have hlt : ∀ᶠ n in atTop, q n < 1 := hq_null.eventually_lt_const zero_lt_one
+  obtain ⟨n, hn, hqn⟩ := ((eventually_gt_atTop 0).and hlt).exists
+  have hc : ContractingWith ⟨q n, hq_nonneg n⟩ f^[n] :=
+    ⟨hqn, LipschitzWith.of_dist_le_mul (hLip ⟨n, hn⟩)⟩
+  exact ⟨_, hc.isFixedPt_fixedPoint_iterate⟩
 
 end MathlibExt.Analysis.Calculus.IterateLipschitzNullFixedPointWanted
