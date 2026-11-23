@@ -34,6 +34,7 @@ and draws data sets with [Mapper](algebraic-topology/mapper/README.md); its zero
 - [Descriptive set theory](descriptive-set-theory/README.md)
 - [Continuum theory and infinite-dimensional topology](continua-infinite-dimensional/README.md)
 - [Topological groups](topological-groups/README.md)
+- [Topological modules and vector spaces](topological-modules/README.md)
 - [Algebraic topology](algebraic-topology/README.md)
 - [Manifolds and geometric topology](manifolds-geometric-topology/README.md)
 - [Knot theory](knot-theory/README.md)

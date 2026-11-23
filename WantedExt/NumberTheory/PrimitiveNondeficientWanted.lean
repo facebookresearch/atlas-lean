@@ -43,41 +43,13 @@ public import Mathlib.NumberTheory.Divisors
 public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Rat.Defs
+public import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficient
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.PrimitiveNondeficientWanted
-
-/-- **Non-deficient number.** A natural number $n$ is non-deficient when $n \ne 0$ and
-$\sigma(n) \ge 2n$, where $\sigma(n)$ is the sum of the positive divisors of $n$.
-
-Positivity is part of the notion: $0$ has no divisors in this convention, so the inequality
-alone would make $0$ non-deficient. -/
-def IsNondeficient (n : ℕ) : Prop :=
-  n ≠ 0 ∧ 2 * n ≤ ∑ d ∈ Nat.divisors n, d
-
-/-- **Primitive non-deficient number.** A natural number $n$ is primitive non-deficient when it
-is non-deficient and every proper divisor $m$ of $n$ (a divisor with $m < n$) is deficient, that
-is, $\sigma(m) < 2m$, where $\sigma(m)$ is the sum of the positive divisors of $m$. -/
-def IsPrimitiveNondeficient (n : ℕ) : Prop :=
-  IsNondeficient n ∧
-    ∀ m ∈ Nat.divisors n, m < n → ∑ d ∈ Nat.divisors m, d < 2 * m
-
-/-- **Abundancy index.** For a natural number $n$, the abundancy index is the rational number
-$h(n) = \sigma(n)/n$, where $\sigma(n)$ is the sum of the positive divisors of $n$.
-
-At $n = 0$ this gives $h(0) = 0$, since division by zero is $0$ in $\mathbb{Q}$; the abundancy
-index is only meaningful for positive $n$. -/
-noncomputable def abundancyIndex (n : ℕ) : ℚ :=
-  ((∑ d ∈ Nat.divisors n, d : ℕ) : ℚ) / (n : ℚ)
-
-/-- **Product of $p/(p-1)$ over the prime factors.** For a natural number $n$, let
-$H(n) = \prod_p p/(p-1)$ in $\mathbb{Q}$, the product over the distinct primes $p$ dividing $n$.
-For $n = 0$ the product is empty ($0$ is taken to have no prime factors), so $H(0) = 1$. -/
-noncomputable def abundancySup (n : ℕ) : ℚ :=
-  ∏ p ∈ n.primeFactors, (p : ℚ) / ((p : ℚ) - 1)
 
 /-- **Even primitive non-deficient numbers with two prime factors.** Let $p$ be an odd prime and
 $a$ a natural number. Then $2^a p$ is primitive non-deficient if and only if
@@ -144,16 +116,6 @@ theorem_wanted two_pow_factorization_add_one_lt_radical
     (n : ℕ) (hne : Even n)
     (hn : IsPrimitiveNondeficient n) :
     2 ^ (n.factorization 2 + 1) < ∏ q ∈ n.primeFactors, q
-
-/-- **Zelinsky's reciprocal bound.** For real numbers $k$ and $m$ with $k \ge 2$ and
-$0 < m < 1/(k(k+1))$, we have $1/(1 - km) < 1 + (k+1)m$.
-
-Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
-Always Have a Small Component?", Lemma (label `KMlemma`). -/
-theorem_wanted one_div_one_sub_mul_lt_add
-    (k m : ℝ) (hk : 2 ≤ k) (hm0 : 0 < m)
-    (hm : m < 1 / (k * (k + 1))) :
-    1 / (1 - k * m) < 1 + (k + 1) * m
 
 /-- **Abundancy ratio at an exactly dividing prime power.** Let $n$ be a positive integer, $p$ a
 prime and $a \ge 1$ an integer such that $p^a$ exactly divides $n$ (that is, $p^a \mid n$ and
