@@ -29,3 +29,13 @@ example : ∑ i ∈ Finset.range 4, (-2 : ℂ) ^ (3 - i) * fibAB 1 2 (2 * i) = 1
 -- Two recurrence steps preserve the Fibonacci and Lucas specializations of the Horadam sequence.
 example (a b : ℂ) : fibAB a b 3 = horadamAB a b 0 1 3 := rfl
 example (a b : ℂ) : lucasAB a b 3 = horadamAB a b 2 a 3 := rfl
+
+-- At the first index the quotient is the single term of weight one.
+example (a b c : ℂ) (hc : c ≠ 0) (h : c ^ 2 - a * c - b ≠ 0) :
+    (c ^ 2 - c * fibAB a b 2 - b * fibAB a b 1) / (c ^ 2 - a * c - b) = 1 := by
+  simpa using (sum_c_pow_fibAB a b c hc h 1 le_rfl).symm
+
+-- A repeated characteristic root is allowed, and a negative weight alternates the signs.
+example : ∑ i ∈ Finset.Icc 1 4, (-2 : ℂ) ^ (4 - i) * fibAB 2 (-1) i = -2 := by
+  rw [sum_c_pow_fibAB 2 (-1) (-2) (by norm_num) (by norm_num) 4 (by decide)]
+  norm_num [fibAB]
