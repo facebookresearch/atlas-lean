@@ -16,6 +16,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.RingTheory.PowerSeries.Expand
 public import MathlibExt.Combinatorics.Enumerative.Partition.Overpartition
 public import MathlibExt.RingTheory.PowerSeries.SeriesDivisorInverseConvolution
+public import MathlibExt.RingTheory.PowerSeries.SeriesDivisorProduct
 
 /-!
 # Glaisher's divisors and infinite products: wishlist
@@ -81,24 +82,6 @@ set_option quotPrecheck false in
 /-- `t_k(m)`: ordered representations of `m` as a sum of `k` triangular numbers. -/
 local notation "ttri" k:max m:max =>
   ((Set.ncard {x : Fin k → ℕ | ∑ i, x i * (x i + 1) / 2 = m} : ℕ) : ℤ)
-
-/-- **Series-divisors add under multiplication.** Let $R$ be a commutative ring and let $A$, $B$
-be formal power series over $R$ with coefficients $a(n)$, $b(n)$. Suppose $s_A, s_B$ are maps
-$\mathbb{N} \to R$ with $n\,a(n) = \sum_{i=1}^{n} s_A(i)\,a(n-i)$ and
-$n\,b(n) = \sum_{i=1}^{n} s_B(i)\,b(n-i)$ for every $n \ge 0$ (that is, $s_A$ and $s_B$ are
-series-divisors of $A$ and $B$). Then, writing $c(n)$ for the coefficients of $AB$,
-$n\,c(n) = \sum_{i=1}^{n} \bigl(s_A(i) + s_B(i)\bigr)\,c(n-i)$ for every $n \ge 0$, so $s_A + s_B$
-is a series-divisor of $AB$.
-
-Source: Hartosh Singh Bal and Gaurav Bhatnagar, *Glaisher's Divisors and Infinite
-Products*, Journal of Integer Sequences 27 (2024), Article 24.1.6, Lemma 2
-(`jis-2024-24.1.6-lem-2`). -/
-public theorem_wanted series_divisor_add_of_mul {R : Type*} [CommRing R]
-    (A B : PowerSeries R) (sA sB : ℕ → R)
-    (hA : ∀ n : ℕ, (n : R) * coeff n A = ∑ i ∈ Finset.Icc 1 n, sA i * coeff (n - i) A)
-    (hB : ∀ n : ℕ, (n : R) * coeff n B = ∑ i ∈ Finset.Icc 1 n, sB i * coeff (n - i) B) :
-    ∀ n : ℕ, (n : R) * coeff n (A * B) =
-      ∑ i ∈ Finset.Icc 1 n, (sA i + sB i) * coeff (n - i) (A * B)
 
 /-- **Calculus of series-divisors.** Let $R$ be a commutative ring, let $A$ be a formal power
 series over $R$, write $[q^k]F$ for the coefficient of $q^k$ in a power series $F$, and let
