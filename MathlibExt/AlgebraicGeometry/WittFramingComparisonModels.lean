@@ -100,15 +100,24 @@ structure ActionRestrictionSquare {R S : PerfectAlgebra p k} (f : R ⟶ S) where
       (groupSheaf B G (integralTest p k B R)),
     (comparison.inv.app P).val = (sheafRestrictionSquare p k B pi f).inv.app P.sheaf
 
+/-- A comparison of the restricted regular action with the regular action is the identity on
+sections, in both directions. Stated once as a named predicate, so that the structure below does
+not make the kernel recheck these section-level equations in every auxiliary declaration. -/
+def IsIdentityOnSections {R S : PerfectAlgebra p k} (f : R ⟶ S)
+    (c : (actionPullback G (rationalTestMap p k B pi f)).obj
+      (regularAction B G (rationalTest p k B pi R)) ≅
+        regularAction B G (rationalTest p k B pi S)) : Prop :=
+  (∀ (T : (Site B (rationalTest p k B pi S))ᵒᵖ) (x : ULift.{1} (T.unop.left ⟶ G)),
+      c.hom.val.hom.app T x = x) ∧
+    ∀ (T : (Site B (rationalTest p k B pi S))ᵒᵖ) (x : ULift.{1} (T.unop.left ⟶ G)),
+      c.inv.val.hom.app T x = x
+
 /-- The regular action restricts to the original regular action with identity on sections. -/
 structure RegularRestriction {R S : PerfectAlgebra p k} (f : R ⟶ S) where
   comparison : (actionPullback G (rationalTestMap p k B pi f)).obj
       (regularAction B G (rationalTest p k B pi R)) ≅
     regularAction B G (rationalTest p k B pi S)
-  sheaf_hom : ∀ (T : (Site B (rationalTest p k B pi S))ᵒᵖ)
-    (x : ULift.{1} (T.unop.left ⟶ G)), comparison.hom.val.hom.app T x = x
-  sheaf_inv : ∀ (T : (Site B (rationalTest p k B pi S))ᵒᵖ)
-    (x : ULift.{1} (T.unop.left ⟶ G)), comparison.inv.val.hom.app T x = x
+  identity_on_sections : IsIdentityOnSections p k B pi G f comparison
 
 variable {p k B pi G}
 

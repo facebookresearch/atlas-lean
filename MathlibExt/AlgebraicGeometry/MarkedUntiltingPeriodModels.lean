@@ -159,15 +159,31 @@ abbrev RelativeCompletion :=
   AdicCompletion (RingHom.ker (relativeTheta p C T L))
     (RamifiedRational p C (residueTest p C S))
 
+/-- A ring isomorphism from the relative completion to `B_dR^+` restricts, on the ramified
+rational source, to the period embedding. -/
+def CompletionComparison.UnitCondition
+    (e : RelativeCompletion p C T L ≃+* DeRhamPlus p T.affine.pair) : Prop :=
+  e.toRingHom.comp (algebraMap _ _) = rationalPeriodEmbedding p C T L
+
 set_option maxHeartbeats 1200000 in
 -- Allow the dependent native period-ring and sheaf signatures to elaborate.
-/-- Completion comparison retains the actual source unit and every filtration projection. -/
+/-- A ring isomorphism from the relative completion to `B_dR^+` matches the `n`-th filtration
+ideal of `B_dR^+` with the kernel of the projection to level `n` of the completion, for every
+`n`. -/
+def CompletionComparison.FiltrationCondition
+    (e : RelativeCompletion p C T L ≃+* DeRhamPlus p T.affine.pair) : Prop :=
+  ∀ n : ℕ, Ideal.comap e.toRingHom (AffinoidPeriodRings.filtration p T.affine.pair n) =
+    RingHom.ker ((AdicCompletion.evalₐ (RingHom.ker (relativeTheta p C T L)) n).toRingHom)
+
+set_option maxHeartbeats 1200000 in
+-- Allow the dependent native period-ring and sheaf signatures to elaborate.
+/-- Completion comparison retains the actual source unit and every filtration projection. The two
+conditions are named predicates, so that the kernel does not recheck them in every auxiliary
+declaration of the structure. -/
 structure CompletionComparison where
   equivalence : RelativeCompletion p C T L ≃+* DeRhamPlus p T.affine.pair
-  unit : equivalence.toRingHom.comp (algebraMap _ _) = rationalPeriodEmbedding p C T L
-  filtration : ∀ n : ℕ,
-    Ideal.comap equivalence.toRingHom (AffinoidPeriodRings.filtration p T.affine.pair n) =
-      RingHom.ker ((AdicCompletion.evalₐ (RingHom.ker (relativeTheta p C T L)) n).toRingHom)
+  unit : CompletionComparison.UnitCondition p C T L equivalence
+  filtration : CompletionComparison.FiltrationCondition p C T L equivalence
 
 set_option maxHeartbeats 1200000 in
 -- Allow the dependent native period-ring and sheaf signatures to elaborate.
