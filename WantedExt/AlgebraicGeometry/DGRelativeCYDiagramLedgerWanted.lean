@@ -49,7 +49,7 @@ open MathlibExt.Algebra.Homology.DGCategoryTraceModels
 universe u
 
 /-- The bar-counit square commutes by the fixed native induction units and actual bar maps. -/
-def_wanted relative_cy_bar_counit_square (k : Type u) [Field k] (P : Cospan (k := k))
+theorem_wanted relative_cy_bar_counit_square (k : Type u) [Field k] (P : Cospan (k := k))
     (S : NegativeTraceSystem k) (n : ℤ) (D : ModuleData P S n) (K : InductionData D) :
   BarCounitSquare D K
 
@@ -66,7 +66,7 @@ def_wanted dg_morita_bar_counit_pushout_dual (k : Type u) [Field k]
     (Q : ModuleHomotopyPushout B.square) : DualCotangentComparison B Q
 
 /-- The square's degree -1 cell is the signed difference of its two native chain cells. -/
-def_wanted dg_coherent_grid_square (k : Type u) [Field k]
+theorem_wanted dg_coherent_grid_square (k : Type u) [Field k]
     (R : CoherentIndexModel k GridIndex) (C : DGCat k) (Q : CoherentDiagram R C)
     (nodes : GridIndex → DGDerivedModules k C)
     (eq : ∀ q : GridIndex, Q.toEnrichedFunctor.obj (R.objects.symm q) = (nodes q).obj)
