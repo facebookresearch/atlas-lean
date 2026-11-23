@@ -29,11 +29,13 @@ itself a proper curve. Coherent cohomology on a proper curve is
 finite-dimensional and vanishes above degree one, so `h⁰ - h¹` with
 `Module.finrank` is the actual Euler characteristic.
 
-Families are tested over an algebraically closed field `k` on parameter
-schemes locally of finite type, at their `k`-points: these are exactly the
-closed points, which are dense in every closed subset, and stability is an
-open condition in flat families of torsion-free rank-one sheaves (Esteves,
-§3), so this is equivalent to testing every geometric fiber.
+The moduli problem is stated over an algebraically closed field `k`,
+restricted to parameter schemes locally of finite type (the interface does
+not classify families over other bases). Families are tested at their
+`k`-points: these are exactly the closed points, which are dense in every
+closed subset, and stability is an open condition in flat families of
+torsion-free rank-one sheaves (Esteves, §3), so this is equivalent to
+testing every geometric fiber.
 
 References: E. Esteves, *Compactifying the relative Jacobian over families
 of reduced curves*; Melo--Rapagnetta--Viviani, *Fine compactified Jacobians
@@ -50,8 +52,10 @@ open _root_.MathlibExt.AlgebraicGeometry.PointedPicardFamilies
 
 universe u
 
-/-- Quasi-coherence and finite generation on affine opens. -/
-def IsCoherent {X : Scheme.{u}} (F : X.Modules) : Prop :=
+/-- Quasi-coherence and finite generation on affine opens: a quasi-coherent sheaf of finite
+type. On a locally Noetherian scheme, such as the curves and the families over parameter
+schemes of finite type below, this is coherence. -/
+def IsFiniteTypeQuasicoherent {X : Scheme.{u}} (F : X.Modules) : Prop :=
   SheafOfModules.IsQuasicoherent F ∧
     ∀ U : X.Opens, IsAffineOpen U → Module.Finite Γ(X, U) Γ(F, U)
 
@@ -101,14 +105,14 @@ structure TorsionFreeQuotient {Z : Scheme.{u}} (F : Z.Modules) where
   Q : Z.Modules
   q : F ⟶ Q
   [epi : Epi q]
-  coherent : IsCoherent Q
+  coherent : IsFiniteTypeQuasicoherent Q
   torsionFree : IsTorsionFree Q
-  universal : ∀ (N : Z.Modules), IsCoherent N → IsTorsionFree N →
+  universal : ∀ (N : Z.Modules), IsFiniteTypeQuasicoherent N → IsTorsionFree N →
     ∀ f : F ⟶ N, ∃! g : Q ⟶ N, q ≫ g = f
 
 /-- Canonically characterized restrictions to the actual proper subcurves. -/
 class TorsionFreeRestrictions (C : Scheme.{u}) where
-  restriction : ∀ (F : C.Modules), IsCoherent F → ∀ Y : Subcurve C,
+  restriction : ∀ (F : C.Modules), IsFiniteTypeQuasicoherent F → ∀ Y : Subcurve C,
     TorsionFreeQuotient ((Scheme.Modules.pullback Y.i).obj F)
 
 /-- A rational polarization indexed by the actual curve components. -/
@@ -122,30 +126,33 @@ def subcurveWeight {C : Scheme.{u}} (q : Polarization C) (Y : Subcurve C) : ℚ 
   classical
   exact q.sum fun c a ↦ if c.val ⊆ Set.range Y.i then a else 0
 
-/-- The Euler characteristic `h⁰(F) - h¹(F)` of a sheaf on a proper curve, from actual
-coherent cohomology. -/
+/-- The Euler characteristic `h⁰(F) - h¹(F)` of a coherent sheaf on a proper curve, from
+actual coherent cohomology (finite-dimensional, and zero above degree one). -/
 def euler {k : Type u} [Field k] {X : Scheme.{u}}
-    (f : X ⟶ Spec (.of k)) [IsProperCurve f] (F : X.Modules) : ℤ :=
+    (f : X ⟶ Spec (.of k)) [IsProperCurve f] (F : X.Modules)
+    (_hF : IsFiniteTypeQuasicoherent F) : ℤ :=
   (Module.finrank k (cohomology f F 0) : ℤ) -
     Module.finrank k (cohomology f F 1)
 
 /-- Esteves/MRV semistability on a proper curve, on actual rank-one torsion-free sheaves. -/
 def IsSemistable {k : Type u} [Field k] (C : Over (Spec (.of k))) [IsProperCurve C.hom]
     [TorsionFreeRestrictions C.left] (q : Polarization C.left) (F : C.left.Modules) : Prop :=
-  IsCoherent F ∧ IsTorsionFree F ∧ HasGenericRankOne F ∧
-    (euler C.hom F : ℚ) = totalWeight q ∧
-    ∀ (Y : Subcurve C.left) (hF : IsCoherent F),
+  ∃ hF : IsFiniteTypeQuasicoherent F, IsTorsionFree F ∧ HasGenericRankOne F ∧
+    (euler C.hom F hF : ℚ) = totalWeight q ∧
+    ∀ Y : Subcurve C.left,
       subcurveWeight q Y ≤
-        (euler (Y.i ≫ C.hom) (TorsionFreeRestrictions.restriction F hF Y).Q : ℚ)
+        (euler (Y.i ≫ C.hom) (TorsionFreeRestrictions.restriction F hF Y).Q
+          (TorsionFreeRestrictions.restriction F hF Y).coherent : ℚ)
 
 /-- Stability uses the strict subcurve inequalities. -/
 def IsStable {k : Type u} [Field k] (C : Over (Spec (.of k))) [IsProperCurve C.hom]
     [TorsionFreeRestrictions C.left] (q : Polarization C.left) (F : C.left.Modules) : Prop :=
-  IsCoherent F ∧ IsTorsionFree F ∧ HasGenericRankOne F ∧
-    (euler C.hom F : ℚ) = totalWeight q ∧
-    ∀ (Y : Subcurve C.left) (hF : IsCoherent F),
+  ∃ hF : IsFiniteTypeQuasicoherent F, IsTorsionFree F ∧ HasGenericRankOne F ∧
+    (euler C.hom F hF : ℚ) = totalWeight q ∧
+    ∀ Y : Subcurve C.left,
       subcurveWeight q Y <
-        (euler (Y.i ≫ C.hom) (TorsionFreeRestrictions.restriction F hF Y).Q : ℚ)
+        (euler (Y.i ≫ C.hom) (TorsionFreeRestrictions.restriction F hF Y).Q
+          (TorsionFreeRestrictions.restriction F hF Y).coherent : ℚ)
 
 /-- Nondegeneracy compares only semistable sheaves to stable sheaves. -/
 def IsNondegenerate {k : Type u} [Field k] (C : Over (Spec (.of k))) [IsProperCurve C.hom]
@@ -160,20 +167,22 @@ structure SmoothMarking {k : Type u} [Field k] (C : Over (Spec (.of k))) where
   lift : 𝟙_ (Over (Spec (.of k))) ⟶ Over.mk (U.ι ≫ C.hom)
   factors : lift ≫ Over.homMk U.ι = p
 
-/-- A flat coherent family of stable sheaves over a parameter scheme locally of finite type
-over an algebraically closed field: every closed fiber, that is the fiber at every
-`k`-point, is stable. By openness of stability this is stability of every geometric
-fiber (see the module documentation). -/
+/-- The fine moduli problem restricted to parameter schemes locally of finite type over an
+algebraically closed field `k` (the test schemes of `FineCompactifiedJacobian.universal`;
+the predicate is only stated for them): a flat coherent family whose closed fibers, that
+is its fibers at the `k`-points, are stable. By openness of stability this is stability
+of every geometric fiber (see the module documentation). -/
 def IsStableFamily {k : Type u} [Field k] [IsAlgClosed k] (C T : Over (Spec (.of k)))
-    [IsProperCurve C.hom] [TorsionFreeRestrictions C.left] (q : Polarization C.left)
-    (F : (prod C T).left.Modules) : Prop :=
-  LocallyOfFiniteType T.hom ∧ IsCoherent F ∧ IsFlatOver (prod.snd : prod C T ⟶ T).left F ∧
+    [IsProperCurve C.hom] [LocallyOfFiniteType T.hom] [TorsionFreeRestrictions C.left]
+    (q : Polarization C.left) (F : (prod C T).left.Modules) : Prop :=
+  IsFiniteTypeQuasicoherent F ∧ IsFlatOver (prod.snd : prod C T ⟶ T).left F ∧
     ∀ x : 𝟙_ (Over (Spec (.of k))) ⟶ T,
       IsStable C q ((Scheme.Modules.pullback (pointSection C T x).left).obj F)
 
 /-- A fine moduli representative with a normalized actual universal sheaf, for a proper
-curve with `H⁰(C, 𝒪_C) = k` over an algebraically closed field. Its dimension is the
-genus. -/
+curve with `H⁰(C, 𝒪_C) = k` over an algebraically closed field: it represents the moduli
+functor of stable normalized families restricted to parameter schemes locally of finite
+type and quasi-compact over `k`. Its dimension is the genus. -/
 structure FineCompactifiedJacobian {k : Type u} [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
     [TorsionFreeRestrictions C.left] (q : Polarization C.left) (s : SmoothMarking C) where
@@ -185,10 +194,8 @@ structure FineCompactifiedJacobian {k : Type u} [Field k] [IsAlgClosed k]
   F : (prod C J).left.Modules
   stableFamily : IsStableFamily C J q F
   normalized : IsNormalized C J s.p F
-  universal : ∀ (T : Over (Spec (.of k))),
-    LocallyOfFiniteType T.hom → QuasiCompact T.hom →
-      ∀ G : (prod C T).left.Modules, IsStableFamily C T q G →
-        IsNormalized C T s.p G →
-          ∃! f : T ⟶ J, Nonempty (familyPullback C J T F f ≅ G)
+  universal : ∀ (T : Over (Spec (.of k))) [LocallyOfFiniteType T.hom] [QuasiCompact T.hom]
+    (G : (prod C T).left.Modules), IsStableFamily C T q G → IsNormalized C T s.p G →
+      ∃! f : T ⟶ J, Nonempty (familyPullback C J T F f ≅ G)
 
 end MathlibExt.AlgebraicGeometry.NumericalCompactifiedJacobians

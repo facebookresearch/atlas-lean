@@ -12,8 +12,9 @@ public import MathlibExt.AlgebraicGeometry.NumericalCompactifiedJacobians
 
 @[expose] public section
 
-open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
+open CategoryTheory CategoryTheory.Limits CategoryTheory.MonoidalCategory AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+open MathlibExt.AlgebraicGeometry.AlgebraicLineBundleFamilies
 open MathlibExt.AlgebraicGeometry.NumericalCompactifiedJacobians
 
 universe u
@@ -26,9 +27,10 @@ example (C : Over (Spec (.of k))) [IsProperCurve C.hom] (Y : Subcurve C.left) :
     IsProperCurve (Y.i ≫ C.hom) := inferInstance
 
 -- On a proper curve with `H⁰(C, 𝒪_C) = k`, the Euler characteristic of the structure
--- sheaf is `1 - g`.
-example (C : Over (Spec (.of k))) [IsProperCurve C.hom] [HasConstantGlobalSections C.hom] :
-    euler C.hom (structureModule C.left) = 1 - genus C.hom := by
+-- sheaf is `1 - g` (for any coherence witness).
+example (C : Over (Spec (.of k))) [IsProperCurve C.hom] [HasConstantGlobalSections C.hom]
+    (h : IsFiniteTypeQuasicoherent (structureModule C.left)) :
+    euler C.hom (structureModule C.left) h = 1 - genus C.hom := by
   simp [euler, genus, finrank_cohomology_zero_structureModule]
 
 -- Weights of a polarization: the total weight is the sum of the component weights,
@@ -43,9 +45,18 @@ example {C : Scheme.{u}} (Y : Subcurve C) (c : Component C) (a : ℚ)
   classical
   simp [subcurveWeight, hc]
 
--- A stable family is tested on a parameter scheme locally of finite type over the
--- algebraically closed base field, at each of its closed (`k`-rational) points.
+-- Stable families are stated for parameter schemes locally of finite type over the
+-- algebraically closed base field; they are coherent, flat, and stable at each closed
+-- (`k`-rational) point.
 example [IsAlgClosed k] (C T : Over (Spec (.of k))) [IsProperCurve C.hom]
-    [TorsionFreeRestrictions C.left] (q : Polarization C.left)
-    (F : (prod C T).left.Modules) (hF : IsStableFamily C T q F) :
-    LocallyOfFiniteType T.hom := hF.1
+    [LocallyOfFiniteType T.hom] [TorsionFreeRestrictions C.left] (q : Polarization C.left)
+    (F : (prod C T).left.Modules) (hF : IsStableFamily C T q F)
+    (x : 𝟙_ (Over (Spec (.of k))) ⟶ T) :
+    IsFiniteTypeQuasicoherent F ∧
+      IsStable C q ((Scheme.Modules.pullback (pointSection C T x).left).obj F) :=
+  ⟨hF.1, hF.2.2 x⟩
+
+-- Semistability carries the coherence witness used by its Euler characteristics.
+example (C : Over (Spec (.of k))) [IsProperCurve C.hom] [TorsionFreeRestrictions C.left]
+    (q : Polarization C.left) (F : C.left.Modules) (h : IsSemistable C q F) :
+    IsFiniteTypeQuasicoherent F := h.1
