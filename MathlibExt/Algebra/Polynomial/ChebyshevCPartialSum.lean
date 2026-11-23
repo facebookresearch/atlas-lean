@@ -113,4 +113,21 @@ public theorem chebyshevCPartialSum_generatingFunction :
         X * chebyshevCPartialSum_succ (n + 1) + chebyshevCPartialSum_succ n +
         Chebyshev.C_add_two ℤ (n + 1)
 
+/-- **Three-term recurrence for the partial sums of Chebyshev polynomials.** Let
+$F_n = 1 + \sum_{k=1}^{n} \bar T_k \in \mathbb{Z}[X]$ be the partial sums of the monic Chebyshev
+polynomials $\bar T_k$ ($\bar T_0 = 2$, $\bar T_1 = X$, $\bar T_{k+2} = X \bar T_{k+1} - \bar T_k$).
+For every $k \ge 1$, $F_{k+1} = X F_k - F_{k-1}$.
+
+Source: C. Kassel and C. Reutenauer, *Pairs of Intertwined Integer Sequences*,
+Journal of Integer Sequences 29 (2026), Article 26.4.4, Proposition 3.6
+(`jis-2026-26.4.4-prop-11`). -/
+public theorem chebyshevCPartialSum_recurrence (k : ℕ) (hk : 1 ≤ k) :
+    chebyshevCPartialSum (k + 1) = X * chebyshevCPartialSum k - chebyshevCPartialSum (k - 1) := by
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hk)
+  have hcoeff := congrArg (PowerSeries.coeff (R := ℤ[X]) (n + 2))
+    chebyshevCPartialSum_generatingFunction
+  simp [add_mul, sub_mul, pow_two, mul_assoc, PowerSeries.coeff_one, PowerSeries.coeff_X] at hcoeff
+  rw [Nat.succ_sub_one]
+  linear_combination hcoeff
+
 end MetaMathlibExt
