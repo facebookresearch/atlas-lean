@@ -10527,6 +10527,7 @@
   "MathlibExt/Data/Multiset/Scan": {"to": "Logic/proof-theory", "title": "Cut elimination for classical linear logic"},
   "MathlibExt/Data/Nat/Digits/Reverse": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Digit reversal"},
   "MathlibExt/Data/Nat/DyadicBlock": {"to": "GameTheory/combinatorial-games", "title": "Chocolate bar games"},
+  "MathlibExt/Data/Nat/Factorial/Iterate": {"to": "Analysis/special-functions/gamma-function", "title": "Iterated factorials and power towers"},
   "MathlibExt/Data/Set/Density": {"to": "NumberTheory/additive-number-theory", "title": "Natural and logarithmic density"},
   "MathlibExt/Data/Set/Triplewise": {"to": "Geometry/discrete-geometry", "title": "Convex and general position of point sets"},
   "MathlibExt/Dynamics/CurtisHedlundLyndon": {"to": "Dynamics/topological-symbolic-dynamics", "title": "Curtis–Hedlund–Lyndon theorem"},
