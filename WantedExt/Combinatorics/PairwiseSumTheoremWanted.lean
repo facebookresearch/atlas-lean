@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Hindman
 public import Mathlib.Data.PNat.Basic
+public import MathlibExt.Combinatorics.RamseyWitnessTensorSquare
 
 /-!
 # From Schur's theorem to the pairwise sum theorem
@@ -23,6 +24,10 @@ A finite coloring is a map `c : S → Fin r`; a set `F` is monochromatic when `c
 Ultrafilters on `ℕ+` carry Mathlib's sum `Ultrafilter.add` (`A ∈ U + V` iff
 `{n | {m | n + m ∈ A} ∈ V} ∈ U`) and the Stone–Čech topology. The tensor product of ultrafilters
 on `ℕ` is `X ∈ U ⊗ V ↔ {n | {m | (n, m) ∈ X} ∈ V} ∈ U`.
+
+The characterization of Ramsey's witnesses on `ℕ × ℕ` as the closure of the tensor squares
+`U ⊗ U` of non-principal ultrafilters (`ramseyWitness_iff_mem_closure_tensor_squares`) is
+proved in `MathlibExt.Combinatorics.RamseyWitnessTensorSquare`, which this module imports.
 -/
 
 open Filter
@@ -109,23 +114,6 @@ public theorem_wanted finiteSums_witness_iff_mem_closure_idempotents (U : Ultraf
         ∀ F : Finset ℕ+, F.Nonempty → (F : Set ℕ+) ⊆ X →
           ∃ y ∈ A, (y : ℕ) = ∑ x ∈ F, (x : ℕ)) ↔
       U ∈ closure {V : Ultrafilter ℕ+ | V + V = V}
-
-/-- **Ramsey's witnesses are the closure of tensor squares.** For an ultrafilter $U$ on
-$\mathbb{N} = \{0, 1, 2, \dots\}$, the tensor square $U \otimes U$ is the ultrafilter on
-$\mathbb{N} \times \mathbb{N}$ whose members are the sets $X$ with
-$\{n : \{m : (n, m) \in X\} \in U\} \in U$. An ultrafilter $W$ on $\mathbb{N} \times \mathbb{N}$ is
-a Ramsey's witness when every $X \in W$ contains $[H]^2 = \{(h, h') \in H \times H : h < h'\}$ for
-some infinite $H \subseteq \mathbb{N}$. An ultrafilter $W$ on $\mathbb{N} \times \mathbb{N}$ is a
-Ramsey's witness if and only if $W$ lies in the closure, in the Stone–Čech space
-$\beta(\mathbb{N} \times \mathbb{N})$, of the set of tensor squares $U \otimes U$ of non-principal
-ultrafilters $U$ on $\mathbb{N}$.
-
-Source: Mauro Di Nasso and Renling Jin, *From Schur's Theorem to the Pairwise Sum Theorem*,
-INTEGERS 25 (2025), Article A105, Proposition 3.5 (`integers-2025-A105-prop-3-5`). -/
-public theorem_wanted ramseyWitness_iff_mem_closure_tensor_squares (W : Ultrafilter (ℕ × ℕ)) :
-    (∀ X ∈ W, ∃ H : Set ℕ, H.Infinite ∧ ∀ h ∈ H, ∀ h' ∈ H, h < h' → (h, h') ∈ X) ↔
-      W ∈ closure {V : Ultrafilter (ℕ × ℕ) | ∃ U : Ultrafilter ℕ, (U : Filter ℕ) ≤ cofinite ∧
-        V = U.bind fun n => U.map (Prod.mk n)}
 
 /-- **PR-witnesses of the pairwise sum family.** An ultrafilter $W$ on
 $\mathbb{N} \times \mathbb{N}$, where $\mathbb{N} = \{0, 1, 2, \dots\}$, is a Ramsey's witness
