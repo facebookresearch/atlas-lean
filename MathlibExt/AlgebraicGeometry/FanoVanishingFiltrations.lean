@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.ValuativeFanoGeometry
 public import MathlibExt.AlgebraicGeometry.LineBundleTaskContracts
+public import MathlibExt.AlgebraicGeometry.GenericSectionMaps
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Algebra.Order.Floor.Ring
 
@@ -46,17 +47,11 @@ open MathlibExt.AlgebraicGeometry.FiniteCoverLocalComparison
 open MathlibExt.AlgebraicGeometry.ValuativeFanoGeometry
 open scoped ENNReal
 
-/-- An actual global section as the canonical homomorphism from the structure module. -/
-def sectionHom (X : ComplexVariety) (M : X.left.Modules) (s : SectionSpace X M) :
-    structureModule X.left ⟶ M := by
-  let t : M.val.obj (op (⊤ : X.left.Opens)) := s
-  refine (SheafOfModules.unitHomEquiv M).symm ?_
-  refine PresheafOfModules.sectionsMk (M := M.val)
-    (fun U ↦ M.val.map (homOfLE (le_top : U.unop ≤ ⊤)).op t) ?_
-  intro U V f
-  have h : (homOfLE (le_top : U.unop ≤ ⊤)).op ≫ f =
-      (homOfLE (le_top : V.unop ≤ ⊤)).op := Subsingleton.elim _ _
-  rw [← PresheafOfModules.map_comp_apply, h]
+/-- The actual module morphism represented by a global section: the shared
+`GenericSectionMaps.topSectionHom`. -/
+abbrev sectionHom (X : ComplexVariety) (M : X.left.Modules) (s : SectionSpace X M) :
+    structureModule X.left ⟶ M :=
+  GenericSectionMaps.topSectionHom X.left M s
 
 /-- On every actual open, the normalized section homomorphism multiplies
 the restricted section by the regular function. -/
