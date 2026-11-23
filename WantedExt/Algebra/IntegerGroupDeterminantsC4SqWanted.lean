@@ -40,8 +40,9 @@ namespace MetaMathlibExt
 
 open Matrix
 
-/-- The set `S(G)` of integer group determinants of a finite abelian group `G`
-(written additively): all values `det (x_{g - h})_{g,h ∈ G}` with `x : G → ℤ`.
+/-- **Integer group determinants.** For a finite group $G$, written additively and not
+necessarily commutative, $S(G)$ is the set of integers $\det(x_{g - h})_{g, h \in G}$, where $x$
+ranges over all functions $G \to \mathbb{Z}$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Section 1 (definition of `S(G)`). -/
@@ -49,7 +50,9 @@ public def integerGroupDeterminants (G : Type*) [AddGroup G] [Fintype G] [Decida
     Set ℤ :=
   Set.range fun x : G → ℤ => (circulant x).det
 
-/-- `1 ∈ S(G)`: the indicator of the identity gives the identity matrix.
+/-- **$1$ is an integer group determinant.** For every finite group $G$, written additively,
+$1 \in S(G)$, where $S(G)$ is the set of integer group determinants of $G$: the indicator
+function of the identity element gives the identity matrix.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Section 1 (definition of `S(G)`). -/
@@ -57,15 +60,17 @@ public theorem one_mem_integerGroupDeterminants (G : Type*) [AddGroup G] [Fintyp
     [DecidableEq G] : (1 : ℤ) ∈ integerGroupDeterminants G :=
   ⟨Pi.single 0 1, by simp⟩
 
-/-- The group determinant `D₄(x₀, x₁, x₂, x₃)` of the cyclic group `C₄`, i.e. the
-`4 × 4` circulant determinant, over any commutative ring.
+/-- **The group determinant of $C_4$.** For a commutative ring $R$ and
+$x = (x_0, x_1, x_2, x_3) \in R^4$, $D_4(x_0, x_1, x_2, x_3)$ is the determinant of the
+$4 \times 4$ circulant matrix whose $(i, j)$ entry is $x_{i - j}$, indices taken mod $4$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Section 2 (definition of `D_n`). -/
 public def circulantDetFour {R : Type*} [CommRing R] (x : Fin 4 → R) : R :=
   (circulant x).det
 
-/-- `D₄(1, 0, 0, 0) = 1`.
+/-- **The 4 × 4 circulant determinant of (1, 0, 0, 0).** Over every commutative ring $R$, the
+$4 \times 4$ circulant determinant satisfies $D_4(1, 0, 0, 0) = 1$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Section 2 (definition of `D_n`). -/
@@ -73,22 +78,30 @@ public theorem circulantDetFour_single_one {R : Type*} [CommRing R] :
     circulantDetFour (Pi.single 0 1 : Fin 4 → R) = 1 := by
   simp [circulantDetFour]
 
-/-- The paper's `b_i = (a_i + a_{i+8}) + (a_{i+4} + a_{i+12})`, `0 ≤ i ≤ 3`.
+/-- **The sums $b_i$.** For $a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$ and
+$i \in \mathbb{Z}/4$, $b_i = \bigl(a(i, 0) + a(i, 2)\bigr) + \bigl(a(i, 1) + a(i, 3)\bigr)$. In the
+paper's indexing $a_{r + 4s} = a(r, s)$ this is $b_i = (a_i + a_{i+8}) + (a_{i+4} + a_{i+12})$
+for $0 \le i \le 3$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Section 2 (notation after Corollary 2). -/
 public def c4SqB (a : Fin 4 × Fin 4 → ℤ) (i : Fin 4) : ℤ :=
   a (i, 0) + a (i, 2) + (a (i, 1) + a (i, 3))
 
-/-- The paper's `c_i = (a_i + a_{i+8}) - (a_{i+4} + a_{i+12})`, `0 ≤ i ≤ 3`.
+/-- **The alternating sums $c_i$.** For $a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$
+and $i \in \mathbb{Z}/4$, $c_i = \bigl(a(i, 0) + a(i, 2)\bigr) - \bigl(a(i, 1) + a(i, 3)\bigr)$. In
+the paper's indexing $a_{r + 4s} = a(r, s)$ this is $c_i = (a_i + a_{i+8}) - (a_{i+4} + a_{i+12})$
+for $0 \le i \le 3$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Section 2 (notation after Corollary 2). -/
 public def c4SqC (a : Fin 4 × Fin 4 → ℤ) (i : Fin 4) : ℤ :=
   a (i, 0) + a (i, 2) - (a (i, 1) + a (i, 3))
 
-/-- The paper's `d_i = a_i - a_{i+8}`, `0 ≤ i ≤ 7` (so `d_i = a (i, 0) - a (i, 2)`
-and `d_{i+4} = a (i, 1) - a (i, 3)` for `i ≤ 3`).
+/-- **The differences $d_i$ of a function on $C_4^2$.** For
+$a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$, the integers $d_0, \dots, d_7$ are
+$d_i = a(i, 0) - a(i, 2)$ and $d_{i+4} = a(i, 1) - a(i, 3)$ for $0 \le i \le 3$. Writing
+$a_{r + 4s}$ for $a(r, s)$, this is the paper's $d_i = a_i - a_{i+8}$ for $0 \le i \le 7$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Section 2 (notation after Corollary 2). -/
@@ -96,7 +109,11 @@ public def c4SqD (a : Fin 4 × Fin 4 → ℤ) : Fin 8 → ℤ :=
   ![a (0, 0) - a (0, 2), a (1, 0) - a (1, 2), a (2, 0) - a (2, 2), a (3, 0) - a (3, 2),
     a (0, 1) - a (0, 3), a (1, 1) - a (1, 3), a (2, 1) - a (2, 3), a (3, 1) - a (3, 3)]
 
-/-- The paper's `α_i = d_i + √-1 d_{i+4}`, `0 ≤ i ≤ 3`, as a Gaussian integer.
+/-- **The Gaussian integers $\alpha_i$.** For
+$a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$ with differences $d_0, \dots, d_7$ (so
+$d_i = a(i, 0) - a(i, 2)$ and $d_{i+4} = a(i, 1) - a(i, 3)$ for $0 \le i \le 3$), the Gaussian
+integers $\alpha_0, \dots, \alpha_3 \in \mathbb{Z}[\sqrt{-1}]$ are
+$\alpha_i = d_i + d_{i+4} \sqrt{-1}$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Section 2 (notation after Corollary 2). -/
@@ -104,22 +121,30 @@ public def c4SqAlpha (a : Fin 4 × Fin 4 → ℤ) : Fin 4 → GaussianInt :=
   ![⟨c4SqD a 0, c4SqD a 4⟩, ⟨c4SqD a 1, c4SqD a 5⟩, ⟨c4SqD a 2, c4SqD a 6⟩,
     ⟨c4SqD a 3, c4SqD a 7⟩]
 
-/-- The paper's `β = (α₀ + α₂)² - (α₁ + α₃)²`.
+/-- **The Gaussian integer $\beta$.** For $a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$
+with Gaussian integers $\alpha_0, \dots, \alpha_3$,
+$\beta = (\alpha_0 + \alpha_2)^2 - (\alpha_1 + \alpha_3)^2 \in \mathbb{Z}[\sqrt{-1}]$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Section 2 (definition before Lemma 1). -/
 public def c4SqBeta (a : Fin 4 × Fin 4 → ℤ) : GaussianInt :=
   (c4SqAlpha a 0 + c4SqAlpha a 2) ^ 2 - (c4SqAlpha a 1 + c4SqAlpha a 3) ^ 2
 
-/-- The paper's `γ = (α₀ - α₂)² + (α₁ - α₃)²`.
+/-- **The Gaussian integer $\gamma$ of a function on $C_4^2$.** For
+$a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$, let
+$\alpha_i = (a(i, 0) - a(i, 2)) + (a(i, 1) - a(i, 3))\sqrt{-1} \in \mathbb{Z}[\sqrt{-1}]$
+for $0 \le i \le 3$. Then
+$\gamma = (\alpha_0 - \alpha_2)^2 + (\alpha_1 - \alpha_3)^2 \in \mathbb{Z}[\sqrt{-1}]$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Section 2 (definition before Lemma 1). -/
 public def c4SqGamma (a : Fin 4 × Fin 4 → ℤ) : GaussianInt :=
   (c4SqAlpha a 0 - c4SqAlpha a 2) ^ 2 + (c4SqAlpha a 1 - c4SqAlpha a 3) ^ 2
 
-/-- For the identity indicator `a = δ_{(0,0)}` one has `b = c = (1, 0, 0, 0)`,
-`d = (1, 0, …, 0)` and `β = γ = 1`.
+/-- **The C₄² notation at the indicator of the identity.** Let $\delta$ be the integer-valued
+function on $C_4^2 = \mathbb{Z}/4 \times \mathbb{Z}/4$ that is $1$ at $(0, 0)$ and $0$ elsewhere.
+For $a = \delta$ the associated integers are $b = c = (1, 0, 0, 0)$ and
+$d = (1, 0, 0, 0, 0, 0, 0, 0)$, and the associated Gaussian integers are $\beta = \gamma = 1$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Section 2 (notation after Corollary 2). -/
@@ -134,14 +159,16 @@ public theorem c4Sq_notation_single :
   · ext <;> simp [c4SqBeta, c4SqAlpha, c4SqD, sq]
   · ext <;> simp [c4SqGamma, c4SqAlpha, c4SqD, sq]
 
-/-- The set `P` of (positive) primes `p ≡ -3 (mod 8)`.
+/-- **Primes congruent to $-3$ modulo $8$.** $P$ is the set of positive prime integers $p$
+with $p \equiv -3 \pmod 8$, that is, $p \equiv 5 \pmod 8$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Theorem 1 (definition of `P`). -/
 public def primesFiveModEight : Set ℤ :=
   {p | 0 < p ∧ Prime p ∧ p % 8 = 5}
 
-/-- `5 ∈ P` and `13 ∈ P`.
+/-- **$5$ and $13$ lie in $P$.** The integers $5$ and $13$ both belong to the set $P$ of
+positive primes $p \equiv -3 \pmod 8$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Theorem 1 (definition of `P`). -/
@@ -150,8 +177,10 @@ public theorem five_thirteen_mem_primesFiveModEight :
   ⟨⟨by norm_num, Int.prime_iff_natAbs_prime.2 (by decide), by norm_num⟩,
     ⟨by norm_num, Int.prime_iff_natAbs_prime.2 (by decide), by norm_num⟩⟩
 
-/-- The paper's set
-`A = {(8k-3)(8l-3)(8m-3)(8n-3) | k ∈ ℤ, 8l-3, 8m-3, 8n-3 ∈ P, k + l ≢ m + n (mod 2)}`.
+/-- **The exceptional set $A$ for $C_4^2$.** Let $P$ be the set of positive primes
+$p \equiv 5 \pmod 8$. The set $A \subseteq \mathbb{Z}$ consists of all products
+$(8k - 3)(8l - 3)(8m - 3)(8n - 3)$ with $k, l, m, n \in \mathbb{Z}$ such that $8l - 3$,
+$8m - 3$ and $8n - 3$ lie in $P$ and $k + l \not\equiv m + n \pmod 2$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Theorem 1 (definition of `A`). -/
@@ -160,7 +189,10 @@ public def c4SqExceptionalSet : Set ℤ :=
     8 * n - 3 ∈ primesFiveModEight ∧ ¬ k + l ≡ m + n [ZMOD 2] ∧
     z = (8 * k - 3) * (8 * l - 3) * (8 * m - 3) * (8 * n - 3)}
 
-/-- `1625 = 5 · 5 · 5 · 13 ∈ A` (`k = l = m = 1`, `n = 2`).
+/-- **The exceptional set $A$ contains $1625$.** Let $P$ be the set of positive primes
+$p \equiv -3 \pmod 8$ and $A$ the set of products $(8k-3)(8l-3)(8m-3)(8n-3)$ with
+$k, l, m, n \in \mathbb{Z}$, $8l-3, 8m-3, 8n-3 \in P$ and $k + l \not\equiv m + n \pmod 2$.
+Then $1625 \in A$: take $k = l = m = 1$ and $n = 2$, so that $1625 = 5 \cdot 5 \cdot 5 \cdot 13$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Theorem 1 (definition of `A`). -/
@@ -168,9 +200,11 @@ public theorem mem_c4SqExceptionalSet_1625 : (1625 : ℤ) ∈ c4SqExceptionalSet
   ⟨1, 1, 1, 2, five_thirteen_mem_primesFiveModEight.1, five_thirteen_mem_primesFiveModEight.1,
     five_thirteen_mem_primesFiveModEight.2, by decide, by norm_num⟩
 
-/-- **Corollary 1.** `D₄(x₀, x₁, x₂, x₃) = {(x₀ + x₂)² - (x₁ + x₃)²}{(x₀ - x₂)² + (x₁ - x₃)²}`
-over any commutative ring. The paper's intermediate factorization through `D₂` is
-omitted.
+/-- **Factorization of the 4 × 4 circulant determinant.** For every commutative ring $R$ and all
+$x_0, x_1, x_2, x_3 \in R$, the $4 \times 4$ circulant determinant $D_4$ satisfies
+
+$$D_4(x_0, x_1, x_2, x_3) =
+\bigl((x_0 + x_2)^2 - (x_1 + x_3)^2\bigr)\bigl((x_0 - x_2)^2 + (x_1 - x_3)^2\bigr).$$
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Corollary 1 (`integers-2024-A30-cor-1`). -/
@@ -178,8 +212,17 @@ public theorem_wanted circulantDetFour_eq {R : Type*} [CommRing R] (x₀ x₁ x�
     circulantDetFour ![x₀, x₁, x₂, x₃] =
       ((x₀ + x₂) ^ 2 - (x₁ + x₃) ^ 2) * ((x₀ - x₂) ^ 2 + (x₁ - x₃) ^ 2)
 
-/-- **Corollary 2.** For complex variables `y`, the `C₄²` group determinant factors as
-`∏_{k=0}^{3} D₄(∑_s i^{ks} y_{4s}, ∑_s i^{ks} y_{1+4s}, ∑_s i^{ks} y_{2+4s}, ∑_s i^{ks} y_{3+4s})`.
+/-- **Factorization of the complex group determinant of $C_4^2$.** For every
+$y \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{C}$,
+
+$$
+\det\bigl(y(h - g)\bigr)_{g, h \in \mathbb{Z}/4 \times \mathbb{Z}/4} =
+\prod_{k=0}^{3} D_4\bigl(z_k(0), z_k(1), z_k(2), z_k(3)\bigr), \qquad
+z_k(r) = \sum_{s=0}^{3} i^{ks} y(r, s),
+$$
+
+where $i = \sqrt{-1}$ and $D_4(x_0, x_1, x_2, x_3)$ is the determinant of the $4 \times 4$
+circulant matrix with first row $(x_0, x_1, x_2, x_3)$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Corollary 2 (`integers-2024-A30-cor-2`). -/
@@ -188,15 +231,27 @@ public theorem_wanted c4Sq_groupDet_eq_prod_circulantDetFour (y : Fin 4 × Fin 4
       ∏ k : Fin 4, circulantDetFour fun r : Fin 4 =>
         ∑ s : Fin 4, Complex.I ^ (k.val * s.val) * y (r, s)
 
-/-- **Corollary 3.** If `a² + b² ≡ -3 (mod 8)`, then `a² + b² = (8k + 1)(8l - 3)` for some
-`k ∈ ℤ` and `8l - 3 ∈ P`.
+/-- **Sums of two squares congruent to −3 modulo 8.** Let $a$ and $b$ be integers with
+$a^2 + b^2 \equiv -3 \pmod 8$. Then there are integers $k$ and $l$ such that $8l - 3$ lies in
+the set $P$ of positive primes congruent to $5$ modulo $8$, and $a^2 + b^2 = (8k + 1)(8l - 3)$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Corollary 3 (`integers-2024-A30-cor-3`). -/
 public theorem_wanted sq_add_sq_eq_mul_of_mod_eight (a b : ℤ) (h : a ^ 2 + b ^ 2 ≡ -3 [ZMOD 8]) :
     ∃ k l : ℤ, 8 * l - 3 ∈ primesFiveModEight ∧ a ^ 2 + b ^ 2 = (8 * k + 1) * (8 * l - 3)
 
-/-- **Lemma 1.** The norms `β β̄` and `γ γ̄` as products of two sums of two squares in the `d_i`.
+/-- **Norms of β and γ as products of sums of two squares (C₄²).** Let $a$ be an integer-valued
+function on $C_4^2 = \mathbb{Z}/4 \times \mathbb{Z}/4$, with associated integers $d_0, \dots, d_7$
+and Gaussian integers $\beta$, $\gamma$, and write $\beta\bar\beta$, $\gamma\bar\gamma$ for the
+norms of $\beta$ and $\gamma$. Then
+
+$$\beta\bar\beta = \bigl((d_0 + d_2 + d_1 + d_3)^2 + (d_4 + d_6 + d_5 + d_7)^2\bigr)
+\bigl((d_0 + d_2 - d_1 - d_3)^2 + (d_4 + d_6 - d_5 - d_7)^2\bigr)$$
+
+and
+
+$$\gamma\bar\gamma = \bigl((d_0 - d_2 - d_5 + d_7)^2 + (d_4 - d_6 + d_1 - d_3)^2\bigr)
+\bigl((d_0 - d_2 + d_5 - d_7)^2 + (d_4 - d_6 - d_1 + d_3)^2\bigr).$$
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 1 (`integers-2024-A30-lem-1`). -/
@@ -209,7 +264,18 @@ public theorem_wanted c4Sq_norm_beta_gamma_eq (a : Fin 4 × Fin 4 → ℤ) :
         ((d 0 - d 2 - d 5 + d 7) ^ 2 + (d 4 - d 6 + d 1 - d 3) ^ 2) *
           ((d 0 - d 2 + d 5 - d 7) ^ 2 + (d 4 - d 6 - d 1 + d 3) ^ 2)
 
-/-- **Lemma 2.** `D_{4×4}(a) ≡ D₄(b) ≡ D₄(c) ≡ β β̄ ≡ γ γ̄ (mod 2)`.
+/-- **The group determinant of $C_4^2$ modulo $2$.**
+Let $a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$. For $0 \le i \le 3$ let
+$b_i = a(i, 0) + a(i, 2) + a(i, 1) + a(i, 3)$, $c_i = a(i, 0) + a(i, 2) - a(i, 1) - a(i, 3)$
+and $\alpha_i = (a(i, 0) - a(i, 2)) + (a(i, 1) - a(i, 3))\sqrt{-1} \in \mathbb{Z}[\sqrt{-1}]$,
+and let $\beta = (\alpha_0 + \alpha_2)^2 - (\alpha_1 + \alpha_3)^2$ and
+$\gamma = (\alpha_0 - \alpha_2)^2 + (\alpha_1 - \alpha_3)^2$, with complex conjugates $\bar\beta$
+and $\bar\gamma$. Let $D_4(x_0, x_1, x_2, x_3)$ be the determinant of the $4 \times 4$
+circulant matrix with first row $(x_0, x_1, x_2, x_3)$.
+Then the group determinant $D_{4 \times 4}(a) = \det\bigl(a(h - g)\bigr)_{g, h}$, with $g, h$
+ranging over $\mathbb{Z}/4 \times \mathbb{Z}/4$, satisfies
+$D_{4 \times 4}(a) \equiv D_4(b) \equiv D_4(c) \equiv \beta\bar\beta \equiv \gamma\bar\gamma
+\pmod 2$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 2 (`integers-2024-A30-lem-2`). -/
@@ -219,7 +285,18 @@ public theorem_wanted c4Sq_groupDet_congr_mod_two (a : Fin 4 × Fin 4 → ℤ) :
       circulantDetFour (c4SqC a) ≡ Zsqrtd.norm (c4SqBeta a) [ZMOD 2] ∧
       Zsqrtd.norm (c4SqBeta a) ≡ Zsqrtd.norm (c4SqGamma a) [ZMOD 2]
 
-/-- **Lemma 3.** `β β̄ = {∑ (d_i + d_{i+2})²}² - 4{…}²` and the analogous formula for `γ γ̄`.
+/-- **Norms of β and γ as differences of squares (C₄²).** Let $a$ be an integer-valued function
+on $C_4^2 = \mathbb{Z}/4 \times \mathbb{Z}/4$, with associated integers $d_0, \dots, d_7$ and
+Gaussian integers $\beta$, $\gamma$, and write $\beta\bar\beta$, $\gamma\bar\gamma$ for the norms of
+$\beta$ and $\gamma$. Then
+
+$$\beta\bar\beta = \bigl((d_0 + d_2)^2 + (d_4 + d_6)^2 + (d_1 + d_3)^2 + (d_5 + d_7)^2\bigr)^2 -
+4\bigl((d_0 + d_2)(d_1 + d_3) + (d_4 + d_6)(d_5 + d_7)\bigr)^2$$
+
+and
+
+$$\gamma\bar\gamma = \bigl((d_0 - d_2)^2 + (d_4 - d_6)^2 + (d_1 - d_3)^2 + (d_5 - d_7)^2\bigr)^2 -
+4\bigl((d_0 - d_2)(d_5 - d_7) - (d_4 - d_6)(d_1 - d_3)\bigr)^2.$$
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 3 (`integers-2024-A30-lem-3`). -/
@@ -232,8 +309,15 @@ public theorem_wanted c4Sq_norm_beta_gamma_eq_sq_sub (a : Fin 4 × Fin 4 → ℤ
         ((d 0 - d 2) ^ 2 + (d 4 - d 6) ^ 2 + (d 1 - d 3) ^ 2 + (d 5 - d 7) ^ 2) ^ 2 -
           4 * ((d 0 - d 2) * (d 5 - d 7) - (d 4 - d 6) * (d 1 - d 3)) ^ 2
 
-/-- **Lemma 4.** The difference of the squared sums of squares in Lemma 3 equals
-`8 (∑ d_i²)(d₀d₂ + d₄d₆ + d₁d₃ + d₅d₇)`.
+/-- **Difference of the squared sums of squares of the $d_i$.** Let
+$a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$, and let $d_i = a(i, 0) - a(i, 2)$ and
+$d_{i+4} = a(i, 1) - a(i, 3)$ for $0 \le i \le 3$. Then
+
+$$
+\bigl((d_0 + d_2)^2 + (d_4 + d_6)^2 + (d_1 + d_3)^2 + (d_5 + d_7)^2\bigr)^2 -
+\bigl((d_0 - d_2)^2 + (d_4 - d_6)^2 + (d_1 - d_3)^2 + (d_5 - d_7)^2\bigr)^2 =
+8 \Bigl(\sum_{i=0}^{7} d_i^2\Bigr)(d_0 d_2 + d_4 d_6 + d_1 d_3 + d_5 d_7).
+$$
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 4 (`integers-2024-A30-lem-4`). -/
@@ -244,8 +328,14 @@ public theorem_wanted c4SqD_sum_sq_sq_sub_sq (a : Fin 4 × Fin 4 → ℤ) :
       8 * (d 0 ^ 2 + d 2 ^ 2 + d 4 ^ 2 + d 6 ^ 2 + d 1 ^ 2 + d 3 ^ 2 + d 5 ^ 2 + d 7 ^ 2) *
         (d 0 * d 2 + d 4 * d 6 + d 1 * d 3 + d 5 * d 7)
 
-/-- **Lemma 5.** Five congruences mod 4 between doubled cross terms in the `d_i` and
-cross terms in the `b_i`, `c_i`.
+/-- **Cross terms of the $d_i$ modulo $4$.** Let
+$a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$ have sums $b_i$, alternating sums
+$c_i$ and differences $d_0, \dots, d_7$. Then the following five congruences hold modulo $4$:
+$2(d_0 d_2 + d_4 d_6 + d_1 d_3 + d_5 d_7) \equiv b_0 b_2 + b_1 b_3 + c_0 c_2 + c_1 c_3$;
+$2(d_0 d_7 + d_2 d_5 + d_4 d_3 + d_6 d_1) \equiv b_0 b_3 + b_2 b_1 - c_0 c_3 - c_2 c_1$;
+$2(d_0 d_3 + d_2 d_1 + d_4 d_7 + d_6 d_5) \equiv b_0 b_3 + b_2 b_1 + c_0 c_3 + c_2 c_1$;
+$2(d_0 d_5 + d_2 d_7 + d_4 d_1 + d_6 d_3) \equiv b_0 b_1 + b_2 b_3 - c_0 c_1 - c_2 c_3$;
+$2(d_0 d_1 + d_2 d_3 + d_4 d_5 + d_6 d_7) \equiv b_0 b_1 + b_2 b_3 + c_0 c_1 + c_2 c_3$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 5 (`integers-2024-A30-lem-5`). -/
@@ -264,8 +354,10 @@ public theorem_wanted c4SqD_cross_terms_mod_four (a : Fin 4 × Fin 4 → ℤ) :
       2 * (d 0 * d 1 + d 2 * d 3 + d 4 * d 5 + d 6 * d 7) ≡
         b 0 * b 1 + b 2 * b 3 + c 0 * c 1 + c 2 * c 3 [ZMOD 4]
 
-/-- **Lemma 6.** `D₄(2k+1, 2l, 2m, 2n) ≡ 8m + 1` and
-`D₄(2k, 2l+1, 2m+1, 2n+1) ≡ 8(k + l + n) - 3 (mod 16)`.
+/-- **The 4 × 4 circulant determinant modulo 16 at two parity patterns.** For all integers
+$k$, $l$, $m$, $n$, the $4 \times 4$ circulant determinant $D_4$ satisfies
+$D_4(2k + 1, 2l, 2m, 2n) \equiv 8m + 1 \pmod{16}$ and
+$D_4(2k, 2l + 1, 2m + 1, 2n + 1) \equiv 8(k + l + n) - 3 \pmod{16}$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 6 (`integers-2024-A30-lem-6`). -/
@@ -273,9 +365,24 @@ public theorem_wanted circulantDetFour_mod_sixteen (k l m n : ℤ) :
     circulantDetFour ![2 * k + 1, 2 * l, 2 * m, 2 * n] ≡ 8 * m + 1 [ZMOD 16] ∧
       circulantDetFour ![2 * k, 2 * l + 1, 2 * m + 1, 2 * n + 1] ≡ 8 * (k + l + n) - 3 [ZMOD 16]
 
-/-- **Lemma 7.** Powers of `2` dividing `D₄` at the four parity patterns of the arguments
-(`2^e ℤ_odd` is written `∃ t, x = 2^e (2t + 1)`; "otherwise" is the negation of the
-earlier cases).
+/-- **Powers of $2$ dividing the $C_4$ group determinant at four parity patterns.** Let
+$D(x_0, x_1, x_2, x_3)$ be the group determinant of $C_4$, that is the determinant of the
+$4 \times 4$ circulant matrix with $(i, j)$ entry $x_{i - j}$ (indices mod $4$). For integers
+$k, l, m, n$ put $D_1 = D(2k, 2l, 2m, 2n)$, $D_2 = D(2k+1, 2l+1, 2m+1, 2n+1)$,
+$D_3 = D(2k, 2l+1, 2m, 2n+1)$, $D_4 = D(2k, 2l, 2m+1, 2n+1)$,
+$w_3 = (2k+2l+1)(2m+2n+1)$ and $w_4 = (2k+2m+1)(2l+2n+1)$, and write $2^e \mathbb{Z}_{odd}$
+for the set of integers $2^e(2t+1)$ with $t \in \mathbb{Z}$. Then:
+
+* if $k + m \not\equiv l + n \pmod 2$ then $D_1 \in 2^4 \mathbb{Z}_{odd}$, and if
+  $k + m \equiv l + n \pmod 2$ then $2^8 \mid D_1$;
+* if $k + m \not\equiv l + n \pmod 2$ then $D_2 \in 2^4 \mathbb{Z}_{odd}$; if
+  $(k + m)(l + n) \equiv -1 \pmod 4$ then $D_2 \in 2^7 \mathbb{Z}_{odd}$; and if
+  $k + m \equiv l + n \pmod 2$ and $(k + m)(l + n) \not\equiv -1 \pmod 4$ then $2^9 \mid D_2$;
+* if $k - m$ and $l - n$ are both odd then $D_3 \in 2^5 \mathbb{Z}_{odd}$; if
+  $k \equiv m \pmod 2$ and $w_3 \equiv \pm 3 \pmod 8$ then $D_3 \in 2^6 \mathbb{Z}_{odd}$; and if
+  neither of these two conditions holds then $2^7 \mid D_3$;
+* if $w_4 \equiv \pm 3 \pmod 8$ then $D_4 \in 2^4 \mathbb{Z}_{odd}$, and if
+  $w_4 \equiv \pm 1 \pmod 8$ then $2^5 \mid D_4$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 7 (`integers-2024-A30-lem-7`). -/
@@ -299,7 +406,12 @@ public theorem_wanted circulantDetFour_two_power_cases (k l m n : ℤ) :
       ((w₄ ≡ 3 [ZMOD 8] ∨ w₄ ≡ -3 [ZMOD 8] → ∃ t, D₄ = 2 ^ 4 * (2 * t + 1)) ∧
         (w₄ ≡ 1 [ZMOD 8] ∨ w₄ ≡ -1 [ZMOD 8] → 2 ^ 5 ∣ D₄))
 
-/-- **Lemma 8.** `S(C₄²) ∩ ℤ_odd ⊆ {16m + 1 | m ∈ ℤ} ∪ A`.
+/-- **Odd integer group determinants of $C_4 \times C_4$.** Let $C_4$ be the cyclic group of
+order $4$, $S(C_4^2)$ the set of integer group determinants of $C_4 \times C_4$ and $P$ the set
+of positive primes $p \equiv -3 \pmod 8$, and let $A$ be the set of products
+$(8k-3)(8l-3)(8m-3)(8n-3)$ with $k, l, m, n \in \mathbb{Z}$, $8l-3, 8m-3, 8n-3 \in P$ and
+$k + l \not\equiv m + n \pmod 2$. Every odd $z \in S(C_4^2)$ is of the form $16m + 1$ for some
+integer $m$ or lies in $A$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 8 (`integers-2024-A30-lem-8`). -/
@@ -307,8 +419,17 @@ public theorem_wanted odd_mem_integerGroupDeterminants_c4Sq {z : ℤ}
     (hz : z ∈ integerGroupDeterminants (Fin 4 × Fin 4)) (hodd : Odd z) :
     (∃ m : ℤ, z = 16 * m + 1) ∨ z ∈ c4SqExceptionalSet
 
-/-- **Lemma 9.** If `b₀ + b₂ ≢ b₁ + b₃ (mod 2)`, the residues of
-`(b₀b₂ + b₁b₃, c₀c₂ + c₁c₃) (mod 4)` determine the shape of `D₄(b) D₄(c)`.
+/-- **Factorization shapes of $D_4(b) D_4(c)$.** Let
+$a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$ have sums $b_i$ and alternating sums
+$c_i$, let $D_4$ be the $4 \times 4$ circulant determinant, and suppose
+$b_0 + b_2 \not\equiv b_1 + b_3 \pmod 2$. Put $x = b_0 b_2 + b_1 b_3$, $y = c_0 c_2 + c_1 c_3$
+and $D = D_4(b) D_4(c)$. If $(x, y) \equiv (0, 0)$ or $(2, 2) \pmod 4$, then
+$D = (8k + 1)(8l + 1)$ for some integers $k \equiv l \pmod 2$. If
+$(x, y) \equiv (0, 2)$ or $(2, 0) \pmod 4$, then $D = (8k + 1)(8l + 1)$ for some integers
+$k \not\equiv l \pmod 2$. If $(x, y) \equiv (1, 1)$ or $(-1, -1) \pmod 4$, then
+$D = (8k - 3)(8l - 3)$ for some integers $k \equiv l \pmod 2$. If
+$(x, y) \equiv (1, -1)$ or $(-1, 1) \pmod 4$, then $D = (8k - 3)(8l - 3)$ for some integers
+$k \not\equiv l \pmod 2$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 9 (`integers-2024-A30-lem-9`). -/
@@ -326,8 +447,11 @@ public theorem_wanted c4Sq_circulantDetFour_product_classes (a : Fin 4 × Fin 4 
       ((x ≡ 1 [ZMOD 4] ∧ y ≡ -1 [ZMOD 4]) ∨ (x ≡ -1 [ZMOD 4] ∧ y ≡ 1 [ZMOD 4]) →
         ∃ k l : ℤ, ¬ k ≡ l [ZMOD 2] ∧ D = (8 * k - 3) * (8 * l - 3))
 
-/-- **Lemma 10.** If `b₀ + b₂ ≢ b₁ + b₃ (mod 2)`, then
-`D₄(b) D₄(c) ≡ 1 - 4(b₀b₂ + b₁b₃ + c₀c₂ + c₁c₃) (mod 16)`.
+/-- **$D_4(b) D_4(c)$ modulo $16$.** Let
+$a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$ have sums $b_i$ and alternating sums
+$c_i$, and let $D_4$ be the $4 \times 4$ circulant determinant. If
+$b_0 + b_2 \not\equiv b_1 + b_3 \pmod 2$, then
+$D_4(b) D_4(c) \equiv 1 - 4(b_0 b_2 + b_1 b_3 + c_0 c_2 + c_1 c_3) \pmod{16}$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 10 (`integers-2024-A30-lem-10`). -/
@@ -337,9 +461,15 @@ public theorem_wanted c4Sq_circulantDetFour_product_mod_sixteen (a : Fin 4 × Fi
       1 - 4 * (c4SqB a 0 * c4SqB a 2 + c4SqB a 1 * c4SqB a 3 +
         c4SqC a 0 * c4SqC a 2 + c4SqC a 1 * c4SqC a 3) [ZMOD 16]
 
-/-- **Lemma 11.** If `b₀ + b₂ ≢ b₁ + b₃ (mod 2)` and `β β̄ ≡ -3 (mod 8)`, then
-`D₄(b) D₄(c) = (8k - 3)(8l - 3)` with `8l - 3 ∈ P`, where `k ≢ l` or `k ≡ l (mod 2)`
-according as `b₀b₂ + b₁b₃ + c₀c₂ + c₁c₃ ≡ 0` or `2 (mod 4)`.
+/-- **A prime factor $8l - 3$ of $D_4(b) D_4(c)$.** Let
+$a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$ have sums $b_i$, alternating sums
+$c_i$ and Gaussian integer $\beta$, let $D_4$ be the $4 \times 4$ circulant determinant, and let
+$P$ be the set of positive primes $p \equiv 5 \pmod 8$. Suppose
+$b_0 + b_2 \not\equiv b_1 + b_3 \pmod 2$ and that the norm $\beta \bar\beta \equiv -3 \pmod 8$,
+and put $Q = b_0 b_2 + b_1 b_3 + c_0 c_2 + c_1 c_3$. If $Q \equiv 0 \pmod 4$, then
+$D_4(b) D_4(c) = (8k - 3)(8l - 3)$ for some integers $k \not\equiv l \pmod 2$ with
+$8l - 3 \in P$. If $Q \equiv 2 \pmod 4$, then $D_4(b) D_4(c) = (8k - 3)(8l - 3)$ for some
+integers $k \equiv l \pmod 2$ with $8l - 3 \in P$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 11 (`integers-2024-A30-lem-11`). -/
@@ -354,8 +484,12 @@ public theorem_wanted c4Sq_circulantDetFour_product_prime_factor (a : Fin 4 × F
       (Q ≡ 2 [ZMOD 4] → ∃ k l : ℤ, 8 * l - 3 ∈ primesFiveModEight ∧ k ≡ l [ZMOD 2] ∧
         D = (8 * k - 3) * (8 * l - 3))
 
-/-- **Lemma 12.** If `b₀ + b₂ ≢ b₁ + b₃ (mod 2)`, then
-`β β̄ - γ γ̄ ≡ 4(b₀b₂ + b₁b₃ + c₀c₂ + c₁c₃) (mod 16)`.
+/-- **The difference of the norms of β and γ modulo 16 (C₄²).** Let $a$ be an integer-valued
+function on $C_4^2 = \mathbb{Z}/4 \times \mathbb{Z}/4$, with associated integers $b_i$, $c_i$
+$(0 \le i \le 3)$ and Gaussian integers $\beta$, $\gamma$, and write $\beta\bar\beta$,
+$\gamma\bar\gamma$ for the norms of $\beta$ and $\gamma$. If
+$b_0 + b_2 \not\equiv b_1 + b_3 \pmod 2$, then
+$\beta\bar\beta - \gamma\bar\gamma \equiv 4(b_0b_2 + b_1b_3 + c_0c_2 + c_1c_3) \pmod{16}$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 12 (`integers-2024-A30-lem-12`). -/
@@ -365,9 +499,15 @@ public theorem_wanted c4Sq_norm_beta_sub_norm_gamma_mod_sixteen (a : Fin 4 × Fi
       4 * (c4SqB a 0 * c4SqB a 2 + c4SqB a 1 * c4SqB a 3 +
         c4SqC a 0 * c4SqC a 2 + c4SqC a 1 * c4SqC a 3) [ZMOD 16]
 
-/-- **Lemma 13.** If `b₀ + b₂ ≢ b₁ + b₃ (mod 2)` and `β β̄ ≡ -3 (mod 8)`, then
-`β β̄ γ γ̄ = (8j + 1)(8m - 3)(8n - 3)` with `8m - 3, 8n - 3 ∈ P`, where `j ≡ m + n` or
-`j ≢ m + n (mod 2)` according as `b₀b₂ + b₁b₃ + c₀c₂ + c₁c₃ ≡ 0` or `2 (mod 4)`.
+/-- **Two prime factors ≡ −3 mod 8 of ββ̄γγ̄ (C₄²).** Let $a$ be an integer-valued function on
+$C_4^2 = \mathbb{Z}/4 \times \mathbb{Z}/4$, with associated integers $b_i$, $c_i$ $(0 \le i \le 3)$
+and Gaussian integers $\beta$, $\gamma$, write $\beta\bar\beta$, $\gamma\bar\gamma$ for the norms of
+$\beta$ and $\gamma$, let $P$ be the set of primes $p \equiv -3 \pmod 8$, and put
+$Q = b_0b_2 + b_1b_3 + c_0c_2 + c_1c_3$. Suppose that $b_0 + b_2 \not\equiv b_1 + b_3 \pmod 2$ and
+$\beta\bar\beta \equiv -3 \pmod 8$. If $Q \equiv 0 \pmod 4$, there are integers $j$, $m$, $n$ with
+$8m - 3 \in P$, $8n - 3 \in P$, $j \equiv m + n \pmod 2$ and
+$\beta\bar\beta\gamma\bar\gamma = (8j + 1)(8m - 3)(8n - 3)$. If $Q \equiv 2 \pmod 4$, the same holds
+with $j \not\equiv m + n \pmod 2$ in place of $j \equiv m + n \pmod 2$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 13 (`integers-2024-A30-lem-13`). -/
@@ -384,8 +524,11 @@ public theorem_wanted c4Sq_norm_beta_gamma_prime_factors (a : Fin 4 × Fin 4 →
         8 * n - 3 ∈ primesFiveModEight ∧ ¬ j ≡ m + n [ZMOD 2] ∧
         N = (8 * j + 1) * (8 * m - 3) * (8 * n - 3))
 
-/-- **Lemma 14.** `S(C₄²) ∩ 2ℤ ⊆ 2^15 ℤ` and
-`S(C₄²) ∩ 2^15 ℤ_odd ⊆ {2^15 p (2m + 1) | p ∈ P, m ∈ ℤ}`.
+/-- **Even integer group determinants of $C_4 \times C_4$.** Let $C_4$ be the cyclic group of
+order $4$, $S(C_4^2)$ the set of integer group determinants of $C_4 \times C_4$ and $P$ the set
+of positive primes $p \equiv -3 \pmod 8$, and let $z \in S(C_4^2)$. If $z$ is even, then
+$2^{15} \mid z$. If $z = 2^{15}(2t + 1)$ for some integer $t$, then $z = 2^{15} p (2m + 1)$ for
+some $p \in P$ and some integer $m$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 14 (`integers-2024-A30-lem-14`). -/
@@ -395,8 +538,20 @@ public theorem_wanted even_mem_integerGroupDeterminants_c4Sq {z : ℤ}
       ((∃ t : ℤ, z = 2 ^ 15 * (2 * t + 1)) →
         ∃ p ∈ primesFiveModEight, ∃ m : ℤ, z = 2 ^ 15 * p * (2 * m + 1))
 
-/-- **Lemma 15.** Powers of `2` dividing `D₄(b) D₄(c)` according to the parities of the
-`b_i` (`2^e ℤ_odd` is written `∃ t, x = 2^e (2t + 1)`).
+/-- **The power of $2$ in $D_4(b) D_4(c)$.** Let
+$a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$ have sums $b_i$ and alternating sums
+$c_i$, let $D_4$ be the $4 \times 4$ circulant determinant, put $D = D_4(b) D_4(c)$, and say
+that $D \in 2^e \mathbb{Z}_{\mathrm{odd}}$ when $D = 2^e (2t + 1)$ for some integer $t$.
+If every $b_i$ is even, then $D \in 2^8 \mathbb{Z}_{\mathrm{odd}}$ when
+$b_0 + b_1 + b_2 + b_3 \equiv c_0 + c_1 + c_2 + c_3 \equiv 2 \pmod 4$, and $2^{12} \mid D$
+otherwise. If every $b_i$ is odd, then $D \in 2^8 \mathbb{Z}_{\mathrm{odd}}$ under the same
+condition, and $2^{11} \mid D$ otherwise. If $b_0 \equiv b_2$, $b_1 \equiv b_3$ and
+$b_0 \not\equiv b_1 \pmod 2$, then $D \in 2^{10} \mathbb{Z}_{\mathrm{odd}}$ when
+$b_0 - b_2 \equiv b_1 - b_3 \equiv c_0 - c_2 \equiv c_1 - c_3 \equiv 2 \pmod 4$, and
+$2^{11} \mid D$ otherwise. If $b_0 + b_2$ and $b_1 + b_3$ are both odd, put
+$u = (b_0 + b_2)(b_1 + b_3)$ and $v = (c_0 + c_2)(c_1 + c_3)$; then
+$D \in 2^8 \mathbb{Z}_{\mathrm{odd}}$ when $u \equiv \pm 3$ and $v \equiv \pm 3 \pmod 8$, and
+$2^9 \mid D$ otherwise.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 15 (`integers-2024-A30-lem-15`). -/
@@ -427,9 +582,17 @@ public theorem_wanted c4Sq_circulantDetFour_product_two_power (a : Fin 4 × Fin 
         (¬ ((u ≡ 3 [ZMOD 8] ∨ u ≡ -3 [ZMOD 8]) ∧ (v ≡ 3 [ZMOD 8] ∨ v ≡ -3 [ZMOD 8])) →
           2 ^ 9 ∣ D))
 
-/-- **Lemma 16.** Powers of `2` dividing `β β̄ γ γ̄` according to the parities of
-`b₀ + b₂` and `b₁ + b₃`, with
-`d = {(d₀+d₂)(d₅+d₇) + (d₄+d₆)(d₁+d₃)}{(d₀-d₂)(d₁-d₃) + (d₄-d₆)(d₅-d₇)}` in the odd case.
+/-- **The power of $2$ in $\beta\bar\beta\gamma\bar\gamma$.** Let
+$a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$ have sums $b_i$, alternating sums
+$c_i$, differences $d_0, \dots, d_7$ and Gaussian integers $\beta$, $\gamma$, and put
+$N = \beta \bar\beta \gamma \bar\gamma$, the product of the norms of $\beta$ and $\gamma$. If
+$b_0 + b_2$ and $b_1 + b_3$ are both even, then $N = 2^4 (2t + 1)$ for some integer $t$ when
+$b_0 + b_1 + b_2 + b_3 \not\equiv c_0 + c_1 + c_2 + c_3 \pmod 4$, and $2^8 \mid N$ when
+$b_0 + b_1 + b_2 + b_3 \equiv c_0 + c_1 + c_2 + c_3 \pmod 4$. If $b_0 + b_2$ and $b_1 + b_3$
+are both odd, put
+$d = \bigl((d_0 + d_2)(d_5 + d_7) + (d_4 + d_6)(d_1 + d_3)\bigr)
+\bigl((d_0 - d_2)(d_1 - d_3) + (d_4 - d_6)(d_5 - d_7)\bigr)$; then $N = 2^7 (2t + 1)$ for
+some integer $t$ when $d \equiv 2 \pmod 4$, and $2^8 \mid N$ when $d \equiv 0 \pmod 4$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 16 (`integers-2024-A30-lem-16`). -/
@@ -447,7 +610,14 @@ public theorem_wanted c4Sq_norm_beta_gamma_two_power (a : Fin 4 × Fin 4 → ℤ
     (b 0 + b 2 ≡ 1 [ZMOD 2] → b 1 + b 3 ≡ 1 [ZMOD 2] →
       (d ≡ 2 [ZMOD 4] → ∃ t, N = 2 ^ 7 * (2 * t + 1)) ∧ (d ≡ 0 [ZMOD 4] → 2 ^ 8 ∣ N))
 
-/-- **Lemma 17.** Two situations in which `b₀b₂ + b₁b₃ + c₀c₂ + c₁c₃ ≡ 2 (mod 4)`.
+/-- **Two conditions forcing $b_0 b_2 + b_1 b_3 + c_0 c_2 + c_1 c_3 \equiv 2 \pmod 4$.** Let
+$a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$ have sums $b_i$, alternating sums
+$c_i$ and Gaussian integers $\beta$, $\gamma$; let $D_4$ be the $4 \times 4$ circulant
+determinant, and put $D = D_4(b) D_4(c)$, $N = \beta \bar\beta \gamma \bar\gamma$ and
+$Q = b_0 b_2 + b_1 b_3 + c_0 c_2 + c_1 c_3$. If every $b_i$ is odd and $D = 2^{11} (2t + 1)$
+for some integer $t$, then $Q \equiv 2 \pmod 4$. If $b_0 \equiv b_2$, $b_1 \equiv b_3$ and
+$b_0 \not\equiv b_1 \pmod 2$, and $D = 2^{11} (2t + 1)$ and $N = 2^4 (2s + 1)$ for some
+integers $t$ and $s$, then $Q \equiv 2 \pmod 4$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 17 (`integers-2024-A30-lem-17`). -/
@@ -461,8 +631,14 @@ public theorem_wanted c4Sq_cross_sum_mod_four_of_two_power (a : Fin 4 × Fin 4 �
       (b 0 ≡ b 2 [ZMOD 2] → b 1 ≡ b 3 [ZMOD 2] → ¬ b 0 ≡ b 1 [ZMOD 2] →
         (∃ t, D = 2 ^ 11 * (2 * t + 1)) → (∃ t, N = 2 ^ 4 * (2 * t + 1)) → Q ≡ 2 [ZMOD 4])
 
-/-- **Lemma 18.** If `b₀ + b₂ ≡ b₁ + b₃ ≡ 0 (mod 2)`, `β β̄ γ γ̄ ∈ 2^4 ℤ_odd` and
-`b₀b₂ + b₁b₃ + c₀c₂ + c₁c₃ ≡ 2 (mod 4)`, then `β β̄ γ γ̄ = 2^4 p (2m + 1)` with `p ∈ P`.
+/-- **A prime factor p ≡ −3 mod 8 of ββ̄γγ̄ in the even case (C₄²).** Let $a$ be an integer-valued
+function on $C_4^2 = \mathbb{Z}/4 \times \mathbb{Z}/4$, with associated integers $b_i$, $c_i$
+$(0 \le i \le 3)$ and Gaussian integers $\beta$, $\gamma$, write $\beta\bar\beta$ and
+$\gamma\bar\gamma$ for the norms of $\beta$ and $\gamma$, and let $P$ be the set of primes
+$p \equiv -3 \pmod 8$. Suppose that $b_0 + b_2 \equiv b_1 + b_3 \equiv 0 \pmod 2$, that
+$\beta\bar\beta\gamma\bar\gamma = 2^4(2t + 1)$ for some integer $t$, and that
+$b_0b_2 + b_1b_3 + c_0c_2 + c_1c_3 \equiv 2 \pmod 4$. Then
+$\beta\bar\beta\gamma\bar\gamma = 2^4 p(2m + 1)$ for some $p \in P$ and some integer $m$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 18 (`integers-2024-A30-lem-18`). -/
@@ -474,8 +650,18 @@ public theorem_wanted c4Sq_norm_beta_gamma_prime_factor (a : Fin 4 × Fin 4 → 
     ∃ p ∈ primesFiveModEight, ∃ m : ℤ,
       Zsqrtd.norm (c4SqBeta a) * Zsqrtd.norm (c4SqGamma a) = 2 ^ 4 * p * (2 * m + 1)
 
-/-- **Lemma 19.** If `b₀ + b₂ ≡ b₁ + b₃ ≡ 1 (mod 2)`, `D₄(b) D₄(c) ∈ 2^8 ℤ_odd` and
-`β β̄ γ γ̄ ∈ 2^7 ℤ_odd`, then `D₄(b) D₄(c) β β̄ γ γ̄ = 2^15 p (2m + 1)` with `p ∈ P`.
+/-- **A prime factor $p \equiv 5 \pmod 8$ of $D_4(b) D_4(c) \beta\bar\beta \gamma\bar\gamma$.**
+Let $a \colon \mathbb{Z}/4 \times \mathbb{Z}/4 \to \mathbb{Z}$. For $0 \le i \le 3$ let
+$b_i = a(i, 0) + a(i, 2) + a(i, 1) + a(i, 3)$, $c_i = a(i, 0) + a(i, 2) - a(i, 1) - a(i, 3)$
+and $\alpha_i = (a(i, 0) - a(i, 2)) + (a(i, 1) - a(i, 3))\sqrt{-1} \in \mathbb{Z}[\sqrt{-1}]$,
+and let $\beta = (\alpha_0 + \alpha_2)^2 - (\alpha_1 + \alpha_3)^2$ and
+$\gamma = (\alpha_0 - \alpha_2)^2 + (\alpha_1 - \alpha_3)^2$, with complex conjugates $\bar\beta$
+and $\bar\gamma$. Let $D_4(x_0, x_1, x_2, x_3)$ be the determinant of the $4 \times 4$
+circulant matrix with first row $(x_0, x_1, x_2, x_3)$.
+Let $P$ be the set of positive primes $p \equiv 5 \pmod 8$. Suppose that $b_0 + b_2$ and
+$b_1 + b_3$ are odd, that $D_4(b) D_4(c) = 2^8 (2t + 1)$ for some integer $t$, and that
+$\beta\bar\beta \gamma\bar\gamma = 2^7 (2t' + 1)$ for some integer $t'$. Then there are $p \in P$
+and $m \in \mathbb{Z}$ with $D_4(b) D_4(c) \beta\bar\beta \gamma\bar\gamma = 2^{15} p (2m + 1)$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 19 (`integers-2024-A30-lem-19`). -/
@@ -487,8 +673,9 @@ public theorem_wanted c4Sq_groupDet_factors_prime_factor (a : Fin 4 × Fin 4 →
       circulantDetFour (c4SqB a) * circulantDetFour (c4SqC a) *
         (Zsqrtd.norm (c4SqBeta a) * Zsqrtd.norm (c4SqGamma a)) = 2 ^ 15 * p * (2 * m + 1)
 
-/-- **Lemma 20.** For every `m ∈ ℤ`, `16m + 1`, `2^16 (4m + 1)`, `2^16 (4m - 1)` and
-`2^16 (2m)` lie in `S(C₄²)`.
+/-- **Basic integer group determinants of $C_4^2$.** For every integer $m$, the integers
+$16m + 1$, $2^{16} (4m + 1)$, $2^{16} (4m - 1)$ and $2^{16} \cdot 2m$ all lie in the set
+$S(C_4^2)$ of integer group determinants of $C_4^2 = \mathbb{Z}/4 \times \mathbb{Z}/4$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 20 (`integers-2024-A30-lem-20`). -/
@@ -498,9 +685,16 @@ public theorem_wanted c4Sq_integerGroupDeterminants_basic_members (m : ℤ) :
       2 ^ 16 * (4 * m - 1) ∈ integerGroupDeterminants (Fin 4 × Fin 4) ∧
       2 ^ 16 * (2 * m) ∈ integerGroupDeterminants (Fin 4 × Fin 4)
 
-/-- **Lemma 21.** If `16l - 3, 16l + 5, 16m - 3, 16m + 5, 16n - 3, 16n + 5 ∈ P`, then for
-every `k ∈ ℤ` the four products of one factor `16k - 3` or `16k + 5` with three of these primes
-in the displayed residue patterns mod 16 lie in `S(C₄²)` (the paper's shared hypothesis list).
+/-- **Four-factor integer group determinants of $C_4^2$.** Let
+$P$ be the set of positive primes $p \equiv 5 \pmod 8$, and let $k, l, m, n$ be integers such
+that $16l - 3$, $16l + 5$, $16m - 3$, $16m + 5$, $16n - 3$ and $16n + 5$ all lie in $P$. Then
+the four integers $(16k - 3)(16l + 5)(16m - 3)(16n - 3)$,
+$(16k - 3)(16l + 5)(16m + 5)(16n + 5)$, $(16k + 5)(16l - 3)(16m - 3)(16n - 3)$ and
+$(16k + 5)(16l - 3)(16m + 5)(16n + 5)$ all lie in the set $S(C_4^2)$ of integer group
+determinants of $C_4^2 = \mathbb{Z}/4 \times \mathbb{Z}/4$.
+
+All six membership hypotheses are assumed for each of the four conclusions, as in the paper's
+shared hypothesis list.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 21 (`integers-2024-A30-lem-21`). -/
@@ -517,7 +711,10 @@ public theorem_wanted c4Sq_integerGroupDeterminants_four_factor_members (k l m n
       (16 * k + 5) * (16 * l - 3) * (16 * m + 5) * (16 * n + 5) ∈
         integerGroupDeterminants (Fin 4 × Fin 4)
 
-/-- **Lemma 22.** For every `m ∈ ℤ` and `p ∈ P`, `2^15 p (2m + 1) ∈ S(C₄²)`.
+/-- **Integer group determinants of $C_4^2$ of the form $2^{15} p (2m + 1)$.** Let $P$ be
+the set of positive primes $p \equiv 5 \pmod 8$. For every integer $m$ and every $p \in P$, the
+integer $2^{15} p (2m + 1)$ lies in the set $S(C_4^2)$ of integer group determinants of
+$C_4^2 = \mathbb{Z}/4 \times \mathbb{Z}/4$.
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Lemma 22 (`integers-2024-A30-lem-22`). -/
@@ -525,8 +722,16 @@ public theorem_wanted c4Sq_integerGroupDeterminants_two_pow_fifteen (m p : ℤ)
     (hp : p ∈ primesFiveModEight) :
     2 ^ 15 * p * (2 * m + 1) ∈ integerGroupDeterminants (Fin 4 × Fin 4)
 
-/-- **Theorem 1.** `S(C₄²) = {16m + 1, 2^15 p (2m + 1), 2^16 m | m ∈ ℤ, p ∈ P} ∪ A`, and
-`A ⊊ {16m - 7 | m ∈ ℤ}`.
+/-- **Integer group determinants of $C_4 \times C_4$.** Let $C_4$ be the cyclic group of order
+$4$, let $S(C_4^2)$ be the set of integer group determinants of $C_4 \times C_4$, let $P$ be the
+set of positive primes $p \equiv -3 \pmod 8$, and let $A$ be the set of products
+$(8k-3)(8l-3)(8m-3)(8n-3)$ with $k, l, m, n \in \mathbb{Z}$, $8l-3, 8m-3, 8n-3 \in P$ and
+$k + l \not\equiv m + n \pmod 2$. Then $A$ is a proper subset of
+$\{16m - 7 \mid m \in \mathbb{Z}\}$, and
+
+$$S(C_4^2) = \{16m + 1 \mid m \in \mathbb{Z}\} \cup
+\{2^{15} p (2m + 1) \mid p \in P, m \in \mathbb{Z}\} \cup
+\{2^{16} m \mid m \in \mathbb{Z}\} \cup A.$$
 
 Source: Yuka Yamaguchi and Naoya Yamaguchi, *Integer Group Determinants for
 C_4^2*, INTEGERS 24 (2024), Article A30, Theorem 1 (`integers-2024-A30-thm-1`). -/

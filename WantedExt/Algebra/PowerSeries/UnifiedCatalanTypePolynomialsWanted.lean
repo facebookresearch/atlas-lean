@@ -40,10 +40,18 @@ open PowerSeries
 
 @[expose] public section
 
-/-- The formal expansion of `(c - α t + β t^m)^(-λ)` in powers of `t`, written as
-`c^(-λ) (1 + u)^(-λ)` with `u = (-α t + β t^m) / c` and Mathlib's binomial series. For
-`c > 0` and `m ≥ 1` this is the denominator factor of every generating function in the
-paper (with `c = 1`, `α = m`, `β = x` in Section 2).
+/-- **Negative real power of a trinomial as a power series.** For real numbers $\lambda$, $c$,
+$\alpha$, $\beta$ and a natural number $m$, this is the formal power series in $t$ with real
+coefficients
+$$c^{-\lambda} \sum_{n \ge 0} \binom{-\lambda}{n} u^n, \qquad u = \frac{-\alpha t + \beta t^m}{c},$$
+that is, the real power $c^{-\lambda}$ times the binomial series
+$(1 + t)^{-\lambda} = \sum_{n \ge 0} \binom{-\lambda}{n} t^n$ with $u$ substituted for $t$ (for
+$c = 0$ the division is read as $0$, so $u = 0$). The substitution is meaningful when $u$ has
+zero constant term, which holds for $m \ge 1$; for $c > 0$ and $m \ge 1$ the series is the
+expansion of $(c - \alpha t + \beta t^m)^{-\lambda}$ in powers of $t$.
+
+For $c > 0$ and $m \ge 1$ this is the denominator factor of every generating function in Pathan
+and Usman's paper; Section 2 takes $c = 1$, $\alpha = m$ and $\beta = x$.
 
 Source: M. A. Pathan and T. Usman, *Unified Catalan-Type Polynomials with Matrix
 Formulations and Applications*, INTEGERS 26 (2026), Article A105, Equations (6), (12)
@@ -52,7 +60,12 @@ noncomputable def trinomialNegPowSeries (lam c α β : ℝ) (m : ℕ) : PowerSer
   C (c ^ (-lam)) *
     (binomialSeries ℝ (-lam)).subst (C (-α / c) * X + C (β / c) * X ^ m : PowerSeries ℝ)
 
-/-- The constant term of `(c - α t + β t^m)^(-λ)` is `c^(-λ)`.
+/-- **Constant term of the trinomial series.** For all real numbers $\lambda, c, \alpha, \beta$
+and every natural number $m \ne 0$, the negative real power of the trinomial
+$c - \alpha t + \beta t^m$ with exponent $\lambda$ as a power series in $t$, that is, the real
+power $c^{-\lambda}$ times the binomial series $(1 + u)^{-\lambda}$ with
+$u = (-\alpha t + \beta t^m)/c$ substituted (where $u = 0$ when $c = 0$), has constant term
+$c^{-\lambda}$.
 
 Source: M. A. Pathan and T. Usman, *Unified Catalan-Type Polynomials with Matrix
 Formulations and Applications*, INTEGERS 26 (2026), Article A105, Equation (6). -/
@@ -72,7 +85,9 @@ theorem constantCoeff_trinomialNegPowSeries (lam c α β : ℝ) {m : ℕ} (hm : 
   rw [← hu_def, ← hb_def, map_mul, hb, subst_add hu, map_add, hone, hsub0]
   simp
 
-/-- For `λ = -1` and `c = 1` the series is the trinomial `1 - α t + β t^m` itself.
+/-- **The trinomial series at exponent one.** For all real numbers $\alpha, \beta$ and every
+natural number $m \ne 0$, the formal expansion of $(1 - \alpha t + \beta t^m)^{-\lambda}$ in
+powers of $t$ at $\lambda = -1$ is the polynomial $1 - \alpha t + \beta t^m$ itself.
 
 Source: M. A. Pathan and T. Usman, *Unified Catalan-Type Polynomials with Matrix
 Formulations and Applications*, INTEGERS 26 (2026), Article A105, Equation (6). -/
@@ -89,9 +104,14 @@ theorem trinomialNegPowSeries_neg_one (α β : ℝ) {m : ℕ} (hm : m ≠ 0) :
   simp [u, map_neg]
   ring
 
-/-- The Kampé de Fériet (two-variable Hermite) polynomial
-`H^m_n(x, y) = n! ∑_{r ≤ ⌊n/m⌋} y^r x^(n - m r) / (r! (n - m r)!)`, evaluated in any real
-algebra (so that `H_k(x + 2 y t, y)` can be formed in `ℝ⟦t⟧`); `H^2_n = H_n`.
+/-- **Kampé de Fériet polynomials.** For natural numbers $m, n$ and elements $x, y$ of a
+commutative $\mathbb{R}$-algebra, the Kampé de Fériet (two-variable Hermite) polynomial is
+
+$$H^m_n(x, y) = \sum_{r=0}^{q} \frac{n!}{r!\,(n - m r)!}\, y^r x^{n - m r},$$
+
+where $q = \lfloor n / m \rfloor$, read as $q = 0$ when $m = 0$. The paper writes $H_n(x, y)$
+for $H^2_n(x, y)$; taking values in an algebra lets $H_k(x + 2yt, y)$ be formed as a formal
+power series in $t$.
 
 Source: M. A. Pathan and T. Usman, *Unified Catalan-Type Polynomials with Matrix
 Formulations and Applications*, INTEGERS 26 (2026), Article A105, Equation (2). -/
@@ -101,7 +121,8 @@ noncomputable def kampeDeFerietHermite {A : Type*} [CommRing A] [Algebra ℝ A] 
     ((n.factorial : ℝ) / ((r.factorial : ℝ) * ((n - m * r).factorial : ℝ))) •
       (y ^ r * x ^ (n - m * r))
 
-/-- `H^m_0(x, y) = 1`.
+/-- **The zeroth Kampé de Fériet polynomial.** For every natural number $m$ and all elements
+$x, y$ of a commutative $\mathbb{R}$-algebra, $H^m_0(x, y) = 1$.
 
 Source: M. A. Pathan and T. Usman, *Unified Catalan-Type Polynomials with Matrix
 Formulations and Applications*, INTEGERS 26 (2026), Article A105, Equation (2). -/
@@ -109,7 +130,8 @@ theorem kampeDeFerietHermite_zero {A : Type*} [CommRing A] [Algebra ℝ A] (m : 
     kampeDeFerietHermite m 0 x y = 1 := by
   simp [kampeDeFerietHermite]
 
-/-- `H_2(x, y) = x² + 2 y`.
+/-- **The second Kampé de Fériet polynomial.** For all real numbers $x$ and $y$,
+$H^2_2(x, y) = x^2 + 2y$.
 
 Source: M. A. Pathan and T. Usman, *Unified Catalan-Type Polynomials with Matrix
 Formulations and Applications*, INTEGERS 26 (2026), Article A105, Equation (2). -/
@@ -117,13 +139,21 @@ theorem kampeDeFerietHermite_two_two (x y : ℝ) :
     kampeDeFerietHermite 2 2 x y = x ^ 2 + 2 * y := by
   simp [kampeDeFerietHermite, Finset.sum_range_succ, Nat.factorial]
 
-/-- **Theorem 2.** The polynomials `H^{k;λ}_{n,m}(x, y, z)` and `h^{k;λ}_{n,m}(x, y, z)`,
-the coefficients of `t^n` in `e^(xt + yt²) H_k(x + 2yt, y) / (1 - m t + z t^m)^λ` and
-`e^(xt + yt²) H_k(x + 2yt, y) / (1 - m z t + t^m)^λ` (Definition 3), are
-`∑_{r=0}^n H_{n-r+k}(x, y) P^λ_{r,m}(z) / (n - r)!` and
-`∑_{r=0}^n H_{n-r+k}(x, y) h^λ_{r,m}(z) / (n - r)!` (Equations (8) and (9)), where
-`P^λ_{r,m}(z)` and `h^λ_{r,m}(z)` are the coefficients of `t^r` in the two denominator
-factors. Stated for all `m` and real `λ`.
+/-- **Hermite-shifted Catalan-type polynomials as convolutions.** Write $H_n(x, y) = H^2_n(x, y)$
+for the Kampé de Fériet polynomials. For a natural number $m$ and real numbers $\lambda, z$,
+write $(1 - m t + z t^m)^{-\lambda}$ and $(1 - m z t + t^m)^{-\lambda}$ for the negative real
+powers of the trinomials $1 - m t + z t^m$ and $1 - m z t + t^m$ with exponent $\lambda$ as
+power series in $t$ (for $m \ge 1$ these are their expansions in powers of $t$), and let
+$P^\lambda_{r,m}(z)$ and $h^\lambda_{r,m}(z)$ be their coefficients of $t^r$. For all natural
+numbers $k, m, n$ and real numbers $\lambda, x, y, z$, as formal power series in $t$ (with
+$e^{xt + yt^2}$ the exponential series and $H_k(x + 2yt, y)$ evaluated in power series), the
+coefficient of $t^n$ in $e^{xt + yt^2} H_k(x + 2yt, y) (1 - m t + z t^m)^{-\lambda}$ is
+$\sum_{r=0}^{n} H_{n-r+k}(x, y) P^\lambda_{r,m}(z) / (n - r)!$, and the coefficient of $t^n$
+in $e^{xt + yt^2} H_k(x + 2yt, y) (1 - m z t + t^m)^{-\lambda}$ is
+$\sum_{r=0}^{n} H_{n-r+k}(x, y) h^\lambda_{r,m}(z) / (n - r)!$.
+
+These coefficients are the paper's $H^{k;\lambda}_{n,m}(x, y, z)$ and
+$h^{k;\lambda}_{n,m}(x, y, z)$ (Definition 3, Equations (8) and (9)).
 
 Source: M. A. Pathan and T. Usman, *Unified Catalan-Type Polynomials with Matrix
 Formulations and Applications*, INTEGERS 26 (2026), Article A105, Theorem 2
@@ -139,14 +169,24 @@ public theorem_wanted coeff_hermiteShift_mul_trinomialNegPowSeries (k m n : ℕ)
         ∑ r ∈ Finset.range (n + 1), kampeDeFerietHermite 2 (n - r + k) x y /
           ((n - r).factorial : ℝ) * coeff r (trinomialNegPowSeries lam 1 (m * z) 1 m)
 
-/-- **Theorem 3.** With `F(j, k, y, t) = ∑_n t^(jn+k) H_{jn+k}(y) / (jn + k)!` (Equation (1),
-`H_n` the Hermite polynomials of `e^(2yt - t²)`, so `H_n(y) / n!` is the coefficient of
-`t^n` in that exponential), the coefficients `F^{j.k;λ}_{r,m}(x, y)` and `f^{j.k;λ}_{r,m}(x, y)`
-of `t^r` in `F(j, k, y, t) / (1 - m t + x t^m)^λ` and `F(j, k, y, t) / (1 - m x t + t^m)^λ`
-(Equations (10) and (11)) are
-`∑_{n ≤ ⌊(r-k)/j⌋} H_{jn+k}(y) P^λ_{r-jn-k,m}(x) / (jn + k)!` and the same sum with
-`h^λ_{r-jn-k,m}(x)`. Stated for `k ≤ r` (for `r < k` the paper's sum is empty and both
-sides vanish), all `j, m` (the paper takes `j, m ≥ 1`) and real `λ`.
+/-- **Nieto–Hermite Catalan-type polynomials as convolutions.** Let $j, k, m, r$ be natural
+numbers with $k \le r$ and let $\lambda, x, y$ be real numbers. Let $E(t) = e^{2yt - t^2}$ be the
+exponential series, so that its coefficient of $t^n$ is $H_n(y) / n!$ with $H_n$ the Hermite
+polynomials, and let $F(t)$ be the power series whose coefficient of $t^n$ is $H_n(y) / n!$ when
+$n \ge k$ and $j \mid n - k$, and $0$ otherwise (for $j \ge 1$ this is the series
+$F(j, k, y, t) = \sum_n H_{jn+k}(y) t^{jn+k} / (jn + k)!$ of Equation (1)). Write
+$(1 - m t + x t^m)^{-\lambda}$ and $(1 - m x t + t^m)^{-\lambda}$ for the negative real powers
+of the trinomials $1 - m t + x t^m$ and $1 - m x t + t^m$ with exponent $\lambda$ as power
+series in $t$ (for $m \ge 1$ these are their expansions in powers of $t$), let
+$P^\lambda_{s,m}(x)$ and $h^\lambda_{s,m}(x)$ be their coefficients of $t^s$, and let
+$q = \lfloor (r - k) / j \rfloor$, read as $q = 0$ when $j = 0$. Then the coefficient of
+$t^r$ in $F(t) (1 - m t + x t^m)^{-\lambda}$ is
+$\sum_{n=0}^{q} H_{jn+k}(y) P^\lambda_{r-jn-k,m}(x) / (jn + k)!$, and the coefficient of $t^r$
+in $F(t) (1 - m x t + t^m)^{-\lambda}$ is the same sum with $h^\lambda_{r-jn-k,m}(x)$ in place
+of $P^\lambda_{r-jn-k,m}(x)$.
+
+These are the paper's $F^{j.k;\lambda}_{r,m}(x, y)$ and $f^{j.k;\lambda}_{r,m}(x, y)$
+(Equations (10) and (11)). The paper takes $j, m \ge 1$; for $r < k$ its sum is empty.
 
 Source: M. A. Pathan and T. Usman, *Unified Catalan-Type Polynomials with Matrix
 Formulations and Applications*, INTEGERS 26 (2026), Article A105, Theorem 3
@@ -163,13 +203,20 @@ public theorem_wanted coeff_nietoHermiteSeries_mul_trinomialNegPowSeries (j k m 
         ∑ n ∈ Finset.range ((r - k) / j + 1),
           coeff (j * n + k) E * coeff (r - j * n - k) (trinomialNegPowSeries lam 1 (m * x) 1 m)
 
-/-- **Theorem 6.** For the kernel `R(x, t) = [c - a x t + b t^m (2x - 1)^d]^λ`, the
-coefficients `P^{j.k;a,b,c,d,λ,A}_{n,m}(x, y)` of `(S(j, k, yt) + A(x) t) / R(x, t)`
-(Equation (15), `S` the pseudo-Bessel function of Equation (5)) satisfy
-`P^{j.k;…,λ,A}_{n,m}(x, y) = P^{j.k;…,λ,0}_{n,m}(x, y) + P^{1.0;…,λ,A}_{n,m}(x) -
-P^{1.0;…,λ,0}_{n,m}(x)`, where the last two are the `y = 0` specializations with numerators
-`1 + A(x) t` and `1`. Stated for `d ∈ ℕ`, `A ∈ ℤ[x]`, all real `a, b, c, λ`; the kernel is the
-paper's for `c > 0`.
+/-- **Splitting the numerator of a unified Catalan-type generating function.** Let
+$j, k, m, d, n$ be natural numbers, let $a, b, c, \lambda, x, y$ be real numbers and let $A$ be
+a polynomial with integer coefficients. Let $K(t)$ be the negative real power of the trinomial
+$c - a x t + b (2x - 1)^d t^m$ with exponent $\lambda$ as a power series in $t$ (for $c > 0$ and
+$m \ge 1$ this is the expansion of $(c - a x t + b (2x - 1)^d t^m)^{-\lambda}$ in powers of $t$),
+and let $S(t) = \sum_i y^i t^i / i!$, the sum running over the natural numbers $i \ge k$ with
+$j \mid i - k$ (for $j \ge 1$ this is the pseudo-Bessel function $S(j, k, yt)$ of Equation (5)).
+Then the coefficient of $t^n$ in $(S(t) + A(x)\, t)\, K(t)$ equals the coefficient of $t^n$ in
+$S(t) K(t)$, plus the coefficient of $t^n$ in $(1 + A(x)\, t)\, K(t)$, minus the coefficient of
+$t^n$ in $K(t)$.
+
+In the paper's notation this is
+$P^{j.k;\lambda,A}_{n,m}(x, y) = P^{j.k;\lambda,0}_{n,m}(x, y) + P^{1.0;\lambda,A}_{n,m}(x) -
+P^{1.0;\lambda,0}_{n,m}(x)$; the kernel is the paper's for $c > 0$.
 
 Source: M. A. Pathan and T. Usman, *Unified Catalan-Type Polynomials with Matrix
 Formulations and Applications*, INTEGERS 26 (2026), Article A105, Theorem 6
@@ -182,11 +229,16 @@ public theorem_wanted coeff_catalanTypeKernel_decomposition (j k m d n : ℕ)
     let At : PowerSeries ℝ := C (Polynomial.aeval x A) * X
     coeff n ((S + At) * K) = coeff n (S * K) + coeff n ((1 + At) * K) - coeff n K
 
-/-- **Theorem 7.** The lower-triangular matrix `P_N^{(m,λ,A)}(x)` with `(i, j)` entry
-`P^{λ,A}_{i-j,m}(x)` for `i ≥ j` and `0` otherwise (Equation (18)), where `P^{λ,A}_{n,m}(x)`
-is the coefficient of `t^n` in `(1 + A(x) t) / (1 - m t + x t^m)^λ` (Definition 6 at
-`y = 0`), has determinant `(P^{λ,A}_{0,m}(x))^(N+1)`. The paper's proviso
-`P^{λ,A}_{0,m}(x) ≠ 0` is not needed and is dropped.
+/-- **Determinant of the lower-triangular Catalan-type matrix.** Let $m, N$ be natural numbers,
+let $\lambda, x$ be real numbers, let $A$ be a polynomial with integer coefficients, and let
+$P_n$ be the coefficient of $t^n$ in $(1 + A(x)\, t)(1 - m t + x t^m)^{-\lambda}$, where
+$(1 - m t + x t^m)^{-\lambda}$ denotes the negative real power of the trinomial
+$1 - m t + x t^m$ with exponent $\lambda$ as a power series in $t$ (for $m \ge 1$, its expansion
+in powers of $t$). Then the $(N + 1) \times (N + 1)$ matrix whose $(i, j)$ entry, for
+$0 \le i, j \le N$, is $P_{i-j}$ when $j \le i$ and $0$ otherwise has determinant $P_0^{N+1}$.
+
+In the paper's notation $P_n = P^{\lambda,A}_{n,m}(x)$ (Definition 6 at $y = 0$) and the matrix
+is $P_N^{(m,\lambda,A)}(x)$ of Equation (18). The paper's proviso $P_0 \ne 0$ is dropped.
 
 Source: M. A. Pathan and T. Usman, *Unified Catalan-Type Polynomials with Matrix
 Formulations and Applications*, INTEGERS 26 (2026), Article A105, Theorem 7
@@ -197,11 +249,19 @@ public theorem_wanted det_catalanTypeLowerTriangular (m N : ℕ) (lam x : ℝ)
       coeff n ((1 + C (Polynomial.aeval x A) * X) * trinomialNegPowSeries lam 1 m x m)
     (Matrix.of fun i j : Fin (N + 1) ↦ if j ≤ i then P (i - j) else 0).det = P 0 ^ (N + 1)
 
-/-- **Theorem 8.** If the sequence `P^{λ,A}_{n,m}(x)` of Theorem 7 satisfies a linear
-recurrence `∑_{k=0}^r c_k P^{λ,A}_{n-k,m}(x) = 0` for all `n ≥ r` with constants `c_k` not all
-zero (Equation (22)) and `r ≤ N`, then the Hankel matrix `H_N^{(m,λ,A)}(x)` with `(i, j)`
-entry `P^{λ,A}_{i+j,m}(x)` (Equation (20)) is singular. The paper's `1 ≤ r` is dropped
-(`r = 0` is vacuous since `P^{λ,A}_{0,m}(x) = 1`), and with it the explicit `N ≥ 1`.
+/-- **Hankel determinants of recurrent Catalan-type sequences vanish.** Let $m, N, r$ be natural
+numbers with $r \le N$, let $\lambda, x$ be real numbers, let $A$ be a polynomial with integer
+coefficients, and let $P_n$ be the coefficient of $t^n$ in
+$(1 + A(x)\, t)(1 - m t + x t^m)^{-\lambda}$, where $(1 - m t + x t^m)^{-\lambda}$ denotes the
+negative real power of the trinomial $1 - m t + x t^m$ with exponent $\lambda$ as a power series
+in $t$ (for $m \ge 1$, its expansion in powers of $t$). Suppose real numbers $c_0, \dots, c_r$,
+not all zero, satisfy $\sum_{k=0}^{r} c_k P_{n-k} = 0$ for every $n \ge r$. Then the
+$(N + 1) \times (N + 1)$ Hankel matrix with $(i, j)$ entry $P_{i+j}$ for $0 \le i, j \le N$ has
+determinant $0$.
+
+In the paper's notation $P_n = P^{\lambda,A}_{n,m}(x)$, the recurrence is Equation (22) and the
+Hankel matrix is $H_N^{(m,\lambda,A)}(x)$ of Equation (20). The paper's assumption $1 \le r$ is
+dropped.
 
 Source: M. A. Pathan and T. Usman, *Unified Catalan-Type Polynomials with Matrix
 Formulations and Applications*, INTEGERS 26 (2026), Article A105, Theorem 8

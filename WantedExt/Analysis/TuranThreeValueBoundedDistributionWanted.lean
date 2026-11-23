@@ -68,58 +68,71 @@ Clauses 11–12 are formalized in `conjecture`.
 Clauses 8–10 are recorded here as context evidence and are not separate targets.
 -/
 
-/-- Multiplicity of `z` as a root of the equation `f (·) = w`: the
-meromorphic order of `f - w` at `z`, read as an extended natural number.
-This is `0` at non-roots and at poles, is unchanged when values of `f`
-are altered at isolated points, and is `⊤` when `f` is identically `w`
-on a punctured neighbourhood of `z` (infinitely many roots, not zero).
+/-- **Multiplicity of a root of $f = w$.** Let $f : \mathbb{C} \to \mathbb{C}$ and
+$w, z \in \mathbb{C}$. The multiplicity of $z$ as a root of the equation $f = w$ is an extended
+natural number: it is $\infty$ if $f(t) = w$ for every $t \neq z$ in some neighbourhood of $z$;
+otherwise it is $n$ if $f - w$ has meromorphic order $n \ge 0$ at $z$, and it is $0$ if that
+order is negative or $f - w$ is not meromorphic at $z$.
 
-Citing stable source identifiers: Hayman - Research Problems in Function Theory
-(2018), Problem 2.28 [AMR-022-2028], `https://arxiv.org/abs/1809.07200`. -/
+It depends only on the values of $f$ on a punctured neighbourhood of $z$, so changing $f(z)$
+does not change it. It is $0$ when $f$ has a pole at $z$, and when $f - w$ is analytic at $z$
+with $f(z) \neq w$.
+
+Source: Hayman - Research Problems in Function Theory (2018), Problem 2.28 [AMR-022-2028],
+`https://arxiv.org/abs/1809.07200`. -/
 noncomputable def rootMult (f : ℂ → ℂ) (w z : ℂ) : ℕ∞ :=
   if meromorphicOrderAt (fun t => f t - w) z = ⊤ then ⊤
   else ((meromorphicOrderAt (fun t => f t - w) z).untopD 0).toNat
 
-/-- Multiplicity of `z` as a pole of `f`, i.e. the multiplicity of the
-value `∞` at `z`: the negative part of the meromorphic order of `f` at
-`z`. This is `0` unless `f` genuinely has a pole at `z`.
+/-- **Multiplicity of a pole.** Let $f : \mathbb{C} \to \mathbb{C}$ and $z \in \mathbb{C}$. The
+multiplicity of $z$ as a pole of $f$, that is, the multiplicity of the value $\infty$ at $z$, is
+$-n$ if $f$ has finite meromorphic order $n < 0$ at $z$, and $0$ otherwise. In particular it is
+$0$ unless $f$ has a pole at $z$.
 
-Citing stable source identifiers: Hayman - Research Problems in Function Theory
-(2018), Problem 2.28 [AMR-022-2028], `https://arxiv.org/abs/1809.07200`. -/
+Source: Hayman - Research Problems in Function Theory (2018), Problem 2.28 [AMR-022-2028],
+`https://arxiv.org/abs/1809.07200`. -/
 noncomputable def poleMult (f : ℂ → ℂ) (z : ℂ) : ℕ∞ :=
   ((-(meromorphicOrderAt f z).untopD 0).toNat : ℕ∞)
 
-/-- Multiplicity of `z` as a preimage of the value `w` on the Riemann
-sphere: finite values `some w` are counted by `rootMult`, and the value
-at infinity `none` is counted by pole multiplicity `poleMult`.
+/-- **Multiplicity of a value on the Riemann sphere.** Let $f : \mathbb{C} \to \mathbb{C}$ and
+$z \in \mathbb{C}$, and let $w$ be a point of the Riemann sphere $\mathbb{C} \cup \{\infty\}$.
+The multiplicity of $w$ as a value of $f$ at $z$ is the multiplicity of $z$ as a root of
+$f = w$ when $w$ is finite, and the multiplicity of $z$ as a pole of $f$ when $w = \infty$.
 
-Citing stable source identifiers: Hayman - Research Problems in Function Theory
-(2018), Problem 2.28 [AMR-022-2028], `https://arxiv.org/abs/1809.07200`. -/
+Source: Hayman - Research Problems in Function Theory (2018), Problem 2.28 [AMR-022-2028],
+`https://arxiv.org/abs/1809.07200`. -/
 noncomputable def rootMultSph (f : ℂ → ℂ) (w : Option ℂ) (z : ℂ) : ℕ∞ :=
   match w with
   | some w => rootMult f w z
   | none => poleMult f z
 
-/-- Bounded value distribution for a plane meromorphic function.
+/-- **Bounded value distribution.** A function $f : \mathbb{C} \to \mathbb{C}$ has bounded value
+distribution if for every real $r > 0$ there is a natural number $C$ such that, for every value
+$w$ of the Riemann sphere $\mathbb{C} \cup \{\infty\}$ and every open disc of radius $r$, the
+multiplicities of $w$ as a value of $f$ at the points of any finite subset of the disc add up
+to at most $C$.
 
-Citing stable source identifiers: Hayman - Research Problems in Function Theory
-(2018), Problem 2.28 [AMR-022-2028], `https://arxiv.org/abs/1809.07200`:
-for every positive `r` there exists `C(r)` such that `f(z) = w` has at most
-`C(r)` roots, counted with multiplicity, in any disc of radius `r`, for
-every value `w` finite or infinite (poles counted with multiplicity). -/
+The source states this for functions meromorphic in the plane; the definition itself does not
+assume meromorphy.
+
+Source: Hayman - Research Problems in Function Theory (2018), Problem 2.28 [AMR-022-2028],
+`https://arxiv.org/abs/1809.07200`. -/
 def IsBoundedValueDistribution (f : ℂ → ℂ) : Prop :=
   ∀ (r : ℝ), r > 0 →
     ∃ C : ℕ, ∀ (c : ℂ) (w : Option ℂ) (s : Finset ℂ),
       (↑s ⊆ Metric.ball c r) → ∑ z ∈ s, rootMultSph f w z ≤ (C : ℕ∞)
 
-/-- Turán's three-value question for b.v.d. functions.
+/-- **Turán's three-value question.** The statement that every function
+$f : \mathbb{C} \to \mathbb{C}$ with the following properties has bounded value distribution:
+$f$ is meromorphic on $\mathbb{C}$; for every $w \in \mathbb{C}$ there is a point at which
+$f - w$ has finite meromorphic order; and there are three distinct values $w_1, w_2, w_3$ of
+the Riemann sphere $\mathbb{C} \cup \{\infty\}$ such that for every real $r > 0$ there is a
+natural number $C$ for which, for each $i$ and every open disc of radius $r$, the
+multiplicities of $w_i$ as a value of $f$ at the points of any finite subset of the disc add
+up to at most $C$.
 
-Citing stable source identifiers: Hayman - Research Problems in Function Theory
-(2018), Problem 2.28 [AMR-022-2028], `https://arxiv.org/abs/1809.07200`,
-question by P. Turán: is the basic bounded-roots assumption for only three
-values `w₁, w₂, w₃` sufficient to assure a nonconstant meromorphic `f` is
-of b.v.d. for all values? Stated as the implication from the three-value
-bound to `IsBoundedValueDistribution`. -/
+Source: Hayman - Research Problems in Function Theory (2018), Problem 2.28 [AMR-022-2028],
+`https://arxiv.org/abs/1809.07200`, question by P. Turán. -/
 def conjecture : Prop :=
   ∀ (f : ℂ → ℂ), MeromorphicOn f Set.univ →
     (∀ w : ℂ, ∃ z : ℂ, meromorphicOrderAt (fun t => f t - w) z ≠ ⊤) →
@@ -130,10 +143,20 @@ def conjecture : Prop :=
             (↑s ⊆ Metric.ball c r) → ∑ z ∈ s, rootMultSph f w z ≤ (C : ℕ∞)) →
     IsBoundedValueDistribution f
 /--
-Resolved false: A. A. Gol'dberg (Izv. Vyssh. Uchebn. Zaved. Mat. 1972) answered Turan's question
-negatively, as recorded in Hayman-Lingham Update 2.28; the Weierstrass sigma-function is another
-counterexample: it has boundedly many w-points per disc for every bounded set of w but has order
-2, so it is not b.v.d. Source: W. K. Hayman and E. F. Lingham, Research Problems in Function
+**Turán's three-value question has a negative answer.** There is a function
+$f : \mathbb{C} \to \mathbb{C}$, meromorphic on $\mathbb{C}$, such that for every $w \in \mathbb{C}$
+there is a point at which $f - w$ has finite meromorphic order, together with three distinct
+values $w_1, w_2, w_3$ of the Riemann sphere $\mathbb{C} \cup \{\infty\}$ such that for every real
+$r > 0$ there is a natural number $C$ for which, for each $i$ and every open disc of radius $r$,
+the multiplicities of $w_i$ as a value of $f$ at the points of any finite subset of the disc add
+up to at most $C$; and yet $f$ does not have bounded value distribution.
+
+A. A. Gol'dberg (Izv. Vyssh. Uchebn. Zaved. Mat. 1972) answered Turan's question negatively, as
+recorded in Hayman-Lingham Update 2.28; the Weierstrass sigma-function is another
+counterexample: it has boundedly many $w$-points per disc for every bounded set of $w$ but has
+order $2$, so it does not have bounded value distribution.
+
+Source: W. K. Hayman and E. F. Lingham, Research Problems in Function
 Theory (2018), arXiv:1809.07200, https://arxiv.org/abs/1809.07200. Moved from
 `OpenConjectures/Analysis/TuranThreeValueBoundedDistribution`.
 -/

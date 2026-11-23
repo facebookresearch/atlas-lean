@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Rat.Defs
 public import Mathlib.LinearAlgebra.Matrix.Notation
+public import MathlibExt.NumberTheory.SternBrocotSumTwoSquares
 
 /-!
 # Binary trees, continued fractions and sums of two squares
@@ -28,31 +29,6 @@ is Mathlib's `Nat.Prime.sq_add_sq`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Continued fraction convergents as matrix paths.** Let
-$R = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ and
-$L = \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix}$, as matrices over $\mathbb{N}$. Let
-$q_0, q_1, q_2, \dots$ be natural numbers, and define natural numbers $A_k$, $B_k$ for $k \ge -1$
-by $A_{-1} = 1$, $A_0 = q_0$, $B_{-1} = 0$, $B_0 = 1$ and, for $k \ge 1$,
-$A_k = q_k A_{k-1} + A_{k-2}$ and $B_k = q_k B_{k-1} + B_{k-2}$. For $n \ge 0$ let
-$W_n = M_0^{q_0} M_1^{q_1} \cdots M_n^{q_n}$, where $M_i = R$ for even $i$ and $M_i = L$ for odd
-$i$. Then $W_n = \begin{pmatrix} A_{n-1} & A_n \\ B_{n-1} & B_n \end{pmatrix}$ when $n$ is even,
-and $W_n = \begin{pmatrix} A_n & A_{n-1} \\ B_n & B_{n-1} \end{pmatrix}$ when $n$ is odd.
-
-When every $q_i$ is positive, $A_k / B_k$ is the $k$-th convergent of $[q_0; q_1, q_2, \dots]$,
-and the parity of $n$ says whether the path $W_n$ ends with an $R$-move or an $L$-move, which is
-the paper's case split; the identity holds for all $q_i \ge 0$.
-
-Source: Hongshen Chua, *Binary Trees and Sum of Two Squares*, INTEGERS 26 (2026), Article A76,
-Theorem 1 (`integers-2026-A76-thm-1`). -/
-public theorem_wanted continuedFraction_path_eq_convergents (q A B : ℕ → ℕ)
-    (hA₀ : A 0 = 1) (hA₁ : A 1 = q 0) (hA : ∀ k, A (k + 2) = q (k + 1) * A (k + 1) + A k)
-    (hB₀ : B 0 = 0) (hB₁ : B 1 = 1) (hB : ∀ k, B (k + 2) = q (k + 1) * B (k + 1) + B k)
-    (n : ℕ) :
-    ((List.range (n + 1)).map fun i =>
-        (if Even i then !![1, 1; 0, 1] else !![1, 0; 1, 1] : Matrix (Fin 2) (Fin 2) ℕ) ^ q i).prod =
-      if Even n then !![A n, A (n + 1); B n, B (n + 1)]
-      else !![A (n + 1), A n; B (n + 1), B n]
 
 /-- **Perron's lemma.** Let $p$ be a prime with $p \equiv 1 \pmod 4$, and let $x_0$ be an integer
 with $0 < x_0 < p/2$ and $x_0^2 \equiv -1 \pmod p$. Then there are positive integers

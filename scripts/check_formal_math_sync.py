@@ -24,7 +24,8 @@ only, and scoped to those synced files, so a pull request fails only if it touch
   the pin only with the `formal-math-sync` label (pushes and merge groups are maintainer-only). In CI the base is the push's
   `before` commit, the merge group's base, or for a pull request the merge ref's first parent,
   fetched if the checkout is shallow (unreadable fails closed); locally the merge-base with
-  origin/main, else the comparison is skipped with a warning;
+  origin/main (including all incoming parents during a local merge), falling back to HEAD's
+  first parent;
 - files without a row (ATLAS-only work) are ignored; new upstream files enter at sync time.
 
 A pull request that changes or deletes a synced or diverged file records that with
@@ -525,7 +526,7 @@ def local_merge_heads(root: Path) -> list[str]:
         return []
 
 
-def base_commit(root: Path, base: str | None, merge_heads: list[str]) -> tuple[str | None, str | None]:
+def base_commit(root: Path, base: str | None, *merge_heads: str) -> tuple[str | None, str | None]:
     """The commit whose manifest this tree is compared with: (commit, None) or (None, why not)."""
     if git(root, "rev-parse", "--show-toplevel") != str(root.resolve()):
         return None, "not a git checkout"
@@ -593,7 +594,7 @@ def copy_and_rename_status(root: Path, commit: str, *, staged: bool) -> str | No
     """`git diff --name-status -z` of the roots with rename (50%) and near-copy (90%) detection,
     copies searched from every base file, not only modified ones. None if git fails or skips
     detection (too many files for the limit)."""
-    revisions = ["--cached", commit] if staged else [commit, "HEAD"]
+    revisions = ("--cached", commit) if staged else (commit, "HEAD")
     try:
         done = subprocess.run(["git", "-C", str(root), "diff", "--no-ext-diff", "-M", "-C90%", "--find-copies-harder",
                                "-l100000", "--name-status", "-z", *revisions, "--", *ROOTS],
@@ -639,7 +640,7 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
         return [], [f"skipping the base-manifest comparison: {why}"]
 
     merge_heads = local_merge_heads(root)
-    commit, why = base_commit(root, base, merge_heads)
+    commit, why = base_commit(root, base, *merge_heads)
     if commit is None:
         return unreadable(why or "no base commit")
     if symlinked_component(root, manifest_path):
@@ -677,7 +678,7 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
         problems += unstaged_problems(root, rel)
     moves = copy_and_rename_status(root, commit, staged=bool(merge_heads))
     if moves is None:
-        target = "index" if merge_heads else "HEAD"
+        target = "the index" if merge_heads else "HEAD"
         found, note = unreadable(f"cannot diff base {commit} with {target} for renames")
         problems += found
         warnings = note
