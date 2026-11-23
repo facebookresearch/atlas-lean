@@ -57,7 +57,7 @@ induces an isomorphism in the homotopy category.
 With `Q` the shift `P'⟦1⟧` of a twisted object `P'` and `g` the degree-one morphism
 `P'⟦1⟧ ⟶ P' ⟶ P` underlying a closed degree-zero morphism `u : P' ⟶ P`, the extension is the
 cone of `u`, the basic construction of the pretriangulated envelope of Bondal and Kapranov; see
-`TauCeti/CategoryTheory/DG/Twisted/Cone.lean`.
+`MathlibExt/CategoryTheory/DGSourceMore/DGTwistedCone.lean`.
 
 A DG functor `G : E ⥤ E'` preserves extensions: the image under the induced DG functor of
 `extension P Q g` is isomorphic in the homotopy category to the extension of the images of `P`

@@ -30,7 +30,7 @@ The shifts do not compose strictly: `P⟦a⟧⟦b⟧` has summands `Xᵢ[rᵢ + 
 summands `Xᵢ[rᵢ + (a + b)]`.  The isomorphisms `P⟦0⟧ ≅ P` and `P⟦a + b⟧ ≅ P⟦a⟧⟦b⟧` of the shift are
 the classes of the comparison morphism `MathlibExt.DGSource.DGTwistedObject.fromShift P 0` and of the closed
 degree-zero isomorphism `MathlibExt.DGSource.DGTwistedObject.shiftAddHom P a b` of
-`TauCeti/CategoryTheory/DG/Twisted/Shift.lean`, whose associativity and unit coherences hold already
+`MathlibExt/CategoryTheory/DGSourceMore/DGTwistedShift.lean`, whose associativity and unit coherences hold already
 at the level of DG morphisms.
 
 ## Main definitions

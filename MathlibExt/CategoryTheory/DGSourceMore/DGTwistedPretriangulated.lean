@@ -20,8 +20,8 @@ public import MathlibExt.CategoryTheory.DGSourceMore.DGTwistedTriangle
 
 Let `C` be a differential graded category and let `H⁰` be the homotopy category of the twisted
 objects of the additive closure of the shift closure of `C`, with the shift of
-`TauCeti/CategoryTheory/DG/Twisted/HomotopyShift.lean` and the cone triangles
-`P ⟶ Q ⟶ cone u ⟶ P⟦1⟧` of `TauCeti/CategoryTheory/DG/Twisted/Triangle.lean` as distinguished
+`MathlibExt/CategoryTheory/DGSourceMore/DGTwistedHomotopyShift.lean` and the cone triangles
+`P ⟶ Q ⟶ cone u ⟶ P⟦1⟧` of `MathlibExt/CategoryTheory/DGSourceMore/DGTwistedTriangle.lean` as distinguished
 triangles.  This file proves the remaining axiom, the converse half of the rotation axiom, and so
 makes `H⁰` a pretriangulated category.
 
@@ -33,7 +33,7 @@ shift by `n` of the cone triangle of `u : P ⟶ Q` is the triangle
 the cone triangle, the last one followed by the isomorphism `P⟦1⟧⟦n⟧ ≅ P⟦n⟧⟦1⟧`.  It is
 isomorphic to the cone triangle of `u⟦n⟧` by the identity of `P⟦n⟧`, `(-1)^n` times the identity
 of `Q⟦n⟧`, and the isomorphism `(cone u)⟦n⟧ ≅ cone (u⟦n⟧)`
-(`MathlibExt.DGSource.DGTwistedObject.shiftConeIso`) of `TauCeti/CategoryTheory/DG/Twisted/Cone.lean`.
+(`MathlibExt.DGSource.DGTwistedObject.shiftConeIso`) of `MathlibExt/CategoryTheory/DGSourceMore/DGTwistedCone.lean`.
 
 ## Main definitions
 
