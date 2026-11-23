@@ -28,7 +28,6 @@ homeomorphism, both closed ends and their canonical characteristic cell maps.
 -/
 
 
-
 /-!
 Construction of the actual ordinary common colimit CW data.
 Born cells retain the original stage characteristics, finite frontiers and
@@ -218,37 +217,6 @@ private theorem birthDisk_stageCell (c : Cocone (commonSequence S)) (n m : ℕ)
         rw [BirthLabels.reindex, dite_eq_right ha]
         rfl
 
-
--- Arbitrary cell sets, including empty and infinite sets, retain injective stage labels.
-example (n m : ℕ) : Function.Injective (stageCellIntoUnion S n m) :=
-  (stageCellIntoUnion S n m).injective
-
--- The actual old-stage label is the same union label at the next stage.
-example (n m : ℕ) (a : stageCell S n m) :
-    stageCellIntoUnion S (n + 1) m (cellStep S n m a) = stageCellIntoUnion S n m a :=
-  stageCellIntoUnion_step S n m a
-
--- Every birth is genuinely represented by its original stage and cell.
-example (m : ℕ) (a : unionCell S m) :
-    BirthLabels.reindex (fun n => cellStep S n m)
-      (BirthLabels.birthStage (fun n => cellStep S n m) a)
-      (BirthLabels.birthCell (fun n => cellStep S n m) a) = a :=
-  BirthLabels.reindex_birth (fun n => cellStep S n m) a
-
--- The complete original closed-disk map is independent of its stage representative.
-example (c : Cocone (commonSequence S)) (n m : ℕ) (a : stageCell S n m) :
-    birthDisk S c m (stageCellIntoUnion S n m a) = diskFromStage S c n m a :=
-  birthDisk_stageCell S c n m a
-
--- A separately chosen point of the entire literal closed disk uses the same map.
-example (c : Cocone (commonSequence S)) (n m : ℕ) (a : stageCell S n m)
-    (q : (classicalCellDiskPair.{u} m).fst) :
-    letI := (S.stages n).cw
-    birthDisk S c m (stageCellIntoUnion S n m a) q =
-      c.ι.app n (characteristicDiskMap (X := (S.stages n).space) m a q) := by
-  let := (S.stages n).cw
-  exact (ConcreteCategory.congr_hom (birthDisk_stageCell S c n m a) q).trans
-    (ConcreteCategory.comp_apply _ _ q)
 
 end CommonUnionCWBirthPreparation
 
@@ -610,19 +578,6 @@ private def actualOriginalXUnionCW (X : TopCat.{u}) [T2Space X]
   unionClassicalCW (commonSuccessorSystem X)
 
 
-example : CWComplex (Set.univ : Set (unionSpace S)) := unionClassicalCW S
-
-example (n m : ℕ) (a : stageCell S n m) :
-    letI := unionClassicalCW S
-    letI := (S.stages n).cw
-    characteristicDiskMap (X := unionSpace S) m (stageCellIntoUnion S n m a) =
-      characteristicDiskMap (X := (S.stages n).space) m a ≫ unionLeg S n :=
-  unionCharacteristicDisk_stage S n m a
-
-example (X : TopCat.{u}) [T2Space X] [CWComplex (Set.univ : Set X)] :
-    CWComplex (Set.univ : Set (unionSpace (commonSuccessorSystem X))) :=
-  actualOriginalXUnionCW X
-
 end CommonUnionCWBirthPreparation
 
 end
@@ -857,27 +812,10 @@ private theorem actualCommonUnionHausdorff : T2Space (unionSpace (commonSuccesso
   · exact Set.mem_iUnion.mpr ⟨0, ⟨b, hb, hby⟩⟩
 
 
-example : T2Space (unionSpace (commonSuccessorSystem X)) := actualCommonUnionHausdorff X
-
-example (N : ℕ) (p : StageOpenPair X N) :
-    IsOpen (globalTailOpen X N p true) ∧ IsOpen (globalTailOpen X N p false) ∧
-      Disjoint (globalTailOpen X N p true) (globalTailOpen X N p false) :=
-  ⟨globalTailOpen_isOpen X N p true, globalTailOpen_isOpen X N p false,
-    globalTailOpen_disjoint X N p⟩
-
-example (N : ℕ) (p : StageOpenPair X N) (n : ℕ) :
-    unionLeg (commonSuccessorSystem X) n ⁻¹' globalTailOpen X N p true =
-      ((commonSequence (commonSuccessorSystem X)).map
-        (homOfLE (show n ≤ N + n by omega))) ⁻¹'
-          pairSide X (pairTail X N p n) true :=
-  globalTailOpen_preimage X N p true n
-
 end HausdorffUnion
 end CommonUnionCWBirthPreparation
 
 end
-
-
 
 
 /-!
@@ -2088,28 +2026,6 @@ private theorem actualCanonicalUnionCell_covered (m : ℕ)
   exact ⟨n, a, ha⟩
 
 
-example (m : ℕ)
-    (b : cell (Set.univ : Set (ActualPolyhedralDimensionUnionConstruction.unionComplex X).Realization) m) :
-    ∃ (n : ℕ)
-      (a : cell (Set.univ : Set ((commonSuccessorSystem X).stages n).polyhedron.Realization) m),
-      actualStageCanonicalCellEmbedding X n m a = b :=
-  actualCanonicalUnionCell_covered X m b
-
-example (n m : ℕ)
-    (a : cell (Set.univ : Set ((commonSuccessorSystem X).stages n).polyhedron.Realization) m)
-    (q : (classicalCellDiskPair.{u} m).fst) :
-    ActualPolyhedralDimensionUnionConstruction.stagePolyhedralInclusion X n
-        (map m a q.down.val) = map m (actualStageCanonicalCellEmbedding X n m a) q.down.val :=
-  actualStageCanonicalCellEmbedding_disk X n m a q
-
-example (n m : ℕ) :
-    (actualStageCanonicalSubcomplex X n :
-      Set (ActualPolyhedralDimensionUnionConstruction.unionComplex X).Realization) =
-        Set.range (ActualPolyhedralDimensionUnionConstruction.stagePolyhedralInclusion X n) ∧
-    (actualStageCanonicalSubcomplex X n).I m =
-      Set.range (actualStageCanonicalCellEmbedding X n m) :=
-  ⟨actualStageCanonicalSubcomplex_carrier X n, actualStageCanonicalSubcomplex_labels X n m⟩
-
 end ActualCanonicalPolyhedralUnionCellCoverage
 
 end
@@ -2368,26 +2284,6 @@ private theorem canonicalPolyhedralEndSubcomplex_stage_image (m : ℕ) :
     exact ⟨actualStageCanonicalCellEmbedding X n m a,
       (canonicalEndEmbedding_stage X n m a).trans ha⟩
 
-
-example : CWComplex (Set.univ : Set (ActualCommonDimensionUnionConstruction.commonUnion X)) :=
-  actualCommonCW X
-
-example : T2Space (ActualCommonDimensionUnionConstruction.commonUnion X) :=
-  actualCommonT2 X
-
-example (n m : ℕ)
-    (a : cell (Set.univ : Set ((commonSuccessorSystem X).stages n).polyhedron.Realization) m) :
-    canonicalEndEmbedding X m (actualStageCanonicalCellEmbedding X n m a) =
-      stageCanonicalEndLabel X n m a := canonicalEndEmbedding_stage X n m a
-
-example (m : ℕ) (b : canonicalPolyCell X m) :
-    letI := actualCommonCW X
-    characteristicDiskMap (X := TopCat.of
-        (ActualPolyhedralDimensionUnionConstruction.unionComplex X).Realization) m b ≫
-      TopCat.ofHom
-        (ActualPolyhedralRealizationCommonEndConstruction.actualPolyhedralRealizationToCommon X) =
-      characteristicDiskMap (X := ActualCommonDimensionUnionConstruction.commonUnion X) m
-        (canonicalEndEmbedding X m b) := canonicalEndEmbedding_characteristicDiskMap X m b
 
 end ActualCommonDimensionUnionCWDictionary
 

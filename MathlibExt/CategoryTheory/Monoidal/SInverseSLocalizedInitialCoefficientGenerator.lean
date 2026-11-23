@@ -87,7 +87,6 @@ private abbrev cachedInitialCoefficientComponentIso :
       localizedCoreTranslationHomologyModuleCat C R q :=
   coreTranslationCoefficientLocalizationIsoApp C R q (0 : Translation C)
 
-set_option diagnostics true in
 /-- The literal original summand, alternating quotient and inverse Dold--Kan map. -/
 private abbrev cachedInitialRawCoefficientClass :
     (cachedInitialCoefficientFunctor C R q).obj (0 : Translation C) ⟶
@@ -120,8 +119,6 @@ private theorem cachedInitialRawCoefficientClass_eq_class :
 
 end InitialCaches
 
--- Reducing the normalized/bar and localization comparisons exceeds the default heartbeat limit.
-set_option diagnostics true in
 /-- The actual localized initial coefficient class is the canonical shrunk/raw
 coefficient component under the existing coefficient-refinement zero iso. -/
 private theorem cachedInitialRawClass_calibration

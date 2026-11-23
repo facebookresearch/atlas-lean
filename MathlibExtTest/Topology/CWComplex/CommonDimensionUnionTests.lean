@@ -65,6 +65,35 @@ example (n m : ℕ) :
     (commonDimensionUnion.{u, v} X).commonStageSubcomplex_labels n m,
     (commonDimensionUnion.{u, v} X).commonStage_characteristicDiskMap n m⟩
 
+-- The returned labels are embeddings in every original dimension.
+example (n m : ℕ) :
+    let d := commonDimensionUnion.{u, v} X
+    letI := d.commonCW
+    letI := ((commonSuccessorSystem X).stages n).cw
+    Function.Injective (d.commonStageLabels n m) :=
+  ((commonDimensionUnion.{u, v} X).commonStageLabels n m).injective
+
+-- The whole public cell-label system agrees across each actual successor.
+example (n m : ℕ) :
+    let d := commonDimensionUnion.{u, v} X
+    letI := d.commonCW
+    letI := ((commonSuccessorSystem X).stages n).cw
+    letI := ((commonSuccessorSystem X).stages (n + 1)).cw
+    ∀ a : cell (Set.univ : Set ((commonSuccessorSystem X).stages n).space) m,
+      d.commonStageLabels (n + 1) m ((commonSuccessorSystem X).oldStageLabels n m a) =
+        d.commonStageLabels n m a :=
+  (commonDimensionUnion.{u, v} X).commonStageLabels_step n m
+
+-- A polyhedral stage label enters the common end through the same old-stage label.
+example (n m : ℕ) :
+    let d := commonDimensionUnion.{u, v} X
+    letI := d.commonCW
+    letI := ((commonSuccessorSystem X).stages n).cw
+    ∀ a : cell (Set.univ : Set ((commonSuccessorSystem X).stages n).polyhedron.Realization) m,
+      d.polyhedralEndLabels m (d.polyhedralStageCellLabels n m a) =
+        d.commonStageLabels n m (((commonSuccessorSystem X).stages n).polyhedralLabels m a) :=
+  (commonDimensionUnion.{u, v} X).polyhedralEndLabels_stage n m
+
 example (n : ℕ) (a : Finset ((commonSuccessorSystem X).stages n).vertices)
     (ha : a ∈ ((commonSuccessorSystem X).stages n).polyhedron) :
     a.map ((commonDimensionUnion.{u, v} X).stageVertexEmbedding n) ∈

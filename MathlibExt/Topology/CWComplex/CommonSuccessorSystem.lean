@@ -151,7 +151,6 @@ end
 is kept free of the unitInterval notation. All time types remain explicit. -/
 
 
-
 /-!
 Private chart primitives for the actual matching-subcomplex CW
 amalgam. Existing CW data are internal stage data; no conditional generic
@@ -190,31 +189,6 @@ private def realizedMonoSpanClassicalCW {S T U : SSet.{u}}
     (SSet.closedT1Embeddings_toTop_map_of_mono f).isClosedEmbedding
     (SSet.closedT1Embeddings_toTop_map_of_mono g).isClosedEmbedding
 
-example {S T U : SSet.{u}} (f : S ⟶ T) [Mono f] (g : S ⟶ U) [Mono g] :
-    Topology.CWComplex (Set.univ : Set ((pushout (SSet.toTop.map f) (SSet.toTop.map g) : TopCat.{u}))) :=
-  realizedMonoSpanClassicalCW f g
-
-example {S T U : SSet.{u}} (f : S ⟶ T) [Mono f] (g : S ⟶ U) [Mono g]
-    (n : ℕ) (a : Topology.CWComplex.cell (Set.univ : Set (SSet.toTop.obj T)) n)
-    (x : Fin n → ℝ) :
-    letI := realizedMonoSpanClassicalCW f g
-    Topology.CWComplex.map
-        (C := (Set.univ : Set ((pushout (SSet.toTop.map f) (SSet.toTop.map g) : TopCat.{u})))) n (Sum.inl a) x =
-      pushout.inl (SSet.toTop.map f) (SSet.toTop.map g)
-        (Topology.CWComplex.map (C := (Set.univ : Set (SSet.toTop.obj T))) n a x) :=
-  left_characteristic (realizedMonoMatching f g) _ _ n a x
-
-example {S T U : SSet.{u}} (f : S ⟶ T) [Mono f] (g : S ⟶ U) [Mono g]
-    (n : ℕ)
-    (b : {b : Topology.CWComplex.cell (Set.univ : Set (SSet.toTop.obj U)) n //
-      b ∉ Set.range ((SSet.realizationClassicalCWSubcomplexOfMono g).fst n)})
-    (x : Fin n → ℝ) :
-    letI := realizedMonoSpanClassicalCW f g
-    Topology.CWComplex.map
-        (C := (Set.univ : Set ((pushout (SSet.toTop.map f) (SSet.toTop.map g) : TopCat.{u})))) n (Sum.inr b) x =
-      pushout.inr (SSet.toTop.map f) (SSet.toTop.map g)
-        (Topology.CWComplex.map (C := (Set.univ : Set (SSet.toTop.obj U))) n b.val x) :=
-  newRight_characteristic (realizedMonoMatching f g) _ _ n b x
 
 end ActualRealizedMonoSpan
 
@@ -745,30 +719,6 @@ private theorem originalSphereDiskSmallCone_isPushout (d r : ℕ)
     intro x
     rfl
 
-example (d r : ℕ)
-    (f : Morphism (subdivisionIter (SphereTriangulation.complex d) r) Q) :
-    IsClosedEmbedding (originalDiskIntoSmallCone d r f) := originalDiskIntoSmallCone_closed d r f
-
-example (d r : ℕ)
-    (f : Morphism (subdivisionIter (SphereTriangulation.complex d) r) Q)
-    (x : (Topology.CWComplex.classicalCellDiskPair.{w} d).snd) :
-    originalDiskIntoSmallCone d r f ((Topology.CWComplex.classicalCellDiskPair.{w} d).map x) =
-      smallIntoCone f (originalSphereIntoSmall d r f x) := originalDiskIntoSmallCone_boundary d r f x
-
-example (d r : ℕ)
-    (f : Morphism (subdivisionIter (SphereTriangulation.complex d) r) Q) :
-    IsPushout (TopCat.ofHom (originalSphereIntoSmall d r f))
-      (Topology.CWComplex.classicalCellDiskPair.{w} d).map
-      (TopCat.ofHom (smallIntoCone f)) (TopCat.ofHom (originalDiskIntoSmallCone d r f)) :=
-  originalSphereDiskSmallCone_isPushout d r f
-
-example (d r : ℕ)
-    (f : Morphism (subdivisionIter (SphereTriangulation.complex d) r) Q) :
-    originalDiskIntoSmallCone d r f
-      (ULift.up ⟨(0 : Fin d → ℝ), by simp⟩ : (Topology.CWComplex.classicalCellDiskPair.{w} d).fst) =
-        Realization.vertex (smallAssociatedCone f) (smallConeApex f).val (smallConeApex f).property :=
-  originalDiskIntoSmallCone_zero d r f
-
 
 end CommonSuccessorSmallCylinderConstruction
 
@@ -1046,11 +996,6 @@ private abbrev refinedTubeCellLabels (d : ℕ) (r : I → ℕ)
 disk×interval closed-ball homeomorphism in the actual stage packet.
 The original CW source may not be substituted by a supplied replacement.
 No full new-carrier CW construction or inverse packet is claimed here. -/
-
-example (d : ℕ) (H : C(sideSum (I := I) d, A)) (i : I)
-    (x : (Topology.CWComplex.classicalCellDiskPair.{u} d).snd) (t : unitInterval) :
-    originalCylinderMap d H i ((Topology.CWComplex.classicalCellDiskPair.{u} d).map x, t) =
-      oldIntoTubeSpace d H (H ⟨i, (x, t)⟩) := originalCylinderMap_whole_side d H i x t
 
 
 end ActualRefinedTubeCharacteristicConstruction47
@@ -1352,7 +1297,6 @@ end ActualRefinedTubeCharacteristicConstruction47
 end
 
 
-
 /-!
 Private finite-carrier proof for classical Hausdorff CW
 spaces. Every subset of the selected one-point-per-open-cell set is closed,
@@ -1515,12 +1459,6 @@ private theorem compactDomain_classical_finite_carrier {D : Type*} [TopologicalS
         Topology.CWComplex.closedCell (C := (Set.univ : Set X)) c.fst c.snd :=
   compact_classical_finite_carrier (Set.range f) (isCompact_range f.continuous)
 
-example {D : Type*} [TopologicalSpace D] [CompactSpace D] (f : C(D, X)) :
-    ∃ J : Finset (CellIndex (X := X)),
-      Set.range f ⊆ ⋃ c ∈ J,
-        Topology.CWComplex.closedCell (C := (Set.univ : Set X)) c.fst c.snd :=
-  compactDomain_classical_finite_carrier f
-
 
 end ClassicalCWCompactCarrierConstruction47
 
@@ -1574,9 +1512,6 @@ private def finiteRefinedTopConeCellsViaCompactness {W : Type u} (d r : ℕ) :
   exact ClassicalCWCompactCarrierConstruction47.compact_classical_all_cell_labels_finite
     (X := c.Realization)
 
-example {W : Type u} (d r : ℕ) :
-    _root_.Finite (Σ n, refinedTopConeCell (W := W) d r n) :=
-  finiteRefinedTopConeCellsViaCompactness (W := W) d r
 
 end CommonSuccessorSmallCylinderConstruction
 
@@ -1774,12 +1709,6 @@ private theorem refinedTubeCellPartialEquiv_continuousOn_symm
   cellPartialEquivOfEmbedding_continuousOn_symm n (refinedTubeCellTotal d r H n j)
     (refinedTubeCellTotal_open_isEmbedding d r H n j)
 
-example [Topology.CWComplex (Set.univ : Set A)] (d : ℕ) (r : I → ℕ)
-    (H : C(sideSum (I := I) d, A)) (n : ℕ)
-    (j : refinedTubeCellLabels (A := A) (W := W) d r n)
-    (x : (Topology.CWComplex.classicalCellDiskPair.{u} n).fst) :
-    refinedTubeCellPartialEquiv d r H n j x.down.val = refinedTubeClosedCharacteristic d r H n j x :=
-  refinedTubeCellPartialEquiv_closed_characteristic d r H n j x
 
 end ActualRefinedTubeCharacteristicConstruction47
 
@@ -1976,13 +1905,6 @@ private theorem wholeTubeBoundary_decomposition (d : ℕ)
     exact (originalCylinderMap_whole_side d H i s p.2).symm.trans
       (congrArg (fun y => originalCylinderMap d H i (y, p.2)) hs)
 
-example (d : ℕ) (H : C(sideSum (I := I) d, A)) (i : I)
-    (x : (Topology.CWComplex.classicalCellDiskPair.{u} (d + 1)).fst)
-    (hx : x ∈ Set.range (Topology.CWComplex.classicalCellDiskPair.{u} (d + 1)).map) :
-    wholeTubeCharacteristic d H i x ∈
-      Set.range (oldIntoTubeSpace d H) ∪
-        (Set.range (bottomDiskCharacteristic d H i) ∪ Set.range (topOriginalDiskMap d H i)) :=
-  wholeTubeBoundary_decomposition d H i x hx
 
 end ActualRefinedTubeCharacteristicConstruction47
 
@@ -2108,10 +2030,6 @@ private theorem originalCylinderDiskHomeomorph_open_time_ne_endpoints (d : ℕ)
     apply (TopCat.I.homeomorph.{u}).injective
     simp
 
-example (d : ℕ) (H : C(sideSum (I := I) d, A)) (i j : I)
-    (x y : cylinderOffSide.{u} d)
-    (h : originalCylinderMap d H i x.val = originalCylinderMap d H j y.val) : i = j :=
-  congrArg Sigma.fst (originalCylinderMap_offSide_coordinates_eq d H i j x y h)
 
 end ActualRefinedTubeCharacteristicConstruction47
 
@@ -2339,7 +2257,6 @@ open CategoryTheory Topology PreAbstractSimplicialComplex
 universe u
 
 
-
 namespace ActualConeBaseClassicalSubcomplexConstruction47
 
 
@@ -2415,15 +2332,6 @@ private def coneBaseClassicalSubcomplex (P : PreAbstractSimplicialComplex V) :
         congrArg (Realization.inclusion (MappingCylinder.cone_base_le P)) (r.snd n j x)
       _ = _ := i.snd.property.2.2 n (r.fst n j) x
 
-example (P : PreAbstractSimplicialComplex V) (n : ℕ)
-    (j : Topology.CWComplex.cell (Set.univ : Set P.Realization) n)
-    (x : (Topology.CWComplex.classicalCellDiskPair.{u} n).fst) :
-    let d := coneBaseClassicalSubcomplex P
-    (MappingCylinder.coneBaseMorphism P).realization
-        (Topology.CWComplex.map (C := (Set.univ : Set P.Realization)) n j x.down.val) =
-      Topology.CWComplex.map
-        (C := (Set.univ : Set (MappingCylinder.coneComplex P).Realization)) n (d.fst n j) x.down.val :=
-  (coneBaseClassicalSubcomplex P).snd.property.2.2 n j x
 
 end ActualConeBaseClassicalSubcomplexConstruction47
 
@@ -7481,7 +7389,6 @@ open PreAbstractSimplicialComplex.MappingCylinder.SmallCylinder CommonSuccessorS
 open WeakClassicalCWDimensionConstruction47
 
 universe u
-
 
 
 namespace ActualCommonSuccessorConstruction

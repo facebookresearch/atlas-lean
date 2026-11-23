@@ -163,7 +163,6 @@ private theorem secondTranslation_iterated_square (p q : ℕ) (W : C) :
   rw [hCoefficientAssoc]
   rw [hForget]
 
-set_option diagnostics true in
 /-- Transparent specialization of the original receiver with concrete
 categories and the original named cofibered projection dictionary. -/
 private abbrev cachedCofiberedIteratedIso (p q : ℕ) :=
@@ -190,7 +189,6 @@ private abbrev cachedCostructuredFiberIso (q : ℕ) :=
     (S := Translation C) (X := Pair C)
     (p := translationProjection (C := C)) AddCommGrpCat.{u} R q
 
-set_option diagnostics true in
 /-- The actual strict-fiber route factors through the actual comma route.
 Naturality of the Dold--Kan projection fixes the comparison, rather than
 choosing a different second-page isomorphism. -/
