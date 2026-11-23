@@ -44,6 +44,7 @@ public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Rat.Defs
 public import MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndexDiv
+public import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficientRadical
 
 set_option autoImplicit false
 
@@ -102,20 +103,6 @@ theorem_wanted grun_bounds_of_isNondeficient
     (hmin : ∀ q ∈ n.primeFactors, p₁ ≤ q) :
     (3 : ℚ) / 2 * (p₁ : ℚ) - 2 < (n.primeFactors.card : ℚ) ∧
       (5 ≤ p₁ → p₁ + 2 ≤ n.primeFactors.card)
-
-/-- **The power of 2 in an even primitive non-deficient number is below its radical.** Let $n$
-be an even primitive non-deficient number, that is, a positive integer with $\sigma(n) \ge 2n$
-all of whose proper divisors $m$ satisfy $\sigma(m) < 2m$, where $\sigma$ is the sum of divisors.
-If $2^a$ is the largest power of $2$ dividing $n$ and $R$ is the product of the distinct primes
-dividing $n$, then $2^{a+1} < R$.
-
-Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
-Always Have a Small Component?", Proposition
-(label `evenprimitivenondeficientshaveatightbound`). -/
-theorem_wanted two_pow_factorization_add_one_lt_radical
-    (n : ℕ) (hne : Even n)
-    (hn : IsPrimitiveNondeficient n) :
-    2 ^ (n.factorization 2 + 1) < ∏ q ∈ n.primeFactors, q
 
 /-- **Generalized Puchta lemma.** Let $n$ be a primitive non-deficient number with $k$ distinct
 prime factors, the least of which is $p_1$, and suppose that $(p_1, k) \ne (3, 3)$. Let $\alpha$

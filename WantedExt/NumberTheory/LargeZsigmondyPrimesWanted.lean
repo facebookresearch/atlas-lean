@@ -15,6 +15,7 @@ public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Data.Nat.PrimeFin
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
+public import MathlibExt.NumberTheory.ArithmeticFunction.TotientSqrtLowerBound
 public import MathlibExt.NumberTheory.Cyclotomic.HomogenizedCyclotomic
 public import MathlibExt.NumberTheory.PrimitiveDivisor
 
@@ -58,14 +59,6 @@ theorem isLargeZsigmondyPrime_two_one_three_seven : IsLargeZsigmondyPrime 2 1 3 
   refine ⟨⟨by norm_num, by norm_num, by norm_num, by norm_num, ?_⟩, Or.inr (by norm_num)⟩
   intro s hs hs3
   interval_cases s <;> norm_num
-
-/-- **Square-root lower bound for Euler's totient.** For every positive integer $n$,
-$\varphi(n) \ge \sqrt{n}/2$, where $\varphi$ is Euler's totient function.
-
-Source: Ömer Avcı, *Large Zsigmondy Primes*, INTEGERS 24 (2024), Article A62, Lemma 1
-(quoted from reference [2]). -/
-theorem_wanted sqrt_div_two_le_totient (n : ℕ) (hn : 0 < n) :
-    Real.sqrt n / 2 ≤ (Nat.totient n : ℝ)
 
 /-- **Homogenized cyclotomic values at $p^\beta k$.** Let $p$ be a prime, let $\beta \ge 1$ and
 $k \ge 1$ be integers with $p \nmid k$, and let $a, b$ be integers; write $\Phi_m(a, b)$ for the
