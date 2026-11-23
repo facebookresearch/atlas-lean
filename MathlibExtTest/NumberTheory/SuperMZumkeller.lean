@@ -30,3 +30,8 @@ example : IsKMPerfect 2 6 := rfl
 -- At one, the empty subset and its complement both have product one.
 example : IsSuperMZumkeller 1 := by
   exact ⟨∅, Finset.empty_subset _, by decide⟩
+
+-- At four, the partition into {8} and {1, 2, 4} attains the bound.
+example : (4 : ℕ).divisors.card = 3 := by
+  refine le_antisymm (by decide) (three_le_card_divisors_of_isSuperMZumkeller 4 (by decide) ?_)
+  exact ⟨{8}, by decide, by decide⟩
