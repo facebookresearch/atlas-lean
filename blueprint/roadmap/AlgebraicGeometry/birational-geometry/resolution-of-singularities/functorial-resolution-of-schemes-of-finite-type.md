@@ -44,16 +44,16 @@ centre meets it, and the blow-ups before the first such centre are isomorphisms 
 there returns $X$ itself, which is not smooth. Several irreducible components may also call for
 different stopping steps. A construction for nonreduced and reducible schemes, with its proof, is
 what remains to be broken down; for such an input the terminal scheme may be empty (blowing up the
-fat point along its nilpotent ideal gives the empty scheme), which items 1–3 allow. It does not
-depend on the embedding, because $BP$ is compatible with closed embeddings (in the weak form 34.4)
-and any two closed embeddings of $X$ into affine spaces become equivalent under an automorphism of a
-larger affine space (Lemma 39). The compatibility with change of fields and with smooth morphisms
-reduces to the same properties of $BP$, through Lemma 41 for smooth morphisms. Finally, a blow-up
-sequence functor defined on affine schemes over a field $k$ and commuting with smooth surjections
-has a unique extension to all schemes of finite type over $k$ commuting with smooth surjections
-(Proposition 37): for a finite affine open cover $X = \bigcup_i U_i$, the blow-up sequence of the
-affine scheme $\coprod_i U_i$ descends to $X$, which is why $BR$ has to be defined on disconnected
-affine schemes (Warning 38).
+fat point along its nilpotent ideal gives the empty scheme), which items 1–3 allow. The sequence
+obtained for a variety does not depend on the embedding, because $BP$ is compatible with closed
+embeddings (in the weak form 34.4) and any two closed embeddings of $X$ into affine spaces become
+equivalent under an automorphism of a larger affine space (Lemma 39). The compatibility with change
+of fields and with smooth morphisms reduces to the same properties of $BP$, through Lemma 41 for
+smooth morphisms. Finally, a blow-up sequence functor defined on affine schemes over a field $k$ and
+commuting with smooth surjections has a unique extension to all schemes of finite type over $k$
+commuting with smooth surjections (Proposition 37): for a finite affine open cover $X = \bigcup_i
+U_i$, the blow-up sequence of the affine scheme $\coprod_i U_i$ descends to $X$, which is why $BR$
+has to be defined on disconnected affine schemes (Warning 38).
 
 ## Depends on
 
