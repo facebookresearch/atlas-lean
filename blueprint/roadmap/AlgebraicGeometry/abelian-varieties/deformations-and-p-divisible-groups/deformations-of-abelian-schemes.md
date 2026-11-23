@@ -1,9 +1,9 @@
 # Deformations of abelian schemes
 
 This node is still to be broken down. It covers the consequences for
-[abelian schemes](../abelian-scheme.md) of the [Serre–Tate theorem](serre-tate-theorem.md) and of the
-[Grothendieck–Messing theorem](grothendieck-messing-theorem.md): deformations of an abelian scheme,
-and of homomorphisms between abelian schemes, along a nilpotent divided power thickening are
+[abelian schemes](../abelian-scheme.md) of the [Serre–Tate theorem](serre-tate-theorem.md) and of
+the [Grothendieck–Messing theorem](grothendieck-messing-theorem.md): deformations of an abelian
+scheme, and of homomorphisms between abelian schemes, along a nilpotent divided power thickening are
 governed by the Hodge filtration of de Rham homology. Let $R \to R_0$ be a surjection of rings whose
 kernel $I$ carries nilpotent divided powers. For an abelian scheme $A$ over $R$ with $A_0 = A
 \times_R R_0$, let $H_1(A) = H_1^{\mathrm{dR}}(A/R)$ be the de Rham homology, identified with the
@@ -41,8 +41,8 @@ $p$-nilpotent case.
 ## Depends on
 
 - [Abelian scheme](../abelian-scheme.md)
-- [De Rham cohomology of abelian schemes](de-rham-cohomology-of-abelian-schemes.md), for
-  $H^1_{\mathrm{dR}}$, its Hodge filtration and its crystalline nature
+- [De Rham cohomology of abelian schemes](de-rham-cohomology-of-abelian-schemes.md), for the de Rham
+  homology $H_1$, its filtration $\operatorname{Fil} = \omega^\perp$ and its crystalline nature
 - [Grothendieck–Messing deformation theorem](grothendieck-messing-theorem.md), for nilpotent divided
   power thickenings
 

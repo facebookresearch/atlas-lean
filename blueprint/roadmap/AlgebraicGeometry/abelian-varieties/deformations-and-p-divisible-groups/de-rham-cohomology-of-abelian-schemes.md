@@ -1,11 +1,11 @@
 # De Rham cohomology of abelian schemes
 
 This node is still to be broken down. It covers the first de Rham cohomology $H^1 =
-H^1_{\mathrm{dR}}(A/R)$ of an [abelian scheme](../abelian-scheme.md) $A$ of relative dimension $g$ over
-a ring $R$, its dual, the first de Rham homology $H_1 = \operatorname{Hom}_R(H^1, R)$, and their
-Hodge filtrations, in the form used by the deformation theory of abelian schemes and by the Hodge
-bundle on moduli spaces. Write $\omega = \omega_{A/R} = e^* \Omega^1_{A/R}$ and $A^t$ for the dual
-abelian scheme. The targets are:
+H^1_{\mathrm{dR}}(A/R)$ of an [abelian scheme](../abelian-scheme.md) $A$ of relative dimension $g$
+over a ring $R$, its dual, the first de Rham homology $H_1 = \operatorname{Hom}_R(H^1, R)$, and
+their Hodge filtrations, in the form used by the deformation theory of abelian schemes and by the
+Hodge bundle on moduli spaces. Write $\omega = \omega_{A/R} = e^* \Omega^1_{A/R}$ and $A^t$ for the
+dual abelian scheme. The targets are:
 
 1. (Freeness.) Every class of $H^1$ is primitive, that is, $m^* x = p_1^* x + p_2^* x$ on $A
    \times_R A$; $H^1$ is a finite projective $R$-module of rank $2g$, and the cup product induces an
@@ -30,18 +30,27 @@ The form in 5 lives on $H_1$, not on $H^1$: a class in $\bigwedge^2 H^1$ is a bi
 dual module. Dualizing turns 2 and 5 into statements about $H^1$ with annihilators, and reverses the
 variance of homomorphisms ($f^* \colon H^1(B) \to H^1(A)$ against $f_* \colon H_1(A) \to H_1(B)$).
 
-The classical sources cover these statements in different generality. Over a field, 1–3 follow from
-the degeneration of the Hodge–de Rham spectral sequence and $H^\bullet_{\mathrm{dR}} =
-\bigwedge^\bullet H^1$ (van der Geer–Moonen, Corollary (7.29)). The comparison of 2 with the
-Grothendieck–Messing crystal of $A[p^\infty]$, in homology, and the rigidity 4 are proved for
-thickenings in which $p$ is nilpotent (Messing; Chai–Oort, Theorem 2.4 (iii)). A good expansion has
-pages for: the Hodge–de Rham spectral sequence of an abelian scheme over a ring and its
-degeneration, with base change; the identification of $H_1$ with the Lie algebra of the universal
-vector extension of $A^t$ (Mazur–Messing); the crystalline comparison for $p$-nilpotent thickenings;
-the Gauss–Manin connection and its integration for divided power thickenings of
-$\mathbb{Q}$-algebras, which 4 needs over rings in which $p$ is not nilpotent and for which no
-source in this generality has been identified; and the polarization form of 5 with its isotropy and
-perfectness.
+The classical sources cover these statements in different generality, and none states the whole
+package 1–5 over all rings. Over a field, 1–3 follow from the degeneration of the Hodge–de Rham
+spectral sequence and $H^\bullet_{\mathrm{dR}} = \bigwedge^\bullet H^1$ (van der Geer–Moonen,
+Corollary (7.29)); that corollary alone does not give base change over a ring. Over any base, $H_1$
+is the Lie algebra of the universal vector extension $A^\natural$ of $A$ itself, an extension of $A$
+by the vector group of $R^1 f_* \mathcal{O}_A$ whose formation commutes with base change, while the
+universal vector extension of $A^t$ has Lie algebra $H^1$; moreover $H^q_{\mathrm{dR}}(A/R) \cong
+e^* \Omega^q_{A^\natural/R}$ for all $q$ (Mazur–Messing, I.2.6.7 and I.4.1.7, as cited by
+Fonseca–Matthes, §2.2 and Remark 2.8, and by Česnavičius, §3.2). For thickenings in which $p$ is
+nilpotent, Chai and Oort's Theorem 2.4 (iii) identifies the de Rham **homology** of an abelian
+scheme lifting $A_0$ with the Grothendieck–Messing crystal of $A_0[p^\infty]$ evaluated on the
+thickening (Messing); the rigidity 4, stated for cohomology, is its dual. Rings in which $p$ is
+nilpotent and $\mathbb{Q}$-algebras do not exhaust the thickenings of 4:
+$\mathbb{Z}[\varepsilon]/(\varepsilon^2) \to \mathbb{Z}$, with the divided powers of its square-zero
+ideal, is in neither case, and such mixed thickenings belong to the pending all-ring target. A good
+expansion has pages for: the Hodge–de Rham spectral sequence of an abelian scheme over a ring and
+its degeneration, with base change; universal vector extensions and the identifications above; the
+crystalline comparison for $p$-nilpotent thickenings, with the duality between homology and
+cohomology; the Gauss–Manin connection and its integration for divided power thickenings of
+$\mathbb{Q}$-algebras; the mixed thickenings, for which no source has been identified; and the
+polarization form of 5 with its isotropy and perfectness.
 
 ## Depends on
 
@@ -50,6 +59,16 @@ perfectness.
 
 ## Sources
 
+- B. Mazur and W. Messing, *Universal Extensions and One Dimensional Crystalline Cohomology*,
+  Lecture Notes in Mathematics 370, Springer, 1974: I.2.6.7 and I.4.1.7, as cited by Fonseca–Matthes
+  and by Česnavičius.
+- T. J. Fonseca and N. Matthes, "A note on the Gauss–Manin connection for abelian schemes",
+  arXiv:2201.06402 (version 2): introduction, p. 1 ($\operatorname{Lie}_S A^\natural \cong
+  H^1_{\mathrm{dR}}(A/S)^\vee$), §2.2 with (2.1) (universal vector extension and base change) and
+  Remark 2.8.
+- K. Česnavičius, "The Manin constant in the semistable case",
+  <https://www.math.uni-bonn.de/people/kestutis/Manin-semistable.pdf>: §3.2, the paragraph after
+  (3.2.1) (the universal vector extension of the dual and $H^1_{\mathrm{dR}}$).
 - W. Messing, *The Crystals Associated to Barsotti–Tate Groups: with Applications to Abelian
   Schemes*, Lecture Notes in Mathematics 264, Springer, 1972, chapter "The deformation theory and
   applications".

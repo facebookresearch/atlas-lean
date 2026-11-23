@@ -23,8 +23,10 @@ separated, so proper over $S$, and it is quasi-finite when $f$ is fibrewise an i
 finite; being finite and flat, it has locally constant rank. For 2, $n_A$ is flat because $A$ is
 flat over $S$ and $n_A$ is flat on every fibre, by the fibrewise criterion of flatness; it is proper
 with finite fibres, hence finite; and on a fibre over a field it is an isogeny of degree $n^{2g}$
-(Milne's Theorem I.7.2, proved with a symmetric very ample line bundle $L$, for which $n_A^* L \cong
-L^{n^2}$, and the equality of degrees of a very ample divisor and its pull-back). It is étale on a
+(Milne's Theorem I.7.2, proved with a symmetric very ample divisor $D$, for which $n_A^* D \sim n^2
+D$: the projection formula $((n_A^* D)^g) = \deg(n_A) (D^g)$, with $((n^2 D)^g) = n^{2g} (D^g)$ and
+$(D^g) > 0$, gives $\deg(n_A) = n^{2g}$; the degree of the pulled-back divisor is not that of $D$,
+for an elliptic curve and $n = 2$, $\deg 3[0] = 3$ but $\deg 2^* (3[0]) = 12$). It is étale on a
 fibre $A_s$ exactly when its differential, multiplication by $n$ on the tangent space
 $\operatorname{Lie}(A_s)$ of dimension $g(s)$, is an isomorphism: when $n$ is invertible in $k(s)$
 or $g(s) = 0$. For 3, a finite étale group scheme over a separably closed field is the constant

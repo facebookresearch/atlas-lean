@@ -18,9 +18,15 @@ This node is still to be broken down. It covers the first results on line bundle
    for $N$ the nonzero class, $L = \mathrm{pr}_Y^* N$ and $M = \mathcal{O}$ agree on every $X \times
    \{y\}$ and on $\{x\} \times Y$ for the closed point $x$ with residue field $\mathbb{C}$, but $L
    \not\cong M$.
-2. (Triviality locus.) For $X$ complete and $L$ a line bundle on $X \times Y$, the set of $y$ with
-   $L|_{X \times \{y\}}$ trivial is closed, and is the support of a maximal closed subscheme $Y_0
-   \subset Y$ over which $L$ is a pull-back from $Y_0$.
+2. (Triviality locus.) For $X$ as in 1, proper and geometrically integral, and $L$ a line bundle on
+   $X \times Y$, the set of $y$ with $L|_{X \times \{y\}}$ trivial is closed, and is the support of
+   a closed subscheme $Y_0 \subset Y$ such that $L|_{X \times Y_0}$ is the pull-back of a line
+   bundle on $Y_0$ and every morphism $\varphi \colon T \to Y$ for which $(\mathrm{id}_X \times
+   \varphi)^* L$ is the pull-back of a line bundle on $T$ factors through $Y_0$ (van der Geer–Moonen
+   (2.3)–(2.4)). The hypothesis on $X$ matters: for $X = \operatorname{Spec} k \sqcup
+   \operatorname{Spec} k$, complete but not connected, $Y = \mathbb{P}^1$ and the bundle that is
+   $\mathcal{O}$ on one copy of $Y$ and $\mathcal{O}(1)$ on the other, every fibre is trivial but no
+   line bundle on $Y$ pulls back to $L$.
 3. (Theorem of the cube.) If $X$, $Y$ are proper geometrically integral varieties, $Z$ is a
    connected locally noetherian scheme, $x \in X(k)$, $y \in Y(k)$ rational points, $z \in Z$, and
    $L$ is a line bundle on $X \times Y \times Z$ whose restrictions to $\{x\} \times Y \times Z$, $X
