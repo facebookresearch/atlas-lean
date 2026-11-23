@@ -10580,6 +10580,7 @@
   "MathlibExt/Combinatorics/Words/PrimitiveWord": {"to": "Combinatorics/combinatorics-on-words/finite-words", "title": "Lyndon and primitive words"},
   "MathlibExt/Combinatorics/Words/RegularSequence": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Regular sequences"},
   "MathlibExt/Combinatorics/Words/TernaryAbelianCubeFreeLowerBound": {"to": "Combinatorics/combinatorics-on-words/repetitions-in-words", "title": "Abelian-cube-free words"},
+  "MathlibExt/Combinatorics/Words/UlamWords": {"to": "Combinatorics/combinatorics-on-words/finite-words", "title": "Ulam words"},
   "MathlibExt/Combinatorics/YoungTableaux/HookLength": {"to": "Combinatorics/symmetric-functions-q-analogues", "title": "Standard Young tableaux and the hook length formula"},
   "MathlibExt/Combinatorics/ZigZagExpanderFamily": {"to": "GraphTheory/graph-families-and-operations", "title": "Zig-zag product and explicit expanders"},
   "MathlibExt/Combinatorics/ZigZagProduct": {"to": "GraphTheory/graph-families-and-operations", "title": "Zig-zag product and explicit expanders"},
