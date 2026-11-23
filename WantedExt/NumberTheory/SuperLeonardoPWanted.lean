@@ -27,51 +27,12 @@ is read here as `(1, …, p + 1)`, i.e. `y_i = i + 1`.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Choose.Basic
-public import Mathlib.Basic.Real.Basic
-public import MathlibExt.NumberTheory.Recurrences.HonsbergerFibonacciP
+public import MathlibExt.NumberTheory.Recurrences.SuperLeonardoP
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Supergeneralized Leonardo p-numbers.** For natural numbers $p$ and $k$ and a real sequence
-$x = (x_n)_{n \in \mathbb{N}}$, the supergeneralized Leonardo $p$-numbers are the real numbers
-$\mathcal{L}_{p,k,x}(n)$, $n \in \mathbb{N}$, given by $\mathcal{L}_{p,k,x}(n) = x_n$ for
-$n \le p$ and $\mathcal{L}_{p,k,x}(n) = \mathcal{L}_{p,k,x}(n-1) + \mathcal{L}_{p,k,x}(n-p-1) + k$
-for $n > p$. Only the initial values $x_0, \dots, x_p$ are used.
-
-Source: Clemens Schütz and Kristian Kelly, *An Explicit Formula for Supergeneralized
-Leonardo `p`-numbers*, Journal of Integer Sequences 28 (2025), Article 25.8.2,
-Definition 1. -/
-noncomputable def superLeonardoP (p k : ℕ) (x : ℕ → ℝ) (n : ℕ) : ℝ :=
-  if _h : n ≤ p then x n
-  else superLeonardoP p k x (n - 1) + superLeonardoP p k x (n - p - 1) + k
-termination_by n
-decreasing_by all_goals omega
-
-/-- **Initial values of the supergeneralized Leonardo p-numbers.** For all natural numbers $p$,
-$k$ and $n$ with $n \le p$ and every real sequence $x$, the supergeneralized Leonardo $p$-number
-$\mathcal{L}_{p,k,x}(n)$ equals $x_n$.
-
-Source: Schütz and Kelly, Journal of Integer Sequences 28 (2025), Article 25.8.2,
-Definition 1. -/
-theorem superLeonardoP_of_le (p k : ℕ) (x : ℕ → ℝ) {n : ℕ} (hn : n ≤ p) :
-    superLeonardoP p k x n = x n := by
-  rw [superLeonardoP]; simp [hn]
-
-/-- **Recurrence for the supergeneralized Leonardo p-numbers.** For all natural numbers $p$, $k$
-and $n$ with $n > p$ and every real sequence $x$, the supergeneralized Leonardo $p$-numbers
-$\mathcal{L}_{p,k,x}$ satisfy
-$\mathcal{L}_{p,k,x}(n) = \mathcal{L}_{p,k,x}(n-1) + \mathcal{L}_{p,k,x}(n-p-1) + k$.
-
-Source: Schütz and Kelly, Journal of Integer Sequences 28 (2025), Article 25.8.2,
-Definition 1. -/
-theorem superLeonardoP_of_lt (p k : ℕ) (x : ℕ → ℝ) {n : ℕ} (hn : p < n) :
-    superLeonardoP p k x n =
-      superLeonardoP p k x (n - 1) + superLeonardoP p k x (n - p - 1) + k := by
-  rw [superLeonardoP]; simp [show ¬n ≤ p by omega]
 
 /-- **Reduction of supergeneralized Leonardo p-numbers to the homogeneous case.** Let $p \ge 1$
 and $k$ be natural numbers, $x$ a real sequence, $y$ the real sequence $y_i = i + 1$, and write
@@ -91,22 +52,6 @@ public theorem_wanted superLeonardoP_eq_add_mul (p k : ℕ) (hp : 1 ≤ p) (x : 
       superLeonardoP p 0 x n +
         (if p < n then superLeonardoP p 1 (fun i => (i : ℝ) + 1) (n - (p + 1)) else 0) *
           k
-
-/-- **Homogeneous supergeneralized Leonardo p-numbers via Fibonacci p-numbers.** For all
-natural numbers $p \ge 1$ and $n$ and every real sequence $x$, the supergeneralized Leonardo
-$p$-numbers $\mathcal{L}_{p,0,x}$ with $k = 0$ satisfy $\mathcal{L}_{p,0,x}(n) = x_n$ if
-$n \le p$, and if $n > p$, with $F_p$ denoting the Fibonacci $p$-numbers,
-$$\mathcal{L}_{p,0,x}(n) = F_p(n-p+1)\,x_p + \sum_{i=0}^{\min(p-1,\,n-p-1)} F_p(n-p-i)\,x_i.$$
-
-Source: Clemens Schütz and Kristian Kelly, *An Explicit Formula for Supergeneralized
-Leonardo `p`-numbers*, Journal of Integer Sequences 28 (2025), Article 25.8.2,
-Theorem 4. -/
-public theorem_wanted superLeonardoP_zero_eq (p : ℕ) (hp : 1 ≤ p) (x : ℕ → ℝ) (n : ℕ) :
-    superLeonardoP p 0 x n =
-      if n ≤ p then x n
-      else (fibonacciP p (n - p + 1) : ℝ) * x p +
-        ∑ i ∈ Finset.range (min (p - 1) (n - p - 1) + 1),
-          (fibonacciP p (n - p - i) : ℝ) * x i
 
 /-- **Binomial sum for supergeneralized Leonardo p-numbers with linear initial values.** Let
 $p \ge 1$ be a natural number and $y$ the real sequence $y_i = i + 1$, so that the initial values
