@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Polynomial.Coeff
 public import Mathlib.Combinatorics.Enumerative.Composition
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.AssociatedStirlingEulerian
+public import MathlibExt.Combinatorics.Enumerative.FenceTiling
 public import MathlibExt.NumberTheory.Recurrences.HonsbergerFibonacciP
 
 /-!
@@ -498,38 +499,6 @@ public theorem_wanted restrictedCombination_genFun_eq_tiling_genFun (Q : Finset 
       PowerSeries.mk (fun n => ∑ k ∈ Finset.range (n + 1),
         (restrictedOverlapTilingCount Q n k : Polynomial ℤ) * Polynomial.X ^ k) -
         ∑ n ∈ Finset.range (Q.sup id), PowerSeries.X ^ n
-
-/-- **Fence tilings and strongly restricted permutations.** Let $D$ be a finite set of integers
-and $n$ a natural number. Number the cells of an $n$-board $0, 1, \dots, n-1$ and give cell $i$
-a left slot $2i$ and a right slot $2i + 1$. A fence $(s, g)$, with $s$ and $g$ natural numbers,
-has teeth in slots $s$ and $s + 1 + 2g$. A tiling is a finite set of fences such that every
-fence $(s, g)$ in it satisfies $s + 1 + 2g < 2n$ and either $s$ is even and $g \in D$, or $s$ is
-odd and $-g - 1 \in D$, and such that every slot $x < 2n$ is a tooth of exactly one of its
-fences. A tiling $t$ and a permutation $\pi$ of $\{0, 1, \dots, n-1\}$ are compatible if for
-every cell $i$ and every fence $(s, g) \in t$: if $s = 2i$ then $\pi(i) = i + g$, and if
-$s + 1 + 2g = 2i$ then $\pi(i) = i - g - 1$. Then for every tiling $t$ there is exactly one
-permutation $\pi$ with $\pi(i) - i \in D$ for all $i$ that is compatible with $t$, and for every
-permutation $\pi$ with $\pi(i) - i \in D$ for all $i$ there is exactly one tiling compatible
-with $\pi$.
-
-The lemma is due to Edwards and Allen (2015); the fences are $(\tfrac12, g)$-fences.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Lemma 12. -/
-public theorem_wanted fenceTiling_strongPerm_bijection (D : Finset ℤ) (n : ℕ) :
-    let IsTiling := fun t : Finset (ℕ × ℕ) =>
-      (∀ f ∈ t, f.1 + 1 + 2 * f.2 < 2 * n ∧
-        ((f.1 % 2 = 0 ∧ (f.2 : ℤ) ∈ D) ∨ (f.1 % 2 = 1 ∧ -(f.2 : ℤ) - 1 ∈ D))) ∧
-      ∀ x < 2 * n, ∃! f, f ∈ t ∧ (x = f.1 ∨ x = f.1 + 1 + 2 * f.2)
-    let Compatible := fun (t : Finset (ℕ × ℕ)) (π : Equiv.Perm (Fin n)) =>
-      ∀ i : Fin n, ∀ f ∈ t,
-        (f.1 = 2 * (i : ℕ) → ((π i : ℕ) : ℤ) = (i : ℕ) + f.2) ∧
-        (f.1 + 1 + 2 * f.2 = 2 * (i : ℕ) → ((π i : ℕ) : ℤ) = (i : ℕ) - f.2 - 1)
-    (∀ t, IsTiling t → ∃! π : Equiv.Perm (Fin n),
-        (∀ i, ((π i : ℕ) : ℤ) - (i : ℕ) ∈ D) ∧ Compatible t π) ∧
-      ∀ π : Equiv.Perm (Fin n), (∀ i, ((π i : ℕ) : ℤ) - (i : ℕ) ∈ D) →
-        ∃! t, IsTiling t ∧ Compatible t π
 
 /-- **Metatiles with at most two combs.** Let $Q$ be a finite set of natural numbers and $q$ its
 largest element ($q = 0$ for $Q = \emptyset$). The set $Q$ has metatiles with at most two combs
