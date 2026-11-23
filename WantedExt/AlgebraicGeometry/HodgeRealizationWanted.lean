@@ -9,8 +9,8 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.AlgebraicGeometry.Morphisms.Proper
+public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 public import MathlibExt.AlgebraicGeometry.HodgeRealization
-public import MathlibExt.AlgebraicGeometry.Variety
 
 /-!
 # Geometric pure Hodge realization
@@ -45,7 +45,7 @@ public theorem_wanted holomorphic_poincare
 cohomology as a pure rational Hodge structure of weight its cohomological
 degree, with precisely the geometric brutal-cut Hodge filtration. -/
 public def_wanted smooth_proper_hodge_realization
-    (X : AnalyticRealization.ComplexScheme) (d : ℕ) [IsVariety ℂ X.left]
+    (X : AnalyticRealization.ComplexScheme) (d : ℕ)
     [Smooth X.hom] [IsProper X.hom] [AnalyticManifold X d]
     [RegularFunctions X d] (D : HolomorphicDeRhamData X d)
     (R : BettiDeRhamResolution X d D) (n : ℕ) : PureBettiHodgeData R (n : ℤ)

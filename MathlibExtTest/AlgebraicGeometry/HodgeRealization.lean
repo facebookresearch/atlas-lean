@@ -18,7 +18,8 @@ public import MathlibExt.AlgebraicGeometry.HodgeRealization
 Global sections are evaluation at the whole space and are additive. The Betti
 and de Rham complexes are global sections of the chosen injective resolutions,
 and the Hodge filtration is the image of the cohomology of the cut
-resolutions.
+resolutions. A pure Betti Hodge realization forces this geometric filtration to
+be antitone, and its map on cycles is determined by the chain comparison.
 -/
 
 noncomputable section
@@ -53,5 +54,23 @@ example (n p : ℤ) (x : ((deRhamComplex R).homology n)) :
         (((globalSections ℂ (ComplexAnalytification.space X)).mapHomologicalComplex
           (ComplexShape.up ℤ)).map (R.cutMap p)) n).hom :=
   Iff.rfl
+
+/-- The Hodge laws of a realization make the geometric filtration antitone. -/
+example (n : ℤ) (H : PureBettiHodgeData R n) : Antitone (hodgeFiltration R n) := by
+  intro p q hpq x hx
+  have h := H.hodge.antitone hpq
+  rw [H.filtration, H.filtration] at h
+  have hy : H.complexIso.inv x ∈ (hodgeFiltration R n q).comap H.complexIso.hom.hom := by
+    simpa using hx
+  have hh := h hy
+  change H.complexIso.hom (H.complexIso.inv x) ∈ hodgeFiltration R n p at hh
+  simpa using hh
+
+/-- The map on cycles of a realization is determined by the chain comparison. -/
+example (n : ℤ) (H H' : PureBettiHodgeData R n) : H.cyclesMap = H'.cyclesMap := by
+  ext z
+  have hmono := (ModuleCat.mono_iff_injective ((deRhamComplex R).iCycles n)).1 inferInstance
+  apply hmono
+  rw [H.cycles_normalization, H'.cycles_normalization]
 
 end MathlibExtTest.AlgebraicGeometry.HodgeRealization
