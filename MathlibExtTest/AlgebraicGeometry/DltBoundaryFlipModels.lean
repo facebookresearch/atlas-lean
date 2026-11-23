@@ -40,5 +40,10 @@ example {k : Type} [Field k] (V W : NormalVariety k 3) (f : V.X ⟶ W.X)
     decide
   · exact hheight
 
-end MathlibExtTest.AlgebraicGeometry.DltBoundaryFlipModels
+/-- Plt records the model calculus, so no proper birational model is omitted from
+its discrepancy quantifier. -/
+example {k : Type} [Field k] {n : ℕ} (P : LogPair k n) (h : IsPlt P) :
+    HasModelCalculus P :=
+  h.2.1
 
+end MathlibExtTest.AlgebraicGeometry.DltBoundaryFlipModels

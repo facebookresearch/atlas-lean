@@ -35,9 +35,7 @@ theorem_wanted model_fixed_part_monotone
     (M₁ M₂ : BirationalModel P) (R : ModelRefinement M₁ M₂)
     (S₁ : ModelSections A M₁) (S₂ : ModelSections A M₂)
     [Module.Finite k (GenericSectionMaps.Sections P.variety.X A.cartier.line.val)]
-    (h₁ : modelSectionSpace S₁ ≠ ⊥) (h₂ : modelSectionSpace S₂ ≠ ⊥)
     (F : FixedCartierPart S₁) (p : PrimePoint M₂.variety) :
     pulledFixedCoefficient R F p ≤ fixedCoefficient S₂ p
 
 end MathlibExt.AlgebraicGeometry.RestrictedAdjointSections
-

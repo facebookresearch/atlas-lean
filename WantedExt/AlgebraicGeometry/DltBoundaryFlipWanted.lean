@@ -43,4 +43,3 @@ def_wanted standardDltThreefoldFlip
     {F : BoundaryFlip C // IsDlt F.source}
 
 end MathlibExt.AlgebraicGeometry.DltBoundaryFlipModels
-

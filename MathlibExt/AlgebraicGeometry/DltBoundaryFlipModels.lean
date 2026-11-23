@@ -74,9 +74,11 @@ structure DltWitness (P : LogPair k n) where
 /-- Dlt is existence of the actual log-resolution witness, including coefficient-one boundaries. -/
 def IsDlt (P : LogPair k n) : Prop := Nonempty (DltWitness P)
 
-/-- Plt tests all actual exceptional divisors and retains coefficient-one original divisors. -/
+/-- Plt tests all actual exceptional divisors and retains coefficient-one original
+divisors. As for `IsKlt`, the model calculus is part of the definition, so that
+every proper birational normal model enters the quantifier. -/
 def IsPlt (P : LogPair k n) : Prop :=
-  (∀ p, P.boundary p ≤ 1) ∧
+  (∀ p, P.boundary p ≤ 1) ∧ HasModelCalculus P ∧
     ∀ M : BirationalModel P, ∀ p : PrimePoint M.variety,
       IsExceptional M.map p → 0 < logDiscrepancy M p
 
@@ -107,7 +109,7 @@ def ofKltFlip {S : Over (Spec (.of k))} {P : LogPair k n}
     {q : P.variety.X ⟶ S} {v : RelativeN1 q} {C : RelativeContraction P q v}
     (F : RelativeFlip C) : BoundaryFlip C where
   source := F.source
-  calculus := F.calculus
+  calculus := F.klt.1
   qfactorial := F.qfactorial
   map := F.map
   proper := F.proper
@@ -124,4 +126,3 @@ def ofKltFlip {S : Over (Spec (.of k))} {P : LogPair k n}
   adjointAmple := F.adjointAmple
 
 end MathlibExt.AlgebraicGeometry.DltBoundaryFlipModels
-

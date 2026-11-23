@@ -42,10 +42,12 @@ open MathlibExt.AlgebraicGeometry.CompactifiedPoincareKernels
 
 universe u
 
+/-- `f` contracts the curve `C` when `C` maps to a single point of `Y`. The point
+need not be `k`-rational: over a field that is not algebraically closed, a curve
+can be contracted to a closed point with a larger residue field. -/
 def IsContracted {k : Type u} [Field k]
     {X Y : Over (Spec (.of k))} (f : X ⟶ Y) (C : Curve X) : Prop :=
-  ∃ p : Spec (.of k) ⟶ Y.left, p ≫ Y.hom = 𝟙 _ ∧
-    C.map.left ≫ f.left = C.source.hom ≫ p
+  (Set.range (C.map.left ≫ f.left).base).Subsingleton
 
 structure Contraction {k : Type u} [Field k]
     (X : Over (Spec (.of k))) (v : N1 X) where
@@ -66,9 +68,12 @@ def exceptionalLocus {Y X : Scheme.{u}} (f : Y ⟶ X) : Set Y :=
   {y | ¬∃ U : Y.Opens, y ∈ U ∧ ∃ V : X.Opens, ∃ e : U.toScheme ≅ V.toScheme,
     U.ι ≫ f = e.hom ≫ V.ι}
 
+/-- A small birational morphism from an `n`-dimensional source: its exceptional
+locus is nonempty of dimension at most `n - 2`, stated without natural-number
+subtraction (so no small morphism has a source of dimension below two). -/
 def IsSmall {Y X : Scheme.{u}} (f : Y ⟶ X) (n : ℕ) : Prop :=
   IsBirationalMorphism f ∧ (exceptionalLocus f).Nonempty ∧
-    topologicalKrullDim (exceptionalLocus f) ≤ (n - 2 : ℕ)
+    topologicalKrullDim (exceptionalLocus f) + 2 ≤ (n : WithBot ℕ∞)
 
 /-- Canonical module fixed by natural top-degree Serre duality. -/
 structure CanonicalModule {k : Type u} [Field k]

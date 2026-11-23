@@ -58,7 +58,7 @@ public theorem_wanted relative_numerical_finite (k : Type u) [Field k] [IsAlgClo
 
 /-- Relative klt base-point-freeness with an actual ample adjoint difference. -/
 public theorem_wanted relative_basepoint_free (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
-    (n : ℕ) (P : LogPair k n) [HasModelCalculus P] (klt : IsKlt P)
+    (n : ℕ) (P : LogPair k n) (klt : IsKlt P)
     (S : Over (Spec (.of k))) (base : IsQuasiProjectiveBase S)
     (q : P.variety.X ⟶ S) (projective : IsProjectiveOver q)
     (L : CartierLine P.variety) (nef : ∀ C : Curve P.variety.X, IsContracted q C →
@@ -69,7 +69,7 @@ public theorem_wanted relative_basepoint_free (k : Type u) [Field k] [IsAlgClose
 
 /-- Contraction of an actual K+Delta-negative relative extremal ray. -/
 public def_wanted relative_contraction (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
-    (n : ℕ) (P : LogPair k n) [HasModelCalculus P] (klt : IsKlt P)
+    (n : ℕ) (P : LogPair k n) (klt : IsKlt P)
     (qfactorial : IsQFactorial P.variety) (S : Over (Spec (.of k)))
     (base : IsQuasiProjectiveBase S) (q : P.variety.X ⟶ S) (projective : IsProjectiveOver q)
     (v : RelativeN1 q) (extremal : IsExtremal v)
@@ -77,7 +77,7 @@ public def_wanted relative_contraction (k : Type u) [Field k] [IsAlgClosed k] [C
 
 /-- A genuine small klt flipping contraction has the normalized log flip. -/
 public def_wanted relative_flip (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
-    (n : ℕ) (dimension : 3 ≤ n) (P : LogPair k n) [HasModelCalculus P]
+    (n : ℕ) (dimension : 3 ≤ n) (P : LogPair k n)
     (klt : IsKlt P) (qfactorial : IsQFactorial P.variety)
     (S : Over (Spec (.of k))) (base : IsQuasiProjectiveBase S)
     (q : P.variety.X ⟶ S) (projective : IsProjectiveOver q)
