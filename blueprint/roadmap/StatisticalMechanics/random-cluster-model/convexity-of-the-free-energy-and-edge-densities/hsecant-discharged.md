@@ -5,3 +5,9 @@ Let $d, N \in \mathbb{N}$ and let $e$ be an unordered pair of vertices of the bo
 $$\theta^1_e(p') \le \theta^0_e(p),$$
 
 where $\theta^1_e$ and $\theta^0_e$ are the [wired](../per-box-agreement-of-free-and-wired-random-clust/wired-edge-density.md) and [free edge densities](../per-box-agreement-of-free-and-wired-random-clust/free-edge-density.md) of $e$ at $q = 2$.
+
+## Depends on
+
+- [Finite-volume tilt data for a box edge at $q = 2$](fksecant-data.md)
+- [Wired infinite-volume edge density](../per-box-agreement-of-free-and-wired-random-clust/wired-edge-density.md)
+- [Free infinite-volume edge density](../per-box-agreement-of-free-and-wired-random-clust/free-edge-density.md)
