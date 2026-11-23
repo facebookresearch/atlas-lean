@@ -548,7 +548,7 @@ lemma theta34_base : ∀ m : ℕ, m < 133 → 10^m * primorial m ≤ 34^m := by
 primorial $m\#$ (the product of all primes $p \le m$) satisfies $10^m \cdot m\# \le 34^m$. -/
 lemma theta34_nat (m : ℕ) : 10^m * primorial m ≤ 34^m := by
   induction m using Nat.strong_induction_on with
-  | h m ih =>
+  | ind m ih =>
     by_cases hm : m < 133
     · exact theta34_base m hm
     · set t : ℕ := (m+5)/6 with ht

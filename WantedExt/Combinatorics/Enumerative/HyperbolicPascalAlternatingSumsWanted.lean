@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Basic.Complex.Basic
+public import MathlibExt.Combinatorics.Enumerative.LinearRecurrenceInhomogeneous
 
 /-!
 # Alternating sums in the generalized hyperbolic Pascal triangle
@@ -103,28 +104,6 @@ public theorem_wanted linearRecurrence_inhomogeneous_identity (k : ℕ) (A f G w
       ∑ j ∈ Finset.range k, ∑ i ∈ Finset.range (k - j), f (n - j) * A (j + 1 + i) * G (k - 1 - i) +
         ∑ j ∈ Finset.range (k - 1), ∑ i ∈ Finset.Icc 1 (k - 1 - j),
           f j * A i * G (n + k - j - i) +
-        ∑ j ∈ Finset.range (n + 1), f (n - j) * w j
-
-/-- **Explicit formula for an inhomogeneous linear recurrence.** Let $k \in \mathbb{N}$ and let
-$A, f, G, w \colon \mathbb{N} \to \mathbb{C}$ be sequences such that, for every $m \ge k$,
-$f_m = \sum_{i=1}^{k} A_i f_{m-i}$ and $G_m = \sum_{i=1}^{k} A_i G_{m-i} + w_{m-k}$. Suppose
-moreover that $f_j = 0$ for every $j < k - 1$ and $f_{k-1} = 1$. Then for every $n \ge k - 1$,
-
-$$G_{n+1} = \sum_{j=0}^{k-1} \sum_{i=0}^{k-1-j} f_{n-j} A_{j+1+i} G_{k-1-i} +
-\sum_{j=0}^{n} f_{n-j} w_j.$$
-
-For $k = 0$ the index $k - 1$ is read as $0$, so the hypotheses cannot all hold. The source
-states the formula for $n \ge k$, as a consequence of its Theorem 1.
-
-Source: Hacène Belbachir, Fella Rami, and László Szalay, *Alternating Sums in the Generalized
-Hyperbolic Pascal Triangle*, INTEGERS 24 (2024), Article A84, Corollary 1
-(`integers-2024-A84-cor-1`). -/
-public theorem_wanted linearRecurrence_inhomogeneous_explicit (k : ℕ) (A f G w : ℕ → ℂ)
-    (hf : ∀ n, k ≤ n → f n = ∑ i ∈ Finset.Icc 1 k, A i * f (n - i))
-    (hG : ∀ n, k ≤ n → G n = ∑ i ∈ Finset.Icc 1 k, A i * G (n - i) + w (n - k))
-    (hf₀ : ∀ j, j + 1 < k → f j = 0) (hf₁ : f (k - 1) = 1) {n : ℕ} (hn : k ≤ n + 1) :
-    G (n + 1) =
-      ∑ j ∈ Finset.range k, ∑ i ∈ Finset.range (k - j), f (n - j) * A (j + 1 + i) * G (k - 1 - i) +
         ∑ j ∈ Finset.range (n + 1), f (n - j) * w j
 
 /-- **Weighted alternating row sums of the generalized hyperbolic Pascal triangle.** Let

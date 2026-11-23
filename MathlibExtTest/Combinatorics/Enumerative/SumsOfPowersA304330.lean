@@ -13,6 +13,18 @@ import MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330
 
 namespace MathlibExt.Combinatorics.Enumerative.SumsOfPowersA304330Wanted
 
+-- Even the last binomial coefficient vanishes when k exceeds twice the upper endpoint.
+example (k n : ℕ) (hn : 1 ≤ n) (hk : 2 * n < k) :
+    (∑ i ∈ Finset.Icc 1 n, (2 * i) * (2 * i + k - 1).choose (2 * k - 1)) = 0 := by
+  rw [sum_two_mul_choose_eq k n (by omega) hn,
+    Nat.choose_eq_zero_of_lt (show 2 * n + k + 1 < 2 * k + 1 by omega), mul_zero]
+
+-- At k = 2n, the final summand is the first nonzero one.
+example (n : ℕ) (hn : 1 ≤ n) :
+    (∑ i ∈ Finset.Icc 1 n, (2 * i) * (2 * i + 2 * n - 1).choose (2 * (2 * n) - 1)) =
+      2 * n := by
+  rw [sum_two_mul_choose_eq (2 * n) n (by omega) hn, ← two_mul (2 * n), Nat.choose_self, mul_one]
+
 -- Every term vanishes below the first nonzero binomial coefficient.
 example (k n : ℕ) (hn : 1 ≤ n) (hnk : n < k) :
     (∑ i ∈ Finset.Icc 1 n, (i : ℚ) * (i + k - 1).choose (2 * k - 1)) = 0 := by

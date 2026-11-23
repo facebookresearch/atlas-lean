@@ -11,8 +11,9 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Complex.Basic
-public import Mathlib.Combinatorics.Enumerative.Stirling
-public import Mathlib.RingTheory.Binomial
+public import MathlibExt.Combinatorics.Enumerative.AlternatingBinomialPowerSumRecurrences
+public import MathlibExt.Combinatorics.Enumerative.RingChooseSub
+public import MathlibExt.Combinatorics.Enumerative.SuccPowStirlingSecond
 public import MathlibExt.NumberTheory.LucasSequence
 public import WantedExt.NumberTheory.HyperLeonardoWanted
 
@@ -81,25 +82,6 @@ public theorem hyperFibonacci_eq_hypersequence (r n : ℕ) :
   induction r generalizing n with
   | zero => rfl
   | succ r ih => simp [hyperFibonacci, hypersequence, ih]
-
-/-- **Alternating binomial power sum.** For natural numbers $\ell, m$ and complex numbers $x, y$,
-$$p_{\ell,m}(x, y) = \sum_{k=0}^{m} (-1)^k \binom{m}{k} (kx + y)^\ell,$$
-with the convention $0^0 = 1$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Section 3, Equation (3.9). -/
-public def alternatingBinomialPowerSum (ℓ m : ℕ) (x y : ℂ) : ℂ :=
-  ∑ k ∈ range (m + 1), (-1) ^ k * (m.choose k : ℂ) * (k * x + y) ^ ℓ
-
-/-- **A value of the alternating binomial power sum.** The alternating binomial power sum
-$p_{\ell,m}(x, y) = \sum_{k=0}^{m} (-1)^k \binom{m}{k} (kx + y)^\ell$ satisfies
-$p_{1,1}(1, 1) = 1 - 2 = -1$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Section 3, Equation (3.9). -/
-public theorem alternatingBinomialPowerSum_one_one_one_one :
-    alternatingBinomialPowerSum 1 1 1 1 = -1 := by
-  simp [alternatingBinomialPowerSum, sum_range_succ]
 
 /-- **Hypersequences as binomial sums.** Let $(a_n)$ be a sequence of complex numbers and let
 $a^{(r)}_n$ denote its hypersequence of generation $r$. For every $r \ge 1$ and every natural
@@ -345,42 +327,6 @@ public theorem_wanted alternatingBinomialPowerSum_small_cases (x y : ℂ) (ℓ m
       alternatingBinomialPowerSum 0 m x y = 0 ^ m ∧
       ∑ m ∈ range (ℓ + 1), alternatingBinomialPowerSum ℓ m x y = (y - x) ^ ℓ
 
-/-- **Recurrences for alternating binomial power sums.** Let
-$p_{\ell,m}(x, y) = \sum_{k=0}^{m} (-1)^k \binom{m}{k} (kx + y)^\ell$. For all complex numbers
-$x, y$ and natural numbers $\ell, m$ (sums over an empty range are $0$, and $m - 1$ means $0$ when
-$m = 0$):
-(i) $p_{\ell,m+1}(x, y) = p_{\ell,m}(x, y) - p_{\ell,m}(x, x + y)$;
-(ii) $p_{\ell,m}(x, x + y) = \sum_{j=m}^{\ell} \binom{\ell}{j} p_{j,m}(x, y)\, x^{\ell-j}$;
-(iii) $p_{\ell,m+1}(x, y) = -\sum_{j=m}^{\ell-1} \binom{\ell}{j} p_{j,m}(x, y)\, x^{\ell-j}$;
-(iv) $p_{\ell+1,m}(x, y) = y\, p_{\ell,m}(x, y) - m x\, p_{\ell,m-1}(x, x + y)$;
-(v) $p_{\ell+1,m+1}(x, y) = ((m + 1) x + y)\, p_{\ell,m+1}(x, y) -
-(m + 1) x\, p_{\ell,m}(x, y)$;
-(vi) if $\ell \ge 1$, the complex derivative of $z \mapsto p_{\ell,m}(x, z)$ at $z = y$ is
-$\ell\, p_{\ell-1,m}(x, y)$;
-(vii) if $\ell \ge 1$, then
-$p_{\ell,m}(x, y) = (m x + y)\, p_{\ell-1,m}(x, y) - m x\, p_{\ell-1,m-1}(x, y)$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Proposition 4 (`integers-2024-A70-prop-4`). -/
-public theorem_wanted alternatingBinomialPowerSum_recurrences (x y : ℂ) (ℓ m : ℕ) :
-    alternatingBinomialPowerSum ℓ (m + 1) x y =
-        alternatingBinomialPowerSum ℓ m x y - alternatingBinomialPowerSum ℓ m x (x + y) ∧
-      alternatingBinomialPowerSum ℓ m x (x + y) =
-        ∑ j ∈ Icc m ℓ, (ℓ.choose j : ℂ) * alternatingBinomialPowerSum j m x y * x ^ (ℓ - j) ∧
-      alternatingBinomialPowerSum ℓ (m + 1) x y =
-        -∑ j ∈ Ico m ℓ, (ℓ.choose j : ℂ) * alternatingBinomialPowerSum j m x y * x ^ (ℓ - j) ∧
-      alternatingBinomialPowerSum (ℓ + 1) m x y =
-        y * alternatingBinomialPowerSum ℓ m x y -
-          m * x * alternatingBinomialPowerSum ℓ (m - 1) x (x + y) ∧
-      alternatingBinomialPowerSum (ℓ + 1) (m + 1) x y =
-        ((m + 1) * x + y) * alternatingBinomialPowerSum ℓ (m + 1) x y -
-          (m + 1) * x * alternatingBinomialPowerSum ℓ m x y ∧
-      (1 ≤ ℓ → deriv (fun z => alternatingBinomialPowerSum ℓ m x z) y =
-        ℓ * alternatingBinomialPowerSum (ℓ - 1) m x y) ∧
-      (1 ≤ ℓ → alternatingBinomialPowerSum ℓ m x y =
-        (m * x + y) * alternatingBinomialPowerSum (ℓ - 1) m x y -
-          m * x * alternatingBinomialPowerSum (ℓ - 1) (m - 1) x y)
-
 /-- **Derivative and recurrence of the shifted alternating binomial power sums.** Let
 $p_{\ell,m}(x, y) = \sum_{k=0}^{m} (-1)^k \binom{m}{k} (kx + y)^\ell$ and, for a complex number
 $n$, let $c_{\ell,m}(n) = p_{\ell,m}(1, n + 1)$. For natural numbers $\ell, m \ge 1$ and every
@@ -413,30 +359,6 @@ public theorem_wanted sum_pow_eq_sum_stirlingSecond (n m : ℕ) :
       ∑ k ∈ range (m + 1),
         (-1) ^ (m - k) * (k.factorial : ℤ) * ((n + k).choose (k + 1) : ℤ) *
           (Nat.stirlingSecond m k : ℤ)
-
-/-- **Alternating binomial expansion of a shifted binomial coefficient.** For all natural numbers
-$m$, $n$ and $k$,
-$$\binom{n+m-k-1}{m} = \sum_{j=0}^{k} (-1)^j \binom{k}{j} \binom{n+m-j-1}{m-j},$$
-where, for an integer $x$ and a natural number $i$, $\binom{x}{i} = x(x-1)\cdots(x-i+1)/i!$ is
-the generalized binomial coefficient, and the term $\binom{n+m-j-1}{m-j}$ is taken to be $0$
-when $j > m$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Lemma 1, Equation (4.10) (`integers-2024-A70-lem-1`). -/
-public theorem_wanted ringChoose_sub_eq_sum (m n k : ℕ) :
-    Ring.choose ((n : ℤ) + m - k - 1) m =
-      ∑ j ∈ range (k + 1), (-1) ^ j * (k.choose j : ℤ) *
-        (if j ≤ m then Ring.choose ((n : ℤ) + m - j - 1) (m - j) else 0)
-
-/-- **Powers of $k + 1$ via Stirling numbers of the second kind.** For all natural numbers $k$
-and $\ell$,
-$$(k + 1)^\ell = \sum_{j=0}^{k} \binom{k}{j}\, j!\, S(\ell + 1, j + 1),$$
-where $S(i, j)$ denotes the Stirling numbers of the second kind.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Lemma 2, Equation (4.11) (`integers-2024-A70-lem-2`). -/
-public theorem_wanted succ_pow_eq_sum_stirlingSecond (k ℓ : ℕ) :
-    (k + 1) ^ ℓ = ∑ j ∈ range (k + 1), k.choose j * j.factorial * Nat.stirlingSecond (ℓ + 1) (j + 1)
 
 /-- **Power-weighted sums of Fibonacci numbers.** Let $F_k$ denote the Fibonacci numbers and let
 $p_{\ell,m}(x, y) = \sum_{i=0}^{m} (-1)^i \binom{m}{i} (ix + y)^\ell$ be the alternating binomial

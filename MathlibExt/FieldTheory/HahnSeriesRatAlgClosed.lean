@@ -516,8 +516,7 @@ private theorem kaplanskyLimitCoeff_isPWO_support {C : Set (HahnSeries ℚ K)}
     obtain ⟨j, hj1, hjle, hjlt⟩ := hga₀
     have hgak : KaplanskyBelowSlope f a₀ (s k) := ⟨j, hj1, hjle, by
       refine lt_of_le_of_lt ?_ hjlt
-      gcongr
-      exact_mod_cast nsmul_le_nsmul_right hsk0 j⟩
+      gcongr⟩
     have heq := kaplanskyLimitCoeff_eq hC ha₀ hgak
     rw [HahnSeries.mem_support, ← heq]
     exact hs k

@@ -117,7 +117,7 @@ of the denominator and the prime-to-$p$ part $x_N$ of the numerator of $x = 1$ a
 Source: Booher, Hsieh, Rivera, Tran, Upton, and Wu, *Higher a-Numbers in `ℤ_p`-Towers via
 Counting Lattice Points*, INTEGERS 26 (2026), Article A78, Notation 2 (`x_N`, `x_D` of `1`). -/
 theorem primeToPDen_one_primeToPNum_one (p : ℕ) : primeToPDen p 1 = 1 ∧ primeToPNum p 1 = 1 := by
-  simp [primeToPDen, primeToPNum]
+  simp [primeToPDen, primeToPNum, Nat.padicValNat_def]
 
 /-- **Period of the base-$p$ expansion.** For a natural number $p$ and a rational number $x$, let
 $x_D$ be the denominator of $x$ in lowest terms divided by the largest power of $p$ dividing it.

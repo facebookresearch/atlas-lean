@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.RingTheory.MvPolynomial.Symmetric.Defs
+public import MathlibExt.Combinatorics.Enumerative.MitrinovicNumbers
 public import WantedExt.Combinatorics.Enumerative.HypersequenceWeightedSumsWanted
 
 namespace MetaMathlibExt
@@ -112,34 +113,6 @@ Section 2, display of `B(n)`. -/
 public theorem hyperseqB_row_three :
     (List.range 4).map (hyperseqB 1 3) = [24, -26, 9, -1] := by
   decide +kernel
-
-/-- **Mitrinović's numbers.** For complex numbers $a$ and $b$, Mitrinović's numbers
-$R^k_j(a, b)$, $j, k \in \mathbb{N}$ (lower index $j$, upper index $k$), are defined by
-$R^k_0(a, b) = 1$ if $k = 0$ and $R^k_0(a, b) = 0$ otherwise, and, for all $j, k$, by
-$R^0_{j+1}(a, b) = -(a + b j)\, R^0_j(a, b)$ and
-$R^{k+1}_{j+1}(a, b) = R^k_j(a, b) - (a + b j)\, R^{k+1}_j(a, b)$.
-
-With $R = 0$ at negative indices this is the recurrence (4.2),
-$R^k_j(a, b) = R^{k-1}_{j-1}(a, b) - (a - b + b j)\, R^k_{j-1}(a, b)$ for $j \ge 1$. The start
-value is the source's Corollary 5 at $a = 0$ and its solution (4.3) at $j = 0$ for every $a$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted
-Sums II*, INTEGERS 26 (2026), Article A36,
-Section 4, Equation (4.2). -/
-public def mitrinovicR (a b : ℂ) : ℕ → ℕ → ℂ
-  | 0, k => if k = 0 then 1 else 0
-  | j + 1, 0 => -(a + b * j) * mitrinovicR a b j 0
-  | j + 1, k + 1 => mitrinovicR a b j k - (a + b * j) * mitrinovicR a b j (k + 1)
-
-/-- **Mitrinović's numbers with lower index one.** For all complex numbers $a, b$, Mitrinović's
-numbers satisfy $R^0_1(a, b) = -a$ and $R^1_1(a, b) = 1$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted
-Sums II*, INTEGERS 26 (2026), Article A36,
-Section 4, Equation (4.2). -/
-public theorem mitrinovicR_one (a b : ℂ) :
-    mitrinovicR a b 1 0 = -a ∧ mitrinovicR a b 1 1 = 1 := by
-  simp [mitrinovicR]
 
 /-- **Hypersequences through elementary symmetric polynomials.** Let $a$ be a sequence of complex
 numbers and let $j, n \in \mathbb{N}$. Write $a^{(r)}_n$ for the hypersequence of generation $r$
@@ -288,42 +261,6 @@ public theorem_wanted hyperseq_entries_eq_sum_at_neg_one (n : ℤ) :
     ∀ ℓ m : ℕ, alternatingBinomialPowerSum ℓ m 1 (n + 1) =
       ∑ i ∈ Finset.Icc m ℓ, (ℓ.choose i : ℂ) * ((n : ℂ) + 1) ^ (ℓ - i) *
         alternatingBinomialPowerSum i m 1 0
-
-/-- **Mitrinović's numbers at $a = 0$.** For every complex number $b$, Mitrinović's numbers
-$R^k_j(0, b)$ satisfy the following. First, for every $k \in \mathbb{N}$, $R^k_0(0, b) = 1$ if
-$k = 0$ and $R^k_0(0, b) = 0$ otherwise. Second, for all $j, k \in \mathbb{N}$,
-$R^{k+1}_{j+1}(0, b) = R^k_j(0, b) + (b - b(j + 1))\, R^{k+1}_j(0, b)$. Third, for all
-$j, k \in \mathbb{N}$, $R^k_j(0, b) = (-b)^{j-k} c(j, k)$, where $c(j, k)$ is the unsigned
-Stirling number of the first kind, which is $0$ for $k > j$, and the exponent $j - k$ is read as
-$0$ when $k > j$.
-
-The source prints the last factor of the recurrence as $R^k_{j-1}(a, b)$; it is
-$R^k_{j-1}(0, b)$, the case $a = 0$ of (4.2). The source's hypothesis $b \ne 0$ is dropped: at
-$b = 0$ both sides of the closed form are $\delta_{j,k}$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted
-Sums II*, INTEGERS 26 (2026), Article A36,
-Corollary 5 (`integers-2026-A36-cor-5`). -/
-public theorem_wanted mitrinovicR_zero_eq (b : ℂ) :
-    (∀ k : ℕ, mitrinovicR 0 b 0 k = if k = 0 then 1 else 0) ∧
-    (∀ j k : ℕ, mitrinovicR 0 b (j + 1) (k + 1) =
-      mitrinovicR 0 b j k + (b - b * (j + 1)) * mitrinovicR 0 b j (k + 1)) ∧
-    ∀ j k : ℕ, mitrinovicR 0 b j k = (-b) ^ (j - k) * Nat.stirlingFirst j k
-
-/-- **Binomial expansion of Mitrinović's numbers in the first parameter.** For all complex
-numbers $a, b$ and all $j, k \in \mathbb{N}$, Mitrinović's numbers satisfy
-$$R^k_j(a, b) = \sum_{\ell=0}^{j-k} (-1)^\ell \binom{k+\ell}{\ell} a^\ell R^{k+\ell}_j(0, b),$$
-where the upper limit $j - k$ is read as $0$ when $k > j$ (both sides are then $0$).
-
-The source's hypothesis $b \ne 0$ is not needed: the identity also holds at $b = 0$.
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted
-Sums II*, INTEGERS 26 (2026), Article A36,
-Proposition 4, Equation (4.6) (`integers-2026-A36-prop-4`). -/
-public theorem_wanted mitrinovicR_eq_sum_mitrinovicR_zero (a b : ℂ) (j k : ℕ) :
-    mitrinovicR a b j k =
-      ∑ ℓ ∈ Finset.range (j - k + 1), (-1) ^ ℓ * ((k + ℓ).choose ℓ : ℂ) * a ^ ℓ *
-        mitrinovicR 0 b j (k + ℓ)
 
 end
 

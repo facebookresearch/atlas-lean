@@ -13,6 +13,8 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Set.Card
+public import MathlibExt.Combinatorics.Enumerative.ExtraTribLeftExtension
+public import MathlibExt.Combinatorics.Enumerative.FibternarySums
 public import MathlibExt.Combinatorics.InfiniteWord.Tribonacci
 public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
 
@@ -131,21 +133,6 @@ public theorem_wanted tendsto_trithoff_first_column_div (α : ℝ)
       (fun r : ℕ => (Nat.nth (fun n => 0 < n ∧ ∃ w, IsTribonacciRepr w n ∧ w.getD 0 0 = 1) r
         : ℝ) / (r + 1))
       Filter.atTop (nhds (α / (α - 1)))
-
-/-- **Sums of Fibternary and Tribternary numbers.** Call a natural number Fibternary if its
-base-$3$ digits are all $0$ or $1$ with no two consecutive $1$s, and Tribternary if its
-base-$3$ digits are all $0$ or $1$ with no three consecutive $1$s. Every natural number is a
-sum of four Fibternary numbers and also a sum of three Tribternary numbers (the summands
-may be $0$ and need not be distinct).
-
-Source: E. Chen et al., *Generalizing the Wythoff Array and Other Fibonacci Facts to
-Tribonacci Numbers*, Journal of Integer Sequences 28 (2025), Article 25.5.4,
-Proposition 21 (`jis-2025-25.5.4-prop-21`). -/
-public theorem_wanted exists_fibternary_sum_four_and_tribternary_sum_three (n : ℕ) :
-    (∃ a b c d : ℕ, (∀ x ∈ [a, b, c, d],
-        (∀ e ∈ Nat.digits 3 x, e ≤ 1) ∧ ¬ [1, 1] <:+: Nat.digits 3 x) ∧ n = a + b + c + d) ∧
-      ∃ a b c : ℕ, (∀ x ∈ [a, b, c],
-        (∀ e ∈ Nat.digits 3 x, e ≤ 1) ∧ ¬ [1, 1, 1] <:+: Nat.digits 3 x) ∧ n = a + b + c
 
 /-- **Fibternary multiples.** Every positive integer $n$ has a positive multiple $m$ that is
 Fibternary: the base-$3$ digits of $m$ are all $0$ or $1$, and no two consecutive digits
@@ -442,17 +429,6 @@ public theorem_wanted trithoff_first_column_sub (i : ℕ) :
 
 /-! ## ExtraTribs -/
 
-/-- **ExtraTribs.** An extraTrib is a two-sided integer sequence
-$S \colon \mathbb{Z} \to \mathbb{Z}$ that follows the Tribonacci rule
-$S(n+3) = S(n+2) + S(n+1) + S(n)$ for every $n \in \mathbb{Z}$ and whose terms are eventually
-positive: there is an integer $N$ with $S(n) > 0$ for all $n \ge N$.
-
-Source: E. Chen et al., *Generalizing the Wythoff Array and Other Fibonacci Facts to
-Tribonacci Numbers*, Journal of Integer Sequences 28 (2025), Article 25.5.4,
-Section 4. -/
-public def IsExtraTrib (S : ℤ → ℤ) : Prop :=
-  (∀ n, S (n + 3) = S (n + 2) + S (n + 1) + S n) ∧ ∃ N, ∀ n ≥ N, 0 < S n
-
 /-- **The zero sequence is not an extraTrib.** The constant sequence $n \mapsto 0$ on
 $\mathbb{Z}$ is not an extraTrib.
 
@@ -510,17 +486,6 @@ public theorem_wanted extraTrib_row_number_modEq_one (S : ℤ → ℤ) (hS : IsE
         ∧ ∃ w, IsTribonacciRepr w m ∧ w.getD 0 0 = 1) r))
     (k₀ : ℤ) (hrow : ∀ j : ℕ, S (k₀ + j) = tribonacciValue (List.replicate j 0 ++ w)) :
     r + 1 ≡ 1 [MOD n]
-
-/-- **Signs of an extraTrib to the left.** Let $S$ be an extraTrib. Then $S(k) < 0$ for some
-integer $k$, and whenever $S(k) < 0$, for every integer $n$ with $n + 2 < k$ the three terms
-$S(n)$, $S(n+1)$, $S(n+2)$ are neither all positive nor all negative.
-
-Source: E. Chen et al., *Generalizing the Wythoff Array and Other Fibonacci Facts to
-Tribonacci Numbers*, Journal of Integer Sequences 28 (2025), Article 25.5.4,
-Lemma 19 (`jis-2025-25.5.4-lem-19`). -/
-public theorem_wanted extraTrib_left_extension (S : ℤ → ℤ) (hS : IsExtraTrib S) :
-    (∃ k, S k < 0) ∧ ∀ k, S k < 0 → ∀ n, n + 2 < k →
-      ¬ (0 < S n ∧ 0 < S (n + 1) ∧ 0 < S (n + 2)) ∧ ¬ (S n < 0 ∧ S (n + 1) < 0 ∧ S (n + 2) < 0)
 
 /-- **The reversal of an extraTrib is not an extraTrib.** If $S : \mathbb{Z} \to \mathbb{Z}$
 is an extraTrib, then the sequence $n \mapsto |S(-n)|$ is not an extraTrib.
