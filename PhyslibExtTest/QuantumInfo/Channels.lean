@@ -36,7 +36,7 @@ theorem not_exists_cptpMap_zero_map :
   simp at h1
 
 /-- The identity map is a channel. -/
-theorem exists_cptpMap_id {d : Type*} [Fintype d] [DecidableEq d] :
+theorem exists_cptpMap_id {d : Type*} [Fintype d] [DecidableEq d] [Nonempty d] :
     ∃ Λ : CPTPMap d d, Λ.map = (LinearMap.id : MatrixMap d d ℂ) := by
   exact ⟨CPTPMap.id, CPTPMap.id_map⟩
 
@@ -47,7 +47,7 @@ theorem kron_id_isPositive_concrete :
   kron_id_isPositive CPTPMap.id (Fin 4)
 
 /-- Backward direction of the characterization on the identity map. -/
-theorem exists_cptpMap_of_id_cp_tp {d : Type*} [Fintype d] [DecidableEq d] :
+theorem exists_cptpMap_of_id_cp_tp {d : Type*} [Fintype d] [DecidableEq d] [Nonempty d] :
     ∃ Λ : CPTPMap d d, Λ.map = (LinearMap.id : MatrixMap d d ℂ) := by
   apply (exists_cptpMap_iff (LinearMap.id : MatrixMap d d ℂ)).mpr
   refine ⟨?_, MatrixMap.IsTracePreserving.id⟩
@@ -59,7 +59,7 @@ theorem exists_cptpMap_of_id_cp_tp {d : Type*} [Fintype d] [DecidableEq d] :
 
 /-- Forward direction of the characterization on the partial-trace channel. -/
 theorem forward_traceLeft_of_exists {d₁ d₂ : Type*} [Fintype d₁] [Fintype d₂]
-    [DecidableEq d₁] [DecidableEq d₂] :
+    [DecidableEq d₁] [DecidableEq d₂] [Nonempty d₁] [Nonempty d₂] :
     (∀ (Z : Type) [Fintype Z] [DecidableEq Z],
       ((CPTPMap.traceLeft (d₁ := d₁) (d₂ := d₂)).map.kron
         (LinearMap.id : MatrixMap Z Z ℂ)).IsPositive)
