@@ -336,7 +336,7 @@ theorem integral_betaHat_mul_betaHat (j l : Fin M) :
   simp_rw [betaHat_eq_fam D X j, betaHat_eq_fam D X l]
   rw [integral_lin_mul_lin (fam D) _ _ (famVar D) (memLp_fam D) (integral_fam_mul D)]
   simp only [Fintype.sum_sum_type, coef, famVar, Sum.elim_inl, Sum.elim_inr, scoreCov,
-    Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, mul_apply, ldMatrix_apply]
+    Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, Matrix.mul_apply, ldMatrix_apply]
   congr 1
   · rw [Finset.mul_sum]
     exact Finset.sum_congr rfl fun k _ => by rw [ldCorr_comm X k l]; ring
@@ -377,7 +377,8 @@ theorem quadCov_betaHat_betaHat :
   rw [ldScore, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun l _ => ?_
   rw [integral_betaHat_mul_betaHat]
-  simp only [scoreCov, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, mul_apply, ldMatrix_apply]
+  simp only [scoreCov, Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, Matrix.mul_apply,
+    ldMatrix_apply]
   have h1 : ∑ k, ldCorr X j k * ldCorr X k l = ∑ k, ldCorr X j k * ldCorr X l k :=
     Finset.sum_congr rfl fun k _ => by rw [ldCorr_comm X k l]
   have h2 : ∑ k, ldCorr X j l * ldCorr X j k * ldCorr X l k =
