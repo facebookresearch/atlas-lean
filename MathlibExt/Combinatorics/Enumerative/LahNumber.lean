@@ -14,11 +14,13 @@ public import Mathlib.Data.Nat.Choose.Basic
 
 namespace MetaMathlibExt
 
-/-- The unsigned Lah number `L(n, k)`, which counts partitions of an `n`-element
-set into `k` nonempty linearly ordered blocks. It is extended by zero outside
-`1 ≤ k ≤ n`, with `L(0, 0) = 1`.
+/-- **Unsigned Lah number.** For natural numbers $n$ and $k$, the unsigned Lah number $L(n, k)$
+is $\binom{n-1}{k-1} \frac{n!}{k!}$ when $1 \le k \le n$, $L(0, 0) = 1$, and $L(n, k) = 0$
+otherwise.
 
-The closed formula is given in Maxie D. Schmidt, *Jacobi-Type Continued
+$L(n, k)$ counts the partitions of an $n$-element set into $k$ nonempty linearly ordered blocks.
+
+Source: closed formula from Maxie D. Schmidt, *Jacobi-Type Continued
 Fractions for the Ordinary Generating Functions of Generalized Factorial
 Functions*, Journal of Integer Sequences 20 (2017):
 https://cs.uwaterloo.ca/journals/JIS/VOL20/Schmidt/schmidt14.tex. -/
@@ -29,10 +31,11 @@ def unsignedLahNumber : ℕ → ℕ → ℕ
   | n + 1, k + 1 =>
     Nat.choose n k * Nat.factorial (n + 1) / Nat.factorial (k + 1)
 
-/-- The signed Lah number `(-1) ^ (n - k) * L(n, k)` on `k ≤ n`, extended
-by zero for `k > n`.
+/-- **Signed Lah number.** For natural numbers $n$ and $k$, the signed Lah number is the integer
+$(-1)^{n-k} L(n, k)$ when $k \le n$, where $L(n, k)$ is the unsigned Lah number, and $0$ when
+$k > n$.
 
-The sign convention is from Toufik Mansour, Matthias Schork, and Mark Shattuck,
+Source: sign convention from Toufik Mansour, Matthias Schork, and Mark Shattuck,
 *The Generalized Stirling and Bell Numbers Revisited*, Journal of Integer
 Sequences 15 (2012):
 https://cs.uwaterloo.ca/journals/JIS/VOL15/Schork/schork2.tex. -/

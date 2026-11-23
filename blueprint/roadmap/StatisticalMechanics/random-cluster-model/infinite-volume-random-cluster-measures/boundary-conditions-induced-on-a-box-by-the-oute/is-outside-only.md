@@ -1,0 +1,3 @@
+# Outer component avoiding the inner box
+
+Let $d, n \in \mathbb{N}$, let $\Lambda_m = \{-m, \dots, m\}^d$ carry its nearest-neighbour edges (so $\Lambda_n \subseteq \Lambda_{n+1}$), and let $\psi$ be an assignment of open/closed states to the unordered pairs of vertices of $\Lambda_{n+1}$ (the outer configuration). A connected component of the [outer graph](outside-graph.md) $O_\psi$ on $\Lambda_{n+1}$ (the edges of $\Lambda_{n+1}$ that are open in $\psi$ and do not have both endpoints in $\Lambda_n$, together with all pairs of distinct vertices of $\partial\Lambda_{n+1}$) avoids the inner box when it contains no vertex of $\Lambda_n$ (equivalently, one, hence every, vertex of it is [outside-only](outside-only.md)).

@@ -26,21 +26,26 @@ namespace Submodule
 
 variable {R M : Type*} [CommRing R] [AddCommGroup M] [Module R M]
 
-/-- Two submodules are `p`-neighbors when `p` is prime and their intersection
-has index `p` in each of them. -/
+/-- **$p$-neighbors of submodules.** Let $R$ be a commutative ring, $M$ an $R$-module and $p$ a
+natural number. Two submodules $L_1$ and $L_2$ of $M$ are $p$-neighbors when $p$ is prime and the
+intersection $L_1 \cap L_2$ has index $p$ in each of them, that is, the quotients
+$L_1 / (L_1 \cap L_2)$ and $L_2 / (L_1 \cap L_2)$ both have exactly $p$ elements. -/
 def ArePNeighbors (p : ℕ) (L₁ L₂ : Submodule R M) : Prop :=
   Nat.Prime p ∧
     Nat.card (L₁ ⧸ Submodule.comap L₁.subtype (L₁ ⊓ L₂)) = p ∧
     Nat.card (L₂ ⧸ Submodule.comap L₂.subtype (L₁ ⊓ L₂)) = p
 
-/-- The `p`-neighbor relation is symmetric. -/
+/-- **The $p$-neighbor relation is symmetric.** For every natural number $p$ and all submodules
+$L_1$, $L_2$ of a module $M$ over a commutative ring $R$, $L_1$ and $L_2$ are $p$-neighbors if
+and only if $L_2$ and $L_1$ are $p$-neighbors. -/
 theorem arePNeighbors_comm (p : ℕ) (L₁ L₂ : Submodule R M) :
     ArePNeighbors p L₁ L₂ ↔ ArePNeighbors p L₂ L₁ := by
   unfold ArePNeighbors
   rw [inf_comm]
   aesop
 
-/-- No two submodules are `1`-neighbors, since `1` is not prime. -/
+/-- **No submodules are $1$-neighbors.** For any submodules $L_1$ and $L_2$ of a module $M$
+over a commutative ring $R$, $L_1$ and $L_2$ are not $1$-neighbors, since $1$ is not prime. -/
 theorem not_arePNeighbors_one (L₁ L₂ : Submodule R M) :
     ¬ArePNeighbors 1 L₁ L₂ := by
   intro h

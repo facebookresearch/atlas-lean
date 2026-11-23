@@ -24,10 +24,15 @@ variable {A K V : Type*} [CommRing A] [Field K] [Algebra A K]
   [IsFractionRing A K] [AddCommGroup V] [Module A V] [Module K V]
   [IsScalarTower A K V]
 
-/-- Double dual of a reflexive lattice, with the duals taken against `B` and `B.flip`.
+/-- **Double dual of a reflexive lattice.** Let $A$ be an integral domain with fraction field $K$,
+let $V$ be a finite-dimensional $K$-vector space, viewed as an $A$-module through $A \subseteq K$,
+and let $B$ be a nondegenerate bilinear form on $V$. Let $M$ be an $A$-lattice in $V$, that is, a
+finitely generated $A$-submodule that spans $V$ over $K$, and suppose that $M$ is reflexive as an
+$A$-module. Let $M^\vee = \{x \in V : B(x, y) \in A \text{ for all } y \in M\}$. Then
+$\{x \in V : B(y, x) \in A \text{ for all } y \in M^\vee\} = M$.
 
-This is the lattice analogue of `BilinForm.dualSubmodule_flip_dualSubmodule_of_basis`:
-no basis is needed when the lattice `M` is reflexive as an `A`-module. -/
+This is the lattice analogue of the corresponding statement for the $A$-span of a $K$-basis of
+$V$: no basis is needed when $M$ is reflexive as an $A$-module. -/
 theorem LinearMap.BilinForm.dualSubmodule_flip_dualSubmodule_of_isLattice
     [FiniteDimensional K V] [IsDomain A]
     (B : BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
@@ -79,11 +84,17 @@ theorem LinearMap.BilinForm.dualSubmodule_flip_dualSubmodule_of_isLattice
     exact m.2
   · exact (BilinForm.le_flip_dualSubmodule (B := B)).mpr le_rfl
 
-/-- Double dual of a lattice over a Dedekind domain against a symmetric form.
+/-- **Double dual of a lattice over a Dedekind domain.** Let $A$ be a Dedekind domain with
+fraction field $K$, let $V$ be a finite-dimensional $K$-vector space, viewed as an $A$-module
+through $A \subseteq K$, and let $B$ be a nondegenerate symmetric bilinear form on $V$. For an
+$A$-submodule $N$ of $V$ write $N^\vee = \{x \in V : B(x, y) \in A \text{ for all } y \in N\}$.
+If $M$ is an $A$-lattice in $V$, that is, a finitely generated $A$-submodule that spans $V$ over
+$K$, then $(M^\vee)^\vee = M$.
 
-This is ATLAS `NumberTheoryI` Proposition 5.16: reflexivity of the lattice is obtained
-from the Dedekind hypotheses (finite plus torsion-free gives flat, hence projective),
-so no explicit `Module.IsReflexive` assumption is needed. -/
+No reflexivity hypothesis on $M$ is needed: over a Dedekind domain a finitely generated
+torsion-free module is flat, hence projective, hence reflexive.
+
+Source: ATLAS NumberTheoryI, Proposition 5.16. -/
 theorem LinearMap.BilinForm.dualSubmodule_dualSubmodule_of_isLattice
     [FiniteDimensional K V] [IsDedekindDomain A]
     (B : BilinForm K V) (hB : B.Nondegenerate) (hBsymm : B.IsSymm)
