@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.UnitaryDivisor
 
@@ -133,6 +134,35 @@ theorem isSZumkeller_iff_of_even (n : ℕ) (hn : 0 < n) (he : Even n) :
     rw [← hbal, Finset.sum_insert hkS]
     have := Nat.pos_of_mem_properDivisors hk
     positivity
+
+/-- **Harmonic mean of squared divisors of s-Zumkeller numbers $2^\alpha(2^{\alpha+1}-1)$.** Let
+$\alpha \ge 1$ be an integer, let $n = 2^\alpha (2^{\alpha+1} - 1)$ and let $\tau(n)$ be the
+number of positive divisors of $n$. If $n$ is s-Zumkeller, then
+$\tau(n) / \sum_{d \mid n} d^{-2} < 2^{2\alpha+3}/3$, where the sum runs over the positive
+divisors $d$ of $n$.
+
+Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
+Numbers*, INTEGERS 24 (2024), Article A95, Proposition 10. -/
+theorem harmonicMeanSq_lt_of_isSZumkeller_mersenne (α n : ℕ) (_hα : 1 ≤ α)
+    (hn : n = 2 ^ α * (2 ^ (α + 1) - 1)) (h : IsSZumkeller n) :
+    (n.divisors.card : ℚ) / ∑ d ∈ n.divisors, 1 / (d : ℚ) ^ 2 < 2 ^ (2 * α + 3) / 3 := by
+  obtain ⟨A, hA, hne, _, _⟩ := h
+  have hn₀ : n ≠ 0 := (Nat.nonempty_properDivisors.mp (hne.mono hA)).ne_zero
+  have hsum : 1 ≤ ∑ d ∈ n.divisors, 1 / (d : ℚ) ^ 2 := calc
+    1 = 1 / (1 : ℚ) ^ 2 := by norm_num
+    _ ≤ _ := Finset.single_le_sum (f := fun d : ℕ => 1 / (d : ℚ) ^ 2)
+      (fun d _ => div_nonneg zero_le_one (sq_nonneg _)) (Nat.one_mem_divisors.mpr hn₀)
+  have hsize : n ≤ 2 ^ (2 * α + 1) := calc
+    n ≤ 2 ^ α * 2 ^ (α + 1) := hn ▸ Nat.mul_le_mul_left _ (Nat.sub_le ..)
+    _ = 2 ^ (2 * α + 1) := by rw [← pow_add, two_mul, Nat.add_assoc]
+  calc
+    _ ≤ (n.divisors.card : ℚ) := div_le_self (by positivity) hsum
+    _ ≤ n := by exact_mod_cast Nat.card_divisors_le_self n
+    _ ≤ 2 ^ (2 * α + 1) := by exact_mod_cast hsize
+    _ < _ := by
+      rw [show 2 * α + 3 = (2 * α + 1) + 2 by omega, pow_add (2 : ℚ) _ 2,
+        lt_div_iff₀ (by norm_num)]
+      exact mul_lt_mul_of_pos_left (by norm_num : (3 : ℚ) < 2 ^ 2) (by positivity)
 
 end
 
