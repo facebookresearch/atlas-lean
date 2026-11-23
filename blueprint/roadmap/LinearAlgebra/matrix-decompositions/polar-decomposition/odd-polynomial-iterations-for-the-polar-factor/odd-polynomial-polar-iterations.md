@@ -74,6 +74,8 @@ Coefficient choices matter, and statements about convergence are specific to the
 
 - [Real singular value decomposition](../../singular-value-decomposition/singular-value-decomposition-theorem/real-singular-value-decomposition.md):
   mathematical prerequisite, the decomposition through which $p(X)$ acts on singular values.
+- [Properties of the canonical polar factor](../polar-decomposition-theorem/canonical-polar-factor-properties.md): mathematical
+  prerequisite, the scale invariance $P(c G) = P(G)$ behind the normalization $P(X_0) = P(G)$.
 - [Squared Frobenius norm as the sum of squared singular values](../../singular-value-decomposition/singular-value-decomposition-theorem/sum-sq-singular-values-eq-sum-sq-norm-of.md):
   mathematical prerequisite, the bound $\sigma_1(G) \le \|G\|_F$ that justifies the normalization
   $X_0 = G / \|G\|_F$.
