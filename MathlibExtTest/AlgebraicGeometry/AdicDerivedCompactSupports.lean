@@ -10,13 +10,11 @@ module
 import MathlibExt.AlgebraicGeometry.AdicDerivedCompactSupports
 
 /-!
-# Native scope, cohomology covariance and trace normalization
+# Tests for derived compact supports
 
-The coefficient is an arbitrary topological commutative ring. Relative
-support allows a scheme base; the absolute RΓ_c test has an explicit
-structural map to a field's spectrum. The coefficient needs no field,
-torsion or smoothness hypothesis. A zero counit cannot stand in for the
-trace when its right-adjoint object is nonzero.
+Compactifications, covariance of cohomology, the trace triangle (a zero trace is excluded on
+nonzero objects), the derived unit of an exact extension by zero, and the derived refinement
+pasting with its normalization.
 -/
 
 noncomputable section
@@ -55,6 +53,34 @@ example (K : Derived E Y) (hK : ¬ IsZero ((properExceptionalPullback E p).obj K
   exact hK ((IsZero.iff_id_eq_zero _).mpr h.symm)
 
 end Trace
+
+section Constructed
+
+/-- An exact extension by zero has invertible derived unit, by instance search. -/
+example {X Y : Scheme} (j : X ⟶ Y) [IsOpenImmersion j] [(pushforward E j).IsRightAdjoint]
+    [(pullback E j).IsRightAdjoint] [ModuleInjectives E]
+    [PreservesFiniteLimits (extensionByZero E j)] (K : Cochains E X) :
+    IsIso ((extensionByZero E j).rightDerivedFunctorPlusUnit.app K) := inferInstance
+
+variable {X S : Scheme} {f : X ⟶ S} {c d : Compactification f} (r : Refinement c d)
+  [(pushforward E c.openMap).IsRightAdjoint] [(pushforward E d.openMap).IsRightAdjoint]
+  [(pushforward E r.map).IsRightAdjoint] [RingedRefinementPasting E r] [ModuleInjectives E]
+  [PreservesFiniteLimits (pullback E c.openMap)] [PreservesFiniteLimits (pullback E d.openMap)]
+  [PreservesFiniteLimits (pullback E r.map)]
+
+/-- The derived refinement pasting exists, by instance search. -/
+example : DerivedRefinementPasting E r := inferInstance
+
+/-- It is compatible with the pasting on complexes. -/
+example (K : Cochains E c.ambient) :
+    refinementCompositeUnit E r K ≫
+        (derivedRefinementPasting E r).comparison.hom.app
+          (DerivedCategory.Plus.Q.obj K) =
+      DerivedCategory.Plus.Q.map (refinementCochainPasting E r K).hom ≫
+        (pullback E c.openMap).rightDerivedFunctorPlusUnit.app K :=
+  (derivedRefinementPasting E r).unit_normalization K
+
+end Constructed
 
 section Compactification
 

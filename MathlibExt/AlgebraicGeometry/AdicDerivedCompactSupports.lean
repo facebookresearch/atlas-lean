@@ -14,41 +14,29 @@ public import Mathlib.CategoryTheory.Adjunction.Basic
 public import Mathlib.CategoryTheory.Adjunction.Mates
 
 /-!
-# Derived compact supports on the actual continuous coefficient ringed site
+# Derived compact supports for modules over the continuous coefficient ring
 
-The categories are the native bounded-below derived categories of modules
-over the continuous coefficient ring `E_X`. Extension by zero is the chosen
-left adjoint of the actual ringed inverse-image functor, with its genuine
-adjoint-existence and exactness inputs. A compactification over a scheme
-base computes relative direct image with proper support. Its global sections
-are explicitly named relative below. Absolute RΓ_c is restricted to a
-structural map to Spec k, or to composition with a proper base over k.
-Traces are actual adjunction counits of the fixed proper direct-image functor.
+All categories are bounded-below derived categories of sheaves of modules over the continuous
+coefficient ring `E_X` on small pro-étale sites. For an open immersion `j`, extension by zero is
+the left adjoint of restriction (when it exists); when it is exact, its derived unit is an
+isomorphism (`extensionNormalization`). For a compactification `c` of `f : X ⟶ S` (an open
+immersion into a scheme proper over `S`), `compactifiedPushforward c` is derived extension by zero
+followed by derived direct image, and `derivedRelativeCompactSections` its global sections; over
+`Spec k` they give compactly supported cohomology. For a proper morphism `p`,
+`properExceptionalPullback` is the right adjoint of `Rp_*` and `properTrace` its counit, under the
+hypothesis that this right adjoint exists; properness alone is not shown to provide it.
 
-The normalization contracts are dependencies, not existence assertions for
-all coefficient rings or arbitrary complexes. In particular, no arbitrary
-functor or cohomology map is supplied and named f_! or a trace. Derived
-complete/constructible proper base change, compactification independence,
-unbounded functors and full six-functor compatibility need their precise
-source hypotheses and separately supplied native adapters.
+The classes `OpenDerivedAdjunction`, `ImageDerivedAdjunction`, `RingedRefinementPasting`,
+`SectionsPushforwardNormalization` and `SectionsDerivedNormalization` specify canonical comparisons
+by their normalization on complexes or sections; `ModuleInjectives` and `RefinementExchange` state
+the existence of enough injectives and open base change. Their constructions are tracked in
+`WantedExt.AlgebraicGeometry.AdicDerivedCompactSupportsWanted`. `DerivedRefinementPasting` is
+constructed (`derivedRefinementPasting`). `RefinementIsomorphism` is a hypothesis on a single
+complex. Compactification independence, proper base change and the six-functor formalism are not
+proved here.
 
-The completed quasi-finite separated torsion étale comparison (0GKM) is
-in AxiomMath/Stacks c496df0d9beea9deaeabcea8492605f9a0a2313b,
-`StacksFrontier/AlgebraicGeometry/Etale/DerivedLowerShriekCompactification.lean`
-and `DerivedLowerShriekCompactificationComparison.lean` (Apache 2.0).
-General compactification independence on bounded-below torsion complexes
-for finite-type separated maps with qcqs target is proved in
-`StacksFrontier/AlgebraicGeometry/EtaleCohomology/CompactificationIndependence`,
-file `IndependenceCoefficientUniverse.lean` (0F7I). These scopes are distinct.
-The complete derived-complete proper base-change theorem is in
-`StacksFrontier/AlgebraicGeometry/ProEtale/Cohomology/CompletedProperBaseChangeTheorem.lean`.
-It retains its Noetherian coefficient ring, torsion quotient, completed
-complexes, bounded-below étale-origin reductions and perfect-quotient inputs.
-Those source results are not new Wanted gaps. The native right-derived
-units and chosen adjoints below are Mathlib operations.
-
-References: Bhatt--Scholze, *The pro-etale topology for schemes*, §§6.1,
-6.8, https://arxiv.org/abs/1309.1198; Stacks 0F7H, 0F7I and 09C9.
+References: Bhatt--Scholze, *The pro-etale topology for schemes*, §§6.1, 6.7, 6.8,
+https://arxiv.org/abs/1309.1198; Stacks 0F7H, 0F7I and 09C9.
 -/
 
 @[expose] public noncomputable section
@@ -65,14 +53,16 @@ attribute [local instance] HasDerivedCategory.standard
 
 variable (E : Type) [CommRing E] [TopologicalSpace E] [IsTopologicalRing E]
 
-/-- A genuine category-existence input on the fixed coefficient modules.
-This records no chosen cohomology functor or injective resolution. -/
+/-- Sheaves of modules over the continuous coefficient ring have enough injectives, for every
+scheme. Tracked as `theorem_wanted`
+(`WantedExt.AlgebraicGeometry.AdicDerivedCompactSupportsWanted.moduleInjectives`). -/
 class ModuleInjectives : Prop where
   enoughInjectives (X : Scheme) : EnoughInjectives (ModuleSheaf E X)
 
 attribute [instance] ModuleInjectives.enoughInjectives
 
-/-- An actual open/proper factorization, with a quasi-compact open map. -/
+/-- A compactification of `f`: a factorization into a quasi-compact open immersion and a proper
+morphism. -/
 structure Compactification {X S : Scheme} (f : X ⟶ S) where
   ambient : Scheme
   openMap : X ⟶ ambient
@@ -119,11 +109,11 @@ structure Refinement {X S : Scheme} {f : X ⟶ S}
 
 attribute [instance] Refinement.isProper
 
-/-- Cohomology as actual Ext from the prescribed continuous-ring unit. -/
+/-- Cohomology of a complex: morphisms from the unit `E_X` to its shifts. -/
 abbrev UnitCohomology (X : Scheme) (K : Derived E X) (n : ℤ) :=
   derivedUnit E X ⟶ K⟦n⟧
 
-/-- The cohomology map is actual postcomposition with the shifted morphism. -/
+/-- The map on cohomology induced by a morphism: postcomposition with its shifts. -/
 def unitCohomologyMap {X : Scheme} {K L : Derived E X} (a : K ⟶ L) (n : ℤ) :
     UnitCohomology E X K n →+ UnitCohomology E X L n where
   toFun b := b ≫ a⟦n⟧'
@@ -148,13 +138,13 @@ section Open
 variable {X Y : Scheme} (j : X ⟶ Y) [IsOpenImmersion j]
   [(pushforward E j).IsRightAdjoint] [(pullback E j).IsRightAdjoint]
 
-/-- Native extension by zero, selected by its actual left-adjoint property. -/
+/-- Extension by zero along an open immersion: the left adjoint of restriction. -/
 def extensionByZero {X Y : Scheme} (j : X ⟶ Y) [IsOpenImmersion j]
     [(pushforward E j).IsRightAdjoint] [(pullback E j).IsRightAdjoint] :
     ModuleSheaf E X ⥤ ModuleSheaf E Y :=
   (pullback E j).leftAdjoint
 
-/-- The native extension/restriction adjunction. -/
+/-- The adjunction between extension by zero and restriction. -/
 def extensionAdjunction : extensionByZero E j ⊣ pullback E j :=
   Adjunction.ofIsRightAdjoint (pullback E j)
 
@@ -167,7 +157,7 @@ instance extension_finiteColimits : PreservesFiniteColimits (extensionByZero E j
 
 variable [ModuleInjectives E]
 
-/-- The actual right-derived realization of exact extension by zero. -/
+/-- Derived extension by zero (for an exact extension by zero). -/
 def derivedExtensionByZero [PreservesFiniteLimits (extensionByZero E j)] :
     Derived E X ⥤ Derived E Y :=
   (extensionByZero E j).rightDerivedFunctorPlus
@@ -209,7 +199,7 @@ def extensionCochainUnit :
     apply ObjectProperty.hom_ext
     exact ((extensionAdjunction E j).unit.mapHomologicalComplex (.up ℤ)).naturality a.hom
 
-/-- The derived adjunction unit is fixed on every actual cochain model. -/
+/-- The expected unit of the derived adjunction on a complex. -/
 def normalizedExtensionUnit (K : Cochains E X) :
     DerivedCategory.Plus.Q.obj K ⟶
       (derivedPullback E j).obj
@@ -220,7 +210,9 @@ def normalizedExtensionUnit (K : Cochains E X) :
     (derivedPullback E j).map
       ((extensionByZero E j).rightDerivedFunctorPlusUnit.app K)
 
-/-- A derived open adjunction with its ordinary/derived unit normalization. -/
+/-- The adjunction between derived extension by zero and derived restriction along an open
+immersion, with the expected unit on every complex. Its construction is tracked as `def_wanted`
+(`WantedExt.AlgebraicGeometry.AdicDerivedCompactSupportsWanted.openDerivedAdjunction`). -/
 class OpenDerivedAdjunction where
   adjunction : derivedExtensionByZero E j ⊣ derivedPullback E j
   unit_normalization : ∀ K : Cochains E X,
@@ -245,7 +237,8 @@ absolute compact-support interpretation. -/
 def derivedRelativeCompactSections : Derived E X ⥤ DerivedCategory.Plus (ModuleCat.{1} E) :=
   derivedExtensionByZero E c.openMap ⋙ derivedSections E c.ambient
 
-/-- The relative-support cohomology module is actual derived homology. -/
+/-- Cohomology with proper support relative to the base: homology of the derived global sections
+of the derived extension by zero. -/
 def relativeCompactCohomology (K : Derived E X) (n : ℤ) : ModuleCat.{1} E :=
   (DerivedCategory.Plus.homologyFunctor (ModuleCat.{1} E) n).obj
     ((derivedRelativeCompactSections E c).obj K)
@@ -253,8 +246,8 @@ def relativeCompactCohomology (K : Derived E X) (n : ℤ) : ModuleCat.{1} E :=
 abbrev relativeCompactUnitCohomology (K : Derived E X) (n : ℤ) :=
   UnitCohomology E c.ambient ((derivedExtensionByZero E c.openMap).obj K) n
 
-/-- A compactified extraordinary inverse image is the genuine chosen
-right adjoint of the displayed compactified direct image, when it exists. -/
+/-- The extraordinary inverse image: the right adjoint of the compactified direct image, when it
+exists. -/
 def compactifiedExceptionalPullback [(compactifiedPushforward E c).IsLeftAdjoint] :
     Derived E S ⥤ Derived E X := (compactifiedPushforward E c).rightAdjoint
 
@@ -280,7 +273,7 @@ variable {k : Type} [Field k] {X : Scheme} {f : X ⟶ Spec (.of k)}
 /-- Absolute RΓ_c for a structural map over a field, with proper ambient. -/
 abbrev derivedCompactSections := derivedRelativeCompactSections E c
 
-/-- Absolute compactly supported cohomology on the fixed native RΓ_c. -/
+/-- Compactly supported cohomology, for a scheme over a field. -/
 abbrev compactCohomology (K : Derived E X) (n : ℤ) := relativeCompactCohomology E c K n
 
 /-- The unit-Ext form on that same absolute compactification. -/
@@ -301,7 +294,8 @@ section ProperTrace
 
 variable {X Y : Scheme} (p : X ⟶ Y)
 
-/-- The actual proper extraordinary inverse image from its true adjoint input. -/
+/-- The extraordinary inverse image along a proper morphism: the right adjoint of derived direct
+image, when it exists. -/
 def properExceptionalPullback {X Y : Scheme} (p : X ⟶ Y) [IsProper p]
     [ModuleInjectives E] [(derivedPushforward E p).IsLeftAdjoint] :
     Derived E Y ⥤ Derived E X :=
@@ -318,18 +312,18 @@ instance properExceptional_additive : (properExceptionalPullback E p).Additive :
     infer_instance
   exact (properAdjunction E p).right_adjoint_additive
 
-/-- The proper trace is the native adjunction counit. -/
+/-- The trace: the counit of that adjunction. -/
 def properTrace : properExceptionalPullback E p ⋙ derivedPushforward E p ⟶ 𝟭 (Derived E Y) :=
   (properAdjunction E p).counit
 
-/-- The actual trace on unit-Ext cohomology, by shifted postcomposition. -/
+/-- The trace on cohomology. -/
 def properTraceCohomology (K : Derived E Y) (n : ℤ) :
     UnitCohomology E Y
       ((derivedPushforward E p).obj ((properExceptionalPullback E p).obj K)) n →+
         UnitCohomology E Y K n :=
   unitCohomologyMap E ((properTrace E p).app K) n
 
-/-- The native triangle equation fixes the counit trace against the unit. -/
+/-- A triangle identity relating the trace and the unit. -/
 theorem properTrace_unit (K : Derived E Y) :
     (properAdjunction E p).unit.app ((properExceptionalPullback E p).obj K) ≫
       (properExceptionalPullback E p).map ((properTrace E p).app K) =
@@ -359,7 +353,9 @@ def normalizedImageUnit (K : Cochains E Y) : DerivedCategory.Plus.Q.obj K ⟶
       ((pullback E f).mapCochainComplexPlus.obj K) ≫
     (derivedPushforward E f).map ((pullback E f).rightDerivedFunctorPlusUnit.app K)
 
-/-- The actual inverse/direct-image adjunction, fixed on every cochain unit. -/
+/-- The adjunction between derived inverse and direct image, with the expected unit on every
+complex. Its construction is tracked as `def_wanted`
+(`WantedExt.AlgebraicGeometry.AdicDerivedCompactSupportsWanted.imageDerivedAdjunction`). -/
 class ImageDerivedAdjunction where
   adjunction : derivedPullback E f ⊣ derivedPushforward E f
   unit_normalization : ∀ K : Cochains E Y,
@@ -371,7 +367,7 @@ section Refine
 
 variable {X S : Scheme} {f : X ⟶ S} {c d : Compactification f} (r : Refinement c d)
 
-/-- The fixed site-pasting isomorphism from the actual Cartesian pullbacks. -/
+/-- The pasting of base changes along the refinement. -/
 def refinementSitePasting :
     ProEtaleCohomologyFunctoriality.baseChange r.map ⋙
       ProEtaleCohomologyFunctoriality.baseChange d.openMap ≅
@@ -380,8 +376,9 @@ def refinementSitePasting :
     eqToIso (congrArg (fun g : X ⟶ c.ambient ↦
       ProEtaleCohomologyFunctoriality.baseChange g) r.open_square)
 
-/-- Ringed pasting must agree on every module section with the fixed site
-pasting. An unrelated composition isomorphism is not this provider. -/
+/-- The composition of direct images along the refinement, agreeing on sections with the pasting
+of base changes. Its construction is tracked as `def_wanted`
+(`WantedExt.AlgebraicGeometry.AdicDerivedCompactSupportsWanted.ringedRefinementPasting`). -/
 class RingedRefinementPasting where
   pushforwardIso : pushforward E d.openMap ⋙ pushforward E r.map ≅ pushforward E c.openMap
   sections_normalization : ∀ (M : ModuleSheaf E X) (U : c.ambient.ProEt)
@@ -423,7 +420,8 @@ def refinementCompositeUnit (K : Cochains E c.ambient) :
     ((pullback E r.map).mapCochainComplexPlus.obj K) ≫
       (derivedPullback E d.openMap).map ((pullback E r.map).rightDerivedFunctorPlusUnit.app K)
 
-/-- Derived pasting is fixed by its native units on all cochain models. -/
+/-- An isomorphism between derived inverse images along the refinement, compatible on every complex
+with the pasting of the underived inverse images. It always exists (`derivedRefinementPasting`). -/
 class DerivedRefinementPasting where
   comparison : derivedPullback E r.map ⋙ derivedPullback E d.openMap ≅
     derivedPullback E c.openMap
@@ -477,19 +475,20 @@ variable [(pullback E c.openMap).IsRightAdjoint]
   [PreservesFiniteLimits (extensionByZero E c.openMap)]
   [PreservesFiniteLimits (extensionByZero E d.openMap)]
   [OpenDerivedAdjunction E c.openMap] [OpenDerivedAdjunction E d.openMap]
-  [DerivedRefinementPasting E r]
 
-/-- Cartesian open exchange is the actual adjunction mate of the normalized
-restriction-pasting inverse and the original extension unit. -/
+/-- The open exchange map `j_{d!} K ⟶ r^* j_{c!} K`: the adjoint of the extension unit followed by
+the inverse of the derived pasting. -/
 def extensionRefinementMap (K : Derived E X) :
     (derivedExtensionByZero E d.openMap).obj K ⟶
       (derivedPullback E r.map).obj ((derivedExtensionByZero E c.openMap).obj K) :=
   ((OpenDerivedAdjunction.adjunction (E := E) (j := d.openMap)).homEquiv _ _).symm
     ((OpenDerivedAdjunction.adjunction (E := E) (j := c.openMap)).unit.app K ≫
-      (DerivedRefinementPasting.comparison (E := E) (r := r)).inv.app
+      (derivedRefinementPasting E r).comparison.inv.app
         ((derivedExtensionByZero E c.openMap).obj K))
 
-/-- The precise open-exchange isomorphism condition on the fixed map. -/
+/-- Open base change: the exchange map is an isomorphism for every complex. Tracked as
+`theorem_wanted`
+(`WantedExt.AlgebraicGeometry.AdicDerivedCompactSupportsWanted.refinementExchange`). -/
 class RefinementExchange : Prop where
   mapIsIso (K : Derived E X) : IsIso (extensionRefinementMap E r K)
 
@@ -498,7 +497,7 @@ attribute [instance] RefinementExchange.mapIsIso
 variable [RefinementExchange E r] [ImageDerivedAdjunction E r.map]
 
 /-- The proper-refinement comparison is the original direct-image unit
-followed by the inverse of the prescribed Cartesian open exchange. -/
+followed by the inverse of the open exchange map. -/
 def refinementComparison (K : Derived E X) :
     (derivedExtensionByZero E c.openMap).obj K ⟶
       (derivedPushforward E r.map).obj ((derivedExtensionByZero E d.openMap).obj K) :=
@@ -506,8 +505,8 @@ def refinementComparison (K : Derived E X) :
     ((derivedExtensionByZero E c.openMap).obj K) ≫
       (derivedPushforward E r.map).map (inv (extensionRefinementMap E r K))
 
-/-- Proper base-change/acyclicity is input on this actual object and map.
-No claim for all topological rings or all complexes is made. -/
+/-- The refinement comparison is an isomorphism on the complex `K` (a hypothesis on a single
+complex; no claim is made for all coefficient rings or all complexes). -/
 class RefinementIsomorphism (K : Derived E X) : Prop where
   mapIsIso : IsIso (refinementComparison E r K)
 
@@ -524,7 +523,9 @@ def baseChangeTerminalIso :
   (IsTerminal.isTerminalObj (ProEtaleCohomologyFunctoriality.baseChange p) _
     terminalIsTerminal).uniqueUpToIso terminalIsTerminal
 
-/-- Global-section composition is fixed by the actual terminal base change. -/
+/-- Global sections of a direct image are global sections, through the base change of the terminal
+object. Its construction is tracked as `def_wanted` (`WantedExt.AlgebraicGeometry.`
+`AdicDerivedCompactSupportsWanted.sectionsPushforwardNormalization`). -/
 class SectionsPushforwardNormalization where
   ordinary : pushforward E p ⋙ sections E Y ≅ sections E X
   sections_normalization : ∀ (M : ModuleSheaf E X)
@@ -551,7 +552,9 @@ def compositeSectionsUnit (K : Cochains E X) :
   (sections E Y).rightDerivedFunctorPlusUnit.app ((pushforward E p).mapCochainComplexPlus.obj K) ≫
     (derivedSections E Y).map ((pushforward E p).rightDerivedFunctorPlusUnit.app K)
 
-/-- Acyclic-composition comparison, determined by the actual cochain units. -/
+/-- Derived global sections of a derived direct image are the derived functor of the composite,
+compatibly with the units. Its construction is tracked as `def_wanted`
+(`WantedExt.AlgebraicGeometry.AdicDerivedCompactSupportsWanted.sectionsDerivedNormalization`). -/
 class SectionsDerivedNormalization where
   comparison : (pushforward E p ⋙ sections E Y).rightDerivedFunctorPlus ≅
     derivedPushforward E p ⋙ derivedSections E Y
@@ -561,8 +564,8 @@ class SectionsDerivedNormalization where
 
 variable [SectionsDerivedNormalization E p]
 
-/-- The global-section/direct-image comparison is assembled from the fixed
-ordinary section map and the normalized derived-composition comparison. -/
+/-- Derived global sections of a derived direct image are derived global sections, assembled from
+`SectionsPushforwardNormalization` and `SectionsDerivedNormalization`. -/
 def sectionsDirectImageComparison : derivedPushforward E p ⋙ derivedSections E Y ≅
     derivedSections E X :=
   (SectionsDerivedNormalization.comparison (E := E) (p := p)).symm ≪≫
@@ -577,8 +580,8 @@ variable {X S : Scheme} {f : X ⟶ S} (c : Compactification f) [ModuleInjectives
   [PreservesFiniteLimits (extensionByZero E c.openMap)]
   [SectionsPushforwardNormalization E c.properMap] [SectionsDerivedNormalization E c.properMap]
 
-/-- The relative RΓ(S,Rf_!K) comparison uses the prescribed ordinary and
-derived proper-image section comparisons. -/
+/-- `RΓ(S, Rf_! K)` is the relative compactly supported cohomology, through the comparisons of
+global sections along the proper morphism. -/
 def relativeBaseSectionsComparison :
     compactifiedPushforward E c ⋙ derivedSections E S ≅ derivedRelativeCompactSections E c :=
   Functor.associator _ _ _ ≪≫
@@ -599,20 +602,20 @@ variable {X S : Scheme} {f : X ⟶ S} {c d : Compactification f} (r : Refinement
   [PreservesFiniteLimits (pullback E r.map)]
   [PreservesFiniteLimits (extensionByZero E c.openMap)]
   [PreservesFiniteLimits (extensionByZero E d.openMap)]
-  [RingedRefinementPasting E r] [DerivedRefinementPasting E r]
+  [RingedRefinementPasting E r]
   [OpenDerivedAdjunction E c.openMap] [OpenDerivedAdjunction E d.openMap]
   [RefinementExchange E r] [ImageDerivedAdjunction E r.map]
   [SectionsPushforwardNormalization E r.map] [SectionsDerivedNormalization E r.map]
 
-/-- The relative-support refinement map is assembled from the prescribed proper unit,
-Cartesian exchange and ordinary/derived section comparisons. -/
+/-- The map between relative compactly supported cohomologies induced by a refinement: the unit
+along the proper map, the inverse open exchange, and the comparisons of global sections. -/
 def relativeRefinementMap (K : Derived E X) :
     (derivedRelativeCompactSections E c).obj K ⟶ (derivedRelativeCompactSections E d).obj K :=
   (derivedSections E c.ambient).map (refinementComparison E r K) ≫
     (sectionsDirectImageComparison E r.map).hom.app
       ((derivedExtensionByZero E d.openMap).obj K)
 
-/-- The cohomology map is the image of that actual derived-object map. -/
+/-- The induced map on cohomology. -/
 def relativeRefinementCohomologyMap (K : Derived E X) (n : ℤ) :
     relativeCompactCohomology E c K n ⟶ relativeCompactCohomology E d K n :=
   (DerivedCategory.Plus.homologyFunctor (ModuleCat.{1} E) n).map (relativeRefinementMap E r K)
@@ -639,14 +642,14 @@ variable {X S : Scheme} {f : X ⟶ S} (c d : Compactification f) [ModuleInjectiv
   [PreservesFiniteLimits (extensionByZero E d.openMap)]
   [(compactifiedPushforward E c).IsLeftAdjoint] [(compactifiedPushforward E d).IsLeftAdjoint]
 
-/-- A comparison of the fixed compactified functors acts on their actual
-chosen right adjoints by the native adjunction mate. No new trace is chosen. -/
+/-- An isomorphism between compactified direct images induces a map between their right adjoints
+(the mate). -/
 def exceptionalComparison
     (comparison : compactifiedPushforward E c ≅ compactifiedPushforward E d) :
     compactifiedExceptionalPullback E d ⟶ compactifiedExceptionalPullback E c :=
   conjugateEquiv (compactifiedAdjunction E d) (compactifiedAdjunction E c) comparison.hom
 
-/-- The actual counits satisfy the canonical mate/trace normalization. -/
+/-- The traces are compatible with that mate. -/
 theorem comparison_trace
     (comparison : compactifiedPushforward E c ≅ compactifiedPushforward E d) (K : Derived E S) :
     (compactifiedPushforward E c).map ((exceptionalComparison E c d comparison).app K) ≫
