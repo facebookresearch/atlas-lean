@@ -51,15 +51,16 @@ public instance_wanted localExteriorTheory (n : ℕ) (M : Type) [TopologicalSpac
     [ChartedSpace (Ambient n) M] [IsManifold 𝓘(ℝ, Ambient n) ∞ M] :
     LocalExteriorTheory n M
 
-/-- The pointwise wedge of smooth forms on a complex manifold is smooth, and
-the constant function `1` is a smooth `0`-form. -/
+/-- The pointwise wedge of smooth forms is smooth, and the constant function
+`1` is a smooth `0`-form. -/
 public instance_wanted wedgeTheory (n : ℕ) (M : Type) [TopologicalSpace M]
     [ChartedSpace (Coordinates n) M] [IsManifold 𝓘(ℝ, Coordinates n) ∞ M]
-    [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] [ExteriorTheory ℝ (Coordinates n) M] :
+    [ExteriorTheory ℝ (Coordinates n) M] :
     WedgeTheory n M
 
 /-- The chart integral of top forms against a finite smooth partition of unity
-on a complex manifold is well defined, linear, and vanishes on exact forms. -/
+on a complex manifold is well defined, linear, and vanishes on exact forms. The
+holomorphic charts give the orientation that Stokes' theorem needs. -/
 public theorem_wanted integrationTheory (n : ℕ) (M : Type) [TopologicalSpace M]
     [ChartedSpace (Coordinates n) M] [IsManifold 𝓘(ℝ, Coordinates n) ∞ M]
     [IsManifold 𝓘(ℂ, Coordinates n) ∞ M] [ExteriorTheory ℝ (Coordinates n) M]
