@@ -23,8 +23,10 @@ example {V S : Scheme} {q : V ⟶ S} {n g : ℕ}
 example {V S : Scheme} {q : V ⟶ S} {n g : ℕ}
     (M : VaryingModel q n g) {T U : Over S} (f : T ⟶ U)
     (x : M.stack.Fibre U) (i : Fin n) :
-    MathlibExt.AlgebraicGeometry.GeneralStableMapFamilies.evaluation (M.toVaryingData.family T ((M.toVaryingData.pull f).obj x)) i =
-      f.left ≫ MathlibExt.AlgebraicGeometry.GeneralStableMapFamilies.evaluation (M.toVaryingData.family U x) i := by
+    MathlibExt.AlgebraicGeometry.GeneralStableMapFamilies.evaluation
+        (M.toVaryingData.family T ((M.toVaryingData.pull f).obj x)) i =
+      f.left ≫ MathlibExt.AlgebraicGeometry.GeneralStableMapFamilies.evaluation
+        (M.toVaryingData.family U x) i := by
   unfold MathlibExt.AlgebraicGeometry.GeneralStableMapFamilies.evaluation
   rw [← M.targetMap f x, ← Category.assoc, M.markings f x i]
   exact Category.assoc _ _ _
