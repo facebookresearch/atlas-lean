@@ -859,6 +859,74 @@ class ShardedLedgerTest(unittest.TestCase):
                                       "--rationale", "Reviewed Atlas change", "--backport", "pending"])
         self.assertEqual(code, 0, output)
 
+    def fail_replacement(self, manifest: dict, number: int) -> None:
+        original_replace = os.replace
+        calls = 0
+
+        def replace(source: Path, target: Path) -> None:
+            nonlocal calls
+            calls += 1
+            if calls == number:
+                raise OSError("simulated replacement failure")
+            original_replace(source, target)
+
+        with mock.patch.object(c.os, "replace", side_effect=replace):
+            with self.assertRaisesRegex(OSError, "simulated replacement failure"):
+                c.write_manifest(self.manifest, manifest)
+
+    def test_conversion_write_failure_restores_all_originals(self) -> None:
+        sharded = {**self.legacy, "schema_version": c.SHARDED_SCHEMA_VERSION}
+        document_count = len(c.manifest_documents(self.manifest, sharded))
+        before = self.manifest.read_bytes()
+        for number in (2, document_count):
+            with self.subTest(failing_write=number):
+                self.fail_replacement(sharded, number)
+                self.assertEqual(self.manifest.read_bytes(), before)
+                self.assertEqual(c.worktree_shards(self.manifest), {})
+                self.assertEqual(run_git(self.root, "status", "--porcelain"), "")
+        c.write_manifest(self.manifest, sharded)
+        self.assertEqual(c.load(self.manifest), (sharded, []))
+
+    def test_sharded_write_failure_restores_existing_and_removes_new_files(self) -> None:
+        self.convert()
+        original, _ = c.load(self.manifest)
+        before = {path: path.read_bytes()
+                  for path in c.manifest_documents(self.manifest, original)}
+        updated = json.loads(json.dumps(original))
+        updated["lean_toolchain"] = "leanprover/lean4:v4.36.0"
+        next(row for row in updated["rows"] if row["disposition"] == "diverged")["rationale"] += \
+            ". A reviewed documentation update."
+        new_path = "MathlibExt/Algebra/New.lean"
+        updated["rows"].append({"path": new_path, "disposition": "diverged",
+                                "published_sha256": c.sha256(FRESH), "rationale": "New port",
+                                "backport": "pending"})
+        updated["rows"].sort(key=lambda row: row["path"])
+        new_file = c.shard_path(self.manifest, new_path)
+        for number in (2, 3):
+            with self.subTest(failing_write=number):
+                self.fail_replacement(updated, number)
+                self.assertEqual({path: path.read_bytes() for path in before}, before)
+                self.assertFalse(new_file.exists())
+        c.write_manifest(self.manifest, updated)
+        self.assertEqual(c.load(self.manifest), (updated, []))
+
+    def test_staging_failure_never_changes_the_ledger(self) -> None:
+        self.convert()
+        ledger, _ = c.load(self.manifest)
+        before = {path: path.read_bytes() for path in c.manifest_documents(self.manifest, ledger)}
+        updated = {**ledger, "lean_toolchain": "leanprover/lean4:v4.36.0"}
+        original_write = Path.write_bytes
+
+        def write_bytes(path: Path, data: bytes) -> int:
+            if path.name.endswith(".old"):
+                raise OSError("simulated staging failure")
+            return original_write(path, data)
+
+        with mock.patch.object(Path, "write_bytes", write_bytes):
+            with self.assertRaisesRegex(OSError, "simulated staging failure"):
+                c.write_manifest(self.manifest, updated)
+        self.assertEqual({path: path.read_bytes() for path in before}, before)
+
     def test_conversion_preserves_logical_rows_and_git_history(self) -> None:
         head = self.convert()
         expected = {**self.legacy, "schema_version": c.SHARDED_SCHEMA_VERSION}

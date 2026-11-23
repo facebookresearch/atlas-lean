@@ -41,8 +41,11 @@ import json
 import os
 import re
 import shlex
+import shutil
+import stat
 import subprocess
 import sys
+import tempfile
 from pathlib import Path, PurePosixPath
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -441,19 +444,61 @@ def write_manifest(manifest_path: Path, manifest: dict, *, paths: list[str] | No
     if paths is not None and manifest["schema_version"] == SHARDED_SCHEMA_VERSION:
         targets = {shard_path(manifest_path, path) for path in paths}
         documents = {target: text for target, text in documents.items() if target in targets}
-    # Check every destination before writing the first file. Write metadata last on conversion.
-    for target in documents:
+    # Validate and stage every changed file before replacing any ledger document.
+    changes: dict[Path, tuple[bytes, bytes | None, int]] = {}
+    for target, text in documents.items():
         absolute = target.absolute()
         if symlinked_component(Path(absolute.anchor), absolute):
             raise ValueError(f"{target}: manifest path must not go through a symlink")
         if target.exists() and not target.is_file():
             raise ValueError(f"{target}: expected a regular manifest file")
-    for target in sorted(documents, key=lambda target: (target == manifest_path, target)):
-        data = documents[target].encode("utf-8")
-        if target.is_file() and target.read_bytes() == data:
-            continue
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(data)
+        original = target.read_bytes() if target.exists() else None
+        data = text.encode("utf-8")
+        if data != original:
+            mode = stat.S_IMODE(target.stat().st_mode) if original is not None else 0o644
+            changes[target] = data, original, mode
+    if not changes:
+        return
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    staging = Path(tempfile.mkdtemp(prefix=".formal-math-write-", dir=manifest_path.parent))
+    staged: dict[Path, tuple[Path, Path | None]] = {}
+    replaced: list[Path] = []
+    keep_backups = False
+    try:
+        for index, (target, (data, original, mode)) in enumerate(changes.items()):
+            new = staging / f"{index}.new"
+            new.write_bytes(data)
+            new.chmod(mode)
+            backup = None
+            if original is not None:
+                backup = staging / f"{index}.old"
+                backup.write_bytes(original)
+                backup.chmod(mode)
+            staged[target] = new, backup
+        recovery = {str(target): str(backup) for target, (_, backup) in staged.items()}
+        (staging / "targets.json").write_text(json.dumps(recovery), encoding="utf-8")
+        for target in sorted(staged, key=lambda target: (target == manifest_path, target)):
+            target.parent.mkdir(parents=True, exist_ok=True)
+            os.replace(staged[target][0], target)
+            replaced.append(target)
+    except BaseException as error:
+        failures = []
+        for target in reversed(replaced):
+            try:
+                backup = staged[target][1]
+                if backup is None:
+                    target.unlink()
+                else:
+                    os.replace(backup, target)
+            except OSError as rollback_error:
+                failures.append(f"{target}: {rollback_error}")
+        if failures:
+            keep_backups = True
+            raise OSError(f"ledger rollback failed: {'; '.join(failures)}; backups in {staging}") from error
+        raise
+    finally:
+        if not keep_backups:
+            shutil.rmtree(staging)
 
 
 def load(manifest_path: Path) -> tuple[dict | None, list[str]]:
