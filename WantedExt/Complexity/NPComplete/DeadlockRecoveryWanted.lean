@@ -19,7 +19,7 @@ on Computers C-28(9) (1979), 671-677, doi:10.1109/TC.1979.1675435.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Algorithms.Concurrency.DeadlockDetection

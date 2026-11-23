@@ -20,7 +20,7 @@ arboricity <= 2" (gc_732), problem Recognition, NP-complete, citing Shermer.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import MathlibExt.Computability.BinaryNatEncoding

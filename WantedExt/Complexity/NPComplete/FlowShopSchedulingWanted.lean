@@ -18,7 +18,7 @@ Mathematics of Operations Research 1 (1976), 117-129, doi:10.1287/moor.1.2.117.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

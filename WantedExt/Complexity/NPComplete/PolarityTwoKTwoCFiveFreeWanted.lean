@@ -17,7 +17,7 @@ graphs", Theoretical Computer Science 528 (2014), 1-11, doi:10.1016/j.tcs.2014.0
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.SimpleGraph.Copy
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph

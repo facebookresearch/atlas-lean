@@ -21,7 +21,7 @@ doi:10.1016/0196-6774(85)90012-4, Table 1 (split graphs: NP-complete, citing C. 
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.DominatingSetSplitGraphsWanted

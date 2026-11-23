@@ -19,7 +19,7 @@ Journal on Computing 10 (1981), 692-701, doi:10.1137/0210052.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.MinimumBroadcastTimeWanted

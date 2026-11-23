@@ -23,7 +23,7 @@ problems", SIAM Journal on Computing 24 (1995), 296-317, doi:10.1137/S0097539793
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import MathlibExt.Computability.BinaryNatEncoding

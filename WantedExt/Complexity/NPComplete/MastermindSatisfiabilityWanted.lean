@@ -16,7 +16,7 @@ Science 5(2) (2006), 25-28, arXiv:cs/0512049 (Definition 2.1, Section 2.1, Theor
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic

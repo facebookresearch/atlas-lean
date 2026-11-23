@@ -20,7 +20,7 @@ alternative proof of Woeginger's result, by a reduction from 3SAT).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Data.Finset.Insert
 public import Mathlib.Order.Defs.Unbundled
 public import MathlibExt.Computability.BinaryNatEncoding

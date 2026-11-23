@@ -18,7 +18,7 @@ drum-like storage devices", Journal of the ACM 23 (1976), 103-115, doi:10.1145/3
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Fin

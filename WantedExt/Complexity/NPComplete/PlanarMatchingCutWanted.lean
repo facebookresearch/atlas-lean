@@ -16,7 +16,7 @@ classes", Journal of Graph Theory 62 (2009), 109-126, doi:10.1002/jgt.20390.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity

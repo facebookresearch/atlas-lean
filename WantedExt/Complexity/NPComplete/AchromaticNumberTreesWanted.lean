@@ -18,7 +18,7 @@ N. Cairnie and K. Edwards, "Some results on the achromatic number", Journal of G
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import MathlibExt.Computability.BinaryNatEncoding

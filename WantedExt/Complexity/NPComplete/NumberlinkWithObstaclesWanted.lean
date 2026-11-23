@@ -19,7 +19,7 @@ B. D. Sullivan, "Zig-zag Numberlink is NP-complete", Journal of Information Proc
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.ZigZagNumberlinkWanted

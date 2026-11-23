@@ -18,7 +18,7 @@ J. Algorithms 2 (1981), 311-313, doi:10.1016/0196-6774(81)90029-8.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

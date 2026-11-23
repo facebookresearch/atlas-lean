@@ -21,7 +21,7 @@ Mathematical Systems 157, Springer (1978), 45-54, doi:10.1007/978-3-642-95322-4_
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic

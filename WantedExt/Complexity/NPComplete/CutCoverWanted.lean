@@ -21,7 +21,7 @@ boards", Operations Research Letters 12 (1992), 301-305, doi:10.1016/0167-6377(9
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.GraphColoringWanted

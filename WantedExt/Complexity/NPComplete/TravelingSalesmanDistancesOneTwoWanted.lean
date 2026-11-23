@@ -20,7 +20,7 @@ two", Mathematics of Operations Research 18 (1993), 1-11, doi:10.1287/moor.18.1.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.TspWanted

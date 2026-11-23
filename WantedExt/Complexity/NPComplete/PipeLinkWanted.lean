@@ -17,7 +17,7 @@ Journal of Information Processing 25 (2017), 724-729, doi:10.2197/ipsjjip.25.724
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Hasse

@@ -19,7 +19,7 @@ orderable graphs: NP-complete.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.SimpleGraph.Paths
 public import Mathlib.Logic.Equiv.Defs

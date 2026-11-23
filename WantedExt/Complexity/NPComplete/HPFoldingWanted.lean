@@ -17,7 +17,7 @@ doi:10.1089/cmb.1998.5.423.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Combinatorics.SimpleGraph.Lattice.HypercubicLattice

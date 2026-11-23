@@ -22,7 +22,7 @@ problem 3-Colourability: NP-complete, with the reference to Holyer (1981).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.LineGraph
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

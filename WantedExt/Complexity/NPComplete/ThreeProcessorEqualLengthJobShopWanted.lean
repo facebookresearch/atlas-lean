@@ -22,7 +22,7 @@ doi:10.1016/S0167-5060(08)70821-5 (cited by Garey and Johnson as [Lenstra and Ri
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.JobShopSchedulingWanted

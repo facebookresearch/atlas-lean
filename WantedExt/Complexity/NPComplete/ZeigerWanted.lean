@@ -17,7 +17,7 @@ doi:10.1007/978-981-96-2845-2_20 (arXiv:2409.14308).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.Finset.Card

@@ -23,7 +23,7 @@ NP-Completeness*, W. H. Freeman (1979), problem [GT4] GRAPH K-COLORABILITY.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Clique
 public import Mathlib.Combinatorics.SimpleGraph.Copy
 public import Mathlib.Combinatorics.SimpleGraph.DeleteEdges

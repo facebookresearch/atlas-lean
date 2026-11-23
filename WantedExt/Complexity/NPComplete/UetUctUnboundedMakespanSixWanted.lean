@@ -18,7 +18,7 @@ doi:10.1016/0167-6377(94)90024-8 (problem `P̄|prec,c=1,p_j=1|C_max`, schedule o
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.UetUctSchedulingWanted

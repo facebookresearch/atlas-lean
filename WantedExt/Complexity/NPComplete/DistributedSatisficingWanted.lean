@@ -17,7 +17,7 @@ Information and Control 53 (1982), 211-218, doi:10.1016/S0019-9958(82)91034-8, S
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

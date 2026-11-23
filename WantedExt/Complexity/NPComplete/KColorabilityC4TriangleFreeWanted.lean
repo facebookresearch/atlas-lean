@@ -23,7 +23,7 @@ doi:10.55016/ojs/cdm.v2i1.61890, Theorem 2.3 and Corollary 2.4.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Clique
 public import Mathlib.Combinatorics.SimpleGraph.Copy
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph

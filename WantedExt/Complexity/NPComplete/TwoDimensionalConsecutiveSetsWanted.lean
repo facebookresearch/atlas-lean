@@ -19,7 +19,7 @@ Processing Letters 6 (1977), 91-93, doi:10.1016/0020-0190(77)90034-5.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

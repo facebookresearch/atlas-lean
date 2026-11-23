@@ -20,7 +20,7 @@ doi:10.1016/0196-6774(81)90037-7, problem [5] CHROMATIC INDEX (the base problem)
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.SimpleGraph.Bipartite
 public import MathlibExt.Computability.BinaryNatEncoding

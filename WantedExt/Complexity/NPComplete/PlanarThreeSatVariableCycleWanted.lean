@@ -18,7 +18,7 @@ Computer Science 21(3) (2019), doi:10.23638/DMTCS-21-3-18.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
 public import Mathlib.Combinatorics.SimpleGraph.Sum
 public import MathlibExt.Computability.BinaryNatEncoding

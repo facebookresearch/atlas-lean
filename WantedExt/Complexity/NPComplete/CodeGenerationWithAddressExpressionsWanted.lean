@@ -19,7 +19,7 @@ Communications of the ACM 21 (1978), 300-308, doi:10.1145/359460.359474.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Data.Set.Operations
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

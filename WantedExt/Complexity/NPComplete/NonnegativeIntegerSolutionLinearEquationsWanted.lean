@@ -23,7 +23,7 @@ doi:10.1090/S0002-9939-1976-0396605-3 (membership in NP).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.IntegerProgrammingWanted

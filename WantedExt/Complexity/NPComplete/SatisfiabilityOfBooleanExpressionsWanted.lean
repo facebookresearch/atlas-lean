@@ -19,7 +19,7 @@ p. 260, crediting S. A. Cook, "The complexity of theorem-proving procedures", Pr
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

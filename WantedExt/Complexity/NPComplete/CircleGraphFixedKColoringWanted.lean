@@ -20,7 +20,7 @@ Algorithms and Applications 28 (2024), 389-402, doi:10.7155/jgaa.v28i1.2991.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex

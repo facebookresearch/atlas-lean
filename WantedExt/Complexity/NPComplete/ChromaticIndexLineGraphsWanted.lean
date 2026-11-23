@@ -22,7 +22,7 @@ graphs: "N [28]", and Section 3: "L. Cai and J. A. Ellis proved that deciding wh
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import MathlibExt.Combinatorics.SimpleGraph.LineGraph
 public import MathlibExt.Computability.BinaryNatEncoding

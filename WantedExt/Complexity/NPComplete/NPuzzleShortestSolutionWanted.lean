@@ -18,7 +18,7 @@ Theoretical Computer Science 732 (2018), 80-84, doi:10.1016/j.tcs.2018.04.031 (P
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Hasse

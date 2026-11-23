@@ -21,7 +21,7 @@ RECTANGLE TILING.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Fintype.Prod
 public import MathlibExt.Computability.BinaryNatEncoding

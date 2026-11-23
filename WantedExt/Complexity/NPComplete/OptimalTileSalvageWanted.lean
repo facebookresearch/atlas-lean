@@ -18,7 +18,7 @@ April 1985, https://hdl.handle.net/1721.1/149083; Sections 1 and 4, Figures 30-3
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Order.Interval.Set.Defs

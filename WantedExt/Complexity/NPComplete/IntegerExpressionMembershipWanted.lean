@@ -23,7 +23,7 @@ doi:10.1007/s00037-007-0229-6, Theorem 2.3(i) (`MF(∪, +)` is NP-complete).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.Group.Pointwise.Set.Basic

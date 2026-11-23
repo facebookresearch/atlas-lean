@@ -19,7 +19,7 @@ Newsletter 5(3) (1975), 31-36, doi:10.1145/1061425.1061430.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

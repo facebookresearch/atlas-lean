@@ -18,7 +18,7 @@ doi:10.1145/2897518.2897527 (arXiv:1510.05043), Section 2 (the cost function) an
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Bioinformatics.Clustering.OptimalLeafOrdering

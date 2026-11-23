@@ -20,7 +20,7 @@ Notes in Computer Science 2204 (2001), 254-262, doi:10.1007/3-540-45477-2_23.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Copy
 public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import Mathlib.Combinatorics.SimpleGraph.Sum

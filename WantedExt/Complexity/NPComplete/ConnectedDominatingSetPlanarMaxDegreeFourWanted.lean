@@ -22,7 +22,7 @@ degree 4"; the original proof was not available).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity
 public import MathlibExt.Computability.BinaryNatEncoding

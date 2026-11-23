@@ -17,7 +17,7 @@ doi:10.1007/978-3-642-04645-2_27 (arXiv:0905.3885), Definition 3.7 and Theorem 5
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.BordaManipulationTwoManipulatorsWanted

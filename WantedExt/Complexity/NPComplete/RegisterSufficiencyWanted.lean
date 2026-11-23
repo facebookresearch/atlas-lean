@@ -18,7 +18,7 @@ R. Sethi, "Complete register allocation problems", SIAM Journal on Computing 4 (
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.Digraph.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Logic.Equiv.Defs

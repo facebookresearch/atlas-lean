@@ -18,7 +18,7 @@ Discrete Applied Mathematics 248 (2018), 68-78, doi:10.1016/j.dam.2017.04.045, S
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.HamiltonianPathUndirectedWanted

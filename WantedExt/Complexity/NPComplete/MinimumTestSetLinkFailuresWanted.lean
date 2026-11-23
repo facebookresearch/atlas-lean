@@ -22,7 +22,7 @@ D. S. Johnson, "The NP-completeness column: an ongoing guide", Journal of Algori
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Logic.Relation

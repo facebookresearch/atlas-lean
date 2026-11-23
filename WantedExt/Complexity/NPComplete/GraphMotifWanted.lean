@@ -20,7 +20,7 @@ networks", IEEE/ACM Transactions on Computational Biology and Bioinformatics 3(4
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.Data.Multiset.MapFold

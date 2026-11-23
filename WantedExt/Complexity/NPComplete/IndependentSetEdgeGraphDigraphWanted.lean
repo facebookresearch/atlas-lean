@@ -22,7 +22,7 @@ Theoretical Computer Science 1(3) (1976), 237-267, doi:10.1016/0304-3975(76)9005
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.Digraph.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Clique

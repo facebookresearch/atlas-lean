@@ -23,7 +23,7 @@ https://research.illc.uva.nl/COMSOC/2008/papers/PDF/35-xia.pdf.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Logic.Relation
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

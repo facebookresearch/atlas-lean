@@ -17,7 +17,7 @@ clustering", Machine Learning 75 (2009), 245-248, doi:10.1007/s10994-009-5103-0
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.QuadraticProgrammingWanted

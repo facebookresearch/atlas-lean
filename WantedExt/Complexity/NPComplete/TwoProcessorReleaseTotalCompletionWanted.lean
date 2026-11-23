@@ -21,7 +21,7 @@ doi:10.1016/S0167-5060(08)70743-X (`1|r_j|ΣC_j` is NP-hard in the strong sense)
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

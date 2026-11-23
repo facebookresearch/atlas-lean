@@ -21,7 +21,7 @@ doi:10.1007/3-540-54945-5_48, Section 1 (restating the model of Coffman et al.).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Data.Fintype.Card
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

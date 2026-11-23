@@ -22,7 +22,7 @@ Algorithm Theory (SWAT 2024), LIPIcs 294 (2024), 29:1-29:17, doi:10.4230/LIPIcs.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity
 public import MathlibExt.Computability.BinaryNatEncoding

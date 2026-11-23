@@ -16,7 +16,7 @@ Mathematics 91 (1999), 127-141, doi:10.1016/S0166-218X(98)00146-2 (Theorem 3.3).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color

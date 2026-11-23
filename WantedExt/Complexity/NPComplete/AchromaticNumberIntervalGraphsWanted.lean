@@ -18,7 +18,7 @@ Information Processing Letters 31 (1989), 135-138, doi:10.1016/0020-0190(89)9022
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import WantedExt.Complexity.NPComplete.IntervalGraphCompletionWanted
 public import MathlibExt.Computability.BinaryNatEncoding

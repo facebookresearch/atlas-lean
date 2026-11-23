@@ -16,7 +16,7 @@ Research Letters 44(5) (2016), 649-654, doi:10.1016/j.orl.2016.07.011, Theorem 1
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic

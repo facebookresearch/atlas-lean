@@ -19,7 +19,7 @@ Journal 10(4) (1963), 385-397, doi:10.1307/mmj/1028998975 (definition of cycle r
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.Digraph.Basic
 public import Mathlib.Logic.Relation
 public import MathlibExt.Computability.BinaryNatEncoding

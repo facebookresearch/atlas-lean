@@ -17,7 +17,7 @@ doi:10.1016/j.tcs.2013.11.023, Theorem 3 (Uno-1); arXiv:1003.2851.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Batteries.Data.List.Basic

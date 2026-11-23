@@ -20,7 +20,7 @@ doi:10.1007/BF00264496 (cited by Johnson as a 1980 manuscript; full text not ava
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.Digraph.Basic

@@ -15,7 +15,7 @@ S. Saha and E. D. Demaine, "ZHED is NP-complete", arXiv:2112.07914 (2021).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Int.Basic
 public import MathlibExt.Computability.BinaryNatEncoding

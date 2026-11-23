@@ -20,7 +20,7 @@ Computational Geometry 47 (2014), 589-604, doi:10.1016/j.comgeo.2014.01.001
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.ConstrainedTriangulationWanted
