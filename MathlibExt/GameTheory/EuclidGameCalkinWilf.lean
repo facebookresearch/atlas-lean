@@ -331,6 +331,50 @@ public theorem euclidPPosition_aunt_xor_cousin (x y : ℕ) (hx : 0 < x) (hy : 0 
   rw [swap, Nat.add_comm x (x + y), Nat.add_comm x y] at h
   exact (twice y x hy hx h).elim
 
+namespace euclidPPosition_branch_step
+
+open euclidPPosition_aunt_xor_cousin
+
+-- A positive pair with one entry at least twice the other has a winning move.
+private theorem daughter_not_p_of_le (a b : ℕ) (hb : 0 < b) (h : b ≤ a) :
+    ¬euclidPPosition (a + b) b = true := by
+  rcases lt_or_eq_of_le h with hlt | rfl
+  · simpa only [Nat.sub_add_cancel h] using twice (a - b) b (by omega) hb
+  · apply (forced b b hb le_rfl).1
+    unfold euclidPPosition
+    cases b + b <;> simp [euclidPPositionAux]
+
+private theorem niece (x y : ℕ) (hx : 0 < x) (hy : 0 < y)
+    (hd : euclidPPosition (x + y) y = true) :
+    euclidPPosition (x + (x + y)) (x + y) = true := by
+  by_contra hn
+  -- The niece can only move to the son, so the son and daughter would both be P-positions.
+  have hs := (forced x (x + y) hx (by omega)).2 hn
+  rcases le_total x y with h | h
+  · rw [swap x (x + y), Nat.add_comm x y] at hs
+    exact daughter_not_p_of_le y x hx h hs
+  · exact daughter_not_p_of_le x y hy h hd
+
+end euclidPPosition_branch_step
+
+open euclidPPosition_branch_step euclidPPosition_aunt_xor_cousin in
+/-- **Establishing branches: nieces and nephews of P-positions.** Call a pair $(a, b)$ of natural
+numbers a P-position when the Euclid P-position test returns true at $(a, b)$, and read it as the
+vertex $a/b$ of the Calkin–Wilf tree, with son $a/(a+b)$ and daughter $(a+b)/b$. Let $x, y$ be
+positive integers. If the daughter $(x+y)/y$ of $x/y$ is a P-position, then so is its niece
+$(2x+y)/(x+y)$, the daughter of its sibling $x/(x+y)$. If the son $x/(x+y)$ of $x/y$ is a
+P-position, then so is its nephew $(x+y)/(x+2y)$, the son of its sibling $(x+y)/y$.
+
+Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
+of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Proposition 4.2. -/
+public theorem euclidPPosition_branch_step (x y : ℕ) (hx : 0 < x) (hy : 0 < y) :
+    (euclidPPosition (x + y) y = true → euclidPPosition (2 * x + y) (x + y) = true) ∧
+      (euclidPPosition x (x + y) = true → euclidPPosition (x + y) (x + 2 * y) = true) := by
+  constructor
+  · simpa only [two_mul, Nat.add_assoc] using niece x y hx hy
+  · rw [swap x (x + y), swap (x + y) (x + 2 * y)]
+    simpa only [two_mul, Nat.add_comm, Nat.add_left_comm, Nat.add_assoc] using niece y x hy hx
+
 namespace fibonacci_arch_tops
 
 -- Each successive Fibonacci pair is the son's daughter of the preceding pair.
