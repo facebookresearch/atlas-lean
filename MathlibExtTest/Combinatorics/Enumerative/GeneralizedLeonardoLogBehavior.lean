@@ -14,9 +14,9 @@ import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Linarith
 
 /-!
-# Tests for log-concavity and reciprocal log-balancedness
+# Tests for log-convexity, log-concavity and reciprocal log-balancedness
 
-The arithmetic progression `z n = n + 1` illustrates both propagation results.
+The arithmetic progression `z n = n + 1` illustrates log-concavity and reciprocal log-balancedness.
 A geometric progression realizes equality in log-concavity at the minimum order.
 -/
 
@@ -50,6 +50,22 @@ example (a : ℝ) (ha : 0 < a) (n : ℕ) (hn : 1 ≤ n) :
   · intro i hi hk
     interval_cases i
     simp
+
+-- The strictly log-convex sequence 2^n + 1 has a nonzero lag coefficient at order two.
+example (n : ℕ) (hn : 1 ≤ n) :
+    ((2 : ℝ) ^ n + 1) ^ 2 ≤ (2 ^ (n - 1) + 1) * (2 ^ (n + 1) + 1) := by
+  let c (j : ℕ) : ℝ := if j = 1 then 3 else 2
+  apply logConvex_of_linearRecurrence_of_initial_logConvex 2 (by decide) c _
+    (fun i => 2 ^ i + 1) (by intro i; positivity) _ _ n hn
+  · intro j hj _
+    simp [c, show j ≠ 1 by omega]
+  · intro i hi
+    obtain ⟨m, rfl⟩ : ∃ m, i = m + 2 := ⟨i - 2, by omega⟩
+    simp [c, pow_succ]
+    linarith
+  · intro i hi hk
+    interval_cases i
+    norm_num
 
 example (n : ℕ) (hn : 1 ≤ n) :
     (1 / (n + 1 : ℝ)) ^ 2 ≤ (1 / ((n - 1 : ℕ) + 1 : ℝ)) * (1 / (↑(n + 1) + 1 : ℝ)) ∧
