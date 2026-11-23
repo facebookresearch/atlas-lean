@@ -69,10 +69,15 @@ jobs:
           esac
           [[ "$base" =~ ^[0-9a-f]{40}$ ]] || { echo "No base commit for this $EVENT run" >&2; exit 1; }
           git cat-file -e "$base^{commit}" 2>/dev/null || git fetch --no-tags --depth=1 origin "$base"
-          # The branch the fix command fetches: the one the change targets, named plainly; else the base commit.
-          [[ "$ref" =~ ^[A-Za-z0-9._/-]+$ ]] || ref=""
+          # What the fix command fetches to find where the branch starts: the branch the change targets, named
+          # plainly, or else its commit. A run dispatched with a base has none: the command names that base.
+          if [[ "$EVENT" == pull_request || "$EVENT" == merge_group ]]; then
+            if [[ "$ref" =~ ^[A-Za-z0-9._/-]+$ ]]; then fetch="refs/heads/$ref"; else fetch="$base"; fi
+          else
+            fetch=""
+          fi
           echo "BASE=$base" >> "$GITHUB_ENV"
-          echo "FIX_REF=$ref" >> "$GITHUB_ENV"
+          echo "FIX_FETCH=$fetch" >> "$GITHUB_ENV"
 
       # The verdicts come first: whether the pull request is in step, with the
       # command that fixes it, and whether its wiki changes are only what that
@@ -116,9 +121,10 @@ jobs:
               echo
               echo "The check could not run (exit $status): the log above says why."
             elif [[ "$status" -ne 0 ]]; then
-              # From the branch the change targets, or, with none, the commit the check compared with.
-              if [[ -n "${FIX_REF:-}" ]]; then
-                fetch="git fetch https://github.com/facebookresearch/atlas-lean.git $FIX_REF"
+              # From where the branch starts on the one the change targets, or, with none, the commit the check
+              # compared with.
+              if [[ -n "${FIX_FETCH:-}" ]]; then
+                fetch="git fetch https://github.com/facebookresearch/atlas-lean.git $FIX_FETCH"
                 # shellcheck disable=SC2016 # The command is shown, not run.
                 sync='python3 scripts/sync_wiki.py declarations --base "$(git merge-base FETCH_HEAD HEAD)"'
               else

@@ -2861,15 +2861,16 @@ def git(*args: str, data: bytes | None = None) -> bytes:
     return result.stdout
 
 
-def index_modes() -> dict[str, str]:
-    """The mode the index gives each file the sync may write (see written_by_sync), by its path from the repository's
-    root, as the file system names it."""
-    modes = {}
+def index_entries() -> dict[str, tuple[str, str]]:
+    """The mode and object the index gives each file the sync may write (see written_by_sync), by its path from the
+    repository's root, as the file system names it."""
+    entries = {}
     for record in git("ls-files", "-s", "-z", "--", "blueprint", "scripts").split(b"\0"):
         if record:
             meta, raw = record.split(b"\t", 1)
-            modes[os.fsdecode(raw)] = meta.split(b" ", 1)[0].decode("ascii")
-    return modes
+            mode, name = meta.decode("ascii").split(" ")[:2]
+            entries[os.fsdecode(raw)] = (mode, name)
+    return entries
 
 
 def changed_paths(base: str) -> list[str]:
@@ -3425,17 +3426,20 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
         if left := unfinished(report):
             return "other", [f"the sync fails on the base's wiki: {row}" for row in left]
         differences = []
-        # What the index holds, whatever the working tree has: a submodule there may have no folder at all.
-        staged = index_modes()
+        # The changes are the working tree's, and the index's where the working tree has nothing: a file staged and
+        # then removed, or a submodule, which may have no folder at all.
+        staged = index_entries()
         for path in sorted(set(paths) | {path.relative_to(scratch).as_posix() for path in written}):
             mine, theirs = scratch / path, wiki.ROOT / path
             linked = theirs.is_symlink() or os.path.realpath(theirs) != str(theirs)
             # A file written in place keeps its mode, and one the sync makes is not executable.
             expected = (mine.read_bytes(), modes.get(path) != "100755") if mine.is_file() else None
             actual = None if linked or not theirs.is_file() else (theirs.read_bytes(), not theirs.stat().st_mode & 0o111)
+            mode, name = staged.get(path, ("100644", None))
+            if not os.path.lexists(theirs) and name is not None and mode in ("100644", "100755"):
+                actual = (git("cat-file", "blob", name), mode != "100755")
             # Anything but a file, in the working tree or the index: a folder, a submodule, a link.
-            other = (os.path.lexists(theirs) and not theirs.is_file()) or staged.get(path, "100644") not in (
-                "100644", "100755")
+            other = (os.path.lexists(theirs) and not theirs.is_file()) or mode not in ("100644", "100755")
             if linked or other or modes.get(path, "100644") not in ("100644", "100755"):
                 differences.append(f"{path}: the sync writes no link or other kind of file")
             elif expected != actual:

@@ -4322,6 +4322,20 @@ class ScopedRun(unittest.TestCase):
                           report["differences"], folder)
 
 
+    def test_a_page_staged_and_then_removed_is_still_the_changes(self) -> None:
+        # The index holds a page written by hand that the working tree no longer has, and the Lean changes only a
+        # comment: the page is the changes', not the sync's.
+        groups = self.root / "MathlibExt/Algebra/Groups.lean"
+        groups.write_text(groups.read_text() + "-- A comment.\n")
+        page = self.root / "blueprint/roadmap/Algebra/hand.md"
+        page.write_text("# By hand\n")
+        self.git("add", "--", "blueprint/roadmap/Algebra/hand.md")
+        page.unlink()
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((report["wiki_changes"], report["differences"]), (
+            "other", ["blueprint/roadmap/Algebra/hand.md: the changes add it, and the sync does not"]))
+
+
 
 class BuildPath(Vault):
     """What the build's own steps refuse before they write, beside what credit_problems refuses everywhere."""
