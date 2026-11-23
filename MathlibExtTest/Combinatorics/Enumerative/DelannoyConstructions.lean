@@ -57,4 +57,15 @@ example (m n : ℕ) : (2 : ℤ) ∣ seededArray 0 m n + seededArray 0 m (n + 1) 
 example : let row := seededArray 2 0
     (2 : ℤ) ∣ row 0 + row 1 ∧ ¬ (2 : ℤ) ∣ row 1 + row 2 := by decide
 
+-- At the least admissible seed index, every horizontal sum is odd.
+example (m n : ℕ) : seededArray 1 m n + seededArray 1 m (n + 1) ≡ 1 [ZMOD 2] := by
+  simpa using delannoyArray_binomial_seeds_horizontalSum_modEq (seededArray 1)
+    (fun _ _ => rfl) 1 le_rfl (fun _ => rfl) m n
+
+-- With seed index two, the first horizontal sum in column zero is even in every row.
+example (m : ℕ) : (2 : ℤ) ∣ seededArray 2 m 0 + seededArray 2 m 1 := by
+  have h := delannoyArray_binomial_seeds_horizontalSum_modEq (seededArray 2)
+    (fun _ _ => rfl) 2 (by decide) (fun _ => rfl) m 0
+  exact h.dvd_iff.mpr (by decide)
+
 end MetaMathlibExt.DelannoyConstructions

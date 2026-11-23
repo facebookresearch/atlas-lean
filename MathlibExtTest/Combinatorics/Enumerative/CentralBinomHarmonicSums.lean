@@ -22,3 +22,10 @@ example : centralBinomPowSum harmonic 1 2 = 13 / 8 ∧
   obtain ⟨h₁, h₂, h₃⟩ := centralBinomPowSum_harmonic_one_two_three 2
   norm_num [harmonic_succ, Nat.centralBinom, Nat.choose] at h₁ h₂ h₃ ⊢
   exact ⟨h₁, h₂, h₃⟩
+
+-- The odd harmonic weight at k = 2 is 4/3, giving three different rational sums.
+example : centralBinomPowSum oddHarmonic 1 2 = 3 / 2 ∧
+    centralBinomPowSum oddHarmonic 2 2 = 5 / 2 ∧ centralBinomPowSum oddHarmonic 3 2 = 9 / 2 := by
+  obtain ⟨h₁, h₂, h₃⟩ := centralBinomPowSum_oddHarmonic_one_two_three 2
+  norm_num [oddHarmonic_succ, Nat.centralBinom, Nat.choose] at h₁ h₂ h₃ ⊢
+  exact ⟨h₁, h₂, h₃⟩
