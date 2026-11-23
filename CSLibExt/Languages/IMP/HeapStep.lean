@@ -36,7 +36,13 @@ heap language via `Cmd.toHeap`, with the heap unchanged throughout.
 
 namespace Cslib.IMP
 
-/-- Commands of IMP extended with heap operations. -/
+/-- **Heap commands.** Heap commands extend the commands of IMP with heap operations. A heap
+command is one of: $\mathbf{skip}$; an assignment $x := a$; a sequence $c_1; c_2$; a
+conditional $\mathbf{if}\ b\ \mathbf{then}\ c_1\ \mathbf{else}\ c_2$; a loop
+$\mathbf{while}\ b\ \mathbf{do}\ c$; a heap read $x := [a]$; a heap write $[a] := e$; an
+allocation $x := \mathbf{alloc}(e)$; or a deallocation $\mathbf{free}(a)$. Here $x$ is a variable
+(a natural number), $a$ and $e$ are arithmetic expressions, $b$ is a Boolean expression, and $c$,
+$c_1$, $c_2$ are heap commands. -/
 inductive HeapCmd where
   | skip
   | assign (name : Nat) (value : AExp)
@@ -49,10 +55,32 @@ inductive HeapCmd where
   | free (addr : AExp)
   deriving DecidableEq, Repr
 
-/-- A heap configuration pairs a command with a store and a heap. -/
+/-- **Heap configurations.** A heap configuration is a triple $(c, s, h)$ of a heap command $c$,
+a store $s$ and a heap $h$. -/
 abbrev HConfig := HeapCmd × State × Heap
 
-/-- Single small-step transitions between heap configurations. -/
+/-- **Small-step semantics of heap commands.** The single-step relation
+$(c, s, h) \to (c', s', h')$ on heap configurations is the least relation closed under the rules
+below. Here $a(s)$ is the value of an expression $a$ in the store $s$, $s[x \mapsto n]$ is $s$
+with variable $x$ set to $n$, $h[\ell \mapsto n]$ is $h$ with address $\ell$ set to $n$, and
+$h \setminus \ell$ is $h$ with address $\ell$ removed.
+
+- Assignment: $(x := a, s, h) \to (\mathbf{skip}, s[x \mapsto a(s)], h)$.
+- Sequence: $(\mathbf{skip}; c_2, s, h) \to (c_2, s, h)$, and if
+  $(c_1, s, h) \to (c_1', s', h')$ then $(c_1; c_2, s, h) \to (c_1'; c_2, s', h')$.
+- Conditional: $(\mathbf{if}\ b\ \mathbf{then}\ c_1\ \mathbf{else}\ c_2, s, h)$ steps to
+  $(c_1, s, h)$ if $b(s)$ is true and to $(c_2, s, h)$ if $b(s)$ is false.
+- Loop: $(\mathbf{while}\ b\ \mathbf{do}\ c, s, h)$ steps to
+  $(\mathbf{if}\ b\ \mathbf{then}\ d\ \mathbf{else}\ \mathbf{skip}, s, h)$, where $d$ is the
+  sequence $c; \mathbf{while}\ b\ \mathbf{do}\ c$.
+- Read: if $h$ maps the address $a(s)$ to $v$, then
+  $(x := [a], s, h) \to (\mathbf{skip}, s[x \mapsto v], h)$.
+- Write: if $a(s)$ is allocated in $h$, then
+  $([a] := e, s, h) \to (\mathbf{skip}, s, h[a(s) \mapsto e(s)])$.
+- Allocation: for every address $\ell$ not allocated in $h$,
+  $(x := \mathbf{alloc}(e), s, h) \to (\mathbf{skip}, s[x \mapsto \ell], h[\ell \mapsto e(s)])$.
+- Deallocation: if $a(s)$ is allocated in $h$, then
+  $(\mathbf{free}(a), s, h) \to (\mathbf{skip}, s, h \setminus a(s))$. -/
 inductive HStep : HConfig → HConfig → Prop
   | assign (state) (name) (value) (heap) :
       HStep (.assign name value, state, heap)
@@ -89,11 +117,14 @@ inductive HStep : HConfig → HConfig → Prop
       HStep (.free addr, state, heap)
         (.skip, state, Finmap.erase (addr.eval state) heap)
 
-/-- Finite sequences of heap small steps. -/
+/-- **Multi-step heap execution.** The relation $(c, s, h) \to^* (c', s', h')$ on heap
+configurations is the reflexive-transitive closure of the small-step relation: it holds when the
+first configuration reaches the second by a finite, possibly empty, sequence of small steps. -/
 abbrev HSteps : HConfig → HConfig → Prop := Relation.ReflTransGen HStep
 
-/-- A configuration is safe when no reachable configuration is stuck
-at a command other than `skip`. -/
+/-- **Safe heap configurations.** A heap configuration, consisting of a heap command, a store and
+a heap, is safe when every heap configuration reachable from it in zero or more heap steps
+either has command $\mathtt{skip}$ or can take a further heap step. -/
 def Safe (cfg : HConfig) : Prop :=
   ∀ cfg', HSteps cfg cfg' → cfg'.1 = .skip ∨ ∃ cfg'', HStep cfg' cfg''
 
@@ -239,16 +270,20 @@ theorem skip_eq {state : State} {heap : Heap} {cfg : HConfig}
 
 end HSteps
 
-/-- Safety is preserved along executions. -/
+/-- **Safety is preserved along executions.** If a heap configuration is safe and reaches a second
+configuration by finitely many (possibly zero) small steps, then the second configuration is
+safe. -/
 theorem Safe.of_steps {cfg cfg' : HConfig} (hsafe : Safe cfg)
     (hsteps : HSteps cfg cfg') : Safe cfg' :=
   fun cfg'' h => hsafe cfg'' (hsteps.trans h)
 
 namespace HStep
 
-/-- If a configuration can step, then it can step after adding a disjoint
-frame heap. Allocation may choose a different fresh address on the
-larger heap. -/
+/-- **Adding a frame heap preserves the ability to step.** Let $h$ and $h_f$ be disjoint heaps,
+$c$ a heap command and $s$ a store. If the configuration $(c, s, h)$ can take a small step, then
+so can $(c, s, h \cup h_f)$.
+
+Allocation may choose a different fresh address on the larger heap. -/
 theorem exists_step_frame {c : HeapCmd} {s : State} {h hf : Heap}
     (_hd : Heap.Disjoint h hf) (hex : ∃ cfg', HStep (c, s, h) cfg') :
     ∃ cfg', HStep (c, s, h ∪ hf) cfg' := by
@@ -280,9 +315,12 @@ theorem exists_step_frame {c : HeapCmd} {s : State} {h hf : Heap}
   obtain ⟨cfg', hstep⟩ := hex
   exact key (hf := hf) hstep
 
-/-- A single step on a framed heap decomposes into a step on the small
-heap, provided the small configuration can step at all. The existence
-hypothesis forces any touched address to lie in the small heap. -/
+/-- **Frame decomposition of a single heap step.** Let $h$ and $h_f$ be disjoint heaps, $c$ a heap
+command and $s$ a store, and suppose that the configuration $(c, s, h)$ can take a small step. If
+$(c, s, h \cup h_f)$ takes a small step to $(c', s', h'')$, then there is a heap $h_1$, disjoint
+from $h_f$, such that $(c, s, h)$ takes a small step to $(c', s', h_1)$ and $h'' = h_1 \cup h_f$.
+
+The step-existence hypothesis forces any address the step touches to lie in $h$. -/
 theorem decompose_of_safe_step {c c' : HeapCmd} {s s' : State} {h hf h'' : Heap}
     (hd : Heap.Disjoint h hf) (hex : ∃ cfg', HStep (c, s, h) cfg')
     (hstep : HStep (c, s, h ∪ hf) (c', s', h'')) :
@@ -365,10 +403,13 @@ end HStep
 
 namespace HSteps
 
-/-- An execution on a framed heap projects to an execution on the small
-heap, with the frame heap unchanged, when the small configuration is
-safe. Safety supplies the step-existence that single-step
-decomposition needs at each stage. -/
+/-- **Frame decomposition of heap executions.** Let $h$ and $h_f$ be disjoint heaps, $c$ a heap
+command and $s$ a store, and suppose that the configuration $(c, s, h)$ is safe. If
+$(c, s, h \cup h_f)$ reaches $(c'', s'', h'')$ by finitely many (possibly zero) small steps, then
+there is a heap $h_2$, disjoint from $h_f$, such that $(c, s, h)$ reaches $(c'', s'', h_2)$ by
+finitely many small steps, $h'' = h_2 \cup h_f$, and $(c'', s'', h_2)$ is safe.
+
+Safety supplies the step-existence that single-step decomposition needs at each stage. -/
 theorem decompose_of_safe {c c'' : HeapCmd} {s s'' : State} {h hf h'' : Heap}
     (hd : Heap.Disjoint h hf) (hsafe : Safe (c, s, h))
     (hsteps : HSteps (c, s, h ∪ hf) (c'', s'', h'')) :
@@ -411,7 +452,11 @@ end HSteps
 
 namespace Cmd
 
-/-- The embedding of a plain IMP command into the heap language. -/
+/-- **Embedding of IMP into the heap language.** The embedding sends each plain IMP command to
+the heap command of the same shape: $\mathtt{skip}$ goes to $\mathtt{skip}$, an assignment of an
+arithmetic expression to a variable goes to the same assignment, a sequence goes to the
+sequence of the embeddings of its parts, and a conditional or while loop goes to the conditional
+or while loop with the same guard and with each subcommand replaced by its embedding. -/
 def toHeap : Cmd → HeapCmd
   | .skip => .skip
   | .assign name value => .assign name value
@@ -442,8 +487,11 @@ end Cmd
 
 namespace HStep
 
-/-- Steps of an embedded plain command are exactly the plain steps,
-with the heap unchanged. -/
+/-- **Heap steps of embedded commands are plain steps.** Let $c$ be a plain IMP command, $s$ a
+store and $h$ a heap, and write $\overline{d}$ for the embedding of a plain command $d$ into the
+heap language. Then $(\overline{c}, s, h)$ takes a heap step to a heap configuration $K$ if and
+only if there are a plain command $c'$ and a store $s'$ such that $(c, s)$ takes a plain small
+step to $(c', s')$ and $K = (\overline{c'}, s', h)$. -/
 theorem toHeap_iff {c : Cmd} {s : State} {h : Heap} {cfg : HConfig} :
     HStep (c.toHeap, s, h) cfg ↔
       ∃ c' s', Step (c, s) (c', s') ∧ cfg = (c'.toHeap, s', h) := by
@@ -501,8 +549,12 @@ end HStep
 
 namespace HSteps
 
-/-- An execution of an embedded command tracks a plain execution and
-never changes the heap. -/
+/-- **Executions of embedded commands are plain executions.** Let $c$ be a plain IMP command,
+$s$ a store and $h$ a heap, and write $\overline{d}$ for the embedding of a plain command $d$
+into the heap language. If $(\overline{c}, s, h)$ reaches a heap configuration $(c_2, s_2, h_2)$
+in zero or more heap steps, then $h_2 = h$ and there is a plain command $c_2'$ with
+$c_2 = \overline{c_2'}$ such that $(c, s)$ reaches $(c_2', s_2)$ in zero or more plain small
+steps. -/
 theorem of_toHeap {c : Cmd} {s : State} {h : Heap} {c₂ : HeapCmd} {s₂ : State}
     {h₂ : Heap} (hsteps : HSteps (c.toHeap, s, h) (c₂, s₂, h₂)) :
     ∃ c₂', c₂ = c₂'.toHeap ∧ Steps (c, s) (c₂', s₂) ∧ h₂ = h := by
@@ -523,8 +575,10 @@ theorem of_toHeap {c : Cmd} {s : State} {h : Heap} {c₂ : HeapCmd} {s₂ : Stat
   obtain ⟨hcc, -, hhh⟩ := hEq
   exact ⟨c₂', hcc, hSteps, hhh⟩
 
-/-- A plain execution lifts to an execution of the embedded command at
-any heap, unchanged. -/
+/-- **Plain executions lift to the heap language.** Let $c, c_2$ be plain IMP commands, $s, s_2$
+stores and $h$ a heap, and write $\overline{d}$ for the embedding of a plain command $d$ into the
+heap language. If $(c, s)$ reaches $(c_2, s_2)$ in zero or more plain small steps, then
+$(\overline{c}, s, h)$ reaches $(\overline{c_2}, s_2, h)$ in zero or more heap steps. -/
 theorem toHeap_of_steps {c c₂ : Cmd} {s s₂ : State} {h : Heap}
     (hsteps : Steps (c, s) (c₂, s₂)) :
     HSteps (c.toHeap, s, h) (c₂.toHeap, s₂, h) := by
@@ -540,8 +594,11 @@ theorem toHeap_of_steps {c c₂ : Cmd} {s s₂ : State} {h : Heap}
 
 end HSteps
 
-/-- Embedded plain commands are safe at every heap, since plain IMP
-never gets stuck except at `skip`. -/
+/-- **Embedded plain commands are safe.** For every plain IMP command $c$ with embedding
+$\overline{c}$ into the heap language, every store $s$ and every heap $h$, the heap
+configuration $(\overline{c}, s, h)$ is safe.
+
+This holds because plain IMP never gets stuck except at $\mathtt{skip}$. -/
 theorem safe_toHeap (c : Cmd) (s : State) (h : Heap) : Safe (c.toHeap, s, h) := by
   intro cfg' hsteps
   obtain ⟨c₂, s₂, h₂⟩ := cfg'
@@ -553,8 +610,10 @@ theorem safe_toHeap (c : Cmd) (s : State) (h : Heap) : Safe (c.toHeap, s, h) := 
     obtain ⟨⟨c₃, s₃⟩, hstep⟩ := Step.exists_step hc
     exact ⟨_, HStep.toHeap_iff.mpr ⟨c₃, s₃, hstep, rfl⟩⟩
 
-/-- Termination of a plain command is termination of its embedding at
-any heap, unchanged. -/
+/-- **Embedding preserves termination.** Let $c$ be a plain IMP command with embedding
+$\overline{c}$ into the heap language, let $s, s'$ be stores and let $h$ be a heap. Then $c$
+terminates from $s$ with final store $s'$ if and only if $(\overline{c}, s, h)$ reaches
+$(\mathtt{skip}, s', h)$ in zero or more heap steps. -/
 theorem terminates_toHeap {c : Cmd} {s s' : State} {h : Heap} :
     Terminates c s s' ↔ HSteps (c.toHeap, s, h) (.skip, s', h) := by
   constructor
@@ -569,7 +628,13 @@ theorem terminates_toHeap {c : Cmd} {s s' : State} {h : Heap} :
 
 namespace HeapCmd
 
-/-- The variables that a heap command may assign to. -/
+/-- **Modified variables of a heap command.** The set $\mathrm{mod}(c)$ of variables a heap command
+$c$ may assign to is defined by recursion on $c$. It is empty for $\mathbf{skip}$, a heap write
+$[a] := e$ and a deallocation $\mathbf{free}(a)$; it is $\{x\}$ for an assignment $x := a$, a heap
+read $x := [a]$ and an allocation $x := \mathbf{alloc}(e)$; it is $\mathrm{mod}(c_1) \cup
+\mathrm{mod}(c_2)$ for a sequence $c_1; c_2$ and for a conditional
+$\mathbf{if}\ b\ \mathbf{then}\ c_1\ \mathbf{else}\ c_2$; and it is $\mathrm{mod}(c_0)$ for a loop
+$\mathbf{while}\ b\ \mathbf{do}\ c_0$. -/
 def modVars : HeapCmd → Finset Nat
   | .skip => ∅
   | .assign name _ => {name}
@@ -585,8 +650,9 @@ end HeapCmd
 
 namespace HStep
 
-/-- A step never enlarges the set of variables the remaining command
-may assign to. -/
+/-- **Steps do not enlarge the modified variables.** Write $\mathrm{mod}(c)$ for the set of
+variables a heap command $c$ may assign to. If the configuration $(c, s, h)$ takes a small step to
+$(c', s', h')$, then $\mathrm{mod}(c') \subseteq \mathrm{mod}(c)$. -/
 theorem modVars_subset {c c' : HeapCmd} {s s' : State} {h h' : Heap}
     (hstep : HStep (c, s, h) (c', s', h')) : c'.modVars ⊆ c.modVars := by
   have key : ∀ {cfg cfg' : HConfig}, HStep cfg cfg' →
@@ -610,8 +676,9 @@ theorem modVars_subset {c c' : HeapCmd} {s s' : State} {h h' : Heap}
     | free _ => simp [HeapCmd.modVars]
   exact key hstep
 
-/-- A step does not change variables outside the command's modified
-set. -/
+/-- **A heap step only changes assignable variables.** If a heap configuration $(c, s, h)$ takes
+one heap step to $(c', s', h')$, then $s'(x) = s(x)$ for every variable $x$ outside the set of
+variables that $c$ may assign to. -/
 theorem store_agree {c c' : HeapCmd} {s s' : State} {h h' : Heap}
     (hstep : HStep (c, s, h) (c', s', h')) :
     ∀ x, x ∉ c.modVars → s' x = s x := by
@@ -650,8 +717,9 @@ end HStep
 
 namespace HSteps
 
-/-- An execution does not change variables outside the command's
-modified set. -/
+/-- **Heap executions only change assignable variables.** If a heap configuration $(c, s, h)$
+reaches a heap configuration $(c', s', h')$ in zero or more heap steps, then $s'(x) = s(x)$ for
+every variable $x$ outside the set of variables that $c$ may assign to. -/
 theorem store_agree {c c' : HeapCmd} {s s' : State} {h h' : Heap}
     (hsteps : HSteps (c, s, h) (c', s', h')) :
     ∀ x, x ∉ c.modVars → s' x = s x := by

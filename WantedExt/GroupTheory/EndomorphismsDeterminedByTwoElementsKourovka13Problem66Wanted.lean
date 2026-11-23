@@ -35,31 +35,44 @@ stated for every rank; (b) is stated for every rank and refuted, which says that
 rank no such pair exists ("not always"). The free metabelian group of rank `n` is `F_n / F_n''`.
 -/
 
-/-- The free metabelian group `F_n / F_n''` of rank `n`. -/
+/-- **The free metabelian group $M_n$.** For a natural number $n$, the free metabelian group of
+rank $n$ is the quotient $F_n / F_n''$ of the free group $F_n$ on $n$ generators by its second
+derived subgroup $F_n'' = [F_n', F_n']$, where $F_n' = [F_n, F_n]$ is the derived subgroup of
+$F_n$. -/
 abbrev FreeMetabelianGroup (n : ℕ) : Type :=
   FreeGroup (Fin n) ⧸ derivedSeries (FreeGroup (Fin n)) 2
 
-/-- Two elements `g, h ∈ F` determine every endomorphism of `F` with non-cyclic image: if `φ`, `ψ`
-have non-cyclic images and agree at `g` and at `h`, then `φ = ψ`. -/
+/-- **Groups whose endomorphisms with non-cyclic images are determined by two elements.** A group
+$F$ has this property when there exist elements $g, h \in F$ such that any two endomorphisms
+$\varphi, \psi$ of $F$ whose images are not cyclic subgroups and which satisfy
+$\varphi(g) = \psi(g)$ and $\varphi(h) = \psi(h)$ are equal. -/
 def DeterminedByTwoElements (F : Type) [Group F] : Prop :=
   ∃ g h : F, ∀ φ ψ : F →* F, ¬ IsCyclic φ.range → ¬ IsCyclic ψ.range → φ g = ψ g →
     φ h = ψ h → φ = ψ
 
-/-- Kourovka 13.66(a) (V. E. Shpil'rain): for every finite rank `n`, the endomorphisms of the free
-group `F_n` with non-cyclic images are determined by their values at some two elements. -/
+/-- **Shpil'rain's two-element problem for free groups (Kourovka 13.66(a)).** For every natural
+number $n$, the free group $F_n$ of rank $n$ contains two elements $g$ and $h$ such that any two
+endomorphisms of $F_n$ whose images are not cyclic subgroups and which agree at $g$ and at $h$
+are equal; that is, $F_n$ has its endomorphisms with non-cyclic images determined by two
+elements. -/
 def freeGroupEndomorphismsDeterminedByTwoElements : Prop :=
   ∀ n : ℕ, DeterminedByTwoElements (FreeGroup (Fin n))
 
-/-- Kourovka 13.66(b) (V. E. Shpil'rain): for every finite rank `n`, the endomorphisms of the free
-metabelian group `M_n` with non-cyclic images are determined by their values at some two
-elements. -/
+/-- **Shpil'rain's two-element problem for free metabelian groups (Kourovka 13.66(b)).** For every
+natural number $n$, the free metabelian group $M_n = F_n / F_n''$ of rank $n$ (the quotient of the
+free group $F_n$ of rank $n$ by its second derived subgroup) contains two elements $g$ and $h$
+such that any two endomorphisms of $M_n$ whose images are not cyclic subgroups and which agree at
+$g$ and at $h$ are equal. -/
 def freeMetabelianEndomorphismsDeterminedByTwoElements : Prop :=
   ∀ n : ℕ, DeterminedByTwoElements (FreeMetabelianGroup n)
 
 /--
-Resolved true: the Kourovka Archive answers 13.66(a) "Yes, one can", citing Lee: for every finite
-rank, endomorphisms of the free group with non-cyclic images are determined by their values at
-suitable `g` and `h`. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
+**Endomorphisms of free groups with non-cyclic images are determined by two elements.** For every
+natural number $n$, the free group $F_n$ of rank $n$ contains two elements $g$ and $h$ such that
+any two endomorphisms $\varphi, \psi$ of $F_n$ whose images are not cyclic subgroups and which
+satisfy $\varphi(g) = \psi(g)$ and $\varphi(h) = \psi(h)$ are equal.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
 Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems,
 Problem 13.66 (V. E. Shpil'rain); resolution: (a) D. Lee, J. Algebra 247 (2002), no. 2, 509-540; (b)
 E. I. Timoshenko, Math. Notes 62 (1998), no. 5-6, 767-770, Kourovka Archive, Problem 13.66 (answers:
@@ -69,9 +82,13 @@ public theorem_wanted freeGroupEndomorphismsDeterminedByTwoElements_holds :
     freeGroupEndomorphismsDeterminedByTwoElements
 
 /--
-Resolved false: the Kourovka Archive answers 13.66(b) "No, not always", citing Timoshenko: for some
-finite rank `n`, no two elements of the free metabelian group `M_n` determine all endomorphisms of
-`M_n` with non-cyclic images. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in
+**Endomorphisms of free metabelian groups are not always determined by two elements.** For a
+natural number $n$, let $M_n = F_n / F_n''$ be the free metabelian group of rank $n$, the quotient
+of the free group $F_n$ of rank $n$ by its second derived subgroup. There is an $n$ such that for
+all elements $g, h \in M_n$ there are endomorphisms $\varphi \ne \psi$ of $M_n$ whose images are
+not cyclic subgroups and which satisfy $\varphi(g) = \psi(g)$ and $\varphi(h) = \psi(h)$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in
 Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved
 Problems, Problem 13.66 (V. E. Shpil'rain); resolution: (a) D. Lee, J. Algebra 247 (2002), no. 2,
 509-540; (b) E. I. Timoshenko, Math. Notes 62 (1998), no. 5-6, 767-770, Kourovka Archive, Problem

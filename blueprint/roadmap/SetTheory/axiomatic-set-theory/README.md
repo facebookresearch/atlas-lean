@@ -1,0 +1,5 @@
+# Axiomatic set theory and models of ZFC
+
+Models of Zermelo–Fraenkel set theory, sets and classes, transitive sets, von Neumann ordinals, rank and the cumulative hierarchy, and hereditarily finite sets with atoms. Forcing and large cardinals have their own fields.
+
+- [The union of a set of transitive sets is transitive](union-of-transitive-sets-transitive.md)

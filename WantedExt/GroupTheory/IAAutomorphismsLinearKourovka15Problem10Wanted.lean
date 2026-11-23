@@ -35,8 +35,10 @@ representation generate a countable field. The target is stated for some `n ≥ 
 covers every `n ≥ 3` (for `n = 2`, `IA(F₂) = Inn(F₂) ≅ F₂` is linear).
 -/
 
-/-- `IA(F_n)`: the automorphisms of the free group `F_n` that act trivially on its abelianization
-`F_n / [F_n, F_n]`. -/
+/-- **IA-automorphisms of a free group.** For a natural number $n$, let $F_n$ be the free group on
+$n$ generators. $\mathrm{IA}(F_n)$ is the subgroup of the automorphism group of $F_n$ consisting of
+the automorphisms $\varphi$ that act trivially on the abelianization $F_n/[F_n, F_n]$, that is,
+such that $\varphi(x)$ and $x$ have the same image in $F_n/[F_n, F_n]$ for every $x \in F_n$. -/
 def iaAut (n : ℕ) : Subgroup (MulAut (FreeGroup (Fin n))) where
   carrier := {φ | ∀ x, Abelianization.of (φ x) = Abelianization.of x}
   one_mem' _ := rfl
@@ -46,8 +48,11 @@ def iaAut (n : ℕ) : Subgroup (MulAut (FreeGroup (Fin n))) where
     simp only [MulAut.apply_inv_self] at h
     exact h.symm
 
-/-- Kourovka 15.10 (Yu. I. Merzlyakov; V. G. Bardakov), for some `n ≥ 3`: `IA(F_n)` is linear,
-i.e. has a faithful finite-dimensional representation over a field. -/
+/-- **Kourovka Problem 15.10 (statement): linearity of IA-automorphism groups of free groups.**
+The statement that for some $n \ge 3$ the group $\mathrm{IA}(F_n)$ of automorphisms of the free
+group $F_n$ on $n$ generators that act trivially on its abelianization $F_n/[F_n, F_n]$ is linear,
+that is, there are a field $K$, a natural number $m$ and an injective group homomorphism
+$\mathrm{IA}(F_n) \to \mathrm{GL}_m(K)$. -/
 def iaAutLinear : Prop :=
   ∃ n : ℕ, 3 ≤ n ∧ ∃ (K : Type) (_ : Field K) (m : ℕ)
     (ρ : iaAut n →* Matrix.GeneralLinearGroup (Fin m) K), Function.Injective ρ

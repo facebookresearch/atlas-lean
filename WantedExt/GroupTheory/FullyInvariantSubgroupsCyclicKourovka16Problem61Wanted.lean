@@ -33,16 +33,23 @@ MacHale). UnsolvedMath record UM-00701253 (`KOU-16.61`), dataset ulamai/Unsolved
 Endomorphisms are all homomorphisms `G →* G`, and orders are `Nat.card`.
 -/
 
-/-- Kourovka 16.61 (D. MacHale): a finite group with a fully invariant subgroup (one mapped into
-itself by every endomorphism) of order `d` for every divisor `d` of `|G|` is cyclic. -/
+/-- **MacHale's question on fully invariant subgroups (Kourovka 16.61).** The statement that every
+finite group $G$ having, for every divisor $d$ of $|G|$, a fully invariant subgroup of order $d$
+(a subgroup $H$ with $\varphi(H) \le H$ for every endomorphism $\varphi$ of $G$) is cyclic. -/
 def fullyInvariantSubgroupsOfEachOrderCyclic : Prop :=
   ∀ (G : Type) [Group G] [Finite G],
     (∀ d : ℕ, d ∣ Nat.card G → ∃ H : Subgroup G, Nat.card H = d ∧ ∀ φ : G →* G, H.map φ ≤ H) →
     IsCyclic G
 
 /--
-Resolved false: the Kourovka Archive answers 16.61 "No" (Abdollahi): take `G = C_p × C_{p²}`, where
-`C_p` and `C_{p²}` are cyclic `p`-groups of orders `p` and `p²`. Source: E. I. Khukhro and V. D.
+**Fully invariant subgroups of every order do not force cyclicity.** Not every finite group $G$
+having, for every divisor $d$ of $|G|$, a fully invariant subgroup of order $d$ (a subgroup $H$
+with $\varphi(H) \le H$ for every endomorphism $\varphi$ of $G$) is cyclic.
+
+The Kourovka Archive answers 16.61 "No" (Abdollahi): take $G = C_p \times C_{p^2}$, where $C_p$
+and $C_{p^2}$ are cyclic $p$-groups of orders $p$ and $p^2$.
+
+Source: E. I. Khukhro and V. D.
 Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 16.61 (D. MacHale); resolution: A.
 Abdollahi, letter of 4 March 2009, as recorded in the Kourovka Archive, Kourovka Archive, Problem

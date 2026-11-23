@@ -21,4 +21,14 @@ example {V : Type*} {G : SimpleGraph V} {v : V} {p : G.Walk v v}
     (hp : p.IsLongestCycle) : p.IsCycle :=
   hp.1
 
+-- A cycle has length at most the number of vertices.
+example {V : Type*} [Fintype V] {G : SimpleGraph V} {v : V} {c : G.Walk v v}
+    (hc : c.IsCycle) : c.length ≤ Fintype.card V :=
+  hc.length_le_card
+
+-- If a graph has a cycle, it has a longest cycle.
+example {V : Type*} [Finite V] {G : SimpleGraph V} {x : V} (c₀ : G.Walk x x)
+    (hc₀ : c₀.IsCycle) : ∃ (w : V) (c : G.Walk w w), c.IsLongestCycle :=
+  exists_isLongestCycle c₀ hc₀
+
 end SimpleGraph.Walk

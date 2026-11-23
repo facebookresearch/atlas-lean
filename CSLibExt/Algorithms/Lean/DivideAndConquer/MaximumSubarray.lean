@@ -48,11 +48,18 @@ universe u
 
 variable {α : Type u} [AddMonoid α] [LinearOrder α]
 
-/-- `p` is the maximum sum of a nonempty prefix of `xs`. -/
+/-- **Maximum prefix sum.** Let $\alpha$ be an additive monoid with a linear order. For a list $xs$
+over $\alpha$ and $p \in \alpha$, $p$ is the maximum prefix sum of $xs$ when some nonempty prefix
+of $xs$ has sum $p$ and every nonempty prefix of $xs$ has sum at most $p$. -/
 def IsMaxPrefixSum (xs : List α) (p : α) : Prop :=
   (∃ ys, ys <+: xs ∧ ys ≠ [] ∧ ys.sum = p) ∧ ∀ ys, ys <+: xs → ys ≠ [] → ys.sum ≤ p
 
-/-- The sum of a nonempty list and its best nonempty suffix sum, scanning from the right. -/
+/-- **Right-to-left suffix scan.** Let $\alpha$ be an additive monoid carrying a linear order.
+For a nonempty list $x_1, \dots, x_n$ in $\alpha$, this timed computation returns the pair
+$(x_1 + \dots + x_n, s)$, where $s$ is the maximum of the suffix sums $x_i + \dots + x_n$ over
+$1 \le i \le n$. It scans from the right: the step for $x_i$ forms $x_i + (x_{i+1} + \dots + x_n)$
+and takes its maximum with the best suffix sum found so far, at a cost of $2$ time units per
+element, $2n$ in total. On the empty list it returns $(0, 0)$ at no cost. -/
 def suffixScan : List α → TimeM ℕ (α × α)
   | [] => pure (0, 0)
   | [x] => do
@@ -64,7 +71,13 @@ def suffixScan : List α → TimeM ℕ (α × α)
       let total := x + r.1
       pure (total, max r.2 total)
 
-/-- The best nonempty prefix sum of a nonempty list. -/
+/-- **Prefix scan.** For lists over an additive monoid with a linear order, the prefix scan returns
+$0$ on the empty list at no cost, and $x$ on a one-element list $[x]$ at cost $2$. On a list with
+first element $x$ and nonempty tail $t$ it returns $\max(x, x + b)$, where $b$ is the prefix scan
+of $t$, at the cost of the scan of $t$ plus $2$.
+
+When $u \le v$ implies $a + u \le a + v$, the value on a nonempty list is the maximum sum of a
+nonempty prefix of the list. -/
 def prefixScan : List α → TimeM ℕ α
   | [] => pure 0
   | [x] => do
@@ -75,7 +88,13 @@ def prefixScan : List α → TimeM ℕ α
       ✓[2]
       pure (max x (x + b))
 
-/-- The divide-and-conquer core on a nonempty list (the empty list gives `0`, unused). -/
+/-- **Divide-and-conquer core of maximum subarray.** For lists over an additive monoid with a
+linear order: on the empty list it returns $0$ and on a one-element list $[x]$ it returns $x$,
+both at no cost. On a list of length $n \ge 2$, let $m = \lfloor n/2 \rfloor$, let $l$ and $r$ be
+its results on the first $m$ elements and on the remaining $n - m$ elements, let $s$ be the best
+nonempty suffix sum of the first $m$ elements as computed by the suffix scan, and let $p$ be the
+prefix scan of the remaining elements. It returns $\max(\max(l, r), s + p)$, at the cost of
+these four computations plus $3$. -/
 def maxSubarrayDC : List α → TimeM ℕ α
   | [] => pure 0
   | [x] => pure x
@@ -93,8 +112,15 @@ decreasing_by
   all_goals simp only [List.length_take, List.length_drop, List.length_cons]
   all_goals omega
 
-/-- CLRS `FIND-MAXIMUM-SUBARRAY`: the maximum sum of a nonempty contiguous run, or `none` for the
-empty list. -/
+/-- **Divide-and-conquer maximum subarray.** The CLRS algorithm FIND-MAXIMUM-SUBARRAY over an
+additive monoid with a linear order, returning only the sum. On the empty list it returns no
+value, at no cost. On a nonempty list it returns the value of the divide-and-conquer core on that
+list, at the same cost; the core splits a list of length $n \ge 2$ after its first
+$\lfloor n/2 \rfloor$ elements and returns the largest of its results on the two parts and the
+best nonempty suffix sum of the first part plus the prefix scan of the second part.
+
+When $b \le c$ implies $a + b \le a + c$ and $b + a \le c + a$, the value returned on a nonempty
+list is the maximum sum of a nonempty contiguous run of the list. -/
 def maxSubarraySumDC (xs : List α) : TimeM ℕ (Option α) :=
   match xs with
   | [] => pure none
@@ -102,7 +128,9 @@ def maxSubarraySumDC (xs : List α) : TimeM ℕ (Option α) :=
 
 /-! ## Cost -/
 
-/-- The cost recurrence of the divide-and-conquer algorithm. -/
+/-- **Cost recurrence of divide-and-conquer maximum subarray.** The function
+$T : \mathbb{N} \to \mathbb{N}$ given by $T(n) = 0$ for $n \le 1$ and
+$T(n) = T(\lfloor n/2 \rfloor) + T(n - \lfloor n/2 \rfloor) + 2n + 3$ for $n \ge 2$. -/
 def maxSubarrayDCCost (n : ℕ) : ℕ :=
   if n ≤ 1 then 0 else maxSubarrayDCCost (n / 2) + maxSubarrayDCCost (n - n / 2) + 2 * n + 3
 termination_by n
@@ -180,8 +208,10 @@ theorem maxSubarrayDCCost_le {n : ℕ} (hn : 1 ≤ n) :
       have e3 : 2 * n * c = 2 * (n * c) := Nat.mul_assoc _ _ _
       omega
 
-/-- On a nonempty list of length `n` the divide-and-conquer algorithm uses at most
-`2 * n * ⌈log₂ n⌉ + 3 * (n - 1)` operations (stated with the `3` moved left). -/
+/-- **Running time of divide-and-conquer maximum subarray.** Let $\alpha$ be an additive monoid
+with a linear order. On a nonempty list over $\alpha$ of length $n$, the cost $T$ of the
+divide-and-conquer maximum subarray algorithm satisfies
+$T + 3 \le 2n\lceil \log_2 n \rceil + 3n$, that is, $T \le 2n\lceil \log_2 n \rceil + 3(n - 1)$. -/
 theorem maxSubarraySumDC_time_le (xs : List α) (hxs : xs ≠ []) :
     (maxSubarraySumDC xs).time + 3 ≤ 2 * xs.length * Nat.clog 2 xs.length + 3 * xs.length := by
   match xs, hxs with
@@ -195,7 +225,10 @@ theorem maxSubarraySumDC_nil_time : (maxSubarraySumDC ([] : List α)).time = 0 :
 
 /-! ## Correctness -/
 
-/-- One scan from the right gives the total and the best nonempty suffix sum. -/
+/-- **Correctness of the suffix scan.** Let $\alpha$ be an additive monoid with a linear order. For
+every nonempty list $xs$ over $\alpha$, the suffix scan of $xs$ returns a pair whose first
+component is the sum of $xs$ and whose second component is the maximum sum of a nonempty suffix
+of $xs$. -/
 theorem suffixScan_spec : ∀ xs : List α, xs ≠ [] →
     (suffixScan xs).ret.1 = xs.sum ∧ IsMaxSuffixSum xs (suffixScan xs).ret.2
   | [], h => absurd rfl h
@@ -245,8 +278,13 @@ theorem prefixScan_spec [AddLeftMono α] : ∀ xs : List α, xs ≠ [] →
             simp
           · exact (add_le_add_right (hle u hu hu0) x).trans (le_max_right _ _)
 
-/-- Combining the halves: a best run of `L ++ R` is a best run of `L`, a best run of `R`, or a
-best suffix of `L` followed by a best prefix of `R`. -/
+/-- **Maximum subarray sum of a concatenation.** Let $\alpha$ be an additive monoid with a linear
+order such that $b \le c$ implies $a + b \le a + c$ and $b + a \le c + a$, and let $L$ and $R$ be
+lists over $\alpha$. Suppose that $l$ is the maximum sum of a nonempty contiguous run of $L$, $r$
+is the maximum sum of a nonempty contiguous run of $R$, $s$ is the maximum sum of a nonempty
+suffix of $L$, and $p$ is the maximum sum of a nonempty prefix of $R$. Then
+$\max(\max(l, r), s + p)$ is the maximum sum of a nonempty contiguous run of the concatenation of
+$L$ followed by $R$. -/
 theorem IsMaxSubarraySum.append [AddLeftMono α] [AddRightMono α] {L R : List α} {l r s p : α}
     (hl : IsMaxSubarraySum L l) (hr : IsMaxSubarraySum R r) (hs : IsMaxSuffixSum L s)
     (hp : IsMaxPrefixSum R p) : IsMaxSubarraySum (L ++ R) (max (max l r) (s + p)) := by
@@ -290,8 +328,10 @@ theorem isMaxSubarraySum_maxSubarrayDC [AddLeftMono α] [AddRightMono α] (xs : 
         have := IsMaxSubarraySum.append hl hr (suffixScan_spec _ hL).2 (prefixScan_spec _ hR)
         rwa [List.take_append_drop] at this
 
-/-- The divide-and-conquer algorithm returns a value exactly when the input is nonempty, and that
-value is the maximum sum of a nonempty contiguous run. -/
+/-- **Correctness of divide-and-conquer maximum subarray.** Let $\alpha$ be an additive monoid
+with a linear order such that $b \le c$ implies $a + b \le a + c$ and $b + a \le c + a$. For every
+list $xs$ over $\alpha$ and every $m \in \alpha$, the divide-and-conquer algorithm returns $m$ on
+$xs$ if and only if $m$ is the maximum sum of a nonempty contiguous run of $xs$. -/
 theorem maxSubarraySumDC_ret_eq_some_iff [AddLeftMono α] [AddRightMono α] (xs : List α)
     (m : α) : (maxSubarraySumDC xs).ret = some m ↔ IsMaxSubarraySum xs m := by
   match xs with
@@ -303,7 +343,10 @@ theorem maxSubarraySumDC_ret_eq_some_iff [AddLeftMono α] [AddRightMono α] (xs 
       simp only [maxSubarraySumDC, ret_map, Option.some.injEq]
       exact ⟨fun hm => hm ▸ h, fun hm => h.unique hm⟩
 
-/-- Divide and conquer and Kadane's scan return the same answer. -/
+/-- **Divide and conquer agrees with Kadane's algorithm.** Let $\alpha$ be an additive monoid with
+a linear order such that $b \le c$ implies $a + b \le a + c$ and $b + a \le c + a$. For every list
+$xs$ over $\alpha$, the divide-and-conquer maximum subarray algorithm and Kadane's algorithm
+return the same result on $xs$. -/
 theorem maxSubarraySumDC_eq_maxSubarraySum [AddLeftMono α] [AddRightMono α] (xs : List α) :
     (maxSubarraySumDC xs).ret = (maxSubarraySum xs).ret := by
   cases h : (maxSubarraySum xs).ret with

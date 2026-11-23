@@ -20,13 +20,21 @@ open scoped ENNReal
 
 noncomputable section
 
-/-- The union of the power-growth bad sets for the logarithmic majorant and its derivative. -/
+/-- **Wiman exceptional set.** For a function $f : \mathbb{C} \to \mathbb{C}$ with radial majorant
+$M_f$, let $g(x) = \log M_f(e^x)$. For $x_0 \in \mathbb{R}$, the Wiman exceptional set $E_f(x_0)$
+is the union of the power-growth bad sets of $g$ and of $g'$ with exponent $9/8$ above $x_0$,
+that is, the set of $x \ge x_0$ with $g(x)^{9/8} \le g'(x)$ or $g'(x)^{9/8} \le g''(x)$. -/
 def wimanExceptionalSet (f : ℂ → ℂ) (x₀ : ℝ) : Set ℝ :=
   Real.powerGrowthBadSet (wimanGrowth f) (9 / 8 : ℝ) x₀ ∪
     Real.powerGrowthBadSet (deriv (wimanGrowth f)) (9 / 8 : ℝ) x₀
 
-/-- The two power-growth bad sets have finite measure, and off their union the second derivative
-is controlled by the composed exponent `(9 / 8) ^ 2 = 81 / 64`. -/
+/-- **The Wiman exceptional set has finite measure.** Let $f$ be a transcendental entire function,
+let $M_f$ be its radial majorant and let $g(x) = \log M_f(e^x)$. For $x_0 \in \mathbb{R}$ let
+$E_f(x_0)$ be the Wiman exceptional set, the set of $x \ge x_0$ with $g(x)^{9/8} \le g'(x)$ or
+$g'(x)^{9/8} \le g''(x)$. There is $x_0 \in \mathbb{R}$ such that $E_f(x_0)$ has finite Lebesgue
+measure and $g''(x) \le g(x)^{81/64}$ for every $x \ge x_0$ outside $E_f(x_0)$.
+
+The exponent $81/64 = (9/8)^2$ comes from composing the two growth bounds. -/
 theorem exists_finite_wimanExceptionalSet
     (f : ℂ → ℂ) (hf : Differentiable ℂ f)
     (htrans : IsTranscendental f) :

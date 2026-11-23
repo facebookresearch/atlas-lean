@@ -51,7 +51,7 @@ teorth/optimizationproblems commit
 `2c1968cd520b60f1cf3cf50749f7285e800e4e15`.
 -/
 
-/-- Head movement direction. -/
+/-- **Head movement.** A head movement is one of exactly two directions: left or right. -/
 inductive Move where
   | left
   | right
@@ -63,26 +63,36 @@ instance : Fintype Move where
     intro m
     cases m <;> simp
 
-/-- The displacement of a head movement. -/
+/-- **Head displacement.** The displacement of a head movement is $-1$ for a move to the left
+and $1$ for a move to the right. -/
 def Move.shift : Move → ℤ
   | .left => -1
   | .right => 1
 
-/-- A Busy Beaver machine with `n` working states: for each state and read
-symbol, the symbol to write, the head movement, and the next state, where
-`none` is the halt state. The write and move of a halting transition are
-still performed, and the halting step counts toward the runtime. -/
+/-- **Busy Beaver machine.** A Busy Beaver machine with $n$ working states is a transition table
+that assigns to each of the $n$ working states and each read symbol in $\{0, 1\}$ a symbol in
+$\{0, 1\}$ to write, a head movement (left or right), and a next state, which is either one of
+the $n$ working states or the halt state.
+
+The write and move of a halting transition are still performed, and the halting step counts
+toward the runtime. -/
 abbrev Machine (n : ℕ) :=
   Fin n → Fin 2 → Fin 2 × Move × Option (Fin n)
 
-/-- A machine configuration: current state (`none` once halted), head
-position, and tape contents. -/
+/-- **Busy Beaver machine configuration.** A configuration of an $n$-state machine consists of a
+current state, which is either one of the $n$ working states or the halt state, an integer head
+position, and a tape assigning a symbol in $\{0, 1\}$ to every integer cell. -/
 structure Config (n : ℕ) where
   state : Option (Fin n)
   head : ℤ
   tape : ℤ → Fin 2
 
-/-- One execution step. A halted configuration is fixed. -/
+/-- **One step of a Busy Beaver machine.** Let $M$ be a machine with $n$ working states and let
+$c$ be a configuration with head position $h$. If $c$ is halted, the step leaves $c$ unchanged.
+Otherwise let $q$ be the current state, let $a$ be the symbol in cell $h$, and let
+$M(q, a) = (b, d, q')$. The step writes $b$ in cell $h$, leaving every other cell unchanged, moves
+the head to $h - 1$ if $d$ is left and to $h + 1$ if $d$ is right, and passes to the state $q'$,
+which may be the halt state. -/
 def step {n : ℕ} (M : Machine n) (c : Config n) : Config n :=
   match c.state with
   | none => c
@@ -119,15 +129,20 @@ theorem step_tape_of_some {n : ℕ} (M : Machine n) {c : Config n}
       Function.update c.tape c.head (M q (c.tape c.head)).1 := by
   rw [step_of_state_some M h]
 
-/-- The initial state: state `0` if it exists, halted for `n = 0`. -/
+/-- **Initial state.** For a machine with $n$ working states, the initial state is state $0$ when
+$n > 0$, and the halt state when $n = 0$. -/
 def initialState (n : ℕ) : Option (Fin n) :=
   if h : 0 < n then some ⟨0, h⟩ else none
 
-/-- The initial configuration on the blank tape. -/
+/-- **Initial configuration of a Busy Beaver machine.** The initial configuration of a machine
+with $n$ working states is in the initial state (state $0$, or the halt state when $n = 0$), with
+the head at position $0$ and every tape cell blank, that is, holding the symbol $0$. -/
 def initial (n : ℕ) : Config n :=
   ⟨initialState n, 0, fun _ => 0⟩
 
-/-- The configuration after `t` steps. -/
+/-- **Configuration after $t$ steps.** For a Busy Beaver machine $M$ and $t \in \mathbb{N}$,
+the configuration of $M$ after $t$ steps is the result of applying the one-step map of $M$
+$t$ times to the initial configuration on the blank tape. -/
 def run {n : ℕ} (M : Machine n) (t : ℕ) : Config n :=
   (step M)^[t] (initial n)
 
@@ -137,11 +152,15 @@ theorem run_succ {n : ℕ} (M : Machine n) (t : ℕ) :
     run M (t + 1) = step M (run M t) :=
   Function.iterate_succ_apply' (step M) t (initial n)
 
-/-- The machine has halted within `t` steps. -/
+/-- **Halting within $t$ steps.** A Busy Beaver machine $M$ with $n$ working states halts within
+$t$ steps when the configuration reached after running $M$ for $t$ steps from the initial
+blank-tape configuration is in the halt state. -/
 def HaltsWithin {n : ℕ} (M : Machine n) (t : ℕ) : Prop :=
   (run M t).state = none
 
-/-- The machine halts on the blank tape. -/
+/-- **Halting on the blank tape.** A Busy Beaver machine $M$ halts when there is a number of steps
+$t$ such that $M$ halts within $t$ steps, that is, when $M$ started from the initial
+blank-tape configuration eventually reaches the halt state. -/
 def Halts {n : ℕ} (M : Machine n) : Prop :=
   ∃ t, HaltsWithin M t
 
@@ -160,7 +179,9 @@ theorem haltsWithin_mono {n : ℕ} {M : Machine n} {s t : ℕ}
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le hst
   exact key k
 
-/-- The halting time of a halting machine. -/
+/-- **Halting time.** For an $n$-state machine $M$ that halts on the blank tape, its
+halting time is the least $t$ such that $M$, started on the blank tape, is in the halt
+state after $t$ steps. -/
 noncomputable def haltTime {n : ℕ} (M : Machine n) (h : Halts M) : ℕ :=
   @Nat.find _ (fun t => Classical.propDecidable _) h
 
@@ -174,7 +195,9 @@ theorem haltTime_le {n : ℕ} (M : Machine n) (h : Halts M) {t : ℕ}
   classical
   exact Nat.find_le ht
 
-/-- After `t` steps the head is within distance `t` of the origin. -/
+/-- **Head displacement bound.** For every $n$-state Busy Beaver machine $M$ and every
+$t \in \mathbb{N}$, if $h \in \mathbb{Z}$ is the head position after $M$ has run for $t$ steps
+from the initial configuration on the blank tape, then $|h| \le t$. -/
 theorem abs_head_le {n : ℕ} (M : Machine n) (t : ℕ) :
     |(run M t).head| ≤ t := by
   induction t with
@@ -202,7 +225,9 @@ theorem abs_head_le {n : ℕ} (M : Machine n) (t : ℕ) :
             linarith
         _ = ((t + 1 : ℕ) : ℤ) := by push_cast; ring
 
-/-- After `t` steps every cell at distance greater than `t` is blank. -/
+/-- **Cells far from the origin stay blank.** Let $M$ be a machine with $n$ working states,
+started in cell $0$ on the blank tape. For every $t \in \mathbb{N}$ and every cell
+$i \in \mathbb{Z}$ with $|i| > t$, the symbol in cell $i$ after $t$ steps is $0$. -/
 theorem tape_eq_zero_of_abs_gt {n : ℕ} (M : Machine n) (t : ℕ)
     {i : ℤ} (hi : t < |i|) : (run M t).tape i = 0 := by
   induction t with
@@ -238,8 +263,13 @@ theorem tape_eq_zero_of_abs_gt {n : ℕ} (M : Machine n) (t : ℕ)
           linarith
         exact_mod_cast h1)
 
-/-- The number of ones on the tape after `t` steps, counted on the finite
-window that the head can have reached. -/
+/-- **Number of ones after $t$ steps.** For a Busy Beaver machine $M$ and $t \in \mathbb{N}$,
+the number of ones of $M$ after $t$ steps is the number of cells $i \in \mathbb{Z}$ with
+$-t \le i \le t$ that hold the symbol $1$ in the configuration of $M$ after $t$ steps, started
+on the blank tape.
+
+Every one on the tape after $t$ steps lies in this window, since the head moves at most one
+cell per step. -/
 def onesAt {n : ℕ} (M : Machine n) (t : ℕ) : ℕ :=
   ((Finset.Icc (-(t : ℤ)) t).filter fun i => (run M t).tape i = 1).card
 
@@ -249,7 +279,10 @@ theorem onesAt_le {n : ℕ} (M : Machine n) (t : ℕ) :
   rw [Int.card_Icc]
   omega
 
-/-- Every one on the tape after `t` steps lies in the counting window. -/
+/-- **After $t$ steps, every one lies within distance $t$ of the origin.** For every Busy Beaver
+machine $M$, every $t \in \mathbb{N}$ and every cell $i \in \mathbb{Z}$, if cell $i$ holds the
+symbol $1$ after $M$ runs for $t$ steps from the initial blank-tape configuration, then
+$-t \le i \le t$. -/
 theorem mem_window_of_tape_eq_one {n : ℕ} (M : Machine n) (t : ℕ) {i : ℤ}
     (hi : (run M t).tape i = 1) : i ∈ Finset.Icc (-(t : ℤ)) t := by
   rw [Finset.mem_Icc, ← abs_le]
@@ -259,7 +292,9 @@ theorem mem_window_of_tape_eq_one {n : ℕ} (M : Machine n) (t : ℕ) {i : ℤ}
   rw [hi] at h0
   exact one_ne_zero h0
 
-/-- A step writes at most one additional one. -/
+/-- **The number of ones grows by at most one per step.** For every Busy Beaver machine $M$
+and every $t \in \mathbb{N}$, the number of ones of $M$ after $t + 1$ steps is at most the
+number of ones of $M$ after $t$ steps plus $1$. -/
 theorem onesAt_succ_le {n : ℕ} (M : Machine n) (t : ℕ) :
     onesAt M (t + 1) ≤ onesAt M t + 1 := by
   by_cases hs : (run M t).state = none
@@ -324,7 +359,8 @@ theorem onesAt_zero {n : ℕ} (M : Machine n) : onesAt M 0 = 0 := by
   rw [onesAt]
   simp [run_zero, initial]
 
-/-- Ones are created one per step. -/
+/-- **At most $t$ ones after $t$ steps.** For every Busy Beaver machine $M$ and every
+$t \in \mathbb{N}$, the number of ones of $M$ after $t$ steps is at most $t$. -/
 theorem onesAt_le_steps {n : ℕ} (M : Machine n) (t : ℕ) :
     onesAt M t ≤ t := by
   induction t with
@@ -332,25 +368,29 @@ theorem onesAt_le_steps {n : ℕ} (M : Machine n) (t : ℕ) :
   | succ t ih =>
     exact (onesAt_succ_le M t).trans (Nat.add_le_add_right ih 1)
 
-/-- The runtime contributed by a machine to the Busy Beaver maximum:
-its halting time if it halts, and `0` otherwise. -/
+/-- **Runtime of a Busy Beaver machine.** For a machine $M$ with $n$ working states, the runtime
+of $M$ is its halting time on the blank tape if $M$ halts, and $0$ if $M$ does not halt. This is
+the quantity whose maximum over all $n$-state machines is the shift function $S(n)$. -/
 noncomputable def stepsOf {n : ℕ} (M : Machine n) : ℕ :=
   @dite ℕ (Halts M) (Classical.propDecidable _) (fun h => haltTime M h)
     (fun _ => 0)
 
-/-- The ones score contributed by a machine: the ones on its final tape
-if it halts, and `0` otherwise. -/
+/-- **Score of a machine.** For a Busy Beaver machine $M$: if $M$ halts on the blank tape,
+with halting time $T$, its score is the number of ones of $M$ after $T$ steps; if $M$ does not
+halt, its score is $0$. -/
 noncomputable def scoreOf {n : ℕ} (M : Machine n) : ℕ :=
   @dite ℕ (Halts M) (Classical.propDecidable _)
     (fun h => onesAt M (haltTime M h)) (fun _ => 0)
 
-/-- Rado's shift function `S(n)`: the largest halting time of an `n`-state
-two-symbol machine started on the blank tape. -/
+/-- **Busy Beaver shift function.** For $n \in \mathbb{N}$, Rado's shift function $S(n)$ is the
+largest halting time of an $n$-state two-symbol machine that halts when started on the blank
+tape; machines that do not halt contribute $0$. -/
 noncomputable def busyBeaverSteps (n : ℕ) : ℕ :=
   (Finset.univ : Finset (Machine n)).sup stepsOf
 
-/-- Rado's score function `Σ(n)`: the largest number of ones left on the
-tape by a halting `n`-state two-symbol machine. -/
+/-- **Busy Beaver score function.** For $n \in \mathbb{N}$, Rado's score function $\Sigma(n)$ is
+the largest number of ones left on the tape, at its halting time, by an $n$-state two-symbol
+machine that halts when started on the blank tape; machines that do not halt contribute $0$. -/
 noncomputable def busyBeaverOnes (n : ℕ) : ℕ :=
   (Finset.univ : Finset (Machine n)).sup scoreOf
 
@@ -387,7 +427,10 @@ theorem scoreOf_le_stepsOf {n : ℕ} (M : Machine n) :
     exact onesAt_le_steps M _
   · rw [scoreOf, stepsOf, dif_neg h, dif_neg h]
 
-/-- The score never exceeds the runtime, at the level of the maxima. -/
+/-- **The Busy Beaver score is at most the shift.** For every $n \in \mathbb{N}$, Rado's score
+function $\Sigma$ and Rado's shift function $S$ satisfy $\Sigma(n) \le S(n)$: the largest number
+of ones left on the tape by a halting $n$-state two-symbol machine started on the blank tape is
+at most the largest halting time of such a machine. -/
 theorem busyBeaverOnes_le_steps (n : ℕ) :
     busyBeaverOnes n ≤ busyBeaverSteps n := by
   rw [busyBeaverOnes, busyBeaverSteps]
@@ -395,7 +438,11 @@ theorem busyBeaverOnes_le_steps (n : ℕ) :
   intro M _hM
   exact (scoreOf_le_stepsOf M).trans (Finset.le_sup (Finset.mem_univ M))
 
-/-- The step maximum is attained by a halting machine (or is zero). -/
+/-- **The shift function is attained.** Let $S(n)$ be Rado's shift function, the largest
+runtime of an $n$-state machine, where the runtime of a machine is its halting time on the
+blank tape if it halts and $0$ otherwise. For every $n$, some $n$-state machine $M$ has
+runtime equal to $S(n)$. Thus $S(n)$ is the halting time of a halting $n$-state machine,
+or $S(n) = 0$. -/
 theorem exists_stepsOf_eq (n : ℕ) :
     ∃ M : Machine n, stepsOf M = busyBeaverSteps n := by
   obtain ⟨M, _hM, hM⟩ := Finset.exists_mem_eq_sup (s := (Finset.univ : Finset (Machine n)))
@@ -404,7 +451,11 @@ theorem exists_stepsOf_eq (n : ℕ) :
   rw [busyBeaverSteps]
   exact hM.symm
 
-/-- The score maximum is attained by a halting machine (or is zero). -/
+/-- **The score function is attained.** Let $\Sigma(n)$ be the busy beaver score function,
+the largest score of an $n$-state machine, where the score of a machine is the number of
+ones on its final tape if it halts on the blank tape and $0$ otherwise. For every $n$, some
+$n$-state machine $M$ has score equal to $\Sigma(n)$. Thus $\Sigma(n)$ is the number of
+ones left by a halting $n$-state machine, or $\Sigma(n) = 0$. -/
 theorem exists_scoreOf_eq (n : ℕ) :
     ∃ M : Machine n, scoreOf M = busyBeaverOnes n := by
   obtain ⟨M, _hM, hM⟩ := Finset.exists_mem_eq_sup (s := (Finset.univ : Finset (Machine n)))
@@ -413,8 +464,14 @@ theorem exists_scoreOf_eq (n : ℕ) :
   rw [busyBeaverOnes]
   exact hM.symm
 
-/-- Embed an `n`-state machine into `n + 1` states, leaving the new state
-unreachable (it halts immediately if ever entered). -/
+/-- **Embedding a machine into one more state.** An $n$-state machine $M$ is embedded
+into $n + 1$ states as follows. In a working state $q < n$ reading a symbol $s$, the new
+machine writes the symbol, makes the move and enters the next state that $M$ prescribes
+in state $q$ on $s$, halting when $M$ halts. In the new state $n$ it writes $0$, moves
+left and halts, whatever it reads.
+
+No transition enters state $n$. So for $n \ge 1$, where the machine starts in state
+$0 < n$, the new state is never reached; for $n = 0$ the new state is the start state. -/
 def embedMachine {n : ℕ} (M : Machine n) : Machine (n + 1) :=
   fun q s =>
     if h : q.val < n then
@@ -422,7 +479,10 @@ def embedMachine {n : ℕ} (M : Machine n) : Machine (n + 1) :=
       (a.1, a.2.1, a.2.2.map Fin.castSucc)
     else (0, Move.left, none)
 
-/-- Embed a configuration along `Fin.castSucc`. -/
+/-- **Embedding a configuration into one more state.** For a configuration $c$ of an
+$n$-state machine, its embedding is the configuration for $n + 1$ states with the same
+head position and the same tape as $c$. Its state is the state of $c$, where a working
+state $q \in \{0, \dots, n - 1\}$ stays $q$ and the halt state stays the halt state. -/
 def embedConfig {n : ℕ} (c : Config n) : Config (n + 1) :=
   ⟨c.state.map Fin.castSucc, c.head, c.tape⟩
 
@@ -598,9 +658,12 @@ theorem not_haltsWithin_zero_one (M : Machine 1) :
   rw [HaltsWithin, run_zero, initial_one_state]
   simp
 
-/-- A one-state machine whose blank transition returns to its only state
-marches in one direction forever and never halts: at every step the head
-is on a previously unvisited blank cell. -/
+/-- **A one-state machine that stays in its state on a blank never halts.** Let $M$ be a Busy Beaver
+machine with a single working state $0$. If the transition of $M$ from state $0$ on reading the
+blank symbol $0$ has next state $0$, then $M$ does not halt.
+
+Such a machine marches in one direction forever: at every step the head is on a previously
+unvisited blank cell. -/
 theorem not_halts_of_one_state_march (M : Machine 1)
     (hnext : (M 0 0).2.2 = some 0) : ¬ Halts M := by
   set s : ℤ := (M 0 0).2.1.shift with hs
@@ -741,35 +804,47 @@ theorem busyBeaverOnes_one : busyBeaverOnes 1 = 1 := by
     rw [hscore] at hle
     exact hle
 
-/-- A code for a machine, as a natural number: the pair of its state
-count and its index in an enumeration of all machines with that many
-states. -/
+/-- **Machine code.** The code of a machine $M$ with $n$ working states is the natural number that
+encodes the pair $(n, i)$ under a fixed pairing bijection
+$\mathbb{N} \times \mathbb{N} \to \mathbb{N}$, where $i$ is the index of $M$ in a fixed enumeration
+of the finitely many machines with $n$ working states. -/
 noncomputable def machineCode {n : ℕ} (M : Machine n) : ℕ :=
   Nat.pair n (Fintype.equivFinOfCardEq (α := Machine n) rfl M).val
 
-/-- A syntactic sentence code, by tag and payload: tag `0` says the
-coded machine halts, tag `1` says it does not halt, tag `2` is the
-false sentence, and tag `3` with payload `Nat.pair n B` says every
-halting `n`-state machine halts within `B` steps. Sentences are natural
-numbers, not Lean propositions, so provability does not collapse under
-`propext`. -/
+/-- **Sentence codes.** The sentence code with tag $a$ and payload $p$ is the natural number
+$4p + a$. The tags in use are $0$ (the coded machine halts), $1$ (the coded machine does not
+halt), $2$ (the false sentence), and $3$ with payload the pairing code of $n$ and $B$ (every
+halting $n$-state machine halts within $B$ steps).
+
+Sentences are natural numbers rather than propositions, so provability does not collapse under
+propositional extensionality. -/
 def sentenceCode (tag payload : ℕ) : ℕ :=
   4 * payload + tag
 
-/-- The sentence "the machine halts on the blank tape". -/
+/-- **Halting sentence of a machine.** For an $n$-state machine $M$, the halting sentence
+of $M$ is the sentence code with tag $0$ and payload the code of $M$. It stands for
+"$M$ halts on the blank tape"; this meaning comes from soundness hypotheses on a
+theory, not from the code itself. -/
 noncomputable def haltsSentence {n : ℕ} (M : Machine n) : ℕ :=
   sentenceCode 0 (machineCode M)
 
-/-- The sentence "the machine does not halt on the blank tape". -/
+/-- **Non-halting sentence of a machine.** For a Busy Beaver machine $M$, the non-halting
+sentence of $M$ is the sentence code with tag $1$ whose payload is the code of $M$; it stands
+for "$M$ does not halt on the blank tape". -/
 noncomputable def notHaltsSentence {n : ℕ} (M : Machine n) : ℕ :=
   sentenceCode 1 (machineCode M)
 
-/-- The false sentence. -/
+/-- **The false sentence.** The false sentence is the sentence code with tag $2$ and
+payload $0$, that is, the natural number $2$. -/
 def falseSentence : ℕ :=
   sentenceCode 2 0
 
-/-- The sentence "every halting `n`-state machine halts within `B`
-steps". -/
+/-- **Runtime-bound sentence.** For natural numbers $n$ and $B$, the runtime-bound sentence is
+the sentence code with tag $3$ and payload $\langle n, B \rangle$, the pairing of $n$ and $B$;
+as a number it equals $4 \langle n, B \rangle + 3$.
+
+Its intended reading is "every halting $n$-state machine halts within $B$ steps"; this meaning
+is assigned only through separate soundness hypotheses. -/
 def boundSentence (n B : ℕ) : ℕ :=
   sentenceCode 3 (Nat.pair n B)
 
@@ -788,39 +863,46 @@ theorem boundSentence_ne_falseSentence (n B : ℕ) :
   unfold boundSentence falseSentence sentenceCode
   omega
 
-/-- An abstract formal theory, given by a provability predicate on
-syntactic sentence codes (natural numbers). The theory is a
-metatheoretic parameter: ZFC itself, including its syntax and proof
-checker, is not formalized in this repository. Meaning is assigned to
-specific families of codes (`haltsSentence`, `notHaltsSentence`,
-`falseSentence`, `boundSentence`) through separate soundness
-hypotheses; no meaning is assigned to other codes here. -/
+/-- **Formal theory.** A formal theory is given by a provability predicate on sentence
+codes, which are natural numbers: for each natural number it specifies whether that
+sentence code is provable in the theory.
+
+The theory is an abstract parameter, with ZFC as the intended instance. No meaning is
+attached to sentence codes here; the halting, non-halting, false and runtime-bound
+sentences receive their meaning through separate soundness hypotheses. -/
 structure FormalTheory where
   /-- Provability of a sentence code in the theory. -/
   Provable : ℕ → Prop
 
-/-- The theory is consistent: it does not prove the false sentence. -/
+/-- **Consistent formal theory.** A formal theory $T$ is consistent when $T$ does not prove the
+false sentence. -/
 def Consistent (T : FormalTheory) : Prop :=
   ¬ T.Provable falseSentence
 
-/-- Soundness for halting sentences: a proof of a halting (resp.
-non-halting) sentence implies the machine really halts (resp. does not
-halt). -/
+/-- **Soundness for halting sentences.** A formal theory $T$ is sound for halting sentences
+when, for every $n$ and every Busy Beaver machine $M$ with $n$ states, if $T$ proves the
+halting sentence of $M$ then $M$ halts on the blank tape, and if $T$ proves the non-halting
+sentence of $M$ then $M$ does not halt on the blank tape. -/
 def SoundForHalting (T : FormalTheory) : Prop :=
   (∀ {n : ℕ} (M : Machine n), T.Provable (haltsSentence M) → Halts M) ∧
   (∀ {n : ℕ} (M : Machine n),
     T.Provable (notHaltsSentence M) → ¬ Halts M)
 
-/-- The theory decides halting for every `n`-state machine: for each
-machine it proves its halting sentence or its non-halting sentence. -/
+/-- **Theories deciding halting at a state count.** A formal theory $T$ decides halting for
+$n$-state machines when, for every $n$-state machine $M$, $T$ proves the halting sentence of $M$
+or $T$ proves the non-halting sentence of $M$. -/
 def DecidesHalting (T : FormalTheory) (n : ℕ) : Prop :=
   ∀ M : Machine n,
     T.Provable (haltsSentence M) ∨ T.Provable (notHaltsSentence M)
 
-/-- The first number of states at which the theory fails to decide
-halting for all machines, or `0` when there is no such number of states.
-For ZFC this is catalogue constant 14a; the `0` junk case corresponds to
-a theory deciding halting at every size. -/
+/-- **First undecidable number of states.** For a formal theory $T$, the first
+undecidable number of states is the least $n$ such that $T$ does not decide halting for
+all $n$-state machines, that is, there is an $n$-state machine $M$ for which $T$ proves
+neither the halting sentence nor the non-halting sentence of $M$. It is $0$ when there
+is no such $n$.
+
+For ZFC this is catalogue constant 14a; the junk value $0$ covers a theory that decides
+halting at every number of states. -/
 noncomputable def firstUndecidable (T : FormalTheory) : ℕ :=
   sInf {n | ¬ DecidesHalting T n}
 
@@ -833,10 +915,12 @@ theorem not_decides_firstUndecidable {T : FormalTheory}
     ¬ DecidesHalting T (firstUndecidable T) :=
   Nat.sInf_mem h
 
-/-- If a theory decides halting for all machines with at most five
-states but fails somewhere, its first undecidable size is at least six.
-This is the shape of the catalogue lower bound from the determination of
-`BB(5)`. -/
+/-- **Decidability through five states and the first undecidable size.** If a formal theory
+$T$ decides halting for $n$-state machines for every $n \le 5$, and fails to decide halting for
+$n$-state machines for some $n$, then the first undecidable size of $T$ is at least $6$.
+
+This is the shape of the catalogue lower bound from the determination of the five-state Busy
+Beaver value. -/
 theorem six_le_firstUndecidable_of_decides_le_five {T : FormalTheory}
     (h5 : ∀ n ≤ 5, DecidesHalting T n)
     (hex : ∃ n, ¬ DecidesHalting T n) :
@@ -846,12 +930,13 @@ theorem six_le_firstUndecidable_of_decides_le_five {T : FormalTheory}
   push Not at hcon
   exact hmem (h5 (firstUndecidable T) (by omega))
 
-/-- A consistency-search machine blocks decidability at its size: if
-`M` halts exactly when `T` proves the false sentence, `T` is consistent
-and sound for the halting sentence of `M`, and `T` does not prove the
-non-halting sentence of `M` (the Gödel second-incompleteness content
-for ZFC), then `T` does not decide halting for all machines of that
-size. -/
+/-- **A consistency-search machine blocks decidability at its size.** Let $T$ be a formal theory
+and $M$ a Busy Beaver machine with $n$ working states. Suppose that $M$ halts if and only if $T$
+proves the false sentence, that $M$ halts whenever $T$ proves the halting sentence of $M$, that
+$T$ is consistent, and that $T$ does not prove the non-halting sentence of $M$. Then $T$ does not
+decide halting for all machines with $n$ working states.
+
+The last hypothesis is the Gödel second-incompleteness content when $T$ is ZFC. -/
 theorem not_decides_of_consistency_machine {T : FormalTheory} {n : ℕ}
     (M : Machine n) (hM : Halts M ↔ T.Provable falseSentence)
     (hsound : T.Provable (haltsSentence M) → Halts M)
@@ -863,13 +948,16 @@ theorem not_decides_of_consistency_machine {T : FormalTheory} {n : ℕ}
   · exact hcons (hM.mp (hsound h1))
   · exact hnot h1
 
-/-- Decidability propagates to fewer states when provability of
-halting sentences transports along the state embedding: an `n`-state
-machine embeds into `n + 1` states with the same halting behaviour.
-The transport hypotheses are the point where a real theory would
-rewrite a proof about the embedded machine into a proof about the
-original machine; they are stated explicitly because provability of
-one sentence code does not formally imply provability of another. -/
+/-- **Decidability of halting passes to fewer states.** Let $T$ be a formal theory such that, for
+every $m$ and every Busy Beaver machine $M$ with $m$ working states, if $T$ proves the halting
+sentence of the embedding of $M$ into $m + 1$ states then $T$ proves the halting sentence of $M$,
+and if $T$ proves the non-halting sentence of the embedding of $M$ into $m + 1$ states then $T$
+proves the non-halting sentence of $M$. Then for every $n$, if $T$ decides halting for machines
+with $n + 1$ working states, it decides halting for machines with $n$ working states.
+
+The transport hypotheses are where a real theory would rewrite a proof about the embedded machine
+into a proof about the original machine; they are stated explicitly because provability of one
+sentence code does not formally imply provability of another. -/
 theorem decidesHalting_of_succ {T : FormalTheory}
     (htransport : ∀ {n : ℕ} (M : Machine n),
       (T.Provable (haltsSentence (embedMachine M)) →
@@ -883,20 +971,26 @@ theorem decidesHalting_of_succ {T : FormalTheory}
   · exact Or.inl ((htransport M).1 h1)
   · exact Or.inr ((htransport M).2 h1)
 
-/-- A presentation of a ZFC-like theory by an explicit proof checker:
-`check p s` says `p` is a proof of the sentence coded by `s`. The
-bundle records exactly the properties used in this file: provability
-is existence of a checked proof, soundness for halting and bound
-sentences, verification of finite halting computations and of the
-computed Busy Beaver bounds through five states, and derivation of
-non-halting sentences from a proved bound plus a finite non-halting
-run. No concrete ZFC syntax or checker is supplied, and no instance
-of this bundle for ZFC is constructed; the intended reading is ZFC with
-its standard proof checker. Formalizing that checker is the gap behind
-the catalogue's numerical state counts for consistency-search machines,
-which are therefore not asserted for arbitrary presentations: the
-counts in the literature are properties of specific checker
-implementations, not of every theory satisfying this bundle. -/
+/-- **Proof-checker presentation of a ZFC-like theory.** A ZFC-like presentation consists of a
+formal theory $T$, given by a provability predicate on sentence codes in $\mathbb{N}$, together
+with a Boolean proof checker $\mathrm{check}(p, s)$ on pairs of natural numbers, such that the
+following hold. A sentence code $s$ is provable in $T$ if and only if $\mathrm{check}(p, s)$ is true
+for some $p \in \mathbb{N}$. $T$ is sound for halting: for every machine $M$, if $T$ proves the
+halting sentence of $M$ then $M$ halts on the blank tape, and if $T$ proves the non-halting
+sentence of $M$ then $M$ does not halt. For every machine $M$, if $M$ has halted within $t$ steps
+for some $t$, then $T$ proves the halting sentence of $M$. Write $S(n)$ for the Busy Beaver shift
+function, the largest halting time of a halting machine with $n$ working states, and call the
+bound sentence for $n$ and $B$ the sentence code saying that every halting machine with $n$
+working states halts within $B$ steps. For every $n \le 5$, $T$ proves the bound sentence for $n$
+and $S(n)$. Whenever $T$ proves the bound sentence for $n$ and $B$, every halting machine with $n$
+working states halts within $B$ steps. Whenever $T$ proves the bound sentence for $n$ and $B$ and a
+machine $M$ with $n$ working states has not halted within $B$ steps, $T$ proves the non-halting
+sentence of $M$.
+
+No concrete syntax or proof checker for ZFC is given, and no presentation of ZFC is constructed;
+the intended instance is ZFC with its standard proof checker. The state counts for
+consistency-search machines in the literature depend on specific checker implementations and are
+not asserted for arbitrary presentations. -/
 structure ZFCPresentation where
   /-- The presented theory. -/
   theory : FormalTheory
@@ -926,10 +1020,13 @@ structure ZFCPresentation where
     theory.Provable (boundSentence n B) → ¬ HaltsWithin M B →
       theory.Provable (notHaltsSentence M)
 
-/-- A ZFC-like presentation decides halting for machines with at most
-five states: run each machine for the proved Busy Beaver bound; if it
-has halted, the computation verifies, and if it has not, the bound
-derives its non-halting sentence. -/
+/-- **ZFC-like theories decide halting through five states.** For every ZFC-like presentation
+$Z$ and every $n \le 5$, the theory presented by $Z$ decides halting for $n$-state machines: for
+every $n$-state machine it proves the machine's halting sentence or its non-halting sentence.
+
+Proof idea: let $S$ be Rado's shift function; $Z$ proves the runtime bound $S(n)$ for
+halting $n$-state machines. Run each machine for $S(n)$ steps; if it has halted, the
+computation verifies, and if it has not, the bound derives its non-halting sentence. -/
 theorem ZFCPresentation.decidesHalting_le_five (Z : ZFCPresentation) :
     ∀ n ≤ 5, DecidesHalting Z.theory n := by
   intro n hn M

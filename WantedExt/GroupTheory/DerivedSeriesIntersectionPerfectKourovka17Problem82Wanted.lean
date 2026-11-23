@@ -33,15 +33,21 @@ D] = D`, and finitely presented is Mathlib's `Group.IsFinitelyPresented`; groups
 `Type`.
 -/
 
-/-- Kourovka 17.82 (R. Mikhailov): in every finitely presented group `G` the intersection
-`D = ⋂ₙ G⁽ⁿ⁾` of the derived series has trivial abelianization, `[D, D] = D`. -/
+/-- **Perfectness of the intersection of the derived series (Kourovka 17.82).** The conjecture of
+R. Mikhailov that for every finitely presented group $G$, the intersection
+$D = \bigcap_{n} G^{(n)}$ of the terms $G^{(n)}$ of the derived series of $G$ satisfies
+$[D, D] = D$, that is, $D$ has trivial abelianization. -/
 def derivedSeriesIntersectionPerfect : Prop :=
   ∀ (G : Type) [Group G], Group.IsFinitelyPresented G →
     ⁅⨅ n, derivedSeries G n, ⨅ n, derivedSeries G n⁆ = ⨅ n, derivedSeries G n
 
 /--
-Resolved false: the Kourovka Archive answers 17.82 "No, not always", citing Roman'kov (2011): some
-finitely presented group has an intersection `D` of its derived series with `[D, D] ≠ D`. Source: E.
+**The intersection of the derived series need not be perfect.** There exists a finitely presented
+group $G$ such that the intersection $D = \bigcap_{n} G^{(n)}$ of the terms $G^{(n)}$ of the
+derived series of $G$ satisfies $[D, D] \ne D$. That is, the conjecture of Kourovka Problem 17.82
+is false; the Kourovka Archive credits this answer to V. A. Roman'kov (2011).
+
+Source: E.
 I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st
 issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 17.82 (R. Mikhailov);
 resolution: V. A. Roman'kov, Siberian Math. J. 52 (2011), 348-351, Kourovka Archive, Problem 17.82
