@@ -145,13 +145,6 @@ public theorem_wanted nthPrimeOne_rosser_schoenfeld :
       (k : ℝ) * (Real.log k + Real.log (Real.log k) - 1) ≤ nthPrimeOne k ∧
         (nthPrimeOne k : ℝ) ≤ k * (Real.log k + Real.log (Real.log k))
 
-/-- **The $k$-th prime exceeds $2k$ for $k \ge 6$.** For every natural number $k \ge 6$, the
-$k$-th prime $p_k$, indexed from one so that $p_1 = 2$, satisfies $p_k > 2k$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Lemma 2 (`integers-2026-A116-lem-2`). -/
-public theorem_wanted two_mul_lt_nthPrimeOne {k : ℕ} (hk : 6 ≤ k) : 2 * k < nthPrimeOne k
-
 /-- **Prime-power decomposition of summatory heights.** Let $H : \mathbb{N} \to \mathbb{N}$ be
 completely additive on the positive integers, and let $x \ge 2$ be a natural number. Then
 $$\sum_{m=1}^{x} H(m) = \sum_{p \le x} \sum_{\alpha \ge 1,\ p^\alpha \le x} H(p)

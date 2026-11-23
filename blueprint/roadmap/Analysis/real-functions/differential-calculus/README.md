@@ -14,3 +14,4 @@ Derivatives of real functions of one real variable: mean-value and second-deriva
 - [The map $x \mapsto e^{x-1} - e^{1-x}$ has a unique fixed point](exists-unique-exp-sub-one-sub-exp-one-su.md)
 - [Mean value theorem for real functions](mean-value-theorem.md)
 - [Lebesgue's theorem: a non-decreasing function on the real line is differentiable almost everywhere](monotone-differentiable-almost-everywhere.md)
+- [Rolle's theorem](rolle-theorem.md)

@@ -34,7 +34,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Order.Interval.Finset.Nat
-public import MathlibExt.NumberTheory.TwoComplexity
+public import MathlibExt.NumberTheory.TwoComplexitySum
 
 set_option autoImplicit false
 
@@ -84,16 +84,6 @@ theorem_wanted complexityL_two_pow_and_add (m1 m2 : ℕ)
     (h : m2 < m1) (hm2 : 1 ≤ m2) :
     complexityL 2 (2 ^ m1) = m1 ∧
       complexityL 2 (2 ^ m1 + 2 ^ m2) = m1 + 1
-
-/-- **An upper bound for the 2-complexity of a sum of distinct powers of two.** Write
-$\|n\|_2$ for the $2$-complexity of $n$. Let $S$ be a nonempty finite set of positive integers
-with $k$ elements and largest element $m_1$. Then $\|\sum_{e \in S} 2^e\|_2 \le m_1 + k - 1$.
-
-Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
-Integers", Lemma 3. -/
-theorem_wanted complexityL_sum_two_pow_le (s : Finset ℕ)
-    (hs : ∀ e ∈ s, 1 ≤ e) (hne : s.Nonempty) :
-    complexityL 2 (∑ e ∈ s, 2 ^ e) ≤ s.max' hne + s.card - 1
 
 /-- **Logarithmic bounds for the 2-complexity (Zhang's Lemma 3(3)).** Write $\|n\|_2$ for the
 2-complexity of $n$: the least number of copies of $2$ from which $n$ can be built using addition
