@@ -18,9 +18,15 @@ Milne's proof. For cyclic $G$ the three statements are equivalent (Lemma VII.5.2
 $\hat H^0(G, C_L) \cong H^2(G, C_L)$ and $\hat H^{-1}(G, C_L) \cong H^1(G, C_L)$, and the
 [first inequality](first-inequality.md) gives $h(C_L) = [L : K]$. Restriction to the Sylow subgroups,
 which is injective on the $p$-primary components, reduces the theorem to $p$-groups (Lemma VII.5.3), and
-an induction on $|G|$ through a normal subgroup of index $p$, using the exact inflation–restriction
-sequences for $H^1$ and $H^2$ and the multiplicativity of norm indices, reduces it to $G$ cyclic of prime
-order $p$ (Lemma VII.5.4). For such $G$ it suffices to prove the second inequality after adjoining a
+an induction on $|G|$ reduces it to $G$ cyclic of prime order $p$ (Lemma VII.5.4). For a normal subgroup
+$H$ of index $p$ with fixed field $K' = L^H$, the exact inflation–restriction sequences for $H^1$ and $H^2$
+give parts 2 and 3 from the cases of $K'/K$ and $L/K'$. For part 1, $(C_K : \mathrm{Nm}_{L/K} C_L)$ is the
+product of $(C_K : \mathrm{Nm}_{K'/K} C_{K'})$, which divides $p$ by the case of $K'/K$, and
+$(\mathrm{Nm}_{K'/K} C_{K'} : \mathrm{Nm}_{L/K} C_L)$; the norm $\mathrm{Nm}_{K'/K}$ induces a surjection
+$C_{K'} / \mathrm{Nm}_{L/K'} C_L \to \mathrm{Nm}_{K'/K} C_{K'} / \mathrm{Nm}_{L/K} C_L$, so the second index
+divides $(C_{K'} : \mathrm{Nm}_{L/K'} C_L)$, which divides $[L : K']$ by induction.
+
+For $G$ cyclic of prime order $p$ it suffices to prove the second inequality after adjoining a
 primitive $p$-th root of unity $\zeta$ to $K$ and to $L$: the degree $m = [K(\zeta) : K]$ divides
 $p - 1$, and the composite of the maps $C_K / \mathrm{Nm}(C_L) \to C_{K(\zeta)} / \mathrm{Nm}(C_{L(\zeta)})$
 and $\mathrm{Nm}_{K(\zeta)/K}$ back is multiplication by $m$, an isomorphism on a group killed by $p$
