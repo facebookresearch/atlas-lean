@@ -95,4 +95,30 @@ example (X : FieldScheme k) (P : CycleSupport X) (i : ℤ) (j : ℕ)
 
 end Cycles
 
+section Multiplicity
+
+open MathlibExt.AlgebraicGeometry.SmallEtaleGeometricTrace
+open _root_.CategoryTheory.Limits
+
+/-- Along the identity of `X`, a geometric point lifts to itself with multiplicity one: the
+geometric fibre is the reduced point, whose local ring is a field of length one. -/
+example {X : Scheme.{0}} {Ω : Type} [Field Ω] (p : Spec (.of Ω) ⟶ X) :
+    fibreMultiplicity (𝟙 X) p ⟨p, Category.comp_id p⟩ = 1 := by
+  set b : Spec (.of Ω) ⟶ pullback (𝟙 X) p := pullback.lift p (𝟙 _) (by simp)
+  have hfield : IsField ((pullback (𝟙 X) p).presheaf.stalk (b default)) := by
+    let y := (pullback.snd (𝟙 X) p) (b default)
+    have hy : closure {y} ∈ irreducibleComponents (Spec (.of Ω)) := by
+      rw [irreducibleComponents_eq_singleton, Set.mem_singleton_iff]
+      exact Set.eq_univ_of_forall fun z => by
+        rw [Subsingleton.elim z y]
+        exact subset_closure rfl
+    exact (asIso ((pullback.snd (𝟙 X) p).stalkMap (b default))).symm.commRingCatIsoToRingEquiv.isField
+      (isField_stalk_of_closure_mem_irreducibleComponents _ y hy)
+  letI := hfield.toField
+  show (Module.length _ _).toNat = 1
+  rw [Module.length_eq_one]
+  rfl
+
+end Multiplicity
+
 end MathlibExtTest.AlgebraicGeometry.SmallEtaleCoefficients
