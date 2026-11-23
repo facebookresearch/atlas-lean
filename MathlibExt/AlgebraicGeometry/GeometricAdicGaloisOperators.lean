@@ -7,13 +7,14 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Portions are adapted from AxiomMath/Stacks at
-c496df0d9beea9deaeabcea8492605f9a0a2313b, licensed under Apache 2.0:
-StacksFrontier/AlgebraicGeometry/EtaleCohomology/Trace/ArithmeticFrobeniusInverse.lean,
-StacksFrontier/AlgebraicGeometry/EtaleCohomology/Trace/GaloisActionFibreCohomology.lean.
-These source files have no individual author or copyright notice.
-Modification notice: retain the actual scheme pullback and contravariant
-Spec convention; apply native continuous-coefficient pro-étale cohomology.
+Portions of this file are adapted from:
+
+`StacksFrontier/AlgebraicGeometry/EtaleCohomology/Trace/ArithmeticFrobeniusInverse.lean` and
+`StacksFrontier/AlgebraicGeometry/EtaleCohomology/Trace/GaloisActionFibreCohomology.lean`
+(AxiomMath/Stacks, revision c496df0d9beea9deaeabcea8492605f9a0a2313b):
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Modifications: use the scheme pullback and the contravariant `Spec` convention, with
+continuous-coefficient pro-étale cohomology.
 -/
 
 module
@@ -29,13 +30,15 @@ public import Mathlib.NumberTheory.Padics.PadicNumbers
 set_option backward.isDefEq.respectTransparency false
 
 /-!
-# Actual Galois and geometric Frobenius operators on adic cohomology
+# Galois and geometric Frobenius operators on `ℓ`-adic cohomology
 
-The scheme automorphism attached to σ is id_X × Spec σ. The arithmetic
-Frobenius convention is σ(x)=x^q; its inverse is geometric Galois Frobenius.
-The geometric scheme Frobenius is π_X × id on the geometric fibre. Each
-cohomology operator is the actual normalized inverse-image map, not a
-separately selected representation or endomorphism.
+For a scheme `X` over a field `k` and an extension `K/k`, an automorphism `σ` of `K` over `k` acts
+on the base change `X_K` by `id_X × Spec σ` (`galoisSchemeOperator`), and on its rational `ℓ`-adic
+cohomology (the cohomology of the pro-étale sheaf `C(-, ℚ_ℓ)`) by inverse image
+(`galoisCohomologyOperator`). Since `Spec` reverses composition, inverse image gives a left action.
+For `k` finite with `q` elements, the geometric Frobenius of `X` induces `π_X × id` on `X_K`
+(`geometricFrobeniusSchemeOperator`) and its action on cohomology. With the arithmetic Frobenius
+`σ(x) = x ^ q`, the inverse of `σ` is the geometric Frobenius element of the Galois group.
 -/
 
 namespace MathlibExt.AlgebraicGeometry.GeometricAdicGaloisOperators
@@ -48,7 +51,7 @@ open MathlibExt.AlgebraicGeometry.FrobeniusGeometry
 
 universe u
 
-/-- The actual map of spectra induced by the coefficient field inclusion. -/
+/-- The morphism `Spec K ⟶ Spec k` induced by a field extension. -/
 abbrev fieldMap (k K : Type u) [Field k] [Field K] [Algebra k K] :
     Spec (.of K) ⟶ Spec (.of k) :=
   Spec.map (CommRingCat.ofHom (algebraMap k K))
@@ -56,10 +59,10 @@ abbrev fieldMap (k K : Type u) [Field k] [Field K] [Algebra k K] :
 variable {k : Type u} [Field k] (X : Over (Spec (.of k)))
   (K : Type u) [Field K] [Algebra k K]
 
-/-- The actual geometric base change X_K. -/
+/-- The base change `X_K` of `X` to `K`. -/
 abbrev geometricFibre : Scheme.{u} := Limits.pullback X.hom (fieldMap k K)
 
-/-- The actual scheme automorphism id_X × Spec σ. -/
+/-- The automorphism `id_X × Spec σ` of `X_K`. -/
 def galoisSchemeOperator (σ : K ≃ₐ[k] K) : geometricFibre X K ⟶ geometricFibre X K :=
   Limits.pullback.lift (Limits.pullback.fst _ _)
     (Limits.pullback.snd _ _ ≫ Spec.map (CommRingCat.ofHom σ.toAlgHom.toRingHom))
@@ -103,13 +106,14 @@ theorem galoisSchemeOperator_mul (σ τ : K ≃ₐ[k] K) :
       galoisSchemeOperator_snd_assoc, ← Spec.map_comp]
     rfl
 
+/-- `id_X × Spec σ` as an automorphism of `X_K`, with inverse `id_X × Spec σ⁻¹`. -/
 def galoisSchemeIso (σ : K ≃ₐ[k] K) : geometricFibre X K ≅ geometricFibre X K where
   hom := galoisSchemeOperator X K σ
   inv := galoisSchemeOperator X K σ⁻¹
   hom_inv_id := by rw [← galoisSchemeOperator_mul, mul_inv_cancel, galoisSchemeOperator_one]
   inv_hom_id := by rw [← galoisSchemeOperator_mul, inv_mul_cancel, galoisSchemeOperator_one]
 
-/-- The actual geometric q-Frobenius on X_K, fixing K on the second factor. -/
+/-- The geometric Frobenius `π_X × id` of `X_K`, for `k` finite with `q = p ^ f` elements. -/
 def geometricFrobeniusSchemeOperator [Fintype k] (p f : ℕ) [Fact p.Prime]
     [CharP k p] (hcard : Fintype.card k = p ^ f) :
     geometricFibre X K ⟶ geometricFibre X K :=
@@ -122,7 +126,7 @@ section Coefficients
 
 variable (ell : ℕ) [Fact ell.Prime]
 
-/-- The actual topological rational coefficient module in the site universe. -/
+/-- The topological coefficient module `ℚ_ℓ`, lifted to the universe of the site. -/
 abbrev RationalCoefficients := ULift.{u + 1} ℚ_[ell]
 
 instance rationalCoefficientContinuousSMul :
@@ -131,19 +135,19 @@ instance rationalCoefficientContinuousSMul :
     continuous_uliftUp.comp ((continuous_const_smul (T := ℚ_[ell]) r).comp
       continuous_uliftDown)
 
-/-- Rational adic cohomology of the actual continuous coefficient sheaf. -/
+/-- Rational `ℓ`-adic cohomology: the cohomology of the pro-étale sheaf `C(-, ℚ_ℓ)`. -/
 abbrev AdicCohomology (Y : Scheme.{u}) (n : ℕ) :=
   Cohomology ℚ_[ell] Y
     (continuousModuleSheaf ℚ_[ell] (RationalCoefficients.{u} ell) Y) n
 
-/-- Galois operator, fixed by the scheme automorphism and actual inverse image. -/
+/-- The action of `σ` on cohomology: inverse image along `id_X × Spec σ`. -/
 def galoisCohomologyOperator (σ : K ≃ₐ[k] K) (n : ℕ) :
     AdicCohomology ell (geometricFibre X K) n →+
       AdicCohomology ell (geometricFibre X K) n :=
   continuousCohomologyPullback ℚ_[ell] (RationalCoefficients.{u} ell)
     (galoisSchemeOperator X K σ) n
 
-/-- Geometric scheme Frobenius operator on actual continuous adic cohomology. -/
+/-- The geometric Frobenius on cohomology: inverse image along `π_X × id`. -/
 def geometricFrobeniusCohomologyOperator [Fintype k] (p f : ℕ) [Fact p.Prime]
     [CharP k p] (hcard : Fintype.card k = p ^ f) (n : ℕ) :
     AdicCohomology ell (geometricFibre X K) n →+

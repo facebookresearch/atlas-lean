@@ -12,27 +12,25 @@ public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.GeometricAdicGaloisOperators
 public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
-public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
+public import Mathlib.FieldTheory.IsSepClosed
 public import Mathlib.LinearAlgebra.Basis.Defs
 
 @[expose] public noncomputable section
 
 /-!
-# Continuity of the normalized geometric adic Galois operators
+# Continuity of the Galois action on `ℓ`-adic cohomology
 
-The remaining realization request concerns the actual continuous
-pro-étale coefficient model. Its carrier is Ext of the discrete coefficient
-unit into C(-, ℚ_ell). Its operators are actual inverse image along
-id_X × Spec σ, with the fixed coefficient/global-section adjunction.
-The Krull topology is the actual topology on Aut_k(K).
+For a proper smooth scheme `X` over a field `k`, a separable closure `K` of `k` and a prime `ℓ`
+invertible in `k`, the absolute Galois group `Aut_k(K)`, with its Krull topology, acts
+continuously on the finite-dimensional `ℚ_ℓ`-vector space `H^n(X_K, ℚ_ℓ)`: in any basis, the
+matrix coefficients of the action are continuous.
 
-Authors of the mathematical source: Pierre Deligne; Bhargav Bhatt;
-Peter Scholze.
+Here `H^n(X_K, ℚ_ℓ)` is the cohomology of the pro-étale sheaf `C(-, ℚ_ℓ)`
+(`MathlibExt.AlgebraicGeometry.GeometricAdicGaloisOperators.AdicCohomology`), which computes
+`ℓ`-adic cohomology for such `X`, and `σ` acts by inverse image along `id_X × Spec σ`.
+
 References: SGA 4½, Rapport, §1; Bhatt--Scholze, The pro-étale topology for
 schemes, §6.8, especially Definition 6.8.3 and Proposition 6.8.14.
-
-Completed Axiom étale Galois actions, Tag 03ST and finite-field Frobenius
-comparisons are existing toolbox. They are not additional requests here.
 -/
 
 namespace WantedExt.AlgebraicGeometry.GeometricAdicGaloisOperators
@@ -42,12 +40,12 @@ open MathlibExt.AlgebraicGeometry.GeometricAdicGaloisOperators
 
 universe u
 
-/-- Every matrix coefficient of the fixed geometric Galois operator is
-continuous. A supplied finite basis describes the usual finite-dimensional
-adic topology without choosing a cohomology carrier or representation. -/
+/-- The action of the absolute Galois group on `ℓ`-adic cohomology is continuous: every matrix
+coefficient `σ ↦ (b.repr (σ • v)) i`, for a basis `b` of `H^n(X_K, ℚ_ℓ)`, is continuous for the
+Krull topology. -/
 public theorem_wanted galoisCohomologyOperator_coordinate_continuous
     (ell : ℕ) [Fact ell.Prime] (k K : Type u) [Field k] [Field K]
-    [Algebra k K] [IsAlgClosure k K] [Algebra.IsSeparable k K]
+    [Algebra k K] [IsSepClosure k K]
     (X : Over (Spec (.of k))) [IsProper X.hom] [Smooth X.hom]
     (ellInvertible : (ell : k) ≠ 0) (n r : ℕ)
     (b : Module.Basis (Fin r) ℚ_[ell] (AdicCohomology ell (geometricFibre X K) n))
