@@ -12,7 +12,7 @@ MathlibExt/AlgebraicGeometry/ValuativeFanoGeometry.lean, at
 534d1fe350d3adec419480b5ab33440a8b25be7f:
 https://github.com/facebookresearch/atlas-lean/pull/2903
 The source has the same Meta license notice. Modification notice: use any
-field, actual normal codimension-one frames and real Weil-boundary data;
+perfect base field, actual normal codimension-one frames and real Weil-boundary data;
 no smooth Fano or absolute-proper specialization is required here.
 Native function-field/ord operations are Mathlib at
 56a005855ea17e0b0958f73ec801ae140b0a1679, Apache 2.0.
@@ -23,6 +23,7 @@ module
 public import Mathlib.AlgebraicGeometry.OrderOfVanishing.DVR
 public import Mathlib.Algebra.Category.ModuleCat.Stalk
 public import Mathlib.RingTheory.Kaehler.Basic
+public import Mathlib.FieldTheory.Perfect
 public import Mathlib.Topology.KrullDimension
 public import MathlibExt.AlgebraicGeometry.RationalResolution
 public import MathlibExt.AlgebraicGeometry.BirationalResolution
@@ -35,7 +36,13 @@ public import MathlibExt.LinearAlgebra.ExteriorPowerSemilinear
 
 Boundary coefficients are finite real Weil cycles on native codimension-one
 scheme points. Canonical coefficients use a nonzero rational top differential,
-actual local/rational bases and Mathlib's order of vanishing. Cartier data
+actual local/rational bases and Mathlib's order of vanishing. The base field
+of canonical data, hence of log pairs, is perfect: then the codimension-one
+local rings of a normal variety are smooth over it, so their top Kähler forms
+are free of rank one and canonical frames exist at every prime point. Over an
+imperfect field the module of Kähler differentials of the function field can
+have dimension larger than `n`, and the canonical divisor would have to come
+from the dualizing module; that case is not modelled here. Cartier data
 use actual affine opens and rational functions with unit transition maps;
 their line bundles are pinned by genuine local sections and stalk generators.
 
@@ -152,7 +159,13 @@ def canonicalCoefficient (V : NormalVariety k n) (eta : RationalTopForms V)
     (frames : ∀ p : PrimePoint V, CanonicalFrame V p) (p : PrimePoint V) : ℤ :=
   V.X.left.ord ((frames p).rationalBasis.repr eta ()) p.val
 
+/-- Canonical data of a normal variety over a perfect field (field `perfect`): a
+nonzero rational top form and frames of the top Kähler forms at every prime point.
+Over a perfect field such frames always exist; over an imperfect field top forms
+need not have rank one (see the module docstring), and this structure does not
+model that case. -/
 structure CanonicalData (V : NormalVariety k n) where
+  [perfect : PerfectField k]
   form : RationalTopForms V
   nonzero : form ≠ 0
   frames : ∀ p : PrimePoint V, CanonicalFrame V p
@@ -237,6 +250,9 @@ structure CartierCombination (V : NormalVariety k n) where
 def CartierCombination.divisor {V : NormalVariety k n} (D : CartierCombination V) : RealWeil V :=
   ∑ i, D.coefficients i • realCast (D.components i).divisor
 
+/-- A log pair over a perfect field `k` (perfectness is recorded in its canonical
+data): a normal variety, canonical data, an effective real boundary and an adjoint
+Cartier combination representing `K + Δ`. -/
 structure LogPair (k : Type u) [Field k] (n : ℕ) where
   variety : NormalVariety k n
   canonical : CanonicalData variety
