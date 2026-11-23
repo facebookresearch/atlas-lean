@@ -120,6 +120,74 @@ def torsorModuleComparison {U V : Over (Spec (.of ℂ))} (f : V ⟶ U)
     (Scheme.Modules.pullbackCongr (congrArg Over.Hom.left hp.symm)).app M ≪≫
     (Scheme.Modules.pullbackComp p.left H'.bundle.regularizer.torsor.projection.left).symm.app M
 
+/-- The centralizer isomorphism carries the section to the pulled-back section. -/
+def IsSectionCompatible {U V : Over (Spec (.of ℂ))} (f : V ⟶ U)
+    (H : HiggsFamily F I K P V) (H' : HiggsFamily F I K P U)
+    (centralizer : H.bundle.centralizer.module ≅
+      (Scheme.Modules.pullback (tensorHom (𝟙 X) f).left).obj H'.bundle.centralizer.module) :
+    Prop :=
+  H.bundle.sectionMap ≫ tensorMap centralizer.hom (lineComparison F K P f).inv =
+    pullbackSection (tensorHom (𝟙 X) f).left H'.bundle.sectionMap ≫
+      ((P.tensor f).iso H'.bundle.centralizer.module (twist F K P U).module).hom
+
+/-- The adjoint isomorphism is compatible with the torsor trivializations of both families. -/
+def IsAdjointTrivializationCompatible {U V : Over (Spec (.of ℂ))} (f : V ⟶ U)
+    (H : HiggsFamily F I K P V) (H' : HiggsFamily F I K P U)
+    (original : H.bundle.regularizer.torsor.total ⟶ H'.bundle.regularizer.torsor.total)
+    (over : original ≫ H'.bundle.regularizer.torsor.projection =
+      H.bundle.regularizer.torsor.projection ≫ tensorHom (𝟙 X) f)
+    (sigma : original ≫ H'.bundle.regularizer.map = H.bundle.regularizer.map)
+    (adjoint : H.bundle.adjoint.module ≅
+      (Scheme.Modules.pullback (tensorHom (𝟙 X) f).left).obj H'.bundle.adjoint.module) :
+    Prop :=
+  (Scheme.Modules.pullback H.bundle.regularizer.torsor.projection.left).map adjoint.hom ≫
+      (torsorModuleComparison F I K P f H H' original over H'.bundle.adjoint.module).hom ≫
+      (Scheme.Modules.pullback original.left).map H'.bundle.adjoint.trivialization.hom =
+    H.bundle.adjoint.trivialization.hom ≫
+      (Scheme.Modules.pullbackCongr (congrArg Over.Hom.left sigma.symm)).hom.app _ ≫
+      (Scheme.Modules.pullbackComp original.left H'.bundle.regularizer.map.left).inv.app _
+
+/-- The centralizer isomorphism is compatible with the torsor trivializations of both
+families. -/
+def IsCentralizerTrivializationCompatible {U V : Over (Spec (.of ℂ))} (f : V ⟶ U)
+    (H : HiggsFamily F I K P V) (H' : HiggsFamily F I K P U)
+    (original : H.bundle.regularizer.torsor.total ⟶ H'.bundle.regularizer.torsor.total)
+    (over : original ≫ H'.bundle.regularizer.torsor.projection =
+      H.bundle.regularizer.torsor.projection ≫ tensorHom (𝟙 X) f)
+    (sigma : original ≫ H'.bundle.regularizer.map = H.bundle.regularizer.map)
+    (centralizer : H.bundle.centralizer.module ≅
+      (Scheme.Modules.pullback (tensorHom (𝟙 X) f).left).obj H'.bundle.centralizer.module) :
+    Prop :=
+  (Scheme.Modules.pullback H.bundle.regularizer.torsor.projection.left).map centralizer.hom ≫
+      (torsorModuleComparison F I K P f H H' original over H'.bundle.centralizer.module).hom ≫
+      (Scheme.Modules.pullback original.left).map H'.bundle.centralizer.trivialization.hom =
+    H.bundle.centralizer.trivialization.hom ≫
+      (Scheme.Modules.pullbackCongr (congrArg Over.Hom.left sigma.symm)).hom.app _ ≫
+      (Scheme.Modules.pullbackComp original.left H'.bundle.regularizer.map.left).inv.app _
+
+/-- The cameral cover arrow and the torsor map send incidence points to incidence points. -/
+def IsIncidenceCompatible {U V : Over (Spec (.of ℂ))}
+    (H : HiggsFamily F I K P V) (H' : HiggsFamily F I K P U)
+    (original : H.bundle.regularizer.torsor.total ⟶ H'.bundle.regularizer.torsor.total)
+    (cover : CameralArrow F H.descent.cameral H'.descent.cameral) : Prop :=
+  ∀ (Z : Over (Spec (.of ℂ))) (c : Z ⟶ total F H.descent.cameral)
+      (p : Z ⟶ H.bundle.regularizer.torsor.total)
+      (hp : c ≫ projection F H.descent.cameral = p ≫ H.bundle.regularizer.torsor.projection)
+      (hq : (c ≫ cover.total) ≫ projection F H'.descent.cameral =
+        (p ≫ original) ≫ H'.bundle.regularizer.torsor.projection),
+    CameralHitchinFunctorModels.incidencePoint F I (twist F K P V) (P.space V) (P.weyl V)
+        H Z c p hp =
+      CameralHitchinFunctorModels.incidencePoint F I (twist F K P U) (P.space U) (P.weyl U)
+        H' Z (c ≫ cover.total) (p ≫ original) hq
+
+/-- The value maps of both families commute with the value-space change and the cover arrow. -/
+def IsValueCompatible {U V : Over (Spec (.of ℂ))} {f : V ⟶ U}
+    (H : HiggsFamily F I K P V) (H' : HiggsFamily F I K P U)
+    (S : ValueSpaceChange F K P f)
+    (cover : CameralArrow F H.descent.cameral H'.descent.cameral) : Prop :=
+  valueMap F I H.bundle H.descent H.quotient H.tensor (P.space V) ≫ S.original =
+    cover.total ≫ valueMap F I H'.bundle H'.descent H'.quotient H'.tensor (P.space U)
+
 structure FamilyBaseChange {U V : Over (Spec (.of ℂ))} (f : V ⟶ U)
     (H : HiggsFamily F I K P V) (H' : HiggsFamily F I K P U)
     (S : ValueSpaceChange F K P f) where
@@ -138,36 +206,15 @@ structure FamilyBaseChange {U V : Over (Spec (.of ℂ))} (f : V ⟶ U)
   inclusion : H.bundle.centralizer.inclusion ≫ adjoint.hom =
     centralizer.hom ≫ (Scheme.Modules.pullback (tensorHom (𝟙 X) f).left).map
       H'.bundle.centralizer.inclusion
-  sectionMap : H.bundle.sectionMap ≫ tensorMap centralizer.hom (lineComparison F K P f).inv =
-    pullbackSection (tensorHom (𝟙 X) f).left H'.bundle.sectionMap ≫
-      ((P.tensor f).iso H'.bundle.centralizer.module (twist F K P U).module).hom
+  sectionMap : IsSectionCompatible F I K P f H H' centralizer
   adjoint_trivialization :
-    (Scheme.Modules.pullback H.bundle.regularizer.torsor.projection.left).map adjoint.hom ≫
-      (torsorModuleComparison F I K P f H H' original over H'.bundle.adjoint.module).hom ≫
-      (Scheme.Modules.pullback original.left).map H'.bundle.adjoint.trivialization.hom =
-    H.bundle.adjoint.trivialization.hom ≫
-      (Scheme.Modules.pullbackCongr (congrArg Over.Hom.left sigma.symm)).hom.app _ ≫
-      (Scheme.Modules.pullbackComp original.left H'.bundle.regularizer.map.left).inv.app _
+    IsAdjointTrivializationCompatible F I K P f H H' original over sigma adjoint
   centralizer_trivialization :
-    (Scheme.Modules.pullback H.bundle.regularizer.torsor.projection.left).map centralizer.hom ≫
-      (torsorModuleComparison F I K P f H H' original over H'.bundle.centralizer.module).hom ≫
-      (Scheme.Modules.pullback original.left).map H'.bundle.centralizer.trivialization.hom =
-    H.bundle.centralizer.trivialization.hom ≫
-      (Scheme.Modules.pullbackCongr (congrArg Over.Hom.left sigma.symm)).hom.app _ ≫
-      (Scheme.Modules.pullbackComp original.left H'.bundle.regularizer.map.left).inv.app _
+    IsCentralizerTrivializationCompatible F I K P f H H' original over sigma centralizer
   cover : CameralArrow F H.descent.cameral H'.descent.cameral
   base : cover.base = tensorHom (𝟙 X) f
-  incidence : ∀ (Z : Over (Spec (.of ℂ))) (c : Z ⟶ total F H.descent.cameral)
-      (p : Z ⟶ H.bundle.regularizer.torsor.total)
-      (hp : c ≫ projection F H.descent.cameral = p ≫ H.bundle.regularizer.torsor.projection)
-      (hq : (c ≫ cover.total) ≫ projection F H'.descent.cameral =
-        (p ≫ original) ≫ H'.bundle.regularizer.torsor.projection),
-    CameralHitchinFunctorModels.incidencePoint F I (twist F K P V) (P.space V) (P.weyl V)
-        H Z c p hp =
-      CameralHitchinFunctorModels.incidencePoint F I (twist F K P U) (P.space U) (P.weyl U)
-        H' Z (c ≫ cover.total) (p ≫ original) hq
-  value : valueMap F I H.bundle H.descent H.quotient H.tensor (P.space V) ≫ S.original =
-    cover.total ≫ valueMap F I H'.bundle H'.descent H'.quotient H'.tensor (P.space U)
+  incidence : IsIncidenceCompatible F I K P H H' original cover
+  value : IsValueCompatible F I K P H H' S cover
 
 /-- Both actual stack family presentations use the computed Hitchin functor. -/
 structure HitchinStacks where
