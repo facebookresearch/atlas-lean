@@ -60,9 +60,9 @@ structure AffineFlag (A : CommAlgCat.{0} ℂ) (n : ℕ) (D : Shape n) where
 def AffineFlag.forget {A : CommAlgCat.{0} ℂ} {n : ℕ} {D E : Shape n}
     (F : AffineFlag A n D) (h : E ⊆ D) : AffineFlag A n E where
   term d := F.term ⟨d.val, h d.property⟩
-  nested d e hd := F.nested _ _ hd
-  zero d hd := F.zero _ hd
-  top d hd := F.top _ hd
+  nested _ _ hd := F.nested _ _ hd
+  zero _ hd := F.zero _ hd
+  top _ hd := F.top _ hd
 
 theorem AffineFlag.forget_term {A : CommAlgCat.{0} ℂ} {n : ℕ} {D E : Shape n}
     (F : AffineFlag A n D) (h : E ⊆ D) (d : Step E) :
@@ -132,17 +132,17 @@ structure CoordinatePoints (n : ℕ) (F : FlagSchemeModel n (fullShape n)) where
 flag which omits the changed subspace, not a flag-equality predicate. -/
 def adjacent {n : ℕ} (F : FlagSchemeModel n (fullShape n)) (i : Fin (n + 1))
     (P : FlagSchemeModel n (omittedShape n i))
-    (p : ForgetMap F P (by intro d hd; exact Finset.mem_univ d)) : ComplexScheme :=
+    (p : ForgetMap F P (Finset.subset_univ _)) : ComplexScheme :=
   Over.mk (pullback.fst p.hom.left p.hom.left ≫ F.scheme.hom)
 
 def adjacentLeft {n : ℕ} (F : FlagSchemeModel n (fullShape n)) (i : Fin (n + 1))
     (P : FlagSchemeModel n (omittedShape n i))
-    (p : ForgetMap F P (by intro d hd; exact Finset.mem_univ d)) : adjacent F i P p ⟶ F.scheme :=
+    (p : ForgetMap F P (Finset.subset_univ _)) : adjacent F i P p ⟶ F.scheme :=
   Over.homMk (pullback.fst p.hom.left p.hom.left) rfl
 
 def adjacentRight {n : ℕ} (F : FlagSchemeModel n (fullShape n)) (i : Fin (n + 1))
     (P : FlagSchemeModel n (omittedShape n i))
-    (p : ForgetMap F P (by intro d hd; exact Finset.mem_univ d)) : adjacent F i P p ⟶ F.scheme :=
+    (p : ForgetMap F P (Finset.subset_univ _)) : adjacent F i P p ⟶ F.scheme :=
   Over.homMk (pullback.snd p.hom.left p.hom.left) (by
     change pullback.snd p.hom.left p.hom.left ≫ F.scheme.hom =
       pullback.fst p.hom.left p.hom.left ≫ F.scheme.hom

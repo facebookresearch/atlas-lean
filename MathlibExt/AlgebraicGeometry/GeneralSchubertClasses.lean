@@ -44,7 +44,6 @@ variable
   (C : CycleMap D P)
 
 variable {n : ℕ} (F : FlagSchemeModel n (fullShape n))
-  (hF : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC F.scheme)
 
 instance schubertInclusion_closed {w : Equiv.Perm (Fin n)} {side : Bool}
     (S : SchubertIdealModel F w side) : IsClosedImmersion S.inclusion.left :=
@@ -54,7 +53,7 @@ def schubertClass (w : Equiv.Perm (Fin n)) (S : SchubertIdealModel F w false)
     [IsNoetherian S.scheme.left] :
     BettiRealization.Cohomology (space F.scheme)
       (2 * (flagDimension (fullShape n) : ℤ) - 2 * (length w : ℤ)) :=
-  C.cohomologyClass F.scheme (flagDimension (fullShape n)) (length w) hF
+  C.cohomologyClass F.scheme (flagDimension (fullShape n)) (length w) F.projective
     ((GeometricChow.rationalEquivalences F.scheme (length w)).mkQ
       (pushedFundamentalCycle S.inclusion (length w)))
 
@@ -71,7 +70,7 @@ def chevalleySum (weight : Fin n → ℤ) (w : Equiv.Perm (Fin n)) :
     classical
     exact ∑ c : Cover w, ((weight c.val.1 - weight c.val.2 : ℤ) : ℚ) •
       cohomologyCast (by have h := c.property.2.2; omega)
-        (schubertClass D P C F hF (w * Equiv.swap c.val.1 c.val.2) (S _))
+        (schubertClass D P C F (w * Equiv.swap c.val.1 c.val.2) (S _))
 
 def weightChern
     (T : BettiCharacteristicClasses.ProjectiveBundleTheory D P) (weight : Fin n → ℤ)

@@ -39,13 +39,15 @@ def simplePermutation {n : ℕ} (i : SimpleRoot n) : Equiv.Perm (Fin n) :=
 def wordPermutation {n : ℕ} (word : List (SimpleRoot n)) : Equiv.Perm (Fin n) :=
   (word.map simplePermutation).prod
 
-def IsReduced {n : ℕ} (word : List (SimpleRoot n)) : Prop :=
+/-- A word in the simple reflections is reduced when its product has as many
+inversions as the word has letters. -/
+def IsReducedWord {n : ℕ} (word : List (SimpleRoot n)) : Prop :=
   length (wordPermutation word) = word.length
 
 structure FlagProjections (n : ℕ) (F : FlagSchemeModel n (fullShape n)) where
   partialFlags : ∀ i : SimpleRoot n, FlagSchemeModel n (omittedShape n i.val)
   projection : ∀ i : SimpleRoot n,
-    ForgetMap F (partialFlags i) (by intro d hd; exact Finset.mem_univ d)
+    ForgetMap F (partialFlags i) (Finset.subset_univ _)
 
 abbrev EvaluatedScheme {n : ℕ} (F : FlagSchemeModel n (fullShape n)) :=
   Σ T : ComplexScheme, T ⟶ F.scheme

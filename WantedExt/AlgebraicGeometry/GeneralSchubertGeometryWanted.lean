@@ -49,7 +49,7 @@ def_wanted adjacent_projections (n : ℕ) (F : FlagSchemeModel n (fullShape n)) 
 
 theorem_wanted bott_samelson_resolution {n : ℕ} (F : FlagSchemeModel n (fullShape n))
     (C : CoordinatePoints n F) (P : FlagProjections n F) (word : List (SimpleRoot n))
-    (_reduced : IsReduced word) (S : SchubertIdealModel F (wordPermutation word) false) :
+    (_reduced : IsReducedWord word) (S : SchubertIdealModel F (wordPermutation word) false) :
     ResolutionProperties C P word S
 
 def_wanted weight_line {n : ℕ} (F : FlagSchemeModel n (fullShape n)) (weight : Fin n → ℤ) :
@@ -80,7 +80,6 @@ theorem_wanted chevalley
       (hX : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X),
       C.purity X d hX = T.family.iso X d)
     {n : ℕ} (F : FlagSchemeModel n (fullShape n))
-    (hF : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC F.scheme)
     (S : ∀ w : Equiv.Perm (Fin n), SchubertIdealModel F w false)
     [∀ w, IsNoetherian (S w).scheme.left] (weight : Fin n → ℤ) (L : WeightLine F weight)
     (B : ProjectiveBundle F.scheme (flagDimension (fullShape n)) 0 L.object)
@@ -89,6 +88,6 @@ theorem_wanted chevalley
     cohomologyCast (by omega)
       (BettiRealization.cup (space F.scheme)
         (weightChern D P F T.toProjectiveBundleTheory weight L B V)
-        (schubertClass D P C F hF w (S w))) = chevalleySum D P C F hF S weight w
+        (schubertClass D P C F w (S w))) = chevalleySum D P C F S weight w
 
 end WantedExt.AlgebraicGeometry.GeneralSchubertGeometryWanted
