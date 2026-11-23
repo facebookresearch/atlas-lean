@@ -6,11 +6,17 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Proved in `MathlibExt.NumberTheory.CubeSubCube`, which this module imports: Lemma 5
+(`MetaMathlibExt.cube_sub_cube_eq_two_or_one_iff`).
+-/
+
 module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Int.GCD
 public import Mathlib.Data.Nat.Prime.Defs
+public import MathlibExt.NumberTheory.CubeSubCube
 
 namespace MetaMathlibExt
 
@@ -83,17 +89,6 @@ with Prime-Square Factors*, INTEGERS 25 (2025), Article A103, Lemma 4
 public theorem_wanted gcd_sub_one_sq_add_add_one (x : ℤ) :
     Int.gcd (x - 1) (x ^ 2 + x + 1) = Int.gcd (x - 1) 3 ∧
       Int.gcd (x + 1) (x ^ 2 - x + 1) = Int.gcd (x + 1) 3
-
-/-- **Integer solutions of $u^3 - v^3 = 2$ and $u^3 - v^3 = 1$.** For all integers $u$ and $v$,
-$u^3 - v^3 = 2$ if and only if $(u, v) = (1, -1)$, and $u^3 - v^3 = 1$ if and only if
-$(u, v) = (1, 0)$ or $(u, v) = (0, -1)$.
-
-Source: Jialai She, *Nonexistence of Consecutive Powerful Triplets Around Cubes
-with Prime-Square Factors*, INTEGERS 25 (2025), Article A103, Lemma 5
-(`integers-2025-A103-lem-5`). -/
-public theorem_wanted cube_sub_cube_eq_two_or_one_iff (u v : ℤ) :
-    (u ^ 3 - v ^ 3 = 2 ↔ (u, v) = (1, -1)) ∧
-      (u ^ 3 - v ^ 3 = 1 ↔ (u, v) = (1, 0) ∨ (u, v) = (0, -1))
 
 /-- **Integer solutions of $u^3 - 2v^3 = 1$.** For all integers $u$ and $v$, $u^3 - 2v^3 = 1$ if
 and only if $(u, v) = (1, 0)$ or $(u, v) = (-1, -1)$.
