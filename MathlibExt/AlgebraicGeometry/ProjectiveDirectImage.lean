@@ -27,7 +27,7 @@ public import Mathlib.AlgebraicGeometry.ProjectiveSpectrum.Basic
 public import
   Mathlib.CategoryTheory.Abelian.GrothendieckCategory.EnoughInjectives
 public import Mathlib.RingTheory.MvPolynomial.Homogeneous
-public import MathlibExt.AlgebraicGeometry.PerverseSheaves
+public import MathlibExt.AlgebraicGeometry.ConstructibleComplexes
 
 @[expose] public section
 
@@ -79,15 +79,22 @@ def IsProjectiveOverC (X : ComplexScheme) : Prop :=
       Proj (MvPolynomial.homogeneousSubmodule (Fin (n + 1)) ℂ)),
     IsClosedImmersion i ∧ X.hom = i ≫ gradedProjToSpec _
 
-/-- The actual derived direct image of the rational constant sheaf placed
-in degree `-n`, namely `Rf_* ℚ_X[n]`. -/
-def normalizedDirectImage (X Y : ComplexScheme) (f : X ⟶ Y) (n : ℕ) :
+/-- Projective space `ℙⁿ_ℂ`, as a scheme over `ℂ`: the projective spectrum of
+the polynomial ring in `n + 1` variables, graded by total degree. -/
+abbrev projectiveSpace (n : ℕ) : ComplexScheme :=
+  let := @MvPolynomial.gradedAlgebra
+  Over.mk (gradedProjToSpec (MvPolynomial.homogeneousSubmodule (Fin (n + 1)) ℂ))
+
+/-- Projective space is projective over `ℂ`, through the identity. -/
+theorem isProjectiveOverC_projectiveSpace (n : ℕ) : IsProjectiveOverC (projectiveSpace n) :=
+  ⟨n, 𝟙 _, inferInstance, (Category.id_comp _).symm⟩
+
+/-- The rational normalized direct image `Rf_* ℚ_X[n]`, with the constant sheaf
+placed in degree `-n`: `ConstructibleComplexes.normalizedDirectImage` at
+`k = ℚ`. -/
+abbrev normalizedDirectImage (X Y : ComplexScheme) (f : X ⟶ Y) (n : ℕ) :
     RationalDerived (space Y) :=
-  DerivedCategory.Plus.ι.obj
-    (((TopCat.Sheaf.pushforward (ModuleCat.{0} ℚ)
-      (spaceMap f)).rightDerivedFunctorPlus).obj
-        ((DerivedCategory.Plus.singleFunctor (RationalSheaf (space X))
-          (-(n : ℤ))).obj (rationalConstantSheaf (space X))))
+  ConstructibleComplexes.normalizedDirectImage ℚ X Y f n
 
 end
 

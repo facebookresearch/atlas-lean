@@ -23,15 +23,11 @@ open MathlibExt.AlgebraicGeometry.DeCataldoMiglioriniDecompositionWanted
 
 namespace MathlibExtTest.AlgebraicGeometry.ProjectiveDirectImage
 
-attribute [local instance] HasDerivedCategory.standard MvPolynomial.gradedAlgebra
-
-/-- Projective space `ℙⁿ_ℂ`, as a scheme over `ℂ`. -/
-abbrev projectiveSpace (n : ℕ) : ComplexScheme :=
-  Over.mk (gradedProjToSpec (MvPolynomial.homogeneousSubmodule (Fin (n + 1)) ℂ))
+attribute [local instance] HasDerivedCategory.standard
 
 /-- `ℙⁿ_ℂ` is projective over `ℂ`, through the identity closed immersion. -/
 example (n : ℕ) : IsProjectiveOverC (projectiveSpace n) :=
-  ⟨n, 𝟙 _, inferInstance, (Category.id_comp _).symm⟩
+  isProjectiveOverC_projectiveSpace n
 
 /-- The normalized direct image places the constant sheaf in degree `-n`
 before deriving the pushforward. -/
