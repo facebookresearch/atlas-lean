@@ -40,8 +40,10 @@ Mathlib's derived pushforward on the analytic topological spaces of complex
 points: `ℚ_X[n]` places the rational constant sheaf in cohomological degree
 `-n`.
 
-The projective decomposition and semisimplicity requests are in
-`WantedExt/AlgebraicGeometry/DeCataldoMiglioriniDecompositionWanted.lean`.
+The declarations live in the namespace
+`MathlibExt.AlgebraicGeometry.DeCataldoMiglioriniDecompositionWanted`, shared
+with the requests that use them; this module itself is complete and requests
+nothing.
 
 ## Reference
 
