@@ -11606,6 +11606,7 @@
   "MathlibExt/NumberTheory/PellCassiniIdentity": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Pell and Pell–Lucas numbers"},
   "MathlibExt/NumberTheory/PellConvergent": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Pell's equation"},
   "MathlibExt/NumberTheory/PellEulerSolutions": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Lucas–Lehmer test"},
+  "MathlibExt/NumberTheory/PellInverseClosedForm": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Pell equation solutions in a rotated square"},
   "MathlibExt/NumberTheory/PellLucasSequence": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Pell and Pell–Lucas numbers"},
   "MathlibExt/NumberTheory/PellNumberSequence": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Pell and Pell–Lucas numbers"},
   "MathlibExt/NumberTheory/PellRotatedSquare": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Pell equation solutions in a rotated square"},
