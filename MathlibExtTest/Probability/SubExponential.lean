@@ -37,6 +37,20 @@ example (α : ℝ≥0) (hα : 0 < α) {t : ℝ} (ht : 0 ≤ t) :
     simpa using (HasSubgaussianMGF.zero (μ := μ)).hasSubexponentialMGF α
   exact h.measureReal_ge_le_of_ge hα (by simp; positivity)
 
+/-- Negation: if `X` is sub-exponential with parameters `(ν, α)`, so is `-X`, and the
+Gaussian-regime upper-tail bound for `-X` is a lower-tail bound for `X`. -/
+example {X : Ω → ℝ} {ν α : ℝ≥0} (h : HasSubexponentialMGF X ν α μ) {t : ℝ} (ht : 0 ≤ t)
+    (htα : α * t ≤ ν ^ 2) : μ.real {ω | t ≤ -X ω} ≤ exp (-t ^ 2 / (2 * ν ^ 2)) :=
+  h.neg.measureReal_ge_le_of_le ht htα
+
+/-- Image measures: if `Y` sends `μ'` to `μ` and `X` is sub-exponential under `μ`, then `X ∘ Y` is
+sub-exponential under `μ'` with the same parameters; here `Y` is the first projection of a product
+of probability measures. -/
+example {Ω' : Type*} {mΩ' : MeasurableSpace Ω'} (μ' : Measure Ω') [IsProbabilityMeasure μ']
+    {X : Ω → ℝ} {ν α : ℝ≥0} (h : HasSubexponentialMGF X ν α μ) :
+    HasSubexponentialMGF (X ∘ Prod.fst) ν α (μ.prod μ') :=
+  .of_map measurable_fst.aemeasurable (by rwa [Measure.map_fst_prod, measure_univ, one_smul])
+
 /-- Bernstein's inequality is applicable to any bounded centred variable; here with the
 variance proxy `σ² = b²`, the crude bound `E[X²] ≤ b²`. -/
 example {X : Ω → ℝ} (hX : AEMeasurable X μ) {b t : ℝ} (hb0 : 0 ≤ b)

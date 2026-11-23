@@ -29,6 +29,8 @@ neighbourhood of zero, which allows exponential rather than Gaussian tails. As i
 * `HasSubexponentialMGF`: the definition; `HasSubgaussianMGF.hasSubexponentialMGF`: a
   sub-Gaussian variable with variance proxy `c` is sub-exponential with parameters `(√c, α)` for
   every `α`.
+* `HasSubexponentialMGF.neg` and `HasSubexponentialMGF.of_map`: the condition is preserved by
+  negation and passes from an image measure `μ.map Y` to `X ∘ Y` under `μ`.
 * `HasSubexponentialMGF.measureReal_ge_le_of_le` and
   `HasSubexponentialMGF.measureReal_ge_le_of_ge`: the **sub-exponential tail bound** (Wainwright
   2019, §2.1.3; Rinaldo 2017, Theorem 3.2): `P(X ≥ t) ≤ exp (-t² / (2 ν²))` for
@@ -84,6 +86,28 @@ lemma HasSubgaussianMGF.hasSubexponentialMGF {c : ℝ≥0} (h : HasSubgaussianMG
     exact h.mgf_le t
 
 namespace HasSubexponentialMGF
+
+/-- **Negation of a sub-exponential variable**: if `X` is sub-exponential with parameters
+`(ν, α)` under `μ`, then so is `-X`. -/
+lemma neg (h : HasSubexponentialMGF X ν α μ) : HasSubexponentialMGF (-X) ν α μ where
+  integrable_exp_mul t ht := by
+    simpa using h.integrable_exp_mul (-t) (by rwa [abs_neg])
+  mgf_le t ht := by
+    rw [mgf_neg]
+    simpa using h.mgf_le (-t) (by rwa [abs_neg])
+
+/-- **Sub-exponential variables under an image measure**: if `Y` is almost everywhere measurable
+with respect to `μ` and `X` is sub-exponential with parameters `(ν, α)` under the image measure
+`μ.map Y`, then `X ∘ Y` is sub-exponential with the same parameters under `μ`. -/
+lemma of_map {Ω' : Type*} {mΩ' : MeasurableSpace Ω'} {μ : Measure Ω'} {Y : Ω' → Ω} {X : Ω → ℝ}
+    (hY : AEMeasurable Y μ) (h : HasSubexponentialMGF X ν α (μ.map Y)) :
+    HasSubexponentialMGF (X ∘ Y) ν α μ where
+  integrable_exp_mul t ht := by
+    have h1 := h.integrable_exp_mul t ht
+    rwa [integrable_map_measure h1.aestronglyMeasurable (by fun_prop)] at h1
+  mgf_le t ht := by
+    rw [← mgf_map hY (h.integrable_exp_mul t ht).1]
+    exact h.mgf_le t ht
 
 /-- The Chernoff step for a sub-exponential variable: for every `0 ≤ s` with `α s ≤ 1`,
 `P(X ≥ t) ≤ exp (-s t + ν² s² / 2)`. The endpoint `s = 1 / α` is reached by continuity. -/

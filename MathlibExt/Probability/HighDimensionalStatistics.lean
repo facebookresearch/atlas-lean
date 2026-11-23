@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Probability.SubExponential
 public import Mathlib.Probability.Distributions.Gaussian.Real
+import MathlibExt.Probability.Distributions.ChiSquare
 
 /-!
 # Bernstein's condition and the `χ²` tail bound
@@ -47,8 +48,9 @@ for bounded variables.
   `E[X⁴] = 0`, so `X = 0` almost surely.
 * Bernstein's inequality. The Chernoff bound at `±t / (σ² + b t)` on each tail, as for bounded
   variables; when `σ = 0`, `X = 0` almost surely.
-* The centred `χ²₁` variable. A Gaussian integral gives `E[exp (t (Z² - 1))] = e^{-t} / √(1 - 2t)`
-  for `t < 1/2`. For `|t| < 1/4`, squaring reduces `e^{-t} / √(1 - 2t) ≤ exp (2 t²)` to
+* The centred `χ²₁` variable. The Gaussian integral `E[exp (t Z²)] = 1 / √(1 - 2t)` of
+  `ProbabilityTheory.mgf_sq_stdGaussian` gives `E[exp (t (Z² - 1))] = e^{-t} / √(1 - 2t)`, which is
+  positive for `t < 1/2`. For `|t| < 1/4`, squaring reduces `e^{-t} / √(1 - 2t) ≤ exp (2 t²)` to
   `1 ≤ (1 - u) exp (u + u²)` with `u = 2t`, which follows from `exp y ≥ 1 + y` when `u ≤ 0`, and
   from `exp u ≥ 1 + u + u²/2 + u³/6` and `exp (u²) ≥ 1 + u²` when `0 ≤ u ≤ 1/2`.
 * The `χ²_n` tail. The coordinates are independent under the product measure, so the sum `S` of
@@ -67,7 +69,8 @@ The four theorems keep the full names, statements and docstrings they had in the
 * M. J. Wainwright, *High-Dimensional Statistics: A Non-Asymptotic Viewpoint*, Cambridge University
   Press, 2019, §2.1.3.
 * "Rinaldo 2017" is A. Rinaldo, *36-755 Advanced Statistics Theory I*, Lecture 3 (Carnegie Mellon,
-  2017), an open account of the same statements with the same constants.
+  2017), an open account of the same statements with the same constants, except that its
+  Example 3.8 omits the factor `2` of the two-sided `χ²_n` tail bound.
 -/
 
 namespace MathlibExt.Probability.HighDimensionalStatisticsWanted
@@ -96,7 +99,7 @@ private lemma abs_pow_odd_le (x : ℝ) {a : ℝ} (ha : 0 < a) (j : ℕ) :
   have : 0 ≤ |x| ^ (2 * j + 2) * (|x| - a) ^ 2 / (2 * a) := by positivity
   linarith
 
-/-- The even moments under the Bernstein condition, with the variance as the case `k = 2`. -/
+/-- The Bernstein condition extended to `k = 2`, where the variance gives equality. -/
 private lemma abs_integral_pow_le
     (hvar : ∫ ω, X ω ^ 2 ∂μ = σ ^ 2)
     (hbern : ∀ k : ℕ, 3 ≤ k → |∫ ω, X ω ^ k ∂μ| ≤ k.factorial * σ ^ 2 * b ^ (k - 2) / 2)
@@ -413,25 +416,12 @@ private lemma one_le_one_sub_mul_exp {u : ℝ} (hu : |u| ≤ 1 / 2) :
     exact hpoly.trans (mul_le_mul_of_nonneg_left hprod (by linarith))
 
 /-- The moment generating function of `Z² - 1` for a standard normal `Z`:
-`E[exp (t (Z² - 1))] = e^{-t} / √(1 - 2t)` for `t < 1/2`. -/
-private lemma mgf_sq_sub_one_gaussianReal {t : ℝ} (ht : t < 1 / 2) :
+`E[exp (t (Z² - 1))] = e^{-t} / √(1 - 2t)`, from `E[exp (t Z²)] = 1 / √(1 - 2t)`. -/
+private lemma mgf_sq_sub_one_gaussianReal (t : ℝ) :
     mgf (fun x : ℝ ↦ x ^ 2 - 1) (gaussianReal 0 1) t = exp (-t) / √(1 - 2 * t) := by
-  have hpt : ∀ x : ℝ, gaussianPDFReal 0 1 x • exp (t * (x ^ 2 - 1)) =
-      (√(2 * π))⁻¹ * exp (-t) * exp (-(1 / 2 - t) * x ^ 2) := fun x ↦ by
-    rw [gaussianPDFReal, smul_eq_mul, mul_assoc, ← exp_add, mul_assoc (√(2 * π))⁻¹, ← exp_add]
-    congr 2
-    · simp
-    · push_cast
-      ring
-  rw [mgf, integral_gaussianReal_eq_integral_smul one_ne_zero]
-  simp_rw [hpt]
-  rw [integral_const_mul, integral_gaussian]
-  have h12 : 0 < 1 - 2 * t := by linarith
-  have hpi : π / (1 / 2 - t) = 2 * π / (1 - 2 * t) := by
-    field_simp
-  rw [hpi, Real.sqrt_div (by positivity)]
-  have hs : 0 < √(2 * π) := Real.sqrt_pos.mpr (by positivity)
-  field_simp
+  have h := mgf_add_const (X := fun x : ℝ ↦ x ^ 2) (μ := gaussianReal 0 1) (t := t) (-1)
+  simp only [← sub_eq_add_neg] at h
+  rw [h, mgf_sq_stdGaussian, mul_neg, mul_one, div_eq_mul_inv, mul_comm]
 
 /-- **A centred `χ²₁` variable is sub-exponential with parameters `(2, 4)`** (Wainwright,
 *High-Dimensional Statistics*, 2019, §2.1.3, the `χ²` example): if `Z` is standard normal, then
@@ -447,14 +437,14 @@ public theorem hasSubexponentialMGF_sq_sub_one_gaussianReal :
     linarith [le_abs_self t]
   refine ⟨fun t ht ↦ ?_, fun t ht ↦ ?_⟩
   · have ht' := hhalf t (hbound t ht)
-    rw [← mgf_pos_iff, mgf_sq_sub_one_gaussianReal ht']
+    rw [← mgf_pos_iff, mgf_sq_sub_one_gaussianReal]
     have : 0 < √(1 - 2 * t) := Real.sqrt_pos.mpr (by linarith)
     positivity
   · have ht4 := hbound t ht
     have ht' := hhalf t ht4
     have h12 : 0 < 1 - 2 * t := by linarith
     have hs : 0 < √(1 - 2 * t) := Real.sqrt_pos.mpr h12
-    rw [mgf_sq_sub_one_gaussianReal ht', div_le_iff₀ hs]
+    rw [mgf_sq_sub_one_gaussianReal, div_le_iff₀ hs]
     have hu : |2 * t| ≤ 1 / 2 := by
       rw [abs_mul, abs_two]
       linarith
@@ -471,30 +461,6 @@ public theorem hasSubexponentialMGF_sq_sub_one_gaussianReal :
         exp (((2 : ℕ) : ℝ) * -t) * ((1 - 2 * t) * exp (2 * t + (2 * t) ^ 2)) :=
           le_mul_of_one_le_right (exp_pos _).le key
       _ = _ := hexp
-
-/-- A sub-exponential variable stays sub-exponential with the same parameters under negation. -/
-private lemma hasSubexponentialMGF_neg {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
-    {X : Ω → ℝ} {ν α : ℝ≥0} (h : HasSubexponentialMGF X ν α μ) :
-    HasSubexponentialMGF (-X) ν α μ where
-  integrable_exp_mul t ht := by
-    simpa [mul_neg, neg_mul] using h.integrable_exp_mul (-t) (by rwa [abs_neg])
-  mgf_le t ht := by
-    rw [mgf_neg]
-    simpa using h.mgf_le (-t) (by rwa [abs_neg])
-
-/-- The sub-exponential property of `X` under `μ` transfers to `X ∘ Y` under `μ'` when `Y` sends
-`μ'` to `μ`. -/
-private lemma hasSubexponentialMGF_comp {Ω Ω' : Type*} {mΩ : MeasurableSpace Ω}
-    {mΩ' : MeasurableSpace Ω'} {μ : Measure Ω} {μ' : Measure Ω'} {X : Ω → ℝ} {Y : Ω' → Ω}
-    {ν α : ℝ≥0} (hY : MeasurePreserving Y μ' μ) (hX : Measurable X)
-    (h : HasSubexponentialMGF X ν α μ) : HasSubexponentialMGF (X ∘ Y) ν α μ' where
-  integrable_exp_mul t ht :=
-    (hY.integrable_comp (by fun_prop : Measurable fun ω ↦ exp (t * X ω)).aestronglyMeasurable).mpr
-      (h.integrable_exp_mul t ht)
-  mgf_le t ht := by
-    rw [← mgf_map hY.measurable.aemeasurable
-      (by fun_prop : Measurable fun ω ↦ exp (t * X ω)).aestronglyMeasurable, hY.map_eq]
-    exact h.mgf_le t ht
 
 /-- **Tail bound for the `χ²_n` distribution** (Wainwright, *High-Dimensional Statistics*, 2019,
 §2.1.3, the `χ²` tail example; Rinaldo 2017, Example 3.8): if `Z₁, …, Zₙ` are independent standard
@@ -517,9 +483,11 @@ public theorem measureReal_abs_chiSq_mean_sub_one_ge_le (n : ℕ) {t : ℝ} (ht0
   have hind : iIndepFun Y P :=
     iIndepFun_pi (X := fun _ (x : ℝ) ↦ x ^ 2 - 1) fun _ ↦ by fun_prop
   have hmeas : ∀ k, Measurable (Y k) := fun k ↦ by fun_prop
-  have hsub : ∀ k, HasSubexponentialMGF (Y k) 2 4 P := fun k ↦
-    hasSubexponentialMGF_comp (X := fun x : ℝ ↦ x ^ 2 - 1) (measurePreserving_eval _ k)
-      (by fun_prop) hasSubexponentialMGF_sq_sub_one_gaussianReal
+  have hsub : ∀ k, HasSubexponentialMGF (Y k) 2 4 P := fun k ↦ by
+    have hk := measurePreserving_eval (fun _ : Fin n ↦ gaussianReal 0 1) k
+    refine HasSubexponentialMGF.of_map (X := fun x : ℝ ↦ x ^ 2 - 1) hk.measurable.aemeasurable ?_
+    rw [hk.map_eq]
+    exact hasSubexponentialMGF_sq_sub_one_gaussianReal
   have hS := HasSubexponentialMGF.sum_of_iIndepFun hind hmeas (s := Finset.univ)
     fun k _ ↦ hsub k
   have hν : ((NNReal.sqrt (∑ _k : Fin n, (2 : ℝ≥0) ^ 2) : ℝ≥0) : ℝ) ^ 2 = 4 * n := by
@@ -547,7 +515,7 @@ public theorem measureReal_abs_chiSq_mean_sub_one_ge_le (n : ℕ) {t : ℝ} (ht0
     push_cast
     nlinarith
   have hup := hS.measureReal_ge_le_of_le (by positivity) htα
-  have hlow := (hasSubexponentialMGF_neg hS).measureReal_ge_le_of_le (by positivity) htα
+  have hlow := hS.neg.measureReal_ge_le_of_le (by positivity) htα
   have hval : -(n * t) ^ 2 / (2 * ((NNReal.sqrt (∑ _k : Fin n, (2 : ℝ≥0) ^ 2) : ℝ≥0) : ℝ) ^ 2) =
       -(n : ℝ) * t ^ 2 / 8 := by
     rw [hν]
