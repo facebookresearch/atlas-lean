@@ -33,8 +33,7 @@ Main result:
   (Kuhapatanakul, *Note on the Generalized Leonardo Numbers*, Fibonacci Quarterly 62 (2024),
   Theorem 2.5).
 
-The other identities of that paper are wanted statements in
-`WantedExt.NumberTheory.GenLeonardoWanted`.
+Further identities from the paper are stated in `WantedExt.NumberTheory.GenLeonardoWanted`.
 
 ## Proof
 
