@@ -10,6 +10,7 @@ module
 public import Mathlib.RingTheory.AlgebraicIndependent.TranscendenceBasis
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import Mathlib.Analysis.Normed.Field.Basic
+public import Mathlib.Topology.QuasiSeparated
 public import MathlibExt.AlgebraicGeometry.PerfectoidSliceSites
 public import MathlibExt.AlgebraicGeometry.IntegralTiltModels
 
@@ -126,9 +127,11 @@ def HasGeometricTrdegLE {K L : GeometricField p}
 
 variable (p)
 
-/-- Actual affine total disconnectedness: compactness and splitting every open cover. -/
+/-- Actual affine total disconnectedness (Scholze, *Étale cohomology of diamonds*, Def. 7.1): the
+space is quasicompact and quasi-separated, and every open cover splits. -/
 def IsTotallyDisconnected (P : Affine p) : Prop :=
   IsCompact (Set.univ : Set P.toHuberPair.Space) ∧
+    QuasiSeparatedSpace P.toHuberPair.Space ∧
     ∀ (I : Type 1) (U : I → Opens P.toHuberPair.Space),
       (∀ x : P.toHuberPair.Space, ∃ i, x ∈ U i) →
       ∃ s : P.toHuberPair.Space → Σ i, U i,
