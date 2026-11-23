@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.GroupTheory.Perm.Cycle.Type
-import Mathlib.GroupTheory.Perm.Fin
+public import Mathlib.GroupTheory.Perm.Fin
 
 /-!
 # Permutations and unsigned Stirling numbers
@@ -286,14 +286,16 @@ private noncomputable def decomposeFinZeroQuotientEquiv {n : ℕ}
       intro x
       exact ⟨Quotient.mk _ x.succ, rfl⟩
 
-private theorem cycleQuotientCount_decomposeFin_zero {n : ℕ}
+/-- Adding a new fixed point adds one cycle. -/
+theorem cycleQuotientCount_decomposeFin_zero {n : ℕ}
     (e : Equiv.Perm (Fin n)) :
     cycleQuotientCount (Equiv.Perm.decomposeFin.symm (0, e)) =
       cycleQuotientCount e + 1 := by
   rw [cycleQuotientCount, cycleQuotientCount,
     Nat.card_congr (decomposeFinZeroQuotientEquiv e), Finite.card_option]
 
-private theorem cycleQuotientCount_decomposeFin_succ {n : ℕ} (q : Fin n)
+/-- Inserting a new point into an existing cycle preserves the cycle count. -/
+theorem cycleQuotientCount_decomposeFin_succ {n : ℕ} (q : Fin n)
     (e : Equiv.Perm (Fin n)) :
     cycleQuotientCount (Equiv.Perm.decomposeFin.symm (q.succ, e)) =
       cycleQuotientCount e := by
