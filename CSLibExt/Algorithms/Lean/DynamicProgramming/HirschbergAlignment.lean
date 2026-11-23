@@ -52,13 +52,18 @@ section Hirschberg
 
 variable (σ : α → α → ℤ) (gap : ℤ)
 
-/-- The argmax of `f` over `0, …, n`, via the standard `List.argmax` API:
-the argmax of `f` on `List.range (n + 1)`, defaulting to `0` (the range is
-never empty, so the default is never used). -/
+/-- **Argmax over an initial segment.** For a function $f : \mathbb{N} \to \mathbb{Z}$ and
+$n \in \mathbb{N}$, the argmax of $f$ over $\{0, \dots, n\}$ is the least $k \le n$ such that
+$f(j) \le f(k)$ for all $j \le n$.
+
+It is computed as the first maximizer of $f$ on the list $[0, 1, \dots, n]$, which is never
+empty. -/
 def bestArgmax (f : ℕ → ℤ) (n : ℕ) : ℕ :=
   ((List.range (n + 1)).argmax f).getD 0
 
-/-- The argmax lies in `0, …, n`. -/
+/-- **The argmax over $\{0, \dots, n\}$ is at most $n$.** For every function
+$f : \mathbb{N} \to \mathbb{Z}$ and every $n \in \mathbb{N}$, the argmax of $f$ over
+$\{0, \dots, n\}$ is at most $n$. -/
 theorem bestArgmax_le (f : ℕ → ℤ) (n : ℕ) : bestArgmax f n ≤ n := by
   unfold bestArgmax
   cases h : (List.range (n + 1)).argmax f with
@@ -75,7 +80,9 @@ theorem bestArgmax_le (f : ℕ → ℤ) (n : ℕ) : bestArgmax f n ≤ n := by
       show m ≤ n
       omega
 
-/-- Every value is at most the argmax value. -/
+/-- **The argmax over $\{0, \dots, n\}$ maximizes the function there.** Let
+$f : \mathbb{N} \to \mathbb{Z}$, let $n \in \mathbb{N}$ and let $m$ be the argmax of $f$ over
+$\{0, \dots, n\}$. Then $f(k) \le f(m)$ for every $k \le n$. -/
 theorem bestArgmax_spec (f : ℕ → ℤ) {n k : ℕ} (hk : k ≤ n) :
     f k ≤ f (bestArgmax f n) := by
   unfold bestArgmax
@@ -249,7 +256,16 @@ private theorem exists_split_alignment_fst {A : Alignment α} {xs ys : List α}
       exact List.drop_left.symm
   · rw [hAeq, alignmentScore_append]
 
-/-- Any split of `ys` scores at most the optimum: concatenate optimal halves. -/
+/-- **A split of the second sequence scores at most the Needleman–Wunsch optimum.** Let
+$\sigma$ be an integer-valued substitution score on an alphabet, let $g$ be an integer gap
+score, and write $\mathrm{NW}(x, y)$ for the optimal Needleman–Wunsch global alignment score
+of sequences $x$ and $y$ under $\sigma$ and $g$. For sequences $x$, $y$ and natural numbers
+$k$, $m$, let $x_{<k}$ be the first $k$ letters of $x$ (all of $x$ if $k$ is at least its
+length) and $x_{\ge k}$ the remaining letters, and define $y_{<m}$ and $y_{\ge m}$ likewise.
+Then $\mathrm{NW}(x_{<k}, y_{<m}) + \mathrm{NW}(x_{\ge k}, y_{\ge m}) \le \mathrm{NW}(x, y)$.
+
+The bound holds because optimal alignments of the two halves concatenate to an alignment of
+$x$ and $y$. -/
 theorem splitScore_le_nwScore_ys (xs ys : List α) {mid k : ℕ} :
     nwScore σ gap (List.take k xs) (List.take mid ys) +
       nwScore σ gap (List.drop k xs) (List.drop mid ys) ≤ nwScore σ gap xs ys := by
@@ -262,7 +278,13 @@ theorem splitScore_le_nwScore_ys (xs ys : List α) {mid k : ℕ} :
   rw [← hs1, ← hs2, ← alignmentScore_append]
   exact alignmentScore_le_nwScore σ gap xs ys (A1 ++ A2) happend
 
-/-- Any split of `xs` scores at most the optimum. -/
+/-- **A split of the first sequence scores at most the Needleman–Wunsch optimum.** Let
+$\sigma$ be an integer-valued substitution score on an alphabet, let $g$ be an integer gap
+score, and write $\mathrm{NW}(x, y)$ for the optimal Needleman–Wunsch global alignment score
+of sequences $x$ and $y$ under $\sigma$ and $g$. For sequences $x$, $y$ and natural numbers
+$m$, $k$, let $x_{<m}$ be the first $m$ letters of $x$ (all of $x$ if $m$ is at least its
+length) and $x_{\ge m}$ the remaining letters, and define $y_{<k}$ and $y_{\ge k}$ likewise.
+Then $\mathrm{NW}(x_{<m}, y_{<k}) + \mathrm{NW}(x_{\ge m}, y_{\ge k}) \le \mathrm{NW}(x, y)$. -/
 theorem splitScore_le_nwScore_xs (xs ys : List α) {mid k : ℕ} :
     nwScore σ gap (List.take mid xs) (List.take k ys) +
       nwScore σ gap (List.drop mid xs) (List.drop k ys) ≤ nwScore σ gap xs ys := by
@@ -275,7 +297,12 @@ theorem splitScore_le_nwScore_xs (xs ys : List α) {mid k : ℕ} :
   rw [← hs1, ← hs2, ← alignmentScore_append]
   exact alignmentScore_le_nwScore σ gap xs ys (A1 ++ A2) happend
 
-/-- Some split of `ys` attains the optimum: split an optimal alignment. -/
+/-- **Every cut of the second list extends to an optimal split.** Fix a type $\alpha$, a
+substitution score $\sigma : \alpha \to \alpha \to \mathbb{Z}$ and a gap score $g \in \mathbb{Z}$.
+Write $S(u, v)$ for the Needleman–Wunsch score of lists $u$, $v$, and $u_{<m}$ for the first
+$m$ elements of $u$ and $u_{\ge m}$ for the rest. For all lists $xs$, $ys$ over $\alpha$ and
+every $m \le |ys|$, there is $k \le |xs|$ with
+$S(xs_{<k}, ys_{<m}) + S(xs_{\ge k}, ys_{\ge m}) = S(xs, ys)$. -/
 theorem exists_split_eq_nwScore_ys (xs ys : List α) {mid : ℕ}
     (hmid : mid ≤ ys.length) :
     ∃ k ≤ xs.length, nwScore σ gap (List.take k xs) (List.take mid ys) +
@@ -290,7 +317,12 @@ theorem exists_split_eq_nwScore_ys (xs ys : List α) {mid : ℕ}
       exact add_le_add (alignmentScore_le_nwScore σ gap _ _ A1 hA1)
         (alignmentScore_le_nwScore σ gap _ _ A2 hA2)
 
-/-- Some split of `xs` attains the optimum. -/
+/-- **Every cut of the first list extends to an optimal split.** Fix a type $\alpha$, a
+substitution score $\sigma : \alpha \to \alpha \to \mathbb{Z}$ and a gap score $g \in \mathbb{Z}$.
+Write $S(u, v)$ for the Needleman–Wunsch score of lists $u$, $v$, and $u_{<m}$ for the first
+$m$ elements of $u$ and $u_{\ge m}$ for the rest. For all lists $xs$, $ys$ over $\alpha$ and
+every $m \le |xs|$, there is $k \le |ys|$ with
+$S(xs_{<m}, ys_{<k}) + S(xs_{\ge m}, ys_{\ge k}) = S(xs, ys)$. -/
 theorem exists_split_eq_nwScore_xs (xs ys : List α) {mid : ℕ}
     (hmid : mid ≤ xs.length) :
     ∃ k ≤ ys.length, nwScore σ gap (List.take mid xs) (List.take k ys) +
@@ -305,7 +337,13 @@ theorem exists_split_eq_nwScore_xs (xs ys : List α) {mid : ℕ}
       exact add_le_add (alignmentScore_le_nwScore σ gap _ _ A1 hA1)
         (alignmentScore_le_nwScore σ gap _ _ A2 hA2)
 
-/-- The argmax split of `ys` attains the optimum. -/
+/-- **Hirschberg split identity, splitting the second sequence.** Fix a substitution score
+$\sigma$ assigning an integer to each pair of letters and an integer gap score $g$, and write
+$\mathrm{NW}$ for the Needleman–Wunsch score. For a sequence $s$, write $s_{<j}$ for its first
+$j$ letters and $s_{\ge j}$ for the remaining letters. Let $x$, $y$ be sequences and
+$m \le |y|$, and let $k$ be the first index $j \in \{0, \dots, |x|\}$ that maximizes
+$\mathrm{NW}(x_{<j}, y_{<m}) + \mathrm{NW}(x_{\ge j}, y_{\ge m})$. Then
+$\mathrm{NW}(x_{<k}, y_{<m}) + \mathrm{NW}(x_{\ge k}, y_{\ge m}) = \mathrm{NW}(x, y)$. -/
 theorem nwScore_eq_bestSplit_ys (xs ys : List α) {mid : ℕ}
     (hmid : mid ≤ ys.length) :
     nwScore σ gap
@@ -334,7 +372,13 @@ theorem nwScore_eq_bestSplit_ys (xs ys : List α) {mid : ℕ}
       nwScore σ gap (List.drop k xs) (List.drop mid ys)) hk
   exact le_antisymm hle hge
 
-/-- The argmax split of `xs` attains the optimum. -/
+/-- **Hirschberg split identity, splitting the first sequence.** Fix a substitution score
+$\sigma$ assigning an integer to each pair of letters and an integer gap score $g$, and write
+$\mathrm{NW}$ for the Needleman–Wunsch score. For a sequence $s$, write $s_{<j}$ for its first
+$j$ letters and $s_{\ge j}$ for the remaining letters. Let $x$, $y$ be sequences and
+$m \le |x|$, and let $k$ be the first index $j \in \{0, \dots, |y|\}$ that maximizes
+$\mathrm{NW}(x_{<m}, y_{<j}) + \mathrm{NW}(x_{\ge m}, y_{\ge j})$. Then
+$\mathrm{NW}(x_{<m}, y_{<k}) + \mathrm{NW}(x_{\ge m}, y_{\ge k}) = \mathrm{NW}(x, y)$. -/
 theorem nwScore_eq_bestSplit_xs (xs ys : List α) {mid : ℕ}
     (hmid : mid ≤ xs.length) :
     nwScore σ gap (List.take mid xs)
@@ -364,7 +408,10 @@ theorem nwScore_eq_bestSplit_xs (xs ys : List α) {mid : ℕ}
   exact le_antisymm hle hge
 
 
-/-- The optimal alignment of two singletons: match, or two gaps. -/
+/-- **Needleman–Wunsch score of two single letters.** For every substitution score $\sigma$
+assigning an integer to each pair of letters, integer gap score $g$ and letters $a$, $b$, the
+Needleman–Wunsch score of the one-letter sequences $[a]$ and $[b]$ is
+$\max(\sigma(a, b), g + g)$: the better of matching $a$ with $b$ and gapping both. -/
 theorem nwScore_singleton_singleton (a b : α) :
     nwScore σ gap [a] [b] = max (σ a b) (gap + gap) := by
   have e := nwScore_eq σ gap a b [] []
@@ -372,7 +419,14 @@ theorem nwScore_singleton_singleton (a b : α) :
   rw [e]
   simp [h00, nwScore_nil_left, nwScore_nil_right, max_idem]
 
-/-- The `≤ 1 × ≤ 1` base case: match singletons, or gap them. -/
+/-- **Base-case alignment for Hirschberg.** Fix a substitution score $\sigma$ assigning an
+integer to each pair of letters and an integer gap score $g$, and write a column as a pair
+whose missing entry, a gap, is marked $\bot$. The base-case alignment of sequences $x$ and $y$
+is the empty alignment if both are empty; the single column $(\bot, b)$ if $x$ is empty and
+$y = [b]$; the single column $(a, \bot)$ if $x = [a]$ and $y$ is empty; if $x = [a]$ and
+$y = [b]$, it is the single column $(a, b)$ when $\sigma(a, b) \ge 2g$ and the two columns
+$(a, \bot)$, $(\bot, b)$ otherwise; and it is the empty alignment when $x$ or $y$ has length
+at least $2$. -/
 def smallAlign : List α → List α → Alignment α
   | [], [] => []
   | [], [b] => [(none, some b)]
@@ -381,7 +435,10 @@ def smallAlign : List α → List α → Alignment α
       else [(some a, none), (none, some b)]
   | _, _ => []
 
-/-- The base case is valid. -/
+/-- **The base-case alignment is valid.** For every substitution score $\sigma$ assigning an
+integer to each pair of letters, integer gap score $g$ and sequences $x$, $y$ with
+$|x| \le 1$ and $|y| \le 1$, the base-case alignment of $x$ and $y$ is a valid alignment of
+$x$ and $y$. -/
 theorem isAlignment_smallAlign (xs ys : List α) (hxs : xs.length ≤ 1)
     (hys : ys.length ≤ 1) : IsAlignment (smallAlign σ gap xs ys) xs ys := by
   cases xs with
@@ -428,7 +485,10 @@ theorem isAlignment_smallAlign (xs ys : List α) (hxs : xs.length ≤ 1)
           simp only [List.length_cons] at hxs
           omega
 
-/-- The base case attains the optimum. -/
+/-- **The base-case alignment is optimal.** Fix a type $\alpha$, a substitution score
+$\sigma : \alpha \to \alpha \to \mathbb{Z}$ and a gap score $g \in \mathbb{Z}$. For all lists
+$xs$, $ys$ over $\alpha$ with $|xs| \le 1$ and $|ys| \le 1$, the alignment score of the
+base-case alignment of $xs$ and $ys$ equals the Needleman–Wunsch score of $xs$ and $ys$. -/
 theorem alignmentScore_smallAlign_eq_nwScore (xs ys : List α)
     (hxs : xs.length ≤ 1) (hys : ys.length ≤ 1) :
     alignmentScore σ gap (smallAlign σ gap xs ys) = nwScore σ gap xs ys := by
@@ -481,9 +541,23 @@ theorem alignmentScore_smallAlign_eq_nwScore (xs ys : List α)
           simp only [List.length_cons] at hxs
           omega
 
-/-- Hirschberg reconstruction: split the longer sequence in half, pick the
-argmax split of the other sequence, and recurse on the two halves. The fuel
-is the total length. -/
+/-- **Hirschberg reconstruction with fuel.** Fix a substitution score $\sigma$ assigning an
+integer to each pair of letters and an integer gap score $g$, and write $\mathrm{NW}$ for the
+Needleman–Wunsch score. For a sequence $s$, write $s_{<j}$ for its first $j$ letters and
+$s_{\ge j}$ for the remaining letters. The Hirschberg reconstruction of sequences $x$ and $y$
+with fuel $n$ is the alignment defined by recursion on $n$. With fuel $0$ it is the empty
+alignment. With fuel $n + 1$: if $|x| \le 1$ and $|y| \le 1$, it is the base-case alignment
+of $x$ and $y$; otherwise, if $|y| \ge |x|$, let $m = \lfloor |y|/2 \rfloor$ and let $k$ be
+the first index $j \in \{0, \dots, |x|\}$ that maximizes
+$\mathrm{NW}(x_{<j}, y_{<m}) + \mathrm{NW}(x_{\ge j}, y_{\ge m})$, and the result is the
+concatenation of the reconstructions with fuel $n$ of $x_{<k}$ and $y_{<m}$ and of $x_{\ge k}$
+and $y_{\ge m}$; otherwise, let $m = \lfloor |x|/2 \rfloor$ and let $k$ be the first index
+$j \in \{0, \dots, |y|\}$ that maximizes
+$\mathrm{NW}(x_{<m}, y_{<j}) + \mathrm{NW}(x_{\ge m}, y_{\ge j})$, and the result is the
+concatenation of the reconstructions with fuel $n$ of $x_{<m}$ and $y_{<k}$ and of $x_{\ge m}$
+and $y_{\ge k}$.
+
+Hirschberg's alignment algorithm runs this reconstruction with fuel $|x| + |y|$. -/
 def hirschbergAlign : ℕ → List α → List α → Alignment α
   | 0, _, _ => []
   | fuel + 1, xs, ys =>
@@ -512,7 +586,11 @@ def hirschbergAlign : ℕ → List α → List α → Alignment α
               (List.take (xs.length / 2) xs) (List.take k ys) + nwScore σ gap
               (List.drop (xs.length / 2) xs) (List.drop k ys)) ys.length) ys)
 
-/-- The base-case unfolding. -/
+/-- **Hirschberg reconstruction on lists of length at most one.** Fix a type $\alpha$, a
+substitution score $\sigma : \alpha \to \alpha \to \mathbb{Z}$ and a gap score $g \in \mathbb{Z}$.
+For every $n \in \mathbb{N}$ and all lists $xs$, $ys$ over $\alpha$ with $|xs| \le 1$ and
+$|ys| \le 1$, the Hirschberg reconstruction of $xs$ and $ys$ with fuel $n + 1$ is the
+base-case alignment of $xs$ and $ys$. -/
 theorem hirschbergAlign_small (fuel : ℕ) (xs ys : List α)
     (hsmall : xs.length ≤ 1 ∧ ys.length ≤ 1) :
     hirschbergAlign σ gap (fuel + 1) xs ys = smallAlign σ gap xs ys := by
@@ -522,7 +600,16 @@ theorem hirschbergAlign_small (fuel : ℕ) (xs ys : List α)
   simp only [hirschbergAlign]
   rw [ite_eq_left hbool]
 
-/-- The split-`ys` unfolding. -/
+/-- **Hirschberg recursion step splitting the second sequence.** Fix a substitution score
+$\sigma$ assigning an integer to each pair of letters and an integer gap score $g$, and write
+$\mathrm{NW}$ for the Needleman–Wunsch score. For a sequence $s$, write $s_{<j}$ for its first
+$j$ letters and $s_{\ge j}$ for the remaining letters. Let $x$, $y$ be sequences with
+$|y| \ge |x|$ that do not both have length at most $1$, let $m = \lfloor |y|/2 \rfloor$, and
+let $k$ be the first index $j \in \{0, \dots, |x|\}$ that maximizes
+$\mathrm{NW}(x_{<j}, y_{<m}) + \mathrm{NW}(x_{\ge j}, y_{\ge m})$. Then for every natural
+number $n$, the Hirschberg reconstruction of $x$ and $y$ with fuel $n + 1$ is the
+concatenation of the Hirschberg reconstruction of $x_{<k}$ and $y_{<m}$ with fuel $n$ and the
+Hirschberg reconstruction of $x_{\ge k}$ and $y_{\ge m}$ with fuel $n$. -/
 theorem hirschbergAlign_split_ys (fuel : ℕ) (xs ys : List α)
     (hsmall : ¬ (xs.length ≤ 1 ∧ ys.length ≤ 1)) (hge : ys.length ≥ xs.length) :
     hirschbergAlign σ gap (fuel + 1) xs ys =
@@ -545,7 +632,15 @@ theorem hirschbergAlign_split_ys (fuel : ℕ) (xs ys : List α)
   simp only [hirschbergAlign]
   rw [ite_eq_right hbool, ite_eq_left hge_bool]
 
-/-- The split-`xs` unfolding. -/
+/-- **Hirschberg reconstruction splits the longer first list.** Fix a type $\alpha$, a
+substitution score $\sigma : \alpha \to \alpha \to \mathbb{Z}$ and a gap score $g \in \mathbb{Z}$.
+Write $H_n(u, v)$ for the Hirschberg reconstruction of lists $u$, $v$ with fuel $n$, $S(u, v)$
+for their Needleman–Wunsch score, and $u_{<m}$, $u_{\ge m}$ for the first $m$ elements of $u$
+and the rest. Let $xs$, $ys$ be lists over $\alpha$ that are not both of length at most $1$,
+with $|ys| < |xs|$. Put $h = \lfloor |xs| / 2 \rfloor$ and let $k$ be the least maximizer over
+$\{0, \dots, |ys|\}$ of $j \mapsto S(xs_{<h}, ys_{<j}) + S(xs_{\ge h}, ys_{\ge j})$. Then
+for every $n \in \mathbb{N}$, $H_{n+1}(xs, ys)$ is the concatenation of
+$H_n(xs_{<h}, ys_{<k})$ and $H_n(xs_{\ge h}, ys_{\ge k})$. -/
 theorem hirschbergAlign_split_xs (fuel : ℕ) (xs ys : List α)
     (hsmall : ¬ (xs.length ≤ 1 ∧ ys.length ≤ 1))
     (hge : ¬ ys.length ≥ xs.length) :
@@ -570,7 +665,10 @@ theorem hirschbergAlign_split_xs (fuel : ℕ) (xs ys : List α)
   simp only [hirschbergAlign]
   rw [ite_eq_right hbool, ite_eq_right hge_bool]
 
-/-- Hirschberg reconstruction returns a valid alignment. -/
+/-- **Hirschberg reconstruction with enough fuel is valid.** For every substitution score
+$\sigma$ assigning an integer to each pair of letters, integer gap score $g$, natural number
+$n$ and sequences $x$, $y$ with $|x| + |y| \le n$, the Hirschberg reconstruction of $x$ and
+$y$ with fuel $n$ is a valid alignment of $x$ and $y$. -/
 theorem isAlignment_hirschbergAlign : ∀ (fuel : ℕ) (xs ys : List α),
     xs.length + ys.length ≤ fuel →
     IsAlignment (hirschbergAlign σ gap fuel xs ys) xs ys
@@ -627,7 +725,11 @@ theorem isAlignment_hirschbergAlign : ∀ (fuel : ℕ) (xs ys : List α),
           have happ := isAlignment_append ih1 ih2
           rwa [List.take_append_drop, List.take_append_drop] at happ
 
-/-- Hirschberg reconstruction attains the optimum. -/
+/-- **Hirschberg reconstruction with enough fuel attains the optimum.** Fix a type $\alpha$, a
+substitution score $\sigma : \alpha \to \alpha \to \mathbb{Z}$ and a gap score $g \in \mathbb{Z}$.
+For every fuel $n \in \mathbb{N}$ and all lists $xs$, $ys$ over $\alpha$ with
+$|xs| + |ys| \le n$, the alignment score of the Hirschberg reconstruction of $xs$ and $ys$ with
+fuel $n$ equals the Needleman–Wunsch score of $xs$ and $ys$. -/
 theorem alignmentScore_hirschbergAlign : ∀ (fuel : ℕ) (xs ys : List α),
     xs.length + ys.length ≤ fuel →
     alignmentScore σ gap (hirschbergAlign σ gap fuel xs ys) = nwScore σ gap xs ys
@@ -685,16 +787,23 @@ theorem alignmentScore_hirschbergAlign : ∀ (fuel : ℕ) (xs ys : List α),
           exact nwScore_eq_bestSplit_xs σ gap xs ys
             (by omega : mid ≤ xs.length)
 
-/-- The Hirschberg alignment: divide-and-conquer reconstruction at full fuel. -/
+/-- **Hirschberg's alignment algorithm.** Fix a substitution score $\sigma$ assigning an integer
+to each pair of letters and an integer gap score $g$. The Hirschberg alignment of sequences $x$
+and $y$ is the Hirschberg reconstruction of $x$ and $y$ with fuel $|x| + |y|$. -/
 def hirschberg (xs ys : List α) : Alignment α :=
   hirschbergAlign σ gap (xs.length + ys.length) xs ys
 
-/-- **Hirschberg reconstruction is valid.** -/
+/-- **Hirschberg reconstruction is valid.** For every substitution score $\sigma$ assigning an
+integer to each pair of letters, integer gap score $g$ and sequences $x$, $y$, the Hirschberg
+alignment of $x$ and $y$ is a valid alignment of $x$ and $y$. -/
 theorem isAlignment_hirschberg (xs ys : List α) :
     IsAlignment (hirschberg σ gap xs ys) xs ys :=
   isAlignment_hirschbergAlign σ gap _ xs ys le_rfl
 
-/-- **Hirschberg reconstruction attains the Needleman–Wunsch optimum.** -/
+/-- **Hirschberg reconstruction attains the Needleman–Wunsch optimum.** Fix a type $\alpha$, a
+substitution score $\sigma : \alpha \to \alpha \to \mathbb{Z}$ and a gap score $g \in \mathbb{Z}$.
+For all lists $xs$, $ys$ over $\alpha$, the alignment score of the Hirschberg alignment of $xs$
+and $ys$ equals the Needleman–Wunsch score of $xs$ and $ys$. -/
 theorem alignmentScore_hirschberg (xs ys : List α) :
     alignmentScore σ gap (hirschberg σ gap xs ys) = nwScore σ gap xs ys :=
   alignmentScore_hirschbergAlign σ gap _ xs ys le_rfl

@@ -42,9 +42,16 @@ namespace Cslib.Language
 
 variable {T : Type*} {g : ContextFreeGrammar T}
 
-/-- Derivation forests with a bound on the height: the height of a
-forest is the number of nonterminal expansions along its longest
-path; terminals and empty forests contribute nothing. -/
+/-- **Height-bounded derivations.** Let $g$ be a context-free grammar. For a sentential form
+$\alpha$ (a list of terminals and nonterminals of $g$), a terminal word $w$ and a natural number
+$n$, say that $\alpha$ yields $w$ at height $n$ when this follows from three rules: the empty form
+yields the empty word at every height $n$; if $\alpha$ yields $w$ at height $n$, then for every
+terminal $a$ the form $a\alpha$ yields $aw$ at height $n$; and if $A \to \beta$ is a production of
+$g$, $\beta$ yields $w_1$ at height $n$ and $\alpha$ yields $w_2$ at height $m$, then $A\alpha$
+yields $w_1 w_2$ at height $\max(n + 1, m)$.
+
+Thus $n$ bounds the height of a derivation forest, the number of nonterminal expansions along
+its longest path; terminals and empty forests contribute nothing. -/
 inductive YieldsH (g : ContextFreeGrammar T) :
     List (Symbol T g.NT) → List T → ℕ → Prop
   | nil (n : ℕ) : YieldsH g [] [] n
@@ -55,7 +62,9 @@ inductive YieldsH (g : ContextFreeGrammar T) :
       (hout : YieldsH g r.output w₁ n) (hrest : YieldsH g u w₂ m) :
       YieldsH g (Symbol.nonterminal r.input :: u) (w₁ ++ w₂) (max (n + 1) m)
 
-/-- Height bounds can be increased. -/
+/-- **Raising the height bound of a yield.** Let $g$ be a context-free grammar. If a sentential
+form $\alpha$ yields the terminal word $w$ through a derivation forest of height at most $n$,
+and $n \le m$, then $\alpha$ yields $w$ through a derivation forest of height at most $m$. -/
 theorem YieldsH.mono {α : List (Symbol T g.NT)} {w : List T} {n m : ℕ}
     (h : YieldsH g α w n) (hle : n ≤ m) : YieldsH g α w m := by
   induction h generalizing m with
@@ -74,7 +83,9 @@ theorem YieldsH.mono {α : List (Symbol T g.NT)} {w : List T} {n m : ℕ}
       have h := YieldsH.nonterminal hr (ihout hn) (ihrest hm)
       simpa using h
 
-/-- Every yield has a height-bounded derivation forest. -/
+/-- **Every yield has a height bound.** Let $g$ be a context-free grammar. If a sentential form
+$\alpha$ yields the terminal word $w$, then there is a natural number $n$ such that $\alpha$
+yields $w$ through a derivation forest of height at most $n$. -/
 theorem YieldsH.of_yields {α : List (Symbol T g.NT)} {w : List T}
     (h : Yields g α w) : ∃ n, YieldsH g α w n := by
   induction h with
@@ -87,7 +98,9 @@ theorem YieldsH.of_yields {α : List (Symbol T g.NT)} {w : List T}
     obtain ⟨m, hm⟩ := ihrest
     exact ⟨max (n + 1) m, YieldsH.nonterminal hr hn hm⟩
 
-/-- A height-bounded derivation forest is a yield. -/
+/-- **Height-bounded yields are yields.** Let $g$ be a context-free grammar. If a sentential
+form $\alpha$ yields the terminal word $w$ through a derivation forest of height at most $n$,
+then $\alpha$ yields $w$. -/
 theorem Yields.of_yieldsH {α : List (Symbol T g.NT)} {w : List T} {n : ℕ}
     (h : YieldsH g α w n) : Yields g α w := by
   induction h with
@@ -96,7 +109,11 @@ theorem Yields.of_yieldsH {α : List (Symbol T g.NT)} {w : List T} {n : ℕ}
   | nonterminal hr _ _ ihout ihrest =>
     exact Yields.nonterminal hr ihout ihrest
 
-/-- Height-bounded yields concatenate at the maximum height. -/
+/-- **Concatenating height-bounded yields.** Let $g$ be a context-free grammar. If a sentential
+form $u$ yields the terminal word $w_1$ through a derivation forest of height at most $n$, and
+a sentential form $v$ yields the terminal word $w_2$ through one of height at most $m$, then the
+concatenation $uv$ yields $w_1 w_2$ through a derivation forest of height at most
+$\max(n, m)$. -/
 theorem YieldsH.append {u v : List (Symbol T g.NT)} {w₁ w₂ : List T}
     {n m : ℕ} (hu : YieldsH g u w₁ n) (hv : YieldsH g v w₂ m) :
     YieldsH g (u ++ v) (w₁ ++ w₂) (max n m) := by
@@ -107,7 +124,11 @@ theorem YieldsH.append {u v : List (Symbol T g.NT)} {w₁ w₂ : List T}
     simpa [Nat.max_assoc, List.append_assoc] using
       YieldsH.nonterminal hr hout ihrest
 
-/-- A height-bounded yield over an append splits at the same height. -/
+/-- **Splitting a height-bounded yield at a concatenation.** Let $g$ be a context-free grammar
+and $u$, $v$ sentential forms of $g$. If the concatenation $uv$ yields the terminal word $w$
+through a derivation forest of height at most $n$, then there are terminal words $w_1$, $w_2$
+with $w = w_1 w_2$ such that $u$ yields $w_1$ and $v$ yields $w_2$, each through a derivation
+forest of height at most $n$. -/
 theorem YieldsH.append_inv {u v : List (Symbol T g.NT)} {w : List T}
     {n : ℕ} (h : YieldsH g (u ++ v) w n) :
     ∃ w₁ w₂, w = w₁ ++ w₂ ∧ YieldsH g u w₁ n ∧ YieldsH g v w₂ n := by
@@ -128,8 +149,10 @@ theorem YieldsH.append_inv {u v : List (Symbol T g.NT)} {w : List T}
         exact ⟨w₁ ++ w₁', w₂', by rw [List.append_assoc],
           YieldsH.nonterminal hr hout hu, hv.mono (Nat.le_max_right _ _)⟩
 
-/-- The length of a yield is bounded in terms of the height and the
-longest production output. -/
+/-- **Length bound for height-bounded yields.** Let $g$ be a context-free grammar and $R$ a
+natural number such that every production of $g$ has an output of length at most $R$. If a
+sentential form $\alpha$ yields the terminal word $w$ through a derivation forest of height at
+most $n$, then $|w| \le |\alpha| \cdot \max(2, R)^n$. -/
 theorem List.length_le_of_yieldsH {R : ℕ}
     (hR : ∀ r ∈ g.rules, r.output.length ≤ R) :
     ∀ {α : List (Symbol T g.NT)} {w : List T} {n : ℕ},
@@ -161,7 +184,10 @@ theorem List.length_le_of_yieldsH {R : ℕ}
     rw [List.length_append, List.length_cons, Nat.add_one_mul]
     omega
 
-/-- Every yield has a derivation forest of minimal height. -/
+/-- **Minimal-height derivation forests exist.** Let $g$ be a context-free grammar. If a
+sentential form $\alpha$ yields the terminal word $w$, then there is a natural number $n$ such
+that $\alpha$ yields $w$ through a derivation forest of height at most $n$, but through no
+derivation forest of height at most $m$ for any $m < n$. -/
 theorem exists_minimal_yieldsH {α : List (Symbol T g.NT)} {w : List T}
     (h : Yields g α w) :
     ∃ n, YieldsH g α w n ∧ ∀ m < n, ¬ YieldsH g α w m := by
@@ -236,12 +262,13 @@ private theorem exists_minimal_tall {α : List (Symbol T g.NT)}
         by simp [hw, hword, List.append_assoc],
         by simpa using YieldsH.append (h₁.mono hle1) hL, hB, hBmin, hR⟩
 
-/-- A *semantic* derivation context: every word yielded by `B`,
-framed by `l` and `r`, is yielded by `A`. This is the
-language-inclusion form of a one-hole derivation context; it is
-what pumping iteration uses, and it holds vacuously when `B`
-yields nothing. The `YieldsContext.of_rule` lemma produces such
-contexts from actual productions. -/
+/-- **Derivation contexts.** Let $g$ be a context-free grammar, let $A$ and $B$ be nonterminals of
+$g$, and let $l$ and $r$ be words over the terminal alphabet. Then $(l, r)$ is a derivation
+context from $A$ to $B$ when, for every terminal word $w$ that the nonterminal $B$ yields in $g$,
+the nonterminal $A$ yields the word $l w r$ in $g$.
+
+This is the language-inclusion form of a one-hole derivation context; it is what pumping
+iteration uses, and it holds vacuously when $B$ yields nothing. -/
 def YieldsContext (g : ContextFreeGrammar T) (A B : g.NT) (l r : List T) :
     Prop :=
   ∀ w, Yields g [Symbol.nonterminal B] w →
@@ -255,8 +282,11 @@ theorem YieldsContext.trans {A B C : g.NT} {l₁ r₁ l₂ r₂ : List T}
     YieldsContext g A C (l₁ ++ l₂) (r₂ ++ r₁) :=
   fun _ h => by simpa [List.append_assoc] using h₁ _ (h₂ _ h)
 
-/-- One production step gives a derivation context to each nonterminal
-in its output. -/
+/-- **A production gives derivation contexts.** Let $g$ be a context-free grammar and
+$A \to \alpha_1 B \alpha_2$ a production of $g$, where $B$ is a nonterminal and $\alpha_1$,
+$\alpha_2$ are sentential forms. If $\alpha_1$ yields the terminal word $l$ and $\alpha_2$ yields
+the terminal word $r$, then for every terminal word $w$ yielded by $B$ the word $l w r$ is
+yielded by $A$; that is, $(l, r)$ is a derivation context from $A$ to $B$. -/
 theorem YieldsContext.of_rule {r : ContextFreeRule T g.NT}
     (hr : r ∈ g.rules) {α₁ α₂ : List (Symbol T g.NT)} {B : g.NT}
     {l rr : List T} (hα : r.output = α₁ ++ Symbol.nonterminal B :: α₂)
@@ -276,7 +306,11 @@ private theorem flatten_replicate_append (l : List T) :
     rw [List.replicate_succ, List.flatten_cons, List.append_assoc,
       flatten_replicate_append l _]
 
-/-- Iterating a self-context pumps the surrounding words. -/
+/-- **Pumping through a self-context.** Let $g$ be a context-free grammar, $A$ a nonterminal and
+$l$, $r$, $x$ terminal words. Suppose that for every terminal word $w$ yielded by $A$ the word
+$l w r$ is also yielded by $A$, and that $A$ yields $x$. Then for every natural number $i$ the
+nonterminal $A$ yields $l^i x r^i$, where $l^i$ and $r^i$ denote the concatenations of $i$
+copies of $l$ and of $r$. -/
 theorem YieldsContext.iterate {A : g.NT} {l r x : List T}
     (h : YieldsContext g A A l r) (hx : Yields g [Symbol.nonterminal A] x)
     (i : ℕ) :
@@ -643,12 +677,11 @@ private theorem exists_output_length_le (g : ContextFreeGrammar T) :
     ∃ R, ∀ r ∈ g.rules, r.output.length ≤ R :=
   exists_le_of_finset g.rules (fun r => r.output.length)
 
-/-- The pumping lemma for context-free languages: every context-free
-language has a pumping length `n > 0` such that every word of length
-at least `n` splits as `u ++ v ++ x ++ y ++ z` with `v ++ y` nonempty,
-`v ++ x ++ y` of length at most `n`, and every pumped word
-`u ++ v^[i] ++ x ++ y^[i] ++ z` (where `v^[i]` is `i` copies of `v`)
-back in the language. -/
+/-- **Pumping lemma for context-free languages.** For every context-free language $L$ over an
+alphabet $T$ there is a natural number $n > 0$ such that every word $w \in L$ with $|w| \ge n$
+can be written as $w = uvxyz$ with words $u, v, x, y, z$ over $T$ such that $vy$ is nonempty,
+$|vxy| \le n$, and $u v^i x y^i z \in L$ for every natural number $i$, where $v^i$ and $y^i$
+denote the concatenations of $i$ copies of $v$ and of $y$. -/
 theorem IsContextFree.pumping {L : Language T} (hL : L.IsContextFree) :
     ∃ n : ℕ, 0 < n ∧ ∀ w ∈ L, n ≤ w.length →
       ∃ u v x y z : List T, w = u ++ v ++ x ++ y ++ z ∧ v ++ y ≠ [] ∧

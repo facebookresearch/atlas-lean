@@ -11,12 +11,13 @@ Author: Steven Warner
 -/
 module
 
-public import Mathlib.SetTheory.Cardinal.Aleph
 public import Mathlib.SetTheory.Ordinal.Basic
 
 @[expose] public section
 
 -- Source: Lean Definition Library (Airtable) records: Logic 55, Logic 56
+
+open Cardinal Ordinal
 
 /-!
 # Subsets of $lambda$ of size less than $\kappa$; Club in P_κ(λ)
@@ -25,8 +26,6 @@ public import Mathlib.SetTheory.Ordinal.Basic
 
 * Jech (for `powersetCardLT`, `IsClubPowersetCardLT`)
 -/
-
-open Cardinal Ordinal
 
 namespace MetaMathlibExt
 
