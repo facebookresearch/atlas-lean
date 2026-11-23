@@ -1,0 +1,3 @@
+# Equal free densities from merging free marginals
+
+Let $d, N \in \mathbb{N}$, $e, e'$ unordered pairs of vertices of $\Lambda_N$, and $0 < p < 1$. If $\phi_{N+k}(e^{(N+k)} \text{ open}) - \phi_{N+k}(e'^{(N+k)} \text{ open}) \to 0$ as $k \to \infty$, then $\theta^0_e(p) = \theta^0_{e'}(p)$. Here $e^{(m)}$ is a pair $e$ of vertices of $\Lambda_N$ viewed in $\Lambda_m$, $\phi_m(e \text{ open})$ is the [edge marginal](../fkg-inequality-and-monotonicity-of-random-cluste/edge-marg-prob.md) of the random-cluster probability on $\Lambda_m = \{-m, \dots, m\}^d$ at $(p, 2)$, and $\theta^0_e(p)$ is the [free edge density](../per-box-agreement-of-free-and-wired-random-clust/free-edge-density.md) of $e$ at $q = 2$.

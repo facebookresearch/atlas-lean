@@ -47,8 +47,13 @@ open MetaMathlibExt.TM2Recursive (encodeNat_eq_cons encodeNat_zero)
 
 /-! ### Parsing -/
 
-/-- Whether a block whose bits so far end in `false` iff `z` ends in `false` after the further
-bits `p`. So `lastF false p` says that `p` is non-empty and ends in `false`: not canonical. -/
+/-- **Whether a bit string ends in false.** For a Boolean $z$ and a list of bits $p$, the value
+is $z$ when $p$ is empty and the negation of the last bit of $p$ otherwise. So if $z$ records
+whether the bits read so far end in false, the value records whether those bits followed by $p$
+end in false.
+
+With $z$ false the value is true exactly when $p$ is non-empty and ends in false, that is, when
+$p$ is not the canonical binary code of a number, least significant bit first. -/
 def lastF : Bool → List Bool → Bool
   | z, [] => z
   | _, b :: p => lastF (!b) p
@@ -61,7 +66,10 @@ theorem lastF_eq_false_iff : ∀ (z : Bool) (p : List Bool),
       rw [lastF, lastF_eq_false_iff (!b) (c :: p)]
       simp [List.getLast?_cons_cons]
 
-/-- A block is canonical binary iff it does not end in `false`. -/
+/-- **Canonical binary strings are those not ending in zero.** For every bit string $p$, encoding
+in binary (least significant bit first) the natural number that $p$ decodes to gives back $p$ if
+and only if the trailing-zero test, started with no trailing zero, reports that $p$ does not end
+in $0$; that is, $p$ is empty or its last bit is $1$. -/
 theorem encodeNat_decodeNat_iff (p : List Bool) :
     encodeNat (decodeNat p) = p ↔ lastF false p = false := by
   rw [encodeNat_decodeNat_eq_iff, lastF_eq_false_iff]
@@ -75,7 +83,13 @@ private theorem decodeNatPrefix_eq_some' {l r : List Bool} {a : ℕ} :
     decodeNatPrefix l = some (a, r) ↔ l = delimit (encodeNat a) ++ r :=
   decodeNatPrefix_eq_some_iff l a r
 
-/-- The number blocks of the input, up to its end, with fuel. -/
+/-- **Parsing number blocks, with fuel.** For a fuel $n$ and a list of bits $r$, the result is
+either a list of numbers or a failure. If $r$ is empty, the result is the empty list. If $r$ is
+non-empty and $n = 0$, parsing fails. If $r$ is non-empty and $n = m + 1$, one prefix-coded
+number is decoded off the front of $r$: if this gives a number $a$ with remainder $r'$, the result
+is $a$ followed by the result for $r'$ with fuel $m$ (failing if that fails), and otherwise
+parsing fails. Here the prefix code of $a$ is the canonical binary code of $a$, least significant
+bit first, with each bit $b$ written as the pair true, $b$, followed by a final false. -/
 def numsAux : ℕ → List Bool → Option (List ℕ)
   | _, [] => some []
   | 0, _ :: _ => none
@@ -83,7 +97,12 @@ def numsAux : ℕ → List Bool → Option (List ℕ)
     | some (a, r) => (numsAux n r).map (a :: ·)
     | none => none
 
-/-- Parse a SUBSET-SUM instance: the target block, then number blocks up to the end. -/
+/-- **Decoding a SUBSET-SUM instance.** A block holding a bit string $p$ writes each bit $b$ of $p$
+as the two bits $1, b$ and ends with a single $0$. The decoder reads a bit string $x$ as one block
+holding the target $t$, followed by blocks holding numbers $a_1, \dots, a_n$ that run exactly to
+the end of $x$, where each block must hold the canonical binary representation of its number
+(least significant bit first, no trailing $0$). It returns the list $(a_1, \dots, a_n)$ together
+with $t$, and fails if $x$ does not split this way. -/
 def decodeSS (x : List Bool) : Option (List ℕ × ℕ) :=
   match decodeNatPrefix x with
   | some (t, r) => (numsAux r.length r).map fun as => (as, t)
@@ -152,7 +171,10 @@ theorem numsAux_eq_some : ∀ (n : ℕ) (r : List Bool) (as : List ℕ), r.lengt
               (numsAux_eq_some n _ as hr).2 rfl,
               Option.map_some]
 
-/-- **`decodeSS` inverts `encodeSS`**, and succeeds only on its image. -/
+/-- **Decoding a SUBSET-SUM instance inverts its encoding.** For every bit string $x$, every
+list $a$ of natural numbers and every natural number $t$, the SUBSET-SUM decoder returns the
+instance $(a, t)$ on $x$ if and only if $x$ is the encoding of the SUBSET-SUM instance with
+numbers $a$ and target $t$. -/
 theorem decodeSS_eq_some {x : List Bool} {as : List ℕ} {t : ℕ} :
     decodeSS x = some (as, t) ↔ encodeSS as t = x := by
   constructor
@@ -173,13 +195,18 @@ theorem decodeSS_eq_some {x : List Bool} {as : List ℕ} {t : ℕ} :
 
 /-! ### The verifier as a pure function -/
 
-/-- The numbers chosen by the mask `w`: `as[i]` where `w[i] = true` (missing bits are
-`false`). -/
+/-- **Numbers chosen by a mask.** For a list of numbers $a_0, \dots, a_{k-1}$ and a list of bits
+$w$, the list of those $a_i$ with $w_i$ true, in their original order, where positions $i$ beyond
+the end of $w$ count as false. -/
 def pick : List ℕ → List Bool → List ℕ
   | [], _ => []
   | a :: as, w => if w.headD false then a :: pick as w.tail else pick as w.tail
 
-/-- The verifier: `x` decodes to `(as, t)` and the numbers chosen by `w` sum to `t`. -/
+/-- **The SUBSET-SUM verifier.** For bit strings $x$ and $w$, the verifier accepts $(x, w)$ exactly
+when $x$ is the encoding of a SUBSET-SUM instance with numbers $a_0, \dots, a_{n-1}$ and target
+$t$, and the sum of the $a_i$ for which bit $i$ of $w$ is true equals $t$; bits beyond the end of
+$w$ count as false, and bits of $w$ past position $n - 1$ are ignored. If $x$ is not the encoding
+of an instance, the verifier rejects. -/
 def ssCheck (x w : List Bool) : Bool :=
   match decodeSS x with
   | some (as, t) => (pick as w).sum == t
@@ -193,7 +220,9 @@ theorem pick_sublist : ∀ (as : List ℕ) (w : List Bool), (pick as w).Sublist 
       · exact (pick_sublist as w.tail).cons_cons a
       · exact (pick_sublist as w.tail).cons a
 
-/-- Every sublist is chosen by a mask as long as the list. -/
+/-- **Every sublist is selected by a mask.** If $l$ is a sublist of a list $a$ of natural numbers,
+then there is a list $w$ of Booleans of the same length as $a$ such that the entries $a_i$ of $a$
+with $w_i$ true, taken in order, form exactly $l$. -/
 theorem exists_pick {l as : List ℕ} (h : l.Sublist as) :
     ∃ w : List Bool, w.length = as.length ∧ pick as w = l := by
   induction h with
@@ -210,7 +239,9 @@ theorem sum_pick_cons (a : ℕ) (as : List ℕ) (w : List Bool) :
   simp only [pick]
   cases w.headD false <;> simp
 
-/-- **SUBSET-SUM is verified by `ssCheck`**, with witnesses no longer than the input. -/
+/-- **SUBSET-SUM is characterized by its verifier.** A bit string $x$ is a yes-instance of
+SUBSET-SUM if and only if there is a bit string $w$ with $|w| \le |x|$ such that the SUBSET-SUM
+verifier accepts $(x, w)$. -/
 theorem subsetSumDec_iff (x : List Bool) :
     subsetSumDec x = true ↔ ∃ w, w.length ≤ x.length ∧ ssCheck x w = true := by
   simp only [subsetSumDec, decide_eq_true_eq]
@@ -231,16 +262,25 @@ theorem subsetSumDec_iff (x : List Bool) :
 
 /-! ### Binary addition -/
 
-/-- The carry out of adding the bits `a`, `b` and the carry `c`. -/
+/-- **Carry bit of a full adder.** For bits $a$, $b$ and a carry-in $c$, the carry out of adding
+$a$, $b$ and $c$ is $(a \wedge b) \vee (c \wedge (a \oplus b))$, which is true iff at least two of
+$a$, $b$, $c$ are true. -/
 def carry (a b c : Bool) : Bool := a && b || c && (a ^^ b)
 
-/-- Add the carry `c` to a number (least significant bit first). -/
+/-- **Adding a carry bit.** For a carry bit $c$ and a bit string $u$ (least significant bit
+first), $\mathrm{inc}(c, u)$ adds $c$ to $u$ by ripple carry: on the empty string it is $[1]$ if
+$c$ is true and empty otherwise, and on a string with first bit $a$ and rest $u'$ it is the bit
+$a \oplus c$ followed by $\mathrm{inc}(a \wedge c, u')$. -/
 def incB : Bool → List Bool → List Bool
   | c, [] => if c then [true] else []
   | c, a :: u => (a ^^ c) :: incB (a && c) u
 
-/-- Ripple-carry addition of the bits `p` to `u` with carry-in `c`, least significant bit first,
-walking `p`; bits of `u` past its end count as `false`. -/
+/-- **Ripple-carry addition of bit lists.** For a carry-in bit $c$ and bit lists $u$ and $p$, both
+least significant bit first, the ripple-carry sum walks $p$. If $p$ is empty, the result is $u$ with
+the carry $c$ added (a final carry becomes a new last bit). Otherwise, with $a$ the first bit of $u$
+($a$ is false when $u$ is empty) and $b$ the first bit of $p$, the result is the bit
+$a \oplus b \oplus c$ followed by the ripple-carry sum of the rest of $u$ and the rest of $p$ with
+carry-in the carry out of $a$, $b$ and $c$. -/
 def addB : Bool → List Bool → List Bool → List Bool
   | c, u, [] => incB c u
   | c, u, b :: p =>
@@ -266,7 +306,11 @@ theorem incB_encodeNat (c : Bool) (m : ℕ) : incB c (encodeNat m) = encodeNat (
       congr 2 <;> cases c <;> rcases Nat.mod_two_eq_zero_or_one m with h | h <;> simp [h] <;>
         omega
 
-/-- **Addition is correct on canonical numbers**, and keeps them canonical. -/
+/-- **Addition is correct on canonical numbers.** For every bit $c$ and all natural numbers $m$ and
+$n$, the ripple-carry sum, with carry-in $c$, of the canonical binary expansions of $m$ and $n$
+(least significant bit first, no trailing false bit) is the canonical binary expansion of
+$m + n + c$, where $c$ counts as $1$ if true and $0$ if false. In particular the sum stays
+canonical. -/
 theorem addB_encodeNat (c : Bool) (m n : ℕ) :
     addB c (encodeNat m) (encodeNat n) = encodeNat (m + n + c.toNat) := by
   induction n using Nat.strong_induction_on generalizing c m with
@@ -293,9 +337,10 @@ theorem length_addB : ∀ (c : Bool) (u p : List Bool),
 
 /-! ### The machine -/
 
-/-- Stacks: the input `X` and the witness `W`, the target `T` (most significant bit on top), the
-running sum `A` (least significant bit on top), the new sum `B` (most significant bit on top),
-and the scratch stacks `P`, `Q` of the final comparison. -/
+/-- **Stacks of the SUBSET-SUM verifier.** The verifier has seven stacks: the input $X$, the
+witness $W$, the target $T$ (most significant bit on top), the running sum $A$ (least significant
+bit on top), the new sum $B$ (most significant bit on top), and the scratch stacks $P$ and $Q$ of
+the final comparison. -/
 inductive K | X | W | T | A | B | P | Q
   deriving DecidableEq
 
@@ -304,9 +349,14 @@ instance K.instFintypeEnumFix : Fintype K where
   elems := ⟨↑[K.X, .W, .T, .A, .B, .P, .Q], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- Labels: read the target (`z`: the bits read so far end in `false`), start the next number,
-add a chosen number (with carry `c`), skip an unchosen one, carry `c` through the rest of the
-sum, move the new sum back, move the final sum for the comparison, compare, accept, reject. -/
+/-- **Labels of the SUBSET-SUM verifier.** The verifier has the labels $\mathrm{tgt}(z)$, reading
+the target; $\mathrm{next}$, starting the next number; $\mathrm{add}(c, z)$, adding a chosen
+number with carry $c$; $\mathrm{skip}(z)$, skipping an unchosen number; $\mathrm{fin}(c)$,
+carrying $c$ through the rest of the sum; $\mathrm{back}$, moving the new sum back;
+$\mathrm{fmove}$, moving the final sum for the comparison; $\mathrm{cmp}$, comparing;
+$\mathrm{yes}$, accepting; and $\mathrm{no}$, rejecting, for all bits $c$ and $z$. In
+$\mathrm{tgt}(z)$, $\mathrm{add}(c, z)$ and $\mathrm{skip}(z)$ the flag $z$ records whether the
+bits of the current block read so far end in $0$. -/
 inductive Lab
   | tgt (z : Bool) | next | add (c z : Bool) | skip (z : Bool) | fin (c : Bool) | back | fmove
   | cmp | yes | no
@@ -320,12 +370,19 @@ instance Lab.instFintypeEnumFix : Fintype Lab where
   complete := by
     rintro (⟨_ | _⟩ | _ | ⟨_ | _, _ | _⟩ | ⟨_ | _⟩ | ⟨_ | _⟩ | _ | _ | _ | _ | _) <;> decide
 
-/-- Statements of the verifier. -/
+/-- **Statements of the SUBSET-SUM verifier.** The statements of the SUBSET-SUM verifier machine
+are the statements of a multi-stack Turing machine in Mathlib's TM2 model whose stacks are the
+seven stacks $X$, $W$, $T$, $A$, $B$, $P$, $Q$, each over the symbol alphabet of the SAT verifier,
+whose labels are the labels of the SUBSET-SUM verifier, and whose local state is a Boolean. -/
 abbrev Stmt := TM2.Stmt (fun _ : K => Sym) Lab Bool
 
-/-- Read the next pair of a block off `X`. At the end of `X` reject. On the end marker `false`,
-reject if `z` (the block ends in `false`) and run `done` otherwise. On `true`, pop the payload bit
-`b` (reject if `X` has ended) and run `body b`. -/
+/-- **Reading one pair of a block.** For a flag $z$ (the bits read so far end in false), a
+statement $\mathit{done}$ and statements $\mathit{body}(b)$ for each bit $b$: if the input stack
+$X$ is empty, go to the label $\mathsf{no}$. Otherwise pop the top of $X$ as a bit, a symbol that
+is not a bit counting as false. If it is false (the end marker), go to $\mathsf{no}$ when $z$ is
+true and run $\mathit{done}$ otherwise. If it is true, go to $\mathsf{no}$ if $X$ is now empty,
+and otherwise pop the next symbol of $X$ as a payload bit $b$ (again a non-bit counts as false)
+and run $\mathit{body}(b)$. -/
 def rdS (z : Bool) (done : Stmt) (body : Bool → Stmt) : Stmt :=
   .peek .X (fun _ o => o.isNone) <| .branch id (.goto fun _ => .no) <|
   .pop .X (fun _ o => bitOf Sym.bit? o) <| .branch id
@@ -333,27 +390,63 @@ def rdS (z : Bool) (done : Stmt) (body : Bool → Stmt) : Stmt :=
       .pop .X (fun _ o => bitOf Sym.bit? o) <| .branch id (body true) (body false))
     (bif z then .goto fun _ => .no else done)
 
-/-- Add the payload bit `b` with carry `c`: pop the sum bit `a` off `A` (`false` past its end),
-push `a ^^ b ^^ c` onto `B` and go on with the new carry. -/
+/-- **Adding one payload bit to the sum.** The machine statement for adding the payload bit $b$
+with carry $c$: pop the top symbol of the sum stack $A$ and read it as a bit $a$ (false if $A$ is
+empty or the symbol is not a bit), push the bit $a \oplus b \oplus c$ onto $B$, and go to the label
+that adds a chosen number with carry the carry out of $a$, $b$ and $c$ and flag $\lnot b$ (the flag
+records whether the bits of the block read so far end in false). -/
 def addS (c b : Bool) : Stmt :=
   .pop .A (fun _ o => bitOf Sym.bit? o) <| .push .B (fun a => .bit (a ^^ b ^^ c)) <|
     .goto fun a => .add (carry a b c) (!b)
 
-/-- Carry `c` through the rest of the sum on `A`, pushing the result bits onto `B`. -/
+/-- **Carry step of the SUBSET-SUM verifier.** For a carry bit $c$, the verifier statement that
+carries $c$ through the rest of the sum on stack $A$: if $A$ is empty, it sets the local variable
+to true, pushes the bit $1$ onto $B$ when $c$ is true and goes to label $\mathrm{back}$; otherwise
+it pops the top symbol of $A$, read as a bit $a$ (a symbol that is not a bit reads as $0$), sets
+the local variable to $a$, pushes the bit $a \oplus c$ onto $B$ and goes to label
+$\mathrm{fin}(a \wedge c)$. -/
 def finS (c : Bool) : Stmt :=
   .peek .A (fun _ o => o.isNone) <| .branch id
     (bif c then .push .B (fun _ => .bit true) (.goto fun _ => .back) else .goto fun _ => .back)
     (.pop .A (fun _ o => bitOf Sym.bit? o) <| .push .B (fun a => .bit (a ^^ c)) <|
       .goto fun a => .fin (a && c))
 
-/-- Start the next number: with `X` empty go to the final comparison; otherwise pop the witness
-bit (`false` past the end of `W`) and add or skip the number. -/
+/-- **Starting the next number.** The verifier's statement at the label $\mathsf{next}$. If the
+input stack $X$ is empty, it goes to the label $\mathsf{fmove}$ (move the sum, then compare).
+Otherwise it pops the top of the witness stack $W$ and reads it as a bit $c$, taking $c$ false
+when $W$ is empty or its top is not a bit; $c$ becomes the internal state. It then goes to the
+label $\mathsf{add}$ with carry false if $c$ is true, and to the label $\mathsf{skip}$ if $c$ is
+false, in both cases with the flag "the bits read so far end in false" unset. -/
 def nextS : Stmt :=
   .peek .X (fun _ o => o.isNone) <| .branch id (.goto fun _ => .fmove) <|
   .pop .W (fun _ o => bitOf Sym.bit? o) <|
     .goto fun c => bif c then .add false false else .skip false
 
-/-- The verifier: read the target, add up the chosen numbers, compare. -/
+/-- **The SUBSET-SUM verifier program.** The program on the stacks $X, W, T, A, B, P, Q$ over
+the verifier's symbols, with Boolean internal state, given label by label. A popped symbol that
+is not a bit counts as false, as does a pop from an empty stack. Reading a pair of a block off
+$X$ with flag $z$ ("the bits read so far end in false") goes to $\mathsf{no}$ if $X$ is empty;
+on the end marker false it goes to $\mathsf{no}$ if $z$ holds and otherwise ends the block; on
+true it reads a payload bit $b$, going to $\mathsf{no}$ if $X$ has ended.
+
+* $\mathsf{tgt}(z)$: read a pair of the target block with flag $z$; at the end of the block go
+  to $\mathsf{next}$; on a payload bit $b$, push $b$ onto $T$ and go to $\mathsf{tgt}(\lnot b)$.
+* $\mathsf{next}$: if $X$ is empty go to $\mathsf{fmove}$; otherwise pop a witness bit $c$ off
+  $W$ (false if absent) and go to $\mathsf{add}$ with carry false if $c$, else to
+  $\mathsf{skip}$, with the flag unset.
+* $\mathsf{add}(c, z)$: read a pair with flag $z$; at the end of the block go to
+  $\mathsf{fin}(c)$; on a payload bit $b$, pop a bit $a$ off $A$ (false if absent), push
+  $a \oplus b \oplus c$ onto $B$ and go to $\mathsf{add}(c', \lnot b)$, where $c'$ is the carry
+  out of $a + b + c$.
+* $\mathsf{skip}(z)$: read a pair with flag $z$; at the end of the block go to $\mathsf{next}$;
+  on a payload bit $b$ go to $\mathsf{skip}(\lnot b)$.
+* $\mathsf{fin}(c)$: carry $c$ through the rest of $A$, pushing the result bits onto $B$, then
+  go to $\mathsf{back}$.
+* $\mathsf{back}$: move the bits on top of $B$ onto $A$ one by one, then go to $\mathsf{next}$.
+* $\mathsf{fmove}$: move the bits on top of $A$ onto $B$ one by one, then go to $\mathsf{cmp}$.
+* $\mathsf{cmp}$: compare the bit blocks on top of $B$ and $T$, using $P$ and $Q$ as scratch, and
+  go to $\mathsf{yes}$ if they are equal and to $\mathsf{no}$ otherwise.
+* $\mathsf{yes}$ and $\mathsf{no}$: halt. -/
 def prog : Lab → TM2.Stmt (fun _ : K => Sym) Lab Bool
   | .tgt z => rdS z (.goto fun _ => .next) fun b =>
       .push .T (fun _ => .bit b) <| .goto fun _ => .tgt (!b)
@@ -367,12 +460,17 @@ def prog : Lab → TM2.Stmt (fun _ : K => Sym) Lab Bool
   | .yes => .halt
   | .no => .halt
 
-/-- The start label. -/
+/-- **Start state of the SUBSET-SUM verifier.** The SUBSET-SUM verifier machine starts in its
+target-reading state, with the flag recording whether the bits read so far end in false set to
+false. -/
 def start : Lab := .tgt false
 
 /-! ### Stacks -/
 
-/-- The stacks `X`, `W`, `T`, `A`, `B`, with the scratch stacks `P`, `Q` empty. -/
+/-- **Stack contents of the SUBSET-SUM verifier.** For lists of symbols $x$, $w$, $t$, $a$, $b$,
+this assigns contents to the seven stacks of the SUBSET-SUM verifier machine: the input stack $X$
+holds $x$, the witness stack $W$ holds $w$, the target stack $T$ holds $t$, the sum stacks $A$ and
+$B$ hold $a$ and $b$, and the scratch stacks $P$ and $Q$ are empty. -/
 def st (x w t a b : List Sym) : K → List Sym
   | .X => x
   | .W => w
@@ -407,7 +505,10 @@ variable (x w t a b l : List Sym)
 
 end Upd
 
-/-- The machine reaches `no` from `c` within `n` steps. -/
+/-- **Rejection by the SUBSET-SUM verifier within a step bound.** For a natural number $n$ and a
+configuration $c$ of the SUBSET-SUM verifier, $\mathrm{Rej}(n, c)$ holds when there are an
+internal state $v$ and stack contents $S$ such that the verifier runs from $c$ in at most $n$
+steps to the configuration with label $\mathsf{no}$, internal state $v$ and stacks $S$. -/
 def Rej (n : ℕ) (c : TM2.Cfg (fun _ : K => Sym) Lab Bool) : Prop :=
   ∃ v S, RunLe prog n c ⟨some .no, v, S⟩
 
@@ -419,7 +520,10 @@ theorem Rej.head {k n : ℕ} {c d : TM2.Cfg (fun _ : K => Sym) Lab Bool} (h₁ :
     (h₂ : Rej n d) : Rej (k + n) c :=
   let ⟨v, S, h⟩ := h₂; ⟨v, S, (h₁.le le_rfl).trans h⟩
 
-/-- One step that lands on `no`. -/
+/-- **Rejecting in one step.** Let $l$ be a label, $v$ a Boolean and $S$ an assignment of stack
+contents. If executing the verifier's statement at label $l$ from internal state $v$ and stacks
+$S$ yields the next label $\mathsf{no}$, then the verifier reaches a configuration with label
+$\mathsf{no}$ from the configuration $(l, v, S)$ within one step. -/
 theorem rej_one {l : Lab} {v : Bool} {S : K → List Sym}
     (h : (TM2.stepAux (prog l) v S).l = some .no) : Rej 1 ⟨some l, v, S⟩ := by
   rcases hs : TM2.stepAux (prog l) v S with ⟨l', v', S'⟩
@@ -429,8 +533,18 @@ theorem rej_one {l : Lab} {v : Bool} {S : K → List Sym}
 
 /-! ### Reading blocks -/
 
-/-- Reading the target block `delimit p`: `|p| + 1` steps, pushing `p` onto `T`; then `next`,
-unless the whole block ends in `false`. -/
+/-- **Reading the target block.** Let $p$ and $s$ be lists of bits, and write $\mathrm{delimit}(p)$
+for the self-delimiting encoding of $p$ (each bit $b$ written as true followed by $b$, then a
+terminating false). Suppose the SUBSET-SUM verifier machine is in its target-reading state, with
+flag $z$ recording whether the bits read so far end in false and any value of its local Boolean
+variable, with the bits of $\mathrm{delimit}(p)$ followed by the bits of $s$ on the input stack
+$X$, a list $t$ of symbols on the target stack $T$, arbitrary contents on the stacks $W$, $A$, $B$,
+and the scratch stacks $P$, $Q$ empty. Then after exactly $|p| + 1$ steps the stack $X$ holds the
+bits of $s$, the bits of $p$ have been pushed onto $T$ one at a time (so that $T$ holds, from the
+top, the bits of $p$ in reverse order followed by $t$), the stacks $W$, $A$, $B$, $P$, $Q$ are
+unchanged, the local variable is false, and the machine is in its rejecting state if either $p$
+is non-empty and ends in false or $p$ is empty and $z$ is true, and in the state that starts the
+next number otherwise. -/
 theorem tgt_run (rest : List Bool) (w a b : List Sym) :
     ∀ (p : List Bool) (z : Bool) (t : List Sym) (v : Bool),
     Run prog (p.length + 1) ⟨some (.tgt z), v, st ((delimit p ++ rest).map .bit) w t a b⟩
@@ -445,8 +559,16 @@ theorem tgt_run (rest : List Bool) (w a b : List Sym) :
       exact Run.head
         (by cases c <;> simp [TM2.step, prog, rdS, TM2.stepAux, delimit, bitOf, Sym.bit?]) h
 
-/-- Skipping the block `delimit p`: `|p| + 1` steps; then `next`, unless the whole block ends in
-`false`. -/
+/-- **Skipping a number block.** Let $p$ and $s$ be lists of bits, and write $\mathrm{delimit}(p)$
+for the self-delimiting encoding of $p$ (each bit $b$ written as true followed by $b$, then a
+terminating false). Suppose the SUBSET-SUM verifier machine is in the state that skips an
+unchosen number block, with flag $z$ recording whether the bits read so far end in false and any
+value of its local Boolean variable, with the bits of $\mathrm{delimit}(p)$ followed by the bits
+of $s$ on the input stack $X$, arbitrary contents on the stacks $W$, $T$, $A$, $B$, and the
+scratch stacks $P$, $Q$ empty. Then after exactly $|p| + 1$ steps the stack $X$ holds the bits of
+$s$, all other stacks are unchanged, the local variable is false, and the machine is in its
+rejecting state if either $p$ is non-empty and ends in false or $p$ is empty and $z$ is true, and
+in the state that starts the next number otherwise. -/
 theorem skip_run (rest : List Bool) (w t a b : List Sym) :
     ∀ (p : List Bool) (z : Bool) (v : Bool),
     Run prog (p.length + 1) ⟨some (.skip z), v, st ((delimit p ++ rest).map .bit) w t a b⟩
@@ -459,7 +581,14 @@ theorem skip_run (rest : List Bool) (w t a b : List Sym) :
       exact Run.head
         (by cases c <;> simp [TM2.step, prog, rdS, TM2.stepAux, delimit, bitOf, Sym.bit?]) h
 
-/-- Carrying `c` through the rest `u` of the sum: `|u| + 1` steps to `back`, with `A` empty. -/
+/-- **Carry phase of the SUBSET-SUM verifier.** Let $x$, $w$, $t$ and $\mathit{acc}$ be lists of
+stack symbols, $u$ a list of bits, $c$ a carry bit and $v$ a Boolean, and write
+$\mathrm{inc}(c, u)$ for the result of adding the carry $c$ to $u$ (least significant bit first).
+Started at label $\mathrm{fin}(c)$ with variable $v$, with $x$, $w$, $t$ on the stacks $X$, $W$,
+$T$, the bits of $u$ on $A$ (first bit on top), $\mathit{acc}$ on $B$ and $P$, $Q$ empty, the
+verifier takes exactly $|u| + 1$ steps to reach label $\mathrm{back}$ with variable true, where
+$X$, $W$, $T$ are unchanged, $A$, $P$, $Q$ are empty, and $B$ holds the bits of
+$\mathrm{inc}(c, u)$ on top of $\mathit{acc}$, last bit on top. -/
 theorem fin_run (x w t : List Sym) : ∀ (u : List Bool) (c : Bool) (acc : List Sym) (v : Bool),
     Run prog (u.length + 1) ⟨some (.fin c), v, st x w t (u.map .bit) acc⟩
       ⟨some .back, true, st x w t [] (((incB c u).map .bit).reverse ++ acc)⟩
@@ -470,8 +599,18 @@ theorem fin_run (x w t : List Sym) : ∀ (u : List Bool) (c : Bool) (acc : List 
         List.singleton_append]
       exact Run.head (by simp [TM2.step, prog, finS, TM2.stepAux, bitOf, Sym.bit?]) h
 
-/-- Adding the canonical block `delimit p` to the sum `u` with carry `c`: reaches `back` with `A`
-empty and the new sum on `B`, most significant bit on top. -/
+/-- **Adding a canonical chosen block.** Let $p$ and $\mathit{rest}$ be bit lists and $z$ a bit
+such that $p$ is nonempty and ends in true, or $p$ is empty and $z$ is false (the flag $z$
+records whether the bits of the block read so far end in false), and let $c$ be a bit. Start the
+SUBSET-SUM verifier machine at the label that adds a chosen number with carry $c$ and flag $z$,
+with any value of the local variable, the self-delimiting encoding of $p$ followed by
+$\mathit{rest}$ (as bit symbols) on the input stack $X$, symbol lists $w$ on $W$ and $t$ on $T$, a
+bit list $u$ (as bit symbols, least significant bit first) on the sum stack $A$, a symbol list
+$\mathit{acc}$ on $B$, and the scratch stacks $P$ and $Q$ empty. Then within $|p| + |u| + 2$ steps
+the machine reaches the label that moves the new sum back, with some value of the local variable,
+$\mathit{rest}$ on $X$, $w$ on $W$, $t$ on $T$, $A$, $P$ and $Q$ empty, and on $B$ the ripple-carry
+sum of $u$ and $p$ with carry-in $c$ (as bit symbols, most significant bit on top) above
+$\mathit{acc}$. -/
 theorem add_run (rest : List Bool) (w t : List Sym) :
     ∀ (p : List Bool) (c z : Bool) (u : List Bool) (acc : List Sym) (v : Bool),
     lastF z p = false →
@@ -493,7 +632,14 @@ theorem add_run (rest : List Bool) (w t : List Sym) :
       cases u <;> cases b <;>
         simp [TM2.step, prog, rdS, addS, TM2.stepAux, delimit, bitOf, Sym.bit?]
 
-/-- A chosen block that ends in `false` is rejected within `|p| + 1` steps. -/
+/-- **The verifier rejects a chosen block that ends in false.** Let $p$ and $\mathit{rest}$ be bit
+lists and $z$ a bit such that $p$ is nonempty and ends in false, or $p$ is empty and $z$ is true
+(the flag $z$ records whether the bits of the block read so far end in false). Let $c$ be a bit and
+$u$ a bit list. Start the SUBSET-SUM verifier machine at the label that adds a chosen number with
+carry $c$ and flag $z$, with any value of the local variable, the self-delimiting encoding of $p$
+followed by $\mathit{rest}$ (as bit symbols) on the input stack $X$, any symbol lists on $W$, $T$
+and $B$, $u$ (as bit symbols) on the sum stack $A$, and the scratch stacks $P$ and $Q$ empty. Then
+the machine reaches the rejecting label within $|p| + 1$ steps. -/
 theorem add_rej (rest : List Bool) (w t : List Sym) :
     ∀ (p : List Bool) (c z : Bool) (u : List Bool) (acc : List Sym) (v : Bool),
     lastF z p = true →
@@ -507,7 +653,13 @@ theorem add_rej (rest : List Bool) (w t : List Sym) :
       refine (Rej.head (Run.single ?_) ih).mono (by simp only [List.length_cons]; omega)
       cases u <;> cases b <;> simp [prog, rdS, addS, TM2.stepAux, delimit, bitOf, Sym.bit?]
 
-/-- An unterminated target block is rejected within `|r| + 1` steps. -/
+/-- **The verifier rejects an unterminated target block.** Let $r$ be a list of bits that does
+not begin with a self-delimiting block, that is, parsing one self-delimiting block off the front
+of $r$ fails. Suppose the SUBSET-SUM verifier machine is in its target-reading state, with either
+value of the flag $z$ recording whether the bits read so far end in false and either value of its
+local Boolean variable, with the bits of $r$ on the input stack $X$, arbitrary contents on the
+stacks $W$, $T$, $A$, $B$, and the scratch stacks $P$, $Q$ empty. Then the machine reaches its
+rejecting state within $|r| + 1$ steps. -/
 theorem tgt_fail (w a b : List Sym) : ∀ (r : List Bool), undelimit r = none →
     ∀ (z : Bool) (t : List Sym) (v : Bool), Rej (r.length + 1)
       ⟨some (.tgt z), v, st (r.map .bit) w t a b⟩
@@ -522,7 +674,13 @@ theorem tgt_fail (w a b : List Sym) : ∀ (r : List Bool), undelimit r = none �
       refine (Rej.head (Run.single ?_) ih).mono (by simp; omega)
       cases c <;> simp [prog, rdS, TM2.stepAux, bitOf, Sym.bit?]
 
-/-- An unterminated skipped block is rejected within `|r| + 1` steps. -/
+/-- **The verifier rejects an unterminated skipped block.** Let $r$ be a list of bits that does
+not begin with a self-delimiting block, that is, parsing one self-delimiting block off the front
+of $r$ fails. Suppose the SUBSET-SUM verifier machine is in the state that skips an unchosen
+number block, with either value of the flag $z$ recording whether the bits read so far end in
+false and either value of its local Boolean variable, with the bits of $r$ on the input stack
+$X$, arbitrary contents on the stacks $W$, $T$, $A$, $B$, and the scratch stacks $P$, $Q$ empty.
+Then the machine reaches its rejecting state within $|r| + 1$ steps. -/
 theorem skip_fail (w t a b : List Sym) : ∀ (r : List Bool), undelimit r = none →
     ∀ (z : Bool) (v : Bool), Rej (r.length + 1) ⟨some (.skip z), v, st (r.map .bit) w t a b⟩
   | [], _, z, v => rej_one (by simp [prog, rdS, TM2.stepAux])
@@ -536,7 +694,13 @@ theorem skip_fail (w t a b : List Sym) : ∀ (r : List Bool), undelimit r = none
       refine (Rej.head (Run.single ?_) ih).mono (by simp; omega)
       cases c <;> simp [prog, rdS, TM2.stepAux, bitOf, Sym.bit?]
 
-/-- An unterminated chosen block is rejected within `|r| + 1` steps. -/
+/-- **The verifier rejects an unterminated chosen block.** Let $r$ be a bit list from whose front no
+complete self-delimiting block can be parsed, let $c$ and $z$ be bits, and let $u$ be a bit list.
+Start the SUBSET-SUM verifier machine at the label that adds a chosen number with carry $c$ and
+flag $z$ (the flag records whether the bits of the block read so far end in false), with any value
+of the local variable, $r$ (as bit symbols) on the input stack $X$, any symbol lists on $W$, $T$
+and $B$, $u$ (as bit symbols) on the sum stack $A$, and the scratch stacks $P$ and $Q$ empty. Then
+the machine reaches the rejecting label within $|r| + 1$ steps. -/
 theorem add_fail (w t : List Sym) : ∀ (r : List Bool), undelimit r = none →
     ∀ (c z : Bool) (u : List Bool) (acc : List Sym) (v : Bool),
     Rej (r.length + 1) ⟨some (.add c z), v, st (r.map .bit) w t (u.map .bit) acc⟩
@@ -554,7 +718,13 @@ theorem add_fail (w t : List Sym) : ∀ (r : List Bool), undelimit r = none →
 
 /-! ### Moving and comparing sums -/
 
-/-- Moving the new sum `res` from `B` back to `A`: `|res| + 1` steps to `next`. -/
+/-- **Moving the new sum back.** Let $\mathit{res}$ be a bit list. Start the SUBSET-SUM verifier
+machine at the label that moves the new sum back, with any value of the local variable, symbol lists
+$x$, $w$, $t$ on $X$, $W$, $T$, the sum stack $A$ empty, $\mathit{res}$ (as bit symbols, last bit
+on top) on $B$, and the scratch stacks $P$ and $Q$ empty. Then after exactly
+$|\mathit{res}| + 1$ steps the machine is at the label that starts the next number, with some value
+of the local variable, $x$, $w$, $t$ unchanged, $\mathit{res}$ (as bit symbols, first bit on top)
+on $A$, and $B$, $P$, $Q$ empty. -/
 theorem back_run (x w t : List Sym) (res : List Bool) (v : Bool) :
     ∃ v', Run prog (res.length + 1) ⟨some .back, v, st x w t [] (res.map .bit).reverse⟩
       ⟨some .next, v', st x w t (res.map .bit) []⟩ := by
@@ -571,8 +741,12 @@ theorem back_run (x w t : List Sym) (res : List Bool) (v : Bool) :
     all_goals exact hk _ (by decide) (by decide)
   exact ⟨v', by simpa [e] using h⟩
 
-/-- Moving the final sum `s` from `A` to `B` (most significant bit on top): `|s| + 1` steps to
-`cmp`. -/
+/-- **Moving the final sum for the comparison.** Let $x$, $w$, $t$ be lists of stack symbols, $s$
+a list of bits and $v$ a Boolean. Started at label $\mathrm{fmove}$ with variable $v$, with $x$,
+$w$, $t$ on the stacks $X$, $W$, $T$, the bits of $s$ on $A$ (first bit on top) and $B$, $P$, $Q$
+empty, the verifier takes exactly $|s| + 1$ steps to reach label $\mathrm{cmp}$, with some value
+of the variable, where $X$, $W$, $T$ are unchanged, $A$, $P$, $Q$ are empty, and $B$ holds the
+bits of $s$, last bit on top. -/
 theorem fmove_run (x w t : List Sym) (s : List Bool) (v : Bool) :
     ∃ v', Run prog (s.length + 1) ⟨some .fmove, v, st x w t (s.map .bit) []⟩
       ⟨some .cmp, v', st x w t [] (s.map .bit).reverse⟩ := by
@@ -587,8 +761,11 @@ theorem fmove_run (x w t : List Sym) (s : List Bool) (v : Bool) :
     all_goals exact hk _ (by decide) (by decide)
   exact ⟨v', by simpa [e] using h⟩
 
-/-- Comparing the sum `s` on `B` with the target `tt` on `T` (both most significant bit on top):
-`yes` iff `s = tt`, within `|s| + 1` steps. -/
+/-- **Comparing the sum with the target.** Let $s$ and $\tau$ be bit lists. Start the SUBSET-SUM
+verifier machine at the comparison label, with any value of the local variable, symbol lists $x$
+and $w$ on $X$ and $W$, the target $\tau$ on $T$ and the sum $s$ on $B$ (both as bit symbols, last
+bit on top), and the stacks $A$, $P$ and $Q$ empty. Then within $|s| + 1$ steps the machine reaches
+the accepting label if $s = \tau$ and the rejecting label otherwise. -/
 theorem cmp_run (x w : List Sym) (s tt : List Bool) (v : Bool) :
     ∃ v' S', RunLe prog (s.length + 1)
       ⟨some .cmp, v, st x w (tt.map .bit).reverse [] (s.map .bit).reverse⟩
@@ -605,10 +782,20 @@ theorem cmp_run (x w : List Sym) (s tt : List Bool) (v : Bool) :
 
 /-! ### The summing loop -/
 
-/-- **The summing loop.** From `next` with the number blocks `r` on `X`, the witness `w` on `W`
-and the sum `s` on `A`, the machine reaches `fmove` if `r` parses into numbers `as` and `no`
-otherwise; then `A` holds `s` plus the numbers that `w` chooses. `N` bounds the bits of the sum
-plus the input left, so a block of `p` bits costs `O(N + p)` steps. -/
+/-- **The summing loop of the SUBSET-SUM verifier.** Let $N$ be a natural number and $t$ a list
+of symbols. Write $\langle m \rangle$ for the canonical binary code of a natural number $m$, least
+significant bit first, and put a bit list on a stack as the list of its name-bit symbols. Let $n$
+and $s$ be natural numbers, $r$ and $w$ bit lists and $v$ a Boolean, with $|r| \le n$ and
+$|\langle s \rangle| + |r| \le N$. Start the SUBSET-SUM verifier at the label $\mathsf{next}$
+with internal state $v$, with $r$ on $X$, $w$ on $W$, $t$ on $T$, $\langle s \rangle$ on $A$,
+and the stacks $B$, $P$ and $Q$ empty. Then for some internal state $v'$ and stack contents $S'$
+it runs within $|r| \cdot (2N + 6) + 1$ steps to the configuration with internal state $v'$,
+stacks $S'$ and label $\mathsf{fmove}$ if parsing the number blocks of $r$ with fuel $n$
+succeeds, and label $\mathsf{no}$ if it fails. Moreover, if that parsing gives the list of
+numbers $a$, and $\sigma$ is $s$ plus the sum of the numbers of $a$ chosen by the mask $w$, then
+$|\langle \sigma \rangle| \le N$, and for some list of symbols $w'$ the stacks $S'$ hold nothing
+on $X$, $w'$ on $W$, $t$ on $T$, $\langle \sigma \rangle$ on $A$, and nothing on $B$, $P$ and
+$Q$. -/
 theorem loop_run (N : ℕ) (t : List Sym) : ∀ (n : ℕ) (r w : List Bool) (s : ℕ) (v : Bool),
     r.length ≤ n → (encodeNat s).length + r.length ≤ N →
     ∃ v' S', RunLe prog (r.length * (2 * N + 6) + 1)
@@ -716,7 +903,9 @@ theorem loop_run (N : ℕ) (t : List Sym) : ∀ (n : ℕ) (r w : List Bool) (s :
 
 /-! ### The whole run -/
 
-/-- The step bound of `run`, from the phase costs. -/
+/-- **Cubic bound on the verifier's phase costs.** For natural numbers $X$, $W$, $P$, $R$ and $S$
+with $P + R \le X$ and $S \le X$,
+$P + 1 + (R(2X + 6) + 1) + (S + 1) + (S + 1) \le 16 (X + W + 1)^3$. -/
 theorem cost_le (X W P R S : ℕ) (hP : P + R ≤ X) (hS : S ≤ X) :
     P + 1 + (R * (2 * X + 6) + 1) + (S + 1) + (S + 1) ≤ 16 * (X + W + 1) ^ 3 := by
   have h1 : R * (2 * X + 6) ≤ X * (2 * X + 6) := Nat.mul_le_mul_right _ (by omega)
@@ -724,9 +913,11 @@ theorem cost_le (X W P R S : ℕ) (hP : P + R ≤ X) (hS : S ≤ X) :
     (Nat.pow_le_pow_left (by omega) 2).trans (Nat.pow_le_pow_right (by omega) (by omega))
   nlinarith
 
-/-- **The verifier machine.** From `start` with `x` on `X`, `w` on `W` and the other stacks
-empty, `prog` reaches `yes` if `ssCheck x w` and `no` otherwise, within
-`16 (|x| + |w| + 1)³` steps. -/
+/-- **The SUBSET-SUM verifier machine.** Let $x$ and $w$ be lists of bits and $v$ a Boolean, and
+let $S$ assign stack contents with the bits of $x$ on $X$, the bits of $w$ on $W$ and every other
+stack empty. Started at the start label with internal state $v$ and stacks $S$, the verifier
+program reaches, within $16(|x| + |w| + 1)^3$ steps, a configuration with label $\mathsf{yes}$
+if the SUBSET-SUM check accepts $(x, w)$, and with label $\mathsf{no}$ otherwise. -/
 theorem run (x w : List Bool) (v : Bool) (St : ∀ _ : K, List Sym)
     (hX : St .X = x.map Sym.bit) (hW : St .W = w.map Sym.bit)
     (h0 : ∀ k, k ≠ .X → k ≠ .W → St k = []) :

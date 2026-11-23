@@ -48,8 +48,11 @@ universe u
 
 variable {Base : Type u}
 
-/-- Call-by-name big-step evaluation: evaluate the function to an abstraction
-and evaluate the body instantiated with the unevaluated argument. -/
+/-- **Call-by-name big-step evaluation.** Call-by-name big-step evaluation $M \Downarrow_n V$
+of the simply typed $\lambda$-calculus relates two terms of the same type in the same context
+$\Gamma$. It is the least relation closed under two rules: every abstraction $\lambda x.\,N$
+evaluates to itself, and if $f \Downarrow_n \lambda x.\,N$ and $N[a/x] \Downarrow_n v$, then
+$f\,a \Downarrow_n v$. The argument $a$ is substituted for $x$ without being evaluated. -/
 inductive EvalN {Γ : List (Ty Base)} : {A : Ty Base} → Tm Γ A → Tm Γ A → Prop
   | lam {A B : Ty Base} (body : Tm (A :: Γ) B) : EvalN (.lam body) (.lam body)
   | app {A B : Ty Base} {f : Tm Γ (A ⇒ B)} {a : Tm Γ A} {body : Tm (A :: Γ) B}
@@ -58,7 +61,13 @@ inductive EvalN {Γ : List (Ty Base)} : {A : Ty Base} → Tm Γ A → Tm Γ A �
 
 variable (R : Ty Base)
 
-/-- A renaming of source contexts, transported to the translated contexts. -/
+/-- **The call-by-name CPS translation of a renaming.** Fix an answer type $R$. The translation
+of a context $\Gamma$ replaces each type $A$ in it by the computation type $(A^* \to R) \to R$,
+where $A^*$ is the call-by-name translation of $A$, and a variable $x$ of $\Gamma$ becomes the
+variable $\overline{x}$ at the same position of the translated context. A renaming $\rho$ from
+$\Gamma$ to $\Delta$, a type-preserving map from the variables of $\Gamma$ to those of $\Delta$,
+is transported to the renaming $\overline{\rho}$ of the translated contexts with
+$\overline{\rho}(\overline{x}) = \overline{\rho(x)}$ for every variable $x$ of $\Gamma$. -/
 def cbnRen : {Γ Δ : List (Ty Base)} → Ren Γ Δ →
     Ren (Γ.map (cbnComp R)) (Δ.map (cbnComp R))
   | [], _, _, _, x => nomatch x
@@ -101,7 +110,13 @@ theorem cbnRen_lift (ρ : Ren Γ Δ) {T : Ty Base} (y : Var ((A :: Γ).map (cbnC
   | zero => rfl
   | succ y => exact cbnRen_succ ρ y
 
-/-- The translation commutes with renaming. -/
+/-- **The call-by-name CPS translation commutes with renaming.** Fix an answer type $R$ and write
+$\overline{t}$ for the call-by-name CPS translation of a term $t$. For a renaming $\rho$ from a
+context $\Gamma$ to a context $\Delta$, let $\overline{\rho}$ be the renaming of the translated
+contexts that sends the translation of each variable $x$ of $\Gamma$ to the translation of
+$\rho(x)$. Then for every term $t$ in context $\Gamma$, the translation of the renamed term
+$t[\rho]$ is the renaming of $\overline{t}$ by $\overline{\rho}$:
+$\overline{t[\rho]} = \overline{t}[\overline{\rho}]$. -/
 theorem cbn_rename (ρ : Ren Γ Δ) (t : Tm Γ A) :
     cbn R (Tm.rename ρ t) = Tm.rename (cbnRen R ρ) (cbn R t) := by
   induction t generalizing Δ with
@@ -121,15 +136,25 @@ theorem cbnRen_weaken {T : Ty Base} (y : Var (Γ.map (cbnComp R)) T) :
     cbnRen R (fun x => Var.succ (B := B) x) y = y.succ :=
   (cbnRen_succ Var.id y).trans (congrArg Var.succ (cbnRen_id y))
 
-/-- Weakening commutes with the translation. -/
+/-- **The call-by-name CPS translation commutes with weakening.** Fix an answer type $R$ and write
+$\overline{t}$ for the call-by-name CPS translation of a term $t$. For every term $t$ in a context
+$\Gamma$ and every type $B$, translating the weakening of $t$ to the context $B, \Gamma$ (which
+adds a fresh newest variable of type $B$) gives the weakening of $\overline{t}$ to the translated
+context, which adds a fresh newest variable of the translated type
+$(B^* \to R) \to R$, where $B^*$ is the call-by-name translation of $B$. -/
 theorem cbn_weaken (t : Tm Γ A) :
     cbn R (Tm.weaken (B := B) t) = Tm.weaken (cbn R t) := by
   rw [Tm.weaken, cbn_rename, Tm.weaken]
   exact Tm.rename_congr (fun y => cbnRen_weaken y) _
 
-/-- The translation commutes with substitution: if `τ` maps each translated
-variable to the translation of the term `σ` substitutes for it, then
-`⟦M[σ]⟧ = ⟦M⟧[τ]`. -/
+/-- **The call-by-name CPS translation commutes with substitution.** Fix an answer type $R$ and
+write $\overline{t}$ for the call-by-name CPS translation of a term $t$ and $\overline{x}$ for the
+translation of a variable $x$, the variable at the same position of the translated context. Let
+$\sigma$ be a substitution from a context $\Gamma$ to a context $\Delta$ (assigning to each
+variable of $\Gamma$ a term of the same type in context $\Delta$), and let $\tau$ be a
+substitution from the translated context of $\Gamma$ to that of $\Delta$ such that
+$\tau(\overline{x}) = \overline{\sigma(x)}$ for every variable $x$ of $\Gamma$. Then for every
+term $t$ in context $\Gamma$, $\overline{t[\sigma]} = \overline{t}[\tau]$. -/
 theorem cbn_subst (t : Tm Γ A) {σ : Sub Γ Δ}
     {τ : Sub (Γ.map (cbnComp R)) (Δ.map (cbnComp R))}
     (hτ : ∀ {B} (x : Var Γ B), τ (cbnVar R x) = cbn R (σ x)) :
@@ -157,7 +182,12 @@ theorem cbn_subst (t : Tm Γ A) {σ : Sub Γ Δ}
       rw [Tm.subst_lift_weaken, Tm.subst_lift_weaken, Tm.subst_lift_weaken]
       rfl
 
-/-- Instantiation commutes with the translation. -/
+/-- **The call-by-name CPS translation commutes with instantiation.** Fix an answer type $R$ and
+write $\overline{t}$ for the call-by-name CPS translation of a term $t$. Let $N$ be a term of type
+$B$ in a context $A, \Gamma$ whose newest variable $x$ has type $A$, and let $a$ be a term of type
+$A$ in context $\Gamma$. Then translating the instantiation $N[a/x]$ of $x$ by $a$ gives the
+instantiation of the newest variable of $\overline{N}$ by $\overline{a}$:
+$\overline{N[a/x]} = \overline{N}[\overline{a}/x]$. -/
 theorem cbn_instantiate (body : Tm (A :: Γ) B) (a : Tm Γ A) :
     cbn R (Tm.instantiate body a) = Tm.instantiate (cbn R body) (cbn R a) := by
   refine cbn_subst body fun x => ?_
@@ -165,7 +195,8 @@ theorem cbn_instantiate (body : Tm (A :: Γ) B) (a : Tm Γ A) :
   | zero => rfl
   | succ x => rfl
 
-/-- The translation of a closed term is a value. -/
+/-- **The translation of a closed term is a value.** Fix an answer type $R$. For every closed term
+$t$, the call-by-name CPS translation of $t$ is a value, that is, a $\lambda$-abstraction. -/
 theorem cbn_value : (t : Tm [] A) → Value (cbn R t)
   | .var x => nomatch x
   | .lam _ => .lam _
@@ -178,6 +209,16 @@ variable {Ξ : List (Ty Base)} {W V Z : Ty Base}
 /-! The administrative reductions of the translation of an application, at
 generic types. -/
 
+/-- **Administrative step of the call-by-name translation of an application.** Let $\Xi$ be a
+context and $W$, $V$, $Z$ types, and write $t^{\uparrow}$ for the weakening of a term $t$ by one
+new newest variable. Let $F$ be a term of type
+$((W \Rightarrow ((V \Rightarrow Z) \Rightarrow Z)) \Rightarrow Z) \Rightarrow Z$, $N$ a term of
+type $W$ and $K$ a term of type $V \Rightarrow Z$, all in context $\Xi$. In the context $\Xi$
+extended by a newest variable $k$ of type $V \Rightarrow Z$, consider the term
+$F^{\uparrow}\,(\lambda p.\; p\; N^{\uparrow\uparrow}\; k)$. Here $p$ is the bound variable, of type
+$W \Rightarrow ((V \Rightarrow Z) \Rightarrow Z)$, with de Bruijn index $0$, and $k$ has index $1$
+under the binder. Instantiating $k$ with $K$ in this term gives
+$F\,(\lambda p.\; p\; N^{\uparrow}\; K^{\uparrow})$. -/
 theorem instantiate_cbnApp₁ (F : Tm Ξ (((W ⇒ ((V ⇒ Z) ⇒ Z)) ⇒ Z) ⇒ Z)) (N : Tm Ξ W)
     (K : Tm Ξ (V ⇒ Z)) :
     Tm.instantiate (.app (Tm.weaken F)
@@ -193,16 +234,26 @@ theorem instantiate_cbnApp₂ (N : Tm Ξ W) (K : Tm Ξ (V ⇒ Z))
 
 end Instantiate
 
-/-- The translation of an abstraction passes `λx. ⟦N⟧` to its continuation. -/
+/-- **The translation of an abstraction passes the translated function to its continuation.**
+Fix an answer type $R$, and write $\overline{t}$ for the call-by-name CPS translation of a term
+$t$, $T^*$ for the translation of a type $T$, and $\Gamma^*$ for the context obtained from
+$\Gamma$ by replacing each type $C$ with $(C^* \to R) \to R$. Let $N$ be a term of type $B$ in
+context $A, \Gamma$, let $K$ be a value of type $(A \to B)^* \to R$ in context $\Gamma^*$, and
+let $w$ be a term of type $R$ in context $\Gamma^*$. Then $\overline{\lambda x.\,N}\,K$
+evaluates to $w$ under call-by-value big-step evaluation if and only if
+$K\,(\lambda x.\,\overline{N})$ does. -/
 theorem eval_cbn_lam_iff (body : Tm (A :: Γ) B)
     {K : Tm (Γ.map (cbnComp R)) (cbnTy R (A ⇒ B) ⇒ R)} (hK : Value K) (w : Tm _ R) :
     Eval (.app (cbn R (.lam body)) K) w ↔ Eval (.app K (.lam (cbn R body))) w :=
   (eval_app_lam_iff hK).trans
     (iff_of_eq (congrArg (Eval · w) (instantiate_ret (Tm.lam (cbn R body)) K)))
 
-/-- Call-by-name evaluation is preserved by the translation: if `M ⇓ₙ V` for
-closed `M`, then `⟦M⟧ K` and `⟦V⟧ K` have the same call-by-value results for
-every continuation value `K`. -/
+/-- **Call-by-name evaluation is preserved by the CPS translation.** Fix an answer type $R$,
+and write $\overline{M}$ for the call-by-name CPS translation of a term $M$ and $T^*$ for the
+translation of a type $T$. Let $M$ and $V$ be closed terms of type $T$ such that $M$ evaluates
+to $V$ under call-by-name big-step evaluation. Then for every closed value $K$ of type
+$T^* \to R$ and every closed term $w$ of type $R$, the application $\overline{M}\,K$ evaluates to
+$w$ under call-by-value big-step evaluation if and only if $\overline{V}\,K$ does. -/
 theorem cbn_evalN {T : Ty Base} {M V : Tm [] T} (h : EvalN M V)
     (K : Tm ([].map (cbnComp R)) (cbnTy R T ⇒ R)) (hK : Value K) (w : Tm [] R) :
     Eval (.app (cbn R M) K) w ↔ Eval (.app (cbn R V) K) w := by
@@ -221,10 +272,15 @@ theorem cbn_evalN {T : Ty Base} {M V : Tm [] T} (h : EvalN M V)
         (cbn_instantiate body' a).symm)).trans ?_
       exact ihb K hK w
 
-/-- Plotkin's simulation theorem for the call-by-name translation, big-step
-form: if the closed program `M` evaluates by name to `λx. N`, then for every
-continuation value `K`, `⟦M⟧ K` evaluates by value to `w` exactly when
-`K (λx. ⟦N⟧)` does. -/
+/-- **Plotkin's simulation theorem for the call-by-name CPS translation.** Fix an answer type
+$R$, and write $\overline{M}$ for the call-by-name CPS translation of a term $M$ and $T^*$ for
+the translation of a type $T$. Let $M$ be a closed term of type $A \to B$ that evaluates to
+$\lambda x.\,N$ under call-by-name big-step evaluation. Then for every closed value $K$ of type
+$(A \to B)^* \to R$ and every closed term $w$ of type $R$, the application $\overline{M}\,K$
+evaluates to $w$ under call-by-value big-step evaluation if and only if
+$K\,(\lambda x.\,\overline{N})$ does.
+
+This is the big-step form of the theorem, for the simply typed calculus. -/
 theorem cbn_simulation {M : Tm [] (A ⇒ B)} {body : Tm [A] B} (h : EvalN M (.lam body))
     (K : Tm ([].map (cbnComp R)) (cbnTy R (A ⇒ B) ⇒ R)) (hK : Value K) (w : Tm [] R) :
     Eval (.app (cbn R M) K) w ↔ Eval (.app K (.lam (cbn R body))) w :=
