@@ -25,7 +25,6 @@ namespace MathlibExt.AlgebraicGeometry.DuBoisCanonicalComparison
 
 open _root_.CategoryTheory _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.LogPairs
-open MathlibExt.AlgebraicGeometry.DltBoundaryFlipModels
 open MathlibExt.AlgebraicGeometry.FourierMukai
 open MathlibExt.AlgebraicGeometry.PrincipalizationModels
 open MathlibExt.AlgebraicGeometry.EmbeddedDuBoisZero

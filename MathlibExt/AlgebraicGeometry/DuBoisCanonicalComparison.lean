@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.AlgebraicGeometry.EmbeddedDuBoisZero
-public import MathlibExt.AlgebraicGeometry.DltBoundaryFlipModels
 public import MathlibExt.AlgebraicGeometry.DerivedInternalHom
 public import MathlibExt.AlgebraicGeometry.FiniteDualityModuleTrace
 public import MathlibExt.AlgebraicGeometry.QuasicoherentDualityReferences
@@ -47,7 +46,6 @@ namespace MathlibExt.AlgebraicGeometry.DuBoisCanonicalComparison
 
 open _root_.CategoryTheory _root_.CategoryTheory.Limits _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.LogPairs
-open MathlibExt.AlgebraicGeometry.DltBoundaryFlipModels
 open MathlibExt.AlgebraicGeometry.FourierMukai
 open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 open MathlibExt.AlgebraicGeometry.RationalResolution
@@ -65,11 +63,13 @@ open scoped BigOperators
 
 variable {k : Type} [Field k] {n : ℕ}
 
-/-- The reduced exceptional divisor contains exactly the actual exceptional prime points. -/
+/-- The reduced exceptional divisor contains exactly the actual exceptional prime points: the
+prime divisors whose image is not a prime divisor, that is, has codimension other than one
+(`Order.coheight` is codimension, since points of a scheme are ordered by specialization). -/
 structure ReducedExceptional {V : NormalVariety k n} {KX : CanonicalData V}
     (M : CanonicalModel V KX) where
   support : Finset (PrimePoint M.variety)
-  normalized : ∀ p, p ∈ support ↔ IsExceptional M.map p
+  normalized : ∀ p, p ∈ support ↔ Order.coheight (M.map.left p.val) ≠ 1
 
 def reducedExceptionalDivisor {V : NormalVariety k n} {KX : CanonicalData V}
     {M : CanonicalModel V KX}
