@@ -63,51 +63,77 @@ variable {d : ℕ}
 local notation "ℝᵈ" => EuclideanSpace ℝ (Fin d)
 
 variable (d) in
-/-- The unit sphere in `ℝᵈ`, centered at the origin. This is denoted `Sᵈ⁻¹` in the paper. -/
+/-- **Unit sphere.** For a natural number $d$, the unit sphere
+$S^{d-1} = \{x \in \mathbb{R}^d : \|x\| = 1\}$ in $\mathbb{R}^d$, centered at the origin. -/
 abbrev S : Set ℝᵈ := Metric.sphere 0 1
 
-/-- A subset `K ⊆ ℝᵈ` is called origin-symmetric if `K = -K`. -/
+/-- **Origin-symmetric set.** A set $K \subseteq \mathbb{R}^d$ is origin-symmetric if $K = -K$,
+where $-K = \{-x : x \in K\}$. -/
 abbrev IsOriginSymmetric (K : Set ℝᵈ) : Prop :=
   K = -K
 
-/-- A subset `K ⊆ ℝᵈ` is called centrally symmetric, if there exists `p ∈ ℝᵈ` such that `K - p`
-is origin symmetric. -/
+/-- **Centrally symmetric set.** A set $K \subseteq \mathbb{R}^d$ is centrally symmetric if there
+is a point $p \in \mathbb{R}^d$ such that the translate $K - p = \{x - p : x \in K\}$ is
+origin-symmetric, that is, $K - p = -(K - p)$. -/
 abbrev IsCentrallySymmetric (K : Set ℝᵈ) : Prop :=
   ∃ p, IsOriginSymmetric (K - {p})
 
-/-- The center of mass of a `d`-dimensional compact convex set `K ⊆ ℝᵈ` is defined to be
-`(1 / vol(K)) * ∫_K x dx`, where `dx` is the usual Lebesgue measure in `ℝᵈ`. -/
+/-- **Center of mass.** The center of mass of a set $K \subseteq \mathbb{R}^d$ is the average
+$\frac{1}{\operatorname{vol}(K)} \int_K x \, dx$, where $dx$ is Lebesgue measure on $\mathbb{R}^d$.
+By convention it is $0$ when $\operatorname{vol}(K)$ is $0$ or infinite, or when $x \mapsto x$ is
+not integrable on $K$. For a compact convex body this is the usual center of mass. -/
 noncomputable abbrev centerOfMass (K : Set ℝᵈ) : ℝᵈ := ⨍ x in K, x
 
-/-- Given a direction `ξ ∈ S d` and `t ∈ ℝ`, we define the set
-`H⁻(ξ) = { p ∈ ℝᵈ | ξ ∙ p ≤ t }`; see Equation (1) in the paper. -/
+/-- **Lower half-space.** For a unit vector $\xi \in \mathbb{R}^d$ and $t \in \mathbb{R}$, the
+closed lower half-space is $H^-(\xi) = \{p \in \mathbb{R}^d : \xi \cdot p \le t\}$.
+
+Source: D. Ryabogin, A negative answer to Ulam's Problem 19 from the Scottish Book, Annals of
+Math. 195 (3) 2022, Equation (1). -/
 def H_minus (ξ : S d) (t : ℝ) : Set ℝᵈ := { x | ⟪x, ξ⟫ ≤ t }
 
-/-- A hyperplane `H(ξ) = { p ∈ ℝᵈ | ξ ∙ p = t }` is called the cutting hyperplane of `K` at
-level `δ ∈ ℝ`, if `vol(K ∩ H⁻(ξ)) = δ`. -/
+/-- **Cutting hyperplane at a level.** Let $K \subseteq \mathbb{R}^d$, let $\xi \in \mathbb{R}^d$ be
+a unit vector and let $\delta \in \mathbb{R}$. A cutting hyperplane of $K$ in direction $\xi$ at
+level $\delta$ is a real number $t$, standing for the hyperplane
+$\{p \in \mathbb{R}^d : \xi \cdot p = t\}$, such that the volume of
+$K \cap \{p \in \mathbb{R}^d : \xi \cdot p \le t\}$ equals $\delta$. Here a set of infinite volume
+is assigned volume $0$. -/
 structure CuttingHyperplaneAtLevel (K : Set ℝᵈ) (ξ : S d) (δ : ℝ) where
   /-- The translation of the hyperplane. -/
   t : ℝ
   vol : volume.real (K ∩ H_minus ξ t) = δ
 
-/-- The direction vector of the line `l(ξ)` passing through the center of mass of `K` and the
-center of mass of the "submerged part" `K ∩ H⁻(ξ)`. -/
+/-- **Direction of the line through the centers of mass.** Let $d$ be a natural number, let
+$K \subseteq \mathbb{R}^d$, let $\xi$ be a unit vector in $\mathbb{R}^d$, let
+$\delta \in \mathbb{R}$, and let $H$ be a cutting hyperplane of $K$ in direction $\xi$ at level
+$\delta$, with translation $t$, so that
+$H^-(\xi) = \{x \in \mathbb{R}^d : \langle x, \xi \rangle \le t\}$. Writing $c(A)$ for the center
+of mass of a set $A \subseteq \mathbb{R}^d$, the direction vector of the line $l(\xi)$ through the
+center of mass of $K$ and the center of mass of the submerged part $K \cap H^-(\xi)$ is the vector
+$c(K) - c(K \cap H^-(\xi))$. -/
 noncomputable def CuttingHyperplaneAtLevel.lineThroughCentersOfMass {K : Set ℝᵈ} {ξ : S d} {δ : ℝ}
     (H : CuttingHyperplaneAtLevel K ξ δ) : ℝᵈ :=
   centerOfMass K - centerOfMass (K ∩ H_minus ξ H.t)
 
-/-- We say that `K` floats in equilibrium in direction `ξ` at level `δ`, if for all cutting
-hyperplanes at level `δ`, the line `l(ξ)` through the centers of masses is parallel to `ξ`. -/
+/-- **Floating in equilibrium in a direction.** Let $K \subseteq \mathbb{R}^d$, let
+$\xi \in \mathbb{R}^d$ be a unit vector and let $\delta \in \mathbb{R}$. We say that $K$ floats in
+equilibrium in direction $\xi$ at level $\delta$ if, for every cutting hyperplane
+$\{p : \xi \cdot p = t\}$ of $K$ in direction $\xi$ at level $\delta$, the center of mass of $K$
+minus the center of mass of $K \cap \{p : \xi \cdot p \le t\}$ is a real multiple of $\xi$
+(possibly zero); that is, the line through the two centers of mass is parallel to $\xi$ when they
+differ. -/
 def FloatsInEquilibriumInDirectionAtLevel (K : Set ℝᵈ) (ξ : S d) (δ : ℝ) : Prop :=
   ∀ H : CuttingHyperplaneAtLevel K ξ δ, H.lineThroughCentersOfMass ∈ ℝ ∙ ξ.val
 
-/-- We say that `K` floats in equilibrium in every orientation at level `δ`, if it floats
-in equilibrium in direction `ξ` at level `δ`, for all `ξ ∈ S^d`. -/
+/-- **Floating in equilibrium in every orientation.** A set $K \subseteq \mathbb{R}^d$ floats in
+equilibrium in every orientation at level $\delta \in \mathbb{R}$ if it floats in equilibrium in
+direction $\xi$ at level $\delta$ for every unit vector $\xi \in \mathbb{R}^d$. -/
 def FloatsInEquilibriumInEveryOrientationAtLevel (K : Set ℝᵈ) (δ : ℝ) : Prop :=
   ∀ ξ, FloatsInEquilibriumInDirectionAtLevel K ξ δ
 
-/-- A body of revolution is given by a smooth concave function `f : ℝ → ℝ` supported on
-an interval `[-R₁, R₂]`. -/
+/-- **Body of revolution.** A body of revolution in $\mathbb{R}^d$ is given by real numbers
+$R_1, R_2$ and a function $f : \mathbb{R} \to \mathbb{R}$ that vanishes outside the interval
+$[-R_1, R_2]$, is infinitely differentiable on the open interval $(-R_1, R_2)$ and is concave on
+$[-R_1, R_2]$. The dimension $d$ is only a parameter; these data do not depend on it. -/
 structure BodyOfRevolution (d : ℕ) where
   /-- The left half-length of the interval; `f` is supported on `[-R₁, R₂]`. -/
   R₁ : ℝ
@@ -119,21 +145,23 @@ structure BodyOfRevolution (d : ℕ) where
   smooth : ContDiffOn ℝ ∞ f (Set.Ioo (-R₁) R₂)
   concave : ConcaveOn ℝ (Set.Icc (-R₁) R₂) f
 
-/-- The convex body of revolution defined by a smooth concave function `f : ℝ → ℝ` supported on
-`[-R₁, R₂]` is `K_f := { x ∈ ℝᵈ | x₁ ∈ [-R₁, R₂] and x₂² + ... + x²_d ≤ f(x₁)² }`.
-Note: we actually index the `xᵢ` starting from zero, for convenience. -/
+/-- **Solid of revolution.** Let $d \ge 1$ and let a body of revolution in $\mathbb{R}^d$ be given
+by $R_1$, $R_2$ and $f$. Writing points of $\mathbb{R}^d$ as $x = (x_0, \dots, x_{d-1})$, its solid
+is the set of all $x$ with $x_0 \in [-R_1, R_2]$ and $x_1^2 + \dots + x_{d-1}^2 \le f(x_0)^2$. -/
 def BodyOfRevolution.body [NeZero d] (K : BodyOfRevolution d) : Set ℝᵈ :=
   { x | x 0 ∈ Set.Icc (-K.R₁) K.R₂ ∧ ∑ i > 0, (x i) ^ 2 ≤ K.f (x 0) ^ 2 }
 
-/-- A strictly convex body `K ⊂ ℝᵈ` is a strictly convex compact set with non-empty interior. -/
+/-- **Strictly convex body.** A set $K \subseteq \mathbb{R}^d$ is a strictly convex body if it is
+strictly convex (for distinct $x, y \in K$, every point of the open segment between $x$ and $y$
+lies in the interior of $K$), compact, and has nonempty interior. -/
 def IsStrictlyConvexBody (K : Set ℝᵈ) : Prop :=
   StrictConvex ℝ K ∧ IsCompact K ∧ (interior K).Nonempty
 
 /--
-Statement of Theorem 1:
+**Ryabogin's negative answer to Ulam's floating body problem.** Let $d \ge 3$. There exists a
+body of revolution $K \subset \mathbb{R}^d$ that is a strictly convex body, is not centrally
+symmetric, and floats in equilibrium in every orientation at the level $\operatorname{vol}(K)/2$.
 
-Let `d ≥ 3`. There exists a strictly convex non-centrally-symmetric body of revolution `K ⊂ ℝᵈ`
-that floats in equilibrium in every orientation at the level `vol(K)/2`.
 Source: D. Ryabogin, `A negative answer to Ulam's Problem 19 from the Scottish Book`, Annals of Math, 195 (3) 2022. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2022-195-3-Ulam.lean Via leanprover/lean-eval@38361be, problem `annals_ulam`.
 -/
 public theorem_wanted theorem_1 (hd : 3 ≤ d) : letI : NeZero d := ⟨by omega⟩

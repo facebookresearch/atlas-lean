@@ -44,14 +44,22 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- A not-all-equal 3-SAT instance: number of variables, 3-CNF formula. -/
+/-- **NOT-ALL-EQUAL 3-SAT instances.** A NOT-ALL-EQUAL 3-SAT instance is a pair $(n, \varphi)$ of
+a natural number $n$, the number of variables, and a CNF formula $\varphi$. The formula is not
+required to have three literals per clause; that is part of well-formedness. -/
 abbrev NaeThreeSatInstance := ℕ × Cslib.Logic.PL.CNF
 
-/-- Well-formedness of an instance. -/
+/-- **Well-formed NOT-ALL-EQUAL 3-SAT instances.** A NOT-ALL-EQUAL 3-SAT instance $(n, \varphi)$
+is well-formed when every clause of $\varphi$ is a list of exactly three literals, repetitions
+allowed, and every literal $(x, b)$ in it has variable index $x < n$. -/
 def WellFormed (i : NaeThreeSatInstance) : Prop :=
   (∀ clause ∈ i.2, clause.length = 3 ∧ ∀ l ∈ clause, l.1 < i.1)
 
-/-- An assignment making every clause not-all-equal. -/
+/-- **Not-all-equal satisfiability of an instance.** A NOT-ALL-EQUAL 3-SAT instance
+$(n, \varphi)$, with $n \in \mathbb{N}$ and $\varphi$ a CNF formula, is not-all-equal satisfiable
+when there are truth values $a_0, \dots, a_{n-1}$ such that, for the assignment $v$ with
+$v(x) = a_x$ for $x < n$ and $v(x) = \mathrm{false}$ for $x \ge n$, every clause of $\varphi$
+contains a literal satisfied by $v$ and a literal not satisfied by $v$. -/
 def NaeThreeSatFeasible
     (i : NaeThreeSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
@@ -59,7 +67,10 @@ def NaeThreeSatFeasible
       ∃ l ∈ clause, ¬ Cslib.Logic.PL.CNFLiteral.Satisfies (fun x => assign.getD x false) l
 
 open Classical in
-/-- NOT-ALL-EQUAL 3-SAT as a decision problem over bitstrings. -/
+/-- **NOT-ALL-EQUAL 3-SAT as a decision problem.** The decision problem NOT-ALL-EQUAL 3-SAT
+accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding, to a
+NOT-ALL-EQUAL 3-SAT instance $(n, \varphi)$ that is well-formed and not-all-equal satisfiable.
+Every bitstring that decodes to no instance is rejected. -/
 noncomputable def naeThreeSatDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
@@ -67,7 +78,11 @@ noncomputable def naeThreeSatDec :
   | some i => decide (WellFormed i ∧ NaeThreeSatFeasible i)
   | none => false
 
-/-- **NOT-ALL-EQUAL 3-SAT is NP-complete.** Source: M. R. Garey and D. S. Johnson, *Computers
+/-- **NOT-ALL-EQUAL 3-SAT is NP-complete.** The decision problem NOT-ALL-EQUAL 3-SAT over
+bitstrings belongs to NP, and every decision problem in NP has a polynomial-time many-one
+reduction to it.
+
+Source: M. R. Garey and D. S. Johnson, *Computers
 and Intractability: A Guide to the Theory of NP-Completeness* (1979), NOT-ALL-EQUAL 3-SAT;
 T. J. Schaefer, "The complexity of satisfiability problems" (1978). -/
 public theorem_wanted naeThreeSat_npComplete :

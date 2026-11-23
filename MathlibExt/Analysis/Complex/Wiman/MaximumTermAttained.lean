@@ -21,7 +21,9 @@ noncomputable section
 
 open Filter Set
 
-/-- The radial Taylor terms are bounded above by their summable majorant. -/
+/-- **The Taylor terms are bounded above.** Let $f$ be an entire function with Taylor
+coefficients $a_n$ at the origin, and let $r$ be real. Then the set of Taylor terms
+$\{|a_n|\,|r|^n : n \in \mathbb{N}\}$ is bounded above. -/
 theorem bddAbove_range_wimanTerm
     (f : ℂ → ℂ) (hf : Differentiable ℂ f) (r : ℝ) :
     BddAbove (range (wimanTerm f r)) := by
@@ -29,7 +31,9 @@ theorem bddAbove_range_wimanTerm
   rintro _ ⟨n, rfl⟩
   exact wimanTerm_le_wimanMajorant f hf r n
 
-/-- Every Taylor term is bounded by the supremal maximum term. -/
+/-- **Each Taylor term is at most the maximum term.** Let $f$ be an entire function with Taylor
+coefficients $a_n$ at the origin and maximum term $\mu(r) = \sup_k |a_k|\,|r|^k$. For every real
+$r$ and every $n \in \mathbb{N}$, $|a_n|\,|r|^n \le \mu(r)$. -/
 theorem wimanTerm_le_wimanMaximumTerm
     (f : ℂ → ℂ) (hf : Differentiable ℂ f)
     (r : ℝ) (n : ℕ) :
@@ -37,7 +41,9 @@ theorem wimanTerm_le_wimanMaximumTerm
   rw [wimanMaximumTerm]
   exact le_csSup (bddAbove_range_wimanTerm f hf r) ⟨n, rfl⟩
 
-/-- The maximum term is below a bound exactly when every Taylor term is. -/
+/-- **Bounding the maximum term.** Let $f$ be an entire function with Taylor coefficients $a_n$
+at the origin and maximum term $\mu(r) = \sup_n |a_n|\,|r|^n$. For all real $r$ and $c$,
+$\mu(r) \le c$ if and only if $|a_n|\,|r|^n \le c$ for every $n \in \mathbb{N}$. -/
 theorem wimanMaximumTerm_le_iff
     (f : ℂ → ℂ) (hf : Differentiable ℂ f)
     (r a : ℝ) :
@@ -51,7 +57,9 @@ theorem wimanMaximumTerm_le_iff
     rintro _ ⟨n, rfl⟩
     exact h n
 
-/-- A summable nonnegative Taylor-term sequence realizes its supremum. -/
+/-- **The maximum term is attained by a Taylor term.** Let $f$ be an entire function with Taylor
+coefficients $a_n$ at the origin and maximum term $\mu(r) = \sup_n |a_n|\,|r|^n$. For every real
+$r$ there is an $n \in \mathbb{N}$ with $|a_n|\,|r|^n = \mu(r)$. -/
 theorem exists_wimanTerm_eq_wimanMaximumTerm
     (f : ℂ → ℂ) (hf : Differentiable ℂ f)
     (r : ℝ) :

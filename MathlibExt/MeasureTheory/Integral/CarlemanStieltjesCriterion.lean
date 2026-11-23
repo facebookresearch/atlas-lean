@@ -160,8 +160,9 @@ private lemma carleman_geometric_mean_le (a : ℕ → ℝ) (ha : ∀ n, 0 ≤ a 
     nlinarith
   simpa [N, Nat.cast_add, Nat.cast_one] using hfinal
 
-/-- Summability form of Carleman's inequality: geometric means of the initial products of a
-summable nonnegative sequence again form a summable sequence. -/
+/-- **Carleman's inequality, summability form.** If $(a_n)_{n \ge 0}$ is a summable sequence of
+nonnegative real numbers, then the sequence of geometric means $(a_0 a_1 \cdots a_n)^{1/(n+1)}$,
+$n \ge 0$, is summable. -/
 public theorem summable_geometric_means {a : ℕ → ℝ} (ha : ∀ n, 0 ≤ a n)
     (hasum : Summable a) :
     Summable (fun n =>
@@ -1405,18 +1406,20 @@ private theorem carleman_measure_eq
   rw [carleman_map_sq_symmetrization σ hs, carleman_map_sq_symmetrization τ ht] at hmaps
   exact (carleman_add_self_injective hmaps).symm
 
-/-- Stieltjes moment determinacy on the closed nonnegative half-line.
-    Corpus `jis_grounded_5e39d97b31ef58deb38a5a58`. Authoritative source:
-    Gwo Dong Lin, "Recent Developments on the Moment Problem", Journal of
-    Statistical Distributions and Applications (2017), DOI
-    10.1186/s40488-017-0059-2, arXiv:1703.01027v3, frozen TeX SHA-256
-    e2dcb54a4b25d57ae3ad6e52267862aeca0ae2f38ffb729df0d727013d3c3080,
-    definition lines 57-75, criterion lines 297-321. JIS application, frozen
-    source SHA-256 66f0a4a264af03f82a43e3b37e62cc80cf0aed6f43e476e56456006203232bd0,
-    lines 152-177. Says a probability measure supported on [0, infinity),
-    represented by zero mass on `Set.Iio 0`, is uniquely determined among
-    probability measures supported there with finite absolute moments by
-    equality of every positive moment. -/
+/-- **Stieltjes moment determinacy.** A measure $\mu$ on $\mathbb{R}$ is Stieltjes moment
+determinate when every probability measure $\nu$ on $\mathbb{R}$ such that $\nu((-\infty, 0)) = 0$,
+$\int |x|^k \, d\nu(x) < \infty$ for every integer $k \ge 1$, and
+$\int x^k \, d\nu(x) = \int x^k \, d\mu(x)$ for every integer $k \ge 1$ is equal to $\mu$.
+
+The moments of $\mu$ are Bochner integrals, which are $0$ when $x^k$ is not $\mu$-integrable, and
+the definition places no condition on $\mu$ itself.
+
+Source: Gwo Dong Lin, "Recent Developments on the Moment Problem", Journal of
+Statistical Distributions and Applications (2017), DOI 10.1186/s40488-017-0059-2,
+arXiv:1703.01027v3. Corpus `jis_grounded_5e39d97b31ef58deb38a5a58`. Frozen TeX SHA-256
+e2dcb54a4b25d57ae3ad6e52267862aeca0ae2f38ffb729df0d727013d3c3080, definition lines 57-75,
+criterion lines 297-321. JIS application, frozen source SHA-256
+66f0a4a264af03f82a43e3b37e62cc80cf0aed6f43e476e56456006203232bd0, lines 152-177. -/
 public def StieltjesMomentDeterminate (μ : MeasureTheory.Measure ℝ) : Prop :=
   ∀ (ν : MeasureTheory.Measure ℝ) [MeasureTheory.IsProbabilityMeasure ν],
     ν (Set.Iio (0 : ℝ)) = 0 →
@@ -1426,20 +1429,22 @@ public def StieltjesMomentDeterminate (μ : MeasureTheory.Measure ℝ) : Prop :=
         ProbabilityTheory.moment (id : ℝ → ℝ) k μ) →
     ν = μ
 
-/-- Carleman Stieltjes criterion: divergence of the all-moment series implies
-    determinacy on [0, infinity) (Lin Theorem 2, (s6) implies (s7)).
-    Corpus `jis_grounded_5e39d97b31ef58deb38a5a58`. Condition (s6) is the
-    series sum_{k = 1} m_k^(-1 / (2 * k)) diverging, with m_k given by
-    `ProbabilityTheory.moment id k mu`; condition (s7) is moment determinacy
-    on [0, infinity). Source spans: definition lines 57-75, criterion lines
-    297-321, TeX SHA-256 e2dcb54a4b25d57ae3ad6e52267862aeca0ae2f38ffb729df0d727013d3c3080;
-    JIS application lines 152-177, source SHA-256
-    66f0a4a264af03f82a43e3b37e62cc80cf0aed6f43e476e56456006203232bd0.
+/-- **Carleman's criterion for the Stieltjes moment problem.** Let $\mu$ be a probability measure
+on $\mathbb{R}$ with $\mu((-\infty, 0)) = 0$ such that $\int |x|^k \, d\mu(x) < \infty$ for every
+integer $k \ge 1$, and write $m_k = \int x^k \, d\mu(x)$. If
+$\sum_{k \ge 1} m_k^{-1/(2k)} = \infty$, where the terms are taken in $[0, \infty]$ (so a term
+with $m_k = 0$ equals $\infty$), then $\mu$ is Stieltjes moment determinate.
 
 Proves `Wanted` entry `carleman_stieltjes_criterion`.
 
 Proof: Symmetrize through the square-root map, apply Denjoy--Carleman quasi-analytic
 uniqueness to the difference of characteristic functions, then push forward by squaring.
+
+Source: Gwo Dong Lin, "Recent Developments on the Moment Problem" (2017), Theorem 2, (s6) implies
+(s7). Corpus `jis_grounded_5e39d97b31ef58deb38a5a58`. Source spans: definition lines 57-75,
+criterion lines 297-321, TeX SHA-256
+e2dcb54a4b25d57ae3ad6e52267862aeca0ae2f38ffb729df0d727013d3c3080; JIS application lines
+152-177, source SHA-256 66f0a4a264af03f82a43e3b37e62cc80cf0aed6f43e476e56456006203232bd0.
 -/
 public theorem carleman_stieltjes_criterion
     (μ : MeasureTheory.Measure ℝ) [MeasureTheory.IsProbabilityMeasure μ]
