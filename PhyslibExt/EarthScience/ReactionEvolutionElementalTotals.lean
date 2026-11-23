@@ -48,7 +48,7 @@ namespace EarthScience
 
 /-- Reaction evolution preserves each conserved elemental total: if `l` is a
 left-null vector of the stoichiometric matrix `S` and the concentration
-trajectory obeys `c' = S * v(c)`, then the `l`-weighted total at time `t`
+trajectory obeys `c' = S * v(c)` at every real time, then the `l`-weighted total at time `t`
 equals the `l`-weighted total at time `0`. -/
 theorem reaction_evolution_preserves_elemental_total {n m : ℕ}
     (S : Fin n → Fin m → ℝ) (l : Fin n → ℝ)

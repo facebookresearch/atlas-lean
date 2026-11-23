@@ -60,7 +60,7 @@ namespace EarthScience
 
 open Set
 
-/-- Local sign condition from a negative derivative: if `F(T*) = 0`,
+/-- Local sign condition from a negative derivative: if `δ > 0`, `F(T*) = 0`,
 `F` is differentiable on `(T* - δ, T* + δ)`, and `deriv F < 0` on the
 punctured neighbourhood `(T* - δ, T* + δ) \ {T*}`, then
 `(T - T*) * F(T) < 0` for `T ≠ T*` in it. Proved via the mean value
@@ -140,7 +140,7 @@ theorem local_sign {F : ℝ → ℝ} {Tstar δ : ℝ} (hδ : 0 < δ)
     exact mul_neg_of_pos_of_neg hdenom hFT
 
 /-- Pointwise quadratic-energy decay about an arbitrary reference value
-`Tstar`: if `T` solves `C * T' = F(T)` at time `t` (stated as
+`Tstar`: for `C > 0`, if `T` solves `C * T' = F(T)` at time `t` (stated as
 `HasDerivAt T (F(T t)/C) t`) and `(T t - Tstar) * F(T t) < 0`, then the
 energy `V(s) = (T s - Tstar)^2 / 2` has derivative
 `(T t - Tstar) * F(T t) / C < 0` at `t`.

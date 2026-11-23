@@ -68,7 +68,7 @@ namespace EarthScience
 
 
 set_option linter.unusedVariables false in
-/-- Stokes settling: if the terminal velocity `v` balances Stokes drag
+/-- Stokes settling: for `a, eta, g > 0`, if the terminal velocity `v` balances Stokes drag
 `6*pi*eta*a*v` against the stipulated spherical buoyant weight
 `(4/3)*pi*a^3*(rho_s - rho_f)*g`, then
 `v = 2*(rho_s - rho_f)*g*a^2/(9*eta)`. -/
@@ -88,7 +88,9 @@ theorem terminal_velocity {a η g ρs ρf v : ℝ} (ha : 0 < a) (hη : 0 < η) (
   ring
 
 set_option linter.unusedVariables false in
-/-- Stokes settling: the formula velocity satisfies the force balance. -/
+/-- Stokes settling: for `a, eta, g > 0`, the formula velocity
+`v = 2*(rho_s - rho_f)*g*a^2/(9*eta)` satisfies the force balance
+`6*pi*eta*a*v = (4/3)*pi*a^3*(rho_s - rho_f)*g`. -/
 theorem terminal_velocity_balances {a η g ρs ρf : ℝ} (ha : 0 < a) (hη : 0 < η) (hg : 0 < g) :
     6 * Real.pi * η * a * (2 * (ρs - ρf) * g * a ^ 2 / (9 * η))
       = (4 / 3) * Real.pi * a ^ 3 * (ρs - ρf) * g := by
@@ -97,12 +99,12 @@ theorem terminal_velocity_balances {a η g ρs ρf : ℝ} (ha : 0 < a) (hη : 0 
   ring
 
 set_option linter.unusedVariables false in
-/-- Neutral buoyancy: equal densities give zero terminal velocity. -/
+/-- Neutral buoyancy: for `a, eta, g > 0`, equal densities give zero terminal velocity. -/
 theorem neutral_buoyancy {a η g ρ : ℝ} (ha : 0 < a) (hη : 0 < η) (hg : 0 < g) :
     2 * (ρ - ρ) * g * a ^ 2 / (9 * η) = 0 := by
   simp
 
-/-- Upward buoyant particle: if `rho_s < rho_f` the terminal velocity
+/-- Upward buoyant particle: for `a, eta, g > 0`, if `rho_s < rho_f` the terminal velocity
 is negative (rises). -/
 theorem buoyant_rises {a η g ρs ρf : ℝ} (ha : 0 < a) (hη : 0 < η) (hg : 0 < g)
     (h : ρs < ρf) :

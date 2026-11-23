@@ -97,9 +97,11 @@ theorem muskingum_storage_balance_iff {K X dt I0 I1 O0 O1 : ℝ}
   simp only [sub_eq_zero] at key0
   exact key0
 
-/-- Bounded-outflow invariance: under the nonnegative-coefficient
-admission range, if the two inflows and previous outflow lie in
-`[a, b]`, so does the routed outflow (a convex combination). -/
+/-- Bounded-outflow invariance: for `K > 0`, `0 ≤ X ≤ 1 / 2`, `dt > 0`
+in the nonnegative-coefficient admission range
+`2 * K * X ≤ dt ≤ 2 * K * (1 - X)`, if the two inflows and previous
+outflow lie in `[a, b]`, so does the routed outflow (a convex
+combination). -/
 theorem muskingum_outflow_mem_Icc {K X dt I0 I1 O0 a b : ℝ}
     (hK : 0 < K) (hX0 : 0 ≤ X) (hX : X ≤ 1 / 2) (hdt : 0 < dt)
     (hadm : 2 * K * X ≤ dt ∧ dt ≤ 2 * K * (1 - X))

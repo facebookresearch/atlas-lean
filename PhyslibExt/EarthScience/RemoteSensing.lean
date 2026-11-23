@@ -89,7 +89,8 @@ private theorem weighted_hasDerivAt (κ j I : ℝ → ℝ) (hκ : Continuous κ)
   exact h
 
 set_option linter.unusedVariables false in
-/-- Integrating-factor identity for `I' = -kappa*I + j`: with
+/-- Integrating-factor identity for `I' = -kappa*I + j`: for continuous `kappa`, `j`,
+an `I` solving the equation at every `t` with `I 0 = I0`, and `L >= 0`, with
 `mu(s) = exp(∫ x in 0..s, kappa x)`, the weighted endpoint satisfies
 `mu(L) * I(L) = I0 + ∫ s in 0..L, mu(s) * j(s)`. -/
 theorem integrating_factor {κ j I : ℝ → ℝ} {L I0 : ℝ} (hL : 0 ≤ L)
@@ -118,8 +119,10 @@ theorem integrating_factor {κ j I : ℝ → ℝ} {L I0 : ℝ} (hL : 0 ≤ L)
   rw [h0, hI0] at hFTC2
   linarith
 
-/-- Explicit Duhamel form: dividing the integrating-factor identity by
-`mu(L)` and using `∫ x in 0..L, kappa = ∫ x in 0..s + ∫ x in s..L`,
+/-- Explicit Duhamel form: for continuous `kappa`, `j`, an `I` solving
+`I' = -kappa*I + j` at every `t` with `I 0 = I0`, and `L >= 0`, dividing the
+integrating-factor identity by `mu(L)` and using
+`∫ x in 0..L, kappa = ∫ x in 0..s + ∫ x in s..L`,
 `I(L) = I0*exp(-∫_0^L kappa) + ∫_0^L j(s)*exp(-∫_s^L kappa) ds`. This is
 the integral solution of Liou (2002), Eq. (1.4.19); see the References. -/
 theorem explicit_form {κ j I : ℝ → ℝ} {L I0 : ℝ} (hL : 0 ≤ L)
@@ -163,7 +166,9 @@ theorem explicit_form {κ j I : ℝ → ℝ} {L I0 : ℝ} (hL : 0 ≤ L)
   rw [add_mul, mul_assoc, inv_mul_cancel₀ hμL, mul_one]
   linear_combination hIF
 
-/-- Finite-basis affine observation operator: if `j = ∑ i in s, a i * b i`,
+/-- Finite-basis affine observation operator: for continuous `kappa` and `b i`
+(`i ∈ s`), `L >= 0`, and an `I` solving `I' = -kappa*I + j` at every `t` with
+`I 0 = I0`, if `j = ∑ i in s, a i * b i`,
 then `I(L) = I0*exp(-∫_0^L kappa) + ∑ i in s, a i * w i` where
 `w i = ∫_0^L b i(s)*exp(-∫_s^L kappa) ds`. -/
 theorem finite_basis {κ : ℝ → ℝ} {ι : Type*} (s : Finset ι)
@@ -222,7 +227,8 @@ theorem finite_basis {κ : ℝ → ℝ} {ι : Type*} (s : Finset ι)
   rw [hex, add_left_cancel_iff]
   exact hgoal
 
-/-- Witness `kappa = 1, j = 0, I0 = 1`: the explicit form gives
+/-- Witness `kappa = 1, j = 0, I0 = 1`: for `L >= 0` and an `I` solving
+`I' = -I` at every `t` with `I 0 = 1`, the explicit form gives
 `I(L) = exp(-L)`. Stated as an integral evaluation plus the
 explicit-form conclusion for a solution with zero source. -/
 theorem witness {I : ℝ → ℝ} {L : ℝ} (hL : 0 ≤ L)

@@ -84,7 +84,9 @@ namespace EarthScience
 /-- van Genuchten (1980) effective saturation with the Mualem exponent
 `m = 1 - 1/n`, in gauge-head form: `S_e(h) = (1 + (α |h|)^n)^(-(1 - 1/n))`.
 Real powers throughout. Physically meaningful only for `α > 0`, `n > 1`,
-`h ≤ 0`; outside that domain the expression is a totalized value. -/
+`h ≤ 0`; outside that domain the expression is a totalized value, with
+`1 / 0 = 0` (so `S_e = 1 / 2` at `n = 0`, as `x ^ 0 = 1`), `0 ^ y = 0` for
+`y ≠ 0` and `x ^ y = |x| ^ y * cos (π y)` for `x < 0`. -/
 noncomputable def vanGenuchtenSe (α n h : ℝ) : ℝ :=
   (1 + (α * |h|) ^ n) ^ (-(1 - 1 / n))
 
@@ -161,7 +163,7 @@ lemma vanGenuchtenSe_exponent_one (α h : ℝ) :
   unfold vanGenuchtenSe
   rw [he, Real.rpow_zero]
 
-/-- Control, `0 < n < 1`: the exponent `-(1 - 1/n)` is positive and the upper
+/-- Control, `α > 0` and `0 < n < 1`: the exponent `-(1 - 1/n)` is positive and the upper
 bound fails at every finite negative head, so `n > 1` cannot be dropped from
 the range statement. -/
 lemma one_lt_vanGenuchtenSe_of_lt_one {α n h : ℝ} (hα : 0 < α) (hn₀ : 0 < n)

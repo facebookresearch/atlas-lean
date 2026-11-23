@@ -69,7 +69,7 @@ relations convert these into the thermal-wind formulas.
 namespace EarthScience
 
 
-/-- Zonal thermal wind, one component: differentiating the zonal geostrophic
+/-- Zonal thermal wind, one component: for `rho0 ≠ 0`, differentiating the zonal geostrophic
 balance `f * ug = -py / rho0` in `z` and using the hydrostatic relation
 differentiated in `y`, `d/dz py = -g * rho_y`, gives
 `f * d/dz ug = (g / rho0) * rho_y`. Here `A` is the `z`-derivative of `ug`
@@ -88,7 +88,7 @@ lemma thermal_wind_zonal {f rho0 g rho_y : ℝ} {ug py : ℝ → ℝ} {t A Dpy :
   field_simp
 
 set_option linter.unusedVariables false in
-/-- Thermal wind: differentiating the f-plane geostrophic balances
+/-- Thermal wind: for `f ≠ 0` and `rho0 ≠ 0`, differentiating the f-plane geostrophic balances
 `f * ug = -py / rho0`, `f * vg = px / rho0` in `z`, and using the
 hydrostatic relations differentiated in the horizontal,
 `d/dz py = -g * rho_y`, `d/dz px = -g * rho_x` (commuting mixed
@@ -117,7 +117,8 @@ theorem thermal_wind {f rho0 g rho_y rho_x : ℝ} {ug vg py px : ℝ → ℝ} {t
     field_simp
   exact ⟨hA, hB⟩
 
-/-- No horizontal density gradient: `rho_y = rho_x = 0` gives no thermal
+/-- No horizontal density gradient: with the balances and derivatives of `thermal_wind`
+and `rho0 ≠ 0`, `rho_y = rho_x = 0` gives no thermal
 wind shear, `A = 0` and `B = 0` (cancelling `f ≠ 0`). -/
 theorem thermal_wind_no_gradient {f rho0 g : ℝ} {ug vg py px : ℝ → ℝ} {t : ℝ}
     {A B Dpy Dpx : ℝ}

@@ -60,8 +60,9 @@ overview. -/
 noncomputable def rankineActivePressure (Ka γ z : ℝ) : ℝ :=
   Ka * γ * z
 
-/-- The Rankine resultant acts at height `H / 3` above the base:
-with the unit-width panel force and moment for the linear law
+/-- For `Ka > 0`, `γ > 0` and `H > 0`, the Rankine resultant acts at
+height `H / 3` above the base: with the unit-width panel force and
+moment for the linear law
 `rankineActivePressure` (pressure gradient `Ka * γ`), the
 resultant depth `moment / force` is `2 * H / 3`. -/
 theorem rankine_resultant_height {Ka γ H : ℝ} (hKa : 0 < Ka)

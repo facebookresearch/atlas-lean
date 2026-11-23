@@ -86,8 +86,8 @@ private theorem pressure_hasFDerivAt (p : EuclideanSpace ℝ (Fin 3) → ℝ) (�
   have h := hp.mul_const (ρ⁻¹ : ℝ)
   simpa [div_eq_mul_inv] using h
 
-/-- Kinetic-energy identity: the directional derivative of `‖u‖^2 / 2`
-along `u x` equals `⟪u x, (fderiv ℝ u x) (u x)⟫`. -/
+/-- Kinetic-energy identity: for `u` differentiable at `x`, the directional derivative of
+`‖u‖^2 / 2` along `u x` equals `⟪u x, (fderiv ℝ u x) (u x)⟫`. -/
 theorem kinetic_directional_deriv (u : EuclideanSpace ℝ (Fin 3) → EuclideanSpace ℝ (Fin 3))
     (x : EuclideanSpace ℝ (Fin 3)) (hu : HasFDerivAt u (fderiv ℝ u x) x) :
     (fderiv ℝ (fun y => ‖u y‖ ^ 2 / 2) x) (u x) =
@@ -99,11 +99,12 @@ theorem kinetic_directional_deriv (u : EuclideanSpace ℝ (Fin 3) → EuclideanS
 /-! ## B. Bernoulli along a streamline -/
 
 /-- Local form of Bernoulli's theorem: for steady incompressible inviscid flow
-satisfying the Euler balance dotted with `u x`, with constant `ρ > 0` and
-time-independent potential `Φ`, the directional derivative of the Bernoulli
-head `p / ρ + ‖u‖^2 / 2 + Φ` along `u x` is zero at the point `x`. This is the
-local differential condition behind `bernoulli_along_streamline`; by itself it
-says nothing about the values of the head at other points. -/
+satisfying the Euler balance dotted with `u x`, with constant `ρ > 0`,
+time-independent potential `Φ`, and `u`, `p` and `Φ` differentiable at `x`, the
+directional derivative of the Bernoulli head `p / ρ + ‖u‖^2 / 2 + Φ` along `u x`
+is zero at the point `x`. This is the local differential condition behind
+`bernoulli_along_streamline`; by itself it says nothing about the values of the
+head at other points. -/
 theorem bernoulli_head_directional_deriv_eq_zero
     (u : EuclideanSpace ℝ (Fin 3) → EuclideanSpace ℝ (Fin 3))
     (p Φ : EuclideanSpace ℝ (Fin 3) → ℝ) (ρ : ℝ) (hρ : 0 < ρ)

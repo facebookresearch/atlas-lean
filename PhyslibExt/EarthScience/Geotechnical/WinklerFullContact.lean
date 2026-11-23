@@ -46,11 +46,11 @@ namespace EarthScience
 
 /-! ## A. Full-contact admission -/
 
-/-- Contact pressure at a footing point. -/
+/-- Contact pressure `ks * (a + b * x)` at a footing point `x`. -/
 noncomputable def footingPressure (ks a b x : ℝ) : ℝ := ks * (a + b * x)
 
-/-- Full-contact admission: pressure is nonnegative everywhere on
-the footing exactly when `a ≥ |b| * B / 2`. -/
+/-- Full-contact admission: for `ks > 0` and `B > 0`, pressure is nonnegative everywhere on
+the footing `[-B / 2, B / 2]` exactly when `a ≥ |b| * B / 2`. -/
 lemma footingPressure_nonneg_iff {ks a b B : ℝ} (hks : 0 < ks)
     (hB : 0 < B) :
     (∀ x ∈ Set.Icc (-B / 2) (B / 2), 0 ≤ footingPressure ks a b x)

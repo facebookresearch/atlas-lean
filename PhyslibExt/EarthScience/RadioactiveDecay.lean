@@ -64,8 +64,8 @@ theorem decay_hasDerivAt (lam N0 t : ℝ) :
   ring
 
 set_option linter.unusedVariables false in
-/-- At the half-life `log 2 / λ`, half the initial inventory remains. This is
-`CompartmentKinetics.amount_bolus_add_halfLife` at time zero, via
+/-- For `λ > 0` and `N0 > 0`, at the half-life `log 2 / λ`, half the initial inventory
+remains. This is `CompartmentKinetics.amount_bolus_add_halfLife` at time zero, via
 `CompartmentKinetics.amount_bolus`. -/
 theorem decay_halfLife_value (lam N0 : ℝ) (hlam : 0 < lam) (hN0 : 0 < N0) :
     N0 * Real.exp (-lam * (Real.log 2 / lam)) = N0 / 2 := by
@@ -77,8 +77,8 @@ theorem decay_halfLife_value (lam N0 : ℝ) (hlam : 0 < lam) (hN0 : 0 < N0) :
   exact h
 
 set_option linter.unusedVariables false in
-/-- The positive half-life is unique: any `t ≥ 0` with `N(t) = N0/2`
-equals `log 2 / λ`. -/
+/-- The positive half-life is unique: for `λ > 0` and `N0 > 0`, any `t ≥ 0` with
+`N(t) = N0/2` equals `log 2 / λ`. -/
 theorem decay_halfLife_unique (lam N0 t : ℝ) (hlam : 0 < lam) (hN0 : 0 < N0)
     (ht : 0 ≤ t) (h : N0 * Real.exp (-lam * t) = N0 / 2) :
     t = Real.log 2 / lam := by

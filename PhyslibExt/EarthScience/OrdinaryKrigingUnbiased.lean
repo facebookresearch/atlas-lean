@@ -55,10 +55,10 @@ namespace EarthScience
 
 /-- Ordinary kriging is unbiased: the kriging weights solve the ordinary
 kriging system, whose last equation is the unbiasedness constraint that the
-weights sum to `1`. If every observation has the same mean `mean`, the
-kriging estimator `∑ i, lam i * Z i` has mean `mean`. The covariance
-equations pin down which weights solve the system; unbiasedness itself
-follows from the constraint. -/
+weights sum to `1`. If every observation is integrable on a probability space
+and has the same mean `mean`, the kriging estimator `∑ i, lam i * Z i` has
+mean `mean`. Unbiasedness follows from the constraint alone; the covariance
+equations play no part in it. -/
 theorem ordinary_kriging_unbiased {ι : Type*} [Fintype ι] {Ω : Type*}
     {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ]
     {Z : Ω → ι → ℝ} {mean : ℝ}

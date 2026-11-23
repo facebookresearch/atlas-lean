@@ -172,7 +172,7 @@ theorem linearReservoirStorage_nonneg {I k S0 t : ℝ}
     MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_nonneg
     hk hI hS0 ht
 
-/-- Starting at or below the steady storage `I / k`, the
+/-- For `k > 0`, starting at or below the steady storage `I / k`, the
 profile never exceeds that steady storage. -/
 theorem linearReservoirStorage_le_steady {I k S0 t : ℝ}
     (hk : 0 < k) (h : S0 ≤ I / k) :
@@ -186,7 +186,7 @@ theorem linearReservoirStorage_le_steady {I k S0 t : ℝ}
       MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_le_steadyAmount hk h _)
     hk h
 
-/-- Starting at or above the steady storage `I / k`, the
+/-- For `k > 0`, starting at or above the steady storage `I / k`, the
 profile never falls below that steady storage. -/
 theorem steady_le_linearReservoirStorage {I k S0 t : ℝ}
     (hk : 0 < k) (h : I / k ≤ S0) :
@@ -200,7 +200,7 @@ theorem steady_le_linearReservoirStorage {I k S0 t : ℝ}
       MathlibExt.Biology.Biophysics.CompartmentKinetics.steadyAmount_le_amount hk h _)
     hk h
 
-/-- Operating-envelope capacity form: at nonnegative times, if
+/-- Operating-envelope capacity form: for `k > 0` and at nonnegative times, if
 both the initial storage and the steady storage are at most
 `Smax`, then the storage remains at most `Smax`. The bound
 `Smax` is a supplied envelope, not a controller. -/

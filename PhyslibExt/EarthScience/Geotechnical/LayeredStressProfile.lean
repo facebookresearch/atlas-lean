@@ -76,7 +76,8 @@ noncomputable def layerTop (t : ℕ → ℝ) (k : ℕ) : ℝ :=
   ∑ i ∈ Finset.range k, t i
 
 /-- Thickness of layer `i` traversed at depth `z`, clamped to
-the layer interval. -/
+the layer interval. For a negative thickness `t i < 0` it is `0`
+at every depth. -/
 noncomputable def traversedThickness (t : ℕ → ℝ) (i : ℕ) (z : ℝ) : ℝ :=
   max (layerTop t i) (min z (layerTop t (i + 1))) - layerTop t i
 
@@ -338,7 +339,7 @@ lemma staticPorePressure_eq_hydrostatic_of_ge {ρ g zw z : ℝ}
   ring
 
 /-- For a saturated submerged layer with unit weight
-`bulkUnitWeight Gs 1 e γw`, the effective-stress slope is
+`bulkUnitWeight Gs 1 e γw` and `1 + e ≠ 0`, the effective-stress slope is
 `submergedUnitWeight Gs e γw`. -/
 lemma layeredEffectiveStress_sub_submergedUnitWeight {n k m : ℕ}
     (hk : k < n) (hmk : m ≤ k) (q γw Gs e : ℝ) {t : ℕ → ℝ} (γ : ℕ → ℝ)

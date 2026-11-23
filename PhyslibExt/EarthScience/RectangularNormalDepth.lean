@@ -52,7 +52,9 @@ namespace EarthScience
 /-- Rectangular-channel Manning discharge at depth `h`, width
 `b`, and positive combined prefactor `C` (roughness and slope):
 `C * (b * h) * ((b * h) / (b + 2 * h)) ^ (2 / 3)`, using area
-`b * h` and hydraulic radius `(b * h) / (b + 2 * h)`. -/
+`b * h` and hydraulic radius `(b * h) / (b + 2 * h)`. With the
+conventions `x / 0 = 0` and `0 ^ y = 0` for `y ≠ 0`, it is `0` when
+`b + 2 * h = 0`; a negative base `x` gives `|x| ^ y * cos (π y)`. -/
 noncomputable def rectangularDischarge (C b h : ℝ) : ℝ :=
   C * (b * h) * ((b * h) / (b + 2 * h)) ^ ((2 : ℝ) / 3)
 
@@ -85,8 +87,8 @@ theorem rectangularDischarge_strictMonoOn {C b : ℝ}
   exact (mul_lt_mul_of_pos_right hu hrpow1pos).trans
     (mul_lt_mul_of_pos_left hrpow hu2pos)
 
-/-- A prescribed discharge has at most one positive rectangular
-normal depth. -/
+/-- For positive prefactor and width, a prescribed discharge has at
+most one positive rectangular normal depth. -/
 theorem rectangular_normal_depth_unique {C b h1 h2 : ℝ}
     (hC : 0 < C) (hb : 0 < b) (hh1 : 0 < h1) (hh2 : 0 < h2)
     (h : rectangularDischarge C b h1

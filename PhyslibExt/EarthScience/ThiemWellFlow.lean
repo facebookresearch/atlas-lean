@@ -57,9 +57,9 @@ module is self-contained from Mathlib primitives.
 
 namespace EarthScience
 
-/-- Thiem head difference: for the steady confined radial-flow profile
-`h(r) = C + Q * log r / (2 * π * T)`, the head rise from `r1` to `r2`
-is `Q * log (r2 / r1) / (2 * π * T)`. -/
+/-- Thiem head difference: for `T ≠ 0`, `r1 > 0`, `r2 > 0` and the steady
+confined radial-flow profile `h(r) = C + Q * log r / (2 * π * T)`, the
+head rise from `r1` to `r2` is `Q * log (r2 / r1) / (2 * π * T)`. -/
 theorem thiem_head_difference {Q T C r1 r2 : ℝ} (hT : T ≠ 0)
     (hr1 : 0 < r1) (hr2 : 0 < r2) :
     (C + Q * Real.log r2 / (2 * Real.pi * T)) -
@@ -73,7 +73,7 @@ theorem thiem_head_difference {Q T C r1 r2 : ℝ} (hT : T ≠ 0)
   ring
 
 /-- Thiem head difference: sign of drawdown. For pumping `Q ≥ 0`,
-`T > 0` and `r1 < r2`, head increases outward: `h(r2) - h(r1) ≥ 0`. -/
+`T > 0` and `0 < r1 < r2`, head increases outward: `h(r2) - h(r1) ≥ 0`. -/
 theorem thiem_head_difference_nonneg {Q T C r1 r2 : ℝ} (hQ : 0 ≤ Q) (hT : 0 < T)
     (hr1 : 0 < r1) (hr2 : r1 < r2) :
     0 ≤ (C + Q * Real.log r2 / (2 * Real.pi * T)) -
@@ -87,7 +87,8 @@ theorem thiem_head_difference_nonneg {Q T C r1 r2 : ℝ} (hQ : 0 ≤ Q) (hT : 0 
   exact div_nonneg (mul_nonneg hQ hlog) hden
 
 set_option linter.unusedVariables false in
-/-- Thiem head difference: zero pumping gives zero head difference. -/
+/-- Thiem head difference: for `T ≠ 0`, `r1 > 0` and `r2 > 0`, zero
+pumping gives zero head difference. -/
 theorem thiem_head_difference_zero_pumping {T C r1 r2 : ℝ} (hT : T ≠ 0)
     (hr1 : 0 < r1) (hr2 : 0 < r2) :
     (C + 0 * Real.log r2 / (2 * Real.pi * T)) -
@@ -95,7 +96,8 @@ theorem thiem_head_difference_zero_pumping {T C r1 r2 : ℝ} (hT : T ≠ 0)
   simp
 
 set_option linter.unusedVariables false in
-/-- Thiem head difference: equal radii give zero head difference. -/
+/-- Thiem head difference: for `T ≠ 0` and `r > 0`, equal radii give zero
+head difference. -/
 theorem thiem_head_difference_equal_radii {Q T C r : ℝ} (hT : T ≠ 0)
     (hr : 0 < r) :
     (C + Q * Real.log r / (2 * Real.pi * T)) -

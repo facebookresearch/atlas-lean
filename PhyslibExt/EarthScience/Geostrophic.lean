@@ -53,7 +53,7 @@ namespace EarthScience
 
 /-- Geostrophic balance `f * khat x u = -grad_h p / rho0`, i.e.
 `f * ux = -py / rho0` and `-f * uy = -px / rho0`, for `f ≠ 0`,
-`rho0 ≠ 0` uniquely gives `u = (-py / (rho0 * f), px / (rho0 * f))`. -/
+`rho0 ≠ 0` forces `u = (-py / (rho0 * f), px / (rho0 * f))`. -/
 theorem geostrophic_velocity {f rho0 px py ux uy : ℝ} (hf : f ≠ 0) (hrho : rho0 ≠ 0)
     (hx : f * ux = -py / rho0) (hy : -f * uy = -px / rho0) :
     ux = -py / (rho0 * f) ∧ uy = px / (rho0 * f) := by
@@ -66,8 +66,8 @@ theorem geostrophic_velocity {f rho0 px py ux uy : ℝ} (hf : f ≠ 0) (hrho : r
     field_simp at hy
     linear_combination -hy
 
-/-- Uniqueness: two velocities satisfying the same geostrophic balance
-coincide. -/
+/-- Uniqueness: for `f ≠ 0` and `rho0 ≠ 0`, two velocities satisfying the same
+geostrophic balance coincide. -/
 theorem geostrophic_velocity_unique {f rho0 px py ux1 uy1 ux2 uy2 : ℝ}
     (hf : f ≠ 0) (hrho : rho0 ≠ 0)
     (hx1 : f * ux1 = -py / rho0) (hy1 : -f * uy1 = -px / rho0)

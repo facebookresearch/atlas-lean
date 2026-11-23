@@ -50,14 +50,16 @@ accumulation speed.
 namespace EarthScience
 
 /-- Age of the sediment at depth `d` (positive downward) under constant accumulation speed
-`v`, with no compaction, no hiatus and present surface age zero: `d / v`. -/
+`v`, with no compaction, no hiatus and present surface age zero: `d / v`. With the convention
+`x / 0 = 0` it is `0` when `v = 0`; the intended domain is `v > 0` and `d ≥ 0`. -/
 noncomputable def sedimentAge (v d : ℝ) : ℝ := d / v
 
 /-- Depth (positive downward) of the sediment of age `t` under constant accumulation speed
 `v`, with no compaction and no hiatus: `v * t`. -/
 noncomputable def sedimentDepth (v t : ℝ) : ℝ := v * t
 
-/-- The present surface, at depth `0`, has age `0`. -/
+/-- The present surface, at depth `0`, has age `0` (at `v = 0` by the convention
+`x / 0 = 0`). -/
 theorem sedimentAge_zero (v : ℝ) : sedimentAge v 0 = 0 :=
   zero_div v
 
@@ -71,19 +73,20 @@ theorem sediment_age_strictMonoOn (v : ℝ) (hv : 0 < v) :
     StrictMonoOn (sedimentAge v) (Set.Ici 0) :=
   (strictMono_div_right_of_pos hv).strictMonoOn _
 
-/-- Constant accumulation inverts: the sediment of age `t` lies at depth `v * t`, and the
-sediment there has age `t`. -/
+/-- Constant accumulation inverts: with `v > 0`, the sediment of age `t` lies at depth
+`v * t`, and the sediment there has age `t`. -/
 theorem sediment_depth_age_inverse (v t : ℝ) (hv : 0 < v) :
     sedimentAge v (sedimentDepth v t) = t :=
   mul_div_cancel_left₀ t hv.ne'
 
-/-- Conversely, the sediment of the age found at depth `d` lies at depth `d`. -/
+/-- Conversely, with `v > 0`, the sediment of the age found at depth `d` lies at depth `d`. -/
 theorem sedimentDepth_sedimentAge (v d : ℝ) (hv : 0 < v) :
     sedimentDepth v (sedimentAge v d) = d :=
   mul_div_cancel₀ d hv.ne'
 
 /-- Age difference between horizons: sediment at depths `d₁` and `d₂` differs in age by the
-separation `d₂ - d₁` divided by the accumulation speed `v`. -/
+separation `d₂ - d₁` divided by the accumulation speed `v`. This holds for every real `v`; with
+the convention `x / 0 = 0` both sides are `0` when `v = 0`. -/
 theorem sedimentAge_sub (v d₁ d₂ : ℝ) :
     sedimentAge v d₂ - sedimentAge v d₁ = (d₂ - d₁) / v :=
   (sub_div d₂ d₁ v).symm

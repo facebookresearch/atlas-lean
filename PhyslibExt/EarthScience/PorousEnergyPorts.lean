@@ -163,7 +163,9 @@ namespace EarthScience
 /-! ## A. Radial Darcy head profile -/
 
 /-- Radial Darcy head profile with head `h0` at the well radius `r0`, constant outward
-discharge `Q` and transmissivity `Tr`: `h0 - Q log (r / r0) / (2 π Tr)`. -/
+discharge `Q` and transmissivity `Tr`: `h0 - Q log (r / r0) / (2 π Tr)`. With `x / 0 = 0` and
+`log x = log |x|` it is `h0` when `r = 0`, `r0 = 0` or `Tr = 0`; the intended domain is
+`Tr > 0`, `0 < r0 ≤ r`. -/
 noncomputable def radialDarcyHead (h0 Q Tr r0 r : ℝ) : ℝ :=
   h0 - Q * Real.log (r / r0) / (2 * Real.pi * Tr)
 
@@ -265,8 +267,9 @@ lemma radialDarcy_head_sub {h h' : ℝ → ℝ} {Q Tr r0 r1 : ℝ} (hr0 : 0 < r0
       linarith
     exact hfield
 
-/-- The radial Darcy profile solves the model for every discharge `Q`: at each radius `r > 0`
-its radial derivative is `-Q / (2 π Tr r)`, and its outward discharge is `Q`. -/
+/-- The radial Darcy profile solves the model for every discharge `Q`: for `r0 > 0` and
+`Tr > 0`, at each radius `r > 0` its radial derivative is `-Q / (2 π Tr r)`, and its outward
+discharge is `Q`. -/
 lemma radialDarcyHead_solves {h0 Q Tr r0 r : ℝ} (hr0 : 0 < r0) (hTr : 0 < Tr) (hr : 0 < r) :
     HasDerivAt (radialDarcyHead h0 Q Tr r0) (-Q / (2 * Real.pi * Tr * r)) r ∧
       -2 * Real.pi * r * Tr * (-Q / (2 * Real.pi * Tr * r)) = Q := by
@@ -299,7 +302,7 @@ lemma radialDarcyHead_solves {h0 Q Tr r0 r : ℝ} (hr0 : 0 < r0) (hTr : 0 < Tr) 
 
 /-! ## B. Matching the Thiem profile -/
 
-/-- The Thiem rate is the pumping (extraction) rate: the Thiem profile
+/-- The Thiem rate is the pumping (extraction) rate: for `Tr > 0` the Thiem profile
 `C + P log r / (2 π Tr)` with rate `P` has radial derivative `P / (2 π Tr r)` at `r > 0`, so
 its outward discharge `-2 π r Tr h'(r)` is `-P`. -/
 lemma thiemProfile_outward_discharge {P Tr C r : ℝ} (hTr : 0 < Tr) (hr : 0 < r) :
@@ -325,9 +328,11 @@ lemma thiemProfile_outward_discharge {P Tr C r : ℝ} (hTr : 0 < Tr) (hr : 0 < r
     exact hadd
   · field_simp
 
-/-- Matching the Thiem profile with the sign reversed: on the annulus, the radial Darcy head
-difference equals the Thiem head difference of `EarthScience.thiem_head_difference` for the
-pumping rate `-Q`, with any additive constant `C`. -/
+/-- Matching the Thiem profile with the sign reversed: on the annulus, under the hypotheses of
+`radialDarcy_head_sub` (`r0 > 0`, `Tr > 0`, `h` continuous on `[r0, r1]` with the steady outward
+discharge `Q` inside), the radial Darcy head difference equals the Thiem head difference of
+`EarthScience.thiem_head_difference` for the pumping rate `-Q`, with any additive constant
+`C`. -/
 lemma radialDarcy_head_sub_eq_thiem {h h' : ℝ → ℝ} {Q Tr r0 r1 : ℝ} (hr0 : 0 < r0)
     (hTr : 0 < Tr) (hcont : ContinuousOn h (Set.Icc r0 r1))
     (hderiv : ∀ r ∈ Set.Ioo r0 r1, HasDerivAt h (h' r) r)
@@ -572,15 +577,18 @@ private lemma denom_pos {μo μw s : ℝ} (hμo : 0 < μo) (hμw : 0 < μw) :
 
 /-- Water fractional flow `μo s ^ 2 / (μo s ^ 2 + μw (1 - s) ^ 2)` at normalized saturation `s`,
 from the relative permeabilities `s ^ 2` (water) and `(1 - s) ^ 2` (oil) and the oil and water
-viscosities `μo`, `μw`. -/
+viscosities `μo`, `μw`. With `x / 0 = 0` it is `0` where the denominator vanishes, which never
+happens for positive viscosities. -/
 noncomputable def fracFlow (μo μw s : ℝ) : ℝ :=
   μo * s ^ 2 / (μo * s ^ 2 + μw * (1 - s) ^ 2)
 
-/-- Derivative of the fractional flow: `2 μo μw s (1 - s) / (μo s ^ 2 + μw (1 - s) ^ 2) ^ 2`. -/
+/-- Derivative of the fractional flow: `2 μo μw s (1 - s) / (μo s ^ 2 + μw (1 - s) ^ 2) ^ 2`
+(for positive viscosities). With `x / 0 = 0` it is `0` where the denominator vanishes. -/
 noncomputable def fracFlowDeriv (μo μw s : ℝ) : ℝ :=
   2 * μo * μw * s * (1 - s) / (μo * s ^ 2 + μw * (1 - s) ^ 2) ^ 2
 
-/-- Derivative bound `B = (μo + μw) ^ 2 / (2 μo μw)` of the fractional flow on `[0, 1]`. -/
+/-- Derivative bound `B = (μo + μw) ^ 2 / (2 μo μw)` of the fractional flow on `[0, 1]` (for
+positive viscosities). With `x / 0 = 0` it is `0` when `μo μw = 0`. -/
 noncomputable def fracFlowBound (μo μw : ℝ) : ℝ :=
   (μo + μw) ^ 2 / (2 * μo * μw)
 
@@ -589,8 +597,8 @@ private lemma fracFlowBound_pos {μo μw : ℝ} (hμo : 0 < μo) (hμw : 0 < μw
   simp only [fracFlowBound]
   positivity
 
-/-- Endpoint values: no water flows at connate water, `f 0 = 0`, and only water flows at
-residual oil, `f 1 = 1`. -/
+/-- Endpoint values for `μo > 0`: no water flows at connate water, `f 0 = 0`, and only water
+flows at residual oil, `f 1 = 1`. -/
 lemma fracFlow_zero_one {μo : ℝ} (μw : ℝ) (hμo : 0 < μo) :
     fracFlow μo μw 0 = 0 ∧ fracFlow μo μw 1 = 1 := by
   have hμo' : μo ≠ 0 := ne_of_gt hμo
@@ -652,8 +660,8 @@ lemma hasDerivAt_fracFlow {μo μw : ℝ} (hμo : 0 < μo) (hμw : 0 < μw) (s :
   rw [hEq, hDeriv]
   exact hDiv
 
-/-- Finite derivative bound: on `[0, 1]` the derivative lies in `[0, B]`,
-`B = (μo + μw) ^ 2 / (2 μo μw)`. -/
+/-- Finite derivative bound: for positive viscosities, on `[0, 1]` the derivative lies in
+`[0, B]`, `B = (μo + μw) ^ 2 / (2 μo μw)`. -/
 lemma fracFlowDeriv_mem_Icc {μo μw s : ℝ} (hμo : 0 < μo) (hμw : 0 < μw)
     (hs : s ∈ Set.Icc (0 : ℝ) 1) :
     fracFlowDeriv μo μw s ∈ Set.Icc 0 (fracFlowBound μo μw) := by
@@ -712,8 +720,8 @@ lemma fracFlowDeriv_mem_Icc {μo μw s : ℝ} (hμo : 0 < μo) (hμw : 0 < μw)
     exact hNleB
   exact ⟨hLower, hUpper⟩
 
-/-- Lipschitz bound with monotone increment: for `t ≤ s` in `[0, 1]`,
-`0 ≤ f s - f t ≤ B (s - t)`. -/
+/-- Lipschitz bound with monotone increment: for positive viscosities and `t ≤ s` in
+`[0, 1]`, `0 ≤ f s - f t ≤ B (s - t)`. -/
 lemma fracFlow_sub_mem_Icc {μo μw s t : ℝ} (hμo : 0 < μo) (hμw : 0 < μw)
     (hs : s ∈ Set.Icc (0 : ℝ) 1) (ht : t ∈ Set.Icc (0 : ℝ) 1) (hts : t ≤ s) :
     fracFlow μo μw s - fracFlow μo μw t ∈ Set.Icc 0 (fracFlowBound μo μw * (s - t)) := by
@@ -745,7 +753,7 @@ lemma fracFlow_sub_mem_Icc {μo μw s t : ℝ} (hμo : 0 < μo) (hμw : 0 < μw)
       exact mul_le_mul_of_nonneg_right hHi hNonneg
     exact ⟨hLower, hUpper⟩
 
-/-- Monotonicity of the fractional flow on `[0, 1]`. -/
+/-- Monotonicity of the fractional flow on `[0, 1]`, for positive viscosities. -/
 lemma monotoneOn_fracFlow {μo μw : ℝ} (hμo : 0 < μo) (hμw : 0 < μw) :
     MonotoneOn (fracFlow μo μw) (Set.Icc 0 1) := by
   intro a ha b hb hab
@@ -754,11 +762,13 @@ lemma monotoneOn_fracFlow {μo μw : ℝ} (hμo : 0 < μo) (hμw : 0 < μw) :
 
 /-! ## G. Normalized saturation and the CFL number -/
 
-/-- Normalized saturation `s = (S - Swc) / ΔS` on the mobile range, `ΔS = 1 - Sor - Swc`. -/
+/-- Normalized saturation `s = (S - Swc) / ΔS` on the mobile range, `ΔS = 1 - Sor - Swc`. With
+`x / 0 = 0` it is `0` when `ΔS = 0`; the intended domain is `ΔS > 0`. -/
 noncomputable def normSat (Swc Sor S : ℝ) : ℝ :=
   (S - Swc) / (1 - Sor - Swc)
 
-/-- CFL number of the normalized update, `ν = Q dt / (φ A dx ΔS)`. -/
+/-- CFL number of the normalized update, `ν = Q dt / (φ A dx ΔS)`. With `x / 0 = 0` it is `0`
+when `φ A dx ΔS = 0`. -/
 noncomputable def cflNumber (Q dt φ A dx ΔS : ℝ) : ℝ :=
   Q * dt / (φ * A * dx * ΔS)
 
@@ -791,14 +801,15 @@ noncomputable def upwindStep (μo μw ν sIn : ℝ) {n : ℕ} (s : Fin (n + 1) �
 
 /-- One physical step of the water saturations `S` with inflow saturation `Sin`: the water volume
 of cell `i` changes by `Q dt (f s_(i-1) - f s_i)`, so `S i` changes by that amount over the pore
-volume `φ A dx`. -/
+volume `φ A dx`. With `x / 0 = 0` the saturations are unchanged when `φ A dx = 0`. -/
 noncomputable def satStep (μo μw Swc Sor Q dt φ A dx Sin : ℝ) {n : ℕ} (S : Fin (n + 1) → ℝ)
     (i : Fin (n + 1)) : ℝ :=
   S i - Q * dt / (φ * A * dx) * (fracFlow μo μw (normSat Swc Sor (S i)) -
     fracFlow μo μw (normSat Swc Sor (Matrix.vecCons Sin S i.castSucc)))
 
-/-- **Monotone scheme.** Under `0 ≤ ν B ≤ 1` the update `a - ν (f a - f b)` is nondecreasing in
-the cell state `a` and in the upwind state `b` on `[0, 1]`. -/
+/-- **Monotone scheme.** For positive viscosities and under `0 ≤ ν B ≤ 1` the update
+`a - ν (f a - f b)` is nondecreasing in the cell state `a` and in the upwind state `b` on
+`[0, 1]`. -/
 lemma upwindUpdate_mono {μo μw ν a a' b b' : ℝ} (hμo : 0 < μo) (hμw : 0 < μw)
     (hν0 : 0 ≤ ν * fracFlowBound μo μw) (hν1 : ν * fracFlowBound μo μw ≤ 1)
     (ha : a ∈ Set.Icc (0 : ℝ) 1) (ha' : a' ∈ Set.Icc (0 : ℝ) 1) (hb : b ∈ Set.Icc (0 : ℝ) 1)
@@ -831,8 +842,8 @@ lemma upwindUpdate_mono {μo μw ν a a' b b' : ℝ} (hμo : 0 < μo) (hμw : 0 
         - ν * (fracFlow μo μw b' - fracFlow μo μw b) := by ring
   linarith [hνDa_le_Δ, hνDb, heq]
 
-/-- **Interval preservation.** If the inflow state and every cell lie in `[0, 1]` and
-`0 ≤ ν B ≤ 1`, every cell of the upwind step lies in `[0, 1]`. -/
+/-- **Interval preservation.** For positive viscosities, if the inflow state and every cell lie
+in `[0, 1]` and `0 ≤ ν B ≤ 1`, every cell of the upwind step lies in `[0, 1]`. -/
 lemma upwindStep_mem_Icc {μo μw ν sIn : ℝ} {n : ℕ} {s : Fin (n + 1) → ℝ} (hμo : 0 < μo)
     (hμw : 0 < μw) (hν0 : 0 ≤ ν * fracFlowBound μo μw) (hν1 : ν * fracFlowBound μo μw ≤ 1)
     (hIn : sIn ∈ Set.Icc (0 : ℝ) 1) (hs : ∀ i, s i ∈ Set.Icc (0 : ℝ) 1) (i : Fin (n + 1)) :

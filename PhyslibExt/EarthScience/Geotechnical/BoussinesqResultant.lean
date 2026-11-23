@@ -102,7 +102,7 @@ noncomputable def boussinesqVerticalStress (P r z : ℝ) : ℝ :=
 /-- Source-form bridge: the pinned `rpow` form equals Love's form
 `3 P z³ / (2 π R⁵)` with `R = √(r² + z²)` the distance from the load
 point. Stated for all real arguments (both sides are `0` at
-`r = z = 0`); the physical domain is `z > 0`. -/
+`r = z = 0`, with the convention `x / 0 = 0`); the physical domain is `z > 0`. -/
 lemma boussinesqVerticalStress_eq_love (P r z : ℝ) :
     boussinesqVerticalStress P r z
       = 3 * P * z ^ 3 / (2 * π * (√(r ^ 2 + z ^ 2)) ^ 5) := by
@@ -139,7 +139,8 @@ lemma boussinesqVerticalStress_zero_radius {P z : ℝ} (hz : 0 < z) :
 
 /-- `r ↦ -P z³ (r² + z²)^(-3/2)` is an antiderivative of the radial
 force density `2 π r σ_z(r, z)` at every real `r`. Stated for every
-real `z` (at `z = 0` both sides vanish identically); the physical
+real `z` (at `z = 0` both sides vanish identically; at `r = z = 0` the real power
+is `0 ^ (-3/2) = 0`, by the convention `0 ^ t = 0` for `t ≠ 0`); the physical
 domain is `z > 0`. -/
 lemma hasDerivAt_boussinesq_antiderivative (P z r : ℝ) :
     HasDerivAt (fun r : ℝ => -P * z ^ 3 * (r ^ 2 + z ^ 2) ^ (-3 / 2 : ℝ))

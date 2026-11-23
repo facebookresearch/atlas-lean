@@ -43,16 +43,20 @@ namespace EarthScience
 
 /-! ## A. Water-content phase relation -/
 
-/-- Degree of saturation: water volume over void volume. -/
+/-- Degree of saturation: water volume over void volume, `Vw / Vv`. With the
+convention `x / 0 = 0` it is `0` when `Vv = 0`. -/
 noncomputable def degreeOfSaturation (Vw Vv : ℝ) : ℝ := Vw / Vv
 
-/-- Gravimetric water content: water mass over solid mass. -/
+/-- Gravimetric water content: water mass over solid mass, `Mw / Ms`. With
+the convention `x / 0 = 0` it is `0` when `Ms = 0`. -/
 noncomputable def gravimetricWaterContent (Mw Ms : ℝ) : ℝ := Mw / Ms
 
-/-- Specific gravity of solids: solid density over water density. -/
+/-- Specific gravity of solids: solid density over water density,
+`ρs / ρw`. With the convention `x / 0 = 0` it is `0` when `ρw = 0`. -/
 noncomputable def specificGravity (ρs ρw : ℝ) : ℝ := ρs / ρw
 
-/-- The phase relation `S * e = w_g * G_s`. -/
+/-- The phase relation `S * e = w_g * G_s`, for `Vs`, `Vv`, `ρs`, `ρw`
+positive, with water mass `ρw * Vw` and solid mass `ρs * Vs`. -/
 theorem saturation_mul_voidRatio {Vs Vv Vw ρs ρw : ℝ}
     (hVs : 0 < Vs) (hVv : 0 < Vv) (hρs : 0 < ρs) (hρw : 0 < ρw) :
     degreeOfSaturation Vw Vv * voidRatio Vs Vv

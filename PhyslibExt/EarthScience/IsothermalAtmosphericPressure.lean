@@ -63,14 +63,17 @@ namespace EarthScience
 
 /-- Isothermal ideal-gas pressure profile `p(z) = p0 * exp(-g * z / (R * T))`,
 with surface pressure `p0`, constant gravity `g`, mass-specific gas constant
-`R`, temperature `T`, and height `z` measured upward. The physical regime is
+`R`, temperature `T`, and height `z` measured upward. With the convention
+`x / 0 = 0`, it is the constant `p0` when `R * T = 0`. The physical regime is
 `p0, g, R, T > 0`; each lemma below states the hypotheses it needs. -/
 noncomputable def isothermalPressure (p0 g R T z : ℝ) : ℝ :=
   p0 * Real.exp (-g * z / (R * T))
 
 /-- Hydrostatic balance: the isothermal profile satisfies
 `p'(z) = -(p(z) / (R * T)) * g`, i.e. `p' = -rho * g` with ideal-gas density
-`rho = p / (R * T)`. The derivative identity needs no sign hypotheses. -/
+`rho = p / (R * T)`. The derivative identity needs no sign hypotheses; with
+`x / 0 = 0`, the profile is the constant `p0` and both sides are `0` when
+`R * T = 0`. -/
 lemma hasDerivAt_isothermalPressure (p0 g R T z : ℝ) :
     HasDerivAt (isothermalPressure p0 g R T)
       (-(isothermalPressure p0 g R T z / (R * T)) * g) z := by
@@ -109,8 +112,8 @@ lemma isothermalPressure_strictAnti {p0 g R T : ℝ} (hp0 : 0 < p0) (hg : 0 < g)
     (div_lt_div_iff_of_pos_right (mul_pos hR hT)).mpr hneg
   exact mul_lt_mul_of_pos_left (Real.exp_strictMono hdiv) hp0
 
-/-- One scale height: at `z = R * T / g` the isothermal pressure is
-`p0 / exp 1`. -/
+/-- One scale height: for nonzero `g`, `R` and `T`, at `z = R * T / g` the
+isothermal pressure is `p0 / exp 1`. -/
 lemma isothermalPressure_scaleHeight (p0 : ℝ) {g R T : ℝ} (hg : g ≠ 0) (hR : R ≠ 0)
     (hT : T ≠ 0) : isothermalPressure p0 g R T (R * T / g) = p0 / Real.exp 1 := by
   have hRT : R * T ≠ 0 := mul_ne_zero hR hT

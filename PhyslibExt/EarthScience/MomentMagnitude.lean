@@ -66,7 +66,8 @@ namespace EarthScience
 /-- Moment magnitude `Mw(M) = (2 / 3) * (log₁₀ M - c)` with zero-point `c` for
 one fixed moment unit, where `log₁₀ = Real.logb 10`. It is a magnitude only for
 positive moment `M`: `Real.logb` is total, so nonpositive `M` give no physical
-value. -/
+value. With the conventions `log 0 = 0` and `log x = log |x|`, `Mw(0) = -(2 / 3) * c` and
+`Mw(M) = Mw(-M)` for `M < 0`. -/
 noncomputable def momentMagnitude (c M : ℝ) : ℝ :=
   (2 / 3 : ℝ) * (Real.logb 10 M - c)
 
@@ -78,7 +79,7 @@ theorem momentMagnitude_difference {M k c : ℝ} (hM : 0 < M) (hk : 0 < k) :
   rw [Real.logb_mul (ne_of_gt hk) (ne_of_gt hM)]
   ring
 
-/-- The same shift, stated as a formula for `Mw (k * M)`. -/
+/-- The same shift, for `M > 0` and `k > 0`, stated as a formula for `Mw (k * M)`. -/
 theorem momentMagnitude_scaled {M k c : ℝ} (hM : 0 < M) (hk : 0 < k) :
     momentMagnitude c (k * M) = momentMagnitude c M + (2 / 3 : ℝ) * Real.logb 10 k :=
   sub_eq_iff_eq_add'.mp (momentMagnitude_difference hM hk)

@@ -102,7 +102,7 @@ theorem enstrophy_flux_divergence {psi_x psi_y psi_xy q q_x q_y : ℝ} :
   ring
 
 set_option linter.unusedVariables false in
-/-- Energy-density identity in the flux `psi_t * grad psi` form: with
+/-- Energy-density identity in the flux `psi_t * grad psi` form: for `Ld ≠ 0`, with
 `e_t = psi_x * psi_xt + psi_y * psi_yt + psi * psi_t / Ld^2` the time
 derivative of the energy density `0.5 * (|grad psi|^2 + psi^2 / Ld^2)`,
 and `div (psi_t * grad psi) = psi_t * (psi_xx + psi_yy) + psi_xt * psi_x +

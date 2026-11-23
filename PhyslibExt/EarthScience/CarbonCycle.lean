@@ -85,7 +85,9 @@ theorem carbon_total_deriv_closed {ι : Type*} (s : Finset ι)
 
 /-- Atmosphere / ocean / land specialization: with pairwise transfers
 `Fao` (atmosphere to ocean), `Foa`, `Fal`, `Fla`, `Fol`, `Flo` and
-external fluxes `e_atm, e_ocean, e_land`, the total carbon derivative is
+external fluxes `e_atm, e_ocean, e_land`, if the three reservoirs have derivatives
+`(Foa - Fao) + (Fla - Fal) + e_atm`, `(Fao - Foa) + (Flo - Fol) + e_ocean` and
+`(Fal - Fla) + (Fol - Flo) + e_land` at `t`, the total carbon derivative is
 `e_atm + e_ocean + e_land`; internal transfers cancel. -/
 theorem carbon_atmosphere_ocean_land {Catm Cocean Cland : ℝ → ℝ} {t : ℝ}
     {Fao Foa Fal Fla Fol Flo e_atm e_ocean e_land : ℝ}

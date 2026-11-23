@@ -52,7 +52,9 @@ coordinate is `-k * T'`; the upward surface heat flux differs by sign.
 namespace EarthScience
 
 /-- Conductive geotherm: first derivative of
-`T(d) = Ts + [(Tb - Ts) / L + H * L / (2 * k)] * d - H * d ^ 2 / (2 * k)`. -/
+`T(d) = Ts + [(Tb - Ts) / L + H * L / (2 * k)] * d - H * d ^ 2 / (2 * k)`.
+It holds for all real parameters; with the convention `x / 0 = 0` the quotients by `L` are `0`
+when `L = 0` and those by `k` are `0` when `k = 0`. The intended domain is `L > 0`, `k > 0`. -/
 theorem geotherm_hasDerivAt {Ts Tb L k H d : ℝ} :
     HasDerivAt (fun d => Ts + ((Tb - Ts) / L + H * L / (2 * k)) * d - H * d ^ 2 / (2 * k))
       ((Tb - Ts) / L + H * L / (2 * k) - H * d / k) d := by
@@ -79,7 +81,8 @@ theorem geotherm_hasDerivAt {Ts Tb L k H d : ℝ} :
   have h := (HasDerivAt.const_add Ts hlin).sub hquad
   exact h
 
-/-- Conductive geotherm: second derivative is `-H / k`, so `k * T'' + H = 0`. -/
+/-- Conductive geotherm: for `k > 0`, the second derivative is `-H / k`, so
+`k * T'' + H = 0` (for every real `L`; with `x / 0 = 0` the constant term is `0` at `L = 0`). -/
 theorem geotherm_second_deriv {Ts Tb L k H d : ℝ} (hk : 0 < k) :
     HasDerivAt (fun d => (Tb - Ts) / L + H * L / (2 * k) - H * d / k) (-H / k) d ∧
       k * (-H / k) + H = 0 := by
@@ -102,7 +105,8 @@ theorem geotherm_second_deriv {Ts Tb L k H d : ℝ} (hk : 0 < k) :
     field_simp
     ring
 
-/-- Conductive geotherm: boundary values `T(0) = Ts` and `T(L) = Tb`. -/
+/-- Conductive geotherm: for `L > 0` and `k > 0`, boundary values `T(0) = Ts` and
+`T(L) = Tb`. -/
 theorem geotherm_boundary {Ts Tb L k H : ℝ} (hL : 0 < L) (hk : 0 < k) :
     (Ts + ((Tb - Ts) / L + H * L / (2 * k)) * 0 - H * 0 ^ 2 / (2 * k)) = Ts ∧
       (Ts + ((Tb - Ts) / L + H * L / (2 * k)) * L - H * L ^ 2 / (2 * k)) = Tb := by

@@ -124,9 +124,9 @@ lemma signed_band_weight_sum {n m : ℕ} (hm : m ≠ 0)
   ring
 
 set_option linter.unusedVariables false in
-/-- The signed band weights of an endpoint sequence (as in
-`signed_band_weight_sum`, no ordering assumed) integrate a constant `C`
-to `C * 4π R²`. -/
+/-- The signed band weights of an endpoint sequence `φ` with `φ 0 = -π/2` and `φ n = π/2`
+(as in `signed_band_weight_sum`, no ordering assumed), for `m ≠ 0` longitude cells,
+integrate a constant `C` to `C * 4π R²`. -/
 lemma signed_band_weight_sum_mul_const {n m : ℕ} (hm : m ≠ 0)
     (φ : Fin (n + 1) → ℝ) (h0 : φ 0 = -(Real.pi / 2))
     (hlast : φ (Fin.last n) = Real.pi / 2) {R C : ℝ} :
