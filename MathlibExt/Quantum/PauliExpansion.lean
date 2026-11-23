@@ -36,16 +36,6 @@ set_option autoImplicit false
 /-- Hermitian Pauli string σ_(a,b) = i^|a∧b| X^a Z^b built on merged MathlibExt.Quantum.PauliXZ.pauliXZ (no parallel Pauli encoding) -/
 noncomputable def hermPauli {k : ℕ} (a b : Fin k → ZMod 2) : Matrix (Fin k → ZMod 2) (Fin k → ZMod 2) ℂ := Complex.I ^ (∑ i, (a i).val * (b i).val) • pauliXZ a b
 
-/-- `ZMod 2` addition of a value with itself vanishes (by finite check). -/
-private theorem zmod2_add_self_eq (x : ZMod 2) : x + x = 0 := by
-  have h : ∀ y : ZMod 2, y + y = 0 := by decide
-  exact h x
-
-/-- In `ZMod 2`, `x + y = 0` iff `x = y` (by finite check). -/
-private theorem zmod2_add_eq_zero_iff (x y : ZMod 2) : x + y = 0 ↔ x = y := by
-  have h : ∀ u v : ZMod 2, (u + v = 0 ↔ u = v) := by decide
-  exact h x y
-
 /-- In `ZMod 2`, every element is `0` or `1` (by finite check). -/
 private theorem zmod2_eq_zero_or_one (x : ZMod 2) : x = 0 ∨ x = 1 := by
   have h : ∀ y : ZMod 2, y = 0 ∨ y = 1 := by decide
@@ -56,38 +46,10 @@ private theorem zmod2_eq_one_of_ne_zero {x : ZMod 2} (hx : x ≠ 0) : x = 1 := b
   have h : ∀ y : ZMod 2, y ≠ 0 → y = 1 := by decide
   exact h x hx
 
-/-- Value of a product in `ZMod 2` is the product of values (by finite check). -/
-private theorem zmod2_mul_val (a b : ZMod 2) : (a * b).val = a.val * b.val := by
-  have h : ∀ x y : ZMod 2, (x * y).val = x.val * y.val := by decide
-  exact h a b
-
-/-- Value of a sum in `ZMod 2` is the sum of values mod 2 (by finite check). -/
-private theorem zmod2_val_add (a b : ZMod 2) : (a + b).val = (a.val + b.val) % 2 := by
-  have h : ∀ x y : ZMod 2, (x + y).val = (x.val + y.val) % 2 := by decide
-  exact h a b
-
-/-- Value is injective on `ZMod 2` (by finite check). -/
-private theorem zmod2_ne_of_val_ne {a b : ZMod 2} (h : a.val ≠ b.val) : a ≠ b := by
-  have hinj : ∀ x y : ZMod 2, x.val = y.val → x = y := by decide
-  intro hab
-  subst hab
-  exact h rfl
-
-private theorem zmod2_zero_val : (0 : ZMod 2).val = 0 := by decide
-
-private theorem zmod2_one_val : (1 : ZMod 2).val = 1 := by decide
-
-/-- `(-1)^(_ % 2) = (-1)^_` over `ℂ`. -/
-private theorem neg_one_pow_mod_two (n : ℕ) : (-1 : ℂ) ^ (n % 2) = (-1 : ℂ) ^ n := by
-  conv_rhs => rw [← Nat.div_add_mod n 2]
-  rw [pow_add, pow_mul]
-  have h2 : (-1 : ℂ) ^ 2 = 1 := by ring
-  rw [h2, one_pow, one_mul]
-
 /-- `(-1)^_` is multiplicative over `ZMod 2` addition. -/
 private theorem neg_one_pow_zmod_add (a b : ZMod 2) :
     (-1 : ℂ) ^ (a + b).val = (-1 : ℂ) ^ a.val * (-1 : ℂ) ^ b.val := by
-  rw [zmod2_val_add, neg_one_pow_mod_two, pow_add]
+  rw [ZMod.val_add, (neg_one_pow_eq_pow_mod_two _).symm, pow_add]
 
 /-- `(-1)^_` turns `ZMod 2` sums into `ℂ` products. -/
 private theorem neg_one_pow_sum_val {ι : Type*} (s : Finset ι) (f : ι → ZMod 2) :
@@ -134,7 +96,7 @@ private theorem phase_mul_self (m : ℕ) : (Complex.I ^ m * Complex.I ^ m) * (-1
 private theorem bit_add_self {k : ℕ} (a : Fin k → ZMod 2) : a + a = 0 := by
   funext i
   simp only [Pi.add_apply, Pi.zero_apply]
-  exact zmod2_add_self_eq (a i)
+  exact CharTwo.add_self_eq_zero (a i)
 
 /-- `a + a' = 0 ↔ a = a'` on bitstrings. -/
 private theorem bit_add_eq_zero_iff {k : ℕ} (a a' : Fin k → ZMod 2) : a + a' = 0 ↔ a = a' := by
@@ -148,55 +110,6 @@ private theorem bit_add_eq_zero_iff {k : ℕ} (a a' : Fin k → ZMod 2) : a + a'
   · intro h
     subst h
     exact bit_add_self a
-
-/-- `⬝ᵥ` distributes over addition in the second argument (entrywise). -/
-private theorem dot_add {k : ℕ} (b x a : Fin k → ZMod 2) : b ⬝ᵥ (x + a) = b ⬝ᵥ x + b ⬝ᵥ a := by
-  have h1 : b ⬝ᵥ (x + a) = ∑ i, (b i * x i + b i * a i) := by
-    have hdef : b ⬝ᵥ (x + a) = ∑ i, b i * (x + a) i := rfl
-    rw [hdef]
-    apply Finset.sum_congr rfl
-    intro i _
-    rw [Pi.add_apply, mul_add]
-  have h2 : b ⬝ᵥ x = ∑ i, b i * x i := rfl
-  have h3 : b ⬝ᵥ a = ∑ i, b i * a i := rfl
-  rw [h1, h2, h3, Finset.sum_add_distrib]
-
-/-- `⬝ᵥ` with `0` vanishes. -/
-private theorem dot_zero_left {k : ℕ} (x : Fin k → ZMod 2) : (0 : Fin k → ZMod 2) ⬝ᵥ x = 0 := by
-  have hdef : (0 : Fin k → ZMod 2) ⬝ᵥ x = ∑ i, (0 : Fin k → ZMod 2) i * x i := rfl
-  rw [hdef]
-  simp
-
-/-- Scalar-matrix products combine (entrywise, avoids `smul` algebra lemma names). -/
-private theorem smul_mul_smul {k : ℕ} (c d : ℂ) (P Q : Matrix (Fin k → ZMod 2) (Fin k → ZMod 2) ℂ) :
-    (c • P) * (d • Q) = (c * d) • (P * Q) := by
-  ext i j
-  simp only [Matrix.mul_apply, Matrix.smul_apply, smul_eq_mul]
-  rw [Finset.mul_sum]
-  apply Finset.sum_congr rfl
-  intro t _
-  ring
-
-/-- Trace of a scalar multiple (entrywise). -/
-private theorem trace_smul {k : ℕ} (c : ℂ) (A : Matrix (Fin k → ZMod 2) (Fin k → ZMod 2) ℂ) :
-    Matrix.trace (c • A) = c * Matrix.trace A := by
-  simp only [Matrix.trace, Matrix.diag_apply, Matrix.smul_apply, smul_eq_mul, Finset.mul_sum]
-
-/-- Trace of a sum (entrywise helper for two terms). -/
-private theorem trace_add {k : ℕ} (A B : Matrix (Fin k → ZMod 2) (Fin k → ZMod 2) ℂ) :
-    Matrix.trace (A + B) = Matrix.trace A + Matrix.trace B := by
-  simp only [Matrix.trace, Matrix.diag_apply, Matrix.add_apply, Finset.sum_add_distrib]
-
-private theorem trace_zero {k : ℕ} : Matrix.trace (0 : Matrix (Fin k → ZMod 2) (Fin k → ZMod 2) ℂ) = 0 := by
-  simp [Matrix.trace, Matrix.diag_apply]
-
-/-- Trace of a finite sum, by induction. -/
-private theorem trace_sum {k : ℕ} {ι : Type*} (s : Finset ι) (M : ι → Matrix (Fin k → ZMod 2) (Fin k → ZMod 2) ℂ) :
-    Matrix.trace (∑ i ∈ s, M i) = ∑ i ∈ s, Matrix.trace (M i) := by
-  classical
-  induction s using Finset.induction with
-  | empty => simp [trace_zero]
-  | insert a s ha ih => rw [Finset.sum_insert ha, Finset.sum_insert ha, trace_add, ih]
 
 /-- Cardinality of bitstrings. -/
 private theorem card_bitstring (k : ℕ) : Fintype.card (Fin k → ZMod 2) = 2 ^ k := by
@@ -276,7 +189,7 @@ private theorem char_sum {k : ℕ} (b : Fin k → ZMod 2) :
   · subst hb
     have h1 : ∀ x : Fin k → ZMod 2, (-1 : ℂ) ^ (((0 : Fin k → ZMod 2) ⬝ᵥ x).val) = 1 := by
       intro x
-      rw [dot_zero_left, zmod2_zero_val, pow_zero]
+      rw [zero_dotProduct, ZMod.val_zero, pow_zero]
     simp only [h1]
     have hsum : (∑ _x : Fin k → ZMod 2, (1 : ℂ)) = (2 : ℂ) ^ k := by
       have h : (∑ _x : Fin k → ZMod 2, (1 : ℂ)) = (Fintype.card (Fin k → ZMod 2) : ℂ) := by simp
@@ -296,16 +209,11 @@ private theorem char_sum {k : ℕ} (b : Fin k → ZMod 2) :
       rw [dot_basis_single, hbi]
     have hneg : ∀ x : Fin k → ZMod 2, (-1 : ℂ) ^ ((b ⬝ᵥ (x + e)).val) = -(-1 : ℂ) ^ ((b ⬝ᵥ x).val) := by
       intro x
-      rw [dot_add, hbe]
+      rw [dotProduct_add, hbe]
       have hadd := neg_one_pow_zmod_add (b ⬝ᵥ x) 1
-      rw [zmod2_one_val, pow_one] at hadd
+      rw [ZMod.val_one, pow_one] at hadd
       rw [hadd, mul_neg, mul_one]
     exact sum_eq_zero_of_involution_neg (fun x => (-1 : ℂ) ^ ((b ⬝ᵥ x).val)) e hneg
-
-/-- `x = x + a ↔ a = 0` on bitstrings. -/
-private theorem self_eq_add_iff {k : ℕ} (x a : Fin k → ZMod 2) : x = x + a ↔ a = 0 := by
-  conv_lhs => lhs; rw [← add_zero x]
-  rw [add_left_cancel_iff, eq_comm]
 
 /-- Trace of merged `pauliXZ`: `2^k` at `(0,0)`, else `0`. -/
 private theorem trace_pauliXZ {k : ℕ} (a b : Fin k → ZMod 2) :
@@ -320,7 +228,7 @@ private theorem trace_pauliXZ {k : ℕ} (a b : Fin k → ZMod 2) :
     exact char_sum b
   · have hfalse : ∀ x : Fin k → ZMod 2, ¬(x = x + a) := by
       intro x hx
-      exact ha ((self_eq_add_iff x a).mp hx)
+      exact ha ((left_eq_add).mp hx)
     have hsum : (∑ x : Fin k → ZMod 2, (if x = x + a then (-1 : ℂ) ^ ((b ⬝ᵥ x).val) else 0)) = 0 := by
       apply Finset.sum_eq_zero
       intro x _
@@ -332,8 +240,8 @@ private theorem trace_pauliXZ {k : ℕ} (a b : Fin k → ZMod 2) :
 private theorem pauliXZ_zero_zero {k : ℕ} : pauliXZ (0 : Fin k → ZMod 2) (0 : Fin k → ZMod 2) = 1 := by
   ext y x
   rw [pauliXZ_apply, add_zero]
-  have hdot : ∀ x : Fin k → ZMod 2, (0 : Fin k → ZMod 2) ⬝ᵥ x = 0 := dot_zero_left
-  rw [hdot, zmod2_zero_val, pow_zero]
+  have hdot : ∀ x : Fin k → ZMod 2, (0 : Fin k → ZMod 2) ⬝ᵥ x = 0 := zero_dotProduct
+  rw [hdot, ZMod.val_zero, pow_zero]
   by_cases h : y = x <;> simp [h, Matrix.one_apply]
 
 /-- `star` fixes `(-1)^n` over `ℂ`. -/
@@ -341,12 +249,6 @@ private theorem star_neg_one_pow (n : ℕ) : star ((-1 : ℂ) ^ n) = (-1 : ℂ) 
   rw [star_pow]
   have hs1 : star (-1 : ℂ) = -1 := by rw [star_neg, star_one]
   rw [hs1]
-
-/-- Conjugation negates `Complex.I` (via `Complex.ext`). -/
-private theorem star_I_eq : star Complex.I = -Complex.I := by
-  apply Complex.ext
-  · simp
-  · simp
 
 /-- real coefficients -/
 theorem hermPauli_isHermitian {k : ℕ} (a b : Fin k → ZMod 2) : (hermPauli a b).IsHermitian := by
@@ -369,11 +271,11 @@ theorem hermPauli_isHermitian {k : ℕ} (a b : Fin k → ZMod 2) : (hermPauli a 
   by_cases h : y = x + a
   · have hx : x = y + a := hiff.mpr h
     rw [if_pos hx, if_pos h]
-    have hby : b ⬝ᵥ y = b ⬝ᵥ x + b ⬝ᵥ a := by rw [h, dot_add]
+    have hby : b ⬝ᵥ y = b ⬝ᵥ x + b ⬝ᵥ a := by rw [h, dotProduct_add]
     rw [hby, neg_one_pow_zmod_add, star_mul, star_mul, star_neg_one_pow, star_neg_one_pow]
     have hstar_pow : star (Complex.I ^ (∑ i, (a i).val * (b i).val)) =
         (-Complex.I) ^ (∑ i, (a i).val * (b i).val) := by
-      rw [star_pow, star_I_eq]
+      rw [star_pow, Complex.star_def, Complex.conj_I]
     rw [hstar_pow]
     have hneg_pow : (-Complex.I) ^ (∑ i, (a i).val * (b i).val) =
         (-1 : ℂ) ^ (∑ i, (a i).val * (b i).val) * Complex.I ^ (∑ i, (a i).val * (b i).val) := by
@@ -396,7 +298,7 @@ theorem hermPauli_isHermitian {k : ℕ} (a b : Fin k → ZMod 2) : (hermPauli a 
 /-- ±1 parity outcomes; via merged pauliXZ_mul -/
 theorem hermPauli_mul_self {k : ℕ} (a b : Fin k → ZMod 2) : hermPauli a b * hermPauli a b = 1 := by
   unfold hermPauli
-  rw [smul_mul_smul, pauliXZ_mul]
+  rw [smul_mul_smul_comm, pauliXZ_mul]
   have ha : a + a = (0 : Fin k → ZMod 2) := bit_add_self a
   have hb : b + b = (0 : Fin k → ZMod 2) := bit_add_self b
   rw [ha, hb, pauliXZ_zero_zero, ← mul_smul]
@@ -409,7 +311,7 @@ theorem hermPauli_mul_self {k : ℕ} (a b : Fin k → ZMod 2) : hermPauli a b * 
 /-- Hilbert-Schmidt orthogonality -/
 theorem trace_hermPauli_mul_hermPauli {k : ℕ} (a b a' b' : Fin k → ZMod 2) : Matrix.trace (hermPauli a b * hermPauli a' b') = if a = a' ∧ b = b' then (2 : ℂ) ^ k else 0 := by
   unfold hermPauli
-  rw [smul_mul_smul, pauliXZ_mul, trace_smul, trace_smul, ← mul_assoc]
+  rw [smul_mul_smul_comm, pauliXZ_mul, Matrix.trace_smul, Matrix.trace_smul, smul_eq_mul, smul_eq_mul, ← mul_assoc]
   have hequiv : (a + a' = 0 ∧ b + b' = 0) ↔ (a = a' ∧ b = b') := by
     constructor
     · intro hcon
@@ -435,12 +337,6 @@ theorem trace_hermPauli_mul_hermPauli {k : ℕ} (a b a' b' : Fin k → ZMod 2) :
     rw [if_neg hneg] at htr
     rw [htr, mul_zero, if_neg h]
 
-/-- `(-1)^n = 1` when `n` is even. -/
-private theorem neg_one_pow_eq_one_of_even {n : ℕ} (h : n % 2 = 0) : (-1 : ℂ) ^ n = 1 := by
-  conv_lhs => rw [← Nat.div_add_mod n 2, h, add_zero, pow_mul]
-  have h2 : (-1 : ℂ) ^ 2 = 1 := by ring
-  rw [h2, one_pow]
-
 /-- `(-1)^n = -1` when `n` is odd. -/
 private theorem neg_one_pow_eq_neg_one_of_odd {n : ℕ} (h : n % 2 = 1) : (-1 : ℂ) ^ n = -1 := by
   conv_lhs => rw [← Nat.div_add_mod n 2, h, pow_add, pow_mul]
@@ -451,7 +347,7 @@ private theorem neg_one_pow_eq_neg_one_of_odd {n : ℕ} (h : n % 2 = 1) : (-1 : 
 private theorem coord_flip {ai ui xi bi : ZMod 2} (hne : ai ≠ ui + xi) :
     (-1 : ℂ) ^ (ai.val * ((bi + 1).val)) * (-1 : ℂ) ^ (((bi + 1) * ui).val) * (-1 : ℂ) ^ (((bi + 1) * xi).val)
     = -((-1 : ℂ) ^ (ai.val * (bi.val)) * (-1 : ℂ) ^ ((bi * ui).val) * (-1 : ℂ) ^ ((bi * xi).val)) := by
-  have hval_add := zmod2_val_add ui xi
+  have hval_add := ZMod.val_add ui xi
   have hinj : ∀ x y : ZMod 2, x.val = y.val → x = y := by decide
   have hne_val : ai.val ≠ (ui + xi).val := fun heq => hne (hinj _ _ heq)
   have hle1 : ai.val ≤ 1 := by
@@ -464,16 +360,16 @@ private theorem coord_flip {ai ui xi bi : ZMod 2} (hne : ai ≠ ui + xi) :
   have hodd : (ai.val + ui.val + xi.val) % 2 = 1 := by omega
   have hg1 : (-1 : ℂ) ^ (ai.val * (1 : ZMod 2).val) * (-1 : ℂ) ^ (((1 : ZMod 2) * ui).val) *
       (-1 : ℂ) ^ (((1 : ZMod 2) * xi).val) = -1 := by
-    rw [zmod2_one_val, mul_one, one_mul, one_mul, ← pow_add, ← pow_add]
+    rw [ZMod.val_one, mul_one, one_mul, one_mul, ← pow_add, ← pow_add]
     exact neg_one_pow_eq_neg_one_of_odd hodd
   have hg0 : (-1 : ℂ) ^ (ai.val * (0 : ZMod 2).val) * (-1 : ℂ) ^ (((0 : ZMod 2) * ui).val) *
       (-1 : ℂ) ^ (((0 : ZMod 2) * xi).val) = 1 := by
-    rw [zmod2_zero_val, mul_zero, zero_mul, zero_mul, zmod2_zero_val,
+    rw [ZMod.val_zero, mul_zero, zero_mul, zero_mul, ZMod.val_zero,
       pow_zero, mul_one, mul_one]
   rcases zmod2_eq_zero_or_one bi with rfl | rfl
   · have h01 : (0 : ZMod 2) + 1 = 1 := zero_add _
     rw [h01, hg1, hg0]
-  · have h10 : (1 : ZMod 2) + 1 = 0 := zmod2_add_self_eq 1
+  · have h10 : (1 : ZMod 2) + 1 = 0 := CharTwo.add_self_eq_zero 1
     rw [h10, hg0, hg1, neg_neg]
 
 /-- Inner character sum over `b` with overlap phase: `2^k` if `a = u + x`, else `0`. -/
@@ -486,7 +382,7 @@ private theorem inner_sum_b {k : ℕ} (a u x : Fin k → ZMod 2) :
         (-1 : ℂ) ^ (∑ i, ((u + x) i).val * (b i).val) * (-1 : ℂ) ^ ((b ⬝ᵥ u).val) *
           (-1 : ℂ) ^ ((b ⬝ᵥ x).val) = 1 := by
       intro b
-      have hdot : b ⬝ᵥ u + b ⬝ᵥ x = b ⬝ᵥ (u + x) := (dot_add b u x).symm
+      have hdot : b ⬝ᵥ u + b ⬝ᵥ x = b ⬝ᵥ (u + x) := (dotProduct_add b u x).symm
       have hmul : (-1 : ℂ) ^ ((b ⬝ᵥ u).val) * (-1 : ℂ) ^ ((b ⬝ᵥ x).val) =
           (-1 : ℂ) ^ ((b ⬝ᵥ (u + x)).val) := by
         rw [← neg_one_pow_zmod_add, hdot]
@@ -705,14 +601,6 @@ private theorem entry_orth {k : ℕ} (v u y x : Fin k → ZMod 2) :
 /-- c_l = Tr(P_l H_j)/2^k (contract) -/
 noncomputable def pauliCoeff {k : ℕ} (A : Matrix (Fin k → ZMod 2) (Fin k → ZMod 2) ℂ) (a b : Fin k → ZMod 2) : ℂ := Matrix.trace (hermPauli a b * A) / 2 ^ k
 
-/-- `(∑ f)/d = ∑ (f/d)` via `div_eq_mul_inv` (avoids `sum_div` name). -/
-private theorem sum_div_eq {R : Type*} [DivisionRing R] {ι : Type*} (s : Finset ι) (f : ι → R) (d : R) :
-    (∑ i ∈ s, f i) / d = ∑ i ∈ s, f i / d := by
-  rw [div_eq_mul_inv, Finset.sum_mul]
-  apply Finset.sum_congr rfl
-  intro i _
-  rw [div_eq_mul_inv]
-
 /-- A4 reconstruction, per term (MNS: H_m = Σ_S c^m_S S) -/
 theorem sum_pauliCoeff_smul_hermPauli {k : ℕ} (A : Matrix (Fin k → ZMod 2) (Fin k → ZMod 2) ℂ) : ∑ a, ∑ b, pauliCoeff A a b • hermPauli a b = A := by
   have hne : (2 : ℂ) ^ k ≠ 0 := pow_ne_zero _ (by norm_num)
@@ -727,10 +615,10 @@ theorem sum_pauliCoeff_smul_hermPauli {k : ℕ} (A : Matrix (Fin k → ZMod 2) (
     unfold pauliCoeff
     have htr : Matrix.trace (hermPauli a b * A) = ∑ v, ∑ u, hermPauli a b v u * A u v := by
       simp only [Matrix.trace, Matrix.diag_apply, Matrix.mul_apply]
-    rw [htr, div_mul_eq_mul_div, Finset.sum_mul, sum_div_eq]
+    rw [htr, div_mul_eq_mul_div, Finset.sum_mul, Finset.sum_div]
     apply Finset.sum_congr rfl
     intro v _
-    rw [Finset.sum_mul, sum_div_eq]
+    rw [Finset.sum_mul, Finset.sum_div]
   rw [hentry]
   have hfactor : ∀ a b v u : Fin k → ZMod 2,
       (hermPauli a b v u * A u v * hermPauli a b y x) / 2 ^ k =
@@ -760,10 +648,10 @@ theorem sum_pauliCoeff_smul_hermPauli {k : ℕ} (A : Matrix (Fin k → ZMod 2) (
     have horth := entry_orth (k := k) v u y x
     have hdiv : (∑ a, ∑ b, (hermPauli a b v u * hermPauli a b y x) / 2 ^ k)
         = (∑ a, ∑ b, hermPauli a b v u * hermPauli a b y x) / 2 ^ k := by
-      rw [sum_div_eq]
+      rw [Finset.sum_div]
       apply Finset.sum_congr rfl
       intro a _
-      exact (sum_div_eq _ _ _).symm
+      exact (Finset.sum_div _ _ _).symm
     rw [hdiv, horth]
     by_cases hcon : v = x ∧ u = y
     · rw [if_pos hcon, if_pos hcon, div_self hne]
@@ -800,19 +688,11 @@ theorem sum_pauliCoeff_smul_hermPauli {k : ℕ} (A : Matrix (Fin k → ZMod 2) (
 theorem pauliCoeff_eq_of_sum_eq {k : ℕ} (A : Matrix (Fin k → ZMod 2) (Fin k → ZMod 2) ℂ) (c : (Fin k → ZMod 2) → (Fin k → ZMod 2) → ℂ) (h : ∑ a, ∑ b, c a b • hermPauli a b = A) (a b : Fin k → ZMod 2) : c a b = pauliCoeff A a b := by
   unfold pauliCoeff
   have hne : (2 : ℂ) ^ k ≠ 0 := pow_ne_zero _ (by norm_num)
-  have hmul_smul : ∀ (P Q : Matrix (Fin k → ZMod 2) (Fin k → ZMod 2) ℂ) (d : ℂ),
-      P * (d • Q) = d • (P * Q) := by
-    intro P Q d
-    ext i j
-    simp only [Matrix.mul_apply, Matrix.smul_apply, smul_eq_mul, Finset.mul_sum]
-    apply Finset.sum_congr rfl
-    intro l _
-    ring
   have hTr : Matrix.trace (hermPauli a b * A) = c a b * 2 ^ k := by
     rw [← h]
-    simp only [Finset.mul_sum, hmul_smul]
-    simp only [trace_sum]
-    simp only [trace_smul]
+    simp only [Finset.mul_sum, Matrix.mul_smul]
+    simp only [Matrix.trace_sum]
+    simp only [Matrix.trace_smul]
     have hcollapse : (∑ a', ∑ b', c a' b' * Matrix.trace (hermPauli a b * hermPauli a' b'))
         = c a b * 2 ^ k := by
       have horth : ∀ a' b' : Fin k → ZMod 2, Matrix.trace (hermPauli a b * hermPauli a' b')
@@ -904,14 +784,6 @@ theorem sum_norm_sq_pauliCoeff {k : ℕ} (A : Matrix (Fin k → ZMod 2) (Fin k �
     rw [Matrix.conjTranspose_smul, hPe]
   have hTr : Matrix.trace (Matrix.conjTranspose A * A)
       = (2 : ℂ) ^ k * ∑ a, ∑ b, ((‖pauliCoeff A a b‖ ^ 2 : ℝ) : ℂ) := by
-    have hsmul : ∀ (s c : ℂ) (P Q : Matrix (Fin k → ZMod 2) (Fin k → ZMod 2) ℂ),
-        (s • P) * (c • Q) = (s * c) • (P * Q) := by
-      intro s c P Q
-      ext i j
-      simp only [Matrix.mul_apply, Matrix.smul_apply, smul_eq_mul, Finset.mul_sum]
-      apply Finset.sum_congr rfl
-      intro l _
-      ring
     have hprod : Matrix.conjTranspose A * A
         = (∑ a, ∑ b, star (pauliCoeff A a b) • hermPauli a b)
           * (∑ a, ∑ b, pauliCoeff A a b • hermPauli a b) := by
@@ -991,7 +863,7 @@ theorem sum_norm_sq_pauliCoeff {k : ℕ} (A : Matrix (Fin k → ZMod 2) (Fin k �
       rw [Matrix.trace_sum]
       apply Finset.sum_congr rfl
       intro b' _
-      rw [hsmul, Matrix.trace_smul, smul_eq_mul]
+      rw [smul_mul_smul_comm, Matrix.trace_smul, smul_eq_mul]
     have hrhs : (2 : ℂ) ^ k * ∑ a, ∑ b, ((‖pauliCoeff A a b‖ ^ 2 : ℝ) : ℂ)
         = ∑ a, ∑ b, (2 : ℂ) ^ k * ((‖pauliCoeff A a b‖ ^ 2 : ℝ) : ℂ) := by
       rw [Finset.mul_sum]
@@ -1031,10 +903,7 @@ theorem sum_norm_sq_pauliCoeff {k : ℕ} (A : Matrix (Fin k → ZMod 2) (Fin k �
   rw [h2k_cast, ← Complex.ofReal_div] at heq
   exact Complex.ofReal_injective heq
 
-/-- Frobenius sum is at most `2^k` for `0 ≤ A ≤ 1` (via eigenvalues in `[0,1]` and Parseval).
-Best-effort eigenvalue-link names (`eigenvalues_nonneg` per task; trace/Frobenius links
-and the `1 - A` eigenvalue relation are the standard `Spectrum` API and may need a
-one-line name fix with Loogle where shell works). -/
+/-- Frobenius sum is at most `2 ^ k` for `0 ≤ A ≤ 1`, via positivity of `A - A * A` and eigenvalue traces. -/
 private theorem frob_le_two_pow {k : ℕ} {A : Matrix (Fin k → ZMod 2) (Fin k → ZMod 2) ℂ}
     (h0 : A.PosSemidef) (h1 : (1 - A).PosSemidef) :
     (∑ x, ∑ y, ‖A x y‖ ^ 2) ≤ 2 ^ k := by
