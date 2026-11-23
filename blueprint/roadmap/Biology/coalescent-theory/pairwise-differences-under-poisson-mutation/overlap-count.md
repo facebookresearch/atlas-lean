@@ -7,8 +7,10 @@ lineage in the
 [partition after the first `u` coalescence events](../ranked-labeled-histories-of-coalescent-trees/blocks-after.md)
 of `h` holds exactly one gene of `s` and exactly one gene of `s'`.
 
-For `u ≤ n - 1` that partition has exactly `n - u` lineages, labelled `0, …, n - u - 1`. The
-intended range is `u ≤ n - 2`: the epoch then has `n - u ≥ 2` lineages, and for pairs `s` and
-`s'` the count is the number of branches of that epoch that separate both pairs. At
-`u = n - 1` the only lineage holds every gene, so the count of two pairs is `0`. For `u ≥ n`
-the truncated difference `n - u` is `0`, so the count is `0`.
+For `n ≥ 1` and `u ≤ n - 1` that partition has exactly `n - u` lineages, labelled
+`0, …, n - u - 1`. The intended range is `u + 2 ≤ n`: the epoch then has `n - u ≥ 2` lineages,
+and for pairs `s` and `s'` the count is the number of branches of that epoch that separate both
+pairs. At `u = n - 1`, still for `n ≥ 1`, the only lineage holds every gene, so the count is `1`
+if `s` and `s'` are both single genes and `0` otherwise, in particular `0` for two pairs. For
+`u ≥ n` (every `u` when `n = 0`, where there are no lineages) the truncated difference `n - u` is
+`0`, so the count is `0`.

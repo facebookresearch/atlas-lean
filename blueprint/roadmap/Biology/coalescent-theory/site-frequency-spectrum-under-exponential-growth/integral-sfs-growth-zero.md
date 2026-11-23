@@ -21,6 +21,7 @@ Let `θ` be a real number and let `ξ_i` (`i ∈ ℕ`) be integrable real random
 `E[ξ_i] = θ / i`,
 
 the [expected spectrum of a population of constant size](../expected-site-frequency-spectrum/integral-sfs.md).
-Here `ξ_i` is the number of sites whose derived allele is carried by exactly `i` of the `n`
-sample copies under neutral infinite-sites mutation at rate `θ / 2` per lineage per unit of real
-time.
+In the neutral infinite-sites model with `θ ≥ 0`, mutation at rate `θ / 2` per lineage per unit
+of real time, one may take `ξ_i` to be the number of sites whose derived allele is carried by
+exactly `i` of the `n` sample copies. The result assumes only the conditional mean: `ξ_i` need
+not be integer-valued and `θ` may be negative, as for `ξ_i = (θ / 2) L_i`.

@@ -1,4 +1,4 @@
-# The GTR rate matrix has negative trace
+# Positive off-diagonal rates on two or more states give negative trace
 
 Let `ι` be a finite set with at least two states, `π : ι → ℝ` with `π i > 0` for every `i`, and `s`
 a real `ι × ι` matrix with `s i j > 0` for `i ≠ j`. Then the

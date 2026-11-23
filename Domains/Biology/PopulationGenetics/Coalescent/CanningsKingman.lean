@@ -152,7 +152,9 @@ theorem factorialMoment_nonneg (m : ℕ) : 0 ≤ W.factorialMoment m :=
 
 /-! ### Sampling distinct children -/
 
-/-- There are `(#S)_m` injective maps `Fin m → S`. -/
+/-- There are `(#S)_m` injective maps `Fin m → α` with values in `S`, where
+`(s)_m = s (s - 1) ⋯ (s - m + 1)` is the falling factorial: `(s)_0 = 1`, and `(s)_m = 0` for
+`m > s`. -/
 theorem card_injective_mem {α : Type*} [Fintype α] [DecidableEq α] (S : Finset α) (m : ℕ) :
     #{g : Fin m → α | Function.Injective g ∧ ∀ i, g i ∈ S} = (#S).descFactorial m := by
   rw [← Fintype.card_subtype]
@@ -480,18 +482,21 @@ open Cannings
 
 /-! ### The Möhle–Sagitov conditions -/
 
-/-- **The Möhle–Sagitov conditions** for a sequence of Cannings models `W N` (population size
-`N`) to have Kingman's coalescent as genealogical limit (Möhle 2000; Möhle–Sagitov 2001):
-the pair-coalescence probability `c_N = E[ν₁ (ν₁ - 1)] / (N - 1)` is positive for all large `N`
-and tends to `0` (so `⌊t / c_N⌋` generations is a nondegenerate time scale), and triple mergers
-are negligible on that time scale, `E[ν₁ (ν₁ - 1) (ν₁ - 2)] / (N² c_N) → 0`. -/
+/-- **The Möhle–Sagitov conditions** for a sequence of Cannings models `W N` (population size `N`)
+to have Kingman's coalescent as genealogical limit (Möhle 2000; Möhle–Sagitov 2001): the
+pair-coalescence probability `c_N = E[ν₁ (ν₁ - 1)] / (N - 1)` is positive for all large `N` and
+tends to `0` (so `⌊t / c_N⌋` generations is a nondegenerate time scale), and triple mergers are
+negligible on that time scale, `E[ν₁ (ν₁ - 1) (ν₁ - 2)] / (N² c_N) → 0`. The conditions concern
+large `N` only: `c_N = 0` for `N ≤ 1` (the factorial moments are `0` at `N = 0`, and `x / 0 = 0` at
+`N = 1`), and the triple ratio is `0` wherever `c_N = 0`. -/
 structure MohleSagitov (W : ∀ N, CanningsModel N) : Prop where
   pairCoalescence_pos : ∀ᶠ N in atTop, 0 < (W N).pairCoalescence
   tendsto_pairCoalescence : Tendsto (fun N => (W N).pairCoalescence) atTop (𝓝 0)
   tendsto_triple : Tendsto
     (fun N => (W N).factorialMoment 3 / ((N : ℝ) ^ 2 * (W N).pairCoalescence)) atTop (𝓝 0)
 
-/-- `N ^ k / (N)_k → 1`. -/
+/-- `N ^ k / (N)_k → 1`. The quotient is `1` for `k = 0`, `0` for `1 ≤ k` and `N < k` (then
+`(N)_k = 0` and `x / 0 = 0`), and the ordinary quotient once `N ≥ k`. -/
 theorem tendsto_pow_div_descFactorial (k : ℕ) :
     Tendsto (fun N : ℕ => (N : ℝ) ^ k / N.descFactorial k) atTop (𝓝 1) := by
   have h := (tendsto_noCoalProb_one k).inv₀ one_ne_zero
@@ -500,9 +505,12 @@ theorem tendsto_pow_div_descFactorial (k : ℕ) :
   filter_upwards [eventually_gt_atTop 0] with N hN
   rw [noCoalProb_eq_descFactorial_div hN, inv_div]
 
-/-- Under the Möhle–Sagitov conditions, triple mergers and simultaneous double mergers are
+/-- Under the Möhle–Sagitov conditions (`c_N > 0` for all large `N`, `c_N → 0` and
+`E[ν₁ (ν₁ - 1) (ν₁ - 2)] / (N² c_N) → 0`), triple mergers and simultaneous double mergers are
 negligible on the coalescent time scale: `(P(triple) + doubleBound) / c_N → 0`. The bound on
-simultaneous mergers is derived from the triple-merger condition. -/
+simultaneous mergers is derived from the triple-merger condition. `P(triple) = 0` for `N < 3`,
+`doubleBound = 0` for `N < 4`, and the ratio is `0` at an `N` with `c_N = 0` (for instance `N ≤ 1`),
+all by `x / 0 = 0`. -/
 theorem MohleSagitov.tendsto_multiple {W : ∀ N, CanningsModel N} (hW : MohleSagitov W) :
     Tendsto (fun N => ((W N).tripleCoalescence + (W N).doubleBound) / (W N).pairCoalescence)
       atTop (𝓝 0) := by
@@ -834,7 +842,8 @@ open CanningsKingman
 
 variable {N : ℕ} (W : CanningsModel N)
 
-/-- Three distinct children with a common parent: bound by `tripleCoalescence`. -/
+/-- For three distinct children `x, y, z`, every event `Q` on parent maps such that `Q f` implies
+`f x = f y = f z` has probability at most `tripleCoalescence`. -/
 theorem expect_le_triple {Q : (Fin N → Fin N) → Prop} [DecidablePred Q] {x y z : Fin N}
     (hxy : x ≠ y) (hyz : y ≠ z) (hxz : x ≠ z) (hQ : ∀ f, Q f → f x = f y ∧ f y = f z) :
     W.expect (fun f => if Q f then 1 else 0) ≤ W.tripleCoalescence := by
@@ -874,8 +883,9 @@ theorem expect_le_double {w x y z : Fin N} (hwx : w ≠ x) (hwy : w ≠ y) (hwz 
   · rw [ite_eq_left hf, ite_eq_left (by simpa using hf)]
   · rw [ite_eq_right hf, ite_eq_right (by simpa using hf)]
 
-/-- Two distinct pairs of lineages both coalescing in one generation: probability at most
-`tripleCoalescence + doubleBound`. -/
+/-- Two distinct pairs of lineages, at distinct children, both coalescing in one generation:
+probability at most `tripleCoalescence + doubleBound`. Here `N ≥ 3`; for `N = 3`, `doubleBound = 0`
+(`(N)_4 = 0` and `x / 0 = 0`). -/
 theorem expect_two_pairs_le {b : ℕ} {e : Fin b → Fin N} (he : Function.Injective e)
     {p q : Fin b × Fin b} (hp : p ∈ lineagePairs b) (hq : q ∈ lineagePairs b) (hpq : p ≠ q) :
     W.expect (fun f => if f (e p.1) = f (e p.2) ∧ f (e q.1) = f (e q.2) then 1 else 0) ≤
@@ -912,7 +922,7 @@ theorem expect_two_pairs_le {b : ℕ} {e : Fin b → Fin N} (he : Function.Injec
     linarith
 
 /-- Expected number of coalescing pairs among `b ≤ N` lineages at the children `0, …, b - 1`:
-`(b.choose 2) c_N`. -/
+`(b.choose 2) c_N`. For `N ≤ 1`, `c_N = 0` and `b ≤ 1`, so both sides are `0`. -/
 theorem expect_collCount {b : ℕ} (h : b ≤ N) :
     W.expect (fun f => (collCount (f ∘ Fin.castLE h) : ℝ)) =
       #(lineagePairs b) * W.pairCoalescence := by
@@ -922,8 +932,9 @@ theorem expect_collCount {b : ℕ} (h : b ≤ N) :
   simp only [lineagePairs, mem_filter, mem_univ, true_and] at hp
   exact W.expect_pair fun h' => hp.ne (Fin.castLE_injective h h')
 
-/-- `E[k² - k] ≤ #pairs (#pairs - 1) (P(triple) + doubleBound)`, `k` the number of coalescing
-pairs among `b ≤ N` lineages at the children `0, …, b - 1`. -/
+/-- `E[k² - k] ≤ #pairs (#pairs - 1) (P(triple) + doubleBound)`, `k` the number of coalescing pairs
+among `b ≤ N` lineages at the children `0, …, b - 1`. `P(triple) = 0` for `N < 3` and
+`doubleBound = 0` for `N < 4`, by `x / 0 = 0`. -/
 theorem expect_collCount_sq_le {b : ℕ} (h : b ≤ N) :
     W.expect (fun f => (collCount (f ∘ Fin.castLE h) : ℝ) ^ 2 - collCount (f ∘ Fin.castLE h)) ≤
       #(lineagePairs b) * (#(lineagePairs b) - 1) *
@@ -1041,7 +1052,10 @@ theorem stepProb_le_of_isMerge (hc : 0 ≤ W.pairCoalescence) {η : SamplePartit
     rw [this]
     exact hc
 
-/-- Any other change of partition needs two coalescing pairs. -/
+/-- For a partition `η ≠ ξ` that does not arise from `ξ` by merging two blocks, the probability that
+one generation takes `ξ` to `η` is at most `#pairs (#pairs - 1) (P(triple) + doubleBound)`, where
+`#pairs = b.choose 2` for the `b ≤ N` blocks of `ξ`: any such change needs two coalescing pairs.
+`P(triple) = 0` for `N < 3` and `doubleBound = 0` for `N < 4`, by `x / 0 = 0`. -/
 theorem stepProb_le_of_not_isMerge {η : SamplePartition n} (hM : ¬IsMerge ξ η) (hne : η ≠ ξ) :
     stepProb W h η ≤ #(lineagePairs #ξ.parts) * (#(lineagePairs #ξ.parts) - 1) *
       (W.tripleCoalescence + W.doubleBound) := by
@@ -1072,7 +1086,8 @@ theorem sum_stepProb_isMerge_le : ∑ η with IsMerge ξ η, stepProb W h η ≤
 
 open scoped Classical in
 /-- Given `c_N ≥ 0` (true for every Cannings model), a one-generation merger has probability at
-least `c_N - #pairs (#pairs - 1) (P(triple) + doubleBound)`. -/
+least `c_N - #pairs (#pairs - 1) (P(triple) + doubleBound)`. Here `N ≥ 2`, since `ξ` has a merger;
+`P(triple) = 0` for `N = 2` and `doubleBound = 0` for `N < 4`, by `x / 0 = 0`. -/
 theorem stepProb_ge_of_isMerge (hc : 0 ≤ W.pairCoalescence) {η : SamplePartition n}
     (hM : IsMerge ξ η) :
     W.pairCoalescence - #(lineagePairs #ξ.parts) * (#(lineagePairs #ξ.parts) - 1) *
@@ -1101,10 +1116,12 @@ end Entries
 /-! ### Kingman's limit -/
 
 open scoped Classical in
-/-- **The generator limit.** Under the Möhle–Sagitov conditions, the one-generation transition
-matrix of the ancestral partition of a sample of `n` genes satisfies
-`c_N⁻¹ (Π_N - 1) → Q`, the rate matrix of Kingman's `n`-coalescent: each pair of blocks merges at
-rate `1`, and every other change of partition has rate `0`. -/
+/-- **The generator limit.** Under the Möhle–Sagitov conditions (`c_N > 0` for all large `N`,
+`c_N → 0` and `E[ν₁ (ν₁ - 1) (ν₁ - 2)] / (N² c_N) → 0`), the one-generation transition matrix of the
+ancestral partition of a sample of `n` genes satisfies `c_N⁻¹ (Π_N - 1) → Q`, the rate matrix of
+Kingman's `n`-coalescent: each pair of blocks merges at rate `1`, and every other change of
+partition has rate `0`. Where `c_N = 0` (for instance `N ≤ 1`), `c_N⁻¹ (Π_N - 1)` is the zero matrix
+(`0⁻¹ = 0`). -/
 theorem MohleSagitov.tendsto_generator {W : ∀ N, CanningsModel N} (hW : MohleSagitov W)
     (n : ℕ) :
     Tendsto (fun N => (W N).pairCoalescence⁻¹ • (ancestralMatrix (W N) n - 1)) atTop
@@ -1177,8 +1194,9 @@ theorem MohleSagitov.tendsto_generator {W : ∀ N, CanningsModel N} (hW : MohleS
       exact div_le_div_of_nonneg_right
         (stepProb_le_of_not_isMerge (W N) _ hM (Ne.symm hξη)) hc.le
 
-/-- For `x ≥ 0`, `⌊x / c⌋ c → x` as `c → 0⁺`, where `⌊·⌋` rounds down to a natural number
-(`0` on negative numbers). -/
+/-- For `x ≥ 0`, `⌊x / c⌋ c → x` as `c → 0⁺`, where `⌊·⌋` rounds down to a natural number (`0` on
+negative numbers). The sequence `c` need be positive only for large `N`: wherever `c N ≤ 0`,
+`x / c N ≤ 0` (with `x / 0 = 0`) and the term is `0`. -/
 theorem tendsto_floor_div_mul {c : ℕ → ℝ} (hc0 : ∀ᶠ N in atTop, 0 < c N)
     (hc : Tendsto c atTop (𝓝 0)) {x : ℝ} (hx : 0 ≤ x) :
     Tendsto (fun N => (⌊x / c N⌋₊ : ℝ) * c N) atTop (𝓝 x) := by
@@ -1193,9 +1211,11 @@ theorem tendsto_floor_div_mul {c : ℕ → ℝ} (hc0 : ∀ᶠ N in atTop, 0 < c 
     rwa [le_div_iff₀ hcN] at this
 
 /-- **Kingman's limit for Cannings models** (Möhle 2000; Möhle–Sagitov 2001). Under the
-Möhle–Sagitov conditions, for `0 ≤ s ≤ t` the transition matrix of the ancestral partition
-process of a sample of `n` genes over the generations `⌊s / c_N⌋, …, ⌊t / c_N⌋` converges to the
-transition matrix `exp ((t - s) • Q)` of Kingman's `n`-coalescent. -/
+Möhle–Sagitov conditions (`c_N > 0` for all large `N`, `c_N → 0` and
+`E[ν₁ (ν₁ - 1) (ν₁ - 2)] / (N² c_N) → 0`), for `0 ≤ s ≤ t` the transition matrix of the ancestral
+partition process of a sample of `n` genes over the generations `⌊s / c_N⌋, …, ⌊t / c_N⌋` converges
+to the transition matrix `exp ((t - s) • Q)` of Kingman's `n`-coalescent. At an `N` with `c_N = 0`
+(for instance `N ≤ 1`), both floors are `0` and the matrix power is the identity. -/
 theorem MohleSagitov.tendsto_ancestralMatrix_pow {W : ∀ N, CanningsModel N}
     (hW : MohleSagitov W) (n : ℕ) {s t : ℝ} (hs : 0 ≤ s) (hst : s ≤ t) :
     Tendsto (fun N => ancestralMatrix (W N) n ^
@@ -1215,8 +1235,11 @@ theorem MohleSagitov.tendsto_ancestralMatrix_pow {W : ∀ N, CanningsModel N}
   filter_upwards [hW.pairCoalescence_pos] with N hcN
   rw [smul_smul, mul_inv_cancel₀ hcN.ne', one_smul, add_sub_cancel]
 
-/-- From the sample in singletons: for `t ≥ 0`, after `⌊t / c_N⌋` generations the ancestral
-partition has the law `timeLaw n t` of Kingman's `n`-coalescent at time `t` in the limit. -/
+/-- From the sample in singletons: under the Möhle–Sagitov conditions (`c_N > 0` for all large `N`,
+`c_N → 0` and `E[ν₁ (ν₁ - 1) (ν₁ - 2)] / (N² c_N) → 0`) and for `t ≥ 0`, after `⌊t / c_N⌋`
+generations the ancestral partition has the law `timeLaw n t` of Kingman's `n`-coalescent at time
+`t` in the limit. At an `N` with `c_N = 0` (for instance `N ≤ 1`), `⌊t / c_N⌋ = 0` and the matrix
+power is the identity. -/
 theorem MohleSagitov.tendsto_ancestralMatrix_pow_bot {W : ∀ N, CanningsModel N}
     (hW : MohleSagitov W) (n : ℕ) {t : ℝ} (ht : 0 ≤ t) (π : SamplePartition n) :
     Tendsto (fun N => (ancestralMatrix (W N) n ^ ⌊t / (W N).pairCoalescence⌋₊) ⊥ π) atTop
@@ -1245,12 +1268,14 @@ noncomputable def kingmanFDD (n : ℕ) {k : ℕ} (t : Fin (k + 1) → ℝ)
   timeLaw n (t 0) (x 0) * ∏ i : Fin k,
     NormedSpace.exp ((t i.succ - t i.castSucc) • partitionRate n) (x i.castSucc) (x i.succ)
 
-/-- **Cannings genealogies converge to Kingman's coalescent** (finite-dimensional
-distributions; Möhle 2000, Möhle–Sagitov 2001). Under the Möhle–Sagitov conditions, the
-ancestral partition process of a sample of `n` genes, started from singletons at generation `0`
-and observed at the generations `⌊t i / c_N⌋` for times `0 ≤ t 0 ≤ t 1 ≤ ⋯ ≤ t k`, has
-finite-dimensional distributions converging to those of Kingman's `n`-coalescent, started from
-singletons, at the times `t i`. -/
+/-- **Cannings genealogies converge to Kingman's coalescent** (finite-dimensional distributions;
+Möhle 2000, Möhle–Sagitov 2001). Under the Möhle–Sagitov conditions (`c_N > 0` for all large `N`,
+`c_N → 0` and `E[ν₁ (ν₁ - 1) (ν₁ - 2)] / (N² c_N) → 0`), the ancestral partition process of a sample
+of `n` genes, started from singletons at generation `0` and observed at the generations
+`⌊t i / c_N⌋` for times `0 ≤ t 0 ≤ t 1 ≤ ⋯ ≤ t k`, has finite-dimensional distributions converging
+to those of Kingman's `n`-coalescent, started from singletons, at the times `t i`. At an `N` with
+`c_N = 0` (for instance `N ≤ 1`), every observation generation is `0` and every factor is an entry
+of the identity matrix. -/
 theorem MohleSagitov.tendsto_chainFDD {W : ∀ N, CanningsModel N} (hW : MohleSagitov W)
     (n : ℕ) {k : ℕ} (t : Fin (k + 1) → ℝ) (ht0 : 0 ≤ t 0) (ht : Monotone t)
     (x : Fin (k + 1) → SamplePartition n) :

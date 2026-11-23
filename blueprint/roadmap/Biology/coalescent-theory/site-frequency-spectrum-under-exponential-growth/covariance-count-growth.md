@@ -20,11 +20,14 @@ Let `θ` be a real number and let `ξ_i` (`i ∈ ℕ`) be real random variables 
 [conditional moments of the site frequency spectrum](../covariances-of-the-site-frequency-spectrum/sfscond-moments.md)
 given `𝒢`: for all `i, j ∈ ℕ`, `ξ_i` and `L^ρ_i` are square integrable, and almost surely
 `E[ξ_i | 𝒢] = (θ / 2) L^ρ_i` and `E[ξ_i ξ_j | 𝒢] = (θ / 2)² L^ρ_i L^ρ_j + δ_{ij} (θ / 2) L^ρ_i`,
-with `δ_{ij} = 1` if `i = j` and `0` otherwise. Then for `1 ≤ i ≤ n - 1` and every natural
+with `δ_{ij} = 1` if `i = j` and `0` otherwise. These are the first two conditional moments of
+independent Poisson counts with means `(θ / 2) L^ρ_i`; neither a conditional Poisson law nor
+conditional independence of the `ξ_i` is assumed. Then for `1 ≤ i ≤ n - 1` and every natural
 number `j`,
 
 `Cov(ξ_i, ξ_j) = δ_{ij} (θ / 2) ∑_{k=2}^{n} g_{n,i,k} E[T^ρ_k] + (θ / 2)² Cov(L^ρ_i, L^ρ_j)`,
 
 with the [Griffiths–Tavaré kernel](../site-frequency-spectrum-under-variable-populatio/sfs-kernel.md)
-`g_{n,i,k} = k C(n - i - 1, k - 2) / C(n - 1, k - 1)`. The sum in the diagonal term is the
-[expected spectrum under exponential growth](integral-sfs-growth.md): it equals `E[ξ_i]`.
+`g_{n,i,k} = k C(n - i - 1, k - 2) / C(n - 1, k - 1)`. In the diagonal term, `θ / 2` times the
+sum is the [expected spectrum under exponential growth](integral-sfs-growth.md):
+`(θ / 2) ∑_{k=2}^{n} g_{n,i,k} E[T^ρ_k] = E[ξ_i]`.

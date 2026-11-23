@@ -1,4 +1,4 @@
-# The delta-method variance of Tajima's D is 1
+# Unit delta-method variance of Tajima's D under neutral-model moments
 
 Let `μ` be a probability measure, `n ≥ 4`, `θ > 0`, and let `T_k` be
 [Kingman holding times](../../coalescent-theory/kingman-s-coalescent-and-watterson-s-estimator/kingman-times.md)

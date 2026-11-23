@@ -13,4 +13,6 @@ which is never apart, and the count is `2 · 1[a, b apart]`.
 
 Epoch by epoch, this is the tree identity
 `ℓ(P_{ab} ∩ P_{ac}) = (ℓ(P_{ab}) + ℓ(P_{ac}) - ℓ(P_{bc})) / 2`, where `P_{xy}` is the path between
-the genes `x` and `y` and `ℓ` is length.
+the genes `x` and `y` and `ℓ` is length. When `b = c`, `P_{bb}` is the path from `b` to itself,
+of length `0`, not the set of [branches with exactly one gene](pair-path.md) of `{b}` below them,
+which are all the branches ancestral to `b`.

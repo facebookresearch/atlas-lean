@@ -1,4 +1,4 @@
-# Point consistency of the GTR pair-site MLE, almost surely
+# Almost-sure point consistency for a singleton GTR class
 
 Let `Θ` be a compact metric space. Let `ι` be a finite set of states and let `π`, `s` and `t` give
 each parameter `θ` base frequencies `π θ : ι → ℝ`, exchangeabilities `s θ` (a real `ι × ι` matrix)
@@ -15,5 +15,6 @@ measurable. Let `P` be a finite measure on `Ω` and let the columns `X 0, X 1, �
 `P (X 0 = a) = law θ₀ a` for every pattern `a`. Then every [maximum-likelihood estimator](is-mle.md)
 `est` for the pair-site model and the
 [empirical site-pattern frequencies](../consistency-of-minimum-distance-gtr-estimators/empirical-freq.md)
-of the columns satisfies `est n ω → θ₀` as `n → ∞` for `P`-almost every `ω`. Pairwise independence
-forces the total mass of `P` to be `0` or `1`, so `P` is a probability measure unless it is zero.
+of the columns satisfies `est n ω → θ₀` as `n → ∞` for `P`-almost every `ω`. Summing the sampling
+equalities over the finitely many patterns gives `P(Ω) = ∑_a law θ₀ a = 1`, as the
+[pair-site law sums to one](sum-gtr-law.md), so `P` is a probability measure.

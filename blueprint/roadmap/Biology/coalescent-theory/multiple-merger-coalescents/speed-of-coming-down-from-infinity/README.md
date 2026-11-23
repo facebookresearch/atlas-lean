@@ -12,6 +12,6 @@
 - [Under Grey's condition the speed inverts the tail integral](psi-tail-speed.md)
 - [Under Grey's condition the speed blows up at time zero](tendsto-speed-zero.md)
 - [Kingman lower bound on the tail integral of 1/ψ](two-div-le-psi-tail.md)
-- [The Beta-coalescent measure pushed to the line is the Beta law](map-val-beta-lambda.md)
+- [Pushing the clamped Beta measure back to the real line](map-val-beta-lambda.md)
 - [Growth of the Laplace exponent for a Beta pushforward, 1 < α < 2](tendsto-psi-div-rpow-of-map-val-eq-beta.md)
 - [Growth of the Laplace exponent of the Beta-coalescent for 1 < α < 2](tendsto-psi-div-rpow-beta-lambda.md)

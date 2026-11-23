@@ -128,8 +128,9 @@ open MathlibExt.Biology.PopulationGenetics.Diffusion
 `a₁(x) = 2 - x + 2 (1 - x) log (1 - x) / x`. It solves `generator 0 w x = w x / x` on
 `(0, 1)` (`pattersonAux1_ode`; this is his Equation A2, `x² (1 - x) / 2 * w'' = w`,
 divided by `x`), tends to `0` at `x = 0` and equals `1` at `x = 1` (Equations A5,
-A6). At `x = 0` the Lean value is the totalized `2`, not the limit. For `x > 1` the
-logarithm is `log (x - 1)` (`log u = log |u|`). -/
+A6). At `x = 0` the Lean value is the totalized `2` (from `u / 0 = 0`), not the limit; at `x = 1`
+the term `(1 - x) log (1 - x)` is `0` (with `log 0 = 0`). For `x > 1` the logarithm is
+`log (x - 1)` (`log u = log |u|`). -/
 noncomputable def pattersonAux1 (x : ℝ) : ℝ :=
   2 - x + 2 * ((1 - x) * log (1 - x) / x)
 
@@ -151,11 +152,12 @@ and for `x > y`,
 
 In the diffusion reading (not formalized here), `G_C(x, y) = ∫₀^∞ C(x, y; t) dt` for
 the killed transition density `C` of his Equation 4, with `y` the present-day
-frequency and `x` the frequency backward in time. The branches are
-`2 a₁(x) / y²` and `2 a₁(y) a₂(x) / ((1 - y) y)` (`killedGreen_eq_aux_left`,
-`killedGreen_eq_aux_right`). The formula is meaningful for `x, y ∈ (0, 1)`; outside
-that range Lean's totalized division takes over: with `u / 0 = 0` the value is `0` when
-`x = 0`, when `y = 0` and when `x > y = 1`, and logarithms of negative numbers are `log |u|`. -/
+frequency and `x` the frequency backward in time. For `x ≠ 0` and `y ≠ 0` the branches are
+`2 a₁(x) / y²` and, if also `y ≠ 1`, `2 a₁(y) a₂(x) / ((1 - y) y)` (`killedGreen_eq_aux_left`,
+`killedGreen_eq_aux_right`); at `x = 0 < y` the formula gives `0`, whereas `2 a₁(0) / y² = 4 / y²`.
+The formula is meaningful for `x, y ∈ (0, 1)`; outside that range Lean's totalized division takes
+over: with `u / 0 = 0` the value is `0` when `x = 0`, when `y = 0` and when `x > y = 1`, and
+logarithms are taken with `log 0 = 0` and `log u = log |u|` for negative `u`. -/
 noncomputable def killedGreen (x y : ℝ) : ℝ :=
   if x ≤ y then -2 * (x ^ 2 + 2 * x * log (1 - x) - 2 * x - 2 * log (1 - x)) / (y ^ 2 * x)
   else 2 * (1 - x) * (2 * y - y ^ 2 + 2 * log (1 - y) - 2 * y * log (1 - y)) /
@@ -167,8 +169,8 @@ noncomputable def killedGreen (x y : ℝ) : ℝ :=
 integral `∫₁ˣ (log t) / (1 - t) dt`; `pattersonDilog_eq_integral` proves that the
 two agree on `(0, 1)`. This is his sign and normalization convention:
 `dilog 1 = 0`, derivative `log x / (1 - x)` on `(0, 1)`. In classical notation
-`pattersonDilog x = Li₂(1 - x)` (Maple's `dilog`). The series converges for `0 ≤ x ≤ 2`; for
-`x < 0` and `x > 2` it is not summable and the value is `0`. -/
+`pattersonDilog x = Li₂(1 - x)` for `0 ≤ x ≤ 2` (Maple's `dilog`), where the series converges; for
+`x < 0` and `x > 2` it is not summable and the value is `0`, not a continuation of `Li₂`. -/
 noncomputable def pattersonDilog (x : ℝ) : ℝ :=
   Real.li2PowerSeries (1 - x)
 
@@ -181,8 +183,9 @@ known to be new (nonancestral) and now at frequency `y`:
 Meaningful for `y ∈ (0, 1)`. At `y = 1` the Lean value is `2π² / 3 - 4`: the last
 term `2 log 1 / (1 - 1)` evaluates to `0` by totalized division, so the value at `1`
 is an artifact, `2` more than the limit `2 (π² - 9) / 3` of
-`tendsto_meanMrcaNew_one`. At `y = 0` the value is `-4`. The identity `meanMrcaNew_eq_integral`
-derives this formula from Theorem 4. -/
+`tendsto_meanMrcaNew_one`. At `y = 0` the value is `-4` (with `log 0 = 0`), and for `y < 0` the
+logarithm is `log |y|`. The identity `meanMrcaNew_eq_integral` derives this formula from
+Theorem 4. -/
 noncomputable def meanMrcaNew (y : ℝ) : ℝ :=
   -4 + 2 * log y + (2 * π ^ 2 - 12 * pattersonDilog y) / (3 * y) + 2 * log y / (1 - y)
 
@@ -322,7 +325,7 @@ theorem pattersonAux1_ode {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
   ring
 
 /-- Patterson's Equation A6: `a₁(1) = 1`. At `x = 1` the Lean computation uses
-`(1 - x) * log (1 - x) = 0 * log 0 = 0`; `tendsto_pattersonAux1_nhdsLT_one` shows
+`(1 - x) * log (1 - x) = 0 * log 0 = 0` (with `log 0 = 0`); `tendsto_pattersonAux1_nhdsLT_one` shows
 the value is also the limit from below. -/
 theorem pattersonAux1_one : pattersonAux1 1 = 1 := by
   norm_num [pattersonAux1]
@@ -729,7 +732,8 @@ theorem meanMrca_mixture {y : ℝ} (hy : y ∈ Ioo (0 : ℝ) 1) :
   ring
 
 /-- **Limit of `M₁` at frequency `1`** (Patterson p. 1094, item 6):
-`M₁(y) → 2 (π² - 9) / 3` as `y → 1⁻`. -/
+`M₁(y) → 2 (π² - 9) / 3` as `y → 1⁻`. The value `meanMrcaNew 1 = 2π² / 3 - 4`, from `x / 0 = 0`,
+differs from this limit. -/
 theorem tendsto_meanMrcaNew_one :
     Tendsto meanMrcaNew (𝓝[<] (1 : ℝ)) (𝓝 (2 * (π ^ 2 - 9) / 3)) := by
   have hlog : Tendsto (fun y => log y) (𝓝[<] (1 : ℝ)) (𝓝 0) := by
@@ -1116,8 +1120,8 @@ theorem killedGreen_pos {x y : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) (hy : y ∈ Ioo
 
 /-- The boundary ratio in the integrated form of Patterson's Equation 14: for `y ∈ (0, 1)`,
 `G_C(1 - ε, y) / (2ε) → a₁(y) / ((1 - y) y)` as `ε → 0⁺`, the contribution of an
-allele that was fixed, since `G_C(1 - ε, y) = (2 a₁(y) / ((1 - y) y)) a₂(1 - ε)`
-and `a₂(1 - ε) = ε / (1 - ε)`. -/
+allele that was fixed, since for `0 < ε < 1 - y` (so that `1 - ε > y` lies on the upper branch)
+`G_C(1 - ε, y) = (2 a₁(y) / ((1 - y) y)) a₂(1 - ε)` and `a₂(1 - ε) = ε / (1 - ε)`. -/
 theorem tendsto_killedGreen_one_sub_div {y : ℝ} (hy : y ∈ Ioo (0 : ℝ) 1) :
     Tendsto (fun ε => killedGreen (1 - ε) y / (2 * ε)) (𝓝[>] (0 : ℝ))
       (𝓝 (pattersonAux1 y / ((1 - y) * y))) := by

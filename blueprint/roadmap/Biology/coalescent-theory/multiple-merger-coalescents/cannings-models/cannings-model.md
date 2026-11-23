@@ -6,5 +6,5 @@ generation has parent `f(c)` in the previous one) that is exchangeable in the ch
 parents: the probability of `f ∘ τ` and of `σ ∘ f` equals that of `f` for all permutations `τ`
 and `σ`. The [offspring vector](offspring.md) `ν_i = #{c : f(c) = i}` is then an exchangeable
 vector summing to `N`, and given `ν` the children are assigned to parents uniformly at random;
-this is Cannings' model (Cannings 1974). Successive generations are independent copies of this
-law.
+this is Cannings' model (Cannings 1974). The model consists of this one-generation law only; the
+iterated Cannings process uses independent copies of it for successive generations.

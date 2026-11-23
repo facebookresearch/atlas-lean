@@ -1,4 +1,4 @@
-# Watterson's estimator is unbiased in the marked Kingman model
+# Watterson's estimator is unbiased in the marked model for n ≥ 2
 
 For every natural number `n ≥ 2` and every `θ ≥ 0`, in the
 [marked Kingman model](kingman-mutation-measure.md) the number of segregating sites

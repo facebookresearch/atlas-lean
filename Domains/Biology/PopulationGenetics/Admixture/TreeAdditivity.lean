@@ -61,8 +61,8 @@ theorem f4_eq_of_weight_eq_mul_add (M : DriftModel μ E P) (M' : DriftModel μ' 
   linear_combination ((M.weight A e - M.weight B e) * (M.weight C e - M.weight D e) * M.len e) *
     hs2
 
-/-- Common-shift invariance: replacing every weight vector `w X` by `w X + c` for one vector `c`
-leaves every `f4` unchanged. -/
+/-- Common-shift invariance: replacing every weight vector `w X` by `w X + c` for one vector `c`,
+with the same edge lengths, leaves every `f4` unchanged. -/
 theorem f4_eq_of_weight_eq_add (M : DriftModel μ E P) (M' : DriftModel μ' E P)
     (hlen : M'.len = M.len) (c : E → ℝ) (hw : ∀ X, M'.weight X = M.weight X + c)
     (A B C D : P) : f4 μ' M'.freq A B C D = f4 μ M.freq A B C D :=

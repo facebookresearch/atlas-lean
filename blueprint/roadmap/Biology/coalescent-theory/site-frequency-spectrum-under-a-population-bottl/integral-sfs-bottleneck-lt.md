@@ -1,4 +1,4 @@
-# A genuine bottleneck puts every spectrum entry below Fu's value
+# With θ > 0, a genuine bottleneck lowers every expected SFS entry
 
 Let `μ` be a probability measure on a measurable space `(Ω, F)` and `n` a natural number. Let
 `T_k` (`k ∈ ℕ`) be

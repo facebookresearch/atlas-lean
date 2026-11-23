@@ -17,7 +17,7 @@
 
 ## Rates
 
-- [The total merger rate is positive from two blocks on](total-merger-rate-pos.md)
+- [A nonzero Λ gives a positive merger rate from two blocks on](total-merger-rate-pos.md)
 
 ## The transition operator
 

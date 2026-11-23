@@ -21,5 +21,5 @@ Whether this covariance vanishes is a property of the joint law of `(π, S)`, no
 moments of `N`; see the [counterexample](exists-integral-tajima-d-ne.md).
 
 Where `S = 0`, which has positive probability under the neutral model, `D = N / √0 = 0` by the
-conventions `√0 = 0` and `x / 0 = 0` (Tajima's D is undefined there), so `E[D]` is the mean of
-`D 1{S ≥ 1}`.
+conventions `√0 = 0` and `x / 0 = 0` (Tajima's D is undefined there), so `E[D] = E[D 1{S ≥ 1}]`,
+an unnormalised mean, not the conditional mean of `D` given `S ≥ 1`.

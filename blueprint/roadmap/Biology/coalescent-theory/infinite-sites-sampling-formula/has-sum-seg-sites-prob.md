@@ -1,4 +1,4 @@
-# Tavaré's formula sums to one
+# Tavaré's probabilities sum to one for samples of size at least two
 
 For `θ ≥ 0` and every natural number `n ≥ 2`, [Tavaré's formula](seg-sites-prob.md) is summable
 over `m` with sum

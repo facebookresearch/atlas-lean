@@ -386,7 +386,10 @@ def firstCoalMean (η : ℝ → ℝ) (m : ℕ) : ℝ :=
 
 /-- The survival integral for the sample's pair count and cumulative coalescence intensity:
 `c_m = ∫_{s > 0} exp(-C(m,2) R(s)) ds` with `R = cumRate η`, where `(η r)⁻¹ = 0` if `η r = 0`
-and the integral of a non-integrable function is `0` (so `c_0 = c_1 = 0`). -/
+and the integral of a non-integrable function is `0` (so `c_0 = c_1 = 0`). The identity is
+unconditional; `c_m` is the expected waiting time only for `m ≥ 2`, positive `η` with `1/η`
+locally integrable and an integrable integrand (for `η = exp`, `m = 2` the mean is infinite and
+the formula gives `0`). -/
 theorem firstCoalMean_eq_integral (η : ℝ → ℝ) (m : ℕ) :
     firstCoalMean η m = ∫ s in Set.Ioi 0, Real.exp (-((m.choose 2 : ℕ) : ℝ) * cumRate η s) := rfl
 

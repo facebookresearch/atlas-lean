@@ -22,6 +22,7 @@ surely for every `i`. Then for every `1 ≤ i ≤ n - 1`,
 `E[ξ_i] < θ / i`,
 
 the [expected spectrum of a population of constant size](../expected-site-frequency-spectrum/integral-sfs.md).
-Here `ξ_i` is the number of sites whose derived allele is carried by exactly `i` of the `n`
-sample copies under neutral infinite-sites mutation at rate `θ / 2` per lineage per unit of real
-time.
+In the neutral infinite-sites model, with mutation at rate `θ / 2` per lineage per unit of real
+time, one may take `ξ_i` to be the number of sites whose derived allele is carried by exactly `i`
+of the `n` sample copies; the result assumes only the conditional mean, so `ξ_i` need not be
+integer-valued.

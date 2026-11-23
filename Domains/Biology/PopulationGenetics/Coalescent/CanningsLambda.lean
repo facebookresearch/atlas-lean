@@ -331,7 +331,7 @@ variable {N : ℕ} (M : CanningsModel N)
 by inclusion–exclusion, the probability that `k` given lineages among `b` share a parent that
 none of the other `b - k` lineages has (`sampleProb_inclusionExclusion`). Under the
 Möhle–Sagitov conditions and for `2 ≤ k ≤ b`, divided by `c_N` it converges to Pitman's rate
-`λ_{b,k} = ∫ x^(k-2) (1-x)^(b-k) Λ(dx)`. -/
+`λ_{b,k} = ∫ x^(k-2) (1-x)^(b-k) Λ(dx)`; the quotient is `0` where `c_N = 0` (`x / 0 = 0`). -/
 def altMergeSum (b k : ℕ) : ℝ :=
   ∑ m ∈ range (b - k + 1), ((b - k).choose m : ℝ) * ((-1) ^ m * M.mergeProb (k + m))
 
@@ -417,8 +417,11 @@ private lemma sampleProb_inclusionExclusion {b : ℕ} (hb : b ≤ N) {S : Finset
   simp_rw [nsmul_eq_mul]
 
 /-- **One-generation estimate.** For `a < b ≤ N`, with `k = b + 1 - a`, the probability that `b`
-lineages have `a` parents is `(b choose k) * altMergeSum b k` (a single `k`-merger) up to an
-error of at most `((b choose k) + 1) b ^ 4 doubleMergeProb` (simultaneous mergers). -/
+lineages have `a` parents is `(b choose k) * altMergeSum b k` up to an error of at most
+`((b choose k) + 1) b ^ 4 doubleMergeProb` (simultaneous mergers). The comparison term is the
+expected number of `k`-sets of sampled lineages forming a whole parent family, a single-merger
+approximation rather than the probability of exactly one `k`-merger (it can exceed `1`); for
+`a = 0`, `k = b + 1` and `b choose k = 0`. -/
 theorem abs_lineageProb_sub_le {b a : ℕ} (hb : b ≤ N) (ha : a < b) :
     |M.lineageProb b a - (b.choose (b + 1 - a) : ℝ) * M.altMergeSum b (b + 1 - a)| ≤
       ((b.choose (b + 1 - a) : ℝ) + 1) * ((b : ℝ) ^ 4 * M.doubleMergeProb) := by
@@ -637,8 +640,10 @@ probability measure):
 * simultaneous mergers are negligible: `doubleMergeProb / c_N → 0`, equivalently
   `E[(ν_1)_2 (ν_2)_2] / (N ^ 2 c_N) → 0`.
 
-The limits `φ_k = lim q_k / c_N` are the moments of Λ, so Λ is determined by the model
-(`eq_of_mohleSagitovLambda`); `k = 2` forces Λ to be a probability measure. -/
+The limits `φ_k = lim q_k / c_N`, for `k ≥ 2`, are the moments `∫ x ^ (k - 2) Λ(dx)`, so Λ is
+determined by the model (`eq_of_mohleSagitovLambda`); `k = 2` forces Λ to be a probability
+measure, and rules out infinite mass, for which `∫ 1 dΛ` is assigned `0`. The ratios are `0` at
+an `N` with `c_N = 0` (`x / 0 = 0`); the conditions concern only large `N`. -/
 structure MohleSagitovLambda : Prop where
   eventually_coalProb_pos : ∀ᶠ N in atTop, 0 < (M N).coalProb
   tendsto_coalProb : Tendsto (fun N => (M N).coalProb) atTop (𝓝 0)
@@ -694,7 +699,7 @@ private lemma tendsto_altMergeSum_div (h : MohleSagitovLambda M Λ) {b k : ℕ} 
 
 /-- **The one-generation limit.** Under the Möhle–Sagitov conditions, for `a < b`, the
 probability that `b` lineages have `a` parents, divided by `c_N`, tends to the Λ-coalescent
-jump rate `(b choose k) λ_{b,k}` with `k = b + 1 - a`. -/
+jump rate `(b choose k) λ_{b,k}` with `k = b + 1 - a`. The ratio is `0` where `c_N = 0`. -/
 theorem tendsto_lineageProb_div (h : MohleSagitovLambda M Λ) {b a : ℕ} (ha : a < b) :
     Tendsto (fun N => (M N).lineageProb b a / (M N).coalProb) atTop
       (𝓝 ((b.choose (b + 1 - a) : ℝ) * LambdaCoalescent.mergerRate Λ b (b + 1 - a))) := by
@@ -724,7 +729,8 @@ theorem tendsto_lineageProb_div (h : MohleSagitovLambda M Λ) {b a : ℕ} (ha : 
 
 /-- **Generator convergence.** Under the Möhle–Sagitov conditions, `c_N⁻¹ • (Π_N - 1)`
 converges entrywise to the generator of the Λ-coalescent's block-counting process, where `Π_N`
-is the one-generation transition matrix of the ancestral lineage count. -/
+is the one-generation transition matrix of the ancestral lineage count. Where `c_N = 0`,
+`c_N⁻¹ = 0` and the rescaled matrix is `0`. -/
 theorem tendsto_smul_lineageMatrix_sub_one (h : MohleSagitovLambda M Λ) (n : ℕ) :
     Tendsto (fun N => (M N).coalProb⁻¹ • ((M N).lineageMatrix n - 1)) atTop
       (𝓝 (LambdaCoalescent.blockCountingGenerator Λ n)) := by
@@ -787,8 +793,9 @@ private lemma tendsto_floor_div_mul {c : ℕ → ℝ} (hc : Tendsto c atTop (�
 Möhle–Sagitov conditions, for every `t ≥ 0` the `⌊t / c_N⌋`-generation transition matrix of the
 ancestral lineage count of a sample of at most `n` converges, as `N → ∞`, to the time-`t`
 transition matrix `exp (t • G_Λ)` of the Λ-coalescent's block-counting process, with
-`G_Λ = LambdaCoalescent.blockCountingGenerator Λ n` and Λ the measure whose moments are the
-limits `lim q_k / c_N` of the offspring factorial moments.
+`G_Λ = LambdaCoalescent.blockCountingGenerator Λ n` and Λ the measure whose moments
+`∫ x ^ (k - 2) Λ(dx)`, for `k ≥ 2`, are the limits of `q_k / c_N`. Where `c_N = 0`,
+`⌊t / c_N⌋ = 0` and the matrix power is the identity.
 
 Source: M. Möhle, S. Sagitov, *A classification of coalescent processes for haploid exchangeable
 population models*, Ann. Probab. 29 (2001), Theorem 2.1 (Λ case: Sagitov 1999). Only the
@@ -806,7 +813,10 @@ theorem tendsto_lineageMatrix_pow (h : MohleSagitovLambda M Λ) (n : ℕ) {t : �
   rw [smul_smul, mul_inv_cancel₀ hN.ne', one_smul, add_sub_cancel]
 
 omit [IsFiniteMeasure Λ] in
-/-- Under the Möhle–Sagitov conditions Λ is a probability measure (`q_2 / c_N = 1`). -/
+/-- Under the Möhle–Sagitov conditions Λ is a probability measure: `q_2 / c_N = 1` for all large
+`N` (where `c_N > 0`; at `N ≤ 1`, `c_N = 0` and the ratio is `0`), so the `k = 2` condition gives
+`∫ 1 dΛ = 1`. A measure of infinite mass, for which `∫ 1 dΛ` is assigned `0`, never satisfies
+the conditions. -/
 theorem measureReal_univ_eq_one (h : MohleSagitovLambda M Λ) : Λ.real Set.univ = 1 := by
   have h2 := h.tendsto_mergeProb_div 2 le_rfl
   simp only [Nat.sub_self, pow_zero, integral_const, smul_eq_mul, mul_one] at h2
@@ -905,7 +915,8 @@ theorem blockCountingGenerator_ne_kingman (h : MohleSagitovLambda M Λ) (hH : He
 /-- **Heavy-tailed Cannings models converge to a Λ-coalescent with multiple mergers.** Under
 the Möhle–Sagitov conditions and the heavy-tail condition, the limit measure Λ is not `δ₀`, the
 limit has a positive triple-merger rate `λ_{3,3} = ∫ x Λ(dx)`, and the time-rescaled ancestral
-lineage count converges to the Λ-coalescent's block-counting process. -/
+lineage count converges to the Λ-coalescent's block-counting process. Where `c_N = 0`,
+`⌊t / c_N⌋ = 0` and the matrix power is the identity. -/
 theorem tendsto_lineageMatrix_pow_of_heavyTailed (h : MohleSagitovLambda M Λ)
     (hH : HeavyTailed M) (n : ℕ) {t : ℝ} (ht : 0 ≤ t) :
     Λ ≠ Measure.dirac 0 ∧ 0 < LambdaCoalescent.mergerRate Λ 3 3 ∧
@@ -916,7 +927,8 @@ theorem tendsto_lineageMatrix_pow_of_heavyTailed (h : MohleSagitovLambda M Λ)
 
 /-- **The Kingman boundary.** When the Möhle–Sagitov conditions hold with `Λ = δ₀` (no heavy
 tail), the Λ-coalescent limit is Kingman's: the time-rescaled lineage count converges to
-Kingman's pure-death process with rates `k choose 2`. -/
+Kingman's pure-death process with rates `k choose 2`. Where `c_N = 0`, `⌊t / c_N⌋ = 0` and the
+matrix power is the identity. -/
 theorem tendsto_lineageMatrix_pow_dirac_zero {M : (N : ℕ) → CanningsModel N}
     (h : MohleSagitovLambda M (Measure.dirac 0)) (n : ℕ) {t : ℝ} (ht : 0 ≤ t) :
     Tendsto (fun N => (M N).lineageMatrix n ^ ⌊t / (M N).coalProb⌋₊) atTop

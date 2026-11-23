@@ -53,12 +53,18 @@ def psiKernel (q x : ℝ) : ℝ :=
   if x = 0 then q ^ 2 / 2 else (exp (-(q * x)) - 1 + q * x) / x ^ 2
 
 /-- **The Laplace exponent** `ψ(q) = ∫_{[0,1]} (e^{-qx} - 1 + qx) x^{-2} Λ(dx)` of the
-Λ-coalescent (BBL eq. (3) with `ν = x^{-2} Λ`, the `x = 0` term taken as in eq. (6)). -/
+Λ-coalescent, for every real `q`, with the integrand at `x = 0` given its continuous value
+`q² / 2` (`psiKernel`), so that an atom of `Λ` at `0` contributes `Λ{0} q² / 2` (BBL eq. (3)
+with `ν = x^{-2} Λ`, the `x = 0` term as in eq. (6)). -/
 def psi (Λ : Measure I) [IsFiniteMeasure Λ] (q : ℝ) : ℝ :=
   ∫ x, psiKernel q x ∂Λ
 
-/-- **Grey's condition** (BBL eq. (4)): `Λ ≠ 0` and `∫_a^∞ dq / ψ(q) < ∞` for some `a > 0`.
-The clause `Λ ≠ 0` excludes the junk case `ψ ≡ 0`, where `ψ⁻¹ = 0` would be integrable. -/
+/-- **Grey's condition** (BBL eq. (4)): `Λ ≠ 0` and `q ↦ 1 / ψ(q)` integrable on `(a, ∞)` for
+some `a > 0`, that is, the integral of the nonnegative `1 / ψ` over `(a, ∞)`, taken in `[0, ∞]`,
+is finite. This is not finiteness of the real-valued `psiTail`, which is always finite (it is `0`
+when `1 / ψ` is not integrable, e.g. for `Λ = δ₁`, where `ψ(q) = e^{-q} - 1 + q`). The clause
+`Λ ≠ 0` excludes the degenerate case `ψ ≡ 0`, where `ψ⁻¹ = 0` (by `1 / 0 = 0`) would be
+integrable. -/
 def GreyCondition (Λ : Measure I) [IsFiniteMeasure Λ] : Prop :=
   Λ ≠ 0 ∧ ∃ a, 0 < a ∧ IntegrableOn (fun q => (psi Λ q)⁻¹) (Ioi a)
 
@@ -311,7 +317,9 @@ private lemma tendsto_two_div {L : ℝ} (hL : 0 < L) :
   refine h.congr (fun s => ?_)
   ring
 
-/-- Grey's condition holds for some `a > 0` iff for every `a > 0` (BBL, after eq. (4)). -/
+/-- Grey's condition holds iff `Λ ≠ 0` and `1 / ψ` is integrable on `(a, ∞)` for every `a > 0`:
+once for some cutoff, then for every cutoff (BBL, after eq. (4)). The clause `Λ ≠ 0` is needed on
+the right: for `Λ = 0`, `1 / ψ = 0` is integrable for every cutoff, yet Grey's condition fails. -/
 theorem greyCondition_iff (Λ : Measure I) [IsFiniteMeasure Λ] :
     GreyCondition Λ ↔ Λ ≠ 0 ∧ ∀ a, 0 < a → IntegrableOn (fun q => (psi Λ q)⁻¹) (Ioi a) := by
   constructor

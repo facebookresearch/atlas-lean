@@ -126,8 +126,8 @@ theorem isWrightFisherSolution_one_sub (hX : IsWrightFisherSolution 0 ℱ μ X) 
   · have hg : ContDiff ℝ 2 (fun z => f (1 - z)) := hf.comp (contDiff_const.sub contDiff_id)
     simpa only [generator_zero_comp_one_sub] using hX.2.2.2 _ hg
 
-/-- In the neutral case, under a probability measure, the mean allele frequency is constant:
-`E[X t] = x`. -/
+/-- In the neutral case, under a probability measure and with the deterministic initial value
+`X 0 = x` almost surely, the mean allele frequency is constant: `E[X t] = x` for every `t`. -/
 theorem integral_apply_eq [IsProbabilityMeasure μ] (hX : IsWrightFisherSolution 0 ℱ μ X)
     (hX0 : ∀ᵐ ω ∂μ, X 0 ω = x) (t : ℝ≥0) : ∫ ω, X t ω ∂μ = x := by
   have h := (martingale_of_neutral hX).setIntegral_eq (zero_le (a := t)) MeasurableSet.univ

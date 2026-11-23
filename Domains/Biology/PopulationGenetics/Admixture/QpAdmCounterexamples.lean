@@ -113,8 +113,9 @@ theorem f4Matrix_eq_of_proxy (M : DriftModel μ E P) {n r : ℕ} (L L' : Fin (n 
   exact f4_right_eq_of_contrast M R j.succ (fun e => h i.succ e j.succ) (fun e => h 0 e j.succ)
 
 /-- **Ghost absorption.** If, on every edge seen by the right set, the target `T` has the
-weights of the mixture `α G + (1 - α) S 0` of a source `G` that is not among the sampled
-sources, and the right contrasts of `G` lie in the span of those of the sampled sources,
+weights of the mixture `α G + (1 - α) S 0` of a population `G` (in the intended example, a
+source that is not sampled), and the right contrasts of `G` lie in the span of those of the
+sampled sources,
 `f4 (G, S 0; R j, R 0) = ∑ l, c l * f4 (S (l + 1), S 0; R j, R 0)`, then the qpAdm system of the
 sampled sources is solved by the weights `α • c` (any sign, any size). -/
 theorem qpAdm_mulVec_eq_of_ghost (M : DriftModel μ E P) {k r : ℕ} {T G : P}
@@ -136,11 +137,12 @@ theorem qpAdm_mulVec_eq_of_ghost (M : DriftModel μ E P) {k r : ℕ} {T G : P}
   rw [h1, hG j, Finset.mul_sum]
   exact Finset.sum_congr rfl fun l _ => by ring
 
-/-- **Reversed direction.** If the source `S₁` descends from the target, with the weights of the
-mixture `β T + (1 - β) S₀` on every edge seen by the right set (private drift of `S₁` elsewhere
-is allowed) and `β ≠ 0`, then the target is fitted by the sources `(S₀, S₁)`, with weight
-`1 / β` on `S₁`, and the qpWave matrix of the left populations `(S₀, T, S₁)` has rank at most
-one. -/
+/-- **Reversed direction.** If, on every edge seen by the right set, the source `S₁` has the
+weights of `β T + (1 - β) S₀` with `β ≠ 0` of either sign (a relation between weight contrasts,
+vacuous if every right population has the weights of `R 0`; for `0 < β ≤ 1` on a graph it holds,
+for example, when `S₁` descends from such a mixture with private drift elsewhere), then the
+target is fitted by the sources `(S₀, S₁)`, with weight `1 / β` on `S₁`, and the qpWave matrix of
+the left populations `(S₀, T, S₁)` has rank at most one. -/
 theorem qpAdm_fit_of_reversed (M : DriftModel μ E P) {r : ℕ} {T S₀ S₁ : P}
     (R : Fin (r + 1) → P) {β : ℝ} (hβ : β ≠ 0)
     (hS : ∀ e j, (M.weight S₁ e - (β * M.weight T e + (1 - β) * M.weight S₀ e)) *
@@ -306,8 +308,9 @@ theorem ghost_counterexample {α : ℝ} (hα : α ≠ 0) (M : DriftModel μ (Fin
     exact hα h2
 
 /-- **Counterexample (iii), reversed direction.** In the reversed weight table at unit edge lengths
-and `β ≠ 0`, the source `S₁` descends from the unadmixed target (`S₁ = β T + (1 - β) S₀` plus
-private drift, `T` with `0`/`1` weights), yet the target is fitted by the sources `(S₀, S₁)`
+and `β ≠ 0`, the source `S₁` has the weights of `β T + (1 - β) S₀` plus a private edge (for
+`0 < β ≤ 1`, descent from a mixture of the target and `S₀`) and the target has `0`/`1` weights,
+yet the target is fitted by the sources `(S₀, S₁)`
 with weight exactly `1 / β` on `S₁`, the qpWave matrix of `(S₀, T, S₁)` has rank exactly one,
 and the target is no mixture of `S₁` and `S₀`. -/
 theorem reversed_counterexample {β : ℝ} (hβ : β ≠ 0) (M : DriftModel μ (Fin 8) (Fin 6))

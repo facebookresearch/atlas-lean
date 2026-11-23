@@ -93,9 +93,9 @@ theorem sum_count_Ico_eq_length {n : ℕ} {b : List ℕ} (hpos : ∀ x ∈ b, 1 
 in the unfolded form of `sfsLength` and `KingmanTimes.totalLength`: if for every
 `k ∈ [2, n]` the block-size list `ps.getD (n - k) []` has `k` positive entries
 summing to `n` (as every list visited by random joining from `n` singletons
-does), then for all holding times `T`,
+does), then for all real weights `T` (of any sign),
 `∑_{i=1}^{n-1} ∑_{k=2}^{n} #{blocks of size i among k} · T k = ∑_{k=2}^{n} k · T k`,
-i.e. `∑_i L_i = L`. -/
+i.e. `∑_i L_i = L` when the `T k` are the holding times of a genealogy. -/
 theorem sum_sum_count_mul_eq_sum_mul {n : ℕ} (ps : List (List ℕ)) (T : ℕ → ℝ)
     (hpos : ∀ k ∈ Finset.Icc 2 n, ∀ x ∈ ps.getD (n - k) [], 1 ≤ x)
     (hsum : ∀ k ∈ Finset.Icc 2 n, (ps.getD (n - k) []).sum = n)
@@ -312,8 +312,11 @@ private lemma ae_levelInvariant {μ : Measure Ω} [IsProbabilityMeasure μ] {n :
   exact ⟨k, hk, hnot⟩
 
 /-- Pathwise decomposition of total branch length over SFS classes for a
-history with the random-joining law, almost surely. This closes the
-`∑ i, L_i = L` gap noted for `SFSCovariance`. -/
+history with the random-joining law, almost surely: under a probability measure, if every fibre
+`τ ⁻¹' {ps}` has measure `randomJoining (n - 1) (List.replicate n 1) ps` (natural subtraction:
+for `n = 0` no step, the history `[[]]`), then a.s. `∑_{i=1}^{n-1} L_i = L`. Neither
+measurability of `τ` nor independence from the holding times is assumed; for a non-measurable
+fibre `μ.real` is the value of the outer measure. For `n ≤ 1` both sums are empty. -/
 theorem sum_sfsLength_ae_eq_totalLength {μ : Measure Ω} [IsProbabilityMeasure μ] {n : ℕ}
     (K : KingmanTimes μ n) {τ : Ω → List (List ℕ)}
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) =
@@ -330,9 +333,11 @@ theorem sum_sfsLength_ae_eq_totalLength {μ : Measure Ω} [IsProbabilityMeasure 
     filter_upwards with ω
     simp [sfsLength, KingmanTimes.totalLength, hIco, hIcc]
 
-/-- Expected folded site frequency spectrum under the hypotheses of
-`integral_sfs` (Kingman holding times, an independent random-joining block-size history, and
-integrable counts `ξ i` with conditional mean `(θ / 2) L_i` given the genealogy): for
+/-- Expected folded site frequency spectrum under the hypotheses of `integral_sfs`: a probability
+measure `μ`, Kingman holding times `K.T` (for `2 ≤ k ≤ n`, `K.T k` exponential with rate
+`C(k, 2)`, mutually independent), every `K.T k` measurable, a block-size history `τ` with
+measurable preimages, the random-joining law from `n` singletons and independent of the holding
+times, and integrable counts `ξ i` with conditional mean `(θ / 2) L_i` given the genealogy: for
 `1 ≤ i ≤ n / 2`, `E η_i = θ (1 / i + 1 / (n - i)) / (1 + δ_{i, n - i})`. -/
 theorem integral_foldedCount_kingman {μ : Measure Ω} [IsProbabilityMeasure μ]
     {n : ℕ} (K : KingmanTimes μ n) (hT : ∀ k, Measurable (K.T k))

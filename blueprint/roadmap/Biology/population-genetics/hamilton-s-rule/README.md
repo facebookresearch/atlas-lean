@@ -7,7 +7,7 @@
 - [Additive social fitness](additive-fitness.md)
 - [Covariance as mean of the product minus product of the means](pop-cov-eq-expect-mul-sub.md)
 - [Covariance of additive social fitness with the trait](pop-cov-additive-fitness.md)
-- [Hamilton identity with the variance factored out](expect-mul-mean-trait-change.md)
+- [Hamilton's rule as an exact identity for additive fitness](expect-mul-mean-trait-change.md)
 - [Exact sign criterion for an increase of the mean trait](mean-trait-change-pos-iff.md)
 - [Exact sign criterion for a decrease of the mean trait](mean-trait-change-neg-iff.md)
 - [Hamilton's rule for an increase of the mean trait](hamilton-rule.md)

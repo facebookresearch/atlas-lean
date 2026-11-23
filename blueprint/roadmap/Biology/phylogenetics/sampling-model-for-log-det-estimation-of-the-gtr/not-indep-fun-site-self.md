@@ -1,4 +1,4 @@
-# A site pair is not independent of itself under full support
+# Full support on multiple states precludes site self-independence
 
 Let `ι` be a finite set of at least two states. Let every subset of `ι` be measurable. Let `π i > 0`
 for every `i` with `∑_i π i = 1`, let `s` be a real `ι × ι` matrix with `s i j > 0` for `i ≠ j`, and

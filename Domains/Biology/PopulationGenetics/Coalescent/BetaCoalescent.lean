@@ -41,7 +41,7 @@ the zero measure). -/
 noncomputable def betaLambda (α : ℝ) : Measure I :=
   (betaMeasure (2 - α) α).map (Set.projIcc (0 : ℝ) 1 zero_le_one : ℝ → I)
 
-/-- For `0 < α < 2`, `Beta(2 - α, α)` is a probability measure on `[0, 1]`. -/
+/-- For `0 < α < 2`, `Beta(2 - α, α)` is a probability measure on `[0, 1]` (it has mass one). -/
 theorem isProbabilityMeasure_betaLambda {α : ℝ} (h0 : 0 < α) (h2 : α < 2) :
     IsProbabilityMeasure (betaLambda α) := by
   have := isProbabilityMeasureBeta (by linarith : (0 : ℝ) < 2 - α) h0

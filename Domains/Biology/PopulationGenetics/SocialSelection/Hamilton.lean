@@ -108,8 +108,9 @@ noncomputable def relatedness (y z : ι → ℝ) : ℝ := popCov y z / popCov z 
 
 /-- The change `Δz̄ = ∑ i, w i z' i / ∑ i, w i - 𝔼 i, z i` in mean trait from parents to
 offspring, for fitnesses `w`, parental traits `z` and mean offspring traits `z'`. When
-`∑ i, w i = 0` the convention `x / 0 = 0` makes the first term `0`, so the value is `-𝔼 i, z i`;
-the intended domain is `∑ i, w i ≠ 0`. -/
+`∑ i, w i = 0` the convention `x / 0 = 0` makes the first term `0`, so the value is `-𝔼 i, z i`
+(for an empty `ι` that average is `0` too, so the value is `0`); the intended domain is
+`∑ i, w i ≠ 0`. -/
 noncomputable def meanTraitChange (w z z' : ι → ℝ) : ℝ :=
   (∑ i, w i * z' i) / (∑ i, w i) - 𝔼 i, z i
 
@@ -130,7 +131,8 @@ theorem price_eq (w z z' : ι → ℝ) (hw : ∑ i, w i ≠ 0) :
 theorem popCov_self_nonneg (z : ι → ℝ) : 0 ≤ popCov z z :=
   expect_nonneg fun _ _ => mul_self_nonneg _
 
-/-- `Cov(x, y) = 𝔼[x y] - x̄ ȳ`. -/
+/-- `Cov(x, y) = 𝔼[x y] - x̄ ȳ`, with `𝔼` the average over `ι`; for an empty `ι` every average is
+`0` and both sides are `0`. -/
 theorem popCov_eq_expect_mul_sub (x y : ι → ℝ) :
     popCov x y = (𝔼 i, x i * y i) - (𝔼 i, x i) * 𝔼 i, y i := by
   rcases isEmpty_or_nonempty ι with hι | hι
@@ -170,7 +172,8 @@ theorem price_hamilton {w y z z' e : ι → ℝ} {α b c : ℝ} (hw : w = additi
   field_simp
 
 /-- In the additive model `w = α + b y - c z + e` with `∑ i, w i ≠ 0` and `Var(z) ≠ 0`,
-`w̄ Δz̄ = Var(z) (r b - c + (Cov(e, z) + E[w (z' - z)]) / Var(z))`. -/
+`w̄ Δz̄ = Var(z) (r b - c + (Cov(e, z) + E[w (z' - z)]) / Var(z))`, the variance factored out of
+`w̄ Δz̄ = Var(z) (r b - c) + Cov(e, z) + E[w (z' - z)]`. -/
 theorem expect_mul_meanTraitChange {w y z z' e : ι → ℝ} {α b c : ℝ}
     (hw : w = additiveFitness α b c y z e) (hsum : ∑ i, w i ≠ 0) (hV : popCov z z ≠ 0) :
     (𝔼 i, w i) * meanTraitChange w z z' = popCov z z *

@@ -21,5 +21,5 @@
 - [Star tree and admixture model have equal f2](f2-star-eq-f2-admix.md)
 - [Star tree and admixture model have equal f4](f4-star-eq-f4-admix.md)
 - [Nonnegativity of the matching star-tree edge lengths](star-len-nonneg.md)
-- [Star tree and admixture model have equal f3](f3-star-eq-f3-admix.md)
+- [Star tree with matching lengths and admixture model have equal f3](f3-star-eq-f3-admix.md)
 - [At α = 0 the admixture model has the frequencies of a star tree](exists-star-freq-eq-of-admix-zero.md)

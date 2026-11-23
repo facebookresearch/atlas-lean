@@ -9,5 +9,5 @@ measurable maps `Ω → σ` that are pairwise independent and identically distri
 `est` for the
 [empirical site-pattern frequencies](../consistency-of-minimum-distance-gtr-estimators/empirical-freq.md)
 of the columns satisfies `est n ω → θ₀` as `n → ∞` for `P`-almost every `ω`: the analogue of Chang's
-Lemma 5.1, under the positivity of the model. Pairwise independence forces the total mass of `P` to
-be `0` or `1`, so `P` is a probability measure unless it is zero.
+Lemma 5.1, under the positivity of the model. Summing the sampling equalities over the finitely many
+patterns gives `P(Ω) = ∑_a law θ₀ a = 1`, so `P` is a probability measure.

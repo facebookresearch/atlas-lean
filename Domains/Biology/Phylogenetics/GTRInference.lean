@@ -103,7 +103,8 @@ variable {Θ σ : Type*}
 /-! ## The estimator -/
 
 /-- The **empirical site-pattern frequencies** of the first `n` alignment columns `X 0, …,
-X (n - 1)`: the fraction of columns showing pattern `a`. At `n = 0` it is `0`. -/
+X (n - 1)`: the fraction of columns showing pattern `a`. At `n = 0` it is `0`, by the convention
+`0⁻¹ = 0`. -/
 noncomputable def empiricalFreq [DecidableEq σ] {Ω : Type*} (X : ℕ → Ω → σ) (n : ℕ) (ω : Ω) :
     σ → ℝ :=
   fun a => (n : ℝ)⁻¹ * (#{i ∈ range n | X i ω = a} : ℕ)
@@ -127,7 +128,9 @@ noncomputable def minDistEstimator {Ω : Type*} {law : Θ → σ → ℝ} (hlaw 
   (isCompact_univ.exists_isMinOn Set.univ_nonempty
     (hlaw.dist continuous_const).continuousOn (f := fun θ => dist (law θ) (freq n ω))).choose
 
-/-- `minDistEstimator` is a minimum-distance estimator. -/
+/-- On a nonempty compact metric space, for a continuous model `law` on a finite pattern set, the
+chosen estimate `minDistEstimator` is a minimum-distance estimator: it minimizes
+`dist (law θ) (freq n ω)` for every `n` and `ω`. -/
 theorem isMinDistEstimator_minDistEstimator {Ω : Type*} {law : Θ → σ → ℝ}
     (hlaw : Continuous law) (freq : ℕ → Ω → σ → ℝ) :
     IsMinDistEstimator law freq (minDistEstimator hlaw freq) := fun n ω θ =>
@@ -182,7 +185,8 @@ theorem dist_law_le_two_mul {law : Θ → σ → ℝ} {freq : ℕ → Ω → σ 
     _ ≤ dist (law θ₀) (freq n ω) + dist (freq n ω) (law θ₀) := by gcongr
     _ = 2 * dist (freq n ω) (law θ₀) := by rw [dist_comm (law θ₀)]; ring
 
-/-- **Consistency to the fibre** (no identifiability): for any measure `P`, if the frequency
+/-- **Consistency to the fibre** (no identifiability): on a compact metric `Θ`, with `law`
+continuous on a finite pattern set, for any measure `P`, if the frequency
 estimates converge in `P`-measure to `law θ₀`, a minimum-distance estimator converges in
 `P`-measure to the fibre `{θ | law θ = law θ₀}` of parameters with the same law (in probability
 when `P` is a probability measure). The estimator need not be measurable: `P` of a
@@ -201,11 +205,11 @@ theorem tendstoInMeasure_infDist_fiber {law : Θ → σ → ℝ} (hlaw : Continu
     abs_of_nonneg infDist_nonneg] at hω ⊢
   linarith [hsep _ hω, dist_law_le_two_mul hest θ₀ n ω]
 
-/-- **Consistency up to the permitted symmetries, from convergent frequencies**: for any measure
-`P`, if `law` identifies `θ₀` up to the class `E` (`law θ = law θ₀ → θ ∈ E`) and the frequency
-estimates converge in `P`-measure to `law θ₀`, then `infDist (est n) E → 0` in `P`-measure (in
-probability when `P` is a probability measure; `P` of a non-measurable set is its outer
-measure). -/
+/-- **Consistency up to the identified class, from convergent frequencies**: on a compact metric
+`Θ`, with `law` continuous on a finite pattern set, for any measure `P`, if every `θ` with
+`law θ = law θ₀` lies in `E` and the frequency estimates converge in `P`-measure to `law θ₀`, then
+every minimum-distance estimator `est` satisfies `infDist (est n) E → 0` in `P`-measure (in
+probability when `P` is a probability measure; `P` of a non-measurable set is its outer measure). -/
 theorem tendstoInMeasure_infDist_of_tendstoInMeasure {law : Θ → σ → ℝ} (hlaw : Continuous law)
     {θ₀ : Θ} {E : Set Θ} (hId : ∀ θ, law θ = law θ₀ → θ ∈ E) {freq : ℕ → Ω → σ → ℝ}
     {est : ℕ → Ω → Θ} (hest : IsMinDistEstimator law freq est)
@@ -280,7 +284,7 @@ theorem ae_tendsto_empiricalFreq [Finite σ] [IsFiniteMeasure P] {X : ℕ → Ω
   filter_upwards [ae_all_iff.2 key] with ω hω
   exact tendsto_pi_nhds.2 hω
 
-/-- **Sampling law ⇒ convergence of the empirical frequencies in probability.** For a finite
+/-- **Sampling law ⇒ convergence of the empirical frequencies in measure.** For a finite
 pattern set `σ` with measurable singletons and a finite measure `P`, if the columns `X i` are
 measurable, pairwise independent and identically distributed with `P (X 0 = a) = q a`, then
 `empiricalFreq X n → q` in `P`-measure. -/
@@ -302,15 +306,14 @@ variable [MetricSpace Θ] [CompactSpace Θ] [Fintype σ] [DecidableEq σ] [Measu
   [MeasurableSingletonClass σ] {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
   [IsFiniteMeasure P]
 
-/-- **GTR inference corollary** (identifiability + sampling law ⇒ consistency). Let `Θ` be a
-compact parameter space with a continuous site-pattern law `law` on a finite pattern set with
-measurable singletons, and let the true parameter
-`θ₀` be identified up to the class `E` of symmetry-equivalent parameters
-(`hId : law θ = law θ₀ → θ ∈ E`, the T66 identifiability input). If the alignment columns are
-measurable, pairwise independent and identically distributed under a finite measure `P`, with
-`P (X 0 = a) = law θ₀ a`, then every minimum-distance estimator `est` for the empirical
-site-pattern frequencies satisfies `infDist (est n) E → 0` in `P`-measure (`P` of a
-non-measurable set is its outer measure). -/
+/-- **GTR inference corollary** (identification + sampling law ⇒ consistency). Let `Θ` be a compact
+metric parameter space with a continuous site-pattern law `law` on a finite pattern set with
+measurable singletons, and let `E` contain every parameter with the law of `θ₀`
+(`hId : law θ = law θ₀ → θ ∈ E`; for example the class of `θ₀` under the permitted symmetries, but
+`E` may be larger). If the alignment columns are measurable, pairwise independent and identically
+distributed under a finite measure `P`, with `P (X 0 = a) = law θ₀ a`, then every minimum-distance
+estimator `est` for the empirical site-pattern frequencies satisfies `infDist (est n) E → 0` in
+`P`-measure (`P` of a non-measurable set is its outer measure). -/
 theorem tendstoInMeasure_infDist_minDist {law : Θ → σ → ℝ} (hlaw : Continuous law) {θ₀ : Θ}
     {E : Set Θ} (hId : ∀ θ, law θ = law θ₀ → θ ∈ E) {X : ℕ → Ω → σ}
     (hX : ∀ i, Measurable (X i)) (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X))
@@ -320,8 +323,12 @@ theorem tendstoInMeasure_infDist_minDist {law : Θ → σ → ℝ} (hlaw : Conti
   tendstoInMeasure_infDist_of_tendstoInMeasure hlaw hId hest
     (tendstoInMeasure_empiricalFreq hX hindep hident hsample)
 
-/-- The GTR inference corollary for the chosen estimator `minDistEstimator`, on a nonempty
-`Θ`. -/
+/-- The GTR inference corollary for the chosen estimator `minDistEstimator`: on a nonempty compact
+metric `Θ`, with `law` continuous on a finite pattern set with measurable singletons,
+`hId : law θ = law θ₀ → θ ∈ E`, and measurable, pairwise independent, identically distributed
+columns with `P (X 0 = a) = law θ₀ a` under a finite measure `P`,
+`infDist (minDistEstimator … n) E → 0` in `P`-measure. The chosen estimate need not be measurable:
+`P` of a non-measurable set is its outer measure. -/
 theorem tendstoInMeasure_infDist_minDistEstimator [Nonempty Θ] {law : Θ → σ → ℝ}
     (hlaw : Continuous law) {θ₀ : Θ} {E : Set Θ} (hId : ∀ θ, law θ = law θ₀ → θ ∈ E)
     {X : ℕ → Ω → σ} (hX : ∀ i, Measurable (X i)) (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X))
@@ -332,10 +339,11 @@ theorem tendstoInMeasure_infDist_minDistEstimator [Nonempty Θ] {law : Θ → σ
   tendstoInMeasure_infDist_minDist hlaw hId hX hindep hident hsample
     (isMinDistEstimator_minDistEstimator hlaw _)
 
-/-- **Full identifiability**: for a compact `Θ`, a continuous `law` and measurable, pairwise
-independent, identically distributed columns with `P (X 0 = a) = law θ₀ a` under a finite
-measure `P`, if `law` is injective at `θ₀` (`E = {θ₀}`), every minimum-distance estimator
-converges to `θ₀` in `P`-measure. -/
+/-- **Full identifiability**: for a compact metric `Θ`, a continuous `law` on a finite pattern set
+with measurable singletons and measurable, pairwise independent, identically distributed columns
+with `P (X 0 = a) = law θ₀ a` under a finite measure `P`, if every `θ` with `law θ = law θ₀` is `θ₀`
+(`E = {θ₀}`), every minimum-distance estimator for the empirical frequencies converges to `θ₀` in
+`P`-measure (`P` of a non-measurable set is its outer measure). -/
 theorem tendstoInMeasure_minDist_of_injective {law : Θ → σ → ℝ} (hlaw : Continuous law)
     {θ₀ : Θ} (hId : ∀ θ, law θ = law θ₀ → θ = θ₀) {X : ℕ → Ω → σ}
     (hX : ∀ i, Measurable (X i)) (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X))

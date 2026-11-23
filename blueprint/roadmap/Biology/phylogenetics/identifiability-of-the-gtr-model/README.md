@@ -36,7 +36,7 @@
 
 - [Reversible generators are determined by one transition matrix](eq-of-exp-eq-of-is-detailed-balance.md)
 - [GTR identifiability from a single branch, up to rate/time scaling](gtr-pair-law-eq-iff.md)
-- [GTR identifiability from a single branch of known length](eq-and-off-diag-eq-of-gtr-pair-law-eq.md)
+- [GTR identification from one branch of known positive length](eq-and-off-diag-eq-of-gtr-pair-law-eq.md)
 
 ## Relabeling the states in the pair-site law
 

@@ -4,7 +4,7 @@
 
 - [Block partition of the sample with gene positions](is-block-partition.md)
 - [Position of a block after two blocks merge](merge-idx.md)
-- [Merging two blocks shortens the list by one](length-merge-blocks.md)
+- [Merging shortens a block list by one if the removed position exists](length-merge-blocks.md)
 - [Entries of the list after merging two blocks](get-elem-merge-blocks.md)
 - [Merging two blocks of a block partition gives a block partition](is-block-partition-merge-blocks.md)
 - [Smaller label of a pair of lineages](pair-lo.md)
@@ -20,7 +20,7 @@
 - [Genes apart after $t$ events: no lineage block contains them all](pair-apart.md)
 - [Two genes are apart exactly when their block positions differ](pair-apart-iff.md)
 - [Genes are together after a step iff together before or merged by it](pair-apart-succ-iff.md)
-- [Once together, two genes stay together](of-succ.md)
+- [A pair apart after the next event was already apart](of-succ.md)
 
 ## Counting histories
 
@@ -37,7 +37,7 @@
 - [Coalescence time of two sampled genes](pair-coal-time.md)
 - [Two branches per epoch separate a pair while apart, none afterwards](card-pair-path-epoch.md)
 - [One shared branch per epoch once a pair has coalesced, none before](card-pair-shared-epoch.md)
-- [The path between two genes has length twice their coalescence time](sum-pair-path-branch-length.md)
+- [The separating path has length twice the apart epochs' positive parts](sum-pair-path-branch-length.md)
 
 ## Poisson mutation marking with an arbitrary topology
 
@@ -115,7 +115,7 @@
 - [Gene $a$ apart from $b$ and $c$, which share a lineage](split-a.md)
 - [All but three choices of step $t$ keep three distinct lineages apart](card-update-apart3-succ.md)
 - [A single choice of step $t$ merges $b$ with $c$ while $a$ stays apart](card-update-split-a-succ.md)
-- [Remaining product moment $4/3$ for two pairs sharing a gene](sum-mul-apart3-future-prod.md)
+- [Remaining product moment $4/3$ from three distinct lineages](sum-mul-apart3-future-prod.md)
 
 ## Four distinct lineages: two disjoint pairs
 
@@ -127,7 +127,7 @@
 - [Exactly one choice of step $t$ merges two genes that are apart](card-update-and-not-pair-apart-succ.md)
 - [Indicator decomposition of the next state from four distinct lineages](ite-apart4-mul-apart-ind-succ.md)
 - [Merging $a$ with $c$ from four lineages leaves $a$, $b$, $d$ apart](apart3-of-apart4-not-ac.md)
-- [Remaining product moment $11/9$ for two disjoint pairs](sum-mul-apart4-future-prod.md)
+- [Remaining product moment $11/9$ from four distinct lineages](sum-mul-apart4-future-prod.md)
 
 ## Overlap of the paths of two pairs
 

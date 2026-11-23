@@ -1,4 +1,4 @@
-# Empirical frequencies of independent columns converge almost surely
+# Strong law for pairwise independent columns with a common law
 
 Let `σ` be a finite set of site patterns, every subset of which is measurable. Let `P` be a finite
 measure on `Ω` and let the columns `X 0, X 1, …` be measurable maps `Ω → σ` that are pairwise

@@ -2,7 +2,7 @@
 
 ## The GTR divergence law
 
-- [Full support of the GTR divergence law for a positive branch length](divergence-weight-pos.md)
+- [Positive GTR divergence weights at positive time](divergence-weight-pos.md)
 - [GTR divergence law on site pairs](divergence-law.md)
 
 ## The i.i.d. sampling model
@@ -16,18 +16,18 @@
 - [The site pairs are identically distributed under the sample law](ident-distrib-site.md)
 - [Site-pair probabilities are the GTR divergence weights](measure-real-site-preimage-singleton.md)
 
-## The consistency theorems, instantiated
+## Consistency under independent GTR sampling
 
 - [Log-det recovery is consistent almost surely on the i.i.d. GTR model](ae-tendsto-rate-estimate-sample-law.md)
 - [Log-det recovery is consistent in probability on the i.i.d. GTR model](tendsto-in-measure-rate-estimate-sample.md)
 
-## The constant sample is not an instance
+## Why reusing one nonconstant site pair breaks independence
 
-- [A site pair is not independent of itself under full support](not-indep-fun-site-self.md)
+- [Full support on multiple states precludes site self-independence](not-indep-fun-site-self.md)
 
 ## Two states: the explicit divergence law
 
 - [On two states the GTR matrix is the equal-input generator](gtr-rate-two-eq-equal-input-rate.md)
 - [Closed-form two-state transition function](ctmc-transition-gtr-rate-two.md)
-- [Explicit two-state divergence law](divergence-weight-two.md)
+- [Explicit two-state GTR divergence weights](divergence-weight-two.md)
 - [Log-det recovery on two states is consistent almost surely](ae-tendsto-rate-estimate-sample-law-two.md)

@@ -130,8 +130,10 @@ def IsBlockPartition (bs : List (Finset (Fin n))) (pos : Fin n → ℕ) : Prop :
 shift down by one. -/
 def mergeIdx (x y p : ℕ) : ℕ := if p = y then x else if y < p then p - 1 else p
 
-/-- Merging two blocks removes one entry: merging positions `x` (any) and `y < bs.length` gives
-`bs.length - 1` blocks. -/
+/-- Merging positions `x` (any) and `y < bs.length` gives `bs.length - 1` blocks: the union of
+the blocks at `x` and `y` is written at position `x` and position `y` is removed. Two blocks
+merge when `x < bs.length` and `x ≠ y`; for `x ≥ bs.length` nothing is written and for `x = y`
+the written block is the one removed, so in these two cases the effect is to delete `bs[y]`. -/
 theorem length_mergeBlocks (bs : List (Finset (Fin n))) {x y : ℕ} (hy : y < bs.length) :
     (mergeBlocks bs x y).length = bs.length - 1 := by
   simp [mergeBlocks, List.length_eraseIdx, hy]
@@ -251,7 +253,10 @@ theorem blocksAfter_spec (h : RankedHistory n) {t : ℕ} (ht : t ≤ n - 1) :
 /-! ### When two sampled genes coalesce -/
 
 /-- The genes of `s` are not all in one lineage after `t` coalescence events of the history
-`h`: no block contains `s`. For a pair of distinct genes: they are in different lineages. -/
+`h`: no block contains `s`. For a pair of distinct genes: they are in different lineages. For
+`n ≥ 1` a set of at most one gene is never apart, and after `t ≥ n - 1` events the single block
+holds every gene, so no set is apart; for `n = 0` the block list is empty and the only set, `∅`,
+is apart for every `t`. -/
 def PairApart (h : RankedHistory n) (s : Finset (Fin n)) (t : ℕ) : Prop :=
   ∀ B ∈ blocksAfter h t, ¬s ⊆ B
 
@@ -303,7 +308,8 @@ theorem pairApart_succ_iff {h : RankedHistory n} {t : ℕ} (ht : t < n - 1) {pos
   rw [blocksAfter_succ h ht, forall_not_pair_subset_iff (isBlockPartition_mergeBlocks hP hxy hy),
     Ne, mergeIdx_eq_iff hxy]
 
-/-- Once together, two genes stay together. -/
+/-- One step: a pair apart after `t + 1` events is apart after `t` events, i.e. two genes
+together after `t` events are still together after `t + 1` events. -/
 theorem PairApart.of_succ {h : RankedHistory n} {t : ℕ} {a b : Fin n}
     (H : PairApart h {a, b} (t + 1)) : PairApart h {a, b} t := by
   by_cases ht : t < n - 1
@@ -377,9 +383,11 @@ private theorem pair_eq_of_minmax {u v p q : ℕ}
 
 variable {n : ℕ}
 
-/-- **Counting step**: among the ranked labeled histories in which the genes `a ≠ b` are apart
-after `t < n - 1` events, exactly a fraction `1 / C(n - t, 2)` merge them at step `t` (one of the
-`C(n - t, 2)` pairs of current lineages). -/
+/-- **Counting step**: for genes `a`, `b` and a step `t < n - 1`, write `N_u` for the number of
+ranked labeled histories in which `{a, b}` is apart after `u` events; then
+`N_{t+1} C(n - t, 2) + N_t = N_t C(n - t, 2)`. So when `N_t > 0`, exactly a fraction
+`1 / C(n - t, 2)` of the histories with `a`, `b` apart after `t` events merge them at step `t`
+(one of the `C(n - t, 2)` pairs of current lineages). For `a = b` both counts are `0`. -/
 theorem card_pairApart_succ {a b : Fin n} {t : ℕ} (ht : t < n - 1) :
     #{h : RankedHistory n | PairApart h {a, b} (t + 1)} * (n - t).choose 2 +
       #{h : RankedHistory n | PairApart h {a, b} t} =
@@ -435,7 +443,9 @@ theorem pairApart_zero (h : RankedHistory n) {a b : Fin n} (hab : a ≠ b) :
   exact hab (Fin.ext (by rw [← h0 a, ← h0 b, he]))
 
 /-- **Probability that two genes are still apart after `t` coalescence events** (Tajima 1983):
-under random joining, for `n ≥ 2` and `t ≤ n - 2`, it is
+for distinct genes `a ≠ b`, `n ≥ 2` and `t ≤ n - 2`, the fraction of the ranked labeled
+histories in which `a` and `b` are apart after `t` events, their probability under random
+joining, is
 `∏_{i < t} (1 - 1 / C(n - i, 2)) = (n - t - 1)(n + 1) / ((n - t + 1)(n - 1))`, which is
 `pairSeparateProb n (n - t)`; `integral_pairApart_randomJoining` states it in that form. -/
 theorem card_pairApart_div {a b : Fin n} (hab : a ≠ b) {t : ℕ} (ht : t + 2 ≤ n) :
@@ -502,19 +512,25 @@ lineage `j` while there are `k` lineages, i.e. after `n - k` coalescence events.
 def branchBlock (h : RankedHistory n) (b : KingmanBranch n) : Finset (Fin n) :=
   (blocksAfter h (n - b.1)).getD b.2 ∅
 
-/-- The branches **separating** the two genes of `s`: those ancestral to exactly one of them.
-These form the path between the two genes through their most recent common ancestor (MRCA). -/
+/-- The branches **separating** the genes of `s`: those with exactly one gene of `s` below them.
+For a pair of distinct genes these form the path between the two genes through their most recent
+common ancestor (MRCA). For `s = ∅` there are none; for `s = {a}` they are all the branches
+ancestral to `a`, one per epoch, so for `n ≥ 2` not the empty path from `a` to itself. -/
 def pairPath (h : RankedHistory n) (s : Finset (Fin n)) : Finset (KingmanBranch n) :=
   {b | (s ∩ branchBlock h b).card = 1}
 
-/-- The branches **shared** by the two genes of `s`: those ancestral to both, i.e. above their
-MRCA. Mutations there are carried by both genes and do not separate them. -/
+/-- The branches **shared** by the genes of `s`: those with every gene of `s` below them. For a
+pair of distinct genes, those ancestral to both, i.e. above their MRCA; mutations there are
+carried by both genes and do not separate them. For `s = ∅` every branch is shared; for
+`s = {a}` they are the branches ancestral to `a`, as for `pairPath h {a}`. -/
 def pairShared (h : RankedHistory n) (s : Finset (Fin n)) : Finset (KingmanBranch n) :=
   {b | s ⊆ branchBlock h b}
 
-/-- The **coalescence time** of the two genes of `s` in a genealogy with epoch lengths `t` and
-history `h`: the total length of the epochs during which they are in different lineages. The
-values `t k` enter as given, also when negative. -/
+/-- The **coalescence time** of the genes of `s` in a genealogy with epoch lengths `t` and history
+`h`: the sum of the `t k` over the epochs `k` during which `s` is apart (not all in one lineage),
+that is, until some block contains all of `s`. The values `t k` enter as given, also when
+negative. For a pair `s` of distinct genes and nonnegative `t` it is the time back to their
+MRCA; for a set of at most one gene it is `0`. -/
 def pairCoalTime (h : RankedHistory n) (s : Finset (Fin n)) (t : Icc 2 n → ℝ) : ℝ :=
   ∑ k : Icc 2 n, if PairApart h s (n - k) then t k else 0
 
@@ -524,7 +540,9 @@ private theorem card_pair_inter_eq_one {a b : Fin n} (hab : a ≠ b) (B : Finset
     simp [Finset.insert_inter_of_mem, Finset.insert_inter_of_notMem, ha, hb, hab]
 
 /-- **In each epoch exactly two branches separate a pair that is still apart, and none separate
-a pair that has coalesced.** -/
+a pair that has coalesced**: for distinct genes `a ≠ b` and an epoch `k` (`2 ≤ k ≤ n`), the
+number of branches `⟨k, j⟩`, `j < k`, with exactly one of `a`, `b` below them is `2` if `{a, b}`
+is apart after `n - k` events and `0` otherwise. -/
 theorem card_pairPath_epoch (h : RankedHistory n) {a b : Fin n} (hab : a ≠ b) (k : Icc 2 n) :
     #{j : Fin k | (({a, b} : Finset (Fin n)) ∩ branchBlock h ⟨k, j⟩).card = 1} =
       if PairApart h {a, b} (n - k) then 2 else 0 := by
@@ -591,10 +609,11 @@ theorem card_pairShared_epoch (h : RankedHistory n) {a b : Fin n} (k : Icc 2 n) 
     simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton, Fin.ext_iff]
     omega
 
-/-- **The path between two genes has length twice their coalescence time**: for a pair `s` of
+/-- **The separating path has length twice the apart epochs' positive parts**: for a pair `s` of
 distinct genes, `∑_{b separating s} ℓ_b = 2 ∑_{epochs k with s apart} max(t_k, 0)`, the branch
 lengths being the epoch lengths truncated at `0`; for nonnegative epoch lengths the right side
-is `2 * pairCoalTime h s t`. -/
+is `2 * pairCoalTime h s t`, but for a negative epoch length during which `s` is apart the two
+differ. -/
 theorem sum_pairPath_branchLength (h : RankedHistory n) {s : Finset (Fin n)}
     (hs : s ∈ samplePairs n) (t : Icc 2 n → ℝ) :
     ∑ b ∈ pairPath h s, kingmanBranchLength n t b =
@@ -611,9 +630,10 @@ end Branches
 
 /-! ### Pairwise differences under Poisson mutation marking -/
 
-/-- Infinite-sites mutation on a Kingman genealogy with topology: given the epoch lengths `t` and
-the ranked labeled history `h`, branch `b` carries an independent `Po((θ/2) ℓ_b(t))` number of
-mutation events (`kingmanMutationKernel`, which does not depend on `h`). Here
+/-- Infinite-sites mutation on a Kingman genealogy with topology: the pullback of
+`kingmanMutationKernel n θ` along `(t, h) ↦ t`, so it does not depend on the ranked labeled
+history `h`. By `kingmanTreeMutationKernel_apply`, given the epoch lengths `t` and the history
+`h`, branch `b` carries an independent `Po((θ/2) ℓ_b(t))` number of mutation events. Here
 `ℓ_b(t) = max(t_k, 0)` for a branch of epoch `k`: a negative epoch length gives length `0`, and
 the counts on the branches of that epoch are then `0` almost surely. -/
 def kingmanTreeMutationKernel (n : ℕ) (θ : ℝ≥0) :
@@ -869,7 +889,9 @@ theorem integral_pairCoalTime_kingmanGenealogyMeasure (hn : 2 ≤ n) {s : Finset
   exact sum_pairSeparateProb_div_choose hn
 
 /-- The marked Kingman model with topology: genealogy from `kingmanGenealogyMeasure n`, then
-independent `Po((θ/2) ℓ_b)` mutation counts on the branches. -/
+independent `Po((θ/2) ℓ_b)` mutation counts on the branches, where a branch of epoch `k` has
+length `ℓ_b = max(t_k, 0)`; as the epoch lengths are almost surely positive, the Poisson mean is
+`(θ/2) t_k` almost surely. -/
 def kingmanTreeMutationMeasure (n : ℕ) (θ : ℝ≥0) :
     Measure (((Icc 2 n → ℝ) × RankedHistory n) × (KingmanBranch n → ℕ)) :=
   kingmanGenealogyMeasure n ⊗ₘ kingmanTreeMutationKernel n θ
@@ -1400,9 +1422,10 @@ private theorem integrable_pairPathOverlap (s s' : Finset (Fin n)) :
 
 /-- **Product moment of two pairwise differences** in the marked Kingman model, for `n ≥ 2` and
 pairs `s`, `s'`: `E[D_s D_{s'}] = θ² E[τ_s τ_{s'}] + (θ/2) E[ℓ(path s ∩ path s')]`. The first
-term is the product of the conditional means `θ τ_s`, `θ τ_{s'}`; the second is the Poisson
-variance of the mutations on the branches separating both pairs. This reduces Tajima's `Var π`
-to moments of the genealogy. -/
+term is the mean over genealogies of the product `(θ τ_s)(θ τ_{s'})` of the conditional means;
+the second is the mean over genealogies of the conditional Poisson variance
+`(θ/2) ℓ(path s ∩ path s')` of the mutations on the branches separating both pairs, not that
+conditional variance itself. This reduces Tajima's `Var π` to moments of the genealogy. -/
 theorem integral_pairDiff_mul_kingmanTreeMutationMeasure {θ : ℝ≥0} (hn : 2 ≤ n)
     {s s' : Finset (Fin n)} (hs : s ∈ samplePairs n) (hs' : s' ∈ samplePairs n) :
     ∫ p, pairDiff (fun p => p.1.2) Prod.snd s p * pairDiff (fun p => p.1.2) Prod.snd s' p
@@ -1491,15 +1514,19 @@ section DistinctPairs
 
 variable {n : ℕ}
 
-/-- The coalescence rate `C(n - u, 2)` after `u` events of a sample of size `n`. The subtraction
-`n - u` is truncated, so the rate is `0` for `u ≥ n - 1`, when fewer than two lineages remain. -/
+/-- The coalescence rate `C(n - u, 2)` after `u` events of a sample of size `n`, with `n - u`
+truncated at `0`. For `n ≥ 1` and `u ≤ n - 1` there are `n - u` lineages and this is the number
+of their pairs: positive for `u + 2 ≤ n` and `0` at `u = n - 1`. For `u ≥ n` the value is `0`
+too, but `n - u = 0` is then not the number of lineages: for `n ≥ 1` one lineage remains. -/
 noncomputable def rateAfter (n u : ℕ) : ℝ := (((n - u).choose 2 : ℕ) : ℝ)
 
 theorem rateAfter_pos {u : ℕ} (hu : u < n - 1) : 0 < rateAfter n u := by
   unfold rateAfter
   exact_mod_cast Nat.choose_pos (by omega)
 
-/-- `1` if the genes of `s` are apart after `u` events of `h`, else `0`. -/
+/-- `1` if the genes of `s` are apart after `u` events of `h`, else `0`. For `n ≥ 1` it is `0`
+for a set of at most one gene and for every `s` when `u ≥ n - 1` (one lineage holds every gene);
+for `n = 0` it is `1` at every `u` (the only set, `∅`, is vacuously apart). -/
 noncomputable def apartInd (h : RankedHistory n) (s : Finset (Fin n)) (u : ℕ) : ℝ :=
   if PairApart h s u then 1 else 0
 
@@ -1556,9 +1583,10 @@ theorem sum_mul_card_eq_sum_update (F : RankedHistory n → ℝ) (i : Fin (n - 1
   ring
 
 /-- **Transition counts**: for `t < n - 1`, if `P` does not depend on step `t` (replacing step `t`
-does not change it) and from every history in state `P` exactly `m` choices of step `t` lead into
-`E ⊆ P`, then summing a weight `Y` determined before step `t` over `E` gives `m / C(n - t, 2)`
-times its sum over `P`. -/
+does not change it) and, for a real `m`, from every history in state `P` the number of choices of
+step `t` leading into `E ⊆ P` equals `m`, then summing a weight `Y` determined before step `t`
+over `E` gives `m / C(n - t, 2)` times its sum over `P`. If no history is in state `P`, nothing
+constrains `m` and both sums are `0`. -/
 theorem sum_mul_ite_mul_rateAfter {t : ℕ} (ht : t < n - 1) (Y : RankedHistory n → ℝ)
     (hY : DependsBefore Y t) (P E : RankedHistory n → Prop) [DecidablePred P] [DecidablePred E]
     (hP : ∀ f (x : LineagePair (n - t)), P (Function.update f ⟨t, ht⟩ x) ↔ P f)
@@ -1706,20 +1734,22 @@ theorem apartInd_sub_one (h : RankedHistory n) (a b : Fin n) :
   simp [apartInd, not_pairApart_sub_one h a.pos a b]
 
 /-- The expected remaining coalescence time of `s` after `t` events, given the history, when the
-epoch with `k` lineages has mean length `1 / C(k, 2)`:
+epoch with `k` lineages has mean length `1 / C(k, 2)` given the history (as for exponential
+epochs of rates `C(k, 2)` independent of the history):
 `∑_{t ≤ u < n - 1} 1[s apart after u] / C(n - u, 2)`, which is `0` for `t ≥ n - 1`. -/
 noncomputable def futureMean (h : RankedHistory n) (s : Finset (Fin n)) (t : ℕ) : ℝ :=
   ∑ u ∈ Ico t (n - 1), apartInd h s u / rateAfter n u
 
-/-- The diagonal part of `E[τ_s τ_{s'} | h]` after `t` events (the variance of the shared
-epochs, exponential with rates `C(k, 2)`):
+/-- The diagonal part of `E[τ_s τ_{s'} | h]` after `t` events (the variance given `h` of the
+total length of the epochs where both are apart, for epochs that, given `h`, are independent and
+exponential with rates `C(k, 2)`):
 `∑_{t ≤ u < n - 1} 1[s apart] 1[s' apart] / C(n - u, 2)²`, which is `0` for `t ≥ n - 1`. -/
 noncomputable def futureDiag (h : RankedHistory n) (s s' : Finset (Fin n)) (t : ℕ) : ℝ :=
   ∑ u ∈ Ico t (n - 1), apartInd h s u * apartInd h s' u / rateAfter n u ^ 2
 
-/-- `E[τ_s^{(t)} τ_{s'}^{(t)} | h]` for the parts of the coalescence times after `t` events, with
-independent exponential epochs of rates `C(k, 2)`: the product of the two `futureMean` terms plus
-`futureDiag`. -/
+/-- `E[τ_s^{(t)} τ_{s'}^{(t)} | h]` for the parts of the coalescence times after `t` events, for
+epochs that, given `h`, are independent and exponential with rates `C(k, 2)`: the product of the
+two `futureMean` terms plus `futureDiag`. -/
 noncomputable def futureProd (h : RankedHistory n) (s s' : Finset (Fin n)) (t : ℕ) : ℝ :=
   futureMean h s t * futureMean h s' t + futureDiag h s s' t
 
@@ -2515,17 +2545,19 @@ theorem sum_mul_apart4_futureProd {a b c d : Fin n} (k : ℕ) : ∀ t, t + k = n
 
 /-! #### Overlap of two paths -/
 
-/-- The number of branches of the epoch after `u` events that separate both pairs `s` and `s'`
-(labels `j < n - u` of the lineages holding exactly one gene of each pair). For `u ≥ n` the
-truncated difference `n - u` is `0` and the count is `0`. -/
+/-- The number of labels `j < n - u` of the lineages after `u` events holding exactly one gene of
+`s` and exactly one of `s'`: for pairs `s`, `s'` and `u + 2 ≤ n`, the branches of that epoch that
+separate both pairs. At `u = n - 1` (for `n ≥ 1`) the single lineage holds every gene, so the
+count is `1` if `s` and `s'` are both singletons and `0` otherwise (`0` for two pairs). For
+`u ≥ n` (every `u` when `n = 0`) the truncated difference `n - u` is `0` and the count is `0`. -/
 noncomputable def overlapCount (h : RankedHistory n) (s s' : Finset (Fin n)) (u : ℕ) : ℝ :=
   ∑ j ∈ range (n - u), if (s ∩ (blocksAfter h u).getD j ∅).card = 1 ∧
     (s' ∩ (blocksAfter h u).getD j ∅).card = 1 then 1 else 0
 
 /-- `∑_{t ≤ u < n - 1} overlapCount h s s' u / C(n - u, 2)`, which is `0` for `t ≥ n - 1`. When
-the epoch with `k` lineages has mean length `1 / C(k, 2)` (exponential epochs of rates
-`C(k, 2)`), this is `E[ℓ(path s ∩ path s')^{(t)} | h]`, the part of the overlap length after `t`
-events. -/
+the epoch with `k` lineages has mean length `1 / C(k, 2)` given the history (exponential epochs
+of rates `C(k, 2)` independent of the history), this is `E[ℓ(path s ∩ path s')^{(t)} | h]`, the
+part of the overlap length after `t` events. -/
 noncomputable def futureOverlap (h : RankedHistory n) (s s' : Finset (Fin n)) (t : ℕ) : ℝ :=
   ∑ u ∈ Ico t (n - 1), overlapCount h s s' u / rateAfter n u
 
@@ -2550,7 +2582,8 @@ theorem overlapCount_eq {h : RankedHistory n} {u : ℕ} (hu : u ≤ n - 1) {pos 
 /-- **Overlap of two paths through a shared gene**: for `u ≤ n - 1` and genes `a ≠ b`, `a ≠ c`,
 the lineages after `u` events separating both `{a, b}` and `{a, c}` number
 `1[a, b apart] + 1[a, c apart] - 1[b, c apart]` (the tree identity
-`ℓ(P_{ab} ∩ P_{ac}) = (ℓ(P_{ab}) + ℓ(P_{ac}) - ℓ(P_{bc}))/2`, epoch by epoch). -/
+`ℓ(P_{ab} ∩ P_{ac}) = (ℓ(P_{ab}) + ℓ(P_{ac}) - ℓ(P_{bc}))/2`, epoch by epoch, where for `b = c`
+the path `P_{bb}` from `b` to itself has length `0`, unlike `pairPath h {b}`). -/
 theorem overlapCount_shared {h : RankedHistory n} {u : ℕ} (hu : u ≤ n - 1) {a b c : Fin n}
     (hab : a ≠ b) (hac : a ≠ c) :
     overlapCount h {a, b} {a, c} u =
@@ -2922,7 +2955,8 @@ theorem integral_pairCoalTime_mul_piMeasure (h : RankedHistory n) (s s' : Finset
 
 /-- **Expected overlap of two paths given the history**: for a fixed history `h`, any `s`, `s'`
 and independent exponential epoch lengths of rates `C(k, 2)` (`piMeasure n`),
-`E[ℓ(path s ∩ path s') | h] = futureOverlap h s s' 0`. -/
+`E[ℓ(path s ∩ path s') | h] = futureOverlap h s s' 0`, where a branch of epoch `k` has length
+`max(t_k, 0)`. -/
 theorem integral_pairPathOverlap_piMeasure (h : RankedHistory n) (s s' : Finset (Fin n)) :
     ∫ t, pairPathOverlap h s s' t ∂piMeasure n = futureOverlap h s s' 0 := by
   have hTi : ∀ k : Icc 2 n, Integrable (fun t : Icc 2 n → ℝ => t k) (piMeasure n) := fun k => by

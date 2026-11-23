@@ -782,7 +782,9 @@ theorem integral_greenFunction_one_left (b a g : ℝ → ℝ) :
   simp [greenFunction, max_eq_left hx.2]
 
 /-- Bundled Dirichlet uniqueness for the Green integral: for a regular diffusion and `g`
-continuous on `(0,1)` with the integrability conditions `hL`, `hR` of Green's representation,
+continuous on `(0,1)` with the integrability conditions of Green's representation
+(`x ↦ S(x) g(x) / (a(x) ψ(x))` interval integrable on `[0, q]` and
+`x ↦ (S(1) - S(x)) g(x) / (a(x) ψ(x))` on `[q, 1]`, for every `q ∈ (0, 1)`),
 a function `u` in Atlas's regularity class (`C[0,1]`, differentiable with differentiable
 derivative on `(0,1)`) satisfying `L u = -g` on `(0,1)` and `u 0 = u 1 = 0`
 equals the Green integral on `[0,1]`, provided the Green integral also lies in
@@ -848,7 +850,9 @@ theorem scaleDensity_wrightFisher (σ : ℝ) {y : ℝ} (hy : y ∈ Icc (0 : ℝ)
   ring_nf
 
 /-- **Kimura's formula as a corollary.** For genic selection the general scale-function ratio
-is `kimuraFixation σ p` on `[0, 1]`. -/
+is `kimuraFixation σ p` on `[0, 1]`, for every real `σ`; since the dominance drift
+`2σ x (1 - x) (h + (1 - 2h) x)` is `σ x (1 - x)` at `h = 1/2`, this is also the half-dominance
+case. -/
 theorem fixationProb_wrightFisher (σ : ℝ) {p : ℝ} (hp : p ∈ Icc (0 : ℝ) 1) :
     fixationProb (fun x => σ * x * (1 - x)) (fun x => x * (1 - x)) p = kimuraFixation σ p := by
   have hd : ∀ y, HasDerivAt (kimuraFixation σ) (kimuraSlope σ * exp (-2 * σ * y)) y :=

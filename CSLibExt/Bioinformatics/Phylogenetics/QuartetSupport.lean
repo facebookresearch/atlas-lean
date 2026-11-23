@@ -49,8 +49,9 @@ and `#A = 2`. -/
 def resolutions (q : Finset X) : Finset (Finset (Finset X)) :=
   (q.powersetCard 2).image fun A => {A, q \ A}
 
-/-- `T` **induces** the resolution `ρ` of `q`: some edge split of `T` cuts `q` into the two sides
-of `ρ` (the quartet tree `T|q` is `ρ`). -/
+/-- `T` **induces** the family `ρ` on the finite set `q`: some edge split `B` of `T` has
+`q ∩ B ∈ ρ`. For a four-taxon set `q` and a resolution `ρ = {A, q \ A}` of `q`, this says that the
+quartet tree `T|q` is `ρ`. -/
 def Induces (T : UnrootedBinaryTree X) (q : Finset X) (ρ : Finset (Finset X)) : Prop :=
   ∃ B ∈ edgeSplits T, q ∩ B ∈ ρ
 
@@ -310,7 +311,8 @@ theorem induces_unique (T : UnrootedBinaryTree X) {q : Finset X} (hq : q ∈ qua
   · exact Or.inr (Or.inr (Or.inr (Finset.disjoint_of_subset_left Finset.inter_subset_right
       (Finset.disjoint_of_subset_right Finset.inter_subset_right h))))
 
-/-- The quartet tree `T|q` is well defined: exactly one resolution of `q` is induced. -/
+/-- The quartet tree `T|q` is well defined: exactly one resolution of `q` is induced; equivalently
+the set of induced resolutions of `q` has exactly one element (`card_filter_induces`). -/
 theorem existsUnique_induces (T : UnrootedBinaryTree X) {q : Finset X} (hq : q ∈ quartets) :
     ∃! ρ, ρ ∈ resolutions q ∧ Induces T q ρ := by
   obtain ⟨ρ, hρ, hT⟩ := exists_induces T hq
@@ -356,8 +358,8 @@ theorem quartetScore_le {f : Finset X → Finset (Finset X) → ℝ} {S : Unroot
     quartetScore f T ≤ quartetScore f S :=
   Finset.sum_le_sum fun _ hq => (local_le hS T hq).1
 
-/-- A tree with the same total quartet support as the species tree induces the same quartet tree
-on every four-taxon set. -/
+/-- Under strict plurality (`IsStrictPlurality f S`), a tree with the same total quartet support as
+the species tree `S` induces the same quartet tree on every four-taxon set. -/
 theorem induces_iff_of_quartetScore_eq {f : Finset X → Finset (Finset X) → ℝ}
     {S T : UnrootedBinaryTree X} (hS : IsStrictPlurality f S)
     (h : quartetScore f T = quartetScore f S) :
@@ -367,9 +369,10 @@ theorem induces_iff_of_quartetScore_eq {f : Finset X → Finset (Finset X) → �
   have hall := (Finset.sum_eq_sum_iff_of_le fun q hq => (local_le hS T hq).1).1 h
   exact (local_le hS T hq).2 (hall q hq)
 
-/-- Displaying the quartet `xy|zw` (taxa `x, y` separated from `z, w`) is inducing the
-resolution `{{x, y}, {z, w}}` of `{x, y, z, w}`, for `x` and `y` both distinct from `z` and
-`w`. -/
+/-- Displaying the quartet `xy|zw` (taxa `x, y` separated from `z, w`) is inducing the family
+`{{x, y}, {z, w}}` on `{x, y, z, w}`, for `x` and `y` both distinct from `z` and `w`. For four
+distinct taxa this family is the quartet resolution; for `x = y` and `z = w` it is not a resolution
+of `{x, z}`. -/
 theorem displaysQuartet_iff_induces (T : UnrootedBinaryTree X) {x y z w : X}
     (hxz : x ≠ z) (hxw : x ≠ w) (hyz : y ≠ z) (hyw : y ≠ w) :
     DisplaysQuartet T x y z w ↔ Induces T {x, y, z, w} {{x, y}, {z, w}} := by

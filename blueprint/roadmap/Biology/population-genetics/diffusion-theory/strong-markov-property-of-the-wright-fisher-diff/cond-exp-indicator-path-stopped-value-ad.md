@@ -15,8 +15,9 @@ time with values in `[0, ∞]` and `ℱ_τ` its σ-algebra. Then for every bound
 
 where `P_y` is the
 [canonical path measure](../construction-of-the-neutral-wright-fisher-diffus/raw-measure.md) of the
-neutral Wright–Fisher diffusion started at `y`: given `ℱ_τ`, on `{τ < ∞}` the process after `τ` is
-the neutral Wright–Fisher diffusion started at `π X_τ`.
+neutral Wright–Fisher diffusion started at `y`: on `{τ < ∞}`, the conditional law given `ℱ_τ` of the
+clamped future path `(π X_{τ + u})_{u ≥ 0}` is `P_{π X_τ}`. Nothing is asserted about the unclamped
+path `(X_{τ + u})_{u ≥ 0}`, which need not take values in `[0, 1]`.
 
 ## Sources
 

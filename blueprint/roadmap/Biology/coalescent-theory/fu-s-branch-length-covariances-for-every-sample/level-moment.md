@@ -13,4 +13,5 @@ summand is `C(l, 2)⁻¹ E[c_{k,i} c_{l,j}]`, where `c_{k,i}` is the number of b
 while `k` lineages remain under random joining from `n` singletons and `1 / C(l, 2)` is the mean
 holding time of Kingman's coalescent with `l` lineages. For `k > n` the truncation `n - k = 0`
 gives instead `M_n(k; i, j) = c_i(1ⁿ) ∑_{l=2}^{k} C(l, 2)⁻¹ (J^{n-l} c_j)(1ⁿ)`, where `c_i(1ⁿ)` is
-`n` if `i = 1` and `0` otherwise.
+`n` if `i = 1` and `0` otherwise. For `k = 0` or `k = 1` the sum over `2 ≤ l ≤ k` is empty and
+`M_n(k; i, j) = 0` for all `n`, `i` and `j`.

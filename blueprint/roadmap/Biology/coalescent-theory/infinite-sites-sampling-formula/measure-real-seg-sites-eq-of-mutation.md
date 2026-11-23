@@ -12,4 +12,5 @@ epoch `k`. Then the number of segregating sites `S = ∑_b N_b` has, for every n
 
 `P(S = m) = (n - 1) ∑_{j=0}^{n-2} (-1)^j C(n - 2, j) θ^m / (θ + j + 1)^{m+1}`,
 
-[Tavaré's formula](seg-sites-prob.md) (Watterson 1975, Tavaré 1984).
+[Tavaré's formula](seg-sites-prob.md) (Watterson 1975, Tavaré 1984). Powers are natural powers with
+`θ^0 = 1`, also at `θ = 0`, where all the mass is at `m = 0`.

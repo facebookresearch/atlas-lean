@@ -1,4 +1,4 @@
-# The reciprocal denominator of Tajima's D lies in every Lᵖ space
+# Reciprocal Tajima denominator in every Lᵖ if S = 0 or S ≥ 1, n ≥ 4
 
 Let `μ` be a finite measure, `n ≥ 4`, and `S` an almost everywhere measurable real function with
 `S = 0` or `S ≥ 1` almost everywhere. Then `1 / √(e₁ S + e₂ S (S - 1))`, which is `0` where

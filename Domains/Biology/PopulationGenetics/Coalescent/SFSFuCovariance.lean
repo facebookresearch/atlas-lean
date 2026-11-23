@@ -645,7 +645,8 @@ theorem count_eq_sum_sizeInd (j : ℕ) (y : List ℕ) :
 /-- The `T̄`-weighted moment at level `k`: `∑_{l=2}^{k} T̄_l E[c_{k,i} c_{l,j}]`, with
 `T̄_l = 1 / C(l, 2)`, for `2 ≤ k ≤ n`. For `k > n` the truncated subtraction `n - k = 0` gives
 `count i (replicate n 1) · ∑_{l=2}^{k} T̄_l (joinStep^[n - l] (count j)) (replicate n 1)`
-instead. -/
+instead. For `k ≤ 1` the sum over `2 ≤ l ≤ k` is empty and the value is `0` for all `n`, `i`
+and `j`. -/
 noncomputable def levelMoment (n k i j : ℕ) : ℝ :=
   ∑ l ∈ Icc 2 k, ((l.choose 2 : ℕ) : ℝ)⁻¹ *
     joinPair (n - k) (n - l) (fun b => (b.count i : ℝ)) (fun b => (b.count j : ℝ))
@@ -804,7 +805,7 @@ theorem sum_Icc_two_choose_sub_div_pred {n : ℕ} (hn : 1 ≤ n) (r : ℕ) :
     simp
 
 /-- `C(n-i-1, k-2) (n-1) C(n-2, i-1) = (k-1) C(n-k, i-1) C(n-1, k-1)` for `2 ≤ k ≤ n` and
-`1 ≤ i < n`. -/
+`1 ≤ i < n`, with `C(a, b) = 0` for `b > a` (both sides vanish when `k + i > n + 1`). -/
 theorem choose_mul_choose_eq_conv {n k i : ℕ} (hk : 2 ≤ k) (hkn : k ≤ n) (hi : 1 ≤ i)
     (hin : i < n) :
     (n - i - 1).choose (k - 2) * ((n - 1) * (n - 2).choose (i - 1)) =
@@ -831,7 +832,7 @@ theorem choose_mul_choose_eq_conv {n k i : ℕ} (hk : 2 ≤ k) (hkn : k ≤ n) (
         rw [← mul_assoc, h2]; ring
 
 /-- `C(j, k-1) C(n-1, i-1) = C(n-k, i-1) C(n-1, k-1)` when `i + j = n`, for `2 ≤ k ≤ n` and
-`1 ≤ i`. -/
+`1 ≤ i`, with `C(a, b) = 0` for `b > a` (both sides vanish when `k - 1 > j`). -/
 theorem choose_mul_choose_eq_conv' {n k i j : ℕ} (hk : 2 ≤ k) (hkn : k ≤ n) (hi : 1 ≤ i)
     (hij : i + j = n) :
     j.choose (k - 1) * (n - 1).choose (i - 1) =
@@ -846,7 +847,8 @@ theorem choose_mul_choose_eq_conv' {n k i j : ℕ} (hk : 2 ≤ k) (hkn : k ≤ n
   rw [mul_comm, h1, mul_comm]
 
 /-- **The first harmonic sum**: `∑_{k=2}^{n} C(n-i-1, k-2) / (C(n-1, k-1) C(k, 2)) = β_n(i)`
-for `1 ≤ i < n`. -/
+for `1 ≤ i < n`. The denominators are positive, and with `C(a, b) = 0` for `b > a` the terms
+with `k > n - i + 1` vanish. -/
 theorem sum_choose_div_choose_mul_inv_choose_two {n i : ℕ} (hi : 1 ≤ i) (hin : i < n) :
     ∑ k ∈ Icc 2 n, ((k.choose 2 : ℕ) : ℝ)⁻¹ * ((n - i - 1).choose (k - 2) : ℝ) /
       ((n - 1).choose (k - 1) : ℝ) = fuBeta n i := by
@@ -905,7 +907,8 @@ theorem sum_choose_div_choose_mul_inv_choose_two {n i : ℕ} (hi : 1 ≤ i) (hin
 
 /-- **The second harmonic sum** (`1 ≤ i`, `1 ≤ j`, `i + j = n`):
 `∑_{k=2}^{n} C(j, k-1) / (C(n-1, k-1) C(k, 2))` equals
-`2 (H_{n-1} - H_{i-1}) - 2 n / (n-i+1) (H_n - H_{i-1}) + 2`. -/
+`2 (H_{n-1} - H_{i-1}) - 2 n / (n-i+1) (H_n - H_{i-1}) + 2`. The denominators are positive;
+with `C(a, b) = 0` for `b > a` the terms with `k > j + 1` vanish. -/
 theorem sum_choose_div_choose_mul_inv_choose_two' {n i j : ℕ} (hi : 1 ≤ i) (hj : 1 ≤ j)
     (hij : i + j = n) :
     ∑ k ∈ Icc 2 n, ((k.choose 2 : ℕ) : ℝ)⁻¹ * (j.choose (k - 1) : ℝ) /
@@ -976,7 +979,9 @@ theorem sum_cladeWeight_mul_choose (k : ℕ) (F : ℕ → ℝ) :
     rw [cladeWeight_of h1 h2]
     field_simp
 
-/-- The `m`-sum for blocks nested in the size-`j` set (for `2 ≤ k` and `j < n`). -/
+/-- The `m`-sum for blocks nested in the size-`j` set (for `2 ≤ k` and `j < n`, with no bound
+`k ≤ n` and `C(a, b) = 0` for `b > a`). The identity is algebraic and holds for every `i`; it
+counts a part of size `i` inside the clade only for `i ≥ 1`, since no part has size `0`. -/
 theorem sum_nested {n k i j : ℕ} (hk : 2 ≤ k) (hjn : j < n) :
     ∑ m ∈ Ico 1 k, (if i ≤ j then ((comps (j - i) (m - 1)).card : ℝ) else 0) *
         ((comps (n - j) (k - m)).card : ℝ) =
@@ -1014,7 +1019,11 @@ theorem sum_nested {n k i j : ℕ} (hk : 2 ≤ k) (hjn : j < n) :
   · simp only [show ¬ i ≤ j by omega, ↓reduceIte, zero_mul, sum_const_zero,
       show ¬ i < j by omega, show i ≠ j by omega, add_zero]
 
-/-- The `m`-sum for blocks disjoint from the size-`j` set (for `2 ≤ k` and `1 ≤ j < n`). -/
+/-- The `m`-sum for blocks disjoint from the size-`j` set (for `2 ≤ k` and `1 ≤ j < n`, with no
+bound `k ≤ n` and `C(a, b) = 0` for `b > a`). The real differences of binomial terms can be
+negative: `2 C(n-i-1, k-2) - k C(n-i-j-1, k-2) = -5` at `(n, k, i, j) = (10, 3, 1, 1)`.
+The identity is algebraic and holds for every `i`; it counts a part of size `i` outside the clade
+only for `i ≥ 1`, since no part has size `0`. -/
 theorem sum_disjoint {n k i j : ℕ} (hk : 2 ≤ k) (hj : 1 ≤ j) (hjn : j < n) :
     ∑ m ∈ Ico 1 k, 1 / (m : ℝ) * ((comps j m).card : ℝ) * ((k - m : ℕ) *
         (if i ≤ n - j then ((comps (n - j - i) (k - m - 1)).card : ℝ) else 0)) =
@@ -1367,7 +1376,8 @@ variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilit
 /-- **`hσ` (Fu 1995)**: under a probability measure `μ`, with Kingman holding times `K.T` and a
 block-size history `τ` measurable for the discrete σ-algebra, with the random-joining law from
 `n` singletons and independent of the family `K.T`, `Cov(L_i, L_j) = 4 σ_{ij}` for
-`1 ≤ i, j ≤ n - 1`. This is the hypothesis `hσ` of the theorems of `SFSFuClosedForm`. -/
+`1 ≤ i, j ≤ n - 1`, with `L_i = sfsLength n i τ K.T` (an absent entry `n - k` of `τ`
+contributes zero blocks). This is the hypothesis `hσ` of the theorems of `SFSFuClosedForm`. -/
 theorem covariance_sfsLength_eq_four_mul_fuSigma
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)
@@ -1382,7 +1392,9 @@ theorem covariance_sfsLength_eq_four_mul_fuSigma
 /-- **Variance of a linear combination of branch lengths** (Fu 1995): under the hypotheses of
 `covariance_sfsLength_eq_four_mul_fuSigma` (a probability measure, a measurable random-joining
 history from `n` singletons independent of the holding times), for real `c`,
-`Var(∑_{i=1}^{n-1} c_i L_i) = 4 ∑_{i,j} c_i c_j σ_{ij}`. -/
+`Var(∑_{i=1}^{n-1} c_i L_i) = 4 ∑_{i,j} c_i c_j σ_{ij}`. In `L_i` an absent entry `n - k` of `τ`
+contributes zero blocks. Random joining takes `n - 1` steps, truncated: none for `n = 0`, when
+`τ = [[]]` almost surely. For `n ≤ 1` the sums are empty and both sides are `0`. -/
 theorem variance_sum_sfsLength_eq_fuSigma
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)
@@ -1399,7 +1411,8 @@ variable {θ : ℝ} {ξ : ℕ → Ω → ℝ}
 under Kingman's coalescent (measurable holding times) with an independent random-joining
 topology, and counts `ξ` whose first two conditional moments given the genealogy are those of
 independent Poisson counts with means `(θ / 2) L_i`, with square integrability
-(`SFSCondMoments`), `Cov(ξ_i, ξ_j) = δ_{ij} θ / i + σ_{ij} θ²` for `1 ≤ i, j ≤ n - 1`. -/
+(`SFSCondMoments`), `Cov(ξ_i, ξ_j) = δ_{ij} θ / i + σ_{ij} θ²` for `1 ≤ i, j ≤ n - 1`. Here
+`L_i = sfsLength n i τ K.T`, where an absent entry `n - k` of `τ` contributes zero blocks. -/
 theorem covariance_count_kingman_eq_fuSigma (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)
@@ -1415,7 +1428,10 @@ theorem covariance_count_kingman_eq_fuSigma (hT : ∀ k, Measurable (K.T k))
 
 /-- **Variance of a linear SFS statistic** (Fu 1995), for every sample size: under the
 hypotheses of `covariance_count_kingman_eq_fuSigma`, for real `a`,
-`Var(∑_{i=1}^{n-1} a_i ξ_i) = θ ∑_i a_i² / i + θ² ∑_{i,j} a_i a_j σ_{ij}`. -/
+`Var(∑_{i=1}^{n-1} a_i ξ_i) = θ ∑_i a_i² / i + θ² ∑_{i,j} a_i a_j σ_{ij}`. In `L_i` an absent
+entry `n - k` of `τ` contributes zero blocks. Random joining takes `n - 1` steps, truncated:
+none for `n = 0`, when `τ = [[]]` almost surely. For `n ≤ 1` the sums are empty and both sides
+are `0`. -/
 theorem variance_sum_kingman_eq_fuSigma (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)

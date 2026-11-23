@@ -1,4 +1,4 @@
-# Remaining product moment $11/9$ for two disjoint pairs
+# Remaining product moment $11/9$ from four distinct lineages
 
 Let `a`, `b`, `c`, `d` be genes, `t ≤ n - 1`, and `Y` a real function on the [ranked labeled histories](../ranked-labeled-histories-of-coalescent-trees/ranked-history.md) of `n` genes
 that [depends only on the first `t` steps](depends-before.md). Write `F_h` for the indicator that `a`, `b`, `c`, `d` are in

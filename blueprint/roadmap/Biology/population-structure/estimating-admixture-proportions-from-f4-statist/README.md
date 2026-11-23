@@ -15,7 +15,7 @@
 - [Proxy sources give the same f4 system as the sources they match](qp-adm-eq-of-proxy.md)
 - [Proxy left populations give the same f4 matrix as those they match](f4-matrix-eq-of-proxy.md)
 - [A ghost source with contrasts in the sampled span is absorbed exactly](qp-adm-mul-vec-eq-of-ghost.md)
-- [A source descended from the target fits it, with f4 rank at most one](qp-adm-fit-of-reversed.md)
+- [A source matching a target mixture on the right contrasts fits it](qp-adm-fit-of-reversed.md)
 
 ## Explicit examples
 
@@ -24,4 +24,4 @@
 - [Lineage-weight table of the reversed-direction example](reversed-weight.md)
 - [Example of a proxy that fits although the target is not mixed from it](proxy-counterexample.md)
 - [Example where a ghost source is absorbed with weight twice its share](ghost-counterexample.md)
-- [Example: an unadmixed target fits with its own descendant as a source](reversed-counterexample.md)
+- [Example: a source built from a binary-weight target fits that target](reversed-counterexample.md)

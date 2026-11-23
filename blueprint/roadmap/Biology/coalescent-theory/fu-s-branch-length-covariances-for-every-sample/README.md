@@ -28,8 +28,8 @@
 
 ## Composition sums for blocks inside and outside a clade
 
-- [Composition sum for a block of size $i$ inside a clade of size $j$](sum-nested.md)
-- [Composition sum for a block of size $i$ outside a clade of size $j$](sum-disjoint.md)
+- [Closed form of the composition sum inside a clade of size $j$](sum-nested.md)
+- [Closed form of the composition sum outside a clade of size $j$](sum-disjoint.md)
 
 ## The level moments in closed form
 

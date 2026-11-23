@@ -42,8 +42,9 @@ and `θ > 0` (`integral_sfs_growth_le`, `integral_sfs_growth_lt`), and `ρ = 0` 
 `E T^ρ_n = c_n = ∫_0^∞ exp(-C(n,2) R(s)) ds` (`integral_growthTimes_top`), and the real time to the
 most recent common ancestor is `G` of the standard one (`sum_growthHolding`).
 
-**Covariance.** With the conditionally Poisson counts of `SFSCovariance.SFSCondMoments` given
-the time-changed genealogy, `Cov(ξ_i, ξ_j) = δ_{ij} E ξ_i + (θ / 2)² Cov(L^ρ_i, L^ρ_j)`
+**Covariance.** For counts with the first two conditional moments of independent Poisson counts
+(`SFSCovariance.SFSCondMoments`) given the time-changed genealogy,
+`Cov(ξ_i, ξ_j) = δ_{ij} E ξ_i + (θ / 2)² Cov(L^ρ_i, L^ρ_j)` for `1 ≤ i ≤ n - 1` and every `j`
 (`covariance_count_growth`, with the moment hypotheses packaged by `sfsCondMoments_growth`).
 
 Not formalized here: closed forms of `E T^ρ_k` for `k < n` (Polanski, Bobrowski & Kimmel's
@@ -130,7 +131,7 @@ theorem cumRate_expGrowthSize {ρ : ℝ} (hρ : ρ ≠ 0) (s : ℝ) :
 theorem cumRate_expGrowthSize_zero (s : ℝ) : cumRate (expGrowthSize 0) s = s := by
   simp [cumRate, expGrowthSize]
 
-/-- `G` inverts `R`: `R(G(u)) = u` whenever `1 + ρ u > 0`. -/
+/-- `R` undoes `G`: `R(G(u)) = u` whenever `1 + ρ u > 0`. -/
 theorem cumRate_growthTime {ρ u : ℝ} (hu : 0 < 1 + ρ * u) :
     cumRate (expGrowthSize ρ) (growthTime ρ u) = u := by
   by_cases hρ : ρ = 0
@@ -141,7 +142,7 @@ theorem cumRate_growthTime {ρ u : ℝ} (hu : 0 < 1 + ρ * u) :
   field_simp
   ring
 
-/-- `R` inverts `G`: `G(R(s)) = s` for every `s`. -/
+/-- `G` undoes `R`: `G(R(s)) = s` for every `s`. -/
 theorem growthTime_cumRate (ρ s : ℝ) :
     growthTime ρ (cumRate (expGrowthSize ρ) s) = s := by
   by_cases hρ : ρ = 0
@@ -243,8 +244,9 @@ theorem lt_growthTime_iff {ρ t y : ℝ} (hρ : 0 ≤ ρ) (ht : 0 ≤ t) (hy : 0
 /-! ### The time-changed genealogy -/
 
 /-- The standard-coalescent time `V_k = ∑_{j=k}^{n} T_j` at which the epoch with `k` lineages
-ends, for standard holding times `T` of a sample of size `n` (`V_{n+1} = 0`, and `V_2` is the
-time to the most recent common ancestor). -/
+ends, for standard holding times `T` of a sample of size `n` and `2 ≤ k ≤ n` (`V_2` is the time
+to the most recent common ancestor). For every `k > n` the sum is empty and `V_k = 0`; in
+particular `V_{n+1} = 0`. -/
 def epochEnd (n : ℕ) (T : ℕ → ℝ) (k : ℕ) : ℝ := ∑ j ∈ Icc k n, T j
 
 /-- The **holding times under exponential growth** (Griffiths–Tavaré time change): the epoch
@@ -276,8 +278,10 @@ theorem growthHolding_zero {n k : ℕ} (hk : k ≤ n) (T : ℕ → ℝ) :
   rw [growthHolding, growthTime_zero_left, growthTime_zero_left, epochEnd_eq_add hk]
   ring
 
-/-- The real time to the most recent common ancestor is `G` of the standard one:
-`∑_{k=2}^{n} T^ρ_k = G(∑_{k=2}^{n} T_k)`. -/
+/-- For every `ρ`, `n` and `T`, `∑_{k=2}^{n} T^ρ_k = G(∑_{k=2}^{n} T_k)`; for `n < 2` both sides
+are `0` (empty sums, `G(0) = 0`). For `n ≥ 2`, `ρ ≥ 0` and `T_j ≥ 0` (`2 ≤ j ≤ n`) it says that
+the real time to the most recent common ancestor is `G` of the standard one; elsewhere `G` may
+be evaluated where `1 + ρ u ≤ 0` and need not give a real time (`G(1) = 0` for `ρ = -1`). -/
 theorem sum_growthHolding (ρ : ℝ) (n : ℕ) (T : ℕ → ℝ) :
     ∑ k ∈ Icc 2 n, growthHolding ρ n T k = growthTime ρ (∑ k ∈ Icc 2 n, T k) := by
   rcases lt_or_ge n 2 with hn | hn
@@ -330,7 +334,8 @@ theorem measurable_growthHolding (ρ : ℝ) (n : ℕ) :
 /-! ### Monotonicity of the variable-size spectrum in the mean holding times -/
 
 /-- The Griffiths–Tavaré kernel is nonnegative, for all `n`, `i`, `k` (its subtractions are
-truncated at `0` and division by `0` gives `0`). -/
+truncated at `0` and division by `0` gives `0`). It is intended for `1 ≤ i < n` and
+`2 ≤ k ≤ n`, where no subtraction is truncated and `C(n - 1, k - 1) > 0`. -/
 theorem sfsKernel_nonneg (n i k : ℕ) : 0 ≤ sfsKernel n i k := by
   unfold sfsKernel
   positivity
@@ -344,15 +349,20 @@ theorem sfsKernel_two_pos {n i : ℕ} (hi : 1 ≤ i) (hin : i < n) : 0 < sfsKern
   positivity
 
 /-- The expected spectrum is monotone in the mean holding times (for `θ ≥ 0`): `t k ≤ t' k` for
-`2 ≤ k ≤ n` gives the inequality for every `i`, the kernel being nonnegative at all indices. -/
+`2 ≤ k ≤ n` gives the inequality for every `i`, the kernel being nonnegative at all indices. It
+holds for real `t`, `t'` of any sign and every `i`, including `i ≥ n`, where `n - i - 1` is
+truncated at `0`; within the sums `2 ≤ k ≤ n`, so `C(n - 1, k - 1) > 0`. It compares expected
+spectra for `1 ≤ i < n` and nonnegative mean holding times. -/
 theorem variableSFS_le_variableSFS {θ : ℝ} (hθ : 0 ≤ θ) {n : ℕ} {t t' : ℕ → ℝ}
     (h : ∀ k ∈ Icc 2 n, t k ≤ t' k) (i : ℕ) : variableSFS θ n t i ≤ variableSFS θ n t' i := by
   unfold variableSFS
   refine mul_le_mul_of_nonneg_left (sum_le_sum fun k hk => ?_) (by positivity)
   exact mul_le_mul_of_nonneg_left (h k hk) (sfsKernel_nonneg n i k)
 
-/-- Strict monotonicity: shortening every epoch, and strictly the last one, strictly lowers
-every entry `1 ≤ i < n` of the expected spectrum (for `θ > 0`). -/
+/-- Strict monotonicity (for `θ > 0`): if `t k ≤ t' k` for every `2 ≤ k ≤ n` (no epoch is longer
+under `t`) and `t 2 < t' 2` (the last epoch, with two lineages, is strictly shorter), then every
+entry `1 ≤ i < n` of the expected spectrum is strictly lower under `t` than under `t'`. It holds
+for real `t`, `t'` of any sign; as mean holding times they are nonnegative. -/
 theorem variableSFS_lt_variableSFS {θ : ℝ} (hθ : 0 < θ) {n : ℕ} {t t' : ℕ → ℝ}
     (h : ∀ k ∈ Icc 2 n, t k ≤ t' k) (h2 : t 2 < t' 2) {i : ℕ} (hi : 1 ≤ i) (hin : i < n) :
     variableSFS θ n t i < variableSFS θ n t' i := by
@@ -405,7 +415,8 @@ theorem measurable_growthTimes (hT : ∀ k, Measurable (K.T k)) :
   (measurable_growthHolding ρ n).comp (measurable_pi_iff.2 hT)
 
 /-- If every Kingman holding time `T_k` is measurable, each time-changed holding time is
-measurable. -/
+measurable; equivalently, `ω ↦ (T^ρ_k(ω))_k` is measurable into `ℕ → ℝ` with the product
+σ-algebra. -/
 theorem measurable_growthTimes_apply (hT : ∀ k, Measurable (K.T k)) (k : ℕ) :
     Measurable (growthTimes K ρ k) :=
   (measurable_pi_apply k).comp (measurable_growthTimes hT)
@@ -484,10 +495,13 @@ sample of `n` gene copies from a population that has grown exponentially at rate
 Kingman's coalescent (measurable holding times `K.T` under a probability measure `μ`, and an
 independent random-joining block-size history `τ` whose preimages are measurable) run through
 the Griffiths–Tavaré time change, so that the epoch with `k` lineages lasts
-`T^ρ_k = G(V_k) - G(V_{k+1})` (`growthTimes`). If, given this genealogy, the count `ξ i` is
-integrable with conditional mean `(θ / 2) L^ρ_i` (neutral infinite-sites mutation at rate
-`θ / 2` per lineage per unit of real time), then for `1 ≤ i ≤ n - 1`,
+`T^ρ_k = G(V_k) - G(V_{k+1})` (`growthTimes`). If, given this genealogy, `ξ i` is integrable
+with conditional mean `(θ / 2) L^ρ_i`, then for `1 ≤ i ≤ n - 1`,
 `E ξ_i = (θ / 2) ∑_{k=2}^{n} k C(n-i-1, k-2) / C(n-1, k-1) · E T^ρ_k`.
+In the neutral infinite-sites model with `θ ≥ 0` (mutation at rate `θ / 2` per lineage per unit
+of real time) one may take `ξ i` to be the number of sites whose derived allele is carried by
+exactly `i` sample copies; only the conditional mean is assumed, so `ξ i` need not be
+integer-valued and `θ` may be negative (e.g. `ξ i = (θ / 2) L^ρ_i`).
 The independence of the time-changed holding times and the topology, a hypothesis of
 `VariableSFS.integral_sfs_of_indep`, is derived here from that of the Kingman ones. -/
 theorem integral_sfs_growth (hρ : 0 ≤ ρ) (hT : ∀ k, Measurable (K.T k))
@@ -579,8 +593,8 @@ theorem memLp_growthTimes (hρ : 0 ≤ ρ) (hT : ∀ k, Measurable (K.T k)) {k :
 
 /-- Under exponential growth, each branch-length class `L^ρ_i = sfsLength n i τ T^ρ` is
 square integrable, for `ρ ≥ 0`, a probability measure `μ`, measurable Kingman holding times and
-a block-size history `τ` with measurable preimages and the random-joining law (no independence
-needed). -/
+a block-size history `τ` with measurable preimages and the law of `n - 1` random-joining steps
+from `n` singletons (`0` steps for `n = 0`; no independence needed). -/
 theorem memLp_sfsLength_growth (hρ : 0 ≤ ρ) (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)
@@ -607,9 +621,10 @@ theorem memLp_sfsLength_growth (hρ : 0 ≤ ρ) (hT : ∀ k, Measurable (K.T k))
     exact single_le_sum (f := g) (fun _ _ => by positivity) hω
   exact hbd.fun_mul (memLp_growthTimes hρ hT hk)
 
-/-- Build `SFSCondMoments` for the time-changed genealogy: square integrability of the
-branch-length classes is automatic (`memLp_sfsLength_growth`, for `ρ ≥ 0`, measurable Kingman
-holding times and `τ` with measurable preimages and the random-joining law), so only the square
+/-- Build `SFSCondMoments` for the time-changed genealogy under a probability measure `μ`:
+square integrability of the branch-length classes is automatic (`memLp_sfsLength_growth`, for
+`ρ ≥ 0`, measurable Kingman holding times and `τ` with measurable preimages and the law of
+`n - 1` random-joining steps from `n` singletons, `0` steps for `n = 0`), so only the square
 integrability of the counts and their two conditional moments are assumed. -/
 theorem sfsCondMoments_growth (hρ : 0 ≤ ρ) (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
@@ -629,10 +644,10 @@ theorem sfsCondMoments_growth (hρ : 0 ≤ ρ) (hT : ∀ k, Measurable (K.T k))
   ⟨hξ2, memLp_sfsLength_growth hρ hT hτ hτ_law, hξ, hξξ⟩
 
 /-- **Covariance of SFS entries under exponential growth**: for the genealogy of
-`integral_sfs_growth` (`ρ ≥ 0`) and the conditionally Poisson counts of `SFSCondMoments` given
-the time-changed genealogy, `Cov(ξ_i, ξ_j) = δ_{ij} E ξ_i + (θ / 2)² Cov(L^ρ_i, L^ρ_j)` for
-`1 ≤ i ≤ n - 1` and every `j`, where the diagonal term is the growth spectrum of
-`integral_sfs_growth`. -/
+`integral_sfs_growth` (`ρ ≥ 0`) and counts with the first two conditional moments of independent
+Poisson counts (`SFSCondMoments`) given the time-changed genealogy,
+`Cov(ξ_i, ξ_j) = δ_{ij} E ξ_i + (θ / 2)² Cov(L^ρ_i, L^ρ_j)` for `1 ≤ i ≤ n - 1` and every `j`,
+where the diagonal term is the growth spectrum of `integral_sfs_growth`. -/
 theorem covariance_count_growth (hρ : 0 ≤ ρ) (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)
@@ -660,7 +675,10 @@ section FirstCoalescence
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} {n : ℕ} {K : KingmanTimes μ n}
   {ρ : ℝ}
 
-/-- The most recent epoch (`n` lineages) lasts `G(T_n)` in real time. -/
+/-- `T^ρ_n(ω) = G(T_n(ω))` for every `ω`, `ρ` and `n` (for `n ≤ 1`, `T_n` is unconstrained). For
+`n ≥ 2`, `ρ ≥ 0` and `T_n(ω) ≥ 0` the most recent epoch (`n` lineages) lasts `G(T_n(ω))` in
+real time; elsewhere `G` may be evaluated where `1 + ρ u ≤ 0` and need not give a real time
+(`G(1) = 0` for `ρ = -1`). -/
 theorem growthTimes_top (ω : Ω) : growthTimes K ρ n ω = growthTime ρ (K.T n ω) := by
   simp [growthTimes, growthHolding, epochEnd]
 

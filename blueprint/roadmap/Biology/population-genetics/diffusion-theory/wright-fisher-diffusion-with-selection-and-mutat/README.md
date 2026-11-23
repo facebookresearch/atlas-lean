@@ -8,7 +8,7 @@
 - [The neutral generator is x(1 − x)/2 times the second derivative](selection-mutation-generator-neutral.md)
 - [The selection–mutation generator adds the two drifts](selection-mutation-generator-eq.md)
 - [The selection–mutation generator applied to the frequency is the drift](selection-mutation-generator-id.md)
-- [The neutral generator applied to y² is the variance x(1 − x)](selection-mutation-generator-neutral-sq.md)
+- [The neutral generator sends y² to x(1 − x)](selection-mutation-generator-neutral-sq.md)
 
 ## Stationary distribution under selection–mutation balance
 

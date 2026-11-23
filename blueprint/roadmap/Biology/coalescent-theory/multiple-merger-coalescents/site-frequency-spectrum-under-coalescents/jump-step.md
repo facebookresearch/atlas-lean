@@ -7,4 +7,5 @@ positions of `b`, where `b_K` is the list with the [blocks at `K` merged](merge-
 `λ_{|b|,|K|}` is the [merger rate](../../coalescents/merger-rate.md) (`0` unless `|K| ≥ 2`) and
 `λ_{|b|}` the [total merger rate](../../coalescents/total-merger-rate.md). When `λ_{|b|} = 0`
 (fewer than two blocks, or `Λ = 0`) the value is `g(b)`: such a state is absorbing, and no
-quotient by `λ_{|b|}` is formed.
+quotient by `λ_{|b|}` is formed. The operator is defined on all lists of natural numbers; the
+configurations of a genealogy are the lists of positive block sizes.

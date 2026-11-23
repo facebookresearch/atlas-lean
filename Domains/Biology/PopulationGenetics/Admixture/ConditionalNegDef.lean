@@ -79,7 +79,8 @@ def IsCondNegSemidef {P : Type*} [Fintype P] (D : P → P → ℝ) : Prop :=
   ∀ c : P → ℝ, ∑ i, c i = 0 → ∑ i, ∑ j, c i * c j * D i j ≤ 0
 
 /-- `D` is the `f2` matrix of an unconstrained (real-valued) drift model on a probability space:
-some finite edge set, square-integrable uncorrelated increments, and arbitrary real weights. -/
+some finite edge set, square-integrable increments that are pairwise orthogonal in L², and
+arbitrary real weights. -/
 def IsF2Realizable {P : Type u} (D : P → P → ℝ) : Prop :=
   ∃ (E : Type u) (_ : Fintype E) (Ω : Type u) (_ : MeasurableSpace Ω) (μ : Measure Ω)
     (_ : IsProbabilityMeasure μ) (M : DriftModel μ E P), ∀ X Y, f2 μ M.freq X Y = D X Y

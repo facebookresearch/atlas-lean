@@ -6,4 +6,4 @@
 - [A double sum of products is the square of a single sum](sum-sum-mul-mul-eq-sq.md)
 - [Diploid selection with multiplicative fitnesses as haploid selection](diploid-eq-haploid-of-mul.md)
 - [Multiplicative haploid selection preserves linkage equilibrium](recombine-select-eq-mul.md)
-- [Selection and recombination leave zero linkage disequilibrium](linkage-diseq-recombine-select-of-mul.md)
+- [Multiplicative selection and recombination create no disequilibrium](linkage-diseq-recombine-select-of-mul.md)

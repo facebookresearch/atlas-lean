@@ -3,7 +3,7 @@
 ## Real-number forms
 
 - [Real-number bias factor of the f4 ratio](ratio-eq-mul-div-of-eq-mul.md)
-- [Real-number criterion for an unbiased f4 ratio](ratio-eq-iff-of-eq-mul.md)
+- [When the population f4 ratio equals the admixture proportion](ratio-eq-iff-of-eq-mul.md)
 - [Edge-sum f4 ratio with a split reference is twice the proportion](sum-ratio-eq-two-mul-of-split-reference.md)
 
 ## The f4 ratio in the drift model

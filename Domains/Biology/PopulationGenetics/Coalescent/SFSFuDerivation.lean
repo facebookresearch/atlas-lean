@@ -92,7 +92,8 @@ private lemma joinStep_iterate_succ_of_card {x : List ℕ} (hx : (blockPairs x.l
   simp [hx, joinStep_iterate_nil]
 
 /-- **Two-level Markov property of random joining.** The random-joining law has finite support,
-and the expectation of `g` at step `a` times `h` at step `b` (`a ≤ b ≤ m`) is `joinPair`. -/
+and the expectation of `g` at step `a` times `h` at step `b` (`a ≤ b ≤ m`) is `joinPair`; an
+entry missing from a short history is read as the empty list. -/
 theorem exists_finset_randomJoining_pair (m : ℕ) (x : List ℕ) :
     ∃ F : Finset (List (List ℕ)), (∀ ps ∉ F, randomJoining m x ps = 0) ∧
       ∀ a b, a ≤ b → b ≤ m → ∀ g h : List ℕ → ℝ,
@@ -206,9 +207,12 @@ noncomputable def kingmanTimeMoment (k l : ℕ) : ℝ :=
   if k = l then 2 * (((k.choose 2 : ℕ) : ℝ)⁻¹) ^ 2
   else ((k.choose 2 : ℕ) : ℝ)⁻¹ * ((l.choose 2 : ℕ) : ℝ)⁻¹
 
-/-- The covariance of `L_i` and `L_j` in terms of the moments of the block counts and of the
-holding times: `∑_{k,l} E[c_{k,i} c_{l,j}] E[T_k T_l] - E[L_i] E[L_j]`, with
-`E[L_i] = ∑_k E[c_{k,i}] / C(k, 2)`. A deterministic number. -/
+/-- The moment sum for the covariance of `L_i` and `L_j`:
+`∑_{k,l} E[c_{k,i} c_{l,j}] E[T_k T_l] - E_i E_j` with `E_i = ∑_k E[c_{k,i}] / C(k, 2)`, the sums
+over `2 ≤ k, l ≤ n` (empty, giving `0`, for `n < 2`). A deterministic number. Under Kingman's
+coalescent with a random-joining topology independent of the holding times, `E_i = E[L_i]` and
+the sum is `Cov(L_i, L_j)` (`covariance_sfsLength_eq_fuTopologyCov`); both identifications use
+that independence. -/
 noncomputable def fuTopologyCov (n i j : ℕ) : ℝ :=
   ∑ k ∈ Icc 2 n, ∑ l ∈ Icc 2 n, blockCountMoment n k l i j * kingmanTimeMoment k l -
     (∑ k ∈ Icc 2 n, blockCountMean n k i * ((k.choose 2 : ℕ) : ℝ)⁻¹) *

@@ -28,7 +28,7 @@
 - [Square integrability of the number of segregating sites](mem-lp-seg-sites-of-mutation.md)
 - [Conditional variance of the number of segregating sites](cond-var-seg-sites-of-mutation.md)
 - [Expected number of segregating sites under Poisson mutation marking](integral-seg-sites-of-mutation.md)
-- [Watterson's estimator is unbiased under Poisson mutation marking](watterson-unbiased-of-mutation.md)
+- [Watterson's estimator is unbiased under Poisson marking for n ≥ 2](watterson-unbiased-of-mutation.md)
 - [Variance of the segregating-site count under Poisson mutation marking](variance-seg-sites-of-mutation.md)
 - [Tajima's variance estimator is unbiased under Poisson mutation marking](integral-tajima-var-estimator-of-mutatio.md)
 
@@ -40,7 +40,7 @@
 - [Holding times of the marked Kingman model](of-mutation-model.md)
 - [The genealogy of the marked Kingman model is its first coordinate](epochs-of-mutation-model.md)
 - [Branch counts of the marked Kingman model are conditionally Poisson](has-cond-distrib-kingman-mutation-measur.md)
-- [Watterson's estimator is unbiased in the marked Kingman model](watterson-unbiased-kingman-mutation-meas.md)
+- [Watterson's estimator is unbiased in the marked model for n ≥ 2](watterson-unbiased-kingman-mutation-meas.md)
 - [Variance of the segregating-site count in the marked Kingman model](variance-seg-sites-kingman-mutation-meas.md)
 - [Expected number of segregating sites in the marked Kingman model](integral-seg-sites-kingman-mutation-meas.md)
 - [Tajima's variance estimator is unbiased in the marked Kingman model](integral-tajima-var-estimator-kingman-mu.md)

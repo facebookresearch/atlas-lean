@@ -55,9 +55,9 @@ generation's parent map: child `c` of the new generation has parent `f c` in the
 The law is exchangeable in the children (relabelling the children `f ↦ f ∘ τ`) and in the
 parents (relabelling the parents `f ↦ σ ∘ f`). The offspring vector `ν_i = #{c | f c = i}`
 (`offspring`) is then an exchangeable vector summing to `N`, and given `ν` the children are
-assigned to parents uniformly at random; this is Cannings' model (Cannings 1974). Successive
-generations are independent copies of this law. Real-valued probabilities use the masses
-`(law f).toReal`. -/
+assigned to parents uniformly at random; this is Cannings' model (Cannings 1974). The structure
+is this one-generation law only; the iterated Cannings process uses independent copies of it for
+successive generations. Real-valued probabilities use the masses `(law f).toReal`. -/
 structure CanningsModel (N : ℕ) where
   /-- The law of one generation's parent map: `law f` is the probability of the parent map `f`. -/
   law : PMF (Fin N → Fin N)

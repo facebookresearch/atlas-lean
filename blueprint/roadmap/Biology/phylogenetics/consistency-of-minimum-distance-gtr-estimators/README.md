@@ -20,8 +20,8 @@
 ## The sampling law
 
 - [Empirical frequencies of measurable columns are measurable](measurable-empirical-freq.md)
-- [Empirical frequencies of independent columns converge almost surely](ae-tendsto-empirical-freq.md)
-- [Empirical frequencies of independent columns converge in probability](tendsto-in-measure-empirical-freq.md)
+- [Strong law for pairwise independent columns with a common law](ae-tendsto-empirical-freq.md)
+- [Weak law for pairwise independent columns with a common law](tendsto-in-measure-empirical-freq.md)
 
 ## Consistency under independent sampling
 

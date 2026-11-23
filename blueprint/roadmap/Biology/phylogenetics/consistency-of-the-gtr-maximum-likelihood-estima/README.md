@@ -4,14 +4,14 @@
 
 - [Log-likelihood criterion](log-lik.md)
 - [Maximum-likelihood estimator](is-mle.md)
-- [At empirical frequencies the criterion is the average log-likelihood](log-lik-empirical-freq.md)
+- [At empirical frequencies the criterion is an average of log-values](log-lik-empirical-freq.md)
 - [The log-likelihood criterion is continuous for a positive model](continuous-log-lik.md)
 - [Chosen maximum-likelihood estimator](mle.md)
 - [The chosen maximizer is a maximum-likelihood estimator](is-mle-mle.md)
 
 ## Wald's argmax argument for an abstract criterion
 
-- [An identified maximum is well separated on a compact space](exists-pos-add-le-of-identified.md)
+- [Separation outside an upper level set on a compact space](exists-pos-add-le-of-identified.md)
 - [One step of Wald's argument](inf-dist-lt-of-forall-abs-sub-lt.md)
 - [Wald's argmax theorem](tendsto-inf-dist-of-tendsto-uniformly.md)
 
@@ -53,5 +53,5 @@
 - [The GTR pair-site MLE converges almost surely to the identified class](ae-tendsto-inf-dist-gtr-class-mle.md)
 - [The GTR pair-site MLE converges in probability to the identified class](tendsto-in-measure-inf-dist-gtr-class-ml-2.md)
 - [The chosen GTR pair-site MLE converges in probability to the class](tendsto-in-measure-inf-dist-gtr-class-ml-3.md)
-- [Point consistency of the GTR pair-site MLE, almost surely](ae-tendsto-mle-of-gtr-class-subset-singl.md)
-- [Point consistency of the GTR pair-site MLE, in probability](tendsto-in-measure-mle-of-gtr-class-subs.md)
+- [Almost-sure point consistency for a singleton GTR class](ae-tendsto-mle-of-gtr-class-subset-singl.md)
+- [Point consistency in probability for a singleton GTR class](tendsto-in-measure-mle-of-gtr-class-subs.md)

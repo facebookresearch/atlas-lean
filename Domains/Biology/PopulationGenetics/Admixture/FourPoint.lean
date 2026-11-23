@@ -146,8 +146,8 @@ theorem f4_split_of_isTreeMetric (hp : ∀ X, MemLp (p X) 2 μ)
 
 /-- For square-integrable frequencies, if all three f4 permutations at some
 four populations are nonzero, then
-`f2` is not a tree metric: the frequencies do not come from a tree model
-(informally, some population is admixed). This is the contrapositive of
+`f2` is not a tree metric, so the frequencies do not come from a drift model with
+the lineage weights of a tree-shaped admixture graph. This is the contrapositive of
 `f4_eq_zero_or_of_fourPointCondition` composed with Buneman's theorem. -/
 theorem not_isTreeMetric_of_f4_ne_zero (hp : ∀ X, MemLp (p X) 2 μ) {A B C D : P}
     (h1 : f4 μ p A B C D ≠ 0) (h2 : f4 μ p A C B D ≠ 0) (h3 : f4 μ p A D B C ≠ 0) :

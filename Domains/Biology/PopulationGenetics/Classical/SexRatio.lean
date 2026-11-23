@@ -24,7 +24,7 @@ son fraction `y` is, up to the positive factor `1/4`,
 
 At the resident ratio `1/2`, every mutant has the same fitness. The selection gradient
 `1/y - 1/(1-y)` is positive below `1/2`, negative above it, and zero only at `1/2`; `1/2` is
-the unique uninvadable resident ratio. With unequal costs of sons and daughters, equal
+the unique uninvadable interior resident ratio. With unequal costs of sons and daughters, equal
 investment still gives the stable investment fraction, while the resulting son fraction is
 biased toward the cheaper sex.
 
@@ -106,7 +106,8 @@ theorem W_lt_W_half {x ε : ℝ} (hx0 : 0 < x) (hx1 : x < 1) (hx : x ≠ 1 / 2) 
     positivity
   linarith
 
-/-- Uniqueness: every other resident ratio `y ∈ (0, 1)` can be invaded. -/
+/-- Uniqueness: every interior resident son fraction `y ∈ (0, 1)` other than `1/2` can be
+invaded by some mutant son fraction `x ∈ (0, 1)`, that is `W y y < W x y`. -/
 theorem exists_W_self_lt {y : ℝ} (hy0 : 0 < y) (hy1 : y < 1) (hy : y ≠ 1 / 2) :
     ∃ x ∈ Ioo (0 : ℝ) 1, W y y < W x y := by
   refine ⟨(y + 1 / 2) / 2, ⟨by linarith, by linarith⟩, ?_⟩
@@ -119,7 +120,8 @@ theorem exists_W_self_lt {y : ℝ} (hy0 : 0 < y) (hy1 : y < 1) (hy : y ≠ 1 / 2
     positivity
   linarith
 
-/-- `1/2` is the unique uninvadable resident son fraction in `(0, 1)`. -/
+/-- `1/2` is the only uninvadable interior resident son fraction: for `0 < y < 1`,
+`W x y ≤ W y y` for every `x ∈ (0, 1)` iff `y = 1/2`. -/
 theorem forall_W_le_iff {y : ℝ} (hy0 : 0 < y) (hy1 : y < 1) :
     (∀ x ∈ Ioo (0 : ℝ) 1, W x y ≤ W y y) ↔ y = 1 / 2 := by
   constructor
@@ -144,8 +146,9 @@ for all real arguments, with the convention `a / 0 = 0`; the intended domain is 
 `0 ≤ r ≤ 1`, where the denominator is positive. -/
 noncomputable def sonFraction (cs cd r : ℝ) : ℝ := (r / cs) / (r / cs + (1 - r) / cd)
 
-/-- With nonzero costs `cs` and `cd`, the Shaw–Mohler fitness in investment fractions is `W`, so
-the stable investment is `1/2` by `forall_W_le_iff`. -/
+/-- With nonzero costs `cs` and `cd`, the Shaw–Mohler fitness in investment fractions is `W`:
+`Wcost cs cd r' r = W r' r` for all real `r'` and `r`. So, by `forall_W_le_iff`, for a resident
+investment `0 < r < 1`, no mutant investment `r' ∈ (0, 1)` does better iff `r = 1/2`. -/
 theorem Wcost_eq (cs cd r' r : ℝ) (hcs : cs ≠ 0) (hcd : cd ≠ 0) : Wcost cs cd r' r = W r' r := by
   unfold Wcost W
   rw [div_div_div_cancel_right₀ hcs, div_div_div_cancel_right₀ hcd]

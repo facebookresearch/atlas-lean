@@ -1,7 +1,7 @@
 # Merger rates and Beta-coalescents
 
 - [The Beta-coalescent measure on the unit interval](beta-lambda.md)
-- [The Beta-coalescent measure is a probability measure](is-probability-measure-beta-lambda.md)
+- [The Beta-coalescent measure has mass one for 0 < α < 2](is-probability-measure-beta-lambda.md)
 - [Closed form of the Beta-coalescent rates](merger-rate-beta-lambda.md)
 - [At α = 1 the Beta-coalescent rates are the uniform rates](merger-rate-beta-lambda-one.md)
 - [The α = 1 Beta-coalescent measure is the uniform measure](beta-lambda-one.md)

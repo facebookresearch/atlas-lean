@@ -32,7 +32,7 @@
 
 ## The Möhle–Sagitov conditions
 
-- [The Möhle–Sagitov conditions](mohle-sagitov.md)
+- [Möhle–Sagitov conditions for a Kingman genealogy limit](mohle-sagitov.md)
 - [The ratio of the k-th power to the k-th falling factorial tends to 1](tendsto-pow-div-desc-factorial.md)
 - [Triple and double mergers are negligible under Möhle–Sagitov](tendsto-multiple.md)
 

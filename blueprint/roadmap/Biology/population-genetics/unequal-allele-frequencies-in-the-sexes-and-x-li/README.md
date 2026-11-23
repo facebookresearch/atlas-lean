@@ -12,7 +12,7 @@
 - [Hardy–Weinberg proportions persist after the second generation](offspring-offspring-offspring.md)
 - [Biallelic offspring allele frequency is the average of the sexes](gamete-offspring-true-to-real.md)
 - [First-generation heterozygote excess from the parental genotype laws](offspring-heterozygote-excess.md)
-- [First-generation excess is positive exactly when the sexes differ](offspring-heterozygote-excess-pos-iff.md)
+- [Offspring heterozygote excess iff parental allele frequencies differ](offspring-heterozygote-excess-pos-iff.md)
 - [One generation of X-linked transmission](step.md)
 - [Weighted mean allele frequency at an X-linked locus](pbar.md)
 - [The weighted mean frequency is invariant under X-linked transmission](pbar-step.md)

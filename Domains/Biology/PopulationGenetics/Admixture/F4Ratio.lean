@@ -70,7 +70,7 @@ theorem ratio_eq_mul_div_of_eq_mul {α fX fY fB : ℝ} (hX : fX = α * fY) (hB :
   rw [hX]
   ring
 
-/-- Exactly when the f4-ratio estimator is unbiased: with `fX = α * fY` and a
+/-- When the population f4 ratio recovers `α`: with `fX = α * fY` and a
 nonzero denominator `fB`, the ratio `fX / fB` equals `α` if and only if `α = 0`
 or the f4-equality condition `fY = fB`
 (`f4(A, O; Y, C) = f4(A, O; B, C)`) required by `f4_ratio` holds. For
@@ -167,8 +167,9 @@ theorem DriftModel.f4_ratio_eq_two_mul_of_split_reference {Ω P : Type*}
 variable {Ω P E : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} [Fintype E]
 
 /-- The difference of the two f4 statistics in the sister condition of
-`DriftModel.f4_ratio` is the weighted overlap of the `A`–`O` path with the
-`Y`–`B` difference: `f4(A,O;Y,C) - f4(A,O;B,C)` equals
+`DriftModel.f4_ratio` is the length-weighted inner product of the `A`–`O` and
+`Y`–`B` weight contrasts (on a tree with binary weights, supported on the two
+paths): `f4(A,O;Y,C) - f4(A,O;B,C)` equals
 `∑ e, (w A e - w O e) * (w Y e - w B e) * len e`. The reference population `C`
 cancels. -/
 theorem DriftModel.f4_sub_f4_eq_sum (M : DriftModel μ E P) (A O Y B C : P) :
@@ -193,8 +194,9 @@ theorem DriftModel.f4_sister_iff_f4_eq_zero (M : DriftModel μ E P) (A O Y B C :
   rw [M.f4_sister_iff_sum_eq_zero, M.f4_freq]
 
 /-- Sufficient condition for the sister equality: if every edge separating
-`Y` from `B` (every edge with `w Y e ≠ w B e`) lies off the `A`–`O` path
-(`w A e = w O e`), i.e. `(w A e - w O e) * (w Y e - w B e) = 0` for every edge,
+`Y` from `B` (every edge with `w Y e ≠ w B e`) has a zero `A`–`O` weight
+contrast (`w A e = w O e`; on a tree, it lies off the `A`–`O` path), i.e.
+`(w A e - w O e) * (w Y e - w B e) = 0` for every edge,
 then `f4(A,O;Y,C) = f4(A,O;B,C)`. Cancellation between edges can also give the
 equality, so this is not necessary. -/
 theorem DriftModel.f4_sister_of_disjoint (M : DriftModel μ E P) (A O Y B C : P)

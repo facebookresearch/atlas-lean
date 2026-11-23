@@ -1,4 +1,4 @@
-# First-generation excess is positive exactly when the sexes differ
+# Offspring heterozygote excess iff parental allele frequencies differ
 
 At a biallelic locus with alleles `A` and `a`, let `G_f` and `G_m` be the genotype laws of the
 female and male parents and `p_f`, `p_m` the frequencies of `A` among their

@@ -1,4 +1,4 @@
-# Equal total support forces the species topology
+# Under strict plurality equal support forces the species topology
 
 Let `X` be a finite nonempty set of taxa. Let `f q ρ` be real numbers, one for each set `q` of taxa
 and family `ρ` of subsets, and let `S` be an

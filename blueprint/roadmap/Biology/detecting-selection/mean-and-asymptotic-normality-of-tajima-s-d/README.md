@@ -7,8 +7,8 @@
 ## The mean of Tajima's D
 
 - [The mean of Tajima's D](integral-tajima-d-eq.md)
-- [The reciprocal denominator of Tajima's D is at most 1/√e₁](inv-sqrt-tajima-var-estimator-le.md)
-- [The reciprocal denominator of Tajima's D lies in every Lᵖ space](mem-lp-inv-sqrt-tajima-var-estimator.md)
+- [Reciprocal-denominator bound 1/√e₁ for S = 0 or S ≥ 1 and n ≥ 4](inv-sqrt-tajima-var-estimator-le.md)
+- [Reciprocal Tajima denominator in every Lᵖ if S = 0 or S ≥ 1, n ≥ 4](mem-lp-inv-sqrt-tajima-var-estimator.md)
 - [The mean of Tajima's D under the neutral model](integral-tajima-d-eq-covariance.md)
 
 ## A nonzero mean with a centred numerator
@@ -20,10 +20,10 @@
 - [Derivative of the studentizing map](has-fderiv-at-div-sqrt.md)
 - [Derivative of the studentizing map at a zero numerator](has-fderiv-at-div-sqrt-zero.md)
 - [Delta-method variance of a studentized statistic](variance-linearization-div-sqrt.md)
-- [The delta-method variance of Tajima's D is 1](variance-tajima-d-linearization-eq-one.md)
+- [Unit delta-method variance of Tajima's D under neutral-model moments](variance-tajima-d-linearization-eq-one.md)
 
 ## Asymptotic normality and non-Gaussianity at a fixed sample size
 
 - [Sufficient conditions for asymptotic normality of Tajima's D](tendsto-in-distribution-tajima-d-gaussia.md)
-- [Tajima's D has bounded range for a fixed sample size](abs-tajima-d-le.md)
-- [Tajima's D is not Gaussian for a fixed sample size](not-has-law-tajima-d-gaussian-real.md)
+- [A bound for Tajima's D when its numerator is controlled by S](abs-tajima-d-le.md)
+- [Bounded Tajima statistics exclude nondegenerate Gaussian laws](not-has-law-tajima-d-gaussian-real.md)

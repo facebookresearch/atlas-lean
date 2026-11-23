@@ -1,4 +1,4 @@
-# Remaining product moment $4/3$ for two pairs sharing a gene
+# Remaining product moment $4/3$ from three distinct lineages
 
 Let `a`, `b`, `c` be genes, `t ≤ n - 1`, and `Y` a real function on the [ranked labeled histories](../ranked-labeled-histories-of-coalescent-trees/ranked-history.md) of `n` genes that
 [depends only on the first `t` steps](depends-before.md). Write `T_h` for the indicator that `a`, `b`, `c` are in

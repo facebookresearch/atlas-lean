@@ -161,8 +161,9 @@ theorem current_prfDensity (θ σ : ℝ) {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) 
     field_simp
     ring
 
-/-- **Probability current, explicit form.** For `σ ≠ 0` the constant current `σ F - F' / 2`
-of `current_prfDensity` is `θ σ / (1 - e^{-2σ})` on `(0, 1)`. -/
+/-- **Probability current, explicit form.** For `σ ≠ 0` and every real `θ` the constant current
+`σ F - F' / 2` of `current_prfDensity` is `θ σ / (1 - e^{-2σ})` on `(0, 1)`; the intensity and
+current reading needs `θ ≥ 0`. -/
 theorem current_prfDensity_of_ne_zero (θ : ℝ) {σ : ℝ} (hσ : σ ≠ 0) {x : ℝ}
     (hx : x ∈ Ioo (0 : ℝ) 1) :
     σ * (x * (1 - x) * prfDensity θ σ x) -

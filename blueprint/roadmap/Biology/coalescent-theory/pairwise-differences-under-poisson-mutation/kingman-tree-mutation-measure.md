@@ -8,5 +8,5 @@ independent epoch lengths, `t_k` exponential with rate `C(k, 2)`, and an indepen
 random-joining [ranked labeled history](../ranked-labeled-histories-of-coalescent-trees/ranked-history.md)
 `h`; given `(t, h)`, the counts `N_b` on the
 [branches](../poisson-mutation-on-the-kingman-genealogy/kingman-branch.md) `b = (k, j)` are
-independent, `N_b` Poisson with mean `θ / 2` times the length `max(t_k, 0)` of `b`, which is
-`(θ / 2) t_k` almost surely since the epoch lengths are almost surely positive.
+independent, `N_b` Poisson with mean `θ / 2` times the length `max(t_k, 0)` of `b`; since the
+epoch lengths are almost surely positive, this Poisson mean is `(θ / 2) t_k` almost surely.

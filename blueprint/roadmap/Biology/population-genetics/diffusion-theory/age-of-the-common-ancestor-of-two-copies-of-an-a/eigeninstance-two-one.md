@@ -1,4 +1,4 @@
-# Eigen-instance of Theorem 1 for k = 2 and n = 1
+# Patterson's polynomial eigenfunction for eigenvalue 6
 
 For every real number `x`, `β(x) = x² (1 - x) (6x - 4)` satisfies
 `(1 - 6x) β(x) = x² (1 - x) β''(x) / 2`. This is the instance `k = 2`, `n = 1` of Patterson's

@@ -5,5 +5,7 @@ equations `κ_{s + t}(x, ·) = ∫ κ_t(y, ·) κ_s(x, dy)`, the Markov kernel f
 [sample paths](../construction-of-the-neutral-wright-fisher-diffus/sample-path.md) that sends `x` to
 the
 [path measure](../../../../Probability/markov-chains/markov-processes-from-transition-semigroups/path-measure.md)
-`P^κ_x` of `κ` from `x`; it is a kernel because
-[`x ↦ P^κ_x` is measurable](measurable-path-measure.md).
+`P^κ_x` of `κ` with input `x`; it is a kernel because
+[`x ↦ P^κ_x` is measurable](measurable-path-measure.md). Here `x` is the input of the kernel
+construction: the time-`0` marginal of `P^κ_x` is `κ_0(x, ·)`, which is the point mass at `x` only
+when `κ_0` is the identity kernel; the Chapman–Kolmogorov equations alone do not force this.

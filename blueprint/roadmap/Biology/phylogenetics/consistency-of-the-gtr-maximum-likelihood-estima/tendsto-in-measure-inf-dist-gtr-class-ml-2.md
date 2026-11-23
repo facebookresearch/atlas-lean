@@ -15,5 +15,6 @@ model and the
 [empirical site-pattern frequencies](../consistency-of-minimum-distance-gtr-estimators/empirical-freq.md)
 of the columns satisfies, for every `ε > 0`, `P {ω : d(est n ω, C) ≥ ε} → 0` as `n → ∞`, where
 `d(θ, C) = inf_{θ' ∈ C} d(θ, θ')`. The estimator need not be measurable: `P` of a set that is not
-measurable is its outer measure. Pairwise independence forces the total mass of `P` to be `0` or
-`1`, so this is consistency in probability unless `P` is zero.
+measurable is its outer measure. Summing the sampling equalities over the finitely many patterns
+gives `P(Ω) = ∑_a law θ₀ a = 1`, as the [pair-site law sums to one](sum-gtr-law.md), so this is
+consistency in probability.

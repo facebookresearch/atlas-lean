@@ -1,4 +1,4 @@
-# Watterson's estimator is unbiased under Poisson mutation marking
+# Watterson's estimator is unbiased under Poisson marking for n ≥ 2
 
 Let `n ≥ 2`, let `μ` be a probability measure and let `T_k` (`k ∈ ℕ`) be
 [Kingman holding times](../kingman-s-coalescent-and-watterson-s-estimator/kingman-times.md) of a

@@ -73,11 +73,10 @@ private theorem sum_two_mul_sub_Ico (n : ℕ) (hn : 2 ≤ n) :
 sum explicit; an expected count for `θ ≥ 0`): in the neutral infinite-sites model, the sum of
 `expectedSFS θ 0 n i` over the segregating classes `1 ≤ i < n` equals `θ`
 times the harmonic sum over those classes. The monomorphic class `i = n` is
-excluded, matching `expectedSFS_neutral`. The class `i = 0` is also excluded:
-there the integrand is not integrable and the model has an infinite expected
-number of ancestral-monomorphic sites; separately, Lean assigns its arbitrary
-junk value `0` to a non-integrable real integral, so that Lean value is not an
-expectation result. -/
+excluded, matching `expectedSFS_neutral`. The class `i = 0` is also excluded: for
+`θ ≠ 0` its integrand has a `θ / x` singularity and is not integrable (for `θ > 0` the model has an
+infinite expected number of ancestral-monomorphic sites), while for `θ = 0` it is identically zero;
+Lean assigns the value `0` to a non-integrable real integral, which is not an expectation result. -/
 theorem sum_expectedSFS_neutral (θ : ℝ) (n : ℕ) :
     ∑ i ∈ Finset.Ico 1 n,
         MathlibExt.Biology.PopulationGenetics.Diffusion.expectedSFS θ 0 n i

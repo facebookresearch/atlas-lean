@@ -10,5 +10,5 @@ measurable maps `Ω → σ` that are pairwise independent and identically distri
 [empirical site-pattern frequencies](../consistency-of-minimum-distance-gtr-estimators/empirical-freq.md)
 of the columns converges to `θ₀` in `P`-measure: for every `ε > 0`, `P {ω : d(est n ω, θ₀) ≥ ε} → 0`
 as `n → ∞`. The estimator need not be measurable: `P` of a set that is not measurable is its outer
-measure. Pairwise independence forces the total mass of `P` to be `0` or `1`, so this is convergence
-in probability unless `P` is zero.
+measure. Summing the sampling equalities over the finitely many patterns gives
+`P(Ω) = ∑_a law θ₀ a = 1`, so this is convergence in probability.

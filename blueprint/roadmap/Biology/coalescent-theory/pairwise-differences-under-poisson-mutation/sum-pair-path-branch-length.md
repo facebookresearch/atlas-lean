@@ -1,4 +1,4 @@
-# The path between two genes has length twice their coalescence time
+# The separating path has length twice the apart epochs' positive parts
 
 Let `h` be a [ranked labeled history](../ranked-labeled-histories-of-coalescent-trees/ranked-history.md) of `n`
 genes, `s` a [pair](../segregating-sites-and-pairwise-differences/sample-pairs.md) of two distinct sampled

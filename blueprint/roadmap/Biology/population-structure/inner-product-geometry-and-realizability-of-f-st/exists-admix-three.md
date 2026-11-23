@@ -1,7 +1,7 @@
-# Admixture fit of a 3×3 conditionally negative semidefinite matrix
+# Admixture fit of a symmetric zero-diagonal 3×3 CND matrix
 
 Let `D` be a symmetric real matrix with zero diagonal on three populations `0, 1, 2`,
-[conditionally negative semidefinite](is-cond-neg-semidef.md), with `D 0 1` at least the other two
+[conditionally negative semidefinite](is-cond-neg-semidef.md) (CND), with `D 0 1` at least the other two
 off-diagonal entries: `D 0 2 ≤ D 0 1` and `D 1 2 ≤ D 0 1`. Then there are an admixture proportion
 `0 ≤ α ≤ 1` and edge lengths `a, b, c ≥ 0` with `a + b = D 0 1` such that
 `D X Y = ∑ e, (w X e - w Y e) ^ 2 * ℓ e` for all `X, Y`, where `w` are the

@@ -50,11 +50,11 @@
 
 - [Expected site frequency spectrum under a bottleneck](integral-sfs-bottleneck.md)
 - [A bottleneck keeps the expected spectrum at most Fu's value](integral-sfs-bottleneck-le.md)
-- [A genuine bottleneck puts every spectrum entry below Fu's value](integral-sfs-bottleneck-lt.md)
+- [With θ > 0, a genuine bottleneck lowers every expected SFS entry](integral-sfs-bottleneck-lt.md)
 - [An expansion keeps the expected spectrum at least Fu's value](integral-sfs-bottleneck-ge.md)
 - [A constant population recovers Fu's spectrum](integral-sfs-bottleneck-eq.md)
 
 ## The most recent epoch and the first-coalescence time
 
-- [The most recent epoch lasts the time change of its standard duration](bottleneck-times-top.md)
+- [Bottleneck holding time at index n is the time change of T_n](bottleneck-times-top.md)
 - [Expected first-coalescence time under a bottleneck](integral-bottleneck-times-top.md)

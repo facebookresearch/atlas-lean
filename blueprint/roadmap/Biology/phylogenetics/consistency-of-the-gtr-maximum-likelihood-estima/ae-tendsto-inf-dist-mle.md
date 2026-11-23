@@ -10,6 +10,6 @@ under `P`, with `P (X 0 = a) = law θ₀ a` for every pattern `a`. Then every
 [empirical site-pattern frequencies](../consistency-of-minimum-distance-gtr-estimators/empirical-freq.md)
 of the columns satisfies `d(est n ω, E) → 0` as `n → ∞` for `P`-almost every `ω`, where
 `d(θ, E) = inf_{θ' ∈ E} d(θ, θ')`. This extends Chang's Lemma 5.1 from point identification to
-identification up to a class (Newey and McFadden, Theorem 2.5, finite-pattern case). Pairwise
-independence forces the total mass of `P` to be `0` or `1`, so `P` is a probability measure unless
-it is zero.
+identification up to a class (Newey and McFadden, Theorem 2.5, finite-pattern case). Summing the
+sampling equalities over the finitely many patterns gives `P(Ω) = ∑_a law θ₀ a = 1`, so `P` is a
+probability measure.

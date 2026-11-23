@@ -7,5 +7,6 @@ individuals `I`, SNPs `J` and a finite set `K` of ancestral populations (`Q i k 
 every frequency of the [admixture-model family](ancestry-freq.md) is square integrable. Then for
 every individual `i` and all members `X`, `Y`, `Z` of the family,
 `f4(i, X; Y, Z) = ∑ k, Q i k * f4(k, X; Y, Z)`, where `f4` is the
-[f4 statistic](../patterson-s-f-statistics/f4.md) over SNPs. The identity needs only the sums
-`∑ k, Q i k = 1`, not the positivity conditions.
+[f4 statistic](../patterson-s-f-statistics/f4.md) over SNPs. Of the parameter constraints, only the
+row sums `∑ k, Q i k = 1` are used, not the positivity conditions; square integrability is still
+assumed.

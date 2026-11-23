@@ -18,4 +18,6 @@ $\mathbb{E}_j$ averages over the members of group $k$. In words, $\bar w\, \Delt
 between-group covariance $\mathrm{Cov}_k(W_k, Z_k)$, plus the mean within-group covariance
 $\mathrm{E}_k[\mathrm{Cov}_j(w_{kj}, z_{kj})]$, plus the transmission term $\mathrm{E}[w (z' - z)]$,
 with population moments and groups weighted by size. The fitnesses may have any sign; no other
-hypothesis is needed.
+hypothesis is needed. The hypothesis $\sum w \ne 0$ makes the population nonempty, $N > 0$, but
+groups may be empty: an empty group $k$ has $q_k = 0$, and $W_k$, $Z_k$ and its within-group
+average are $0$, an average over no members being $0$.

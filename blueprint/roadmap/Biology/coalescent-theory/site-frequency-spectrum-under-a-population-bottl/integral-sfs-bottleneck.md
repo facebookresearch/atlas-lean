@@ -25,7 +25,10 @@ If `d ≥ 0` and `f > 0`, then for every `1 ≤ i ≤ n - 1`,
 with the [Griffiths–Tavaré kernel](../site-frequency-spectrum-under-variable-populatio/sfs-kernel.md)
 `g_{n,i,k} = k C(n - i - 1, k - 2) / C(n - 1, k - 1)`: the
 [variable-size expected spectrum](../site-frequency-spectrum-under-variable-populatio/variable-sfs.md)
-for the mean holding times `E[T^b_k]`. Here `ξ_i` reads as the number of sites whose derived
-allele is carried by exactly `i` of the `n` sample copies, under neutral infinite-sites mutation
-at rate `θ / 2` per lineage per unit of real time, in a population with the
-[bottleneck history](bottleneck-size.md).
+for the mean holding times `E[T^b_k]`. The statement allows every real `a` and every real `θ`,
+and the `ξ_i` need not be integer-valued: one may take `ξ_i = (θ / 2) L^b_i`. For `a ≥ 0`,
+`T^b_k` (`2 ≤ k ≤ n`) is the real duration of the epoch with `k` lineages in the genealogy of a
+sample from a population with the [bottleneck history](bottleneck-size.md); in the neutral
+infinite-sites model with `θ ≥ 0`, mutation at rate `θ / 2` per lineage per unit of real time,
+one may then take `ξ_i` to be the number of sites whose derived allele is carried by exactly `i`
+of the `n` sample copies.

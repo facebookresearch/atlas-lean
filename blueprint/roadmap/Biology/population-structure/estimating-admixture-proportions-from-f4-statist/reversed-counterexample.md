@@ -1,4 +1,4 @@
-# Example: an unadmixed target fits with its own descendant as a source
+# Example: a source built from a binary-weight target fits that target
 
 Let `β ≠ 0` and let `M` be a [drift model](../patterson-s-f-statistics/drift-model.md) on a measure
 `μ`, with eight edges and six populations, whose lineage weights `w` are the
@@ -10,8 +10,10 @@ Let `β ≠ 0` and let `M` be a [drift model](../patterson-s-f-statistics/drift-
   is the weight `1 / β` on `S₁`;
 - the [qpWave matrix](../abba-baba-test-and-f-statistic-estimators/f4-matrix.md) of the left
   populations `(S₀, T, S₁)` has rank exactly `1`;
-- the source descends from the target: `w S₁ = β w T + (1 - β) w S₀ + u`, where `u` is `1` on
-  edge `3` and `0` on the other edges (drift private to `S₁`);
+- the source is built from the target: `w S₁ = β w T + (1 - β) w S₀ + u`, where `u` is `1` on
+  edge `3` and `0` on the other edges (drift private to `S₁`); for `0 < β ≤ 1` the table is the
+  graph in which `S₁` descends from a mixture of `T` and `S₀`, while for other `β` it is only a
+  real weight table;
 - every lineage weight of `T` is `0` or `1`;
 - for no real `γ` is `w T = γ w S₁ + (1 - γ) w S₀`.
 

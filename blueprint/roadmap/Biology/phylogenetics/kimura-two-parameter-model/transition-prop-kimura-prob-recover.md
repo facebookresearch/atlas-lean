@@ -1,4 +1,4 @@
-# Recovered parameters reproduce the transition proportion
+# On the inverse domain the transition proportion is recovered
 
 `P(M, i)` and `Q(M, i)` are the [transition](transition-prop.md) and
 [transversion](transversion-prop.md) proportions in row `i` of a matrix `M`. If `1 - 2Q > 0` and

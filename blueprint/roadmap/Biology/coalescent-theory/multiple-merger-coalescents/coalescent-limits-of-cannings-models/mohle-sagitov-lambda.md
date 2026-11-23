@@ -15,7 +15,9 @@ Through the [factorial moments](merge-prob-mul-desc-factorial.md), with `ν_1` t
 `(x)_k = x (x - 1) ⋯ (x - k + 1)`, the second condition is the offspring condition
 `E[(ν_1)_k] / (N^(k-1) c_N) → ∫ x^(k-2) Λ(dx)` of Möhle–Sagitov (2001), and the third is
 equivalent to `E[(ν_1)_2 (ν_2)_2] / (N² c_N) → 0`, with `ν_2` the number of offspring of
-another fixed parent. The limits `lim q_k / c_N` are the moments of `Λ`, so `Λ` is
-[determined by the model](eq-of-mohle-sagitov-lambda.md); `k = 2` forces `Λ` to be a
-[probability measure](measure-real-univ-eq-one.md). For a measure of infinite total mass
-`∫ 1 dΛ` takes the value `0` given to non-integrable functions, so the conditions fail.
+another fixed parent. The limits `lim q_k / c_N`, for integers `k ≥ 2`, are the moments
+`∫ x^(k-2) Λ(dx)` of `Λ`, so `Λ` is [determined by the model](eq-of-mohle-sagitov-lambda.md);
+`k = 2` forces `Λ` to be a [probability measure](measure-real-univ-eq-one.md). For a measure of
+infinite total mass `∫ 1 dΛ` takes the value `0` given to non-integrable functions, so the
+conditions fail. The ratios are read as `0` at an `N` with `c_N = 0` (for instance `N ≤ 1`), by
+the convention `x / 0 = 0`; the conditions concern only large `N`, where `c_N > 0`.

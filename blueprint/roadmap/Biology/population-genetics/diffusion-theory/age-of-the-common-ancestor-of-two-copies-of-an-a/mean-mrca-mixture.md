@@ -1,4 +1,4 @@
-# Patterson's Equation 17 rearranged as a mixture
+# The mixture of new- and old-allele MRCA ages equals y
 
 For `0 < y < 1`, `(1 - y) M₁(y) + y M₂(y) = y`, where [`M₁`](mean-mrca-new.md) and
 [`M₂`](mean-mrca-old.md) are Patterson's functions for a new and an old allele. Since `M₂` is

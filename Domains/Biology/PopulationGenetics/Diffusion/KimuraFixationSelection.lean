@@ -252,8 +252,9 @@ private theorem hasDerivAt_kimuraFixation_sigma_zero_aux {x : ℝ} (_hx : x ∈ 
     rw [hceq]
     exact htmp (by simpa using hc0)
 
-/-- Allele-label symmetry of Kimura's formula: relabeling the two alleles sends frequency `x`
-to `1 - x` and selection `σ` to `-σ`; formula level only. -/
+/-- Allele-label symmetry of Kimura's formula, for all real `σ` and `x`: relabeling the two
+alleles sends frequency `x` to `1 - x` and selection `σ` to `-σ`; formula level only, a statement
+about fixation probabilities for `x ∈ [0, 1]`. -/
 theorem kimuraFixation_neg (σ x : ℝ) :
     kimuraFixation σ x = 1 - kimuraFixation (-σ) (1 - x) := by
   by_cases h : σ = 0

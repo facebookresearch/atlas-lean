@@ -90,17 +90,19 @@ noncomputable def selectionMutationPartition (α θ₁ θ₂ : ℝ) : ℝ :=
   ∫ x in (0 : ℝ)..1, selectionMutationSpeedDensity α θ₁ θ₂ x
 
 /-- Stationary mean under selection-mutation balance: the normalized first
-moment of the speed density over `(0, 1)`. With `x / 0 = 0` the ratio is `0` when the
-normalizer vanishes (for instance for `θ₁ ≤ 0` or `θ₂ ≤ 0`); that the normalizer is positive
-for `0 < θ₁`, `0 < θ₂` is proved separately. -/
+moment of the speed density over `(0, 1)`. The integral of a non-integrable function is `0`
+(which makes the normalizer vanish for `θ₁ ≤ 0` or `θ₂ ≤ 0`), and with `x / 0 = 0` the ratio is `0`
+when the normalizer vanishes; that the normalizer is positive for `0 < θ₁`, `0 < θ₂` is proved
+separately. -/
 noncomputable def selectionMutationMean (α θ₁ θ₂ : ℝ) : ℝ :=
   (∫ x in (0 : ℝ)..1, x * selectionMutationSpeedDensity α θ₁ θ₂ x) /
     selectionMutationPartition α θ₁ θ₂
 
 /-- Stationary variance under selection-mutation balance: the normalized
 centered second moment of the speed density over `(0, 1)`, centered at
-`selectionMutationMean`. With `x / 0 = 0` it is `0` when the normalizer vanishes
-(for instance for `θ₁ ≤ 0` or `θ₂ ≤ 0`). The intended domain is `0 < θ₁`, `0 < θ₂`. -/
+`selectionMutationMean`. The integral of a non-integrable function is `0` (which makes the
+normalizer vanish for `θ₁ ≤ 0` or `θ₂ ≤ 0`), and with `x / 0 = 0` the variance is `0` when the
+normalizer vanishes. The intended domain is `0 < θ₁`, `0 < θ₂`. -/
 noncomputable def selectionMutationVariance (α θ₁ θ₂ : ℝ) : ℝ :=
   (∫ x in (0 : ℝ)..1,
       (x - selectionMutationMean α θ₁ θ₂) ^ 2 *

@@ -180,7 +180,8 @@ private theorem kimura_ratio_eq (u : ℝ → ℝ → ℝ)
 `u σ x = (1 - e^{-2σx}) / (1 - e^{-2σ})` for `σ ≠ 0` and `u 0 x = x`, and let `K` be its slope
 constant `K σ = 2σ / (1 - e^{-2σ})` for `σ ≠ 0` and `K 0 = 1`. For every fixed `α`, the scaled
 fixation probability of a single new copy among `M` gene copies converges:
-`M * u α (1 / M) → K α` as `M → ∞`. -/
+`M * u α (1 / M) → K α` as `M → ∞`. The hypotheses force `u = kimuraFixation` and
+`K = kimuraSlope`, so this is `M * kimuraFixation α (1 / M) → kimuraSlope α`. -/
 theorem tendsto_natCast_mul_one_div_of_kimuraForm (u : ℝ → ℝ → ℝ) (K : ℝ → ℝ)
     (hu : ∀ σ x, σ ≠ 0 → u σ x = (1 - Real.exp (-2 * σ * x)) / (1 - Real.exp (-2 * σ)))
     (hu0 : ∀ x, u 0 x = x)
@@ -509,8 +510,9 @@ theorem tendsto_one_sub_exp_of_kimuraForm (u : ℝ → ℝ → ℝ)
 
 /-! ### Atlas's Kimura formula -/
 
-/-- For `σ ≠ 0`, `kimuraFixation σ x = (1 - e^{-2σx}) / (1 - e^{-2σ})`: Atlas's
-`kimuraFixation` has the closed form the core lemmas assume (definition unfolding). -/
+/-- For `σ ≠ 0` and every real `x`, `kimuraFixation σ x = (1 - e^{-2σx}) / (1 - e^{-2σ})`: Atlas's
+`kimuraFixation` has the closed form the core lemmas assume (definition unfolding). It is a fixation
+probability only for `x ∈ [0, 1]`. -/
 theorem kimuraFixation_eq_of_ne_zero (σ x : ℝ) (hσ : σ ≠ 0) :
     kimuraFixation σ x = (1 - Real.exp (-2 * σ * x)) / (1 - Real.exp (-2 * σ)) := by
   simp [kimuraFixation, hσ]

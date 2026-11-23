@@ -146,8 +146,9 @@ theorem integral_diffusionGenerator_speedMeasure {b a f : ℝ → ℝ} {L0 L1 : 
   rw [MeasureTheory.integral_congr_ae aeEq]
   exact hFTC
 
-/-- **Weak stationarity against the speed measure (zero-flux case).** When both boundary
-fluxes vanish, `∫ L f ∂m = 0`: the case `L0 = L1 = 0` of
+/-- **Weak stationarity against the speed measure (zero-flux case).** For a regular diffusion, `f`
+twice continuously differentiable on `[0, 1]` and `L f` integrable against the speed measure, when
+both boundary fluxes vanish, `∫ L f ∂m = 0`: the case `L0 = L1 = 0` of
 `integral_diffusionGenerator_speedMeasure`. The Beta-mutation weak stationarity
 `integral_mutationGenerator_betaMeasure` is a parallel singular-endpoint result that this
 does not subsume. As above, this is analytic stationarity only, with no process-level,

@@ -1,4 +1,4 @@
-# Star tree and admixture model have equal f3
+# Star tree with matching lengths and admixture model have equal f3
 
 Let `α, a, b, c` be real numbers, `M` a [drift model](../patterson-s-f-statistics/drift-model.md) on
 three populations and three edges with the [star-tree weights](star-weight.md) and the

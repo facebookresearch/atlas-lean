@@ -12,7 +12,7 @@
 ## The log-det distance as a log-determinant
 
 - [Trace of the logarithm of a positive definite matrix](trace-cfc-log-eq-log-det.md)
-- [The log-det distance is minus a log-determinant](log-det-distance-eq-neg-log-det.md)
+- [Positive definite normalized divergence gives minus log determinant](log-det-distance-eq-neg-log-det.md)
 - [Paralinear form of the log-det distance](log-det-distance-eq-log-det.md)
 
 ## Exact recovery at the true divergence matrix
@@ -24,14 +24,14 @@
 - [Exact recovery of the log-det distance](log-det-distance-gtr.md)
 - [Exact recovery of the GTR rate matrix up to scale](rate-estimate-gtr.md)
 - [Recovery of the exchangeabilities up to scale](exchangeability-gtr.md)
-- [The GTR rate matrix has negative trace](trace-gtr-rate-neg.md)
+- [Positive off-diagonal rates on two or more states give negative trace](trace-gtr-rate-neg.md)
 
 ## Continuity of the estimator at the true divergence matrix
 
 - [Continuity of the logarithm of the normalized divergence matrix](continuous-at-cfc-log-norm-divergence.md)
 - [Continuity of the log-det rate estimate](continuous-at-rate-estimate.md)
 - [The normalized divergence at the truth has positive eigenvalues](spectrum-norm-divergence-gtr.md)
-- [The log-det distance at the true divergence matrix is nonzero](log-det-distance-gtr-ne-zero.md)
+- [Nonzero time and strictly positive rates give nonzero log-det distance](log-det-distance-gtr-ne-zero.md)
 - [The log-det rate estimate is continuous at the true divergence matrix](continuous-at-rate-estimate-gtr.md)
 - [The log-det distance is continuous at the true divergence matrix](continuous-at-log-det-distance-gtr.md)
 - [Log-det recovery is consistent for any convergent divergence estimate](tendsto-rate-estimate-gtr.md)

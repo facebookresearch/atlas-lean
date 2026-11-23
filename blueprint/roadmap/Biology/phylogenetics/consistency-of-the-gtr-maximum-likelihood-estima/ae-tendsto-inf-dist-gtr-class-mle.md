@@ -15,5 +15,6 @@ model and the
 [empirical site-pattern frequencies](../consistency-of-minimum-distance-gtr-estimators/empirical-freq.md)
 of the columns satisfies `d(est n ω, C) → 0` as `n → ∞` for `P`-almost every `ω`, where
 `d(θ, C) = inf_{θ' ∈ C} d(θ, θ')`. The pair-site law is then positive and normalized, and every
-parameter with the law of `θ₀` lies in `C`. Pairwise independence forces the total mass of `P` to be
-`0` or `1`, so `P` is a probability measure unless it is zero.
+parameter with the law of `θ₀` lies in `C`. Summing the sampling equalities over the finitely many
+patterns gives `P(Ω) = ∑_a law θ₀ a = 1`, as the [pair-site law sums to one](sum-gtr-law.md), so `P`
+is a probability measure.

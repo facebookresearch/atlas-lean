@@ -488,7 +488,7 @@ theorem prop_eq_one_sub_of_parents_eq_pair {X A B : V} (hX : G.parents X = {A, B
 variable [Fintype V] {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω}
 
 /-- The drift model of an admixture graph: the populations are the nodes, the root frequency is
-`root`, the edge increments are `incr` (square integrable and pairwise uncorrelated), the drift
+`root`, the edge increments are `incr` (square integrable and pairwise orthogonal in L²), the drift
 length of an edge is the second moment of its increment, and the weights are the lineage
 weights of the graph. -/
 noncomputable def driftModel (root : Ω → ℝ) (incr : G.Edge → Ω → ℝ) (hroot : MemLp root 2 μ)

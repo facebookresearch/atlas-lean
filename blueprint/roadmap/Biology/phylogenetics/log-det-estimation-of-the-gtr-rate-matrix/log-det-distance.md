@@ -6,5 +6,6 @@ Let `ι` be a finite set of states. For a real `ι × ι` matrix `F` with
 `N(F)`, counted with multiplicity, with the conventions `log 0 = 0` and `log x = log |x|` for
 `x < 0`. When `N(F)` is positive definite it is `-log det N(F)`
 ([log-determinant form](log-det-distance-eq-neg-log-det.md)); if moreover every base-frequency
-estimate is positive, it is the paralinear or LogDet distance of the symmetrized divergence matrix
-([paralinear form](log-det-distance-eq-log-det.md)).
+estimate is positive, it is the
+[LogDet (paralinear) distance](../pulley-principle-logdet-distances-and-felsenstei/paralinear.md) of
+the symmetrized divergence matrix ([paralinear form](log-det-distance-eq-log-det.md)).

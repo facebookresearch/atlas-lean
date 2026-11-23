@@ -5,3 +5,7 @@ density $F(y) = y(1 - y)\,\varphi_{\theta,\sigma}(y)$ of the
 [Poisson random field density](prf-density.md),
 
 $$\sigma F(x) - \frac{1}{2} F'(x) = \frac{\theta \sigma}{1 - e^{-2\sigma}}.$$
+
+The identity holds for every real $\theta$; reading $\varphi_{\theta,\sigma}$ as the intensity of a
+Poisson random field, and the left side as its probability current, needs $\theta \ge 0$, since for
+$\theta < 0$ the density $\varphi_{\theta,\sigma}$ is negative.

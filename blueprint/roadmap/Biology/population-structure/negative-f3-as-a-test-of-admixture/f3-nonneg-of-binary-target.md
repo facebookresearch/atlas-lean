@@ -1,4 +1,4 @@
-# A target with binary weights has nonnegative f3
+# Binary targets have nonnegative f3 for unit-interval source weights
 
 In a [drift model](../patterson-s-f-statistics/drift-model.md) with lineage weights `w`, let
 `C, A, B` be populations such that every weight `w C e` of the target is `0` or `1` and the source

@@ -6,6 +6,6 @@ For a [ranked labeled history](../ranked-labeled-histories-of-coalescent-trees/r
 
 where `M_h` is the [conditional mean of the remaining coalescence time](future-mean.md) and
 `D_h` its [variance part](future-diag.md); it is `0` for `t ≥ n - 1`. In the [Kingman genealogy](kingman-genealogy-measure.md),
-with independent exponential epochs, the epoch with `k` lineages having rate `C(k, 2)`, it is the
-mean, given `h`, of the product of the parts of the coalescence times of `s` and `s'` after `t`
-events.
+where given the history the epoch lengths are independent and exponential, the one with `k`
+lineages of rate `C(k, 2)`, it is the mean, given `h`, of the product of the parts of the
+coalescence times of `s` and `s'` after `t` events.

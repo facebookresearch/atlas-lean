@@ -46,7 +46,7 @@ namespace MathlibExt.Biology.PopulationGenetics.FStatistics.DriftModel
 /-- Every weight matrix `w` and every nonnegative length vector `len` are realized by a drift
 model: the counting measure on the edge set (not normalized), with root frequency `1 / 2` and
 increment `√(len e)` on the atom `e` (so the increments have disjoint supports, hence are
-uncorrelated). -/
+orthogonal in L²: the integral of the product of two of them is `0`). -/
 noncomputable def ofLen {P E : Type*} [Fintype E] [DecidableEq E] [MeasurableSpace E]
     [DiscreteMeasurableSpace E] (w : P → E → ℝ) (len : E → ℝ) (hlen : ∀ e, 0 ≤ len e) :
     DriftModel (Measure.count : Measure E) E P where

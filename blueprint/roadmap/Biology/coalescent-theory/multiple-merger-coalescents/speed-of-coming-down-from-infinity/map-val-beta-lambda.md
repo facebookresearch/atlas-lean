@@ -1,4 +1,4 @@
-# The Beta-coalescent measure pushed to the line is the Beta law
+# Pushing the clamped Beta measure back to the real line
 
 For every real `α`, pushing the [Beta-coalescent measure](../merger-rates-and-beta-coalescents/beta-lambda.md)
 on `[0, 1]` forward to `ℝ` by the inclusion `[0, 1] ⊆ ℝ` gives back the measure on `ℝ` with

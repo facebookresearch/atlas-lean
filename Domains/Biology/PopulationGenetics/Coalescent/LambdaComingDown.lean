@@ -77,8 +77,9 @@ empty and `D_b = 0`. -/
 def driftKernel (b : ℕ) (x : ℝ) : ℝ :=
   ∑ k ∈ Icc 2 b, ((k : ℝ) - 1) * (b.choose k : ℝ) * (x ^ (k - 2) * (1 - x) ^ (b - k))
 
-/-- The kernel in closed form: `x² D_b(x) = b x - 1 + (1 - x) ^ b` for every real `x` (the mean of
-`Binomial(b, x)` minus one, corrected for `k = 0`). -/
+/-- The kernel in closed form: `x² D_b(x) = b x - 1 + (1 - x) ^ b` for every real `x`. For
+`0 ≤ x ≤ 1` the right side is the mean of `k - 1` for `k ~ Binomial(b, x)`, with the `k = 0` term
+removed. -/
 theorem sq_mul_driftKernel (x : ℝ) (b : ℕ) :
     x ^ 2 * driftKernel b x = b * x - 1 + (1 - x) ^ b := by
   rw [driftKernel]
@@ -183,7 +184,8 @@ theorem blockDrift_dirac_zero (b : ℕ) :
     simp [hb]
     norm_num
 
-/-- **Bolthausen–Sznitman** (`Λ` uniform on `[0, 1]`): `γ_b = b ∑_{k=2}^b 1 / k`. -/
+/-- **Bolthausen–Sznitman** (`Λ` uniform on `[0, 1]`): `γ_b = b ∑_{k=2}^b 1 / k`. For `b < 2`
+the sum is empty and both sides are `0`. -/
 theorem blockDrift_volume (b : ℕ) :
     blockDrift volume b = b * ∑ k ∈ Icc 2 b, (1 / (k : ℝ)) := by
   rw [blockDrift, mul_sum]

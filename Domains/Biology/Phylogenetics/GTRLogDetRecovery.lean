@@ -34,9 +34,10 @@ consistent when `F` is estimated by the empirical pair-site frequencies.
 For any real matrix `F` (in practice the empirical divergence matrix of two sequences):
 
 * `baseFreq F i = (∑ j, F i j + ∑ j, F j i) / 2`, the average of the two marginals;
-* `normDivergence F = D⁻¹ Fₛ D⁻¹`, where `Fₛ = (F + Fᵀ) / 2` and `D = diagonal (√ baseFreq F)`;
-  it is symmetric for every `F`;
-* `logGenerator F = D⁻¹ log (normDivergence F) D`, with `log` the real logarithm of the
+* `normDivergence F = E Fₛ E`, where `Fₛ = (F + Fᵀ) / 2`, `D = diagonal (√ baseFreq F)` and
+  `E` is `D` with each diagonal entry inverted (`0⁻¹ = 0`), so `E = D⁻¹` when every base
+  frequency is positive; it is symmetric for every `F`;
+* `logGenerator F = E log (normDivergence F) D`, with `log` the real logarithm of the
   continuous functional calculus of symmetric matrices;
 * `logDetDistance F = -tr log (normDivergence F)`, the **log-det distance**: when
   `normDivergence F` is positive definite it equals `-log det (normDivergence F)`
@@ -45,8 +46,8 @@ For any real matrix `F` (in practice the empirical divergence matrix of two sequ
   (`logDetDistance_eq_logDet`);
 * `rateEstimate F = (logDetDistance F)⁻¹ • logGenerator F`, the rate matrix normalized to
   `tr = -1` when every base-frequency estimate is positive and `logDetDistance F ≠ 0`
-  (`trace_rateEstimate`). Lean totalizes the inverse, so at `logDetDistance F = 0` the estimate
-  is the zero matrix, of trace `0`.
+  (`trace_rateEstimate`). With the convention `0⁻¹ = 0`, at `logDetDistance F = 0` the
+  estimate is the zero matrix, of trace `0`.
 
 ## Main results
 
@@ -123,14 +124,18 @@ marginals. -/
 noncomputable def baseFreq (F : Matrix ι ι ℝ) (i : ι) : ℝ :=
   (∑ j, F i j + ∑ j, F j i) / 2
 
-/-- The **normalized divergence matrix** `D⁻¹ Fₛ D⁻¹`, with `Fₛ = (F + Fᵀ) / 2` and
-`D = diagonal (√ baseFreq F)`. It is symmetric for every `F`. With `√x = 0` for `x ≤ 0` and
+/-- The **normalized divergence matrix** `E Fₛ E`, with `Fₛ = (F + Fᵀ) / 2` and
+`E = diagonal (fun i => (√ (baseFreq F i))⁻¹)`, the reciprocals taken entrywise (`0⁻¹ = 0`); `E`
+is the inverse of `D = diagonal (√ baseFreq F)` only when every `baseFreq F i > 0`. It is
+symmetric for every `F`. With `√x = 0` for `x ≤ 0` and
 `x / 0 = 0`, the entries of row and column `i` are `0` when `baseFreq F i ≤ 0`; the intended
 domain is `baseFreq F i > 0` for every `i`. -/
 noncomputable def normDivergence (F : Matrix ι ι ℝ) : Matrix ι ι ℝ :=
   Matrix.of fun i j => (F i j + F j i) / 2 / (√(baseFreq F i) * √(baseFreq F j))
 
-/-- The **log-det generator** `D⁻¹ log (normDivergence F) D`, where `log` is the real logarithm
+/-- The **log-det generator** `E log (normDivergence F) D`, with `D = diagonal (√ baseFreq F)` and
+`E` its entrywise reciprocal (`0⁻¹ = 0`, so `E = D⁻¹` only when every `baseFreq F i > 0`), where
+`log` is the real logarithm
 of the continuous functional calculus, which applies `log` to the eigenvalues with `log 0 = 0`
 and `log x = log |x|`; the entry `(i, j)` is `0` when `baseFreq F i ≤ 0` or `baseFreq F j ≤ 0`.
 At the true divergence matrix it equals `t • Q`. -/
@@ -144,10 +149,12 @@ it is `-∑ log λ` over the eigenvalues `λ` of `normDivergence F`, with `log 0
 noncomputable def logDetDistance (F : Matrix ι ι ℝ) : ℝ :=
   -(cfc Real.log (normDivergence F)).trace
 
-/-- The **log-det rate estimate**: the log-det generator divided by the log-det distance. Its
-trace is `-1` when every base-frequency estimate is positive and the log-det distance is nonzero
-(`trace_rateEstimate`); when `logDetDistance F = 0`, Lean's `0⁻¹ = 0` makes it the zero
-matrix. -/
+/-- The **log-det rate estimate**: the log-det generator divided by the log-det distance, for every
+real `F`. Its trace is `-1` when every base-frequency estimate is positive and the log-det distance
+is nonzero (`trace_rateEstimate`); when `logDetDistance F = 0`, the convention `0⁻¹ = 0` makes it
+the zero matrix. The intended estimation domain is positive base frequencies, a positive definite
+normalized divergence matrix and a nonzero log-det distance; even there the estimate need not be a
+rate matrix. -/
 noncomputable def rateEstimate (F : Matrix ι ι ℝ) : Matrix ι ι ℝ :=
   (logDetDistance F)⁻¹ • logGenerator F
 
@@ -161,7 +168,7 @@ theorem isSelfAdjoint_normDivergence (F : Matrix ι ι ℝ) : IsSelfAdjoint (nor
 /-- **Trace normalization of the rate estimate**: if every base-frequency estimate is positive
 and the log-det distance is nonzero, `rateEstimate F` has trace `-1`. Without the second
 hypothesis the claim fails: at `logDetDistance F = 0` the estimate is the zero matrix
-(Lean's `0⁻¹ = 0`). -/
+(by the convention `0⁻¹ = 0`). -/
 theorem trace_rateEstimate {F : Matrix ι ι ℝ} (hb : ∀ i, 0 < baseFreq F i)
     (hd : logDetDistance F ≠ 0) : (rateEstimate F).trace = -1 := by
   have hgen : (logGenerator F).trace = -logDetDistance F := by
@@ -296,8 +303,8 @@ private theorem isSelfAdjoint_conj (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i
   rw [IsSelfAdjoint, star_eq_conjTranspose, conjTranspose_eq_transpose_of_trivial]
   exact h
 
-/-- The real logarithm of the normalized divergence matrix at the true divergence matrix
-(`π > 0`, `s` symmetric and `≥ 0` off the diagonal). -/
+/-- The real logarithm of the normalized divergence matrix at the true divergence matrix (`π > 0`,
+`s` symmetric and `≥ 0` off the diagonal) is `D (t • Q) D⁻¹` with `D = diagonal (√ π)`. -/
 theorem cfc_log_normDivergence_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i j = s j i)
     (hs : ∀ i j, i ≠ j → 0 ≤ s i j) (t : ℝ) :
     cfc Real.log (normDivergence (diagonal π * ctmcTransition (gtrRate π s) t)) =
@@ -322,8 +329,8 @@ theorem logGenerator_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i j = s j i
 
 /-- **Exact recovery of the log-det distance**: at the true divergence matrix
 (`π > 0`, `s` symmetric and `≥ 0` off the diagonal) it is `-t * tr Q`, the trace-normalized branch
-length. This is not the expected number of substitutions per site, which under the stationary
-frequencies is `-t * ∑ i, π i * Q i i`. -/
+length. For `t ≥ 0` and a stationary probability vector `π`, the expected number of
+substitutions per site is `-t * ∑ i, π i * Q i i`, which in general differs from it. -/
 theorem logDetDistance_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i j = s j i)
     (hs : ∀ i j, i ≠ j → 0 ≤ s i j) (t : ℝ) :
     logDetDistance (diagonal π * ctmcTransition (gtrRate π s) t) = -t * (gtrRate π s).trace := by
@@ -390,8 +397,10 @@ theorem continuousAt_normDivergence {F₀ : Matrix ι ι ℝ} (hb : ∀ i, 0 < b
   · exact ((continuous_baseFreq i).sqrt.mul (continuous_baseFreq j).sqrt).continuousAt
   · exact mul_ne_zero (Real.sqrt_pos.2 (hb i)).ne' (Real.sqrt_pos.2 (hb j)).ne'
 
-/-- The real logarithm of the normalized divergence matrix is continuous at every `F₀` with
-positive base frequencies whose normalized divergence matrix has positive spectrum. -/
+/-- The real logarithm of the normalized divergence matrix is continuous at every `F₀` with positive
+base frequencies whose normalized divergence matrix has positive spectrum. The logarithm map applies
+`log` to the eigenvalues of a symmetric matrix, with the conventions `log 0 = 0` and
+`log x = log |x|` for `x < 0`. -/
 theorem continuousAt_cfc_log_normDivergence {F₀ : Matrix ι ι ℝ} (hb : ∀ i, 0 < baseFreq F₀ i)
     (hspec : spectrum ℝ (normDivergence F₀) ⊆ Set.Ioi 0) :
     ContinuousAt (fun F => cfc Real.log (normDivergence F)) F₀ := by

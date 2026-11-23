@@ -13,5 +13,6 @@ epoch (`n` lineages) has mean
 the [expected time to the first coalescence](../site-frequency-spectrum-under-variable-populatio/first-coal-mean.md)
 among `n` lineages for the [bottleneck history](bottleneck-size.md) `η`, with its
 [cumulative coalescence intensity](cum-rate-bottleneck-size.md) `R_η` (`μ` is a probability
-measure, since `n ≥ 2`). This follows from `E[X] = ∫_0^∞ P(X > t) dt` for `X = G(T_n) ≥ 0` and
+measure, since `n ≥ 2`). This follows from `E[X] = ∫_0^∞ P(X > t) dt` for `X = T^b_n = G(T_n)`,
+which is nonnegative `μ`-almost everywhere, and from
 `P(G(T_n) > t) = P(T_n > R_η(t)) = exp(-C(n, 2) R_η(t))` for `t ≥ 0`.

@@ -5,7 +5,7 @@
 - [Variance of the segregation deviation at independent loci](variance-segregation-deviation.md)
 - [Berry–Esseen bound for the segregation deviation](abs-segregation-cdf-sub-le.md)
 - [The Mendelian offspring law puts no mass outside 0 ≤ x ≤ 2](mendel-law-compl-icc.md)
-- [The Mendelian offspring law is a probability measure](is-probability-measure-mendel-law.md)
+- [Diploid parental counts give a probability measure](is-probability-measure-mendel-law.md)
 - [Integrals against the Mendelian offspring law](integral-mendel-law.md)
 - [Per-locus segregation variance](variance-mendel-law.md)
 - [Berry–Esseen bound for Mendelian draws](abs-mendelian-segregation-cdf-sub-le.md)

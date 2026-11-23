@@ -49,10 +49,12 @@ namespace MathlibExt.Biology.PopulationGenetics.Classical.InfinitesimalLimit
 
 variable {Ω : Type*} [MeasurableSpace Ω]
 
-/-- The offspring **segregation deviation** at `M` loci, `R_M = ∑_{l < M} a_l (X_l - E X_l)`:
-`X l` is the offspring's allele count at locus `l` (a Mendelian draw given the parents) and
-`a l` is the additive effect of the locus. Here `E X_l = ∫ X_l dP` is the mean when `P` is a
-probability measure, and `0` when `X l` is not integrable; for `M = 0` the sum is empty and
+/-- The offspring **segregation deviation** at `M` loci, `R_M = ∑_{l < M} a_l (X_l - E X_l)`,
+for a measure `P`, reals `a l` and real functions `X l`. In the intended use `X l` is the
+offspring's allele count at locus `l` (a Mendelian draw given the parents) and `a l` is the
+additive effect of the locus; the definition assumes no range, law, probability measure or
+integrability. Here `E X_l = ∫ X_l dP`, the mean when `P` is a probability measure and `X l` is
+integrable, and `0` by convention when `X l` is not integrable; for `M = 0` the sum is empty and
 `R_0 = 0`. -/
 noncomputable def segregationDeviation (P : Measure Ω) (M : ℕ) (a : ℕ → ℝ) (X : ℕ → Ω → ℝ) :
     Ω → ℝ :=
@@ -221,7 +223,9 @@ theorem abs_segregation_cdf_sub_le {P : Measure Ω} [IsProbabilityMeasure P] {M 
   calc _ ≤ 42 * γ := hmain
     _ = 336 * B ^ 3 / (σ ^ 3 * √M) := by rw [hγ]; ring
 
-/-- A Mendelian draw lies in `{0, 1, 2} ⊆ [0, 2]`: the law gives no mass outside `[0, 2]`. -/
+/-- For all natural `g₁, g₂` the measure `mendelLaw g₁ g₂` is carried by `{0, 1, 2}`, so it gives
+no mass outside `[0, 2]`; for `g₁, g₂ ≤ 2`, where it is a probability measure, a Mendelian draw
+lies in `{0, 1, 2} ⊆ [0, 2]`. -/
 theorem mendelLaw_compl_Icc (g₁ g₂ : ℕ) : mendelLaw g₁ g₂ (Set.Icc (0 : ℝ) 2)ᶜ = 0 := by
   simp [mendelLaw, Measure.dirac_apply' _ measurableSet_Icc.compl, Set.indicator_of_notMem]
 

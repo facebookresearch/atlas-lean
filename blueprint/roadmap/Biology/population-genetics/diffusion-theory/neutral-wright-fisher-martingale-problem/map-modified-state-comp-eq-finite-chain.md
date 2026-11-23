@@ -9,5 +9,6 @@ started at `x`, is the
 [finite-dimensional law](../../../../Probability/markov-chains/markov-processes-from-transition-semigroups/finite-chain-law.md)
 of the
 [neutral Wright–Fisher kernels](../construction-of-the-neutral-wright-fisher-diffus/neutral-kernel.md)
-`K` started at `x` at time `0`: the law of the Markov chain started at `x` with transitions
-`K_{τ_0}`, `K_{τ_1 - τ_0}`, …, `K_{τ_{m-1} - τ_{m-2}}`.
+`K` started at `x` at time `0`: for `m > 0`, the law of the Markov chain started at `x` with
+transitions `K_{τ_0}`, `K_{τ_1 - τ_0}`, …, `K_{τ_{m-1} - τ_{m-2}}`; for `m = 0` it is the point mass
+on the empty tuple.

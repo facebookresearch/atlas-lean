@@ -7,5 +7,6 @@ and its covariance matrix is the [drift covariance matrix](drift-cov.md) `Σ = W
 probability measure, read as a law of the vector of population allele frequencies. As `Σ` is
 [positive semidefinite](pos-semidef-drift-cov.md) for all weights and lengths, it is a genuine
 Gaussian law, degenerate when `Σ` is singular: with all lengths `0` it is the Dirac mass at `m 1`.
-Unlike genuine allele frequencies, its coordinates are not confined to `[0, 1]`
-([negative frequencies](gaussian-surrogate-coord-neg-pos.md)).
+Unlike genuine allele frequencies, its coordinates need not be confined to `[0, 1]`: a coordinate
+of positive variance is [negative with positive probability](gaussian-surrogate-coord-neg-pos.md),
+while a coordinate of zero variance [equals `m` almost surely](gaussian-surrogate-coord-ae-eq.md).

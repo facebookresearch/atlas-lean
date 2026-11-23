@@ -8,5 +8,9 @@ does not
 [arise from `ξ` by merging two blocks](../../partition-valued-kingman-coalescent/is-merge.md), the
 [probability that one generation takes `ξ` to `η`](step-prob.md) is at most `B (B - 1) (p_3 + D)`,
 where `p_3 = N μ_3 / (N)_3` is the [triple-coalescence probability](triple-coalescence.md) and
-`D = E[X²] / (N)_4` the [double-merger bound](double-bound.md). Such a change needs at least two
-pairs of lineages that pick common parents.
+`D = E[X²] / (N)_4` the [double-merger bound](double-bound.md), with `μ_3` the third
+[factorial moment](factorial-moment.md) of the offspring numbers, `X` the
+[pair count](pair-count.md) of the parent map, `(N)_3 = N (N - 1) (N - 2)` and
+`(N)_4 = N (N - 1) (N - 2) (N - 3)`. Such a change needs at least two pairs of lineages that pick
+common parents. Here `p_3 = 0` for `N < 3` and `D = 0` for `N < 4`, since `(N)_3` or `(N)_4` is then
+`0` and `x / 0 = 0`.

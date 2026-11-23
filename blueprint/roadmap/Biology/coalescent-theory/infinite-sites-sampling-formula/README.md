@@ -20,4 +20,4 @@
 - [The infinite-sites sampling formula in the marked Kingman model](measure-real-seg-sites-kingman-mutation.md)
 - [Generating function in the marked Kingman model](pgf-seg-sites-kingman-mutation-measure.md)
 - [Tavaré's formula is nonnegative](seg-sites-prob-nonneg.md)
-- [Tavaré's formula sums to one](has-sum-seg-sites-prob.md)
+- [Tavaré's probabilities sum to one for samples of size at least two](has-sum-seg-sites-prob.md)

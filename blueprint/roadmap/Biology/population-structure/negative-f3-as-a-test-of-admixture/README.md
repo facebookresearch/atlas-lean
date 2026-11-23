@@ -3,9 +3,9 @@
 ## Binary targets and the sign of f3
 
 - [Termwise bound behind nonnegative f3 for a binary target](sum-nonneg-of-target-binary.md)
-- [A target with binary weights has nonnegative f3](f3-nonneg-of-binary-target.md)
+- [Binary targets have nonnegative f3 for unit-interval source weights](f3-nonneg-of-binary-target.md)
 - [On an admixture graph a target with binary weights has nonnegative f3](f3-nonneg-of-binary-weights.md)
-- [A negative f3 forces a non-binary target weight in the drift model](exists-weight-ne-zero-ne-one-of-f3-neg.md)
+- [With bounded source weights, negative f3 forces a nonbinary target](exists-weight-ne-zero-ne-one-of-f3-neg.md)
 - [On an admixture graph a negative f3 forces a non-binary target weight](exists-weight-ne-zero-ne-one-of-f3-neg-2.md)
 
 ## Admixture masked by private drift

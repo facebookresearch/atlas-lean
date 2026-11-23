@@ -1,4 +1,4 @@
-# The log-det distance at the true divergence matrix is nonzero
+# Nonzero time and strictly positive rates give nonzero log-det distance
 
 Let `ι` be a finite set of at least two states. Let `π : ι → ℝ` have `π i > 0` for every `i`, let
 `s` be a symmetric real `ι × ι` matrix with `s i j > 0` for `i ≠ j`, and let `t` be a real number

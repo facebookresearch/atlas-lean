@@ -912,7 +912,9 @@ theorem measureReal_fixation {σ x : ℝ} {ℱ : Filtration ℝ≥0 mΩ} {μ : M
 
 /-- **Kimura–Ohta mean absorption time, process form.** For a solution of the neutral
 Wright–Fisher martingale problem started at frequency `x`, the expected time to loss or
-fixation, in units of `2N` generations, is `-2 (x log x + (1 - x) log (1 - x))`.
+fixation, in units of `2N` generations, is `-2 (x log x + (1 - x) log (1 - x))`. Here `x ∈ [0, 1]`,
+since the solution is `[0, 1]`-valued and `X 0 = x` almost surely; at `x = 0` or `x = 1` the
+formula, with `0 log 0 = 0`, gives mean `0`.
 
 Source: Kimura & Ohta (1969); Ewens (2004), ch. 4. Proves the deferred entry
 `integral_absorptionTime`. -/

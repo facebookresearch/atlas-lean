@@ -2,9 +2,11 @@
 
 Let $\mu$ be a probability measure on a measurable space $(\Omega, \mathcal{F})$ and $n$ a natural
 number. Let $(T_k)$ be [Kingman holding times](../kingman-s-coalescent-and-watterson-s-estimator/kingman-times.md)
-of a sample of size $n$ under $\mu$, each $T_k$ measurable, and let $\tau$ be a random list of
-block-size lists such that every preimage $\tau^{-1}(A)$ of a set $A$ of such lists is in
-$\mathcal{F}$, with the [random-joining law](random-joining.md) started from $n$ singletons,
+of a sample of size $n$ under $\mu$: for $2 \le k \le n$, $T_k$ is exponential with rate
+$\binom{k}{2}$, and $T_2, \dots, T_n$ are mutually independent. Suppose moreover that every $T_k$
+($k \in \mathbb{N}$) is measurable, and let $\tau$ be a random list of block-size lists such
+that every preimage $\tau^{-1}(A)$ of a set $A$ of such lists is in $\mathcal{F}$, with the
+[random-joining law](random-joining.md) started from $n$ singletons,
 
 $$\mu(\tau = \mathbf{p}) = R_{n-1}\bigl((1, \dots, 1), \mathbf{p}\bigr) \quad \text{for every }
 \mathbf{p},$$

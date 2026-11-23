@@ -1,4 +1,4 @@
-# Patterson's Corollary 1, analytic form
+# Normalized old-allele Green weight equals the frequency
 
 For real numbers `0 < ε < x < 1 - ε`, the
 [neutral Green's function](../sojourn-times-of-the-wright-fisher-diffusion/neutral-green.md) `G`

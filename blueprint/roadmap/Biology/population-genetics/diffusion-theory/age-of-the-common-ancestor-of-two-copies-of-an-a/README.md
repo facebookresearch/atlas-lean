@@ -44,10 +44,10 @@
 
 - [Patterson's MRCA-age function M₁ for a new allele](mean-mrca-new.md)
 - [Patterson's MRCA-age function M₂ for an old allele](mean-mrca-old.md)
-- [Patterson's Corollary 1, analytic form](neutral-green-old-ratio-eq.md)
+- [Normalized old-allele Green weight equals the frequency](neutral-green-old-ratio-eq.md)
 - [Weighted integral of the killed Green's function plus a₁ is y](killed-green-weighted-integral-add-patte.md)
 - [Integral representation of M₁ through the killed Green's function](mean-mrca-new-eq-integral.md)
-- [Patterson's Equation 17 rearranged as a mixture](mean-mrca-mixture.md)
+- [The mixture of new- and old-allele MRCA ages equals y](mean-mrca-mixture.md)
 - [Limit of M₁ at frequency 1](tendsto-mean-mrca-new-one.md)
 
 ## Taylor recursion and eigenfunctions
@@ -55,6 +55,6 @@
 - [One step of Patterson's Taylor recursion](patterson-taylor-step.md)
 - [Patterson's Taylor step annihilates y/x²](patterson-taylor-step-new.md)
 - [Patterson's Taylor step changes the sign of the unknown-ancestry input](patterson-taylor-step-unknown.md)
-- [Eigen-instance of Theorem 1 for k = 2 and n = 0](eigeninstance-two-zero.md)
-- [Eigen-instance of Theorem 1 for k = 2 and n = 1](eigeninstance-two-one.md)
-- [Eigen-instance of Theorem 1 for k = 2 and n = 2](eigeninstance-two-two.md)
+- [Patterson's polynomial eigenfunction for eigenvalue 3](eigeninstance-two-zero.md)
+- [Patterson's polynomial eigenfunction for eigenvalue 6](eigeninstance-two-one.md)
+- [Patterson's polynomial eigenfunction for eigenvalue 10](eigeninstance-two-two.md)

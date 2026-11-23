@@ -11,7 +11,10 @@ and `M k` on `Ω`, one of each for every natural number `k`, such that
 - the functions `M k` and `C k`, `2 ≤ k ≤ n`, are mutually independent under `μ`.
 
 The values of `C k` and `M k` for `k` outside `[2, n]` are unconstrained. The exponential law of a
-rate `λ ≤ 0` is taken to be the zero measure, so the conditions are meant for `θ > 0`.
+rate `λ ≤ 0` is taken to be the zero measure, so the conditions are meant for `θ > 0`: for `n ≥ 2`
+and `θ ≤ 0` no coalescent with killing exists, since the laws of `C 2` and `M 2` are both images
+of `μ`, hence of equal total mass, while the first has mass `1` and the second, of rate `θ ≤ 0`,
+mass `0`. For `n < 2` there are no levels and `θ` plays no role.
 
 While the genealogy has `k` lineages, `C k` is the waiting time to the next coalescence and `M k`
 the waiting time to the next mutation; whichever comes first reduces the number of lineages to

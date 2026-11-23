@@ -29,6 +29,8 @@ Kingman holding times is assumed: the time-changed holding times generate a σ-a
 [contained in that of the Kingman ones](comap-growth-times-le.md), so `τ` is independent of them
 as well, and the
 [spectrum formula for holding times independent of the topology](../site-frequency-spectrum-under-variable-populatio/integral-sfs-of-indep.md)
-applies. Here `ξ_i` is the number of sites whose derived allele is carried by exactly `i` of the `n`
-sample copies under neutral infinite-sites mutation at rate `θ / 2` per lineage per unit of real
-time, in a population that has grown exponentially at rate `ρ`.
+applies. In the neutral infinite-sites model with `θ ≥ 0`, mutation at rate `θ / 2` per lineage
+per unit of real time in a population that has grown exponentially at rate `ρ`, one may take
+`ξ_i` to be the number of sites whose derived allele is carried by exactly `i` of the `n` sample
+copies. The result assumes only the conditional mean: `ξ_i` need not be integer-valued and `θ`
+may be negative, as for `ξ_i = (θ / 2) L^ρ_i`.

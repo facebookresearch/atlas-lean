@@ -1,7 +1,7 @@
-# Drift model realizing a 3×3 conditionally negative semidefinite matrix
+# Drift model realizing a symmetric zero-diagonal 3×3 CND matrix
 
 Let `D` be a symmetric real matrix with zero diagonal on three populations `0, 1, 2`,
-[conditionally negative semidefinite](is-cond-neg-semidef.md), with `D 0 2 ≤ D 0 1` and
+[conditionally negative semidefinite](is-cond-neg-semidef.md) (CND), with `D 0 2 ≤ D 0 1` and
 `D 1 2 ≤ D 0 1`. Then there are `0 ≤ α ≤ 1` and `a, b, c ≥ 0` with `a + b = D 0 1` (and, when
 `D 0 1 > 0`, `1 - α = (D 0 1 + D 0 2 - D 1 2) / (2 * D 0 1)` and `c = D 0 2 - (1 - α) ^ 2 * D 0 1`),
 and a [drift model](../patterson-s-f-statistics/drift-model.md) on a probability space with three

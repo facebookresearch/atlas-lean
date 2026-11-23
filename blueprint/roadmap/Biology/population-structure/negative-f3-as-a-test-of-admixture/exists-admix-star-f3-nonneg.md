@@ -5,7 +5,8 @@ and `(Ω', μ')` with [drift models](../patterson-s-f-statistics/drift-model.md)
 on `μ'`, each on three populations `A = 0`, `B = 1`, `C = 2` and three edges, such that `M` is the
 admixture model, with the
 [admixture weights](../centred-population-covariance-and-f-statistics/admix-weight.md) for `α`, edge
-lengths `(a, b, c)` and no [binary loadings](../patterson-s-f-statistics/has-binary-loadings.md),
+lengths `(a, b, c)` and not all lineage weights binary (it does not have
+[binary loadings](../patterson-s-f-statistics/has-binary-loadings.md)),
 and has `f3(C; A, B) = c - α (1 - α) (a + b) ≥ 0`; `M'` is the star tree, with the
 [star-tree weights](../centred-population-covariance-and-f-statistics/star-weight.md), the
 [matching edge lengths](../centred-population-covariance-and-f-statistics/star-len.md) and binary
