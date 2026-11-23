@@ -175,8 +175,10 @@ structure LogAnticanonicalModels (D : TwoModels (R := R) (K := K)) (n : ℕ) whe
 
 
 /-- A genuine polarized log-Fano fibre of an actual DVR model.
-Its boundary coefficients come from the actual ideal I_(eB), and its
-line comparison uses the fixed relative log-anticanonical line. -/
+Its boundary coefficients come from the actual ideal I_(eB), whose restriction to the integral
+special fibre is nonzero (`boundaryRestricts`: the boundary has a restriction to the fibre, so
+e.g. the ideal of the special fibre itself is excluded), and its line comparison uses the fixed
+relative log-anticanonical line. -/
 structure LogFanoFibre (X : Over (Spec (.of R))) (L : X.left.Modules)
     (I : X.left.IdealSheafData) (n e : ℕ) where
   positive : 0 < e
@@ -187,6 +189,7 @@ structure LogFanoFibre (X : Over (Spec (.of R))) (L : X.left.Modules)
   adjoint : AdjointPower pair e
   lineIso : (Scheme.Modules.pullback (schemeIso.inv.left ≫ specialProjection X)).obj L ≅
     dual adjoint.cartier.line.val
+  boundaryRestricts : I.comap (schemeIso.inv.left ≫ specialProjection X) ≠ ⊥
   boundaryNormalized : ∀ p : LogPairs.PrimePoint pair.variety,
     (ConductorLogGluing.idealOrder pair.variety
       (I.comap (schemeIso.inv.left ≫ specialProjection X)) p : ℝ) = (e : ℝ) * pair.boundary p
@@ -198,12 +201,14 @@ structure LogFanoFibre (X : Over (Spec (.of R))) (L : X.left.Modules)
     CenteredValuationSections.SectionSeries pair.variety v
   sectionLine : ∀ v, (sectionSeries v).line = dual adjoint.cartier.line.val
 
-/-- The valuative semistability condition uses the actual volume integral and discrepancy.
-No stability score or nonarchimedean functional is supplied. -/
+/-- The valuative semistability condition uses the actual volume integral and discrepancy, at
+every valuation whose discrepancy is computed by charts. No stability score or nonarchimedean
+functional is supplied. -/
 def LogFanoFibre.IsValuativelySemistable
     {X : Over (Spec (.of R))} {L : X.left.Modules} {I : X.left.IdealSheafData}
     {n e : ℕ} (F : LogFanoFibre X L I n e) : Prop :=
   ∀ v : CenteredValuationSections.CenteredValuation F.pair.variety,
+    MonomialModelRetractions.HasDiscrepancyCharts (P := F.pair) v →
     ((CenteredValuationSections.expectedVanishing (F.sectionSeries v)) : EReal) / (e : EReal) ≤
       MonomialModelRetractions.extendedDiscrepancy (P := F.pair) v
 

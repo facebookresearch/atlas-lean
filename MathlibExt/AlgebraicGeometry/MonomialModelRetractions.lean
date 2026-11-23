@@ -115,9 +115,17 @@ def chartDiscrepancy {P : LogPair k n} {v : CenteredValuation P.variety}
     (C : DiscrepancyChart v) : ℝ :=
   ∑ i, weights C i * LogPairs.logDiscrepancy C.model (C.divisors i)
 
-/-- Extended discrepancy is a supremum over actual normalized model charts. -/
+/-- The chart supremum of discrepancies: the supremum of the chart contributions over all
+discrepancy charts of `v`. When `v` has no chart it is `⊥`, which is not a discrepancy (charts
+need smooth birational models, which may not exist, e.g. over imperfect fields); use it as a
+discrepancy only under `HasDiscrepancyCharts v`. -/
 def extendedDiscrepancy {P : LogPair k n} (v : CenteredValuation P.variety) : EReal :=
   sSup {a | ∃ C : DiscrepancyChart v, a = (chartDiscrepancy C : EReal)}
+
+/-- The valuation has a discrepancy chart, so that `extendedDiscrepancy v` is a supremum of
+actual chart discrepancies. -/
+def HasDiscrepancyCharts {P : LogPair k n} (v : CenteredValuation P.variety) : Prop :=
+  Nonempty (DiscrepancyChart v)
 
 /-- A concrete divisorial realization of a given valuation, fixing its scale and all values. -/
 structure DivisorialRealization {P : LogPair k n} (v : CenteredValuation P.variety) where
