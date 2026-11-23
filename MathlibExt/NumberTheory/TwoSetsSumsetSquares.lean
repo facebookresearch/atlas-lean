@@ -18,13 +18,13 @@ import Mathlib.Tactic.Ring.Basic
 /-!
 # Two sets whose sumset elements are squares
 
-The two quadruples in Ajai Choudhry's family (5.1) have sixteen square sums.
-The proof gives a table of integer square roots, one for each choice of summands.
+Ajai Choudhry's triples (3.3) and quadruples (5.1) have square pairwise sums.
+The proofs give tables of integer square roots, one for each choice of summands.
 
 ## References
 
 * Ajai Choudhry, [*Two Sets of Integers Such That All Elements of the Sumset of the Two Sets
-  Are Perfect Squares*](https://arxiv.org/abs/2508.07806), Theorem 3.
+  Are Perfect Squares*](https://arxiv.org/abs/2508.07806), Theorems 1 and 3.
 -/
 
 @[expose] public section
@@ -48,6 +48,31 @@ def IsSemiMagicRoots (e : Fin 3 → Fin 3 → ℤ) : Prop :=
   ∃ S : ℤ,
     (∀ i : Fin 3, ∑ j : Fin 3, (e i j) ^ 2 = S) ∧
       ∀ j : Fin 3, ∑ i : Fin 3, (e i j) ^ 2 = S
+
+/-- **Four-parameter triples with square pairwise sums, family (3.3).** For all integers
+$p, q, r, s$, put $a_1 = 4(ps - qr)^2$, $a_2 = 4(ps + qr)^2$, $a_3 = (p^2 - q^2 - r^2 + s^2)^2$
+and $b_1 = 4(p^2 - q^2)(r^2 - s^2)$, $b_2 = 0$, $b_3 = 4(p^2 - r^2)(q^2 - s^2)$. Then $a_i + b_j$
+is a perfect square for all $i, j \in \{1, 2, 3\}$.
+
+Source: Ajai Choudhry, "Two Sets of Integers Such That All
+Elements of the Sumset of the Two Sets Are Perfect Squares",
+Theorem 1. -/
+theorem pairwiseSumsSquares_triple_family33
+    (p q r s : ℤ) :
+    PairwiseSumsSquares
+      ![4 * (p * s - q * r) ^ 2, 4 * (p * s + q * r) ^ 2,
+        (p ^ 2 - q ^ 2 - r ^ 2 + s ^ 2) ^ 2]
+      ![4 * (p ^ 2 - q ^ 2) * (r ^ 2 - s ^ 2), 0,
+        4 * (p ^ 2 - r ^ 2) * (q ^ 2 - s ^ 2)] := by
+  let roots : Fin 3 → Fin 3 → ℤ :=
+    ![![2 * (p * r - q * s), 2 * (p * s - q * r), 2 * (p * q - r * s)],
+      ![2 * (p * r + q * s), 2 * (p * s + q * r), 2 * (p * q + r * s)],
+      ![p ^ 2 - q ^ 2 + r ^ 2 - s ^ 2, p ^ 2 - q ^ 2 - r ^ 2 + s ^ 2,
+        p ^ 2 + q ^ 2 - r ^ 2 - s ^ 2]]
+  intro i j
+  refine ⟨roots i j, ?_⟩
+  fin_cases i <;> dsimp [roots, Matrix.cons_val] <;>
+    fin_cases j <;> dsimp [Matrix.cons_val] <;> ring1
 
 /-- **A four-parameter family of integer quadruples with square pairwise sums.** For integers
 $u_1, u_2, v_1, v_2$, put $w = v_1^4 - 6 v_1^2 v_2^2 + v_2^4$, $s = v_1^2 + v_2^2$ and
