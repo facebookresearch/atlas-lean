@@ -24386,7 +24386,7 @@
 "MathlibExt.Analysis.Complex.LacunarySeriesDiscWanted.differentiableOn_ball_continuousOn_closedBall_lacunary": "fbb069e9128f6014",
 "MathlibExt.Analysis.Complex.LacunarySeriesDiscWanted.f": "b69567c848f169f4",
 "MathlibExt.Analysis.Complex.LaurentSeriesWanted.laurentExpansion": "71f1c02380e58a38",
-"MathlibExt.Analysis.Complex.LogNormHarmonicPlaneWanted.harmonicOnNhd_log_norm_euclideanSpace_two": "4ceea18d14876370",
+"MathlibExt.Analysis.Complex.LogNormHarmonicPlaneWanted.harmonicOnNhd_log_norm_euclideanSpace_two": "3bc0ef619e31c8c3",
 "MathlibExt.Analysis.Complex.MittagLefflerWanted.mittag_leffler": "cf58831f15da417e",
 "MathlibExt.Analysis.Complex.MittagLefflerWanted.mittag_leffler_of_isDiscrete": "18870fd380701ee3",
 "MathlibExt.Analysis.Complex.MittagLefflerWanted.principalPart": "ecaf6945868b2ab2",
