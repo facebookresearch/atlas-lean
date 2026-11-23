@@ -81,6 +81,9 @@ def basisPullback (d r : ℕ) (x : X) : CycleGroup Y (d + r) :=
     (AlgebraicCycle.map (fiberInclusion p x) Order.height Order.height
       (fundamentalCycle (pointFiber p x)))
 
+/-- The raw fibre-cycle transform: each point is sent to the dimension-`d + r` part of the
+fundamental cycle of its fibre. It is the flat pullback only for a flat map of pure relative
+dimension `r`; `FlatCycleDescent` records those hypotheses. -/
 def flatCyclePullback (d r : ℕ) : CycleGroup X d →ₗ[ℚ] CycleGroup Y (d + r) :=
   Finsupp.linearCombination ℚ (basisPullback p d r) ∘ₗ cycleFinsupp X ∘ₗ
     (cyclesOfDimension X d).subtype
@@ -88,7 +91,12 @@ def flatCyclePullback (d r : ℕ) : CycleGroup X d →ₗ[ℚ] CycleGroup Y (d +
 variable (X Y : ComplexScheme) [IsNoetherian X.left] [IsNoetherian Y.left]
   (f : Y ⟶ X) (r : ℕ)
 
+/-- Flat pullback of relative dimension `r`: `f` is flat, every irreducible component of every
+fibre has dimension `r`, and the fibre-cycle transform preserves rational equivalence. -/
 structure FlatCycleDescent : Prop where
+  flat : Flat f.left
+  pureDimension : ∀ (x : X.left) (Z : Set (pointFiber f.left x)),
+    Z ∈ irreducibleComponents (pointFiber f.left x) → topologicalKrullDim Z = r
   preserves : ∀ d : ℕ, rationalEquivalences X d ≤
     (rationalEquivalences Y (d + r)).comap (flatCyclePullback f.left d r)
 

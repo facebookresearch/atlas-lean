@@ -25,6 +25,7 @@ module
 public import Mathlib.AlgebraicGeometry.Modules.Sheaf
 public import Mathlib.Algebra.Category.ModuleCat.Sheaf.PullbackFree
 public import MathlibExt.AlgebraicGeometry.PerverseSheaves
+public import MathlibExt.AlgebraicGeometry.CurveVectorBundles
 public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import Mathlib.AlgebraicGeometry.Morphisms.ClosedImmersion
 /-!
@@ -67,16 +68,14 @@ def pullbackSection {X Y : Scheme.{0}} (f : X ⟶ Y) (M : Y.Modules)
 
 open MathlibExt.AlgebraicGeometry.PerverseSheaves
 
-/-- `E` is locally free of rank `r`. -/
-def IsBundle {X : Scheme.{0}} (E : X.Modules) (r : ℕ) : Prop :=
-  ∀ x : X, ∃ U : X.Opens, x ∈ U ∧
-    Nonempty ((Scheme.Modules.pullback U.ι).obj E ≅
-      SheafOfModules.free (R := U.toScheme.ringCatSheaf) (Fin r))
+/-- `E` is locally free of rank `r`: `CurveVectorBundles.IsVectorBundle`. -/
+abbrev IsBundle {X : Scheme.{0}} (E : X.Modules) (r : ℕ) : Prop :=
+  CurveVectorBundles.IsVectorBundle E r
 
-/-- `L` is invertible: locally isomorphic to the structure sheaf. -/
-def IsLine {X : Scheme.{0}} (L : X.Modules) : Prop :=
-  ∀ x : X, ∃ U : X.Opens, x ∈ U ∧
-    Nonempty ((Scheme.Modules.pullback U.ι).obj L ≅ SheafOfModules.unit U.toScheme.ringCatSheaf)
+/-- `L` is invertible, locally isomorphic to the structure sheaf:
+`CoherentCurveLinearSeries.IsLineBundle`. -/
+abbrev IsLine {X : Scheme.{0}} (L : X.Modules) : Prop :=
+  CoherentCurveLinearSeries.IsLineBundle L
 
 /-- The pullback along `f = g ≫ p` of a quotient `q : p^* E ⟶ L`, followed by
 an identification `g^* L ≅ M`. -/

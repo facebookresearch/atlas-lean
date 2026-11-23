@@ -35,7 +35,7 @@ all object values, coefficient/base-arrow translations and actual
 refinement-cell images. No local embedding isomorphism replaces that map.
 
 References: Kresch arXiv:math/9810166v1, Theorem 2.1.12(vi),(x),
-Proposition 5.3.2; Behrend--Fantechi arXiv:alg-geom/9601010v2,
+Proposition 5.3.2; Behrend--Fantechi arXiv:alg-geom/9601010,
 Sections 1--3; Manolache arXiv:0805.2065v2, Definitions 2.7--2.10,
 Condition 3.3 and Construction 3.6. Rees and conormal definitions reuse
 the completed native scheme modules. No obstruction-theory or virtual
@@ -274,6 +274,121 @@ structure LinearBundleChart {X U B : Stack S} {π : StackHom B X} {n : ℤ}
     (affineMap π).map ((normalized a).hom.app r) ≫ (targetBase a).hom.app ((linear a).functor.obj r) =
       (sourceBase a).hom.app r
 
+/-- The morphism of affine points induced, at one affine point, by an invertible modification:
+over the identity of the base, with fibre part the component of the modification. -/
+def twoIsoPointHom {X Y : Stack S} {p q : StackHom X Y} (e : StackVectorBundles.TwoIso p q)
+    (a : AffinePoint X) : (affineMap p).obj a ⟶ (affineMap q).obj a :=
+  ObjectProperty.homMk
+    (⟨𝟙 a.obj.base, (e.app a.obj.base).hom.app a.obj.fiber ≫
+      (Y.toPseudofunctor.mapId ⟨op a.obj.base⟩).inv.toNatTrans.app _⟩ :
+      Pseudofunctor.CoGrothendieck.Hom ((totalMap p).obj a.obj) ((totalMap q).obj a.obj))
+
+section Reindexing
+
+universe v₁ u₁ v₂ u₂ v₃ u₃
+variable {C : Type u₁} [Category.{v₁} C] {D : Type u₂} [Category.{v₂} D]
+
+set_option backward.isDefEq.respectTransparency false in
+set_option backward.defeqAttrib.useBackward true in
+/-- The canonical functor from the CoGrothendieck construction of a pseudofunctor reindexed along
+`F` to the CoGrothendieck construction of the pseudofunctor itself, over `F`. -/
+def reindexTotal (F : C ⥤ D) (G : Pseudofunctor (LocallyDiscrete Dᵒᵖ) Cat.{v₃, u₃}) :
+    Pseudofunctor.CoGrothendieck ((F.op.toPseudofunctor).comp G) ⥤
+      Pseudofunctor.CoGrothendieck G where
+  obj x := ⟨F.obj x.base, x.fiber⟩
+  map f := ⟨F.map f.base, f.fiber⟩
+  map_id x := by
+    ext
+    · simp
+    · simp [Pseudofunctor.comp, Functor.toPseudofunctor, pseudofunctorOfIsLocallyDiscrete,
+        PrelaxFunctor.map₂_eqToHom]
+  map_comp f g := by
+    ext
+    · simp
+    · dsimp [Pseudofunctor.comp, Functor.toPseudofunctor, pseudofunctorOfIsLocallyDiscrete,
+        Quiver.Hom.toLoc]
+      simp [PrelaxFunctor.map₂_eqToHom]
+
+end Reindexing
+
+/-- A linear map of linear bundle diagrams over `p`: a strong transformation from `M` to the
+reindexing of `N` along `p`, whose component at each affine point of `T` is the map of quotient
+groupoids induced by a linear map of the two-term presentations (over the identity of the common
+coordinate ring), and whose naturality cell at each restriction arrow is a linear homotopy.
+This is descent data: the comparison is coherent across restriction arrows, not chosen
+independently on each affine fibre. -/
+structure LinearDiagramMap {T X : Stack S} {n m : ℤ} (M : LinearBundleDiagram T n)
+    (N : LinearBundleDiagram X m) (p : StackHom T X) where
+  trans : Pseudofunctor.StrongTrans M.pseudofunctor
+    (((affineMap p).op.toPseudofunctor).comp N.pseudofunctor)
+  linear : ∀ a : AffinePoint T,
+    SemilinearQuotientMap (R := (rings T).obj (op a))
+      (A := (rings X).obj (op ((affineMap p).obj a)))
+      (M.modules a).differential.hom
+      (N.modules ((affineMap p).obj a)).differential.hom
+      (RingHom.id ((rings X).obj (op ((affineMap p).obj a))))
+  components : ∀ a : AffinePoint T,
+    eqToHom (M.objects a).symm ≫ trans.app (.mk (op a)) ≫
+        eqToHom (N.objects ((affineMap p).obj a)) = (linear a).functor.toCatHom
+  naturalityLinear : ∀ {a b : AffinePoint T} (f : a ⟶ b),
+    ∃ h : (M.modules b).degreeOne →ₛₗ[(RingHom.id ((rings X).obj (op ((affineMap p).obj a)))).comp
+          ((rings T).map f.op).hom]
+        (N.modules ((affineMap p).obj a)).degreeZero,
+      ∀ q : M.pseudofunctor.obj (.mk (op b)),
+        ((eqToHom (N.objects ((affineMap p).obj a))).toFunctor.map
+          ((trans.naturality f.op.toLoc).hom.toNatTrans.app q)).translation =
+          h (((eqToHom (M.objects b)).toFunctor.obj q).value)
+
+/-- The functor of total CoGrothendieck categories induced by a linear diagram map. -/
+def LinearDiagramMap.total {T X : Stack S} {n m : ℤ} {M : LinearBundleDiagram T n}
+    {N : LinearBundleDiagram X m} {p : StackHom T X} (Φ : LinearDiagramMap M N p) :
+    Pseudofunctor.CoGrothendieck M.pseudofunctor ⥤ Pseudofunctor.CoGrothendieck N.pseudofunctor :=
+  Pseudofunctor.CoGrothendieck.map Φ.trans ⋙ reindexTotal (affineMap p) N.pseudofunctor
+
+/-- `G` is the strict linear diagram of the global two-term complex `d : E₀ → E₁` on `X`: on each
+affine point its presentation is identified with the sections of `d`, compatibly with the
+restriction maps, and its unit and composition cells are trivial. -/
+structure PresentsComplex {X : Stack S} {n : ℤ} (G : LinearBundleDiagram X n)
+    {E₀ E₁ : VectorBundle X} (d : BundleMap E₀ E₁) where
+  zero : ∀ a : AffinePoint X,
+    (G.modules a).degreeZero ≃ₗ[(rings X).obj (op a)] E₀.module.val.presheaf.obj (op a)
+  one : ∀ a : AffinePoint X,
+    (G.modules a).degreeOne ≃ₗ[(rings X).obj (op a)] E₁.module.val.presheaf.obj (op a)
+  differential : ∀ (a : AffinePoint X) (x : (G.modules a).degreeZero),
+    one a ((G.modules a).differential.hom x) = (d.linear.app (op a)).hom (zero a x)
+  restrictionZero : ∀ {a b : AffinePoint X} (f : a ⟶ b) (x : (G.modules b).degreeZero),
+    zero a ((G.restriction f).degreeZero x) = (E₀.module.val.presheaf.map f.op).hom (zero b x)
+  restrictionOne : ∀ {a b : AffinePoint X} (f : a ⟶ b) (x : (G.modules b).degreeOne),
+    one a ((G.restriction f).degreeOne x) = (E₁.module.val.presheaf.map f.op).hom (one b x)
+  identityStrict : ∀ (a : AffinePoint X) (q : G.pseudofunctor.obj (.mk (op a))),
+    ((eqToHom (G.objects a)).toFunctor.map
+      ((G.pseudofunctor.mapId (.mk (op a))).hom.toNatTrans.app q)).translation = 0
+  compositionStrict : ∀ {a b c : AffinePoint X} (f : a ⟶ b) (g : b ⟶ c)
+      (q : G.pseudofunctor.obj (.mk (op c))),
+    ((eqToHom (G.objects a)).toFunctor.map
+      ((G.pseudofunctor.mapComp g.op.toLoc f.op.toLoc).hom.toNatTrans.app q)).translation = 0
+
+/-- A linear isomorphism of bundle stacks over `p`: a linear diagram map inducing an equivalence of
+quotient groupoids on every affine point, whose induced total functor is the displayed total-space
+map `q` on all affine points (including restriction arrows), over the base 2-cell `square`. A map
+that only gives a Cartesian square of total spaces, or one that is linear fibre by fibre but not
+coherently (a shear through stabilizers), is not linear. -/
+structure LinearBundleIso {T X B C : Stack S} {π : StackHom B T} {ρ : StackHom C X} {n m : ℤ}
+    (M : LinearBundleModel π n) (N : LinearBundleModel ρ m) (p : StackHom T X) (q : StackHom B C)
+    (square : StackVectorBundles.TwoIso (Pseudofunctor.StrongTrans.vcomp q ρ)
+      (Pseudofunctor.StrongTrans.vcomp π p)) where
+  diagramMap : LinearDiagramMap M.diagram N.diagram p
+  /-- On each affine point the induced map of quotient groupoids is an equivalence (a
+  quasi-isomorphism of the two-term presentations). -/
+  equivalence : ∀ a : AffinePoint T, (diagramMap.linear a).functor.IsEquivalence
+  normalized : M.comparison.functor ⋙ diagramMap.total ⋙ N.comparison.inverse ≅ affineMap q
+  /-- `normalized` lies over `square`: projected to affine points of `X`, it is the base comparison
+  of `N`, the base comparison of `M` transported along `p`, and the inverse cell of `square`. -/
+  based : ∀ b : AffinePoint B,
+    (affineMap ρ).map (normalized.hom.app b) =
+      N.inverseBase.hom.app (diagramMap.total.obj (M.comparison.functor.obj b)) ≫
+        (affineMap p).map (M.overBase.hom.app b) ≫ square.pointInv b
+
 /-- A local quotient presentation on a genuine scheme atlas of X. -/
 structure VectorBundleStack (X : Stack S) where
   total : Stack S
@@ -297,7 +412,24 @@ structure VectorBundleStack (X : Stack S) where
   rank_eq : virtualRank = (degreeOne.rank : ℤ) - degreeZero.rank
   linear : LinearBundleModel projection virtualRank
   linearChart : LinearBundleChart linear quotient base.map map commutes
+  /-- Descent for the atlas chart: over the atlas, the linear model is coherently (over all affine
+  points of the atlas, including restriction arrows) the strict diagram of the atlas presentation,
+  so the fibrewise chart cannot hide a shear through stabilizers. -/
+  chartDescent : ∃ (G : LinearBundleDiagram base.stack virtualRank)
+      (_ : PresentsComplex G differential) (Φ : LinearDiagramMap G linear.diagram base.map),
+    ∀ a : AffinePoint base.stack, (Φ.linear a).functor.IsEquivalence
 
+/-- The bundle stack `E` is the quotient of the global two-term complex `d` on `X`: its linear
+model is equivalent, coherently over all affine points (descent data over the identity of `X`),
+to the strict linear diagram of `d`. -/
+def IsQuotientOf {X : Stack S} (E : VectorBundleStack X) {E₀ E₁ : VectorBundle X}
+    (d : BundleMap E₀ E₁) : Prop :=
+  ∃ (G : LinearBundleDiagram X E.virtualRank) (_ : PresentsComplex G d)
+    (Φ : LinearDiagramMap G E.linear.diagram (Pseudofunctor.StrongTrans.id X.toPseudofunctor)),
+    ∀ a : AffinePoint X, (Φ.linear a).functor.IsEquivalence
+
+/-- The base change of a bundle stack: a 2-Cartesian total-space square whose map is linear for
+the two linear models (it cannot, for example, move the origin of a line). -/
 structure BundleStackPullback {T X : Stack S} (p : StackHom T X) (E : VectorBundleStack X) where
   bundle : VectorBundleStack T
   rank_eq : bundle.virtualRank = E.virtualRank
@@ -309,6 +441,7 @@ structure BundleStackPullback {T X : Stack S} (p : StackHom T X) (E : VectorBund
       (StackCycleGeometry.component E.projection U) (StackCycleGeometry.component p U) _).obj
       ⟨StackCycleGeometry.component map U, StackCycleGeometry.component bundle.projection U,
         commutes.app U⟩).IsEquivalence
+  linearMap : LinearBundleIso bundle.linear E.linear p map commutes
 
 def zeroElementFunctor {X : Stack S} (E : VectorBundle X) :
     AffinePoint X ⥤ (sectionPresheaf E.module.val).Elementsᵒᵖ where
