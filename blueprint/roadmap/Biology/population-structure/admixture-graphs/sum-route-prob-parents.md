@@ -1,4 +1,4 @@
-# Routing probabilities over parent assignments sum to one
+# Off the root, routing probabilities over parent assignments sum to one
 
 In every [admixture graph](admixture-graph.md) with root `ρ` and parent sets `pa`, for every node
 `X ≠ ρ` and every natural number `k`, the [routing probabilities](route-prob.md) of the

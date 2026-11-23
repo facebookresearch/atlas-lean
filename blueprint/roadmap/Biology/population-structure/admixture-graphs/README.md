@@ -32,10 +32,10 @@
 - [Routing kernel for several lineages at a node](route-prob.md)
 - [Routing probabilities are nonnegative](route-prob-nonneg.md)
 - [Sending a lineage to a non-parent has routing probability zero](route-prob-eq-zero.md)
-- [Routing probabilities over parent assignments sum to one](sum-route-prob-parents.md)
+- [Off the root, routing probabilities over parent assignments sum to one](sum-route-prob-parents.md)
 - [Routing kernel rows at non-root nodes sum to one](sum-route-prob.md)
 - [At the root every nonempty routing has probability zero](route-prob-root.md)
-- [The root row of the routing kernel has total mass zero](sum-route-prob-root.md)
+- [With at least one lineage, the routing kernel's root row has mass zero](sum-route-prob-root.md)
 - [The empty routing has probability one at every node](route-prob-zero.md)
 
 ## The induced drift model

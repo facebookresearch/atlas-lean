@@ -1,4 +1,4 @@
-# The root row of the routing kernel has total mass zero
+# With at least one lineage, the routing kernel's root row has mass zero
 
 In every [admixture graph](admixture-graph.md) on a finite set `V` of nodes with root `ρ`, for every
 natural number `k > 0`, the [routing probabilities](route-prob.md) at the root sum to zero over all
