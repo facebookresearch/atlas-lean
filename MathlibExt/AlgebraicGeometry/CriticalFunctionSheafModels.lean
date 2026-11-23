@@ -47,10 +47,14 @@ def reducedOver (X : Over (Spec (.of k))) : Over (Spec (.of k)) :=
 def reductionArrow (X : Over (Spec (.of k))) : reducedOver X ⟶ X :=
   Over.homMk (reductionMap X.left) rfl
 
-/-- The exact local kernels and maps characterize the actual S_X sheaf. -/
+/-- The exact local kernels and maps characterize the actual S_X sheaf. The
+domains of affine embeddings cover `X` (as they do when `X` is locally of finite
+type) and are stable under principal shrinking, so they form a basis on which the
+sheaf, its restrictions and `beta` are fixed. -/
 structure CriticalSheafModel (X : Over (Spec (.of k))) where
   sheaf : Sheaf (Opens.grothendieckTopology X.left) (ModuleCat k)
   beta : sheaf ⟶ coefficientFunctions X
+  covers : ∀ x : X.left, ∃ E : AffineEmbedding X, x ∈ E.domain
   affine : ∀ E : AffineEmbedding X,
     sheaf.obj.obj (op E.domain) ≅ ModuleCat.of k (localCriticalModule k E.algebra E.ideal)
   beta_normalized : ∀ (E : AffineEmbedding X) (f : criticalFunctions k E.algebra E.ideal),
