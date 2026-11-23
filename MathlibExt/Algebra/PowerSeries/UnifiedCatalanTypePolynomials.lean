@@ -10,9 +10,9 @@ module
 
 public import Mathlib.Algebra.Polynomial.AlgebraMap
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.RingTheory.PowerSeries.Binomial
 public import Mathlib.RingTheory.PowerSeries.Substitution
+public import MathlibExt.NumberTheory.HankelTransform
 
 /-!
 # Unified Catalan-type polynomials
@@ -128,6 +128,29 @@ theorem kampeDeFerietHermite_two_two (x y : ℝ) :
     kampeDeFerietHermite 2 2 x y = x ^ 2 + 2 * y := by
   simp [kampeDeFerietHermite, Finset.sum_range_succ, Nat.factorial]
 
+/-- A sequence over an integral domain with a nontrivial recurrence of order `r`
+has vanishing Hankel transform at every index `N ≥ r`. -/
+theorem hankelTransform.eq_zero_of_recurrence {R : Type*} [CommRing R] [IsDomain R]
+    (P cs : ℕ → R) {N r : ℕ} (hr : r ≤ N) (hcs : ∃ k ≤ r, cs k ≠ 0)
+    (hrec : ∀ n, r ≤ n → ∑ k ∈ Finset.range (r + 1), cs k * P (n - k) = 0) :
+    hankelTransform P N = 0 := by
+  obtain ⟨k, hk, hck⟩ := hcs
+  unfold hankelTransform
+  apply Matrix.det_eq_zero_of_not_linearIndependent_rows
+  intro hrows
+  -- The recurrence weights rows r, r - 1, ..., 0 in this order.
+  let row (a : Fin (r + 1)) := a.rev.castLE (Nat.succ_le_succ hr)
+  have hind := hrows.comp row ((Fin.castLE_injective _).comp Fin.rev_injective)
+  apply hck
+  apply Fintype.linearIndependent_iff.mp hind (fun a ↦ cs a) _ ⟨k, by omega⟩
+  funext j
+  have hj := hrec (r + j.val) (by omega)
+  rw [← Fin.sum_univ_eq_sum_range] at hj
+  simp only [Finset.sum_apply, Pi.smul_apply, Function.comp_apply, Matrix.of_apply,
+    row, Fin.val_castLE, Fin.val_rev, Nat.succ_sub_succ_eq_sub, smul_eq_mul, Pi.zero_apply]
+  refine (Finset.sum_congr rfl fun a _ ↦ ?_).trans hj
+  rw [Nat.sub_add_comm (Nat.le_of_lt_succ a.isLt)]
+
 /-- **Hankel determinants of recurrent Catalan-type sequences vanish.** Let $m, N, r$ be natural
 numbers with $r \le N$, let $\lambda, x$ be real numbers, let $A$ be a polynomial with integer
 coefficients, and let $P_n$ be the coefficient of $t^n$ in
@@ -152,21 +175,8 @@ theorem det_catalanTypeHankel_eq_zero (m N r : ℕ) (lam x : ℝ)
     r ≤ N → (∃ k ≤ r, cs k ≠ 0) →
       (∀ n, r ≤ n → ∑ k ∈ Finset.range (r + 1), cs k * P (n - k) = 0) →
       (Matrix.of fun i j : Fin (N + 1) ↦ P (i + j)).det = 0 := by
-  intro P hr ⟨k, hk, hck⟩ hrec
-  apply Matrix.det_eq_zero_of_not_linearIndependent_rows
-  intro hrows
-  -- The recurrence weights rows r, r - 1, ..., 0 in this order.
-  let row (a : Fin (r + 1)) := a.rev.castLE (Nat.succ_le_succ hr)
-  have hind := hrows.comp row ((Fin.castLE_injective _).comp Fin.rev_injective)
-  apply hck
-  apply Fintype.linearIndependent_iff.mp hind (fun a ↦ cs a) _ ⟨k, by omega⟩
-  funext j
-  have hj := hrec (r + j.val) (by omega)
-  rw [← Fin.sum_univ_eq_sum_range] at hj
-  simp only [Finset.sum_apply, Pi.smul_apply, Function.comp_apply, Matrix.of_apply,
-    row, Fin.val_castLE, Fin.val_rev, Nat.succ_sub_succ_eq_sub, smul_eq_mul, Pi.zero_apply]
-  refine (Finset.sum_congr rfl fun a _ ↦ ?_).trans hj
-  rw [Nat.sub_add_comm (Nat.le_of_lt_succ a.isLt)]
+  intro P
+  exact hankelTransform.eq_zero_of_recurrence P cs
 
 end
 

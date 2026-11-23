@@ -22,7 +22,7 @@ example {A : Type*} [CommRing A] [Algebra ℝ A] (n : ℕ) (x y : A) :
 -- The generating series is 1. For n ≥ 2, its coefficients satisfy P_{n-1} = 0,
 -- so the sole nonzero recurrence coefficient lies strictly between the endpoints.
 example (N : ℕ) (hN : 2 ≤ N) :
-    (Matrix.of fun i j : Fin (N + 1) ↦ coeff (i.val + j.val) (1 : PowerSeries ℝ)).det = 0 := by
+    hankelTransform (fun n ↦ coeff n (1 : PowerSeries ℝ)) N = 0 := by
   have hseries : trinomialNegPowSeries (-1) 1 1 1 1 = 1 := by
     rw [trinomialNegPowSeries_neg_one _ _ one_ne_zero]
     simp
@@ -32,3 +32,9 @@ example (N : ℕ) (hN : 2 ≤ N) :
   intro n hn
   have hpos : n - 1 ≠ 0 := by omega
   simp [Finset.sum_range_succ, coeff_one, hpos]
+
+-- At order zero the recurrence forces the whole sequence to vanish, including its first term.
+example : hankelTransform (fun _ ↦ (0 : ℤ)) 0 = 0 := by
+  apply hankelTransform.eq_zero_of_recurrence _ (fun _ ↦ 1) (r := 0) le_rfl
+  · exact ⟨0, le_rfl, one_ne_zero⟩
+  · simp
