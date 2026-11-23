@@ -13,7 +13,7 @@ import Mathlib.Algebra.Order.Interval.Finset.Basic
 import Mathlib.Tactic.Ring
 
 /-!
-# Dominant colors in rainbow-free colorings for `x - y = z ^ k`
+# Colorings for `x - y = z ^ k`
 
 Let `c : ZMod p → Fin 3` be rainbow-free for `x - y = z ^ k`: no solution has `c x`, `c y`, `c z`
 pairwise distinct. For `a i : ZMod p` and `ℓ : ℕ`, the `aᵏ`-string at `i` of length `ℓ` is
@@ -33,6 +33,8 @@ that `c` is surjective, that `a ≠ 0` and that `p` is prime, which the statemen
   the color `c a`.
 * `MetaMathlibExt.color_one_dominant_of_rainbowFree_powDiff`: every bichromatic interval of
   positive integers contains the color of one.
+* `MetaMathlibExt.exists_coprime_same_colors_of_coprime_dist` gives coprime representatives
+  preserving both colors and the distance when the distance is coprime to the modulus.
 -/
 
 public section
@@ -120,5 +122,39 @@ theorem color_one_dominant_of_rainbowFree_powDiff (r k : ℕ) (c : ℕ → Fin r
     (by simp [Nat.add_assoc]) ⟨hne.symm, fun h => hmem ?_, fun h => hmem ?_⟩
   · exact Finset.mem_image.2 ⟨t, Finset.mem_range.2 (by omega), h⟩
   · exact Finset.mem_image.2 ⟨t + 1, Finset.mem_range.2 ht, h⟩
+
+/-- **Coprime representatives at a coprime distance.** Let $n$ be a natural number and let $c$ be a
+coloring of $\mathbb{Z}/n\mathbb{Z}$ with three colors, used to color every positive integer by its
+residue modulo $n$. If $i_1, i_2$ are positive integers with $\gcd(|i_1 - i_2|, n) = 1$, then there
+are coprime positive integers $j_1, j_2$ with $|j_1 - j_2| = |i_1 - i_2|$ such that $j_1$ has the
+color of $i_1$ and $j_2$ has the color of $i_2$.
+
+Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
+Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 8
+(`integers-2024-A105-lem-8`). -/
+theorem exists_coprime_same_colors_of_coprime_dist
+    (n : ℕ) (c : ZMod n → Fin 3) (i₁ i₂ : ℕ) (hi₁ : 0 < i₁) (hi₂ : 0 < i₂)
+    (hd : Nat.Coprime ((i₁ : ℤ) - i₂).natAbs n) :
+    ∃ j₁ j₂ : ℕ, 0 < j₁ ∧ 0 < j₂ ∧ Nat.Coprime j₁ j₂ ∧ c j₁ = c i₁ ∧ c j₂ = c i₂ ∧
+      ((j₁ : ℤ) - j₂).natAbs = ((i₁ : ℤ) - i₂).natAbs := by
+  wlog hle : i₁ ≤ i₂ generalizing i₁ i₂
+  · have hdist : ((i₂ : ℤ) - i₁).natAbs = ((i₁ : ℤ) - i₂).natAbs := by omega
+    obtain ⟨b, a, hb, ha, hcop, h₂, h₁, hab⟩ :=
+      this i₂ i₁ hi₂ hi₁ (hdist ▸ hd) (by omega)
+    exact ⟨a, b, ha, hb, hcop.symm, h₁, h₂, by omega⟩
+  let d := i₂ - i₁
+  have hdist : ((i₁ : ℤ) - i₂).natAbs = d := by dsimp [d]; omega
+  rw [hdist] at hd ⊢
+  -- Choose the predecessor so that the first representative is positive even for zero moduli.
+  obtain ⟨x, hx, hi⟩ := Nat.chineseRemainder hd 0 (i₁ - 1)
+  have hx₁ : x + 1 ≡ i₁ [MOD n] := by
+    simpa only [Nat.sub_add_cancel hi₁] using hi.add_right 1
+  have hx₂ : x + 1 + d ≡ i₂ [MOD n] := by
+    simpa only [d, Nat.add_sub_of_le hle] using hx₁.add_right d
+  refine ⟨x + 1, x + 1 + d, Nat.succ_pos _, by omega, ?_, ?_, ?_, by omega⟩
+  · rw [Nat.coprime_self_add_right, Nat.Coprime, (hx.add_right 1).gcd_eq]
+    simp
+  · exact congrArg c ((ZMod.natCast_eq_natCast_iff ..).2 hx₁)
+  · exact congrArg c ((ZMod.natCast_eq_natCast_iff ..).2 hx₂)
 
 end MetaMathlibExt

@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Algebra.Polynomial.ArithmeticProgressionAuxiliaryRoot
+public import MathlibExt.Algebra.Polynomial.ArithmeticProgressionRootPower
 public import Mathlib.Algebra.Polynomial.AlgebraMap
 public import Mathlib.Algebra.Polynomial.Monic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
@@ -105,25 +106,6 @@ public theorem_wanted arithProgPoly_mul_sub_one_sq (m a d : ℕ) :
     (∑ i ∈ Finset.range (m + 1), C ((a : ℤ) + i * d) * X ^ (m - i)) * (X - 1) ^ 2 =
       C (a : ℤ) * X ^ (m + 2) - C ((a : ℤ) - d) * X ^ (m + 1) -
         C ((a : ℤ) + (m + 1) * d) * X + C ((a : ℤ) + m * d)
-
-/-- **Power identity at the roots of an arithmetic-progression polynomial.** Let $m$ and $a$
-be natural numbers, let $d$ be a positive integer, and let
-$A_m(x) = a x^m + (a + d) x^{m-1} + \cdots + (a + md)$, that is,
-$A_m(x) = \sum_{i=0}^{m} (a + id) x^{m-i} \in \mathbb{Z}[x]$. If $z \in \mathbb{C}$ is a root of
-$A_m$ or $z = 1$, then
-
-$$z^{m+1} = \frac{(a + (m + 1)d) z - (a + md)}{a z - (a - d)}.$$
-
-With the paper's notation $a_n = a + (n - 1)d$ this reads
-$z^{m+1} = (a_{m+2} z - a_{m+1}) / (a_1 z - a_0)$. The denominator does not vanish at such $z$.
-
-Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
-Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Lemma 1, equation (2)
-(`integers-2026-A92-lem-1`). -/
-public theorem_wanted arithProgPoly_root_pow_eq (m a d : ℕ) (hd : 0 < d) (z : ℂ)
-    (hz : aeval z (∑ i ∈ Finset.range (m + 1), C ((a : ℤ) + i * d) * X ^ (m - i)) = 0 ∨ z = 1) :
-    z ^ (m + 1) =
-      (((a : ℂ) + (m + 1) * d) * z - ((a : ℂ) + m * d)) / ((a : ℂ) * z - ((a : ℂ) - d))
 
 /-- **Bound on the zeros of the arithmetic-progression polynomial.** Let $m \ge 2$, let $a$, $d$
 be integers with $0 < d \le a$, and let $\lambda > 0$ be a real number with
