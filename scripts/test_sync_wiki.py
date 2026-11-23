@@ -4428,6 +4428,43 @@ class ScopedRun(unittest.TestCase):
         self.assertEqual((status, report["wiki_changes"], report["differences"]), (0, "none", []))
 
 
+    def test_a_committed_submodule_without_its_folder_is_not_the_syncs(self) -> None:
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        self.git("add", "-A")
+        self.git("update-index", "--add", "--cacheinfo", f"160000,{'1' * 40},blueprint/roadmap/Algebra/sub")
+        self.git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "the sync's output and a submodule")
+        self.assertFalse((self.root / "blueprint/roadmap/Algebra/sub").exists())
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual(report["wiki_changes"], "other", report)
+        self.assertIn("blueprint/roadmap/Algebra/sub: the sync writes no link or other kind of file",
+                      report["differences"])
+
+    def test_an_executable_bit_staged_where_git_reads_none_from_the_working_tree(self) -> None:
+        # With core.filemode off, the index's executable bit is the file's: staged on a page, it is not the sync's.
+        self.git("config", "core.filemode", "false")
+        self.groups(more="/-- A new result. -/\ntheorem fresh : True := trivial\n\n")
+        self.assertEqual(self.run_sync()[0], 0)
+        self.git("add", "-A")
+        self.assertEqual(self.run_sync("--check")[3]["wiki_changes"], "sync")
+        self.git("update-index", "--chmod=+x", "--", "blueprint/roadmap/Algebra/groups/group-basics/fresh.md")
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((report["wiki_changes"], report["differences"]), ("other", [
+            "blueprint/roadmap/Algebra/groups/group-basics/fresh.md: the changes write it otherwise than the sync"]))
+
+    def test_a_refusal_counts_a_wiki_file_only_the_index_adds(self) -> None:
+        elsewhere = self.root.parent / f"{self.root.name}-lean"
+        elsewhere.mkdir()
+        self.addCleanup(shutil.rmtree, elsewhere, True)
+        (self.root / "MathlibExt/Linked").symlink_to(elsewhere)
+        page = self.root / "blueprint/roadmap/Algebra/hand.md"
+        page.write_text("# By hand\n")
+        self.git("add", "--", "blueprint/roadmap/Algebra/hand.md")
+        page.unlink()
+        status, out, err, report = self.run_sync("--check")
+        self.assertEqual((status, report["wiki_changes"]), (1, "other"))
+
+
 
 INDEX_DIFFERS = sync.INDEX_DIFFERS
 

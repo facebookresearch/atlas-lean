@@ -2910,6 +2910,26 @@ def disagreeing(paths: set[str]) -> dict[str, str]:
     return found
 
 
+def staged_from(base: str) -> dict[str, str]:
+    """The files the index changes from commit *base*, by their path from the repository's root, each with the mode
+    the index gives it ("000000" for none): read from Git's records alone, no file read."""
+    tokens = git("diff", "--cached", "--raw", "-z", "--no-renames", base, "--").split(b"\0")
+    found = {}
+    for meta, raw in zip(tokens[0::2], tokens[1::2]):
+        if meta.startswith(b":"):
+            found[os.fsdecode(raw)] = meta[1:].decode("ascii").split(" ")[1]
+    return found
+
+
+def filemode() -> bool:
+    """Whether Git reads the executable bit from the working tree (core.filemode); when not, a tracked file's is the
+    index's, and a new file's is unset."""
+    try:
+        return git("config", "--bool", "core.filemode").decode().strip() != "false"
+    except GitError:
+        return True
+
+
 def changed_paths(base: str) -> list[str]:
     """The files that differ between commit *base* and the working tree, untracked ones included, by their path from
     the repository's root: what a pull request from *base* changes (see staged_paths for the index)."""
@@ -3466,13 +3486,16 @@ def sync_output(base: str, paths: list[str], plan_of, apply) -> tuple[str, list[
         # them, is not the sync's either. Where the index changes a file from HEAD, staged by hand, a commit may take
         # the index's instead, so the two must agree (see disagreeing).
         staged = index_entries()
+        modes_read = filemode()
         for path in sorted(set(paths) | {path.relative_to(scratch).as_posix() for path in written}):
             mine, theirs = scratch / path, wiki.ROOT / path
             linked = theirs.is_symlink() or os.path.realpath(theirs) != str(theirs)
             # A file written in place keeps its mode, and one the sync makes is not executable.
             expected = (mine.read_bytes(), modes.get(path) != "100755") if mine.is_file() else None
-            actual = None if linked or not theirs.is_file() else (theirs.read_bytes(), not theirs.stat().st_mode & 0o111)
             mode, name = staged.get(path, ("100644", None))
+            # Executable as Git reads it: from the working tree, or, with core.filemode off, from the index.
+            plain = (not theirs.stat().st_mode & 0o111 if modes_read else mode != "100755") if theirs.is_file() else None
+            actual = None if linked or not theirs.is_file() else (theirs.read_bytes(), plain)
             # Anything but a file, in the working tree or the index: a folder, a submodule, a link.
             other = (os.path.lexists(theirs) and not theirs.is_file()) or mode not in ("100644", "100755")
             if linked or other or modes.get(path, "100644") not in ("100644", "100755"):
@@ -3535,11 +3558,25 @@ def run_scoped(argv: list[str]) -> int:
         except GitError as error:
             print(f"error: {error}", file=sys.stderr)
             return 2
+        try:
+            unusual = {path: "the sync writes no link or other kind of file"
+                       for path, mode in staged_from(base).items()
+                       if graph_file(path) and mode not in ("100644", "100755", "000000")}
+        except GitError as error:
+            print(f"error: {error}", file=sys.stderr)
+            return 2
+        disagree = {**unusual, **disagree}
         graph = sorted(set(graph) | {path for path in disagree if graph_file(path)})
     unsettled = {path: what for path, what in disagree.items() if lean_source(path)}
     if linked or unsettled:
         errors = [f"{path} is a link: the sync reads and writes through none; put what it links to in its place"
                   for path in linked] + [f"{path}: {what}" for path, what in unsettled.items()]
+        # The wiki changes from Git's records alone: the working tree's, and what the index changes from the base.
+        try:
+            staged_graph = [path for path in staged_from(base) if graph_file(path)]
+        except GitError as error:
+            print(f"error: {error}", file=sys.stderr)
+            return 2
         if options.check:
             print("In step: no")
         for row in errors:
@@ -3554,7 +3591,7 @@ def run_scoped(argv: list[str]) -> int:
                 "schema": "atlas-graph-sync/v1", "base": base, "check": options.check, "fix": fix,
                 "lean_files": sorted(lean), "counts": {**NOTHING, "lean files": len(lean)}, "new": {}, "missing": [],
                 "held": [], "digests": {}, "parts": [], "changed": [], "errors": errors, "unindexed": [],
-                "in_step": False, "wiki_changes": "other" if graph else "none", "written": [],
+                "in_step": False, "wiki_changes": "other" if graph or staged_graph else "none", "written": [],
                 "differences": [f"{path}: the sync writes no link or other kind of file" for path in linked
                                 if path.replace(os.sep, "/") in graph]},
                 indent=1, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8", errors="backslashreplace")
