@@ -900,7 +900,6 @@ theorem measureReal_window_of_ae_injective {r a b : ℕ} (hr : 1 ≤ r) (hrm : r
         realOrderStatistic r ω ≤ syntheticOrderStatistic b ω} =ᵐ[μ]
       ({ω | sampleRank r ω + 1 ≤ b} \ {ω | sampleRank r ω + 1 ≤ a} : Set _) := by
     filter_upwards [hinj] with ω hω
-    apply propext
     simp only [Set.mem_sdiff, Set.mem_ofPred_eq, not_le]
     rw [window_iff_of_injective hr hrm hab hω]
     omega

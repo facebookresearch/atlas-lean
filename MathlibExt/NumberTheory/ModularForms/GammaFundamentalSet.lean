@@ -47,7 +47,7 @@ open scoped MatrixGroups Modular Pointwise
 /-- The fundamental set for a subgroup `Γ` of `SL(2, ℤ)`, obtained by
 translating the standard fundamental domain `𝒟` by coset representatives
 for `SL(2, ℤ) ⧸ Γ`. -/
-public def gammaFundamentalSet (Γ : Subgroup SL(2, ℤ)) : Set ℍ :=
+public noncomputable def gammaFundamentalSet (Γ : Subgroup SL(2, ℤ)) : Set ℍ :=
   ⋃ q : SL(2, ℤ) ⧸ Γ, (Quotient.out q)⁻¹ • 𝒟
 
 private theorem volume_smul_sl2z (γ : SL(2, ℤ)) (s : Set ℍ) :
