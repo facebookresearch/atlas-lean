@@ -135,20 +135,23 @@ noncomputable def huckelMatrix {n : ℕ} (α β : ℝ) (G : SimpleGraph (Fin n))
 noncomputable def pertE1 {n : ℕ} [NeZero n] (H1 : Matrix (Fin n) (Fin n) ℝ) : ℝ :=
   H1 0 0
 
-/-- First-order eigenvector correction (zero 0-component), for `n ≥ 1` levels. -/
+/-- First-order eigenvector correction (zero 0-component), for `n ≥ 1` levels. A component with
+`d j = d 0` is `0`, by the convention `x / 0 = 0`. -/
 noncomputable def pertV1 {n : ℕ} [NeZero n] (d : Fin n → ℝ)
     (H1 : Matrix (Fin n) (Fin n) ℝ) : Fin n → ℝ :=
   fun j => if j = 0 then 0 else H1 j 0 / (d 0 - d j)
 
-/-- Second-order energy correction of level `0`, for `n ≥ 1` levels. -/
+/-- Second-order energy correction of level `0`, for `n ≥ 1` levels. A term with `d j = d 0` is `0`,
+by the convention `x / 0 = 0`. -/
 noncomputable def pertE2 {n : ℕ} [NeZero n] (d : Fin n → ℝ)
     (H1 H2 : Matrix (Fin n) (Fin n) ℝ) : ℝ :=
   H2 0 0 + ∑ j ∈ Finset.univ.erase 0, (H1 j 0) ^ 2 / (d 0 - d j)
 
 /-- Second-order eigenvector coefficient (zero `0`-component) for `n ≥ 1` levels, the
-Rayleigh–Schrödinger formula in intermediate normalization. In `secondOrder_projected_residual`
-it enters only the `t ^ 3` remainder of the `e₀`-component; the tests check the full second-order
-residual on a `3 × 3` example. -/
+Rayleigh–Schrödinger formula in intermediate normalization. In `secondOrder_projected_residual` it
+enters only the `t ^ 3` remainder of the `e₀`-component; the tests check the full second-order
+residual on a `3 × 3` example. Terms with a vanishing denominator are `0`, by the convention
+`x / 0 = 0`. -/
 noncomputable def pertV2 {n : ℕ} [NeZero n] (d : Fin n → ℝ)
     (H1 H2 : Matrix (Fin n) (Fin n) ℝ) : Fin n → ℝ :=
   fun j => if j = 0 then 0 else

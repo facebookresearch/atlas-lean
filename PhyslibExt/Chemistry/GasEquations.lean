@@ -160,7 +160,8 @@ lemma hasDerivAt_deriv_vdWPressure (a b R T Vm : ℝ) (hb : 0 < b) (hVm : b < Vm
 
 /-! ## C. The van der Waals critical point -/
 
-/-- The compressibility factor `Z = p V_m / (R T)`. -/
+/-- The compressibility factor `Z = p V_m / (R T)`. By the convention `x / 0 = 0`, `Z = 0` when
+`R T = 0`. -/
 noncomputable def compressibilityFactor (p Vm R T : ℝ) : ℝ := p * Vm / (R * T)
 
 /-- Van der Waals model, critical point. If `a, b, R, T > 0`, `Vm > b`, and both critical

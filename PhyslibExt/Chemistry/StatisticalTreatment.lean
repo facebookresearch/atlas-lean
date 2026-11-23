@@ -521,9 +521,9 @@ lemma lodK3_nonneg (s m : ℝ) (hs : 0 ≤ s) (hm : 0 < m) : 0 ≤ lodK3 s m := 
     norm_num
   · exact le_of_lt hm
 
-/-- Detection limit `LOD = 3.3·s/m` as a stated convention (not a theorem): `k = 3.3`
-convention, meaningful for `m > 0`. Separate from `lodK3`: state which convention is used and
-never mix them. -/
+/-- Detection limit `LOD = 3.3·s/m` as a stated convention (not a theorem): `k = 3.3` convention,
+meaningful for `m > 0`. Separate from `lodK3`: state which convention is used and never mix them. At
+`m = 0` the value is `0`, by the convention `x / 0 = 0`. -/
 noncomputable def lodK33 (s m : ℝ) : ℝ :=
   3.3 * s / m
 

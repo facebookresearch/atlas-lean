@@ -454,14 +454,15 @@ noncomputable def meanEnergy {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : �
 noncomputable def energyVariance {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ) : ℝ :=
   ∑ i, boltzmannProb E β i * (E i - meanEnergy E β) ^ 2
 
-/-- The temperature `T = 1 / (kB * β)`: a definition, not a new constant, meaningful for
-`0 < kB` and `0 < β`. -/
+/-- The temperature `T = 1 / (kB * β)`: a definition, not a new constant, meaningful for `0 < kB`
+and `0 < β`. By the convention `x / 0 = 0`, `T = 0` when `kB * β = 0`. -/
 noncomputable def temperature (kB β : ℝ) : ℝ :=
   1 / (kB * β)
 
 /-- The Helmholtz free energy `A = -(log Z) / β`, which is `-kB T log Z` because `kB T = 1 / β`
 (`helmholtzFreeEnergy_eq_neg_mul_temperature_mul_log`). It does not depend on the Boltzmann
-constant, so it takes no `kB` argument. -/
+constant, so it takes no `kB` argument. By the conventions `x / 0 = 0` and `log 0 = 0`, `A = 0` at
+`β = 0` and for an empty state space. -/
 noncomputable def helmholtzFreeEnergy {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ) : ℝ :=
   -(Real.log (partitionFunction E β)) / β
 

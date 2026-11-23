@@ -554,8 +554,9 @@ noncomputable def hydrogenRadial21' (r : ℝ) : ℝ :=
 noncomputable def hydrogenRadial21'' (r : ℝ) : ℝ :=
   (1 / (2 * Real.sqrt 6)) * Real.exp (-r / 2) * (r / 4 - 1)
 
-/-- Radial residual: `-1/2 * R'' - (1/r) * R' + (l*(l+1)/(2*r^2) - Z/r) * R`.
-The eigen-equation is `radialResidual Z l R R' R'' r = E * R`. -/
+/-- Radial residual: `-1/2 * R'' - (1/r) * R' + (l*(l+1)/(2*r^2) - Z/r) * R`. The eigen-equation is
+`radialResidual Z l R R' R'' r = E * R`. At `r = 0` the terms with `1/r` and `1/r^2` are `0`, by the
+convention `x / 0 = 0`. -/
 noncomputable def radialResidual (Z l R R' R'' r : ℝ) : ℝ :=
   -1 / 2 * R'' - (1 / r) * R' + (l * (l + 1) / (2 * r ^ 2) - Z / r) * R
 

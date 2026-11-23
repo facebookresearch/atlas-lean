@@ -239,10 +239,10 @@ theorem calibration_blue {m n : ℕ} (X : Matrix (Fin m) (Fin n) ℝ)
 
 /-! ## B. Inverse prediction and first-order uncertainty -/
 
-/-- Inverse prediction from a fitted line (CH24.4): given fitted intercept `a`, fitted slope
-`b` and a new response `y₀`, the predicted concentration is `x₀ = (y₀ - a) / b`. No Mathlib
-or ATLAS definition covers fitted-line inverse prediction (`EarthScience` treats a known
-line with the fitted case explicitly out of scope). -/
+/-- Inverse prediction from a fitted line (CH24.4): given fitted intercept `a`, fitted slope `b` and
+a new response `y₀`, the predicted concentration is `x₀ = (y₀ - a) / b`. No Mathlib or ATLAS
+definition covers fitted-line inverse prediction (`EarthScience` treats a known line with the fitted
+case explicitly out of scope). For `b = 0` the value is `0`, by the convention `x / 0 = 0`. -/
 noncomputable def inversePrediction (a b y₀ : ℝ) : ℝ :=
   (y₀ - a) / b
 
@@ -407,14 +407,13 @@ end FirstOrderUncertainty
 
 /-! ## C. Standard addition and internal standard -/
 
-/-- Standard-addition unknown from a fitted line (CH24.5a): given the fitted intercept and
-slope of the response-versus-added-concentration line, the unknown concentration is
-`intercept / slope`. The parametrization is fixed once here: `intercept` and `slope` are the
-fitted line's coefficients, and the sign convention is that the line `y = a + b * t` meets
-`y = 0` at `t = -a / b`, so the unknown is `-t* = a / b` (positive for same-sign `a, b`).
-It is defined for every slope: for `b = 0` the convention `x / 0 = 0` makes it `0`, while the
-line meets `y = 0` only when `b ≠ 0`. No Mathlib or ATLAS definition covers standard
-addition. -/
+/-- Standard-addition unknown from a fitted line (CH24.5a): given the fitted intercept and slope of
+the response-versus-added-concentration line, the unknown concentration is `intercept / slope`. The
+parametrization is fixed once here: `intercept` and `slope` are the fitted line's coefficients, and
+the sign convention is that the line `y = a + b * t` meets `y = 0` at `t = -a / b`, so the unknown
+is `-t* = a / b` (positive for same-sign `a, b`). It is defined for every slope: for `b = 0` the
+convention `x / 0 = 0` makes it `0`, while the line meets `y = 0` in exactly one point only when
+`b ≠ 0`. No Mathlib or ATLAS definition covers standard addition. -/
 noncomputable def standardAdditionUnknown (intercept slope : ℝ) : ℝ :=
   intercept / slope
 

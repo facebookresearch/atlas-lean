@@ -92,7 +92,8 @@ namespace Chemistry.ReactingTransportPorts
 /-! ## A. Rates, balances and the box -/
 
 /-- Arrhenius rate coefficient `k(T) = A * exp(-B / T)`, with prefactor `A` (per time) and
-activation temperature `B = E_a / R`. -/
+activation temperature `B = E_a / R`. It is read for `T > 0`; by the convention `-B / 0 = 0`,
+`k(0) = A`, and `k(T) > A` for `T < 0` when `A, B > 0`. -/
 noncomputable def arrheniusRateConstant (A B T : ℝ) : ℝ :=
   A * Real.exp (-B / T)
 

@@ -310,8 +310,9 @@ natural number `a * (D / b)`, where `D = commonDenominator r`; it equals `D * r 
 def clearDenominators {E : Type*} [Fintype E] (r : E → ℚ) (e : E) : ℕ :=
   (r e).num.toNat * (commonDenominator r / (r e).den)
 
-/-- The empirical formula of the nonnegative mole ratios `r`: clear denominators, then divide
-every entry by the greatest common divisor of all the entries. -/
+/-- The empirical formula of the nonnegative mole ratios `r`: clear denominators, then divide every
+entry by the greatest common divisor of all the entries. For `r = 0` the cleared entries and their
+greatest common divisor are `0`, and the convention `n / 0 = 0` makes the result the zero vector. -/
 def empiricalFormula {E : Type*} [Fintype E] (r : E → ℚ) (e : E) : ℕ :=
   clearDenominators r e / Finset.univ.gcd (clearDenominators r)
 
@@ -532,13 +533,15 @@ lemma formulaMolarMass_nsmul_consistency_pos {E : Type*} [Fintype E] {Mₑ : E �
 -/
 
 /-- The mole fraction `x i = n i / ∑ j, n j` of the component `i` of a mixture with amounts of
-substance `n`. -/
+substance `n`. When the total amount is `0`, every fraction is `0`, by the convention `x / 0 = 0`.
+-/
 noncomputable def moleFraction {ι : Type*} [Fintype ι] (n : ι → ℝ) (i : ι) : ℝ :=
   n i / ∑ j, n j
 
 /-- The mass fraction `w i = n i * M i / ∑ j, n j * M j` of the component `i` of a mixture with
 amounts `n` and molar masses `M`. Applied to mole fractions in place of amounts, it converts mole
-fractions to mass fractions (`massFraction_moleFraction`). -/
+fractions to mass fractions (`massFraction_moleFraction`). When the total mass `∑ j, n j * M j` is
+`0`, every fraction is `0`, by the convention `x / 0 = 0`. -/
 noncomputable def massFraction {ι : Type*} [Fintype ι] (M n : ι → ℝ) (i : ι) : ℝ :=
   n i * M i / ∑ j, n j * M j
 
