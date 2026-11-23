@@ -15,21 +15,15 @@ public import MathlibExt.AlgebraicGeometry.EllAdicReductionComparison
 @[expose] public noncomputable section
 
 /-!
-# Integral pro-étale realization and its normalized finite reductions
+# Integral `ℓ`-adic cohomology as the limit of finite-level cohomology
 
-This packet isolates the coefficient-normalized realization comparison needed
-before transporting graded products and arithmetic actions onto Mathlib's
-integral pro-étale carrier. It records no independently chosen product.
-
-The comparison sends a class to its actual finite coefficient reductions.
-The proper smooth prime-to-characteristic scope is essential for finiteness
-and the Mittag–Leffler argument; no unrestricted inverse-limit assertion is
-made for arbitrary cohomology towers.
+For a proper smooth scheme `X` over an algebraically closed field `k` and a prime `ℓ ≠ char k`, the
+reductions `H^i(X, ℤ_ℓ) → H^i(X, ℤ/ℓ^(r+1))` identify the pro-étale cohomology `H^i(X, ℤ_ℓ)`
+(Mathlib's `Scheme.EllAdicCohomology`) with the inverse limit of the finite-level groups. The
+finite-level groups are finite, so the `lim¹` term vanishes (Mittag-Leffler).
 
 References: Bhatt–Scholze, *The pro-étale topology for schemes*, §6.8;
-Stacks 03UT and 09BT. AxiomMath/Stacks implements completed constant sheaves
-and pro-étale point comparison, but those generic objects do not identify this
-specific Mathlib carrier and all its coefficient-induced projections.
+Stacks 03UT and 09BT.
 -/
 
 namespace WantedExt.AlgebraicGeometry.ProEtaleCoefficientComparisonWanted
@@ -39,12 +33,12 @@ open MathlibExt.AlgebraicGeometry.EllAdicReductionComparison
 
 universe u
 
-/-- The normalized comparison is bijective in the proper smooth setting.
-Its coordinates are fixed by `reduction`; no abstract inverse map is supplied. -/
+/-- For `X` proper and smooth over an algebraically closed field and `ℓ ≠ char k`, the map from
+`H^i(X, ℤ_ℓ)` to the inverse limit of the `H^i(X, ℤ/ℓ^(r+1))` is bijective. -/
 public theorem_wanted comparison_bijective (ell : ℕ) [Fact ell.Prime]
-    [ReductionMaps ell] (k : Type u) [Field k] [IsAlgClosed k]
-    (X : Over (Spec (.of k))) (d i : ℕ) [IsProper X.hom]
-    [SmoothOfRelativeDimension d X.hom] (hell : ell ≠ ringChar k) :
+    (k : Type u) [Field k] [IsAlgClosed k]
+    (X : Over (Spec (.of k))) (i : ℕ) [IsProper X.hom] [Smooth X.hom]
+    (hell : ell ≠ ringChar k) :
     Function.Bijective
       (comparison ell X.left i (reductions_commute ell X.left i))
 

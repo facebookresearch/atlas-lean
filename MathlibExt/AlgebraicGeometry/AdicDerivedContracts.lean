@@ -425,12 +425,17 @@ structure VanishingCochainModel {A Y Z : Scheme} (j : Y ⟶ A) (i : Z ⟶ A)
   normalized : DerivedCategory.Plus.Q.map arrow ≫ targetIso.hom =
     sourceIso.hom ≫ specialization R M j i
 
-/-- Its vanishing object is the actual cochain cone of that fixed arrow. -/
+/-- The vanishing object: the mapping cone of the cochain model of specialization, a bounded-below
+complex. -/
 def vanishingObject {A Y Z : Scheme} {j : Y ⟶ A} {i : Z ⟶ A}
     [PullbackDerivedNormalization R i]
     [IsIso (coefficientPullback R M i)]
     (V : VanishingCochainModel R M j i) :
-    DerivedCategory (ModuleSheaf R Z) :=
-  DerivedCategory.Q.obj (CochainComplex.mappingCone V.arrow.hom)
+    Derived R Z :=
+  DerivedCategory.Plus.Q.obj ⟨CochainComplex.mappingCone V.arrow.hom, by
+    obtain ⟨n₁, _⟩ := V.source.property
+    obtain ⟨n₂, _⟩ := V.target.property
+    exact ⟨min (n₁ - 1) n₂,
+      CochainComplex.isStrictlyGE_mappingCone V.arrow.hom n₁ n₂ _ (by omega) (by omega)⟩⟩
 
 end MathlibExt.AlgebraicGeometry.AdicDerivedContracts
