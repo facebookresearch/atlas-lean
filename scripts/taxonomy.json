@@ -9894,6 +9894,7 @@
   "MathlibExt/Combinatorics/Additive/AlonFurediCover": {"to": "Combinatorics/additive-combinatorics", "title": "Combinatorial Nullstellensatz"},
   "MathlibExt/Combinatorics/Additive/Basis": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Asymptotic additive bases"},
   "MathlibExt/Combinatorics/Additive/BhSet": {"to": "Combinatorics/additive-combinatorics/sidon-sets-difference-sets", "title": "B_h-sets"},
+  "MathlibExt/Combinatorics/Additive/CapSetDimThree": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Small values of cap set sizes and Roth numbers"},
   "MathlibExt/Combinatorics/Additive/CauchyDavenportChowla": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Cauchy–Davenport–Chowla theorem"},
   "MathlibExt/Combinatorics/Additive/CombinatorialNullstellensatz": {"to": "Combinatorics/additive-combinatorics", "title": "Combinatorial Nullstellensatz"},
   "MathlibExt/Combinatorics/Additive/CommonDifferenceProgressions": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Vosper's theorem"},
