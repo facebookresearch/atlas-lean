@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import MathlibExt.AlgebraicGeometry.StackVectorBundles
+public import MathlibExt.AlgebraicGeometry.StackCycleGeometry
 public import Mathlib.GroupTheory.QuotientGroup.Basic
 public import Mathlib.AlgebraicGeometry.Morphisms.QuasiCompact
 
@@ -30,7 +30,7 @@ not a new cycle carrier or a newly requested scheme theorem.
 namespace AlgebraicGeometry.StackCycleRelations
 
 open CategoryTheory CategoryTheory.Limits Opposite
-open GeneralStackGeometry StackCycleGeometry StackVectorBundles
+open GeneralStackGeometry StackCycleGeometry
 
 variable {S : Scheme.{0}}
 
