@@ -63,10 +63,15 @@ structure OriginalRationalModel (P : AffineUntilting p) where
         ∀ a ∈ numerators, v.1.relation.vle a denominator}
   point_normalized : ∀ v, (point v).val = map.original.spa v
 
-/-- The tilted rational algebra and comparison are fixed on all coefficients and maps. -/
+/-- The tilted rational algebra and comparison are fixed on all coefficients and maps: the original
+rational domain is cut out by the sharps of the integral data `T, s`, and the tilted one by their
+images in the tilt. -/
 structure RationalTiltComparison (P : AffineUntilting p)
     (D : OriginalRationalModel p P) (T : Finset (IntegralRing p P.pair))
     (s : IntegralRing p P.pair) where
+  original_numerators : (D.numerators : Set P.pair.ring) =
+    sharp p P.pair '' (T : Set (IntegralRing p P.pair))
+  original_denominator : D.denominator = sharp p P.pair s
   model : RationalModel p P.tilt.pair
   numerators : (model.numerators : Set P.tilt.pair.ring) =
     TiltModel.integralMap p P.pair P.tilt '' (T : Set (IntegralRing p P.pair))
