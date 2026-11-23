@@ -1,0 +1,40 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import MathlibExt.AlgebraicTopology.TopologicalSpace.ModelCategory.LegacyTopCat.TopCatWeakHomotopyIdentities
+
+/-!
+# Weak homotopy equivalences in `TopCat`
+
+At universe zero, `TopCat.weakHomotopyEquivalences` defines the
+`CategoryWithWeakEquivalences TopCat.{0}` instance. The identity-closure
+instance is inherited from `TopCatWeakHomotopyIdentities` and identified
+with the installed weak-equivalence class.
+
+Mathematical source: Goerss--Jardine, Simplicial Homotopy Theory, I.3.
+-/
+
+@[expose] public section
+
+open CategoryTheory
+
+namespace TopCat
+
+/-- Weak homotopy equivalences give the `CategoryWithWeakEquivalences`
+instance on `TopCat.{0}`. -/
+@[nolint defsWithUnderscore]
+instance : HomotopicalAlgebra.CategoryWithWeakEquivalences TopCat.{0} where
+  weakEquivalences := weakHomotopyEquivalences
+
+/-- Bridge identities to the installed weak-equivalence class. -/
+instance : (HomotopicalAlgebra.weakEquivalences TopCat.{0}).ContainsIdentities :=
+  inferInstanceAs ((weakHomotopyEquivalences : MorphismProperty TopCat.{0}).ContainsIdentities)
+
+end TopCat
