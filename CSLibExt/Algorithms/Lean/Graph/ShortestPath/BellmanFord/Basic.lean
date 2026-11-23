@@ -55,7 +55,10 @@ theorem iterate_fin_has_earlier {n : Nat} (f : Fin n → Fin n) (x : Fin n) :
 
 end Internal
 
-/-- One occurrence in a weighted directed edge list. -/
+/-- **Weighted directed edge.** A weighted directed edge on the vertices $0, \dots, n-1$ consists
+of a source vertex, a target vertex and an integer weight.
+
+Bellman-Ford takes a list of such edges, so each entry is one edge occurrence. -/
 public structure Edge (n : Nat) where
   /-- The source vertex. -/
   source : Fin n
@@ -65,7 +68,10 @@ public structure Edge (n : Nat) where
   weight : Int
 deriving DecidableEq
 
-/-- Forget weights while preserving edge-list order and multiplicity. -/
+/-- **Weight-forgetting directed graph.** For a list of weighted edges on the vertices
+$\{0, \dots, n-1\}$, the associated ordered directed graph enumerates its vertices as
+$0, 1, \dots, n-1$, and the outgoing neighbor list of a vertex $u$ is the list of targets of the
+edges of the list with source $u$, in the order in which they occur and with repetitions. -/
 @[expose] public def toDirectedAdjacency {n : Nat}
     (edges : List (Edge n)) : DirectedAdjacency (Fin n) where
   vertices := List.finRange n
@@ -74,16 +80,25 @@ deriving DecidableEq
   adjacency source :=
     (edges.filter fun edge => decide (edge.source = source)).map Edge.target
 
-/-- The vertices visited by a path represented by forward edge occurrences. -/
+/-- **Vertices of a path.** For a vertex $s$ of $\{0, \dots, n-1\}$ and a list of weighted edges
+$e_1, \dots, e_k$ on these vertices, the vertices of the path from $s$ along this list are the
+list $s, t_1, \dots, t_k$, where $t_i$ is the target of $e_i$.
+
+The edges are not required to be consecutive. -/
 @[expose] public def pathVertices {n : Nat}
     (source : Fin n) (path : List (Edge n)) : List (Fin n) :=
   source :: path.map Edge.target
 
-/-- Sum the integer weights of concrete edge occurrences. -/
+/-- **Bellman–Ford path weight.** The weight of a list of integer-weighted edges is the sum of the
+weights of its entries, an edge occurring several times being counted each time. -/
 @[expose] public def pathWeight {n : Nat} (path : List (Edge n)) : Int :=
   (path.map Edge.weight).sum
 
-/-- A concrete edge list is a source-to-target path in the input edge list. -/
+/-- **Weighted path in an edge list.** Let $E$ be a list of weighted directed edges on the vertices
+$0, \dots, n-1$. A list $P = (e_1, \dots, e_k)$ of weighted directed edges is a weighted path in $E$
+from $s$ to $t$ when every $e_i$ belongs to $E$, the target of $e_i$ is the source of $e_{i+1}$ for
+every $i < k$, and either $k = 0$ and $s = t$, or $k \ge 1$, the source of $e_1$ is $s$ and the
+target of $e_k$ is $t$. -/
 @[expose] public def IsWeightedPath {n : Nat} (edges : List (Edge n)) (source target : Fin n)
     (path : List (Edge n)) : Prop :=
   (∀ edge ∈ path, edge ∈ edges) ∧
@@ -93,7 +108,9 @@ deriving DecidableEq
     | first :: rest =>
         first.source = source ∧ (first :: rest).getLast?.map Edge.target = some target
 
-/-- The weight-forgetting graph contains exactly the endpoint pairs of input edges. -/
+/-- **Edges of the weight-forgetting graph.** For a list $E$ of weighted directed edges on the
+vertices $0, \dots, n-1$ and vertices $u$, $v$, the graph obtained from $E$ by forgetting weights
+has an edge from $u$ to $v$ if and only if some edge in $E$ has source $u$ and target $v$. -/
 public theorem edge_toDirectedAdjacency_iff {n : Nat} {edges : List (Edge n)} {u v : Fin n} :
     (toDirectedAdjacency edges).Edge u v ↔
       ∃ edge, edge ∈ edges ∧ edge.source = u ∧ edge.target = v := by
@@ -197,14 +214,20 @@ end Internal
 
 open Internal
 
-/-- Removing the first edge leaves a weighted path from that edge's target. -/
+/-- **Tail of a weighted path.** Let $E$ be a list of weighted directed edges on the vertices
+$0, \dots, n-1$ and let $s$ and $t$ be vertices. If the list consisting of an edge $e$ followed by
+a list $R$ of edges is a weighted path in $E$ from $s$ to $t$, then $R$ is a weighted path in $E$
+from the target of $e$ to $t$. -/
 public theorem isWeightedPath_tail {n : Nat} {edges : List (Edge n)}
     {source target : Fin n} {first : Edge n} {rest : List (Edge n)}
     (path : IsWeightedPath edges source target (first :: rest)) :
     IsWeightedPath edges first.target target rest :=
   Internal.isWeightedPath_tail path
 
-/-- Append an input edge whose source is the endpoint of a weighted path. -/
+/-- **Appending an edge to a weighted path.** Let $E$ be a list of weighted directed edges on the
+vertices $0, \dots, n-1$ and let $s$, $m$ and $t$ be vertices. If $P$ is a weighted path in $E$
+from $s$ to $m$ and $e$ is an edge belonging to $E$ with source $m$ and target $t$, then the list
+$P$ followed by $e$ is a weighted path in $E$ from $s$ to $t$. -/
 public theorem isWeightedPath_append_edge {n : Nat} {edges : List (Edge n)}
     {source middle target : Fin n} {path : List (Edge n)} {edge : Edge n}
     (path_valid : IsWeightedPath edges source middle path)
@@ -213,19 +236,27 @@ public theorem isWeightedPath_append_edge {n : Nat} {edges : List (Edge n)}
     IsWeightedPath edges source target (path ++ [edge]) :=
   Internal.isWeightedPath_append_edge path_valid edge_mem edge_source edge_target
 
-/-- Appending one edge adds exactly its integer weight. -/
+/-- **Weight of a path with an edge appended.** For every list $P$ of weighted directed edges on
+the vertices $0, \dots, n-1$ and every weighted directed edge $e$ on these vertices, the weight of
+the list $P$ followed by $e$ is the weight of $P$ plus the weight of $e$. -/
 public theorem pathWeight_append_edge {n : Nat} (path : List (Edge n)) (edge : Edge n) :
     pathWeight (path ++ [edge]) = pathWeight path + edge.weight :=
   Internal.pathWeight_append_edge path edge
 
-/-- A concrete weighted path gives the canonical walk of the same edge length. -/
+/-- **Weighted paths give walks of the same length.** Let $E$ be a list of weighted directed
+edges on the vertices $0, \dots, n-1$ and let $s$ and $t$ be vertices. If a list $P$ of $k$ edges
+is a weighted path in $E$ from $s$ to $t$, then there is a walk of length $k$ from $s$ to $t$ in
+the directed graph obtained from $E$ by forgetting the weights. -/
 public theorem isWeightedPath_walk {n : Nat} {edges : List (Edge n)}
     {source target : Fin n} {path : List (Edge n)}
     (path_valid : IsWeightedPath edges source target path) :
     (toDirectedAdjacency edges).Walk path.length source target :=
   Internal.isWeightedPath_walk path_valid
 
-/-- Weighted edge-list paths characterize reachability in the weight-forgetting graph. -/
+/-- **Reachability by weighted paths.** For a list of weighted edges on the vertices
+$\{0, \dots, n-1\}$ and vertices $s$ and $t$, the vertex $t$ is reachable from $s$ in the directed
+graph obtained from the list by forgetting the weights if and only if there is a weighted path
+from $s$ to $t$ using edges of the list. -/
 public theorem reachable_iff_exists_isWeightedPath {n : Nat} {edges : List (Edge n)}
     {source target : Fin n} :
     (toDirectedAdjacency edges).Reachable source target ↔
@@ -238,7 +269,11 @@ public theorem reachable_iff_exists_isWeightedPath {n : Nat} {edges : List (Edge
     rw [DirectedAdjacency.reachable_iff_exists_walk]
     exact ⟨path.length, isWeightedPath_walk path_valid⟩
 
-/-- A concrete simple negative cycle plus a concrete path from the source to its base. -/
+/-- **Reachable negative cycle witness.** For a list of weighted edges on the vertices
+$\{0, \dots, n-1\}$ and a source vertex $s$, a reachable negative cycle consists of a base
+vertex $b$, a weighted path $p$ from $s$ to $b$ using edges of the list whose vertices along $p$
+from $s$ are pairwise distinct, and a nonempty weighted path $c$ from $b$ to $b$ using edges of
+the list whose edges have pairwise distinct sources and whose weight is negative. -/
 public structure ReachableNegativeCycle {n : Nat} (edges : List (Edge n)) (source : Fin n) where
   /-- The distinguished cycle vertex reached by the prefix. -/
   base : Fin n
@@ -259,12 +294,21 @@ public structure ReachableNegativeCycle {n : Nat} (edges : List (Edge n)) (sourc
   /-- The cycle has negative total weight. -/
   cycle_negative : pathWeight cycle < 0
 
-/-- There is a negative cycle reachable from the chosen source. -/
+/-- **Existence of a reachable negative cycle.** Let $E$ be a list of weighted directed edges on
+the vertices $0, \dots, n-1$ and $s$ a vertex. Then $E$ has a negative cycle reachable from $s$
+when there is a reachable negative cycle witness for $E$ and $s$: a base vertex $b$, a weighted
+path in $E$ from $s$ to $b$ that visits no vertex twice, and a nonempty weighted path in $E$ from
+$b$ to $b$ whose edge sources are pairwise distinct and whose total weight is negative. -/
 @[expose] public def HasReachableNegativeCycle {n : Nat}
     (edges : List (Edge n)) (source : Fin n) : Prop :=
   Nonempty (ReachableNegativeCycle edges source)
 
-/-- Successful Bellman-Ford output. -/
+/-- **Bellman-Ford distance table.** For a graph on the vertices $0, \dots, n-1$, the output of a
+successful Bellman-Ford run consists of a source vertex $s$, for every vertex a distance that is
+either an integer or $\infty$, and for every vertex an optional predecessor edge (a weighted
+directed edge, or none).
+
+The structure only records these values; that they are shortest-path data is proved separately. -/
 public structure Distances (n : Nat) where
   /-- The source used for the run. -/
   source : Fin n
@@ -273,7 +317,12 @@ public structure Distances (n : Nat) where
   /-- The final predecessor edge for every vertex. -/
   predecessor : Vector (Option (Edge n)) n
 
-/-- Follow successful predecessors for at most `n` edges. -/
+/-- **Bellman-Ford path reconstruction.** Let the output of a Bellman-Ford run on $n$ vertices
+have source $s$. The path to a vertex $t$ is built backwards from $t$: at a vertex $v \ne s$, take
+the recorded predecessor edge $e$ of $v$, put it in front of the edges collected so far, and
+continue from the source of $e$. When $s$ is reached within at most $n$ such steps, the result is
+the collected list of edges (empty if $t = s$). If some vertex on the way has no predecessor edge,
+or $s$ is not reached within $n$ steps, there is no result. -/
 public def Distances.pathTo? {n : Nat} (result : Distances n) (target : Fin n) :
     Option (List (Edge n)) := by
   let rec follow (current : Fin n) : Nat → List (Edge n) → Option (List (Edge n))
@@ -287,7 +336,9 @@ public def Distances.pathTo? {n : Nat} (result : Distances n) (target : Fin n) :
           | some edge => follow edge.source fuel (edge :: suffix)
   exact follow target n []
 
-/-- Separate counts for edge checks and negative-cycle witness reconstruction. -/
+/-- **Bellman-Ford cost counters.** The cost of a Bellman-Ford run is a pair of natural numbers:
+the number of edge occurrences checked by relaxation passes, and the number of predecessor edges
+read or emitted while reconstructing a negative-cycle witness. -/
 public structure Cost where
   /-- Edge occurrences checked by relaxation passes. -/
   relaxationChecks : Nat
@@ -321,11 +372,17 @@ theorem Cost.zero_cycleWitnessSteps : (0 : Cost).cycleWitnessSteps = 0 := rfl
 
 end Internal
 
-/-- Total abstract events charged by the Bellman-Ford cost model. -/
+/-- **Total Bellman–Ford cost.** The total of a Bellman–Ford cost record is its number of edge
+relaxation checks plus its number of negative-cycle witness reconstruction steps. -/
 @[expose] public def Cost.total (cost : Cost) : Nat :=
   cost.relaxationChecks + cost.cycleWitnessSteps
 
-/-- Distances when no reachable negative cycle exists, otherwise a validated witness. -/
+/-- **Bellman–Ford result.** For a list of weighted edges on the vertices $\{0, \dots, n-1\}$ and
+a source vertex $s$, a Bellman–Ford result is either a distance record (a source vertex, an
+optional integer distance for each vertex and an optional predecessor edge for each vertex) or a
+reachable negative cycle witness for the list and $s$.
+
+The type itself does not require the distances to be correct. -/
 public inductive Result {n : Nat} (edges : List (Edge n)) (source : Fin n) where
   /-- Exact shortest distances and predecessor edges. -/
   | distances (result : Distances n)
