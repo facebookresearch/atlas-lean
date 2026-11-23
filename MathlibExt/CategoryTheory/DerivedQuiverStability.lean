@@ -69,16 +69,32 @@ def centralCharge (z : V → ℂ) : (V → ℤ) →+ ℂ where
   map_zero' := by simp
   map_add' d e := by simp [add_mul, Finset.sum_add_distrib]
 
-abbrev heartCharge (z : V → ℂ) (M : Representations k V) : ℂ :=
-  centralCharge V z (dimensionVector k V M)
+/-- Vertex charges in the upper half-plane. Their central charge is a stability function
+on the finite-length heart of finite-dimensional representations: it sends every nonzero
+representation to the upper half-plane (Bridgeland, Definition 2.1 and Example 5.5). -/
+structure VertexCharges where
+  /-- The charge of each vertex. -/
+  charge : V → ℂ
+  /-- Every vertex charge has positive imaginary part. -/
+  im_pos : ∀ v, 0 < (charge v).im
 
-def heartPhase (z : V → ℂ) (M : Representations k V) : ℝ :=
-  (heartCharge k V z M).arg / Real.pi
+variable {V} in
+/-- The charge of a representation: the central charge of its dimension vector. -/
+abbrev heartCharge (Z : VertexCharges V) (M : Representations k V) : ℂ :=
+  centralCharge V Z.charge (dimensionVector k V M)
 
+variable {V} in
+/-- The phase `arg Z(M) / π` of a representation. For a nonzero representation `Z(M)`
+lies in the upper half-plane, so its phase lies in `(0, 1)`; the phase is only used for
+nonzero representations. -/
+def heartPhase (Z : VertexCharges V) (M : Representations k V) : ℝ :=
+  (heartCharge k Z M).arg / Real.pi
+
+variable {V} in
 /-- Semistability tests every actual nonzero subrepresentation by its charge phase. -/
-def HeartSemistable (z : V → ℂ) (M : Representations k V) : Prop :=
+def HeartSemistable (Z : VertexCharges V) (M : Representations k V) : Prop :=
   ¬ IsZero M ∧ ∀ (A : Representations k V) (i : A ⟶ M), Mono i → ¬ IsZero A →
-    heartPhase k V z A ≤ heartPhase k V z M
+    heartPhase k Z A ≤ heartPhase k Z M
 
 /-- The bounded objects of the derived category. -/
 abbrev BoundedDerivedQuiver := (show ObjectProperty (D k V) from Bounded k V).FullSubcategory
@@ -99,40 +115,44 @@ abbrev derivedCharge (z : V → ℂ) (K : D k V) (hK : Bounded k V K) : ℂ :=
 def numericalNorm (K : D k V) (hK : Bounded k V K) : ℝ :=
   ∑ v : V, (|numericalClass k V K hK v| : ℤ)
 
+variable {V} in
 /-- A shift by m raises phase by m: H^n(K) has phase phi+n. -/
-def slicing (z : V → ℂ) (phi : ℝ) : ObjectProperty (D k V) := fun K ↦
+def slicing (Z : VertexCharges V) (phi : ℝ) : ObjectProperty (D k V) := fun K ↦
   Bounded k V K ∧ ∀ n : ℤ, ¬ IsZero (cohomology k V K n) →
-    HeartSemistable k V z (cohomology k V K n) ∧
-      heartPhase k V z (cohomology k V K n) - (n : ℝ) = phi
+    HeartSemistable k Z (cohomology k V K n) ∧
+      heartPhase k Z (cohomology k V K n) - (n : ℝ) = phi
 
+variable {V} in
 /-- An actual distinguished-triangle HN tower, with literal stages and nonzero pieces. -/
-abbrev HNFiltration (z : V → ℂ) (K : D k V) :=
-  MathlibExt.CategoryTheory.BridgelandStability.HNFiltration (D k V) (slicing k V z) K
+abbrev HNFiltration (Z : VertexCharges V) (K : D k V) :=
+  MathlibExt.CategoryTheory.BridgelandStability.HNFiltration (D k V) (slicing k Z) K
 
+variable {V} in
 /-- The actual extension window of slicing objects, via a finite triangle tower. -/
-def InPhaseWindow (z : V → ℂ) (a b : ℝ) (K : D k V) : Prop :=
-  ∃ F : HNFiltration k V z K, ∀ i, a < F.phases i ∧ F.phases i < b
+abbrev InPhaseWindow (Z : VertexCharges V) (a b : ℝ) (K : D k V) : Prop :=
+  MathlibExt.CategoryTheory.BridgelandStability.InPhaseWindow (D k V) (slicing k Z) a b K
 
+variable {V} in
 /-- The requested laws concern only the fixed candidate slicing and computed charge. -/
-structure SlicingLaws (z : V → ℂ) : Prop where
-  zero : ∀ phi : ℝ, slicing k V z phi (0 : D k V)
+structure SlicingLaws (Z : VertexCharges V) : Prop where
+  zero : ∀ phi : ℝ, slicing k Z phi (0 : D k V)
   isomorphic : ∀ (phi : ℝ) (K L : D k V), Nonempty (K ≅ L) →
-    slicing k V z phi K → slicing k V z phi L
+    slicing k Z phi K → slicing k Z phi L
   extensions : ∀ (phi : ℝ) (T : _root_.CategoryTheory.Pretriangulated.Triangle (D k V)),
-    T ∈ distTriang (D k V) → slicing k V z phi T.obj₁ → slicing k V z phi T.obj₃ →
-      slicing k V z phi T.obj₂
-  phase_charge : ∀ (phi : ℝ) (K : D k V) (hK : slicing k V z phi K), ¬ IsZero K →
-    ∃ m : ℝ, 0 < m ∧ derivedCharge k V z K hK.1 =
+    T ∈ distTriang (D k V) → slicing k Z phi T.obj₁ → slicing k Z phi T.obj₃ →
+      slicing k Z phi T.obj₂
+  phase_charge : ∀ (phi : ℝ) (K : D k V) (hK : slicing k Z phi K), ¬ IsZero K →
+    ∃ m : ℝ, 0 < m ∧ derivedCharge k V Z.charge K hK.1 =
       (m : ℂ) * Complex.exp ((phi * Real.pi : ℝ) * Complex.I)
   shift : ∀ (phi : ℝ) (K : D k V),
-    slicing k V z phi K ↔ slicing k V z (phi + 1) (K⟦(1 : ℤ)⟧)
+    slicing k Z phi K ↔ slicing k Z (phi + 1) (K⟦(1 : ℤ)⟧)
   hom_vanishing : ∀ (phi psi : ℝ), psi < phi →
-    ∀ (K L : D k V), slicing k V z phi K → slicing k V z psi L → Subsingleton (K ⟶ L)
-  harderNarasimhan : ∀ K : D k V, Bounded k V K → Nonempty (HNFiltration k V z K)
-  support : ∃ C : ℝ, 0 < C ∧ ∀ (phi : ℝ) (K : D k V) (hK : slicing k V z phi K),
-    C * numericalNorm k V K hK.1 ≤ ‖derivedCharge k V z K hK.1‖
+    ∀ (K L : D k V), slicing k Z phi K → slicing k Z psi L → Subsingleton (K ⟶ L)
+  harderNarasimhan : ∀ K : D k V, Bounded k V K → Nonempty (HNFiltration k Z K)
+  support : ∃ C : ℝ, 0 < C ∧ ∀ (phi : ℝ) (K : D k V) (hK : slicing k Z phi K),
+    C * numericalNorm k V K hK.1 ≤ ‖derivedCharge k V Z.charge K hK.1‖
   local_window : ∃ e : ℝ, 0 < e ∧ ∀ phi : ℝ, ∃ n : ℤ,
-    ∀ K : D k V, InPhaseWindow k V z (phi - e) (phi + e) K →
+    ∀ K : D k V, InPhaseWindow k Z (phi - e) (phi + e) K →
       ∀ j : ℤ, j ≠ n → IsZero (cohomology k V K j)
 
 end MathlibExt.CategoryTheory.DerivedQuiverStability

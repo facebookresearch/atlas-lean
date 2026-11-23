@@ -27,8 +27,9 @@ namespace WantedExt.CategoryTheory.DerivedQuiverStabilityWanted
 
 open MathlibExt.CategoryTheory.DerivedQuiverStability
 
-/-- Positive vertex charges give the stated candidate's HN, phase and support laws. -/
+/-- Vertex charges in the upper half-plane give the stated candidate's HN, phase and support
+laws. -/
 public theorem_wanted finite_quiver_slicing (k V : Type) [Field k] [Quiver V] [Fintype V]
-    (z : V → ℂ) (hz : ∀ v, 0 < (z v).im) : SlicingLaws k V z
+    (Z : VertexCharges V) : SlicingLaws k Z
 
 end WantedExt.CategoryTheory.DerivedQuiverStabilityWanted
