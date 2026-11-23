@@ -101,7 +101,8 @@ theorem repaired_exists :
 
 /-- Explicit witness: `Q0` itself works for the regression numbers. -/
 theorem tvDist_P0_Q0 : tvDist P0 Q0 = 1 / 4 := by
-  simp only [tvDist_unfold, Fintype.sum_bool, P0_false_toReal, P0_true_toReal,
+  show (1 / 2) * ∑ w, |(P0 w).toReal - (Q0 w).toReal| = 1 / 4
+  simp only [Fintype.sum_bool, P0_false_toReal, P0_true_toReal,
     Q0_false_toReal, Q0_true_toReal]
   norm_num
 

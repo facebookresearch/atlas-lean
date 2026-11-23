@@ -45,7 +45,7 @@ def maxDivLE {Outcome : Type*} [Fintype Outcome] [Nonempty Outcome]
   ∀ w, (P w).toReal ≤ Real.exp eps * (Q w).toReal
 
 /-- Unfolding of the shared total variation distance on `toReal` masses. -/
-theorem tvDist_unfold {Outcome : Type*} [Fintype Outcome] (P R : PMF Outcome) :
+private theorem tvDist_unfold {Outcome : Type*} [Fintype Outcome] (P R : PMF Outcome) :
     tvDist P R = (1 / 2) * ∑ w, |(P w).toReal - (R w).toReal| :=
   rfl
 
@@ -355,7 +355,7 @@ theorem repairPMF_maxDivLE_of_pos {Outcome : Type*} [Fintype Outcome]
   rw [repairPMF_apply_of_pos P Q eps heps hd w]
   exact repairFun_le_cq P Q eps heps hd w
 
-theorem abs_sub_eq_add_sub_two_min (a b : ℝ) :
+private theorem abs_sub_eq_add_sub_two_min (a b : ℝ) :
     |a - b| = a + b - 2 * min a b := by
   by_cases h : a ≤ b
   · simp [abs_of_nonpos (sub_nonpos.mpr h), min_eq_left h]
@@ -364,7 +364,7 @@ theorem abs_sub_eq_add_sub_two_min (a b : ℝ) :
     simp [abs_of_pos (sub_pos.mpr hlt), min_eq_right (le_of_lt hlt)]
     ring
 
-theorem tvDist_eq_one_minus_overlap {Outcome : Type*} [Fintype Outcome]
+private theorem tvDist_eq_one_minus_overlap {Outcome : Type*} [Fintype Outcome]
     [Nonempty Outcome] (P R : PMF Outcome) :
     tvDist P R = 1 - ∑ w, min ((P w).toReal) ((R w).toReal) := by
   rw [tvDist_unfold]
@@ -449,7 +449,10 @@ theorem exists_repair_of_approx {Outcome : Type*} [Fintype Outcome]
       repairPMF_maxDivLE_of_pos P Q eps heps hpos⟩
 
 open Classical in
-theorem event_diff_le_tvDist {Outcome : Type*} [Fintype Outcome]
+/-- Event mass difference bounded by total variation. This specializes the canonical
+`MathlibExt.Probability.MulticommodityFlow.sum_sub_le_tvDist` (mass functions swapped);
+kept private to this module. -/
+private theorem event_diff_le_tvDist {Outcome : Type*} [Fintype Outcome]
     [Nonempty Outcome] (P R : PMF Outcome) (s : Finset Outcome) :
     (∑ w ∈ s, (P w).toReal) - (∑ w ∈ s, (R w).toReal) ≤ tvDist P R := by
   classical
@@ -527,7 +530,7 @@ theorem excess_eq_zero_of_approx_zero {Outcome : Type*} [Fintype Outcome]
   · exact excessMass_nonneg P Q eps
 
 /-- Outer measure of a finite set is the real mass sum. -/
-theorem toOuterMeasure_coe_finset {Outcome : Type*} (P : PMF Outcome)
+private theorem toOuterMeasure_coe_finset {Outcome : Type*} (P : PMF Outcome)
     (s : Finset Outcome) :
     P.toOuterMeasure ↑s = ENNReal.ofReal (∑ w ∈ s, (P w).toReal) := by
   rw [PMF.toOuterMeasure_apply_finset,
