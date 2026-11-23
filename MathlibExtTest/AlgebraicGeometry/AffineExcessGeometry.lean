@@ -78,8 +78,9 @@ example : @MathlibExt.AlgebraicGeometry.BettiCycleRealization.cohomologyCast =
   rfl
 
 /-- A purity isomorphism makes the fundamental class an isomorphism. -/
-example (Z : TopCat.{0}) (D : MathlibExt.AlgebraicGeometry.CompactSupportBetti.DualizingComplex Z)
-    (d : ℕ) (e : D.obj ≅ (MathlibExt.AlgebraicGeometry.BettiRealization.rationalUnit Z)⟦(2 * d : ℤ)⟧) :
+example (Z : TopCat.{0})
+    (D : MathlibExt.AlgebraicGeometry.CompactSupportBetti.DualizingComplex Z) (d : ℕ)
+    (e : D.obj ≅ (MathlibExt.AlgebraicGeometry.BettiRealization.rationalUnit Z)⟦(2 * d : ℤ)⟧) :
     IsIso (MathlibExt.AlgebraicGeometry.VerdierBetti.fundamentalClass Z D d e) :=
   MathlibExt.AlgebraicGeometry.BettiCycleRealization.fundamentalClass_isIso Z D d e
 
