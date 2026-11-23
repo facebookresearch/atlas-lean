@@ -4,3 +4,4 @@ Groups acting on sets: orbits, stabilizers, fixed-point counts, transitivity, ba
 
 - [Finite permutation groups](finite-permutation-groups/README.md)
 - [Infinite permutation groups](infinite-permutation-groups/README.md)
+- [Symmetric and alternating groups](symmetric-groups/README.md)
