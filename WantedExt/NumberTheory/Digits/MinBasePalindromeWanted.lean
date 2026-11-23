@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Data.List.Palindrome
 public import Mathlib.Data.Nat.Digits.Lemmas
 public import Mathlib.Data.Nat.Prime.Defs
+public import MathlibExt.NumberTheory.Digits.BinomialFormTwoPowBase
 public import MathlibExt.NumberTheory.Digits.MinBasePalindrome
 public import MathlibExt.NumberTheory.Digits.ThreeDigitBinomialForm
 
@@ -123,18 +124,6 @@ Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Corollary 1
 (`integers-2024-A69-cor-1`). -/
 public theorem_wanted hasBinomialForm_two_pow (n x k r : ℕ) (hk : 1 ≤ k) (hn : n = x * k + r)
     (h : 2 ^ r * k.choose ((k + 1) / 2) < 2 ^ x - 1) : HasBinomialForm (2 ^ x - 1) (2 ^ n)
-
-/-- **Bases of binomial forms of powers of 2.** Let $n$, $b \ge 2$, $\alpha \ge 1$ and $k \ge 1$
-be natural numbers. If the base-$b$ digits of $2^n$, from the most significant to the least
-significant, are $\alpha\binom{k}{k}, \alpha\binom{k}{k-1}, \dots, \alpha\binom{k}{0}$, then
-$b = 2^x - 1$ for some natural number $x \le n$, and $\alpha = 2^i$ for some natural number $i$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Lemma 2
-(`integers-2024-A69-lem-2`). -/
-public theorem_wanted binomialForm_two_pow_base (n b α k : ℕ) (hb : 2 ≤ b) (hα : 1 ≤ α)
-    (hk : 1 ≤ k) (h : Nat.digits b (2 ^ n) = (List.range (k + 1)).map fun i => α * k.choose i) :
-    (∃ x ≤ n, b = 2 ^ x - 1) ∧ ∃ i, α = 2 ^ i
 
 /-- **Even-length palindromic powers of 2 have base one less than a power of 2.** Let $n$ and
 $b \ge 2$ be natural numbers. If the base-$b$ representation of $2^n$ is a palindrome with an
