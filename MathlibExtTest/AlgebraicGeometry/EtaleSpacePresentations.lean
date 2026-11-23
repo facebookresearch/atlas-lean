@@ -7,17 +7,19 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import MathlibExt.AlgebraicGeometry.EtaleSpacePresentations
+public import MathlibExt.AlgebraicGeometry.EtaleSpacePresentations
 
 /-! # Tests for étale equivalence relations and their quotient sheaves
 
 The API checks cover typeclass inference for the atlas, the projections of the comparison map
 `R ⟶ U ×_{U/R} U` and both directions of the universal property. The trivial relation on a scheme
 `U` (with `R = U` and `s = t = 𝟙 U`) is an étale equivalence relation, and its quotient is the
-represented sheaf of `U`: the atlas map is an isomorphism, with inverse given by descent.
+represented sheaf of `U`: the atlas map is an isomorphism, with inverse given by descent. The
+kernel pair of an étale morphism gives an étale equivalence relation through the bridge with
+internal equivalence relations.
 -/
 
-noncomputable section
+@[expose] public noncomputable section
 
 namespace MathlibExtTest.AlgebraicGeometry.EtaleSpacePresentations
 
@@ -87,5 +89,16 @@ example (U : Scheme.{u}) : IsIso (atlas (trivialPresentation U)) := by
   refine ⟨⟨trivialRetraction U, atlas_trivialRetraction U, ?_⟩⟩
   apply (cancel_epi (atlas (trivialPresentation U))).mp
   rw [← Category.assoc, atlas_trivialRetraction, Category.id_comp, Category.comp_id]
+
+/-- The trivial relation is an internal equivalence relation of schemes. -/
+example (U : Scheme.{u}) : IsEquivalenceRelation (𝟙 U) (𝟙 U) :=
+  (trivialPresentation U).isEquivalenceRelation
+
+/-- The kernel pair of an étale morphism is an étale equivalence relation. -/
+example {U V : Scheme.{u}} (f : U ⟶ V) [Etale f] : EtaleEquivalencePresentation.{u} :=
+  have : IsEquivalenceRelation (pullback.fst f f) (pullback.snd f f) :=
+    (IsKernelPair.equivalenceRelation f _ _ (pullbackIsPullback _ _)
+      (IsPullback.of_hasPullback f f)).isEquivalenceRelation
+  EtaleEquivalencePresentation.ofIsEquivalenceRelation (pullback.fst f f) (pullback.snd f f)
 
 end MathlibExtTest.AlgebraicGeometry.EtaleSpacePresentations

@@ -8,15 +8,17 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.AlgebraicGeometry.GeneralStackGeometry
+public import MathlibExtTest.AlgebraicGeometry.EtaleSpacePresentations
 import Mathlib.CategoryTheory.SingleObj
 
-/-! # Actual 2-fibre and isomorphism-value checks
+/-! # Tests for 2-fibre products, algebraic spaces and stacks
 
-The pointwise 2-fibre of two points in the one-object groupoid of Z
-retains a different object for each comparison automorphism.
-Equal first and second projections do not
-identify different comparisons. This probes the data lost by replacing
-a 2-fibre product with an ordinary product of point sets.
+The 2-fibre product of two points in the one-object groupoid of `ℤ` retains a different object
+for each comparison automorphism: equal first and second projections do not identify different
+comparisons, which probes the data lost by replacing a 2-fibre product with an ordinary product of
+point sets. The remaining checks cover invertible modifications, the comparison functor of a
+2-commutative square of stacks, atlases, and a scheme as an algebraic space over itself (smooth,
+étale and surjective, via the identity chart).
 -/
 
 noncomputable section
@@ -27,34 +29,39 @@ open CategoryTheory _root_.AlgebraicGeometry.GeneralStackGeometry
 
 abbrev G := Multiplicative ℤ
 
-def pointFunctor : Discrete PUnit ⥤ SingleObj G :=
-  (Functor.const (Discrete PUnit)).obj (SingleObj.star G)
+def pointFunctor : Discrete Unit ⥤ SingleObj G :=
+  (Functor.const (Discrete Unit)).obj (SingleObj.star G)
+
+/-- The automorphism `n` of the unique object of the one-object groupoid of `ℤ`. -/
+def comparisonIso (n : ℤ) :
+    pointFunctor.obj (Discrete.mk ()) ≅ pointFunctor.obj (Discrete.mk ()) where
+  hom := Multiplicative.ofAdd n
+  inv := Multiplicative.ofAdd (-n)
+  hom_inv_id := by
+    change Multiplicative.ofAdd (-n) * Multiplicative.ofAdd n = 1
+    rw [← ofAdd_add, neg_add_cancel, ofAdd_zero]
+  inv_hom_id := by
+    change Multiplicative.ofAdd n * Multiplicative.ofAdd (-n) = 1
+    rw [← ofAdd_add, add_neg_cancel, ofAdd_zero]
 
 def comparisonPoint (n : ℤ) : IsoFibre pointFunctor pointFunctor :=
-  ⟨⟨Discrete.mk PUnit.unit, Discrete.mk PUnit.unit, Multiplicative.ofAdd n⟩,
-    by
-      change IsIso (C := SingleObj G) (X := SingleObj.star G) (Y := SingleObj.star G)
-        (Multiplicative.ofAdd n)
-      refine ⟨⟨Multiplicative.ofAdd (-n), ?_, ?_⟩⟩
-      · change -n + n = 0
-        exact neg_add_cancel n
-      · change n + -n = 0
-        exact add_neg_cancel n⟩
+  ⟨Discrete.mk (), Discrete.mk (), comparisonIso n⟩
 
 example : IsGroupoid (IsoFibre pointFunctor pointFunctor) := inferInstance
 
-example : (isoFibreFst pointFunctor pointFunctor).obj (comparisonPoint 0) =
-    (isoFibreFst pointFunctor pointFunctor).obj (comparisonPoint 1) := rfl
+example : (Limits.CategoricalPullback.π₁ pointFunctor pointFunctor).obj (comparisonPoint 0) =
+    (Limits.CategoricalPullback.π₁ pointFunctor pointFunctor).obj (comparisonPoint 1) := rfl
 
-example : (isoFibreSnd pointFunctor pointFunctor).obj (comparisonPoint 0) =
-    (isoFibreSnd pointFunctor pointFunctor).obj (comparisonPoint 1) := rfl
+example : (Limits.CategoricalPullback.π₂ pointFunctor pointFunctor).obj (comparisonPoint 0) =
+    (Limits.CategoricalPullback.π₂ pointFunctor pointFunctor).obj (comparisonPoint 1) := rfl
 
-example : (isoFibreComparison pointFunctor pointFunctor).hom.app (comparisonPoint 1) =
-    Multiplicative.ofAdd (1 : ℤ) := rfl
+example : (CatCommSq.iso (Limits.CategoricalPullback.π₁ pointFunctor pointFunctor)
+      (Limits.CategoricalPullback.π₂ pointFunctor pointFunctor) pointFunctor pointFunctor).hom.app
+        (comparisonPoint 1) = Multiplicative.ofAdd (1 : ℤ) := rfl
 
 example : ¬ Nonempty (comparisonPoint 0 ⟶ comparisonPoint 1) := by
   rintro ⟨h⟩
-  have hc := h.hom.w
+  have hc := h.w
   change Multiplicative.ofAdd (1 : ℤ) * 1 = 1 * Multiplicative.ofAdd (0 : ℤ) at hc
   simp only [mul_one, one_mul] at hc
   have heq : (1 : ℤ) = 0 := congrArg Multiplicative.toAdd hc
@@ -100,15 +107,16 @@ example (p : AlgebraicGeometry.FppfStacks.StackInGroupoids.Hom X Y) (T : Algebra
 example {f : AlgebraicGeometry.FppfStacks.StackInGroupoids.Hom X Z}
     {g : AlgebraicGeometry.FppfStacks.StackInGroupoids.Hom Y Z} (P : TwoFibreSquare f g)
     (T : AlgebraicGeometry.Scheme.{u}) (w : Fibre P.apex T) :
-    ((P.comparisonFunctor T).obj w).obj.left = (component P.fst T).obj w ∧
-      ((P.comparisonFunctor T).obj w).obj.right = (component P.snd T).obj w ∧
-      ((P.comparisonFunctor T).obj w).obj.hom = (componentIso P.commutes T).hom.app w :=
+    ((P.comparisonFunctor T).obj w).fst = (component P.fst T).obj w ∧
+      ((P.comparisonFunctor T).obj w).snd = (component P.snd T).obj w ∧
+      ((P.comparisonFunctor T).obj w).iso = (componentIso P.commutes T).app w :=
   ⟨rfl, rfl, rfl⟩
 
 example {f : AlgebraicGeometry.FppfStacks.StackInGroupoids.Hom X Z}
     {g : AlgebraicGeometry.FppfStacks.StackInGroupoids.Hom Y Z} (P : TwoFibreSquare f g)
     (T : AlgebraicGeometry.Scheme.{u}) :
-    P.comparisonFunctor T ⋙ isoFibreFst (component f T) (component g T) = component P.fst T :=
+    P.comparisonFunctor T ⋙ Limits.CategoricalPullback.π₁ (component f T) (component g T) =
+      component P.fst T :=
   P.comparison_fst T
 
 /-- An étale atlas gives a smooth atlas with the same underlying atlas. -/
@@ -124,5 +132,26 @@ example {T : AlgebraicGeometry.Scheme.{u}} (A : AlgebraicSpaceOver T) (c c' : A.
     (c.normalization.symm.trans c'.normalization)
 
 end Stacks
+
+section Spaces
+
+open MathlibExtTest.AlgebraicGeometry.EtaleSpacePresentations
+
+/-- A scheme `U` as an algebraic space over itself, presented by the trivial relation. -/
+def selfSpace (U : AlgebraicGeometry.Scheme.{u}) : AlgebraicSpaceOver (trivialPresentation U).U :=
+  ⟨trivialPresentation U, trivialRetraction U⟩
+
+/-- Its chart is the identity of `U`. -/
+def selfChart (U : AlgebraicGeometry.Scheme.{u}) : (selfSpace U).Chart :=
+  ⟨𝟙 _, (atlas_trivialRetraction U).trans
+    (AlgebraicGeometry.EtaleSpacePresentations.represented.map_id _).symm⟩
+
+example (U : AlgebraicGeometry.Scheme.{u}) :
+    (selfSpace U).IsSurjective ∧ (selfSpace U).IsSmooth ∧ (selfSpace U).IsEtale :=
+  ⟨⟨selfChart U, (inferInstance : AlgebraicGeometry.Surjective (𝟙 (trivialPresentation U).U))⟩,
+    ⟨selfChart U, (inferInstance : AlgebraicGeometry.Smooth (𝟙 (trivialPresentation U).U))⟩,
+    ⟨selfChart U, (inferInstance : AlgebraicGeometry.Etale (𝟙 (trivialPresentation U).U))⟩⟩
+
+end Spaces
 
 end MathlibExtTest.AlgebraicGeometry.GeneralStackGeometry

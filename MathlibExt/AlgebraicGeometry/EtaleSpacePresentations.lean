@@ -13,6 +13,7 @@ public import Mathlib.AlgebraicGeometry.Pullbacks
 public import Mathlib.CategoryTheory.Sites.Limits
 public import Mathlib.CategoryTheory.Sites.Subcanonical
 public import Mathlib.CategoryTheory.Limits.Shapes.Equalizers
+public import Mathlib.CategoryTheory.EquivalenceRelation
 public import MathlibExt.AlgebraicGeometry.FppfStacks
 
 /-!
@@ -73,6 +74,62 @@ structure EtaleEquivalencePresentation where
   target_etale : Etale target
   relation_mono : Mono (Limits.prod.lift source target)
   equivalence : ∀ T : Scheme.{u}, Equivalence (schemeRelation source target T)
+
+/-- A pair of morphisms of schemes is an internal equivalence relation
+(`CategoryTheory.IsEquivalenceRelation`) if and only if `(s, t)` is a monomorphism and the relation
+it induces on `T`-points is an equivalence relation for every scheme `T`. -/
+theorem isEquivalenceRelation_iff {R U : Scheme.{u}} (s t : R ⟶ U) :
+    IsEquivalenceRelation s t ↔
+      Mono (Limits.prod.lift s t) ∧ ∀ T : Scheme.{u}, Equivalence (schemeRelation s t T) := by
+  constructor
+  · rintro ⟨⟨E⟩⟩
+    refine ⟨⟨fun g h hgh => E.right_cancellation g h ?_ ?_⟩, fun T => ⟨?_, ?_, ?_⟩⟩
+    · simpa using hgh =≫ Limits.prod.fst
+    · simpa using hgh =≫ Limits.prod.snd
+    · intro x
+      exact ⟨x ≫ E.r, by simp, by simp⟩
+    · rintro x y ⟨a, rfl, rfl⟩
+      exact ⟨a ≫ E.s, by rw [Category.assoc, E.symmetry₁], by rw [Category.assoc, E.symmetry₂]⟩
+    · rintro x y z ⟨a, rfl, ha⟩ ⟨b, hb, rfl⟩
+      refine ⟨PullbackCone.IsLimit.lift E.isLimit a b (ha.trans hb.symm) ≫ E.t, ?_, ?_⟩
+      · rw [Category.assoc, E.transitivity₁, ← Category.assoc, PullbackCone.IsLimit.lift_fst]
+      · rw [Category.assoc, E.transitivity₂, ← Category.assoc, PullbackCone.IsLimit.lift_snd]
+  · rintro ⟨hmono, heq⟩
+    obtain ⟨r, hr₁, hr₂⟩ := (heq U).refl (𝟙 U)
+    obtain ⟨σ, hσ₁, hσ₂⟩ := (heq R).symm ⟨𝟙 R, Category.id_comp s, Category.id_comp t⟩
+    obtain ⟨τ, hτ₁, hτ₂⟩ := (heq (pullback t s)).trans
+      ⟨pullback.fst t s, rfl, rfl⟩ ⟨pullback.snd t s, pullback.condition.symm, rfl⟩
+    exact ⟨⟨{ right_cancellation := fun _ f g h₁ h₂ => (cancel_mono (Limits.prod.lift s t)).1
+                (Limits.prod.hom_ext (by simpa using h₁) (by simpa using h₂))
+              r := r
+              reflexivity₁ := hr₁
+              reflexivity₂ := hr₂
+              s := σ
+              symmetry₁ := hσ₁
+              symmetry₂ := hσ₂
+              c := PullbackCone.mk (pullback.fst t s) (pullback.snd t s) pullback.condition
+              isLimit := pullbackIsPullback t s
+              t := τ
+              transitivity₁ := hτ₁
+              transitivity₂ := hτ₂ }⟩⟩
+
+/-- The relation of an étale equivalence relation is an internal equivalence relation. -/
+theorem EtaleEquivalencePresentation.isEquivalenceRelation (P : EtaleEquivalencePresentation.{u}) :
+    IsEquivalenceRelation P.source P.target :=
+  (isEquivalenceRelation_iff _ _).2 ⟨P.relation_mono, P.equivalence⟩
+
+/-- The étale equivalence relation given by étale morphisms `s t : R ⟶ U` forming an internal
+equivalence relation. -/
+def EtaleEquivalencePresentation.ofIsEquivalenceRelation {R U : Scheme.{u}} (s t : R ⟶ U)
+    [Etale s] [Etale t] [h : IsEquivalenceRelation s t] : EtaleEquivalencePresentation.{u} where
+  U := U
+  R := R
+  source := s
+  target := t
+  source_etale := inferInstance
+  target_etale := inferInstance
+  relation_mono := ((isEquivalenceRelation_iff s t).1 h).1
+  equivalence := ((isEquivalenceRelation_iff s t).1 h).2
 
 /-- The quotient `U/R`: the coequalizer of the two maps of represented fppf sheaves. -/
 def quotientSheaf (P : EtaleEquivalencePresentation.{u}) : FppfSheaf.{u} :=
