@@ -12,7 +12,7 @@ public import Mathlib.AlgebraicGeometry.Geometrically.Irreducible
 public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
 public import MathlibExt.AlgebraicGeometry.CurvePositivity
-public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
+public import MathlibExt.AlgebraicGeometry.RelativeProjectivity
 
 @[expose] public noncomputable section
 
@@ -42,6 +42,8 @@ open _root_.MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 open _root_.MathlibExt.AlgebraicGeometry.CurveVectorBundles
 open _root_.MathlibExt.AlgebraicGeometry.CurvePositivity
 
+export _root_.MathlibExt.AlgebraicGeometry.RelativeProjectivity (IsHProjectiveOver)
+
 universe u
 
 /-- Serre duality pins the actual canonical line, including naturality
@@ -70,15 +72,6 @@ def HasGeneralTypeGrowth {k : Type u} [Field k] {X : Scheme.{u}}
     c * (m : ℚ) ^ n ≤
       (Module.finrank k (cohomology f (power K m) 0) : ℚ)
 
-/-- Relative projectivity is a genuine closed immersion into projective
-space over the parameter scheme, with the projection equation fixed. -/
-def IsProjectiveOver {k : Type u} [Field k]
-    {X B : Over (Spec (.of k))} (f : X ⟶ B) : Prop :=
-  ∃ N : ℕ,
-    ∃ i : X ⟶ prod (ProjectiveSpace.projectiveSpace k N) B,
-      IsClosedImmersion i.left ∧
-        i ≫ (prod.snd : prod (ProjectiveSpace.projectiveSpace k N) B ⟶ B) = f
-
 /-- The actual scheme-theoretic fiber at a field-valued point `Spec Ω ⟶ B`. -/
 abbrev fiberScheme {k : Type u} [Field k]
     {X B : Over (Spec (.of k))} (f : X ⟶ B)
@@ -98,9 +91,9 @@ abbrev fiberCanonical {k : Type u} [Field k]
     {Ω : Type u} [Field Ω] (x : Spec (.of Ω) ⟶ B.left) : (fiberScheme f x).Modules :=
   (Scheme.Modules.pullback (pullback.fst f.left x)).obj K
 
-/-- A smooth projective general-type family, with a line bundle that restricts to the
-canonical line of every geometric fiber (characterized there by Serre duality). It
-contains no constancy conclusion. -/
+/-- A smooth projective general-type family (H-projective: embedded in `ℙᴺ_B` over the
+base), with a line bundle that restricts to the canonical line of every geometric fiber
+(characterized there by Serre duality). It contains no constancy conclusion. -/
 structure SmoothGeneralTypeFamily {k : Type u} [Field k] (n : ℕ) where
   B : Over (Spec (.of k))
   [smoothBase : SmoothOfRelativeDimension 1 B.hom]
@@ -110,7 +103,7 @@ structure SmoothGeneralTypeFamily {k : Type u} [Field k] (n : ℕ) where
   f : X ⟶ B
   [proper : IsProper f.left]
   [smoothFibers : SmoothOfRelativeDimension n f.left]
-  projective : IsProjectiveOver f
+  projective : IsHProjectiveOver f
   /-- A line bundle on the total space whose restriction to every geometric fiber is
   that fiber's canonical line (determined only up to twists pulled back from the base). -/
   canonical : X.left.Modules
@@ -135,4 +128,3 @@ def plurigenus {k : Type u} [Field k] {n : ℕ}
       (power (fiberCanonical P.f P.canonical x) m) 0)
 
 end MathlibExt.AlgebraicGeometry.PlurigenusFamilies
-
