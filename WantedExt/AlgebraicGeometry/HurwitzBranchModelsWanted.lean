@@ -20,7 +20,8 @@ chosen with its Cartesian base changes. The branch morphism covers
 every scheme parameter, and its full cotangent differential is the
 actual derivative of that same source-fixed morphism.
 References: Fantechi–Pandharipande math/9905104v1, §§1–3, Theorem 1;
-Graber–Harris–Starr math/0109220v1, §2.
+Graber–Harris–Starr math/0109220v1, §2. The genus of the smooth projective
+geometrically connected target curve `D` is `h¹(D, 𝒪_D)` (here `H⁰(D, 𝒪_D) = k`).
 -/
 
 @[expose] public noncomputable section
@@ -66,7 +67,8 @@ def_wanted actualBranchDivisorOrigin (k : Type) [Field k] [IsAlgClosed k] [CharZ
     (D T : Over (Spec (.of k))) [LocallyOfFiniteType D.hom] [IsNoetherian D.left]
     [SmoothOfRelativeDimension 1 D.hom] [GeometricallyConnected D.hom]
     (projective : IsProjectiveVariety D) (n g d r : ℕ) (positive : 0 < d)
-    (degree : (r : ℤ) = 2 * (g : ℤ) - 2 - (d : ℤ) * (2 * (genus D.hom : ℤ) - 2))
+    (degree : (r : ℤ) = 2 * (g : ℤ) - 2 -
+      (d : ℤ) * (2 * (Module.finrank k (cohomology D.hom (structureModule D.left) 1) : ℤ) - 2))
     (F : Family D.hom n g T.left T.hom) (stable : IsGeometricallyStable F)
     (curveClass : HasCurveClass D T F (targetClass D d)) (C : BranchComplexData D F) :
     (B : EffectiveCartierFamily (pullback.snd D.hom T.hom) r) ×
@@ -76,7 +78,8 @@ def_wanted actualBranchMorphism (k : Type) [Field k] [IsAlgClosed k] [CharZero k
     (D : Over (Spec (.of k))) [LocallyOfFiniteType D.hom] [IsNoetherian D.left]
     [SmoothOfRelativeDimension 1 D.hom] [GeometricallyConnected D.hom]
     (projective : IsProjectiveVariety D) (n g d r : ℕ) (positive : 0 < d)
-    (degree : (r : ℤ) = 2 * (g : ℤ) - 2 - (d : ℤ) * (2 * (genus D.hom : ℤ) - 2))
+    (degree : (r : ℤ) = 2 * (g : ℤ) - 2 -
+      (d : ℤ) * (2 * (Module.finrank k (cohomology D.hom (structureModule D.left) 1) : ℤ) - 2))
     (M : DegreeModuli D n g d) (base : DegreeBaseChange D M) (S : DivisorScheme D r) :
     BranchModel D M S
 

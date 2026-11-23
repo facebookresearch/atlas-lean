@@ -9,6 +9,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.AlgebraicGeometry.RationalCurveFamilies
+public import MathlibExt.AlgebraicGeometry.PlurigenusFamilies
 
 /-!
 # Rational connectedness of smooth Fano varieties
@@ -40,7 +41,7 @@ open ProjectiveLineSystems PlurigenusFamilies RationalCurveFamilies
 universe u
 
 def_wanted fanoFamily (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
-    (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom]
+    (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom] [IsNoetherian X.left]
     (n : ℕ) [SmoothOfRelativeDimension n X.hom]
     (projective : IsProjectiveVariety X) (K : LineBundle X.left)
     (canonical : SerreDualizingLine X.hom K.val n) (Kinv : InverseLine K)

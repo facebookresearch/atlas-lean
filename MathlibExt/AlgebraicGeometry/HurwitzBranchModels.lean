@@ -9,6 +9,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.PerfectTorsionCartierOrigins
 public import MathlibExt.AlgebraicGeometry.StableMapCompositionStacks
+public import MathlibExt.AlgebraicGeometry.GeneralStableMapCurveClasses
 
 /-!
 # Source normalized Hurwitz branch maps and differentials

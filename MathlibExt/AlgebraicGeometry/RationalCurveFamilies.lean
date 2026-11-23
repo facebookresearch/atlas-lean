@@ -64,7 +64,9 @@ structure RationalCurveFamily {k : Type u} [Field k]
   [properCurve : IsProper curve.hom]
   [smoothCurve : SmoothOfRelativeDimension 1 curve.hom]
   [irreducibleCurve : GeometricallyIrreducible curve.hom]
-  genus_zero : genus curve.hom = 0
+  /-- Genus zero: `h¹(C, 𝒪_C) = 0`, the genus of this smooth proper geometrically irreducible
+  curve (for which `H⁰(C, 𝒪_C) = k`). -/
+  genus_zero : Module.finrank k (cohomology curve.hom (structureModule curve.left) 1) = 0
   firstPoint : Over.mk (𝟙 (Spec (.of k))) ⟶ curve
   secondPoint : Over.mk (𝟙 (Spec (.of k))) ⟶ curve
   distinct : firstPoint ≠ secondPoint
