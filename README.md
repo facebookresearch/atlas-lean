@@ -55,9 +55,14 @@ absolutely-maximally-entangled-state development in `PhyslibExt`, with their
 matching tests and source-statement comparisons.
 
 Remaining `Atlas/` development material and the archived `v1/` release are not
-part of this root build. `v1/` retains its original build configuration. The
-[`StatisticalMechanics`](Atlas/StatisticalMechanics/MIGRATED.md) archive and
-migration ledger keep their existing paths while the library migration continues.
+part of this root build. `v1/` retains its original build configuration.
+[`Atlas/StatisticalMechanics/`](Atlas/StatisticalMechanics/MIGRATED.md) and
+[`Atlas/CDISProbability/`](Atlas/CDISProbability/README.md) retain their source
+and provenance paths while their destinations or archival dispositions are
+tracked in [#5408](https://github.com/facebookresearch/atlas-lean/issues/5408)
+and the [remaining-Atlas record](docs/provenance/remaining-atlas.md).
+That issue stays open until every remaining directory is accounted for and
+`Atlas/` is retired as a development directory.
 
 ## Dependency explorer
 
