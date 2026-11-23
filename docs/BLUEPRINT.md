@@ -491,9 +491,9 @@ declaration. `declarations` gives a duplicate no page and lists it as a
 duplicate. The extraction counts another page's use of a duplicate as a use of
 the page's declaration, so that page depends on the page. To the declaration
 itself, its duplicate is part of it. The page depends on what the duplicate
-uses, as for an undocumented declaration, and never on itself; what the
-duplicate names, a Mathlib-credited declaration included, the declaration names.
-The row's own `object` credits a
+uses, as for an undocumented declaration, and never on itself. Where the
+declaration names the duplicate itself, it also names what the duplicate names,
+a Mathlib-credited declaration included. The row's own `object` credits a
 declaration of this project; an unlinked, planned, held or Mathlib-credited row
 lists none. Each name is given once. It is not the row's own declaration, and
 no other row links it, holds it back or lists it. `declarations` reports any

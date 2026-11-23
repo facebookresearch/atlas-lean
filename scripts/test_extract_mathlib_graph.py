@@ -485,6 +485,44 @@ class Bridge(unittest.TestCase):
                          [("MathlibExt.D", "Group", "statement", True), ("MathlibExt.D", "mul_comm", "proof", True)])
         self.assertEqual(meta["v2_agreement"]["articles_differing"], 0)
 
+    def test_a_duplicate_reached_through_another_gives_no_direct_edge(self) -> None:
+        # D lists d and e as duplicates. D names e, e names d, and d's type uses Group and its proof the page B and
+        # mul_comm: D reaches all three, as in the v2 extraction, but Group and mul_comm through d, as through a hidden
+        # constant. When D names d itself as well, each is one direct edge. The check against the v2 extraction passes.
+        mathlib = [row("Group", "inductive", **{"class": True}), row("mul_comm")]
+        articles = {"MathlibExt.B", "MathlibExt.D"}
+        aliases = {"MathlibExt.d": "MathlibExt.D", "MathlibExt.e": "MathlibExt.D"}
+        for named, direct, through in ((["MathlibExt.e"], False, ("atlas_non_article",)),
+                                       (["MathlibExt.e", "MathlibExt.d"], True, ())):
+            atlas = [row("MathlibExt.B", "theorem", module="MathlibExt.A"),
+                     row("MathlibExt.d", "theorem", ["Group"], ["MathlibExt.B", "mul_comm"], module="MathlibExt.A"),
+                     row("MathlibExt.e", "theorem", ["MathlibExt.d"], ["MathlibExt.d"], module="MathlibExt.A"),
+                     row("MathlibExt.D", "theorem", named, named, module="MathlibExt.A")]
+            with self.subTest(named=named), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                v2_dump = write_dump(root, [{**r, "type": [u for u in r["type"] if u.startswith("MathlibExt")],
+                                             "value": [u for u in r["value"] if u.startswith("MathlibExt")]}
+                                            for r in atlas], "v2-only.jsonl.gz")
+                v2_output = root / "lean-dependencies.json"
+                # The bridge reads the annotations through its own import of the v2 extractor.
+                with patch.object(v2, "article_manifest", lambda: set(articles)), \
+                        patch.object(v2, "article_aliases", lambda: dict(aliases)), \
+                        patch.object(graph.v2, "article_manifest", lambda: set(articles)), \
+                        patch.object(graph.v2, "article_aliases", lambda: dict(aliases)), patch("sys.stdout"):
+                    with patch("sys.argv", ["extract", str(v2_dump), str(v2_output)]):
+                        self.assertEqual(v2.main(), 0)
+                    self.assertEqual(graph.main(["bridge", str(write_dump(root, atlas, "v2.jsonl.gz")),
+                                                 str(root / "out"), "--mathlib-dump",
+                                                 str(write_dump(root, mathlib, "mathlib.jsonl.gz")),
+                                                 "--check-v2", str(v2_output)]), 0)
+                bridge = list(graph.read_jsonl(root / "out" / "bridge-edges.jsonl.gz"))
+                expected = json.loads(v2_output.read_text())["articles"]
+                self.assertEqual(expected["MathlibExt.D"]["proof"], ["MathlibExt.B"])
+                self.assertEqual(sorted((e["source"], e["target"], e["kind"], e["direct"], tuple(e["through"]))
+                                        for e in bridge),
+                                 [("MathlibExt.D", "Group", "statement", direct, through),
+                                  ("MathlibExt.D", "mul_comm", "proof", direct, through)])
+
     def test_a_listed_duplicate_the_dump_lacks_stops_the_bridge_unless_the_lean_deleted_it(self) -> None:
         # The annotations list c as a duplicate of C, and no article uses c, so comparing edges with the v2 extraction
         # cannot show that the bridge's dump lacks it. While the Lean sources declare c, the dump is incomplete and the

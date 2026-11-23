@@ -1008,6 +1008,21 @@ class BridgeConvention(unittest.TestCase):
         self.assertEqual((found["bridges"], found["left_out"]),
                          ({}, {"C": {"statement": [], "proof": ["M.fubini", "M.space"]}}))
 
+    def test_only_a_duplicate_the_article_names_itself_names_for_it(self) -> None:
+        # C lists c and d as duplicates. C names c, c names d, and d's type names M.s and its proof M.p: C reaches both
+        # through c, but names neither, so both are left out, by kind. When C names d itself as well, it bridges to
+        # each, once.
+        mathlib = [credited(name, "theorem", [], []) for name in ("M.p", "M.s")]
+        duplicates = [with_mathlib(row("c", "theorem", ["d"], ["d"]), [], []),
+                      with_mathlib(row("d", "theorem", [], []), ["M.s"], ["M.p"], direct=["M.p"], type_direct=["M.s"])]
+        for named, bridges, left_out in ((["c"], {}, {"C": {"statement": ["M.s"], "proof": ["M.p"]}}),
+                                         (["c", "d"], {"C": {"statement": ["M.s"], "proof": ["M.p"]}}, {})):
+            with self.subTest(named=named):
+                rows = [with_mathlib(row("C", "theorem", named, named), [], []), *duplicates, *mathlib]
+                with redirect_stdout(io.StringIO()):
+                    _, found = run_registry(rows, ["C"], duplicates={"c": "C", "d": "C"})
+                self.assertEqual((found["bridges"], found["left_out"]), (bridges, left_out))
+
     def test_a_duplicate_whose_article_is_gone_gives_no_bridge(self) -> None:
         # The Lean deleted C, whose row lists c as a duplicate; c's type names M.space and its proof M.fubini. A uses
         # only c: the way stops there, so A neither bridges to them nor leaves them out, and the registry's inputs say

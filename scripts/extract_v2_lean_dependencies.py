@@ -658,21 +658,21 @@ def through_aliases(name: str, reached: frozenset[str], through: dict[str, froze
 def own_duplicates(name: str, uses: list[str], rows: dict[str, dict], alias: dict[str, str | None],
                    statement: bool) -> tuple[list[str], list[str]]:
     """*uses*, an expression of article *name*, with each duplicate of *name*'s own it names (see resolve_aliases)
-    replaced by what the duplicate uses (see expression_uses, with *statement*), and so on, each duplicate once; then
-    the duplicates so replaced. A duplicate states its article's result, so what it names, the article names: for
-    its own article it is no stop but part of the article. A duplicate of another article stays in *uses*."""
+    replaced by what the duplicate uses (see expression_uses, with *statement*), each once; then the duplicates so
+    replaced. A duplicate states its article's result, so what it names, the article names: for its own article it is
+    no stop but part of the article. Another of *name*'s own that such a duplicate names stays among the uses, for the
+    caller to follow as a hidden constant (see through_aliases): the article reaches what that one uses, but names
+    none of it. A duplicate of another article stays in *uses*."""
     if not alias or name not in alias.values():
         return uses, []
     kept: list[str] = []
     replaced: list[str] = []
-    pending = list(reversed(uses))
-    while pending:
-        use = pending.pop()
+    for use in uses:
         if use not in alias or alias[use] != name:
             kept.append(use)
         elif use not in replaced:
             replaced.append(use)
-            pending.extend(reversed(expression_uses(rows.get(use), statement)))
+            kept.extend(expression_uses(rows.get(use), statement))
     return kept, replaced
 
 
@@ -741,7 +741,9 @@ def registry(rows: dict[str, dict], articles: set[str], registered: dict[str, di
     (`left_out`), by kind. A duplicate (*alias*, see frontiers) stops any other article's way as its article does, so
     that no article reaches through it what its article's own edges give, nor, its article gone, what it reaches
     itself. For its own article it is part of the article (see own_duplicates): what it reaches, the article reaches,
-    and what it names, where the article names the duplicate itself, the article names, so that it bridges too."""
+    and what it names, where the article names the duplicate itself, the article names, so that it bridges too; one
+    the article reaches otherwise, through a hidden constant or through another duplicate, gives only what is left
+    out, as a hidden constant does."""
     alias = alias or {}
     found = {name: row for name, row in registered.items() if not row.get("missing")}
 
@@ -766,14 +768,16 @@ def registry(rows: dict[str, dict], articles: set[str], registered: dict[str, di
     def collapse(name: str, uses: list[str], own: list[str], named: list[str], memo: dict[str, frozenset[str]],
                  statement: bool) -> tuple[set[str], set[str]]:
         # What article *name*'s expression *uses* reaches, given what it reaches through Mathlib itself (*own*), and
-        # what it names, given the names it has (*named*), its own duplicates' with its own.
+        # what it names, given the names it has (*named*), with those of the duplicates of its own it names itself.
         kept, duplicates = own_duplicates(name, uses, rows, alias, statement)
         reached, naming = set(own), set(named)
         for duplicate in duplicates:
             reached |= set(direct(duplicate, statement))
             naming |= set(names(duplicate, statement))
         for use in kept:
-            if use not in articles and use not in alias:
+            # Another article stops the way, and so does its duplicate; one of the article's own that a duplicate it
+            # names names is followed as a hidden constant.
+            if use not in articles and (use not in alias or alias[use] == name):
                 reached |= through_aliases(name, memo.get(use, frozenset()), memo, alias, articles=False)
         return reached & found.keys(), naming
 
@@ -928,12 +932,13 @@ def main() -> int:
         found: set[str] = set()
         # The article's own duplicates are part of it: what they use, it uses.
         for use in own_duplicates(name, uses, rows, alias, statement)[0]:
-            if use in alias:
+            if use in alias and alias[use] != name:
                 # A duplicate of another article stands for that article; one whose article is gone, for none.
                 found |= {alias[use]} - {None}
             elif use in articles:
                 found.add(use)
             else:
+                # A hidden constant, or one of the article's own duplicates that a duplicate it names names.
                 found |= through_aliases(name, through.get(use, frozenset()), through, alias)
         found.discard(name)
         return found

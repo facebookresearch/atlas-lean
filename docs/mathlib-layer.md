@@ -68,7 +68,8 @@ Mathlib constants together, and keep the edges whose target is a Mathlib node.
 A declaration a row lists as a duplicate of its page's counts as that page's
 article, as in the v2 extraction: another article's use of it is a direct use
 of the article, and to the article itself it is part of the article, whose
-edges reach what the duplicate uses, as directly as the duplicate does.
+edges reach what the duplicate uses: as directly as the duplicate does where
+the article names it, and otherwise as through a hidden constant.
 The bridge refuses a duplicate, or warns about one, as the extraction does;
 with `--articles`, which comes with no Lean sources to tell a deleted
 declaration from an incomplete dump, it refuses a duplicate its dump lacks.

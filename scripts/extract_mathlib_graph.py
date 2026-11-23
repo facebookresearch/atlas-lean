@@ -279,12 +279,13 @@ def gather(uses: list[str], through: dict[str, frozenset[str]], nodes, rule_of: 
     article, and so counts as direct: the duplicate states the article's result; one whose article is gone reaches
     nothing. A duplicate of *name*'s own is part of it, as in the v2 extraction: *uses* come with those it names
     replaced by what they use (extract_v2_lean_dependencies.own_duplicates), a direct use of theirs being one of
-    *name*'s, and one reached through hidden constants reaches what it reaches itself, through the same constants."""
+    *name*'s. One reached otherwise, through hidden constants or through another of its duplicates, reaches what it
+    reaches itself, as a hidden constant does."""
     alias = alias or {}
     for use in uses:
         if use in nodes:
             found.setdefault(use, set()).add(DIRECT)
-        elif use in alias:
+        elif use in alias and alias[use] != name:
             if alias[use] is not None:
                 found.setdefault(alias[use], set()).add(DIRECT)
         else:
