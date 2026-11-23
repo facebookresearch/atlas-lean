@@ -12,9 +12,8 @@ Ported from TauCetiProject/TauCeti, revision
 TauCeti/AlgebraicGeometry/Stack/Basic.lean and StackInGroupoids.lean.
 Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
 Authors: The Tau Ceti contributors. Apache License 2.0.
-Modification notice: consolidate the completed definitions and equivalence
-laws in one MathlibExt module and use namespace AlgebraicGeometry.FppfStacks.
-No unresolved result, arbitrary category carrier or Stacks dependency is added.
+Modifications: consolidate the definitions and the fibrewise-equivalence
+lemmas in one module, in the namespace `AlgebraicGeometry.FppfStacks`.
 -/
 module
 

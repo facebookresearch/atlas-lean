@@ -84,4 +84,45 @@ example {S : AlgebraicGeometry.Scheme.{u}} (X : RelativeStack S)
     (z : (pointComparisonPresheaf X.toPseudofunctor x y).obj (Opposite.op V)) :
     z.1.left ≫ U.hom = V.left.hom := Over.w z.1
 
+section Stacks
+
+open scoped Pseudofunctor.StrongTrans
+
+variable {X Y Z : AlgebraicGeometry.FppfStacks.StackInGroupoids.{u}}
+
+/-- The components of the identity invertible modification are identities. -/
+example (p : AlgebraicGeometry.FppfStacks.StackInGroupoids.Hom X Y) (T : AlgebraicGeometry.Scheme.{u})
+    (x : Fibre X T) :
+    (componentIso (Iso.refl _ : TwoIso p p) T).hom.app x =
+      𝟙 _ := rfl
+
+/-- The comparison functor of a 2-commutative square recovers both legs and the 2-cell. -/
+example {f : AlgebraicGeometry.FppfStacks.StackInGroupoids.Hom X Z}
+    {g : AlgebraicGeometry.FppfStacks.StackInGroupoids.Hom Y Z} (P : TwoFibreSquare f g)
+    (T : AlgebraicGeometry.Scheme.{u}) (w : Fibre P.apex T) :
+    ((P.comparisonFunctor T).obj w).obj.left = (component P.fst T).obj w ∧
+      ((P.comparisonFunctor T).obj w).obj.right = (component P.snd T).obj w ∧
+      ((P.comparisonFunctor T).obj w).obj.hom = (componentIso P.commutes T).hom.app w :=
+  ⟨rfl, rfl, rfl⟩
+
+example {f : AlgebraicGeometry.FppfStacks.StackInGroupoids.Hom X Z}
+    {g : AlgebraicGeometry.FppfStacks.StackInGroupoids.Hom Y Z} (P : TwoFibreSquare f g)
+    (T : AlgebraicGeometry.Scheme.{u}) :
+    P.comparisonFunctor T ⋙ isoFibreFst (component f T) (component g T) = component P.fst T :=
+  P.comparison_fst T
+
+/-- An étale atlas gives a smooth atlas with the same underlying atlas. -/
+example (a : EtaleAtlas X) : a.toSmoothAtlas.toAtlas = a.toAtlas := rfl
+
+example (h : IsDeligneMumfordStack X) : IsArtinStack X :=
+  isArtinStack_of_isDeligneMumfordStack h
+
+/-- Charts of an algebraic space are unique: the represented-sheaf functor is faithful. -/
+example {T : AlgebraicGeometry.Scheme.{u}} (A : AlgebraicSpaceOver T) (c c' : A.Chart) :
+    c.map = c'.map :=
+  AlgebraicGeometry.EtaleSpacePresentations.represented.map_injective
+    (c.normalization.symm.trans c'.normalization)
+
+end Stacks
+
 end MathlibExtTest.AlgebraicGeometry.GeneralStackGeometry
