@@ -29,7 +29,7 @@ $f \in \mathbb{Z}[X]$ be a nonzero polynomial, with $a_n$ the coefficient of $X^
 $v_p(a)$ for the $p$-adic valuation of an integer $a$, the $p$-adic valuation of $f$ is the
 natural number $v_p(f) = \min \{ v_p(a_n) : a_n \neq 0 \}$. -/
 @[nolint unusedArguments]
-def padicValuation (p : ℕ) (_hp : Nat.Prime p) (f : Polynomial ℤ) (hf : f ≠ 0) : ℕ :=
+noncomputable def padicValuation (p : ℕ) (_hp : Nat.Prime p) (f : Polynomial ℤ) (hf : f ≠ 0) : ℕ :=
   (f.support.image (fun n => padicValInt p (f.coeff n))).min'
     ((support_nonempty.mpr hf).image fun n => padicValInt p (f.coeff n))
 

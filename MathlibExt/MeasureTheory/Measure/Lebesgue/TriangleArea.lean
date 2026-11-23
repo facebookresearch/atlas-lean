@@ -76,7 +76,7 @@ private lemma mem_standardTriangle_iff (x : EuclideanSpace ℝ (Fin 2)) :
       rw [Fin.sum_univ_two] at hrepr
       simpa [w, z, r, s, Fin.sum_univ_three] using hrepr
 
-private def standardTriangle : Set (EuclideanSpace ℝ (Fin 2)) :=
+private noncomputable def standardTriangle : Set (EuclideanSpace ℝ (Fin 2)) :=
   convexHull ℝ ({0, euclideanPlaneBasis 0, euclideanPlaneBasis 1} : Set (EuclideanSpace ℝ (Fin 2)))
 
 private noncomputable def reflect (x : EuclideanSpace ℝ (Fin 2)) :

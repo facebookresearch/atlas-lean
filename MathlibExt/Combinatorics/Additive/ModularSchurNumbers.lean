@@ -109,6 +109,31 @@ theorem isSumFreeMod_three_two_singleton_one : IsSumFreeMod 3 2 {1} := by
   rw [Fin.sum_univ_two, hx 0, hx 1]
   decide
 
+/-- **When a singleton set is sum-free.** Let $a$, $l$ and $m$ be natural numbers with
+$l \ge 1$, $m \ge 1$ and $m \nmid a$, and let $d = \gcd(a, m)$. If $d = 1$, then $\{a\}$ is not
+$l$-sum-free modulo $m$ if and only if $l \equiv 1 \pmod{m}$. If $d > 1$, then $\{a\}$ is not
+$l$-sum-free modulo $m$ if and only if $l \equiv 1 \pmod{m/d}$.
+
+Source: Jourdan D'orville, Kai An Sim, Kok Bin Wong, and Chee Kit Ho, *Modular
+Generalizations of Schur Numbers*, INTEGERS 25 (2025), Article A62, Theorem 4
+(`integers-2025-A62-thm-4`). -/
+theorem not_isSumFreeMod_singleton_iff (a l m : ℕ) (hl : 0 < l) (hm : 0 < m)
+    (_ha : ¬ m ∣ a) :
+    (Nat.gcd a m = 1 → (¬ IsSumFreeMod m l {(a : ℤ)} ↔ l ≡ 1 [MOD m])) ∧
+      (1 < Nat.gcd a m → (¬ IsSumFreeMod m l {(a : ℤ)} ↔ l ≡ 1 [MOD m / Nat.gcd a m])) := by
+  have hle : a ≤ l * a := by simpa using Nat.mul_le_mul_right a hl
+  have criterion : ¬ IsSumFreeMod m l {(a : ℤ)} ↔ l ≡ 1 [MOD m / Nat.gcd a m] := calc
+    ¬ IsSumFreeMod m l {(a : ℤ)} ↔ l * a ≡ a [MOD m] := by
+      rw [← Int.natCast_modEq_iff]
+      simp [IsSumFreeMod, ← funext_iff (g := fun _ : Fin l => (a : ℤ))]
+    _ ↔ m ∣ a * (l - 1) := by
+      rw [Nat.ModEq.comm, Nat.modEq_iff_dvd' hle, Nat.mul_sub, Nat.mul_one, Nat.mul_comm a l]
+    _ ↔ m / Nat.gcd a m ∣ l - 1 := by
+      rw [Nat.gcd_comm a m, Nat.div_dvd_iff_dvd_mul (Nat.gcd_dvd_left m a)
+        (Nat.gcd_pos_of_pos_left a hm), Nat.dvd_gcd_mul_iff_dvd_mul]
+    _ ↔ l ≡ 1 [MOD m / Nat.gcd a m] := (Nat.modEq_iff_dvd' hl).symm.trans Nat.ModEq.comm
+  exact ⟨fun hd => by simpa only [hd, Nat.div_one] using criterion, fun _ => criterion⟩
+
 namespace modularSchurNumber_two_mul
 
 -- Give each integer its own color, so all summands in its class must equal it.

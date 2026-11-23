@@ -352,8 +352,7 @@ public theorem Algebra.bijective_tensorProduct_equalizer_of_faithfullyFlat_of_de
     apply LinearMap.ext
     intro w
     have key := AlgHom.congr_fun hφcoc w
-    simp only [AlgHom.coe_comp, Function.comp_apply, AlgEquiv.toAlgHom_eq_coe,
-        AlgHom.coe_coe] at key
+    simp only [AlgHom.coe_comp, Function.comp_apply] at key
     simp only [LinearMap.coe_comp, Function.comp_apply, LinearEquiv.coe_coe]
     rw [← agree_mapR, ← agree_assoc1, ← agree_mapL, ← agree_assoc2, ← agree_commN, ← agree_assoc2s,
         ← agree_mapR,

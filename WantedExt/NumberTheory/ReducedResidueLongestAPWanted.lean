@@ -22,8 +22,8 @@ with common difference `d`, and `g(n) = f_{-⌈n/2⌉}(n)` for the system of abs
 reduced residues. Throughout, `gpf(n)` is written `n.primeFactors.sup id` (the largest prime
 factor of `n` for `n > 1`) and `rad(n)` is `UniqueFactorizationMonoid.radical n`.
 
-The definitions and the squarefree fixed-difference bound are in
-`MathlibExt.NumberTheory.ReducedResidueLongestAP`.
+The definitions, the squarefree fixed-difference bound and the formula for twice an odd prime
+are in `MathlibExt.NumberTheory.ReducedResidueLongestAP`.
 
 Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
 Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6.
@@ -91,16 +91,6 @@ public theorem_wanted absLeastAPLength_odd_squarefree {n : ℕ} (hn : 1 < n) (ho
     (absLeastAPLength n : ℤ) =
       ⌊((n.primeFactors.sup id : ℕ) : ℚ) -
         ((n.primeFactors.sup id : ℕ) + 1) / (2 * ((n / n.primeFactors.sup id : ℕ) : ℚ))⌋
-
-/-- **Longest progressions of absolute least residues: twice an odd prime.** For an odd prime
-$p$, the length $g(2p)$ of the longest arithmetic progression in the absolute least reduced
-residue system modulo $2p$ is $p - 1$.
-
-Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
-Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
-Theorem 1 (`integers-2026-A6-thm-1`). -/
-public theorem_wanted absLeastAPLength_two_mul_prime {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2) :
-    absLeastAPLength (2 * p) = p - 1
 
 /-- **Longest progressions of absolute least residues: neither squarefree nor prime power.** Let
 $n > 1$ be a natural number that is neither squarefree nor a prime power, let
