@@ -79,7 +79,9 @@ done
 cp "$REPO_ROOT/scripts/"{check.sh,check_diagnostics.sh,check_declaration_collisions.sh,check_declaration_collisions.lean,list_v2_modules.sh} \
   "$TMP_ROOT/repo/scripts/"
 touch "$TMP_ROOT/repo/"{lean-toolchain,README.md,REVIEWING.md}
-touch "$TMP_ROOT/repo/scripts/"{check_copyright.py,check_formal_math_sync.py}
+touch "$TMP_ROOT/repo/scripts/check_copyright.py"
+# The sync ledger is an opt-in audit, never an ordinary preflight dependency.
+printf 'raise SystemExit(97)\n' >"$TMP_ROOT/repo/scripts/check_formal_math_sync.py"
 printf '#!/usr/bin/env bash\nexit 0\n' >"$TMP_ROOT/repo/scripts/test_scripts.sh"
 chmod +x "$TMP_ROOT/repo/scripts/test_scripts.sh"
 # LC_ALL=C keeps bash's syntax-error messages untranslated for the greps below.
@@ -90,6 +92,9 @@ run_preflight() {
 if ! run_preflight; then
   cat "$TMP_ROOT/output.log" >&2
   fail "preflight failed with valid shell scripts"
+fi
+if "$TMP_ROOT/repo/scripts/check.sh" sync-audit >"$TMP_ROOT/sync-output.log" 2>&1; then
+  fail "explicit sync audit did not invoke the standalone checker"
 fi
 printf '\nif then\n' >>"$TMP_ROOT/repo/scripts/check_diagnostics.sh"
 if run_preflight; then

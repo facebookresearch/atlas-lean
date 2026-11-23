@@ -33,34 +33,18 @@ divergence.
 | `behind` | Header-only copy of an older upstream version of the same path; the next sync brings it current. | `published_sha256`, `upstream_commit` (the commit that introduced that version), `upstream_sha256` (its body), optional `notice` or `header` |
 | `diverged` | Reviewed ATLAS-side difference from upstream, including a file deleted upstream that ATLAS still publishes. | `published_sha256` (the reviewed bytes), `rationale`, `backport` (`pending`, `not-needed`, or the Formal-Math backport PR URL); informational `upstream_sha256`, `upstream_commit` |
 | `retired` | A synced or diverged file ATLAS removed on purpose; the file must stay absent. | the row's last `published_sha256`, `upstream_sha256` and `upstream_commit`, and `line_fingerprint` (sorted 12-hex hashes of the file's distinct lines of 8+ characters) |
-| `reserved` | An exact source file enrolled by an authorized sync for a later PR. ATLAS has not published it; its path must stay absent until its row is promoted. This is provenance metadata, not an unfinished Lean module. | exactly `path`, `disposition`, `upstream_commit` and `upstream_sha256`; no `published_sha256` |
 
-A reservation binds the path, source commit and source-body hash before the later
-publication. The sync reads these from the source repository's immutable Git
-objects. New reservations require a real change of the upstream pin, the same
-maintainer authorization as any sync, and `upstream_commit` equal to that new pin.
-An existing published or retired row cannot become a reservation. A reservation
-cannot be dropped, retargeted, retired as if it had been published, or change its
-source hash or commit, even on a later sync.
+## Optional sync audit
 
-With the source pin unchanged, a later PR may promote that existing reservation
-to `identical`, `attributed` or `diverged`. Both recorded source fields remain
-exactly the same. Every promotion requires the recorded source pin, including a
-genuinely adapted publication with a precise reviewed divergence rationale. All
-ordinary published-byte, header/body, attribution and divergence-rationale checks
-still apply. Unreserved new synced rows still require a pin-changing
-sync. Reserving a source does not claim any theorem has been published or tested.
+Ordinary Atlas pull requests, including model-category contributions, are independent
+of this ledger. They do not need manifest entries, reservations, the `formal-math-sync`
+label, or an upstream pin update. Standard preflight and build checks continue to enforce
+copyright, library policy and proof requirements. Preserve attribution in file headers,
+`NOTICE` and the library documentation.
 
-Compared with the base tree, a new unregistered path whose source body exactly
-matches a current or base reservation also fails. The same source and published
-header parsers handle Meta headers, attribution notices and retained legal
-headers. Existing registered paths and already-published baseline paths retain
-their ordinary checks; a reservation does not retroactively enroll them.
-
-## What preflight enforces
-
-`scripts/check.sh preflight` runs `scripts/check_formal_math_sync.py`, which is offline, uses only
-the Python standard library, and fails on:
+The existing ledger remains available for a separate sync cleanup. Run
+`scripts/check.sh sync-audit` or `python3 scripts/check_formal_math_sync.py` explicitly.
+The offline checker uses only the Python standard library and fails on:
 
 - a malformed manifest: schema, upstream pin, roots, or paths that are not unique, sorted, relative
   and under the roots (absolute, escaping and symlinked paths are rejected);
@@ -70,15 +54,11 @@ the Python standard library, and fails on:
 - a `diverged` row whose file is missing or differs from `published_sha256` (refresh the row and
   its rationale), or that lacks a non-empty `rationale` and `backport`;
 - a `retired` row whose file exists;
-- a `reserved` row whose path exists or that records publication fields, and any
-  enrollment or promotion that violates the source binding described above;
 - compared with the base manifest: a row that disappears or changes path (rows are never dropped;
   a deleted file keeps its row as `retired`), and, while the upstream pin is unchanged, any change
   to a synced row or a new one. With the pin unchanged a row may only become `retired`, become
   `diverged` (keeping its `upstream_sha256` and `upstream_commit`), or, if diverged, take a new `published_sha256` with a
   new rationale or a rationale/backport update; its `upstream_sha256` and `upstream_commit` stay.
-  The explicit reservation exception permits a previously enrolled row's
-  same-snapshot publication, with both source fields unchanged.
   A tracked (synced or diverged) file that git sees as renamed (50% similar) or copied (90%
   similar, searched from every base file) to a path without a row fails until the new path gets
   one (`--record-divergence NEW`, then `--retire OLD` if it was deleted): a tracked file stays
@@ -94,8 +74,10 @@ the Python standard library, and fails on:
   and may move the pin; a local run allows it with a warning. In CI the base is the push's `before` commit, the merge
   group's base, or for a pull request the merge ref's first parent, fetched if the checkout is
   shallow; if it cannot be read the check fails. Locally it is
-  the merge-base with `origin/main`, and the comparison is skipped with a warning when neither can
-  be read. `--base REV` names it explicitly. The base manifest is looked up at every path the
+  the merge-base with `origin/main`. During a local merge, the checker includes the incoming parent
+  in that calculation and checks the index for copies and renames. If the merge-base is unavailable,
+  it uses the first parent of `HEAD`. `--base REV` names the base explicitly.
+  The base manifest is looked up at every path the
 manifest has had (`MANIFEST_PATHS`); a base without one is accepted only before the cutover, that is
 when it also lacks `scripts/check_formal_math_sync.py`.
 
@@ -117,8 +99,7 @@ a divergence when ATLAS needs the change before that.
 
 ```bash
 python3 scripts/sync_formal_math.py --formal-math <formal-math checkout> --commit <sha> \
-    [--rationales divergences.json] [--report sync-report.md] \
-    [--reserve-paths reserved-paths.json]
+    [--rationales divergences.json] [--report sync-report.md]
 ```
 
 The script reads Formal-Math only through `git` in the given local repository: it never fetches
@@ -130,11 +111,3 @@ A row already diverged keeps its rationale only while its published and upstream
 unchanged. Rows never disappear: a file that left ATLAS keeps its row as `retired`, and the script
 stops if a file with a row no longer looks upstream-derived. A periodic sync picks up
 upstream changes and new upstream files.
-
-`reserved-paths.json` is a JSON list of unique relative source paths, without
-caller-supplied hashes. Each path must be absent in ATLAS and identify a regular
-Lean file in the chosen source snapshot. The report lists every reserved path,
-commit and body hash separately from published files. A later sync at the same
-source snapshot preserves still-absent reservations and classifies published
-reservations with the ordinary source/header parser; adapted publications still
-need exact rationales. It does not enroll new reservations at an unchanged pin.

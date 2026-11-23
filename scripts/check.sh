@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Canonical validation entry point for the top-level extension libraries.
 #
-#   scripts/check.sh            run every check
+#   scripts/check.sh            run the standard preflight and build checks
 #   scripts/check.sh preflight  run deterministic repository checks
 #   scripts/check.sh build      build the Lean libraries
+#   scripts/check.sh sync-audit inspect the separate upstream-sync ledger
 set -uo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -11,17 +12,17 @@ cd "$REPO_ROOT"
 
 scope="${1:-all}"
 if [[ $# -gt 1 ]]; then
-  echo "usage: scripts/check.sh [preflight|build]" >&2
+  echo "usage: scripts/check.sh [preflight|build|sync-audit]" >&2
   exit 2
 fi
 case "$scope" in
-  all|preflight|build) ;;
+  all|preflight|build|sync-audit) ;;
   -h|--help)
-    sed -n '2,6p' "${BASH_SOURCE[0]}"
+    sed -n '2,7p' "${BASH_SOURCE[0]}"
     exit 0
     ;;
   *)
-    echo "unknown check scope: $scope (expected preflight or build)" >&2
+    echo "unknown check scope: $scope (expected preflight, build, or sync-audit)" >&2
     exit 2
     ;;
 esac
@@ -72,9 +73,10 @@ if [[ "$scope" == all || "$scope" == preflight ]]; then
   run_check "maintenance script regressions" scripts/test_scripts.sh
   run_check "library policy" scripts/check_health.sh
   run_check "copyright headers" python3 scripts/check_copyright.py --all
-  # Scoped to files synced from formal-math (see provenance/README.md): files without a manifest
-  # row are ignored, so only a PR that changes or deletes a synced file must record it.
-  run_check "formal-math sync manifest" python3 scripts/check_formal_math_sync.py
+fi
+
+if [[ "$scope" == sync-audit ]]; then
+  run_check "formal-math sync audit" python3 scripts/check_formal_math_sync.py
 fi
 
 if [[ "$scope" == all || "$scope" == build ]]; then

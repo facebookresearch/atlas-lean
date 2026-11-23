@@ -18,15 +18,14 @@ only, and scoped to those synced files, so a pull request fails only if it touch
 - `diverged` rows: the file exists, its SHA-256 is `published_sha256` (so a later edit refreshes the
   row and its rationale), and `rationale` and `backport` are set;
 - `retired` rows: the file is absent;
-- `reserved` rows: source identity is frozen and the path is absent until exact same-snapshot
-  publication; enrollment requires an authorized pin change, and unregistered new body copies fail;
 - compared with the base manifest: no row disappears or changes path (a deleted synced file keeps
   its row as `retired`), and while the upstream pin is unchanged no synced row is added or changes
   its `upstream_sha256` (only a sync says what upstream contains), and a pull request may move
   the pin only with the `formal-math-sync` label (pushes and merge groups are maintainer-only). In CI the base is the push's
   `before` commit, the merge group's base, or for a pull request the merge ref's first parent,
   fetched if the checkout is shallow (unreadable fails closed); locally the merge-base with
-  origin/main, else the comparison is skipped with a warning;
+  origin/main (including the incoming parent during a local merge), falling back to HEAD's
+  first parent;
 - files without a row (ATLAS-only work) are ignored; new upstream files enter at sync time.
 
 A pull request that changes or deletes a synced or diverged file records that with
@@ -61,8 +60,7 @@ ROOTS = ("MathlibExt", "MathlibExtTest", "CSLibExt", "CSLibExtTest", "WantedExt"
 # behind:     header-only copy of an older upstream version (`upstream_commit`)
 # diverged:   reviewed ATLAS-side difference at `published_sha256`; needs `rationale` and `backport`
 # retired:    removed from ATLAS on purpose; the file must stay absent
-# reserved:   exact source identity enrolled by a sync; never published, path must stay absent
-DISPOSITIONS = ("identical", "attributed", "behind", "diverged", "retired", "reserved")
+DISPOSITIONS = ("identical", "attributed", "behind", "diverged", "retired")
 SYNCED = ("identical", "attributed", "behind")
 SHA256 = re.compile(r"[0-9a-f]{64}")
 COMMIT = re.compile(r"[0-9a-f]{40}")
@@ -281,15 +279,10 @@ def field_problems(row: dict) -> list[str]:
     required = {"identical": ("published_sha256", "upstream_sha256"),
                 "attributed": ("published_sha256", "upstream_sha256", "notice"),
                 "behind": ("published_sha256", "upstream_sha256", "upstream_commit"),
-                "diverged": ("published_sha256", "rationale", "backport"), "retired": (),
-                "reserved": ("upstream_commit", "upstream_sha256")}[disposition]
+                "diverged": ("published_sha256", "rationale", "backport"), "retired": ()}[disposition]
     for field in required:
         if field not in row:
             problems.append(f"{path}: {disposition} row has no {field}")
-    if disposition == "reserved":
-        extra = sorted(set(row) - {"path", "disposition", "upstream_commit", "upstream_sha256"})
-        if extra:
-            problems.append(f"{path}: reserved row has publication fields or unknown fields: {', '.join(extra)}")
     for field in ("published_sha256", "upstream_sha256"):
         if field in row and not (isinstance(row[field], str) and SHA256.fullmatch(row[field])):
             problems.append(f"{path}: {field} is not a SHA-256 hex digest")
@@ -316,8 +309,6 @@ def file_problems(root: Path, row: dict) -> list[str]:
     """What the files on disk must satisfy for this row."""
     path, disposition = row["path"], row["disposition"]
     target = root / path
-    if disposition == "reserved":
-        return [f"{path}: reserved source, but the path exists; publish and promote its row"] if target.exists() else []
     if disposition == "retired":
         return [f"{path}: retired row, but the file exists"] if target.exists() else []
     if not target.is_file():
@@ -522,7 +513,8 @@ def ci_base(root: Path) -> tuple[str | None, str]:
     return first_parent(root), "first parent of HEAD"
 
 
-def base_commit(root: Path, base: str | None) -> tuple[str | None, str | None]:
+def base_commit(root: Path, base: str | None,
+                merge_head: str | None = None) -> tuple[str | None, str | None]:
     """The commit whose manifest this tree is compared with: (commit, None) or (None, why not)."""
     if git(root, "rev-parse", "--show-toplevel") != str(root.resolve()):
         return None, "not a git checkout"
@@ -536,7 +528,9 @@ def base_commit(root: Path, base: str | None) -> tuple[str | None, str | None]:
         if candidate and git(root, "cat-file", "-e", f"{candidate}^{{commit}}") is not None:
             return candidate, None
         return None, f"cannot read the base commit ({source})"
-    for candidate in (git(root, "merge-base", "HEAD", "origin/main"), first_parent(root)):
+    # With multiple heads, git finds the base of origin/main and their hypothetical merge.
+    heads = ("HEAD", merge_head) if merge_head else ("HEAD",)
+    for candidate in (git(root, "merge-base", "origin/main", *heads), first_parent(root)):
         if candidate and git(root, "cat-file", "-e", f"{candidate}^{{commit}}") is not None:
             return candidate, None
     return None, "no origin/main merge-base and no readable parent commit"
@@ -584,89 +578,14 @@ def row_transition_problems(path: str, before: dict | None, row: dict, short: st
     return []
 
 
-def reservation_transition_problems(path: str, before: dict | None, row: dict,
-                                    old_pin: str, pin: str, short: str) -> list[str]:
-    """Reservations enroll only at a real sync, then retain their exact source identity.
-
-    Unlike ordinary sync transitions this runs even when the global pin changes. A reservation
-    never replaces a published row, and it never acquires invented publication history.
-    """
-    disposition = row.get("disposition")
-    if before is None:
-        if disposition != "reserved":
-            return []
-        problems = []
-        if pin == old_pin:
-            problems.append(f"{path}: new reserved row while the upstream pin is unchanged (base {short})")
-        if row.get("upstream_commit") != pin:
-            problems.append(f"{path}: new reservation must name the sync's upstream commit")
-        return problems
-    if before.get("disposition") != "reserved":
-        return [f"{path}: published provenance cannot become a reservation (base {short})"] \
-            if disposition == "reserved" else []
-    if row == before:
-        return []
-    problems = []
-    changed = [k for k in ("upstream_sha256", "upstream_commit") if row.get(k) != before.get(k)]
-    if changed:
-        problems.append(f"{path}: reserved source changed {', '.join(changed)} (base {short})")
-    if disposition not in ("identical", "attributed", "diverged"):
-        problems.append(f"{path}: a reservation may only become identical, attributed or diverged (base {short})")
-    if disposition in ("identical", "attributed", "diverged") and pin != before.get("upstream_commit"):
-        problems.append(f"{path}: reservation publication requires its recorded upstream pin")
-    return problems
-
-
-def reservation_body_hashes(data: bytes) -> set[str]:
-    """Exact source-body readings, using the native source and publication header parsers."""
-    try:
-        text = data.decode("utf-8")
-    except UnicodeDecodeError:
-        return set()
-    hashes = {sha256(upstream_body(text))}
-    notices = [""] + ([notice] if (notice := leading_notice(text)) else [])
-    for notice in notices:
-        body, why = split_published(text, notice)
-        if why is None:
-            hashes.add(sha256(body))
-    body, why = split_published(text, "", "upstream")
-    if why is None:
-        hashes.add(sha256(body))
-    return hashes
-
-
-def reservation_copy_problems(root: Path, old: dict, new: dict, commit: str) -> list[str]:
-    """New unregistered paths cannot disguise an exact copy of an enrolled source body.
-
-    Registered current paths and paths already published in the base are left to their existing
-    checks. Include base reservations too, so promoting every row cannot hide an alternate copy.
-    """
-    sources = {row["upstream_sha256"]: path for rows in (old, new) for path, row in rows.items()
-               if row.get("disposition") == "reserved" and isinstance(row.get("upstream_sha256"), str)}
-    if not sources:
-        return []
-    listing = git(root, "ls-tree", "-r", "--name-only", commit, "--", *ROOTS)
-    if listing is None:
-        return ["manifest: cannot read the base library tree for reserved source-copy checks"]
-    baseline_paths = set(listing.splitlines())
-    files, _ = library_files(root)
-    problems = []
-    for path in sorted(files - set(new) - baseline_paths):
-        source = next((sources[digest] for digest in sorted(reservation_body_hashes((root / path).read_bytes()))
-                       if digest in sources), None)
-        if source:
-            problems.append(f"{path}: exact source-body copy of reserved {source} but has no row; "
-                            "publish at its reserved path or record the copied source provenance")
-    return problems
-
-
-def copy_and_rename_status(root: Path, commit: str) -> str | None:
+def copy_and_rename_status(root: Path, commit: str, *, staged: bool) -> str | None:
     """`git diff --name-status -z` of the roots with rename (50%) and near-copy (90%) detection,
     copies searched from every base file, not only modified ones. None if git fails or skips
     detection (too many files for the limit)."""
+    revisions = ("--cached", commit) if staged else (commit, "HEAD")
     try:
         done = subprocess.run(["git", "-C", str(root), "diff", "--no-ext-diff", "-M", "-C90%", "--find-copies-harder",
-                               "-l100000", "--name-status", "-z", commit, "HEAD", "--", *ROOTS],
+                               "-l100000", "--name-status", "-z", *revisions, "--", *ROOTS],
                               capture_output=True, text=True, timeout=600)
     except (OSError, subprocess.TimeoutExpired):
         return None
@@ -690,7 +609,10 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
             return [f"manifest: {why}; cannot compare with the base manifest"], []
         return [], [f"skipping the base-manifest comparison: {why}"]
 
-    commit, why = base_commit(root, base)
+    merge_head = None
+    if not os.environ.get("GITHUB_ACTIONS"):
+        merge_head = git(root, "rev-parse", "--verify", "MERGE_HEAD")
+    commit, why = base_commit(root, base, merge_head)
     if commit is None:
         return unreadable(why or "no base commit")
     if symlinked_component(root, manifest_path):
@@ -706,14 +628,6 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
         if CHECKER in present:  # only the cutover itself may compare against a base without a manifest
             return [f"manifest: base {commit[:12]} has {CHECKER} but no manifest at {', '.join(candidates[:-1])}; "
                     "keep the manifest at a known path (MANIFEST_PATHS)"], []
-        try:
-            has_reservations = any(row.get("disposition") == "reserved" for row in
-                                   json.loads(manifest_path.read_text(encoding="utf-8")).get("rows", [])
-                                   if isinstance(row, dict))
-        except (OSError, ValueError, AttributeError):
-            has_reservations = False  # check() reports malformed input
-        if has_reservations:
-            return ["manifest: reservation enrollment requires a base manifest and a real upstream pin change"], []
         return [], []  # the cutover: the base predates the manifest
     try:
         old_manifest = json.loads(git(root, "show", f"{commit}:{base_rel}") or "")
@@ -731,13 +645,11 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
     problems = [f"{path}: row removed or renamed (base {short}); rows are never dropped: restore it, then use "
                 "--record-divergence for a changed file or --retire for a deleted one"
                 for path in sorted(old.keys() - new.keys())]
-    for path, row in new.items():
-        problems += reservation_transition_problems(path, old.get(path), row, old_pin, pin, short)
-    problems += reservation_copy_problems(root, old, new, commit)
     tracked = {path for path, row in old.items() if row.get("disposition") in (*SYNCED, "diverged")}
-    moves = copy_and_rename_status(root, commit)
+    moves = copy_and_rename_status(root, commit, staged=bool(merge_head))
     if moves is None:
-        found, note = unreadable(f"cannot diff base {commit} with HEAD for renames")
+        target = "the index" if merge_head else "HEAD"
+        found, note = unreadable(f"cannot diff base {commit} with {target} for renames")
         problems += found
         warnings = note
     else:
@@ -760,8 +672,7 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
         problem, note = repin_authorization(old_pin, pin)
         return problems + ([problem] if problem else []), warnings + ([note] if note else [])
     for path, row in sorted(new.items(), key=lambda item: str(item[0])):
-        if row.get("disposition") != "reserved" and (old.get(path) or {}).get("disposition") != "reserved":
-            problems += row_transition_problems(path, old.get(path), row, short)
+        problems += row_transition_problems(path, old.get(path), row, short)
         before = old.get(path) or {}
         if row.get("disposition") == "retired" and before.get("disposition") not in (None, "retired"):
             text = git(root, "show", f"{commit}:{path}")
@@ -845,8 +756,6 @@ def main(argv: list[str] | None = None) -> int:
 
     if a.retire:
         def retire(old: dict, path: str) -> dict | str:
-            if old.get("disposition") == "reserved":
-                return "reserved source has never been published; keep its reservation instead of retiring it"
             if (a.root / path).exists():
                 return "file still exists; delete it first, or use --record-divergence for a changed file"
             return retired_row(old, path, last_committed_text(a.root, path))

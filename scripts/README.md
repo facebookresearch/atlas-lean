@@ -32,6 +32,7 @@ For the reproducible, opt-in Tau Ceti quality evaluation of maintained Atlas
 libraries, see [`QUALITY_EVAL.md`](QUALITY_EVAL.md). Its deterministic tests run
 in preflight; model inference is never launched by repository CI.
 
-For the Formal-Math sync manifest, its offline checker (run by preflight on
-files synced from Formal-Math), the divergence helper and the refresh script, see
-[`provenance/README.md`](../provenance/README.md).
+The Formal-Math sync ledger is a separate, opt-in audit. Ordinary contributions
+and their preflight/build checks do not require ledger entries, a sync label or
+an upstream pin update. Run `scripts/check.sh sync-audit` explicitly when auditing
+or refreshing that ledger; see [`provenance/README.md`](../provenance/README.md).
