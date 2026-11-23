@@ -50440,7 +50440,7 @@
 "Matrix.bitSwap_eq_one_sub_vecMulVec": "b7ca60ebbb0f1b31",
 "Matrix.cochran_rank_criterion": "9d47b04313c208db",
 "Matrix.coeff_one_det_add_X_smul": "a0980be3fc2e50aa",
-"Matrix.deriv_det_eq_trace_adjugate_mul": "be835eeb425776f9",
+"Matrix.deriv_det_eq_trace_adjugate_mul": "ffc4812a99d2ff7e",
 "Matrix.detLinear": "cb6e50b0e5085e9b",
 "Matrix.detLinear_add": "5288d4d3ddadd335",
 "Matrix.detLinear_smul": "7ddf657e8ff6f2c2",

@@ -23,7 +23,12 @@ open scoped Matrix.Norms.Elementwise
 /-- **Jacobi's formula.** The derivative of the determinant of a differentiable square real
 matrix curve is the trace of its adjugate times its derivative. The matrix need not be invertible.
 
-Source: R. A. Horn and C. R. Johnson, *Matrix Analysis*, 2nd ed., §0.8.10. -/
+Source: R. A. Horn and C. R. Johnson, *Matrix Analysis*, 2nd ed., §0.8.10.
+
+See also `yalexey-jcode`'s earlier Lean proposal in
+<https://github.com/leanprover-community/mathlib4/issues/41881>, which derives the Fréchet
+derivative from the determinant's permutation expansion. This proof instead differentiates the
+continuous multilinear determinant. -/
 theorem Matrix.deriv_det_eq_trace_adjugate_mul {n : Type*} [Fintype n] [DecidableEq n]
     (A : ℝ → Matrix n n ℝ) (t : ℝ) (hA : DifferentiableAt ℝ A t) :
     deriv (fun s => (A s).det) t = Matrix.trace ((A t).adjugate * deriv A t) := by
