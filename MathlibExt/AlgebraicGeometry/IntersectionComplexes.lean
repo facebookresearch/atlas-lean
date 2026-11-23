@@ -7,26 +7,30 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Algebra.Homology.DerivedCategory.ExactFunctor
 public import Mathlib.AlgebraicGeometry.Morphisms.OpenImmersion
-public import MathlibExt.AlgebraicGeometry.PerverseSheaves
+public import MathlibExt.AlgebraicGeometry.ConstructibleComplexes
 
 /-!
 # Intermediate extensions and intersection-complex normalization
 
-The middle t-structure is the support/cosupport-characterized input from the
-unchanged PR1970 core. This module introduces no additional perverse-provider
-request. Intermediate extension is specified by an actual restriction
-isomorphism and the absence of boundary-supported subobjects and quotients.
+The perverse t-structure is the support/cosupport-characterized
+`PerverseSheafTheory`. Restriction to an open is the exact inverse image of
+sheaves, derived (`ConstructibleComplexes.derivedPullback`). Intermediate
+extension is specified by a natural restriction isomorphism and the absence of
+subobjects and quotients supported on the boundary, which characterize it
+(BBD, §1.4). The normalized local system `L[d]` is `L` placed in cohomological
+degree `-d`.
 
-All restriction, ambient inclusion and normalization constructions have
-complete bodies. The intermediate-extension provider and its geometric laws
-are requested in the matching Wanted module.
+All constructions here are complete. The existence, fullness and uniqueness of
+intermediate extension and the perversity of `L[d]` are requested in
+`WantedExt/AlgebraicGeometry/IntersectionComplexesWanted.lean`.
 
 ## References
 
-* BBD, *Faisceaux pervers*, Astérisque 100 (1982), §1.4, intermediate extension.
-* de Cataldo–Migliorini, https://arxiv.org/abs/0712.0349, §§2.1 and 2.3.
+* A. Beilinson, J. Bernstein and P. Deligne, *Faisceaux pervers*,
+  Astérisque 100 (1982), §1.4.
+* M. A. de Cataldo and L. Migliorini, https://arxiv.org/abs/0712.0349,
+  §§2.1 and 2.3.
 -/
 
 @[expose] public noncomputable section
@@ -38,52 +42,33 @@ open _root_.AlgebraicGeometry ComplexAnalytification PerverseSheaves
 
 attribute [local instance] HasDerivedCategory.standard
 
-/-- Exactness hypotheses for the fixed actual inverse-image sheaf functor.
-They are ordinary Mathlib properties, not an independently chosen operator. -/
-class OpenRestrictionExact {U X : ComplexScheme} (j : U ⟶ X) : Prop where
-  [additive : (TopCat.Sheaf.pullback (ModuleCat.{0} ℚ) (spaceMap j)).Additive]
-  [limits : PreservesFiniteLimits (TopCat.Sheaf.pullback (ModuleCat.{0} ℚ) (spaceMap j))]
-  [colimits : PreservesFiniteColimits (TopCat.Sheaf.pullback (ModuleCat.{0} ℚ) (spaceMap j))]
-
-attribute [instance] OpenRestrictionExact.additive OpenRestrictionExact.limits
-  OpenRestrictionExact.colimits
-
-/-- The actual inverse image on derived rational sheaves. -/
-def derivedRestriction {U X : ComplexScheme} (j : U ⟶ X) [OpenRestrictionExact j] :
+/-- The actual inverse image on derived rational sheaves, induced by the exact
+inverse-image functor of sheaves. -/
+def derivedRestriction {U X : ComplexScheme} (j : U ⟶ X) :
     RationalDerived (space X) ⥤ RationalDerived (space U) :=
-  (TopCat.Sheaf.pullback (ModuleCat.{0} ℚ) (spaceMap j)).mapDerivedCategory
-
-/-- Include the actual perverse heart into the ambient derived category. -/
-def perverseAmbient (X : ComplexScheme) [IsComplexVariety X] [PerverseSheafTheory X] :
-    PerverseSheaf X ⥤ RationalDerived (space X) :=
-  (perverseTStructure X).heart.ι ⋙ (boundedConstructible X).ι
-
-instance perverseAmbient_faithful (X : ComplexScheme) [IsComplexVariety X]
-    [PerverseSheafTheory X] : (perverseAmbient X).Faithful := by
-  dsimp only [perverseAmbient]
-  infer_instance
+  ConstructibleComplexes.derivedPullback ℚ (spaceMap j)
 
 /-- Restrict a perverse object, keeping the target in the actual derived category. -/
 def perverseRestriction {U X : ComplexScheme} [IsComplexVariety X]
-    [PerverseSheafTheory X] (j : U ⟶ X) [OpenRestrictionExact j] :
+    [PerverseSheafTheory X] (j : U ⟶ X) :
     PerverseSheaf X ⥤ RationalDerived (space U) :=
   perverseAmbient X ⋙ derivedRestriction j
 
 /-- Boundary support means that the actual restriction is zero. -/
 def IsBoundarySupported {U X : ComplexScheme} [IsComplexVariety X]
-    [PerverseSheafTheory X] (j : U ⟶ X) [OpenRestrictionExact j]
+    [PerverseSheafTheory X] (j : U ⟶ X)
     (P : PerverseSheaf X) : Prop :=
   IsZero ((perverseRestriction j).obj P)
 
 /-- No nonzero subobject supported on the complement of the open. -/
 def NoBoundarySubobjects {U X : ComplexScheme} [IsComplexVariety X]
-    [PerverseSheafTheory X] (j : U ⟶ X) [OpenRestrictionExact j]
+    [PerverseSheafTheory X] (j : U ⟶ X)
     (P : PerverseSheaf X) : Prop :=
   ∀ (Q : PerverseSheaf X) (a : Q ⟶ P), Mono a → IsBoundarySupported j Q → IsZero Q
 
 /-- No nonzero quotient supported on the complement of the open. -/
 def NoBoundaryQuotients {U X : ComplexScheme} [IsComplexVariety X]
-    [PerverseSheafTheory X] (j : U ⟶ X) [OpenRestrictionExact j]
+    [PerverseSheafTheory X] (j : U ⟶ X)
     (P : PerverseSheaf X) : Prop :=
   ∀ (Q : PerverseSheaf X) (a : P ⟶ Q), Epi a → IsBoundarySupported j Q → IsZero Q
 
@@ -92,7 +77,7 @@ without an arbitrary predicate called "intersection complex". -/
 structure IntermediateExtensionData {U X : ComplexScheme}
     [IsComplexVariety U] [IsComplexVariety X]
     [PerverseSheafTheory U] [PerverseSheafTheory X]
-    (j : U ⟶ X) [OpenRestrictionExact j] where
+    (j : U ⟶ X) where
   /-- The actual perverse-category functor. -/
   functor : PerverseSheaf U ⥤ PerverseSheaf X
   /-- Its restriction is naturally the source object. -/
@@ -108,7 +93,7 @@ needed for this completed helper. -/
 instance intermediateExtension_faithful {U X : ComplexScheme}
     [IsComplexVariety U] [IsComplexVariety X]
     [PerverseSheafTheory U] [PerverseSheafTheory X]
-    (j : U ⟶ X) [OpenRestrictionExact j] (J : IntermediateExtensionData j) :
+    (j : U ⟶ X) (J : IntermediateExtensionData j) :
     J.functor.Faithful :=
   J.restriction.faithful_of_comp
 
@@ -129,7 +114,7 @@ structure LocalSystemPerverseRealization (U : ComplexScheme) [IsComplexVariety U
 For a dense smooth open `U`, this is the perverse-normalized intersection complex. -/
 def intersectionComplex {U X : ComplexScheme} [IsComplexVariety U] [IsComplexVariety X]
     [PerverseSheafTheory U] [PerverseSheafTheory X]
-    (j : U ⟶ X) [OpenRestrictionExact j] (J : IntermediateExtensionData j)
+    (j : U ⟶ X) (J : IntermediateExtensionData j)
     (L : RationalSheaf (space U)) (d : ℕ) (R : LocalSystemPerverseRealization U L d) :
     PerverseSheaf X := J.functor.obj R.object
 
@@ -138,7 +123,7 @@ comparison maps. -/
 def intersectionComplex_restriction {U X : ComplexScheme}
     [IsComplexVariety U] [IsComplexVariety X]
     [PerverseSheafTheory U] [PerverseSheafTheory X]
-    (j : U ⟶ X) [OpenRestrictionExact j] (J : IntermediateExtensionData j)
+    (j : U ⟶ X) (J : IntermediateExtensionData j)
     (L : RationalSheaf (space U)) (d : ℕ) (R : LocalSystemPerverseRealization U L d) :
     (perverseRestriction j).obj (intersectionComplex j J L d R) ≅
       normalizedLocalSystem U L d :=
