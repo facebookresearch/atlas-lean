@@ -15,8 +15,8 @@ public import MathlibExt.AlgebraicGeometry.ProperDecomposition
 /-!
 # Tests for proper images and the semismall defect
 
-The normalized image is the derived direct image of the constant sheaf in
-degree `-d`, the constructible package keeps that object, the defect bound is
+The constructible package has the derived direct image of the constant sheaf
+in degree `-d` as its object, the defect bound is
 monotone in the defect and is a bound on the Krull dimension of the actual
 fiber product, and point fibers are scheme pullbacks along complex points.
 -/
@@ -35,17 +35,13 @@ attribute [local instance] HasDerivedCategory.standard
 
 variable {X Y : PerverseSheaves.ComplexScheme} (f : X ⟶ Y)
 
-/-- The normalized image is `Rf_*` applied to `ℚ_X` placed in degree `-d`. -/
-example (d : ℕ) :
-    normalizedDirectImage X Y f d =
+/-- The constructible package has the normalized image as its object. -/
+example (d : ℕ)
+    (hK : boundedConstructible Y (ConstructibleComplexes.normalizedDirectImage ℚ X Y f d)) :
+    (constructibleImage X Y f d hK).obj =
       (ConstructibleComplexes.derivedPushforwardPlus ℚ f).obj
         ((DerivedCategory.Plus.singleFunctor (RationalSheaf (space X))
           (-(d : ℤ))).obj (rationalConstantSheaf (space X))) :=
-  rfl
-
-/-- The constructible package has the normalized image as its object. -/
-example (d : ℕ) (hK : boundedConstructible Y (normalizedDirectImage X Y f d)) :
-    (constructibleImage X Y f d hK).obj = normalizedDirectImage X Y f d :=
   rfl
 
 /-- The defect bound is monotone in the defect. -/

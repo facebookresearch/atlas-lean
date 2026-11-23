@@ -24,7 +24,8 @@ complexes with coefficients in a field `k` (`CoefficientSheaf`,
 `CoefficientDerived`, `IsFiniteRankLocalSystem`, `boundedConstructible`) are
 defined in `MathlibExt.AlgebraicGeometry.PerverseSheaves`, whose rational
 notions are their specializations at `k = ℚ`. This module adds change of
-coefficients, exact inverse image and the bounded-below derived direct image.
+coefficients, exact inverse image, the bounded-below derived direct image and
+the normalized direct image `Rf_* k_X[n]` of the constant sheaf.
 
 All carriers are actual sheaves on complex analytification. Scalar extension
 is performed on presheaves and then sheafified (Mathlib's
@@ -144,5 +145,15 @@ def derivedPushforwardPlus (k : Type) [Field k] {X Y : ComplexScheme} (f : X ⟶
     DerivedCategory.Plus (CoefficientSheaf k (space X)) ⥤ CoefficientDerived k (space Y) :=
   (TopCat.Sheaf.pushforward (ModuleCat.{0} k) (spaceMap f)).rightDerivedFunctorPlus ⋙
     DerivedCategory.Plus.ι
+
+/-- The normalized direct image `Rf_* k_X[n]`: the constant sheaf of `X(ℂ)`,
+placed in cohomological degree `-n`, pushed forward by the bounded-below derived
+direct image. -/
+def normalizedDirectImage (k : Type) [Field k] (X Y : ComplexScheme) (f : X ⟶ Y) (n : ℕ) :
+    CoefficientDerived k (space Y) :=
+  (derivedPushforwardPlus k f).obj
+    ((DerivedCategory.Plus.singleFunctor (CoefficientSheaf k (space X)) (-(n : ℤ))).obj
+      ((constantSheaf (Opens.grothendieckTopology (space X)) (ModuleCat.{0} k)).obj
+        (ModuleCat.of k k)))
 
 end MathlibExt.AlgebraicGeometry.ConstructibleComplexes

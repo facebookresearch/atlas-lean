@@ -14,9 +14,10 @@ public import MathlibExt.AlgebraicGeometry.ConstructibleComplexes
 /-!
 # Proper images, semismall defect and support data
 
-The normalized image of `f : X ⟶ Y` is the actual `Rf_* ℚ_X[d]`: the derived
-direct image `ConstructibleComplexes.derivedPushforwardPlus` of the rational
-constant sheaf placed in cohomological degree `-d`. The defect bound is
+The normalized image of `f : X ⟶ Y` is the actual `Rf_* ℚ_X[d]`,
+`ConstructibleComplexes.normalizedDirectImage ℚ X Y f d`: the derived direct
+image of the rational constant sheaf placed in cohomological degree `-d`. Here
+it is packaged as a bounded constructible complex. The defect bound is
 geometric: `dim (X ×_Y X) ≤ d + r`, measured on the actual scheme fiber
 product. Fibers over complex points are actual scheme pullbacks.
 
@@ -42,20 +43,12 @@ open _root_.AlgebraicGeometry ComplexAnalytification PerverseSheaves
 
 attribute [local instance] HasDerivedCategory.standard
 
-/-- The actual rational direct image `Rf_* ℚ_X[d]` of the constant sheaf placed
-in cohomological degree `-d`. -/
-def normalizedDirectImage (X Y : ComplexScheme) (f : X ⟶ Y) (d : ℕ) :
-    RationalDerived (space Y) :=
-  (ConstructibleComplexes.derivedPushforwardPlus ℚ f).obj
-    ((DerivedCategory.Plus.singleFunctor (RationalSheaf (space X)) (-(d : ℤ))).obj
-      (rationalConstantSheaf (space X)))
-
-/-- The image as an object of the bounded constructible category, given its
-constructibility. -/
+/-- The rational image `Rf_* ℚ_X[d]` as an object of the bounded constructible
+category, given its constructibility. -/
 def constructibleImage (X Y : ComplexScheme) (f : X ⟶ Y) (d : ℕ)
-    (hK : boundedConstructible Y (normalizedDirectImage X Y f d)) :
+    (hK : boundedConstructible Y (ConstructibleComplexes.normalizedDirectImage ℚ X Y f d)) :
     (boundedConstructible Y).FullSubcategory :=
-  ⟨normalizedDirectImage X Y f d, hK⟩
+  ⟨ConstructibleComplexes.normalizedDirectImage ℚ X Y f d, hK⟩
 
 /-- Geometric defect bound: the self-fiber product `X ×_Y X` has Krull
 dimension at most `d + r`. For `X` smooth of dimension `d`, the least such `r`

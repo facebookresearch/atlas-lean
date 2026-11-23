@@ -48,7 +48,7 @@ proper direct image preserves bounded constructibility. -/
 public theorem_wanted normalizedDirectImage_constructible (X Y : ComplexScheme)
     [IsComplexVariety X] [IsComplexVariety Y] (d : ℕ) (f : X ⟶ Y)
     [IsProper f.left] :
-    boundedConstructible Y (normalizedDirectImage X Y f d)
+    boundedConstructible Y (ConstructibleComplexes.normalizedDirectImage ℚ X Y f d)
 
 /-- The image `Rf_* ℚ_X[d]` of a proper map of complex varieties, as an object
 of the bounded constructible category. -/
@@ -96,7 +96,7 @@ public theorem_wanted semismall_support_relevance (X Y : ComplexScheme)
     (d : ℕ) [SmoothOfRelativeDimension d X.hom] (f : X ⟶ Y) [IsProper f.left]
     (P : PerverseSheaf Y) [Simple P]
     (a : (perverseAmbient Y).obj P ⟶
-      ProperDecomposition.normalizedDirectImage X Y f d) [IsSplitMono a]
+      ConstructibleComplexes.normalizedDirectImage ℚ X Y f d) [IsSplitMono a]
     (S : ComplexScheme) [IsComplexVariety S] (s n : ℕ)
     [SmoothOfRelativeDimension s S.hom] (i : S ⟶ Y) [IsImmersion i.left]
     (p : space S)
