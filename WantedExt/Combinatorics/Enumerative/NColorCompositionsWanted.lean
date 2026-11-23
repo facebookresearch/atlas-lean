@@ -44,7 +44,8 @@ Proved in `MathlibExt.Combinatorics.Enumerative.NColorCompositions`,
 which this module imports: the identity for `t(n) + t(n-2)` when
 `n ≡ 2 (mod 3)` (`trib_add_two_sub_three_mul_add_two`). The
 tribonacci numbers `tribNat` and `trib` moved there with it, with
-unchanged names, bodies and docstrings.
+unchanged names, bodies and docstrings. The Fibonacci identity for colors 3 and 4 and
+the definitions `ColorCompAllowed` and `ccoAllowed` are also in that module.
 -/
 module
 
@@ -62,16 +63,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.Enumerative.NColorCompositionsWanted
-
-/-- **n-color compositions with two allowed consecutive colors.** For natural numbers $b$ and $n$,
-$\mathrm{CCo}_{b,b+1}(n)$ is the set of $n$-color compositions of $n$ that use only the colors $b$
-and $b+1$: finite sequences of pairs $(k_1, c_1), \dots, (k_m, c_m)$ of natural numbers (part
-$k_i$ with color $c_i$) such that $1 \le c_i \le k_i$ and $c_i \in \{b, b+1\}$ for every $i$, and
-$k_1 + \dots + k_m = n$. -/
-def ColorCompAllowed (b n : ℕ) : Type :=
-  { l : List (ℕ × ℕ) //
-    (∀ pc ∈ l, 1 ≤ pc.2 ∧ pc.2 ≤ pc.1 ∧ (pc.2 = b ∨ pc.2 = b + 1)) ∧
-      (l.map Prod.fst).sum = n }
 
 /-- **n-color compositions with two prohibited consecutive colors.** For natural numbers $b$ and
 $n$, $\mathrm{CCo}_{\widehat{b,b+1}}(n)$ is the set of $n$-color compositions of $n$ in which no
@@ -91,14 +82,6 @@ def ColorCompProhibit2 (n : ℕ) : Type :=
   { l : List (ℕ × ℕ) //
     (∀ pc ∈ l, 1 ≤ pc.2 ∧ pc.2 ≤ pc.1 ∧ pc.2 ≠ 2) ∧
       (l.map Prod.fst).sum = n }
-
-/-- **Count of n-color compositions with two consecutive colors.** An $n$-color composition of a
-natural number $n$ is a finite sequence of parts, each a positive integer $k$ carrying a color
-$c$ with $1 \le c \le k$, whose sizes sum to $n$. For natural numbers $b$ and $n$,
-$\operatorname{cco}_{b,b+1}(n)$ is the number of $n$-color compositions of $n$ in which every
-part has color $b$ or $b+1$. -/
-noncomputable def ccoAllowed (b n : ℕ) : ℕ :=
-  Nat.card (ColorCompAllowed b n)
 
 /-- **Number of n-color compositions with two prohibited consecutive colors.** For natural numbers
 $b$ and $n$, $\mathrm{cco}_{\widehat{b,b+1}}(n)$ is the number of elements of
@@ -348,18 +331,6 @@ theorem_wanted trib_add_two_sub_three_mul (k : ℕ) (hk : 1 ≤ k) :
       trib (3 * (k : ℤ) + 1) + trib (3 * (k : ℤ) + 1 - 2) =
         2 * ∑ i ∈ Finset.range k,
           trib (3 * (k : ℤ) + 1 - 3 * (i : ℤ) - 1)
-
-/-- **Fibonacci identity for n-color compositions with colors 3 and 4.** For a natural number
-$m$, let $\operatorname{cco}_{3,4}(m)$ be the number of $n$-color compositions of $m$ in which
-every part has color $3$ or $4$, and let $F_k$ be the Fibonacci numbers with $F_0 = 0$ and
-$F_1 = 1$. Then for every natural number $n \ge 3$,
-$\operatorname{cco}_{3,4}(n) + \operatorname{cco}_{3,4}(n-2) = F_{n-1}$.
-
-Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
-Two Consecutive Colors in `n`-Color Compositions",
-Proposition 10. -/
-theorem_wanted ccoAllowed_three_add (n : ℕ) (hn : 3 ≤ n) :
-    ccoAllowed 3 n + ccoAllowed 3 (n - 2) = Nat.fib (n - 1)
 
 /-- **Recurrence for n-color compositions avoiding two consecutive colors.** Fix a natural number
 $b \ge 1$. For an integer $m$, let $c(m)$ be the number of $n$-color compositions of $m$ in

@@ -58,4 +58,29 @@ example : trib 32 + trib 30 =
     2 + 2 * ∑ i ∈ Finset.range 10, trib (3 * ((10 : ℕ) : ℤ) + 2 - 3 * (i : ℤ) - 1) := by
   simpa using trib_add_two_sub_three_mul_add_two 10 (by decide)
 
+-- At the lower endpoint there is one composition of 3 and none of 1.
+example : ccoAllowed 3 3 = 1 := by
+  have : IsEmpty (ColorCompAllowed 3 1) := by
+    constructor
+    rintro ⟨_ | ⟨⟨k, c⟩, l⟩, hvalid, hsum⟩
+    · simp at hsum
+    · have hc := hvalid (k, c) (by simp)
+      simp only [List.map_cons, List.sum_cons] at hsum
+      omega
+  simpa [ccoAllowed, Nat.fib] using ccoAllowed_three_add 3 le_rfl
+
+-- At total 7 the same two colored parts occur in two different orders.
+example : (⟨[(3, 3), (4, 4)], by decide⟩ : ColorCompAllowed 3 7) ≠
+    ⟨[(4, 4), (3, 3)], by decide⟩ := by decide
+
+-- The color must also fit the size of the part.
+example (x : ColorCompAllowed 3 3) : x.val ≠ [(3, 4)] := by
+  intro h
+  have := x.property.1 (3, 4) (by simp [h])
+  omega
+
+-- At total 8 both summands are nonzero.
+example : ccoAllowed 3 8 + ccoAllowed 3 6 = 13 := by
+  simpa [Nat.fib] using ccoAllowed_three_add 8 (by decide)
+
 end MathlibExtTest.NColorCompositions
