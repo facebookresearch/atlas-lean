@@ -324,7 +324,7 @@ private theorem finrank_frobeniusSubfield_adjoin_transcendental [PerfectField K]
         Polynomial.natDegree_le_of_dvd (minpoly.dvd _ _ (by
           simp only [map_sub, map_pow, aeval_X, aeval_C]; exact sub_eq_zero.mpr rfl))
           (monic_X_pow_sub_C _ hp.out.ne_zero).ne_zero
-    _ = p := natDegree_X_pow_sub_C
+    _ = p := natDegree_X_pow_sub_C _
 
 end AdjoinIndex
 

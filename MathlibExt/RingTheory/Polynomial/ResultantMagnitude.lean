@@ -199,12 +199,12 @@ theorem leadingCoeff_nonneg_of_eventually_nonneg (F A : ℚ[X]) (hF : 0 < F.degr
     rw [hFr, leadingCoeff_map_of_injective hinj, eq_ratCast]
     exact_mod_cast hlc.le
   have h1 : Tendsto (fun x => Fr.eval x) atTop atBot :=
-    Polynomial.tendsto_atBot_of_leadingCoeff_nonpos Fr hFr_deg hFr_lc
+    Polynomial.tendsto_atBot_of_leadingCoeff_nonpos hFr_deg hFr_lc
   have h2 : ∀ᶠ x in atTop, Fr.eval x < 0 := h1.eventually_lt_atBot 0
   have hAr0 : Ar ≠ 0 := by
     rw [hAr, Ne, Polynomial.map_eq_zero_iff hinj]
     exact hA
-  have h3 : ∀ᶠ x in atTop, ¬ Ar.IsRoot x := Polynomial.eventually_atTop_not_isRoot Ar hAr0
+  have h3 : ∀ᶠ x in atTop, ¬ Ar.IsRoot x := Polynomial.eventually_atTop_not_isRoot hAr0
   obtain ⟨b, hb⟩ := Filter.eventually_atTop.mp (h2.and h3)
   obtain ⟨c, hcS, hcb⟩ := hS ⌈b⌉
   have hcast : (algebraMap ℚ ℝ) (c : ℚ) = (c : ℝ) := by simp

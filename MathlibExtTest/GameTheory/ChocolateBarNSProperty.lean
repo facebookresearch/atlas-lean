@@ -35,3 +35,13 @@ example : ¬ HasNSProperty ((Set.Ici 3).indicator (1 : ℕ → ℕ)) := by
   intro hns
   have hpair := hns.2 2 3 1 (by decide) (by decide)
   simp [Set.indicator] at hpair
+
+-- Inputs in the same block of eight have quotients by four in the same block of four.
+example {a b : ℕ} (h : a / 8 = b / 8) : a / 4 / 4 = b / 4 / 4 :=
+  (hasNSProperty_div_two_pow (m := 2) (by decide)).2 a b 3 (by decide) h
+
+-- Exponent zero gives the identity, so positivity of the exponent is necessary.
+example : ¬ HasNSProperty (fun x : ℕ ↦ x / 2 ^ 0) := by
+  intro h
+  have hpair := h.2 0 1 1 (by decide) rfl
+  exact absurd hpair (by decide)

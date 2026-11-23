@@ -17,8 +17,7 @@ import Mathlib.Tactic.Ring
 # Convergent denominators of symmetric continued fractions
 
 A symmetric sequence admits a splitting formula for its shifted continuant at each interior
-index. At even period length, symmetry also determines its parity from the middle coefficient
-and the continuant on its left.
+index. Splitting at the middle gives parity formulas for both even and odd period lengths.
 -/
 
 namespace MetaMathlibExt
@@ -155,6 +154,16 @@ theorem shifted_convergentDen_symm_split (l : ℕ) (a : ℕ → ℕ)
     show l - 2 - i = l - 3 - i + 1 by omega]
   exact split a hsymm _ _ (by omega)
 
+namespace shifted_convergentDen_parity_of_odd
+
+private theorem mul_self_modEq_two (n : ℕ) : n * n ≡ n [MOD 2] := by
+  rw [Nat.ModEq, Nat.mul_mod]
+  rcases Nat.mod_two_eq_zero_or_one n with h | h <;> simp [h]
+
+end shifted_convergentDen_parity_of_odd
+
+open shifted_convergentDen_parity_of_odd
+
 /-- **Parity of the shifted continuant of a symmetric sequence, even length.** Let $l \ge 4$ be
 even and let $a_1, \dots, a_{l-1}$ be natural numbers with $a_i = a_{l-i}$ for
 $1 \le i \le l - 1$. For $j \ge 1$ let $r_j = K(a_2, \dots, a_j)$ be the continuant, given by
@@ -174,15 +183,34 @@ theorem shifted_convergentDen_parity_of_even (l : ℕ) (hl : Even l) (hl4 : 4 �
   let k := l / 2 - 2
   have hk : k + 2 = l / 2 := by dsimp [k]; omega
   have hsplit := split a hsymm k (k + 1) (by dsimp [k]; omega)
-  have hsquare : den a (k + 1) * den a (k + 1) ≡ den a (k + 1) [MOD 2] := by
-    rw [Nat.ModEq, Nat.mul_mod]
-    rcases Nat.mod_two_eq_zero_or_one (den a (k + 1)) with h | h <;> simp [h]
   change den a (l - 3 + 1) ≡ a (l / 2) * den a (k + 1) [MOD 2]
   rw [show l - 3 + 1 = l - 2 by omega, hsplit, den_add_two a k, hk]
   calc
     _ = 2 * (den a k * den a (k + 1)) + a (l / 2) * (den a (k + 1) * den a (k + 1)) := by ring
     _ ≡ a (l / 2) * (den a (k + 1) * den a (k + 1)) [MOD 2] := Nat.ModEq.modulus_mul_add
-    _ ≡ _ [MOD 2] := hsquare.mul_left _
+    _ ≡ _ [MOD 2] := (mul_self_modEq_two _).mul_left _
+
+/-- **Parity of the shifted continuant of a symmetric sequence, odd length.** Let $l \ge 5$ be
+odd and let $a_1, \dots, a_{l-1}$ be natural numbers with $a_i = a_{l-i}$ for
+$1 \le i \le l - 1$. For $j \ge 1$ let $r_j = K(a_2, \dots, a_j)$ be the continuant, given by
+$r_1 = 1$, $r_2 = a_2$ and $r_{j+2} = a_{j+2} r_{j+1} + r_j$. Then
+$r_{l-2} \equiv r_{(l-1)/2} + r_{(l-3)/2} \pmod 2$.
+
+The case $l = 3$ of the paper, which needs $r_0 = 0$, is omitted.
+
+Source: Jun Ho Lee, *Nonexistence of the Continued Fraction of a Quadratic Irrational
+Number with a Given Sequence*, INTEGERS 26 (2026), Article A69, Corollary 2 (ii)
+(`integers-2026-A69-cor-2`). -/
+theorem shifted_convergentDen_parity_of_odd (l : ℕ) (hl : Odd l) (hl5 : 5 ≤ l)
+    (a : ℕ → ℕ) (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) :
+    convergentDen (fun n => a (n + 1)) (l - 3) ≡
+      convergentDen (fun n => a (n + 1)) ((l - 1) / 2 - 1) +
+        convergentDen (fun n => a (n + 1)) ((l - 3) / 2 - 1) [MOD 2] := by
+  obtain ⟨m, hm⟩ := hl
+  rw [shifted_convergentDen_symm_split l a hsymm m (by omega) (by omega),
+    show l - 2 - m = m - 1 by omega, show l - 3 - m = m - 2 by omega,
+    show (l - 1) / 2 - 1 = m - 1 by omega, show (l - 3) / 2 - 1 = m - 2 by omega]
+  exact (mul_self_modEq_two _).add (mul_self_modEq_two _)
 
 end
 
