@@ -11,7 +11,7 @@ public import Mathlib.AlgebraicGeometry.Birational.Birational
 public import Mathlib.AlgebraicGeometry.Morphisms.FiniteType
 public import Mathlib.AlgebraicGeometry.Morphisms.Proper
 public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
-public import MathlibExt.AlgebraicGeometry.PlurigenusFamilies
+public import MathlibExt.AlgebraicGeometry.RelativeProjectivity
 
 /-!
 # Normalized birational resolutions
@@ -35,7 +35,7 @@ Stacks Project, Tag 0BHW (definition of a resolution).
 namespace MathlibExt.AlgebraicGeometry.BirationalResolution
 
 open CategoryTheory _root_.AlgebraicGeometry
-open MathlibExt.AlgebraicGeometry.PlurigenusFamilies
+open MathlibExt.AlgebraicGeometry.RelativeProjectivity
 
 universe u
 
