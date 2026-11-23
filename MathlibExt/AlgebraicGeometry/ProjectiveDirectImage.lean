@@ -24,10 +24,10 @@ public import MathlibExt.AlgebraicGeometry.ProjectiveSpace
 
 Projectivity over `ℂ` and projective space `ℙⁿ_ℂ` are those of
 `MathlibExt.AlgebraicGeometry.ProjectiveSpace` over the complex numbers: a
-closed immersion into some `ℙⁿ_ℂ` that respects the structure morphism. The normalized direct image uses
-Mathlib's derived pushforward on the analytic topological spaces of complex
-points: `ℚ_X[n]` places the rational constant sheaf in cohomological degree
-`-n`.
+closed immersion into some `ℙⁿ_ℂ` that respects the structure morphism. The
+normalized direct image uses Mathlib's derived pushforward on the analytic
+topological spaces of complex points: `ℚ_X[n]` places the rational constant
+sheaf in cohomological degree `-n`.
 
 The declarations live in the namespace
 `MathlibExt.AlgebraicGeometry.DeCataldoMiglioriniDecompositionWanted`, shared
