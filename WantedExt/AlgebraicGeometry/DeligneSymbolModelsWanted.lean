@@ -47,7 +47,7 @@ public def_wanted symbols {X Y : Scheme.{0}} (f : X ⟶ Y) (n : ℕ)
 
 /-- The source construction is independent of adapted bases, localizations
 and coherent affine cochain presentations on the SAME original Deligne line. -/
-public proof_wanted symbols_independent {X Y : Scheme.{0}} (f : X ⟶ Y) (n : ℕ)
+public theorem_wanted symbols_independent {X Y : Scheme.{0}} (f : X ⟶ Y) (n : ℕ)
     (scope : RelativeScope f n) (L : Fin (n+1) → X.Modules)
     (I : DeterminantSources)
     (P : ∀ (R : CommRingCat.{0}) (a : Spec R ⟶ Y), Presentations f L R a)

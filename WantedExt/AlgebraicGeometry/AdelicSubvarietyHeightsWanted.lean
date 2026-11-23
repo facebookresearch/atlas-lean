@@ -38,7 +38,7 @@ variable {K : Type} [Field K] {A : AdelicField K} {X T : Over (Spec (.of K))}
 
 /-- The image retains all actual regular-function kernels, rather than a selected closed subset. -/
 public def_wanted closedImage (u : T ⟶ X) [IsIntegral T.left] [IsProper T.hom]
-    [LocallyOfFiniteType T.hom] (scope : QuasiProjectiveScope X) :
+    (scope : QuasiProjectiveScope X) :
     Σ n : ℕ, ClosedImage u n
 
 public def_wanted vectorSources (G : GroundBase (K := K)) (u : T ⟶ X) (n : ℕ)
@@ -54,7 +54,7 @@ public def_wanted numericalIntersections (G : GroundBase (K := K)) (t : ℕ)
     (B : AdelicArithmeticModelFrames.ArithmeticBase A) (b : ℕ+) (ground : GroundModel G B b)
     (arity : t = n+b) : NumericalAdelicIntersections.Sources G M
 
-public proof_wanted numericalConvergence (G : GroundBase (K := K)) (t : ℕ)
+public theorem_wanted numericalConvergence (G : GroundBase (K := K)) (t : ℕ)
     (M : Fin t → LineObject (A := A) (X := X) G) (S : NumericalAdelicIntersections.Sources G M) :
     NumericalAdelicIntersections.Convergence S
 

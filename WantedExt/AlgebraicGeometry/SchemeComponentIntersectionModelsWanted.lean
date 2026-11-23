@@ -44,7 +44,7 @@ public def_wanted intersectionSources (K : Type) [Field K]
     ComponentIntersectionSources X d L
 
 /-- The coherent intersection degree uses the whole nonreduced fundamental cycle. -/
-public proof_wanted totalDegree (K : Type) [Field K] (X : Over (Spec (.of K)))
+public theorem_wanted totalDegree (K : Type) [Field K] (X : Over (Spec (.of K)))
     (d : ℕ) (L : Fin d → X.left.Modules) (D : DegreeData X d L)
     (S : ComponentIntersectionSources X d L) :
     componentTotalDegree S = mixedDegree D

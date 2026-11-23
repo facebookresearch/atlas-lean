@@ -36,7 +36,7 @@ public def_wanted normSources (K : Type) [Field K] (A : AdelicField K)
     (X : Over (Spec (.of K))) (S : ClosedPointSources X) (G : GroundBase (K := K))
     (M : LineObject (A := A) (X := X) G) : ClosedPointNormSources S G M
 
-public proof_wanted independentNormSources (K : Type) [Field K] (A : AdelicField K)
+public theorem_wanted independentNormSources (K : Type) [Field K] (A : AdelicField K)
     (X : Over (Spec (.of K))) (S : ClosedPointSources X) (G : GroundBase (K := K))
     (M : LineObject (A := A) (X := X) G) (N P : ClosedPointNormSources S G M)
     (z : ZeroCycle X) : cycleNormClass S N z = cycleNormClass S P z

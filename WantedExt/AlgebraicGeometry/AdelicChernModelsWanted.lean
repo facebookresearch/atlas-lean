@@ -85,7 +85,7 @@ public def_wanted adelicSources (G : GroundBase (K := K)) (d : ℕ)
     (nontrivial : ∀ v : A.places, ∃ a : A.completion v, ‖a‖ ≠ 0 ∧ ‖a‖ ≠ 1) :
     Σ F : GenericModelSources G M, ChernSources M F
 
-public proof_wanted genericDegreeConvergence (G : GroundBase (K := K)) (d : ℕ)
+public theorem_wanted genericDegreeConvergence (G : GroundBase (K := K)) (d : ℕ)
     (M : Fin d → LineObject (A := A) (X := X) G) (F : GenericModelSources G M) :
     GenericDegreeConvergence F
 
@@ -100,7 +100,7 @@ public def_wanted positiveMeasure (G : GroundBase (K := K)) (d : ℕ)
     PositiveChernMeasure S v
 
 /-- The SAME measure, the SAME degree, and the precise proper/global-field scope. -/
-public proof_wanted mass (G : GroundBase (K := K)) (d : ℕ)
+public theorem_wanted mass (G : GroundBase (K := K)) (d : ℕ)
     (M : Fin d → LineObject (A := A) (X := X) G)
     (F : GenericModelSources G M) (S : ChernSources M F) (v : A.places)
     (P : PositiveChernMeasure S v) (guard : MassScope G X) : MassIdentity P guard

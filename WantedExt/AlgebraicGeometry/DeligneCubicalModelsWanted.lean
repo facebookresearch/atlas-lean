@@ -83,7 +83,7 @@ public def_wanted regularSection {X Y : Scheme.{0}} (I : DeterminantSources)
     CanonicalRegularSection I f n L P D s
 
 /-- The full source regular section is independent on the original normal integral base. -/
-public proof_wanted regularSection_independent {X Y : Scheme.{0}} (I : DeterminantSources)
+public theorem_wanted regularSection_independent {X Y : Scheme.{0}} (I : DeterminantSources)
     (f : X ⟶ Y) (n : ℕ) (scope : FiniteTorRelativeScope f n) (L : Fin (n+1) → X.Modules)
     (P : ∀ (R : CommRingCat.{0}) (a : Spec R ⟶ Y), Presentations f L R a)
     (D : DeligneLine I f n L P) (s : StrongRegularTuple f n L)
@@ -97,7 +97,7 @@ public def_wanted tensorComparison {X Y : Scheme.{0}} (I : DeterminantSources)
     (e : CurvePositivity.moduleTensor X (N j) B ≅ A) : TensorComparisonSources I f n C N j B A e
 
 /-- Same source tensors have a unique normalized comparator, including localization descent. -/
-public proof_wanted tensorComparison_independent {X Y : Scheme.{0}} (I : DeterminantSources)
+public theorem_wanted tensorComparison_independent {X Y : Scheme.{0}} (I : DeterminantSources)
     (f : X ⟶ Y) (n : ℕ) (C : CubicalSources I f n) (N : Fin (n+1) → X.Modules)
     (j : Fin (n+1)) (B A : X.Modules) (e : CurvePositivity.moduleTensor X (N j) B ≅ A)
     (S T : TensorComparisonSources I f n C N j B A e)
@@ -116,7 +116,7 @@ public def_wanted rationalSymbols {X Y : Scheme.{0}} (I : DeterminantSources)
 
 /-- Independence includes fraction choices, insertion order, tensor association,
 permutations and source isomorphisms; the original rational tuple and P stay fixed. -/
-public proof_wanted rationalExpression_independent {X Y : Scheme.{0}} (I : DeterminantSources)
+public theorem_wanted rationalExpression_independent {X Y : Scheme.{0}} (I : DeterminantSources)
     (f : X ⟶ Y) (n : ℕ) (scope : RelativeScope f n) (C : CubicalSources I f n)
     (N : Fin (n+1) → X.Modules) (q : ∀ i, RationalSection (N i))
     (P : ∀ (R : CommRingCat.{0}) (a : Spec R ⟶ Y), Presentations f N R a)
