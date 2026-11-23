@@ -11227,6 +11227,7 @@
   "MathlibExt/NumberTheory/Digits/MinBasePalindrome": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromic representations of powers of two"},
   "MathlibExt/NumberTheory/Digits/NineDvdExponent": {"to": "NumberTheory/congruences/covering-systems", "title": "Exact covering system digraphs"},
   "MathlibExt/NumberTheory/Digits/Permutiple": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Permutiples"},
+  "MathlibExt/NumberTheory/Digits/PermutipleStrings": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Permutiples"},
   "MathlibExt/NumberTheory/Digits/ProdigiousCrtSolution": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Prodigious numbers"},
   "MathlibExt/NumberTheory/Digits/ReverseDivisibility": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/Digits/ReverseDivisor": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
