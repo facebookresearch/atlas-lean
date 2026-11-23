@@ -58,11 +58,11 @@ example {ρ : ℝ} (h : IsLowerCutoff ρ) : IsLowerCutoff (ρ - 1) :=
 -- The canonical-CNF bridge agrees with the model's native predicates.
 example (a : Fin 3 → Bool) (c : Clause 3) :
     clauseSat a c ↔
-      Cslib.Logic.PL.CNFClause.Satisfies (extendAssign a) (toCNFClause c) :=
+      Cslib.Logic.LegacyPL.CNFClause.Satisfies (extendAssign a) (toCNFClause c) :=
   clauseSat_iff a c
 
 example (F : Formula 3 2) :
-    Satisfiable F ↔ Cslib.Logic.PL.CNFSat (toCNF F) :=
+    Satisfiable F ↔ Cslib.Logic.LegacyPL.CNFSat (toCNF F) :=
   satisfiable_iff F
 
 end CSLibExtTest.RandomThreeSat

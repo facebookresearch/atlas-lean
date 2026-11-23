@@ -11,4 +11,4 @@ score vector, apply to full conformal prediction.
 ## Background
 
 - [Permutation-equivariant score map](is-perm-equivariant.md): the hypothesis on $S$.
-- [Product measures are exchangeable](../../distributions/discrete/negative-binomial-and-beta-binomial-distribution/map-comp-perm-pi.md): i.i.d. data satisfy the hypothesis on $\mu$.
+- [Product measures are exchangeable](../../distributions/discrete/negative-binomial-and-beta-binomial-distribution/sample-rank-law/map-comp-perm-pi.md): i.i.d. data satisfy the hypothesis on $\mu$.

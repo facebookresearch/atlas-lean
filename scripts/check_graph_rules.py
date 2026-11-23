@@ -117,7 +117,16 @@ def lean_sections(text: str) -> list[str]:
 
 def names_declaration(end: object) -> bool:
     location = end.get("location") if isinstance(end, dict) else None
-    return isinstance(location, dict) and bool(location.get("declaration"))
+    declaration = location.get("declaration") if isinstance(location, dict) else None
+    return (isinstance(declaration, str) and bool(declaration)
+            and end.get("role") in (None, "states"))
+
+
+def credit_candidates(objects: list) -> set[str]:
+    """Declaration names that can supply credit; generic and reference ends do not."""
+    named = [end for end in objects if names_declaration(end)]
+    states = [end for end in named if end.get("role") == "states"]
+    return {end["location"]["declaration"] for end in states or named}
 
 
 def linked(annotation: dict) -> bool:
@@ -286,31 +295,32 @@ def load_annotations(root: Path, report: Report) -> set[Path]:
                 report.add(5, name, "a row names exactly one subject page", at)
                 continue
             page = annotation_page(roadmap, source, name, annotation, at, report)
-            if page is None:
-                continue
-            subject = rel(page, root)
-            # Every row is checked in full, a second row for a page included: Autoform merges them all.
+            subject = rel(page, root) if page is not None else name
+            # Check row fields even if the subject is unusable.
             for fact in DERIVED_FACTS:
                 if fact in annotation:
                     report.add(8, subject, f"its annotation commits {fact!r}, which lean-facts adds at build time", at)
             objects = annotation.get("object", [])
             if not isinstance(objects, list):
                 report.add(5, subject, "its annotation's `object` is not a list of ends", at)
-            elif sum(names_declaration(end) for end in objects) > 1:
-                report.add(5, subject, "its annotation names more than one Lean declaration", at)
+            elif len(credit_candidates(objects)) > 1:
+                report.add(5, subject, "its annotation names more than one Lean declaration for credit", at)
             article_id = annotation.get("id")
-            if article_id is not None:  # a missing id is not a finding until the one-off fill (#5524)
+            if "id" in annotation:  # The committed-annotation suite separately requires an ID on every row.
                 if not isinstance(article_id, str) or not ARTICLE_ID.fullmatch(article_id):
                     report.add(5, subject, f"malformed id {article_id!r}", at)
                 elif ids.setdefault(article_id, subject) != subject:
                     report.add(5, subject, f"id {article_id} is shared by {ids[article_id]}, {subject}", at)
-            if linked(annotation):
+            row_linked = linked(annotation)
+            marked = not_ready(subject, annotation, at, report)
+            if marked and row_linked:
+                report.add(12, subject, f"a node still to be broken down ({NOT_READY}) names no Lean declaration", at)
+            if page is None:
+                continue
+            if row_linked:
                 linked_pages.add(page)
-            if not_ready(subject, annotation, at, report):
-                if linked(annotation):
-                    report.add(12, subject, f"a node still to be broken down ({NOT_READY}) names no Lean declaration", at)
-                elif page.name == "README.md":
-                    report.add(12, subject, f"a folder page is not a node to break down; mark an article {NOT_READY}", at)
+            if marked and not row_linked and page.name == "README.md":
+                report.add(12, subject, f"a folder page is not a node to break down; mark an article {NOT_READY}", at)
             # Autoform merges a row from any file it reads, so a second one anywhere is a second annotation.
             if page in rows:
                 report.add(5, subject, "the page has more than one annotation", at)

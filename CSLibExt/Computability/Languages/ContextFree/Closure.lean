@@ -175,7 +175,8 @@ private theorem unionGrammar_language :
     · exact derives_union_left ((ContextFreeGrammar.mem_language_iff g w).mp hw)
     · exact derives_union_right ((ContextFreeGrammar.mem_language_iff h w).mp hw)
 
-/-- Context-free languages are closed under union. -/
+/-- **Closure of context-free languages under union.** If $L$ and $M$ are context-free languages
+over the same alphabet, then their union $L \cup M$ is context-free. -/
 theorem IsContextFree.add {L M : Language T} (hL : L.IsContextFree) (hM : M.IsContextFree) :
     (L + M).IsContextFree := by
   obtain ⟨g, rfl⟩ := hL
@@ -243,7 +244,9 @@ private theorem mulGrammar_language :
     rw [List.map_append]
     exact hstep.trans_derives (derives_append hliftL hliftR)
 
-/-- Context-free languages are closed under concatenation. -/
+/-- **Closure of context-free languages under concatenation.** If $L$ and $M$ are context-free
+languages over the same alphabet, then their concatenation $LM = \{uv : u \in L,\ v \in M\}$ is
+context-free. -/
 theorem IsContextFree.mul {L M : Language T} (hL : L.IsContextFree) (hM : M.IsContextFree) :
     (L * M).IsContextFree := by
   obtain ⟨g, rfl⟩ := hL
@@ -336,13 +339,16 @@ private theorem starGrammar_language :
     subst hwflatten
     exact derives_starGrammar_flatten hWs
 
-/-- Context-free languages are closed under Kleene star. -/
+/-- **Closure of context-free languages under Kleene star.** If $L$ is a context-free language,
+then its Kleene star $L^*$ is context-free. -/
 theorem IsContextFree.kstar {L : Language T} (hL : L.IsContextFree) :
     (L∗).IsContextFree := by
   obtain ⟨g, rfl⟩ := hL
   exact ⟨starGrammar g, starGrammar_language⟩
 
-/-- Powers of a context-free language are context-free. -/
+/-- **Powers of a context-free language are context-free.** If $L$ is a context-free language,
+then for every natural number $n$ the power $L^n$, the concatenation of $n$ copies of $L$ (with
+$L^0$ the language containing only the empty word), is context-free. -/
 theorem IsContextFree.pow {L : Language T} (hL : L.IsContextFree) :
     ∀ n : ℕ, (L ^ n).IsContextFree
   | 0 => by simpa using IsContextFree.one (T := T)
@@ -359,8 +365,9 @@ theorem IsContextFree.of_finite {L : Language T} (h : Set.Finite L) : L.IsContex
     rw [Set.insert_eq]
     exact IsContextFree.add (IsContextFree.singleton_word a) ih
 
-/-- Over a finite alphabet, a language whose words all have length at most
-`n` is context-free. -/
+/-- **Languages of bounded word length are context-free.** Over a finite alphabet, if $n$ is a
+natural number and every word of a language $L$ has length at most $n$, then $L$ is
+context-free. -/
 theorem IsContextFree.of_length_le [Finite T] {L : Language T} (n : ℕ)
     (h : ∀ w ∈ L, w.length ≤ n) : L.IsContextFree := by
   apply IsContextFree.of_finite

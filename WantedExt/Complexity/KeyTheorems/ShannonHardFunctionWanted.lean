@@ -42,11 +42,21 @@ shared flat gate lists; a circuit computes `f` when its last gate's value equals
 -/
 
 
-/-- Wire count: total number of input references in a circuit. -/
+/-- **Wire count of a flat circuit.** The wire count of a flat Boolean circuit on $n$ inputs,
+given as a list of gates, is the sum over its gates of the lengths of their predecessor lists:
+every reference of a gate to a gate index is counted, with multiplicity, while input variables
+and constants contribute nothing and the modulus of a mod gate is not counted. -/
 def wireCount {n : ℕ} (C : List (ACGate n)) : ℕ :=
   (C.map gateInputs).flatten.length
 
-/-- **Shannon: most Boolean functions need exponential circuits.** Source: C. E. Shannon, "The
+/-- **Shannon: most Boolean functions need exponential circuits.** For every natural number
+$n \ge 10$, at least $2^{2^n}/2$ of the Boolean functions $f$ on $n$ input bits have the
+following property: for every well-formed flat Boolean circuit $C$ on $n$ inputs without mod
+gates whose wire count (the total length of the predecessor lists of its gates) is at most
+$\lfloor 2^n / (10 n) \rfloor$, there is an input $x \in \{0,1\}^n$ such that $C$ has no
+gates or the value of the last gate of $C$ on $x$ differs from $f(x)$.
+
+Source: C. E. Shannon, "The
 synthesis of two-terminal switching circuits", Bell System Technical Journal 28 (1949),
 59-98. -/
 public theorem_wanted shannon_hard_function :

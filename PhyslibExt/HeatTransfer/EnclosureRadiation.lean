@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.LinearAlgebra.Matrix.Gershgorin
 public import PhyslibExt.EarthScience.BlackbodyFlux
@@ -15,6 +16,7 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
@@ -22,7 +24,7 @@ import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# Enclosure radiation: black power conservation and gray radiosity
+# Enclosure radiation: black power conservation, gray radiosity and parallel plates
 
 ## i. Overview
 
@@ -45,6 +47,18 @@ radiosities `J` solve `J i = ε i * σ * T i ^ 4 + (1 - ε i) * ∑ j, F i j * J
 absorption; the gray powers sum to zero; with every `ε i = 1` the radiosity is `σ T⁴` and the
 gray power is `netPower`. With every `ε i = 0` each constant radiosity solves the equations.
 
+Parallel plates, in the infinite-plane idealization: two gray plates of equal area `A` that see
+only each other, with no radiation escaping through the edges, have view factors
+`F 0 1 = F 1 0 = 1` and `F 0 0 = F 1 1 = 0`. These are the view factors of infinite parallel
+planes, the limit of a vanishing gap-to-size ratio. Finite plates at a positive gap lose part of
+their radiation through the edges and have `F 0 1 < 1`, so the parallel-plate results are exact
+for the idealization and only an approximation for finite plates. Solving the two radiosity rows
+of the idealization gives the net power leaving plate `0` as
+`σ A (T 0⁴ - T 1⁴) / (1 / ε 0 + 1 / ε 1 - 1)`, a power through the area `A` (the flux is the power
+divided by `A`). The two powers sum to zero, swapping the temperatures reverses the sign, equal
+temperatures exchange nothing and different temperatures exchange a nonzero power. These view
+factors satisfy reciprocity only for equal areas.
+
 ## ii. Key results
 
 - `HeatTransfer.EnclosureRadiation.sum_netPower_eq_zero`: the net powers of all surfaces
@@ -58,6 +72,13 @@ gray power is `netPower`. With every `ε i = 0` each constant radiosity solves t
 - `HeatTransfer.EnclosureRadiation.sum_grayNetPower_eq_zero`: the gray net powers sum to zero.
 - `HeatTransfer.EnclosureRadiation.isRadiosity_iff_of_emissivity_eq_one`,
   `HeatTransfer.EnclosureRadiation.grayNetPower_blackbody`: the black limit.
+- `HeatTransfer.EnclosureRadiation.grayNetPower_parallelPlates`: in the infinite-plane
+  idealization (unit view factors, no edge loss), the net power of two equal-area parallel gray
+  plates is `parallelPlatePower`; for finite plates it is an approximation.
+- `HeatTransfer.EnclosureRadiation.parallelPlatePower_swap`,
+  `HeatTransfer.EnclosureRadiation.parallelPlatePower_self`,
+  `HeatTransfer.EnclosureRadiation.parallelPlatePower_ne_zero`: sign reversal, zero exchange at
+  equal temperature and nonzero exchange at different temperatures.
 
 ## iii. Table of contents
 
@@ -65,6 +86,7 @@ gray power is `netPower`. With every `ε i = 0` each constant radiosity solves t
 - B. Conservation and sign results
 - C. Gray enclosures: radiosity
 - D. Gray net power: conservation and the black limit
+- E. Equal-area parallel gray plates: the infinite-plane idealization
 
 ## iv. References
 
@@ -75,6 +97,10 @@ gray power is `netPower`. With every `ε i = 0` each constant radiosity solves t
 - Radiosity of opaque, diffuse, gray surfaces and the radiosity network: the same chapter of
   Incropera and DeWitt; M. F. Modest, *Radiative Heat Transfer*, the chapter on exchange between
   gray, diffuse surfaces.
+- Exchange between two large (in the limit, infinite) parallel gray planes,
+  `q = A σ (T₁⁴ - T₂⁴) / (1 / ε₁ + 1 / ε₂ - 1)` with `F₁₂ = 1`: the same chapter of Incropera and
+  DeWitt, whose view factors for finite aligned parallel rectangles and coaxial parallel disks are
+  below one at every positive gap.
 
 ## A. Enclosure data and net power
 -/
@@ -446,5 +472,198 @@ lemma not_existsUnique_isRadiosity_of_emissivity_eq_zero [Nonempty ι] {A : ι �
   obtain ⟨i⟩ := (inferInstance : Nonempty ι)
   have hcontra := congrFun h01 i
   norm_num at hcontra
+
+/-! ## E. Equal-area parallel gray plates: the infinite-plane idealization
+
+Every result of this section concerns two plates that see only each other: the view factors
+`parallelPlateViewFactor` are those of infinite parallel planes, with no radiation escaping
+through the edges. The results are exact for this idealization. Finite plates at a positive gap
+have `F 0 1 < 1`, so applying the results to them is an approximation.
+-/
+
+/-- View factors of two equal-area parallel plates in the infinite-plane idealization: all
+radiation leaving one plate reaches the other, `F 0 1 = F 1 0 = 1`, and a flat plate does not
+see itself, `F 0 0 = F 1 1 = 0`. These are the view factors of infinite parallel planes, the limit
+of a vanishing gap-to-size ratio with no loss through the edges; finite plates at a positive gap
+have `F 0 1 < 1`, and using these view factors for them is an approximation. -/
+def parallelPlateViewFactor : Fin 2 → Fin 2 → ℝ :=
+  ![![0, 1], ![1, 0]]
+
+/-- Net radiative power from plate 1 to plate 2 of two equal-area parallel gray plates in the
+infinite-plane idealization (`parallelPlateViewFactor`), with emissivities `ε₁, ε₂`, absolute
+temperatures `T₁, T₂` and plate area `A`: `σ * A * (T₁ ^ 4 - T₂ ^ 4) / (1 / ε₁ + 1 / ε₂ - 1)`
+(watts). Positive values are a net outflow from plate 1. It is the power through the area `A`,
+not a flux. For finite plates, whose view factor is below one, it is an approximation. -/
+noncomputable def parallelPlatePower (σ A ε₁ ε₂ T₁ T₂ : ℝ) : ℝ :=
+  σ * A * (T₁ ^ 4 - T₂ ^ 4) / (1 / ε₁ + 1 / ε₂ - 1)
+
+/-- With the idealized view factors, equal-area parallel plates form an enclosure: positive areas,
+nonnegative view factors with unit row sums (no radiation leaves through the edges), and
+reciprocity `A * F 0 1 = A * F 1 0`, which holds because the areas are equal. -/
+lemma isBlackEnclosure_parallelPlates {A : ℝ} (hA : 0 < A) :
+    IsBlackEnclosure (fun _ : Fin 2 => A) parallelPlateViewFactor := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro i
+    exact hA
+  · intro i j
+    fin_cases i <;> fin_cases j <;> simp [parallelPlateViewFactor]
+  · intro i
+    fin_cases i <;> simp [parallelPlateViewFactor, Fin.sum_univ_two]
+  · intro i j
+    fin_cases i <;> fin_cases j <;> simp [parallelPlateViewFactor]
+
+/-- Unequal areas need other view factors: for `A₀ ≠ A₁` the view factors
+`F 0 1 = F 1 0 = 1` violate reciprocity, so the parallel-plate formula is not a general
+two-surface enclosure formula. -/
+lemma not_isBlackEnclosure_parallelPlates_of_area_ne {A₀ A₁ : ℝ} (h : A₀ ≠ A₁) :
+    ¬ IsBlackEnclosure ![A₀, A₁] parallelPlateViewFactor := by
+  intro hE
+  have hrec := hE.reciprocity 0 1
+  simp [parallelPlateViewFactor] at hrec
+  exact h (by linarith)
+
+/-- The radiosities of two parallel gray plates in the infinite-plane idealization, with
+emissivities `0 < ε i ≤ 1`, exist and are unique, for every temperature field and every `σ`. -/
+lemma existsUnique_isRadiosity_parallelPlates {ε : Fin 2 → ℝ} (hε : ∀ i, 0 < ε i)
+    (hε₁ : ∀ i, ε i ≤ 1) (σ : ℝ) (T : Fin 2 → ℝ) :
+    ∃! J, IsRadiosity σ ε parallelPlateViewFactor T J := by
+  exact existsUnique_isRadiosity (isBlackEnclosure_parallelPlates one_pos) hε hε₁ σ T
+
+/-- The parallel-plate formula from the radiosity equations of the infinite-plane idealization:
+for emissivities `0 < ε i ≤ 1` and radiosities `J` of the two plates with the view factors
+`parallelPlateViewFactor`, the net power leaving plate `0` is
+`σ * A * (T 0 ^ 4 - T 1 ^ 4) / (1 / ε 0 + 1 / ε 1 - 1)`. The identity is exact for the
+idealization; for finite plates, whose view factor is below one, the formula is an
+approximation. -/
+lemma grayNetPower_parallelPlates {A σ : ℝ} {ε T J : Fin 2 → ℝ} (hε : ∀ i, 0 < ε i)
+    (hε₁ : ∀ i, ε i ≤ 1) (hJ : IsRadiosity σ ε parallelPlateViewFactor T J) :
+    grayNetPower (fun _ : Fin 2 => A) parallelPlateViewFactor J 0 =
+      parallelPlatePower σ A (ε 0) (ε 1) (T 0) (T 1) := by
+  have s0 : ∑ j, parallelPlateViewFactor 0 j * J j = J 1 := by
+    rw [Fin.sum_univ_two]
+    simp [parallelPlateViewFactor]
+  have s1 : ∑ j, parallelPlateViewFactor 1 j * J j = J 0 := by
+    rw [Fin.sum_univ_two]
+    simp [parallelPlateViewFactor]
+  have h0 : J 0 = ε 0 * σ * T 0 ^ 4 + (1 - ε 0) * J 1 := by
+    have h := hJ 0
+    rw [s0] at h
+    exact h
+  have h1 : J 1 = ε 1 * σ * T 1 ^ 4 + (1 - ε 1) * J 0 := by
+    have h := hJ 1
+    rw [s1] at h
+    exact h
+  have hq : grayNetPower (fun _ : Fin 2 => A) parallelPlateViewFactor J 0
+      = A * (J 0 - J 1) := by
+    unfold grayNetPower
+    rw [Fin.sum_univ_two]
+    simp [parallelPlateViewFactor]
+  have hd : (ε 0 + ε 1 - ε 0 * ε 1) * (J 0 - J 1)
+      = ε 0 * ε 1 * σ * (T 0 ^ 4 - T 1 ^ 4) := by
+    linear_combination (ε 1) * h0 - (ε 0) * h1
+  have e0 : ε 0 ≠ 0 := ne_of_gt (hε 0)
+  have e1 : ε 1 ≠ 0 := ne_of_gt (hε 1)
+  have hε0pos : 0 < ε 0 := hε 0
+  have hε1pos : 0 < ε 1 := hε 1
+  have hD : (0 : ℝ) < 1 / ε 0 + 1 / ε 1 - 1 := by
+    have g0 : (1 : ℝ) ≤ 1 / ε 0 := one_le_one_div (hε 0) (hε₁ 0)
+    have g1 : (0 : ℝ) < 1 / ε 1 := by positivity
+    linarith
+  have hD' : (1 / ε 0 + 1 / ε 1 - 1) ≠ 0 := ne_of_gt hD
+  rw [hq]
+  unfold parallelPlatePower
+  rw [eq_div_iff hD']
+  field_simp
+  linear_combination A * hd
+
+/-- Conservation in the idealization: with no radiation escaping through the edges, the power
+leaving plate `0` arrives at plate `1`; for every radiosity field the two net powers sum to
+zero. -/
+lemma grayNetPower_parallelPlates_add_eq_zero (A : ℝ) (J : Fin 2 → ℝ) :
+    grayNetPower (fun _ : Fin 2 => A) parallelPlateViewFactor J 0 +
+      grayNetPower (fun _ : Fin 2 => A) parallelPlateViewFactor J 1 = 0 := by
+  have q0 : grayNetPower (fun _ : Fin 2 => A) parallelPlateViewFactor J 0
+      = A * (J 0 - J 1) := by
+    unfold grayNetPower
+    rw [Fin.sum_univ_two]
+    simp [parallelPlateViewFactor]
+  have q1 : grayNetPower (fun _ : Fin 2 => A) parallelPlateViewFactor J 1
+      = A * (J 1 - J 0) := by
+    unfold grayNetPower
+    rw [Fin.sum_univ_two]
+    simp [parallelPlateViewFactor]
+  rw [q0, q1]
+  ring
+
+/-- Reciprocity: the formula read from plate 2 is the negative of the formula read from plate 1.
+-/
+lemma parallelPlatePower_comm (σ A ε₁ ε₂ T₁ T₂ : ℝ) :
+    parallelPlatePower σ A ε₂ ε₁ T₂ T₁ = -parallelPlatePower σ A ε₁ ε₂ T₁ T₂ := by
+  unfold parallelPlatePower
+  ring
+
+/-- Sign reversal: swapping the two plate temperatures, with the emissivities kept, reverses the
+net power. -/
+lemma parallelPlatePower_swap (σ A ε₁ ε₂ T₁ T₂ : ℝ) :
+    parallelPlatePower σ A ε₁ ε₂ T₂ T₁ = -parallelPlatePower σ A ε₁ ε₂ T₁ T₂ := by
+  unfold parallelPlatePower
+  ring
+
+/-- Zero exchange at equal temperature. -/
+lemma parallelPlatePower_self (σ A ε₁ ε₂ T : ℝ) : parallelPlatePower σ A ε₁ ε₂ T T = 0 := by
+  unfold parallelPlatePower
+  ring
+
+/-- Equilibrium from the radiosity equations of the idealization: plates at equal temperature
+exchange no net power. -/
+lemma grayNetPower_parallelPlates_eq_zero_of_temp_eq {A σ : ℝ} {ε T J : Fin 2 → ℝ}
+    (hε : ∀ i, 0 < ε i) (hε₁ : ∀ i, ε i ≤ 1) (hJ : IsRadiosity σ ε parallelPlateViewFactor T J)
+    (hT : T 0 = T 1) :
+    grayNetPower (fun _ : Fin 2 => A) parallelPlateViewFactor J 0 = 0 := by
+  rw [grayNetPower_parallelPlates hε hε₁ hJ, hT]
+  exact parallelPlatePower_self σ A (ε 0) (ε 1) (T 1)
+
+/-- The hotter plate loses power: with `σ > 0`, `A > 0`, emissivities in `(0, 1]` and absolute
+temperatures `0 ≤ T₂ < T₁`, the net power from plate 1 is positive. -/
+lemma parallelPlatePower_pos {σ A ε₁ ε₂ T₁ T₂ : ℝ} (hσ : 0 < σ) (hA : 0 < A) (hε₁ : 0 < ε₁)
+    (hε₁' : ε₁ ≤ 1) (hε₂ : 0 < ε₂) (hε₂' : ε₂ ≤ 1) (hT₂ : 0 ≤ T₂) (hT : T₂ < T₁) :
+    0 < parallelPlatePower σ A ε₁ ε₂ T₁ T₂ := by
+  have hpow : T₂ ^ 4 < T₁ ^ 4 := pow_lt_pow_left₀ hT hT₂ (by norm_num)
+  have hsub : (0 : ℝ) < T₁ ^ 4 - T₂ ^ 4 := sub_pos.mpr hpow
+  have hnum : (0 : ℝ) < σ * A * (T₁ ^ 4 - T₂ ^ 4) := by positivity
+  have hden : (0 : ℝ) < 1 / ε₁ + 1 / ε₂ - 1 := by
+    have g1 : (1 : ℝ) ≤ 1 / ε₁ := one_le_one_div hε₁ hε₁'
+    have g2 : (1 : ℝ) ≤ 1 / ε₂ := one_le_one_div hε₂ hε₂'
+    linarith
+  unfold parallelPlatePower
+  exact div_pos hnum hden
+
+/-- Different temperatures exchange a nonzero power: with `σ > 0`, `A > 0`, emissivities in
+`(0, 1]` and absolute temperatures `T₁ ≠ T₂`, the net power is nonzero. -/
+lemma parallelPlatePower_ne_zero {σ A ε₁ ε₂ T₁ T₂ : ℝ} (hσ : 0 < σ) (hA : 0 < A)
+    (hε₁ : 0 < ε₁) (hε₁' : ε₁ ≤ 1) (hε₂ : 0 < ε₂) (hε₂' : ε₂ ≤ 1) (hT₁ : 0 ≤ T₁) (hT₂ : 0 ≤ T₂)
+    (hT : T₁ ≠ T₂) :
+    parallelPlatePower σ A ε₁ ε₂ T₁ T₂ ≠ 0 := by
+  have hpow : T₁ ^ 4 ≠ T₂ ^ 4 := by
+    rcases lt_or_gt_of_ne hT with h | h
+    · exact ne_of_lt (pow_lt_pow_left₀ h hT₁ (by norm_num))
+    · exact ne_of_gt (pow_lt_pow_left₀ h hT₂ (by norm_num))
+  have hnum : σ * A * (T₁ ^ 4 - T₂ ^ 4) ≠ 0 :=
+    mul_ne_zero (mul_ne_zero (ne_of_gt hσ) (ne_of_gt hA)) (sub_ne_zero.mpr hpow)
+  have hden : (1 / ε₁ + 1 / ε₂ - 1) ≠ 0 := by
+    have g1 : (1 : ℝ) ≤ 1 / ε₁ := one_le_one_div hε₁ hε₁'
+    have g2 : (1 : ℝ) ≤ 1 / ε₂ := one_le_one_div hε₂ hε₂'
+    have hpos : (0 : ℝ) < 1 / ε₁ + 1 / ε₂ - 1 := by linarith
+    exact ne_of_gt hpos
+  unfold parallelPlatePower
+  exact div_ne_zero hnum hden
+
+/-- Power, not flux: dividing the net power by the plate area `A > 0` gives the net flux
+`σ * (T₁ ^ 4 - T₂ ^ 4) / (1 / ε₁ + 1 / ε₂ - 1)` (watts per square metre). -/
+lemma parallelPlatePower_div_area {σ A ε₁ ε₂ T₁ T₂ : ℝ} (hA : 0 < A) :
+    parallelPlatePower σ A ε₁ ε₂ T₁ T₂ / A = σ * (T₁ ^ 4 - T₂ ^ 4) / (1 / ε₁ + 1 / ε₂ - 1) := by
+  have hA' : A ≠ 0 := ne_of_gt hA
+  unfold parallelPlatePower
+  field_simp
 
 end HeatTransfer.EnclosureRadiation

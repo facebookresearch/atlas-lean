@@ -131,6 +131,29 @@ class GraphRules(unittest.TestCase):
         self.vault.save()
         self.assertIn("subject None is not a page under blueprint/roadmap/", self.findings())
 
+    def test_a_bad_subject_does_not_hide_malformed_row_metadata(self) -> None:
+        self.vault.annotations["Physics"].append({
+            "subject": [], "id": None, "kind": "theorem",
+            "object": [{"location": {"declaration": "X.a"}}, {"location": {"declaration": "X.b"}}],
+            "extensions": {rules.AUTOFORM: {rules.NOT_READY: "true"}},
+        })
+        self.vault.save()
+        found = self.findings()
+        for message in ("a row names exactly one subject page", "malformed id None", "commits 'kind'",
+                        "names more than one Lean declaration", "takes true or false"):
+            self.assertIn(message, found)
+
+    def test_a_reference_does_not_take_credit_or_link_a_planned_page(self) -> None:
+        reference = {"role": "uses", "location": {"declaration": "X.reference"}}
+        objects = self.vault.annotations["CategoryTheory"][2]["object"]
+        objects.append(reference)
+        objects[0]["role"] = "states"
+        objects.append({"location": {"declaration": "X.implicitReference"}})
+        self.vault.annotations["Physics"][1]["object"] = [reference]
+        self.vault.write("blueprint/roadmap/Physics/mechanics.md", "# Mechanics\n\n## Depends on\n")
+        self.vault.save()
+        self.assertEqual(self.vault.check(), [])
+
     def test_a_percent_escaped_subject_uri_is_a_finding_since_sync_and_autoform_disagree(self) -> None:
         # A literal `%6dechanics.md` beside `mechanics.md`: sync_wiki binds the row to the first, Autoform to the second.
         self.vault.write("blueprint/roadmap/Physics/%6dechanics.md", "# Other\n\nOther.\n")
