@@ -104,7 +104,23 @@ def GenericDisplacement (A B : WeightedComplex n) (w v : RealSpace n) : Prop :=
     v ∉ (affineSpan ℝ (A.complex.cell i).carrier).direction ⊔
       (affineSpan ℝ (B.complex.cell j).carrier).direction
 
-/-- The raw local stable multiplicity with exact lattice-index weights. -/
+/-- `w` is a regular point for the stable multiplicity of `A` and `B`: every cell of `A` and every
+cell of `B` through `w` meet in a set of at least the expected dimension
+`A.dimension + B.dimension - n` (stated without natural subtraction). Equivalently, the cell of
+their common refinement having `w` in its relative interior has at least the expected dimension.
+Osserman--Payne (Definition 2.6.1) attach the stable multiplicity to faces of the expected
+dimension; at a lower-dimensional cell of the common refinement, for instance a new vertex of a
+subdivision, the raw displacement sum `stableMultiplicity` adds up several neighbouring faces and
+depends on the subdivision and on the displacement. -/
+def RegularPoint (A B : WeightedComplex n) (w : RealSpace n) : Prop :=
+  ∀ i j, w ∈ (A.complex.cell i).carrier → w ∈ (B.complex.cell j).carrier →
+    A.dimension + B.dimension ≤ n + Module.finrank ℝ
+      (affineSpan ℝ ((A.complex.cell i).carrier ∩ (B.complex.cell j).carrier)).direction
+
+/-- The raw local stable multiplicity with exact lattice-index weights: the sum, over pairs of
+top-dimensional cells through `w` whose tangent stars meet after displacing one of them by `v`, of
+the lattice index times the two weights. It is the stable intersection multiplicity at `w` when `w`
+is a `RegularPoint` and `v` is a `GenericDisplacement`. -/
 def stableMultiplicity (A B : WeightedComplex n) (w v : RealSpace n) : ℤ := by
   classical
   exact ∑ i, ∑ j,

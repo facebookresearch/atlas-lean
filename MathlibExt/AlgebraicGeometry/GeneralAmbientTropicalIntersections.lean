@@ -43,9 +43,13 @@ structure SimplePoint (Y : WeightedComplex n) (w : RealSpace n) where
   dimension : (Y.complex.cell facet).dimension = Y.dimension
   multiplicity_one : Y.weight facet = 1
 
+/-- The supports of `A` and `B` meet properly at `w` inside `Y`: every pair of nonzero weighted
+facets through `w` meets in at most the expected dimension `dim A + dim B - dim Y`. Cells of
+weight zero are ignored. -/
 def ProperIn (Y A B : WeightedComplex n) (w : RealSpace n) : Prop :=
   w ∈ A.support ∩ B.support ∧ Y.dimension ≤ A.dimension + B.dimension ∧
-    ∀ i j, w ∈ (A.complex.cell i).carrier → w ∈ (B.complex.cell j).carrier →
+    ∀ i j, A.weight i ≠ 0 → B.weight j ≠ 0 →
+      w ∈ (A.complex.cell i).carrier → w ∈ (B.complex.cell j).carrier →
       TropicalCycleIntersections.intersectionDimension n (A.complex.cell i)
         (B.complex.cell j) ≤ A.dimension + B.dimension - Y.dimension
 
@@ -146,11 +150,5 @@ theorem weightedSum_of_higherTor_zero (tau : Polyhedron n) (t : Fin n → Kˣ)
   intro Z _
   dsimp [AmbientIdeals.componentCoefficient, AmbientIdeals.componentSchemeCoefficient]
   rw [coefficient_of_higherTor_zero _ (T Z) (h Z)]
-
-variable {L : Type} [Field L] [Valued L NNReal] [Algebra K L]
-
-def ValuationExtends : Prop :=
-  ∀ a : K, (Valued.v : Valuation L NNReal) (algebraMap K L a) =
-    (Valued.v : Valuation K NNReal) a
 
 end MathlibExt.AlgebraicGeometry.GeneralAmbientTropicalIntersections

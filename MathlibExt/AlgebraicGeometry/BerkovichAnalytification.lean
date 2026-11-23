@@ -112,20 +112,11 @@ def projection : space K X ⟶ X.left.toRingedSpace.carrier :=
 
 variable {K X} {Y : AlgebraicScheme K}
 
-/-- Pull back an absolute value by an actual injective field homomorphism. -/
-def pullAbsoluteValue {A B : Type} [Field A] [Field B]
-    (v : AbsoluteValue B ℝ) (f : A →+* B) : AbsoluteValue A ℝ where
-  toFun a := v (f a)
-  map_mul' a b := by rw [map_mul, map_mul]
-  nonneg' a := v.nonneg _
-  eq_zero' a := v.eq_zero.trans (by
-    constructor
-    · intro h
-      apply f.injective
-      exact h.trans (map_zero f).symm
-    · rintro rfl
-      exact map_zero f)
-  add_le' a b := by simpa only [map_add] using v.add_le (f a) (f b)
+/-- Pull back an absolute value by a field homomorphism (which is injective): Mathlib's
+`AbsoluteValue.comp`. -/
+abbrev pullAbsoluteValue {A B : Type} [Field A] [Field B]
+    (v : AbsoluteValue B ℝ) (f : A →+* B) : AbsoluteValue A ℝ :=
+  v.comp f.injective
 
 /-- The base-scalar maps commute through the actual residue-field map. -/
 theorem scalarMap_naturality (f : X ⟶ Y) (x : X.left) (a : K) :

@@ -174,19 +174,23 @@ def zeroCommonSubdivision (A B : WeightedComplex n) (hA : ∀ i, A.weight i = 0)
     (hB : ∀ i, B.weight i = 0) (hd : A.dimension = B.dimension) : CommonSubdivision A B :=
   ⟨A, zeroWeightedRefinement A A hA hA rfl, zeroWeightedRefinement A B hA hB hd⟩
 
+/-- The support of the stable product: the closure of the regular points carrying a nonzero
+stable multiplicity for some generic displacement. -/
 def stableSupport (A B : WeightedComplex n) : Set (RealSpace n) :=
-  closure {w | ∃ v, GenericDisplacement A B w v ∧ stableMultiplicity A B w v ≠ 0}
+  closure {w | RegularPoint A B w ∧
+    ∃ v, GenericDisplacement A B w v ∧ stableMultiplicity A B w v ≠ 0}
 
 /-- The candidate product is normalized by the computed local displacement
-sum on every relative facet interior. Balancing is a separate target. Its
-dimension is `dim A + dim B - n`, stated without natural subtraction, so a
+sum at the regular points of every relative facet interior (the other points of a facet interior
+lie on finitely many lower-dimensional cells of the common refinement). Balancing is a separate
+target. Its dimension is `dim A + dim B - n`, stated without natural subtraction, so a
 product only exists in the proper range `n ≤ dim A + dim B`. -/
 structure StableProduct (A B : WeightedComplex n) where
   cycle : WeightedComplex n
   dimension : cycle.dimension + n = A.dimension + B.dimension
   support : cycle.support = stableSupport A B
   multiplicity : ∀ i, (cycle.complex.cell i).dimension = cycle.dimension →
-    ∀ w ∈ intrinsicInterior ℝ (cycle.complex.cell i).carrier,
+    ∀ w ∈ intrinsicInterior ℝ (cycle.complex.cell i).carrier, RegularPoint A B w →
       ∀ v, GenericDisplacement A B w v →
         cycle.weight i = stableMultiplicity A B w v
 

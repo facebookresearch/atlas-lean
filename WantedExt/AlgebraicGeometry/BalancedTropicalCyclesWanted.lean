@@ -18,6 +18,10 @@ Osserman--Payne, 1007.1314v3, sections 2.4--2.7 and 5.2;
 Fulton--Sturmfels, alg-geom/9403002v1, Theorem 3.2.
 All sums, normals, weight subgroups and subdivision maps are actual native
 constructions. Their closure and choice independence are the requested results.
+Multiplicity comparisons are requested only at regular points (`RegularPoint`), which lie in the
+relative interior of a cell of the common refinement of at least the expected dimension; at a new
+vertex of a subdivision the raw displacement sum changes (for instance from one to two when a
+line is cut into two rays).
 Product comparison uses common refinements of nonzero weighted facets.
 Extra zero cells impose no covering condition.
 -/
@@ -41,6 +45,8 @@ theorem_wanted refinement_multiplicity (n : ℕ) (A B : WeightedComplex n)
     (N : NormalData A.complex) (M : NormalData B.complex)
     (_balanced_A : Balanced A N) (_balanced_B : Balanced B M)
     (S : Subdivision A) (T : Subdivision B) (w v : RealSpace n)
+    (_regular : RegularPoint A B w)
+    (_regular_refined : RegularPoint (subdivide S) (subdivide T) w)
     (_generic : GenericDisplacement A B w v)
     (_generic_refined : GenericDisplacement (subdivide S) (subdivide T) w v) :
     stableMultiplicity (subdivide S) (subdivide T) w v = stableMultiplicity A B w v
@@ -48,7 +54,8 @@ theorem_wanted refinement_multiplicity (n : ℕ) (A B : WeightedComplex n)
 theorem_wanted displacement_independent (n : ℕ) (A B : WeightedComplex n)
     (N : NormalData A.complex) (M : NormalData B.complex)
     (_balanced_A : Balanced A N) (_balanced_B : Balanced B M)
-    (w u v : RealSpace n) (_generic_u : GenericDisplacement A B w u)
+    (w u v : RealSpace n) (_regular : RegularPoint A B w)
+    (_generic_u : GenericDisplacement A B w u)
     (_generic_v : GenericDisplacement A B w v) :
     stableMultiplicity A B w u = stableMultiplicity A B w v
 
