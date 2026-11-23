@@ -47,10 +47,10 @@ def_wanted finite_stack_product (X Y : FiniteTypeStack) : ProductModel X Y
 
 def_wanted actual_lefschetz_product (M : ComplexStack) (g : Generator M) : LefschetzProduct g
 
-def_wanted integral_proper_push_descent {X Y : SchemeData}
+theorem_wanted integral_proper_push_descent {X Y : SchemeData}
     (f : X.scheme ⟶ Y.scheme) [IsProper f.left] : ProperPushDescent f
 
-def_wanted integral_smooth_pull_descent {X Y : SchemeData}
+theorem_wanted integral_smooth_pull_descent {X Y : SchemeData}
     (f : Y.scheme ⟶ X.scheme) (r : ℕ) [SmoothOfRelativeDimension r f.left] :
     SmoothPullDescent f r
 

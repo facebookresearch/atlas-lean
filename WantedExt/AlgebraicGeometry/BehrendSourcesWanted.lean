@@ -62,7 +62,7 @@ def_wanted actual_quotient_grassmannian (V : SchemeData) (d : ℕ) : QuotientGra
 def_wanted actual_nash_blowup (V : SchemeData) (I : IntegralDimension V) :
     {N : NashModel V // N.dimension=I}
 
-def_wanted actual_nash_point_fibre {V : SchemeData} (N : NashModel V) (p : space V.scheme) :
+theorem_wanted actual_nash_point_fibre {V : SchemeData} (N : NashModel V) (p : space V.scheme) :
     FibreGeometry N p
 
 def_wanted actual_euler_obstruction (V : SchemeData) (I : IntegralDimension V) :

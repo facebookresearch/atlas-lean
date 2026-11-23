@@ -98,7 +98,7 @@ theorem_wanted actual_regular_finite_numerical_decomposition {X : Over (Spec (.o
     ∃ S : Finset (Delta N), (∀ α : Delta N, α∉S → P.projection α a.val=0) ∧
       ∑ α ∈ S, P.projection α a.val=a.val
 
-def_wanted actual_finite_laurent_products {X : Over (Spec (.of ℂ))} {HX : Threefold X}
+theorem_wanted actual_finite_laurent_products {X : Over (Spec (.of ℂ))} {HX : Threefold X}
     (N : NumericalData X HX) : FiniteLaurentProducts N
 
 theorem_wanted actual_target_laurent_product_support {X : Over (Spec (.of ℂ))}
