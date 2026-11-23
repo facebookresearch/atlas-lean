@@ -7,3 +7,4 @@ Set theory studies membership, cardinality, ordinals, infinity, and foundational
 - [Infinitary combinatorics](infinitary-combinatorics/README.md)
 - [Forcing and forcing axioms](forcing/README.md)
 - [Infinite games and determinacy](determinacy/README.md)
+- [Sets, functions and relations](sets-functions-relations/README.md)

@@ -1,7 +1,20 @@
 /-
-# If T*T is Fredholm then T has closed range
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
 
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Portions of this file are adapted from:
+
+`benchmark/level2/ma_proofbench_l2_23.lean` (openbmb/ma-proofbench, commit 31bab4c).
 Copyright (c) 2026 OpenBMB
+Licensed under the MIT License.
+Authors: L. Pu et al.
+
+The theorem statement is adapted from this problem using Mathlib's Fredholm predicate.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,28 +33,25 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-Attribution and modification notice: the statement below is taken from openbmb/ma-proofbench at
-commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level2/ma_proofbench_l2_23.lean`
-(MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
-Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
-`theorem ma_proofbench_l2_23 … := by sorry` into the Batteries `theorem_wanted`
-`isClosed_range_of_isFredholm_adjoint_comp`; moved the informal problem statement docstring onto
-it and placed the declarations in namespace
-`MathlibExt.Analysis.OperatorTheory.AdjointCompFredholmClosedRangeWanted`; replaced `import
-Mathlib` by `public import Mathlib` under the module system; changed the statement to reuse
-Mathlib API: replaced the source's helper predicate `IsFredholm` (finite-dimensional kernel and
-a finite-dimensional complement of the range) by Mathlib's `ContinuousLinearMap.IsFredholm`,
-which also records closed range, strictness, and a complemented kernel; for bounded operators
-between Hilbert spaces these follow from the source's two conditions.
 -/
+
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib
+public import Mathlib.Analysis.InnerProductSpace.Adjoint
+public import Mathlib.Analysis.Normed.Operator.Fredholm.Basic
+import MathlibExt.Analysis.InnerProductSpace.ClosedRangeAdjoint
 
-@[expose] public section
+/-!
+# Closed range from a Fredholm Gram operator
+
+If the range of `T† ∘L T` is closed, it equals the orthogonal complement of its kernel.
+Since this kernel equals the kernel of `T`, the range of `T† ∘L T` contains the closure
+of the range of `T†`. The closed range theorem for adjoints then applies.
+-/
+
+public section
+
+open scoped InnerProduct
 
 namespace MathlibExt.Analysis.OperatorTheory.AdjointCompFredholmClosedRangeWanted
 
@@ -59,11 +69,22 @@ Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Operator theor
 theory of linear operators), `benchmark/level2/ma_proofbench_l2_23.lean` at
 openbmb/ma-proofbench@31bab4c, with the change above.
 -/
-public theorem_wanted isClosed_range_of_isFredholm_adjoint_comp {X Y : Type*}
+theorem isClosed_range_of_isFredholm_adjoint_comp {X Y : Type*}
     [NormedAddCommGroup X] [InnerProductSpace ℂ X] [CompleteSpace X]
     [NormedAddCommGroup Y] [InnerProductSpace ℂ Y] [CompleteSpace Y]
     (T : X →L[ℂ] Y)
     (hFredholm : (ContinuousLinearMap.adjoint T ∘L T).IsFredholm) :
-    IsClosed (LinearMap.range T.toLinearMap : Set Y)
+    IsClosed (LinearMap.range T.toLinearMap : Set Y) := by
+  apply T.isClosed_range_adjoint_iff.mpr
+  apply isClosed_of_closure_subset
+  change T†.range.topologicalClosure ≤ T†.range
+  calc
+    T†.range.topologicalClosure = T.kerᗮ := T.orthogonal_ker.symm
+    _ = (T† ∘L T).kerᗮ := by rw [T.ker_adjoint_comp_self]
+    _ = (T† ∘L T).range := by
+      rw [ContinuousLinearMap.orthogonal_ker, ContinuousLinearMap.adjoint_comp,
+        ContinuousLinearMap.adjoint_adjoint,
+        hFredholm.isClosed_range.submodule_topologicalClosure_eq]
+    _ ≤ T†.range := LinearMap.range_comp_le_range ..
 
 end MathlibExt.Analysis.OperatorTheory.AdjointCompFredholmClosedRangeWanted
