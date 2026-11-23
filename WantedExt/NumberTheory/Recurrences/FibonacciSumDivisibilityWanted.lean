@@ -39,15 +39,18 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibilityWanted
 
-/-- The Pisano period of `n`: the minimal period of `(0, 1)` under
-the Fibonacci pair step `(a, b) ↦ (b, a + b)` on
-`ZMod n × ZMod n`. -/
+/-- **Pisano period.** For a natural number $n$, the Pisano period $\pi(n)$ is the minimal period
+of the pair $(0, 1)$ under the Fibonacci step $(a, b) \mapsto (b, a + b)$ on
+$\mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/n\mathbb{Z}$: the least $k \ge 1$ such that $k$
+applications of the step map $(0, 1)$ back to $(0, 1)$, or $0$ if there is no such $k$ (as for
+$n = 0$, where $\mathbb{Z}/0\mathbb{Z} = \mathbb{Z}$). -/
 noncomputable def pisanoPeriod (n : ℕ) : ℕ :=
   Function.minimalPeriod
     (fun p : ZMod n × ZMod n => (p.2, p.1 + p.2)) (0, 1)
 
-/-- The paper's Proposition 2: for even `n > 1`, the Pisano
-period of `Nat.fib n` divides `2 * n`.
+/-- **The Pisano period of $F_n$ divides $2n$ for even $n$.** Let $F_n$ denote the $n$-th Fibonacci
+number and $\pi(m)$ the Pisano period of $m$. For every even natural number $n > 1$, $\pi(F_n)$
+divides $2n$.
 
 Source: Oisín Flynn-Connolly, "On the Divisibility of Sums of Fibonacci
 Numbers",
@@ -56,11 +59,9 @@ theorem_wanted pisanoPeriod_fib_dvd_two_mul
     (n : ℕ) (hn : 1 < n) (hn2 : 2 ∣ n) :
     pisanoPeriod (Nat.fib n) ∣ 2 * n
 
-/-- The paper's Corollary 1: the minimum of `π(n) / n` over
-positive `n < N` tends to `0` as `N` tends to infinity. The
-finite minimum is written as an infimum indexed by the subtype
-of elements of `Finset.Icc 1 (N - 1)`, so out-of-range indices
-do not contribute an empty infimum.
+/-- **The minimum of $\pi(n)/n$ over $1 \le n < N$ tends to zero.** Let $\pi(n)$ denote the Pisano
+period of $n$. As $N \to \infty$, the minimum of the real numbers $\pi(n)/n$ over the integers
+$1 \le n \le N - 1$ (defined for $N \ge 2$) tends to $0$.
 
 Source: Oisín Flynn-Connolly, "On the Divisibility of Sums of Fibonacci
 Numbers",
@@ -73,11 +74,11 @@ theorem_wanted tendsto_iInf_pisanoPeriod_div_atTop
           (pisanoPeriod n.1 : ℝ) / n.1)
       Filter.atTop (nhds 0)
 
-/-- The paper's Theorem 1: for a prime `p > 5`, the sum of the
-first `p` Fibonacci numbers is `1` modulo `p` when
-`p % 5 = 1` or `4`, is `p - 2` modulo `p` when `p % 5 = 2` or
-`3`, and in particular is not divisible by `p`. These are the
-residues forced by the paper's Binet-formula computation.
+/-- **Sum of the first $p$ Fibonacci numbers modulo a prime $p$.** Let $p > 5$ be a prime, let
+$F_i$ denote the $i$-th Fibonacci number, with $F_1 = F_2 = 1$, and let
+$S = F_1 + F_2 + \dots + F_p$. If $p \equiv 1$ or $4 \pmod 5$, then $S$ leaves remainder $1$ on
+division by $p$; if $p \equiv 2$ or $3 \pmod 5$, then $S$ leaves remainder $p - 2$ on division
+by $p$; and in every case $p$ does not divide $S$.
 
 Source: Oisín Flynn-Connolly, "On the Divisibility of Sums of Fibonacci
 Numbers",
@@ -90,10 +91,10 @@ theorem_wanted sum_fib_mod_prime_eq_and_not_dvd
         (∑ i ∈ Finset.Icc 1 p, Nat.fib i) % p = p - 2) ∧
       ¬p ∣ (∑ i ∈ Finset.Icc 1 p, Nat.fib i)
 
-/-- The paper's Theorem 2: if `p` is an odd prime with
-`p % 3 = 2` and `p % 5 = 2` or `3`, and `n = 2 * p` or
-`n = 4 * p`, then `Nat.fib n` is odd and
-`Nat.fib (Nat.fib n + 2) ≡ 1` modulo `Nat.fib n`.
+/-- **Odd Fibonacci numbers $F_n$ with $F_{F_n + 2} \equiv 1 \pmod{F_n}$.** Let $F_m$ denote the
+$m$-th Fibonacci number, with $F_0 = 0$ and $F_1 = 1$. If $p$ is an odd prime with
+$p \equiv 2 \pmod 3$ and $p \equiv 2$ or $3 \pmod 5$, and $n = 2p$ or $n = 4p$, then $F_n$ is odd
+and $F_{F_n + 2}$ leaves remainder $1$ on division by $F_n$.
 
 Source: Oisín Flynn-Connolly, "On the Divisibility of Sums of Fibonacci
 Numbers",
@@ -105,9 +106,9 @@ theorem_wanted fib_two_mul_prime_odd_and_fib_fib_add_two_mod
     Nat.fib n % 2 = 1 ∧
       Nat.fib (Nat.fib n + 2) % Nat.fib n = 1
 
-/-- The paper's Corollary 2: there are infinitely many odd
-positive integers `k` dividing the sum of the first `k`
-Fibonacci numbers.
+/-- **Infinitely many odd $k$ divide the sum of the first $k$ Fibonacci numbers.** Let $F_i$ denote
+the $i$-th Fibonacci number, with $F_1 = F_2 = 1$. There are infinitely many odd positive integers
+$k$ such that $k$ divides $F_1 + F_2 + \dots + F_k$.
 
 Source: Oisín Flynn-Connolly, "On the Divisibility of Sums of Fibonacci
 Numbers",

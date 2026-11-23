@@ -45,12 +45,17 @@ variable {Γ Δ Ξ : List (Ty Base)}
 
 namespace RawTm
 
-/-- Lift a numerical renaming through one binder. -/
+/-- **Lifting a numerical renaming.** Given a renaming $\rho : \mathbb{N} \to \mathbb{N}$ of
+de Bruijn indices, its lift through one binder is the map $\mathbb{N} \to \mathbb{N}$ sending
+$0$ to $0$ and $n + 1$ to $\rho(n) + 1$. -/
 def liftRen (ρ : Nat → Nat) : Nat → Nat
   | 0 => 0
   | n + 1 => ρ n + 1
 
-/-- Apply a de Bruijn-index renaming, lifting it at every binder. -/
+/-- **Renaming of raw terms.** Given a map $\rho : \mathbb{N} \to \mathbb{N}$ on de Bruijn indices,
+renaming a raw term by $\rho$ replaces each variable $n$ by $\rho(n)$, renames both parts of an
+application by $\rho$, and renames the body of a lambda abstraction, keeping its parameter type,
+by the lifted map $\rho'$ given by $\rho'(0) = 0$ and $\rho'(n + 1) = \rho(n) + 1$. -/
 def rename (ρ : Nat → Nat) : RawTm Base → RawTm Base
   | .var n => .var (ρ n)
   | .app f a => RawTm.app (rename ρ f) (rename ρ a)
@@ -65,7 +70,9 @@ def rename (ρ : Nat → Nat) : RawTm Base → RawTm Base
   funext n
   cases n <;> rfl
 
-/-- Lifting distributes over composition. -/
+/-- **Lifting commutes with composition of numerical renamings.** For maps
+$\rho, \sigma : \mathbb{N} \to \mathbb{N}$, the lift of $\sigma \circ \rho$ through one binder
+equals the lift of $\sigma$ composed after the lift of $\rho$. -/
 theorem liftRen_comp (ρ σ : Nat → Nat) :
     liftRen (σ ∘ ρ) = liftRen σ ∘ liftRen ρ := by
   funext n
@@ -86,7 +93,10 @@ theorem liftRen_comp (ρ σ : Nat → Nat) :
   | app f a ihf iha => simp [ihf, iha]
   | lam A body ih => simp [ih]
 
-/-- Numerical renamings compose extensionally on raw syntax. -/
+/-- **Composition of renamings of raw terms.** For all maps
+$\rho, \sigma : \mathbb{N} \to \mathbb{N}$ and every raw term $t$, renaming $t$ by $\rho$ and then
+renaming the result by $\sigma$ gives the same raw term as renaming $t$ by the composite
+$\sigma \circ \rho$. -/
 theorem rename_comp (ρ σ : Nat → Nat) (t : RawTm Base) :
     rename σ (rename ρ t) = rename (σ ∘ ρ) t := by
   induction t generalizing ρ σ with
@@ -96,7 +106,8 @@ theorem rename_comp (ρ σ : Nat → Nat) (t : RawTm Base) :
       simp only [rename_lam]
       rw [ih, liftRen_comp]
 
-/-- Renaming preserves the number of syntax nodes. -/
+/-- **Renaming preserves the size of a raw term.** For every map $\rho : \mathbb{N} \to \mathbb{N}$
+and every raw term $t$, the renaming of $t$ by $\rho$ has the same number of syntax nodes as $t$. -/
 @[simp] theorem size_rename (ρ : Nat → Nat) (t : RawTm Base) :
     (rename ρ t).size = t.size := by
   induction t generalizing ρ with
@@ -104,7 +115,10 @@ theorem rename_comp (ρ σ : Nat → Nat) (t : RawTm Base) :
   | app f a ihf iha => simp [RawTm.size, ihf, iha]
   | lam A body ih => simp [RawTm.size, ih]
 
-/-- Shifting preserves the number of syntax nodes. -/
+/-- **Shifting preserves the size of a raw term.** For all natural numbers $k$ and $c$ and every
+raw term $t$, shifting $t$ by $k$ at cutoff $c$ (adding $k$ to each variable index that is at
+least the cutoff, which grows by one under each binder) gives a raw term with the same number
+of syntax nodes as $t$. -/
 @[simp] theorem size_shift (amount cutoff : Nat) (t : RawTm Base) :
     (t.shift amount cutoff).size = t.size := by
   induction t generalizing cutoff with
@@ -112,8 +126,13 @@ theorem rename_comp (ρ σ : Nat → Nat) (t : RawTm Base) :
   | app f a ihf iha => simp [RawTm.shift, RawTm.size, ihf, iha]
   | lam A body ih => simp [RawTm.shift, RawTm.size, ih]
 
-/-- List the indices occurring in a raw term.  This intentionally includes
-bound occurrences and is useful for diagnostics rather than scoping. -/
+/-- **Indices occurring in a raw term.** The list of de Bruijn indices of a raw term, read
+from left to right with repetitions: a variable with index $n$ gives $[n]$, an application
+gives the indices of the function followed by those of the argument, and a lambda abstraction
+gives the indices of its body, unshifted.
+
+Bound occurrences are intentionally included, so this list is useful for diagnostics rather
+than for scoping. -/
 def indices : RawTm Base → List Nat
   | .var n => [n]
   | .app f a => indices f ++ indices a
@@ -128,13 +147,18 @@ def indices : RawTm Base → List Nat
 @[simp] theorem indices_lam (A : Ty Base) (body : RawTm Base) :
     indices (RawTm.lam A body) = indices body := rfl
 
-/-- The free indices at binder depth `depth`. -/
+/-- **Free indices of a raw term.** For a binder depth $d$ and a raw term $t$, the free
+indices of $t$ at depth $d$ form a list defined by recursion on $t$: a variable with index $n$
+contributes $[n - d]$ if $d \le n$ and the empty list otherwise; an application contributes
+the free indices of the function followed by those of the argument, both at depth $d$; and a
+lambda abstraction contributes the free indices of its body at depth $d + 1$. -/
 def freeIndices : Nat → RawTm Base → List Nat
   | depth, .var n => if depth ≤ n then [n - depth] else []
   | depth, .app f a => freeIndices depth f ++ freeIndices depth a
   | depth, .lam _ body => freeIndices (depth + 1) body
 
-/-- A raw term is closed when it has no free indices. -/
+/-- **Closed raw terms.** A raw term $t$ is closed when its list of free indices at binder
+depth $0$ is empty. -/
 def Closed (t : RawTm Base) : Prop := freeIndices 0 t = []
 
 instance (t : RawTm Base) : Decidable t.Closed := by
@@ -158,8 +182,10 @@ instance (t : RawTm Base) : Decidable t.Closed := by
 
 end RawTm
 
-/-- A typed renaming and a numerical renaming agree when erasing every
-well-typed variable gives the prescribed numerical image. -/
+/-- **Agreement of a typed and a numerical renaming.** A typed renaming $\rho$ from context
+$\Gamma$ to context $\Delta$ agrees with a map $r : \mathbb{N} \to \mathbb{N}$ when, for every
+type $A$ and every variable $x$ of type $A$ in $\Gamma$, the de Bruijn index of $\rho(x)$
+equals $r$ applied to the de Bruijn index of $x$. -/
 def RenAgrees (ρ : Ren Γ Δ) (r : Nat → Nat) : Prop :=
   ∀ {A} (x : Var Γ A), (ρ x).toNat = r x.toNat
 
@@ -167,7 +193,10 @@ def RenAgrees (ρ : Ren Γ Δ) (r : Nat → Nat) : Prop :=
   intro A x
   rfl
 
-/-- Agreement is preserved when both renamings are lifted under a binder. -/
+/-- **Agreement of renamings is preserved by lifting.** Let $\rho$ be a typed renaming from
+context $\Gamma$ to $\Delta$ and let $r : \mathbb{N} \to \mathbb{N}$ be a numerical renaming
+that agrees with $\rho$. Then for every type $A$, the lift of $\rho$ under a binder of type
+$A$ agrees with the lift of $r$ through one binder. -/
 theorem RenAgrees.lift {ρ : Ren Γ Δ} {r : Nat → Nat} (h : RenAgrees ρ r) :
     RenAgrees (Var.lift (A := A) ρ) (RawTm.liftRen r) := by
   intro B x
@@ -175,7 +204,11 @@ theorem RenAgrees.lift {ρ : Ren Γ Δ} {r : Nat → Nat} (h : RenAgrees ρ r) :
   | zero => rfl
   | succ x => simp [RawTm.liftRen, Var.toNat, h x]
 
-/-- Agreement is closed under composition. -/
+/-- **Agreement of renamings is preserved by composition.** Let $\rho$ be a typed renaming
+from context $\Gamma$ to $\Delta$, let $\sigma$ be a typed renaming from $\Delta$ to $\Xi$,
+and let $r, s : \mathbb{N} \to \mathbb{N}$. If $\rho$ agrees with $r$ and $\sigma$ agrees with
+$s$, then the composite renaming that applies $\rho$ and then $\sigma$ agrees with
+$s \circ r$. -/
 theorem RenAgrees.comp {ρ : Ren Γ Δ} {r : Nat → Nat}
     {σ : Ren Δ Ξ} {s : Nat → Nat}
     (hρ : RenAgrees ρ r) (hσ : RenAgrees σ s) :
@@ -183,7 +216,11 @@ theorem RenAgrees.comp {ρ : Ren Γ Δ} {r : Nat → Nat}
   intro A x
   exact (hσ (ρ x)).trans (congrArg s (hρ x))
 
-/-- Erasure commutes with every agreeing typed/raw renaming pair. -/
+/-- **Erasure commutes with renaming.** Let $\rho$ be a typed renaming from context $\Gamma$
+to $\Delta$ and let $r : \mathbb{N} \to \mathbb{N}$ be a numerical renaming that agrees with
+$\rho$. Then for every intrinsically typed term $t$ of type $A$ in context $\Gamma$, the
+erasure of the renamed term $\rho(t)$ equals the raw renaming by $r$ (lifted at every binder)
+of the erasure of $t$. -/
 theorem Tm.erase_rename (ρ : Ren Γ Δ) (r : Nat → Nat)
     (h : RenAgrees ρ r) (t : Tm Γ A) :
     (Tm.rename ρ t).erase = RawTm.rename r t.erase := by
@@ -193,16 +230,22 @@ theorem Tm.erase_rename (ρ : Ren Γ Δ) (r : Nat → Nat)
   | @lam A B Γ body ih =>
       simp [Tm.erase, ih (Var.lift ρ) (RawTm.liftRen r) h.lift]
 
-/-- Weakening an intrinsic term erases to incrementing all its free raw
-indices. -/
+/-- **Erasure of a weakened term.** For every intrinsically typed term $t$ in context $\Gamma$
+and every type $B$, the erasure of the weakening of $t$ to the context $\Gamma$ extended by
+$B$ equals the raw renaming by the successor map $n \mapsto n + 1$ (lifted at every binder)
+of the erasure of $t$. Thus every free index is incremented by one. -/
 @[simp] theorem Tm.erase_weaken (t : Tm Γ A) :
     (Tm.weaken (B := B) t).erase = RawTm.rename Nat.succ t.erase := by
   apply Tm.erase_rename
   intro C x
   rfl
 
-/-- Two agreeing presentations of the same intrinsic renaming act identically
-on every erased well-typed term. -/
+/-- **Agreeing numerical renamings coincide on erased terms.** Let $\rho$ be a type-preserving
+renaming of variables from context $\Gamma$ to context $\Delta$, and let
+$r, s : \mathbb{N} \to \mathbb{N}$ both agree with $\rho$: for every variable $x$ of $\Gamma$, the
+de Bruijn index of $\rho(x)$ is the image of the index of $x$ under $r$, and also under $s$. Then
+for every intrinsically typed term $t$ of type $A$ in context $\Gamma$, renaming the erasure of $t$
+by $r$ and renaming it by $s$ give the same raw term. -/
 theorem RawTm.rename_eq_on_erase (ρ : Ren Γ Δ) (r s : Nat → Nat)
     (hr : RenAgrees ρ r) (hs : RenAgrees ρ s) (t : Tm Γ A) :
     RawTm.rename r t.erase = RawTm.rename s t.erase := by

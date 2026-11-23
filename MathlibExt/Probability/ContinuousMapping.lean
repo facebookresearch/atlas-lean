@@ -62,12 +62,15 @@ open scoped Topology BoundedContinuousFunction
 
 namespace ProbabilityTheory
 
-/-- **Continuous mapping theorem** (Lecture 12), integral form.
+/-- **Continuous mapping theorem, integral form.** Let $\mu_n$ ($n \in \mathbb{N}$) and $\mu$ be
+probability measures on $\mathbb{R}$, let $g : \mathbb{R} \to \mathbb{R}$ be a measurable function
+whose set of discontinuity points has $\mu$-measure zero, and write $\nu \circ g^{-1}$ for the
+pushforward of a measure $\nu$ on $\mathbb{R}$ under $g$. If $\int f \, d\mu_n \to \int f \, d\mu$
+as $n \to \infty$ for every bounded continuous function $f : \mathbb{R} \to \mathbb{R}$, then
+$\int f \, d(\mu_n \circ g^{-1}) \to \int f \, d(\mu \circ g^{-1})$ as $n \to \infty$ for every
+bounded continuous function $f : \mathbb{R} \to \mathbb{R}$.
 
-If `g : ℝ → ℝ` is measurable and its set of discontinuity points has
-`μ`-measure zero, and `μs n` converges weakly to `μ` (in the sense that
-integrals of every bounded continuous test function converge), then the
-pushforwards `(μs n).map g` converge weakly to `μ.map g` in the same sense. -/
+Source: Lecture 12, continuous mapping theorem. -/
 theorem continuous_mapping
     (μs : ℕ → Measure ℝ) [∀ n, IsProbabilityMeasure (μs n)]
     (μ : Measure ℝ) [IsProbabilityMeasure μ]
@@ -127,13 +130,15 @@ end ProbabilityTheory
 
 namespace MeasureTheory
 
-/-- **Continuous mapping theorem** (Lecture 12), probability-measure form.
+/-- **Continuous mapping theorem for weak convergence of probability measures.** Let $\mu_n$
+($n \in \mathbb{N}$) and $\mu$ be probability measures on $\mathbb{R}$, and let
+$g : \mathbb{R} \to \mathbb{R}$ be a measurable function whose set of discontinuity points has
+$\mu$-measure zero. If $\mu_n$ converges weakly to $\mu$ as $n \to \infty$, then the pushforward
+probability measures $\mu_n \circ g^{-1}$ converge weakly to $\mu \circ g^{-1}$.
 
-If `g : ℝ → ℝ` is measurable and continuous `μ`-almost everywhere, then
-weak convergence `μs n ⟹ μ` implies weak convergence of the pushforwards
-`(μs n).map g ⟹ μ.map g`. This generalizes Mathlib's
-`ProbabilityMeasure.tendsto_map_of_tendsto_of_continuous`, which assumes
-`g` continuous everywhere. -/
+This generalizes the case where $g$ is continuous everywhere, which is already in Mathlib.
+
+Source: Lecture 12, continuous mapping theorem. -/
 theorem ProbabilityMeasure.tendsto_map_of_tendsto_of_ae_continuous
     {μs : ℕ → ProbabilityMeasure ℝ} {μ : ProbabilityMeasure ℝ}
     {g : ℝ → ℝ} (hg_meas : Measurable g)
