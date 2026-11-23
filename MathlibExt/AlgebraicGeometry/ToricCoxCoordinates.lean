@@ -7,16 +7,17 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The ray-indexed toric chart dictionary specializes the completed finite-fan
-construction in TauCetiProject/TauCeti, revision
-62bbc0596dc3539d488232e4e924a338548ea0a9:
-TauCeti/Geometry/Toric/Algebraic/Fan/Scheme.lean and
-TauCeti/Geometry/Toric/Algebraic/DualSemigroup/Basic.lean.
-Copyright (c) 2026 The Tau Ceti contributors. Released under Apache 2.0.
-Modification notice: use the actual lattice Z^n and indexed ray faces, actual
-Mathlib additive monoid algebras and their face maps, and retain the existing
-toric chart realization as characterized input. The completed fan-gluing
-existence theorem is credited and is not a new Wanted request.
+Portions of this file are adapted from:
+
+`TauCeti/Geometry/Toric/Algebraic/Fan/Scheme.lean` and
+`TauCeti/Geometry/Toric/Algebraic/DualSemigroup/Basic.lean`
+(TauCetiProject/TauCeti, revision 62bbc0596dc3539d488232e4e924a338548ea0a9):
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: The Tau Ceti contributors
+Modifications: the ray-indexed chart dictionary uses the lattice `ℤ^n` with indexed ray faces
+and Mathlib's additive monoid algebras with their face maps, and keeps the toric chart
+realization as characterized input.
 -/
 
 module
