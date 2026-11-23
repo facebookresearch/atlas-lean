@@ -37,6 +37,7 @@ finite Galois extension (Lemma VII.8.6).
 - [Global Artin map](global-artin-map.md), as the product of the local Artin maps
 - [Periodicity of Tate cohomology for finite cyclic groups](../../../../RepresentationTheory/group-cohomology/tate-cohomology-and-the-herbrand-quotient/nonempty-periodicity-iso.md)
 - [Restriction, corestriction, inflation and Tate's theorem in group cohomology](../../../../RepresentationTheory/group-cohomology/restriction-corestriction-inflation-and-tate-s-theorem.md), for cup products and the injectivity of inflation in degree $2$
+- [Hilbert's Theorem 90 for the multiplicative group](../../../../FieldTheory/galois-theory/multiplicative-hilbert-s-theorem-90.md), for the vanishing of $H^1$ of the multiplicative groups, which makes that inflation injective
 
 ## Sources
 

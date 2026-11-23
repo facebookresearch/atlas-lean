@@ -23,16 +23,19 @@ $C_L = \mathbb{I}_L / L^\times$ its idèle class group. The statements are:
    passes to the limit over the fields $\Omega_n$ below; since $\mathbb{Q}^c$ is totally real, that limit
    reaches only the groups $\mathrm{Br}(\Omega_v/K_v)$, which are $0$ at the real places of $K$ that stay
    real in $\Omega$, instead of $\mathrm{Br}(K_v) = \tfrac12\mathbb{Z}/\mathbb{Z}$; the argument above
-   avoids this. For every finite extension $L/K$, the snake lemma then gives the exact sequence that
-   ends in $\tfrac{1}{n_0}\mathbb{Z}/\mathbb{Z}$, $n_0$ the least common multiple of the local degrees
-   (Milne, Corollary VIII.4.3).
+   avoids this. For every finite Galois extension $L/K$, the snake lemma then gives the exact sequence
+   above, ending in $\tfrac{1}{n_0}\mathbb{Z}/\mathbb{Z}$, $n_0$ the least common multiple of the local
+   degrees (Milne, Corollary VIII.4.3, stated there for every finite extension).
 2. **The fundamental class.** Let $\mathbb{Q}^c$ be the infinite cyclic cyclotomic extension of
    $\mathbb{Q}$, with Galois group $\hat{\mathbb{Z}}$, which is totally real (Milne, Example I.A.5(d)), let
    $\Omega = \mathbb{Q}^c K$ and let $\Omega_n \subseteq \Omega$ be the cyclic extension of $K$ of degree
    $n$. For each place $v$ of $K$ let $\mathrm{Br}(\Omega_v/K_v)$ be the union of the relative groups
-   $\mathrm{Br}(\Omega_{n,w}/K_v)$; it is $\mathrm{Br}(K_v)$ for $v$ finite, since the local degrees tend
-   to infinity, and $0$ at a real place of $K$ that is real in $\Omega$. The exact sequences of item 1
-   for the cyclic extensions $\Omega_n/K$ give an isomorphism
+   $\mathrm{Br}(\Omega_{n,w}/K_v)$. It is $\mathrm{Br}(K_v)$ for $v$ finite: for every prime $\ell$ the
+   local degrees at $v$ of the $\ell$-power layers of $\Omega/K$ are unbounded, since those of
+   $\mathbb{Q}^c$ at every prime are (Milne, proof of Lemma VII.7.3), so every integer $d$ divides the local
+   degree $[\Omega_{n,w} : K_v]$ for a suitable $n$, and $\Omega_n$ then splits every class of order $d$ in
+   $\mathrm{Br}(K_v) \cong \mathbb{Q}/\mathbb{Z}$. It is $0$ at a real place of $K$ that is real in $\Omega$.
+   The exact sequences of item 1 for the cyclic extensions $\Omega_n/K$ give an isomorphism
    $\mathrm{inv}_K \colon H^2(\mathrm{Gal}(\Omega/K), C_\Omega) \to \mathbb{Q}/\mathbb{Z}$, the only one whose
    composite with the map from $\bigoplus_v \mathrm{Br}(\Omega_v/K_v)$ is $\sum_v \mathrm{inv}_v$, where
    $H^2(\mathrm{Gal}(\Omega/K), C_\Omega)$ is the union of the groups $H^2(\mathrm{Gal}(\Omega_n/K), C_{\Omega_n})$.
@@ -67,6 +70,7 @@ the global Artin map.
 - [Frobenius elements generate the Galois group of a solvable extension](../cohomology-of-idele-classes/frobenius-elements-generate.md), for Lemma VIII.4.1 (its part 3)
 - [Second inequality of global class field theory](../cohomology-of-idele-classes/second-inequality.md), for $H^1(G, C_L) = 0$ and the order of $H^2(G, C_L)$, in items 1 to 3
 - [Cohomology of the idèle group of a Galois extension](../cohomology-of-idele-classes/cohomology-of-the-idele-group.md), for $H^2(G, \mathbb{I}_L) \cong \bigoplus_v \mathrm{Br}(L_w/K_v)$ in item 1
+- [Hilbert's Theorem 90 for the multiplicative group](../../../../FieldTheory/galois-theory/multiplicative-hilbert-s-theorem-90.md), for $H^1(G, L^\times) = 0$, which makes the relative Brauer groups subgroups of $\mathrm{Br}(K)$, in item 1
 - [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for the local invariant maps (its item 2)
 - [Restriction, corestriction, inflation and Tate's theorem in group cohomology](../../../../RepresentationTheory/group-cohomology/restriction-corestriction-inflation-and-tate-s-theorem.md), for the inflation–restriction sequences in item 1, Tate's theorem and its compatibility with corestriction (its items 1, 2 and 4)
 

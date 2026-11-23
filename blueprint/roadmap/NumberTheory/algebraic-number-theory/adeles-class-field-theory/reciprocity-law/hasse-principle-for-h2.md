@@ -33,6 +33,7 @@ identifies $H^2(G, \mathbb{I}_L)$ with $\bigoplus_v H^2(G_v, L_w^\times)$.
 - [Second inequality of global class field theory](../cohomology-of-idele-classes/second-inequality.md), for $H^1(G, C_L) = 0$
 - [Cohomology of the idèle group of a Galois extension](../cohomology-of-idele-classes/cohomology-of-the-idele-group.md), in degree $2$
 - [Restriction, corestriction, inflation and Tate's theorem in group cohomology](../../../../RepresentationTheory/group-cohomology/restriction-corestriction-inflation-and-tate-s-theorem.md), for the injectivity of inflation in degree $2$, used in the passage to the limit
+- [Hilbert's Theorem 90 for the multiplicative group](../../../../FieldTheory/galois-theory/multiplicative-hilbert-s-theorem-90.md), for the vanishing of $H^1$ of the multiplicative groups, which makes that inflation injective
 
 ## Sources
 

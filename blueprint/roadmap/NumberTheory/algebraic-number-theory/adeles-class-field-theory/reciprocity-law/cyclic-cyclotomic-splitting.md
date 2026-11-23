@@ -14,14 +14,23 @@ cyclotomic if $L/K$ is cyclic and $L \subseteq K(\zeta)$ for some root of unity 
 In terms of Brauer groups, part 2 says that every central simple algebra over $K$ splits over a cyclic
 cyclotomic extension of $K$.
 
-Part 1 is Milne's Lemma VII.7.3. Milne reduces to $K = \mathbb{Q}$, replacing $m$ by $m [K : \mathbb{Q}]$,
-and composes, over several primes $\ell$, cyclic subfields of the fields $\mathbb{Q}(\zeta_{\ell^r})$ of
-$\ell$-power degree, whose local degrees at every prime tend to infinity with $r$. The subfields Milne
-names, the fixed fields of the torsion subgroups of $(\mathbb{Z}/\ell^r\mathbb{Z})^\times$, are real; for the
-prime $2$ one can use instead the fixed field in $\mathbb{Q}(\zeta_{2^r})$, $r \ge 3$, of the element
-$-(1 + 2^{r-1})$ of order $2$ of $(\mathbb{Z}/2^r\mathbb{Z})^\times$, which is imaginary and cyclic of degree
-$2^{r-2}$, so that the composite, and then its composite with $K$, is totally complex. (This remark is
-not Milne's text.)
+Part 1 is Milne's Lemma VII.7.3. For a finite extension $F/\mathbb{Q}$, a place $u$ of $F$ and a place
+$v$ of $K$ above the same prime $p$, the degree $[F_u K_v : K_v] \, [K_v : \mathbb{Q}_p] = [F_u K_v : \mathbb{Q}_p]$
+is a multiple of $[F_u : \mathbb{Q}_p]$. So it suffices to find a totally complex cyclic cyclotomic field
+$F$ such that, for every prime $p$ below $S$, $[F_u : \mathbb{Q}_p]$ is divisible by
+$M_p = m \cdot \mathrm{lcm}_{v \in S, v \mid p} [K_v : \mathbb{Q}_p]$, and to take $L = FK$, which is cyclic,
+cyclotomic and totally complex over $K$. Milne builds $F$ by composing, over several primes $\ell$, the
+cyclic subfields of the fields $\mathbb{Q}(\zeta_{\ell^r})$ fixed by the image of the torsion subgroup of
+$\mathbb{Z}_\ell^\times$ in $(\mathbb{Z}/\ell^r\mathbb{Z})^\times$; they have $\ell$-power degree, and their
+local degrees at every prime are powers of $\ell$ that tend to infinity with $r$, hence divisible by any
+given power of $\ell$ for $r$ large. The composite over the primes $\ell$ dividing $2 \prod_p M_p$ is cyclic,
+its local degrees being the products of those of its factors, and so has local degree at each $p$
+divisible by $M_p$. These subfields are real. For the prime $2$ one can use instead the fixed field in
+$\mathbb{Q}(\zeta_{2^r})$, $r \ge 3$, of the element $-(1 + 2^{r-1})$ of order $2$ of
+$(\mathbb{Z}/2^r\mathbb{Z})^\times$, which is imaginary and cyclic of degree $2^{r-2}$, with local degrees that
+are still powers of $2$ tending to infinity; including this $2$-primary factor, even when the $M_p$ are
+odd, makes $F$ totally complex. (These two requirements are not Milne's text: Milne replaces $m$ by
+$m [K : \mathbb{Q}]$, which does not suffice in general, and names only the real subfields.)
 
 Part 2 is Milne's Proposition VII.7.2. By the [Hasse principle](hasse-principle-for-h2.md), $\beta$ is
 determined by its local components $\beta_v$, hence by their invariants
@@ -39,6 +48,7 @@ $H^1(\mathrm{Gal}(\overline{K}/L), \overline{K}^\times) = 0$.
 - [Hasse principle for H² of the multiplicative group of a number field](hasse-principle-for-h2.md), for $\overline{K}/K$, in part 2
 - [Local class field theory: cohomology and the existence theorem](../../../p-adic-numbers/local-class-field-theory-cohomology.md), for the local invariant maps and their behaviour under restriction (its item 2), in part 2
 - [Restriction, corestriction, inflation and Tate's theorem in group cohomology](../../../../RepresentationTheory/group-cohomology/restriction-corestriction-inflation-and-tate-s-theorem.md), for the inflation–restriction sequence (its item 2), for the equivalence of the two formulations
+- [Hilbert's Theorem 90 for the multiplicative group](../../../../FieldTheory/galois-theory/multiplicative-hilbert-s-theorem-90.md), for $H^1(\mathrm{Gal}(\overline{K}/L), \overline{K}^\times) = 0$, the union of the groups $H^1$ of the finite Galois layers, in the equivalence of the two formulations
 
 ## Sources
 

@@ -24,8 +24,8 @@ III.
    $u_{L/K} \in H^2(G, L^\times)$ of invariant $1/n$ makes cup product an isomorphism
    $\hat H^r(G, \mathbb{Z}) \to \hat H^{r+2}(G, L^\times)$ for all $r$ (Tate's theorem, Milne, Theorem
    II.3.11); for $r = -2$ this is an isomorphism $G^{\mathrm{ab}} \to K^\times / \mathrm{Nm}_{L/K}(L^\times)$
-   (Milne, Theorem III.3.1), whose inverse $\mathrm{rec}_{L/K}$ is the local Artin map of $L/K$. For every
-   $\chi \in \mathrm{Hom}(G, \mathbb{Q}/\mathbb{Z})$ and $a \in K^\times$,
+   (Milne, Theorem III.3.1), whose inverse $\mathrm{rec}_{L/K}$ is the local Artin map of $L/K$. For $L/K$
+   abelian, every $\chi \in \mathrm{Hom}(G, \mathbb{Q}/\mathbb{Z})$ and every $a \in K^\times$,
    $$\chi(\mathrm{rec}_{L/K}(a)) = \mathrm{inv}_K(a \cup \delta\chi),$$
    where $\delta \colon H^1(G, \mathbb{Q}/\mathbb{Z}) \to H^2(G, \mathbb{Z})$ is the connecting map of
    $0 \to \mathbb{Z} \to \mathbb{Q} \to \mathbb{Q}/\mathbb{Z} \to 0$ and $a \cup \delta\chi \in H^2(G, L^\times)$
@@ -75,6 +75,7 @@ uses are in [functoriality and explicit reciprocity](local-class-field-theory-fu
 - [Herbrand quotients agree across a map with finite kernel and cokernel](../../RepresentationTheory/group-cohomology/tate-cohomology-and-the-herbrand-quotient/herbrand-quotient-finite-kernel-cokernel.md), for item 2
 - [Periodicity of Tate cohomology for finite cyclic groups](../../RepresentationTheory/group-cohomology/tate-cohomology-and-the-herbrand-quotient/nonempty-periodicity-iso.md), for items 1 and 3
 - [Restriction, corestriction, inflation and Tate's theorem in group cohomology](../../RepresentationTheory/group-cohomology/restriction-corestriction-inflation-and-tate-s-theorem.md), for Tate's theorem, cup products and the inflation–restriction sequences in items 2 to 4
+- [Hilbert's Theorem 90 for the multiplicative group](../../FieldTheory/galois-theory/multiplicative-hilbert-s-theorem-90.md), for $H^1(G, L^\times) = 0$ in item 2 and for the Hilbert symbol in item 4
 - [The p-adic exponential on a neighbourhood of zero](p-adic-exponential.md), for an open subgroup of $U_L$ with trivial cohomology (Milne, Lemma III.2.4), in item 2
 
 ## Sources

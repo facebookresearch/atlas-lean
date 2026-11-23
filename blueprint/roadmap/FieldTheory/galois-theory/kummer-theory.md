@@ -21,9 +21,13 @@ $n$-th roots of unity in $F$.
 
 Milne obtains this isomorphism from the cohomology sequence of
 $1 \to \mu_n \to E^\times \xrightarrow{x \mapsto x^n} E^{\times n} \to 1$, which ends with
-$H^1(G, E^\times) = 0$, the multiplicative form of Hilbert's Theorem 90 for the finite Galois extension
-$E/F$ (Milne, *Fields and Galois Theory*, Theorem 5.23), and deduces the bijection from it by comparing
+$H^1(G, E^\times) = 0$, [Hilbert's Theorem 90](multiplicative-hilbert-s-theorem-90.md) for the finite Galois
+extension $E/F$ (Milne, *Fields and Galois Theory*, Theorem 5.23), and deduces the bijection from it by comparing
 the degrees $[E : F]$ with the indices $(B : F^{\times n})$.
+
+## Proof depends on
+
+- [Hilbert's Theorem 90 for the multiplicative group](multiplicative-hilbert-s-theorem-90.md), for $H^1(G, E^\times) = 0$
 
 ## Sources
 
@@ -35,6 +39,3 @@ the degrees $[E : F]$ with the indices $(B : F^{\times n})$.
 - J. S. Milne, *Class Field Theory*, version 4.03 (2020),
   <https://www.jmilne.org/math/CourseNotes/CFT.pdf>, Appendix to Chapter VII, Theorem A.3 (the
   correspondence with the finite subgroups of $K^\times / K^{\times n}$).
-- The mathlib Community, *mathlib4* at revision 56a005855ea17e0b0958f73ec801ae140b0a1679, for the
-  multiplicative Hilbert's Theorem 90: `groupCohomology.H1ofAutOnUnitsUnique`,
-  https://github.com/leanprover-community/mathlib4/blob/56a005855ea17e0b0958f73ec801ae140b0a1679/Mathlib/RepresentationTheory/Homological/GroupCohomology/Hilbert90.lean#L107-L108.
