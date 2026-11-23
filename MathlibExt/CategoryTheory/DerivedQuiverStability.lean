@@ -80,17 +80,24 @@ def HeartSemistable (z : V → ℂ) (M : Representations k V) : Prop :=
   ¬ IsZero M ∧ ∀ (A : Representations k V) (i : A ⟶ M), Mono i → ¬ IsZero A →
     heartPhase k V z A ≤ heartPhase k V z M
 
-/-- The literal alternating Euler class of actual cohomology at each vertex. -/
-def numericalClass (K : D k V) (v : V) : ℤ :=
+/-- The bounded objects of the derived category. -/
+abbrev BoundedDerivedQuiver := (show ObjectProperty (D k V) from Bounded k V).FullSubcategory
+
+/-- The numerical class of a bounded object: at each vertex `v`, the alternating sum
+`∑ₙ (-1)ⁿ dim H^n(K)_v` of the dimensions of its cohomology at `v`. Boundedness makes the
+sum finite, so this is the Euler characteristic; it is not defined on unbounded objects. -/
+def numericalClass (K : D k V) (_hK : Bounded k V K) (v : V) : ℤ :=
   GradedObject.eulerChar (ComplexShape.up ℤ) (fun n ↦
     (forget₂ (FGModuleCat.{0} k) (ModuleCat.{0} k)).obj
       ((cohomology k V K n).obj ((Paths.of V).obj v)))
 
-abbrev derivedCharge (z : V → ℂ) (K : D k V) : ℂ :=
-  centralCharge V z (numericalClass k V K)
+/-- The central charge of a bounded object, evaluated on its numerical class. -/
+abbrev derivedCharge (z : V → ℂ) (K : D k V) (hK : Bounded k V K) : ℂ :=
+  centralCharge V z (numericalClass k V K hK)
 
-/-- A concrete l1 norm on the actual vertex Euler class. -/
-def numericalNorm (K : D k V) : ℝ := ∑ v : V, (|numericalClass k V K v| : ℤ)
+/-- The l¹ norm of the numerical class of a bounded object. -/
+def numericalNorm (K : D k V) (hK : Bounded k V K) : ℝ :=
+  ∑ v : V, (|numericalClass k V K hK v| : ℤ)
 
 /-- A shift by m raises phase by m: H^n(K) has phase phi+n. -/
 def slicing (z : V → ℂ) (phi : ℝ) : ObjectProperty (D k V) := fun K ↦
@@ -114,16 +121,16 @@ structure SlicingLaws (z : V → ℂ) : Prop where
   extensions : ∀ (phi : ℝ) (T : _root_.CategoryTheory.Pretriangulated.Triangle (D k V)),
     T ∈ distTriang (D k V) → slicing k V z phi T.obj₁ → slicing k V z phi T.obj₃ →
       slicing k V z phi T.obj₂
-  phase_charge : ∀ (phi : ℝ) (K : D k V), slicing k V z phi K → ¬ IsZero K →
-    ∃ m : ℝ, 0 < m ∧ derivedCharge k V z K =
+  phase_charge : ∀ (phi : ℝ) (K : D k V) (hK : slicing k V z phi K), ¬ IsZero K →
+    ∃ m : ℝ, 0 < m ∧ derivedCharge k V z K hK.1 =
       (m : ℂ) * Complex.exp ((phi * Real.pi : ℝ) * Complex.I)
   shift : ∀ (phi : ℝ) (K : D k V),
     slicing k V z phi K ↔ slicing k V z (phi + 1) (K⟦(1 : ℤ)⟧)
   hom_vanishing : ∀ (phi psi : ℝ), psi < phi →
     ∀ (K L : D k V), slicing k V z phi K → slicing k V z psi L → Subsingleton (K ⟶ L)
   harderNarasimhan : ∀ K : D k V, Bounded k V K → Nonempty (HNFiltration k V z K)
-  support : ∃ C : ℝ, 0 < C ∧ ∀ (phi : ℝ) (K : D k V), slicing k V z phi K →
-    C * numericalNorm k V K ≤ ‖derivedCharge k V z K‖
+  support : ∃ C : ℝ, 0 < C ∧ ∀ (phi : ℝ) (K : D k V) (hK : slicing k V z phi K),
+    C * numericalNorm k V K hK.1 ≤ ‖derivedCharge k V z K hK.1‖
   local_window : ∃ e : ℝ, 0 < e ∧ ∀ phi : ℝ, ∃ n : ℤ,
     ∀ K : D k V, InPhaseWindow k V z (phi - e) (phi + e) K →
       ∀ j : ℤ, j ≠ n → IsZero (cohomology k V K j)

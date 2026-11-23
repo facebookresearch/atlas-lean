@@ -7,17 +7,17 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-The presentation and its normalization follow TauCetiProject/TauCeti,
-revision 62bbc0596dc3539d488232e4e924a338548ea0a9,
-TauCeti/CategoryTheory/GrothendieckGroup/Triangulated.lean and
-TauCeti/CategoryTheory/GrothendieckGroup/Presentation.lean.
+Portions of this file are adapted from:
+
+`TauCeti/CategoryTheory/GrothendieckGroup/Triangulated.lean` and
+`TauCeti/CategoryTheory/GrothendieckGroup/Presentation.lean` (TauCetiProject/TauCeti at
+revision 62bbc0596dc3539d488232e4e924a338548ea0a9):
 Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
 Released under Apache 2.0 license as described in that repository's LICENSE.
 Authors: The Tau Ceti contributors.
-Modification: use the actual free abelian group on objects, imposing both
-isomorphism and distinguished-triangle relations directly. This avoids
-shrinking/skeleton choices for the task-language interface. No K0 carrier
-or class map is supplied as an arbitrary field.
+Modification notice: use the free abelian group on objects, imposing both the
+isomorphism and the distinguished-triangle relations directly, without shrinking or
+skeleton choices.
 -/
 module
 

@@ -7,9 +7,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import MathlibExt.AlgebraicGeometry.BoundedCoherent
 public import MathlibExt.CategoryTheory.Triangulated.BridgelandStability
-public import MathlibExt.CategoryTheory.DerivedQuiverStability
-public import MathlibExt.AlgebraicGeometry.SphericalTwists
+public import Mathlib.AlgebraicGeometry.Noetherian
 
 /-!
 # General stability contracts on actual bounded coherent derived categories
@@ -19,10 +19,6 @@ bounded coherent homology property. Standard triangulated/isomorphism
 closure is a named shared dependency. Numerical realization, slicing,
 HN, local finiteness and support are data for the paper's construction;
 no stability-existence theorem on arbitrary varieties is asserted.
-
-The existing concrete quiver HN tower maps into the same general triangle
-language. A complete quiver stability-condition provider on its bounded
-subcategory remains a separate bridge from the existing quiver request.
 
 Sources: Bridgeland, https://arxiv.org/abs/math/0212237, Definitions 3.3
 and 5.1, Proposition 5.3; the existing actual bounded coherent and quiver
@@ -35,7 +31,7 @@ namespace MathlibExt.AlgebraicGeometry.CoherentStabilityContracts
 
 open _root_.CategoryTheory _root_.AlgebraicGeometry
 open MathlibExt.CategoryTheory.BridgelandStability
-open MathlibExt.AlgebraicGeometry.SphericalTwists
+open MathlibExt.AlgebraicGeometry.BoundedCoherent
 
 attribute [local instance] HasDerivedCategory.standard
 
@@ -60,25 +56,3 @@ abbrev NumericalStabilityCondition (X : Scheme.{u}) [IsNoetherian X]
   MathlibExt.CategoryTheory.BridgelandStability.NumericalStabilityCondition (DbCoh X) rank
 
 end MathlibExt.AlgebraicGeometry.CoherentStabilityContracts
-
-namespace MathlibExt.CategoryTheory.DerivedQuiverStability
-
-open _root_.CategoryTheory
-
-attribute [local instance] HasDerivedCategory.standard
-
-variable {k V : Type} [Field k] [Quiver V] [Fintype V]
-
-/-- The concrete quiver tower is an instance of the general actual
-distinguished-triangle tower language, in the same ambient category. -/
-def HNFiltration.toGeneral {z : V → ℂ} {K : D k V}
-    (F : HNFiltration k V z K) :
-    MathlibExt.CategoryTheory.BridgelandStability.HNFiltration
-      (D k V) (slicing k V z) K := F
-
-/-- The actual bounded quiver-derived category for a stability provider.
-No assertion is made on the unbounded ambient derived category. -/
-abbrev BoundedDerivedQuiver (k V : Type) [Field k] [Quiver V] [Fintype V] :=
-  (show ObjectProperty (D k V) from Bounded k V).FullSubcategory
-
-end MathlibExt.CategoryTheory.DerivedQuiverStability
