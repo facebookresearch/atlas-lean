@@ -11,7 +11,7 @@ module
 public import MathlibExt.Combinatorics.Coding.ListDecoding
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Data.ZMod.Defs
-public import Mathlib
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # The q-ary Johnson bound
