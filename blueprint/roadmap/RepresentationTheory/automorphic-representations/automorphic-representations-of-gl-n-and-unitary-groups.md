@@ -67,8 +67,10 @@ the trace formula and the cohomology of arithmetic groups are outside this node.
 
 ## Depends on
 
-- [Smooth representations of p-adic GLₙ and the local Langlands correspondence](../reductive-groups-over-local-fields/smooth-representations-of-p-adic-gl-n-and-local-langlands.md), for the local components of automorphic representations of $\mathrm{GL}_n$ at the finite places
-- [Representations of U(p, q)](../reductive-groups-over-local-fields/representations-of-u-p-q.md), for the local components of automorphic representations of unitary groups at the real places
+- [Smooth and admissible representations of p-adic groups](../reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/smooth-representations-of-p-adic-groups.md), for the local components of automorphic representations of $\mathrm{GL}_n$ at the finite places, irreducible admissible representations of the groups $\mathrm{GL}_n(F_v)$
+- [Whittaker models and the Gelfand–Kazhdan theorems for GLₙ](../reductive-groups-over-local-fields/representations-of-p-adic-gl-n/whittaker-models-for-gl-n.md), for the uniqueness of local Whittaker models at the finite places, used with the Whittaker–Fourier expansions for multiplicity one
+- [L- and ε-factors of pairs for GLₙ and of Weil–Deligne representations](../reductive-groups-over-local-fields/representations-of-p-adic-gl-n/l-and-epsilon-factors-of-pairs.md), for the local Rankin–Selberg factors $L(s, \pi_v \times \pi'_v)$ at the finite places
+- [Harish-Chandra modules](../reductive-groups-over-local-fields/representations-of-real-reductive-groups/harish-chandra-modules.md), for the local components of automorphic representations of unitary groups at the real places, irreducible Harish-Chandra modules of the groups $\mathrm{U}(p, q)$
 - [Topological idele class group](../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/adeles-and-ideles/topological-idele-class-group.md), on which the central characters are defined
 
 ## Expansion
