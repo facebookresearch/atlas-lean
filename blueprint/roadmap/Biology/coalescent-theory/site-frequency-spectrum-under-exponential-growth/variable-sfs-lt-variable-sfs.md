@@ -1,4 +1,4 @@
-# For θ > 0, shortening the oldest mean epoch suffices if none grow
+# For θ > 0 the SFS falls if no epoch grows and the oldest shortens
 
 Let `θ > 0`, let `n` and `i` be natural numbers with `1 ≤ i < n`, and let `t_k`, `t'_k`
 (`k ∈ ℕ`) be real numbers with `t_k ≤ t'_k` for `2 ≤ k ≤ n` and `t_2 < t'_2`. Then the

@@ -44,8 +44,8 @@ For any real matrix `F` (in practice the empirical divergence matrix of two sequ
   (`logDetDistance_eq_neg_log_det`), which is the paralinear / LogDet distance
   `-log det Fₛ + ∑ i, log (baseFreq F i)` of the symmetrized divergence matrix
   (`logDetDistance_eq_logDet`);
-* `rateEstimate F = (logDetDistance F)⁻¹ • logGenerator F`, the rate matrix normalized to
-  `tr = -1` when every base-frequency estimate is positive and `logDetDistance F ≠ 0`
+* `rateEstimate F = (logDetDistance F)⁻¹ • logGenerator F`, the generator estimate normalized
+  to trace `-1` when every base-frequency estimate is positive and `logDetDistance F ≠ 0`
   (`trace_rateEstimate`). With the convention `0⁻¹ = 0`, at `logDetDistance F = 0` the
   estimate is the zero matrix, of trace `0`.
 
@@ -134,11 +134,10 @@ noncomputable def normDivergence (F : Matrix ι ι ℝ) : Matrix ι ι ℝ :=
   Matrix.of fun i j => (F i j + F j i) / 2 / (√(baseFreq F i) * √(baseFreq F j))
 
 /-- The **log-det generator** `E log (normDivergence F) D`, with `D = diagonal (√ baseFreq F)` and
-`E` its entrywise reciprocal (`0⁻¹ = 0`, so `E = D⁻¹` only when every `baseFreq F i > 0`), where
-`log` is the real logarithm
-of the continuous functional calculus, which applies `log` to the eigenvalues with `log 0 = 0`
-and `log x = log |x|`; the entry `(i, j)` is `0` when `baseFreq F i ≤ 0` or `baseFreq F j ≤ 0`.
-At the true divergence matrix it equals `t • Q`. -/
+`E` its entrywise reciprocal (`0⁻¹ = 0`, so `E = D⁻¹` when every `baseFreq F i > 0`), where `log` is
+the real logarithm of the continuous functional calculus, which applies `log` to the eigenvalues
+with `log 0 = 0` and `log x = log |x|`; the entry `(i, j)` is `0` when `baseFreq F i ≤ 0` or
+`baseFreq F j ≤ 0`. At the true divergence matrix it equals `t • Q`. -/
 noncomputable def logGenerator (F : Matrix ι ι ℝ) : Matrix ι ι ℝ :=
   Matrix.of fun i j => cfc Real.log (normDivergence F) i j * √(baseFreq F j) / √(baseFreq F i)
 

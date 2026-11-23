@@ -8,6 +8,7 @@ times, with elements `j_1 < ⋯ < j_m`, and every measurable `S ⊆ [0, 1]^J`, t
 where `Q` is the
 [finite-dimensional kernel](../../../../Probability/markov-chains/markov-processes-from-transition-semigroups/finite-chain-kernel.md)
 of `κ` and `e : [0, 1]^m → [0, 1]^J` sends `(y_1, …, y_m)` to the function `j_k ↦ y_k`. Here `x` is
-the input of the kernel construction: the time-`0` marginal of `P^κ_x` is `κ_0(x, ·)`, which is the
-point mass at `x` only when `κ_0` is the identity kernel; the Chapman–Kolmogorov equations alone do
-not force this.
+the input of the kernel construction: the time-`0` marginal of `P^κ_x` is `κ_0(x, ·)`. This marginal
+is the point mass at the input for every input exactly when `κ_0` is the identity kernel, which is
+not assumed here; the Chapman–Kolmogorov equations alone do not imply it (the constant family
+`κ_t(x, ·) = δ_0` satisfies them, and `κ_0(1, ·) = δ_0`).

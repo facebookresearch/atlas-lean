@@ -154,7 +154,8 @@ theorem f3_eq_f2 (hp : ∀ X, MemLp (p X) 2 μ) (C A B : P) :
   rw [integral_div, integral_sub h1 (integrable_sub_sq hp A B),
     integral_add (integrable_sub_sq hp C A) (integrable_sub_sq hp C B)]
 
-/-- `f4` in terms of `f2`: `f4 A B C D = (f2 A D + f2 B C - f2 A C - f2 B D) / 2`. -/
+/-- `f4` in terms of `f2`, for square-integrable frequencies:
+`f4 A B C D = (f2 A D + f2 B C - f2 A C - f2 B D) / 2`. -/
 theorem f4_eq_f2 (hp : ∀ X, MemLp (p X) 2 μ) (A B C D : P) :
     f4 μ p A B C D = (f2 μ p A D + f2 μ p B C - f2 μ p A C - f2 μ p B D) / 2 := by
   unfold f4 f2

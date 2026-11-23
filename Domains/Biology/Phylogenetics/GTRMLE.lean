@@ -135,12 +135,14 @@ variable {Θ σ : Type*}
 
 /-- The **log-likelihood criterion** of the model `law` at weights `f`: the weighted sum
 `∑ a, f a * log (law θ a)`, defined for all real `f` and `law`, with `log 0 = 0` and
-`log x = log |x|` for `x < 0`. For a probability vector `f = law θ₀` it is the expected value of
-`log (law θ a)` under `law θ₀`; for other weights it is only a weighted sum. At the empirical
-frequencies of `n > 0` observations it is the average of their log-values (`logLik_empiricalFreq`);
-when `law θ` is a probability vector positive at the observed patterns this is the average
-log-likelihood. Without positivity it is not a log-likelihood: a model giving an observed pattern
-probability `0` scores `0` there. -/
+`log x = log |x|` for `x < 0`. For any probability vector `f` (nonnegative entries summing to `1`),
+for example `f = law θ₀`, it is the expected value of `log (law θ a)` under `f`; for general real
+`f` it is only a weighted sum. At the empirical frequencies of `n > 0` observations it is the
+average of their log-values (`logLik_empiricalFreq`); when `law θ` is a probability vector positive
+at the observed patterns, `n` times it exponentiates to the product of the one-column probabilities,
+which is the likelihood of the sample under the product model, where the columns are independent
+with common law `law θ`. Without positivity it is not a log-likelihood: a model giving an observed
+pattern probability `0` scores `0` there. -/
 noncomputable def logLik [Fintype σ] (law : Θ → σ → ℝ) (f : σ → ℝ) (θ : Θ) : ℝ :=
   ∑ a, f a * Real.log (law θ a)
 
@@ -148,9 +150,10 @@ noncomputable def logLik [Fintype σ] (law : Θ → σ → ℝ) (f : σ → ℝ)
 `freq`: for every `n` and `ω`, `est n ω` maximizes the weighted sum `logLik law (freq n ω)` over the
 whole parameter space. The definition is algebraic, for all real `law` and `freq`. With
 `freq = empiricalFreq X` and a model whose laws are probability vectors positive at the observed
-patterns it maximizes the likelihood of the sample; in general it maximizes the total-log score,
-with `log 0 = 0` and `log x = log |x|`, which can prefer a model giving an observed pattern
-probability `0`. -/
+patterns it maximizes the product of the one-column likelihoods, which is the likelihood of the
+sample under the product model, where the columns are independent with common law `law θ`; in
+general it maximizes the total-log score, with `log 0 = 0` and `log x = log |x|`, which can prefer a
+model giving an observed pattern probability `0`. -/
 def IsMLE [Fintype σ] {Ω : Type*} (law : Θ → σ → ℝ) (freq : ℕ → Ω → σ → ℝ)
     (est : ℕ → Ω → Θ) : Prop :=
   ∀ n ω θ, logLik law (freq n ω) θ ≤ logLik law (freq n ω) (est n ω)
@@ -159,7 +162,7 @@ def IsMLE [Fintype σ] {Ω : Type*} (law : Θ → σ → ℝ) (freq : ℕ → Ω
 columns: `logLik law (empiricalFreq X n ω) θ = n⁻¹ * ∑ i < n, log (law θ (X i ω))`, for every real
 `law`, with `log 0 = 0` and `log x = log |x|` for `x < 0`. At `n = 0` both sides are `0`
 (`0⁻¹ = 0`). For `n > 0` and a probability vector `law θ` positive at the observed patterns it is
-the average log-likelihood of the columns. -/
+the average of the one-column log-likelihoods `log (law θ (X i ω))`. -/
 theorem logLik_empiricalFreq [Fintype σ] [DecidableEq σ] {Ω : Type*} (law : Θ → σ → ℝ)
     (X : ℕ → Ω → σ) (n : ℕ) (ω : Ω) (θ : Θ) :
     logLik law (empiricalFreq X n ω) θ =
@@ -362,11 +365,11 @@ theorem tendstoUniformly_logLik {law : Θ → σ → ℝ} (hlaw : Continuous law
 variable [DecidableEq σ] [MeasurableSpace σ] [MeasurableSingletonClass σ] {Ω : Type*}
   [MeasurableSpace Ω] {P : Measure Ω}
 
-/-- **Uniform law of large numbers for the log-likelihood**: for a continuous positive model on
-a compact space, under the sampling law (measurable, pairwise independent, identically
-distributed columns with `P (X 0 = a) = law θ₀ a` under a finite measure `P`), the average
-log-likelihood `logLik law (empiricalFreq X n ω)` converges to the expected log-likelihood
-`logLik law (law θ₀)` uniformly in `θ`, for almost every `ω`. -/
+/-- **Uniform law of large numbers for the log-likelihood**: for a continuous positive model on a
+compact space and a finite pattern set with measurable singletons, under the sampling law
+(measurable, pairwise independent, identically distributed columns with `P (X 0 = a) = law θ₀ a`
+under a finite measure `P`), the average log-likelihood `logLik law (empiricalFreq X n ω)` converges
+to the expected log-likelihood `logLik law (law θ₀)` uniformly in `θ`, for almost every `ω`. -/
 theorem ae_tendstoUniformly_logLik_empiricalFreq [IsFiniteMeasure P] {law : Θ → σ → ℝ}
     (hlaw : Continuous law) (hpos : ∀ θ a, 0 < law θ a) {θ₀ : Θ} {X : ℕ → Ω → σ}
     (hX : ∀ i, Measurable (X i)) (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X))
@@ -439,13 +442,13 @@ theorem tendstoInMeasure_infDist_mle_of_tendstoInMeasure {law : Θ → σ → �
 
 variable [DecidableEq σ] [MeasurableSpace σ] [MeasurableSingletonClass σ] [IsFiniteMeasure P]
 
-/-- **Almost-sure consistency of the GTR maximum-likelihood estimator**, a generalization of
-Chang's Lemma 5.1 from point identification to identification up to a class `E`
-(Newey–McFadden, Theorem 2.5, finite-pattern case). Let `Θ` be compact, `law` continuous,
-positive and normalized, and `θ₀` identified up to the class `E` (`hId`). If the
-alignment columns are measurable, pairwise independent and identically distributed under a
-finite measure `P`, with `P (X 0 = a) = law θ₀ a`, every MLE `est` satisfies
-`infDist (est n ω) E → 0` for almost every `ω`. -/
+/-- **Almost-sure consistency of the GTR maximum-likelihood estimator**, a generalization of Chang's
+Lemma 5.1 from point identification to identification up to a class `E` (Newey–McFadden, Theorem
+2.5, finite-pattern case). Let `Θ` be a compact metric space and `σ` a finite pattern set with
+measurable singletons; let `θ ↦ law θ` be continuous, positive and normalized, and `θ₀` identified
+up to the class `E` (`hId`). If the alignment columns are measurable, pairwise independent and
+identically distributed under a finite measure `P`, with `P (X 0 = a) = law θ₀ a`, every MLE `est`
+satisfies `infDist (est n ω) E → 0` for almost every `ω`. -/
 theorem ae_tendsto_infDist_mle {law : Θ → σ → ℝ} (hlaw : Continuous law)
     (hpos : ∀ θ a, 0 < law θ a) (hsum : ∀ θ, ∑ a, law θ a = 1) {θ₀ : Θ} {E : Set Θ}
     (hId : ∀ θ, law θ = law θ₀ → θ ∈ E) {X : ℕ → Ω → σ} (hX : ∀ i, Measurable (X i))
@@ -470,10 +473,11 @@ theorem tendstoInMeasure_infDist_mle {law : Θ → σ → ℝ} (hlaw : Continuou
     (tendstoInMeasure_empiricalFreq hX hindep hident hsample)
 
 /-- The GTR MLE consistency theorem (in probability) for the chosen estimator `mle`: on a nonempty
-compact `Θ`, for a continuous, positive, normalized model identifying `θ₀` up to `E` and measurable,
-pairwise independent, identically distributed columns with `P (X 0 = a) = law θ₀ a` under a finite
-measure `P`, `infDist (mle … n) E → 0` in `P`-measure. The estimator need not be measurable: `P` of
-a non-measurable set is its outer measure. -/
+compact metric `Θ`, with a finite pattern set `σ` with measurable singletons, for a continuous,
+positive, normalized model identifying `θ₀` up to `E` and measurable, pairwise independent,
+identically distributed columns with `P (X 0 = a) = law θ₀ a` under a finite measure `P`,
+`infDist (mle … n) E → 0` in `P`-measure. The estimator need not be measurable: `P` of a
+non-measurable set is its outer measure. -/
 theorem tendstoInMeasure_infDist_mleEstimator [Nonempty Θ] {law : Θ → σ → ℝ}
     (hlaw : Continuous law) (hpos : ∀ θ a, 0 < law θ a) (hsum : ∀ θ, ∑ a, law θ a = 1)
     {θ₀ : Θ} {E : Set Θ} (hId : ∀ θ, law θ = law θ₀ → θ ∈ E) {X : ℕ → Ω → σ}
@@ -634,13 +638,13 @@ theorem tendstoInMeasure_infDist_gtrClass_mle_of_tendstoInMeasure
 
 variable [MeasurableSpace (ι × ι)] [MeasurableSingletonClass (ι × ι)] [IsFiniteMeasure P]
 
-/-- **Almost-sure consistency of the GTR pair-site MLE**: on a compact `Θ`, with every `(π θ, s θ)`
-in the GTR domain (`π θ` positive and summing to `1`, `s θ` symmetric and positive off the
-diagonal), every `t θ > 0` and `gtrLaw π s t` continuous, and measurable columns `X i`, pairwise
-independent and identically distributed under a finite measure `P` with
-`P (X 0 = a) = gtrLaw π s t θ₀ a` (summing over `a`, `P` is then a probability measure), every
-maximum-likelihood estimator for the empirical frequencies satisfies
-`infDist (est n ω) (gtrClass π s t θ₀) → 0` for almost every `ω`. -/
+/-- **Almost-sure consistency of the GTR pair-site MLE**: on a compact metric `Θ`, with every
+`(π θ, s θ)` in the GTR domain (`π θ` positive and summing to `1`, `s θ` symmetric and positive off
+the diagonal), every `t θ > 0` and `gtrLaw π s t` continuous, and measurable columns `X i` with
+values in the finite pair-pattern set `ι × ι` with measurable singletons, pairwise independent and
+identically distributed under a finite measure `P` with `P (X 0 = a) = gtrLaw π s t θ₀ a` (summing
+over `a`, `P` is then a probability measure), every maximum-likelihood estimator for the empirical
+frequencies satisfies `infDist (est n ω) (gtrClass π s t θ₀) → 0` for almost every `ω`. -/
 theorem ae_tendsto_infDist_gtrClass_mle (hlaw : Continuous (gtrLaw π s t))
     (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ) {θ₀ : Θ} {X : ℕ → Ω → ι × ι}
     (hX : ∀ i, Measurable (X i)) (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X))
@@ -651,14 +655,14 @@ theorem ae_tendsto_infDist_gtrClass_mle (hlaw : Continuous (gtrLaw π s t))
   ae_tendsto_infDist_mle hlaw (gtrLaw_pos hp ht) (sum_gtrLaw hp)
     (mem_gtrClass_of_gtrLaw_eq hp ht θ₀) hX hindep hident hsample hest
 
-/-- **Consistency in probability of the GTR pair-site MLE**: on a compact `Θ`, with every
+/-- **Consistency in probability of the GTR pair-site MLE**: on a compact metric `Θ`, with every
 `(π θ, s θ)` in the GTR domain (`π θ` positive and summing to `1`, `s θ` symmetric and positive off
-the diagonal), every `t θ > 0` and `gtrLaw π s t` continuous, and measurable columns `X i`, pairwise
-independent and identically distributed under a finite measure `P` with
-`P (X 0 = a) = gtrLaw π s t θ₀ a` (summing over `a`, `P` is then a probability measure), every
-maximum-likelihood estimator for the empirical frequencies satisfies
-`infDist (est n) (gtrClass π s t θ₀) → 0` in probability. The estimator need not be measurable: `P`
-of a non-measurable set is its outer measure. -/
+the diagonal), every `t θ > 0` and `gtrLaw π s t` continuous, and measurable columns `X i` with
+values in the finite pair-pattern set `ι × ι` with measurable singletons, pairwise independent and
+identically distributed under a finite measure `P` with `P (X 0 = a) = gtrLaw π s t θ₀ a` (summing
+over `a`, `P` is then a probability measure), every maximum-likelihood estimator for the empirical
+frequencies satisfies `infDist (est n) (gtrClass π s t θ₀) → 0` in probability. The estimator need
+not be measurable: `P` of a non-measurable set is its outer measure. -/
 theorem tendstoInMeasure_infDist_gtrClass_mle (hlaw : Continuous (gtrLaw π s t))
     (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ) {θ₀ : Θ} {X : ℕ → Ω → ι × ι}
     (hX : ∀ i, Measurable (X i)) (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X))
@@ -669,10 +673,11 @@ theorem tendstoInMeasure_infDist_gtrClass_mle (hlaw : Continuous (gtrLaw π s t)
   tendstoInMeasure_infDist_mle hlaw (gtrLaw_pos hp ht) (sum_gtrLaw hp)
     (mem_gtrClass_of_gtrLaw_eq hp ht θ₀) hX hindep hident hsample hest
 
-/-- **The chosen GTR pair-site MLE is consistent in probability**: on a nonempty compact `Θ`, with
-every `(π θ, s θ)` in the GTR domain (`π θ` positive and summing to `1`, `s θ` symmetric and
+/-- **The chosen GTR pair-site MLE is consistent in probability**: on a nonempty compact metric `Θ`,
+with every `(π θ, s θ)` in the GTR domain (`π θ` positive and summing to `1`, `s θ` symmetric and
 positive off the diagonal), every `t θ > 0` and `gtrLaw π s t` continuous, and measurable columns
-`X i`, pairwise independent and identically distributed under a finite measure `P` with
+`X i` with values in the finite pair-pattern set `ι × ι` with measurable singletons, pairwise
+independent and identically distributed under a finite measure `P` with
 `P (X 0 = a) = gtrLaw π s t θ₀ a` (summing over `a`, `P` is then a probability measure), the chosen
 estimate `mle` for the empirical frequencies satisfies `infDist (mle … n) (gtrClass π s t θ₀) → 0`
 in probability (outer measure for a non-measurable set). -/
@@ -687,11 +692,12 @@ theorem tendstoInMeasure_infDist_gtrClass_mleEstimator [Nonempty Θ]
   tendstoInMeasure_infDist_mleEstimator hlaw (gtrLaw_pos hp ht) (sum_gtrLaw hp)
     (mem_gtrClass_of_gtrLaw_eq hp ht θ₀) hX hindep hident hsample
 
-/-- **Almost-sure point consistency for a singleton GTR class**: on a compact `Θ`, with every
+/-- **Almost-sure point consistency for a singleton GTR class**: on a compact metric `Θ`, with every
 `(π θ, s θ)` in the GTR domain (`π θ` positive and summing to `1`, `s θ` symmetric and positive off
 the diagonal), every `t θ > 0` and `gtrLaw π s t` continuous, if moreover `gtrClass π s t θ₀ ⊆ {θ₀}`
 (e.g. a known branch length and an injective `(π, s)` off the diagonal), and measurable columns
-`X i`, pairwise independent and identically distributed under a finite measure `P` with
+`X i` with values in the finite pair-pattern set `ι × ι` with measurable singletons, pairwise
+independent and identically distributed under a finite measure `P` with
 `P (X 0 = a) = gtrLaw π s t θ₀ a` (summing over `a`, `P` is then a probability measure), every
 maximum-likelihood estimator for the empirical frequencies converges to `θ₀` almost surely. -/
 theorem ae_tendsto_mle_of_gtrClass_subset_singleton (hlaw : Continuous (gtrLaw π s t))
@@ -704,13 +710,14 @@ theorem ae_tendsto_mle_of_gtrClass_subset_singleton (hlaw : Continuous (gtrLaw �
   ae_tendsto_mle_of_injective hlaw (gtrLaw_pos hp ht) (sum_gtrLaw hp)
     (fun θ h => hsep (mem_gtrClass_of_gtrLaw_eq hp ht θ₀ θ h)) hX hindep hident hsample hest
 
-/-- **Point consistency in probability for a singleton GTR class**: on a compact `Θ`, with every
-`(π θ, s θ)` in the GTR domain (`π θ` positive and summing to `1`, `s θ` symmetric and positive off
-the diagonal), every `t θ > 0` and `gtrLaw π s t` continuous, if moreover
-`gtrClass π s t θ₀ ⊆ {θ₀}`, and measurable columns `X i`, pairwise independent and identically
-distributed under a finite measure `P` with `P (X 0 = a) = gtrLaw π s t θ₀ a` (summing over `a`, `P`
-is then a probability measure), every maximum-likelihood estimator for the empirical frequencies
-converges to `θ₀` in probability (outer measure for a non-measurable set). -/
+/-- **Point consistency in probability for a singleton GTR class**: on a compact metric `Θ`, with
+every `(π θ, s θ)` in the GTR domain (`π θ` positive and summing to `1`, `s θ` symmetric and
+positive off the diagonal), every `t θ > 0` and `gtrLaw π s t` continuous, if moreover
+`gtrClass π s t θ₀ ⊆ {θ₀}`, and measurable columns `X i` with values in the finite pair-pattern set
+`ι × ι` with measurable singletons, pairwise independent and identically distributed under a finite
+measure `P` with `P (X 0 = a) = gtrLaw π s t θ₀ a` (summing over `a`, `P` is then a probability
+measure), every maximum-likelihood estimator for the empirical frequencies converges to `θ₀` in
+probability (outer measure for a non-measurable set). -/
 theorem tendstoInMeasure_mle_of_gtrClass_subset_singleton (hlaw : Continuous (gtrLaw π s t))
     (hp : ∀ θ, IsGTRParam (π θ) (s θ)) (ht : ∀ θ, 0 < t θ) {θ₀ : Θ}
     (hsep : gtrClass π s t θ₀ ⊆ {θ₀}) {X : ℕ → Ω → ι × ι} (hX : ∀ i, Measurable (X i))

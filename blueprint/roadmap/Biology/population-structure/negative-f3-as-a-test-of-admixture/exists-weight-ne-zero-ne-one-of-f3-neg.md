@@ -1,4 +1,4 @@
-# With bounded source weights, negative f3 forces a nonbinary target
+# Negative f3 forces a nonbinary target for unit-interval source weights
 
 In a [drift model](../patterson-s-f-statistics/drift-model.md) with lineage weights `w`, let
 `C, A, B` be populations whose sources have weights in `[0, 1]`: `0 ≤ w A e ≤ 1` and `0 ≤ w B e ≤ 1`

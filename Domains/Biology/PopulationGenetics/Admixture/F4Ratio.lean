@@ -167,9 +167,10 @@ theorem DriftModel.f4_ratio_eq_two_mul_of_split_reference {Ω P : Type*}
 variable {Ω P E : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} [Fintype E]
 
 /-- The difference of the two f4 statistics in the sister condition of
-`DriftModel.f4_ratio` is the length-weighted inner product of the `A`–`O` and
-`Y`–`B` weight contrasts (on a tree with binary weights, supported on the two
-paths): `f4(A,O;Y,C) - f4(A,O;B,C)` equals
+`DriftModel.f4_ratio` is the length-weighted sum of products of the `A`–`O` and
+`Y`–`B` weight contrasts, the dot product of the contrasts scaled by `√len` (on a
+tree with binary weights, the contrasts are supported on the two paths):
+`f4(A,O;Y,C) - f4(A,O;B,C)` equals
 `∑ e, (w A e - w O e) * (w Y e - w B e) * len e`. The reference population `C`
 cancels. -/
 theorem DriftModel.f4_sub_f4_eq_sum (M : DriftModel μ E P) (A O Y B C : P) :

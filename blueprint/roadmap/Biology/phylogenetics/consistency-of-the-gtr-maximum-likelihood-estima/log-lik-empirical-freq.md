@@ -7,4 +7,4 @@ columns. The [log-likelihood criterion](log-lik.md) at the
 `L(p̂ₙ(ω), θ) = n⁻¹ · ∑_{i < n} log (law θ (X i ω))` for every `θ`, `n` and `ω`, with the
 conventions `log 0 = 0` and `log x = log |x|` for `x < 0`. At `n = 0` both sides are `0`, with the
 convention `0⁻¹ = 0`. For `n > 0` and a probability vector `law θ` positive at the observed
-patterns, it is the average log-likelihood of the columns.
+patterns, it is the average of the one-column log-likelihoods `log (law θ (X i ω))`.

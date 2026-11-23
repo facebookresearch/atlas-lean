@@ -22,11 +22,12 @@ The Shaw-Mohler invasion fitness of a mutant parent with son fraction `x` in a p
 son fraction `y` is, up to the positive factor `1/4`,
 `W x y = x / y + (1 - x) / (1 - y)`.
 
-At the resident ratio `1/2`, every mutant has the same fitness. The selection gradient
-`1/y - 1/(1-y)` is positive below `1/2`, negative above it, and zero only at `1/2`; `1/2` is
-the unique uninvadable interior resident ratio. With unequal costs of sons and daughters, equal
-investment still gives the stable investment fraction, while the resulting son fraction is
-biased toward the cheaper sex.
+At the resident ratio `1/2`, every mutant has the same fitness. For interior resident fractions
+`0 < y < 1`, the selection gradient `1/y - 1/(1-y)` is positive on `(0, 1/2)`, negative on
+`(1/2, 1)` and zero only at `1/2` (at `y = 0` and `y = 1` the convention `a / 0 = 0` gives `-1`
+and `1`); `1/2` is the unique uninvadable interior resident ratio. With unequal costs of sons
+and daughters, equal investment still gives the stable investment fraction, while the resulting
+son fraction is biased toward the cheaper sex.
 
 ## References
 

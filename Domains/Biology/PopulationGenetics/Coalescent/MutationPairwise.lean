@@ -1516,8 +1516,9 @@ variable {n : ℕ}
 
 /-- The coalescence rate `C(n - u, 2)` after `u` events of a sample of size `n`, with `n - u`
 truncated at `0`. For `n ≥ 1` and `u ≤ n - 1` there are `n - u` lineages and this is the number
-of their pairs: positive for `u + 2 ≤ n` and `0` at `u = n - 1`. For `u ≥ n` the value is `0`
-too, but `n - u = 0` is then not the number of lineages: for `n ≥ 1` one lineage remains. -/
+of their pairs: positive for `u + 2 ≤ n` and `0` at `u = n - 1`, when one lineage is left. For
+`u ≥ n` the rate is `0`; if `n ≥ 1`, one final lineage remains although `n - u = 0`, and if
+`n = 0` there are no lineages. -/
 noncomputable def rateAfter (n u : ℕ) : ℝ := (((n - u).choose 2 : ℕ) : ℝ)
 
 theorem rateAfter_pos {u : ℕ} (hu : u < n - 1) : 0 < rateAfter n u := by
@@ -2583,7 +2584,8 @@ theorem overlapCount_eq {h : RankedHistory n} {u : ℕ} (hu : u ≤ n - 1) {pos 
 the lineages after `u` events separating both `{a, b}` and `{a, c}` number
 `1[a, b apart] + 1[a, c apart] - 1[b, c apart]` (the tree identity
 `ℓ(P_{ab} ∩ P_{ac}) = (ℓ(P_{ab}) + ℓ(P_{ac}) - ℓ(P_{bc}))/2`, epoch by epoch, where for `b = c`
-the path `P_{bb}` from `b` to itself has length `0`, unlike `pairPath h {b}`). -/
+`P_{bb}` denotes the empty geometric self-path, of length `0`, not `pairPath h {b}`, the set of
+ancestral branches of `b`). -/
 theorem overlapCount_shared {h : RankedHistory n} {u : ℕ} (hu : u ≤ n - 1) {a b c : Fin n}
     (hab : a ≠ b) (hac : a ≠ c) :
     overlapCount h {a, b} {a, c} u =

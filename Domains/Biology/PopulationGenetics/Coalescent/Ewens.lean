@@ -160,7 +160,8 @@ open scoped Classical in
 /-- **The Ewens sampling formula as the law of the allele-count configuration.** If
 `∑_{j=1}^n j a_j = n`, exactly one allelic partition has a configuration agreeing with `a` at
 `1, …, n`, and its Ewens weight is `ewensConfigProb θ n a`, for every real `θ` (with the
-convention `x / 0 = 0` both are `0` when `θ = -i` for an integer `0 ≤ i < n`); so, for `θ > 0`,
+convention `x / 0 = 0` both are `0` when `θ = -i` for an integer `0 ≤ i < n`; for `n = 0` the
+products are empty and the common value is `1` for every `θ`); so, for `θ > 0`,
 the probability that the configuration of the sample agrees with `a` at `1, …, n` is
 `n! / θ^{(n)} · ∏_j (θ / j) ^ {a_j} / a_j!`. -/
 theorem sum_ewensProb_alleleCount_eq (θ : ℝ) {a : ℕ → ℕ} (ha : ∑ j ∈ Icc 1 n, j * a j = n) :

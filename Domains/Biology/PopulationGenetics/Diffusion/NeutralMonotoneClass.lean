@@ -246,7 +246,9 @@ theorem map_restrict_eq_comp [IsFiniteMeasure μ] (hY : IsNeutralMarkovFamily μ
 /-- The kernel form of the Markov property for nonnegative measurable test functions. Let `μ` be a
 finite measure and `Y` a Markov family for `wfSemigroup` with respect to `𝒢`: each `Y u` is
 `𝒢 u`-measurable and `∫_A g (Y v) dμ = ∫_A (wfSemigroup (v - u) g) (Y u) dμ` for `u ≤ v`, `A ∈ 𝒢 u`
-and continuous `g`. -/
+and continuous `g`. Then for `u ≤ v`, every `A ∈ 𝒢 u` and every measurable `f : I → [0, ∞]`,
+possibly unbounded, the lower integrals agree: `∫⁻_A f (Y v) dμ = ∫⁻_A ∫⁻ f dK_{v - u}(Y u) dμ`,
+where `K = neutralKernel`. -/
 theorem lintegral_step [IsFiniteMeasure μ] (hY : IsNeutralMarkovFamily μ 𝒢 Y) {u v : ℝ≥0}
     (huv : u ≤ v) {A : Set Ω} (hA : MeasurableSet[𝒢 u] A) {f : I → ℝ≥0∞} (hf : Measurable f) :
     ∫⁻ ω in A, f (Y v ω) ∂μ = ∫⁻ ω in A, ∫⁻ y, f y ∂neutralKernel (v - u) (Y u ω) ∂μ := by

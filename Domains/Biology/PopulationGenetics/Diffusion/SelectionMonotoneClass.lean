@@ -139,8 +139,8 @@ variable (hκ : ∀ s t, κ (s + t) = κ t ∘ₖ κ s)
 
 /-- For Markov kernels `κ` satisfying the Chapman–Kolmogorov equations, the canonical path measure
 of a measurable cylinder is given by the ordered finite-dimensional law. Here `x` is the input of
-the construction: the time-`0` marginal of `pathMeasure κ hκ x` is `κ 0 x`, the point mass at `x`
-only when `κ 0` is the identity kernel. -/
+the construction: the time-`0` marginal of `pathMeasure κ hκ x` is `κ 0 x`, which is the point mass
+at the input for every input exactly when `κ 0` is the identity kernel; that is not assumed. -/
 theorem pathMeasure_cylinder (x : I) (J : Finset ℝ≥0) {S : Set (J → I)}
     (hS : MeasurableSet S) :
     pathMeasure κ hκ x (cylinder J S) =
@@ -153,8 +153,8 @@ theorem pathMeasure_cylinder (x : I) (J : Finset ℝ≥0) {S : Set (J → I)}
 
 /-- **The path measure is measurable in the initial state.** For Markov kernels `κ` satisfying the
 Chapman–Kolmogorov equations `hκ`, `x ↦ pathMeasure κ hκ x` is measurable. Here `x` is the input of
-the construction: the time-`0` marginal of `pathMeasure κ hκ x` is `κ 0 x`, the point mass at `x`
-only when `κ 0` is the identity kernel. -/
+the construction: the time-`0` marginal of `pathMeasure κ hκ x` is `κ 0 x`, which is the point mass
+at the input for every input exactly when `κ 0` is the identity kernel; that is not assumed. -/
 theorem measurable_pathMeasure : Measurable fun x => pathMeasure κ hκ x := by
   refine Measurable.measure_of_isPiSystem generateFrom_measurableCylinders.symm
     isPiSystem_measurableCylinders ?_ (by simp)
@@ -165,8 +165,8 @@ theorem measurable_pathMeasure : Measurable fun x => pathMeasure κ hκ x := by
 
 /-- The canonical path measures of a Chapman–Kolmogorov family of Markov kernels, as a Markov kernel
 from the input state to sample paths. Here `x` is the input of the construction: the time-`0`
-marginal of `pathMeasure κ hκ x` is `κ 0 x`, the point mass at `x` only when `κ 0` is the identity
-kernel. -/
+marginal of `pathMeasure κ hκ x` is `κ 0 x`, which is the point mass at the input for every input
+exactly when `κ 0` is the identity kernel; that is not assumed. -/
 def pathKernel : Kernel I SamplePath :=
   ⟨fun x => pathMeasure κ hκ x, measurable_pathMeasure hκ⟩
 
@@ -243,7 +243,8 @@ theorem map_restrict_eq_comp [IsFiniteMeasure μ] (hY : IsKernelMarkovFamily κ 
 /-- The kernel form of the Markov property for nonnegative measurable test functions. Let the `κ t`
 be Markov kernels, `μ` a finite measure and `Y` a Markov family for `κ` with respect to `𝒢`: each
 `Y u` is `𝒢 u`-measurable and `∫_A g (Y v) dμ = ∫_A ∫ g dκ_{v - u}(Y u) dμ` for `u ≤ v`, `A ∈ 𝒢 u`
-and continuous `g`. -/
+and continuous `g`. Then for `u ≤ v`, every `A ∈ 𝒢 u` and every measurable `f : I → [0, ∞]`,
+possibly unbounded, the lower integrals agree: `∫⁻_A f (Y v) dμ = ∫⁻_A ∫⁻ f dκ_{v - u}(Y u) dμ`. -/
 theorem lintegral_step [IsFiniteMeasure μ] (hY : IsKernelMarkovFamily κ μ 𝒢 Y) {u v : ℝ≥0}
     (huv : u ≤ v) {A : Set Ω} (hA : MeasurableSet[𝒢 u] A) {f : I → ℝ≥0∞} (hf : Measurable f) :
     ∫⁻ ω in A, f (Y v ω) ∂μ = ∫⁻ ω in A, ∫⁻ y, f y ∂κ (v - u) (Y u ω) ∂μ := by
@@ -851,8 +852,8 @@ selection martingale problem with `μ[g (X t) | ℱ s] = ∫ g dκ_{t - s}(X s)`
 and every continuous `g`. If moreover `κ` satisfies the Chapman–Kolmogorov equations `hκ`, then for
 every `ℱ`-stopping time `τ` and every bounded measurable `F` on sample paths `ℝ≥0 → [0, 1]` (product
 σ-algebra), `μ[1_{τ < ∞} F ((X (τ + u))_{u ≥ 0}) | ℱ_τ] = 1_{τ < ∞} ∫ F d(pathMeasure κ hκ (X τ))`
-almost surely. The path measure with input `y` has time-`0` marginal `κ 0 y`, the point mass at `y`
-only when `κ 0` is the identity.
+almost surely. The path measure with input `y` has time-`0` marginal `κ 0 y`; this is the point
+mass at the input for every input exactly when `κ 0` is the identity kernel, which is not assumed.
 
 Source: Ethier & Kurtz (1986), ch. 4, §1 and Thm. 2.7; Revuz & Yor (1999), ch. III,
 §1 and §3. -/

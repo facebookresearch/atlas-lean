@@ -5,7 +5,7 @@
 - [Generator of the Wright–Fisher diffusion with selection and mutation](selection-mutation-generator.md)
 - [Without mutation the generator is the selection generator](selection-mutation-generator-zero-zero.md)
 - [Without selection the generator is the mutation generator](selection-mutation-generator-zero-left.md)
-- [The neutral generator is x(1 − x)/2 times the second derivative](selection-mutation-generator-neutral.md)
+- [The neutral generator applies the total derivative twice](selection-mutation-generator-neutral.md)
 - [The selection–mutation generator adds the two drifts](selection-mutation-generator-eq.md)
 - [The selection–mutation generator applied to the frequency is the drift](selection-mutation-generator-id.md)
 - [The neutral generator sends y² to x(1 − x)](selection-mutation-generator-neutral-sq.md)

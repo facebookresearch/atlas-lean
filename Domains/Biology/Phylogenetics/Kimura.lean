@@ -363,8 +363,10 @@ theorem ctmcTransition_k80Rate_eq_iff {κ₁ t₁ κ₂ t₂ : ℝ} :
       (t₂ := t₂)
 
 /-- **K80 distance recovery**: for all real `κ` and `t`, the Kimura distance of the transition and
-transversion row weights of `exp (t • k80Rate κ)` is `(κ + 2) t / 4`, the total substitution rate
-`-k80Rate κ i i = (κ + 2) / 4` times `t`. They are proportions when `κ ≥ 0` and `t ≥ 0`. -/
+transversion row weights of `exp (t • k80Rate κ)` is `(κ + 2) t / 4`, that is `-k80Rate κ i i * t`.
+For `κ ≥ 0`, `-k80Rate κ i i = (κ + 2) / 4` is the total substitution rate out of each base; if also
+`t ≥ 0`, the row weights are proportions and the distance is the expected number of substitutions
+per site. For `κ < -2` the coefficient is negative. -/
 theorem kimuraDistance_k80Rate (κ t : ℝ) (i : Fin 4) :
     kimuraDistance (transitionProp (ctmcTransition (k80Rate κ) t) i)
         (transversionProp (ctmcTransition (k80Rate κ) t) i) = (κ + 2) / 4 * t := by

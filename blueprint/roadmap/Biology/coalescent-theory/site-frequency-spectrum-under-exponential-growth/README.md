@@ -12,7 +12,7 @@
 - [The time change undoes the cumulative intensity](growth-time-cum-rate.md)
 - [For ρ ≥ 0 the time change is monotone on nonnegative times](growth-time-sub-nonneg.md)
 - [For ρ ≥ 0 the time change never lengthens a nonnegative interval](growth-time-sub-le.md)
-- [For ρ > 0 the time change strictly shortens positive-length intervals](growth-time-sub-lt.md)
+- [For ρ > 0, the time change strictly shortens intervals 0 ≤ a < b](growth-time-sub-lt.md)
 - [The time change is measurable](measurable-growth-time.md)
 - [For ρ ≥ 0 the time change is strictly increasing on nonnegative times](growth-time-lt-growth-time.md)
 - [The cumulative intensity is nonnegative at nonnegative times](cum-rate-exp-growth-size-nonneg.md)
@@ -37,7 +37,7 @@
 - [The Griffiths–Tavaré kernel is nonnegative](sfs-kernel-nonneg.md)
 - [The kernel entry for two lineages is positive](sfs-kernel-two-pos.md)
 - [The variable-size spectrum is monotone in the mean holding times](variable-sfs-le-variable-sfs.md)
-- [For θ > 0, shortening the oldest mean epoch suffices if none grow](variable-sfs-lt-variable-sfs.md)
+- [For θ > 0 the SFS falls if no epoch grows and the oldest shortens](variable-sfs-lt-variable-sfs.md)
 
 ## Kingman's coalescent under exponential growth
 

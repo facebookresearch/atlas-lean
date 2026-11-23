@@ -182,11 +182,12 @@ theorem f2_eq_of_mixedDrift_eq_of_forall_ne [DecidableEq E] (M : DriftModel μ E
       simp
     · rw [hlen e he]
 
-/-- Equal mixed drift gives the same `f4` at every quadruple: if two drift models have the same
-weights, `Mx` is admixed as in `f2_admixedBranch` from distinct edges `a`, `b` followed by drift
-on `c`, `A`, `B` and every population other than `Mx` have weight `0` on `a`, `b`, `c`, the
-lengths agree off `{a, b, c}` and the mixed drifts agree, then every `f4` (hence every `f2` and
-`f3`) agrees. -/
+/-- Equal mixed drift gives the same `f4` at every quadruple. Let two drift models have the same
+weights `w`, let `a`, `b`, `c` be three distinct edges and `α` a real number with
+`w Mx = α (w A + 1_a) + (1 - α) (w B + 1_b) + 1_c`, where `1_e` is the indicator of edge `e`,
+and let `A`, `B` and every population other than `Mx` have weight `0` on `a`, `b`, `c`. If the
+lengths agree off `{a, b, c}` and the two models have the same mixed drift
+`α² ℓ_a + (1 - α)² ℓ_b + ℓ_c`, then every `f4` (hence every `f2` and `f3`) agrees. -/
 theorem f4_eq_of_mixedDrift_eq_of_forall_ne [DecidableEq E] (M : DriftModel μ E P)
     (M' : DriftModel μ' E P) {Mx A B : P} {a b c : E} {α : ℝ} (hab : a ≠ b) (hac : a ≠ c)
     (hbc : b ≠ c)

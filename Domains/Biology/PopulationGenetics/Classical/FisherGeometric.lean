@@ -24,9 +24,9 @@ is `‖G‖⁻¹ • G` (which is `0` on the event `G = 0`, null when `n ≥ 1`;
 the only point is `0` and the beneficial probability is `0`). For `r > 0` the mutant is
 beneficial iff `⟪a, u⟫ < -r / 2` for the unit direction `u`; the beneficial probability
 depends only on `‖a‖`, is `1/2` below the one-dimensional cutoff `r < 2‖a‖`
-(and `0` beyond it) when `r > 0` and `‖a‖ > 0`, and in the large-dimension limit with
-`x = r √n / (2z)` held fixed (`z = ‖a‖`) tends to `1 - Φ(x)` for `Φ` the
-standard normal cdf (Fisher 1930; Orr 1998).
+(and `0` beyond it) when `r > 0` and `‖a‖ > 0`, and, for fixed `z = ‖a‖ > 0` and `x > 0`,
+in the large-dimension limit with `x = r √n / (2z)` held fixed tends to `1 - Φ(x)` for
+`Φ` the standard normal cdf (Fisher 1930; Orr 1998).
 
 ## Main results
 
@@ -66,9 +66,9 @@ noncomputable def gaussDirection (G : EuclideanSpace ℝ (Fin n)) :
 /-- The probability that a mutation of size `r` in a uniformly random direction
 (modelled by the Gaussian representation) moves the phenotype `a` strictly closer
 to the optimum at `0`. This reading needs `n ≥ 1`, where `G = 0` has probability `0`, and
-`r ≥ 0` (for `r < 0` the displacement has length `|r|`). In dimension `0` the space is `{0}`,
-`G = 0` surely, `gaussDirection G = 0` by the convention `0⁻¹ = 0`, the event is empty and the
-probability is `0`. -/
+`r ≥ 0` (for `r < 0` the displacement has length `|r|` when `G ≠ 0`, so almost surely). In
+dimension `0` the space is `{0}`, `G = 0` surely, `gaussDirection G = 0` by the convention
+`0⁻¹ = 0`, the event is empty and the probability is `0`. -/
 noncomputable def beneficialProb (a : EuclideanSpace ℝ (Fin n)) (r : ℝ) : ℝ :=
   (stdGaussian (EuclideanSpace ℝ (Fin n))).real
     {G | ‖a + r • gaussDirection G‖ < ‖a‖}

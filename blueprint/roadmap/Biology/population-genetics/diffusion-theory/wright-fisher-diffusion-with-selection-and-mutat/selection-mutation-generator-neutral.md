@@ -1,4 +1,4 @@
-# The neutral generator is x(1 − x)/2 times the second derivative
+# The neutral generator applies the total derivative twice
 
 For every real function `f` and every real `x`, the
 [selection–mutation generator](selection-mutation-generator.md) with `α = θ₁ = θ₂ = 0` is

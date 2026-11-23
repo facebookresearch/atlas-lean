@@ -38,9 +38,10 @@ independent of the topology (`VariableSFS.integral_sfs_of_indep`),
 is lengthened in expectation, `E T^ρ_k ≤ 1 / C(k,2)`, strictly when `ρ > 0`; hence growth lowers
 every entry of the expected spectrum below Fu's constant-size value `θ / i`, strictly when `ρ > 0`
 and `θ > 0` (`integral_sfs_growth_le`, `integral_sfs_growth_lt`), and `ρ = 0` recovers `θ / i`
-(`integral_sfs_growth_zero`). The most recent epoch has mean Bhaskar–Song's first-coalescence time,
-`E T^ρ_n = c_n = ∫_0^∞ exp(-C(n,2) R(s)) ds` (`integral_growthTimes_top`), and the real time to the
-most recent common ancestor is `G` of the standard one (`sum_growthHolding`).
+(`integral_sfs_growth_zero`). For `n ≥ 2` and measurable holding times, the most recent epoch has
+mean Bhaskar–Song's first-coalescence time, `E T^ρ_n = c_n = ∫_0^∞ exp(-C(n,2) R(s)) ds`
+(`integral_growthTimes_top`), and the real time to the most recent common ancestor is `G` of the
+standard one (`sum_growthHolding`).
 
 **Covariance.** For counts with the first two conditional moments of independent Poisson counts
 (`SFSCovariance.SFSCondMoments`) given the time-changed genealogy,
@@ -686,7 +687,8 @@ theorem growthTimes_top (ω : Ω) : growthTimes K ρ n ω = growthTime ρ (K.T n
 measurable Kingman holding times and `n ≥ 2`, the expected real duration of the most recent
 epoch (`n` lineages) is Bhaskar–Song's first-coalescence time
 `c_n = ∫_0^∞ exp(-C(n,2) R(s)) ds` for `η(s) = exp(-ρ s)`. Proof by the tail formula
-`E X = ∫_0^∞ P(X > t) dt` and `P(G(T_n) > t) = P(T_n > R(t)) = exp(-C(n,2) R(t))`. -/
+`E X = ∫_0^∞ P(X > t) dt` and, for `t ≥ 0`,
+`P(G(T_n) > t) = P(T_n > R(t)) = exp(-C(n,2) R(t))`. -/
 theorem integral_growthTimes_top (hρ : 0 ≤ ρ) (hT : ∀ k, Measurable (K.T k)) (hn : 2 ≤ n) :
     μ[growthTimes K ρ n] = firstCoalMean (expGrowthSize ρ) n := by
   have hk : n ∈ Icc 2 n := mem_Icc.2 ⟨hn, le_rfl⟩

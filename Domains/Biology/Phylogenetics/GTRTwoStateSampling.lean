@@ -120,7 +120,8 @@ variable [MeasurableSpace ι] [MeasurableSingletonClass ι]
 with coefficients `max (divergenceWeight π s t a) 0` (`ENNReal.ofReal`), a measure for the product
 σ-algebra. With measurable singletons the mass of `{a}` is that coefficient
 (`divergenceLaw_singleton`); otherwise a singleton with coefficient `0` can still have positive
-outer measure. -/
+outer measure. It is a probability measure if `π ≥ 0`, `∑ π = 1`, `s ≥ 0` off the diagonal and
+`t ≥ 0`. -/
 noncomputable def divergenceLaw (π : ι → ℝ) (s : Matrix ι ι ℝ) (t : ℝ) : Measure (ι × ι) :=
   ∑ a, ENNReal.ofReal (divergenceWeight π s t a) • Measure.dirac a
 
@@ -267,10 +268,10 @@ theorem tendstoInMeasure_rateEstimate_sampleLaw [Nontrivial ι] (hπ : ∀ i, 0 
 /-! ## The constant sample is not an instance -/
 
 /-- **Full support on multiple states precludes site self-independence.** For `t > 0`, positive
-parameters with base frequencies summing to `1` and at least two states, `site 0` is not independent
-of itself under `sampleLaw π s t`, so the constant sequence `X n = site 0` (identically distributed
-with the GTR divergence law) violates the pairwise-independence hypothesis of
-`GTRLogDetRecovery.ae_tendsto_rateEstimate_empirical`. -/
+parameters with base frequencies summing to `1`, at least two states and measurable singletons,
+`site 0` is not independent of itself under `sampleLaw π s t`, so the constant sequence
+`X n = site 0` (identically distributed with the GTR divergence law) violates the
+pairwise-independence hypothesis of `GTRLogDetRecovery.ae_tendsto_rateEstimate_empirical`. -/
 theorem not_indepFun_site_self [Nontrivial ι] (hπ : ∀ i, 0 < π i) (hπ1 : ∑ i, π i = 1)
     (hs : ∀ i j, i ≠ j → 0 < s i j) (ht : 0 < t) :
     ¬ IndepFun (site (ι := ι) 0) (site 0) (sampleLaw π s t) := by

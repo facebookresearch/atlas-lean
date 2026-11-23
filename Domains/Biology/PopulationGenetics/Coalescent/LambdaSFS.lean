@@ -192,19 +192,21 @@ def holdingCount (i : ℕ) (b : List ℕ) : ℝ :=
 /-- The **expected total length of branches subtending exactly `i` sample copies**, for the
 Λ-coalescent started from the block sizes `b`: the expected occupation sum
 `∑_j E [holdingCount Λ i (X_j)]` over the jump chain `X`. It is defined for every list of
-naturals; the branch-length reading needs positive block sizes and `i ≥ 1`. For `Λ ≠ 0`, jumps
-after the first `b.length` contribute nothing (`expectedLength_eq_sum`). For `Λ = 0` nothing
-ever merges, so from at least two blocks, one of size `i`, the true length is infinite; the
-definition returns `0`, since every holding count is then `0 / 0 = 0`. -/
+naturals; the branch-length reading needs `Λ ≠ 0`, positive block sizes and `i ≥ 1`. For
+`Λ ≠ 0`, jumps after the first `b.length` contribute nothing (`expectedLength_eq_sum`). For
+`Λ = 0` nothing ever merges, so from at least two blocks, one of size `i`, the true length is
+infinite; the definition returns `0`, since every holding count is then `b.count i / 0 = 0`,
+even when `b.count i > 0`, and this `0` is not an expected length. -/
 def expectedLength (i : ℕ) (b : List ℕ) : ℝ :=
   ∑ j ∈ range b.length, (jumpStep Λ)^[j] (holdingCount Λ i) b
 
 /-- The **expected site frequency spectrum** `E ξ_i = (θ / 2) E L_i` of a sample of `n` gene
-copies under the Λ-coalescent, defined for every real `θ`. For `θ ≥ 0`, with neutral
-infinite-sites mutation at rate `θ / 2` per lineage, it is the expected number of segregating
-sites whose derived allele is carried by exactly `i` copies; for `θ < 0` it is not a count. For
-`Λ = 0` and for `n ≤ 1` it is `0`, as `expectedLength` is (by `x / 0 = 0`); the intended domain
-is `Λ ≠ 0`, `n ≥ 2`, `θ ≥ 0`. -/
+copies under the Λ-coalescent, defined for every real `θ`. For `Λ ≠ 0`, `n ≥ 2` and `θ ≥ 0`,
+with neutral infinite-sites mutation at rate `θ / 2` per lineage, it is the expected number of
+segregating sites whose derived allele is carried by exactly `i` copies; for `θ < 0` it is not a
+count. For `Λ = 0` and for `n ≤ 1` it is `0`, as `expectedLength` is (by `x / 0 = 0`); at
+`Λ = 0` with `n ≥ 2` this `0` is not in general the expected count: for `θ > 0` the expected
+number of singleton sites is infinite. -/
 def expectedSFS (θ : ℝ) (n i : ℕ) : ℝ :=
   θ / 2 * expectedLength Λ i (List.replicate n 1)
 
@@ -327,8 +329,8 @@ least two blocks, the expected length of branches subtending `i` copies is the l
 accumulated in `b`, `#{blocks of size i} / λ_b`, plus the average over the first merger `K`
 (probability `λ_{b,|K|} / λ_b`) of the expected length after it. This follows from the
 occupation-sum definition; its block-count counterpart is the first-jump recursion (8) of
-Birkner, Blath & Eldon (2013). The identity holds for every list of naturals and every `i`; the
-branch-length reading needs positive block sizes. -/
+Birkner, Blath & Eldon (2013). The identity holds for every list of at least two naturals,
+including zero entries, and every `i`; the branch-length reading needs positive block sizes. -/
 theorem expectedLength_eq (hΛ : Λ ≠ 0) (i : ℕ) {b : List ℕ} (hb : 2 ≤ b.length) :
     expectedLength Λ i b = (b.count i : ℝ) / totalMergerRate Λ b.length +
       ∑ K ∈ (range b.length).powerset, mergerRate Λ b.length K.card /

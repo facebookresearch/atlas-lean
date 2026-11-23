@@ -48,22 +48,25 @@ This file makes the three parts of that statement precise.
   value `D_k = 0` where `S_k = 0`), and a limit in distribution of laws supported in one bounded
   closed interval is supported in that interval, so it is not `N(0, 1)`. This limit argument is
   not formalized here.
-  `not_hasLaw_tajimaD_gaussianReal` proves only the single-sample statement: under the same bound
-  the law of `D` is not exactly Gaussian. This is why Tajima fitted a beta distribution instead.
+  `not_hasLaw_tajimaD_gaussianReal` proves only the single-sample statement: under the support and
+  numerator bounds `D` has no nondegenerate Gaussian law (a constant `D = 0` has the degenerate
+  law `N(0, 0)`). This is why Tajima fitted a beta distribution instead.
 
 ## Main results
 
 * `integral_tajimaD_eq`: `E[D] = Cov(N, 1/√V) + E[N] E[1/√V]`.
-* `inv_sqrt_tajimaVarEstimator_le`, `memLp_inv_sqrt_tajimaVarEstimator`: `1/√V ≤ 1/√e₁` when
-  `S = 0` or `S ≥ 1`, so `1/√V` has all moments.
+* `inv_sqrt_tajimaVarEstimator_le`, `memLp_inv_sqrt_tajimaVarEstimator`: for `n ≥ 4`,
+  `1/√V ≤ 1/√e₁` when `S = 0` or `S ≥ 1`, so for an almost everywhere measurable `S` with these
+  values almost everywhere, `1/√V` has all moments under a finite measure.
 * `KingmanTimes.integral_tajimaD_eq_covariance`: under the neutral model, `E[D] = Cov(N, 1/√V)`.
 * `exists_integral_tajimaD_ne`: `E[N] = 0` but `E[D] ≠ E[N] / E[√V]`, indeed `E[D] > 0`.
 * `hasFDerivAt_div_sqrt`, `hasFDerivAt_div_sqrt_zero`: the derivative of `(x, y) ↦ x / √y`.
 * `variance_linearization_div_sqrt`, `KingmanTimes.variance_tajimaD_linearization_eq_one`: the
   delta-method variance of `D` is `1`.
 * `tendstoInDistribution_tajimaD_gaussian`: conditions for `D_k →ᵈ N(0, 1)`.
-* `abs_tajimaD_le`, `not_hasLaw_tajimaD_gaussianReal`: for fixed `n`, `D` is bounded and its law
-  is not exactly Gaussian.
+* `abs_tajimaD_le`, `not_hasLaw_tajimaD_gaussianReal`: for fixed `n ≥ 4` and a numerator bound
+  `|π - S / a₁| ≤ β S`, `D` is bounded where `S ≥ 1`; if moreover `S = 0` or `S ≥ 1` almost
+  everywhere, `D` has no nondegenerate Gaussian law.
 
 ## References
 
@@ -397,7 +400,7 @@ theorem tendstoInDistribution_tajimaD_gaussian {ι Ω Ω' : Type*} {mΩ : Measur
   simp only [tajimaD]
   rw [Real.sqrt_mul (sq_nonneg _), Real.sqrt_sq (hr k).le, mul_div_mul_left _ _ (hr k).ne']
 
-/-- **`D` has bounded range for a fixed sample size**: for `n ≥ 4`, `S ≥ 1` and
+/-- **A bound on `D` when its numerator is controlled by `S`**: for `n ≥ 4`, `S ≥ 1` and
 `|π - S / a₁| ≤ β S`, `|D| ≤ β / √(min(e₁, e₂) / 2)`. For real data the hypothesis holds with
 `β = max(n / (2 (n - 1)), 1 / a₁)`, since each segregating site contributes between `0` and
 `n / (2 (n - 1))` to `π`. -/
@@ -429,12 +432,12 @@ theorem abs_tajimaD_le {n : ℕ} (hn : 4 ≤ n) {π S β : ℝ} (hS : 1 ≤ S)
       ≤ β * S / (Real.sqrt c * S) := div_le_div₀ ((abs_nonneg _).trans hN) hN hcS hsq
     _ = β / Real.sqrt c := mul_div_mul_right _ _ (by linarith)
 
-/-- **`D` is not Gaussian for a fixed sample size**: for `n ≥ 4` genes, `S = 0` or `S ≥ 1` and
-`|π - S / a₁| ≤ β S` almost everywhere, `D` is almost everywhere bounded (`abs_tajimaD_le`; at
-`S = 0` it takes the value `0`, by `√0 = 0` and `x / 0 = 0`), so for every `v ≠ 0`, `D` does not
-have the law `N(m, v)` under `μ`, for any measure `μ`. This is a statement about one fixed
-sample; it does not by itself rule out a Gaussian limit in distribution of a sequence of such
-samples (see the module docstring). -/
+/-- **`D` has no nondegenerate Gaussian law for a fixed sample size**: for `n ≥ 4` genes,
+`S = 0` or `S ≥ 1` and `|π - S / a₁| ≤ β S` almost everywhere, `D` is almost everywhere bounded
+(`abs_tajimaD_le`; at `S = 0` it takes the value `0`, by `√0 = 0` and `x / 0 = 0`), so for every
+`v ≠ 0`, `D` does not have the law `N(m, v)` under `μ`, for any measure `μ`. This is a statement
+about one fixed sample; it does not by itself rule out a Gaussian limit in distribution of a
+sequence of such samples (see the module docstring). -/
 theorem not_hasLaw_tajimaD_gaussianReal {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
     {n : ℕ} (hn : 4 ≤ n) {π S : Ω → ℝ} {β : ℝ} (hS : ∀ᵐ ω ∂μ, S ω = 0 ∨ 1 ≤ S ω)
     (hN : ∀ᵐ ω ∂μ, |π ω - S ω / tajimaA1 n| ≤ β * S ω) (m : ℝ) {v : NNReal} (hv : v ≠ 0) :

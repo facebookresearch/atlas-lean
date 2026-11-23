@@ -8,7 +8,7 @@
 
 - [The mean of Tajima's D](integral-tajima-d-eq.md)
 - [Reciprocal-denominator bound 1/√e₁ for S = 0 or S ≥ 1 and n ≥ 4](inv-sqrt-tajima-var-estimator-le.md)
-- [Reciprocal Tajima denominator in every Lᵖ if S = 0 or S ≥ 1, n ≥ 4](mem-lp-inv-sqrt-tajima-var-estimator.md)
+- [All Lᵖ bounds for Tajima count data under a finite measure](mem-lp-inv-sqrt-tajima-var-estimator.md)
 - [The mean of Tajima's D under the neutral model](integral-tajima-d-eq-covariance.md)
 
 ## A nonzero mean with a centred numerator

@@ -44,9 +44,10 @@ oldest epoch overlaps the bottleneck window with positive probability, so it is 
 shortened on average and every entry is strictly below `θ / i` when `θ > 0`
 (`integral_sfs_bottleneck_lt`). For `f ≥ 1` and `θ ≥ 0` every entry is at least `θ / i`
 (`integral_sfs_bottleneck_ge`), and `f = 1` or `d = 0` gives exactly `θ / i`
-(`integral_sfs_bottleneck_eq`). The most recent epoch has mean Bhaskar–Song's first-coalescence
-time `E T^b_n = ∫_0^∞ exp(-C(n,2) R(s)) ds` (`integral_bottleneckTimes_top`), and the real time
-to the most recent common ancestor is `G` of the standard one (`sum_bottleneckHolding`).
+(`integral_sfs_bottleneck_eq`). For `n ≥ 2` and measurable holding times, the most recent epoch
+has mean Bhaskar–Song's first-coalescence time `E T^b_n = ∫_0^∞ exp(-C(n,2) R(s)) ds`
+(`integral_bottleneckTimes_top`), and the real time to the most recent common ancestor is `G` of
+the standard one (`sum_bottleneckHolding`).
 
 Not formalized here: the normalized-spectrum effects of a bottleneck (the relative excess or
 deficit of rare variants depending on the timing), closed forms of `E T^b_k` for `k < n`, the
@@ -730,8 +731,8 @@ theorem bottleneckTimes_top (ha : 0 ≤ a) (hd : 0 ≤ d) (hf : 0 < f) (ω : Ω)
 `d ≥ 0`, `f > 0`, measurable `K.T k` and `n ≥ 2`, the expected real duration of the most
 recent epoch (`n` lineages) is Bhaskar–Song's first-coalescence time
 `c_n = ∫_0^∞ exp(-C(n,2) R(s)) ds` for the bottleneck history. Proof by the tail formula
-`E X = ∫_0^∞ P(X > t) dt` for `X = G(T_n)`, which is nonnegative almost everywhere, and
-`P(G(T_n) > t) = P(T_n > R(t)) = exp(-C(n,2) R(t))`. -/
+`E X = ∫_0^∞ P(X > t) dt` for `X = G(T_n)`, which is nonnegative almost everywhere, and, for
+`t ≥ 0`, `P(G(T_n) > t) = P(T_n > R(t)) = exp(-C(n,2) R(t))`. -/
 theorem integral_bottleneckTimes_top (ha : 0 ≤ a) (hd : 0 ≤ d) (hf : 0 < f)
     (hT : ∀ k, Measurable (K.T k)) (hn : 2 ≤ n) :
     μ[bottleneckTimes K a d f n] = firstCoalMean (bottleneckSize a d f) n := by

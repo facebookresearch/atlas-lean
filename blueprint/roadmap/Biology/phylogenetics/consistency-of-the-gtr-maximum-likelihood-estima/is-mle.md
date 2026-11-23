@@ -8,5 +8,7 @@ all of `Θ`, with the conventions `log 0 = 0` and `log x = log |x|` for `x < 0`.
 algebraic and applies to all real `law` and `freq`. With the
 [empirical site-pattern frequencies](../consistency-of-minimum-distance-gtr-estimators/empirical-freq.md)
 of a sample as `freq` and a model whose laws are probability vectors positive at the observed
-patterns, it maximizes the likelihood of the sample. In general it maximizes only this total-log
-score, which can prefer a model that gives an observed pattern probability `0`.
+patterns, it maximizes the product of the one-column likelihoods, which is the likelihood of the
+sample under the product model, in which the columns are independent with common law `law θ`. In
+general it maximizes only this total-log score, which can prefer a model that gives an observed
+pattern probability `0`.

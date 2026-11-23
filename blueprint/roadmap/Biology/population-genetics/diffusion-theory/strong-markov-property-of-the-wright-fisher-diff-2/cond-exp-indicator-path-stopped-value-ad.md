@@ -18,8 +18,9 @@ measurable `F` on the
 where `P^κ_y` is the
 [path measure](../../../../Probability/markov-chains/markov-processes-from-transition-semigroups/path-measure.md)
 of `κ` with input `y`. Here `y` is the input of the kernel construction: the time-`0` marginal of
-`P^κ_y` is `κ_0(y, ·)`, which is the point mass at `y` only when `κ_0` is the identity kernel; the
-Chapman–Kolmogorov equations alone do not force this.
+`P^κ_y` is `κ_0(y, ·)`. This marginal is the point mass at the input for every input exactly when
+`κ_0` is the identity kernel, which is not assumed here; the Chapman–Kolmogorov equations alone do
+not imply it (the constant family `κ_t(x, ·) = δ_0` satisfies them, and `κ_0(1, ·) = δ_0`).
 
 ## Sources
 
