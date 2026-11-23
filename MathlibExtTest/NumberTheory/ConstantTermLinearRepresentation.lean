@@ -1,0 +1,60 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+import MathlibExt.NumberTheory.ConstantTermLinearRepresentation
+
+/-! # Tests for constant terms of powers of Laurent polynomials -/
+
+open AddMonoidAlgebra MetaMathlibExt
+
+example {R : Type*} [Semiring R] {r : ℕ} (F : AddMonoidAlgebra R (Fin r → ℤ)) :
+    laurentCartier 0 F = 0 := by
+  simp [laurentCartier]
+
+-- Halving the even exponent keeps its coefficient and discards the odd exponent.
+example (e : Fin 1 → ℤ) :
+    laurentCartier 2 (single (2 • e) (5 : ℤ) + single (fun _ => -3) 7) = single e 5 := by
+  classical
+  ext j
+  have hodd : (fun _ : Fin 1 => (-3 : ℤ)) ≠ 2 • j := by
+    intro h
+    have h₀ := congrFun h 0
+    change -3 = (2 : ℕ) • j 0 at h₀
+    simp only [nsmul_eq_mul, Nat.cast_ofNat] at h₀
+    omega
+  simp only [coeff_laurentCartier (by decide : 2 ≠ 0), coeff_add, Finsupp.add_apply,
+    coeff_single, Finsupp.single_apply, hodd, ite_false, add_zero,
+    (smul_right_injective (Fin 1 → ℤ) (by decide : (2 : ℕ) ≠ 0)).eq_iff]
+
+-- The coefficients 9 and 5 agree modulo 4. The offset k = 2 is outside the digit range.
+example (e : Fin 1 → ℤ) (Q : AddMonoidAlgebra ℤ (Fin 1 → ℤ)) :
+    (single e 3 ^ 4 * Q).coeff 0 ≡
+      (single e 5 * laurentCartier 2 (single e 3 ^ 2 * Q)).coeff 0 [ZMOD 4] := by
+  have h (j : Fin 1 → ℤ) : (single (2 • e) (9 : ℤ)).coeff j ≡
+      (single (2 • e) 5).coeff j [ZMOD 4] := by
+    classical
+    simp only [coeff_single, Finsupp.single_apply]
+    split <;> decide
+  simpa using constantTerm_pow_mul_modEq_tilde (p := 2) (a := 2) (ℓ := 1)
+    (by decide) (by decide) (single e 3) (single e 5) (by simpa using h) Q 1 2
+
+-- For P̃ = 8x and k = 4, the Cartier step reads the coefficient of x⁻⁷ in Q.
+example (Q : AddMonoidAlgebra ℤ (Fin 1 → ℤ)) :
+    (single (fun _ => 1) 8 ^ 7 * Q).coeff 0 ≡ 8 ^ 5 * Q.coeff (fun _ => -7) [ZMOD 9] := by
+  let e : Fin 1 → ℤ := fun _ => 1
+  have h (j : Fin 1 → ℤ) : (single (3 • e) (512 : ℤ)).coeff j ≡
+      (single (3 • e) 8).coeff j [ZMOD 9] := by
+    classical
+    simp only [coeff_single, Finsupp.single_apply]
+    split <;> decide
+  have step := constantTerm_tilde_pow_mul_modEq_laurentCartier (p := 3) (a := 2)
+    (by decide) (single e 8) (by simpa using h) Q 1 4
+  simpa [coeff_laurentCartier (by decide : 3 ≠ 0), e, Pi.mul_def, Pi.neg_def, Pi.add_def,
+    ← mul_assoc] using step

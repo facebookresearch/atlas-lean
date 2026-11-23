@@ -27,8 +27,10 @@ monic divisor `(X - C a) ^ 2`, and the quotient is unique. Uniqueness is by
 cancellation against the monic divisor, so no domain hypothesis is needed.
 -/
 
-/-- First-order Taylor expansion with unique quadratic remainder, over an
-arbitrary commutative ring. -/
+/-- **First-order Taylor expansion of a polynomial.** Let $R$ be a commutative ring, let
+$f \in R[X]$ and $a \in R$, and let $f'$ be the formal derivative of $f$. There is a unique
+polynomial $g \in R[X]$ such that
+$$f = f(a) + f'(a)\,(X - a) + g\,(X - a)^2.$$ -/
 theorem existsUnique_taylor_remainder (f : R[X]) (a : R) :
     ∃! g : R[X],
       f = C (f.eval a) + C (f.derivative.eval a) * (X - C a) +

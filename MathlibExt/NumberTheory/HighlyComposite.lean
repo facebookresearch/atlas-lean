@@ -29,7 +29,9 @@ smaller positive natural number. -/
 def IsHighlyComposite (H : ℕ) : Prop :=
   0 < H ∧ ∀ m : ℕ, 0 < m → m < H → m.divisors.card < H.divisors.card
 
-/-- The exponents in the prime factorization of a highly composite number are non-increasing. -/
+/-- **Exponents of highly composite numbers are non-increasing.** If $H$ is a highly composite
+number and $p \le q$ are primes, then the exponent of $q$ in the prime factorization of $H$ is at
+most the exponent of $p$. -/
 theorem IsHighlyComposite.factorization_antitone {H p q : ℕ}
     (hH : H.IsHighlyComposite) (hp : p.Prime) (hq : q.Prime) (hpq : p ≤ q) :
     H.factorization q ≤ H.factorization p := by
@@ -125,7 +127,9 @@ theorem IsHighlyComposite.factorization_antitone {H p q : ℕ}
   rw [hCard_eq] at hlt_card
   exact Nat.lt_irrefl _ hlt_card
 
-/-- The prime support of a highly composite number is an initial segment of the primes. -/
+/-- **Prime divisors of highly composite numbers form an initial segment.** If $H$ is a highly
+composite number and $p \le q$ are primes with $q \mid H$, then $p \mid H$. In other words, the
+set of primes dividing $H$ is an initial segment of the primes. -/
 theorem IsHighlyComposite.dvd_of_prime_le {H p q : ℕ}
     (hH : H.IsHighlyComposite) (hp : p.Prime) (hq : q.Prime)
     (hpq : p ≤ q) (hqH : q ∣ H) : p ∣ H := by
