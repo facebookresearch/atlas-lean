@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Rat.Defs
+public import MathlibExt.NumberTheory.ErdosStrausDivisorPatterns
 
 /-!
 # Divisor criteria for Erdős–Straus solutions with prime denominator

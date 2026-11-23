@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import MathlibExt.Combinatorics.Enumerative.HsuShiueGeneralizedStirlingNumber
+public import MathlibExt.Combinatorics.Enumerative.RationallyWeightedBinomialSums
 public import MathlibExt.NumberTheory.LucasSequence
 import MathlibExt.Combinatorics.Enumerative.StirlingSecondExplicit
 
@@ -29,6 +30,9 @@ Quarterly 62 (2024), no. 1, 45–56.
 rising factorial `(k + 1)^{(s)} = (k + 1)(k + 2) ⋯ (k + s)` is `(k + 1).ascFactorial s`. A
 polynomial `f(x) = ∑_{k=0}^N a_k x^k` is written `∑ k ∈ range (N + 1), C (a k) * X ^ k`, and its
 `i`-th derivative is `derivative^[i]`. `F_n` and `L_n` are `Nat.fib n` and `lucasNumber n`.
+
+Epsteen's identity (`sum_choose_div_succ`) is proved in
+`MathlibExt.Combinatorics.Enumerative.RationallyWeightedBinomialSums`.
 -/
 
 namespace MetaMathlibExt
@@ -294,16 +298,6 @@ public theorem_wanted sum_coeff_mul_pow_div_ascFactorial_eq_antideriv (a : ℕ �
     (hI : ∀ j y, HasDerivAt (I (j + 1)) (I j y) y) (x : ℝ) :
     ∑ k ∈ Finset.range (N + 1), a k * x ^ (k + s) / (k + 1).ascFactorial s =
       I s x - ∑ j ∈ Finset.Icc 1 s, I j 0 * x ^ (s - j) / (s - j).factorial
-
-/-- **Epsteen's identity.** For every natural number $n$,
-
-$$\sum_{k=0}^{n} \frac{1}{k+1} \binom{n}{k} = \frac{2^{n+1} - 1}{n+1}.$$
-
-Source: Andreea M. Stănică, Gabriela N. Stănică, and Pantelimon Stănică, *An Evaluation of
-Rationally Weighted Binomial Sums Via Some Differential and Integral Operators*, The Fibonacci
-Quarterly 62 (2024), Article 62-1/stanica09202023, Corollary 3.2. -/
-public theorem_wanted sum_choose_div_succ (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1), (n.choose k : ℚ) / (k + 1) = (2 ^ (n + 1) - 1) / (n + 1)
 
 /-- **Finkel's identity.** For every natural number $n$, with $H_n = \sum_{j=1}^{n} 1/j$ the
 $n$-th harmonic number,
