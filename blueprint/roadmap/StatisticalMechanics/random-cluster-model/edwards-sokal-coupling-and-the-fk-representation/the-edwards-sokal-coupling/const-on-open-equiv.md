@@ -1,0 +1,3 @@
+# Cluster-constant colorings as colorings of clusters
+
+Let $G = (V, E)$ be a finite simple graph, $q \in \mathbb{N}$, and $\omega$ an assignment of open/closed states to the unordered pairs of vertices. The map $\tau \mapsto (v \mapsto \tau(C_v))$, with $C_v$ the open cluster of $v$, is a bijection from the colorings of the open clusters of $\omega$ (the connected components of the graph on $V$ formed by the edges of $G$ that are open in $\omega$, isolated vertices included) with colors in $\{0, \dots, q - 1\}$ onto the colorings $\sigma : V \to \{0, \dots, q - 1\}$ that are [constant on open clusters](const-on-open.md).

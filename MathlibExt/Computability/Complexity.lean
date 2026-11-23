@@ -42,35 +42,49 @@ and omit unrelated source instances and lemmas.
 
 open Computability
 
-/-- A canonical encoding of a type as bitstrings (`List Bool`).
-This is a class version of Mathlib's `Computability.Encoding`, specialized to
-the alphabet `Bool`. Inlined from FormalConjectures (absent from Mathlib). -/
+/-- **Bitstring encodings.** A canonical bitstring encoding of a type $\alpha$ consists of an
+encoding map from $\alpha$ to finite lists of booleans and a partial decoding map from finite
+lists of booleans to $\alpha$, such that decoding the encoding of any $a \in \alpha$ succeeds
+and returns $a$.
+
+Source: a class version of Mathlib's `Computability.Encoding` specialized to the alphabet
+`Bool`, inlined from FormalConjectures (absent from Mathlib). -/
 class BitstringEncoding α extends Computability.Encoding α Bool
 
 namespace BitstringEncoding
 
 variable {α β : Type*}
 
-/-- The encoding function of the canonical `BitstringEncoding` of `α`. -/
+/-- **Encoding function of a bitstring encoding.** For a type $\alpha$ with a canonical bitstring
+encoding, the bitstring encoding of $a \in \alpha$ is the finite list of booleans that this
+encoding assigns to $a$. -/
 def bitEncode [BitstringEncoding α] (a : α) : List Bool := toEncoding.encode a
 
-/-- The decoding function of the canonical `BitstringEncoding` of `α`. -/
+/-- **Decoding function of a bitstring encoding.** For a type $\alpha$ with a canonical bitstring
+encoding, bitstring decoding is the decoding function of that encoding: it sends each finite list
+of booleans either to an element of $\alpha$ or to failure. -/
 def bitDecode [BitstringEncoding α] (l : List Bool) : Option α := toEncoding.decode l
 
-/-- Decoding is a left inverse of encoding. -/
+/-- **Decoding inverts bitstring encoding.** Let $\alpha$ be a type with a canonical bitstring
+encoding. For every $a \in \alpha$, decoding the bitstring encoding of $a$ succeeds and returns
+$a$. -/
 @[simp]
 theorem bitDecode_bitEncode [BitstringEncoding α] (a : α) :
     bitDecode (bitEncode a) = some a :=
   toEncoding.decode_encode a
 
-/-- Make a bitstring self-delimiting: each payload bit `b` becomes the two bits
-`[true, b]`, and the block is terminated by `false`. -/
+/-- **Self-delimiting form of a bitstring.** The self-delimiting form of a bitstring
+$(b_1, \dots, b_n)$ is $(\mathrm{true}, b_1, \dots, \mathrm{true}, b_n, \mathrm{false})$: each
+bit is preceded by $\mathrm{true}$ and the block is terminated by $\mathrm{false}$. In
+particular the empty bitstring becomes $(\mathrm{false})$. -/
 def delimit : List Bool → List Bool
   | [] => [false]
   | b :: l => true :: b :: delimit l
 
-/-- Parse one self-delimiting block from the front of the input, returning the
-payload and the remaining input. -/
+/-- **Parsing one self-delimiting block.** Write booleans as bits, with true as $1$ and false as
+$0$. Reading a list of bits from the front, a $0$ ends the block, and a $1$ followed by a bit $b$
+contributes $b$ to the payload. The result is the payload together with the rest of the list
+after the terminating $0$. Parsing fails if the list runs out before a terminating $0$ is read. -/
 def undelimit : List Bool → Option (List Bool × List Bool)
   | false :: rest => some ([], rest)
   | true :: b :: input => (undelimit input).map fun p => (b :: p.1, p.2)
@@ -90,15 +104,23 @@ theorem length_delimit (l : List Bool) :
   | nil => rfl
   | cons b l ih => simp [delimit, ih]; omega
 
-/-- Parse a sequence of self-delimiting blocks off the front of the input,
-using `fuel` to bound the number of blocks. -/
+/-- **Bounded parsing of self-delimiting blocks.** Given a bound $n$ and a list of booleans $s$,
+the parse returns the empty list of payloads if $s$ is empty. If $s$ is nonempty and $n = 0$ it
+fails. If $s$ is nonempty and $n = m + 1$, it parses one self-delimiting block from the front of
+$s$, then parses the remaining list with bound $m$, and returns the first payload followed by the
+payloads of the rest. It fails if either step fails. So the parse succeeds exactly when $s$ is
+the concatenation of at most $n$ self-delimiting blocks, and it returns their payloads in order. -/
 def undelimitBlocksAux : ℕ → List Bool → Option (List (List Bool))
   | _, [] => some []
   | 0, _ :: _ => none
   | fuel + 1, input =>
     (undelimit input).bind fun p => (undelimitBlocksAux fuel p.2).map (p.1 :: ·)
 
-/-- Parse a sequence of self-delimiting blocks off the front of the input. -/
+/-- **Parsing a list of booleans into self-delimiting blocks.** Given a list of booleans $s$, this
+repeatedly parses one self-delimiting block from the front of $s$ until $s$ is used up, allowing
+at most as many blocks as the length of $s$, and returns the list of payloads in order. It fails
+if some block fails to parse. The bound never binds, since every block uses at least one bit.
+So the parse succeeds exactly when $s$ is a concatenation of self-delimiting blocks. -/
 def undelimitBlocks (input : List Bool) : Option (List (List Bool)) :=
   undelimitBlocksAux input.length input
 
@@ -165,45 +187,72 @@ end BitstringEncoding
 
 namespace ComplexityTheory
 
-/-- The type of decision problems: functions from lists of booleans to
-booleans. Inlined from FormalConjectures (absent from Mathlib). -/
+/-- **Decision problems.** A decision problem is a function from finite lists of booleans
+(bitstrings) to booleans.
+
+Source: inlined from FormalConjectures (absent from Mathlib). -/
 abbrev DecisionProblem := List Bool → Bool
 
-/-- The type of complexity classes: sets of decision problems. Inlined from
-FormalConjectures (absent from Mathlib). -/
+/-- **Complexity classes.** A complexity class is a set of decision problems.
+
+Source: inlined from FormalConjectures (absent from Mathlib). -/
 abbrev DecisionComplexityClass := Set DecisionProblem
 
-/-- `IsPolyTimeWithEncoding ea eb f` asserts that `f` is computable in
-polynomial time under the given encodings. Inlined from FormalConjectures
-(absent from Mathlib). -/
+/-- **Polynomial-time computability under given encodings.** Let $e_\alpha$ encode $\alpha$ as
+words over an alphabet $\Gamma_\alpha$ and $e_\beta$ encode $\beta$ as words over $\Gamma_\beta$. A
+function $f : \alpha \to \beta$ is polynomial-time computable with respect to $e_\alpha$ and
+$e_\beta$ when there are a multi-stack Turing machine with finitely many stacks, function labels
+and internal states and a finite input stack alphabet, identifications of its input and output
+stack alphabets with $\Gamma_\alpha$ and $\Gamma_\beta$, and a polynomial $p$ with natural-number
+coefficients, such that for every $a \in \alpha$ the machine, started at its main function in its
+initial state with $e_\alpha(a)$ on its input stack and every other stack empty, halts within
+$p(n)$ steps, where $n$ is the length of $e_\alpha(a)$, with $e_\beta(f(a))$ on its output stack,
+every other stack empty and its internal state equal to its initial state.
+
+Source: inlined from FormalConjectures (absent from Mathlib). -/
 def IsPolyTimeWithEncoding {α β Γα Γβ : Type} (ea : Encoding α Γα)
     (eb : Encoding β Γβ) (f : α → β) :=
   Nonempty (Turing.TM2ComputableInPolyTime ea.encode eb.encode f)
 
-/-- A function is polynomial-time computable when it is
-`IsPolyTimeWithEncoding` for the canonical bitstring encodings. Inlined from
-FormalConjectures (absent from Mathlib). -/
+/-- **Polynomial-time computable functions.** Let $\alpha$ and $\beta$ be types with canonical
+bitstring encodings. A function $f : \alpha \to \beta$ is polynomial-time computable when it is
+polynomial-time computable with respect to the canonical bitstring encodings of $\alpha$ and
+$\beta$.
+
+Source: inlined from FormalConjectures (absent from Mathlib). -/
 def IsPolyTime {α β : Type} [BitstringEncoding α] [BitstringEncoding β]
     (f : α → β) : Prop :=
   IsPolyTimeWithEncoding (BitstringEncoding.toEncoding (α := α))
     (BitstringEncoding.toEncoding (α := β)) f
 
-/-- The class P: decision problems decidable in polynomial time by a
-deterministic Turing machine. Inlined from FormalConjectures (absent from
-Mathlib). -/
+/-- **The complexity class P.** P is the set of decision problems (functions from lists of
+booleans to booleans) that are computable in polynomial time by a deterministic multi-stack
+Turing machine, with respect to the canonical bitstring encodings of inputs and outputs.
+
+Source: adapted from FormalConjectures,
+FormalConjecturesForMathlib/Computability/Complexity.lean (absent from Mathlib). -/
 def P : DecisionComplexityClass :=
   { L | IsPolyTime L }
 
-/-- The class NP: decision problems with a polynomial bound `p` and a poly-time
-verifier `R` such that `L x` iff some witness `w` of length at most `p |x|` is
-accepted. Inlined from FormalConjectures (absent from Mathlib). -/
+/-- **The complexity class NP.** NP is the set of decision problems $L$ (functions from lists of
+booleans to booleans) for which there exist a polynomial $p$ with natural-number coefficients and
+a polynomial-time computable function $R$ from pairs of lists of booleans to booleans such that,
+for every list of booleans $x$, $L(x)$ is true if and only if there is a list of booleans $w$
+whose length is at most $p$ evaluated at the length of $x$ and for which $R(x, w)$ is true.
+
+Polynomial time is measured with respect to the canonical bitstring encodings.
+
+Source: adapted from FormalConjectures,
+FormalConjecturesForMathlib/Computability/Complexity.lean (absent from Mathlib). -/
 def NP : DecisionComplexityClass :=
   { L | ∃ (p : Polynomial ℕ), ∃ R : (List Bool × List Bool) → Bool,
       IsPolyTime R ∧
       ∀ x, L x ↔ ∃ w : List Bool, w.length ≤ p.eval x.length ∧ R (x, w) }
 
-/-- The class coNP: decision problems whose complements are in NP. Inlined
-from FormalConjectures (absent from Mathlib). -/
+/-- **The class coNP.** coNP is the set of decision problems $L$ whose complement, the decision
+problem that accepts exactly the bitstrings that $L$ rejects, belongs to NP.
+
+Source: inlined from FormalConjectures (absent from Mathlib). -/
 def coNP : DecisionComplexityClass :=
   { L | Lᶜ ∈ NP }
 

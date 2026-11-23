@@ -65,10 +65,6 @@ private lemma sqrt_pow_succ' (n : ℕ) (hn : 1 ≤ n) :
     rw [h93, Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 3)]
   rw [h9]
 
-private lemma powI_succ (n : ℕ) :
-    Complex.I ^ (n + 1) = Complex.I * Complex.I ^ n :=
-  pow_succ' Complex.I n
-
 private lemma powI_succ' (n : ℕ) (hn : 1 ≤ n) :
     Complex.I ^ (n + 1) = -Complex.I ^ (n - 1) := by
   have hn2 : n + 1 = (n - 1) + 2 := by omega
@@ -400,17 +396,11 @@ private lemma legSeq_one : legSeq 1 = 1 := by
   simp only [legSeq, hI1, s1, g1]
   exact leg_scalar
 
-private lemma tri_zero_legendre : trinomialCoefficient 0 0 = 1 := by
-  simp [trinomialCoefficient]
+private lemma base0 : triSeq 0 = legSeq 0 := by
+  simp [triSeq, trinomialCoefficient_zero_zero, legSeq_zero]
 
-private lemma tri_one : trinomialCoefficient 1 1 = 1 := by
-  unfold trinomialCoefficient
-  simp [pow_one, Polynomial.coeff_add, Polynomial.coeff_one, Polynomial.coeff_X,
-    Polynomial.coeff_X_pow]
-
-private lemma base0 : triSeq 0 = legSeq 0 := by simp [triSeq, tri_zero_legendre, legSeq_zero]
-
-private lemma base1 : triSeq 1 = legSeq 1 := by simp [triSeq, tri_one, legSeq_one]
+private lemma base1 : triSeq 1 = legSeq 1 := by
+  simp [triSeq, trinomialCoefficient_one_one, legSeq_one]
 
 /-- The Legendre sequence satisfies the central trinomial recurrence. -/
 private lemma f_rec (n : ℕ) :
@@ -424,7 +414,7 @@ private lemma f_rec (n : ℕ) :
     simp
   · have hn1 : 1 ≤ n := by omega
     have hB := bl_bonnet_eval n
-    have hI1 := powI_succ n
+    have hI1 := pow_succ' Complex.I n
     have hs1 : (Real.sqrt ((3 : ℝ) ^ (n + 1)) : ℂ)
         = (Real.sqrt 3 : ℂ) * (Real.sqrt ((3 : ℝ) ^ n) : ℂ) := by
       exact_mod_cast sqrt_pow_succ n
@@ -476,25 +466,28 @@ private lemma tri_eq_leg (n : ℕ) : triSeq n = legSeq n := by
   exact (key n).1
 
 /--
-The central trinomial coefficient as a special value of the Legendre
-polynomial: `c_n = i^n * √(3^n) * P_n(-i/√3)`.
+**Central trinomial coefficients as Legendre values.** For a natural number $n$, let $c_n$ be the
+central trinomial coefficient, the coefficient of $X^n$ in $(1 + X + X^2)^n$, and let $P_n$ be the
+$n$th Legendre polynomial. Then, in the complex numbers,
+$$
+c_n = i^n \sqrt{3^n}\, P_n\Bigl(-\frac{i}{\sqrt{3}}\Bigr).
+$$
+
+Here $P_n(-i/\sqrt{3})$ is computed through the shifted Legendre polynomial
+$\tilde{P}_n(y) = \sum_{k=0}^{n} (-1)^k \binom{n}{k} \binom{n+k}{n} y^k$, which satisfies
+$\tilde{P}_n(y) = P_n(1 - 2y)$, evaluated at $y = (1 + i/\sqrt{3})/2$.
+
+Proof: Bonnet's recurrence $(n+1) P_{n+1}(x) = (2n+1) x P_n(x) - n P_{n-1}(x)$, evaluated at
+$x = -i/\sqrt{3}$ and rescaled by $i^n \sqrt{3^n}$, becomes the central trinomial recurrence
+$(n+1) c_{n+1} = (2n+1) c_n + 3n c_{n-1}$ (OEIS A002426); both sides agree at $n = 0, 1$.
+
+Proves `Wanted` entry `centralTrinomialCoeff_eq_legendre_specialValue`.
 
 Source: P. Blasiak, G. Dattoli, A. Horzela, K. A. Penson, and K. Zhukovsky,
 "Motzkin Numbers, Central Trinomial Coefficients and Hybrid Polynomials,"
 Journal of Integer Sequences 11 (2008), Article 08.1.1, Proposition with
 equation `eq20`, lines 337-343,
 <https://cs.uwaterloo.ca/journals/JIS/VOL11/Penson/penson131.tex>.
-
-The standard Legendre value `P_n(-i/√3)` is represented via
-`Polynomial.shiftedLegendre`: Mathlib's shifted polynomial satisfies
-`P⋆_n(y) = P_n(1 - 2*y)`, so evaluating at `(1 + i/√3)/2` gives `P_n(-i/√3)`.
-
-Proves `Wanted` entry `centralTrinomialCoeff_eq_legendre_specialValue`.
-
-Proof: Bonnet's recurrence `(n+1) P_{n+1}(x) = (2n+1) x P_n(x) - n P_{n-1}(x)`, evaluated at
-`x = -i/√3` and rescaled by `i^n √(3^n)`, becomes the central trinomial recurrence
-`(n+1) c_{n+1} = (2n+1) c_n + 3n c_{n-1}` (OEIS A002426), proved in
-`MathlibExt.Combinatorics.Enumerative.CentralTrinomialRecurrence`; both sides agree at `n = 0, 1`.
 -/
 public theorem centralTrinomialCoeff_eq_legendre_specialValue
     (n : ℕ) :
