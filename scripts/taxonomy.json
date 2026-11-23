@@ -833,6 +833,7 @@
    "title": "Mathematical Physics",
    "description": "Mathematical physics describes mechanical, electromagnetic and quantum systems through mathematical models and their laws.",
    "fields": [
+    {"slug": "acoustics", "title": "Acoustics", "description": "Sound transmission, intensity and loss, including how transmitted power and decibel levels combine across parallel paths.", "msc": ["76Q05"], "subfields": []},
     {"slug": "quantities-and-measurement", "title": "Quantities, units and measurement", "description": "Physical quantities and their dimensions in the International System of Quantities, unit conversions and dimensionless groups, and the propagation of measurement uncertainty through linear, linearized and Lipschitz models. Calibration in analytical chemistry is under Chemistry.", "msc": ["00A73", "62P35"], "subfields": []},
     {"slug": "elasticity-and-structures", "title": "Elasticity and structural mechanics", "description": "Linear elasticity and the mechanics of structures: Cauchy stress, small strain and Mohr's circle, isotropic elastic energy, Euler–Bernoulli beams and their vibration modes, rigid footings on elastic foundations, and fracture under linear elastic fracture mechanics.", "msc": ["74B05", "74A10", "74K10", "74H45", "74R10"], "subfields": []},
     {"slug": "fluid-mechanics", "title": "Fluid mechanics", "description": "Hydrostatics and elementary fluid dynamics: hydrostatic pressure and buoyancy, Bernoulli's theorem, Stokes settling, and continuum models of traffic flow with their shocks. Rotating and stratified flows of the ocean and atmosphere, water waves and open-channel hydraulics are under Earth Science.", "msc": ["76A02", "76D07", "76A30", "35L65"], "subfields": []},
@@ -12655,6 +12656,7 @@
   "PhyslibExt/Chemistry/Thermodynamics/Thermochemistry": {"to": "Chemistry/chemical-thermodynamics", "title": "Thermochemistry and Hess's law"},
   "PhyslibExt/Chemistry/Uncertainty/Propagation": {"to": "Physics/quantities-and-measurement", "title": "Propagation of measurement uncertainty"},
   "PhyslibExt/Chemistry/VariationalPerturbationHuckel": {"to": "Chemistry/quantum-chemistry-and-spectroscopy", "title": "Variational method, perturbation theory and Hückel theory"},
+  "PhyslibExt/ClassicalMechanics/Acoustics/EffectiveLoss": {"to": "Physics/acoustics", "title": "Effective transmission loss of parallel patches"},
   "PhyslibExt/CondensedMatter/IsingModel": {"to": "StatisticalMechanics/spin-models", "title": "Ising model on a finite graph"},
   "PhyslibExt/CondensedMatter/IsingModel/AizenmanBarsky": {"to": "StatisticalMechanics/random-currents-and-sharpness", "title": "Sharpness of the phase transition for the Ising model"},
   "PhyslibExt/CondensedMatter/IsingModel/AizenmanHdom": {"to": "StatisticalMechanics/correlation-inequalities", "title": "Griffiths–Hurst–Sherman inequality"},
