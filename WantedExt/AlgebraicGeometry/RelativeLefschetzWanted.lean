@@ -21,7 +21,12 @@ cohomology. Arbitrary classes of `H²(X, ℚ)` are not treated as ample.
 
 The request also asserts that the direct image `Rf_* ℚ_X[d]` is bounded
 constructible, so that its perverse cohomology is defined; it does not assume
-it.
+it. The comparison isomorphisms of the pullback/direct-image pipeline (the
+standard identifications of constant sheaves under shift and inverse image,
+and of `Rf_*` with shifts) are constructed by a request in this file rather
+than assumed; being isomorphisms, they do not affect whether the power map is
+invertible. The perverse t-structure is the characterized
+`[PerverseSheafTheory Y]`, unique when it exists.
 
 Sources: A. Beilinson, J. Bernstein and P. Deligne, *Faisceaux pervers*,
 Astérisque 100 (1982), Theorem 6.2.10; M. A. de Cataldo and L. Migliorini,
@@ -39,6 +44,10 @@ open DeCataldoMiglioriniDecompositionWanted (projectiveSpace)
 
 attribute [local instance] HasDerivedCategory.standard
 
+/-- The comparison isomorphisms of the hyperplane pipeline exist. -/
+public def_wanted hyperplaneComparisons {X Y : ComplexScheme} {f : X ⟶ Y} {n : ℕ}
+    (E : RelativeProjectiveEmbedding f n) (d k : ℕ) : HyperplaneComparisons E d k
+
 /-- Relative hard Lefschetz for the geometrically relatively very ample
 direction, including every nonzero scalar normalization of the projective
 hyperplane class: `Rf_* ℚ_X[d]` is bounded constructible, and the `k`-th power
@@ -49,8 +58,9 @@ public theorem_wanted relative_hard_lefschetz (X Y : ComplexScheme)
     (d n k : ℕ) [SmoothOfRelativeDimension d X.hom] (hn : 1 ≤ n)
     (f : X ⟶ Y) [IsProper f.left] (E : RelativeProjectiveEmbedding f n)
     (η : unitComplex (projectiveSpace n) ⟶ (unitComplex (projectiveSpace n))⟦(2 : ℤ)⟧)
-    (hη : η ≠ 0) (C : HyperplaneComparisons E d k) :
+    (hη : η ≠ 0) :
     ∃ hK : boundedConstructible Y (ConstructibleComplexes.normalizedDirectImage ℚ X Y f d),
-      IsIso (perversePowerMap Y ⟨_, hK⟩ k (hyperplaneImageMap E d k η C))
+      IsIso (perversePowerMap Y ⟨_, hK⟩ k
+        (hyperplaneImageMap E d k η (❰hyperplaneComparisons❱ E d k)))
 
 end WantedExt.AlgebraicGeometry.RelativeLefschetzWanted
