@@ -488,9 +488,12 @@ When Lean states a page's result in several declarations, the page credits one
 of them, and its row lists the others under `org.atlas-wiki`, as `"duplicates":
 ["<Lean name>", ...]`. A duplicate is no credit: the row still credits one
 declaration. `declarations` gives a duplicate no page and lists it as a
-duplicate. The extraction counts a use of a duplicate as a use of the page's
-declaration, so a page that uses the duplicate depends on the page, and the
-declaration's own use of it gives no edge. The row's own `object` credits a
+duplicate. The extraction counts another page's use of a duplicate as a use of
+the page's declaration, so that page depends on the page. To the declaration
+itself, its duplicate is part of it. The page depends on what the duplicate
+uses, as for an undocumented declaration, and never on itself; what the
+duplicate names, a Mathlib-credited declaration included, the declaration names.
+The row's own `object` credits a
 declaration of this project; an unlinked, planned, held or Mathlib-credited row
 lists none. Each name is given once. It is not the row's own declaration, and
 no other row links it, holds it back or lists it. `declarations` reports any

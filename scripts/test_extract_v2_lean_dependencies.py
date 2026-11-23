@@ -139,8 +139,9 @@ class Mutual(unittest.TestCase):
 
 
 class Duplicates(unittest.TestCase):
-    """A declaration a page's row lists as a duplicate states the page's result again (sync_wiki.duplicate_names): the
-    way stops at it as at the page's own declaration, and a use of it is a use of that article."""
+    """A declaration a page's row lists as a duplicate states the page's result again (sync_wiki.duplicate_names): any
+    other article's way stops at it as at the page's own declaration, and a use of it is a use of that article; for
+    that article it is part of the article, which depends on what it uses."""
 
     def test_an_article_that_uses_only_the_duplicate_depends_on_its_article(self) -> None:
         # C and its duplicate c define one function, c by a body that uses the article X. A's statement names c, and
@@ -154,12 +155,45 @@ class Duplicates(unittest.TestCase):
         found = run_extract(rows, ["X", "C", "A", "B"])
         self.assertEqual((found["A"]["statement"], found["B"]["proof"]), (["X"], ["X"]))
 
-    def test_a_duplicate_used_only_in_its_article_s_own_proof_gives_no_self_edge(self) -> None:
-        # C's proof uses its duplicate c, whose own proof uses the article Y: C gains no edge, to itself or to Y.
-        rows = [row("Y", "def", [], []), row("c", "theorem", [], ["Y"]), row("C", "theorem", [], ["c"])]
-        found = run_extract(rows, ["Y", "C"], {"c": "C"})
-        self.assertEqual((found["C"]["statement"], found["C"]["proof"]), ([], []))
-        self.assertEqual(run_extract(rows, ["Y", "C"])["C"]["proof"], ["Y"])
+    def test_an_article_depends_on_what_its_own_duplicate_uses(self) -> None:
+        # C is proved through its duplicate c, whose proof uses the page B: C's proof depends on B, as it did before c
+        # was listed, and never on C. So it does when c's statement is part of C's, and when C reaches c through the
+        # hidden theorem h. Another article, E, which uses c, still depends on C only.
+        cases = {
+            "C's proof uses c": ([row("B", "def", [], []), row("c", "theorem", [], ["B"]),
+                                  row("C", "theorem", [], ["c"])], ([], ["B"])),
+            "C's statement uses c": ([row("A", "def", [], []), row("B", "def", [], []),
+                                      row("c", "theorem", ["A"], ["B"]), row("C", "theorem", ["c"], [])], (["A"], [])),
+            "C's proof reaches c through h": ([row("B", "def", [], []), row("c", "theorem", [], ["B"]),
+                                               row("h", "theorem", [], ["c"]), row("C", "theorem", [], ["h"])],
+                                              ([], ["B"])),
+        }
+        for case, (rows, edges) in cases.items():
+            with self.subTest(case=case):
+                articles = [r["name"] for r in rows if r["name"] not in ("c", "h")]
+                found = run_extract(rows, articles, {"c": "C"})
+                self.assertEqual((found["C"]["statement"], found["C"]["proof"]), edges)
+                self.assertEqual(found["C"], run_extract(rows, articles)["C"])
+        rows = [row("B", "def", [], []), row("c", "theorem", [], ["B"]), row("C", "theorem", [], ["c"]),
+                row("E", "theorem", [], ["c"])]
+        found = run_extract(rows, ["B", "C", "E"], {"c": "C"})
+        self.assertEqual((found["C"]["proof"], found["E"]["proof"]), (["B"], ["C"]))
+
+    def test_an_article_and_its_own_duplicate_that_use_each_other_end(self) -> None:
+        # C and its duplicate c use each other, so do c and C's second duplicate d, and so do c and the hidden theorem
+        # h: C depends on the page B, which c's proof uses, and never on itself.
+        cases = {
+            "C and c": ([row("B", "def", [], []), row("c", "theorem", [], ["C", "B"]), row("C", "theorem", [], ["c"])],
+                        {"c": "C"}),
+            "c and d": ([row("B", "def", [], []), row("c", "theorem", [], ["d"]), row("d", "theorem", [], ["c", "B"]),
+                         row("C", "theorem", [], ["c"])], {"c": "C", "d": "C"}),
+            "c and h": ([row("B", "def", [], []), row("h", "theorem", [], ["c"]), row("c", "theorem", [], ["h", "B"]),
+                         row("C", "theorem", [], ["h"])], {"c": "C"}),
+        }
+        for case, (rows, duplicates) in cases.items():
+            with self.subTest(case=case):
+                found = run_extract(rows, ["B", "C"], duplicates)
+                self.assertEqual((found["C"]["statement"], found["C"]["proof"]), ([], ["B"]))
 
     def test_a_private_duplicate_is_read_by_its_source_name(self) -> None:
         # The dump names a declaration outside a module's public section by its private name.
@@ -954,6 +988,25 @@ class BridgeConvention(unittest.TestCase):
         self.assertEqual(found["inputs"]["aliases_sha256"], hashlib.sha256(b"").hexdigest())
         self.assertEqual(found["bridges"], {"C": {"statement": ["M.space"], "proof": []}})
         self.assertEqual(found["left_out"], {"A": {"statement": ["M.measure", "M.space"], "proof": ["M.fubini"]}})
+
+    def test_an_article_bridges_to_what_its_own_duplicate_names(self) -> None:
+        # C states and proves its result through its duplicate c, whose type names M.space and whose proof names
+        # M.fubini: c is part of C, so C bridges to both, by kind, and leaves none out. When C's proof reaches its
+        # duplicate only through the hidden theorem h, C's proof names neither: what it reaches through h is left out.
+        duplicate = with_mathlib(row("c", "theorem", [], []), ["M.space"], ["M.fubini"], direct=["M.fubini"],
+                                 type_direct=["M.space"])
+        mathlib = [credited(name, "theorem", [], []) for name in ("M.fubini", "M.space")]
+        rows = [duplicate, with_mathlib(row("C", "theorem", ["c"], ["c"]), [], []), *mathlib]
+        with redirect_stdout(io.StringIO()):
+            _, found = run_registry(rows, ["C"], duplicates={"c": "C"})
+        self.assertEqual((found["bridges"], found["left_out"]),
+                         ({"C": {"statement": ["M.space"], "proof": ["M.fubini"]}}, {}))
+        rows = [duplicate, with_mathlib(row("h", "theorem", [], ["c"]), [], []),
+                with_mathlib(row("C", "theorem", [], ["h"]), [], []), *mathlib]
+        with redirect_stdout(io.StringIO()):
+            _, found = run_registry(rows, ["C"], duplicates={"c": "C"})
+        self.assertEqual((found["bridges"], found["left_out"]),
+                         ({}, {"C": {"statement": [], "proof": ["M.fubini", "M.space"]}}))
 
     def test_a_duplicate_whose_article_is_gone_gives_no_bridge(self) -> None:
         # The Lean deleted C, whose row lists c as a duplicate; c's type names M.space and its proof M.fubini. A uses

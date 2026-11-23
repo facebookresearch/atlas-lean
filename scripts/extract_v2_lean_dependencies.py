@@ -20,9 +20,11 @@ ones. Mutually recursive definitions and mutual inductive types depend on each
 other, which a dependency DAG can't show, so statement edges inside such a group
 are left out and the group is listed under "mutual". A declaration a statement
 page's row lists as a duplicate (`sync_wiki.duplicate_names`), the article's
-result stated again, has no page: the way stops at it as at the article, which a
-use of it reaches, so an article that uses only the duplicate depends on the
-article, and the article's own use of it is no edge. Nothing is written when a
+result stated again, has no page. For any other article the way stops at it as
+at the article, which a use of it reaches, so an article that uses only the
+duplicate depends on the article. For its own article it is part of the
+article, as a non-article constant would be: the article depends on what the
+duplicate uses, and never on itself (own_duplicates). Nothing is written when a
 page stands for a duplicate, when two private constants of the dump take the
 name of a duplicate or of its article, or when the dump lacks one of them that
 the Lean sources still declare. When the Lean no longer declares one of them, a
@@ -525,6 +527,16 @@ def lean_index():
     return index_project(BLUEPRINT.parent, exclude_roots=("v1", "Atlas"))
 
 
+def expression_uses(row: dict | None, statement: bool) -> list[str]:
+    """The constants *row*'s expressions use: with *statement*, what it states (its type, and its value when that is
+    part of what it states); otherwise everything, its type and its value."""
+    if not row:
+        return []
+    if statement and row.get("kind") not in STATEMENT_VALUE:
+        return row["type"]
+    return row["type"] + row["value"]
+
+
 def frontiers(rows: dict[str, dict], articles: set[str], statement: bool = False,
               direct=None, alias: dict[str, str | None] | None = None) -> dict[str, frozenset[str]]:
     """For every non-article constant, the articles reachable through non-articles.
@@ -532,8 +544,9 @@ def frontiers(rows: dict[str, dict], articles: set[str], statement: bool = False
     With *direct*, a function of a constant's name, the constants reached are instead what *direct* gives for
     each non-article on the way (the Mathlib declarations it names, say), and articles only stop the way.
 
-    With *alias*, which maps a duplicate (see resolve_aliases) to its article, a duplicate stops the way as its
-    article does, and reaching it reaches the article; one mapped to None, its article gone, reaches nothing.
+    With *alias*, which maps a duplicate (see resolve_aliases) to its article, or to None when the article is gone, a
+    duplicate stops the way, and a set lists the duplicate itself where the way reaches it: what it gives depends on
+    whose way it is (see through_aliases). Each duplicate also gets the set its own uses reach, as a non-article.
 
     With *statement*, only what a constant states counts: its type, and its value only when that value is
     part of what it states (a definition's body, an inductive type's constructors). A hidden theorem's proof
@@ -547,12 +560,7 @@ def frontiers(rows: dict[str, dict], articles: set[str], statement: bool = False
     """
 
     def uses(name: str) -> list[str]:
-        row = rows.get(name)
-        if not row:
-            return []
-        if statement and row.get("kind") not in STATEMENT_VALUE:
-            return row["type"]
-        return row["type"] + row["value"]
+        return expression_uses(rows.get(name), statement)
 
     alias = alias or {}
     memo: dict[str, frozenset[str]] = {}
@@ -599,14 +607,73 @@ def frontiers(rows: dict[str, dict], articles: set[str], statement: bool = False
                 if direct is not None:
                     reached |= set(direct(member))
                 for use in uses(member):
-                    if use in articles or use in alias:
-                        if direct is None and (target := alias.get(use, use)) is not None:
-                            reached.add(target)
+                    if use in alias:
+                        reached.add(use)
+                    elif use in articles:
+                        if direct is None:
+                            reached.add(use)
                     elif use not in members:
                         reached |= memo[use]
             for member in component:
                 memo[member] = frozenset(reached)
+    # What each duplicate's own uses reach, for its own article, which it is part of (see through_aliases).
+    for name in alias:
+        if name in rows:
+            reached = set(direct(name)) if direct is not None else set()
+            for use in uses(name):
+                if use in alias or (use in articles and direct is None):
+                    reached.add(use)
+                elif use not in articles:
+                    reached |= memo.get(use, frozenset())
+            memo[name] = frozenset(reached)
     return memo
+
+
+def through_aliases(name: str, reached: frozenset[str], through: dict[str, frozenset[str]],
+                    alias: dict[str, str | None], articles: bool = True) -> frozenset[str] | set[str]:
+    """What *reached*, a set frontiers gives with *alias*, gives article *name*. A duplicate of another article stands
+    for that article (with *articles*; for nothing otherwise, as articles then only stop the way), and one whose
+    article is gone for nothing. One of *name*'s own is part of it, as a non-article: it stands for what it reaches
+    itself, its set in *through*, each read once, so a cycle through it ends. The caller drops *name* itself."""
+    if not alias or alias.keys().isdisjoint(reached):
+        return reached
+    found: set[str] = set()
+    seen: set[str] = set()
+    pending = [reached]
+    while pending:
+        for target in pending.pop():
+            if target not in alias:
+                found.add(target)
+            elif (article := alias[target]) is None:
+                continue
+            elif article == name:
+                if target not in seen:
+                    seen.add(target)
+                    pending.append(through.get(target, frozenset()))
+            elif articles:
+                found.add(article)
+    return found
+
+
+def own_duplicates(name: str, uses: list[str], rows: dict[str, dict], alias: dict[str, str | None],
+                   statement: bool) -> tuple[list[str], list[str]]:
+    """*uses*, an expression of article *name*, with each duplicate of *name*'s own it names (see resolve_aliases)
+    replaced by what the duplicate uses (see expression_uses, with *statement*), and so on, each duplicate once; then
+    the duplicates so replaced. A duplicate states its article's result, so what it names, the article names: for
+    its own article it is no stop but part of the article. A duplicate of another article stays in *uses*."""
+    if not alias or name not in alias.values():
+        return uses, []
+    kept: list[str] = []
+    replaced: list[str] = []
+    pending = list(reversed(uses))
+    while pending:
+        use = pending.pop()
+        if use not in alias or alias[use] != name:
+            kept.append(use)
+        elif use not in replaced:
+            replaced.append(use)
+            pending.extend(reversed(expression_uses(rows.get(use), statement)))
+    return kept, replaced
 
 
 def mutual_groups(edges: dict[str, set[str]]) -> list[list[str]]:
@@ -671,8 +738,10 @@ def registry(rows: dict[str, dict], articles: set[str], registered: dict[str, di
     `mathlib_type_direct` and `mathlib_value_direct` those its type and its value name themselves. An article's
     bridge's kind is decided first, a statement one when the statement reaches the declaration at all, and the bridge
     is kept only when the statement, or the proof, names the declaration itself; the others are listed apart
-    (`left_out`), by kind. A duplicate (*alias*, see frontiers) stops the way as its article does, so that no article
-    reaches through it what its article's own edges give, nor, its article gone, what it reaches itself."""
+    (`left_out`), by kind. A duplicate (*alias*, see frontiers) stops any other article's way as its article does, so
+    that no article reaches through it what its article's own edges give, nor, its article gone, what it reaches
+    itself. For its own article it is part of the article (see own_duplicates): what it reaches, the article reaches,
+    and what it names, where the article names the duplicate itself, the article names, so that it bridges too."""
     alias = alias or {}
     found = {name: row for name, row in registered.items() if not row.get("missing")}
 
@@ -687,28 +756,45 @@ def registry(rows: dict[str, dict], articles: set[str], registered: dict[str, di
     through_statement = frontiers(rows, articles, statement=True, direct=lambda name: direct(name, True), alias=alias)
     through = frontiers(rows, articles, direct=lambda name: direct(name, False), alias=alias)
 
-    def collapse(uses: list[str], own: list[str], memo: dict[str, frozenset[str]]) -> set[str]:
-        reached = set(own)
-        for use in uses:
+    def names(name: str, statement: bool) -> list[str]:
+        # What a constant's expressions name themselves: those it states, or all it uses (see expression_uses).
+        row = rows.get(name) or {}
+        if statement and row.get("kind") not in STATEMENT_VALUE:
+            return row.get("mathlib_type_direct", [])
+        return row.get("mathlib_type_direct", []) + row.get("mathlib_value_direct", [])
+
+    def collapse(name: str, uses: list[str], own: list[str], named: list[str], memo: dict[str, frozenset[str]],
+                 statement: bool) -> tuple[set[str], set[str]]:
+        # What article *name*'s expression *uses* reaches, given what it reaches through Mathlib itself (*own*), and
+        # what it names, given the names it has (*named*), its own duplicates' with its own.
+        kept, duplicates = own_duplicates(name, uses, rows, alias, statement)
+        reached, naming = set(own), set(named)
+        for duplicate in duplicates:
+            reached |= set(direct(duplicate, statement))
+            naming |= set(names(duplicate, statement))
+        for use in kept:
             if use not in articles and use not in alias:
-                reached |= memo.get(use, frozenset())
-        return reached & found.keys()
+                reached |= through_aliases(name, memo.get(use, frozenset()), memo, alias, articles=False)
+        return reached & found.keys(), naming
 
     bridges, left_out = {}, {}
     for name in sorted(articles):
         row = rows[name]
         if row["kind"] in STATEMENT_VALUE:
-            statement = collapse(row["type"] + row["value"], direct(name, True), through_statement)
-            proof: set[str] = set()
             # A definition's body and an inductive type's constructors are part of what it states.
-            stated = set(row["mathlib_type_direct"]) | set(row["mathlib_value_direct"])
+            statement, stated = collapse(name, row["type"] + row["value"], direct(name, True),
+                                         row["mathlib_type_direct"] + row["mathlib_value_direct"], through_statement,
+                                         True)
+            proof, proved = set(), set()
         else:
-            statement = collapse(row["type"], row.get("mathlib_type", []), through_statement)
-            proof = collapse(row["value"], row.get("mathlib_value", []), through) - statement
-            stated = set(row["mathlib_type_direct"])
+            statement, stated = collapse(name, row["type"], row.get("mathlib_type", []), row["mathlib_type_direct"],
+                                         through_statement, True)
+            proof, proved = collapse(name, row["value"], row.get("mathlib_value", []), row["mathlib_value_direct"],
+                                     through, False)
+            proof -= statement
         # A statement or a proof bridges only to what it names itself; what it reaches only through other constants,
         # the project's or Mathlib's, gives no edge.
-        kept = {"statement": statement & stated, "proof": proof & set(row["mathlib_value_direct"])}
+        kept = {"statement": statement & stated, "proof": proof & proved}
         dropped = {"statement": statement - kept["statement"], "proof": proof - kept["proof"]}
         if kept["statement"] or kept["proof"]:
             bridges[name] = {kind: sorted(kept[kind]) for kind in ("statement", "proof")}
@@ -838,14 +924,17 @@ def main() -> int:
     reach_statement = frontiers(rows, articles, statement=True, alias=alias)
     reach = frontiers(rows, articles, alias=alias)
 
-    def collapse(name: str, uses: list[str], through: dict[str, frozenset[str]]) -> set[str]:
+    def collapse(name: str, uses: list[str], through: dict[str, frozenset[str]], statement: bool) -> set[str]:
         found: set[str] = set()
-        for use in uses:
+        # The article's own duplicates are part of it: what they use, it uses.
+        for use in own_duplicates(name, uses, rows, alias, statement)[0]:
             if use in alias:
-                # A duplicate stands for its article; one whose article is gone, for none.
+                # A duplicate of another article stands for that article; one whose article is gone, for none.
                 found |= {alias[use]} - {None}
+            elif use in articles:
+                found.add(use)
             else:
-                found |= {use} if use in articles else through.get(use, frozenset())
+                found |= through_aliases(name, through.get(use, frozenset()), through, alias)
         found.discard(name)
         return found
 
@@ -853,10 +942,10 @@ def main() -> int:
     for name in sorted(articles):
         row = rows[name]
         if row["kind"] in STATEMENT_VALUE:
-            statement, proof = collapse(name, row["type"] + row["value"], reach_statement), set()
+            statement, proof = collapse(name, row["type"] + row["value"], reach_statement, True), set()
         else:
-            statement = collapse(name, row["type"], reach_statement)
-            proof = collapse(name, row["value"], reach) - statement
+            statement = collapse(name, row["type"], reach_statement, True)
+            proof = collapse(name, row["value"], reach, False) - statement
         result[name] = {
             "module": row["module"],
             "statement": sorted(statement),

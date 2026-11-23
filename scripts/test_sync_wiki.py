@@ -5095,7 +5095,8 @@ class BuildPath(Vault):
         # one of them that the Lean sources declare, as a use of Ext.backlog would then follow its own body, and when a
         # page an earlier sync wrote with a module and a name stands for Ext.backlog. One the Lean no longer declares
         # fails no build: the extraction warns, and a page that uses only Ext.backlog depends on no page through it
-        # while Ext.lagrange is gone. With both rows, it depends on Lagrange's.
+        # while Ext.lagrange is gone. With both rows, it depends on Lagrange's, and Lagrange's proof, which uses its
+        # duplicate, depends on Ext.other, which the duplicate's body uses.
         (wiki.ROOT / "Ext").mkdir()
         self.page("Algebra/README.md", "# Algebra\n\n" + "".join(f"- [{n}]({n}.md)\n" for n in ("lagrange", "uses",
                                                                                                 "other", "old")))
@@ -5159,7 +5160,8 @@ class BuildPath(Vault):
                             "the duplicate the Lean no longer declares": []}[case]
                 self.assertEqual(articles["Ext.uses"]["statement"], expected)
                 if "Ext.lagrange" in articles:
-                    self.assertEqual(articles["Ext.lagrange"]["proof"], [])
+                    self.assertEqual(articles["Ext.lagrange"]["proof"],
+                                     ["Ext.other"] if case == "both compiled" else [])
 
     def test_a_folder_page_credits_nothing(self) -> None:
         # A folder page's row that credits a Mathlib declaration (Autoform would show the folder in Mathlib, with no

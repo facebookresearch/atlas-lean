@@ -273,19 +273,23 @@ def node_kind(row: dict) -> str:
 
 
 def gather(uses: list[str], through: dict[str, frozenset[str]], nodes, rule_of: dict[str, str],
-           found: dict[str, set[str]], alias: dict[str, str | None] | None = None) -> None:
-    """Add the nodes that *uses* reach, each with how: directly, or through hidden constants of which rules. A use of a
-    duplicate (*alias*, see extract_v2_lean_dependencies.frontiers) is a use of its article, and so counts as direct:
-    the duplicate states the article's result; one whose article is gone reaches nothing."""
+           found: dict[str, set[str]], alias: dict[str, str | None] | None = None, name: str | None = None) -> None:
+    """Add the nodes that *uses*, an expression of *name*, reach, each with how: directly, or through hidden constants
+    of which rules. A use of a duplicate (*alias*, see extract_v2_lean_dependencies.frontiers) is a use of its
+    article, and so counts as direct: the duplicate states the article's result; one whose article is gone reaches
+    nothing. A duplicate of *name*'s own is part of it, as in the v2 extraction: *uses* come with those it names
+    replaced by what they use (extract_v2_lean_dependencies.own_duplicates), a direct use of theirs being one of
+    *name*'s, and one reached through hidden constants reaches what it reaches itself, through the same constants."""
+    alias = alias or {}
     for use in uses:
         if use in nodes:
             found.setdefault(use, set()).add(DIRECT)
-        elif alias and use in alias:
+        elif use in alias:
             if alias[use] is not None:
                 found.setdefault(alias[use], set()).add(DIRECT)
         else:
             rule = rule_of.get(use, "outside")
-            for target in through.get(use, ()):
+            for target in v2.through_aliases(name, through.get(use, frozenset()), through, alias):
                 found.setdefault(target, set()).add(rule)
 
 
@@ -293,6 +297,7 @@ def collapse(rows: dict[str, dict], nodes, sources, rule_of: dict[str, str],
              alias: dict[str, str | None] | None = None) -> tuple[list[dict], list[list[str]], dict]:
     """Statement and proof edges from each name in *sources* to *nodes*, with extract_v2_lean_dependencies.py's
     semantics, the mutual groups whose statement edges to each other are left out, and edge counts."""
+    alias = alias or {}
     reach_statement = v2.frontiers(rows, nodes, statement=True, alias=alias)
     reach = v2.frontiers(rows, nodes, alias=alias)
     found_statement: dict[str, dict[str, tuple[str, set[str]]]] = {}
@@ -301,13 +306,17 @@ def collapse(rows: dict[str, dict], nodes, sources, rule_of: dict[str, str],
         row = rows[name]
         by_type: dict[str, set[str]] = {}
         by_value: dict[str, set[str]] = {}
-        gather(row["type"], reach_statement, nodes, rule_of, by_type, alias)
+        # The source's own duplicates are part of it: what they use, it uses.
+        own_type = v2.own_duplicates(name, row["type"], rows, alias, True)[0]
+        gather(own_type, reach_statement, nodes, rule_of, by_type, alias, name)
         statement: dict[str, tuple[str, set[str]]] = {}
         proof: dict[str, set[str]] = {}
         if row["kind"] in STATEMENT_VALUE:
-            gather(row["value"], reach_statement, nodes, rule_of, by_value, alias)
+            own_value = v2.own_duplicates(name, row["value"], rows, alias, True)[0]
+            gather(own_value, reach_statement, nodes, rule_of, by_value, alias, name)
         else:
-            gather(row["value"], reach, nodes, rule_of, proof, alias)
+            own_value = v2.own_duplicates(name, row["value"], rows, alias, False)[0]
+            gather(own_value, reach, nodes, rule_of, proof, alias, name)
         for target, how in by_value.items():
             statement[target] = ("value", how)
         for target, how in by_type.items():
