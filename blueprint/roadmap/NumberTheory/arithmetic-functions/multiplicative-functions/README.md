@@ -20,3 +20,4 @@ Dirichlet and unitary convolution, completely multiplicative and additive functi
 - [Explicit bounds for the summatory function of $\mu(n)/n$](summatory-moebius-div-bound.md)
 - [Prime powers fixed by a uniform power sum of their prime factors](prime-power-factorization-sum-eq-iff.md)
 - [Von Mangoldt function](von-mangoldt-function.md)
+- [The von Mangoldt function summed over the divisors of a positive integer n gives log n](von-mangoldt-divisor-sum.md)

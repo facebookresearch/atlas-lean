@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Order.PosetMatrix.Connected
+public import MathlibExt.Order.QuasiFullRootedTree
 public import Mathlib.Data.Matrix.Block
 public import Mathlib.SetTheory.Cardinal.Finite
 
@@ -25,6 +26,9 @@ Statement-only targets from Salah Uddin Mohammad, Md. Shah Noor, and Md. Rashed 
 `Matrix.fromBlocks M 1 0 N` (all-`false` / all-`true` off-diagonal blocks), reindexed along
 `finSumFinEquiv`. The block of `0`s (`1`s) property of length `r`, `1 ≤ r < n`, says that
 `M i j = false` (`true`) for all `i < r ≤ j` (zero-based indices).
+
+The arity of quasi-full rooted trees (`quasiFullTree_arity`) is proved in
+`MathlibExt.Order.QuasiFullRootedTree`, which this module imports.
 -/
 
 namespace MetaMathlibExt
@@ -94,32 +98,6 @@ public theorem_wanted directSum_ordinalSum_represents {P Q : Type*} [PartialOrde
       ∃ e : Fin (m + k) ≃ P ⊕ₗ Q, ∀ i j, e i ≤ e j ↔
         reindex finSumFinEquiv finSumFinEquiv
           (fromBlocks A (Matrix.of fun _ _ => true) (Matrix.of fun _ _ => false) B) i j = true)
-
-/-- **Arity of quasi-full rooted trees.** Let $P$ be a finite partial order with $n \ge 3$
-elements that is a rooted tree: $P$ has a least element and, for every $x \in P$, the elements
-below $x$ form a chain. For a natural number $t$, call $P$ quasi-full $t$-ary when every $x \in P$
-is covered by exactly $\min(|U_x| - 1, t)$ elements of $P$, where $U_x = \{y \in P : x \le y\}$.
-Then (i) if $P$ is quasi-full $(n - 1)$-ary, it is quasi-full $t$-ary for every $t \ge n$; and
-(ii) if $P$ is quasi-full $t$-ary for some $t \le n - 2$, it is not quasi-full $t'$-ary for any
-$t' \ge n$.
-
-The source states this for poset matrices representing quasi-full $t$-ary rooted trees; both
-parts depend only on the represented poset.
-
-Source: Salah Uddin Mohammad, Md. Shah Noor, and Md. Rashed Talukder, *Recognition and
-Enumeration of the Quasi-Full Rooted Trees*, Journal of Integer Sequences 28 (2025),
-Article 25.6.3, Theorem 10 (`jis-2025-25.6.3-thm-10`). -/
-public theorem_wanted quasiFullTree_arity {P : Type*} [PartialOrder P] [Fintype P]
-    (hn : 3 ≤ Fintype.card P) (hroot : ∃ ρ : P, ∀ x, ρ ≤ x)
-    (hchain : ∀ x : P, IsChain (· ≤ ·) (Set.Iic x)) :
-    ((∀ x : P, Nat.card {y : P // x ⋖ y} =
-        min (Nat.card (Set.Ici x) - 1) (Fintype.card P - 1)) →
-      ∀ t, Fintype.card P ≤ t →
-        ∀ x : P, Nat.card {y : P // x ⋖ y} = min (Nat.card (Set.Ici x) - 1) t) ∧
-    (∀ t, t ≤ Fintype.card P - 2 →
-      (∀ x : P, Nat.card {y : P // x ⋖ y} = min (Nat.card (Set.Ici x) - 1) t) →
-        ∀ t', Fintype.card P ≤ t' →
-          ¬ ∀ x : P, Nat.card {y : P // x ⋖ y} = min (Nat.card (Set.Ici x) - 1) t')
 
 /-- **Direct sum criterion for relabeling inequivalence.** Let $n, t \ge 2$ and let
 $M$ and $M'$ be poset matrices of order $n$, Boolean matrices with rows and columns indexed by
